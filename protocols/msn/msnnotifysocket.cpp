@@ -342,6 +342,11 @@ void MSNNotifySocket::slotWriteHotmailTmpFile()
 	<< endl;
 }
 
+void MSNNotifySocket::slotOpenInbox()
+{
+	kapp->invokeBrowser(m_HotmailTmpFile);
+}
+
 void MSNNotifySocket::slotReadMessage( const QString &msg )
 {
 	if(msg.contains("Inbox-Unread:"))
@@ -361,7 +366,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 			//FIXME: how the hell do you use KGuiItem::yes() ???
 			if(answer==3)
 			{
-				kapp->invokeBrowser(m_HotmailTmpFile);
+				slotOpenInbox();
 			}
 			
 		}

@@ -299,7 +299,9 @@ private slots:
 	/**
 	 * Recieved phone numbers
 	 */
-	void slotRecievedInfo(QString handle,QString type,QString data);;
+	void slotRecievedInfo(QString handle,QString type,QString data);
+
+	void slotOpenInbox();
 
 private:
 	/**
@@ -341,6 +343,7 @@ private:
 	KAction* actionGoInvisible;
 	KAction* m_renameAction;
 	KAction* m_startChatAction;
+	KAction* m_openInboxAction;
 
 	KActionMenu *m_debugMenu;
 	KAction *m_debugRawCommand;

@@ -409,6 +409,11 @@ void MSNProtocol::initIcons()
 	connectingIcon = QMovie(dir.findResource("data","kopete/pics/msn_connecting.mng"));
 }
 
+void MSNProtocol::slotOpenInbox()
+{
+	m_notifySocket->slotOpenInbox();
+}
+
 void MSNProtocol::initActions()
 {
 	actionGoOnline = new KAction ( i18n("Go O&nline"), "msn_online", 0, this, SLOT(slotGoOnline()), this, "actionMSNConnect" );
@@ -427,8 +432,8 @@ void MSNProtocol::initActions()
 
 	m_startChatAction = new KAction ( i18n( "&Start chat..." ), "mail_generic", 0, this, SLOT( slotStartChat() ),
 		this, "m_renameAction" );
-	actionStatusMenu = new KActionMenu( "MSN", this );
 
+	m_openInboxAction = new KAction ( i18n( "Open inbo&x" ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
 
 	m_debugMenu = new KActionMenu( "Debug", this );
 	m_debugRawCommand = new KAction( i18n( "Send Raw C&ommand..." ), 0,
@@ -450,6 +455,8 @@ void MSNProtocol::initActions()
 	actionStatusMenu->popupMenu()->insertSeparator();
 	actionStatusMenu->insert( m_renameAction );
 	actionStatusMenu->insert( m_startChatAction );
+	actionStatusMenu->popupMenu()->insertSeparator();
+	actionStatusMenu->insert( m_openInboxAction );
 
 #if !defined NDEBUG
 	actionStatusMenu->popupMenu()->insertSeparator();

@@ -50,6 +50,9 @@ public:
 
 	void createChatSession();
 
+public slots:
+	void slotOpenInbox();
+
 signals:
 //	void newMail(QString, uint);
 	void contactList(QString, QString, QString, QString);
