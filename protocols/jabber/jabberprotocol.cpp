@@ -413,9 +413,6 @@ void JabberProtocol::slotError(const Jabber::StreamError &error)
 			break;
 
 	}
-	
-	/* basically all errors mean disconnection, so disconnect for real here */
-	Disconnect();
 
 }
 
