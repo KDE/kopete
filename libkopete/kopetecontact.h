@@ -226,6 +226,11 @@ public:
 	 void showContextMenu( const QPoint& p );
 
 	 /**
+	  * Get the Context Menu for this contact
+	  */
+	KPopupMenu *createContextMenu();
+	
+	 /**
 	  * Moves this contact to a new MetaContact
 	  *
 	  * @param m The new MetaContact to move this contact to
@@ -287,7 +292,7 @@ public slots:
 	 * Method to send a file. Should be implemented by the protocols
 	 */
 	 virtual void slotSendFile();
-	
+
 private slots:
 	/**
 	 * Function that is called when "Change Alias" is chosen from the

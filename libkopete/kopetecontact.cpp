@@ -193,27 +193,27 @@ void KopeteContact::slotSendFile()
 	kdDebug() << "[KopeteContact] Opps, the plugin hasn't implemented file sending, yet it was turned on! :(" << endl;
 }
 
-void KopeteContact::showContextMenu(const QPoint& p)
+KPopupMenu* KopeteContact::createContextMenu()
 {
 	/* Build the menu */
-	contextMenu = new KPopupMenu();
-	contextMenu->insertTitle( displayName()+" <"+id()+"> ("+statusText()+")" );
+	KPopupMenu *menu = new KPopupMenu();
+	menu->insertTitle( displayName()+" <"+id()+"> ("+statusText()+")" );
 
-	actionSendMessage->plug( contextMenu );
+	actionSendMessage->plug( menu );
 	actionSendMessage->setEnabled( isReachable() );
 
-	actionViewHistory->plug( contextMenu );
+	actionViewHistory->plug( menu );
 
-	contextMenu->insertSeparator();
+	menu->insertSeparator();
 
 	actionChangeMetaContact->setEnabled( !m_metaContact->isTemporary() );
-	actionChangeMetaContact->plug( contextMenu );
-	actionUserInfo->plug( contextMenu );
-	actionChangeAlias->plug( contextMenu );
-	actionDeleteContact->plug( contextMenu );
+	actionChangeMetaContact->plug( menu );
+	actionUserInfo->plug( menu );
+	actionChangeAlias->plug( menu );
+	actionDeleteContact->plug( menu );
 
 	if (mFileCapable)
-		actionSendFile->plug( contextMenu );
+		actionSendFile->plug( menu );
 
 	/* Protocol specific options will go below this separator
 	 * through the use of the customContextMenuActions() function
@@ -223,14 +223,20 @@ void KopeteContact::showContextMenu(const QPoint& p)
 	if(customActions != 0L)
 	{
 		if ( !customActions->isEmpty() )
-			contextMenu->insertSeparator();
+			menu->insertSeparator();
 
 		for(unsigned int i = 0; i < customActions->count(); i++)
 		{
-			customActions->action(i)->plug( contextMenu );
+			customActions->action(i)->plug( menu );
 		}
 	}
 
+	return menu;
+}
+
+void KopeteContact::showContextMenu(const QPoint& p)
+{
+	contextMenu=createContextMenu();
 	contextMenu->exec( p );
 	delete contextMenu;
 	contextMenu = 0L;
