@@ -47,8 +47,6 @@ public:
 
 	virtual bool isReachable() { return true; };
 
-	virtual KActionCollection *customContextMenuActions();
-
 public slots:
 
 	void slotUnloading ( void );
@@ -59,7 +57,6 @@ public slots:
 	void slotSendFile();
 	void slotSendMessage(const KopeteMessage &msg);
 
-	void slotHistoryDialogClosing();
 	void slotCloseHistoryDialog();
 
 private:
@@ -68,11 +65,7 @@ private:
 	QString m_smsId;
 	SMSProtocol* m_protocol;
 
-	QPtrList<KopeteContact> theContacts;
-
 	KopeteHistoryDialog *historyDialog;
-
-	KActionCollection* m_actionCollection;
 
 	KopeteMessageManager* mMsgManager;
 };

@@ -38,8 +38,6 @@ SMSContact::SMSContact( SMSProtocol *protocol, const QString &smsId,
 	const QString &displayName, KopeteMetaContact *parent )
 : KopeteContact( protocol->id(), parent )
 {
-	m_actionCollection=0L;
-
 	historyDialog = 0L;
 
 	m_smsId = smsId;
@@ -48,23 +46,11 @@ SMSContact::SMSContact( SMSProtocol *protocol, const QString &smsId,
 
 	m_protocol = protocol;
 
-	theContacts.append(this);
-
 	connect ( m_protocol, SIGNAL(unloading()), this, SLOT(slotUnloading()));
 }
 
 SMSContact::~SMSContact()
 {
-}
-
-KActionCollection *SMSContact::customContextMenuActions()
-{
-	if (m_actionCollection != 0L)
-		delete m_actionCollection;
-	
-	m_actionCollection = new KActionCollection(this);
-
-	return m_actionCollection;
 }
 
 void SMSContact::slotUnloading()
@@ -90,7 +76,9 @@ KopeteMessageManager* SMSContact::msgManager()
 	}
 	else
 	{
-		mMsgManager = kopeteapp->sessionFactory()->create(m_protocol->myself(), theContacts, m_protocol, "sms_logs/" + m_smsId + ".log", KopeteMessageManager::Email);
+		QPtrList<KopeteContact> contacts;
+		contacts.append(this);
+		mMsgManager = kopeteapp->sessionFactory()->create(m_protocol->myself(), contacts, m_protocol, "sms_logs/" + m_smsId + ".log", KopeteMessageManager::Email);
 		connect(mMsgManager, SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager*)),
 		this, SLOT(slotSendMessage(const KopeteMessage&)));
 		return mMsgManager;
@@ -119,7 +107,6 @@ void SMSContact::slotViewHistory()
 	{
 		historyDialog = new KopeteHistoryDialog(QString("sms_logs/%1.log").arg(m_smsId), displayName(), true, 50, 0, "SMSHistoryDialog");
 		connect ( historyDialog, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()) );
-		connect ( historyDialog, SIGNAL(destroyed()), this, SLOT(slotHistoryDialogClosing()) );
 	}
 }
 
@@ -127,15 +114,7 @@ void SMSContact::slotCloseHistoryDialog()
 {
 	kdDebug() << "SMS Plugin: slotCloseHistoryDialog()" << endl;
 	delete historyDialog;
-}
-
-void SMSContact::slotHistoryDialogClosing()
-{
-	kdDebug() << "SMS Plugin: slotHistoryDialogClosing()" << endl;
-	if (historyDialog != 0L)
-	{
-		historyDialog = 0L;
-	}
+	historyDialog = 0L;
 }
 
 void SMSContact::slotUserInfo()
