@@ -225,8 +225,8 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 		this, SLOT( slotChatDisplayNameChanged() ) );
 	connect( mgr, SIGNAL( contactAdded(const KopeteContact*, bool) ),
 		this, SLOT( slotContactAdded(const KopeteContact*, bool) ) );
-	connect( mgr, SIGNAL( contactRemoved(const KopeteContact*, const QString&) ),
-		this, SLOT( slotContactRemoved(const KopeteContact*, const QString&) ) );
+	connect( mgr, SIGNAL( contactRemoved(const KopeteContact*, const QString&, KopeteMessage::MessageFormat ) ),
+		this, SLOT( slotContactRemoved(const KopeteContact*, const QString&, KopeteMessage::MessageFormat) ) );
 	connect( mgr, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & , const KopeteOnlineStatus &) ),
 		this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
@@ -804,7 +804,7 @@ void ChatView::slotContactAdded(const KopeteContact *c, bool surpress)
 	emit updateStatusIcon( this );
 }
 
-void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &reason )
+void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &reason, KopeteMessage::MessageFormat format )
 {
 	kdDebug(14000) << k_funcinfo << endl;
 	if ( memberContactMap.contains( contact ) && contact != m_manager->user() )
@@ -825,7 +825,7 @@ void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &
 		}
 
 		if ( reason.isEmpty() )
-			sendInternalMessage( i18n( "%1 has left the chat." ).arg( contactName ) ) ;
+			sendInternalMessage( i18n( "%1 has left the chat." ).arg( contactName ), format ) ;
 		else
 		{
 			sendInternalMessage( i18n( "%1 has left the chat (%2)." ).
@@ -1027,11 +1027,11 @@ void ChatView::slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/*args
 	}
 }
 
-void ChatView::sendInternalMessage(const QString &msg)
+void ChatView::sendInternalMessage(const QString &msg, KopeteMessage::MessageFormat format )
 {
 	// When closing kopete, some internal message may be sent because some contact are deleted
 	// these contacts can already be deleted
-	KopeteMessage m = KopeteMessage(/*m_manager->user(),  m_manager->members()*/ 0L,0L, msg, KopeteMessage::Internal);
+	KopeteMessage m = KopeteMessage(/*m_manager->user(),  m_manager->members()*/ 0L,0L, msg, KopeteMessage::Internal, format);
 	// (in many case, this is useless to set myself as contact)
 	// TODO: set the contact which initiate the internal message,
 	// so we can later show a icon of it (for example, when he join a chat)

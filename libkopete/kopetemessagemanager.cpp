@@ -303,7 +303,7 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool suppress )
 	d->isEmpty = false;
 }
 
-void KopeteMessageManager::removeContact( const KopeteContact *c, const QString& reason )
+void KopeteMessageManager::removeContact( const KopeteContact *c, const QString& reason, KopeteMessage::MessageFormat format )
 {
 	kdDebug( 14010 ) << k_funcinfo << endl;
 	if ( !c || !d->mContactList.contains( c ) )
@@ -330,7 +330,7 @@ void KopeteMessageManager::removeContact( const KopeteContact *c, const QString&
 
 	d->contactStatus.remove( c );
 
-	emit contactRemoved( c, reason );
+	emit contactRemoved( c, reason, format );
 }
 
 void KopeteMessageManager::receivedTypingMsg( const KopeteContact *c, bool t )

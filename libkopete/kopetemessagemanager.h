@@ -187,7 +187,7 @@ signals:
 	/**
 	 * @brief a contact is no longer in this chat
 	 */
-	void contactRemoved( const KopeteContact *contact, const QString &reason );
+	void contactRemoved( const KopeteContact *contact, const QString &reason, KopeteMessage::MessageFormat format = KopeteMessage::PlainText );
 
 	/**
 	 * @brief a contact in this chat has changed his status
@@ -247,9 +247,10 @@ public slots:
 	/**
 	 * Remove a contact from the session
 	 * @param c is the contact
-	 * @param raison is the optional raison message showed in the chatwindow
+	 * @param reason is the optional raison message showed in the chatwindow
+	 * @param format The format of the message
 	 */
-	void removeContact( const KopeteContact *contact, const QString& reason = QString::null );
+	void removeContact( const KopeteContact *contact, const QString& reason = QString::null, KopeteMessage::MessageFormat format = KopeteMessage::PlainText );
 
 	/**
 	 * Set if the KMM will be deleted when the chatwindow is deleted. It is useful if you want

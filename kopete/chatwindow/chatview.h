@@ -358,9 +358,10 @@ private slots:
 	 * Called when a contact is removed from the KMM instance (A person left the chat).
 	 * Removes this contact from typingMap and the contact list view
 	 * @param c The contact left the chat
-	 * @param raison is the raison message
+	 * @param reason is the reason the contact left
+	 * @param format The format of the reason message
 	 */
-	void slotContactRemoved( const KopeteContact *c, const QString& raison );
+	void slotContactRemoved( const KopeteContact *c, const QString& reason, KopeteMessage::MessageFormat format );
 
 	/**
 	 * Called when a contact changes status, updates the contact list view and
@@ -486,7 +487,7 @@ private:
 	void refreshView();
 
 	KopeteMessage messageFromNode( Node &n );
-	void sendInternalMessage(const QString &msg);
+	void sendInternalMessage(const QString &msg, KopeteMessage::MessageFormat format = KopeteMessage::PlainText );
 
 	const QString styleHTML() const;
 
