@@ -3,7 +3,7 @@
 
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -349,7 +349,9 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 	if( old )
 	{
 		int result=KMessageBox::No;
-		if( old->contacts().count()==1 )
+		if( old->isTemporary() ) 
+			result=KMessageBox::Yes;
+		else if( old->contacts().count()==1 )
 		{ //only one contact, including this one, that mean the contact will be empty efter the move
 			result = KMessageBox::questionYesNoCancel( Kopete::UI::Global::mainWidget(), i18n( "You are moving the contact `%1' to the meta contact `%2'.\n"
 				"`%3' will be empty afterwards. Do you want to delete this contact?" )
