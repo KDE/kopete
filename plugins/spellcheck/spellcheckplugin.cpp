@@ -190,9 +190,22 @@ bool SpellCheckPlugin::eventFilter(QObject *o, QEvent *e)
 
 						if( id > -1 )
 						{
+							int parIdx = 1, txtIdx = 1;
+							t->getCursorPosition(&parIdx, &txtIdx);
+
 							QString txtContents = t->text();
-							t->setText( txtContents.left(firstSpace) + mReplacements[word][id] +
-								txtContents.right( txtContents.length() - lastSpace ) );
+							QString newContents = txtContents.left(firstSpace) + mReplacements[word][id] +
+								txtContents.right( txtContents.length() - lastSpace );
+
+							t->setText( newContents );
+							if( txtIdx > lastSpace )
+								txtIdx += newContents.length() - txtContents.length();
+
+							t->setCursorPosition(parIdx, txtIdx);
+
+							if( !txtContents.contains( QRegExp(QString::fromLatin1("\\b(%1)\\b").arg(word)) ) )
+								mReplacements.remove( word );
+
 							slotUpdateTextEdit();
 						}
 
