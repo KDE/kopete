@@ -74,13 +74,11 @@ void Kopete::initialize()
 {
 	mPluginsModule = new Plugins(this);
 
-	m_mainWindow = new KopeteWindow( 0, "m_mainWindow" );
-	setMainWidget(m_mainWindow);
-	connect( m_mainWindow, SIGNAL( destroyed() ),
-				this, SLOT( slotMainWindowDestroyed() ) );
+	KopeteWindow *mainWindow = new KopeteWindow( 0, "mainWindow" );
+	setMainWidget( mainWindow );
 
-	mAppearance = new AppearanceConfig(m_mainWindow);
-	mUserPreferencesConfig = new KopeteUserPreferencesConfig(m_mainWindow);
+	mAppearance = new AppearanceConfig( mainWindow );
+	mUserPreferencesConfig = new KopeteUserPreferencesConfig( mainWindow );
 
 	connect( KopetePrefs::prefs() , SIGNAL(saved()), this, SIGNAL(signalSettingsChanged()));
 	mNotifier = new KopeteNotifier(this, "mNotifier");
@@ -162,19 +160,10 @@ void Kopete::slotLoadPlugins()
 	LibraryLoader::pluginLoader()->loadAll();
 }
 
-// Set a meta-away in all protocol plugins
-// This is a fire and forget thing, we do not check if
-// it worked or if the plugin exits away-mode
-void Kopete::slotSetAwayAll(void)
-{
-	KopeteAway::setGlobalAway(true);
-	KopeteAway::show();
-}
-
 /** Add a contact through Wizard */
 void Kopete::slotAddContact()
 {
-	AddWizardImpl *tmpdialog = new AddWizardImpl( m_mainWindow );
+	AddWizardImpl *tmpdialog = new AddWizardImpl( qApp->mainWidget() );
 	tmpdialog->show();
 }
 
@@ -190,11 +179,6 @@ void Kopete::cancelEvent( KopeteEvent *event)
 {
 	/* deleted events are removed automaticly */
 	delete event;
-}
-
-void Kopete::slotMainWindowDestroyed()
-{
-	m_mainWindow = 0L;
 }
 
 void Kopete::slotShowTransfers()

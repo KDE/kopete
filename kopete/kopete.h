@@ -83,10 +83,8 @@ signals:
 
 private slots:
 	void slotAddContact();
-	void slotSetAwayAll();
 	void slotShowTransfers();
 
-	void slotMainWindowDestroyed();
 	void initialize();
 
 	/**
