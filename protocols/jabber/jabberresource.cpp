@@ -16,11 +16,10 @@
  ***************************************************************************/
 
 #include <qdatetime.h>
-
 #include <kdebug.h>
-
+#include <psi/types.h>
+#include "jabberprotocol.h"
 #include "jabberresource.h"
-
 
 JabberResource::JabberResource()
 {
@@ -29,7 +28,7 @@ JabberResource::JabberResource()
 
 }
 
-JabberResource::JabberResource(const QString &resource, const int &priority, const QDateTime &timestamp, const int &status, const QString &reason)
+JabberResource::JabberResource(const QString &resource, const int &priority, const QDateTime &timestamp, const JabberProtocol::Presence &status, const QString &reason)
 {
 	
 	kdDebug() << QString("Jabber resource: New Jabber resource (resource %1, priority %2, timestamp %3).").arg(resource, 1).arg(priority, 2).arg(timestamp.toString("yyyyMMddhhmmss"), 3) << endl;
@@ -62,7 +61,7 @@ QDateTime JabberResource::timestamp()
     return mTimestamp;
 }
 	
-int JabberResource::status()
+JabberProtocol::Presence JabberResource::status()
 {
     return mStatus;
 }

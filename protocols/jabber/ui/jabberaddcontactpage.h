@@ -27,7 +27,7 @@ class JabberAddContactPage:public AddContactPage {
     bool canadd;
     public slots:		// Public slots
   /** No descriptions */
-     virtual void slotFinish();
+     virtual void slotFinish(KopeteMetaContact *mc);
 
 };
 

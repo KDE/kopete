@@ -25,17 +25,18 @@
 #include <klineedit.h>
 #include <kurllabel.h>
 
-#include "dlgjabbervcard.h"
-#include "jabtasks.h"
+#include <psi/tasks.h>
+#include <psi/types.h>
+#include <psi/vcard.h>
 
+#include "dlgjabbervcard.h"
 
 /* 
  *  Constructs a dlgJabberVCard which is a child of 'parent', with the 
  *  name 'name'
  *
  */
-dlgJabberVCard::dlgJabberVCard( QWidget* parent,  const char* name, JT_VCard *vCard )
-    : dlgVCard( parent, name )
+dlgJabberVCard::dlgJabberVCard( QWidget* parent,  const char* name, Jabber::JT_VCard *vCard ) : dlgVCard( parent, name )
 {
 
 	if(vCard != NULL)
@@ -62,24 +63,26 @@ dlgJabberVCard::~dlgJabberVCard()
 /*
  * Assign new vCard data to this dialog
  */
-void dlgJabberVCard::assignVCard(JT_VCard *vCard)
+void dlgJabberVCard::assignVCard(Jabber::JT_VCard *vCard)
 {
-	leJID->setText(vCard->jid);
-	leNickname->setText(vCard->vcard.field[vNickname]);
-	leName->setText(vCard->vcard.field[vFullname]);
-	leBirthday->setText(vCard->vcard.field[vBday]);
-	urlEmail->setText(vCard->vcard.field[vEmail]);
-	leEmail->setText(vCard->vcard.field[vEmail]);
-	urlEmail->setURL(vCard->vcard.field[vEmail]);
-	urlHomepage->setText(vCard->vcard.field[vHomepage]);
-	leHomepage->setText(vCard->vcard.field[vHomepage]);
-	urlHomepage->setURL(vCard->vcard.field[vHomepage]);
-	teAddress->setText(vCard->vcard.field[vStreet]);
-	leCity->setText(vCard->vcard.field[vCity]);
-	leState->setText(vCard->vcard.field[vState]);
-	leZIP->setText(vCard->vcard.field[vPcode]);
-	leCountry->setText(vCard->vcard.field[vCountry]);
-	lePhone->setText(vCard->vcard.field[vPhone]);
+
+	leJID->setText(vCard->jid().userHost());
+	leNickname->setText(vCard->vcard().field[Jabber::vNickname]);
+	leName->setText(vCard->vcard().field[Jabber::vFullname]);
+	leBirthday->setText(vCard->vcard().field[Jabber::vBday]);
+	urlEmail->setText(vCard->vcard().field[Jabber::vEmail]);
+	leEmail->setText(vCard->vcard().field[Jabber::vEmail]);
+	urlEmail->setURL(vCard->vcard().field[Jabber::vEmail]);
+	urlHomepage->setText(vCard->vcard().field[Jabber::vHomepage]);
+	leHomepage->setText(vCard->vcard().field[Jabber::vHomepage]);
+	urlHomepage->setURL(vCard->vcard().field[Jabber::vHomepage]);
+	teAddress->setText(vCard->vcard().field[Jabber::vStreet]);
+	leCity->setText(vCard->vcard().field[Jabber::vCity]);
+	leState->setText(vCard->vcard().field[Jabber::vState]);
+	leZIP->setText(vCard->vcard().field[Jabber::vPcode]);
+	leCountry->setText(vCard->vcard().field[Jabber::vCountry]);
+	lePhone->setText(vCard->vcard().field[Jabber::vPhone]);
+
 }
 
 /*
@@ -87,7 +90,9 @@ void dlgJabberVCard::assignVCard(JT_VCard *vCard)
  */
 void dlgJabberVCard::slotClose()
 {
+
 	delete this;
+
 }
 
 /*
@@ -95,9 +100,13 @@ void dlgJabberVCard::slotClose()
  */
 void dlgJabberVCard::slotSaveNickname()
 {
+
 	if (mIsReadOnly == true)
+	{
 		emit updateNickname(leNickname->text());
-	else { /* sigh. */
+	}
+	else
+	{
 		doc = QDomDocument();
 		QDomElement element = doc.createElement("vCard");
 		element.setAttribute("version", "3.0");
@@ -142,12 +151,16 @@ void dlgJabberVCard::slotSaveNickname()
 }
 
 void dlgJabberVCard::setReadOnly(bool b)
-{ /* I can't believe I'm giving in on coding style. */
+{
+
 	leJID->setReadOnly(b);
 	leNickname->setReadOnly(b);
 	leName->setReadOnly(b);
 	leBirthday->setReadOnly(b);
-	if (b == false) {
+	leGender->setReadOnly(b);
+
+	if (b == false)
+	{
 		urlEmail->hide();
 		urlHomepage->hide();
 		leEmail->show();
@@ -155,30 +168,39 @@ void dlgJabberVCard::setReadOnly(bool b)
 		leEmail->setText(urlEmail->text());
 		leHomepage->setText(urlHomepage->text());
 	}
-	else {
+	else
+	{
 		urlEmail->show();
 		urlHomepage->show();
 		leEmail->hide();
 		leHomepage->hide();
 	}
+
 	teAddress->setReadOnly(b);
 	leCity->setReadOnly(b);
 	leState->setReadOnly(b);
 	leZIP->setReadOnly(b);
 	leCountry->setReadOnly(b);
 	lePhone->setReadOnly(b);
-	if (b == false) /* Abuse of the worst kind; kill me now. */
+
+	if (b == false)
 		btnSaveNickname->setText("Save vCard");
 	else
 		btnSaveNickname->setText("Save Nickname");
+
 	mIsReadOnly = b;
+
 }
 
-QDomElement dlgJabberVCard::textTag(const QString &name, const QString &content) {
+QDomElement dlgJabberVCard::textTag(const QString &name, const QString &content)
+{
+
 	QDomElement tag = doc.createElement(name);
 	QDomText text = doc.createTextNode(content);
 	tag.appendChild(text);
+
 	return tag;
+
 }
 
 #include "dlgjabbervcard.moc"

@@ -1,4 +1,4 @@
-TODO for Jabber:
+TODO for Jabber (kdepsi branch):
 
 - update status is not signalled after a new contact has been added
 - check if pending subscriptions are displayed
@@ -18,15 +18,41 @@ TODO for Jabber:
 - moving a user currently does seem to pass on the correct parameters to the protocol
   backend, however, slotUpdate() is not called on the contact in return after a
   successful move. check that this doesn't lead to data corruption or data loss
-- when having one contact in several groups at the same time, this needs to be
-  emulated via the serialization API somehow
+- add support for multiple groups per contact (enabled in next Psi lib)
 - allow synchronization of offline changes / online changes, this requires adding
   groups to the serialized data
 - group() does not seem to work with JabberContact serialization
-- seemingly Jabber supports multiple groups per contact (Gabber does support
-  this at least). Implement it! (JabberContact::group needs to be a QStringList
-  etc)
 - BUG: make sure that unsubscriptions from other users actually update the roster!
 - find out about Jabber server-side filtering components and if they can be
   integrated into the Kopete filtering API
-- an icon for STATUS_INVISIBLE ?
+- make Jabber load all contacts belonging to a certain identity, display all
+  as offline if they don't belong to the current identity
+- Setting your status to away and changing it back again does not seem to work.
+  Selectively setting your status to away for a certain contact does not seem
+  to work at all.
+- make sure that JabberPreferences is updated (remove email widget etc)
+- registering is implemented i don't know if it works yet, the task is fired
+  but do i have to connect a signal to see if it worked? am i logged in after
+  registering? MAKE IT AN EXTRA FUNCTION IN THE GUI
+- currently determining the away status does _not_ work. find out how to do that
+  with Psi
+- implement support for transports, gateways etc
+- implement support for registration forms etc
+- verify that invisible works
+- verify that setting oneself from offline to <away/na/xa/etc> connects and works
+- add vcard support, currently missing in libpsi
+- need to verify SSL, couldn't get it to work on amessage.de
+- send presence to node has to be adopted so that it sends to the current
+  resource (if override is in effect)
+- support all message types (chat/ticker/etc)
+- set correct timestamps for messages
+- do a std translation of resource.status().show() to JabberProtocol::Presence
+- Scenario: A asks B for authorization to a subscription. B auths and asks
+  A in return. A auths. B removes A from its roster but does not unsubscribe.
+  A later sends a message to B.
+  - make sure that A appropriately gets a new contact created
+  - make sure that A gets a menu item allowing to unsubscribe
+- upon delete, the metacontact stays. make sure that it either disappears
+  completely or at least updates its status
+- find out if slotContactDestroyed() is called before the contact is destroyed
+  or not. If called before, update contactMap as well as metaContactMap

@@ -23,6 +23,7 @@
  */
 
 #include <qobject.h>
+#include "jabberprotocol.h"
 
 class QDateTime;
 
@@ -32,7 +33,7 @@ class JabberResource : public QObject
 
 	public:
 		JabberResource();
-		JabberResource(const QString &, const int &, const QDateTime &, const int &, const QString &);
+		JabberResource(const QString &, const int &, const QDateTime &, const JabberProtocol::Presence &, const QString &);
 		~JabberResource();
 
         QString resource();
@@ -41,13 +42,14 @@ class JabberResource : public QObject
 
 		QDateTime timestamp();
 		
-		int status();
+		JabberProtocol::Presence status();
 
 		QString reason();
 
 	private:
 		QString mResource, mReason;
-		int mPriority, mStatus;
+		int mPriority;
+		JabberProtocol::Presence mStatus;
 		QDateTime mTimestamp;
 };
 

@@ -1,27 +1,44 @@
+/***************************************************************************
+                      dlgjabbersendraw.h  -  Raw XML dialog
+                             -------------------
+    begin                : Sun Aug 25 2002
+    copyright            : (C) 2002 by Till Gerken,
+                           Kopete Development team
+    email                : till@tantalo.net
+ ***************************************************************************
+
+ ***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
 
 #ifndef DLGJABBERSENDRAW_H
 #define DLGJABBERSENDRAW_H
 
-#include "jabberprotocol.h"
+#include <qwidget.h>
 #include "dlgsendraw.h"
 
-/**
-  *@author Till Gerken
-  */
-class dlgSendRaw;
 class JabberProtocol;
-class dlgJabberSendRaw;
 
-class dlgJabberSendRaw : public dlgSendRaw {
-  Q_OBJECT
-  public:
-    dlgJabberSendRaw(JabberProtocol *owner, QWidget *parent =
-			 0, const char *name = 0);
-    ~dlgJabberSendRaw();
-    JabberProtocol *plugin;
-  public slots:
-    void slotFinish();
-    void slotCancel();
+class dlgJabberSendRaw : public dlgSendRaw
+{
+	Q_OBJECT
+
+	public:
+		dlgJabberSendRaw(JabberProtocol *owner, QWidget *parent = 0, const char *name = 0);
+		~dlgJabberSendRaw();
+
+	public slots:
+		void slotFinish();
+		void slotCancel();
+
+	private:
+		JabberProtocol *plugin;
+
 };
 
 
@@ -34,4 +51,3 @@ class dlgJabberSendRaw : public dlgSendRaw {
  * End:
  */
 // vim: set noet ts=4 sts=4 sw=4:
-

@@ -3,16 +3,21 @@ INCLUDES = -I$(srcdir)/../../../libkopete \
 	-I$(srcdir)/../../../libkopete/ui \
 	-I../../../libkopete/ui \
 	-I$(srcdir)/.. \
-	-I$(srcdir)/../psi \
-	-I../psi \
 	$(all_includes)
 
 noinst_LTLIBRARIES = libkopetejabberui.la
 
-libkopetejabberui_la_SOURCES = dlgrename.ui dlgaddcontact.ui \
-	dlgpreferences.ui dlgsendraw.ui dlgvcard.ui dlgjabberprefs.cpp \
-	jabberaddcontactpage.cpp dlgstatus.ui dlgjabberstatus.cpp \
-	dlgjabbervcard.cpp dlgjabbersendraw.cpp empty.cpp
+libkopetejabberui_la_SOURCES = dlgjabberprefs.cpp dlgpreferences.ui \
+	dlgjabberstatus.cpp dlgstatus.ui \
+	dlgjabbersendraw.cpp dlgsendraw.ui \
+	jabberaddcontactpage.cpp dlgaddcontact.ui \
+	dlgjabberrename.cpp dlgrename.ui \
+	dlgjabbervcard.cpp dlgvcard.ui \
+	empty.cpp
 
-EXTRA_DIST = dlgrename.ui dlgaddcontact.ui dlgpreferences.ui
-
+EXTRA_DIST = dlgpreferences.ui \
+	dlgstatus.ui \
+	dlgsendraw.ui \
+	dlgaddcontact.ui \
+	dlgrename.ui \
+	dlgvcard.ui

@@ -1,11 +1,10 @@
 /***************************************************************************
      jabberprotocol.h  -  Base class for the Kopete Jabber protocol
                              -------------------
-    begin                : Fri Apr 12 2002
-    copyright            : (C) 2002 by Daniel Stone
-    email                : dstone@kde.org
+    begin                : Thu Aug 22 2002
+    copyright            : (C) 2002 by Till Gerken / The Kopete Dev Team
+    email                : till@tantalo.net
     
-    Lots of cleanup and fixing by Till Gerken, till@tantalo.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -20,80 +19,116 @@
 #ifndef JABBERPROTOCOL_H
 #define JABBERPROTOCOL_H
 
-#include <qmovie.h>
-#include <qpixmap.h>
-#include <qptrlist.h>
-#include <qptrdict.h>
+#include <qstring.h>
 #include <qstringlist.h>
-#include <qsocket.h>
-#include <qdom.h>
 #include <qmap.h>
-#include <map>
-
-#include "jabbercontact.h"
-#include "jabcommon.h"
-#include "jabberaddcontactpage.h"
+#include <qpixmap.h>
+#include <qmovie.h>
+#include <kaction.h>
+#include <kpopupmenu.h>
+#include <psi/client.h>
+#include <psi/types.h>
+#include <psi/jid.h>
+#include "kopetecontact.h"
+#include "kopetemetacontact.h"
+#include "addcontactpage.h"
+#include "statusbaricon.h"
 #include "jabberprefs.h"
-#include "kopeteprotocol.h"
-#include "jabber.h"
-
-class QSocket;
-
-class KAction;
-class KActionMenu;
-class KDialogBase;
-class KPopupMenu;
-class KSimpleConfig;
+#include "jabbermap.h"
 
 class JabberContact;
-class JabberPreferences;
 class dlgJabberStatus;
 class dlgJabberSendRaw;
 
-class StatusBarIcon;
+using namespace Jabber;
 
-/**
- * @author Daniel Stone
- */
 class JabberProtocol : public KopeteProtocol
 {
+
 	Q_OBJECT
 
 public:
+	/*********************************************************************
+	 *
+	 * KopeteProtocol reimplementation start
+	 *
+	 ********************************************************************/
+	 
+	/**
+	 * Object constructor and destructor
+	 */
 	JabberProtocol(QObject *parent, QString name, QStringList);
 	~JabberProtocol();
 
+	/**
+	 * Our own Jabber contact associated with the Jabber account
+	 */
+	KopeteContact *myself() const;
+
+	/**
+	 * Return the protocol icon
+	 */
+	QString protocolIcon() const;
+
+	/**
+	 * Initialization/deinitialization routines called upon
+	 * loading/unloading the plugin
+	 */
 	void init();
 	bool unload();
 
-	QString protocolIcon() const;
+	/**
+	 * Creates the "add contact" dialog specific to this protocol
+	 */
 	AddContactPage *createAddContactWidget(QWidget * parent);
 
+	/**
+	 * Function to connect to the server
+	 */
 	void Connect();
+
+	/**
+	 * Function to disconnect from server
+	 */
 	void Disconnect();
 
-	bool isConnected() const;
-	bool isAway() const;
-
+	/**
+	 * Set Stats to "Away"
+	 */
 	void setAway();
+
+	/**
+	 * Set status to "Online"/"Available"
+	 */
 	void setAvailable();
 
-	KopeteContact *myself() const;
+	/**
+	 * Return connection status
+	 */
+	bool isConnected() const;
 
-	void removeUser(QString);
-	void renameContact(QString, QString, QString);
-	void moveUser(QString, QString, QString, JabberContact * contact);
-	void addContact(QString);
-	virtual KopeteContact *createContact(KopeteMetaContact *, const QString &);
-	void registerUser();
 
-	/*
-	 * Serialize and deserialize contact data
+	/**
+	 * Determine away status
+	 */
+	bool isAway() const;
+
+	/**
+	 * Are we able to relay messages to offline users?
+	 */
+	bool canSendOffline() const;
+	
+	/**
+	 * Serialize  contact data
 	 */
 	virtual bool serialize(KopeteMetaContact *contact, QStringList &data) const;
+
+	/**
+	 * Deserialize contact data
+	 */
 	virtual void deserialize(KopeteMetaContact *contact, const QStringList &data);
 
-	/*
+	/**
 	 * addressBookFields() returns a list of fields we are interested in
 	 * addressBookFieldChanged() is a notification slot for changes
 	 */
@@ -101,62 +136,241 @@ public:
 	virtual QStringList addressBookFields() const;
 	virtual void addressBookFieldChanged(KopeteMetaContact *contact, const QString &key);
 	*/
-		
+
+	/*********************************************************************
+	 *
+	 * KopeteProtocol reimplementation end
+	 *
+	 ********************************************************************/
+
+	/**
+	 * Internal enum for passing on the status as a constant
+	 * (instead of a string, how Psi handles it)
+	 */
+	enum Presence
+	{
+		STATUS_ONLINE,
+		STATUS_AWAY,
+		STATUS_XA,
+		STATUS_DND,
+		STATUS_INVISIBLE,
+		STATUS_OFFLINE
+	};
+
+	/**
+	 * This returns our protocol instance
+	 */
 	static const JabberProtocol *protocol();
 
+	/**
+	 * Function called by the configuration dialog,
+	 * it will register the account currently specified
+	 * in the dialog.
+	 */
+	void registerUser();
+
+	/**
+	 * Function called by the add contact widget,
+	 * it will send a subscription request to the
+	 * specified user.
+	 */
+	void addContact(KopeteMetaContact *mc, const QString &userId);
+
+	 /**
+	  * Function called by JabberContact via
+	  * the various widgetd to update roster
+	  * information (groups, name)
+	  */
+	void updateContact(const Jabber::RosterItem &item);
+
+	/**
+	 * Removes a contact from the roster
+	 */
+	void removeContact(const Jabber::RosterItem &item);
+
+	/**
+	 * Slot for sending a message
+	 */
+	void slotSendMessage(Message);
+
 public slots:
-	void slotConnect();
-	void slotDisconnect();
-	void slotConnected();
-	void slotDisconnected();
-	void slotConnecting();
-	void slotError(JabError *);
+	void setPresence(Presence status, const QString &reason = 0, int priority = 0);
 
-	void slotGoOnline();
-	void slotGoOffline();
-	void slotSetAway();
-	void slotSetInvisible();
-	void slotSetXA();
-	void slotSetDND();
-	void slotSendRaw();
-	void setPresence(int, QString, int = 0);
-	
+	/**
+	 * Send a raw message to the server (usually called by the dialog widget)
+	 */
 	void sendRawMessage(const QString &packet);
-	void sendPresenceToNode(const int&, const QString &);
+	void sendPresenceToNode(const Presence &, const QString &);
 
-	void slotIconRightClicked(const QPoint&);
-
-	void slotNewContact(JabRosterEntry *);
-	void slotContactUpdated(JabRosterEntry *);
-	void slotUserWantsAuth(const Jid &);
-	void slotUserDeletedAuth(const Jid &);
-	void slotSettingsChanged(void);
-	void slotResourceAvailable(const Jid &, const JabResource &);
-	void slotResourceUnavailable(const Jid &);
-
-	void slotSendMsg(JabMessage);
-	void slotNewMessage(const JabMessage &);
-
-	void slotSnarfVCard (QString &);
-	void slotGotVCard(JabTask *);
-	void slotEditVCard();
-	void slotSaveVCard(QDomElement &);
+	/**
+	 * Slot for retrieving a vCard
+	 */
+	void slotRetrieveVCard (const Jid &);
 
 signals:
 	void protocolUnloading();
+	void settingsChanged();
 
 private slots:
+
+	/*
+	 * Slot to connect to the server
+	 */
+	void slotConnect();
+
+	/*
+	 * Slot to disconnect from the server
+	 */
+	void slotDisconnect();
+	
+	/**
+	 * Slot called upon successful connection (called by Psi backend)
+	 */
+	void slotConnected(bool success, int statusCode, const QString &statusString);
+
+	/**
+	 * This slot is called from connect() if there has
+	 * been a successful connection to a Jabber server.
+	 * This function is then responsible for logging in.
+	 */
+	void slotHandshaken();
+
+	/**
+	 * Slot called upon successful disconnection (called by Psi backend)
+	 */
+	void slotDisconnected();
+
+	void slotPsiDebug(const QString &msg);
+
+	/**
+	 * Slot called if there was a protocol error (called by Psi backend)
+	 */
+	void slotError(const StreamError &);
+
+	void slotRosterReceived(bool success);
+	
+	/**
+	 * Slot for going online
+	 */
+	void slotGoOnline();
+
+	/**
+	 * Slot for going offline
+	 */
+	void slotGoOffline();
+
+	/**
+	 * Slot for going "away"
+	 */
+	void slotGoAway();
+
+	/**
+	 * Slot for going "not available"
+	 */
+	void slotGoXA();
+
+	/**
+	 * Slot for going "do not disturb"
+	 */
+	void slotGoDND();
+
+	/**
+	 * Slot for going to invisible mode
+	 */
+	void slotGoInvisible();
+
+	/**
+	 * Slot for sending a raw message to the server
+	 */
+	void slotSendRaw();
+
+	/**
+	 * Create popup menu for right clicks on status icon
+	 */
+	void slotIconRightClicked(const QPoint&);
+
+	/**
+	 * Cleans up when a contact is destroyed
+	 */
 	void slotContactDestroyed(KopeteContact *c);
 
+	/**
+	 * Incoming subscription request
+	 */
+	void slotSubscription(const Jid &jid, const QString &type);
+
+	/**
+	 * A new item was added to our roster, update contact
+	 * list. If this is a new subscription, make sure we
+	 * validate it.
+	 */
+	void slotNewContact(const RosterItem &);
+
+	/**
+	 * Update a contact's details
+	 */
+	void slotContactUpdated(const RosterItem &);
+
+	/**
+	 * A user deleted you from his contact list (call from Psi backend) 
+	 */
+	void slotContactDeleted(const RosterItem &);
+
+	/**
+	 * Slot to update the configuration data
+	 */
+	void slotSettingsChanged(void);
+
+	/**
+	 * Slot for notifying the availability of another resource for a contact
+	 * (called from Psi backend)
+	 */
+	void slotResourceAvailable(const Jid &, const Resource &);
+
+	/**
+	 * Slot for notifying the removal of a certain resource for a contact
+	 * (called from Psi backend)
+	 */
+	void slotResourceUnavailable(const Jid &, const Resource &);
+
+	/**
+	 * Slot for displaying a new message
+	 */
+	void slotNewMessage(const Message &);
+
+	/**
+	 * Evaluate results of account registration
+	 */
+	void slotRegisterUserDone();
+
+	/**
+	 * Slot being called when a vCard arrives
+	 */
+	void slotGotVCard();
+	
+	void slotEditVCard();
+	void slotSaveVCard(QDomElement &);
+
 private:
-	typedef QMap<QString, JabberContact*> JabberContactList;
+	typedef JabberMap<JabberContact*, KopeteMetaContact*> JabberMetaContactMap;
+	typedef QMap<QString, JabberContact*> JabberContactMap;
 
-	void initIcons();
-	void initActions();
-	bool mIsConnected;
-	bool mIsInvisible;
+	/**
+	 * Singleton instance of our protocol class
+	 */
+	static const JabberProtocol *protocolInstance;
+	
+	/**
+	 * This is the local contact list used to keep JabberContacts in
+	 * synch with the related metacontacts.
+	 */
+	JabberMetaContactMap metaContactMap;
 
-	StatusBarIcon *statusBarIcon;
+	/**
+	 * This is the local contact list used to keep the Psi
+	 * roster items in synch with the related JabberContacts
+	 */
+	JabberContactMap contactMap;
 
 	QPixmap onlineIcon;
 	QPixmap offlineIcon;
@@ -175,23 +389,47 @@ private:
 	KPopupMenu *popup;
 	KActionMenu *actionStatusMenu;
 
-	QString mUsername, mPassword, mServer, mResource;
-	int mPort;
-	bool doRegister;
-	int mStatus; /** If you use this for any purpose other than to determine the initial status, I will slice your testicles
-				  *  off and have them on toast in the morning. */
-	int m_menuTitleId; /** Save title id to change it to user@host when user changes settings. */
-	JabberPreferences *mPrefs;
-	static const JabberProtocol *sProtocol;
-	Jabber *mProtocol;
-	JabberContact *myContact;
+	StatusBarIcon *statusBarIcon;
+
 	dlgJabberStatus *reasonDialog;
 	dlgJabberSendRaw *sendRawDialog;
 	
-	// this is the local contact list used to keep Jabber contacts in
-	// synch with the related meta-contacts
-	JabberContactList contactList;
-	QPtrDict<JabberContact> metaContactMap;
+	JabberPreferences *preferences;
+
+	JabberContact *myContact;
+
+	/**
+	 * Initial presence to set after connecting
+	 */
+	Presence initialPresence;
+	
+	/**
+	 * Jabber client classes per identity
+	 */
+    Jabber::Client *jabberClient;
+
+	/**
+	 * Cache for the title ID of the status bar context
+	 * menu to reflect changes in the user@host settings
+	 */
+	int menuTitleId;
+
+	/**
+	 * Load and create icons
+	 */
+	void initIcons();
+
+	/**
+	 * Create actions
+	 */
+	void initActions();
+
+	/**
+	 * Add new contact to the Kopete contact list
+	 * Note: this does not affect the Jabber roster at all
+	 */
+	void createAddContact(KopeteMetaContact *mc, const Jabber::RosterItem &item);
+	
 };
 
 #endif

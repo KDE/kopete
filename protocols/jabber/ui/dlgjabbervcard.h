@@ -18,10 +18,11 @@
 #ifndef DLGJABBERVCARD_H
 #define DLGJABBERVCARD_H
 
-#include "dlgvcard.h"
 #include <qdom.h>
+#include <psi/types.h>
+#include <psi/vcard.h>
+#include "dlgvcard.h"
 
-class JT_VCard;
 class QDomElement;
 class QDomDocument;
 
@@ -30,10 +31,10 @@ class dlgJabberVCard : public dlgVCard
 	Q_OBJECT
 
 	public:
-		dlgJabberVCard(QWidget* parent = 0, const char* name = 0, JT_VCard *vCard = 0);
+		dlgJabberVCard(QWidget* parent = 0, const char* name = 0, Jabber::JT_VCard *vCard = 0);
 		~dlgJabberVCard();
     
-		void assignVCard(JT_VCard *vCard);
+		void assignVCard(Jabber::JT_VCard *vCard);
     
 	public slots:
 		void slotClose();
@@ -41,7 +42,7 @@ class dlgJabberVCard : public dlgVCard
 		void setReadOnly(bool);
 
 	signals:
-		void updateNickname(const QString);
+		void updateNickname(const QString &);
 		void saveAsXML(QDomElement &);
 
 	private:
