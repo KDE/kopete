@@ -382,6 +382,8 @@ GaduSession::sendResult( gg_pubdir50_t result )
 		QString stat = textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_STATUS ) );
 		rl->status = stat.toInt();
 
+    kdDebug(14100) << "found line "<< rl->uin << " " << rl->firstname << endl;
+
     sres.append(rl);
     rl=NULL;    
   }

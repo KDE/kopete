@@ -86,8 +86,7 @@ public slots:
 	void pubDirSearchClose();
 
 signals:
-	void pubDirSearchResult( searchResult &result );
-
+	void pubDirSearchResult( const searchResult & );
 
 protected slots:
 	virtual void loaded();
@@ -114,7 +113,7 @@ private slots:
 	
 	void slotCommandDone( const QString&, const QString& );
 	void slotCommandError( const QString&, const QString& );
-	void slotSearchResult( searchResult &result );
+	void slotSearchResult( const searchResult &result );
 	
 private:
 	void initConnections();

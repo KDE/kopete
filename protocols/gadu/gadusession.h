@@ -103,7 +103,7 @@ signals:
 	void connectionFailed( struct gg_event* );
 	void connectionSucceed( struct gg_event* );
 	void disconnect();
-	void pubDirSearchResult( searchResult &result );
+	void pubDirSearchResult( const searchResult & );
   
   
 protected slots:

@@ -79,8 +79,8 @@ GaduAccount::initConnections()
 				SLOT(slotSessionDisconnect()) );
 	QObject::connect( session_, SIGNAL(ackReceived(struct gg_event*)),
 				SLOT(ackReceived(struct gg_event*)) );
-	QObject::connect( session_, SIGNAL(pubDirSearchResult( searchResult &result )),
-				SLOT(slotSearchResult( searchResult &result )) );
+	QObject::connect( session_, SIGNAL(pubDirSearchResult( const searchResult & )),
+				SLOT(slotSearchResult( const searchResult & )) );
 
 }
 
@@ -622,7 +622,7 @@ void GaduAccount::pubDirSearchClose()
     session_->pubDirSearchClose();
 }
 
-void GaduAccount::slotSearchResult( searchResult &result )
+void GaduAccount::slotSearchResult( const searchResult &result )
 {
     emit pubDirSearchResult( result );
 }
