@@ -102,7 +102,7 @@ QString KopeteAccount::accountId() const
 
 const QColor KopeteAccount::color() const
 {
-	return d->color;
+		return d->color;
 }
 
 void KopeteAccount::setColor( const QColor &color )
@@ -133,7 +133,7 @@ void KopeteAccount::writeConfig( const QString &configGroup )
 	config->writeEntry( "AutoConnect", d->autologin );
 
 	if( d->color.isValid() )
-		config->writeEntry( "Color", d->color.name() );
+		config->writeEntry( "Color", d->color );
 
 	// Store other plugin data
 	KopetePluginDataObject::writeConfig( configGroup );
@@ -141,12 +141,14 @@ void KopeteAccount::writeConfig( const QString &configGroup )
 
 void KopeteAccount::readConfig( const QString &configGroup )
 {
+	QString newColor;
 	KConfig *config = KGlobal::config();
 	config->setGroup( configGroup );
 
 	d->password  = cryptStr( config->readEntry( "Password" ) );
 	d->autologin = config->readBoolEntry( "AutoConnect", false );
-	d->color     = config->readEntry( "Color", QString::null );
+	d->color = config->readColorEntry( "Color", &d->color );
+
 
 	// Handle the plugin data, if any
 	QMap<QString, QString> entries = config->entryMap( configGroup );
