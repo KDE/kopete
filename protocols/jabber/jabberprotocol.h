@@ -80,6 +80,7 @@ public:
 	void renameContact(QString, QString, QString);
 	void moveUser(QString, QString, QString, JabberContact * contact);
 	void addContact(QString);
+	KopeteContact *createContact(KopeteMetaContact, QString);
 	void registerUser();
 
 	static const JabberProtocol *protocol();

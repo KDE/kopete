@@ -53,7 +53,7 @@ class JabberContact:public KopeteContact {
   public:
     JabberContact(QString userid, QString name, QString group,
 		  JabberProtocol *protocol);
-    void initContact(QString userid, QString name);
+    void initContact(QString userID, QString name, QString group);
 
 
 	// Reimplementations of the (uninteresting)
@@ -73,6 +73,8 @@ class JabberContact:public KopeteContact {
     virtual void showContextMenu(QPoint, QString);
 
     JabberResource *bestResource();
+
+    QString id(), data();
 
   public slots:
     void slotNewMessage(const JabMessage &);

@@ -27,27 +27,26 @@
 #include "jabberprotocol.h"
 #include "jabcommon.h"
 
-JabberContact::JabberContact(QString userID, QString displayName(), QString group, JabberProtocol *protocol) : KopeteContact(protocol) {
+JabberContact::JabberContact(QString userID, QString nickname, QString group, JabberProtocol *protocol) : KopeteContact(protocol) {
     mProtocol = protocol;
-    if (displayName().isNull()) { name = userID; hasLocalName = false; }
-    setDisplayName(displayName());
-    mGroup = group;
-    mUserID = userID;
-	if (mGroup == QString("")) { hasLocalGroup = false; }
-	else { hasLocalGroup = true; }
 	hasResource = false;
+	historyDialog = 0L;
+	
     connect(mProtocol, SIGNAL(contactUpdated(QString, QString, int, QString)), this, SLOT(slotUpdateContact(QString, QString, int, QString)));
     connect(mProtocol, SIGNAL(nukeContacts(bool)), this, SLOT(slotDeleteMySelf(bool)));
 	connect(mProtocol, SIGNAL(resourceAvailable(const Jid &, const JabResource &)), this, SLOT(slotResourceAvailable(const Jid &, const JabResource &)));
 	connect(mProtocol, SIGNAL(resourceUnavailable(const Jid &)), this, SLOT(slotResourceUnavailable(const Jid &)));
 
-	historyDialog = 0L;
-
-    initContact(userID, displayName());
+    initContact(userID, nickname, group);
 }
 
-void JabberContact::initContact(QString, QString)
-{
+void JabberContact::initContact(QString userID, QString nickname, QString group) {
+    if (nickname.isNull()) { nickname = userID; hasLocalName = false; }
+    setDisplayName(nickname);
+    mGroup = group;
+    mUserID = userID;
+	if (mGroup == QString("")) { hasLocalGroup = false; }
+	else { hasLocalGroup = true; }
     initActions();
     slotUpdateContact(mUserID, "", STATUS_OFFLINE, "");
 	theContacts.append(this);
@@ -484,6 +483,9 @@ void JabberContact::slotRemoveFromGroup() {
 	mProtocol->moveUser(userID(), mGroup = QString(""), displayName()(), this);
 	hasLocalGroup = false;
 }
+
+void JabberContact::id() { return mUserID; }
+void JabberContact::data() { return mUserID; }
 
 JabberResource::JabberResource() { 
 	kdDebug() << "Jabber resource: New Jabber resource (no params)." << endl;
