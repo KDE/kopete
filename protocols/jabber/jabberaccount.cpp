@@ -67,7 +67,7 @@
 #include "jabbercontact.h"
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
-
+#include "jabberaccount.moc"
 #include <sys/utsname.h>
 
 
@@ -91,7 +91,7 @@ JabberAccount::JabberAccount(KopeteProtocol *parent, const QString& accountID,
 	myContact = 0L;
 
 	initialPresence = JabberOnline;
-	
+
 	/* Setup actions. */
 	initActions();
 
@@ -124,9 +124,9 @@ JabberAccount::~JabberAccount() {
 	delete actionSendRaw;
 	delete actionEditVCard;
 	delete actionEmptyMail;
-	
+
 	delete actionStatusMenu;
-	
+
 	delete sendRawDialog;
 
 	delete myContact;
@@ -189,7 +189,7 @@ void JabberAccount::initActions() {
 
         actionStatusMenu->popupMenu()->insertSeparator();
 	actionStatusMenu->insert(actionEmptyMail);
-	
+
 	/* make sure we load the SSL library if required. */
 	if(pluginData(protocol(), "UseSSL") == "true") {
 		/* Try to load QSSL library needed by libpsi.
@@ -207,11 +207,11 @@ void JabberAccount::initActions() {
 
 		Jabber::Stream::loadSSL(dirs);
 	}
-	
+
 	/* If we need to connect on startup, do it now. */
 	if (pluginData(protocol(), "AutoConnect") == "true")
 		QTimer::singleShot(0, this, SLOT(connect()));
-	
+
 	myContact = new JabberContact(userID, userID, StringList(i18n("Unknown")), this, 0L,
 				      QString::null);
 }
@@ -403,7 +403,7 @@ void JabberAccount::slotHandshaken() {
 			jabberClient->authDigest(userID, password, resource);
 		else
 			jabberClient->authPlain(userID, password, resource);
-		
+
 	}
 
 }
@@ -415,7 +415,7 @@ void JabberAccount::slotConnected(bool success, int statusCode,
 					     << endl;
 
 		emit connected();
-		
+
 		/* Request roster. */
 		jabberClient->rosterRequest();
 
@@ -426,7 +426,7 @@ void JabberAccount::slotConnected(bool success, int statusCode,
 		 * information in that case either). */
 		setPresence(initialPresence, myContact->reason());
 
-		/* Initiate anti-idle timer (will be triggered every 120 
+		/* Initiate anti-idle timer (will be triggered every 120
 		 * seconds). */
 		jabberClient->setNoopTime(120000);
 	}
@@ -589,7 +589,7 @@ void JabberAccount::setPresence(const KopeteOnlineStatus &status, const QString 
 							<< endl;
 			return;
 		}
-		
+
 		kdDebug( JABBER_DEBUG_GLOBAL )  << k_funcinfo << "Updating presence to \"" << presence.status()
 						<< "\" with reason \"" << reason << endl;
 		myContact->slotUpdatePresence(status, reason);
@@ -682,7 +682,7 @@ void JabberAccount::slotGoAway()
 void JabberAccount::slotGoXA() {
 	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberAccount] Setting extended away mode."
 				     << endl;
-	
+
 	if (!isConnected()) {
 		/* We are not connected yet, so connect now. */
 		initialPresence = JabberXA;
@@ -700,7 +700,7 @@ void JabberAccount::slotGoXA() {
 void JabberAccount::slotGoDND() {
 	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberAccount] Setting do not disturb mode."
 				     << endl;
-	
+
 	if (!isConnected()) {
 		/* We are not connected yet, so connect now. */
 		initialPresence = JabberDND;
