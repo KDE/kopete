@@ -48,7 +48,8 @@
 #include "pluginloader.h"
 #include "preferencesdialog.h"
 #include "systemtray.h"
-#include "statusbaricon.h"
+#include "kopeteaccountstatusbaricon.h"
+#include "kopeteprotocolstatusbaricon.h"
 
 //#include "addaccountwizard.h"
 
@@ -79,6 +80,10 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	connect( LibraryLoader::pluginLoader(),
 		SIGNAL( pluginLoaded( KopetePlugin * ) ),
 		this, SLOT( slotPluginLoaded( KopetePlugin * ) ) );
+
+	connect( KopeteAccountManager::manager(), SIGNAL(accountRegistered(KopeteAccount*)), this, SLOT(slotAccountRegistered(KopeteAccount*)));
+	connect( KopeteAccountManager::manager(), SIGNAL(accountUnregistered(KopeteAccount*)), this, SLOT(slotAccountUnregistered(KopeteAccount*)));
+
 }
 
 void KopeteWindow::initView ( void )
@@ -190,8 +195,10 @@ void KopeteWindow::initSystray ( void )
 	actionConnectionMenu->plug ( tm,1 );
 	tm->insertSeparator(1);
 
+	QObject::connect( tray, SIGNAL(aboutToShowMenu(KActionMenu *)), this, SLOT(slotTrayAboutToShowMenu(KactionMenu*am)));
+
 #if KDE_VERSION >= 306
-	connect(tray,SIGNAL(quitSelected()),this,SLOT(slotQuit()));
+	QObject::connect(tray,SIGNAL(quitSelected()),this,SLOT(slotQuit()));
 #endif
 }
 
@@ -390,10 +397,10 @@ void KopeteWindow::slotQuit()
 	qApp->quit();
 }
 
-void KopeteWindow::slotPluginLoaded( KopetePlugin *p )
+void KopeteWindow::slotPluginLoaded( KopetePlugin */* p  */)
 {
 //	kdDebug(14000) << "KopeteWindow::slotPluginLoaded()" << endl;
-
+/*
 	KopeteProtocol *proto = dynamic_cast<KopeteProtocol *>( p );
 	if( !proto )
 		return;
@@ -417,10 +424,12 @@ void KopeteWindow::slotPluginLoaded( KopetePlugin *p )
 	KActionMenu *menu = proto->protocolActions();
 	if( menu )
 		menu->plug( tray->contextMenu(), 1 );
+*/
 }
 
-void KopeteWindow::slotProtocolDestroyed( QObject *o )
+void KopeteWindow::slotProtocolDestroyed( QObject */*o */)
 {
+/*
 //	kdDebug(14000) << "KopeteWindow::slotProtocolDestroyed()" << endl;
 
 	StatusBarIcon *i = static_cast<StatusBarIcon *>( m_statusBarIcons[ o ] );
@@ -429,15 +438,53 @@ void KopeteWindow::slotProtocolDestroyed( QObject *o )
 
 	delete i;
 	m_statusBarIcons.remove( o );
+*/
 }
 
-void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& status )
-/*KopeteProtocol * p,	const QString &icon )*/
+void KopeteWindow::slotAccountRegistered( KopeteAccount *a )
 {
-	kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconChanged() Icon: " <<
+	kdDebug(14000) << "KopeteWindow::slotAccountRegistered()" << endl;
+
+	if ( !a )
+		return;
+
+	connect( a,
+		SIGNAL( onlineStatusIconChanged( KopeteAccount *, const KopeteOnlineStatus& ) ),
+		SLOT( slotAccountStatusIconChanged( KopeteAccount *,const KopeteOnlineStatus& ) ) );
+
+	KopeteAccountStatusBarIcon *i = new KopeteAccountStatusBarIcon( a, m_statusBarWidget );
+	connect( i, SIGNAL( rightClicked( KopeteAccount *, const QPoint & ) ),
+		SLOT( slotAccountStatusIconRightClicked( KopeteAccount *,
+		const QPoint & ) ) );
+
+	m_accountStatusBarIcons.insert( a, i );
+
+	// FIXME -Will
+	//slotProtocolStatusIconChanged( proto, proto->statusIcon() );
+
+	KActionMenu *menu = a->actionMenu();
+	if( menu )
+		menu->plug( tray->contextMenu(), 1 );
+}
+
+void KopeteWindow::slotAccountUnregistered( KopeteAccount *a)
+{
+	kdDebug(14000) << "KopeteWindow::slotAccountUnregistered()" << endl;
+
+	KopeteAccountStatusBarIcon *i = static_cast<KopeteAccountStatusBarIcon *>( m_accountStatusBarIcons[ a ] );
+	if( !i )
+		return;
+
+	delete i;
+	m_accountStatusBarIcons.remove( a );
+}
+
+void KopeteWindow::slotAccountStatusIconChanged( KopeteAccount *account, const KopeteOnlineStatus& status )
+{
+	kdDebug(14000) << "KopeteWindow::slotAccountStatusIconChanged() Icon: " <<
 		status.overlayIcon() << endl;
 
-	StatusBarIcon *i = static_cast<StatusBarIcon *>( m_statusBarIcons[ status.protocol() ] );
+	KopeteAccountStatusBarIcon *i = static_cast<KopeteAccountStatusBarIcon *>( m_accountStatusBarIcons[ account ] );
 	if( !i )
 		return;
 
@@ -477,6 +524,66 @@ void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& stat
 		kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconChanged(): "<< "Using movie."  << endl;
 		i->setMovie( mv );
 	}
+}
+
+
+void KopeteWindow::slotAccountStatusIconRightClicked( KopeteAccount *account,
+	const QPoint &p )
+{
+	account->actionMenu()->popupMenu()->exec( p );
+}
+
+void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& status )
+/*KopeteProtocol * p,	const QString &icon )*/
+{
+	kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconChanged() Icon: " <<
+		status.overlayIcon() << endl;
+
+	KopeteProtocolStatusBarIcon *i = static_cast<KopeteProtocolStatusBarIcon *>( m_protocolStatusBarIcons[ status.protocol() ] );
+	if( !i )
+		return;
+
+	// Because we want null pixmaps to detect the need for a loadMovie
+	// we can't use the SmallIcon() method directly
+	KIconLoader *loader = KGlobal::instance()->iconLoader();
+
+	QMovie mv = loader->loadMovie(status.overlayIcon(), KIcon::User);
+
+	if ( mv.isNull() )
+	{
+		// No movie found, fallback to pixmap
+		// Get the icon for our status
+
+		//QPixmap pm = SmallIcon( icon );
+		QPixmap pm = status.protocolIcon();
+		// Compat for the non-themed icons
+		// FIXME: When all icons are converted, remove this - Martijn
+		if( pm.isNull() )
+			pm = loader->loadIcon( status.overlayIcon(), KIcon::User, 0, KIcon::DefaultState, 0L, true );
+
+		if( pm.isNull() )
+		{
+			/* No Pixmap found, fallback to Unknown */
+			kdDebug(14000) << k_funcinfo
+				<< "Using unknown pixmap for status icon '" << status.overlayIcon() << "'."
+				<< endl;
+			i->setPixmap( KIconLoader::unknown() );
+		}
+		else
+		{
+			i->setPixmap( pm );
+		}
+	}
+	else
+	{
+		kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconChanged(): "<< "Using movie."  << endl;
+		i->setMovie( mv );
+	}
+}
+
+void KopeteWindow::slotTrayAboutToShowMenu( KActionMenu *am )
+{
+
 }
 
 void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,

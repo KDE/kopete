@@ -29,6 +29,7 @@
 class QTimer;
 class QPoint;
 class KPopupMenu;
+class KActionMenu;
 class KopeteBalloon;
 
 /**
@@ -62,6 +63,10 @@ public:
 protected:
 	virtual void mousePressEvent( QMouseEvent *e );
 	virtual void mouseDoubleClickEvent( QMouseEvent *me );
+	virtual void contextMenuAboutToShow( KActionMenu *am );
+
+signals:
+	void aboutToShowMenu(KActionMenu *am);
 
 private slots:
 	void slotBlink();

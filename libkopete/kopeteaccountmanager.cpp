@@ -121,6 +121,7 @@ void KopeteAccountManager::registerAccount(KopeteAccount *i)
 		}
 		/* Ok seems sane */
 		m_accounts.append( i );
+		emit accountRegistered(i);
 	}
 
 }
@@ -155,6 +156,7 @@ KopeteAccount* KopeteAccountManager::findAccount(const QString& protocolId, cons
 void KopeteAccountManager::unregisterAccount( KopeteAccount *account )
 {
 	m_accounts.remove( account );
+	emit accountUnregistered( account );
 }
 
 void KopeteAccountManager::save()

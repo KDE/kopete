@@ -114,6 +114,17 @@ public slots:
 	 */
 	void load();
 
+signals:
+	/**
+	 * An account has been registered
+	 */
+	void accountRegistered(KopeteAccount *a);
+
+	/**
+	 * An account has been unregistered
+	 */
+	void accountUnregistered(KopeteAccount *a);
+
 private:
 	/**
 	 * Private constructor, because we're a singleton

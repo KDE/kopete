@@ -35,9 +35,11 @@ class KToggleAction;
 class KopeteContactListView;
 class KopetePlugin;
 class KopeteProtocol;
+class KopeteAccount;
 class KopeteSystemTray;
 class KopeteGlobalAwayDialog;
-class StatusBarIcon;
+class KopeteAccountStatusBarIcon;
+class KopeteProtocolStatusBarIcon;
 class KopeteOnlineStatus;
 
 /**
@@ -82,17 +84,44 @@ private slots:
 	void slotProtocolDestroyed( QObject *o );
 
 	/**
+	 * Get a notification when an account is created, so we can add a status bar
+	 * icon
+	 */
+	void slotAccountRegistered( KopeteAccount *a );
+
+	/**
+	 * Cleanup the status bar icon when the account is destroyed
+	 */
+	void slotAccountUnregistered( KopeteAccount *a);
+
+
+	/**
 	 * The status icon got changed, update it.
 	 * Note that iconName can also be a .mng movie instead of an icon.
 	 */
 	//void slotProtocolStatusIconChanged( KopeteProtocol *proto,
 	//	const QString &iconName );
 	void slotProtocolStatusIconChanged( const KopeteOnlineStatus& status );
+
+	/**
+	 * The status icon got changed, update it.
+	 * Note that iconName can also be a .mng movie instead of an icon.
+	 */
+	void slotAccountStatusIconChanged( KopeteAccount *account, const KopeteOnlineStatus& status );
+
 	/**
 	 * Show a context icon for a protocol
 	 */
 	void slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
 		const QPoint &p );
+
+	/**
+	 * Show a context icon for an account
+	 */
+	void slotAccountStatusIconRightClicked( KopeteAccount *a,
+		const QPoint &p );
+
+	void slotTrayAboutToShowMenu( KActionMenu *am );
 
 	/**
 	 * Show the Add Contact wizard
@@ -139,12 +168,19 @@ private:
 	QHBox *m_statusBarWidget;
 
 	/**
-	 * This is really a dictionary of StatusBarIcon objects, but
+	 * This is really a dictionary of KopeteAccountStatusBarIcon objects, but
 	 * QPtrDict requires a full class definition to be known to make
 	 * that work. And since I don't want to include that whole file here,
 	 * use QObject instead.
 	 */
-	QPtrDict<QObject> m_statusBarIcons;
+	QPtrDict<QObject> m_accountStatusBarIcons;
+	/**
+	 * This is really a dictionary of KopeteProtocolStatusBarIcon objects, but
+	 * QPtrDict requires a full class definition to be known to make
+	 * that work. And since I don't want to include that whole file here,
+	 * use QObject instead.
+	 */
+	QPtrDict<QObject> m_protocolStatusBarIcons;
 
 	/**
 	 * This is the away message selection dialog

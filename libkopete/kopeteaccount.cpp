@@ -65,6 +65,7 @@ KopeteAccount::KopeteAccount(KopeteProtocol *parent, const QString& _accountId ,
 
 	//the prococol need to acess to myself, which is create later, in the customAccount constructor
 	QTimer::singleShot( 0, parent, SLOT( slotAccountAdded() ) );
+	QTimer::singleShot( 0, this, SLOT( slotMyselfCreated() ) );
 }
 
 KopeteAccount::~KopeteAccount()
@@ -80,6 +81,20 @@ KopeteAccount::~KopeteAccount()
 
 	delete d;
 }
+
+void KopeteAccount::slotMyselfCreated()
+{
+	QObject::connect( myself(), SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &)), this, SLOT(slotMyselfStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & )) );
+
+	/* Lets emit our first account status */
+	emit onlineStatusIconChanged(this, myself()->onlineStatus() );
+}
+
+void KopeteAccount::slotMyselfStatusChanged( KopeteContact *contact, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus )
+{
+	emit onlineStatusIconChanged(this, status);
+}
+
 
 KopeteProtocol *KopeteAccount::protocol() const
 {

@@ -28,6 +28,7 @@ class KopeteContact;
 class KopetePlugin;
 class KopeteProtocol;
 class KopeteMetaContact;
+class KopeteOnlineStatus;
 
 struct KopeteAccountPrivate;
 
@@ -202,6 +203,12 @@ signals:
 	 */
 	void passwordChanged();
 
+	signals:
+	/**
+	 * The myself status icon changed.
+	 */
+	void onlineStatusIconChanged( KopeteAccount *account, const KopeteOnlineStatus &status );
+
 protected slots:
 	/*
 	 * This method is called at the end on fromXML fucntion
@@ -214,6 +221,17 @@ private slots:
 	 * Track the deletion of a KopeteContact and cleanup
 	 */
 	void slotKopeteContactDestroyed( KopeteContact * );
+
+	/**
+	 * mySelf contact is created in account child classes
+	 * we use a single shot hack to connect myself signals
+	 */
+	void slotMyselfCreated();
+
+	/**
+	 * The myself status changed.
+	 */
+	void slotMyselfStatusChanged( KopeteContact *contact, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus );
 
 private:
 	KopeteAccountPrivate *d;
