@@ -133,8 +133,12 @@ void MSNSocket::setOnlineStatus( MSNSocket::OnlineStatus status )
 
 void MSNSocket::slotSocketError( int error )
 {
-	kdDebug( 14140 ) << k_funcinfo << "Error: " << error << endl;
+	kdWarning( 14140 ) << k_funcinfo << "Error: " << error << endl;
 
+	if(!KSocketBase::isFatalError(error))
+		return;
+		//we only care about fatal error
+	
 	QString errormsg = i18n( "There was an error while connecting to the MSN server.\nError message:\n" );
 	if ( error == KSocketBase::LookupFailure )
 		errormsg += i18n( "Unable to lookup %1" ).arg( m_socket->peerResolver().nodeName() );
