@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>513</width>
-            <height>651</height>
+            <height>504</height>
         </rect>
     </property>
     <property name="caption">
@@ -39,6 +39,14 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
+                <widget class="QPushButton" row="1" column="0">
+                    <property name="name">
+                        <cstring>m_add</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Add</string>
+                    </property>
+                </widget>
                 <widget class="QPushButton" row="1" column="1">
                     <property name="name">
                         <cstring>m_remove</cstring>
@@ -53,14 +61,6 @@
                     </property>
                     <property name="text">
                         <string>Rename...</string>
-                    </property>
-                </widget>
-                <widget class="QPushButton" row="1" column="0">
-                    <property name="name">
-                        <cstring>m_add</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Add</string>
                     </property>
                 </widget>
                 <widget class="KListView" row="0" column="0" rowspan="1" colspan="3">
@@ -81,7 +81,7 @@
                     <property name="sizePolicy">
                         <sizepolicy>
                             <hsizetype>7</hsizetype>
-                            <vsizetype>3</vsizetype>
+                            <vsizetype>7</vsizetype>
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                         </sizepolicy>
