@@ -136,13 +136,17 @@ protected slots:
 	void slotKopeteGroupRenamed(KopeteGroup *group,
 		const QString &oldName);
 
-	/** Called when the contact list removes a group */
+	/*
+	 * Called when the contact list removes a group
+	 */
 	void slotKopeteGroupRemoved(KopeteGroup *group);
 
-	/** Called when our status changes on the server */
+	/*
+	 * Called when our status changes on the server
+	 */
 	void slotOurStatusChanged(const unsigned int newStatus);
 
-	/**
+	/*
 	 * Called when we get a contact list from the server
 	 * The parameter is a qmap with the contact names as keys
 	 * the value is another map with keys "name", "group"
@@ -152,8 +156,9 @@ protected slots:
 	/*
 	 * Called when we've received an IM
 	 */
-	void slotGotIM(OscarSocket::OscarMessageType type, QString &message, const QString &sender);
-	//void slotGotIM(QString message, QString sender, bool isAuto);
+	void slotReceivedMessage(const QString &sender, QString &message, OscarSocket::OscarMessageType type);
+
+	void slotReceivedAwayMessage(const QString &sender, QString &message);
 
 	/*
 	 * Called when we get a request for a direct IM session with @sn

@@ -221,7 +221,7 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 		{
 			/*kdDebug(14150) << k_funcinfo <<
 				"RECV (SRV_OFFLINEMSG), got an offline message" << endl;*/
-			QString UIN = QString::number(fromicqsrv.getLEDWord());
+			QString uin = QString::number(fromicqsrv.getLEDWord());
 			/*WORD year =*/ fromicqsrv.getLEWord();
 			/*BYTE month =*/ fromicqsrv.getLEByte();
 			/*BYTE day =*/ fromicqsrv.getLEByte();
@@ -233,10 +233,10 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 			QString message = msg;
 			delete [] msg;
 
-			kdDebug(14150) << k_funcinfo << "Offline message from '" << UIN <<
+			kdDebug(14150) << k_funcinfo << "Offline message from '" << uin <<
 				"' type=" << (type & 0xFF) << ", message='" << message << "'" << endl;
 
-			emit gotIM(Normal, message, UIN);
+			emit receivedMessage(uin, message, Normal);
 			break;
 		}
 
@@ -755,11 +755,11 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 		ackStatus = P2P_ONLINE;
 
 
-	WORD unk = messageBuf.getWord(); // unknown
-	ack.addWord(unk);
+	WORD unk = messageBuf.getLEWord(); // unknown
+	ack.addLEWord(unk);
 
-	WORD seq2 = messageBuf.getWord(); // some stupid sequence
-	ack.addWord(seq2);
+	WORD seq2 = messageBuf.getLEWord(); // some stupid sequence
+	ack.addLEWord(seq2);
 
 	char *unkblock = messageBuf.getBlock(12); // unknown, always zero
 	ack.addString(unkblock,12);
@@ -786,8 +786,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 	WORD priority = messageBuf.getLEWord();
 	kdDebug(14150) << k_funcinfo << "priority flag=" << priority << endl;
 
-	WORD messageLength = messageBuf.getLEWord();
-	char *messagetext = messageBuf.getBlock(messageLength);
+	char *messagetext = messageBuf.getLNTS();
 
 	switch(msgType)
 	{
@@ -807,10 +806,10 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 		{
 			kdDebug(14150) << k_funcinfo << "RECV TYPE-2 IM, normal/auto message" << endl;
 
-			/*DWORD fgColor = */messageBuf.getDWord();
+			/*DWORD fgColor = */messageBuf.getLEDWord();
 			//kdDebug(14150) << k_funcinfo << "fgcolor=" << fgColor << endl;
 
-			/*DWORD bgColor =*/ messageBuf.getDWord();
+			/*DWORD bgColor =*/ messageBuf.getLEDWord();
 			//kdDebug(14150) << k_funcinfo << "bgcolor=" << bgColor << endl;
 
 			/*kdDebug(14150) << k_funcinfo <<
@@ -844,7 +843,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 			{
 				kdDebug(14150) << k_funcinfo << "emit gotIM(), contact='" <<
 					user.sn << "', message='" << message << "'" << endl;
-				emit gotIM(Normal, message, user.sn);
+				emit receivedMessage(user.sn, message, Normal);
 			}
 
 			kdDebug(14150) << k_funcinfo <<
@@ -854,10 +853,11 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 			ack.addLEWord(ackStatus);
 			ack.addLEWord(ackFlags);
 			ack.addLNTS(ackMessage.latin1()); // TODO: encoding
+
 			if(msgType==0x0001)
 			{
-				ack.addDWord(0x00000000);
-				ack.addDWord(0xFFFFFF00);
+				ack.addLEDWord(0x00000000);
+				ack.addLEDWord(0xFFFFFF00);
 			}
 			sendBuf(ack, 0x02); // send back ack
 			sendAck = false; // already sent
@@ -880,8 +880,8 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 			",flags=" << ackFlags <<
 			", message='" << ackMessage << "'" << endl;
 
-		ack.addWord(ackStatus);
-		ack.addWord(ackFlags);
+		ack.addLEWord(ackStatus);
+		ack.addLEWord(ackFlags);
 		ack.addLNTS(ackMessage.latin1()); // TODO: encoding
 
 		/*kdDebug(14150) << k_funcinfo <<

@@ -678,6 +678,16 @@ void OscarContact::setGroupId(const int newgid)
 	}
 }
 
+const QString &OscarContact::awayMessage()
+{
+	return mAwayMessage;
+}
+
+void OscarContact::setAwayMessage(const QString &message)
+{
+	mAwayMessage = message;
+}
+
 void OscarContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &/*addressBookData*/)
 {
 	serializedData["awaitingAuth"] = waitAuth() ? "1" : "0";

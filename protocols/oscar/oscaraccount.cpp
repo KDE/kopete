@@ -16,17 +16,8 @@
 */
 
 #include "oscaraccount.h"
-#include <qapplication.h>
-#include <qtimer.h>
-
-#include <assert.h>
-
-#include <qstylesheet.h>
-#include <qregexp.h>
-
-#include <kdebug.h>
-#include <klocale.h>
-#include <kmessagebox.h>
+#include "oscarchangestatus.h"
+#include "aim.h"
 
 #include "kopeteprotocol.h"
 #include "kopeteaway.h"
@@ -34,11 +25,16 @@
 #include "kopetecontactlist.h"
 #include "kopeteawaydialog.h"
 
-// TODO: get rid of the next include
-#include "aim.h" // For tocNormalize()
+#include <assert.h>
 
-#include "oscarchangestatus.h"
+#include <qapplication.h>
+#include <qregexp.h>
+#include <qstylesheet.h>
+#include <qtimer.h>
 
+#include <kdebug.h>
+#include <klocale.h>
+#include <kmessagebox.h>
 
 OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, const char *name, bool isICQ)
 	: KopeteAccount(parent, accountID, name)
@@ -88,10 +84,13 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 		engine(), SIGNAL(protocolError(QString, int)),
 		this, SLOT(slotError(QString, int)));
 
-	// Got IM
 	QObject::connect(
-		engine(), SIGNAL(gotIM(OscarSocket::OscarMessageType, QString &, const QString &)),
-		this, SLOT(slotGotIM(OscarSocket::OscarMessageType, QString &, const QString &)));
+		engine(), SIGNAL(receivedMessage(const QString &, QString &, OscarSocket::OscarMessageType)),
+		this, SLOT(slotReceivedMessage(const QString &, QString &, OscarSocket::OscarMessageType)));
+
+	QObject::connect(
+		engine(), SIGNAL(receivedAwayMessage(const QString &, QString &)),
+		this, SLOT(slotReceivedAwayMessage(const QString &, QString &)));
 
 	// Got Config (Buddy List)
 	QObject::connect(
@@ -128,13 +127,8 @@ OscarAccount::~OscarAccount()
 	// Delete the backend
 	if (mEngine)
 	{
-		kdDebug(14150) << k_funcinfo << "deleting Engine!" << endl;
+		kdDebug(14150) << k_funcinfo << "'" << accountId() << "'; delayed deleting of mEngine" << endl;
 		mEngine->deleteLater();
-	}
-	else
-	{
-		kdDebug(14150) << k_funcinfo <<
-			"ERROR, we don't have an OscarSocket anymore!" << endl;
 	}
 }
 
@@ -151,13 +145,13 @@ OscarSocket* OscarAccount::engine() const
 
 void OscarAccount::disconnect()
 {
-	kdDebug(14150) << k_funcinfo << "accountID='" << accountId() << "'" << endl;
+	kdDebug(14150) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
 	mEngine->doLogoff();
 }
 
 void OscarAccount::initEngine(bool icq)
 {
-	kdDebug(14150) << k_funcinfo << "accountID='" << accountId() << "'" << endl;
+	kdDebug(14150) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
 
 	QByteArray cook;
 	cook.duplicate("01234567",8);
@@ -175,13 +169,13 @@ void OscarAccount::slotGoOffline()
 
 void OscarAccount::slotGoAway()
 {
-	kdDebug(14150) << k_funcinfo << "Called" << endl;
+	kdDebug(14150) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
 	mAwayDialog->show(OSCAR_AWAY);
 }
 
 void OscarAccount::slotError(QString errmsg, int errorCode)
 {
-	kdDebug(14150) << k_funcinfo << "accountId()='" << accountId() <<
+	kdDebug(14150) << k_funcinfo << "accountId='" << accountId() <<
 		"' errmsg=" << errmsg <<
 		", errorCode=" << errorCode << "." << endl;
 
@@ -189,7 +183,7 @@ void OscarAccount::slotError(QString errmsg, int errorCode)
 	// 5 = wrong password
 	if (errorCode == 1 || errorCode == 5)
 	{
-	   OscarAccount::disconnect();
+		OscarAccount::disconnect();
 	}
 	// FIXME: maybe doLogoff() instead to properly shutdown the connection
 	// No, doLogoff() only works perfectly for logged in connections
@@ -197,15 +191,13 @@ void OscarAccount::slotError(QString errmsg, int errorCode)
 	KMessageBox::error(qApp->mainWidget(), errmsg);
 }
 
-void OscarAccount::slotGotIM(OscarSocket::OscarMessageType type, QString &message,
-	const QString &sender)
+void OscarAccount::slotReceivedMessage(const QString &sender, QString &message, OscarSocket::OscarMessageType type)
 {
 	kdDebug(14150) << k_funcinfo << "account='" << accountId() <<
 		"', type=" << static_cast<int>(type) << ", sender='" << sender << "'" << endl;
 
 	OscarContact *contact = static_cast<OscarContact*>(contacts()[tocNormalize(sender)]);
 
-//	if(!mInternalBuddyList->findBuddy(sender) && !mIgnoreUnknownContacts)
 	if(!contact && !mIgnoreUnknownContacts)
 	{
 		//basically, all this does is add the person to your buddy list
@@ -278,6 +270,18 @@ void OscarAccount::slotGotIM(OscarSocket::OscarMessageType type, QString &messag
 				break;*/
 		}
 		contact->gotIM(type, message);
+	}
+}
+
+void OscarAccount::slotReceivedAwayMessage(const QString &sender, QString &message)
+{
+	kdDebug(14150) << k_funcinfo << "account='" << accountId() <<
+		", sender='" << sender << "'" << endl;
+
+	OscarContact *contact = static_cast<OscarContact*>(contacts()[tocNormalize(sender)]);
+	if(contact)
+	{
+		contact->setAwayMessage(message);
 	}
 }
 

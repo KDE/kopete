@@ -1621,10 +1621,10 @@ void OscarSocket::parseIM(Buffer &inbuf)
 						WORD tcpVer = messageBuf.getLEWord();
 						kdDebug(14150) << k_funcinfo << "len=" << len << ", tcpver=" << tcpVer << endl;
 						char *cap=messageBuf.getBlock(16);
-						WORD unk1 = messageBuf.getWord();
-						DWORD unk2 = messageBuf.getDWord();
-						BYTE unk3 = messageBuf.getByte();
-						WORD seq1 = messageBuf.getWord();
+						WORD unk1 = messageBuf.getLEWord();
+						DWORD unk2 = messageBuf.getLEDWord();
+						BYTE unk3 = messageBuf.getLEByte();
+						WORD seq1 = messageBuf.getLEWord();
 
 
 						Buffer ack; // packet sent back as acknowledgment
@@ -1632,16 +1632,15 @@ void OscarSocket::parseIM(Buffer &inbuf)
 						ack.addDWord(msgTime);
 						ack.addDWord(msgRandomId);
 						ack.addWord(0x0002); // type-2 ack
-						ack.addByte(u.sn.length()); //dest sn length
-						ack.addString(u.sn.latin1(), u.sn.length()); //dest sn
+						ack.addBUIN(u.sn.latin1());
 						ack.addWord(0x0003); // unknown
-						ack.addWord(len);
+						ack.addLEWord(len);
 						ack.addLEWord(tcpVer);
 						ack.addString(cap, 16);
-						ack.addWord(unk1);
-						ack.addDWord(unk2);
-						ack.addByte(unk3);
-						ack.addWord(seq1);
+						ack.addLEWord(unk1);
+						ack.addLEDWord(unk2);
+						ack.addLEByte(unk3);
+						ack.addLEWord(seq1);
 
 						parseAdvanceMessage(messageBuf, u, ack);
 						break;
@@ -1839,9 +1838,10 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 	bool isAutoResponse=false; // This gets set if we are notified of an auto response
 	WORD length=0;
 
+	kdDebug(14150) << k_funcinfo << "RECV TYPE-1 IM from '" << u.sn << "'" << endl;
+
 	while(moreTLVs)
 	{
-		kdDebug(14150) << k_funcinfo << "RECV TYPE-1 IM from '" << u.sn << "'" << endl;
 		WORD type = inbuf.getWord();
 		kdDebug(14150) << k_funcinfo << "TLV(" << type << ")" << endl;
 		switch(type)
@@ -1858,10 +1858,16 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 					while(capBuf.length() > 0)
 					{
 						BYTE capPart = capBuf.getByte();
-						/*kdDebug(14150) << k_funcinfo <<
-							"capPart = '" << capPart << "'" << endl;*/
+						/*
+						kdDebug(14150) << k_funcinfo <<
+							"capPart = '" << capPart << "'" << endl;
+
 						if (capPart==0x06)
-							kdDebug(14150) << k_funcinfo << "TLV(1281) says sender does UTF-8 :)" << endl;
+						{
+							kdDebug(14150) << k_funcinfo <<
+								"TLV(1281) says sender does UTF-8 :)" << endl;
+						}
+						*/
 					}
 					capBuf.clear();
 				}
@@ -1870,7 +1876,7 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 				TLV tlvMessage = inbuf.getTLV(); // TLV(257), MESSAGE
 				if(tlvMessage.type == 0x0101)
 				{
-					kdDebug(14150) << k_funcinfo << "TLV(257), MESSAGE" << endl;
+					//kdDebug(14150) << k_funcinfo << "TLV(257), MESSAGE" << endl;
 					Buffer msgBuf(tlvMessage.data, tlvMessage.length);
 
 					WORD charsetNumber = msgBuf.getWord();
@@ -1883,22 +1889,22 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 					QString message;
 					if (charsetNumber == 0x0002) // UCS-2BE (or UTF-16)
 					{
-						kdDebug(14150) << k_funcinfo << "UTF-16BE message" << endl;
+						//kdDebug(14150) << k_funcinfo << "UTF-16BE message" << endl;
 						unsigned short *txt = msgBuf.getWordBlock((int)messageLength/2);
 						message = QString::fromUcs2(txt);
 						delete [] txt;
 					}
 					else if (charsetNumber == 0x0003) // local encoding, usually iso8859-1
 					{
-						kdDebug(14150) << k_funcinfo << "ISO8859-1 message" << endl;
+						//kdDebug(14150) << k_funcinfo << "ISO8859-1 message" << endl;
 						const char *messagetext = msgBuf.getBlock(messageLength);
 						message = QString::fromLatin1(messagetext);
 						delete [] messagetext;
 					}
 					else
 					{	// BEGIN unknown or us-ascii
-						kdDebug(14150) << k_funcinfo <<
-							"Unknown encoding or US-ASCII, guessing encoding" << endl;
+						/*kdDebug(14150) << k_funcinfo <<
+							"Unknown encoding or US-ASCII, guessing encoding" << endl;*/
 						const char *messagetext = msgBuf.getBlock(messageLength);
 
 						if(contact)
@@ -1911,7 +1917,7 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 							if(codec)
 							{
 								kdDebug(14150) << k_funcinfo <<
-									"using per-contact encoding MIB=" << contact->encoding() << endl;
+									"using per-contact encoding, MIB=" << contact->encoding() << endl;
 							}
 						}
 
@@ -1923,9 +1929,9 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 							if(codec)
 							{
 								cresult=codec->heuristicContentMatch(messagetext, messageLength);
-								kdDebug(14150) << k_funcinfo <<
+								/*kdDebug(14150) << k_funcinfo <<
 									"result for US-ASCII=" << cresult <<
-									", message length=" << messageLength << endl;
+									", message length=" << messageLength << endl;*/
 								if(cresult < messageLength-1)
 									codec=0L; // codec not appropriate
 							}
@@ -1936,9 +1942,9 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 								if(codec)
 								{
 									cresult=codec->heuristicContentMatch(messagetext, messageLength);
-									kdDebug(14150) << k_funcinfo <<
+									/*kdDebug(14150) << k_funcinfo <<
 										"result for UTF-8=" << cresult <<
-										", message length=" << messageLength << endl;
+										", message length=" << messageLength << endl;*/
 									if(cresult < (messageLength/2)-1)
 										codec=0L;
 								}
@@ -1961,13 +1967,19 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 						delete [] messagetext;
 					} // END unknown or us-ascii
 
-					kdDebug(14150) << k_funcinfo << "emit gotIM(), contact='" << u.sn <<
-						"', message='" << message << "'" << endl;
+					/*kdDebug(14150) << k_funcinfo <<
+						"emit receivedMessage(), contact='" << u.sn <<
+						"', message='" << message << "'" << endl;*/
 
 					if(isAutoResponse)
-						emit gotIM(Away, message, u.sn);
+					{
+						emit receivedMessage(u.sn, message, Away); // also displays message in chatwin
+						emit receivedAwayMessage(u.sn, message); // only sets contacts away message var
+					}
 					else
-						emit gotIM(Normal, message, u.sn);
+					{
+						emit receivedMessage(u.sn, message, Normal);
+					}
 
 					msgBuf.clear();
 				}
@@ -2067,37 +2079,37 @@ void OscarSocket::parseServerIM(Buffer &inbuf, const UserInfo &u)
 		case MSG_AUTO:
 			kdDebug(14150) << k_funcinfo <<
 				"Got an automatic message: " << message << endl;
-			emit gotIM(Away, message, u.sn);
+			emit receivedMessage(u.sn, message, Away);
 			break;
 		case MSG_NORM:
 			kdDebug(14150) << k_funcinfo <<
 				"Got a normal message: " << message << endl;
-			emit gotIM(Normal, message, u.sn);
+			emit receivedMessage(u.sn, message, Normal);
 			break;
 		case MSG_URL:
 			kdDebug(14150) << k_funcinfo <<
 				"Got an URL message: " << message << endl;
-			emit gotIM(URL, message, u.sn);
+			emit receivedMessage(u.sn, message, URL);
 			break;
 		case MSG_AUTHREJ:
 			kdDebug(14150) << k_funcinfo <<
 				"Got an 'auth rejected' message: " << message << endl;
-			emit gotIM(DeclinedAuth, message, u.sn);
+			emit receivedMessage(u.sn, message, DeclinedAuth);
 			break;
 		case MSG_AUTHACC:
 			kdDebug(14150) << k_funcinfo <<
 				"Got an 'auth granted' message: " << message << endl;
-			emit gotIM(GrantedAuth, message, u.sn);
+			emit receivedMessage(u.sn, message, GrantedAuth);
 			break;
 		case MSG_WEB:
 			kdDebug(14150) << k_funcinfo <<
 				"Got a web panel message: " << message << endl;
-			emit gotIM(WebPanel, message, u.sn);
+			emit receivedMessage(u.sn, message, WebPanel);
 			break;
 		case MSG_EMAIL:
 			kdDebug(14150) << k_funcinfo <<
 				"Got an email message: " << message << endl;
-			emit gotIM(EMail, message, u.sn);
+			emit receivedMessage(u.sn, message, EMail);
 			break;
 		case MSG_CHAT:
 		case MSG_FILE:
@@ -2109,7 +2121,7 @@ void OscarSocket::parseServerIM(Buffer &inbuf, const UserInfo &u)
 		default:
 			kdDebug(14150) << k_funcinfo <<
 				"Got unknown message type, treating as normal: " << message << endl;
-			emit gotIM(Normal, message, u.sn);
+			emit receivedMessage(u.sn, message, Normal);
 			break;
 	}
 
@@ -2658,21 +2670,21 @@ void OscarSocket::parseMsgAck(Buffer &inbuf)
 
 	inbuf.getWord(); // message-type, only type-2 is acknowledged so this is always 2
 
-	char *sn = inbuf.getBUIN();
-	QString nm = QString::fromLatin1(sn);
-	delete [] sn;
+	char *tmp = inbuf.getBUIN();
+	QString uin = QString::fromLatin1(tmp);
+	delete [] tmp;
 
 	inbuf.getWord(); // unk
 
 	sublen = inbuf.getLEWord(); // len of following subchunk
-	kdDebug(14150) << k_funcinfo << "sublen=" << sublen << endl;
+	//kdDebug(14150) << k_funcinfo << "sublen=" << sublen << endl;
 	inbuf.getBlock(sublen); // ignore subchunk
-	kdDebug(14150) << k_funcinfo << "len after subchunk=" << inbuf.length() << endl;
+	//kdDebug(14150) << k_funcinfo << "len after subchunk=" << inbuf.length() << endl;
 
 	inbuf.getLEWord();
 	seq2 = inbuf.getLEWord();
 	inbuf.getBlock(12); // ignore 12 zero bytes
-	kdDebug(14150) << k_funcinfo << "len after 12 zero bytes=" << inbuf.length() << endl;
+	//kdDebug(14150) << k_funcinfo << "len after 12 zero bytes=" << inbuf.length() << endl;
 
 	msgType = inbuf.getByte(); //
 	msgFlags = inbuf.getByte(); // type and flags have wrong order because it's a little-endian word
@@ -2681,18 +2693,17 @@ void OscarSocket::parseMsgAck(Buffer &inbuf)
 
 	WORD txtLen = inbuf.getLEWord();
 	char *txtStr = inbuf.getBlock(txtLen);
-	QString text = QString::fromLatin1(txtStr);
+	QString text = QString::fromLatin1(txtStr); // TODO: encoding
 	delete [] txtStr;
 
-	kdDebug(14150) << k_funcinfo << "RECV (ACKMSG) sn=" << nm <<
+	kdDebug(14150) << k_funcinfo << "RECV (ACKMSG) uin=" << uin <<
 		" msgType=" << msgType << " msgFlags=" << msgFlags <<
 		" msgStatus=" << msgStatus << " msgPrio=" << msgPrio <<
 		" text='"  << text << "'" << endl;
 
 	if(msgFlags == MSG_FLAG_GETAUTO)
 	{
-		kdDebug(14150) << "Was away message" << endl;
-		//emit gotICQAwayMessage(sn, text);
+		emit receivedAwayMessage(uin, text);
 	}
 
 	//TODO: there can be more data after text
@@ -3738,9 +3749,9 @@ void OscarSocket::OnDirectIMReceived(QString message, QString sender,
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
 	//for now, let's just emit a gotIM as though it came from the server
 	if(isAuto)
-		emit gotIM(Away, message, sender);
+		emit receivedMessage(sender, message, Away);
 	else
-		emit gotIM(Normal, message, sender);
+		emit receivedMessage(sender, message, Normal);
 }
 
 // Called when a direct IM connection suffers an error

@@ -905,11 +905,13 @@ class OscarSocket : public OscarConnection
 
 		/*
 		 * emitted when any kind of Instant Message was received
-		 * @p type describes the message type, i.e. normal-msg, away-msg, sms-msg ...
+		 * @p contact contains the screenname/UIN of the sender
 		 * @p message contains the message as received
-		 * @p user contains the screenname/UIN of the sender
+		 * @p type describes the message type, i.e. normal-msg, away-msg, sms-msg ...
 		 */
-		void gotIM(OscarSocket::OscarMessageType type, QString &message, const QString &user);
+		void receivedMessage(const QString &contact, QString &message, OscarSocket::OscarMessageType type);
+
+		void receivedAwayMessage(const QString &contact, QString &message);
 
 		/*
 		 * The server has sent the key with which to encrypt the password

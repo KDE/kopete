@@ -96,10 +96,13 @@ class OscarContact : public KopeteContact
 		void setEncoding(const unsigned int);
 
 		/*
-		 * group id for this contact onthe oscar-server
+		 * group id for this contact on the oscar-server
 		 */
 		const int groupId();
 		void setGroupId(const int);
+
+		const QString &awayMessage();
+		void setAwayMessage(const QString &message);
 
 	public slots:
 		/*
@@ -221,6 +224,8 @@ class OscarContact : public KopeteContact
 
 		int mEncoding;
 		int mGroupId; // TODO: move the server groupid to OscarContact!
+
+		QString mAwayMessage;
 };
 
 #endif

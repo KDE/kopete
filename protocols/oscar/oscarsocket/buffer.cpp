@@ -447,7 +447,7 @@ void Buffer::expandBuffer(unsigned int inc)
 
 char *Buffer::getLNTS()
 {
-	WORD len = getWord();
+	WORD len = getLEWord();
 	return getBlock(len);
 }
 
@@ -457,20 +457,20 @@ char *Buffer::getLELNTS()
 	return getLEBlock(len);
 }
 
-int Buffer::addLNTS(const char * s)
+int Buffer::addLNTS(const char *s)
 {
 	unsigned int len = strlen(s);
-	int ret = addWord(len+1);
+	int ret = addLEWord(len+1);
 	if(len > 0)
 		ret = addString(s, len);
 	ret = addByte(0x00);
 	return ret;
 }
 
-int Buffer::addLELNTS(const char * s)
+int Buffer::addLELNTS(const char *s)
 {
 	unsigned int len = strlen(s);
-	int ret = addLEWord(len);
+	int ret = addLEWord(len+1);
 	if(len > 0)
 		ret = addLEString(s, len);
 	ret = addByte(0x00);
