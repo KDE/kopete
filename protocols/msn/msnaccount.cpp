@@ -68,6 +68,12 @@ void MSNAccount::loaded()
 		m_myself->setDisplayName(publicName);
 	m_blockList=QStringList::split(',' ,pluginData(protocol(),QString::fromLatin1("blockList")) );
 	m_allowList=QStringList::split(',' ,pluginData(protocol(),QString::fromLatin1("allowList")) );
+	m_reverseList=QStringList::split(',' ,pluginData(protocol(),QString::fromLatin1("reverseList")) );
+
+	m_myself->setInfo( "PHH" , pluginData(protocol() , "PHH") );
+	m_myself->setInfo( "PHM" , pluginData(protocol() , "PHM") );
+	m_myself->setInfo( "PHW" , pluginData(protocol() , "PHW") );
+
 }
 
 void MSNAccount::setAway( bool away, const QString & awayReason )
@@ -405,8 +411,9 @@ void MSNAccount::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status )
 		for ( ; it.current() ; ++it )
 			( *it )->setOnlineStatus( MSNProtocol::protocol()->FLN );
 
-		m_allowList.clear();
+		/*m_allowList.clear();
 		m_blockList.clear();
+		m_reverseList.clear();*/
 		m_groupList.clear();
 
 //		setStatusIcon( "msn_offline" );
@@ -647,6 +654,7 @@ void MSNAccount::slotNewContactList()
 {
 		m_allowList.clear();
 		m_blockList.clear();
+		m_reverseList.clear();
 		m_groupList.clear();
 
 		//clear all date information which will be received.
@@ -830,6 +838,8 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 		{
 			static_cast<MSNContact *>( contacts()[ handle ] )->setReversed( true );
 		}
+		m_reverseList.append( handle );
+		setPluginData(protocol(),QString::fromLatin1("reverseList") , m_reverseList.join(",") ) ;
 	}
 }
 
@@ -842,13 +852,17 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 		if(!m_allowList.contains(handle))
 			notifySocket()->addContact( handle, handle, 0, MSNProtocol::AL );
 	}
-
-	if( list == "AL" )
+	else if( list == "AL" )
 	{
 		m_allowList.remove(handle);
 		setPluginData(protocol(),QString::fromLatin1("allowList") , m_allowList.join(",") ) ;
 		if(!m_blockList.contains(handle))
 			notifySocket()->addContact( handle, handle, 0, MSNProtocol::BL );
+	}
+	else if( list== "RL" )
+	{
+		m_reverseList.remove(handle);
+		setPluginData(protocol(),QString::fromLatin1("reverseList") , m_reverseList.join(",") ) ;
 	}
 
 	MSNContact *c = static_cast<MSNContact*>( contacts()[ handle ] );

@@ -20,8 +20,10 @@
 #ifndef MSNEDITACCOUNTWIDEGET_H
 #define MSNEDITACCOUNTWIDEGET_H
 
-#include <qwidget.h>
 #include "editaccountwidget.h"
+
+#include "msneditaccountui.h"
+
 
 /**
   *@author Olivier Goffart <ogoffart@tiscalinet.be>
@@ -31,7 +33,7 @@ class MSNProtocol;
 class QCheckBox;
 class QLineEdit;
 
-class MSNEditAccountWidget : public QWidget, public EditAccountWidget
+class MSNEditAccountWidget : public MSNEditAccountUI, public EditAccountWidget
 {
 	Q_OBJECT
 
@@ -40,14 +42,14 @@ class MSNEditAccountWidget : public QWidget, public EditAccountWidget
 		~MSNEditAccountWidget();
 		virtual bool validateData();
 		virtual KopeteAccount *apply();
-		
 
 	private:
 		MSNProtocol *m_protocol;
-		QLineEdit *m_password;
-		QLineEdit *m_login;
-		QCheckBox *m_autologin;
-		QCheckBox *m_rememberpasswd;
+
+	private slots:
+		void slotAllow();
+		void slotBlock();
+		void slotShowReverseList();
 };
 
 

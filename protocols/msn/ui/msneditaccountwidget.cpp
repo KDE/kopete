@@ -19,33 +19,27 @@
 #include <qlineedit.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
+#include <qgroupbox.h>
+#include <qlistbox.h>
+#include <qpushbutton.h>
 
 #include <klocale.h>
 #include <kmessagebox.h>
 
 #include "msneditaccountwidget.h"
 #include "msnaccount.h"
+#include "msncontact.h"
+#include "msnnotifysocket.h"
 
 MSNEditAccountWidget::MSNEditAccountWidget(MSNProtocol *proto, KopeteAccount *ident, QWidget *parent, const char * )
-				  : QWidget(parent), EditAccountWidget(ident)
+				  : MSNEditAccountUI(parent), EditAccountWidget(ident)
 {
+	m_protocol=proto;
+
+	//TODO: actually, i don't know how to set fonts for qlistboxitem
+	 label_font->hide();
+
 	//default fields
-	QVBoxLayout *layout=new QVBoxLayout(this);
-	layout->setAutoAdd(true);
-
-	new QLabel( i18n ("Login:") , this );
-	m_login = new QLineEdit( this );
-
-	new QLabel( i18n("Password:"), this);
-	m_password = new QLineEdit( this );
-	m_password->setEchoMode( QLineEdit::Password );
-
-	m_rememberpasswd = new QCheckBox( i18n("Remember password") , this );
-	m_autologin = new QCheckBox( i18n("Auto login") , this );
-
-
-	layout->addItem( new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding ));
-
 	if(ident)
 	{
 		if(ident->rememberPassword())
@@ -57,11 +51,53 @@ MSNEditAccountWidget::MSNEditAccountWidget(MSNProtocol *proto, KopeteAccount *id
 		//remove me after we can change account ids (Matt)
 		m_login->setDisabled(true);
 		m_autologin->setChecked((ident && ident->autoLogin()));
+
+		MSNContact *myself=static_cast<MSNContact*>(m_account->myself());
+
+		m_displayName->setText( myself->displayName() );
+		m_phw->setText( m_account->pluginData( m_protocol , "PHW") );
+		m_phm->setText( m_account->pluginData( m_protocol , "PHM") );
+		m_phh->setText( m_account->pluginData( m_protocol , "PHH") );
+
+		bool connected=m_account->isConnected();
+		if(connected)
+		{
+			m_warning_1->hide();
+			m_warning_2->hide();
+		}
+		m_phones->setEnabled(connected);
+		m_displayName->setEnabled(connected);
+		m_allowButton->setEnabled(connected);
+		m_blockButton->setEnabled(connected);
+
+
+
+		QStringList blockList=QStringList::split(',' ,m_account->pluginData(m_protocol,QString::fromLatin1("blockList")) );
+		QStringList allowList=QStringList::split(',' ,m_account->pluginData(m_protocol,QString::fromLatin1("allowList")) );
+		//QStringList reverseList=QStringList::split(',' ,m_account->pluginData(m_protocol,QString::fromLatin1("reverseList")) );
+
+		for ( QStringList::Iterator it = blockList.begin(); it != blockList.end(); ++it )
+		{
+			m_BL->insertItem( *it);
+		}
+		for ( QStringList::Iterator it = allowList.begin(); it != allowList.end(); ++it )
+		{
+			m_AL->insertItem( *it);
+		}
+
+		m_blp->setChecked(m_account->pluginData(m_protocol,QString::fromLatin1("BLP"))=="BL");
+
+		connect(m_allowButton,SIGNAL(pressed()), this, SLOT(slotAllow()));
+		connect(m_blockButton,SIGNAL(pressed()), this, SLOT(slotBlock()));
+		connect(m_RLButton,SIGNAL(pressed()), this, SLOT(slotShowReverseList()));
+
 	}
 	else
+	{
 		m_rememberpasswd->setChecked(true);
-
-	m_protocol=proto;
+		tab_info->setDisabled(true);
+		tab_contacts->setDisabled(true);
+	}
 }
 
 MSNEditAccountWidget::~MSNEditAccountWidget()
@@ -80,6 +116,30 @@ KopeteAccount *MSNEditAccountWidget::apply()
 		m_account->setPassword( QString::null );
 
 	m_account->setAutoLogin(m_autologin->isChecked());
+
+	if(m_account->isConnected())
+	{
+		MSNContact *myself=static_cast<MSNContact*>(m_account->myself());
+		MSNNotifySocket *notify=static_cast<MSNAccount*>(m_account)->notifySocket();
+		if(m_displayName->text() != myself->displayName())
+			static_cast<MSNAccount*>(m_account)->setPublicName(m_displayName->text());
+		if(notify)
+		{
+			if(m_phw->text() != myself->phoneWork() && ( !m_phw->text().isEmpty() || !myself->phoneWork().isEmpty() ))
+				notify->changePhoneNumber( "PHW" , m_phw->text() );
+			if(m_phh->text() != myself->phoneHome() && ( !m_phh->text().isEmpty() || !myself->phoneHome().isEmpty() ))
+				notify->changePhoneNumber( "PHH" , m_phh->text() );
+			if(m_phm->text() != myself->phoneMobile() && ( !m_phm->text().isEmpty() || !myself->phoneMobile().isEmpty() ) )
+				notify->changePhoneNumber( "PHM" , m_phm->text() );
+			//(the && .isEmpty is because one can be null and the other empty)
+
+			if( (m_account->pluginData(m_protocol,QString::fromLatin1("BLP"))=="BL") !=  m_blp->isChecked())
+			{
+				//yes, i know, calling sendcommand here is not verry clean.
+				notify->sendCommand("BLP" , m_blp->isChecked() ? "BL" : "AL" );
+			}
+		}
+	}
 	return m_account;
 }
 
@@ -92,6 +152,47 @@ bool MSNEditAccountWidget::validateData()
 
 	KMessageBox::sorry(this, i18n("<qt>You must enter a valid email address as login.</qt>"), i18n("MSN Messenger"));
 	return false;
+}
+
+void MSNEditAccountWidget::slotAllow()
+{
+	//TODO: play with multiple selection
+	QListBoxItem *item=m_BL->selectedItem();
+	if(!item)
+		return;
+	QString handle=item->text();
+
+	MSNNotifySocket *notify=static_cast<MSNAccount*>(m_account)->notifySocket();
+	if(!notify)
+		return;
+	notify->removeContact(handle,0,MSNProtocol::BL);
+
+	m_BL->takeItem(item);
+	m_AL->insertItem(item);
+}
+
+
+void MSNEditAccountWidget::slotBlock()
+{
+	//TODO: play with multiple selection
+	QListBoxItem *item=m_AL->selectedItem();
+	if(!item)
+		return;
+	QString handle=item->text();
+
+	MSNNotifySocket *notify=static_cast<MSNAccount*>(m_account)->notifySocket();
+	if(!notify)
+		return;
+	notify->removeContact(handle,0,MSNProtocol::AL);
+
+	m_AL->takeItem(item);
+	m_BL->insertItem(item);
+}
+
+void MSNEditAccountWidget::slotShowReverseList()
+{
+	QStringList reverseList=QStringList::split(',' ,m_account->pluginData(m_protocol,QString::fromLatin1("reverseList")) );
+	KMessageBox::informationList( this, i18n("Here you can see a list of contact which added you in their contactlist") , reverseList , i18n("Reverse List - MSN Plugin") );
 }
 
 #include "msneditaccountwidget.moc"

@@ -241,10 +241,15 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "LST" )
 	{
+		//The hanlde is used if we receive some BRP
+		m_tmpLastHandle=data.section( ' ', 0, 0 );
+
 		// handle, publicName, lists, group
-		emit contactList( data.section( ' ', 0, 0 ),
+		emit contactList(  m_tmpLastHandle ,
 			unescape( data.section( ' ', 1, 1 ) ), data.section( ' ', 2, 2 ).toUInt(),
 			data.section( ' ', 3, 3 ) );
+
+
 	}
 	else if( cmd == "MSG" )
 	{
@@ -392,12 +397,37 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "BPR" )
 	{
-		MSNContact *c = static_cast<MSNContact*>( m_account->contacts()[ data.section( ' ', 0, 0 ) ] );
+		MSNContact *c = static_cast<MSNContact*>( m_account->contacts()[ m_tmpLastHandle ] );
+		if( c )
+			c->setInfo(data.section( ' ', 0, 0 ),unescape(data.section( ' ', 1, 1 )));
+	}
+	else if( cmd == "PRP" )
+	{
+		MSNContact *c = static_cast<MSNContact*>( m_account->myself() );
 		if( c )
 		{
-			c->setInfo(data.section( ' ', 1, 1 ),unescape(data.section( ' ', 2, 2 )));
+			if( id > 0 ) //FROM PRP
+			{
+				m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 0, 0 ) );
+				m_account->setPluginData(m_account->protocol() ,data.section( ' ', 1, 1 ),unescape(data.section( ' ', 2, 2 ) ));
+				c->setInfo(data.section( ' ', 1, 1 ),unescape(data.section( ' ', 2, 2 )));
+			}
+			else //FROM SYN
+			{
+				c->setInfo(data.section( ' ', 0, 0 ),unescape(data.section( ' ', 1, 1 )));
+				m_account->setPluginData(m_account->protocol() ,data.section( ' ', 0, 0 ),unescape(data.section( ' ', 1, 1 ) ));
+			}
 		}
-//		emit receivedInfo(data.section( ' ', 0, 0 ), data.section( ' ', 1, 1 ) , unescape(data.section( ' ', 2, 2 )));
+	}
+	else if( cmd == "BLP" )
+	{
+		if( id > 0 ) //FROM BLP
+		{
+			m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 0, 0 ) );
+			m_account->setPluginData(m_account->protocol() , "BLP" , data.section( ' ', 1, 1 ) );
+		}
+		else //FROM SYN
+			m_account->setPluginData(m_account->protocol() , "BLP" , data.section( ' ', 0, 0 ) );
 	}
 	else if( cmd == "QRY" )
 	{
@@ -686,12 +716,11 @@ void MSNNotifySocket::setStatus( const KopeteOnlineStatus &status )
 		sendCommand( "CHG", statusToString( status ) );
 }
 
-void MSNNotifySocket::changePublicName( const QString &publicName, const QString &handle )
+void MSNNotifySocket::changePublicName(  QString publicName, const QString &handle )
 {
 	if( escape(publicName).length() > 387 )
 	{
-		kdDebug(14140) << "MSNNotifySocket::changePublicName: nickname too long! aborting " << endl;
-		return;
+		publicName=publicName.left(387);
 	}
 
 	m_tmpLastHandle=handle;
@@ -703,6 +732,12 @@ void MSNNotifySocket::changePublicName( const QString &publicName, const QString
 	else
 		sendCommand( "REA", handle + " " + escape ( publicName ) );
 }
+
+void MSNNotifySocket::changePhoneNumber( const QString &key, const QString &data )
+{
+	sendCommand( "PRP", key + " " + escape ( data ) );
+}
+
 
 void MSNNotifySocket::createChatSession()
 {

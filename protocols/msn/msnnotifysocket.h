@@ -53,7 +53,9 @@ public:
 	void removeGroup( uint group );
 	void renameGroup(const QString& groupName, uint group);
 
-	void changePublicName( const QString &publicName , const QString &handle=QString::null );
+	void changePublicName(  QString publicName , const QString &handle=QString::null );
+
+	void changePhoneNumber( const QString &key, const QString &data );
 
 	void createChatSession();
 

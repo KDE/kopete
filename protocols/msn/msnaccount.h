@@ -181,6 +181,7 @@ private:
 	// server data
 	QStringList m_allowList;
 	QStringList m_blockList;
+	QStringList m_reverseList;
 
 	QMap<unsigned int, KopeteGroup*> m_groupList;
 	KopeteMetaContact *m_addWizard_metaContact;

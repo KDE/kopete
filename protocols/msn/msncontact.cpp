@@ -194,7 +194,7 @@ void MSNContact::setReversed( bool reversed )
 	m_reversed= reversed;
 }
 
-void MSNContact::setInfo( QString type, QString data )
+void MSNContact::setInfo(const  QString &type,const QString &data )
 {
 	if( type == "PHH" )
 	{
@@ -222,6 +222,7 @@ void MSNContact::setInfo( QString type, QString data )
 		kdDebug( 14140 ) << k_funcinfo << "Unknow info " << type << " " << data << endl;
 	}
 }
+
 
 void MSNContact::serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> & /* addressBookData */ )
 {
@@ -252,6 +253,11 @@ void MSNContact::serialize( QMap<QString, QString> &serializedData, QMap<QString
 	serializedData[ "PHM" ]  = m_phoneMobile;
 	serializedData[ "lists" ] = lists;
 }
+
+QString MSNContact::phoneHome(){ return m_phoneHome ;}
+QString MSNContact::phoneWork(){ return m_phoneWork ;}
+QString MSNContact::phoneMobile(){ return m_phoneMobile ;}
+
 
 const QMap<uint, KopeteGroup*> & MSNContact::serverGroups() const
 {

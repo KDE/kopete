@@ -73,7 +73,7 @@ public:
 	/**
 	 * set one phone number
 	 */
-	void setInfo(QString type, QString data);
+	void setInfo(const QString &type, const QString &data);
 
 	/**
 	 * The groups in which the user is located on the server.
@@ -120,6 +120,12 @@ public:
 	 * used when syncing contactlist
 	 */
 	void setDontSync(bool b);
+
+
+
+	QString phoneHome();
+	QString phoneWork();
+	QString phoneMobile();
 
 public slots:
 	virtual void slotUserInfo();
