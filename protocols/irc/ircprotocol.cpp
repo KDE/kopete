@@ -997,7 +997,8 @@ void IRCProtocol::slotSaveNetworkConfig()
 	stream << doc.toString(4);
 	xmlFile.close();
 
-	emit networkConfigUpdated( netConf->networkList->currentText() );
+	if (netConf)
+		emit networkConfigUpdated( netConf->networkList->currentText() );
 }
 
 void IRCProtocol::slotReadNetworks()
