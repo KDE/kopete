@@ -37,24 +37,27 @@ IRCUserContact::IRCUserContact(IRCIdentity *identity, const QString &nickname, K
 	mCustomActions = new KActionCollection(this);
 
 	actionCtcpMenu = new KActionMenu(i18n("C&TCP"), 0, this );
-	actionCtcpPing = new KAction(i18n("&Ping"), 0, this, SLOT(slotCtcpPing()), this);
-	actionCtcpVersion = new KAction(i18n("&Version"), 0, this, SLOT(slotCtcpVersion()), this);
-	actionCtcpMenu->insert( actionCtcpVersion );
-	actionCtcpMenu->insert( actionCtcpPing );
+	actionCtcpMenu->insert( new KAction(i18n("&Version"), 0, this, SLOT(slotCtcpVersion()), this) );
+	actionCtcpMenu->insert(  new KAction(i18n("&Ping"), 0, this, SLOT(slotCtcpPing()), this) );
 	mCustomActions->insert( actionCtcpMenu );
 
 	actionModeMenu = new KActionMenu(i18n("&Modes"), 0, this, "actionModeMenu");
-	actionOp = new KAction(i18n("&Op"), 0, this, SLOT(slotOp()), this, "actionOp");
-	actionDeop = new KAction(i18n("&Deop"), 0, this, SLOT(slotDeop()), this, "actionDeop");
-	actionVoice = new KAction(i18n("&Voice"), 0, this, SLOT(slotVoice()), this, "actionVoice");
-	actionDevoice = new KAction(i18n("Devoice"), 0, this, SLOT(slotDevoice()), this, "actionDevoice");
-	actionModeMenu->insert( actionOp );
-	actionModeMenu->insert( actionDeop );
-	actionModeMenu->insert( actionVoice );
-	actionModeMenu->insert( actionDevoice );
-
+	actionModeMenu->insert( new KAction(i18n("&Op"), 0, this, SLOT(slotOp()), this, "actionOp") );
+	actionModeMenu->insert( new KAction(i18n("&Deop"), 0, this, SLOT(slotDeop()), this, "actionDeop") );
+	actionModeMenu->insert( new KAction(i18n("&Voice"), 0, this, SLOT(slotVoice()), this, "actionVoice") );
+	actionModeMenu->insert( new KAction(i18n("Devoice"), 0, this, SLOT(slotDevoice()), this, "actionDevoice") );
 	actionModeMenu->setEnabled( false );
 	mCustomActions->insert( actionModeMenu );
+
+	actionKick = new KAction(i18n("&Kick"), 0, this, SLOT(slotKick()), this);
+	mCustomActions->insert( actionKick );
+
+	actionBanMenu = new KActionMenu(i18n("&Ban"), 0, this, "actionBanMenu");
+	actionBanMenu->insert( new KAction(i18n("Ban *!*@*.host"), 0, this, SLOT(slotBanHost()), this ) );
+	actionBanMenu->insert( new KAction(i18n("Ban *!*@domain"), 0, this, SLOT(slotBanDomain()), this ) );
+	actionBanMenu->insert( new KAction(i18n("Ban *!*user@*.host"), 0, this, SLOT(slotBanUserHost()), this ) );
+	actionBanMenu->insert( new KAction(i18n("Ban *!*user@domain"), 0, this, SLOT(slotBanUserDomain()), this ) );
+	mCustomActions->insert( actionBanMenu );
 
 	mOnlineTimer = new QTimer( this );
 	connect( mOnlineTimer, SIGNAL(timeout()), this, SLOT( slotUserOffline() ) );
@@ -157,16 +160,43 @@ void IRCUserContact::slotDevoice()
 	contactMode( QString::fromLatin1("-v") );
 }
 
+void IRCUserContact::slotBanHost()
+{
+	slotKick();
+}
+
+void IRCUserContact::slotBanUserHost()
+{
+	slotKick();
+}
+
+void IRCUserContact::slotBanDomain()
+{
+	slotKick();
+}
+
+void IRCUserContact::slotBanUserDomain()
+{
+	slotKick();
+}
+
+void IRCUserContact::slotKick()
+{
+	KopeteView *activeView = KopeteViewManager::viewManager()->activeView();
+	if( activeView && activeView->msgManager()->user()->inherits("IRCUserContact") )
+	{
+		QString channelName = activeView->msgManager()->displayName().section(' ', 0, 0);
+		mEngine->kickUser(mNickName, channelName, QString::null);
+	}
+}
+
 void IRCUserContact::contactMode( const QString &mode )
 {
 	KopeteView *activeView = KopeteViewManager::viewManager()->activeView();
-	if( activeView && activeView->msgManager()->user()->inherits("IRCContact") )
+	if( activeView && activeView->msgManager()->user()->inherits("IRCUserContact") )
 	{
-		if( activeView->msgManager()->displayName().startsWith( QString::fromLatin1("#") ) )
-		{
-			QString channelName = activeView->msgManager()->displayName().section(' ', 0, 0);
-			mEngine->changeMode( channelName, QString::fromLatin1("%1 %2").arg(mode).arg(mNickName) );
-		}
+		QString channelName = activeView->msgManager()->displayName().section(' ', 0, 0);
+		mEngine->changeMode( channelName, QString::fromLatin1("%1 %2").arg(mode).arg(mNickName) );
 	}
 }
 
@@ -198,7 +228,10 @@ void IRCUserContact::slotIncomingModeChange( const QString &, const QString &cha
 				mUserClassMap[channel.lower()] = KIRC::Normal;
 		}
 
-		actionModeMenu->setEnabled( mIdentity->mySelf()->userclass(channel) == KIRC::Operator );
+		bool isOperator = mIdentity->mySelf()->userclass(channel) == KIRC::Operator;
+		actionModeMenu->setEnabled(isOperator);
+		actionBanMenu->setEnabled(isOperator);
+		actionKick->setEnabled(isOperator);
 	}
 }
 

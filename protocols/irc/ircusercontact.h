@@ -61,6 +61,11 @@ class IRCUserContact : public IRCContact
 		void slotCtcpPing();
 		void slotCtcpVersion();
 		void slotUserOffline();
+		void slotBanHost();
+		void slotBanUserHost();
+		void slotBanDomain();
+		void slotBanUserDomain();
+		void slotKick();
 		void slotNewPrivMessage(const QString &originating, const QString &target, const QString &message);
 		void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 		void slotUserOnline( const QString &nick );
@@ -68,15 +73,9 @@ class IRCUserContact : public IRCContact
 	private:
 		KActionCollection *mCustomActions;
 		KActionMenu *actionModeMenu;
-		KAction *actionOp;
-		KAction *actionDeop;
-		KAction *actionVoice;
-		KAction *actionDevoice;
 		KActionMenu *actionCtcpMenu;
-		KAction *actionCtcpPing;
-		KAction *actionCtcpVersion;
-		KActionMenu *actionKick;
-		KActionMenu *actionBan;
+		KAction *actionKick;
+		KActionMenu *actionBanMenu;
 		QTimer *mOnlineTimer;
 		QStringList mChannels;
 		QMap<QString,KIRC::UserClass> mUserClassMap;
