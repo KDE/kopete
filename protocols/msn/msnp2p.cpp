@@ -761,6 +761,14 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 				if(kmm)
 					c=kmm->account()->contacts()[m_msgHandle];
 			}
+			if(!c)
+			{
+				// while the contact ptr shouldn't be needed, kopete crash if one pass a null contact.
+				//  cf  Bug 89818
+				kdWarning(14140) << " impossible to get the contact for initiating file transfer " << endl;
+				error();
+				return;
+			}
 			disconnect(Kopete::TransferManager::transferManager(), 0L , this, 0L);
 			connect(Kopete::TransferManager::transferManager() , SIGNAL(accepted(Kopete::Transfer*, const QString& )) ,
 					this, SLOT(slotTransferAccepted(Kopete::Transfer*, const QString& )));
