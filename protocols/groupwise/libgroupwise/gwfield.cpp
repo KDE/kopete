@@ -21,7 +21,6 @@
 #include <qcstring.h>
 
 #include "gwfield.h"
-#include <iostream.h>
 
 using namespace Field;
 
@@ -45,10 +44,10 @@ FieldListIterator FieldList::find( QCString tag )
 FieldListIterator FieldList::find( FieldListIterator &it, QCString tag )
 {
 	FieldListIterator theEnd = end();
-	cout << "FieldList::find() looking for " << tag.data() << endl;
+	//cout << "FieldList::find() looking for " << tag.data() << endl;
 	for ( ; it != theEnd; ++it )
 	{
-		cout << " - on " << (*it)->tag().data() << endl;
+		//cout << " - on " << (*it)->tag().data() << endl;
 		if ( (*it)->tag() == tag )
 			break;
 	}
@@ -71,12 +70,12 @@ void FieldList::dump( bool recursive, int offset )
 {
 	const FieldListIterator myEnd = end();
 	if ( !offset )
-		cout << "FieldList::dump()" << ( recursive ? ", recursively" : ", non-recursive" ) << endl;
+		qDebug( "FieldList::dump() %s\n", ( recursive ? ", recursively" : ", non-recursive" ) );
 	for( FieldListIterator it = begin(); it != myEnd; ++it )
 	{
 		for ( int i = 0; i < offset; i ++ )
-			cout << "  ";
-		cout << (*it)->tag() << endl;
+			qDebug( "  " );
+		qDebug( "%s\n", (*it)->tag().data() );
 		if ( recursive )
 		{
 			MultiField * mf;
@@ -87,31 +86,31 @@ void FieldList::dump( bool recursive, int offset )
 }
 // THIS IS AN ATTEMPT TO HIDE THE POLYMORPHISM INSIDE THE LIST
 // HOWEVER IT FAILS BECAUSE WE NEED BOTH THE ITERATOR AND THE CASTED Single|MultiField it points to
-//
-// SingleField * FieldList::findSingleField( QCString tag )
-// {
-// 	FieldListIterator it = begin();
-// 	return findSingleField( it, tag );
-// }
-// 
-// SingleField * FieldList::findSingleField( FieldListIterator &it, QCString tag )
-// {
-// 	FieldListIterator it = find( it, tag );
-// 	return dynamic_cast<SingleField *>( *it );
-// }
-// 
-// MultiField * FieldList::findMultiField( QCString tag )
-// {
-// 	FieldListIterator it = begin();
-// 	return findMultiField( it, tag );
-// }
-// 
-// MultiField * FieldList::findMultiField( FieldListIterator &it, QCString tag )
-// {
-// 	FieldListIterator it = find( it, tag );
-// 	return dynamic_cast<MultiField *>( *it );
-// }
-// 
+
+SingleField * FieldList::findSingleField( QCString tag )
+{
+	FieldListIterator it = begin();
+	return findSingleField( it, tag );
+}
+
+SingleField * FieldList::findSingleField( FieldListIterator &it, QCString tag )
+{
+	FieldListIterator found = find( it, tag );
+	return dynamic_cast<SingleField *>( *found );
+}
+
+MultiField * FieldList::findMultiField( QCString tag )
+{
+	FieldListIterator it = begin();
+	return findMultiField( it, tag );
+}
+
+MultiField * FieldList::findMultiField( FieldListIterator &it, QCString tag )
+{
+	FieldListIterator found = find( it, tag );
+	return dynamic_cast<MultiField *>( *found );
+}
+
 
 /* === FieldBase ========================================================= */
 

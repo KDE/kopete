@@ -177,7 +177,9 @@ namespace Field
 	
 	typedef QValueListIterator<FieldBase *> FieldListIterator;
 	typedef QValueListConstIterator<FieldBase *> FieldListConstIterator;
-
+	class SingleField;
+	class MultiField;
+	
 	class FieldList : public QValueList<FieldBase *>
 	{
 		public:
@@ -206,6 +208,16 @@ namespace Field
 			 * Debug function, dumps to stdout
 			 */
 			void dump( bool recursive = false, int offset = 0 );
+			/** 
+			 * Utility functions for finding the first instance of a tag
+			 * @return 0 if no field of the right tag and type was found.
+			 */
+			SingleField * findSingleField( QCString tag );
+			MultiField * findMultiField( QCString tag );
+		protected:
+			SingleField * findSingleField( FieldListIterator &it, QCString tag );
+			MultiField * findMultiField( FieldListIterator &it, QCString tag );
+
 	};
 
 	/**
