@@ -31,6 +31,7 @@
 #include <qsocketnotifier.h>
 #include <qtextcodec.h>
 #include <qdatetime.h>
+#include "gadurichtextformat.h"
 
 #include <errno.h>
 #include <string.h>
@@ -268,7 +269,7 @@ GaduSession::changeStatusDescription( int status, const QString& descr, bool for
 	ndescr= textcodec->fromUnicode(descr);
 
 	if ( isConnected() ) {
-		return gg_change_status_descr( session_, 
+		return gg_change_status_descr( session_,
 				status | ( forFriends ? GG_STATUS_FRIENDS_MASK : 0), ndescr.data() );
 	}
 	else {
@@ -401,7 +402,7 @@ GaduSession::sendResult( gg_pubdir50_t result )
 		sres.append( resultLine );
 		kdDebug(14100) << "found line "<< resultLine.uin << " " << resultLine.firstname << endl;
 	}
-	
+
 	searchSeqNr_ = gg_pubdir50_next( result );
 
 	emit pubDirSearchResult( sres );
@@ -608,6 +609,7 @@ GaduSession::checkDescriptor()
 					textcodec->toUnicode((const char*)event->event.msg.message);
 				gaduMessage.sender_id = event->event.msg.sender;
 				gaduMessage.sendTime.setTime_t( event->event.msg.time, Qt::LocalTime );
+				gaduMessage.message = GaduRichTextFormat::convertToHtml( gaduMessage.message, event->event.msg.formats_length, event->event.msg.formats );
 				emit messageReceived( &gaduMessage );
 			}
 		break;

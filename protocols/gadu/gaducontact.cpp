@@ -126,7 +126,7 @@ GaduContact::messageSend( KopeteMessage& msg, KopeteMessageManager* mgr )
 	if ( msg.plainBody().isEmpty() ) {
 		return;
 	}
-	//FIXME: handle ritch text
+
 	account_->sendMessage( uin_, msg.plainBody() );
 	mgr->appendMessage( msg );
 }

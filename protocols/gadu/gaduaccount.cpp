@@ -440,7 +440,7 @@ GaduAccount::messageReceived( KGaduMessage* gaduMessage )
 	}
 
 	contactsListTmp.append( myself() );
-	KopeteMessage msg( gaduMessage->sendTime, contact, contactsListTmp, gaduMessage->message, KopeteMessage::Inbound );
+	KopeteMessage msg( gaduMessage->sendTime, contact, contactsListTmp, gaduMessage->message, KopeteMessage::Inbound, KopeteMessage::RichText );
 	contact->messageReceived( msg );
 }
 
