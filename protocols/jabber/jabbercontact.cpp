@@ -635,7 +635,13 @@ void JabberContact::slotSendMessage(KopeteMessage &message)
 		manager()->messageSucceeded();
 	}
 	else
+	{
 		protocol->errorConnectFirst();
+
+		// FIXME: there is no messageFailed() yet,
+		// but we need to stop the animation etc.
+		manager()->messageSucceeded();
+	}
 
 }
 
