@@ -761,7 +761,7 @@ GaduSession::checkDescriptor()
 			gaduNotify.image_size = 0;
 			gaduNotify.time = 0;
 
-			emit statusChanged( &gaduNotify );
+			emit contactStatusChanged( &gaduNotify );
 		break;
 		case GG_EVENT_STATUS60:
 			gaduNotify.status = e->event.status60.status;
@@ -778,7 +778,7 @@ GaduSession::checkDescriptor()
 			gaduNotify.image_size = e->event.status60.image_size;
 			gaduNotify.time = e->event.status60.time;
 
-			emit statusChanged( &gaduNotify );
+			emit contactStatusChanged( &gaduNotify );
 		break;
 		case GG_EVENT_NOTIFY60:
 			notify60( e );

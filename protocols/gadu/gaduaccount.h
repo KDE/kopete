@@ -119,7 +119,7 @@ private slots:
 	
 	void messageReceived( KGaduMessage* );
 	void ackReceived( unsigned int );
-	void statusChanged( KGaduNotify* );
+	void contactStatusChanged( KGaduNotify* );
 	void slotSessionDisconnect();
 
 	void userlist( const QString& contacts );

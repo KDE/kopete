@@ -101,8 +101,8 @@ GaduAccount::initConnections()
 				SLOT( messageReceived( KGaduMessage* ) )  );
 	QObject::connect( session_, SIGNAL( notify( KGaduNotifyList* ) ),
 				SLOT( notify( KGaduNotifyList* ) ) );
-	QObject::connect( session_, SIGNAL( statusChanged( KGaduNotify* ) ),
-				SLOT( statusChanged( KGaduNotify* ) ) );
+	QObject::connect( session_, SIGNAL( contactStatusChanged( KGaduNotify* ) ),
+				SLOT( contactStatusChanged( KGaduNotify* ) ) );
 	QObject::connect( session_, SIGNAL( connectionFailed( gg_failure_t )),
 				SLOT( connectionFailed( gg_failure_t ) ) );
 	QObject::connect( session_, SIGNAL( connectionSucceed( ) ),
@@ -117,7 +117,8 @@ GaduAccount::initConnections()
 				SLOT( userListExportDone() ) );
 }
 
-void GaduAccount::loaded()
+void 
+GaduAccount::loaded()
 {
 	QString nick;
 	nick	= pluginData( protocol(), QString::fromAscii( "nickName" ) );
@@ -126,7 +127,8 @@ void GaduAccount::loaded()
 	}
 }
 
-void GaduAccount::setAway( bool isAway, const QString& awayMessage )
+void 
+GaduAccount::setAway( bool isAway, const QString& awayMessage )
 {
 	uint status;
 
@@ -139,7 +141,9 @@ void GaduAccount::setAway( bool isAway, const QString& awayMessage )
 	changeStatus( GaduProtocol::protocol()->convertStatus( status ), awayMessage );
 }
 
-KActionMenu* GaduAccount::actionMenu()
+
+KActionMenu* 
+GaduAccount::actionMenu()
 {
 	kdDebug(14100) << "actionMenu() " << endl;
 
@@ -182,24 +186,24 @@ KActionMenu* GaduAccount::actionMenu()
 	actionMenu_->insert( listputAction );
 	actionMenu_->insert( searchAction );
 
-//  actionMenu_->insert( new KAction( i18n( "Change Password" ), "", 0, this,
-//		SLOT( slotChangePassword() ), this, "actionChangePassword" ) );
-
 	return actionMenu_;
 }
 
-void GaduAccount::connect()
+void 
+GaduAccount::connect()
 {
 	slotGoOnline();
 }
 
-void GaduAccount::disconnect()
+void 
+GaduAccount::disconnect()
 {
 	slotGoOffline();
 	connectWithSSL=true;
 }
 
-bool GaduAccount::addContactToMetaContact( const QString& contactId, const QString& displayName,
+bool 
+GaduAccount::addContactToMetaContact( const QString& contactId, const QString& displayName,
 					 KopeteMetaContact* parentContact )
 {
 	kdDebug(14100) << "addContactToMetaContact " << contactId << endl;
@@ -276,7 +280,12 @@ GaduAccount::slotLogin( int status, const QString& dscr )
 	myself()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING ), dscr );
 
 	if ( !session_->isConnected() ) { 
-		session_->login( accountId().toInt(), password(), connectWithSSL, status, dscr, serverIP );
+		if ( password().isEmpty() ) {
+			connectionFailed( GG_FAILURE_PASSWORD );
+		}
+		else {
+				session_->login( accountId().toInt(), password(), connectWithSSL, status, dscr, serverIP );
+		}
 	}
 	else {
 		session_->changeStatus( status );
@@ -286,7 +295,7 @@ GaduAccount::slotLogin( int status, const QString& dscr )
 void
 GaduAccount::slotLogoff()
 {
-	if ( session_->isConnected() ) {
+	if ( session_->isConnected() || status_ == GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING )) {
 		status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
 		changeStatus( status_ );
 		session_->logoff();
@@ -443,9 +452,9 @@ GaduAccount::notify( KGaduNotifyList* nl )
 }
 
 void
-GaduAccount::statusChanged( KGaduNotify* s )
+GaduAccount::contactStatusChanged( KGaduNotify* s )
 {
-	kdDebug(14100) << "####" << " status changed, uin:" << s->contact_id <<endl;
+	kdDebug(14100) << "####" << " contact's status changed, uin:" << s->contact_id <<endl;
 
 	GaduContact* c;
 
@@ -482,16 +491,6 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 	bool tryReconnect = false;
 	QString pass;
 
-	if ( currentServer == NUM_SERVERS || connectWithSSL ) {
-		serverIP = 0;
-		currentServer = -1;
-	}
-	else {
-		serverIP = htons( servers_[ ++currentServer ].ip4Addr() );
-		kdDebug(14100) << "trying : " << servers_ip[ currentServer ]  << endl;
-		tryReconnect = true;
-	}
-
 			
 	switch (failure) {
 		case GG_FAILURE_PASSWORD:
@@ -513,12 +512,26 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 			return;
 		break;
 		default:
-			if ( connectWithSSL && useTls() != TLS_only ) {
-				kdDebug( 14100 ) << "try without tls now" << endl;
-				connectWithSSL = false;
-				tryReconnect = true;
-				currentServer = 0;
-				serverIP = 0;
+			if ( connectWithSSL ) {
+				if ( useTls() != TLS_only ) {
+					kdDebug( 14100 ) << "try without tls now" << endl;
+					connectWithSSL = false;
+					tryReconnect = true;
+					currentServer = 0;
+					serverIP = 0;
+					break;
+				}
+			}
+			else {
+				if ( currentServer == NUM_SERVERS ) {
+					serverIP = 0;
+					currentServer = -1;
+				}
+				else {
+					serverIP = htons( servers_[ ++currentServer ].ip4Addr() );
+					kdDebug(14100) << "trying : " << servers_ip[ currentServer ]  << endl;
+					tryReconnect = true;
+				}
 			}
 		break;
 	}
@@ -751,19 +764,6 @@ GaduAccount::slotSearch( int uin )
 void
 GaduAccount::slotChangePassword()
 {
-/*
-	QCString password;
-	int result = KPasswordDialog::getPassword( password, i18n("Enter new password") );
-
-//	if ( result == KPasswordDialog::Accepted ) {
-//		ChangePasswordCommand *cmd = new ChangePasswordCommand( this, "changePassCmd" );
-//		cmd->setInfo( myself()->uin(), password(), password, "zackrat@att.net" );
-//		QObject::connect( cmd, SIGNAL(done(const QString&, const QString&)),
-//											SLOT(slotCommandDone(const QString&, const QString&)) );
-//		QObject::connect( cmd, SIGNAL(error(const QString&, const QString&)),
-//											SLOT(slotCommandError(const QString&, const QString&)) );
-//	}
-*/
 }
 
 void
@@ -792,7 +792,8 @@ GaduAccount::slotDescription()
 	delete away;
 }
 
-bool GaduAccount::pubDirSearch( QString& name, QString& surname, QString& nick,
+bool 
+GaduAccount::pubDirSearch( QString& name, QString& surname, QString& nick,
 			    int UIN, QString& city, int gender,
 			    int ageFrom, int ageTo, bool onlyAlive )
 {
@@ -800,12 +801,14 @@ bool GaduAccount::pubDirSearch( QString& name, QString& surname, QString& nick,
 							ageFrom, ageTo, onlyAlive );
 }
 
-void GaduAccount::pubDirSearchClose()
+void 
+GaduAccount::pubDirSearchClose()
 {
 	session_->pubDirSearchClose();
 }
 
-void GaduAccount::slotSearchResult( const searchResult& result )
+void 
+GaduAccount::slotSearchResult( const searchResult& result )
 {
 	emit pubDirSearchResult( result );
 }
@@ -822,7 +825,8 @@ GaduAccount::useTls()
 	return Tls;
 }
 
-void GaduAccount::setUseTls( tlsConnection ut )
+void 
+GaduAccount::setUseTls( tlsConnection ut )
 {
 	if ( ut < 0 || ut > 2 ) {
 		return;
