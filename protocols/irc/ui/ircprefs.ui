@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>510</width>
-            <height>336</height>
+            <width>525</width>
+            <height>338</height>
         </rect>
     </property>
     <property name="caption">
@@ -482,41 +482,6 @@
             </widget>
             <widget class="QGroupBox">
                 <property name="name">
-                    <cstring>GroupBox4</cstring>
-                </property>
-                <property name="title">
-                    <string>Extras:</string>
-                </property>
-                <grid>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <property name="margin">
-                        <number>11</number>
-                    </property>
-                    <property name="spacing">
-                        <number>6</number>
-                    </property>
-                    <widget class="QCheckBox" row="0" column="0">
-                        <property name="name">
-                            <cstring>chkSideIcons</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Show task specific icons next to each event in the windows.</string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="1" column="0">
-                        <property name="name">
-                            <cstring>chkShowTimes</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Show a timestamp to the left of all messages.</string>
-                        </property>
-                    </widget>
-                </grid>
-            </widget>
-            <widget class="QGroupBox">
-                <property name="name">
                     <cstring>GroupBox6</cstring>
                 </property>
                 <property name="title">
@@ -562,6 +527,41 @@
                         </property>
                         <property name="text">
                             <string>Channel sessions</string>
+                        </property>
+                    </widget>
+                </grid>
+            </widget>
+            <widget class="QGroupBox">
+                <property name="name">
+                    <cstring>GroupBox4</cstring>
+                </property>
+                <property name="title">
+                    <string>Extras:</string>
+                </property>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
+                        <number>11</number>
+                    </property>
+                    <property name="spacing">
+                        <number>6</number>
+                    </property>
+                    <widget class="QCheckBox" row="0" column="0">
+                        <property name="name">
+                            <cstring>chkSideIcons</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Show task specific icons next to each event in the windows.</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="1" column="0">
+                        <property name="name">
+                            <cstring>chkShowTimes</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Show a timestamp to the left of all messages.</string>
                         </property>
                     </widget>
                 </grid>
@@ -651,12 +651,12 @@
     <tabstop>useMDI</tabstop>
     <tabstop>chkMinimizeQueries</tabstop>
     <tabstop>useSDI</tabstop>
-    <tabstop>chkSideIcons</tabstop>
-    <tabstop>chkShowTimes</tabstop>
     <tabstop>chkLogChans</tabstop>
     <tabstop>chkLogQuery</tabstop>
     <tabstop>chkLogDcc</tabstop>
     <tabstop>chkLogServers</tabstop>
+    <tabstop>chkSideIcons</tabstop>
+    <tabstop>chkShowTimes</tabstop>
     <tabstop>chkHideConsole</tabstop>
 </tabstops>
 <includes>
