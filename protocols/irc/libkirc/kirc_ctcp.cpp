@@ -18,9 +18,9 @@
 */
 
 #include <qfileinfo.h>
+#include <kextsock.h>
 
 #include "kirctransferhandler.h"
-
 #include "kirc.h"
 
 void KIRC::registerCtcpMethods()

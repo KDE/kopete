@@ -46,7 +46,6 @@ class KIRCMethodFunctor_Ignore : public KIRCMethodFunctorCall
 		KIRCMethodFunctor_Ignore() {}
 };
 
-
 template <class TClass>
 class KIRCMethodFunctorBase : public KIRCMethodFunctorCall
 {

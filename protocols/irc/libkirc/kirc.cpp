@@ -32,6 +32,7 @@
 #include <kconfig.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
+#include <kextsock.h>
 
 #include "kircfunctors.h"
 #include "ksslsocket.h"
@@ -43,11 +44,13 @@
  */
 const QRegExp KIRC::m_RemoveLinefeeds( QString::fromLatin1("[\\r\\n]*$") );
 const QRegExp KIRC::isChannelRegex( QString::fromLatin1("^[#!+&][^\\s,:]+$") );
+KIRCMethodFunctorCall *KIRC::IgnoreMethod( new KIRCMethodFunctor_Ignore() );
 
 KIRC::KIRC( QObject *parent, const char *name) : QObject( parent, name ),
 	  m_status(Disconnected),
 	  m_useSSL(false),
-	  m_IrcMethods(101, false),
+	  m_IrcMethods(17, false),
+	  m_IrcNumericMethods(101),
 	  m_IrcCTCPQueryMethods(17, false),
 	  m_IrcCTCPReplyMethods(17, false),
 	  codecs( QDict<QTextCodec>(577,false) )
@@ -262,7 +265,7 @@ void KIRC::setUserName(const QString &newName)
 
 void KIRC::addIrcMethod(QDict<KIRCMethodFunctorCall> &map, const char *str, KIRCMethodFunctorCall *method)
 {
-	map.replace(QString::fromLatin1(str).upper(), method);
+	map.replace( QString::fromLatin1(str), method);
 }
 
 void KIRC::addIrcMethod(QDict<KIRCMethodFunctorCall> &map, const char *str,
@@ -270,6 +273,17 @@ void KIRC::addIrcMethod(QDict<KIRCMethodFunctorCall> &map, const char *str,
 			int argsSize_min, int argsSize_max, const char *helpMessage)
 {
 	addIrcMethod(map, str, new KIRCMethodFunctor_Forward<KIRC>(this, method, argsSize_min, argsSize_max, helpMessage));
+}
+
+void KIRC::addNumericIrcMethod(int id, KIRCMethodFunctorCall *method)
+{
+	m_IrcNumericMethods.replace(id, method);
+}
+
+void KIRC::addNumericIrcMethod(int id, bool (KIRC::*method)(const KIRCMessage &msg),
+			int argsSize_min, int argsSize_max, const char *helpMessage)
+{
+	addNumericIrcMethod(id, new KIRCMethodFunctor_Forward<KIRC>(this, method, argsSize_min, argsSize_max, helpMessage) );
 }
 
 bool KIRC::canSend( bool mustBeConnected ) const
@@ -350,7 +364,12 @@ void KIRC::slotReadyRead()
 		KIRCMessage msg = KIRCMessage::parse(this, defaultCodec, &parseSuccess);
 		if(parseSuccess)
 		{
-			KIRCMethodFunctorCall *method = m_IrcMethods[msg.command()];
+			KIRCMethodFunctorCall *method;
+			if( msg.isNumeric() )
+				method = m_IrcNumericMethods[ msg.command().toInt() ];
+			else
+				method = m_IrcMethods[ msg.command() ];
+
 			if(method && method->isValid())
 			{
 				if (method->checkMsgValidity(msg) &&
@@ -594,7 +613,6 @@ void KIRC::motd(const QString &server)
 	writeMessage("MOTD", server);
 }
 
-
 void KIRC::kickUser(const QString &user, const QString &channel, const QString &reason)
 {
 	writeMessage("KICK", join( channel, user, reason ) );
@@ -605,7 +623,7 @@ bool KIRC::kick(const KIRCMessage &msg)
 	/* The given user is kicked.
 	 * "<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]"
 	 */
-	emit incomingKick( msg.nickFromPrefix(), msg.arg(0), msg.arg(1), msg.suffix());
+	emit incomingKick( msg.arg(0), msg.nickFromPrefix(), msg.arg(1), msg.suffix());
 	return true;
 }
 

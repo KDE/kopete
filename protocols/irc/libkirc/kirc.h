@@ -21,8 +21,8 @@
 #define KIRC_H
 
 #include <qdict.h>
+#include <qintdict.h>
 #include <qdatetime.h>
-#include <qhostaddress.h>
 #include <qregexp.h>
 #include <qstring.h>
 #include <qstringlist.h>
@@ -33,9 +33,6 @@
 #if KDE_VERSION < KDE_MAKE_VERSION( 3, 1, 90 )
 #include <kdebugclasses.h>
 #endif
-
-#include <kextsock.h>
-#include <ksockaddr.h>
 
 #include "kirctransfer.h"
 #include "kircmessage.h"
@@ -48,6 +45,7 @@ class KIRCMethodFunctorCall;
 /**
  * @author Nick Betcher <nbetcher@kde.org>
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
+ * @author Jason Keirstead <jason@keirstead.org>
  */
 class KIRC : public QObject
 {
@@ -75,45 +73,65 @@ public:
 	KIRC( QObject *parent = 0, const char* name = 0 );
 	~KIRC();
 
-	const QString &currentHost() const { return m_Host; };
+	inline const QString &currentHost() const
+		{ return m_Host; };
 
-	Q_UINT16 currentPort() { return m_Port; }
+	inline Q_UINT16 currentPort()
+		{ return m_Port; }
 
-	const QString &nickName() const { return m_Nickname; };
+	inline const QString &nickName() const
+		{ return m_Nickname; };
 
-	const QString &password() const { return m_Passwd; }
-	void setPassword(const QString &passwd) { m_Passwd = passwd; };
+	inline const QString &password() const
+		{ return m_Passwd; }
 
-	const QString &userName() const {return m_Username; }
+	inline void setPassword(const QString &passwd)
+		{ m_Passwd = passwd; };
+
+	inline const QString &userName() const
+		{ return m_Username; }
+
 	void setUserName(const QString &newName);
 
-	const bool reqsPassword() const { return m_ReqsPasswd; };
-	void setReqsPassword(bool b) { m_ReqsPasswd = b; };
+	inline const bool reqsPassword() const
+		{ return m_ReqsPasswd; };
+
+	inline void setReqsPassword(bool b)
+		{ m_ReqsPasswd = b; };
 
 	const bool useSSL() const { return m_useSSL; };
 	void setUseSSL( bool useSSL );
 
-	const QTextCodec *codec() const { return defaultCodec; };
+	inline const QTextCodec *codec() const
+		{ return defaultCodec; };
+
 	const QTextCodec *codecForNick( const QString &nick ) const;
-	void setDefaultCodec( QTextCodec* codec ) { defaultCodec = codec; };
+
+	inline void setDefaultCodec( QTextCodec* codec )
+		{ defaultCodec = codec; };
 
 	void setVersionString(const QString &versionString);
 	void setUserString(const QString &userString);
 	void setSourceString(const QString &sourceString);
 	void connectToServer(const QString &host, Q_UINT16 port, const QString &nickname, bool useSSL = false);
 
-	KExtendedSocket *socket() { return m_sock; };
+	KExtendedSocket *socket()
+		{ return m_sock; };
 
-	EngineStatus status() const { return m_status; }
+	EngineStatus status() const
+		{ return m_status; }
 
-	inline bool isDisconnected() const { return m_status == Disconnected; }
+	inline bool isDisconnected() const
+		{ return m_status == Disconnected; }
 
-	inline bool isConnected() const { return m_status == Connected; }
+	inline bool isConnected() const
+		{ return m_status == Connected; }
 
 	inline void setCodec( const QString &nick, const QTextCodec *codec )
-	{
-		codecs.replace( nick, codec );
-	}
+		{ codecs.replace( nick, codec ); }
+
+	inline static bool isChannel( const QString &s )
+		{ return isChannelRegex.exactMatch(s); };
 
 	/**
 	 * Send a quit message for the given reason.
@@ -141,28 +159,52 @@ public:
 	void kickUser(const QString &user, const QString &channel, const QString &reason);
 	void partChannel(const QString &name, const QString &reason);
 
-	const QStringList &motd() { return m_motdBuffer; }
-
 	/* CTCP commands */
 	void CtcpRequestCommand(const QString &contact, const QString &command);
-
 	void CtcpRequest_action(const QString &contact, const QString &message);
 	void CtcpRequest_dcc(const QString &, const QString &, unsigned int port, KIRCTransfer::Type type);
 	void CtcpRequest_pingPong(const QString &target);
 	void CtcpRequest_version(const QString &target);
 
 	/* Custom CTCP replies handling */
-	QString &customCtcp( const QString &s ) { return customCtcpMap[s];  }
-	void addCustomCtcp( const QString &ctcp, const QString &reply ) {
-	kdDebug(14120) << "Adding cusotm CTCP reply: " << ctcp << " = " << reply << endl;
-	customCtcpMap[ ctcp.lower() ] = reply; }
+	inline QString &customCtcp( const QString &s )
+		{ return customCtcpMap[s];  }
+
+	inline void addCustomCtcp( const QString &ctcp, const QString &reply )
+		{ customCtcpMap[ ctcp.lower() ] = reply; }
+
+	//Message output
+	KIRCMessage writeRawMessage( const QString &message, bool mustBeConnected = true );
+
+	KIRCMessage writeMessage(const QString &message, bool mustBeConnected = true);
+
+	KIRCMessage writeMessage( const QString &command, const QString &arg,
+		const QString &suffix = QString::null, bool mustBeConnected = true );
+
+	KIRCMessage writeCtcpMessage(const QString &command, const QString &to, const QString &suffix,
+			const QString &ctcpCommand, const QString &ctcpArgs, const QString &ctcpSuffix = QString::null,
+			bool emitRepliedCtcp = true);
+
+	inline KIRCMessage writeCtcpQueryMessage(const QString &to, const QString &suffix,
+			const QString &ctcpCommand, const QString &ctcpArg = QString::null,
+			const QString &ctcpSuffix = QString::null, bool emitRepliedCtcp = true)
+		{ return writeCtcpMessage("PRIVMSG", to, suffix, ctcpCommand, ctcpArg, ctcpSuffix, emitRepliedCtcp); }
+
+	inline KIRCMessage writeCtcpReplyMessage(const QString &to, const QString &suffix,
+			const QString &ctcpCommand, const QString &ctcpArg = QString::null,
+			const QString &ctcpSuffix = QString::null, bool emitRepliedCtcp = true)
+		{ return writeCtcpMessage("NOTICE", to, suffix, ctcpCommand, ctcpArg, ctcpSuffix, emitRepliedCtcp); }
+
+	inline KIRCMessage writeCtcpErrorMessage(const QString &to, const QString &ctcpLine,
+			const QString &errorMsg, bool emitRepliedCtcp=true)
+		{ return writeCtcpReplyMessage(to, QString::null, "ERRMSG", ctcpLine, errorMsg, emitRepliedCtcp); }
 
 public slots:
 	void showInfoDialog();
 
 signals:
 	//Engine Signals
-	void connectedToServer(); /* 001 */
+	void connectedToServer();
 	void disconnected();
 	void successfulQuit();
 	void connectionTimeout();
@@ -170,12 +212,15 @@ signals:
 	void statusChanged(KIRC::EngineStatus newStatus);
 	void sentMessage(const KIRCMessage &);
 	void receivedMessage(const KIRCMessage &);
+	void successfullyChangedNick(const QString &, const QString &);
 
 	//ServerContact Signals
-	void incomingMotd(const QStringList &motd);
+	void incomingMotd(const QString &motd);
 	void incomingNotice(const QString &originating, const QString &message);
-	void incomingHostInfo(const QString &servername, const QString &version, const QString &userModes, const QString &channelModes);
-	void incomingYourHostInfo(const QString &servername, const QString &version, const QString &userModes, const QString &channelModes);
+	void incomingHostInfo(const QString &servername, const QString &version,
+		const QString &userModes, const QString &channelModes);
+	void incomingYourHostInfo(const QString &servername, const QString &version,
+		const QString &userModes, const QString &channelModes);
 	void incomingConnectString(const QString &clients);
 
 	//Channel Contact Signals
@@ -200,8 +245,10 @@ signals:
 
 	//Response Signals
 	void incomingUserOnline(const QString &nick);
-	void incomingWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
-	void incomingWhoWasUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
+	void incomingWhoIsUser(const QString &nickname, const QString &username,
+		const QString &hostname, const QString &realname);
+	void incomingWhoWasUser(const QString &nickname, const QString &username,
+		const QString &hostname, const QString &realname);
 	void incomingWhoIsServer(const QString &nickname, const QString &server, const QString &serverInfo);
 	void incomingWhoIsOperator(const QString &nickname);
 	void incomingWhoIsIdentified(const QString &nickname);
@@ -233,45 +280,15 @@ signals:
 	void incomingUnknown(const QString &);
 	void incomingUnknownCtcp(const QString &);
 	void incomingPrivAction(const QString &, const QString &, const QString &);
-	void incomingKick(const QString &nick, const QString &channel,
+	void incomingKick(const QString &channel, const QString &nick,
 		const QString &nickKicked, const QString &reason);
 
 	void incomingUserIsAway(const QString &nick, const QString &awayMessage);
 	void incomingListedChan(const QString &chan, uint users, const QString &topic);
 	void incomingEndOfList();
 
-	void successfullyChangedNick(const QString &, const QString &); /* 001 */
-
 	void repliedCtcp(const QString &type, const QString &ctcpMessage);
 	void incomingCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
-
-public:
-	inline static bool isChannel( const QString &s ) { return isChannelRegex.search(s) != -1; };
-
-	KIRCMessage writeRawMessage( const QString &message, bool mustBeConnected = true );
-
-	KIRCMessage writeMessage(const QString &message, bool mustBeConnected = true);
-
-	KIRCMessage writeMessage( const QString &command, const QString &arg,
-		const QString &suffix = QString::null, bool mustBeConnected = true );
-
-	KIRCMessage writeCtcpMessage(const QString &command, const QString &to, const QString &suffix,
-			const QString &ctcpCommand, const QString &ctcpArgs, const QString &ctcpSuffix = QString::null,
-			bool emitRepliedCtcp = true);
-
-	inline KIRCMessage writeCtcpQueryMessage(const QString &to, const QString &suffix,
-			const QString &ctcpCommand, const QString &ctcpArg = QString::null,
-			const QString &ctcpSuffix = QString::null, bool emitRepliedCtcp = true)
-		{ return writeCtcpMessage("PRIVMSG", to, suffix, ctcpCommand, ctcpArg, ctcpSuffix, emitRepliedCtcp); }
-
-	inline KIRCMessage writeCtcpReplyMessage(const QString &to, const QString &suffix,
-			const QString &ctcpCommand, const QString &ctcpArg = QString::null,
-			const QString &ctcpSuffix = QString::null, bool emitRepliedCtcp = true)
-		{ return writeCtcpMessage("NOTICE", to, suffix, ctcpCommand, ctcpArg, ctcpSuffix, emitRepliedCtcp); }
-
-	inline KIRCMessage writeCtcpErrorMessage(const QString &to, const QString &ctcpLine,
-			const QString &errorMsg, bool emitRepliedCtcp=true)
-		{ return writeCtcpReplyMessage(to, QString::null, "ERRMSG", ctcpLine, errorMsg, emitRepliedCtcp); }
 
 private slots:
 	void slotConnected();
@@ -284,38 +301,54 @@ private slots:
 private:
 	void registerCtcpMethods();
 	void registerNumericReplies();
+	void setStatus(EngineStatus status);
+	bool canSend( bool mustBeConnected ) const;
+	bool invokeCtcpCommandOfMessage(const KIRCMessage &message, const QDict<KIRCMethodFunctorCall> &map);
 
-	static const QRegExp isChannelRegex;
-
-	typedef bool ircMethod(const KIRCMessage &msg);
-	typedef bool (KIRC::*pIrcMethod)(const KIRCMessage &msg);
-
-	void addIrcMethod(QDict<KIRCMethodFunctorCall> &map, const char *str, KIRCMethodFunctorCall *method);
-
-	void addIrcMethod( QDict<KIRCMethodFunctorCall> &map,
-			const char *str,
-			pIrcMethod method,
-			int argsSize_min=-1, int argsSize_max=-1,
-			const char *helpMessage=0);
-
-	inline void addIrcMethod(const char *str, KIRCMethodFunctorCall *method) {
-			addIrcMethod(m_IrcMethods, str, method);
-		}
-
-	inline void addIrcMethod(const char *str,
-			pIrcMethod method,
-			int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0) {
-			addIrcMethod(m_IrcMethods, str, method, argsSize_min, argsSize_max, helpMessage);
-		}
-
+	//Joins a bunch of strings with " "
 	inline static const QString join( const QString &arg1, const QString &arg2 = QString::null,
 		const QString &arg3 = QString::null, const QString &arg4 = QString::null,
 		const QString &arg5 = QString::null )
 	{
 		QStringList ret( arg1 );
 		ret << arg2 << arg3 << arg4 << arg5;
-		return ret.join( QString::fromLatin1(" ") );
+		return ret.join( QChar(' ') ).stripWhiteSpace();
 	}
+
+	typedef bool ircMethod(const KIRCMessage &msg);
+	typedef bool (KIRC::*pIrcMethod)(const KIRCMessage &msg);
+
+	//KIRCMethodFunctor registration
+	void addIrcMethod(QDict<KIRCMethodFunctorCall> &map, const char *str, KIRCMethodFunctorCall *method);
+
+	void addIrcMethod(QDict<KIRCMethodFunctorCall> &map, const char *str, pIrcMethod method,
+			int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0);
+
+	void addNumericIrcMethod(int id, KIRCMethodFunctorCall *method);
+
+	void addNumericIrcMethod(int id, pIrcMethod method, int argsSize_min=-1,
+		int argsSize_max=-1, const char *helpMessage=0);
+
+	inline void addIrcMethod(const char *str, KIRCMethodFunctorCall *method)
+		{ addIrcMethod(m_IrcMethods, str, method); }
+
+	inline void addIrcMethod(const char *str, pIrcMethod method, int argsSize_min=-1,
+			int argsSize_max=-1, const char *helpMessage=0)
+		{ addIrcMethod(m_IrcMethods, str, method, argsSize_min, argsSize_max, helpMessage); }
+
+	inline void addCtcpQueryIrcMethod(const char *str, KIRCMethodFunctorCall *method)
+		{ addIrcMethod(m_IrcCTCPQueryMethods, str, method); }
+
+	inline void addCtcpQueryIrcMethod( const char *str, pIrcMethod method, int argsSize_min=-1,
+			int argsSize_max=-1, const char *helpMessage=0)
+		{ addIrcMethod(m_IrcCTCPQueryMethods, str, method, argsSize_min, argsSize_max, helpMessage); }
+
+	inline void addCtcpReplyIrcMethod(const char *str, KIRCMethodFunctorCall *method)
+		{ addIrcMethod(m_IrcCTCPReplyMethods, str, method); }
+
+	inline void addCtcpReplyIrcMethod( const char *str, pIrcMethod method, int argsSize_min=-1,
+			int argsSize_max=-1, const char *helpMessage=0)
+		{ addIrcMethod(m_IrcCTCPReplyMethods, str, method, argsSize_min, argsSize_max, helpMessage); }
 
 	ircMethod nickChange;
 	ircMethod notice;
@@ -358,7 +391,6 @@ private:
 	ircMethod numericReply_352;
 	ircMethod numericReply_353;
 	ircMethod numericReply_372;
-	ircMethod numericReply_375;
 	ircMethod numericReply_376;
 
 	ircMethod numericReply_433;
@@ -367,18 +399,6 @@ private:
 	ircMethod numericReply_473;
 	ircMethod numericReply_474;
 	ircMethod numericReply_475;
-
-	inline void addCtcpQueryIrcMethod(const char *str, KIRCMethodFunctorCall *method) {
-		addIrcMethod(m_IrcCTCPQueryMethods, str, method);
-	}
-
-	inline void addCtcpQueryIrcMethod(
-			const char *str,
-			pIrcMethod method,
-			int argsSize_min=-1, int argsSize_max=-1,
-			const char *helpMessage=0) {
-		addIrcMethod(m_IrcCTCPQueryMethods, str, method, argsSize_min, argsSize_max, helpMessage);
-	}
 
 	ircMethod CtcpQuery_action;
 	ircMethod CtcpQuery_clientInfo;
@@ -390,28 +410,18 @@ private:
 	ircMethod CtcpQuery_userInfo;
 	ircMethod CtcpQuery_version;
 
-	inline void addCtcpReplyIrcMethod(const char *str, KIRCMethodFunctorCall *method) {
-		addIrcMethod(m_IrcCTCPReplyMethods, str, method);
-	}
-
-	inline void addCtcpReplyIrcMethod(
-			const char *str,
-			pIrcMethod method,
-			int argsSize_min=-1, int argsSize_max=-1,
-			const char *helpMessage=0) {
-		addIrcMethod(m_IrcCTCPReplyMethods, str, method, argsSize_min, argsSize_max, helpMessage);
-	}
-
 	ircMethod CtcpReply_errorMsg;
 	ircMethod CtcpReply_pingPong;
 	ircMethod CtcpReply_version;
 
-	bool invokeCtcpCommandOfMessage(const KIRCMessage &message, const QDict<KIRCMethodFunctorCall> &map);
+	//Static ignore
+	static KIRCMethodFunctorCall *IgnoreMethod;
 
+	//Static regexes
+	static const QRegExp isChannelRegex;
 	static const QRegExp m_RemoveLinefeeds;
 
 	EngineStatus m_status;
-	// put this in a QMap<QString, QVariant> ?
 	QString m_Host;
 	Q_UINT16 m_Port;
 
@@ -419,29 +429,26 @@ private:
 	QString m_Realname;
 	QString m_Nickname;
 	QString m_Passwd;
-	bool	m_ReqsPasswd;
-	bool	m_FailedNickOnLogin;
-	bool	m_useSSL;
-	int	connectTimeout;
+	bool m_ReqsPasswd;
+	bool m_FailedNickOnLogin;
+	bool m_useSSL;
+	int connectTimeout;
 
 	QString m_VersionString;
 	QString m_UserString;
 	QString m_SourceString;
 	QString m_PendingNick;
-	QStringList m_motdBuffer;
 
 	QDict<KIRCMethodFunctorCall> m_IrcMethods;
-
+	QIntDict<KIRCMethodFunctorCall> m_IrcNumericMethods;
 	QDict<KIRCMethodFunctorCall> m_IrcCTCPQueryMethods;
 	QDict<KIRCMethodFunctorCall> m_IrcCTCPReplyMethods;
+
 	QMap<QString, QString> customCtcpMap;
 	QDict<QTextCodec> codecs;
 	QTextCodec *defaultCodec;
 
 	KExtendedSocket *m_sock;
-
-	void setStatus(EngineStatus status);
-	bool canSend( bool mustBeConnected ) const;
 };
 
 #endif // KIRC_H

@@ -108,28 +108,28 @@ protected slots:
 	void readyReadFileOutgoing();
 
 protected:
-	Type			m_type;
+	Type		m_type;
 
-	KExtendedSocket *	m_socket;
+	KExtendedSocket *m_socket;
 
 	// Text member data
-	QTextStream		m_socket_textStream;
-//	QTextCodec *		m_socket_codec;
+	QTextStream	m_socket_textStream;
+//	QTextCodec *	m_socket_codec;
 
 	// File member data
-	QFile *			m_file;
+	QFile *		m_file;
 	Q_UINT32 /*usize_t*/	m_file_size_cur;
 	Q_UINT32 /*usize_t*/	m_file_size_ack;
-	QDataStream		m_socket_dataStream;
-	char			m_buffer[1024];
-	int			m_buffer_length;
+	QDataStream	m_socket_dataStream;
+	char		m_buffer[1024];
+	int		m_buffer_length;
 
 	// Data transfer measures
-	Q_UINT32		m_received_bytes_limit;
-	Q_UINT32		m_received_bytes;
+	Q_UINT32	m_received_bytes_limit;
+	Q_UINT32	m_received_bytes;
 
-	Q_UINT32		m_sent_bytes_limit;
-	Q_UINT32		m_sent_bytes;
+	Q_UINT32	m_sent_bytes_limit;
+	Q_UINT32	m_sent_bytes;
 };
 
 #endif

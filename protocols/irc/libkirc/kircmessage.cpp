@@ -18,6 +18,8 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kextsock.h>
+
 #include "kirc.h"
 #include "kircmessage.h"
 
@@ -284,8 +286,7 @@ QString KIRCMessage::toString() const
 
 bool KIRCMessage::isNumeric() const
 {
-	QRegExp re(m_IRCNumericCommand);
-	return re.exactMatch( m_command );
+	return m_IRCNumericCommand.exactMatch( m_command );
 }
 
 bool KIRCMessage::isValid() const

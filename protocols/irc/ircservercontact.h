@@ -62,7 +62,7 @@ class IRCServerContact : public IRCContact
 
 		void slotIncomingUnknown( const QString &message );
 		void slotIncomingConnect( const QString &message );
-		void slotIncomingMotd( const QStringList &motd );
+		void slotIncomingMotd( const QString &motd );
 		void slotIncomingNotice( const QString &orig, const QString &notice );
 		void slotCannotSendToChannel( const QString &channel, const QString &msg );
 

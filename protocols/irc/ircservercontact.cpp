@@ -57,9 +57,8 @@ IRCServerContact::IRCServerContact(IRCContactManager *contactManager, const QStr
 	QObject::connect( m_engine, SIGNAL(incomingConnectString( const QString &)),
 			this, SLOT(slotIncomingConnect(const QString &)) );
 
-	//FIXME:: This shouldn't add MOTD stuffs when someone uses /motd
-	QObject::connect( m_engine, SIGNAL(incomingMotd( const QStringList &)),
-			this, SLOT(slotIncomingMotd(const QStringList &)) );
+	QObject::connect( m_engine, SIGNAL(incomingMotd( const QString &)),
+			this, SLOT(slotIncomingMotd(const QString &)) );
 
 	QObject::connect(KopeteMessageManagerFactory::factory(), SIGNAL(viewCreated(KopeteView*)),
 			this, SLOT(slotViewCreated(KopeteView*)) );
@@ -151,15 +150,14 @@ void IRCServerContact::slotIncomingConnect( const QString &message )
 	m_account->appendMessage( message , IRCAccount::ConnectReply );
 }
 
+void IRCServerContact::slotIncomingMotd( const QString &message )
+{
+	m_account->appendMessage( message , IRCAccount::InfoReply );
+}
+
 void IRCServerContact::slotCannotSendToChannel( const QString &channel, const QString &message )
 {
 	m_account->appendMessage( QString::fromLatin1("%1: %2").arg( channel ).arg( message ), IRCAccount::ErrorReply );
-}
-
-void IRCServerContact::slotIncomingMotd( const QStringList &motd )
-{
-	for( QStringList::ConstIterator it = motd.begin(); it != motd.end(); ++it )
-		slotIncomingConnect( *it );
 }
 
 void IRCServerContact::appendMessage( KopeteMessage &msg )
