@@ -972,9 +972,14 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 		}
 	}
 	// END OF PASTE
-
+	
+	
+	//do you see a better way to tell the TextComponent we are selected ?  - Olivier 2004-09-02
+	if ( isSelected() ) 
+		_cg.setColor(QColorGroup::Text , _cg.highlightedText() );
+	
 	if ( Component *comp = component( column ) )
-		comp->paint( &paint, cg );
+		comp->paint( &paint, _cg );
 	paint.end();
 
 #ifdef HAVE_XRENDER
