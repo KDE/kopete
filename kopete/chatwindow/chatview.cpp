@@ -268,7 +268,7 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	saveAction = KStdAction::saveAs ( this, SLOT(save()), actionCollection());
 	printAction = KStdAction::print ( this, SLOT(print()),actionCollection());
 	closeAction = KStdAction::close ( this, SLOT(closeView()),actionCollection());
-	copyURLAction = new KAction( i18n("Copy Link Location"),QString::fromLatin1("editcopy"),0,this, SLOT(slotCopyURL()),actionCollection());
+	copyURLAction = new KAction( i18n("Copy Link Address"),QString::fromLatin1("editcopy"),0,this, SLOT(slotCopyURL()),actionCollection());
 
 	setCaption( m_manager->displayName(), false );
 
