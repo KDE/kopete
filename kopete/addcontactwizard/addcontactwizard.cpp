@@ -42,6 +42,8 @@
 //		true
 
 #include <qcheckbox.h>
+#include <kapplication.h>
+#include <kconfig.h>
 #include <klocale.h>
 #include <kiconloader.h>
 
@@ -82,15 +84,29 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	protocolListView->clear();
 	m_accountItems.clear();
 
+	// read sticky settings
+	KConfig *config = kapp->config();
+	config->setGroup("Add Contact Wizard");
+	bool useKABC = config->readBoolEntry( "UseAddressBook", false );
+	chkAddressee->setChecked( useKABC );
+	setAppropriate( selectAddressee, useKABC );
+	m_usedAccounts = config->readListEntry( "AccountsUsedLast" );
+	
 	// Populate the accounts list
 	QCheckListItem* accountLVI=0L;
 	QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
+	bool foundUsedAccount = false;
 	for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
 	{
 		accountLVI= new QCheckListItem( protocolListView, i->accountId(), QCheckListItem::CheckBox);
 		accountLVI->setText(1,i->protocol()->displayName() + QString::fromLatin1(" ") );
 		//FIXME - I'm not sure the column 1 is a right place for the colored icon -Olivier
 		accountLVI->setPixmap( 1, i->accountIcon() );
+		if ( m_usedAccounts.contains( i->accountId() ) )
+		{
+			accountLVI->setOn( true );
+			foundUsedAccount = true;
+		}
 		m_accountItems.insert(accountLVI,i);
 	}
 
@@ -100,7 +116,7 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 		setAppropriate( selectService, false );
 	}
 
-	setNextEnabled( selectService, ( accounts.count() == 1 ) );
+	setNextEnabled( selectService, ( accounts.count() == 1 ) || foundUsedAccount );	
 	setNextEnabled( selectAddressee, false );
 	setFinishEnabled( finis, true );
 
@@ -280,6 +296,12 @@ void AddContactWizard::accept()
 
 	disconnect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), this, SLOT( slotLoadAddressees() ) );
 
+	// write sticky settings
+	KConfig *config = kapp->config();
+	config->setGroup("Add Contact Wizard");
+	config->writeEntry( "UseAddressBook", chkAddressee->isChecked() );
+	config->writeEntry( "AccountsUsedLast", m_usedAccounts );
+	config->sync();
 	deleteLater();
 }
 
@@ -304,6 +326,8 @@ void AddContactWizard::next()
 		}
 		protocolPages.clear();
 
+		// reset the list of last used accounts
+		m_usedAccounts.clear();
 		// We don't keep track of this pointer because it gets deleted when the wizard does (which is what we want)
 		for (QListViewItemIterator it(protocolListView); it.current(); ++it)
 		{
@@ -315,6 +339,7 @@ void AddContactWizard::next()
 					continue;
 
 				AddContactPage *addPage = m_accountItems[item]->protocol()->createAddContactWidget(this, m_accountItems[item] );
+				m_usedAccounts.append( m_accountItems[item]->accountId() );
 				if (!addPage)
 					continue;
 
