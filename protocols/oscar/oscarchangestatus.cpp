@@ -22,6 +22,7 @@
 #include <qlineedit.h>
 #include "kopeteaway.h"
 #include "oscarchangestatus.h"
+#include "oscarchangestatus.moc"
 #include "oscarsocket.h"
 
 OscarChangeStatus::OscarChangeStatus(QWidget *parent, const char *name ) : OscarChangeStatusBase(parent,name)
