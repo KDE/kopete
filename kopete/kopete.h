@@ -29,6 +29,7 @@
 #include "kopetemessage.h"
 
 class KopeteWindow;
+class QSessionManager;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -40,6 +41,12 @@ class Kopete : public KUniqueApplication
 public:
 	Kopete();
 	~Kopete();
+	/**
+	 * Method to return whether or not we're shutting down
+	 * or not at this point.
+	 */
+	 bool isShuttingDown() { return m_isShuttingDown; }
+	 virtual void commitData( QSessionManager &sm );
 
 private slots:
 	/**
@@ -54,6 +61,7 @@ private slots:
 
 private:
 	KopeteWindow *m_mainWindow;
+	bool m_isShuttingDown;
 };
 
 #endif

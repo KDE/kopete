@@ -129,8 +129,6 @@ private:
 	void loadOptions(void);
 	void saveOptions(void);
 
-	bool isClosing;
-
 	/**
 	 * This is really a dictionary of StatusBarIcon objects, but
 	 * QPtrDict requires a full class definition to be known to make

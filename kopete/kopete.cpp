@@ -40,6 +40,7 @@
 Kopete::Kopete()
 : KUniqueApplication( true, true, true )
 {
+	m_isShuttingDown = false;
 	m_mainWindow = new KopeteWindow( 0, "mainWindow" );
 	setMainWidget( m_mainWindow );
 
@@ -150,6 +151,12 @@ void Kopete::slotLoadPlugins()
 void Kopete::slotMainWindowDestroyed()
 {
 	m_mainWindow = 0L;
+}
+
+void Kopete::commitData( QSessionManager &sm )
+{
+	m_isShuttingDown = true;
+	KUniqueApplication::commitData(sm);
 }
 
 #include "kopete.moc"

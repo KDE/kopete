@@ -36,6 +36,7 @@
 #include <kstatusbar.h>
 
 #include "addcontactwizard.h"
+#include "kopete.h"
 #include "kopeteballoon.h"
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
@@ -73,7 +74,6 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 
 	// for now systemtray is also always shown
 	// TODO: make the configurable
-	isClosing=false;
 	tray->show();
 
 	// Trap all loaded plugins, so we can add their status bar icons accordingly
@@ -343,7 +343,9 @@ void KopeteWindow::slotGlobalAwayMessageSelect(){
 
 void KopeteWindow::closeEvent( QCloseEvent *e )
 {
-	if(isClosing)
+	Kopete *kopeteapp = static_cast<Kopete*>(kapp);
+	if (!kopeteapp) return;
+	if(kopeteapp->isShuttingDown())
 	{
 		KMainWindow::closeEvent( e );
 		return;
@@ -356,7 +358,7 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 		"application.</qt>" ), i18n( "Docking in System Tray" ),
 		"hideOnCloseInfo" );
 	hide();
-	e->ignore(); // necessary to not interrupt session management!
+	e->ignore();
 #else
 	KMainWindow::closeEvent( e );
 #endif
@@ -365,11 +367,6 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 void KopeteWindow::slotQuit()
 {
 	kdDebug(14000) << "KopeteWindow::slotQuit()" << endl;
-
-	//I don't know why, but when this slot is called by the toolbar, that work fine
-	// but when this slot is called by the system try, the closeEvent's message is showed
-	isClosing=true;
-	
 	qApp->quit();
 }
 
