@@ -28,7 +28,9 @@
 #include <qlabel.h>
 #include <kpopupmenu.h>
 
+
 #include "contactlist.h"
+#include "pluginmanager.h"
 /** Kopete is the base class of the project */
 class Kopete : public QWidget
 {
@@ -42,6 +44,8 @@ class Kopete : public QWidget
   void saveOptions();
   /** No descriptions */
   void readOptions();
+
+	PluginManager *plugins;
 	private:
 	ContactList *contactlist;
 	QPushButton *mainbutton;

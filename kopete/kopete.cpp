@@ -22,6 +22,7 @@
 
 Kopete::Kopete(QWidget *parent, const char *name) : QWidget(parent, name)
 {
+	plugins = new PluginManager();
 	QBoxLayout *layout = new QBoxLayout(this,QBoxLayout::TopToBottom);
   QBoxLayout *layout2 = new QBoxLayout(this,QBoxLayout::LeftToRight);
   QBoxLayout *layout3 = new QBoxLayout(this,QBoxLayout::LeftToRight);
@@ -39,7 +40,7 @@ Kopete::Kopete(QWidget *parent, const char *name) : QWidget(parent, name)
   icqpopupmenu = new KPopupMenu(this);
   msnpopupmenu = new KPopupMenu(this);
 
-	mainbutton->setText("ICQ");
+	mainbutton->setText("Kopete");
 
 	addbutton->setText("+");
 	globalbutton->setText("O");
