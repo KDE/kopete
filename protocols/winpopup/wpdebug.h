@@ -16,7 +16,7 @@
  ***************************************************************************/
 
 #ifndef WPDEBUG_H
-#define WPEBUG_H
+#define WPDEBUG_H
 
 #define WPDEBUGLEVEL 0
 
