@@ -1,7 +1,7 @@
 METASOURCES = AUTO
 
 noinst_LTLIBRARIES = libcutestuff_network.la
-INCLUDES = -I../util -I../../qca/src $(all_includes)
+INCLUDES = -I$(srcdir)/../util -I$(srcdir)/../../qca/src $(all_includes)
 
 libcutestuff_network_la_SOURCES = \
 	bsocket.cpp \

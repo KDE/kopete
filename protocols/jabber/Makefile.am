@@ -13,7 +13,7 @@ kde_module_LTLIBRARIES = kopete_jabber.la
 kopete_jabber_la_SOURCES = jabberprotocol.cpp jabberaccount.cpp jabberresource.cpp jabbercontact.cpp                            jabberformtranslator.cpp jabberformlineedit.cpp jabbergroupchat.cpp jabberawaydialog.cpp
 
 kopete_jabber_la_LDFLAGS = -no-undefined -module -lidn $(KDE_PLUGIN) $(all_libraries)
-kopete_jabber_la_LIBADD  = ../../libkopete/libkopete.la \
+kopete_jabber_la_LIBADD  = $(top_builddir)/kopete/libkopete/libkopete.la \
 	ui/libkopetejabberui.la \
 	libiris/iris/include/libiris.la \
 	libiris/iris/jabber/libiris_jabber.la \
