@@ -1,7 +1,7 @@
 /*
     kopetefileconfirmdialog.cpp
 
-    Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2003-2004 by Olivier Goffart       <ogoffart@tiscalinet.be>
 
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
@@ -22,6 +22,7 @@
 #include <klocale.h>
 #include <kfiledialog.h>
 #include <kpushbutton.h>
+#include <kmessagebox.h>
 
 //#include "kopetetransfermanager.h"
 #include "fileconfirmbase.h"
@@ -70,7 +71,7 @@ void KopeteFileConfirmDialog::slotUser1()
 {
 	m_emited=true;
 	KURL url(m_view->m_saveto->text());
-	if(url.isValid())
+	if(url.isValid() && url.isLocalFile() )
 	{
 		const QString directory=url.directory();
 		if(!directory.isEmpty())
@@ -78,9 +79,20 @@ void KopeteFileConfirmDialog::slotUser1()
 			KGlobal::config()->setGroup("File Transfer");
 			KGlobal::config()->writeEntry("defaultPath" , directory );
 		}
-	} 
-	emit accepted(m_info,m_view->m_saveto->text());
-	close();
+		
+		if(QFile(m_view->m_saveto->text()).exists())
+		{
+			int ret=KMessageBox::warningContinueCancel(this,  i18n("The file '%1' already exists.\nDo you want to overwrite it ?").arg(m_view->m_saveto->text()) ,
+					 i18n("Overwrite File - Kopete") , KStdGuiItem::save());
+			if(ret==KMessageBox::Cancel)
+				return;
+		}
+	 
+		emit accepted(m_info,m_view->m_saveto->text());
+		close();
+	}
+	else
+		KMessageBox::queuedMessageBox (this, KMessageBox::Sorry, i18n("You must provide a valid local filename") );
 }
 
 void KopeteFileConfirmDialog::slotUser2()
