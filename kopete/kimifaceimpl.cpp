@@ -32,7 +32,7 @@
 
 #include "kimifaceimpl.h"
 
-KIMIfaceImpl::KIMIfaceImpl() : QObject(), DCOPObject( "KIMIface" )
+KIMIfaceImpl::KIMIfaceImpl() : DCOPObject( "KIMIface" ), QObject()
 {
 	connect( KopeteContactList::contactList(),
 		SIGNAL( metaContactAdded( KopeteMetaContact * ) ),
@@ -310,3 +310,4 @@ void KIMIfaceImpl::slotContactStatusChanged( KopeteMetaContact *mc )
 }
 
 #include "kimifaceimpl.moc"
+
