@@ -32,7 +32,7 @@
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "pluginloader.h"
-
+#include "kopetehistorydialog.h"
 
 #define EMAIL_WINDOW 0
 #define CHAT_WINDOW 1
@@ -54,6 +54,7 @@ struct KopeteMetaContactPrivate
 	uint contactId;
 	KopeteMetaContact::OnlineStatus onlineStatus;
 	KopeteMetaContact::IdleState    idleState;
+	KopeteHistoryDialog *historyDialog;
 };
 
 KopeteMetaContact::KopeteMetaContact()
@@ -67,6 +68,7 @@ KopeteMetaContact::KopeteMetaContact()
 
 	d->onlineStatus = Unknown;
 	d->idleState = Unspecified;
+	d->historyDialog = 0L;
 }
 
 KopeteMetaContact::~KopeteMetaContact()
@@ -805,6 +807,26 @@ void KopeteMetaContact::slotContactIdleStateChanged( KopeteContact *c, KopeteCon
 {
 	emit contactIdleStateChanged(c,s);
 	updateIdleState();
+}
+
+void KopeteMetaContact::viewHistory()
+{
+	kdDebug( 14010 ) << k_funcinfo << endl;
+
+	if( d->historyDialog )
+	{
+		d->historyDialog->raise();
+	}
+	else
+	{
+		d->historyDialog = new KopeteHistoryDialog( this, true, 50, qApp->mainWidget(), "KopeteHistoryDialog" );
+		connect ( d->historyDialog, SIGNAL( destroyed() ), SLOT( slotHistoryDialogDestroyed() ) );
+	}
+}
+
+void KopeteMetaContact::slotHistoryDialogDestroyed()
+{
+	d->historyDialog = 0L;
 }
 
 QPtrList<KopeteContact> KopeteMetaContact::contacts() const
