@@ -526,7 +526,7 @@ void ICQProtocol::fillTZCombo(QComboBox *combo)
 
 void ICQProtocol::setTZComboValue(QComboBox *combo, const char &tz)
 {
-// 	kdDebug(14200) << k_funcinfo << "tz=" << int(tz) << endl;
+	kdDebug(14200) << k_funcinfo << "tz=" << int(tz) << endl;
 	if ((tz < -24) || (tz > 24))
 		combo->setCurrentItem(24); // GMT+0:00 as default
 	else

@@ -38,7 +38,7 @@ void RateClass::setRateInfo( WORD pclassid, DWORD pwindowsize, DWORD pclear,
 	lastTime = plastTime;
 	currentState = pcurrentState;
 }
-	
+
 void RateClass::addMember( SnacPair *pmember )
 {
 	members.append(pmember);
@@ -48,7 +48,7 @@ void RateClass::dequeue(void)
 {
 	//clear the buffer
 	mPacketQueue.first().clear();
-	
+
 	//then remove it
 	mPacketQueue.pop_front();
 }
@@ -66,58 +66,58 @@ void RateClass::timedSend(void)
 		kdDebug(14150) << k_funcinfo << "Calling writeData on empty queue!" << endl;
 	}
 	Buffer &outbuf = mPacketQueue.first();
-	
+
 	DWORD newLevel = 0;
-	
+
 	//get time elapsed since the last packet was sent
 	int timeDiff = mPacketTimer.elapsed();
-	
+
 	//Calculate new rate level
 	//NewLevel = ((Window - 1)*OldLevel + TimeDiff)/Window
 	//add 1 because we never want to round down or there will be problems
 	newLevel = ((windowsize - 1)*current + timeDiff)/windowsize + 1;
-	
+
 	//The maximum level at which we can safely send a packet
-	DWORD maxPacket = limit*windowsize/(windowsize-1) + 25;
-	
+	DWORD maxPacket = limit*windowsize/(windowsize-1) + RATE_SAFETY_TIME;
+
 	//kdDebug(14150) << k_funcinfo << "Rate Information:"
 	//	<< "\nWindow Size: " << windowsize
 	//	<< "\nWindow Size - 1: " << windowsize - 1
-	//	<< "\nOld Level: " << current 
-	//	<< "\nAlert Level: " << alert 
+	//	<< "\nOld Level: " << current
+	//	<< "\nAlert Level: " << alert
 	//	<< "\nLimit Level: " << limit
 	//	<< "\nDisconnect Level: " << disconnect
 	//	<< "\nNew Level: " << newLevel
-	//	<< "\nTime elapsed: " << timeDiff 
+	//	<< "\nTime elapsed: " << timeDiff
 	//	<< "\nMax packet: " << maxPacket
 	//	<< "\nSend queue length: " << mPacketQueue.count() << endl;
-	
-	//If we are one packet or less away from being blocked, 
+
+	//If we are one packet or less away from being blocked,
 	// wait to send
 	if ( newLevel < maxPacket || newLevel < disconnect )
 	{
 		//We are sending TOO FAST, let's wait and send later
-		kdDebug(14150) << k_funcinfo << "Sending this packet would violate rate limit... waiting " 
-			<< maxPacket*windowsize - (windowsize - 1)*current - timeDiff + 25
+		kdDebug(14150) << k_funcinfo << "Sending this packet would violate rate limit... waiting "
+			<< maxPacket*windowsize - (windowsize - 1)*current - timeDiff + RATE_SAFETY_TIME
 			<< " ms..." << endl;
-			
+
 		//the 25 is included here to allow for differences in clock
 		//granularity between client and server
-		QTimer::singleShot( 
-			maxPacket*windowsize - (windowsize - 1)*current - timeDiff + 25,
+		QTimer::singleShot(
+			maxPacket*windowsize - (windowsize - 1)*current - timeDiff + RATE_SAFETY_TIME,
 			this,
-			SLOT(timedSend()) );
-			
+			SLOT(timedSend()));
+
 		return;
 	}
 	emit dataReady(outbuf);
-	
+
 	//Update rate info
 	if ( newLevel > max )
 		current = max;
 	else
-		current = newLevel; 
-		
+		current = newLevel;
+
 	mPacketTimer.restart();
 }
 

@@ -313,20 +313,26 @@ void OscarAccount::slotReceivedAwayMessage(const QString &sender, const QString 
 		", sender='" << sender << "'" << endl;*/
 
 	OscarContact *contact = static_cast<OscarContact*>(contacts()[tocNormalize(sender)]);
-	//kdDebug(14150) << k_funcinfo << "Incoming away-message is: " << message << endl;
+	if(!contact)
+		return;
+
+	/*kdDebug(14150) << k_funcinfo <<
+		"Incoming away-message is: " << message << endl;*/
+
 	QString filteredMessage = message;
-	if(contact)
-	{
-		filteredMessage.replace( QRegExp( QString::fromLatin1("<[hH][tT][mM][lL].*>(.*)</[hH][tT][mM][lL]>") ),
-			QString::fromLatin1("\\1"));
-		filteredMessage.replace( QRegExp( QString::fromLatin1("<[bB][oO][dD][yY].*>(.*)</[bB][oO][dD][yY]>") ),
-			QString::fromLatin1("\\1") );
-		filteredMessage.replace( QRegExp( QString::fromLatin1("<[fF][oO][nN][tT].*>(.*)</[fF][oO][nN][tT]>") ),
-			QString::fromLatin1("\\1") );
-		/*kdDebug(14150) << k_funcinfo <<
-			"Filtered Away-message is: " << filteredMessage << endl;*/
-		contact->setAwayMessage(filteredMessage);
-	}
+	filteredMessage.replace(
+		QRegExp(QString::fromLatin1("<[hH][tT][mM][lL].*>(.*)</[hH][tT][mM][lL]>")),
+		QString::fromLatin1("\\1"));
+	filteredMessage.replace(
+		QRegExp(QString::fromLatin1("<[bB][oO][dD][yY].*>(.*)</[bB][oO][dD][yY]>")),
+		QString::fromLatin1("\\1") );
+	filteredMessage.replace(
+		QRegExp(QString::fromLatin1("<[fF][oO][nN][tT].*>(.*)</[fF][oO][nN][tT]>")),
+		QString::fromLatin1("\\1") );
+
+	/*kdDebug(14150) << k_funcinfo <<
+		"Filtered Away-message is: " << filteredMessage << endl;*/
+	contact->setAwayMessage(filteredMessage);
 }
 
 // Called when a group is added by adding a contact

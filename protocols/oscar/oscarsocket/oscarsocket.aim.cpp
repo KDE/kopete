@@ -202,14 +202,20 @@ void OscarSocket::parseMemRequest(Buffer &inbuf)
 
 void OscarSocket::sendAIMAway(bool away, const QString &message)
 {
-	kdDebug(14150) << k_funcinfo << "Called. away=" << away <<
-		", message='" << message << "'" << endl;
+	kdDebug(14150) << k_funcinfo << "Called. away = " << away <<
+		", message = '" << message << "'" << endl;
 
 	Buffer outbuf;
 	outbuf.addSnac(0x0002,0x0004,0x0000,0x00000000);
 
-	if (away && !message.isEmpty())
-	{ // Check to see that we're sending away
+	if (away)
+	{
+		// user did not provide a messagetext, work around AIM-protocol
+		// stupidity, it sets you online if the away message is totally empty
+		QString awayText = " ";
+		if (!message.isEmpty())
+			awayText = message;
+
 		static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
 		outbuf.addTLV(0x0003, defencoding.length(), defencoding.latin1());
 		outbuf.addTLV(0x0004, message.length(), message.local8Bit());
@@ -220,7 +226,8 @@ void OscarSocket::sendAIMAway(bool away, const QString &message)
 		outbuf.addTLV(0x0004, 0, "");
 		//emit statusChanged(OSCAR_ONLINE);
 	}
-	sendBuf(outbuf,0x02);
+	sendBuf(outbuf, 0x02);
+
 	//sendUserLocationInfoRequest(getSN(), AIM_LOCINFO_SHORTINFO)
 	requestMyUserInfo();
 }

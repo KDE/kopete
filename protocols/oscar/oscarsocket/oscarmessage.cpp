@@ -47,6 +47,7 @@ void OscarMessage::setText(const QString &txt, MessageFormat format)
 		RTF2HTML parser;
 		/*kdDebug(14150) << k_funcinfo <<
 			"Original message text: " << txt << endl;*/
+		//TODO: encoding
 		mText = parser.Parse(txt.latin1(), "");
 		/*kdDebug(14150) << k_funcinfo <<
 			"Message text after RTF2HTML: " << mText << endl;*/

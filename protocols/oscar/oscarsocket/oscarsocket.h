@@ -320,23 +320,27 @@ class OscarSocket : public OscarConnection
 			const QString &awayMessage);
 
 		/**
-		 * Gets the rate info from the server
+		 * Gets the rate info from the server [OSCAR]
 		 */
 		void sendRateInfoRequest();
+
 		/**
 		 * requests the current user's info [AIM]
 		 */
 		void requestMyUserInfo();
+
 		/**
 		 * Sends idle time  [OSCAR]
 		 */
 		void sendIdleTime(DWORD time);
+
 		/**
 		 * requests ssi data from the server  [OSCAR]
 		 */
 		void sendRosterRequest();
+
 		/**
-		 * Sends message to dest
+		 * Sends a type-1 message to dest [OSCAR]
 		 */
 		void sendIM(
 			const QString &message,
@@ -344,7 +348,7 @@ class OscarSocket : public OscarConnection
 			bool isAuto);
 
 		/**
-		 * cool eh ;)
+		 * Sends a type-2 message, not used for real IM yet [ICQ]
 		 */
 		bool sendType2IM(OscarContact *c, const QString &text, WORD type);
 

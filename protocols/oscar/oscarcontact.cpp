@@ -218,8 +218,8 @@ void OscarContact::slotDeleteContact()
 
 	if ( mAccount->engine()->isICQ() )
 		mAccount->engine()->sendDelBuddylist(contactName());
-	mAccount->engine()->sendDelBuddy(contactName(), grpName ); 
-	
+	mAccount->engine()->sendDelBuddy(contactName(), grpName );
+
 	deleteLater();
 }
 
@@ -345,7 +345,7 @@ void OscarContact::syncGroups()
 	//the server.
 	if ( groups.contains( KopeteGroup::topLevel() ) || groups.contains( KopeteGroup::temporary() ) )
 		return;
-	
+
 	// Oscar only supports one group per contact, so just get the first one
 	KopeteGroup *firstKopeteGroup = groups.first();
 
@@ -369,7 +369,7 @@ void OscarContact::syncGroups()
 	/*
 	 * Another possibility is moving a buddy in the blm, but in that case, we don't need
          * to move him on BLM or SSI or anywhere, since BLM doesn't keep track of groups.
-	 * 
+	 *
 	 * Due to a bug in libkopete, temporary contacts don't have syncGroups called on them
 	 */
 	SSI* movedItem = mAccount->engine()->ssiData().findContact( contactId() );
@@ -452,7 +452,7 @@ void OscarContact::rename(const QString &newNick)
 		newNick << "'" << endl;
 
 	//TODO: group handling!
-	
+
 	setDisplayName(newNick);
 }
 
@@ -654,7 +654,8 @@ void OscarContact::setGroupId(const int newgid)
 	}
 }
 
-void OscarContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &/*addressBookData*/)
+void OscarContact::serialize(QMap<QString, QString> &serializedData,
+	QMap<QString, QString> &/*addressBookData*/)
 {
 //	serializedData["awaitingAuth"] = waitAuth() ? "1" : "0";
 	serializedData["Encoding"] = QString::number(mEncoding);

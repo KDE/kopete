@@ -221,6 +221,12 @@ void AIMAccount::slotGoOnline()
 	}
 }
 
+void AIMAccount::slotGoAway(const QString &message)
+{
+	kdDebug(14190) << k_funcinfo << endl;
+	setAway(true, message);
+}
+
 void AIMAccount::connect()
 {
 	kdDebug(14190) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
@@ -277,11 +283,6 @@ void AIMAccount::connect(const unsigned long status, const QString &awMessage)
 		slotError(i18n("You have not specified your account name in the " \
 			"account set up yet, please do so."), 0);
 	}
-}
-
-void AIMAccount::slotGoAway(const QString &message)
-{
-	setAway(true,message);
 }
 
 #include "aimaccount.moc"

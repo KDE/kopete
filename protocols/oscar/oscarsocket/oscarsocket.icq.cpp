@@ -336,25 +336,25 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					OscarContact *contact = 0L;
 
 					tmptxt = fromicqsrv.getLELNTS();
-					kdDebug(14150) << k_funcinfo << "converting nickname string" << endl;
+					//kdDebug(14150) << k_funcinfo << "converting nickname string" << endl;
 					res.nickName = ServerToQString(tmptxt, contact);
 					//res.nickName = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
-					kdDebug(14150) << k_funcinfo << "converting firstname string" << endl;
+					//kdDebug(14150) << k_funcinfo << "converting firstname string" << endl;
 					res.firstName = ServerToQString(tmptxt, contact);
 					//res.firstName = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
-					kdDebug(14150) << k_funcinfo << "converting lastname string" << endl;
+					//kdDebug(14150) << k_funcinfo << "converting lastname string" << endl;
 					res.lastName = ServerToQString(tmptxt, contact);
 					//res.lastName = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
-					kdDebug(14150) << k_funcinfo << "converting email string" << endl;
+					//kdDebug(14150) << k_funcinfo << "converting email string" << endl;
 					res.eMail = ServerToQString(tmptxt, contact);
 					//res.eMail = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;

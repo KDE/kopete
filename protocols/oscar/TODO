@@ -1,10 +1,12 @@
 
 X general support for SNAC (0x15, *)
-- fix adding contacts for both addcontactwizard and serverside list
+X fix adding contacts for both addcontactwizard and serverside list
 X read away reasons
 X own away-reasons
 X support type-2 messages
-- support RTF messages (That's RTF as in M$ .rtf files!!!)
+X general support for incoming RTF-messages
+- support encoding-settings for RTF-messages
+- use RTF in outgoing messages
 X keepalive for connection to server (icq has ping packets)
 X Keep users from adding their own UIN to their userlist
 X honor encodings for both sides (I need more knowledge about this!)
