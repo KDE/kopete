@@ -61,7 +61,7 @@ public:
 	 * @param target Target object to connect to for async operation
 	 * @param slotCompleted Slot to fire on completion in asnc operation
 	 */
-	KopeteXSLThread( const QCString &xmlString, xsltStylesheetPtr xslDoc, QObject *target = 0L, const char *slotCompleted = 0L );
+	KopeteXSLThread( const QString &xmlString, xsltStylesheetPtr xslDoc, QObject *target = 0L, const char *slotCompleted = 0L );
 
 	/**
 	 * Reimplemented from QThread. Does the processing.
@@ -82,7 +82,7 @@ public:
 	{ return m_resultString; };
 
 private:
-	QCString m_xml;
+	QString m_xml;
 	xsltStylesheetPtr m_xsl;
 	QString m_resultString;
 	QObject *m_target;
@@ -90,7 +90,7 @@ private:
 	QMutex dataMutex;
 };
 
-KopeteXSLThread::KopeteXSLThread( const QCString &xmlString, xsltStylesheetPtr xslDoc, QObject *target, const char *slotCompleted )
+KopeteXSLThread::KopeteXSLThread( const QString &xmlString, xsltStylesheetPtr xslDoc, QObject *target, const char *slotCompleted )
 {
 	m_xml = xmlString;
 	m_xsl = xslDoc;
@@ -408,12 +408,12 @@ void Kopete::XSLT::setXSLT( const QString &_document )
 
 QString Kopete::XSLT::transform( const QString &xmlString )
 {
-	return KopeteXSLThread::xsltTransform( xmlString.utf8(), d->styleSheet );
+	return KopeteXSLThread::xsltTransform( xmlString, d->styleSheet );
 }
 
 void Kopete::XSLT::transformAsync( const QString &xmlString, QObject *target, const char *slotCompleted )
 {
-	( new KopeteXSLThread( xmlString.utf8(), d->styleSheet, target, slotCompleted ) )->start();
+	( new KopeteXSLThread( xmlString, d->styleSheet, target, slotCompleted ) )->start();
 }
 
 bool Kopete::XSLT::isValid() const
