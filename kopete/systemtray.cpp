@@ -55,7 +55,7 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent, const char* name)
 	mBlinkTimer = new QTimer(this, "mBlinkTimer");
 
 	//mKopeteIcon = kapp->miniIcon();
-	mKopeteIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
+	mKopeteIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ), 22 ) );
 	mBlinkIcon = KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "newmsg" ), KIcon::User);
 	mMovie = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::User);
 
