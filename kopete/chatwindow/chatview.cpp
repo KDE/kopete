@@ -938,13 +938,27 @@ void ChatView::readOptions()
 
 	//Work-around to restore dock widget positions
 	config->setGroup( QString::fromLatin1("ChatViewDock") );
-	int splitterPos = config->readNumEntry( QString::fromLatin1("viewDock,membersDock,editDock:sepPos"), 70);
+	
+	visibleMembers = config->readBoolEntry( QString::fromLatin1("visibleMembers"), false );
+	membersDockPosition = static_cast<KDockWidget::DockPosition>(
+		config->readNumEntry( QString::fromLatin1("membersDockPosition"), KDockWidget::DockRight ) );
+		
+	QString dockKey = QString::fromLatin1("viewDock");
+	if( visibleMembers )
+	{
+		if( membersDockPosition == KDockWidget::DockLeft )
+			dockKey.prepend( QString::fromLatin1("membersDock,") );
+		else if( membersDockPosition == KDockWidget::DockRight )
+			dockKey.append( QString::fromLatin1(",membersDock") );
+	}
+	dockKey.append( QString::fromLatin1(",editDock:sepPos") );
+
+	kdDebug(14000) << k_funcinfo << dockKey << endl;
+	
+	int splitterPos = config->readNumEntry( dockKey, 70);
 	editDock->manualDock( viewDock, KDockWidget::DockBottom, splitterPos );
 	viewDock->setDockSite(KDockWidget::DockLeft | KDockWidget::DockRight );
 	editDock->setEnableDocking(KDockWidget::DockNone);
-	membersDockPosition = static_cast<KDockWidget::DockPosition>(
-		config->readNumEntry( QString::fromLatin1("membersDockPosition"), KDockWidget::DockRight ) );
-	visibleMembers = config->readBoolEntry( QString::fromLatin1("visibleMembers"), false );
 
 	config->setGroup( QString::fromLatin1("ChatViewSettings") );
 
