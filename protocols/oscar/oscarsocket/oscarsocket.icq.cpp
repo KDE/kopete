@@ -424,10 +424,19 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					break;
 				}
 
-				case 230:
+				case 230: // SRV_METAABOUT
 				{
-					kdDebug(14150) << k_funcinfo <<
-						"TODO: SRV_METAABOUT subtype=" << type << endl;
+					kdDebug(14150) << k_funcinfo << "RECV (SRV_METAWORK)" << endl;
+					char *tmptxt;
+					QString res;
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					kdDebug(14150) << k_funcinfo << "emitting gotICQAboutUserInfo()" << endl;
+
+					emit gotICQAboutUserInfo(sequence, res);
 					break;
 				}
 

@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>559</width>
-            <height>482</height>
+            <width>523</width>
+            <height>406</height>
         </rect>
     </property>
     <property name="caption">
@@ -1223,19 +1223,44 @@
                     </spacer>
                 </vbox>
             </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>About</string>
+                </attribute>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QLabel">
+                        <property name="name">
+                            <cstring>textLabel1</cstring>
+                        </property>
+                        <property name="text">
+                            <string>About User:</string>
+                        </property>
+                    </widget>
+                    <widget class="QTextEdit">
+                        <property name="name">
+                            <cstring>rwAboutUser</cstring>
+                        </property>
+                    </widget>
+                </vbox>
+            </widget>
         </widget>
     </vbox>
 </widget>
 <tabstops>
     <tabstop>TabWidget2</tabstop>
     <tabstop>rwNickName</tabstop>
-    <tabstop>roUIN</tabstop>
     <tabstop>rwAlias</tabstop>
+    <tabstop>roUIN</tabstop>
     <tabstop>roIPAddress</tabstop>
     <tabstop>rwFirstName</tabstop>
     <tabstop>rwLastName</tabstop>
     <tabstop>roBday</tabstop>
-    <tabstop>rwBday</tabstop>
     <tabstop>rwAge</tabstop>
     <tabstop>roGender</tabstop>
     <tabstop>rwGender</tabstop>
@@ -1248,13 +1273,13 @@
     <tabstop>roLang3</tabstop>
     <tabstop>rwLang3</tabstop>
     <tabstop>prsCityEdit</tabstop>
+    <tabstop>prsPhoneEdit</tabstop>
     <tabstop>prsStateEdit</tabstop>
+    <tabstop>prsCellphoneEdit</tabstop>
     <tabstop>roPrsCountry</tabstop>
     <tabstop>rwPrsCountry</tabstop>
-    <tabstop>prsZipcodeEdit</tabstop>
-    <tabstop>prsPhoneEdit</tabstop>
-    <tabstop>prsCellphoneEdit</tabstop>
     <tabstop>prsFaxEdit</tabstop>
+    <tabstop>prsZipcodeEdit</tabstop>
     <tabstop>prsAddressEdit</tabstop>
     <tabstop>prsHomepageEdit</tabstop>
     <tabstop>prsEmailEdit</tabstop>
@@ -1270,6 +1295,7 @@
     <tabstop>rwWrkCountry</tabstop>
     <tabstop>wrkAddressEdit</tabstop>
     <tabstop>wrkHomepageEdit</tabstop>
+    <tabstop>rwBday</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

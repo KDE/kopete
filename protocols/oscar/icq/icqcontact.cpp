@@ -101,6 +101,9 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 	QObject::connect(
 		acc->getEngine(), SIGNAL(gotICQMoreUserInfo(const int, const ICQMoreUserInfo &)),
 		this, SLOT(slotUpdMoreUserInfo(const int, const ICQMoreUserInfo &)));
+	QObject::connect(
+		acc->getEngine(), SIGNAL(gotICQAboutUserInfo(const int, const QString &)),
+		this, SLOT(slotUpdAboutUserInfo(const int, const QString &)));
 }
 
 ICQContact::~ICQContact()
@@ -280,7 +283,7 @@ void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf
 	generalInfo = inf;
 
 	userinfoReplyCount++; // number of packets that
-	if (userinfoReplyCount >= 3)
+	if (userinfoReplyCount >= 4)
 		emit updatedUserInfo();
 }
 
@@ -290,13 +293,13 @@ void ICQContact::slotUpdWorkInfo(const int seq, const ICQWorkUserInfo &inf)
 	if(seq != userinfoRequestSequence)
 		return;
 
-	kdDebug(14200) << k_funcinfo << "called; seq=" << seq << ", last saved seq=" <<
-		userinfoRequestSequence << endl;
+// 	kdDebug(14200) << k_funcinfo << "called; seq=" << seq << ", last saved seq=" <<
+// 		userinfoRequestSequence << endl;
 
 	workInfo = inf;
 
 	userinfoReplyCount++; // number of packets that
-	if (userinfoReplyCount >= 3)
+	if (userinfoReplyCount >= 4)
 		emit updatedUserInfo();
 }
 
@@ -306,13 +309,29 @@ void ICQContact::slotUpdMoreUserInfo(const int seq, const ICQMoreUserInfo &inf)
 	if(seq != userinfoRequestSequence)
 		return;
 
-	kdDebug(14200) << k_funcinfo << "called; seq=" << seq << ", last saved seq=" <<
-		userinfoRequestSequence << endl;
+// 	kdDebug(14200) << k_funcinfo << "called; seq=" << seq << ", last saved seq=" <<
+// 		userinfoRequestSequence << endl;
 
 	moreInfo = inf;
 
 	userinfoReplyCount++; // number of packets that
-	if (userinfoReplyCount >= 3)
+	if (userinfoReplyCount >= 4)
+		emit updatedUserInfo();
+}
+
+void ICQContact::slotUpdAboutUserInfo(const int seq, const QString &inf)
+{
+	// compare reply's sequence with the one we sent with our last request
+	if(seq != userinfoRequestSequence)
+		return;
+
+// 	kdDebug(14200) << k_funcinfo << "called; seq=" << seq << ", last saved seq=" <<
+// 		userinfoRequestSequence << endl;
+
+	aboutInfo = inf;
+
+	userinfoReplyCount++; // number of packets that
+	if (userinfoReplyCount >= 4)
 		emit updatedUserInfo();
 }
 

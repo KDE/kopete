@@ -1109,6 +1109,15 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 				TLV *nick = findTLV(lst,0x0131);
 				if(nick && nick->length > 0)
 					bud->setAlias(QString::fromLatin1(nick->data));
+
+				TLV *auth = findTLV(lst,0x0066);
+				if(auth)
+				{
+					kdDebug(14150) << k_funcinfo <<
+						"Contact has WAITAUTH set." <<
+						"Might be possible he never appears as online!" << endl;
+				}
+
 				lst.clear();
 
 				blist.addBuddy(bud);
@@ -1120,7 +1129,7 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 				Buffer tmpBuf(ssi->tlvlist, ssi->tlvlength);
 				QPtrList<TLV> lst = tmpBuf.getTLVList();
 				lst.setAutoDelete(TRUE);
-
+/*
 				kdDebug(14150) << k_funcinfo << "Group entry contained TLVs:" << endl;
 				TLV *t;
 				for(t=lst.first(); t; t=lst.next())
@@ -1128,7 +1137,7 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 					kdDebug(14150) << k_funcinfo <<
 						"TLV(" << t->type << "), length=" << t->length << endl;
 				}
-
+*/
 				if (namelen) //if it's not the master group
 					blist.addGroup(ssi->gid, ssi->name);
 				break;
@@ -1149,7 +1158,51 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 			}
 
 			case 0x0004: // TODO permit-deny setting
+			{
+				Buffer tmpBuf(ssi->tlvlist, ssi->tlvlength);
+				QPtrList<TLV> lst = tmpBuf.getTLVList();
+				lst.setAutoDelete(TRUE);
+
+				// visibility setting, needed for invisible mode
+				TLV *visibility = findTLV(lst,0x00ca);
+
+				if(visibility)
+				{
+					int vis = visibility->data[0];
+					switch(vis)
+					{
+						case 01:
+							kdDebug(14150) << k_funcinfo <<
+								"visibility setting = Allow all users to see you" << endl;
+							break;
+
+						case 02:
+							kdDebug(14150) << k_funcinfo <<
+								"visibility setting = Block all users from seeing you" << endl;
+							break;
+
+						case 03:
+							kdDebug(14150) << k_funcinfo <<
+								"visibility setting = Allow only users in the permit list to see you" << endl;
+							break;
+
+						case 04:
+							kdDebug(14150) << k_funcinfo <<
+								"visibility setting = Block only users in the invisible list from seeing you" << endl;
+							break;
+
+						case 05:
+							kdDebug(14150) << k_funcinfo <<
+								"visibility setting = Allow only users in the buddy list to see you" << endl;
+							break;
+
+						default:
+							kdDebug(14150) << k_funcinfo <<
+								"visibility setting (UNKNOWN)=" << vis << endl;
+					}
+				} // END if(visibility)
 				break;
+			} // END 0x0004
 
 			case 0x000e: // TODO contact on ignore list
 				break;

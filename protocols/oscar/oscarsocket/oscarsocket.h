@@ -562,9 +562,8 @@ class OscarSocket : public OscarConnection
 	void gotICQGeneralUserInfo(const int, const ICQGeneralUserInfo &);
 	void gotICQWorkUserInfo(const int, const ICQWorkUserInfo &);
 	void gotICQMoreUserInfo(const int, const ICQMoreUserInfo &);
-/*
-	void gotICQAboutUserInfo(const int, const ICQAboutUserInfo &);
-	void gotICQEmailUserInfo(const int, const ICQEmailUserInfo &);
+	void gotICQAboutUserInfo(const int, const QString &);
+/*	void gotICQEmailUserInfo(const int, const ICQEmailUserInfo &);
 	void gotICQInterestUserInfo(const int, const ICQInterestUserInfo &);
 	void gotICQBackgroundUserInfo(const int, const ICQBackgroundUserInfo &);
 */

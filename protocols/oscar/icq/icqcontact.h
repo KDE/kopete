@@ -80,6 +80,7 @@ class ICQContact : public OscarContact
 		ICQGeneralUserInfo generalInfo;
 		ICQWorkUserInfo workInfo;
 		ICQMoreUserInfo moreInfo;
+		QString aboutInfo;
 
 		int userinfoRequestSequence;
 		int userinfoReplyCount;
@@ -97,9 +98,10 @@ class ICQContact : public OscarContact
 		/** Called when an IM is received */
 		void slotIMReceived(QString sender, QString msg, bool isAuto);
 
-		void slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf);
-		void slotUpdWorkInfo(const int seq, const ICQWorkUserInfo &inf);
+		void slotUpdGeneralInfo(const int, const ICQGeneralUserInfo &);
+		void slotUpdWorkInfo(const int, const ICQWorkUserInfo &);
 		void slotUpdMoreUserInfo(const int, const ICQMoreUserInfo &);
+		void slotUpdAboutUserInfo(const int, const QString &);
 };
 
 #endif

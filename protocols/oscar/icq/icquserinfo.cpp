@@ -661,6 +661,10 @@ void ICQUserInfo::slotReadInfo()
 	if ( !mEditable )
 		mMainWidget->roWrkCountry->setText( mMainWidget->rwWrkCountry->currentText() );
 */
+
+	// ABOUT USER ========================================
+	mMainWidget->rwAboutUser->setText(mContact->aboutInfo);
+
 } // END slotReadInfo()
 
 void ICQUserInfo::sendInfo()
