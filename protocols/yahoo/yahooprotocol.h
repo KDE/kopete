@@ -50,8 +50,7 @@ public:
 	~YahooProtocol();
 	
 	static YahooProtocol *protocol();
-	
-	virtual const QString protocolIcon() { return "yahoo_online"; }
+
 	virtual void deserializeContact( KopeteMetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 	

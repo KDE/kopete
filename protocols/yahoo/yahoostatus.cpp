@@ -33,14 +33,12 @@ YahooStatus::YahooStatus()
 
 KopeteOnlineStatus YahooStatus::translate() const
 {
-	if(m_status == Offline)
-		return KopeteOnlineStatus(KopeteOnlineStatus::Offline, 25, YahooProtocol::protocol(), m_status, "yahoo_offline", i18n(YSTOffline), i18n(YSTOffline));
-	else if(m_status == Available)
-		return KopeteOnlineStatus(KopeteOnlineStatus::Online,  25, YahooProtocol::protocol(), m_status, "yahoo_online",  i18n(YSTAvailable), i18n(YSTAvailable));
+	if(m_status == Available)
+		return KopeteOnlineStatus(KopeteOnlineStatus::Online,  25, YahooProtocol::protocol(), m_status, "yahoo_protocol",  i18n(YSTAvailable), i18n(YSTAvailable));
 	else if(m_status == Mobile)
 		return KopeteOnlineStatus(KopeteOnlineStatus::Away,     5, YahooProtocol::protocol(), m_status, "yahoo_mobile",  i18n("On the mobile"), i18n("On the mobile"));
 	else if(m_status == Invisible)
-		return KopeteOnlineStatus(KopeteOnlineStatus::Offline, 25, YahooProtocol::protocol(), m_status, "yahoo_offline", i18n(YSTInvisible), i18n(YSTInvisible));
+		return KopeteOnlineStatus(KopeteOnlineStatus::Offline, 0, YahooProtocol::protocol(), m_status, "", i18n(YSTInvisible), i18n(YSTInvisible));
 	else if(m_status == Idle)
 		return KopeteOnlineStatus(KopeteOnlineStatus::Away,    15, YahooProtocol::protocol(), m_status, "yahoo_idle",    i18n("Idle"), i18n("Idle"));
 	else if(m_status == Custom)
@@ -67,8 +65,8 @@ KopeteOnlineStatus YahooStatus::translate() const
 		return KopeteOnlineStatus(KopeteOnlineStatus::Away,    10, YahooProtocol::protocol(), m_status, "yahoo_away",    i18n(YSTOutToLunch), i18n(YSTOutToLunch));
 	else if(m_status == SteppedOut)
 		return KopeteOnlineStatus(KopeteOnlineStatus::Away,    10, YahooProtocol::protocol(), m_status, "yahoo_away",    i18n(YSTSteppedOut), i18n(YSTSteppedOut));
-	else
-		return KopeteOnlineStatus(KopeteOnlineStatus::Offline,  0, YahooProtocol::protocol(), m_status, "yahoo_offline", i18n(YSTOffline), i18n(YSTOffline));
+	else	// must be offline
+		return KopeteOnlineStatus(KopeteOnlineStatus::Offline,  0, YahooProtocol::protocol(), m_status, "", i18n(YSTOffline), i18n(YSTOffline));
 }
 
 void YahooStatus::setStatus( Status status_, const QString &statusText_ )
