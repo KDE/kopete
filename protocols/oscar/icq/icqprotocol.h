@@ -61,6 +61,7 @@ class ICQProtocol : public KopeteProtocol
 		const QMap<int, QString> &genders() { return mGenders; }
 		const QMap<int, QString> &countries() { return mCountries; }
 		const QMap<int, QString> &languages() { return mLanguages; }
+		const QMap<int, QString> &encodings() { return mEncodings; }
 
 		void initUserinfoWidget(ICQUserInfoWidget *widget);
 		void fillComboFromTable(QComboBox *, const QMap<int, QString> &);
@@ -75,12 +76,14 @@ class ICQProtocol : public KopeteProtocol
 		void initGenders();
 		void initLang();
 		void initCountries();
+		void initEncodings();
 
 	private:
 		static ICQProtocol *protocolStatic_;
 		QMap<int, QString> mGenders;
 		QMap<int, QString> mCountries;
 		QMap<int, QString> mLanguages;
+		QMap<int, QString> mEncodings;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

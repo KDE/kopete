@@ -92,8 +92,8 @@ class OscarContact : public KopeteContact
 		/*
 		 * Encoding is a MIB, see IANA docs or QTextCodec apidocs!
 		 */
-		const int encoding();
-		void setEncoding(const int);
+		const unsigned int encoding();
+		void setEncoding(const unsigned int);
 
 		/*
 		 * group id for this contact onthe oscar-server

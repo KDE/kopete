@@ -643,12 +643,12 @@ void OscarContact::setWaitAuth(bool b) const
 	mListContact->setWaitAuth(b);
 }
 
-const int OscarContact::encoding()
+const unsigned int OscarContact::encoding()
 {
 	return mEncoding;
 }
 
-void OscarContact::setEncoding(const int mib)
+void OscarContact::setEncoding(const unsigned int mib)
 {
 	mEncoding = mib;
 }
@@ -664,7 +664,7 @@ void OscarContact::setGroupId(const int newgid)
 	if(newgid > 0)
 	{
 		mGroupId = newgid;
-		kdDebug(14150) << k_funcinfo << "updated group id to " << mGroupId << endl;
+		//kdDebug(14150) << k_funcinfo << "updated group id to " << mGroupId << endl;
 	}
 }
 

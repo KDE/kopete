@@ -17,6 +17,7 @@
 #ifndef OSCARSOCKET_H
 #define OSCARSOCKET_H
 
+#include "aim.h" // tocNormalize()
 #include "oscardirectconnection.h"
 #include "ssidata.h"
 #include "aimbuddylist.h"

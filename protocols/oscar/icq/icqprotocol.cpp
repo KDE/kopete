@@ -71,6 +71,7 @@ ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 	initGenders();
 	initLang();
 	initCountries();
+	initEncodings();
 }
 
 ICQProtocol::~ICQProtocol()
@@ -397,6 +398,63 @@ void ICQProtocol::initLang()
 	mLanguages.insert(59, i18n("Armenian"));
 }
 
+void ICQProtocol::initEncodings()
+{
+	mEncodings.insert(0 , i18n("Automatic")); // guess encoding instead of hardcoding
+
+	mEncodings.insert(2026, i18n("Big5"));
+	mEncodings.insert(2101, i18n("Big5-HKSCS"));
+	mEncodings.insert(18, i18n("euc-JP Japanese"));
+	mEncodings.insert(38, i18n("euc-KR Korean"));
+	mEncodings.insert(57, i18n("GB-2312 Chinese"));
+	mEncodings.insert(113, i18n("GBK Chinese"));
+	mEncodings.insert(114, i18n("GB18030 Chinese"));
+
+	mEncodings.insert(16, i18n("JIS Japanese"));
+	mEncodings.insert(17, i18n("Shift-JIS Japanese"));
+
+	mEncodings.insert(2084, i18n("KOI8-R Russian"));
+	mEncodings.insert(2088, i18n("KOI8-U Ukrainian"));
+
+	mEncodings.insert(2250, i18n("Windows-1250 Central European"));
+	mEncodings.insert(2251, i18n("Windows-1251 Cyrillic"));
+	mEncodings.insert(2252, i18n("Windows-1252 Western"));
+	mEncodings.insert(2253, i18n("Windows-1253 Greek"));
+	mEncodings.insert(2254, i18n("Windows-1254 Turkish"));
+	mEncodings.insert(2255, i18n("Windows-1255 Hebrew"));
+	mEncodings.insert(2256, i18n("Windows-1256 Arabic"));
+	mEncodings.insert(2257, i18n("Windows-1257 Baltic"));
+	mEncodings.insert(2258, i18n("Windows-1258 Viet Nam"));
+
+	mEncodings.insert(2009, i18n("IBM 850"));
+	mEncodings.insert(2085, i18n("IBM 866"));
+
+	mEncodings.insert(2259, i18n("TIS-620 Thai"));
+
+/*
+Missing ones (copied from qtextcodec doc):
+TSCII -- Tamil
+utf8 -- Unicode, 8-bit
+utf16 -- Unicode
+ISO8859-1 -- Western
+ISO8859-2 -- Central European
+ISO8859-3 -- Central European
+ISO8859-4 -- Baltic
+ISO8859-5 -- Cyrillic
+ISO8859-6 -- Arabic
+ISO8859-7 -- Greek
+ISO8859-8 -- Hebrew, visually ordered
+ISO8859-8-i -- Hebrew, logically ordered
+ISO8859-9 -- Turkish
+ISO8859-10
+ISO8859-13
+ISO8859-14
+ISO8859-15 -- Western
+CP874
+Apple Roman
+*/
+}
+
 void ICQProtocol::fillComboFromTable(QComboBox *box, const QMap<int, QString> &map)
 {
 //	kdDebug(14200) << k_funcinfo << "Called." << endl;
@@ -484,6 +542,7 @@ void ICQProtocol::initUserinfoWidget(ICQUserInfoWidget *widget)
 	fillComboFromTable(widget->rwLang3, languages());
 	fillComboFromTable(widget->rwPrsCountry, countries());
 	fillComboFromTable(widget->rwWrkCountry, countries());
+	fillComboFromTable(widget->cmbEncoding, encodings());
 	fillTZCombo(widget->rwTimezone);
 }
 
@@ -792,6 +851,7 @@ void ICQProtocol::contactInfo2UserInfoWidget(ICQContact *c, ICQUserInfoWidget *w
 		}
 		i++;
 	}
+
 } // END contactInfo2UserInfoWidget()
 
 // Called when we want to return the active instance of the protocol

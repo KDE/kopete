@@ -249,8 +249,8 @@ void OscarSocket::slotRead()
 			SNAC s;
 			s=inbuf.getSnacHeader();
 
-			kdDebug(14150) << k_funcinfo <<
-				"SNAC(" << s.family << "," << s.subtype << "), id=" << s.id << endl;
+			/*kdDebug(14150) << k_funcinfo <<
+				"SNAC(" << s.family << "," << s.subtype << "), id=" << s.id << endl;*/
 
 			switch(s.family)
 			{
@@ -1561,181 +1561,185 @@ void OscarSocket::parseIM(Buffer &inbuf)
 
 		case MSGFORMAT_ADVANCED: //AIM rendezvous, ICQ advanced messages
 		{
-			unsigned int remotePort = 0;
-			QString qh;
-			QString message;
-			WORD msgtype = 0x0000; //used to tell whether it is a direct IM requst, deny, or accept
-			DWORD capflag = 0x00000000; //used to tell what kind of rendezvous this is
-			OncomingSocket *sockToUse; //used to tell which listening socket to use
-			QString fileName; //the name of the file to be transferred (if any)
-			long unsigned int fileSize = 0; //the size of the file(s) to be transferred
 			if (mIsICQ) // TODO: unify AIM and ICQ in this place
 			{
 				parseAdvanceMessage(inbuf, u);
 				break;
 			}
-
-			kdDebug(14150) << k_funcinfo << "IM received on channel 2 from " << u.sn << endl;
-			TLV tlv = inbuf.getTLV();
-			kdDebug(14150) << k_funcinfo << "The first TLV is of type " << tlv.type;
-			if (tlv.type == 0x0005) //connection info
-			{
-				Buffer tmpbuf(tlv.data, tlv.length);
-				//embedded in the type 5 tlv are more tlv's
-				//first 2 bytes are the request status
-				// 0 - Request
-				// 1 - Deny
-				// 2 - Accept
-				msgtype = tmpbuf.getWord();
-				//next comes the cookie, which should match the ICBM cookie
-				char *c = tmpbuf.getBlock(8);
-				cook.duplicate(c,8);
-				delete [] c;
-				//the next 16 bytes are the capability block (what kind of request is this?)
-				char *cap = tmpbuf.getBlock(0x10);
-				int identified = 0;
-				for (int i = 0; !(oscar_caps[i].flag & AIM_CAPS_LAST); i++)
-				{
-					if (memcmp(&oscar_caps[i].data, cap, 0x10) == 0)
-					{
-						capflag |= oscar_caps[i].flag;
-						identified++;
-						break; // should only match once...
-					}
-				}
-				delete [] cap;
-
-				if (!identified)
-				{
-					printf("unknown capability: {%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}\n",
-						cap[0], cap[1], cap[2], cap[3],
-						cap[4], cap[5],
-						cap[6], cap[7],
-						cap[8], cap[9],
-						cap[10], cap[11], cap[12], cap[13],
-						cap[14], cap[15]);
-				}
-
-				//Next comes a big TLV chain of stuff that may or may not exist
-				QPtrList<TLV> tlvlist = tmpbuf.getTLVList();
-				TLV *cur;
-				tlvlist.setAutoDelete(true);
-
-				for(cur = tlvlist.first();cur;cur = tlvlist.next())
-				{
-					if (cur->type == 0x0002)
-					{
-						//IP address from the perspective of the client
-						kdDebug(14150) << "ClientIP1: " << cur->data[0] << "."
-							<< cur->data[1] << "." << cur->data[2] << "."
-							<< cur->data[3]  << endl;
-					}
-					else if (cur->type == 0x0003)
-					{
-						//Secondary IP address from the perspective of the client
-							kdDebug(14150) << "ClientIP2: " << cur->data[0] << "."
-								<< cur->data[1] << "." << cur->data[2] << "."
-								<< cur->data[3] << endl;
-					}
-					else if (cur->type == 0x0004) //Verified IP address (from perspective of oscar server)
-					{
-						DWORD tmpaddr = 0;
-						for (int i=0;i<4;i++)
-						{
-							tmpaddr = (tmpaddr*0x100) + static_cast<unsigned char>(cur->data[i]);
-						}
-						qh = cur->data[0] + '.' + cur->data[1] + '.' + cur->data[2] + '.' + cur->data[3];
-						kdDebug(14150) << "OscarIPRaw: " <<
-							cur->data[0] << "." << cur->data[1] << "." <<
-							cur->data[2] << "." << cur->data[3] << endl;
-						kdDebug(14150) << "OscarIP: " << qh << endl;
-					}
-					else if (cur->type == 0x0005) //Port number
-					{
-						remotePort = (cur->data[0] << 8) | cur->data[1];
-						kdDebug(14150) << k_funcinfo << "remotePort=" << remotePort << endl;
-					}
-					//else if (cur->type == 0x000a)
-					//{
-					//}
-					//Error code
-					else if (cur->type == 0x000b)
-					{
-						kdDebug(14150) << k_funcinfo << "ICBM ch 2 error code " <<
-							 ((cur->data[1] << 8) | cur->data[0]) << endl;
-
-						emit protocolError(
-							i18n("Rendezvous with buddy failed. Please check your " \
-								"internet connection or try the operation again later. " \
-								"Error code %1.\n").arg((cur->data[1] << 8) | cur->data[0]), 0);
-					}
-					//Invitation message/ chat description
-					else if (cur->type == 0x000c)
-					{
-						message = cur->data;
-						kdDebug(14150) << k_funcinfo << "Invited to chat " << cur->data << endl;
-					}
-					//Character set
-					else if (cur->type == 0x000d)
-					{
-						kdDebug(14150) << k_funcinfo << "Using character set " << cur->data << endl;
-					}
-					//Language
-					else if (cur->type == 0x000e)
-					{
-						kdDebug(14150) << k_funcinfo << "Using language " << cur->data << endl;
-					}
-					//File transfer
-					else if (cur->type == 0x2711)
-					{
-						Buffer thebuf(cur->data,cur->length);
-
-						thebuf.getWord(); //more than 1 file? (0x0002 for multiple files)
-						thebuf.getWord(); //number of files
-						fileSize = thebuf.getDWord(); //total size
-						char *fname = thebuf.getBlock(cur->length - 2 - 2 - 4 - 4); //file name
-						thebuf.getDWord(); //DWord of 0x00000000
-						fileName = fname;
-						delete [] fname;
-					} // END File transfer
-					else
-						kdDebug(14150) << k_funcinfo << "ICBM, unknown TLV type " << cur->type << endl;
-
-					delete [] cur->data;
-				} // END for (tlvlist...)
-			}
 			else
 			{
-				kdDebug(14150) << k_funcinfo << "IM: unknown TLV type " << tlv.type << endl;
-			}
+				// TODO: unify AIM and ICQ parts
+				unsigned int remotePort = 0;
+				QString qh;
+				QString message;
+				WORD msgtype = 0x0000; //used to tell whether it is a direct IM requst, deny, or accept
+				DWORD capflag = 0x00000000; //used to tell what kind of rendezvous this is
+				OncomingSocket *sockToUse; //used to tell which listening socket to use
+				QString fileName; //the name of the file to be transferred (if any)
+				long unsigned int fileSize = 0; //the size of the file(s) to be transferred
 
-			// Set the appropriate server socket
-#if 0
-			sockToUse = serverSocket(capflag);
+				kdDebug(14150) << k_funcinfo << "IM received on channel 2 from " << u.sn << endl;
+				TLV tlv = inbuf.getTLV();
+				kdDebug(14150) << k_funcinfo << "The first TLV is of type " << tlv.type;
+				if (tlv.type == 0x0005) //connection info
+				{
+					Buffer tmpbuf(tlv.data, tlv.length);
+					//embedded in the type 5 tlv are more tlv's
+					//first 2 bytes are the request status
+					// 0 - Request
+					// 1 - Deny
+					// 2 - Accept
+					msgtype = tmpbuf.getWord();
+					//next comes the cookie, which should match the ICBM cookie
+					char *c = tmpbuf.getBlock(8);
+					cook.duplicate(c,8);
+					delete [] c;
+					//the next 16 bytes are the capability block (what kind of request is this?)
+					char *cap = tmpbuf.getBlock(0x10);
+					int identified = 0;
+					for (int i = 0; !(oscar_caps[i].flag & AIM_CAPS_LAST); i++)
+					{
+						if (memcmp(&oscar_caps[i].data, cap, 0x10) == 0)
+						{
+							capflag |= oscar_caps[i].flag;
+							identified++;
+							break; // should only match once...
+						}
+					}
+					delete [] cap;
 
-			if (msgtype == 0x0000) // initiate
-			{
-				kdDebug(14150) << k_funcinfo << "adding " << u.sn << " to pending list." << endl;
-				if ( capflag & AIM_CAPS_IMIMAGE ) //if it is a direct IM rendezvous
-				{
-					sockToUse->addPendingConnection(u.sn, cook, 0L, qh, 4443, DirectInfo::Outgoing);
-					emit gotDirectIMRequest(u.sn);
+					if (!identified)
+					{
+						printf("unknown capability: {%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}\n",
+							cap[0], cap[1], cap[2], cap[3],
+							cap[4], cap[5],
+							cap[6], cap[7],
+							cap[8], cap[9],
+							cap[10], cap[11], cap[12], cap[13],
+							cap[14], cap[15]);
+					}
+
+					//Next comes a big TLV chain of stuff that may or may not exist
+					QPtrList<TLV> tlvlist = tmpbuf.getTLVList();
+					TLV *cur;
+					tlvlist.setAutoDelete(true);
+
+					for(cur = tlvlist.first();cur;cur = tlvlist.next())
+					{
+						if (cur->type == 0x0002)
+						{
+							//IP address from the perspective of the client
+							kdDebug(14150) << "ClientIP1: " << cur->data[0] << "."
+								<< cur->data[1] << "." << cur->data[2] << "."
+								<< cur->data[3]  << endl;
+						}
+						else if (cur->type == 0x0003)
+						{
+							//Secondary IP address from the perspective of the client
+								kdDebug(14150) << "ClientIP2: " << cur->data[0] << "."
+									<< cur->data[1] << "." << cur->data[2] << "."
+									<< cur->data[3] << endl;
+						}
+						else if (cur->type == 0x0004) //Verified IP address (from perspective of oscar server)
+						{
+							DWORD tmpaddr = 0;
+							for (int i=0;i<4;i++)
+							{
+								tmpaddr = (tmpaddr*0x100) + static_cast<unsigned char>(cur->data[i]);
+							}
+							qh = cur->data[0] + '.' + cur->data[1] + '.' + cur->data[2] + '.' + cur->data[3];
+							kdDebug(14150) << "OscarIPRaw: " <<
+								cur->data[0] << "." << cur->data[1] << "." <<
+								cur->data[2] << "." << cur->data[3] << endl;
+							kdDebug(14150) << "OscarIP: " << qh << endl;
+						}
+						else if (cur->type == 0x0005) //Port number
+						{
+							remotePort = (cur->data[0] << 8) | cur->data[1];
+							kdDebug(14150) << k_funcinfo << "remotePort=" << remotePort << endl;
+						}
+						//else if (cur->type == 0x000a)
+						//{
+						//}
+						//Error code
+						else if (cur->type == 0x000b)
+						{
+							kdDebug(14150) << k_funcinfo << "ICBM ch 2 error code " <<
+								((cur->data[1] << 8) | cur->data[0]) << endl;
+
+							emit protocolError(
+								i18n("Rendezvous with buddy failed. Please check your " \
+									"internet connection or try the operation again later. " \
+									"Error code %1.\n").arg((cur->data[1] << 8) | cur->data[0]), 0);
+						}
+						//Invitation message/ chat description
+						else if (cur->type == 0x000c)
+						{
+							message = cur->data;
+							kdDebug(14150) << k_funcinfo << "Invited to chat " << cur->data << endl;
+						}
+						//Character set
+						else if (cur->type == 0x000d)
+						{
+							kdDebug(14150) << k_funcinfo << "Using character set " << cur->data << endl;
+						}
+						//Language
+						else if (cur->type == 0x000e)
+						{
+							kdDebug(14150) << k_funcinfo << "Using language " << cur->data << endl;
+						}
+						//File transfer
+						else if (cur->type == 0x2711)
+						{
+							Buffer thebuf(cur->data,cur->length);
+
+							thebuf.getWord(); //more than 1 file? (0x0002 for multiple files)
+							thebuf.getWord(); //number of files
+							fileSize = thebuf.getDWord(); //total size
+							char *fname = thebuf.getBlock(cur->length - 2 - 2 - 4 - 4); //file name
+							thebuf.getDWord(); //DWord of 0x00000000
+							fileName = fname;
+							delete [] fname;
+						} // END File transfer
+						else
+							kdDebug(14150) << k_funcinfo << "ICBM, unknown TLV type " << cur->type << endl;
+
+						delete [] cur->data;
+					} // END for (tlvlist...)
 				}
-				else // file send
-				{
-					sockToUse->addPendingConnection(u.sn, cook, 0L, qh, remotePort, DirectInfo::Outgoing);
-					emit gotFileSendRequest(u.sn, message, fileName, fileSize);
-				}
-			}
-			else if (msgtype == 0x0001) //deny
-			{
-				if ( capflag & AIM_CAPS_IMIMAGE )
-					emit protocolError(i18n("Direct IM request denied by %1").arg(u.sn),0);
 				else
-					emit protocolError(i18n("Send file request denied by %1").arg(QString(u.sn)),0);
-				sockToUse->removeConnection(u.sn);
-			}
+				{
+					kdDebug(14150) << k_funcinfo << "IM: unknown TLV type " << tlv.type << endl;
+				}
+
+#if 0
+				// Set the appropriate server socket
+				sockToUse = serverSocket(capflag);
+
+				if (msgtype == 0x0000) // initiate
+				{
+					kdDebug(14150) << k_funcinfo << "adding " << u.sn << " to pending list." << endl;
+					if ( capflag & AIM_CAPS_IMIMAGE ) //if it is a direct IM rendezvous
+					{
+						sockToUse->addPendingConnection(u.sn, cook, 0L, qh, 4443, DirectInfo::Outgoing);
+						emit gotDirectIMRequest(u.sn);
+					}
+					else // file send
+					{
+						sockToUse->addPendingConnection(u.sn, cook, 0L, qh, remotePort, DirectInfo::Outgoing);
+						emit gotFileSendRequest(u.sn, message, fileName, fileSize);
+					}
+				}
+				else if (msgtype == 0x0001) //deny
+				{
+					if ( capflag & AIM_CAPS_IMIMAGE )
+						emit protocolError(i18n("Direct IM request denied by %1").arg(u.sn),0);
+					else
+						emit protocolError(i18n("Send file request denied by %1").arg(QString(u.sn)),0);
+					sockToUse->removeConnection(u.sn);
+				}
 #endif
+			} // END if (mIsICQ)
 			break;
 		} // END MSGFORMAT_ADVANCED
 
@@ -1755,6 +1759,8 @@ void OscarSocket::parseIM(Buffer &inbuf)
 
 void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 {
+	OscarContact *contact = static_cast<OscarContact*>(mAccount->contacts()[tocNormalize(u.sn)]);
+
 	bool moreTLVs=true; // Flag to indicate if there are more TLV's to parse
 	bool isAutoResponse=false; // This gets set if we are notified of an auto response
 	WORD length=0;
@@ -1804,15 +1810,13 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 					if (charsetNumber == 0x0002) // UCS-2BE (or UTF-16)
 					{
 						kdDebug(14150) << k_funcinfo << "UTF-16BE message" << endl;
-						unsigned short *txt = msgBuf.getWordBlock(messageLength/2);
+						unsigned short *txt = msgBuf.getWordBlock((int)messageLength/2);
 						message = QString::fromUcs2(txt);
 						delete [] txt;
 					}
-					else if (charsetNumber == 0x0003) // iso-8859-1
+					else if (charsetNumber == 0x0003) // local encoding, usually iso8859-1
 					{
 						kdDebug(14150) << k_funcinfo << "ISO8859-1 message" << endl;
-						/*codec = QTextCodec::codecForName("ISO8859-1");
-						message = codec->toUnicode(messagetext);*/
 						const char *messagetext = msgBuf.getBlock(messageLength);
 						message = QString::fromLatin1(messagetext);
 						delete [] messagetext;
@@ -1823,44 +1827,51 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 							"Unknown encoding or US-ASCII, guessing encoding" << endl;
 						const char *messagetext = msgBuf.getBlock(messageLength);
 
-						int cresult = -1;
-						codec=QTextCodec::codecForMib(1000); //UTF-16 aka UCS-2
-						if(codec)
+						if(contact)
 						{
-							cresult=codec->heuristicContentMatch(messagetext, messageLength);
-							kdDebug(14150) << k_funcinfo <<
-								"result for UTF-16 = " << cresult << endl;
+							if(contact->encoding() != 0)
+								codec=QTextCodec::codecForMib(contact->encoding());
+							else
+								codec=0L;
+
+							if(codec)
+							{
+								kdDebug(14150) << k_funcinfo <<
+									"using per-contact encoding MIB=" << contact->encoding() << endl;
+							}
 						}
 
-						if(cresult < (messageLength/2))
+						if(!codec) // no per-contact codec
 						{
-							codec=QTextCodec::codecForMib(106); //UTF-8
+							int cresult = -1;
+							codec=QTextCodec::codecForMib(3); // US-ASCII
+
 							if(codec)
 							{
 								cresult=codec->heuristicContentMatch(messagetext, messageLength);
 								kdDebug(14150) << k_funcinfo <<
-									"result for UTF-8 = " << cresult << endl;
+									"result for US-ASCII = " << cresult << endl;
 							}
-						}
 
-						if(cresult < (messageLength/2))
-						{
-							codec=QTextCodec::codecForMib(4); // ISO 8859-1 aka Latin1
-							if(codec)
+							if(cresult < messageLength)
 							{
-								cresult=codec->heuristicContentMatch(messagetext, messageLength);
-								kdDebug(14150) << k_funcinfo <<
-									"result for ISO 8859-1 = " << cresult << endl;
+								codec=QTextCodec::codecForMib(106); //UTF-8
+								if(codec)
+								{
+									cresult=codec->heuristicContentMatch(messagetext, messageLength);
+									kdDebug(14150) << k_funcinfo <<
+										"result for UTF-8 = " << cresult << endl;
+								}
 							}
-						}
 
-						if(cresult < messageLength)
-						{
-							// FIXME: same as for sendIM
-							kdDebug(14150) << k_funcinfo <<
-								"Couldn't find suitable encoding for incoming message, " <<
-								"encoding using local system-encoding" << endl;
-							codec=QTextCodec::codecForLocale();
+							if(cresult < messageLength/2)
+							{
+								kdDebug(14150) << k_funcinfo <<
+									"Couldn't find suitable encoding for incoming message, " <<
+									"encoding using local system-encoding" << endl;
+								codec=QTextCodec::codecForLocale();
+								// TODO: optionally have a per-account encoding as fallback!
+							}
 						}
 
 						kdDebug(14150) << k_funcinfo <<
@@ -2031,14 +2042,13 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 		return false;
 	}
 
-	BYTE len = inbuf.getByte();
-	char *cb = inbuf.getBlock(len); // screenname/uin
-	u.sn = QString::fromLocal8Bit(cb); // TODO: Check Encoding
+	char *cb = inbuf.getBSTR(); // screenname/uin
+	u.sn = tocNormalize(QString::fromLatin1(cb)); // screennames and uin are always us-ascii
 	delete [] cb;
 
 	// Next comes the warning level
 	//for some reason aol multiplies the warning level by 10
-	u.evil = inbuf.getWord() / 10;
+	u.evil = (int)(inbuf.getWord() / 10);
 
 	WORD tlvlen = inbuf.getWord(); //the number of TLV's that follow
 
@@ -2292,7 +2302,7 @@ void OscarSocket::sendIM(
 		kdDebug(14150) << k_funcinfo << "Could not find QTextCodec for US-ASCII encoding!" << endl;
 	}
 
-	if((codec==0L) && contact->hasCap(AIM_CAPS_UTF8))
+	if(!codec && contact->hasCap(AIM_CAPS_UTF8))
 	{
 		// use UTF is peer supports it and encoding as US-ASCII failed
 		length=message.length()*2;
@@ -2309,7 +2319,8 @@ void OscarSocket::sendIM(
 		kdDebug(14150) << k_funcinfo << "Cannot send as UTF-16BE, codec value=" << (void *)codec << endl;
 	}
 
-	if((!codec || charset!=0x0002) && contact->encoding() != 0)
+	// no codec and no charset and per-contact encoding set
+	if(!codec && charset != 0x0002 && contact->encoding() != 0)
 	{
 		codec=QTextCodec::codecForMib(contact->encoding());
 		if(codec)
@@ -2519,13 +2530,14 @@ void OscarSocket::sendDirectIMRequest(const QString &sn)
 void OscarSocket::parseMsgAck(Buffer &inbuf)
 {
 	//8 byte cookie is first
-	char *ck = inbuf.getBlock(8);
+	/*char *ck =*/ inbuf.getBlock(8);
+	//delete [] ck;
 	WORD typ = inbuf.getWord();
-	BYTE snlen = inbuf.getByte();
-	char *sn = inbuf.getBlock(snlen);
-	QString nm = sn;
+
+	char *sn = inbuf.getBSTR();
+	QString nm = QString::fromLatin1(sn);
 	delete [] sn;
-	delete [] ck;
+
 	emit gotAck(nm,typ);
 }
 

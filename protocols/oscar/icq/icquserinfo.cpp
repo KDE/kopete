@@ -41,7 +41,7 @@
 ICQUserInfo::ICQUserInfo(ICQContact *c, ICQAccount *account,
 	QWidget *parent, const char* name)
 	: KDialogBase(parent, name, false, QString::null, Close | User1 | User2,
-		Close, false, i18n("&Save Nickname"), i18n("&Fetch Again"))
+		Close, false, i18n("&Save Settings"), i18n("&Fetch Again"))
 {
 	mAccount = account;
 	mContact = c;
@@ -60,6 +60,7 @@ ICQUserInfo::ICQUserInfo(ICQContact *c, ICQAccount *account,
 	mMainWidget->roBday->setText("");
 	mMainWidget->roUIN->setText(c->contactName());
 	p->initUserinfoWidget(mMainWidget); // fill combos with values
+	p->setComboFromTable(mMainWidget->cmbEncoding, p->encodings(), c->encoding());
 
 	connect(this, SIGNAL(user1Clicked()),
 		this, SLOT(slotSaveClicked()));
@@ -186,12 +187,15 @@ void ICQUserInfo::slotHomePageClicked(const QString &url)
 void ICQUserInfo::slotSaveClicked()
 {
 	kdDebug(14200) << k_funcinfo << "called." << endl;
-//	if(mEditable)
-//		sendInfo();
-//	else
 
 	if(mContact->displayName() != mMainWidget->rwAlias->text())
 		mContact->rename(mMainWidget->rwAlias->text());
+
+	int enc = p->getCodeForCombo(mMainWidget->cmbEncoding, p->encodings());
+	kdDebug(14200) << k_funcinfo <<
+		"setting encoding to MIB:" << enc <<
+		"(" << static_cast<const QString&>(p->encodings()[enc]) << ")" << endl;
+	mContact->setEncoding(enc);
 }
 
 void ICQUserInfo::slotCloseClicked()
