@@ -22,6 +22,7 @@
 #include <qfont.h>
 #include <qdatetime.h>
 #include <qcolor.h>
+#include <qregexp.h>
 
 // KDE
 #include <kconfig.h>
@@ -122,36 +123,39 @@ void YahooAccount::setImportContacts(bool newSetting)
 	m_importContacts = newSetting;
 }
 
+QString YahooAccount::stripMsgColorCodes(const QString& msg)
+{
+	return QString(msg).remove(QRegExp("\033\\[(..m|#......)"));
+}
+
 QColor YahooAccount::getMsgColor(const QString& msg)
 {
 	/* Yahoo sends a message either with color or without color
 	 * so we have to use this really hacky method to get colors
 	 */
-	kdDebug(14180) << k_funcinfo << "msg is " << msg << endl;
-	//If we get here, the message uses a standard Yahoo color
-	//(selectable from the drop down box)
+	//kdDebug(14180) << k_funcinfo << "msg is " << msg << endl;
 	//Please note that some of the colors are hard-coded to
 	//match the yahoo colors
-	if ( msg.find("[38m") != -1 )
+	if ( msg.find("\033[38m") != -1 )
 		return Qt::red;
-	if ( msg.find("[34m") != -1 )
+	if ( msg.find("\033[34m") != -1 )
 		return Qt::green;
-	if ( msg.find("[31m") != -1 )
+	if ( msg.find("\033[31m") != -1 )
 		return Qt::blue;
-	if ( msg.find("[39m") != -1 )
+	if ( msg.find("\033[39m") != -1 )
 		return Qt::yellow;
-	if ( msg.find("[36m") != -1 )
+	if ( msg.find("\033[36m") != -1 )
 		return Qt::darkMagenta;
-	if ( msg.find("[32m") != -1 )
+	if ( msg.find("\033[32m") != -1 )
 		return Qt::cyan;
-	if ( msg.find("[37m") != -1 )
+	if ( msg.find("\033[37m") != -1 )
 		return QColor("#FFAA39");
-	if ( msg.find("[35m") != -1 )
+	if ( msg.find("\033[35m") != -1 )
 		return QColor("#FFD8D8");
-	if ( msg.find("[#") != -1 )
+	if ( msg.find("\033[#") != -1 )
 	{
-		kdDebug(14180) << "Custom color is " << msg.mid(msg.find("[#")+1,7) << endl;
-		return QColor(msg.mid(msg.find("[#")+1,7));
+		kdDebug(14180) << "Custom color is " << msg.mid(msg.find("\033[#")+2,7) << endl;
+		return QColor(msg.mid(msg.find("\033[#")+2,7));
 	}
 	
 	//return a default value just in case
@@ -481,7 +485,7 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	KopeteMessage kmsg(msgDT, contact(who), justMe, msg,
 					KopeteMessage::Inbound , KopeteMessage::PlainText);
 
-	QString newMsg = kmsg.plainBody();
+	QString newMsg = stripMsgColorCodes(kmsg.plainBody());
 	
 	kmsg.setFg(getMsgColor(msg));
 //	kdDebug(14180) << "Message color is " << getMsgColor(msg) << endl;

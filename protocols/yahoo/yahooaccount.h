@@ -122,6 +122,10 @@ protected:
 	 * Gets the just-received message color
 	 */
 	QColor getMsgColor(const QString& msg);
+	/**
+	 * Remove color codes from a message
+	 */
+	QString stripMsgColorCodes(const QString& msg);
 	
 protected slots:
 	virtual void loaded();
