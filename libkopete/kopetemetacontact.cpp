@@ -515,7 +515,7 @@ QString KopeteMetaContact::toXML()
 			QString data = QStyleSheet::escape( strList.join( "||" ) );
 //			kdDebug() << "KopeteMetaContact::toXML: plugin-data = " << data <<endl;
 			xml += "    <plugin-data plugin-id=\"" +
-				QString( p->id() ) + "\">" + data  + "</plugin-data>\n";
+				QStyleSheet::escape( p->id())  + "\">" + data  + "</plugin-data>\n";
 		}
 	}
 
@@ -525,7 +525,7 @@ QString KopeteMetaContact::toXML()
 	{
 //		kdDebug() << "KopeteMetaContact::toXML: Storing address book field "
 //			<< addrIt.key() << " with value '" << addrIt.data() << "'" << endl;
-		xml += "    <address-book-field id=\"" + addrIt.key() + "\">" +
+		xml += "    <address-book-field id=\"" + QStyleSheet::escape(addrIt.key()) + "\">" +
 					QStyleSheet::escape(addrIt.data()) + "</address-book-field>\n";
 	}
 
@@ -540,7 +540,7 @@ QString KopeteMetaContact::toXML()
 		if( !plugin )
 		{
 			xml += "    <plugin-data plugin-id=\"" + QStyleSheet::escape(it.key()) + "\">"
-				+ it.data() + "</plugin-data>\n";
+				+ QStyleSheet::escape(it.data()) + "</plugin-data>\n";
 		}
 	}
 
