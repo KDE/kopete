@@ -1187,9 +1187,19 @@ QDragObject *KopeteContactListView::dragObject()
 	KopeteContact *c = metaLVI->contactForPoint( m_startDragPos );
         KMultipleDrag *drag = new KMultipleDrag( this );
 	drag->addDragObject( new QStoredDrag("application/x-qlistviewitem", 0L ) );
+	
+	QStoredDrag *d = new QStoredDrag("kopete/x-metacontact", 0L );
+	d->setEncodedData( metaLVI->metaContact()->metaContactId().utf8() );
+	drag->addDragObject( d );
 
 	if ( c ) 	// dragging a contact
+	{
+		QStoredDrag *d = new QStoredDrag("kopete/x-contact", 0L );
+		d->setEncodedData( QString( c->protocol()->pluginId() +QChar( 0xE000 )+ c->account()->accountId() +QChar( 0xE000 )+ c->contactId() ).utf8() );
+		drag->addDragObject( d );
+	
 		pm = c->onlineStatus().iconFor( c, 12 ); // FIXME: fixed icon scaling
+	}
 	else		// dragging a metacontact
 	{
 		// FIXME: first start at rendering the whole MC incl small icons
@@ -1205,7 +1215,7 @@ QDragObject *KopeteContactListView::dragObject()
 
 	if( !address.isEmpty() )
 	{
-		drag->addDragObject( new QTextDrag( address.fullEmail(), this ) );
+		drag->addDragObject( new QTextDrag( address.fullEmail(), 0L ) );
 		KABC::VCardConverter converter;
 		QString vcard = converter.createVCard( address );
 		if( !vcard.isNull() )
