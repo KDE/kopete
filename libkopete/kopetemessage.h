@@ -27,7 +27,7 @@ typedef QPtrList<KopeteContact> KopeteContactPtrList;
 
 class QDateTime;
 
-class KopeteMessagePrivate;
+struct KopeteMessagePrivate;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
@@ -47,8 +47,9 @@ public:
 	 * -RichText: Text already HTML escaped and which can contains some tags
 	 * -ParsedHTML: only used by the chatwindow, this text is parsed and ready to
 	 *  show into the chatwindow
+	 * -Crypted is used only by Jabber and the cryptography plugin
 	 */
-	enum MessageFormat  { PlainText, RichText, ParsedHTML };
+	enum MessageFormat{ PlainText = 0x01 , RichText =0x02 , ParsedHTML = 0x06 , Crypted = 0x09};
 
 	/**
 	* Specifies the type of the view.
@@ -56,7 +57,15 @@ public:
 	* - Chat: Two way chat
 	* - Email: Single shot messaging
 	*/
-		enum MessageType { Undefined, Chat, Email };
+	enum MessageType { Undefined, Chat, Email };
+
+	/**
+	* Specifies the type of notification will be send with this message
+	* - Low: almost no notifications used in groupChat
+	* - Normal: default notification
+	* - Highlight: Highlight notification
+	*/
+	enum MessageImportance { Low = 0, Normal = 1, Highlight = 2 };
 
 	/**
 	 * Constructs a new empty message
@@ -192,6 +201,17 @@ public:
 	MessageDirection direction() const;
 
 	/**
+	 * Accessor method for the importance
+	 * @return The message importance (low/normal/highlight)
+	 */
+	MessageImportance importance() const;
+	
+	/**
+	 * set the importance
+	 */
+	void setImportance(MessageImportance );
+
+	/**
 	 * Sets the foreground color for the message
 	 * @param color The color
 	 */
@@ -231,12 +251,13 @@ public:
 	/**
 	 * Get the message body as parsed HTML with Emoticons,
 	 * this should be ready to show in the chatwindow
+	 * @internal
 	 * @return The HTML and Emoticon parsed message body
 	 */
 	QString parsedBody() const ;
 
 	/**
-	 * Functions
+	 * internal Functions
 	 *
 	 */
 	QString asHTML() const;
@@ -253,9 +274,10 @@ public:
 	 */
 	static QString parseHTML( const QString &message, bool parseURLs = true );
 
+	/**
+	 * Highlight the message with the default highlight options
+	 */
 	void highlight();
-
-	bool isHighlighted();
 
 private:
 	/**

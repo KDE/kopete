@@ -31,11 +31,11 @@
 #include "kopetemessage.h"
 #include "kopetemetacontact.h"
 #include "kopeteonlinestatus.h"
+#include "kopeteaccount.h"
 #include "kopeteprefs.h"
 
-class KopeteMessagePrivate
+struct KopeteMessagePrivate
 {
-public:
 	uint refCount;
 
 	const KopeteContact *from;
@@ -51,9 +51,9 @@ public:
 	KopeteMessage::MessageDirection direction;
 	KopeteMessage::MessageFormat format;
 	KopeteMessage::MessageType type;
+	KopeteMessage::MessageImportance importance;
 
 	bool bgOverride;
-	bool highlighted;
 };
 
 KopeteMessage::KopeteMessage()
@@ -159,20 +159,16 @@ void KopeteMessage::setFont( const QFont &font )
 
 void KopeteMessage::highlight()
 {
-	setBody( QString::fromLatin1("<span style=\"background-color:%1;color:%2\">%3</span>")
+	//Why do you want to do this? aren't Fg and Bg sufficient?
+/*	setBody( QString::fromLatin1("<span style=\"background-color:%1;color:%2\">%3</span>")
 		.arg( KopetePrefs::prefs()->highlightBackground().name() )
 		.arg( KopetePrefs::prefs()->highlightForeground().name() )
-		.arg( escapedBody() ), RichText );
+		.arg( escapedBody() ), RichText );*/
 
 	setBg( KopetePrefs::prefs()->highlightBackground() );
 	setFg( KopetePrefs::prefs()->highlightForeground() );
 
-	d->highlighted = true;
-}
-
-bool KopeteMessage::isHighlighted()
-{
-	return d->highlighted;
+	d->importance = Highlight;
 }
 
 void KopeteMessage::setBody( const QString &body, MessageFormat f )
@@ -209,7 +205,8 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 	setBody( body, f );
 	d->bgOverride = false;
 	d->type = type;
-	d->highlighted = false;
+	//Importance to low in a multi chat
+	d->importance= (to.count() <= 1) ? Normal : Low ;
 
 	if( from )
 	{
@@ -256,17 +253,24 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 						break;
 				}
 			}
-
 			colorMap.insert( fromName, newColor );
 		}
-
 		d->contactColor = colorMap[ fromName ];
+		
+		
+		//Highlight if the message contains the nickname (i think it should be place in the highlight plugin)
+		if( KopetePrefs::prefs()->highlightEnabled() && from->account() && from->account()->myself() &&
+			d->body.contains( QRegExp(QString::fromLatin1("\\b(%1)\\b").arg(from->account()->myself()->displayName()),false) ) )
+		{
+			highlight();
+		}
 	}
+
 }
 
 QString KopeteMessage::plainBody() const
 {
-	if( d->format == PlainText )
+	if( d->format & PlainText )
 		return d->body;
 
 	//FIXME: is there a better way to unescape HTML?
@@ -284,7 +288,7 @@ QString KopeteMessage::plainBody() const
 
 QString KopeteMessage::escapedBody() const
 {
-	if( d->format == PlainText )
+	if( d->format & PlainText )
 	{
 		QStringList words;
 		QString parsedString;
@@ -842,6 +846,16 @@ KopeteMessage::MessageFormat KopeteMessage::format() const
 KopeteMessage::MessageDirection KopeteMessage::direction() const
 {
 	return d->direction;
+}
+
+KopeteMessage::MessageImportance KopeteMessage::importance() const
+{
+	return d->importance;
+}
+
+void KopeteMessage::setImportance(KopeteMessage::MessageImportance i)
+{
+	d->importance=i;
 }
 
 void KopeteMessage::detach()
