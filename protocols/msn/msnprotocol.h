@@ -93,7 +93,7 @@ public:
 	virtual void setAvailable();
 	virtual bool isAway() const;
 
-	void addContact( const QString &userID ) const;
+	void addContact( const QString &userID );
 	void removeContact( const MSNContact *c ) const;
 	void removeFromGroup( const MSNContact *c, const QString &group ) const;
 	void moveContact( const MSNContact *c, const QString &oldGroup,
@@ -141,7 +141,7 @@ public slots:
 	// Ask user to auth the new contact
 	void slotAuthenticate( QString );
 	// Add a Contact
-	void slotAddContact(QString) const;
+	void slotAddContact( QString );
 	// Block a Contact
 	void slotBlockContact(QString) const;
 

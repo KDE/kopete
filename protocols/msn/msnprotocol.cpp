@@ -611,9 +611,9 @@ void MSNProtocol::slotAuthenticate( QString handle )
 	authDlg->show();
 }
 
-void MSNProtocol::slotAddContact( QString handle ) const
+void MSNProtocol::slotAddContact( QString handle )
 {
-	m_msnService->contactAdd( handle );
+	addContact( handle );
 }
 
 void MSNProtocol::slotBlockContact( QString handle ) const
@@ -631,32 +631,67 @@ KMSNService* MSNProtocol::msnService() const
 	return m_msnService;
 }
 
-void MSNProtocol::addContact( const QString &userID ) const
+void MSNProtocol::addContact( const QString &userID )
 {
-	m_msnService->contactAdd( userID );
+	if( isConnected() )
+	{
+		serviceSocket()->addContact( userID, publicName( userID ), 0,
+			KMSNService::FL );
+		serviceSocket()->addContact( userID, publicName( userID ), 0,
+			KMSNService::AL );
+	}
 }
 
 void MSNProtocol::removeContact( const MSNContact *c ) const
 {
-	m_msnService->contactDelete( c );
+	QStringList list;
+	const QString id = c->msnId();
+	if( m_contacts.contains( id ) )
+		list = m_contacts[ id ]->groups();
+	else
+		return;
+
+	for( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
+	{
+		serviceSocket()->removeContact( id, groupNumber( (*it).latin1() ),
+			KMSNService::FL );
+	}
+
+	if( m_contacts[ id ]->isBlocked() )
+		serviceSocket()->removeContact( id, 0, KMSNService::BL );
 }
 
 void MSNProtocol::removeFromGroup( const MSNContact *c,
 	const QString &group ) const
 {
-	m_msnService->contactRemove( c, group );
+	int g = groupNumber( group );
+	if( g != -1 )
+		serviceSocket()->removeContact( c->msnId(), g, KMSNService::FL );
 }
 
 void MSNProtocol::moveContact( const MSNContact *c,
 	const QString &oldGroup, const QString &newGroup ) const
 {
-	m_msnService->contactMove( c, oldGroup, newGroup );
+	int og = groupNumber( oldGroup );
+	int ng = groupNumber( newGroup );
+
+	if( og != -1 && ng != -1 )
+	{
+		serviceSocket()->addContact( c->msnId(), c->nickname(), ng,
+			KMSNService::FL);
+		serviceSocket()->removeContact( c->msnId(), og, KMSNService::FL );
+	}
 }
 
 void MSNProtocol::copyContact( const MSNContact *c,
 	const QString &newGroup ) const
 {
-	m_msnService->contactCopy( c, newGroup);
+	int g = groupNumber( newGroup );
+	if( g != -1 )
+	{
+		serviceSocket()->addContact( c->msnId(), c->nickname(), g,
+			KMSNService::FL);
+	}
 }
 
 QStringList MSNProtocol::groups() const
@@ -732,7 +767,8 @@ void MSNProtocol::slotGroupAdded( QString groupName, uint /* serial */,
 	}
 }
 
-void MSNProtocol::slotGroupRenamed( QString groupName, uint serial, uint group )
+void MSNProtocol::slotGroupRenamed( QString groupName, uint /* serial */,
+	uint group )
 {
 	if( m_groupList.contains( group ) )
 	{
