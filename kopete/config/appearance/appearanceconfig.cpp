@@ -642,7 +642,8 @@ void AppearanceConfig::slotUpdatePreview()
 		Kopete::Message msgIn ( &jack,   &myself, i18n( "Hello, this is an incoming message :-)" ), Kopete::Message::Inbound );
 		Kopete::Message msgOut( &myself, &jack,   i18n( "Ok, this is an outgoing message" ), Kopete::Message::Outbound );
 		Kopete::Message msgInt( &jack,   &myself, i18n( "This is an internal message" ), Kopete::Message::Internal );
-		Kopete::Message msgAct( &jack,   &myself, i18n( "performed an action" ), Kopete::Message::Action );
+		Kopete::Message msgAct( &jack,   &myself, i18n( "performed an action" ), Kopete::Message::Inbound,
+		                        Kopete::Message::PlainText, Kopete::Message::Chat, Kopete::Message::TypeAction );
 		//Kopete::Message msgHigh( &jack, &myself, i18n( "This is a highlighted message" ), Kopete::Message::Inbound );
 
 		preview->begin();

@@ -969,7 +969,7 @@ void ChatView::appendMessage(Kopete::Message &message)
 				setTabState( Highlighted );
 				break;
 			case Kopete::Message::Normal:
-				if ( message.direction() == Kopete::Message::Inbound || message.direction() == Kopete::Message::Action )
+				if ( message.direction() == Kopete::Message::Inbound )
 				{
 					setTabState( Message );
 					break;

@@ -202,7 +202,7 @@ void IRCChannelContact::channelTopic(const QString &topic)
 	setProperty( m_protocol->propChannelTopic, mTopic );
 	manager()->setDisplayName( caption() );
 	Kopete::Message msg((Kopete::Contact*)this, mMyself, i18n("Topic for %1 is %2").arg(m_nickName).arg(mTopic),
-		Kopete::Message::Internal, Kopete::Message::RichText, Kopete::Message::Chat);
+	                    Kopete::Message::Internal, Kopete::Message::RichText, Kopete::Message::Chat);
 	appendMessage(msg);
 }
 
@@ -266,7 +266,8 @@ void IRCChannelContact::userJoinedChannel(const QString &nickname)
 
 		Kopete::Message msg((Kopete::Contact *)this, mMyself,
 			i18n("You have joined channel %1").arg(m_nickName),
-			Kopete::Message::Internal, Kopete::Message::PlainText, Kopete::Message::Chat);
+			Kopete::Message::Internal, Kopete::Message::PlainText,
+			Kopete::Message::Chat);
 		msg.setImportance( Kopete::Message::Low); //set the importance manualy to low
 		appendMessage(msg);
 	}
@@ -310,7 +311,7 @@ void IRCChannelContact::userKicked(const QString &nick, const QString &nickKicke
 		{
 			manager()->removeContact( c, r );
 			Kopete::Message msg( (Kopete::Contact *)this, mMyself,
-				r, Kopete::Message::Internal, Kopete::Message::PlainText, Kopete::Message::Chat);
+			                     r, Kopete::Message::Internal, Kopete::Message::PlainText, Kopete::Message::Chat);
 			msg.setImportance(Kopete::Message::Low);
 			appendMessage(msg);
 			if( c->metaContact()->isTemporary() && !static_cast<IRCContact*>(c)->isChatting( manager(false) ) )
@@ -600,7 +601,7 @@ void IRCChannelContact::privateMessage(IRCContact *from, IRCContact *to, const Q
 	if(to == this)
 	{
 		Kopete::Message msg(from, manager()->members(), message, Kopete::Message::Inbound,
-			Kopete::Message::RichText, Kopete::Message::Chat);
+		                    Kopete::Message::RichText, Kopete::Message::Chat);
 		appendMessage(msg);
 	}
 }
@@ -610,8 +611,10 @@ void IRCChannelContact::newAction(const QString &from, const QString &action)
 	kdDebug(14120) << k_funcinfo << m_nickName << endl;
 
 	IRCUserContact *f = MYACCOUNT->contactManager()->findUser(from);
-	Kopete::Message msg(f, manager()->members(), action, Kopete::Message::Action,
-		Kopete::Message::RichText, Kopete::Message::Chat);
+	Kopete::Message::MessageDirection dir =
+		(f == MYACCOUNT->mySelf()) ? Kopete::Message::Outbound : Kopete::Message::Inbound;
+	Kopete::Message msg(f, manager()->members(), action, dir, Kopete::Message::RichText,
+	                    Kopete::Message::Chat, Kopete::Message::TypeAction);
 	appendMessage(msg);
 }
 

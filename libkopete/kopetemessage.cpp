@@ -32,17 +32,23 @@
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
 
-struct KopeteMessagePrivate
+class Kopete::Message::Private
 {
+public:
+	Private( const QDateTime &timeStamp, const Kopete::Contact *from, const Kopete::ContactPtrList &to,
+	         const QString &body, const QString &subject, MessageDirection direction, MessageFormat f,
+	         ViewType view, MessageType type );
+
 	uint refCount;
 
 	const Kopete::Contact *from;
-	Kopete::MessageManager *manager;
 	Kopete::ContactPtrList to;
+	Kopete::MessageManager *manager;
 
 	Kopete::Message::MessageDirection direction;
 	Kopete::Message::MessageFormat format;
-	Kopete::Message::ViewType type;
+	Kopete::Message::MessageType type;
+	Kopete::Message::ViewType view;
 	Kopete::Message::MessageImportance importance;
 	bool bgOverride;
 	bool fgOverride;
@@ -56,51 +62,69 @@ struct KopeteMessagePrivate
 	QString subject;
 };
 
-Kopete::Message::Message()
+Kopete::Message::Private::Private( const QDateTime &timeStamp, const Kopete::Contact *from,
+             const Kopete::ContactPtrList &to, const QString &body, const QString &subject,
+				 MessageDirection direction, MessageFormat f, ViewType view, MessageType type )
+	: refCount(1), from(from), to(to), manager(0), direction(direction), format(f), type(type)
+	, view(view), importance( (to.count() <= 1) ? Normal : Low ), bgOverride(false), fgOverride(false)
+	, rtfOverride(false), timeStamp(timeStamp), body(body), subject(subject)
 {
-	d = new KopeteMessagePrivate;
-	init( QDateTime::currentDateTime(), 0L, Kopete::ContactPtrList(), QString::null, QString::null, Internal, PlainText, Chat );
+	if( format == RichText )
+	{
+		//This is coming from the RichTextEditor component.
+		//Strip off the containing HTML document
+		this->body.replace( QRegExp( QString::fromLatin1(".*<body.*>\\s+(.*)\\s+</body>.*") ), QString::fromLatin1("\\1") );
+
+		//Strip <p> tags
+		this->body.replace( QString::fromLatin1("<p>"), QString::null );
+
+		//Replace </p> with a <br/>
+		this->body.replace( QString::fromLatin1("</p>") , QString::fromLatin1("<br/>") );
+
+		//Remove trailing <br/>
+		if ( this->body.endsWith( QString::fromLatin1("<br/>") ) )
+			this->body.truncate( this->body.length() - 5 );
+		this->body.remove(  QString::fromLatin1("\n") );
+	}
+}
+
+
+Kopete::Message::Message()
+	: d( new Private( QDateTime::currentDateTime(), 0L, Kopete::ContactPtrList(), QString::null, QString::null, Internal, PlainText, Chat, TypeNormal ) )
+{
 }
 
 Kopete::Message::Message( const Kopete::Contact *fromKC, const Kopete::ContactPtrList &toKC, const QString &body,
-	MessageDirection direction, MessageFormat f, ViewType type )
+	                       MessageDirection direction, MessageFormat f, ViewType view, MessageType type )
+	: d( new Private( QDateTime::currentDateTime(), fromKC, toKC, body, QString::null, direction, f, view, type ) )
 {
-	d = new KopeteMessagePrivate;
-	init( QDateTime::currentDateTime(), fromKC, toKC, body, QString::null, direction, f, type );
 }
 
 Kopete::Message::Message( const Kopete::Contact *fromKC, const Kopete::Contact *toKC, const QString &body,
-	MessageDirection direction, MessageFormat f, ViewType type )
+                          MessageDirection direction, MessageFormat f, ViewType view, MessageType type )
 {
-	d = new KopeteMessagePrivate;
 	Kopete::ContactPtrList to;
 	to.append(toKC);
-	init( QDateTime::currentDateTime(), fromKC, to, body, QString::null, direction, f, type );
+	d = new Private( QDateTime::currentDateTime(), fromKC, to, body, QString::null, direction, f, view, type );
 }
 
 
 Kopete::Message::Message( const Kopete::Contact *fromKC, const Kopete::ContactPtrList &toKC, const QString &body,
-	const QString &subject, MessageDirection direction, MessageFormat f, ViewType type )
+                          const QString &subject, MessageDirection direction, MessageFormat f, ViewType view, MessageType type )
+	: d( new Private( QDateTime::currentDateTime(), fromKC, toKC, body, subject, direction, f, view, type ) )
 {
-	d = new KopeteMessagePrivate;
-
-	init( QDateTime::currentDateTime(), fromKC, toKC, body, subject, direction, f, type );
 }
 
 Kopete::Message::Message( const QDateTime &timeStamp, const Kopete::Contact *fromKC, const Kopete::ContactPtrList &toKC,
-	const QString &body, MessageDirection direction, MessageFormat f, ViewType type )
+	const QString &body, MessageDirection direction, MessageFormat f, ViewType view, MessageType type )
+	: d( new Private( timeStamp, fromKC, toKC, body, QString::null, direction, f, view, type ) )
 {
-	d = new KopeteMessagePrivate;
-
-	init( timeStamp, fromKC, toKC, body, QString::null, direction, f, type );
 }
 
 Kopete::Message::Message( const QDateTime &timeStamp, const Kopete::Contact *fromKC, const Kopete::ContactPtrList &toKC,
-	const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, ViewType type )
+	const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, ViewType view, MessageType type )
+	: d( new Private( timeStamp, fromKC, toKC, body, subject, direction, f, view, type ) )
 {
-	d = new KopeteMessagePrivate;
-
-	init( timeStamp, fromKC, toKC, body, subject, direction, f, type );
 }
 
 Kopete::Message::Message( const Kopete::Message &other )
@@ -110,60 +134,13 @@ Kopete::Message::Message( const Kopete::Message &other )
 }
 
 
-void Kopete::Message::init( const QDateTime &timeStamp, const Kopete::Contact *from, const Kopete::ContactPtrList &to,
-	const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, ViewType type )
-{
-	d->refCount = 1;
-	d->from = from;
-	d->to   = to;
-	d->importance = (to.count() <= 1) ? Normal : Low;
-	d->timeStamp = timeStamp;
-	d->direction = direction;
-	d->manager=0l;
-	d->format = f;
-	d->bgOverride = false;
-	d->fgOverride = false;
-	d->rtfOverride = false;
-	d->type = type;
-
-
-	d->subject=subject;
-
-	//Make the body correct
-
-	QString theBody = body;
-	if( f == RichText )
-	{
-		//This is coming from the RichTextEditor component.
-		//Strip off the containing HTML document
-		theBody.replace( QRegExp( QString::fromLatin1(".*<body.*>\\s+(.*)\\s+</body>.*") ), QString::fromLatin1("\\1") );
-
-		//Strip <p> tags
-		theBody.replace( QString::fromLatin1("<p>"), QString::null );
-
-		//Replace </p> with a <br/>
-		theBody.replace( QString::fromLatin1("</p>") , QString::fromLatin1("<br/>") );
-
-		//Remove trailing <br/>
-		if ( theBody.endsWith( QString::fromLatin1("<br/>") ) )
-			theBody.truncate( theBody.length() - 5 );
-		theBody.remove(  QString::fromLatin1("\n") );
-	}
-
-	d->body=theBody;
-}
-
-
 Kopete::Message& Kopete::Message::operator=( const Kopete::Message &other )
 {
-	if( other.d == d )
-		return *this;
-
-	detach();
-	delete d;
-
+	other.d->refCount++;
+	d->refCount--;
+	if( !d->refCount )
+		delete d;
 	d = other.d;
-	d->refCount++;
 
 	return *this;
 }
@@ -183,7 +160,7 @@ void Kopete::Message::detach()
 
 	// Warning: this only works as long as the private object doesn't contain pointers to allocated objects.
 	// The from contact for example is fine, but it's a shallow copy this way.
-	KopeteMessagePrivate *newD = new KopeteMessagePrivate(*d);
+	Private *newD = new Private(*d);
 	newD->refCount = 1;
 	d->refCount--;
 
@@ -424,9 +401,14 @@ Kopete::ContactPtrList Kopete::Message::to() const
 	return d->to;
 }
 
-Kopete::Message::ViewType Kopete::Message::type() const
+Kopete::Message::MessageType Kopete::Message::type() const
 {
 	return d->type;
+}
+
+Kopete::Message::ViewType Kopete::Message::viewType() const
+{
+	return d->view;
 }
 
 QColor Kopete::Message::fg() const
@@ -494,43 +476,43 @@ static QDomElement contactNode( QDomDocument doc, const Kopete::Contact *contact
 	QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 	if(contactName.isEmpty())
 		contactName = contact->metaContact() ? contact->metaContact()->displayName() : contact->contactId();
-	
+
 	QString metacontactName = contact->metaContact() ? contact->metaContact()->displayName() : contactName;
 	QDomElement contactNode = doc.createElement( QString::fromLatin1("contact") );
 	contactNode.setAttribute( QString::fromLatin1("contactId"), contact->contactId() );
-	
+
 	QDomElement contactNameNode = doc.createElement( QString::fromLatin1("contactDisplayName") );
 	contactNameNode.setAttribute( QString::fromLatin1("dir"), contactName.isRightToLeft() ?
 	                              QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
 	contactNameNode.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( contactName ) );
 	contactNode.appendChild( contactNameNode );
-	
+
 	QDomElement metacontactNameNode = doc.createElement( QString::fromLatin1("metaContactDisplayName") );
 	metacontactNameNode.setAttribute( QString::fromLatin1("dir"), metacontactName.isRightToLeft() ?
 	                                  QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
 	metacontactNameNode.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( metacontactName ) );
 	contactNode.appendChild( metacontactNameNode );
-	
+
 	// FIXME: protocol() returns NULL here in the style preview in appearance config.
 	// this isn't the right place to work around it, since contacts should never have
 	// no protocol, but it works for now.
 	QString iconName = QString::fromLatin1("unknown");
 	if ( Kopete::Protocol *protocol = contact->protocol() )
 		iconName = protocol->pluginIcon();
-	
+
 	QString iconPath = KGlobal::iconLoader()->iconPath( iconName, KIcon::Small );
 	contactNode.setAttribute( QString::fromLatin1("protocolIcon"), iconPath );
-	
+
 	// hash contactId to deterministically pick a color for the contact
 	int hash = 0;
 	const QString &contactId = contact->contactId();
 	for( uint f = 0; f < contactId.length(); ++f )
 		hash += contactId[f].latin1() * f;
 	int nameColorsLen = sizeof(nameColors) / sizeof(nameColors[0]);
-	
+
 	QString color = QString::fromLatin1( nameColors[ hash % nameColorsLen ] );
 	contactNode.setAttribute( QString::fromLatin1("color"), color );
-	
+
 	return contactNode;
 }
 
@@ -554,10 +536,66 @@ const QDomDocument Kopete::Message::asXML() const
 			KGlobal::locale()->formatDateTime(d->timeStamp) );
 	}
 	messageNode.setAttribute( QString::fromLatin1("subject"), QStyleSheet::escape( d->subject ) );
-	messageNode.setAttribute( QString::fromLatin1("direction"), d->direction );
+	
+	/**
+	 * @deprecated backwards-compatibility direction attribute for old XSLT
+	 * It used to be the case that Action was in the MessageDirection enum.
+	 * Clearly this is broken - Action is not a direction, and it was impossible
+	 * to tell whether actions were incoming or outgoing. Anyway, some XSLT view
+	 * styles were written back when this was the case. They expected numeric
+	 * 'directions'. So we fake some for them.
+	 */
+	{
+		int oldDirection;
+		if( type() == TypeAction )
+			oldDirection = 3;
+		else if( direction() == Inbound )
+			oldDirection = 0;
+		else if( direction() == Outbound )
+			oldDirection = 1;
+		else if( direction() == Internal )
+			oldDirection = 2;
+		messageNode.setAttribute( QString::fromLatin1("direction"), oldDirection );
+	}
+	
+	const char *route;
+	switch( d->direction )
+	{
+		case Inbound:
+			route = "inbound";
+			break;
+		case Outbound:
+			route = "outbound";
+			break;
+		case Internal:
+			route = "internal";
+			break;
+		default:
+			kdWarning(14000) << k_funcinfo << "unknown message direction " << d->direction << endl;
+			route = "unknown";
+			break;
+	}
+	messageNode.setAttribute( QString::fromLatin1("route"), QString::fromLatin1(route) );
+	
+	const char *type;
+	switch( d->type )
+	{
+		case TypeNormal:
+			type = "normal";
+			break;
+		case TypeAction:
+			type = "action";
+			break;
+		default:
+			kdWarning(14000) << k_funcinfo << "unknown message type " << d->type << endl;
+			type = "unknown";
+			break;
+	}
+	messageNode.setAttribute( QString::fromLatin1("type"), QString::fromLatin1(type) );
+	
 	messageNode.setAttribute( QString::fromLatin1("importance"), d->importance );
-
-
+	
+	
 	//build the <from> and <to>  node
 	if( const Kopete::Contact *mainContact = (d->direction == Inbound ? d->from : d->to.first()) )
 		messageNode.setAttribute( QString::fromLatin1("mainContactId"), mainContact->contactId() );
@@ -577,14 +615,14 @@ const QDomDocument Kopete::Message::asXML() const
 		toNode.appendChild( contactNode( doc, c ) );
 	messageNode.appendChild( toNode );
 	*/
-	
+
 	if( const Kopete::Contact *c = d->to.first() )
 	{
 		QDomElement toNode = doc.createElement( QString::fromLatin1("to") );
 		toNode.appendChild( contactNode( doc, c ) );
 		messageNode.appendChild( toNode );
 	}
-	
+
 	QDomElement bodyNode = doc.createElement( QString::fromLatin1("body") );
 
 	if( !d->fgOverride && d->fgColor.isValid() )

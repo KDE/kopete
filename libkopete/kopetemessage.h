@@ -27,7 +27,6 @@
 #include <qdatetime.h>
 
 class QDateTime;
-struct KopeteMessagePrivate;
 
 namespace Kopete
 {
@@ -59,7 +58,7 @@ public:
 	 * - Internal: Messages which are not sent via the network. This is just a notification a plugin can show in a chat view
 	 * - Action: For the /me command , like on irc
 	 */
-	enum MessageDirection { Inbound = 0, Outbound = 1, Internal= 2, Action = 3 };
+	enum MessageDirection { Inbound = 0, Outbound = 1, Internal= 2 };
 
 	/**
 	 * Format of body
@@ -81,6 +80,14 @@ public:
 	 * - Email: Single shot messaging
 	 */
 	enum ViewType { Undefined, Chat, Email };
+
+	/**
+	 * Specifies the type of the message.
+	 * Currently supported types are:
+	 * - Normal: a message
+	 * - Action: an IRC-style DESCRIBE action.
+	 */
+	enum MessageType { TypeNormal, TypeAction };
 
 	/**
 	 * Specifies the type of notification that will be sent with this message
@@ -107,10 +114,12 @@ public:
 	 * @param body Message body
 	 * @param direction The direction of the message, Kopete::Message::Inbound, Kopete::Message::Outbound, Kopete::Message::Internal
 	 * @param format Format of the message
-	 * @param type Type of the message, see @ref ViewType
+	 * @param type Type of the message, see @ref MessageType
+	 * @param view Suggested view type for the message, see @ref ViewType
 	 */
 	Message( const Contact *fromKC, const ContactPtrList &toKC, const QString &body,
-		MessageDirection direction, MessageFormat format = PlainText, ViewType type = Undefined );
+		MessageDirection direction, MessageFormat format = PlainText, ViewType view = Undefined,
+		MessageType type = TypeNormal );
 
 	/**
 	 * Constructs a new message. See @ref setBody() to more information about the format
@@ -119,10 +128,12 @@ public:
 	 * @param body Message body
 	 * @param direction The direction of the message, Kopete::Message::Inbound, Kopete::Message::Outbound, Kopete::Message::Internal
 	 * @param format Format of the message
-	 * @param type Type of the message, see @ref ViewType
+	 * @param type Type of the message, see @ref MessageType
+	 * @param view Suggested view type for the message, see @ref ViewType
 	 */
 	Message( const Contact *fromKC, const Contact *toKC, const QString &body,
-		MessageDirection direction, MessageFormat format = PlainText, ViewType type = Undefined );
+		MessageDirection direction, MessageFormat format = PlainText,
+		ViewType view = Undefined, MessageType type = TypeNormal );
 
 
 	/**
@@ -133,10 +144,12 @@ public:
 	 * @param subject The subject of the message
 	 * @param direction The direction of the message, Kopete::Message::Inbound, Kopete::Message::Outbound, Kopete::Message::Internal
 	 * @param format Format of the message
-	 * @param type Type of the message, see @ref ViewType
+	 * @param type Type of the message, see @ref MessageType
+	 * @param view Suggested view type for the message, see @ref ViewType
 	 */
 	Message( const Contact *fromKC, const ContactPtrList &toKC, const QString &body,
-		const QString &subject, MessageDirection direction, MessageFormat format = PlainText, ViewType type = Undefined );
+		const QString &subject, MessageDirection direction, MessageFormat format = PlainText,
+		ViewType view = Undefined, MessageType type = TypeNormal );
 
 	/**
 	 * Constructs a new message. See @ref setBody() to more information about the format
@@ -146,10 +159,12 @@ public:
 	 * @param body Message body
 	 * @param direction The direction of the message, Kopete::Message::Inbound, Kopete::Message::Outbound, Kopete::Message::Internal
 	 * @param format Format of the message
-	 * @param type Type of the message, see @ref ViewType
+	 * @param type Type of the message, see @ref MessageType
+	 * @param view Suggested view type for the message, see @ref ViewType
 	 */
 	Message( const QDateTime &timeStamp, const Contact *fromKC, const ContactPtrList &toKC,
-		const QString &body, MessageDirection direction, MessageFormat format = PlainText, ViewType type = Undefined );
+		const QString &body, MessageDirection direction, MessageFormat format = PlainText,
+		ViewType view = Undefined, MessageType type = TypeNormal );
 
 	/**
 	 * Constructs a new message. See @ref setBody() to more information about the format
@@ -160,11 +175,12 @@ public:
 	 * @param subject The subject of the message
 	 * @param direction The direction of the message, Kopete::Message::Inbound, Kopete::Message::Outbound, Kopete::Message::Internal
 	 * @param format Format of the message
-	 * @param type Type of the message, see @ref ViewType
+	 * @param type Type of the message, see @ref MessageType
+	 * @param view Suggested view type for the message, see @ref ViewType
 	 */
 	Message( const QDateTime &timeStamp, const Contact *fromKC, const ContactPtrList &toKC,
 		const QString &body, const QString &subject, MessageDirection direction,
-		MessageFormat format = PlainText, ViewType type = Undefined );
+		MessageFormat format = PlainText, ViewType view = Undefined, MessageType type = TypeNormal );
 
 	/**
 	 * Copy constructor.
@@ -197,9 +213,14 @@ public:
 	Kopete::ContactPtrList to() const;
 
 	/**
+	 * @return the @ref MessageType of this message
+	 */
+	MessageType type() const;
+
+	/**
 	 * @return the @ref ViewType of this message
 	 */
-	ViewType type() const;
+	ViewType viewType() const;
 
 	/**
 	 * Accessor method for the foreground color
@@ -348,7 +369,7 @@ public:
 	 */
 	static QString escape( const QString & );
 
-	
+
 	/**
 	 * Helper function to decode a string. Whatever returned here is *nearly guarenteed* to
 	 * be parseable by the XML engine.
@@ -364,18 +385,13 @@ public:
 
 private:
 	/**
-	 * Helper for constructors
-	 */
-	void init( const QDateTime &timeStamp, const Contact *from, const ContactPtrList &to,
-		const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, ViewType type );
-
-	/**
 	 * Kopete::Message is implicitly shared.
 	 * Detach the instance when modifying data.
 	 */
 	void detach();
 
-	KopeteMessagePrivate *d;
+	class Private;
+	Private *d;
 
 	static QString parseLinks( const QString &message, MessageFormat format );
 };

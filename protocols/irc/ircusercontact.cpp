@@ -474,7 +474,7 @@ void IRCUserContact::privateMessage(IRCContact *from, IRCContact *to, const QStr
 		if(to==account()->myself())
 		{
 			Kopete::Message msg(from, from->manager()->members(), message,
-				Kopete::Message::Inbound, Kopete::Message::RichText, Kopete::Message::Chat);
+			                    Kopete::Message::Inbound, Kopete::Message::RichText, Kopete::Message::Chat);
 			from->appendMessage(msg);
 		}
 		else
@@ -491,11 +491,13 @@ void IRCUserContact::newAction(const QString &to, const QString &action)
 
 	IRCContact *t = MYACCOUNT->contactManager()->findUser(to);
 
-	Kopete::Message msg(this, t, action,
-		Kopete::Message::Action, Kopete::Message::RichText, Kopete::Message::Chat);
+	Kopete::Message::MessageDirection dir =
+		(this == MYACCOUNT->mySelf()) ? Kopete::Message::Outbound : Kopete::Message::Inbound;
+	Kopete::Message msg(this, t, action, dir, Kopete::Message::RichText,
+	                    Kopete::Message::Chat, Kopete::Message::TypeAction);
 
 	//Either this is from me to a guy, or from a guy to me. Either way its a PM
-	if (this == MYACCOUNT->mySelf())
+	if (dir == Kopete::Message::Outbound)
 		t->appendMessage(msg);
 	else
 		appendMessage(msg);
