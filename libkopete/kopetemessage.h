@@ -52,7 +52,7 @@ public:
 	 *  show into the chatwindow
 	 * -Crypted is used only by Jabber and the cryptography plugin
 	 */
-	enum MessageFormat{ PlainText = 0x01 , RichText =0x02 , ParsedHTML = 0x06 , Crypted = 0x09};
+	enum MessageFormat{ PlainText = 0x01 , RichText =0x02 , ParsedHTML = 0x04|RichText , Crypted = 0x08|PlainText};
 
 	/**
 	* Specifies the type of the view.
@@ -284,6 +284,10 @@ public:
 	 */
 	const QDomDocument asXML() const;
 
+	/**
+	 * ?
+	 * //FIXME:  please docuement
+	 */
 	void setBgOverride( bool enable );
 
 	/**
