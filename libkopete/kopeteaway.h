@@ -1,9 +1,10 @@
 /*
     kopeteaway.h  -  Kopete Away
 
-	Copyright (c) 2002 by Hendrik vom Lehn <hvl@linux-4-ever.de> 
+    Copyright (c) 2002 by Hendrik vom Lehn <hvl@linux-4-ever.de> 
+    Copyright (c) 2003 Olivier Goffart     <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -19,18 +20,16 @@
 #define KOPETEAWAY_HI
 
 #include <qstring.h>
-#include <kconfig.h>
+#include <qobject.h>
 #include <qvaluelist.h>
 
-/**
- * @author Hendrik vom Lehn <hvl@linux-4-ever.de>
- * @author Chris TenHarmsel <tenharmsel@users.sourceforge.net>
- */
 
  struct KopeteAwayMessage{
 	QString title;
 	QString message;
 };
+
+struct  KopeteAwayPrivate;
 
 /* Forward Declarations */
 class QStringList;
@@ -48,12 +47,20 @@ class KopeteGlobalAwayDialog;
  * list of user-defined away messages from this.  Protocol
  * plugins' individual away dialogs should also get away
  * messages from this object.
+ * It also handle global Idle Time
+ *
+ * @author Hendrik vom Lehn <hvl@linux-4-ever.de>
+ * @author Chris TenHarmsel <tenharmsel@users.sourceforge.net>
+ * @author Olivier Goffart <ogoffart@tiscalinet.be>
+ 
  */
-class KopeteAway
+class KopeteAway : public QObject
 {
+Q_OBJECT
+
 friend class KopeteAwayDialog;
 	
-	public:
+public:
 	
 	/** 
 	 * @brief Method to get the single instance of KopeteAway
@@ -153,16 +160,46 @@ friend class KopeteAwayDialog;
 	 */
 	bool updateMessage(QString title, QString message);
 	
-	private:
+	/**
+	 * time in seconds since the user is idle
+	 */
+	long int idleTime();
+	
+	
+	
+	/**
+	 *  Go avaliable when detect activity
+	 */
+	void setGoAvailable(bool );
+	bool goAvailable();
+	
+	/**
+	 * time befaure going automaticaly away
+	 * set to 0 to not going away
+	 */
+	void setAutoAwayTimeout(int );
+	int autoAwayTimeout();
+	
+private:
 	KopeteAway();
 	~KopeteAway();
-	KopeteAway( const KopeteAway &rhs );
-	KopeteAway &operator=( const KopeteAway &rhs );
+	//KopeteAway( const KopeteAway &rhs );
+	//KopeteAway &operator=( const KopeteAway &rhs );
 	static KopeteAway *instance;
-	QString mAwayMessage;
-	bool mGlobalAway;
-	QValueList<KopeteAwayMessage> mAwayMessageList;
-	KConfig *config;	
+	KopeteAwayPrivate *d;
+private slots:
+	void slotTimerTimeout();
+public slots:
+	/**
+	 * Set the activity
+	 * Plugins can set the activity if they discover activity bu another way that the mouse
+	 */
+	void setActivity();
+signals:
+	/**
+	 * Activity was detected
+	 */
+	void activity();
 };
 
 #endif
