@@ -1,3 +1,4 @@
 SUBDIRS = emoticons
 icondir = $(kde_datadir)/kopete/pics
-icon_DATA = newmsg.png history.png
+icon_DATA = newmsg.png history.png kopeteavailable.png kopeteaway.png kopetestatus.png
+

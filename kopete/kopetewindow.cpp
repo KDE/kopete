@@ -84,15 +84,15 @@ void KopeteWindow::initActions ( void )
 	actionConnectionMenu->insert(actionConnect);
 	actionConnectionMenu->insert(actionDisconnect);
 
-	actionSetAway = new KAction( i18n("&Set Away Globally"), "away", 0 ,
+	actionSetAway = new KAction( i18n("&Set Away Globally"), "kopeteaway", 0 ,
 							kopeteapp, SLOT(slotSetAwayAll()),
 							actionCollection(), "SetAway" );
 
-	actionSetAvailable = new KAction( i18n("Set Availa&ble Globally"), "available", 0 ,
+	actionSetAvailable = new KAction( i18n("Set Availa&ble Globally"), "kopeteavailable", 0 ,
 							kopeteapp, SLOT(slotSetAvailableAll()),
 							actionCollection(), "SetAvailable" );
 
-	actionAwayMenu = new KActionMenu( i18n("Status"),"awaymenu",
+	actionAwayMenu = new KActionMenu( i18n("Status"),"kopetestatus",
 							actionCollection(), "Status" );
 	actionAwayMenu->insert(actionSetAvailable);
 	actionAwayMenu->insert(actionSetAway);
