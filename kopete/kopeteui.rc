@@ -48,7 +48,7 @@
 		</Menu>
 	</MenuBar>
 
-	<ToolBar fullWidth="true" name="mainToolBar">
+	<ToolBar fullWidth="true" name="mainToolBar" noMerge="1">
 		<Action name="ConnectAll"/>
 		<Action name="DisconnectAll"/>
 		<Action name="Status"/>
