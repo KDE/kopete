@@ -2,7 +2,7 @@
     yahooprotocol.cpp - Yahoo Plugin for Kopete
 
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-    Copyright (c) 2003 by Matt Rogers <mattrogers@sbcglobal.net>
+    Copyright (c) 2003 by Matt Rogers <matt@matt.rogers.name>
 
     Copyright (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
