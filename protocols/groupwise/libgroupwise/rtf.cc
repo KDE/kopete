@@ -303,12 +303,12 @@ static void yy_fatal_error YY_PROTO(( yyconst char msg[] ));
 
 #define YY_NUM_RULES 10
 #define YY_END_OF_BUFFER 11
-static yyconst short int yy_accept[35] =
+static yyconst short int yy_accept[32] =
     {   0,
         0,    0,   11,    8,    8,    9,    9,    1,    2,    8,
         0,    0,    5,    3,    5,    0,    0,    5,    5,    5,
-        0,    6,    5,    7,    5,    5,    0,    5,    0,    5,
-        0,    5,    4,    0
+        0,    6,    5,    7,    5,    5,    4,    5,    5,    5,
+        0
     } ;
 
 static yyconst int yy_ec[256] =
@@ -322,11 +322,11 @@ static yyconst int yy_ec[256] =
         1,    8,    9,    1,   10,   10,   10,   10,   10,   10,
        11,   11,   11,   11,   11,   11,   11,   11,   11,   11,
        11,   11,   11,   11,   11,   11,   11,   11,   11,   11,
-       12,   13,   14,    1,    1,    1,   10,   10,   10,   10,
+        1,   12,    1,    1,    1,    1,   10,   10,   10,   10,
 
        10,   10,   11,   11,   11,   11,   11,   11,   11,   11,
-       11,   11,   11,   11,   11,   11,   15,   11,   11,   11,
-       11,   11,   16,    1,   17,    1,    1,    1,    1,    1,
+       11,   11,   11,   11,   11,   11,   13,   11,   11,   11,
+       11,   11,   14,    1,   15,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -343,52 +343,50 @@ static yyconst int yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static yyconst int yy_meta[18] =
+static yyconst int yy_meta[16] =
     {   0,
         1,    1,    2,    1,    1,    2,    3,    4,    1,    2,
-        2,    1,    3,    1,    2,    3,    3
+        2,    3,    2,    3,    3
     } ;
 
-static yyconst short int yy_base[39] =
+static yyconst short int yy_base[36] =
     {   0,
-        0,   16,   41,    0,    0,   34,   29,   68,   68,    0,
-       33,    0,    2,   68,    6,    0,    5,   68,   16,   18,
-       28,   68,   22,   68,   44,   29,   28,   24,   13,   20,
-       11,    8,   68,   68,   56,   60,    1,   64
+        0,   14,   43,    0,    0,   38,   25,   59,   59,    0,
+       29,    0,    2,   59,   14,    0,    3,   59,   16,   21,
+       24,   59,   28,   59,   38,   19,   59,   17,   12,    5,
+       59,   47,   51,    1,   55
     } ;
 
-static yyconst short int yy_def[39] =
+static yyconst short int yy_def[36] =
     {   0,
-       35,   35,   34,   36,   36,   34,   34,   34,   34,   36,
-       34,   34,   37,   34,   37,   38,   34,   34,   34,   34,
-       38,   34,   34,   34,   34,   25,   34,   25,   34,   25,
-       34,   25,   34,    0,   34,   34,   34,   34
+       32,   32,   31,   33,   33,   31,   31,   31,   31,   33,
+       31,   31,   34,   31,   34,   35,   31,   31,   31,   31,
+       35,   31,   31,   31,   31,   25,   31,   25,   25,   25,
+        0,   31,   31,   31,   31
     } ;
 
-static yyconst short int yy_nxt[86] =
+static yyconst short int yy_nxt[75] =
     {   0,
-       34,    5,   13,   34,   18,   17,    6,   19,   18,   17,
-       22,   20,    7,   19,   22,    8,    9,    5,   18,   33,
-       18,   19,    6,   23,   18,   32,   31,   25,    7,   30,
-       29,    8,    9,   12,   28,   24,   16,   11,   13,   13,
-       34,   14,   34,   15,   14,   14,   18,   34,   34,   26,
-       34,   34,   34,   34,   34,   27,    4,    4,    4,    4,
-       10,   10,   34,   10,   21,   21,   21,    3,   34,   34,
-       34,   34,   34,   34,   34,   34,   34,   34,   34,   34,
-       34,   34,   34,   34,   34
+       31,    5,   13,   31,   18,   17,    6,   19,   22,   17,
+       19,    7,   22,    8,    9,    5,   18,   30,   18,   20,
+        6,   19,   29,   18,   28,    7,   23,    8,    9,   12,
+       18,   24,   16,   25,   13,   13,   14,   15,   14,   14,
+       18,   11,   31,   26,   31,   31,   27,    4,    4,    4,
+        4,   10,   10,   31,   10,   21,   21,   21,    3,   31,
+       31,   31,   31,   31,   31,   31,   31,   31,   31,   31,
+       31,   31,   31,   31
     } ;
 
-static yyconst short int yy_chk[86] =
+static yyconst short int yy_chk[75] =
     {   0,
-        0,    1,   37,    0,   13,   12,    1,   13,   15,   12,
-       17,   15,    1,   32,   17,    1,    1,    2,   19,   31,
-       20,   19,    2,   20,   23,   30,   29,   23,    2,   28,
-       27,    2,    2,    7,   26,   21,   11,    6,    7,    7,
-        3,    7,    0,    7,    7,    7,   25,    0,    0,   25,
-        0,    0,    0,    0,    0,   25,   35,   35,   35,   35,
-       36,   36,    0,   36,   38,   38,   38,   34,   34,   34,
-       34,   34,   34,   34,   34,   34,   34,   34,   34,   34,
-       34,   34,   34,   34,   34
+        0,    1,   34,    0,   13,   12,    1,   13,   17,   12,
+       30,    1,   17,    1,    1,    2,   15,   29,   19,   15,
+        2,   19,   28,   20,   26,    2,   20,    2,    2,    7,
+       23,   21,   11,   23,    7,    7,    7,    7,    7,    7,
+       25,    6,    3,   25,    0,    0,   25,   32,   32,   32,
+       32,   33,   33,    0,   33,   35,   35,   35,   31,   31,
+       31,   31,   31,   31,   31,   31,   31,   31,   31,   31,
+       31,   31,   31,   31
     } ;
 
 static yy_state_type yy_last_accepting_state;
@@ -445,7 +443,7 @@ rm -f lex.yy.c
 
 #define YY_NO_UNPUT 1
 #define YY_STACK_USED 0
-#line 449 "rtf.cc"
+#line 447 "rtf.cc"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -599,7 +597,7 @@ YY_DECL
 #line 46 "rtf.ll"
 
 
-#line 603 "rtf.cc"
+#line 601 "rtf.cc"
 
 	if ( yy_init )
 		{
@@ -650,13 +648,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 35 )
+				if ( yy_current_state >= 32 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 68 );
+		while ( yy_base[yy_current_state] != 59 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -732,7 +730,7 @@ YY_RULE_SETUP
 #line 57 "rtf.ll"
 ECHO;
 	YY_BREAK
-#line 736 "rtf.cc"
+#line 734 "rtf.cc"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1024,7 +1022,7 @@ static yy_state_type yy_get_previous_state()
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 35 )
+			if ( yy_current_state >= 32 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -1059,11 +1057,11 @@ yy_state_type yy_current_state;
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 35 )
+		if ( yy_current_state >= 32 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 34);
+	yy_is_jam = (yy_current_state == 31);
 
 	return yy_is_jam ? 0 : yy_current_state;
 	}
@@ -1690,7 +1688,7 @@ void RTF2HTML::FlushOutTags()
         case TAG_FONT_COLOR:
             {
                // RTF colors are 1-based; colors[] is a 0-based array.
-               if (t.param > colors.size())
+               if (t.param > colors.size() || t.param == 0)
                    break;
                QColor &c = colors[t.param-1];
                PrintUnquoted("<span style=\"color:#%02X%02X%02X\">", c.red(), c.green(), c.blue());
@@ -1748,7 +1746,7 @@ void Level::resetTag(TagEnum tag)
            Thus, for each tag we remove from the actual tag stack, we also
            try to remove a yet-to-be-printed tag, and only if there are no
            yet-to-be-printed tags left, we start closing the tags we pop.
-           The tags have one space - needed for umlaute (ן¿½) and .utf8()
+           The tags have one space - needed for umlaute (צהü) and .utf8()
         */
         if (p->oTags.empty()){
             switch (nTag){
