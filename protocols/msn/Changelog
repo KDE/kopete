@@ -4,6 +4,9 @@ Changes since Kopete 0.4
   friend list (like deleted contacts). Small problem: there already was
   a need to have a gui for manipulating blocked/allowed contacts, with
   this change this is even a bit more urgent...
+- Hopefully fix a problem with an empty reverse list on a fresh MSN account.
+  can't test, because by the time the recompile was done the reverse list
+  was no longer empty...
 
 CHANGELOG FOR THE MSN PLUGIN IN KOPETE 0.4
 

@@ -521,8 +521,8 @@ void MSNProtocol::addContact( const QString &userID )
 {
 	if( isConnected() )
 	{
-		m_serviceSocket->addContact( userID, userID, 0, FL );
 		m_serviceSocket->addContact( userID, userID, 0, AL );
+		m_serviceSocket->addContact( userID, userID, 0, FL );
 	}
 }
 
@@ -768,6 +768,10 @@ void MSNProtocol::slotContactStatusChanged( const QString &handle,
 void MSNProtocol::slotContactList( QString handle, QString publicName,
 	QString group, QString list )
 {
+	// On empty lists handle might be empty, ignore that
+	if( handle.isEmpty() )
+		return;
+
 	MSNContact *c;
 	QStringList groups;
 	groups = QStringList::split(",", group, false );
