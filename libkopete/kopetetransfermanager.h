@@ -191,7 +191,7 @@ signals:
 	/**
 	 * @deprecated Use result() and check error() for ERR_USER_CANCELED
 	 */
-	void transferCanceled() KDE_DEPRECATED;
+	void transferCanceled();
 
 private:
 	void init( const KURL &, bool );
