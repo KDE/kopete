@@ -100,33 +100,28 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	//Create the botttom dock widget, with the edit area, statusbar and send button
 	editDock = createDockWidget( QString::fromLatin1( "editDock" ), QPixmap(), 0L, QString::fromLatin1( "editDock" ), QString::fromLatin1( " " ) );
 
-
+	editpart = 0L;
 	KLibFactory *factory = KLibLoader::self()->factory("libkrichtexteditpart");
-	if ( !factory )
+	if ( factory )
+		editpart = dynamic_cast<KParts::Part*> (factory->create( editDock, "krichtexteditpart", "KParts::ReadWritePart" ) );
+
+	if ( editpart )
 	{
-		KMessageBox::error( this, QString::fromLatin1("Could not load editor library 'libkrichtexteditpart', aborting") );
-		close();
-	}
+		QDomDocument doc = editpart->domDocument();
+		QDomNode menu = doc.documentElement().firstChild();
+		menu.removeChild( menu.firstChild() ); // Remove File
+		menu.removeChild( menu.firstChild() ); // Remove Edit
+		menu.removeChild( menu.firstChild() ); // Remove View
+		menu.removeChild( menu.lastChild() ); //Remove Help
 
-	editpart = static_cast<KParts::Part*> (factory->create( editDock, "krichtexteditpart", "KParts::ReadWritePart" ) );
-	if ( !editpart )
+		doc.documentElement().removeChild( doc.documentElement().childNodes().item(1) ); //Remove MainToolbar
+		doc.documentElement().removeChild( doc.documentElement().lastChild() ); // Remove Edit popup
+		m_edit = static_cast<QTextEdit*>( editpart->widget() );
+	}
+	else
 	{
-		KMessageBox::error( this, QString::fromLatin1("Could not create editor part, aborting") );
-		close();
+		m_edit = m_edit = new QTextEdit( editDock, "m_edit" );
 	}
-
-	QDomDocument doc = editpart->domDocument();
-	QDomNode menu = doc.documentElement().firstChild();
-	menu.removeChild( menu.firstChild() ); // Remove File
-	menu.removeChild( menu.firstChild() ); // Remove Edit
-	menu.removeChild( menu.firstChild() ); // Remove View
-	menu.removeChild( menu.lastChild() ); //Remove Help
-
-	doc.documentElement().removeChild( doc.documentElement().childNodes().item(1) ); //Remove MainToolbar
-	doc.documentElement().removeChild( doc.documentElement().lastChild() ); // Remove Edit popup
-
-	m_edit = static_cast<QTextEdit*>( editpart->widget() );
-	//m_edit = new KTextEdit( editDock, "m_edit" );
 
 	//Set params on the edit widget
 	m_edit->setMinimumSize( QSize( 75, 20 ) );
