@@ -246,11 +246,6 @@ void ListView::slotConfigChanged()
 			if( this->parent() ) // just a caution
 			{
 				d->scrollAutoHide = true;
-				// To avoid double event filtering, remove the event filter before, it's safe
-				this->parent()->removeEventFilter(this);
-				// Install event filter on parent of this object which is supposed to be main window.
-				// So that we can show/hide the scroll bar when the mouse is on the main window
-				this->parent()->installEventFilter(this);
 				// Turn of the bar now
 				setVScrollBarMode( AlwaysOff );
 				// Start the timer to handle auto-hide
@@ -273,7 +268,6 @@ void ListView::slotConfigChanged()
 				d->scrollAutoHide = false;
 				setVScrollBarMode( Auto );
 				killTimer( d->scrollAutoHideTimer );
-				this->parent()->removeEventFilter(this);
 			}
 		}
 	}
@@ -596,7 +590,20 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 
 			if( d->scrollAutoHide ) // If auto-hide scroll bar is enabled
 			{
-				setVScrollBarMode( Auto );			// show the scroll bar
+				d->scrollAutoHideCounter = 9999;		// Mouse is dragging the scrollbar slider
+			}
+		}
+		else if( e->type() == QEvent::Enter )
+		{
+			if( d->scrollAutoHide ) // If auto-hide scroll bar is enabled
+			{
+				d->scrollAutoHideCounter = 9999;		// Mouse is on the scroll bar
+			}
+		}
+		else if( e->type() == QEvent::Leave )
+		{
+			if( d->scrollAutoHide ) // If auto-hide scroll bar is enabled
+			{		// show the scroll bar
 				d->scrollAutoHideCounter = d->scrollAutoHideTimeout;		// Mouse is on the scroll bar
 			}
 		}
