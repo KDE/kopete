@@ -173,42 +173,43 @@ public:
 	~KopeteOnlineStatus();
 
 	/**
-	 * Return the status
+	 * \brief Return the status
 	 */
 	OnlineStatus status() const;
 
 	/**
-	 * Return the internal status
+	 * \brief Return the internal status
 	 */
 	unsigned internalStatus() const;
 
 	/**
-	 * Return the weight
+	 * \brief Return the weight
 	 */
 	unsigned weight() const;
 
 	/**
-	 * Return the icon
+	 * \brief Return the icon
 	 */
 	QString overlayIcon() const;
 
 	/**
-	 * Return the description
+	 * \brief Return the description
 	 */
 	QString description() const;
 
 	/**
-	 * Return the caption
+	 * \brief Return the caption
 	 */
 	QString caption() const;
 
 	/**
-	 * Return the protocol this applies to
+	 * \brief Return the protocol this applies to
 	 */
 	KopeteProtocol* protocol() const;
 
 	/**
-	 * Return a status icon generated for the given KopeteContact
+	 * \brief Return a status icon generated for the given KopeteContact
+	 *
 	 * This will draw an overlay representing the online status
 	 * of the contact the KopeteOnlineStatus applies to
 	 * over the base icon.
@@ -219,7 +220,8 @@ public:
 	QPixmap iconFor( const KopeteContact *contact, int size = 16 ) const;
 
 	/**
-	 * Return a status icon generated for the given KopeteAccount
+	 * \brief Return a status icon generated for the given KopeteAccount
+	 *
 	 * This will draw an overlay representing the online status
 	 * of the account the KopeteOnlineStatus applies to
 	 * over the base icon.
@@ -231,7 +233,8 @@ public:
 	QPixmap iconFor( const KopeteAccount *account, int size = 16 ) const;
 
 	/**
-	 * Returns the status icon for the protocol.
+	 * \brief Returns the status icon for the protocol.
+	 *
 	 * A cache is employed to reduce CPU and memory usage.
 	 */
 	QPixmap protocolIcon() const;
