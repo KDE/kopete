@@ -55,12 +55,11 @@ JabberProtocol::JabberProtocol(): QObject(0, "JabberProtocol"), KopeteProtocol()
 		KMessageBox::error(kopeteapp->mainWindow(), emptyText, emptyCaption);
 	}
   mIsConnected = false;
+  slotSettingsChanged();
 	/** Autoconnect if is selected in config */
 	if (KGlobal::config()->readBoolEntry("AutoConnect", "0")) {
 		Connect();
 	}
-
-  slotSettingsChanged();
 }
 
 JabberProtocol::~JabberProtocol()
