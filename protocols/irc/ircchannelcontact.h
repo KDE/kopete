@@ -43,19 +43,28 @@ class IRCChannelContact : public IRCContact
 		virtual const QString caption() const;
 		// FINISH
 
+	public slots:
+		void setTopic( QString topic = QString::null );
+
 	private slots:
 		void slotConnectedToServer();
 		void slotUserJoinedChannel(const QString &, const QString &);
 		void slotJoin();
 		void slotPart();
 		void slotUserPartedChannel(const QString &user, const QString &channel, const QString &reason);
+		void slotChannelTopic(const QString &channel, const QString &topic);
+		void slotTopicChanged(const QString &channel, const QString &nick, const QString &newtopic);
 		void slotConnectionClosed();
 		void slotNamesList(const QString &channel, const QString &nickname, const int);
+
 	private:
 		// KAction stuff:
 		KActionCollection *mCustomActions;
 		KAction *actionJoin;
 		KAction *actionPart;
+		KAction *actionTopic;
+
+		QString mTopic;
 };
 
 #endif

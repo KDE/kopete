@@ -20,7 +20,6 @@ email                : nbetcher@kde.org
 #include "ircidentity.h"
 
 #include "kirc.h"
-#include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
 #include "kopetestdaction.h"
@@ -28,6 +27,7 @@ email                : nbetcher@kde.org
 #include <klocale.h>
 #include <qsocket.h>
 #include <kdebug.h>
+#include <klineeditdlg.h>
 
 IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &channel, KopeteMetaContact *metac) :
 		IRCContact( identity, channel, metac )
@@ -43,8 +43,9 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 
 	// KAction stuff
 	mCustomActions = new KActionCollection(this);
-	actionJoin = new KAction(i18n("&Join"), 0, this, SLOT(slotJoin()), this, "actionJoin");
-	actionPart = new KAction(i18n("&Part"), 0, this, SLOT(slotPart()), this, "actionPart");
+	actionJoin = new KAction(i18n("&Join"), 0, this, SLOT(slotJoin()), mCustomActions, "actionJoin");
+	actionPart = new KAction(i18n("&Part"), 0, this, SLOT(slotPart()), mCustomActions, "actionPart");
+	actionTopic = new KAction(i18n("Change &Topic"), 0, this, SLOT(setTopic()), mCustomActions, "actionTopic");
 
 	// KIRC Engine stuff
 	QObject::connect(identity->engine(), SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()));
@@ -52,8 +53,10 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 	QObject::connect(identity->engine(), SIGNAL(userJoinedChannel(const QString &, const QString &)), this, SLOT(slotUserJoinedChannel(const QString &, const QString &)));
 	QObject::connect(identity->engine(), SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)), this, SLOT(slotUserPartedChannel(const QString &, const QString &, const QString &)));
 	QObject::connect(identity->engine(), SIGNAL(incomingNamesList(const QString &, const QString &, const int)), this, SLOT(slotNamesList(const QString &, const QString &, const int)));
+	QObject::connect(identity->engine(), SIGNAL(incomingExistingTopic(const QString &, const QString &)), this, SLOT( slotChannelTopic(const QString&, const QString &)));
+	QObject::connect(identity->engine(), SIGNAL(incomingTopicChange(const QString &, const QString &, const QString &)), this, SLOT( slotTopicChanged(const QString&,const QString&,const QString&)));
 
-	connect( this, SIGNAL( endSession() ), this, SLOT( slotPart() ) );
+	QObject::connect( this, SIGNAL( endSession() ), this, SLOT( slotPart() ) );
 
 	// TODO: make this configurable: (join on load)
 	if (mEngine->state() == QSocket::Idle)
@@ -84,6 +87,15 @@ void IRCChannelContact::slotNamesList(const QString &channel, const QString &nic
 	}
 }
 
+void IRCChannelContact::slotChannelTopic(const QString &channel, const QString &topic)
+{
+	if( mNickName.lower() == channel.lower() )
+	{
+		mTopic = topic;
+		mMsgManager->setDisplayName( caption() );
+	}
+}
+
 void IRCChannelContact::slotJoin()
 {
 	if ( onlineStatus() == KopeteContact::Offline )
@@ -107,7 +119,7 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 		setOnlineStatus( KopeteContact::Online ); // We joined the channel, change status
 
 		KopeteMessage msg((KopeteContact *)this, mContact,
-		i18n(QString("You have joined channel %1").arg(mNickName)), KopeteMessage::Internal);
+		i18n("You have joined channel %1").arg(mNickName), KopeteMessage::Internal);
 		manager()->appendMessage(msg);
 	}
 	else {
@@ -115,7 +127,7 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 		manager()->addContact((KopeteContact *)contact);
 
 		KopeteMessage msg((KopeteContact *)this, mContact,
-		i18n(QString("User %1[%2] joined channel %3").arg(nickname).arg(user.section('!', 1))
+		i18n("User %1[%2] joined channel %3").arg(nickname).arg(user.section('!', 1)
 		.arg(mNickName)), KopeteMessage::Internal);
 		manager()->appendMessage(msg);
 	}
@@ -134,8 +146,31 @@ void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString
 			delete user;
 		}
 		KopeteMessage msg((KopeteContact *)this, mContact,
-		i18n(QString("User %1 parted channel %2 (%3)").arg(nickname).arg(mNickName).arg(reason)),
+		i18n("User %1 parted channel %2 (%3)").arg(nickname).arg(mNickName).arg(reason),
 		KopeteMessage::Internal);
+		manager()->appendMessage(msg);
+	}
+}
+
+void IRCChannelContact::setTopic( QString topic )
+{
+	bool okPressed = true;
+	if( topic.isNull() )
+		topic = KLineEditDlg::getText( i18n("New Topic"), i18n("Enter the new topic:"), mTopic, &okPressed, 0L );
+	if( okPressed )
+	{
+		mTopic = topic;
+		mEngine->setTopic( mNickName, topic );
+	}
+}
+
+void IRCChannelContact::slotTopicChanged( const QString &channel, const QString &nick, const QString &newtopic )
+{
+	if( mNickName.lower() == channel.lower() )
+	{
+		mTopic = newtopic;
+		mMsgManager->setDisplayName( caption() );
+		KopeteMessage msg((KopeteContact *)this, mContact, i18n("%1 has changed the topic to %2").arg(nick).arg(newtopic), KopeteMessage::Internal);
 		manager()->appendMessage(msg);
 	}
 }
@@ -148,9 +183,15 @@ void IRCChannelContact::slotConnectionClosed()
 KActionCollection *IRCChannelContact::customContextMenuActions()
 {
 	if ( onlineStatus() == KopeteContact::Offline || onlineStatus() == KopeteContact::Unknown )
-		mCustomActions->insert(actionJoin);
+	{
+		actionJoin->setEnabled( true );
+		actionPart->setEnabled( false );
+	}
 	else if ( onlineStatus() == KopeteContact::Online || onlineStatus() == KopeteContact::Away )
-		mCustomActions->insert(actionPart);
+	{
+		actionJoin->setEnabled( false );
+		actionPart->setEnabled( true );
+	}
 
 	return mCustomActions;
 }
@@ -172,7 +213,7 @@ QString IRCChannelContact::statusIcon() const
 
 const QString IRCChannelContact::caption() const
 {
-	return QString::fromLatin1("%1 @ %2 / %3").arg(mEngine->nickName()).arg(mEngine->host()).arg(mNickName);
+	return QString::fromLatin1("%1 @ %2 - %4").arg(mNickName).arg(mEngine->host()).arg(mTopic);
 }
 
 #include "ircchannelcontact.moc"

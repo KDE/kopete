@@ -24,6 +24,7 @@
 #include "ircidentity.h"
 
 #include "kirc.h"
+#include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
 #include "irccontact.h"
@@ -95,6 +96,7 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 {
 	QStringList commandLine = QStringList::split( QRegExp( QString::fromLatin1("\\s+") ), msg.plainBody() );
 	QString commandArgs = msg.plainBody().section( QRegExp( QString::fromLatin1("\\s+") ), 1 );
+	uint commandCount = commandLine.count();
 
 	if( commandLine.first().startsWith( QString::fromLatin1("/") ) )
 	{
@@ -103,11 +105,14 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 		if( mEngine->isLoggedIn() )
 		{
 			// These commands only work when we are connected
-			if( command == QString::fromLatin1("nick") && commandLine.count() > 1 )
+			if( command == QString::fromLatin1("nick") && commandCount > 1 )
 				mIdentity->successfullyChangedNick( QString::null, *commandLine.at(1) );
 
-			else if( command == QString::fromLatin1("me") && commandLine.count() > 1 )
+			else if( command == QString::fromLatin1("me") && commandCount > 1 )
 				mEngine->actionContact( displayName(), commandArgs );
+
+			else if( command == QString::fromLatin1("topic") && commandCount > 1 && inherits("IRCChannelContact") )
+				static_cast<IRCChannelContact*>( this )->setTopic( *commandLine.at(1) );
 		}
 
 		// A /command returns false to stop further processing
@@ -120,14 +125,15 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 void IRCContact::slotUserDisconnected( const QString &user, const QString &reason)
 {
 	QString nickname = user.section('!', 0, 0);
-	KopeteContact *user = locateUser( nickname );
-	if ( user )
+	KopeteContact *c = locateUser( nickname );
+	if ( c )
 	{
-		manager()->removeContact( user );
-		delete user;
+		KopeteMessage msg(c, mContact, i18n(QString("User %1 has quit (\"%2\")").arg(nickname).arg(reason)), KopeteMessage::Internal);
+		manager()->appendMessage(msg);
+
+		manager()->removeContact( c );
+		delete c;
 	}
-	KopeteMessage msg((KopeteContact *)this, mContact, i18n(QString("User %1 has quit (\"%2\")").arg(nickname).arg(reason)), KopeteMessage::Internal);
-	manager()->appendMessage(msg);
 }
 
 void IRCContact::slotNewMessage(const QString &originating, const QString &target, const QString &message)
