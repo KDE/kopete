@@ -1,6 +1,6 @@
 
 
-SUBDIRS = . icons libgroupwise ui
+SUBDIRS = icons libgroupwise ui
 
 AM_CPPFLAGS = $(KOPETE_INCLUDES) $(all_includes)
 
