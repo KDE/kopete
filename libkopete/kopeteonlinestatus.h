@@ -207,7 +207,7 @@ public:
 	 * identical.
 	 */
 	bool operator==( const KopeteOnlineStatus &other ) const;
-	
+
 	/**
 	 * Comparison operator
 	 *

@@ -30,6 +30,7 @@
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopetemetacontact.h"
+#include "kopetecommandhandler.h"
 #include "kopeteview.h"
 
 struct KMMPrivate
@@ -204,10 +205,14 @@ void KopeteMessageManager::setMMId( int id )
 void KopeteMessageManager::sendMessage(KopeteMessage &message)
 {
 	KopeteMessage sentMessage = message;
-	emit messageSent(sentMessage, this);
-
-	if ( !protocol()->isAway() || KopetePrefs::prefs()->soundIfAway() )
-		KNotifyClient::event( QString::fromLatin1( "kopete_outgoing"), i18n("Outgoing Message Sent") );
+	if( !KopeteCommandHandler::commandHandler()->processMessage( message, this ) )
+	{
+		emit messageSent(sentMessage, this);
+		if ( !protocol()->isAway() || KopetePrefs::prefs()->soundIfAway() )
+			KNotifyClient::event( QString::fromLatin1( "kopete_outgoing"), i18n("Outgoing Message Sent") );
+	}
+	else
+		emit( messageSuccess() );
 }
 
 void KopeteMessageManager::messageSucceeded()

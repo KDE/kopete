@@ -30,6 +30,7 @@
 #include "accountconfig.h"
 #include "kopetecontactlist.h"
 #include "kopeteaccountmanager.h"
+#include "kopetecommandhandler.h"
 #include "kopetewindow.h"
 #include "pluginloader.h"
 #include "pluginconfig.h"
@@ -88,11 +89,13 @@ Kopete::~Kopete()
 	KopeteContactList::contactList()->save();
 	KopeteAccountManager::manager()->save();
 	delete m_mainWindow;
+	delete KopeteCommandHandler::commandHandler();
 //	kdDebug(14000) << "Kopete::~Kopete: done" <<endl;
 }
 
 void Kopete::slotLoadPlugins()
 {
+	new KopeteCommandHandler();
 
 	KopeteAccountManager::manager()->load();
 	KopeteContactList::contactList()->load();
