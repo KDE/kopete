@@ -54,6 +54,11 @@ public:
 
 	void setYahooStatus(YahooStatus::Status, const QString & = "", int = 0);
 
+	/** The group name getter and setter methods**/
+	QString group() const;
+	void setGroup( const QString& );
+
+
 public slots:
 	virtual void slotUserInfo();
 	virtual void slotSendFile();
@@ -72,6 +77,8 @@ private slots:
 
 private:
 	QString m_userId;
+	QString m_groupName;
+
 	YahooStatus m_status;
 	KopeteMessageManager *m_manager;
 	
