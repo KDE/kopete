@@ -56,12 +56,11 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 	unsigned int length = 0;
 	QStringList blmBuddies;
 	
-	kdDebug(14150) << k_funcinfo <<
-		"RECV (SRV_REPLYROSTER) received contactlist of length " <<
-			length << endl;
-
 	inbuf.getByte(); //get fmt version
 	length = inbuf.getWord();
+
+	kdDebug(14150) << k_funcinfo <<
+		"RECV (SRV_REPLYROSTER) got contactlist, length =  " << length << endl;
 
 	while(inbuf.length() > 4) //the last 4 bytes are the timestamp
 	{
@@ -106,14 +105,15 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 			case ROSTER_VISIBLE: // TODO permit buddy list AKA visible list
 			{
 				kdDebug(14150) << k_funcinfo <<
-					"[TODO] Add Contact '" << ssi->name <<
+					"TODO: Add Contact '" << ssi->name <<
 					"' to VISIBLE/ALLOW list." << endl;
 				break;
 			}
 
 			case ROSTER_INVISIBLE: // TODO deny buddy AKA invisible list
 			{
-				kdDebug(14150) << k_funcinfo << "[TODO] Add contact '" << ssi->name << "'"
+				kdDebug(14150) << k_funcinfo <<
+					 "TODO: Add contact '" << ssi->name << "'"
 					<< " to INVISIBLE/DENY list." << endl;
 				break;
 			}
@@ -124,10 +124,34 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 				break;
 			} // END 0x0004
 
+			case ROSTER_PRESENCE: // Presence info (if others can see your idle status, etc)
+			{
+				kdDebug(14150) << k_funcinfo <<
+					"TODO: Handle ROSTER_PRESENCE" << endl; 
+				break;
+			}
+
+			case ROSTER_ICQSHORTCUT: // Unknown or ICQ2k shortcut bar items
+				break;
+
 			case ROSTER_IGNORE: // TODO contact on ignore list
 			{
-				kdDebug(14150) << k_funcinfo << "TODO: add Contact '" << ssi->name <<
+				kdDebug(14150) << k_funcinfo <<
+					 "TODO: add Contact '" << ssi->name <<
 					"' to IGNORE list." << endl;
+				break;
+			}
+
+			case ROSTER_LASTUPDATE: // Last update date (name: "LastUpdateDate")
+			case ROSTER_NONICQ: // a non-icq contact, no UIN, used to send SMS
+			case ROSTER_IMPORTTIME: // roster import time (name: "Import time")
+			case ROSTER_BUDDYICONS: // Buddy icon info. (names: from "0" and incrementing by one)
+				break;
+
+			default:
+			{
+				kdDebug(14150) << k_funcinfo <<
+					"TODO: Handle UNKNOWN SSI type: " << ssi->type << endl;
 				break;
 			}
 		} // END switch (ssi->type)

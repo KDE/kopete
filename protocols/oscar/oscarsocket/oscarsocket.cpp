@@ -613,7 +613,7 @@ void OscarSocket::writeData(Buffer &outbuf)
 		return;
 	}
 
-	kdDebug(14150) << k_funcinfo << "Writing data" << endl;
+	//kdDebug(14150) << k_funcinfo << "Writing data" << endl;
 #ifdef OSCAR_PACKETLOG
 	kdDebug(14150) << "--- OUTPUT ---" << outbuf.toString() << endl;
 #endif
