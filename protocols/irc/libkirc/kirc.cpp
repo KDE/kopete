@@ -26,7 +26,6 @@
 #include <qregexp.h>
 #include <qtextcodec.h>
 #include <qtimer.h>
-#include <qstringlist.h>
 
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
@@ -851,6 +850,7 @@ void KIRC::messageContact(const QString &contact, const QString &message)
 {
 	if (loggedIn)
 	{
+		//FIXME: this should go in irccontact::slotSendMsg instead, so it looks proper in the chatwindow as well.
 		if(message.contains("\n") || message.contains("\r"))
 		{
 			QStringList messages=QStringList::split(QRegExp("[\\r\\n]+"),message);
