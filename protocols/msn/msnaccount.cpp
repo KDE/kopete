@@ -636,10 +636,11 @@ void MSNAccount::slotKopeteGroupRenamed( KopeteGroup *g )
 {
 	if ( g->type() == KopeteGroup::Normal )
 	{
-		if ( !g->pluginData( protocol(), accountId() + " id" ).isEmpty() )
+		if ( !g->pluginData( protocol(), accountId() + " id" ).isEmpty() &&
+			g->displayName() != g->pluginData( protocol(), accountId() + " displayName" ) ||  && 
+			m_groupList.contains( g->pluginData( protocol(), accountId() + " id" ).toUInt() ) )
 		{
-			if ( m_groupList.contains( g->pluginData( protocol(), accountId() + " id" ).toUInt() ) )
-				notifySocket()->renameGroup( g->displayName(), g->pluginData( protocol(), accountId() + " id" ).toUInt() );
+			notifySocket()->renameGroup( g->displayName(), g->pluginData( protocol(), accountId() + " id" ).toUInt() );
 		}
 	}
 }
