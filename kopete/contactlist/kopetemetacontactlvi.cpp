@@ -268,7 +268,11 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 		int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 
 		QString text = i18n( "%2 is now %1!" ).arg( m_metaContact->statusString(), m_metaContact->displayName() );
-
+		
+		/** 
+		 * Yes, I know this is a funky order. However, it works as expected this way
+		 * although I haven't quite figured out why yet. Please don't change the order
+		 */
 		if ( m_metaContact->isOnline() && ( m_oldStatus == KopeteOnlineStatus::Offline || m_oldStatus == KopeteOnlineStatus::Away ) )
 			KNotifyClient::event( winId , "kopete_status_change", text );
 			
