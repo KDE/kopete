@@ -109,7 +109,11 @@ KopeteTransferManager* KopeteTransferManager::s_transferManager = 0L;
 KopeteTransferManager* KopeteTransferManager::transferManager()
 {
 	if( !s_transferManager )
-		s_transferManager = new KopeteTransferManager( qApp->mainWidget() );
+		s_transferManager = new KopeteTransferManager( 0L );
+
+	//FIXME: the transfer manager is never deleted!
+	//	we can't add a parent because it is a widget
+	//	and it shouldn't appaers in it
 
 	return s_transferManager;
 }
