@@ -8,6 +8,7 @@
 #include <kdeversion.h>
 #include <qapplication.h>
 #include <qclipboard.h>
+#include <qevent.h>
 #include <kparts/genericfactory.h>
 #include <private/qrichtext_p.h>
 
@@ -16,13 +17,21 @@
 #include "kopeteprotocol.h"
 
 typedef KParts::GenericFactory<KopeteRichTextEditPart> KopeteRichTextEditPartFactory;
-K_EXPORT_COMPONENT_FACTORY( libkopeterichtexteditpart,  KopeteRichTextEditPartFactory )
+K_EXPORT_COMPONENT_FACTORY( libkopeterichtexteditpart, KopeteRichTextEditPartFactory )
 
 class KopeteTextEdit : public KTextEdit
 {
-	public:
-		KopeteTextEdit( QWidget *parent ) : KTextEdit( parent ) {};
-		const QTextCursor * cursor() { return textCursor(); };
+public:
+	KopeteTextEdit( QWidget *parent ) : KTextEdit( parent ) {}
+	const QTextCursor * cursor() { return textCursor(); }
+	bool event(QEvent *event)
+	{
+		// don't allow QTextEdit to override accels
+		if ( event->type() == QEvent::AccelOverride )
+			return QWidget::event(event);
+		else
+			return KTextEdit::event(event);
+	}
 };
 
 KopeteRichTextEditPart::KopeteRichTextEditPart( QWidget *wparent, const char *wname, QObject*, const char*, const QStringList& )
