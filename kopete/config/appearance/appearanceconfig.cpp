@@ -133,7 +133,7 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	connect(mPrfsChatWindow->mTransparencyBgOverride, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
 
-	
+
 	mPrfsChatWindow->htmlFrame->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
 	QVBoxLayout *l = new QVBoxLayout(mPrfsChatWindow->htmlFrame);
 	preview = new KHTMLPart(mPrfsChatWindow->htmlFrame, "preview");
@@ -167,7 +167,7 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 		this, SLOT(slotUpdatePreview()));
 	connect(mPrfsColors->mGreyIdleMetaContacts, SIGNAL(toggled(bool)),
 		this, SLOT(slotGreyIdleMetaContactsChanged(bool)));
-		
+
 	connect(mPrfsColors->idleContactColor, SIGNAL(changed(const QColor &)),
 		this, SLOT(emitChanged()));
 
@@ -180,9 +180,9 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	slotTransparencyChanged(mPrfsChatWindow->mTransparencyEnabled->isChecked());
 
 	load();
-	
+
 	//EmitChanged when something change.
-	
+
 }
 
 AppearanceConfig::~AppearanceConfig()
@@ -420,7 +420,11 @@ void AppearanceConfig::slotImportStyle()
 		QString stylePath;
 		// FIXME: Using NetAccess uses nested event loops with all associated problems.
 		//        Better use normal KIO and an async API - Martijn
+#if KDE_IS_VERSION( 3, 1, 90 )
+		if ( KIO::NetAccess::download( chosenStyle, stylePath, this ) )
+#else
 		if ( KIO::NetAccess::download( chosenStyle, stylePath ) )
+#endif
 		{
 			QString styleSheet = fileContents( stylePath );
 			if ( KopeteXSLT( styleSheet ).isValid() )
@@ -520,7 +524,7 @@ bool AppearanceConfig::addStyle( const QString &styleName, const QString &styleS
 	bool newStyleName = !mPrfsChatWindow->styleList->findItem( styleName );
 	bool editExistingStyle = (mPrfsChatWindow->styleList->selectedItem() &&
 				 mPrfsChatWindow->styleList->selectedItem()->text()==styleName);
-	
+
 	if ( newStyleName || editExistingStyle )
 	{
 		QString filePath = locateLocal("appdata", QString::fromLatin1("styles/%1.xsl").arg( styleName ) );
