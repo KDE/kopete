@@ -67,6 +67,11 @@ private slots:
 	 */
 	void slotMainWindowDestroyed();
 
+	/**
+	 * auto-connect
+	 */
+	void slotAllPluginsLoaded();
+
 private:
 	KopeteWindow *m_mainWindow;
 	bool m_isShuttingDown;
