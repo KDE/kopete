@@ -1,21 +1,23 @@
 /*
-	kopetemessagemanagerfactory.cpp - Creates chat sessions
+    kopetemessagemanagerfactory.cpp - Creates chat sessions
 
-	Copyright   : (c) 2002 by Duncan Mac-Vicar Prett
-	Email       : duncan@kde.org
+    Copyright   : (c) 2002 by Duncan Mac-Vicar Prett
+    Email       : duncan@kde.org
 
-	*************************************************************************
-	*                                                                       *
-	* This program is free software; you can redistribute it and/or modify  *
-	* it under the terms of the GNU General Public License as published by  *
-	* the Free Software Foundation; either version 2 of the License, or     *
-	* (at your option) any later version.                                   *
-	*                                                                       *
-	*************************************************************************
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
 */
 
 #include "kopetemessagemanagerfactory.h"
-#include "kopetemessagemanagerfactory.moc"
+
+#include <kapplication.h>
+
 #include "kopetemessagemanager.h"
 #include "kopeteprotocol.h"
 
@@ -23,14 +25,26 @@
 
 #include <kdebug.h>
 
+KopeteMessageManagerFactory* KopeteMessageManagerFactory::s_factory = 0L;
+
+KopeteMessageManagerFactory* KopeteMessageManagerFactory::factory()
+{
+	if( !s_factory )
+		s_factory = new KopeteMessageManagerFactory( kapp );
+
+	return s_factory;
+}
+
 KopeteMessageManagerFactory::KopeteMessageManagerFactory( QObject* parent,
 	const char* name )
 	: QObject( parent, name ), mId( 0 )
 {
+	s_factory = this;
 }
 
 KopeteMessageManagerFactory::~KopeteMessageManagerFactory()
 {
+	s_factory = 0L;
 }
 
 KopeteMessageManager* KopeteMessageManagerFactory::findKopeteMessageManager(const KopeteContact *user,
@@ -86,13 +100,15 @@ KopeteMessageManager* KopeteMessageManagerFactory::findKopeteMessageManager(cons
 	return result;
 }
 
-KopeteMessageManager *KopeteMessageManagerFactory::create( const KopeteContact *user, KopeteContactPtrList chatContacts,
-	KopeteProtocol *protocol, QString logFile, enum KopeteMessageManager::WidgetType widget)
+KopeteMessageManager *KopeteMessageManagerFactory::create(
+	const KopeteContact *user, KopeteContactPtrList chatContacts,
+	KopeteProtocol *protocol, enum KopeteMessageManager::WidgetType widget )
 {
 	KopeteMessageManager *result=findKopeteMessageManager( user,  chatContacts, protocol,  widget);
 	if (!result)
 	{
-		result = new KopeteMessageManager(user,  chatContacts, protocol, ++mId, logFile, widget);
+		result = new KopeteMessageManager(user,  chatContacts, protocol, ++mId,
+			widget );
 		addKopeteMessageManager(result);
 	}
 	return (result);
@@ -152,13 +168,7 @@ void KopeteMessageManagerFactory::cleanSessions( KopeteProtocol *protocol )
 	}
 }
 
+#include "kopetemessagemanagerfactory.moc"
 
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 

@@ -82,8 +82,7 @@ public:
 	 * Use it to access Kopete's plugin loader.
 	 * You shouldn't need to use it from a plugin.
 	 */
-	KopeteMessageManagerFactory *sessionFactory() const
-	{ return mMessageManagerFactory; }
+	KopeteMessageManagerFactory *sessionFactory();
 
 	/**
 	 * Use it to access Kopete's plugin loader.
@@ -179,7 +178,6 @@ private:
 	//User preferences config module
 	KopeteUserPreferencesConfig *mUserPreferencesConfig;
 	KopeteNotifier *mNotifier;
-	KopeteMessageManagerFactory *mMessageManagerFactory;
 	KopeteTransferManager *mTransferManager;
 };
 

@@ -46,6 +46,11 @@
 #include "pluginmodule.h"
 #include "preferencesdialog.h"
 
+KopeteMessageManagerFactory* Kopete::sessionFactory()
+{
+	return KopeteMessageManagerFactory::factory();
+}
+
 Kopete::Kopete()
 : KUniqueApplication( true, true, true )
 {
@@ -91,11 +96,10 @@ void Kopete::initialize()
 
 	connect( KopetePrefs::prefs() , SIGNAL(saved()), this, SIGNAL(signalSettingsChanged()));
 	mNotifier = new KopeteNotifier(this, "mNotifier");
-	mMessageManagerFactory = new KopeteMessageManagerFactory(this, "KMMFactory");
-	connect( mMessageManagerFactory,
+	connect( sessionFactory(),
 		SIGNAL( messageReceived( KopeteMessage & ) ),
 		SIGNAL( aboutToDisplay( KopeteMessage & ) ) );
-	connect( mMessageManagerFactory,
+	connect( sessionFactory(),
 		SIGNAL( messageQueued( KopeteMessage & ) ),
 		SIGNAL( aboutToSend( KopeteMessage & ) ) );
 
