@@ -91,8 +91,10 @@ void YahooAccount::slotGoStatus( int status, const QString &awayMessage)
 		connect();
 		stateOnConnection = status;
 	}
-	else
+	else 
 	{
+		if ( status == 99 )
+			theAwayDialog->show(99);
 		m_session->setAway( yahoo_status( status ), awayMessage, status ? 1 : 0 );
 	}
 }
@@ -348,47 +350,47 @@ KActionMenu *YahooAccount::actionMenu()
 		this, "actionYahooGoOnline"));
 
 	theActionMenu->insert(new KAction(m_protocol->BeRightBack.caption(),
-		m_protocol->BeRightBack.iconFor(this), 0, this, SLOT(slotGoStatus001()),
+		m_protocol->BeRightBack.iconFor(this), 0, this, SLOT(slotGoStatus(1)),
 		this, "actionYahooGoStatus001"));
 
 	theActionMenu->insert(new KAction(m_protocol->Busy.caption(),
-		m_protocol->Busy.iconFor(this), 0, this, SLOT(slotGoStatus002()),
+		m_protocol->Busy.iconFor(this), 0, this, SLOT(slotGoStatus(2)),
 		this, "actionYahooGoStatus002"));
 
 	theActionMenu->insert(new KAction(m_protocol->NotAtHome.caption(),
-		m_protocol->NotAtHome.iconFor(this), 0, this, SLOT(slotGoStatus003()),
+		m_protocol->NotAtHome.iconFor(this), 0, this, SLOT(slotGoStatus(3)),
 		this, "actionYahooGoStatus003"));
 
 	theActionMenu->insert(new KAction(m_protocol->NotAtMyDesk.caption(),
-		m_protocol->NotAtMyDesk.iconFor(this), 0, this, SLOT(slotGoStatus004()),
+		m_protocol->NotAtMyDesk.iconFor(this), 0, this, SLOT(slotGoStatus(4)),
 		this, "actionYahooGoStatus004"));
 
 	theActionMenu->insert(new KAction(m_protocol->NotInTheOffice.caption(),
-		m_protocol->NotInTheOffice.iconFor(this), 0, this, SLOT(slotGoStatus005()),
+		m_protocol->NotInTheOffice.iconFor(this), 0, this, SLOT(slotGoStatus(5)),
 		this, "actionYahooGoStatus005"));
 
 	theActionMenu->insert(new KAction(m_protocol->OnThePhone.caption(),
-		m_protocol->OnThePhone.iconFor(this), 0, this, SLOT(slotGoStatus006()),
+		m_protocol->OnThePhone.iconFor(this), 0, this, SLOT(slotGoStatus(6)),
 		this, "actionYahooGoStatus006"));
 
 	theActionMenu->insert(new KAction(m_protocol->OnVacation.caption(),
-		m_protocol->OnVacation.iconFor(this), 0, this, SLOT(slotGoStatus007()),
+		m_protocol->OnVacation.iconFor(this), 0, this, SLOT(slotGoStatus(7)),
 		this, "actionYahooGoStatus007"));
 
 	theActionMenu->insert(new KAction(m_protocol->OutToLunch.caption(),
-		m_protocol->OutToLunch.iconFor(this), 0, this, SLOT(slotGoStatus008()),
+		m_protocol->OutToLunch.iconFor(this), 0, this, SLOT(slotGoStatus(8)),
 		this, "actionYahooGoStatus008"));
 
 	theActionMenu->insert(new KAction(m_protocol->SteppedOut.caption() ,
-		m_protocol->SteppedOut.iconFor(this), 0, this, SLOT(slotGoStatus009()),
+		m_protocol->SteppedOut.iconFor(this), 0, this, SLOT(slotGoStatus(9)),
 		this, "actionYahooGoStatus009"));
 
 	theActionMenu->insert(new KAction(m_protocol->Invisible.caption(),
-		 m_protocol->Invisible.iconFor(this), 0, this, SLOT(slotGoStatus012()),
+		 m_protocol->Invisible.iconFor(this), 0, this, SLOT(slotGoStatus(12)),
 		 this, "actionYahooGoStatus012"));
 
 	theActionMenu->insert(new KAction(m_protocol->Custom.caption(),
-		m_protocol->Custom.iconFor(this), 0, this, SLOT(slotGoStatus099()),
+		m_protocol->Custom.iconFor(this), 0, this, SLOT(slotGoStatus(99)),
 		this, "actionYahooGoStatus099"));
 
 	theActionMenu->insert(new KAction(m_protocol->Offline.caption(),
@@ -503,9 +505,12 @@ void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, co
 	IDs[userid] = QPair<QString, QString>(group, alias);
 
 	// Serverside -> local
-	kdDebug(14180) << "SS Contact " << userid << " is not in the contact list. Adding..." << endl;
-	QString groupName = group;
-	addContact(userid, alias.isEmpty() ? userid : alias, 0, KopeteAccount::ChangeKABC, group);
+	if ( !contact( userid ) )
+	{
+		kdDebug(14180) << "SS Contact " << userid << " is not in the contact list. Adding..." << endl;
+		QString groupName = group;
+		addContact(userid, alias.isEmpty() ? userid : alias, 0, KopeteAccount::ChangeKABC, group);
+	}
 
 }
 
