@@ -80,7 +80,7 @@ KopeteContact *GroupWiseProtocol::deserializeContact(
 	KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> &/* addressBookData */)
 {
-	QString contactId = serializedData[ "contactId" ];
+	QString dn = serializedData[ "DN" ];
 	QString accountId = serializedData[ "accountId" ];
 	QString displayName = serializedData[ "displayName" ];
 	int objectId = serializedData[ "objectId" ].toInt();
@@ -97,7 +97,7 @@ KopeteContact *GroupWiseProtocol::deserializeContact(
 	}
 
 	// FIXME: creating a contact with a userId here
-	return new GroupWiseContact(account, contactId, metaContact, objectId, parentId, sequence );
+	return new GroupWiseContact(account, dn, metaContact, objectId, parentId, sequence );
 }
 
 AddContactPage * GroupWiseProtocol::createAddContactWidget( QWidget *parent, KopeteAccount *  account )

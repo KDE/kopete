@@ -145,8 +145,8 @@ void GroupWiseContact::serialize( QMap< QString, QString > &serializedData, QMap
 		value = "null";
 	case Echo:
 		value = "echo";
-	}
-	serializedData[ "contactType" ] = value;*/
+	}*/
+	serializedData[ "DN" ] = m_dn;
 }
 
 KopeteMessageManager * GroupWiseContact::manager( bool canCreate )
