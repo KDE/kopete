@@ -33,6 +33,8 @@
 #include "contactlist.h"
 #include "pluginmanager.h"
 #include "ui/preferencesdialog.h"
+#include "ui/aboutplugins.h"
+
 /** Kopete is the base class of the project */
 class Kopete : public KUniqueApplication
 {
@@ -43,6 +45,7 @@ class Kopete : public KUniqueApplication
 	
 	PreferencesDialog *preferencesBox() const { return mPref; }
   KPopupMenu *popupMenu() const { return popupmenu; };
+	PluginManager *Plugins() const { return plugins; }
 	
 	/** No descriptions */
   void saveOptions();
@@ -51,6 +54,7 @@ class Kopete : public KUniqueApplication
 
 	PluginManager *plugins;
 	PreferencesDialog *mPref;
+	AboutPlugins *aboutPl;
 	private:
 	QWidget *mainwidget;
 	ContactList *contactlist;
@@ -62,8 +66,6 @@ class Kopete : public KUniqueApplication
 	QPushButton *otherbutton;
 	
 	KPopupMenu *popupmenu;
-	KPopupMenu *icqpopupmenu;
-	KPopupMenu *msnpopupmenu;
 	QLabel *statuslabel;
 	
 	
@@ -74,6 +76,8 @@ public slots:
   void slotExit();
   /** No descriptions */
   void slotPrefDialogClosed();
+  /** No descriptions */
+  void slotConnectAll();
 };
 
 #define kopeteapp (static_cast<Kopete*>(kapp))

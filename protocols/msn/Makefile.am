@@ -1,3 +1,4 @@
+SUBDIRS = libkmsn
 INCLUDES = -I$(top_srcdir)/kopete/library $(all_includes)
 lib_LTLIBRARIES = libmsnprotocol.la
 

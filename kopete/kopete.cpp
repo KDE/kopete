@@ -25,7 +25,9 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 	mainwidget = new QWidget(0);
 	setMainWidget(mainwidget);
 	mPref=new PreferencesDialog(0);
+	aboutPl = new AboutPlugins(mainwidget);
   mPref->hide();
+  aboutPl->hide();
 	
 	plugins = new PluginManager();
 	QBoxLayout *layout = new QBoxLayout(mainwidget,QBoxLayout::TopToBottom);
@@ -42,8 +44,6 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 
 	statuslabel = new QLabel(mainwidget);
   popupmenu = new KPopupMenu(mainwidget);
-  icqpopupmenu = new KPopupMenu(mainwidget);
-  msnpopupmenu = new KPopupMenu(mainwidget);
 
 	mainbutton->setText("Kopete");
 
@@ -65,18 +65,14 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 	layout2->insertWidget(-1,mainbutton);
 	layout2->insertWidget(-1,statuslabel);
 	
-	icqpopupmenu->insertTitle("ICQ");
-	//icqpopupmenu->insertItem("Go Online", this, SLOT(slotICQConnectByMenu()),0);
-
-	msnpopupmenu->insertTitle("MSN Messenger");
-	//msnpopupmenu->insertItem("Go Online", this, SLOT(slotMSNConnectByMenu()),0);
-
-	popupmenu->insertTitle("Connection");
-	popupmenu->insertItem("&ICQ",icqpopupmenu,0,32423);
-	popupmenu->insertItem("&MSN",msnpopupmenu,0,32453);
-	popupmenu->insertTitle("Options");
+	popupmenu->insertTitle("Kopete");
+	popupmenu->insertItem("&Connect", this, SLOT(slotConnectAll()),0);
+	popupmenu->insertSeparator();
 	popupmenu->insertItem("&Preferences", this, SLOT(slotPreferences()),0);
+	popupmenu->insertItem("About Plugins", aboutPl, SLOT(show()),0);
+	popupmenu->insertSeparator();
 	popupmenu->insertItem("&Exit", this, SLOT(slotExit()),0);
+	
 	mainbutton->setPopup(popupmenu);
 	mainwidget->show();
 	
@@ -94,7 +90,7 @@ void Kopete::slotPreferences()
 /** No descriptions */
 void Kopete::slotExit()
 {
-
+	quit();
 }
 /** No descriptions */
 void Kopete::slotPrefDialogClosed()
@@ -162,4 +158,8 @@ void Kopete::readOptions()
 }
 /** No descriptions */
 void Kopete::saveOptions(){
+}
+/** No descriptions */
+void Kopete::slotConnectAll()
+{
 }

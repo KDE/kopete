@@ -1,4 +1,4 @@
-INCLUDES = $(all_includes) -I$(top_srcdir)/kopete/library
+INCLUDES = $(all_includes) -I$(top_srcdir)/kopete/library -I$(top_srcdir)/kopete/protocols/icq -I$(top_srcdir)/kopete/protocols/icq/kxengine
 SUBDIRS = library protocols
 
 lib_LTLIBRARIES = libkopetemain.la

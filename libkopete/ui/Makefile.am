@@ -8,9 +8,11 @@ INCLUDES = $(all_includes)
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libui_a_SOURCES = \
 		configmodule.cpp \
-		preferencesdialog.cpp
+		preferencesdialog.cpp \
+		aboutplugins.cpp 
 EXTRA_DIST = \
 		preferencesdialog.cpp \
 		preferencesdialog.h \
-		configmodule.cpp
+		configmodule.cpp \
+		aboutplugins.cpp
 
