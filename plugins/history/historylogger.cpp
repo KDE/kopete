@@ -205,7 +205,7 @@ void HistoryLogger::appendMessage( const KopeteMessage &msg , const KopeteContac
 	msgElem.setAttribute( "in",  msg.direction()==KopeteMessage::Outbound ? "0" : "1" );
 	msgElem.setAttribute( "from",  msg.from()->contactId() );
 	msgElem.setAttribute( "nick",  msg.from()->displayName() ); //do we have to set this?
-	msgElem.setAttribute( "time",  QString::number(msg.timestamp().date().day()) + " " +  QString::number(msg.timestamp().time().hour()) + ":" + QString::number(msg.timestamp().time().minute())  );
+	msgElem.setAttribute( "time",  QString::number(msg.timestamp().date().day()) + " " +  QString::number(msg.timestamp().time().hour()) + ":" + QString::number(msg.timestamp().time().minute()) +  ":" + QString::number(msg.timestamp().time().second()) );
 	QDomText msgNode = doc.createTextNode( msg.plainBody() );
 	docElem.appendChild( msgElem );
 	msgElem.appendChild( msgNode );
@@ -313,7 +313,7 @@ QValueList<KopeteMessage> HistoryLogger::readMessages( unsigned int nb , const K
 						QRegExp rx("(\\d+) (\\d+):(\\d+)");
 						rx.search(msgElem2.attribute("time"));
 						QDate d=QDate::currentDate().addMonths(0-m_currentMonth);
-						QDateTime dt( QDate(d.year() , d.month() , rx.cap(1).toUInt()), QTime( rx.cap(2).toUInt() , rx.cap(3).toUInt() ) );
+						QDateTime dt( QDate(d.year() , d.month() , rx.cap(1).toUInt()), QTime( rx.cap(2).toUInt() , rx.cap(3).toUInt()  ) );
 						if(!timestamp.isValid() || ((sens==Chronological )? dt < timestamp : dt > timestamp) )
 						{
 							timeLimit=timestamp;
@@ -399,10 +399,10 @@ QValueList<KopeteMessage> HistoryLogger::readMessages( unsigned int nb , const K
 
 					if(!timestamp.isValid())
 					{ //parse timestamp only if it was not already parsed
-						QRegExp rx("(\\d+) (\\d+):(\\d+)");
+						QRegExp rx("(\\d+) (\\d+):(\\d+)($|:)(\\d*)");
 						rx.search(msgElem.attribute("time"));
 						QDate d=QDate::currentDate().addMonths(0-m_currentMonth);
-						timestamp=QDateTime( QDate(d.year() , d.month() , rx.cap(1).toUInt()), QTime( rx.cap(2).toUInt() , rx.cap(3).toUInt() ) );
+						timestamp=QDateTime( QDate(d.year() , d.month() , rx.cap(1).toUInt()), QTime( rx.cap(2).toUInt() , rx.cap(3).toUInt() , rx.cap(5).toUInt() ) );
 					}
 
 					KopeteMessage msg(timestamp,from,to, msgElem.text() , dir);
