@@ -6,7 +6,8 @@ $filename = "";
 
 sub writeoutstring($)
 {
-    print STDOUT "i18n(\"@_[0]\");\n";
+    print STDOUT "i18n(\"Translators: The \%FOO\% placeholders are variables that are substituted in the code, please leave them untranslated\"," .
+        "\"@_[0]\");\n";
 }
 
 while (defined ($ARGV[0]))
