@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>413</width>
-            <height>152</height>
+            <width>442</width>
+            <height>244</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -30,7 +30,7 @@
         </property>
         <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>Layout2</cstring>
+                <cstring>layout18</cstring>
             </property>
             <hbox>
                 <property name="name">
@@ -41,7 +41,7 @@
                         <cstring>TextLabel2</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Become away after</string>
+                        <string>&amp;Become away after this many minutes of inactivity:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>AwayTimeout</cstring>
@@ -56,14 +56,6 @@
                     </property>
                     <property name="value">
                         <number>1</number>
-                    </property>
-                </widget>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>TextLabel3</cstring>
-                    </property>
-                    <property name="text">
-                        <string>minutes of user inactivity</string>
                     </property>
                 </widget>
             </hbox>
@@ -123,15 +115,13 @@
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>0</width>
-                    <height>0</height>
+                    <width>16</width>
+                    <height>137</height>
                 </size>
             </property>
         </spacer>
     </vbox>
 </widget>
-<customwidgets>
-</customwidgets>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>klineedit.h</includehint>
