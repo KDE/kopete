@@ -1622,32 +1622,16 @@ void KopeteContactListView::slotRemove()
 
 void KopeteContactListView::slotRename()
 {
-	KopeteMetaContactLVI *metaLVI = dynamic_cast<KopeteMetaContactLVI *>( currentItem() );
-	if ( metaLVI )
+	if ( KopeteMetaContactLVI *metaLVI = dynamic_cast<KopeteMetaContactLVI *>( currentItem() ) )
 	{
 		metaLVI->slotRename();
 	}
-	else if ( KopeteContactList::contactList()->selectedGroups().count() == 1 )
+	else if ( KopeteGroupViewItem *groupLVI = dynamic_cast<KopeteGroupViewItem *>( currentItem() ) )
 	{
-		// Not a meta contact, so rename the group instead
-		// FIXME: Shouldn't this be moved to a method KopeteGroupLVI::rename()? - Martijn
 		if ( !KopetePrefs::prefs()->sortByGroup() )
 			return;
 
-		KopeteGroup *group = KopeteContactList::contactList()->selectedGroups().first();
-
-		bool ok;
-#if KDE_IS_VERSION( 3, 1, 90 )
-		QString newname = KInputDialog::getText
-#else
-		QString newname = KLineEditDlg::getText
-#endif
-			( i18n( "Rename Group" ), i18n( "Please enter the new name for group '%1':" ).arg( group->displayName() ),
-			group->displayName(), &ok );
-
-		if ( !ok )
-			return;
-		group->setDisplayName( newname );
+		groupLVI->startRename( 0 );
 	}
 }
 
