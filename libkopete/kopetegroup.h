@@ -86,7 +86,7 @@ public:
 	/**
 	 * say if the group is expanded or not,
 	 */
-	bool expanded() ;
+	bool expanded() const;
 
 	/**
 	 * set the parent group
@@ -114,7 +114,7 @@ signals:
 	 */
 	void renamed(KopeteGroup* , const QString& );
 	/**
-	 * The group has changed parents 
+	 * The group has changed parents
 	 */
 	//void movedToGroup( KopeteGroup *from , KopeteGroup *to, KopeteGroup *this_one );
 

@@ -315,7 +315,7 @@ KopeteContact *IRCContact::locateUser( const QString &nick )
 	return 0L;
 }
 
-bool IRCContact::isChatting()
+bool IRCContact::isChatting() const
 {
 	bool result=false;
 	QIntDict<KopeteMessageManager> sessions = KopeteMessageManagerFactory::factory()->sessions();

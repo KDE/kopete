@@ -384,7 +384,7 @@ void KopeteAway::setActivity()
 	}
 }
 
-int KopeteAway::autoAwayTimeout()
+int KopeteAway::autoAwayTimeout() const
 {
 	return d->awayTimeout;
 }
@@ -409,7 +409,7 @@ void KopeteAway::setUseAutoAway(bool b)
 	d->useAutoAway = b;
 }
 
-bool KopeteAway::useAutoAway()
+bool KopeteAway::useAutoAway() const
 {
 	return d->useAutoAway;
 }

@@ -181,10 +181,10 @@ public:
 	/**
 	 * the time before going away automatically.
 	 */
-	int autoAwayTimeout();
+	int autoAwayTimeout() const;
 
 	void setUseAutoAway(bool);
-	bool useAutoAway();
+	bool useAutoAway() const;
 
 private:
 	KopeteAway();

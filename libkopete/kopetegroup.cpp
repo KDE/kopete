@@ -162,7 +162,7 @@ bool KopeteGroup::fromXML( const QDomElement& data )
 	// Should "Default" be i18n()ed as well?
 	if ( d->displayName.isEmpty() )
 	{
-		d->displayName = (d->type == Temporary) ? i18n("Not in your contact list") : 
+		d->displayName = (d->type == Temporary) ? i18n("Not in your contact list") :
 							(d->type == TopLevel) ? QString::fromLatin1("Default") :
 										QString::fromLatin1("Classic");
 	}
@@ -200,7 +200,7 @@ void KopeteGroup::setExpanded(bool in_expanded)
 {
 	d->expanded = in_expanded;
 }
-bool KopeteGroup::expanded()
+bool KopeteGroup::expanded() const
 {
 	return d->expanded;
 }

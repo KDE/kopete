@@ -71,7 +71,7 @@ class IRCContact : public KopeteContact
 		 * return true if the contact is in a chat. false if the contact is in no chats
 		 * that loop over all manager, and checks the presence of the user
 		 */
-		bool isChatting();
+		bool isChatting() const;
 
 
 	private slots:
