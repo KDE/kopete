@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>YahooAddContactBase</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>396</width>
-            <height>345</height>
+            <height>347</height>
         </rect>
     </property>
     <property name="caption">
@@ -73,44 +73,6 @@
             <property name="alignment">
                 <set>AlignVCenter|AlignRight</set>
             </property>
-        </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layout54</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>textLabel4</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Display name:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>displayName</cstring>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>The alias you would like this account to be shown as.</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>The alias you would like this account to be shown as.  This will be shown instead of the Yahoo username.</string>
-                    </property>
-                </widget>
-                <widget class="QLineEdit">
-                    <property name="name">
-                        <cstring>displayName</cstring>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>The alias you would like this account to be shown as.</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>The alias you would like this account to be shown as.  This will be shown instead of the Yahoo username.</string>
-                    </property>
-                </widget>
-            </hbox>
         </widget>
         <spacer>
             <property name="name">
