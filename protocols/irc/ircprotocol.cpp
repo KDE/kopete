@@ -793,6 +793,9 @@ void IRCProtocol::slotUpdateNetworkHostConfig()
 			netConf->password->setText( host->password );
 			netConf->port->setValue( host->port );
 			netConf->useSSL->setChecked( host->ssl );
+
+			netConf->upButton->setEnabled( netConf->hostList->currentItem() > 0 );
+			netConf->downButton->setEnabled( netConf->hostList->currentItem() < ( netConf->hostList->count() - 1 ) );
 		}
 	}
 	else
