@@ -100,6 +100,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	{
 	case 201:
 	case 205:
+	case 208:
 	{
 		QString msg = i18n( "<qt>The MSN user '%1' does not exist.<br>Please check the MSN ID.</qt>" ).arg( m_tmpLastHandle );
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
