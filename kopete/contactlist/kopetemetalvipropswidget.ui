@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>KopeteMetaLVIPropsWidget</class>
 <widget class="QWidget">
     <property name="name">
@@ -11,6 +11,9 @@
             <width>452</width>
             <height>443</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>KopeteMetaLVIPropsWidget</string>
     </property>
     <vbox>
         <property name="name">
@@ -78,13 +81,52 @@
                                 <property name="text">
                                     <string>Use the name given by the &amp;server</string>
                                 </property>
+                                <property name="accel">
+                                    <string>Alt+S</string>
+                                </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Use the name of the child contact</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>If you select this option, the displayname will be synchronized to the displayname of the child contact.
-This option is only available if there is exactly one child contact </string>
+                                    <string>If you select this option, the displayname will be synchronized to the displayname of the child contact selected below.</string>
                                 </property>
+                            </widget>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>layout20</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLabel">
+                                        <property name="name">
+                                            <cstring>lblAccount</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>&amp;Account:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>cmbAccount</cstring>
+                                        </property>
+                                    </widget>
+                                    <widget class="QComboBox">
+                                        <property name="name">
+                                            <cstring>cmbAccount</cstring>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>7</hsizetype>
+                                                <vsizetype>0</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>Contact to synchronize the displayname with.</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
                             </widget>
                         </vbox>
                     </widget>
@@ -327,6 +369,12 @@ This option is only available if there is exactly one child contact </string>
         <signal>toggled(bool)</signal>
         <receiver>edtDisplayName</receiver>
         <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>chkTrackChildDisplayName</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>cmbAccount</receiver>
+        <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
 <tabstops>

@@ -47,12 +47,18 @@
 
 namespace Kopete {
 
+const QString NSCID_ELEM = QString::fromLatin1( "nameSourceContactId" );
+const QString NSPID_ELEM = QString::fromLatin1( "nameSourcePluginId" );
+const QString NSAID_ELEM = QString::fromLatin1( "nameSourceAccountId" );
+
 class  MetaContact::Private
 { public:
 
 	QPtrList<Contact> contacts;
 	QString displayName;
-	bool trackChildNameChanges;
+	QString nameSourceCID;
+	QString nameSourcePID;
+	QString nameSourceAID;
 	QPtrList<Group> groups;
 	QMap<QString, QMap<QString, QString> > addressBook;
 	bool temporary;
@@ -89,7 +95,7 @@ MetaContact::MetaContact()
 {
 	d = new Private;
 
-	d->trackChildNameChanges = true;
+	setNameSource( 0 );
 	d->temporary = false;
 
 	d->onlineStatus = Kopete::OnlineStatus::Offline;
@@ -145,14 +151,7 @@ void MetaContact::addContact( Contact *c )
 				"empty displayname, using contacts display" << endl;*/
 			QString nick=c->property( Global::Properties::self()->nickName()).value().toString();
 			setDisplayName( nick.isEmpty() ? c->contactId() : nick );
-			d->trackChildNameChanges = true;
-		}
-
-		if( d->contacts.count() > 1 )
-		{
-			/*kdDebug(14010) << k_funcinfo << "Disabling trackChildNameChanges,"
-				" more than ONE Contact in MetaContact" << endl;*/
-			d->trackChildNameChanges = false;
+			setNameSource( c );
 		}
 
 		emit contactAdded(c);
@@ -204,7 +203,14 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 	}
 	else
 	{
+		// must check before removing, or will always be false
+		bool wasTracking = ( nameSource() == c );
+
 		d->contacts.remove( c );
+
+		// Set new name tracking (or disable if no subcontacts left -- implicit
+		if( wasTracking )
+			setNameSource( d->contacts.first() );
 
 		if(!deleted)
 		{  //If this function is tell by slotContactRemoved, c is maybe just a QObject
@@ -510,7 +516,7 @@ void MetaContact::setDisplayName( const QString &name )
 	d->displayName = name;
 
 	//The name is set by the user, disable tracking
-	d->trackChildNameChanges = false;
+	setNameSource( 0 );
 
 	emit displayNameChanged( old , name );
 
@@ -524,38 +530,63 @@ QString MetaContact::displayName() const
 	return d->displayName;
 }
 
-bool MetaContact::trackChildNameChanges() const
+Contact *MetaContact::nameSource() const
 {
-	return d->trackChildNameChanges;
+	// quick-out for contacts not tracking
+	if( d->nameSourceCID.isEmpty() )
+		return 0;
+	
+	for( QPtrListIterator< Contact > it ( d->contacts ); it.current(); ++it )
+	{
+		if( d->nameSourceCID == it.current()->contactId() &&
+			d->nameSourcePID == it.current()->protocol()->pluginId() &&
+			d->nameSourceAID == it.current()->account()->accountId() )
+		{
+			return it;
+		}
+	}
+	
+	// Invalid tracking information.  We don't clear the tracking  it in case the contact 
+	// is only temporarily unavailable (ie. plugin was disabled / broken).
+	return 0;
 }
 
-void MetaContact::setTrackChildNameChanges( bool  track  )
+void MetaContact::setNameSource( Contact *contact )
 {
-	if (track && (d->contacts.count() == 1))
+	if ( contact != 0 )
 	{
-		QString nick=d->contacts.first()->property(Global::Properties::self()->nickName()).value().toString();
-		setDisplayName( nick.isEmpty() ? d->contacts.first()->contactId() : nick );
-
-		d->trackChildNameChanges = true;
+		QString nick = contact->property( Global::Properties::self()->nickName() ).value().toString();
+		setDisplayName( nick.isEmpty() ? contact->contactId() : nick );
+		// We do this after, since setDisplayName clears it.
+		d->nameSourceCID = contact->contactId();
+		d->nameSourcePID = contact->protocol()->pluginId();
+		d->nameSourceAID = contact->account()->accountId();
 	}
 	else
 	{
-		d->trackChildNameChanges = false;
+		// Clear our name tracking
+		d->nameSourceCID = "";
+		d->nameSourcePID = "";
+		d->nameSourceAID = "";
 	}
 	emit persistentDataChanged();
 }
 
-void MetaContact::slotPropertyChanged( Contact*, const QString &key,
+void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 		const QVariant&, const QVariant &newValue  )
 {
 	if( key == Global::Properties::self()->nickName().key() )
 	{
+		Contact* ns = nameSource();
+		bool isTrackedSubcontact = ( subcontact == ns );
 		QString newNick=newValue.toString();
-		if( (d->trackChildNameChanges || d->displayName.isEmpty()) && !newNick.isEmpty() )
+		
+		if( isTrackedSubcontact && !newNick.isEmpty() )
 		{
+			// The subcontact we are tracking just changed its name.
 			setDisplayName( newNick );
-			//because d->trackChildNameChanges is set to false in setDisplayName
-			d->trackChildNameChanges = true;
+			//because nameSource is removed in setDisplayName
+			setNameSource( ns );
 		}
 	//TODO:  chack if the property was persistent, and emit, not only when it's the displayname
 	emit persistentDataChanged();
@@ -657,9 +688,13 @@ const QDomElement MetaContact::toXML()
 	metaContact.documentElement().setAttribute( QString::fromLatin1( "contactId" ), metaContactId() );
 
 	QDomElement displayName = metaContact.createElement( QString::fromLatin1("display-name" ) );
-	displayName.setAttribute( QString::fromLatin1("trackChildNameChanges"),
-		QString::fromLatin1( d->trackChildNameChanges ? "1":"0" ) );
 	displayName.appendChild( metaContact.createTextNode( d->displayName ) );
+	if ( !d->nameSourceCID.isEmpty() )
+	{
+		displayName.setAttribute( NSCID_ELEM, d->nameSourceCID );
+		displayName.setAttribute( NSPID_ELEM, d->nameSourcePID );
+		displayName.setAttribute( NSAID_ELEM, d->nameSourceAID );
+	}
 	metaContact.documentElement().appendChild( displayName );
 
 	// Store groups
@@ -706,9 +741,10 @@ bool MetaContact::fromXML( const QDomElement& element )
 				return false;
 			d->displayName = contactElement.text();
 
-			d->trackChildNameChanges =
-				( contactElement.attribute( QString::fromLatin1( "trackChildNameChanges" ),
-				QString::fromLatin1( "0" ) ) == QString::fromLatin1( "1" ) );
+			d->nameSourceCID = contactElement.attribute( NSCID_ELEM );
+			d->nameSourcePID = contactElement.attribute( NSPID_ELEM );
+			d->nameSourceAID = contactElement.attribute( NSAID_ELEM );
+
 		}
 		else if( contactElement.tagName() == QString::fromLatin1( "groups" ) )
 		{
@@ -752,7 +788,7 @@ bool MetaContact::fromXML( const QDomElement& element )
 	// If a plugin is loaded, load data cached
 	connect( Kopete::PluginManager::self(), SIGNAL( pluginLoaded(Kopete::Plugin*) ),
 		this, SLOT( slotPluginLoaded(Kopete::Plugin*) ) );
-
+	
 	// track changes only works if ONE Contact is inside the MetaContact
 //	if (d->contacts.count() > 1) // Does NOT work as intended
 //		d->trackChildNameChanges=false;

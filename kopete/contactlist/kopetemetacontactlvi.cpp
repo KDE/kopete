@@ -290,8 +290,13 @@ void KopeteMetaContactLVI::rename( const QString& newName )
 	if ( lv )
 	{
 		KopeteContactListView::UndoItem *u=new KopeteContactListView::UndoItem(KopeteContactListView::UndoItem::MetaContactRename, m_metaContact);
-		if(!m_metaContact->trackChildNameChanges())
+		if ( m_metaContact->nameSource() == 0 )
 			u->args << m_metaContact->displayName();
+		else
+		{
+			Kopete::Contact* c = m_metaContact->nameSource();
+			u->args << c->contactId() << c->protocol()->pluginId() << c->account()->accountId();
+		}
 		lv->insertUndoItem(u);
 	}
 	
@@ -299,15 +304,15 @@ void KopeteMetaContactLVI::rename( const QString& newName )
 	{
 		// Reset the last display name
 		slotDisplayNameChanged();
-		m_metaContact->setTrackChildNameChanges( true );
+		m_metaContact->setNameSource( m_metaContact->contacts().first() );
 	}
 	else // user changed name manually, disable tracking of contact nickname and update displayname
 	{
-		m_metaContact->setTrackChildNameChanges( false );
+		m_metaContact->setNameSource( 0 );
 		m_metaContact->setDisplayName( newName );
 	}
 
-	kdDebug( 14000 ) << k_funcinfo << "newName=" << newName << ", TrackChildNameChanges=" << m_metaContact->trackChildNameChanges() << endl;
+	kdDebug( 14000 ) << k_funcinfo << "newName=" << newName << endl;
 }
 
 void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )

@@ -64,7 +64,6 @@ class MetaContact : public ContactListElement, public NotifyDataObject
 //	Q_PROPERTY( bool isTopLevel READ isTopLevel )
 //	Q_PROPERTY( bool canAcceptFiles READ canAcceptFiles )
 	Q_PROPERTY( QString metaContactId READ metaContactId WRITE setMetaContactId )
-	Q_PROPERTY( bool trackChildNameChanges READ trackChildNameChanges WRITE setTrackChildNameChanges )
 
 public:
 
@@ -118,33 +117,23 @@ public:
 	 * @brief Set the displayName.
 	 *
 	 * this metohd may emit @ref displayNameChanged signal.
-	 * If @ref trackChildNameChanges was true, this will automatically set it to false
+	 * If @ref nameSource was not null, it will automatically set it to null
 	 */
 	void setDisplayName( const QString &name );
-	
+
 	/**
-	 * @brief get the tracking of contact names
+	 * @brief get the subcontact being tracked (null if not tracking)
 	 *
-	 * The MetaContact will adjust its displayName() every time the contact
-	 * inside changes its name.
-	 * This should only work for MCs with exactly ONE contact inside in order
-	 * to not confuse users (think about 4 subcontacts and what happens if one
-	 * changes nickname...)
+	 * The MetaContact will adjust its displayName() every time the 
+	 * "nameSource" changes its name.
 	 */
-	bool trackChildNameChanges() const;
+	Contact *nameSource() const;
+
 	/**
-	 * @brief set if the metacontact displayname follow subcontacts displayname
-	 *
-	 * When setting it to true, it will refresh the dysplayname to the subcontactone instentaneous,
-	 * and each time the contact change.
-	 *
-	 * Note that this method has an effect only if there is exactly one subcontact.
-	 *
-	 * @see @ref trackChildNameChanges , @ref setDisplayName
+	 * @brief set the subcontact whose name is to be tracked (set to null to disable tracking)
 	 */
-	void setTrackChildNameChanges( bool track );
-	
-	
+	void setNameSource( Contact* contact );
+
 	/**
 	 * Temporary contacts will not be serialized.
 	 * If they are added to the contactlist, they appears in a special "Not in your contactlist" group.

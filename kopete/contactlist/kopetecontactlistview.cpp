@@ -1743,12 +1743,33 @@ void KopeteContactListView::slotUndo()
 			Kopete::MetaContact *m=m_undo->metacontact;
 			if( m )
 			{
-				const QString old=m->displayName();
-				if( m_undo->args[0].isEmpty() )
-					m->setTrackChildNameChanges(true);
+				if( m_undo->args[1].isEmpty() )
+				{
+					const QString name = m_undo->args[0];
+					m_undo->args[0] = m->nameSource()->contactId();
+					m_undo->args[1] = m->nameSource()->protocol()->pluginId();
+					m_undo->args[2] = m->nameSource()->account()->accountId();
+					m->setDisplayName( name );
+				}
 				else
-					m->setDisplayName( m_undo->args[0] );
-				m_undo->args[0]=old;
+				{
+					const QString oldName = m->displayName();
+					QPtrList< Kopete::Contact > cList = m->contacts();
+					QPtrListIterator< Kopete::Contact > it (cList);
+					for ( ; it.current(); ++it )
+					{
+						if( m_undo->args[0].compare( it.current()->contactId() ) == 0 &&
+							m_undo->args[1].compare( it.current()->protocol()->pluginId() ) == 0 &&
+							m_undo->args[2].compare( it.current()->account()->accountId() ) == 0 )
+						{
+							m->setNameSource( it.current() );
+							break;
+						}
+					}
+					m_undo->args[0] = oldName;
+					m_undo->args[1] = "";
+					m_undo->args[2] = "";
+				}
 				success=true;
 			}
 			break;
@@ -1869,11 +1890,33 @@ void KopeteContactListView::slotRedo()
 			if( m )
 			{
 				const QString old=m->displayName();
-				if( m_redo->args[0].isEmpty() )
-					m->setTrackChildNameChanges(true);
+				if( m_redo->args[1].isEmpty() )
+				{
+					const QString name = m_redo->args[0];
+					m_redo->args[0] = m->nameSource()->contactId();
+					m_redo->args[1] = m->nameSource()->protocol()->pluginId();
+					m_redo->args[2] = m->nameSource()->account()->accountId();
+					m->setDisplayName( name );
+				}
 				else
-					m->setDisplayName( m_redo->args[0] );
-				m_redo->args[0]=old;
+				{
+					const QString oldName = m->displayName();
+					QPtrList< Kopete::Contact > cList = m->contacts();
+					QPtrListIterator< Kopete::Contact > it (cList);
+					for ( ; it.current(); ++it )
+					{
+						if( m_redo->args[0].compare( it.current()->contactId() ) == 0&&
+							m_redo->args[1].compare( it.current()->protocol()->pluginId() ) == 0 &&
+							m_redo->args[2].compare( it.current()->account()->accountId() ) == 0 )
+						{
+							m->setNameSource( it.current() );
+							break;
+						}
+					}
+					m_redo->args[0] = oldName;
+					m_redo->args[1] = "";
+					m_redo->args[2] = "";
+				}
 				success=true;
 			}
 			break;

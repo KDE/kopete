@@ -27,6 +27,7 @@
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qtabwidget.h>
+#include <qcombobox.h>
 
 #include <kdialogbase.h>
 #include <kfiledialog.h>
@@ -45,6 +46,8 @@
 #include "kopetemetacontact.h"
 #include "kopetenotifyclient.h"
 #include "kopetemetacontactlvi.h"
+#include "kopeteaccount.h"
+#include "kopeteprotocol.h"
 
 #include "customnotificationprops.h"
 #include "customnotifications.h"
@@ -159,8 +162,25 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	item = lvi;
 
 	mainWidget->edtDisplayName->setText( item->metaContact()->displayName() );
-	mainWidget->chkTrackChildDisplayName->setChecked( item->metaContact()->trackChildNameChanges() );
-	mainWidget->chkTrackChildDisplayName->setEnabled( item->metaContact()->contacts().count() == 1 );
+	mainWidget->chkTrackChildDisplayName->setChecked( item->metaContact()->nameSource() != 0 );
+	mainWidget->chkTrackChildDisplayName->setEnabled( item->metaContact()->contacts().count() > 0 );
+	mainWidget->cmbAccount->setEnabled( mainWidget->chkTrackChildDisplayName->isChecked() );
+	
+	Kopete::Contact* tracking = item->metaContact()->nameSource();
+	QPtrList< Kopete::Contact > cList = item->metaContact()->contacts();
+	QPtrListIterator<Kopete::Contact> it( cList );
+	for( ; it.current(); ++it )
+	{
+		QString acct = it.current()->property( Kopete::Global::Properties::self()->nickName() ).value().toString() + " <" + it.current()->contactId() + ">";
+		QPixmap acctIcon = it.current()->account()->accountIcon();
+		mainWidget->cmbAccount->insertItem( acctIcon, acct );
+		
+		// Select this item if it's the one we're tracking.
+		if( it.current() == tracking )
+		{
+			mainWidget->cmbAccount->setCurrentItem( mainWidget->cmbAccount->count() - 1 );
+		}
+	}
 
 	mainWidget->chkUseCustomIcons->setChecked( item->metaContact()->useCustomIcon() );
 
@@ -232,7 +252,10 @@ void KopeteMetaLVIProps::slotOkClicked()
 	{
 		item->metaContact()->setDisplayName( mainWidget->edtDisplayName->text() );
 	}
-	item->metaContact()->setTrackChildNameChanges( mainWidget->chkTrackChildDisplayName->isChecked() );
+	if ( mainWidget->chkTrackChildDisplayName->isChecked() )
+		item->metaContact()->setNameSource( item->metaContact()->contacts().at( mainWidget->cmbAccount->currentItem() ) );
+	else
+		item->metaContact()->setNameSource( 0 );
 
 	item->metaContact()->setUseCustomIcon(
 		mainWidget->chkUseCustomIcons->isChecked() );

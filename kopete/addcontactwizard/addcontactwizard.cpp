@@ -248,7 +248,7 @@ void AddContactWizard::accept()
 	// set the display name if required
 	if ( !mDisplayName->text().isEmpty() )
 	{
-		metaContact->setTrackChildNameChanges( false );
+		metaContact->setNameSource( 0 );
 		metaContact->setDisplayName( mDisplayName->text() );
 	}
 	// NOT SURE IF I MEANT TO TAKE THIS OUT - WILL
