@@ -9,8 +9,8 @@
       <keyword>Qt</keyword>
       <keyword>KDE</keyword>
     </keywords>
-    <version></version>
-    <description></description>
+    <version/>
+    <description/>
     <ignoreparts/>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
@@ -45,7 +45,7 @@
     <general>
       <dbgshell>../libtool</dbgshell>
       <programargs>--nofork</programargs>
-      <gdbpath></gdbpath>
+      <gdbpath/>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
@@ -73,7 +73,7 @@
       <abortonerror>true</abortonerror>
       <numberofjobs>3</numberofjobs>
       <dontact>false</dontact>
-      <makebin></makebin>
+      <makebin/>
     </make>
     <general>
       <useconfiguration>default</useconfiguration>
@@ -86,12 +86,12 @@
         <ccompiler>GccOptions</ccompiler>
         <cxxcompiler>GppOptions</cxxcompiler>
         <f77compiler>G77Options</f77compiler>
-        <ccompilerbinary></ccompilerbinary>
-        <cxxcompilerbinary></cxxcompilerbinary>
-        <f77compilerbinary></f77compilerbinary>
-        <cflags></cflags>
-        <cxxflags></cxxflags>
-        <f77flags></f77flags>
+        <ccompilerbinary/>
+        <cxxcompilerbinary/>
+        <f77compilerbinary/>
+        <cflags/>
+        <cxxflags/>
+        <f77flags/>
       </default>
     </configurations>
   </kdevautoproject>
@@ -106,8 +106,8 @@
     </classstore>
     <filetemplates>
       <choosefiles>false</choosefiles>
-      <interfaceURL></interfaceURL>
-      <implementationURL></implementationURL>
+      <interfaceURL/>
+      <implementationURL/>
       <interfacesuffix>.h</interfacesuffix>
       <implementationsuffix>.cpp</implementationsuffix>
       <lowercasefilenames>true</lowercasefilenames>
@@ -122,13 +122,13 @@
   </kdevclassview>
   <kdevcvs>
     <cvsoptions>-f</cvsoptions>
-    <commitoptions></commitoptions>
+    <commitoptions/>
     <updateoptions>-dP</updateoptions>
     <addoptions>-z4</addoptions>
     <removeoptions>-f</removeoptions>
     <diffoptions>-u3 -p</diffoptions>
-    <logoptions></logoptions>
-    <rshoptions></rshoptions>
+    <logoptions/>
+    <rshoptions/>
   </kdevcvs>
   <kdevfilecreate>
     <filetypes/>

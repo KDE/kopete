@@ -27,6 +27,7 @@
 #include <kgenericfactory.h>
 
 #include "kopeteviewmanager.h"
+#include "kopeteview.h"
 #include "kopetemessagemanagerfactory.h"
 #include "spellcheckplugin.h"
 #include "spellcheckpreferences.h"

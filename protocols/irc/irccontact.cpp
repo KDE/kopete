@@ -31,6 +31,7 @@
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
 #include "kopeteviewmanager.h"
+#include "kopeteview.h"
 #include "ircusercontact.h"
 #include "irccontact.h"
 #include "ircprotocol.h"

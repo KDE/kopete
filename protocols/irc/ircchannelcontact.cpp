@@ -23,6 +23,7 @@
 #include "kirc.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteviewmanager.h"
+#include  "kopeteview.h"
 #include "kopetemetacontact.h"
 #include "kopetestdaction.h"
 #include "../kopete/kopete.h"

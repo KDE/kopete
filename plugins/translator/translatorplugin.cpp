@@ -39,6 +39,7 @@
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteviewmanager.h"
+#include "kopeteview.h"
 
 #include "translatorplugin.h"
 #include "translatorprefs.h"

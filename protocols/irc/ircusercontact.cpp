@@ -21,6 +21,7 @@
 #include "ircprotocol.h"
 #include "kopetemessagemanager.h"
 #include "kopeteviewmanager.h"
+#include "kopeteview.h"
 
 #include "kirc.h"
 

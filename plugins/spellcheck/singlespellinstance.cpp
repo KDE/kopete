@@ -23,7 +23,7 @@
 #include <kspell.h>
 #include <klocale.h>
 
-#include "kopeteviewmanager.h"
+#include "kopeteview.h"
 #include "singlespellinstance.h"
 #include "spellcheckpreferences.h"
 #include "spellcheckplugin.h"
