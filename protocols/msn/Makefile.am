@@ -2,8 +2,6 @@ METASOURCES = AUTO
 SUBDIRS = ui . pixmaps icons config
 AM_CPPFLAGS = -I$(srcdir)/ui \
 	-I./ui \
-	-I$(top_srcdir)/kopete/libkopete/compat \
-	-I$(top_srcdir)/kopete/libkopete/compat/kcdialog \
 	$(KOPETE_INCLUDES) \
 	$(all_includes)
 
@@ -13,8 +11,7 @@ kopete_msn_la_SOURCES = msnprotocol.cpp msnaccount.cpp msnaddcontactpage.cpp msn
 	msnsocket.cpp msnauthsocket.cpp msndispatchsocket.cpp msnmessagemanager.cpp msndebugrawcmddlg.cpp \
 	msnnotifysocket.cpp msnswitchboardsocket.cpp msnfiletransfersocket.cpp msninvitation.cpp
 kopete_msn_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
-kopete_msn_la_LIBADD  = ./ui/libkopetemsnui.la \
-	../../libkopete/libkopete.la ../../libkopete/compat/libkopetecompat.la $(LIB_KIO)
+kopete_msn_la_LIBADD  = ./ui/libkopetemsnui.la ../../libkopete/libkopete.la $(LIB_KIO)
 
 service_DATA = msn.desktop
 servicedir = $(kde_servicesdir)
