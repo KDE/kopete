@@ -149,3 +149,9 @@ AC_MSG_RESULT($ac_have_valgrind_h)
 
 # -- End valgrind ----------------------------------------------
 
+# -- Determine pointer size for sqlite -------------------------
+
+KDE_CHECK_TYPES
+AC_DEFINE(SQLITE_PTR_SZ, SIZEOF_CHAR_P, [Determine pointer size for SQLite])
+
+# -- End sqlite ------------------------------------------------
