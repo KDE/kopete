@@ -96,13 +96,12 @@ bool KopeteCommandHandler::processMessage( KopeteMessage &msg, KopeteMessageMana
 	QString command = messageBody.section( spaces, 0, 0).section('/',1).lower();
 	QString args = messageBody.section( spaces, 1 );
 
-	bool retVal = false;
-
 	if( reservedCommands.contains( command ) )
 	{
 		kdDebug(14010) << k_funcinfo << "Reserved Command" << endl;
 		//Reserved command. Process it internally.
 		reservedCommand( command, args, manager );
+		return true;
 	}
 	else
 	{
@@ -120,7 +119,7 @@ bool KopeteCommandHandler::processMessage( KopeteMessage &msg, KopeteMessageMana
 		}
 	}
 
-	return retVal;
+	return false;
 }
 
 void KopeteCommandHandler::reservedCommand( const QString &command, const QString &args, KopeteMessageManager *manager )
