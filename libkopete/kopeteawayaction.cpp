@@ -16,8 +16,13 @@
 */
 
 #include <klocale.h>
-#include <qstringlist.h>
-#include <kinputdialog.h>
+#include <kdeversion.h>
+#include <qinputdialog.h>
+
+#if KDE_IS_VERSION( 3, 1, 90 )
+	#include <kinputdialog.h>
+	#define QInputDialog KInputDialog
+#endif
 
 #include "kopeteawayaction.h"
 #include "kopeteaway.h"
@@ -60,7 +65,7 @@ void KopeteAwayAction::slotSelectAway( int index )
 		awayReason = mAway->getMessage( awayTitles[index] );
 	}
 	else
-		awayReason = KInputDialog::getText( i18n( "Custom Away Message" ), i18n( "Please enter your away reason:" ), QString::null);
+		awayReason = QInputDialog::getText( i18n( "Custom Away Message" ), i18n( "Please enter your away reason:" ), QString::null);
 	
 	if( !awayReason.isEmpty() )
 	{
