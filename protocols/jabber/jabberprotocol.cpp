@@ -66,7 +66,7 @@ JabberProtocol *JabberProtocol::protocolInstance = 0;
 
 typedef KGenericFactory<JabberProtocol> JabberProtocolFactory;
 
-K_EXPORT_COMPONENT_FACTORY( kopete_jabber, JabberProtocolFactory );
+K_EXPORT_COMPONENT_FACTORY( kopete_jabber, JabberProtocolFactory( "kopete_jabber" )  );
 
 JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStringList &)
 : KopeteProtocol( JabberProtocolFactory::instance(), parent, name ),

@@ -42,7 +42,7 @@ class KPopupMenu;
 WPProtocol *WPProtocol::sProtocol = 0;
 
 typedef KGenericFactory<WPProtocol> WPProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_wp, WPProtocolFactory );
+K_EXPORT_COMPONENT_FACTORY( kopete_wp, WPProtocolFactory( "kopete_wp" )  );
 
 // WP Protocol
 WPProtocol::WPProtocol( QObject *parent, QString name, QStringList )

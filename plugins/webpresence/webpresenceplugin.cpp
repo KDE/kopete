@@ -51,7 +51,7 @@
 #include "webpresencepreferences.h"
 
 typedef KGenericFactory<WebPresencePlugin> WebPresencePluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_webpresence, WebPresencePluginFactory );
+K_EXPORT_COMPONENT_FACTORY( kopete_webpresence, WebPresencePluginFactory( "kopete_webpresence" )  );
 
 WebPresencePlugin::WebPresencePlugin( QObject *parent, const char *name, const QStringList& /*args*/ )
 : KopetePlugin( WebPresencePluginFactory::instance(), parent, name )

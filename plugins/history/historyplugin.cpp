@@ -31,7 +31,7 @@
 #include "historyguiclient.h"
 
 typedef KGenericFactory<HistoryPlugin> HistoryPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_history, HistoryPluginFactory );
+K_EXPORT_COMPONENT_FACTORY( kopete_history, HistoryPluginFactory( "kopete_history" )  );
 
 HistoryPlugin::HistoryPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
 : KopetePlugin( HistoryPluginFactory::instance(), parent, name )

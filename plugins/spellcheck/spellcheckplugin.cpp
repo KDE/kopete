@@ -33,7 +33,7 @@
 #include "singlespellinstance.h"
 
 typedef KGenericFactory<SpellCheckPlugin> SpellCheckPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_spellcheck, SpellCheckPluginFactory );
+K_EXPORT_COMPONENT_FACTORY( kopete_spellcheck, SpellCheckPluginFactory( "kopete_spellcheck" )  );
 
 SpellCheckPlugin* SpellCheckPlugin::pluginStatic_ = 0L;
 

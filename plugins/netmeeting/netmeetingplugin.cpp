@@ -30,7 +30,7 @@
 #include "netmeetingguiclient.h"
 
 
-K_EXPORT_COMPONENT_FACTORY( kopete_netmeeting, KGenericFactory<NetMeetingPlugin> );
+K_EXPORT_COMPONENT_FACTORY( kopete_netmeeting, KGenericFactory<NetMeetingPlugin>( "kopete_netmeeting" )  );
 
 NetMeetingPlugin::NetMeetingPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
 : KopetePlugin( KGlobal::instance(), parent, name )

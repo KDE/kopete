@@ -37,7 +37,7 @@
 #include "translatorguiclient.h"
 
 typedef KGenericFactory<TranslatorPlugin> TranslatorPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_translator, TranslatorPluginFactory );
+K_EXPORT_COMPONENT_FACTORY( kopete_translator, TranslatorPluginFactory( "kopete_translator" )  );
 
 TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
 : KopetePlugin( TranslatorPluginFactory::instance(), parent, name )

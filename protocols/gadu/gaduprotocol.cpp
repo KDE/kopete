@@ -39,7 +39,7 @@
 
 #include <libgadu.h>
 
-K_EXPORT_COMPONENT_FACTORY( kopete_gadu, KGenericFactory<GaduProtocol> );
+K_EXPORT_COMPONENT_FACTORY( kopete_gadu, KGenericFactory<GaduProtocol>( "kopete_gadu" )  );
 
 GaduProtocol* GaduProtocol::protocolStatic_ = 0L;
 

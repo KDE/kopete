@@ -34,7 +34,7 @@
 #include "kgpginterface.h"
 
 typedef KGenericFactory<CryptographyPlugin> CryptographyPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_cryptography, CryptographyPluginFactory );
+K_EXPORT_COMPONENT_FACTORY( kopete_cryptography, CryptographyPluginFactory( "kopete_cryptography" ) );
 
 CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
 : KopetePlugin( CryptographyPluginFactory::instance(), parent, name ),

@@ -27,7 +27,7 @@
 #include "contactnotesplugin.h"
 
 typedef KGenericFactory<ContactNotesPlugin> ContactNotesPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_contactnotes, ContactNotesPluginFactory );
+K_EXPORT_COMPONENT_FACTORY( kopete_contactnotes, ContactNotesPluginFactory( "kopete_contactnotes" )  );
 
 ContactNotesPlugin::ContactNotesPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
 : KopetePlugin( ContactNotesPluginFactory::instance(), parent, name )

@@ -26,7 +26,7 @@
 #include "texteffectpreferences.h"
 
 typedef KGenericFactory<TextEffectPlugin> TextEffectPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_texteffect, TextEffectPluginFactory );
+K_EXPORT_COMPONENT_FACTORY( kopete_texteffect, TextEffectPluginFactory( "kopete_texteffect" )  );
 
 TextEffectPlugin::TextEffectPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
 : KopetePlugin( TextEffectPluginFactory::instance(), parent, name )
