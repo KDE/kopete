@@ -145,8 +145,9 @@ void GaduPublicDir::slotSearchResult( const searchResult& result )
 	kdDebug(14100) << "searchResults(" << result.count() <<")" << endl;
 
 	// if not found anything, obviously we don't want to search for more
+	// if we are looking just for one UIN, don't allow search more - it is pointless
 
-	if ( result.count() ) {
+	if ( result.count() && fUin==0 ) {
 		enableButton( User2, true );
 	}
 
