@@ -63,6 +63,16 @@ public:
 	 */
 	OnlineStatus initialStatus();
 
+	/**
+	 * @brief Remove the account from the server.
+	 *
+	 * reimplementation of @ref Account::removeAccount  to remove the password from the wallet.
+	 * if your protocol reimplment this function, you should call this one anyway.
+	 *
+	 * @return true
+	 */
+	virtual bool removeAccount();
+
 public slots:
 	/**
 	 * Called when your account should attempt to connect.

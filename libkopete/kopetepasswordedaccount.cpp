@@ -80,6 +80,13 @@ Kopete::OnlineStatus Kopete::PasswordedAccount::initialStatus()
 	return d->initialStatus;
 }
 
+bool Kopete::PasswordedAccount::removeAccount()
+{
+	password().set(QString::null);
+	return Kopete::Account::removeAccount();
+}
+
+
 #include "kopetepasswordedaccount.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
