@@ -339,9 +339,11 @@ QString KopeteSystemTray::squashMessage( const Kopete::Message& msg )
 		// no URLs in text, just pick the first 30 chars of
 		// the parsed text if necessary. We used parsed text
 		// so that things like "<knuff>" show correctly
-		msgText = Kopete::Message::escape( msg.plainBody() );
+		//  Escape it after snipping it to not snip entities
+		msgText =msg.plainBody() ;
 		if( msgText.length() > 30 )
 			msgText = msgText.left( 30 ) + QString::fromLatin1( " ..." );
+		msgText=Kopete::Message::escape(msgText);
 	}
 	else
 	{
