@@ -1,5 +1,5 @@
 #include <qlayout.h>
-#include <qlineedit.h>
+#include <klineedit.h>
 
 #include <klocale.h>
 

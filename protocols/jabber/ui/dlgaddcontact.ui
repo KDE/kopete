@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>dlgAddContact</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,12 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>298</width>
-            <height>102</height>
+            <width>376</width>
+            <height>93</height>
         </rect>
     </property>
     <property name="caption">
-        <string>Form4</string>
+        <string>Add Contacts</string>
     </property>
     <vbox>
         <property name="name">
@@ -27,7 +27,7 @@
         </property>
         <widget class="QGroupBox">
             <property name="name">
-                <cstring>GroupBox1</cstring>
+                <cstring>contactInformationBox</cstring>
             </property>
             <property name="title">
                 <string>Contact Information</string>
@@ -42,14 +42,9 @@
                 <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget class="QLineEdit" row="0" column="1">
-                    <property name="name">
-                        <cstring>addID</cstring>
-                    </property>
-                </widget>
                 <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
                     <property name="name">
-                        <cstring>TextLabel1_2</cstring>
+                        <cstring>helpLabel</cstring>
                     </property>
                     <property name="text">
                         <string>(for example fooishbar@jabber.org)</string>
@@ -57,10 +52,15 @@
                 </widget>
                 <widget class="QLabel" row="0" column="0">
                     <property name="name">
-                        <cstring>TextLabel1</cstring>
+                        <cstring>addIDLabel</cstring>
                     </property>
                     <property name="text">
                         <string>Jabber ID:</string>
+                    </property>
+                </widget>
+                <widget class="KLineEdit" row="0" column="1">
+                    <property name="name">
+                        <cstring>addID</cstring>
                     </property>
                 </widget>
             </grid>
@@ -68,4 +68,7 @@
     </vbox>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>klineedit.h</includehint>
+</includehints>
 </UI>
