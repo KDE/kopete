@@ -680,7 +680,6 @@ class OscarSocket : public OscarConnection
 	void gotICQMoreUserInfo(const int, const ICQMoreUserInfo &);
 	void gotICQAboutUserInfo(const int, const QString &);
 	void gotICQEmailUserInfo(const int, const ICQMailList &);
-	// TODO: Will - make these signals mean something
 	void gotICQInfoItemList(const int, const ICQInfoItemList &);
 	void gotICQInfoItemList(const int, const ICQInfoItemList &, const ICQInfoItemList &);
 

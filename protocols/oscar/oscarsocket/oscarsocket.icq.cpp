@@ -97,11 +97,11 @@ void OscarSocket::sendLoginICQ()
 //	kdDebug(14150) << "Outbuf length before flap is: " << outbuf.length() << endl;
 
 	sendBuf(outbuf,0x01);
-	kdDebug(14150) << k_funcinfo "emitting connectionChanged" << endl;
+	//kdDebug(14150) << k_funcinfo << "emitting connectionChanged" << endl;
 //	emit connectionChanged(3,"Sending username and password...");
 }
 
-// Parses all SNAC(15,3) Packets, these are only for ICQ!
+// Parses all SNAC(0x15,3) Packets, these are only for ICQ!
 void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 {
 	QPtrList<TLV> tl = inbuf.getTLVList();

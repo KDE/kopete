@@ -432,7 +432,7 @@ void OscarSocket::slotRead(void)
 					break;
 				} // END 0x0013
 
-				case OSCAR_FAM_21: // ICQ packets
+				case OSCAR_FAM_21: // ICQ 0x15 packets
 				{
 					switch(s.subtype)
 					{
@@ -455,6 +455,9 @@ void OscarSocket::slotRead(void)
 				{
 					switch(s.subtype)
 					{
+						case 0x0001: //registration refused!
+							emit protocolError ( i18n( "Registration refused!" ), 0 );
+							break;
 						case 0x0003: //authorization response (and hash) is being sent
 							parseAuthResponse(inbuf);
 							break;
@@ -485,7 +488,7 @@ void OscarSocket::slotRead(void)
 
 		case 0x04: //close connection negotiation channel
 		{
-			kdDebug(14150) << "Got connection close request, length=" << inbuf.length() << endl;
+			kdDebug(14150) << k_funcinfo << "Got connection close request, length=" << inbuf.length() << endl;
 
 			// BEGIN TODO
 			// This is a part of icq login procedure,
@@ -524,27 +527,38 @@ void OscarSocket::slotRead(void)
 					case 0x0001: // multiple logins (on same UIN)
 						kdDebug(14150) << k_funcinfo <<
 							"multiple logins (on same UIN)!!!" << endl;
+						emit protocolError( i18n( "You've logged in more than once with the same UIN/buddy name, this login is now disconnected." ), 0 );
 						doLogoff();
 						break;
 					case 0x0004:
 					case 0x0005: // bad password
 						kdDebug(14150) << k_funcinfo << "bad password!!!" << endl;
+						emit protocolError( i18n( "Couldn't log on to %1 with account %2 as the password was incorrect." ).arg(
+														( mIsICQ ? "AIM" : "ICQ" ) ).arg( getSN() ), 0 );
 						doLogoff();
+						disconnect();
+						emit statusChanged( OSCAR_OFFLINE );
 						break;
 					case 0x0007: // non-existant ICQ#
 					case 0x0008: // non-existant ICQ#
 						kdDebug(14150) << k_funcinfo << "non-existant ICQ#" << endl;
+						emit protocolError( i18n( "Couldn't log on to %1 with nonexistent account %2." ).arg(
+														( mIsICQ ? "AIM" : "ICQ" ) ).arg( getSN() ), 0 );
 						doLogoff();
 						break;
 					case 0x0015: // too many clients from same IP
 					case 0x0016: // too many clients from same IP
 						kdDebug(14150) << k_funcinfo <<
 							"too many clients from same IP" << endl;
+						emit protocolError( i18n( "Couldn't log on to %1 as there are too many clients from the same computer." ).arg(
+														( mIsICQ ? "AIM" : "ICQ" ) ), 0 );
 						break;
 					case 0x0018: // rate exceeded (turboing)
 						kdDebug(14150) << k_funcinfo <<
 							"rate exceeded (maybe reconnecting too fast), " \
 							"server-ban for at least 10 mins!!!" << endl;
+						emit protocolError( i18n( "Server has blocked %1 account %2 for sending messages too quickly. Wait ten minutes and try again. If you continue to try, you will need to wait even longer." ).arg(
+														( mIsICQ ? "AIM" : "ICQ" ) ).arg( getSN() ), 0 );
 						break;
 				}
 
@@ -695,6 +709,20 @@ void OscarSocket::doLogin(const QString &host, int port, const QString &s, const
 		kdDebug(14150) << k_funcinfo << "We're already connected, aborting!" << endl;
 		return;
 	}
+
+	bool error = false;
+	if ( host.isNull() )
+	{
+		kdDebug( 14150 ) << k_funcinfo << " Tried to connect without a hostname, oops!" << endl;
+		error = true;
+	}
+	if ( port == 0 )
+	{
+		kdDebug( 14150 ) << k_funcinfo << " Tried to connect to port 0, oops!" << endl;
+		error = true;
+	}
+	if ( error )
+		return;
 
 	kdDebug(14150) << k_funcinfo "Connecting to '" << host << "', port=" << port << endl;
 
