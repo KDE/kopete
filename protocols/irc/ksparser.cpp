@@ -112,22 +112,13 @@ QCString KSParser::_parse(const QCString &message)
 					i += colorsModeRegexp.matchedLength(); // + 1 will be added by ++
 					QString tagStyle;
 
-					kdDebug(14120)	<< k_funcinfo
-						<< "fg:" << colorsModeRegexp.cap(1)
-						<< "\tbg:" << colorsModeRegexp.cap(2) << endl;
-
 					fgColor = ircColor(colorsModeRegexp.cap(1));
 					bgColor = ircColor(colorsModeRegexp.cap(2));
-
-					kdDebug(14120)	<< k_funcinfo
-						<< "fg:" << fgColor.name()
-						<< "\tbg:" << bgColor.name() << endl;
 
 					toAppend = pushColorTag(fgColor, bgColor);
 				}
 				else
 				{
-					kdDebug(14120)	<< k_funcinfo << "reverting colors" << endl;
 					toAppend = popTag(QString::fromLatin1("span"));
 				}
 				break;

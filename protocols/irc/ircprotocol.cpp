@@ -177,9 +177,10 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		SLOT( slotTopicCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /topic [<topic>] - Sets and/or displays the topic for the active channel.") );
 
+	//FIXME: Update help text
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("whois"),
 		SLOT( slotWhoisCommand( const QString &, Kopete::ChatSession*) ),
-		i18n("USAGE: /whois <nickname> - Display whois info on this user."), 1, 1 );
+		i18n("USAGE: /whois <nickname> - Display whois info on this user."), 1 );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("whowas"),
 		SLOT( slotWhoWasCommand( const QString &, Kopete::ChatSession*) ),
@@ -576,8 +577,7 @@ void IRCProtocol::slotQueryCommand( const QString &args, Kopete::ChatSession *ma
 
 void IRCProtocol::slotWhoisCommand( const QString &args, Kopete::ChatSession *manager )
 {
-	QStringList argsList = Kopete::CommandHandler::parseArguments( args );
-	static_cast<IRCAccount*>( manager->account() )->engine()->whoisUser( argsList.first() );
+	static_cast<IRCAccount*>( manager->account() )->engine()->whoisUser( args );
 	m_commandInProgress = true;
 }
 

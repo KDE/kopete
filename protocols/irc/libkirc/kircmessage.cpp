@@ -102,7 +102,7 @@ void Message::writeRawMessage(Engine *engine, const QTextCodec *codec, const QSt
 	QString txt = str + QString::fromLatin1("\r\n");
 
 	QCString s(codec->fromUnicode(txt));
-        kdDebug(14120) << "Message is " << s.length() << "chars" << endl;
+        kdDebug(14120) << "Message is " << s.length() << " chars" << endl;
 	// FIXME: Should check the amount of data really writen.
 	int wrote = engine->socket()->writeBlock(s.data(), s.length());
 
@@ -326,12 +326,11 @@ bool Message::isValid() const
  */
 bool Message::extractCtcpCommand(QCString &message, QString &ctcpline, const QTextCodec *codec)
 {
-	QString msg = Kopete::Message::decodeString(message, codec);
-	uint len = msg.length();
+	uint len = message.length();
 
-	if( msg[0] == 1 && msg[len-1] == 1 )
+	if( message[0] == 1 && message[len-1] == 1 )
 	{
-		ctcpline = ctcpUnquote( unquote( msg.mid(1, len-2) ) );
+		ctcpline = ctcpUnquote( unquote( Kopete::Message::decodeString(message.mid(1,len-2), codec) ) );
 		message.truncate(0);
 
 		return true;
