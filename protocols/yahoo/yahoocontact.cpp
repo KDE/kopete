@@ -195,6 +195,8 @@ void YahooContact::slotDeleteContact()
 	kdDebug(14180) << k_funcinfo << endl;
 	//my ugliest hack yet. how many levels of indirection do I want? ;)
 	m_account->yahooSession()->removeBuddy(m_userId, metaContact()->groups().getFirst()->displayName());
+
+	KopeteContact::slotDeleteContact();
 }
 #include "yahoocontact.moc"
 
