@@ -88,6 +88,7 @@ void JabberContact::showContextMenu(QPoint, QString /*group */) {
     actionChat->plug(popup);
 	if (mStatus != STATUS_OFFLINE) {
 		QStringList items;
+		int activeItem;
 		items.append("Automatic (best resource)");
 		JabberResource *tmpBestResource = bestResource();
 		items.append(tmpBestResource->resource());
@@ -97,13 +98,17 @@ void JabberContact::showContextMenu(QPoint, QString /*group */) {
 				items.append(tmpResource->resource());
 			}
 			if (hasResource && tmpResource->resource() == activeResource->resource()) {
-				kdDebug() << "Jabber contact: Woot woot, it's the same resource, activating item " << i << endl;
-				actionSelectResource->setCurrentItem(i);
+				kdDebug() << "Jabber contact: Woot woot, it's the same resource, activating(ish) item " << i << endl;
+				activeItem = i;
 			}
 		}
 		actionSelectResource->setItems(items);
-		if (!hasResource) {
+		if (!hasResource || !activeItem) {
 			actionSelectResource->setCurrentItem(0);
+		}
+		else {
+			actionSelectResource->setCurrentItem(activeItem);
+			kdDebug() << "Jabber contact: Item " << activeItem << " fully activated." << endl;
 		}
 		actionSelectResource->plug(popup);
 	}
