@@ -98,13 +98,13 @@ void HighlightPreferences::load()
 		first=false;
 	}
 	donttouch=false;
-	setChanged(false);
+	emit KCModule::changed(false);
 }
 
 void HighlightPreferences::save()
 {
 	m_config->save();
-	setChanged(false);
+	emit KCModule::changed(false);
 }
 
 
@@ -179,7 +179,7 @@ void HighlightPreferences::slotRemoveFilter()
 	m_filterItems.remove(lvi);
 	delete lvi;
 	m_config->removeFilter(current);
-	setChanged(true);
+	emit KCModule::changed(true);
 }
 
 void HighlightPreferences::slotRenameFilter()
@@ -198,7 +198,7 @@ void HighlightPreferences::slotRenameFilter()
 		return;
 	current->displayName=newname;
 	lvi->setText(0,newname);
-	setChanged(true);
+	emit KCModule::changed(true);
 }
 
 
@@ -225,7 +225,7 @@ void HighlightPreferences::slotSomethingHasChanged()
 	current->playSound=preferencesDialog->m_sound->isChecked();
 	preferencesDialog->m_soundFN->setEnabled(current->playSound);
 
-	setChanged(true);
+	emit KCModule::changed(true);
 }
 
 void HighlightPreferences::slotEditRegExp()

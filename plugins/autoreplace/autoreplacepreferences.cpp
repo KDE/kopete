@@ -152,7 +152,7 @@ void AutoReplacePreferences::slotEnableRemove()
 
 void AutoReplacePreferences::slotWidgetModified()
 {
-	setChanged( m_wordListChanged || autoConfig()->hasChanged() );
+	emit KCModule::changed( m_wordListChanged || autoConfig()->hasChanged() );
 }
 
 #include "autoreplacepreferences.moc"

@@ -46,7 +46,7 @@ WebPresencePreferences::WebPresencePreferences(QWidget *parent, const char* /*na
 
 void WebPresencePreferences::widgetModified()
 {
-	setChanged(kautoconfig->hasChanged());
+	emit KCModule::changed(kautoconfig->hasChanged());
 }
 
 void WebPresencePreferences::save()
