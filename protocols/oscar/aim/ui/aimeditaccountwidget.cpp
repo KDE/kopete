@@ -9,6 +9,7 @@
 
 #include <kdebug.h>
 #include <krun.h>
+#include <kpassdlg.h>
 
 #include "aimprotocol.h"
 #include "aimaccount.h"

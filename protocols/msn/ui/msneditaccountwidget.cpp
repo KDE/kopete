@@ -36,6 +36,7 @@
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>
 #include <kdebug.h>
+#include <kpassdlg.h>
 
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"

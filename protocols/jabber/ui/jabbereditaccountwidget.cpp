@@ -24,8 +24,10 @@
 #include <qspinbox.h>
 #include <qcombobox.h>
 #include <qlabel.h>
+
 #include <kmessagebox.h>
 #include <klocale.h>
+#include <kpassdlg.h>
 
 #include "kopeteuiglobal.h"
 

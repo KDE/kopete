@@ -33,6 +33,7 @@
 #include <kurllabel.h>
 #include <kdatewidget.h>
 #include <krun.h>
+#include <kpassdlg.h>
 
 #include "icquserinfowidget.h"
 #include "icqprotocol.h"
