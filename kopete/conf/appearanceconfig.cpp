@@ -306,7 +306,7 @@ void AppearanceConfig::slotSelectKind(int k)
 {
 	if(k > 0)
 	{
-		QString model = KopeteChatWindow::KindMessagesHTML(k-1);
+		QString model = KopetePrefs::KindMessagesHTML(k-1);
 		mPrfsChatAppearance->mle_codehtml->setText( model );
 	}
 	slotUpdatePreview();

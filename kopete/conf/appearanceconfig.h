@@ -73,6 +73,7 @@ private:
 	AppearanceConfig_Contactlist *mPrfsContactlist;
 	AppearanceConfig_ChatAppearance *mPrfsChatAppearance;
 	AppearanceConfig_ChatWindow *mPrfsChatWindow;
+
 };
 #endif
 

@@ -49,24 +49,12 @@ KopeteMessageManagerFactory::~KopeteMessageManagerFactory()
 KopeteMessageManager* KopeteMessageManagerFactory::findKopeteMessageManager(const KopeteContact *user,
 		KopeteContactPtrList chatContacts, KopeteProtocol *protocol)
 {
-
-	/* We build the sessions list for this protocol */
-	KopeteMessageManagerDict protocolSessions;
+	KopeteMessageManager *result = 0L;
 	QIntDictIterator<KopeteMessageManager> it( mSessionDict );
-	for ( ; it.current() ; ++it )
-	{
-		if ( it.current()->protocol() == protocol )
-		{
-			protocolSessions.insert( it.current()->mmId(), it.current() );
-		}
-	}
-	// Point this to the right KMM, if found
-	KopeteMessageManager* result = 0;
 
-	it = QIntDictIterator<KopeteMessageManager>( protocolSessions );
 	for ( KopeteMessageManager* kmm = it.current(); kmm && !result ; ++it , kmm = it.current()  )
 	{
-		if ( user == kmm->user() )
+		if ( it.current()->protocol() == protocol && user == kmm->user() )
 		{
 			QPtrList<KopeteContact> contactlist = kmm->members();
 
@@ -162,12 +150,14 @@ const KopeteMessageManagerDict& KopeteMessageManagerFactory::sessions( )
 
 void KopeteMessageManagerFactory::cleanSessions( KopeteProtocol *protocol )
 {
-	KopeteMessageManagerDict sessions = protocolSessions( protocol );
-	QIntDictIterator<KopeteMessageManager> it( sessions );
+	QIntDictIterator<KopeteMessageManager> it( mSessionDict );
 	for ( ; it.current() ; ++it )
 	{
-		kdDebug( 14010 ) << k_funcinfo << "Unloading KMM " << it.current()->user()->displayName() << endl;
-		delete it.current();
+		if ( it.current()->protocol() == protocol )
+		{
+			kdDebug( 14010 ) << k_funcinfo << "Unloading KMM " << it.current()->user()->displayName() << endl;
+			delete it.current();
+		}
 	}
 }
 

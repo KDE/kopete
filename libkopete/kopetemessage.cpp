@@ -124,7 +124,7 @@ QString KopeteMessage::plainBody() const
 
 	//FIXME: is there a better way to unescape HTML?
 	QString r=mBody;
-	r = r.replace( QRegExp( QString::fromLatin1( "<br>" ) ), QString::fromLatin1( "\n" ) ).
+	r = r.replace( QRegExp( QString::fromLatin1( "<br/>" ) ), QString::fromLatin1( "\n" ) ).
 		replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::fromLatin1( "" ) ).
 		replace( QRegExp( QString::fromLatin1( "&gt;" ) ), QString::fromLatin1( ">" ) ).
 		replace( QRegExp( QString::fromLatin1( "&lt;" ) ), QString::fromLatin1( "<" ) ).
@@ -617,19 +617,19 @@ QString KopeteMessage::asHTML() const
 	QString msg = parsedBody();
 
 	if ( fg().isValid() )
-		msg.prepend( QString::fromLatin1( "<FONT COLOR=\"%1\">" ).arg(fg().name()) );
+		msg.prepend( QString::fromLatin1( "<font color=\"%1\">" ).arg(fg().name()) );
 	else
-		msg.prepend( QString::fromLatin1( "<FONT>" ) );
+		msg.prepend( QString::fromLatin1( "<font>" ) );
 
-	msg.append( QString::fromLatin1( "</FONT>" ) );
+	msg.append( QString::fromLatin1( "</font>" ) );
 
 	// we want a custom background-color
 	if ( bg().isValid() )
-		msg.prepend( QString::fromLatin1( "<HTML><BODY BGCOLOR=\"%1\">" ).arg( bg().name() ) );
+		msg.prepend( QString::fromLatin1( "<html><body bgcolor=\"%1\">" ).arg( bg().name() ) );
 	else
-		msg.prepend( QString::fromLatin1( "<HTML><BODY>" ) );
+		msg.prepend( QString::fromLatin1( "<html><body>" ) );
 
-	msg.append ( QString::fromLatin1( "</BODY></HTML>" ) );
+	msg.append ( QString::fromLatin1( "</body></html>" ) );
 	return msg;
 }
 
