@@ -16,6 +16,9 @@ export DH_OPTIONS
 DEB_HOST_GNU_TYPE	?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE	?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 
+DEB_BUILD_OPTIONS = nofinal
+export DEB_BUILD_OPTIONS
+
 objdir = $(CURDIR)/obj-$(DEB_BUILD_GNU_TYPE)
 
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
@@ -139,19 +142,9 @@ install: build
 binary-common:
 	dh_testdir
 	dh_testroot
-#	dh_installxfonts
 	dh_installchangelogs
 	dh_installdocs
-#	dh_installexamples
 	dh_installmenu
-#	dh_installdebconf
-#	dh_installlogrotate
-#	dh_installemacsen
-#	dh_installpam
-#	dh_installmime
-#	dh_installinit
-#	dh_installcron
-#	dh_installinfo
 	dh_undocumented
 	dh_installman
 	dh_strip
@@ -160,7 +153,6 @@ binary-common:
 	dh_fixperms
 	dh_makeshlibs -V
 	dh_installdeb
-#	dh_perl
 	dh_shlibdeps -ldebian/kopete/usr/lib
 	dh_gencontrol
 	dh_md5sums

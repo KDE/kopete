@@ -2,13 +2,14 @@ Source: kopete
 Section: net
 Priority: optional
 Maintainer: Till Gerken <till@tantalo.net>
-Build-Depends: debhelper (>> 4.0.18), docbook-to-man, doxygen, kdelibs4-dev
+Build-Depends: debhelper (>> 4.0.18), docbook-to-man, doxygen, kdelibs4-dev, libssl-dev
 Standards-Version: 3.5.7.0
 
 Package: kopete
 Architecture: any
 Depends: ${shlibs:Depends}
+Suggests: xmms
 Description: Multi-protocol KDE Instant Messenger client
  Kopete is a multi-protocol Instant Messenger client for KDE. Currently,
- it supports AIM, ICQ, MSN, IRC and Jabber. This is the preferred IM client
- for KDE, replacing KMSN/Merlin and Kit.
+ it supports AIM/Oscar, Gadu-Gadu, ICQ, MSN, IRC, Jabber and SMS.
+ This is the preferred IM client for KDE, replacing KMSN/Merlin and Kit.

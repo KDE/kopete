@@ -1,3 +1,10 @@
+kopete (0.6.0-1) unstable; urgency=low
+
+  * New upstream version
+  * First package for Sid (Closes: 148421)
+
+ -- Till Gerken <till@tantalo.net>  Tue, 11 Feb 2003 22:18:12 +0100
+
 kopete (0.5-1) unstable; urgency=low
 
   * New Upstream.
