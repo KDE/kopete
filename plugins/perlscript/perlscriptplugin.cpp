@@ -37,7 +37,7 @@
 #include "perlscriptplugin.h"
 #include "perlscriptprefs.h"
 
-K_EXPORT_COMPONENT_FACTORY( kopete_perlscript, KGenericFactory<PerlPlugin>( "kopete_perlscript" )  );
+K_EXPORT_COMPONENT_FACTORY( kopete_perlscript, KGenericFactory<PerlPlugin>( "kopete_perlscript" )  )
 
 //This stuff lets the perl engine load external modules if they want to in their scripts
 EXTERN_C void xs_init (pTHX);

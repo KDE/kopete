@@ -11,7 +11,7 @@
 
 #include <qcolor.h>
 
-K_EXPORT_COMPONENT_FACTORY( kopete_msginfo, KGenericFactory<MsgInfoPlugin>( "kopete_msginfo" )  );
+K_EXPORT_COMPONENT_FACTORY( kopete_msginfo, KGenericFactory<MsgInfoPlugin>( "kopete_msginfo" )  )
 
 MsgInfoPlugin::MsgInfoPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
 : KopetePlugin( KGlobal::instance(), parent, name )
