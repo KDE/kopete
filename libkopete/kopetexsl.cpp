@@ -212,7 +212,6 @@ Kopete::XSLT::XSLT( const QString &document, QObject *parent )
 
 Kopete::XSLT::~XSLT()
 {
-	xmlFreeDoc( d->xslDoc );
 	xsltFreeStylesheet( d->styleSheet );
 
 	delete d;
@@ -392,9 +391,18 @@ void Kopete::XSLT::setXSLT( const QString &_document )
 		}
 		else
 		{
+			kdWarning(14000) << "Invalid stylesheet provided" << endl;
+
 			//We don't have a stylesheet, so free the doc pointer
 			xmlFreeDoc( d->xslDoc );
+			d->styleSheet = 0;
+			d->xslDoc = 0;
 		}
+	}
+	else
+	{
+		kdWarning(14000) << "Invalid stylesheet provided" << endl;
+		d->xslDoc = 0;
 	}
 }
 
