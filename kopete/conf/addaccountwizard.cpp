@@ -166,10 +166,15 @@ void AddAccountWizard::next()
 		QListViewItem *lvi = selectService->protocolListView->selectedItem();
 		if(lvi)
 		{
-			KopetePlugin *pl=LibraryLoader::pluginLoader()->searchByName(m_protocolItems[lvi].name);
-			if(!pl)
-				pl=LibraryLoader::pluginLoader()->loadPlugin(m_protocolItems[lvi].specfile);
-			prot= dynamic_cast <KopeteProtocol*> (pl);
+			kdDebug( 14100 ) << k_funcinfo << "Trying to load plugin " << m_protocolItems[ lvi ].name << " by name" << endl;
+			KopetePlugin *pl = LibraryLoader::pluginLoader()->searchByName( m_protocolItems[ lvi ].name );
+			if( !pl )
+			{
+				kdDebug( 14100 ) << k_funcinfo << "Unable to load by name. Trying to load plugin " <<
+					m_protocolItems[ lvi ].specfile << "by specfile" << endl;
+				pl = LibraryLoader::pluginLoader()->loadPlugin( m_protocolItems[ lvi ].specfile );
+			}
+			prot = dynamic_cast <KopeteProtocol*> (pl);
 			if(prot)
 			{
 				if(accountPage)
