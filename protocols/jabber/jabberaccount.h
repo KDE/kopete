@@ -74,6 +74,11 @@ public:
 		return mProtocol;
 	}
 
+	/**
+	 * Returns if a connection attempt is currently in progress.
+	 */
+	bool isConnecting ();
+
 	/* Tells the user to connect first before they can do whatever it is
 	 * that they want to do. */
 	void errorConnectFirst ();
@@ -81,6 +86,9 @@ public:
 	/* Tells the user that the connection was lost while we waited for
 	 * an answer of him. */
 	void errorConnectionLost ();
+
+	/* Tells the user that a connection attempt is already in progress */
+	void errorConnectionInProgress ();
 
 	/*
 	 * Handle TLS warnings. Displays a dialog and returns the user's choice.

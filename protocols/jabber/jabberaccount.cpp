@@ -219,6 +219,29 @@ void JabberAccount::errorConnectionLost ()
 
 }
 
+void JabberAccount::errorConnectionInProgress ()
+{
+
+	KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
+									KMessageBox::Information,
+									i18n ("A connection attempt is already in progress. "
+									"Please wait until the previous attempt finished or "
+									"disconnect to start over."),
+									i18n ("Connection attempt already in progress") );
+
+}
+
+bool JabberAccount::isConnecting ()
+{
+
+	XMPP::Jid jid ( myself()->contactId () );
+
+	// see if we are currently trying to connect
+	return resourcePool()->bestResource ( jid ).status().show () == QString("connecting");
+
+}
+
+
 void JabberAccount::connect ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called" << endl;
@@ -965,6 +988,12 @@ void JabberAccount::slotGoOnline ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
 
+	if( isConnecting () )
+	{
+		errorConnectionInProgress ();
+		return;
+	}
+
 	XMPP::Status status ( "", "", 0, true );
 
 	if ( !isConnected () )
@@ -991,6 +1020,12 @@ void JabberAccount::slotGoChatty ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
 
+	if( isConnecting () )
+	{
+		errorConnectionInProgress ();
+		return;
+	}
+
 	XMPP::Status status ( "chat", "", 0, true );
 
 	if ( !isConnected () )
@@ -1009,6 +1044,12 @@ void JabberAccount::slotGoChatty ()
 void JabberAccount::slotGoAway ( const QString &reason )
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
+
+	if( isConnecting () )
+	{
+		errorConnectionInProgress ();
+		return;
+	}
 
 	XMPP::Status status ( "away", reason, 0, true );
 
@@ -1029,6 +1070,12 @@ void JabberAccount::slotGoXA ( const QString &reason )
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
 
+	if( isConnecting () )
+	{
+		errorConnectionInProgress ();
+		return;
+	}
+
 	XMPP::Status status ( "xa", reason, 0, true );
 
 	if ( !isConnected () )
@@ -1048,6 +1095,12 @@ void JabberAccount::slotGoDND ( const QString &reason )
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
 
+	if( isConnecting () )
+	{
+		errorConnectionInProgress ();
+		return;
+	}
+
 	XMPP::Status status ( "dnd", reason, 0, true );
 
 	if ( !isConnected () )
@@ -1066,6 +1119,12 @@ void JabberAccount::slotGoDND ( const QString &reason )
 void JabberAccount::slotGoInvisible ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
+
+	if( isConnecting () )
+	{
+		errorConnectionInProgress ();
+		return;
+	}
 
 	XMPP::Status status ( "", "", 0, true );
 	status.setIsInvisible ( true );
