@@ -158,9 +158,13 @@ void JabberProtocol::Disconnect() {
 		mIsConnected = false;
 		statusBarIcon->setPixmap(offlineIcon);
 
+		/* Temporarily disabling this code here, it crashes.
+		 * Waiting for new API from Martijn.
+		 *
 		QMap<QString, JabberContact*>::Iterator it;
 		for (it = contactList.begin(); it != contactList.end(); ++it)
 			delete it.data();
+		 */
 	}
 	else { /* Again, what's with the crack? Sheez. */
 		kdDebug() << "[JabberProtocol] Ignoring disconnect request (not connected)." << endl;
