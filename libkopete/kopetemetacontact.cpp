@@ -230,7 +230,7 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 	updateOnlineStatus();
 }
 
-bool KopeteMetaContact::isTopLevel()
+bool KopeteMetaContact::isTopLevel() const
 {
 	if ( d->groups.isEmpty() )
 		d->groups.append( KopeteGroup::topLevel() );

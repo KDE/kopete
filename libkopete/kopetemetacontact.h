@@ -196,7 +196,7 @@ public:
 	 * @brief Return true if the contact is shown at toplevel.
 	 * You may also check if @ref groups() contains @ref KopeteGroup::topLevel()
 	 */
-	bool isTopLevel();
+	bool isTopLevel() const;
 
 	/**
 	 * @brief Returns this metacontact's ID.
