@@ -123,9 +123,9 @@ public slots:
 
 signals:
 	/**
-	 * An account has been registered
+	 * An account is ready for use
 	 */
-	void accountRegistered(KopeteAccount *a);
+	void accountReady( KopeteAccount *account );
 
 	/**
 	 * An account has been unregistered
@@ -145,6 +145,14 @@ private:
 	 * (Not even a derived class).
 	 */
 	void registerAccount( KopeteAccount *account );
+
+	/**
+	 * @internal
+	 * Notify the KopeteAccountManager that an account is ready for use
+	 * Same rules apply as for registerAccount()
+	 */
+	void notifyAccountReady( KopeteAccount *account );
+
 
 	/**
 	 * @internal

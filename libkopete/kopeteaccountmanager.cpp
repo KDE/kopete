@@ -167,7 +167,6 @@ void KopeteAccountManager::registerAccount(KopeteAccount *i)
 		}
 
 		m_accounts.append( i );
-		emit accountRegistered(i);
 	}
 
 }
@@ -303,6 +302,15 @@ void KopeteAccountManager::autoConnect()
 		if(i->autoLogin())
 			i->connect();
 	}
+}
+
+/**
+ * Called to cause KopeteAccountManager to inform others that
+ * an account is fully created and ready for use
+ */
+void KopeteAccountManager::notifyAccountReady( KopeteAccount *account )
+{
+	emit accountReady( account );
 }
 
 #include "kopeteaccountmanager.moc"

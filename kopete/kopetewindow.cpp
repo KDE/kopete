@@ -40,6 +40,7 @@
 #include "addcontactwizard.h"
 #include "kopete.h"
 #include "kopeteaccount.h"
+#include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
 #include "kopeteaccountmanager.h"
@@ -86,7 +87,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	// Trap all loaded plugins, so we can add their status bar icons accordingly , also used to add XMLGUIClient
 	connect( LibraryLoader::pluginLoader(), SIGNAL( pluginLoaded( KopetePlugin * ) ), this, SLOT( slotPluginLoaded( KopetePlugin * ) ) );
 	// And accounts too
-	connect( KopeteAccountManager::manager(), SIGNAL(accountRegistered(KopeteAccount*)), this, SLOT(slotAccountRegistered(KopeteAccount*)));
+	connect( KopeteAccountManager::manager(), SIGNAL(accountReady(KopeteAccount*)), this, SLOT(slotAccountRegistered(KopeteAccount*)));
 	connect( KopeteAccountManager::manager(), SIGNAL(accountUnregistered(KopeteAccount*)), this, SLOT(slotAccountUnregistered(KopeteAccount*)));
 
 	createGUI ( "kopeteui.rc"  , false);
@@ -459,9 +460,9 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *a )
 	if ( !a )
 		return;
 
-	connect( a,
-		SIGNAL( onlineStatusIconChanged( KopeteAccount * ) ),
-		SLOT( slotAccountStatusIconChanged( KopeteAccount * ) ) );
+	connect( a->myself(),
+		SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &) ),
+		this, SLOT( slotAccountStatusIconChanged( KopeteContact * ) ) );
 
 	KopeteAccountStatusBarIcon *i = new KopeteAccountStatusBarIcon( a, m_statusBarWidget );
 	connect( i, SIGNAL( rightClicked( KopeteAccount *, const QPoint & ) ),
@@ -475,11 +476,11 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *a )
 
 	m_accountStatusBarIcons.insert( a, i );
 
-	// Adds tooltip for each status icon
-	// usefull in case You have many accounts 
+	// Adds tooltip for each status icon,
+	// useful in case you have many accounts
 	// over one protocol
         QToolTip::add(i, a->accountId() );
-	
+
 	// FIXME -Will
 	//slotProtocolStatusIconChanged( proto, proto->statusIcon() );
 
@@ -489,6 +490,7 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *a )
 
 	// this should be placed in the contactlistview insteads of, but i am lazy to redo a new slot
 	contactlist->actionAddContact->insert(new KAction( a->accountId() , a->protocol()->pluginIcon() , 0 , contactlist , SLOT( slotAddContact() ) , a));
+	slotAccountStatusIconChanged( a->myself() );
 }
 
 void KopeteWindow::slotAccountUnregistered( KopeteAccount *a)
@@ -503,19 +505,19 @@ void KopeteWindow::slotAccountUnregistered( KopeteAccount *a)
 	m_accountStatusBarIcons.remove( a );
 }
 
-void KopeteWindow::slotAccountStatusIconChanged( KopeteAccount *account )
+void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 {
-	KopeteOnlineStatus status = account->myself()->onlineStatus();
+	KopeteOnlineStatus status = contact->onlineStatus();
 //	kdDebug(14000) << k_funcinfo << "Icon: '" <<
 //		status.overlayIcon() << "'" << endl;
 
-	KopeteAccountStatusBarIcon *i = static_cast<KopeteAccountStatusBarIcon *>( m_accountStatusBarIcons[ account ] );
+	KopeteAccountStatusBarIcon *i = static_cast<KopeteAccountStatusBarIcon *>( m_accountStatusBarIcons[ contact->account() ] );
 	if( !i )
 		return;
-		
+
 	// probably we have to change tooltip :-)
 	QToolTip::remove(i);
-	QToolTip::add(i, account->accountId());
+	QToolTip::add(i, contact->account()->accountId());
 
 	// Because we want null pixmaps to detect the need for a loadMovie
 	// we can't use the SmallIcon() method directly
@@ -530,13 +532,16 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteAccount *account )
 		// Get the icon for our status
 
 		//QPixmap pm = SmallIcon( icon );
-		QPixmap pm = status.iconFor( account );
+		QPixmap pm = status.iconFor( contact->account() );
 		// Compat for the non-themed icons
 		// FIXME: When all icons are converted, remove this - Martijn
 		if( pm.isNull() )
+		{
+			kdDebug(14000) << k_funcinfo << " FIXME: loading non-themed icon for "
+					<< contact->protocol()->pluginId() << ", needs converting!" << endl;
 			pm = loader->loadIcon( status.overlayIcon(),
 				 KIcon::User, 0, KIcon::DefaultState, 0L, true );
-
+		}
 		if( pm.isNull() )
 		{
 			/* No Pixmap found, fallback to Unknown */
@@ -698,7 +703,7 @@ void KopeteWindow::slotSettingsChanged()
 		while ( ( a = it.current() ) != 0 )
 		{
 			++it;
-			slotAccountStatusIconChanged( a );
+			slotAccountStatusIconChanged( a->myself() );
 		}
 	}
 }

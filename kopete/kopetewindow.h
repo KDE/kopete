@@ -36,6 +36,7 @@ class KopeteContactListView;
 class KopetePlugin;
 class KopeteProtocol;
 class KopeteAccount;
+class KopeteContact;
 class KopeteSystemTray;
 class KopeteGlobalAwayDialog;
 class KopeteAccountStatusBarIcon;
@@ -99,15 +100,14 @@ private slots:
 	 * The status icon got changed, update it.
 	 * Note that iconName can also be a .mng movie instead of an icon.
 	 */
-	//void slotProtocolStatusIconChanged( KopeteProtocol *proto,
-	//	const QString &iconName );
+	// TODO: Is this obsolete at 20030710? I can't see a call to it anywhere - Will
 	void slotProtocolStatusIconChanged( const KopeteOnlineStatus& status );
 
 	/**
 	 * The status icon got changed, update it.
-	 * Note that iconName can also be a .mng movie instead of an icon.
+	 * @param contact The account's contact that changed.
 	 */
-	void slotAccountStatusIconChanged( KopeteAccount *account );
+	void slotAccountStatusIconChanged( KopeteContact * contact);
 
 	/**
 	 * Show a context menu for a protocol

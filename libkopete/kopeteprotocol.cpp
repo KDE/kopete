@@ -37,6 +37,8 @@ KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)
 	m_status = KopeteOnlineStatus( KopeteOnlineStatus::Unknown, 0,
 			this, 765, QString::fromLatin1( "status_unknown" )
 			, QString::null, QString::null );
+	connect ( KopeteAccountManager::manager(), SIGNAL( accountReady(KopeteAccount *) ),
+				this, SLOT( refreshAccounts() ) );
 }
 
 KopeteProtocol::~KopeteProtocol()

@@ -62,11 +62,6 @@ protected slots:
 	 */
 	 void slotUploadJobResult( KIO::Job * );
 	/**
-	 * Ugly hack to get around partially created accounts when the
-	 * account manager signals they're created.
-	 */
-	void slotKludgeWaitAccountFullyCreated();
-	/**
 	 * Called to schedule a write, after waiting to see if more changes
 	 * occur (accounts tend to change status together)
 	 */

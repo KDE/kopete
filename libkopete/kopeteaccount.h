@@ -279,11 +279,6 @@ signals:
 	 */
 	void passwordChanged();
 
-	/**
-	 * The myself status icon changed.
-	 */
-	void onlineStatusIconChanged( KopeteAccount *account );
-
 protected slots:
 	/**
 	 * This method is called at the end of the  fromXML function
@@ -298,15 +293,10 @@ private slots:
 	void slotKopeteContactDestroyed( KopeteContact * );
 
 	/**
-	 * mySelf contact is created in account child classes
-	 * we use a single shot hack to connect myself signals
+	 * Called by a single shot hack to indicate that the account is
+	 * fully created and ready to use.
 	 */
-	void slotMyselfCreated();
-
-	/**
-	 * The myself status changed.
-	 */
-	void slotMyselfStatusChanged( );
+	void slotAccountReady();
 
 private:
 	KopeteAccountPrivate *d;

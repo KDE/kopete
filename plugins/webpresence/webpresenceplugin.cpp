@@ -58,22 +58,15 @@ WebPresencePlugin::WebPresencePlugin( QObject *parent, const char *name, const Q
 	m_writeScheduler = new QTimer( this );
 	connect ( m_writeScheduler, SIGNAL( timeout() ), this, SLOT( slotWriteFile() ) );
 	m_prefs = new WebPresencePreferences( "", this );
-	connect( KopeteAccountManager::manager(), SIGNAL(accountRegistered(KopeteAccount*)),
-				this, SLOT( slotKludgeWaitAccountFullyCreated() ) );
+	connect( KopeteAccountManager::manager(), SIGNAL(accountReady(KopeteAccount*)),
+				this, SLOT( listenToAllAccounts() ) );
 	connect( KopeteAccountManager::manager(), SIGNAL(accountUnregistered(KopeteAccount*)),
-				this, SLOT( slotKludgeWaitAccountFullyCreated() ) );
+				this, SLOT( listenToAllAccounts() ) );
 
 }
 
 WebPresencePlugin::~WebPresencePlugin()
 {
-}
-
-void WebPresencePlugin::slotKludgeWaitAccountFullyCreated()
-{
-	// If we knew the order in which plugins are loaded, this wouldn't be necessary
-	// this function needs access to myself, which is created later, in the customAccount constructor
-	QTimer::singleShot( 0, this, SLOT( listenToAllAccounts() ) );
 }
 
 void WebPresencePlugin::listenToAllAccounts()
