@@ -28,12 +28,16 @@
 #include "statusbaricon.h"
 
 // QT Includes
+#include <qcursor.h>
 
 // KDE Includes
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <kstandarddirs.h>
 #include <ksimpleconfig.h>
+#include <klocale.h>
+
+class KPopupMenu;
 
 
 // Yahoo Protocol
@@ -46,6 +50,9 @@ YahooProtocol::YahooProtocol() : QObject(0, "YahooProtocol"), KopeteProtocol()
 	// Load icons
     initIcons();
 
+	// Load Status Actions
+    initActions();
+
 	// Create statusbar Icon
     statusBarIcon = new StatusBarIcon();
     QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)),
@@ -55,7 +62,7 @@ YahooProtocol::YahooProtocol() : QObject(0, "YahooProtocol"), KopeteProtocol()
 	// Create preferences menu
     mPrefs = new YahooPreferences("yahoo_protocol_32", this);
     connect(mPrefs, SIGNAL(saved(void)), this,
-	    SLOT(settingsChanged(void)));
+	    SLOT(slotSettingsChanged(void)));
 
 	// Ensure that we are disconnectd
 	mIsConnected = false;
@@ -149,7 +156,28 @@ AddContactPage *YahooProtocol::createAddContactWidget(QWidget * parent)
 void YahooProtocol::slotIconRightClicked(const QPoint)
 {
 	DEBUG(0, "YahooProtocol::slotIconRightClicked");
+
+    QString handle = mUsername + "@" + mServer;
+
+    popup = new KPopupMenu(statusBarIcon);
+    popup->insertTitle(handle);
+    actionGoOnline->plug(popup);
+    actionGoOffline->plug(popup);
+    actionGoStatus001->plug(popup);
+    actionGoStatus002->plug(popup);
+    actionGoStatus003->plug(popup);
+    actionGoStatus004->plug(popup);
+    actionGoStatus005->plug(popup);
+    actionGoStatus006->plug(popup);
+    actionGoStatus007->plug(popup);
+    actionGoStatus008->plug(popup);
+    actionGoStatus009->plug(popup);
+    actionGoStatus012->plug(popup);
+    actionGoStatus099->plug(popup);
+    actionGoStatus999->plug(popup);
+    popup->popup(QCursor::pos());
 }
+
 
 
 // Callback when settings changed
@@ -177,6 +205,57 @@ void YahooProtocol::initIcons()
     busyIcon    = QPixmap(loader->loadIcon("yahoo_busy",    KIcon::User));
     idleIcon    = QPixmap(loader->loadIcon("yahoo_idle",    KIcon::User));
     mobileIcon  = QPixmap(loader->loadIcon("yahoo_mobile",  KIcon::User));
+}
+
+
+// Private initActions
+void YahooProtocol::initActions()
+{
+    actionGoOnline = new KAction(i18n("Online"), "yahoo_online", 
+			0, this, SLOT(Connect()), this, "actionYahooConnect");
+    actionGoOffline = new KAction(i18n("Offline"), "yahoo_offline", 
+			0, this, SLOT(Disconnect()), this, "actionYahooDisconnect");
+    actionGoStatus001 = new KAction(i18n("Be Right Back"), "yahoo_busy", 
+			0, this, SLOT(Connect()), this, "actionYahooConnect");
+    actionGoStatus002 = new KAction(i18n("Busy"), "yahoo_busy", 
+			0, this, SLOT(Connect()), this, "actionYahooConnect");
+    actionGoStatus003 = new KAction(i18n("Not At Home"), "yahoo_busy", 
+			0, this, SLOT(Connect()), this, "actionYahooConnect");
+    actionGoStatus004 = new KAction(i18n("Not At My Desk"), "yahoo_busy", 
+			0, this, SLOT(Connect()), this, "actionYahooConnect");
+    actionGoStatus005 = new KAction(i18n("Not In The Office"), "yahoo_busy", 
+			0, this, SLOT(Connect()), this, "actionYahooConnect");
+    actionGoStatus006 = new KAction(i18n("On The Phone"), "yahoo_busy", 
+			0, this, SLOT(Connect()), this, "actionYahooConnect");
+    actionGoStatus007 = new KAction(i18n("On Vacation"), "yahoo_busy", 
+			0, this, SLOT(Connect()), this, "actionYahooConnect");
+    actionGoStatus008 = new KAction(i18n("Out To Lunch"), "yahoo_busy", 
+			0, this, SLOT(Connect()), this, "actionYahooConnect");
+    actionGoStatus009 = new KAction(i18n("Stepped Out"), "yahoo_busy", 
+			0, this, SLOT(Connect()), this, "actionYahooConnect");
+    actionGoStatus012 = new KAction(i18n("Invisible"), "yahoo_offline", 
+			0, this, SLOT(Connect()), this, "actionYahooConnect"); // XXX Connect with invisible on
+    actionGoStatus099 = new KAction(i18n("Custom"), "yahoo_online", 
+			0, this, SLOT(Connect()), this, "actionYahooConnect"); // XXX Get some dialogbox
+    actionGoStatus999 = new KAction(i18n("Idle"), "yahoo_idle", 
+			0, this, SLOT(Connect()), this, "actionYahooConnect"); // XXX Get some dialogbox
+
+    actionStatusMenu = new KActionMenu("Yahoo", this);
+    actionStatusMenu->insert(actionGoOnline);
+    actionStatusMenu->insert(actionGoOffline);
+    actionStatusMenu->insert(actionGoStatus001);
+    actionStatusMenu->insert(actionGoStatus002);
+    actionStatusMenu->insert(actionGoStatus003);
+    actionStatusMenu->insert(actionGoStatus004);
+    actionStatusMenu->insert(actionGoStatus005);
+    actionStatusMenu->insert(actionGoStatus006);
+    actionStatusMenu->insert(actionGoStatus007);
+    actionStatusMenu->insert(actionGoStatus008);
+    actionStatusMenu->insert(actionGoStatus009);
+    actionStatusMenu->insert(actionGoStatus012);
+    actionStatusMenu->insert(actionGoStatus099);
+    actionStatusMenu->insert(actionGoStatus999);
+    actionStatusMenu->plug(kopeteapp->systemTray()->contextMenu(), 1);
 }
 
 #include "yahooprotocol.moc"

@@ -35,6 +35,9 @@
 
 
 class StatusBarIcon;	// libkopete::ui::statusbaricon
+class KPopupMenu;
+class KActionMenu;
+class KAction;
 
 
 // Yahoo Protocol
@@ -62,6 +65,9 @@ class YahooProtocol : public QObject, public KopeteProtocol {
 		void slotSettingsChanged(void);
 							// Callback when settings changed
 
+		// XXX void slotConnect();		
+		// XXX void slotDisconnect();
+
 	signals:
 		void protocolUnloading();	// Unload Protocol
 
@@ -70,6 +76,7 @@ class YahooProtocol : public QObject, public KopeteProtocol {
 		QString mUsername, mPassword, mServer; int mPort;	
 										// Configuration data
 		StatusBarIcon *statusBarIcon;	// Statusbar Icon Object
+		KPopupMenu *popup;				// Statusbar Popup
 		YahooPreferences *mPrefs;		// Preferences Object
 		QPixmap onlineIcon;				// Icons
 		QPixmap offlineIcon;
@@ -78,6 +85,24 @@ class YahooProtocol : public QObject, public KopeteProtocol {
 		QPixmap mobileIcon;
 		
 		void initIcons();	// Load Icons
+		void initActions();	// Load Status Actions
+
+		KActionMenu *actionStatusMenu; // Statusbar Popup
+		KAction *actionGoOnline;	// Available
+		KAction *actionGoOffline;	// Disconnected
+		KAction *actionGoStatus001; // Be Right Back 
+		KAction *actionGoStatus002; // Busy
+		KAction *actionGoStatus003; // Not At Home
+		KAction *actionGoStatus004; // Not At My Desk
+		KAction *actionGoStatus005; // Not In The Office
+		KAction *actionGoStatus006; // On The Phone
+		KAction *actionGoStatus007; // On Vacation
+		KAction *actionGoStatus008; // Out To Lunch
+		KAction *actionGoStatus009; // Stepped Out
+		KAction *actionGoStatus012; // Invisible
+		KAction *actionGoStatus099; // Custom
+		KAction *actionGoStatus999; // Idle
+
 };
 
 #endif
