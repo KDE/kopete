@@ -167,7 +167,7 @@ email=duncan@kde.org
 kdevprj_version=1.3
 lfv_open_groups=
 make_options=\s-j1
-makefiles=./Makefile.am,po/Makefile.am,kopete/Makefile.am,kopete/templates/Makefile.am,kopete/protocols/Makefile.am,kopete/protocols/msn/Makefile.am,kopete/protocols/msn/libkmsn/Makefile.am,kopete/protocols/icq/Makefile.am,kopete/protocols/icq/kxengine/Makefile.am,kopete/pixmaps/Makefile.am,kopete/pixmaps/.pics/Makefile.am,kopete/pixmaps/.pics/small/Makefile.am,kopete/library/Makefile.am,kopete/library/ui/Makefile.am,kopete/gui/Makefile.am,doc-api/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,admin/Makefile.am,kopete/protocols/irc/Makefile.am,kopete/protocols/irc/libkirc/Makefile.am,kopete/protocols/aim/Makefile.am,kopete/protocols/msn/ui/Makefile.am,kopete/protocols/msn/libkmerlin/Makefile.am,kopete/protocols/irc/ui/Makefile.am,kopete/plugins/autoaway/Makefile.am,kopete/plugins/Makefile.am
+makefiles=./Makefile.am,po/Makefile.am,kopete/Makefile.am,kopete/templates/Makefile.am,kopete/protocols/Makefile.am,kopete/protocols/msn/Makefile.am,kopete/protocols/msn/libkmsn/Makefile.am,kopete/protocols/icq/Makefile.am,kopete/protocols/icq/kxengine/Makefile.am,kopete/pixmaps/Makefile.am,kopete/pixmaps/.pics/Makefile.am,kopete/pixmaps/.pics/small/Makefile.am,kopete/library/Makefile.am,kopete/library/ui/Makefile.am,kopete/gui/Makefile.am,doc-api/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,admin/Makefile.am,kopete/protocols/irc/Makefile.am,kopete/protocols/irc/libkirc/Makefile.am,kopete/protocols/aim/Makefile.am,kopete/protocols/msn/ui/Makefile.am,kopete/protocols/msn/libkmerlin/Makefile.am,kopete/protocols/irc/ui/Makefile.am,kopete/plugins/autoaway/Makefile.am,kopete/plugins/Makefile.am,libkopete/Makefile.am
 modifyMakefiles=false
 project_name=Kopete
 project_type=normal_empty
@@ -188,7 +188,7 @@ User Interface=*.ui,*.kdevdlg,*.rc,
 groups=Headers,Sources,GNU,Translations,User Interface,Desktop,Others
 
 [Makefile.am]
-sub_dirs=kopete
+sub_dirs=kopete,libkopete
 
 [admin/ChangeLog]
 dist=true
@@ -1506,6 +1506,25 @@ dist=true
 install=false
 install_location=
 type=DATA
+
+[libkopete/Makefile.am]
+files=libkopete/kopetemessagemanager.cpp,libkopete/kopetemessagemanager.h
+sharedlib_LDFLAGS=-version-info 0:0:0
+sharedlib_rootname=libkopete
+sub_dirs=
+type=static_library
+
+[libkopete/kopetemessagemanager.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[libkopete/kopetemessagemanager.h]
+dist=true
+install=false
+install_location=
+type=HEADER
 
 [po/Makefile.am]
 sub_dirs=
