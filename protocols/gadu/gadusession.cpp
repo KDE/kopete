@@ -620,7 +620,7 @@ GaduSession::checkDescriptor()
 	disableNotifiers();
 
 	struct gg_event* event;
-	struct gg_dcc*   dccSock;
+//	struct gg_dcc*   dccSock;
 	KGaduMessage	gaduMessage;
 	KGaduNotify	gaduNotify;
 
