@@ -23,6 +23,7 @@
 #include <qlineedit.h>
 #include <qptrlist.h>
 #include <qvaluestack.h>
+#include <kaction.h>
 
 #include "kopete.h"
 #include "kopetemetacontact.h"
@@ -51,11 +52,11 @@ class KPopupMenu;
 class JabberProtocol;
 class JabberResource;
 
-class JabberContact:public KopeteContact
+class JabberContact : public KopeteContact
 {
 	Q_OBJECT
   
-	  public:
+	public:
 
 		JabberContact( QString userid, QString name, QString group,
 				JabberProtocol *protocol, KopeteMetaContact *mc);
@@ -63,19 +64,49 @@ class JabberContact:public KopeteContact
 		void initContact(QString &userID, QString &name, QString &group);
 
 
-	// Reimplementations of the (uninteresting)
-	// members in KopeteContact
-	virtual ContactStatus status() const;
-	QString statusText() const;
-	QString statusIcon() const;
-	int importance() const;
+		// Reimplementations of the (uninteresting)
+		// members in KopeteContact
+		virtual ContactStatus status() const;
+		QString statusText() const;
+		QString statusIcon() const;
+		int importance() const;
 
-    void execute();
+		/*
+		 * Pop up a chat window for this contact
+		 */
+		void execute();
 
-    QString resource() const { return mResource; }
-    QString group() const { return mGroup; }
-    QString userID() const { return mUserID; }
-    bool localGroup() { return hasLocalGroup; }
+		/*
+		 * Return the currently used resource for this contact
+		 */
+		QString resource() const
+		{
+			return mResource;
+		}
+		
+		/*
+		 * Return the group this contact resides in
+		 */
+		QString group() const
+		{
+			return mGroup;
+		}
+		
+		/*
+		 * Return this contact's user ID
+		 */
+		QString userID() const
+		{
+			return mUserID;
+		}
+		
+		/*
+		 * 
+		 */
+		bool localGroup()
+		{
+			return hasLocalGroup;
+		}
 
     virtual void showContextMenu(const QPoint&, const QString&);
 

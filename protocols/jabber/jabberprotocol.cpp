@@ -35,10 +35,15 @@
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 #include <kgenericfactory.h>
+#include <kstatusbar.h>
+#include <kaction.h>
+#include <kpopupmenu.h>
 
 #include "kopete.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
+#include "kopetewindow.h"
+#include "systemtray.h"
 
 #include "jabberprotocol.h"
 #include "jabcommon.h"

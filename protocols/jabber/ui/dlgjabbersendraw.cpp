@@ -6,6 +6,7 @@
 #include <klocale.h>
 #include <ktextedit.h>
 
+#include "kopetewindow.h"
 #include "dlgpreferences.h"
 #include "dlgjabbersendraw.h"
 #include "dlgsendraw.h"

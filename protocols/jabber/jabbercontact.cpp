@@ -20,7 +20,10 @@
 #include <kmessagebox.h>
 #include <qfont.h>
 #include <kconfig.h>
+#include <kaction.h>
+#include <kpopupmenu.h>
 
+#include "kopetewindow.h"
 #include "kopetestdaction.h"
 #include "jabbercontact.h"
 #include "kopetemessage.h"
