@@ -28,6 +28,7 @@
 #include "ircusercontact.h"
 #include "ircchannelcontact.h"
 
+#include "kopeteaway.h"
 #include "kopetecontactlist.h"
 #include "kopetemessagemanager.h"
 #include "kopetemetacontact.h"
@@ -133,8 +134,8 @@ void IRCAccount::slotGoAway()
 {
 	if( engine()->isLoggedIn() )
 	{
-		mySelf()->setOnlineStatus( IRCProtocol::IRCUserOnline() );
-		engine()->setAway( true, QString::null );
+		mySelf()->setOnlineStatus( IRCProtocol::IRCUserAway() );
+		engine()->setAway( true, KopeteAway::message() );
 	}
 }
 
