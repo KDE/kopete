@@ -35,7 +35,6 @@ public:
 	~NetMeetingPlugin();
 
 private slots:
-	void slotStartInvitation();
 	void slotNewKMM(KopeteMessageManager *);
 	void slotPluginLoaded(KopetePlugin*);
 	void slotInvitation(MSNInvitation*& invitation,  const QString &bodyMSG , long unsigned int cookie , MSNMessageManager* msnMM , MSNContact* c );
