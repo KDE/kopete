@@ -44,11 +44,12 @@ public:
 	 * Asynchronously read a block of data of the specified size. When the
 	 * data is available, the blockRead() signal will be emitted with the
 	 * data as parameter.
+	 *
 	 * NOTE: As the block queue takes precedence over the line-based
 	 *       command-processing this method can effectively block all
 	 *       communications when passed a wrong length!
 	 */
-	void readBlock(uint len);
+	void readBlock( uint len );
 
 	/**
 	 * OnlineStatus encapsulates the 4 states a connection can be in,
@@ -75,17 +76,13 @@ public:
 	 * For debugging it's convenient to have this method public, but using
 	 * it outside this class is deprecated for any other use!
 	 *
-	 * If you use the body please remember that the size of the body is the
-	 * length of the utf8() converted QString, not the QString converted to
-	 * latin1() (Or the implicit conversion to QCString which synonym with latin1()
+	 * The size of the body (if any) is automatically added to the argument
+	 * list and shouldn't be explicitly specified! This size is in bytes
+	 * instead of characters to reflect what actually goes over the wire.
 	 */
 	void sendCommand( const QString &cmd, const QString &args = QString::null,
-			  bool addId = true, const QCString &body="");
-	/** Just to make sure no implicit conversions are made on body, this will generate errors
-	 * in most compilers. Will print an error and exit with errorcode.
-	 */
-	void sendCommand( const QString &cmd, const QString &args,
-			  bool addId, const QString &body);
+		bool addId = true, const QString &body = QString::null );
+
 signals:
 	/**
 	 * A block read is ready.
@@ -97,13 +94,12 @@ signals:
 	 * The online status has changed
 	 */
 	void onlineStatusChanged( MSNSocket::OnlineStatus status );
-	
+
 	/**
 	 * The connection failed
 	 */
 	void connectionFailed();
-	
-	
+
 	/**
 	 * The connection was closed
 	 */

@@ -27,7 +27,6 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kurl.h>
-#include <stdlib.h>
 
 MSNSocket::MSNSocket()
 {
@@ -339,19 +338,23 @@ void MSNSocket::handleError( uint code, uint id )
 }
 
 void MSNSocket::sendCommand( const QString &cmd, const QString &args,
-			     bool addId, const QCString &body )
+	bool addId, const QString &body )
 {
-	QCString data=cmd.utf8();
-	if( addId ) {
-	        char buf[50];
-		sprintf(buf," %d",m_id);
-		data += buf;
-	}
+	QCString data = cmd.utf8();
+	if( addId )
+		data += " " + QString::number( m_id ).utf8();
+
 	if( !args.isEmpty() )
 		data += " " + args.utf8();
-	data += "\r\n";
+
+	// Add length in bytes, not characters
 	if( !body.isEmpty() )
-	        data += body;
+		data += " " + QString::number( body.utf8().length() ).utf8();
+
+	data += "\r\n";
+
+	if( !body.isEmpty() )
+		data += body.utf8();
 
 	kdDebug() << "MSNSocket::sendCommand: Sending command " << data << endl;
 
@@ -370,14 +373,6 @@ void MSNSocket::sendCommand( const QString &cmd, const QString &args,
 	}
 
 	m_id++;
-}
-
-void MSNSocket::sendCommand( const QString &cmd, const QString &args,
-			     bool, const QString &)
-{
-        kdDebug() << "MSNSocket::sendCommand: Forgot to utf8 convert the body " << cmd <<
-	  ": '" << args << "'" << endl;
-	exit(2);
 }
 
 QString MSNSocket::escape( const QString &str )

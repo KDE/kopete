@@ -302,14 +302,16 @@ void MSNSwitchBoardSocket::slotTypingMsg()
 		"Content-Type: text/x-msmsgscontrol\r\n"
 		"TypingUser: " + m_myHandle + "\r\n"
 		"\r\n").utf8();
-	QString args = QString( "U %1" ).arg( message.length() );
+
+	// Length is appended by sendCommand()
+	QString args = "U";
 	sendCommand( "MSG", args, true, message );
 }
 
 // this Invites an Contact
 void MSNSwitchBoardSocket::slotInviteContact(QString handle)
 {
-	sendCommand( "CAL", handle);
+	sendCommand( "CAL", handle );
 }
 
 // this sends a short message to the server
@@ -338,7 +340,7 @@ void MSNSwitchBoardSocket::slotSendMsg( const KopeteMessage &msg )
 		"\r\n";
 
 	head += msg.body().replace( QRegExp( "\n" ), "\r\n" ).utf8();
-	QString args = QString( "A %1" ).arg( head.length() );
+	QString args = "A";
 	sendCommand( "MSG", args, true, head );
 
 	// TODO: send our fonts and colors as well

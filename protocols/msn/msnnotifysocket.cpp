@@ -268,8 +268,8 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		kdDebug() << "Sending final Authentication" << endl;
 		KMD5 context( data.section( ' ', 0, 0 ) + "Q1P7W2E4J9R8U3S5" );
-		sendCommand( "QRY", "msmsgs@msnmsgr.com 32",true,
-			     context.hexDigest());
+		sendCommand( "QRY", "msmsgs@msnmsgr.com", true,
+			context.hexDigest());
 	}
 	else if( cmd == "SYN" )
 	{
@@ -335,7 +335,7 @@ void MSNNotifySocket::renameGroup( QString groupName, uint group )
 {
 	// escape spaces
 	sendCommand( "REG", QString::number( group ) + " " +
-		     escape( groupName ) + " 0" );
+		escape( groupName ) + " 0" );
 }
 
 void MSNNotifySocket::removeGroup( uint group )
