@@ -216,7 +216,7 @@ void JabberContact::rename ( const QString &newName )
 
 void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 {
-	Kopete::Message::ViewType type;
+	QString viewPlugin;
 	Kopete::Message *newMessage = 0L;
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;
@@ -243,9 +243,9 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 
 	// determine message type
 	if (message.type () == "chat")
-		type = Kopete::Message::Chat;
+		viewPlugin = "kopete_chatwindow";
 	else
-		type = Kopete::Message::Email;
+		viewPlugin = "kopete_emailwindow";
 
 	Kopete::ContactPtrList contactList;
 	contactList.append ( account()->myself () );
@@ -256,7 +256,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		newMessage = new Kopete::Message( message.timeStamp (), this, contactList,
 										i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"").
 										arg ( message.body () ).arg ( message.error().text ),
-										message.subject(), Kopete::Message::Inbound, Kopete::Message::PlainText, type );
+										message.subject(), Kopete::Message::Inbound, Kopete::Message::PlainText, viewPlugin );
 	}
 	else
 	{
