@@ -97,7 +97,7 @@
                         <cstring>m_notifyAway</cstring>
                     </property>
                     <property name="text">
-                        <string>Notify all open chats when i go away</string>
+                        <string>Notify all open chats when I go away</string>
                     </property>
                 </widget>
             </vbox>
