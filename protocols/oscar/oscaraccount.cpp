@@ -568,7 +568,7 @@ int OscarAccount::randomNewGroupNum()
 	return mRandomNewGroupNum++;
 }
 
-AIMBuddyList *OscarAccount::internalBuddyList()
+AIMBuddyList *OscarAccount::internalBuddyList() const
 {
 	return mInternalBuddyList;
 }

@@ -32,7 +32,7 @@ public:
 	HistoryGUIClient(KopeteMessageManager *parent = 0, const char *name = 0);
 	~HistoryGUIClient();
 
-	HistoryLogger *logger() { return m_logger; }
+	HistoryLogger *logger() const { return m_logger; }
 
 private slots:
 	void slotPrevious();

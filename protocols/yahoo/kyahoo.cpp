@@ -130,7 +130,7 @@ YahooSession* YahooSessionManager::getSession(int id)
 	return m_sessionsMap[id] ? m_sessionsMap[id] : 0L;
 }
 
-int YahooSessionManager::getSessionCount()
+int YahooSessionManager::getSessionCount() const
 {
 	return m_sessionsMap.count();
 }

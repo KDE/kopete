@@ -45,17 +45,17 @@ public:
 	~YahooSessionManager();
 
 	int socketDescriptor( int session_id );
-	
+
 	/* Creates a new session */
 	YahooSession* createSession(const QString username, const QString password, int initial);
 	bool cleanSessions();
 	YahooSession* getSession(int id);
-	int getSessionCount();
-	
+	int getSessionCount() const;
+
 	/* Sets the host and port for connection to the pager and f.t. servers */
 	void setPager(QString host, int port);
 	void setFileTransfer(QString host, int port);
-	
+
 	/* Receivers for libyahoo callbacks, resolve connection id and emit signal for the correct session */
 	void loginResponseReceiver( int id, int succ, char *url);
 	void gotIgnoreReceiver(int id, YList *igns);
@@ -103,10 +103,10 @@ friend class YahooSessionManager;
 
 public:
 	~YahooSession();
-	int Id()
+	int Id() const
 	{ return m_connId; };
 
-	int socketDescriptor()
+	int socketDescriptor() const
 	{ return m_fd; };
 
 	int setLogLevel(enum yahoo_log_level level);

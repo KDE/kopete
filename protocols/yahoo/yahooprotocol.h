@@ -56,10 +56,10 @@ public:
 					 const QMap<QString,QString> &serializedData,
 					 const QMap<QString, QString> &addressBookData );
 
-	QString server() { return m_server; }
-	int port() { return m_port; }
-	bool importContacts() { return m_importContacts; }
-	bool useGroupNames() { return m_useGroupNames; }
+	QString server() const { return m_server; }
+	int port() const { return m_port; }
+	bool importContacts() const { return m_importContacts; }
+	bool useGroupNames() const { return m_useGroupNames; }
 
 public slots:
 	virtual AddContactPage *createAddContactWidget(QWidget * parent, KopeteAccount* a);

@@ -51,7 +51,7 @@ public:
 
 	~HistoryLogger();
 
-	bool hideOutgoing() { return m_hideOutgoing; }
+	bool hideOutgoing() const { return m_hideOutgoing; }
 	void setHideOutgoing(bool);
 
 

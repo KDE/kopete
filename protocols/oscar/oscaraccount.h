@@ -69,7 +69,7 @@ public:
 	int randomNewGroupNum();
 
 	/** Gets the internal buddy list */
-	AIMBuddyList *internalBuddyList();
+	AIMBuddyList *internalBuddyList() const;
 
 	/** Sets the port we connect to */
 	void setServerPort(int port);

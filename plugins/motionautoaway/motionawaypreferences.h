@@ -40,15 +40,15 @@ public:
 	~MotionAwayPreferences();
    virtual void save();
 
-	bool goAvailable() { return preferencesDialog->mGoAvailable->isChecked(); };
-	int awayTimeout() { return preferencesDialog->mAwayTimeout->value(); };
+	bool goAvailable() const { return preferencesDialog->mGoAvailable->isChecked(); };
+	int awayTimeout() const { return preferencesDialog->mAwayTimeout->value(); };
 	const QString device() { return preferencesDialog->m_videoDevice->text(); };
 
 signals:
 	void saved();
 
 private:
-	motionawayPrefsUI *preferencesDialog;	
+	motionawayPrefsUI *preferencesDialog;
 
 };
 

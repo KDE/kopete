@@ -37,9 +37,9 @@ public:
 	virtual void save();
 	virtual void reopen();
 
-	int nbChatwindow();
-	int nbAutoChatwindow();
-	QColor historyColor();
+	int nbChatwindow() const;
+	int nbAutoChatwindow() const;
+	QColor historyColor() const;
 private:
 	HistoryPrefsUI *m_widget;
 };

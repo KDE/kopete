@@ -67,19 +67,19 @@ void HistoryPreferences::save()
 }
 
 
-int HistoryPreferences::nbAutoChatwindow()
+int HistoryPreferences::nbAutoChatwindow() const
 {
 	if(!m_widget->newView->isChecked())
 		return 0;
 	return m_widget->nbNewView->value();
 }
 
-int HistoryPreferences::nbChatwindow()
+int HistoryPreferences::nbChatwindow() const
 {
 	return m_widget->nbChatWindow->value();
 }
 
-QColor  HistoryPreferences::historyColor()
+QColor  HistoryPreferences::historyColor() const
 {
 	return m_widget->m_color->color();
 }

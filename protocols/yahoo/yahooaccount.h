@@ -87,7 +87,7 @@ public:
 	/**
 	 * Returns true if we have the server-side contact list
 	 */
-	bool haveContactList() { return theHaveContactList; }
+	bool haveContactList() const { return theHaveContactList; }
 
 public slots:
 	/**
