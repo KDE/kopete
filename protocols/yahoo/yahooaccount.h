@@ -43,10 +43,12 @@ public:
 	
 	virtual KopeteContact *myself() const;				// returns our yahoo contact
 	YahooContact *contact(const QString &id);			// returns a contact of name "id"
-	virtual bool isConnected() const;				// are we connected?
-	virtual void setAway(bool);					// set away status
-	virtual bool isAway() const;					// check away status
+	virtual KActionMenu* actionMenu() { return actionStatusMenu; }
 
+	virtual bool isConnected() const;				// are we connected?
+	virtual bool isAway() const;					// check away status
+	virtual void setAway(bool);					// set away status
+	
 	YahooSession *yahooSession();					// the session
 	virtual const QString protocolIcon();				// the current protocol icon (TODO: make it work!)
 	
