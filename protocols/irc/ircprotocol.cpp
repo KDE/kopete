@@ -85,7 +85,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("query"),
 		SLOT( slotQueryCommand( const QString &, KopeteMessageManager*) ),
-		i18n("USAGE: /query <nickname> - Open a private chat with this user.") );
+		i18n("USAGE: /query <nickname> [<message>] - Open a private chat with this user.") );
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("mode"),
 		SLOT( slotModeCommand( const QString &, KopeteMessageManager*) ),
@@ -138,6 +138,10 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	KopeteCommandHandler::commandHandler()->registerAlias( this, QString::fromLatin1("ping"),
 		QString::fromLatin1("ctcp PING %1"),
 		i18n("USAGE: /ping <nickname> - Alias for CTCP PING <nickname>."), KopeteCommandHandler::SystemAlias );
+		
+	KopeteCommandHandler::commandHandler()->registerAlias( this, QString::fromLatin1("msg"),
+		QString::fromLatin1("query %s"),
+		i18n("USAGE: /msg <nickname> [<message>] - Alias for QUERY <nickname>."), KopeteCommandHandler::SystemAlias );
 	
 	QObject::connect( KopeteMessageManagerFactory::factory(), SIGNAL(aboutToDisplay(KopeteMessage &)),
 		this, SLOT(slotMessageFilter(KopeteMessage &)) );
@@ -274,12 +278,23 @@ void IRCProtocol::slotQueryCommand( const QString &args, KopeteMessageManager *m
 {
 	if( !args.isEmpty() )
 	{
-		QStringList argsList = KopeteCommandHandler::parseArguments( args );
-		if( !argsList.front().startsWith( QString::fromLatin1("#") ) )
-			static_cast<IRCAccount*>( manager->account() )->findUser( argsList.front() )->startChat();
+		QString user = args.section( ' ', 0, 0 );
+		QString rest = args.section( ' ', 1 );
+		
+		if( !user.startsWith( QString::fromLatin1("#") ) )
+		{
+			IRCUserContact *c = static_cast<IRCAccount*>( manager->account() )->findUser( user );
+			c->startChat();
+			if( !rest.isEmpty() )
+			{
+				KopeteMessage msg( c->manager()->user(), c->manager()->members(), rest, 
+					KopeteMessage::Outbound, KopeteMessage::PlainText, KopeteMessage::Chat);
+				c->manager()->sendMessage(msg);	
+			}
+		}
 		else
 		{
-			KopeteMessage msg(manager->user(), manager->members(), i18n("\"%1\" is an invalid nickname. Nicknames must not start with '#'.").arg(argsList.front()), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+			KopeteMessage msg(manager->user(), manager->members(), i18n("\"%1\" is an invalid nickname. Nicknames must not start with '#'.").arg(user), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 			manager->appendMessage(msg);
 		}
 	}

@@ -36,13 +36,18 @@ void KopeteCommand::processCommand( const QString &args, KopeteMessageManager *m
 		m_type == KopeteCommandHandler::SystemAlias )
 	{
 		QString formatString = m_formatString;
-		QStringList mArgs = KopeteCommandHandler::parseArguments( args );
-		while( mArgs.count() > 0 )
+		if( formatString.contains( QString::fromLatin1("%s") ) )
+			formatString.replace( QString::fromLatin1("%s"), args );
+		else
 		{
-			formatString = formatString.arg( mArgs.front() );
-			mArgs.pop_front();
+			QStringList mArgs = KopeteCommandHandler::parseArguments( args );
+			while( mArgs.count() > 0 )
+			{
+				formatString = formatString.arg( mArgs.front() );
+				mArgs.pop_front();
+			}
 		}
-		
+
 		kdDebug() << "New Command after processing alias: " << formatString << endl;
 		
 		KopeteCommandHandler::commandHandler()->processMessage( QString::fromLatin1("/") + formatString, manager ); 

@@ -81,7 +81,8 @@ class KopeteCommandHandler : public QObject
 		 * @param formatString This is the string that will be transformed into another
 		 *    command. The formatString should begin with an already existing command,
 		 *    followed by any other arguments. The variables %1, %2... %9 will be substituted
-		 *    with the arguments passed into the alias
+		 *    with the arguments passed into the alias. The variable %s will be substituted with
+		 *    the entire argument string
 		 */
 		void registerAlias( QObject *parent, const QString &alias, const QString &formatString,
 			const QString &help = QString::null, CommandType = SystemAlias );
