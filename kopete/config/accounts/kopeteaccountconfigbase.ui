@@ -51,7 +51,7 @@
                 <string>Modify selected account</string>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>Let you edit account's properties.</string>
+                <string>Let you edit the account's properties.</string>
             </property>
         </widget>
         <widget class="QPushButton" row="2" column="1" rowspan="1" colspan="3">
