@@ -718,14 +718,14 @@ void
 GaduAccount::slotCommandDone( const QString& /*title*/, const QString& what )
 {
 	//XXX: any chance to have my own title in event popup ?
-	KNotifyClient::userEvent( qApp->mainWidget()->winId() , what,
+	KNotifyClient::userEvent( 0, what,
 			KNotifyClient::PassivePopup, KNotifyClient::Notification  );
 }
 
 void
 GaduAccount::slotCommandError(const QString& title, const QString& what )
 {
-	KMessageBox::error( qApp->mainWidget(), title, what );
+	KMessageBox::error( 0, title, what );
 }
 
 void
