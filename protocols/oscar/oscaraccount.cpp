@@ -216,6 +216,7 @@ void OscarAccount::slotGoOnline()
 
 void OscarAccount:: protocolError( int error, int psError, const QString& message )
 {
+	QString realMessage = message;
 	if ( error == Client::NoError )
 		return;
 	
@@ -236,13 +237,20 @@ void OscarAccount:: protocolError( int error, int psError, const QString& messag
 			password().setWrong( true );
 			return;
 		}
+		
+		if ( psError == 16 || psError == 2 )
+		{
+			disconnected( Kopete::Account::Manual );
+			realMessage = i18n("The %1 service is temporarily unavailable. Please try again later.")
+			              .arg( d->engine->isIcq() ? i18n( "ICQ" ) : i18n( "AIM" ) );
+		
 		if ( psError == 0 ) //zero is a generic error when i don't know what's wrong. :/
 		{
 			disconnected( Kopete::Account::ConnectionReset );
 		}
 		
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
-		                               message, i18n( "%1 Disconnected" ).arg( d->engine->userId() ) );
+		                               realMessage, i18n( "%1 Disconnected" ).arg( d->engine->userId() ) );
 		return;
 	}
 	
