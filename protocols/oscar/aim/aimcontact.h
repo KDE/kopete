@@ -99,6 +99,6 @@ class AIMContact : public OscarContact
 		KAction *actionRequestAuth;
 		KAction *actionSendAuth;
 		KAction *actionWarn;
-		KAction *actionBlock;
+		//KAction *actionBlock;
 };
 #endif

@@ -96,7 +96,8 @@ void AIMContact::slotGotProfile(const UserInfo &user, const QString &profile, co
 
 bool AIMContact::isReachable()
 {
-	return isOnline();
+	return true;
+	//return isOnline();
 }
 
 QPtrList<KAction> *AIMContact::customContextMenuActions()
@@ -111,8 +112,6 @@ QPtrList<KAction> *AIMContact::customContextMenuActions()
 			this, SLOT(slotSendAuth()), this, "actionSendAuth");
 		actionWarn = new KAction(i18n("&Warn"), 0,
 			this, SLOT(slotWarn()), this, "actionWarn");
-		actionBlock = new KAction(i18n("&Block"), 0,
-			this, SLOT(slotBlock()), this, "actionBlock");
 		/*KAction* actionDirectConnect = new KAction(i18n("&Direct IM"), 0,
 			this, SLOT(slotDirectConnect()), this, "actionDirectConnect");*/
 	}
@@ -120,12 +119,10 @@ QPtrList<KAction> *AIMContact::customContextMenuActions()
 	actionRequestAuth->setEnabled(isOnline());
 	actionSendAuth->setEnabled(isOnline());
 	actionWarn->setEnabled(isOnline());
-	actionBlock->setEnabled(mAccount->isConnected()); // works if contact is offline
 
 	actionCollection->append(actionRequestAuth);
 	actionCollection->append(actionSendAuth);
 	actionCollection->append(actionWarn);
-	actionCollection->append(actionBlock);
 	//actionCollection->insert(actionDirectConnect);
 
 	return actionCollection;

@@ -24,8 +24,6 @@
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
-class AIMBuddy;
-
 struct UserInfo;
 class KAction;
 class KToggleAction;
@@ -119,6 +117,8 @@ class ICQContact : public OscarContact
 		KAction *actionRequestAuth;
 		KAction *actionSendAuth;
 		KToggleAction *actionIgnore;
+		KToggleAction *actionInvisibleTo;
+		KToggleAction *actionVisibleTo;
 
 		int userinfoRequestSequence;
 		unsigned int userinfoReplyCount;
@@ -165,6 +165,8 @@ class ICQContact : public OscarContact
 		void slotReadAwayMessage();
 		void slotSnacFailed(WORD snacID);
 		void slotIgnore();
+		void slotVisibleTo();
+		void slotInvisibleTo();
 };
 
 #endif

@@ -112,7 +112,12 @@ class OscarContact : public KopeteContact
 		void setServerSide( bool isServerSide ) { mIsServerSide = isServerSide; }
 
 		bool ignore() { return mIgnore; }
-		void setIgnore(bool val) { mIgnore = val; }
+		bool visibleTo() { return mVisibleTo; }
+		bool invisibleTo() { return mInvisibleTo; }
+
+		void setIgnore(bool val, bool updateServer = false);
+		void setVisibleTo(bool val, bool updateServer = false);
+		void setInvisibleTo(bool val, bool updateServer = false);
 
 	signals:
 		void awayMessageChanged();
@@ -165,8 +170,6 @@ class OscarContact : public KopeteContact
 
 		/** Called when KMM is destroyed */
 		void slotMessageManagerDestroyed();
-		/** Called when we want to block the contact */
-		void slotBlock();
 
 
 /*
@@ -215,6 +218,8 @@ class OscarContact : public KopeteContact
 
 		bool mIsServerSide;
 		bool mIgnore;
+		bool mVisibleTo;
+		bool mInvisibleTo;
 };
 
 #endif

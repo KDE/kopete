@@ -58,7 +58,7 @@ void OscarSocket::sendMsgParams()
 	// bit 1 : messages allowed (always 1 or you cannot send IMs)
 	// bit 2 : missed call notifications enabled
 	// bit 4 : typing notifications enabled
-	outbuf.addDWord(0x0000000b);
+	outbuf.addDWord(0xb);
 
 	//max message length (8000 bytes)
 	outbuf.addWord(0x1f40);
@@ -85,25 +85,23 @@ void OscarSocket::parseMsgRights(Buffer &inbuf)
 	WORD channel = inbuf.getWord();
 	kdDebug(14150) << k_funcinfo << "channel=" << channel << endl;
 
+	/**
+	 * bit1: messages allowed for specified channel
+	 * bit2: missed calls notifications enabled for specified channel
+	 * bit4: client supports typing notifications
+	 */
 	DWORD messageFlags = inbuf.getDWord();
-	kdDebug(14150) << k_funcinfo << "messageFlags=" << messageFlags << endl;
-	/*
-bit1: messages allowed for specified channel
-bit2: missed calls notifications enabled for specified channel
-bit4: client supports typing notifications
-	*/
-
 	WORD maxMessageSnacSize = inbuf.getWord();
-	kdDebug(14150) << k_funcinfo << "maxMessageSnacSize=" << maxMessageSnacSize << endl;
-
 	WORD maxSendWarnLvl = inbuf.getWord(); // max sender Warning Level
-	kdDebug(14150) << k_funcinfo << "maxSendWarnLvl=" << maxSendWarnLvl << endl;
-
 	WORD maxRecvWarnLvl = inbuf.getWord(); // max Receiver Warning Level
-	kdDebug(14150) << k_funcinfo << "maxRecvWarnLvl=" << maxRecvWarnLvl << endl;
-
 	WORD minMsgInterval = inbuf.getWord(); // minimum message interval (msec)
-	kdDebug(14150) << k_funcinfo << "minMsgInterval=" << minMsgInterval << endl;
+
+
+	kdDebug(14150) << k_funcinfo << "messageFlags       = " << messageFlags << endl;
+	kdDebug(14150) << k_funcinfo << "maxMessageSnacSize = " << maxMessageSnacSize << endl;
+	kdDebug(14150) << k_funcinfo << "maxSendWarnLvl     = " << maxSendWarnLvl << endl;
+	kdDebug(14150) << k_funcinfo << "maxRecvWarnLvl     = " << maxRecvWarnLvl << endl;
+	kdDebug(14150) << k_funcinfo << "minMsgInterval     = " << minMsgInterval << endl;
 
 	/*WORD unknown = */inbuf.getWord();
 

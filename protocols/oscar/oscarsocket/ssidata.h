@@ -80,6 +80,7 @@ struct SSI
 /**
  * @author Tom Linsky (Main)
  * @author Chris TenHarmsel (Secondary)
+ * @author Stefan Gehn (ignore/visible/invisible lists)
  *
  * \brief Manages SSI data from the server
  *
@@ -157,38 +158,51 @@ class SSIData : public QPtrList<SSI>
 		 */
 		SSI *renameGroup(const QString &currentName, const QString &newName);
 
-		// ===============================================================================
+		// =======================================================================
 
 		/**
-		 * \brief Add a screenname to the list of blocked screennames
+		 * \brief Add a screenname to the list of allowed screennames
 		 *
-		 * Creates a new SSI item to be added to the invisible list.
+		 * Creates a new SSI item to be added to the visible list.
 		 * Existing items are not changed.
 		 * \return An SSI pointer to the data.
 		 */
-		SSI *addInvis(const QString &name);
+		SSI *addVisible(const QString &name);
 
 		/**
-		 * \brief Remove an SSI item from the list of blocked
-		 * screennames
+		 * \brief Remove an SSI item from the list of allowed screennames
 		 *
-		 * Deletes the SSI item created by addInvis from the SSI list
-		 * The SSI item should be retrieved using findInvis before
+		 * Deletes the SSI item created by @ref addVisible from the SSI list
+		 * The SSI item should be retrieved using @ref findVisible() before
 		 * removing the item using this function.
 		 * \return true if the deletion was successful, false otherwise
 		 */
-		bool removeInvis(const QString &name);
+		//bool removeVisible(const QString &name);
 
 		/**
-		 * \brief Finds the given contact in the list of blocked
-		 * screennames
+		 * \brief Finds the given contact in the list of allowed screennames
 		 *
 		 * \return An SSI pointer to the data or NULL is no matching
 		 * screenname is found.
 		 */
-		SSI *findInvis(const QString &name);
+		SSI *findVisible(const QString &name);
 
-		// ===============================================================================
+		/** \brief Same as @ref addVisible() but for contacts on the invisible/blocked list
+		 */
+		SSI *addInvisible(const QString &name);
+
+		//bool removeInvisible(const QString &name)
+		SSI *findInvisible(const QString &name);
+
+		/** \brief Same as @ref addVisible() but for contacts on the ignore list
+		 */
+		SSI *addIgnore(const QString &name);
+
+		//bool removeIgnore(const QString &name)
+		SSI *findIgnore(const QString &name);
+
+
+		// =======================================================================
 
 		/**
 		 * \brief Set that we're waiting auth for a SSI Item
@@ -217,6 +231,14 @@ class SSIData : public QPtrList<SSI>
 		 * or NULL if the appropriate item cannot be found
 		 */
 		SSI *findVisibilitySetting();
+
+	private:
+		/**
+		 * Internal backends for add/find/remove of visible/invisible/ignore contacts
+		 */
+		SSI *addSpecial(const QString &name, WORD type);
+		bool removeSpecial(const QString &name, WORD type);
+		SSI *findSpecial(const QString &name, WORD type);
 
 	private:
 		/**

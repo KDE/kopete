@@ -73,7 +73,7 @@ SSI *SSIData::addContact(const QString &name, const QString &group, bool addingA
 // Finds the contact with given name and group... returns NULL if not found
 SSI *SSIData::findContact(const QString &name, const QString &group)
 {
-	SSI *gr = findGroup(group); //find the parent group
+	SSI *gr = findGroup(group); // find the parent group
 	if (gr)
 	{
 #ifdef OSCAR_SSI_DEBUG
@@ -123,7 +123,7 @@ SSI *SSIData::findContact(const QString& name)
 			return i;
 		}
 	}
-	
+
 	kdDebug(14150) << k_funcinfo <<
 		"ERROR: contact '" << name << "' not found!" << endl;
 	return 0L;
@@ -205,20 +205,97 @@ SSI *SSIData::renameGroup(const QString &currentName, const QString &newName)
 	return group;
 }
 
+
 // ========================================================================================
 
-SSI *SSIData::addInvis(const QString &name)
+
+SSI *SSIData::addVisible(const QString &name)
 {
 #ifdef OSCAR_SSI_DEBUG
 	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
 #endif
+	return addSpecial(name, ROSTER_VISIBLE);
+}
 
+/*bool SSIData::removeVisible(const QString &name)
+{
+#ifdef OSCAR_SSI_DEBUG
+	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
+#endif
+	return removeSpecial(name, ROSTER_VISIBLE);
+}*/
+
+SSI *SSIData::findVisible(const QString &name)
+{
+#ifdef OSCAR_SSI_DEBUG
+	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
+#endif
+	return findSpecial(name, ROSTER_VISIBLE);
+}
+
+// ================
+
+
+SSI *SSIData::addInvisible(const QString &name)
+{
+#ifdef OSCAR_SSI_DEBUG
+	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
+#endif
+	return addSpecial(name, ROSTER_INVISIBLE);
+}
+
+/*bool SSIData::removeInvisible(const QString &name)
+{
+#ifdef OSCAR_SSI_DEBUG
+	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
+#endif
+	return removeSpecial(name, ROSTER_INVISIBLE);
+}*/
+
+SSI *SSIData::findInvisible(const QString &name)
+{
+#ifdef OSCAR_SSI_DEBUG
+	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
+#endif
+	return findSpecial(name, ROSTER_INVISIBLE);
+}
+
+// ================
+
+SSI *SSIData::addIgnore(const QString &name)
+{
+#ifdef OSCAR_SSI_DEBUG
+	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
+#endif
+	return addSpecial(name, ROSTER_IGNORE);
+}
+
+/*bool SSIData::removeIgnore(const QString &name)
+{
+#ifdef OSCAR_SSI_DEBUG
+	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
+#endif
+	return removeSpecial(name, ROSTER_IGNORE);
+}*/
+
+SSI *SSIData::findIgnore(const QString &name)
+{
+#ifdef OSCAR_SSI_DEBUG
+	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
+#endif
+	return findSpecial(name, ROSTER_IGNORE);
+}
+
+// ================
+
+SSI *SSIData::addSpecial(const QString &name, WORD type)
+{
 	SSI *newitem = new SSI;
 
 	newitem->name = name;
 	newitem->gid = 0;
 	newitem->bid = maxContactId(newitem->gid) + 1;
-	newitem->type = ROSTER_INVISIBLE; // the type here is deny
+	newitem->type = type;
 	newitem->tlvlist = 0L;
 	newitem->tlvlength = 0;
 	newitem->waitingAuth = false;
@@ -228,29 +305,27 @@ SSI *SSIData::addInvis(const QString &name)
 	return newitem;
 }
 
-bool SSIData::removeInvis(const QString &name)
+bool SSIData::removeSpecial(const QString &name, WORD type)
 {
-	SSI *denyItem = findInvis(name);
+	SSI *denyItem = findSpecial(name, type);
 	if(denyItem != 0L)
 		remove(denyItem);
-
 	return (denyItem!=0L);
 }
 
-SSI *SSIData::findInvis(const QString &name)
+SSI *SSIData::findSpecial(const QString &name, WORD type)
 {
-#ifdef OSCAR_SSI_DEBUG
-	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
-#endif
 	for (SSI *i=first(); i; i = next())
 	{
-		if ((current()->name == name) && (current()->type == ROSTER_INVISIBLE))
+		if ((current()->name == name) && (current()->type == type))
 			return current();
 	}
 	return 0L;
 }
 
-// ========================================================================================
+
+// =============================================================================
+
 
 SSI *SSIData::findVisibilitySetting()
 {

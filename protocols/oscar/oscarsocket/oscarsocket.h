@@ -477,11 +477,20 @@ class OscarSocket : public OscarConnection
 		 */
 		void fillDirectInfo(Buffer &directInfo);
 
-		/** Blocks user sname */
-		void sendBlock(const QString &sname);
 
-		/** Removes the block on user sname */
-		void sendRemoveBlock(const QString &sname);
+		/** Adds contact @p name to the ignore-list on SSI */
+		void sendSSIAddIgnore(const QString &name);
+		/** Removes contact @p name from the ignore-list on SSI */
+		void sendSSIRemoveIgnore(const QString &name);
+		/** Adds contact @p name to the invisible/block-list on SSI */
+		void sendSSIAddInvisible(const QString &name);
+		/** Removes contact @p name from the invisible/block-list on SSI */
+		void sendSSIRemoveInvisible(const QString &name);
+		/** Adds contact @p name to the visible/allow-list on SSI */
+		void sendSSIAddVisible(const QString &name);
+		/** Removes contact @p name from the visible/allow-list on SSI */
+		void sendSSIRemoveVisible(const QString &name);
+
 
 		/**
 		 * Sends a typing notification to the server
@@ -1036,12 +1045,12 @@ class OscarSocket : public OscarConnection
 		/**
 		 * Emitted when a buddy gets blocked
 		 */
-		void denyAdded(QString);
+		//void denyAdded(QString);
 
 		/**
 		 * emitted when a block is removed on a buddy
 		 */
-		void denyRemoved(QString);
+		//void denyRemoved(QString);
 
 		/**
 		 * Tells when the connection ack has been received on channel 1

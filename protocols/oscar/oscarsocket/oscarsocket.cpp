@@ -197,19 +197,22 @@ void OscarSocket::slotRead()
 
 	// a FLAP is min 6 bytes, we cannot read more out of
 	// a buffer without these 6 initial bytes
+
+	/*
 	if(mSocket->bytesAvailable() < 6)
 	{
-		/*kdDebug(14150) << k_funcinfo <<
-		"less than 6 bytes available, waiting for m data" << endl;*/
+		kdDebug(14150) << k_funcinfo <<
+		"less than 6 bytes available, waiting for m data" << endl;
 		mSocket->waitForMore(200);
 		return;
 	}
+	*/
 
 	fl = getFLAP();
 
 	if (fl.error || fl.length == 0)
 	{
-		//kdDebug(14150) << k_funcinfo << "Error reading FLAP" << endl;
+		kdDebug(14150) << k_funcinfo << "Could not read full FLAP, aborting" << endl;
 		return;
 	}
 
@@ -274,7 +277,7 @@ void OscarSocket::slotRead()
 							break;
 						case 0x0005: //redirect
 							kdDebug(14150) << k_funcinfo <<
-								"TODO: Parse redirect!" << endl;
+								"TODO: Parse redirect! ================" << endl;
 							//parseRedirect(inbuf);
 							break;
 						case 0x0007: //rate info request response, SRV_RATES
@@ -508,8 +511,9 @@ void OscarSocket::slotRead()
 
 	// another flap is waiting in read buffer
 	if (mSocket->bytesAvailable() > 0)
-		slotRead();
+		QTimer::singleShot(0, this, SLOT(slotRead()));
 }
+
 
 void OscarSocket::sendLoginRequest()
 {
@@ -1886,42 +1890,6 @@ void OscarSocket::parseError(WORD family, WORD snacID, Buffer &inbuf)
 
 
 
-void OscarSocket::sendSSIRightsRequest()
-{
-	kdDebug(14150) << k_funcinfo << "SEND (CLI_REQLISTS)" << endl;
-	Buffer outbuf;
-	outbuf.addSnac(0x0013,0x0002,0x0000,0x00000002);
-	sendBuf(outbuf,0x02);
-}
-
-void OscarSocket::sendSSIRequest(void)
-{
-	kdDebug(14150) << "SEND (CLI_REQROSTER), " <<
-		"requesting serverside contactlist for the FIRST time" << endl;
-	Buffer outbuf;
-	outbuf.addSnac(0x0013,0x0004,0x0000,0x00020004);
-	sendBuf(outbuf,0x02);
-}
-
-void OscarSocket::parseSSIRights(Buffer &/*inbuf*/)
-{
-	kdDebug(14150) << k_funcinfo << "RECV (SRV_REPLYLISTS) IGNORING" << endl;
-	//List of TLV's
-		//TLV of type 4 contains a bunch of words, representing maxmimums
-		// word 0 of TLV 4 data: max contacts
-		// word 1 of TLV 4 data: max groups
-		// word 2 of TLV 4 data: max visible-list entries
-		// word 3 of TLV 4 data: max invisible-list entries
-//	sendSSIRequest();
-	gotAllRights++;
-	if (gotAllRights==7)
-	{
-		kdDebug(14150) << k_funcinfo "gotAllRights==7" << endl;
-		sendInfo();
-	}
-}
-
-
 void OscarSocket::sendInfo()
 {
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
@@ -1951,7 +1919,6 @@ void OscarSocket::sendInfo()
 
 	requestMyUserInfo();
 }
-
 
 
 // Reads a FLAP header from the input
@@ -2346,35 +2313,6 @@ const QString OscarSocket::ServerToQString(const char* string, OscarContact *con
 
 	return KopeteMessage::decodeString( string, codec );
 }
-
-
-void OscarSocket::addBuddyToAckMap(const QString &contactName, const QString &groupName, const DWORD id)
-{
-	kdDebug(14150) << k_funcinfo << "Mapping ID " << id << " to buddy " << contactName << endl;
-	AckBuddy buddy;
-	buddy.contactName = contactName;
-	buddy.groupName = groupName;
-	m_ackBuddyMap[id] = buddy;
-}
-
-AckBuddy OscarSocket::ackBuddy(const DWORD id)
-{
-	AckBuddy buddy;
-	QMap<DWORD, AckBuddy>::Iterator it;
-	for (it = m_ackBuddyMap.begin() ; it != m_ackBuddyMap.end() ; it++)
-	{
-		if (it.key() == id)
-		{
-			kdDebug(14150) << k_funcinfo << "Found buddy " << it.data().contactName << ", group " << it.data().groupName << endl;
-			buddy = it.data();
-			m_ackBuddyMap.remove(it);
-			break;
-		}
-	}
-	return(buddy);
-}
-
-
 
 #include "oscarsocket.moc"
 // vim: set noet ts=4 sts=4 sw=4:

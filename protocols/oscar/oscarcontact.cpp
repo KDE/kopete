@@ -57,6 +57,8 @@ OscarContact::OscarContact(const QString& name, const QString& displayName,
 	mMsgManager=0L;
 	mIsServerSide = false;
 	mIgnore = false;
+	mVisibleTo = false;
+	mInvisibleTo = false;
 
 	setFileCapable(false);
 
@@ -198,34 +200,17 @@ void OscarContact::slotDeleteContact()
 	kdDebug(14150) << k_funcinfo << "contact '" << displayName() << "'" << endl;
 
 	QString grpName;
-	if( metaContact() && metaContact()->groups().count() > 0 )
+	if (metaContact())
 	{
-		grpName = metaContact()->groups().first()->displayName();
-		kdDebug(14150) << k_funcinfo <<
-			"searching group by name '" << grpName << "'" << endl;
+		if (metaContact()->groups().count() > 0)
+			grpName = metaContact()->groups().first()->displayName();
 	}
 
-	if ( mAccount->engine()->isICQ() )
+	if (mAccount->engine()->isICQ())
 		mAccount->engine()->sendDelBuddylist(contactName());
-	mAccount->engine()->sendDelBuddy(contactName(), grpName );
 
+	mAccount->engine()->sendDelBuddy(contactName(), grpName);
 	deleteLater();
-}
-
-void OscarContact::slotBlock()
-{
-	QString message = i18n("<qt>Are you sure you want to block %1?" \
-		" Once blocked, this user will no longer be visible to you. The block can be" \
-		" removed later in the preferences dialog.</qt>").arg(mName);
-
-	int result = KMessageBox::questionYesNo(
-		Kopete::UI::Global::mainWidget(),
-		message,
-		i18n("Block User %1?").arg(mName),
-		i18n("Block"));
-
-	if (result == KMessageBox::Yes)
-		mAccount->engine()->sendBlock(mName);
 }
 
 #if 0
@@ -638,6 +623,42 @@ void OscarContact::serialize(QMap<QString, QString> &serializedData,
 //	serializedData["awaitingAuth"] = waitAuth() ? "1" : "0";
 	serializedData["Encoding"] = QString::number(mEncoding);
 	serializedData["groupID"] = QString::number(mGroupId);
+}
+
+void OscarContact::setIgnore(bool val, bool updateServer)
+{
+	mIgnore = val;
+	if (updateServer)
+	{
+		if (val)
+			mAccount->engine()->sendSSIAddIgnore(mName);
+		else
+			mAccount->engine()->sendSSIRemoveIgnore(mName);
+	}
+}
+
+void OscarContact::setVisibleTo(bool val, bool updateServer)
+{
+	mVisibleTo = val;
+	if (updateServer)
+	{
+		if (val)
+			mAccount->engine()->sendSSIAddVisible(mName);
+		else
+			mAccount->engine()->sendSSIRemoveVisible(mName);
+	}
+}
+
+void OscarContact::setInvisibleTo(bool val, bool updateServer)
+{
+	mInvisibleTo = val;
+	if (updateServer)
+	{
+		if (val)
+			mAccount->engine()->sendSSIAddInvisible(mName);
+		else
+			mAccount->engine()->sendSSIRemoveInvisible(mName);
+	}
 }
 
 #include "oscarcontact.moc"

@@ -23,6 +23,7 @@
 #include <qapplication.h>
 
 #include <kdebug.h>
+#include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 
@@ -247,8 +248,18 @@ QPtrList<KAction> *ICQContact::customContextMenuActions()
 			this, SLOT(slotRequestAuth()), this, "actionRequestAuth");
 		actionSendAuth = new KAction(i18n("&Send Authorization"), "mail_forward", 0,
 			this, SLOT(slotSendAuth()), this, "actionSendAuth");
+
 		actionIgnore = new KToggleAction(i18n("&Ignore"), "", 0,
 			this, SLOT(slotIgnore()), this, "actionIgnore");
+		actionVisibleTo = new KToggleAction(i18n("&Visible To"), "", 0,
+			this, SLOT(slotVisibleTo()), this, "actionVisibleTo");
+		actionInvisibleTo = new KToggleAction(i18n("&Invisible To"), "", 0,
+			this, SLOT(slotInvisibleTo()), this, "actionInvisibleTo");
+	}
+	else
+	{
+		actionReadAwayMessage->setText(awTxt);
+		actionReadAwayMessage->setIconSet(SmallIconSet(awIcn));
 	}
 
 	//TODO: Only enable this if waitAuth is set
@@ -256,14 +267,16 @@ QPtrList<KAction> *ICQContact::customContextMenuActions()
 	actionSendAuth->setEnabled(account()->isConnected());
 	actionReadAwayMessage->setEnabled(status != OSCAR_OFFLINE && status != OSCAR_ONLINE);
 
-	// TODO: implement changing its value
-	actionIgnore->setEnabled(false);
 	actionIgnore->setChecked(mIgnore);
+	actionVisibleTo->setChecked(mVisibleTo);
+	actionInvisibleTo->setChecked(mInvisibleTo);
 
 	actionCollection->append(actionRequestAuth);
 	actionCollection->append(actionSendAuth);
 	actionCollection->append(actionReadAwayMessage);
 	actionCollection->append(actionIgnore);
+	actionCollection->append(actionVisibleTo);
+	actionCollection->append(actionInvisibleTo);
 
 	return actionCollection;
 }
@@ -586,9 +599,24 @@ void ICQContact::slotSnacFailed(WORD snacID)
 
 void ICQContact::slotIgnore()
 {
-	kdDebug(14150) << "TODO" << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"Called; ignore = " << actionIgnore->isChecked() << endl;
+	setIgnore(actionIgnore->isChecked(), true);
 }
 
+void ICQContact::slotVisibleTo()
+{
+	kdDebug(14150) << k_funcinfo <<
+		"Called; visible = " << actionVisibleTo->isChecked() << endl;
+	setVisibleTo(actionVisibleTo->isChecked(), true);
+}
+
+void ICQContact::slotInvisibleTo()
+{
+	kdDebug(14150) << k_funcinfo <<
+		"Called; invisible = " << actionInvisibleTo->isChecked() << endl;
+	setInvisibleTo(actionInvisibleTo->isChecked(), true);
+}
 
 #include "icqcontact.moc"
 // vim: set noet ts=4 sts=4 sw=4:

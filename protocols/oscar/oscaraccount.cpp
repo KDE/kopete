@@ -423,6 +423,8 @@ void OscarAccount::slotGotServerBuddyList()
 	//groups are added. Add the contacts
 	QPtrListIterator<SSI> bit( engine()->ssiData() );
 	QString groupName;
+	OscarContact* contact = 0;
+
 	for (; bit.current(); ++bit)
 	{
 		switch (bit.current()->type)
@@ -430,22 +432,22 @@ void OscarAccount::slotGotServerBuddyList()
 			case ROSTER_CONTACT:
 			{ //active contact on SSI
 				SSI* ssiGroup = engine()->ssiData().findGroup( bit.current()->gid );
-				if ( ssiGroup )
+				if (ssiGroup==0)
+				{
+					kdDebug(14150) << k_funcinfo <<
+						"ssiGroup invalid for some reason. Using group name 'Buddies'" << endl;
+					groupName = i18n("Buddies");
+				}
+				else
 				{
 					/*kdDebug(14150) << k_funcinfo <<
 						"ssiGroup is valid using group name = '" << ssiGroup->name << "'" << endl;
 					*/
 					groupName = ssiGroup->name;
 				}
-				else
-				{
-					kdDebug(14150) << k_funcinfo <<
-						"ssiGroup invalid for some reason. Using group name 'Buddies'" << endl;
-					groupName = i18n("Buddies");
-				}
 
-				OscarContact* contact = static_cast<OscarContact*> (contacts()[tocNormalize(bit.current()->name)]);
-				if ( !contact )
+				contact = static_cast<OscarContact*> (contacts()[tocNormalize(bit.current()->name)]);
+				if (contact == 0)
 				{
 					kdDebug(14150) << k_funcinfo "Adding SSI contact '" <<
 						bit.current()->name << "' to contact list" << endl;
@@ -456,15 +458,39 @@ void OscarAccount::slotGotServerBuddyList()
 				break;
 			}
 
-			case ROSTER_VISIBLE: // a contact on the visible list
-				break;
-			case ROSTER_INVISIBLE:// a contact on the invisible/ignore list
+			case ROSTER_VISIBLE: // a contact on the allow(AIM) / visible(ICQ) list
 			{
-				OscarContact* contact = static_cast<OscarContact*> (contacts()[tocNormalize(bit.current()->name)]);
-				if (contact)
+				contact = static_cast<OscarContact*> (contacts()[tocNormalize(bit.current()->name)]);
+				if (contact != 0)
 				{
 					kdDebug(14150) << k_funcinfo <<
-						"Setting IGNORE flag on contact '" << contact->displayName() << "'" << endl;
+						"Setting VISIBLE TO flag on contact '" << contact->displayName() << "'" << endl;
+					contact->setVisibleTo(true);
+				}
+				break;
+			}
+
+			case ROSTER_INVISIBLE:// a contact on the block(AIM) / invisible(ICQ) list
+			{
+				contact = static_cast<OscarContact*> (contacts()[tocNormalize(bit.current()->name)]);
+				if (contact != 0)
+				{
+					kdDebug(14150) << k_funcinfo <<
+						"Setting INVISIBLE flag on contact '" <<
+						contact->displayName() << "'" << endl;
+					contact->setInvisibleTo(true);
+				}
+				break;
+			}
+
+			case ROSTER_IGNORE: // a contact on the ignore list (ICQ only?)
+			{
+				contact = static_cast<OscarContact*> (contacts()[tocNormalize(bit.current()->name)]);
+				if (contact != 0)
+				{
+					kdDebug(14150) << k_funcinfo <<
+						"Setting IGNORE flag on contact '" <<
+						contact->displayName() << "'" << endl;
 					contact->setIgnore(true);
 				}
 				break;

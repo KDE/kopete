@@ -15,42 +15,79 @@
 */
 
 #include "oscarsocket.h"
-//#include "rateclass.h"
 #include "oscardebug.h"
-
-//#include <stdlib.h>
-//#include <netinet/in.h> // for htonl()
-
 #include "oscaraccount.h"
 
-//#include <qobject.h>
-//#include <qtextcodec.h>
-//#include <qtimer.h>
-
 #include <kdebug.h>
+
+const WORD CLI_SSI_CHECKOUT = 0x0005;
+const WORD CLI_SSIxADD = 0x0008;
+const WORD CLI_SSIxUPDATE = 0x0009;
+const WORD CLI_SSIxDELETE = 0x000a;
+const WORD CLI_SSI_EDIT_BEGIN = 0x0011;
+const WORD CLI_SSI_EDIT_END = 0x0012;
+
+
+
+// SNAC(19,02)
+void OscarSocket::sendSSIRightsRequest()
+{
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_REQLISTS)" << endl;
+	Buffer outbuf;
+	outbuf.addSnac(0x0013,0x0002,0x0000,0x00000002);
+	sendBuf(outbuf,0x02);
+}
+
+
+// SNAC(19,03) SRV_SSI_RIGHTS_REPLY
+// http://iserverd.khstu.ru/oscar/snac_13_03.html
+void OscarSocket::parseSSIRights(Buffer &/*inbuf*/)
+{
+	kdDebug(14150) << k_funcinfo << "RECV (SRV_REPLYLISTS) IGNORING" << endl;
+	//List of TLV's
+	//TLV of type 4 contains a bunch of words, representing maximums
+	// word 0 of TLV 4 data: max contacts
+	// word 1 of TLV 4 data: max groups
+	// word 2 of TLV 4 data: max visible-list entries
+	// word 3 of TLV 4 data: max invisible-list entries
+	// word 4 of TLV 4 data: max vis/invis bitmasks
+	// word 5 of TLV 4 data: max presence info fields
+
+	gotAllRights++;
+	if (gotAllRights==7)
+	{
+		kdDebug(14150) << k_funcinfo "gotAllRights==7" << endl;
+		sendInfo();
+	}
+}
+
+
+// SNAC(19,04)
+void OscarSocket::sendSSIRequest()
+{
+	kdDebug(14150) << "SEND (CLI_REQROSTER), " <<
+		"requesting serverside contactlist for the FIRST time" << endl;
+	Buffer outbuf;
+	outbuf.addSnac(0x0013,0x0004,0x0000,0x00020004);
+	sendBuf(outbuf,0x02);
+}
+
 
 // SNAC(19,05)
 void OscarSocket::sendRosterRequest()
 {
-	kdDebug(14150) << k_funcinfo << "SEND (CLI_CHECKROSTER) Requesting SSI data" << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"SEND (CLI_CHECKROSTER) Requesting SSI data" << endl;
 	Buffer outbuf;
-	outbuf.addSnac(0x0013,0x0005,0x0000,0x00000000);
+	outbuf.addSnac(OSCAR_FAM_19,CLI_SSI_CHECKOUT,0x0000,0x00000000);
 	outbuf.addDWord(0x00000000); // FIXME: contactlist timestamp
 	outbuf.addWord(0x0000); // FIXME: contactlist length, same as first Word gotten in parseSSIData
 	sendBuf(outbuf,0x02);
 }
 
 
-// SNAC(19,07)
-void OscarSocket::sendSSIActivate(void)
-{
-	kdDebug(14150) << k_funcinfo << "SEND (CLI_ROSTERACK), sending SSI Activate" << endl;
-	Buffer outbuf;
-	outbuf.addSnac(0x0013,0x0007,0x0000,0x00000000);
-	sendBuf(outbuf,0x02);
-}
-
-
+// SNAC(19,06) SRV_SSIxREPLY
+// http://iserverd.khstu.ru/oscar/snac_13_06.html
 void OscarSocket::parseSSIData(Buffer &inbuf)
 {
 	unsigned int length = 0;
@@ -102,21 +139,11 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 				break;
 			}
 
-			case ROSTER_VISIBLE: // TODO permit buddy list AKA visible list
-			{
-				kdDebug(14150) << k_funcinfo <<
-					"TODO: Add Contact '" << ssi->name <<
-					"' to VISIBLE/ALLOW list." << endl;
+			case ROSTER_VISIBLE: // permit buddy list AKA visible list
 				break;
-			}
 
-			case ROSTER_INVISIBLE: // TODO deny buddy AKA invisible list
-			{
-				kdDebug(14150) << k_funcinfo <<
-					 "TODO: Add contact '" << ssi->name << "'"
-					<< " to INVISIBLE/DENY list." << endl;
+			case ROSTER_INVISIBLE: // deny buddy AKA invisible list
 				break;
-			}
 
 			case ROSTER_VISIBILITY: // Visibility Setting (probably ICQ only!)
 			{
@@ -127,20 +154,15 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 			case ROSTER_PRESENCE: // Presence info (if others can see your idle status, etc)
 			{
 				kdDebug(14150) << k_funcinfo <<
-					"TODO: Handle ROSTER_PRESENCE" << endl;
+					"TODO: Handle ROSTER_PRESENCE (AIM only)" << endl;
 				break;
 			}
 
 			case ROSTER_ICQSHORTCUT: // Unknown or ICQ2k shortcut bar items
 				break;
 
-			case ROSTER_IGNORE: // TODO contact on ignore list
-			{
-				kdDebug(14150) << k_funcinfo <<
-					 "TODO: add Contact '" << ssi->name <<
-					"' to IGNORE list." << endl;
+			case ROSTER_IGNORE: // Contact on ignore list
 				break;
-			}
 
 			case ROSTER_LASTUPDATE: // Last update date (name: "LastUpdateDate")
 			case ROSTER_NONICQ: // a non-icq contact, no UIN, used to send SMS
@@ -382,6 +404,18 @@ void OscarSocket::parseSSIVisibility(SSI *pSsi)
 				"Allow others to see that I am typing a response" << endl;
 		}
 	} // END if(allowOthers)
+}
+
+
+// SNAC(19,07) CLI_SSI_ACTIVATE
+// http://iserverd.khstu.ru/oscar/snac_13_07.html
+void OscarSocket::sendSSIActivate()
+{
+	kdDebug(14150) << k_funcinfo <<
+		"SEND (CLI_ROSTERACK), sending SSI Activate" << endl;
+	Buffer outbuf;
+	outbuf.addSnac(OSCAR_FAM_19,0x0007,0x0000,0x00000000);
+	sendBuf(outbuf,0x02);
 }
 
 
@@ -700,21 +734,21 @@ DWORD OscarSocket::sendSSIAddModDel(SSI *item, WORD requestType)
 
 	switch(requestType)
 	{
-		case 0x0008:
+		case CLI_SSIxADD:
 		{
 			kdDebug(14150) << k_funcinfo << "SEND (CLI_ADDSTART)" << endl;
 			Buffer addstart;
-			addstart.addSnac(0x0013,0x0011,0x0000,0x00000000);
+			addstart.addSnac(OSCAR_FAM_19,CLI_SSI_EDIT_BEGIN,0x0000,0x00000000);
 			sendBuf(addstart,0x02);
 			kdDebug(14150) << k_funcinfo << "SEND (CLI_ROSTERADD)" << endl;
 			break;
 		}
-		case 0x0009:
+		case CLI_SSIxUPDATE:
 		{
 			kdDebug(14150) << k_funcinfo << "SEND (CLI_ROSTERUPDATE)" << endl;
 			break;
 		}
-		case 0x000a:
+		case CLI_SSIxDELETE:
 		{
 			kdDebug(14150) << k_funcinfo << "SEND (CLI_ROSTERDELETE)" << endl;
 			break;
@@ -727,7 +761,7 @@ DWORD OscarSocket::sendSSIAddModDel(SSI *item, WORD requestType)
 	}
 
 	Buffer outbuf;
-	DWORD reqId = outbuf.addSnac(0x0013,requestType,0x0000,0x00000000);
+	DWORD reqId = outbuf.addSnac(OSCAR_FAM_19,requestType,0x0000,0x00000000);
 	outbuf.addBSTR(item->name.latin1()); // TODO: encoding
 	outbuf.addWord(item->gid); // TAG
 	outbuf.addWord(item->bid); // ID
@@ -742,11 +776,11 @@ DWORD OscarSocket::sendSSIAddModDel(SSI *item, WORD requestType)
 
 	sendBuf(outbuf,0x02);
 
-	if(requestType==0x0008)
+	if(requestType==CLI_SSIxADD)
 	{
 		kdDebug(14150) << k_funcinfo << "SEND (CLI_ADDEND)" << endl;
 		Buffer addend;
-		addend.addSnac(0x0013,0x0012,0x0000,0x00000000);
+		addend.addSnac(OSCAR_FAM_19,CLI_SSI_EDIT_END,0x0000,0x00000000);
 		sendBuf(addend,0x02);
 	}
 	return(reqId);
@@ -781,31 +815,36 @@ void OscarSocket::sendDelBuddy(const QString &budName, const QString &budGroup)
 }
 
 
-void OscarSocket::sendBlock(const QString &sname)
+
+
+
+
+void OscarSocket::sendSSIAddIgnore(const QString &name)
 {
-	SSI *newitem = mSSIData.addInvis(sname);
+	SSI *newitem = mSSIData.addIgnore(name);
 	if (!newitem)
 		return;
 
-	kdDebug(14150) << k_funcinfo << "Adding contact to INVISIBLE list:" << newitem->name << ", gid=" <<
+	kdDebug(14150) << k_funcinfo << "Adding contact to IGNORE list:" <<
+		newitem->name << ", gid=" <<
 		newitem->gid << ", bid=" << newitem->bid << ", type=" <<
 		newitem->type << ", datalength=" << newitem->tlvlength << endl;
 
-	sendSSIAddModDel(newitem, 0x0008);
+	sendSSIAddModDel(newitem, CLI_SSIxADD);
 
 	// FIXME: Use SNAC headers and SSI acks to do this more correctly
-	emit denyAdded(sname);
+	//emit denyAdded(sname);
 }
 
-void OscarSocket::sendRemoveBlock(const QString &sname)
+void OscarSocket::sendSSIRemoveIgnore(const QString &name)
 {
-	kdDebug(14150) << k_funcinfo << "Removing DENY for contact '" <<
-		sname << "'" << endl;
+	kdDebug(14150) << k_funcinfo << "Removing contact '" <<
+		name << "' from IGNORE list" << endl;
 
-	SSI *delitem = mSSIData.findInvis(sname);
+	SSI *delitem = mSSIData.findIgnore(name);
 	if (!delitem)
 	{
-		kdDebug(14150) << k_funcinfo << "Item with name " << sname <<
+		kdDebug(14150) << k_funcinfo << "Item with name " << name <<
 			"not found" << endl;
 		return;
 	}
@@ -815,7 +854,7 @@ void OscarSocket::sendRemoveBlock(const QString &sname)
 		", bid " << delitem->bid << ", type " << delitem->type <<
 		", datalength " << delitem->tlvlength << endl;
 
-	sendSSIAddModDel(delitem,0x000a);
+	sendSSIAddModDel(delitem, CLI_SSIxDELETE);
 
 	if (!mSSIData.remove(delitem))
 	{
@@ -823,11 +862,109 @@ void OscarSocket::sendRemoveBlock(const QString &sname)
 			"delitem was not found in the SSI list" << endl;
 	}
 
-	mSSIData.print();
+	// FIXME: Use SNAC headers and SSI acks to do this more correctly
+	//emit denyRemoved(sname);
+}
+
+
+void OscarSocket::sendSSIAddInvisible(const QString &name)
+{
+	SSI *newitem = mSSIData.addInvisible(name);
+	if (!newitem)
+		return;
+
+	kdDebug(14150) << k_funcinfo << "Adding contact to INVISIBLE list:" <<
+		newitem->name << ", gid=" <<
+		newitem->gid << ", bid=" << newitem->bid << ", type=" <<
+		newitem->type << ", datalength=" << newitem->tlvlength << endl;
+
+	sendSSIAddModDel(newitem, CLI_SSIxADD);
 
 	// FIXME: Use SNAC headers and SSI acks to do this more correctly
-	emit denyRemoved(sname);
+	//emit denyAdded(sname);
 }
+
+void OscarSocket::sendSSIRemoveInvisible(const QString &name)
+{
+	kdDebug(14150) << k_funcinfo << "Removing contact '" <<
+		name << "' from INVISIBLE list" << endl;
+
+	SSI *delitem = mSSIData.findInvisible(name);
+	if (!delitem)
+	{
+		kdDebug(14150) << k_funcinfo << "Item with name " << name <<
+			"not found" << endl;
+		return;
+	}
+
+	kdDebug(14150) << k_funcinfo << "Deleting " << delitem->name <<
+		", gid " << delitem->gid <<
+		", bid " << delitem->bid << ", type " << delitem->type <<
+		", datalength " << delitem->tlvlength << endl;
+
+	sendSSIAddModDel(delitem, CLI_SSIxDELETE);
+
+	if (!mSSIData.remove(delitem))
+	{
+		kdDebug(14150) << k_funcinfo <<
+			"delitem was not found in the SSI list" << endl;
+	}
+
+	// FIXME: Use SNAC headers and SSI acks to do this more correctly
+	//emit denyRemoved(sname);
+}
+
+
+void OscarSocket::sendSSIAddVisible(const QString &name)
+{
+	SSI *newitem = mSSIData.addVisible(name);
+	if (!newitem)
+		return;
+
+	kdDebug(14150) << k_funcinfo << "Adding contact to VISIBLE list:" <<
+		newitem->name << ", gid=" <<
+		newitem->gid << ", bid=" << newitem->bid << ", type=" <<
+		newitem->type << ", datalength=" << newitem->tlvlength << endl;
+
+	sendSSIAddModDel(newitem, CLI_SSIxADD);
+
+	// FIXME: Use SNAC headers and SSI acks to do this more correctly
+	//emit denyAdded(sname);
+}
+
+void OscarSocket::sendSSIRemoveVisible(const QString &name)
+{
+	kdDebug(14150) << k_funcinfo << "Removing contact '" <<
+		name << "' from VISIBLE list" << endl;
+
+	SSI *delitem = mSSIData.findVisible(name);
+	if (!delitem)
+	{
+		kdDebug(14150) << k_funcinfo << "Item with name " << name <<
+			"not found" << endl;
+		return;
+	}
+
+	kdDebug(14150) << k_funcinfo << "Deleting " << delitem->name <<
+		", gid " << delitem->gid <<
+		", bid " << delitem->bid << ", type " << delitem->type <<
+		", datalength " << delitem->tlvlength << endl;
+
+	sendSSIAddModDel(delitem, CLI_SSIxDELETE);
+
+	if (!mSSIData.remove(delitem))
+	{
+		kdDebug(14150) << k_funcinfo <<
+			"delitem was not found in the SSI list" << endl;
+	}
+
+	// FIXME: Use SNAC headers and SSI acks to do this more correctly
+	//emit denyRemoved(sname);
+}
+
+
+
+
 
 
 
@@ -861,11 +998,11 @@ void OscarSocket::sendChangeBuddyGroup(const QString &buddyName,
 		       editEnd;
 
 		// Send CLI_SSI_EDIT_BEGIN
-		editStart.addSnac(0x0013,0x0011,0x0000,0x00000000);
+		editStart.addSnac(OSCAR_FAM_19,0x0011,0x0000,0x00000000);
 		sendBuf(editStart,0x02);
 
 		// Send CLI_SSIxDELETE with the BuddyID and the GroupID, but null screenname
-		delBuddy.addSnac(0x0013,0x000a,0x0000,0x00000000);
+		delBuddy.addSnac(OSCAR_FAM_19,0x000a,0x0000,0x00000000);
 		delBuddy.addBSTR(buddyItem->name.latin1());
 		delBuddy.addWord(buddyItem->gid);
 		delBuddy.addWord(buddyItem->bid);
@@ -877,7 +1014,7 @@ void OscarSocket::sendChangeBuddyGroup(const QString &buddyName,
 		buddyItem->gid = groupItem->gid;
 
 		// Send CLI_SSIxADD with the new buddy group
-		addBuddy.addSnac(0x0013,0x0008,0x0000,0x00000000);
+		addBuddy.addSnac(OSCAR_FAM_19,0x0008,0x0000,0x00000000);
 		addBuddy.addBSTR(buddyItem->name.latin1());
 		addBuddy.addWord(buddyItem->gid);
 		addBuddy.addWord(buddyItem->bid);
@@ -892,7 +1029,7 @@ void OscarSocket::sendChangeBuddyGroup(const QString &buddyName,
 		sendBuf(addBuddy,0x02);
 
 		// Send CLI_SSIxUPDATE for the group
-		changeGroup.addSnac(0x0013,0x0009,0x0000,0x00000000);
+		changeGroup.addSnac(OSCAR_FAM_19,0x0009,0x0000,0x00000000);
 		changeGroup.addBSTR(groupItem->name.latin1());
 		changeGroup.addWord(groupItem->gid);
 		changeGroup.addWord(groupItem->bid);
@@ -902,7 +1039,7 @@ void OscarSocket::sendChangeBuddyGroup(const QString &buddyName,
 		sendBuf(changeGroup,0x02);
 
 		// Send CLI_SSI_EDIT_END
-		editEnd.addSnac(0x0013,0x0012,0x0000,0x00000000);
+		editEnd.addSnac(OSCAR_FAM_19,0x0012,0x0000,0x00000000);
 		sendBuf(editEnd,0x02);
 	}
 	else
@@ -927,9 +1064,9 @@ void OscarSocket::parseSSIAck(Buffer &inbuf, const DWORD reqId)
 
 	OscarContact *contact = 0L;
 
-	SSI* ssiItem = mSSIData.findContact( buddy.contactName, buddy.groupName );
+	SSI* ssiItem = mSSIData.findContact(buddy.contactName, buddy.groupName);
 
-	if ( !buddy.contactName.isEmpty() )
+	if (!buddy.contactName.isEmpty())
 		contact = static_cast<OscarContact*>(mAccount->contacts()[buddy.contactName]);
 
 	switch(result)
@@ -948,20 +1085,50 @@ void OscarSocket::parseSSIAck(Buffer &inbuf, const DWORD reqId)
 			break;
 		case SSIACK_LIMITEXD:
 			kdDebug(14150) << k_funcinfo << "Cannot add item, item limit exceeded." << endl;
-			//FIXME: Remove contact!
 			break;
 		case SSIACK_ICQTOAIM:
 			kdDebug(14150) << k_funcinfo << "Cannot add ICQ contact to AIM list." << endl;
-			//FIXME: Remove contact!
 			break;
 		case SSIACK_NEEDAUTH:
+		{
 			kdDebug(14150) << k_funcinfo << "Cannot add contact because he needs AUTH." << endl;
 			contact->requestAuth();
 			sendAddBuddy(buddy.contactName, buddy.groupName, true);
 			sendAddBuddylist(buddy.contactName);
 			ssiItem->waitingAuth = true;
 			break;
+		}
 		default:
 			kdDebug(14150) << k_funcinfo << "Unknown result " << result << endl;
 	}
+}
+
+
+void OscarSocket::addBuddyToAckMap(const QString &contactName, const QString &groupName, const DWORD id)
+{
+	kdDebug(14150) << k_funcinfo << "Mapping ID " << id <<
+		" to buddy " << contactName << endl;
+
+	AckBuddy buddy;
+	buddy.contactName = contactName;
+	buddy.groupName = groupName;
+	m_ackBuddyMap[id] = buddy;
+}
+
+AckBuddy OscarSocket::ackBuddy(const DWORD id)
+{
+	AckBuddy buddy;
+	QMap<DWORD, AckBuddy>::Iterator it;
+	for (it = m_ackBuddyMap.begin() ; it != m_ackBuddyMap.end() ; it++)
+	{
+		if (it.key() == id)
+		{
+			kdDebug(14150) << k_funcinfo << "Found buddy " <<
+				it.data().contactName << ", group " << it.data().groupName << endl;
+			buddy = it.data();
+			m_ackBuddyMap.remove(it);
+			break;
+		}
+	}
+	return(buddy);
 }
