@@ -2,6 +2,7 @@
     kopeteview.h - View Manager
 
     Copyright (c) 2003      by Jason Keirstead       <jason@keirstead.org>
+    Copyright (c) 2004      by Matt Rogers           <matt.rogers@kdemail.net>
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
@@ -56,11 +57,7 @@ class KopeteView
 		 * @brief Get the message manager
 		 * @return The KopeteMessageManager that the view is in communication with.
 		 */
-		KopeteMessageManager *msgManager();
-		/**
-		 * const version of the above function
-		 */
-		const KopeteMessageManager *msgManager() const;
+		KopeteMessageManager *msgManager() const;
 
 		/**
 		 * @brief Get the view type
@@ -75,6 +72,7 @@ class KopeteView
 		 * displayed. Classes that inherit from KopeteView should make this a slot.
 		 */
 		virtual void appendMessage( KopeteMessage & ) = 0;
+
 		/**
 		 * @brief append multiple messages to the view
 		 *
