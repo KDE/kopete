@@ -65,7 +65,7 @@ void ConnectionStatusPlugin::slotCheckStatus()
 	// netstat -rn in slotProcessStdout() to see if it mentions the
 	// default gateway. If so, we're connected, if not, we're offline
 	m_process = new KProcess;
-	*m_process << "netstat" << "-rn";
+	*m_process << "netstat" << "-r";
 
 	connect( m_process, SIGNAL( receivedStdout( KProcess *, char *, int ) ), this, SLOT( slotProcessStdout( KProcess *, char *, int ) ) );
 	connect( m_process, SIGNAL( processExited( KProcess * ) ), this, SLOT( slotProcessExited( KProcess * ) ) );
