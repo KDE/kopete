@@ -414,7 +414,7 @@ void ChatView::createMembersList(void)
 				QString::fromLatin1("MembersListPolicy") ).toInt() );
 		
 		if( membersStatus == Smart )
-			visibleMembers = ( memberContactMap.count() > 1 );
+			visibleMembers = ( memberContactMap.count() > 2 );
 		else
 			visibleMembers = ( membersStatus == Visible );
 		
@@ -638,7 +638,7 @@ void ChatView::slotContactAdded(const KopeteContact *c, bool surpress)
 
 		if( membersStatus == Smart && membersDock )
 		{
-			bool currStatus = ( memberContactMap.count() > 1 );
+			bool currStatus = ( memberContactMap.count() > 2 );
 			if( currStatus != visibleMembers )
 			{
 				visibleMembers = currStatus;
