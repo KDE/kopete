@@ -211,6 +211,13 @@ Protocol* OnlineStatus::protocol() const
 	return d->protocol;
 }
 
+bool OnlineStatus::isDefinitelyOnline() const
+{
+	if ( status() == Offline || status() == Connecting || status() == Unknown )
+		return false;
+	return true;
+}
+
 QPixmap OnlineStatus::iconFor( const Contact *contact, int size ) const
 {
 	return OnlineStatusManager::self()->cacheLookupByMimeSource( mimeSourceFor( contact, size ) );

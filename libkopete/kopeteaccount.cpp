@@ -359,8 +359,8 @@ void Account::setMyself( Contact *myself )
 void Account::slotOnlineStatusChanged( Contact * /* contact */,
 	const OnlineStatus &newStatus, const OnlineStatus &oldStatus )
 {
-	bool wasOffline = oldStatus.status() == OnlineStatus::Offline || oldStatus.status() == OnlineStatus::Connecting;
-	bool isOffline  = newStatus.status() == OnlineStatus::Offline || newStatus.status() == OnlineStatus::Connecting;
+	bool wasOffline = !oldStatus.isDefinitelyOnline();
+	bool isOffline  = !newStatus.isDefinitelyOnline();
 	
 	if ( wasOffline || newStatus.status() == OnlineStatus::Offline )
 	{
@@ -374,6 +374,9 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 		d->suppressStatusTimer.start( 5000, true );
 	}
 	
+	kdDebug(14010) << k_funcinfo << "account " << d->id << " changed status. was "
+	               << Kopete::OnlineStatus::statusTypeToString(oldStatus.status()) << ", is "
+	               << Kopete::OnlineStatus::statusTypeToString(newStatus.status()) << endl;
 	if ( wasOffline != isOffline )
 		emit isConnectedChanged();
 }

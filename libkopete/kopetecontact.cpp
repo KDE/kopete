@@ -545,10 +545,7 @@ QPtrList<KAction> *Contact::customContextMenuActions( ChatSession * /* manager *
 
 bool Contact::isOnline() const
 {
-	Kopete::OnlineStatus::StatusType type = onlineStatus().status();
-	return type != OnlineStatus::Offline
-	    && type != OnlineStatus::Connecting
-	    && type != OnlineStatus::Unknown;
+	return onlineStatus().isDefinitelyOnline();
 }
 
 

@@ -258,6 +258,13 @@ public:
 	 * \brief Return the protocol this applies to
 	 */
 	Protocol* protocol() const;
+	
+	/**
+	 * @return @c true if this a contact with this status is definitely online,
+	 *         @c false if the contact is Offline, Connecting or Unknown.
+	 */
+	bool isDefinitelyOnline() const;
+	
 
 	/**
 	 * \brief Return a status icon generated for the given Contact
