@@ -272,13 +272,15 @@ void IRCChannelContact::setTopic(const QString &topic)
 	}
 }
 
-void IRCChannelContact::slotTopicChanged(const QString &channel, const QString &nick, const QString &newtopic)
+void IRCChannelContact::slotTopicChanged(const QString &nick, const QString &channel, const QString &newtopic)
 {
+	kdDebug(14120) << k_funcinfo << "Chan:" << channel << ", nick:" << nick << ", topic:" << newtopic << endl;
 	if( m_isConnected && m_nickName.lower() == channel.lower() )
 	{
 		mTopic = newtopic;
 		manager()->setDisplayName( caption() );
-		KopeteMessage msg((KopeteContact *)this, mMyself, i18n("%1 has changed the topic to %2").arg(nick).arg(newtopic), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+		KopeteMessage msg((KopeteContact *)this, mMyself,
+			i18n("%1 has changed the topic to: %2").arg(nick).arg(newtopic), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 		msg.setImportance(KopeteMessage::Low); //set the importance manualy to low
 		appendMessage(msg);
 	}

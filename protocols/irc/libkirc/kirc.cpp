@@ -662,7 +662,7 @@ bool KIRC::topicChange(const KIRCMessage &msg)
 	/* The topic of a channel changed. emit the channel, new topic, and the person who changed it.
 	 * "<channel> [ <topic> ]"
 	 */
-	emit incomingTopicChange(msg.prefix(), msg.args()[0], msg.suffix());
+	emit incomingTopicChange(msg.prefix().section('!',0,0), msg.args()[0], msg.suffix());
 	return true;
 }
 /*

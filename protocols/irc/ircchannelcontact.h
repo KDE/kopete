@@ -108,7 +108,7 @@ private slots:
 	void slotUserKicked(const QString &nick, const QString &channel,
 		const QString &nickKicked, const QString &reason);
 	void slotChannelTopic(const QString &channel, const QString &topic);
-	void slotTopicChanged(const QString &channel, const QString &nick, const QString &newtopic);
+	void slotTopicChanged(const QString &nick, const QString &channel, const QString &newtopic);
 	void slotNamesList(const QString &channel, const QStringList &nicknames);
 	void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 	void slotIncomingChannelMode( const QString &channel, const QString &mode, const QString &params );
