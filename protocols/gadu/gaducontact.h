@@ -69,7 +69,6 @@ public slots:
     void slotUserInfo();
     void slotDeleteContact();
     void slotViewHistory();
-    void removeThisUser();
     void messageReceived( const KopeteMessage& );
     void messageSend( const KopeteMessage&, KopeteMessageManager* );
     void slotCloseHistoryDialog();

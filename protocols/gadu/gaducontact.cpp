@@ -265,7 +265,7 @@ GaduContact::msgManager()
     } else {
         msgManager_ = kopeteapp->sessionFactory()->create( GaduProtocol::protocol()->myself(),
                                                            thisContact_, GaduProtocol::protocol(),
-                                                           "gadu_logs/" + id() + ".log",
+                                                           QString("gadu_logs/%1.log ").arg( id() ),
                                                            KopeteMessageManager::ChatWindow );
         connect( msgManager_, SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager*)),
                  this, SLOT(messageSend(const KopeteMessage&, KopeteMessageManager*)) );
@@ -338,13 +338,9 @@ GaduContact::slotCloseHistoryDialog()
 }
 
 void
-GaduContact::removeThisUser()
-{
-}
-
-void
 GaduContact::slotDeleteContact()
 {
+    GaduProtocol::protocol()->removeContact( this );
 }
 
 #include "gaducontact.moc"

@@ -265,8 +265,16 @@ GaduProtocol::addContact( const QString& uin, const QString& nick,
 void
 GaduProtocol::removeContact( const GaduContact* c )
 {
-    const uin_t u = c->uin();
-    contactsMap_.remove( u );
+    if ( isConnected() ) {
+        const uin_t u = c->uin();
+        session_->removeNotify( u );
+        contactsMap_.remove( u );
+        delete c;
+    } else {
+        KMessageBox::error( 0l,
+                            i18n( "<qt>Please go online to remove contact</qt>" ),
+                            i18n( "Gadu Plugin" ));
+    }
 }
 
 void
@@ -430,7 +438,8 @@ GaduProtocol::notify( struct gg_event* e )
 
     struct gg_notify_reply *n = e->event.notify;
 
-    while( n->uin ) {
+    while( n && n->uin ) {
+        kdDebug()<<"### NOTIFY "<<n->uin<<endl;
         if ( !(c=contactsMap_.find(n->uin).data()) ) {
             ++n;
             continue;
