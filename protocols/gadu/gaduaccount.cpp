@@ -349,7 +349,8 @@ GaduAccount::createContact( const QString& contactId, Kopete::MetaContact* paren
 void
 GaduAccount::changeStatus( const Kopete::OnlineStatus& status, const QString& descr )
 {
-	kdDebug(14101) << "### Status = " << p->session_->isConnected() << endl;
+	kdDebug(14100) << "### Status = " << p->session_->isConnected() << endl;
+	kdDebug(14100) << "### Status description = \"" << descr << "\"" << endl;
 
 	if ( GG_S_NA( status.internalStatus() ) ) {
 		if ( !p->session_->isConnected() ) {
