@@ -9,7 +9,9 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+#include "client.h"
 #include "response.h"
+#include "userdetailsmanager.h"
 
 #include "getdetailstask.h"
 

@@ -27,7 +27,7 @@ Q_OBJECT
 		EventTask( Task *parent );
 	protected:
 		bool forMe( Transfer * transfer, EventTransfer *& event ) const;
-		void registerEvent( EventTransfer::Event e );
+		void registerEvent( GroupWise::Event e );
 	private:
 		QValueList<int> m_eventCodes;
 };

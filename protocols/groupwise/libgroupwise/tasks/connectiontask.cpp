@@ -13,8 +13,8 @@
 
 ConnectionTask::ConnectionTask(Task* parent): EventTask(parent)
 {
-	registerEvent( EventTransfer::UserDisconnect );
-	registerEvent( EventTransfer::ServerDisconnect );
+	registerEvent( GroupWise::UserDisconnect );
+	registerEvent( GroupWise::ServerDisconnect );
 }
 
 
@@ -30,10 +30,10 @@ bool ConnectionTask::take( Transfer * transfer )
 		qDebug( "Got a connection event:" );
 		switch ( incomingEvent->event() )
 		{
-			case EventTransfer::UserDisconnect:
+			case GroupWise::UserDisconnect:
 				emit connectedElsewhere();
 				break;
-			case EventTransfer::ServerDisconnect:
+			case GroupWise::ServerDisconnect:
 				emit serverDisconnect();
 				break;
 		}

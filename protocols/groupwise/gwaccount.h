@@ -197,6 +197,10 @@ protected slots:
 	 */
 	void receiveAccountDetails( const ContactDetails & details );
 	/**
+	 * Receive a temporary contact (not on our contact list but is messaging us or involved in a conversation that we have been invited to.
+	 */
+	void receiveTemporaryContact( const ContactDetails & details );
+	/**
 	 * The TLS handshake has happened, check the result
 	 */
 	void slotTLSHandshaken();

@@ -12,6 +12,12 @@
 #ifndef USERDETAILSMANAGER_H
 #define USERDETAILSMANAGER_H
 
+#include <qobject.h>
+#include <qstringlist.h>
+
+#include "gwerror.h"
+class Client;
+
 /**
 Several client event handling processes require that a contact's details are available before exposing the event to the user.  This class is responsible for issuing details requests, tracking which users the client already has received details for, and signalling when details have been received.  The manager allows multiple interleaved get details requests to be replaced by a single request.
 
@@ -27,6 +33,10 @@ public:
 	 * List of DNs that we have already received details for
 	 */
 	QStringList knownDNs();
+	/**
+	 * Check if we have details for a single DN
+	 */
+	bool known( const QString &dn );
 	/** 
 	 * Add a DN to the list of DNs that we have details for.  This SHOULD be called when receiving details in contactlist receive and manipulation, to prevent unnecessary additional requests.
 	 */

@@ -18,7 +18,7 @@ EventTask::EventTask( Task * parent )
 {
 }
 
-void EventTask::registerEvent( EventTransfer::Event e )
+void EventTask::registerEvent( GroupWise::Event e )
 {
 	m_eventCodes.append( e );
 }

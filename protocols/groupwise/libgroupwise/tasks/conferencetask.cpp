@@ -9,22 +9,30 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+
+#include "client.h"
+#include "userdetailsmanager.h"
+
 #include "conferencetask.h"
 
 ConferenceTask::ConferenceTask( Task* parent )
  : EventTask( parent )
 {
 	// register all the events that this task monitors
-	registerEvent( EventTransfer::ConferenceClosed );
-	registerEvent( EventTransfer::ConferenceJoined );
-	registerEvent( EventTransfer::ConferenceLeft );
-	registerEvent( EventTransfer::ReceiveMessage );
-	registerEvent( EventTransfer::UserTyping );
-	registerEvent( EventTransfer::UserNotTyping );
-	registerEvent( EventTransfer::ConferenceInvite );
-	registerEvent( EventTransfer::ConferenceInviteNotify );
-	registerEvent( EventTransfer::ConferenceReject );
-	registerEvent( EventTransfer::ReceiveAutoReply );
+	registerEvent( GroupWise::ConferenceClosed );
+	registerEvent( GroupWise::ConferenceJoined );
+	registerEvent( GroupWise::ConferenceLeft );
+	registerEvent( GroupWise::ReceiveMessage );
+	registerEvent( GroupWise::UserTyping );
+	registerEvent( GroupWise::UserNotTyping );
+	registerEvent( GroupWise::ConferenceInvite );
+	registerEvent( GroupWise::ConferenceInviteNotify );
+	registerEvent( GroupWise::ConferenceReject );
+	registerEvent( GroupWise::ReceiveAutoReply );
+	
+	// listen to the UserDetailsManager telling us that user details are available
+	connect( client()->userDetailsManager(), SIGNAL( gotContactDetails( const GroupWise::ContactDetails & ) ), 
+		SLOT( slotReceiveUserDetails( const GroupWise::ContactDetails & ) ) );
 }
 
 
@@ -48,6 +56,7 @@ bool ConferenceTask::take( Transfer * transfer )
 		din.setByteOrder( QDataStream::LittleEndian );
 		
 		ConferenceEvent event;
+		event.type = (GroupWise::Event)incomingEvent->event();
 		event.timeStamp = incomingEvent->timeStamp();
 		event.user = incomingEvent->source();
 		event.flags = 0;
@@ -60,74 +69,74 @@ bool ConferenceTask::take( Transfer * transfer )
 		//else 
 			// set error protocolError
 
-		switch ( incomingEvent->event() )
+		switch ( event.type )
 		{
-			case EventTransfer::ConferenceClosed:
+			case GroupWise::ConferenceClosed:
 				qDebug( "ConferenceClosed" );
-				dumpConferenceEvent( event );
 				emit closed( event );
 				break;
-			case EventTransfer::ConferenceJoined:
+			case GroupWise::ConferenceJoined:
 				event.flags = readFlags( din );
 				qDebug( "ConferenceJoined" );
-				dumpConferenceEvent( event );
-				emit joined( event );
+				if ( !queueWhileAwaitingData( event ) )
+					emit joined( event );
 				break;
-			case EventTransfer::ConferenceLeft:
+			case GroupWise::ConferenceLeft:
 				event.flags = readFlags( din );
 				qDebug( "ConferenceLeft" );
-				dumpConferenceEvent( event );
 				emit left( event );
 				break;
-			case EventTransfer::ReceiveMessage:
+			case GroupWise::ReceiveMessage:
 				event.flags = readFlags( din );
 				event.message = readMessage( din );
 				qDebug( "ReceiveMessage" );
-				dumpConferenceEvent( event );
 				qDebug( "message: %s\n", event.message.ascii() );
-				emit message( event );
+				if ( !queueWhileAwaitingData( event ) )
+					emit message( event );
 				break;
-			case EventTransfer::UserTyping:
+			case GroupWise::UserTyping:
 				qDebug( "UserTyping" );
-				dumpConferenceEvent( event );
 				emit typing( event );
 				break;
-			case EventTransfer::UserNotTyping:
+			case GroupWise::UserNotTyping:
 				qDebug( "UserNotTyping" );
-				dumpConferenceEvent( event );
 				emit notTyping( event );
 				break;
-			case EventTransfer::ConferenceInvite:
+			case GroupWise::ConferenceInvite:
 				event.message = readMessage( din );
 				qDebug( "ConferenceInvite" );
-				dumpConferenceEvent( event );
 				qDebug( "message: %s\n", event.message.ascii() );
-				emit invited( event );
+				if ( !queueWhileAwaitingData( event ) )
+					emit invited( event );
 				break;
-			case EventTransfer::ConferenceInviteNotify:
+			case GroupWise::ConferenceInviteNotify:
 				qDebug( "ConferenceInviteNotify" );
-				dumpConferenceEvent( event );
-				emit otherInvited( event );
+				if ( !queueWhileAwaitingData( event ) )
+					emit otherInvited( event );
 				break;
-			case EventTransfer::ConferenceReject:
+			case GroupWise::ConferenceReject:
 				qDebug( "ConferenceReject" );
-				dumpConferenceEvent( event );
 				emit invitationRejected( event );
 				break;
-			case EventTransfer::ReceiveAutoReply:
+			case GroupWise::ReceiveAutoReply:
 				event.flags = readFlags( din );
 				event.message = readMessage( din );
 				qDebug( "ReceiveAutoReply" );
-				dumpConferenceEvent( event );
 				qDebug( "message: %s\n", event.message.ascii() );
 				emit autoReply( event );
 				break;
 			default:
 				qDebug( "WARNING: didn't handle registered event %i, on conference %s\n", incomingEvent->event(), event.guid.ascii() );
 		}
+		dumpConferenceEvent( event );
+
 		return true;
 	}
 	return false;
+}
+
+void ConferenceTask::handleEvent( GroupWise::ConferenceEvent & event )
+{
 }
 
 Q_UINT32 ConferenceTask::readFlags( QDataStream & din )
@@ -156,6 +165,68 @@ QString ConferenceTask::readMessage( QDataStream & din )
 	 else
 		setError( GroupWise::Protocol );
 	return message;
+}
+
+void ConferenceTask::slotReceiveUserDetails( const GroupWise::ContactDetails & details )
+{
+	qDebug( "ConferenceTask::slotReceiveUserDetails()" );
+	
+	// emit the details, so anything waiting for them will update itself
+	//client()-›contactUserDetailsReceived(details);
+	// dequeue any events which are deliverable now we have these details 
+	QValueListIterator< ConferenceEvent > end = m_pendingEvents.end();
+	QValueListIterator< ConferenceEvent > it = m_pendingEvents.begin();
+	while ( it != end )
+	{
+		QValueListIterator< ConferenceEvent > current = it;
+		++it;
+		// if the details relate to event, try again to handle it
+		if ( details.dn == (*current).user )
+		{
+			qDebug( " - got details for event involving %s", (*current).user.ascii() );
+			emit temporaryContact( details );
+			switch ( (*current).type )
+			{
+				case GroupWise::ConferenceJoined:
+					qDebug( "ConferenceJoined" );
+					emit joined( *current );
+					break;
+				case GroupWise::ReceiveMessage:
+					qDebug( "ReceiveMessage" );
+					emit message( *current );
+					break;
+				case GroupWise::ConferenceInvite:
+					qDebug( "ConferenceInvite" );
+					emit invited( *current );
+					break;
+				case GroupWise::ConferenceInviteNotify:
+					qDebug( "ConferenceInviteNotify" );
+					emit otherInvited( *current );
+					break;
+				default:
+					qDebug( "Queued an event while waiting for more data, but didn't write a handler for the dequeue!" );
+			}
+			m_pendingEvents.remove( current );
+			qDebug( "Event handled - now %i pending events", m_pendingEvents.count() );
+		}
+	}
+}
+
+
+bool ConferenceTask::queueWhileAwaitingData( const ConferenceEvent & event )
+{
+	if ( client()->userDetailsManager()->known( event.user ) )
+	{
+		qDebug( "ConferenceTask::queueWhileAwaitingData() -	source is known!" );
+		return false;
+	}
+	else
+	{
+		qDebug( "ConferenceTask::queueWhileAwaitingData() - queueing event involving %s", event.user.ascii() );
+		client()->userDetailsManager()->requestDetails( event.user );
+		m_pendingEvents.append( event );
+		return true;
+	}
 }
 
 #include "conferencetask.moc"

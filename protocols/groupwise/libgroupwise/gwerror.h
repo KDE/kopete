@@ -44,6 +44,28 @@ namespace GroupWise
 					FolderExists
 				};
 	
+	enum Event {		InvalidRecipient 		= 101,
+						UndeliverableStatus 	= 102,
+						StatusChange 			= 103,
+						ContactAdd 				= 104,
+						ConferenceClosed 		= 105,
+						ConferenceJoined 		= 106,
+						ConferenceLeft 			= 107,
+						ReceiveMessage			= 108,
+						ReceiveFile				= 109,
+						UserTyping				= 112,
+						UserNotTyping			= 113,
+						UserDisconnect			= 114,
+						ServerDisconnect		= 115,
+						ConverenceRename		= 116,
+						ConferenceInvite		= 117,
+						ConferenceInviteNotify	= 118,
+						ConferenceReject		= 119,
+						ReceiveAutoReply		= 121,
+						Start					= InvalidRecipient,
+						Stop					= ReceiveAutoReply
+				};
+	
 	enum ConferenceFlags { 	Logging = 0x00000001,
 							Secure  = 0x00000002,
 							Closed  = 0x10000000
@@ -52,6 +74,7 @@ namespace GroupWise
 	// helpful structs used to pass data between the client library and the application using it
 	struct ConferenceEvent 
 	{
+		Event type;
 		QString guid;
 		QString user;
 		QDateTime timeStamp;

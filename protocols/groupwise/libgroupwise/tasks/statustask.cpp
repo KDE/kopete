@@ -13,7 +13,7 @@
 
 StatusTask::StatusTask(Task* parent): EventTask(parent)
 {
-	registerEvent( EventTransfer::StatusChange );
+	registerEvent( GroupWise::StatusChange );
 }
 
 StatusTask::~StatusTask()

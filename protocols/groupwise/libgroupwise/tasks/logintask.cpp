@@ -11,6 +11,7 @@
 //
 #include "client.h"
 #include "response.h"
+#include "userdetailsmanager.h"
 
 #include "logintask.h"
 
@@ -118,11 +119,15 @@ void LoginTask::extractContact( Field::MultiField * contactContainer )
 	current = fl.findSingleField( NM_A_SZ_DISPLAY_NAME );
 	contact.displayName = current->value().toString();
 	current = fl.findSingleField( NM_A_SZ_DN );
-	contact.dn = current->value().toString();
+	contact.dn = current->value().toString().lower();
 	emit gotContact( contact );
 	Field::MultiField * details = fl.findMultiField( NM_A_FA_USER_DETAILS );
 	Field::FieldList detailsFields = details->fields();
 	ContactDetails cd = extractUserDetails( detailsFields );
+	
+	// tell the UserDetailsManager that we have this contact's details
+	client()->userDetailsManager()->addContact( contact.dn );
+	
 	cd.dn = contact.dn.lower(); // HACK: lowercased DN
 	emit gotContactUserDetails( cd );
 }

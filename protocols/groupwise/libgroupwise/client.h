@@ -260,8 +260,11 @@ Q_OBJECT
 		/**
 		 * An attempt to create a conference failed.
 		 */
-		 void conferenceCreationFailed( const int clientId, const int error );
-		
+		void conferenceCreationFailed( const int clientId, const int error );
+		/**
+		 * We received a temporary contact related to a conference 
+		 */
+		void tempContactReceived( const ContactDetails & );
 		/** CONTACT LIST MANAGEMENT EVENTS */
 		/** TBD! */
 	protected:

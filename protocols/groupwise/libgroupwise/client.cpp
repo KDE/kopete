@@ -168,6 +168,7 @@ void Client::initialiseEventTasks()
 	connect( ct, SIGNAL( otherInvited( const ConferenceEvent & ) ), SIGNAL( inviteNotifyReceived( const ConferenceEvent & ) ) );
 	connect( ct, SIGNAL( invitationRejected( const ConferenceEvent & ) ), SIGNAL( invitationDeclined( const ConferenceEvent & ) ) );
 	connect( ct, SIGNAL( closed( const ConferenceEvent & ) ), SIGNAL( conferenceClosed( const ConferenceEvent & ) ) );
+	connect( ct, SIGNAL( temporaryContact( const ContactDetails & ) ), SIGNAL( tempContactReceived( const ContactDetails & ) ) );
 	// TODO: connect autoreply
 	// The ConnectionTask handles incoming connection events
 	ConnectionTask* cont = new ConnectionTask( d->root );
@@ -271,6 +272,7 @@ void Client::sst_statusChanged()
 
 void Client::ct_messageReceived( const ConferenceEvent & messageEvent )
 {
+	qDebug( "parsing received message's RTF" );
 	ConferenceEvent transformedEvent = messageEvent;
 	RTF2HTML parser;
 	QString rtf = messageEvent.message;
