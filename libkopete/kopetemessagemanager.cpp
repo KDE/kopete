@@ -88,6 +88,16 @@ KopeteMessageManager::~KopeteMessageManager()
 	delete d;
 }
 
+void KopeteMessageManager::customEvent( QCustomEvent * e )
+{
+	if ( e->type() == (QEvent::User + 1) )
+	{
+		ContactAddedEvent* ce = (ContactAddedEvent*)e;
+		addContact( static_cast<KopeteContact*>( ce->data() ), true );
+	}
+}
+
+
 void KopeteMessageManager::setLogging( bool on )
 {
 	d->mLog = on;
