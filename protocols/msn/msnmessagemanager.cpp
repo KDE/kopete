@@ -218,6 +218,7 @@ void MSNMessageManager::slotMessageSent(const KopeteMessage &message,KopeteMessa
 			m_messagesSent.insert( id, message );
 			KopeteMessage msg2=message;
 			msg2.setBg(QColor()); // BGColor is not send, don't show it on chatwindow
+			msg2.setBody(message.plainBody() , KopeteMessage::PlainText);
 			appendMessage(msg2);
 			// send the own msg to chat window
 		}
