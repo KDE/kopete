@@ -2,10 +2,10 @@
     kopetecontactlist.cpp - Kopete's Contact List backend
 
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
 
-    Copyright (c) 2002      by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -873,6 +873,13 @@ void KopeteContactList::removeMetaContact(KopeteMetaContact *m)
 	{
 		d->selectedMetaContacts.remove( m );
 		setSelectedItems( d->selectedMetaContacts, d->selectedGroups );
+	}
+	
+	//removes subcontact from server here and now.
+	QPtrList<KopeteContact> cts=m->contacts();
+	for( KopeteContact *c = cts.first(); c; c = cts.next() )
+	{
+		c->slotDeleteContact();
 	}
 
 	d->contacts.remove( m );

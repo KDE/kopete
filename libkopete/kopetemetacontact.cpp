@@ -2,10 +2,10 @@
     kopetemetacontact.cpp - Kopete Meta Contact
 
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -94,12 +94,6 @@ void KopeteMetaContact::emitPersistentDataChanged()
 
 KopeteMetaContact::~KopeteMetaContact()
 {
-	for( KopeteContact *c = d->contacts.first(); c; c = d->contacts.next() )
-	{
-		removeContact( c );
-		c->slotDeleteContact();
-	}
-
 	delete d;
 }
 
