@@ -68,14 +68,14 @@ KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId,
 		if( c )
 			return it.current();
 	}
-	//kdDebug() << "*** Not found!" << endl;
-
-	// Contact not found, create a new meta contact
+	/*// Contact not found, create a new meta contact
 	KopeteMetaContact *mc = new KopeteMetaContact();
-	//m_contacts.append( c );
 	KopeteContactList::contactList()->addMetaContact(mc);
+	return mc;*/
 
-	return mc;
+	kdDebug() << "KopeteContactList::findContact  *** Not found!" << endl;
+	return 0L;
+	
 }
 
 

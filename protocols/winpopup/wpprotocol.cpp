@@ -310,25 +310,28 @@ void WPProtocol::slotNewContact(const QString &userID, const QString &name, cons
 
 	KopeteContactList *l = KopeteContactList::contactList();
 	KopeteMetaContact *m = l->findContact( this->id(), QString::null, userID );
-	KopeteContact *c = m->findContact( this->id(), QString::null, userID );
 
-	if( c )
+	if( m )
 	{
 		// Existing contact, update data
 		// FIXME: TODO!
 		kdDebug() << "WPProtocol::slotNewContact: Not implemented: "
 			<< "Meta contact already contains contact " << userID
 			<< "???" << endl;
+			
+		//KopeteContact *c = m->findContact( this->id(), QString::null, userID );
 	}
 	else
 	{
+		m=new KopeteMetaContact();
 		QString protocol = this->id();
 		// New contact
 		WPContact *ourContact = new WPContact( userID, name, realGroup, this, m );
 		m->addContact( ourContact, realGroup );
 
 		contactList[userID] = ourContact;
-		kopeteapp->contactList()->addContact(ourContact, realGroup);
+		//kopeteapp->contactList()->addContact(ourContact, realGroup);//OBSOLETE
+		KopeteContactList::contactList()->addMetaContact(m);
 	}
 }
 

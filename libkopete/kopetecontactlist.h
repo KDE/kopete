@@ -92,6 +92,13 @@ public:
 	 */
 	QStringList groups() const;
 
+  	/**
+	 * add a metacontact into the contact list
+	 * It handles the groups for it.
+	 */
+	void addMetaContact( KopeteMetaContact *c );
+
+	
   void removeMetaContact(KopeteMetaContact *contact);
 
 public slots:
@@ -106,11 +113,6 @@ signals:
 	void removedFromGroup( KopeteMetaContact *mc, const QString &from );
 
 private:
-	/**
-	 * add a metacontact into the contact list
-	 * It handles the groups for it.
-	 */
-	void addMetaContact( KopeteMetaContact *c );
 
 	/**
 	 * Return a XML representation of the contact list

@@ -225,8 +225,15 @@ GaduProtocol::addContact( const QString& uin, const QString& nick,
     KopeteContactList *l = KopeteContactList::contactList();
     KopeteMetaContact *m;
 
-    if ( !parent ) {
+    if ( !parent )
+    {
         m = l->findContact( this->id(), QString::null, uin );
+        if(!m)
+        {
+        	//TODO: make this better
+          m=new KopeteMetaContact();
+          KopeteContactList::contactList()->addMetaContact(m);
+        }
     } else
         m = parent;
 

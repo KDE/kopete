@@ -43,7 +43,13 @@ KopeteMetaContact::~KopeteMetaContact()
 {
 }
 
-void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &/*groups*/ )
+void KopeteMetaContact::addContact( KopeteContact *c )
+{
+	addContact(c,c->groups());
+}
+
+
+void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &groups )
 {
 //	bool isUnknown = false;
 
@@ -71,47 +77,14 @@ void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &/*group
 		 if (displayName() == "")
 			 setDisplayName( c->displayName() );
 
-		// FIXME: Group handling!!!!
-		// Generally, if the groups are explicitly set by the user they
-		// should not be overridden. Until then manage them automatically.
-		// For now just assume an empty group list means override
-        /*
-		if( m_groups.isEmpty() )
+		for( QStringList::ConstIterator it = groups.begin(); it != groups.end(); ++it )
 		{
-			m_groups = groups;
-			for( QStringList::ConstIterator it = groups.begin();
-				it != groups.end(); ++it )
-			{
-				QString group = *it;
-
-				if( group.isEmpty() )
-				{
-					// already added to the unknown group
-					if( isUnknown )
-						continue;
-					group = i18n( "Unknown" );
-					isUnknown = true;
-				}
-				kdDebug() << "KopeteMetaContact::addContact: adding " << c->id()
-					<< " to group " << group << endl;
-
-				QListViewItem *groupLVI =
-					kopeteapp->contactList()->getGroup( group );
-
-				// If the group doesn't exist: create it first
-				if( !groupLVI )
-				{
-					kopeteapp->contactList()->addGroup( group );
-					groupLVI = kopeteapp->contactList()->getGroup( group );
-				}
-
-				kopeteapp->contactList()->addContact(
-					new KopeteMetaContactLVI( this, groupLVI ) );
-			}
+			addToGroup(*it);
 		}
-		*/
+
 	}
 }
+
 
 KopeteContact *KopeteMetaContact::findContact( const QString &protocolId, const QString &identityId, const QString &contactId )
 {

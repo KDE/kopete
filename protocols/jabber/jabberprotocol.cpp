@@ -909,20 +909,27 @@ void JabberProtocol::slotNewContact(JabRosterEntry *contact)
 
 	KopeteContactList *l = KopeteContactList::contactList();
 	KopeteMetaContact *m = l->findContact(this->id(), QString::null, contact->jid);
-	KopeteContact *c = m->findContact(this->id(), QString::null, contact->jid);
 
-	if (c)
+	if (m)
 	{
 		// existing contact, update data
 		kdDebug() << "[JabberProtocol] Contact " << contact->jid << " already exists, updating" << endl;
-		
-		QString tmpGroup = (!group.isNull() ? group : QString("") );
-		((JabberContact *)c)->initContact(contact->jid, contact->nick, tmpGroup);
+		KopeteContact *c = m->findContact(this->id(), QString::null, contact->jid);
+		if(!c)
+		{
+			kdDebug() << "!!!WARNING!!! JabberProtocol::slotNewContact,  One MetaContact was found but it doesn't contains the contact. Please report bug" << endl;
+		}
+		else
+		{
+			QString tmpGroup = (!group.isNull() ? group : QString("") );
+			((JabberContact *)c)->initContact(contact->jid, contact->nick, tmpGroup);
+		}
 	}
 	else
 	{
 		kdDebug() << "[JabberProtocol] Adding contact " << contact->jid << " ..." << endl;
 		
+		m=new KopeteMetaContact();
 		JabberContact *jabContact = new JabberContact(contact->jid, contact->nick, group ? group : QString(""), this, 0L, myContact->userID());
 		contactList[contact->jid] = jabContact;
 
@@ -934,6 +941,9 @@ void JabberProtocol::slotNewContact(JabRosterEntry *contact)
 		m->addContact(jabContact, group ? QStringList(group) : QStringList("Unknown"));
 		
 		metaContactMap.insert(m, jabContact);
+		
+		KopeteContactList::contactList()->addMetaContact(m);
+		
 	}
 
 	slotContactUpdated(contact); /* More kludges! Ugh. */

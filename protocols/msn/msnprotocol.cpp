@@ -868,18 +868,19 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 	{
 		KopeteContactList *l = KopeteContactList::contactList();
 		KopeteMetaContact *m = l->findContact( id(), QString::null, handle );
-		KopeteContact *c = m->findContact( id(), QString::null, handle );
 
-		if( c )
+		if( m )
 		{
 			// Existing contact, update data
 			// FIXME: TODO!
 			kdDebug() << "MSNProtocol::slotContactList: Not implemented: "
 				<< "Meta contact already contains contact " << handle
 				<< "???" << endl;
+			// KopeteContact *c = m->findContact( id(), QString::null, handle );
 		}
 		else
 		{
+			m=new KopeteMetaContact();
 			QString protocolid = this->id();
 
 			MSNContact *msnContact = new MSNContact( protocolid, handle,
@@ -893,8 +894,8 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 			{
 				msnContact->addToGroup( groupName( (*it).toUInt() ) );
 			}
-			c = msnContact;
-			m->addContact( c, msnContact->groups() );
+			m->addContact( msnContact, msnContact->groups() );
+			KopeteContactList::contactList()->addMetaContact(m);
 
 			// FIXME: Try to remove this
 			m_contacts.insert( msnContact->msnId(), msnContact );
@@ -1004,15 +1005,16 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 		{
 			KopeteContactList *l = KopeteContactList::contactList();
 			KopeteMetaContact *m = l->findContact( this->id(), QString::null, handle );
-			KopeteContact *c = m->findContact( this->id(), QString::null, handle );
 
-			if( c )
+			if( m )
 			{
 				// Existing contact, update data
 				// FIXME: TODO!
 				kdDebug() << "MSNProtocol::slotContactAdded: Not implemented: "
 					<< "Meta contact already contains contact " << handle
 					<< "???" << endl;
+
+				//KopeteContact *c = m->findContact( this->id(), QString::null, handle );
 			}
 			else
 			{
@@ -1024,6 +1026,7 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 					SLOT( slotContactDestroyed( KopeteContact * ) ) );
 				m_metaContacts.insert( m, c );
 				m->addContact( c, gn );
+				KopeteContactList::contactList()->addMetaContact(m);
 
 				// FIXME: Try to remove this
 				m_contacts.insert( c->msnId(), c );

@@ -135,27 +135,32 @@ void IRCProtocol::addContact( const QString &groupName, const QString &server, c
 
 	KopeteContactList *l = KopeteContactList::contactList();
 	KopeteMetaContact *m = l->findContact( this->id(), QString::null, serverAndNick );
-	KopeteContact *c = m->findContact( this->id(), QString::null, serverAndNick );
-	if( c )
+
+	if( m )
 	{
 		// Existing contact, update data
 		// FIXME: TODO!
 		kdDebug() << "IRCProtocol::slotContactList: Not implemented: "
 			<< "Meta contact already contains contact " << contact
 			<< "???" << endl;
+
+		//KopeteContact *c = m->findContact( this->id(), QString::null, serverAndNick );
 	}
 	else
 	{
+		m = new KopeteMetaContact();
 		if (serverContact != 0)
 		{
-			(void)new IRCContact(groupName, server, contact, 6667, joinNow, serverContact, m, protocolID);
+			m->addContact( new IRCContact(groupName, server, contact, 6667, joinNow, serverContact, m, protocolID));
 		} else {
 			IRCServerContact *serverItem = m_serverManager->addServer(serverAndNick, connectNow, this);
 			if (serverItem != 0)
 			{
-				(void)new IRCContact(groupName, server, contact, 6667, joinNow, serverItem, m, protocolID);
+				m->addContact(new IRCContact(groupName, server, contact, 6667, joinNow, serverItem, m, protocolID));
 			}
 		}
+		KopeteContactList::contactList()->addMetaContact(m);
+
 	}
 }
 

@@ -261,6 +261,12 @@ void IRCServerContact::incomingPrivMessage(const QString &originating, const QSt
 	if (m_activeContacts.find(queryName.lower()) == m_activeContacts.end())
 	{
 		KopeteMetaContact *m = KopeteContactList::contactList()->findContact(m_protocol->id(), QString::null, queryName);
+		//FIXME: make this better
+		if(!m)
+		{
+			m=new KopeteMetaContact();
+			KopeteContactList::contactList()->addMetaContact(m);
+		}
 		QString protocolID=m_protocol->id();
 		(void)new IRCContact(m_serverName, queryName, 6667, true, this, m, protocolID);
 	}
@@ -277,6 +283,12 @@ void IRCServerContact::incomingPrivAction(const QString &originating, const QStr
 	if (m_activeContacts.find(queryName.lower()) == m_activeContacts.end())
 	{
 		KopeteMetaContact *m = KopeteContactList::contactList()->findContact(m_protocol->id(), QString::null,queryName);
+		//FIXME: make this better
+		if(!m)
+		{
+			m=new KopeteMetaContact();
+			KopeteContactList::contactList()->addMetaContact(m);
+		}
 		QString protocolID=m_protocol->id();
 		(void)new IRCContact(m_serverName, queryName, 6667, true, this, m, protocolID);
 	}
