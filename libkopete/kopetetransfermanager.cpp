@@ -53,14 +53,14 @@ KopeteFileTransferInfo::KopeteFileTransferInfo(  KopeteContact *contact, const Q
 
 KopeteTransfer::KopeteTransfer( const KopeteFileTransferInfo &kfti, QObject *parent, const char *name)
 	: QObject(parent, name),
-	  QListViewItem( KopeteTransferManager::transferManager()->mListView)
+	  QListViewItem( KopeteTransferManager::transferManager()->mListView),
+	  mInfo( kfti )
 {
 //	if (!kfti)
 //		kfti = new KopeteFileTransferInfo(0L, QString("Unknown"), 0, QString("Unknown"), 0); // icky
-	mInfo = kfti;
 	setText(0, kfti.file());
 	setText(1, kfti.recipient());
-	setText(2, QString::number(kfti.size()));
+	setText(2, KGlobal::locale()->formatNumber( kfti.size() ));
 	setText(3, i18n("Waiting"));
 	listView()->setColumnWidth(4, 150);
 	slotPercentCompleted(0);
@@ -169,7 +169,7 @@ int KopeteTransferManager::askIncomingTransfer(  KopeteContact *contact, const Q
 {
 //	if (nextID != 0)
 		nextID++;
-	KopeteFileTransferInfo info(contact, file, size, contact->metaContact()->displayName(), KopeteFileTransferInfo::Incomming , nextID , internalId);
+	KopeteFileTransferInfo info(contact, file, size, contact->metaContact()->displayName(), KopeteFileTransferInfo::Incoming , nextID , internalId);
 
 	KopeteFileConfirmDialog *diag= new KopeteFileConfirmDialog(info, description , this )  ;
 
@@ -186,8 +186,7 @@ void KopeteTransferManager::removeTransfer( unsigned int id )
 	mListView->takeItem(trans);
 	if (mListView->childCount() == 0)
 		hide();
-	if (trans)
-		delete trans;
+	delete trans;
 }
 
 void KopeteTransferManager::slotAbortClicked()

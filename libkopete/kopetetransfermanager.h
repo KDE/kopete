@@ -34,18 +34,17 @@ class KopeteContact;
 class KopeteFileTransferInfo
 {
 public:
-	enum KopeteTransferDirection { Incomming, Outgoing };
+	enum KopeteTransferDirection { Incoming, Outgoing };
 
 	KopeteFileTransferInfo( KopeteContact *, const QString&, const unsigned long size, const QString &,KopeteFileTransferInfo::KopeteTransferDirection di, const unsigned int id, void *internalId=0L);
-	~KopeteFileTransferInfo(){};
-	KopeteFileTransferInfo(){};
-	unsigned int transferId() const { return mId; };
-	KopeteContact* contact() const { return mContact; };
-	QString file() const { return mFile; };
-	QString recipient() const { return mRecipient; };
-	unsigned long size() const { return mSize; };
-	void *internalId() const { return m_intId; };
-	KopeteTransferDirection direction() const { return mDirection; };
+	~KopeteFileTransferInfo(){}
+	unsigned int transferId() const { return mId; }
+	KopeteContact* contact() const { return mContact; }
+	QString file() const { return mFile; }
+	QString recipient() const { return mRecipient; }
+	unsigned long size() const { return mSize; }
+	void *internalId() const { return m_intId; }
+	KopeteTransferDirection direction() const { return mDirection; }
 
 private:
 	unsigned long mSize;
@@ -107,8 +106,8 @@ public:
 		Other
 	};
 	KopeteTransfer( const KopeteFileTransferInfo &, QObject *parent = 0, const char *name=0);
-	~KopeteTransfer(){};
-	KopeteFileTransferInfo info() { return mInfo; };
+	~KopeteTransfer(){}
+	KopeteFileTransferInfo info() const { return mInfo; }
 	void setError(KopeteTransferError error);
 
 public slots:
