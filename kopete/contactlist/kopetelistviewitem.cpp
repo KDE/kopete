@@ -885,6 +885,13 @@ void Item::setHeight( int )
 	KListViewItem::setHeight( minHeight );
 }
 
+int Item::width( const QFontMetrics &, const QListView *lv, int c ) const
+{
+	// Qt computes the itemRect from this. we want the whole item to be
+	// clickable, so we return the widest we could possibly be.
+	return lv->header()->sectionSize( c );
+}
+
 void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width, int align )
 {
 	QPixmap back( width, height() );
