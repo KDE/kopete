@@ -249,13 +249,14 @@ QString KopeteEmoticons::parseEmoticons( QString message )
 		QString es=QStyleSheet::escape(*it);
 		if(message.contains(es))
 		{
-			QString em = QRegExp::escape( es );
-
+			QRegExp regex = QRegExp( QString::fromLatin1("(?![^<]+>)(?!(http|https|mailto))(%1)(?![^<]+>)")
+					.arg( QRegExp::escape( es ) )  );
+			
 			QString imgPath = KopeteEmoticons::emoticons()->emoticonToPicPath( *it );
 
 			QImage iconImage(imgPath);
- 			message.replace( QRegExp(QString::fromLatin1( "(^|[\\W\\s]|%1)(%2)(?!\\w)" ).arg(em).arg(em)),
-				QString::fromLatin1("\\1<img align=\"center\" width=\"") +
+ 			message.replace( regex,
+				QString::fromLatin1("<img align=\"center\" width=\"") +
 				QString::number(iconImage.width()) +
 				QString::fromLatin1("\" height=\"") +
 				QString::number(iconImage.height()) +
