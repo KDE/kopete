@@ -1284,8 +1284,6 @@ void KopeteContactListView::contentsMousePressEvent( QMouseEvent *e )
 	}
 }
 
-
-
 /* This is a small hack ensuring that only F2 triggers inline
  * renameing. Won't win a beauty award, but I think relying on
  * the fact that QListView intercepts and processes the F2 event
@@ -1747,9 +1745,18 @@ void KopeteContactListView::delayedSort()
 
 void KopeteContactListView::slotSort()
 {
-	kdDebug() << k_funcinfo << endl;
+	kdDebug( 14000 ) << k_funcinfo << endl;
 
 	sort();
+}
+
+void KopeteContactListView::slotItemRenamed( QListViewItem *item )
+{
+	KopeteMetaContactLVI *metaLVI = dynamic_cast<KopeteMetaContactLVI *>( item );
+	if ( metaLVI )
+		metaLVI->metaContact()->setDisplayName( metaLVI->text( 0 ) );
+	else
+		kdWarning( 14000 ) << k_funcinfo << "Unknown list view item '" << item << "' renamed, ignoring item" << endl;
 }
 
 #include "kopetecontactlistview.moc"

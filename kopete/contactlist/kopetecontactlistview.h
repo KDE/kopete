@@ -135,6 +135,10 @@ private slots:
 
 	void removeGroup();
 
+	/**
+	 * Handle renamed items by renaming the meta contact
+	 */
+	void slotItemRenamed( QListViewItem *item );
 
 	/** Actions related slots **/
 	void slotSendMessage();

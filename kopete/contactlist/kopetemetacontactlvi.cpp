@@ -272,13 +272,19 @@ void KopeteMetaContactLVI::slotRemoveFromGroup()
 void KopeteMetaContactLVI::slotRename()
 {
 	setRenameEnabled( 0, true );
-	startRename( 0 );
+
+	// Use KListView's inline renaming when available, as it is more powerful
+	// and allows clicking outside the edit box to actually save the changes.
+	KListView *lv = dynamic_cast<KListView *>( listView() );
+	if ( lv )
+		lv->rename( this, 0 );
+	else
+		startRename( 0 );
 }
 
 void KopeteMetaContactLVI::okRename( int col )
 {
 	KListViewItem::okRename( col );
-	emit rename( text( col ) );
 	setRenameEnabled( col, false ); // Yeah, that's on purpose...
 }
 
