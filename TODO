@@ -5,18 +5,10 @@ Beware: It's totally unsorted ;)
 
 ================================================================================
 
-- The history plugin is not finished and has got bugs, for cartman
-  (he's on #kde-devel) it duplicates every incoming icq message.
-
 - fix account pluginData() handling, it obviously gets lost somehow sometimes
-
-- Fix the chatwindow (i think the richedit component is still not
-  stable enough)
 
 - Fix the segfault-on-exit that's been around for years. Unfortunately nobody
   knows if this is still valid and what segfaults where or why ;)
-
-- Load protocol-plugins on demand (i.e. when an account needs it)
 
 ================================================================================
 
