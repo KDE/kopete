@@ -37,6 +37,7 @@
 #include <kpopupmenu.h>
 
 #include <kopeteuiglobal.h>
+#include <kopeteaway.h>
 #include <kopeteawayaction.h>
 #include <kopetecontactlist.h>
 #include <kopetegroup.h>
@@ -182,7 +183,12 @@ GroupWiseContact * GroupWiseAccount::contactForDN( const QString & dn )
 void GroupWiseAccount::setAway( bool away, const QString & reason )
 {
 	if ( away )
-		setStatus( GroupWise::Away, reason);
+	{
+		if ( KopeteAway::getInstance()->idleTime() > 10 ) // don't go AwayIdle unless the user has actually been idle this long
+			setStatus( GroupWise::AwayIdle, QString::null );
+		else
+			setStatus( GroupWise::Away, reason );
+	}
 	else
 		setStatus( GroupWise::Available );
 }
