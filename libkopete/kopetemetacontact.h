@@ -41,9 +41,10 @@ struct KopeteMetaContactPrivate;
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  *
- * A metacontact represent a persone. This is a kind of entry to
- * the contactlist. All information of a contact is contains into the metacontact.
- * plugins can store data in it with all @KopetePluginData method
+ * A metacontact represent a person. This is a kind of entry to
+ * the contactlist. All information of a contact is contains into
+ * the metacontact. Plugins can store data in it with all
+ * @KopetePluginData method
  */
 class KopeteMetaContact : public KopetePluginDataObject
 {
@@ -128,9 +129,11 @@ public:
 
 	/**
 	 * Get/set the tracking of contact names
-	 * The MetaContact will adjust its displayName() everytime the contact inside changes its name
-	 * This should only work for MCs with exactly ONE contact inside in order to not confuse users
-	 * (think about 4 subcontacts and what happens if one changes nickname...)
+	 * The MetaContact will adjust its displayName() everytime the contact
+	 * inside changes its name.
+	 * This should only work for MCs with exactly ONE contact inside in order
+	 * to not confuse users (think about 4 subcontacts and what happens if one
+	 * changes nickname...)
 	 */
 	bool trackChildNameChanges() const;
 	void setTrackChildNameChanges( bool track );
@@ -207,6 +210,7 @@ public:
 	 * Returns this metacontact's ID. Every metacontact has a unique id.
 	 */
 	ulong contactId() const;
+
 	/**
 	 * Get or set a field for the KDE address book backend. Fields not
 	 * registered during the call to KopetePlugin::addressBookFields()
@@ -274,9 +278,9 @@ public slots:
 
 signals:
 	/**
-	 * The contact's online status changed
+	 * The MetaContact online status changed
 	 * Do *NOT* emit this signal directly, unless you also update the
-	 * cache m_onlineStatus value! In all other case, just call
+	 * cache m_onlineStatus value! In all other cases, just call
 	 * updateOnlineStatus() instead.
 	 */
 	void onlineStatusChanged( KopeteMetaContact *contact, KopeteOnlineStatus::OnlineStatus status );
