@@ -44,6 +44,7 @@ HighlightConfig::~HighlightConfig()
 void HighlightConfig::removeFilter(Filter *f)
 {
 	m_filters.remove(f);
+	delete f;
 }
 
 void HighlightConfig::appendFilter(Filter *f)
@@ -73,6 +74,7 @@ Filter* HighlightConfig::newFilter()
 
 void HighlightConfig::load()
 {
+	m_filters.clear(); //clear filters
 
 	QString filename = locateLocal( "appdata", QString::fromLatin1( "highlight.xml" ) );
 	if( filename.isEmpty() )
@@ -141,7 +143,6 @@ void HighlightConfig::load()
 		node = node.nextSibling();
 	}
 	filterListFile.close();
-
 }
 
 void HighlightConfig::save()

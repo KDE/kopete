@@ -51,13 +51,9 @@ public:
 	HighlightPlugin( QObject *parent, const char *name, const QStringList &args );
 	~HighlightPlugin();
 
-	void removeFilter(Filter *f);
-	void slotSettingsChanged();
-
-
 public slots:
-
 	void slotIncomingMessage( KopeteMessage& msg );
+	void slotSettingsChanged();
 
 
 private:

@@ -76,7 +76,6 @@ HighlightPreferences::~HighlightPreferences()
 	delete m_config;
 }
 
-
 void HighlightPreferences::load()
 {
 	m_config->load();
@@ -84,7 +83,8 @@ void HighlightPreferences::load()
 	preferencesDialog->m_list->clear();
 	m_filterItems.clear();
 
-	QPtrListIterator<Filter> it( m_config->filters());
+	QPtrList<Filter> filters=m_config->filters();
+	QPtrListIterator<Filter> it( filters );
 	Filter *f;
 	bool first=true;
 	while ( (f=it.current()) != 0 )
@@ -104,6 +104,7 @@ void HighlightPreferences::load()
 void HighlightPreferences::save()
 {
 	m_config->save();
+	setChanged(false);
 }
 
 

@@ -62,7 +62,8 @@ void HighlightPlugin::slotIncomingMessage( KopeteMessage& msg )
 		return;	// FIXME: highlighted internal/actions messages are not showed correctly in the chat window (bad style)
 				//  but they should maybe be highlinghted if needed
 
-	QPtrListIterator<Filter> it (m_config->filters());
+	QPtrList<Filter> filters=m_config->filters();
+	QPtrListIterator<Filter> it( filters );
 	Filter *f;
 	while ((f = it.current()) != 0 )
 	{
@@ -83,12 +84,6 @@ void HighlightPlugin::slotIncomingMessage( KopeteMessage& msg )
 			break; //uh?
 		}
 	}
-}
-
-void HighlightPlugin::removeFilter(Filter *f)
-{
-	m_config->removeFilter(f);
-	delete f;
 }
 
 void HighlightPlugin::slotSettingsChanged()
