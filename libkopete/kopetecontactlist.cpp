@@ -2,7 +2,7 @@
     kopetecontactlist.cpp - Kopete's Contact List backend
 
     Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
-	Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
     Copyright (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -54,17 +54,20 @@ KopeteContactList::~KopeteContactList()
 {
 }
 
-KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId, const QString &identityId, const QString &contactId )
+KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId,
+	const QString &identityId, const QString &contactId )
 {
-	//kdDebug() << "*** Looking for contact " << contactId << ", proto " << protocolId << endl;
+	//kdDebug() << "*** Looking for contact " << contactId << ", proto "
+	//	<< protocolId << endl;
 	QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
-		{
+	{
 		//kdDebug() << "*** Iterating " << it.current()->displayName() << endl;
-		KopeteContact *c = it.current()->findContact( protocolId, identityId, contactId );
+		KopeteContact *c = it.current()->findContact( protocolId, identityId,
+			contactId );
 		if( c )
-				return it.current();
-		}
+			return it.current();
+	}
 	//kdDebug() << "*** Not found!" << endl;
 
 	// Contact not found, create a new meta contact
@@ -78,7 +81,7 @@ KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId, co
 
 void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 {
-    QStringList groups;
+	QStringList groups;
 
 	groups = mc->groups();
 
@@ -130,7 +133,7 @@ void KopeteContactList::loadXML()
 				//TODO: id isn't used
 				QString id = element.attribute( "id", QString::null );
 				KopeteMetaContact *metaContact = new KopeteMetaContact();
-            	
+
 				QDomNode contactNode = node.firstChild();
 				if ( !metaContact->fromXML( contactNode ) )
 				{
@@ -138,7 +141,10 @@ void KopeteContactList::loadXML()
 					metaContact = 0;
 				}
 				else
-					KopeteContactList::contactList()->addMetaContact( metaContact );
+				{
+					KopeteContactList::contactList()->addMetaContact(
+						metaContact );
+				}
 			}
 			else
 			{
@@ -157,13 +163,14 @@ void KopeteContactList::saveXML()
 {
 	QString contactListFileName = locateLocal( "appdata", "contactlist.xml" );
 
-	kdDebug() << "[KopeteContactList] saveXML() Contact List File: " << contactListFileName << endl;
+	kdDebug() << "[KopeteContactList] saveXML() Contact List File: "
+		<< contactListFileName << endl;
 	QFile contactListFile( contactListFileName );
 	if( contactListFile.open( IO_WriteOnly ) )
 	{
 		QTextStream stream( &contactListFile );
 		stream.setEncoding( QTextStream::UnicodeUTF8 );
-	
+
 	stream << toXML();
 
 		contactListFile.close();
@@ -190,14 +197,14 @@ QString KopeteContactList::toXML()
 
 	xml += "</messaging-contact-list>\n";
 
-    return xml;
+	return xml;
 }
 
 
 QStringList KopeteContactList::contacts() const
 {
 	QStringList contacts;
-	QPtrListIterator<KopeteMetaContact> it( KopeteContactList::contactList()->m_contacts );
+	QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
 		contacts.append( it.current()->displayName() );
@@ -208,10 +215,12 @@ QStringList KopeteContactList::contacts() const
 QStringList KopeteContactList::contactStatuses() const
 {
 	QStringList meta_contacts;
-	QPtrListIterator<KopeteMetaContact> it( KopeteContactList::contactList()->m_contacts );
+	QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
-		meta_contacts.append( QString ("%1 (%2)").arg( it.current()->displayName() ).arg( it.current()->statusString() ) );
+		meta_contacts.append( QString( "%1 (%2)" ).arg(
+			it.current()->displayName() ).arg(
+			it.current()->statusString() ) );
 	}
 	return meta_contacts;
 }
@@ -219,7 +228,7 @@ QStringList KopeteContactList::contactStatuses() const
 QStringList KopeteContactList::reachableContacts() const
 {
 	QStringList contacts;
-	QPtrListIterator<KopeteMetaContact> it( KopeteContactList::contactList()->m_contacts );
+	QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
 		if ( it.current()->isReachable() )
@@ -231,7 +240,7 @@ QStringList KopeteContactList::reachableContacts() const
 QStringList KopeteContactList::onlineContacts() const
 {
 	QStringList contacts;
-	QPtrListIterator<KopeteMetaContact> it( KopeteContactList::contactList()->m_contacts );
+	QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
 		if ( it.current()->isOnline() )
@@ -242,11 +251,11 @@ QStringList KopeteContactList::onlineContacts() const
 
 QStringList KopeteContactList::groups() const
 {
-    QStringList groups;
+	QStringList groups;
 
-	QPtrListIterator<KopeteMetaContact> it( KopeteContactList::contactList()->m_contacts );
+	QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	kdDebug() << "[AddContactWizard] ****************************" <<endl;
-	
+
 	for( ; it.current(); ++it )
 	{
 		QStringList thisgroups;
@@ -256,33 +265,25 @@ QStringList KopeteContactList::groups() const
 
 		if ( thisgroups.isEmpty() ) continue;
 
-		for( QStringList::ConstIterator it = thisgroups.begin(); it != thisgroups.end(); ++it )
+		for( QStringList::ConstIterator it = thisgroups.begin();
+			it != thisgroups.end(); ++it )
 		{
 			 /* We add the group only if it is not already there */
 			QString groupname = (*it);
-            if ( ! groups.contains( groupname ) && !groupname.isNull() )
+			if ( ! groups.contains( groupname ) && !groupname.isNull() )
 			{
-                kdDebug() << "[AddContactWizard] Adding group [" << groupname << "]" <<endl;
+				kdDebug() << "[AddContactWizard] Adding group ["
+					<< groupname << "]" <<endl;
 				groups.append( *it );
 			}
 		}
 	}
 	kdDebug() << "[AddContactWizard] ****************************" <<endl;
-				
 
 	return groups;
 }
 
 #include "kopetecontactlist.moc"
 
-
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 

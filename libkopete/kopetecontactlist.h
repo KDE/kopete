@@ -53,8 +53,8 @@ public:
 	 *       with server-side contact lists ( MSN, Jabber, etc. ) may detect
 	 *       new contacts having been added upon reconnect.
 	 */
-	KopeteMetaContact *findContact( const QString &protocolId, const QString &identityId,
-	                                const QString &contactId );
+	KopeteMetaContact *findContact( const QString &protocolId,
+		const QString &identityId, const QString &contactId );
 
 	/**
 	 * Return all meta contacts
@@ -133,14 +133,5 @@ private:
 
 #endif
 
-
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 
