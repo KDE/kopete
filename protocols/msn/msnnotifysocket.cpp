@@ -41,12 +41,13 @@
 
 #include <ctime>
 
-MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& msnId )
+MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& msnId, const QString &password )
 : MSNAuthSocket( msnId, account )
 {
 	m_newstatus = MSNProtocol::protocol()->NLN;
 
 	m_account = account;
+	m_password=password;
 	QObject::connect( this, SIGNAL( blockRead( const QString & ) ),
 		this, SLOT( slotReadMessage( const QString & ) ) );
 
@@ -431,7 +432,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		time(&actualTime);
 		QString sl = QString::number( ( unsigned long ) actualTime - m_loginTime.toULong() );
 
-		QString md5this( m_MSPAuth + sl + m_account->password() );
+		QString md5this( m_MSPAuth + sl + m_password );
 		KMD5 md5( md5this.utf8() );
 
 		QString hotmailRequest = "<html>\n"
@@ -512,7 +513,7 @@ void MSNNotifySocket::slotAuthJobDone ( KIO::Job *job)
 
 		kdDebug( 14140 ) << "MSNNotifySocket::slotAuthJobDone: " << authURL << "(*************)" << endl;
 
-		authURL += escape( m_account->password() );
+		authURL += escape( m_password );
 		KIO::Job *job = KIO::get( authURL, false, false );
 
 		m_authData = QString::null;

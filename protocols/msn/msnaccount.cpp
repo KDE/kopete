@@ -132,7 +132,7 @@ void MSNAccount::connect()
 		setPluginData( protocol(), "serial", "0" );
 	}
 
-	m_notifySocket = new MSNNotifySocket( this, accountId() );
+	m_notifySocket = new MSNNotifySocket( this, accountId() , passwd);
 
 	QObject::connect( m_notifySocket, SIGNAL( groupAdded( const QString&, uint ) ),
 		SLOT( slotGroupAdded( const QString&, uint ) ) );

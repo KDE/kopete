@@ -39,7 +39,7 @@ class MSNNotifySocket : public MSNAuthSocket
 	Q_OBJECT
 
 public:
-	MSNNotifySocket( MSNAccount* account, const QString &msnId );
+	MSNNotifySocket( MSNAccount* account, const QString &msnId, const QString &password );
 	~MSNNotifySocket();
 
 	void connect();
@@ -135,6 +135,7 @@ private:
 	KopeteOnlineStatus convertOnlineStatus( const QString &statusString );
 
 	MSNAccount *m_account;
+	QString m_password;
 
 	unsigned int mailCount;
 
