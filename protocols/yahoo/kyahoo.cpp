@@ -192,7 +192,7 @@ void YahooSession::logOff()
 
 void YahooSession::refresh()
 {
-	kdDebug(14181) << k_funcinfo << endl;
+//	kdDebug(14181) << k_funcinfo << endl;
 	if ( !m_waitingForKeepalive )
 	{
 		m_waitingForKeepalive = true;
@@ -914,7 +914,7 @@ void YahooSession::_gameNotifyReceiver( char *who, int stat )
 
 void YahooSession::_mailNotifyReceiver( char *from, char *subj, int cnt )
 {
-	kdDebug(14181) << k_funcinfo << " session: " <<  endl;
+	//kdDebug(14181) << k_funcinfo << " session: " <<  endl;
 
 	emit mailNotify( QString::fromLocal8Bit( from ), QString::fromLocal8Bit( subj ), cnt);
 }
@@ -1057,7 +1057,7 @@ void YahooSession::slotReadReady()
 {
 	int ret = 1;
 	int fd = m_socket->fd();
-	kdDebug(14181) << k_funcinfo << "Socket FD: " << fd << endl;
+	//kdDebug(14181) << k_funcinfo << "Socket FD: " << fd << endl;
 
 	if ( m_waitingForKeepalive )
 		m_waitingForKeepalive = false;
