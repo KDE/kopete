@@ -326,21 +326,19 @@ Contact *MetaContact::preferredContact()
 	{
 		Contact *c=it.current();
 
-		//Has the contact an open chatwindow?
-		 if( c->manager( Contact::CannotCreate ) /*&& c->manager()->view(false)*/)
-		 {      //there is no need of having a view() i consider already having a manager
-		        // is enough to give the priority to that contact
-		 	if( !hasOpenView )
-			{ //the selected contact has not an openview
+		//Does the contact an open chatwindow?
+		if( c->manager( Contact::CannotCreate ) )
+		{ //no need to check the view. having a manager is enough
+			if( !hasOpenView )
+			{
 				contact=c;
 				hasOpenView=true;
-				if( c->isOnline() )
-
+				if( c->isReachable() )
 					continue;
 			} //else, several contact might have an open view, uses following criterias
-		 }
-		 else if( hasOpenView && contact->isOnline() )
-		 	continue; //This contact has not open view, but the selected contact has, and is reachable
+		}
+		else if( hasOpenView && contact->isReachable() )
+			continue; //This contact has not open view, but the selected contact has, and is reachable
 
 		// FIXME: The isConnected call should be handled in Contact::isReachable
 		//        after KDE 3.2 - Martijn
@@ -350,7 +348,7 @@ Contact *MetaContact::preferredContact()
 		if ( !contact )
 		{  //this is the first contact.
 			contact= c;
-		    continue;
+			continue;
 		}
 
 		if( c->onlineStatus().status() > contact->onlineStatus().status()  )
