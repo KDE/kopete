@@ -42,6 +42,7 @@
 #include <kstandarddirs.h>
 #include <kdialog.h>
 #include <kstringhandler.h>
+#include <ksqueezedtextlabel.h>
 
 #include "chatview.h"
 #include "kopetechatwindow.h"
@@ -64,8 +65,6 @@
 #else
 	#include "loadmovie.h"
 #endif
-
-static int MESSAGE_STATUS_ID = 1;
 
 typedef QMap<KopeteAccount*,KopeteChatWindow*> AccountMap;
 typedef QMap<KopeteGroup*,KopeteChatWindow*> GroupMap;
@@ -200,8 +199,12 @@ KopeteChatWindow::KopeteChatWindow(QWidget *parent, const char* name) : KParts::
 	else
 		m_button_send = 0L;
 
-	statusBar()->insertItem( i18n("Ready."), MESSAGE_STATUS_ID, 1, false );
-	statusBar()->setItemAlignment( MESSAGE_STATUS_ID, AlignLeft | AlignVCenter );
+	m_status_text = new KSqueezedTextLabel( i18n("Ready."), statusBar(), "m_status_text" );
+	m_status_text->setAlignment( AlignLeft | AlignVCenter );
+	m_status_text->setSizePolicy( QSizePolicy( QSizePolicy::Minimum, QSizePolicy::Expanding ) );
+	m_status_text->setFont( statusBar()->font() );
+	m_status_text->setFixedHeight( statusBar()->sizeHint().height() );
+	statusBar()->addWidget( m_status_text, 1 );
 
 	readOptions();
 	setWFlags( Qt::WDestructiveClose );
@@ -610,7 +613,7 @@ KopeteView *KopeteChatWindow::addChatView( KopeteMessageManager *manager )
 
 void KopeteChatWindow::setStatus(const QString &text)
 {
-	statusBar()->changeItem(text, MESSAGE_STATUS_ID);
+	m_status_text->setText(text);
 }
 
 void KopeteChatWindow::createTabBar()
