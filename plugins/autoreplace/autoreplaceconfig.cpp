@@ -41,7 +41,9 @@ void AutoReplaceConfig::load()
 		// "qsa,qualcosa,qno,qualcuno" remember UTF-8 accents
             wordsList = defaultAutoReplaceList();
 	}
-
+	
+	// we may be reloading after removing an entry from the list
+	m_map.clear();
 	QString k, v;
 	for ( QStringList::Iterator it = wordsList.begin(); it != wordsList.end(); ++it )
 	{
