@@ -82,6 +82,11 @@ WPAccount::~WPAccount()
 	static_cast<WPProtocol *>(protocol())->destroyInterface(theInterface);
 }
 
+KopeteContact *WPAccount::myself() const
+{
+	return theMyself;
+}
+
 const QStringList WPAccount::getGroups()
 {
 	return theInterface->getGroups();
@@ -182,19 +187,11 @@ void WPAccount::initActions()
 {
 	DEBUG(WPDMETHOD, "WPAccount::initActions()");
 
-	actionGoAvailable = new KAction("Online", "wp_available", 0, this, SLOT(connect()), this, "actionGoAvailable");
-	actionGoOffline = new KAction("Offline", "wp_offline", 0, this, SLOT(disconnect()), this, "actionGoOffline");
-	actionGoAway = new KAction("Away", "wp_away", 0, this, SLOT(goAway()), this, "actionGoAway");
-
-	KGlobal::config()->setGroup("WinPopup");
-	QString handle = "WinPopup (" + accountId() + ")";
-
 	theActionMenu = new KActionMenu("WinPopup", this);
-	theActionMenu->popupMenu()->insertTitle(theMyself->icon(), handle);
-
-	theActionMenu->insert(actionGoAvailable);
-	theActionMenu->insert(actionGoAway);
-	theActionMenu->insert(actionGoOffline);
+	theActionMenu->popupMenu()->insertTitle(theMyself->icon(), "WinPopup (" + accountId() + ")");
+	theActionMenu->insert(new KAction("Online", "wp_available", 0, this, SLOT(connect()), this, "actionGoAvailable"));
+	theActionMenu->insert(new KAction("Away", "wp_away", 0, this, SLOT(goAway()), this, "actionGoAway"));
+	theActionMenu->insert(new KAction("Offline", "wp_offline", 0, this, SLOT(disconnect()), this, "actionGoOffline"));
 }
 
 #include "wpaccount.moc"

@@ -96,6 +96,23 @@
                 </widget>
             </grid>
         </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer11</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>404</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
         <widget class="QLabel">
             <property name="name">
                 <cstring>TextLabel1_2_3</cstring>

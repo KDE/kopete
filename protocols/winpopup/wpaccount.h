@@ -57,10 +57,9 @@ public:
 	WPAccount(WPProtocol *parent, const QString& accountID, const char *name = 0);
 	~WPAccount();
 
-	virtual KopeteContact *myself() const {	return (KopeteContact *)theMyself; } 					// Return the user's contact object
-	virtual KActionMenu* actionMenu();	// Per-protocol actions for the systray and the status bar
+	virtual KopeteContact *myself() const;			// Return the user's contact object
+	virtual KActionMenu* actionMenu();			// Per-protocol actions for the systray and the status bar
 	virtual void setAway(bool status, const QString &);	// Set user away
-	virtual const QString protocolIcon() { return "wp_available"; }
 
 public slots:
 	virtual void connect();						// Connect to server
@@ -98,13 +97,10 @@ private slots:
 	void updateAccountId();
 
 private:
-	void initActions();				// Load Status Actions
+	void initActions();			// Load Status Actions
 	KActionMenu *theActionMenu;		// Statusbar Popup
-	KAction *actionGoAvailable;		// Go into normal/away/offline mode
-	KAction *actionGoOffline;
-	KAction *actionGoAway;
 
-	KopeteWinPopup *theInterface;	// Our KopeteWinPopup instance
+	KopeteWinPopup *theInterface;		// Our KopeteWinPopup instance
 	WPContact *theMyself;			// A contact to return for the API
 };
 

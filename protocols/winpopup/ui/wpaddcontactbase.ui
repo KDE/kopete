@@ -69,7 +69,7 @@
                         <string>Computer &amp;workgroup/domain:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>HostGroup</cstring>
+                        <cstring>mHostGroup</cstring>
                     </property>
                 </widget>
                 <widget class="KComboBox" row="1" column="1">
@@ -88,7 +88,7 @@
                         <string>Computer &amp;name:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>HostName</cstring>
+                        <cstring>mHostName</cstring>
                     </property>
                 </widget>
                 <widget class="KComboBox" row="0" column="1">
