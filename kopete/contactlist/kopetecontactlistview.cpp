@@ -1686,7 +1686,6 @@ void KopeteContactListView::slotUndo()
 	bool step = false;
 	while(m_undo && !step)
 	{
-		kdDebug( 14000 ) << k_funcinfo << m_undo->type << "    " << m_undo->args<< endl;
 		bool success=false;
 		switch (m_undo->type)
 		{
@@ -1780,14 +1779,15 @@ void KopeteContactListView::slotUndo()
 			if(c)
 			{
 				success=true;
-				c->slotDeleteContact();
+				KopeteMetaContact *m=new KopeteMetaContact;
+				m->setTemporary(true);
+				c->setMetaContact(m);
+				KopeteContactList::contactList()->addMetaContact(m);
 				m_undo->metacontact=m0;
 			}
 			break;
 		 }
 		}
-		
-		kdDebug( 14000 ) << k_funcinfo << success << endl;
 		
 		if(success) //the undo item has been correctly performed
 		{
@@ -1817,7 +1817,6 @@ void KopeteContactListView::slotRedo()
 	bool step = false;
 	while(m_redo && (!step || m_redo->isStep ))
 	{
-		kdDebug( 14000 ) << k_funcinfo << m_redo->type << "    " << m_redo->args<< endl;
 		bool success=false;
 		switch (m_redo->type)
 		{
@@ -1880,6 +1879,7 @@ void KopeteContactListView::slotRedo()
 			break;
 		 }
 		 case UndoItem::MetaContactChange:
+		 case UndoItem::ContactAdd:
 		 {
 		 	KopeteContact *c=0;
 			KopeteMetaContact *m0=KopeteContactList::contactList()->findContact(m_redo->args[0] , m_redo->args[1], m_redo->args[2] ) ;
@@ -1893,14 +1893,7 @@ void KopeteContactListView::slotRedo()
 			}
 			break;
 		 }
-		 case UndoItem::ContactAdd:
-		 {
-			//impossible to add it back
-			break;
-		 }
 		}
-		
-		kdDebug( 14000 ) << k_funcinfo << success << endl;
 		
 		if(success) //the undo item has been correctly performed
 		{
