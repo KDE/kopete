@@ -30,8 +30,8 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_pluginconfig, KopetePluginConfigFactory( 
 KopetePluginConfig::KopetePluginConfig( QWidget *parent, const char * /* name */, const QStringList &args )
 : KSettings::PluginPage( KopetePluginConfigFactory::instance(), parent, args )
 {
-	pluginSelector()->addPlugins( LibraryLoader::availablePlugins( "Protocols" ), i18n( "Protocols" ), "Protocols" );
-	pluginSelector()->addPlugins( LibraryLoader::availablePlugins( "Plugins" ),   i18n( "General Plugins" ), "Plugins" );
+	pluginSelector()->addPlugins( LibraryLoader::self()->availablePlugins( "Protocols" ), i18n( "Protocols" ), "Protocols" );
+	pluginSelector()->addPlugins( LibraryLoader::self()->availablePlugins( "Plugins" ),   i18n( "General Plugins" ), "Plugins" );
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

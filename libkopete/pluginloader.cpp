@@ -47,6 +47,13 @@ struct KopeteLibraryInfo
 	QString messagingProtocol;
 };
 
+class KopetePluginManagerPrivate
+{
+public:
+	// All available plugins, regardless of category, and loaded or not
+	QValueList<KPluginInfo *> plugins;
+};
+
 bool operator ==(const KopeteLibraryInfo &, const KopeteLibraryInfo &);
 
 // Put the static deleter in its anonymous namespace
@@ -74,7 +81,11 @@ LibraryLoader* LibraryLoader::self()
 LibraryLoader::LibraryLoader()
 : QObject( qApp )
 {
+	d = new KopetePluginManagerPrivate;
+
 	KSettings::Dispatcher::self()->registerInstance( KGlobal::instance(), this, SLOT( slotKopeteSettingsChanged() ) );
+
+	d->plugins = KPluginInfo::fromServices( KTrader::self()->query( QString::fromLatin1( "Kopete/Plugin" ) ) );
 }
 
 LibraryLoader::~LibraryLoader()
@@ -94,13 +105,25 @@ LibraryLoader::~LibraryLoader()
 	while( i.current() )
 		delete i.current();
 
+	delete d;
+
 	kdDebug(14010) << k_funcinfo << "All plugins removed" << endl;
 }
 
-QValueList<KPluginInfo *> LibraryLoader::availablePlugins( const QString &category )
+QValueList<KPluginInfo *> LibraryLoader::availablePlugins( const QString &category ) const
 {
-	return KPluginInfo::fromServices( KTrader::self()->query( QString::fromLatin1( "Kopete/Plugin" ),
-		QString::fromLatin1( "[X-KDE-PluginInfo-Category]=='" ) + category + QString::fromLatin1( "'" ) ) );
+	if ( category.isEmpty() )
+		return d->plugins;
+
+	QValueList<KPluginInfo *> result;
+	QValueList<KPluginInfo *>::ConstIterator it;
+	for ( it = d->plugins.begin(); it != d->plugins.end(); ++it )
+	{
+		if ( ( *it )->category() == category )
+			result.append( *it );
+	}
+
+	return result;
 }
 
 QPtrList<KopetePlugin> LibraryLoader::plugins() const

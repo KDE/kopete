@@ -53,7 +53,7 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 
 	QListViewItem *pluginItem = 0L;
 
-	QValueList<KPluginInfo *> protocols = LibraryLoader::availablePlugins( "Protocols" );
+	QValueList<KPluginInfo *> protocols = LibraryLoader::self()->availablePlugins( "Protocols" );
 
 	for ( QValueList<KPluginInfo *>::Iterator it = protocols.begin(); it != protocols.end(); ++it )
 	{
