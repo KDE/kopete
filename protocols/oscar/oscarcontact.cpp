@@ -375,13 +375,32 @@ void OscarContact::slotGotMiniType(QString screenName, int type)
 	//TODO
 	// Check to see if it's us
 	if(tocNormalize(screenName) != tocNormalize(mName))
+	{ // It's not us, so just return
 		return;
+	}
 
 	kdDebug( 14150 ) << k_funcinfo << "Got minitype notification for " << mName << endl;
 
 	// If we already have a message manager
 	if( mMsgManager )
-		mMsgManager->receivedTypingMsg(this,(type==2));
+	{
+		// Switch on the type
+		switch(type)
+		{
+		case 0: case 1:
+			// 0 == Typing Finished
+			// 1 == Text Typed
+			// Both of these are types of "not typing"
+			mMsgManager->receivedTypingMsg(this, false);
+			break;
+		case 2:
+			// Typing started
+			mMsgManager->receivedTypingMsg(this, true);
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 // Called when we want to send a typing notification to
