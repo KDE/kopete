@@ -5,7 +5,7 @@ SUBDIRS = kcdialog ksettings .
 
 noinst_LTLIBRARIES  = libkopetecompat.la
 
-libkopetecompat_la_SOURCES = dummy.cpp kautoconfig.cpp loadmovie.cpp
+libkopetecompat_la_SOURCES = dummy.cpp loadmovie.cpp
 libkopetecompat_la_LDFLAGS = -no-undefined $(LIB_KDEUI) $(LIB_KDECORE) $(all_libraries)
 libkopetecompat_la_LIBADD = kcdialog/libkopetecompat_kcdialog.la ksettings/libksettings.la
 

@@ -11,7 +11,7 @@ kopete_webpresence_la_LIBADD      = ../../libkopete/libkopete.la $(LIBXML_LIBS) 
 
 kcm_kopete_webpresence_la_SOURCES = webpresencepreferences.cpp webpresenceprefs.ui
 kcm_kopete_webpresence_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
-kcm_kopete_webpresence_la_LIBADD  = $(LIB_KOPETECOMPAT) $(LIB_KUTILS)
+kcm_kopete_webpresence_la_LIBADD  = ../../libkopete/libkopete.la $(LIB_KOPETECOMPAT) $(LIB_KUTILS)
 
 service_DATA = kopete_webpresence.desktop
 servicedir = $(kde_servicesdir)

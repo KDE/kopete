@@ -17,6 +17,7 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  */
+
 #include "kautoconfig.h"
 
 #include <kglobal.h>
@@ -140,46 +141,46 @@ bool KAutoConfig::retrieveSettings(bool trackChanges){
   
   if(trackChanges){
     // QT
-    changedMap.insert("QButton", SIGNAL(stateChanged(int)));
-    changedMap.insert("QCheckBox", SIGNAL(stateChanged(int)));
-    changedMap.insert("QPushButton", SIGNAL(stateChanged(int)));
-    changedMap.insert("QRadioButton", SIGNAL(stateChanged(int)));
-    changedMap.insert("QComboBox", SIGNAL(activated (int)));
+    changedMap.insert(QString::fromLatin1("QButton"), SIGNAL(stateChanged(int)));
+    changedMap.insert(QString::fromLatin1("QCheckBox"), SIGNAL(stateChanged(int)));
+    changedMap.insert(QString::fromLatin1("QPushButton"), SIGNAL(stateChanged(int)));
+    changedMap.insert(QString::fromLatin1("QRadioButton"), SIGNAL(stateChanged(int)));
+    changedMap.insert(QString::fromLatin1("QComboBox"), SIGNAL(activated (int)));
     //qsqlproperty map doesn't store the text, but the value!
-    //changedMap.insert("QComboBox", SIGNAL(textChanged(const QString &)));
-    changedMap.insert("QDateEdit", SIGNAL(valueChanged(const QDate &)));
-    changedMap.insert("QDateTimeEdit", SIGNAL(valueChanged(const QDateTime &)));
-    changedMap.insert("QDial", SIGNAL(valueChanged (int)));
-    changedMap.insert("QLineEdit", SIGNAL(textChanged(const QString &)));
-    changedMap.insert("QSlider", SIGNAL(valueChanged(int)));
-    changedMap.insert("QSpinBox", SIGNAL(valueChanged(int)));
-    changedMap.insert("QTimeEdit", SIGNAL(valueChanged(const QTime &)));
-    changedMap.insert("QTextEdit", SIGNAL(textChanged()));
-    changedMap.insert("QTextBrowser", SIGNAL(sourceChanged(const QString &)));
-    changedMap.insert("QMultiLineEdit", SIGNAL(textChanged()));
-    changedMap.insert("QListBox", SIGNAL(selectionChanged()));
-    changedMap.insert("QTabWidget", SIGNAL(currentChanged(QWidget *)));
+    //changedMap.insert(QString::fromLatin1("QComboBox"), SIGNAL(textChanged(const QString &)));
+    changedMap.insert(QString::fromLatin1("QDateEdit"), SIGNAL(valueChanged(const QDate &)));
+    changedMap.insert(QString::fromLatin1("QDateTimeEdit"), SIGNAL(valueChanged(const QDateTime &)));
+    changedMap.insert(QString::fromLatin1("QDial"), SIGNAL(valueChanged (int)));
+    changedMap.insert(QString::fromLatin1("QLineEdit"), SIGNAL(textChanged(const QString &)));
+    changedMap.insert(QString::fromLatin1("QSlider"), SIGNAL(valueChanged(int)));
+    changedMap.insert(QString::fromLatin1("QSpinBox"), SIGNAL(valueChanged(int)));
+    changedMap.insert(QString::fromLatin1("QTimeEdit"), SIGNAL(valueChanged(const QTime &)));
+    changedMap.insert(QString::fromLatin1("QTextEdit"), SIGNAL(textChanged()));
+    changedMap.insert(QString::fromLatin1("QTextBrowser"), SIGNAL(sourceChanged(const QString &)));
+    changedMap.insert(QString::fromLatin1("QMultiLineEdit"), SIGNAL(textChanged()));
+    changedMap.insert(QString::fromLatin1("QListBox"), SIGNAL(selectionChanged()));
+    changedMap.insert(QString::fromLatin1("QTabWidget"), SIGNAL(currentChanged(QWidget *)));
 
     // KDE
-    changedMap.insert( "KComboBox", SIGNAL(activated (int)));
-    changedMap.insert( "KFontCombo", SIGNAL(activated (int)));
-    changedMap.insert( "KFontRequester", SIGNAL(fontSelected(const QFont &)));
-    changedMap.insert( "KFontChooser",  SIGNAL(fontSelected(const QFont &)));
-    changedMap.insert( "KHistoryCombo", SIGNAL(activated (int)));
+    changedMap.insert( QString::fromLatin1("KComboBox"), SIGNAL(activated (int)));
+    changedMap.insert( QString::fromLatin1("KFontCombo"), SIGNAL(activated (int)));
+    changedMap.insert( QString::fromLatin1("KFontRequester"), SIGNAL(fontSelected(const QFont &)));
+    changedMap.insert( QString::fromLatin1("KFontChooser"),  SIGNAL(fontSelected(const QFont &)));
+    changedMap.insert( QString::fromLatin1("KHistoryCombo"), SIGNAL(activated (int)));
 
-    changedMap.insert( "KColorButton", SIGNAL(changed(const QColor &)));
-    changedMap.insert( "KDatePicker", SIGNAL(dateSelected (QDate)));
-    changedMap.insert( "KEditListBox", SIGNAL(changed()));
-    changedMap.insert( "KListBox", SIGNAL(selectionChanged()));
-    changedMap.insert( "KLineEdit", SIGNAL(textChanged(const QString &)));
-    changedMap.insert( "KPasswordEdit", SIGNAL(textChanged(const QString &)));
-    changedMap.insert( "KRestrictedLine", SIGNAL(textChanged(const QString &)));
-    changedMap.insert( "KTextBrowser", SIGNAL(sourceChanged(const QString &)));
-    changedMap.insert( "KTextEdit", SIGNAL(textChanged()));
-    changedMap.insert( "KURLRequester",  SIGNAL(textChanged (const QString& )));
-    changedMap.insert( "KIntNumInput", SIGNAL(valueChanged (int)));
-    changedMap.insert( "KIntSpinBox", SIGNAL(valueChanged (int)));
-    changedMap.insert( "KDoubleNumInput", SIGNAL(valueChanged (double)));
+    changedMap.insert( QString::fromLatin1("KColorButton"), SIGNAL(changed(const QColor &)));
+    changedMap.insert( QString::fromLatin1("KDatePicker"), SIGNAL(dateSelected (QDate)));
+    changedMap.insert( QString::fromLatin1("KEditListBox"), SIGNAL(changed()));
+    changedMap.insert( QString::fromLatin1("KListBox"), SIGNAL(selectionChanged()));
+    changedMap.insert( QString::fromLatin1("KLineEdit"), SIGNAL(textChanged(const QString &)));
+    changedMap.insert( QString::fromLatin1("KPasswordEdit"), SIGNAL(textChanged(const QString &)));
+    changedMap.insert( QString::fromLatin1("KRestrictedLine"), SIGNAL(textChanged(const QString &)));
+    changedMap.insert( QString::fromLatin1("KTextBrowser"), SIGNAL(sourceChanged(const QString &)));
+    changedMap.insert( QString::fromLatin1("KTextEdit"), SIGNAL(textChanged()));
+    changedMap.insert( QString::fromLatin1("KURLRequester"),  SIGNAL(textChanged (const QString& )));
+    changedMap.insert( QString::fromLatin1("KIntNumInput"), SIGNAL(valueChanged (int)));
+    changedMap.insert( QString::fromLatin1("KIntSpinBox"), SIGNAL(valueChanged (int)));
+    changedMap.insert( QString::fromLatin1("KDoubleNumInput"), SIGNAL(valueChanged (double)));
   }
 
   // Go through all of the children of the widgets and find all known widgets
@@ -214,8 +215,8 @@ bool KAutoConfig::saveSettings() {
       QVariant defaultValue = d->defaultValues[groupWidget];
       QVariant currentValue = propertyMap->property(groupWidget);
 #if KDE_IS_VERSION( 3, 1, 90 )
-      if(!config->hasDefault(groupWidget->name()) && currentValue == defaultValue){
-        config->revertToDefault(groupWidget->name());
+      if(!config->hasDefault(QString::fromLatin1(groupWidget->name())) && currentValue == defaultValue){
+        config->revertToDefault(QString::fromLatin1(groupWidget->name()));
         widgetChanged = true;
       }
       else{
@@ -389,7 +390,7 @@ bool KAutoConfig::parseChildren(const QWidget *widget,
       {
         parseTheChildren = false;
         // Disable the widget if it is immutable?
-        if(config->entryIsImmutable( childWidget->name()))
+        if(config->entryIsImmutable( QString::fromLatin1(childWidget->name())))
           childWidget->setEnabled(false);
         else
         {
@@ -407,15 +408,15 @@ bool KAutoConfig::parseChildren(const QWidget *widget,
           propertyMap->setProperty(childWidget, setting);
           valueChanged = true;
         }
-        if(trackChanges && changedMap.find(childWidget->className()) !=
+        if(trackChanges && changedMap.find(QString::fromLatin1(childWidget->className())) !=
             changedMap.end())
         {
-          connect(childWidget, changedMap[childWidget->className()],
+          connect(childWidget, changedMap[QString::fromLatin1(childWidget->className())],
                   this, SIGNAL(widgetModified()));
         }
 #ifndef NDEBUG
         else if(trackChanges &&
-          changedMap.find(childWidget->className()) == changedMap.end())
+          changedMap.find(QString::fromLatin1(childWidget->className())) == changedMap.end())
         {
           // Without a signal kautoconfigdialog could incorectly 
 	  // enable/disable the buttons
