@@ -1,7 +1,7 @@
 METASOURCES = AUTO
 
 SUBDIRS = icons
-INCLUDES = $(KOPETE_INCLUDES) $(all_includes)
+INCLUDES = -I$(srcdir)/../../libkopete -I$(srcdir)/../../libkopete/ui $(all_includes)
 
 kde_module_LTLIBRARIES = kopete_texteffect.la kcm_kopete_texteffect.la
 
