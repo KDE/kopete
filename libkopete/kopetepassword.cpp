@@ -55,8 +55,9 @@ static QString cryptStr( const QString &aStr )
 class Kopete::Password::Private
 {
 public:
-	Private( const QString &group, uint maxLen )
-	 : refCount( 1 ), configGroup( group ), remembered( false ), maximumLength( maxLen ), isWrong( false )
+	Private( const QString &group, uint maxLen, bool blanksAllowed )
+	 : refCount( 1 ), configGroup( group ), remembered( false ), maximumLength( maxLen ),
+	 isWrong( false ), allowBlankPassword( blanksAllowed )
 	{
 	}
 	Private *incRef()
@@ -81,6 +82,8 @@ public:
 	uint maximumLength;
 	/** Is the current password known to be wrong? */
 	bool isWrong;
+	/** Are we allowed to have blank passwords? */
+	bool allowBlankPassword;
 	/** The cached password */
 	QString cachedValue;
 };
@@ -281,21 +284,6 @@ public:
 	}
 	bool setPassword()
 	{
-		//TODO: refactor this function to remove duplication
-		// and possibly to make it not need to be a friend of Kopete::Password
-
-		if ( mNewPass.isNull() )
-		{
-			kdDebug( 14010 ) << k_funcinfo << " clearing password" << endl;
-
-			mPassword.d->remembered = false;
-			mPassword.d->passwordFromKConfig = QString::null;
-			mPassword.writeConfig();
-			if ( mWallet )
-				mWallet->removeEntry( mPassword.d->configGroup );
-			return true;
-		}
-
 		kdDebug( 14010 ) << k_funcinfo << " setting password for " << mPassword.d->configGroup << endl;
 
 		if ( mWallet && mWallet->writePassword( mPassword.d->configGroup, mNewPass ) == 0 )
@@ -334,8 +322,53 @@ private:
 	QString mNewPass;
 };
 
+class KopetePasswordClearRequest : public KopetePasswordRequest
+{
+public:
+	KopetePasswordClearRequest( Kopete::Password &pass )
+	 : KopetePasswordRequest( 0, pass )
+	{
+		if ( KApplication *app = KApplication::kApplication() )
+			app->ref();
+	}
+	~KopetePasswordClearRequest()
+	{
+		if ( KApplication *app = KApplication::kApplication() )
+			app->deref();
+		kdDebug( 14010 ) << k_funcinfo << "job complete" << endl;
+	}
+	void processRequest()
+	{
+		if ( clearPassword() )
+		{
+			mPassword.setWrong( true );
+			mPassword.d->cachedValue = QString::null;
+		}
+
+		delete this;
+	}
+	bool clearPassword()
+	{
+		kdDebug( 14010 ) << k_funcinfo << " clearing password" << endl;
+
+		mPassword.d->remembered = false;
+		mPassword.d->passwordFromKConfig = QString::null;
+		mPassword.writeConfig();
+		if ( mWallet )
+			mWallet->removeEntry( mPassword.d->configGroup );
+		return true;
+	}
+};
+
 Kopete::Password::Password( const QString &configGroup, uint maximumLength, const char *name )
- : QObject( 0, name ), d( new Private( configGroup, maximumLength ) )
+ : QObject( 0, name ), d( new Private( configGroup, maximumLength, false ) )
+{
+	readConfig();
+}
+
+Kopete::Password::Password( const QString &configGroup, uint maximumLength,
+	bool allowBlankPassword, const char *name )
+ : QObject( 0, name ), d( new Private( configGroup, maximumLength, allowBlankPassword ) )
 {
 	readConfig();
 }
@@ -392,6 +425,11 @@ int Kopete::Password::preferredImageSize()
 	return IconSize(KIcon::Toolbar);
 }
 
+bool Kopete::Password::allowBlankPassword()
+{
+	return d->allowBlankPassword;
+}
+
 uint Kopete::Password::maximumLength()
 {
 	return d->maximumLength;
@@ -439,10 +477,20 @@ void Kopete::Password::set( const QString &pass )
 {
 	// if we're being told to forget the password, and we aren't remembering one,
 	// don't try to open the wallet. fixes bug #71804.
-	if ( pass.isNull() && !remembered() )
+	if( pass.isNull() && !d->allowBlankPassword )
+	{
+		if( remembered() )
+			clear();
 		return;
+	}
 
 	KopetePasswordRequest *request = new KopetePasswordSetRequest( *this, pass );
+	request->begin();
+}
+
+void Kopete::Password::clear()
+{
+	KopetePasswordClearRequest *request = new KopetePasswordClearRequest( *this );
 	request->begin();
 }
 

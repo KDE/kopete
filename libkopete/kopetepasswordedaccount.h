@@ -37,7 +37,7 @@ class Password;
 class KOPETE_EXPORT PasswordedAccount : public Account
 {
 	Q_OBJECT
-	
+
 public:
 
 	/**
@@ -46,8 +46,23 @@ public:
 	 * @param acctId The ID of this account - should be unique within this protocol
 	 * @param maxPasswordLength The maximum length for passwords for this account, or 0 for no limit
 	 * @param name The name for this QObject
+	 *
+	 * @deprecated Use the constructor that specifies if a blank password is allowed
 	 */
 	PasswordedAccount( Protocol *parent, const QString &acctId, uint maxPasswordLength = 0, const char *name = 0 );
+
+        /**
+	 * KopetePasswordedAccount constructor
+	 * @param parent The protocol this account connects via
+	 * @param acctId The ID of this account - should be unique within this protocol
+	 * @param maxPasswordLength The maximum length for passwords for this account, or 0 for no limit
+	 * @param allowBlankPassword If this protocol allows blank passwords. Note that this will mean that
+	 *
+	 * @param name The name for this QObject
+	 */
+	PasswordedAccount( Protocol *parent, const QString &acctId, uint maxPasswordLength = 0,
+		bool allowBlankPassword = false, const char *name = 0 );
+
 	virtual ~PasswordedAccount();
 
 	/**
@@ -57,7 +72,7 @@ public:
 
 	void connect();
 	void connect( const OnlineStatus& );
-	
+
 	/**
 	 * \brief Get the initial status
 	 */

@@ -28,6 +28,8 @@ class QPixmap;
 class KopetePasswordGetRequest;
 /** @internal */
 class KopetePasswordSetRequest;
+/** @internal */
+class KopetePasswordClearRequest;
 
 namespace Kopete
 {
@@ -51,8 +53,21 @@ public:
 	 *
 	 * @param configGroup The configuration group to save passwords in.
 	 * @param maxLength The maximum length of the password, or 0 if no maximum exists.
+	 *
+	 * @deprecated Use the constructor that specifies if a blank password is allowed
 	 */
 	explicit Password( const QString &configGroup, uint maxLength = 0, const char *name = 0 );
+
+	/**
+	 * Create a new Kopete::Password object.
+	 *
+	 * @param configGroup The configuration group to save passwords in.
+	 * @param maxLength The maximum length of the password, or 0 if no maximum exists.
+	 * @param allowBlankPassword If this password is allowed to be blank
+	 */
+	explicit Password( const QString &configGroup, uint maxLength = 0,
+		bool allowBlankPassword = false, const char *name = 0 );
+
 	/**
 	 * Create a shallow copy of this object
 	 */
@@ -135,6 +150,11 @@ public:
 	bool remembered();
 
 	/**
+	 * @return true if you are allowed to have a blank password
+	 */
+	bool allowBlankPassword();
+
+	/**
 	 * When a password request succeeds, the password is cached. This function
 	 * returns the cached password, if there is one, or QString::null if there
 	 * is not.
@@ -144,12 +164,18 @@ public:
 public slots:
 	/**
 	 * Set the password for this account.
-	 * @param pass If set to QString::null, the password is forgotten,
-	 *             otherwise sets the password to this value.
+	 * @param pass If set to QString::null, the password is forgotten unless you
+	 *	specified to allow blank passwords. Otherwise, sets the password to
+	 *	this value.
 	 *
 	 * Note: this function is asynchronous; changes will not be instant.
 	 */
 	void set( const QString &pass = QString::null );
+
+	/**
+	 * Unconditionally clears the stored password
+	 */
+	void clear();
 
 private:
 	void readConfig();
@@ -161,6 +187,7 @@ private:
 	//TODO: can we rearrange things so these aren't friends?
 	friend class ::KopetePasswordGetRequest;
 	friend class ::KopetePasswordSetRequest;
+	friend class ::KopetePasswordClearRequest;
 };
 
 }
