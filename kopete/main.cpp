@@ -32,7 +32,8 @@ static const char *description =
 	
 static KCmdLineOptions options[] =
 {
-  { 0, 0, 0 }
+	{ "noplugins", I18N_NOOP("Do not load plugins"), 0 },
+	{ 0, 0, 0 }
 };
 
 int main(int argc, char *argv[])
