@@ -80,7 +80,7 @@ void BlackLister::saveToDisk()
 
 void BlackLister::slotRemoveContact(QString &contactId)
 {
-	if( !isBlocked(contactId) ){
+	if( isBlocked(contactId) ){
 		m_blacklist.remove( contactId );
 		saveToDisk();
 		emit contactRemoved( contactId );
