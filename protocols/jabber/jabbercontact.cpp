@@ -523,7 +523,10 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	{
 		XMPP::VCard::Email email = (*it);
 
-		setProperty ( protocol()->propEmailAddress, email.userid );
+		if ( !email.userid.isEmpty () )
+		{
+			setProperty ( protocol()->propEmailAddress, email.userid );
+		}
 	}
 
 	/*
