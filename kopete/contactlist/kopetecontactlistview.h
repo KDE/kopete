@@ -195,9 +195,8 @@ private:
 
 	KopeteContactListViewPrivate *d;
 
-	void addDraggedContactToTopLevel( Kopete::Contact *contact );
 	void moveDraggedContactToGroup( Kopete::MetaContact *contact, Kopete::Group *from, Kopete::Group *to );
-	void addDraggedContactToGroup( Kopete::Contact *contact, Kopete::Group *group );
+	void addDraggedContactToGroup( Kopete::MetaContact *contact, Kopete::Group *group );
 	void addDraggedContactToMetaContact( Kopete::Contact *contact, Kopete::MetaContact *parent );
 	void addDraggedContactByInfo( const QString &protocolId, const QString &accountId,
 		const QString &contactId, QListViewItem *after );

@@ -836,7 +836,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 
 				if(source_metaLVI->metaContact()->isTemporary())
 				{
-					addDraggedContactToGroup(source_contact,dest_groupLVI->group());
+					addDraggedContactToGroup(source_metaLVI->metaContact(),dest_groupLVI->group());
 				}
 				else
 				{
@@ -851,7 +851,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 
 				if(source_metaLVI->metaContact()->isTemporary())
 				{
-					addDraggedContactToTopLevel( source_contact );
+					addDraggedContactToGroup(source_metaLVI->metaContact() , Kopete::Group::topLevel() );
 				}
 				else
 				{
@@ -950,21 +950,6 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 	}
 }
 
-void KopeteContactListView::addDraggedContactToTopLevel( Kopete::Contact *contact )
-{
-	int r=KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
-					  i18n( "<qt>Would you like to add <b>%1</b> to your contact list?</qt>" )
-					.arg( contact->displayName() ),
-					i18n( "Kopete" ), KStdGuiItem::yes(), KStdGuiItem::no(),
-					"addTemporaryWhenMoving" );
-
-	if ( r == KMessageBox::Yes )
-	{
-		contact->metaContact()->setTemporary( false, Kopete::Group::topLevel() );
-		insertUndoItem( new UndoItem(UndoItem::MetaContactAdd, contact->metaContact() ) );
-	}
-}
-
 void KopeteContactListView::moveDraggedContactToGroup( Kopete::MetaContact *contact, Kopete::Group *from, Kopete::Group *to )
 {
 	contact->moveToGroup( from, to );
@@ -975,7 +960,7 @@ void KopeteContactListView::moveDraggedContactToGroup( Kopete::MetaContact *cont
 	insertUndoItem(u);
 }
 
-void KopeteContactListView::addDraggedContactToGroup( Kopete::Contact *contact, Kopete::Group *group )
+void KopeteContactListView::addDraggedContactToGroup( Kopete::MetaContact *contact, Kopete::Group *group )
 {
 	int r=KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
 					i18n( "<qt>Would you like to add <b>%1</b> to your contact list as a member of <b>%2</b>?</qt>" )
@@ -985,8 +970,8 @@ void KopeteContactListView::addDraggedContactToGroup( Kopete::Contact *contact, 
 
 	if( r == KMessageBox::Yes )
 	{
-		contact->metaContact()->setTemporary( false, group );
-		insertUndoItem( new UndoItem( UndoItem::MetaContactAdd, contact->metaContact(), group ) );
+		contact->setTemporary( false, group );
+		insertUndoItem( new UndoItem( UndoItem::MetaContactAdd, contact, group ) );
 	}
 }
 
@@ -994,7 +979,7 @@ void KopeteContactListView::addDraggedContactToMetaContact( Kopete::Contact *con
 {
 	int r = KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
 					i18n( "<qt>Would you like to add <b>%1</b> to your contact list as a child contact of <b>%2</b>?</qt>" )
-					.arg( contact->displayName(), parent->displayName() ),
+					.arg( contact->contactId(), parent->displayName() ),
 					i18n( "Kopete" ), KStdGuiItem::yes(), KStdGuiItem::no(),
 					"addTemporaryWhenMoving" );
 
@@ -1034,11 +1019,11 @@ void KopeteContactListView::addDraggedContactByInfo( const QString &protocolId, 
 				}
 				else if( dest_groupLVI )
 				{
-					addDraggedContactToGroup( source_contact,dest_groupLVI->group() );
+					addDraggedContactToGroup( source_contact->metaContact(),dest_groupLVI->group() );
 				}
 				else
 				{
-					addDraggedContactToTopLevel( source_contact );
+					addDraggedContactToGroup( source_contact->metaContact(), Kopete::Group::topLevel() );
 				}
 			}
 			else
