@@ -142,6 +142,13 @@ class Buffer
 		 * returns new buffer length
 		 */
 		int addFlap(const BYTE channel, const WORD flapSequenceNum);
+		
+		/**
+		 * changes the flap sequence number
+		 * (assumed to be already included in the buffer) to the
+		 * passed parameter value, returns length
+		 */
+		int changeSeqNum(const WORD flapSequenceNum);
 
 		/**
 		 * Prints out the buffer, just for debug reasons
@@ -188,6 +195,11 @@ class Buffer
 		 * Gets a SNAC header from the head of the buffer
 		 */
 		SNAC getSnacHeader();
+
+		/**
+		 * Reads the SNAC header from the buffer without removing it 
+		 */
+		SNAC readSnacHeader();
 
 		/**
 		 * sets the buffer and length to the given values

@@ -214,6 +214,13 @@ int Buffer::addFlap(const BYTE channel, const WORD flapSequenceNum)
 	return mBuffer.size();
 }
 
+int Buffer::changeSeqNum(const WORD flapSequenceNum)
+{
+	mBuffer[2] = ((flapSequenceNum & 0xff00) >> 8);
+	mBuffer[3] = (flapSequenceNum & 0x00ff);
+	return mBuffer.size();
+}
+
 DWORD Buffer::addSnac(const WORD family, const WORD subtype,
 	const WORD flags, DWORD id)
 {
@@ -237,6 +244,16 @@ SNAC Buffer::getSnacHeader()
 	s.subtype = getWord();
 	s.flags = getWord();
 	s.id = getDWord();
+	return s;
+}
+
+SNAC Buffer::readSnacHeader()
+{
+	SNAC s;
+	s.family = (mBuffer[6] << 8) | mBuffer[7];
+	s.subtype = (mBuffer[8] << 8) | mBuffer[9];
+	s.flags = (mBuffer[10] << 8) | mBuffer[11];
+	s.id = (mBuffer[12] << 24) | (mBuffer[13] << 16) | (mBuffer[14] << 8) | mBuffer[15];
 	return s;
 }
 

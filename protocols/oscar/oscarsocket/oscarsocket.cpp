@@ -15,6 +15,7 @@
 */
 
 #include "oscarsocket.h"
+#include "rateclass.h"
 #include "oscardebug.h"
 
 #include <stdlib.h>
@@ -33,6 +34,7 @@
 
 #include "aimbuddy.h"
 #include "aimgroup.h"
+
 
 // ---------------------------------------------------------------------------------------
 
@@ -61,7 +63,6 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	mDirectIMMgr=0L;
 	mFileTransferMgr=0L;
 	awaitingFirstPresenceBlock=OscarSocket::Waiting;
-	mBlockSend=false;
 	bSomethingOutgoing=false;
 
 	socket()->enableWrite(false); // don't spam us with readyWrite() signals
@@ -95,6 +96,10 @@ OscarSocket::~OscarSocket()
 	delete[] mCookie;
 	delete[] key;
 
+	for ( RateClass *tmp=rateClasses.first(); tmp; tmp = rateClasses.next() )
+	{
+		QObject::disconnect(tmp, SIGNAL(dataReady(Buffer &)), this, SLOT(writeData(Buffer &)));
+	}
 	rateClasses.clear();
 }
 
@@ -123,26 +128,12 @@ DWORD OscarSocket::setIPv4Address(const QString &address)
 	return 0;
 }
 
-void OscarSocket::slotToggleSend()
-{
-	if (mBlockSend)
-	{
-		kdDebug(14150) << k_funcinfo << "Removing send block" << endl;
-		mBlockSend=false;
-	}
-	else
-	{
-		kdDebug(14150) << k_funcinfo << "Adding send block" << endl;
-		mBlockSend=true;
-	}
-}
-
 void OscarSocket::slotConnected()
 {
 	kdDebug(14150) << k_funcinfo <<
 		"Connected to '" << socket()->host() <<
 		"', port '" << socket()->port() << "'" << endl;
-
+		
 #if 0
 	QString h=socket()->localAddress()->nodeName();
 	mDirectIMMgr=new OncomingSocket(this, h, DirectIM);
@@ -242,7 +233,7 @@ void OscarSocket::slotRead()
 	}
 
 	inbuf.setBuf(buf, bytesread);
-
+	
 #ifdef OSCAR_PACKETLOG
 	kdDebug(14150) << "=== INPUT ===" << inbuf.toString();
 #endif
@@ -585,43 +576,63 @@ void OscarSocket::OnConnAckReceived()
 
 void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 {
-	outbuf.addFlap(chan, flapSequenceNum);
+	//For now, we use 0 as the sequence number because rate
+	//limiting can cause packets from different classes to be
+	//sent out in different order
+	outbuf.addFlap(chan, 0);
+	
+	//Read SNAC family/type from buffer if able
+	SNAC s = outbuf.readSnacHeader();
+	
+	//Pointer to proper rate class
+	RateClass *rc = 0L; 
+	
+	//Determine rate class
+	for ( RateClass *tmp=rateClasses.first(); tmp; tmp = rateClasses.next() )
+	{
+		if ( tmp->isMember(s) )
+		{
+			kdDebug(14150) << k_funcinfo << "Rate class (id=" << tmp->id() << ") found: SNAC(" << s.family << "," << s.subtype << ")" << endl;
+			rc = tmp;
+			break;
+		}
+	}
+	
+	if ( rc ) 
+		rc->enqueue(outbuf);
+	else
+		writeData(outbuf);
+}
+
+/* Writes the next packet in the queue onto the wire */
+void OscarSocket::writeData(Buffer &outbuf)
+{
+	//Update packet sequence number
+	outbuf.changeSeqNum(flapSequenceNum);
 	flapSequenceNum++;
-
-#ifdef OSCAR_PACKETLOG
-	kdDebug(14150) << "--- OUTPUT ---" << outbuf.toString() << endl;
-#endif
-
+	
 	if(socket()->socketStatus() != KExtendedSocket::connected)
 	{
 		kdDebug(14150) << k_funcinfo << "Socket is NOT open, can't write to it right now" << endl;
 		return;
 	}
+		
+	kdDebug(14150) << k_funcinfo << "Writing data" << endl;
 
-	if(mBlockSend)
+#ifdef OSCAR_PACKETLOG
+	kdDebug(14150) << "--- OUTPUT ---" << outbuf.toString() << endl;
+#endif
+	
+	//actually put the data onto the wire
+	if(socket()->writeBlock(outbuf.buffer(), outbuf.length()) == -1)
 	{
-		//add the packet to the queue (at the end)
-		mPacketQueue.push_back(outbuf);
+		kdDebug(14150) << k_funcinfo << "writeBlock() call failed!" << endl;
+		kdDebug(14150) << k_funcinfo << 
+		socket()->strError(socket()->socketStatus(), socket()->systemError()) << endl;
 	}
-	else
-	{
-		if (!mPacketQueue.empty())
-		{
-			mPacketQueue.push_back(outbuf);
-			outbuf = mPacketQueue.first();
-		}
-
-		if(socket()->writeBlock(outbuf.buffer(), outbuf.length()) == -1)
-		{
-			kdDebug(14150) << k_funcinfo << "writeBlock() call failed!" << endl;
-			kdDebug(14150) << k_funcinfo <<
-				socket()->strError(socket()->socketStatus(), socket()->systemError())
-				<< endl;
-		}
-		outbuf.clear(); // get rid of the buffer contents
-
-	}
-
+	
+	if ( sender() && sender()->isA("RateClass") )
+		((RateClass *)sender())->dequeue();
 }
 
 // Logs in the user!
@@ -746,18 +757,28 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 
 	for (unsigned int i=0;i<numclasses;i++)
 	{
+		WORD classid;
+		DWORD windowsize, clear, alert, limit, disconnect,
+			current, max, lastTime;
+		BYTE currentState;
+		
 		rc = new RateClass;
-		rc->classid = inbuf.getWord();
+		classid = inbuf.getWord();
 		//kdDebug(14150) << k_funcinfo << "Rate classId=" << rc->classid << endl;
-		rc->windowsize = inbuf.getDWord();
-		rc->clear = inbuf.getDWord();
-		rc->alert = inbuf.getDWord();
-		rc->limit = inbuf.getDWord();
-		rc->disconnect = inbuf.getDWord();
-		rc->current = inbuf.getDWord();
-		rc->max = inbuf.getDWord();
-		rc->lastTime = inbuf.getDWord();
-		rc->currentState = inbuf.getByte();
+		windowsize = inbuf.getDWord();
+		clear = inbuf.getDWord();
+		alert = inbuf.getDWord();
+		limit = inbuf.getDWord();
+		disconnect = inbuf.getDWord();
+		current = inbuf.getDWord();
+		max = inbuf.getDWord();
+		lastTime = inbuf.getDWord();
+		currentState = inbuf.getByte();
+		rc->setRateInfo( classid, windowsize, clear, alert, limit, 
+			disconnect, current, max, lastTime, currentState );
+			
+		QObject::connect(rc, SIGNAL(dataReady(Buffer &)), this, SLOT(writeData(Buffer &)));
+		
 		/*//5 unknown bytes, depending on the 0x0001/0x0017 you send
 		for (int j=0;j<5;j++)
 				rc->unknown[j] = inbuf.getByte();*/
@@ -784,7 +805,7 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 		// find the class we're talking about
 		for (tmp=rateClasses.first();tmp;tmp=rateClasses.next())
 		{
-			if (tmp->classid == classid)
+			if (tmp->id() == classid)
 			{
 				rc = tmp;
 				break;
@@ -799,7 +820,7 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 //			kdDebug(14150)  << k_funcinfo << "snacpair; group=" << s->group <<
 //				", type=" << s->type << endl;
 			if (rc)
-				rc->members.append(s);
+				rc->addMember(s);
 		}
 	}
 
@@ -819,7 +840,7 @@ void OscarSocket::sendRateAck()
 	{
 		//kdDebug(14150) << k_funcinfo << "adding classid " << rc->classid << " to RateAck" << endl;
 //		if (rc->classid != 0x0015) //0x0015 is ICQ
-			outbuf.addWord(rc->classid);
+			outbuf.addWord(rc->id());
 	}
 	sendBuf(outbuf,0x02);
 //	emit connectionChanged(7,"Completing login...");
@@ -980,13 +1001,13 @@ void OscarSocket::sendClientReady(void)
 		/*kdDebug(14150) << "adding family '" << rc->classid <<
 			"' to CLI_READY packet" << endl;*/
 
-		outbuf.addWord(rc->classid);
+		outbuf.addWord(rc->id());
 
-		if (rc->classid == 0x0001)
+		if (rc->id() == 0x0001)
 		{
 			outbuf.addWord(0x0003);
 		}
-		else if (rc->classid == 0x0013)
+		else if (rc->id() == 0x0013)
 		{
 			if(mIsICQ)
 				outbuf.addWord(0x0002);
@@ -1000,7 +1021,7 @@ void OscarSocket::sendClientReady(void)
 
 		if(mIsICQ)
 		{
-			if(rc->classid == 0x0002)
+			if(rc->id() == 0x0002)
 				outbuf.addWord(0x0101);
 			else
 				outbuf.addWord(0x0110);
@@ -1008,9 +1029,9 @@ void OscarSocket::sendClientReady(void)
 		}
 		else // AIM
 		{
-			if (rc->classid == 0x0008 ||
-				rc->classid == 0x000b ||
-				rc->classid == 0x000c)
+			if (rc->id() == 0x0008 ||
+				rc->id() == 0x000b ||
+				rc->id() == 0x000c)
 			{
 				outbuf.addWord(0x0104);
 				outbuf.addWord(0x0001);
@@ -2826,20 +2847,20 @@ void OscarSocket::parseRateChange(Buffer &inbuf)
 	kdDebug(14150) << k_funcinfo << "lastTime=" << lastTime << endl;
 
 	BYTE currentState = inbuf.getByte();
-	kdDebug(14150) << k_funcinfo << "currentState=" << currentState << endl;
+	kdDebug(14150) << k_funcinfo << "currentState=" << (WORD)currentState << endl;
 
 	//Predict the new rate level
-	int newLevel = ((windowSize - 1) / windowSize) * ((currentLevel + 1) / windowSize);
-	if (newLevel <= 0)
-		newLevel = 250; //seems like a good default
-
-	kdDebug(14150) << "New Level is: " << newLevel << endl;
+	//int newLevel = ((windowSize - 1) / windowSize) * ((currentLevel + 1) / windowSize);
+	//if (newLevel <= 0)
+	//	newLevel = 250; //seems like a good default
+	
+	//kdDebug(14150) << "New Level is: " << newLevel << endl;
 
 	if (currentLevel <= disconnectLevel)
 	{
 		emit protocolError(i18n("The account %1 will be disconnected for exceeding the rate limit." \
 					"Please wait approximately 10 minutes before reconnecting.")
-					.arg(mAccount->accountId()),0);
+					.arg(mAccount->accountId()), 0);
 
 		//let the account properly clean itself up
 		mAccount->disconnect();
@@ -2848,10 +2869,9 @@ void OscarSocket::parseRateChange(Buffer &inbuf)
 	{
 		if (code == 0x0002 || code == 0x0003)
 		{
-			slotToggleSend();
-			kdDebug(14150) << "Warning about the rate limit received. Waiting "
-							<< newLevel / 2 << " milliseconds" << endl;
-			QTimer::singleShot( newLevel / 2, this, SLOT(slotToggleSend()));
+			kdDebug(14150) << "Warning about the rate limit in class "
+				<< rateclass << " received. Current level: "
+				<< currentLevel << endl;
 		}
 	}
 

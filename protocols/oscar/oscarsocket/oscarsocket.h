@@ -35,6 +35,7 @@ class OscarAccount;
 class OscarContact;
 class QTimer;
 class KExtendedSocket;
+class RateClass;
 
 struct FLAP
 {
@@ -43,29 +44,6 @@ struct FLAP
 	 WORD sequence_number;
 	 WORD length;
 	 bool error;
-};
-
-struct SnacPair
-{
-	//just a group+type pair
-	 WORD group;
-	 WORD type;
-};
-
-struct RateClass
-{
-	//rate info
-	WORD classid;
-	DWORD windowsize;
-	DWORD clear;
-	DWORD alert;
-	DWORD limit;
-	DWORD disconnect;
-	DWORD current;
-	DWORD max;
-	DWORD lastTime;
-	BYTE currentState;
-	QPtrList<SnacPair> members;
 };
 
 struct AckBuddy
@@ -625,7 +603,7 @@ class OscarSocket : public OscarConnection
 		* Sends the output buffer, and clears it
 		*/
 		void sendBuf(Buffer &buf, BYTE chan);
-
+		
 		/*
 		* Sends login information, actually logs
 		* onto the server
@@ -889,6 +867,8 @@ class OscarSocket : public OscarConnection
 
 
 	private slots:
+		/** Immediately send data */
+		void writeData(Buffer &outbuf);
 		/** Called when a connection has been closed */
 		void slotConnectionClosed();
 		/** Called when the server aknowledges the connection */
@@ -917,15 +897,8 @@ class OscarSocket : public OscarConnection
 			const unsigned long size, const QString &recipient);*/
 
 		void slotKeepaliveTimer();
-
-		/*
-		 * Called by the singleshot timer that is set when we've reached
-		 * the rate limit warning
-		 */
-		void slotToggleSend();
-
 		void slotBytesWritten(int n);
-
+		
 	signals:
 		/*
 		 * Emitted when there is more information to read from the socket
@@ -1128,12 +1101,6 @@ class OscarSocket : public OscarConnection
 		KExtendedSocket * connsock;
 		// Tells if we are connected to the server and ready to operate
 		bool isLoggedIn;
-		// Tells if we can send data to the server or not
-		bool mBlockSend;
-
-		/** Packet Queue for delayed sending. nuff said. :) */
-		QValueList<Buffer> mPacketQueue;
-
 
 		/**
 		 * counter to find out if we got all packets needed before sending

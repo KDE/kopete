@@ -21,7 +21,6 @@
 #include <qobject.h>
 #include <kextsock.h>
 
-
 /**Implementation of a base oscar connection.
   *No login functions, just basic direct Oscar connection functionality.
   *@author Tom Linsky

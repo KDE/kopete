@@ -12,4 +12,4 @@ liboscarsocket_la_SOURCES = oscarsocket.cpp \
 	md5.c aimbuddylist.cpp \
 	aim.cpp ssidata.cpp \
 	oscarconnection.cpp oscardirectconnection.cpp \
-	oscarfilesendconnection.cpp
+	oscarfilesendconnection.cpp rateclass.cpp 
