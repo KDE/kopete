@@ -39,6 +39,8 @@ KopeteMetaContact::KopeteMetaContact()
 	m_trackChildNameChanges = false;
 	m_temporary=false;
 	m_isTopLevel=false;
+
+	m_onlineStatus = Offline;
 }
 
 KopeteMetaContact::~KopeteMetaContact()
@@ -47,18 +49,18 @@ KopeteMetaContact::~KopeteMetaContact()
 
 void KopeteMetaContact::addContact( KopeteContact *c )
 {
-	// If the meta contact doesn't contains any group, add group of the metaContact
-	// Else, don't care about Contact group
-	if(m_groups.isEmpty())
-		addContact(c,c->groups());
+	// If the meta contact isn't in any group, make them member of the
+	// new contact's groups, otherwise don't care about the groups
+	// (FIXME: Why is this? - Martijn)
+	if( m_groups.isEmpty() )
+		addContact( c, c->groups() );
 	else
-		addContact(c,QStringList());
+		addContact( c, QStringList() );
 }
 
-
-void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &groups )
+void KopeteMetaContact::addContact( KopeteContact *c,
+	const QStringList &groups )
 {
-
 	if( m_contacts.contains( c ) )
 	{
 		kdDebug() << "KopeteMetaContact::addContact: WARNING: "
@@ -89,9 +91,37 @@ void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &groups 
 		}
 		emit contactAdded(c);
 	}
-	// If a contact has been removed, we need to re-evaluate the on-line status
-	emit onlineStatusChanged( this, status() );
 
+	updateOnlineStatus();
+}
+
+void KopeteMetaContact::updateOnlineStatus()
+{
+	OnlineStatus newStatus = Offline;
+
+	QPtrListIterator<KopeteContact> it( m_contacts );
+	for( ; it.current(); ++it )
+	{
+		KopeteContact::ContactStatus s = it.current()->status();
+
+		if ( s == KopeteContact::Online )
+		{
+			newStatus = Online;
+			break;
+		}
+		else if ( s == KopeteContact::Away )
+		{
+			// Set status, but don't stop searching, since 'Online' overrules
+			// 'Away'
+			newStatus = Away;
+		}
+	}
+
+	if( newStatus != m_onlineStatus )
+	{
+		m_onlineStatus = newStatus;
+		emit onlineStatusChanged( this, m_onlineStatus );
+	}
 }
 
 void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
@@ -121,9 +151,8 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 		}
 		emit contactRemoved(c);
 	}
-	// If a contact has been removed, we need to re-evaluate the on-line status
-	emit onlineStatusChanged( this, status() );
 
+	updateOnlineStatus();
 }
 
 
@@ -268,32 +297,7 @@ QString KopeteMetaContact::statusString() const
 
 KopeteMetaContact::OnlineStatus KopeteMetaContact::status() const
 {
-	bool awayFound = false;
-
-//	kdDebug() << "KopeteMetaContact::status() for " << displayName() << endl;
-	QPtrListIterator<KopeteContact> it( m_contacts );
-	for( ; it.current(); ++it )
-	{
-//		kdDebug() << "checking status for contact-pointer " << (it.current()) << endl;
-		KopeteContact::ContactStatus s = it.current()->status();
-
-		if ( s == KopeteContact::Online )
-			return Online;
-		else if ( s == KopeteContact::Away )
-			awayFound = true;
-	}
-/*
-	it.toFirst();
-	for( ; it.current(); ++it )
-	{
-		if( it.current()->status() == KopeteContact::Away )
-			return Away;
-	}
-*/
-	if ( awayFound )
-		return Away;
-	else
-		return Offline;
+	return m_onlineStatus;
 }
 
 bool KopeteMetaContact::isOnline() const
@@ -326,8 +330,7 @@ bool KopeteMetaContact::isReachable() const
 void KopeteMetaContact::slotContactStatusChanged( KopeteContact * /* c */,
 	KopeteContact::ContactStatus /* s */ )
 {
-//	kdDebug() << "KopeteMetaContact::slotContactStatusChanged" << endl;
-	emit onlineStatusChanged( this, status() );
+	updateOnlineStatus();
 }
 
 void KopeteMetaContact::setDisplayName( const QString &name )

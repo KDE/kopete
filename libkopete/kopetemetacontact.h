@@ -26,11 +26,12 @@
 
 #include "kopetecontact.h"
 
+class QDomNode;
 class QStringList;
 
 class KopetePlugin;
 class KopetePlugin;
-class QDomNode;
+
 /**
  * @author Martijn Klingens <klingens@kde.org>
  */
@@ -53,7 +54,7 @@ public:
 	/**
 	 * Add contact to the meta contact
 	 */
- 	void addContact( KopeteContact *c);
+	void addContact( KopeteContact *c);
 	void addContact( KopeteContact *c, const QStringList &groups );
 	
 	/**
@@ -125,7 +126,7 @@ public:
 	 */
 	bool fromXML( const QDomNode& cnode );
 
-  	/**
+	/**
 	 * Move a contact from one group to another.
 	 */
 	void moveToGroup( const QString &from, const QString &to );
@@ -133,7 +134,8 @@ public:
 	 * Remove a contact from one group
 	 */
 	void removeFromGroup( const QString &from);
-  	/**
+
+	/**
 	 * Add a contact to another group.
 	 */
 	void addToGroup( const QString &to );
@@ -184,7 +186,6 @@ public slots:
 	 */
 	void startChat();
 
-
 	/**
 	 * Get or set a field for the KDE address book backend. Fields not
 	 * registered during the call to KopetePlugin::addressBookFields()
@@ -193,6 +194,7 @@ public slots:
 	QString addressBookField( KopetePlugin *p, const QString &key ) const;
 	void setAddressBookField( KopetePlugin *p, const QString &key,
 		const QString &value );
+
 	/**
 	 * Return a copy of all address book fields exported by this
 	 * meta contact
@@ -202,6 +204,9 @@ public slots:
 signals:
 	/**
 	 * The contact's online status changed
+	 * Do *NOT* emit this signal directly, unless you also update the
+	 * cache m_onlineStatus value! In all other case, just call
+	 * updateOnlineStatus() instead.
 	 */
 	void onlineStatusChanged( KopeteMetaContact *contact,
 		KopeteMetaContact::OnlineStatus status );
@@ -214,26 +219,34 @@ signals:
 	/**
 	 * The contact was moved
 	 */
-	void movedToGroup( KopeteMetaContact *contact, const QString &from, const QString &to );
-    /**
+	void movedToGroup( KopeteMetaContact *contact, const QString &from,
+		const QString &to );
+
+	/**
 	 * The contact was removed from group
 	 */
 	void removedFromGroup( KopeteMetaContact *contact, const QString &from);
+
 	/**
 	 * The contact was added to another group
 	 */
 	void addedToGroup( KopeteMetaContact *contact, const QString &to );
 
-
-	void contactAdded (KopeteContact *) ;
-	void contactRemoved(KopeteContact *) ;
+	void contactAdded( KopeteContact *c );
+	void contactRemoved( KopeteContact *c );
 
 	/**
 	 * The metacontact is at top level
 	 */
-	void topLevel ( KopeteMetaContact *contact, const bool b);
+	void topLevel ( KopeteMetaContact *contact, const bool b );
 
 private slots:
+	/**
+	 * Update the contact's online status and emit onlineStatusChanged
+	 * when appropriate
+	 */
+	void updateOnlineStatus();
+
 	/**
 	 * One of the child contact's online status changed
 	 */
@@ -258,7 +271,6 @@ private slots:
 	 */
 	void slotPluginLoaded(KopetePlugin *p);
 
-
 private:
 	QPtrList<KopeteContact> m_contacts;
 
@@ -275,7 +287,7 @@ private:
 
 	QStringList m_groups;
 	bool m_isTopLevel;
-                
+
 	/**
 	 * Data to store in the XML file
 	 */
@@ -283,6 +295,8 @@ private:
 	AddressBookFields m_addressBook;
 
 	bool m_temporary;
+
+	OnlineStatus m_onlineStatus;
 };
 
 #endif
