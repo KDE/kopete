@@ -108,6 +108,7 @@ private slots:
 	void slotConnectedToServer();
 	void slotConnectionClosed();
 	void slotNewPrivMessage(const QString &originating, const QString &target, const QString &message);
+	void slotContactDestroy(KopeteContact *);
 
 private:
 	const IRCProtocol *mProtocol;

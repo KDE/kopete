@@ -77,7 +77,6 @@ IRCChannelContact::IRCChannelContact(IRCAccount *account, const QString &channel
 
 IRCChannelContact::~IRCChannelContact()
 {
-	mAccount->unregisterChannel(mNickName);
 }
 
 KopeteMessageManager* IRCChannelContact::manager(bool)

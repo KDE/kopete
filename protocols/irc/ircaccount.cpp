@@ -144,6 +144,9 @@ bool IRCAccount::addContact( const QString &contact, const QString &displayName,
 	else if( c->metaContact()->isTemporary() )
 		m->setTemporary(false);
 
+	QObject::connect(c, SIGNAL(contactDestroyed(KopeteContact *)), this, 
+		SLOT(slotContactDestroy(KopeteContact *)));
+
 	return true;
 }
 
@@ -224,6 +227,16 @@ void IRCAccount::unregisterUser( const QString &name )
 			engine()->removeFromNotifyList( lowerName );
 		}
 	}
+}
+
+void IRCAccount::slotContactDestroy(KopeteContact *contact)
+{
+	const QString id = contact->contactId();
+	
+	if ( id.startsWith( QString::fromLatin1("#") ) )
+		unregisterChannel(id);
+	else
+		unregisterUser(id);
 }
 
 void IRCAccount::slotConnectedToServer()
