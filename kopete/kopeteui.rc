@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kopete" version="16">
+<kpartgui name="kopete" version="17">
 	<MenuBar>
 		<Menu name="file" noMerge="1">
 			<text>&amp;File</text>
@@ -48,13 +48,18 @@
 		</Menu>
 	</MenuBar>
 
-	<ToolBar fullWidth="true" name="mainToolBar" noMerge="1">
+	<ToolBar fullWidth="true" name="mainToolBar" noMerge="1"><Text>Main Toolbar</Text>
 		<Action name="ConnectAll"/>
 		<Action name="DisconnectAll"/>
 		<Action name="Status"/>
 		<Action name="AddContact"/>
 		<Action name="settings_show_offliners"/>
 		<Action name="settings_show_empty_groups"/>
+	</ToolBar>
+
+	<ToolBar fullWidth="true" name="quickSearchBar" noMerge="1"><Text>Quick Search Bar</Text>
+		<Action name="quicksearch_reset"/>
+		<Action name="quicksearch_bar"/>
 	</ToolBar>
 
 	<Menu name="contact_popup">

@@ -313,6 +313,13 @@ public:
 	static void setEffects( bool animation, bool fading, bool folding );
 
 	int width( const QFontMetrics & fm, const QListView * lv, int c ) const;
+	
+	/**
+	 * Show or hide this item in a clean way depending on whether it matches
+	 * the current quick search
+	 * @param match If true, show or hide the item as normal. If false, hide the item immediately.
+	 */
+	virtual void setSearchMatch( bool match );
 
 protected:
 	void componentAdded( Component *component );

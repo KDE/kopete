@@ -648,7 +648,7 @@ public:
 	 : layoutAnimateTimer( theLayoutAnimateTimer(), item, SLOT( slotLayoutAnimateItems() ) )
 	 , animateLayout( true ), opacity( 1.0 )
 	 , visibilityTimer( theVisibilityTimer(), item, SLOT( slotUpdateVisibility() ) )
-	 , visibilityLevel( 0 ), visibilityTarget( false )
+	 , visibilityLevel( 0 ), visibilityTarget( false ), searchMatch( true )
 	{
 	}
 
@@ -661,7 +661,7 @@ public:
 		static SharedTimer timer( 10 );
 		return timer;
 	}
-
+	
 	bool animateLayout;
 	int layoutAnimateSteps;
 	static const int layoutAnimateStepsTotal = 10;
@@ -685,6 +685,9 @@ public:
 	static const int visibilityFadeSteps = 0;
 #endif
 	static const int visibilityStepsTotal = visibilityFoldSteps + visibilityFadeSteps;
+	
+	bool searchMatch;
+		
 	static bool animateChanges;
 	static bool fadeVisibility;
 	static bool foldVisibility;
@@ -800,6 +803,23 @@ void Item::setOpacity( float opacity )
 	repaint();
 }
 
+void Item::setSearchMatch( bool match )
+{
+	d->searchMatch = match;
+	
+	if ( !match )
+		setVisible( false );
+	else
+	{
+		kdDebug(14000) << k_funcinfo << " match: " << match << ", vis timer active: " << d->visibilityTimer.isActive()
+		               << ", target visibility: " << targetVisibility() << endl;
+		if ( d->visibilityTimer.isActive() )
+			setVisible( true );
+		else
+			setVisible( targetVisibility() );
+	}
+}
+
 bool Item::targetVisibility()
 {
 	return d->visibilityTarget;
@@ -812,14 +832,14 @@ void Item::setTargetVisibility( bool vis )
 		// in case we're getting called because our parent was shown and
 		// we need to be rehidden
 		if ( !d->visibilityTimer.isActive() )
-			setVisible( vis );
+			setVisible( vis && d->searchMatch );
 		return;
 	}
 	d->visibilityTarget = vis;
 	d->visibilityTimer.start();
 	//d->visibilityTimer.start( 40 );
 	if ( targetVisibility() )
-		setVisible( true );
+		setVisible( d->searchMatch );
 	slotUpdateVisibility();
 }
 

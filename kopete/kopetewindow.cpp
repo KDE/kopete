@@ -26,6 +26,7 @@
 #include <qtimer.h>
 
 #include <kaction.h>
+#include <kactionclasses.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -53,6 +54,7 @@
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
+#include "kopetelistviewsearchline.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetepluginconfig.h"
 #include "kopetepluginmanager.h"
@@ -140,6 +142,7 @@ void KopeteWindow::initActions()
 	actionConnectionMenu = new KActionMenu( i18n("Connection"),"connect_established",
 							actionCollection(), "Connection" );
 
+	actionConnectionMenu->setDelayed( false );
 	actionConnectionMenu->insert(actionConnect);
 	actionConnectionMenu->insert(actionDisconnect);
 	actionConnect->setEnabled(false);
@@ -189,7 +192,18 @@ void KopeteWindow::initActions()
 	actionShowOffliners->setCheckedState(i18n("Hide Offline &Users"));
 	actionShowEmptyGroups->setCheckedState(i18n("Hide Empty &Groups"));
 #endif
-
+	
+	// quick search bar
+	QWidget *searchBar = new Kopete::UI::ListView::SearchLine( 0, contactlist, "quicksearch_bar" );
+	KWidgetAction *quickSearch = new KWidgetAction( searchBar, i18n( "Quick Search Bar" ), 0, 0, 0, actionCollection(), "quicksearch_bar" );
+	quickSearch->setAutoSized( true );
+	// quick search bar - clear button
+	KAction *resetQuickSearch = new KAction( i18n( "Reset Quick Search" ),
+		QApplication::reverseLayout() ? "clear_left" : "locationbar_erase",
+		0, searchBar, SLOT( clear() ), actionCollection(), "quicksearch_reset" );
+	resetQuickSearch->setWhatsThis( i18n( "Reset Quick Search\n"
+		"Resets the quick search so that all contacts and groups are shown again." ) );
+	
 	// sync actions, config and prefs-dialog
 	connect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
 	slotConfigChanged();
@@ -254,6 +268,7 @@ void KopeteWindow::loadOptions()
 	KConfig *config = KGlobal::config();
 
 	toolBar("mainToolBar")->applySettings( config, "ToolBar Settings" );
+	toolBar("quickSearchBar")->applySettings( config, "QuickSearchBar Settings" );
 
 	applyMainWindowSettings( config, "General Options" );
 
@@ -288,7 +303,8 @@ void KopeteWindow::saveOptions()
 	KConfig *config = KGlobal::config();
 
 	toolBar("mainToolBar")->saveSettings ( config, "ToolBar Settings" );
-
+	toolBar("quickSearchBar")->saveSettings( config, "QuickSearchBar Settings" );
+	
 	saveMainWindowSettings( config, "General Options" );
 
 	config->setGroup("General Options");

@@ -35,12 +35,12 @@ class KToggleAction;
 
 class KopeteAccountStatusBarIcon;
 class KopeteContactListView;
-namespace Kopete { class AwayAction; }
 class KopetePluginConfig;
 class KopeteSystemTray;
 
 namespace Kopete
 {
+class AwayAction;
 class Account;
 class Contact;
 class Plugin;
