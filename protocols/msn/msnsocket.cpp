@@ -225,14 +225,20 @@ void MSNSocket::slotReadLine()
 			return;
 		}
 
-		// If there's no CR/LF waiting, just stop and wait for new data to arrive
-		if( !QCString(m_buffer).contains( "\r\n" ) )
-		  return;
+		int index = -1;
+		for (unsigned int x = 0;(x + 1) < m_buffer.size();x++)
+		{
+			if ((m_buffer[x] == '\r') &&
+			    (m_buffer[x+1] == '\n'))
+			{
+				index = x;
+				break;
+			}
+		}
 
-		int index = QCString(m_buffer).find( "\r\n" );
 		if( index != -1 )
 		{
-			QString command = QString::fromUtf8((QCString(m_buffer.take(index+2))+'\0').left(index));
+			QString command = QString::fromUtf8(m_buffer.take(index+2), index);
 
 			command.replace( QRegExp( "\r\n" ), "" );
 			kdDebug() << "MSNSocket::slotReadLine: " << command << endl;
@@ -294,7 +300,7 @@ bool MSNSocket::pollReadBlock()
 	}
 
 	QByteArray baBlock = m_buffer.take( m_waitBlockSize );
-	QString block = QString::fromUtf8((QCString(baBlock)+'\0').left(m_waitBlockSize));
+	QString block = QString::fromUtf8(baBlock, m_waitBlockSize);
 
 
 	kdDebug() << "MSNSocket::pollReadBlock: Successfully read block of size "
