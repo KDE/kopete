@@ -47,6 +47,8 @@ public:
 	bool settings_changed;
 
 private:
+	bool revalidateJID;
+
 	void reopen ();
 	void writeConfig ();
 	JabberProtocol *m_protocol;
@@ -55,6 +57,7 @@ private slots:
 	void registerClicked ();
 	void sslToggled (bool);
 	void configChanged ();
+	void setJIDValidation ();
 	void validateJID ();
 
 };

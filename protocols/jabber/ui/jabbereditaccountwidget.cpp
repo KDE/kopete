@@ -55,6 +55,9 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	connect (leProxyUser, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
 	connect (leProxyPass, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
 
+	connect (mID, SIGNAL (textChanged (const QString &)), this, SLOT (setJIDValidation ()));
+	connect (mServer, SIGNAL (textChanged (const QString &)), this, SLOT (setJIDValidation ()));
+
 	connect (btnRegister, SIGNAL (clicked ()), this, SLOT (registerClicked ()));
 	connect (chkUseSSL, SIGNAL (toggled (bool)), this, SLOT (sslToggled (bool)));
 
@@ -112,13 +115,16 @@ void JabberEditAccountWidget::reopen ()
 	leProxyPass->setText (account()->pluginData (m_protocol, "ProxyPass"));
 	mAutoConnect->setChecked (account()->autoLogin());
 
+	revalidateJID = false;
+
 }
 
 KopeteAccount *JabberEditAccountWidget::apply ()
 {
 	kdDebug (14180) << "JabberEditAccount::apply()" << endl;
 
-	validateJID();
+	if(revalidateJID)
+		validateJID();
 
 	if (!account())
 	{
@@ -261,6 +267,16 @@ void JabberEditAccountWidget::validateJID ()
 void JabberEditAccountWidget::configChanged ()
 {
 	settings_changed = true;
+}
+
+void JabberEditAccountWidget::setJIDValidation ()
+{
+
+	if(account ()->pluginData(m_protocol, "Server") == mServer->text ())
+		revalidateJID = false;
+	else
+		revalidateJID = true;
+
 }
 
 void JabberEditAccountWidget::registerClicked ()
