@@ -97,6 +97,8 @@ private slots: // Private slots
   void slotViewHistory(void);
 	/** Warn the user */
 	void slotWarn(void);
+	/** Called when the status of the Kopete user(behind this computer)'s status has changed */
+	void slotMainStatusChanged(int);
 };
 
 #endif

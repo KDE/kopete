@@ -42,6 +42,7 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	QObject::connect(mProtocol->engine, SIGNAL(gotOncomingBuddy(UserInfo)),this,SLOT(slotOncomingBuddy(UserInfo)));
 	QObject::connect(mProtocol->engine, SIGNAL(gotOffgoingBuddy(QString)),this,SLOT(slotOffgoingBuddy(QString)));
 	QObject::connect(mProtocol->engine, SIGNAL(gotIM(QString,QString,bool)),this,SLOT(slotIMReceived(QString,QString,bool)));
+	QObject::connect(mProtocol->engine, SIGNAL(statusChanged(int)), this, SLOT(slotMainStatusChanged(int)));
 	initActions();
 	TBuddy tmpBuddy;
 	int num = mProtocol->buddyList()->getNum(mName);
@@ -138,6 +139,21 @@ KopeteMessageManager* OscarContact::msgManager()
 		mMsgManager = kopeteapp->sessionFactory()->create(mProtocol->myself(), theContacts, mProtocol, "aim_logs/" + mName +".log", KopeteMessageManager::ChatWindow);
 		connect(mMsgManager, SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(const KopeteMessage&, KopeteMessageManager *)));
 		return mMsgManager;
+	}
+}
+
+void OscarContact::slotMainStatusChanged(int newStatus)
+{
+	if (newStatus == OSCAR_OFFLINE)
+	{
+		mStatus = OSCAR_OFFLINE;
+		emit statusChanged( this, status() );
+		// Try to do this, otherwise no big deal
+		TBuddy tmpBuddy;
+		int buddyNum = mProtocol->buddyList()->getNum(mName);
+		if ( mProtocol->buddyList()->get(&tmpBuddy, buddyNum) == -1 )
+			return;
+		mProtocol->buddyList()->setStatus(buddyNum, OSCAR_OFFLINE);
 	}
 }
 
