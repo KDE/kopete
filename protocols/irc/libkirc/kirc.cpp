@@ -22,6 +22,7 @@
 #include <qregexp.h>
 #include <sys/time.h>
 #include <qdatetime.h>
+#include "dcchandler.h"
 
 KIRC::KIRC()
 	: QSocket()
@@ -157,6 +158,22 @@ void KIRC::slotReadyRead()
 						emit incomingAction(originating, target, message);
 					} else {
 						emit incomingPrivAction(originating, target, message);
+					}
+					continue;
+				} else if (special.lower() == "dcc")
+				{
+					if (message.section(' ', 1, 1).lower() == "chat")
+					{
+						// Tells if the conversion went okay to unsigned int
+						bool okayHost;
+						bool okayPort;
+						QHostAddress address(message.section(' ', 3, 3).toUInt(&okayHost));
+						unsigned int port = message.section(' ', 4, 4).toUInt(&okayPort);
+						if (okayHost && okayPort)
+						{
+							DCCChat *chatObject = new DCCChat(address, port);
+							emit incomingDccChatRequest(address, port, originating.section('!', 0, 0), *chatObject);
+						}
 					}
 					continue;
 				}

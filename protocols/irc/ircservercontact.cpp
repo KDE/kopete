@@ -37,6 +37,8 @@
 #include "irccontact.h"
 #include "ircservermanager.h"
 #include "ircmessage.h"
+#include "ircdccview.h"
+#include "dccconfirm.h"
 
 IRCServerContact::IRCServerContact(const QString &server, const QString &nickname, bool connectNow, IRCProtocol *protocol)
 {
@@ -101,6 +103,7 @@ void IRCServerContact::init()
 	QObject::connect(engine, SIGNAL(successfulQuit()), this, SLOT(slotServerHasQuit()));
 	QObject::connect(engine, SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)), this, SLOT(incomingPrivMessage(const QString &, const QString &, const QString &)));
 	QObject::connect(engine, SIGNAL(incomingPrivAction(const QString &, const QString &, const QString &)), this, SLOT(incomingPrivAction(const QString &, const QString &, const QString &)));
+	QObject::connect(engine, SIGNAL(incomingDccChatRequest(const QHostAddress &, unsigned int, const QString &, DCCChat &)), this, SLOT(incomingDccChatRequest(const QHostAddress &, unsigned int, const QString &, DCCChat &)));
 	mWindow = new IRCChatWindow(mServer, this);
 	QObject::connect(mWindow, SIGNAL(windowClosing()), this, SLOT(slotQuitServer()));
 	mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(connectNow()));
@@ -161,6 +164,23 @@ void IRCServerContact::disconnectNow()
 		slotQuitServer();
 	} else {
 		forceDisconnect();
+	}
+}
+
+void IRCServerContact::incomingDccChatRequest(const QHostAddress &, unsigned int port, const QString &nickname, DCCChat &chatObject)
+{
+	if (mWindow != 0)
+	{
+		if (DCCConfirm::confirmRequest(DCCConfirm::Chat, nickname, mWindow))
+		{
+			QVBox *parent = new QVBox(mWindow->mTabWidget);
+			IRCDCCView *dccView = new IRCDCCView(nickname, this, parent, &chatObject);
+			mWindow->mTabWidget->addTab(parent, SmallIconSet("irc_dcc"),nickname);
+			chatObject.dccAccept();
+			mWindow->mTabWidget->showPage(parent);
+		} else {
+			chatObject.dccCancel();
+		}
 	}
 }
 

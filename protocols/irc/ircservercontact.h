@@ -38,6 +38,7 @@ class IRCCmdParser;
 class IRCServerManager;
 class IRCMessage;
 class IRCProtocol;
+class DCCChat;
 
 class IRCServerContact : public QObject
 {
@@ -75,6 +76,7 @@ private slots:
 	void updateToolbar();
 	void incomingPrivMessage(const QString &, const QString &, const QString &);
 	void incomingPrivAction(const QString &, const QString &, const QString &);
+	void incomingDccChatRequest(const QHostAddress &, unsigned int port, const QString &nickname, DCCChat &chatObject);
 public slots:
 	void slotQuitServer();
 	void connectNow();

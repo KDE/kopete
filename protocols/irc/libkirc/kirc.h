@@ -22,6 +22,8 @@
 
 #include <qsocket.h>
 #include <qstring.h>
+#include <qhostaddress.h>
+#include "dcchandler.h"
 
 /**
   *@author nbetcher
@@ -101,6 +103,7 @@ signals:
 	void repliedCtcp(const QString &type, const QString &target, const QString &messageSent);
 	void incomingCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
 	void incomingKick(const QString &, const QString &, const QString &, const QString &);
+	void incomingDccChatRequest(const QHostAddress &, unsigned int port, const QString &nickname, DCCChat &chatObject);
 private:
 	bool waitingFinishMotd;
 	bool loggedIn;
