@@ -394,6 +394,21 @@ QString KopeteMetaContact::toXML()
 		}
 	}
 
+	// We may have more 'cached' plugin data from plugins that are not
+	// loaded at the moment. Assume our copy is still valid and store it
+	QMap<QString, QString>::ConstIterator it;
+	for( it = m_pluginData.begin(); it != m_pluginData.end(); ++it )
+	{
+		KopetePlugin *plugin = kopeteapp->libraryLoader()->searchByID(
+			it.key() );
+
+		if( !plugin )
+		{
+			xml += "    <plugin-data plugin-id=\"" + it.key() + "\">"
+				+ it.data() + "</plugin-data>\n";
+		}
+	}
+
 	xml += "  </meta-contact>\n";
 
 	return xml;
