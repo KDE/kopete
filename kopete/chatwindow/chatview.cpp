@@ -276,7 +276,7 @@ void ChatView::save()
 	else
 	{
 		KMessageBox::error( 0, //No parent
-			i18n("Could not open %1 for writing.").arg(fileName), // Message
+			i18n("<qt>Could not open <b>%1</b> for writing.</qt>").arg(fileName), // Message
 			i18n("Error While Saving") ); //Caption
 	}
 }
@@ -313,15 +313,15 @@ bool ChatView::closeView( bool force )
 			if( shortCaption.length() > 40 )
 				shortCaption = shortCaption.left( 40 ) + QString::fromLatin1("...");
 
-			response = KMessageBox::warningContinueCancel(this, i18n("You are about to leave the group chat session \"%1\"."
-				"You will not receive future messages from this conversation").arg(shortCaption), i18n("Closing Group Chat"),
+			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You are about to leave the group chat session <b>%1</b>.<br>"
+				"You will not receive future messages from this conversation.</qt>").arg(shortCaption), i18n("Closing Group Chat"),
 				i18n("Cl&ose Chat"), i18n("Do not ask me this again"));
 		}
 
 		if( !unreadMessageFrom.isNull() && ( response == KMessageBox::Continue ) )
 		{
-			response = KMessageBox::warningContinueCancel(this, i18n("You have received a message from \"%1\" in the last "
-				"second, are you sure you want to close this chat?").arg(unreadMessageFrom), i18n("Unread Message"),
+			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You have received a message from <b>%1</b> in the last "
+				"second, are you sure you want to close this chat?</qt>").arg(unreadMessageFrom), i18n("Unread Message"),
 				i18n("Cl&ose Chat"), i18n("Do not ask me this again"));
 		}
 

@@ -534,15 +534,15 @@ bool KopeteEmailWindow::closeView( bool force )
 			if( shortCaption.length() > 40 )
 				shortCaption = shortCaption.left( 40 ) + QString::fromLatin1("...");
 
-			response = KMessageBox::warningContinueCancel(this, i18n("You are about to leave the group chat session \"%1\"."
-				"You will not receive future messages from this conversation").arg(shortCaption), i18n("Closing Group Chat"),
+			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You are about to leave the group chat session <b>%1</b>.<br>"
+				"You will not receive future messages from this conversation.</qt>").arg(shortCaption), i18n("Closing Group Chat"),
 				i18n("&Close Chat"), i18n("Do not ask me this again"));
 		}
 
 		if( !d->unreadMessageFrom.isNull() && ( response == KMessageBox::Continue ) )
 		{
-			response = KMessageBox::warningContinueCancel(this, i18n("You have received a message from \"%1\" in the last "
-				"second, are you sure you want to close this chat?").arg(d->unreadMessageFrom), i18n("Unread Message"),
+			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You have received a message from <b>%1</b> in the last "
+				"second, are you sure you want to close this chat?</qt>").arg(d->unreadMessageFrom), i18n("Unread Message"),
 				i18n("&Close Chat"), i18n("Do not ask me this again"));
 		}
 
