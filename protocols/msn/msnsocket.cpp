@@ -31,6 +31,7 @@
 MSNSocket::MSNSocket()
 {
 	m_onlineStatus = Disconnected;
+	m_socket = 0L;
 }
 
 MSNSocket::~MSNSocket()
@@ -81,12 +82,6 @@ void MSNSocket::connect( const QString &server, uint port )
 
 void MSNSocket::disconnect()
 {
-	if( m_onlineStatus == Disconnected )
-	{
-		doneDisconnect();	
-		return;
-	}
-
 	delete m_socket;
 	m_socket = 0L;
 	m_buffer = QString::null;
