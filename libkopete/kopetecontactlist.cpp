@@ -155,6 +155,7 @@ void KopeteContactList::loadXML()
 							if( proto )
 							{
 								KopeteContact *c = proto->createContact( mc, serializedData );
+								c->setDisplayName(mc->displayName()); //FIXME: Protocols should do that theirself
 
 								// FIXME: Retrieve the groups somewhere
 								mc->addContact( c, QStringList() );
