@@ -90,7 +90,14 @@ private: // Private attributes
 	KActionCollection* actionCollection;
 
 	OscarProtocol *mProtocol;
-
+	
+	/**
+	 * The time of the last autoresponse,
+	 * used to determine when to send an
+	 * autoresponse again.
+	 */
+	long mLastAutoResponseTime;
+		
 	/** The contact's idle time */
 	int mIdle;
 
@@ -120,6 +127,12 @@ private slots: // Private slots
 };
 
 #endif
-
+/*
+ * Local variables:
+ * c-indentation-style: k&r
+ * c-basic-offset: 4
+ * indent-tabs-mode: t
+ * End:
+ */
 // vim: set noet ts=4 sts=4 sw=4:
 

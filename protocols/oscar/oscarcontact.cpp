@@ -17,6 +17,8 @@
 
 #include "oscarcontact.h"
 
+#include <time.h>
+
 #include <qapplication.h>
 #include <qregexp.h>
 #include <qstylesheet.h>
@@ -46,32 +48,32 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	mProtocol = protocol;
 	mMsgManager = 0L;
 	mIdle = 0;
+	mLastAutoResponseTime = 0;
 	QObject::connect(mProtocol->engine, SIGNAL(gotBuddyChange(UserInfo)),this,SLOT(slotBuddyChanged(UserInfo)));
 	QObject::connect(mProtocol->engine, SIGNAL(gotOffgoingBuddy(QString)),this,SLOT(slotOffgoingBuddy(QString)));
 	QObject::connect(mProtocol->engine, SIGNAL(gotIM(QString,QString,bool)),this,SLOT(slotIMReceived(QString,QString,bool)));
 	QObject::connect(mProtocol->engine, SIGNAL(statusChanged(int)), this, SLOT(slotMainStatusChanged(int)));
 
 	connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ),
-		this, SLOT (slotMoved(KopeteMetaContact*) ));
-	if(parent)
+			this, SLOT (slotMoved(KopeteMetaContact*) ));
+	if(parent){
 		connect (parent , SIGNAL( aboutToSave(KopeteMetaContact*) ),
-			protocol, SLOT (serialize(KopeteMetaContact*) ));
-
-
+				protocol, SLOT (serialize(KopeteMetaContact*) ));
+	}
+	
 	initActions();
 	TBuddy tmpBuddy;
 	int num = mProtocol->buddyList()->getNum(mName);
 	if ( mProtocol->buddyList()->get(&tmpBuddy, num) != -1 )
 	{
-		if ( !tmpBuddy.alias.isEmpty() )
+		if ( !tmpBuddy.alias.isEmpty() ){
 			setDisplayName(tmpBuddy.alias);
-		else
+		} else {
 			setDisplayName(tmpBuddy.name);
-
+		}
+		
 		slotUpdateBuddy(num);
-	}
-	else
-	{
+	}	else 	{
 		setDisplayName(mName);
 	}
 	theContacts.append(this);
@@ -319,16 +321,45 @@ void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto
 
 		TBuddy tmpBuddy;
 		mProtocol->buddyList()->get(&tmpBuddy, mProtocol->buddyList()->getNum(mName));
-		// TODO add code to handle sending auto responses
+				
 		// Build a KopeteMessage and set the body as Rich Text
 		KopeteContactPtrList tmpList;
 		tmpList.append(mProtocol->myself());
 		KopeteMessage msg = parseAIMHTML( message );
 		msgManager()->appendMessage(msg);
 
-		if ( mProtocol->isAway() ) // send our away message in fire-and-forget-mode :)
-		{
+		// send our away message in fire-and-forget-mode :)
+		if ( mProtocol->isAway() ){
+			// Get the current time
+			long currentTime = time(0L);
+			// Compare to the last time we sent a message
+			// We'll wait 2 minutes between responses
+			if( (currentTime - mLastAutoResponseTime) > 120 ){
 				kdDebug() << "[OscarContact] slotIMReceived() while we are away, sending away-message to annoy buddy :)" << endl;
+				// Send the autoresponse
+				mProtocol->engine->sendIM(
+						KopeteAway::getInstance()->message(),
+						mName, true);
+				// Build a pointerlist to insert this contact into
+				KopeteContactPtrList toContact;
+				toContact.append(this);
+				// Display the autoresponse
+				// Make it look different
+				QString responseDisplay = KopeteAway::getInstance()->message();
+				responseDisplay.prepend("<font color='#666699'>Autoresponse: </font>");
+								
+				KopeteMessage message( mProtocol->myself(), toContact,
+						responseDisplay,
+						KopeteMessage::Outbound,
+						KopeteMessage::RichText);
+				
+				msgManager()->appendMessage(message);
+								
+				// Set the time we last sent an autoresponse
+				// which is right now
+				mLastAutoResponseTime = time(0L);
+			}
+			
 		}
 }
 
@@ -456,7 +487,7 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 
 	kdDebug() << "AIM Plugin: original message: " << m << endl;
 
-	QRegExp expr;( "<HTML*>" );
+	QRegExp expr( "<HTML*>" );
 	expr.setCaseSensitive( false );
 	expr.setWildcard( true );
 	expr.setMinimal( true );
@@ -538,7 +569,13 @@ void OscarContact::slotBlock(void)
 		mProtocol->engine->sendBlock(mName);
 	}
 }
-
+/*
+ * Local variables:
+ * c-indentation-style: k&r
+ * c-basic-offset: 4
+ * indent-tabs-mode: t
+ * End:
+ */
 // vim: set noet ts=4 sts=4 sw=4:
 
 #include "oscarcontact.moc"

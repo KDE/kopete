@@ -1200,9 +1200,8 @@ void OscarSocket::parseIM(Buffer &inbuf)
 								break;
 						}
 						case 0x0004: // Away message
-								// The server doesn't actually SEND the away message
-								// I think we have to request it and print it out ourselves
-								// There is a length specified, but it's always zero, as of  now
+								// There isn't actually a message in this TLV, it just specifies
+								// that the message that was send was an autoresponse
 								inbuf.getWord();
 								// Set the autoresponse flag
 								isAutoResponse = true;
@@ -1451,7 +1450,7 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
     outbuf.addSnac(0x0004,0x0006,0x0000,0x00000000);
     //generate random message cookie
     for (int i=0;i<8;i++)
-	outbuf.addByte( (BYTE) rand());
+				outbuf.addByte( (BYTE) rand());
     //add the channel ID
     outbuf.addWord(0x0001);
     //dest sn length
