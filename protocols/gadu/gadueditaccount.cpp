@@ -1,6 +1,7 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
+// Copyright (C) 2003 Casey Allen Shobe 	<cshobe@somerandomdomain.com>
 //
 // gadueditaccount.cpp
 //
@@ -78,9 +79,11 @@ void GaduEditAccount::pswdChecked( bool on )
 {
 	if ( on ) {
 		passwordEdit_->setDisabled( false );
+		passwordText->setDisabled( false );
 	}
 	else {
 		passwordEdit_->setDisabled( true );
+		passwordText->setDisabled( true );
 	}
 }
 

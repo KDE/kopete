@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>461</width>
-            <height>508</height>
+            <height>510</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -198,7 +198,7 @@
                         </spacer>
                         <widget class="QLabel">
                             <property name="name">
-                                <cstring>textLabel2</cstring>
+                                <cstring>passwordText</cstring>
                             </property>
                             <property name="text">
                                 <string>Pass&amp;word:</string>
