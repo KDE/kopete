@@ -45,6 +45,7 @@
 #include <kdialog.h>
 #include <kglobal.h>
 #include <kiconloader.h>
+#include <klineeditdlg.h>
 #include <khtmlview.h>
 #include <khtml_part.h>
 #include <klocale.h>
@@ -152,6 +153,7 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	connect(mPrfsChatAppearance->editButton, SIGNAL(clicked()), this, SLOT(slotEditStyle()));
 	connect(mPrfsChatAppearance->deleteButton, SIGNAL(clicked()), this, SLOT(slotDeleteStyle()));
 	connect(mPrfsChatAppearance->importButton, SIGNAL(clicked()), this, SLOT(slotImportStyle()));
+	connect(mPrfsChatAppearance->copyButton, SIGNAL(clicked()), this, SLOT(slotCopyStyle()));
 	// ===========================================================================
 
 	errorAlert = false;
@@ -445,6 +447,25 @@ void AppearanceConfig::slotImportStyle()
 	}
 }
 
+void AppearanceConfig::slotCopyStyle()
+{
+	QListBoxItem *copiedItem = mPrfsChatAppearance->styleList->selectedItem();
+	if( copiedItem )
+	{
+		bool okPressed;
+		if( okPressed )
+		{
+			QString styleName = KLineEditDlg::getText( i18n("New Style Name"), i18n("Enter the name of the new style:"), QString::null, &okPressed, 0L );
+			QString copiedXSL = fileContents( itemMap[ copiedItem] );
+			addStyle( styleName, copiedXSL );
+		}
+	}
+	else
+		KMessageBox::error( this, i18n("Please select a style to copy."), i18n("No Style Selected") );
+
+
+}
+
 void AppearanceConfig::slotEditStyle()
 {
 	slotAddStyle();
@@ -512,8 +533,8 @@ void AppearanceConfig::addStyle( const QString &styleName, const QString &xslStr
 
 			mPrfsChatAppearance->styleList->insertItem( styleName, 0 );
 			itemMap.insert( mPrfsChatAppearance->styleList->firstItem(), filePath );
-			mPrfsChatAppearance->styleList->sort();
 			mPrfsChatAppearance->styleList->setSelected( mPrfsChatAppearance->styleList->firstItem(), true );
+			mPrfsChatAppearance->styleList->sort();
 		}
 		else
 		{

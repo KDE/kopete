@@ -71,6 +71,7 @@ private slots:
 	void slotEditStyle();
 	void slotDeleteStyle();
 	void slotImportStyle();
+	void slotCopyStyle();
 	void slotStyleSaved();
 	void slotStyleSelected();
 
