@@ -926,7 +926,7 @@ bool ChatView::canSend()
 
 	// can't send if there's nothing *to* send...
 	if ( m_edit->text().isEmpty() )
-	    return false;
+		return false;
 
 	// if we can't send offline, make sure we have an online contact...
 	if ( !msgManager()->protocol()->canSendOffline() )
