@@ -9,7 +9,7 @@
 
 void WPPreferencesBase::doRefreshDisplay()
 {
-    HCFDisplay->setText(QString("").setNum(mHostCheckFrequency->value()) + i18n(" second(s)"));
-    MCFDisplay->setText(QString("").setNum(mMessageCheckFrequency->value()) + i18n(" second(s)"));
+    HCFDisplay->setText(i18n("%n second", "%n seconds", mHostCheckFrequency->value()));
+    MCFDisplay->setText(i18n("%n second", "%n seconds", mMessageCheckFrequency->value()));
 }
 

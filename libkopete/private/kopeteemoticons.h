@@ -36,7 +36,7 @@ public:
 	 * chosen by the user.
 	 * For that one use the singleton stuff
 	 **/
-	KopeteEmoticons( const QString &theme = QString() );
+	KopeteEmoticons( const QString &theme = QString::null );
 
 	/**
 	 * The emoticons container-class by default is a singleton object.
@@ -111,7 +111,7 @@ private slots:
 	 * Fills the map with paths and emoticons
 	 * This needs to be done on every emoticon-theme change
 	 **/
-	void initEmoticons ( const QString &theme = QString() );
+	void initEmoticons ( const QString &theme = QString::null );
 };
 
 #endif
