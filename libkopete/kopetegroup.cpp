@@ -19,6 +19,7 @@
 #include "kopetegroup.h"
 
 #include "kopetecontactlist.h"
+#include "kopetemetacontact.h"
 
 #include <klocale.h>
 
@@ -79,6 +80,19 @@ KopeteGroup::KopeteGroup()
 KopeteGroup::~KopeteGroup()
 {
 	delete d;
+}
+
+QPtrList<KopeteMetaContact> KopeteGroup::members() const
+{
+	QPtrList<KopeteMetaContact> members = KopeteContactList::contactList()->metaContacts();
+	while( members.current() )
+	{
+		if ( members.current()->groups().contains( this ) )
+			members.next();
+		else
+			members.remove();
+	}
+	return members;
 }
 
 const QDomElement KopeteGroup::toXML()

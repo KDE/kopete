@@ -26,6 +26,7 @@
 class QDomElement;
 
 class KopeteGroupPrivate;
+class KopeteMetaContact;
 
 /**
  * @author Olivier Goffart
@@ -86,6 +87,11 @@ public:
 	uint groupId() const;
 
 	/**
+	 * \return the members of this group
+	 */
+	QPtrList<KopeteMetaContact> members() const;
+
+	/**
 	 * @internal
 	 * Outputs the group data in XML
 	 */
@@ -101,6 +107,7 @@ public:
 	 * \brief Set if the group is expanded.
 	 *
 	 * This is saved to the xml contactlist file
+	 * FIXME: the group should not need to know this
 	 */
 	void setExpanded( bool expanded );
 

@@ -47,7 +47,7 @@ public:
 	~KopeteContactList();
 
 	/**
-	 * Find the meta contact that belongs to a given contact. If contact
+	 * Find the meta contact that a given contact belongs to. If contact
 	 * is not found, null is returned.
 	 * For now, just compare the ID field.
 	 *
