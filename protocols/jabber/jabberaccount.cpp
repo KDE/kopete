@@ -685,12 +685,21 @@ void JabberAccount::slotCSAuthenticated ()
 	 * Determine local IP address.
 	 * FIXME: This is ugly!
 	 */
-	ByteStream *byteStream = jabberClientConnector->stream();
-	if( byteStream->inherits ( "BSocket" ) || byteStream->inherits ( "XMPP::BSocket" ) )
+	KGlobal::config()->setGroup("Jabber");
+	if ( !KGlobal::config()->readEntry ( "LocalIP", "" ).isEmpty () )
 	{
-		localAddress = ( (BSocket *)byteStream )->address().toString ();
-		addS5bAddress ( localAddress );
+		localAddress = KGlobal::config()->readEntry ( "LocalIP", "" );
 	}
+	else
+	{
+		ByteStream *byteStream = jabberClientConnector->stream();
+		if( byteStream->inherits ( "BSocket" ) || byteStream->inherits ( "XMPP::BSocket" ) )
+		{
+			localAddress = ( (BSocket *)byteStream )->address().toString ();
+		}
+	}
+
+	addS5bAddress ( localAddress );
 
 	/* start the client operation */
 	XMPP::Jid jid(accountId());

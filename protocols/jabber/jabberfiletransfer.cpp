@@ -90,6 +90,8 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberContact *
 
 	mXMPPTransfer = mAccount->client()->fileTransferManager()->createTransfer ();
 
+	mXMPPTransfer->setProxy ( XMPP::Jid ( account->pluginData ( account->protocol (), "ProxyJID" ) ) );
+
 	connect ( mXMPPTransfer, SIGNAL ( connected () ), this, SLOT ( slotOutgoingConnected () ) );
 	connect ( mXMPPTransfer, SIGNAL ( bytesWritten ( int ) ), this, SLOT ( slotOutgoingBytesWritten ( int ) ) );
 	connect ( mXMPPTransfer, SIGNAL ( error ( int ) ), this, SLOT ( slotTransferError ( int ) ) );
