@@ -19,7 +19,7 @@
 
 #include "kopetewalletmanager.h"
 
-#include "kopeteglobal.h"
+#include "kopeteuiglobal.h"
 
 #include <kdebug.h>
 #include <kstaticdeleter.h>
