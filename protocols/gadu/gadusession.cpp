@@ -422,39 +422,9 @@ GaduSession::requestContacts()
 	kdDebug( 14100 ) << "Contacts list import..started " << endl;
 }
 
-QString
-GaduSession::contactsToString( gaduContactsList* contactsList )
-{
-	QPtrListIterator<contactLine>contactsListIterator( *contactsList );
-	unsigned int i;
-	QString contacts;
-
-	for ( i = contactsList->count() ; i-- ; ++contactsListIterator ) {
-		if ( (*contactsListIterator)->ignored ) {
-			contacts +=
-				"i;;;;;;" + (*contactsListIterator)->uin+
-				"\n";
-		}
-		else {
-//	name;surname;nick;displayname;telephone;group(s);uin;email;0;;0;
-			contacts +=
-				(*contactsListIterator)->firstname +";"+
-				(*contactsListIterator)->surname+";"+
-				(*contactsListIterator)->nickname+";"+
-				(*contactsListIterator)->displayname+";"+
-				(*contactsListIterator)->phonenr+";"+
-				(*contactsListIterator)->group+";"+
-				(*contactsListIterator)->uin+";"+
-				(*contactsListIterator)->email+
-				";0;;0;\n";
-		}
-	}
-
-	return contacts;
-}
 
 void
-GaduSession::exportContactsOnServer( gaduContactsList* contactsList )
+GaduSession::exportContactsOnServer( GaduContactsList* contactsList )
 {
 	QCString plist;
 
@@ -463,8 +433,7 @@ GaduSession::exportContactsOnServer( gaduContactsList* contactsList )
 		return;
 	}
 
-
-	plist = textcodec->fromUnicode( contactsToString( contactsList ) );
+	plist = textcodec->fromUnicode( contactsList->asString() );
 	kdDebug(14100) <<"--------------------userlists\n" << plist << endl;
 	kdDebug(14100) << "----------------------------" << endl;
 
@@ -475,126 +444,6 @@ GaduSession::exportContactsOnServer( gaduContactsList* contactsList )
 	kdDebug( 14100 ) << "Contacts list export..started " << endl;
 }
 
-
-bool
-GaduSession::stringToContacts( gaduContactsList& gaducontactsList , const QString& sList )
-{
-	QStringList::iterator stringIterator;
-	QStringList strList ;
-	contactLine* cl = NULL;
-	bool email;
-
-	if ( sList.isEmpty() || sList.isNull() ) {
-		return false;
-	}
-
-	if ( ( !sList.contains( '\n' ) && sList.contains( ';' ) )  || !sList.contains( ';' ) ) {
-		// basicaly, server stores contact list as it is
-		// even if i will send him windows 2000 readme file
-		// he will accept it, and he will return it on each contact import
-		// so, if you have any problems with contact list
-		// this is probably not my fault, only previous client issue
-		// iow: i am not bothered :-)
-		kdDebug(14100)<<"you have to retype your contacts, and export list again"<<endl;
-		kdDebug(14100)<<"send this line to author, if you think it should work"<<endl;
-		kdDebug(14100)<<"------------------------------------------------------"<<endl;
-		kdDebug(14100)<<"\"" << sList << "\""<<endl;
-		kdDebug(14100)<<"------------------------------------------------------"<<endl;
-		return false;
-	}
-
-	QStringList ln  = QStringList::split( QChar( '\n' ),  sList, true );
-	QStringList::iterator lni = ln.begin( );
-
-	while( lni != ln.end() ) {
-		QString cline = (*lni);
-		if ( cline.isNull() ) {
-			break;
-		}
-		kdDebug(14100)<<"\""<< cline << "\"" << endl;
-
-		strList  = QStringList::split( QChar( ';' ), cline, true );
-
-		stringIterator = strList.begin();
-
-		if ( cl == NULL ) {
-			cl = new contactLine;
-		}
-
-		// ignored contact
-		if ( strList.count() == 7 ) {
-			 // well, this is probably it - you're d00med d\/de :-)
-			if ( (*stringIterator) == QString( "i" ) ) {
-				cl->ignored	= true;
-				cl->uin		= strList[6];
-				kdDebug(14100) << " ignored :\"" << cl->uin << "\"" << endl;
-				++lni;
-				continue;
-			}
-			else {
-				kdDebug(14100) << "This line of contacts is incorrect, send it to me if you think it is ok:" << strList.count() << " LINE:\"" << cline << "\"" << endl;
-				++lni;
-				continue;
-			}
-		}
-
-		if ( strList.count() == 12 ) {
-			email = true;
-		}
-		else {
-			email = false;
-			if ( strList.count() != 8 ) {
-				kdDebug(14100) << "This line of contacts is incorrect, send it to me if you think it is ok:" <<strList.count() << " LINE:\"" << cline << "\"" << endl;
-				++lni;
-				continue;
-			}
-		}
-
-
-//each line ((firstname);(secondname);(nickname);(displayname);(tel);(group);(uin);
-
-		stringIterator = strList.begin();
-
-		if ( cl == NULL ) {
-			cl = new contactLine;
-		}
-
-		cl->ignored		= false;
-		cl->firstname		= (*stringIterator);
-		cl->surname		= (*++stringIterator);
-		cl->nickname		= (*++stringIterator);
-		cl->displayname		= (*++stringIterator);
-		cl->phonenr		= (*++stringIterator);
-		cl->group		= (*++stringIterator);
-		cl->uin			= (*++stringIterator);
-		if ( email ) {
-			cl->email	= (*++stringIterator);
-        	}
-		else {
-			 cl->email	= "";
-		}
-
-		++lni;
-
-		if ( cl->uin.isNull() ) {
-			kdDebug(14100) << "no Uin, strange "<<endl;
-			kdDebug(14100) << "LINE:" << cline <<endl;
-			// FIXME: maybe i should consider this as an fatal error, and return false
-			continue;
-		}
-
-		gaducontactsList.append( cl );
-		kdDebug(14100) << "adding to list ,uin:" << cl->uin <<endl;
-
-		cl = NULL;
-	}
-
-	// happends only when last contact was without UIN, and was at the end of list...
-	// rather rare, but don't leak please :-)
-	delete cl;
-
-	return true;
-}
 
 void
 GaduSession::handleUserlist( gg_event* event )

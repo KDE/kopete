@@ -29,6 +29,7 @@
 
 #include "gaduaccount.h"
 #include "gaducommands.h"
+#include "gaducontactlist.h"
 
 #include "kopeteaccount.h"
 #include "kopetecontact.h"
@@ -55,7 +56,7 @@ public:
 
 //	void	setInfo( const QString& email, const QString& firstName, const QString& secondName,
 //			 	const QString& nickName, const QString& phonenr );
-	contactLine* contactDetails();
+	GaduContactsList::ContactLine* contactDetails();
 
 	void	setParentIdentity( const QString& );
 	void	setDescription( const QString& );

@@ -29,6 +29,7 @@
 
 #include "gaducommands.h"
 #include "gadusession.h"
+#include "gaducontactlist.h"
 #include "libgadu.h"
 
 #include <qhostaddress.h>
@@ -127,7 +128,7 @@ private slots:
 	void slotFriendsMode();
 
 	void userlist( const QString& contacts );
-	gaduContactsList* userlist();
+	GaduContactsList* userlist();
 
 	void connectionFailed( gg_failure_t failure );
 	void connectionSucceed( );

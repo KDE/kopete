@@ -28,6 +28,7 @@
 #include "gaducontact.h"
 #include "gadupubdir.h"
 #include "gadueditcontact.h"
+#include "gaducontactlist.h"
 
 #include "kopetemessagemanagerfactory.h"
 #include "kopetegroup.h"
@@ -200,13 +201,13 @@ GaduContact::serialize( QMap<QString, QString>& serializedData, QMap<QString, QS
 	serializedData[ "nickname" ]	= property( "nickName" ).value().toString();
 }
 
-contactLine*
+GaduContactsList::ContactLine*
 GaduContact::contactDetails()
 {
 	KopeteGroupList		groupList;
 	QString			groups;
 
-	contactLine* cl	= new contactLine;
+	GaduContactsList::ContactLine* cl = new GaduContactsList::ContactLine;
 
 	cl->firstname	= property( "firstName" ).value().toString();
 	cl->surname	= property( "lastName" ).value().toString();

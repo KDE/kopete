@@ -665,101 +665,87 @@ GaduAccount::userlist( const QString& contactsListString )
 {
 	kdDebug(14100)<<"### Got userlist - gadu account"<<endl;
 
-	gaduContactsList contactsList;
+	GaduContactsList contactsList( contactsListString );
 	QString contactName;
 	QStringList groups;
 	GaduContact* contact;
 	KopeteMetaContact* metaContact;
-	int i;
+	unsigned int i;
 
-	// FIXME: give feedback about error
-	if ( session_->stringToContacts( contactsList, contactsListString ) == false ) {
-		kdDebug(14100) << "couldn't convert it, something is wrong" << endl;
-		return;
-	}
+	for ( i = 0; i != contactsList.size() ; i++ ) {
+		kdDebug(14100) << "uin " << contactsList[i].uin << endl;
 
-	contactsList.setAutoDelete( TRUE );
-	
-	QPtrListIterator< contactLine >contactLine( contactsList );
-
-	for ( i = contactsList.count() ; i-- ;  ) {
-		kdDebug(14100) << "uin " << (*contactLine)->uin << endl;
-
-		if ( (*contactLine)->uin.isNull() ) {
+		if ( contactsList[i].uin.isNull() ) {
 			kdDebug(14100) << "no Uin, strange.. "<<endl;
-			goto next_cont;
+			continue;
 		}
 
-		if ( contacts()[ (*contactLine)->uin ] ) {
-			kdDebug(14100) << "UIN already exists in contacts "<< (*contactLine)->uin << endl;
+		if ( contacts()[ contactsList[i].uin ] ) {
+			kdDebug(14100) << "UIN already exists in contacts "<< contactsList[i].uin << endl;
 		}
 		else {
-			if ( (*contactLine)->displayname.length() ) {
-				contactName = (*contactLine)->displayname;
+			if ( contactsList[i].displayname.length() ) {
+				contactName = contactsList[i].displayname;
 			}
 			else {
 				// no name either
-				if ( (*contactLine)->nickname.isNull() ) {
+				if ( contactsList[i].nickname.isNull() ) {
 					// maybe we can use fistname + surname ?
-					if ( (*contactLine)->firstname.isNull() && (*contactLine)->surname.isNull() ) {
-						contactName = (*contactLine)->uin;
+					if ( contactsList[i].firstname.isNull() && contactsList[i].surname.isNull() ) {
+						contactName = contactsList[i].uin;
 					}
 					// what a shame, i have to use UIN than :/
 					else {
-						if ( (*contactLine)->firstname.isNull() ) {
-							contactName = (*contactLine)->surname;
+						if ( contactsList[i].firstname.isNull() ) {
+							contactName = contactsList[i].surname;
 						}
 						else {
-							if ( (*contactLine)->surname.isNull() ) {
-								contactName = (*contactLine)->firstname;
+							if ( contactsList[i].surname.isNull() ) {
+								contactName = contactsList[i].firstname;
 							}
 							else {
-								contactName = (*contactLine)->firstname+" "+(*contactLine)->surname;
+								contactName = contactsList[i].firstname+" "+contactsList[i].surname;
 							}
 						}
 					}
 				}
 				else {
-					contactName = (*contactLine)->nickname;
+					contactName = contactsList[i].nickname;
 				}
 			}
 
-			bool s = addContact( (*contactLine)->uin, contactName, 0L, KopeteAccount::DontChangeKABC, QString::null, false );
+			bool s = addContact( contactsList[i].uin, contactName, 0L, KopeteAccount::DontChangeKABC, QString::null, false );
 			if ( s == false ) {
-				kdDebug(14100) << "There was a problem adding UIN "<< (*contactLine)->uin << "to users list" << endl;
-				goto next_cont;
+				kdDebug(14100) << "There was a problem adding UIN "<< contactsList[i].uin << "to users list" << endl;
+				continue;
 			}
 		}
-		contact = static_cast<GaduContact*>( contacts()[ (*contactLine)->uin ] );
+		contact = static_cast<GaduContact*>( contacts()[ contactsList[i].uin ] );
 		if ( contact == NULL ) {
-			kdDebug(14100) << "oops, no KopeteContact in contacts()[] for some reason, for \"" << (*contactLine)->uin << "\"" << endl;
-			goto next_cont;
+			kdDebug(14100) << "oops, no KopeteContact in contacts()[] for some reason, for \"" << contactsList[i].uin << "\"" << endl;
+			continue;
 		}
 
 		// update/add infor for contact
 
-		contact->setProperty( "emailAddress", (*contactLine)->email );
-		contact->setProperty( "firstName", (*contactLine)->firstname );
-		contact->setProperty( "lastName", (*contactLine)->surname );
-		contact->setProperty( "privPhoneNum", (*contactLine)->phonenr );
-		contact->setProperty( "ignored", i18n( "ignored" ), (*contactLine)->ignored ? "true" : "false" );
-		contact->setProperty( "nickName", i18n( "nick name" ), (*contactLine)->nickname );
+		contact->setProperty( "emailAddress", contactsList[i].email );
+		contact->setProperty( "firstName", contactsList[i].firstname );
+		contact->setProperty( "lastName", contactsList[i].surname );
+		contact->setProperty( "privPhoneNum", contactsList[i].phonenr );
+		contact->setProperty( "ignored", i18n( "ignored" ), contactsList[i].ignored ? "true" : "false" );
+		contact->setProperty( "nickName", i18n( "nick name" ), contactsList[i].nickname );
 
-		if ( !( (*contactLine)->group.isEmpty() ) ) {
+		if ( !( contactsList[i].group.isEmpty() ) ) {
 			// FIXME: libkopete bug i guess, by default contact goes to top level group
 			// if user desrired to see contact somewhere else, remove it from top level one
 			metaContact = contact->metaContact();
 			metaContact->removeFromGroup( KopeteGroup::topLevel() );
 			// put him in all desired groups:
-			groups = QStringList::split( ",", (*contactLine)->group );
+			groups = QStringList::split( ",", contactsList[i].group );
 			for ( QStringList::Iterator groupsIterator = groups.begin(); groupsIterator != groups.end(); ++groupsIterator ) {
 				metaContact->addToGroup( KopeteContactList::contactList ()->getGroup ( *groupsIterator) );
 			}
 		}
-
-next_cont:
-		// next contact line
-		++contactLine;
 	}
 }
 
@@ -799,7 +785,7 @@ GaduAccount::slotExportContactsListToFile()
 
 	if ( saveListDialog->exec() == QDialog::Accepted ) {
 
-		QCString list = textcodec_->fromUnicode( session_->contactsToString( userlist() ) );
+		QCString list = textcodec_->fromUnicode( userlist()->asString() );
 
 		if ( tempFile.status() ) {
 			// say cheese, can't create file.....
@@ -885,11 +871,11 @@ GaduAccount::slotExportContactsList()
 }
 
 
-gaduContactsList*
+GaduContactsList*
 GaduAccount::userlist()
 {
 	GaduContact* contact;
-	gaduContactsList* contactsList = new gaduContactsList;
+	GaduContactsList* contactsList = new GaduContactsList();
 	int i;
 
 	if ( !contacts().count() ) {
@@ -901,7 +887,7 @@ GaduAccount::userlist()
 	for( i=0 ; contactsIterator.current() ; ++contactsIterator ) {
 		contact = static_cast<GaduContact*>( *contactsIterator );
 		if ( contact->uin() != static_cast<GaduContact*>( myself() )->uin() ) {
-			contactsList->append( contact->contactDetails() );
+			contactsList->addContact( *contact->contactDetails() );
 		}
 	}
 

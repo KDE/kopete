@@ -30,24 +30,12 @@
 #include <qstringlist.h>
 #include <qdatetime.h>
 
+#include "gaducontactlist.h"
+
 #include <libgadu.h>
 
-struct contactLine {
-	QString displayname;
-	QString group;
-	QString uin;
-	QString firstname;
-	QString surname;
-	QString nickname;
-	QString phonenr;
-	QString email;
-	bool 	ignored;
-};
-
-typedef QPtrList<contactLine> gaduContactsList;
-
 struct KGaduMessage {
-    QString		message;		// Unicode
+    QString		message;	// Unicode
     unsigned int	sender_id;	// sender's UIN
     QDateTime	sendTime;
 };
@@ -89,8 +77,8 @@ public:
 	virtual ~GaduSession();
 	bool	isConnected() const;
 	int	status() const;
-	QString contactsToString( gaduContactsList* contactsList );
-	bool	stringToContacts( gaduContactsList& , const QString& );
+	QString contactsToString( GaduContactsList* contactsList );
+	bool	stringToContacts( GaduContactsList& , const QString& );
 	static QString failureDescription( gg_failure_t );
 	static QString errorDescription( int err );
 	static QString stateDescription( int state );
@@ -126,7 +114,7 @@ public slots:
 	*  This will be done on each @ref pubDirNewSearch(), if previuos is not released
 	*/
 	void pubDirSearchClose();
-	void exportContactsOnServer( gaduContactsList* );
+	void exportContactsOnServer( GaduContactsList* );
 
 signals:
 	void error( const QString&, const QString& );
