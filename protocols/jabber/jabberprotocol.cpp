@@ -203,17 +203,24 @@ void JabberProtocol::slotDisconnected() {
 }
 
 void JabberProtocol::slotError(JabError *error) { /* "Bugger." */
+	
+	/* determine type of error */
 	switch(error->type)
 	{
 		case JABERR_CONNECT:
-			KMessageBox::error(kopeteapp->mainWindow(), i18n("There was an error connecting to the Jabber server (%1).").arg(error->msg, 1), i18n("Error Connecting to Jabber Server"));
+			KMessageBox::error(kopeteapp->mainWindow(), i18n("There was an error connecting to the Jabber server (%1).").arg(error->msg, 1),
+					   i18n("Error Connecting to Jabber Server"));
 			break;
 		case JABERR_AUTH:   /* FIXME FIXME FIXME FIXME!!! */
-		case JABERR_CREATE: /* Isn't red-on-orange just so PRETTY? */
-		default: /* o/~ cause i'm that fool who broke the key/i'm unlockable so don't check me/
-					    i got weight on my shoulders and things on my mind/ the sky is falling, and i'm falling behind */
-			KMessageBox::error(kopeteapp->mainWindow(), i18n("You were disconnected for an unspecified reason (%1).").arg(error->type, 1), i18n("Disconnected From Jabber Server")); /* (But were they really disconnected, or are they just on speed? (Who said programmers have no sense of humour! hehe) */
+		case JABERR_CREATE:
+		default:
+			KMessageBox::error(kopeteapp->mainWindow(), i18n("You were disconnected for an unspecified reason (%1).").arg(error->type, 1),
+								    i18n("Disconnected From Jabber Server"));
 	}
+	
+	/* basically all errors mean disconnection, so disconnect for real here */
+	Disconnect();
+	
 }
 
 bool JabberProtocol::isConnected() const {
