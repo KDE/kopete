@@ -1,1 +1,1 @@
-SUBDIRS = CompuMessenger Default ccmathteam.com greggman.com phpBB redones set1
+SUBDIRS = ccmathteam.com CompuMessenger Default greggman.com phpBB plain redones set1
