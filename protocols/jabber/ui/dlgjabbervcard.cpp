@@ -134,7 +134,7 @@ void dlgJabberVCard::setReadOnly (bool b)
 {
 
 	leJID->setReadOnly (b);
-	leNickname->setReadOnly (b);
+	leNickname->setReadOnly (false);
 	leName->setReadOnly (b);
 	leBirthday->setReadOnly (b);
 	leGender->setReadOnly (b);
