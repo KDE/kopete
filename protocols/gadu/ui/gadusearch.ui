@@ -145,7 +145,10 @@
                                     <number>120</number>
                                 </property>
                                 <property name="minValue">
-                                    <number>1</number>
+                                    <number>0</number>
+                                </property>
+                                <property name="value">
+                                    <number>0</number>
                                 </property>
                             </widget>
                             <widget class="QLabel">
@@ -170,7 +173,10 @@
                                     <number>120</number>
                                 </property>
                                 <property name="minValue">
-                                    <number>1</number>
+                                    <number>0</number>
+                                </property>
+                                <property name="value">
+                                    <number>0</number>
                                 </property>
                             </widget>
                             <spacer>
@@ -408,6 +414,50 @@
                                 <bool>true</bool>
                             </property>
                         </column>
+                    <item>
+                        <property name="text">
+                            <string>Item</string>
+                        </property>
+                        <property name="text">
+                            <string>agnieszka</string>
+                        </property>
+                        <property name="text">
+                            <string>krzysztofowoficz</string>
+                        </property>
+                        <property name="text">
+                            <string>agniesia z podlesia</string>
+                        </property>
+                        <property name="text">
+                            <string>128</string>
+                        </property>
+                        <property name="text">
+                            <string>zagłobożagłów nizno-dolny</string>
+                        </property>
+                        <property name="text">
+                            <string>31337</string>
+                        </property>
+                        <property name="pixmap">
+                            <pixmap></pixmap>
+                        </property>
+                        <property name="pixmap">
+                            <pixmap></pixmap>
+                        </property>
+                        <property name="pixmap">
+                            <pixmap></pixmap>
+                        </property>
+                        <property name="pixmap">
+                            <pixmap></pixmap>
+                        </property>
+                        <property name="pixmap">
+                            <pixmap></pixmap>
+                        </property>
+                        <property name="pixmap">
+                            <pixmap></pixmap>
+                        </property>
+                        <property name="pixmap">
+                            <pixmap></pixmap>
+                        </property>
+                    </item>
                         <property name="name">
                             <cstring>listFound</cstring>
                         </property>
