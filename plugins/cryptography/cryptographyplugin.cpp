@@ -77,8 +77,8 @@ void CryptographyPlugin::loadSettings()
 	config->setGroup("Cryptography Plugin");
 
 	mPrivateKeyID = config->readEntry("PGP_private_key");
-	mEncrypt = config->readBoolEntry("Encrypt", false);
-	
+	mAlsoMyKey = config->readBoolEntry("Also_my_key", false);
+
 	if(config->readBoolEntry("Cache_Till_App_Close", false))
 	  mCachePassPhrase = Keep;
 	if(config->readBoolEntry("Cache_Till_Time", false))
@@ -202,8 +202,7 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 		}
 		keys.append( tmpKey );
 	}
-	// always encrypt to self, too
-	if(mEncrypt)
+	if(mAlsoMyKey) //encrypt also with the self key
 		keys.append( mPrivateKeyID );
 
 	QString key = keys.join( " " );

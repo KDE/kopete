@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>CryptographyPrefsUI</class>
 <author>Olivier Goffart</author>
 <widget class="QWidget">
@@ -46,10 +46,14 @@
         </widget>
         <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="3">
             <property name="name">
-                <cstring>Encrypt</cstring>
+                <cstring>Also_my_key</cstring>
             </property>
             <property name="text">
-                <string>Encrypt message with the key</string>
+                <string>Encrypt message also with this key</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>&lt;qt&gt;Check this box if you want encrypt outgoing messages also with your key. So you will be able to decrypt it yourself later.&lt;br&gt;
+&lt;b&gt;Warning:&lt;/b&gt; This can grow the size of messages, and some protocols will refuse to send your messages because they are too big.</string>
             </property>
         </widget>
         <spacer row="5" column="1">
@@ -182,8 +186,6 @@
         </widget>
     </grid>
 </widget>
-<customwidgets>
-</customwidgets>
 <connections>
     <connection>
         <sender>No_Passphrase_Handling</sender>
@@ -195,13 +197,18 @@
 <tabstops>
     <tabstop>PGP_private_key</tabstop>
     <tabstop>m_selectOwnKey</tabstop>
-    <tabstop>Encrypt</tabstop>
+    <tabstop>Also_my_key</tabstop>
     <tabstop>No_Passphrase_Handling</tabstop>
     <tabstop>Cache_Till_App_Close</tabstop>
     <tabstop>Cache_Till_Time</tabstop>
     <tabstop>Cache_Time</tabstop>
     <tabstop>Cache_Never</tabstop>
 </tabstops>
+<slots>
+    <slot>m_selectOwnKey_clicked()</slot>
+    <slot>m_selectOwnKey_toggled(bool)</slot>
+    <slot>m_selectOwnKey_stateChanged(int)</slot>
+</slots>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>klineedit.h</includehint>

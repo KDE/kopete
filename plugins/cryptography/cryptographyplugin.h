@@ -77,7 +77,7 @@ private:
 	QString mPrivateKeyID;
 	int mCacheMode;
 	unsigned int mCacheTime;
-	bool mEncrypt;
+	bool mAlsoMyKey;
 	bool mAskPassPhrase;
 	bool mCachePassPhrase;
 };
