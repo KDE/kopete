@@ -326,11 +326,11 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 	QString pass;
 	if ( passwdDialog->exec() == QDialog::Accepted )
 	{
-		pass = view->m_password->text();
-		if ( view->m_save_passwd->isChecked() )
-			setPassword( pass );
 		d->rememberPassword = view->m_save_passwd->isChecked();
 		d->autologin = view->m_autologin->isChecked();
+		pass = view->m_password->text();
+		if ( d->rememberPassword )
+			setPassword( pass );
 	}
 	else
 	{
