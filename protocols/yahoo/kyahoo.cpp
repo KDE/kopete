@@ -139,8 +139,9 @@ YahooSession::YahooSession(int id, const QString username, const QString passwor
 	m_Username = username;
 	m_Password = password;
 	m_socket = 0L;
+	m_waitingForKeepalive = false;
 	m_keepalive = new QTimer(this, "keepaliveTimer");
-	connect(m_keepalive, SIGNAL(timeout()), this, SLOT(keepalive()));
+	connect( m_keepalive, SIGNAL( timeout() ), this, SLOT( refresh() ) );
 }
 
 int YahooSession::sessionId() const
@@ -192,7 +193,13 @@ void YahooSession::logOff()
 void YahooSession::refresh()
 {
 	kdDebug(14181) << k_funcinfo << endl;
-	yahoo_refresh( m_connId );
+	if ( !m_waitingForKeepalive )
+	{
+		m_waitingForKeepalive = true;
+		yahoo_refresh( m_connId );
+	}
+	else
+		emit error( "Disconnected." , 1 );
 }
 
 void YahooSession::setIdentityStatus( const QString &identity, int active)
@@ -1049,6 +1056,9 @@ void YahooSession::slotReadReady()
 	int ret = 1;
 	int fd = m_socket->fd();
 	kdDebug(14181) << k_funcinfo << "Socket FD: " << fd << endl;
+
+	if ( m_waitingForKeepalive )
+		m_waitingForKeepalive = false;
 
 	ret = yahoo_read_ready( m_connId , fd, m_data );
 

@@ -78,11 +78,14 @@ public:
 
 	void login(int initial);
 	void logOff();
-	void refresh();
+
 	void setIdentityStatus( const QString &identity, int active);
 	void getList();
+
 public slots:
 	void keepalive();
+	void refresh();
+
 public:
 	void sendIm( const QString &from, const QString &who, const QString &msg);
 	void sendTyping( const QString &from, const QString &who, int typ);
@@ -221,6 +224,7 @@ signals:
 	 * emitted when someone invites us to join a game
 	 */
 	void gameNotify( const QString &who, int stat);
+
 	/**
 	 * Notify that we have mail
 	 */
@@ -237,11 +241,13 @@ signals:
 	void error( const QString &err, int fatal);
 	//void hostConnect(char *host, int port);
 
-	private slots:
+private slots:
+
 	void slotLoginResponseReceiver( int succ, char *url);
 	void slotReadReady();
 	void slotWriteReady();
-	private:
+
+private:
 	/* Private constructor */
 	YahooSession(int id, const QString username, const QString password);
 
@@ -261,6 +267,8 @@ signals:
 	QString m_BuddyListServer; // Buddy List server
 	int m_BuddyListPort;
 	QTimer *m_keepalive;
+
+	bool m_waitingForKeepalive;
 };
 
 #endif
