@@ -203,54 +203,64 @@ QValueList<KopeteLibraryInfo> LibraryLoader::available() const
 
 KopetePlugin *LibraryLoader::loadPlugin( const QString &spec )
 {
-//	kdDebug( 14010 ) << k_funcinfo << spec << endl;
+//	kdDebug(14010) << k_funcinfo << spec << endl;
 
 	QString pluginId = spec;
 	pluginId.remove( QRegExp( QString::fromLatin1( ".desktop$" ) ) );
 
 	KopetePlugin *plugin;
 
+	int error=0;
 	plugin = KParts::ComponentFactory::createInstanceFromQuery<KopetePlugin>(
 		QString::fromLatin1("Kopete/Plugin"),
-		QString::fromLatin1("[X-Kopete-Plugin-Id]=='%1'").arg(pluginId), this);
+		QString::fromLatin1("[X-Kopete-Plugin-Id]=='%1'").arg(pluginId), this, 0, QStringList(), &error);
 
-	// BEGIN ===========================================================================
-	// TODO: REMOVE THIS ASAP, WORKAROUND FOR BROKEN KDELIBS AROUND APRIL 2003!
-	if( !plugin ) // maybe it's a protocol?
+	if(plugin)
 	{
-		kdDebug( 14010 ) << k_funcinfo << "WORKAROUND FOR BROKEN KDELIBS AROUND APRIL 2003! WHY IS THIS STILL BROKEN (JULY 2003)?" << endl;
+		m_loadedPlugins.insert(spec, plugin);
 
-		plugin = KParts::ComponentFactory::createInstanceFromQuery<KopetePlugin>(
-			QString::fromLatin1("Kopete/Protocol"),
-			QString::fromLatin1("[X-Kopete-Plugin-Id]=='%1'").arg(pluginId), this);
-	}
-	// END =============================================================================
+		connect(plugin, SIGNAL(destroyed(QObject *)),
+			this, SLOT(slotPluginDestroyed(QObject *)));
 
-	//KopetePlugin *plugin = m_loadedPlugins[ spec ];
-	if( plugin )
-	{
-		/*KopeteLibraryInfo info = getInfo( spec );
-		if( info.specfile != spec )
-			return false;*/
-
-		m_loadedPlugins.insert( spec, plugin );
-
-		connect( plugin, SIGNAL( destroyed( QObject * ) ),
-			SLOT( slotPluginDestroyed( QObject * ) ) );
-
-		// Automatically load the i18n catalogue for the plugin
-		//KGlobal::locale()->insertCatalogue( info.filename );
-
-		m_addressBookFields.insert( plugin, plugin->addressBookFields() );
+		m_addressBookFields.insert(plugin, plugin->addressBookFields());
 
 		kdDebug(14010) << k_funcinfo << "Successfully loaded plugin '" << pluginId << "'"<< endl;
 
-		emit pluginLoaded( plugin );
+		emit pluginLoaded(plugin);
 	}
 	else
 	{
-		kdDebug(14010) << k_funcinfo << "Unable to load plugin '" << pluginId << "'!" << endl;
+		switch(error)
+		{
+			case KParts::ComponentFactory::ErrNoServiceFound:
+				kdDebug(14010) << k_funcinfo << "No service implementing the given mimetype "
+					<< "and fullfilling the given constraint expression can be found." << endl;
+				break;
+
+			case KParts::ComponentFactory::ErrServiceProvidesNoLibrary:
+				kdDebug(14010) << "the specified service provides no shared library." << endl;
+				break;
+
+			case KParts::ComponentFactory::ErrNoLibrary:
+				kdDebug(14010) << "the specified library could not be loaded." << endl;
+				break;
+
+			case KParts::ComponentFactory::ErrNoFactory:
+				kdDebug(14010) << "the library does not export a factory for"
+					<< " creating components." << endl;
+				break;
+
+			case KParts::ComponentFactory::ErrNoComponent:
+				kdDebug(14010) << "the factory does not support creating components of the"
+					<< " specified type." << endl;
+				break;
+		}
+
+		kdDebug(14010) << k_funcinfo << "Loading plugin '"<< pluginId <<
+			"'failed, KLibLoader reported error:" << endl <<
+			KLibLoader::self()->lastErrorMessage() << endl;
 	}
+
 	return plugin;
 }
 
