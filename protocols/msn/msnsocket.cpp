@@ -27,6 +27,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kurl.h>
+#include <stdlib.h>
 
 MSNSocket::MSNSocket()
 {
