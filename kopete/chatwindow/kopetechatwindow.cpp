@@ -231,36 +231,53 @@ bool KopeteChatWindow::eventFilter( QObject *o, QEvent *e )
 		QKeyEvent *event = static_cast<QKeyEvent*>( e );
 		KKey key( event );
 
+// NOTE:
+// shortcut.contains( key ) doesn't work. It was the old way we used to do it, but it is incorrect
+// because if you have a multi-key shortcut then pressing any of the keys in
+// that shortcut individually causes the shortcut to be activated.
+
 		if( chatSend->isEnabled() )
 		{
-			if ( chatSend->shortcut().contains( key ) )
+			for( uint i = 0; i < chatSend->shortcut().count(); i++ )
 			{
-				slotSendMessage();
+				if( key == chatSend->shortcut().seq(i).key(0) )
+				{
+					slotSendMessage();
+					return true;
+				}
+			}
+		}
+
+		for( uint i = 0; i < nickComplete->shortcut().count(); i++ )
+		{
+			if( key == nickComplete->shortcut().seq(i).key(0) )
+			{
+				slotNickComplete();
 				return true;
 			}
 		}
 
-		if ( nickComplete->shortcut().contains( key ) )
-		{
-			slotNickComplete();
-			return true;
-		}
-
 		if( historyDown->isEnabled() )
 		{
-			if ( historyDown->shortcut().contains( key ) )
+			for( uint i = 0; i < historyDown->shortcut().count(); i++ )
 			{
-				slotHistoryDown();
-				return true;
+				if( key == historyDown->shortcut().seq(i).key(0) )
+				{
+					slotHistoryDown();
+					return true;
+				}
 			}
 		}
 
 		if( historyUp->isEnabled() )
 		{
-			if ( historyUp->shortcut().contains( key ) )
+			for( uint i = 0; i < historyUp->shortcut().count(); i++ )
 			{
-				slotHistoryUp();
-				return true;
+				if( key == historyUp->shortcut().seq(i).key(0) )
+				{
+					slotHistoryUp();
+					return true;
+				}
 			}
 		}
 	}
