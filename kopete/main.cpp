@@ -24,7 +24,7 @@
 #include <dcopclient.h>
 #include "kopeteiface.h"
 
-#define KOPETE_VERSION "0.6.90cvs >= 20030326"
+#define KOPETE_VERSION "0.6.90cvs >= 20030426"
 
 static const char *description =
 	I18N_NOOP("Kopete, the KDE Instant Messenger");
