@@ -391,7 +391,9 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 			if(!m_metaContact->photo().isNull())
 			{
 				text= i18n("<qt><table cellpadding=\"0\" cellspacing=\"0\"><tr><td><img src=\"kopete-metacontact-photo:%1\"></td><td>%2 is now %3</td></tr></table></qt>")
-						.arg( KURL::encode_string( m_metaContact->metaContactId()) ,  QStyleSheet::escape(m_metaContact->displayName()) , QStyleSheet::escape(c->onlineStatus().description())  );
+						.arg( KURL::encode_string( m_metaContact->metaContactId()) , 
+						 Kopete::Emoticons::parseEmoticons( QStyleSheet::escape(m_metaContact->displayName()) ),
+						 Kopete::Emoticons::parseEmoticons( QStyleSheet::escape(c->onlineStatus().description()) ) );
 			}
 			else
 			{
