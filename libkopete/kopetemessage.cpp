@@ -726,7 +726,8 @@ QString Kopete::Message::decodeString( const QCString &message, const QTextCodec
 	kdDebug(14000) << k_funcinfo << "Using latin1 and cleaning string" << endl;
 	//No codec decoded. Just decode latin1, and clean out any junk.
 	QString result = testCodec->toUnicode( message );
-	for( uint i = 0; i < message.length(); ++i )
+	const uint length = message.length();
+	for( uint i = 0; i < length; ++i )
 	{
 		if( !result[i].isPrint() )
 			result[i] = '?';
