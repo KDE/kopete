@@ -51,7 +51,7 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name,
 	m_services.insert("babelfish", "BabelFish");
 
 	m_langs.insert("en", i18n("English"));
-    m_langs.insert("zh", i18n("Chinese"));
+	m_langs.insert("zh", i18n("Chinese"));
 	m_langs.insert("fr", i18n("French"));
 	m_langs.insert("de", i18n("Deutsch"));
 	m_langs.insert("it", i18n("Italian"));
@@ -70,21 +70,21 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name,
 	m_supported["babelfish"].append("en_ko");
 	m_supported["babelfish"].append("en_pt");
 	m_supported["babelfish"].append("en_es");
-    /* Chinese to .. */
+	/* Chinese to .. */
 	m_supported["babelfish"].append("zh_en");
 	/* French to ... */
-    m_supported["babelfish"].append("fr_en");
-    m_supported["babelfish"].append("fr_de");
+	m_supported["babelfish"].append("fr_en");
+	m_supported["babelfish"].append("fr_de");
 	/* German to ... */
-    m_supported["babelfish"].append("de_en");
-    m_supported["babelfish"].append("de_fr");
+	m_supported["babelfish"].append("de_en");
+	m_supported["babelfish"].append("de_fr");
 
 	m_supported["babelfish"].append("it_en");
-    m_supported["babelfish"].append("ja_en");
-    m_supported["babelfish"].append("ko_en");
-    m_supported["babelfish"].append("pt_en");
-    m_supported["babelfish"].append("ru_en");
-    m_supported["babelfish"].append("es_en");
+	m_supported["babelfish"].append("ja_en");
+	m_supported["babelfish"].append("ko_en");
+	m_supported["babelfish"].append("pt_en");
+	m_supported["babelfish"].append("ru_en");
+	m_supported["babelfish"].append("es_en");
 
 	m_prefs = new TranslatorPreferences ( "locale", this );
  
@@ -183,19 +183,22 @@ void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 {
     kdDebug() << "[Translator] Outgoing message " << msg.timestamp().toString("hhmmsszzz") << endl;
-    kdDebug() << "[Translator] Outgoing infu " << msg.timestamp().toString("hhmmsszzz") << endl;
+    kdDebug() << "[Translator] Outgoing info: " << endl
+				<< msg.body() << endl << "Direction: " << msg.direction();
     QString src_lang;
     QString dst_lang;
 
 	if ( ( msg.direction() == KopeteMessage::Outbound ) && ( msg.body() != QString::null ) )
     {
 		src_lang = m_prefs->myLang();
+		kdDebug() << "[Translator] ( Outgoing ) My lang is: " << src_lang << endl;
 
 		/* Sad, we have to consideer only the first To: metacontact only */
 		KopeteMetaContact *to = msg.to().first()->metaContact();
 		if ( m_langMap.contains( to ) && (m_langMap[to] != "null"))
     	{
 			dst_lang = m_langMap[ to ];
+            kdDebug() << "[Translator] ( Outgoing ) remote lang is: " << dst_lang << endl;
 		}
 		else
 		{
@@ -219,7 +222,12 @@ void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 			if ( *i == src_lang + "_" + dst_lang )
 			{
 				translateMessage( msg , src_lang, dst_lang);
+				kdDebug() << "[Translator] Outgoing, DONE" << endl;
 				return;
+			}
+			else
+			{
+				kdDebug() << "[Translator] ( Outgoing ) " << src_lang << " and " << dst_lang << " != " << *i<< endl;
 			}
 		}				
 	}
@@ -241,7 +249,9 @@ void TranslatorPlugin::translateMessage( KopeteMessage &msg , const QString &fro
 
 	translatorURL = "http://babel.altavista.com/tr";
 
-	body = KURL::encode_string("x-x-x " + msg.body() + " x-x-x");
+	//body = KURL::encode_string("*-*-* " + msg.body() + " *-*-*");
+    body = KURL::encode_string( msg.body() );
+
 	lp = from + "_" + to;
 
 	postData = "enc=utf8&doit=done&tt=urltext&urltext=" + body +"&lp=" + lp ;
@@ -271,7 +281,8 @@ void TranslatorPlugin::translateMessage( KopeteMessage &msg , const QString &fro
 
 	kdDebug() << "[Translator]: Babelfish response: "<< endl << data << endl;
 
-	QRegExp re("x-x-x (.*) x-x-x");
+	//QRegExp re("*-*-* (.*) *-*-*");
+    QRegExp re("<Div style=padding:10px;>(.*)</div");
 	re.setMinimal(true);
 	re.match( data );
 

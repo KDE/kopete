@@ -87,7 +87,7 @@ const QString& TranslatorPreferences::myLang()
 
 const QString& TranslatorPreferences::service()
 {
-	return m_langIntKeyMap[ preferencesDialog->m_ServiceBox->currentItem() ];
+	return m_servicesIntKeyMap[ preferencesDialog->m_ServiceBox->currentItem() ];
 }
 
 void TranslatorPreferences::save()
