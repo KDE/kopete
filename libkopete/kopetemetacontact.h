@@ -29,6 +29,7 @@
 #include <kdemacros.h>
 
 #include "kopetecontact.h"
+#include "kopetenotifydataobject.h"
 #include "kopeteonlinestatus.h"
 #include "kopeteplugindataobject.h"
 
@@ -49,7 +50,7 @@ struct KopeteMetaContactPrivate;
  * the metacontact. Plugins can store data in it with all
  * @ref KopetePluginData methods
  */
-class KopeteMetaContact : public KopetePluginDataObject
+class KopeteMetaContact : public KopetePluginDataObject, public KopeteNotifyDataObject
 {
 	Q_OBJECT
 

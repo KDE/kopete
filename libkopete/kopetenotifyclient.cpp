@@ -19,9 +19,13 @@
    Boston, MA 02111-1307, USA.
 */
 
-#include "kopetenotifyclient.h"
-
+#include "kopeteeventpresentation.h"
+#include "kopetenotifydataobject.h"
+#include "kopetenotifyevent.h"
+#include "kopetemetacontact.h"
 #include "kopeteuiglobal.h"
+
+#include "kopetenotifyclient.h"
 
 #include <qfile.h>
 #include <qlayout.h>
@@ -301,60 +305,73 @@ int KNotifyClient::userEvent(int winId, const QString &text, int present,
 }*/
 
 int KNotifyClient::event(int winId, const QString &message, const QString &text,
-                    const KGuiItem &action , QObject* receiver , const char* slot)
+                    KopeteMetaContact *mc, const KGuiItem &action,
+                    QObject* receiver , const char* slot)
 {
     if (message.isEmpty()) return 0;
-
-    int level=Default;
-    QString sound;
-    QString file;
-    QString commandline;
-
-    // get config file
-    KConfig eventsFile( KNotifyClient::instance()->instanceName()+"/eventsrc", true, false, "data");
-    eventsFile.setGroup(message);
-
-    KConfig configFile( KNotifyClient::instance()->instanceName()+".eventsrc", true, false);
-    configFile.setGroup(message);
-
-	int present=getPresentation(message);
-	if(present==-1)
-		present=getDefaultPresentation(message);
-	if(present==-1)
-		present=0;
-
-    // get sound file name
-    if( present & KNotifyClient::Sound ) {
-		QString theSound = configFile.readPathEntry( "soundfile" );
-		if ( theSound.isEmpty() )
-			theSound = eventsFile.readPathEntry( "default_sound" );
-		if ( !theSound.isEmpty() )
-			 sound = theSound;
+    
+    bool suppress = false;
+    performCustomNotifications( winId, mc, message, suppress);
+    
+    if ( suppress )
+	{
+		//kdDebug( 14000 ) << "suppressing common notifications" << endl;
+    	return 0; // custom notifications don't create a single unique id
+	}
+    else
+    {
+		//kdDebug( 14000 ) << "carrying out common notifications" << endl;
+		int level=Default;
+		QString sound;
+		QString file;
+		QString commandline;
+	
+		// get config file
+		KConfig eventsFile( KNotifyClient::instance()->instanceName()+"/eventsrc", true, false, "data");
+		eventsFile.setGroup(message);
+	
+		KConfig configFile( KNotifyClient::instance()->instanceName()+".eventsrc", true, false);
+		configFile.setGroup(message);
+	
+		int present=getPresentation(message);
+		if(present==-1)
+			present=getDefaultPresentation(message);
+		if(present==-1)
+			present=0;
+	
+		// get sound file name
+		if( present & KNotifyClient::Sound ) {
+			QString theSound = configFile.readPathEntry( "soundfile" );
+			if ( theSound.isEmpty() )
+				theSound = eventsFile.readPathEntry( "default_sound" );
+			if ( !theSound.isEmpty() )
+				sound = theSound;
+		}
+	
+		// get log file name
+		if( present & KNotifyClient::Logfile ) {
+			QString theFile = configFile.readPathEntry( "logfile" );
+			if ( theFile.isEmpty() )
+				theFile = eventsFile.readPathEntry( "default_logfile" );
+			if ( !theFile.isEmpty() )
+				file = theFile;
+		}
+	
+		// get default event level
+		if( present & KNotifyClient::Messagebox )
+		level = eventsFile.readNumEntry( "level", 0 );
+	
+		// get command line
+		if (present & KNotifyClient::Execute ) {
+		commandline = configFile.readPathEntry( "commandline" );
+		if ( commandline.isEmpty() )
+			commandline = eventsFile.readPathEntry( "default_commandline" );
+		}
+	
+	
+		return userEvent(winId, message, text,  present , level, sound, file, commandline, action, receiver,
+				slot);
     }
-
-    // get log file name
-    if( present & KNotifyClient::Logfile ) {
-		QString theFile = configFile.readPathEntry( "logfile" );
-		if ( theFile.isEmpty() )
-			theFile = eventsFile.readPathEntry( "default_logfile" );
-		if ( !theFile.isEmpty() )
-			 file = theFile;
-    }
-
-    // get default event level
-    if( present & KNotifyClient::Messagebox )
-	level = eventsFile.readNumEntry( "level", 0 );
-
-     // get command line
-    if (present & KNotifyClient::Execute ) {
-	commandline = configFile.readPathEntry( "commandline" );
-	if ( commandline.isEmpty() )
-	    commandline = eventsFile.readPathEntry( "default_commandline" );
-    }
-
-
-    return userEvent(winId, message, text,  present , level, sound, file, commandline, action, receiver,
-			slot);
 }
 
 int KNotifyClient::userEvent(int winId, const QString &message, const QString &text, int present,
@@ -397,5 +414,49 @@ int KNotifyClient::userEvent(int winId, const QString &message, const QString &t
     return uniqueId;
 }
 
+void KNotifyClient::performCustomNotifications( int winId, KopeteNotifyDataObject *dataObj, const QString &message, bool& suppress)
+{
+	//kdDebug( 14010 ) << k_funcinfo << endl;
+	QString sound;
+	QString text;
+
+	if ( dataObj )
+	{
+		KopeteNotifyEvent *evt = dataObj->notifyEvent( message );
+		if ( evt )
+		{
+			suppress = evt->suppressCommon();
+			int present = 0;
+			// sound 
+			KopeteEventPresentation *pres = evt->presentation( KopeteEventPresentation::Sound );
+			if ( pres && pres->enabled() )
+			{
+				present = present | KNotifyClient::Sound;
+				sound = pres->content();
+				evt->firePresentation( KopeteEventPresentation::Sound );
+			}
+			// message
+			if ( ( pres = evt->presentation( KopeteEventPresentation::Message ) )
+				&& pres->enabled() )
+			{
+				present = present | KNotifyClient::PassivePopup;
+				text = pres->content();
+				evt->firePresentation( KopeteEventPresentation::Message );
+			}
+			// chat
+			if ( ( pres = evt->presentation( KopeteEventPresentation::Chat ) )
+				&& pres->enabled() )
+			{
+				// start a chat with the mc here
+				KopeteMetaContact *mc = static_cast<KopeteMetaContact*>(dataObj);
+				if ( mc )
+					mc->execute();
+				evt->firePresentation( KopeteEventPresentation::Chat );
+			}
+			// fire the event
+			userEvent( winId, message, text, present, 0, sound, QString(), QString() );
+		}
+	}
+}
 // vim: set noet ts=8 sts=4 sw=4:
 

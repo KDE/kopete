@@ -4,6 +4,7 @@
     Kopete Contactlist Properties GUI for Groups and MetaContacts
 
     Copyright (c) 2002-2003 by Stefan Gehn            <metz AT gehn.net>
+	Copyright (c) 2004      by Will Stephenson <lists@stevello.free-online.co.uk>
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -18,22 +19,29 @@
 
 #include "kopetelviprops.h"
 
+#include <kdebug.h>
+
 #include <klocale.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
+#include <qcombobox.h>
 #include <qlabel.h>
 
+#include <kconfig.h>
 #include <kdialogbase.h>
 #include <kicondialog.h>
 #include <kabc/addresseedialog.h>
 #include <kabc/stdaddressbook.h>
+#include <kurlrequester.h>
 
 #include "kopeteaddrbookexport.h"
 
+#include "kopeteeventpresentation.h"
+#include "kopetenotifyevent.h"
 #include "kopetegroup.h"
 #include "kopetegroupviewitem.h"
-
 #include "kopetemetacontact.h"
+#include "kopetenotifyclient.h"
 #include "kopetemetacontactlvi.h"
 
 const char MC_OFF[] = "metacontact_offline";
@@ -176,6 +184,8 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 		this, SLOT( slotMergeClicked() ) );
 		
 	slotUseCustomIconsToggled( mainWidget->chkUseCustomIcons->isChecked() );
+
+	populateEventsCombo();
 }
 
 KopeteMetaLVIProps::~KopeteMetaLVIProps()
@@ -215,6 +225,9 @@ void KopeteMetaLVIProps::slotOkClicked()
 	// if no kabc link, remove any existing link
 	if ( !mainWidget->chkHasAddressbookEntry->isChecked() )
 		item->metaContact()->setMetaContactId( QString::null );
+	
+	// save the widgets' state
+	storeCurrentCustoms();
 }
 
 void KopeteMetaLVIProps::slotUseCustomIconsToggled(bool on)
@@ -264,4 +277,127 @@ void KopeteMetaLVIProps::slotMergeClicked()
 	if ( mExport->showDialog() == QDialog::Accepted )
 		mExport->exportData();
 }
+
+void KopeteMetaLVIProps::populateEventsCombo()
+{
+	QString path = "kopete/eventsrc";
+	KConfig eventsfile( path, true, false, "data" );
+	m_eventList = eventsfile.groupList();
+	QStringList contactSpecificEvents; // we are only interested in events that relate to contacts
+	QStringList::Iterator it = m_eventList.begin();
+	QStringList::Iterator end = m_eventList.end();
+	for ( ; it != end; ++it )
+	{
+		if ( !(*it).startsWith( QString::fromLatin1( "kopete_contact_" ) ) )
+			continue;
+		contactSpecificEvents.append( *it );
+		QMap<QString, QString> entries = eventsfile.entryMap( *it );
+		eventsfile.setGroup( *it );
+		QString comment = eventsfile.readEntry( "Comment", QString::fromLatin1( "Found nothing!" ) );
+		mainWidget->cmbEvents->insertItem( comment );
+	}
+	m_eventList = contactSpecificEvents;
+	slotEventsComboChanged( mainWidget->cmbEvents->currentItem() );
+	connect( mainWidget->cmbEvents, SIGNAL( activated( int ) ), this, SLOT( slotEventsComboChanged( int ) ) );
+}
+
+void KopeteMetaLVIProps::slotEventsComboChanged( int itemNo )
+{
+	// if the combo has changed, store the previous state of the widgets
+	// record the selected item so we can save it when the widget changes next
+	storeCurrentCustoms();
+	m_event = m_eventList[ itemNo ];
+	// update the widgets for the selected item
+	// get the corresponding KopeteNotifyEvent
+	KopeteNotifyEvent *evt = item->metaContact()->notifyEvent( m_event );
+	// set the widgets accordingly
+	resetEventWidgets();
+	if ( evt )
+	{
+		// sound presentation
+		KopeteEventPresentation *pres = evt->presentation( KopeteEventPresentation::Sound );
+		if ( pres )
+		{
+			mainWidget->chkCustomSound->setChecked( pres->enabled() );
+			mainWidget->customSound->setURL( pres->content() );
+			mainWidget->chkSoundSS->setChecked( pres->singleShot() );
+		}
+		// message presentation
+		pres = evt->presentation( KopeteEventPresentation::Message );
+		if ( pres )
+		{
+			mainWidget->chkCustomMsg->setChecked( pres->enabled() );
+			mainWidget->customMsg->setText( pres->content() );
+			mainWidget->chkMsgSS->setChecked( pres->singleShot() );
+		}
+		// chat presentation
+		pres = evt->presentation( KopeteEventPresentation::Chat );
+		if ( pres )
+		{
+			mainWidget->chkCustomChat->setChecked( pres->enabled() );
+			mainWidget->chkChatSS->setChecked( pres->singleShot() );
+		}
+		mainWidget->chkSuppressCommon->setChecked( evt->suppressCommon() );
+	}
+	//dumpData();
+}
+
+
+void KopeteMetaLVIProps::dumpData()
+{
+	KopeteNotifyEvent *evt = item->metaContact()->notifyEvent( m_event );
+	if ( evt )
+		kdDebug( 14000 ) << k_funcinfo << evt->toString() << endl;
+	else 
+		kdDebug( 14000 ) << k_funcinfo << " no event exists." << endl;
+}
+
+void KopeteMetaLVIProps::resetEventWidgets()
+{
+	mainWidget->chkCustomSound->setChecked( false );
+	mainWidget->customSound->clear();
+	mainWidget->chkSoundSS->setChecked( true );
+	mainWidget->chkCustomMsg->setChecked( false );
+	mainWidget->customMsg->clear();
+	mainWidget->chkMsgSS->setChecked( true );
+	mainWidget->chkCustomChat->setChecked( false );
+	mainWidget->chkChatSS->setChecked( true );
+	mainWidget->chkSuppressCommon->setChecked( true );
+}
+
+void KopeteMetaLVIProps::storeCurrentCustoms()
+{
+	if ( !m_event.isNull() )
+	{
+		KopeteNotifyEvent *evt = item->metaContact()->notifyEvent( m_event );
+		if ( !evt )
+		{
+			evt = new KopeteNotifyEvent( );
+			// store the changed event
+			item->metaContact()->setNotifyEvent( m_event, evt );
+		}
+		evt->setSuppressCommon( mainWidget->chkSuppressCommon->isChecked() );
+		// set different presentations
+		KopeteEventPresentation *eventNotify = 0;
+		eventNotify = new KopeteEventPresentation( KopeteEventPresentation::Sound, 
+				mainWidget->customSound->url(),
+				mainWidget->chkSoundSS->isChecked(),
+				mainWidget->chkCustomSound->isChecked() );
+		evt->setPresentation( KopeteEventPresentation::Sound, eventNotify );
+		// set message attributes
+		eventNotify = new KopeteEventPresentation( KopeteEventPresentation::Message,
+				mainWidget->customMsg->text(),
+				mainWidget->chkMsgSS->isChecked(),
+				mainWidget->chkCustomMsg->isChecked() );
+		evt->setPresentation( KopeteEventPresentation::Message, eventNotify );
+		// set chat attributes
+		eventNotify = new KopeteEventPresentation( KopeteEventPresentation::Chat,
+				QString::null,
+				mainWidget->chkChatSS->isChecked(),
+				mainWidget->chkCustomChat->isChecked() );
+		evt->setPresentation( KopeteEventPresentation::Chat, eventNotify );
+		evt->setSuppressCommon( mainWidget->chkSuppressCommon->isChecked() );
+	}
+}
+
 #include "kopetelviprops.moc"

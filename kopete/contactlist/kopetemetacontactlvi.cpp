@@ -275,12 +275,12 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 		 * although I haven't quite figured out why yet. Please don't change the order
 		 */
 		if ( m_metaContact->isOnline() && ( m_oldStatus == KopeteOnlineStatus::Offline || m_oldStatus == KopeteOnlineStatus::Away ) )
-			KNotifyClient::event( winId , "kopete_status_change", text );
+			KNotifyClient::event( winId , "kopete_contact_status_change", text, m_metaContact, i18n( "Status Change" ), 0, 0 );
 
 		else if ( m_oldStatus == KopeteOnlineStatus::Online && ( m_metaContact->status() != KopeteOnlineStatus::Offline || m_metaContact->status() != KopeteOnlineStatus::Unknown ) )
-			KNotifyClient::event( winId,  "kopete_online", text, i18n( "Chat" ), this, SLOT( execute() ) );
+			KNotifyClient::event( winId,  "kopete_contact_online", text, m_metaContact, i18n( "Chat" ), this, SLOT( execute() ) );
 		else
-			KNotifyClient::event( winId , "kopete_offline", text );
+			KNotifyClient::event( winId , "kopete_contact_offline", text, m_metaContact, i18n( "Offline" ), 0, 0 );
 
 
 		if ( !mBlinkTimer->isActive() && ( m_metaContact->statusIcon() != m_oldStatusIcon ) )

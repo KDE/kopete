@@ -202,16 +202,16 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 			switch( msg.importance() )
 			{
 				case KopeteMessage::Low:
-					event = QString::fromLatin1( "kopete_lowpriority" );
+					event = QString::fromLatin1( "kopete_contact_lowpriority" );
 					break;
 				case KopeteMessage::Highlight:
-					event = QString::fromLatin1( "kopete_highlight" );
+					event = QString::fromLatin1( "kopete_contact_highlight" );
 					body = i18n( "<qt>A highlighted message arrived from %1<br>\"%2\"</qt>" );
 					break;
 				default:
-					event = QString::fromLatin1( "kopete_incoming" );
+					event = QString::fromLatin1( "kopete_contact_incoming" );
 			}
-			KNotifyClient::event(winId,  event, body.arg( msgFrom, msgText ) ,
+			KNotifyClient::event(winId,  event, body.arg( msgFrom, msgText ), msg.from()->metaContact(),
 				i18n("View") , const_cast<KopeteContact*>(msg.from()) , SLOT(execute()) );
 
 		}

@@ -77,7 +77,7 @@ Comment=Sound notification for Kopete events
 default_sound=Kopete_Event.ogg
 default_presentation=65
 
-[kopete_incoming]
+[kopete_contact_incoming]
 Name=Incoming
 Name[bg]=Пристигна ново съобщение
 Name[bs]=Ulazni
@@ -198,7 +198,7 @@ default_sound=Kopete_Sent.ogg
 default_presentation=0
 
 
-[kopete_online]
+[kopete_contact_online]
 Name=Online
 Name[bg]=Включи се приятел
 Name[ca]=Connectat
@@ -249,7 +249,7 @@ Comment[zh_CN]=联系人上线
 default_sound=Kopete_User_is_Online.ogg
 default_presentation=16
 
-[kopete_offline]
+[kopete_contact_offline]
 Name=Offline
 Name[bg]=Изключи се приятел
 Name[ca]=Desconnectat
@@ -301,7 +301,7 @@ default_sound=Kopete_Event.ogg
 default_presentation=0
 
 
-[kopete_status_change]
+[kopete_contact_status_change]
 Name=Status Change
 Name[be]=Зьмяненьне статусу
 Name[bg]=Променен статус на приятел
@@ -357,7 +357,7 @@ Comment[zh_CN]=联系人更改了他的在线状态
 default_sound=Kopete_Event.ogg
 default_presentation=0
 
-[kopete_highlight]
+[kopete_contact_highlight]
 Name=Highlight
 Name[be]=Падсьветка
 Name[bg]=Пристигна специално съобщение
@@ -412,7 +412,7 @@ default_sound=Kopete_Received.ogg
 default_presentation=65
 
 
-[kopete_lowpriority]
+[kopete_contact_lowpriority]
 Name=Low priority messages
 Name[bg]=Пристигна съобщение с нисък приоритет
 Name[ca]=Missatges de baixa prioritat

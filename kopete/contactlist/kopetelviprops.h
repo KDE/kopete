@@ -55,9 +55,16 @@ class KopeteMetaLVIProps: public KDialogBase
 		~KopeteMetaLVIProps();
 
 	private:
+		void populateEventsCombo();
+		void dumpData();
+		void resetEventWidgets();
+		void storeCurrentCustoms();
+
 		KopeteMetaLVIPropsWidget *mainWidget;
 		KopeteMetaContactLVI *item;
 		KopeteAddressBookExport *mExport;
+		QStringList m_eventList;
+		QString m_event;
 
 	private slots:
 		void slotOkClicked();
@@ -65,6 +72,7 @@ class KopeteMetaLVIProps: public KDialogBase
 		void slotHasAddressbookEntryToggled( bool on );
 		void slotSelectAddresseeClicked();
 		void slotMergeClicked();
+		void slotEventsComboChanged( int item );
 };
 
 #endif

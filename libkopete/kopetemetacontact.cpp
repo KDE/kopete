@@ -67,7 +67,7 @@ KABC::AddressBook* KopeteMetaContact::m_addressBook = 0L;
 bool KopeteMetaContactPrivate::s_addrBookWritePending = false;
 
 KopeteMetaContact::KopeteMetaContact()
-: KopetePluginDataObject( KopeteContactList::contactList() )
+: KopetePluginDataObject( KopeteContactList::contactList() ), KopeteNotifyDataObject()
 {
 	d = new KopeteMetaContactPrivate;
 
@@ -665,7 +665,11 @@ const QDomElement KopeteMetaContact::toXML()
 	QValueList<QDomElement> pluginData = KopetePluginDataObject::toXML();
 	for( QValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
 		metaContact.documentElement().appendChild( metaContact.importNode( *it, true ) );
-
+	
+	// Store custom notification data
+	QDomElement notifyData = KopeteNotifyDataObject::notifyDataToXML();
+	if ( notifyData.hasChildNodes() )
+		metaContact.documentElement().appendChild( metaContact.importNode( notifyData, true ) );
 	return metaContact.documentElement();
 }
 
@@ -718,6 +722,10 @@ bool KopeteMetaContact::fromXML( const QDomElement& element )
 			QString key = contactElement.attribute( QString::fromLatin1( "key" ), QString::null );
 			QString val = contactElement.text();
 			d->addressBook[ app ][ key ] = val;
+		}
+		else if( contactElement.tagName() == QString::fromLatin1( "custom-notifications" ) )
+		{
+			KopeteNotifyDataObject::notifyDataFromXML( contactElement );
 		}
 		else //if( groupElement.tagName() == QString::fromLatin1( "plugin-data" ) || groupElement.tagName() == QString::fromLatin1("custom-icons" ))
 		{
@@ -820,7 +828,7 @@ void KopeteMetaContact::updateKABC()
 	// If the metacontact is linked to a kabc entry
 	if ( !d->metaContactId.isEmpty() )
 	{
-		kdDebug( 14010 ) << k_funcinfo << "looking up Addressee for " << displayName() << "..." << endl;
+		//kdDebug( 14010 ) << k_funcinfo << "looking up Addressee for " << displayName() << "..." << endl;
 		// Look up the address book entry
 		KABC::Addressee theAddressee = ab->findByUid( metaContactId() );
 		// Check that if addressee is not deleted or if the link is spurious
@@ -830,12 +838,11 @@ void KopeteMetaContact::updateKABC()
 		if ( theAddressee.isEmpty() )
 		{
 			// remove the link
-			kdDebug( 14010 ) << k_funcinfo << "...not found." << endl;
 			d->metaContactId=QString::null;
 		}
 		else
 		{
-			kdDebug( 14010 ) << k_funcinfo << "...FOUND ONE!" << endl;
+			//kdDebug( 14010 ) << k_funcinfo << "...FOUND ONE!" << endl;
 			// Store address book fields
 			QMap<QString, QMap<QString, QString> >::ConstIterator appIt = d->addressBook.begin();
 			for( ; appIt != d->addressBook.end(); ++appIt )
@@ -870,19 +877,19 @@ void KopeteMetaContact::removeKABC()
 	// If the metacontact is linked to a kabc entry
 	if ( !d->metaContactId.isEmpty() )
 	{
-		kdDebug( 14010 ) << k_funcinfo << "looking up Addressee for " << displayName() << "..." << endl;
+		//kdDebug( 14010 ) << k_funcinfo << "looking up Addressee for " << displayName() << "..." << endl;
 		// Look up the address book entry
 		KABC::Addressee theAddressee = ab->findByUid( metaContactId() );
 
 		if ( theAddressee.isEmpty() )
 		{
 			// remove the link
-			kdDebug( 14010 ) << k_funcinfo << "...not found." << endl;
+			//kdDebug( 14010 ) << k_funcinfo << "...not found." << endl;
 			d->metaContactId=QString::null;
 		}
 		else
 		{
-			kdDebug( 14010 ) << k_funcinfo << "...FOUND ONE!" << endl;
+			//kdDebug( 14010 ) << k_funcinfo << "...FOUND ONE!" << endl;
 			// Remove address book fields
 			QMap<QString, QMap<QString, QString> >::ConstIterator appIt = d->addressBook.begin();
 			for( ; appIt != d->addressBook.end(); ++appIt )
@@ -942,7 +949,7 @@ void KopeteMetaContact::slotWriteAddressBook()
 			ab->releaseSaveTicket( ticket );
 		}
 	}
-	kdDebug( 14010 ) << k_funcinfo << "Finished writing KABC" << endl;
+	//kdDebug( 14010 ) << k_funcinfo << "Finished writing KABC" << endl;
 	KopeteMetaContactPrivate::s_addrBookWritePending = false;
 }
 #include "kopetemetacontact.moc"
@@ -1046,14 +1053,6 @@ bool KopeteMetaContact::syncWithKABC()
 							if ( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), 
 															 i18n( "<qt>An address was added to this contact by another application.<br>Would you like to use it in Kopete?<br><b>Protocol:</b> %1<br><b>Address:</b> %2</qt>" ).arg( proto->displayName() ).arg( *it ), i18n( "Import Address From Address Book" ), i18n("&Yes"), i18n("&No"), QString::fromLatin1( "ImportFromKABC" ) ) )
 							{
-								for ( ; acs.current(); ++acs )
-									if ( !acs.current()->isConnected() )
-									{
-									}
-								acs.toFirst();
-								if ( !allAccountsConnected )
-									continue;
-								
 								// we have got a contact to add, our accounts are connected, so add it.
 								// Do we need to choose an account
 								KopeteAccount *chosen = 0;
@@ -1065,10 +1064,9 @@ bool KopeteMetaContact::syncWithKABC()
 									AccountSelector *accSelector = new AccountSelector(proto, chooser,
 										"accSelector");
 									chooser->setMainWidget(accSelector);
-									int ret = chooser->exec();
-									chosen = accSelector->selectedItem();
-									if ( ret == QDialog::Rejected )
+									if ( chooser->exec() == QDialog::Rejected )
 										continue; 
+									chosen = accSelector->selectedItem();
 
 									delete chooser;
 								}
@@ -1083,8 +1081,8 @@ bool KopeteMetaContact::syncWithKABC()
 								{
 									chosen = acs.current();
 								}
+
 								// add the contact to the chosen account
-								
 								if ( chosen )
 								{
 									kdDebug( 14010 ) << "Adding " << *it << " to " << chosen->accountId() << endl;
