@@ -77,8 +77,8 @@ private:
 	GaduPreferences     *prefs_;
 
 	const KopeteOnlineStatus gaduStatusOffline_;
-	const KopeteOnlineStatus gaduStatusNotAvail_;
-	const KopeteOnlineStatus gaduStatusNotAvailDescr_;
+	const KopeteOnlineStatus gaduStatusOfflineDescr_;
+  const KopeteOnlineStatus gaduStatusMaybeOffline_;
 	const KopeteOnlineStatus gaduStatusBusy_;
 	const KopeteOnlineStatus gaduStatusBusyDescr_;
 	const KopeteOnlineStatus gaduStatusInvisible_;

@@ -136,4 +136,9 @@ GaduContact::slotDeleteContact()
 	deleteLater();
 }
 
+void GaduContact::messageAck()
+{
+  manager()->messageSucceeded();
+}
+
 #include "gaducontact.moc"

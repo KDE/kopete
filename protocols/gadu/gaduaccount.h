@@ -60,7 +60,6 @@ public slots:
 	void slotGoOnline();
 	void slotGoOffline();
 	void slotGoInvisible();
-	void slotGoAway();
 	void slotGoBusy();
 
   void removeContact( const GaduContact* c );
@@ -79,6 +78,7 @@ protected:
 	//}
 
 private slots:
+  void startNotify();
   void messageReceived( struct gg_event* e );
   void ackReceived( struct gg_event* /* e */ );
   void notify( struct gg_event* e );
@@ -89,6 +89,10 @@ private slots:
   void connectionFailed( struct gg_event* /*e*/ );
   void connectionSucceed( struct gg_event* /*e*/ );
 
+  void slotChangePassword();
+
+  void slotCommandDone( const QString&, const QString& );
+  void slotCommandError( const QString&, const QString& );
 private:
 	void initConnections();
 	void initActions();

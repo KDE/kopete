@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>gaduAddUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>507</width>
-            <height>75</height>
+            <width>448</width>
+            <height>123</height>
         </rect>
     </property>
     <property name="caption">
@@ -32,7 +32,7 @@
             <property name="title">
                 <string>Contact Information</string>
             </property>
-            <hbox>
+            <vbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
@@ -42,23 +42,59 @@
                 <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget class="QLabel">
+                <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>TextLabel1</cstring>
+                        <cstring>layout1</cstring>
                     </property>
-                    <property name="text">
-                        <string>Gadu-Gadu UIN:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>addID</cstring>
-                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel1</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Name:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>addEdit__2</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QLineEdit">
+                            <property name="name">
+                                <cstring>nameEdit_</cstring>
+                            </property>
+                        </widget>
+                    </hbox>
                 </widget>
-                <widget class="QLineEdit">
+                <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>addEdit_</cstring>
+                        <cstring>layout2</cstring>
                     </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>TextLabel1</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Gadu-Gadu UIN:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>addEdit_</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QLineEdit">
+                            <property name="name">
+                                <cstring>addEdit_</cstring>
+                            </property>
+                        </widget>
+                    </hbox>
                 </widget>
-            </hbox>
+            </vbox>
         </widget>
     </grid>
 </widget>

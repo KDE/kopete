@@ -1,27 +1,48 @@
+//////////////////////////////////////////////////////////////////////////////
+// gaduaddconectpage.cpp                                                    //
+//                                                                          //
+// Copyright (C)  2002-2003  Zack Rusin <zack@kde.org>                      //
+//                                                                          //
+// This program is free software; you can redistribute it and/or            //
+// modify it under the terms of the GNU General Public License              //
+// as published by the Free Software Foundation; either version 2           //
+// of the License, or (at your option) any later version.                   //
+//                                                                          //
+// This program is distributed in the hope that it will be useful,          //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of           //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            //
+// GNU General Public License for more details.                             //
+//                                                                          //
+// You should have received a copy of the GNU General Public License        //
+// along with this program; if not, write to the Free Software              //
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA                //
+// 02111-1307, USA.                                                         //
+//////////////////////////////////////////////////////////////////////////////
+#include "gaduadd.h"
+#include "gaduaccount.h"
+#include "gaduaddcontactpage.h"
+
 #include <klocale.h>
+#include <kdebug.h>
 
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
 
-#include "gaduadd.h"
-#include "gaduaccount.h"
-#include "gaduaddcontactpage.h"
-
 GaduAddContactPage::GaduAddContactPage( GaduAccount* owner,
-                                        QWidget* parent, const char* name )
-    :AddContactPage( parent, name )
+																				QWidget* parent, const char* name )
+	: AddContactPage( parent, name )
 {
-    (new QVBoxLayout(this))->setAutoAdd(true);
-    if( owner->isConnected() ) {
-        addUI_ = new gaduAddUI( this );
-        account_ = owner;
-        canAdd_ = true;
-    } else {
-        noaddMsg1_ = new QLabel(i18n("You need to be connected to be able to add contacts."), this);
-        noaddMsg2_ = new QLabel(i18n("Connect to the MSN network and try again."), this);
-        canAdd_ = false;
-    }
+	(new QVBoxLayout(this))->setAutoAdd(true);
+	if( owner->isConnected() ) {
+		addUI_ = new gaduAddUI( this );
+		account_ = owner;
+		canAdd_ = true;
+	} else {
+		noaddMsg1_ = new QLabel(i18n("You need to be connected to be able to add contacts."), this);
+		noaddMsg2_ = new QLabel(i18n("Connect to the Gadu-Gadu network and try again."), this);
+		canAdd_ = false;
+	}
 }
 
 GaduAddContactPage::~GaduAddContactPage()
@@ -31,33 +52,28 @@ GaduAddContactPage::~GaduAddContactPage()
 bool
 GaduAddContactPage::validateData()
 {
-    bool ok;
-    addUI_->addEdit_->text().toULong( &ok );
-    return ok;
+	bool ok;
+	addUI_->addEdit_->text().toULong( &ok );
+	return ok;
 }
 
 bool
 GaduAddContactPage::apply(KopeteAccount *a , KopeteMetaContact *mc)
-{	//FIXME: use the metacontat and the account!!!
-    if ( canAdd_ ) {
-        if ( validateData() ) {
-            QString userid = addUI_->addEdit_->text();
-            account_->addContact( userid, userid );
-        }
-    } else {
-        return false;
-    }
+{
+	if ( canAdd_ ) {
+		if ( validateData() ) {
+			QString userid = addUI_->addEdit_->text();
+			QString name   = addUI_->nameEdit_->text();
+			if ( a != account_ ) {
+				kdDebug(14001)<<"Problem since accounts differ: "<< a->accountId()
+											<<" , "<<account_->accountId() <<endl;
+			}
+			a->addContact( userid, userid, mc );
+		}
+	} else {
+		return false;
+	}
 	return true;
 }
 
 #include "gaduaddcontactpage.moc"
-
-/*
- * Local variables:
- * c-indentation-style: bsd
- * c-basic-offset: 4
- * indent-tabs-mode: nil
- * End:
- *
- * vim: set et ts=4 sts=4 sw=4:
- */

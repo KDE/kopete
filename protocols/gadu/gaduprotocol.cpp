@@ -37,15 +37,24 @@ GaduProtocol* GaduProtocol::protocolStatic_ = 0L;
 
 GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList & )
 	:   KopeteProtocol( parent, name ),
-			gaduStatusOffline_(       KopeteOnlineStatus::Offline, 25, this, 0x0,                       "gg_offline", i18n( "Go O&ffline" ),   i18n( "Online" ) ),
-			gaduStatusNotAvail_(      KopeteOnlineStatus::Away,    15, this, GG_STATUS_NOT_AVAIL,       "gg_away",    i18n( "Go A&way" ),      i18n( "Unavailable" ) ),
-			gaduStatusNotAvailDescr_( KopeteOnlineStatus::Away,    20, this, GG_STATUS_NOT_AVAIL_DESCR, "gg_away",    i18n( "Go A&way" ),      i18n( "Unavailable" ) ),
-			gaduStatusBusy_(          KopeteOnlineStatus::Away,    20, this, GG_STATUS_BUSY,            "gg_busy",    i18n( "Go B&usy" ),      i18n( "Busy" ) ),
-			gaduStatusBusyDescr_(     KopeteOnlineStatus::Away,    25, this, GG_STATUS_BUSY_DESCR,      "gg_busy",    i18n( "Go B&usy" ),      i18n( "Busy" ) ),
-			gaduStatusInvisible_(     KopeteOnlineStatus::Away,     5, this, GG_STATUS_INVISIBLE,       "gg_invi",    i18n( "Go I&nvisible" ), i18n( "Invisible" ) ),
-			gaduStatusInvisibleDescr_(KopeteOnlineStatus::Away,    10, this, GG_STATUS_INVISIBLE_DESCR, "gg_invi",    i18n( "Go I&nvisible" ), i18n( "Invisible" ) ),
-			gaduStatusAvail_(         KopeteOnlineStatus::Online,  20, this, GG_STATUS_AVAIL,           "gg_online",  i18n( "Go &Online" ),    i18n( "Online" ) ),
-			gaduStatusAvailDescr_(    KopeteOnlineStatus::Online,  25, this, GG_STATUS_AVAIL_DESCR,     "gg_online",  i18n( "Go &Online" ),    i18n( "Online" ) ),
+			gaduStatusOffline_(       KopeteOnlineStatus::Offline, 0, this, GG_STATUS_NOT_AVAIL,
+                                "gg_offline", i18n( "Go O&ffline" ),   i18n( "Offline" ) ),
+			gaduStatusOfflineDescr_(  KopeteOnlineStatus::Away,    2, this, GG_STATUS_NOT_AVAIL_DESCR,
+                                "gg_offline_d",    i18n( "Go A&way" ),      i18n( "Offline With Description" ) ),
+      gaduStatusMaybeOffline_( KopeteOnlineStatus::Offline, 4, this, 0x0,
+                               "gg_away", i18n( "Go O&ffline" ),   i18n( "Offline (maybe)" ) ),
+			gaduStatusBusy_(          KopeteOnlineStatus::Away,    20, this, GG_STATUS_BUSY,
+                                "gg_busy",    i18n( "Go B&usy" ),      i18n( "Busy" ) ),
+			gaduStatusBusyDescr_(     KopeteOnlineStatus::Away,    25, this, GG_STATUS_BUSY_DESCR,
+                                "gg_busy_d",    i18n( "Go B&usy" ),      i18n( "Busy With Description" ) ),
+			gaduStatusInvisible_(     KopeteOnlineStatus::Away,     5, this, GG_STATUS_INVISIBLE,
+                                "gg_invi",    i18n( "Go I&nvisible" ), i18n( "Invisible" ) ),
+			gaduStatusInvisibleDescr_(KopeteOnlineStatus::Away,    10, this, GG_STATUS_INVISIBLE_DESCR,
+                                "gg_invi_d",    i18n( "Go I&nvisible" ), i18n( "Invisible With Description" ) ),
+			gaduStatusAvail_(         KopeteOnlineStatus::Online,  30, this, GG_STATUS_AVAIL,
+                                "gg_online",  i18n( "Go &Online" ),    i18n( "Online" ) ),
+			gaduStatusAvailDescr_(    KopeteOnlineStatus::Online,  30, this, GG_STATUS_AVAIL_DESCR,
+                                "gg_online_d",  i18n( "Go &Online" ),    i18n( "Online With Description" ) ),
 			defaultAccount_( 0 )
 {
 	if ( protocolStatic_ )
@@ -100,9 +109,9 @@ GaduProtocol::convertStatus( uint status ) const
 	switch( status )
 	{
 	case GG_STATUS_NOT_AVAIL:
-		return gaduStatusNotAvail_;
+		return gaduStatusOffline_;
 	case GG_STATUS_NOT_AVAIL_DESCR:
-		return gaduStatusNotAvailDescr_;
+		return gaduStatusOfflineDescr_;
 	case GG_STATUS_BUSY:
 		return gaduStatusBusy_;
 	case GG_STATUS_BUSY_DESCR:

@@ -54,6 +54,7 @@ public slots:
 	void slotDeleteContact();
 	void messageReceived( KopeteMessage& );
 	void messageSend( KopeteMessage&, KopeteMessageManager* );
+  void messageAck();
 
 protected:
 	virtual KopeteMessageManager* manager( bool canCreate = false );

@@ -1,16 +1,28 @@
+#include "gadusession.h"
+
 #include <klocale.h>
+#include <kdebug.h>
 
 #include <qsocketnotifier.h>
-#include <kdebug.h>
+
+#include <netinet/in.h>
 #include <errno.h>
 #include <string.h>
 
-#include "gadusession.h"
+const int NUM_SERVERS = 7;
+const char* const gg_servers_ip[NUM_SERVERS] = {"217.17.41.82", "217.17.41.83",
+                                                "217.17.41.84", "217.17.41.85",
+                                                "217.17.41.86", "217.17.41.87",
+                                                "217.17.41.88"};
 
 GaduSession::GaduSession( QObject *parent, const char* name )
-	: QObject( parent, name )
+	: QObject( parent, name ), session_(0), currentServer_(-1)
 {
-	session_ = 0;
+  QHostAddress ip;
+	for ( int i = 0; i < NUM_SERVERS; i++ ) {
+		ip.setAddress( QString( gg_servers_ip[i] ) );
+		servers_.append( ip );
+  }
 }
 
 GaduSession::~GaduSession()
@@ -36,14 +48,31 @@ GaduSession::isConnected() const
 	return false;
 }
 
-void
-GaduSession::login( const struct gg_login_params& p )
+int
+GaduSession::status() const
 {
+  kdDebug(14100)<<"Status = " << session_->status <<", initial = "<< session_->initial_status <<endl;
+  if ( session_ )
+    return session_->status;
+  return GG_STATUS_NOT_AVAIL;
+}
+
+void
+GaduSession::login( struct gg_login_params& p )
+{
+  kdDebug()<<"Login"<<endl;
 	if ( !isConnected() ) {
+    if ( currentServer_++ != -1 ) {
+      p.server_addr = htonl( servers_[ currentServer_ ].ip4Addr() );
+      p.server_port = 8074;
+    }
 		if ( !(session_ = gg_login( &p ))) {
 			gg_free_session( session_ );
 			session_ = 0;
-			emit connectionFailed( 0L );
+      if ( currentServer_ == NUM_SERVERS )
+        emit connectionFailed( 0L );
+      else
+        login( params_ );
 			return;
 		}
 		read_ = new QSocketNotifier( session_->fd, QSocketNotifier::Read, this );
@@ -84,15 +113,14 @@ void
 GaduSession::login( uin_t uin, const QString& password,
                     int status, const QString& statusDescr )
 {
-	struct gg_login_params p;
-
-	memset( &p, 0, sizeof(p) );
-	p.uin = uin;
-	p.password = const_cast<char*>( password.latin1() );
-	p.status = status;
-	p.status_descr = statusDescr.local8Bit().data();
-	p.async = 1;
-	login( p );
+  memset( &params_, 0, sizeof(params_) );
+	params_.uin = uin;
+	params_.password = const_cast<char*>( password.latin1() );
+	params_.status = status;
+	params_.status_descr = statusDescr.local8Bit().data();
+  params_.client_version = GG_DEFAULT_CLIENT_VERSION;
+	params_.async = 1;
+	login( params_ );
 }
 
 void
@@ -177,6 +205,7 @@ GaduSession::sendMessageCtcp( uin_t recipient, const QString& msg,
 int
 GaduSession::changeStatus( int status )
 {
+  kdDebug()<<"## Changing to "<<status<<endl;
 	if ( isConnected() )
 		return gg_change_status( session_, status );
 	else
@@ -266,7 +295,10 @@ GaduSession::checkDescriptor()
 		delete write_;
 		read_ = 0;
 		write_ = 0;
-		emit connectionFailed( e );
+    if ( currentServer_ == NUM_SERVERS )
+      emit connectionFailed( e );
+    else
+      login( params_ );
 		break;
 	case GG_EVENT_DISCONNECT:
 		if ( session_ ) {
