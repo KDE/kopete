@@ -33,9 +33,9 @@ void SendMessageTask::message( const QStringList & recipientDNList, const Outgoi
 	tmp.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, msg.guid ) );
 	lst.append( new Field::MultiField( NM_A_FA_CONVERSATION, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, tmp ) );
 	// message body as rtf : FIXME RTFIZE TEXT - HOPE 
-	msgBodies.append( new Field::SingleField( NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_TYPE_UTF8, QString("") ) );
+	msgBodies.append( new Field::SingleField( NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_TYPE_UTF8, QString("{\\rtf1\\ansi\n{\\fonttbl\\f0\\fnil Monospaced;\\f1\\fnil SansSerif;}\n\n\\f1\\fs18\\i0\\b0\\ul0\\cf0 tiredy.\\par\n}\n") ) );
 	// message body type indicator / separator?
-	msgBodies.append( new Field::SingleField( NM_A_UD_MESSAGE_TYPE, 0, NMFIELD_TYPE_UDWORD, 0 ) );
+ 	msgBodies.append( new Field::SingleField( NM_A_UD_MESSAGE_TYPE, 0, NMFIELD_TYPE_UDWORD, 0 ) );
 	// message body plaintext
 	msgBodies.append( new Field::SingleField( NM_A_SZ_MESSAGE_TEXT, 0, NMFIELD_TYPE_UTF8, msg.message ) );
 	// list containing message bodies

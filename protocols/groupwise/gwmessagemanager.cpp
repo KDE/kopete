@@ -117,6 +117,7 @@ void GroupWiseMessageManager::slotMessageSent( KopeteMessage & message, KopeteMe
 			acct->sendMessage( guid(), message );
 			// we could wait until the server acks our send, 
 			// but we'd need a UID for outgoing messages and a list to track them
+			appendMessage( message );
 			messageSucceeded();
 		}
 	}

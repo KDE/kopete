@@ -226,7 +226,7 @@ void GroupWiseAccount::createConference( const int clientId, const QStringList& 
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	// TODO: remove this it prevents sending a list of participants with the createconf
-	m_client->createConference( clientId /*, invitees */);
+	m_client->createConference( clientId , invitees );
 }
 
 void GroupWiseAccount::slotGoOnline()

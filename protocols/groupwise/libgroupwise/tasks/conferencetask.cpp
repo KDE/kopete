@@ -43,7 +43,7 @@ bool ConferenceTask::take( Transfer * transfer )
 	EventTransfer * incomingEvent;
 	if ( forMe( transfer, incomingEvent ) )
 	{
-		qDebug( "Got a status change!" );
+		qDebug( "Got a conference event:" );
 		QDataStream din( incomingEvent->payload(), IO_ReadOnly);
 		din.setByteOrder( QDataStream::LittleEndian );
 		

@@ -260,7 +260,7 @@ QString Client::userId()
 
 QString Client::userDN()
 {
-	return "cn=maeuschen,o=suse";
+	return "CN=maeuschen,O=suse";
 }
 
 QString Client::password()
