@@ -78,7 +78,6 @@ GaduAddContactPage::apply( KopeteAccount* a , KopeteMetaContact* mc )
 			contact->setProperty( "emailAddress", addUI_->emailEdit_->text() );
 			contact->setProperty( "firstName", addUI_->fornameEdit_->text() );
 			contact->setProperty( "lastName", addUI_->snameEdit_->text() );
-			contact->rename( addUI_->nickEdit_->text() );
 			contact->setProperty( "privPhoneNum", addUI_->telephoneEdit_ ->text() );
 			contact->setProperty( "ignored", i18n( "ignored" ), "false" );
 			contact->setProperty( "nickName", i18n( "nick name" ), name );
