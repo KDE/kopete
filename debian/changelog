@@ -1,29 +1,46 @@
-kopete (0.6.0-1) unstable; urgency=low
+kopete (0.7-1) unstable; urgency=low
 
-  * New upstream version
-  * First package for Sid (Closes: 148421)
+  * New kopete release (0.7)
 
- -- Till Gerken <till@tantalo.net>  Tue, 11 Feb 2003 22:18:12 +0100
+ -- Matias Fernandez <radix@creativa.cl>  Tue, 05 Aug 2003 11:15:28 -0400
 
-kopete (0.5-1) unstable; urgency=low
+kopete (0.6.2-6) unstable; urgency=low
 
-  * New Upstream.
+  * Fixed a dependency problem, kopete should depend on konqueror, it's
+    needed by the help system. (Closes: #200760)
+  * Added kopete's homepage to the package description.
+  * Kopete now suggest kicker because it's docking capabilites.
 
- -- Christopher L Cheney <ccheney@debian.org>  Wed, 16 Oct 2002 16:00:00 -0500
+ -- Matias Fernandez <radix@creativa.cl>  Tue, 15 Jul 2003 12:10:18 -0400
 
-kopete (0.4.1-1) unstable; urgency=low
+kopete (0.6.2-5) unstable; urgency=low
 
-  * New upstream version
-  * Introduced a custom configure line as
-    --enable-final broke compilation
-  * Removed SGML version of the manpage and
-    replaced it by an already converted one
+  * Fixed a buid problem (debian/rules issue). (Closes: #200179)
 
- -- Till Gerken <till@tantalo.net>  Mon,  1 Jul 2002 18:28:50 +0200
+ -- Matias Fernandez <radix@creativa.cl>  Mon, 07 Jul 2003 15:52:40 -0400
 
-kopete (0.4-1) unstable; urgency=low
+kopete (0.6.2-4) unstable; urgency=low
 
-  * Initial Release.
+  * Description of the package is now more easy to understand. (Closes: #199994)
 
- -- Till Gerken <till@tantalo.net>  Thu, 30 May 2002 23:19:40 +0200
+ -- Matias Fernandez <radix@creativa.cl>  Fri, 04 Jul 2003 14:41:23 -0400
 
+kopete (0.6.2-3) unstable; urgency=low
+
+  * Updated kopete license reflecting upstream changes.
+
+ -- Matias Fernandez <radix@creativa.cl>  Fri, 20 Jun 2003 15:24:40 -0400
+
+kopete (0.6.2-2) unstable; urgency=low
+
+  * Corrected architecture entry.
+
+ -- Matias Fernandez <radix@creativa.cl>  Thu,  8 May 2003 13:09:06 -0400
+ 
+kopete (0.6.2-1) unstable; urgency=low
+
+  * Initial Release, see
+    http://kopete.kde.org/index.php?page=newsstory&news=Kopete_releases_version_0.6.2
+    for the changelog up to 0.6.1a
+
+ -- Matias Fernandez <radix@creativa.cl>  Tue, 02 May 2003 12:51:15 -0400

@@ -1,15 +1,18 @@
 Source: kopete
-Section: net
+Section: kde
 Priority: optional
-Maintainer: Till Gerken <till@tantalo.net>
-Build-Depends: debhelper (>> 4.0.18), docbook-to-man, doxygen, kdelibs4-dev, libssl-dev
-Standards-Version: 3.5.7.0
+Maintainer: Matias Fernandez <radix@creativa.cl>
+Standards-Version: 3.5.8
+Build-Depends: debmake, debhelper (>> 4.0.0), kdelibs4-dev, libqt3-mt-dev, libqt3-compat-headers, libxslt1-dev (>= 1.0.16), libgadu-dev, xmms-dev (>= 1.2.7-1)
 
 Package: kopete
 Architecture: any
-Depends: ${shlibs:Depends}
-Suggests: xmms
-Description: Multi-protocol KDE Instant Messenger client
- Kopete is a multi-protocol Instant Messenger client for KDE. Currently,
- it supports AIM/Oscar, Gadu-Gadu, ICQ, MSN, IRC, Jabber and SMS.
- This is the preferred IM client for KDE, replacing KMSN/Merlin and Kit.
+Depends: konqueror (>= 4:3.1.2), ${shlibs:Depends}
+Suggests: kicker
+Description: Instant messenger program
+ Kopete is an instant messenger program which can communicate with
+ a variety of IM systems, such as ICQ, MSN, IRC and Jabber.
+ .
+ Support for more IM protocols can be added through a plugin system.
+ .
+  Homepage: http://kopete.kde.org/
