@@ -180,10 +180,15 @@ void ListView::setShowTreeLines( bool bShowAsTree )
  */
 void ListView::keyPressEvent( QKeyEvent *e )
 {
-	if ( (e->key() == Qt::Key_F2) && currentItem() )
-		rename( currentItem(), 0 );
-	else if ( (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) && currentItem())
-		emitExecute( currentItem(), QPoint(), 0 );
+	QListViewItem *item = currentItem();
+	if ( (e->key() == Qt::Key_F2) && item && item->isVisible() )
+		rename( item, 0 );
+	else if ( (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) && item && item->isVisible() )
+	{
+		// must provide a point within the item; emitExecute checks for this
+		QPoint p = viewport()->mapToGlobal(itemRect(item).center());
+		emitExecute( currentItem(), p, 0 );
+	}
 	else
 		KListView::keyPressEvent(e);
 }
