@@ -22,7 +22,7 @@
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qtextcodec.h>
-#include <kregexp.h>
+#include <qregexp.h>
 #include <kbufferedio.h>
 
 #include "kircentity.h" // Don't remove this prefix should/could(MUST?) be returned as a KIRCEntity
@@ -35,6 +35,7 @@ class KIRC;
 
 class KIRCMessage
 {
+friend class KIRC;
 public:
 	KIRCMessage();
 	KIRCMessage(const KIRCMessage &obj);
@@ -125,17 +126,11 @@ private:
 
 	static bool extractCtcpCommand(QCString &str, QCString &ctcpline);
 	static bool matchForIRCRegExp(const QCString &line, const QTextCodec *codec, KIRCMessage &message);
-	static bool matchForIRCRegExp(KRegExp &regexp, const QTextCodec *codec,
-		const QCString &line, KIRCMessage &message);
 
 	class KIRCMessage *m_ctcpMessage;
 
-	static KRegExp m_IRCCommandType1;
-#ifdef _IRC_STRICTNESS_
-	static KRegExp m_IRCCommandType2;
-#endif // _IRC_STRICTNESS_
-
-	static KRegExp m_IRCNumericCommand;
+	static QRegExp m_IRCCommand;
+	static QRegExp m_IRCNumericCommand;
 };
 
 #endif // KIRCMESSAGE_H

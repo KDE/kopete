@@ -25,82 +25,15 @@
 #include "kirc.h"
 #include "ksparser.h"
 #include "kircmessage.h"
- /*
-KIRCRegExp::KIRCRegExp( const char* regex )
-{
-	const char *error;
-	int erroffset;
-	re = pcre_compile(
-		regex,
-		PCRE_NO_UTF8_CHECK,
-		&error,
-		&erroffset,
-		NULL
-	);
 
-	pe = pcre_study(
-		re,
-		0,
-		&error
-	);
-}
-
-KIRCRegExp::~KIRCRegExp()
-{
-	pcre_free( pe );
-	pcre_free( re );
-}
-
-bool KIRCRegExp::exactMatch( QCString str )
-{
-	subject = str;
-	caps = pcre_exec(
-		re,
-		pe,
-		str,
-		subject.length(),
-		0,
-		0,
-		ovector,
-		30
-	);
-
-	if( caps > 0 )
-	{
-	        return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-QCString KIRCRegExp::cap( int idx )
-{
-	if( caps >= idx )
-	{
-		char buffer[4096];
-		pcre_copy_substring( subject, ovector, caps, idx, buffer, 4096 );
-		return buffer;
-	}
-	else
-	{
-		return "";
-	}
-}   */
-
-#ifndef _IRC_STRICTNESS_
-KRegExp KIRCMessage::m_IRCCommandType1(
+// TODO: This regexp parsing is no good. It's slower than it needs to be, and
+// is not codec-safe since QString requires a codec. NEed to parse this with
+// our own parsing class that operates on the raw QCStrings
+QRegExp KIRCMessage::m_IRCCommand(
 	"^(?::([^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*)*) ?(?: :(.*))?$");
 	// Extra end arg space check -------------------------^
-#else // _IRC_STRICTNESS_
-KRegExp KIRCMessage::m_IRCCommandType1(
-	"^(?::([^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*){0,13})(?: :(.*))?$");
-KRegExp KIRCMessage::m_IRCCommandType2(
-	"^(?::[[^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*){14,14})(?: (.*))?$");
-#endif // _IRC_STRICTNESS_
 
-KRegExp KIRCMessage::m_IRCNumericCommand("^\\d{3,3}$");
+QRegExp KIRCMessage::m_IRCNumericCommand("^\\d{3,3}$");
 
 KIRCMessage::KIRCMessage() : m_ctcpMessage(0)
 {
@@ -275,27 +208,16 @@ QString KIRCMessage::ctcpQuote(const QString &str)
 	return tmp;
 }
 
-bool KIRCMessage::matchForIRCRegExp(const QCString &line, const QTextCodec *codec, KIRCMessage &message)
+bool KIRCMessage::matchForIRCRegExp(const QCString &line, const QTextCodec *codec, KIRCMessage &msg)
 {
-	if(matchForIRCRegExp(m_IRCCommandType1, codec, line, message))
-		return true;
-#ifdef _IRC_STRICTNESS_
-	if(!matchForIRCRegExp(m_IRCCommandType2, codec, line, message)
-		return true;
-#endif // _IRC_STRICTNESS_
-	return false;
-}
-
-bool KIRCMessage::matchForIRCRegExp(KRegExp &regexp, const QTextCodec *codec, const QCString &line, KIRCMessage &msg )
-{
-	if(regexp.match(line))
+	if( m_IRCCommand.search( QString::fromLatin1(line) ) > -1 )
 	{
 		msg.m_raw = line;
-		msg.m_prefix  = QString::fromLatin1( unquote( regexp.group(1) ) );
-		msg.m_command = QString::fromLatin1( unquote( regexp.group(2) ) );
-		msg.m_args = QStringList::split(' ', QString::fromLatin1( regexp.group(3) ) );
+		msg.m_prefix  = QString::fromLatin1( unquote( m_IRCCommand.cap(1).latin1() ) );
+		msg.m_command = QString::fromLatin1( unquote( m_IRCCommand.cap(2).latin1() ) );
+		msg.m_args = QStringList::split(' ', QString::fromLatin1( m_IRCCommand.cap(3).latin1() ) );
 
-		QCString suffix = unquote( regexp.group(4) );
+		QCString suffix = unquote( m_IRCCommand.cap(4).latin1() );
 		if( !suffix.isNull() && suffix.length() > 0 )
 		{
 			if( extractCtcpCommand( suffix, msg.m_ctcpRaw ) )
@@ -337,6 +259,7 @@ bool KIRCMessage::matchForIRCRegExp(KRegExp &regexp, const QTextCodec *codec, co
 	return false;
 }
 
+
 // FIXME: there are missing parts
 QString KIRCMessage::toString() const
 {
@@ -354,7 +277,7 @@ QString KIRCMessage::toString() const
 
 bool KIRCMessage::isNumeric() const
 {
-	return m_IRCNumericCommand.match( m_command.latin1() );
+	return m_IRCNumericCommand.exactMatch( m_command );
 }
 
 bool KIRCMessage::isValid() const
