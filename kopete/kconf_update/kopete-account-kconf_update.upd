@@ -1,4 +1,4 @@
-Id=kopete0.7/r2
+Id=kopete0.7/r1
 File=kopeterc
-Script=kopete-account-kconf_update
+Script=kopete-account-kconf_update.sh,sh
 
