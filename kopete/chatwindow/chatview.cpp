@@ -181,6 +181,7 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	m_tabBar = 0L;
 	messageId = 0;
 	bgChanged = false;
+	m_tabState=Normal;
 
 //	m_icon = SmallIcon( mgr->protocol()->pluginIcon() );
 //	m_iconLight = KIconEffect().apply( m_icon, KIconEffect::ToGamma, 0.5, Qt::white, true );
@@ -342,7 +343,7 @@ bool ChatView::closeView( bool force )
 	return false;
 }
 
-void ChatView::setTabState( KopeteTabState newState = Undefined )
+void ChatView::setTabState( KopeteTabState newState  )
 {
 	if( m_tabBar )
 	{

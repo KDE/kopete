@@ -104,7 +104,7 @@ KopeteChatWindow *KopeteChatWindow::window( KopeteProtocol *p )
 			protocolMap.insert( p, myWindow );
 	}
 
-	kdDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
+//	kdDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
 
 	return myWindow;
 }
@@ -149,12 +149,12 @@ KopeteChatWindow::KopeteChatWindow(QWidget *parent, const char* name) : KParts::
 
 	windows.append( this );
 
-	kdDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
+//	kdDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
 }
 
 KopeteChatWindow::~KopeteChatWindow()
 {
-	kdDebug( 14010 ) << k_funcinfo << endl;
+//	kdDebug( 14010 ) << k_funcinfo << endl;
 
 	emit( closing( this ) );
 
@@ -180,7 +180,7 @@ KopeteChatWindow::~KopeteChatWindow()
 
 	windows.remove( this );
 
-	kdDebug( 14010 ) << "Open Windows: " << windows.count() << endl;
+//	kdDebug( 14010 ) << "Open Windows: " << windows.count() << endl;
 
 	saveOptions();
 
@@ -729,7 +729,7 @@ void KopeteChatWindow::updateBackground( const QPixmap &pm )
 
 void KopeteChatWindow::setActiveView( QWidget *widget )
 {
-	kdDebug(14010) << k_funcinfo << endl;
+//	kdDebug(14010) << k_funcinfo << endl;
 
 	ChatView *view = static_cast<ChatView*>(widget);
 
@@ -852,7 +852,7 @@ void KopeteChatWindow::slotPlaceTabs( int placement )
 {
 	if( m_tabBar )
 	{
-		kdDebug(14010) << k_funcinfo << "Placement:" << placement << endl;
+//		kdDebug(14010) << k_funcinfo << "Placement:" << placement << endl;
 		if( placement == 0 )
 			m_tabBar->setTabPosition( QTabWidget::Top );
 		else
@@ -877,7 +877,7 @@ void KopeteChatWindow::slotPrepareActionMenu(void)
 		KActionCollection *customActions = p->customChatActions( m_activeView->msgManager() );
 		if( customActions )
 		{
-			kdDebug(14010) << k_funcinfo << "Found custom Actions defined by Plugins" << endl;
+//			kdDebug(14010) << k_funcinfo << "Found custom Actions defined by Plugins" << endl;
 			actions = true;
 			for(unsigned int i = 0; i < customActions->count(); i++)
 			{
@@ -889,7 +889,7 @@ void KopeteChatWindow::slotPrepareActionMenu(void)
 
 	if ( !actions )
 	{
-		kdDebug(14010) << k_funcinfo << "No Action defined by any Plugin" << endl;
+//		kdDebug(14010) << k_funcinfo << "No Action defined by any Plugin" << endl;
 		int id = actionsMenu->insertItem( i18n("No Action Defined by any Plugin") );
 		actionsMenu->setItemEnabled(id, false);
 	}
@@ -898,7 +898,7 @@ void KopeteChatWindow::slotPrepareActionMenu(void)
 void KopeteChatWindow::readOptions()
 {
 	// load and apply config file settings affecting the appearance of the UI
-	kdDebug(14010) << k_funcinfo << endl;
+//	kdDebug(14010) << k_funcinfo << endl;
 	KConfig *config = KGlobal::config();
 	applyMainWindowSettings( config, QString::fromLatin1( "KopeteChatWindow" ) );
 	config->setGroup( QString::fromLatin1("ChatWindowSettings") );
@@ -911,7 +911,7 @@ void KopeteChatWindow::readOptions()
 
 void KopeteChatWindow::saveOptions()
 {
-	kdDebug(14010) << k_funcinfo << endl;
+//	kdDebug(14010) << k_funcinfo << endl;
 
 	KConfig *config = KGlobal::config();
 
@@ -970,16 +970,16 @@ void KopeteChatWindow::slotSmileyActivated(const QString &sm)
 
 void KopeteChatWindow::closeEvent( QCloseEvent *e )
 {
-	kdDebug( 14010 ) << k_funcinfo << endl;
+//	kdDebug( 14010 ) << k_funcinfo << endl;
 
 	// FIXME: This should only check if it *can* close
 	// and not start closing if the close can be aborted halfway, it would
 	// leave us with half the chats open and half of them closed. - Martijn
 	bool canClose = true;
 
-	kdDebug( 14010 ) << " Windows left open:" << endl;
-	for( QPtrListIterator<ChatView> it( chatViewList ); it; ++it)
-		kdDebug( 14010 ) << "  " << *it << " (" << (*it)->caption() << ")" << endl;
+//	kdDebug( 14010 ) << " Windows left open:" << endl;
+//	for( QPtrListIterator<ChatView> it( chatViewList ); it; ++it)
+//		kdDebug( 14010 ) << "  " << *it << " (" << (*it)->caption() << ")" << endl;
 
 	for( QPtrListIterator<ChatView> it( chatViewList ); it; )
 	{

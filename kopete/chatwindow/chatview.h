@@ -438,7 +438,7 @@ private:
 	 */
 	QString m_captionText;
 
-	void setTabState( KopeteTabState );
+	void setTabState( KopeteTabState state=Undefined);
 
 	/**
 	 * Creates the members list widget
