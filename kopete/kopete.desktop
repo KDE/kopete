@@ -1,15 +1,25 @@
 [Desktop Entry]
 Name=Kopete
 Name[xx]=xxKopetexx
+GenericName=Instant Messenger
 Comment=Instant Messenger
+Comment[bg]=Съобщения в реално време
 Comment[ca]=Missatger a l'instant
+Comment[el]=Στιγμιαίος αποστολέας
 Comment[es]=Mensajería instantánea
 Comment[et]=Kiirsuhtlemisrakendus
+Comment[fi]=Pikaviestiohjelma
+Comment[fr]=Messagerie instantanée
+Comment[gl]=Mensaxería Instantánea
+Comment[he]=תוכנת מסרים מידיים
 Comment[hu]=Azonnali üzenetküldő
 Comment[it]=Messaggistica istantanea
+Comment[pt]=Mensageiro Instantâneo
 Comment[pt_BR]=Mensageiro Instantâneo
 Comment[ru]=Мгновенные сообщения
-Comment[sv]=Instant Messenger-klient
+Comment[sr]=Брзи гласник
+Comment[sv]=Direktmeddelandeklient
+Comment[uz]=Хабар алмашиш
 Comment[xx]=xxInstant Messengerxx
 Exec=kopete %i %m -caption "%c"
 Type=Application
