@@ -68,11 +68,9 @@ DlgJabberServices::DlgJabberServices(QWidget *parent, const char *name ) : dlgSe
 
 	connect(btnRegister, SIGNAL(clicked()), this, SLOT(slotRegister()));
 	connect(btnBrowse, SIGNAL(clicked()), this, SLOT(slotBrowse()));
-	
-	// create the jabber task
-	serviceTask = new Jabber::JT_GetServices(JabberProtocol::protocol()->jabberClient->rootTask());
-	connect(serviceTask, SIGNAL(finished()), this, SLOT(slotQueryFinished()));
 
+	serviceTask = 0L;
+	
 	selectedRow = 0;
 
 }
@@ -100,6 +98,11 @@ void DlgJabberServices::slotQuery()
 		return;
 	}
 
+	// create the jabber task
+	delete serviceTask;
+	serviceTask = new Jabber::JT_GetServices(JabberProtocol::protocol()->jabberClient->rootTask());
+	connect(serviceTask, SIGNAL(finished()), this, SLOT(slotQueryFinished()));
+
 	/* populate server field if it is empty */
 	if(leServer->text().isEmpty())
 		leServer->setText(Jid(JabberProtocol::protocol()->myContact->id()).host());
@@ -119,7 +122,7 @@ void DlgJabberServices::slotQueryFinished()
 
 	if(!task->success())
 	{
-		KMessageBox::information(qApp->mainWidget(),
+		KMessageBox::error(this,
 								 i18n("Unable to retrieve the list of services"),
 								 i18n("Jabber Error"));
 		return;
