@@ -580,6 +580,58 @@ GaduSession::handleUserlist( gg_event* e )
 }
 
 QString
+GaduSesssion::stateDescription( int state )
+{
+	switch( state ) {
+		case GG_STATE_IDLE:
+			return i18n( "idle" );
+			break
+		case GG_STATE_RESOLVING:
+			return i18n( "resolving host" );
+			break;
+		case GG_STATE_CONNECTING:
+			return i18n( "connecting" );
+			break;
+		case GG_STATE_READING_DATA:
+			return i18n( "reading data" );
+			break;
+		case GG_STATE_ERROR:
+			return i18n( "error" );
+			break;
+		case GG_STATE_CONNECTING_HUB:
+			return i18n( "connecting to hub" );
+			break;
+		case GG_STATE_CONNECTING_GG:
+			return i18n( "connecting to server" );
+			break;
+		case GG_STATE_READING_KEY:
+			return i18n( "retriving key" );
+			break;
+		case GG_STATE_READING_REPLY:
+			return i18n( "waiting for reply" );
+			break;
+		case GG_STATE_CONNECTED:
+			return i18n( "connected" );
+			break;
+		case GG_STATE_SENDING_QUERY:
+			return i18n( "sending query" );
+			break;
+		case GG_STATE_READING_HEADER:
+			return i18n( "reading header" );
+			break;
+		case GG_STATE_PARSING:
+			return i18n( "parse data" );
+			break;
+		case GG_STATE_DONE:
+			return i18n( "done" );
+			break;
+		case GG_STATE_TLS_NEGOTIATION:
+			return i18n( "Tls connection negotiation" );
+			break;
+	}
+	return i18n( "unknown" );
+}
+QString
 GaduSession::errorDescription( int err )
 {
 	switch( err ){

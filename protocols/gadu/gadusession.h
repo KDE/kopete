@@ -89,6 +89,7 @@ public:
 	bool	stringToContacts( gaduContactsList& , const QString& );
 	static QString failureDescription( gg_failure_t );
 	static QString errorDescription( int err );
+	static QString stateDescription( int state );
 
 public slots:
 	void login( struct gg_login_params* );
