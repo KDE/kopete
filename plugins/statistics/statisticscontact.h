@@ -1,7 +1,7 @@
 /*
     statisticscontact.h
 
-    Copyright (c) 2003-2004 by Marc Cramdal        <marc.cramdal@yahoo.fr>
+    Copyright (c) 2003-2004 by Marc Cramdal        <marc.cramdal@gmail.com>
 
 
     *************************************************************************

@@ -1,7 +1,7 @@
 /*
     statisticsdb.cpp
 
-    Copyright (c) 2003-2004 by Marc Cramdal        <marc.cramdal@yahoo.fr>
+    Copyright (c) 2003-2004 by Marc Cramdal        <marc.cramdal@gmail.com>
 
 
     *************************************************************************
@@ -33,7 +33,7 @@
 
 StatisticsDB::StatisticsDB()
 {
-	QCString path = (::locateLocal("appdata", "kopete_statistics.db")).latin1();
+	QCString path = (::locateLocal("appdata", "kopete_statistics-0.1.db")).latin1();
 	kdDebug() << "statistics: DB path:" << path << endl;
 
 	// Open database file and check for correctness
