@@ -26,7 +26,7 @@
 #include "securestream.h"
 #include "tlshandler.h"
 
-#include "iostream.h"
+//#include "iostream.h"
 
 #include "gwclientstream.h"
 
@@ -386,7 +386,7 @@ Transfer * ClientStream::read()
 
 void ClientStream::write( Request *request )
 {
-	cout << "ClientStream::write()" << endl;
+	qDebug( "ClientStream::write()" );
 
 	// pass to CoreProtocol for transformation into wire format
 	d->client.outgoingTransfer( request );
@@ -394,7 +394,7 @@ void ClientStream::write( Request *request )
 	
 void cs_dump( const QByteArray &bytes )
 {
-	cout << "contains: " << bytes.count() << " bytes " << endl;
+	qDebug( "contains: %i bytes ", bytes.count() );
 	uint count = 0;
 	while ( count < bytes.count() )
 	{
@@ -1758,7 +1758,7 @@ QByteArray ClientStream::Buffer::take( unsigned blockSize )
 {
 	if ( size() < blockSize )
 	{
-		cout << "ClientStream::Buffer::take( unsigned blockSize ) " << "Buffer size " << size() << " < asked size " << blockSize << "!" << endl;
+		qDebug( "ClientStream::Buffer::take( unsigned blockSize ) Buffer size: %i  asked size: %i!",  size(), blockSize  );
 		return QByteArray();
 	}
 
