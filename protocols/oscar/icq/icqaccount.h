@@ -51,16 +51,16 @@ class ICQAccount : public OscarAccount
 
 	public slots:
 		void slotGoOnline();
-		void slotGoNA();
-		void slotGoOCC();
-		void slotGoFFC();
-		void slotGoDND();
+		void slotGoAway( const QString & );
+		void slotGoNA( const QString & );
+		void slotGoOCC( const QString & );
+		void slotGoFFC( const QString & );
+		void slotGoDND( const QString & );
 		void slotToggleInvisible();
 
 	protected slots:
 		// called after XML is read in, cannot access pluginData in constructor
 		virtual void loaded();
-		void slotAwayDialogReturned(const int, const QString&);
 		void slotSendSMS();
 
 	protected:

@@ -71,7 +71,7 @@ class AIMAccount : public OscarAccount
 		void slotGotWarning(int newlevel, QString warner);
 
 		//void slotGotMyUserInfo(UserInfo &);
-		void slotAwayDialogReturned(const int, const QString&);
+		void slotGoAway(const QString&);
 
 	protected:
 		void initSignals();

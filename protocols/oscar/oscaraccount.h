@@ -29,7 +29,6 @@
 class KopeteContact;
 class KopeteGroup;
 
-class KopeteAwayDialog;
 class OscarContact;
 
 class AIMBuddyList;
@@ -114,11 +113,6 @@ public slots:
 	 * Slot for telling this account to go offline
 	 */
 	void slotGoOffline();
-
-	/*
-	 * Slot for telling this account to go away
-	 */
-	void slotGoAway();
 
 protected slots:
 	/** Called when we get disconnected */
@@ -263,11 +257,6 @@ protected:
 	 * anti SPAM feature :)
 	 */
 	bool mIgnoreUnknownContacts;
-
-	/*
-	 * Our away dialog
-	 */
-	KopeteAwayDialog *mAwayDialog;
 
 	/*
 	 * This is our idle timer, it is used internally

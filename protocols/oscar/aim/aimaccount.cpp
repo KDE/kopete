@@ -18,11 +18,11 @@
 #include <kpopupmenu.h>
 #include <kmessagebox.h>
 
+#include "kopeteawayaction.h"
 #include "kopetestdaction.h"
 
 #include "aim.h"
 
-#include "oscarchangestatus.h"
 #include "aimprotocol.h"
 #include "aimaccount.h"
 #include "aimcontact.h"
@@ -37,8 +37,6 @@ AIMAccount::AIMAccount(KopeteProtocol *parent, QString accountID, const char *na
 	mStatus = OSCAR_OFFLINE;
 
 	setMyself( new AIMContact(tocNormalize(accountID), accountID, this, 0L) );
-	QObject::connect(mAwayDialog, SIGNAL(goAway(const int, const QString&)),
-		this, SLOT(slotAwayDialogReturned(const int, const QString&)));
 }
 
 AIMAccount::~AIMAccount()
@@ -91,11 +89,10 @@ KActionMenu* AIMAccount::actionMenu()
 			"AIMAccount::mActionOnline"));
 
 	mActionMenu->insert(
-		new KAction(p->statusAway.caption(),
-			p->statusAway.iconFor(this), 0,
-			this, SLOT(slotGoAway()), mActionMenu,
-			"AIMAccount::mActionAway"));
-
+		new KopeteAwayAction(p->statusAway.caption(),
+		p->statusAway.iconFor(this), 0, 
+		this, SLOT(slotGoAway( const QString & )), this, "AIMAccount::mActionNA" ) );
+		
 	KAction* mActionOffline = new KAction(p->statusOffline.caption(),
 		p->statusOffline.iconFor(this),
 		0, this, SLOT(slotGoOffline()), mActionMenu,
@@ -282,9 +279,9 @@ void AIMAccount::connect(const unsigned long status, const QString &awMessage)
 	}
 }
 
-void AIMAccount::slotAwayDialogReturned(const int status, const QString &message)
+void AIMAccount::slotGoAway(const QString &message)
 {
-	setStatus(status,message);
+	setAway(true,message);
 }
 
 #include "aimaccount.moc"

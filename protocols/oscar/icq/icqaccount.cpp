@@ -18,8 +18,8 @@
 #include "icqcontact.h"
 #include "icqprotocol.h"
 #include "icqsendsmsdialog.h"
-#include "oscarchangestatus.h"
 #include "oscarcontact.h"
+#include "kopeteawayaction.h"
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -40,9 +40,6 @@ ICQAccount::ICQAccount(KopeteProtocol *parent, QString accountID, const char *na
 	mHideIP = false;
 	mInvisible = false;
 	setMyself( new ICQContact(accountId(), QString::null, this, 0L) );
-
-	QObject::connect(mAwayDialog, SIGNAL(goAway(const int, const QString&)),
-		this, SLOT(slotAwayDialogReturned(const int, const QString&)));
 }
 
 void ICQAccount::loaded()
@@ -77,25 +74,25 @@ KActionMenu* ICQAccount::actionMenu()
 		p->statusOffline.iconFor(this), 0,
 		this, SLOT(slotGoOffline()), this, "ICQAccount::mActionOffline");
 
-	KAction* mActionAway = new KAction(p->statusAway.caption(),
-		p->statusAway.iconFor(this), 0,
-		this, SLOT(slotGoAway()), this, "ICQAccount::mActionAway");
+	KopeteAwayAction* mActionAway = new KopeteAwayAction(p->statusAway.caption(),
+		p->statusAway.iconFor(this), 0, 
+		this, SLOT(slotGoAway( const QString & )), this, "ICQAccount::mActionAway" );
+	
+	KopeteAwayAction* mActionNA = new KopeteAwayAction(p->statusNA.caption(),
+		p->statusNA.iconFor(this), 0, 
+		this, SLOT(slotGoNA( const QString & )), this, "ICQAccount::mActionNA" );
 
-	KAction* mActionNA = new KAction(p->statusNA.caption(),
-		p->statusNA.iconFor(this), 0,
-		this, SLOT(slotGoNA()), this, "ICQAccount::mActionNA");
+	KopeteAwayAction* mActionDND = new KopeteAwayAction(p->statusDND.caption(),
+		p->statusDND.iconFor(this), 0, 
+		this, SLOT(slotGoDND( const QString & )), this, "ICQAccount::mActionDND" );
 
-	KAction* mActionDND = new KAction(p->statusDND.caption(),
-		p->statusDND.iconFor(this), 0,
-		this, SLOT(slotGoDND()), this, "ICQAccount::mActionDND");
+	KopeteAwayAction* mActionOCC = new KopeteAwayAction(p->statusOCC.caption(),
+		p->statusOCC.iconFor(this), 0, 
+		this, SLOT(slotGoOCC( const QString & )), this, "ICQAccount::mActionOCC" );
 
-	KAction* mActionOCC = new KAction(p->statusOCC.caption(),
-		p->statusOCC.iconFor(this), 0,
-		this, SLOT(slotGoOCC()), this, "ICQAccount::mActionOCC");
-
-	KAction* mActionFFC = new KAction(p->statusFFC.caption(),
-		p->statusFFC.iconFor(this), 0,
-		this, SLOT(slotGoFFC()), this, "ICQAccount::mActionFFC");
+	KopeteAwayAction* mActionFFC = new KopeteAwayAction(p->statusFFC.caption(),
+		p->statusFFC.iconFor(this), 0, 
+		this, SLOT(slotGoFFC( const QString & )), this, "ICQAccount::mActionFCC" );
 
 	KToggleAction* mActionInvisible = new KToggleAction(i18n("Invisible"),
 		"icq_invisible", 0, this, SLOT(slotToggleInvisible()), this, "ICQAccount::mActionInvisible");
@@ -208,28 +205,34 @@ void ICQAccount::slotGoOnline()
 	}
 }
 
-void ICQAccount::slotGoNA()
+void ICQAccount::slotGoAway( const QString &reason )
 {
 	kdDebug(14200) << k_funcinfo << "account='" << accountId() << "'" << endl;
-	mAwayDialog->show(OSCAR_NA);
+	setStatus(ICQ_STATUS_SET_AWAY, reason);
 }
 
-void ICQAccount::slotGoOCC()
+void ICQAccount::slotGoNA( const QString &reason )
 {
 	kdDebug(14200) << k_funcinfo << "account='" << accountId() << "'" << endl;
-	mAwayDialog->show(OSCAR_OCC);
+	setStatus(ICQ_STATUS_SET_NA, reason);
 }
 
-void ICQAccount::slotGoFFC()
+void ICQAccount::slotGoOCC( const QString &reason )
 {
 	kdDebug(14200) << k_funcinfo << "account='" << accountId() << "'" << endl;
-	mAwayDialog->show(OSCAR_FFC);
+	setStatus(ICQ_STATUS_SET_OCC, reason);
 }
 
-void ICQAccount::slotGoDND()
+void ICQAccount::slotGoFFC( const QString &reason )
 {
 	kdDebug(14200) << k_funcinfo << "account='" << accountId() << "'" << endl;
-	mAwayDialog->show(OSCAR_DND);
+	setStatus(ICQ_STATUS_SET_FFC, reason);
+}
+
+void ICQAccount::slotGoDND( const QString &reason )
+{
+	kdDebug(14200) << k_funcinfo << "account='" << accountId() << "'" << endl;
+	setStatus(ICQ_STATUS_SET_DND, reason);
 }
 
 void ICQAccount::slotToggleInvisible()
@@ -312,31 +315,6 @@ void ICQAccount::setInvisible(bool invis)
 			engine()->sendChangeVisibility(4);
 */
 		setStatus(mStatus); // also sends the new invis flag
-	}
-}
-
-
-void ICQAccount::slotAwayDialogReturned(const int awaytype, const QString &message)
-{
-	kdDebug(14200) << k_funcinfo << "awaytype=" << awaytype << endl;
-
-	switch(awaytype)
-	{
-		case OSCAR_AWAY:
-			setStatus(ICQ_STATUS_SET_AWAY, message);
-			break;
-		case OSCAR_DND:
-			setStatus(ICQ_STATUS_SET_DND, message);
-			break;
-		case OSCAR_NA:
-			setStatus(ICQ_STATUS_SET_NA, message);
-			break;
-		case OSCAR_OCC:
-			setStatus(ICQ_STATUS_SET_OCC, message);
-			break;
-		case OSCAR_FFC:
-			setStatus(ICQ_STATUS_SET_FFC, message);
-			break;
 	}
 }
 

@@ -16,7 +16,6 @@
 */
 
 #include "oscaraccount.h"
-#include "oscarchangestatus.h"
 #include "aim.h"
 
 #include "kopeteprotocol.h"
@@ -53,8 +52,6 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 	mAwayMessage = "";
 
 	initEngine(isICQ); // Initialize the backend
-
-	mAwayDialog = new OscarChangeStatus(engine());
 
 	// Create the internal buddy list for this account
 	// TODO: make this an internal list of KopeteGroup and Kopete-/OscarContact
@@ -123,8 +120,6 @@ OscarAccount::~OscarAccount()
 
 	OscarAccount::disconnect();
 
-	delete mAwayDialog; // has no parent
-
 	// Delete the backend
 	if (mEngine)
 	{
@@ -158,12 +153,6 @@ void OscarAccount::initEngine(bool icq)
 void OscarAccount::slotGoOffline()
 {
 	OscarAccount::disconnect();
-}
-
-void OscarAccount::slotGoAway()
-{
-	kdDebug(14150) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
-	mAwayDialog->show(OSCAR_AWAY);
 }
 
 void OscarAccount::slotError(QString errmsg, int errorCode)
