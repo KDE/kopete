@@ -16,8 +16,8 @@
  ***************************************************************************/
 
 
-#ifndef KMSNSERVICESOCKET_H
-#define KMSNSERVICESOCKET_H
+#ifndef MSNNOTIFYSOCKET_H
+#define MSNNOTIFYSOCKET_H
 
 #include "msnauthsocket.h"
 #include "msnprotocol.h"
@@ -27,13 +27,13 @@ class MSNDispatchSocket;
 /**
  * @author Olaf Lueg
  */
-class KMSNServiceSocket : public MSNAuthSocket
+class MSNNotifySocket : public MSNAuthSocket
 {
 	Q_OBJECT
 
 public:
-	KMSNServiceSocket( const QString &msnId );
-	~KMSNServiceSocket();
+	MSNNotifySocket( const QString &msnId );
+	~MSNNotifySocket();
 
 	void connect( const QString &password );
 	virtual void disconnect();

@@ -59,7 +59,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	mIsConnected = false;
 	m_serial = 0;
 	m_silent = false;
-	m_serviceSocket = 0L;
+	m_notifySocket = 0L;
 
 	m_identity = new MSNIdentity( this, "m_identity" );
 
@@ -157,69 +157,69 @@ void MSNProtocol::Connect()
 
 	kdDebug() << "MSNProtocol::connect: Connecting to MSN with Passport "
 		<< m_msnId << endl;
-	m_serviceSocket = new KMSNServiceSocket( m_msnId );
+	m_notifySocket = new MSNNotifySocket( m_msnId );
 
-	connect( m_serviceSocket, SIGNAL( groupAdded( QString, uint,uint ) ),
+	connect( m_notifySocket, SIGNAL( groupAdded( QString, uint,uint ) ),
 		this, SLOT( slotGroupAdded( QString, uint, uint ) ) );
-	connect( m_serviceSocket, SIGNAL( groupRenamed( QString, uint, uint ) ),
+	connect( m_notifySocket, SIGNAL( groupRenamed( QString, uint, uint ) ),
 		this, SLOT( slotGroupRenamed( QString, uint, uint ) ) );
-	connect( m_serviceSocket, SIGNAL( groupName( QString, uint ) ),
+	connect( m_notifySocket, SIGNAL( groupName( QString, uint ) ),
 		this, SLOT( slotGroupListed( QString, uint ) ) );
-	connect( m_serviceSocket, SIGNAL(groupRemoved( uint, uint ) ),
+	connect( m_notifySocket, SIGNAL(groupRemoved( uint, uint ) ),
 		this, SLOT( slotGroupRemoved( uint, uint ) ) );
-	connect( m_serviceSocket, SIGNAL( statusChanged( QString ) ),
+	connect( m_notifySocket, SIGNAL( statusChanged( QString ) ),
 				this, SLOT( slotStateChanged( QString ) ) );
-	connect( m_serviceSocket,
+	connect( m_notifySocket,
 		SIGNAL( contactStatusChanged( const QString &, const QString &, MSNProtocol::Status ) ),
 		this,
 		SLOT( slotContactStatusChanged( const QString &, const QString &, MSNProtocol::Status ) ) );
-	connect( m_serviceSocket,
+	connect( m_notifySocket,
 		SIGNAL( contactList( QString, QString, QString, QString ) ),
 		this, SLOT( slotContactList( QString, QString, QString, QString ) ) );
-	connect( m_serviceSocket,
+	connect( m_notifySocket,
 		SIGNAL( contactAdded( QString, QString, QString, uint, uint ) ),
 		this,
 		SLOT( slotContactAdded( QString, QString, QString, uint, uint ) ) );
-	connect( m_serviceSocket,
+	connect( m_notifySocket,
 		SIGNAL( contactRemoved( QString, QString, uint, uint ) ),
 		this,
 		SLOT( slotContactRemoved( QString, QString, uint, uint ) ) );
-	connect( m_serviceSocket, SIGNAL( statusChanged( QString ) ),
+	connect( m_notifySocket, SIGNAL( statusChanged( QString ) ),
 		this, SLOT( slotStatusChanged( QString ) ) );
-	connect( m_serviceSocket,
+	connect( m_notifySocket,
 		SIGNAL( contactStatus( QString, QString, QString ) ),
 		this, SLOT( slotContactStatus( QString, QString, QString ) ) );
-	connect( m_serviceSocket,
+	connect( m_notifySocket,
 		SIGNAL( onlineStatusChanged( MSNSocket::OnlineStatus ) ),
 		this, SLOT( slotOnlineStatusChanged( MSNSocket::OnlineStatus ) ) );
-	connect( m_serviceSocket, SIGNAL( publicNameChanged( QString, QString ) ),
+	connect( m_notifySocket, SIGNAL( publicNameChanged( QString, QString ) ),
 		this, SLOT( slotPublicNameChanged( QString, QString ) ) );
-	connect( m_serviceSocket,
+	connect( m_notifySocket,
 		SIGNAL( invitedToChat( QString, QString, QString, QString, QString ) ),
 		this,
 		SLOT( slotCreateChat( QString, QString, QString, QString, QString ) ) );
-	connect( m_serviceSocket, SIGNAL( startChat( QString, QString ) ),
+	connect( m_notifySocket, SIGNAL( startChat( QString, QString ) ),
 		this, SLOT( slotCreateChat( QString, QString ) ) );
 
-	connect( m_serviceSocket, SIGNAL( socketClosed( int ) ),
+	connect( m_notifySocket, SIGNAL( socketClosed( int ) ),
 		this, SLOT( slotNotifySocketClosed( int ) ) );
 
-	m_serviceSocket->connect( m_password );
+	m_notifySocket->connect( m_password );
 	statusBarIcon->setMovie( connectingIcon );
 }
 
 void MSNProtocol::Disconnect()
 {
-	if (m_serviceSocket)
-		m_serviceSocket->disconnect();
+	if (m_notifySocket)
+		m_notifySocket->disconnect();
 
-	//delete m_serviceSocket;
-	m_serviceSocket->deleteLater();
-	m_serviceSocket = 0L;
+	//delete m_notifySocket;
+	m_notifySocket->deleteLater();
+	m_notifySocket = 0L;
 
-	m_chatServices.setAutoDelete( true );
-	m_chatServices.clear();
-	m_chatServices.setAutoDelete( false );
+	m_switchBoardSockets.setAutoDelete( true );
+	m_switchBoardSockets.clear();
+	m_switchBoardSockets.setAutoDelete( false );
 }
 
 bool MSNProtocol::isConnected() const
@@ -355,7 +355,7 @@ void MSNProtocol::slotGoOnline()
 	if (!isConnected() )
 		Connect();
 	else
-		m_serviceSocket->setStatus( NLN );
+		m_notifySocket->setStatus( NLN );
 }
 
 void MSNProtocol::slotGoOffline()
@@ -368,7 +368,7 @@ void MSNProtocol::slotGoAway()
 	kdDebug() << "MSN Plugin: Going Away" << endl;
 	if (!isConnected() )
 		Connect();
-	m_serviceSocket->setStatus( AWY );
+	m_notifySocket->setStatus( AWY );
 }
 
 void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
@@ -526,16 +526,16 @@ void MSNProtocol::slotAddContact( QString handle )
 
 void MSNProtocol::slotBlockContact( QString handle ) const
 {
-	m_serviceSocket->removeContact( handle, 0, AL);
-	m_serviceSocket->addContact( handle, handle, 0, BL );
+	m_notifySocket->removeContact( handle, 0, AL);
+	m_notifySocket->addContact( handle, handle, 0, BL );
 }
 
 void MSNProtocol::addContact( const QString &userID )
 {
 	if( isConnected() )
 	{
-		m_serviceSocket->addContact( userID, userID, 0, AL );
-		m_serviceSocket->addContact( userID, userID, 0, FL );
+		m_notifySocket->addContact( userID, userID, 0, AL );
+		m_notifySocket->addContact( userID, userID, 0, FL );
 	}
 }
 
@@ -550,12 +550,12 @@ void MSNProtocol::removeContact( const MSNContact *c ) const
 
 	for( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
 	{
-		m_serviceSocket->removeContact( id, groupNumber( (*it).latin1() ),
+		m_notifySocket->removeContact( id, groupNumber( (*it).latin1() ),
 			FL );
 	}
 
 	if( m_contacts[ id ]->isBlocked() )
-		m_serviceSocket->removeContact( id, 0, BL );
+		m_notifySocket->removeContact( id, 0, BL );
 }
 
 void MSNProtocol::removeFromGroup( const MSNContact *c,
@@ -563,7 +563,7 @@ void MSNProtocol::removeFromGroup( const MSNContact *c,
 {
 	int g = groupNumber( group );
 	if( g != -1 )
-		m_serviceSocket->removeContact( c->msnId(), g, FL );
+		m_notifySocket->removeContact( c->msnId(), g, FL );
 }
 
 void MSNProtocol::moveContact( const MSNContact *c,
@@ -577,9 +577,9 @@ void MSNProtocol::moveContact( const MSNContact *c,
 
 	if( og != -1 && ng != -1 )
 	{
-		m_serviceSocket->addContact( c->msnId(), c->nickname(), ng,
+		m_notifySocket->addContact( c->msnId(), c->nickname(), ng,
 			FL);
-		m_serviceSocket->removeContact( c->msnId(), og, FL );
+		m_notifySocket->removeContact( c->msnId(), og, FL );
 	}
 }
 
@@ -589,7 +589,7 @@ void MSNProtocol::copyContact( const MSNContact *c,
 	int g = groupNumber( newGroup );
 	if( g != -1 )
 	{
-		m_serviceSocket->addContact( c->msnId(), c->nickname(), g,
+		m_notifySocket->addContact( c->msnId(), c->nickname(), g,
 			FL);
 	}
 }
@@ -682,7 +682,7 @@ void MSNProtocol::slotGroupRemoved( uint /* serial */, uint group )
 void MSNProtocol::addGroup( const QString &groupName )
 {
 	if( !( groups().contains( groupName ) ) )
-		m_serviceSocket->addGroup( groupName );
+		m_notifySocket->addGroup( groupName );
 }
 
 void MSNProtocol::renameGroup( const QString &oldGroup,
@@ -690,14 +690,14 @@ void MSNProtocol::renameGroup( const QString &oldGroup,
 {
 	int g = groupNumber( oldGroup );
 	if( g != -1 )
-		m_serviceSocket->renameGroup( newGroup, g );
+		m_notifySocket->renameGroup( newGroup, g );
 }
 
 void MSNProtocol::removeGroup( const QString &name )
 {
 	int g = groupNumber( name );
 	if( g != -1 )
-		m_serviceSocket->removeGroup( g );
+		m_notifySocket->removeGroup( g );
 }
 
 MSNProtocol::Status MSNProtocol::status() const
@@ -760,15 +760,15 @@ void MSNProtocol::slotContactStatusChanged( const QString &handle,
 			do
 			{
 				done = true;
-				QPtrDictIterator<MSNSwitchBoardSocket> it( m_chatServices );
-				for( ; m_chatServices.count() && it.current(); ++it )
+				QPtrDictIterator<MSNSwitchBoardSocket> it( m_switchBoardSockets );
+				for( ; m_switchBoardSockets.count() && it.current(); ++it )
 				{
 					if( ( *it ).chatMembers().contains( handle ) )
 					{
 						kdDebug() << "MSNProtocol::slotContactStatusChanged: "
 							<< "Removing stale switchboard from offline user "
 							<< handle << endl;
-						delete m_chatServices.take( it.currentKey() );
+						delete m_switchBoardSockets.take( it.currentKey() );
 						done = false;
 						break;
 					}
@@ -969,7 +969,7 @@ void MSNProtocol::setPublicName( const QString &publicName )
 	kdDebug() << "MSNProtocol::setPublicName: Setting name to "
 		<< publicName << "..." << endl;
 
-	m_serviceSocket->changePublicName( publicName );
+	m_notifySocket->changePublicName( publicName );
 }
 
 void MSNProtocol::slotCreateChat( QString address, QString auth)
@@ -1025,7 +1025,7 @@ void MSNProtocol::slotMessageSent( const KopeteMessage msg )
 	KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
 		m_myself, msg.to(), this );
 
-	MSNSwitchBoardSocket *service = m_chatServices[ manager ];
+	MSNSwitchBoardSocket *service = m_switchBoardSockets[ manager ];
 	if( service )
 		service->slotSendMsg( msg );
 	else // There's no switchboard available, so we must create a new one!
@@ -1046,7 +1046,7 @@ void MSNProtocol::slotMessageSent( const KopeteMessage msg )
 		slotStartChatSession( contact->msnId() );
 
 		// *********** NOW WHAT DO WE DO?! ************** //
-		//MSNSwitchBoardSocket *service = m_chatServices[ manager ];
+		//MSNSwitchBoardSocket *service = m_switchBoardSockets[ manager ];
 
 		//if( service )
 		//	service->slotSendMsg( msg );
@@ -1074,7 +1074,7 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 		chatService->setHandle( m_msnId );
 		chatService->setMsgHandle( handle );
 		chatService->connectToSwitchBoard( ID, address, auth );
-		m_chatServices.insert( manager, chatService );
+		m_switchBoardSockets.insert( manager, chatService );
 
 		connect( chatService, SIGNAL( msgReceived( const KopeteMessage & ) ),
 			this, SLOT( slotMessageReceived( const KopeteMessage & ) ) );
@@ -1108,7 +1108,7 @@ void MSNProtocol::slotStartChatSession( QString handle )
 			m_myself, chatmembers, this,
 			QString( "msn_logs/" + handle + ".log" ) );
 
-		if( m_chatServices.find( manager ) )
+		if( m_switchBoardSockets.find( manager ) )
 		{
 			kdDebug() << "MSNProtocol::slotStartChatSession: "
 				<< "Reusing existing switchboard connection" << endl;
@@ -1119,15 +1119,15 @@ void MSNProtocol::slotStartChatSession( QString handle )
 			kdDebug() << "MSNProtocol::slotStartChatSession: "
 				<< "Creating new switchboard connection" << endl;
 			m_msgHandle = handle;
-			m_serviceSocket->createChatSession();
+			m_notifySocket->createChatSession();
 		}
 	}
 }
 
 void MSNProtocol::contactUnBlock( QString handle ) const
 {
-	m_serviceSocket->removeContact( handle, 0, BL );
-	m_serviceSocket->addContact( handle, handle, 0, AL );
+	m_notifySocket->removeContact( handle, 0, BL );
+	m_notifySocket->addContact( handle, handle, 0, AL );
 }
 
 void MSNProtocol::slotChangePublicName()
@@ -1172,7 +1172,7 @@ void MSNProtocol::slotDebugRawCommand()
 	int result = dlg->exec();
 	if( result == QDialog::Accepted )
 	{
-		m_serviceSocket->sendCommand( dlg->command(), dlg->params(),
+		m_notifySocket->sendCommand( dlg->command(), dlg->params(),
 			dlg->addNewline(), dlg->addId() );
 	}
 	delete dlg;
@@ -1190,15 +1190,15 @@ void MSNProtocol::slotNotifySocketClosed( int state )
 
 void MSNProtocol::slotSwitchBoardClosed( MSNSwitchBoardSocket *switchboard)
 {
-	QPtrDictIterator<MSNSwitchBoardSocket> it( m_chatServices );
-	for( ; m_chatServices.count() && it.current(); ++it )
+	QPtrDictIterator<MSNSwitchBoardSocket> it( m_switchBoardSockets );
+	for( ; m_switchBoardSockets.count() && it.current(); ++it )
 	{
 		if( it == switchboard )
 		{
 			kdDebug() << "MSNProtocol::slotSwitchBoardClosed" << endl;
 
 			// remove from the list, then make it kill itself
-			m_chatServices.take( it.currentKey() )->deleteLater();
+			m_switchBoardSockets.take( it.currentKey() )->deleteLater();
 			break;
 		}
 	}

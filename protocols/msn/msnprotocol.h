@@ -32,7 +32,7 @@ class KAction;
 class KActionMenu;
 
 class MSNSwitchBoardSocket;
-class KMSNServiceSocket;
+class MSNNotifySocket;
 class KopeteContact;
 class KopeteMessage;
 class KopeteMessageManager;
@@ -343,11 +343,11 @@ private:
 	bool m_publicNameSyncNeeded;
 	QString m_msgHandle;
 
-	KMSNServiceSocket *m_serviceSocket;
+	MSNNotifySocket *m_notifySocket;
 	KopeteContact *m_myself;
 
 	MSNIdentity *m_identity;
-	QPtrDict<MSNSwitchBoardSocket> m_chatServices;
+	QPtrDict<MSNSwitchBoardSocket> m_switchBoardSockets;
 };
 
 #endif

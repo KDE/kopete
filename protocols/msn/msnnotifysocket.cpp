@@ -25,7 +25,7 @@
 #include <kmdcodec.h>
 #include <kmessagebox.h>
 
-KMSNServiceSocket::KMSNServiceSocket( const QString &msnId )
+MSNNotifySocket::MSNNotifySocket( const QString &msnId )
 : MSNAuthSocket( msnId )
 {
 	QObject::connect( this, SIGNAL( blockRead( const QString & ) ),
@@ -34,12 +34,12 @@ KMSNServiceSocket::KMSNServiceSocket( const QString &msnId )
 	m_dispatchSocket = 0L;
 }
 
-KMSNServiceSocket::~KMSNServiceSocket()
+MSNNotifySocket::~MSNNotifySocket()
 {
-	kdDebug() << "KMSNServiceSocket::~KMSNServiceSocket" << endl;
+	kdDebug() << "MSNNotifySocket::~MSNNotifySocket" << endl;
 }
 
-void KMSNServiceSocket::connect( const QString &pwd )
+void MSNNotifySocket::connect( const QString &pwd )
 {
 	m_password = pwd;
 
@@ -57,14 +57,14 @@ void KMSNServiceSocket::connect( const QString &pwd )
 	m_dispatchSocket->connect();
 }
 
-void KMSNServiceSocket::slotReceivedServer( const QString &server, uint port )
+void MSNNotifySocket::slotReceivedServer( const QString &server, uint port )
 {
 	MSNAuthSocket::connect( server, port );
 	m_dispatchSocket->deleteLater();
 	m_dispatchSocket = 0L;
 }
 
-void KMSNServiceSocket::disconnect()
+void MSNNotifySocket::disconnect()
 {
 	if( onlineStatus() != Disconnected )
 		sendCommand( "OUT", QString::null, true, false );
@@ -72,7 +72,7 @@ void KMSNServiceSocket::disconnect()
 	MSNAuthSocket::disconnect();
 }
 
-void KMSNServiceSocket::handleError( uint code, uint id )
+void MSNNotifySocket::handleError( uint code, uint id )
 {
 	// See http://www.hypothetic.org/docs/msn/basics.php for a
 	// description of all possible error codes.
@@ -104,10 +104,10 @@ void KMSNServiceSocket::handleError( uint code, uint id )
 		break;
 	}
 }
-void KMSNServiceSocket::parseCommand( const QString &cmd, uint id,
+void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	const QString &data )
 {
-	kdDebug() << "KMSNServiceSocket::parseCommand: Command: " << cmd << endl;
+	kdDebug() << "MSNNotifySocket::parseCommand: Command: " << cmd << endl;
 
 	if( cmd == "USR" )
 	{
@@ -293,7 +293,7 @@ void KMSNServiceSocket::parseCommand( const QString &cmd, uint id,
 	}
 }
 
-void KMSNServiceSocket::slotReadMessage( const QString &msg )
+void MSNNotifySocket::slotReadMessage( const QString &msg )
 {
 	if(msg.contains("Inbox-Unread:"))
 	{
@@ -325,25 +325,25 @@ void KMSNServiceSocket::slotReadMessage( const QString &msg )
 	}
 }
 
-void KMSNServiceSocket::addGroup(QString groupName)
+void MSNNotifySocket::addGroup(QString groupName)
 {
 	// escape spaces
 	sendCommand( "ADG", escape( groupName ) + " 0" );
 }
 
-void KMSNServiceSocket::renameGroup( QString groupName, uint group )
+void MSNNotifySocket::renameGroup( QString groupName, uint group )
 {
 	// escape spaces
 	sendCommand( "REG", QString::number( group ) + " " +
 		escape( groupName ) + " 0" );
 }
 
-void KMSNServiceSocket::removeGroup( uint group )
+void MSNNotifySocket::removeGroup( uint group )
 {
 	sendCommand( "RMG", QString::number( group ) );
 }
 
-void KMSNServiceSocket::addContact( const QString &handle,
+void MSNNotifySocket::addContact( const QString &handle,
 	QString publicName, uint group, int list )
 {
 	QString args;
@@ -360,14 +360,14 @@ void KMSNServiceSocket::addContact( const QString &handle,
 			escape( publicName );
 		break;
 	default:
-		kdDebug() << "KMSNServiceSocket::addContact: WARNING! Unknown list " <<
+		kdDebug() << "MSNNotifySocket::addContact: WARNING! Unknown list " <<
 			list << "!" << endl;
 		return;
 	}
 	sendCommand( "ADD", args );
 }
 
-void KMSNServiceSocket::removeContact( const QString &handle, uint group,
+void MSNNotifySocket::removeContact( const QString &handle, uint group,
 	int list )
 {
 	QString args;
@@ -383,30 +383,30 @@ void KMSNServiceSocket::removeContact( const QString &handle, uint group,
 		args = "BL " + handle;
 		break;
 	default:
-		kdDebug() << "KMSNServiceSocket::removeContact: " <<
+		kdDebug() << "MSNNotifySocket::removeContact: " <<
 			"WARNING! Unknown list " << list << "!" << endl;
 		return;
 	}
 	sendCommand( "REM", args );
 }
 
-void KMSNServiceSocket::setStatus( int status )
+void MSNNotifySocket::setStatus( int status )
 {
 	sendCommand( "CHG", statusToString( status ) );
 }
 
-void KMSNServiceSocket::changePublicName( const QString &publicName )
+void MSNNotifySocket::changePublicName( const QString &publicName )
 {
 	QString pn = publicName;
 	sendCommand( "REA", msnId() + " " + escape( pn ) );
 }
 
-void KMSNServiceSocket::createChatSession()
+void MSNNotifySocket::createChatSession()
 {
 	sendCommand( "XFR", "SB" );
 }
 
-QString KMSNServiceSocket::statusToString( int status ) const
+QString MSNNotifySocket::statusToString( int status ) const
 {
 	switch( status )
 	{
@@ -429,13 +429,13 @@ QString KMSNServiceSocket::statusToString( int status ) const
 	case MSNProtocol::IDL:
 		return "IDL";
 	default:
-		kdDebug() << "KMSNServiceSocket::statusToString: " <<
+		kdDebug() << "MSNNotifySocket::statusToString: " <<
 			"WARNING! Unknown status " << status << "!" << endl;
 		return QString::null;
 	}
 }
 
-void KMSNServiceSocket::slotDispatchFailed()
+void MSNNotifySocket::slotDispatchFailed()
 {
 	emit( onlineStatusChanged( Disconnected ) );
 	m_dispatchSocket->deleteLater();
