@@ -35,6 +35,7 @@ public:
 	TextEffectPreferences(QWidget *parent = 0, const char* name = 0, const QStringList &args = QStringList());
 	~TextEffectPreferences();
 
+	// Overloaded from parent
 	virtual void save();
 	virtual void load();
 
@@ -42,12 +43,14 @@ private:
 	QStringList colors();
 	TextEffectPrefs *preferencesDialog;
 	TextEffectConfig *config;
+		
 private slots: // Public slots
 	void slotAddPressed();
 	void slotRemovePressed();
 	void slotUpPressed();
 	void slotDownPressed();
-
+	void slotSettingChanged();
+	
 };
 
 #endif

@@ -23,6 +23,8 @@
 #include <klocale.h>
 #include <kcolordialog.h>
 #include <kgenericfactory.h>
+#include <kautoconfig.h>
+#include <kdebug.h>
 
 #include <kdeversion.h>
 
@@ -33,18 +35,51 @@
 typedef KGenericFactory<TextEffectPreferences> TextEffectPreferencesFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_texteffect, TextEffectPreferencesFactory( "kcm_kopete_texteffect" )  )
 
-TextEffectPreferences::TextEffectPreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
-			: KCModule(TextEffectPreferencesFactory::instance(), parent, args)
+TextEffectPreferences::TextEffectPreferences(QWidget *parent,
+                                             const char* /*name*/,
+                                             const QStringList &args)
+	: KCModule(TextEffectPreferencesFactory::instance(), parent, args)
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 
+	kdDebug( 14310 ) << "Creating preferences dialog" << endl;
+
 	preferencesDialog = new TextEffectPrefs(this);
+
+	kdDebug( 14310 ) << "Creating config object" << endl;
+
 	config = new TextEffectConfig;
 
-	connect(preferencesDialog->mColorsAdd , SIGNAL(pressed()) , this , SLOT(slotAddPressed()));
-	connect(preferencesDialog->mColorsRemove , SIGNAL(pressed()) , this , SLOT(slotRemovePressed()));
-	connect(preferencesDialog->mColorsUp , SIGNAL(pressed()) , this , SLOT(slotUpPressed()));
-	connect(preferencesDialog->mColorsDown , SIGNAL(pressed()) , this , SLOT(slotDownPressed()));
+	kdDebug( 14310 ) << "Setting up connections" << endl;
+
+	connect(preferencesDialog->mColorsAdd , SIGNAL(pressed()) ,
+			this , SLOT(slotAddPressed()));
+
+	connect(preferencesDialog->mColorsRemove , SIGNAL(pressed()) ,
+			this , SLOT(slotRemovePressed()));
+
+	connect(preferencesDialog->mColorsUp , SIGNAL(pressed()) ,
+			this , SLOT(slotUpPressed()));
+
+	connect(preferencesDialog->mColorsDown , SIGNAL(pressed()) ,
+			this , SLOT(slotDownPressed()));
+
+	// Connect up all the check boxes
+	connect( preferencesDialog->m_lamer, SIGNAL( clicked() ),
+			 this, SLOT( slotSettingChanged() ) );
+	connect( preferencesDialog->m_casewaves, SIGNAL( clicked() ),
+			 this, SLOT( slotSettingChanged() ) );
+
+	connect( preferencesDialog->m_colorRandom, SIGNAL( clicked() ),
+			 this, SLOT( slotSettingChanged() ) );
+	connect( preferencesDialog->m_fg, SIGNAL( clicked() ),
+			 this, SLOT( slotSettingChanged() ) );
+	connect( preferencesDialog->m_char, SIGNAL( clicked() ),
+			 this, SLOT( slotSettingChanged() ) );
+	connect( preferencesDialog->m_words, SIGNAL( clicked() ),
+			 this, SLOT( slotSettingChanged() ) );
+
+	//setMainWidget( preferencesDialog, "Text Effect Plugin" );
 
 	load();
 
@@ -59,6 +94,8 @@ TextEffectPreferences::~TextEffectPreferences()
 
 void TextEffectPreferences::load()
 {
+	kdDebug( 14310 ) << k_funcinfo << "ENTER" << endl;
+
 	config->load();
 
 	preferencesDialog->mColorsListBox->insertStringList(config->colors());
@@ -68,12 +105,20 @@ void TextEffectPreferences::load()
 	preferencesDialog->m_lamer->setChecked(config->lamer());
 	preferencesDialog->m_casewaves->setChecked(config->waves());
 
-	//TODO-FIXME: port this plugin to KCAutoConfigModule to make it know if the page has been modified or not
-	setChanged(true);
+	// Call parent's save method
+	KCModule::load();
+
+	// Indicate that we have not changed ^_^
+	setChanged( false );
+
+	kdDebug( 14310 ) << k_funcinfo << "EXIT" << endl;
+
 }
 
 void TextEffectPreferences::save()
 {
+	kdDebug() << k_funcinfo << "ENTER" << endl;
+	// Save the settings
 	config->setColors(colors());
 	config->setColorRandom(preferencesDialog->m_colorRandom->isChecked());
 	config->setColorLines(preferencesDialog->m_fg->isChecked());
@@ -85,8 +130,15 @@ void TextEffectPreferences::save()
 
 	config->save();
 
-//	TODO: uncomment this line when the plugin will be ported to autoconfig
-//	setChanged( false );
+	// Notify the plugin that the settings have changed
+	//TextEffectPlugin::plugin()->slotSettingsChanged();
+
+	// Call parent's save method
+	KCModule::save();
+
+	// Indicate that we have not changed ^_^
+	setChanged( false );
+	kdDebug() << k_funcinfo << "EXIT" << endl;
 }
 
 QStringList TextEffectPreferences::colors()
@@ -106,13 +158,19 @@ void TextEffectPreferences::slotAddPressed()
 	{
 		preferencesDialog->mColorsListBox->insertItem(myColor.name());
 	}
-	setChanged(true);
+
+	// Indicate that something has changed
+	slotSettingChanged();
+
 }
 void TextEffectPreferences::slotRemovePressed()
 {
 	delete preferencesDialog->mColorsListBox->selectedItem();
-	setChanged(true);
+	// Indicate that something has changed
+	slotSettingChanged();
 }
+
+
 void TextEffectPreferences::slotUpPressed()
 {
 	int p=preferencesDialog->mColorsListBox->currentItem();
@@ -125,7 +183,10 @@ void TextEffectPreferences::slotUpPressed()
 	preferencesDialog->mColorsListBox->takeItem(i);
 	preferencesDialog->mColorsListBox->insertItem(i , p-1 );
 	preferencesDialog->mColorsListBox->setSelected(i,true);
-	setChanged(true);
+
+	// Indicate that something has changed
+	slotSettingChanged();
+
 }
 void TextEffectPreferences::slotDownPressed()
 {
@@ -139,7 +200,19 @@ void TextEffectPreferences::slotDownPressed()
 	preferencesDialog->mColorsListBox->takeItem(i);
 	preferencesDialog->mColorsListBox->insertItem(i , p+1 );
 	preferencesDialog->mColorsListBox->setSelected(i,true);
-	setChanged(true);
+
+	// Indicate that something has changed
+	slotSettingChanged();
+}
+
+
+
+void TextEffectPreferences::slotSettingChanged()
+{
+	kdDebug() << k_funcinfo << "Called"
+			  << endl;
+	// Indicate that our settings have changed
+    setChanged( true );
 }
 
 #include "texteffectpreferences.moc"
