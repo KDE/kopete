@@ -2,6 +2,7 @@ METASOURCES = AUTO
 SUBDIRS = ui pixmaps psi
 AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(srcdir)/ui \
+	-I$(top_builddir)/kopete/protocols/jabber/ui \
 	-I$(srcdir)/psi/libpsi/src \
 	$(all_includes)
 
