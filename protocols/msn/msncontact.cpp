@@ -21,13 +21,14 @@
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kpopupmenu.h>
+#include <kmessagebox.h>
 
 #include "kopete.h"
 #include "kopetecontactlistview.h"
 #include "kopetestdaction.h"
 #include "msncontact.h"
 #include "msnprotocol.h"
+#include "msnnotifysocket.h"
 
 #include "msninfo.h"
 
@@ -106,10 +107,27 @@ void MSNContact::execute()
 
 void MSNContact::slotBlockUser()
 {
-	if( isBlocked() )
-		MSNProtocol::protocol()->contactUnBlock( m_msnId );
+	MSNNotifySocket *notify=MSNProtocol::protocol()->notifySocket();
+	if( !notify )
+	{
+		KMessageBox::error( 0l,
+			i18n( "<qt>Please go online to block/unblock contact</qt>" ),
+			i18n( "MSN Plugin" ));
+		return;
+	}
+
+	if( m_blocked )
+	{
+		notify->removeContact( m_msnId, 0, MSNProtocol::BL );
+		if( !m_allowed )
+			notify->addContact( m_msnId, m_msnId, 0, MSNProtocol::AL );
+	}
 	else
-		MSNProtocol::protocol()->blockContact( m_msnId );
+	{
+		if(m_allowed)
+			notify->removeContact( m_msnId, 0, MSNProtocol::AL);
+		notify->addContact( m_msnId, m_msnId, 0, MSNProtocol::BL );
+	}
 }
 
 void MSNContact::slotViewHistory()
@@ -163,8 +181,31 @@ void MSNContact::slotUserInfo()
 void MSNContact::slotDeleteContact()
 {
 	kdDebug() << "MSNContact::slotDeleteContact" << endl;
-	m_moving=false;
-	MSNProtocol::protocol()->removeContact( this );
+
+	MSNNotifySocket *notify=MSNProtocol::protocol()->notifySocket();
+	if( notify )
+	{
+		m_moving=false;
+
+		if(m_groups.isEmpty())
+		{
+			kdDebug() << "MSNContact::slotDeleteContact : ohoh, contact already removed from server, just delete it" <<endl;
+			delete this;
+			return;
+		}
+
+		for( QStringList::Iterator it = m_groups.begin(); it != m_groups.end(); ++it )
+		{
+			notify->removeContact( m_msnId, MSNProtocol::protocol()->groupNumber( *it ), MSNProtocol::FL );
+		}
+	}
+	else
+	{
+		KMessageBox::error( 0l,
+			i18n( "<qt>Please go online to remove contact</qt>" ),
+				i18n( "MSN Plugin" ));
+	}
+
 }
 
 KopeteContact::ContactStatus MSNContact::status() const
@@ -451,8 +492,21 @@ void MSNContact::moveToGroup( const QString &from, const QString &to )
 		return;
 	}
 
-	m_moving=true;
-	MSNProtocol::protocol()->moveContact( this, from, to );
+	MSNNotifySocket *notify=MSNProtocol::protocol()->notifySocket();
+	if( notify )
+	{
+		m_moving=true;
+		addToGroup(to);
+		int g = MSNProtocol::protocol()->groupNumber( from );
+		if( g != -1 && m_groups.contains(from))
+			notify->removeContact( m_msnId, g, MSNProtocol::FL );
+   }
+	else
+	{
+		KMessageBox::information( 0l,
+			i18n( "<qt>Changes in the contact list when you are offline don't update the contact list server-side. Your changes may be lost</qt>" ),
+				i18n( "MSN Plugin" ), "msn_OfflineContactList" );
+	}
 }
 
 void MSNContact::addToGroup( const QString &group )
@@ -462,8 +516,28 @@ void MSNContact::addToGroup( const QString &group )
 		kdDebug() << "MSNContact::addToGroup: ignoring top-level group" << endl;
 		return;
 	}
-	if(!m_groups.contains(group))
-		MSNProtocol::protocol()->addContactToGroup( this, group );
+	if(m_groups.contains(group))
+		return;
+
+	MSNNotifySocket *notify=MSNProtocol::protocol()->notifySocket();
+	if( notify )
+	{
+		int g = MSNProtocol::protocol()->groupNumber( group );
+		if(g!=-1)
+		{
+			notify->addContact( m_msnId, m_msnId, g, MSNProtocol::FL );
+		}
+		else
+		{
+			MSNProtocol::protocol()->addGroup(group, m_msnId);
+		}
+	}
+	else
+	{
+		KMessageBox::information( 0l,
+			i18n( "<qt>Changes in the contact list when you are offline don't update the contact list server-side. Your changes may be lost</qt>" ),
+				i18n( "MSN Plugin" ), "msn_OfflineContactList" );
+	}
 }
 
 void MSNContact::removeFromGroup( const QString &group )
@@ -473,9 +547,31 @@ void MSNContact::removeFromGroup( const QString &group )
 		kdDebug() << "MSNContact::removeFromGroup: ignoring top-level group" << endl;
 		return;
 	}
+	if(!m_groups.contains(group))
+		return;
+
 	m_moving=false;
-	if(m_groups.contains(group))
-		MSNProtocol::protocol()->removeContactFromGroup( this, group );
+
+	MSNNotifySocket *notify=MSNProtocol::protocol()->notifySocket();
+	if( notify )
+	{
+		if(m_groups.count()==1)
+		{
+			//Do not remove the contact if he has no group:
+			//Kopete allow top-level contact
+			kdDebug() << "MSNContact::removeFromGroup : contact not removed.  MSN requires all contacts to be in at least one group" <<endl;
+			return;
+		}
+		int g = MSNProtocol::protocol()->groupNumber( group );
+		if( g != -1 )
+			notify->removeContact( m_msnId, g, MSNProtocol::FL );
+	}
+	else
+	{
+		KMessageBox::information( 0l,
+			i18n( "<qt>Changes in the contact list when you are offline don't update the contact list server-side. Your changes may be lost</qt>" ),
+				i18n( "MSN Plugin" ), "msn_OfflineContactList" );
+	}
 }
 
 void MSNContact::addedToGroup(QString group)
@@ -493,7 +589,7 @@ void MSNContact::addThisTemporaryContact(QString group)
 	if(group.isNull())
 		MSNProtocol::protocol()->addContact( m_msnId );
 	else
-		MSNProtocol::protocol()->addContactToGroup( this, group );
+		addToGroup(  group );
 }
 
 #include "msncontact.moc"

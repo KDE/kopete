@@ -38,7 +38,7 @@ public:
 	/**
 	 * Contructor: id is the KopeteMessageMangager's id
 	 */
-	MSNSwitchBoardSocket(int id);
+	MSNSwitchBoardSocket();
 	~MSNSwitchBoardSocket();
 
 protected:
@@ -75,7 +75,6 @@ public:
 	void setMsgHandle( QString handle ) { m_msgHandle = handle; }
 
 	const QStringList &chatMembers() { return m_chatMembers; }
-	int id() {return mId; }
 
  	void userLeftChat( QString handle );
 
@@ -92,20 +91,19 @@ private slots:
 
 signals:
 	void msgReceived( const KopeteMessage &msg );
-	void startChat(MSNSwitchBoardSocket* switchoard);
-	void userTypingMsg(QString , MSNSwitchBoardSocket* );
+	//void startChat(MSNSwitchBoardSocket* switchoard);
+	void userTypingMsg(QString );
 	void msgAcknowledgement(bool);
-	void switchBoardIsActive(bool);  
+	void switchBoardIsActive(bool);
 	/**
 	 *  updateChatMember();
 	 *  	if add=true, the contact join the chat, else, the contact leave.
 	 */
-	void updateChatMember(QString handle,QString plublicName, bool add ,MSNSwitchBoardSocket* switchboard );
-	void switchBoardClosed( MSNSwitchBoardSocket* switchboard );
+	void updateChatMember(QString handle,QString plublicName, bool add  );
+	void switchBoardClosed(  );
 
 private:
 	QStringList m_chatMembers;
-	int mId;	//id of the KopeteMessageManager
 
 	//Messages sent before the ending of the connection are queued
 	QValueList<KopeteMessage> m_messagesQueue;

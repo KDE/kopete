@@ -57,8 +57,7 @@ signals:
 	//void newMail(QString, unsigned int);
 	void contactList(QString, QString, QString, QString);
 	void contactList(QString, QString, uint);
-	void contactStatusChanged( const QString &msnId, const QString &publicName,
-		MSNProtocol::Status status );
+//	void contactStatusChanged( const QString &msnId, const QString &publicName, MSNProtocol::Status status );
 	void contactStatus(QString, QString, QString );
 	void contactAdded(QString, QString, QString, uint, uint);
 	void contactRemoved(QString, QString, uint, uint);
@@ -71,10 +70,10 @@ signals:
 	void invitedToChat(QString, QString, QString, QString, QString );
 	void startChat( QString, QString );
 
-	void publicNameChanged( QString, QString );
+	void publicNameChanged( QString );
 	void statusChanged( QString );
 
-	void recievedInfo(QString, QString , QString);
+//	void recievedInfo(QString, QString , QString);
 	void hotmailSeted(bool) ;
 
 protected:

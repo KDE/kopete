@@ -33,14 +33,12 @@
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
-#include <klineeditdlg.h>
 #include <kfiledialog.h>
 
 
 
-MSNSwitchBoardSocket::MSNSwitchBoardSocket(int _id)
+MSNSwitchBoardSocket::MSNSwitchBoardSocket()
 {
-	mId=_id;
 }
 
 MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
@@ -76,17 +74,22 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 		case 208:
 		{
 			QString msg = i18n( "Invalid user! \n"
-				"This MSN user does not exist. Please check the MSN ID" );
+				"This MSN user does not exist. Please check the MSN ID." );
+			KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+			break;
+		}
+		case 215:
+		{
+			QString msg = i18n( "The user %1 is already on this chat.\n" ).arg( m_msgHandle );
 			KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 			break;
 		}
 		case 216:
 		{
-			QString msg = i18n( "MSN error code 216 (in response to transaction ID %1).\n"
-			"This error seems to appear when you try to talk with an on-line contact who would have blocked you.\n"
-			"Please check and mail kopete-devel@kde.org if this is not the case." ).arg( id );
+			QString msg = i18n( "The user %1 is online but has blocked you.\n"
+				"You can't start to chat with them." ).arg( m_msgHandle );
 			KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
-			slotSocketClosed( 0 ); // emit signal to get ourselves removed...
+//			slotSocketClosed( 0 ); // emit signal to get ourselves removed...
 			break;
 		}
 		case 217:
@@ -95,7 +98,7 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 			QString msg = i18n( "The user %1 is currently not signed in.\n"
 				"Messages will not be delivered." ).arg( m_msgHandle );
 			KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
-			slotSocketClosed( 0 ); // emit signal to get ourselves removed...
+//			slotSocketClosed( 0 ); // emit signal to get ourselves removed...
 			break;
 		}
 		default:
@@ -107,8 +110,6 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint /* id */,
 	const QString &data )
 {
-	kdDebug() << "MSNSwitchBoardSocket::parseCommand" << endl;
-
 	if( cmd == "NAK" )
 	{
 		emit msgAcknowledgement(false);    // msg was not accepted
@@ -123,7 +124,7 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint /* id */,
 		emit switchBoardIsActive(true);   
 		QString handle = data.section( ' ', 0, 0 );
 		QString screenname = data.section( ' ', 1, 1 );
-    emit updateChatMember( handle, screenname, true, this );
+		emit updateChatMember( handle, screenname, true );
     
 		if( !m_chatMembers.contains( handle ) )
 			m_chatMembers.append( handle );
@@ -140,7 +141,7 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint /* id */,
 
       
     QString screenname = data.section( ' ', 3, 3);
-		emit updateChatMember( handle,  screenname, true, this);
+		emit updateChatMember( handle,  screenname, true);
 	}
 	else if( cmd == "USR" )
 	{
@@ -157,7 +158,6 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint /* id */,
 	}
 	else if( cmd == "MSG" )
 	{
-		kdDebug() << "MSNSwitchBoardSocket::parseCommand: Received MSG: " << endl;
 		QString len = data.section( ' ', 2, 2 );
 
 		// we need to know who's sending is the block...
@@ -168,8 +168,6 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint /* id */,
 }
 void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 {
-	kdDebug() << "MSNSwitchBoardSocket::slotReadMessage" << endl;
-
 	// incoming message for File-transfer
 	if( msg.contains("Content-Type: text/x-msmsgsinvite; charset=UTF-8") )
 	{
@@ -190,8 +188,8 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			// missing:	-a signal when the transfer is aborted
 			//         	-a flag to precies if it is an outgoing or an incomming transfer
 			// I would like set the size later in the MSNFileTransferSocket.  (current size is set to 0)
-			MFTS->setKopeteTransfer(kopeteapp->transferManager()->addTransfer(MSNProtocol::protocol()->contacts()[ m_msgHandle ]->metaContact(),
-						m_filetransferName, 0,  MSNProtocol::protocol()->contacts()[ m_msgHandle ]->displayName()));
+			MFTS->setKopeteTransfer(kopeteapp->transferManager()->addTransfer(MSNProtocol::protocol()->contact(m_msgHandle)->metaContact(),
+						m_filetransferName, 0,  MSNProtocol::protocol()->contact(m_msgHandle)->displayName()));
 			MFTS->connect(ip_adress, port.toUInt());
 		}
 		else  if( msg.contains("Application-File:") )  //not "Application-Name: File Transfer" because the File Transfer label is sometimes translate 
@@ -206,7 +204,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			kdDebug() << "MSNSwitchBoardService::slotReadMessage: " <<
 				"invitation cookie: " << cookie << endl;
 
-			QString contact = MSNProtocol::protocol()->contacts()[ m_msgHandle ]->displayName();
+			QString contact = MSNProtocol::protocol()->contact(m_msgHandle)->displayName();
 			QString txt = i18n("%1 tried to send you a file.\n"
 				"Name: %2 \nSize: %3 bytes\n"
 				"Would you like to accept?\n").arg( contact).arg( filename).arg( filesize );
@@ -258,7 +256,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		QString message;
 		message = msg.right(msg.length() - msg.findRev(" ")-1);
 		message = message.replace(QRegExp("\r\n"),"");
-		emit userTypingMsg(message,this);  
+		emit userTypingMsg(message);  
 	}
 	else// if(msg.contains("Content-Type: text/plain;"))
 	{
@@ -336,11 +334,11 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		others.append( MSNProtocol::protocol()->myself() );
 		QStringList::iterator it;
 		for ( it = m_chatMembers.begin(); it != m_chatMembers.end(); ++it )
-			if(*it != m_msgHandle) others.append( MSNProtocol::protocol()->contacts()[*it] );
+			if(*it != m_msgHandle) others.append( MSNProtocol::protocol()->contact(*it) );
 
 		//FIXME: we should add a flag to KopeteMessage to specified that it's a plein text message
 		//      QStyleSheet::escape is a temporary code
-		KopeteMessage kmsg( MSNProtocol::protocol()->contacts()[ m_msgHandle ] , others,
+		KopeteMessage kmsg( MSNProtocol::protocol()->contact(m_msgHandle) , others,
 			QStyleSheet::escape(msg.right( msg.length() - msg.find("\r\n\r\n") - 4 )),
 			KopeteMessage::Inbound );
 
@@ -368,25 +366,15 @@ void MSNSwitchBoardSocket::slotTypingMsg()
 // this Invites an Contact
 void MSNSwitchBoardSocket::slotInviteContact(const QString &handle)
 {
-	QString handle2=handle;
-	if(handle.isEmpty())
-	{
-		bool ok;
-		handle2 = KLineEditDlg::getText(i18n( "MSN Plugin" ),
-			i18n( "Please enter the email address of the person you want to invite" ),
-			QString::null, &ok );
-		if( !ok )
-			return;
-	}
-	sendCommand( "CAL", handle2 );
+	sendCommand( "CAL", handle );
 }
 
 // this sends a short message to the server
 void MSNSwitchBoardSocket::slotSendMsg( const KopeteMessage &msg )
 {
 	if ( onlineStatus() != Connected || m_chatMembers.empty())
-  {
-      m_messagesQueue.append(msg);
+	{
+		m_messagesQueue.append(msg);
 		return;
   }
 
@@ -428,12 +416,12 @@ void MSNSwitchBoardSocket::slotSocketClosed( int /*state */)
 {
 	for( QStringList::Iterator it = m_chatMembers.begin(); it != m_chatMembers.end(); ++it )
 	{
-		emit updateChatMember( (*it), QString::null, false, this );
+		emit updateChatMember( (*it), QString::null, false);
 	}
 
 	// we have lost the connection, send a message to chatwindow (this will not displayed)
 	emit switchBoardIsActive(false);
-	emit switchBoardClosed( this );
+ emit switchBoardClosed( );
 
 }
 
@@ -486,7 +474,7 @@ void MSNSwitchBoardSocket::sendMessageQueue() //O.G.
 
 void MSNSwitchBoardSocket::userLeftChat( QString handle ) //O.G.
 {
-		emit updateChatMember( handle, QString::null, false, this );
+		emit updateChatMember( handle, QString::null, false );
 		if( m_chatMembers.contains( handle ) )
 			m_chatMembers.remove( handle );
 

@@ -18,8 +18,10 @@
 #include "msnnotifysocket.h"
 #include "msndispatchsocket.h"
 #include "msnprotocol.h"
+#include "msncontact.h"
+#include "msnpreferences.h"
 
-#include <kconfig.h>
+//#include <kconfig.h>
 #include <kdebug.h>
 #include <kglobal.h>
 #include <klocale.h>
@@ -97,7 +99,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 205:
 	{
 		QString msg = i18n( "Invalid user! \n"
-			"This MSN user does not exist. Please check the MSN ID" );
+			"This MSN user does not exist. Please check the MSN ID." );
 		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 		break;
 	}
@@ -110,13 +112,19 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 		break;
 	}
-	case 913:
+	case 223:
 	{
-		QString msg = i18n( "You cannot send messages when you are offline or when you appear offline" );
+		QString msg = i18n( "The maximum number of group is reached.\n"
+			"You can't have more than 30 groups" );
 		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 		break;
 	}
-
+	case 913:
+	{
+		QString msg = i18n( "You cannot send messages when you are offline or when you appear offline." );
+		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+		break;
+	}     
 	default:
 		MSNAuthSocket::handleError( code, id );
 		break;
@@ -147,15 +155,23 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			// this is our current user and friendly name
 			// do some nice things with it  :-)
 			QString publicName = unescape( data.section( ' ', 2, 2 ) );
-			emit publicNameChanged( msnId(), publicName );
+			emit publicNameChanged( publicName );
 		}
 	}
 	else if( cmd == "NLN" )
 	{
-		// handle, publicName, status
+/*		// handle, publicName, status
 		emit contactStatusChanged( data.section( ' ', 1, 1 ),
 			unescape( data.section( ' ', 2, 2 ) ),
-			MSNProtocol::convertStatus( data.section( ' ', 0, 0 ) ) );
+			MSNProtocol::convertStatus( data.section( ' ', 0, 0 ) ) );*/
+
+		MSNContact *c=MSNProtocol::protocol()->contact(data.section( ' ', 1, 1 ));
+		if( c )
+		{
+			c->setMsnStatus( MSNProtocol::convertStatus(data.section( ' ', 0, 0 )));
+			c->setDisplayName(unescape( data.section( ' ', 2, 2 ) ) );
+		}
+
 	}
 	else if( cmd == "LST" )
 	{
@@ -170,21 +186,21 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "FLN" )
 	{
-		emit contactStatusChanged( data.section( ' ', 0, 0 ),QString::null, MSNProtocol::FLN );
+//		emit contactStatusChanged(data.section( ' ', 0, 0 ) ,QString::null, MSNProtocol::FLN );
+		MSNContact *c=MSNProtocol::protocol()->contact(data.section( ' ', 0, 0 ));
+		if( c )
+			c->setMsnStatus( MSNProtocol::FLN );
 	}
 	else if( cmd == "ILN" )
 	{
 		// handle, publicName, Status
-		emit contactStatus( data.section( ' ', 1, 1 ),
-			unescape( data.section( ' ', 2, 2 ) ), data.section( ' ', 0, 0 ) );
-	}
-	else if( cmd == "GTC" )
-	{
-		kdDebug() << "GTC: is not implemented!" << endl;
-	}
-	else if( cmd == "BLP" )
-	{
-		kdDebug() << "BLP: is not implemented!" << endl;
+//		emit contactStatus( data.section( ' ', 1, 1 ), unescape( data.section( ' ', 2, 2 ) ), data.section( ' ', 0, 0 ) );
+		MSNContact *c=MSNProtocol::protocol()->contact(data.section( ' ', 1, 1 ));
+		if( c )
+		{
+			c->setMsnStatus( MSNProtocol::convertStatus(data.section( ' ', 0, 0 )));
+			c->setDisplayName(unescape( data.section( ' ', 2, 2 ) ) );
+		}
 	}
 	else if( cmd == "XFR" )
 	{
@@ -243,8 +259,9 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "REA" )
 	{
-		emit publicNameChanged( data.section( ' ', 1, 1 ),
-			unescape( data.section( ' ', 2, 2 ) ) );
+		QString handle=data.section( ' ', 1, 1 );
+		if(handle==msnId())
+			emit publicNameChanged( unescape( data.section( ' ', 2, 2 ) ) );
 	}
 	else if( cmd == "LSG" )
 	{
@@ -293,7 +310,12 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "BPR" )
 	{
-		emit recievedInfo(data.section( ' ', 0, 0 ), data.section( ' ', 1, 1 ) , unescape(data.section( ' ', 2, 2 )));
+		MSNContact *c=MSNProtocol::protocol()->contact(data.section( ' ', 0, 0));
+		if( c )
+		{
+			c->setInfo(data.section( ' ', 1, 1 ),unescape(data.section( ' ', 2, 2 )));
+		}
+//		emit recievedInfo(data.section( ' ', 0, 0 ), data.section( ' ', 1, 1 ) , unescape(data.section( ' ', 2, 2 )));
 	}
 	else
 	{
@@ -317,8 +339,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 		m = m.left(msg.find("\r\n"));
 		mailCount = m.right(m.length() -m.find(" ")-1).toUInt();
 
-		KGlobal::config()->setGroup( "MSN" );
-		if(KGlobal::config()->readBoolEntry( "MailNotifications", true ))
+		if(MSNPreferences::mailNotifications())
 		{
 			int answer=KMessageBox::questionYesNo( 0l, i18n( "<qt>You have %1 unread messages in your inbox.<br>Would you like to open your inbox now?</qt>" ).arg(mailCount), i18n( "MSN Plugin" ) );
 
@@ -344,8 +365,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 
 		mailCount++;
 
-		KGlobal::config()->setGroup( "MSN" );
-		if(KGlobal::config()->readBoolEntry( "MailNotifications", true ))
+		if(MSNPreferences::mailNotifications())
 		{
 			int answer=KMessageBox::questionYesNo( 0l, i18n( "<qt>You have one new e-mail from %1.<br>Would you like to open your inbox now?</qt>" ).arg(m), i18n( "MSN Plugin" ) );
 
@@ -378,8 +398,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 		}
 
 		//write the tmp file
-		KGlobal::config()->setGroup( "MSN" );
-		QString UserID=KGlobal::config()->readEntry( "UserID" );
+		QString UserID=MSNPreferences::msnId();
 
 		QString md5this(m_MSPAuth+"1"+m_password);
 		KMD5 md5(md5this);

@@ -1,9 +1,11 @@
 /***************************************************************************
-                          msnprotocol.h  -  description
+                    msnprotocol.h  -  Kopete's MSN Plugin
                              -------------------
-    begin                : Wed Jan 2 2002
-    copyright            : (C) 2002 by duncan
-    email                : duncan@tarro
+    Copyright (c) 2002   by Duncan Mac-Vicar P. <duncan@kde.org>
+    Copyright (c) 2002   by Martijn Klingens    <klingens@kde.org>
+    Copyright (c) 2002   by Olivier Goffart     <ogoffart@tiscalinet.be>
+
+    Copyright (c) 2002  by the Kopete developers  <kopete-devel@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -136,12 +138,8 @@ public:
 	virtual bool isAway() const;
 
 	void addContact( const QString &userID , KopeteMetaContact *m=0L, const QString &group=QString::null);
-	void addContactToGroup( MSNContact * , QString group)  ;
-	void removeContact( MSNContact *c )  ;
-	void removeContactFromGroup( MSNContact *c, const QString &group ) ;
-	void moveContact( MSNContact *c, const QString &oldGroup, const QString &newGroup ) ;
 
-	void addGroup( const QString &groupName );
+	void addGroup( const QString &groupName , const QString& contactToAdd=QString::null );
 	void renameGroup( const QString &oldGroup, const QString &newGroup );
 	void removeGroup( const QString &groupName );
 
@@ -149,7 +147,6 @@ public:
 
 	/**
 	 * Convert string-like status to Status enum
-	 * FIXME: should be made private again when possible
 	 */
 	static Status convertStatus( QString status );
 	Status status() const;
@@ -162,14 +159,10 @@ public:
 	 */
 	void setPublicName( const QString &name );
 
-	/**
-	 * Allow this blocked contact
-	 */
-	void contactUnBlock( QString handle ) const;
 
-	const ContactList& contacts() const { return m_contacts; }
+	ContactList& contacts() { return m_contacts; }
 
-	void blockContact( QString passport ) const;
+	MSNContact *contact( const QString &handle );
 
   void setStatus(Status);
   /** 
@@ -177,15 +170,32 @@ public:
 	 */
   KActionCollection * customChatActions(KopeteMessageManager * );
 
+	MSNNotifySocket *notifySocket() { return m_notifySocket; };
+
+	/**
+	 * Get group by name.
+	 * Returns -1 if the group was not found.
+	 */
+	int groupNumber( const QString &groupName ) const;
+
+
+
+
 signals:
 	void protocolUnloading();
+
+public slots:
+	/**
+	 * Start a new chat session: the result is an XFR command, see above
+	 */
+	void slotStartChatSession( QString handle );
 
 private slots:
 	/**
 	 * The publicName has successful changed
 	 * This is an anwser from setMyPublicName
 	 */
-	void slotPublicNameChanged(QString handle, QString publicName);
+	void slotPublicNameChanged(QString publicName);
 
 	// Add a Contact
 	void slotAddContact( QString );
@@ -213,8 +223,6 @@ private slots:
 
 	void slotOpenInbox();
 
-	void slotMessageSent( const KopeteMessage& msg, KopeteMessageManager *manager );
-
 	/**
 	 * The group has successful renamed
 	 * groupName: is new new group name
@@ -239,15 +247,12 @@ private slots:
 	 */
 	void slotContactRemoved(QString handle, QString list, uint serial,
 		uint group );
-	void slotContactStatus( QString handle, QString publicName,
-		QString status );
+
 	void slotContactAdded(QString handle, QString publicName, QString list,
 		uint serial, uint group );
 
 	void slotContactList(QString handle, QString publicName, QString group,
 		QString list );
-	void slotContactStatusChanged( const QString &msnId,
-		const QString &publicName, MSNProtocol::Status status );
 	void slotStatusChanged( QString status );
 
 	/**
@@ -263,11 +268,6 @@ private slots:
 	 * connect to the switchboard server and sen startChat signal
 	 */
 	void slotCreateChat( QString address, QString auth);
-
-	/**
-	 * Start a new chat session: the result is an XFR command, see above
-	 */
-	void slotStartChatSession( QString handle );
 
 	/**
 	 * Set our public name
@@ -288,33 +288,12 @@ private slots:
 	 void slotNotifySocketClosed( int state );
 
 	/**
-	 * The SwitchBoard socket was closed, so we remove it from the list.
-	 */
-	 void slotSwitchBoardClosed( MSNSwitchBoardSocket *switchboard );
-
-	/**
 	 * An MSN contact got deleted. Clean up the necessary data
 	 */
 	void slotContactDestroyed( KopeteContact *c );
-	/** 
-	 * eventually add a contact if the contact does not exist 
-	 */
-	void slotUpdateChatMember(QString handle, QString publicName,bool, MSNSwitchBoardSocket* service);
 
-	/**
-	 * Recieved phone numbers
-	 */
-	void slotRecievedInfo(QString handle,QString type,QString data);
-  /** No descriptions */
-  void slotUserTypingMsg( QString ,MSNSwitchBoardSocket* );
-
-
+	void slotPreferencesSaved();
 private:
-	/**
-	 * Get group by name.
-	 * Returns -1 if the group was not found.
-	 */
-	int groupNumber( const QString &groupName ) const;
 
 	/**
 	 * Add contact to contact list and maintain a list of currently active
@@ -330,7 +309,7 @@ private:
 
 	StatusBarIcon *statusBarIcon;
 
-	MSNPreferences *m_configModule;
+	MSNPreferences *mPrefs;
 
 	QPixmap onlineIcon;
 	QPixmap offlineIcon;
@@ -374,14 +353,13 @@ private:
 	SyncMode m_publicNameSyncMode;
 	bool m_publicNameSyncNeeded;
 	QString m_msgHandle;
-	KopeteMessage *m_msgQueued;
 	KopeteMetaContact *m_addWizard_metaContact;
 
 	MSNNotifySocket *m_notifySocket;
 	KopeteContact *m_myself;
 
 	MSNIdentity *m_identity;
-	QPtrDict<MSNSwitchBoardSocket> m_switchBoardSockets;
+//	QPtrDict<MSNSwitchBoardSocket> m_switchBoardSockets;
 
 	/**
 	 * Mapping of meta contacts to MSN contacts
@@ -394,6 +372,8 @@ private:
 	QStringList m_blockList;
 
 	QValueList< QPair<QString,QString> > tmp_addToNewGroup;
+
+
 
 };
 

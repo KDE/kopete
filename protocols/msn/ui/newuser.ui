@@ -1,0 +1,156 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>NewUser</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>NewUser</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>410</width>
+            <height>234</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Certificate User</string>
+    </property>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>PushButton1</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>160</x>
+                <y>200</y>
+                <width>102</width>
+                <height>26</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>&amp;Ok</string>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>TextLabel2</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>10</y>
+                <width>380</width>
+                <height>20</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>New User</string>
+        </property>
+        <property name="alignment">
+            <set>AlignCenter</set>
+        </property>
+        <property name="hAlign" stdset="0">
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>handle</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>40</y>
+                <width>390</width>
+                <height>30</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>TextLabel3</string>
+        </property>
+    </widget>
+    <widget class="QGroupBox">
+        <property name="name">
+            <cstring>GroupBox1</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>80</y>
+                <width>390</width>
+                <height>111</height>
+            </rect>
+        </property>
+        <property name="title">
+            <string>What do you want to do?</string>
+        </property>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>Block</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>60</y>
+                    <width>340</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Block this user</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>Allow</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>30</y>
+                    <width>360</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Allow this user to view your online state</string>
+            </property>
+            <property name="checked">
+                <bool>true</bool>
+            </property>
+        </widget>
+    </widget>
+</widget>
+<connections>
+    <connection>
+        <sender>Block</sender>
+        <signal>clicked()</signal>
+        <receiver>Allow</receiver>
+        <slot>toggle()</slot>
+    </connection>
+    <connection>
+        <sender>Allow</sender>
+        <signal>clicked()</signal>
+        <receiver>Block</receiver>
+        <slot>toggle()</slot>
+    </connection>
+    <connection>
+        <sender>PushButton1</sender>
+        <signal>clicked()</signal>
+        <receiver>NewUser</receiver>
+        <slot>slotClose()</slot>
+    </connection>
+    <connection>
+        <sender>PushButton1</sender>
+        <signal>clicked()</signal>
+        <receiver>NewUser</receiver>
+        <slot>accept()</slot>
+    </connection>
+</connections>
+<includes>
+    <include location="global" impldecl="in declaration">klocale.h</include>
+</includes>
+<slots>
+    <slot>slotClose()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
