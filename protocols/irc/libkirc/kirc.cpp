@@ -37,7 +37,6 @@
 #include <qtimer.h>
 
 #include <kdebug.h>
-#include <kdebugclasses.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 
@@ -67,7 +66,7 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 
 	m_Host = host;
 	m_Port = (port==0)?6667:port;
-	m_Username = QString::fromLatin1(getpwuid(getuid())->pw_name);
+	setUserName(QString::null);
 
 //	The following order is based on the RFC2812.
 
@@ -335,19 +334,31 @@ void KIRC::error()
 	m_sock.reset();
 }
 
-void KIRC::setVersionString(QString &newString)
+void KIRC::setVersionString(const QString &newString)
 {
-	m_VersionString = newString.replace(m_RemoveLinefeeds, QString::null);
+	m_VersionString = newString;
+	m_VersionString.remove(m_RemoveLinefeeds);
 }
 
-void KIRC::setUserString(QString &newString)
+void KIRC::setUserString(const QString &newString)
 {
-	m_UserString = newString.replace(m_RemoveLinefeeds, QString::null);
+	m_UserString = newString;
+	m_UserString.remove(m_RemoveLinefeeds);
 }
 
-void KIRC::setSourceString(QString &newString)
+void KIRC::setSourceString(const QString &newString)
 {
-	m_SourceString = newString.replace(m_RemoveLinefeeds, QString::null);
+	m_SourceString = newString;
+	m_SourceString.remove(m_RemoveLinefeeds);
+}
+
+void KIRC::setUserName(const QString &newName)
+{
+	if(newName.isEmpty())
+		m_Username = QString::fromLatin1(getpwuid(getuid())->pw_name);
+	else
+		m_Username = newName;
+	m_Username.remove(m_RemoveLinefeeds);
 }
 
 void KIRC::addIrcMethod(QDict<KIRCMethodFunctorCall> &map, const char *str, KIRCMethodFunctorCall *method)
@@ -362,7 +373,7 @@ void KIRC::addIrcMethod(QDict<KIRCMethodFunctorCall> &map, const char *str,
 	addIrcMethod(map, str, new KIRCMethodFunctor_Forward<KIRC>(this, method, argsSize_min, argsSize_max, helpMessage));
 }
 
-bool KIRC::canSend( bool mustBeConnected )
+bool KIRC::canSend( bool mustBeConnected ) const
 {
 	return	(mustBeConnected && m_status==Connected) ||
 		(!mustBeConnected);
@@ -371,7 +382,11 @@ bool KIRC::canSend( bool mustBeConnected )
 KIRCMessage KIRC::writeString(const QString &str, bool mustBeConnected)
 {
 	if(canSend(mustBeConnected))
-		return KIRCMessage::writeString(&m_sock, str);
+	{
+		KIRCMessage ircmsg = KIRCMessage::writeString(&m_sock, str);
+		emit sentMessage(ircmsg);
+		return ircmsg;
+	}
 	kdDebug(14120) << "Must be connected error:" << str << endl;
 	return KIRCMessage();
 }
@@ -379,7 +394,11 @@ KIRCMessage KIRC::writeString(const QString &str, bool mustBeConnected)
 KIRCMessage KIRC::writeMessage(const QString &command, const QStringList &args, const QString &suffix, bool mustBeConnected)
 {
 	if(canSend(mustBeConnected))
-		return KIRCMessage::writeMessage(&m_sock, command, args, suffix);
+	{
+		KIRCMessage ircmsg = KIRCMessage::writeMessage(&m_sock, command, args, suffix);
+		emit sentMessage(ircmsg);
+		return ircmsg;
+	}
 	kdDebug(14120) << "Must be connected error:" << command << args << suffix << endl;
 	return KIRCMessage();
 }
@@ -387,7 +406,11 @@ KIRCMessage KIRC::writeMessage(const QString &command, const QStringList &args, 
 KIRCMessage KIRC::writeMessage(const QString &command, const QString &arg, const QString &suffix, bool mustBeConnected)
 {
 	if(canSend(mustBeConnected))
-		return KIRCMessage::writeMessage(&m_sock, command, arg, suffix);
+	{
+		KIRCMessage ircmsg = KIRCMessage::writeMessage(&m_sock, command, arg, suffix);
+		emit sentMessage(ircmsg);
+		return ircmsg;
+	}
 	kdDebug(14120) << "Must be connected error:" << command << arg << suffix << endl;
 	return KIRCMessage();
 }
@@ -398,6 +421,7 @@ KIRCMessage KIRC::writeCtcpMessage(const char *command, const QString &to /* pre
 	KIRCMessage msg = KIRCMessage::writeCtcpMessage(&m_sock,
 			QString::fromLatin1(command), to, suffix, ctcpCommand, ctcpArgs, ctcpSuffix);
 
+	emit sentMessage(msg);
 	if(emitRepliedCtcp && msg.isValid() && msg.hasCtcpMessage())
 		emit repliedCtcp(msg.ctcpMessage().command(), msg.ctcpMessage().ctcpRaw());
 
@@ -424,7 +448,11 @@ void KIRC::slotReadyRead()
 				{
 					// FIXME: should also check for args[0] == m_nickname/"*" for nummeric replies
 					// If the m_nickname is given, the nickname change is successful(ie we are in).
-					if (!method->operator()(msg))
+					if (method->operator()(msg))
+					{
+						emit receivedMessage(msg);
+					}
+					else
 					{
 						kdDebug(14120) << "Method error for line:" << msg.raw();
 						emit internalError(MethodFailed, msg);

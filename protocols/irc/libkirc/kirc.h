@@ -49,12 +49,22 @@ public:
 	KIRC(const QString &host, const Q_UINT16 port, QObject *parent=0, const char *name=0);
 	~KIRC();
 
-	const QString &host() { return m_Host; };
+	const QString &host() const { return m_Host; };
+
 	Q_UINT16 port() { return m_Port; }
 
-	const QString &nickName() { return m_Nickname; };
-	const QString &password() { return m_Passwd; }
+	const QString &nickName() const { return m_Nickname; };
+
+	const QString &password() const { return m_Passwd; }
 	void setPassword(const QString &passwd) { m_Passwd = passwd; };
+
+	const QString &userName() const {return m_Username; }
+	void setUserName(const QString &newName);
+
+public slots:
+	void setVersionString(const QString &versionString);
+	void setUserString(const QString &userString);
+	void setSourceString(const QString &sourceString);
 
 public:
 	typedef enum EngineError
@@ -65,7 +75,7 @@ public:
 		MethodFailed
 	};
 signals:
-	void internalError(KIRC::EngineError, KIRCMessage &);
+	void internalError(KIRC::EngineError, const KIRCMessage &);
 
 public:
 	typedef enum EngineStatus
@@ -76,9 +86,9 @@ public:
 		Connected,
 		Closing
 	};
-	EngineStatus status() { return m_status; }
-	inline bool isDisconnected() { return m_status == Disconnected; }
-	inline bool isConnected() { return m_status == Connected; }
+	EngineStatus status() const { return m_status; }
+	inline bool isDisconnected() const { return m_status == Disconnected; }
+	inline bool isConnected() const { return m_status == Connected; }
 private:
 	void setStatus(EngineStatus status);
 signals:
@@ -91,9 +101,12 @@ private slots:
 	void slotReadyRead();
 	void error();
 	void quitTimeout();
+signals:
+	void sentMessage(const KIRCMessage &);
+	void receivedMessage(const KIRCMessage &);
 
 protected:
-	bool canSend( bool mustBeConnected );
+	bool canSend( bool mustBeConnected ) const;
 
 	KIRCMessage writeString(const QString &str, bool mustBeConnected=true);
 
@@ -140,10 +153,6 @@ protected:
 
 public slots:
 	void connectToServer(const QString &nickname=QString::null, const QString &host=QString::null, Q_UINT16 port=0);
-
-	void setVersionString(QString &versionString);
-	void setUserString(QString &userString);
-	void setSourceString(QString &sourceString);
 
 	void changeUser(const QString &newUsername, const QString &hostname, const QString &newRealname);
 	void changeUser(const QString &newUsername, Q_UINT8 mode, const QString &newRealname);

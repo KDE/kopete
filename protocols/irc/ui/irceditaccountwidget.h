@@ -37,6 +37,7 @@ class IRCEditAccountWidget : public IRCEditAccountBase, public EditAccountWidget
 
 	private:
 		IRCProtocol *mProtocol;
+		IRCAccount *m_IRCAccount;
 };
 
 #endif

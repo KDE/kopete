@@ -57,7 +57,6 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 	m_contactManager = new IRCContactManager(mNickName, m_server, this);
 	m_mySelf = m_contactManager->mySelf();
 	m_myServer = m_contactManager->myServer();
-
 }
 
 IRCAccount::~IRCAccount()
@@ -68,6 +67,22 @@ IRCAccount::~IRCAccount()
 
 	delete m_contactManager;
 	delete m_engine;
+}
+
+void IRCAccount::loaded()
+{
+	setUserName(userName());
+}
+
+QString IRCAccount::userName()
+{
+	return pluginData(protocol(), QString::fromLatin1("userName"));
+}
+
+void IRCAccount::setUserName(QString userName)
+{
+	m_engine->setUserName(userName);
+	setPluginData(protocol(), QString::fromLatin1( "userName" ), userName);
 }
 
 KActionMenu *IRCAccount::actionMenu()

@@ -28,10 +28,11 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 {
 	mProtocol = proto;
 
-	if( m_account )
+	m_IRCAccount = (IRCAccount *)ident;
+	if( m_IRCAccount )
 	{
-		QString nickName = m_account->accountId().section( '@', 0, 0);
-		QString serverInfo = m_account->accountId().section( '@', 1);
+		QString nickName = m_IRCAccount->accountId().section( '@', 0, 0);
+		QString serverInfo = m_IRCAccount->accountId().section( '@', 1);
 
 		mNickName->setText( nickName );
 		mServer->setText( serverInfo.section(':', 0, 0) );
@@ -40,8 +41,9 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		mNickName->setReadOnly(true);
 		mServer->setReadOnly(true);
 
+		mUserName->setText( m_IRCAccount->userName() );
 
-		if(m_account->rememberPassword()) mPassword->setText( m_account->getPassword() );
+		if(m_account->rememberPassword()) mPassword->setText( m_IRCAccount->getPassword() );
 	}
 }
 
@@ -58,10 +60,11 @@ KopeteAccount *IRCEditAccountWidget::apply()
 //	else
 //		m_account->setAccountId( mAccountId );
 
-	m_account->setPassword( mPassword->text() );
-	m_account->setAutoLogin( mAutoConnect->isChecked() );
+	m_IRCAccount->setPassword( mPassword->text() );
+	m_IRCAccount->setUserName( mUserName->text() );
+	m_IRCAccount->setAutoLogin( mAutoConnect->isChecked() );
 
-	return m_account;
+	return m_IRCAccount;
 }
 
 

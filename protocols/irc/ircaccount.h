@@ -47,6 +47,14 @@ public:
 	IRCAccount(IRCProtocol *p, const QString &accountid);
 	~IRCAccount();
 
+	// Load the user preferences.
+	virtual void loaded();
+
+	QString userName();
+public slots:
+	void setUserName(QString userName);
+
+public:
 	void unregister(KopeteContact *);
 
 	IRCServerContact *findServer(const QString &name, KopeteMetaContact *m = 0L);

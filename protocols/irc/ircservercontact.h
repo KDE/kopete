@@ -56,7 +56,9 @@ private slots:
 	void slotServerOffline();
 
 protected slots:
-	void engineInternalError(KIRC::EngineError error, KIRCMessage &ircmsg);
+	void engineInternalError(KIRC::EngineError error, const KIRCMessage &ircmsg);
+	void engineSentMessage(const KIRCMessage &ircmsg);
+	void engineReceivedMessage(const KIRCMessage &ircmsg);
 
 	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
 	virtual void action(IRCContact *from, IRCContact *to, const QString &action);

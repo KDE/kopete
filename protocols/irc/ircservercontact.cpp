@@ -33,8 +33,12 @@
 IRCServerContact::IRCServerContact(IRCContactManager *contactManager, const QString &servername, KopeteMetaContact *m)
 	: IRCContact( contactManager, servername, m, QString::fromLatin1("irc_contact_server_")+servername )
 {
-	QObject::connect(m_engine, SIGNAL(internalError(KIRC::EngineError, KIRCMessage &)),
-			this, SLOT(engineInternalError(KIRC::EngineError, KIRCMessage &)));
+	QObject::connect(m_engine, SIGNAL(internalError(KIRC::EngineError, const KIRCMessage &)),
+			this, SLOT(engineInternalError(KIRC::EngineError, const KIRCMessage &)));
+	QObject::connect(m_engine, SIGNAL(sentMessage(const KIRCMessage &)),
+			this, SLOT(engineSentMessage(const KIRCMessage &)));
+	QObject::connect(m_engine, SIGNAL(receivedMessage(const KIRCMessage &)),
+			this, SLOT(engineReceivedMessage(const KIRCMessage &)));
 
 	updateStatus();
 }
@@ -113,7 +117,7 @@ KActionCollection *IRCServerContact::customContextMenuActions()
 	return m_customActions;
 }
 
-void IRCServerContact::engineInternalError(KIRC::EngineError engineError, KIRCMessage &ircmsg)
+void IRCServerContact::engineInternalError(KIRC::EngineError engineError, const KIRCMessage &ircmsg)
 {
 	QString error;
 	switch( engineError )
@@ -135,6 +139,20 @@ void IRCServerContact::engineInternalError(KIRC::EngineError engineError, KIRCMe
 	}
 
 	KopeteMessage msg(this, manager()->members(), error+QString(ircmsg.raw()), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+	msg.setBody(m_account->protocol()->parser()->parse(msg.escapedBody().stripWhiteSpace()), KopeteMessage::RichText);
+	appendMessage(msg);
+}
+
+void IRCServerContact::engineSentMessage(const KIRCMessage &ircmsg)
+{
+	KopeteMessage msg(m_account->myself(), manager()->members(), QString(ircmsg.raw()), KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat);
+	msg.setBody(m_account->protocol()->parser()->parse(msg.escapedBody().stripWhiteSpace()), KopeteMessage::RichText);
+	appendMessage(msg);
+}
+
+void IRCServerContact::engineReceivedMessage(const KIRCMessage &ircmsg)
+{
+	KopeteMessage msg(this, manager()->members(), QString(ircmsg.raw()), KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat);
 	msg.setBody(m_account->protocol()->parser()->parse(msg.escapedBody().stripWhiteSpace()), KopeteMessage::RichText);
 	appendMessage(msg);
 }
