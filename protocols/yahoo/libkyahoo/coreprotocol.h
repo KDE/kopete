@@ -99,7 +99,7 @@ private:
 	int m_error;
 	Transfer* m_inTransfer; // the transfer that is being received
 	int m_state;		// represents the protocol's overall state
-	YMSGProtocol* m_snacProtocol;
+	YMSGProtocol* m_YMSGProtocol;
 
 };
 

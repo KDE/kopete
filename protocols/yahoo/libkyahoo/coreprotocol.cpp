@@ -32,11 +32,11 @@
 #include <kurl.h>
 
 #include "coreprotocol.h"
-
+#include "ymsgprotocol.h"
 
 CoreProtocol::CoreProtocol() : QObject()
 {
-	m_snacProtocol = new SnacProtocol( this, "snacprotocol" );
+	m_YMSGProtocol = new YMSGProtocol( this, "ymsgprotocol" );
 }
 
 CoreProtocol::~CoreProtocol() 
@@ -61,6 +61,7 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 	int parsedBytes = 0;
 	int transferCount = 0;
 	// while there is data left in the input buffer, and we are able to parse something out of it
+	/*
 	while ( m_in.size() && ( parsedBytes = wireToTransfer( m_in ) ) )
 	{
 		transferCount++;
@@ -85,6 +86,7 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 		m_in.truncate( 0 );
 	}
 	qDebug( " - done processing chunk" );
+	*/
 }
 
 Transfer* CoreProtocol::incomingTransfer()
@@ -198,11 +200,13 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 	if ( okToProceed() )
 	{
 		*m_din >> flapStart;
+		/*
 		if ( flapStart == 0x2A )
 		{
 			qDebug( "CoreProtocol::wireToTransfer() - looks like a valid snac packet " );
 			QByteArray packet = wire.duplicate( wire.data(), flapLength + 6 )
-			Transfer * t = m_snacProtocol->parse( packet, bytesParsed );
+			Transfer * t = m_YMSGProtocol->parse( packet, bytesParsed );
+			
 			if ( t )
 			{
 				m_inTransfer = t;
@@ -213,10 +217,12 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 			}
 			else
 				bytesParsed = 0;
+			
 		}
 		else 
 		{ //unknown wire format
 		}
+		*/
 		
 	}
 	delete m_din;
