@@ -158,7 +158,7 @@ namespace GroupWise
 		int operation;
 	};
 	
-};
+}
 
 // temporary typedef pending implementation
 
