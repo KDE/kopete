@@ -16,6 +16,8 @@
     *************************************************************************
 */
 
+#include <qpainter.h>
+
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kdebug.h>
@@ -222,6 +224,16 @@ void KopeteGroupViewItem::updateIcon()
 
 		setPixmap( 0, open );
 	}
+}
+
+void KopeteGroupViewItem::paintCell( QPainter *p, const QColorGroup &cg, int column, int width, int align )
+{
+	QColorGroup myColorGroup = cg;
+	myColorGroup.setColor( QColorGroup::Text, darkRed );
+	QFont f = p->font();
+	f.setBold( true );
+	p->setFont( f );
+	KListViewItem::paintCell( p, myColorGroup, column, width, align );
 }
 
 #include "kopetegroupviewitem.moc"

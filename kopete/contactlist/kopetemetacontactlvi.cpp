@@ -52,8 +52,21 @@
 #include "kopetestdaction.h"
 #include "systemtray.h"
 
+using namespace Kopete::UI;
+
+class KopeteMetaContactLVI::Private
+{
+public:
+	ListView::ImageComponent *metaContactIcon;
+	ListView::TextComponent *nameText;
+	ListView::TextComponent *extraText;
+	ListView::BoxComponent *contactIconBox;
+	ListView::ImageComponent *buddyIcon;
+};
+
 KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, KopeteGroupViewItem *parent )
-: QObject( contact, "KopeteMetaContactLVI" ), KListViewItem( parent )
+: ListView::Item( parent, contact, "MetaContactLVI" )
+//: QObject( contact, "MetaContactLVI" ), KListViewItem( parent )
 {
 	m_metaContact = contact;
 	m_isTopLevel = false;
@@ -65,7 +78,8 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, KopeteGr
 }
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, QListViewItem *parent )
-: QObject( contact, "KopeteMetaContactLVI" ), KListViewItem( parent )
+: ListView::Item( parent, contact, "MetaContactLVI" )
+//: QObject( contact, "MetaContactLVI" ), KListViewItem( parent )
 {
 	m_metaContact = contact;
 
@@ -77,7 +91,8 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, QListVie
 }
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, QListView *parent )
-: QObject( contact, "KopeteMetaContactLVI" ), KListViewItem( parent )
+: ListView::Item( parent, contact, "MetaContactLVI" )
+//: QObject( contact, "MetaContactLVI" ), KListViewItem( parent )
 {
 	m_metaContact = contact;
 
@@ -90,6 +105,8 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, QListVie
 
 void KopeteMetaContactLVI::initLVI()
 {
+	d = new Private;
+
 	m_oldStatus = m_metaContact->status();
 	m_oldStatusIcon = m_metaContact->statusIcon();
 
@@ -119,7 +136,7 @@ void KopeteMetaContactLVI::initLVI()
 
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ),
 		SLOT( slotConfigChanged() ) );
-
+	
 	mBlinkTimer = new QTimer( this, "mBlinkTimer" );
 	connect( mBlinkTimer, SIGNAL( timeout() ), SLOT( slotBlink() ) );
 	mIsBlinkIcon = false;
@@ -128,12 +145,34 @@ void KopeteMetaContactLVI::initLVI()
 	//if ( !mBlinkIcon )
 	//	mBlinkIcon = new QPixmap( KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "newmsg" ), KIcon::Small ) );
 
+	// generate our contents
+	using namespace ListView;
+	Component *hbox = new BoxComponent( this, BoxComponent::Horizontal );
+	d->metaContactIcon = new ImageComponent( hbox );
+	Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
+	d->nameText = new TextComponent( vbox, listView()->font() );
+
+	QFont smallFont = listView()->font();
+	int size = smallFont.pixelSize();
+	if ( size != -1 )
+		smallFont.setPixelSize( (size * 3) / 2 );
+	else
+		smallFont.setPointSizeFloat( smallFont.pointSizeFloat() * 0.667 );
+	d->extraText = new TextComponent( vbox, smallFont );
+	//FIXME: fill in d->extraText
+
+	d->contactIconBox = new BoxComponent( vbox, BoxComponent::Horizontal );
+
+	d->buddyIcon = new ImageComponent( hbox );
+	d->buddyIcon->setPixmap( SmallIcon(QString::fromLatin1("newmsg")) );
+
 	slotUpdateIcons();
 	slotDisplayNameChanged();
 }
 
 KopeteMetaContactLVI::~KopeteMetaContactLVI()
 {
+	delete d;
 	//if ( m_parentGroup )
 	//	m_parentGroup->refreshDisplayName();
 }
@@ -168,7 +207,7 @@ void KopeteMetaContactLVI::rename( const QString& newName )
 	if ( newName.isEmpty() )
 	{
 		// Reset the last display name
-		QListViewItem::setText( 0, m_metaContact->displayName() );
+		slotDisplayNameChanged();
 		m_metaContact->setTrackChildNameChanges( true );
 	}
 	else // user changed name manually, disable tracking of contact nickname and update displayname
@@ -184,6 +223,15 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 {
 	m_oldStatus = m_metaContact->status();
 	slotUpdateIcons();
+
+	if ( d->extraText )
+	{
+		d->extraText->setText( QString::fromLatin1("this is a test!") );
+		if ( c->onlineStatus().status() == KopeteOnlineStatus::Online )
+			d->extraText->setText( QString::null );
+		if ( c->hasProperty( QString::fromLatin1("awayMessage") ) )
+			d->extraText->setText( i18n( "Message: %1" ).arg( c->property( QString::fromLatin1("awayMessage") ).value().toString() ) );
+	}
 
 	// FIXME: All this code should be in kopetemetacontact.cpp.. having it in the LVI makes it all fire
 	// multiple times if the user is in multiple groups - Jason
@@ -202,11 +250,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 		if ( m_metaContact->isOnline() && m_oldStatus == KopeteOnlineStatus::Offline )
 			KNotifyClient::event( winId,  "kopete_online", text, i18n( "Chat" ), this, SLOT( execute() ) );
 		else if ( !m_metaContact->isOnline() && m_oldStatus != KopeteOnlineStatus::Offline && m_oldStatus != KopeteOnlineStatus::Unknown )
-#if KDE_IS_VERSION( 3, 1, 1 )
 			KNotifyClient::event( winId , "kopete_offline", text );
-#else
-			KNotifyClient::event( "kopete_offline", text );
-#endif
 		else if ( m_oldStatus != KopeteOnlineStatus::Unknown )
 			KNotifyClient::event( winId , "kopete_status_change", text, i18n( "Chat" ), this, SLOT( execute() ) );
 
@@ -222,13 +266,9 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 
 void KopeteMetaContactLVI::slotUpdateIcons()
 {
-	QPixmap statusIcon = SmallIcon( m_metaContact->statusIcon() );
-	if ( KopetePrefs::prefs()->greyIdleMetaContacts() && ( m_metaContact->idleTime() >= 10 * 60 ) )
-		KIconEffect::semiTransparent( statusIcon );
-
-	setPixmap( 0, statusIcon );
-
+	slotIdleStateChanged();
 	updateVisibility();
+	updateContactIcons();
 
 	if ( m_parentGroup )
 		m_parentGroup->refreshDisplayName();
@@ -244,7 +284,7 @@ void KopeteMetaContactLVI::execute() const
 
 void KopeteMetaContactLVI::slotDisplayNameChanged()
 {
-	setText( 0, m_metaContact->displayName() );
+	d->nameText->setText( m_metaContact->displayName() );
 }
 
 /*
@@ -347,7 +387,6 @@ void KopeteMetaContactLVI::slotConfigChanged()
 {
 	updateVisibility();
 	slotIdleStateChanged();
-	//repaint();
 }
 
 void KopeteMetaContactLVI::updateVisibility()
@@ -360,131 +399,44 @@ void KopeteMetaContactLVI::updateVisibility()
 		setVisible( true );
 }
 
-void KopeteMetaContactLVI::paintCell( QPainter *p, const QColorGroup &cg,
-	int column, int width, int align )
+void KopeteMetaContactLVI::updateContactIcons()
 {
-	if ( column == 0 )
+	while ( d->contactIconBox->components() )
+		delete d->contactIconBox->component( 0 );
+
+	QPtrList<KopeteContact> contacts = m_metaContact->contacts();
+	QPtrListIterator<KopeteContact> it( contacts );
+
+	for ( ; it.current(); ++it )
 	{
-		QPtrList<KopeteContact> contacts = m_metaContact->contacts();
-		int cellWidth = width - ( contacts.count() * 16 ) - 4;
-		if ( cellWidth < 0 )
-			cellWidth = 0;
-
-		QColorGroup modcg = cg;
-		KopetePrefs *prefs = KopetePrefs::prefs();
-		if ( prefs->greyIdleMetaContacts() && ( m_metaContact->idleTime() >= 10 * 60 ) )
-			modcg.setColor( QColorGroup::Text, prefs->idleContactColor() );
-
-		KListViewItem::paintCell( p, modcg, column, cellWidth, align );
-		QFontMetrics fm( p->font() );
-		int pixelsWide = fm.width( text( 0 ) ) + 16 + 4;
-		if ( pixelsWide > cellWidth )
-			pixelsWide = cellWidth;
-		m_pixelWide = pixelsWide;
-
-		// Draw the rest of the background
-		QListView *lv = listView();
-		if ( !lv )
-			return;
-
-
-			/*
-
-  QColorGroup _cg = cg;
-  const QPixmap *pm = listView()->viewport()->backgroundPixmap();
-  if (pm && !pm->isNull())
-  {
-        _cg.setBrush(QColorGroup::Base, QBrush(backgroundColor(), *pm));
-        QPoint o = p->brushOrigin();
-        p->setBrushOrigin( o.x()-listView()->contentsX(), o.y()-listView()->contentsY() );
-  }
-  else if (isAlternate())
-       if (listView()->viewport()->backgroundMode()==Qt::FixedColor)
-            _cg.setColor(QColorGroup::Background, static_cast< KListView* >(listView())->alternateBackground());
-       else
-        _cg.setColor(QColorGroup::Base, static_cast< KListView* >(listView())->alternateBackground());
-
-  QListViewItem::paintCell(p, _cg, column, width, alignment);
-
-
-			*/
-
-		int marg = lv->itemMargin();
-		int r = marg;
-
-		p->fillRect( cellWidth, 0, width - cellWidth, height(),
-			QBrush( backgroundColor() ) );
-
-		/*
-			const BackgroundMode bgmode = lv->viewport()->backgroundMode();
-			const QColorGroup::ColorRole crole =
-				QPalette::backgroundRoleFromMode( bgmode );
-			p->fillRect( cellWidth, 0, width - cellWidth, height(),
-				cg.brush( crole ) );
-		*/
-
-
-		if ( isSelected() && ( column == 0 || listView()->allColumnsShowFocus() ) )
-		{
-			p->fillRect( QMAX( cellWidth, r - marg ), 0,
-				width - cellWidth - r + marg, height(),
-				cg.brush( QColorGroup::Highlight ) );
-			if ( isEnabled() || !lv )
-				p->setPen( cg.highlightedText() );
-			else if ( !isEnabled() && lv )
-				p->setPen( lv->palette().disabled().highlightedText() );
-		}
-
-		// And last, draw the online status icons
-		int mc_x = 0;
-		QPtrListIterator<KopeteContact> it( contacts );
-		for ( ; it.current(); ++it )
-		{
-			QPixmap icon = ( *it )->onlineStatus().iconFor( *it, 12 );
-			p->drawPixmap( mc_x + pixelsWide + 4, height() - 16,
-				icon );
-			mc_x += 16;
-		}
+		ListView::ImageComponent *icon = new ListView::ImageComponent( d->contactIconBox );
+		QPixmap image = ( *it )->onlineStatus().iconFor( *it, 12 );
+		icon->setPixmap( image );
 	}
-	else
-	{
-		// Use Qt's own drawing
-		KListViewItem::paintCell( p, cg, column, width, align );
-	}
+	new ListView::HSpacerComponent( d->contactIconBox );
 }
 
 KopeteContact *KopeteMetaContactLVI::contactForPoint( const QPoint &p ) const
 {
 	QPtrList<KopeteContact> contacts = m_metaContact->contacts();
 	QPtrListIterator<KopeteContact> it( contacts );
-	int mc_x = 0;
-	for ( ; it.current(); ++it )
+	for ( uint n = 0; n < d->contactIconBox->components() && it.current(); ++it, ++n )
 	{
-		if ( QRect( mc_x + m_pixelWide + 4, 0, 12, height() ).contains( p ) )
-		{
+		if ( d->contactIconBox->component( n )->rect().contains( p ) )
 			return *it;
-		}
-		mc_x += 16;
 	}
 	return 0L;
 }
 
 QRect KopeteMetaContactLVI::contactRect( const KopeteContact *c ) const
 {
-	if ( !c )
-		return QRect();
-
 	QPtrList<KopeteContact> contacts = m_metaContact->contacts();
 	QPtrListIterator<KopeteContact> it( contacts );
-	int mc_x = 0;
-	for ( ; it.current(); ++it )
+	for ( uint n = 0; n < d->contactIconBox->components() && it.current(); ++it, ++n )
 	{
-		if ( it.current() == c )
-			return QRect( mc_x + m_pixelWide + 4, 0, 12, height() );
-
-		mc_x += 16;
+		if ( *it == c )
+			return d->contactIconBox->component( n )->rect();
 	}
-
 	return QRect();
 }
 
@@ -559,11 +511,22 @@ bool KopeteMetaContactLVI::isGrouped() const
 
 void KopeteMetaContactLVI::slotIdleStateChanged()
 {
-	QPixmap icon = SmallIcon( m_metaContact->statusIcon() );
+	QPixmap icon = SmallIcon( m_metaContact->statusIcon(), 32 );
 	if ( KopetePrefs::prefs()->greyIdleMetaContacts() && ( m_metaContact->idleTime() >= 10 * 60 ) )
+	{
 		KIconEffect::semiTransparent( icon );
+		d->nameText->setColor( KopetePrefs::prefs()->idleContactColor() );
+		if ( d->extraText )
+			d->extraText->setColor( KopetePrefs::prefs()->idleContactColor() );
+	}
+	else
+	{
+		d->nameText->setDefaultColor();
+		if ( d->extraText )
+			d->extraText->setDefaultColor();
+	}
 
-	setPixmap( 0, icon );
+	d->metaContactIcon->setPixmap( icon );
 	//if ( m_parentGroup )
 	//	m_parentGroup->refreshDisplayName();
 }
@@ -593,7 +556,7 @@ void KopeteMetaContactLVI::slotBlink()
 {
 	if ( mIsBlinkIcon )
 	{
-		setPixmap( 0, SmallIcon( m_metaContact->statusIcon() ) );
+		d->metaContactIcon->setPixmap( SmallIcon( m_metaContact->statusIcon(), 32 ) );
 		if ( !m_event && m_blinkLeft <= 0 )
 		{
 			mBlinkTimer->stop();
@@ -605,11 +568,11 @@ void KopeteMetaContactLVI::slotBlink()
 	{
 		if ( m_event )
 		{
-			setPixmap( 0, SmallIcon( "newmsg" ) );
+			d->metaContactIcon->setPixmap( SmallIcon( "newmsg", 32 ) );
 		}
 		else
 		{
-			setPixmap( 0, SmallIcon( m_oldStatusIcon ) );
+			d->metaContactIcon->setPixmap( SmallIcon( m_oldStatusIcon, 32 ) );
 			m_blinkLeft--;
 		}
 	}
@@ -628,7 +591,7 @@ void KopeteMetaContactLVI::slotEventDone( KopeteEvent * /* event */ )
 		updateVisibility();
 	}
 
-	setPixmap( 0, SmallIcon( m_metaContact->statusIcon() ) );
+	d->metaContactIcon->setPixmap( SmallIcon( m_metaContact->statusIcon(), 32 ) );
 	mIsBlinkIcon = false;
 }
 

@@ -20,6 +20,8 @@
 #ifndef __kopetemetacontactlvi_h__
 #define __kopetemetacontactlvi_h__
 
+#include "kopetelistviewitem.h"
+
 #include <qobject.h>
 #include <qpixmap.h>
 #include <qptrdict.h>
@@ -41,7 +43,9 @@ class KopeteEvent;
 /**
  * @author Martijn Klingens <klingens@kde.org>
  */
-class KopeteMetaContactLVI : public QObject, public KListViewItem
+class KopeteMetaContactLVI :
+//public QObject, public KListViewItem
+public Kopete::UI::ListView::Item
 {
 	Q_OBJECT
 
@@ -77,9 +81,6 @@ public:
 	 * parent when not top-level
 	 */
 	KopeteGroupViewItem *parentGroup() const { return m_parentGroup; };
-
-//	virtual void setup();
-	virtual void paintCell ( QPainter *p, const QColorGroup &cg, int column, int width, int align );
 
 	/* Duncan experiment */
 /*	virtual void setColor( const QColor &color );
@@ -167,7 +168,7 @@ protected:
 private:
 	void initLVI();
 	QString key( int column, bool ascending ) const;
-
+	void updateContactIcons();
 
 	KopeteMetaContact *m_metaContact;
 	KopeteGroupViewItem *m_parentGroup;
@@ -186,6 +187,9 @@ private:
 
 	bool mIsBlinkIcon;
 	int m_blinkLeft;
+
+	class Private;
+	Private *d;
 };
 
 #endif
