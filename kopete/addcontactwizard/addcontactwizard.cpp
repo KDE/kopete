@@ -233,7 +233,7 @@ void AddContactWizard::accept()
 			topLevel = false;
 		}
 	}
-	m->setTopLevel( topLevel );
+	metaContact->setTopLevel( topLevel );
 
 	bool ok = false;
 
