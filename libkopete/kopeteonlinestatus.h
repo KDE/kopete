@@ -68,6 +68,9 @@ public:
 	 *         doesn't make sense to have more than one status per protocol
 	 *         that maps to 'Offline', since you're supposed to be
 	 *         disconnected from the network in this state.
+	 * Connecting is a state where the user is not available on the network yet
+	 *         but trying to get onto. Most useful to yourself contact, because
+	 *         this state means not visible but with network access
 	 * Unknown refers to protocols where state cannot be determined. This
 	 *         applies to SMS contacts (text messages via mobile phones),
 	 *         since there's no presence information over SMS, but also
@@ -77,7 +80,7 @@ public:
 	 *         itself uses the Unknown state in @ref KopeteMetaContact for
 	 *         meta contacts that have no child contacts at all.
 	 */
-	enum OnlineStatus { Unknown, Offline, Online, Away };
+	enum OnlineStatus { Unknown, Connecting, Offline, Online, Away };
 
 	/**
 	 * Constructor.
