@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>IRCEditAccountBase</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>640</width>
-            <height>486</height>
+            <height>496</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -25,6 +25,9 @@
             <width>440</width>
             <height>575</height>
         </size>
+    </property>
+    <property name="caption">
+        <string>IRCEditAccountBase</string>
     </property>
     <vbox>
         <property name="name">
@@ -291,7 +294,7 @@
                         <property name="maximumSize">
                             <size>
                                 <width>32767</width>
-                                <height>40</height>
+                                <height>32767</height>
                             </size>
                         </property>
                         <property name="text">
@@ -314,7 +317,7 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>141</height>
+                                <height>20</height>
                             </size>
                         </property>
                     </spacer>
@@ -501,11 +504,11 @@
                 <attribute name="title">
                     <string>A&amp;dvanced Configuration</string>
                 </attribute>
-                <grid>
+                <vbox>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QGroupBox" row="0" column="0">
+                    <widget class="QGroupBox">
                         <property name="name">
                             <cstring>groupBox5</cstring>
                         </property>
@@ -592,31 +595,14 @@
                             </widget>
                         </grid>
                     </widget>
-                    <spacer row="3" column="0">
-                        <property name="name">
-                            <cstring>spacer9</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>171</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <widget class="QGroupBox" row="1" column="0">
+                    <widget class="QGroupBox">
                         <property name="name">
                             <cstring>groupBox6</cstring>
                         </property>
                         <property name="sizePolicy">
                             <sizepolicy>
                                 <hsizetype>3</hsizetype>
-                                <vsizetype>5</vsizetype>
+                                <vsizetype>3</vsizetype>
                                 <horstretch>0</horstretch>
                                 <verstretch>0</verstretch>
                             </sizepolicy>
@@ -630,11 +616,11 @@
                         <property name="title">
                             <string>Custom CTCP Replies</string>
                         </property>
-                        <vbox>
+                        <grid>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="KListView">
+                            <widget class="KListView" row="0" column="0">
                                 <column>
                                     <property name="text">
                                         <string>CTCP</string>
@@ -663,15 +649,21 @@
                                 <property name="sizePolicy">
                                     <sizepolicy>
                                         <hsizetype>1</hsizetype>
-                                        <vsizetype>3</vsizetype>
+                                        <vsizetype>7</vsizetype>
                                         <horstretch>0</horstretch>
                                         <verstretch>0</verstretch>
                                     </sizepolicy>
                                 </property>
+                                <property name="minimumSize">
+                                    <size>
+                                        <width>0</width>
+                                        <height>58</height>
+                                    </size>
+                                </property>
                                 <property name="maximumSize">
                                     <size>
                                         <width>32767</width>
-                                        <height>58</height>
+                                        <height>232</height>
                                     </size>
                                 </property>
                                 <property name="allColumnsShowFocus">
@@ -690,7 +682,7 @@
                                     <string>You can use this dialog to add custom replies for when people send CTCP requests to you. You can also use this dialog to override the built-in replies for VERSION, USERINFO, and CLIENTINFO.</string>
                                 </property>
                             </widget>
-                            <widget class="QLayoutWidget">
+                            <widget class="QLayoutWidget" row="1" column="0">
                                 <property name="name">
                                     <cstring>layout153</cstring>
                                 </property>
@@ -737,12 +729,15 @@
                                         <property name="text">
                                             <string>Add Repl&amp;y</string>
                                         </property>
+                                        <property name="accel">
+                                            <string>Alt+Y</string>
+                                        </property>
                                     </widget>
                                 </hbox>
                             </widget>
-                        </vbox>
+                        </grid>
                     </widget>
-                    <widget class="QGroupBox" row="2" column="0">
+                    <widget class="QGroupBox">
                         <property name="name">
                             <cstring>groupBox60</cstring>
                         </property>
@@ -767,7 +762,41 @@
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="KListView" row="0" column="0" rowspan="1" colspan="2">
+                            <widget class="QLayoutWidget" row="1" column="0">
+                                <property name="name">
+                                    <cstring>layout29</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLineEdit">
+                                        <property name="name">
+                                            <cstring>commandEdit</cstring>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>3</hsizetype>
+                                                <vsizetype>0</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                    </widget>
+                                    <widget class="QPushButton">
+                                        <property name="name">
+                                            <cstring>addButton</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Add Co&amp;mmand</string>
+                                        </property>
+                                        <property name="accel">
+                                            <string>Alt+M</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                            <widget class="KListView" row="0" column="0">
                                 <column>
                                     <property name="text">
                                         <string>Command</string>
@@ -785,15 +814,21 @@
                                 <property name="sizePolicy">
                                     <sizepolicy>
                                         <hsizetype>7</hsizetype>
-                                        <vsizetype>3</vsizetype>
+                                        <vsizetype>7</vsizetype>
                                         <horstretch>0</horstretch>
                                         <verstretch>0</verstretch>
                                     </sizepolicy>
                                 </property>
+                                <property name="minimumSize">
+                                    <size>
+                                        <width>0</width>
+                                        <height>58</height>
+                                    </size>
+                                </property>
                                 <property name="maximumSize">
                                     <size>
                                         <width>32767</width>
-                                        <height>58</height>
+                                        <height>232</height>
                                     </size>
                                 </property>
                                 <property name="allColumnsShowFocus">
@@ -815,30 +850,26 @@
                                     <string>Any commands added here will be run as soon as you are connected to the IRC server.</string>
                                 </property>
                             </widget>
-                            <widget class="QLineEdit" row="1" column="0">
-                                <property name="name">
-                                    <cstring>commandEdit</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>3</hsizetype>
-                                        <vsizetype>0</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                            </widget>
-                            <widget class="QPushButton" row="1" column="1">
-                                <property name="name">
-                                    <cstring>addButton</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Add Co&amp;mmand</string>
-                                </property>
-                            </widget>
                         </grid>
                     </widget>
-                </grid>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer29</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>0</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </vbox>
             </widget>
         </widget>
     </vbox>
@@ -860,12 +891,12 @@
     </connection>
 </connections>
 <tabstops>
+    <tabstop>tabWidget2</tabstop>
     <tabstop>mNickName</tabstop>
     <tabstop>mAltNickname</tabstop>
     <tabstop>mUserName</tabstop>
     <tabstop>mPassword</tabstop>
     <tabstop>mRememberPassword</tabstop>
-    <tabstop>tabWidget2</tabstop>
     <tabstop>partMessage</tabstop>
     <tabstop>quitMessage</tabstop>
     <tabstop>ctcpList</tabstop>
@@ -875,6 +906,11 @@
     <tabstop>commandList</tabstop>
     <tabstop>commandEdit</tabstop>
     <tabstop>addButton</tabstop>
+    <tabstop>network</tabstop>
+    <tabstop>charset</tabstop>
+    <tabstop>autoConnect</tabstop>
+    <tabstop>preferSSL</tabstop>
+    <tabstop>editButton</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
