@@ -27,9 +27,18 @@
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
 
+class KopeteProtocolPrivate
+{
+public:
+	bool unloading;
+};
+
 KopeteProtocol::KopeteProtocol( KInstance *instance, QObject *parent, const char *name )
 : KopetePlugin( instance, parent, name )
 {
+	d = new KopeteProtocolPrivate;
+	d->unloading = false;
+
 	// FIXME: avoid having to use an arbitrary number like 765
 	// and *hope* that protocols won't declare their own KOS with
 	// the same internalStatus
@@ -45,6 +54,8 @@ KopeteProtocol::~KopeteProtocol()
 	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
 	for( QDictIterator<KopeteAccount> it( accounts ); it.current() ; ++it )
 		delete *it;
+
+	delete d;
 }
 
 KopeteOnlineStatus KopeteProtocol::status() const

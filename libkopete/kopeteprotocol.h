@@ -33,6 +33,8 @@ class KopeteMetaContact;
 class EditAccountWidget;
 class KopeteAccount;
 
+class KopeteProtocolPrivate;
+
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  * @author Martijn Klingens       <klingens@kde.org>
@@ -170,6 +172,8 @@ protected:
 	 * The default unknown status every protocol needs
 	 */
 	KopeteOnlineStatus m_status;
+
+	KopeteProtocolPrivate *d;
 };
 
 #endif
