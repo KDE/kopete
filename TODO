@@ -17,6 +17,11 @@ Beware: It's totally unsorted ;)
   fails. Alternatively, retry reconnecting with increasing intervals.
 
 - Prevent attempting to send while offline where appropriate
+
+- First time wizard (mETz)
+
+- Import emoticon themes and/or styles (mETz)
+
 ================================================================================
 
 OSCAR ICQ/AIM TODO ITEMS (generously added by mETz *g*)
@@ -37,9 +42,6 @@ For 0.7
 	- make renaming serverside contacts possible (function is there but fails due
 	  to massive contactlist crappyness caused by above mentioned classes)
 
-	X error handling on channel 0x04 messages. properly disconnect and emit a
-	  signal in oscarsocket. (Will)
-
 For 1.0/kdenetwork:
 	- switch from QSocket to KExtendedSocket,
 	  this means rewriting most of oscarsocket
@@ -57,20 +59,15 @@ For 1.0/kdenetwork:
 
 	- get rid of AIMContactList, AIMBuddy (almost gone already) and AIMGroup.
 
+	- Maybe base Buffer class on something like QDataStream (if possible),
+	  I don't like all the pointer stuff in here
+
 	- possible switch to a libfaim based backend (for both ICQ and AOL)
 	  (rather no :P)
 
 
 	ICQ specific ================================================================
 For 0.7:
-	X IMPORTANT: write plugin data to accounts.xml, and fail gracefully if
-	there is none there instead of giving
-	kopete (oscar): [void OscarAccount::slotGoOnline()] 389743: Already ONLINE
-	** See if this is still there after the move back to KConfig
-	I noticed it was writing no plugin data to accounts.xml recently,
-	I think a lack of server name and port data there prevents ICQ
-	connecting. (Will, confirmed by Till, hopefully fixed by mETz)
-
 	- support simple icq type-2 messages so we can send/receive away
 	messages (yes, I even see this as a point for not releasing 0.7, away
 	messages ARE important or else I could take out away modes altogether)
@@ -80,8 +77,6 @@ For 0.7:
 	- read away reasons
 	- own away-reasons
 	- use html/rtf in own messages (i.e. support type-2 messages, BIG ONE)
-	X keepalive for connection to server (icq has ping packets)
-	- STOP stupid users from adding their own UIN to the userlist
 	- honor encodings for both sides (I need more knowledge about this!)
 	- Option: Allow access from contacts on my contact list only
 	- group handling
@@ -90,14 +85,6 @@ For 0.7:
 	  these signals.
 	- ignore lists (needs proper group-handling)
 	- invisible list (needs proper group-handling)
-	X invisible mode
-
-	X support login with something different than "online" status, both for
-	  AIM and ICQ. I thought about changing OscarSocket::doLogin but the var
-	  would either contain an icq status long or a simple number for aim, not
-	  sure if mixing icq-specific values and plain numbers is a good idea
-	  (although possible, we have an isICQ() function anyway)
-
 	- support sending your own icq userinfo to the server,
 	  it's easy to do for me but because of the mass of items takes lots of time
 	  and is extremely boring.
@@ -124,4 +111,3 @@ For 1.0/kdenetwork:
 	   possibility to send files without opening previously a chat
 
 ================================================================================
-
