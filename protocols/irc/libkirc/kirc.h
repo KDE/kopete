@@ -155,6 +155,9 @@ public:
 
 	const QStringList &motd() { return m_motdBuffer; }
 
+public slots:
+	void showInfoDialog();
+
 signals:
 	//Engine Signals
 	void connectedToServer(); /* 001 */

@@ -662,6 +662,14 @@ void KIRC::changeUser(const QString &newUsername, Q_UINT8 mode, const QString &n
 	writeMessage("USER", QStringList(m_Username) << QString::number(mode) << QChar('*'), m_Realname, false);
 }
 
+void KIRC::showInfoDialog()
+{
+	if( m_useSSL )
+	{
+		static_cast<KSSLSocket*>( m_sock )->showInfoDialog();
+	}
+}
+
 void KIRC::quitIRC(const QString &reason, bool now)
 {
 	kdDebug(14120) << k_funcinfo << endl;

@@ -19,9 +19,12 @@
     *************************************************************************
 */
 
+#include <qvariant.h>
 #include <kextsock.h>
+
 class KSSLSocketPrivate;
 class SSLPollThread;
+class QWidget;
 
 class KSSLSocket : public KExtendedSocket
 {
@@ -38,6 +41,8 @@ class KSSLSocket : public KExtendedSocket
 		int peekBlock( char *data, uint maxLen );
 		int bytesAvailable() const;
 
+		void showInfoDialog( QWidget *parent = 0L, bool modal = false );
+
 	signals:
 		void sslFailure();
 
@@ -48,6 +53,13 @@ class KSSLSocket : public KExtendedSocket
 
 	private:
 		void readData( int bytes );
+		int verifyCertificate();
+
+		//Copied frm tcpslavebase to simply integrating their dialog function
+		void setMetaData( const QString &, const QVariant & );
+		bool hasMetaData( const QString & );
+		QString metaData( const QString & );
+
 		KSSLSocketPrivate *d;
 };
 

@@ -385,7 +385,13 @@ KActionMenu *IRCAccount::actionMenu()
 	mActionMenu->popupMenu()->insertSeparator();
 	mActionMenu->insert( new KAction ( i18n("Join Channel..."), "", 0, this, SLOT(slotJoinChannel()), mActionMenu ) );
 	mActionMenu->insert( new KAction ( i18n("Search Channels..."), "", 0, this, SLOT(slotSearchChannels()), mActionMenu ) );
-	mActionMenu->insert( new KAction ( i18n("Show Server Window"), "", 0, this, SLOT(slotShowServerWindow()), mActionMenu ) );
+	mActionMenu->insert( new KAction ( i18n("Show Server Window..."), "", 0, this, SLOT(slotShowServerWindow()), mActionMenu ) );
+
+	if( m_engine->isConnected() && m_network->hosts[ currentHost ]->ssl )
+	{
+		mActionMenu->insert( new KAction ( i18n("Show Security Information..."), "", 0, m_engine,
+			SLOT(showInfoDialog()), mActionMenu ) );
+	}
 
 	return mActionMenu;
 }
