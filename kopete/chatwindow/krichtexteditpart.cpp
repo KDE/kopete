@@ -7,12 +7,20 @@
 #include <qapplication.h>
 #include <qclipboard.h>
 #include <kparts/genericfactory.h>
+#include <private/qrichtext_p.h>
 
 #include "krichtexteditpart.h"
 #include "krichtexteditpart.moc"
 
 typedef KParts::GenericFactory<KopeteRichTextEditPart> KopeteRichTextEditPartFactory;
 K_EXPORT_COMPONENT_FACTORY( libkopeterichtexteditpart,  KopeteRichTextEditPartFactory )
+
+class KopeteTextEdit : public KTextEdit
+{
+	public:
+		KopeteTextEdit( QWidget *parent ) : KTextEdit( parent ) {};
+		const QTextCursor * cursor() { return textCursor(); };
+};
 
 KopeteRichTextEditPart::KopeteRichTextEditPart( QWidget *wparent, const char *wname, QObject*, const char*, const QStringList& )
 	: KParts::ReadOnlyPart( wparent, wname ? wname : "rich_text_part" )
@@ -26,7 +34,7 @@ KopeteRichTextEditPart::KopeteRichTextEditPart( QWidget *parent, const char *nam
 	// we need an instance
 	setInstance( KopeteRichTextEditPartFactory::instance() );
 
-	editor = new KTextEdit( parent );
+	editor = new KopeteTextEdit( parent );
 	editor->setReadOnly( false );
 
 	simpleMode = !supportsRichText;
@@ -296,15 +304,5 @@ const QString KopeteRichTextEditPart::text( Qt::TextFormat fmt ) const
 	if( fmt == editor->textFormat() || fmt != Qt::PlainText )
 		return editor->text();
 	else
-	{
-	        QClipboard *cb = qApp->clipboard();
-		QString t1 = cb->text( QClipboard::Clipboard );
-		editor->selectAll();
-		editor->copy();
-		QString t2 = cb->text( QClipboard::Clipboard );
-		cb->setText( t1 );
-		editor->selectAll(false);
-
-		return t2;
-	}
+		return editor->cursor()->document()->plainText();
 }
