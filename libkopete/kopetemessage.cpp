@@ -17,12 +17,12 @@
 #include <qstylesheet.h>
 #include <qregexp.h>
 #include <kdebug.h>
+#include <kglobal.h>
+#include <klocale.h>
 
 #include "kopetemessage.h"
-
 #include "kopeteemoticons.h"
-
-
+#include "kopetemetacontact.h"
 
 KopeteMessage::KopeteMessage()
 {
@@ -152,6 +152,161 @@ QString KopeteMessage::parsedBody() const
 		return mBody;
 
 	return KopeteEmoticons::parseEmoticons(parseHTML(escapedBody()));
+}
+
+QString KopeteMessage::transformMessage( const QString &model ) const
+{
+	QString message = "";
+	bool F_first = true;
+	unsigned int f = 0;
+
+	do
+	{
+		char c = ((const char*)model)[f];
+		if( c != '%' )
+		{
+			message += c;
+		}
+		else
+		{
+			f++;
+			c = ((const char*)model)[f];
+			switch(c)
+			{
+				case 'M':  //insert Message
+					message.append( parsedBody() );
+					break;
+
+				case 'T':  //insert Timestamp
+					message.append( KGlobal::locale()->formatTime(mTimestamp.time(), true) );
+					break;
+
+				case 'F':  //insert Fonts
+					if( F_first ) // <font>....
+					{
+						message +="<font ";
+						if ( mFg.isValid() )
+							message += "color=\"" + mFg.name() + "\"";
+						if ( mFont != QFont() )
+							message += " face=\"" + mFont.family() + "\"";
+						message +=">";
+						if ( mFont != QFont() && mFont.bold())
+							message += "<b>";
+						if ( mFont != QFont() && mFont.italic())
+							message += "<i>";
+						F_first=false;
+					}
+					else            // </font>
+					{
+						if ( mFont != QFont() && mFont.italic())
+							message += "</i>";
+						if ( mFont != QFont() && mFont.bold())
+							message += "</b>";
+
+						message +="</font>";
+						F_first=true;
+					}
+					break;
+
+				case 'b':   //BgColor
+					if ( mBg.isValid() )
+						message += "bgcolor=\"" + mBg.name() + "\"";
+					break;
+
+				case 'i': //only inbound
+					if(mDirection != Inbound)
+					{
+						bool b=false;
+						bool fin;
+						do
+						{
+							fin=false;
+							f++;
+							char c2=((const char*)model)[f];
+							if(c2=='i' && b)
+								fin=true;
+							b = (c2=='%');
+						}
+						while (f<model.length() && !fin);
+					}
+					break;
+
+				case 'o': //only outbound
+					if(mDirection != Outbound)
+					{
+						bool b=false;
+						bool fin;
+						do
+						{
+							fin=false;
+							f++;
+							char c2=((const char*)model)[f];
+							if(c2=='o' && b)
+								fin=true;
+							b=(c2=='%');
+						}
+						while (f<model.length() && !fin);
+					}
+					break;
+				case 's': //only internal
+					if(mDirection != Internal)
+					{
+						bool b=false;
+						bool fin;
+						do
+						{
+							fin=false;
+							f++;
+							char c2=((const char*)model)[f];
+							if(c2=='s' && b)
+								fin=true;
+							b=(c2=='%');
+						}
+						while (f<model.length() && !fin);
+					}
+					break;
+				case 'e': //not internal (external)
+					if(mDirection == Internal)
+					{
+						bool b=false;
+						bool fin;
+						do
+						{
+							fin=false;
+							f++;
+							char c2=((const char*)model)[f];
+							if(c2=='e' && b)
+								fin=true;
+							b=(c2=='%');
+						}
+						while (f<model.length() && !fin);
+					}
+					break;
+
+				case 'f': //insert the 'from' displayName
+					if (mFrom->metaContact()) 
+						message.append( QStyleSheet::escape(mFrom->metaContact()->displayName()) );
+					else
+						message.append( QStyleSheet::escape(mFrom->displayName()) );
+					break;
+
+				case 't': //insert the 'to' displayName
+					if (to().first()->metaContact()) 
+						message.append( QStyleSheet::escape(to().first()->metaContact()->displayName()) );
+					else
+						message.append( QStyleSheet::escape(to().first()->displayName()) );
+					break;
+
+				default:
+					message += c;
+					break;
+			}
+		}
+		f++;
+	}
+	while( f < model.length() );
+	
+	return message;
 }
 
 QString KopeteMessage::parseHTML( QString message, bool parseURLs )

@@ -20,14 +20,12 @@
 
 #include <qptrlist.h>
 #include <qvaluelist.h>
-#include <qobject.h>
 
 #include "kopetemessage.h"
 #include "kopetecontact.h"
 
 class KopeteContact;
 class KopeteMessageManager;
-class QObject;
 
 class KopeteChatWindow;
 class KopeteEvent;

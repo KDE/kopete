@@ -30,6 +30,7 @@
 #include <qstringlist.h>
 #include <qtextedit.h>
 #include <qvgroupbox.h>
+#include <qdatetime.h>
 
 #include <kcombobox.h>
 #include <kconfig.h>
@@ -47,6 +48,8 @@
 #endif
 #include <kstddirs.h>
 #include <ktabctl.h>
+#include <kglobalsettings.h>
+#include <khtml_part.h>
 
 #include "appearanceconfig_chatwindow.h"
 #include "configmodule.h"
@@ -325,7 +328,10 @@ void AppearanceConfig::slotUseEmoticonsChanged ( bool checked )
 void AppearanceConfig::slotSelectKind(int k)
 {
 	if(k>0)
-		mPrfsChatWindow->mle_codehtml->setText(KopeteChatWindow::KindMessagesHTML(k-1));
+	{
+		QString model = KopeteChatWindow::KindMessagesHTML(k-1);
+		mPrfsChatWindow->mle_codehtml->setText( model );
+	}
 }
 
 #include "appearanceconfig.moc"

@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>302</width>
+            <width>317</width>
             <height>395</height>
         </rect>
     </property>
@@ -39,65 +39,6 @@
                 <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>cb_RaiseMsgWindowChk</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Raise window on new messages</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>cb_ShowEventsChk</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Show events in chat window</string>
-                    </property>
-                </widget>
-                <widget class="QGroupBox">
-                    <property name="name">
-                        <cstring>ButtonGroup1</cstring>
-                    </property>
-                    <property name="title">
-                        <string>Send Message With</string>
-                    </property>
-                    <grid>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>11</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
-                        <widget class="QCheckBox" row="0" column="0">
-                            <property name="name">
-                                <cstring>cb_Enter</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Enter</string>
-                            </property>
-                        </widget>
-                        <widget class="QCheckBox" row="0" column="1">
-                            <property name="name">
-                                <cstring>cb_CtrlEnter</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Ctrl+Enter</string>
-                            </property>
-                        </widget>
-                        <widget class="QCheckBox" row="0" column="2">
-                            <property name="name">
-                                <cstring>cb_ShiftEnter</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Shift+Enter</string>
-                            </property>
-                        </widget>
-                    </grid>
-                </widget>
                 <widget class="QGroupBox">
                     <property name="name">
                         <cstring>GroupBox2</cstring>
@@ -115,20 +56,9 @@
                         <property name="spacing">
                             <number>6</number>
                         </property>
-                        <widget class="QLabel" row="0" column="0">
+                        <widget class="KTextBrowser" row="3" column="0" rowspan="1" colspan="2">
                             <property name="name">
-                                <cstring>TextLabel1</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>1</hsizetype>
-                                    <vsizetype>5</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="text">
-                                <string>Kind:</string>
+                                <cstring>preview</cstring>
                             </property>
                         </widget>
                         <widget class="QComboBox" row="0" column="1">
@@ -164,6 +94,30 @@
                                 <enum>PlainText</enum>
                             </property>
                         </widget>
+                        <widget class="QLabel" row="0" column="0">
+                            <property name="name">
+                                <cstring>TextLabel1</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>1</hsizetype>
+                                    <vsizetype>5</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="text">
+                                <string>Kind:</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="2" column="0">
+                            <property name="name">
+                                <cstring>previewLabel</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Preview:</string>
+                            </property>
+                        </widget>
                     </grid>
                 </widget>
             </vbox>
@@ -171,4 +125,7 @@
     </hbox>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>ktextbrowser.h</includehint>
+</includehints>
 </UI>

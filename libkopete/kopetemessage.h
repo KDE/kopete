@@ -216,6 +216,8 @@ public:
 	 *
 	 */
 	QString asHTML() const;
+	
+	QString transformMessage( const QString &model ) const;
 
 protected:
 	// Helper for constructors
@@ -227,7 +229,7 @@ protected:
 	/** Contact the message came from */
 	const KopeteContact *mFrom;
 	/** Pointer list of contacts the message is going to */
-	QPtrList<KopeteContact> mTo;
+	KopeteContactPtrList mTo;
 	/** Message body */
 	QString mBody;
 	/** Message subject */
@@ -251,8 +253,6 @@ public:
 	 * and uses HTML parser.
 	 **/
 	static QString parseHTML( QString message, bool parseURLs = true );
-
-
 };
 
 #endif
