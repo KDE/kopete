@@ -58,9 +58,9 @@ void dlgJabberRegister::slotGotForm ()
 	}
 
 	// translate the form and create it inside the box widget
-	translator = new JabberFormTranslator (grpForm);
-
-	translator->translate (task->form (), grpForm);
+	translator = new JabberFormTranslator (task->form (), grpForm);
+	grpForm->layout()->add (translator);
+	translator->show();
 
 	// enable the send button
 	btnRegister->setEnabled (true);

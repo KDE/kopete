@@ -66,9 +66,9 @@ void dlgJabberBrowse::slotGotForm ()
 
 
 	// translate the form and create it inside the display widget
-	translator = new JabberFormTranslator (dynamicForm);
-
-	translator->translate (task->form (), dynamicForm);
+	translator = new JabberFormTranslator (task->form (), dynamicForm);
+	dynamicForm->layout()->add( translator );
+	translator->show();
 
 	// enable the send button
 	btnSearch->setEnabled (true);

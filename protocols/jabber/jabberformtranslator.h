@@ -32,10 +32,9 @@ class JabberFormTranslator:public QWidget
 {
 
   Q_OBJECT public:
-	  JabberFormTranslator (QWidget * parent = 0, const char *name = 0);
+	  JabberFormTranslator (const Jabber::Form & form, QWidget * parent = 0, const char *name = 0);
 	 ~JabberFormTranslator ();
 
-	void translate (const Jabber::Form & form, QWidget * widget);
 	  Jabber::Form & resultData ();
 
 	  signals:void gatherData (Jabber::Form & form);
