@@ -82,7 +82,7 @@ public slots:
    *  You must set @ref pubDirSearchResult() signal before calling this function, otherwise no result
    *  will be returned
    */
-	bool pubDirSearch(QString &name, QString &surname, QString &nick, 
+    bool pubDirSearch(QString &name, QString &surname, QString &nick, 
 			    int UIN, QString &city, int gender, 
 			    int ageFrom, int ageTo, bool onlyAlive);
                             
@@ -90,7 +90,7 @@ public slots:
    *  Releases all allocated memory needed to perform search.
    *  This will be done on each @ref pubDirNewSearch(), if previuos is not released
    */
-  void pubDirSearchClose();
+    void pubDirSearchClose();
   
 signals:
 	void error( const QString& title, const QString& message );
@@ -103,7 +103,7 @@ signals:
 	void connectionFailed( struct gg_event* );
 	void connectionSucceed( struct gg_event* );
 	void disconnect();
-  void pubDirSearchResult( searchResult &result );
+	void pubDirSearchResult( searchResult &result );
   
   
 protected slots:
