@@ -22,6 +22,8 @@
 #include <qpushbutton.h>
 #include <qspinbox.h>
 #include <qcombobox.h>
+#include <kmessagebox.h>
+#include <klocale.h>
 
 
 #include "jabbereditaccountwidget.h"
@@ -32,6 +34,7 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	m_protocol = proto;
 
 	connect (mID, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
+	connect (mID, SIGNAL (lostFocus ()), this, SLOT (validateJID ()));
 	connect (mPass, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
 	connect (mResource, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
 	connect (mServer, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
@@ -76,20 +79,13 @@ void JabberEditAccountWidget::reopen ()
 	mResource->setText (m_account->pluginData (m_protocol, "Resource"));
 	mServer->setText (m_account->pluginData (m_protocol, "Server"));
 
-	mID->setReadOnly(true); //the accountId is constant
-
-	// START Order Important =====
-	// !!! First set the checkbox, THEN the port
-	// if done the other way round: checking the checkbox triggers +/- 1 for the port-value
-	// ( see dlgJabberPrefs::sslToggled() )
 	if (m_account->pluginData (m_protocol, "UseSSL") == "true")
 		chkUseSSL->setChecked (true);
 
+	mPort->setValue (m_account->pluginData (m_protocol, "Port").toInt ());
+
 	if (m_account->pluginData (m_protocol, "RemPass") == "true")
 		chkRemPass->setChecked (true);
-
-	mPort->setValue (m_account->pluginData (m_protocol, "Port").toInt ());
-	// END Order Important =====
 
 	QString auth = m_account->pluginData (m_protocol, "AuthType");
 
@@ -214,6 +210,34 @@ void JabberEditAccountWidget::writeConfig ()
 bool JabberEditAccountWidget::validateData ()
 {
 	return true;
+}
+
+void JabberEditAccountWidget::validateJID ()
+{
+	QString server = mID->text().section('@', 1);
+
+	if(mServer->text().isEmpty())
+	{
+		// the user didn't specify a server, automatically choose one
+		mServer->setText(server);
+	}
+	else
+	{
+		if(mServer->text() != server)
+		{
+			// the user has chosen a different server than his JID
+			// suggests, display a warning
+			int result = KMessageBox::warningYesNo (this, i18n("You have chosen a different Jabber server than your Jabber "
+													"ID suggests. Do you want me to change your server setting? Selecting \"Yes\" "
+													"will change your Jabber server to \"%1\" as indicated by your Jabber ID. "
+													"Selecting \"No\" leave your current settings.").arg(server),
+													i18n("Are you sure about your server name?"));
+
+			if(result == KMessageBox::Yes)
+				mServer->setText(server);
+		}
+	}
+
 }
 
 void JabberEditAccountWidget::configChanged ()

@@ -27,7 +27,6 @@ TODO for Jabber:
    to treat that information as if it went offline itself)
 - when opening the prefs dialog, make sure that the password dialog does not pop up
 - add a button for server defaults
-- if an account is entered and the server field is empty, automatically retrieve it from the JID
 - on a failed connection attempt, the animation does not stop
 - going offline does not stop the animation after a failed connection attempt
 - empty hostname makes Jabber crash (faulty NDNS)
