@@ -241,7 +241,7 @@ KopeteChatWindow *KopeteMessageManager::newWindow()
 			kdDebug(14010) << k_funcinfo << "Group all" << endl;
 
 			//Check if a window exists
-			if( chatWindowMap()->isEmpty() )
+			if( chatWindowList()->isEmpty() )
 			{
 				//No window exists, create a new window
 				myWindow = new KopeteChatWindow();
@@ -250,17 +250,16 @@ KopeteChatWindow *KopeteMessageManager::newWindow()
 			}
 			else
 			{
+				kdDebug(14010) << k_funcinfo << "A window exists already" << endl;
 				//A window does exist. Use the one with the most tabs
 				int viewCount = 0;
-				ChatWindowMap::Iterator it;
-				for ( it = chatWindowMap()->begin(); it != chatWindowMap()->end(); ++it )
+				for ( KopeteChatWindow *thisWindow = chatWindowList()->first(); thisWindow; thisWindow = chatWindowList()->next() )
 				{
-					if( it.data()->chatViewCount() > viewCount )
+					if( thisWindow->chatViewCount() > viewCount )
 					{
-						myWindow = it.data();
-						viewCount = it.data()->chatViewCount();
+						myWindow = thisWindow;
+						viewCount = thisWindow->chatViewCount();
 					}
-
 				}
 			}
 			break;
