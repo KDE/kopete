@@ -1,5 +1,13 @@
 METASOURCES = AUTO
-SUBDIRS = ui icons
+if include_libggcopy
+LIBGADU_COPY=libgadu
+LIBGG_INCLUDES=-I./libgadu
+LIBGG_LIBS=$(top_builddir)/kopete/protocols/gadu/libgadu/libgadu_copy.la \
+	   $(LIBPTHREAD)
+endif
+
+
+SUBDIRS = ui icons $(LIBGADU_COPY)
 AM_CPPFLAGS = -I$(srcdir)/ui \
 	-I./ui \
 	-I./lib \
