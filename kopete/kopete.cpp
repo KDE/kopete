@@ -236,12 +236,33 @@ void Kopete::quitKopete()
 {
 	kdDebug( 14000 ) << k_funcinfo << endl;
 
-	m_isShuttingDown = true;
-	if ( m_mainWindow )
+	if ( !m_isShuttingDown )
 	{
-		//m_mainWindow->close();
-		KopetePluginManager::self()->shutdown();
+		m_isShuttingDown = true;
+
+#if KDE_VERSION < KDE_MAKE_VERSION( 3, 1, 90 )
+		// When we close Kopete through KSystemTray, kdelibs will close all open
+		// windows first. However, despite the destructive close the main window
+		// is _NOT_ yet deleted at this point (it's a scheduled deleteLater()
+		// call).
+		// Due to a bug in KMainWindow prior to KDE 3.2 calling close() a second
+		// time also derefs KApplication a second time, which causes a premature
+		// call to KApplication::quit(), so we never go through the plugin
+		// manager's shutdown process.
+		// Unfortunately we can't assume close() ever being called though,
+		// because the code paths not using the system tray still need this.
+		// As a workaround we schedule a call to quitKopete() through a timer,
+		// so the event loop is processed and the window is already deleted.
+		// - Martijn
+		QTimer::singleShot( 0, this, SLOT( quitKopete() ) );
+		return;
+#endif
 	}
+
+	if ( m_mainWindow )
+		m_mainWindow->close();
+
+	KopetePluginManager::self()->shutdown();
 }
 
 void Kopete::commitData( QSessionManager &sm )
