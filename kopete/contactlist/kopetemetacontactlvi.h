@@ -165,7 +165,7 @@ private:
 
 	int m_pixelWide;
 
-	/*KopeteOnlineStatus::OnlineStatus*/ unsigned int m_oldStatus;
+	KopeteOnlineStatus m_oldStatus;
 	QString m_oldStatusIcon;
 
 	KopeteEvent *m_event;

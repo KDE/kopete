@@ -248,45 +248,106 @@ void KopeteMetaContactLVI::rename( const QString& newName )
 
 void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 {
-	m_oldStatus = m_metaContact->status();
 	updateContactIcon( c );
 
 	// FIXME: All this code should be in kopetemetacontact.cpp.. having it in the LVI makes it all fire
 	// multiple times if the user is in multiple groups - Jason
-	if ( c->account()->suppressStatusNotification() )
-		return;
 
-	if ( c->account()->myself()->onlineStatus().status() == KopeteOnlineStatus::Connecting )
-		return;
-
-	//generaly when starting kopete and creating contacts.  (yeah, it's a workaround)
-	if( !c->account()->isConnected() )
-		return;
-
-	if ( !c->account()->isAway() || KopetePrefs::prefs()->soundIfAway() )
+	// comparing the status of the previous and new preferred contact is the determining factor in deciding to notify
+	KopeteOnlineStatus newStatus;
+	if ( m_metaContact->preferredContact() )
+		newStatus = m_metaContact->preferredContact()->onlineStatus();
+	else
 	{
-		int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
-
-		QString text = i18n( "%2 is now %1." ).arg( m_metaContact->statusString(), m_metaContact->displayName() );
-
-		/**
-		 * Yes, I know this is a funky order. However, it works as expected this way
-		 * although I haven't quite figured out why yet. Please don't change the order
-		 */
-		if ( m_metaContact->isOnline() && ( m_oldStatus == KopeteOnlineStatus::Offline || m_oldStatus == KopeteOnlineStatus::Away ) )
-			KNotifyClient::event( winId , "kopete_contact_status_change", text, m_metaContact, i18n( "Status Change" ), 0, 0 );
-		else if ( c == m_metaContact->preferredContact() && ( m_metaContact->status() != KopeteOnlineStatus::Offline || m_metaContact->status() != KopeteOnlineStatus::Unknown ) )
-			KNotifyClient::event( winId,  "kopete_contact_online", text, m_metaContact, i18n( "Chat" ), this, SLOT( execute() ) );
-		else
-			KNotifyClient::event( winId , "kopete_contact_offline", text, m_metaContact, i18n( "Offline" ), 0, 0 );
-	}
-	if ( !mBlinkTimer->isActive() && ( m_metaContact->statusIcon() != m_oldStatusIcon ) )
-	{
-		mIsBlinkIcon = false;
-		m_blinkLeft = 5;
-		mBlinkTimer->start( 400, false );
+		// the last child contact has gone offline or otherwise unreachable, so take the changed contact's online status
+		newStatus = c->onlineStatus();
 	}
 
+	// ensure we are not suppressing notifications, because connecting or disconnected
+	if ( !(c->account()->suppressStatusNotification()
+		 || ( c->account()->myself()->onlineStatus().status() == KopeteOnlineStatus::Connecting )
+		 || !c->account()->isConnected() ) )
+	{
+		if ( !c->account()->isAway() || KopetePrefs::prefs()->soundIfAway() )
+		{
+			int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
+
+			//QString text = i18n( "%2 is now %1." ).arg( m_metaContact->statusString(), m_metaContact->displayName() );
+			QString text = i18n( "%2 is now %1." ).arg( c->onlineStatus().description(), m_metaContact->displayName() );
+
+			// figure out what's happened
+			enum ChangeType { noChange, noEvent, signedIn, changedStatus, signedOut };
+			ChangeType t = noChange;
+			//kdDebug( 14000 ) << k_funcinfo << m_metaContact->displayName() <<
+					" - Old MC Status: " << m_oldStatus.status() << ", New MC Status: " << newStatus.status() << endl;
+			// first, exclude changes due to blocking or subscription changes at the protocol level
+			if ( ( m_oldStatus.status() == KopeteOnlineStatus::Unknown
+						|| newStatus.status() == KopeteOnlineStatus::Unknown ) )
+				t = noEvent;	// This means the contact's changed from or to unknown - due to a protocol state change, not a contact state change
+			else	// we're dealing with a genuine contact state change
+			{
+				if ( m_oldStatus.status() == KopeteOnlineStatus::Offline )
+				{
+					if ( newStatus.status() != KopeteOnlineStatus::Offline )
+					{
+						//kdDebug( 14000 ) << "signed in" << endl;
+						t = signedIn;	// contact has gone from offline to something else, it's a sign-in
+					}
+				}
+				else if ( m_oldStatus.status() == KopeteOnlineStatus::Online
+						  || m_oldStatus.status() == KopeteOnlineStatus::Away
+						  || m_oldStatus.status() == KopeteOnlineStatus::Invisible)
+				{
+					if ( newStatus.status() == KopeteOnlineStatus::Offline )
+					{
+						//kdDebug( 14000 ) << "signed OUT" << endl;
+						t = signedOut;	// contact has gone from an online state to an offline state, it's a sign out
+					}
+					else if ( m_oldStatus > newStatus || m_oldStatus < newStatus ) // operator!= is useless because it's an identity operator, not an equivalence operator
+					{
+						// contact has changed online states, it's a status change,
+						// and the preferredContact changed status, or there is a new preferredContacat
+						// so it's worth notifying
+						//kdDebug( 14000 ) << "changed status" << endl;
+						t = changedStatus; 
+					}
+				}
+				else if ( m_oldStatus != newStatus )
+				{
+					//kdDebug( 14000 ) << "non-event" << endl;
+					// catch-all for any other status change we don't know about
+					t = noEvent;
+				}
+				// if none of the above were true, t will still be noChange
+			}
+	
+			// now issue the appropriate notification
+			switch ( t )
+			{
+			case noEvent:
+			case noChange:
+				break;
+			case signedIn:
+				KNotifyClient::event( winId,  "kopete_contact_online", text, m_metaContact, i18n( "Chat" ), this, SLOT( execute() ) );
+				break;
+			case changedStatus:
+				KNotifyClient::event( winId , "kopete_contact_status_change", text, m_metaContact, i18n( "Chat" ), this, SLOT( execute() ) );
+				break;
+			case signedOut:
+				KNotifyClient::event( winId , "kopete_contact_offline", text, m_metaContact, i18n( "Offline" ), 0, 0 );
+				break;
+			}
+		}
+
+		if ( !mBlinkTimer->isActive() && ( m_metaContact->statusIcon() != m_oldStatusIcon ) )
+		{
+			mIsBlinkIcon = false;
+			m_blinkLeft = 5;
+			mBlinkTimer->start( 400, false );
+		}
+	}
+	// make a note of the current status for the next time we get a status change
+	m_oldStatus = newStatus;
 }
 
 void KopeteMetaContactLVI::slotUpdateMetaContact()
