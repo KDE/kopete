@@ -229,6 +229,7 @@ ChatMessagePart::~ChatMessagePart()
 		delete backgroundFile;
 	}
 
+	delete d->xsltParser;
 	delete d;
 }
 
