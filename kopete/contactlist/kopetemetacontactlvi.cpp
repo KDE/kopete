@@ -165,8 +165,9 @@ void KopeteMetaContactLVI::rename( const QString& newName )
 {
 	if( newName.isEmpty() )
 	{
-		//m_metaContact->setDisplayName( somethinginhere ); // FIXME: restore last displayname
-//		m_metaContact->setTrackChildNameChanges( true );
+		//reset the last display name
+		QListViewItem::setText(0, m_metaContact->displayName());
+		m_metaContact->setTrackChildNameChanges( true );
 	}
 	else // user changed name manually, disable tracking of contact nickname and update displayname
 	{
