@@ -71,7 +71,7 @@ QString KSParser::parse( const QString &message )
 
                 c = ircColor(bg);
                 if ( c.isValid() )
-                    res += pushTag( "font", QString( "bgcolor=\"%1\"" ).arg( c.name() ) );
+                    res += pushTag( "font", QString( "style=\"background-color:%1;\"" ).arg( c.name() ) );
             }
             else if (ch.latin1() == 0x03)
                 res += popTag( "font" );

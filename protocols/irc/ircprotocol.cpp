@@ -128,7 +128,14 @@ void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 
 	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
 	if( !accounts.isEmpty() )
-		accounts[ serializedData[ "accountId" ] ]->addContact( contactId, displayName, metaContact );
+	{
+		IRCAccount *a = static_cast<IRCAccount*>( accounts[ serializedData[ "accountId" ] ] );
+		if( a )
+			a->addContact( contactId, displayName, metaContact );
+		else
+			kdDebug(14120) << k_funcinfo << serializedData[ "accountId" ] << " was a contact's account,"
+				" but we dont have it in the accounts list" << endl;
+	}
 	else
 		kdDebug(14120) << k_funcinfo << "No accounts loaded!" << endl;
 }

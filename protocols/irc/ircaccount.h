@@ -86,7 +86,7 @@ public:
 	 */
 	void unregisterUser(const QString &name);
 
-	virtual bool addContactToMetaContact( const QString &contact, const QString &displayName, KopeteMetaContact *m);
+	bool addContact( const QString &contact, const QString &displayName, KopeteMetaContact *m);
 
 	virtual KActionMenu *actionMenu();
 

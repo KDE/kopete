@@ -112,7 +112,7 @@ bool IRCAccount::isConnected()
 	return (mMySelf->onlineStatus().status() == KopeteOnlineStatus::Online);
 }
 
-bool IRCAccount::addContactToMetaContact( const QString &contact, const QString &displayName, KopeteMetaContact *m )
+bool IRCAccount::addContact( const QString &contact, const QString &displayName, KopeteMetaContact *m )
 {
 	IRCContact *c;
 
