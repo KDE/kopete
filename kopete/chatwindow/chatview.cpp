@@ -1078,9 +1078,9 @@ const QString ChatView::addNickLinks( const QString &html ) const
 		if( c->displayName().length() > 0 )
 		{
 			retVal.replace(
-				QRegExp( QString::fromLatin1("(?![^<]+>)(\\b%1\\b)(?![^<]+>)")
+				QRegExp( QString::fromLatin1("([\\s&;>])(%1)([\\s&;<])")
 					.arg( QRegExp::escape( c->displayName() ) )  ),
-				QString::fromLatin1("<a href=\"kopetemessage://%1\" class=\"KopeteDisplayName\">\\1</a>")
+				QString::fromLatin1("\\1<a href=\"kopetemessage://%1\" class=\"KopeteDisplayName\">\\2</a>\\3")
 				.arg( c->contactId() )
 			);
 		}
