@@ -644,7 +644,7 @@ void JabberProtocol::removeUser(QString userID)
 		mProtocol->unsubscribe(userID);
 		
 		// remove account from local list
-		delete contactList[userID];
+		//delete contactList[userID];
 		contactList.remove(userID);
 	}
 	
