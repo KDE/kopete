@@ -91,7 +91,7 @@
                         <cstring>mEventIfActive</cstring>
                     </property>
                     <property name="text">
-                        <string>Enable events for incoming messages is the &amp;chatwindow is active</string>
+                        <string>Enable events for incoming messages if the &amp;chatwindow is active</string>
                     </property>
                 </widget>
             </vbox>
