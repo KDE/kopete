@@ -51,9 +51,25 @@ public:
 	MSNProtocol();
 	~MSNProtocol();
 
+	static const MSNProtocol *protocol();
+
 	// Plugin reimplementation
 	void init();
 	bool unload();
+
+	enum Status
+	{
+		NLN,    // Online
+		BSY,    // Busy
+		BRB,    // Be right back
+		AWY,    // Away from computer
+		PHN,    // On the phone
+		LUN,    // Out to lunch
+		FLN,    // Offline
+		HDN,    // Invisible
+		IDL,    // Idle
+		BLO     // blocked
+	};
 
 	// KopeteProtocol reimplementation
 	virtual QString protocolIcon() const;
@@ -171,6 +187,8 @@ private:
 	QLabel *mEmptyMsg;
 //	QList<MSNContactStruct> contactList;
 //	QList<MSNGroupStruct> groupList;
+
+	static const MSNProtocol *s_protocol;
 };
 
 #endif

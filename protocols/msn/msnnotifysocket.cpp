@@ -18,6 +18,7 @@
 
 #include "kmsnservicesocket.h"
 #include "kmsnservice.h"
+#include "msnprotocol.h"
 
 // kde
 #include <kglobal.h>
@@ -410,7 +411,7 @@ void KMSNServiceSocket::parseCommand(QString str)
 		//emit connected(true);
 		// set the status to online
 		// create an option in config dialog to select the state to be set
-		setStatus(KMSNService::NLN);
+		setStatus(MSNProtocol::NLN);
 		sendCVR();
 		return;
 	}
@@ -603,47 +604,47 @@ void KMSNServiceSocket::setStatus( int status )
 	QString command;
 	switch(status)
 	{
-		case KMSNService::NLN:
+		case MSNProtocol::NLN:
 		{
 			command.sprintf("CHG %lu NLN\r\n",ID);
 			break;
 		}
-		case KMSNService::BSY:
+		case MSNProtocol::BSY:
 		{
 			command.sprintf("CHG %lu BSY\r\n",ID);
 			break;
 		}
-		case KMSNService::BRB:
+		case MSNProtocol::BRB:
 		{
 			command.sprintf("CHG %lu BRB\r\n",ID);
 			break;
 		}
-		case KMSNService::AWY:
+		case MSNProtocol::AWY:
 		{
 			command.sprintf("CHG %lu AWY\r\n",ID);
 			break;
 		}
-		case KMSNService::PHN:
+		case MSNProtocol::PHN:
 		{	
 			command.sprintf("CHG %lu PHN\r\n", ID);
 			break;
 		}
-		case KMSNService::LUN:
+		case MSNProtocol::LUN:
 		{
 			command.sprintf("CHG %lu LUN\r\n",ID);
 			break;
 		}
-		case KMSNService::FLN:
+		case MSNProtocol::FLN:
 		{
 			command.sprintf("CHG %lu FLN\r\n",ID);
 			break;
 		}
-		case KMSNService::HDN:
+		case MSNProtocol::HDN:
 		{
 			command.sprintf("CHG %lu HDN\r\n",ID);
 			break;
 		}
-		case KMSNService::IDL:
+		case MSNProtocol::IDL:
 		{
 			command.sprintf("CHG %lu IDL\r\n",ID);
 			break;

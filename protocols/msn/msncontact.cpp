@@ -28,14 +28,14 @@
 
 // Constructor for no-groups
 MSNContact::MSNContact( const QString &msnId, const QString &nickname,
-	const QString &group, MSNProtocol *protocol )
-	: KopeteContact( protocol )
+	const QString &group, QObject *parent )
+	: KopeteContact( parent )
 {
-	initContact( msnId, nickname, group, protocol );
+	initContact( msnId, nickname, group );
 }
 
 void MSNContact::initContact( const QString &msnId, const QString &nickname,
-	const QString &group, const MSNProtocol *protocol)
+	const QString &group )
 {
 	m_actionRemove = 0L;
 	m_actionRemoveFromGroup = 0L;
@@ -45,25 +45,30 @@ void MSNContact::initContact( const QString &msnId, const QString &nickname,
 	m_actionMove = 0L;
 	m_actionCopy = 0L;
 
+	m_status = MSNProtocol::FLN;
+
+	m_deleted = false;
+	m_allowed = false;
+	m_blocked = false;
+
 	historyDialog = 0L;
 
-	m_protocol = protocol;
 	m_msnId = msnId;
 	m_nickname = nickname;
 	m_groups = group;
 	hasLocalGroup = false;
 
 	// We connect this signal so that we can tell when a user's status changes
-	connect( protocol, SIGNAL( updateContact( QString, uint ) ),
+	connect( MSNProtocol::protocol(), SIGNAL( updateContact( QString, uint ) ),
 				this, SLOT( slotUpdateContact( QString, uint ) ) );
-	connect( protocol, SIGNAL( contactRemoved( QString, QString ) ),
+	connect( MSNProtocol::protocol(), SIGNAL( contactRemoved( QString, QString ) ),
 				this, SLOT( slotContactRemoved( QString, QString ) ) );
 
-	connect ( this, SIGNAL(chatToUser(QString)), protocol->msnService(), SLOT( slotStartChatSession(QString)) );
-	connect ( protocol, SIGNAL( connectedToService( bool ) ), this, SLOT( slotDeleteMySelf( bool ) ) );
+	connect ( this, SIGNAL(chatToUser(QString)), MSNProtocol::protocol()->msnService(), SLOT( slotStartChatSession(QString)) );
+	connect ( MSNProtocol::protocol(), SIGNAL( connectedToService( bool ) ), this, SLOT( slotDeleteMySelf( bool ) ) );
 
 	setName( nickname );
-	slotUpdateContact( m_msnId, m_protocol->contactStatus( m_msnId ) );
+	slotUpdateContact( m_msnId, MSNProtocol::protocol()->contactStatus( m_msnId ) );
 }
 
 void MSNContact::showContextMenu(QPoint point, QString /*group*/)
@@ -103,7 +108,7 @@ void MSNContact::showContextMenu(QPoint point, QString /*group*/)
 		m_actionCopy = new KListAction( i18n( "Copy Contact" ), "editcopy", 0,
 			this, SLOT( slotCopyThisUser() ), this, "m_actionCopy" );
 	}
-	m_actionCopy->setItems( m_protocol->groups() );
+	m_actionCopy->setItems( MSNProtocol::protocol()->groups() );
 	m_actionCopy->plug( popup );
 
 	// Remove From Group
@@ -139,7 +144,7 @@ void MSNContact::slotChatThisUser()
 
 void MSNContact::slotRemoveThisUser()
 {
-	m_protocol->removeContact( this );
+	MSNProtocol::protocol()->removeContact( this );
 	delete this;
 }
 
@@ -147,7 +152,7 @@ void MSNContact::slotRemoveFromGroup()
 {
 	// FIXME: This slot needs to know to remove from WHICH group!
 	// for now, remove from the first group...
-	m_protocol->removeFromGroup( this, m_groups.first() );
+	MSNProtocol::protocol()->removeFromGroup( this, m_groups.first() );
 }
 
 void MSNContact::slotMoveThisUser()
@@ -155,7 +160,7 @@ void MSNContact::slotMoveThisUser()
 	// FIXME: originating group should also be provided!
 	if( m_actionMove )
 	{
-		m_protocol->moveContact( this, m_groups.first(),
+		MSNProtocol::protocol()->moveContact( this, m_groups.first(),
 			m_actionMove->currentText() );
 	}
 }
@@ -163,7 +168,7 @@ void MSNContact::slotMoveThisUser()
 void MSNContact::slotCopyThisUser()
 {
 	if( m_actionCopy )
-		m_protocol->copyContact( this, m_actionCopy->currentText() );
+		MSNProtocol::protocol()->copyContact( this, m_actionCopy->currentText() );
 }
 
 void MSNContact::slotContactRemoved( QString handle, QString group )
@@ -181,14 +186,14 @@ void MSNContact::slotUpdateContact ( QString handle, uint status)
 	if (handle != m_msnId) // not our contact
 		return;
 
-	if ( status == mStatus ) // no statuschange
+	if ( status == m_status ) // no statuschange
 		return;
 
 	kdDebug() << "MSN Plugin: Contact " << handle <<" request update (" << status << ")\n";
-	mStatus = status;
-	QString tmppublicname = m_protocol->publicName( handle );
+	m_status = status;
+	QString tmppublicname = MSNProtocol::protocol()->publicName( handle );
 
-	if (mStatus == KMSNService::BLO)
+	if (m_status == MSNProtocol::BLO)
 		setName( i18n("%1 (Blocked)").arg(tmppublicname) );
 	else
 		setName( tmppublicname );
@@ -239,19 +244,19 @@ void MSNContact::slotHistoryDialogClosing()
 
 MSNContact::ContactStatus MSNContact::status() const
 {
-	switch ( mStatus )
+	switch ( m_status )
 	{
-		case KMSNService::NLN: // Online
+		case MSNProtocol::NLN: // Online
 		{
 			return Online;
 			break;
 		}
-		case KMSNService::BSY: // Busy
-		case KMSNService::IDL: // Idle
-		case KMSNService::AWY: // Away from computer
-		case KMSNService::PHN: // On the phone
-		case KMSNService::BRB: // Be right back
-		case KMSNService::LUN: // Out to lunch
+		case MSNProtocol::BSY: // Busy
+		case MSNProtocol::IDL: // Idle
+		case MSNProtocol::AWY: // Away from computer
+		case MSNProtocol::PHN: // On the phone
+		case MSNProtocol::BRB: // Be right back
+		case MSNProtocol::LUN: // Out to lunch
 		{
 			return Away;
 			break;
@@ -268,44 +273,44 @@ MSNContact::ContactStatus MSNContact::status() const
 
 QString MSNContact::statusText() const
 {
-	switch ( mStatus )
+	switch ( m_status )
 	{
-		case KMSNService::BLO: // blocked
+		case MSNProtocol::BLO: // blocked
 		{
 			return i18n("Blocked");
 			break;
 		}
-		case KMSNService::NLN: // Online
+		case MSNProtocol::NLN: // Online
 		{
 			return i18n("Online");
 			break;
 		}
-		case KMSNService::BSY: // Busy
+		case MSNProtocol::BSY: // Busy
 		{
 			return i18n("Busy");
 			break;
 		}
-		case KMSNService::IDL: // Idle
+		case MSNProtocol::IDL: // Idle
 		{
 			return i18n("Idle");
 			break;
 		}
-		case KMSNService::AWY: // Away from computer
+		case MSNProtocol::AWY: // Away from computer
 		{
 			return i18n("Away From Computer");
 			break;
 		}
-		case KMSNService::PHN: // On the phone
+		case MSNProtocol::PHN: // On the phone
 		{
 			return i18n("On The Phone");
 			break;
 		}
-		case KMSNService::BRB: // Be right back
+		case MSNProtocol::BRB: // Be right back
 		{
 			return i18n("Be Right Back");
 			break;
 		}
-		case KMSNService::LUN: // Out to lunch
+		case MSNProtocol::LUN: // Out to lunch
 		{
 			return i18n("Out To Lunch");
 			break;
@@ -320,72 +325,72 @@ QString MSNContact::statusText() const
 
 QString MSNContact::statusIcon() const
 {
-	switch ( mStatus )
+	switch ( m_status )
 	{
-		case KMSNService::NLN: // Online
+		case MSNProtocol::NLN: // Online
 		{
 			return "msn_online";
 			break;
 		}
-		case KMSNService::BSY: // Busy
-		case KMSNService::PHN: // On the phone
+		case MSNProtocol::BSY: // Busy
+		case MSNProtocol::PHN: // On the phone
 		{
 			return "msn_na";
 			break;
 		}
-		case KMSNService::IDL: // Idle
-		case KMSNService::AWY: // Away from computer
-		case KMSNService::BRB: // Be right back
-		case KMSNService::LUN: // Out to lunch
+		case MSNProtocol::IDL: // Idle
+		case MSNProtocol::AWY: // Away from computer
+		case MSNProtocol::BRB: // Be right back
+		case MSNProtocol::LUN: // Out to lunch
 		{
 			return "msn_away";
 			break;
 		}
+		default:
+			return "msn_offline";
 	}
-
-	return "msn_offline";
 }
 
 int MSNContact::importance() const
 {
-	switch ( mStatus )
+	switch ( m_status )
 	{
-		case KMSNService::BLO: // blocked
+		case MSNProtocol::BLO: // blocked
 		{
 			return 1;
 			break;
 		}
-		case KMSNService::NLN: // Online
+		case MSNProtocol::NLN: // Online
 		{
 			return 20;
 			break;
 		}
-		case KMSNService::BSY: // Busy
+		case MSNProtocol::BSY: // Busy
 		{
 			return 13;
 			break;
 		}
-		case KMSNService::IDL: // Idle
+		case MSNProtocol::IDL: // Idle
 		{
 			return 15;
 			break;
 		}
-		case KMSNService::AWY: // Away from computer
+		case MSNProtocol::AWY: // Away from computer
 		{
 			return 10;
 			break;
 		}
-		case KMSNService::PHN: // On the phone
+		case MSNProtocol::PHN: // On the phone
 		{
 			return 12;
 			break;
 		}
-		case KMSNService::BRB: // Be right back
+		case MSNProtocol::BRB: // Be right back
 		{
 			return 14;
 			break;
 		}
-		case KMSNService::LUN: // Out to lunch
+		case MSNProtocol::LUN: // Out to lunch
 		{
 			return 11;
 			break;
@@ -403,14 +408,74 @@ QString MSNContact::msnId() const
 	return m_msnId;
 }
 
+void MSNContact::setMsnId( const QString &id )
+{
+	m_msnId = id;
+}
+
 QString MSNContact::nickname() const
 {
 	return m_nickname;
 }
 
+void MSNContact::setNickname( const QString &nick )
+{
+	m_nickname = nick;
+}
+
+MSNProtocol::Status MSNContact::msnStatus() const
+{
+	return m_status;
+}
+
+void MSNContact::setMsnStatus( MSNProtocol::Status status )
+{
+	m_status = status;
+}
+
+bool MSNContact::isBlocked() const
+{
+	return m_blocked;
+}
+
+void MSNContact::setBlocked( bool blocked )
+{
+	m_blocked = blocked;
+}
+
+bool MSNContact::isDeleted() const
+{
+	return m_deleted;
+}
+
+void MSNContact::setDeleted( bool deleted )
+{
+	m_deleted = deleted;
+}
+
+bool MSNContact::isAllowed() const
+{
+	return m_allowed;
+}
+
+void MSNContact::setAllowed( bool allowed )
+{
+	m_allowed = allowed;
+}
+
 QStringList MSNContact::groups() const
 {
 	return m_groups;
+}
+
+void MSNContact::addToGroup( const QString &group )
+{
+	m_groups.append( group );
+}
+
+void MSNContact::removeFromGroup( const QString &group )
+{
+	m_groups.remove( group );
 }
 
 #include "msncontact.moc"

@@ -38,6 +38,11 @@
 
 MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 {
+	if( s_protocol )
+		kdDebug() << "MSNProtocol::MSNProtocol: WARNING: s_protocol already defined!" << endl;
+	else
+		s_protocol = this;
+
 	QString path;
 	path = locateLocal("data","kopete/msn.contacts");
 	mContactsFile=new KSimpleConfig(path);
@@ -106,6 +111,7 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 
 MSNProtocol::~MSNProtocol()
 {
+	s_protocol = 0L;
 }
 
 /*
@@ -187,18 +193,18 @@ bool MSNProtocol::isAway(void) const
 	status = m_msnService->status();
 	switch(status)
 	{
-		case KMSNService::NLN:
+		case NLN:
 		{
 			return false;
 			break;
 		}
-		case KMSNService::FLN:
-		case KMSNService::BSY:
-		case KMSNService::IDL:
-		case KMSNService::AWY:
-		case KMSNService::PHN:
-		case KMSNService::BRB:
-		case KMSNService::LUN:
+		case FLN:
+		case BSY:
+		case IDL:
+		case AWY:
+		case PHN:
+		case BRB:
+		case LUN:
 		{
 	    	return true;
 			break;
@@ -425,7 +431,7 @@ void MSNProtocol::slotGoOnline()
 	if (!isConnected() )
 		Connect();
 	else
-		m_msnService->changeStatus( KMSNService::NLN );
+		m_msnService->changeStatus( NLN );
 }
 void MSNProtocol::slotGoOffline()
 {
@@ -444,7 +450,7 @@ void MSNProtocol::slotGoAway()
 	kdDebug() << "MSN Plugin: Going Away" << endl;
 	if (!isConnected() )
 		Connect();
-	m_msnService->changeStatus( KMSNService::AWY );
+	m_msnService->changeStatus( AWY );
 }
 
 void MSNProtocol::slotConnectedToMSN(bool c)
@@ -467,42 +473,42 @@ void MSNProtocol::slotStateChanged( uint newstate ) const
 	kdDebug() << "MSN Plugin: My Status Changed to " << newstate <<"\n";
 	switch(newstate)
 	{
-		case KMSNService::NLN:
+		case NLN:
 		{
 			statusBarIcon->setPixmap(onlineIcon);
 			break;
 		}
-		case KMSNService::FLN:
+		case FLN:
 		{
 			statusBarIcon->setPixmap(offlineIcon);
 			break;
 		}
-		case KMSNService::AWY:
+		case AWY:
 		{
 			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
-		case KMSNService::BSY:
+		case BSY:
 		{
 			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
-		case KMSNService::IDL:
+		case IDL:
 		{
 			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
-		case KMSNService::PHN:
+		case PHN:
 		{
 			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
-		case KMSNService::BRB:
+		case BRB:
 		{
 			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
-		case KMSNService::LUN:
+		case LUN:
 		{
 			statusBarIcon->setPixmap(awayIcon);
 			break;
@@ -620,6 +626,13 @@ int MSNProtocol::contactStatus( const QString &handle ) const
 QString MSNProtocol::publicName( const QString &handle ) const
 {
 	return m_msnService->getPublicName( handle );
+}
+
+const MSNProtocol* MSNProtocol::s_protocol = 0L;
+
+const MSNProtocol* MSNProtocol::protocol()
+{
+	return s_protocol;
 }
 
 #include "msnprotocol.moc"

@@ -20,6 +20,7 @@
 
 #include "kopetecontact.h"
 #include "kopetehistorydialog.h"
+#include "msnprotocol.h"
 
 class QListView;
 class QListViewItem;
@@ -31,7 +32,6 @@ class KListAction;
 class KPopupMenu;
 
 class KopeteHistoryDialog;
-class MSNProtocol;
 
 class MSNContact : public KopeteContact
 {
@@ -39,10 +39,10 @@ class MSNContact : public KopeteContact
 
 public:
 	MSNContact( const QString &msnId, const QString &nickname,
-				const QString &group, MSNProtocol *protocol );
+				const QString &group, QObject *parent = 0L );
 
 	void initContact( const QString &msnId, const QString &nickname,
-						const QString &group, const MSNProtocol *protocol );
+						const QString &group );
 	virtual void showContextMenu(QPoint, QString group);
 	virtual void execute();
 
@@ -55,6 +55,7 @@ public:
 	 * The MSN id of this user, e.g. kopeteuser@kde.org
 	 */
 	QString msnId() const;
+	void setMsnId( const QString &id );
 
 	/**
 	 * The nickname of this user as known to MSN. By default this is also
@@ -62,6 +63,27 @@ public:
 	 * rename contacts locally, in which case there is an obvious difference.
 	 */
 	QString nickname() const;
+	void setNickname( const QString &nick );
+
+	/**
+	 * Indicate whether this contact is blocked
+	 */
+	bool isBlocked() const;
+	void setBlocked( bool b );
+
+	/**
+	 * Indicate whether this contact is deleted
+	 * FIXME: What does this mean??? For now, just port from KMSNContact
+	 */
+	bool isDeleted() const;
+	void setDeleted( bool d );
+
+	/**
+	 * Indicate whether this contact is allowed
+	 * FIXME: What does this mean??? For now, just port from KMSNContact
+	 */
+	bool isAllowed() const;
+	void setAllowed( bool d );
 
 	/**
 	 * The groups in which the user is located.
@@ -69,6 +91,20 @@ public:
 	 * relying on this for now!
 	 */
 	QStringList groups() const;
+
+	/**
+	 * The contact's MSN specific status, this is NOT the ContactStatus!
+	 * FIXME: Status handling needs serious redesign, probably!
+	 */
+	MSNProtocol::Status msnStatus() const;
+	void setMsnStatus( MSNProtocol::Status status );
+
+	/**
+	 * Add/Remove user to/from a group
+	 * FIXME: Probably needs another API. For now, just port.
+	 */
+	void addToGroup( const QString &group );
+	void removeFromGroup( const QString &group );
 
 public slots:
 	void slotContactRemoved( QString, QString );
@@ -98,8 +134,12 @@ private:
 	QStringList m_groups;
 	bool hasLocalGroup;
 
-	uint mStatus;
-	const MSNProtocol *m_protocol;
+	bool m_blocked;
+	bool m_allowed;
+	bool m_deleted;
+
+	MSNProtocol::Status m_status;
+
 	KopeteHistoryDialog *historyDialog;
 	KPopupMenu *popup;
 
