@@ -60,7 +60,7 @@ KopeteMetaContact::KopeteMetaContact()
 : QObject( KopeteContactList::contactList() )
 {
 	d = new KopeteMetaContactPrivate;
-	
+
 	d->trackChildNameChanges = true;
 	d->temporary = false;
 //	m_isTopLevel=false;
@@ -71,6 +71,7 @@ KopeteMetaContact::KopeteMetaContact()
 
 KopeteMetaContact::~KopeteMetaContact()
 {
+	delete d;
 }
 
 void KopeteMetaContact::addContact( KopeteContact *c )
