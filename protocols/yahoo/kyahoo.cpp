@@ -23,6 +23,7 @@
 
 // QT Includes
 #include <qfile.h>
+#include <qtimer.h>
 
 // KDE Includes
 #include <kdebug.h>
@@ -138,7 +139,8 @@ YahooSession::YahooSession(int id, const QString username, const QString passwor
 	m_Username = username;
 	m_Password = password;
 	m_socket = 0L;
-	
+	m_keepalive = new QTimer(this, "keepaliveTimer");	
+	connect(m_keepalive, SIGNAL(timeout()), this, SLOT(keepalive()));
 }
 
 int YahooSession::sessionId() const
@@ -154,6 +156,7 @@ void YahooSession::login(int initial)
 
 	/* We try to login */
 	yahoo_login( m_connId, initial );
+	m_keepalive->start(10000);
 }
 
 YahooSession::~YahooSession()
@@ -162,7 +165,6 @@ YahooSession::~YahooSession()
 	yahoo_logoff( m_connId );
 	yahoo_close( m_connId );
 	delete m_socket;
-
 }
 
 int YahooSession::setLogLevel(enum yahoo_log_level level)
@@ -175,6 +177,9 @@ void YahooSession::logOff()
 {
 	kdDebug(14181)<< k_funcinfo << " " << m_connId <<endl;
 	yahoo_logoff( m_connId );
+	if (m_keepalive)
+		m_keepalive->stop();
+
 	if ( m_socket ) 
 	{
 		if ( m_socket->isOpen() )

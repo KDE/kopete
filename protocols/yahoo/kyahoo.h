@@ -81,7 +81,9 @@ public:
 	void refresh();
 	void setIdentityStatus( const QString &identity, int active);
 	void getList();
+public slots:
 	void keepalive();
+public:
 	void sendIm( const QString &from, const QString &who, const QString &msg);
 	void sendTyping( const QString &from, const QString &who, int typ);
 	void setAway( enum yahoo_status state, const QString &msg, int away);
@@ -253,6 +255,7 @@ signals:
 	
 	QString m_BuddyListServer; // Buddy List server
 	int m_BuddyListPort;
+	QTimer *m_keepalive;
 };
 
 #endif
