@@ -63,8 +63,8 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char *name, const
 	connect ( m_prefs, SIGNAL( saved() ), this, SLOT( slotSettingsChanged() ) );
 	// get a pointer to the dcop client
 	
-	m_client = kapp->dcopClient();
-	m_client->attach();
+	m_client = kapp->dcopClient(); //new DCOPClient(); 
+	//m_client->attach();
 	
 	// set up known media players
 	m_mediaPlayer = new QPtrList<NLMediaPlayer>;
@@ -96,7 +96,7 @@ NowListeningPlugin::~NowListeningPlugin()
 	delete m_mediaPlayer;
 	
 	// cleanly end DCOP
-	m_client->detach();
+	//m_client->detach();
 }
 
 KActionCollection *NowListeningPlugin::customContextMenuActions( KopeteMetaContact *m )
@@ -138,10 +138,14 @@ void NowListeningPlugin::slotContactWantsToggled()
 
 void NowListeningPlugin::slotAdvertToCurrentChat()
 {
-	//advertise  to a single chat
-	if ( m_currentMessageManager )
-		advertiseToChat( m_currentMessageManager, allPlayerAdvert() );
-	return;
+	QString message = allPlayerAdvert();
+	
+	if ( !message.isEmpty() )
+	{
+		//advertise  to a single chat
+		if ( m_currentMessageManager )
+			advertiseToChat( m_currentMessageManager, message );
+	}
 }	
 
 void NowListeningPlugin::slotChangesToAllChats()
@@ -188,7 +192,7 @@ void NowListeningPlugin::slotOutgoingMessage( KopeteMessage& msg )
 QString NowListeningPlugin::allPlayerAdvert() const
 {
 	// generate message for all players
-	QString message = m_prefs->header();
+	QString message = "";
 	QString perTrack = m_prefs->perTrack();
 	
 	for ( NLMediaPlayer* i = m_mediaPlayer->first(); i; i = m_mediaPlayer->next() )
@@ -196,6 +200,9 @@ QString NowListeningPlugin::allPlayerAdvert() const
 		i->update();
 		if ( i->playing() )
 		{
+			if ( message.isEmpty() )
+				message = m_prefs->header();
+				
 			if (  message != m_prefs->header() ) // > 1 track playing!
 				message = message + m_prefs->conjunction();
 			message = message + substDepthFirst( i, perTrack, false );
