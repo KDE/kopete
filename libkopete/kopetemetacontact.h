@@ -259,7 +259,7 @@ public slots:
 	void removeContact( KopeteContact *c , bool deleted = false );
 
 	/**
-	 * Set if this is a temporary contact. (see @ref isTemporary)
+	 * @brief Set if this is a temporary contact. (see @ref isTemporary)
 	 *
 	 * @param b if the contact is or not temporary
 	 * @param group if the contact was temporary and b is true, then the contact will be moved to this group.
@@ -297,7 +297,7 @@ public slots:
 	KopeteContact *sendMessage();
 
 	/**
-	 * @brief start a chat in a persistent chat window
+	 * @brief Start a chat in a persistent chat window
 	 *
 	 * Like sendMessage, but this time a full-blown chat will be opened.
 	 * Most protocols can't distinguish between the two and are either
@@ -309,6 +309,8 @@ public slots:
 	KopeteContact *startChat();
 
 	/**
+	 * @brief Send a file to this metacontact
+	 *
 	 * This is the KopeteMetaContact level slot for sending files. It may be called through the
 	 * "Send File" entry in the GUI, or over DCOP. If the function is called through the GUI,
 	 * no parameters are sent and they assume default values. This slot calls the slotSendFile
@@ -324,12 +326,14 @@ public slots:
 		unsigned long fileSize = 0L );
 
 	/**
+	 * @brief Change the KABC data associated with this metacontact
+	 *
 	 * The KABC exposed data changed, so change it in KABC
 	 */
 	void updateKABC();
 
 	/**
-	 * Remove any KABC data for this meta contact
+	 * @brief Remove any KABC data for this meta contact
 	 */
 	void removeKABC();
 
@@ -387,7 +391,7 @@ signals:
 	void contactRemoved( KopeteContact *c );
 
 	/**
-	 * This metaContact is going to be saved to the contactlist. Plugin should
+	 * This metaContact is going to be saved to the contactlist. Plugins should
 	 * connect to this signal to update data with setPluginData()
 	 */
 	void aboutToSave( KopeteMetaContact *metaContact );
