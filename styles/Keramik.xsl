@@ -76,8 +76,16 @@
 						<xsl:text>; </xsl:text>
 					</xsl:if>
 					<xsl:text>margin-top:8px;padding:6px;</xsl:text>
+					<xsl:if test="@direction='3'">
+						<xsl:text>color:darkgreen;</xsl:text>
+					</xsl:if>
 				</xsl:attribute>
-
+				<xsl:if test="@direction='3'"><!-- Action -->
+					<xsl:text>*</xsl:text>
+					<span class="KopeteDisplayName">
+						<xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/><xsl:text>&#160;</xsl:text>
+					</span>
+				</xsl:if>
 				<xsl:value-of disable-output-escaping="yes" select="body"/>
 			</div>
 		</div>
