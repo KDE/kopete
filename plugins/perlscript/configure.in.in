@@ -1,4 +1,4 @@
-AC_DEFUN(AC_CHECK_LIBPERL,
+AC_DEFUN([AC_CHECK_LIBPERL],
 [
   AC_MSG_CHECKING([for libperl])
   AC_CACHE_VAL(ac_cv_have_libperl,
