@@ -124,7 +124,7 @@ void KopeteWindow::initActions ( void )
 	actionAwayMenu->insert(actionSetAvailable);
 	actionAwayMenu->insert(actionSetAway);
 
-	actionShowTransfers = new KAction( i18n( "Show &File Transfers" ),
+	actionShowTransfers = new KAction( i18n( "Show &File Transfers..." ),
 		"network", 0, KopeteTransferManager::transferManager(),
 		SLOT( show() ), actionCollection(), "ShowTransfers" );
 
@@ -335,6 +335,7 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 	}
 	
 #if KDE_VERSION >= 306
+// ### this heavily interferes with session management. FIX THIS.
 	KMessageBox::information( this,
 		i18n( "<qt>Closing the main window will keep Kopete running in the "
 		"system tray. Use Quit from the File menu to quit the "

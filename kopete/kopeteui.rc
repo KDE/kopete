@@ -18,8 +18,8 @@
 		</Menu>
 	</MenuBar>
 	<ToolBar fullWidth="true" name="mainToolBar">
-		<Action name="Connect"/>
-		<Action name="Disconnect"/>
+		<Action name="ConnectAll"/>
+		<Action name="DisconnectAll"/>
 		<Action name="Status"/>
 		<Action name="AddContact"/>
 		<Action name="options_show_offliners"/>
