@@ -18,6 +18,8 @@
 #include "kopetemessagemanagerfactory.h"
 
 #include <kapplication.h>
+
+#include "ui/kopeteview.h"
 #include "kopetecontact.h"
 
 
@@ -155,10 +157,33 @@ KopeteView * KopeteMessageManagerFactory::createView( KopeteMessageManager *kmm 
 		kdDebug(14010) << k_funcinfo << "View not successfuly created" << endl;
 		return 0L;
 	}
+
+	QObject *viewObject = dynamic_cast<QObject *>(newView);
+	if(viewObject)
+	{
+		connect(viewObject, SIGNAL(activated(KopeteView *)),
+			this, SLOT(slotViewActivated(KopeteView *)));
+		connect(viewObject, SIGNAL(closing(KopeteView *)),
+			this, SLOT(slotViewClosing(KopeteView *)));
+	}
+	else
+	{
+		kdWarning(14010) << "Failed to cast view to QObject *" << endl;
+	}
+
 	emit viewCreated( newView ) ;
 	return newView;
 }
 
+void KopeteMessageManagerFactory::slotViewActivated(KopeteView *view)
+{
+	emit viewActivated(view);
+}
+
+void KopeteMessageManagerFactory::slotViewClosing(KopeteView *view)
+{
+	emit viewClosing(view);
+}
 
 #include "kopetemessagemanagerfactory.moc"
 

@@ -133,17 +133,17 @@ class KopeteView
 		 * The window remains open until the KopeteMessageManager::messageSentSuccessfully()
 		 * signal is emitted
 		 */
-		virtual void messageSent( KopeteMessage & ) = 0;
+//		virtual void messageSent( KopeteMessage & ) = 0;
 
 		/**
 		 * SIGNAL Emitted when the view is closing.
 		 */
-		virtual void closing( KopeteView * ) = 0;
+//		virtual void closing( KopeteView * ) = 0;
 
 		/**
 		 * SIGNAL Emitted when the view is activated ( raised by the user )
 		 */
-		virtual void activated( KopeteView * ) = 0;
+//		virtual void activated( KopeteView * ) = 0;
 
 
 	protected:
