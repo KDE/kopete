@@ -24,11 +24,11 @@
 #include "webpresenceprefs.h"
 #include "webpresencepreferences.h"
 
-typedef KGenericFactory<WebPrecencePreferences> WebPrecencePreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_webpresence, WebPrecencePreferencesFactory("kcm_kopete_webpresence"))
+typedef KGenericFactory<WebPresencePreferences> WebPresencePreferencesFactory;
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_webpresence, WebPresencePreferencesFactory("kcm_kopete_webpresence"))
 
-WebPrecencePreferences::WebPrecencePreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
-							: KCModule(WebPrecencePreferencesFactory::instance(), parent, args)
+WebPresencePreferences::WebPresencePreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
+							: KCModule(WebPresencePreferencesFactory::instance(), parent, args)
 {
 	// Add actuall widget generated from ui file.
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
@@ -44,17 +44,17 @@ WebPrecencePreferences::WebPrecencePreferences(QWidget *parent, const char* /*na
 	kautoconfig->retrieveSettings(true);
 }
 
-void WebPrecencePreferences::widgetModified()
+void WebPresencePreferences::widgetModified()
 {
 	setChanged(kautoconfig->hasChanged());
 }
 
-void WebPrecencePreferences::save()
+void WebPresencePreferences::save()
 {
 	kautoconfig->saveSettings();
 }
 
-void WebPrecencePreferences::defaults ()
+void WebPresencePreferences::defaults ()
 {
 	kautoconfig->resetSettings();
 }

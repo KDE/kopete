@@ -24,14 +24,14 @@ class WebPresencePrefsUI;
 class KAutoConfig;
 
 /**
- * Preference widget for the Cryptography plugin
+ * Preference widget for the Now Listening plugin, copied from the Cryptography plugin
  * @author Olivier Goffart
  */
-class WebPrecencePreferences : public KCModule  {
+class WebPresencePreferences : public KCModule  {
    Q_OBJECT
 
 public:
-	WebPrecencePreferences(QWidget *parent = 0, const char *name = 0, const QStringList &args = QStringList());
+	WebPresencePreferences(QWidget *parent = 0, const char *name = 0, const QStringList &args = QStringList());
 
 	virtual void save();
 	virtual void defaults();
