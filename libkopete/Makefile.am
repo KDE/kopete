@@ -7,6 +7,6 @@ noinst_LTLIBRARIES = libkopete.la
 
 libkopete_la_SOURCES = kopete.cpp improtocol.cpp imcontact.cpp pluginmanager.cpp pluginloader.cpp plugin.cpp
 libkopete_la_METASOURCES = AUTO
-#libkopete_la_LDFLAGS     =  -lDCOP
+libkopete_la_LDFLAGS     = 
 libkopete_la_LIBADD      = $(top_srcdir)/kopete/library/ui/libkopeteui.la
 CXXFLAGS = -g -O2 -Wall

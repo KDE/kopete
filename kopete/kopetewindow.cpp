@@ -5,7 +5,7 @@
 
 KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(parent,name)
 {
-	
+
 	mainwidget = new QWidget(this);
 	this->statusBar()->show();
 	QBoxLayout *layout = new QBoxLayout(mainwidget,QBoxLayout::TopToBottom);
@@ -13,15 +13,15 @@ KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(pare
 	contactlist = new ContactList(mainwidget);
 	//statuslabel = new ConnectionLabel(mainwidget);
 	//statuslabel->setText("offline");
-	
+
 	layout->insertWidget(-1,contactlist);
 	//layout->insertWidget(-1,statuslabel);
-	
+
 	setCentralWidget(mainwidget);
 	this->show();
 	mainwidget->show();
   resize(200,400);
-	
+
 	initActions();
 	createGUI("kopeteui.rc");
 }
@@ -37,16 +37,20 @@ void KopeteWindow::initActions()
 	actionAddContact = 	new KAction( i18n("&Add contact"),"hotlistadd",0 ,
                           kopeteapp, SLOT(slotAddContact()),
                           actionCollection(), "AddContact" );
-  actionConnect = 	new KAction( i18n("&Connect"),"connect_no",0 ,
+
+	actionConnect = new KAction( i18n("&Connect"),"connect_no",0 ,
                           kopeteapp, SLOT(slotConnect()),
                           actionCollection(), "Connect" );
-	actionAboutPlugins = 	new KAction( i18n("&Plugins"),"input_devices_settings", 0,
+
+	actionAboutPlugins = new KAction( i18n("&Plugins"),"input_devices_settings", 0,
                           kopeteapp, SLOT(slotAboutPlugins()),
                           actionCollection(), "AboutPlugins" );
-  actionPrefs         = 	new KAction( i18n("&Configure"),"configure", 0,
+
+	actionPrefs = new KAction( i18n("&Configure"),"configure", 0,
                           kopeteapp, SLOT(slotPreferences()),
                           actionCollection(), "Preferences" );
-	actionQuit         = 	new KAction( i18n("&Quit"),"exit", 0,
+
+	actionQuit = new KAction( i18n("&Quit"),"exit", 0,
                           kopeteapp, SLOT(slotExit()),
                           actionCollection(), "Quit" );
 }
