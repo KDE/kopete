@@ -318,7 +318,7 @@ void KopeteContact::slotMoveDialogOkClicked()
 	KopeteMetaContact *mc= static_cast<MetaContactListViewItem*>( m_selectMetaContactListBox->currentItem() ) ->metaContact;
 	if(!mc)
 	{
-		kdDebug(14010) << "KopeteContact::slotMoveDialogOkClicked : WARNING metaContact not found" << endl;
+		kdDebug(14010) << "KopeteContact::slotMoveDialogOkClicked : metaContact not found, will create a new one" << endl;
 		return;
 	}
 	setMetaContact( mc );
@@ -361,6 +361,12 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 	//the aboutToSave signal is disconnected from "old" , but it still contains
 	//cached data in it, then, i serialize the old contact for removing old data
 	protocol()->slotMetaContactAboutToSave(old);
+
+	if( old->contacts().isEmpty() )
+	{
+		//Delete an empty MC after a move
+		KopeteContactList::contactList()->removeMetaContact( old );
+	}
 }
 
 KopeteContact::MetaContactListViewItem::MetaContactListViewItem(KopeteMetaContact *m, QListView *p)
