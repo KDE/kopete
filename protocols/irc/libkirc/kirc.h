@@ -129,7 +129,6 @@ public slots:
 	void setAway(bool isAway, const QString &awayMessage = QString::null); /* 301-305-306 */
 	void whoisUser(const QString &user); /* 311-312-313-317-318-319 */
 	void list(); /* 321-322-323 */
-	void motd();
 
 	//OBSOLETE: use sendCtcpAction instead.
 	inline void actionContact(const QString &contact, const QString &message) { sendCtcpAction(contact, message); }
