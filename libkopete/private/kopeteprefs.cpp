@@ -87,6 +87,8 @@ void KopetePrefs::load()
 
 	mShowTray = config->readBoolEntry("Show Systemtray", true);
 	mStyleSheet = config->readEntry("Stylesheet", locate("appdata", QString::fromLatin1("styles/Kopete.xsl")));
+	if ( !QFile::exists( mStyleSheet ) )
+		mStyleSheet = locate( "appdata", QString::fromLatin1("styles/Kopete.xsl") );
 	mStyleContents = fileContents(mStyleSheet);
 
 	mToolTipContents = config->readListEntry("ToolTipContents");
