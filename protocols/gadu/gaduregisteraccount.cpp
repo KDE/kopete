@@ -41,6 +41,7 @@ GaduRegisterAccount::GaduRegisterAccount( QWidget* parent, const char* name )
 
 	ui->textToken->setDisabled( true );
 	enableButton( Ok, false );
+	updateStatus( "" );
 
 	cRegister = new RegisterCommand( this );
 
@@ -57,7 +58,7 @@ GaduRegisterAccount::GaduRegisterAccount( QWidget* parent, const char* name )
 	connect( cRegister, SIGNAL( tokenRecieved( QPixmap, QString ) ), SLOT( displayToken( QPixmap, QString ) ) );
 	connect( cRegister, SIGNAL( done(  const QString&,  const QString& ) ), SLOT( registrationDone(  const QString&,  const QString& ) ) );
 	connect( cRegister, SIGNAL( error(  const QString&,  const QString& ) ), SLOT( registrationError(  const QString&,  const QString& ) ) );
-
+	connect( cRegister, SIGNAL( operationStatus( const QString ) ), SLOT( updateStatus( const QString ) ) );
 	cRegister->requestToken();
 
 	show();
@@ -116,12 +117,14 @@ void GaduRegisterAccount::passwordsChanged( const QString & )
 
 void GaduRegisterAccount::registrationDone(  const QString& /*title*/,  const QString& /*what */ )
 {
+	updateStatus( "" );
 	KMessageBox::sorry( this, QString::number( cRegister->newUin() ), "dupa" );
 	enableButton( Ok, true );
 }
 
 void GaduRegisterAccount::registrationError(  const QString& title,  const QString& what )
 {
+	updateStatus( "" );
 	KMessageBox::sorry( this, what, title );
 }
 
@@ -129,6 +132,13 @@ void GaduRegisterAccount::displayToken( QPixmap image, QString tokenId )
 {
 	ui->textToken->setDisabled( false );
 	ui->pixmapToken->setPixmap( image );
+	updateStatus( "" );
+}
+
+void GaduRegisterAccount::updateStatus( const QString status )
+{
+	ui->statusLabel->setAlignment( AlignCenter );
+	ui->statusLabel->setText( status );
 }
 
 void GaduRegisterAccount::slotApply()

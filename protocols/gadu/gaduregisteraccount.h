@@ -58,6 +58,7 @@ protected slots:
 	void passwordsChanged( const QString & );
 	void doRegister();
 	void tokenChanged( const QString & );
+	void updateStatus( const QString status );
 
 private:
 	void validateInput();
