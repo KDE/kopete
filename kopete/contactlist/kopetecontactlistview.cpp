@@ -966,6 +966,7 @@ void KopeteContactListView::slotUpdateAllGroupIcons()
 
 void KopeteContactListView::slotExecuted( QListViewItem *item, const QPoint &p, int /* col */ )
 {
+	item->setSelected( false );
 	KopeteMetaContactLVI *metaContactLVI = dynamic_cast<KopeteMetaContactLVI *>( item );
 
 	QPoint pos = viewport()->mapFromGlobal( p );
