@@ -40,6 +40,7 @@
 #include <kapplication.h>
 #include <kcolorcombo.h>
 #include <kcolorbutton.h>
+#include <kconfig.h> // for KNewStuff emoticon fetching
 #include <kdebug.h>
 #include <kfontrequester.h>
 #include <kgenericfactory.h>
@@ -55,6 +56,8 @@
 #include <kurlrequesterdlg.h>
 #include <krun.h>
 #include <kdirwatch.h>
+
+#include <knewstuff/downloaddialog.h>
 
 #include <ktexteditor/highlightinginterface.h>
 #include <ktexteditor/editinterface.h>
@@ -103,6 +106,8 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 		this, SLOT(slotSelectedEmoticonsThemeChanged()));
 	connect(mPrfsEmoticons->btnInstallTheme, SIGNAL(clicked()),
 		this, SLOT(installNewTheme()));
+	connect(mPrfsEmoticons->btnGetThemes, SIGNAL(clicked()),
+		this, SLOT(slotGetThemes()));
 	connect(mPrfsEmoticons->btnRemoveTheme, SIGNAL(clicked()),
 		this, SLOT(removeSelectedTheme()));
 
@@ -755,6 +760,19 @@ void AppearanceConfig::removeSelectedTheme()
 	KIO::NetAccess::del(themeUrl, this);
 
 	updateEmoticonlist();
+}
+
+void AppearanceConfig::slotGetThemes()
+{
+   KConfig* config = KGlobal::config();
+   config->setGroup("KNewStuff");
+   config->writeEntry( "ProvidersUrl", "http://www.stevello.free-online.co.uk/khotnewstuff/emoticon-providers.xml" );
+   config->writeEntry( "StandardResource", "emoticons" );
+   config->writeEntry( "Uncompress", "application/x-gzip" );
+   config->sync();
+
+   KNS::DownloadDialog::open("emoticons");
+   updateEmoticonlist();
 }
 
 void AppearanceConfig::slotEditTooltips()

@@ -77,6 +77,7 @@ private slots:
 	void emitChanged();
 	void installNewTheme();
 	void removeSelectedTheme();
+	void slotGetThemes();
 
 private:
 	void updateHighlight();

@@ -8,8 +8,10 @@ kcm_kopete_appearanceconfig_la_SOURCES = appearanceconfig_emoticons.ui \
 	appearanceconfig_colors.ui appearanceconfig_chatwindow.ui appearanceconfig_contactlist.ui \
 	appearanceconfig.cpp tooltipeditwidget.ui tooltipeditdialog.cpp
 
-kcm_kopete_appearanceconfig_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
-kcm_kopete_appearanceconfig_la_LIBADD  = ../../../libkopete/libkopete.la -lktexteditor $(LIB_KOPETECOMPAT) $(LIB_KUTILS)
+kcm_kopete_appearanceconfig_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) \
+	$(all_libraries)
+kcm_kopete_appearanceconfig_la_LIBADD = ../../../libkopete/libkopete.la \
+	-lktexteditor $(LIB_KOPETECOMPAT) $(LIB_KUTILS) $(LIB_KNEWSTUFF)
 
 service_DATA = kopete_appearanceconfig.desktop
 servicedir = $(kde_servicesdir)

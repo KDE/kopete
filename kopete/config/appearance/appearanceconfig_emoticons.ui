@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>AppearanceConfig_Emoticons</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,9 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>340</width>
-            <height>319</height>
+            <width>481</width>
+            <height>389</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>AppearanceConfig_Emoticons</string>
     </property>
     <vbox>
         <property name="name">
@@ -22,6 +25,9 @@
             </property>
             <property name="text">
                 <string>&amp;Use emoticons</string>
+            </property>
+            <property name="accel">
+                <string>Alt+U</string>
             </property>
         </widget>
         <widget class="KListBox">
@@ -61,35 +67,32 @@
         </widget>
         <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>layout1</cstring>
+                <cstring>layout2</cstring>
             </property>
             <hbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <spacer>
+                <widget class="QPushButton">
                     <property name="name">
-                        <cstring>spacer1</cstring>
+                        <cstring>btnGetThemes</cstring>
                     </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
+                    <property name="text">
+                        <string>&amp;Get New Themes...</string>
                     </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
+                    <property name="accel">
+                        <string>Alt+G</string>
                     </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>16</width>
-                            <height>16</height>
-                        </size>
-                    </property>
-                </spacer>
+                </widget>
                 <widget class="QPushButton">
                     <property name="name">
                         <cstring>btnInstallTheme</cstring>
                     </property>
                     <property name="text">
-                        <string>Install New Theme...</string>
+                        <string>&amp;Install Theme File...</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+I</string>
                     </property>
                 </widget>
                 <widget class="QPushButton">
@@ -104,8 +107,6 @@
         </widget>
     </vbox>
 </widget>
-<customwidgets>
-</customwidgets>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>klistbox.h</includehint>
