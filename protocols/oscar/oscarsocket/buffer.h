@@ -19,8 +19,11 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
+#include "oscardebug.h"
+
 #include <qobject.h>
 #include <qptrlist.h>
+#include <qcstring.h>
 
 typedef unsigned char BYTE;
 typedef unsigned short WORD;
@@ -41,6 +44,7 @@ struct TLV
 	char *data;
 };
 
+
 class Buffer : public QObject
 {
 	Q_OBJECT
@@ -53,12 +57,12 @@ class Buffer : public QObject
 		/*
 		 * returns the actual buffer
 		 */
-		inline char *buffer() const { return mBuf; };
+		char *buffer() const;
 
 		/*
 		 * returns the length of the buffer
 		 */
-		inline int length() const { return mLength; };
+		int length() const;
 
 		/*
 		 * adds the given string to the buffer (make sure it's NULL-terminated)
@@ -125,7 +129,7 @@ class Buffer : public QObject
 		/*
 		 * Prints out the buffer, just for debug reasons
 		 */
-		void print() const;
+//		void print() const;
 
 		/*
 		 * Returns a QString representation of the buffer
@@ -177,6 +181,12 @@ class Buffer : public QObject
 		 * Allocates memory for and gets a block of buffer bytes
 		 */
 		char *getBlock(WORD len);
+
+		/*
+		 * Allocates memory for and gets a block of buffer words
+		 */
+		WORD *getWordBlock(WORD len);
+
 		/*
 		 * Same as above but returning little-endian
 		 */
@@ -220,11 +230,6 @@ class Buffer : public QObject
 		 * Creates a chat data segment for a tlv and calls addTLV with that data
 		 */
 		int addChatTLV(const WORD, const WORD, const QString &, const WORD);
-		/** Gets a snac header out of the buffer */
-
-	private:
-		/** Make the buffer bigger by inc bytes, reallocating memory if needed */
-		void doResize(int inc);
 
 	signals:
 		/*
@@ -233,30 +238,26 @@ class Buffer : public QObject
 		 */
 		void bufError(QString);
 
-	private:
-		/*
-		 * length of buffer (mBuf)
-		 */
-		DWORD mLength;
-		/*
-		 * allocated size of the buffer
-		 */
-		DWORD alloc_length;
-		/*
-		 * The actual buffer
-		 */
-		char *alloc_buf;
-		/*
-		 * The usable buffer
-		 */
-		char *mBuf;
-
 	public slots:
 		/*
 		 * Called when a buffer error occurs
 		 * i.e. reading more bytes than the buffer actually contains
 		 */
-		void OnBufError(QString);
+		void slotBufferError(QString);
+
+	private:
+		/*
+		 * Make the buffer bigger by inc bytes
+		 */
+		void expandBuffer(unsigned int inc);
+
+	private:
+		QByteArray mBuffer;
+
+		char *mExtDataPointer;
+		Q_ULONG mExtDataLen;
+		unsigned int mReadPos;
+
 };
 
 #endif

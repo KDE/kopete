@@ -53,8 +53,7 @@ void OscarConnection::slotRead()
 	char *buf = new char[len];
 	readBlock(buf,len);
 	inbuf.setBuf(buf,len);
-	inbuf.print();
-
+//	inbuf.print();
 	delete buf;
 }
 

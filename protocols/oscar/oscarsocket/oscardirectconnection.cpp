@@ -15,6 +15,7 @@
 */
 
 #include <kdebug.h>
+#include "oscardebug.h"
 #include "oscardirectconnection.h"
 
 OscarDirectConnection::OscarDirectConnection(const QString &sn,
@@ -227,7 +228,10 @@ void OscarDirectConnection::sendODC2Block(const QString &message, WORD typingnot
 
 	kdDebug(14150) << k_funcinfo << "Sending ODC2 block, message: " <<
 		message << "typingnotify: " << typingnotify << endl;
-	//outbuf.print();
+
+#ifdef OSCAR_PACKETLOG
+		kdDebug(14150) << "=== OUTPUT ===" << outbuf.toString();
+#endif
 
 	writeBlock(outbuf.buffer(), outbuf.length());
 }

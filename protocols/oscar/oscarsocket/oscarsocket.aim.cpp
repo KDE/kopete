@@ -24,53 +24,48 @@ extern "C"
 
 // ----------------------------------------------------------------------------------------
 
-#define AIM_MD5_STRING 				"AOL Instant Messenger (SM)"
-#define AIM_CLIENTSTRING			"AOL Instant Messenger (SM), version 4.8.2790/WIN32"
-
-#define AIM_CLIENTID					0x0109
-#define AIM_MAJOR						0x0004
-#define AIM_MINOR						0x0008
-#define AIM_POINT						0x0000
-#define AIM_BUILD						0x0ae6
-static const char AIM_OTHER[] = { 0x00, 0x00, 0x00, 0xbb };
-#define AIM_COUNTRY					"us"
-#define AIM_LANG						"en"
+const char AIM_MD5_STRING[]		= "AOL Instant Messenger (SM)";
+const char AIM_CLIENTSTRING[]	= "AOL Instant Messenger (SM), version 4.8.2790/WIN32";
+const WORD AIM_CLIENTID			= 0x0109;
+const WORD AIM_MAJOR			= 0x0004;
+const WORD AIM_MINOR			= 0x0008;
+const WORD AIM_POINT			= 0x0000;
+const WORD AIM_BUILD			= 0x0ae6;
+const char AIM_OTHER[]			= { 0x00, 0x00, 0x00, 0xbb };
+const char AIM_COUNTRY[]		= "us";
+const char AIM_LANG[] 			= "en";
 
 // ----------------------------------------------------------------------------------------
 
 // Sends login information, actually logs onto the server
 void OscarSocket::sendLoginAIM(void)
 {
-	kdDebug(14150) << k_funcinfo <<  "Sending AIM login info..." << endl;
-	unsigned char digest[16];
-	digest[16] = '\0';  //do this so that addTLV sees a NULL-terminator
+	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_MD5_LOGIN) sending AIM login" << endl;
 
 	Buffer outbuf;
 	outbuf.addSnac(0x0017,0x0002,0x0000,0x00000000);
 	outbuf.addTLV(0x0001,getSN().length(),getSN().latin1());
 
-	encodePassword(digest);
+	char digest[16];
+	encodePassword(&digest[0]);
+	digest[16] = '\0';  //do this so that addTLV sees a NULL-terminator
 
-	outbuf.addTLV(0x0025,16,(char *)digest);
-	outbuf.addTLV(0x0003,0x32,AIM_CLIENTSTRING);
-	outbuf.addTLV16(0x0016,AIM_CLIENTID);
-	outbuf.addTLV16(0x0017,AIM_MAJOR);
-	outbuf.addTLV16(0x0018,AIM_MINOR);
-	outbuf.addTLV16(0x0019,AIM_POINT);
-	outbuf.addTLV16(0x001a,AIM_BUILD);
-	outbuf.addTLV(0x0014,0x0004,AIM_OTHER);
-	outbuf.addTLV(0x000f,0x0002,AIM_LANG);
-	outbuf.addTLV(0x000e,0x0002,AIM_COUNTRY);
+	outbuf.addTLV(0x0025, 16, &digest[0]);
+	outbuf.addTLV(0x0003, 0x32, AIM_CLIENTSTRING);
+	outbuf.addTLV16(0x0016, AIM_CLIENTID);
+	outbuf.addTLV16(0x0017, AIM_MAJOR);
+	outbuf.addTLV16(0x0018, AIM_MINOR);
+	outbuf.addTLV16(0x0019, AIM_POINT);
+	outbuf.addTLV16(0x001a, AIM_BUILD);
+	outbuf.addTLV(0x0014, 0x0004, AIM_OTHER);
+	outbuf.addTLV(0x000f, 0x0002, AIM_LANG);
+	outbuf.addTLV(0x000e, 0x0002, AIM_COUNTRY);
 
 	//if set, old-style buddy lists will not work... you will need to use SSI
 	outbuf.addTLV8(0x004a,0x01);
 
-#ifdef OSCAR_PWDEBUG
-	kdDebug(14150) << "CLI_MD5LOGIN packet:" << endl << outbuf.toString() << endl;
-#endif
-
 	sendBuf(outbuf,0x02);
-	kdDebug(14150) << k_funcinfo <<  "emitting connectionChanged" << endl;
+//	kdDebug(14150) << k_funcinfo <<  "emitting connectionChanged" << endl;
 //	emit connectionChanged(3,"Sending username and password...");
 }
 
@@ -161,7 +156,7 @@ void OscarSocket::sendMiniTypingNotify(QString screenName, TypingNotify notifyTy
 } // END OscarSocket::sendMiniTypingNotify()
 
 // encodes a password, outputs to digest
-int OscarSocket::encodePassword(unsigned char *digest)
+void OscarSocket::encodePassword(char *digest)
 {
 	md5_state_t state;
 	md5_init(&state);
@@ -169,7 +164,6 @@ int OscarSocket::encodePassword(unsigned char *digest)
 	md5_append(&state, (const md5_byte_t *)loginPassword.latin1(), loginPassword.length());
 	md5_append(&state, (const md5_byte_t *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
 	md5_finish(&state, (md5_byte_t *)digest);
-	return 0;
 }
 
 /** Handles AOL's evil attempt to thwart 3rd party apps using Oscar.

@@ -16,6 +16,7 @@
 
 #include "oscarfilesendconnection.h"
 
+#include "oscardebug.h"
 #include <unistd.h>
 
 #include <kdebug.h>
@@ -128,8 +129,9 @@ OFT2 OscarFileSendConnection::getOFT2()
 		Buffer inbuf;
 		inbuf.setBuf(buf,oft.headerlen-6);
 
-		kdDebug(14150) << k_funcinfo <<  "Input: " << endl;
-		inbuf.print();
+#ifdef OSCAR_PACKETLOG
+		kdDebug(14150) << "=== INPUT ===" << inbuf.toString();
+#endif
 
 		oft.channel = inbuf.getWord();
 		oft.cookie.assign( inbuf.getBlock(8), 8 );
@@ -226,9 +228,9 @@ void OscarFileSendConnection::sendOFT2Block(const OFT2 &oft, const Buffer &/*dat
 	for (int i=oft.filename.length();i<64;i++)
 		outbuf.addByte(0x00);
 
-	kdDebug(14150) << k_funcinfo <<  "Output: " << endl;
-	outbuf.print();
-
+#ifdef OSCAR_PACKETLOG
+		kdDebug(14150) << "=== OUTPUT ===" << outbuf.toString();
+#endif
 	writeBlock(outbuf.buffer(), outbuf.length());
 }
 

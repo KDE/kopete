@@ -27,25 +27,13 @@
 
 #include <qptrlist.h>
 
-// ========================================================================================
-
-// Define this if you want to get tons of packets printed out
-//#define OSCAR_PACKETLOG 1
-
-// Define this if you want to get yoiur password in both plaintext and encrypted form
-// printed out
-// !!! security issue in case you don't remove your logfile afterwards !!!
-//#define OSCAR_PWDEBUG 1
-
-// ========================================================================================
-
 class KFileItem;
 class OscarAccount;
 class QTimer;
 
-
 struct FLAP
-{ //flap header
+{
+	//flap header
 	 BYTE channel;
 	 WORD sequence_number;
 	 WORD length;
@@ -53,13 +41,15 @@ struct FLAP
 };
 
 struct SnacPair
-{ //just a group+type pair
+{
+	//just a group+type pair
 	 WORD group;
 	 WORD type;
 };
 
 struct RateClass
-{ //rate info
+{
+	//rate info
 	WORD classid;
 	DWORD windowsize;
 	DWORD clear;
@@ -89,41 +79,40 @@ class UserInfo
 		unsigned int  port;
 		unsigned int  fwType;
 		unsigned int version;
-
 		unsigned long icqextstatus;
 };
 
 
-#define AIM_CAPS_BUDDYICON			0x00000001
-#define AIM_CAPS_VOICE				0x00000002
-#define AIM_CAPS_IMIMAGE			0x00000004
-#define AIM_CAPS_CHAT				0x00000008
-#define AIM_CAPS_GETFILE			0x00000010
-#define AIM_CAPS_SENDFILE			0x00000020
-#define AIM_CAPS_GAMES				0x00000040
-#define AIM_CAPS_SAVESTOCKS			0x00000080
-#define AIM_CAPS_SENDBUDDYLIST		0x00000100
-#define AIM_CAPS_GAMES2				0x00000200
-#define AIM_CAPS_ISICQ				0x00000400
-#define AIM_CAPS_APINFO				0x00000800
-#define AIM_CAPS_RTFMSGS			0x00001000
-#define AIM_CAPS_EMPTY				0x00002000
-#define AIM_CAPS_ICQSERVERRELAY		0x00004000
-#define AIM_CAPS_IS_2001			0x00008000
-#define AIM_CAPS_TRILLIANCRYPT		0x00010000
-#define AIM_CAPS_UTF8				0x00020000
-#define AIM_CAPS_IS_WEB				0x00040000
-#define AIM_CAPS_INTEROPERATE		0x00080000
-#define AIM_CAPS_LAST				0x00100000
+const DWORD AIM_CAPS_BUDDYICON 		= 0x00000001;
+const DWORD AIM_CAPS_VOICE			= 0x00000002;
+const DWORD AIM_CAPS_IMIMAGE		= 0x00000004;
+const DWORD AIM_CAPS_CHAT			= 0x00000008;
+const DWORD AIM_CAPS_GETFILE		= 0x00000010;
+const DWORD AIM_CAPS_SENDFILE		= 0x00000020;
+const DWORD AIM_CAPS_GAMES			= 0x00000040;
+const DWORD AIM_CAPS_SAVESTOCKS		= 0x00000080;
+const DWORD AIM_CAPS_SENDBUDDYLIST	= 0x00000100;
+const DWORD AIM_CAPS_GAMES2			= 0x00000200;
+const DWORD AIM_CAPS_ISICQ			= 0x00000400;
+const DWORD AIM_CAPS_APINFO			= 0x00000800;
+const DWORD AIM_CAPS_RTFMSGS		= 0x00001000;
+const DWORD AIM_CAPS_EMPTY			= 0x00002000;
+const DWORD AIM_CAPS_ICQSERVERRELAY	= 0x00004000;
+const DWORD AIM_CAPS_IS_2001		= 0x00008000;
+const DWORD AIM_CAPS_TRILLIANCRYPT	= 0x00010000;
+const DWORD AIM_CAPS_UTF8			= 0x00020000;
+const DWORD AIM_CAPS_IS_WEB			= 0x00040000;
+const DWORD AIM_CAPS_INTEROPERATE	= 0x00080000;
+const DWORD AIM_CAPS_LAST			= 0x00100000;
 
 // DON'T touch these if you're not 100% sure what they are for!
 //#define KOPETE_AIM_CAPS			AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE
 #define KOPETE_AIM_CAPS			0 // our aim client is as stupid as bread
-#define KOPETE_ICQ_CAPS			AIM_CAPS_ICQSERVERRELAY | /*AIM_CAPS_UTF8 | AIM_CAPS_RTFMSGS |*/ AIM_CAPS_ISICQ
+#define KOPETE_ICQ_CAPS			/*AIM_CAPS_ICQSERVERRELAY |*/ AIM_CAPS_UTF8 | /* AIM_CAPS_RTFMSGS |*/ AIM_CAPS_ISICQ
 
 //ICQ 2002b sends: CAP_AIM_SERVERRELAY, CAP_UTF8, CAP_RTFMSGS, CAP_AIM_ISICQ
 
-static const struct
+const struct
 {
 	DWORD flag;
 	unsigned char data[16];
@@ -218,7 +207,7 @@ static const struct
 };
 
 
-static const QString msgerrreason[] =
+const QString msgerrreason[] =
 {
 	I18N_NOOP("Invalid error"),
 	I18N_NOOP("Invalid SNAC"),
@@ -247,7 +236,7 @@ static const QString msgerrreason[] =
 	I18N_NOOP("Not while on AOL")
 };
 
-static const int msgerrreasonlen=25;
+const int msgerrreasonlen=25;
 
 //#define DIRECTCONNECT				0x0f1f // WHAT IS THAT FOR??? [mETz, 21.05.2003]
 
@@ -263,15 +252,15 @@ const unsigned int OSCAR_OCC = 5;
 const unsigned int OSCAR_FFC = 6;
 const unsigned int OSCAR_CONNECTING = 10;
 
-const WORD OSCAR_FAM_1 = 0x0001; // Services
-const WORD OSCAR_FAM_2 = 0x0002; // Location
-const WORD OSCAR_FAM_3 = 0x0003; // Contacts, adding, removal, statuschanges
-const WORD OSCAR_FAM_4 = 0x0004; // ICBM, messaging
-const WORD OSCAR_FAM_9 = 0x0009; // BOS, visible/invisible lists
-const WORD OSCAR_FAM_11 = 0x000b; // Interval
-const WORD OSCAR_FAM_19 = 0x0013; // Roster, Contactlist
-const WORD OSCAR_FAM_21 = 0x0015; // icq metasearch, sms, offline messages
-const WORD OSCAR_FAM_23 = 0x0017; // new user, registration
+const WORD OSCAR_FAM_1			= 0x0001; // Services
+const WORD OSCAR_FAM_2			= 0x0002; // Location
+const WORD OSCAR_FAM_3			= 0x0003; // Contacts, adding, removal, statuschanges
+const WORD OSCAR_FAM_4			= 0x0004; // ICBM, messaging
+const WORD OSCAR_FAM_9			= 0x0009; // BOS, visible/invisible lists
+const WORD OSCAR_FAM_11			= 0x000b; // Interval
+const WORD OSCAR_FAM_19			= 0x0013; // Roster, Contactlist
+const WORD OSCAR_FAM_21			= 0x0015; // icq metasearch, sms, offline messages
+const WORD OSCAR_FAM_23			= 0x0017; // new user, registration
 
 
 // used for SRV_RECVMSG, SNAC(4,7)
@@ -279,7 +268,7 @@ const WORD MSGFORMAT_SIMPLE		= 0x0001;
 const WORD MSGFORMAT_ADVANCED	= 0x0002;
 const WORD MSGFORMAT_SERVER		= 0x0004;
 
-#define OSCAR_SERVER 			"login.oscar.aol.com"
+const char OSCAR_SERVER[] 		= "login.oscar.aol.com";
 const unsigned int OSCAR_PORT	= 5190;
 
 const WORD CLASS_TRIAL			= 0x0001;
@@ -324,7 +313,7 @@ class OscarSocket : public OscarConnection
 		/*
 		 * encodes a password using md5, outputs to digest [AIM]
 		 */
-		int encodePassword(unsigned char *digest);
+		void encodePassword(char *digest);
 		/*
 		 * same as above but for icq which needs a XOR method to encode the password
 		 *  returns the encoded password  [ICQ]
@@ -542,10 +531,6 @@ class OscarSocket : public OscarConnection
 		 * This is called when a connection is established
 		 */
 		void slotConnected();
-		/*
-		 * This function is called when there is data to be read from the socket
-		 */
-		virtual void slotRead();
 
 	private:
 	/** adds the flap version to the buffer */
@@ -664,8 +649,23 @@ class OscarSocket : public OscarConnection
 	void parseBuddyRights(Buffer &inbuf);
 	/** Parses msg rights info from server */
 	void parseMsgRights(Buffer &inbuf);
-	/** Parses an incoming IM */
+
+	/*
+	 * Parses an incoming IM
+	 */
 	void parseIM(Buffer &inbuf);
+
+	/*
+	 * parses a type-1 message
+	 * called by parseIM
+	 */
+	void parseSimpleIM(Buffer &inbuf, UserInfo &u);
+	/*
+	 * parses a type-4 message
+	 * called by parseIM
+	 */
+	void parseServerIM(Buffer &inbuf, UserInfo &u);
+
 	/** parses the aim standard user info block */
 	UserInfo parseUserInfo(Buffer &inbuf);
 	/** Activates the SSI list on the server */
@@ -676,8 +676,11 @@ class OscarSocket : public OscarConnection
 	void parseUserOffline(Buffer &);
 	/** Parses someone's user info */
 	void parseUserProfile(Buffer &);
-	/** Handles a redirect */
-	void parseRedirect(Buffer &);
+	/*
+	 * Handles a redirect
+	 * TODO: unused
+	 */
+//	void parseRedirect(Buffer &);
 	/** Parses a message ack from the server */
 	void parseMsgAck(Buffer &);
 	/** Parses a minityping notification from server */
@@ -728,6 +731,8 @@ class OscarSocket : public OscarConnection
 	void stopKeepalive();
 
 	void parseAuthReply(Buffer &inbuf);
+
+	void sendBuddylistAdd(QStringList &contacts);
 
 	private slots:
 	/** Called when a connection has been closed */
@@ -848,6 +853,12 @@ class OscarSocket : public OscarConnection
 	 * emitted when we received an authorization reply
 	 */
 	void gotAuthReply(const QString &, const QString &, bool);
+
+	protected slots:
+		/*
+		 * This function is called when there is data to be read from the socket
+		 */
+		virtual void slotRead();
 
 	protected:
 		ICQInfoItemList extractICQItemList( Buffer& theBuffer );

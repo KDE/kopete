@@ -157,8 +157,8 @@ void OscarSocket::sendLoginICQ()
 	outbuf.addTLV16(0x0019, ICQ_POINT);
 	outbuf.addTLV16(0x001a, ICQ_BUILD);
 	outbuf.addTLV(0x0014, 0x0004, ICQ_OTHER); // distribution chan
-	outbuf.addTLV(0x000e, 0x0002, ICQ_COUNTRY);
 	outbuf.addTLV(0x000f, 0x0002, ICQ_LANG);
+	outbuf.addTLV(0x000e, 0x0002, ICQ_COUNTRY);
 
 #ifdef OSCAR_PWDEBUG
 	kdDebug(14150) << "CLI_COOKIE packet:" << endl << outbuf.toString() << endl;

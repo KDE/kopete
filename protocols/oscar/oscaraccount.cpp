@@ -119,8 +119,7 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 
 OscarAccount::~OscarAccount()
 {
-	kdDebug(14150) << k_funcinfo << "'" << accountId() <<
-		"' deleted, Disconnecting..." << endl;
+	kdDebug(14150) << k_funcinfo << "'" << accountId() << "' deleted" << endl;
 
 	OscarAccount::disconnect();
 
@@ -129,28 +128,30 @@ OscarAccount::~OscarAccount()
 	// Delete the backend
 	if (mEngine)
 	{
-		delete mEngine;
-		mEngine = 0L;
+		kdDebug(14150) << k_funcinfo << "deleting Engine!" << endl;
+//		delete mEngine;
+		mEngine->deleteLater();
+//		mEngine = 0L;
 	}
 	else
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"ERROR, we don't have an OscarSocket anymore!" << endl;
 	}
-
+/*
 	if (myself())
 	{
 		kdDebug(14150) << k_funcinfo << "'" << accountId() <<
 			"' deleting myself() contact" << endl;
 		delete mMyself;
-		mMyself=0L;
+//		mMyself=0L;
 	}
 	else
 	{
 		kdDebug(14150) << k_funcinfo << "'" << accountId() <<
 			"' myself() contact already gone, who deleted it before me?" << endl;
 	}
-
+*/
 }
 
 KopeteContact* OscarAccount::myself() const

@@ -17,96 +17,131 @@
 */
 
 #include <kdebug.h>
-#include <string.h>
 #include "buffer.h"
 
-Buffer::Buffer(QObject *parent, const char *name) : QObject(parent, name)
+Buffer::Buffer(QObject *parent, const char *name)
+	: QObject(parent, name)
 {
-	mLength = 0;
-	alloc_length = 0;
-	alloc_buf = 0L;
-	mBuf = 0L;
-	connect(this, SIGNAL(bufError(QString)), this, SLOT(OnBufError(QString)));
+	mExtDataPointer=0L;
+	mExtDataLen=0;
+
+	mReadPos=0;
+	connect(this, SIGNAL(bufError(QString)), this, SLOT(slotBufferError(QString)));
 }
 
 Buffer::Buffer(char *b, Q_ULONG len, QObject *parent, const char *name)
 	: QObject(parent,name)
 {
-	mLength = 0;
-	alloc_length = 0;
-	alloc_buf = 0L;
-	mBuf = 0L;
-	connect(this, SIGNAL(bufError(QString)), this, SLOT(OnBufError(QString)));
-	setBuf(b, len);
+#ifdef BUFFER_DEBUG
+	kdDebug(14150) << k_funcinfo << "Creating prefilled Buffer" << endl;
+#endif
+
+	mExtDataPointer=b;
+	mExtDataLen=len;
+	mBuffer.setRawData(mExtDataPointer, mExtDataLen);
+
+	mReadPos=0;
+	connect(this, SIGNAL(bufError(QString)), this, SLOT(slotBufferError(QString)));
 }
 
 Buffer::~Buffer()
 {
+#ifdef BUFFER_DEBUG
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
+#endif
+
+	if(mExtDataPointer)
+	{
+#ifdef BUFFER_DEBUG
+		kdDebug(14150) << k_funcinfo << "Deleting prefilled Buffer without deleting contents" << endl;
+		kdDebug(14150) << k_funcinfo << "mExtDataPointer=" << mExtDataPointer <<  endl;
+#endif
+		mBuffer.resetRawData(mExtDataPointer, mExtDataLen);
+	}
+	mExtDataPointer=0L;
+	mExtDataLen=0;
 }
+
 
 int Buffer::addByte(const BYTE b)
 {
-	doResize(1);
-	mBuf[mLength] = b;
-	return ++mLength;
+	expandBuffer(1);
+//	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
+	mBuffer[mBuffer.size()-1] = b;
+
+	return mBuffer.size();
 }
 
 int Buffer::addLEByte(const BYTE b)
 {
-	doResize(1);
-	mBuf[mLength] = ((b) & 0xff);
-	return ++mLength;
+	expandBuffer(1);
+//	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
+	mBuffer[mBuffer.size()-1] = ((b) & 0xff);
+
+	return mBuffer.size();
 }
+
 
 int Buffer::addWord(const WORD w)
 {
-	doResize(2);
-	mBuf[mLength] = (w & 0xff00) >> 8;
-	mBuf[mLength+1] = (w & 0x00ff);
-	mLength += 2;
-	return mLength;
-}
+	expandBuffer(2);
+//	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
+	mBuffer[mBuffer.size()-2] = ((w & 0xff00) >> 8);
+	mBuffer[mBuffer.size()-1] = (w & 0x00ff);
 
-int Buffer::addDWord(const DWORD dw)
-{
-	doResize(4);
-	mBuf[mLength] = (dw & 0xff000000) >> 24;
-	mBuf[mLength+1] = (dw & 0x00ff0000) >> 16;
-	mBuf[mLength+2] = (dw & 0x0000ff00) >> 8;
-	mBuf[mLength+3] = (dw & 0x000000ff);
-	mLength += 4;
-	return mLength;
+	return mBuffer.size();
 }
 
 int Buffer::addLEWord(const WORD w)
 {
-	doResize(2);
-	mBuf[mLength] = (unsigned char) ((w >> 0) & 0xff);
-	mBuf[mLength+1] = (unsigned char) ((w >> 8) & 0xff);
-	mLength += 2;
-	return mLength;
+	expandBuffer(2);
+//	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
+	mBuffer[mBuffer.size()-2] = (unsigned char) ((w >> 0) & 0xff);
+	mBuffer[mBuffer.size()-1] = (unsigned char) ((w >> 8) & 0xff);
+
+	return mBuffer.size();
+}
+
+
+int Buffer::addDWord(const DWORD dw)
+{
+	expandBuffer(4);
+//	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
+	mBuffer[mBuffer.size()-4] = (dw & 0xff000000) >> 24;
+	mBuffer[mBuffer.size()-3] = (dw & 0x00ff0000) >> 16;
+	mBuffer[mBuffer.size()-2] = (dw & 0x0000ff00) >> 8;
+	mBuffer[mBuffer.size()-1] = (dw & 0x000000ff);
+
+	return mBuffer.size();
 }
 
 int Buffer::addLEDWord(const DWORD dw)
 {
-	doResize(4);
-	mBuf[mLength] = (unsigned char) ((dw >> 0) & 0xff);
-	mBuf[mLength+1] = (unsigned char) ((dw >>  8) & 0xff);
-	mBuf[mLength+2] = (unsigned char) ((dw >> 16) & 0xff);
-	mBuf[mLength+3] = (unsigned char) ((dw >> 24) & 0xff);
+	expandBuffer(4);
+//	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
+	mBuffer[mBuffer.size()-4] = (unsigned char) ((dw >> 0) & 0xff);
+	mBuffer[mBuffer.size()-3] = (unsigned char) ((dw >>  8) & 0xff);
+	mBuffer[mBuffer.size()-2] = (unsigned char) ((dw >> 16) & 0xff);
+	mBuffer[mBuffer.size()-1] = (unsigned char) ((dw >> 24) & 0xff);
 
-	mLength += 4;
-	return mLength;
+	return mBuffer.size();
 }
 
-int Buffer::addString(const char * s, const DWORD len)
+
+int Buffer::addString(const char *s, const DWORD len)
 {
-	doResize(len);
+	unsigned int pos = mBuffer.size();
+	expandBuffer(len);
+//	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
+
 	//concatenate the new string onto the buffer
-	for (unsigned int i=0;i<len;i++)
-		mBuf[mLength+i] = s[i];
-	mLength += len;
-	return mLength;
+	for (unsigned int i=0; i<len; i++)
+	{
+/*		kdDebug(14150) << k_funcinfo << "mBuffer[" << pos+i << "]  =  " <<
+			"'" << s[i] << "'" << endl;*/
+		mBuffer[pos+i] = s[i];
+	}
+	return mBuffer.size();
 }
 
 int Buffer::addString(const unsigned char *s, const DWORD len)
@@ -114,28 +149,51 @@ int Buffer::addString(const unsigned char *s, const DWORD len)
 	return addString((const char*)s, len);
 }
 
-int Buffer::addLEString(const char * s, const DWORD len)
+int Buffer::addLEString(const char *s, const DWORD len)
 {
-	doResize(len);
+	unsigned int pos = mBuffer.size()-1;
+	expandBuffer(len);
+//	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
+
 	//concatenate the new string onto the buffer
-	for (unsigned int i=0;i<len;i++)
-		mBuf[mLength+i] = ( (s[i]) & 0xff);
-	mLength += len;
-	return mLength;
+	for (unsigned int i=0; i<len; i++)
+	{
+/*		kdDebug(14150) << k_funcinfo << "mBuffer[" << pos << "]  =  " <<
+			"'" << s[i] << "'" << endl;*/
+		mBuffer[pos] = ( (s[i]) & 0xff);
+		pos++;
+	}
+
+	return mBuffer.size();
 }
+
 
 void Buffer::clear()
 {
-	delete [] alloc_buf;
-	mLength = 0;
-	alloc_length = 0;
-	alloc_buf = 0L;
-	mBuf = 0L;
+#ifdef BUFFER_DEBUG
+	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
+#endif
+
+	if(mExtDataPointer)
+	{
+#ifdef BUFFER_DEBUG
+		kdDebug(14150) << k_funcinfo << "Clearing Buffer without deleting contents" << endl;
+#endif
+		mBuffer.resetRawData(mExtDataPointer, mExtDataLen);
+		mExtDataPointer=0L;
+		mExtDataLen=0;
+	}
+	else
+	{
+		mBuffer.resize(0);
+	}
+	mReadPos=0;
 }
 
-/** Adds a TLV with the given type and data */
+
 int Buffer::addTLV(WORD type, WORD len, const char *data)
 {
+//	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
 	addWord(type);
 	addWord(len);
 	return addString(data,len);
@@ -143,43 +201,36 @@ int Buffer::addTLV(WORD type, WORD len, const char *data)
 
 int Buffer::addFlap(const BYTE channel, const WORD flapSequenceNum)
 {
-	doResize(6);
+	unsigned int sizeWithoutHeader = mBuffer.size();
+	expandBuffer(6);
+
+/*	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() <<
+		", size without header = " << sizeWithoutHeader << endl;*/
+
 	//create the flap header
-	for (int i=mLength-1;i>=0;i--) //copy over the packet
-		mBuf[i+6] = mBuf[i];
-	mBuf[0] = 0x2a;
-	mBuf[1] = channel;
-	mBuf[2] = (flapSequenceNum & 0xff00) >> 8;
-	mBuf[3] = (flapSequenceNum & 0x00ff);
-	mBuf[4] = (mLength & 0xff00) >> 8;
-	mBuf[5] = (mLength & 0x00ff);
-	mLength += 6;
-//	flapSequenceNum++;
-	return mLength;
-}
-
-void Buffer::print() const
-{
-	kdDebug(14150) << toString() << endl;
-}
-
-QString Buffer::toString() const
-{
-	QString output;
-	for (unsigned int i=0;i<mLength;i++)
+	for (int i=sizeWithoutHeader-1; i>=0; i--) //copy over the packet
 	{
-		if (static_cast<unsigned char>(mBuf[i]) < 0x10)
-			output += "0";
-		output += QString("%1 ").arg(static_cast<unsigned char>(mBuf[i]),0,16);
-		if ((i>0) && (i % 10 == 0))
-			output += '\n';
+		mBuffer[i+6] = mBuffer[i];
 	}
-	return output;
+
+	mBuffer[0] = 0x2a;
+	mBuffer[1] = channel;
+	mBuffer[2] = ((flapSequenceNum & 0xff00) >> 8);
+	mBuffer[3] = (flapSequenceNum & 0x00ff);
+	mBuffer[4] = ((sizeWithoutHeader & 0xff00) >> 8);
+	mBuffer[5] = (sizeWithoutHeader & 0x00ff);
+
+	return mBuffer.size();
 }
 
 int Buffer::addSnac(const WORD family, const WORD subtype,
 	const WORD flags, const DWORD id)
 {
+#ifdef BUFFER_DEBUG
+	kdDebug(14150) << k_funcinfo <<
+		family << ", " << subtype << ", " << flags << ", " << id << endl;
+#endif
+
 	addWord(family);
 	addWord(subtype);
 	addWord(flags);
@@ -199,15 +250,16 @@ SNAC Buffer::getSnacHeader()
 BYTE Buffer::getByte()
 {
 	BYTE thebyte = 0x00;
-	if(mLength > 0)
+
+	if(mReadPos < mBuffer.size())
 	{
-		thebyte = mBuf[0];
-		mBuf++; //advance mBuf to the next char
-		mLength--;
+//		kdDebug(14150) << k_funcinfo << "read pos = " << mReadPos << endl;
+		thebyte = mBuffer[mReadPos];
+		mReadPos++;
 	}
 	else
 	{
-		emit bufError("Buffer::getByte(): mBuf empty");
+		emit bufError("Buffer::getByte(): mBuffer empty");
 	}
 	return thebyte;
 }
@@ -255,33 +307,61 @@ DWORD Buffer::getLEDWord()
 	return retdword;
 }
 
-void Buffer::OnBufError(QString s)
+void Buffer::slotBufferError(QString s)
 {
 	kdDebug(14150) << " BUFFER ERROR: " << s << endl << "Stopping reporting errors" << endl;
 
-	disconnect(this, SIGNAL(bufError(QString)), this, SLOT(OnBufError(QString)));
+	disconnect(this, SIGNAL(bufError(QString)), this, SLOT(slotBufferError(QString)));
 }
 
-void Buffer::setBuf(char *b, const WORD l)
+void Buffer::setBuf(char *b, const WORD len)
 {
-	if (alloc_buf)
-		delete [] alloc_buf;
-	alloc_buf = b;
-	mBuf = b;
-	mLength = l;
-	alloc_length = l;
+#ifdef BUFFER_DEBUG
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
+#endif
+
+	if(mExtDataPointer)
+	{
+#ifdef BUFFER_DEBUG
+		kdDebug(14150) << k_funcinfo << "Deleting prefilled Buffer without deleting contents" << endl;
+#endif
+		mBuffer.resetRawData(mExtDataPointer, mExtDataLen);
+	}
+	else
+	{
+		mBuffer.resize(0);
+	}
+
+	mExtDataPointer = b;
+	mExtDataLen = len;
+	mBuffer.setRawData(mExtDataPointer, mExtDataLen);
+
+	mReadPos = 0;
 }
 
 char *Buffer::getBlock(WORD len)
 {
-	char *ch = new char[len+1];
-	for (unsigned int i=0;i<len;i++)
+	char *ch=new char[len+1];
+	for (unsigned int i=0; i<len; i++)
 	{
 		ch[i] = getByte();
 	}
-	ch[len] = 0;
+	ch[len]=0;
 	return ch;
 }
+
+WORD *Buffer::getWordBlock(WORD len)
+{
+	kdDebug(14150) << k_funcinfo << "of length " << len << endl;
+	WORD *ch=new WORD[len+1];
+	for (unsigned int i=0; i<len; i++)
+	{
+		ch[i]=getWord();
+	}
+	ch[len]=0;
+	return ch;
+}
+
 
 char *Buffer::getLEBlock(WORD len)
 {
@@ -321,7 +401,8 @@ QPtrList<TLV> Buffer::getTLVList(bool debug)
 {
 	QPtrList<TLV> ql;
 	ql.setAutoDelete(FALSE);
-	while (mLength != 0)
+
+	while (mReadPos < mBuffer.size())
 	{
 		TLV *t = new TLV;
 
@@ -334,21 +415,23 @@ QPtrList<TLV> Buffer::getTLVList(bool debug)
 
 		ql.append(t);
 	}
+
 	return ql;
 }
 
 int Buffer::appendFlap(const BYTE chan, const WORD len, const WORD flapSequenceNum)
 {
-	doResize(6);
-	mBuf[mLength] = 0x2a;
-	mBuf[mLength+1] = chan;
-	mBuf[mLength+2] = (flapSequenceNum & 0xff00) >> 8;
-	mBuf[mLength+3] = (flapSequenceNum & 0x00ff);
-	mBuf[mLength+4] = (len & 0xff00) >> 8;
-	mBuf[mLength+5] = (len & 0x00ff);
-	mLength += 6;
-//	flapSequenceNum++;
-	return mLength;
+	unsigned int currentSize = mBuffer.size();
+	expandBuffer(6);
+
+	mBuffer[currentSize] = 0x2a;
+	mBuffer[currentSize+1] = chan;
+	mBuffer[currentSize+2] = (flapSequenceNum & 0xff00) >> 8;
+	mBuffer[currentSize+3] = (flapSequenceNum & 0x00ff);
+	mBuffer[currentSize+4] = (len & 0xff00) >> 8;
+	mBuffer[currentSize+5] = (len & 0x00ff);
+
+	return mBuffer.size();
 }
 
 int Buffer::addChatTLV(const WORD type, const WORD exchange,
@@ -358,43 +441,16 @@ int Buffer::addChatTLV(const WORD type, const WORD exchange,
 	addWord(0x0005 + roomname.length());
 	addWord(exchange);
 	addByte(roomname.length());
-	addString(roomname.latin1(), roomname.length());
+	addString(roomname.latin1(), roomname.length()); // TODO: check encoding
+
 	return addWord(instance);
 }
 
-void Buffer::doResize(int inc)
+void Buffer::expandBuffer(unsigned int inc)
 {
-	if(static_cast<DWORD>(mLength + inc + mBuf - alloc_buf) > alloc_length)
-	{
-		// If we need a new array
-
-		// FIXME: do what this comment says!
-		// don't worry, I'll be changing this to a QByteArray pretty soon
-		// in the meantime:
-		// before allocating memory, check to see if we can use what is already discarded
-		// if more than half the mBuffer has been discarded, we'll just relocate what we have
-		if(static_cast<DWORD>(mBuf-alloc_buf) > (mLength+inc))
-		{
-			for (DWORD i=0; i < mLength; i++)
-				alloc_buf[i] = mBuf[i];
-			mBuf = alloc_buf;
-		}
-		else
-		{
-			char *tmp;
-			tmp = new char[(mLength + inc)*2];
-
-			for (DWORD i=0;i<mLength;i++)
-				tmp[i] = mBuf[i];
-
-			if (alloc_buf)
-				delete[] alloc_buf;
-
-			alloc_buf = tmp;
-			mBuf = alloc_buf;
-			alloc_length = (mLength + inc)*2;
-		}
-	}
+/*	kdDebug(14150) << k_funcinfo << "Resizing from '" << mBuffer.size() << "' to " <<
+		(mBuffer.size()+inc) << "' bytes" << endl;*/
+	mBuffer.resize(mBuffer.size()+inc, QGArray::SpeedOptim);
 }
 
 char *Buffer::getLNTS()
@@ -421,8 +477,65 @@ int Buffer::addLNTS(const char * s)
 int Buffer::addLELNTS(const char * s)
 {
 	unsigned int len = strlen(s);
-	addLEWord(len);
-	return addLEString(s, len);
+	int ret = addLEWord(len);
+	if(len > 0)
+		ret = addLEString(s, len);
+	return ret;
+}
+
+
+char *Buffer::buffer() const
+{
+	return mBuffer.data();
+}
+
+int Buffer::length() const
+{
+	return (mBuffer.size() - mReadPos);
+}
+
+
+/*void Buffer::print() const
+{
+	kdDebug(14150) << toString() << endl;
+}*/
+
+QString Buffer::toString() const
+{
+	// line format:
+	//00 03 00 0b 00 00 90 b8 f5 9f 09 31 31 33 37 38   |¶;tJÛ...........|
+
+	int i = 0;
+	QString output = "\n";
+	QString hex, ascii;
+
+	QByteArray::ConstIterator it;
+    for(it = mBuffer.begin(); it != mBuffer.end(); ++it)
+	{
+		i++;
+
+		unsigned char c = static_cast<unsigned char>(*it);
+
+		if(c < 0x10)
+			hex.append("0");
+		hex.append(QString("%1 ").arg(c, 0, 16));
+
+		ascii.append(isprint(c) ? c : '.');
+
+		if (i == 16)
+		{
+			output += hex + "   |" + ascii + "|\n";
+			i=0;
+			hex=QString::null;
+			ascii=QString::null;
+		}
+	}
+
+	if(!hex.isEmpty())
+		output += hex.leftJustify(48, ' ') + "   |" + ascii.leftJustify(16, ' ') + '|';
+	output.append('\n');
+
+	return output;
 }
 
 #include "buffer.moc"

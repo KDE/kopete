@@ -15,6 +15,7 @@
 */
 
 #include "oscarsocket.h"
+#include "oscardebug.h"
 
 #include <stdlib.h>
 #include <netinet/in.h> // for htonl()
@@ -62,15 +63,24 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 
 OscarSocket::~OscarSocket()
 {
+	kdDebug(14150) << k_funcinfo << "Called" << endl;
+
 	if(state() != QSocket::Idle)
 	{
-		clearPendingData();
+		kdDebug(14150) << k_funcinfo << "FIXME: Still not disconnected" << endl;
+		if(mIsICQ)
+			stopKeepalive();
+
+		clearPendingData(); // hard socket shutdown, output queue gets killed!
 		close();
-		slotConnectionClosed();
 	}
 
+	if (mDirectIMMgr)
+		delete mDirectIMMgr;
+	if (mFileTransferMgr)
+		delete mFileTransferMgr;
 	if (mCookie)
-		delete[] mCookie;
+		delete [] mCookie;
 	if (key)
 		delete [] key;
 
@@ -147,9 +157,12 @@ void OscarSocket::slotRead()
 		readBlock(tmp, bytesAvailable());
 		inbuf.setBuf(tmp, bytesAvailable());
 
-		inbuf.print();
+#ifdef OSCAR_PACKETLOG
+	kdDebug(14150) << "=== INCOMPLETE INPUT ===" << inbuf.toString();
+#endif
 
-		delete buf;
+		inbuf.clear();
+		delete [] buf;
 		return;
 	}
 
@@ -163,26 +176,27 @@ void OscarSocket::slotRead()
 	if (bytesAvailable())
 		emit readyRead(); //there is another packet waiting to be read
 
-	inbuf.setBuf(buf,bytesread);
+	inbuf.setBuf(buf, bytesread);
 
 #ifdef OSCAR_PACKETLOG
-	kdDebug(14150) << k_funcinfo << "Input: " << endl;
-	inbuf.print();
+	kdDebug(14150) << "=== INPUT ===" << inbuf.toString();
 #endif
 
 	switch(fl.channel)
 	{
 		case 0x01: //new connection negotiation channel
 		{
-			DWORD flapversion;
-			flapversion=inbuf.getDWord();
+			DWORD flapversion = inbuf.getDWord();
 			if (flapversion == 0x00000001)
 			{
 				emit connAckReceived();
 			}
 			else
 			{
-				kdDebug(14150) << k_funcinfo << "Could not read FLAP version on channel 0x01" << endl;
+				kdDebug(14150) << k_funcinfo <<
+					"Could not read FLAP version on channel 0x01" << endl;
+				inbuf.clear();
+				delete [] buf;
 				return;
 			}
 			break;
@@ -203,10 +217,8 @@ void OscarSocket::slotRead()
 					{
 						case 0x0001:  //error
 						{
-#ifdef OSCAR_PACKETLOG
-							kdDebug(14150) << k_funcinfo << "Generic service error, remaining data is:" << endl;
-							inbuf.print();
-#endif
+							kdDebug(14150) << k_funcinfo << "Generic service error!" << endl;
+
 							emit protocolError(
 							i18n(
 								"An unknown error occurred. " \
@@ -218,8 +230,8 @@ void OscarSocket::slotRead()
 						case 0x0003: //server ready
 							parseServerReady(inbuf);
 							break;
-						case 0x0005: //redirect
-							parseRedirect(inbuf);
+						case 0x0005: //redirect, TODO: unused
+//							parseRedirect(inbuf);
 							break;
 						case 0x0007: //rate info request response, SRV_RATES
 							parseRateInfoResponse(inbuf);
@@ -243,10 +255,11 @@ void OscarSocket::slotRead()
 							parseMemRequest(inbuf);
 							break;
 						default:
-							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" <<
+								s.family << ",|" << s.subtype << "|)" << endl;
 					};
 					break;
-				}
+				} // END OSCAR_FAM_1
 
 				case OSCAR_FAM_2: // Location service
 				{
@@ -262,7 +275,8 @@ void OscarSocket::slotRead()
 							parseUserProfile(inbuf);
 							break;
 						default:
-							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" <<
+								s.family << ",|" << s.subtype << "|)" << endl;
 					};
 					break;
 				} // END 0x0002
@@ -318,10 +332,11 @@ void OscarSocket::slotRead()
 							parseMiniTypeNotify(inbuf);
 							break;
 						default: //invalid subtype
-							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC("
+								<< s.family << ",|" << s.subtype << "|)" << endl;
 					};
 					break;
-				} // END Family 4
+				} // END OSCAR_FAM_4
 
 				case OSCAR_FAM_9: // BOS
 				{
@@ -331,10 +346,11 @@ void OscarSocket::slotRead()
 							parseBOSRights(inbuf);
 							break;
 						default:
-							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC("
+								<< s.family << ",|" << s.subtype << "|)" << endl;
 					};
 					break;
-				} // END 0x0009
+				} // END OSCAR_FAM_9
 
 				case OSCAR_FAM_19: // Contact list management
 				{
@@ -359,10 +375,11 @@ void OscarSocket::slotRead()
 							kdDebug(14150) << k_funcinfo << "IGNORE 'added by' message" << endl;
 							break;
 						default: //invalid subtype
-							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC("
+								<< s.family << ",|" << s.subtype << "|)" << endl;
 					};
 					break;
-				} // END 0x0013
+				} // END OSCAR_FAM_19
 
 				case OSCAR_FAM_21: // ICQ 0x15 packets
 				{
@@ -378,7 +395,8 @@ void OscarSocket::slotRead()
 							parseSRV_FROMICQSRV(inbuf);
 							break;
 						default:
-							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC("
+								<< s.family << ",|" << s.subtype << "|)" << endl;
 					}
 					break;
 				} // END OSCAR_FAM_21
@@ -404,6 +422,7 @@ void OscarSocket::slotRead()
 
 				default:
 					kdDebug(14150) << k_funcinfo << "Unknown SNAC(|" << s.family << "|," << s.subtype << ")" << endl;
+
 			}; // END switch (s.family)
 			break;
 		} // END channel 0x02
@@ -411,10 +430,6 @@ void OscarSocket::slotRead()
 		case 0x03: //FLAP error channel
 		{
 			kdDebug(14150) << "FLAP error channel, UNHANDLED" << endl;
-#ifdef OSCAR_PACKETLOG
-			kdDebug(14150) << "Input: " << endl;
-			inbuf.print();
-#endif
 			break;
 		} // END channel 0x03
 
@@ -430,17 +445,17 @@ void OscarSocket::slotRead()
 			break;
 		}
 
-		default: //oh, crap, something's wrong
+		default: //oh, crap, something is really wrong
 		{
 			kdDebug(14150) << k_funcinfo << "Unknown channel " << fl.channel << endl;
-#ifdef OSCAR_PACKETLOG
-			kdDebug(14150) << k_funcinfo << "Input: " << endl;
-			inbuf.print();
-#endif
 		}
+
 	} // END switch(fl.channel)
 
+	inbuf.clear(); // seperate buf from inbuf again
 	delete [] buf;
+
+//	kdDebug(14150) << k_funcinfo << "END" << endl;
 }
 
 void OscarSocket::sendLoginRequest()
@@ -448,7 +463,7 @@ void OscarSocket::sendLoginRequest()
 	kdDebug(14150) << k_funcinfo << "Called" << endl;
 	Buffer outbuf;
 	outbuf.addSnac(OSCAR_FAM_23,0x0006,0x0000,0x00000000);
-	outbuf.addTLV(0x0001,getSN().length(),getSN().latin1());
+	outbuf.addTLV(0x0001, getSN().length(), getSN().latin1());
 	sendBuf(outbuf,0x02);
 //	emit connectionChanged(2,QString("Requesting login for " + getSN() + "..."));
 }
@@ -458,7 +473,7 @@ void OscarSocket::putFlapVer(Buffer &outbuf)
 	outbuf.addDWord(0x00000001);
 }
 
-void OscarSocket::OnConnAckReceived(void)
+void OscarSocket::OnConnAckReceived()
 {
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
 	if(mIsICQ)
@@ -482,15 +497,19 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 	flapSequenceNum++;
 
 #ifdef OSCAR_PACKETLOG
-	kdDebug(14150) << "Output: " << endl;
-	outbuf.print();
+	kdDebug(14150) << "--- OUTPUT ---" << outbuf.toString() << endl;
 #endif
 
 	if(state() != QSocket::Connected)
 		kdDebug(14150) << k_funcinfo << "Socket is NOT open, can't write to it right now" << endl;
 	else
-		writeBlock(outbuf.buffer(), outbuf.length());
-	outbuf.clear();
+	{
+		if(writeBlock(outbuf.buffer(), outbuf.length()) == -1)
+		{
+			kdDebug(14150) << k_funcinfo << "writeBlock() call failed!" << endl;
+		}
+	}
+	outbuf.clear(); // get rid of the buffer contents
 }
 
 // Logs in the user!
@@ -613,7 +632,7 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 	{
 		rc = new RateClass;
 		rc->classid = inbuf.getWord();
-		kdDebug(14150) << k_funcinfo << "Rate classId=" << rc->classid << endl;
+		//kdDebug(14150) << k_funcinfo << "Rate classId=" << rc->classid << endl;
 		rc->windowsize = inbuf.getDWord();
 		rc->clear = inbuf.getDWord();
 		rc->alert = inbuf.getDWord();
@@ -623,19 +642,17 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 		rc->max = inbuf.getDWord();
 		rc->lastTime = inbuf.getDWord();
 		rc->currentState = inbuf.getByte();
-/*
-		//5 unknown bytes, depending on the 0x0001/0x0017 you send
+		/*//5 unknown bytes, depending on the 0x0001/0x0017 you send
 		for (int j=0;j<5;j++)
-				rc->unknown[j] = inbuf.getByte();
-*/
+				rc->unknown[j] = inbuf.getByte();*/
 		rateClasses.append(rc);
 	}
 
+	/*kdDebug(14150) << k_funcinfo << "The buffer is " << inbuf.length() <<
+		" bytes long after reading the classes." << endl;*/
+
 #ifdef OSCAR_PACKETLOG
-	kdDebug(14150) << k_funcinfo << "The buffer is " << inbuf.length()
-		<< " bytes long after reading the classes." << endl;
-	kdDebug(14150) << k_funcinfo << "It looks like this: " << endl;
-	inbuf.print();
+	kdDebug(14150) << "REMAINING BUFFER:" << inbuf.toString() << endl;
 #endif
 
 	//now here come the members of each class
@@ -684,8 +701,7 @@ void OscarSocket::sendRateAck()
 	outbuf.addSnac(0x0001,0x0008,0x0000,0x00000000);
 	for (RateClass *rc=rateClasses.first();rc;rc=rateClasses.next())
 	{
-		kdDebug(14150) << "adding classid " << rc->classid << " to RateAck" << endl;
-
+		//kdDebug(14150) << k_funcinfo << "adding classid " << rc->classid << " to RateAck" << endl;
 //		if (rc->classid != 0x0015) //0x0015 is ICQ
 			outbuf.addWord(rc->classid);
 	}
@@ -930,7 +946,6 @@ void OscarSocket::sendIdleTime(DWORD time)
 	}
 }
 
-/** requests ssi data from the server */
 void OscarSocket::sendBuddyListRequest(void)
 {
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_CHECKROSTER) Requesting SSI data" << endl;
@@ -941,7 +956,6 @@ void OscarSocket::sendBuddyListRequest(void)
 	sendBuf(outbuf,0x02);
 }
 
-/** parses incoming ssi data */
 void OscarSocket::parseRosterData(Buffer &inbuf)
 {
 	AIMBuddyList blist;
@@ -956,7 +970,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 	{
 		SSI *ssi = new SSI;
 		char *name = inbuf.getLNTS(); //name
-		ssi->name = QString::fromLocal8Bit(name);
+		ssi->name = QString::fromLocal8Bit(name); // TODO: check encoding
 		if (name)
 			delete [] name;
 		ssi->gid = inbuf.getWord();
@@ -1080,19 +1094,23 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 			}
 
 			case 0x0002: // TODO permit buddy list AKA visible list
+			{
+				kdDebug(14150) << k_funcinfo << "[TODO] Add Contact '" << ssi->name <<
+					"' to VISIBLE/ALLOW list." << endl;
 				break;
+			}
 
 			case 0x0003: // TODO deny buddy AKA invisible list
 			{
 				bud = new AIMBuddy(ssi->bid, ssi->gid, ssi->name);
 				kdDebug(14150) << k_funcinfo << "Adding Contact '" << ssi->name <<
-					"' to DENY list." << endl;
+					"' to INVISIBLE/DENY list." << endl;
 				blist.addBuddyDeny(bud);
 				emit denyAdded(ssi->name);
 				break;
 			}
 
-			case 0x0004: // TODO permit-deny setting
+			case 0x0004:
 			{
 				Buffer tmpBuf(ssi->tlvlist, ssi->tlvlength);
 				QPtrList<TLV> lst = tmpBuf.getTLVList();
@@ -1229,11 +1247,12 @@ void OscarSocket::parseServerReady(Buffer &inbuf)
 
 	int famcount; //the number of families received
 	WORD *families = new WORD[inbuf.length()];
-	for (famcount=0; inbuf.length(); famcount++)
+	for (famcount=0; inbuf.length() > 1; famcount++)
 	{
 		families[famcount] = inbuf.getWord();
 	}
-	sendVersions(families,famcount); // send back a CLI_FAMILIES packet
+
+	sendVersions(families, famcount); // send back a CLI_FAMILIES packet
 	emit serverReady(); // What is this exactly used for? [mETz]
 	delete [] families;
 }
@@ -1397,9 +1416,10 @@ bit4: client supports typing notifications
 void OscarSocket::parseIM(Buffer &inbuf)
 {
 	QByteArray cook(8);
+/*
 	WORD type = 0;
 	WORD length = 0;
-
+*/
 	//This is probably the hardest thing to do in oscar
 	//first comes an 8 byte ICBM cookie (random)
 	// from icq docs:
@@ -1434,176 +1454,24 @@ void OscarSocket::parseIM(Buffer &inbuf)
 	// never be two TLVs of the same type in one block.
 	UserInfo u = parseUserInfo(inbuf);
 
-//	TLV tlv;
-	unsigned int remotePort = 0;
-	QHostAddress qh;
-	QString message;
-	WORD msgtype = 0x0000; //used to tell whether it is a direct IM requst, deny, or accept
-	DWORD capflag = 0x00000000; //used to tell what kind of rendezvous this is
-	OncomingSocket *sockToUse; //used to tell which listening socket to use
-	QString fileName; //the name of the file to be transferred (if any)
-	long unsigned int fileSize = 0; //the size of the file(s) to be transferred
-
 	switch(channel)
 	{
 		case MSGFORMAT_SIMPLE: //normal IM
 		{
-			// Flag to indicate if there are more TLV's to parse
-			bool moreTLVs = true;
-			// This gets set if we are notified of an auto response
-			bool isAutoResponse = false;
-			while(moreTLVs)
-			{
-//				kdDebug(14150) << k_funcinfo << "Got a normal IM block from '" << u.sn << "'" << endl;
-				type = inbuf.getWord();
-				kdDebug(14150) << k_funcinfo << "TLV(" << type << ")" << endl;
-				switch(type)
-				{
-					case 0x0002: //TLV(2), message block
-					{
-						// This is the total length of the rest of this message TLV
-						length = inbuf.getWord();
-
-						TLV caps = inbuf.getTLV(); // TLV(1281), CAPABILITIES
-/*
-						if (caps.type==1281)
-						{
-							kdDebug(14150) << k_funcinfo <<
-								"TODO: parse CAPABILITIES block!" << endl;
-						}
-*/
-						delete [] caps.data;
-
-						TLV tlvMessage = inbuf.getTLV(); // TLV(257), MESSAGE
-
-						if (tlvMessage.type == 0x0101)
-						{
-							Buffer msgBuf(tlvMessage.data, tlvMessage.length);
-							//DWORD encoding = msgBuf.getDWord();
-							WORD charsetNumber=msgBuf.getWord();
-							WORD charsetSubset=msgBuf.getWord();
-							DWORD encoding = (charsetNumber << 16) | charsetSubset;
-/*
-							kdDebug(14150) << k_funcinfo << "charsetNumber=" <<charsetNumber <<
-								", charsetSubset=" << charsetSubset << endl;
-*/
-							if (msgBuf.length() < 1 )
-								break;
-
-							char *messagetext = msgBuf.getBlock(msgBuf.length());
-
-							QTextCodec *codec;
-							if (charsetNumber == 0x0002) // UCS-2BE (or UTF-16)
-							{
-								kdDebug(14150) << k_funcinfo << "UTF16 message" << endl;
-								codec = QTextCodec::codecForName("utf16");
-								message = codec->toUnicode(messagetext);
-							}
-	 						else if (charsetNumber == 0x0003) // iso-8859-1
-							{
-								if (charsetSubset == 0)
-								{
-									kdDebug(14150) << k_funcinfo << "ISO8859-1 message" << endl;
-									codec = QTextCodec::codecForName("ISO8859-1");
-									message = codec->toUnicode(messagetext);
-								}
-								else if (charsetSubset == 0xffff)
-								{
-									kdDebug(14150) << k_funcinfo << "CP1257 message" << endl;
-									codec = QTextCodec::codecForName("CP1257");
-									message = codec->toUnicode(messagetext);
-								}
-							}
-  							else //if (encoding == 0x0000ffff) // unknown
-							{
-								kdDebug(14150) << k_funcinfo << "unknown encoded message" << endl;
-								message = QString::fromLatin1(messagetext);
-							}
-
-							delete [] messagetext; // getBlock allocates memory, we HAVE to free it again!
-
-							kdDebug(14150) << k_funcinfo << "emit gotIM(), contact='" << u.sn <<
-								"', message='" << message <<
-								"' encoding=" << (void *)encoding << endl;
-							if(isAutoResponse)
-								emit gotIM(Away, message, u.sn);
-							else
-								emit gotIM(Normal, message, u.sn);
-						}
-						else
-						{
-							kdDebug(14150) << k_funcinfo <<
-								"Cannot find TLV(257), no message inside packet???" << endl;
-						}
-
-//						kdDebug(14150) << k_funcinfo << "deleting data from TLV(257)" << endl;
-						delete [] tlvMessage.data; // getTLV uses getBlock() internally! same as aboves delete applies
-
-						if(inbuf.length() > 0)
-						{
-							moreTLVs = true;
- 							kdDebug(14150) << k_funcinfo <<
-								"remaining length after reading message=" << inbuf.length() << endl;
-
-							kdDebug(14150) << k_funcinfo << inbuf.toString() << endl;
-						}
-						else
-						{
-							moreTLVs = false;
-						}
-						break;
-					} // END 0x0002
-
-					case 0x0004: // AIM Away message
-					{
-						kdDebug(14150) << k_funcinfo << "AIM autoresponse." << endl;
-						// There isn't actually a message in this TLV, it just specifies
-						// that the message that was send was an autoresponse
-						inbuf.getWord();
-						// Set the autoresponse flag
-						isAutoResponse = true;
-
-						// Check to see if there's more
-						if(inbuf.length() > 0)
-							moreTLVs = true;
-						else
-							moreTLVs = false;
-						break;
-					}
-
-					case 0x0008: // User Icon
-					{
-						kdDebug(14150) << k_funcinfo << "AIM USER ICON." << endl;
-						// TODO support this
-						// The length of the TLV
-						length = inbuf.getWord();
-						// Get the block
-						/*char *msg =*/ inbuf.getBlock(length);
-
-						// Check to see if there are more TLVs
-						if(inbuf.length() > 0)
-							moreTLVs = true;
-						else
-							moreTLVs = false;
-						break;
-					}
-
-					default: //unknown type
-					{
-						kdDebug(14150) << k_funcinfo <<
-							"Unknown message type, type=" << type << endl;
-						if(inbuf.length() > 0)
-							moreTLVs = true;
-						else
-							moreTLVs = false;
-					}
-				};
-			}
+			parseSimpleIM(inbuf, u);
 			break;
 		}; // END MSGFORMAT_SIMPLE
 
 		case MSGFORMAT_ADVANCED: //AIM rendezvous, ICQ advanced messages
 		{
+			unsigned int remotePort = 0;
+			QHostAddress qh;
+			QString message;
+			WORD msgtype = 0x0000; //used to tell whether it is a direct IM requst, deny, or accept
+			DWORD capflag = 0x00000000; //used to tell what kind of rendezvous this is
+			OncomingSocket *sockToUse; //used to tell which listening socket to use
+			QString fileName; //the name of the file to be transferred (if any)
+			long unsigned int fileSize = 0; //the size of the file(s) to be transferred
 			if (mIsICQ) // TODO: unify AIM and ICQ in this place
 			{
 				parseAdvanceMessage(inbuf, u);
@@ -1656,18 +1524,18 @@ void OscarSocket::parseIM(Buffer &inbuf)
 				TLV *cur;
 				tlvlist.setAutoDelete(true);
 
-				for (cur = tlvlist.first();cur;cur = tlvlist.next())
+				for(cur = tlvlist.first();cur;cur = tlvlist.next())
 				{
-					//IP address from the perspective of the client
 					if (cur->type == 0x0002)
 					{
+						//IP address from the perspective of the client
 						kdDebug(14150) << "ClientIP1: " << cur->data[0] << "."
 							<< cur->data[1] << "." << cur->data[2] << "."
 							<< cur->data[3]  << endl;
 					}
-					//Secondary IP address from the perspective of the client
 					else if (cur->type == 0x0003)
 					{
+						//Secondary IP address from the perspective of the client
 							kdDebug(14150) << "ClientIP2: " << cur->data[0] << "."
 								<< cur->data[1] << "." << cur->data[2] << "."
 								<< cur->data[3] << endl;
@@ -1741,7 +1609,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 			}
 			else
 			{
-				kdDebug(14150) << k_funcinfo << "IM: unknown TLV type " << type << endl;
+				kdDebug(14150) << k_funcinfo << "IM: unknown TLV type " << tlv.type << endl;
 			}
 
 			// Set the appropriate server socket
@@ -1777,74 +1645,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 
 		case MSGFORMAT_SERVER: // non-acknowledged, server messages (ICQ ONLY I THINK)
 		{
-			kdDebug(14150) << k_funcinfo << "message format = MSGFORMAT_SERVER" << endl;
-
-			// Flag to indicate if there are more TLV's to parse
-			bool moreTLVs = true;
-
-			while(moreTLVs)
-			{
-				type = inbuf.getWord();
-				kdDebug(14150) << k_funcinfo << "MSGFORMAT_SERVER; type=" << type << endl;
-				switch(type)
-				{
-					case 0x0005: //TLV(5)
-					{
-						// This is the total length of the rest of this message TLV
-						length = inbuf.getWord();
-						DWORD uin = inbuf.getLEDWord();
-						BYTE msgtype = inbuf.getByte();
-						BYTE msgflags = inbuf.getByte();
-						WORD msgLength = inbuf.getLEWord();
-
-						kdDebug(14150) << "MSGFORMAT_SERVER; server message, tlv length=" <<
-							length << ", uin=" << uin << ", type=" << msgtype <<
-							", flags=" << msgflags << endl;
-
-						kdDebug(14150) << k_funcinfo <<
-							"MSGFORMAT_SERVER; length after reading uin + type=" <<
-							inbuf.length() << " == " << msgLength << " ?" << endl;
-
-						char *msgtxt = inbuf.getBlock(msgLength);
-						QStringList msgParts = QStringList::split(QChar('þ') /*0xFE*/,
-							QString::fromLocal8Bit(msgtxt));
-						delete [] msgtxt; // getBlock allocates memory, we HAVE to free it again!
-
-						if(msgParts.count() == 2)
-						{
-							kdDebug(14150) << k_funcinfo <<
-								"MSGFORMAT_SERVER; emit gotIM(), contact=" <<
-								u.sn << ", message='" << message << "'" << endl;
-							QString finalMessage = QString("%1\n%2").arg(msgParts[1]).arg(msgParts[0]);
-							emit gotIM(URL, finalMessage, u.sn);
-						}
-
-						if(inbuf.length() > 0)
-						{
-							moreTLVs = true;
- 							kdDebug(14150) << k_funcinfo <<
-								"MSGFORMAT_SERVER; remaining length after reading message=" << inbuf.length() << endl;
-						}
-						else
-						{
- 							kdDebug(14150) << k_funcinfo <<
-								"MSGFORMAT_SERVER; last TLV after reading message" << endl;
-							moreTLVs = false;
-						}
-						break;
-					}
-
-					default: //unknown type
-					{
-						kdDebug(14150) << k_funcinfo <<
-							"MSGFORMAT_SERVER; Unknown message type, type=" << type << endl;
-						if(inbuf.length() > 0)
-							moreTLVs = true;
-						else
-							moreTLVs = false;
-					}
-				};
-			}
+			parseServerIM(inbuf, u);
 			break;
 		}; // END MSGFORMAT_SERVER
 
@@ -1852,6 +1653,277 @@ void OscarSocket::parseIM(Buffer &inbuf)
 			kdDebug(14150) << "Error: unknown ICBM channel " << channel << endl;
 	} // END switch(channel)
 }
+
+
+
+void OscarSocket::parseSimpleIM(Buffer &inbuf, UserInfo &u)
+{
+	bool moreTLVs=true; // Flag to indicate if there are more TLV's to parse
+	bool isAutoResponse=false; // This gets set if we are notified of an auto response
+	WORD length=0;
+
+	while(moreTLVs)
+	{
+		kdDebug(14150) << k_funcinfo << "RECV TYPE-1 IM from '" << u.sn << "'" << endl;
+		WORD type = inbuf.getWord();
+		kdDebug(14150) << k_funcinfo << "TLV(" << type << ")" << endl;
+		switch(type)
+		{
+			case 0x0002: //TLV(2), message block
+			{
+				// This is the total length of the rest of this message TLV
+				length = inbuf.getWord();
+				TLV caps = inbuf.getTLV(); // TLV(1281), CAPABILITIES
+				if (caps.type==1281)
+				{
+					kdDebug(14150) << k_funcinfo << "TLV(1281), CAPABILITIES" << endl;
+					Buffer capBuf(caps.data, caps.length);
+					while(capBuf.length() > 0)
+					{
+						BYTE capPart = capBuf.getByte();
+						kdDebug(14150) << k_funcinfo <<
+							"capPart = '" << capPart << "'" << endl;
+						if (capPart==0x06)
+							kdDebug(14150) << k_funcinfo << "  TLV(1281) says sender does UTF-8 :)" << endl;
+					}
+					capBuf.clear();
+				}
+				delete [] caps.data;
+
+				TLV tlvMessage = inbuf.getTLV(); // TLV(257), MESSAGE
+				if(tlvMessage.type == 0x0101)
+				{
+					kdDebug(14150) << k_funcinfo << "TLV(257), MESSAGE" << endl;
+					Buffer msgBuf(tlvMessage.data, tlvMessage.length);
+
+					WORD charsetNumber = msgBuf.getWord();
+					WORD charsetSubset = msgBuf.getWord();
+					int messageLength = msgBuf.length();
+					if (messageLength < 1)
+						break;
+
+					QTextCodec *codec;
+					QString message;
+					if (charsetNumber == 0x0002) // UCS-2BE (or UTF-16)
+					{
+						kdDebug(14150) << k_funcinfo << "UCS-2 message, length = " <<
+							(messageLength/2) << endl;
+						unsigned short *txt = msgBuf.getWordBlock(messageLength/2);
+						message = QString::fromUcs2(txt);
+						delete [] txt;
+					}
+					else if (charsetNumber == 0x0003) // iso-8859-1
+					{
+						kdDebug(14150) << k_funcinfo << "ISO8859-1 message" << endl;
+						/*codec = QTextCodec::codecForName("ISO8859-1");
+						message = codec->toUnicode(messagetext);*/
+						const char *messagetext = msgBuf.getBlock(messageLength);
+						message = QString::fromLatin1(messagetext);
+						delete [] messagetext;
+					}
+					else
+					{	// BEGIN unknown or us-ascii
+						kdDebug(14150) << k_funcinfo << "Unknown encoding or US-ASCII" << endl;
+						const char *messagetext = msgBuf.getBlock(messageLength);
+
+						int cresult = -1;
+						codec=QTextCodec::codecForMib(1000); //UTF-16 aka UCS-2
+						if(codec)
+						{
+							cresult=codec->heuristicContentMatch(messagetext, messageLength);
+							kdDebug(14150) << k_funcinfo <<
+								"result for UTF-16 = " << cresult << endl;
+						}
+
+						if(cresult < 1)
+						{
+							codec=QTextCodec::codecForMib(106); //UTF-8
+							if(codec)
+							{
+								cresult=codec->heuristicContentMatch(messagetext, messageLength);
+								kdDebug(14150) << k_funcinfo <<
+									"result for UTF-8 = " << cresult << endl;
+							}
+						}
+
+						if(cresult < 1)
+						{
+							codec=QTextCodec::codecForMib(4); // ISO 8859-1 aka Latin1
+							if(codec)
+							{
+								cresult=codec->heuristicContentMatch(messagetext, messageLength);
+								kdDebug(14150) << k_funcinfo <<
+									"result for ISO 8859-1 = " << cresult << endl;
+							}
+						}
+
+						if(cresult < 1)
+						{
+							kdDebug(14150) << k_funcinfo <<
+								"Couldn't find suitable encoding for incoming message, " <<
+								"encoding using local system-encoding" << endl;
+							codec=QTextCodec::codecForLocale();
+						}
+
+						kdDebug(14150) << k_funcinfo <<
+							"Decoding using codec '" << codec->name() << "'" << endl;
+
+						message = codec->toUnicode(messagetext);
+						delete [] messagetext;
+					} // END unknown or us-ascii
+
+					kdDebug(14150) << k_funcinfo << "emit gotIM(), contact='" << u.sn <<
+						"', message='" << message << "'" << endl;
+
+					if(isAutoResponse)
+						emit gotIM(Away, message, u.sn);
+					else
+						emit gotIM(Normal, message, u.sn);
+
+					msgBuf.clear();
+				}
+				else
+				{
+					kdDebug(14150) << k_funcinfo <<
+						"Cannot find TLV(257), no message inside packet???" << endl;
+				}
+
+				//kdDebug(14150) << k_funcinfo << "deleting data from TLV(257)" << endl;
+				delete [] tlvMessage.data; // getTLV uses getBlock() internally! same as aboves delete applies
+
+				if(inbuf.length() > 0)
+				{
+					moreTLVs = true;
+					kdDebug(14150) << k_funcinfo <<
+						"remaining length after reading message=" << inbuf.length() << endl;
+
+					kdDebug(14150) << k_funcinfo << inbuf.toString() << endl;
+				}
+				else
+				{
+					moreTLVs = false;
+				}
+				break;
+			} // END TLV(0x0002), normal message block
+
+			case 0x0004: // AIM Away message
+			{
+				kdDebug(14150) << k_funcinfo << "AIM autoresponse." << endl;
+				// There isn't actually a message in this TLV, it just specifies
+				// that the message that was send was an autoresponse
+				inbuf.getWord();
+				// Set the autoresponse flag
+				isAutoResponse = true;
+
+				// Check to see if there's more
+				if(inbuf.length() > 0)
+					moreTLVs = true;
+				else
+					moreTLVs = false;
+				break;
+			} // END TLV(0x0004), AIM away message
+
+			case 0x0008: // User Icon
+			{
+				kdDebug(14150) << k_funcinfo << "AIM USER ICON." << endl;
+				// TODO support this
+				// The length of the TLV
+				length = inbuf.getWord();
+				// Get the block
+				/*char *msg =*/ inbuf.getBlock(length);
+
+				// Check to see if there are more TLVs
+				if(inbuf.length() > 0)
+					moreTLVs = true;
+				else
+					moreTLVs = false;
+				break;
+			}
+
+			default: //unknown type
+			{
+				kdDebug(14150) << k_funcinfo <<
+					"Unknown message type, type=" << type << endl;
+				if(inbuf.length() > 0)
+					moreTLVs = true;
+				else
+					moreTLVs = false;
+			}
+		};
+	}
+}
+
+
+
+void OscarSocket::parseServerIM(Buffer &inbuf, UserInfo &u)
+{
+	kdDebug(14150) << k_funcinfo << "message format = MSGFORMAT_SERVER" << endl;
+	bool moreTLVs = true; // Flag to indicate if there are more TLV's to parse
+	while(moreTLVs)
+	{
+		WORD type = inbuf.getWord();
+		kdDebug(14150) << k_funcinfo << "MSGFORMAT_SERVER; type=" << type << endl;
+		switch(type)
+		{
+			case 0x0005: //TLV(5)
+			{
+				// This is the total length of the rest of this message TLV
+				WORD length = inbuf.getWord();
+				DWORD uin = inbuf.getLEDWord();
+				BYTE msgtype = inbuf.getByte();
+				BYTE msgflags = inbuf.getByte();
+				WORD msgLength = inbuf.getLEWord();
+
+				kdDebug(14150) << "MSGFORMAT_SERVER; server message, tlv length=" <<
+					length << ", uin=" << uin << ", type=" << msgtype <<
+					", flags=" << msgflags << endl;
+
+				kdDebug(14150) << k_funcinfo <<
+					"MSGFORMAT_SERVER; length after reading uin + type=" <<
+					inbuf.length() << " == " << msgLength << " ?" << endl;
+
+				char *msgtxt = inbuf.getBlock(msgLength);
+				QStringList msgParts = QStringList::split(QChar('þ') /*0xFE*/,
+					QString::fromLatin1(msgtxt));
+				delete [] msgtxt; // getBlock allocates memory, we HAVE to free it again!
+
+				if(msgParts.count() == 2)
+				{
+					QString message = QString("%1\n%2").arg(msgParts[1]).arg(msgParts[0]);
+
+					kdDebug(14150) << k_funcinfo <<
+						"MSGFORMAT_SERVER; emit gotIM(), contact=" <<
+						u.sn << ", message='" << message << "'" << endl;
+
+					emit gotIM(URL, message, u.sn);
+				}
+
+				if(inbuf.length() > 0)
+				{
+					moreTLVs = true;
+					kdDebug(14150) << k_funcinfo <<
+						"MSGFORMAT_SERVER; remaining length after reading message=" <<
+						inbuf.length() << endl;
+				}
+				else
+				{
+					kdDebug(14150) << k_funcinfo <<
+						"MSGFORMAT_SERVER; last TLV after reading message" << endl;
+					moreTLVs = false;
+				}
+				break;
+			}
+
+			default: //unknown type
+			{
+				kdDebug(14150) << k_funcinfo <<
+					"MSGFORMAT_SERVER; Unknown message type, type=" << type << endl;
+				moreTLVs = (inbuf.length() > 0);
+			}
+		}; // END switch(type)
+	}
+} // END parseServerIM()
+
 
 // parses the aim standard user info block
 UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
@@ -1873,7 +1945,7 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 		BYTE len = inbuf.getByte();
 		// First comes their screen name/UIN
 		char *cb = inbuf.getBlock(len);
-		u.sn = QString::fromLocal8Bit(cb);
+		u.sn = QString::fromLocal8Bit(cb); // TODO: Check Encoding
 		delete [] cb;
 
 		// Next comes the warning level
@@ -1888,7 +1960,7 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 			<< ", number of TLVs following " << tlvlen << endl;*/
 
 //		delete [] cb;
-		for (int i=0;i<tlvlen;i++)
+		for (unsigned int i=0; i<tlvlen; i++)
 		{
 			TLV t = inbuf.getTLV();
 			switch(t.type)
@@ -1898,15 +1970,15 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 					u.userclass = (((BYTE)t.data[0] << 8)) | ((BYTE)t.data[1]);
 					break;
 				}
-				case 0x0002: //member since
+				case 0x0002: //member since time
 				{
 					u.membersince = (DWORD) (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
 							| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
-					kdDebug(14150) << k_funcinfo <<
-						"TLV(2) membersince=" << u.membersince << endl;
+/*					kdDebug(14150) << k_funcinfo <<
+						"TLV(2) membersince=" << u.membersince << endl;*/
 					break;
 				}
-				case 0x0003: //online since
+				case 0x0003: //online since time
 				{
 					u.onlinesince = (DWORD) (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
 							| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
@@ -1917,13 +1989,12 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 					u.idletime = (WORD) ((((BYTE)t.data[0]) << 8) | ((BYTE)t.data[1]));
 					break;
 				}
-				case 0x0005: // unknown time
+				case 0x0005: // member since time (again)
 				{
 					u.membersince = (DWORD) (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
 							| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
-
-					kdDebug(14150) << k_funcinfo <<
-						"TLV(5) membersince=" << u.membersince << endl;
+/*					kdDebug(14150) << k_funcinfo <<
+						"TLV(5) membersince=" << u.membersince << endl;*/
 					break;
 				}
 				case 0x0006:
@@ -1978,19 +2049,21 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 						") length=" << t.length << " in userinfo for user '" <<
 						u.sn << "'" << endl;
 					Buffer temp(t.data, t.length);
-					kdDebug(14150) << k_funcinfo << temp.toString() << endl;
+					kdDebug(14150) << k_funcinfo << temp.toString();
 				}
 			}; // END switch()
 			delete [] t.data;
-		}
+		} // END for (unsigned int i=0; i<tlvlen; i++)
+
 /*
 		kdDebug(14150) << k_funcinfo << "userclass: " << u.userclass <<
 			", membersince: " << u.membersince <<
 			", onlinesince: " << u.onlinesince <<
 			", idletime: " << u.idletime << endl;
 */
+
 	}
-	else
+	else // Never seen this happening [mETz]
 	{
 		kdDebug(14150) << k_funcinfo << "ZERO sized userinfo!" << endl;
 		// Buffer had length of zero for some reason, so
@@ -2030,6 +2103,9 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 //	static const char deffeatures[] = { 0x01, 0x01, 0x01, 0x02 };
 	static const char deffeatures[] = { 0x01 };
 
+	// for utf messages, make sure receiver understands these
+//	static const char deffeatures[] = { 0x01, 0x06 };
+
 	Buffer outbuf;
 	outbuf.addSnac(0x0004,0x0006,0x0000, toicqsrv_seq);
 	toicqsrv_seq++;
@@ -2045,18 +2121,55 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 	outbuf.addByte(dest.length()); //dest sn length
 	outbuf.addString(dest.latin1(),dest.length()); //dest sn
 
-	// ---------------------------------------------------
+	// ==================================================================
 	Buffer tlv2;
 	tlv2.addWord(0x0501); // add TLV(0x0501) also known as TLV(1281)
 	tlv2.addWord(sizeof(deffeatures)); // add TLV length
 	tlv2.addString(deffeatures, sizeof(deffeatures)); //add deffeatures
 
+	QTextCodec *codec;
+	WORD charset = 0x0000; // default to ascii
+	WORD charsubset = 0x0000;
+
+	codec=QTextCodec::codecForName("ISO 8859-1");
+	if(codec && codec->canEncode(message))
+	{
+		kdDebug(14150) << k_funcinfo << "Encoding outgoing message as ISO8859-1" << endl;
+		charset=0x0003;
+		charsubset=0x0000;
+	}
+	else // last try: utf
+	{
+		// TODO: add UTF8 GUID at the end of messages if we send utf8
+		// otherwise peers will display crap
+
+		/*codec=QTextCodec::codecForName("utf8");
+		if(codec && codec->canEncode(message))
+		{
+			kdDebug(14150) << k_funcinfo << "Encoding outgoing message as UTF-8" << endl;
+			charset=0x0002;
+			charsubset=0x0000;
+		}
+		else*/
+		{
+			kdDebug(14150) << k_funcinfo <<
+				"couldn't find suitable encoding for outgoing message, " <<
+				"encoding using local system-encoding" << endl;
+			codec = QTextCodec::codecForLocale();
+			if (!codec)
+				return;
+		}
+	}
+
+	QCString outgoingMessage = codec->fromUnicode(message);
+
 	tlv2.addWord(0x0101); //add TLV(0x0101) also known as TLV(257)
-	tlv2.addWord(message.length() + 0x04); // add TLV length
-	tlv2.addDWord(0x0000ffff); // normal char set
-	QCString tmp = message.local8Bit();
-	tlv2.addString(tmp, tmp.length()); // the actual message
-	// ---------------------------------------------------
+	tlv2.addWord(outgoingMessage.length() + 0x04); // add TLV length
+	tlv2.addWord(charset); // normal char set
+	tlv2.addWord(charsubset); // normal char set
+
+	tlv2.addString(outgoingMessage, outgoingMessage.length()); // the actual message
+	// ==================================================================
 
 	outbuf.addTLV(0x0002, tlv2.length(), tlv2.buffer());
 
@@ -2132,6 +2245,7 @@ void OscarSocket::sendChatJoin(const QString &/*name*/, const int /*exchange*/)
 	kdDebug(14150) << "Send chat join thingie (That's a technical term)" << endl;
 }
 
+#if 0
 void OscarSocket::parseRedirect(Buffer &inbuf)
 {
 	// FIXME: this function does not work, but it is never
@@ -2195,6 +2309,7 @@ void OscarSocket::parseRedirect(Buffer &inbuf)
 	delete servsock;
 	kdDebug(14150) << "Socket added to connection list!" << endl;
 }
+#endif
 
 /*
   Request a direct IM session with someone
@@ -2252,13 +2367,6 @@ void OscarSocket::sendLocationInfo(const QString &profile, const unsigned long c
 	}
 	kdDebug(14150) << k_funcinfo << "adding capabilities, size=" << capBuf.length() << endl;
 	outbuf.addTLV(0x0005, capBuf.length(), capBuf.buffer());
-
-#ifdef OSCAR_PACKETLOG
-	kdDebug(14150) << k_funcinfo << endl <<
-		"------------------------------------" << endl <<
-		outbuf.toString() << endl <<
-		"------------------------------------" << endl;
-#endif
 
 	sendBuf(outbuf,0x02);
 }
@@ -2343,8 +2451,7 @@ void OscarSocket::doLogoff()
 {
 	if(isLoggedIn && (state() == QSocket::Connected))
 	{
-
-/*		if(mIsICQ) // Done in slotConnectionClosed()
+		/*if(mIsICQ) // Done in slotConnectionClosed()
 			stopKeepalive();
 		*/
 		kdDebug(14150) << k_funcinfo << "Sending sign off request" << endl;
@@ -3480,6 +3587,27 @@ void OscarSocket::parseAuthReply(Buffer &inbuf)
 	delete []r;
 
 	emit gotAuthReply(contact, reason, (grant==0x01));
+}
+
+
+/*
+Probably important TODO:
+this adds contacts to the "client-side" contactlist, we probably have to call this after
+ login with ALL our contactnames and when adding a new contact
+*/
+
+void OscarSocket::sendBuddylistAdd(QStringList &contacts)
+{
+	kdDebug(14150) << k_funcinfo << "SEND CLI_ADDCONTACT (add to local userlist?)" << endl;
+	Buffer outbuf;
+	outbuf.addSnac(0x0003,0x0004,0x0000,0x00000000);
+	for(QStringList::Iterator it = contacts.begin(); it != contacts.end(); ++it)
+	{
+		QCString contact = (*it).latin1();
+		outbuf.addByte(contact.length());
+		outbuf.addString(contact, contact.length());
+	}
+	sendBuf(outbuf,0x02);
 }
 
 #include "oscarsocket.moc"
