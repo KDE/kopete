@@ -471,7 +471,7 @@ void JabberContact::slotSendAuth()
 
 	kdDebug() << "[JabberContact] (Re)send auth " << userId() << endl;
 
-	protocol->subscribe(Jabber::Jid(userId()));
+	protocol->subscribed(Jabber::Jid(userId()));
 
 }
 
