@@ -248,7 +248,12 @@ void JabberContact::slotSendMsg(const KopeteMessage message) {
 	JabberContact *to = dynamic_cast<JabberContact *>(message.to().first());
 	const JabberContact *from = dynamic_cast<const JabberContact *>(message.from());
 	kdDebug() << "Jabber contact: slotSendMsg called: to " << to->userID() << ", from " << from->userID() << ", body: " << message.body() << "." << endl;
-	jabMessage.to = to->userID();
+	if (hasResource) {
+		jabMessage.to = QString("%1/%2").arg(to->userID(), 1).arg(activeResource->resource(), 2);
+	}
+	else {
+		jabMessage.to = to->userID();
+	}
 	jabMessage.from = from->userID();
 	jabMessage.body = message.body();
 	/* Hi Jeremy!
@@ -330,6 +335,7 @@ void JabberContact::slotSelectResource() {
 	if (actionSelectResource->currentItem() == 0) {
 		hasResource = false;
 		activeResource = bestResource();
+		kdDebug() << "Jabber contact: Removing active resource, trusting bestResource()." << endl;
 	}
 	else {
 		hasResource = true;
@@ -338,6 +344,7 @@ void JabberContact::slotSelectResource() {
 		for (resource = resources.first(); resource; resource = resources.next()) {
 			if (resource->resource() == selectedResource) {
 				activeResource = resource;
+				kdDebug() << "Jabber contact: New active resource is " << resource->resource() << endl;
 				break;
 			}
 		}
