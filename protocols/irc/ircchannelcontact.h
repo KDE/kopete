@@ -63,7 +63,6 @@ public:
 
 	// START: Virtual reimplmentations from KopeteContact, see kopetecontact.h:
 	bool isReachable();
-	KopeteContact::ContactStatus status() const { return mStatus; }
 	KActionCollection *customContextMenuActions();
 	KopeteMessageManager* manager( bool canCreate = false );
 	QString statusIcon() const;
@@ -84,7 +83,6 @@ private:
 	IRCIdentity *mIdentity;
 	QString mChannelName;
 	KopeteMetaContact *mMetaContact;
-	KopeteContact::ContactStatus mStatus;
 	KIRC *mEngine;
 	QPtrList<KopeteContact> mContact;
 	QPtrList<KopeteContact> mMyself;

@@ -112,13 +112,13 @@ void IRCChannelContact::slotNamesList(const QString &channel, const QString &nic
 
 void IRCChannelContact::slotJoin()
 {
-	if (mStatus == KopeteContact::Offline || mStatus == KopeteContact::Unknown)
+	if ( onlineStatus() == KopeteContact::Offline )
 		mEngine->joinChannel(mChannelName);
 }
 
 void IRCChannelContact::slotPart()
 {
-	if (mStatus == KopeteContact::Online || mStatus == KopeteContact::Away)
+	if ( onlineStatus() == KopeteContact::Online || onlineStatus() == KopeteContact::Away)
 		mEngine->partChannel(mChannelName, QString("Kopete 2.0: http://kopete.kde.org"));
 }
 
@@ -127,7 +127,7 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 	QString nickname = user.section('!', 0, 0);
 	if (nickname.lower() == mEngine->nickName().lower() && channel.lower() == mChannelName.lower())
 	{
-		mStatus = KopeteContact::Online; // We joined the channel, change status
+		setOnlineStatus( KopeteContact::Online ); // We joined the channel, change status
 
 		KopeteMessage msg((KopeteContact *)this, mContact,
 		i18n(QString("You have joined channel %1").arg(mChannelName)), KopeteMessage::Internal);
@@ -149,7 +149,7 @@ void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString
 {
 	QString nickname = user.section('!', 0, 0);
 	if (nickname.lower() == mEngine->nickName().lower() && channel.lower() == mChannelName.lower())
-		mStatus = KopeteContact::Offline; // We parted the channel, change status
+		setOnlineStatus( KopeteContact::Offline ); // We parted the channel, change status
 	else {
 		IRCChanPrivUser *user = mMembers[nickname];
 		mMembers.remove(nickname);
@@ -167,7 +167,7 @@ void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString
 
 void IRCChannelContact::slotConnectionClosed()
 {
-	mStatus = KopeteContact::Offline;
+	setOnlineStatus( KopeteContact::Offline );
 }
 
 KopeteMessageManager* IRCChannelContact::manager(bool)
@@ -197,9 +197,9 @@ void IRCChannelContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager
 
 KActionCollection *IRCChannelContact::customContextMenuActions()
 {
-	if (mStatus == KopeteContact::Offline || mStatus == KopeteContact::Unknown)
+	if ( onlineStatus() == KopeteContact::Offline || onlineStatus() == KopeteContact::Unknown )
 		mCustomActions->insert(actionJoin);
-	else if (mStatus == KopeteContact::Online || mStatus == KopeteContact::Away)
+	else if ( onlineStatus() == KopeteContact::Online || onlineStatus() == KopeteContact::Away )
 		mCustomActions->insert(actionPart);
 
 	return mCustomActions;
@@ -207,7 +207,7 @@ KActionCollection *IRCChannelContact::customContextMenuActions()
 
 bool IRCChannelContact::isReachable()
 {
-	if (mStatus != KopeteContact::Offline && mStatus != KopeteContact::Unknown)
+	if ( onlineStatus() != KopeteContact::Offline && onlineStatus() != KopeteContact::Unknown )
 		return true;
 
 	return false;
@@ -215,7 +215,7 @@ bool IRCChannelContact::isReachable()
 
 QString IRCChannelContact::statusIcon() const
 {
-	if (mStatus == KopeteContact::Online || mStatus == KopeteContact::Away)
+	if ( onlineStatus() == KopeteContact::Online || onlineStatus() == KopeteContact::Away )
 		return "irc_protocol_small";
 	return "irc_protocol_offline";
 }
