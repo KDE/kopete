@@ -39,10 +39,11 @@ int main(int argc, char *argv[])
 	aboutData.addAuthor ( "Duncan Mac-Vicar Prett", I18N_NOOP("Original author, core developer"), "duncan@kde.org", "http://www.mac-vicar.com" );
 	aboutData.addAuthor ( "Nick Betcher", I18N_NOOP("Core developer, fastest plugin developer on earth."), "nbetcher@usinternet.com", "http://www.kdedevelopers.net" );
 	aboutData.addAuthor ( "Ryan Cumming", I18N_NOOP("Core developer"), "bodnar42@phalynx.dhs.org" );
-	aboutData.addAuthor ( "Martijn Klingens", I18N_NOOP("Patches, bugfixes"), "klingens@kde.org" );
-	aboutData.addAuthor ( "Richard Stellingwerff", I18N_NOOP("features and bugfixes"), "remenic@linuxfromscratch.org");
+	aboutData.addAuthor ( "Martijn Klingens", I18N_NOOP("Core developer"), "klingens@kde.org" );
+	aboutData.addAuthor ( "Richard Stellingwerff", I18N_NOOP("Developer"), "remenic@linuxfromscratch.org");
 	aboutData.addAuthor ( "Daniel Stone", I18N_NOOP("Core developer, Jabber plugin"), "dstone@kde.org", "http://raging.dropbear.id.au/daniel/");
-	aboutData.addAuthor ( "Andres Krapf", I18N_NOOP("random hacks and bugfixes"), "dae@chez.com" );
+    aboutData.addAuthor ( "Hendrik vom Lehn", I18N_NOOP("Developer"), "hennevl@hennevl.de", "http://www.hennevl.de");
+	aboutData.addAuthor ( "Andres Krapf", I18N_NOOP("Random hacks and bugfixes"), "dae@chez.com" );
 
 	aboutData.addCredit ( "Herwin Jan Steehouwer", I18N_NOOP("KxEngine ICQ code") );
 	aboutData.addCredit ( "Olaf Lueg", I18N_NOOP("Kmerlin MSN code") );
