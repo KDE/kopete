@@ -26,7 +26,6 @@
 #include "kopeteview.h"
 #include "kopetestdaction.h"
 #include "kopetemessagemanagerfactory.h"
-#include "kcodecaction.h"
 
 #include "irccontactmanager.h"
 #include "ircchannelcontact.h"
@@ -499,11 +498,6 @@ KActionCollection *IRCChannelContact::customContextMenuActions()
 	actionPart = new KAction(i18n("&Part"), 0, this, SLOT(part()), mCustomActions, "actionPart");
 	actionTopic = new KAction(i18n("Change &Topic..."), 0, this, SLOT(setTopic()), mCustomActions, "actionTopic");
 	actionModeMenu = new KActionMenu(i18n("Channel Modes"), 0, mCustomActions, "actionModeMenu");
-	
-	KCodecAction *c = new KCodecAction( i18n("Select Charset"), 0, mCustomActions, "selectcharset" );
-	connect( c, SIGNAL( activated( const QTextCodec * ) ), 
-		this, SLOT( setCodec( const QTextCodec *) ) );
-	c->setCodec( codec() );
 
 	actionModeMenu->insert( actionModeT );
 	actionModeMenu->insert( actionModeN );

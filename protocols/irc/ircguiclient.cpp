@@ -29,44 +29,58 @@
 IRCGUIClient::IRCGUIClient( KopeteMessageManager *parent ) : QObject(parent) , KXMLGUIClient(parent)
 {
 	KopeteContactPtrList members = parent->members();
-	m_user = static_cast<IRCContact*>( members.first() );
-	
-	/***
-	FIXME: Why doesn't this work???? Have to use DOM hack below now...
-	
-	QPtrList<KAction> actionList;
-	KActionCollection *col = m_user->customContextMenuActions();
-
-	for( int i = col->count() - 1; i >= 0; i-- )
+	if( members.count() > 0 )
 	{
-		KAction *a = col->take( col->action(i) );
-		actionCollection()->insert( a );
-		actionList.append( a );
+		m_user = static_cast<IRCContact*>( members.first() );
+		
+		/***
+		FIXME: Why doesn't this work???? Have to use DOM hack below now...
+		
+		QPtrList<KAction> actionList;
+		KActionCollection *col = m_user->customContextMenuActions();
+	
+		for( int i = col->count() - 1; i >= 0; i-- )
+		{
+			KAction *a = col->take( col->action(i) );
+			actionCollection()->insert( a );
+			actionList.append( a );
+		}
+	
+		setXMLFile("ircchatui.rc");
+		
+		kdDebug(14120) << actionList.count() << " actions" <<endl;
+		unplugActionList( "irccontactactionlist" );
+		plugActionList( "irccontactactionlist",  actionList );
+		
+		*/
+		
+		setXMLFile("ircchatui.rc");
+		
+		QDomDocument doc = domDocument();
+		QDomNode menu = doc.documentElement().firstChild().firstChild();
+		KActionCollection *col = m_user->customContextMenuActions( parent );
+		if( col )
+		{
+			for( int i = col->count() - 1; i >= 0; i-- )
+			{
+				KAction *a = col->take( col->action(i) );
+				actionCollection()->insert( a );
+				QDomElement newNode = doc.createElement( "Action" );
+				newNode.setAttribute( "name", a->name() );
+				menu.appendChild( newNode );
+			}
+		}
+		else
+		{
+			kdDebug(14120) << k_funcinfo << "Actions == 0" << endl;
+		}
+		
+		setDOMDocument( doc );
 	}
-
-	setXMLFile("ircchatui.rc");
-	
-	kdDebug(14120) << actionList.count() << " actions" <<endl;
-	unplugActionList( "irccontactactionlist" );
-	plugActionList( "irccontactactionlist",  actionList );
-	
-	*/
-	
-	setXMLFile("ircchatui.rc");
-	
-	QDomDocument doc = domDocument();
-	QDomNode menu = doc.documentElement().firstChild().firstChild();
-	KActionCollection *col = m_user->customContextMenuActions();
-	for( int i = col->count() - 1; i >= 0; i-- )
+	else
 	{
-		KAction *a = col->take( col->action(i) );
-		actionCollection()->insert( a );
-		QDomElement newNode = doc.createElement( "Action" );
-		newNode.setAttribute( "name", a->name() );
-		menu.appendChild( newNode );
+		kdDebug(14120) << k_funcinfo << "Members == 0" << endl;
 	}
-	
-	setDOMDocument( doc );
 }
 
 IRCGUIClient::~IRCGUIClient()
