@@ -19,6 +19,8 @@
 #ifndef ADDRESSBOOKSELECTORDIALOG_H
 #define ADDRESSBOOKSELECTORDIALOG_H
 
+#include <kdemacros.h>
+#include "kopete_export.h"
 #include <kdialogbase.h>
 
 class AddressBookSelectorWidget;
@@ -37,7 +39,7 @@ namespace KABC
  *
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  */
-class AddressBookSelectorDialog : public KDialogBase
+class KOPETE_EXPORT AddressBookSelectorDialog : public KDialogBase
 {
 	Q_OBJECT
 public:
