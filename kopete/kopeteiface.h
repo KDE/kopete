@@ -97,6 +97,11 @@ k_dcop:
 	 */
 	void setAway();
 	/**
+	 * set all account away using the global away function
+	 * and set an away message.
+	 */
+	void setAway(const QString &msg);
+	/**
 	 * set Available all accountes
 	 */
 	void setAvailable();

@@ -226,6 +226,11 @@ void KopeteIface::setAway()
 	KopeteAccountManager::manager()->setAwayAll();
 }
 
+void KopeteIface::setAway(const QString &msg)
+{
+	KopeteAccountManager::manager()->setAwayAll(msg);
+}
+
 void KopeteIface::setAvailable()
 {
 	KopeteAccountManager::manager()->setAvailableAll();
