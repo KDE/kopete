@@ -337,8 +337,6 @@ private slots:
 	 */
 	void slotChangeDisplayName();
 
-	void slotMoveDialogOkClicked();
-
 
 	void slotAddContact();
 
