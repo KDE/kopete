@@ -2329,10 +2329,15 @@ void OscarSocket::sendIM(const QString &message, const UserInfo &uInfo, bool isA
 		outbuf.addWord(0x0004);
 		outbuf.addWord(0x0000);
 	}
-//	outbuf.addWord(0x0003); // TLV.Type(0x03) - request an ack from server
-//	outbuf.addWord(0x0000);
-	outbuf.addWord(0x0006); // TLV.Type(0x06) - store message if recipient offline
-	outbuf.addWord(0x0000);
+
+	if(mIsICQ)
+	{
+		//outbuf.addWord(0x0003); // TLV.Type(0x03) - request an ack from server
+		//outbuf.addWord(0x0000);
+
+		outbuf.addWord(0x0006); // TLV.Type(0x06) - store message if recipient offline
+		outbuf.addWord(0x0000);
+	}
 
 	sendBuf(outbuf,0x02);
 }
