@@ -241,24 +241,30 @@ public slots:
 	 * Contact another user.
 	 * Depending on the config settings, call sendMessage() or
 	 * startChat()
+	 *
+	 * returns the KopeteContact that was chosen as the preferred
 	 */
-	void execute();
+	KopeteContact *execute();
 
 	/**
 	 * Send a single message, classic ICQ style.
 	 * The actual sending is done by the KopeteContact, but the meta contact
 	 * does the GUI side of things.
 	 * This is a slot to allow being called easily from e.g. a GUI.
+	 *
+	 * returns the KopeteContact that was chosen as the preferred
 	 */
-	void sendMessage();
+	KopeteContact *sendMessage();
 
 	/**
 	 * Like sendMessage, but this time a full-blown chat will be opened.
 	 * Most protocols can't distinguish between the two and are either
 	 * completely session based like MSN or completely message based like
 	 * ICQ the only true difference is the GUI shown to the user.
+	 *
+	 * returns the KopeteContact that was chosen as the preferred
 	 */
-	void startChat();
+	KopeteContact *startChat();
 
 	/**
 	 * This is the KopeteMetaContact level slot for sending files. It may be called through the

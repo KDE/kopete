@@ -242,7 +242,7 @@ KopeteContact *KopeteMetaContact::findContact( const QString &protocolId,
 	return 0L;
 }
 
-void KopeteMetaContact::sendMessage()
+KopeteContact *KopeteMetaContact::sendMessage()
 {
 	KopeteContact *c = preferredContact();
 
@@ -257,11 +257,12 @@ void KopeteMetaContact::sendMessage()
 	else
 	{
 		c->sendMessage();
+		return c;
 	}
-
+	return 0L;
 }
 
-void KopeteMetaContact::startChat()
+KopeteContact *KopeteMetaContact::startChat()
 {
 	KopeteContact *c = preferredContact();
 
@@ -276,7 +277,9 @@ void KopeteMetaContact::startChat()
 	else
 	{
 		c->startChat();
+		return c;
 	}
+	return 0L;
 }
 
 KopeteContact *KopeteMetaContact::preferredContact()
@@ -319,17 +322,17 @@ KopeteContact *KopeteMetaContact::preferredContact()
 	return c;
 }
 
-void KopeteMetaContact::execute()
+KopeteContact *KopeteMetaContact::execute()
 {
 	switch( KopetePrefs::prefs()->interfacePreference() )
 	{
 		case EMAIL_WINDOW:
-			sendMessage();
+			return sendMessage();
 			break;
 
 		case CHAT_WINDOW:
 		default:
-			startChat();
+			return startChat();
 			break;
 	}
 }

@@ -27,6 +27,8 @@
 #include <ksavefile.h>
 #include <kstandarddirs.h>
 #include "kopetemetacontact.h"
+#include "kopetemessagemanager.h"
+#include "kopetemessage.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
@@ -744,13 +746,15 @@ void KopeteContactList::sendFile( const QString &displayName, const KURL &source
 		c->sendFile( sourceURL, altFileName, fileSize );
 }
 
-void KopeteContactList::messageContact( const QString &displayName, const QString & /* messageText */ )
+void KopeteContactList::messageContact( const QString &displayName, const QString &messageText )
 {
-	KopeteMetaContact *c = findContactByDisplayName( displayName );
-	if( c )
-		c->execute();
+	KopeteMetaContact *mc = findContactByDisplayName( displayName );
+	KopeteContact *c = mc->execute(); //We need to know which contact was chosen as the preferred in order to message it
+	if (!c) return;
 
-	// TODO: Add the message text
+	KopeteMessage msg(c->account()->myself(), c, messageText, KopeteMessage::Outbound);
+	c->manager(true)->sendMessage(msg);
+
 }
 
 KopeteMetaContact *KopeteContactList::findContactByDisplayName( const QString &displayName )
