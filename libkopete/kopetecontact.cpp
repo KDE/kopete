@@ -448,6 +448,9 @@ void KopeteContact::sendMessage()
 
 void KopeteContact::execute()
 {
+	if (d->account->myself() == this)
+		return;
+
 	switch( KopetePrefs::prefs()->interfacePreference() )
 	{
 	case EMAIL_WINDOW:
