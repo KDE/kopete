@@ -24,14 +24,18 @@
 
 #include "oscartypes.h"
 
-const WORD ROSTER_CONTACT = 0x0000;		// a normal contact
-const WORD ROSTER_GROUP = 0x0001;		// a group of contacts
-const WORD ROSTER_VISIBLE = 0x0002;		// a contact on the visible list
-const WORD ROSTER_INVISIBLE = 0x0003;	// a contact on the invisible list
-const WORD ROSTER_VISIBILITY = 0x0004;	// this entry contains visibility setting TLV(0xca)=TLV(202)
-const WORD ROSTER_IGNORE = 0x000e;		// a contact on the ignore list
+const WORD ROSTER_CONTACT		= 0x0000; // a normal contact
+const WORD ROSTER_GROUP			= 0x0001; // a group of contacts
+const WORD ROSTER_VISIBLE		= 0x0002; // a contact on the visible list
+const WORD ROSTER_INVISIBLE	= 0x0003; // a contact on the invisible list
+const WORD ROSTER_VISIBILITY	= 0x0004; // this entry contains visibility setting TLV(0xca)=TLV(202)
+const WORD ROSTER_PRESENCE		= 0x0005; // Presence info (if others can see your idle status, etc)
+const WORD ROSTER_IGNORE		= 0x000e; // a contact on the ignore list
+const WORD ROSTER_NONICQ		= 0x0010; // a non-icq contact, no UIN, used to send SMS
+const WORD ROSTER_BUDDYICONS	= 0x0014; // Buddy icon info. (names: from "0" and incrementing by one)
 
-const WORD SSIACK_OK			= 0x0000; // SSI change succeeded
+
+const WORD SSIACK_OK				= 0x0000; // SSI change succeeded
 const WORD SSIACK_NOTFOUND		= 0x0002; // Modified item not found on server
 const WORD SSIACK_ALREADYONSERVER	= 0x0003; // Added item already on server
 const WORD SSIACK_ADDERR		= 0x000A; // Error adding item (invalid id, already in list, invalid data)
@@ -47,7 +51,7 @@ struct SSI
 	int type;
 	char *tlvlist;
 	int tlvlength;
-	bool waitingAuth;
+	bool waitingAuth; // optional, only valid for contacts
 };
 
 /*
@@ -83,7 +87,7 @@ class SSIData : public QPtrList<SSI>
 		 * Side data
 		 */
 		SSI *addContact(const QString &name, const QString &group, bool addingAuthBuddy);
-		SSI *addContact(const int groupId, const int contactId, bool addingAuthBuddy);
+		//SSI *addContact(const int groupId, const int contactId, bool addingAuthBuddy);
 
 		/**
 		 * Finds the contact with given name and group...

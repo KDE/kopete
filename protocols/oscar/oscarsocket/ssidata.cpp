@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <kdebug.h>
 #include "ssidata.h"
+#include "oscardebug.h"
 
 SSIData::SSIData()
 {
@@ -75,10 +76,12 @@ SSI *SSIData::findContact(const QString &name, const QString &group)
 	SSI *gr = findGroup(group); //find the parent group
 	if (gr)
 	{
+#ifdef OSCAR_SSI_DEBUG
 		kdDebug(14150) << k_funcinfo << "gr->name= " << gr->name <<
 			", gr->gid= " << gr->gid <<
 			", gr->bid= " << gr->bid <<
 			", gr->type= " << gr->type << endl;
+#endif
 		for (SSI *i=first(); i; i = next())
 		{
 			//if the ssi item has the right name, is a contact, and has the right group
@@ -87,19 +90,23 @@ SSI *SSIData::findContact(const QString &name, const QString &group)
 			if ((i->name == name) && (i->type == ROSTER_CONTACT) && (i->gid == gr->gid))
 			{
 				//we have found our contact
-				kdDebug(14150) << "Found contact " << name << " in SSI data" << endl;
+#ifdef OSCAR_SSI_DEBUG
+				kdDebug(14150) << k_funcinfo <<
+					"Found contact " << name << " in SSI data" << endl;
+#endif
 				return i;
 			}
 		}
 	}
 	else
 	{
-		kdDebug(14150) << "Group " << group << " not found" << endl;
+		kdDebug(14150) << k_funcinfo <<
+			"ERROR: Group '" << group << "' not found!" << endl;
 	}
 	return 0L;
 }
 
-SSI *SSIData::findContact( const QString& name )
+SSI *SSIData::findContact(const QString& name)
 {
 	for (SSI *i=first(); i; i = next())
 	{
@@ -109,11 +116,16 @@ SSI *SSIData::findContact( const QString& name )
 		if ((i->name.lower() == name.lower()) && (i->type == ROSTER_CONTACT))
 		{
 			//we have found our contact
-			kdDebug(14150) << "Found contact " << name << " in SSI data" << endl;
+#ifdef OSCAR_SSI_DEBUG
+			kdDebug(14150) << k_funcinfo <<
+				"Found contact " << name << " in SSI data" << endl;
+#endif
 			return i;
 		}
 	}
 	
+	kdDebug(14150) << k_funcinfo <<
+		"ERROR: contact '" << name << "' not found!" << endl;
 	return 0L;
 }
 
@@ -121,6 +133,11 @@ SSI *SSIData::findContact( const QString& name )
 
 SSI *SSIData::findGroup(const QString &name)
 {
+#ifdef OSCAR_SSI_DEBUG
+	kdDebug(14151) << k_funcinfo <<
+		"Looking for group named '" << name << "'" << endl;
+#endif
+
 	for (SSI *i=first(); i; i = next())
 	{
 		if ((current()->name == name) && (current()->type == ROSTER_GROUP))
@@ -131,7 +148,11 @@ SSI *SSIData::findGroup(const QString &name)
 
 SSI *SSIData::findGroup(const int groupId)
 {
-	kdDebug(14151) << "Looking for gid '" << groupId << "'" << endl;
+#ifdef OSCAR_SSI_DEBUG
+	kdDebug(14151) << k_funcinfo <<
+		"Looking for gid '" << groupId << "'" << endl;
+#endif
+
 	for (QPtrListIterator<SSI> it (*this); it.current(); ++it)
 	{
 		if ( it.current()->gid == groupId && it.current()->type == ROSTER_GROUP )
@@ -168,7 +189,9 @@ SSI *SSIData::renameGroup(const QString &currentName, const QString &newName)
 	// No sense in trying to change the group's name if it doesn't exist
 	if (group)
 	{
+#ifdef OSCAR_SSI_DEBUG
 		kdDebug(14150) << k_funcinfo << "Building group name change request" << endl;
+#endif
 		// Change the info in the SSI for the group name
 		// Sending the OSCAR server this SNAC, where the
 		// group ID is the same, but the name in the
@@ -186,7 +209,9 @@ SSI *SSIData::renameGroup(const QString &currentName, const QString &newName)
 
 SSI *SSIData::addInvis(const QString &name)
 {
+#ifdef OSCAR_SSI_DEBUG
 	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
+#endif
 
 	SSI *newitem = new SSI;
 
@@ -214,7 +239,9 @@ bool SSIData::removeInvis(const QString &name)
 
 SSI *SSIData::findInvis(const QString &name)
 {
+#ifdef OSCAR_SSI_DEBUG
 	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
+#endif
 	for (SSI *i=first(); i; i = next())
 	{
 		if ((current()->name == name) && (current()->type == ROSTER_INVISIBLE))
@@ -268,7 +295,7 @@ bool SSIData::waitingAuth( SSI* item )
 	if ( item )
 		return item->waitingAuth;
 
-	return 0L;
+	return false;
 }
 
 

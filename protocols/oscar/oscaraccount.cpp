@@ -403,7 +403,7 @@ void OscarAccount::slotKopeteGroupRemoved(KopeteGroup *group)
 
 void OscarAccount::slotGotServerBuddyList()
 {
-	kdDebug( 14150 ) << k_funcinfo << "account='" << accountId() << "'" << endl;
+	kdDebug(14150) << k_funcinfo << "account='" << accountId() << "'" << endl;
 
 	//If we get mysterious results (or crashes) here, it's because the SSIData object
 	//was mysteriously destroyed and since engine()->ssiData() returns a reference
@@ -416,7 +416,8 @@ void OscarAccount::slotGotServerBuddyList()
 		{ //active contact on SSI
 			if ( !git.current()->name.isEmpty() )
 			{
-				kdDebug(14150) << "Adding group '" << git.current()->name << "' to contact list" << endl;
+				kdDebug(14150) << k_funcinfo << "Adding group '" <<
+					git.current()->name << "' to contact list" << endl;
 				addGroup( git.current()->name );
 			}
 		}
@@ -432,19 +433,23 @@ void OscarAccount::slotGotServerBuddyList()
 			SSI* ssiGroup = engine()->ssiData().findGroup( bit.current()->gid );
 			if ( ssiGroup )
 			{
-				kdDebug(14150) << k_funcinfo << "ssiGroup is valid using group name = '" << ssiGroup->name << "'" << endl;
+				/*kdDebug(14150) << k_funcinfo <<
+					"ssiGroup is valid using group name = '" << ssiGroup->name << "'" << endl;
+				*/
 				groupName = ssiGroup->name;
 			}
 			else
 			{
-				kdDebug(14150) << k_funcinfo << "ssiGroup invalid for some reason. Using group name 'Buddies'" << endl;
+				kdDebug(14150) << k_funcinfo <<
+					"ssiGroup invalid for some reason. Using group name 'Buddies'" << endl;
 				groupName = i18n("Buddies");
 			}
 
 			OscarContact* contact = static_cast<OscarContact*> (contacts()[tocNormalize(bit.current()->name)]);
 			if ( !contact )
 			{
-				kdDebug(14150) << "Adding contact '" << bit.current()->name << "' to contact list" << endl;
+				kdDebug(14150) << k_funcinfo "Adding contact '" <<
+					bit.current()->name << "' to contact list" << endl;
 				addContact( tocNormalize(bit.current()->name), bit.current()->name, 0L,
 					 DontChangeKABC, groupName , false );
 			}

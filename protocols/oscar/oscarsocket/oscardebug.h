@@ -30,4 +30,6 @@
  * Even end users trying to debug things don't want this one :)
  */
 // #define OSCAR_CAP_DEBUG 1
+
+//#define OSCAR_SSI_DEBUG 1
 #endif

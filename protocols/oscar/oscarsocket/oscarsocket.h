@@ -680,13 +680,20 @@ class OscarSocket : public OscarConnection
 		/**
 		 * parses incoming contactlist (roster) data
 		 */
-		void parseRosterData(Buffer &inbuf);
+		void parseSSIData(Buffer &inbuf);
+		
+		/**
+		 * Parts of @ref parseSSIData()
+		 **/
+		void parseSSIContact(SSI *pSsi, QStringList &blmContacts);
+		void parseSSIGroup(SSI *pSsi);
+		void parseSSIVisibility(SSI *pSsi);
 
 		/**
 		 * parses incoming ack for current contactlist timestamp/length
 		 * @see sendRosterRequest() for data sent on CLI_CHECKROSTER
 		 */
-		void parseRosterOk(Buffer &inbuf);
+		void parseSSIOk(Buffer &inbuf);
 
 		/** Requests the user's SSI rights */
 		void requestBOSRights();
