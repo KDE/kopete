@@ -36,6 +36,8 @@
 #include <qsignal.h>
 #include <qstylesheet.h>
 #include <qthread.h>
+#include <qevent.h>
+#include <qmutex.h>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -48,7 +50,7 @@
  * The thread class that actually performs the XSL processing.
  * Using a thread allows async operation.
  */
-class KopeteXSLThread : public QThread
+class KopeteXSLThread : public QObject, public QThread
 {
 public:
 	/**
@@ -66,6 +68,11 @@ public:
 	 */
 	virtual void run();
 
+	/**
+	 * A user event is used to get back to the UI thread to emit the completed signal
+	 */
+	bool event( QEvent *event );
+	
 	static QString xsltTransform( const QString &xmlString, const QCString &xsltString );
 
 	/**
@@ -80,6 +87,7 @@ private:
 	QString m_resultString;
 	QObject *m_target;
 	const char *m_slotCompleted;
+	QMutex dataMutex;
 };
 
 KopeteXSLThread::KopeteXSLThread( const QString &xmlString, const QCString &xsltString, QObject *target, const char *slotCompleted )
@@ -93,19 +101,30 @@ KopeteXSLThread::KopeteXSLThread( const QString &xmlString, const QCString &xslt
 
 void KopeteXSLThread::run()
 {
+	dataMutex.lock();
 	m_resultString = xsltTransform( m_xml, m_xsl );
+	dataMutex.unlock();
+	// get back to the main thread
+	qApp->postEvent( this, new QEvent( QEvent::User ) );
+}
 
-	// Signal completion
+bool KopeteXSLThread::event( QEvent *event )
+{
+	if ( event->type() == QEvent::User )
+	{
+		dataMutex.lock();
 	if( m_target && m_slotCompleted )
 	{
 		QSignal completeSignal( m_target );
 		completeSignal.connect( m_target, m_slotCompleted );
 		completeSignal.setValue( m_resultString );
 		completeSignal.activate();
-
-		// FIXME: Why no 'delete this' if there's no slotCompleted? - Martijn
+		}
+		dataMutex.unlock();
 		delete this;
+		return true;
 	}
+	return QObject::event( event );
 }
 
 QString KopeteXSLThread::xsltTransform( const QString &xmlString, const QCString &xslCString )
