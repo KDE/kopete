@@ -340,7 +340,7 @@ void OscarContact::syncGroups()
 		return;
 	}
 
-	QString oldGroupName = mAccount->engine()->ssiData().findGroup( 
+	
 	// Oscar only supports one group per contact, so just get the first one
 	KopeteGroup *firstKopeteGroup = groups.first();
 	if(!firstKopeteGroup)
@@ -358,7 +358,7 @@ void OscarContact::syncGroups()
 
 	/*
 	* temporary contact's have their display name set to what the contactID would be
-	* so if it's a temporary contact, it's not on SSI
+	* so if it's a temporary contact, it's not on SSI. We'll have to add it.
 	*
 	* Another possibility is moving a buddy in the blm, but in that case, we don't need
         * to move him on BLM or SSI or anywhere, since BLM doesn't keep track of groups.
@@ -371,18 +371,16 @@ void OscarContact::syncGroups()
 			<< "to be temporary. Adding to SSI" << endl;
 		mAccount->engine()->sendAddBuddy( displayName(), firstKopeteGroup->displayName(), false );
 	}
-
-/*
-	if (currentOscarGroup->name() != firstKopeteGroup->displayName())
-	{
-		// The group has changed, so ask the engine to change
-		// our group on the server
-		mAccount->engine()->sendChangeBuddyGroup(
-			contactName(),
-			currentOscarGroup->name(),
-			firstKopeteGroup->displayName());
+	
+	SSI* movedItem = engine()->ssiData().findContact( displayName() )
+	if ( movedItem )
+	{	//hey, contact's on SSI, move him
+		SSI* oldGroup = engine()->ssiData().findGroup( movedItem->gid );
+		//I'm not checking the old group pointer because since we're using
+		//the gid, the group is guaranteed to be found.
+		mAccount->engine()->sendChangeBuddyGroup( movedItem->name, oldGroup->name,
+			firstKopeteGroup->displayName() );
 	}
-*/
 }
 
 #if 0
