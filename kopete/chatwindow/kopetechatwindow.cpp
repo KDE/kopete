@@ -22,6 +22,7 @@
 #include <qvbox.h>
 #include <qlayout.h>
 #include <qtooltip.h>
+#include <qfileinfo.h>
 
 #include <kcursor.h>
 #include <klocale.h>
@@ -37,9 +38,7 @@
 #include <ksqueezedtextlabel.h>
 #include <kpushbutton.h>
 #include <ktabwidget.h>
-#include <kactionclasses.h>
 #include <kstandarddirs.h>
-#include <qfileinfo.h>
 
 #include "chatview.h"
 #include "kopetechatwindow.h"
