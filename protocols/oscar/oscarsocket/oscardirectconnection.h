@@ -30,7 +30,6 @@ struct ODC2 { //direct connect header
   WORD type;
   DWORD length;
   char *sn;
-  char *message;	
 };
 
 class OscarSocket;
@@ -38,7 +37,7 @@ class OscarSocket;
 class OscarDirectConnection : public OscarConnection  {
 	Q_OBJECT
 public: 
-	OscarDirectConnection(OscarSocket *serverconn, const QString &connName, QObject *parent=0, const char *name=0);
+	OscarDirectConnection(const QString &sn, const QString &connName, char cookie[8], QObject *parent=0, const char *name=0);
 	~OscarDirectConnection();
   /** Sets the socket to use socket, state() to connected, and emit connected() */
   virtual void setSocket( int socket );
@@ -68,8 +67,6 @@ private slots: // Private slots
   void slotConnectionClosed(void);
 
 private: //private members
-	/** The main oscar connection */
-	OscarSocket *mMainConn;
 	/** the message cookie */
 	char mCookie[8];
 

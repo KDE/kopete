@@ -69,11 +69,6 @@ struct UserInfo { //user info
 	int idletime;
 };
 
-struct DirectInfo { //info used for keeping track of direct connections
-	BYTE cookie[8];
-	QString sn;
-};
-
 #define OSCAR_SERVER 	"login.oscar.aol.com"
 #define OSCAR_PORT 		5190
 #define OSCAR_OFFLINE	0
@@ -158,13 +153,16 @@ public:
 	 * @param notifyType Type of notify to send
 	 */
 	void sendMiniTypingNotify(QString screenName, TypingNotify notifyType);
-	inline QPtrList<DirectInfo> *getPendingConnections(void) { return &pendingDirect; };
+  /** Initiate a transfer of the given file to the given sn */
+  void sendFileSendRequest(const QString &sn, const QString &filename);
 
 public slots:
   /** This is called when a connection is established */
   void OnConnect(void);
   /** This function is called when there is data to be read */
   virtual void slotRead(void);
+  /** Accepts a file transfer from sn */
+  void sendFileSendAccept(const QString &sn);
 	
 private: // Private methods
   /** adds the flap version to the buffer */
@@ -274,11 +272,12 @@ private: // Private methods
 	void parseError(Buffer &inbuf);
 	/** Parses a missed message notification */
 	void parseMissedMessage(Buffer &inbuf);
-  /** Request, deny, or accept a direct IM session with someone
+  /** Request, deny, or accept a rendezvous session with someone
 		type == 0: request
 		type == 1: deny
 		type == 2: accept  */
-  void sendDirectIMInit(const QString &sn, WORD type);
+  void sendRendezvous(const QString &sn, WORD type, DWORD rendezvousType,
+  	const QString &filename=QString::null, long filesize=0);
   /** Sends a 0x0013,0x0002 (requests SSI rights information) */
   void sendSSIRightsRequest(void);
   /** Sends a 0x0013,0x0004 (requests SSI data?) */
@@ -287,8 +286,6 @@ private: // Private methods
   void parseSSIRights(Buffer &inbuf);
   /** Sends parameters for ICBM messages */
   void sendMsgParams(void);
-  /** looks for a connection named thename.  If such a connection exists, return it, otherwise, return NULL */
-  OscarDirectConnection * findConnection(const QString &thename);
 private slots: // Private slots
   /** Called when a connection has been closed */
   void OnConnectionClosed(void);
@@ -305,7 +302,7 @@ private slots: // Private slots
   /** Called when a direct IM connection suffers an error */
   void OnDirectIMError(QString, int);
   /** Called when a direct IM connection bites the dust */
-  void OnDirectIMConnectionClosed(OscarDirectConnection *);
+  void OnDirectIMConnectionClosed(QString);
   /** Called whenever a direct IM connection gets a typing notification */
   void OnDirectMiniTypeNotification(QString screenName, int notify);
   /** Called when a direct connection is set up and ready for use */
@@ -354,8 +351,6 @@ private: // Private attributes
   QPtrList<RateClass> rateClasses;
   /** tells whether we are idle */
   bool idle;
-  /** A collections of the sockets we are connected with */
-  QPtrList<OscarDirectConnection> sockets;
   /** Socket for direct connections */
   OncomingSocket *serverSocket;
   /** SSI server stored data */
@@ -366,8 +361,6 @@ private: // Private attributes
   QString myUserProfile;
   /** Tells if we are connected to the server and ready to operate */
   bool isConnected;
-  /** A list of pending direct connections */
-	QPtrList<DirectInfo> pendingDirect;
 		
 signals: // Signals
   /** Called when an SSI acknowledgement is recieved */

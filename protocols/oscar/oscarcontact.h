@@ -65,12 +65,13 @@ public:
 	 */
 	bool isDirectConnected() const { return mDirectlyConnected; };
 
-
 public slots:
 	/** Pops up a chat window */
 	virtual void execute(void);
 	/** Method to delete a contact from the contact list */
 	virtual void slotDeleteContact(void);
+	/** Send a file */
+	virtual void sendFile(const KURL &sourceURL, const QString &altFileName, const long unsigned int fileSize);
 
 public: // Public attributes
 	/** The name of the contact */

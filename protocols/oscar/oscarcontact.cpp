@@ -28,6 +28,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
+#include <kfiledialog.h>
 
 #include "aim.h"
 #include "kopeteaway.h"
@@ -51,6 +52,7 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	mIdle = 0;
 	mLastAutoResponseTime = 0;
 	mTypingTimer = new QTimer();
+	setFileCapable(true);
 	
 	// Buddy Changed
 	QObject::connect(mProtocol->engine, SIGNAL(gotBuddyChange(UserInfo)),
@@ -739,9 +741,9 @@ void OscarContact::slotDirectConnect(void)
 	if ( result == KMessageBox::Yes )
 	{
 		execute();
-		KopeteMessage m;
-		m.setBody(i18n("Waiting for %1 to connect...").arg(mName), KopeteMessage::PlainText );
-		msgManager()->appendMessage(m);
+		KopeteContactPtrList p;
+		p.append(this);
+		msgManager()->appendMessage(KopeteMessage(this, p, i18n("Waiting for %1 to connect...").arg(mName), KopeteMessage::Internal, KopeteMessage::PlainText ) );
 		mProtocol->engine->sendDirectIMRequest(mName);
 	}
 }
@@ -755,10 +757,9 @@ void OscarContact::slotDirectIMReady(QString name)
 
 	kdDebug() << "[OscarContact] Setting direct connect state for " << mName << " to true." << endl;
 	mDirectlyConnected = true;
-	execute();
-	KopeteMessage m;
-	m.setBody(i18n("Direct connection to %1 established").arg(mName), KopeteMessage::PlainText );
-	msgManager()->appendMessage(m);
+	KopeteContactPtrList p;
+	p.append(this);
+	msgManager()->appendMessage(KopeteMessage(this, p, i18n("Direct connection to %1 established").arg(mName), KopeteMessage::Internal, KopeteMessage::PlainText ) );
 }
 
 /** Called when the direct connection to contact @name has been terminated */
@@ -770,6 +771,26 @@ void OscarContact::slotDirectIMConnectionClosed(QString name)
 
 	kdDebug() << "[OscarContact] Setting direct connect state for " << mName << " to false." << endl;
 	mDirectlyConnected = false;
+}
+
+/** Sends a file */
+void OscarContact::sendFile(const KURL &sourceURL, const QString &altFileName,
+	const long unsigned int fileSize)
+{
+	QString filePath;
+
+	//If the file location is null, then get it from a file open dialog
+	if( !sourceURL.isValid() )
+		filePath = KFileDialog::getOpenFileName( QString::null ,"*.*", 0l  , i18n( "Kopete File Transfer" ));
+	else
+		filePath = sourceURL.path(-1);
+
+	if ( !filePath.isEmpty() )
+	{
+		kdDebug() << "[OscarContact] File size is " << fileSize << endl;
+		//Send the file
+		mProtocol->engine->sendFileSendRequest( mName, filePath );
+	}
 }
 
 /*	if ( (this->status() != m_cachedOldStatus) || ( size != m_cachedSize ) )

@@ -1,6 +1,9 @@
-Add support for Minityping Notifications ("Your buddy is typing a message")
-Add support for Direct Connections
+Prompt user to accept, deny, or warn incoming DirectIM and file transfer requests
+Make Buffer inherit QByteArray, get rid of possibly error prone c-style array code
 Add support for File Transfers
+Add support for buddy icons
+Add support for sending/receiving buddy lists
+Add support for reverse connections for both file transfers and direct IM (this is used when one client is behind a firewall that does not allow direct connections)
 
 Long Term:
 Remove all legacy TAim code: TBuddy, TBuddyList, etc.

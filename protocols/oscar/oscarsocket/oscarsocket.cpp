@@ -33,7 +33,6 @@ extern "C" {
 #include <kdebug.h>
 #include <klocale.h>
 #define DIRECTCONNECT		0x0f1f
-#define DIRECTIM_PORT		4443
 
 #define AIM_MD5_STRING "AOL Instant Messenger (SM)"
 #define AIM_CLIENTSTRING "AOL Instant Messenger (SM), version 4.8.2790/WIN32"
@@ -66,7 +65,7 @@ static const char AIM_OTHER[] = { 0x00, 0x00, 0x00, 0xbb };
 #define AIM_CAPS_TRILLIANCRYPT  0x00010000
 #define AIM_CAPS_LAST           0x00020000
 
-#define KOPETE_CAPS				AIM_CAPS_IMIMAGE
+#define KOPETE_CAPS				AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE
 
 static const struct {
     DWORD flag;
@@ -206,8 +205,6 @@ OscarSocket::OscarSocket(const QString &connName, QObject *parent, const char *n
     idle = false;
 //    tmpSocket = NULL;
     rateClasses.setAutoDelete(TRUE);
-    pendingDirect.setAutoDelete(TRUE);
-    sockets.setAutoDelete(TRUE);
     myUserProfile = "Visit the Kopete website at <a href=""http://kopete.kde.org"">http://kopete.kde.org</a>";
     isConnected = false;
 }
@@ -222,7 +219,7 @@ void OscarSocket::OnConnect(void)
 {
     QString tmp = QString("Connected to " + peerName() + ", port %1").arg(peerPort());
     kdDebug() << "[OSCAR][OnConnect] Connected to " << peerName() << ", port " << peerPort() << endl;
-    serverSocket = new OncomingSocket(this,&sockets,address(),DIRECTIM_PORT);
+   	serverSocket = new OncomingSocket(this, address());
     kdDebug() << "[OSCAR] address() is " << address().toString() << " serverSocket->address() is " << serverSocket->address().toString() << endl;
     emit connectionChanged(1,tmp);
 }
@@ -471,6 +468,8 @@ void OscarSocket::OnConnectionClosed(void)
     kdDebug() << "[OSCAR] Connection closed by server" << endl;
     rateClasses.clear();
     isConnected = false;
+    if (serverSocket)
+    	delete serverSocket;
 }
 
 /** Called when the server aknowledges the connection */
@@ -489,9 +488,9 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 
 		//kdDebug() << "[OSCAR] Output: " << endl;
 		//outbuf.print();
-		//if(hasDebugDialog()){
-		//		debugDialog()->addMessageFromClient(outbuf.toString(), connectionName());
-		//}
+		if(hasDebugDialog()){
+				debugDialog()->addMessageFromClient(outbuf.toString(), connectionName());
+		}
 		
 		outbuf.addFlap(chan);
 		writeBlock(outbuf.getBuf(),outbuf.getLength());
@@ -1124,6 +1123,7 @@ void OscarSocket::parseMsgRights(Buffer &/*inbuf*/)
 void OscarSocket::parseIM(Buffer &inbuf)
 {
 		Buffer tmpbuf;
+		char *cook = 0L;
     WORD type = 0;
     WORD length = 0;
     //This is probably the hardest thing to do in oscar
@@ -1160,8 +1160,8 @@ void OscarSocket::parseIM(Buffer &inbuf)
     unsigned int remotePort = 0;
     QHostAddress qh;
     QString message;
-    OscarDirectConnection *s;
-    WORD msgtype; //used to tell whether it is a direct IM requst, deny, or accept
+    WORD msgtype = 0; //used to tell whether it is a direct IM requst, deny, or accept
+    DWORD capflag = 0; //used to tell what kind of rendezvous this is
     switch(channel)
 		{
  		case 0x0001: //normal IM
@@ -1267,42 +1267,41 @@ void OscarSocket::parseIM(Buffer &inbuf)
 		    // 2 - Accept
 		    msgtype = tmpbuf.getWord();
 		    //next comes the cookie, which should match the ICBM cookie
-		    char * cook = tmpbuf.getBlock(8);
-		    delete cook;
+		    cook = tmpbuf.getBlock(8);
 		    //the next 16 bytes are the capability block (what kind of request is this?)
 		    char *cap = tmpbuf.getBlock(0x10);
 		    int identified = 0;
-		    DWORD capflag = 0;
 		    for (int i = 0; !(aim_caps[i].flag & AIM_CAPS_LAST); i++)
-			{
-			    if (memcmp(&aim_caps[i].data, cap, 0x10) == 0)
 				{
+			    if (memcmp(&aim_caps[i].data, cap, 0x10) == 0)
+					{
 				    capflag |= aim_caps[i].flag;
 				    identified++;
 				    break; /* should only match once... */
-						}
-			}
-						if (!identified){
-								printf("unknown capability: {%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}\n",
-												cap[0], cap[1], cap[2], cap[3],
-												cap[4], cap[5],
-												cap[6], cap[7],
-												cap[8], cap[9],
-												cap[10], cap[11], cap[12], cap[13],
-												cap[14], cap[15]);
-						}
-						delete cap;
-						//Next comes a big TLV chain of stuff that may or may not exist
-						QList<TLV> tlvlist = tmpbuf.getTLVList();
-						TLV *cur;
-						tlvlist.setAutoDelete(true);
-						for (cur = tlvlist.first();cur;cur = tlvlist.next())
+					}
+				}
+				delete cap;
+				if (!identified)
+				{
+						printf("unknown capability: {%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}\n",
+										cap[0], cap[1], cap[2], cap[3],
+										cap[4], cap[5],
+										cap[6], cap[7],
+										cap[8], cap[9],
+										cap[10], cap[11], cap[12], cap[13],
+										cap[14], cap[15]);
+				}
+				//Next comes a big TLV chain of stuff that may or may not exist
+				QList<TLV> tlvlist = tmpbuf.getTLVList();
+				TLV *cur;
+				tlvlist.setAutoDelete(true);
+				for (cur = tlvlist.first();cur;cur = tlvlist.next())
+				{
+						//IP address from the perspective of the client
+						if (cur->type == 0x0002)
 						{
-								//IP address from the perspective of the client
-								if (cur->type == 0x0002)
-								{
-										kdDebug() << "[OSCAR] ClientIP1: " << cur->data[0] << "."
-															<< cur->data[1] << "." << cur->data[2] << "."
+								kdDebug() << "[OSCAR] ClientIP1: " << cur->data[0] << "."
+													<< cur->data[1] << "." << cur->data[2] << "."
 															<< cur->data[3]  << endl;
 
 								}
@@ -1329,9 +1328,12 @@ void OscarSocket::parseIM(Buffer &inbuf)
 								//Port number
 								else if (cur->type == 0x0005)
 								{
-										remotePort = (cur->data[1] << 8) | cur->data[0];
+										remotePort = (cur->data[0] << 8) | cur->data[1];
 										kdDebug() << "[OSCAR] Port# " << remotePort << endl;
 								}
+								//else if (cur->type == 0x000a)
+								//{
+								//}
 								//Error code
 								else if (cur->type == 0x000b)
 								{
@@ -1362,9 +1364,34 @@ void OscarSocket::parseIM(Buffer &inbuf)
 				{
 						kdDebug() << "[OSCAR] Ch 2 IM: unknown TLV type " << type << endl;
 				}
-				s = new OscarDirectConnection(this, QString(u.sn));
-				kdDebug() << "[OSCAR] Connecting to " << qh.toString() << ":" << remotePort << endl;
-				s->connectToHost(qh.toString(),DIRECTIM_PORT);
+
+				if (msgtype == 0x0000) // initiate
+				{
+					if ( capflag & AIM_CAPS_IMIMAGE ) //if it is a direct IM rendezvous
+					{
+						sendDirectIMAccept(u.sn);
+						serverSocket->addOutgoingConnection(u.sn, cook, qh.toString(), DIRECTIM_PORT);
+					}
+					else // file send
+					{
+						sendFileSendAccept(u.sn);
+						serverSocket->addOutgoingConnection(u.sn, cook, qh.toString(), remotePort);
+					}
+				}
+				else if (msgtype == 0x0002) //deny
+				{
+					if ( capflag & AIM_CAPS_IMIMAGE )
+					{
+						emit protocolError(i18n("Direct IM request denied by %1").arg(u.sn),0);
+						serverSocket->removeConnection(u.sn);
+					}
+					else
+					{
+						emit protocolError(i18n("Send file request denied by %1").arg(QString(u.sn)),0);
+					}
+				}
+        if (cook)
+		    	delete cook;
 				break;
 		default: //unknown channel
 				kdDebug() << "[OSCAR] Error: unknown ICBM channel " << channel << endl;
@@ -1456,7 +1483,7 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAuto)
 {
 	//check to see if we have a direct connection to the contact
-	OscarDirectConnection *dc = findConnection(dest);
+	OscarDirectConnection *dc = serverSocket->findConnection(dest);
 	if (dc)
 	{
 		dc->sendIM(message,isAuto);
@@ -1728,7 +1755,7 @@ void OscarSocket::parseRedirect(Buffer &inbuf)
 	type == 2: accept */
 void OscarSocket::sendDirectIMRequest(const QString &sn)
 {
-	sendDirectIMInit(sn,0x0000);
+	sendRendezvous(sn,0x0000,AIM_CAPS_IMIMAGE);
 }
 
 /** Parses a message ack from the server */
@@ -1792,15 +1819,15 @@ void OscarSocket::sendCapabilities(unsigned long caps)
     outbuf.addSnac(0x0002,0x0004,0x0000,0x00000000);
     int sz = 0;
     for (int i=0;aim_caps[i].flag != AIM_CAPS_LAST;i++)
-	if (aim_caps[i].flag & caps)
-	    sz += 16;
+			if (aim_caps[i].flag & caps)
+	    	sz += 16;
     kdDebug() << "[OSCAR] Sending capabilities.. size " << sz << endl;
     //TLV (type 5)
     outbuf.addWord(0x0005);
     outbuf.addWord(sz);
     for (int i=0;aim_caps[i].flag != AIM_CAPS_LAST;i++)
-	if (aim_caps[i].flag & caps)
-	    outbuf.addString(aim_caps[i].data,16);
+			if (aim_caps[i].flag & caps)
+	    	outbuf.addString(aim_caps[i].data,16);
     sendBuf(outbuf,0x02);
 }
 
@@ -1930,11 +1957,11 @@ void OscarSocket::parseError(Buffer &inbuf)
 	emit protocolError(msg,reason);
 }
 
-/** Request, deny, or accept a direct IM session with someone
+/** Request, deny, or accept a rendezvous session with someone
 type == 0: request
 type == 1: deny
 type == 2: accept  */
-void OscarSocket::sendDirectIMInit(const QString &sn, WORD type)
+void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousType, const QString &filename, long filesize)
 {
     Buffer outbuf;
     outbuf.addSnac(0x0004,0x0006,0x0000,0x00000000);
@@ -1947,11 +1974,7 @@ void OscarSocket::sendDirectIMInit(const QString &sn, WORD type)
 		//add this to the list of pending connections if it is a request
 		if ( type == 0 )
 		{
-			DirectInfo *dinfo = new DirectInfo;
-			dinfo->sn = sn;
-			for (int i=0;i<8;i++)
-				dinfo->cookie[i] = ck[i];
-			pendingDirect.append(dinfo);
+			serverSocket->addPendingConnection(sn, ck);
 		}
     outbuf.addString(ck,8);
     //channel 2
@@ -1963,51 +1986,77 @@ void OscarSocket::sendDirectIMInit(const QString &sn, WORD type)
     outbuf.addTLV(0x0003,0x0000,NULL);
     //add a huge TLV of type 5
     outbuf.addWord(0x0005);
-    outbuf.addWord(2+8+16+6+8+6+4);
+    if ( filename.isNull() ) //this is a simple direct IM
+    {
+    	if (type == 0x0000)
+     		outbuf.addWord(2+8+16+6+8+6+4);
+      else
+      	outbuf.addWord(2+8+16);
+    }
+    else //this is a file transfer request
+    {
+    	if (type == 0x0000)
+	    	outbuf.addWord(2+8+16+6+8+6+4+2+2+2+2+4+filename.length()+4);
+      else
+      	outbuf.addWord(2+8+16);
+    }
     outbuf.addWord(type); //2
     outbuf.addString(ck,8); //8
     for (int i=0;aim_caps[i].flag != AIM_CAPS_LAST;i++)
 		{
-	    if (aim_caps[i].flag & AIM_CAPS_IMIMAGE)
-			{
-		    outbuf.addString(aim_caps[i].data,0x10);
-		    break;
-			}
+	    	if (aim_caps[i].flag & rendezvousType)
+				{
+		    	outbuf.addString(aim_caps[i].data,0x10);
+		    	break;
+				}
 		} //16
-    //TLV (type a)
-    outbuf.addWord(0x000a);
-    outbuf.addWord(0x0002);
-    outbuf.addWord(0x0001); //6
-    //TLV (type 3)
-    outbuf.addWord(0x0003);
-    outbuf.addWord(0x0004);
-    if (!serverSocket->ok()) //make sure the socket stuff is properly set up
-    {
-    	kdDebug() << "[Oscar] SERVER SOCKET NOT SET UP... returning from directiminit" << endl;
-			return;
-		}
-    outbuf.addDWord(static_cast<DWORD>(serverSocket->address().ip4Addr())); //8
-    //TLV (type 5)
-    outbuf.addWord(0x0005);
-    outbuf.addWord(0x0002);
-    outbuf.addWord(serverSocket->port()); //6
-    //TLV (type f)
-    outbuf.addTLV(0x000f,0x0000,NULL); //4
-
-    kdDebug() << "[OSCAR] Sending direct IM, type " << type << " from " << serverSocket->address().toString() << ", port " << serverSocket->port() << endl;
+		if ( type == 0x0000 ) //if this is an initiate rendezvous command
+		{
+    	//TLV (type a)
+ 	  	outbuf.addWord(0x000a);
+ 		  outbuf.addWord(0x0002);
+ 	   	outbuf.addWord(0x0001); //6
+ 	   	//TLV (type 3)
+    	outbuf.addWord(0x0003);
+    	outbuf.addWord(0x0004);
+    	if (!serverSocket->ok()) //make sure the socket stuff is properly set up
+    	{
+    		kdDebug() << "[Oscar] SERVER SOCKET NOT SET UP... returning from sendRendezvous" << endl;
+				return;
+			}	
+    	outbuf.addDWord(static_cast<DWORD>(serverSocket->address().ip4Addr())); //8
+    	//TLV (type 5)
+    	outbuf.addWord(0x0005);
+    	outbuf.addWord(0x0002); //8
+    	outbuf.addWord(serverSocket->port()); //6
+    	//TLV (type f)
+    	outbuf.addTLV(0x000f,0x0000,NULL); //4
+    	
+   	 if ( !filename.isNull() )
+   	 {
+    		outbuf.addWord(0x2711); //2
+     		outbuf.addWord(2+2+4+filename.length()+4); //2
+      	outbuf.addWord(0x0001); //more than 1 file? (0x0002 for multiple -- implement later)
+      	outbuf.addWord(0x0001); //number of files
+				outbuf.addDWord(filesize);
+				outbuf.addString(filename.latin1(),filename.length());
+				outbuf.addDWord(0x00000000);
+    	}
+    }
+   	kdDebug() << "[OSCAR] Sending direct IM, type " << type << " from " << serverSocket->address().toString() << ", port " << serverSocket->port() << endl;
     sendBuf(outbuf,0x02);
 }
 
 /** Sends a direct IM denial */
 void OscarSocket::sendDirectIMDeny(const QString &sn)
 {
-	sendDirectIMInit(sn,0x0001);
+	sendRendezvous(sn,0x0001,AIM_CAPS_IMIMAGE);
 }
 
 /** Sends a direct IM accept */
 void OscarSocket::sendDirectIMAccept(const QString &sn)
 {
-	sendDirectIMInit(sn,0x0002);
+	sendRendezvous(sn,0x0002,AIM_CAPS_IMIMAGE);
 }
 
 /** Parses a missed message notification */
@@ -2235,7 +2284,7 @@ void OscarSocket::sendMiniTypingNotify(QString screenName,TypingNotify notifyTyp
 		kdDebug() << "[OSCAR] Sending Typing notify " << endl;
 
 		//look for direct connection before sending through server
-		OscarDirectConnection *dc = findConnection(screenName);
+		OscarDirectConnection *dc = serverSocket->findConnection(screenName);
 		if ( dc )
 		{
 			kdDebug() << "[OSCAR] Found direct connection, sending typing notify directly" << endl;
@@ -2295,33 +2344,28 @@ void OscarSocket::OnDirectMiniTypeNotification(QString screenName, int notify)
  emit gotMiniTypeNotification(screenName, notify);
 }
 
-/** looks for a connection named thename.  If such a connection exists, return it, otherwise, return NULL */
-OscarDirectConnection * OscarSocket::findConnection(const QString &thename)
-{
-	OscarDirectConnection *tmp;
-	for (tmp = sockets.first(); tmp; tmp = sockets.next())
-	{
-		if ( !thename.compare(tmp->connectionName()) )
-		{
-			return tmp;
-		}
-	}
-	return 0L;
-}
-
 /** Called when a direct IM connection bites the dust */
-void OscarSocket::OnDirectIMConnectionClosed(OscarDirectConnection *theconn)
+void OscarSocket::OnDirectIMConnectionClosed(QString name)
 {
-	kdDebug() << "[OscarSocket] Deleting closed connection!" << endl;
-	QString sn = theconn->connectionName();
-	sockets.remove(theconn);
-	emit directIMConnectionClosed(sn);
+	emit directIMConnectionClosed(name);
 }
 
 /** Called when a direct connection is set up and ready for use */
 void OscarSocket::OnDirectIMReady(QString name)
 {
 	emit directIMReady(name);
+}
+
+/** Initiate a transfer of the given file to the given sn */
+void OscarSocket::sendFileSendRequest(const QString &sn, const QString &filename)
+{
+	sendRendezvous(sn, 0x0000, AIM_CAPS_SENDFILE, filename);
+}
+
+/** Accepts a file transfer from sn */
+void OscarSocket::sendFileSendAccept(const QString &sn)
+{
+	sendRendezvous(sn, 0x0001, AIM_CAPS_SENDFILE);
 }
 
 /*

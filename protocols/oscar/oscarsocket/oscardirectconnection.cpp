@@ -20,17 +20,15 @@
 #include "oscardebugdialog.h"
 #include "oscarsocket.h"
 
-OscarDirectConnection::OscarDirectConnection(OscarSocket *serverconn, const QString &connName,
+OscarDirectConnection::OscarDirectConnection(const QString &sn, const QString &connName, char cookie[8],
 	QObject *parent, const char *name)
 	: OscarConnection(connName, CONN_TYPE_DIRECTIM, parent, name)
 {
-	if (serverconn)
-		mMainConn = serverconn;
-	else
-		kdDebug() << "[OscarDirectConnection] serverconn is NULL!!!  BAD!" << endl;
+  setSN(sn);
+  for (int i=0;i<8;i++)
+  	mCookie[i] = cookie[i];
 	connect(this, SIGNAL(connected()), this, SLOT(slotConnected()));
 	connect(this, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
-	setSN(mMainConn->getSN());
 }
 
 OscarDirectConnection::~OscarDirectConnection()
@@ -76,7 +74,7 @@ void OscarDirectConnection::slotRead(void)
 		emit gotMiniTypeNotification(fl.sn, 1);
 	}
 
-	if ( (fl.length > 0) && fl.message && fl.sn) //there is a message here
+	if ( (fl.length > 0) && fl.sn) //there is a message here
 		parseMessage(inbuf);
 
 	if ( inbuf.getLength() )
@@ -183,22 +181,7 @@ ODC2 OscarDirectConnection::getODC2(void)
 /** Called when we have established a connection */
 void OscarDirectConnection::slotConnected(void)
 {
- 	// Connect protocol error signal
-	QObject::connect(this, SIGNAL(protocolError(QString, int)),
-			mMainConn, SLOT(OnDirectIMError(QString, int)));
-	// Got IM
-	QObject::connect(this, SIGNAL(gotIM(QString, QString, bool)),
-			mMainConn, SLOT(OnDirectIMReceived(QString,QString,bool)));
-	// Disconnected
-	QObject::connect(this, SIGNAL(connectionClosed(OscarDirectConnection *)),
-			mMainConn, SLOT(OnDirectIMConnectionClosed(OscarDirectConnection *)));
-	// Typing notification
-	QObject::connect(this, SIGNAL(gotMiniTypeNotification(QString,int)),
-			mMainConn, SLOT(OnDirectMiniTypeNotification(QString, int)));
-	// Ready signal
-	QObject::connect(this, SIGNAL(directIMReady(QString)),
-			mMainConn, SLOT(OnDirectIMReady(QString)));
-
+	kdDebug() << "[OscarDirectConnection] We are connected to " << connectionName() << endl;
 	// Announce that we are ready for use!
 	emit directIMReady(connectionName());
 }
@@ -288,12 +271,13 @@ void OscarDirectConnection::parseMessage(Buffer &inbuf)
 	QString message;
 	while ( !message.contains("<BINARY>",false) )
 	{
-		kdDebug() << "[OscarDirect] message is: " << message << endl;
+		//kdDebug() << "[OscarDirect] message is: " << message << endl;
 		// while the message does not contain the string "<BINARY>"
 		message.append(inbuf.getByte());
 		if ( !inbuf.getLength() )
 		{
 			//if we are at the end of the buffer
+			kdDebug() << "[OscarDirectConnection] got IM: " << message << endl;
 			emit gotIM(message, connectionName(), false);
 			return;
 		}
@@ -312,9 +296,11 @@ void OscarDirectConnection::parseMessage(Buffer &inbuf)
 		if ( !inbuf.getLength() )
 		{
 			//message ended in the middle of the data tag
+			kdDebug() << "[OscarDirectConnection] got IM: " << message << endl;
 			emit gotIM(message.remove("<BINARY>"), connectionName(), false);
 		}
 	}
+	kdDebug() << "[OscarDirectConnection] got IM: " << message << endl;
 	emit gotIM(message.remove("<BINARY>"), connectionName(), false);
 }
 
