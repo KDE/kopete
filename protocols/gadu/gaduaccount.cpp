@@ -62,7 +62,7 @@ const char* const servers_ip[ NUM_SERVERS ] = {
 };
 
  GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const char* name )
-: KopeteAccount( parent, accountID, name ), pingTimer_( 0 ), saveListDialog( NULL ), loadListDialog( NULL )
+: KopeteAccount( parent, accountID, name ), pingTimer_( 0 ), saveListDialog( NULL ), loadListDialog( NULL ), forFriends( false )
 {
 	QHostAddress ip;
 
@@ -269,7 +269,7 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 		}
 		else {
 			 if ( status.internalStatus() == GG_STATUS_NOT_AVAIL_DESCR ) {
-				if ( session_->changeStatusDescription( status.internalStatus(), descr ) != 0 ) {
+				if ( session_->changeStatusDescription( status.internalStatus(), descr, forFriends ) != 0 ) {
 					return;
 				}
 			}
@@ -295,11 +295,11 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 		else {
 			status_ = status;
 			if ( descr.isEmpty() ) {
-				if ( session_->changeStatus( status.internalStatus() ) != 0 )
+				if ( session_->changeStatus( status.internalStatus(), forFriends ) != 0 )
 					return;
 			}
 			else {
-				if ( session_->changeStatusDescription( status.internalStatus(), descr ) != 0 )
+				if ( session_->changeStatusDescription( status.internalStatus(), descr, forFriends ) != 0 )
 					return;
 			}
 		}
@@ -329,7 +329,7 @@ GaduAccount::slotLogin( int status, const QString& dscr )
 			connectionFailed( GG_FAILURE_PASSWORD );
 		}
 		else {
-				session_->login( accountId().toInt(), password(), connectWithSSL, status, dscr, serverIP );
+				session_->login( accountId().toInt(), password(), connectWithSSL, status, dscr, serverIP, forFriends );
 		}
 	}
 	else {
@@ -773,10 +773,10 @@ GaduAccount::userListExportDone()
 void
 GaduAccount::slotFriendsMode()
 {
-	static bool friendsMode = false;
-
-	friendsMode = !friendsMode;
-	kdDebug( 14100 ) << "for friends mode: " << friendsMode << endl;
+	forFriends = !forFriends;
+	kdDebug( 14100 ) << "for friends mode: " << forFriends << endl;
+	// now change status, it will changing it with forFriends flag
+	changeStatus( status_, lastDescription );
 
 }
 

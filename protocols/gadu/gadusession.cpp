@@ -60,7 +60,7 @@ GaduSession::status() const
 {
 	kdDebug(14100)<<"Status = " << session_->status <<", initial = "<< session_->initial_status <<endl;
 	if ( session_ ) {
-		return session_->status;
+		return session_->status & ( ~GG_STATUS_FRIENDS_MASK );
 	}
 	return GG_STATUS_NOT_AVAIL;
 }
@@ -146,13 +146,13 @@ GaduSession::disableNotifiers()
 
 void
 GaduSession::login( uin_t uin, const QString& password, bool useTls,
-					int status, const QString& statusDescr, unsigned int server )
+					int status, const QString& statusDescr, unsigned int server, bool forFriends )
 {
 	memset( &params_, 0, sizeof(params_) );
 
 	params_.uin		= uin;
 	params_.password	= (char *)password.ascii();
-	params_.status		= status;
+	params_.status		= status | ( forFriends ? GG_STATUS_FRIENDS_MASK : 0);
 	params_.status_descr	= ( textcodec->fromUnicode( statusDescr ).data() );
 	params_.async		= 1;
 	params_.tls		= useTls;
@@ -247,11 +247,11 @@ GaduSession::sendMessage( uin_t recipient, const QString& msg, int msgClass )
 }
 
 int
-GaduSession::changeStatus( int status )
+GaduSession::changeStatus( int status, bool forFriends )
 {
 	kdDebug()<<"## Changing to "<<status<<endl;
 	if ( isConnected() ) {
-		return gg_change_status( session_, status );
+		return gg_change_status( session_, status | ( forFriends ? GG_STATUS_FRIENDS_MASK : 0) );
 	}
 	else {
 		emit error( i18n("Not Connected"),  i18n("You have to be connected to the server to change your status.") );
@@ -261,14 +261,15 @@ GaduSession::changeStatus( int status )
 }
 
 int
-GaduSession::changeStatusDescription( int status, const QString& descr )
+GaduSession::changeStatusDescription( int status, const QString& descr, bool forFriends )
 {
 	QCString ndescr;
 
 	ndescr= textcodec->fromUnicode(descr);
 
 	if ( isConnected() ) {
-		return gg_change_status_descr( session_, status, ndescr.data() );
+		return gg_change_status_descr( session_, 
+				status | ( forFriends ? GG_STATUS_FRIENDS_MASK : 0), ndescr.data() );
 	}
 	else {
 		emit error( i18n("Not Connected"), i18n("You have to be connected to the server to change your status.") );

@@ -171,6 +171,7 @@ private:
 	unsigned int		serverIP;
 
 	QString			lastDescription;
+	bool			forFriends;
 };
 
 #endif

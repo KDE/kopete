@@ -98,14 +98,14 @@ public:
 public slots:
 	void	login( struct gg_login_params* );
 	void	login( uin_t uin, const QString&, bool, int status = GG_STATUS_AVAIL,
-			const QString& statusDescr = "", unsigned int server = 0 );
+			const QString& statusDescr = "", unsigned int server = 0, bool forFriends = false );
 	void	logoff();
 	int	notify( uin_t*, int );
 	int	addNotify( uin_t );
 	int	removeNotify( uin_t );
 	int	sendMessage( uin_t recipient, const QString& msg, int msgClass );
-	int	changeStatus( int );
-	int	changeStatusDescription( int, const QString& );
+	int	changeStatus( int, bool forFriends = false );
+	int	changeStatusDescription( int, const QString&, bool forFriends = false );
 	int	ping();
 
 	void	requestContacts();
