@@ -10,8 +10,11 @@
             <x>0</x>
             <y>0</y>
             <width>403</width>
-            <height>285</height>
+            <height>287</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>CryptographyPrefsUI</string>
     </property>
     <grid>
         <property name="name">
@@ -156,29 +159,12 @@
                 </widget>
             </grid>
         </widget>
-        <spacer row="2" column="0">
-            <property name="name">
-                <cstring>spacer2</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Fixed</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
         <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>No_Passphrase_Handling</cstring>
             </property>
             <property name="text">
-                <string>Don't ask the passphrase (when using gpg-agent)</string>
+                <string>Don't ask for the passphrase</string>
             </property>
         </widget>
     </grid>
