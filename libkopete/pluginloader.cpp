@@ -140,14 +140,14 @@ bool LibraryLoader::loadAll()
 	return true;
 }
 
-KopeteLibraryInfo LibraryLoader::getInfo(const QString &spec) const
+KopeteLibraryInfo LibraryLoader::getInfo( const QString &spec ) const
 {
-	QMap<QString, KopeteLibraryInfo>::iterator cached = m_cachedInfo.find(spec);
-	if (cached != m_cachedInfo.end() )
+	QMap<QString, KopeteLibraryInfo>::iterator cached = m_cachedInfo.find( spec );
+	if ( cached != m_cachedInfo.end() )
 		return *cached;
 
 	KopeteLibraryInfo info;
-	QString specPath = ( spec[ 0 ] == '/' ) ? spec : KGlobal::dirs()->findResource( "services", spec );
+	QString specPath = ( spec[ 0 ] == '/' ) ? spec : KGlobal::dirs()->findResource( "services", spec + QString::fromLatin1( ".desktop" ) );
 	if( !QFile::exists( specPath ) )
 		return info;
 
@@ -155,7 +155,7 @@ KopeteLibraryInfo LibraryLoader::getInfo(const QString &spec) const
 	if( spec.find( '/' ) >= 0 )
 		info.specfile = KURL( spec ).fileName();
 	else
-		info.specfile = spec;
+		info.specfile = spec + QString::fromLatin1( ".desktop" );
 
 	file.setGroup( QString::fromLatin1( "Desktop Entry" ) );
 
@@ -209,13 +209,11 @@ QValueList<KopeteLibraryInfo> LibraryLoader::available() const
 KopetePlugin *LibraryLoader::loadPlugin( const QString &spec_ )
 {
 	QString spec = spec_;
+	spec.remove( QRegExp( QString::fromLatin1( ".desktop$" ) ) );
+
 	kdDebug( 14010 ) << k_funcinfo << spec << endl;
 
 	QString pluginId = spec;
-	pluginId.remove( QRegExp( QString::fromLatin1( ".desktop$" ) ) );
-
-	if(!spec.endsWith(QString::fromLatin1(".desktop")))
-		spec += QString::fromLatin1(".desktop") ;
 
 	KopetePlugin *plugin = m_loadedPlugins[ spec ];
 	if(plugin)
@@ -275,13 +273,8 @@ KopetePlugin *LibraryLoader::loadPlugin( const QString &spec_ )
 	return plugin;
 }
 
-bool LibraryLoader::remove( const QString &spec_ )
+bool LibraryLoader::remove( const QString &spec )
 {
-	QString spec=spec_;
-	if(!spec.endsWith(QString::fromLatin1(".desktop")))
-		spec += QString::fromLatin1(".desktop") ;
-
-
 	KopetePlugin *plugin = m_loadedPlugins[ spec ];
 	if( !plugin )
 		return false;
@@ -329,11 +322,13 @@ KopetePlugin * LibraryLoader::searchByName(const QString &name)
 
 KopetePlugin* LibraryLoader::searchByID( const QString &Id )
 {
+	kdDebug() << k_funcinfo << Id << endl;
+
 	QValueList<KopeteLibraryInfo> l = loaded();
 
 	for ( QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i )
 	{
-		KopetePlugin *tmp_plug = m_loadedPlugins[ ( *i ).specfile ];
+		KopetePlugin *tmp_plug = m_loadedPlugins[ ( *i ).specfile.remove( QString::fromLatin1( ".desktop" ) ) ];
 		if( tmp_plug && tmp_plug->pluginId() == Id )
 			return tmp_plug;
 	}
@@ -381,7 +376,6 @@ void LibraryLoader::slotKopeteSettingsChanged()
 			if ( key.startsWith( QString::fromLatin1( "kopete_" ) ) )
 			{
 				key.remove( 0, 7 );
-				key += QString::fromLatin1( ".desktop" );
 				if ( it.data() == QString::fromLatin1( "true" ) )
 				{
 					if ( !m_loadedPlugins[ key ] )
