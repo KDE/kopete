@@ -855,7 +855,11 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 	else if( list == "RL" )
 	{
 		// search for new Contacts
-		if( !m_contacts.contains( handle ) )
+		// FIXME: Users in the allow list or block list now never trigger the
+		// 'new user' dialog, which makes it impossible to add those here.
+		// Not necessarily bad, but the usability effects need more thought
+		// before I declare it good :-)
+		if( !m_allowList.contains( handle ) && !m_blockList.contains( handle ) )
 		{
 			kdDebug() << "MSNProtocol: Contact not found in list!" << endl;
 
