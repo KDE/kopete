@@ -96,7 +96,7 @@ void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 	if ( groups.isEmpty() )
 	{
 		kdDebug() << "KopeteContactList::addMetaContact : adding metacontact with no groups" <<endl;
-		kopeteapp->contactList()->addContact(new KopeteMetaContactLVI( mc, kopeteapp->contactList() ) );
+		kopeteapp->contactList()->addContact( mc );
 	}
 	else
 	{
@@ -106,21 +106,30 @@ void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 			QString group = *it;
 			kdDebug() << "KopeteContactList::addMetaContact: "
 				<< "adding metacontact to group " << group <<endl;
-			kopeteapp->contactList()->addContact( new KopeteMetaContactLVI(
-				mc, kopeteapp->contactList()->getGroup( group ) ) );
+			kopeteapp->contactList()->addContact( mc, group );
 		}
 	}
 }
 
 void KopeteContactList::slotAddedToGroup( KopeteMetaContact *mc, const QString &to )
 {
-	kopeteapp->contactList()->addContact( new KopeteMetaContactLVI(
-				mc, kopeteapp->contactList()->getGroup( to ) ) );
+	kopeteapp->contactList()->addContact( mc, to );
+
+	if ( (mc->groups()).count() == 1 )
+	{
+		kopeteapp->contactList()->removeTopLevel(mc);
+	}
 }
 
 void KopeteContactList::slotRemovedFromGroup(KopeteMetaContact *mc, const QString &from )
 {
 	kopeteapp->contactList()->removeContact( mc, from );
+
+	if ( (mc->groups()).isEmpty() )
+	{
+		kopeteapp->contactList()->addContact(mc);
+	}
+
 }
 
 
