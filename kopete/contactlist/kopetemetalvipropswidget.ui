@@ -526,7 +526,7 @@ This option is only available if there is exactly one child contact </string>
         <sender>chkTrackChildDisplayName</sender>
         <signal>toggled(bool)</signal>
         <receiver>edtDisplayName</receiver>
-        <slot>setEnabled(bool)</slot>
+        <slot>setDisabled(bool)</slot>
     </connection>
 </connections>
 <tabstops>
