@@ -29,7 +29,7 @@
 
 #include "yahooconferencemessagemanager.h"
 
-YahooConferenceMessageManager::YahooConferenceMessageManager( const QString &m_yahooRoom, KopeteProtocol *protocol, const KopeteContact *user,
+YahooConferenceMessageManager::YahooConferenceMessageManager( const QString & /* yahooRoom */, KopeteProtocol *protocol, const KopeteContact *user,
 	KopeteContactPtrList others, const char *name )
 : KopeteMessageManager( user, others, protocol, 0, name )
 {
