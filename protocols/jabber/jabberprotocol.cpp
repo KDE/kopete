@@ -109,19 +109,19 @@ JabberProtocol::~JabberProtocol ()
 
 AddContactPage *JabberProtocol::createAddContactWidget (QWidget * parent, KopeteAccount * i)
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create Add Contact  Widget\n";
+	kdDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create Add Contact  Widget\n" << endl;;
 	return new JabberAddContactPage (i, parent);
 }
 
 EditAccountWidget *JabberProtocol::createEditAccountWidget (KopeteAccount * account, QWidget * parent)
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Edit Account Widget\n";
+	kdDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Edit Account Widget\n" << endl;
 	return new JabberEditAccountWidget (this, static_cast < JabberAccount * >(account), parent);
 }
 
 KopeteAccount *JabberProtocol::createNewAccount (const QString & accountId)
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create New Account. ID: " << accountId << "\n";
+	kdDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create New Account. ID: " << accountId << "\n" << endl;
 	return new JabberAccount (this, accountId);
 }
 

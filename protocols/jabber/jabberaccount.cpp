@@ -151,7 +151,7 @@ bool JabberAccount::addContactToMetaContact (const QString & contactId, const QS
 	if (!kmc)
 	{
 		//kmc = new KopeteMetaContact ();
-		kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] New meta contacts";
+		kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] New meta contacts" << endl;
 	}
 
 	//KopeteContactList::contactList()->addMetaContact(kmc);
