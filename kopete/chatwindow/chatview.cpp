@@ -15,6 +15,7 @@
     *                                                                       *
     *************************************************************************
 */
+
 #include <qclipboard.h>
 #include <qheader.h>
 
@@ -1109,8 +1110,9 @@ void ChatView::slotCopyURL()
 KopeteMessage ChatView::messageFromNode( Node &node )
 {
 	HTMLElement e = node;
-	while( !e.isNull() && e.className() != QString::fromLatin1("KopeteMessage") && e != chatView->htmlDocument().body() )
-		 e = e.parentNode();
+
+	while (!e.isNull() && e.className() != QString::fromLatin1("KopeteMessage") && e != (const DOM::Node)chatView->htmlDocument().body())
+		e = e.parentNode();
 
 	KopeteMessage m;
 	if( e.className().string() == QString::fromLatin1("KopeteMessage") )
