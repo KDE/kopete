@@ -12,4 +12,5 @@ Name[pt_BR]=Auto-Ausência por Movimento
 Name[ru]=Авто-отсутствие по движению
 Name[sv]=Automatisk rörelsefrånvaro
 Name[zh_TW]=依移動自動暫離
+Name[zu]=Nyakazisa Ngokuhambisa-Okuzenzekelayo
 Comment=Sets away status when not detecting movement near the computer 
