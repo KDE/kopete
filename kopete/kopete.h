@@ -29,7 +29,6 @@
 #include "kopetemessage.h"
 
 class KIconLoader;
-class KStatusBar;
 
 class AppearanceConfig;
 class KopeteContactListView;
@@ -45,14 +44,6 @@ class PreferencesDialog;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
- *
- * Kopete is the main class.
- * Almost all the common tasks you will need
- * for plugin development are here.
- *
- * You can should Kopete API like this:
- * 1- #include <kopete.h>
- * 2- kopeteapp->someFunction();
  */
 class Kopete : public KUniqueApplication
 {
@@ -75,13 +66,6 @@ public:
 	 */
 	LibraryLoader *libraryLoader() const
 	{ return mLibraryLoader; }
-
-	/**
-	 * Use it to access the status bar
-	 * The plugins can dock status bar icons to
-	 * show informatin about the plugin itself
-	 */
-	KStatusBar *statusBar() const;
 
 	/**
 	 * Use it to access Kopete's system tray

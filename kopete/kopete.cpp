@@ -303,11 +303,6 @@ void Kopete::cancelEvent( KopeteEvent *event)
 	delete event;
 }
 
-KStatusBar* Kopete::statusBar() const
-{
-	return m_mainWindow ? m_mainWindow->statusBar() : 0L;
-}
-
 KopeteSystemTray* Kopete::systemTray() const
 {
 	return m_mainWindow ? m_mainWindow->tray : 0L;

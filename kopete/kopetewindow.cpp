@@ -366,6 +366,7 @@ void KopeteWindow::slotPluginLoaded( KopetePlugin *p )
 		SLOT( slotProtocolDestroyed( QObject * ) ) );
 
 	StatusBarIcon *i = new StatusBarIcon( proto, statusBar() );
+	statusBar()->addWidget( i, 0, true );
 	connect( i, SIGNAL( rightClicked( KopeteProtocol *, const QPoint & ) ),
 		SLOT( slotProtocolStatusIconRightClicked( KopeteProtocol *,
 		const QPoint & ) ) );
