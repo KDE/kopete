@@ -4,9 +4,9 @@
     Copyright (c) 2002      by Olivier Goffart       <ogoffart@tiscalinet.be>
     Copyright (C) 2002      by James Grant
     Copyright (c) 2002      by Stefan Gehn           <metz AT gehn.net>
-    Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
+    Copyright (c) 2002-2004 by Martijn Klingens      <klingens@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -741,6 +741,7 @@ void KopeteChatWindow::checkDetachEnable()
 
 void KopeteChatWindow::detachChatView( ChatView *view )
 {
+	kdDebug() << "######################## " << k_funcinfo << endl;
 	if( !chatViewList.removeRef( view ) )
 		return;
 
@@ -769,6 +770,7 @@ void KopeteChatWindow::detachChatView( ChatView *view )
 			setActiveView( static_cast<ChatView*>(m_tabBar->currentPage()) );
 	}
 
+	kdDebug() << "######################## count: " << chatViewList.count() << endl;
 	if( chatViewList.isEmpty() )
 		close();
 	else if( chatViewList.count() == 1)
@@ -1104,14 +1106,25 @@ void KopeteChatWindow::closeEvent( QCloseEvent *e )
 		++it;
 
 		// if the view is closed, it is removed from chatViewList for us
-		if( !view->closeView() )
+		if ( !view->closeView() )
+		{
+			kdDebug() << k_funcinfo << "Closing view failed!" << endl;
 			canClose = false;
+		}
 	}
 
-	if( canClose )
-		e->accept();
+	kdDebug() << "########## " << k_funcinfo << "Canclose: " << canClose << endl;
+	if ( canClose )
+	{
+		// Call the parent class's closeEvent, which will accept() the event,
+		// but also make sure that we deref() KApplication if we're the last
+		// open window
+		KParts::MainWindow::closeEvent( e );
+	}
 	else
+	{
 		e->ignore();
+	}
 }
 
 void KopeteChatWindow::slotConfKeys()
@@ -1145,11 +1158,7 @@ void KopeteChatWindow::slotConfToolbar()
 	delete dlg;
 }
 
-bool KopeteChatWindow::queryExit()
-{
-//	 never quit kopete
-	return false;
-}
-
 #include "kopetechatwindow.moc"
+
 // vim: set noet ts=4 sts=4 sw=4:
+
