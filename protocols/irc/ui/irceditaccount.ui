@@ -378,9 +378,6 @@
                                 <property name="name">
                                     <cstring>preferSSL</cstring>
                                 </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
                                 <property name="text">
                                     <string>&amp;Prefer SSL-based connections</string>
                                 </property>
