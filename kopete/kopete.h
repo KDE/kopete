@@ -103,11 +103,12 @@ private:
 
 public slots:
 	void slotPreferences();
-	void slotExit();
+//	void slotExit();
 	void slotConnectAll();
 	void slotDisconnectAll();
 	void slotAddContact();
-	void slotSetAway();
+	void slotSetAwayAll(void);
+
 signals:
 	void signalSettingsChanged();
 };

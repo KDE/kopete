@@ -30,36 +30,41 @@ class QListViewItem;
 
 class KopeteWindow : public KMainWindow
 {
-	Q_OBJECT
+Q_OBJECT
 
-	public:
-		KopeteWindow ( QWidget *parent=0, const char *name=0 );
-		 ~KopeteWindow();
+public:
+	KopeteWindow ( QWidget *parent=0, const char *name=0 );
+	~KopeteWindow();
 
-	private slots:
-		void showToolbar(void);
-		void slotExecuted( QListViewItem * );
+private slots:
+	void showToolbar(void);
+	void slotExecuted( QListViewItem * );
 
-	public:
-		ContactList *contactlist;
-		/* Some Actions */
-		KAction* actionAddContact;
-		KAction* actionSetAway;
-		KAction* actionQuit;
-		KSelectAction* actionStatus;
-		KAction* actionConnect;
-		KAction* actionDisconnect;
-		KAction* actionPrefs;
-		KAction* actionHide;
-		KToggleAction *toolbarAction;
-		
-		KopeteSystemTray *tray;
+public:
+	ContactList *contactlist;
 
-	private:
-		bool queryExit(void);
-		void loadOptions(void);
-		void saveOptions(void);
-		QWidget *mainwidget;
+	// Some Actions
+	KAction* actionAddContact;
+	KAction* actionConnect;
+	KAction* actionDisconnect;
+	KAction* actionSetAway;
+	KAction* actionPrefs;
+	KAction* actionQuit;
+	KToggleAction *toolbarAction;
+
+//	KSelectAction* actionStatus;
+//	KAction* actionHide;
+
+	KopeteSystemTray *tray;
+
+private:
+	void initView ( void );
+	void initActions ( void );
+	void initSystray ( void );
+	bool queryExit(void);
+	void loadOptions(void);
+	void saveOptions(void);
+	QWidget *mainwidget;
 };
 
 #endif

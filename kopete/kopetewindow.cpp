@@ -15,6 +15,15 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "kopetewindow.h"
+#include "kopetewindow.moc"
+
+#include "contactlist.h"
+#include "imcontact.h"
+#include "kopete.h"
+#include "kopeteballoon.h"
+#include "systemtray.h"
+
 #include <qlayout.h>
 
 #include <kconfig.h>
@@ -22,54 +31,70 @@
 #include <klocale.h>
 #include <kstdaction.h>
 
-#include "contactlist.h"
-#include "imcontact.h"
-#include "kopete.h"
-#include "kopeteballoon.h"
-#include "kopetewindow.h"
-#include "systemtray.h"
-
 KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(parent,name)
 {
-	kdDebug() << "KopeteWindow::KopeteWindow()" << endl;
+	kdDebug() << "[KopeteWindow] KopeteWindow()" << endl;
 
+	/* -------------------------------------------------------------------------------- */
+	initView();
+	initActions();
+	initSystray();
+	/* -------------------------------------------------------------------------------- */
+
+	loadOptions();
+
+	// we always show our statusbar
+	// it's important because it shows the protocol-icons
+	statusBar()->show();
+	
+	// for now systemtray is also always shown
+	// TODO: make the configurable
+	tray->show();
+}
+
+void KopeteWindow::initView ( void )
+{
 	mainwidget = new QWidget(this);
 	setCentralWidget(mainwidget);
 
 	QBoxLayout *layout = new QBoxLayout(mainwidget,QBoxLayout::TopToBottom);
 	contactlist = new ContactList(mainwidget);
+
 	layout->insertWidget ( -1, contactlist );
-	connect( contactlist, SIGNAL(executed(QListViewItem *)),
-			 this, SLOT(slotExecuted(QListViewItem *)) );
-	
-	/* ---------------------------------- */
-	
-	actionAddContact = new KAction( i18n("&Add contact"),"bookmark_add",0 ,
+	connect( contactlist, SIGNAL(executed(QListViewItem *)), this, SLOT(slotExecuted(QListViewItem *)) );
+}
+
+void KopeteWindow::initActions ( void )
+{
+	actionAddContact = new KAction( i18n("&Add contact"),"bookmark_add", 0 ,
 							kopeteapp, SLOT(slotAddContact()),
 							actionCollection(), "AddContact" );
 
-	actionConnect = new KAction( i18n("&Connect All"),"connect_no",0 ,
+	actionConnect = new KAction( i18n("&Connect All"),"connect_creating", 0 ,
 							kopeteapp, SLOT(slotConnectAll()),
 							actionCollection(), "Connect" );
 
-	actionDisconnect = new KAction( i18n("&Disconnect All"),"connect_established",0 ,
+	actionDisconnect = new KAction( i18n("&Disconnect All"),"connect_no", 0 ,
 							kopeteapp, SLOT(slotDisconnectAll()),
 							actionCollection(), "Disconnect" );
 
+	actionSetAway = new KAction( i18n("&Set away globally"), "away", 0 ,
+							kopeteapp, SLOT(slotSetAwayAll()),
+							actionCollection(), "SetAway" );
+
 	actionPrefs = KStdAction::preferences(kopeteapp, SLOT(slotPreferences()), actionCollection());
 
-	actionQuit = KStdAction::quit(kopeteapp, SLOT(slotExit()), actionCollection());
+//	actionQuit = KStdAction::quit(kopeteapp, SLOT(slotExit()), actionCollection());
+	KStdAction::quit(kopeteapp, SLOT(quit()), actionCollection());
 
 	toolbarAction = KStdAction::showToolbar(this, SLOT(showToolbar()), actionCollection());
 
-	/* ---------------------------------- */
-
 	createGUI ( "kopeteui.rc" );
-	
-	loadOptions();
-	toolbarAction->setChecked( !toolBar("mainToolBar")->isHidden() );
+}
 
-	tray = new KopeteSystemTray(this);
+void KopeteWindow::initSystray ( void )
+{
+	tray = new KopeteSystemTray(this, "KopeteSystemTray");
 	KPopupMenu *tm = tray->getContextMenu();
 
 	tm->insertSeparator();
@@ -77,23 +102,22 @@ KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(pare
 	tm->insertSeparator();
 	actionConnect->plug( tm );
 	actionDisconnect->plug( tm );
+	actionSetAway->plug( tm );
+	tm->insertSeparator();
 	actionPrefs->plug( tm );
 	tm->insertSeparator();
-
-	statusBar()->show();
-
-
 }
 
 KopeteWindow::~KopeteWindow()
 {
 //	delete tray;
-	kdDebug() << "KopeteWindow::~KopeteWindow()" << endl;
+	kdDebug() << "[KopeteWindow] ~KopeteWindow()" << endl;
 }
+
 
 bool KopeteWindow::queryExit()
 {
-	kdDebug() << "KopeteWindow::queryExit()" << endl;
+	kdDebug() << "[KopeteWindow] queryExit()" << endl;
 	saveOptions();
 	return true;
 }
@@ -102,17 +126,19 @@ bool KopeteWindow::queryExit()
 void KopeteWindow::loadOptions(void)
 {
 	KConfig *config = KGlobal::config();
+  
+	toolBar("mainToolBar")->applySettings( config, "ToolBar Settings" );
 
 	applyMainWindowSettings ( config, "General Options" );
 
+	QPoint pos = config->readPointEntry("Position");
+	move(pos);
+	
 	QSize size = config->readSizeEntry("Geometry");
 	if(!size.isEmpty())
 	{
 		resize(size);
 	}
-
-	QPoint pos = config->readPointEntry("Position");
-	move(pos);
 
 	QString tmp = config->readEntry("State", "Shown");
 	if ( tmp == "Minimized" )
@@ -126,17 +152,19 @@ void KopeteWindow::loadOptions(void)
 	else
 	{
 		KConfig *config = KGlobal::config();
-  		config->setGroup("Appearance");
-  		if (!config->readBoolEntry("StartDocked", false))
-  	    {
+		config->setGroup("Appearance");
+		if ( !config->readBoolEntry("StartDocked", false) )
 			show();
-		}
 	}
+	
+	toolbarAction->setChecked( !toolBar("mainToolBar")->isHidden() );
 }
 
 void KopeteWindow::saveOptions(void)
 {
 	KConfig *config = KGlobal::config();
+
+	toolBar("mainToolBar")->saveSettings ( config, "ToolBar Settings" );
 
 	saveMainWindowSettings( config, "General Options" );
 
@@ -171,13 +199,9 @@ void KopeteWindow::showToolbar(void)
 void KopeteWindow::slotExecuted( QListViewItem *item )
 {
 	IMContact *contact = dynamic_cast<IMContact *>(item);
-	if (contact)
-	{
+	if ( contact )
 		contact->doubleClicked();
-	}
 }
-
-#include "kopetewindow.moc"
 
 // vim: set noet sw=4 ts=4 sts=4:
 

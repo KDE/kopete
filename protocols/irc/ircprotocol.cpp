@@ -145,6 +145,17 @@ bool IRCProtocol::isConnected()
 	return false;
 }
 
+void IRCProtocol::setAway(void)
+{
+// TODO
+}
+
+bool IRCProtocol::isAway(void)
+{
+// TODO
+	return false;
+}
+
 /** This i used for al protocol selection dialogs */
 QPixmap IRCProtocol::getProtocolIcon()
 {

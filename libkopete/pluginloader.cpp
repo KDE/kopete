@@ -82,6 +82,7 @@ bool LibraryLoader::loadAll(void)
 bool LibraryLoader::loadAll(const QStringList &modules)
 {
 	// Session management...
+/*
 	for(QStringList::ConstIterator i=modules.begin(); i!=modules.end(); ++i)
 	{
 		KopeteLibraryInfo info=getInfo(*i);
@@ -89,7 +90,7 @@ bool LibraryLoader::loadAll(const QStringList &modules)
 			continue;
 		loadSO(*i);
 	}
-
+*/
 	// load all the protocols in the first
 	for(QStringList::ConstIterator i=modules.begin(); i!=modules.end(); ++i)
 	{
@@ -97,7 +98,8 @@ bool LibraryLoader::loadAll(const QStringList &modules)
 		if (!info.type.contains("protocol"))
 			continue;
 
-		loadSO(*i);
+		if ( !loadSO(*i) )
+			kdDebug() << "[LibraryLoader] loading " << (*i) << " failed!" << endl;
 	}
 
 	return true;
@@ -135,7 +137,7 @@ bool LibraryLoader::isLoaded(const QString &spec) const
 
 bool LibraryLoader::loadSO(const QString &spec)
 {
-	if(!isLoaded(spec))
+	if( !isLoaded(spec) )
 	{
 		KopeteLibraryInfo info = getInfo(spec);
 		if (info.specfile != spec)
@@ -151,30 +153,37 @@ bool LibraryLoader::loadSO(const QString &spec)
 
 		if (!listitem)
 		{
-			KLibrary *lib = loader->library(QFile::encodeName(info.filename));
+			KLibrary *lib = loader->library( QFile::encodeName(info.filename) );
 			if (!lib)
+			{
+				kdDebug() << "[LibraryLoader] loadSO(), error while loading library: " << loader->lastErrorMessage() << endl;
 				return false;
-			listitem=new PluginLibrary;
-			listitem->library=lib;
+			}
+			listitem = new PluginLibrary;
+			listitem->library = lib;
 			mLibHash.insert(spec, listitem);
 		}
 
-		void *create=listitem->library->symbol("create_plugin");
+		void *create = listitem->library->symbol("create_plugin");
 		if (!create)
 			return false;
 
 		Plugin* (*plugInStart)();
-		plugInStart= (Plugin* (*)()) create;
-		listitem->plugin=plugInStart();
+		plugInStart = (Plugin* (*)()) create;
+		listitem->plugin = plugInStart();
 
 		//if (getInfo(spec).type=="playlist")
 		//	mPlaylist=listitem->plugin->playlist();
 
 		listitem->plugin->init();
+		kdDebug() << "[LibraryLoader] loadSO(), loading " << spec << " successful"<< endl;
 		return true;
 	}
 	else
+	{
+		kdDebug() << "[LibraryLoader] loadSO(), " << spec << " is already loaded!" << endl;
 		return false;
+	}
 }
 
 void LibraryLoader::add(const QString &spec)

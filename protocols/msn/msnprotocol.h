@@ -78,6 +78,8 @@ class MSNProtocol : public QObject, public IMProtocol
 		virtual void Connect();
 		virtual void Disconnect();
 		virtual bool isConnected();
+		virtual void setAway(void);
+		virtual bool isAway(void);
 		bool mIsConnected;
 		/** Internal */
 		StatusBarIcon *statusBarIcon;

@@ -50,7 +50,7 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 
 	mPluginsModule = new Plugins(this);
 
-	mainwindow = new KopeteWindow();
+	mainwindow = new KopeteWindow(0, "KopeteWindow");
 	setMainWidget(mainwindow);
 
 	mAppearance = new AppearanceConfig(mainwindow);
@@ -60,7 +60,7 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 	KConfig *config=KGlobal::config();
 	config->setGroup("");
 	
-	/* Ups! the user dont have plugins selected. */
+	// Ups! the user does not have plugins selected.
 	if (!config->hasKey("Modules"))
 	{
 		QStringList modules;
@@ -69,32 +69,35 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 		config->writeEntry("Modules", modules);
 	}
 
-	/* Ok, load saved plugins */
+	// Ok, load saved plugins
 	loadPlugins();
 }
 
 
 Kopete::~Kopete()
 {
-	kdDebug() << "Kopete::~Kopete()" << endl;
+	kdDebug() << "[Kopete] ~Kopete()" << endl;
 
 	delete mPref;
 	delete mLibraryLoader;
 
-	kdDebug() << "END OF Kopete::~Kopete()" << endl;
+	kdDebug() << "[Kopete] END ~Kopete()" << endl;
 }
 
 void Kopete::slotPreferences()
 {
+	kdDebug() << "[Kopete] slotPreferences()" << endl;
 	mPref->show();
 	mPref->raise();
 }
 
+/*
 void Kopete::slotExit()
 {
-	kdDebug() << "Kopete::slotExit()" << endl;
+	kdDebug() << "[Kopete] slotExit()" << endl;
 	quit();
 }
+*/
 
 /** Connect all loaded protocol plugins */
 void Kopete::slotConnectAll()
@@ -102,7 +105,7 @@ void Kopete::slotConnectAll()
 	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
     for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
-		kdDebug() << "Kopete: Connect All: " << (*i).name << endl;
+		kdDebug() << "[Kopete] Connect All: " << (*i).name << endl;
 		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;				
 		IMProtocol *prot =  static_cast<IMProtocol*>(tmpprot);
 		if ( !(prot->isConnected()))
@@ -118,7 +121,7 @@ void Kopete::slotDisconnectAll()
 	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
     for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
-		kdDebug() << "Kopete: Disconnect All: "<<(*i).name << endl;
+		kdDebug() << "[Kopete] Disconnect All: "<<(*i).name << endl;
 		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;
 		IMProtocol *prot =  static_cast<IMProtocol*>(tmpprot);
 		if (prot->isConnected())
@@ -128,6 +131,27 @@ void Kopete::slotDisconnectAll()
 	}
 }
 
+
+// Set a meta-away in all protocol plugins
+// This is a fire and forget thing, we do not check if
+// it worked or if the plugin exits away-mode
+void Kopete::slotSetAwayAll(void)
+{
+	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
+    for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
+	{
+		kdDebug() << "[Kopete] slotSetAwayAll() for plugin: " << (*i).name << endl;
+		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;
+		IMProtocol *prot =  static_cast<IMProtocol*>(tmpprot);
+		if ( prot->isConnected() && !prot->isAway() )
+		{
+			kdDebug() << "[Kopete] setting away-mode for: " << (*i).name << endl;
+			prot->setAway(); // sets protocol-plugin into away-mode
+		}
+	}
+}
+
+
 /** Add a contact through Wizard */
 void Kopete::slotAddContact()
 {
@@ -135,10 +159,6 @@ void Kopete::slotAddContact()
 	tmpdialog->show();
 }
 
-/** Set a meta-away in all protocol plugins */
-void Kopete::slotSetAway()
-{
-}
 
 /** Load all plugins */
 void Kopete::loadPlugins()

@@ -48,6 +48,8 @@ public:
 	virtual void Connect();
 	virtual void Disconnect();
 	virtual bool isConnected();
+	virtual void setAway(void);
+	virtual bool isAway(void);
 	/** Internal */
 	StatusBarIcon *statusBarIcon;
 	/** The IRC Engine */

@@ -164,6 +164,19 @@ bool MSNProtocol::isConnected()
 	return mIsConnected;	
 }
 
+
+void MSNProtocol::setAway(void)
+{
+// TODO
+}
+
+bool MSNProtocol::isAway(void)
+{
+// TODO
+	return false;
+}
+
+
 /** This i used for al protocol selection dialogs */
 QPixmap MSNProtocol::getProtocolIcon()
 {

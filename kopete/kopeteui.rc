@@ -5,6 +5,7 @@
 			<Action name="Connect"/>
 			<Action name="Disconnect"/>
 			<Action name="AddContact"/>
+			<Action name="SetAway"/>
 			<Separator lineSeparator="true"/>
 			<Action name="file_quit"/>
 		</Menu>
