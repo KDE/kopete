@@ -25,6 +25,7 @@
 #include <qlayout.h>
 
 #include <kglobal.h>
+#include <kapplication.h>
 #include <kiconloader.h>
 #include <klocale.h>
 
@@ -54,7 +55,6 @@ ConfigModule::ConfigModule(const QString &name, const QString &description, cons
 ConfigModule::~ConfigModule()
 {
 	PreferencesDialog::preferencesDialog()->remove(this);
-
 }
 
 void ConfigModule::ownerDeleted()

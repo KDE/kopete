@@ -2,7 +2,7 @@
     appearanceconfig.cpp  -  Kopete Look Feel Config
 
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-    Kopete    (c) 2002      by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -32,7 +32,6 @@
 #include <qtextedit.h>
 #include <qvgroupbox.h>
 #include <qspinbox.h>
-//#include <qdatetime.h>
 #include <qslider.h>
 
 #include <kcolorcombo.h>
@@ -178,6 +177,7 @@ void AppearanceConfig::save()
 	p->setTransparencyColor( mPrfsChatWindow->mTransparencyTintColor->color() );
 	p->setTransparencyEnabled( mPrfsChatWindow->mTransparencyEnabled->isChecked() );
 	p->setTransparencyValue( mPrfsChatWindow->mTransparencyValue->value() );
+	p->setChatViewBufferSize ( mPrfsChatWindow->mChatViewBufferSize->value() );
 // 	p->setCTransparencyColor( mPrfsChatWindow->mCTransparencyColor->color() );
 // 	p->setCTransparencyEnabled( mPrfsChatWindow->mCTransparencyEnabled->isChecked() );
 // 	p->setCTransparencyValue( mPrfsChatWindow->mCTransparencyValue->value() );
@@ -264,12 +264,12 @@ void AppearanceConfig::reopen()
 	mPrfsChatWindow->mTransparencyValue->setValue( p->transparencyValue() );
 	mPrfsChatWindow->mTransparencyBgOverride->setChecked( p->bgOverride() );
 	mPrfsChatWindow->interfaceGroup->setButton( p->interfacePreference() );
+	mPrfsChatWindow->mChatViewBufferSize->setValue( p->chatViewBufferSize() );
+
+	// "Chat Appearance" TAB
 	mPrfsChatAppearance->highlightEnabled->setChecked( p->highlightEnabled() );
 	mPrfsChatAppearance->foregroundColor->setColor( p->highlightForeground() );
 	mPrfsChatAppearance->backgroundColor->setColor( p->highlightBackground() );
-
-
-	// "Chat Appearance" TAB
   const QString wthis = i18n("Code:                                <br>\
 	<b>%M</b> : insert the Message                                   <br>\
 	<b>%T</b> : insert Timestamp                                     <br>\
@@ -390,4 +390,5 @@ void AppearanceConfig::slotUpdatePreview()
 }
 
 #include "appearanceconfig.moc"
+
 // vim: set noet ts=4 sts=4 sw=4:

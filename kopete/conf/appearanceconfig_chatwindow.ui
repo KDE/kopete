@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>453</width>
-            <height>471</height>
+            <width>485</width>
+            <height>541</height>
         </rect>
     </property>
     <property name="caption">
@@ -121,38 +121,6 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>mTransparencyEnabled</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Enable &amp;translucency</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>mTransparencyBgOverride</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Don't show user specified background color</string>
-                    </property>
-                </widget>
-                <widget class="KColorCombo" row="2" column="1">
-                    <property name="name">
-                        <cstring>mTransparencyTintColor</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="2" column="0">
-                    <property name="name">
-                        <cstring>textLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Tint color:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>mTransparencyTintColor</cstring>
-                    </property>
-                </widget>
                 <widget class="QSlider" row="3" column="1">
                     <property name="name">
                         <cstring>mTransparencyValue</cstring>
@@ -239,7 +207,71 @@
                         <cstring>mTransparencyValue</cstring>
                     </property>
                 </widget>
+                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>mTransparencyEnabled</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Enable &amp;translucency</string>
+                    </property>
+                </widget>
+                <widget class="KColorCombo" row="2" column="1">
+                    <property name="name">
+                        <cstring>mTransparencyTintColor</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Tint color:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>mTransparencyTintColor</cstring>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>mTransparencyBgOverride</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Don't show user specified background color</string>
+                    </property>
+                </widget>
             </grid>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout2</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>txtChatViewBufferSize</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Maximum Chatwindow Lines:</string>
+                    </property>
+                </widget>
+                <widget class="QSpinBox">
+                    <property name="name">
+                        <cstring>mChatViewBufferSize</cstring>
+                    </property>
+                    <property name="maxValue">
+                        <number>9000</number>
+                    </property>
+                    <property name="minValue">
+                        <number>2</number>
+                    </property>
+                    <property name="value">
+                        <number>250</number>
+                    </property>
+                </widget>
+            </hbox>
         </widget>
         <spacer>
             <property name="name">
@@ -254,7 +286,7 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>20</height>
+                    <height>60</height>
                 </size>
             </property>
         </spacer>
@@ -263,6 +295,8 @@
 <tabstops>
     <tabstop>cb_RaiseMsgWindowChk</tabstop>
     <tabstop>cb_ShowEventsChk</tabstop>
+    <tabstop>mSingleShot</tabstop>
+    <tabstop>mChatWindow</tabstop>
     <tabstop>mNewWindow</tabstop>
     <tabstop>mTabProtocolWindow</tabstop>
     <tabstop>mTabWindow</tabstop>
@@ -270,6 +304,7 @@
     <tabstop>mTransparencyBgOverride</tabstop>
     <tabstop>mTransparencyTintColor</tabstop>
     <tabstop>mTransparencyValue</tabstop>
+    <tabstop>mChatViewBufferSize</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

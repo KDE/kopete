@@ -25,7 +25,7 @@
                 <cstring>mButtonNew</cstring>
             </property>
             <property name="text">
-                <string>New ...</string>
+                <string>&amp;New ...</string>
             </property>
         </widget>
         <widget class="QPushButton" row="4" column="1">
@@ -58,7 +58,7 @@
                 <cstring>mButtonEdit</cstring>
             </property>
             <property name="text">
-                <string>Edit ...</string>
+                <string>&amp;Modify...</string>
             </property>
         </widget>
         <widget class="QPushButton" row="2" column="1">
@@ -66,7 +66,7 @@
                 <cstring>mButtonRemove</cstring>
             </property>
             <property name="text">
-                <string>Remove</string>
+                <string>&amp;Remove</string>
             </property>
         </widget>
         <widget class="QPushButton" row="5" column="1">
@@ -109,6 +109,14 @@
         </widget>
     </grid>
 </widget>
+<tabstops>
+    <tabstop>mAccountList</tabstop>
+    <tabstop>mButtonNew</tabstop>
+    <tabstop>mButtonEdit</tabstop>
+    <tabstop>mButtonRemove</tabstop>
+    <tabstop>mButtonUp</tabstop>
+    <tabstop>mButtonDown</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>klistview.h</includehint>
