@@ -15,6 +15,9 @@
     *************************************************************************
 */
 
+//QT
+#include <qregexp.h>
+
 // KDE
 #include <kconfig.h>
 #include <kdebug.h>
@@ -306,7 +309,14 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	KopeteContactPtrList justMe;
 	justMe.append(myself());
 	KopeteMessage kmsg(contact(who), justMe, msg, KopeteMessage::Inbound);
+
+	//filter <fade> tags from the messages
+	QString filteredMsg = kmsg.plainBody();
+
+	//set the body to be richtext so tags are removed
+	kmsg.setBody(filteredMsg, KopeteMessage::RichText);
 	mm->appendMessage(kmsg);
+
 }
 
 void YahooAccount::slotGotConfInvite( const QString & /* who */, const QString & /* room */, const QString & /* msg */, const QStringList & /* members */ )
