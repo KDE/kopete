@@ -30,6 +30,7 @@
 #include <kaction.h>
 #include <kstatusbar.h>
 #include <kiconloader.h>
+#include <klistview.h>
 
 #include "preferencesdialog.h"
 #include "kopetewindow.h"
@@ -45,6 +46,8 @@ class LibraryLoader;
 class KopeteLibraryInfo;
 class KopeteMessageManagerFactory;
 class AppearanceConfig;
+class KopeteTransferManager;
+class KopeteMetaContact;
 
 /**
 * Kopete is the main class.
@@ -122,8 +125,12 @@ public:
 	**/
 	void setAwayAll(void);
 
-
-
+	/**
+	 * This returns the active transferview window, if any.
+	 *
+	 */
+	KopeteTransferManager *transferManager() { return mTransferManager; };
+ 
 private:
 	PreferencesDialog *mPref;
 	Plugins *mPluginsModule;
@@ -136,8 +143,7 @@ private:
 	KopeteNotifier *mNotifier;
 	KopeteMessageManagerFactory *mMessageManagerFactory;
 	void loadPlugins();
-
-
+	KopeteTransferManager *mTransferManager;
 public slots:
 	/**
 	* Only use notify event for system-wide messages
@@ -158,7 +164,7 @@ public slots:
 	void slotAddContact();
 	void slotSetAwayAll(void);
 	void slotSetAvailableAll(void);
-
+	void slotShowTransfers();
 signals:
 	void signalSettingsChanged();
 

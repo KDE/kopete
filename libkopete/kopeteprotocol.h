@@ -22,11 +22,14 @@
 #include <qobject.h>
 #include <qwidget.h>
 #include <plugin.h>
+#include <qptrlist.h>
 
 class AddContactPage;
 class QString;
 class KopeteContact;
 class KopeteMetaContact;
+class KopeteFileTransferInfo;
+class KopeteTransfer;
 
 /**
  * @author duncan
@@ -86,6 +89,10 @@ public:
 	 */
 	bool canSendOffline() const { return false; }
 
+protected slots:
+	void percentCompleted( const KopeteFileTransferInfo *,int percentDone );
+signals:
+	void transferCanceled( const KopeteFileTransferInfo * );
 	/**
 	 * Function has to be reimplemented in every single protocol
 	 * and return the KopeteContact associated with the 'home' user.
@@ -93,10 +100,8 @@ public:
 	 * @return contact associated with the currently logged in user
 	 */
 	virtual KopeteContact* myself() const=0;
-
 private:
 	QString m_icon;
-
 	bool m_canStream;
 };
 

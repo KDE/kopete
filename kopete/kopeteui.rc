@@ -21,6 +21,7 @@
 		<Action name="Status"/>
 		<Action name="AddContact"/>
 		<Action name="options_configure"/>
+		<Action name="ShowTransfers"/>
 		<Action name="file_quit"/>
 	</ToolBar>
 </kpartgui>

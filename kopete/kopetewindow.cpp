@@ -98,6 +98,10 @@ void KopeteWindow::initActions ( void )
 	actionAwayMenu->insert(actionSetAvailable);
 	actionAwayMenu->insert(actionSetAway);
 
+	actionShowTransfers = new KAction( i18n("Show &File Transfers"),"network", 0 ,
+							kopeteapp, SLOT(slotShowTransfers()),
+							actionCollection(), "ShowTransfers" );
+	
 	actionPrefs = KStdAction::preferences(kopeteapp, SLOT(slotPreferences()), actionCollection());
 
 //	actionQuit = KStdAction::quit(kopeteapp, SLOT(slotExit()), actionCollection());

@@ -14,20 +14,23 @@
  *                                                                         *
  ***************************************************************************/
 
-
-#include "kopete.h"
 #include "kopete.moc"
+#include "kopete.h"
 
 #include <qvaluelist.h>
 #include <qlist.h>
 #include <qlayout.h>
 #include <qregexp.h>
+#include <qpixmap.h>
+#include <qpainter.h>
+#include <qbrush.h>
 
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <kstandarddirs.h>
+#include <klocale.h>
 
 #include "preferencesdialog.h"
 #include "appearanceconfig.h"
@@ -37,6 +40,8 @@
 #include "kopeteprefs.h"
 #include "kopeteaway.h"
 #include "kopetecontactlist.h"
+#include "kopetemetacontact.h"
+#include "kopetetransfermanager.h"
 
 #include "plugin.h"
 #include "pluginloader.h"
@@ -111,6 +116,7 @@ void Kopete::initialize()
 
 	KopeteContactList::contactList()->load();
 //	kdDebug() << endl << KopeteContactList::contactList())->toXML() << endl;
+	mTransferManager = new KopeteTransferManager();
 }
 
 
@@ -590,7 +596,10 @@ void Kopete::slotMainWindowDestroyed()
 	m_mainWindow = 0L;
 }
 
-
+void Kopete::slotShowTransfers()
+{
+	transferManager()->show();
+}
 
 /*
  * Local variables:
@@ -599,5 +608,5 @@ void Kopete::slotMainWindowDestroyed()
  * indent-tabs-mode: t
  * End:
  */
-// vim: set noet ts=4 sts=4 sw=4:
 
+// vim: set noet ts=4 sts=4 sw=4:

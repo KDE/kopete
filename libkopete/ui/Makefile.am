@@ -18,7 +18,7 @@ libkopeteui_la_SOURCES = configmodule.cpp kopetewindow.cpp \
 	kopetecontactviewitem.cpp kopetestdaction.cpp \
 	kopetehistorywidget.cpp kopeteemailwindow.cpp emailwindow.ui \
 	kopetemetacontactlvi.cpp kopeteawaydialogbase.ui \
-	emoticonbutton.cpp
+	emoticonbutton.cpp kopetefiletransferui.ui
 libkopeteui_la_LDFLAGS = $(all_libraries)
 libkopeteui_la_LIBADD = $(LIB_KDEUI)
 
