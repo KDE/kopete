@@ -307,6 +307,16 @@ KopetePlugin * LibraryLoader::searchByName(const QString &name)
 	return 0L;
 }
 
+QString LibraryLoader::pluginName(KopetePlugin *plugin)
+{
+	for( QDictIterator<KopetePlugin> i( mLibHash ); i.current(); ++i )
+	{
+		if (i.current() == plugin)
+			return getInfo(i.currentKey()).name;
+	}
+	return "ERROR plugin unknown";
+}
+
 QString LibraryLoader::pluginIcon( const QString &pluginId ) const
 {
 	QDictIterator<KopetePlugin> i( mLibHash );

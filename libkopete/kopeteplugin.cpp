@@ -42,6 +42,11 @@ const char *KopetePlugin::pluginId() const
 	return this->className();
 }
 
+QString KopetePlugin::displayName()
+{
+	return LibraryLoader::pluginLoader()->pluginName(this);
+}
+
 void KopetePlugin::deserialize( KopeteMetaContact * /* metaContact */,
 	const QStringList & /* stream */ )
 {

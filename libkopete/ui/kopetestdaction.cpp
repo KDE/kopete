@@ -120,7 +120,7 @@ KListAction *KopeteStdAction::addContact(const QObject *recvr, const char *slot,
 	{
 		KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
 		if( proto )
-			protocolList.append( proto->pluginId() );
+			protocolList.append( proto->displayName() );
 	}
 
 	a->setItems( protocolList );

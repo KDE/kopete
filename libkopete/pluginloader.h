@@ -85,6 +85,11 @@ public:
 	 * ex: "ICQ"
 	 */
 	KopetePlugin *searchByName(const QString&);
+	
+	/**
+	 * The opposite of searchByName. Returns the name of the protocol.
+	 */
+	QString pluginName(KopetePlugin *plugin);
 
 	/**
 	 * loads all the enabled plugins

@@ -72,6 +72,11 @@ public:
 	 * specifies no icon name to use.
 	 */
 	QString pluginIcon() const;
+	
+	/**
+	 * Returns the display name of this plugin.
+	 */
+	QString displayName();
 
 public slots:
 	/**
