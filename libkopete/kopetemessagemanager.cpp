@@ -315,7 +315,7 @@ void KopeteMessageManager::slotMessageSent(KopeteMessage &message)
 
 	if ( KopetePrefs::prefs()->soundNotify() )
 	{
-		if ( !( (KopetePrefs::prefs()->soundIfAway() == false) && (KopeteAway::globalAway()) ) )
+		if ( !protocol()->isAway() || KopetePrefs::prefs()->soundIfAway() )
 		    KNotifyClient::event("kopete_outgoing");
 	}
 }
@@ -442,7 +442,7 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 
 	if ( KopetePrefs::prefs()->soundNotify() && isvisible && (msg.direction() != KopeteMessage::Outbound) )
 	{
-		if ( !( (KopetePrefs::prefs()->soundIfAway() == false) && (KopeteAway::globalAway()) ) )
+		if ( !protocol()->isAway() || KopetePrefs::prefs()->soundIfAway() )
 		    KNotifyClient::event("kopete_incoming");
 	}
 }

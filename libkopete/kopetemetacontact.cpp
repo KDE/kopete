@@ -25,12 +25,15 @@
 
 #include <kdebug.h>
 #include <klocale.h>
+#include <knotifyclient.h>
 
 #include "kopete.h"
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
 #include "kopetemetacontactlvi.h"
 #include "kopeteplugin.h"
+#include "kopeteprotocol.h"
+#include "kopeteprefs.h"
 #include "pluginloader.h"
 
 KopeteMetaContact::KopeteMetaContact()
@@ -321,10 +324,17 @@ bool KopeteMetaContact::isReachable() const
 	return false;
 }
 
-void KopeteMetaContact::slotContactStatusChanged( KopeteContact * /* c */,
+void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
 	KopeteContact::ContactStatus /* s */ )
 {
+	OnlineStatus m = m_onlineStatus;
 	updateOnlineStatus();
+	if ( (m_onlineStatus != m) && (m_onlineStatus==Online) && (KopetePrefs::prefs()->soundNotify()) )
+	{
+		KopeteProtocol* p = kopeteapp->libraryLoader()->searchByID(c->protocol());
+		if ( !p->isAway() || KopetePrefs::prefs()->soundIfAway() )
+			KNotifyClient::event("kopete_online");
+	}
 }
 
 void KopeteMetaContact::setDisplayName( const QString &name )
