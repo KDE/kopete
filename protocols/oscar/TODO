@@ -19,20 +19,14 @@ This is the TODO file for the OSCAR plugin.
 
 
 
-====== Requirements for Merge to HEAD ======
-
-Can't move contacts between groups yet. The required methods for this have 
-yet to be implemented. 
-
-Searching for contacts needs to be implemented
-
-
 ====== Adding new features not in oscarsocket ======
 
 Support buddy icon connections
 Support direct connections
 Support file transfers
 A bunch of other stuff i'm probably forgetting.
+
+Add support for the many privacy options OSCAR has
 
 
 ====== Left Over from the previous TODO ======

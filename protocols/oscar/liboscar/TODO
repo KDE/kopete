@@ -41,25 +41,6 @@ When/If we get around to it. Matt knows absolutely nothing about direct connecti
 This will definately be one of those things we have to dissect gaim for. :/
 
 
-Authorization handling
-====================================
-Update: this appears to be done, but needs more testing.
-
-This is actually pretty straightforward. The hard part is going to be refactoring the SSIModifyTask to be more flexible when it comes
-to handling auth. I (Matt) don't think I did a very good job implementing it since i wanted to get it done before I left for vacation.
-The docs at iserverd1.khstu.ru/oscar should be good enough to explain the protocol bits. I was thinking about calling the class "SSIAuthTask" but I suck
-at naming things so if somebody comes up with something better, be my guest. Anyways, whatever name given to the task, i had envisioned it handling the following
-SNACs:
-
-0x13, 0x14 - sending future auth
-0x13, 0x15 - handle receiving future auth (i don't know how we'll do this, but whatever)
-0x13, 0x18 - sending the auth request
-0x13, 0x19 - handle receiving a request for authorization
-0x13, 0x1A - send authorization reply
-0x13, 0x1B - handling the auth reply
-
-
-
 SNAC 0x15 parsing
 ====================================
 
