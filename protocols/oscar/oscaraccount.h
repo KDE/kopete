@@ -259,8 +259,8 @@ protected:
 	void addOldContact(AIMBuddy *bud, KopeteMetaContact *meta=0l);
 
 protected:
-	void syncLocalWithServerBuddyList( AIMBuddyList& serverList );
-	AIMGroup * findOrCreateGroup( const QString& localGroup, AIMBuddyList& serverList );
+	void syncLocalWithServerBuddyList();
+	AIMGroup * findOrCreateGroup( const QString& localGroup );
 
 protected:
 	/*

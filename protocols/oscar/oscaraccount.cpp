@@ -344,7 +344,7 @@ void OscarAccount::slotGotServerBuddyList()
 			addServerContact((*it)); // Add the server contact to Kopete list
 	}
 	// old locaton
-	//syncLocalWithServerBuddyList( *mLoginContactlist );
+	//syncLocalWithServerBuddyList();
 }
 
 void OscarAccount::slotLoggedIn()
@@ -362,7 +362,7 @@ void OscarAccount::slotDelayedListSync()
 {
 	kdDebug(14150) << k_funcinfo << "Called" << endl;
 
-	syncLocalWithServerBuddyList ( *mLoginContactlist );
+	syncLocalWithServerBuddyList ();
 	delete mLoginContactlist;
 	mLoginContactlist = 0L;
 }
@@ -373,7 +373,7 @@ void OscarAccount::slotDelayedListSync()
 // in the server side list.
 //
 
-void OscarAccount::syncLocalWithServerBuddyList(AIMBuddyList & /* serverList*/ )
+void OscarAccount::syncLocalWithServerBuddyList()
 {
 	kdDebug(14150) << k_funcinfo << "Called but DISABLED" << endl;
 #if 0
@@ -386,7 +386,7 @@ void OscarAccount::syncLocalWithServerBuddyList(AIMBuddyList & /* serverList*/ )
 		QString contactId = static_cast<OscarContact*>( it.current() )->contactName();
 		QString displayName = static_cast<OscarContact*>( it.current() )->displayName();
 
-		AIMBuddy *buddy = serverList.findBuddy( contactId );
+		AIMBuddy *buddy = mLoginContactlist->findBuddy( contactId );
 
 		if(!buddy && it.current() != myself())
 		{
@@ -395,8 +395,7 @@ void OscarAccount::syncLocalWithServerBuddyList(AIMBuddyList & /* serverList*/ )
 			// Add the buddy to the server's list
 			const KopeteGroupList& groups = it.current()->metaContact()->groups();
 
-			AIMGroup *group = findOrCreateGroup(groups.isEmpty() ? QString::null : groups.getFirst()->displayName(),
-				(*mInternalBuddyList));
+			AIMGroup *group = findOrCreateGroup( groups.isEmpty() ? QString::null : groups.getFirst()->displayName() );
 
 			// Create a new internal buddy for this contact
 			AIMBuddy *newBuddy =
@@ -417,14 +416,13 @@ void OscarAccount::syncLocalWithServerBuddyList(AIMBuddyList & /* serverList*/ )
 #endif
 }
 
-
 // Looks for the group localGroup in the server-side list.
 // If it doesn't find it there, creates and returns it.
-AIMGroup * OscarAccount::findOrCreateGroup(const QString& localGroup, AIMBuddyList& serverList)
+AIMGroup * OscarAccount::findOrCreateGroup( const QString& localGroup )
 {
 	QString groupName = localGroup.isEmpty() ? QString::fromLatin1("Buddies") : localGroup;
 	// See if it exists in our internal group list already
-	AIMGroup *internalGroup = serverList.findGroup( groupName );
+	AIMGroup *internalGroup = mInternalBuddyList->findGroup( groupName );
 
 	// If the group didn't exist, take it from the local list
 	if (!internalGroup)
