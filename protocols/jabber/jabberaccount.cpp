@@ -86,6 +86,15 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 
 	initialPresence = JabberProtocol::getJabberOnline ();
 
+	/*
+	 * Load the SSL support library. We need to that here as
+	 * otherwise, libpsi won't recognize SSL support. (loading
+	 * SSL just before doing setSSLEnabled() will fail)
+	 * The string list is just a dummy, QSSL is linked statically.
+	 */
+	QStringList dirs = "/usr/lib";
+	Jabber::Stream::loadSSL (dirs);
+
 	/* Setup actions. */
 	initActions ();
 
@@ -310,17 +319,7 @@ void JabberAccount::connect ()
 	/* Check if we are capable of using SSL if requested. */
 	if (pluginData (protocol (), "UseSSL") == "true")
 	{
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "We are to use SSL, try to load the QSSL library\n";
-
-		// the string list is just a dummy, QSSL is linked statically
-		QStringList dirs = "/usr/lib";
-		bool result = Jabber::Stream::loadSSL (dirs);
-
 		bool sslPossible = jabberClient->setSSLEnabled (true);
-
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Jabber::Stream::loadSSL() returned " << result <<
-									 "(Reason: " << Jabber::Stream::SSLUnsupportedReason() << "), sslPossible is " <<
-									 sslPossible << "\n";
 
 		if (!sslPossible)
 		{
@@ -488,6 +487,8 @@ void JabberAccount::slotDisconnected ()
 
 void JabberAccount::slotError (const Jabber::StreamError & error)
 {
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Error in stream signalled, disconnecting.\n";
+
 	/* Determine type of error. */
 	switch (error.type ())
 	{
