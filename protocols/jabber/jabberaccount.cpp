@@ -526,8 +526,13 @@ void JabberAccount::setPresence (const KopeteOnlineStatus & status, const QStrin
 
 void JabberAccount::setAway (bool away, const QString & reason)
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Setting away mode." << endl;
-	setPresence (protocol()->JabberAway, KopeteAway::getInstance ()->message ());
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting away mode: " << away << endl;
+
+	if(away)
+		setPresence (protocol()->JabberAway, reason);
+	else
+		setPresence (protocol()->JabberOnline, reason);
+
 }
 
 void JabberAccount::setAvailable (void)
