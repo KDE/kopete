@@ -29,6 +29,7 @@ class KActionMenu;
 class KToggleAction;
 class KopeteMessageManager;
 class KopeteMessage;
+class KopeteView;
 
 /**
  * @author Jason Keirstead <jason@keirstead.org
@@ -80,7 +81,7 @@ class IRCChannelContact : public IRCContact
 	private slots:
 		void slotMessageManagerDestroyed();
 		void slotConnectedToServer();
-		void slotJoinChannel();
+		void slotJoinChannel( KopeteView* );
 		void slotUserJoinedChannel(const QString &, const QString &);
 		void slotJoin();
 		void slotPart();

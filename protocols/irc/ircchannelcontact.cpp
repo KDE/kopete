@@ -22,6 +22,7 @@
 
 #include "kirc.h"
 #include "kopetemessagemanagerfactory.h"
+#include "kopeteviewmanager.h"
 #include "kopetemetacontact.h"
 #include "kopetestdaction.h"
 #include "../kopete/kopete.h"
@@ -88,7 +89,7 @@ KopeteMessageManager* IRCChannelContact::manager(bool)
 		QObject::connect( mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
 		QObject::connect( mMsgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
 		isConnected = true;
-		QTimer::singleShot( 1000, this, SLOT( slotJoinChannel() ) );
+		QObject::connect( KopeteViewManager::viewManager(), SIGNAL(viewCreated(KopeteView*)),this, SLOT( slotJoinChannel(KopeteView*) ) );
 	}
 	return mMsgManager;
 }
@@ -106,9 +107,13 @@ void IRCChannelContact::slotMessageManagerDestroyed()
 	mMsgManager = 0L;
 }
 
-void IRCChannelContact::slotJoinChannel()
+void IRCChannelContact::slotJoinChannel( KopeteView *view )
 {
-	mEngine->joinChannel(mNickName);
+	if( view->msgManager() == mMsgManager )
+	{
+		mEngine->joinChannel(mNickName);
+		QObject::disconnect( KopeteViewManager::viewManager(), SIGNAL(viewCreated(KopeteView*)),this, SLOT( slotJoinChannel(KopeteView*) ) );
+	}
 }
 
 void IRCChannelContact::slotConnectedToServer()
@@ -202,7 +207,7 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 			manager()->addContact((KopeteContact *)contact, true);
 
 			KopeteMessage msg((KopeteContact *)this, mContact,
-			i18n("User %1 [%2] joined channel %3").arg(nickname).arg(user.section('!', 1)).arg(mNickName), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+			i18n("User <b>%1</b> [%2] joined channel %3").arg(nickname).arg(user.section('!', 1)).arg(mNickName), KopeteMessage::Internal, KopeteMessage::RichText, KopeteMessage::Chat);
 			manager()->appendMessage(msg);
 		}
 	}
@@ -220,7 +225,7 @@ void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString
 			mAccount->unregisterUser( nickname );
 		}
 		KopeteMessage msg((KopeteContact *)this, mContact,
-		i18n("User %1 parted channel %2 (%3)").arg(nickname).arg(mNickName).arg(reason), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+		i18n("User <b>%1</b> parted channel %2 (%3)").arg(nickname).arg(mNickName).arg(reason), KopeteMessage::Internal, KopeteMessage::RichText, KopeteMessage::Chat);
 		manager()->appendMessage(msg);
 	}
 }
