@@ -1,10 +1,9 @@
-
 /*
     kircentity.h - IRC Client
 
     Copyright (c) 2004      by Michel Hermier <michel.hermier@wanadoo.fr>
 
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2004      by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -59,11 +58,11 @@ public:
 		{ return isChannel(m_name); };
 
 	inline static bool isChannel( const QString &s )
-		{ return channelRegExp.exactMatch(s); };
+		{ return sm_channelRegExp.exactMatch(s); };
 
 private:
-	static const QRegExp userRegExp;
-	static const QRegExp channelRegExp;
+	static const QRegExp sm_userRegExp;
+	static const QRegExp sm_channelRegExp;
 
 	QString	m_name;
 
