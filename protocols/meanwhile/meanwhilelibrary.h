@@ -126,7 +126,7 @@ class MeanwhileLibrary : public QObject
         DEFINE_MW_HOOK(got_welcome(
                             struct mwConference *conf, 
                             struct mwIdBlock *members,
-                            unsigned int count));
+                            gsize count));
         DEFINE_MW_HOOK(got_closed(
                             struct mwConference *conf));
         DEFINE_MW_HOOK(got_join(
@@ -149,7 +149,7 @@ class MeanwhileLibrary : public QObject
         static int _writeToSocket(
                             struct mwSessionHandler *handler,
                             const char *buffer,
-                            unsigned int count);
+                            gsize count);
         int writeToSocket(
                             struct mwSessionHandler *handler,
                             const char *buffer,

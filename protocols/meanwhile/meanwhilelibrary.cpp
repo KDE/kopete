@@ -253,7 +253,7 @@ HERE
 MEANWHILE_HOOK_CONF(got_welcome(
                     struct mwConference *conf,
                     struct mwIdBlock *members,
-                    unsigned int count) ,
+                    gsize count) ,
                got_welcome(conf,members,count))
 {
 HERE
@@ -370,7 +370,7 @@ HERE
 int MeanwhileLibrary::_writeToSocket(
                         struct mwSessionHandler *handler,
                         const char *buffer,
-                        unsigned int count)
+                        gsize count)
 {
 HERE
     return ((kopete_handler*)handler)->private_data.library->
