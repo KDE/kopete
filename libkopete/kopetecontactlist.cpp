@@ -146,21 +146,15 @@ void KopeteContactList::loadXML()
 						// We have found a plugin contact
 						if( elementl2.tagName() == "contact" )
 						{
-							QString contactid = elementl2.attribute("id", "Help!");
 							QString protocol = elementl2.attribute("protocol", "Unknown");
 							QString serializedData = elementl2.attribute("data", "none");
-							kdDebug() << "XML Reader: \tNew Contact ID:"
-								<< contactid << " Protocol: " << protocol
+							kdDebug() << "XML Reader: Protocol: " << protocol
 								<< " Data: " << serializedData << endl;
 							KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>(
 								kopeteapp->libraryLoader()->searchByID( protocol ) );
 							if( proto )
 							{
 								KopeteContact *c = proto->createContact( mc, serializedData );
-
-								// FIXME: provide these values in a sane way.
-								c->setId( contactid );
-								c->setProtocol( protocol );
 
 								// FIXME: Retrieve the groups somewhere
 								mc->addContact( c, QStringList() );

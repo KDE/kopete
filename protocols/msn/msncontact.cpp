@@ -26,9 +26,9 @@
 #include "msnprotocol.h"
 
 // Constructor for no-groups
-MSNContact::MSNContact( const QString &msnId, const QString &displayName,
+MSNContact::MSNContact( QString &protocolId, const QString &msnId, const QString &displayName,
 	const QString &group, KopeteMetaContact *parent )
-	: KopeteContact( parent )
+	: KopeteContact( protocolId, parent )
 {
 	initContact( msnId, displayName, group );
 }
@@ -143,9 +143,19 @@ void MSNContact::execute()
 	emit chatToUser( m_msnId );
 }
 
+QString MSNContact::id() const
+{
+	return m_msnId;
+}
+
+QString MSNContact::data() const
+{
+	return m_msnId;
+}
+
 void MSNContact::slotChatThisUser()
 {
-	emit chatToUser( m_msnId );
+	return m_msnId;
 }
 
 void MSNContact::slotRemoveThisUser()

@@ -48,6 +48,9 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	const QStringList & /* args */ )
 : KopeteProtocol( parent, name )
 {
+
+    QString protocolId = this->id();
+
 	if( s_protocol )
 		kdDebug() << "MSNProtocol::MSNProtocol: WARNING: s_protocol already defined!" << endl;
 	else
@@ -108,7 +111,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 
 	// FIXME: Is 'self' supposed to be a KopeteMetaContact? I guess so.
 	// Fix that. - Martijn
-	m_myself = new MSNContact( cfg->readEntry( "UserID", "" ),
+	m_myself = new MSNContact( protocolId, cfg->readEntry( "UserID", "" ),
 		cfg->readEntry( "Nick", "" ), "", 0L );
 
 	if ( cfg->readBoolEntry( "AutoConnect", "0" ) )
@@ -264,6 +267,7 @@ bool MSNProtocol::isAway(void) const
 
 KopeteContact* MSNProtocol::createContact( KopeteMetaContact *parent, const QString &serializedData )
 {
+    QString protocolId = this->id();
 	// FIXME: serializedData contains much more than just the passport and
 	// the display name, but for now it hopefully suffices.
 
@@ -273,7 +277,7 @@ KopeteContact* MSNProtocol::createContact( KopeteMetaContact *parent, const QStr
 	QString displayName = data[ 1 ].replace( QRegExp( "%20" ), " " );
 	QString groups      = data[ 2 ].replace( QRegExp( "%20" ), " " );
 
-	return new MSNContact( passport, displayName, QString::null, parent );
+	return new MSNContact( protocolId, passport, displayName, QString::null, parent );
 }
 
 /** Get myself */
@@ -825,8 +829,9 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 		}
 		else
 		{
+			QString protocolid = this->id();
 			// New contact
-			MSNContact *msnContact = new MSNContact( handle, publicName,
+			MSNContact *msnContact = new MSNContact( protocolid, handle, publicName,
 				QString::null, m );
 			for( QStringList::Iterator it = groups.begin();
 				it != groups.end(); ++it )
@@ -960,8 +965,9 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 			}
 			else
 			{
+                QString protocol = this->id();
 				// New contact
-				MSNContact *c = new MSNContact( handle, publicName, gn, m );
+				MSNContact *c = new MSNContact( protocol, handle, publicName, gn, m );
 				m->addContact( c, gn );
 
 				// FIXME: Try to remove this

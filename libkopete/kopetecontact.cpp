@@ -27,12 +27,13 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-KopeteContact::KopeteContact( KopeteMetaContact *parent )
+KopeteContact::KopeteContact( QString &protocolId, KopeteMetaContact *parent )
 	: QObject( parent )
 {
 	connect(this, SIGNAL(incomingEvent(KopeteEvent *)), kopeteapp, SLOT(notifyEvent(KopeteEvent *)));
 
 	m_metaContact = parent;
+	m_protocolId = protocolId;
 }
 
 KopeteContact::~KopeteContact()
@@ -76,21 +77,21 @@ QString KopeteContact::statusText() const
 QString KopeteContact::toXML()
 {
 	QString xml;
+	QString displayname = displayName();
+	QString data = this->data();
 
 	xml = "<contact";
 
-	kdDebug() << "KC: " << m_id << endl;
-	kdDebug() << "KC: " << m_protocolId << endl;
+	kdDebug() << "KC: " << protocol() << endl;
 
-	if ( ! m_id.isNull() && ! m_protocolId.isNull() )
+	if ( m_protocolId.isNull() )
 	{
-		xml = xml + " id=\"" + m_id + "\"";
-		xml = xml + " protocol=\"" + m_protocolId + "\"";
+		xml = xml + " protocol=\"" + protocol() + "\"";
 
-		if ( ! m_displayName.isNull() )
-			xml = xml + " name=\"" + m_displayName + "\"";
-		if ( ! m_data.isNull() )
-			xml = xml + " data=\"" + m_data + "\"";
+		if ( ! displayname.isNull() )
+			xml = xml + " name=\"" + displayName() + "\"";
+		if ( ! data.isNull() )
+			xml = xml + " data=\"" + this->data() + "\"";
 	}
 	else
 	{
@@ -165,15 +166,6 @@ void KopeteContact::moveToGroup( const QString & /* from */,
 		<< "Default implementation called! Function not implemented?" << endl;
 }
 
-QString KopeteContact::id() const
-{
-	return m_id;
-}
-
-void KopeteContact::setId( const QString &id )
-{
-	m_id = id;
-}
 
 #include "kopetecontact.moc"
 

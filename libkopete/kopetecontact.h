@@ -90,7 +90,7 @@ public:
 	/**
 	 * Create new contact. Supply the parent meta contact!
 	 */
-	KopeteContact( KopeteMetaContact *parent );
+	KopeteContact( QString &protocolId, KopeteMetaContact *parent );
 	~KopeteContact();
 
 	/**
@@ -166,8 +166,7 @@ public:
 	 * value! Even if it may look like an ICQ UIN or an MSN passport,
 	 * this is undefined and may change at any time!
 	 */
-	QString id() const;
-	void setId( const QString &id );
+	virtual QString id() const = 0;
 
 	/**
 	 * Return the protocol id that identifies a contact. Id is required
@@ -179,14 +178,13 @@ public:
 	 * this is undefined and may change at any time!
 	 */
 	QString protocol() const { return m_protocolId; }
-	void setProtocol( const QString &id ) { m_protocolId = id; }
 
 	/**
 	 * Return the protocol specific serialized data
-	 * that a plugin may want to store here.
+	 * that a plugin may want to store contact list.
+	 * Include all necesary data to rebuild it later.
 	 */
-	QString data() const { return m_data; }
-	void setData( const QString &data ) { m_data = data; }
+	virtual QString data() const = 0;
 
 	/**
 	 * Return a XML representation of the contact
@@ -219,10 +217,7 @@ signals:
 
 private:
 	QString m_displayName;
-
-	QString m_id;
 	QString m_protocolId;
-	QString m_data;
 
 	/**
 	 * Scaled icon cache
