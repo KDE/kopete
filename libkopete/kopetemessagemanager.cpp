@@ -372,6 +372,15 @@ void KopeteMessageManager::readMessages()
 	bool queueEmpty = d->mMessageQueue.isEmpty();
 	bool foreignMessage = emptyMessageBuffer();
 
+	//Make these casts once so we don't have to do it X times
+	KopeteChatWindow *chatWindow = 0L;
+	ChatView *chatView = 0L;
+	if (d->mWidget == ChatWindow)
+	{
+		chatWindow = static_cast<KopeteChatWindow*>(myWindow);
+		chatView = static_cast<ChatView*>(mainView);
+	}
+
 	// only show the window when a message from someone else (i.e. not an own message) arrived or
 	// when no message at all arrived (happens when you click on a contact, creating the window)
 	if ( foreignMessage || queueEmpty )
@@ -379,18 +388,27 @@ void KopeteMessageManager::readMessages()
 		myWindow->show();
 		if( queueEmpty || KopetePrefs::prefs()->raiseMsgWindow() )
 		{
-			KWin::setOnDesktop(myWindow->winId() , KWin::currentDesktop()); //set on the desktop
+			kdDebug(14010) << k_funcinfo << "Raising window" << endl;
+
+			KWin::setOnDesktop( myWindow->winId() , KWin::currentDesktop() ); //set on the desktop
 			myWindow->raise(); // make it top window
 			
 			//Raise the tab if needed
 			if (d->mWidget == ChatWindow)
-				static_cast<KopeteChatWindow*>(myWindow)->setActiveView( static_cast<ChatView*>(mainView)->dockWidget() );
-			
+				chatWindow->setActiveView( chatView->dockWidget() );
+
 			//Only grab focus if we opened the chat ourselves
 			if ( queueEmpty )
 				myWindow->setActiveWindow();
 		}
+		else if (d->mWidget == ChatWindow)
+		{
+			//Dock in the view if needed
+			if( !chatView->docked() )
+				chatWindow->setActiveView( chatView->dockWidget() );
+		}
 	}
+
 	d->isBusy=false;
 }
 
