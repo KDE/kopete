@@ -131,9 +131,15 @@ install: build
 	dh_installdirs
 
 	cd $(objdir) && \
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/kopete
 
-	dh_install --list-missing
+	# remove Psi header files
+	rm -r $(CURDIR)/debian/kopete/usr/include
+
+	# remove illegal symlink libkopete.so
+	rm $(CURDIR)/debian/kopete/usr/lib/libkopete.so
+
+	#dh_install --list-missing
 
 # This single target is used to build all the packages, all at once, or
 # one at a time. So keep in mind: any options passed to commands here will
@@ -145,7 +151,6 @@ binary-common:
 	dh_installchangelogs
 	dh_installdocs
 	dh_installmenu
-	dh_undocumented
 	dh_installman
 	dh_strip
 	dh_link
@@ -154,6 +159,19 @@ binary-common:
 	dh_makeshlibs -V
 	dh_installdeb
 	dh_shlibdeps -ldebian/kopete/usr/lib
+
+	# xlibs (>> 4.1.0), xlibs (>> 4.2.0) is senseless....
+	cp debian/kopete.substvars debian/kopete.substvars.tmp
+	cat debian/kopete.substvars.tmp | sed -e s/"xlibs (>> 4.1.0), "// \
+		> debian/kopete.substvars
+	rm debian/kopete.substvars.tmp
+
+	# xmms needs to be in suggests, not depends
+	cp debian/kopete.substvars debian/kopete.substvars.tmp
+	cat debian/kopete.substvars.tmp | sed -e s/"xmms, "// \
+		> debian/kopete.substvars
+	rm debian/kopete.substvars.tmp
+
 	dh_gencontrol
 	dh_md5sums
 	dh_builddeb
