@@ -85,7 +85,6 @@ Contact::Contact( Account *account, const QString &contactId,
 	d->fileCapable = false;
 	d->account = account;
 	d->idleTime = 0;
-	d->onlineStatus = account->protocol()->accountOfflineStatus();
 	d->icon = icon;
 
 	if ( account )
@@ -195,9 +194,9 @@ KPopupMenu* Contact::popupMenu( ChatSession *manager )
 	QString titleText;
 	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if( nick.isEmpty() )
-		titleText = QString::fromLatin1( "%1 (%2)" ).arg( contactId(), d->onlineStatus.description() );
+		titleText = QString::fromLatin1( "%1 (%2)" ).arg( contactId(), onlineStatus().description() );
 	else
-		titleText = QString::fromLatin1( "%1 <%2> (%3)" ).arg( nick, contactId(), d->onlineStatus.description() );
+		titleText = QString::fromLatin1( "%1 <%2> (%3)" ).arg( nick, contactId(), onlineStatus().description() );
 	menu->insertTitle( titleText );
 
 	if( metaContact() && metaContact()->isTemporary() )
