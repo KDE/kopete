@@ -135,7 +135,6 @@ void Engine::setStatus(Engine::Status status)
 		break;
 	case Authentifying:
 		m_sock->enableRead(true);
-		m_sock->enableWrite(true);
 
 		// If password is given for this server, send it now, and don't expect a reply
 		if (!(password()).isEmpty())
@@ -143,6 +142,7 @@ void Engine::setStatus(Engine::Status status)
 
 		user(m_Username, 0, m_realName);
 		nick(m_Nickname);
+
 		break;
 	case Connected:
 		// Do nothing.
