@@ -105,8 +105,8 @@ void TranslatorPlugin::loadSettings()
 	int mode = 0;
 
 	config->setGroup( "Translator Plugin" );
-	m_myLang  = config->readEntry( "myLang", "null" );
-	m_service = config->readEntry( "Service", "babelfish" );
+	m_myLang = m_languages->languageKey( config->readNumEntry( "myLang" , 0 ) );
+	m_service = m_languages->serviceKey( config->readNumEntry( "Service", 0 ) );
 
 	if ( config->readBoolEntry( "IncomingDontTranslate", true ) )
 		mode = 0;
@@ -219,7 +219,7 @@ void TranslatorPlugin::slotOutgoingMessage( KopeteMessage &msg )
 	if ( ( msg.direction() == KopeteMessage::Outbound ) && ( !msg.plainBody().isEmpty() ) )
 	{
 		src_lang = m_myLang;
-		//kdDebug( 14308 ) << k_funcinfo << "(Outgoing) My lang is: " << src_lang << endl;
+	kdDebug( 14308 ) << k_funcinfo << "(Outgoing) My lang is: " << src_lang << endl;
 
 		// Sad, we have to consider only the first To: metacontact
 		KopeteMetaContact *to = msg.to().first()->metaContact();
