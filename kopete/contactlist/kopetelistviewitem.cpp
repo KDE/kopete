@@ -502,7 +502,7 @@ void TextComponent::setFixedWidth( bool fixedWidth )
 void TextComponent::calcMinSize()
 {
 	if ( d->fixedWidth )
-		setMinWidth( QFontMetrics( font() ).width( d->text ) );
+		setMinWidth( QFontMetrics( font() ).width( d->text ) + 2 );
 	else
 		setMinWidth( 0, true );
 
