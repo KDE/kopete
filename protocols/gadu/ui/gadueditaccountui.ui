@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>414</width>
-            <height>304</height>
+            <height>309</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -51,9 +51,6 @@
                     <property name="name">
                         <cstring>emailedit_</cstring>
                     </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
                     <property name="maxLength">
                         <number>256</number>
                     </property>
@@ -69,7 +66,7 @@
                         <cstring>passwordEdit2__</cstring>
                     </property>
                     <property name="enabled">
-                        <bool>false</bool>
+                        <bool>true</bool>
                     </property>
                     <property name="echoMode">
                         <enum>Password</enum>
@@ -112,6 +109,9 @@
                     <property name="checked">
                         <bool>false</bool>
                     </property>
+                    <property name="buttonGroupId">
+                        <number>1</number>
+                    </property>
                 </widget>
                 <widget class="KLineEdit" row="2" column="1" rowspan="1" colspan="3">
                     <property name="name">
@@ -152,20 +152,9 @@
                         <cstring>kLineEdit1</cstring>
                     </property>
                 </widget>
-                <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="4">
-                    <property name="name">
-                        <cstring>radio1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>I already have an account</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                </widget>
                 <widget class="KLineEdit" row="1" column="1" rowspan="1" colspan="3">
                     <property name="name">
-                        <cstring>NickName</cstring>
+                        <cstring>nickName</cstring>
                     </property>
                     <property name="enabled">
                         <bool>true</bool>
@@ -191,14 +180,6 @@
                         <cstring>kLineEdit1_2</cstring>
                     </property>
                 </widget>
-                <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="4">
-                    <property name="name">
-                        <cstring>rememberCheck_</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Remember password</string>
-                    </property>
-                </widget>
                 <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="4">
                     <property name="name">
                         <cstring>autoLoginCheck_</cstring>
@@ -207,20 +188,39 @@
                         <string>Auto login</string>
                     </property>
                 </widget>
+                <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="4">
+                    <property name="name">
+                        <cstring>radio1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>I already have an account</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="4">
+                    <property name="name">
+                        <cstring>rememberCheck_</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Remember password</string>
+                    </property>
+                </widget>
             </grid>
         </widget>
     </grid>
 </widget>
 <tabstops>
     <tabstop>radio1</tabstop>
-    <tabstop>NickName</tabstop>
+    <tabstop>nickName</tabstop>
     <tabstop>loginEdit_</tabstop>
     <tabstop>passwordEdit_</tabstop>
-    <tabstop>radio2</tabstop>
     <tabstop>emailedit_</tabstop>
     <tabstop>passwordEdit2__</tabstop>
-    <tabstop>autoLoginCheck_</tabstop>
     <tabstop>rememberCheck_</tabstop>
+    <tabstop>autoLoginCheck_</tabstop>
+    <tabstop>radio2</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

@@ -30,6 +30,7 @@
 #include <qcheckbox.h>
 #include <qlineedit.h>
 #include <qbutton.h>
+#include <qregexp.h>
 
 #include <klineedit.h>
 #include <kmessagebox.h>
@@ -44,24 +45,19 @@ GaduEditAccount::GaduEditAccount( GaduProtocol *proto, KopeteAccount *ident,
     protocol_( proto ), rcmd(0)
 {
 
+    reg_in_progress=false;
+    
     if (!m_account){
-	reg_in_progress=false;
 	
-	kdDebug(14100)<<"GJ"<<"NEW ACCOUNT WIZ"<<endl;
-
 	radio1->setDisabled(false);
 	radio2->setDisabled(false);
-	textLabel2_2->setDisabled(false);
-	textLabel1_2->setDisabled(false);
 	emailedit_->setDisabled(false);
 	passwordEdit2__->setDisabled(false);
     }
     else{
-	kdDebug(14100)<<"GJ"<<"ACCOUNT EDIT"<<endl;
 	radio1->setDisabled(true);
 	radio2->setDisabled(true);
 	radio2->setDisabled(true);
-	textLabel2_2->setDisabled(true);
 	loginEdit_->setDisabled(true);
 	emailedit_->setDisabled(true);
 	passwordEdit2__->setDisabled(true);
@@ -73,23 +69,25 @@ GaduEditAccount::GaduEditAccount( GaduProtocol *proto, KopeteAccount *ident,
 	    passwordEdit_->setText("");
 	}
 	
-	NickName->setText(m_account->myself()->displayName());
+	nickName->setText(m_account->myself()->displayName());
 	
         rememberCheck_->setChecked(m_account->rememberPassword());
 	autoLoginCheck_->setChecked(m_account->autoLogin());
     }    
 }
 
-void GaduEditAccount::registrationComplete( const QString& title, const QString& )
+void GaduEditAccount::registrationComplete( const QString& , const QString& )
 {
 	reg_in_progress=false;
 	
-	kdDebug(14100)<<"GJ"<<" ID " << title << endl;	    
-	    
+	QRegExp regexp("(.*)[@](.*)");
+	regexp.search(emailedit_->text());
+	
 	// i am sure rcmd is valid, since it sends this signal ;)
 	loginEdit_->setText(QString::number(rcmd->newUin()));
 	passwordEdit_->setText(passwordEdit2__->text());
-
+	nickName->setText(regexp.cap(1)+"-"+loginEdit_->text());
+	
 	radio1->setChecked(true);
 	radio2->setChecked(false);
 	radio1->setDisabled(true);
@@ -111,6 +109,7 @@ void GaduEditAccount::registrationError( const QString& title, const QString& wh
 
 bool GaduEditAccount::validateData()
 {
+    QRegExp regexp("(.*)[@](.*)");
 
     // FIXME: I need to disable somehow next, finish and back button here
     if (reg_in_progress){
@@ -134,12 +133,15 @@ bool GaduEditAccount::validateData()
 	    return false;
 	}
 
+	if (regexp.exactMatch(emailedit_->text())==FALSE){
+	    KMessageBox::sorry(this, i18n("<b>Please enter a valid email address.</b>"), i18n("Gadu-Gadu"));
+	    return false;
+	}
+
 	if (passwordEdit2__->text().isEmpty()){
 	    KMessageBox::sorry(this, i18n("<b>Enter password please.</b>"), i18n("Gadu-Gadu"));
 	    return false;
 	}
-
-	kdDebug(14100)<<"GJ"<<"email:" << emailedit_->text() <<endl;
 
 	reg_in_progress=true;
 	rcmd=new RegisterCommand(emailedit_->text(), 
@@ -161,12 +163,8 @@ bool GaduEditAccount::validateData()
 KopeteAccount* GaduEditAccount::apply()
 {
 
-    if (m_account){
-	kdDebug(14100)<<"GJ"<<"ACCOUNT CHANGE"<<endl;	    
-    }
-    else{
+    if (m_account==NULL){
 	if (radio1->isChecked()){
-	    kdDebug(14100)<<"GJ"<<"NEW ACCOUNT"<<endl;
     	    m_account = new GaduAccount( protocol_, loginEdit_->text() );
     	    if (!m_account){
 		kdDebug(14100)<<"Couldn't create GaduAccount object, fatal!"<<endl;
@@ -184,15 +182,21 @@ KopeteAccount* GaduEditAccount::apply()
     
     if(rememberCheck_->isChecked()){
         m_account->setPassword(passwordEdit_->text());
+	kdDebug(14100) << "password remembered "<<endl;
     }
     else{
-        m_account->setPassword(QString::null);
+	kdDebug(14100) << "password should not be remembered" <<endl;
+        m_account->setPassword();
     }
-    m_account->myself()->rename(NickName->text());
+    
+    kdDebug(14100) << "password " << m_account->getPassword() <<endl;
+    
+    
+    m_account->myself()->rename(nickName->text());
     
     // this is changed only here, so i won't add any proper handling now
     m_account->setPluginData(m_account->protocol(), 
-	    QString::fromLatin1("nickName"), NickName->text());
+	    QString::fromLatin1("nickName"), nickName->text());
     
     m_account->setAutoLogin(autoLoginCheck_->isChecked());
     
