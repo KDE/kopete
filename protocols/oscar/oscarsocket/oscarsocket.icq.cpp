@@ -71,7 +71,7 @@ void OscarSocket::sendICQserverRequest(unsigned short cmd, unsigned short seq)
 QCString OscarSocket::encodePasswordXOR()
 {
 	const char *password = pass.latin1();
-	QCString encoded; //(strlen(password));
+	QCString encoded;
 
 	kdDebug(14150) << k_funcinfo <<  endl;
 //	kdDebug(14150) << "  unencoded pw='" << password << "'" << endl;

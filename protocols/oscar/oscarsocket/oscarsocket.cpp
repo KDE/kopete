@@ -30,13 +30,9 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-#define ICQTEST mIsICQ?" I'm ICQ ":" I'm AIM "
-
 // ---------------------------------------------------------------------------------------
 
 //#define DIRECTCONNECT				0x0f1f
-
-
 
 /* This was in the oscarsocket.h before. i move them here because too warning
  *   (warning: overflow in implicit constant conversion)
