@@ -40,6 +40,10 @@ KopetePasswordWidget::~KopetePasswordWidget()
 
 void KopetePasswordWidget::load( KopetePassword *source )
 {
+	disconnect( mRemembered, SIGNAL( stateChanged( int ) ), this, SLOT( slotRememberChanged() ) );
+	disconnect( mPassword, SIGNAL( textChanged( const QString & ) ), this, SIGNAL( changed() ) );
+	disconnect( mRemembered, SIGNAL( stateChanged( int ) ), this, SIGNAL( changed() ) );
+
 	if ( source && source->remembered() )
 	{
 		mRemembered->setTristate();
@@ -58,9 +62,12 @@ void KopetePasswordWidget::load( KopetePassword *source )
 		d->maxLength = 0;
 
 	mPassword->setEnabled( false );
-	connect( mRemembered, SIGNAL( stateChanged( int ) ), SLOT( slotRememberChanged() ) );
-	connect( mPassword, SIGNAL( textChanged( const QString & ) ), SIGNAL( changed() ) );
-	connect( mRemembered, SIGNAL( stateChanged( int ) ), SIGNAL( changed() ) );
+
+	connect( mRemembered, SIGNAL( stateChanged( int ) ), this, SLOT( slotRememberChanged() ) );
+	connect( mPassword, SIGNAL( textChanged( const QString & ) ), this, SIGNAL( changed() ) );
+	connect( mRemembered, SIGNAL( stateChanged( int ) ), this, SIGNAL( changed() ) );
+
+	emit changed();
 }
 
 void KopetePasswordWidget::slotRememberChanged()

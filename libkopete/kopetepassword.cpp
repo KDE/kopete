@@ -259,10 +259,11 @@ public:
 	}
 	void processRequest()
 	{
-		setPassword();
+		if ( setPassword() )
+			mPassword.setWrong( false );
 		delete this;
 	}
-	void setPassword()
+	bool setPassword()
 	{
 		//TODO: refactor this function to remove duplication
 		// and possibly to make it not need to be a friend of KopetePassword
@@ -275,7 +276,7 @@ public:
 			mPassword.writeConfig();
 			if ( mWallet )
 				mWallet->removeEntry( mPassword.d->configGroup );
-			return;
+			return true;
 		}
 	
 		kdDebug( 14010 ) << k_funcinfo << " setting password for " << mPassword.d->configGroup << endl;
@@ -285,7 +286,7 @@ public:
 			mPassword.d->remembered = true;
 			mPassword.d->passwordFromKConfig = QString::null;
 			mPassword.writeConfig();
-			return;
+			return true;
 		}
 
 		if ( KWallet::Wallet::isEnabled() )
@@ -307,7 +308,7 @@ public:
 			        KGuiItem( i18n( "Store &Unsafe" ), QString::fromLatin1( "unlock" ) ),
 			        QString::fromLatin1( "KWalletFallbackToKConfig" ) ) != KMessageBox::Continue )
 			{
-				return;
+				return false;
 			}
 
 			// if our parent was deleted, we can't save the password.
@@ -319,7 +320,7 @@ public:
 			{
 				KMessageBox::error( qApp->mainWidget(), i18n( "Sorry, your password could not be saved at this time." ),
 				                    i18n( "Unable to Store Password" ) );
-				return;
+				return false;
 			}
 		}
 	
