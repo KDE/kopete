@@ -31,7 +31,7 @@ ac_save_LIBS="$LIBS"
 ac_save_CXXFLAGS="$CXXFLAGS"
 LIBS="$LIBGG_LIBS -lgadu $LIBPTHREAD"
 CFLAGS="$CFLAGS $LIBGG_INCLUDES"
-AC_MSG_CHECKING([libgadu version 1.4rc2, 1.4, 1.5(rcX) with pthread support])
+AC_MSG_CHECKING([libgadu version 1.5(rcX) with pthread support])
 	AC_TRY_RUN(
 	[
 	
@@ -47,11 +47,11 @@ AC_MSG_CHECKING([libgadu version 1.4rc2, 1.4, 1.5(rcX) with pthread support])
 		if ( maj != 1 ) {
 			return 1;
 		}
-		if ( min == 3 && date < 20031020 ) {
+		if ( ( min == 4 || min == 5 ) && date < 20040520 ) {
 			return 1;
 		}
 
-		if ( min == 4 || min == 5 ){
+		if ( min == 5 ){
 			return 0;
 		}
 			     
