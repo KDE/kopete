@@ -20,3 +20,6 @@ kopete_irc_la_LIBADD      = ../../libkopete/libkopete.la \
 
 service_DATA = kopete_irc.desktop
 servicedir = $(kde_servicesdir)
+
+mydatadir = $(kde_datadir)/kopete
+mydata_DATA = ircchatui.rc
