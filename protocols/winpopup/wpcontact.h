@@ -64,9 +64,6 @@ public slots:
 	void slotCheckStatus();	// the call back for the checkStatus timer
 	void slotNewMessage(const QString &Body, const QDateTime &Arrival);
 
-signals:
-	void messageSuccess();
-
 private slots:
 	void slotMessageManagerDestroyed();
 	void slotSendMessage(KopeteMessage &message);
