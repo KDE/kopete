@@ -26,8 +26,10 @@
 #include <kprocess.h>
 #include <ktempfile.h>
 #include <kmdcodec.h>
+#include <kmessagebox.h>
 
 #include "kopetemessagemanagerfactory.h"
+#include "kopeteuiglobal.h"
 
 #include "latexplugin.h"
 #include "latexconfig.h"
@@ -44,6 +46,7 @@ LatexPlugin::LatexPlugin( QObject *parent, const char *name, const QStringList &
 	if( !s_pluginStatic )
 		s_pluginStatic = this;
 
+	mMagickNotFoundShown = false;
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToDisplay( Kopete::Message & ) ), SLOT( slotHandleLatex( Kopete::Message & ) ) );
 	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
 
@@ -69,6 +72,22 @@ LatexPlugin* LatexPlugin::s_pluginStatic = 0L;
 
 void LatexPlugin::slotHandleLatex( Kopete::Message& msg )
 {
+	QString mMagick = KStandardDirs::findExe("convert");
+	if ( mMagick.isEmpty() )
+	{
+		// show just once
+		if (  !mMagickNotFoundShown )
+		{
+			KMessageBox::queuedMessageBox(
+			    Kopete::UI::Global::mainWidget(),
+			    KMessageBox::Error, i18n("I can't find Magick convert program.\nConvert is required to render the Latex formulas.\nPlease go to www.imagemagick.org or to your distribution site and get the right package.")
+			);
+			mMagickNotFoundShown = true;
+		}
+		// dont try to parse if convert is not installed
+		return;
+	}
+	
 	QString messageText = msg.plainBody();
 	if( !messageText.contains("$$"))
 		return;

@@ -55,6 +55,7 @@ private:
 	static LatexPlugin* s_pluginStatic;
 	QString m_convScript;
 	LatexConfig *m_config;
+	bool mMagickNotFoundShown;
 };
 
 #endif
