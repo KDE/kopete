@@ -582,10 +582,14 @@ bool MSNSocket::accept( KServerSocket *server )
 	}
 
 	m_socket = static_cast<KBufferedSocket*>(server->accept());
-	kdDebug( 14140 ) << k_funcinfo << "Result: " << (m_socket != 0L) << ", m_socket: " << m_socket << endl;
 
 	if ( !m_socket )
+	{
+		kdWarning( 14140 ) << k_funcinfo << "Socket not created.  Error nb" << server->error() << " : " << server->errorString() << endl;
 		return false;
+	}
+	
+	kdDebug( 14140 ) << k_funcinfo << "incoming conneciton accepted" << endl;
 
 	setOnlineStatus( Connecting );
 
