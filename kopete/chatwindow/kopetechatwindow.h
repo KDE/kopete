@@ -135,9 +135,7 @@ private:
 	KAction *historyDown;
 	KAction *nickComplete;
 
-#if !KDE_IS_VERSION( 3, 1, 90 )
 	KToggleAction *mStatusbarAction;
-#endif
 
 	KAction *tabLeft;
 	KAction *tabRight;
