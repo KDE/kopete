@@ -46,6 +46,7 @@
 #include <ksqueezedtextlabel.h>
 #include <kstdaccel.h>
 
+#include "chatmessagepart.h"
 #include "chatview.h"
 #include "kopetechatwindow.h"
 #include "kopeteemoticonaction.h"
@@ -330,12 +331,12 @@ bool KopeteChatWindow::eventFilter( QObject *object, QEvent *event )
 		{
 			if( keyEvent->key() == Qt::Key_Prior )
 			{
-				m_activeView->pageUp();
+				m_activeView->messagePart()->pageUp();
 				return true;
 			}
 			else if( keyEvent->key() == Qt::Key_Next )
 			{
-				m_activeView->pageDown();
+				m_activeView->messagePart()->pageDown();
 				return true;
 			}
 		}
@@ -386,8 +387,8 @@ void KopeteChatWindow::initActions(void)
 	chatSend->setShortcut( QKeySequence(Key_Return) );
 	chatSend->setEnabled( false );
 
-	KStdAction::save ( this, SLOT(slotChatSave()), coll );
-	KStdAction::print ( this, SLOT(slotChatPrint()), coll );
+ 	KStdAction::save ( this, SLOT(slotChatSave()), coll );
+ 	KStdAction::print ( this, SLOT(slotChatPrint()), coll );
 	KStdAction::quit ( this, SLOT(close()), coll );
 
 	tabClose = KStdAction::close ( this, SLOT(slotChatClosed()), coll, "tabs_close" );
@@ -458,7 +459,7 @@ void KopeteChatWindow::initActions(void)
 #if KDE_IS_VERSION(3, 2, 90)
 	KStdAction::keyBindings( guiFactory(), SLOT( configureShortcuts() ), coll );
 #else  // when we will drop the KDE 3.2 compatibility, do not forget to remove  slotConfKeys
-KStdAction::keyBindings( this, SLOT( slotConfKeys() ), coll );
+	KStdAction::keyBindings( this, SLOT( slotConfKeys() ), coll );
 	#endif
 
 
@@ -1043,7 +1044,7 @@ void KopeteChatWindow::slotChatSave()
 {
 //	kdDebug(14010) << "KopeteChatWindow::slotChatSave()" << endl;
 	if( isActiveWindow() && m_activeView )
-		m_activeView->save();
+		m_activeView->messagePart()->save();
 }
 
 void KopeteChatWindow::windowActivationChange( bool )
@@ -1054,7 +1055,7 @@ void KopeteChatWindow::windowActivationChange( bool )
 
 void KopeteChatWindow::slotChatPrint()
 {
-	m_activeView->print();
+	m_activeView->messagePart()->print();
 }
 
 void KopeteChatWindow::slotToggleStatusBar()

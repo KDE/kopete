@@ -15,49 +15,40 @@
     *************************************************************************
 */
 
-#ifndef __CHATVIEW_H__
-#define __CHATVIEW_H__
-
-#include <qptrdict.h>
-#include <qvaluelist.h>
-#include <qpair.h>
-#include <ktextedit.h>
-
-#include <kopetecontact.h>
-#include <kdockwidget.h>
-#include <klistview.h>
-#include <dom/html_element.h>
+#ifndef CHATVIEW_H
+#define CHATVIEW_H
 
 #include "kopeteview.h"
 
-class QPixmap;
-class KopeteTabWidget;
+#include <ktextedit.h>
+#include <kdockwidget.h>
+
+#include <qptrdict.h>
+
 class QTimer;
 
-class KHTMLPart;
-class KHTMLView;
-class KRootPixmap;
-class KRichTextEditPart;
+class ChatMembersListWidget;
+class ChatMessagePart;
 
 class KopeteChatWindow;
-class KTabWidget;
 class KopeteRichTextEditPart;
+
+class KTextEdit;
+class KTabWidget;
 class KCompletion;
-class KURL;
 
 class KopeteChatViewPrivate;
 
-class ChatMembersListWidget;
-
-using namespace DOM;
-
 namespace Kopete
 {
+class Contact;
 class ChatSession;
-typedef QPtrList<Contact> ContactPtrList;
 }
 
-namespace KParts { struct URLArgs; class Part; }
+namespace KParts
+{
+class Part;
+}
 
 /**
  * @author Olivier Goffart
@@ -70,6 +61,9 @@ class ChatView : public KDockMainWindow, public KopeteView
 public:
 	ChatView( Kopete::ChatSession *manager, const char *name = 0 );
 	~ChatView();
+	
+	ChatMembersListWidget *membersList() { return m_membersList; }
+	ChatMessagePart *messagePart() { return m_messagePart; }
 
 	/**
 	 * Adds text into the edit area. Used when you select an emoticon
@@ -156,12 +150,6 @@ public:
 	 */
 	bool visibleMembersList();
 
-	/**
-	 * Returns the HTML contents of the KHTML widget
-	 * @return The contents of the view
-	 */
-	QString viewsText();
-
 	const QString &statusText();
 
 	bool docked() { return ( m_tabBar != 0L ); }
@@ -184,14 +172,12 @@ public:
 	virtual bool isVisible();
 
 	/** Reimplemented from KopeteView **/
-	virtual QTextEdit *editWidget() { return static_cast<QTextEdit*>( m_edit ); }
+	virtual KTextEdit *editWidget() { return m_edit; }
 	
 	/** Reimplemented from KopeteView **/
 	virtual QWidget *mainWidget() { return this; }
 
 	void nickComplete();
-
-	void setStylesheet( const QString &style  );
 
 	/**
 	 * Can we send messages now?
@@ -203,9 +189,6 @@ public:
 	 */
 	bool isTyping();
 	
-	
-
-
 public slots:
 	/**
 	 * Initiates a cut action on the edit area of the chat view
@@ -223,19 +206,6 @@ public slots:
 	 * Initiates a paste action into the edit area of the chat view
 	 */
 	void paste();
-
-	void print();
-
-	void save();
-
-	/**
-	 * Selects all text in the chat view
-	 */
-	void selectAll();
-
-	void pageUp();
-
-	void pageDown();
 
 	/**
 	 * Sets the foreground color of the entry area, and outgoing messages
@@ -266,12 +236,6 @@ public slots:
 	 * Sends the text currently entered into the edit area
 	 */
 	virtual void sendMessage();
-
-	/**
-	 * Appends a message to the chat view display area
-	 * @param message The message to be appended
-	 */
-	void addChatMessage( Kopete::Message &message );
 
 	/**
 	 * Called when a message is received from someone
@@ -333,11 +297,8 @@ signals:
 	void windowCreated();
 
 private slots:
-	void slotOpenURLRequest( const KURL &url, const KParts::URLArgs &args );
 	void slotRepeatTimer();
 	void slotRemoteTypingTimeout();
-	void slotScrollView();
-	void slotAppearanceChanged();
 	void slotPropertyChanged( Kopete::Contact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
 
 	/**
@@ -377,32 +338,9 @@ private slots:
 
 	void slotStopTimer();
 
-	/**
-	 * Called when KopetePrefs are saved
-	 */
-	void slotTransparencyChanged();
 	void slotMarkMessageRead();
 
-	/**
-	 * Sets the background of the widget
-	 * @param pm The new background image
-	 */
-	void slotUpdateBackground( const QPixmap &pm );
-
-	void slotScrollingTo( int x, int y );
-
-	void slotRefreshNodes();
-
-	void slotRefreshView();
-
-	void slotTransformComplete( const QVariant &result );
-
-	void slotRightClick( const QString &, const QPoint &point );
-
-	void slotCopyURL();
-
 	void slotToggleRtfToolbar( bool enabled );
-	
 	
 protected:
 	virtual void dragEnterEvent ( QDragEnterEvent * );
@@ -412,29 +350,21 @@ private:
 	enum KopeteTabState { Normal , Highlighted , Changed , Typing , Message , Undefined };
 	enum MembersListPolicy { Smart = 0, Visible = 1, Hidden = 2 };
 
-	typedef QMap<unsigned long,Kopete::Message> MessageMap;
-
 	QPtrDict<QTimer> m_remoteTypingMap;
-	KHTMLPart *chatView; //move to d-pointer
-	KHTMLView *htmlWidget; //move to d-pointer
-	bool scrollPressed;
+	ChatMessagePart *m_messagePart; //move to d-pointer
+	
 	MembersListPolicy membersStatus;
 	QStringList historyList;
 	int historyPos;
-	bool bgChanged;
 	QString unreadMessageFrom;
 	KTextEdit* m_edit;
-	ChatMembersListWidget *membersList; //move to d-pointer
+	ChatMembersListWidget *m_membersList; //move to d-pointer
 	
-	unsigned long messageId; 
 	QString m_lastMatch;
-	QString backgroundFile;
 	QString m_status;
 	KCompletion *mComplete;
-	HTMLElement activeElement;
 
 	KopeteTabState m_tabState;
-	KRootPixmap *root;
 	KDockWidget *viewDock;
 	KDockWidget *membersDock;
 	KDockWidget *editDock;
@@ -442,10 +372,6 @@ private:
 	KopeteRichTextEditPart *editpart;
 
 	KAction *copyAction;
-	KAction *saveAction;
-	KAction *printAction;
-	KAction *closeAction;
-	KAction *copyURLAction;
 
 	// These control the position and visibility of the chat member list
 	KDockWidget::DockPosition membersDockPosition;
@@ -467,21 +393,7 @@ private:
 	 */
 	void readOptions();
 
-	/**
-	 * Refreshes the cuat view. Used to update the background.
-	 */
-	void refreshView();
-
-	Kopete::Message messageFromNode( Node &n );
 	void sendInternalMessage( const QString &msg, Kopete::Message::MessageFormat format = Kopete::Message::PlainText );
-
-	const QString styleHTML() const;
-
-	const QString addNickLinks( const QString &html ) const;
-
-	Kopete::Contact *contactFromNode( const DOM::Node &n ) const;
-
-	MessageMap messageMap;
 
 	KopeteChatViewPrivate *d;
 };
