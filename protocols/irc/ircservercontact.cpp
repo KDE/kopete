@@ -48,6 +48,8 @@
 #include "messagetransport.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
+#include "tabcompleter.h"
+#include "irc_channel_tabwidget.h"
 
 IRCServerContact::IRCServerContact(const QString &server, const QString &nickname, bool connectNow, IRCProtocol *protocol)
 {
