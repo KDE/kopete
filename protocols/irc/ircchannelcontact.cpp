@@ -83,7 +83,7 @@ void IRCChannelContact::slotNamesList(const QString &channel, const QString &nic
 			newNick.remove(0, 1);
 
 		IRCUserContact *user = new IRCUserContact(mIdentity, newNick, (KIRC::UserClass)mode);
-		manager()->addContact((KopeteContact *)user);
+		manager()->addContact((KopeteContact *)user, true);
 	}
 }
 
@@ -93,6 +93,8 @@ void IRCChannelContact::slotChannelTopic(const QString &channel, const QString &
 	{
 		mTopic = topic;
 		mMsgManager->setDisplayName( caption() );
+		KopeteMessage msg((KopeteContact*)this, mContact, i18n("Topic for %1 is %2").arg(mNickName).arg(mTopic), KopeteMessage::Internal);
+		manager()->appendMessage(msg);
 	}
 }
 
@@ -124,11 +126,11 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 	}
 	else {
 		IRCUserContact *contact = new IRCUserContact(mIdentity, nickname, KIRC::Normal);
-		manager()->addContact((KopeteContact *)contact);
+		manager()->addContact((KopeteContact *)contact, true);
 
 		KopeteMessage msg((KopeteContact *)this, mContact,
-		i18n("User %1[%2] joined channel %3").arg(nickname).arg(user.section('!', 1)
-		.arg(mNickName)), KopeteMessage::Internal);
+		i18n("User %1 [%2] joined channel %3").arg(nickname).arg(user.section('!', 1)).arg(mNickName),
+		KopeteMessage::Internal);
 		manager()->appendMessage(msg);
 	}
 }
@@ -142,7 +144,7 @@ void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString
 		KopeteContact *user = locateUser( nickname );
 		if ( user )
 		{
-			manager()->removeContact( user );
+			manager()->removeContact( user, true );
 			delete user;
 		}
 		KopeteMessage msg((KopeteContact *)this, mContact,

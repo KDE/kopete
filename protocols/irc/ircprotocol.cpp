@@ -200,7 +200,7 @@ AddContactPage *IRCProtocol::createAddContactWidget(QWidget *parent)
 void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> & /* addressBookData */ )
 {
-/* TODO: FIXME:
+/* TODO: FIXME:*/
 
 	QString contactId = serializedData[ "contactId" ];
 	if( !contacts()[ contactId ] )
@@ -211,7 +211,6 @@ void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 
 		addContact( serializedData[ "serverName" ], displayName, true, metaContact );
 	}
-*/
 }
 
 #include "ircprotocol.moc"

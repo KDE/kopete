@@ -100,7 +100,7 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 
 	if( commandLine.first().startsWith( QString::fromLatin1("/") ) )
 	{
-		QString command = commandLine.first().right( commandLine.first().length() - 1 );
+		QString command = commandLine.first().right( commandLine.first().length() - 1 ).lower();
 
 		if( mEngine->isLoggedIn() )
 		{
@@ -111,8 +111,26 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 			else if( command == QString::fromLatin1("me") && commandCount > 1 )
 				mEngine->actionContact( displayName(), commandArgs );
 
-			else if( command == QString::fromLatin1("topic") && commandCount > 1 && inherits("IRCChannelContact") )
-				static_cast<IRCChannelContact*>( this )->setTopic( *commandLine.at(1) );
+			else if( command == QString::fromLatin1("topic") && inherits("IRCChannelContact") )
+			{
+				IRCChannelContact *chan = static_cast<IRCChannelContact*>( this );
+				if( commandCount > 1 )
+					chan->setTopic( *commandLine.at(1) );
+				else
+				{
+					KopeteMessage msg((KopeteContact*)this, mContact, i18n("Topic for %1 is %2").arg(mNickName).arg(chan->topic()), KopeteMessage::Internal);
+					manager()->appendMessage(msg);
+				}
+			}
+			else if( command == QString::fromLatin1("whois") && commandCount > 1 )
+			{
+				mEngine->whoisUser( *commandLine.at(1) );
+			}
+			else
+			{
+				KopeteMessage msg((KopeteContact*)this, mContact, i18n("\"%1\" is an unrecognized command.").arg(command), KopeteMessage::Internal);
+				manager()->appendMessage(msg);
+			}
 		}
 
 		// A /command returns false to stop further processing
@@ -128,10 +146,10 @@ void IRCContact::slotUserDisconnected( const QString &user, const QString &reaso
 	KopeteContact *c = locateUser( nickname );
 	if ( c )
 	{
-		KopeteMessage msg(c, mContact, i18n(QString("User %1 has quit (\"%2\")").arg(nickname).arg(reason)), KopeteMessage::Internal);
+		KopeteMessage msg(c, mContact, i18n("User %1 has quit (\"%2\")").arg(nickname).arg(reason), KopeteMessage::Internal);
 		manager()->appendMessage(msg);
 
-		manager()->removeContact( c );
+		manager()->removeContact( c, true );
 		delete c;
 	}
 }

@@ -41,6 +41,7 @@ class IRCChannelContact : public IRCContact
 		virtual KActionCollection *customContextMenuActions();
 		virtual QString statusIcon() const;
 		virtual const QString caption() const;
+		const QString &topic() const { return mTopic; };
 		// FINISH
 
 	public slots:
