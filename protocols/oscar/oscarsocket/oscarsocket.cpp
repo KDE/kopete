@@ -54,12 +54,14 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	mAccount=account;
 	mDirectIMMgr=0L;
 	mFileTransferMgr=0L;
+	awaitingFirstPresenceBlock = OscarSocket::Waiting;
 
+	socket()->enableWrite(false); // don't spam us with readyWrite() signals
+	socket()->enableRead(true);
 	// from KExtenedSocket
 	QObject::connect(socket(), SIGNAL(closed(int)), this, SLOT(slotConnectionClosed()));
 	QObject::connect(this, SIGNAL(serverReady()), this, SLOT(OnServerReady()));
 	QObject::connect(this, SIGNAL(moreToRead()), this, SLOT(slotRead()));
-
 }
 
 OscarSocket::~OscarSocket()
@@ -154,6 +156,7 @@ void OscarSocket::slotConnectionClosed()
 	idle=false;
 	gotAllRights=0;
 	isLoggedIn=false;
+	awaitingFirstPresenceBlock = OscarSocket::Waiting;
 
 	socket()->reset();
 	//kdDebug(14150) << k_funcinfo << "Socket state is " << state() << endl;
@@ -252,15 +255,6 @@ void OscarSocket::slotRead()
 		kdDebug(14150) << k_funcinfo << "EEEK, couldn't read all of that packet" << endl;
 	}
 
-	// another flap is waiting in read buffer
-	if (socket()->bytesAvailable() > 0)
-	{
-		kdDebug(14150) << k_funcinfo << "emitting moreToRead() for " <<
-			socket()->bytesAvailable() << " bytes" << endl;
-		emit moreToRead();
-	}
-
-
 #ifdef OSCAR_PACKETLOG
 	kdDebug(14150) << "=== INPUT ===" << inbuf.toString();
 #endif
@@ -280,9 +274,11 @@ void OscarSocket::slotRead()
 			{
 				kdDebug(14150) << k_funcinfo <<
 					"Could not read FLAP version on channel 0x01" << endl;
+				break;
+				/*
 				inbuf.clear();
 				delete [] buf;
-				return;
+				return;*/
 			}
 			break;
 		} // END 0x01
@@ -292,7 +288,8 @@ void OscarSocket::slotRead()
 			SNAC s;
 			s=inbuf.getSnacHeader();
 
-			kdDebug(14150) << k_funcinfo << "SNAC(" << s.family << "," << s.subtype << "), id=" << s.id << endl;
+			kdDebug(14150) << k_funcinfo <<
+				"SNAC(" << s.family << "," << s.subtype << "), id=" << s.id << endl;
 
 			switch(s.family)
 			{
@@ -316,7 +313,9 @@ void OscarSocket::slotRead()
 							parseServerReady(inbuf);
 							break;
 						case 0x0005: //redirect, TODO: unused
-//							parseRedirect(inbuf);
+							kdDebug(14150) << k_funcinfo <<
+								"TODO: Parse redirect!" << endl;
+							//parseRedirect(inbuf);
 							break;
 						case 0x0007: //rate info request response, SRV_RATES
 							parseRateInfoResponse(inbuf);
@@ -383,6 +382,8 @@ void OscarSocket::slotRead()
 							break;
 						case 0x000b: //contact changed status, (SRV_USERONLINE)
 							parseUserOnline(inbuf);
+							if(awaitingFirstPresenceBlock == OscarSocket::Waiting)
+								awaitingFirstPresenceBlock = OscarSocket::GotSome;
 							break;
 						case 0x000c: //contact went offline
 							parseUserOffline(inbuf);
@@ -474,7 +475,7 @@ void OscarSocket::slotRead()
 							kdDebug(14150) << k_funcinfo <<
 								"TODO: parse SRV_FROMICQERR packet!!" << endl;
 							kdDebug(14150) << "errorcode=" << inbuf.getWord() << endl;
-//							parseSRV_FROMICQERR(inbuf);
+							//parseSRV_FROMICQERR(inbuf);
 							break;
 						case 0x0003:
 							parseSRV_FROMICQSRV(inbuf);
@@ -540,7 +541,25 @@ void OscarSocket::slotRead()
 	inbuf.clear(); // separate buf from inbuf again
 	delete [] buf;
 
-	kdDebug(14150) << k_funcinfo << "END" << endl;
+	// another flap is waiting in read buffer
+	if (socket()->bytesAvailable() > 0)
+	{
+		kdDebug(14150) << k_funcinfo <<
+			"END, restarting from top as we still have buffer contents." << endl;
+		slotRead();
+	}
+	else
+	{
+		kdDebug(14150) << k_funcinfo <<
+			"END, nothing more to read from socket buffer." << endl;
+
+		if(awaitingFirstPresenceBlock == OscarSocket::GotSome)
+		{
+			kdDebug(14150) << k_funcinfo << "Got all initial presence status ===========" << endl;
+			awaitingFirstPresenceBlock = OscarSocket::GotAll;
+			requestMyUserInfo();
+		}
+	}
 }
 
 void OscarSocket::sendLoginRequest()
@@ -833,17 +852,18 @@ void OscarSocket::requestMyUserInfo()
 
 void OscarSocket::parseMyUserInfo(Buffer &inbuf)
 {
-	if (gotAllRights > 7)
+	if ((gotAllRights > 7) && (awaitingFirstPresenceBlock == OscarSocket::GotAll))
 	{
 		kdDebug(14150) << k_funcinfo "RECV (SRV_REPLYINFO) Parsing OWN user info" << endl;
 		UserInfo u;
 		parseUserInfo(inbuf, u);
 		emit gotMyUserInfo(u);
+		return;
 	}
-	else
-	{
-		kdDebug(14150) << k_funcinfo "RECV (SRV_REPLYINFO) Ignoring OWN user info, gotAllRights=" << gotAllRights << endl;
-	}
+
+	kdDebug(14150) << k_funcinfo <<
+		"RECV (SRV_REPLYINFO) Ignoring OWN user info, gotAllRights=" <<
+		gotAllRights << endl;
 
 	gotAllRights++;
 	if (gotAllRights==7)

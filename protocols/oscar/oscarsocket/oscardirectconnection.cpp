@@ -19,13 +19,15 @@
 #include "oscardirectconnection.h"
 
 OscarDirectConnection::OscarDirectConnection(const QString &sn,
-	const QString &connName, const QByteArray &cookie,
-	QObject *parent, const char *name)
-	: OscarConnection(sn, connName, DirectIM, cookie, parent, name)
+	const QString &connName, const QByteArray &cookie, QObject *parent,
+	const char *name)
+		: OscarConnection(sn, connName, DirectIM, cookie, parent, name)
 {
 	kdDebug(14150) << k_funcinfo <<  "called, sn='" << sn << "' connName='" <<
 		connName << "'" << endl;
 
+	socket()->enableWrite(false); // don't spam us with readyWrite() signals
+	socket()->enableRead(true);
 	connect(this, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
 }
 

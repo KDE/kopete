@@ -688,9 +688,8 @@ void OscarSocket::fillDirectInfo(Buffer &directInfo)
 
 void OscarSocket::sendKeepalive()
 {
-	kdDebug(14150) << k_funcinfo << "SEND KEEPALIVE" << endl;
+	//kdDebug(14150) << k_funcinfo << "SEND KEEPALIVE" << endl;
 	Buffer outbuf;
-//	outbuf.print();
 	sendBuf(outbuf, 0x05);
 }
 

@@ -28,7 +28,7 @@ OscarConnection::OscarConnection(const QString &sn, const QString &connName,
 	mSN = sn;
 	mCookie.duplicate(cookie);
 	mSocket = new KExtendedSocket();
-	mSocket->setSocketFlags(KExtendedSocket::inetSocket);
+	mSocket->setSocketFlags(KExtendedSocket::inetSocket | KExtendedSocket::bufferedSocket);
 
 	connect(mSocket, SIGNAL(connectionSuccess()), this, SLOT(slotConnected()));
 	connect(mSocket, SIGNAL(connectionFailed(int)), this, SLOT(slotError(int)));
@@ -78,16 +78,14 @@ void OscarConnection::sendTypingNotify(TypingNotify /*notifyType*/)
 		"Not implemented in this object! " << endl;
 }
 
-/** Called when we have established a connection */
 void OscarConnection::slotConnected()
 {
 	kdDebug(14150) << k_funcinfo << "Connected" << endl;
 
-	mSocket->enableRead(true);
-	mSocket->enableWrite(true);
-	mSocket->setBufferSize(-1);
+//	mSocket->enableRead(true);
+//	mSocket->enableWrite(true);
+//	mSocket->setBufferSize(-1);
 	connect(mSocket, SIGNAL(readyRead()), this, SLOT(slotRead()));
-
 
 	// Announce that we are ready for use, if it's not the server socket
 	if(mConnType != Server)

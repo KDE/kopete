@@ -1005,6 +1005,12 @@ class OscarSocket : public OscarConnection
 
 		DWORD mDirectConnnectionCookie;
 
+		enum FirstPresenceBlock
+		{
+			Waiting=0, GotSome, GotAll
+		};
+		FirstPresenceBlock awaitingFirstPresenceBlock;
+
 	signals:
 		// Called when an SSI acknowledgement is received
 		void SSIAck();
