@@ -3,8 +3,10 @@ Kopete Messenger ChangeLog
 
 o Main App
 
-	o Added globally Away/Available
-
+	o Kopete API redesign/cleanup (Ryan)
+	o Added globally Away/Available (Duncan)
+	o Added Auto-Away Plugin (Duncan)
+	
 o IRC Plugin
 
 	o Updated for globally Away/Vailable
