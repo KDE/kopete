@@ -18,6 +18,8 @@
 #ifndef YAHOOPROTOCOL_H
 #define YAHOOPROTOCOL_H
 
+#include "libyahoo2/yahoo2.h"
+#include "libyahoo2/yahoo2_callbacks.h"
 
 // Local Includes
 #include "yahooprefs.h"
@@ -76,11 +78,31 @@ public slots:
 						// CallBack when clicking on statusbar icon
 	void slotSettingsChanged(void);
 						// Callback when settings changed
-	void slotNewContact(QString, QString, QString);
-						// XXX ?
-
 	//void slotConnect();
 	void slotGoOffline();
+	
+	void slotLoginResponse( int succ, char *url);
+	void slotGotBuddies(YList * buds);
+	void slotGotIgnore( YList * igns);
+	void slotGotIdentities( YList * ids);
+	void slotStatusChanged( char *who, int stat, char *msg, int away);
+	void slotGotIm( char *who, char *msg, long tm, int stat);
+	void slotGotConfInvite( char *who, char *room, char *msg, YList *members);
+	void slotConfUserDecline( char *who, char *room, char *msg);
+	void slotConfUserJoin( char *who, char *room);
+	void slotConfUserLeave( char *who, char *room);
+	void slotConfMessage( char *who, char *room, char *msg);
+	void slotGotFile( char *who, char *url, long expires, char *msg, char *fname, unsigned long fesize);
+	void slotContactAdded( char *myid, char *who, char *msg);
+	void slotRejected( char *who, char *msg);
+	void slotTypingNotify( char *who, int stat);
+	void slotGameNotify( char *who, int stat);
+	void slotMailNotify( char *from, char *subj, int cnt);
+	void slotSystemMessage( char *msg);
+	void slotError( char *err, int fatal);
+	void slotRemoveHandler( int fd);
+	//void slotHostConnect(char *host, int port);
+	
 
 signals:
 //	void protocolUnloading();	// Unload Protocol

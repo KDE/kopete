@@ -58,15 +58,15 @@ YahooSessionManager::~YahooSessionManager()
 YahooSession* YahooSessionManager::login(const QString username, const QString password, int initial)
 {
 	int id;
-    YahooSession *session;
+	YahooSession *session;
 	kdDebug() << "[YahooSessionManager::login] login!!!..."<< endl;
 	id = yahoo_login( username.latin1() , password.latin1(), initial);
-    kdDebug() << "[YahooSessionManager::login] got id "<< id << " !, creating session"<< endl;
+	kdDebug() << "[YahooSessionManager::login] got id "<< id << " !, creating session"<< endl;
 	session = new YahooSession( id, username, password, initial);
 	m_sessionsMap[id] = session;
-	m_fdMap[m_fd]=id;
-//	m_fd=0;
-	session->addHandler(m_fd);
+	//m_fdMap[m_fd]=id;
+	
+	//session->addHandler(m_fd);
 	return session;
 }
 
@@ -467,41 +467,43 @@ int YAHOO_CALLBACK_TYPE(ext_yahoo_connect)(char *host, int port)
 
 void YahooSessionManager::loginResponseReceiver( int id, int succ, char *url)
 {
-    kdDebug() << "[YahooSessionManager::loginResponseReceiver]" << endl;
+	kdDebug() << "[YahooSessionManager::loginResponseReceiver]" << endl;
 	YahooSession *session = getSession(id);
 	emit session->loginResponse(succ, url);
 }
 
 void YahooSessionManager::gotIgnoreReceiver(int id, YList * igns)
 {
-    kdDebug() << "[YahooSessionManager::removeHandlerReceiver]1" << endl;
+	kdDebug() << "[YahooSessionManager::gotIgnoreReceiver]" << endl;
 	YahooSession *session = getSession(id);
 	emit session->gotIgnore(igns);
 }
 
 void YahooSessionManager::gotBuddiesReceiver(int id, YList * buds)
 {
-    kdDebug() << "[YahooSessionManager::removeHandlerReceiver]2" << endl;
+	kdDebug() << "[YahooSessionManager::gotBuddiesReceiver]" << endl;
 	YahooSession *session = getSession(id);
 	emit session->gotBuddies(buds);
 }
 
 void YahooSessionManager::gotIdentitiesReceiver(int id, YList *ids)
 {
-    kdDebug() << "[YahooSessionManager::removeHandlerReceiver]3" << endl;
+	kdDebug() << "[YahooSessionManager::gotIdentitiesReceiver]3" << endl;
 	YahooSession *session = getSession(id);
 	emit session->gotIdentities(ids);
 }
 
 void YahooSessionManager::statusChangedReceiver(int id, char *who, int stat, char *msg, int away)
 {
-    kdDebug() << "[YahooSessionManager::removeHandlerReceiver]4" << endl;
+	kdDebug() << "[YahooSessionManager::statusChangedReceiver]" << endl;
 	YahooSession *session = getSession(id);
 	emit session->statusChanged(who, stat, msg, away);
 }
 
 void YahooSessionManager::gotImReceiver(int id, char *who, char *msg, long tm, int stat)
 {
+	kdDebug() << "[YahooSessionManager::gotImReceiver]" << endl;
+	
 	YahooSession *session = getSession(id);
 	kdDebug()<<"got IM"<<endl;
 	emit session->gotIm(who, msg, tm, stat);	
@@ -509,12 +511,16 @@ void YahooSessionManager::gotImReceiver(int id, char *who, char *msg, long tm, i
 
 void YahooSessionManager::gotConfInviteReceiver(int id, char *who, char *room, char *msg, YList *members)
 {
+	kdDebug() << "[YahooSessionManager::gotConfInviteReceiver]" << endl;
+	
 	YahooSession *session = getSession(id);
 	emit session->gotConfInvite(who, room, msg, members);	
 }
 
 void YahooSessionManager::confUserDeclineReceiver(int id, char *who, char *room, char *msg)
 {
+	kdDebug() << "[YahooSessionManager::confUserDeclineReceiver]" << endl;
+	
 	YahooSession *session = getSession(id);
 	emit session->confUserDecline(who, room, msg);	
 }
@@ -570,28 +576,28 @@ void YahooSessionManager::gameNotifyReceiver(int id, char *who, int stat)
 
 void YahooSessionManager::mailNotifyReceiver(int id, char *from, char *subj, int cnt)
 {
-    kdDebug() << "[YahooSessionManager::removeHandlerReceiver]5" << endl;
+	kdDebug() << "[YahooSessionManager::removeHandlerReceiver] session: " << id <<  endl;
 	YahooSession *session = getSession(id);
 	emit session->mailNotify(from, subj,cnt);	
 }
 
 void YahooSessionManager::systemMessageReceiver(int id, char *msg)
 {
-    kdDebug() << "[YahooSessionManager::removeHandlerReceiver]6" << endl;
+	kdDebug() << "[YahooSessionManager::removeHandlerReceiver] session: " << id << endl;
 	YahooSession *session = getSession(id);
 	emit session->systemMessage(msg);	
 }
 
 void YahooSessionManager::errorReceiver(int id, char *err, int fatal)
 {
-    kdDebug() << "[YahooSessionManager::removeHandlerReceiver]7" << endl;
+	kdDebug() << "[YahooSessionManager::removeHandlerReceiver] session: " << id <<  endl;
 	YahooSession *session = getSession(id);
 	emit session->error(err, fatal);	
 }
 
 int YahooSessionManager::logReceiver(char *fmt, ...)
 {
-    kdDebug() << "[YahooSessionManager::removeHandlerReceiver]8" << endl;
+	kdDebug() << "[YahooSessionManager::removeHandlerReceiver]" << endl;
 	//emit session->	
 }
 
@@ -602,19 +608,19 @@ void YahooSessionManager::addHandlerReceiver(int id, int fd, yahoo_input_conditi
 	m_idMap[fd] = id;
 	m_fdMap[id] = fd;
 
-    kdDebug() << "[YahooSessionManager::addHandlerReceiver]" <<id<<" "<<fd<< endl;
+	kdDebug() << "[YahooSessionManager::addHandlerReceiver]" <<id<< " " << fd<< endl;
 
-    YahooSession *_session = m_sessionsMap[id];
+	YahooSession *_session = m_sessionsMap[id];
 	if ( cond == YAHOO_INPUT_READ && _session )
 	{
-    	kdDebug() << "[YahooSessionManager::addHandlerReceiver] Socket connected to sessions data handler!";
+		kdDebug() << "[YahooSessionManager::addHandlerReceiver] Socket connected to sessions data handler!";
 		_socket->enableRead(true);
 		connect (_socket,SIGNAL(readyRead()),_session,SLOT(dataReceived()));
 	}
 	else if ( cond == YAHOO_INPUT_WRITE )
 	{
 		// cachar que hacer al reves
-    }
+	}
 }
 
 void YahooSessionManager::removeHandlerReceiver(int id, int fd)
@@ -627,7 +633,7 @@ void YahooSessionManager::removeHandlerReceiver(int id, int fd)
 int YahooSessionManager::hostConnectReceiver(char *host, int port)
 {
 	kdDebug() << "[YahooSessionManager::hostConnectReceiver]" << endl;
-    KExtendedSocket *_socket;
+	KExtendedSocket *_socket;
 	_socket = new KExtendedSocket( host, port );
 	m_socketsMap[_socket->fd()] =_socket;
 

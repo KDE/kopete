@@ -52,17 +52,17 @@ public:
 	int socketDescriptor( int session_id )
 	{ return m_fdMap[session_id] ? m_fdMap[session_id] : 0L ; };
 
+	/* Creates a new session */
 	YahooSession* login(const QString username, const QString password, int initial);	
 	bool logout();
 	YahooSession* getSession(int id);
 	int getSessionCount();
-	/* Receivers for libyahoo signals, resolve connection id and emit signal
-		for the correct session */
+	
+	/* Receivers for libyahoo callbacks, resolve connection id and emit signal for the correct session */
 	void loginResponseReceiver( int id, int succ, char *url);
 	void gotIgnoreReceiver(int id, YList * igns);
 	void gotBuddiesReceiver(int id, YList * buds);
 	void gotidentitiesReceiver(int id, char *who, int stat, char *msg, int away);
-
 	void gotIdentitiesReceiver(int id, YList * ids);
 	void statusChangedReceiver(int id, char *who, int stat, char *msg, int away);
 	void gotImReceiver(int id, char *who, char *msg, long tm, int stat);
@@ -88,7 +88,7 @@ public:
 private:
 	/* id to session */
 	QMap< int, YahooSession*> m_sessionsMap;
-    /* fd to sockets */
+	/* fd to sockets */
 	QMap< int, KExtendedSocket *> m_socketsMap;
 	/* id to fd */
 	QMap< int,int> m_fdMap;
@@ -96,7 +96,6 @@ private:
 	QMap< int,int> m_idMap;
 
 	static YahooSessionManager *managerStatic_;
-	int m_fd;
 	
 };
 
@@ -167,7 +166,7 @@ signals:
 	void systemMessage( char *msg);
 	void error( char *err, int fatal);
 	void removeHandler( int fd);
-	void hostConnect(char *host, int port);
+	//void hostConnect(char *host, int port);
 
 	private slots:
 	void loginResponseReceiver( int succ, char *url);
