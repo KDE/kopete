@@ -404,7 +404,7 @@ void GroupWiseMessageManager::addInvitee( const KopeteContact * c )
 	KopeteMetaContact * inviteeMC = new KopeteMetaContact();
 	inviteeMC->setDisplayName( c->metaContact()->displayName() + pending );
 	GroupWiseContact * invitee = new GroupWiseContact( account(), c->contactId() + " " + pending, inviteeMC, 0, 0, 0 );
-	invitee->setOnlineStatus( c->onlineStatus() );
+	invitee->setOnlineStatus( GroupWiseProtocol::protocol()->groupwisePending );
 	// TODO: we could set all the placeholder's properties etc here too
 	addContact( invitee, true );
 	m_invitees.append( invitee );
@@ -414,11 +414,11 @@ void GroupWiseMessageManager::joined( GroupWiseContact * c )
 {
 	// look for the invitee and remove it
 	KopeteContact * pending;
-	for ( pending = m_invitees.first(); pending; m_invitees.next() )
+	for ( pending = m_invitees.first(); pending; pending = m_invitees.next() )
 	{
 		if ( pending->contactId().startsWith( c->contactId() ) )
 		{
-			removeContact( pending );
+			removeContact( pending, QString::null, KopeteMessage::PlainText, true );
 			break;
 		}
 	}
@@ -460,11 +460,11 @@ void GroupWiseMessageManager::inviteDeclined( GroupWiseContact * c )
 {
 	// look for the invitee and remove it
 	KopeteContact * pending;
-	for ( pending = m_invitees.first(); pending; m_invitees.next() )
+	for ( pending = m_invitees.first(); pending; pending = m_invitees.next() )
 	{
 		if ( pending->contactId().startsWith( c->contactId() ) )
 		{
-			removeContact( pending );
+			removeContact( pending, QString::null, KopeteMessage::PlainText, true );
 			break;
 		}
 	}
