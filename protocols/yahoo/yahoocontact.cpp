@@ -31,8 +31,8 @@
 #include <kdebug.h>
 #include <kapplication.h>
 
-YahooContact::YahooContact(KopeteAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact, KopeteContact::AddMode mode )
-	: KopeteContact(account, userId, metaContact, mode )
+YahooContact::YahooContact(KopeteAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact)
+	: KopeteContact(account, userId, metaContact)
 {
 	kdDebug(14180) << "YahooContact::YahooContact(" << userId << ", " << fullName << ")" << endl;
 

@@ -54,10 +54,6 @@ class KopeteContact : public QObject
 
 public:
 	/**
-	 * Describes what should be done when the contact is added to a metacontact
-	 */
-	enum AddMode { AddToKABC=0, OmitFromKABC=1 };
-	/**
 	 * Create new contact. Supply the parent meta contact!
 	 *
 	 * Note: Id is required to be unique per protocol and per account.
@@ -70,9 +66,11 @@ public:
 	 * @param account is the parent account. this constructor automatically register the contact to the account
 	 * @param id is the KopeteContact inique Id (mostly the user's login)
 	 */
-	KopeteContact( KopeteAccount *account, const QString &id, KopeteMetaContact *parent, AddMode mode,
-				   const QString &icon = QString::null );
+	KopeteContact( KopeteAccount *account, const QString &id, KopeteMetaContact *parent,
+					   const QString &icon = QString::null );
+
 	~KopeteContact();
+	
 
 	/**
 	 * Return whether this contact is online or not.

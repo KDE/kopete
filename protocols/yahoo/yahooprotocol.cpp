@@ -89,7 +89,7 @@ void YahooProtocol::deserializeContact( KopeteMetaContact *metaContact,
 		return;
 	}
 
-	theAccount->addContact(contactId, serializedData["displayName"], metaContact, serializedData["group"]);
+	theAccount->addContact(contactId, serializedData["displayName"], metaContact, KopeteAccount::DontChangeKABC, serializedData["group"]);
 }
 
 AddContactPage *YahooProtocol::createAddContactWidget( QWidget * parent , KopeteAccount* )

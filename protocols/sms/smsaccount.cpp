@@ -29,7 +29,7 @@
 SMSAccount::SMSAccount( SMSProtocol *parent, const QString &accountID, const char *name )
 	: KopeteAccount( parent, accountID, name )
 {
-	m_myself = new SMSContact(this, accountID, accountID, 0L, KopeteContact::OmitFromKABC );
+	m_myself = new SMSContact(this, accountID, accountID, 0L);
 }
 
 SMSAccount::~SMSAccount()
@@ -99,7 +99,7 @@ KopeteContact* SMSAccount::myself() const
 bool SMSAccount::addContactToMetaContact( const QString &contactId, const QString &displayName,
 	KopeteMetaContact * parentContact )
 {
-	if (new SMSContact(this, contactId, displayName, parentContact, KopeteContact::AddToKABC ))
+	if (new SMSContact(this, contactId, displayName, parentContact))
 		return true;
 	else
 		return false;

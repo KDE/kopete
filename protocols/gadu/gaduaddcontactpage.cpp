@@ -71,7 +71,7 @@ GaduAddContactPage::apply(KopeteAccount *a , KopeteMetaContact *mc)
 				kdDebug(14001)<<"Problem since accounts differ: "<< a->accountId()
 											<<" , "<<account_->accountId() <<endl;
 			}
-			if (a->addContact( userid, userid, mc )==false){
+			if (a->addContact( userid, userid, mc, KopeteAccount::ChangeKABC )==false){
 			    return false;
 			}
 		}

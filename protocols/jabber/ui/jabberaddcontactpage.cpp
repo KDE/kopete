@@ -59,7 +59,7 @@ bool JabberAddContactPage::apply (KopeteAccount * i, KopeteMetaContact * m)
 
 	if(canadd)
 		if (validateData ())
-			return static_cast<JabberAccount *>(i)->addContact(jabData->addID->text(), jabData->addID->text(), m);
+			return static_cast<JabberAccount *>(i)->addContact(jabData->addID->text(), jabData->addID->text(), m, KopeteAccount::ChangeKABC );
 
 	return false;
 }

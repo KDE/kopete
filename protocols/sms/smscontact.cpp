@@ -30,8 +30,8 @@
 #include "smsuserpreferences.h"
 
 SMSContact::SMSContact( KopeteAccount* _account, const QString &phoneNumber,
-	const QString &displayName, KopeteMetaContact *parent, KopeteContact::AddMode mode  )
-: KopeteContact( _account, phoneNumber, parent, mode )
+	const QString &displayName, KopeteMetaContact *parent )
+: KopeteContact( _account, phoneNumber, parent )
 {
 	kdWarning( 14160 ) << k_funcinfo << " this = " << this << ", phone = " << phoneNumber << endl;
 	setPhoneNumber( phoneNumber );

@@ -73,7 +73,7 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 
 	/* Create a new JabberContact for this account, to be returned from
 	 * myself(). */
-	myContact = new JabberContact (accountId, accountId.section('@', 0, 0), QStringList (), this, 0L, KopeteContact::OmitFromKABC );
+	myContact = new JabberContact (accountId, accountId.section('@', 0, 0), QStringList (), this, 0L);
 
 	jabberClient = 0L;
 	registerFlag = 0;
@@ -184,7 +184,7 @@ bool JabberAccount::addContactToMetaContact (const QString & contactId, const QS
 		groupNames += group->displayName();
 
 
-	JabberContact *jc = createContact(contactId, displayName, groupNames, metaContact, KopeteContact::OmitFromKABC );
+	JabberContact *jc = createContact(contactId, displayName, groupNames, metaContact);
 
 	return (jc != 0);
 
@@ -772,10 +772,10 @@ void JabberAccount::sendPresenceToNode (const KopeteOnlineStatus & pres, const Q
 	task->go (true);
 }
 
-JabberContact *JabberAccount::createContact (const QString & jid, const QString & alias, const QStringList & groups, KopeteMetaContact * metaContact, KopeteContact::AddMode mode )
+JabberContact *JabberAccount::createContact (const QString & jid, const QString & alias, const QStringList & groups, KopeteMetaContact * metaContact)
 {
 
-	JabberContact *jc = new JabberContact (jid, alias, groups, this, metaContact, mode );
+	JabberContact *jc = new JabberContact (jid, alias, groups, this, metaContact);
 
 	return jc;
 
@@ -855,7 +855,7 @@ void JabberAccount::createAddContact (KopeteMetaContact * mc, const Jabber::Rost
 	else
 		contactName = item.name ();
 
-	createContact (item.jid().userHost(), contactName, item.groups(), mc, KopeteContact::AddToKABC );
+	createContact (item.jid().userHost(), contactName, item.groups(), mc);
 
 	if (!isContactInList)
 		KopeteContactList::contactList ()->addMetaContact (mc);
@@ -1047,7 +1047,7 @@ void JabberAccount::slotReceivedMessage (const Jabber::Message & message)
 
 			metaContact->setTemporary (true);
 
-			contactFrom = createContact (userHost, userHost, QStringList (), metaContact, KopeteContact::OmitFromKABC );
+			contactFrom = createContact (userHost, userHost, QStringList (), metaContact);
 
 			KopeteContactList::contactList ()->addMetaContact (metaContact);
 		}
@@ -1085,7 +1085,7 @@ void JabberAccount::slotGroupChatJoined (const Jabber::Jid & jid)
 	JabberGroupChat *groupChat = new JabberGroupChat (jid, QStringList (), this, mc);
 
 	/* Add the group chat class to the meta contact. */
-	mc->addContact (groupChat, KopeteContact::OmitFromKABC );
+	mc->addContact (groupChat);
 
 	KopeteContactList::contactList ()->addMetaContact (mc);
 }
@@ -1185,7 +1185,7 @@ void JabberAccount::slotRegisterUserDone ()
 }
 
 bool JabberAccount::addContact( const QString &contactId, const QString &displayName,
-							   KopeteMetaContact *parentContact, const QString &groupName,
+							   KopeteMetaContact *parentContact, const KopeteAccount::AddMode mode, const QString &groupName,
 							   bool isTemporary)
 {
 	Jabber::RosterItem item;
@@ -1205,7 +1205,7 @@ bool JabberAccount::addContact( const QString &contactId, const QString &display
 	// send a subscription request.
 	subscribe(item.jid());
 
-	return KopeteAccount::addContact(contactId, displayName, parentContact, groupName, isTemporary);
+	return KopeteAccount::addContact(contactId, displayName, parentContact, mode, groupName, isTemporary);
 
 }
 

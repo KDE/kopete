@@ -34,8 +34,7 @@ class SMSContact : public KopeteContact
 	Q_OBJECT
 public:
 	SMSContact( KopeteAccount* _account, const QString &phoneNumber,
-		const QString &displayName, KopeteMetaContact *parent,
-		KopeteContact::AddMode mode );
+		const QString &displayName, KopeteMetaContact *parent );
 
 	KActionCollection* customContextMenuActions();
 

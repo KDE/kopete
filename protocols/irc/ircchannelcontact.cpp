@@ -33,7 +33,7 @@
 #include "ksparser.h"
 
 IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QString &channel, KopeteMetaContact *metac)
-	: IRCContact(contactManager, channel, metac, KopeteContact::OmitFromKABC, "irc_channel" )
+	: IRCContact(contactManager, channel, metac, "irc_channel")
 {
 	// KIRC Engine stuff
 	QObject::connect(m_engine, SIGNAL(userJoinedChannel(const QString &, const QString &)),

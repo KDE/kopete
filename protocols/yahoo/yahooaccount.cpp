@@ -61,7 +61,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& AccountID, cons
 
 	// we need this quite early (before initActions at least)
 	kdDebug(14180) << "Yahoo: Creating myself with name = " << accountId() << endl;
-	m_myself = new YahooContact(this, accountId(), accountId(), 0, KopeteContact::OmitFromKABC );
+	m_myself = new YahooContact(this, accountId(), accountId(), 0);
 	m_myself->setYahooStatus(YahooStatus::Offline, "", 0);
 
 	if(autoLogin()) connect();
@@ -269,7 +269,7 @@ void YahooAccount::slotGotBuddies( const YList */*theList*/ )
 		if(!contacts()[i.key()] && m_importContacts)
 		{	kdDebug(14180) << "SS Contact " << i.key() << " is not in the contact list. Adding..." << endl;
 			QString groupName = m_useServerGroups ? i.data().first : QString("Imported Yahoo Contacts");
-			addContact(i.key(), i.data().second == "" || i.data().second.isNull() ? i.key() : i.data().second, 0, groupName);
+			addContact(i.key(), i.data().second == "" || i.data().second.isNull() ? i.key() : i.data().second, 0, KopeteAccount::ChangeKABC, groupName);
 		}
 
 	// Local -> serverside
@@ -291,7 +291,7 @@ bool YahooAccount::addContactToMetaContact(const QString &contactId, const QStri
 	{
 		// FIXME: New Contacts are NOT added to KABC, because:
 		// How on earth do you tell if a contact is being deserialised or added brand new here?
-		YahooContact *newContact = new YahooContact( this, contactId, displayName, parentContact, KopeteContact::OmitFromKABC);
+		YahooContact *newContact = new YahooContact( this, contactId, displayName, parentContact );
 		return newContact != 0;
 	}
 	else
@@ -375,7 +375,7 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long /*tm*
 	QFont msgFont;
 
 	if(!contact(who))
-		addContact( who, who, 0L, QString::null, true );
+		addContact( who, who, 0L, KopeteAccount::DontChangeKABC, QString::null, true );
 
 	KopeteMessageManager *mm = contact(who)->manager();
 

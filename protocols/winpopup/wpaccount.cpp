@@ -45,7 +45,7 @@ WPAccount::WPAccount(WPProtocol *parent, const QString &accountID, const char *n
 	theInterface = parent->createInterface(theHostName);
 
 	// we need this before initActions
-	theMyself = new WPContact(this, theHostName, theHostName, 0, KopeteContact::OmitFromKABC );
+	theMyself = new WPContact(this, theHostName, theHostName, 0);
 
 	if(autoLogin()) connect();
 
@@ -95,7 +95,7 @@ bool WPAccount::addContactToMetaContact(const QString &contactId, const QString 
 
 	if(!contacts()[contactId])
 	{
-		WPContact *newContact = new WPContact(this, contactId, displayName, parentContact, KopeteContact::AddToKABC );
+		WPContact *newContact = new WPContact(this, contactId, displayName, parentContact);
 		return newContact != 0;
 	}
 	else
@@ -110,7 +110,7 @@ void WPAccount::slotGotNewMessage(const QString &Body, const QDateTime &Arrival,
 
 	if(isConnected())
 		if(!isAway())
-		{	if(!contacts()[From]) addContact(From, From, 0, QString::null, true);
+		{	if(!contacts()[From]) addContact(From, From, 0, KopeteAccount::DontChangeKABC, QString::null, true);
 			static_cast<WPContact *>(contacts()[From])->slotNewMessage(Body, Arrival);
 		}
 		else

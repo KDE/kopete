@@ -172,7 +172,7 @@ bool GaduAccount::addContactToMetaContact( const QString& contactId, const QStri
 	
 	uin_t uinNumber = contactId.toUInt();
 	
-	GaduContact *newContact = new GaduContact( uinNumber, displayName, this, parentContact, KopeteContact::AddToKABC );
+	GaduContact *newContact = new GaduContact( uinNumber, displayName, this, parentContact );
 	newContact->setParentIdentity( accountId() );
 	addNotify( uinNumber );
 
@@ -582,7 +582,7 @@ GaduAccount::userlist( const gaduContactsList& u)
 		    contactname=(*loo)->nickname;
 		}
 	    
-		if (addContact( (*loo)->uin, contactname, 0L, QString::null, false)==false){
+		if (addContact( (*loo)->uin, contactname, 0L, KopeteAccount::DontChangeKABC, QString::null, false)==false){
 		    kdDebug(14100) << "There was a problem adding UIN "<< (*loo)->uin << "to users list" << endl; 
 		    goto next_cont;
 		}

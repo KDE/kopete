@@ -99,7 +99,8 @@ public slots:
 	 * @return Pointer to the KopeteContact object which was added
 	 */
 	bool addContact( const QString &contactId, const QString &displayName = QString::null,
-		KopeteMetaContact *parentContact = 0L, const QString &groupName = QString::null, bool isTemporary = false) ;
+		KopeteMetaContact *parentContact = 0L, const KopeteAccount::AddMode mode = KopeteAccount::DontChangeKABC, 
+		const QString &groupName = QString::null, bool isTemporary = false) ;
 
 protected:
 	/* Create a new contact in the specified metacontact.
@@ -151,8 +152,7 @@ private:
 	 * Create a new JabberContact
 	 */
 	JabberContact *createContact (const QString & jid, const QString & alias,
-								  const QStringList & groups, KopeteMetaContact * metaContact,
-								  KopeteContact::AddMode mode );
+								  const QStringList & groups, KopeteMetaContact * metaContact);
 
 	/* Add new contact to the Kopete contact list; this doesn't actually
 	 * affect the Jabber roster, it's just an internal method. */

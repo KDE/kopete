@@ -85,7 +85,7 @@ class AIMAccount : public OscarAccount
 		 * This allows OscarAccount to take care of adding new contacts
 		 */
 		OscarContact *createNewContact( const QString &contactId,
-			const QString &displayName, KopeteMetaContact *parentContact, KopeteContact::AddMode mode );
+			const QString &displayName, KopeteMetaContact *parentContact );
 
 	private:
 		void connect(const unsigned long status, const QString &awMessage);

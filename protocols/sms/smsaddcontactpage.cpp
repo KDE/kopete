@@ -41,7 +41,7 @@ bool SMSAddContactPage::apply(KopeteAccount* a, KopeteMetaContact* m)
 		QString nr = smsdata->addNr->text();
 		QString name = smsdata->addName->text();
 
-		return a->addContact(nr, name, m);
+		return a->addContact( nr, name, m, KopeteAccount::ChangeKABC );
 	}
 
 	return false;

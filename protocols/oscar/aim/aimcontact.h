@@ -26,7 +26,7 @@ class AIMContact : public OscarContact
 	Q_OBJECT
 
 	public:
-		AIMContact(const QString , const QString , AIMAccount *, KopeteMetaContact *, KopeteContact::AddMode mode );
+		AIMContact(const QString , const QString , AIMAccount *, KopeteMetaContact *);
 		virtual ~AIMContact();
 
 		bool isReachable();

@@ -886,7 +886,7 @@ void ICQProtocol::deserializeContact(KopeteMetaContact *metaContact,
 		kdDebug(14200) << k_funcinfo << "WARNING: Account for contact does not exist, skipping." << endl;
 		return;
 	}
-	ICQContact *c = new ICQContact(contactId, displayName, account, metaContact, KopeteContact::OmitFromKABC );
+	ICQContact *c = new ICQContact(contactId, displayName, account, metaContact);
 	c->setGroupId(serializedData["groupID"].toInt());
 	c->setEncoding(serializedData["Encoding"].toInt());
 	c->setWaitAuth(serializedData["awaitingAuth"] == "1");

@@ -574,7 +574,7 @@ void AppearanceConfig::addStyle( const QString &styleName, const QString &xslStr
 	class TestContact : public KopeteContact
 	{
 		public:
-			TestContact (  const QString &id  ) : KopeteContact ( (KopeteAccount*)0L, id, 0L, KopeteContact::OmitFromKABC ) {}
+			TestContact (  const QString &id  ) : KopeteContact ( (KopeteAccount*)0L, id, 0L ) {}
 			virtual KopeteMessageManager* manager(bool) { return 0L; }
 	};
 

@@ -87,7 +87,7 @@ public:
 
 
 KopeteContact::KopeteContact( KopeteAccount *account,
-	const QString &contactId, KopeteMetaContact *parent, AddMode mode, const QString &icon )
+	const QString &contactId, KopeteMetaContact *parent, const QString &icon )
 	: QObject( parent )
 {
 	d = new KopeteContactPrivate;
@@ -115,7 +115,7 @@ KopeteContact::KopeteContact( KopeteAccount *account,
 		connect( parent, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
 			protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
 
-		parent->addContact( this, mode );
+		parent->addContact( this );
 	}
 }
 
@@ -379,8 +379,10 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 			protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
 
 		// Reparent the contact
+		old->removeKABC();
 		old->removeChild( this );
-
+		old->updateKABC();
+		
 		if(result==KMessageBox::Yes)
 		{
 			//remove the old metacontact.  (this delete the MC)
@@ -392,14 +394,14 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 			//remove cached data for this protocol which will not be removed since we disconnected
 			protocol()->slotMetaContactAboutToSave( old );
 		}
-
 	}
 
 	d->metaContact = m;
 
 	if( m )
 	{
-		m->addContact( this, AddToKABC );
+		m->addContact( this );
+		m->updateKABC();
 		m->insertChild( this );
 
 		connect( d->metaContact, SIGNAL( aboutToSave( KopeteMetaContact * ) ),

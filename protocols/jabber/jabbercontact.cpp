@@ -49,8 +49,8 @@
 /**
  * JabberContact constructor
  */
-JabberContact::JabberContact (QString userId, QString nickname, QStringList groups, JabberAccount * p, KopeteMetaContact * mc, KopeteContact::AddMode mode )
-				: KopeteContact (p, userId.lower(), mc, mode)
+JabberContact::JabberContact (QString userId, QString nickname, QStringList groups, JabberAccount * p, KopeteMetaContact * mc)
+				: KopeteContact (p, userId.lower(), mc)
 {
 
 	parentMetaContact = mc;

@@ -89,7 +89,7 @@ bool WPAddContact::apply(KopeteAccount *theAccount, KopeteMetaContact *theMetaCo
 	DEBUG(WPDMETHOD, "WPAddContact::apply(" << theAccount << ", " << theMetaContact << ")");
 
 	// TODO: make the displayname an option
-	theAccount->addContact(theDialog->mHostName->currentText(), theDialog->mHostName->currentText(), theMetaContact);
+	theAccount->addContact(theDialog->mHostName->currentText(), theDialog->mHostName->currentText(), theMetaContact, KopeteAccount::ChangeKABC );
 	DEBUG(WPDMETHOD, "WPAddContact::apply()");
 	return true;
 }

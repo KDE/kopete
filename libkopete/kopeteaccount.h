@@ -62,6 +62,11 @@ class KopeteAccount : public KopetePluginDataObject
 
 public:
 	/**
+	 * Describes what should be done when the contact is added to a metacontact
+	 */
+	enum AddMode { ChangeKABC=0, DontChangeKABC=1 };
+
+	/**
 	 * constructor:
 	 * The constructor register automatically the account to the @ref KopeteAccountManager
 	 * @param parent it the protocol of this account. the accoun is a child object of the
@@ -270,12 +275,14 @@ public slots:
 	 * @param contactId The unique ID for this protocol
 	 * @param displayName The displayname of the contact (may equal userId for some protocols
 	 * @param parentContact The metacontact to add this contact to
+	 * @param mode If the KDE addressbook should be changed to include the new contact.  Don't change if you are using this method to deserialise.
 	 * @param groupName The name of the group to add the contact to
 	 * @param isTemporary If this is a temporary contact
 	 * @return Pointer to the KopeteContact object which was added
 	 */
 	bool addContact( const QString &contactId, const QString &displayName = QString::null,
-		KopeteMetaContact *parentContact = 0L, const QString &groupName = QString::null, bool isTemporary = false) ;
+		KopeteMetaContact *parentContact = 0L, const AddMode mode = DontChangeKABC, 
+		const QString &groupName = QString::null, bool isTemporary = false ) ;
 
 signals:
 	/**

@@ -16,6 +16,7 @@
     <ignoreparts>
       <part>KDevDebugger</part>
     </ignoreparts>
+    <secondaryLanguages/>
   </general>
   <kdevfileview>
     <groups>
@@ -24,10 +25,12 @@
       <group pattern="*.png" name="Icons" />
       <group pattern="*.po;*.ts" name="Translations" />
       <group pattern="*" name="Others" />
+      <hidenonprojectfiles>false</hidenonprojectfiles>
     </groups>
     <tree>
       <hidenonprojectfiles>false</hidenonprojectfiles>
-      <hidepatterns>*.o,*.lo,CVS</hidepatterns>
+      <hidepatterns></hidepatterns>
+      <showvcsfields>true</showvcsfields>
     </tree>
   </kdevfileview>
   <kdevdoctreeview>
@@ -36,9 +39,13 @@
       <toc>gnustep</toc>
     </ignoretocs>
     <projectdoc>
-      <userdocDir>/home/matt/src/kde-cvs/kdenonbeta/kopete/html/</userdocDir>
-      <apidocDir>/home/httpd/htdocs/apidocs/kopete</apidocDir>
+      <userdocDir>/home/will/projects/kde/build/kdenetwork/kopete/doc-api/html/</userdocDir>
+      <apidocDir>/home/will/projects/build/kde/non-release/kdenonbeta/kopete/doc-api/html/</apidocDir>
     </projectdoc>
+    <ignoreqt_xml/>
+    <ignoredoxygen/>
+    <ignorekdocs/>
+    <ignoredevhelp/>
   </kdevdoctreeview>
   <kdevdebugger>
     <general>
@@ -72,12 +79,16 @@
     </make>
     <general>
       <useconfiguration>default</useconfiguration>
+      <activetarget>kopete/contactlist/libkopetecontactlist.la</activetarget>
     </general>
     <run>
       <mainprogram/>
       <programargs/>
       <terminal>false</terminal>
       <envvars/>
+      <directoryradio>executable</directoryradio>
+      <customdirectory>/</customdirectory>
+      <autocompile>true</autocompile>
     </run>
   </kdevautoproject>
   <kdevfilecreate>
@@ -120,6 +131,9 @@
       <automaticArgumentsHint>true</automaticArgumentsHint>
       <codeCompletionDelay>250</codeCompletionDelay>
       <argumentsHintDelay>400</argumentsHintDelay>
+      <automaticHeaderCompletion>true</automaticHeaderCompletion>
+      <headerCompletionDelay>250</headerCompletionDelay>
     </codecompletion>
+    <references/>
   </kdevcppsupport>
 </kdevelop>

@@ -284,7 +284,7 @@ bool ICQAddContactPage::apply(KopeteAccount* , KopeteMetaContact *parentContact 
 		QString displayName = item->text(0);
 		kdDebug(14200) << k_funcinfo << "uin=" << contactId << ", displayName=" << displayName << endl;
 
-		return mAccount->addContact(contactId, displayName, parentContact);
+		return mAccount->addContact(contactId, displayName, parentContact, KopeteAccount::ChangeKABC );
 	}
 	return false;
 }

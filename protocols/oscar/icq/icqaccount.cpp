@@ -40,7 +40,7 @@ ICQAccount::ICQAccount(KopeteProtocol *parent, QString accountID, const char *na
 	mWebAware = true;
 	mHideIP = false;
 	mInvisible = false;
-	mMyself = new ICQContact(accountId(), QString::null, this, 0L, KopeteContact::OmitFromKABC );
+	mMyself = new ICQContact(accountId(), QString::null, this, 0L);
 
 	QObject::connect(mAwayDialog, SIGNAL(goAway(const int, const QString&)),
 		this, SLOT(slotAwayDialogReturned(const int, const QString&)));
@@ -360,11 +360,11 @@ void ICQAccount::reloadPluginData()
 OscarContact *ICQAccount::createNewContact(
 	const QString &contactId,
 	const QString &displayName,
-	KopeteMetaContact *parentContact, KopeteContact::AddMode mode )
+	KopeteMetaContact *parentContact)
 {
 	kdDebug(14200) << k_funcinfo << "contactId='" << contactId << "', displayName='" <<
 		displayName << /*"', ptr parentContact=" << parentContact <<*/ endl;
-	return new ICQContact(contactId,displayName,this,parentContact, mode);
+	return new ICQContact(contactId,displayName,this,parentContact);
 }
 
 #include "icqaccount.moc"

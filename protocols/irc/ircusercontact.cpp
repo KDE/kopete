@@ -29,8 +29,8 @@
 #include "ksparser.h"
 #include "kopetemetacontact.h"
 
-IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString &nickname, KopeteMetaContact *m, KopeteContact::AddMode mode )
-	: IRCContact(contactManager, nickname, m, mode ),
+IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString &nickname, KopeteMetaContact *m )
+	: IRCContact(contactManager, nickname, m ),
 	  m_isAway(false)
 {
 	mOnlineTimer = new QTimer( this );

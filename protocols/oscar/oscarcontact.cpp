@@ -43,8 +43,8 @@
 #include <assert.h>
 
 OscarContact::OscarContact(const QString& name, const QString& displayName,
-	KopeteAccount *account, KopeteMetaContact *parent, KopeteContact::AddMode mode )
-	: KopeteContact(account, name, parent, mode)
+	KopeteAccount *account, KopeteMetaContact *parent)
+	: KopeteContact(account, name, parent)
 {
 // 	kdDebug(14150) << k_funcinfo "name='" << name <<
 // 		"', displayName='" << displayName << "'"<< endl;

@@ -112,7 +112,7 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &accoun
 			.arg( protocolName ).arg( contactName ), i18n( "Allow Contact?" ) ) == 3 ) // Yes == 3
 		{
 			//User said Yes
-			myAccount->addContact( contactId, displayName, 0L, groupName, false );
+			myAccount->addContact( contactId, displayName, 0L, KopeteAccount::DontChangeKABC, groupName, false );
 			return true;
 		} else {
 			//User said No

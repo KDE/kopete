@@ -69,7 +69,7 @@ void TestbedProtocol::deserializeContact( KopeteMetaContact *metaContact, const 
 		return;
 	}
 
-	new TestbedContact(account, contactId, tbcType, displayName, metaContact, KopeteContact::OmitFromKABC );
+	new TestbedContact(account, contactId, tbcType, displayName, metaContact);
 }
 
 AddContactPage * TestbedProtocol::createAddContactWidget( QWidget *parent, KopeteAccount *account )

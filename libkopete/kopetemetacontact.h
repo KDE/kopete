@@ -67,7 +67,7 @@ public:
 	 * @param c The KopeteContact being added
 	 * @param mode Whether the Contact is a completely new contact(Add) or one that is being loaded from disk
 	 */
-	void addContact( KopeteContact *c, KopeteContact::AddMode mode );
+	void addContact( KopeteContact *c );
 	
 	/**
 	 * Find the KopeteContact to a given contact. If contact
@@ -309,6 +309,15 @@ public slots:
 	void sendFile( const KURL &sourceURL, const QString &altFileName = QString::null,
 		unsigned long fileSize = 0L );
 
+	/**
+	 * The KABC exposed data changed, so change it in KABC
+	 */
+	void updateKABC();
+	
+	/** 
+	 * Remove any KABC data for this meta contact
+	 */
+	void removeKABC();
 
 signals:
 	/**
@@ -402,11 +411,6 @@ private slots:
 	 * If a plugin is loaded, maybe data about this plugin are already cached in the metacontact
 	 */
 	void slotPluginLoaded( KopetePlugin *plugin );
-
-	/**
-	 * The KABC exposed data changed, so change it in KABC
-	 */
-	void slotUpdateKABC();
 
 private:
 	KopeteContact *preferredContact();

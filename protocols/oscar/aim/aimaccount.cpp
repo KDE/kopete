@@ -37,7 +37,7 @@ AIMAccount::AIMAccount(KopeteProtocol *parent, QString accountID, const char *na
 	mAwayMessage = QString::null;
 	mStatus = OSCAR_OFFLINE;
 
-	mMyself = new AIMContact(tocNormalize(accountID), accountID, this, 0L, KopeteContact::OmitFromKABC );
+	mMyself = new AIMContact(tocNormalize(accountID), accountID, this, 0L);
 	QObject::connect(mAwayDialog, SIGNAL(goAway(const int, const QString&)),
 		this, SLOT(slotAwayDialogReturned(const int, const QString&)));
 }
@@ -61,9 +61,9 @@ void AIMAccount::loaded()
 }
 
 OscarContact *AIMAccount::createNewContact( const QString &contactId,
-		const QString &displayName, KopeteMetaContact *parentContact, KopeteContact::AddMode mode )
+		const QString &displayName, KopeteMetaContact *parentContact )
 {
-	return new AIMContact(contactId, displayName, this, parentContact, mode );
+	return new AIMContact(contactId, displayName, this, parentContact);
 }
 
 KActionMenu* AIMAccount::actionMenu()

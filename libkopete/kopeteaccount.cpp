@@ -395,7 +395,7 @@ const QDict<KopeteContact>& KopeteAccount::contacts()
 
 
 bool KopeteAccount::addContact( const QString &contactId, const QString &displayName,
-	KopeteMetaContact *parentContact, const QString &groupName, bool isTemporary )
+	KopeteMetaContact *parentContact, const AddMode mode, const QString &groupName, bool isTemporary )
 {
 	if ( contactId == accountId() )
 	{
@@ -417,7 +417,7 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 	{
 		if ( c->metaContact()->isTemporary() && !isTemporary )
 		{
-			kdDebug( 14010 ) << "KopeteAccount::addContact: You are triying to add an existing temporary contact. Just add it on the list" << endl;
+			kdDebug( 14010 ) << "KopeteAccount::addContact: You are trying to add an existing temporary contact. Just add it on the list" << endl;
 			/* //FIXME: calling this can produce a message to delete the old contazct which should be deleted in many case.
 			if(c->metaContact() != parentContact)
 				c->setMetaContact(parentContact);*/
@@ -429,7 +429,7 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 		else
 		{
 			// should we here add the contact to the parentContact if any?
-			kdDebug( 14010 ) << "KopeteAccount::addContact: Contact already exist" << endl;
+			kdDebug( 14010 ) << "KopeteAccount::addContact: Contact already exists" << endl;
 		}
 		return false; //(the contact is not in the correct metacontact, so false)
 	}
@@ -461,11 +461,31 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 	if ( c )
 	{
 		c->setMetaContact( parentContact );
+		if ( mode == ChangeKABC )
+		{
+			kdDebug( 14010 ) << k_funcinfo << " changing KABC" << endl;
+			parentContact->updateKABC();
+		}
+		else
+			kdDebug( 14010 ) << k_funcinfo << " leaving KABC" << endl;	
 		return true;
 	}
 	else
 	{
-		return addContactToMetaContact( contactId, displayName, parentContact );
+		if ( addContactToMetaContact( contactId, displayName, parentContact ) )
+		{
+		 	if ( mode == ChangeKABC )
+			{
+				kdDebug( 14010 ) << k_funcinfo << " changing KABC" << endl;
+				parentContact->updateKABC();
+			}
+			else
+				kdDebug( 14010 ) << k_funcinfo << " leaving KABC" << endl;	
+			return true;
+		}
+		else
+			return false;
+		
 	}
 }
 

@@ -217,7 +217,7 @@ void OscarAccount::slotGotIM(OscarSocket::OscarMessageType type, QString &messag
 			"Message from contact that is not on our contactlist, sender='" <<
 			sender << "'" << endl;
 
-		if (addContact(tocNormalize(sender), sender, 0L, QString::null, true))
+		if (addContact(tocNormalize(sender), sender, 0L, KopeteAccount::DontChangeKABC, QString::null, true))
 			contact = static_cast<OscarContact*>(contacts()[tocNormalize(sender)]);
 	}
 
@@ -500,7 +500,7 @@ void OscarAccount::addServerContact(AIMBuddy *buddy)
 			// Add contact to the kopete contact list, with no metacontact
 			// which creates a new one. This will also call the
 			// addContactToMetaContact method in this class
-			addContact(tocNormalize(buddy->screenname()), nick, 0L, aimGroup->name(), false);
+			addContact(tocNormalize(buddy->screenname()), nick, 0L, KopeteAccount::ChangeKABC, aimGroup->name(), false);
 		}
 		else
 		{
@@ -645,7 +645,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 		kdDebug(14150) << k_funcinfo << "Found buddy internally, just make"
 				<< " a new OscarContact subclass for it." << endl;
 		// Create an OscarContact for the metacontact
-		if(OscarContact* newContact = createNewContact( contactId, displayName, parentContact, KopeteContact::AddToKABC ))
+		if(OscarContact* newContact = createNewContact(contactId, displayName, parentContact))
 		{
 			// Set the oscar contact's status
 			newContact->setStatus(internalBuddy->status());
@@ -736,14 +736,14 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			mRandomNewBuddyNum++;
 
 			// Create the actual contact, which adds it to the metacontact
-			return ( createNewContact( contactId, displayName, parentContact, KopeteContact::AddToKABC ));
+			return ( createNewContact( contactId, displayName, parentContact ));
 		}
 		else
 		{
 			kdDebug(14150) << "Temporary new contact, only adding him to local list" << endl;
 			// This is a temporary contact, so don't add it to the server list
 			// Create the contact, which adds it to the parent contact
-			if ( createNewContact( contactId, displayName, parentContact, KopeteContact::OmitFromKABC ) )
+			if(createNewContact(contactId, displayName, parentContact))
 			{
 				// Set it's initial status
 				// This requests the buddy's info from the server
@@ -847,7 +847,7 @@ void OscarAccount::addOldContact(AIMBuddy *bud,KopeteMetaContact *meta)
 		else
 			nick = bud->screenname();
 
-		createNewContact(bud->screenname(), nick, m, KopeteContact::OmitFromKABC );
+		createNewContact(bud->screenname(), nick, m);
 
 		if (!meta)
 			KopeteContactList::contactList()->addMetaContact(m);

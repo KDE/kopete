@@ -59,7 +59,8 @@ bool YahooAddContact::apply(KopeteAccount *theAccount, KopeteMetaContact *theMet
 {
 	kdDebug(14180) << k_funcinfo << endl;
 
-	theAccount->addContact(theDialog->contactID->text(), theDialog->displayName->text() == "" ? theDialog->contactID->text() : theDialog->displayName->text(), theMetaContact);
+	QString displayName = theDialog->displayName->text() == "" ? theDialog->contactID->text() : theDialog->displayName->text();
+	theAccount->addContact(theDialog->contactID->text(), displayName, theMetaContact, KopeteAccount::ChangeKABC );
 	return true;
 }
 

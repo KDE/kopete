@@ -110,7 +110,7 @@ void IRCAddContactPage::slotSelectionChanged( QListViewItem *i )
 bool IRCAddContactPage::apply(KopeteAccount *account , KopeteMetaContact *m)
 {
 	QString name = ircdata->addID->text();
-	return account->addContact(name, name, m);
+	return account->addContact(name, name, m, KopeteAccount::ChangeKABC );
 }
 
 bool IRCAddContactPage::validateData()
