@@ -48,6 +48,25 @@
 Kopete::Kopete()
 : KUniqueApplication( true, true, true )
 {
+	mPluginsModule = new Plugins(this);
+
+	KopeteWindow *mainWindow = new KopeteWindow( 0, "mainWindow" );
+	setMainWidget( mainWindow );
+
+	mAppearance = new AppearanceConfig( mainWindow );
+	mUserPreferencesConfig = new KopeteUserPreferencesConfig( mainWindow );
+
+	connect( KopetePrefs::prefs() , SIGNAL(saved()), this, SIGNAL(signalSettingsChanged()));
+	mNotifier = new KopeteNotifier(this, "mNotifier");
+	connect( KopeteMessageManagerFactory::factory(),
+		SIGNAL( messageReceived( KopeteMessage & ) ),
+		SIGNAL( aboutToDisplay( KopeteMessage & ) ) );
+	connect( KopeteMessageManagerFactory::factory(),
+		SIGNAL( messageQueued( KopeteMessage & ) ),
+		SIGNAL( aboutToSend( KopeteMessage & ) ) );
+
+	KopeteContactList::contactList()->load();
+
 	/*
 	 * This is a workaround for a quite odd problem:
 	 * When starting up kopete and the msn plugin gets loaded it can bring up
@@ -66,34 +85,11 @@ Kopete::Kopete()
 	 * where the loop_level is already > 0 . That is why I moved all the code from
 	 * the constructor to the initialize() method and added this single-shot-timer
 	 * setup. (Simon)
+	 *
+	 * Additionally, it makes the GUI appear less 'blocking' during startup, so
+	 * there is a secondary benefit as well here. (Martijn)
 	 */
-	QTimer::singleShot( 0, this, SLOT( initialize() ) );
-}
-
-void Kopete::initialize()
-{
-	mPluginsModule = new Plugins(this);
-
-	KopeteWindow *mainWindow = new KopeteWindow( 0, "mainWindow" );
-	setMainWidget( mainWindow );
-
-	mAppearance = new AppearanceConfig( mainWindow );
-	mUserPreferencesConfig = new KopeteUserPreferencesConfig( mainWindow );
-
-	connect( KopetePrefs::prefs() , SIGNAL(saved()), this, SIGNAL(signalSettingsChanged()));
-	mNotifier = new KopeteNotifier(this, "mNotifier");
-	connect( KopeteMessageManagerFactory::factory(),
-		SIGNAL( messageReceived( KopeteMessage & ) ),
-		SIGNAL( aboutToDisplay( KopeteMessage & ) ) );
-	connect( KopeteMessageManagerFactory::factory(),
-		SIGNAL( messageQueued( KopeteMessage & ) ),
-		SIGNAL( aboutToSend( KopeteMessage & ) ) );
-
 	QTimer::singleShot( 0, this, SLOT( slotLoadPlugins() ) );
-
-	// Ok, load saved plugins
-
-	KopeteContactList::contactList()->load();
 }
 
 Kopete::~Kopete()

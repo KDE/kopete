@@ -85,8 +85,6 @@ private slots:
 	void slotAddContact();
 	void slotShowTransfers();
 
-	void initialize();
-
 	/**
 	 * Load all plugins
 	 */
