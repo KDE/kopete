@@ -103,6 +103,10 @@ public slots:
 
 // API section:
 
+public slots:
+	void goOffline();
+	void goOnline();
+	
 protected:
 	virtual void receivedMessage(const QString &Body, const QDateTime &Arrival, const QString &From) = 0;
 	// overload this to be called when a new message arrives

@@ -71,12 +71,6 @@ WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProto
 	// Load Status Actions
 	initActions();
 
-	// Create statusbar Icon
-	statusBarIcon = new StatusBarIcon();
-	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint &)), this, SLOT(slotIconRightClicked(const QPoint &)));
-	setAvailable();
-	Connect();
-
 	// Set up initial settings
 	KGlobal::config()->setGroup("WinPopup");
 	QString theSMBClientPath = KGlobal::config()->readEntry("SMBClientPath", "/usr/bin/smbclient");
@@ -121,6 +115,12 @@ WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProto
 
 	// Call slotSettingsChanged() to get it all registered.
 	slotSettingsChanged();
+
+	// Create statusbar Icon
+	statusBarIcon = new StatusBarIcon();
+	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint &)), this, SLOT(slotIconRightClicked(const QPoint &)));
+	setAvailable();
+	Connect();
 
 	// FIXME: I guess 'myself' should be a metacontact as well...
 	theMyself = new WPContact(theHostName, this, 0L);		// XXX: Should be from config file!!!
@@ -264,6 +264,7 @@ void WPProtocol::Connect()
 	DEBUG(WPDMETHOD, "WPProtocol::Connect()");
 
 	online = true;
+	theInterface->goOnline();
 	available = true;
 	statusBarIcon->setPixmap(iconAvailable);
 }
@@ -273,6 +274,7 @@ void WPProtocol::Disconnect()
 	DEBUG(WPDMETHOD, "WPProtocol::Disconnect()");
 
 	online = false;
+	theInterface->goOffline();
 	statusBarIcon->setPixmap(iconOffline);
 }
 
@@ -281,6 +283,7 @@ void WPProtocol::setAvailable()
 	DEBUG(WPDMETHOD, "WPProtocol::setAvailable()");
 
 	online = true;
+	theInterface->goOnline();
 	available = true;
 	statusBarIcon->setPixmap(iconAvailable);
 	// do any other stuff?
@@ -292,6 +295,7 @@ void WPProtocol::setAway()
 
 	available = false;
 	online = true;
+	theInterface->goOnline();
 	statusBarIcon->setPixmap(iconAway);
 	// do any other stuff?
 }

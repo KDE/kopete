@@ -53,11 +53,31 @@ KWinPopup::KWinPopup(const QString &SMBClientPath, const QString &InitialSearchH
 	mySMBClientPath = SMBClientPath;
 	myInitialSearchHost = InitialSearchHost;
 	myHostName = HostName;
+	myMessageCheckFrequency = MessageCheckFrequency;
+	myHostCheckFrequency = HostCheckFrequency;
 	updateNoWait();
+	online = true;
 }
 
 KWinPopup::~KWinPopup()
 {
+}
+
+void KWinPopup::goOffline()
+{
+	if(!online) return;
+	updateData.stop();
+	checkForMessages.stop();
+	theGroups.clear();
+	online = false;
+}
+
+void KWinPopup::goOnline()
+{
+	if(online) return;
+	checkForMessages.start(myMessageCheckFrequency * 1000, false);
+	updateData.start(myHostCheckFrequency * 1000, false);
+	online = true;
 }
 
 bool KWinPopup::sendMessage(const QString &Body, const QString &Destination)
@@ -99,7 +119,6 @@ void KWinPopup::messageHandler()
 		receivedMessage(Text, Date, From);
 	}
 }
-
 
 time_t getLastMod()
 {
