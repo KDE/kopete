@@ -1,0 +1,515 @@
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<class>MSNEditAccountUI</class>
+<author>Olivier Goffart</author>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>Form1</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>488</width>
+            <height>411</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Form1</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <widget class="QTabWidget">
+            <property name="name">
+                <cstring>tabWidget3</cstring>
+            </property>
+            <property name="tabShape">
+                <enum>Rounded</enum>
+            </property>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab_conneciton</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Connection</string>
+                </attribute>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QLayoutWidget">
+                        <property name="name">
+                            <cstring>layout15</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>TextLabel1_3</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>1</hsizetype>
+                                        <vsizetype>5</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string>Login:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>mID</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit">
+                                <property name="name">
+                                    <cstring>m_login</cstring>
+                                </property>
+                                <property name="text">
+                                    <string></string>
+                                </property>
+                            </widget>
+                        </hbox>
+                    </widget>
+                    <widget class="QLayoutWidget">
+                        <property name="name">
+                            <cstring>layout16</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>TextLabel2_2</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Password:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>mPass</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit">
+                                <property name="name">
+                                    <cstring>m_password</cstring>
+                                </property>
+                                <property name="text">
+                                    <string></string>
+                                </property>
+                                <property name="echoMode">
+                                    <enum>Password</enum>
+                                </property>
+                            </widget>
+                        </hbox>
+                    </widget>
+                    <widget class="QCheckBox">
+                        <property name="name">
+                            <cstring>m_rememberpasswd</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Remember Password</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox">
+                        <property name="name">
+                            <cstring>m_autologin</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Auto-connect</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel">
+                        <property name="name">
+                            <cstring>lblRegisterHelp</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Example of login: &lt;b&gt;joe@msn.com&lt;/b&gt;</string>
+                        </property>
+                        <property name="textFormat">
+                            <enum>AutoText</enum>
+                        </property>
+                        <property name="scaledContents">
+                            <bool>true</bool>
+                        </property>
+                        <property name="alignment">
+                            <set>WordBreak|AlignVCenter|AlignLeft</set>
+                        </property>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer22</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="KActiveLabel">
+                        <property name="name">
+                            <cstring>kActiveLabel1</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>1</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>Get an MSN account &lt;a href="http://register.passport.net/"&gt;here&lt;/a&gt;</string>
+                        </property>
+                    </widget>
+                </vbox>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab_info</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Info</string>
+                </attribute>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QLayoutWidget">
+                        <property name="name">
+                            <cstring>Layout22_2</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <property name="margin">
+                                <number>0</number>
+                            </property>
+                            <property name="spacing">
+                                <number>6</number>
+                            </property>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>TextLabel2_2_2</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>4</hsizetype>
+                                        <vsizetype>4</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string>Display name:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit">
+                                <property name="name">
+                                    <cstring>m_displayName</cstring>
+                                </property>
+                                <property name="readOnly">
+                                    <bool>false</bool>
+                                </property>
+                            </widget>
+                        </hbox>
+                    </widget>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>m_phones</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Phones</string>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel" row="1" column="0">
+                                <property name="name">
+                                    <cstring>TextLabel5</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Home:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="0" column="0">
+                                <property name="name">
+                                    <cstring>TextLabel6</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Work:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit" row="0" column="1">
+                                <property name="name">
+                                    <cstring>m_phw</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit" row="1" column="1">
+                                <property name="name">
+                                    <cstring>m_phh</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="2" column="0">
+                                <property name="name">
+                                    <cstring>TextLabel7</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Mobile:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit" row="2" column="1">
+                                <property name="name">
+                                    <cstring>m_phm</cstring>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer16</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QLabel">
+                        <property name="name">
+                            <cstring>m_warning_1</cstring>
+                        </property>
+                        <property name="paletteForegroundColor">
+                            <color>
+                                <red>255</red>
+                                <green>0</green>
+                                <blue>0</blue>
+                            </color>
+                        </property>
+                        <property name="font">
+                            <font>
+                                <bold>1</bold>
+                            </font>
+                        </property>
+                        <property name="text">
+                            <string>WARNING: you need to be connected to modify this page</string>
+                        </property>
+                    </widget>
+                </vbox>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab_contacts</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Contacts</string>
+                </attribute>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QLabel">
+                        <property name="name">
+                            <cstring>label_font</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&lt;i&gt;Italics&lt;/i&gt; contacts are contact which are not on your contactlist.&lt;br&gt;
+&lt;b&gt;bold&lt;/b&gt; contacts are in your contactlist but you are not in their contactlist</string>
+                        </property>
+                    </widget>
+                    <widget class="QLayoutWidget">
+                        <property name="name">
+                            <cstring>layout6</cstring>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel" row="0" column="2">
+                                <property name="name">
+                                    <cstring>textLabel2</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Blocked contacts</string>
+                                </property>
+                            </widget>
+                            <widget class="QListBox" row="1" column="0">
+                                <property name="name">
+                                    <cstring>m_AL</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget" row="1" column="1">
+                                <property name="name">
+                                    <cstring>layout4</cstring>
+                                </property>
+                                <vbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QPushButton">
+                                        <property name="name">
+                                            <cstring>m_blockButton</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>&gt;</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QPushButton">
+                                        <property name="name">
+                                            <cstring>m_allowButton</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>&lt;</string>
+                                        </property>
+                                    </widget>
+                                    <spacer>
+                                        <property name="name">
+                                            <cstring>spacer13</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Vertical</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Expanding</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>20</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                </vbox>
+                            </widget>
+                            <widget class="QLabel" row="0" column="0">
+                                <property name="name">
+                                    <cstring>textLabel1</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Allowed contacts</string>
+                                </property>
+                            </widget>
+                            <widget class="QListBox" row="1" column="2">
+                                <property name="name">
+                                    <cstring>m_BL</cstring>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                    <widget class="QCheckBox">
+                        <property name="name">
+                            <cstring>m_blp</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Block all &amp;other contacts</string>
+                        </property>
+                    </widget>
+                    <widget class="QFrame">
+                        <property name="name">
+                            <cstring>Frame3_2</cstring>
+                        </property>
+                        <property name="frameShape">
+                            <enum>HLine</enum>
+                        </property>
+                        <property name="frameShadow">
+                            <enum>Sunken</enum>
+                        </property>
+                    </widget>
+                    <widget class="QLayoutWidget">
+                        <property name="name">
+                            <cstring>layout7</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QPushButton">
+                                <property name="name">
+                                    <cstring>m_RLButton</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>1</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string>View the reverse list</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>textLabel2_2</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>1</hsizetype>
+                                        <vsizetype>1</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string>The reverse list is the list of contact who added you in their own contactlist</string>
+                                </property>
+                                <property name="alignment">
+                                    <set>WordBreak|AlignVCenter</set>
+                                </property>
+                            </widget>
+                        </hbox>
+                    </widget>
+                    <widget class="QLabel">
+                        <property name="name">
+                            <cstring>m_warning_2</cstring>
+                        </property>
+                        <property name="paletteForegroundColor">
+                            <color>
+                                <red>255</red>
+                                <green>0</green>
+                                <blue>0</blue>
+                            </color>
+                        </property>
+                        <property name="font">
+                            <font>
+                                <bold>1</bold>
+                            </font>
+                        </property>
+                        <property name="text">
+                            <string>WARNING: you need to be connected to modify this page</string>
+                        </property>
+                    </widget>
+                </vbox>
+            </widget>
+        </widget>
+    </vbox>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kactivelabel.h</includehint>
+</includehints>
+</UI>
