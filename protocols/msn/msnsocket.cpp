@@ -490,12 +490,7 @@ QString MSNSocket::escape( const QString &str )
 
 	for	( int i = 0; i < old_length; i++ )
 	{
-		unsigned char character = str[i];
-
-		 /*character == ' '  || character == '%' || character == '\t'
-			|| characters == '\n' || character == '\r'*/
-		/*	|| character == '<' || character == '>' ||  character == '\\'
-			|| character == '^' || character == '&' || character == '*'*/
+		unsigned short character = str[i].unicode();
 
 		if( character <= 32 || character == '%' )
 		{
