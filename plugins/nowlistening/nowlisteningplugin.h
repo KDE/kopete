@@ -24,7 +24,7 @@
 #include "kopeteplugin.h"
 #include <qptrlist.h>
 
-namespace Kopete { class ChatSession; };
+namespace Kopete { class ChatSession; }
 
 class QTimer;
 class DCOPClient;
