@@ -1,0 +1,20 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+X-Kopete-Version=1000900
+Icon=statistics
+ServiceTypes=Kopete/Plugin
+X-KDE-Library=kopete_statistics
+X-KDE-PluginInfo-Author=Marc Cramdal
+X-KDE-PluginInfo-Email=marc.cramdal@yahoo.fr
+X-KDE-PluginInfo-Name=kopete_statistics
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Website=http://kopete.kde.org
+X-KDE-PluginInfo-Category=Plugins
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
+Name=Statistics
+Name[fr]=Statistiques
+Comment=Gather some meaningful statistics
+Comment[fr]=Collecte des statistiques
