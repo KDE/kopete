@@ -17,6 +17,7 @@
 
 #include "oscaraccount.h"
 #include "aim.h"
+#include "aimbuddylist.h"
 
 #include "kopeteprotocol.h"
 #include "kopeteaway.h"

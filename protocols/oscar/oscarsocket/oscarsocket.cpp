@@ -31,6 +31,8 @@
 #include <kdebug.h>
 #include <kextsock.h>
 
+#include "aimbuddylist.h"
+
 // ---------------------------------------------------------------------------------------
 
 OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,

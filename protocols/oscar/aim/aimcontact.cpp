@@ -22,6 +22,7 @@
 
 #include "kopeteaway.h"
 #include "kopetemessagemanager.h"
+#include "aimbuddylist.h"
 #include "aimprotocol.h"
 #include "aimcontact.h"
 #include "aimaccount.h"

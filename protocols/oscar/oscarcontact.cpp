@@ -38,6 +38,7 @@
 #include "kopetegroup.h"
 
 #include "aim.h"
+#include "aimbuddylist.h"
 #include "oscarsocket.h"
 #include "oscaraccount.h"
 

@@ -20,7 +20,6 @@
 #include "aim.h" // tocNormalize()
 #include "oscardirectconnection.h"
 #include "ssidata.h"
-#include "aimbuddylist.h"
 #include "oncomingsocket.h"
 #include "oscarsocket.icq.h"
 
@@ -31,6 +30,8 @@
 #include <qdatetime.h>
 
 //class KFileItem;
+class AIMBuddyList;
+class AIMBuddy;
 class OscarAccount;
 class OscarContact;
 class QTimer;
@@ -1146,6 +1147,8 @@ class OscarSocket : public OscarConnection
 
 		bool bSomethingOutgoing;
 };
+
 #endif
+
 // vim: set noet ts=4 sts=4 sw=4:
 
