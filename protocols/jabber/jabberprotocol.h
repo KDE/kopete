@@ -52,6 +52,8 @@ class JabberProtocol : public KopeteProtocol
 	Q_OBJECT
 
 	/* Friends can touch each other's private parts. */
+	friend class JabberAccount;
+
 	friend class JabberContact;
 	friend class JabberGroupChat;
 	friend class DlgJabberServices;
@@ -111,14 +113,6 @@ public:
 	 * KopeteProtocol reimplementation end
 	 *
 	 ********************************************************************/
-
-	const KopeteOnlineStatus JabberOnline;
-	const KopeteOnlineStatus JabberChatty;
-	const KopeteOnlineStatus JabberAway;
-	const KopeteOnlineStatus JabberXA;
-	const KopeteOnlineStatus JabberDND;
-	const KopeteOnlineStatus JabberOffline;
-	const KopeteOnlineStatus JabberInvisible;
 
 	/**
 	 * This returns our protocol instance
@@ -328,6 +322,14 @@ private:
 	 * Singleton instance of our protocol class
 	 */
 	static JabberProtocol *protocolInstance;
+
+	const KopeteOnlineStatus JabberOnline;
+	const KopeteOnlineStatus JabberChatty;
+	const KopeteOnlineStatus JabberAway;
+	const KopeteOnlineStatus JabberXA;
+	const KopeteOnlineStatus JabberDND;
+	const KopeteOnlineStatus JabberOffline;
+	const KopeteOnlineStatus JabberInvisible;
 
 	KAction *actionGoOnline;
 	KAction *actionGoChatty;
