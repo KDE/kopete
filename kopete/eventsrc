@@ -7,6 +7,7 @@ Comment[sv]=Kopete Instant Messenger
 Name=message_all
 Name[sv]=Alla meddelanden
 Comment=Sound Notification for Kopete Events
+Comment[da]=Lydbesked for Kopete-begivenheder
 Comment[sv]=Ljudunderrättelse för händelser i Kopete
 default_sound=kopete_event.wav
 default_presentation=1
