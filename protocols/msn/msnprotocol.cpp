@@ -21,6 +21,7 @@
 #include <kmessagebox.h>
 
 #include "msnprotocol.h"
+#include "msncontact.h"
 #include <msnadd.h>
 #include "kopete.h"
 #include <msnaddcontactpage.h>
@@ -49,6 +50,11 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSN"), IMProtocol()
 	kdDebug() << "MSN Protocol Plugin: Creating MSN Engine\n";
 	engine = new MSN;
 	connect(engine, SIGNAL(connectedToMsn(bool)), this, SLOT(slotConnectedToMSN(bool)));
+	connect(engine, SIGNAL(userStateChange (QString, QString, QString)), this, SIGNAL(userStateChange (QString, QString, QString) ) );
+	//connect(engine, SIGNAL(userStateChange (QString, QString, QString)), this, SLOT(slotUserStateChange (QString, QString, QString) ) );
+	//connect(engine, SIGNAL(userStateChange (QString, QString, QString)), this, SLOT(slotInitContacts(QString, QString, QString) ) );
+	//connect(engine, SIGNAL(userSetOffline (QString) ), this, SLOT(slotUserSetOffline(QString) ) );
+	connect(engine, SIGNAL(newUserFound (QString, QString) ), this, SLOT(slotNewUserFound(QString, QString) ) );
 	kdDebug() << "MSN Protocol Plugin: Done\n";
 
 	KGlobal::config()->setGroup("MSN");
@@ -151,6 +157,8 @@ void MSNProtocol::initIcons()
 	protocolIcon = QPixmap(loader->loadIcon("msn_protocol", KIcon::User));
 	onlineIcon = QPixmap(loader->loadIcon("msn_online", KIcon::User));
 	offlineIcon = QPixmap(loader->loadIcon("msn_offline", KIcon::User));
+	awayIcon = QPixmap(loader->loadIcon("msn_away", KIcon::User));
+	naIcon = QPixmap(loader->loadIcon("msn_na", KIcon::User));
 }
 
 /** No descriptions */
@@ -175,3 +183,33 @@ void MSNProtocol::slotConnectedToMSN(bool c)
 			slotDisconnected();
 		}
 }
+
+void MSNProtocol::slotUserStateChange (QString st1, QString st2, QString st3)
+{
+	kdDebug() << "MSN Plugin: User State change " << st1 << " " << st2 << " " << st3 <<"\n";
+}
+
+void MSNProtocol::slotInitContacts (QString status, QString userid, QString nick)
+{
+	kdDebug() << "MSN Plugin: User State change " << status << " " << userid << " " << nick <<"\n";
+	if ( status == "NLN" )
+	{
+		MSNContact *newContact = new MSNContact(kopeteapp->contactList()->onlineBranch, userid, nick, this);
+		newContact->setPixmap(0,onlineIcon);
+	}
+}
+
+
+void MSNProtocol::slotUserSetOffline (QString str)
+{
+	kdDebug() << "MSN Plugin: User Set Offline " << str << "\n";
+		
+}
+
+void MSNProtocol::slotNewUserFound (QString userid, QString nick)
+{
+	kdDebug() << "MSN Plugin: User found " << userid << " " << nick <<"\n";
+	MSNContact *newContact = new MSNContact(kopeteapp->contactList()->offlineBranch, userid, nick, this);
+	newContact->setPixmap(0,offlineIcon);		
+
+}		

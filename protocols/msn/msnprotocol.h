@@ -53,13 +53,21 @@ public:
 	QPixmap protocolIcon;
 	QPixmap onlineIcon;
 	QPixmap offlineIcon;
+	QPixmap awayIcon;
+	QPixmap naIcon;
 private:
 	void initIcons();
 public slots: // Public slots
   /** No descriptions */
   void slotConnected();
   void slotDisconnected();
-  void slotConnectedToMSN(bool c);		
+  void slotConnectedToMSN(bool c);
+  void slotUserStateChange (QString, QString, QString);
+  void slotUserSetOffline( QString );
+  void slotInitContacts (QString, QString, QString);
+  void slotNewUserFound (QString, QString);
+signals:
+	void userStateChange (QString, QString, QString);	
 };
 
 #endif

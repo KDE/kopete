@@ -20,10 +20,7 @@ MSNAddContactPage::~MSNAddContactPage()
 /** No descriptions */
 void MSNAddContactPage::slotFinish()
 {
-	QString lastname = "Mac-Vicar";
 	QString nick = msndata->addNick->text();
-	QString firstname = "Duncan";
-	QString email = "lala@lala.org";
-	//                                              UIN                       Auth   Notify Nick  ?  Firstname Lastname email  unused requestinfo
-	//plugin->addContact(icqdata->addUIN->text().toUInt(), false, false, nick, "", firstname, lastname, email, false, false);
+	QString userid = msndata->addID->text();
+	plugin->engine->slotAddUser(userid,nick);
 }

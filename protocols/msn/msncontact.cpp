@@ -31,8 +31,8 @@ MSNContact::MSNContact(QListViewItem *parent, QString userid, const QString name
 	messageQueue = new QValueStack<MSNMessage>;
 	isMessageIcon = false;
 	// We connect this signal so that we can tell when a user's status changes
-	QObject::connect(protocol->engine, SIGNAL(userStateChange(QString, QString, QString)), this, SLOT(slotUserStateChange (QString, QString, QString) ));
-	QObject::connect(protocol->engine->switchboard, SIGNAL(messageReceived(QString ,QString) ), this, SLOT(slotNewMessage(QString, QString)));
+	QObject::connect(protocol, SIGNAL(userStateChange(QString, QString, QString)), this, SLOT(slotUserStateChange (QString, QString, QString) ));
+	//QObject::connect(protocol->engine->switchboard, SIGNAL(messageReceived(QString ,QString) ), this, SLOT(slotNewMessage(QString, QString)));
 	QObject::connect(messageTimer, SIGNAL(timeout()), this, SLOT(slotFlashIcon()));
 
 	QString tmp = name;
@@ -80,38 +80,27 @@ void MSNContact::slotUserStateChange (QString state, QString handle, QString pub
 	{
 		mStatus = state;
 		isMessageIcon = false;
-		if (mProtocol->engine->getUserStatus(handle) == "NLN")
+		if (state == "NLN")
 		{
+			kopeteapp->contactList()->offlineBranch->takeItem(this);
 			kopeteapp->contactList()->onlineBranch->insertItem(this);
 			setPixmap(0, mProtocol->onlineIcon);
 		}
-		if ( mProtocol->engine->getUserStatus(handle) == "FLN")
+		if ( state == "FLN")
 		{
+			kopeteapp->contactList()->onlineBranch->takeItem(this);
 			kopeteapp->contactList()->offlineBranch->insertItem(this);
 			setPixmap(0, mProtocol->offlineIcon);
 		}
+		
 		/*
-		if (status == STATUS_AWAY)
+		else
 		{
-			kopeteapp->contactList()->onlineBranch->insertItem(this);
+			//kopeteapp->contactList()->onlineBranch->insertItem(this);
 			setPixmap(0, mProtocol->awayIcon);
 		}
-		if (status == STATUS_DND || status == STATUS_DND_99)
-		{
-			kopeteapp->contactList()->onlineBranch->insertItem(this);
-			setPixmap(0, mProtocol->dndIcon);
-		}
-		if (status == STATUS_NA_99 || status == STATUS_NA)
-		{
-			kopeteapp->contactList()->onlineBranch->insertItem(this);
-			setPixmap(0, mProtocol->naIcon);
-		}
-		if (status == STATUS_OCCUPIED || status == STATUS_OCCUPIED_MAC)
-		{
-			kopeteapp->contactList()->onlineBranch->insertItem(this);
-			setPixmap(0, mProtocol->occupiedIcon);
-		}
-	*/
+		*/
+		
 	}
 }
 
