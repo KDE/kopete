@@ -22,6 +22,7 @@
 #include <qglobal.h>
 #include <qregexp.h>
 #include <qtimer.h>
+#include <qstylesheet.h>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -273,38 +274,35 @@ void Kopete::cancelEvent( KopeteEvent *event)
 */
 QString Kopete::parseEmoticons( QString message )
 {
-	kdDebug() << "[Kopete] parseEmoticons()" << endl;
+	//kdDebug() << "[Kopete] parseEmoticons()" << endl;
 	// if emoticons are disabled, we do nothing
 	if ( !KopetePrefs::prefs()->useEmoticons() )
 		return message;
 		
-	kdDebug() << "[[" << message << "]]" << endl;
+	//kdDebug() << "[[" << message << "]]" << endl;
 
 	QStringList emoticons = KopeteEmoticons::emoticons()->emoticonList();
 	QString em;
 	int p = -1;
 	for ( QStringList::Iterator it = emoticons.begin(); it != emoticons.end(); ++it )
 	{
-		em = (*it);
+		em = QStyleSheet::escape(*it); 
 //		kdDebug() << "looking for " << em << endl;
 
 		#if (QT_VERSION-0 >= 0x030100)
-		em.replace( ">", "&gt;" );
-		em.replace( "<", "&lt;" );
 		message.replace( em, "<img src=\"" +
 			KopeteEmoticons::emoticons()->emoticonToPicPath(*it) + "\">" );
 		#else
-		em.replace( QRegExp(">"), "&gt;" );
-		em.replace( QRegExp("<"), "&lt;" );
 		while ( (p = message.find(em,0,true)) != -1 )
 		{
 			message = message.remove( p, em.length() );
 			message = message.insert( p, "<img src=\"" +
 				KopeteEmoticons::emoticons()->emoticonToPicPath(*it) + "\">" );
 		}
-		#endif
-
+		#endif 
 	}
+	//FIXME: if I tape "<-)" , "&lt;-)" is interpreted and the ;-) smileys is showed
+
 	return message;
 }
 

@@ -183,7 +183,7 @@ void KopeteContact::showContextMenu(const QPoint& p)
 {
 	/* Build the menu */	
 	contextMenu = new KPopupMenu();
-	contextMenu->insertTitle( QString("%1 <%2> (%3)").arg(displayName()).arg(id()).arg(statusText()) ); // Name (status)
+	contextMenu->insertTitle( displayName()+" <"+id()+"> ("+statusText()+")" );   
 	actionSendMessage->plug( contextMenu );
 	actionViewHistory->plug( contextMenu );
 	contextMenu->insertSeparator();
