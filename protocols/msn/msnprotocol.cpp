@@ -151,15 +151,12 @@ void MSNProtocol::Connect()
 		return;
 	}
 
-	KGlobal::config()->setGroup("MSN");
-	kdDebug() << "Attempting to connect to MSN" << endl;
-	kdDebug() << "Setting Monopoly mode..." << endl;
-	kdDebug() << "Using Microsoft UserID " << KGlobal::config()->readEntry("UserID", "0") << " with password (hidden)" << endl;
-	KGlobal::config()->setGroup("MSN");
-
+	KGlobal::config()->setGroup( "MSN" );
 	m_msnId      = KGlobal::config()->readEntry( "UserID", "" );
 	m_password   = KGlobal::config()->readEntry( "Password", "" );
 
+	kdDebug() << "MSNProtocol::connect: Connecting to MSN with Passport "
+		<< m_msnId << endl;
 	m_serviceSocket = new KMSNServiceSocket( m_msnId );
 
 	connect( m_serviceSocket, SIGNAL( groupAdded( QString, uint,uint ) ),
