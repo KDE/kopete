@@ -33,7 +33,7 @@ class QGridLayout;
 class QLabel;
 class QLineEdit;
 class QPushButton;
-class QListView;
+class KListView;
 class QSpinBox;
 class QListViewItem;
 
@@ -69,7 +69,7 @@ class ChannelList
 		QLineEdit* channelSearch;
 		QSpinBox* numUsers;
 		QPushButton* mSearchButton;
-		QListView* mChannelList;
+		KListView* mChannelList;
 		QVBoxLayout* ChannelListLayout;
 		QHBoxLayout* layout72_2;
 		KIRC::Engine *m_engine;
