@@ -35,3 +35,6 @@ xmldata_DATA = ircnetworks.xml
 xmldatadir = $(kde_datadir)/kopete
 
 EXTRA_DIST = $(xmldata_DATA)
+
+mydatadir = $(kde_datadir)/kopete
+mydata_DATA = ircchatui.rc
