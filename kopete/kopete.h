@@ -119,6 +119,7 @@ class Kopete : public KUniqueApplication
 	LibraryLoader *mLibraryLoader;
 	KIconLoader *mIconLoader;
 	KopeteEmoticons mEmoticons;
+	QString mEmoticonTheme;
 	static void cleverKCrashHack(int);
 	void loadPlugins();
 	KopeteSystemTray *tray;
