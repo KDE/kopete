@@ -1,8 +1,8 @@
 /***************************************************************************
-                          connectionstatusplugin.cpp  -  description
+                          connectionstatusplugin.cpp
                              -------------------
     begin                : 26th Oct 2002
-    copyright            : (C) 2002 by Chris Howells, Duncan Mac-Vicar Prett
+    copyright            : (C) 2002 by Chris Howells
     email                : howells@kde.org
  ***************************************************************************/
 
@@ -10,8 +10,7 @@
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
+ *   the Free Software Foundation; version 2 of the License.		       *
  *                                                                         *
  ***************************************************************************/
 
@@ -25,11 +24,10 @@
 
 K_EXPORT_COMPONENT_FACTORY(kopete_connectionstatus, KGenericFactory<ConnectionStatusPlugin>);
 
-ConnectionStatusPlugin::ConnectionStatusPlugin(QObject *parent, const char *name,
-	const QStringList& /* args */ )
-: KopetePlugin(parent, name)
+ConnectionStatusPlugin::ConnectionStatusPlugin(QObject *parent, const char *name, const QStringList& /* args */ ) : KopetePlugin(parent, name)
 {
 	kdDebug(14301) << "ConnectionStatusPlugin::ConnectionStatusPlugin()" << endl;
+	
 	qtTimer = new QTimer();
 	connect(qtTimer, SIGNAL(timeout()), this,
 		 SLOT(slotCheckStatus()) );
@@ -73,10 +71,10 @@ void ConnectionStatusPlugin::setConnectedStatus(bool connected)
 {
 	/* We have to handle a few cases here. First is the machine is connected, and the plugin thinks
 	* we're connected. Then we don't do anything. Next, we can have machine connected, but plugin thinks
-	* we're disconnected. Then we call slotConnectAll(). Also, machine disconnected, plugin disconnected -- we
+	* we're disconnected. Also, machine disconnected, plugin disconnected -- we
 	* don't do anything. Finally, we can have the machine disconnected, and the plugin thinks we're
-	* connected -- then we call slotDisconnectAll(). This mechanism is required so that we don't
-	* keep calling slotConnectAll() or slotDisconnectAll() constantly.
+	* connected. This mechanism is required so that we don't keep calling the connect/disconnect functions
+	* constantly.
 	*/
 
 	kdDebug(14301) << "ConnectionStatusPlugin::setConnectedStatus()" << endl;
