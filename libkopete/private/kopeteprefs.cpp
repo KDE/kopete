@@ -53,6 +53,8 @@ void KopetePrefs::load()
 //	kdDebug(14010) << "KopetePrefs::load()" << endl;
 	config->setGroup("Appearance");
 
+	mWindowAppearanceChanged = false;
+
 	mIconTheme		= config->readEntry("EmoticonTheme", defaultTheme());
 	mUseEmoticons		= config->readBoolEntry("Use Emoticons", true);
 	mShowOffline		= config->readBoolEntry("ShowOfflineUsers", true);
