@@ -9,3 +9,7 @@ kopete_translator_la_LIBADD      = ../../libkopete/libkopete.la -lkio
 
 service_DATA = translator.desktop
 servicedir = $(kde_servicesdir)
+
+mydatadir = $(kde_datadir)/kopete
+mydata_DATA = translatorui.rc
+

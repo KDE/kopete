@@ -23,6 +23,7 @@
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
 #include "kopeteview.h"
+#include "kopetecontactlist.h"
 
 #include "historydialog.h"
 #include "historyplugin.h"
@@ -41,6 +42,13 @@ HistoryPlugin::HistoryPlugin( QObject *parent, const char *name, const QStringLi
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL( viewCreated( KopeteView* ) ), this, SLOT( slotViewCreated( KopeteView* ) ) );
 
 	m_prefs=new HistoryPreferences(this);
+
+
+	KAction *viewMetaContactHistory= new KAction( i18n("View &History" ), QString::fromLatin1( "history" ), 0, this, SLOT(slotViewHistory()), actionCollection() , "viewMetaContactHistory" );
+	connect ( KopeteContactList::contactList() , SIGNAL( metaContactSelected(bool)) , viewMetaContactHistory , SLOT(setEnabled(bool)));
+	viewMetaContactHistory->setEnabled(KopeteContactList::contactList()->selectedMetaContacts().count()==1 );
+
+	setXMLFile("historyui.rc");
 
 	if(detectOldHistory())
 	{
@@ -167,17 +175,6 @@ void HistoryPlugin::slotMessageDisplayed(KopeteMessage &m)
 */
 }
 
-KActionCollection *HistoryPlugin::customContextMenuActions(KopeteMetaContact *m)
-{
-	delete m_collection;
-
-	m_collection = new KActionCollection(this);
-
-	m_collection->insert(new KAction( i18n("View &History" ), QString::fromLatin1( "history" ), 0, this, SLOT(slotViewHistory()), m_collection ));
-	m_currentMetaContact=m;
-	return m_collection;
-}
-
 KActionCollection *HistoryPlugin::customChatActions(KopeteMessageManager *KMM)
 {
 	delete m_collection;
@@ -195,7 +192,9 @@ KActionCollection *HistoryPlugin::customChatActions(KopeteMessageManager *KMM)
 
 void HistoryPlugin::slotViewHistory()
 {
-	new HistoryDialog( m_currentMetaContact, true , 50 ); //, qApp->mainWidget(), "KopeteHistoryDialog" );
+	KopeteMetaContact *m=KopeteContactList::contactList()->selectedMetaContacts().first();
+	if(m)
+		new HistoryDialog( m, true , 50 ); //, qApp->mainWidget(), "KopeteHistoryDialog" );
 }
 
 void HistoryPlugin::slotPrevious()

@@ -52,16 +52,6 @@ public:
 	CryptographyPlugin( QObject *parent, const char *name, const QStringList &args );
 	~CryptographyPlugin();
 
-
-	/***************************************************************************
-	 *   Re-implementation of KopetePlugin class methods                       *
-	 ***************************************************************************/
-
-	virtual KActionCollection *customContextMenuActions(KopeteMetaContact*);
-//	virtual KActionCollection *customChatActions(KopeteMessageManager*);
-
-
-
 public slots:
 
 	void slotIncomingMessage( KopeteMessage& msg );
@@ -80,9 +70,6 @@ private:
 
 	//cache messages for showing
 	QMap<QString, QString> m_cachedMessages;
-
-	KActionCollection *m_collection;
-	KopeteMetaContact *m_currentMetaContact;
 };
 
 #endif

@@ -1,0 +1,12 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="kopete_translator" version="1">
+	<MenuBar>
+		<Menu name="edit">
+			<text>&amp;Edit</text>
+			<Action name="contactLanguage" />
+		</Menu>
+	</MenuBar>
+	<Menu name="contact_popup">
+		<Action name="contactLanguage" />
+  	</Menu>
+</kpartgui>

@@ -25,6 +25,7 @@
 #include <kgenericfactory.h>
 
 #include "kopetemetacontact.h"
+#include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteview.h"
 
@@ -125,6 +126,19 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name,
 	connect( KopeteMessageManagerFactory::factory(),
 		SIGNAL( aboutToSend( KopeteMessage & ) ),
 		SLOT( slotOutgoingMessage( KopeteMessage & ) ) );
+
+	QStringList keys;
+	int k;
+	for ( k=0; k <= m_lc; k++)
+	{
+		keys << m_langs[ languageKey(k) ];
+	}
+	m_actionLanguage=new KListAction(i18n("Set &Language"),"",0,  actionCollection() ,"contactLanguage");
+	m_actionLanguage->setItems( keys );
+	connect( m_actionLanguage, SIGNAL( activated() ), this, SLOT(slotSetLanguage()) );
+	connect( KopeteContactList::contactList() , SIGNAL( metaContactSelected(bool) ) , this , SLOT(slotSelectionChanged(bool)));
+
+	setXMLFile("translatorui.rc");
 }
 
 TranslatorPlugin::~TranslatorPlugin()
@@ -139,33 +153,32 @@ TranslatorPlugin* TranslatorPlugin::plugin()
 
 TranslatorPlugin* TranslatorPlugin::pluginStatic_ = 0L;
 
-KActionCollection *TranslatorPlugin::customContextMenuActions(KopeteMetaContact *m)
+void TranslatorPlugin::slotSelectionChanged(bool b)
 {
-	QStringList keys;
+	m_actionLanguage->setEnabled(b);
+
+	if(!b)
+		return;
+
+	KopeteMetaContact *m=KopeteContactList::contactList()->selectedMetaContacts().first();
+
+	if(!m)
+		return;
+
+	//Update the checkmark
+
+	/*QStringList keys;
 	int k;
 	for ( k=0; k <= m_lc; k++)
 	{
 		keys << m_langs[ languageKey(k) ];
-	}
-
-	delete m_actionCollection;
-
-	m_actionCollection = new KActionCollection(this);
-	m_actionLanguage=new KListAction(i18n("Set &Language"),"",0,  m_actionCollection ,"m_actionLanguage");
-
-	m_actionLanguage->setItems( keys );
+	}*/
 
 	QString languageKey = m->pluginData( this, "languageKey" );
 	if( !languageKey.isEmpty() && languageKey != "null" )
 		m_actionLanguage->setCurrentItem( languageIndex( languageKey ) );
 	else
 		m_actionLanguage->setCurrentItem( languageIndex( "null" ) );
-
-
-	connect( m_actionLanguage, SIGNAL( activated() ), this, SLOT(slotSetLanguage()) );
-	m_actionCollection->insert(m_actionLanguage);
-	m_currentMetaContact=m;
-	return m_actionCollection;
 }
 
 KActionCollection *TranslatorPlugin::customChatActions(KopeteMessageManager *KMM)
@@ -484,9 +497,10 @@ void TranslatorPlugin::slotJobDone ( KIO::Job *job)
 
 void TranslatorPlugin::slotSetLanguage()
 {
-	if( m_actionLanguage && m_currentMetaContact)
+	KopeteMetaContact *m=KopeteContactList::contactList()->selectedMetaContacts().first();
+	if( m && m_actionLanguage )
 	{
-		m_currentMetaContact->setPluginData( this, "languageKey", languageKey( m_actionLanguage->currentItem() ) );
+		m->setPluginData( this, "languageKey", languageKey( m_actionLanguage->currentItem() ) );
 	}
 }
 

@@ -67,7 +67,6 @@ void KopetePlugin::addAddressBookField( const QString &field, AddressBookFieldAd
 
  KActionCollection *KopetePlugin::customChatWindowPopupActions( const KopeteMessage &, DOM::Node & ) { return 0L; }
  KActionCollection *KopetePlugin::customToolbarActions() { return 0L; }
- KActionCollection *KopetePlugin::customContextMenuActions(KopeteMetaContact*) { return 0l; }
  KActionCollection *KopetePlugin::customChatActions(KopeteMessageManager*) { return 0l; }
 
 #include "kopeteplugin.moc"

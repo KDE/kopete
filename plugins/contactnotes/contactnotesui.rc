@@ -1,0 +1,12 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="kopete_contactnotes" version="1">
+	<MenuBar>
+		<Menu name="edit">
+			<text>&amp;Edit</text>
+			<Action name="editContactNotes" />
+		</Menu>
+	</MenuBar>
+	<Menu name="contact_popup">
+		<Action name="editContactNotes" />
+  	</Menu>
+</kpartgui>

@@ -20,6 +20,7 @@
 #define KOPETEPLUGIN_H
 
 #include <qobject.h>
+#include <kxmlguiclient.h>
 #include <qstringlist.h>
 
 #include <dom/dom_node.h>
@@ -35,8 +36,11 @@ class KopeteMessage;
  *
  * KopetePlugin is the base class for all Kopete plugins, and can implement
  * virtually anything you like.
+ * KopetePlugin inherits from KXMLGUIClient. it is used in the contactlist.
+ * please not the the client is added *RIGHT* after the plugin is created.
+ * so you have to make every actions in the constructor
  */
-class KopetePlugin : public QObject
+class KopetePlugin : public QObject , public KXMLGUIClient
 {
 	Q_OBJECT
 
@@ -82,12 +86,6 @@ public:
 	 * as index field will reset the value of index field!
 	 */
 	void addAddressBookField( const QString &field, AddressBookFieldAddMode mode = AddOnly );
-
-	/**
-	 * Returns a set of custom menu items for the meta contact's context menu
-	 */
-	virtual KActionCollection *customContextMenuActions(KopeteMetaContact*) ;
-
 
 	/**
 	 * Returns a set of action items for the chatWindows

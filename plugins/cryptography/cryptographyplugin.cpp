@@ -23,6 +23,7 @@
 #include <kgenericfactory.h>
 
 #include "kopetemetacontact.h"
+#include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
 
 #include "cryptographyplugin.h"
@@ -51,16 +52,23 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name,
 		SIGNAL( aboutToSend( KopeteMessage & ) ),
 		SLOT( slotOutgoingMessage( KopeteMessage & ) ) );
 
-	m_collection=0l;
-	m_currentMetaContact=0L;
 	m_cachedPass_timer = new QTimer(this, "m_cachedPass_timer" );
 	QObject::connect(m_cachedPass_timer, SIGNAL(timeout()), this, SLOT(slotForgetCachedPass() ));
+
+
+	KAction *action=new KAction( i18n("&Select Cryptography Public Key"), "kgpg", 0, this, SLOT (slotSelectContactKey()), actionCollection() , "contactSelectKey");
+	connect ( KopeteContactList::contactList() , SIGNAL( metaContactSelected(bool)) , action , SLOT(setEnabled(bool)));
+	action->setEnabled(KopeteContactList::contactList()->selectedMetaContacts().count()==1 );
+
+	setXMLFile("cryptographyui.rc");
+
 }
+
+
 
 CryptographyPlugin::~CryptographyPlugin()
 {
 	pluginStatic_ = 0L;
-	delete m_collection;
 }
 
 CryptographyPlugin* CryptographyPlugin::plugin()
@@ -85,19 +93,6 @@ void CryptographyPlugin::setCachedPass(const QCString& p)
 	pluginStatic_->m_cachedPass=p;
 }
 
-
-KActionCollection *CryptographyPlugin::customContextMenuActions(KopeteMetaContact *m)
-{
-	delete m_collection;
-
-	m_collection = new KActionCollection(this);
-
-	KAction *action=new KAction( i18n("&Select Cryptography Public Key"), "kgpg", 0, this, SLOT (slotSelectContactKey()), m_collection);
-
-	m_collection->insert(action);
-	m_currentMetaContact=m;
-	return m_collection;
-}
 
 /*KActionCollection *CryptographyPlugin::customChatActions(KopeteMessageManager *KMM)
 {
@@ -217,13 +212,16 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 
 void CryptographyPlugin::slotSelectContactKey()
 {
-	QString key = m_currentMetaContact->pluginData( this, "gpgKey" );
-	CryptographySelectUserKey *opts = new CryptographySelectUserKey( key, m_currentMetaContact );
+	KopeteMetaContact *m=KopeteContactList::contactList()->selectedMetaContacts().first();
+	if(!m)
+		return;
+	QString key = m->pluginData( this, "gpgKey" );
+	CryptographySelectUserKey *opts = new CryptographySelectUserKey( key, m );
 	opts->exec();
 	if( opts->result() )
 	{
 		key = opts->publicKey();
-		m_currentMetaContact->setPluginData( this, "gpgKey", key );
+		m->setPluginData( this, "gpgKey", key );
 	}
 	delete opts;
 }

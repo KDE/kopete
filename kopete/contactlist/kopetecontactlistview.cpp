@@ -49,8 +49,6 @@
 #include "kopetestatusgroupviewitem.h"
 #include "kopeteviewmanager.h"
 #include "kopetestdaction.h"
-#include "pluginloader.h" //needed to show actions plugin
-#include "kopeteplugin.h" //needed to show plugins actions
 
 #if QT_VERSION < 0x030100
 #include <qtooltip.h>
@@ -693,25 +691,6 @@ void KopeteContactListView::slotContextMenu( KListView*, QListViewItem *item,
 				popup->insertTitle (title ,0,0);
 			else
 				popup->changeTitle (0,title);
-
-			//-- Specific plugins actions
-			QPtrList<KopetePlugin> ps = LibraryLoader::pluginLoader()->plugins();
-			KPopupMenu *actions=new KPopupMenu();
-			connect( popup, SIGNAL(aboutToHide()) , actions , SLOT(deleteLater()));
-			for( KopetePlugin *p = ps.first() ; p ; p = ps.next() )
-			{
-				KActionCollection *customActions = p->customContextMenuActions(metaLVI->metaContact());
-				if(customActions)
-				{
-					for(unsigned int i = 0; i < customActions->count(); i++)
-					{
-						KAction *a=customActions->action(i);
-						connect( popup, SIGNAL(aboutToHide()) , a , SLOT(deleteLater()));
-						a->plug( actions );
-					}
-				}
-			}
-			popup->insertItem( i18n("Plugins Actions"), actions );
 
 			//-- Submenus for separate contacts actions
 			bool sep=false;  //FIXME: find if there is already a separator in the end

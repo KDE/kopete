@@ -71,7 +71,6 @@ public:
 	 *   Re-implementation of KopetePlugin class methods                       *
 	 ***************************************************************************/
 
-	virtual KActionCollection *customContextMenuActions(KopeteMetaContact*);
 	virtual KActionCollection *customChatActions(KopeteMessageManager*);
 
 	/***************************************************************************
@@ -102,13 +101,14 @@ public:
 	const QString& serviceKey( const int index )
 	{ return  m_servicesIntKeyMap[index]; };
 
-public slots:
+private slots:
 
 	void slotIncomingMessage( KopeteMessage& msg );
 	void slotOutgoingMessage( KopeteMessage& msg );
 	void slotDataReceived ( KIO::Job *, const QByteArray &data);
 	void slotJobDone ( KIO::Job *);
 	void slotSetLanguage();
+	void slotSelectionChanged(bool);
 
 protected:
 
@@ -151,7 +151,6 @@ private:
 
 	KActionCollection* m_actionCollection;
 	KListAction* m_actionLanguage;
-	KopeteMetaContact *m_currentMetaContact;
 	KopeteMessageManager *m_currentMessageManager;
 
 	static TranslatorPlugin* pluginStatic_;

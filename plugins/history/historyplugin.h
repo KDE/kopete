@@ -42,7 +42,6 @@ public:
 	HistoryPlugin( QObject *parent, const char *name, const QStringList &args );
 	~HistoryPlugin();
 
-	virtual KActionCollection *customContextMenuActions(KopeteMetaContact *m);
 	virtual KActionCollection *customChatActions(KopeteMessageManager *KMM);
 
 	/*
@@ -65,7 +64,6 @@ private slots:
 	void slotKMMClosed( KopeteMessageManager* );
 
 private:
-	KopeteMetaContact *m_currentMetaContact;
 	KActionCollection *m_collection;
 	KopeteMessageManager *m_currentMessageManager;
 	KopeteView *m_currentView;

@@ -9,3 +9,7 @@ kopete_cryptography_la_LIBADD      = ../../libkopete/libkopete.la
 
 service_DATA = cryptography.desktop
 servicedir = $(kde_servicesdir)
+
+
+mydatadir = $(kde_datadir)/kopete
+mydata_DATA = cryptographyui.rc

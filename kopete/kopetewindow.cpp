@@ -52,6 +52,7 @@
 #include "kopeteaccountstatusbaricon.h"
 #include "kopeteprotocolstatusbaricon.h"
 
+
 //#include "addaccountwizard.h"
 
 
@@ -81,15 +82,22 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	/* -------------------------------------------------------------------------------- */
 
 	loadOptions();
-	// Trap all loaded plugins, so we can add their status bar icons accordingly
-	connect( LibraryLoader::pluginLoader(),
-		SIGNAL( pluginLoaded( KopetePlugin * ) ),
-		this, SLOT( slotPluginLoaded( KopetePlugin * ) ) );
-
+	// Trap all loaded plugins, so we can add their status bar icons accordingly , also used to add XMLGUIClient
+	connect( LibraryLoader::pluginLoader(), SIGNAL( pluginLoaded( KopetePlugin * ) ), this, SLOT( slotPluginLoaded( KopetePlugin * ) ) );
+	// And accounts too
 	connect( KopeteAccountManager::manager(), SIGNAL(accountRegistered(KopeteAccount*)), this, SLOT(slotAccountRegistered(KopeteAccount*)));
 	connect( KopeteAccountManager::manager(), SIGNAL(accountUnregistered(KopeteAccount*)), this, SLOT(slotAccountUnregistered(KopeteAccount*)));
 
 	createGUI ( "kopeteui.rc"  , false);
+
+	//-- if some plugins are already loaded, merge the GUI
+	QPtrList<KopetePlugin> ps = LibraryLoader::pluginLoader()->plugins();
+	for( KopetePlugin *p = ps.first() ; p ; p = ps.next() )
+	{
+		slotPluginLoaded(p);
+	}
+
+
 }
 
 void KopeteWindow::initView()
@@ -399,8 +407,10 @@ void KopeteWindow::slotQuit()
 	app->quitKopete();
 }
 
-void KopeteWindow::slotPluginLoaded( KopetePlugin * /* p */ )
+void KopeteWindow::slotPluginLoaded( KopetePlugin *  p  )
 {
+	guiFactory()->addClient(p);
+
 //	kdDebug(14000) << "KopeteWindow::slotPluginLoaded()" << endl;
 /*
 	KopeteProtocol *proto = dynamic_cast<KopeteProtocol *>( p );

@@ -49,21 +49,11 @@ public:
 
 	QString notes(KopeteMetaContact *m);
 
-	/***************************************************************************
-	 *   Re-implementation of KopetePlugin class methods                       *
-	 ***************************************************************************/
-
-	virtual KActionCollection *customContextMenuActions(KopeteMetaContact*);
 
 public slots:
 	void setNotes(const QString &n, KopeteMetaContact *m);
 
 private:
-
-	KActionCollection* m_actionCollection;
-	KAction* m_actionEdit;
-	KopeteMetaContact *m_currentMetaContact;
-
 	static ContactNotesPlugin* pluginStatic_;
 
 private slots: // Private slots
