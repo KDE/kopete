@@ -16,8 +16,23 @@ o Main Application
 	  a chat window. (Will)
 	o Allow to use customs icon for groups and metacontacts (Stephan / Olivier)
 	o Allow the user to move a contact to a new metacontact (Olivier)
+	o Show a link in the passive popup (i whish this could be a kdelibs item) (Olivier)
+o MSN
+	o New account edit page, that allow to set phone numbers, and set if we want to
+	   block spam from unknown people, and show the reverse contactlist (Olivier)
+
+Kopete 0.7.1
+================
+
+o Main Application
 	o Actually _store_ the password after you type it in the dialog (the config
 	  was never synced!) (Martijn)
+o Translator
+	o Fix BabbleFish "protocol?" change (Olivier)
+o MSN
+	o Fix crash when filetransfer (Olivier)
+	o MSNP9 implementation to be able to live after 15 oct (Olivier)
+
 
 Kopete 0.7 (released 2003/08/04)
 ================================
