@@ -154,7 +154,7 @@ KopeteMessageManager* OscarContact::msgManager()
 								mProtocol->myself(), theContacts,
 								mProtocol, KopeteMessageManager::ChatWindow);
 		QObject::connect(
-						mMsgMaill have  acomnager,
+						mMsgManager,
 						SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager *)),
 						this,
 						SLOT(slotSendMsg(const KopeteMessage&, KopeteMessageManager *)));
