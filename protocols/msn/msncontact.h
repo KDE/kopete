@@ -30,73 +30,65 @@ class KListAction;
 class KPopupMenu;
 
 class KopeteHistoryDialog;
-
-/* Not usefull yet */
-struct MSNMessageStruct
-{
-	QString userid;
-	QString message;
-};
-
 class MSNProtocol;
 
 class MSNContact : public KopeteContact
 {
 	Q_OBJECT
-	public:
-		MSNContact(QString userid, const QString name, QString group, MSNProtocol *protocol);
-		
-		void initContact(QString userid, const QString name, MSNProtocol *protocol);
-		virtual void showContextMenu(QPoint);
-		virtual void execute();
 
-		QString mUserID;
-		QString mName;
-		bool hasLocalGroup;
+public:
+    MSNContact(QString userid, const QString name, QString group, MSNProtocol *protocol);
 
-		ContactStatus status() const;
-		QString statusText() const;
-		QString statusIcon() const;
-		int importance() const;
+    void initContact(QString userid, const QString name, MSNProtocol *protocol);
+    virtual void showContextMenu(QPoint);
+    virtual void execute();
 
-	public slots:
-		void slotContactRemoved(QString, QString);
-		void slotChatThisUser();
+    ContactStatus status() const;
+    QString statusText() const;
+    QString statusIcon() const;
+    int importance() const;
 
-	private slots:
-		void slotRemoveThisUser();
-		void slotCopyThisUser();
-		void slotMoveThisUser();
-		void slotRemoveFromGroup();
-		
-		void slotUpdateContact (QString, uint);
-		// We have to delete the contact if MSN disconenct
-		// We will use the engine signal
-		void slotDeleteMySelf ( bool );
+public slots:
+    void slotContactRemoved(QString, QString);
+    void slotChatThisUser();
 
-		void slotHistoryDialogClosing();
-		void slotCloseHistoryDialog();
-		void slotViewHistory();
+signals:
+    void chatToUser( QString );
 
+private slots:
+    void slotRemoveThisUser();
+    void slotCopyThisUser();
+    void slotMoveThisUser();
+    void slotRemoveFromGroup();
 
-	private:
-		void initActions();
+    void slotUpdateContact (QString, uint);
+    // We have to delete the contact if MSN disconenct
+    // We will use the engine signal
+    void slotDeleteMySelf ( bool );
 
-		QString mGroup;
-		uint mStatus;
-		MSNProtocol *mProtocol;
-		KopeteHistoryDialog *historyDialog;
-		KPopupMenu *popup;
-		KAction* actionRemove;
-		KAction* actionRemoveFromGroup;
-		KAction* actionChat;
-		KAction* actionInfo;
-		KAction* actionHistory;
-		KListAction *actionContactMove;
-		KListAction *actionContactCopy;
+    void slotHistoryDialogClosing();
+    void slotCloseHistoryDialog();
+    void slotViewHistory();
 
-	signals:
-		void chatToUser( QString );
+private:
+    void initActions();
+
+    QString mUserID;
+    QString mName;
+    bool hasLocalGroup;
+
+    QString mGroup;
+    uint mStatus;
+    MSNProtocol *mProtocol;
+    KopeteHistoryDialog *historyDialog;
+    KPopupMenu *popup;
+    KAction* actionRemove;
+    KAction* actionRemoveFromGroup;
+    KAction* actionChat;
+    KAction* actionInfo;
+    KAction* actionHistory;
+    KListAction *actionContactMove;
+    KListAction *actionContactCopy;
 };
 
 #endif
