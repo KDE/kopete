@@ -333,14 +333,16 @@ void NowListeningPlugin::advertiseToChat( KopeteMessageManager *theChat, QString
 	// reduce the recipients to the set of members who are interested
 	// in our output
 	KopeteContactPtrList pl = theChat->members();
-	QStringList myData;
+	
 	// avoid skipping one member when removing
 	// (old version's pl.remove(); pl.next() skipped because
 	// remove() moves on to next for you.
 	pl.first();
 	while ( pl.current() )
 	{
-		myData = pl.current()->metaContact()->pluginData( this, NL_DATA_KEY );
+		QStringList myData;
+		if( pl.current()->metaContact() )
+			myData = pl.current()->metaContact()->pluginData( this, NL_DATA_KEY );
 		if ( myData.isEmpty() || myData.first() != "true" )
 			pl.remove();
 		else
