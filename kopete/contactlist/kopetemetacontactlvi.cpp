@@ -88,6 +88,8 @@ void KopeteMetaContactLVI::initLVI()
 	m_actionMove = 0L;
 	m_actionCopy = 0L;
 
+	m_oldStatus=KopeteOnlineStatus::Offline;
+
 	connect( m_metaContact, SIGNAL( displayNameChanged( const QString &, const QString & ) ),
 		SLOT( slotDisplayNameChanged() ) );
 
@@ -114,16 +116,12 @@ void KopeteMetaContactLVI::initLVI()
 	mIsBlinkIcon=false;
 	m_event=0L;
 
-	if(!mBlinkIcon)
-	{
-		mBlinkIcon = new QPixmap( KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "newmsg" ), KIcon::Small ) );
-	}
+
+	//if(!mBlinkIcon) mBlinkIcon = new QPixmap(KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "newmsg" ), KIcon::Small));
 
 	slotUpdateIcons();
 	slotDisplayNameChanged();
 }
-
-QPixmap *KopeteMetaContactLVI::mBlinkIcon=0L;
 
 KopeteMetaContactLVI::~KopeteMetaContactLVI()
 {
@@ -181,8 +179,12 @@ void KopeteMetaContactLVI::slotContactStatusChanged()
 
 	// FIXME: All this code should be in kopetemetacontact.cpp.. having it in the LVI makes it all fire
 	// multiple times if the user is in multiple groups - Jason
-	QString event = (m_metaContact->status() == KopeteOnlineStatus::Online) ?
+
+	// NOTE: this assume that the use don't want a notification when the contact was away and goes online
+	QString event = (m_metaContact->status() == KopeteOnlineStatus::Online  && ( m_oldStatus == KopeteOnlineStatus::Offline || m_oldStatus == KopeteOnlineStatus::Unknown )  ) ?
 		"kopete_online" : "kopete_status_change";
+
+	m_oldStatus=m_metaContact->status();
 
 #if KDE_VERSION >= 0x030101
 	int winId = KopeteSystemTray::systemTray() ?
@@ -558,15 +560,11 @@ void KopeteMetaContactLVI::catchEvent(KopeteEvent *event)
 void KopeteMetaContactLVI::slotBlink()
 {
 	if (mIsBlinkIcon)
-	{
 		setPixmap(0,SmallIcon(m_metaContact->statusIcon()));
-		mIsBlinkIcon = false;
-	}
 	else
-	{
-		setPixmap(0,*mBlinkIcon);
-		mIsBlinkIcon = true;
-	}
+		setPixmap(0,SmallIcon("newmsg"));
+
+	mIsBlinkIcon = !mIsBlinkIcon;
 }
 
 void KopeteMetaContactLVI::slotEventDone(KopeteEvent* )
