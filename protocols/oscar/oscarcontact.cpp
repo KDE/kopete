@@ -38,7 +38,8 @@
 #include "kopetegroup.h"
 
 #include "aim.h"
-#include "aimbuddylist.h"
+#include "aimbuddy.h"
+#include "aimgroup.h"
 #include "oscarsocket.h"
 #include "oscaraccount.h"
 
@@ -62,12 +63,12 @@ OscarContact::OscarContact(const QString& name, const QString& displayName,
 	mMsgManager=0L;
 
 	// BEGIN TODO: remove AIMBuddy
-	mListContact=mAccount->internalBuddyList()->findBuddy(mName);
+	mListContact = mAccount->findBuddy( mName );
 
 	if (!mListContact) // this Contact is not yet in the internal contactlist!
 	{
 		mListContact=new AIMBuddy(mAccount->randomNewBuddyNum(), 0, mName);
-		mAccount->internalBuddyList()->addBuddy(mListContact);
+		mAccount->addBuddy( mListContact );
 	}
 	// END TODO: remove AIMBuddy
 
@@ -242,14 +243,14 @@ void OscarContact::slotDeleteContact()
 {
 	kdDebug(14150) << k_funcinfo << "contact '" << displayName() << "'" << endl;
 
-	AIMGroup *group = mAccount->internalBuddyList()->findGroup(mGroupId);
+	AIMGroup *group = mAccount->findGroup( mGroupId );
 
 	if(!group && metaContact() && metaContact()->groups().count() > 0)
 	{
 		QString grpName=metaContact()->groups().first()->displayName();
 		kdDebug(14150) << k_funcinfo <<
 			"searching group by name '" << grpName << "'" << endl;
-		group=mAccount->internalBuddyList()->findGroup(grpName);
+		group = mAccount->findGroup( grpName );
 	}
 
 	if (!group)
@@ -263,7 +264,7 @@ void OscarContact::slotDeleteContact()
 		mAccount->engine()->sendDelBuddy(contactName(), group->name());
 	}
 
-	mAccount->internalBuddyList()->removeBuddy(mListContact);
+	mAccount->removeBuddy( mListContact );
 	deleteLater();
 }
 
@@ -391,7 +392,7 @@ void OscarContact::syncGroups()
 
 //	kdDebug(14150) << k_funcinfo << ": Getting current oscar group " << mListContact->groupID() << " ... " << endl;
 	// Get the current (oscar) group that this contact belongs to on the server
-	AIMGroup *currentOscarGroup = mAccount->internalBuddyList()->findGroup(mGroupId);
+	AIMGroup *currentOscarGroup = mAccount->findGroup( mGroupId );
 	if (!currentOscarGroup)
 	{
 		kdDebug(14150) << k_funcinfo <<
@@ -409,8 +410,7 @@ void OscarContact::syncGroups()
 	if (currentOscarGroup->name() != firstKopeteGroup->displayName())
 	{
 		// First check to see if the new group is actually on the server list yet
-		AIMGroup *newOscarGroup =
-			mAccount->internalBuddyList()->findGroup(firstKopeteGroup->displayName());
+		AIMGroup *newOscarGroup = mAccount->findGroup( firstKopeteGroup->displayName() );
 
 		if(!newOscarGroup)
 		{
@@ -503,8 +503,7 @@ void OscarContact::rename(const QString &newNick)
 	if(mAccount->isConnected())
 	{
 		//FIXME: group handling!
-		currentOscarGroup =
-			mAccount->internalBuddyList()->findGroup(mGroupId);
+		currentOscarGroup = mAccount->findGroup( mGroupId );
 		if(!currentOscarGroup)
 		{
 			if(metaContact() && metaContact()->groups().count() > 0)
@@ -512,7 +511,7 @@ void OscarContact::rename(const QString &newNick)
 				QString grpName=metaContact()->groups().first()->displayName();
 				kdDebug(14150) << k_funcinfo <<
 					"searching group by name '" << grpName << "'" << endl;
-				currentOscarGroup=mAccount->internalBuddyList()->findGroup(grpName);
+				currentOscarGroup = mAccount->findGroup( grpName );
 			}
 		}
 

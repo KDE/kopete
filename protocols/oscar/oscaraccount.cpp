@@ -575,11 +575,6 @@ int OscarAccount::randomNewGroupNum()
 	return mRandomNewGroupNum++;
 }
 
-AIMBuddyList *OscarAccount::internalBuddyList() const
-{
-	return mInternalBuddyList;
-}
-
 void OscarAccount::setServerAddress(const QString &server)
 {
 	kdDebug(14150) << k_funcinfo << "Called, server=" << server << endl;
@@ -857,5 +852,32 @@ const QString &OscarAccount::awayMessage()
 	return mAwayMessage;
 }
 
+void OscarAccount::addBuddy( AIMBuddy *buddy )
+{
+	mInternalBuddyList->addBuddy( buddy );
+}
+
+void OscarAccount::removeBuddy( AIMBuddy *buddy )
+{
+	mInternalBuddyList->removeBuddy( buddy );
+}
+
+AIMBuddy * OscarAccount::findBuddy( const QString &screenName )
+{
+	return mInternalBuddyList->findBuddy( screenName );
+}
+
+AIMGroup * OscarAccount::findGroup( int groupId )
+{
+	return mInternalBuddyList->findGroup( groupId );
+}
+
+AIMGroup * OscarAccount::findGroup( const QString &name )
+{
+	return mInternalBuddyList->findGroup( name );
+}
+
 #include "oscaraccount.moc"
+
 // vim: set noet ts=4 sts=4 sw=4:
+

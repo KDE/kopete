@@ -80,11 +80,6 @@ public:
 	int randomNewGroupNum();
 
 	/*
-	 * Gets the internal buddy list
-	 */
-	AIMBuddyList *internalBuddyList() const;
-
-	/*
 	 * Sets the port we connect to
 	 */
 	void setServerPort(int port);
@@ -107,6 +102,37 @@ public:
 	 */
 	virtual void setStatus(const unsigned long status,
 		const QString &awayMessage = QString::null) =0;
+
+	// -- START PROXIED METHODS ------------------------------------------
+	// Proxy methods for stuff that's in AIMBuddyList. These are the only
+	// methods of AIMBuddyList used outside the account, so having them
+	// proxied here helps in getting rid of AIMBuddyList in the future
+	/**
+	 * Adds a buddy to the buddy list
+	 */
+	void addBuddy( AIMBuddy *buddy );
+
+	/**
+	 * Removes a buddy from the buddy list
+	 */
+	void removeBuddy( AIMBuddy *buddy );
+
+	/**
+	 * Finds a buddy in the buddy list. Returns 0L if none found.
+	 */
+	AIMBuddy * findBuddy( const QString &screenName );
+
+	/**
+	 * Finds a group and returns it. Uses GID
+	 */
+	AIMGroup * findGroup( int groupId );
+
+	/**
+	 * Finds a group by name
+	 */
+	AIMGroup * findGroup( const QString &name );
+
+	// -- END PROXIED METHODS --------------------------------------------
 
 public slots:
 	/*

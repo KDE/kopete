@@ -29,6 +29,9 @@
 #include <qmap.h>
 #include <qobject.h>
 
+#include "aimbuddy.h"
+#include "aimgroup.h"
+
 class AIMBuddyCaps
 {
 public:
@@ -51,77 +54,6 @@ public:
 	bool icqunknown;
 	bool trilliancrypt;
 	bool last;
-};
-
-class AIMBuddy
-{
-	public:
-		// The buddy and group ID's are required to create a buddy
-		AIMBuddy(const int buddyID, const int groupID, const QString &screenName);
-
-		// Returns the buddy id
-		int ID() const { return mBuddyID; }
-
-		// Returns the group id
-		int groupID() const { return mGroupID; }
-
-		// Returns the screenname of this buddy
-		QString screenname() const { return mScreenName; }
-
-		// Returns the alias for this buddy
-		QString alias() const { return mAlias; }
-
-		// Returns the status of this buddy
-		const int status() const {  return mStatus; }
-
-		// Sets the alias for this buddy
-		void setAlias(const QString &alias) { mAlias = alias; }
-
-		// Sets the online/offline/away status of a user
-		void setStatus(const int status) { mStatus = status; }
-
-		void setWaitAuth(bool b) { mWaitAuth = b; }
-		bool waitAuth() { return mWaitAuth; }
-
-	private:
-		friend class AIMBuddyList;
-
-		void setGroupID(const int groupID) { mGroupID = groupID; }
-
-		QString mScreenName;
-		QString mAlias;
-		int mBuddyID;
-		int mGroupID;
-	//	KopeteOnlineStatus mStatus;
-		unsigned int mStatus;
-		bool mWaitAuth;
-};
-
-class AIMGroup
-{
-	public:
-		// Group ID is required when creating
-		AIMGroup(const int);
-
-		// Returns the group's ID
-		int ID() const { return mGroupID; }
-
-		// Returns this group's name, if it has been assigned one yet
-		QString name() const { return mName; }
-
-		// Returns a list of buddies belonging to this group
-		QPtrList<AIMBuddy> buddies() const { return mBuddies; }
-
-	protected:
-		friend class AIMBuddyList;
-		void removeBuddy(AIMBuddy *);
-		bool addBuddy(AIMBuddy *);
-		void setName(const QString &name) { mName = name; }
-
-	private:
-		int mGroupID;
-		QString mName;
-		QPtrList<AIMBuddy> mBuddies;
 };
 
 class AIMBuddyList : public QObject

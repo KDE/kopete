@@ -35,9 +35,6 @@ class OscarChangeStatus;
 class OscarContact;
 class AIMContact;
 
-
-class AIMBuddyList;
-
 class AIMAccount : public OscarAccount
 {
 	Q_OBJECT
