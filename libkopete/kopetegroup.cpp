@@ -34,6 +34,10 @@ struct KopeteGroupPrivate
 	bool expanded;
 	unsigned int groupId;
 
+	/*KopeteGroup *parentGroup;
+	//in case of the loading from xml, the group might not be already loaded
+	unsigned int parentGroupId;*/
+
 	//Unique contact id per metacontact
 	static unsigned int uniqueGroupId;
 };
@@ -47,6 +51,8 @@ KopeteGroup::KopeteGroup(QString _name, GroupType _type)  : KopetePluginDataObje
 	d->type=_type;
 	d->expanded = true;
 	d->groupId=0;
+/*	d->parentGroup=0L;
+	d->parentGroupId=0;*/
 }
 KopeteGroup::KopeteGroup()  : KopetePluginDataObject(KopeteContactList::contactList())
 {
@@ -55,7 +61,10 @@ KopeteGroup::KopeteGroup()  : KopetePluginDataObject(KopeteContactList::contactL
 	d->type=Classic;
 	d->displayName=QString::null;
 	d->groupId=0;
+/*	d->parentGroup=0L;
+	d->parentGroupId=0;*/
 }
+
 
 KopeteGroup::~KopeteGroup()
 {
@@ -82,6 +91,13 @@ const QDomElement KopeteGroup::toXML()
 	QDomElement displayName = group.createElement(QString::fromLatin1("display-name"));
 	displayName.appendChild( group.createTextNode( d->displayName ) );
 	group.documentElement().appendChild( displayName );
+
+	/*if( parentGroup() != KopeteGroup::toplevel )
+	{
+		QDomElement parentG = group.createElement(QString::fromLatin1("parent-group"));
+		parentG.setAttribute( QString::fromLatin1("groupId"), QString::number( parentGroup()->groupId()) );
+		group.documentElement().appendChild( parentG );
+	}*/
 
 	// Store other plugin data
 	QValueList<QDomElement> pluginData = KopetePluginDataObject::toXML();
@@ -133,6 +149,10 @@ bool KopeteGroup::fromXML( const QDomElement& data )
 //				return false;
 			d->displayName = groupElement.text();
 		}
+		/*else if( groupElement.tagName() == QString::fromLatin1( "parent-group" ) )
+		{
+			d->parentGroupId = groupElement.attribute( QString::fromLatin1( "groupId" ) , QString::fromLatin1( "0" ) ).toUInt();
+		}*/
 		else if( groupElement.tagName() == QString::fromLatin1( "plugin-data" ) )
 		{
 			KopetePluginDataObject::fromXML(groupElement);
@@ -185,6 +205,40 @@ unsigned int KopeteGroup::groupId() const
 
 	return d->groupId;
 }
+
+/*KopeteGroup* KopeteGroup::parentGroup()
+{
+	if(d->parentGroup)
+		return d->parentGroup;
+	else if(d->parentGroupId!=0)
+	{
+		KopeteGroup *g=KopeteContactList::contactList()->getGroup(d->parentGroupId);
+		if(g)
+		{
+			d->parentGroup=g;
+			return g;
+		}
+	}
+	return KopeteGroup::toplevel;
+}
+
+void KopeteGroup::setParentGroup(KopeteGroup* g)
+{
+	KopeteGroup *old_one=parentGroup();
+	if(!g)
+		g=KopeteGroup::toplevel;
+	KopeteGroup *gr=g->parentGroup();
+	while(gr && gr != KopeteGroup::toplevel)
+	{
+		if(gr==this)
+			return;
+		gr=gr->parentGroup();
+	}
+	d->parentGroup=g;
+	emit movedToGroup( old_one , g , this );
+}*/
+
+
 
 #include "kopetegroup.moc"
 

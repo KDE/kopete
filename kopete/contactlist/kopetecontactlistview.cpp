@@ -863,6 +863,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem */*parent*/
 	KopeteMetaContactLVI *source_metaLVI=dynamic_cast<KopeteMetaContactLVI*>(source);
 	KopeteMetaContactLVI *dest_metaLVI=dynamic_cast<KopeteMetaContactLVI*>(after);
 	KopeteGroupViewItem *dest_groupLVI=dynamic_cast<KopeteGroupViewItem*>(after);
+//	KopeteGroupViewItem *source_groupLVI=dynamic_cast<KopeteGroupViewItem*>(source);
 
 	if(source_metaLVI  && dest_groupLVI)
 	{
@@ -901,6 +902,18 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem */*parent*/
 			source_metaLVI->metaContact()->moveToGroup(source_metaLVI->group() , KopeteGroup::toplevel);
 		}
 	}
+/*	else if(source_groupLVI && dest_groupLVI)
+	{
+		if(source_groupLVI->group()->parentGroup()  == dest_groupLVI->group() )
+			return;
+		source_groupLVI->group()->setParentGroup( dest_metaLVI->group() );
+	}
+ 	else if(source_groupLVI && !dest_groupLVI && dest_metaLVI)
+	{
+		if(source_groupLVI->group()->parentGroup() == KopeteGroup::toplevel)
+			return;
+		source_groupLVI->group()->setParentGroup( KopeteGroup::toplevel );
+	}*/
 	else if( e->provides( "text/uri-list" ) )
 	{
 		if ( !QUriDrag::canDecode( e ) )
@@ -916,7 +929,6 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem */*parent*/
 		{
 			dest_metaLVI->metaContact()->sendFile( *it );
 		}
-
 		e->acceptAction();
 	}
 
@@ -936,11 +948,13 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 		parent, afterme );
 
 	KopeteMetaContactLVI *dest_metaLVI=dynamic_cast<KopeteMetaContactLVI*>(afterme);
-	KopeteGroupViewItem *dest_groupLVI=dynamic_cast<KopeteGroupViewItem*>(afterme);
 
 	if( e->source() == viewport() )
 	{
 		KopeteMetaContactLVI *source_metaLVI=dynamic_cast<KopeteMetaContactLVI*>(source);
+  		KopeteGroupViewItem *dest_groupLVI=dynamic_cast<KopeteGroupViewItem*>(afterme);
+//		KopeteGroupViewItem *source_groupLVI=dynamic_cast<KopeteGroupViewItem*>(source);
+
 		if( source_metaLVI && dest_groupLVI )
 		{
 			if(source_metaLVI->group() == dest_groupLVI->group())
@@ -960,6 +974,31 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 
 			return true;
 		}
+/*		else if(source_groupLVI && dest_groupLVI)
+		{
+			if(dest_groupLVI->group() == KopeteGroup::temporary)
+				return false;
+			if(source_groupLVI->group() == KopeteGroup::temporary)
+				return false;
+			if(source_groupLVI->group()->parentGroup()  == dest_groupLVI->group() )
+				return false;
+			KopeteGroup *g=dest_groupLVI->group()->parentGroup();
+			while(g && g != KopeteGroup::toplevel)
+			{
+				if(g==source_groupLVI->group())
+					return false;
+				g=g->parentGroup();
+			}
+			return true;
+		}
+		else if(source_groupLVI && !dest_groupLVI && dest_metaLVI)
+		{
+			if(source_groupLVI->group() == KopeteGroup::temporary)
+				return false;
+			if(source_groupLVI->group()->parentGroup() == KopeteGroup::toplevel)
+				return false;
+			return true;
+		}*/
 	}
 	else
 	{

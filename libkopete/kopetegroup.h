@@ -79,13 +79,30 @@ public:
 	void setExpanded(bool in_expanded) ;
 	bool expanded() ;
 
+	/**
+	 * set the parrent group
+	 * a group = 0l equal the top-level group
+	 */
+	//void setParentGroup(KopeteGroup*);
+	/**
+	 * Acessor to the parrent group.
+	 */
+	//KopeteGroup* parentGroup();
+
 
 
 	static KopeteGroup *toplevel;
 	static KopeteGroup *temporary;
 
 signals:
+	/**
+	 * The group has been renamed
+	 */
 	void renamed(KopeteGroup* , const QString& );
+	/**
+	 * The group has changed parent group
+	 */
+	//void movedToGroup( KopeteGroup *from , KopeteGroup *to, KopeteGroup *this_one );
 
 private:
 	KopeteGroupPrivate *d;
