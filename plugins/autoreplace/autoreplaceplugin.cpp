@@ -69,19 +69,24 @@ void AutoReplacePlugin::slotAboutToSend( Kopete::Message &msg )
 
 		// replaces all matched words --> try to find a more 'economic' way
 		// "\\b(%1)\\b" doesn't work when substituting /me.
-		QString match = "(^| |\\.|\\;|\\,|\\:)(%1)($| |\\.|\\;|\\,|\\:)";
+		QString match = "(^|\\s|\\.|\\;|\\,|\\:)(%1)(\\b)";
 		AutoReplaceConfig::WordsToReplace::Iterator it;
+		bool isReplaced=false;
 		for ( it = map.begin(); it != map.end(); ++it )
 		{
 			QRegExp re( match.arg( QRegExp::escape( it.key() ) ) );
-			re.search( replaced_message );
-			QString before = re.cap(1);
-			QString after = re.cap(3);
-			replaced_message.replace( re, before + map.find( it.key() ).data() + after );
+			if( re.search( replaced_message ) != -1 )
+			{
+				QString before = re.cap(1);
+				QString after = re.cap(3);
+				replaced_message.replace( re, before + map.find( it.key() ).data() + after );
+				isReplaced=true;
+			}
 		}
 
 		// the message is now the one with replaced words
-		msg.setBody( replaced_message, Kopete::Message::PlainText );
+		if(isReplaced)
+			msg.setBody( replaced_message, Kopete::Message::PlainText );
 	}
 
 	if( msg.direction() == Kopete::Message::Outbound )
