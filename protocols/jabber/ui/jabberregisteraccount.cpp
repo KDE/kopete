@@ -228,6 +228,7 @@ void JabberRegisterAccount::setServer ( const QString &server )
 {
 
 	mMainWidget->leServer->setText ( server );
+	mMainWidget->leJID->setText ( QString ( "@%1" ).arg ( server ) );
 
 }
 
