@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include "oscarcontact.h"
+#include <qstylesheet.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <klocale.h>
@@ -318,7 +319,7 @@ void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto
 
 	KopeteContactPtrList tmpList;
 	tmpList.append(mProtocol->myself());
-	KopeteMessage msg ( this, tmpList, message, KopeteMessage::Inbound);
+	KopeteMessage msg ( this, tmpList, QStyleSheet::escape(message), KopeteMessage::Inbound);
 	msgManager()->appendMessage(msg);
 	if ( mProtocol->isAway() ) // send our away message in fire-and-forget-mode :)
 	{
@@ -330,7 +331,7 @@ void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto
 			reply = KopeteAway::message();
 
 		mProtocol->engine->sendIM(reply, mName, true);
-		KopeteMessage replymsg ( mProtocol->myself(), theContacts , reply, KopeteMessage::Outbound);
+		KopeteMessage replymsg ( mProtocol->myself(), theContacts , QStyleSheet::escape(reply), KopeteMessage::Outbound);
 		msgManager()->appendMessage(replymsg);
 	}
 }
@@ -369,7 +370,7 @@ void OscarContact::slotSendMsg(const KopeteMessage& message, KopeteMessageManage
 
 	msg.append ( "</BODY></HTML>" );
 	mProtocol->engine->sendIM( msg, mName, false );
-	KopeteMessage kopetemsg ( mProtocol->myself(), theContacts , message.body(), KopeteMessage::Outbound);
+	KopeteMessage kopetemsg ( mProtocol->myself(), theContacts , QStyleSheet::escape(message.body()), KopeteMessage::Outbound);
 	kopetemsg.setFg(message.fg());
 	kopetemsg.setBg(message.bg());
 	kopetemsg.setFont(message.font());
