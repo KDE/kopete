@@ -145,7 +145,7 @@ QString KopeteMessage::escapedBody() const
 		int stringEnd = mBody.findRev( QRegExp( QString::fromLatin1( "\\S" ) ) );
 		kdDebug(14010) << k_funcinfo << "String End:" << stringEnd <<endl;
 		if( stringEnd > -1 )
-			parsedString = QStyleSheet::escape( mBody.left( stringEnd ) );
+			parsedString = QStyleSheet::escape( mBody.left( stringEnd + 1 ) );
 		else
 			parsedString = QStyleSheet::escape( mBody );
 
