@@ -877,10 +877,6 @@ void ChatView::appendMessage(KopeteMessage &message)
 				setTabState( Changed );
 		}
 	}
-#if KDE_VERSION > KDE_MAKE_VERSION( 3, 1, 90 )
-	if((m_mainWindow != 0) && (m.direction() == KopeteMessage::Inbound))
-		KWin::demandAttention( m_mainWindow->winId() );
-#endif
 
 	if( !m_sendInProgress || message.from() != m_manager->user() )
 	{
