@@ -454,7 +454,8 @@ void JabberProtocol::slotNewContact(JabRosterEntry *contact) {
 
 	if (c) {
 		/* Existing contact, update data. */
-		c->initContact(contact->nick, group ? group : QString(""));
+		// !FIXME! seems b0rked to update the data
+		//c->initContact(contact->nick, group ? group : QString(""));
 	}
 	else {
 		kdDebug() << "[JabberProtocol] Adding contact " << contact->jid << " ..." << endl;
@@ -469,11 +470,11 @@ void JabberProtocol::slotNewContact(JabRosterEntry *contact) {
 	slotContactUpdated(contact); /* More kludges! Ugh. */
 }
 
-KopeteContact *JabberProtocol::createContact(KopeteMetaContact *parent, QString &data) {
+KopeteContact *JabberProtocol::createContact(KopeteMetaContact *parent, const QString &data) {
 	/* Assumption: data is just the JID; this could change at some stage. */
 	addContact(data);
 	if (contactList[data]) { /* EEK! Someone's already added it! */
-		return;
+		return(NULL);
 	}
 	contactList[data] = new JabberContact(data, "", QString(""), this);
 	return contactList[data]; /* o/~ superstylin */

@@ -74,7 +74,8 @@ class JabberContact:public KopeteContact {
 
     JabberResource *bestResource();
 
-    QString id(), data();
+    virtual QString id() const;
+    virtual QString data() const;
 
   public slots:
     void slotNewMessage(const JabMessage &);

@@ -484,8 +484,19 @@ void JabberContact::slotRemoveFromGroup() {
 	hasLocalGroup = false;
 }
 
-void JabberContact::id() { return mUserID; }
-void JabberContact::data() { return mUserID; }
+QString JabberContact::id() const
+{
+
+	return mUserID;
+
+}
+
+QString JabberContact::data() const
+{
+
+	return mUserID;
+
+}
 
 JabberResource::JabberResource() { 
 	kdDebug() << "Jabber resource: New Jabber resource (no params)." << endl;
