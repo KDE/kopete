@@ -203,19 +203,19 @@ void KopeteGroupViewItem::updateIcon()
 	// TODO: clever caching
 	if ( isOpen() )
 	{
-		if ( group()->useCustomIcon() )
+		if ( group()->useCustomIcon() && !group()->icon( KopetePluginDataObject::Open ).isEmpty() )
 			open = SmallIcon( group()->icon( KopetePluginDataObject::Open ) );
 		else
-			open = SmallIcon( "folder_green_open" );
+			open = SmallIcon( KOPETE_GROUP_DEFAULT_OPEN_ICON );
 
 		d->image->setPixmap( open );
 	}
 	else
 	{
-		if ( group()->useCustomIcon() )
+		if ( group()->useCustomIcon() && !group()->icon( KopetePluginDataObject::Closed ).isEmpty() )
 			closed = SmallIcon( group()->icon( KopetePluginDataObject::Closed ) );
 		else
-			closed = SmallIcon( "folder_green" );
+			closed = SmallIcon( KOPETE_GROUP_DEFAULT_CLOSED_ICON );
 
 		d->image->setPixmap( closed );
 	}

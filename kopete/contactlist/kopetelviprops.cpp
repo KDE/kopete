@@ -58,23 +58,27 @@ KopeteGVIProps::KopeteGVIProps(KopeteGroupViewItem *gvi, QWidget *parent, const 
 	mainWidget->icnbClosed->setIconSize(KIcon::SizeSmall);
 	setMainWidget(mainWidget);
 	item = gvi;
-
+	m_dirty = false;
+	
 	mainWidget->edtDisplayName->setText( item->group()->displayName() );
 	mainWidget->chkUseCustomIcons->setChecked( item->group()->useCustomIcon() );
 
 	QString openName = item->group()->icon( KopetePluginDataObject::Open );
 	if(openName.isEmpty())
-		openName = "folder_green_open"; // Default
+		openName = KOPETE_GROUP_DEFAULT_OPEN_ICON;
 	QString closeName = item->group()->icon( KopetePluginDataObject::Closed );
 	if(closeName.isEmpty())
-		closeName = "folder_green"; // Default
+		closeName = KOPETE_GROUP_DEFAULT_CLOSED_ICON;
 	mainWidget->icnbOpen->setIcon( openName );
     mainWidget->icnbClosed->setIcon( closeName );
 
 	connect( this, SIGNAL(okClicked()), this, SLOT( slotOkClicked() ) );
 	connect( mainWidget->chkUseCustomIcons, SIGNAL( toggled( bool ) ),
 		this, SLOT( slotUseCustomIconsToggled( bool ) ) );
-
+	connect( mainWidget->icnbOpen, SIGNAL( iconChanged( QString ) ),
+		SLOT( slotIconChanged() ) );
+	connect( mainWidget->icnbClosed, SIGNAL( iconChanged( QString ) ),
+		SLOT( slotIconChanged() ) );
 	slotUseCustomIconsToggled( mainWidget->chkUseCustomIcons->isChecked() );
 }
 
@@ -92,10 +96,8 @@ void KopeteGVIProps::slotOkClicked()
 
 	item->group()->setUseCustomIcon( mainWidget->chkUseCustomIcons->isChecked() );
 
-	// only call setIcon if either closed or open is not set to default icon
-	if(
-		mainWidget->icnbOpen->icon() != "folder_green_open" ||
-		mainWidget->icnbClosed->icon() != "folder_green" )
+	// only call setIcon if the icon was changed
+	if( m_dirty )
 	{
 		item->group()->setIcon( mainWidget->icnbOpen->icon(),
 			 KopetePluginDataObject::Open );
@@ -113,6 +115,10 @@ void KopeteGVIProps::slotUseCustomIconsToggled(bool on)
 	mainWidget->icnbClosed->setEnabled( on );
 }
 
+void KopeteGVIProps::slotIconChanged()
+{
+	m_dirty = true;
+}
 
 // =============================================================================
 

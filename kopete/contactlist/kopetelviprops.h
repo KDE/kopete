@@ -39,10 +39,12 @@ class KopeteGVIProps: public KDialogBase
 	private:
 		KopeteGVIPropsWidget *mainWidget;
 		KopeteGroupViewItem *item;
+		bool m_dirty;
 
 	private slots:
 		void slotOkClicked();
 		void slotUseCustomIconsToggled(bool on);
+		void slotIconChanged();
 };
 
 
