@@ -60,7 +60,7 @@ Comment[ven]=Ndivhadzo ya mubvumo uitela mitambo ya Kopete
 Comment[wa]=Notifiaedje sonore po les evenmints di Kopete
 Comment[xh]=Isazisi Sesandi se Ziganeko ze Kopete
 default_sound=Kopete_Event.ogg
-default_presentation=1
+default_presentation=65
 
 [kopete_incoming]
 Name=Incoming
@@ -104,7 +104,7 @@ Comment[ven]=Milaedza ine ya khou touda yo swika
 Comment[wa]=Noveas emilaedjes en intrêye
 Comment[xh]=Umyalezo ongenayo uyafika
 default_sound=Kopete_Received.ogg
-default_presentation=0
+default_presentation=64
 
 [kopete_outgoing]
 Name=Outgoing
