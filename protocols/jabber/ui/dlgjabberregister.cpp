@@ -54,10 +54,12 @@ void DlgJabberRegister::slotGotForm()
 
 	if(!task->success())
 	{
-		KMessageBox::information(this,
-								 i18n("Unable to retrieve registration form"),
+		KMessageBox::error(this,
+								 i18n("Unable to retrieve registration form.\nReason: \"%1\"").arg(task->statusString(), 1),
 								 i18n("Jabber Error"));
 
+		deleteLater();
+		
 		return;
 	}
 
@@ -106,7 +108,7 @@ void DlgJabberRegister::slotSentForm()
 	else
 	{
 		KMessageBox::error(this,
-								 i18n("The server denied the registration form."),
+								 i18n("The server denied the registration form.\nReason: \"%1\"").arg(task->statusString(), 1),
 								 i18n("Jabber Registration"));
 
 		btnRegister->setEnabled(true);
