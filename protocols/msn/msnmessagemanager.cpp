@@ -424,7 +424,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 	{
 		if( msg.contains("Application-File:") )  //not "Application-Name: File Transfer" because the File Transfer label is sometimes translate
 		{
-			rx=QRegExp("Application-File: ([A-Za-z0-9@\\._\\- ]*)");
+			rx=QRegExp("Application-File: ([^\\r\\n]*)");
 			rx.search(msg);
 			QString filename = rx.cap(1);
 			rx=QRegExp("Application-FileSize: ([0-9]*)");
@@ -439,7 +439,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 		}
 		else
 		{
-			rx=QRegExp("Application-Name: ([A-Za-z0-9@._\\- ]*)");
+			rx=QRegExp("Application-Name: ([^\\r\\n]*)");
 			rx.search(msg);
 			QString invitname = rx.cap(1);
 

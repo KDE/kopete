@@ -101,6 +101,12 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 		break;
 	}
+	case 209:
+	{
+		QString msg = i18n( "You are trying to change the display name of an user who has not confirmed his e-mail address" );
+		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+		break;
+	}
 	case 215:
 	{
 		QString msg = i18n( "This MSN user already exists in this group!\n"

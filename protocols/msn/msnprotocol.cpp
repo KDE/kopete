@@ -765,7 +765,8 @@ void MSNProtocol::slotGroupAdded( QString groupName, uint groupNumber )
 					strL.append( QString::number(groupNumber) );
 					strL.append( groupName );
 					g->setPluginData(this, strL);
-					g->setDisplayName( groupName );
+					if(g->type() == KopeteGroup::Classic)
+						g->setDisplayName( groupName );
 				}
 				else if(g->displayName() != groupName)
 				{	//the displayName was changed in kopete when we was offline (update the server right now)
@@ -852,10 +853,28 @@ void MSNProtocol::slotKopeteGroupRemoved(KopeteGroup *g)
 			slotGroupRemoved(groupNumber);
 			return;
 		}
-		//TODO: check if the group is empty. if not, move all contacts to the group 0
-		// if we are deleting the group 0 abort deletion, and set 0 to the topLevelGroup
-		
-		m_notifySocket->removeGroup( strL.first().toUInt() );
+
+		if ( groupNumber==0 )
+		{
+			//the group #0 can't be deleted
+			//then we set it as the top-level group
+			if(g == KopeteGroup::toplevel)
+				return;
+
+			g->setPluginData(this, QStringList());
+			KopeteGroup::toplevel->setPluginData(this, strL);
+
+			return;
+		}
+
+		//if contact are contains only in the group we are removing, move it from the group 0
+		QMap<QString, MSNContact*>::Iterator it;
+		for ( it = m_contacts.begin(); it != m_contacts.end() ; ++it)
+		{
+			if ((*it)->groups().contains(groupNumber) && (*it)->groups().count() == 1)
+				m_notifySocket->addContact( (*it)->contactId(), (*it)->displayName(), 0, MSNProtocol::FL );
+		}
+		m_notifySocket->removeGroup( groupNumber );
 	}
 }
 

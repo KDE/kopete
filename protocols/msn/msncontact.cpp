@@ -479,19 +479,15 @@ void MSNContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
 		removeFromGroup(from);
 		return;
 	}
-	if(to->displayName().isNull() || to->type() != KopeteGroup::Classic)
-	{
-		removeFromGroup(from);
-		return;
-	}
 	if(!from)
 	{
 		addToGroup(to);
 		return;
 	}
-	if(from->displayName().isNull() || from->type() != KopeteGroup::Classic)
-	{
-		addToGroup(to);
+	if((to->displayName().isNull() || to->type() != KopeteGroup::Classic) && to->pluginData(protocol()).isEmpty() && m_groups.count()==1)
+	{	//if this contact is in the last group and the contact moved to top level, do nothing
+		//		(exepted if the group 0 is the top-level group)
+		kdDebug() << "MSNContact::moveToGroup: ignoring top-level group" << endl;
 		return;
 	}
 
@@ -524,12 +520,6 @@ void MSNContact::addToGroup( KopeteGroup *group )
 
 //	kdDebug() << "MSNContact::addToGroup: " << group->displayName() << endl;
 	
-	if(group->displayName().isNull() || group->type() != KopeteGroup::Classic)
-	{
-		kdDebug() << "MSNContact::addToGroup: ignoring top-level group" << endl;
-		return;
-	}
-
 	MSNNotifySocket *notify=MSNProtocol::protocol()->notifySocket();
 	if( notify )
 	{
@@ -539,10 +529,12 @@ void MSNContact::addToGroup( KopeteGroup *group )
 			if(!m_groups.contains(strL.first().toUInt()))
 					notify->addContact( m_msnId, displayName(), strL.first().toUInt(), MSNProtocol::FL );
 		}
-		else
+		else if(group->displayName().isNull() || group->type() != KopeteGroup::Classic)
 		{
-			MSNProtocol::protocol()->addGroup(group->displayName(), m_msnId);
+			kdDebug() << "MSNContact::addToGroup: ignoring top-level group" << endl;
 		}
+		else
+			MSNProtocol::protocol()->addGroup(group->displayName(), m_msnId);
 	}
 	else
 	{
@@ -559,12 +551,6 @@ void MSNContact::removeFromGroup( KopeteGroup * group )
 
 //	kdDebug() << "MSNContact::removeFromGroup: " << group->displayName() << endl;
 	
-	if(group->displayName().isNull())
-	{
-		kdDebug() << "MSNContact::removeFromGroup: ignoring top-level group" << endl;
-		return;
-	}
-
 	m_moving=false;
 
 	MSNNotifySocket *notify=MSNProtocol::protocol()->notifySocket();
