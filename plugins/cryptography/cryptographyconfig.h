@@ -1,7 +1,7 @@
 /*
     cryptographyconfig.h
 
-    Copyright (c) 2003      by Roberto Pariset       <victorheremita@fastwebnet.it>
+    Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
     Copyright (c) 2003      by Matt Rogers           <matt@matt.rogers.name>
 
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
