@@ -116,11 +116,12 @@ public:
 		while ( !node.isNull() && node.nodeType() != DOM::Node::ELEMENT_NODE )
 			node = node.parentNode();
 
+		DOM::HTMLElement currentElement = node;
 		QString result;
-		m_chat->emitTooltipEvent( node, result );
+		m_chat->emitTooltipEvent( currentElement, result );
 		if( !result.isEmpty() )
 		{
-			tip( rect, result );
+			tip( node.getRect(), result );
 			return;
 		}
 
@@ -576,7 +577,7 @@ void ChatMessagePart::slotRightClick( const QString &, const QPoint &point )
 	//Emit for plugin hooks
 	emit contextMenuEvent( activeElement, chatWindowPopup );
 
-	p->popup( point );
+	chatWindowPopup->popup( point );
 }
 
 void ChatMessagePart::slotCopyURL()
@@ -802,7 +803,7 @@ void ChatMessagePart::slotCloseView( bool force )
 	m_manager->view()->closeView( force );
 }
 
-void emitTooltipEvent( DOM::HTMLElement &element, QString &toolTip )
+void ChatMessagePart::emitTooltipEvent( DOM::HTMLElement &element, QString &toolTip )
 {
 	emit tooltipEvent( element, toolTip );
 }

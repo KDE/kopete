@@ -38,8 +38,6 @@ namespace Kopete { class ChatSession; }
  */
 class ChatMessagePart : public KHTMLPart
 {
-	friend ChatMessagePart::ToolTip;
-
 	Q_OBJECT
 public:
 	ChatMessagePart( Kopete::ChatSession *manager, QWidget *parent, const char *name = 0 );
@@ -85,6 +83,8 @@ public slots:
 	 * @param message The message to be appended
 	 */
 	void appendMessage( Kopete::Message &message );
+
+signals:
 
 	/**
 	 * Emits before the context menu is about to show
@@ -159,7 +159,7 @@ private:
 	/**
 	 * Emits before the tooltip is about to show
 	 */
-	void emitTooltipEvent( DOM:HTMLElement &element, QString &toolTipString );
+	void emitTooltipEvent( DOM::HTMLElement &element, QString &toolTipString );
 
 	class ToolTip;
 	friend class ToolTip;
