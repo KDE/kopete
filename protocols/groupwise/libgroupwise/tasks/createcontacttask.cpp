@@ -53,12 +53,13 @@ bool CreateContactTask::take( Transfer * transfer )
 	return false;
 }
 
-void CreateContactTask::contactFromUserId( const QString & userId, const QString & displayName, const int firstSeqNo, const QValueList< FolderItem > folders )
+void CreateContactTask::contactFromUserId( const QString & userId, const QString & displayName, const int firstSeqNo, const QValueList< FolderItem > folders, bool topLevel )
 {
 	m_userId = userId;
 	m_displayName = displayName;
 	m_firstSequenceNumber = firstSeqNo;
 	m_folders = folders;
+	m_topLevel = topLevel;
 }
 
 void CreateContactTask::onGo()
@@ -127,10 +128,22 @@ void CreateContactTask::createContactInstances()
 		qDebug( "CreateContactTask::slotFolderAdded() - Creating contact %s in folder %u", m_userId.ascii(), (*it).id );
 		CreateContactInstanceTask * ccit = new CreateContactInstanceTask( client()->rootTask() );
 		ccit->contactFromUserId( m_userId, m_displayName, (*it).id );
+		// the add contact action may cause other contacts' sequence numbers to change
+		// CreateContactInstanceTask signals these changes, so we propagate the signal via the Client, to the GroupWiseAccount
+		// This updates our local versions of those contacts using the same mechanism by which they are updated at login.
 		connect( ccit, SIGNAL( gotContactAdded( const ContactItem & ) ), client(), SIGNAL( contactReceived( const ContactItem & ) ) );
 		connect( ccit, SIGNAL( gotContactAdded( const ContactItem & ) ), SLOT( slotContactAdded( const ContactItem & ) ) );
 		ccit->go( true );
-	}	
+	}
+	// now add in top level if necessary
+	if ( m_topLevel )
+	{	
+		CreateContactInstanceTask * ccit = new CreateContactInstanceTask( client()->rootTask() );
+		ccit->contactFromUserId( m_userId, m_displayName, 0 );
+		connect( ccit, SIGNAL( gotContactAdded( const ContactItem & ) ), client(), SIGNAL( contactReceived( const ContactItem & ) ) );
+		connect( ccit, SIGNAL( gotContactAdded( const ContactItem & ) ), SLOT( slotContactAdded( const ContactItem & ) ) );
+		ccit->go( true );
+	}
 }
 
 void CreateContactTask::slotContactAdded( const ContactItem & addedContact )
@@ -163,7 +176,12 @@ void CreateContactTask::slotContactAdded( const ContactItem & addedContact )
 			break;
 		}
 	}
-	if ( m_folders.isEmpty() )
+	
+	// clear the topLevel flag once the corresponding server side entry has been successfully created
+	if ( addedContact.parentId == 0 )
+		m_topLevel = false;
+	
+	if ( m_folders.isEmpty() && !m_topLevel )
 	{
 		qDebug( "CreateContactTask::slotContactAdded() - All contacts were created on the server, we're finished!" );
 		setSuccess(); 

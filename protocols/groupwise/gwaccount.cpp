@@ -841,10 +841,16 @@ bool GroupWiseAccount::addContactToMetaContact( const QString& contactId, const 
 	// first find all the groups that this contact is a member of 
 	// record, in a folderitem, their display names and groupwise object id 
 	// Set object id to 0 if not found - they do not exist on the server
+	bool topLevel = false;
 	QValueList< FolderItem > folders;
 	KopeteGroupList groupList = parentContact->groups();
 	for ( KopeteGroup *group = groupList.first(); group; group = groupList.next() )
 	{
+		if ( group->topLevel() ) // no need to create it on the server
+		{
+			topLevel = true;
+			continue;
+		}
 		bool ok = true;
 		FolderItem fi;
 		fi.parentId = 0;
@@ -881,7 +887,7 @@ bool GroupWiseAccount::addContactToMetaContact( const QString& contactId, const 
 	// delete the contact we just created, in receiveContactCreated :/
 	
 	CreateContactTask * cct = new CreateContactTask( client()->rootTask() );
-	cct->contactFromUserId( contactId, displayName, highestFreeSequence, folders );
+	cct->contactFromUserId( contactId, displayName, highestFreeSequence, folders, topLevel );
 	QObject::connect( cct, SIGNAL( finished() ), SLOT( receiveContactCreated() ) );
 	cct->go( true );
 	return true;

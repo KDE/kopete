@@ -61,8 +61,9 @@ public:
 	 * @param displayName the display name we should give to this contact
 	 * @param firstSeqNo Used to create the folders - the first unused folder sequence number we know of
 	 * @param folders A list of folders that the contact should belong to - any folders that do not exist on the server should have a objectId of 0, and will be created
+	 * @param topLevel is the folder also in the top level folder?
 	 */
-	void contactFromUserId( const QString & userId, const QString & displayName, const int firstSeqNo, const QValueList< FolderItem > folders );
+	void contactFromUserId( const QString & userId, const QString & displayName, const int firstSeqNo, const QValueList< FolderItem > folders, bool topLevel );
 	//void contactFromDN( const QString & dn, const QString & displayName, const int parentFolder );
 	/** 
 	 * This task doesn't do any I/O itself, so this take prints an error and returns false;
@@ -83,6 +84,7 @@ private:
 	QString m_dn;
 	QString m_displayName;
 	QValueList< FolderItem > m_folders;
+	bool m_topLevel;
 };
 
 #endif
