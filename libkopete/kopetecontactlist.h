@@ -22,14 +22,13 @@
 #include <qobject.h>
 #include <qptrlist.h>
 
-#include <kurl.h>
-
-#include "kopetecontact.h"
-#include "kopetegroup.h"
+//#include <kurl.h>
+class KURL;
 
 class QDomDocument;
-
 class KopeteMetaContact;
+class KopeteGroup;
+class KopeteContact;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
@@ -123,7 +122,7 @@ public:
 	/**
 	 * Return all available groups
 	 */
-	KopeteGroupList groups() const;
+	QPtrList<KopeteGroup> groups() const;
 
 	/**
 	 * Add the metacontact into the contact list
@@ -165,8 +164,10 @@ public:
 	 * Get a group.
 	 * If a group already exists with the given name and the given type, the existing group will be returned.
  	 * Otherwise, a new group will be created.
+	 * @param displayName is the display name to search
+	 * @param type is the KopeteGroup::GroupType to search, the default value is Kopetegroup::Normal
 	 */
-	KopeteGroup * getGroup( const QString &displayName, KopeteGroup::GroupType type = KopeteGroup::Normal );
+	KopeteGroup * getGroup( const QString &displayName, unsigned int type = 0/*KopeteGroup::Normal*/ );
 
 	/**
 	 * return the group with the given unique id. if none is found return 0L
@@ -187,7 +188,7 @@ public:
 	/**
 	 * return the list of groups actualy selected in the contactlist UI
 	 */
-	KopeteGroupList selectedGroups() const ;
+	QPtrList<KopeteGroup> selectedGroups() const ;
 
 public slots:
 
@@ -201,7 +202,7 @@ public slots:
 	 * This method has to be called by the contactlist UI side.
 	 * it stores the selected items, and emits signals
 	 */
-	 void setSelectedItems(QPtrList<KopeteMetaContact> metaContacts , KopeteGroupList groups);
+	 void setSelectedItems(QPtrList<KopeteMetaContact> metaContacts , QPtrList<KopeteGroup> groups);
 
 	/**
 	 * @internal
@@ -210,7 +211,7 @@ public slots:
 	 * FIXME: Use a better way, without exposing the XML backend, though.
 	 */
 	void load() { loadXML(); }
-	
+
 	void save() { saveXML(); }
 
 signals:
@@ -257,11 +258,6 @@ signals:
 
 private:
 	/**
-	 * Current contact list version * 10 ( i.e. '10' is version '1.0' )
-	 */
-	static const uint ContactListVersion = 10;
-
-	/**
 	 * Return a XML representation of the contact list
 	 */
 	const QDomDocument toXML();
@@ -275,21 +271,11 @@ private:
 	 * Save the contact list to XML file
 	 */
 	void saveXML();
-	
+
 	/**
 	 * Private constructor: we are a singleton
 	 */
 	KopeteContactList();
-
-	/**
-	 * The list of meta contacts that are available
-	 */
-	QPtrList<KopeteMetaContact> m_contacts;
-
-	/**
-	 * List of groups
-	 */
-	KopeteGroupList m_groupList;
 
 	/**
 	 * Our contact list instance
@@ -301,16 +287,8 @@ private:
 	 */
 	void convertContactList( const QString &fileName, uint fromVersion, uint toVersion );
 
-	/**
-	 * flag to don't save the contactlist when it is not completely loaded
-	 */
-	bool m_loaded;
-
-	/**
-	 * selected items
-	 */
-	QPtrList<KopeteMetaContact> m_selectedMetaContacts;
-	KopeteGroupList m_selectedGroups;
+	class KopeteContactListPrivate;
+	KopeteContactListPrivate *d;
 };
 
 #endif

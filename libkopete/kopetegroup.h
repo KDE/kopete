@@ -35,7 +35,7 @@ class KopeteGroup : public KopetePluginDataObject
 	Q_OBJECT
 
 public:
-	enum GroupType { Normal, Temporary, TopLevel };
+	enum GroupType { Normal=0, Temporary, TopLevel };
 
 	/**
 	 * Create an empty group
