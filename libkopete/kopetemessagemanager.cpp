@@ -495,7 +495,7 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 	if (!widget())
 		newChatWindow();
 	else
-		isvisible = mainWindow() && mainWindow()->isVisible();
+		isvisible = mainWindow()->isVisible();
 
 
 	if (d->mReadMode == Popup)
