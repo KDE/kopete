@@ -31,6 +31,7 @@
 #include "spellcheckpreferences.h"
 #include "spellcheckprefs.h"
 
+#include <kdeversion.h>
 
 SpellCheckPreferences::SpellCheckPreferences(const QString &pixmap, QObject *parent): ConfigModule( i18n("Spell Checking"), i18n("Spell Checking Plugin"), pixmap, parent)
 {
@@ -47,7 +48,18 @@ SpellCheckPreferences::SpellCheckPreferences(const QString &pixmap, QObject *par
 	m_keyButton->setSizePolicy( QSizePolicy( QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding ) );
 
 	connect( m_keyButton, SIGNAL(capturedShortcut( const KShortcut & )), this, SLOT(slotShortcutChanged( const KShortcut & )) );
-	connect( preferencesDialog->autoCheck, SIGNAL(clicked()), this, SLOT(slotAutoCheckChanged()) );
+
+	autoCheck = false;
+	#if KDE_VERSION >= 306
+		if( KDE::versionMajor() > 3 || ( KDE::versionMajor() == 3 && ( KDE::versionMinor() > 1 || ( KDE::versionMinor() == 1 && KDE::versionRelease() >= 90 ) ) ) )
+		{
+			connect( preferencesDialog->autoCheck, SIGNAL(clicked()), this, SLOT(slotAutoCheckChanged()) );
+			autoCheck = true;
+		}
+	#endif
+
+	preferencesDialog->autoCheck->setChecked( autoCheck );
+	preferencesDialog->autoCheck->setEnabled( autoCheck );
 
 	reopen();
 }
@@ -83,7 +95,7 @@ void SpellCheckPreferences::reopen()
 	KConfig *config = KGlobal::config();
 	config->setGroup( QString::fromLatin1("Spell Checking Plugin") );
 
-	autoCheck = config->readBoolEntry( QString::fromLatin1("Check As You Type"), true );
+	autoCheck = config->readBoolEntry( QString::fromLatin1("Check As You Type"), autoCheck );
 	KShortcut newCut = KShortcut( config->readEntry( QString::fromLatin1("Shortcut Key"), QString::fromLatin1("CTRL+ALT+S") ) );
 	if( !newCut.isNull() )
 		slotShortcutChanged( newCut );
