@@ -80,7 +80,7 @@ static QString subTagText(const QDomElement &e, const QString &name)
 	bool found;
 	QDomElement i = findSubTag(e, name, &found);
 	if ( found )
-		return i.text();
+		return i.text().stripWhiteSpace();
 	return QString::null;
 }
 
@@ -589,9 +589,9 @@ bool VCard::fromXml(const QDomElement &q)
 		QDomElement e;
 
 		if ( tag == "VERSION" )
-			d->version = i.text();
+			d->version = i.text().stripWhiteSpace();
 		else if ( tag == "FN" )
-			d->fullName = i.text();
+			d->fullName = i.text().stripWhiteSpace();
 		else if ( tag == "N" ) {
 			d->familyName = subTagText(i, "FAMILY");
 			d->givenName  = subTagText(i, "GIVEN");
@@ -600,13 +600,13 @@ bool VCard::fromXml(const QDomElement &q)
 			d->suffixName = subTagText(i, "SUFFIX");
 		}
 		else if ( tag == "NICKNAME" )
-			d->nickName = i.text();
+			d->nickName = i.text().stripWhiteSpace();
 		else if ( tag == "PHOTO" ) {
 			d->photo = Base64::stringToArray( subTagText(i, "BINVAL") );
 			d->photoURI = subTagText(i, "EXTVAL");
 		}
 		else if ( tag == "BDAY" )
-			d->bday = i.text();
+			d->bday = i.text().stripWhiteSpace();
 		else if ( tag == "ADR" ) {
 			Address a;
 
@@ -654,7 +654,7 @@ bool VCard::fromXml(const QDomElement &q)
 					continue;
 
 				if ( ii.tagName().upper() == "LINE" )
-					l.lines.append ( ii.text() );
+					l.lines.append ( ii.text().stripWhiteSpace() );
 			}
 
 			d->labelList.append ( l );
@@ -696,24 +696,24 @@ bool VCard::fromXml(const QDomElement &q)
 
 			if ( m.userid.isEmpty() ) // FIXME: Workaround for Psi prior to 0.9
 				if ( !i.text().isEmpty() )
-					m.userid = i.text();
+					m.userid = i.text().stripWhiteSpace();
 
 			d->emailList.append ( m );
 		}
 		else if ( tag == "JABBERID" )
-			d->jid = i.text();
+			d->jid = i.text().stripWhiteSpace();
 		else if ( tag == "MAILER" )
-			d->mailer = i.text();
+			d->mailer = i.text().stripWhiteSpace();
 		else if ( tag == "TZ" )
-			d->timezone = i.text();
+			d->timezone = i.text().stripWhiteSpace();
 		else if ( tag == "GEO" ) {
 			d->geo.lat = subTagText(i, "LAT");
 			d->geo.lon = subTagText(i, "LON");
 		}
 		else if ( tag == "TITLE" )
-			d->title = i.text();
+			d->title = i.text().stripWhiteSpace();
 		else if ( tag == "ROLE" )
-			d->role = i.text();
+			d->role = i.text().stripWhiteSpace();
 		else if ( tag == "LOGO" ) {
 			d->logo = Base64::stringToArray( subTagText(i, "BINVAL") );
 			d->logoURI = subTagText(i, "EXTVAL");
@@ -741,7 +741,7 @@ bool VCard::fromXml(const QDomElement &q)
 					continue;
 
 				if ( ii.tagName().upper() == "ORGUNIT" )
-					d->org.unit.append( ii.text() );
+					d->org.unit.append( ii.text().stripWhiteSpace() );
 			}
 		}
 		else if ( tag == "CATEGORIES") {
@@ -752,28 +752,28 @@ bool VCard::fromXml(const QDomElement &q)
 					continue;
 
 				if ( ee.tagName().upper() == "KEYWORD" )
-					d->categories << ee.text();
+					d->categories << ee.text().stripWhiteSpace();
 			}
 		}
 		else if ( tag == "NOTE" )
-			d->note = i.text();
+			d->note = i.text().stripWhiteSpace();
 		else if ( tag == "PRODID" )
-			d->prodId = i.text();
+			d->prodId = i.text().stripWhiteSpace();
 		else if ( tag == "REV" )
-			d->rev = i.text();
+			d->rev = i.text().stripWhiteSpace();
 		else if ( tag == "SORT-STRING" )
-			d->sortString = i.text();
+			d->sortString = i.text().stripWhiteSpace();
 		else if ( tag == "SOUND" ) {
 			d->sound = Base64::stringToArray( subTagText(i, "BINVAL") );
 			d->soundURI      = subTagText(i, "EXTVAL");
 			d->soundPhonetic = subTagText(i, "PHONETIC");
 		}
 		else if ( tag == "UID" )
-			d->uid = i.text();
+			d->uid = i.text().stripWhiteSpace();
 		else if ( tag == "URL")
-			d->url = i.text();
+			d->url = i.text().stripWhiteSpace();
 		else if ( tag == "DESC" )
-			d->desc = i.text();
+			d->desc = i.text().stripWhiteSpace();
 		else if ( tag == "CLASS" ) {
 			if ( hasSubTag(i, "PUBLIC") )
 				d->privacyClass = pcPublic;
@@ -787,7 +787,7 @@ bool VCard::fromXml(const QDomElement &q)
 			e = findSubTag(i, "TYPE", &found);
 			QString type = "text/plain";
 			if ( found )
-				type = e.text();
+				type = e.text().stripWhiteSpace();
 
 			e = findSubTag(i, "CRED", &found );
 			if ( !found )

@@ -108,5 +108,3 @@ void ServSockSignal::newConnection(int x)
 }
 
 // CS_NAMESPACE_END
-
-#include "servsock.moc"

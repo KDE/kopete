@@ -23,6 +23,10 @@
 
 #include"im.h"
 
+#if QT_VERSION < 0x030200
+typedef long int Q_LLONG;
+#endif
+
 namespace XMPP
 {
 	class S5BConnection;
@@ -32,14 +36,16 @@ namespace XMPP
 	{
 		Q_OBJECT
 	public:
-		enum { ErrReject, ErrNeg, ErrConnect, ErrStream };
+		enum { ErrReject, ErrNeg, ErrConnect, ErrProxy, ErrStream };
 		enum { Idle, Requesting, Connecting, WaitingForAccept, Active };
 		~FileTransfer();
 
 		void setProxy(const Jid &proxy);
 
 		// send
-		void sendFile(const Jid &to, const QString &fname, Q_LLONG size);
+		void sendFile(const Jid &to, const QString &fname, Q_LLONG size, const QString &desc);
+		Q_LLONG offset() const;
+		Q_LLONG length() const;
 		int dataSizeNeeded() const;
 		void writeFileData(const QByteArray &a);
 
@@ -47,6 +53,7 @@ namespace XMPP
 		Jid peer() const;
 		QString fileName() const;
 		Q_LLONG fileSize() const;
+		QString description() const;
 		bool rangeSupported() const;
 		void accept(Q_LLONG offset=0, Q_LLONG length=0);
 
@@ -68,6 +75,7 @@ namespace XMPP
 		void s5b_readyRead();
 		void s5b_bytesWritten(int);
 		void s5b_error(int);
+		void doAccept();
 
 	private:
 		class Private;
@@ -119,7 +127,7 @@ namespace XMPP
 		JT_FT(Task *parent);
 		~JT_FT();
 
-		void request(const Jid &to, const QString &id, const QString &fname, Q_LLONG size, const QStringList &streamTypes);
+		void request(const Jid &to, const QString &id, const QString &fname, Q_LLONG size, const QString &desc, const QStringList &streamTypes);
 		Q_LLONG rangeOffset() const;
 		Q_LLONG rangeLength() const;
 		QString streamType() const;
@@ -138,6 +146,7 @@ namespace XMPP
 		QString iq_id, id;
 		QString fname;
 		Q_LLONG size;
+		QString desc;
 		bool rangeSupported;
 		QStringList streamTypes;
 	};

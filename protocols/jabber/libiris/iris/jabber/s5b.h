@@ -170,7 +170,7 @@ namespace XMPP
 		~S5BConnector();
 
 		void reset();
-		void start(const StreamHostList &hosts, const QString &key);
+		void start(const StreamHostList &hosts, const QString &key, int timeout);
 		SocksClient *takeClient();
 		StreamHost streamHostUsed() const;
 

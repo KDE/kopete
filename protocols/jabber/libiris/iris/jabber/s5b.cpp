@@ -26,10 +26,11 @@
 #include<qca.h>
 #include"xmpp_xmlcommon.h"
 #include"socks.h"
+#include"safedelete.h"
 
 #define MAXSTREAMHOSTS 5
 
-#define S5B_DEBUG
+//#define S5B_DEBUG
 
 namespace XMPP {
 
@@ -665,7 +666,7 @@ void S5BManager::srv_incomingReady(SocksClient *sc, const QString &key)
 	Entry *e = findEntryByHash(key);
 	if(!e->i->allowIncoming) {
 		sc->requestGrant(false);
-		sc->deleteLater();
+		SafeDelete::deleteSingle(sc);
 		return;
 	}
 	sc->requestGrant(true);
@@ -1034,10 +1035,10 @@ void S5BManager::Item::doIncoming()
 		lateProxy = false;
 	}
 	else {
-		// only try doing the late proxy trick if we did not offer a proxy
-		if(!proxy.jid().isValid()) {
+		// only try doing the late proxy trick if using fast mode AND we did not offer a proxy
+		if((state == Initiator || (state == Target && fast)) && !proxy.jid().isValid()) {
 			// take just the non-proxy streamhosts
-			bool hasProxies;
+			bool hasProxies = false;
 			for(StreamHostList::ConstIterator it = in_hosts.begin(); it != in_hosts.end(); ++it) {
 				if((*it).isProxy())
 					hasProxies = true;
@@ -1047,15 +1048,9 @@ void S5BManager::Item::doIncoming()
 			if(hasProxies) {
 				lateProxy = true;
 
-				// no regular streamhosts?
-				if(list.isEmpty()) {
-					// if fast mode, then wait for iq-error before trying proxy
-					if(state == Initiator || (state == Target && fast))
-						return;
-					// else try proxy now
-					else
-						list = in_hosts;
-				}
+				// no regular streamhosts?  wait for remote error
+				if(list.isEmpty())
+					return;
 			}
 		}
 		else
@@ -1070,7 +1065,7 @@ void S5BManager::Item::doIncoming()
 	if(!self)
 		return;
 
-	conn->start(list, out_key);
+	conn->start(list, out_key, lateProxy ? 10 : 30);
 }
 
 void S5BManager::Item::setIncomingClient(SocksClient *sc)
@@ -1157,7 +1152,7 @@ void S5BManager::Item::jt_finished()
 			if(!self)
 				return;
 
-			proxy_conn->start(list, key);
+			proxy_conn->start(list, key, 30);
 		}
 		else {
 #ifdef S5B_DEBUG
@@ -1548,7 +1543,7 @@ void S5BConnector::reset()
 	d->itemList.clear();
 }
 
-void S5BConnector::start(const StreamHostList &hosts, const QString &key)
+void S5BConnector::start(const StreamHostList &hosts, const QString &key, int timeout)
 {
 	reset();
 
@@ -1561,7 +1556,7 @@ void S5BConnector::start(const StreamHostList &hosts, const QString &key)
 		d->itemList.append(i);
 		i->start();
 	}
-	d->t.start(30000);
+	d->t.start(timeout * 1000);
 }
 
 SocksClient *S5BConnector::takeClient()
@@ -1737,7 +1732,9 @@ int S5BServer::port() const
 void S5BServer::ss_incomingReady()
 {
 	Item *i = new Item(d->serv.takeIncoming());
-	//printf("S5BServer: incoming connection from %s:%d\n", i->client->peerAddress().toString().latin1(), i->client->peerPort());
+#ifdef S5B_DEBUG
+	printf("S5BServer: incoming connection from %s:%d\n", i->client->peerAddress().toString().latin1(), i->client->peerPort());
+#endif
 	connect(i, SIGNAL(result(bool)), SLOT(item_result(bool)));
 	d->itemList.append(i);
 }
@@ -1745,6 +1742,9 @@ void S5BServer::ss_incomingReady()
 void S5BServer::item_result(bool b)
 {
 	Item *i = (Item *)sender();
+#ifdef S5B_DEBUG
+	printf("S5BServer item result: %d\n", b);
+#endif
 	if(!b) {
 		d->itemList.removeRef(i);
 		return;

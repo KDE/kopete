@@ -81,7 +81,7 @@ void BSocket::reset(bool clear)
 	if(d->qsock) {
 		d->qsock->disconnect(this);
 
-		if(!clear) {
+		if(!clear && d->qsock->isOpen()) {
 			// move remaining into the local queue
 			QByteArray block(d->qsock->bytesAvailable());
 			d->qsock->readBlock(block.data(), block.size());
@@ -109,7 +109,9 @@ void BSocket::ensureSocket()
 {
 	if(!d->qsock) {
 		d->qsock = new QSocket;
+#if QT_VERSION >= 0x030200
 		d->qsock->setReadBufferSize(READBUFSIZE);
+#endif
 		connect(d->qsock, SIGNAL(hostFound()), SLOT(qs_hostFound()));
 		connect(d->qsock, SIGNAL(connected()), SLOT(qs_connected()));
 		connect(d->qsock, SIGNAL(connectionClosed()), SLOT(qs_connectionClosed()));
@@ -388,5 +390,3 @@ void BSocket::qs_error(int x)
 }
 
 // CS_NAMESPACE_END
-
-#include "bsocket.moc"

@@ -19,6 +19,7 @@
  */
 
 #include"im.h"
+#include"safedelete.h"
 
 //! \class Client client.h
 //! \brief Communicates with the Jabber network.  Start here.
@@ -616,11 +617,8 @@ void Client::send(const QString &str)
 		return;
 
 	debug(QString("Client: outgoing: [\n%1]\n").arg(str));
-	QCString cs = str.utf8();
 	xmlOutgoing(str);
-	QByteArray a(cs.length());
-	memcpy(a.data(), cs.data(), a.size());
-	static_cast<ClientStream*>(d->stream)->writeDirect(a);
+	static_cast<ClientStream*>(d->stream)->writeDirect(str);
 }
 
 Stream & Client::stream()
@@ -1164,7 +1162,7 @@ void Task::safeDelete()
 
 	d->deleteme = true;
 	if(!d->insig)
-		deleteLater();
+		SafeDelete::deleteSingle(this);
 }
 
 void Task::onGo()
@@ -1231,7 +1229,7 @@ void Task::done()
 	d->insig = false;
 
 	if(d->deleteme)
-		deleteLater();
+		SafeDelete::deleteSingle(this);
 }
 
 void Task::clientDisconnected()

@@ -533,6 +533,8 @@ public:
 		maximumSSF = 0;
 		doBinding = true;
 
+		in_rrsig = false;
+
 		reset();
 	}
 
@@ -556,6 +558,8 @@ public:
 	int minimumSSF, maximumSSF;
 	QString sasl_mech;
 	bool doBinding;
+
+	bool in_rrsig;
 
 	Connector *conn;
 	ByteStream *bs;
@@ -934,7 +938,10 @@ void ClientStream::cr_connected()
 	d->client.doTLS = d->tlsHandler ? true: false;
 	d->client.doBinding = d->doBinding;*/
 
+	QGuardedPtr<QObject> self = this;
 	connected();
+	if(!self)
+		return;
 
 	// immediate SSL?
 	if(d->conn->useSSL()) {
@@ -1007,7 +1014,10 @@ void ClientStream::ss_bytesWritten(int bytes)
 
 void ClientStream::ss_tlsHandshaken()
 {
+	QGuardedPtr<QObject> self = this;
 	securityLayerActivated(LayerTLS);
+	if(!self)
+		return;
 	processNext();
 }
 
@@ -1234,12 +1244,23 @@ void ClientStream::srvProcessNext()
 	}
 }
 
+void ClientStream::doReadyRead()
+{
+	//QGuardedPtr<QObject> self = this;
+	readyRead();
+	//if(!self)
+	//	return;
+	//d->in_rrsig = false;
+}
+
 void ClientStream::processNext()
 {
 	if(d->mode == Server) {
 		srvProcessNext();
 		return;
 	}
+
+	QGuardedPtr<QObject> self = this;
 
 	while(1) {
 #ifdef XMPP_DEBUG
@@ -1270,8 +1291,11 @@ void ClientStream::processNext()
 			bool cont = handleNeed();
 
 			// now we can announce stanzas
-			if(!d->in.isEmpty())
-				readyRead();
+			//if(!d->in_rrsig && !d->in.isEmpty()) {
+			if(!d->in.isEmpty()) {
+				//d->in_rrsig = true;
+				QTimer::singleShot(0, this, SLOT(doReadyRead()));
+			}
 
 			if(cont)
 				continue;
@@ -1345,6 +1369,8 @@ void ClientStream::processNext()
 				d->state = Active;
 				setNoopTime(d->noop_time);
 				authenticated();
+				if(!self)
+					return;
 				break;
 			}
 			case CoreProtocol::EPeerClosed: {
@@ -1371,6 +1397,8 @@ void ClientStream::processNext()
 				printf("StanzasSent\n");
 #endif
 				stanzaWritten();
+				if(!self)
+					return;
 				break;
 			}
 			case CoreProtocol::EClosed: {
@@ -1475,8 +1503,12 @@ bool ClientStream::handleNeed()
 			// SecureStream will handle the errors from this point
 			disconnect(d->sasl, SIGNAL(error(int)), this, SLOT(sasl_error(int)));
 			d->ss->setLayerSASL(d->sasl, d->client.spare);
-			if(d->sasl_ssf > 0)
+			if(d->sasl_ssf > 0) {
+				QGuardedPtr<QObject> self = this;
 				securityLayerActivated(LayerSASL);
+				if(!self)
+					return false;
+			}
 			break;
 		}
 		case CoreProtocol::NPassword: {

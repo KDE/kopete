@@ -451,7 +451,6 @@ namespace XMPP
 
 		Jid jid() const;
 		void connectToServer(const Jid &jid, bool auth=true);
-		void continueAfterWarning();
 		void accept(); // server
 		bool isActive() const;
 		bool isAuthenticated() const;
@@ -504,6 +503,9 @@ namespace XMPP
 		void incomingXml(const QString &s);
 		void outgoingXml(const QString &s);
 
+	public slots:
+		void continueAfterWarning();
+
 	private slots:
 		void cr_connected();
 		void cr_error();
@@ -526,6 +528,7 @@ namespace XMPP
 		void sasl_error(int);
 
 		void doNoop();
+		void doReadyRead();
 
 	private:
 		class Private;

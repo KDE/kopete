@@ -1575,7 +1575,7 @@ bool JT_DiscoItems::take(const QDomElement &x)
 				item.setNode( e.attribute("node") );
 				item.setAction( DiscoItem::string2action(e.attribute("action")) );
 
-				d->items.push_back( item );
+				d->items.append( item );
 			}
 		}
 
@@ -1688,7 +1688,7 @@ bool JT_DiscoInfo::take(const QDomElement &x)
 				id.name     = e.attribute("name");
 				id.type     = e.attribute("type");
 
-				identities.push_back( id );
+				identities.append( id );
 			}
 		}
 
@@ -1780,5 +1780,3 @@ bool JT_DiscoPublish::take(const QDomElement &x)
 	return true;
 }
 
-
-#include "xmpp_tasks.moc"
