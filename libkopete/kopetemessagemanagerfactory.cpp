@@ -20,7 +20,6 @@
 
 #include "kopetemessagemanager.h"
 #include "kopeteprotocol.h"
-
 #include "kopetecontact.h"
 
 #include <kdebug.h>
@@ -168,6 +167,12 @@ const KopeteMessageManagerDict& KopeteMessageManagerFactory::sessions( )
 void KopeteMessageManagerFactory::cleanSessions( KopeteProtocol *protocol )
 {
 	KopeteMessageManagerDict sessions = protocolSessions( protocol );
+	QIntDictIterator<KopeteMessageManager> it( sessions );
+	for ( ; it.current() ; ++it )
+	{
+		kdDebug( 14010 ) << k_funcinfo << "Unloading KMM " << it.current()->user()->displayName() << endl;
+		it.current()->deleteLater();
+	}
 	sessions.setAutoDelete( true );
 	sessions.clear();
 }
