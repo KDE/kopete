@@ -75,37 +75,59 @@ public:
 	 * Sets scroll auto hide feature
 	 * This method implicitly calls setIgnoreGlobalScrolLAutoHide(true) by default.
 	 * If you want not to ignore global changes, explicitly call setIgnoreGlobalScrollAutoHide(false).
+	 *
+	 * Note: No matter what is the previous vScrollBarMode is, when `false' is provided to this method
+	 * new vScrollBarMode will be `Auto'. So it's programmers responsibility to keep track of vScrollBarMode
+	 * @see setVScrollBarMode( ScrollBarMode )
 	 */
 	void setScrollAutoHide( bool b );
 	
 	/**
 	 * Gets scroll auto hide feature status
 	 */
-	bool scrollAutoHide();
+	bool scrollAutoHide() const;
 
 	/**
-	 * If b is true global settings changes won't effect the status of
-	 * scroll auto-hide feature.
+	 * Sets the amount of time to hide scrollbar after inactivity. ( in seconds )
+	 * Note: If not called, default value 10 will be used.
 	 */
-	void setIgnoreGlobalScrollAutoHide( bool b );
+	void setScrollAutoHideTimeout( int );
+	
+	/**
+	 * Gets the scroll bar auto-hide timeout value.
+	 */
+	int scrollAutoHideTimeout() const;
 
 	/**
-	 * If returns true, it means global changes won't effect the status
-	 * of the scroll auto-hide feature.
+	 * Sets always hide feature
+	 * Note: No matter what is the previous vScrollBarMode is, when `false' is provided to this method
+	 * new vScrollBarMode will be `Auto'. So it's programmers responsibility to keep track of vScrollBarMode
+	 * @see setVScrollBarMode( ScrollBarMode )
 	 */
-	bool ignoreGlobalScrollAutoHide();
+	void setScrollHide( bool b );
 
+	/**
+	 * Gets always hide feature state
+	 */
+	bool scrollHide() const;
+
+	/**
+	 * Sets the mouse navigation status.
+	 * Contact list slider is always automagically adjusted to the content's Y position,
+	 * which means, the scroll bar's slider will follow your cursor while it on the contact
+	 * list.
+	 */
+	void setMouseNavigation( bool b );
+
+	/**
+	 * Gets the mouse navigation status
+	 */
+	bool mouseNavigation() const;
 public slots:
 	/**
 	 * Calls QListView::sort()
 	 */
 	void slotSort() { sort(); }
-
-	/**
-	 * The function to be triggered when the configuration is changed.
-	 */
-	void slotConfigChanged();
-
 protected:
 	virtual void keyPressEvent( QKeyEvent *e );
 	/**
@@ -132,7 +154,6 @@ private slots:
 	 */
 	void slotCurrentChanged( QListViewItem *item );
 private:
-	void setScrollAutoHideInternal( bool b );
 	struct Private;
 	Private *d;
 };

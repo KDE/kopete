@@ -155,10 +155,12 @@ struct ListView::Private
 	int scrollAutoHideTimeout;
 	//! State of scroll auto hide
 	bool scrollAutoHide;
-	//! If true slotConfigChange won't effect scroll auto hide status
-	bool ignoreGlobalScrollAutoHide;
+	//! State of always hide scrollbar feature
+	bool scrollHide;
 	//! Muse navigation offset, we will ignore this much offset to the up/bottom edges
 	int mouseNavigationOffset;
+	//! State of mouse navigation feature
+	bool mouseNavigation;
 	//! C-tor
 	Private()
 	: smoothScrollingEnabled(false),
@@ -190,8 +192,9 @@ struct ListView::Private
 	  scrollAutoHideCounter(10),
 	  scrollAutoHideTimeout(10),
 	  scrollAutoHide(false),
-	  ignoreGlobalScrollAutoHide(false),
-	  mouseNavigationOffset(20) {}
+	  scrollHide(false),
+	  mouseNavigationOffset(20),
+	  mouseNavigation(false) {}
 };
 
 ListView::ListView( QWidget *parent, const char *name )
@@ -227,33 +230,11 @@ ListView::ListView( QWidget *parent, const char *name )
 
 	// init smooth scrolling
  	setSmoothScrolling( true );
-	// List the configuration changes!
-	connect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
-	// Honor current configuration
-	slotConfigChanged();
 }
 
 ListView::~ListView()
 {
 	delete d;
-}
-
-void ListView::slotConfigChanged()
-{
-	if( KopetePrefs::prefs()->contactListHideVerticalScrollBar() )
-	{	// If "hide scrollbars" is enabled, hide the scrollbars ALWAYS and disable auto-hide.
-		if( !d->ignoreGlobalScrollAutoHide )
-			setScrollAutoHideInternal(false);
-		setVScrollBarMode( AlwaysOff );
-	}
-	else
-	{	// If "hide scrollbars" is not enabled, show vertical scrollbars if necessary.
-		setVScrollBarMode( Auto );
-		// Scroll auto hide feature makes sense only if always hide is not enabled
-		// hence we have this in this "else" clause.
-		if( !d->ignoreGlobalScrollAutoHide )
-			setScrollAutoHideInternal( KopetePrefs::prefs()->contactListAutoHideVScroll() );
-	}
 }
 
 void ListView::slotDoubleClicked( QListViewItem *item )
@@ -398,21 +379,9 @@ int ListView::smoothScrollingTimerInterval()
 
 void ListView::setScrollAutoHide( bool b )
 {
-	// Scroll bar status is changed manually, ignore any further changes done by slotConfigChange
-	setIgnoreGlobalScrollAutoHide( true );
-	
-	setScrollAutoHideInternal( b );
+	// If no change, just bail
+	if( d->scrollAutoHide == b ) return;
 
-	// Now honor other settings
-	// This is usefull for options such as "always hide scrollbar".
-	// Calling slotConfigChanged cannot override this ScrollAutoHide property since we have
-	// ignoreGlobalScrollAutoHide at the top of this method by default, so it's safe and sensible to
-	// call this method.
-	slotConfigChanged();
-}
-
-void ListView::setScrollAutoHideInternal( bool b )
-{
 	if( b )
 	{
 		// Set scrollbar auto-hiding state true
@@ -422,8 +391,6 @@ void ListView::setScrollAutoHideInternal( bool b )
 		// Start the timer to handle auto-hide
 		killTimer( d->scrollAutoHideTimer );
 		d->scrollAutoHideTimer = startTimer( 1000 );
-		// Implement a slider for -> KopetePrefs::prefs()->contactListScrollAutoHideTimeOut() 
-		d->scrollAutoHideTimeout = KopetePrefs::prefs()->contactListAutoHideTimeout();
 	}
 	else
 	{
@@ -433,20 +400,46 @@ void ListView::setScrollAutoHideInternal( bool b )
 	}
 }
 
-bool ListView::scrollAutoHide()
+bool ListView::scrollAutoHide() const
 {
 	return d->scrollAutoHide;
 }
 
-void ListView::setIgnoreGlobalScrollAutoHide( bool b )
+void ListView::setScrollAutoHideTimeout( int t )
 {
-	d->ignoreGlobalScrollAutoHide = b;
+	d->scrollAutoHideTimeout = t;
 }
 
-bool ListView::ignoreGlobalScrollAutoHide()
+int ListView::scrollAutoHideTimeout() const
 {
-	return d->ignoreGlobalScrollAutoHide;
-	
+	return d->scrollAutoHideTimeout;
+}
+
+void ListView::setScrollHide( bool b )
+{
+	// if no change, just bail
+	if( d->scrollHide == b ) return;
+
+	d->scrollHide = b;
+	if( b )
+		setVScrollBarMode( AlwaysOff );
+	else
+		setVScrollBarMode( Auto );
+}
+
+bool ListView::scrollHide() const
+{
+	return d->scrollHide;
+}
+
+void ListView::setMouseNavigation( bool b )
+{
+	d->mouseNavigation = b;
+}
+
+bool ListView::mouseNavigation() const
+{
+	return d->mouseNavigation;
 }
 
 void ListView::timerEvent( QTimerEvent *e )
@@ -728,7 +721,7 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 				d->scrollAutoHideCounter = 9999;		// Mouse is on the contact list, so don't hide it
 			}
 
-			if( KopetePrefs::prefs()->contactListMouseNavigation() )
+			if( d->mouseNavigation )
 			{
 				const double offset = static_cast<double>(visibleHeight())/50.0 + d->mouseNavigationOffset;
 				d->targetScrollBarValue = ( event->y() - offset ) * ( static_cast<double>(verticalScrollBar()->maxValue()) /
@@ -747,7 +740,7 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 	}
 	else
 	{
-		kdDebug( 14000 ) << k_funcinfo << "Unhandled event: [" << o << "][" << o->name() << "][" << o->className() << "][" << e->type() << "]" << endl;
+// 		kdDebug( 14000 ) << k_funcinfo << "Unhandled event: [" << o << "][" << o->name() << "][" << o->className() << "][" << e->type() << "]" << endl;
 		return KListView::eventFilter( o, e ); // Pass the event to KListView
 	}
 }
