@@ -172,21 +172,28 @@ QString KopeteMetaContact::statusIcon() const
 
 KopeteMetaContact::OnlineStatus KopeteMetaContact::status() const
 {
+	bool awayFound = false;
+	
 	QPtrListIterator<KopeteContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
 		if( it.current()->status() == KopeteContact::Online )
 			return Online;
+		else if( it.current()->status() == KopeteContact::Away)
+			awayFound = true;
 	}
-
+/*
 	it.toFirst();
 	for( ; it.current(); ++it )
 	{
 		if( it.current()->status() == KopeteContact::Away )
 			return Away;
 	}
-
-	return Offline;
+*/
+	if ( awayFound )
+		return Away;
+	else
+		return Offline;
 }
 
 bool KopeteMetaContact::isOnline() const
