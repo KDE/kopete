@@ -32,6 +32,7 @@
 // Local
 #include "yahooprotocol.h"
 
+class QColor;
 class KAction;
 class KActionMenu;
 class YahooContact;
@@ -71,7 +72,7 @@ public:
 	 * The session
 	 */
 	YahooSession *yahooSession();
-
+	
 	/**
 	 * Returns true if contact @p id is on the server-side contact list
 	 */
@@ -111,6 +112,11 @@ protected:
 	 * Adds our Yahoo contact to a metacontact
 	 */
 	virtual bool addContactToMetaContact(const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact);
+	
+	/**
+	 * Gets the just-received message color
+	 */
+	QColor getMsgColor(const QString& msg);
 
 protected slots:
 	virtual void loaded();

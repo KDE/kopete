@@ -15,8 +15,13 @@
     *                                                                       *
     *************************************************************************
 */
+//Standard Header
+#include <ctime>
+
 //QT
 #include <qfont.h>
+#include <qdatetime.h>
+#include <qcolor.h>
 
 // KDE
 #include <kconfig.h>
@@ -27,7 +32,8 @@
 #include <kapplication.h>
 
 // Kopete
-#include "kopetemessagemanager.h"
+#include <kopetemessagemanager.h>
+#include <kopetemessage.h>
 
 // Yahoo
 #include "yahooaccount.h"
@@ -125,7 +131,39 @@ void YahooAccount::setImportContacts(bool newSetting)
 	m_importContacts = newSetting;
 }
 
-
+QColor YahooAccount::getMsgColor(const QString& msg)
+{
+	/* Yahoo sends a message either with color or without color
+	 * so we have to use this really hacky method to get colors
+	 */
+	kdDebug(14180) << k_funcinfo << "msg is " << msg << endl;
+	//If we get here, the message uses a standard Yahoo color
+	//(selectable from the drop down box)
+	if ( msg.find("[38m") != -1 )
+		return Qt::red;
+	if ( msg.find("[34m") != -1 )
+		return Qt::green;
+	if ( msg.find("[31m") != -1 )
+		return Qt::blue;
+	if ( msg.find("[39m") != -1 )
+		return Qt::yellow;
+	if ( msg.find("[36m") != -1 )
+		return Qt::darkMagenta;
+	if ( msg.find("[32m") != -1 )
+		return Qt::cyan;
+	if ( msg.find("[37m") != -1 )
+		return QColor("#FFAA39");
+	if ( msg.find("[35m") != -1 )
+		return QColor("#FFD8D8");
+	if ( msg.find("[#") != -1 )
+	{
+		kdDebug(14180) << "Custom color is " << msg.mid(msg.find("[#")+1,7) << endl;
+		return QColor(msg.mid(msg.find("[#")+1,7));
+	}
+	
+	//return a default value just in case
+	return Qt::black;
+}
 
 void YahooAccount::connect()
 {
@@ -381,9 +419,11 @@ void YahooAccount::slotStatusChanged( const QString &who, int stat, const QStrin
 		contact(who)->setYahooStatus( YahooStatus::fromLibYahoo2(stat), msg, away);
 }
 
-void YahooAccount::slotGotIm( const QString &who, const QString &msg, long /*tm*/, int /*stat*/)
+void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, int /*stat*/)
 {
 	QFont msgFont;
+	QDateTime msgDT;
+	KopeteContactPtrList justMe;
 
 	if(!contact(who))
 		addContact( who, who, 0L, KopeteAccount::DontChangeKABC, QString::null, true );
@@ -393,11 +433,21 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long /*tm*
 	// Tell the message manager that the buddy is done typing
 	mm->receivedTypingMsg(contact(who), false);
 
-	KopeteContactPtrList justMe;
 	justMe.append(myself());
-	KopeteMessage kmsg(contact(who), justMe, msg, KopeteMessage::Inbound , KopeteMessage::PlainText);
-	QString newMsg = kmsg.plainBody();
 
+	if (tm == 0)
+		msgDT.setTime_t(time(0L));
+	else
+		msgDT.setTime_t(tm, Qt::LocalTime);
+	
+	KopeteMessage kmsg(msgDT, contact(who), justMe, msg,
+					KopeteMessage::Inbound , KopeteMessage::PlainText);
+
+	QString newMsg = kmsg.plainBody();
+	
+	kmsg.setFg(getMsgColor(msg));
+	kdDebug(14180) << "Message color is " << getMsgColor(msg) << endl;
+	
 	if (newMsg.find("<font") != -1)
 	{
 		msgFont.setFamily(newMsg.section('"', 1,1));
