@@ -175,7 +175,7 @@ void MSNMessageManager::slotMessageSent(KopeteMessage &message,KopeteMessageMana
 
 void MSNMessageManager::slotMessageReceived( KopeteMessage &msg )
 {
-	if(msg.plainBody().startsWith("Auto-Message: "))
+	if(msg.plainBody().startsWith("AutoMessage: "))
 	{
 		//FIXME: HardCodded color are not so good
 		msg.setFg(QColor("SlateGray3"));
@@ -187,7 +187,7 @@ void MSNMessageManager::slotMessageReceived( KopeteMessage &msg )
 	if(account()->isAway() && !static_cast<MSNAccount*>(account())->awayReason().isEmpty())
 	{
 		//Don't translate "Auto-Message:" This string is catched by MSN Plus! , (and also by kopete now)
-		KopeteMessage msg2(user(), members() , "Auto-Message: " + static_cast<MSNAccount*>(account())->awayReason() , KopeteMessage::Outbound );
+		KopeteMessage msg2(user(), members() , "AutoMessage: " + static_cast<MSNAccount*>(account())->awayReason() , KopeteMessage::Outbound );
 		msg2.setFg(QColor("SlateGray3"));
 		QFont f;
 		f.setItalic(true);
