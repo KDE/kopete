@@ -65,7 +65,7 @@ int main( int argc, char *argv[] )
 	aboutData.addAuthor ( "Martijn Klingens", I18N_NOOP("Developer"), "klingens@kde.org" );
 	aboutData.addAuthor ( "Matt Rogers", I18N_NOOP("Developer, Yahoo plugin and Oscar plugin maintainer"), "mattrogers@sbcglobal.net" );
 	aboutData.addAuthor ( "Zack Rusin", I18N_NOOP("Developer, original Gadu plugin author"), "zack@kde.org" );
-	aboutData.addAuthor ( "Richard Smith", I18N_NOOP("Developer, Password handling"), "kde@metafoo.co.uk" );
+	aboutData.addAuthor ( "Richard Smith", I18N_NOOP("Developer, UI maintainer"), "kde@metafoo.co.uk" );
 	aboutData.addAuthor ( "Will Stephenson", I18N_NOOP("Developer, icons, various plugins"), "lists@stevello.free-online.co.uk" );
 	aboutData.addAuthor ( "Gav Wood", I18N_NOOP("Developer, WinPopup plugin maintainer"), "gjw102@york.ac.uk" );
 
