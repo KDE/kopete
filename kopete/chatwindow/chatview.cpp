@@ -16,44 +16,44 @@
     *************************************************************************
 */
 
+#include "chatview.h"
+
 #include <qclipboard.h>
 #include <qheader.h>
 
 #include <dom/dom_doc.h>
 #include <dom/dom_element.h>
-#include <dom/html_document.h>
 #include <dom/html_base.h>
+#include <dom/html_document.h>
 #include <dom/html_inline.h>
-#include <khtmlview.h>
-#include <khtml_part.h>
-#include <kfiledialog.h>
-#include <kiconloader.h>
-#include <kdeversion.h>
 #include <kapplication.h>
-#include <krun.h>
-#include <kdebug.h>
-#include <klocale.h>
 #include <kcolordialog.h>
-#include <kfontdialog.h>
-#include <krootpixmap.h>
-#include <ktempfile.h>
-#include <kiconeffect.h>
-#include <kwin.h>
-#include <kmessagebox.h>
 #include <kcompletion.h>
+#include <kdebug.h>
+#include <kdeversion.h>
+#include <kfiledialog.h>
+#include <kfontdialog.h>
+#include <khtml_part.h>
+#include <khtmlview.h>
+#include <kiconeffect.h>
+#include <kiconloader.h>
+#include <klibloader.h>
+#include <klocale.h>
+#include <kmessagebox.h>
 #include <kpopupmenu.h>
+#include <krootpixmap.h>
+#include <krun.h>
+#include <ktempfile.h>
+#include <kwin.h>
 
-#include "chatview.h"
 #include "kopetechatwindow.h"
-#include "kopeteprotocol.h"
 #include "kopetemessagemanager.h"
 #include "kopetemetacontact.h"
+#include "kopetepluginmanager.h"
 #include "kopeteprefs.h"
-#include "kopetexsl.h"
-#include "pluginloader.h"
+#include "kopeteprotocol.h"
 #include "kopetetabwidget.h"
-
-
+#include "kopetexsl.h"
 
 ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	 : KDockMainWindow( 0L, name, 0L ), KopeteView( mgr ), editpart(0)
@@ -1109,23 +1109,25 @@ void ChatView::slotRightClick( const QString &, const QPoint &point )
 	{
 		if( !n.isNull() && msgManager()->members().contains( m.from() ) )
 		{
-			QPtrList<KopetePlugin> ps = LibraryLoader::self()->plugins();
 			bool actions = false;
 			int j = 0;
-			for( KopetePlugin *p = ps.first() ; p ; p = ps.next() )
+
+			QMap<KPluginInfo *, KopetePlugin *> plugins = KopetePluginManager::self()->loadedPlugins( "Plugins" );
+
+			// Add the protocol to the list
+			plugins.insert( 0L, msgManager()->protocol() );
+
+			QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
+			for ( it = plugins.begin(); it != plugins.end(); ++it )
 			{
-				KopeteProtocol *protocol = dynamic_cast<KopeteProtocol*>( p );
-				if( !p || protocol == msgManager()->protocol() )
+				KActionCollection *customActions = it.data()->customChatWindowPopupActions( m, n );
+				if( customActions  && !customActions->isEmpty() )
 				{
-					KActionCollection *customActions = p->customChatWindowPopupActions( m, n );
-					if( customActions  && !customActions->isEmpty() )
-					{
-						actions = true;
-						for(unsigned int i = 0; i < customActions->count(); i++)
-							customActions->action(i)->plug( chatWindowPopup, i+j );
-					}
-					j++;
+					actions = true;
+					for( uint i = 0; i < customActions->count(); i++ )
+						customActions->action( i )->plug( chatWindowPopup, i + j );
 				}
+				j++;
 			}
 
 			if( actions )

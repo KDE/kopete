@@ -16,43 +16,43 @@
     *************************************************************************
 */
 
+#include "kopeteemailwindow.h"
+
 #include <qclipboard.h>
-#include <qlayout.h>
-#include <qvbox.h>
 #include <qlabel.h>
+#include <qlayout.h>
 #include <qtimer.h>
+#include <qvbox.h>
 
 #include <kaction.h>
-#include <kdeversion.h>
 #include <kapplication.h>
 #include <kcolordialog.h>
 #include <kconfig.h>
 #include <kdebug.h>
+#include <kdeversion.h>
 #include <kedittoolbar.h>
 #include <kfontdialog.h>
 #include <kglobalsettings.h>
 #include <khtml_part.h>
 #include <khtmlview.h>
+#include <kiconloader.h>
 #include <kkeydialog.h>
+#include <klibloader.h>
 #include <klocale.h>
 #include <kmenubar.h>
-#include "kopeteplugin.h"
+#include <kmessagebox.h>
 #include <kpopupmenu.h>
 #include <kpushbutton.h>
-#include <kwin.h>
-#include <kmessagebox.h>
-#include <kiconloader.h>
 #include <ktextedit.h>
+#include <kwin.h>
 
-//#include "kopeteemoticons.h"
-#include "kopeteemoticonaction.h"
 #include "kopetecontact.h"
+#include "kopeteemoticonaction.h"
 #include "kopetemessagemanager.h"
+#include "kopeteplugin.h"
+#include "kopetepluginmanager.h"
 #include "kopeteprefs.h"
-#include "pluginloader.h"
 #include "kopetexsl.h"
-
-#include "kopeteemailwindow.h"
 
 struct KopeteEmailWindowPrivate
 {

@@ -35,7 +35,7 @@
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteprotocol.h"
-#include "pluginloader.h"
+#include "kopetepluginmanager.h"
 
 AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool modal )
 : KWizard( parent, name, modal )
@@ -53,7 +53,7 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 
 	QListViewItem *pluginItem = 0L;
 
-	QValueList<KPluginInfo *> protocols = LibraryLoader::self()->availablePlugins( "Protocols" );
+	QValueList<KPluginInfo *> protocols = KopetePluginManager::self()->availablePlugins( "Protocols" );
 
 	for ( QValueList<KPluginInfo *>::Iterator it = protocols.begin(); it != protocols.end(); ++it )
 	{
@@ -154,8 +154,8 @@ void AddAccountWizard::next()
 		QListViewItem *lvi = m_selectService->protocolListView->selectedItem();
 		if ( lvi )
 		{
-			kdDebug( 14100 ) << k_funcinfo << "Trying to load plugin " << m_protocolItems[ lvi ]->name() << " by name" << endl;
-			KopetePlugin *pl = LibraryLoader::self()->loadPlugin( m_protocolItems[ lvi ]->name() );
+			kdDebug( 14100 ) << k_funcinfo << "Trying to load plugin " << m_protocolItems[ lvi ]->pluginname() << " by name" << endl;
+			KopetePlugin *pl = KopetePluginManager::self()->loadPlugin( m_protocolItems[ lvi ]->pluginname() );
 
 			m_proto = dynamic_cast<KopeteProtocol *>( pl );
 			if ( m_proto )

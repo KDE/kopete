@@ -16,7 +16,7 @@
 */
 
 #include "kopeteplugin.h"
-#include "pluginloader.h"
+#include "kopetepluginmanager.h"
 
 #include <ksettings/dispatcher.h>
 
@@ -38,12 +38,12 @@ QString KopetePlugin::pluginId() const
 
 QString KopetePlugin::displayName() const
 {
-	return LibraryLoader::self()->pluginName( this );
+	return KopetePluginManager::self()->pluginName( this );
 }
 
 QString KopetePlugin::pluginIcon() const
 {
-	return LibraryLoader::self()->pluginIcon( this );
+	return KopetePluginManager::self()->pluginIcon( this );
 }
 
 void KopetePlugin::deserialize( KopeteMetaContact * /* metaContact */,

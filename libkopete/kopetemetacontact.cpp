@@ -30,7 +30,7 @@
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
-#include "pluginloader.h"
+#include "kopetepluginmanager.h"
 
 #define EMAIL_WINDOW 0
 #define CHAT_WINDOW 1
@@ -699,7 +699,7 @@ bool KopeteMetaContact::fromXML( const QDomElement& element )
 	}
 
 	// If a plugin is loaded, load data cached
-	connect( LibraryLoader::self(), SIGNAL( pluginLoaded(KopetePlugin*) ),
+	connect( KopetePluginManager::self(), SIGNAL( pluginLoaded(KopetePlugin*) ),
 		this, SLOT( slotPluginLoaded(KopetePlugin*) ) );
 
 	// track changes only works if ONE Contact is inside the MetaContact

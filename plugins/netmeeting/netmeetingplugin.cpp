@@ -19,7 +19,7 @@
 #include <kgenericfactory.h>
 #include <kaction.h>
 
-#include "pluginloader.h"
+#include "kopetepluginmanager.h"
 #include "kopetemessagemanagerfactory.h"
 
 #include "msnmessagemanager.h"
@@ -38,7 +38,7 @@ NetMeetingPlugin::NetMeetingPlugin( QObject *parent, const char *name, const QSt
 	if(MSNProtocol::protocol())
 		slotPluginLoaded(MSNProtocol::protocol());
 	else
-		connect(LibraryLoader::self() , SIGNAL(pluginLoaded(KopetePlugin*) ), this, SLOT(slotPluginLoaded(KopetePlugin*)));
+		connect(KopetePluginManager::self() , SIGNAL(pluginLoaded(KopetePlugin*) ), this, SLOT(slotPluginLoaded(KopetePlugin*)));
 
 
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL( messageManagerCreated( KopeteMessageManager * )) , SLOT( slotNewKMM( KopeteMessageManager * ) ) );

@@ -12,7 +12,7 @@
  * the accountId, to know each protocol id, and more
  *-----------------------------------------------------------*/
 
-#include "pluginloader.h"
+#include "kopetepluginmanager.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
 #include "kopetecontact.h"
@@ -57,7 +57,7 @@ void HistoryPlugin::convertOldHistory()
 		QString protocolId;
 		QString accountId;
 
-		if(KopeteProtocol *p=dynamic_cast<KopeteProtocol*>(LibraryLoader::self()->searchByID(fi->fileName())) )
+		if(KopeteProtocol *p=dynamic_cast<KopeteProtocol*>(KopetePluginManager::self()->searchByID(fi->fileName())) )
 		{
 			protocolId=p->pluginId();
 			QDictIterator<KopeteAccount> it(KopeteAccountManager::manager()->accounts(p));
@@ -322,7 +322,7 @@ bool HistoryPlugin::detectOldHistory()
 	QFileInfo *fi;
 	while ( (fi = it.current()) != 0 )
 	{
-		if( dynamic_cast<KopeteProtocol*>( LibraryLoader::self()->searchByID( fi->fileName() ) ) )
+		if( dynamic_cast<KopeteProtocol*>( KopetePluginManager::self()->searchByID( fi->fileName() ) ) )
 			return true;
 
 		if(fi->fileName() == "MSNProtocol" || fi->fileName() == "msn_logs" )

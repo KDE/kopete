@@ -39,7 +39,7 @@
 
 #include "kopeteprotocol.h"
 #include "kopeteprefs.h"
-#include "pluginloader.h"
+#include "kopetepluginmanager.h"
 #include "kopetemetacontact.h"
 #include "preferencesdialog.h"
 

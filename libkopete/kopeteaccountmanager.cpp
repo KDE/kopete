@@ -27,7 +27,7 @@
 
 #include "kopeteaway.h"
 #include "kopeteprotocol.h"
-#include "pluginloader.h"
+#include "kopetepluginmanager.h"
 #include "kopeteaccount.h"
 
 KopeteAccountManager* KopeteAccountManager::s_manager = 0L;
@@ -237,7 +237,7 @@ void KopeteAccountManager::save()
 
 void KopeteAccountManager::load()
 {
-	connect( LibraryLoader::self(), SIGNAL( pluginLoaded( KopetePlugin* ) ), SLOT( slotPluginLoaded( KopetePlugin * ) ) );
+	connect( KopetePluginManager::self(), SIGNAL( pluginLoaded( KopetePlugin* ) ), SLOT( slotPluginLoaded( KopetePlugin * ) ) );
 }
 
 void KopeteAccountManager::slotPluginLoaded( KopetePlugin *plugin )

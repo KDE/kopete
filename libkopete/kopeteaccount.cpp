@@ -33,7 +33,7 @@
 #include "kopetemetacontact.h"
 #include "kopetepassworddialog.h"
 #include "kopeteprotocol.h"
-#include "pluginloader.h"
+#include "kopetepluginmanager.h"
 
 #if KDE_IS_VERSION( 3, 1, 90 )
 #include <kwallet.h>
@@ -189,7 +189,7 @@ void KopeteAccount::readConfig( const QString &configGroupName )
 	for ( pluginDataIt = pluginData.begin(); pluginDataIt != pluginData.end(); ++pluginDataIt )
 	{
 		QString pluginId = QString::fromLatin1( "kopete_" ) + pluginDataIt.key();
-		KopetePlugin *plugin = LibraryLoader::self()->searchByID( pluginId );
+		KopetePlugin *plugin = KopetePluginManager::self()->plugin( pluginId );
 		if ( plugin )
 			setPluginData( plugin, pluginDataIt.data() );
 	}

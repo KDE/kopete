@@ -39,7 +39,7 @@
 #include "kopetemetacontact.h"
 #include "kopetestdaction.h"
 #include "addcontactpage.h"
-#include "pluginloader.h"
+#include "kopetepluginmanager.h"
 #include "kopeteaccount.h"
 #include "kopeteprefs.h"
 #include "systemtray.h"

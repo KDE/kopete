@@ -22,7 +22,7 @@
 #include "kopetecontactlist.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
-#include "pluginloader.h"
+#include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
 
 
@@ -153,7 +153,6 @@ void KopeteIface::connect(const QString &protocolId, const QString &accountId )
 	}
 }
 
-
 void KopeteIface::disconnect(const QString &protocolId, const QString &accountId )
 {
 	QPtrListIterator<KopeteAccount> it( KopeteAccountManager::manager()->accounts() );
@@ -173,19 +172,15 @@ void KopeteIface::disconnect(const QString &protocolId, const QString &accountId
 	}
 }
 
-
-
 bool KopeteIface::loadPlugin( const QString& name )
 {
-	return LibraryLoader::self()->loadPlugin(name);
+	return KopetePluginManager::self()->loadPlugin(name);
 }
 
 bool KopeteIface::unloadPlugin( const QString& name )
 {
-	return LibraryLoader::self()->remove( name );
+	return KopetePluginManager::self()->unloadPlugin( name );
 }
-
-
 
 // vim: set noet ts=4 sts=4 sw=4:
 

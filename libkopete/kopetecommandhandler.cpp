@@ -24,7 +24,7 @@
 #include "kopetecommand.h"
 #include "kopetemessagemanager.h"
 #include "kopeteprotocol.h"
-#include "pluginloader.h"
+#include "kopetepluginmanager.h"
 #include "kopeteview.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
@@ -77,7 +77,7 @@ KopeteCommandHandler::KopeteCommandHandler() : QObject( qApp )
 		i18n("USAGE: /exec [-o] <command> - Executes the specified command and displays output in the chat buffer. If"
 		" -o is specified, the output is sent to all members of the chat.") );
 
-	connect( LibraryLoader::self(), SIGNAL( pluginLoaded( KopetePlugin*) ), this, SLOT(slotPluginLoaded(KopetePlugin*)) );
+	connect( KopetePluginManager::self(), SIGNAL( pluginLoaded( KopetePlugin*) ), this, SLOT(slotPluginLoaded(KopetePlugin*)) );
 }
 
 KopeteCommandHandler::~KopeteCommandHandler()

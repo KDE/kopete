@@ -42,13 +42,14 @@
 #include <libxslt/xsltutils.h>
 #endif
 
-#include "pluginloader.h"
+#include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
 
 #include "webpresenceplugin.h"
 #include "webpresencepreferences.h"
+#include <kplugininfo.h>
 
 typedef KGenericFactory<WebPresencePlugin> WebPresencePluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_webpresence, WebPresencePluginFactory( "kopete_webpresence" )  );
@@ -321,18 +322,15 @@ bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
 
 QPtrList<KopeteProtocol> WebPresencePlugin::allProtocols()
 {
-	kdDebug(14309) << k_funcinfo << endl;
-	QPtrList<KopeteProtocol> protos;
-	QPtrList<KopetePlugin> plugins = LibraryLoader::self()->plugins();
+	kdDebug( 14309 ) << k_funcinfo << endl;
 
-	for( KopetePlugin *p = plugins.first(); p; p = plugins.next() )
-	{
-		KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
-		if( !proto )
-			continue;
-		protos.append( proto );
-	}
-	return protos;
+	QMap<KPluginInfo *, KopetePlugin *> plugins = KopetePluginManager::self()->loadedPlugins( "Protocols" );
+	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
+	QPtrList<KopeteProtocol> result;
+	for ( it = plugins.begin(); it != plugins.end(); ++it )
+		result.append( static_cast<KopeteProtocol *>( it.data() ) );
+
+	return result;
 }
 
 QString WebPresencePlugin::statusAsString( const KopeteOnlineStatus &newStatus )

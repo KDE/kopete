@@ -22,7 +22,7 @@
 #include <kpluginselector.h>
 #include <ktrader.h>
 
-#include "pluginloader.h"
+#include "kopetepluginmanager.h"
 
 typedef KGenericFactory<KopetePluginConfig, QWidget> KopetePluginConfigFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_pluginconfig, KopetePluginConfigFactory( "kcm_kopete_pluginconfig" ) );
@@ -30,8 +30,8 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_pluginconfig, KopetePluginConfigFactory( 
 KopetePluginConfig::KopetePluginConfig( QWidget *parent, const char * /* name */, const QStringList &args )
 : KSettings::PluginPage( KopetePluginConfigFactory::instance(), parent, args )
 {
-	pluginSelector()->addPlugins( LibraryLoader::self()->availablePlugins( "Protocols" ), i18n( "Protocols" ), "Protocols" );
-	pluginSelector()->addPlugins( LibraryLoader::self()->availablePlugins( "Plugins" ),   i18n( "General Plugins" ), "Plugins" );
+	pluginSelector()->addPlugins( KopetePluginManager::self()->availablePlugins( "Protocols" ), i18n( "Protocols" ), "Protocols" );
+	pluginSelector()->addPlugins( KopetePluginManager::self()->availablePlugins( "Plugins" ),   i18n( "General Plugins" ), "Plugins" );
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

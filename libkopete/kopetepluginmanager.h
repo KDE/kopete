@@ -1,11 +1,8 @@
 /*
-    pluginloader.h - Kopete Plugin Loader
+    kopetepluginmanager.h - Kopete Plugin Loader
 
     Copyright (c) 2002-2003 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-
-    Portions of this code are based on the Noatun plugin code
-    Noatun    (c) 2000-2002 The Noatun Developers
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -19,23 +16,18 @@
     *************************************************************************
 */
 
-#ifndef PLUGIN_LOADER_H
-#define PLUGIN_LOADER_H
+#ifndef KOPETEPLUGINMANAGER_H
+#define KOPETEPLUGINMANAGER_H
 
-#include <qdict.h>
 #include <qmap.h>
+#include <qobject.h>
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qvaluelist.h>
 
-#include <klibloader.h>
-
-class KopeteProtocol;
-class KopetePlugin;
-
 class KPluginInfo;
 
-struct KopeteLibraryInfo;
+class KopetePlugin;
 
 class KopetePluginManagerPrivate;
 
@@ -43,7 +35,7 @@ class KopetePluginManagerPrivate;
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  * @author Martijn Klingens <klingens@kde.org>
  */
-class LibraryLoader : public QObject
+class KopetePluginManager : public QObject
 {
 	Q_OBJECT
 
@@ -51,11 +43,9 @@ public:
 	/**
 	 * Retrieve the plugin loader instance.
 	 */
-	static LibraryLoader* self();
+	static KopetePluginManager* self();
 
-	~LibraryLoader();
-
-	KopetePlugin *loadPlugin( const QString &spec );
+	~KopetePluginManager();
 
 	/**
 	 * Returns a list of all available plugins for the given category.
@@ -70,22 +60,23 @@ public:
 	QValueList<KPluginInfo *> availablePlugins( const QString &category = QString::null ) const;
 
 	/**
-	 * @brief Search by ID
-	 *
-	 * ex: "ICQProtocol"
-	 *
-	 * @return The @ref KopetePlugin object found by the search
+	 * Returns a list of all plugins that are actually loaded.
+	 * If you omit the category you get all, otherwise it's a filtered list.
+	 * See also @ref availablePlugins().
 	 */
-	KopetePlugin *searchByID( const QString &Id );
+	QMap<KPluginInfo *, KopetePlugin *> loadedPlugins( const QString &category = QString::null ) const;
 
 	/**
-	 * @brief Search by name
+	 * @brief Search by plugin name. This is the key used as X-KDE-PluginInfo-Name in
+	 * the .desktop file, e.g. "kopete_jabber"
 	 *
-	 * ex: "ICQ"
+	 * @return The @ref KopetePlugin object found by the search, or a null
+	 * pointer if the plugin is not loaded.
 	 *
-	 * @return The @ref KopetePlugin object found by the search
+	 * If you want to also load the plugin you can better use @ref loadPlugin, which returns
+	 * the pointer to the plugin if it's already loaded.
 	 */
-	KopetePlugin *searchByName(const QString&);
+	KopetePlugin *plugin( const QString &pluginName ) const;
 
 	/**
 	 * @brief The opposite of searchByName.
@@ -95,21 +86,9 @@ public:
 	QString pluginName( const KopetePlugin *plugin ) const;
 
 	/**
-	 * @brief Loads all the enabled plugins
-	 */
-	bool loadAll();
-
-	/**
 	 * @brief Unload the plugin specified by @p spec
 	 */
-	bool remove(const QString &spec);
-
-	/**
-	 * @brief Retrieve a list of all loaded plugins
-	 *
-	 * @return a list of all loaded plugins or protocols
-	 */
-	QPtrList<KopetePlugin> plugins() const;
+	bool unloadPlugin( const QString &pluginName );
 
 	/**
 	 * @brief Retrieve all registered address book fields for a given plugin.
@@ -128,52 +107,42 @@ public:
 	 */
 	QString pluginIcon( const KopetePlugin *plugin ) const;
 
+public slots:
+	/**
+	 * @brief Load a single plugin by plugin name. Returns an existing plugin
+	 * if one is already loaded in memory.
+	 *
+	 * See also @ref plugin().
+	 */
+	KopetePlugin *loadPlugin( const QString &pluginName );
+
+	/**
+	 * @brief Loads all the enabled plugins. Also used to reread the
+	 * config file when the configuration has changed.
+	 */
+	void loadAllPlugins();
+
 signals:
 	/**
 	 * @brief Signals a new plugin has just been loaded.
 	 */
-	void pluginLoaded(KopetePlugin *);
+	void pluginLoaded( KopetePlugin *plugin );
 
 private slots:
 	/**
 	 * @brief Cleans up some references if the plugin is destroyed
 	 */
-	void slotPluginDestroyed( QObject *o );
-
-	/**
-	 * The current configuration has changed; reread the config file
-	 */
-	void slotKopeteSettingsChanged();
+	void slotPluginDestroyed( QObject *plugin );
 
 private:
-	 // FIXME: These 6 methods are only used internally and by
-	 //        pluginconfig. Fix that code and remove them or
-	 //        make them private.
-	 // This is needed for the Plugin-List-View
-	 // to see what plugins are required to show
-	 // (when required by another kopete-plugin)
-	KopeteLibraryInfo getInfo(const QString &spec) const;
+	KopetePluginManager();
 
-	LibraryLoader();
-
-	QDict<KopetePlugin> m_loadedPlugins;
-
-	/**
-	 * The list of all address book keys used by each plugin
-	 */
-	QMap<KopetePlugin *, QStringList> m_addressBookFields;
-
-	/**
-	 * A cache for plugin info, to avoid reparsing (and hence mutable)
-	 */
-	mutable QMap<QString, KopeteLibraryInfo> m_cachedInfo;
-
-	static LibraryLoader *s_pluginLoader;
+	static KopetePluginManager *s_self;
 
 	KopetePluginManagerPrivate *d;
 };
 
-#endif
+#endif // KOPETEPLUGINMANAGER_H
 
 // vim: set noet ts=4 sts=4 sw=4:
 

@@ -35,7 +35,7 @@
 #include "kopeteaccountmanager.h"
 #include "kopetecommandhandler.h"
 #include "kopetewindow.h"
-#include "pluginloader.h"
+#include "kopetepluginmanager.h"
 #include "preferencesdialog.h"
 
 #ifdef HAVE_CONFIG_H
@@ -165,11 +165,10 @@ void Kopete::slotLoadPlugins()
 
 	config->writeEntry( "Plugins", modules );
 
-	LibraryLoader::self()->loadAll();
+	KopetePluginManager::self()->loadAllPlugins();
 
 	//load the default chatwindow
-	LibraryLoader::self()->loadPlugin( "chatwindow.desktop" );
-
+	KopetePluginManager::self()->loadPlugin( "kopete_chatwindow" );
 
 	// --noconnect not specified?
 	if (args->isSet("connect"))

@@ -49,7 +49,7 @@
 #include "kopeteprotocol.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteglobalawaydialog.h"
-#include "pluginloader.h"
+#include "kopetepluginmanager.h"
 #include "preferencesdialog.h"
 #include "systemtray.h"
 #include "kopeteaccountstatusbaricon.h"
@@ -81,7 +81,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	// --------------------------------------------------------------------------------
 
 	// Trap all loaded plugins, so we can add their status bar icons accordingly , also used to add XMLGUIClient
-	connect( LibraryLoader::self(), SIGNAL( pluginLoaded( KopetePlugin * ) ),
+	connect( KopetePluginManager::self(), SIGNAL( pluginLoaded( KopetePlugin * ) ),
 		this, SLOT( slotPluginLoaded( KopetePlugin * ) ) );
 	// And accounts too
 	connect( KopeteAccountManager::manager(), SIGNAL(accountReady(KopeteAccount*)),
@@ -94,12 +94,11 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	// call this _after_ createGUI(), otherwise menubar is not set up correctly
 	loadOptions();
 
-	//-- if some plugins are already loaded, merge the GUI
-	QPtrList<KopetePlugin> ps = LibraryLoader::self()->plugins();
-	for( KopetePlugin *p = ps.first() ; p ; p = ps.next() )
-	{
-		slotPluginLoaded(p);
-	}
+	// If some plugins are already loaded, merge the GUI
+	QMap<KPluginInfo *, KopetePlugin *> plugins = KopetePluginManager::self()->loadedPlugins();
+	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
+	for ( it = plugins.begin(); it != plugins.end(); ++it )
+		slotPluginLoaded( it.data() );
 }
 
 void KopeteWindow::initView()
@@ -692,26 +691,23 @@ void KopeteWindow::slotSettingsChanged()
 	// Account colouring may have changed, so tell our status bar to redraw
 //	kdDebug(14000) << k_funcinfo << endl;
 
-	QPtrList<KopetePlugin> plugins = LibraryLoader::self()->plugins();
-	QPtrListIterator<KopetePlugin> it( plugins );
-	KopetePlugin *plugin = 0L;
-
-	//FIXME: loop only in accounts
-	while( ( plugin = it.current() ) != 0 )
+	QMap<KPluginInfo *, KopetePlugin *> plugins = KopetePluginManager::self()->loadedPlugins( "Protocols" );
+	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
+	for ( it = plugins.begin(); it != plugins.end(); ++it )
 	{
-		++it;
-		KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( plugin );
-		if( !proto )
-			continue;
+		KopeteProtocol *proto = static_cast<KopeteProtocol *>( it.data() );
 		QDict<KopeteAccount> dict = KopeteAccountManager::manager()->accounts( proto );
-		QDictIterator<KopeteAccount> it( dict );
+		QDictIterator<KopeteAccount> accountIt( dict );
 		KopeteAccount *a;
-		while( ( a = it.current() ) != 0 )
+		while( ( a = accountIt.current() ) != 0 )
 		{
-			++it;
 			slotAccountStatusIconChanged( a->myself() );
+			++accountIt;
 		}
 	}
 }
+
 #include "kopetewindow.moc"
+
 // vim: set noet ts=4 sts=4 sw=4:
+
