@@ -183,7 +183,7 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 
 	QDomElement messageNode = d->xmlDoc.createElement( QString::fromLatin1("message") );
 	messageNode.setAttribute( QString::fromLatin1("time"), KGlobal::locale()->formatTime(timeStamp.time(), true) );
-	messageNode.setAttribute( QString::fromLatin1("timestamp"), timeStamp.toString(), true) );
+	messageNode.setAttribute( QString::fromLatin1("timestamp"), timeStamp.toString() );
 	messageNode.setAttribute( QString::fromLatin1("subject"), subject );
 	messageNode.setAttribute( QString::fromLatin1("direction"), direction );
 	messageNode.setAttribute( QString::fromLatin1("importance"), d->importance );
