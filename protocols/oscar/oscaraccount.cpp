@@ -64,11 +64,19 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, QString accountID, const char
 	mDebugDialog=new OscarDebugDialog();
 	getEngine()->setDebugDialog(mDebugDialog);
 
-	initSignals(); // Initialize the signals and slots
+	// Create our idle timer
+	mIdleTimer = new QTimer(this, "OscarIdleTimer");
+
+	// Initialize the signals and slots
+	initSignals();
 
 	// Set our random new numbers
 	mRandomNewBuddyNum = 0;
 	mRandomNewGroupNum = 0;
+
+	// Set our idle to no
+	mAreIdle = false;
+
 }
 
 OscarAccount::~OscarAccount()
@@ -298,7 +306,7 @@ void OscarAccount::initSignals()
 	// Status changed (I think my own status)
 	QObject::connect( getEngine(),
 		SIGNAL( statusChanged( const KopeteOnlineStatus & ) ),
-		SLOT( slotOurStatusChanged( const KopeteOnlineStatus & ) ) );
+		SLOT( slotOurStatusChanged(const KopeteOnlineStatus & )));
 
 	// Got warning
 	QObject::connect( getEngine(),
@@ -310,10 +318,12 @@ void OscarAccount::initSignals()
 		SIGNAL(gotDirectIMRequest(QString)),
 		this, SLOT(slotGotDirectIMRequest(QString)));
 
-	// We have officially become idle
-	QTimer *idleTimer=new QTimer(this, "OscarIdleTimer");
-	QObject::connect(idleTimer, SIGNAL(timeout()), this, SLOT(slotIdleTimeout()));
-	idleTimer->start(3000);
+	// We have officially become idle when this fires
+	QObject::connect(mIdleTimer, SIGNAL(timeout()),
+					 this, SLOT(slotIdleTimeout()));
+	// We go idle after 10 minutes seconds of inactivity, this timer gets
+	// Reset when we detect activity
+	mIdleTimer->start(10 * 60 * 1000);
 
 	// We have officially become un-idle
 	QObject::connect(KopeteAway::getInstance(), SIGNAL(activity()),
@@ -324,7 +334,8 @@ void OscarAccount::setUserProfile( QString profile )
 {
 	// Tell the engine to set the profile
 	getEngine()->setMyProfile( profile );
-	setPluginData(protocol(), "Profile", profile); // Save the user profile
+	// Save the user profile
+	setPluginData(protocol(), "Profile", profile);
 }
 
 KActionMenu* OscarAccount::actionMenu()
@@ -818,15 +829,39 @@ void OscarAccount::slotGotMyUserInfo(UserInfo newInfo)
 
 void OscarAccount::slotIdleActivity()
 {
-//	kdDebug(14150) << k_funcinfo << "system is ACTIVE, setting idle time with server to 0" << endl;
-	getEngine()->sendIdleTime(0);
+	// Reset the idle timer to 10 minutes
+	// TODO Make this configurable
+	if (mIdleTimer != 0L)
+	{
+		mIdleTimer->stop();
+		mIdleTimer->start(10 * 60 * 1000);
+	}
+
+	if (mAreIdle)
+	{ // If we _are_ idle, change it
+		kdDebug(14150) << k_funcinfo
+					   << "system change to ACTIVE, setting idle "
+					   << "time with server to 0" << endl;
+		getEngine()->sendIdleTime(0);
+		mAreIdle = false;
+	}
 }
 
 // Called when there is no activity for a certain amount of time
 void OscarAccount::slotIdleTimeout()
 {
-//	kdDebug(14150) << k_funcinfo << "system is IDLE, setting idle time with server" << endl;
-	getEngine()->sendIdleTime(KopeteAway::getInstance()->idleTime());
+	kdDebug(14150) << k_funcinfo
+				   << "system is IDLE, setting idle time with "
+				   << "server" << endl;
+	getEngine()->sendIdleTime(
+		KopeteAway::getInstance()->idleTime());
+	// Restart the idle timer, so that we keep
+	// updating idle times while we're idle
+	// Every minute
+	mIdleTimer->stop();
+	mIdleTimer->start(60000);
+	// Set the idle flag
+	mAreIdle = true;
 }
 
 int OscarAccount::randomNewBuddyNum()
