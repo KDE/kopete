@@ -16,6 +16,7 @@
 
 #include "kopetepassword.h"
 #include "kopetepassworddialog.h"
+#include "kopeteprotocol.h"
 #include "kopetewalletmanager.h"
 
 #include <qapplication.h>
@@ -57,8 +58,8 @@ QString cryptStr( const QString &aStr )
 
 struct KopetePassword::KopetePasswordPrivate
 {
-	KopetePasswordPrivate( const QString &group )
-	 : configGroup( group ), remembered( false )
+	KopetePasswordPrivate( const QString &group, uint maxLen )
+	 : configGroup( group ), remembered( false ), maximumLength( maxLen ), isWrong( false )
 	{
 	}
 	/** Group to use for KConfig and KWallet */
@@ -67,6 +68,10 @@ struct KopetePassword::KopetePasswordPrivate
 	bool remembered;
 	/** The current password in the KConfig file, or QString::null if no password there */
 	QString passwordFromKConfig;
+	/** The maximum length allowed for this password, or -1 if there is no limit */
+	uint maximumLength;
+	/** Is the current password known to be wrong? */
+	bool isWrong;
 };
 
 /**
@@ -155,8 +160,8 @@ public:
 class KopetePasswordGetRequestPrompt : public KopetePasswordGetRequest
 {
 public:
-	KopetePasswordGetRequestPrompt( KopetePassword &pass,  const QPixmap &image, const QString &prompt, KopetePassword::PasswordSource source, unsigned int maxLength )
-	 : KopetePasswordGetRequest( pass ), mImage( image ), mPrompt( prompt ), mSource( source ), mMaxLength( maxLength ), mView( 0 )
+	KopetePasswordGetRequestPrompt( KopetePassword &pass,  const QPixmap &image, const QString &prompt, KopetePassword::PasswordSource source )
+	 : KopetePasswordGetRequest( pass ), mImage( image ), mPrompt( prompt ), mSource( source ), mView( 0 )
 	{
 	}
 
@@ -182,8 +187,9 @@ public:
 		mView->m_text->setText( mPrompt );
 		mView->m_image->setPixmap( mImage );
 		mView->m_password->insert( password );
-		if ( mMaxLength != 0 )
-			mView->m_password->setMaxLength( mMaxLength );
+		int maxLength = mPassword.maximumLength();
+		if ( maxLength != 0 )
+			mView->m_password->setMaxLength( maxLength );
 	
 		// FIXME: either document what these are for or remove them - lilac
 		mView->adjustSize();
@@ -258,6 +264,8 @@ public:
 	}
 	void setPassword()
 	{
+		//TODO: refactor this function to remove duplication
+		// and possibly to make it not need to be a friend of KopetePassword
 		if ( mNewPass.isNull() )
 		{
 			kdDebug( 14010 ) << k_funcinfo << " clearing password" << endl;
@@ -324,8 +332,8 @@ private:
 	QString mNewPass;
 };
 
-KopetePassword::KopetePassword( const QString &configGroup, const char *name )
- : QObject( 0, name ), d( new KopetePasswordPrivate( configGroup ) ) 
+KopetePassword::KopetePassword( const QString &configGroup, uint maximumLength, const char *name )
+ : QObject( 0, name ), d( new KopetePasswordPrivate( configGroup, maximumLength ) ) 
 {
 	readConfig();
 }
@@ -347,6 +355,7 @@ void KopetePassword::readConfig()
 		d->passwordFromKConfig = cryptStr( passwordCrypted );
 
 	d->remembered = config->readBoolEntry( "RememberPassword", false );
+	d->isWrong = config->readBoolEntry( "PasswordIsWrong", false );
 }
 
 void KopetePassword::writeConfig()
@@ -360,11 +369,32 @@ void KopetePassword::writeConfig()
 		config->deleteEntry( "Password" );
 
 	config->writeEntry( "RememberPassword", d->remembered );
+	config->writeEntry( "PasswordIsWrong", d->isWrong );
 }
 
 int KopetePassword::preferredImageSize()
 {
 	return IconSize(KIcon::Toolbar);
+}
+
+uint KopetePassword::maximumLength()
+{
+	return d->maximumLength;
+}
+
+void KopetePassword::setMaximumLength( uint max )
+{
+	d->maximumLength = max;
+}
+
+bool KopetePassword::isWrong()
+{
+	return d->isWrong;
+}
+
+void KopetePassword::setWrong( bool bWrong )
+{
+	d->isWrong = bWrong;
 }
 
 void KopetePassword::requestWithoutPrompt( QObject *returnObj, const char *slot )
@@ -375,15 +405,16 @@ void KopetePassword::requestWithoutPrompt( QObject *returnObj, const char *slot 
 	request->begin();
 }
 
-void KopetePassword::request( QObject *returnObj, const char *slot, const QPixmap &image, const QString &prompt, KopetePassword::PasswordSource source, unsigned int maxLength )
+void KopetePassword::request( QObject *returnObj, const char *slot, const QPixmap &image, const QString &prompt, KopetePassword::PasswordSource source )
 {
-	KopetePasswordRequest *request = new KopetePasswordGetRequestPrompt( *this, image, prompt, source, maxLength );
+	KopetePasswordRequest *request = new KopetePasswordGetRequestPrompt( *this, image, prompt, source );
 	returnObj->connect( request, SIGNAL( requestFinished( const QString & ) ), slot );
 	request->begin();
 }
 
-QString KopetePassword::retrieve( const QPixmap &image, const QString &prompt, KopetePassword::PasswordSource source, unsigned int maxLength )
+QString KopetePassword::retrieve( const QPixmap &image, const QString &prompt, KopetePassword::PasswordSource source )
 {
+	uint maxLength = maximumLength();
 	if ( source == KopetePassword::FromConfigOrUser )
 	{
 		if( KWallet::Wallet *wallet = KopeteWalletManager::self()->wallet() )
@@ -405,8 +436,7 @@ QString KopetePassword::retrieve( const QPixmap &image, const QString &prompt, K
 		if ( d->remembered && !d->passwordFromKConfig.isNull() )
 			return d->passwordFromKConfig;
 	}
-
-	// FIXME: why is this allocated on the heap?
+	
 	KDialogBase *passwdDialog = new KDialogBase( qApp->mainWidget(), "passwdDialog", true, i18n( "Password Required" ),
 		KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
 
@@ -439,57 +469,6 @@ void KopetePassword::set( const QString &pass )
 {
 	KopetePasswordRequest *request = new KopetePasswordSetRequest( *this, pass );
 	request->begin();
-
-#if 0
-	if ( pass.isNull() )
-	{
-		kdDebug( 14010 ) << k_funcinfo << " clearing password" << endl;
-
-		// FIXME: This is a quick workaround for the problem that after Jason
-		//        added the rememberPassword flag he didn't accordingly update
-		//        all plugins to setRememberPassword( false ), so they now
-		//        try to set a null pass when the pass is not to be remembered.
-		//
-		//        After KDE 3.2 this should be fixed by disallowing null
-		//        passwords here and adding said property setter method - Martijn
-		d->remembered = false;
-		d->passwordFromKConfig = QString::null;
-		writeConfig();
-		return;
-	}
-
-	kdDebug( 14010 ) << k_funcinfo << " setting password for " << d->configGroup << endl;
-
-	if ( KWallet::Wallet::isEnabled() )
-	{
-		if ( KWallet::Wallet *wallet = KopeteWalletManager::self()->wallet() )
-		{
-			if ( wallet->writePassword( d->configGroup, pass ) == 0 )
-			{
-				d->remembered = true;
-				d->passwordFromKConfig = QString::null;
-				writeConfig();
-				return;
-			}
-		}
-
-		// If we end up here, the wallet is enabled, but failed somehow.
-		// Ask the user what to do now.
-		if ( KMessageBox::warningContinueCancel( qApp->mainWidget(),
-			i18n( "<qt>Kopete is unable to save your password securely in your wallet!<br>"
-			"Do you want to save the password in the <b>unsafe</b> configuration file instead?</qt>" ),
-			i18n( "Unable to Store Secure Password" ),
-			KGuiItem( i18n( "Store &Unsafe" ), QString::fromLatin1( "unlock" ) ),
-			QString::fromLatin1( "KWalletFallbackToKConfig" ) ) != KMessageBox::Continue )
-		{
-			return;
-		}
-	}
-
-	d->remembered = true;
-	d->passwordFromKConfig = pass;
-	writeConfig();
-#endif
 }
 
 bool KopetePassword::remembered()
@@ -497,7 +476,43 @@ bool KopetePassword::remembered()
 	return d->remembered;
 }
 
+struct KopetePasswordedAccount::Private
+{
+	Private( const QString &group, uint maxLen ) : password( group, maxLen, "mPassword" ) {}
+	KopetePassword password;
+};
+
+KopetePasswordedAccount::KopetePasswordedAccount( KopeteProtocol *parent, const QString &acctId, uint maxLen, const char *name )
+ : KopeteAccount( parent, acctId, name ), d( new Private( configGroup(), maxLen ) )
+{
+}
+
+KopetePasswordedAccount::~KopetePasswordedAccount()
+{
+	delete d;
+}
+
+KopetePassword &KopetePasswordedAccount::password()
+{
+	return d->password;
+}
+
+void KopetePasswordedAccount::connect()
+{
+	QString prompt = passwordPrompt();
+	KopetePassword::PasswordSource src = password().isWrong() ? KopetePassword::FromUser : KopetePassword::FromConfigOrUser;
+
+	password().request( this, SLOT( connectWithPassword( const QString & ) ), accountIcon( KopetePassword::preferredImageSize() ), prompt, src );
+}
+
+QString KopetePasswordedAccount::passwordPrompt()
+{
+	if ( password().isWrong() )
+		return i18n( "<b>The password was wrong!</b> Please re-enter your password for %1 account <b>%2</b>" ).arg( protocol()->displayName(), accountId() );
+	else
+		return i18n( "Please enter your password for %1 account <b>%2</b>" ).arg( protocol()->displayName(), accountId() );
+}
+
 #include "kopetepassword.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-

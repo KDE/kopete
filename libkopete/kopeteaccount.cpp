@@ -221,13 +221,14 @@ void KopeteAccount::loaded()
 
 QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 {
+	d->password.setMaximumLength( maxLength );
 	QString prompt;
 	if ( error )
 		prompt = i18n( "<b>The password was wrong!</b> Please re-enter your password for %1 account <b>%2</b>" ).arg( protocol()->displayName(), accountId() );
 	else
 		prompt = i18n( "Please enter your password for %1 account <b>%2</b>" ).arg( protocol()->displayName(), accountId() );
 
-	QString pass = d->password.retrieve( accountIcon( KopetePassword::preferredImageSize() ), prompt, error ? KopetePassword::FromUser : KopetePassword::FromConfigOrUser, maxLength );
+	QString pass = d->password.retrieve( accountIcon( KopetePassword::preferredImageSize() ), prompt, error ? KopetePassword::FromUser : KopetePassword::FromConfigOrUser );
 	if ( ok ) *ok = !pass.isNull();
 	return pass;
 }

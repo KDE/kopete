@@ -20,6 +20,8 @@
 #include <qobject.h>
 #include <kdemacros.h>
 
+#include "kopeteaccount.h"
+
 namespace KWallet { class Wallet; }
 
 class QPixmap;
@@ -42,14 +44,37 @@ public:
 	 * Create a new KopetePassword object.
 	 *
 	 * @param configGroup The configuration group to save passwords in.
+	 * @param maxLength The maximum length of the password, or 0 if no maximum exists.
 	 */
-	KopetePassword(const QString &configGroup, const char *name = 0);
+	KopetePassword(const QString &configGroup, uint maxLength = 0, const char *name = 0);
 	~KopetePassword();
 
 	/**
 	 * Returns the preferred size for images passed to the retrieve and request functions.
 	 */
 	static int preferredImageSize();
+
+	/**
+	 * @brief Returns the maximum allowed length of the password, or 0 if there is no maximum.
+	 */
+	uint maximumLength();
+	/**
+	 * Sets the maximum allowed length of the password.
+	 * @param max The new maximum allowed length, or 0 if there is no maximum.
+	 */
+	void setMaximumLength( uint max );
+
+	/**
+	 * @brief Returns whether the password currently stored by this object is known to be incorrect.
+	 * This flag gets reset whenever the user enters a new password, and is expected to be set
+	 * by the user of this class if it is detected that the password the user entered is wrong.
+	 */
+	bool isWrong();
+	/**
+	 * Flag the password as being incorrect.
+	 * @see isWrong
+	 */
+	void setWrong( bool bWrong = true );
 
 	/**
 	 * Type of password request to perform:
@@ -65,13 +90,13 @@ public:
 	 * @see request for description of arguments
 	 * @return The password or QString::null if the user has canceled
 	 */
-	QString retrieve( const QPixmap &image, const QString &prompt, PasswordSource source = FromConfigOrUser, unsigned int maxLength = 0 ) KDE_DEPRECATED;
+	QString retrieve( const QPixmap &image, const QString &prompt, PasswordSource source = FromConfigOrUser ) KDE_DEPRECATED;
 
 	/**
-	 * Start an asynchronous call to get the password. Causes a password entry dialog
-	 * to appear if the password is not set. Triggers a provided slot when done, but not
-	 * until after this function has returned (don't worry about reentrancy or nested
-	 * event loops).
+	 * @brief Start an asynchronous call to get the password.
+	 * Causes a password entry dialog to appear if the password is not set. Triggers
+	 * a provided slot when done, but not until after this function has returned (you
+	 * don't need to worry about reentrancy or nested event loops).
 	 *
 	 * @param receiver The object to notify when the password request finishes
 	 * @param slot The slot on receiver to call at the end of the request. The signature
@@ -87,7 +112,7 @@ public:
 	 * @param maxLength The maximum length for a password, restricts the
 	 *        length of the password that can be entered. 0 means no limit.
 	 */
-	void request( QObject *receiver, const char *slot, const QPixmap &image, const QString &prompt, PasswordSource source = FromConfigOrUser, unsigned int maxLength = 0 );
+	void request( QObject *receiver, const char *slot, const QPixmap &image, const QString &prompt, PasswordSource source = FromConfigOrUser );
 
 	/**
 	 * Start an asynchronous password request. Do not pop up a password entry dialog
@@ -126,6 +151,47 @@ private:
 	//TODO: can we rearrange things so these aren't friends?
 	friend class KopetePasswordGetRequest;
 	friend class KopetePasswordSetRequest;
+};
+
+class KopetePasswordedAccount : public KopeteAccount
+{
+	Q_OBJECT
+public:
+	/**
+	 * KopetePasswordedAccount constructor
+	 * @param parent The protocol this account connects via
+	 * @param acctId The ID of this account - should be unique within this protocol
+	 * @param maxPasswordLength The maximum length for passwords for this account, or 0 for no limit
+	 * @param name The name for this QObject
+	 */
+	KopetePasswordedAccount( KopeteProtocol *parent, const QString &acctId, uint maxPasswordLength = 0, const char *name = 0 );
+	virtual ~KopetePasswordedAccount();
+
+	/**
+	 * Returns a reference to the password object stored in this account.
+	 */
+	KopetePassword &password();
+	void connect();
+
+protected slots:
+	/**
+	 * Called when your account should attempt to connect.
+	 * @param password The password to connect with, or QString::null
+	 *        if the user wished to cancel the connection attempt.
+	 */
+	virtual void connectWithPassword( const QString &password ) = 0;
+
+protected:
+	/**
+	 * Returns the prompt shown to the user when requesting their password.
+	 * The default implementation should be adequate in most cases; override
+	 * if you have a custom message to show the user.
+	 */
+	virtual QString passwordPrompt();
+
+private:
+	struct Private;
+	Private *d;
 };
 
 /**
