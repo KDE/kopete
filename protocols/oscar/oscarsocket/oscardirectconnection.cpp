@@ -277,11 +277,12 @@ void OscarDirectConnection::parseMessage(Buffer &inbuf)
 		{
 			//message ended in the middle of the data tag
 			kdDebug() << "[OscarDirectConnection] got IM: " << message << endl;
-			emit gotIM(message.remove("<BINARY>"), connectionName(), false);
+			//remove the <BINARY> at the end of the string
+			emit gotIM(message.remove(message.length()-8, 8), connectionName(), false);
 		}
 	}
 	kdDebug() << "[OscarDirectConnection] got IM: " << message << endl;
-	emit gotIM(message.remove("<BINARY>"), connectionName(), false);
+	emit gotIM(message.remove(message.length()-8, 8), connectionName(), false);
 }
 
 #include "oscardirectconnection.moc"
