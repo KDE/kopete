@@ -20,6 +20,8 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 
+#include "kopetemetacontact.h"
+
 #include "gaduadd.h"
 #include "gaduaccount.h"
 #include "gaduaddcontactpage.h"
@@ -46,6 +48,8 @@ GaduAddContactPage::GaduAddContactPage( GaduAccount* owner, QWidget* parent, con
 	connect( addUI_->snameEdit_, SIGNAL( textChanged( const QString & ) ), SLOT( recreateStrings( const QString & ) ) );
 	connect( addUI_->nickEdit_, SIGNAL( textChanged( const QString & ) ), SLOT( recreateStrings( const QString & ) ) );
 	connect( addUI_->addEdit_, SIGNAL( textChanged( const QString & ) ), SLOT( recreateStrings( const QString & ) ) );
+
+// FIXME: Again, bug in libkopete, i am not able to get metacontact name that user typed in on previus step!
 	addUI_->dnEdit_->insertItem( "" ,0 );
 	addUI_->dnEdit_->insertItem( "", 1 );
 	addUI_->dnEdit_->insertItem( "", 2 );
@@ -92,11 +96,18 @@ GaduAddContactPage::apply( KopeteAccount* a , KopeteMetaContact* mc )
 		if ( validateData() ) {
 			QString userid	= addUI_->addEdit_->text();
 			QString name	= addUI_->nickEdit_->text();
+			QString dname;
 			if ( a != account_ ) {
 				kdDebug(14001) << "Problem since accounts differ: " << a->accountId()
 								<< " , " << account_->accountId() << endl;
 			}
-			if ( a->addContact( userid, userid, mc, KopeteAccount::ChangeKABC ) == false ) {
+			if ( addUI_->dnEdit_->currentText().isEmpty() ) {
+				dname = mc->displayName();
+			}
+			else {
+				dname = addUI_->dnEdit_->currentText();
+			}
+			if ( a->addContact( userid, dname, mc, KopeteAccount::ChangeKABC ) == false ) {
 				return false;
 			}
 			GaduContact *contact = static_cast<GaduContact*>( a->contacts()[ userid ] );
