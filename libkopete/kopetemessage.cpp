@@ -290,7 +290,7 @@ QString KopeteMessage::parseLinks( const QString &message ) const
 	result.replace( QRegExp( QString::fromLatin1("\\b([\\w\\.]+@([\\w\\.]+\\.\\w+)+)\\b") ), QString::fromLatin1("<a href=\"mailto:\\1\">\\1</a>") );
 
 	//Replace http/https/ftp links
-	result.replace( QRegExp( QString::fromLatin1("\\b((http://\\w|ftp://\\w|https://\\w|www\\.)[\\w\\.]+[\\w\\./#&;:=\\?]*)\\b") ), QString::fromLatin1("<a href=\"\\1\">\\1</a>" ) );
+	result.replace( QRegExp( QString::fromLatin1("\\b((http://\\w|ftp://\\w|https://\\w|www\\.)[\\w\\.]+[\\w\\./#&;:=\\?~%]*)\\b") ), QString::fromLatin1("<a href=\"\\1\">\\1</a>" ) );
 
 	return result;
 }
