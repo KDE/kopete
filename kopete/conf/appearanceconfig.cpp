@@ -214,6 +214,7 @@ void AppearanceConfig::reopen()
 	mPrfsGeneral->mUseQueueChk->setChecked( p->useQueue() );
 	mPrfsGeneral->mTrayflashNotifyChk->setChecked ( p->trayflashNotify() );
 	mPrfsGeneral->mBalloonNotifyChk->setChecked ( p->balloonNotify() );
+	mPrfsGeneral->mSoundIfAwayChk->setChecked( p->soundIfAway( )  ) ;
 
 	// "Contact List" TAB
 	mPrfsContactlist->mTreeContactList->setChecked( p->treeView() );
