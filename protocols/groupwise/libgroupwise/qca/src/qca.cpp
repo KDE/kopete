@@ -1482,3 +1482,5 @@ QByteArray SASL::readOutgoing()
 	d->outbuf.resize(0);
 	return a;
 }
+
+#include "qca.moc"
