@@ -216,7 +216,6 @@ GaduRegisterAccount::~GaduRegisterAccount( )
 {
 	kdDebug( 14100 ) << " register Cancel " << endl;
 	delete cRegister;
-	cRegister = NULL;
 }
 
 #include "gaduregisteraccount.moc"
