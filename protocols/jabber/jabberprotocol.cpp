@@ -274,7 +274,7 @@ void JabberProtocol::slotContactUpdated(QString userID, QString name, QString st
 }
 
 void JabberProtocol::slotNewContact(QString userID, QString name, QString group) {
-  if (group.isNull()) {
+  if (group == QString("")) {
     group = i18n("Unknown");
   }
   kopeteapp->contactList()->addContact(new JabberContact(userID, name, group, this), group);
