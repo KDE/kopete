@@ -251,12 +251,12 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		}
 		*/
 	}
-	else if(msg.contains("MIME-Version: 1.0\r\nContent-Type: text/x-msmsgscontrol\r\nTypingUser:"))
+	else if( msg.contains( "MIME-Version: 1.0\r\nContent-Type: text/x-msmsgscontrol\r\nTypingUser:" ) )
 	{
 		QString message;
-		message = msg.right(msg.length() - msg.findRev(" ")-1);
-		message = message.replace(QRegExp("\r\n"),"");
-		emit userTypingMsg(message);
+		message = msg.right( msg.length() - msg.findRev( " " ) - 1 );
+		message = message.replace( QRegExp( "\r\n" ),"" );
+		emit receivedTypingMsg( message, true );
 	}
 	else// if(msg.contains("Content-Type: text/plain;"))
 	{
@@ -355,19 +355,19 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	}
 }
 
-// this sends the user is typing msg
-void MSNSwitchBoardSocket::slotTypingMsg()
+void MSNSwitchBoardSocket::sendTypingMsg( bool isTyping )
 {
-	return; // FIXME: fix typing notification in libkopete!
-	QCString message = QString("MIME-Version: 1.0\r\n"
+	if( !isTyping )
+		return;
+
+	QCString message = QString( "MIME-Version: 1.0\r\n"
 		"Content-Type: text/x-msmsgscontrol\r\n"
 		"TypingUser: " + m_myHandle + "\r\n"
-		"\r\n").utf8();
+		"\r\n" ).utf8();
 
 	// Length is appended by sendCommand()
 	QString args = "U";
 	sendCommand( "MSG", args, true, message );
-//	m_lastId++;
 }
 
 // this Invites an Contact

@@ -51,9 +51,8 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	mMsgManager = 0L;
 	mIdle = 0;
 	mLastAutoResponseTime = 0;
-	mTypingTimer = new QTimer();
 	setFileCapable(true);
-	
+
 	// Buddy Changed
 	QObject::connect(mProtocol->engine, SIGNAL(gotBuddyChange(UserInfo)),
 					this,SLOT(slotBuddyChanged(UserInfo)));
@@ -75,9 +74,6 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	// Direct connection closed
 	QObject::connect(mProtocol->engine, SIGNAL(directIMConnectionClosed(QString)),
 		this, SLOT(slotDirectIMConnectionClosed(QString)));
-	// Set up the mTypingTimer
-	QObject::connect(mTypingTimer, SIGNAL(timeout()),
-					this, SLOT(slotTextEntered()));
 	//File transfer request
 	QObject::connect(mProtocol->engine, SIGNAL(gotFileSendRequest(QString,QString,QString,unsigned long)),
 		this, SLOT(slotGotFileSendRequest(QString,QString,QString,unsigned long)));
@@ -111,7 +107,6 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 OscarContact::~OscarContact()
 {
 	kdDebug(14150) << "[OscarContact] ~OscarContact()" << endl;
-	delete mTypingTimer;
 }
 
 /** Pops up a chat window */
@@ -316,59 +311,37 @@ void OscarContact::slotBuddyChanged(UserInfo u)
 }
 
 // Called when we get a minityping notification
-void OscarContact::slotGotMiniType(QString screenName, int type){
-		//TODO
-		// Check to see if it's us
-		//kdDebug(14150) << "[OSCAR] Minitype: Comparing "
-		//					<< tocNormalize(screenName) << " and "
-		//					<< tocNormalize(mName) << endl;
-		
-		if(tocNormalize(screenName) != tocNormalize(mName)){
-				return;
-		}
-		
-		kdDebug(14150) << "[OSCAR] OscarContact got minitype notification for " << mName << endl;
-		
-		// If we already have a message manager
-		if(mMsgManager){
-				if(type == 2){
-						mMsgManager->userTypingMsg(this, true);
-				} else {
-						mMsgManager->userTypingMsg(this, false);
-				}
-		}
-		
+void OscarContact::slotGotMiniType(QString screenName, int type)
+{
+	//TODO
+	// Check to see if it's us
+	//kdDebug(14150) << "[OSCAR] Minitype: Comparing "
+	//					<< tocNormalize(screenName) << " and "
+	//					<< tocNormalize(mName) << endl;
+
+	if( tocNormalize( screenName ) != tocNormalize( mName ) )
+		return;
+
+	kdDebug( 14150 ) << k_funcinfo << "Got minitype notification for " << mName << endl;
+
+	// If we already have a message manager
+	if( mMsgManager )
+	{
+		if( type == 2 )
+			mMsgManager->receivedTypingMsg( this, true );
+		else
+			mMsgManager->receivedTypingMsg( this, false );
+	}
 }
 
 // Called when we want to send a typing notification to
 // the other person
-void OscarContact::slotTyping(bool typing){
-		kdDebug(14150) << "[OSCAR] Sending typing notify" << endl;
-		
-		if(typing){
-				kdDebug(14150) << "[OSCAR TYPING] Typing" << endl;
-				if(mTypingTimer->isActive()){
-						mTypingTimer->stop();
-						// Start the timer at 3 seconds
-						mTypingTimer->start(1000*3, true);
-				} else {
-						mProtocol->engine->sendMiniTypingNotify(tocNormalize(mName),
-								OscarSocket::TypingBegun);
-						// Start the timer
-						mTypingTimer->start(1000*3, true);
-				}
-		} else {
-				kdDebug(14150) << "[OSCAR TYPING] Finished" << endl;
-				mProtocol->engine->sendMiniTypingNotify(tocNormalize(mName),
-								OscarSocket::TypingFinished);
-				// Stop the timer
-				mTypingTimer->stop();
-		}
-}
+void OscarContact::slotTyping( bool typing )
+{
+	kdDebug( 14150 ) << k_funcinfo << "Typing: " << typing << endl;
 
-void OscarContact::slotTextEntered(){
-		mProtocol->engine->sendMiniTypingNotify(tocNormalize(mName),
-						OscarSocket::TextTyped);
+	mProtocol->engine->sendMiniTypingNotify( tocNormalize( mName ),
+		typing ? OscarSocket::TypingBegun : OscarSocket::TypingFinished );
 }
 
 /** Called when a buddy is offgoing */
@@ -433,8 +406,8 @@ void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto
 	mProtocol->buddyList()->get(&tmpBuddy, mProtocol->buddyList()->getNum(mName));
 
 	// Tell the message manager that the buddy is done typing
-	msgManager()->userTypingMsg(this, false);
-		
+	msgManager()->receivedTypingMsg( this, false );
+
 	// Build a KopeteMessage and set the body as Rich Text
 	KopeteContactPtrList tmpList;
 	tmpList.append(mProtocol->myself());

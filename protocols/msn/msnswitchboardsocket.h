@@ -84,7 +84,11 @@ public:
 public slots:
 	void slotCloseSession();
 	void slotInviteContact(const QString &handle);
-	void slotTypingMsg();
+
+	/**
+	 * Notify the server that the user is typing a message
+	 */
+	void sendTypingMsg( bool isTyping );
 
 private slots:
 	void slotOnlineStatusChanged( MSNSocket::OnlineStatus status );
@@ -93,7 +97,7 @@ private slots:
 
 signals:
 	void msgReceived( const KopeteMessage &msg );
-	void userTypingMsg(const QString& );
+	void receivedTypingMsg( const QString &contactId, bool isTyping );
 	void msgAcknowledgement(unsigned int, bool);
 	/**
 	 *  updateChatMember();

@@ -132,9 +132,24 @@ signals:
 	void contactAdded(const KopeteContact *);
 	void contactRemoved(const KopeteContact *);
 
-	virtual void typingMsg(bool);
+	/**
+	 * The user is typing a message
+	 */
+	void typingMsg( bool isTyping );
 
 public slots:
+	/**
+	 * Got a typing notification from a user
+	 */
+	void receivedTypingMsg( const KopeteContact *c , bool isTyping = true );
+
+	/**
+	 * Got a typing notification from a user. This is a convenience version
+	 * of the above method that takes a QString contactId instead of a full
+	 * KopeteContact
+	 */
+	void receivedTypingMsg( const QString &contactId, bool isTyping = true );
+
 	void readModeChanged();
 	void slotSendEnabled(bool);
 
@@ -159,11 +174,6 @@ public slots:
 	void removeContact( const KopeteContact *c );
 
 	/**
-	 * Set any user is typing
-	 */
-	void userTypingMsg ( const KopeteContact *c , bool t=true);
-
-	/**
 	 * Set if the KMM will be deleted when the chatwindow is deleted
 	 */
 	void setCanBeDeleted ( bool ) ;
@@ -185,7 +195,6 @@ protected slots:
 	void slotReplyWindowClosing();
 	void slotReadMessages();
 	void slotReply();
-	virtual void slotTyping(bool );
 
 protected:
 	/**

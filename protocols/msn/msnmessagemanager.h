@@ -48,14 +48,10 @@ public:
 public slots:
 	void slotCloseSession();
 
-protected slots:
-	virtual void slotTyping( bool t );
-
 private slots:
 	void slotMessageSent( const KopeteMessage &message, KopeteMessageManager *kmm );
 
 	void slotUpdateChatMember( const QString &handle, const QString &publicName, bool add );
-	void slotUserTypingMsg( const QString &handle );
 	void slotSwitchBoardClosed();
 	void slotInviteContact( const QString &handle );
 	void slotAcknowledgement( unsigned int id, bool ack );
@@ -64,8 +60,6 @@ private slots:
 	void slotFileTransferAccepted( KopeteTransfer *trans, const QString& fileName );
 	void slotFileTransferDone( MSNFileTransferSocket* MFTS );
 	void slotFileTransferRefused( const KopeteFileTransferInfo &info );
-
-	void slotTimer();
 
 private:
 	MSNSwitchBoardSocket *m_chatService;

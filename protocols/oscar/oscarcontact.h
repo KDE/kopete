@@ -113,9 +113,7 @@ private: // Private attributes
 		
 	/** The contact's idle time */
 	int mIdle;
-	/** Timer for sending typing notifications */
-	QTimer* mTypingTimer;
-  /** Tells whether or not we have a direct connection with the contact */
+	/** Tells whether or not we have a direct connection with the contact */
 	bool mDirectlyConnected;
 
 private slots: // Private slots
@@ -130,11 +128,6 @@ private slots: // Private slots
 	 * that this person is being typed to...
 	 */
 	void slotTyping(bool typing);
-	/**
-	 * Called by a timer set up in slotTyping
-	 * to do the "Buddy has entered text"
-	 */
-	void slotTextEntered();
 	/** Called when a buddy is offgoing */
 	void slotOffgoingBuddy(QString sn);
 	/** Called when user info is requested */

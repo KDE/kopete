@@ -495,6 +495,11 @@ void KopeteMetaContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
 	m_groups.remove( from );
 	m_groups.append( to );
 
+	for( KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
+	{
+		c->moveToGroup( from, to );
+	}
+
 	emit movedToGroup( this, from, to );
 }
 
@@ -508,6 +513,9 @@ void KopeteMetaContact::removeFromGroup( KopeteGroup *group )
 	}
 
 	m_groups.remove( group );
+
+	for( KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
+		c->removeFromGroup( group );
 
 	emit removedFromGroup( this, group );
 }
@@ -523,6 +531,11 @@ void KopeteMetaContact::addToGroup( KopeteGroup *to )
 	}
 
 	m_groups.append( to );
+
+	for( KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
+	{
+		c->addToGroup( to );
+	}
 
 	emit addedToGroup( this, to );
 }

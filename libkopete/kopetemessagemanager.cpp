@@ -43,7 +43,7 @@ struct KMMPrivate
 	const KopeteContact *mUser;
 	KopeteChatWindow *mChatWindow;
 	KopeteEmailWindow *mEmailWindow, *mEmailReplyWindow;
-	KopeteEvent	*mUnreadMessageEvent;
+	KopeteEvent *mUnreadMessageEvent;
 	KopeteMessageList mMessageQueue;
 	KopeteMessageLog *mLogger;
 	int mReadMode;
@@ -140,15 +140,15 @@ void KopeteMessageManager::newChatWindow()
 
 		/* When the window is shown, we have to delete this contact event */
 //		kdDebug(14010) << "[KopeteMessageManager] Connecting message box shown() to event killer" << endl;
-		connect (d->mChatWindow, SIGNAL(shown()), this, SLOT(slotCancelUnreadMessageEvent()));
-		connect (d->mChatWindow, SIGNAL(sendMessage(KopeteMessage &)), this, SLOT(slotMessageSent(KopeteMessage &)));
-		connect (d->mChatWindow, SIGNAL(closeClicked()), this, SLOT(slotChatWindowClosing()));
+		connect( d->mChatWindow, SIGNAL(shown()), this, SLOT(slotCancelUnreadMessageEvent()));
+		connect( d->mChatWindow, SIGNAL(sendMessage(KopeteMessage &)), this, SLOT(slotMessageSent(KopeteMessage &)));
+		connect( d->mChatWindow, SIGNAL(closeClicked()), this, SLOT(slotChatWindowClosing()));
 
-		connect (this, SIGNAL(contactAdded(const KopeteContact *)), d->mChatWindow, SLOT(slotContactAdded(const KopeteContact *)));
-		connect (this, SIGNAL(contactRemoved(const KopeteContact *)), d->mChatWindow, SLOT(slotContactRemoved(const KopeteContact *)));
-		connect (d->mChatWindow, SIGNAL(TypingMessage(bool)), this, SLOT(slotTyping(bool)));
-
+		connect( this, SIGNAL(contactAdded(const KopeteContact *)), d->mChatWindow, SLOT(slotContactAdded(const KopeteContact *)));
+		connect( this, SIGNAL(contactRemoved(const KopeteContact *)), d->mChatWindow, SLOT(slotContactRemoved(const KopeteContact *)));
+		connect( d->mChatWindow, SIGNAL( typingMessage( bool ) ), this, SIGNAL( typingMsg( bool ) ) );
 	}
+
 	if (d->mWidget == Email)
 	{
 		d->mEmailWindow = new KopeteEmailWindow(d->mUser, d->mContactList);
@@ -507,21 +507,25 @@ void KopeteMessageManager::readModeChanged()
 	}
 }
 
-void KopeteMessageManager::userTypingMsg ( const KopeteContact *c , bool t )
+void KopeteMessageManager::receivedTypingMsg( const KopeteContact *c , bool t )
 {
-	if (d->mWidget == ChatWindow)
+	if( d->mWidget == ChatWindow )
 	{
-		if (d->mChatWindow)
-		{
-			d->mChatWindow->slotAnyTyping( c , t );
-		}
+		if( d->mChatWindow )
+			d->mChatWindow->slotReceivedTypingMsg( c , t );
 	}
 }
 
-void KopeteMessageManager::slotTyping ( bool t )
+void KopeteMessageManager::receivedTypingMsg( const QString &contactId , bool t )
 {
-//	kdDebug(14010) << "KopeteMessageManager::slotTyping "<< t << endl;
-	emit typingMsg(t);
+	for( KopeteContact *it = d->mContactList.first(); it; it = d->mContactList.next() )
+	{
+		if( it->contactId() == contactId )
+		{
+			receivedTypingMsg( it, t );
+			return;
+		}
+	}
 }
 
 void KopeteMessageManager::setCanBeDeleted ( bool b )
