@@ -40,8 +40,9 @@ StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db,
 {	
 	mainWidget = new StatisticsWidget(this);
 	setMainWidget(mainWidget);
-	setMinimumWidth(500);
+	setMinimumWidth(300);
 	setMinimumHeight(400);
+	adjustSize();
 
 	QHBox *hbox = new QHBox(this);
 	
@@ -51,6 +52,7 @@ StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db,
 	
 	
 	mainWidget->tabWidget->insertTab(hbox, "General", 0);
+	mainWidget->tabWidget->setCurrentPage(0);
 	
 	generatePageGeneral();
 }
@@ -374,10 +376,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 	 	generalHTMLPart->write(QString("</div>"));
 	
 		 generalHTMLPart->write(QString("<div class=\"statgroup\">"));
-         generalHTMLPart->write(QString("<b>Last talk :</b> %1").arg(m_contact->lastTalk().toString()));
-		 generalHTMLPart->write(QString("</div>"));
-
-		 generalHTMLPart->write(QString("<div class=\"statgroup\">"));
+         generalHTMLPart->write(QString("<b>Last talk :</b> %1<br>").arg(m_contact->lastTalk().toString()));
 		 generalHTMLPart->write(QString("<b>Last time contact was present :</b> %1").arg(m_contact->lastPresent().toString()));
 		 generalHTMLPart->write(QString("</div>"));
 	

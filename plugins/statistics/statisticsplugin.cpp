@@ -49,7 +49,7 @@ StatisticsPlugin::StatisticsPlugin( QObject *parent, const char *name, const QSt
 							: Kopete::Plugin( StatisticsPluginFactory::instance(), parent, name )
 {
 	KAction *viewMetaContactStatistics = new KAction( i18n("View &Statistics" ),
-		QString::fromLatin1( "statistics" ), 0, this, SLOT(slotViewStatistics()),
+		QString::fromLatin1( "log" ), 0, this, SLOT(slotViewStatistics()),
 		actionCollection(), "viewMetaContactStatistics" );
 	viewMetaContactStatistics->setEnabled(Kopete::ContactList::self()->selectedMetaContacts().count() == 1);
 
