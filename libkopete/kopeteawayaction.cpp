@@ -3,7 +3,7 @@
 
     Copyright (c) 2003     Jason Keirstead   <jason@keirstead.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -111,8 +111,8 @@ void AwayAction::slotSelectAway( int index )
 	{
 		emit awayMessageSelected( awayReason ) ;
 		emit awayMessageSelected( d->status, awayReason );
-		setCurrentItem( -1 );
 	}
+	setCurrentItem( -1 );
 }
 
 } //END namespace Kopete
