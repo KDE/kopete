@@ -57,27 +57,27 @@ KopeteBalloon::KopeteBalloon( const QString &text, const QString &pix )
 
 	QPushButton *viewButton = new QPushButton( this, "m_reject" );
 	viewButton->setText( i18n( "View" ) );
+
 	QPushButton *ignoreButton = new QPushButton( this );
 	ignoreButton->setText( i18n( "Ignore" ) );
+
 	Layout2->addWidget( viewButton );
 	Layout2->addWidget( ignoreButton );
+
 	QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
 	Layout2->addItem( spacer_2 );
 	BalloonLayout->addLayout( Layout2 );
 
 	setPalette(QToolTip::palette());
 	setAutoMask(true);
-	installEventFilter(this);
-	m_image->installEventFilter(this);
-	m_caption->installEventFilter(this);
-	//m_image->setMovie(locate("data", pix));
+
 	m_image->setPixmap(locate("data", pix));
 	m_caption->setText(text);
-//	m_caption->setAlignment ( m_caption->alignment() | Qt::WordBreak ); // does not work
-	connect( viewButton, SIGNAL( clicked() ), SLOT( hide() ) );
-	connect( ignoreButton, SIGNAL( clicked() ), SLOT( hide() ) );
+
 	connect( viewButton, SIGNAL( clicked() ), SIGNAL( signalButtonClicked() ) );
 	connect( ignoreButton, SIGNAL( clicked() ), SIGNAL( signalIgnoreButtonClicked() ) );
+	connect( viewButton, SIGNAL( clicked() ), SLOT( deleteLater() ) );
+	connect( ignoreButton, SIGNAL( clicked() ), SLOT( deleteLater() ) );
 }
 
 void KopeteBalloon::setAnchor( const QPoint &anchor)
@@ -88,16 +88,6 @@ void KopeteBalloon::setAnchor( const QPoint &anchor)
 
 KopeteBalloon::~KopeteBalloon()
 {
-}
-
-bool KopeteBalloon::eventFilter(QObject * /* o */, QEvent *e )
-{
-	if (e->type() == QEvent::MouseButtonPress)
-	{
-		hide();
-		emit signalBalloonClicked();
-	}
-	return false;
 }
 
 void KopeteBalloon::updateMask()

@@ -39,7 +39,7 @@ public:
 
 	void setAnchor( const QPoint &anchor );
 
-	virtual bool eventFilter( QObject *o, QEvent *ev );
+	//virtual bool eventFilter( QObject *o, QEvent *ev );
 
 signals:
 	void signalButtonClicked();

@@ -243,7 +243,7 @@ void KopeteSystemTray::addBalloon()
 					.arg( msg.from()->metaContact()->displayName() ).arg( msgText ), QString::null );
 			connect(m_balloon, SIGNAL(signalBalloonClicked()), mEventList.first() , SLOT(apply()));
 			connect(m_balloon, SIGNAL(signalButtonClicked()), mEventList.first() , SLOT(apply()));
-			connect(m_balloon, SIGNAL(signalIgnoreButtonClicked()), mEventList.first() , SLOT(deleteLater()));
+			connect(m_balloon, SIGNAL(signalIgnoreButtonClicked()), mEventList.first() , SLOT(ignore()));
 			m_balloon->setAnchor( KopeteSystemTray::systemTray()->mapToGlobal(pos()) );
 			m_balloon->show();
 		}
