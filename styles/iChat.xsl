@@ -55,7 +55,7 @@
 		<xsl:choose>
 			<xsl:when test="from/contact/@userPhoto">
 			    <img style="height:48px;margin:4px;margin-bottom:0px;border:1px solid black;">
-				<xsl:attribute name="src"><xsl:value-of select="from/contact/@userPhoto"/></xsl:attribute>
+				<xsl:attribute name="src">data:image/png;base64,<xsl:value-of select="from/contact/@userPhoto"/></xsl:attribute>
 			    </img>
 			</xsl:when>
 			<xsl:otherwise>
@@ -395,7 +395,7 @@
 		<xsl:choose>
 		    <xsl:when test="from/contact/@userPhoto">
                         <img style="height:48px;margin:4px;margin-bottom:0px;border:1px solid black;">
-			    <xsl:attribute name="src"><xsl:value-of select="from/contact/@userPhoto"/></xsl:attribute>
+			  <xsl:attribute name="src">data:image/png;base64,<xsl:value-of select="from/contact/@userPhoto"/></xsl:attribute>
 			</img>
 		    </xsl:when>
 		    <xsl:otherwise>
@@ -553,7 +553,7 @@
 			<xsl:choose>
 				<xsl:when test="from/contact/@userPhoto">
 				    <img style="height:48px;margin:4px;margin-bottom:0px;;border:1px solid black;">
-					<xsl:attribute name="src"><xsl:value-of select="from/contact/@userPhoto"/></xsl:attribute>
+				      <xsl:attribute name="src">data:image/png;base64,<xsl:value-of select="from/contact/@userPhoto"/></xsl:attribute>
 				    </img>
 				</xsl:when>
 				<xsl:otherwise>

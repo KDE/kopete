@@ -19,6 +19,7 @@
 #include <stdlib.h>
 
 #include <qcolor.h>
+#include <qbuffer.h>
 #include <qimage.h>
 #include <qstylesheet.h>
 #include <qregexp.h>
@@ -27,8 +28,7 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kstringhandler.h>
-#include <kstandarddirs.h>
-#include <ktempfile.h>
+#include <kmdcodec.h>
 
 #include "kopetemessage.h"
 #include "kopetemetacontact.h"
@@ -63,7 +63,6 @@ public:
 	bool rtfOverride;
 	QDateTime timeStamp;
 	QFont font;
-	KTempFile photoFile;
 
 	QColor fgColor;
 	QColor bgColor;
@@ -509,10 +508,11 @@ QDomElement Message::contactNode( QDomDocument doc, const Contact *contact )
 		QImage photo = contact->metaContact()->photo();
 		if( !photo.isNull() )
 		{
-			d->photoFile = KTempFile( locateLocal("tmp", QString::fromLatin1("tmpimage-")), QString::fromLatin1("png") );
-			d->photoFile.setAutoDelete( true );
-			photo.save ( d->photoFile.name(), "PNG" );
-			contactNode.setAttribute( QString::fromLatin1("userPhoto"), QStyleSheet::escape( d->photoFile.name() ) );
+			QByteArray ba;
+			QBuffer buffer( ba );
+			buffer.open( IO_WriteOnly );
+			photo.save ( &buffer, "PNG" );
+			contactNode.setAttribute( QString::fromLatin1("userPhoto"), KCodecs::base64Encode(ba) );
 		}
 	}
 
