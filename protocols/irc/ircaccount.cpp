@@ -258,10 +258,12 @@ void IRCAccount::successfullyChangedNick(const QString &/*oldnick*/, const QStri
 bool IRCAccount::addContactToMetaContact( const QString &contactId, const QString &displayName,
 	 KopeteMetaContact *m )
 {
+	//FIXME: I think there are too many tests in this functions.  This fuction should be called ONLY by
+	// KopeteAccount::addContact, where all test are already done. Can a irc developer look at this?   -Olivier
 	IRCContact *c;
 
 	if( !m )
-	{
+	{//This should NEVER happends
 		m = new KopeteMetaContact();
 		KopeteContactList::contactList()->addMetaContact(m);
 		m->setDisplayName( displayName );
@@ -276,14 +278,14 @@ bool IRCAccount::addContactToMetaContact( const QString &contactId, const QStrin
 	}
 
 	if( c->metaContact() != m )
-	{
+	{//This should NEVER happends
 		KopeteMetaContact *old = c->metaContact();
 		c->setMetaContact( m );
 		KopeteContactPtrList children = old->contacts();
 		if( children.isEmpty() )
 			KopeteContactList::contactList()->removeMetaContact( old );
 	}
-	else if( c->metaContact()->isTemporary() )
+	else if( c->metaContact()->isTemporary() ) //FIXME: if the metacontact is temporary, that mean this is a temporary contact
 		m->setTemporary(false);
 
 	return true;
