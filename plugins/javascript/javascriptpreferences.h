@@ -13,17 +13,13 @@
 #include <qptrdict.h>
 
 #include "kcmodule.h"
+#include "javascriptconfig.h"
 
 typedef QValueList<KopeteAccount*> AccountList;
 
 class JavaScriptPrefsBase;
-class JavaScriptConfig;
-
-namespace KTextEditor
-{
-	class Document;
-}
-class KTextEdit;
+class KTempFile;
+class Script;
 
 class JavaScriptPreferences : public KCModule
 {
@@ -37,15 +33,20 @@ class JavaScriptPreferences : public KCModule
 		virtual void load();
 
 	private slots:
-		void slotUpdateScript();
-		void slotTextChanged();
+		void slotAddScript();
+		void slotEditScript();
+		void slotEmitChanged();
+		void slotUpdateScriptList();
+		void slotUpdateButtons();
+		void slotFileDirty( const QString &file );
+		void slotEnableScript( const QVariant &scriptItem );
 
 	private:
 		//void updateHighlight();
 		JavaScriptPrefsBase *preferencesDialog;
-		//KTextEditor::Document* editDocument;
-		KTextEdit *editDocument;
 		JavaScriptConfig *config;
+		KTempFile *tempFile;
+		Script *currentScript;
 };
 
 #endif

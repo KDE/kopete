@@ -9,32 +9,73 @@
 
 #include <klistview.h>
 #include <klocale.h>
+#include <ktempfile.h>
+#include <krun.h>
+#include <kurl.h>
+#include <kio/netaccess.h>
+#include <kurlrequesterdlg.h>
+#include <kdirwatch.h>
 #include <kgenericfactory.h>
 #include <kmessagebox.h>
 #include <kiconloader.h>
 #include <kconfig.h>
 #include <ktrader.h>
 #include <klibloader.h>
+#include <qfile.h>
 #include <qlayout.h>
 #include <qptrlist.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
-
-#include <ktextedit.h>
-
-#include <ktexteditor/highlightinginterface.h>
-#include <ktexteditor/editinterface.h>
-#include <ktexteditor/document.h>
-#include <ktexteditor/view.h>
+#include <qpushbutton.h>
+#include <qlistview.h>
+#include <qsignal.h>
 
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
+#include "kopeteuiglobal.h"
 
 #include "javascriptpreferences.h"
 #include "javascriptprefsbase.h"
-#include "javascriptconfig.h"
 
 typedef KGenericFactory<JavaScriptPreferences> JavaScriptPreferencesFactory;
+
+class ScriptItem : public QCheckListItem
+{
+	public:
+		ScriptItem( QListView *parent, Script *m_script, QObject *reciever, const char* slot ) :
+			QCheckListItem( parent, m_script->name, QCheckListItem::CheckBox ),
+			script( m_script )
+		{
+			setText( 1, script->description );
+			setText( 2, script->author );
+			setEnabled( !script->immutable );
+
+			sig.connect( reciever, slot );
+			sig.setValue( (int)this );
+			lockSig = false;
+		}
+
+		void stateChange( bool )
+		{
+			kdDebug() << k_funcinfo << endl;
+			if( !lockSig )
+				sig.activate();
+		}
+
+		void setOn( bool b, bool lock = false )
+		{
+			lockSig = lock;
+			QCheckListItem::setOn( b );
+			lockSig = false;
+		}
+
+		Script *script;
+
+	private:
+		QSignal sig;
+		bool lockSig;
+
+};
 
 class AccountItem : public QListViewItem
 {
@@ -59,60 +100,133 @@ JavaScriptPreferences::JavaScriptPreferences( QWidget *parent, const char *, con
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 	preferencesDialog = new JavaScriptPrefsBase( this );
 
-	(new QHBoxLayout( preferencesDialog->scriptFrame ))->setAutoAdd( true );
-	editDocument = new KTextEdit( preferencesDialog->scriptFrame );
-	/*KTrader::OfferList offers = KTrader::self()->query( "KTextEditor/Document" );
-	KService::Ptr service = *offers.begin();
-	KLibFactory *factory = KLibLoader::self()->factory( service->library().latin1() );
-	editDocument = static_cast<KTextEditor::Document *>(
-		factory->create( preferencesDialog->scriptFrame, 0, "KTextEditor::Document" )
-	);
-
-	editDocument->createView( preferencesDialog->scriptFrame, 0 )->setSizePolicy(
-		QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding)
-	);
-
-	updateHighlight();
-	*/
-
 	new QListViewItem( preferencesDialog->accountList, i18n("All Accounts") );
+        tempFile = 0L;
 
 	load();
 
-	connect(preferencesDialog, SIGNAL(destroyed()), editDocument, SLOT(deleteLater()) );
-	connect(preferencesDialog->eventType, SIGNAL(activated(int)), this, SLOT(slotUpdateScript()) );
-	connect(preferencesDialog->accountList, SIGNAL(selectionChanged()), this, SLOT(slotUpdateScript()) );
-	connect(editDocument, SIGNAL(textChanged()), this, SLOT( slotTextChanged()) );
-}
-/*
-void JavaScriptPreferences::updateHighlight()
-{
-	KTextEditor::HighlightingInterface *hi = KTextEditor::highlightingInterface( editDocument );
-	int count = hi->hlModeCount();
+	connect(config, SIGNAL(changed()), this, SLOT(slotEmitChanged()) );
+	connect(preferencesDialog->scriptList, SIGNAL(selectionChanged()), this, SLOT(slotUpdateButtons()) );
+	connect(preferencesDialog->accountList, SIGNAL(selectionChanged()), this, SLOT(slotUpdateScriptList()) );
+	connect(preferencesDialog->addScript, SIGNAL(clicked()), this, SLOT(slotAddScript()) );
+	connect(preferencesDialog->editScript, SIGNAL(clicked()), this, SLOT(slotEditScript()) );
+	connect(preferencesDialog->eventType, SIGNAL(activated(int)), this, SLOT(slotUpdateScriptList()) );
+	connect(preferencesDialog->accountList, SIGNAL(selectionChanged()), this, SLOT(slotUpdateScriptList()) );
+	connect(KDirWatch::self(), SIGNAL( dirty( const QString & ) ), this, SLOT( slotFileDirty( const QString & ) ) );
 
-	for( int i=0; i < count; ++i )
+	QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
+	for( KopeteAccount *a = accounts.first(); a; a = accounts.next() )
 	{
-		if( hi->hlModeName(i) == QString::fromLatin1("JavaScript") )
-		{
-			hi->setHlMode(i);
-			break;
-		}
+		new AccountItem( preferencesDialog->accountList, a );
 	}
+
+	slotUpdateButtons();
 }
-*/
-void JavaScriptPreferences::slotTextChanged()
+
+void JavaScriptPreferences::slotEmitChanged()
 {
 	emit KCModule::changed(true);
 }
 
-void JavaScriptPreferences::slotUpdateScript()
+void JavaScriptPreferences::slotUpdateButtons()
 {
-	QListViewItem *selectedItem = preferencesDialog->accountList->selectedItem();
-	AccountItem *accountItem = dynamic_cast<AccountItem*>( selectedItem );
+	QListViewItem *selectedItem = preferencesDialog->scriptList->selectedItem();
+	if( selectedItem )
+	{
+		Script *s = config->script( selectedItem->text(0) );
+		if( s )
+		{
+			preferencesDialog->editScript->setEnabled( !s->immutable );
+			preferencesDialog->removeScript->setEnabled( !s->immutable );
+		}
+	}
+	else
+	{
+		preferencesDialog->editScript->setEnabled( false );
+		preferencesDialog->removeScript->setEnabled( false );
+	}
+}
 
-	editDocument->setText(
-		config->script( accountItem ? accountItem->account : 0, preferencesDialog->eventType->currentItem() )
-	);
+void JavaScriptPreferences::slotUpdateScriptList()
+{
+	AccountItem *item = dynamic_cast<AccountItem*>( preferencesDialog->accountList->selectedItem() );
+	int type = preferencesDialog->eventType->currentItem();
+	QStringList scripts = config->scriptNamesFor( item ? item->account : 0L, type );
+
+	for( ScriptItem *i = static_cast<ScriptItem*>( preferencesDialog->scriptList->firstChild() );
+		i; i = static_cast<ScriptItem*>( i->nextSibling() ) )
+	{
+		i->setOn( !scripts.grep( i->text(0) ).isEmpty(), true );
+	}
+}
+
+void JavaScriptPreferences::slotAddScript()
+{
+	KURL script = KURLRequesterDlg::getURL( QString::null, preferencesDialog, i18n("Select Script") );
+	QString fileName;
+
+	if( KIO::NetAccess::download( script, fileName, Kopete::UI::Global::mainWidget() ) )
+	{
+		QFile f( fileName );
+		f.open( IO_ReadOnly );
+		QTextStream stream( &f );
+		QString contents;
+		stream >> contents;
+
+		if( script.isLocalFile() )
+			f.close();
+		else
+			f.remove();
+
+		Script *scriptPtr = config->addScript( script.path(), QString::null, QString::null, contents );
+
+		new ScriptItem( preferencesDialog->scriptList, scriptPtr,
+			this, SLOT(slotEnableScript(const QVariant &)) );;
+	}
+	else
+	{
+		kdError() << k_funcinfo << "Could not download URL " << script << endl;
+	}
+}
+
+void JavaScriptPreferences::slotEditScript()
+{
+	if( tempFile )
+	{
+		tempFile->unlink();
+		delete tempFile;
+	}
+
+	currentScript = static_cast<ScriptItem*>( preferencesDialog->scriptList->selectedItem() )->script;
+	tempFile = new KTempFile;
+	*tempFile->textStream() << currentScript->script;
+	tempFile->close();
+	KDirWatch::self()->addFile( tempFile->name() );
+	KRun::runURL( tempFile->name(), QString::fromLatin1("text/javascript"), false );
+}
+
+void JavaScriptPreferences::slotEnableScript( const QVariant &scriptItem )
+{
+	kdDebug() << k_funcinfo << endl;
+	ScriptItem *i = (ScriptItem*)scriptItem.toInt();
+
+	QListViewItem *accountItem = preferencesDialog->accountList->selectedItem();
+	if( accountItem )
+	{
+		AccountItem *a = dynamic_cast<AccountItem*>( accountItem );
+		int type = preferencesDialog->eventType->currentItem();
+
+		config->setScriptEnabled( a ? a->account : 0L, type, i->text(0), i->isOn() );
+	}
+}
+
+void JavaScriptPreferences::slotFileDirty( const QString &file )
+{
+	if( tempFile && file == tempFile->name() )
+	{
+		*tempFile->textStream() >> currentScript->script;
+		emit KCModule::changed(true);
+	}
 }
 
 // reload configuration reading it from kopeterc
@@ -132,11 +246,7 @@ void JavaScriptPreferences::save()
 	config->setFactoryEnabled( preferencesDialog->factoryEnabled->isChecked() );
 	config->setSignalsEnabled( preferencesDialog->signalsEnabled->isChecked() );
 
-	QListViewItem *selectedItem = preferencesDialog->accountList->selectedItem();
-	AccountItem *accountItem = dynamic_cast<AccountItem*>( selectedItem );
-
-	config->setScript( accountItem ? accountItem->account : 0, preferencesDialog->eventType->currentItem(),
-		editDocument->text() );
+	config->apply();
 
 	emit KCModule::changed(false);
 }

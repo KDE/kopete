@@ -19,6 +19,16 @@ class KopeteAccount;
 class KConfig;
 class JavaScriptConfigPrivate;
 
+struct Script
+{
+	QString name;
+	QString description;
+	QString author;
+	QString script;
+	QMap<QString,QString> accounts;
+	bool immutable;
+};
+
 class JavaScriptConfig : public QObject
 {
 	Q_OBJECT
@@ -39,8 +49,19 @@ class JavaScriptConfig : public QObject
 		void setTreeEnabled( bool );
 		bool treeEnabled() const;
 
-		void setScript( KopeteAccount *account, int, const QString &script );
-		QString script( KopeteAccount *account, int );
+		Script* addScript( const QString &name, const QString &description,
+			const QString &author, const QString &contents );
+		void writeScript( const QString &name, const QString &contents );
+		void removeScript( const QString &name );
+
+		void setScriptEnabled( KopeteAccount *account, int type, const QString &script, bool enabled );
+		QStringList scriptsFor( KopeteAccount *account, int );
+		QStringList scriptNamesFor( KopeteAccount *account, int );
+		QStringList accountsFor( int type, const QString &script );
+
+		Script *script( const QString &name );
+
+		void apply();
 
 	signals:
 		void changed();

@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>587</width>
-            <height>420</height>
+            <height>424</height>
         </rect>
     </property>
     <property name="caption">
@@ -19,7 +19,7 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QComboBox" row="1" column="3">
+        <widget class="QComboBox" row="1" column="2" rowspan="1" colspan="3">
             <item>
                 <property name="text">
                     <string>About To Send Message</string>
@@ -33,6 +33,31 @@
             <item>
                 <property name="text">
                     <string>About To Display Message</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>Account Changed Status</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>Contact Changed Status</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>Contact Added</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>Contact Removed</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>File Transfer Request</string>
                 </property>
             </item>
             <property name="name">
@@ -53,7 +78,7 @@
                 </size>
             </property>
         </widget>
-        <widget class="QLabel" row="1" column="2">
+        <widget class="QLabel" row="1" column="1">
             <property name="name">
                 <cstring>textLabel1</cstring>
             </property>
@@ -72,26 +97,7 @@
                 <cstring>comboBox1</cstring>
             </property>
         </widget>
-        <widget class="QFrame" row="2" column="0" rowspan="1" colspan="4">
-            <property name="name">
-                <cstring>scriptFrame</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>3</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="frameShape">
-                <enum>StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Raised</enum>
-            </property>
-        </widget>
-        <widget class="QListView" row="0" column="0" rowspan="2" colspan="1">
+        <widget class="QListView" row="1" column="0" rowspan="2" colspan="1">
             <column>
                 <property name="text">
                     <string>For Account</string>
@@ -127,7 +133,54 @@
                 <enum>AllColumns</enum>
             </property>
         </widget>
-        <widget class="QGroupBox" row="0" column="1" rowspan="1" colspan="3">
+        <widget class="QListView" row="2" column="1" rowspan="1" colspan="4">
+            <column>
+                <property name="text">
+                    <string>Script</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Description</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>About</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <property name="name">
+                <cstring>scriptList</cstring>
+            </property>
+            <property name="selectionMode">
+                <enum>Single</enum>
+            </property>
+            <property name="allColumnsShowFocus">
+                <bool>true</bool>
+            </property>
+            <property name="resizeMode">
+                <enum>AllColumns</enum>
+            </property>
+        </widget>
+        <widget class="QGroupBox" row="0" column="0" rowspan="1" colspan="5">
             <property name="name">
                 <cstring>groupBox1</cstring>
             </property>
@@ -184,6 +237,47 @@
                 </widget>
             </vbox>
         </widget>
+        <widget class="QPushButton" row="3" column="4">
+            <property name="name">
+                <cstring>editScript</cstring>
+            </property>
+            <property name="text">
+                <string>Edit</string>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="3" column="3">
+            <property name="name">
+                <cstring>removeScript</cstring>
+            </property>
+            <property name="text">
+                <string>Remove</string>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="3" column="2">
+            <property name="name">
+                <cstring>addScript</cstring>
+            </property>
+            <property name="text">
+                <string>Add</string>
+            </property>
+        </widget>
+        <spacer row="3" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>300</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
     </grid>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>

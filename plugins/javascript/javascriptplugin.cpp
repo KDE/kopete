@@ -291,8 +291,11 @@ void JavaScriptPlugin::slotDisplayMessage( KopeteMessage &msg )
 
 void JavaScriptPlugin::runScripts( KopeteMessageManager *manager, ScriptType type )
 {
-	d->jsEngine->execute( d->config->script( manager->account(), type ) );
-	d->jsEngine->execute( d->config->script( 0L, type ) );
+	QStringList scripts = d->config->scriptsFor( manager->account(), type );
+	scripts += d->config->scriptsFor( 0L, type );
+
+	for( QStringList::iterator it = scripts.begin(); it != scripts.end(); ++it )
+		d->jsEngine->execute( *it );
 }
 
 #include "javascriptplugin.moc"
