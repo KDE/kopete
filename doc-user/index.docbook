@@ -79,10 +79,10 @@ Appendix: Obtaining and installation (1st draft, Will)
 <legalnotice>&FDLNotice;</legalnotice>
 
 <date>2004-02-24</date>
-<releaseinfo>0.9</releaseinfo>
+<releaseinfo>0.10</releaseinfo>
 
 <copyright>
-<year>2003, 2004</year>
+<year>2003, 2004, 2005</year>
 </copyright>
 
 <!-- Abstract about this handbook -->
@@ -106,6 +106,8 @@ Appendix: Obtaining and installation (1st draft, Will)
 <keyword>AIM</keyword>
 <keyword>Yahoo</keyword>
 <keyword>Gadu-Gadu</keyword>
+<keyword>GroupWise</keyword>
+<keyword>Novell</keyword>
 <keyword>WinPopup</keyword>
 <keyword>SMS</keyword>
 </keywordset>
@@ -335,7 +337,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </sect3>
 <sect3 id="chat-window-layout-memberslist"><title>Chat Members List</title>
 <para>Since some &im; systems allow you to chat as a group, it's useful to see who's chatting at the moment.  The Chat Members List appears to the left or the right of the Chat View.  You can change this using <menuchoice><guimenu>Settings</guimenu><guisubmenu>Chat Members List</guisubmenu></menuchoice>.  The contact context menu is available in the Chat Members List.</para></sect3>
-<sect3 id="chat-window-layout-input-area"><title>Input Area</title><para>The Input Area is below the Chat View.  This is where you type messages before sending them.  You can change the font and color of the message using the usual tools on the toolbar.  If the &im; system supports this, your messages will appear in color when your contacts read them.</para><para>By default, the keyboard shortcut to send messages is <keycombo action="simul">&Ctrl;&Enter;</keycombo>.</para></sect3>
+<sect3 id="chat-window-layout-input-area"><title>Input Area</title><para>The Input Area is below the Chat View.  This is where you type messages before sending them.  You can change the font and color of the message using the usual tools on the toolbar.  If the &im; system supports this, your messages will appear in color when your contacts read them.</para><para>By default, the keyboard shortcut to send messages is <keycap>&Enter;</keycap>.</para></sect3>
 <sect3 id="chat-window-layout-statusbar"><title>Status Bar</title><para>The Status Bar contains temporary messages, such as notification that someone else is typing, as well as the <guibutton>Send</guibutton> button.</para></sect3>
 <sect3 id="chat-window-layout-tabbing"><title>Tabbing</title><para>&kopete; lets you carry on multiple conversations in one window, by putting each one in its own tab within the window.  The tab titles change color to show when a new message has been received:</para>
 <variablelist>
@@ -366,7 +368,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </thead>
 <tbody>
 <row>
-<entry><keycombo action="simul">&Ctrl;&Enter;</keycombo></entry>
+<entry><keycap>&Enter;</keycap></entry>
 <entry>Send the message in the <interface>Input Area</interface>.</entry>
 </row>
 <row>
@@ -493,28 +495,11 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <term><guilabel>Configure Sounds &amp; Events</guilabel></term>
 <listitem>
 <para>Sounds, flashing taskbar entries, passive popups and more exotic notifications are supported in &kopete; using the &kde; notification system.  Type <userinput>help:/kcontrol/kcmnotify</userinput>  in &konqueror; or select the Help tab in the <guilabel>System Notifications</guilabel> section of the &kcontrol; for more information.</para>
-<para>You can use the <quote>Execute a program</quote> notification to perform custom notifications.  As an example, if you have <application>XOSD</application> (X On-Screen Display) installed, you can get OSD online notifications by executing the following command when the <quote>User goes online</quote> event takes place:</para>
+<para>To add custom notifications for a contact, right click that contact in the Contact List and select Properties. This lets you start chats, play a custom sound effect, or display a message for that contact or group. Otherwise you can use the <quote>Execute a program</quote> notification to perform custom notifications.  As an example, if you have <application>XOSD</application> (X On-Screen Display) installed, you can get OSD online notifications by executing the following command when the <quote>User goes online</quote> event takes place:</para>
 <para><userinput>echo %s | osd_cat -o 100 -p bottom -A center -f -*-helvetica-*-r-*-*-24-*-*-*-*-*-*-* -O 2 -c gold</userinput></para>
 <para>OhReally at the KDE Forum suggests having your online notifications read out by a speech synthesiser, using <ulink url="http://mambo.ucsc.edu/psl/mbrola">MBROLA</ulink> like so:</para>
 <para><userinput>echo %s | sed -e 's/online/onlaain/i' | /usr/local/bin/mbrdico.dutch.female</userinput></para>
 <para>The 'sed' in the middle phoneticises Kopete's output to so the synthesizer has a better Dutch pronunciation.</para>
-</listitem>
-</varlistentry>
-</variablelist>
-</sect4>
-<sect4 id="configuring-behavior-general-contactlist">
-<title>Contact List</title>
-<variablelist>
-<varlistentry>
-<term><guilabel>Show as a tree</guilabel></term>
-<listitem>
-<para>Usually &kopete; displays contacts and groups as a tree, where group members are indented.  For a simpler appearance, you can disable this, so the contact list becomes a flat list.</para>
-</listitem>
-</varlistentry>
-<varlistentry>
-<term><guilabel>Sort by group</guilabel></term>
-<listitem>
-<para>By disabling this, &kopete;'s groups are hidden, and contacts are divided only into <guilabel>Online Contacts</guilabel> and <guilabel>Offline Contacts</guilabel>.</para>
 </listitem>
 </varlistentry>
 </variablelist>
@@ -600,6 +585,47 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <title>Chat Window</title>
 <para>&kopete; supports translucent chat views.  You can control the degree of translucency and add a color tint here.  Changes to the translucency settings only become visible when a new chat view opens.</para>
 </sect4>
+</sect3>
+<sect3 id="configuring-behavior-general-contactlist">
+<title>Contact List</title>
+<variablelist>
+<varlistentry>
+	<term><guilabel>Arrange metacontacts by group</guilabel></term>
+<listitem>
+<para>By disabling this, &kopete;'s groups are hidden, and contacts are divided only into <guilabel>Online Contacts</guilabel> and <guilabel>Offline Contacts</guilabel>.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Show tree branch lines</guilabel></term>
+<listitem>
+<para>Usually &kopete; displays contacts and groups as a tree, where group members are indented.  For a simpler appearance, you can disable this, so the contact list becomes a flat list.  You can also control whether branches are indented here.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Contact Display Mode</guilabel></term>
+<listitem>
+	<para>There are several ways you can present the contact list here.  Of particular interest may be the <guilabel>Detailed with contact photos</guilabel> style, that shows the contact list including photos from the &im; system or the KDE Address Book</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Contact List Animations</guilabel></term>
+<listitem>
+	<para>This controls the degree of animation of the contact list.  Turning this off will make Kopete more responsive on slower machines.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Contact List Auto-Hide</guilabel></term>
+<listitem>
+	<para>By enabling this, the contact list will automatically disappear a few seconds after the pointer leaves the window.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Change Tootip Contents...</guilabel></term>
+<listitem>
+	<para>You have a lot of control over how much or how little detail appears inthe tooltips shown on the contact list using this dialog.</para>
+</listitem>
+</varlistentry>
+</variablelist>
 </sect3>
 <sect3 id="configuring-appearance-colors-fonts">
 <title>Colors and Fonts</title>
@@ -707,6 +733,10 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </variablelist>
 </sect2>
 
+<sect2 id="plugins-kopetex">
+<title>KopeteTeX</title>
+<para>KopeteTeX allows scientists and mathematicians to hold conversations using the LaTeX markup language.  Expressions entered within $$ are rendered as a graphic in the chatwindow, and can be cut and pasted as the original Latex.  To use this plugin you must have LaTeX installed</para>
+</sect2>
 <sect2 id="plugins-motion-auto-away">
 <title>Motion Auto-Away</title>
 <para>In conjunction with a webcam and the <application>Video4Linux</application> package, this lets you detect when you're no longer at your computer and have &kopete; automatically become <emphasis>Away</emphasis>.</para>
@@ -714,6 +744,10 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <sect2 id="plugins-now-listening">
 <title>Now Listening</title>
 <para>With the <guilabel>Now Listening plugin</guilabel>, let people you're chatting with know what you're listening to, by typing <userinput>/media</userinput> in a chat, or with <menuchoice><guimenu>Tools</guimenu><guimenuitem>Send Media Info</guimenuitem></menuchoice> in the Chat window.</para>
+</sect2>
+<sect2 id="plugins-statistics">
+<title>Statistics</title>
+<para>This plugin uses a database to gather information about your contacts' activity patterns. You can use this to see when a contact is usually online, for example.</para>
 </sect2>
 <sect2 id="plugins-text-effect">
 <title>Text Effect</title>
@@ -809,7 +843,7 @@ sets that you can simply extract there.</para>
 <chapter id="credits-and-licenses">
 <title>Credits and Licenses</title>
 <para>
-&kopete;: copyright 2001-2003, &kopete; Developers
+&kopete;: copyright 2001-2005, &kopete; Developers
 </para>
 <!-- TRANS:CREDIT_FOR_TRANSLATORS -->
 &underFDL;
@@ -819,15 +853,14 @@ sets that you can simply extract there.</para>
 <!-- please keep in sync with the authors list on the webpage -->
 <itemizedlist>
 <listitem><para>Duncan Mac-Vicar Prett (duncan at kde org): Original author, developer, and project leader</para></listitem>
-<listitem><para>Martijn Klingens (klingens at kde org): Developer, MSN hacker</para></listitem>
-<listitem><para>Olivier Goffart (ogoffart at tiscalinet be): Developer, MSN Plugin Maintainer</para></listitem>
-<listitem><para>Matt Rogers (matt at matt rogers name): Developer, Yahoo Plugin Maintainer, Oscar Plugin Maintainer</para></listitem>
-<listitem><para>Stefan Gehn (sgehn at gmx net): Developer</para></listitem>
 <listitem><para>Till Gerken (till at tantalo net): Developer, Jabber maintainer</para></listitem>
-<listitem><para>Jason Keirstead (jason at keirstead org): Developer, IRC Plugin Maintainer, Website</para></listitem>
-<listitem><para>Grzegorz Jaskiewicz (gregj at pointblue com pl): Developer, Gadu-gadu Plugin Maintainer</para></listitem>
+<listitem><para>Olivier Goffart (ogoffart at tiscalinet be): Developer, MSN Plugin Maintainer</para></listitem>
 <listitem><para>Andy Goossens (andygoossens at telenet be): Current version maintainer</para></listitem>
-<listitem><para>Gav Wood (gav at kde org): WinPopup Plugin author</para></listitem>
+<listitem><para>Grzegorz Jaskiewicz (gregj at pointblue com pl): Developer, Gadu-gadu Plugin Maintainer</para></listitem>
+<listitem><para>Jason Keirstead (jason at keirstead org): Developer, IRC Plugin Maintainer, Website</para></listitem>
+<listitem><para>Martijn Klingens (klingens at kde org): Developer, MSN hacker</para></listitem>
+<listitem><para>Matt Rogers (mattr at kde org): Developer, Yahoo Plugin Maintainer, Oscar Plugin Maintainer</para></listitem>
+<listitem><para>Richard Smith (lilachaze at hotmail com): Developer, UI maintainer</para></listitem>
 <listitem><para>Will Stephenson (lists at stevello free-online co uk): Developer, icons, plugins, manual author</para></listitem>
 </itemizedlist>
 </sect1>
@@ -839,17 +872,19 @@ sets that you can simply extract there.</para>
 <listitem><para>Ryan Cumming (ryan at kde org): Core developer</para></listitem>
 <listitem><para>Richard Stellingwerff (remenic at linuxfromscratch org): Developer</para></listitem>
 <listitem><para>Hendrik vom Lehn (hennevl at hennevl de): Developer</para></listitem>
+<listitem><para>Stefan Gehn (sgehn at gmx net): Developer</para></listitem>
 <listitem><para>Robert Gogolok (robertgogolock at gmx de): Developer</para></listitem>
 <listitem><para>Nick Betcher (nbetcher at kde org): Original author of ICQ, AIM and IRC plugins</para></listitem>
 <listitem><para>Daniel Stone (dstone at kde org): Original Jabber plugin author</para></listitem>
 <listitem><para>James Grant (topace at lightbox org): Developer, importer Plugin author</para></listitem>
 <listitem><para>Zack Rusin (zack at kde org): Developer, old Gadu-gadu Plugin author</para></listitem>
+<listitem><para>Gav Wood (gav at kde org): WinPopup Plugin author</para></listitem>
 </itemizedlist>
 </sect1>
 <sect1 id="documentation">
 <title>Documentation</title>
 <para>
-Documentation copyright 2003, Will Stephenson (lists at stevello free-online co uk)
+Documentation copyright 2003,2004,2005 Will Stephenson (lists at stevello free-online co uk), copyright 2005 Matt Rogers (mattr at kde org).
 </para>
 </sect1>
 </chapter><!-- credits-and-licenses -->
