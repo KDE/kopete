@@ -78,6 +78,8 @@ IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, K
 			this, SLOT( slotWhoIsComplete(const QString &)));
 	QObject::connect(m_engine, SIGNAL(incomingNickChange(const QString &, const QString &)),
 			this, SLOT( slotNewNickChange(const QString&, const QString&)));
+	QObject::connect(m_engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)),
+			this, SLOT(slotNewNickChange(const QString &, const QString &)));
 	QObject::connect(m_engine, SIGNAL(incomingQuitIRC(const QString &, const QString &)),
 			this, SLOT( slotUserDisconnected(const QString&, const QString&)));
 	QObject::connect(m_engine, SIGNAL(incomingCtcpReply(const QString &, const QString &, const QString &)),
@@ -216,15 +218,11 @@ void IRCContact::slotWhoIsComplete(const QString &nickname)
 
 void IRCContact::slotNewNickChange(const QString &oldnickname, const QString &newnickname)
 {
+	kdDebug(14120) << k_funcinfo << oldnickname << " >> " << newnickname << ", " << m_nickName << endl;
+
 	IRCContact *user = static_cast<IRCContact*>( locateUser(oldnickname) );
 	if( user )
 	{
-		QString oldName;
-		if( oldnickname == m_account->mySelf()->nickName() )
-			oldName = i18n("You are");
-		else
-			oldName = i18n("%1 is").arg(oldnickname);
-
 		user->setNickName( newnickname );
 		//If tracking name changes....
 		user->setDisplayName( newnickname );

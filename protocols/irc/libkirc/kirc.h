@@ -353,12 +353,12 @@ protected:
 	QString m_Realname;
 	QString m_Nickname;
 	QString m_Passwd;
-	bool	m_ReqsPasswd;
+	bool m_ReqsPasswd;
+	bool m_FailedNickOnLogin;
 
 	QString m_VersionString;
 	QString m_UserString;
 	QString m_SourceString;
-
 	QString m_PendingNick;
 
 	QDict<KIRCMethodFunctorCall> m_IrcMethods;

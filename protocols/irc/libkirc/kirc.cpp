@@ -510,13 +510,11 @@ bool KIRC::nickChange(const KIRCMessage &msg)
 	QString oldNick = msg.prefix().section('!', 0, 0);
 	if (oldNick.lower() == m_Nickname.lower())
 	{
-//		emit successfullyChangedNick(msg.prefix(), msg.args()[0]);
-		emit successfullyChangedNick(msg.prefix(), msg.suffix());
+		emit successfullyChangedNick(oldNick, msg.suffix());
 		m_Nickname = msg.args()[0];
 	}
 	else
-//		emit incomingNickChange(msg.prefix(), msg.args()[0]);
-		emit incomingNickChange(msg.prefix(), msg.suffix());
+		emit incomingNickChange(oldNick, msg.suffix());
 	return true;
 }
 
@@ -943,14 +941,14 @@ bool KIRC::numericReply_001(const KIRCMessage &msg)
 	/* Gives a welcome message in the form of:
 	 * "Welcome to the Internet Relay Network <nick>!<user>@<host>"
 	 */
-//	if (m_FailedNickOnLogin == true)
-//	{
-//		// this is if we had a "Nickname in use" message when connecting and we set another nick.
-//		// This signal emits that the nick was accepted and we are now logged in
-//		emit successfullyChangedNick(m_Nickname, m_PendingNick);
-//		m_Nickname = m_PendingNick;
-//		m_FailedNickOnLogin = false;
-//	}
+	if (m_FailedNickOnLogin == true)
+	{
+		// this is if we had a "Nickname in use" message when connecting and we set another nick.
+		// This signal emits that the nick was accepted and we are now logged in
+		emit successfullyChangedNick(m_Nickname, m_PendingNick);
+		m_Nickname = m_PendingNick;
+		m_FailedNickOnLogin = false;
+	}
 	emit incomingWelcome(msg.suffix());
 
 	/* At this point we are connected and the server is ready for us to being taking commands
@@ -1116,6 +1114,7 @@ bool KIRC::numericReply_433(const KIRCMessage &msg)
 		// This tells us that our nickname is, but we aren't logged in.
 		// This differs because the server won't send us a response back telling us our nick changed
 		// (since we aren't logged in).
+		m_FailedNickOnLogin = true;
 		emit incomingFailedNickOnLogin(msg.args()[1]);
 	}
 	else
@@ -1124,6 +1123,8 @@ bool KIRC::numericReply_433(const KIRCMessage &msg)
 		// but it's already in use
 		emit incomingNickInUse(msg.args()[1]);
 	}
+	
+	
 	return true;
 }
 
