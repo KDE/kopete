@@ -14,6 +14,11 @@ class CoreProtocol : public QObject
 {
 Q_OBJECT
 public:
+	/**
+	 * Describes the current state of the protocol
+	 */
+	enum State { NeedMore, Available, ServerError, ServerRedirect };
+	
 	CoreProtocol();
 	
 	virtual ~CoreProtocol();
@@ -28,8 +33,15 @@ public:
 	 */
 	void reset();
 	
+	/**
+	 * Returns the next incoming transfer from the queue or 0 if none is available
+	 */
 	Transfer* incomingTransfer();
 	
+	/** 
+	 * Convert a request into an outgoing transfer
+	 * emits @ref outgoingData() with each part of the transfer
+	 */
 	void outgoingTransfer( Request* outgoing );
 	
 signals:
@@ -59,12 +71,25 @@ protected:
 	 * @param depth Current depth of recursion.  Don't use this parameter yourself!
 	 */
 	void fieldsToWire( Field::FieldList fields, int depth = 0 );
+	/**
+	 * Read in an event
+	 */
+	void readEvent( const Q_UINT32 eventType, QDataStream& wireEvent );
+	/**
+	 * Read in a response
+	 */
+	bool readResponse( const QDataStream& wireRequest );
+	
+	/**
+	 * encodes a method number (usually supplied as a #defined symbol) to a char
+	 */
 	QChar encode_method( Q_UINT8 method );
 
 private:
-	QByteArray in;
+	QByteArray m_in;
 	int m_error;
-	QPtrList<Transfer> inQueue;
+	QPtrList<Transfer> m_inQueue;
+	int m_state;
 };
 
 #endif

@@ -11,8 +11,8 @@
 //
 #include "eventtransfer.h"
 
-EventTransfer::EventTransfer()
- : Transfer()
+EventTransfer::EventTransfer( const Q_UINT32 eventType, QCString& source, QTime timeStamp )
+ : Transfer(), m_eventType( eventType ), m_source( source ), m_timeStamp( timeStamp )
 {
 }
 
@@ -21,4 +21,17 @@ EventTransfer::~EventTransfer()
 {
 }
 
+int EventTransfer::eventType()
+{ 
+	return m_eventType;
+}
 
+QCString EventTransfer::source()
+{
+	return m_source;
+}
+
+QTime EventTransfer::timeStamp()
+{
+	return m_timeStamp;
+}

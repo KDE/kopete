@@ -1,9 +1,15 @@
 #include <string.h>
 #include <iostream.h>
 
+#include <qdatastream.h>
+#include <qtextstream.h>
+
+#include <qdatetime.h>
+
 #include <kdebug.h>
 #include <kurl.h>
 
+#include "eventtransfer.h"
 #include "gwerror.h"
 #include "gwfield.h"
 #include "request.h"
@@ -77,9 +83,9 @@ CoreProtocol::~CoreProtocol()
 
 void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 {
-	int oldsize = in.size();
-	in.resize(oldsize + incomingBytes.size());
-	memcpy(in.data() + oldsize, incomingBytes.data(), incomingBytes.size());
+	int oldsize = m_in.size();
+	m_in.resize( oldsize + incomingBytes.size() );
+	memcpy( m_in.data() + oldsize, incomingBytes.data(), incomingBytes.size() );
 }
 
 Transfer * CoreProtocol::incomingTransfer()
@@ -111,7 +117,7 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 	bout += request->command();
 	bout += " HTTP/1.0\r\n";
 	
-	// if a login, add Host arg : public FieldBase
+	// if a login, add Host arg 
 	if ( request->command() == "login" )
 	{
 		bout += "Host: ";
@@ -123,7 +129,7 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 	
 	emit outgoingData( bout );
 	// now convert 
-	fieldsToWire( fields );
+	//fieldsToWire( fields );
 	return;
 }
 
@@ -131,9 +137,123 @@ void CoreProtocol::wireToTransfer( const QByteArray& wire )
 {
 	// processing incoming data and reassembling it into transfers
 	// may be an event or a response
-	// may be incomplete!!
-	// going to need some state to track incomplete transfers :/
-	// store it in the buffer inQueue when complete
+	QDataStream din( wire, IO_ReadOnly );
+	din.setByteOrder( QDataStream::LittleEndian );
+	
+	// does protocol state indicate we are partially through reading a response?
+	if ( m_state = NeedMore )
+		readResponse( din );
+	else
+	{
+		// otherwise, examine the data to see what it is
+		// look at first four bytes
+		Q_UINT32 val;
+		din >> val;
+		// is 'HTTP' -> response
+		if ( qstrncmp( (const char *)&val, "HTTP", strlen( "HTTP" ) ) == 0 )
+		{
+			m_state = ( readResponse( din ) ? Available : NeedMore );
+			emit incomingData();
+		}
+		else	
+		// otherwise -> event
+		{
+			readEvent( val, din );
+			emit incomingData();
+		}
+	}
+}
+
+void CoreProtocol::readEvent( const Q_UINT32 eventType, QDataStream& wireEvent )
+{
+	// discover the length of the event's source, then read it
+	Q_UINT32 len;
+	wireEvent >> len;
+	QCString source;
+	if ( len > 0 )
+	{
+		char* rawSource;
+		wireEvent.readBytes( rawSource, len );
+		source = rawSource; // shallow copy, QCString's destructor will delete the allocated space
+	}
+	// now create an event object
+	EventTransfer * evt = new EventTransfer( eventType, source, QTime::currentTime() );
+	m_inQueue.append( evt );
+	
+}
+
+bool CoreProtocol::readResponse( const QDataStream& wireResponse )
+{
+	// read rest of HTTP header and look for a 301 redirect. 
+	// we can treat the rest of the data as a textstream
+	QTextStream tin( wireResponse.device() );
+	QString headerFirst = tin.readLine();
+	// pull out the HTTP return code
+	int firstSpace = headerFirst.find( ' ' );
+	QString rtnField = headerFirst.mid( firstSpace, headerFirst.find( ' ', firstSpace + 1 ) );
+	bool ok = true;
+	int rtnCode;
+	rtnCode = rtnField.toInt( &ok );
+	
+	// read rest of header
+	QStringList headerRest;
+	QString line;
+	while ( line != "\r" )
+	{
+		line = tin.readLine();
+		headerRest.append( line );
+	}
+	// if it's a redirect, set flag
+	if ( ok && rtnCode == 301 )
+	{	
+		m_state = ServerRedirect;
+		return false;
+	}
+	// other header processing ( 500! )
+	if ( ok && rtnCode == 500 )
+	{	
+		m_state = ServerError;
+		return false;
+	}
+	// find transaction id field and create Response object if nonzero
+	// add fields to Response object
+	
+	// find field type 0 that indicates end of response
+		// append to inQueue
+		// set state to Available
+	// didn't find an 0 - Response is in multiple packets...
+		// Gaim doesn't handle this case yet
+		// Reconstruction - if we are just reading top level fields, read next packet until 0
+		// if we were reading a subarray, we know how long it should be, 
+		// store the partial request, partial MultiField and count of total number of fields in the protocol to await next packet
+	return true;
+}
+
+void CoreProtocol::readFields( QTextStream &tin )
+{
+	// WHILE
+	
+	// read fields 
+		// read uint8 type
+		// if type is 0 SOMETHING_INVALID
+			// break
+		// read uint8 method
+		// read length of tag
+		// read tag 
+		// if multivalue or array
+			// read length uint32
+			// call self
+			// append result to fieldlist
+			// create multifield
+		// if utf8 or dn
+			// read length uint32
+			// read string
+			// convert to unicode
+			// create singlefield
+		// otherwise ( numeric )
+			// read value uint32
+		// append to fieldList
+			
 }
 
 void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
@@ -228,7 +348,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 
 void CoreProtocol::reset()
 {
-	in.resize( 0 );
+	m_in.resize( 0 );
 }
 
 QChar CoreProtocol::encode_method( Q_UINT8 method )

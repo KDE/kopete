@@ -34,7 +34,8 @@ public:
 	{
 		// set up client stream
 		myConnector = new KNetworkConnector( 0 );
-		myConnector->setOptHostPort( "reiser.suse.de", 8300 );
+		myConnector->setOptHostPort( "localhost", 8300 );
+		//myConnector->setOptHostPort( "reiser.suse.de", 8300 );
 		myConnector->setOptSSL( true );
 		Q_ASSERT( QCA::isSupported(QCA::CAP_TLS) );
 		myTLS = new QCA::TLS;
