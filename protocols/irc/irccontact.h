@@ -24,11 +24,12 @@
 
 #include "kirc.h"
 #include "kopetecontact.h"
+#include "kopetemessage.h"
 
 class KopeteMessageManager;
 class KopeteMetaContact;
 class IRCAccount;
-class KopeteMessage;
+class QProcess;
 
 struct whoIsInfo;
 
@@ -80,6 +81,8 @@ class IRCContact : public KopeteContact
 		void slotNewNickChange( const QString &oldnickname, const QString &newnickname);
 		void slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
 		void slotUserDisconnected( const QString &nickname, const QString &reason);
+		void slotExecReturnedData();
+		void slotExecFinished();
 
 	protected slots:
 		void slotSendMsg(KopeteMessage &message, KopeteMessageManager *);
@@ -100,6 +103,8 @@ class IRCContact : public KopeteContact
 		QString mNickName;
 		QValueList<KopeteMessage> messageQueue;
 		bool isConnected;
+		KopeteMessage::MessageDirection execDir;
+		QProcess *proc;
 };
 
 #endif

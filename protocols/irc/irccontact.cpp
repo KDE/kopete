@@ -19,6 +19,8 @@
 #include <klocale.h>
 #include <qstringlist.h>
 #include <qregexp.h>
+#include <qprocess.h>
+#include <qapplication.h>
 
 #include "ircchannelcontact.h"
 #include "ircaccount.h"
@@ -53,6 +55,7 @@ IRCContact::IRCContact(IRCAccount *account, const QString &nick, KopeteMetaConta
 	mMetaContact = metac;
 	mMsgManager = 0L;
 	mNickName = nick;
+	proc = 0L;
 
 	// Contact list display name
 	setDisplayName(mNickName);
@@ -88,8 +91,9 @@ bool IRCContact::isReachable()
 
 bool IRCContact::processMessage( const KopeteMessage &msg )
 {
-	QStringList commandLine = QStringList::split( QRegExp( QString::fromLatin1("\\s+") ), msg.plainBody() );
-	QString commandArgs = msg.plainBody().section( QRegExp( QString::fromLatin1("\\s+") ), 1 );
+	QRegExp whiteSpace(QString::fromLatin1("\\s"));
+	QStringList commandLine = QStringList::split( whiteSpace, msg.plainBody() );
+	QString commandArgs = msg.plainBody().section( whiteSpace, 1 );
 	uint commandCount = commandLine.count();
 
 	if( commandLine.first().startsWith( QString::fromLatin1("/") ) )
@@ -117,13 +121,11 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 				}
 			}
 			else if( command == QString::fromLatin1("mode") && commandCount > 2 )
-			{
-				mEngine->changeMode( *commandLine.at(1), commandArgs.section(' ', 1) );
-			}
+				mEngine->changeMode( *commandLine.at(1), commandArgs.section( whiteSpace, 1 ) );
+
 			else if( command == QString::fromLatin1("whois") && commandCount > 1 )
-			{
 				mEngine->whoisUser( *commandLine.at(1) );
-			}
+
 			else if( command == QString::fromLatin1("query") && commandCount > 1 )
 			{
 				if( !(*commandLine.at(1)).startsWith( QString::fromLatin1("#") ) )
@@ -145,9 +147,36 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 				}
 			}
 			else if( command == QString::fromLatin1("part") )
-			{
 				KopeteViewManager::viewManager()->view( manager(), true )->closeView();
+
+			else if( command == QString::fromLatin1("exec") && commandCount > 1)
+			{
+				if( !proc )
+				{
+					if( *commandLine.at(1) == QString::fromLatin1("-o") )
+					{
+						execDir = KopeteMessage::Outbound;
+						proc = new QProcess( QStringList::split( whiteSpace, commandArgs.section( whiteSpace, 1 ) ) );
+					}
+					else
+					{
+						execDir = KopeteMessage::Internal;
+						proc = new QProcess( QStringList::split( whiteSpace, commandArgs ) );
+					}
+					connect(proc, SIGNAL(readyReadStdout()), this, SLOT(slotExecReturnedData()));
+					connect(proc, SIGNAL(readyReadStderr()), this, SLOT(slotExecReturnedData()));
+					connect(proc, SIGNAL(processExited()), this, SLOT(slotExecFinished()));
+					proc->start();
+				}
+				else
+				{
+					KopeteMessage msg((KopeteContact*)this, mContact, i18n("Please wait for previous processes to complete, or type /kill to cancel them."), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+					manager()->appendMessage(msg);
+				}
 			}
+			else if( command == QString::fromLatin1("kill") && proc )
+				slotExecFinished();
+
 			else
 			{
 				KopeteMessage msg((KopeteContact*)this, mContact, i18n("\"%1\" is an unrecognized command.").arg(command), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
@@ -161,6 +190,29 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 
 	//No command, so return true to continue processing
 	return true;
+}
+
+void IRCContact::slotExecReturnedData()
+{
+	QString buff;
+	while( proc->canReadLineStdout() || proc->canReadLineStderr() )
+	{
+		if( proc->canReadLineStdout() )
+			buff = proc->readLineStdout();
+		else if( proc->canReadLineStderr() )
+			buff = proc->readLineStderr();
+		KopeteMessage msg((KopeteContact*)this, mContact, buff, execDir, KopeteMessage::PlainText, KopeteMessage::Chat);
+		manager()->appendMessage(msg);
+	}
+}
+
+void IRCContact::slotExecFinished()
+{
+	if( proc->isRunning() )
+		proc->kill();
+
+	delete proc;
+	proc = 0L;
 }
 
 void IRCContact::slotConnectionClosed()
