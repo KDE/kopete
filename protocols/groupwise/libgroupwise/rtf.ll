@@ -48,7 +48,7 @@ rm -f lex.yy.c
 "{"				{ return UP; }
 "}"				{ return DOWN; }
 "\\"[\\\{\}]			{ return SLASH; }
-"\\u"[0-9]{3,7}"?"		{ return UNICODE_CHAR; }
+"\\u"[0-9]{3,7}[ ]?"?"		{ return UNICODE_CHAR; }
 "\\"[A-Za-z]+[0-9]*[ ]? 	{ return CMD; }
 "\\'"[0-9A-Fa-f][0-9A-Fa-f]	{ return HEX; }
 "<##"[^>]+">"			{ return IMG; }
@@ -183,7 +183,7 @@ void Level::resetTag(TagEnum tag)
            Thus, for each tag we remove from the actual tag stack, we also
            try to remove a yet-to-be-printed tag, and only if there are no
            yet-to-be-printed tags left, we start closing the tags we pop.
-           The tags have one space - needed for umlaute (צהü) and .utf8()
+           The tags have one space - needed for umlaute (ן¿½) and .utf8()
         */
         if (p->oTags.empty()){
             switch (nTag){
