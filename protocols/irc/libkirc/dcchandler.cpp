@@ -20,10 +20,11 @@
 #include "dcchandler.h"
 #include <qdatastream.h>
 #include <qregexp.h>
-#include <netinet/in.h>
 #include <qcstring.h>
 #include <inttypes.h>
-#include <netinet/in.h>
+#ifndef __FreeBSD__
+#  include <netinet/in.h>
+#endif
 #include <unistd.h>
 
 DCCClient::DCCClient(QHostAddress host, unsigned int port, unsigned int size, Type type)
