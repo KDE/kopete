@@ -992,22 +992,6 @@ void JabberProtocol::slotSubscription(const Jabber::Jid &jid, const QString &typ
 
 		KMessageBox::information(0L, i18n("%1 unsubscribed you!").arg(jid.userHost()), i18n("Notification"));
 
-		if(!contactMap.contains(jid.userHost()))
-		{
-			kdDebug() << "[JabberProtocl] WARNING: slotSubscription() was asked to delete a non-existing contact." << endl;
-			return;
-		}
-
-		JabberContact *jc = contactMap[jid.userHost()];
-
-		// delete contact
-		metaContactMap.remove(jc);
-		contactMap.remove(jid.userHost());
-
-		// this will also cause the contact to disappear from the metacontact
-		// also, it will update the metacontact map automatically
-		delete jc;
-
 		// delete the item from the roster
 		Jabber::JT_Roster *task = new Jabber::JT_Roster(jabberClient->rootTask());
 		task->remove(jid);
@@ -1066,10 +1050,25 @@ void JabberProtocol::slotNewContact(const Jabber::RosterItem &item)
 
 }
 
-void JabberProtocol::slotContactDeleted(const Jabber::RosterItem &)
+void JabberProtocol::slotContactDeleted(const Jabber::RosterItem &item)
 {
 
-	// nothing to be done here yet
+	kdDebug() << "[JabberProtocol] Deleting contact " << item.jid().userHost() << endl;
+
+	if(!contactMap.contains(item.jid().userHost()))
+	{
+		kdDebug() << "[JabberProtocl] WARNING: slotContactDeleted() was asked to delete a non-existing contact." << endl;
+		return;
+	}
+
+	JabberContact *jc = contactMap[item.jid().userHost()];
+
+	// delete contact
+	metaContactMap.remove(jc);
+	contactMap.remove(item.jid().userHost());
+
+	// this will also cause the contact to disappear from the metacontact
+	delete jc;
 
 }
 
@@ -1327,18 +1326,6 @@ void JabberProtocol::removeContact(const Jabber::RosterItem &item)
 		errorConnectFirst();
 		return;
 	}
-
-	if(!contactMap.contains(item.jid().userHost()))
-	{
-		kdDebug() << "[JabberProtocl] WARNING: removeContact() was asked to delete a non-existing contact." << endl;
-		return;
-	}
-
-	JabberContact *jc = contactMap[item.jid().userHost()];
-
-	// delete contact
-	metaContactMap.remove(jc);
-	contactMap.remove(item.jid().userHost());
 
 	Jabber::JT_Roster *rosterTask = new Jabber::JT_Roster(jabberClient->rootTask());
 	rosterTask->remove(item.jid());
