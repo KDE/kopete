@@ -25,3 +25,10 @@ TODO for Jabber:
 - ignore presence information from other resources of myContact
   (using Psi with the same account and going offline in Psi causes Kopete
    to treat that information as if it went offline itself)
+- when opening the prefs dialog, make sure that the password dialog does not pop up
+- deal with the port numbers in a sane way (SSL toggling etc)
+- add a button for server defaults
+- if an account is entered and the server field is empty, automatically retrieve it from the JID
+- on a failed connection attempt, the animation does not stop
+- going offline does not stop the animation after a failed connection attempt
+- empty hostname makes Jabber crash (faulty NDNS)
