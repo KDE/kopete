@@ -197,11 +197,6 @@ void KopeteSystemTray::slotNewEvent(KopeteEvent *event)
 	//balloon
 	addBalloon();
 
-#if KDE_IS_VERSION( 3, 1, 90 )
-        // Demands the attention of the user
-        KWin::demandAttention( topLevelWidget()->winId(), true );
-#endif
-
 	//flash
 	if ( KopetePrefs::prefs()->trayflashNotify() )
 		startBlink();
