@@ -353,10 +353,16 @@ void MSNNotifySocket::slotOpenInbox()
 		// around. There's no easy way for us to detect the browser exiting
 		// though, so we can't do anything about it. For KDE 3.2 and newer
 		// we use the improved KRun that auto-deletes the temp file when done.
-#if KDE_VERSION >= 319
-		KRun::runURL( tmpFile.name(), "text/html", true );
-#else
+
+		// KDE 3.0 has versions in the 300..305 range.
+		// KDE 3.1 has versions all over the place, from
+		// 	306 through 0x3017f
+		// KDE 3.2 has version numbers starting from
+		//	0x30190, it seems.
+#if KDE_VERSION <= 0x301ff
 		KRun::runURL( tmpFile.name(), "text/html" );
+#else
+		KRun::runURL( tmpFile.name(), "text/html", true );
 #endif
 	}
 }
