@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>459</width>
-            <height>216</height>
+            <width>447</width>
+            <height>282</height>
         </rect>
     </property>
     <property name="caption">
@@ -20,7 +20,63 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <spacer row="4" column="2">
+        <widget class="QLabel" row="3" column="1">
+            <property name="name">
+                <cstring>numberLabel</cstring>
+            </property>
+            <property name="text">
+                <string>Number of messages to show:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>Number_Auto_chatwindow</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="4" column="1">
+            <property name="name">
+                <cstring>colorLabel</cstring>
+            </property>
+            <property name="text">
+                <string>Color of messages:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>History_color</cstring>
+            </property>
+        </widget>
+        <spacer row="3" column="0">
+            <property name="name">
+                <cstring>spacer3</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Fixed</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
+        <spacer row="4" column="0">
+            <property name="name">
+                <cstring>spacer4</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Fixed</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
+        <spacer row="9" column="2">
             <property name="name">
                 <cstring>spacer1</cstring>
             </property>
@@ -33,50 +89,64 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>60</height>
+                    <height>40</height>
                 </size>
             </property>
         </spacer>
-        <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="4">
+        <widget class="QLabel" row="8" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>textLabel4</cstring>
+            </property>
+            <property name="text">
+                <string>Number of messages per page:</string>
+            </property>
+        </widget>
+        <widget class="KIntSpinBox" row="8" column="2">
+            <property name="name">
+                <cstring>Number_ChatWindow</cstring>
+            </property>
+            <property name="value">
+                <number>20</number>
+            </property>
+        </widget>
+        <widget class="QLabel" row="5" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="QFrame" row="1" column="0" rowspan="2" colspan="3">
+            <property name="name">
+                <cstring>frame3</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>Auto_chatwindow</cstring>
             </property>
+            <property name="font">
+                <font>
+                    <bold>1</bold>
+                </font>
+            </property>
             <property name="text">
-                <string>Show messages from previous chats in new chat windows:</string>
+                <string>Show previous messages in new chats</string>
             </property>
             <property name="checked">
                 <bool>true</bool>
             </property>
         </widget>
-        <widget class="QLayoutWidget" row="3" column="0" rowspan="1" colspan="4">
+        <spacer row="2" column="3" rowspan="2" colspan="1">
             <property name="name">
-                <cstring>layout2</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>textLabel4</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Number of messages to show per page when browsing history:</string>
-                    </property>
-                </widget>
-                <widget class="KIntSpinBox">
-                    <property name="name">
-                        <cstring>Number_ChatWindow</cstring>
-                    </property>
-                    <property name="value">
-                        <number>20</number>
-                    </property>
-                </widget>
-            </hbox>
-        </widget>
-        <spacer row="1" column="0">
-            <property name="name">
-                <cstring>spacer3</cstring>
+                <cstring>spacer5</cstring>
             </property>
             <property name="orientation">
                 <enum>Horizontal</enum>
@@ -86,51 +156,37 @@
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>60</width>
+                    <width>310</width>
                     <height>20</height>
                 </size>
             </property>
         </spacer>
-        <spacer row="2" column="0">
+        <widget class="KIntSpinBox" row="2" column="2" rowspan="2" colspan="1">
             <property name="name">
-                <cstring>spacer4</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>60</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QLabel" row="1" column="1">
-            <property name="name">
-                <cstring>numberLabel</cstring>
-            </property>
-            <property name="text">
-                <string>Number of messages to show:</string>
-            </property>
-            <property name="buddy" stdset="0">
                 <cstring>Number_Auto_chatwindow</cstring>
             </property>
+            <property name="value">
+                <number>7</number>
+            </property>
         </widget>
-        <widget class="QLabel" row="2" column="1">
+        <spacer row="4" column="3">
             <property name="name">
-                <cstring>colorLabel</cstring>
+                <cstring>spacer6</cstring>
             </property>
-            <property name="text">
-                <string>Color of messages:</string>
+            <property name="orientation">
+                <enum>Horizontal</enum>
             </property>
-            <property name="buddy" stdset="0">
-                <cstring>History_color</cstring>
+            <property name="sizeType">
+                <enum>Expanding</enum>
             </property>
-        </widget>
-        <widget class="KColorButton" row="2" column="2">
+            <property name="sizeHint">
+                <size>
+                    <width>310</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="KColorButton" row="4" column="2">
             <property name="name">
                 <cstring>History_color</cstring>
             </property>
@@ -145,17 +201,33 @@
                 </color>
             </property>
         </widget>
-        <widget class="KIntSpinBox" row="1" column="2">
+        <widget class="QFrame" row="7" column="0" rowspan="1" colspan="3">
             <property name="name">
-                <cstring>Number_Auto_chatwindow</cstring>
+                <cstring>frame3_2</cstring>
             </property>
-            <property name="value">
-                <number>7</number>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
             </property>
         </widget>
-        <spacer row="1" column="3">
+        <widget class="QLabel" row="6" column="0" rowspan="1" colspan="4">
             <property name="name">
-                <cstring>spacer5</cstring>
+                <cstring>textLabel2</cstring>
+            </property>
+            <property name="font">
+                <font>
+                    <bold>1</bold>
+                </font>
+            </property>
+            <property name="text">
+                <string>History Browsing</string>
+            </property>
+        </widget>
+        <spacer row="7" column="3" rowspan="2" colspan="1">
+            <property name="name">
+                <cstring>spacer6_2</cstring>
             </property>
             <property name="orientation">
                 <enum>Horizontal</enum>
@@ -165,24 +237,7 @@
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>101</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <spacer row="2" column="3">
-            <property name="name">
-                <cstring>spacer6</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>91</width>
+                    <width>300</width>
                     <height>20</height>
                 </size>
             </property>
@@ -226,7 +281,7 @@
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>knuminput.h</includehint>
-    <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
+    <includehint>kcolorbutton.h</includehint>
 </includehints>
 </UI>
