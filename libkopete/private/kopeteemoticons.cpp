@@ -49,7 +49,7 @@ struct Emoticons::Emoticon
 {
 	Emoticon(){}
 	QString matchText;
-	QString replacement;
+	QString matchTextEscaped;
 	QString	picPath;
 };
 
@@ -98,6 +98,13 @@ QValueList<Emoticons::Token> Emoticons::tokenizeEmoticons( const QString& messag
 
 QValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode mode )
 {
+	
+	QValueList<Token> result;
+	if ( !KopetePrefs::prefs()->useEmoticons() )
+	{
+		result.append( Token( Text, message ) );
+		return result;
+	}
 	/* previous char, in the firs iteration assume that it is space since we want
 	 * to let emoticons at the beginning, the very first previous QChar must be a space. */
 	QChar p = ' ';
@@ -112,26 +119,39 @@ QValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseM
 	QValueList<Emoticon>::const_iterator it;
 	size_t pos;
 
-	bool inHTML = false;
+	bool inHTMLTag = false;
+	bool inHTMLEntity = false;
+	QString needle; // search for this
 	for ( pos = 0; pos < message.length(); pos++ )
 	{
 		c = message[ pos ];
 		
 		if ( mode & SkipHTML ) // Shall we skip HTML ?
 		{
-			if ( !inHTML ) // Are we already in an HTML tag ?
+			if ( !inHTMLTag ) // Are we already in an HTML tag ?
 			{
 				if ( c == '<' ) { // If not check if are going into one
-					inHTML = true; // If we are, change the state to inHTML
+					inHTMLTag = true; // If we are, change the state to inHTML
 					continue;
 				}
-			} 
+			}
 			else // We are already in a HTML tag
 			{ 
 				if ( c == '>' ) { // Check if it ends
-					inHTML = false;	 // If so, change the state
+					inHTMLTag = false;	 // If so, change the state
 				}
 				continue;
+			}
+		}
+
+		if( mode & SkipHTML )
+		{ //ok, we know we are parsing an HTML text
+			if( !inHTMLEntity )
+			{ // are we
+				if( c == '&' )
+				{
+					inHTMLEntity = true;
+				}
 			}
 		}
 
@@ -144,29 +164,40 @@ QValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseM
 		if ( d->emoticonMap.contains( c ) )
 		{
 			emoticonList = d->emoticonMap[ c ];
+			bool found = false;
 			for ( it = emoticonList.begin(); it != emoticonList.end(); ++it )
 			{
-				if ( ( pos == message.find( (*it).matchText, pos ) ) )
+				// If this is an HTML, then search for the HTML form of the emoticon.
+				// For instance <o) => &gt;o)
+				needle = ( mode & SkipHTML ) ? (*it).matchTextEscaped : (*it).matchText;
+				if ( ( pos == message.find( needle, pos ) ) )
 				{
 					if( mode & StrictParse )
 					{
 					/* check if the character after this match is space or end of string*/
-						n = message[ pos + (*it).matchText.length() ];
+						n = message[ pos + needle.length() ];
 						if( !n.isSpace() &&  !n.isNull() ) break;
 					}
 					/* Perfect match */
 					foundEmoticons.append( EmoticonNode( (*it), pos ) );
+					found = true;
 					/* Skip the matched emoticon's matchText */
-					pos += (*it).matchText.length() - 1;
+					pos += needle.length() - 1;
 					break;
 				}
+			}
+			if( !found )
+			{
+					if( inHTMLEntity ){
+						while( message[++pos] != ';' );
+						inHTMLEntity = false;
+					}
 			}
 		} /* else no emoticons begin with this character, so don't do anything */
 		p = c;
 	}
 
 	/* if no emoticons found just return the text */
-	QValueList<Token> result;
 	if ( foundEmoticons.isEmpty() )
 	{
 		result.append( Token( Text, message ) );
@@ -180,16 +211,17 @@ QValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseM
 
 	for ( found = foundEmoticons.begin(); found != foundEmoticons.end(); ++found )
 	{
+		needle = ( mode & SkipHTML ) ? (*found).emoticon.matchTextEscaped : (*found).emoticon.matchText;
 		if ( ( length = ( (*found).pos - pos ) ) )
 		{
 			result.append( Token( Text,  message.mid( pos, length ) ) );
-			result.append( Token( Image, (*found).emoticon.matchText, (*found).emoticon.picPath ) );
-			pos += length + (*found).emoticon.matchText.length();
+			result.append( Token( Image, (*found).emoticon.matchTextEscaped, (*found).emoticon.picPath ) );
+			pos += length + needle.length();
 		}
 		else
 		{
-			result.append( Token( Image, (*found).emoticon.matchText, (*found).emoticon.picPath ) );
-			pos += (*found).emoticon.matchText.length();
+			result.append( Token( Image, (*found).emoticon.matchTextEscaped, (*found).emoticon.picPath ) );
+			pos += needle.length();
 		}
 	}
 
@@ -241,9 +273,6 @@ void Emoticons::addIfPossible( const QString& filenameNoExt, const QStringList &
 
 	if( !pic.isNull() ) // only add if we found one file
 	{
-		QImage image( pic );
-		int width = image.width(), height = image.height();
-
 		d->emoticonAndPicList.insert( emoticons.first() , pic);
 
 		for ( QStringList::const_iterator it = emoticons.constBegin(), end = emoticons.constEnd();
@@ -253,11 +282,10 @@ void Emoticons::addIfPossible( const QString& filenameNoExt, const QStringList &
 			
 			Emoticon e;
 			e.picPath = pic;
-			e.matchText=matchEscaped;
-			e.replacement=QString::fromLatin1( "<img align=\"center\" width=\"%1\" height=\"%2\" src=\"%3\" title=\"%4\"/>" )
-					.arg( QString::number( width ), QString::number( height ), pic, matchEscaped );
-
+			e.matchTextEscaped = matchEscaped;
+			e.matchText = *it;
 			d->emoticonMap[ matchEscaped[0] ].append( e );
+			d->emoticonMap[ (*it)[0] ].append( e );
 		}
 	}
 }
@@ -346,6 +374,9 @@ QMap<QString, QString> Emoticons::emoticonAndPicList()
 
 QString Emoticons::parse( const QString &message, ParseMode mode )
 {
+	if ( !KopetePrefs::prefs()->useEmoticons() )
+                return message;
+	
 	QValueList<Token> tokens = tokenize( message, mode );
 	QValueList<Token>::const_iterator token;
 	QString result;
