@@ -40,7 +40,6 @@ struct MSNMessageStruct
 	QString message;
 };
 
-class MSNMessage;
 class MSNProtocol;
 
 class MSNContact : public IMContact

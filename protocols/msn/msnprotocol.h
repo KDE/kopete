@@ -18,26 +18,29 @@
 #ifndef MSNPROTOCOL_H
 #define MSNPROTOCOL_H
 
-#include <qpixmap.h>
-#include <qwidget.h>
-#include <qstringlist.h>
-#include <qmovie.h>
-#include <qlist.h>
-#include <qptrlist.h>
-
-#include "msnpreferences.h"
-#include <msnmessage.h>
-#include <statusbaricon.h>
-#include <addcontactpage.h>
-#include <improtocol.h>
-#include <kmsnservice.h>
-#include <newuserimpl.h>
-#include <kpopupmenu.h>
-#include <kaction.h>
-#include <ksimpleconfig.h>
-#include <kdialogbase.h>
-#include <kurllabel.h>
 #include <qlabel.h>
+#include <qlist.h>
+#include <qmovie.h>
+#include <qpixmap.h>
+#include <qptrlist.h>
+#include <qstringlist.h>
+#include <qwidget.h>
+
+#include <kaction.h>
+#include <kdialogbase.h>
+#include <kpopupmenu.h>
+#include <ksimpleconfig.h>
+#include <kurllabel.h>
+
+#include "addcontactpage.h"
+#include "improtocol.h"
+#include "kmsnservice.h"
+#include "msnmessage.h"
+#include "msnmessagedialog.h"
+#include "msnpreferences.h"
+#include "newuserimpl.h"
+#include "statusbaricon.h"
+
 /**
   *@author duncan
   */
@@ -54,8 +57,6 @@ struct MSNGroupStruct
 	bool isdeleted;
 	bool isnew;
 };
-
-class MSNMessage;
 
 class MSNProtocol : public QObject, public IMProtocol
 {
@@ -98,7 +99,7 @@ public:
 	KAction* actionPrefs;
 	KAction* actionUnload;
 
-	QPtrList<MSNMessage> mChatWindows;
+	QPtrList<MSNMessageDialog> mChatWindows;
 
     /* Files to store contacts locally */
     KSimpleConfig *mContactsFile;

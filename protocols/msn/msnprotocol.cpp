@@ -4,9 +4,9 @@
     begin                : Wed Jan 2 2002
     copyright            : (C) 2002 by duncan
     email                : duncan@tarro
- ***************************************************************************/
+ ***************************************************************************
 
-/***************************************************************************
+ ***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -14,27 +14,29 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-#include <kdebug.h>
-#include <kconfig.h>
-#include <kglobal.h>
-#include <kstandarddirs.h>
-#include <kiconloader.h>
-#include <kmessagebox.h>
-#include <klocale.h>
-#include "msnprotocol.h"
-#include "msncontact.h"
-#include <msnadd.h>
-#include "kopete.h"
-#include <systemtray.h>
-#include <msnaddcontactpage.h>
+
 #include <qcursor.h>
 #include <qlayout.h>
 
+#include <kconfig.h>
+#include <kdebug.h>
+#include <kglobal.h>
+#include <kiconloader.h>
+#include <klocale.h>
+#include <kmessagebox.h>
+#include <kstandarddirs.h>
+
+#include "kopete.h"
+#include "msnadd.h"
+#include "msnaddcontactpage.h"
+#include "msncontact.h"
+#include "msnprotocol.h"
+#include "msnuser.h"
+#include "systemtray.h"
 
 ///////////////////////////////////////////////////
 //           Constructor & Destructor
 ///////////////////////////////////////////////////
-
 MSNProtocol::MSNProtocol(): QObject(0, "MSN"), IMProtocol()
 {
 	QString path;
@@ -47,7 +49,7 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSN"), IMProtocol()
 	kdDebug() << "\nMSN Plugin Loading\n";
 	
 	/* Load all ICQ icons from KDE standard dirs */
- 	initIcons();
+	initIcons();
 	
 	kdDebug() << "MSN Protocol Plugin: Creating Status Bar icon\n";
 	statusBarIcon = new StatusBarIcon();
@@ -229,51 +231,51 @@ void MSNProtocol::slotSyncContactList()
 	}
 	/* First, delete D marked contacts */
 	QStringList localcontacts;
-    /*
+/*
 	contactsFile->setGroup("Default");
 
-   	contactsFile->readListEntry("Contacts",localcontacts);
-   	QString tmpUin;
-   	tmpUin.sprintf("%d",uin);
-   	tmp.append(tmpUin);
-   	cnt=contactsFile->readNumEntry("Count",0);
-    */
+	contactsFile->readListEntry("Contacts",localcontacts);
+	QString tmpUin;
+	tmpUin.sprintf("%d",uin);
+	tmp.append(tmpUin);
+	cnt=contactsFile->readNumEntry("Count",0);
+*/
 }
 
 /** OK! We are connected , let's do some work */
 void MSNProtocol::slotConnected()
 {
- 	mIsConnected = true;
+	mIsConnected = true;
 	MSNContact *tmpcontact;
-		
- 	QStringList groups, contacts;
- 	QString group, publicname, userid;
- 	uint status;
- 	// First, we change status bar icon
- 	statusBarIcon->setPixmap(onlineIcon);
-     // We get the group list
- 	groups = engine->getGroups();
- 	for ( QStringList::Iterator it = groups.begin(); it != groups.end(); ++it )
- 	{
- 		QListViewItem *groupItem;
+
+	QStringList groups, contacts;
+	QString group, publicname, userid;
+	uint status;
+	// First, we change status bar icon
+	statusBarIcon->setPixmap(onlineIcon);
+	// We get the group list
+	groups = engine->getGroups();
+	for ( QStringList::Iterator it = groups.begin(); it != groups.end(); ++it )
+	{
+		QListViewItem *groupItem;
 		if ( kopeteapp->contactList()->getGroup( (*it).latin1() ) == NULL )
 		{
 			kdDebug() << "MSN Plugin: Group: [ " << (*it).latin1() << " ] exits in server but not locally!! CREATING!" <<endl;
- 		    kopeteapp->contactList()->addGroup( (*it).latin1() );
+		    kopeteapp->contactList()->addGroup( (*it).latin1() );
 		}
 		/* We now get the widget for the group */
 		groupItem = kopeteapp->contactList()->getGroup( (*it).latin1() );
 		//item=  new QListViewItem(ListView,(*it).latin1() ,"","1");
- 		//item->setPixmap(0,expandedPixmap);
- 		//item->setOpen(true);
-	    kdDebug() << "MSN Plugin: Searching contacts for group: [ " << (*it).latin1() << " ]" <<endl;
- 		// We get the contacts for this group
- 		contacts = engine->getContacts( (*it).latin1() );
- 		for ( QStringList::Iterator it1 = contacts.begin(); it1 != contacts.end(); ++it1 )
- 	 	{
- 	 		userid = (*it1).latin1();
- 			publicname = engine->getPublicName((*it1).latin1());
- 			/* We check if the group was created ok, if not, just no group */
+		//item->setPixmap(0,expandedPixmap);
+		//item->setOpen(true);
+		kdDebug() << "MSN Plugin: Searching contacts for group: [ " << (*it).latin1() << " ]" <<endl;
+		// We get the contacts for this group
+		contacts = engine->getContacts( (*it).latin1() );
+		for ( QStringList::Iterator it1 = contacts.begin(); it1 != contacts.end(); ++it1 )
+		{
+			userid = (*it1).latin1();
+			publicname = engine->getPublicName((*it1).latin1());
+			/* We check if the group was created ok, if not, just no group */
 			if ( groupItem )
 			{
 				kdDebug() << "MSN Plugin: Group OK, exists in contact list" <<endl;
@@ -283,62 +285,62 @@ void MSNProtocol::slotConnected()
 			{
 				kdDebug() << "MSN Plugin: Ups! The group widget was null!" <<endl;
 				tmpcontact = new MSNContact( userid , publicname , this );
- 			}
+			}
 			//item1= new QListViewItem(item, engine->getPublicName((*it1).latin1())  , (*it1).latin1() ,"1");
- 	 		status = engine->getStatus( userid );
- 	 		kdDebug() << "MSN Plugin: Created contact " << userid << " " << publicname << " with status " << status << endl;
+			status = engine->getStatus( userid );
+			kdDebug() << "MSN Plugin: Created contact " << userid << " " << publicname << " with status " << status << endl;
 			switch(status)
- 			{
-  				case NLN:
-  				{
-  					tmpcontact->setPixmap(0, onlineIcon);
-  					break;
-  				}
-  				case FLN:
-  				{
-  					tmpcontact->setPixmap(0, offlineIcon);
-  					break;
-  				}
-  				case BSY:
-  				{
-  					tmpcontact->setPixmap(0, onlineIcon);
-  					break;
-  				}
-  				case IDL:
-  				{
-  					tmpcontact->setPixmap(0, onlineIcon);
-  					break;
-  				}
-  				case AWY:
-  				{
-  					tmpcontact->setPixmap(0, awayIcon);
-  					break;
-  				}
-  				case PHN:
-  				{
-  					tmpcontact->setPixmap(0, onlineIcon);
-  					break;
-  				}
-  				case BRB:
-  				{
-  					tmpcontact->setPixmap(0, onlineIcon);
-  					break;
-  				}
-  				case LUN:
-  				{
-  					tmpcontact->setPixmap(0, onlineIcon);
-  					break;
-  				}
- 			}
- 	 		if( engine->isBlocked( userid ) )
- 	 		{
- 	 			tmpcontact->setText(0,  publicname + i18n(" Blocked") );
- 	 			tmpcontact->setPixmap(0, onlineIcon);
- 	 		}
+			{
+				case NLN:
+				{
+					tmpcontact->setPixmap(0, onlineIcon);
+					break;
+				}
+				case FLN:
+				{
+					tmpcontact->setPixmap(0, offlineIcon);
+					break;
+				}
+				case BSY:
+				{
+					tmpcontact->setPixmap(0, onlineIcon);
+					break;
+				}
+				case IDL:
+				{
+					tmpcontact->setPixmap(0, onlineIcon);
+					break;
+				}
+				case AWY:
+				{
+					tmpcontact->setPixmap(0, awayIcon);
+					break;
+				}
+				case PHN:
+				{
+					tmpcontact->setPixmap(0, onlineIcon);
+					break;
+				}
+				case BRB:
+				{
+					tmpcontact->setPixmap(0, onlineIcon);
+					break;
+				}
+				case LUN:
+				{
+					tmpcontact->setPixmap(0, onlineIcon);
+					break;
+				}
+			}
+			if( engine->isBlocked( userid ) )
+			{
+				tmpcontact->setText(0,  publicname + i18n(" Blocked") );
+				tmpcontact->setPixmap(0, onlineIcon);
+			}
 
- 	 	}
- 	}
-  #warning FIXME is there any way to do a faster sync of msn groups?
+		}
+	}
+#warning FIXME is there any way to do a faster sync of msn groups?
 	/* Now we sync local groups that dont exist in server */
 	QStringList localgroups = *(kopeteapp->contactList()->groupStringList) ;
 	QStringList servergroups = engine->getGroups();
@@ -351,11 +353,11 @@ void MSNProtocol::slotConnected()
 	{
 		for ( QStringList::Iterator it1 = localgroups.begin(); it1 != localgroups.end(); ++it1 )
 		{
- 	 		exists = 0;
+			exists = 0;
 			localgroup = (*it1).latin1();
 			for ( QStringList::Iterator it2 = servergroups.begin(); it2 != servergroups.end(); ++it2 )
 			{
- 	 			remotegroup = (*it2).latin1();
+				remotegroup = (*it2).latin1();
 				if ( localgroup == remotegroup )
 				{
 					exists++;
@@ -366,68 +368,69 @@ void MSNProtocol::slotConnected()
 			{
 				QString notexistsMsg = i18n("the group ") + localgroup + i18n(" doesn't exists in MSN server group list, if you want to move a MSN contact to this group you need to add it to MSN server, do you want to add this group to the server group list?");
 				kdDebug() << "MSN Plugin: Sync: Local group " << localgroup << " dont exists in server!" << endl;
-				//useranswer = KMessageBox::warningYesNo (kopeteapp->mainWindow(), notexistsMsg , i18n("New local group found...") );				
+				//useranswer = KMessageBox::warningYesNo (kopeteapp->mainWindow(), notexistsMsg , i18n("New local group found...") );
 				engine->groupAdd( localgroup );
 
-			}		
+			}
 		}
-	}	
-
+	}
 }
-
-
 
 void MSNProtocol::slotIncomingChat(KMSNChatService *newboard, QString reqUserID)
 {
-		MSNMessage *messagebox;
-		/* May be we have a copy of us in another group */
-		bool hascopyinitedthechat = false;
-    for ( messagebox =  mChatWindows.first() ; messagebox; messagebox = mChatWindows.next() )
- 		{
-			if ( messagebox->getUserID() == reqUserID )
-			{
-				hascopyinitedthechat = true;
-				break;
-			}
-		}	
-		if (hascopyinitedthechat == true && messagebox->isVisible() == true)
- 		{
- 			kdDebug() << "MSN Plugin: Incoming chat but Window opened for " << reqUserID <<"\n";
-			messagebox->mBoard = newboard;
-			connect(newboard,SIGNAL(msgReceived(QString,QString,QString)),messagebox,SLOT(slotMsgReceived(QString,QString,QString)));		
-			messagebox->raise();
- 			return;
- 		}
- 		kdDebug() << "MSN Plugin: Incoming chat , no window, creating window for " << reqUserID <<"\n";
-		QString tmpnick = engine->getPublicName( reqUserID );
-		#warning FIXME MSN MESSAGEBOX NEEDS STATUS
-		messagebox = new MSNMessage(reqUserID, tmpnick, "NLN" , newboard,this);
- 		//QObject::connect(this, SIGNAL(userStateChanged(QString)), messagebox, SLOT(slotUserStateChanged(QString)));
-		QObject::connect(messagebox, SIGNAL(closing(QString)), this, SLOT(slotMessageBoxClosing(QString)));
-		
-		mChatWindows.append( messagebox);
- 		messagebox->show();
-	
+	MSNMessageDialog *messageDialog;
+
+	// Maybe we have a copy of us in another group
+	for( messageDialog = mChatWindows.first() ; messageDialog; messageDialog = mChatWindows.next() )
+	{
+		if ( messageDialog->user()->userID() == reqUserID )
+			break;
+	}
+
+	if( messageDialog && messageDialog->isVisible() )
+	{
+		kdDebug() << "MSN Plugin: Incoming chat but Window opened for " << reqUserID <<"\n";
+		messageDialog->setBoard( newboard );
+		connect(newboard,SIGNAL(msgReceived(QString,QString,QString)),messageDialog,SLOT(slotMsgReceived(QString,QString,QString)));
+		messageDialog->raise();
+	}
+	else
+	{
+		kdDebug() << "MSN Plugin: Incoming chat , no window, creating window for " << reqUserID <<"\n";
+		QString nick = engine->getPublicName( reqUserID );
+
+#warning FIXME: MSN message dialog needs status
+
+		//FIXME: We leak this object!
+		MSNUser *user = new MSNUser( reqUserID, nick, MSNUser::Online );
+		messageDialog = new MSNMessageDialog( user, newboard, this );
+		//QObject::connect( this, SIGNAL(userStateChanged(QString)),
+		//				  messageDialog, SLOT(slotUserStateChanged(QString)) );
+		QObject::connect( messageDialog, SIGNAL(closing(QString)),
+						  this, SLOT(slotmessageDialogClosing(QString)) );
+
+		mChatWindows.append( messageDialog );
+		messageDialog->show();
+	}
 }
 
 void MSNProtocol::slotMessageBoxClosing(QString handle)
 {
-		mChatWindows.setAutoDelete(true);
-		MSNMessage *messagebox;
-		for ( messagebox = mChatWindows.first() ; messagebox; messagebox = mChatWindows.next() )
- 		{
-			if ( messagebox->getUserID() == handle )
-			{
-				mChatWindows.remove(messagebox);	
-			}
-		}	
+	mChatWindows.setAutoDelete(true);
+	MSNMessageDialog *messageDialog;
+	for ( messageDialog = mChatWindows.first() ; messageDialog; messageDialog = mChatWindows.next() )
+	{
+		if ( messageDialog->user()->userID() == handle )
+		{
+			mChatWindows.remove(messageDialog);
+		}
+	}
 }
-
 
 void MSNProtocol::slotDisconnected()
 {
-		mIsConnected = false;
-		statusBarIcon->setPixmap(offlineIcon);
+	mIsConnected = false;
+	statusBarIcon->setPixmap(offlineIcon);
 }
 
 
@@ -464,15 +467,15 @@ void MSNProtocol::slotGoAway()
 
 void MSNProtocol::slotConnectedToMSN(bool c)
 {
-		mIsConnected = c;
-		if (c)
-		{
-			slotConnected();
-		}
-		else
-		{
-			slotDisconnected();
-		}
+	mIsConnected = c;
+	if (c)
+	{
+		slotConnected();
+	}
+	else
+	{
+		slotDisconnected();
+	}
 }
 
 void MSNProtocol::slotUserStateChange (QString handle, QString nick, int newstatus)
@@ -484,48 +487,48 @@ void MSNProtocol::slotStateChanged (uint newstate)
 {
 	kdDebug() << "MSN Plugin: My Status Changed to " << newstate <<"\n";
 	switch(newstate)
- 	{
-  		case NLN:
+	{
+		case NLN:
 		{
-  			statusBarIcon->setPixmap(onlineIcon);
+			statusBarIcon->setPixmap(onlineIcon);
 			break;
 		}
 		case FLN:
 		{
-  			statusBarIcon->setPixmap(offlineIcon);
+			statusBarIcon->setPixmap(offlineIcon);
 			break;
 		}
 		case AWY:
 		{
-  			statusBarIcon->setPixmap(awayIcon);
+			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
 		case BSY:
 		{
-  			statusBarIcon->setPixmap(awayIcon);
+			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
 		case IDL:
 		{
-  			statusBarIcon->setPixmap(awayIcon);
+			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
 		case PHN:
 		{
-  			statusBarIcon->setPixmap(awayIcon);
+			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
 		case BRB:
 		{
-  			statusBarIcon->setPixmap(awayIcon);
+			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
 		case LUN:
 		{
-  			statusBarIcon->setPixmap(awayIcon);
+			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
- 	}
+	}
 }
 
 void MSNProtocol::slotInitContacts (QString status, QString userid, QString nick)
@@ -560,8 +563,8 @@ void MSNProtocol::slotNewUserFound (QString userid )
 	kdDebug() << "MSN Plugin: User found " << userid << " " << tmpnick <<"\n";
 	MSNContact *newContact = new MSNContact(userid, tmpnick, this);
 	newContact->setPixmap(0,offlineIcon);		
-
 }
+
 // Dont use this for now
 void MSNProtocol::slotNewUser (QString userid )
 {
@@ -569,7 +572,6 @@ void MSNProtocol::slotNewUser (QString userid )
 	kdDebug() << "MSN Plugin: User found " << userid << " " << tmpnick <<"\n";
 	MSNContact *newContact = new MSNContact(userid, tmpnick, this);
 	newContact->setPixmap(0,offlineIcon);		
-
 }
 
 void MSNProtocol::slotAuthenticate( QString handle )
@@ -589,19 +591,19 @@ void MSNProtocol::slotAddContact( QString handle )
 void MSNProtocol::slotBlockContact( QString handle)
 {
 	engine->contactBlock( handle );
-}		
+}
 
 void MSNProtocol::slotGroupAdded( QString handle)
 {
-		
 }
 void MSNProtocol::slotDeletingGroup( QString handle)
 {
-
 }
 
 void MSNProtocol::slotGoURL( QString url)
 {
 	kapp->invokeBrowser( url );
 }
+
+// vim: set ts=4 sts=4 sw=4 noet:
 
