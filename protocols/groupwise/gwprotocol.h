@@ -81,15 +81,15 @@ public:
 	/**
 	 * Online statuses used for contacts' presence
 	 */
-	const Kopete::OnlineStatus groupwiseUnknown;
 	const Kopete::OnlineStatus groupwiseOffline;
 	const Kopete::OnlineStatus groupwiseAvailable;
 	const Kopete::OnlineStatus groupwiseBusy;
 	const Kopete::OnlineStatus groupwiseAway;
 	const Kopete::OnlineStatus groupwiseAwayIdle;
+	const Kopete::OnlineStatus groupwiseAppearOffline;
+	const Kopete::OnlineStatus groupwiseUnknown;
 	const Kopete::OnlineStatus groupwiseInvalid;
 	const Kopete::OnlineStatus groupwiseConnecting;
-	const Kopete::OnlineStatus groupwiseAppearOffline;
 
 	/**
 	 * Represents contacts that are Away
