@@ -8,87 +8,99 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>335</width>
-            <height>177</height>
+            <width>330</width>
+            <height>227</height>
         </rect>
     </property>
     <property name="caption">
         <string>Send Raw XML Packet</string>
     </property>
-    <widget class="QPushButton">
+    <vbox>
         <property name="name">
-            <cstring>btnCancel</cstring>
+            <cstring>unnamed</cstring>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>250</x>
-                <y>140</y>
-                <width>70</width>
-                <height>30</height>
-            </rect>
+        <property name="margin">
+            <number>11</number>
         </property>
-        <property name="text">
-            <string>&amp;Cancel</string>
+        <property name="spacing">
+            <number>6</number>
         </property>
-    </widget>
-    <widget class="QTextEdit">
-        <property name="name">
-            <cstring>tePacket</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>30</y>
-                <width>310</width>
-                <height>102</height>
-            </rect>
-        </property>
-    </widget>
-    <widget class="QPushButton">
-        <property name="name">
-            <cstring>btnFinish</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>170</x>
-                <y>140</y>
-                <width>71</width>
-                <height>31</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>&amp;Send</string>
-        </property>
-        <property name="default">
-            <bool>true</bool>
-        </property>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>lblInfo</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>11</x>
-                <y>11</y>
-                <width>295</width>
-                <height>16</height>
-            </rect>
-        </property>
-        <property name="paletteForegroundColor">
-            <color>
-                <red>0</red>
-                <green>0</green>
-                <blue>0</blue>
-            </color>
-        </property>
-        <property name="text">
-            <string>Type in the packet that should be sent to the server:</string>
-        </property>
-        <property name="buddy" stdset="0">
-            <cstring>lblRealStatus</cstring>
-        </property>
-    </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblInfo</cstring>
+            </property>
+            <property name="paletteForegroundColor">
+                <color>
+                    <red>0</red>
+                    <green>0</green>
+                    <blue>0</blue>
+                </color>
+            </property>
+            <property name="text">
+                <string>Type in the packet that should be sent to the server:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>lblRealStatus</cstring>
+            </property>
+        </widget>
+        <widget class="QTextEdit">
+            <property name="name">
+                <cstring>tePacket</cstring>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>Layout1</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <spacer>
+                    <property name="name">
+                        <cstring>Spacer1</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>121</width>
+                            <height>0</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>btnFinish</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Send</string>
+                    </property>
+                    <property name="default">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>btnCancel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Cancel</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+    </vbox>
 </widget>
 <tabstops>
     <tabstop>btnFinish</tabstop>
