@@ -105,6 +105,11 @@ Kopete::MessageManager *Kopete::MessageManagerFactory::create(
 	return (result);
 }
 
+void Kopete::MessageManagerFactory::slotReadMessage()
+{
+	emit readMessage();
+}
+
 void Kopete::MessageManagerFactory::addMessageManager(Kopete::MessageManager * result)
 {
 	if(result->mmId() == 0)
