@@ -464,6 +464,11 @@ void KopeteChatWindow::initActions(void)
 	animIcon = KopeteCompat::loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
 #endif
 
+	// Pause the animation because otherwise it's running even when we're not
+	// showing it. This eats resources, and also triggers a pixmap leak in
+	// QMovie in at least Qt 3.1, Qt 3.2 and the current Qt 3.3 beta
+	animIcon.pause();
+
 	// we can't set the tool bar as parent, if we do, it will be deleted when we configure toolbars
 	anim = new QLabel( QString::null, 0L ,"kde toolbar widget" );
 	anim->setMargin(5);
@@ -874,12 +879,18 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	//Update chat members actions
 	updateMembersActions();
 
-	if( m_activeView->sendInProgress() )
+	if ( m_activeView->sendInProgress() )
+	{
 		anim->setMovie( animIcon );
+		animIcon.unpause();
+	}
 	else
+	{
 		anim->setPixmap( normalIcon );
+		animIcon.pause();
+	}
 
-	if( chatViewList.count() > 1 )
+	if ( chatViewList.count() > 1 )
 	{
 		if( !m_tabBar )
 			createTabBar();
@@ -930,11 +941,12 @@ void KopeteChatWindow::slotPrepareDetachMenu(void)
 	}
 }
 
-void KopeteChatWindow::slotSendMessage(void)
+void KopeteChatWindow::slotSendMessage()
 {
-	if( m_activeView )
+	if ( m_activeView )
 	{
 		anim->setMovie( animIcon );
+		animIcon.unpause();
 		m_activeView->sendMessage();
 	}
 }
