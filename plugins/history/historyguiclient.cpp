@@ -42,10 +42,6 @@ HistoryGUIClient::HistoryGUIClient(KopeteMessageManager *parent, const char *nam
 	m_logger=new HistoryLogger( mb.first() , this );
 
 	actionLast=new KAction( i18n("History Last" ), QString::fromLatin1( "finish" ), 0, this, SLOT(slotLast()), actionCollection() , "historyLast" );
-	/*
-	actionPrev=new KAction( i18n("History Previous" ), QString::fromLatin1( "back" ), ALT+SHIFT+Key_Left, this, SLOT(slotPrevious()), actionCollection() , "historyPrevious" );
-	actionNext=new KAction( i18n("History Next" ), QString::fromLatin1( "forward" ), ALT+SHIFT+Key_Right, this, SLOT(slotNext()), actionCollection() , "historyNext");
-	*/
 	actionPrev = KStdAction::back( this, SLOT(slotPrevious()), actionCollection() , "historyPrevious" );
 	actionNext = KStdAction::forward( this, SLOT(slotNext()), actionCollection() , "historyNext" );
 
@@ -55,13 +51,6 @@ HistoryGUIClient::HistoryGUIClient(KopeteMessageManager *parent, const char *nam
 	actionLast->setEnabled(false);
 
 	setXMLFile("historychatui.rc");
-
-	/*
-	KGlobal::config()->setGroup("History Plugin");
-	m_autoChatWindow=KGlobal::config()->readBoolEntry("Auto_chatwindow" , false );
-	m_nbAutoChatWindow=KGlobal::config()->readNumEntry( "Number_Auto_chatwindow" , 7) ;
-	m_nbChatWindow=KGlobal::config()->readNumEntry( "Number_ChatWindow", 20) ;
-	*/
 }
 
 

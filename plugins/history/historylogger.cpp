@@ -29,6 +29,7 @@
 #include <kstandarddirs.h>
 #include <ksavefile.h>
 
+#include "kopeteglobal.h"
 #include "kopetecontact.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
@@ -224,7 +225,7 @@ void HistoryLogger::appendMessage( const KopeteMessage &msg , const KopeteContac
 	if(docElem.isNull())
 	{
 		docElem= doc.createElement( "kopete-history" );
-		docElem.setAttribute ( "version" , "0.7" );
+		docElem.setAttribute ( "version" , "0.9" );
 		doc.appendChild( docElem );
 		QDomElement headElem = doc.createElement( "head" );
 		docElem.appendChild( headElem );
@@ -244,7 +245,7 @@ void HistoryLogger::appendMessage( const KopeteMessage &msg , const KopeteContac
 	QDomElement msgElem = doc.createElement( "msg" );
 	msgElem.setAttribute( "in",  msg.direction()==KopeteMessage::Outbound ? "0" : "1" );
 	msgElem.setAttribute( "from",  msg.from()->contactId() );
-	msgElem.setAttribute( "nick",  msg.from()->displayName() ); //do we have to set this?
+	msgElem.setAttribute( "nick",  msg.from()->property( Kopete::Global::Properties::self()->nickName() ).value().toString() ); //do we have to set this?
 	msgElem.setAttribute( "time", msg.timestamp().toString("d h:m:s") );
 
 	QDomText msgNode = doc.createTextNode( msg.plainBody() );
@@ -292,12 +293,11 @@ void HistoryLogger::saveToDisk()
 		m_toSaveDocument.save( *stream, 1 );
 		file.close();
 		
-		m_saveTimerTime=QMIN(t.elapsed()*1000, 500000); 
-		    //a time 1000 times supperior to the time needed to save.  but with a upper limit of 8 minutes
+		m_saveTimerTime=QMIN(t.elapsed()*1000, 300000); 
+		    //a time 1000 times supperior to the time needed to save.  but with a upper limit of 5 minutes
 		//on a my machine, (2.4Ghz, but old HD) it should take about 10 ms to save the file. 
 		// So that would mean save every 10 seconds, which seems to be ok.
 		// But it may take 500 ms if the file to save becomes too big (1Mb).
-		// So saving every 8 minutes is a good deal.
 		kdDebug(14310) << k_funcinfo << m_toSaveFileName << " saved in " << t.elapsed() << " ms " <<endl ;
 		
 		m_toSaveFileName=QString::null;
