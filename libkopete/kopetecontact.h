@@ -201,7 +201,7 @@ public:
 	 * @brief Get the online status of the contact
 	 * @return the online status of the contact
 	 */
-	const OnlineStatus& onlineStatus() const;
+	OnlineStatus onlineStatus() const;
 
 	/**
 	 * \brief Set the contact's online status
@@ -484,6 +484,11 @@ private slots:
 	 * slot called when the action "unblock" is called.
 	 */
 	void slotUnblock();
+	
+	/**
+	 * The account's isConnected has changed.
+	 */
+	void slotAccountIsConnectedChanged();
 
 signals:
 	/**

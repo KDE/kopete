@@ -62,15 +62,6 @@ public:
 
 	MetaContact *metaContact;
 
-	KAction *actionSendMessage;
-	KAction *actionChat;
-	KAction *actionDeleteContact;
-	KAction *actionChangeMetaContact;
-	KAction *actionUserInfo;
-	KAction *actionSendFile;
-	KAction *actionAddContact;
-	KAction *actionBlock;
-
 	QString contactId;
 	QString icon;
 
@@ -90,18 +81,17 @@ Contact::Contact( Account *account, const QString &contactId,
 	//kdDebug( 14010 ) << k_funcinfo << "Creating contact with id " << contactId << endl;
 
 	d->contactId = contactId;
-
 	d->metaContact = parent;
 	d->fileCapable = false;
 	d->account = account;
 	d->idleTime = 0;
+	d->onlineStatus = account->protocol()->accountOfflineStatus();
+	d->icon = icon;
 
 	if ( account )
 		account->registerContact( this );
 
-	d->icon = icon;
-
-	// Need to check this because myself() has no parent
+	// Need to check this because myself() may have no parent
 	if( parent )
 	{
 		connect( parent, SIGNAL( aboutToSave( Kopete::MetaContact * ) ),
@@ -109,6 +99,8 @@ Contact::Contact( Account *account, const QString &contactId,
 
 		parent->addContact( this );
 	}
+	
+	connect( account, SIGNAL( isConnectedChanged() ), SLOT( slotAccountIsConnectedChanged() ) );
 }
 
 Contact::~Contact()
@@ -120,9 +112,12 @@ Contact::~Contact()
 
 
 
-const OnlineStatus& Contact::onlineStatus() const
+OnlineStatus Contact::onlineStatus() const
 {
-	return d->onlineStatus;
+	if ( this == account()->myself() || account()->isConnected() )
+		return d->onlineStatus;
+	else
+		return protocol()->accountOfflineStatus();
 }
 
 void Contact::setOnlineStatus( const OnlineStatus &status )
@@ -154,8 +149,21 @@ void Contact::setOnlineStatus( const OnlineStatus &status )
 		setProperty( globalProps->lastSeen(), QDateTime::currentDateTime() );
 	}
 
-	emit onlineStatusChanged( this, status, oldStatus );
+	if ( this == account()->myself() || account()->isConnected() )
+		emit onlineStatusChanged( this, status, oldStatus );
 }
+
+void Contact::slotAccountIsConnectedChanged()
+{
+	if ( this == account()->myself() )
+		return;
+	
+	if ( account()->isConnected() )
+		emit onlineStatusChanged( this, d->onlineStatus, protocol()->accountOfflineStatus() );
+	else
+		emit onlineStatusChanged( this, protocol()->accountOfflineStatus(), d->onlineStatus );
+}
+
 
 void Contact::sendFile( const KURL &, const QString &, uint )
 {
@@ -183,73 +191,67 @@ KPopupMenu* Contact::popupMenu( ChatSession *manager )
 	// Build the menu
 	KPopupMenu *menu = new KPopupMenu();
 
-	// Initialize the context menu
-	d->actionChat        = KopeteStdAction::chat( this,        SLOT( startChat() ),             menu, "actionChat" );
-	d->actionSendFile    = KopeteStdAction::sendFile( this,    SLOT( sendFile() ),              menu, "actionSendFile" );
-	d->actionUserInfo    = KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ),          menu, "actionUserInfo" );
-	d->actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ),           menu, "actionSendMessage" );
-	d->actionDeleteContact = KopeteStdAction::deleteContact( this, SLOT( slotDelete() ),        menu, "actionDeleteContact" );
-	d->actionChangeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( changeMetaContact() ), menu, "actionChangeMetaContact" );
-	d->actionAddContact = new KAction( i18n( "&Add to Your Contact List" ), QString::fromLatin1( "bookmark_add" ), 0,
-		this, SLOT( slotAddContact() ), menu, "actionAddContact" );
-	d->actionBlock = account()->isBlocked( d->contactId ) ? KopeteStdAction::unblockContact( this, SLOT( slotUnblock() ), menu, "actionUnblockContact" ) : KopeteStdAction::blockContact( this, SLOT( slotBlock() ), menu, "actionBlockContact" );
-
-	// FIXME: After KDE 3.2 we should make isReachable do the isConnected call so it can be removed here - Martijn
-	bool reach = isReachable() && account()->isConnected(); // save calling a method several times
-	bool myself = (this == account()->myself());
-	d->actionChat->setEnabled( reach && !myself );
-	d->actionSendFile->setEnabled( reach && d->fileCapable && !myself );
-	d->actionSendMessage->setEnabled( reach && !myself );
-
+	// insert title
 	QString titleText;
-
 	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if( nick.isEmpty() )
 		titleText = QString::fromLatin1( "%1 (%2)" ).arg( contactId(), d->onlineStatus.description() );
 	else
 		titleText = QString::fromLatin1( "%1 <%2> (%3)" ).arg( nick, contactId(), d->onlineStatus.description() );
-
 	menu->insertTitle( titleText );
 
 	if( metaContact() && metaContact()->isTemporary() )
 	{
-		d->actionAddContact->plug( menu );
+		KAction *actionAddContact = new KAction( i18n( "&Add to Your Contact List" ), QString::fromLatin1( "bookmark_add" ),
+		                                         0, this, SLOT( slotAddContact() ), menu, "actionAddContact" );
+		actionAddContact->plug( menu );
 		menu->insertSeparator();
 	}
 
-	d->actionSendMessage->plug( menu );
-	d->actionChat->plug( menu );
-	d->actionSendFile->plug( menu );
+	// FIXME: After KDE 3.2 we should make isReachable do the isConnected call so it can be removed here - Martijn
+	bool reach = account()->isConnected() && isReachable();
+	bool myself = (this == account()->myself());
+
+	KAction *actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ), menu, "actionSendMessage" );
+	actionSendMessage->setEnabled( reach && !myself );
+	actionSendMessage->plug( menu );
+	
+	KAction *actionChat = KopeteStdAction::chat( this, SLOT( startChat() ), menu, "actionChat" );
+	actionChat->setEnabled( reach && !myself );
+	actionChat->plug( menu );
+	
+	KAction *actionSendFile = KopeteStdAction::sendFile( this, SLOT( sendFile() ), menu, "actionSendFile" );
+	actionSendFile->setEnabled( reach && d->fileCapable && !myself );
+	actionSendFile->plug( menu );
 
 	// Protocol specific options will go below this separator
 	// through the use of the customContextMenuActions() function
 
 	// Get the custom actions from the protocols ( pure virtual function )
 	QPtrList<KAction> *customActions = customContextMenuActions( manager );
-	if( customActions )
+	if( customActions && !customActions->isEmpty() )
 	{
-		if ( !customActions->isEmpty() )
-		{
-			menu->insertSeparator();
+		menu->insertSeparator();
 
-			for( KAction *a = customActions->first(); a; a = customActions->next() )
-				a->plug( menu );
-		}
+		for( KAction *a = customActions->first(); a; a = customActions->next() )
+			a->plug( menu );
 	}
-
 	delete customActions;
 
 	menu->insertSeparator();
+	
 	if( metaContact() && !metaContact()->isTemporary() )
-		d->actionChangeMetaContact->plug( menu );
+		KopeteStdAction::changeMetaContact( this, SLOT( changeMetaContact() ), menu, "actionChangeMetaContact" )->plug( menu );
 
-	d->actionUserInfo->plug( menu );
-	d->actionBlock->plug( menu );
+	KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ), menu, "actionUserInfo" )->plug( menu );
+
+	if ( account()->isBlocked( d->contactId ) )
+		KopeteStdAction::unblockContact( this, SLOT( slotUnblock() ), menu, "actionUnblockContact" )->plug( menu );
+	else
+		KopeteStdAction::blockContact( this, SLOT( slotBlock() ), menu, "actionBlockContact" )->plug( menu );
 
 	if( metaContact() && !metaContact()->isTemporary() )
-	{
-		d->actionDeleteContact->plug( menu );
-	}
+		KopeteStdAction::deleteContact( this, SLOT( slotDelete() ), menu, "actionDeleteContact" )->plug( menu );
 
 	return menu;
 }
@@ -545,7 +547,8 @@ QPtrList<KAction> *Contact::customContextMenuActions( ChatSession * /* manager *
 bool Contact::isOnline() const
 {
 	return (d->onlineStatus.status() != OnlineStatus::Offline) &&
-		(d->onlineStatus.status() != OnlineStatus::Unknown);
+	       (d->onlineStatus.status() != OnlineStatus::Connecting) &&
+	       (d->onlineStatus.status() != OnlineStatus::Unknown);
 }
 
 
@@ -577,6 +580,7 @@ void Contact::setIdleTime( unsigned long int t )
 	d->idleTime=t;
 	if(t > 0)
 		d->idleTimer.start();
+	//FIXME: if t == 0, idleTime() will now return garbage
 //	else
 //		d->idleTimer.stop();
 }
