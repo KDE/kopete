@@ -132,6 +132,8 @@ private:
 	void sendResult( gg_pubdir50_t );
 	void handleUserlist( gg_event* );
 	void destroySession();
+	void destroyNotifiers();
+	void createNotifiers( bool connect );
 
 	gg_session*		session_;
 	QSocketNotifier*		read_;

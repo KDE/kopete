@@ -76,21 +76,47 @@ GaduSession::login( struct gg_login_params* p )
 		kdDebug(14100) << "Login" << endl;
 
 		if ( !( session_ = gg_login( p ) ) ) {
-			gg_free_session( session_ );
-			session_ = 0;
+			destroySession();
 			emit connectionFailed( i18n( "Internal gg_login error.Please contact author." ) );
 			return;
 		}
 
-		read_ = new QSocketNotifier( session_->fd, QSocketNotifier::Read, this );
-		read_->setEnabled( false );
-		QObject::connect( read_, SIGNAL( activated( int ) ), SLOT( checkDescriptor() ) );
-
-		write_ = new QSocketNotifier( session_->fd, QSocketNotifier::Write, this );
-		write_->setEnabled( false );
-		QObject::connect( write_, SIGNAL( activated( int ) ), SLOT( checkDescriptor() ) );
+		createNotifiers( true );
 		enableNotifiers( session_->check );
 		searchSeqNr_=0;
+	}
+}
+
+void 
+GaduSession::destroyNotifiers()
+{
+	disableNotifiers();
+	if ( read_ ) {
+		delete read_;
+		read_ = NULL;
+	}
+	if ( write_ ) {
+		delete write_;
+		write_ = NULL;
+	}
+}
+
+void
+GaduSession::createNotifiers( bool connect )
+{
+	if ( !session_ ){
+		return;
+	}
+		
+	read_ = new QSocketNotifier( session_->fd, QSocketNotifier::Read, this );
+	read_->setEnabled( false );
+
+	write_ = new QSocketNotifier( session_->fd, QSocketNotifier::Write, this );
+	write_->setEnabled( false );
+    
+	if ( connect ) {
+		QObject::connect( read_, SIGNAL( activated( int ) ), SLOT( checkDescriptor() ) );
+		QObject::connect( write_, SIGNAL( activated( int ) ), SLOT( checkDescriptor() ) );
 	}
 }
 
@@ -136,16 +162,7 @@ void
 GaduSession::destroySession()
 {
 	if ( session_ ) {
-		disableNotifiers();
-		QObject::disconnect( this, SLOT(checkDescriptor()) );
-		if ( read_ ) {
-			delete read_;
-			read_=NULL;
-		}
-		if ( write_ ) {
-			delete write_;
-			write_=NULL;
-		}
+		destroyNotifiers();
 		gg_free_session( session_ );
 		session_ = 0;
 	}
@@ -180,7 +197,6 @@ GaduSession::addNotify( uin_t uin )
 	else {
 		emit error( i18n("Not Connected"), i18n("You are not connected to the server!") );
 	}
-
 	return 1;
 }
 
@@ -606,6 +622,13 @@ GaduSession::checkDescriptor()
 		kdDebug(14100)<<"Connection was broken for some reason"<<endl;
 		logoff();
 		return;
+	}
+
+	// FD changed, recreate socket notifiers
+	if ( session_->state == GG_STATE_CONNECTING_HUB || session_->state == GG_STATE_CONNECTING_GG ) {
+		kdDebug(14100)<<"recreating notifiers"<<endl;
+		destroyNotifiers();
+		createNotifiers( true );
 	}
 
 	switch( e->type ) {
