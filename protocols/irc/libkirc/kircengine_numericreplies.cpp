@@ -390,8 +390,8 @@ void Engine::numericReply_352(Message &msg)
 		msg.arg(4),
 		msg.arg(6)[0] != 'H',
 		msg.arg(7),
-		suffix[0].toUInt(),
-		suffix[1]
+		msg.suffix().section(' ', 0, 1 ).toUInt(),
+		msg.suffix().section(' ', 1 )
 	);
 }
 

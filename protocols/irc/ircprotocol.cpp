@@ -127,6 +127,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	propChannelTopic(QString::fromLatin1("channelTopic"), i18n("Topic"), QString::null, false, true ),
 	propChannelMembers(QString::fromLatin1("channelMembers"), i18n("Members")),
 	propHomepage(QString::fromLatin1("homePage"), i18n("Home Page")),
+	propFullName(QString::fromLatin1("FormattedName"), i18n("Full Name")),
 	propLastSeen(Kopete::Global::Properties::self()->lastSeen()),
 	propUserInfo(QString::fromLatin1("userInfo"), i18n("IRC User")),
 	propServer(QString::fromLatin1("ircServer"), i18n("IRC Server")),

@@ -239,6 +239,7 @@ void IRCUserContact::newWhoIsUser(const QString &username, const QString &hostna
 		setProperty( m_protocol->propUserInfo, QString::fromLatin1("%1@%2")
 			.arg(mInfo.userName).arg(mInfo.hostName) );
 		setProperty( m_protocol->propServer, mInfo.serverName );
+		setProperty( m_protocol->propFullName, mInfo.realName );
 	}
 }
 
@@ -343,6 +344,7 @@ void IRCUserContact::updateInfo()
 	setProperty( m_protocol->propServer, mInfo.serverName );
 	setProperty( m_protocol->propChannels, mInfo.channels.join(" ") );
 	setProperty( m_protocol->propHops, QString::number(mInfo.hops) );
+	setProperty( m_protocol->propFullName, mInfo.realName );
 
 	setIdleTime( mInfo.idle );
 

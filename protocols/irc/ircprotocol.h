@@ -112,6 +112,7 @@ public:
 	const Kopete::ContactPropertyTmpl propServer;
 	const Kopete::ContactPropertyTmpl propChannels;
 	const Kopete::ContactPropertyTmpl propHops;
+	const Kopete::ContactPropertyTmpl propFullName;
 
 	bool commandInProgress(){ return m_commandInProgress; }
 	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }
