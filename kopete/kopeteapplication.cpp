@@ -42,6 +42,7 @@
 #include "kopeteuiglobal.h"
 #include "kopetewindow.h"
 #include "kopeteprefs.h"
+#include "kopeteviewmanager.h"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -120,6 +121,9 @@ void KopeteApplication::slotLoadPlugins()
 {
 	//Create the command handler (looks silly)
 	Kopete::CommandHandler::commandHandler();
+
+	//Create the view manager
+	KopeteViewManager::viewManager();
 
 	Kopete::AccountManager::self()->load();
 	Kopete::ContactList::self()->load();
