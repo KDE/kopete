@@ -164,7 +164,7 @@ void IRCChannelContact::slotAddNicknames()
 	QString nickToAdd = mJoinedNicks.front();
 	mJoinedNicks.pop_front();
 
-	if (nickToAdd.lower() != m_nickName.lower())
+	if ( nickToAdd.lower() != m_account->mySelf()->nickName().lower() )
 	{
 		kdDebug(14120) << k_funcinfo << m_nickName << endl;
 		QChar firstChar = nickToAdd[0];
@@ -211,22 +211,25 @@ void IRCChannelContact::part()
 
 void IRCChannelContact::slotIncomingUserIsAway( const QString &nick, const QString & )
 {
-	IRCUserContact *c = m_account->findUser( nick );
-	if( m_isConnected && manager()->members().contains( c ) )
+	if( nick.lower() == m_account->mySelf()->nickName().lower() )
 	{
-		KopeteOnlineStatus status = manager()->contactOnlineStatus( c );
-		if( status == m_protocol->m_UserStatusOp )
-			manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusOpAway );
-		else if( status == m_protocol->m_UserStatusOpAway )
-			manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusOp );
-		else if( status == m_protocol->m_UserStatusVoice )
-			manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusVoiceAway );
-		else if( status == m_protocol->m_UserStatusVoiceAway )
-			manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusVoice );
-		else if( status == m_protocol->m_UserStatusAway )
-			manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusOnline );
-		else
-			manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusAway );
+		IRCUserContact *c = m_account->mySelf();
+		if( m_isConnected && manager()->members().contains( c ) )
+		{
+			KopeteOnlineStatus status = manager()->contactOnlineStatus( c );
+			if( status == m_protocol->m_UserStatusOp )
+				manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusOpAway );
+			else if( status == m_protocol->m_UserStatusOpAway )
+				manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusOp );
+			else if( status == m_protocol->m_UserStatusVoice )
+				manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusVoiceAway );
+			else if( status == m_protocol->m_UserStatusVoiceAway )
+				manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusVoice );
+			else if( status == m_protocol->m_UserStatusAway )
+				manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusOnline );
+			else
+				manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusAway );
+		}
 	}
 }
 
@@ -235,7 +238,7 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 	if( m_isConnected && (channel.lower() == m_nickName.lower()) )
 	{
 		QString nickname = user.section('!', 0, 0);
-		if ( nickname.lower() == m_engine->nickName().lower() )
+		if ( nickname.lower() == m_account->mySelf()->nickName().lower() )
 		{
 			KopeteMessage msg((KopeteContact *)this, mMyself, i18n("You have joined channel %1").arg(m_nickName),
 					KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
