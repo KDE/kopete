@@ -252,14 +252,16 @@ redo:
 							fg.setRgb(tmp.mid(4,2).toInt(0, 16), tmp.mid(2,2).toInt(0,16), tmp.mid(0,2).toInt(0,16));
 					}
 
-					// if FN= is supplied, then i assume the rest is too...
-					if (fontinfo.contains("FN"))
+					QString fontName = fontinfo.section( QRegExp( "(FN=|;)" ),
+						0, 0 ).replace( QRegExp( "%20" ), " " );
+					if( !fontName.isEmpty() )
 					{
-						font = QFont(
-									parseFontAttr(fontinfo, "FN").replace(QRegExp("%20"), " "), // font family
-									parseFontAttr(fontinfo, "PF").toInt(), // font size
-									parseFontAttr(fontinfo, "EF").contains('B') ? QFont::Bold : QFont::Normal, // bold?
-									parseFontAttr(fontinfo, "EF").contains('I') ? true : false ); // italic?
+						kdDebug() << "**** Font: '" << fontName << "'" << endl;
+						// if FN= is supplied, then i assume the rest is too...
+						font = QFont( fontName,
+							parseFontAttr(fontinfo, "PF").toInt(), // font size
+							parseFontAttr(fontinfo, "EF").contains('B') ? QFont::Bold : QFont::Normal, // bold?
+							parseFontAttr(fontinfo, "EF").contains('I') ? true : false ); // italic?
 					}
 
 					kdDebug() << "MSN Plugin: PLAIN TExT; -" << miss << "-" << endl;
@@ -354,7 +356,7 @@ void KMSNChatService::slotSendMsg( const KopeteMessage &msg )
 	QString head =
 		"MIME-Version: 1.0\r\n"
 		"Content-Type: text/plain; charset=UTF-8\r\n"
-		"X-MMS-IM-Format: FN=MS%20Sans%20Serif; EF=; ";
+		"X-MMS-IM-Format: FN=; EF=; ";
 
 	// Color support
 	if (msg.fg().isValid()) {
