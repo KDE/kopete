@@ -97,7 +97,7 @@ void IRCUserContact::sendFile(const KURL &sourceURL, const QString&, unsigned in
 
 	//If the file location is null, then get it from a file open dialog
 	if( !sourceURL.isValid() )
-		filePath = KFileDialog::getOpenFileName( QString::null ,"*", 0l  , i18n("Kopete File Transfer"));
+		filePath = KFileDialog::getOpenFileName(QString::null, "*", 0l  , i18n("Kopete File Transfer"));
 	else
 		filePath = sourceURL.path(-1);
 
@@ -145,7 +145,7 @@ void IRCUserContact::userOnline()
 {
 	m_isOnline = true;
 	updateStatus();
-	if( this != MYACCOUNT->mySelf() && !metaContact()->isTemporary() )
+	if (this != MYACCOUNT->mySelf() && !metaContact()->isTemporary())
 	{
 		mOnlineTimer->start( 45000, true );
 		MYACCOUNT->engine()->writeMessage( QString::fromLatin1("WHOIS %1").arg(m_nickName) );
@@ -156,7 +156,7 @@ void IRCUserContact::userOnline()
 
 void IRCUserContact::slotUserInfo()
 {
-	if( isChatting() )
+	if (isChatting())
 	{
 		m_protocol->setCommandInProgress(true);
 		MYACCOUNT->engine()->whoisUser( m_nickName );

@@ -178,6 +178,8 @@ public:
 	void writeMessage( const QString &command, const QStringList &args, const QString &suffix = QString::null,
 		bool mustBeConnected = true );
 
+	void writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage);
+
 	void writeCtcpMessage(const QString &command, const QString &to, const QString &suffix,
 		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix = QString::null,
 		bool emitRepliedCtcp = true);
@@ -186,6 +188,9 @@ public:
 		const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
 		bool emitRepliedCtcp = true)
 		{ return writeCtcpMessage("PRIVMSG", to, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
+
+	inline void writeCtcpReplyMessage(const QString &to, const QString &ctcpMessage)
+		{ writeCtcpMessage("NOTICE", to, ctcpMessage); }
 
 	inline void writeCtcpReplyMessage(const QString &to, const QString &suffix,
 		const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,

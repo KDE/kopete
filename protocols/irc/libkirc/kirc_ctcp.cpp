@@ -217,7 +217,7 @@ bool KIRC::CtcpQuery_dcc(const KIRCMessage &msg)
 		unsigned int size = ctcpMsg.arg(4).toUInt(&okaySize);
 		if (okayHost && okayPort && okaySize)
 		{
-			kdDebug(14120) << "Starting DCC send file transfert." << endl;
+			kdDebug(14120) << "Starting DCC send file transfert for file:" << msg.arg(1) << endl;
 			KIRCTransferHandler::self()->createClient(
 				this, msg.nickFromPrefix(),
 				address, port,
@@ -354,16 +354,11 @@ bool KIRC::CtcpQuery_version(const KIRCMessage &msg)
 	QString response = customCtcpMap[ QString::fromLatin1("version") ];
 	kdDebug(14120) << "Version check: " << response << endl;
 
-	if( !response.isNull() )
-	{
-		writeCtcpReplyMessage(msg.nickFromPrefix(), QString::null,
-			msg.ctcpMessage().command(), QString::null, response);
-	}
-	else
-	{
-		writeCtcpReplyMessage(msg.nickFromPrefix(), QString::null,
-			msg.ctcpMessage().command(), QString::null, m_VersionString);
-	}
+	if (response.isNull())
+		response = m_VersionString;
+
+	writeCtcpReplyMessage(msg.nickFromPrefix(),
+		msg.ctcpMessage().command() + " " + response);
 
 	return true;
 }

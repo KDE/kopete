@@ -342,4 +342,3 @@ void KIRC::isOn(const QStringList &nickList)
 		writeMessage(statement);
 	}
 }
-

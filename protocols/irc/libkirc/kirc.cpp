@@ -302,6 +302,12 @@ void KIRC::writeMessage(const QString &command, const QStringList &args, const Q
 	}
 }
 
+void KIRC::writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage)
+{
+	if (canSend(true))
+		KIRCMessage::writeCtcpMessage(this, defaultCodec, command, to, ctcpMessage);
+}
+
 void KIRC::writeCtcpMessage(const QString &command, const QString &to, const QString &suffix,
 		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix, bool )
 {

@@ -18,14 +18,15 @@
 #ifndef KIRCMESSAGE_H
 #define KIRCMESSAGE_H
 
+#include "kircentity.h" // Don't remove this prefix should/could(MUST?) be returned as a KIRCEntity
+
+#include <kbufferedio.h>
+
 #include <qdict.h>
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qtextcodec.h>
 #include <qregexp.h>
-#include <kbufferedio.h>
-
-#include "kircentity.h" // Don't remove this prefix should/could(MUST?) be returned as a KIRCEntity
 
 // Uncoment this if you want a really rfc compliant message handling.
 // This is due to some changes of the message encoding with 14 arguments.(not very frequent :)
@@ -51,8 +52,12 @@ public:
 		const QString &command, const QStringList &args, const QString &suffix);
 
 	static void writeCtcpMessage(KIRC *engine, const QTextCodec *codec,
+		const QString &command, const QString &to,
+		const QString &ctcpMessage);
+
+	static void writeCtcpMessage(KIRC *engine, const QTextCodec *codec,
 		const QString &command, const QString &to, const QString &suffix,
-		const QString &ctcpMessage, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null );
+		const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null );
 
 	inline const QString nickFromPrefix() const
 		{ return KIRCEntity::userNick(m_prefix); }
@@ -63,8 +68,7 @@ public:
 	bool isValid() const;
 	void dump() const;
 
-	// The raw message
-	inline const QCString &raw() const
+	inline const QString &raw() const
 		{ return m_raw; }
 	inline const QString &prefix() const
 		{ return m_prefix; }
@@ -78,7 +82,7 @@ public:
 		{ return m_args; }
 	inline const QString &suffix() const
 		{ return m_suffix; }
-	inline const QCString &ctcpRaw() const
+	inline const QString &ctcpRaw() const
 		{ return m_ctcpRaw; }
 
 	inline bool hasCtcpMessage() const
@@ -92,7 +96,7 @@ private:
 	/**
 	 * Contains the low level dequoted message.
 	 */
-	QCString m_raw;
+	QString m_raw;
 
 	/**
 	 * Contains the completely dequoted prefix.
@@ -115,21 +119,28 @@ private:
 	 * If it is a message contains the completely dequoted rawCtcpLine.
 	 * If it is a ctcp message contains the completely dequoted rawCtcpArgsLine.
 	 */
-	QCString m_ctcpRaw;
+	QString m_ctcpRaw;
 
 	// low level quoting, message quoting
 	static QString quote(const QString &str);
-	static QCString unquote(const char* str);
+	static QString unquote(const QString &str);
 
 	// ctcp level quoting
 	static QString ctcpQuote(const QString &str);
+	static QString ctcpUnquote(const QString &str);
 
-	static bool extractCtcpCommand(QCString &str, QCString &ctcpline);
-	static bool matchForIRCRegExp(const QCString &line, const QTextCodec *codec, KIRCMessage &message);
+	static bool extractCtcpCommand(QString &str, QString &ctcpline);
+
+	static bool matchForIRCRegExp(const QString &line, const QTextCodec *codec, KIRCMessage &message);
+	static bool matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const QString &line, KIRCMessage &message);
 
 	class KIRCMessage *m_ctcpMessage;
 
-	static QRegExp m_IRCCommand;
+	static QRegExp m_IRCCommandType1;
+  #ifdef _IRC_STRICTNESS_
+	static QRegExp m_IRCCommandType2;
+  #endif // _IRC_STRICTNESS_
+
 	static QRegExp m_IRCNumericCommand;
 };
 

@@ -72,9 +72,9 @@ KSParser::~KSParser()
 }
 
 /* NOTE: If thread corruption are seen simply ad a qlock here */
-QCString KSParser::parse(const QCString &message)
+QString KSParser::parse(const QString &message)
 {
-	return m_parser._parse( QString::fromLatin1(message) ).latin1();
+	return m_parser._parse(message);
 }
 
 QString KSParser::_parse(const QString &message)
@@ -132,8 +132,9 @@ QString KSParser::_parse(const QString &message)
 		case '\n':	// 0x0D
 			res += QString::fromLatin1("<br/>");
 			break;
-//		case 0x1D:	// Italics: ^N
-//			break;
+		case 0x0D:	// Italics: ^N
+			res += toggleTag("i");
+			break;
 		case 0x0F:	//Plain Text, close all tags: ^O
 			res.append( popAll() );
 			break;
