@@ -1,0 +1,336 @@
+<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
+
+<!-- Process this file with docbook-to-man to generate an nroff manual
+     page: `docbook-to-man manpage.sgml > manpage.1'.  You may view
+     the manual page with: `docbook-to-man manpage.sgml | nroff -man |
+     less'.  A typical entry in a Makefile or Makefile.am is:
+
+manpage.1: manpage.sgml
+	docbook-to-man $< > $@
+  -->
+
+  <!ENTITY dhfirstname "<firstname>Daniel</firstname>">
+  <!ENTITY dhsurname   "<surname>Stone</surname>">
+  <!ENTITY dhdate      "<date>April 20, 2002</date>">
+  <!ENTITY dhsection   "<manvolnum>1</manvolnum>">
+  <!ENTITY dhemail     "<email>dstone@kde.org</email>">
+  <!ENTITY dhusername  "Daniel Stone">
+  <!ENTITY dhucpackage "<refentrytitle>KOPETE</refentrytitle>">
+  <!ENTITY dhpackage   "kopete">
+
+  <!ENTITY debian      "<productname>Debian GNU/Linux</productname>">
+  <!ENTITY gnu         "<acronym>GNU</acronym>">
+]>
+
+<refentry>
+  <refentryinfo>
+    <address>
+      &dhemail;
+    </address>
+    <author>
+      &dhfirstname;
+      &dhsurname;
+    </author>
+    <copyright>
+      <year>2001</year>
+      <holder>&dhusername;</holder>
+    </copyright>
+    &dhdate;
+  </refentryinfo>
+  <refmeta>
+    &dhucpackage;
+
+    &dhsection;
+  </refmeta>
+  <refnamediv>
+    <refname>&dhpackage;</refname>
+
+    <refpurpose>A KDE-based Instant Messaging client.</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>&dhpackage;</command>
+
+      <arg><option>--help<replaceable></replaceable></option></arg>
+      <arg><option>--help-kde<replaceable></replaceable></option></arg>
+      <arg><option>--help-qt<replaceable></replaceable></option></arg>
+      <arg><option>--version<replaceable> -v</replaceable></option></arg>
+      <arg><option>--license<replaceable></replaceable</option></arg>
+      <arg><option>--author<replaceable></replaceable></option></arg>
+      <arg><option>--caption &lt;caption&gt;<replaceable></replaceable></option></arg>
+      <arg><option>--icon &lt;icon&gt;<replaceable></replaceable></option></arg>
+      <arg><option>--miniicon &lt;icon&gt;<replaceable></replaceable></option></arg>
+      <arg><option>--dcopserver &lt;server&gt;<replaceable></replaceable></option></arg>
+      <arg><option>--nocrashhandler<replaceable></replaceable></option></arg>
+      <arg><option>--waitforwm<replaceable></replaceable></option></arg>
+      <arg><option>--style &lt;style&gt;<replaceable></replaceable></option></arg>
+      <arg><option>--geometry &lt;geometry&gt;<replaceable></replaceable></option></arg>
+      <arg><option>--display &lt;display&gt;<replaceable></replaceable></option></arg>
+      <arg><option>--session &lt;sessionid&gt;<replaceable></replaceable></option></arg>
+      <arg><option>--cmap<replaceable></replaceable></option></arg>
+      <arg><option>--ncols &lt;columns&gt;<replaceable></replaceable></option></arg>
+      <arg><option>--nograb<replaceable></replaceable></option></arg>
+      <arg><option>--dograb<replaceable></replaceable></option></arg>
+      <arg><option>--sync<replaceable></replaceable></option></arg>
+      <arg><option>--font<replaceable> --fn &lt;fontname&gt;</replaceable></option></arg>
+      <arg><option>--background<replaceable> --bg &lt;colour&gt;</replaceable></option></arg>
+      <arg><option>--button<replaceable> --btn &lt;colour&gt;</replaceable></option></arg>
+      <arg><option>--name<replaceable> &lt;name&gt;</replaceable></option></arg>
+      <arg><option>--title<replaceable> &lt;title&gt;</replaceable></option></arg>
+      <arg><option>--visual<replaceable> TrueColor</replaceable></option></arg>
+      <arg><option>--inputstyle<replaceable> &lt;style&gt;</replaceable></option></arg>
+      <arg><option>--im<replaceable> &lt;server&gt;</replaceable></option></arg>
+      <arg><option>--noxim<replaceable></replaceable></option></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>This manual page documents briefly the
+      <command>&dhpackage;</command> command.</para>
+
+    <para><command>&dhpackage;</command> is a KDE-based multi-protocol Instant
+    Messaging client. Currently, it supports AIM, ICQ, MSN, IRC and Jabber.
+    </para>
+
+  </refsect1>
+  <refsect1>
+    <title>OPTIONS</title>
+
+    <para>These programs follow the usual GNU command line syntax,
+      with long options starting with two dashes (`-').  A summary of
+      options is included below. However, the ordering is very strict -
+      --help/-h must come before hostname.</para>
+    <variablelist>
+      <varlistentry>
+        <term><option>-v</option>
+	  <option>--version</option>
+	</term>
+	<listitem>
+	  <para>Show version information.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--author</option>
+	</term>
+	<listitem>
+	  <para>Show information about the author.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--license</option>
+	</term>
+	<listitem>
+	  <para>Show license information.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--caption &lt;caption&gt;</option>
+	</term>
+	<listitem>
+	  <para>Specify the caption of the window.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--icon &lt;icon&gt;</option>
+	</term>
+	<listitem>
+	  <para>Specify the icon of the window.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--miniicon &lt;icon&gt;</option>
+	</term>
+	<listitem>
+	  <para>Specify the mini-icon of the window.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--dcopserver &lt;server&gt;</option>
+	</term>
+	<listitem>
+	  <para>Specify the DCOP server to use.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--nocrashhandler</option>
+	</term>
+	<listitem>
+	  <para>Disable KDE crash handler (enables core dumps).</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--waitforwm</option>
+	</term>
+	<listitem>
+	  <para>Waits for a compatible window manager to start.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--style &lt;style&gt;</option>
+	</term>
+	<listitem>
+	  <para>Sets the application's GUI style (overrides KDE).</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--geometry &lt;geometry&gt;</option>
+	</term>
+	<listitem>
+	  <para>Sets the geometry of the window.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--display &lt;display&gt;</option>
+	</term>
+	<listitem>
+	  <para>Specifies the X display to use.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--session &lt;sessionid&gt;</option>
+	</term>
+	<listitem>
+	  <para>Restores the application for the given session ID.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--cmap</option>
+	</term>
+	<listitem>
+	  <para>Forces use of an internal colour map on an 8-bit display.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--ncols &lt;count&gt;</option>
+	</term>
+	<listitem>
+	  <para>Limits the number of colours allowed in an 8-bit display.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--nograb</option>
+	</term>
+	<listitem>
+	  <para>Forces Qt to never grab the mouse or keyboard.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--dograb</option>
+	</term>
+	<listitem>
+	  <para>Overrides --nograb, which may be implicitly set.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--sync</option>
+	</term>
+	<listitem>
+	  <para>Forces synchronous mode (for debugging).</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--font &lt;font&gt;</option>
+	  <option>--fn &lt;font&gt;</option></term>
+	<listitem>
+	  <para>Sets the default application font.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--background &lt;colour&gt;</option>
+	  <option>--bg &lt;colour&gt;</option></term>
+	<listitem>
+	  <para>Sets the default background colour and application
+	  pallette.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--foreground &lt;colour&gt;</option>
+	  <option>--fg &lt;colour&gt;</option></term>
+	<listitem>
+	  <para>Sets the default foreground colour.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--button &lt;colour&gt;</option>
+	  <option>--btn &lt;colour&gt;</option></term>
+	<listitem>
+	  <para>Sets the default button colour.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--name &lt;name&gt;</option>
+	  </term>
+	<listitem>
+	  <para>Sets the application name.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--title &lt;name&gt;</option>
+	  </term>
+	<listitem>
+	  <para>Sets the application title.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--visual TrueColor</option>
+	  </term>
+	<listitem>
+	  <para>Forces the application to use a True Colour visual on 8-bit
+	  displays.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--inputstyle &lt;style&gt;</option>
+	  </term>
+	<listitem>
+	  <para>Sets X Input Method (XIM) input style. Possible values are: 
+	  onthespot, overthespot, offthespot, and root.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--im &lt;server&gt;</option>
+	  </term>
+	<listitem>
+	  <para>Sets X Input Method (XIM) server.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--noxim</option>
+	  </term>
+	<listitem>
+	  <para>Disables X Input Method (XIM) support.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>AUTHOR</title>
+
+    <para>This manual page was written by &dhusername; &lt;&dhemail;&gt; for
+      the &debian; system (but may be used by others).  Permission is
+      granted to copy, distribute and/or modify this document under
+      the terms of the <acronym>GNU</acronym> Free Documentation
+      License, Version 1.1 or any later version published by the Free
+      Software Foundation; with no Invariant Sections, no Front-Cover
+      Texts and no Back-Cover Texts.</para>
+
+  </refsect1>
+</refentry>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-omittag:t
+sgml-shorttag:t
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document:nil
+sgml-default-dtd-file:nil
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->
