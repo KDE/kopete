@@ -126,8 +126,9 @@ public:
 	KopeteGroupList groups() const;
 
 	/**
-	 * add a metacontact into the contact list
-	 * It handles the groups for it.
+	 * Add the metacontact into the contact list
+	 * When calling this method, the contact has to be already placed in correct group,
+	 * if the contact is in no group, it will be added to the top-level group
 	 */
 	void addMetaContact( KopeteMetaContact *c );
 
