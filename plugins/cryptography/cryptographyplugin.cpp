@@ -29,6 +29,7 @@
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
+#include "kopetesimplemessagehandler.h"
 #include "kopeteuiglobal.h"
 
 #include "cryptographyplugin.h"
@@ -54,9 +55,8 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const
 	if( !pluginStatic_ )
 		pluginStatic_=this;
 
-	connect( Kopete::MessageManagerFactory::self(),
-		SIGNAL( aboutToDisplay( Kopete::Message & ) ),
-		SLOT( slotIncomingMessage( Kopete::Message & ) ) );
+	m_inboundHandler = new Kopete::SimpleMessageHandlerFactory( Kopete::Message::Inbound,
+		Kopete::MessageHandlerFactory::InStageToSent, this, SLOT( slotIncomingMessage( Kopete::Message& ) ) );
 	connect( Kopete::MessageManagerFactory::self(),
 		SIGNAL( aboutToSend( Kopete::Message & ) ),
 		SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
@@ -86,6 +86,7 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const
 
 CryptographyPlugin::~CryptographyPlugin()
 {
+	delete m_inboundHandler;
 	pluginStatic_ = 0L;
 }
 

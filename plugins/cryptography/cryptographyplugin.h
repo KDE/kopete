@@ -25,9 +25,13 @@ class QStringList;
 class QString;
 class QTimer;
 
-namespace Kopete { class Message; }
-namespace Kopete { class MetaContact; }
-namespace Kopete { class MessageManager; }
+namespace Kopete
+{
+	class Message;
+	class MetaContact;
+	class MessageManager;
+	class SimpleMessageHandlerFactory;
+}
 
 /**
   * @author Olivier Goffart
@@ -69,6 +73,7 @@ private slots:
 
 private:
 	static CryptographyPlugin* pluginStatic_;
+	Kopete::SimpleMessageHandlerFactory *m_inboundHandler;
 	QCString m_cachedPass;
 	QTimer *m_cachedPass_timer;
 
