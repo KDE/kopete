@@ -16,17 +16,12 @@
     *                                                                       *
     *************************************************************************
 */
-#include <qapplication.h>
 #include <qtextedit.h>
-#include <qregexp.h>
-#include <kpopupmenu.h>
 
 #include <kdebug.h>
 #include <kspell.h>
 #include <klocale.h>
 #include <kaction.h>
-#include <kactioncollection.h>
-#include <kmainwindow.h>
 #include <kmessagebox.h>
 #include <kgenericfactory.h>
 
@@ -34,6 +29,7 @@
 #include "kopetemessagemanagerfactory.h"
 #include "spellcheckplugin.h"
 #include "spellcheckpreferences.h"
+#include "singlespellinstance.h"
 
 K_EXPORT_COMPONENT_FACTORY( kopete_spellcheck, KGenericFactory<SpellCheckPlugin> );
 
@@ -44,28 +40,16 @@ SpellCheckPlugin::SpellCheckPlugin( QObject *parent, const char *name, const QSt
 
 	m_actionCollection = 0L;
 	mSpell = 0L;
-	mSingleSpell = 0L;
-	mView = 0L;
-	words = 0L;
-	singleSpellCheckerReady = false;
-	mBound = QRegExp( QString::fromLatin1("[\\s\\W]") );
 	mPrefs = new SpellCheckPreferences( QString::fromLatin1("spellcheck"), this );
 
-	connect( mPrefs, SIGNAL( saved() ), this, SLOT( slotPrefsSaved() ) );
+	//Connect to the viewCreated signal to install our event filter
 	connect( KopeteViewManager::viewManager(), SIGNAL( viewCreated( KopeteView * ) ), this, SLOT( slotBindToView( KopeteView * ) ) );
-
-	slotPrefsSaved();
 }
 
 SpellCheckPlugin::~SpellCheckPlugin()
 {
+	delete mPrefs;
 	pluginStatic_ = 0L;
-	delete words;
-	if( mSingleSpell )
-	{
-		mSingleSpell->cleanUp();
-		delete mSingleSpell;
-	}
 }
 
 SpellCheckPlugin* SpellCheckPlugin::plugin()
@@ -75,35 +59,11 @@ SpellCheckPlugin* SpellCheckPlugin::plugin()
 
 SpellCheckPlugin* SpellCheckPlugin::pluginStatic_ = 0L;
 
-void SpellCheckPlugin::slotPrefsSaved()
-{
-	if( mPrefs->autoCheckEnabled() )
-	{
-		if( !mSingleSpell )
-		{
-  			mSingleSpell = new KSpell(0L, i18n("Spellcheck - Kopete"), this, SLOT( slotSingleSpellCheckerReady( KSpell * )), mPrefs->spellConfig() );
-			connect( mSingleSpell, SIGNAL( misspelling( const QString&, const QStringList&, unsigned int ) ), this, SLOT( slotSingleCorrection( const QString&, const QStringList&, unsigned int ) ) );
-		}
-	}
-	else
-	{
-		if( mSingleSpell )
-		{
-			mSingleSpell->cleanUp();
-			delete mSingleSpell;
-			singleSpellCheckerReady = false;
-			slotUpdateTextEdit();
-		}
-	}
-}
-
-KActionCollection *SpellCheckPlugin::customChatActions( KopeteMessageManager *manager )
+KActionCollection *SpellCheckPlugin::customChatActions( KopeteMessageManager * )
 {
 	kdDebug() << k_funcinfo << endl;
 
 	delete m_actionCollection;
-
-	mView = KopeteViewManager::viewManager()->view( manager, false);
 
 	m_actionCollection = new KActionCollection(this);
 
@@ -117,117 +77,20 @@ KActionCollection *SpellCheckPlugin::customChatActions( KopeteMessageManager *ma
 
 void SpellCheckPlugin::slotBindToView( KopeteView *view )
 {
-	QTextEdit *t = static_cast<QTextEdit*>( view->editWidget() );
-	t->installEventFilter( this );
-	t->viewport()->installEventFilter( this );
-}
-
-bool SpellCheckPlugin::eventFilter(QObject *o, QEvent *e)
-{
-	QTextEdit *t;
-	if( o->inherits("QTextEdit") )
-		t = static_cast<QTextEdit*>( o );
-	else
-		t = static_cast<QTextEdit*>( o->parent() );
-
-	QWidget *w = static_cast<QWidget*>( o );
-
-	switch( e->type() )
+	//Install event filter on the edit widget
+	if( mPrefs->autoCheckEnabled() && view->editWidget()->inherits("QTextEdit") )
 	{
-		case QEvent::KeyPress:
-		{
-			QKeyEvent *event = (QKeyEvent*) e;
-			QChar typedChar = QChar( event->ascii() );
-			if( singleSpellCheckerReady )
-			{
-				if( !typedChar.isLetterOrNumber() )
-				{
-					delete words;
-					words = new QStringList( QStringList::split( mBound, t->text() ) );
-					if( words->count() > 0 )
-						mSingleSpell->checkList( words, false );
-				}
-				slotUpdateTextEdit();
-			}
-			break;
-		}
-		case QEvent::ContextMenu:
-		{
-			if ( singleSpellCheckerReady )
-			{
-				QContextMenuEvent *event = (QContextMenuEvent*) e;
-
-				KPopupMenu p;
-				int para = 0, charPos, firstSpace, lastSpace;
-
-				charPos = t->charAt( event->pos(), &para );
-				QString paraText = t->text( para );
-				QString word = QString::null;
-
-				if( !paraText.at(charPos).isSpace() )
-				{
-					firstSpace = paraText.findRev( mBound, charPos ) + 1;
-					lastSpace = paraText.find( mBound, charPos );
-					if( lastSpace == -1 )
-						lastSpace = paraText.length();
-					word = paraText.mid( firstSpace, lastSpace - firstSpace );
-
-					if( !word.isNull() && mReplacements.contains( word ) )
-					{
-						p.insertTitle( i18n("Suggestions") );
-						QStringList reps = mReplacements[word];
-						if( reps.count() > 0 )
-						{
-							int listPos = 0;
-							for ( QStringList::Iterator it = reps.begin(); it != reps.end(); ++it ) {
-								p.insertItem( *it, listPos );
-								listPos++;
-							}
-						}
-						else
-						{
-							p.insertItem( QString::fromLatin1("No Suggestions"), -2 );
-						}
-
-						int id = p.exec( w->mapToGlobal( event->pos() ) );
-
-						if( id > -1 )
-						{
-							int parIdx = 1, txtIdx = 1;
-							t->getCursorPosition(&parIdx, &txtIdx);
-
-							QString txtContents = t->text();
-							QString newContents = txtContents.left(firstSpace) + mReplacements[word][id] +
-								txtContents.right( txtContents.length() - lastSpace );
-
-							t->setText( newContents );
-							if( txtIdx > lastSpace )
-								txtIdx += newContents.length() - txtContents.length();
-
-							t->setCursorPosition(parIdx, txtIdx);
-
-							slotUpdateTextEdit();
-						}
-
-						return true;
-					}
-				}
-			}
-
-			break;
-		}
-		default:
-			break;
+		kdDebug() << k_funcinfo << "New View, creating a single speller instance" << endl;
+		new SingleSpellInstance( view, mPrefs );
 	}
-
-	return false;
 }
 
 void SpellCheckPlugin::slotCheckSpelling()
 {
 	kdDebug() << k_funcinfo << endl;
 
-	mBuffer = mView->currentMessage();
+	KopeteView *activeView = KopeteViewManager::viewManager()->activeView();
+	mBuffer = activeView->currentMessage();
 
 	if( !mSpell )
 	{
@@ -238,92 +101,31 @@ void SpellCheckPlugin::slotCheckSpelling()
 	}
 }
 
-void SpellCheckPlugin::slotSingleSpellCheckerReady( KSpell * )
-{
-	singleSpellCheckerReady = true;
-}
-
 void SpellCheckPlugin::slotSpellCheckerReady( KSpell * )
 {
 	mSpell->check( mBuffer.plainBody() );
 }
 
-void SpellCheckPlugin::slotSingleCorrection( const QString &originalword, const QStringList &suggestions, unsigned int )
-{
-	if( !mReplacements.contains( originalword ) )
-	{
-		kdDebug() << k_funcinfo << originalword << "IS MISSPELLED!" << endl;
-		mReplacements[originalword] = suggestions;
-	}
-	slotUpdateTextEdit();
-}
-
-void SpellCheckPlugin::slotUpdateTextEdit()
-{
-	KopeteView *activeView = KopeteViewManager::viewManager()->activeView();
-	if( activeView )
-	{
-		QTextEdit *t = static_cast<QTextEdit*>( activeView->editWidget() );
-
-		QString plainTextContents = t->text();
-
-		int parIdx = 1, txtIdx = 1;
-		int selParFrom = 1, selTxtFrom = 1, selParTo = 1, selTxtTo = 1;
-
-		t->getSelection(&selParFrom, &selTxtFrom, &selParTo, &selTxtTo);
-		t->getCursorPosition(&parIdx, &txtIdx);
-
-		/*
-		The reason we don't check this until here is so that the text
-		will be set back to its default color when someone changes their
-		preference settings, turning us off.
-		*/
-		if( singleSpellCheckerReady )
-		{
-			QString highlightColor;
-			if( t->paletteForegroundColor().red() < 250 )
-				highlightColor = QString::fromLatin1("red");
-			else
-				highlightColor = QString::fromLatin1("blue");
-
-			QStringList words = QStringList::split( mBound, plainTextContents );
-			if( words.count() > 0 )
-			{
-				for( QStringList::Iterator it = words.begin(); it != words.end(); ++it )
-				{
-					if( mReplacements.contains(*it) )
-					{
-						plainTextContents.replace( QRegExp( QString::fromLatin1("\\b(%1)\\b").arg( *it ) ),
-							QString::fromLatin1("<font color=\"" + highlightColor + "\">") + *it +
-							QString::fromLatin1("</font>") );
-					}
-				}
-			}
-		}
-
-		t->setTextFormat( QTextEdit::RichText );
-		t->setText( plainTextContents );
-		t->setTextFormat( QTextEdit::PlainText );
-
-		t->setCursorPosition( parIdx, txtIdx );
-		if( selParFrom > -1 )
-			t->setSelection( selParFrom, selTxtFrom, selParTo, selTxtTo );
-	}
-}
-
 void SpellCheckPlugin::slotCorrection( const QString &originalword, const QString &newword, unsigned int pos )
 {
+	KopeteView *activeView = KopeteViewManager::viewManager()->activeView();
+
 	QString mBuff = mBuffer.plainBody();
 	mBuff.replace( pos,originalword.length(), newword );
 	mBuffer.setBody( mBuff );
 
-	mView->setCurrentMessage( mBuffer );
+	activeView->setCurrentMessage( mBuffer );
 }
 
 void SpellCheckPlugin::slotMisspelling( const QString &originalword, const QStringList &, unsigned int pos )
 {
-	QTextEdit *t = dynamic_cast<QTextEdit*>( mView->editWidget() );
-	t->setSelection( 0, pos, 0, pos + originalword.length() );
+	KopeteView *activeView = KopeteViewManager::viewManager()->activeView();
+	if( activeView->editWidget()->inherits("QTextEdit") )
+	{
+		//Select the misspelled text
+		QTextEdit *t = dynamic_cast<QTextEdit*>( activeView->editWidget() );
+		t->setSelection( 0, pos, 0, pos + originalword.length() );
+	}
 }
 
 void SpellCheckPlugin::slotSpellDone( const QString & )
@@ -341,6 +143,7 @@ void SpellCheckPlugin::slotSpellDone( const QString & )
 	delete mSpell;
 	mSpell = 0L;
 }
+
 
 
 

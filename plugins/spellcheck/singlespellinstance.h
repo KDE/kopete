@@ -16,37 +16,41 @@
     *                                                                       *
     *************************************************************************
 */
-#include "kopeteplugin.h"
-#include "kopetemessage.h"
+#include <qobject.h>
+#include <qmap.h>
+#include <qstringlist.h>
+#include <qregexp.h>
 
-class KActionCollection;
-class KopeteMessageManager;
-class KopeteMessage;
 class KSpell;
+class KopeteView;
+class QTextEdit;
 class SpellCheckPreferences;
 
-class SpellCheckPlugin : public KopetePlugin
+typedef QMap<QString,QStringList> ReplacementMap;
+
+class SingleSpellInstance : public QObject
 {
 	Q_OBJECT
 
 	public:
-		static SpellCheckPlugin  *plugin();
-		SpellCheckPlugin( QObject *parent, const char *name, const QStringList &args );
-		~SpellCheckPlugin();
-		virtual KActionCollection *customChatActions( KopeteMessageManager * );
+		SingleSpellInstance( KopeteView*, SpellCheckPreferences* );
+		~SingleSpellInstance();
 
 	private:
-		static SpellCheckPlugin* pluginStatic_;
-		KActionCollection *m_actionCollection;
+		KopeteView *mView;
+		QTextEdit *t;
+		QRegExp mBound;
+		QStringList *words;
+		ReplacementMap mReplacements;
+		bool spellCheckerReady;
 		KSpell *mSpell;
-		KopeteMessage mBuffer;
-		SpellCheckPreferences *mPrefs;
 
 	private slots:
-		void slotCheckSpelling();
-		void slotBindToView( KopeteView * );
 		void slotSpellCheckerReady(KSpell *);
-		void slotCorrection( const QString &, const QString &, unsigned int );
 		void slotMisspelling( const QString &, const QStringList &, unsigned int );
-		void slotSpellDone( const QString & );
+		void slotUpdateTextEdit();
+		void slotViewDestroyed();
+
+	protected:
+		virtual bool eventFilter( QObject *watched, QEvent *e );
 };
