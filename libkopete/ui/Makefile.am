@@ -16,7 +16,7 @@ libkopeteui_la_LIBADD = ../private/libkopeteprivate.la $(LIB_KHTML) $(LIBXML_LIB
 kopeteincludedir = $(includedir)/kopete/ui
 kopeteinclude_HEADERS = accountselector.h fileconfirmbase.h kopetefileconfirmdialog.h \
 	kopetepasswordwidget.h kopeteview.h addcontactpage.h kopeteawaydialogbase.h  \
-	kopetefiletransferui.h kopetepasswordwidgetbase.h kopeteviewplugin.h \
+	kopetepasswordwidgetbase.h kopeteviewplugin.h \
 	editaccountwidget.h kopetecontactaction.h kopetepassworddialog.h kopetestdaction.h \
 	userinfodialog.h
 
