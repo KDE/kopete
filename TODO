@@ -4,8 +4,6 @@ to fix before the next release.
 Beware: It's totally unsorted ;)
 
 ================================================================================
-- Fix removing accounts from kopeterc
-
 - Once and for all fix the way displayName is used in KopeteContact. With
   serverside contact lists it's now impossible to rename contacts on the server
   because some people (e.g. Olivier) want to see the nickname that a user
@@ -58,6 +56,8 @@ For 1.0/kdenetwork:
 	  have a socket() function instead if socket-access is needed.
 
 	- get rid of AIMContactList, AIMBuddy (almost gone already) and AIMGroup.
+
+	- possible switch to a libfaim based backend (for both ICQ and AOL)
 
 
 	ICQ specific ================================================================

@@ -34,13 +34,10 @@
     <ignoretocs>
       <toc>gtk</toc>
       <toc>gnustep</toc>
-      <toc>python</toc>
-      <toc>php</toc>
-      <toc>perl</toc>
     </ignoretocs>
     <projectdoc>
-      <userdocDir>/home/olivier/kdesrc/kdenonbeta/kopete/html/</userdocDir>
-      <apidocDir>/home/olivier/kdesrc/kdenonbeta/kopete/html/</apidocDir>
+      <userdocDir>/home/matt/src/kde-cvs/kdenonbeta/kopete/html/</userdocDir>
+      <apidocDir>/home/httpd/htdocs/apidocs/kopete</apidocDir>
     </projectdoc>
   </kdevdoctreeview>
   <kdevdebugger>
