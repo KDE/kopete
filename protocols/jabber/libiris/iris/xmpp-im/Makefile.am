@@ -13,4 +13,4 @@ libiris_xmpp_im_la_SOURCES = \
 CLEANFILES = types.moc
 types.lo: types.moc
 types.moc: Makefile
-	moc -o types.moc types.cpp
+	${MOC} -o types.moc types.cpp
