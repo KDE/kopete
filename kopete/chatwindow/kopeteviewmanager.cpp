@@ -185,7 +185,7 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 			if( msg.from()->metaContact() )
 				msgFrom = msg.from()->metaContact()->displayName();
 			else
-				msgFrom = msg.from()->displayName();
+				msgFrom = msg.from()->contactId();
 
 			QString msgText = msg.plainBody();
 			if( msgText.length() > 90 )

@@ -49,6 +49,7 @@
 #include <kwin.h>
 
 #include "kopetecontact.h"
+#include "kopetemetacontact.h"
 #include "kopeteemoticonaction.h"
 #include "kopetemessagemanager.h"
 #include "kopeteplugin.h"
@@ -463,7 +464,8 @@ void KopeteEmailWindow::appendMessage(KopeteMessage &message)
 			updateNextButton();
 		}
 
-		d->unreadMessageFrom = message.from()->displayName();
+		d->unreadMessageFrom = message.from()->metaContact() ? 
+			message.from()->metaContact()->displayName() : message.from()->contactId();
 		QTimer::singleShot( 1000, this, SLOT(slotMarkMessageRead()) );
 	}
 }

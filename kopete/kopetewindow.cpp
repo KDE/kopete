@@ -487,11 +487,9 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *account )
 
 	connect( account, SIGNAL( iconAppearanceChanged() ), SLOT( slotAccountStatusIconChanged() ) );
 
-	//FIXME  add a KopeteContact::displayNameChanged(KopeteContact * , ..... )  and connect
-	//  it dirrectly to slotAccountStatusIconChanged( KopeteContact * )
 	connect( account->myself(),
-		SIGNAL(displayNameChanged(const QString&, const QString& ) ),
-		this, SLOT( slotAccountDisplayNameChanged() ) );
+		SIGNAL(propertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ),
+		this, SLOT( slotAccountStatusIconChanged( KopeteContact* ) ) );
 
 	KopeteAccountStatusBarIcon *sbIcon = new KopeteAccountStatusBarIcon( account, m_statusBarWidget );
 	connect( sbIcon, SIGNAL( rightClicked( KopeteAccount *, const QPoint & ) ),
@@ -527,12 +525,6 @@ void KopeteWindow::slotAccountUnregistered( KopeteAccount *account)
 
 	m_accountStatusBarIcons.remove( account );
 	delete sbIcon;
-}
-
-void KopeteWindow::slotAccountDisplayNameChanged()
-{
-	if( const KopeteContact *contact=dynamic_cast<const KopeteContact *>(sender()) )
-		slotAccountStatusIconChanged((KopeteContact*)contact);
 }
 
 void KopeteWindow::slotAccountStatusIconChanged()

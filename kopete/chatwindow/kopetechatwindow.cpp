@@ -1010,7 +1010,7 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 		if( contact->metaContact() )
 			contactsMenu->insertItem( contact->onlineStatus().iconFor( contact ) , contact->metaContact()->displayName(), p );
 		else
-			contactsMenu->insertItem( contact->onlineStatus().iconFor( contact ) , contact->displayName(), p );
+			contactsMenu->insertItem( contact->onlineStatus().iconFor( contact ) , contact->contactId(), p );
 
 		//FIXME: This number should be a config option
 		if( ++contactCount == 15 && contact != m_them.getLast() )

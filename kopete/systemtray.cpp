@@ -245,7 +245,7 @@ void KopeteSystemTray::addBalloon()
 			if( msg.from()->metaContact() )
 				msgFrom = msg.from()->metaContact()->displayName();
 			else
-				msgFrom = msg.from()->displayName();
+				msgFrom = msg.from()->contactId();
 
 			m_balloon = new KopeteBalloon(
 				i18n( "<qt><nobr><b>New Message from %1:</b></nobr><br><nobr>\"%2\"</nobr></qt>" )

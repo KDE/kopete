@@ -74,8 +74,6 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 		this, SLOT(slotSettingsChanged(bool)));
 	connect(mPrfsGeneral->mSoundIfAwayChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsGeneral->mForwardRenamesChk, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
 
 	// "Chat" TAB ===============================================================
 	connect( mPrfsChat->cb_RaiseMsgWindowChk, SIGNAL(toggled(bool)),
@@ -115,7 +113,6 @@ void BehaviorConfig::save()
 	p->setTrayflashNotify(mPrfsGeneral->mTrayflashNotifyChk->isChecked());
 	p->setBalloonNotify(mPrfsGeneral->mBalloonNotifyChk->isChecked());
 	p->setSoundIfAway(mPrfsGeneral->mSoundIfAwayChk->isChecked());
-	p->setForwardContactRenames(mPrfsGeneral->mForwardRenamesChk->isChecked());
 
 	// "Away" TAB ===============================================================
 	p->setNotifyAway( mAwayConfigUI->mNotifyAway->isChecked());
@@ -156,7 +153,6 @@ void BehaviorConfig::load()
 	mPrfsGeneral->mBalloonNotifyChk->setChecked ( p->balloonNotify() );
 	mPrfsGeneral->mSoundIfAwayChk->setChecked( p->soundIfAway() );
 	slotShowTrayChanged( mPrfsGeneral->mShowTrayChk->isChecked() );
-	mPrfsGeneral->mForwardRenamesChk->setChecked( p->forwardContactRenames() );
 
 	// "Away" TAB ===============================================================
 	KConfig *config = KGlobal::config();

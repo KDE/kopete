@@ -103,22 +103,6 @@
                     <string>Use a queue instead of opening a chat window on incoming messages</string>
                 </property>
             </widget>
-            <widget class="QCheckBox">
-                <property name="name">
-                    <cstring>mForwardRenamesChk</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>10</x>
-                        <y>50</y>
-                        <width>370</width>
-                        <height>23</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Rename all subcontacts when renaming</string>
-                </property>
-            </widget>
         </widget>
         <widget class="QButtonGroup" row="1" column="0">
             <property name="name">

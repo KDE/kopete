@@ -108,12 +108,6 @@ private slots:
 	void slotAccountStatusIconChanged();
 
 	/**
-	 * This slot is called when a myself contact change his displayname.
-	 * the slot use sender() to know what account has changed
-	 */
-	void slotAccountDisplayNameChanged();
-
-	/**
 	 * Show a context menu for a protocol
 	 */
 	void slotProtocolStatusIconRightClicked( KopeteProtocol *proto,

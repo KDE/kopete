@@ -65,7 +65,7 @@
 #include "kopetecontact.h"
 #include "kopetemessagemanager.h" //needed to send the URL
 #include "kopetemessage.h"       //needed to send the URL
-
+#include "kopeteglobal.h"
 #include "kopetelviprops.h"
 
 class KopeteContactListViewPrivate
@@ -175,7 +175,7 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 
 				toolTip += i18n("<tr><td>STATUS ICON <b>PROTOCOL NAME</b> (ACCOUNT NAME)</td><td>STATUS DESCRIPTION</td></tr>",
 					"<tr><td><img src=\"%1\">&nbsp;<b>%2</b>&nbsp;(%3)</td><td align=\"right\">%4</td></tr>")
-					.arg( iconName, c->displayName(), c->contactId(), c->onlineStatus().description() );
+					.arg( iconName, c->property(Kopete::Global::Properties::self()->nickName()).value().toString() , c->contactId(), c->onlineStatus().description() );
 			}
 
 			toolTip += QString::fromLatin1("</table></qt>");
@@ -820,8 +820,8 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 
 					KPopupMenu *contactMenu = it.current()->popupMenu();
 					connect( popup, SIGNAL( aboutToHide() ), contactMenu, SLOT( deleteLater() ) );
-					QString text= i18n( "Translators: format: '<displayName> (<id>)'", "%2 <%1>" ).
-						arg( c->contactId(), c->displayName() );
+					QString nick=c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+					QString text= nick.isEmpty() ?  c->contactId() : i18n( "Translators: format: '<displayName> (<id>)'", "%2 <%1>" ). arg( c->contactId(), nick );
 
 					if ( text.length() > 41 )
 						text = text.left( 38 ) + QString::fromLatin1( "..." );

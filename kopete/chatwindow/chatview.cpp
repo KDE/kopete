@@ -54,6 +54,7 @@
 #include "kopeteprotocol.h"
 #include "kopetexsl.h"
 #include "kopeteaccount.h"
+#include "kopeteglobal.h"
 
 #include <ktabwidget.h>
 
@@ -664,7 +665,8 @@ void ChatView::remoteTyping( const KopeteContact *c, bool isTyping )
 	for( ; it.current(); ++it )
 	{
 		KopeteContact *c=static_cast<KopeteContact*>(it.currentKey());
-		typingList.append( c->metaContact() ? c->metaContact()->displayName() : c->displayName() );
+		QString nick=c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+		typingList.append( c->metaContact() ? c->metaContact()->displayName() : ( nick.isEmpty()? c->contactId() : nick ) );
 	}
 
 	statusTyping = typingList.join( QString::fromLatin1( ", " ) );
@@ -758,29 +760,29 @@ void ChatView::slotChatDisplayNameChanged()
 		setCaption( chatName, true );
 }
 
-void ChatView::slotContactNameChanged( const QString &oldName, const QString &newName )
+void ChatView::slotProperyChanged( KopeteContact*, const QString &key,
+		const QVariant& oldValue, const QVariant &newValue  )
 {
-	kdDebug(14000) << k_funcinfo << endl;
-	if( KopetePrefs::prefs()->showEvents() )
-		sendInternalMessage( i18n( "%1 is now known as %2" ).
-#if QT_VERSION < 0x030200
-			arg( oldName ).arg( newName )
-#else
-			arg( oldName, newName )
-#endif
-		);
-	mComplete->removeItem( oldName );
-	mComplete->addItem( newName );
+	if( key == Kopete::Global::Properties::self()->nickName().key() )
+	{
+		QString newName=newValue.toString();
+		QString oldName=oldValue.toString();
+
+		if(KopetePrefs::prefs()->showEvents())
+			sendInternalMessage( i18n( "%1 is now known as %2" ). arg( oldName, newName ) );
+
+		mComplete->removeItem( oldName );
+		mComplete->addItem( newName );
+	}
 }
 
 void ChatView::slotContactAdded(const KopeteContact *c, bool surpress)
 {
 	if( !memberContactMap.contains(c) )
 	{
-		QString contactName;
-		contactName = c->displayName();
-		connect( c, SIGNAL( displayNameChanged( const QString &,const QString & ) ),
-			this, SLOT( slotContactNameChanged( const QString &,const QString & ) ) );
+		QString contactName = c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+		connect( c, SIGNAL( propertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ),
+			this, SLOT( slotProperyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 
 		mComplete->addItem( contactName );
 
@@ -811,7 +813,7 @@ void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &
 	{
 		m_remoteTypingMap.remove( const_cast<KopeteContact *>( contact ) );
 
-		QString contactName = contact->displayName();
+		QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 		mComplete->removeItem( contactName );
 
 		delete memberContactMap[ contact ];
@@ -820,8 +822,8 @@ void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &
 		// When the last person leaves, don't disconnect the signals, since we're in a one-to-one chat
 		if ( msgManager()->members().count() > 0 )
 		{
-			disconnect( contact, SIGNAL( displayNameChanged( const QString &, const QString & ) ),
-				this, SLOT( slotContactNameChanged( const QString &, const QString & ) ) );
+			disconnect(contact,SIGNAL(propertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & )),
+				this, SLOT( slotProperyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 		}
 
 		if ( reason.isEmpty() )
@@ -900,7 +902,8 @@ void ChatView::appendMessage(KopeteMessage &message)
 
 	if( !m_sendInProgress || message.from() != m_manager->user() )
 	{
-		unreadMessageFrom = message.from()->displayName();
+		unreadMessageFrom = message.from()->metaContact() ?
+			 message.from()->metaContact()->displayName() : message.from()->contactId() ;
 		QTimer::singleShot( 1000, this, SLOT(slotMarkMessageRead()) );
 	}
 }
@@ -968,22 +971,13 @@ void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnl
 			if( contact->metaContact() )
 			{
 				sendInternalMessage( i18n( "%2 is now %1." )
-#if QT_VERSION < 0x030200
-					.arg( newStatus.description() ).arg( contact->metaContact()->displayName() )
-#else
-					.arg( newStatus.description(), contact->metaContact()->displayName() )
-#endif
-				);
+					.arg( newStatus.description(), contact->metaContact()->displayName() ) );
 			}
 			else
 			{
+				QString nick=contact->property(Kopete::Global::Properties::self()->nickName().key()).value().toString();
 				sendInternalMessage( i18n( "%2 is now %1." )
-#if QT_VERSION < 0x030200
-					.arg( newStatus.description() ).arg( contact->displayName() )
-#else
-					.arg( newStatus.description(), contact->displayName() )
-#endif
-				);
+					.arg( newStatus.description(), nick.isEmpty() ? contact->contactId() : nick  ) );
 			}
 		}
 	}
@@ -1266,11 +1260,12 @@ const QString ChatView::addNickLinks( const QString &html ) const
 	KopeteContactPtrList members = msgManager()->members();
 	for( KopeteContact *c = members.first(); c; c = members.next() )
 	{
-		if( c->displayName().length() > 0 && ( retVal.find( c->displayName() ) > -1 ) )
+		QString nick=c->property(Kopete::Global::Properties::self()->nickName().key()).value().toString();
+		if( nick.length() > 0 && ( retVal.find( nick ) > -1 ) )
 		{
 			retVal.replace(
 				QRegExp( QString::fromLatin1("([\\s&;>])(%1)([\\s&;<:])")
-					.arg( QRegExp::escape( c->displayName() ) )  ),
+					.arg( QRegExp::escape( nick ) )  ),
 				QString::fromLatin1("\\1<a href=\"kopetemessage://%1\" class=\"KopeteDisplayName\">\\2</a>\\3")
 				.arg( c->contactId() )
 			);
@@ -1395,7 +1390,7 @@ KopeteContact *ChatView::contactFromNode( const Node &n ) const
 					nick = e.innerText().string().stripWhiteSpace();
 					for( c = members.first(); c; c = members.next() )
 					{
-						if( c->displayName() == nick )
+						if( c->property(Kopete::Global::Properties::self()->nickName().key()).value().toString() == nick )
 							break;
 					}
 				}
@@ -1708,9 +1703,10 @@ KopeteContactLVI::KopeteContactLVI( KopeteView *view, const KopeteContact *conta
 	m_parentView = parent;
 	m_view = view;
 
-	setText( 1, QString::fromLatin1( " " ) + m_contact->displayName() );
-	connect( m_contact, SIGNAL( displayNameChanged( const QString &, const QString & ) ),
-		this, SLOT( slotDisplayNameChanged(const QString &, const QString &) ) );
+	QString nick=m_contact->property(Kopete::Global::Properties::self()->nickName().key()).value().toString();
+	setText( 1, QString::fromLatin1( " " ) + (nick.isEmpty() ? m_contact->contactId() : nick) );
+	connect( m_contact, SIGNAL( propertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ),
+			this, SLOT( slotProperyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 
 	connect( m_contact, SIGNAL( destroyed() ), this, SLOT( deleteLater() ) );
 
@@ -1724,10 +1720,14 @@ KopeteContactLVI::KopeteContactLVI( KopeteView *view, const KopeteContact *conta
 		view->msgManager()->contactOnlineStatus(m_contact) );
 }
 
-void KopeteContactLVI::slotDisplayNameChanged(const QString &, const QString &newName)
+void KopeteContactLVI::slotProperyChanged( KopeteContact*, const QString &key,
+		const QVariant&, const QVariant &newValue  )
 {
-	setText( 1, QString::fromLatin1( " " ) + newName );
-	m_parentView->sort();
+	if( key == Kopete::Global::Properties::self()->nickName().key() )
+	{
+		setText( 1, QString::fromLatin1( " " ) + newValue.toString() );
+		m_parentView->sort();
+	}
 }
 
 void KopeteContactLVI::slotStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status,

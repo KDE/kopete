@@ -1,9 +1,9 @@
 /*
     chatview.h - Chat View
 
-    Copyright (c) 2002      by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart       <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -68,7 +68,7 @@ private:
 	KopeteView *m_view;
 
 private slots:
-	void slotDisplayNameChanged(const QString &, const QString&);
+	void slotProperyChanged( KopeteContact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
 	void slotStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, const KopeteOnlineStatus & );
 	void slotExecute( QListViewItem* );
 };
@@ -344,7 +344,7 @@ private slots:
 	void slotRemoteTypingTimeout();
 	void slotScrollView();
 	void slotAppearanceChanged();
-	void slotContactNameChanged( const QString &oldName, const QString &newName );
+	void slotProperyChanged( KopeteContact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
 
 	/**
 	 * Called when a contact is added to the KMM instance (A new person joins the chat).
