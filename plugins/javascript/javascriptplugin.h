@@ -11,15 +11,17 @@
 #ifndef _JAVASCRIPT_PLUGIN_H
 #define _JAVASCRIPT_PLUGIN_H
 
-#include "kopetemessage.h"
 #include "kopeteplugin.h"
 
+#include <qptrdict.h>
 #include <kjs/object.h>
+#include "wrappers/kopeteonlinestatus_imp.h"
 
 class KopeteContact;
 class KopeteMessageManager;
 class Message;
 class JavaScriptConfig;
+class JavaScriptPluginPrivate;
 
 namespace KJSEmbed
 {
@@ -50,6 +52,7 @@ class JavaScriptPlugin : public KopetePlugin
 		void slotDisplayMessage( KopeteMessage& msg );
 
 		void slotShowConsole();
+		void slotInitContacts();
 
 	private:
 		void runScripts( KopeteMessageManager *manager, ScriptType type );
@@ -57,10 +60,7 @@ class JavaScriptPlugin : public KopetePlugin
 
 		static JavaScriptPlugin* pluginStatic_;
 
-		JavaScriptConfig *config;
-		KJSEmbed::KJSEmbedPart *jsEngine;
-		KJSEmbed::JSOpaqueProxy *messageProxy;
-		KJS::Object contactList;
+		JavaScriptPluginPrivate *d;
 };
 
 #endif
