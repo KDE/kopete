@@ -293,7 +293,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 
 		QString message=msg.right( msg.length() - msg.find("\r\n\r\n") - 4 );
 
-		//Stupid MSN PLUS colors code. message with incorrect charactère are not showed correctly in the chatwindow.µ
+		//Stupid MSN PLUS colors code. message with incorrect charactï¿½e are not showed correctly in the chatwindow.
 		//TODO: parse theses one to show the color too in Kopete
 		message.replace("\3","").replace("\4","").replace("\2","");
 
@@ -461,9 +461,11 @@ int MSNSwitchBoardSocket::sendMsg( const KopeteMessage &msg )
 		head += "CO=0";
 	}
 
-	head += "; CS=0; PF=0\r\n"
-		"\r\n";
-
+	head += "; CS=0; PF=0";		
+	if (msg.plainBody().isRightToLeft()) 
+		head += "; RL=1";
+	head += "\r\n\r\n";		
+		
 	QString message= msg.plainBody().replace(  "\n" , "\r\n" );
 		
 	//-- Check if the message isn't too big,  TODO: do that at the libkopete level.
