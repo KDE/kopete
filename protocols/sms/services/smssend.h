@@ -1,0 +1,34 @@
+#ifndef SMSSEND_H
+#define SMSSEND_H
+
+#include "smsservice.h"
+#include <qobject.h>
+#include <qmap.h>
+
+class SMSSendPrefsUI;
+class QListViewItem;
+
+class SMSSend : public SMSService
+{
+	Q_OBJECT
+public:
+	SMSSend();
+	~SMSSend();
+
+	bool send(QString nr, QString message);
+	QWidget* configureWidget(QWidget* parent);
+	void savePreferences();
+
+private slots:
+	void saveProviderPreferences();
+	void setOptions(const QString& name);
+	void showDescription();
+	void changeOption(QListViewItem* i);
+
+private:
+	SMSSendPrefsUI* prefWidget;
+	QMap<QString, QString> descriptions;
+	QStringList providers();
+} ;
+
+#endif //SMSSEND_H
