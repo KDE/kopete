@@ -10,6 +10,7 @@
 #include <kconfig.h>
 
 #include <kopete.h>
+#include <kopeteaway.h>
 
 KopeteAwayDialog::KopeteAwayDialog()
 {
@@ -24,10 +25,11 @@ void KopeteAwayDialog::slotCancelClicked()
 
 void KopeteAwayDialog::slotOkayClicked()
 {
-	kopeteapp->away()->mAwayMessage = mleMessage->text();
+	awayInstance = KopeteAway::getInstance();
+	awayInstance->mAwayMessage = mleMessage->text();
 	close();
-        kopeteapp->away()->config->setGroup("");
-        kopeteapp->away()->config->writeEntry ( "AwayMessage", kopeteapp->away()->mAwayMessage );
-        kopeteapp->away()->config->sync();
+        awayInstance->config->setGroup("");
+        awayInstance->config->writeEntry ( "AwayMessage", awayInstance->mAwayMessage );
+        awayInstance->config->sync();
 				
 }

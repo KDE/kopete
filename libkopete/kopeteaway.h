@@ -9,13 +9,14 @@ class KopeteAway
 friend class KopeteAwayDialog;
 	
 	public:
-	KopeteAway();
-	~KopeteAway();
+	static KopeteAway *getInstance();
 	
-	QString message();
-	void show();
+	static QString message();
+	static void show();
 
 	private:
+	KopeteAway();
+	static KopeteAway *instance;
 	QString mAwayMessage;
 	KConfig *config;
 };

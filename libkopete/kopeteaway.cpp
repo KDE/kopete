@@ -8,6 +8,8 @@
 #include <kopete.h>
 #include "kopeteawaydialog.h"
 
+KopeteAway *KopeteAway::instance = 0L;
+
 KopeteAway::KopeteAway()
 {
 	config = KGlobal::config();
@@ -17,12 +19,22 @@ KopeteAway::KopeteAway()
 
 QString KopeteAway::message()
 {
-	return mAwayMessage;
+	return KopeteAway::getInstance()->mAwayMessage;
 }
 
 void KopeteAway::show()
 {
 	KopeteAwayDialog awaydialog;
-	awaydialog.mleMessage->setText(mAwayMessage);
+	awaydialog.mleMessage->setText(KopeteAway::getInstance()->mAwayMessage);
 	awaydialog.exec();
 }
+
+KopeteAway *KopeteAway::getInstance()
+{
+	if (instance == 0L)
+	{
+		instance = new KopeteAway;
+	}
+	return instance;
+}
+
