@@ -228,7 +228,7 @@ bool WebPresencePlugin::transform( KTempFile* src, KTempFile* dest )
 		xsltFreeStylesheet(cur);
 	}
 	else
-		error = "find stylesheet!";
+		error = "find stylesheet" + sheet.name() + "!";
 
 	xsltCleanupGlobals();
 	xmlCleanupParser();
