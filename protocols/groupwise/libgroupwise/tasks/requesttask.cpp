@@ -40,6 +40,14 @@ bool RequestTask::take( Transfer * transfer )
 	if ( forMe( transfer ) )
 	{
 		qDebug( "RequestTask::take() - Default take() Accepting transaction ack, taking no further action" );
+		Response * response = dynamic_cast<Response *>( transfer );
+		Field::FieldList responseFields = response->fields();
+		Field::SingleField * resultCodeField = responseFields.findSingleField( NM_A_SZ_RESULT_CODE );
+		int resultCode = resultCodeField->value().toInt();
+		if ( resultCode == GroupWise::None )
+			setSuccess();
+		else
+			setError( resultCode );
 		return true;
 	}
 	else
