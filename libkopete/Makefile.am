@@ -11,4 +11,4 @@ libkopete_la_SOURCES = kopete.cpp improtocol.cpp imcontact.cpp \
 						kopeteevent.cpp
 libkopete_la_METASOURCES = AUTO
 libkopete_la_LDFLAGS     = 
-libkopete_la_LIBADD      = ui/libkopeteui.la
+libkopete_la_LIBADD      = ui/libkopeteui.la $(LIB_KDECORE)
