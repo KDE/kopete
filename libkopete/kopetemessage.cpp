@@ -27,6 +27,7 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kstringhandler.h>
+#include <kstandarddirs.h>
 #include <ktempfile.h>
 
 #include "kopetemessage.h"
@@ -152,7 +153,6 @@ Message& Message::operator=( const Message &other )
 Message::~Message()
 {
 }
-
 
 void Message::detach()
 {
@@ -509,10 +509,10 @@ QDomElement Message::contactNode( QDomDocument doc, const Contact *contact )
 		QImage photo = contact->metaContact()->photo();
 		if( !photo.isNull() )
 		{
-			d->photoFile = KTempFile( QString::null, QString::fromLatin1("png") );
+			d->photoFile = KTempFile( locateLocal("tmp", QString::fromLatin1("tmpimage-")), QString::fromLatin1("png") );
 			d->photoFile.setAutoDelete( true );
 			d->photoFile.close();
-			photo.save( d->photoFile.name(), "PNG" );
+			photo.save ( d->photoFile.name(), "PNG" );
 			contactNode.setAttribute( QString::fromLatin1("userPhoto"), QStyleSheet::escape( d->photoFile.name() ) );
 		}
 	}
