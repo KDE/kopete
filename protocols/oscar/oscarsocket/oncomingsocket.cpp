@@ -29,13 +29,17 @@ OncomingSocket::OncomingSocket(QObject *parent, const char *name )
 }
 
 OncomingSocket::OncomingSocket(OscarSocket *server, const QHostAddress &address,
-	OscarConnection::ConnectionType type,	Q_UINT16 port, int backlog, QObject *parent, const char *name)
-: QServerSocket(address,port,backlog,parent,name)
+	OscarConnection::ConnectionType type,
+	Q_UINT16 port,
+	int backlog,
+	QObject *parent,
+	const char *name)
+	: QServerSocket(address,port,backlog,parent,name)
 {
 	mType = type;
 	mServer = server;
-  mConns.setAutoDelete(TRUE);
-  mPendingConnections.setAutoDelete(TRUE);
+	mConns.setAutoDelete(TRUE);
+	mPendingConnections.setAutoDelete(TRUE);
 }
 
 OncomingSocket::~OncomingSocket()
@@ -45,33 +49,36 @@ OncomingSocket::~OncomingSocket()
 	{
 		if (tmp->finfo)
 			delete tmp->finfo;
-  }
+	}
 
 	mPendingConnections.clear();
 }
 
-/** Called when someone connects to the server socket */
-void OncomingSocket::newConnection( int socket )
+// Called when someone connects to the server socket
+void OncomingSocket::newConnection(int socket)
 {
+	kdDebug(14150) << k_funcinfo << "Called! Socket=" << socket << endl;
+
 	for (DirectInfo *tmp=mPendingConnections.first(); tmp; tmp = mPendingConnections.next())
 	{
-  }
+	}
+
 	// TODO: fix this later so that it searches the whole list
-  DirectInfo *tmp = mPendingConnections.first();
-  if (!tmp)
-  {
-  	kdDebug(14150) << k_funcinfo << "no pending connection exists!  uh oh" << endl;
-   	return;
-  }
-  OscarConnection *newsock = createAppropriateType(tmp);
+	DirectInfo *tmp = mPendingConnections.first();
+	if (!tmp)
+	{
+		kdDebug(14150) << k_funcinfo << "no pending connection exists! uh oh" << endl;
+		return;
+	}
+	OscarConnection *newsock = createAppropriateType(tmp);
 	setupConnection(newsock);
 	newsock->setSocket(socket);
-	//The line below needs to be here if one person is behind a firewall, because
-	//AIM clients will try to reverse the connection if that is the case
-	//if ( tmp->type == DirectInfo::Incoming )  && mType == OscarConnection::SendFile )
-  	newsock->sendFileSendRequest();
 
-	kdDebug(14150) << "[Oscar][OncomingSocket]newConnection called!  socket " << socket << endl;
+	// The line below needs to be here if one person is behind a firewall, because
+	// AIM clients will try to reverse the connection if that is the case
+	// if ( tmp->type == DirectInfo::Incoming ) && mType == OscarConnection::SendFile )
+	newsock->sendFileSendRequest();
+
 }
 
 /** Finds the connection with cookie @cookie and returns a pointer to it.
@@ -79,13 +86,11 @@ void OncomingSocket::newConnection( int socket )
 OscarConnection * OncomingSocket::findConnection(const QByteArray &cookie)
 {
 	OscarConnection *tmp;
-	kdDebug(14150) << "[OncomingSocket] there are " << mConns.count() << " connections." << endl;
+//	kdDebug(14150) << k_funcinfo << "There are " << mConns.count() << " connections." << endl;
 	for (tmp = mConns.first(); tmp; tmp = mConns.next())
 	{
-		if ( cookie == tmp->cookie() )
-		{
+		if (cookie == tmp->cookie())
 			return tmp;
-		}
 	}
 	return 0L;
 }
@@ -127,7 +132,7 @@ DirectInfo *OncomingSocket::addPendingConnection(const QString &sn, const QByteA
 /** Called when a connection is ready */
 void OncomingSocket::slotConnectionReady(QString name)
 {
-  OscarConnection *dc = 0L;
+	OscarConnection *dc = 0L;
 	for (DirectInfo *tmp=mPendingConnections.first(); tmp; tmp = mPendingConnections.next())
 	{
 		if ( tmp->sn == tocNormalize(name) )
@@ -140,12 +145,12 @@ void OncomingSocket::slotConnectionReady(QString name)
 
 	if (!dc)
 	{
-		kdDebug(14150) << "[OncomingSocket] Connection " << name << " not found!!!  exiting slotConnectionReady()" << endl;
+		kdDebug(14150) << "[OncomingSocket] Connection " << name << " not found!!! exiting slotConnectionReady()" << endl;
 		return;
 	}
 
 	kdDebug(14150) << "[OncomingSocket] slotConnectionReady(): Setting up direct IM signals!" << endl;
-  // Connect protocol error signal
+	// Connect protocol error signal
 	QObject::connect(dc, SIGNAL(protocolError(QString, int)),
 			mServer, SLOT(OnDirectIMError(QString, int)));
 	// Got IM
@@ -201,9 +206,10 @@ OscarConnection *OncomingSocket::establishOutgoingConnection(const QString &sn)
 			s->connectToHost(tmp->host,tmp->port);
 			return s;
 		}
-  }
-  kdDebug(14150) << k_funcinfo << "WARNING: outgoing connection not found in pending list, returning NULL" << endl;
-  return 0L;
+	}
+
+	kdDebug(14150) << k_funcinfo << "WARNING: outgoing connection not found in pending list, returning NULL" << endl;
+	return 0L;
 }
 
 /** Called when connection named name has been closed */
@@ -237,7 +243,7 @@ OscarConnection * OncomingSocket::createAppropriateType(DirectInfo *tmp)
 	}
 	else // other type?? this should never happen
 	{
-		kdDebug(15150) << "[OncomingSocket] Creating generic OscarConnection type.  INVESTIGATE." << endl;
+		kdDebug(15150) << "[OncomingSocket] Creating generic OscarConnection type. INVESTIGATE." << endl;
 		return new OscarConnection(mServer->getSN(), tmp->sn, mType, tmp->cookie);
 	}
 }
@@ -248,10 +254,8 @@ void OncomingSocket::addFileInfo(const QString &sn, KFileItem *finfo)
 	for (DirectInfo *tmp=mPendingConnections.first(); tmp; tmp = mPendingConnections.next())
 	{
 		if ( tmp->sn == tocNormalize(sn) )
-		{
 			tmp->finfo = finfo;
-		}
-  }
+	}
 }
 
 /** Gets the cookie associated with the pending connection for @sn, stores it in cook */
@@ -264,8 +268,9 @@ bool OncomingSocket::getPendingCookie(const QString &sn, QByteArray &cook)
 			cook.assign(tmp->cookie);
 			return true;
 		}
-  }
- 	return false;
+	}
+	return false;
 }
 
 #include "oncomingsocket.moc"
+// vim: set noet ts=4 sts=4 sw=4:

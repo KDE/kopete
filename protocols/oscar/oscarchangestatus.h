@@ -2,8 +2,7 @@
   oscarchangestatus.h  -  Oscar Protocol Plugin
 
   Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
-
-  Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+  Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -20,32 +19,26 @@
 
 #include <qwidget.h>
 #include <kopeteawaydialog.h>
-#include "oscarsocket.h"
 
+class OscarSocket;
 /**
- * The dialog that is dislpayed when we want
+ * The dialog that is displayed when we want
  * to put up an away message
  * @author Tom Linsky <twl6@po.cwru.edu>
  * @author Chris TenHarmsel <tenharmsel@users.sourceforge.net>
  */
 
-class OscarChangeStatus : public KopeteAwayDialog {
-    Q_OBJECT
-public:
-    OscarChangeStatus(OscarSocket *engine,
-		      QWidget *parent=0, const char *name=0);
+class OscarChangeStatus : public KopeteAwayDialog
+{
+	Q_OBJECT
 
-protected slots:
-    virtual void setAway(int awayType);
-private:
-    OscarSocket *mEngine;
+	public:
+		OscarChangeStatus(OscarSocket *engine, QWidget *parent=0, const char *name="OscarchangeStatus");
+
+	protected slots:
+		virtual void setAway(int awayType);
+	private:
+		OscarSocket *mEngine;
 };
-
 #endif
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 4
- * indent-tabs-mode: t
- * End:
- */
+// vim: set noet ts=4 sts=4 sw=4:

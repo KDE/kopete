@@ -194,17 +194,14 @@ KopeteMessageManager* OscarContact::manager( bool )
 		mMsgManager=KopeteMessageManagerFactory::factory()->create(
 			mAccount->myself(), theContacts, OscarProtocol::protocol());
 		// This is for when the user types a message and presses send
-		QObject::connect(
-			mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)),
+		QObject::connect(mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)),
 			this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
 		// For when the message manager is destroyed
-		QObject::connect(
-			mMsgManager, SIGNAL(destroyed()),
-			this, SLOT(slotMessageManagerDestroyed()));
-		// For when the message manager tells us that the user is typing
-		QObject::connect(
-			mMsgManager, SIGNAL(typingMsg(bool)),
-			this, SLOT(slotTyping(bool)));
+		QObject::connect(mMsgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
+
+		// For when the message manager tells us that the user is typing, only for AIM
+		if (!mAccount->isICQ())
+			QObject::connect(mMsgManager, SIGNAL(typingMsg(bool)), this, SLOT(slotTyping(bool)));
 		return mMsgManager;
 	}
 }
@@ -219,7 +216,7 @@ void OscarContact::slotMainStatusChanged(const KopeteOnlineStatus &newStatus)
 //	kdDebug(14150) << k_funcinfo << "called, with status '" << newStatus.description() << "'" << endl;
 
 //	if(newStatus == OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMOFFLINE))
-	if(newStatus == KopeteOnlineStatus::Offline)
+	if(newStatus.status() == KopeteOnlineStatus::Offline)
 	{
 		if(mAccount->isICQ())
 		{
@@ -239,16 +236,27 @@ void OscarContact::slotMainStatusChanged(const KopeteOnlineStatus &newStatus)
 void OscarContact::slotUpdateBuddy()
 {
 	// status did not change, do nothing
-	if( onlineStatus() == mListContact->status() && mIdle == mListContact->idleTime() )
+	if((onlineStatus() == mListContact->status()) && (mIdle == mListContact->idleTime()))
 		return;
-
-	setOnlineStatus( mListContact->status() );
-	kdDebug( 14150 ) << k_funcinfo << "Contact '" << mName << "' is now '" << onlineStatus().description() << "'" << endl;
 
 	// if we have become idle
 	if (mAccount->isConnected())
 	{
-		if ( mListContact->idleTime() > 0 )
+		if (mIdle != mListContact->idleTime())
+		{
+			kdDebug(14150) << k_funcinfo << "Contact '" << displayName()  <<
+				"' mIdle=" << mIdle << ", idletime=" << mListContact->idleTime() << endl;
+		}
+
+		if (onlineStatus() != mListContact->status())
+		{
+			kdDebug(14150) << k_funcinfo << "Contact '" << displayName() << "' changed from '"
+				<< onlineStatus().description() << "' to '" <<  mListContact->status().description() << "'." << endl;
+		}
+
+		setOnlineStatus(mListContact->status());
+
+		if(mListContact->idleTime() > 0)
 		{
 //			kdDebug(14150) << k_funcinfo << "'" << mName << "' is IDLE, idletime=" << mListContact->idleTime() << endl;
 			setIdleState(Idle);
@@ -378,11 +386,10 @@ void OscarContact::slotGotMiniType(QString screenName, int type)
 
 // Called when we want to send a typing notification to
 // the other person
-void OscarContact::slotTyping( bool typing )
+void OscarContact::slotTyping(bool typing)
 {
-	kdDebug( 14150 ) << k_funcinfo << "Typing: " << typing << endl;
-
-	mAccount->getEngine()->sendMiniTypingNotify( tocNormalize(mName),
+//	kdDebug(14150) << k_funcinfo << "Typing: " << typing << endl;
+	mAccount->getEngine()->sendMiniTypingNotify(tocNormalize(mName),
 		typing ? OscarSocket::TypingBegun : OscarSocket::TypingFinished );
 }
 
@@ -399,7 +406,7 @@ void OscarContact::slotOffgoingBuddy(QString sn)
 	}
 }
 
-void OscarContact::slotUserInfo(void)
+void OscarContact::slotUserInfo()
 {
 	if (!mAccount->isConnected())
 	{
@@ -512,7 +519,10 @@ void OscarContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 		return;
 	}
 
-	mAccount->getEngine()->sendIM(message.escapedBody(), mName, false);
+	// FIXME: We don't do HTML in ICQ
+	// we might be able to do that in AIM and we might also convert
+	// HTML to RTF for ICQ type-2 messages  [mETz]
+	mAccount->getEngine()->sendIM(message.plainBody(), mName, false);
 
 	// Show the message we just sent in the chat window
 	manager()->appendMessage(message);
@@ -550,7 +560,7 @@ KActionCollection *OscarContact::customContextMenuActions()
 }
 
 // Method to delete a contact from the contact list
-void OscarContact::slotDeleteContact(void)
+void OscarContact::slotDeleteContact()
 {
 	AIMGroup *group = mAccount->internalBuddyList()->findGroup(mListContact->groupID());
 	if (!group)
@@ -635,7 +645,7 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 }
 
 /** Called when we want to block the contact */
-void OscarContact::slotBlock(void)
+void OscarContact::slotBlock()
 {
 	QString message = i18n( "<qt>Are you sure you want to block %1? \
 		Once blocked, this user will no longer be visible to you. The block can be \
@@ -650,7 +660,7 @@ void OscarContact::slotBlock(void)
 }
 
 /** Called when we want to connect directly to this contact */
-void OscarContact::slotDirectConnect(void)
+void OscarContact::slotDirectConnect()
 {
 	kdDebug(14150) << "[OscarContact] Requesting direct IM with " << mName << endl;
 	QString message = i18n( "<qt>Are you sure you want to establish a direct connection to %1? \
@@ -697,14 +707,14 @@ void OscarContact::slotDirectIMReady(QString name)
 /** Called when the direct connection to contact @name has been terminated */
 void OscarContact::slotDirectIMConnectionClosed(QString name)
 {
-    // Check if we're the one who is directly connected
-    if ( tocNormalize(name) != tocNormalize(mName) )
-	return;
+	// Check if we're the one who is directly connected
+	if ( tocNormalize(name) != tocNormalize(mName) )
+		return;
 
-    kdDebug(14150) << "[OscarContact] Setting direct connect state for "
-				   << mName << " to false." << endl;
+	kdDebug(14150) << "[OscarContact] Setting direct connect state for '"
+		<< mName << "' to false." << endl;
 
-    mDirectlyConnected = false;
+	mDirectlyConnected = false;
 }
 
 /** Sends a file */
@@ -715,23 +725,17 @@ void OscarContact::sendFile(const KURL &sourceURL, const QString &/*altFileName*
 
 	//If the file location is null, then get it from a file open dialog
 	if( !sourceURL.isValid() )
-	{
-		filePath = KFileDialog::getOpenURL( QString::null ,"*.*", 0l,
-			i18n( "Kopete File Transfer" ));
-	}
+		filePath = KFileDialog::getOpenURL(QString::null ,"*", 0L, i18n("Kopete File Transfer"));
 	else
-	{
 		filePath = sourceURL;
-	}
 
-	if ( !filePath.isEmpty() )
+	if(!filePath.isEmpty())
 	{
 		KFileItem finfo(KFileItem::Unknown, KFileItem::Unknown, filePath);
-		kdDebug(14150) << "[OscarContact] File size is "
-					   << (unsigned long)finfo.size() << endl;
+		kdDebug(14150) << k_funcinfo << "File size is " << (unsigned long)finfo.size() << endl;
 
 		//Send the file
-		mAccount->getEngine()->sendFileSendRequest( mName, finfo );
+		mAccount->getEngine()->sendFileSendRequest(mName, finfo);
 	}
 }
 
@@ -739,7 +743,7 @@ void OscarContact::sendFile(const KURL &sourceURL, const QString &/*altFileName*
 void OscarContact::syncGroups()
 {
 	// Log the function entry
-	kdDebug(14150) << k_funcinfo << ": Entering" << endl;
+//	kdDebug(14150) << k_funcinfo << ": Entering" << endl;
 	// Get the new (kopete) group that we belong to
 	KopeteGroupList groups = metaContact()->groups();
 	// Oscar only supports one group per contact, so just get the first one
@@ -750,7 +754,7 @@ void OscarContact::syncGroups()
 		return;
 	}
 
-	kdDebug(14150) << k_funcinfo << ": Getting current oscar group" << endl;
+//	kdDebug(14150) << k_funcinfo << ": Getting current oscar group" << endl;
 	// Get the current (oscar) group that this contact belongs to on the server
 	AIMGroup *currentOscarGroup =
 		mAccount->internalBuddyList()->findGroup( mListContact->groupID() );
@@ -774,9 +778,9 @@ void OscarContact::syncGroups()
 		if (newOscarGroup == 0L)
 		{ // This is a new group, it doesn't exist on the server yet
 			kdDebug(14150) << k_funcinfo
-						   << ": New group did not exist on server, "
-						   << "asking server to create it first"
-						   << endl;
+				<< ": New group did not exist on server, "
+				<< "asking server to create it first"
+				<< endl;
 			// Ask the server to create the group
 			mAccount->getEngine()->sendAddGroup(newKopeteGroup->displayName());
 		}
@@ -792,8 +796,8 @@ void OscarContact::syncGroups()
 
 /** Called when someone wants to send us a file */
 void OscarContact::slotGotFileSendRequest(QString sn, QString message,
-										  QString filename,
-										  unsigned long filesize)
+	QString filename,
+	unsigned long filesize)
 {
 	// Check if we're the one who is directly connected
 	if ( tocNormalize(sn) != tocNormalize(mName) )
@@ -805,31 +809,25 @@ void OscarContact::slotGotFileSendRequest(QString sn, QString message,
 		this, filename, filesize, message);
 }
 
-/** Called when a pending transfer has been accepted */
-void OscarContact::slotTransferAccepted(KopeteTransfer *tr,
-										const QString &fileName)
+void OscarContact::slotTransferAccepted(KopeteTransfer *tr, const QString &fileName)
 {
-    // Check if we're the one who is directly connected
-    if ( tr->info().contact() != this )
-	return;
+	// Check if we're the one who is directly connected
+	if (tr->info().contact() != this)
+		return;
 
-    kdDebug(14150) << k_funcinfo << "Transfer of " << fileName
-				   << " accepted." << endl;
+	kdDebug(14150) << k_funcinfo << "Transfer of '" << fileName << "' from '" << mName << "' accepted." << endl;
 
-    OscarConnection *fs =
-		mAccount->getEngine()->sendFileSendAccept(mName, fileName);
+	OscarConnection *fs = mAccount->getEngine()->sendFileSendAccept(mName, fileName);
 
-    //connect to transfer manager
-    QObject::connect( fs, SIGNAL( percentComplete( unsigned int ) ),
-		      tr, SLOT(slotPercentCompleted( unsigned int )) );
+	//connect to transfer manager
+	QObject::connect(fs, SIGNAL(percentComplete(unsigned int)), tr, SLOT(slotPercentCompleted(unsigned int)));
 }
 
-/** Called when we deny a transfer */
 void OscarContact::slotTransferDenied(const KopeteFileTransferInfo &tr)
 {
 	// Check if we're the one who is directly connected
-	if ( tr.contact() != this )
-	return;
+	if(tr.contact() != this)
+		return;
 
 	kdDebug(14150) << k_funcinfo << "Transfer denied." << endl;
 	mAccount->getEngine()->sendFileSendDeny(mName);
@@ -837,15 +835,17 @@ void OscarContact::slotTransferDenied(const KopeteFileTransferInfo &tr)
 
 /** Called when a file transfer begins */
 void OscarContact::slotTransferBegun(OscarConnection *con,
-									 const QString& file,
-									 const unsigned long size,
-									 const QString &recipient)
+	const QString& file,
+	const unsigned long size,
+	const QString &recipient)
 {
 	if (tocNormalize(con->connectionName()) != tocNormalize(mName))
 		return;
+
 	kdDebug(14150) << k_funcinfo << "adding transfer of " << file << endl;
 	KopeteTransfer *tr = KopeteTransferManager::transferManager()->addTransfer(
 			this, file, size, recipient, KopeteFileTransferInfo::Outgoing );
+
 	//connect to transfer manager
 	QObject::connect(
 		con, SIGNAL(percentComplete(unsigned int)),

@@ -35,8 +35,12 @@ Buffer::Buffer(QObject *parent, const char *name)
 Buffer::Buffer(char *b, Q_ULONG len, QObject *parent, const char *name)
 	: QObject(parent,name)
 {
-	setBuf(b, len);
+	length = 0;
+	alloc_length = 0;
+	alloc_buf = NULL;
+	buf = NULL;
 	connect(this, SIGNAL(bufError(QString)), this, SLOT(OnBufError(QString)));
+	setBuf(b, len);
 }
 
 Buffer::~Buffer()
@@ -197,11 +201,10 @@ DWORD Buffer::getDWord()
 	return retdword;
 }
 
-/** Called when a buffer error occurs */
-void Buffer::OnBufError(QString /*s*/)
+void Buffer::OnBufError(QString s)
 {
 	// Taking this out for now....
-	//kdDebug(14150) << "Buffer error: " << s << endl;
+	kdDebug(14150) << "Buffer error: " << s << endl;
 }
 
 /** sets the buffer and length to the given values */

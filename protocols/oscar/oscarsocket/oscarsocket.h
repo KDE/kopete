@@ -26,6 +26,7 @@
 
 class KFileItem;
 class OscarAccount;
+class QTimer;
 
 struct FLAP
 { //flap header
@@ -69,12 +70,29 @@ struct UserInfo
 	 unsigned long icqextstatus;
 };
 
-#define OSCAR_SERVER 		"login.oscar.aol.com"
-#define OSCAR_PORT 			5190
+#define OSCAR_FAM_1				0x0001 // Services
+#define OSCAR_FAM_2				0x0002 // Location
+#define OSCAR_FAM_3				0x0003 // Contacts, adding, removal, statuschanges
+#define OSCAR_FAM_4				0x0004 // ICBM, messaging
+#define OSCAR_FAM_9				0x0009 // BOS, visible/invisible lists
+#define OSCAR_FAM_11				0x000b // Interval
+#define OSCAR_FAM_19				0x0013 // Roster, Contactlist
+#define OSCAR_FAM_21				0x0015 // icq metasearch, sms, offline messages
+#define OSCAR_FAM_23				0x0017 // new user, registration
+
+
+// used for SRV_RECVMSG, SNAC(4,7)
+#define MSGFORMAT_SIMPLE		0x0001
+#define MSGFORMAT_ADVANCED		0x0002
+#define MSGFORMAT_SERVER		0x0004
+
+#define OSCAR_SERVER 			"login.oscar.aol.com"
+#define OSCAR_PORT 				5190
+/*
 #define OSCAR_OFFLINE		0
 #define OSCAR_ONLINE			1
 #define OSCAR_AWAY			2
-
+*/
 const unsigned short ICQ_STATUS_ONLINE		= 0x0000;
 const unsigned short ICQ_STATUS_OFFLINE	= 0xFFFF;
 const unsigned short ICQ_STATUS_AWAY		= 0x0001;
@@ -83,13 +101,120 @@ const unsigned short ICQ_STATUS_NA			= 0x0004;
 const unsigned short ICQ_STATUS_OCC			= 0x0010;
 const unsigned short ICQ_STATUS_FFC			= 0x0020;
 
-#define USERCLASS_TRIAL			0x0001
-#define USERCLASS_UNKNOWN2 	0x0002
-#define USERCLASS_AOL			0x0004
-#define USERCLASS_UNKNOWN4		0x0008
-#define USERCLASS_AIM			0x0010
-#define USERCLASS_AWAY			0x0020
-#define USERCLASS_ACTIVEBUDDY	0x0400
+#define USERCLASS_TRIAL					0x0001
+#define USERCLASS_UNKNOWN2 			0x0002
+#define USERCLASS_AOL					0x0004
+#define USERCLASS_UNKNOWN4				0x0008
+#define USERCLASS_AIM					0x0010
+#define USERCLASS_AWAY					0x0020
+#define USERCLASS_ACTIVEBUDDY			0x0400
+
+
+#define AIM_CAPS_BUDDYICON			0x00000001
+#define AIM_CAPS_VOICE				0x00000002
+#define AIM_CAPS_IMIMAGE			0x00000004
+#define AIM_CAPS_CHAT				0x00000008
+#define AIM_CAPS_GETFILE			0x00000010
+#define AIM_CAPS_SENDFILE			0x00000020
+#define AIM_CAPS_GAMES				0x00000040
+#define AIM_CAPS_SAVESTOCKS		0x00000080
+#define AIM_CAPS_SENDBUDDYLIST	0x00000100
+#define AIM_CAPS_GAMES2				0x00000200
+#define AIM_CAPS_ISICQ				0x00000400
+#define AIM_CAPS_APINFO				0x00000800
+#define AIM_CAPS_ICQRTF				0x00001000
+#define AIM_CAPS_EMPTY				0x00002000
+#define AIM_CAPS_ICQSERVERRELAY	0x00004000
+#define AIM_CAPS_IS_2001			0x00008000
+#define AIM_CAPS_TRILLIANCRYPT	0x00010000
+#define AIM_CAPS_LAST				0x00020000
+
+static const struct
+{
+    DWORD flag;
+    char data[16];
+} oscar_caps[] =
+{
+	// Chat is oddball.
+	{AIM_CAPS_CHAT,
+	{0x74, 0x8f, 0x24, 0x20, 0x62, 0x87, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	// These are mostly in order.
+	{AIM_CAPS_VOICE,
+	{0x09, 0x46, 0x13, 0x41, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_SENDFILE,
+	{0x09, 0x46, 0x13, 0x43, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	// Advertised by the EveryBuddy client.
+	{AIM_CAPS_ISICQ,
+	{0x09, 0x46, 0x13, 0x44, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_IMIMAGE,
+	{0x09, 0x46, 0x13, 0x45, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_BUDDYICON,
+	{0x09, 0x46, 0x13, 0x46, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_SAVESTOCKS,
+	{0x09, 0x46, 0x13, 0x47, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_GETFILE,
+	{0x09, 0x46, 0x13, 0x48, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_ICQSERVERRELAY,
+	{0x09, 0x46, 0x13, 0x49, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_GAMES,
+	{0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_GAMES2,
+	{0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
+		0x22, 0x82, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_SENDBUDDYLIST,
+	{0x09, 0x46, 0x13, 0x4b, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_ICQRTF,
+	{0x97, 0xb1, 0x27, 0x51, 0x24, 0x3c, 0x43, 0x34,
+		0xad, 0x22, 0xd6, 0xab, 0xf7, 0x3f, 0x14, 0x92}},
+
+	{AIM_CAPS_IS_2001,
+	{0x2e, 0x7a, 0x64, 0x75, 0xfa, 0xdf, 0x4d, 0xc8,
+		0x88, 0x6f, 0xea, 0x35, 0x95, 0xfd, 0xb6, 0xdf}},
+
+	{AIM_CAPS_EMPTY,
+	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
+
+	{AIM_CAPS_TRILLIANCRYPT,
+	{0xf2, 0xe7, 0xc7, 0xf4, 0xfe, 0xad, 0x4d, 0xfb,
+		0xb2, 0x35, 0x36, 0x79, 0x8b, 0xdf, 0x00, 0x00}},
+
+	{AIM_CAPS_APINFO,
+	{0xAA, 0x4A, 0x32, 0xB5, 0xF8, 0x84, 0x48, 0xc6,
+		0xA3, 0xD7, 0x8C, 0x50, 0x97, 0x19, 0xFD, 0x5B}},
+
+	{AIM_CAPS_LAST,
+	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}
+};
+
+#define KOPETE_AIM_CAPS				AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE
+// AIM_CAPS_ICQSERVERRELAY commented out until we support
+// type-2 icq-messages (SRV_RECVMSG with type=0x0004)
+#define KOPETE_ICQ_CAPS				AIM_CAPS_ISICQ | AIM_CAPS_IS_2001 | AIM_CAPS_ICQSERVERRELAY
 
 /**Implements the actual communication with the oscar server
 *@author Tom Linsky
@@ -192,6 +317,8 @@ class OscarSocket : public OscarConnection
 	void sendReqOfflineMessages();
 	/** send acknowledgment for offline messages (ICQ method) */
 	void sendAckOfflineMessages();
+	/** sends a KEEPALIVE packet, empty FLAP channel 5 */
+	void sendKeepalive();
 
 	public slots:
 	/** This is called when a connection is established */
@@ -301,6 +428,7 @@ class OscarSocket : public OscarConnection
 
 
 	void parseICQ_CLI_META(Buffer &);
+	void parseAdvanceMessage(Buffer &, UserInfo &);
 
 	/** Parses a rate change */
 	void parseRateChange(Buffer &inbuf);
@@ -330,6 +458,9 @@ class OscarSocket : public OscarConnection
 	/** Returns the appropriate server socket, based on the capability flag it is passed. */
 	OncomingSocket * serverSocket(DWORD capflag);
 
+	void startKeepalive();
+	void stopKeepalive();
+
 	private slots:
 	/** Called when a connection has been closed */
 	void OnConnectionClosed();
@@ -353,7 +484,9 @@ class OscarSocket : public OscarConnection
 	void OnDirectIMReady(QString name);
 	/** Called when a file transfer begins */
 	void OnFileTransferBegun(OscarConnection *con, const QString& file,
-	const unsigned long size, const QString &recipient);
+		const unsigned long size, const QString &recipient);
+
+	void slotKeepaliveTimer();
 
 	signals:
 	/** The server has sent the key with which to encrypt the password */
@@ -367,7 +500,7 @@ class OscarSocket : public OscarConnection
 	/** A user profile has arrived */
 	void gotUserProfile(UserInfo, QString);
 	/** Emitted when the status of the connection changes during login */
-	void connectionChanged(int, QString);
+//	void connectionChanged(int, QString);
 	/** Emitted when my user info is received */
 	void gotMyUserInfo(UserInfo);
 	/** A buddy list has been received */
@@ -394,7 +527,7 @@ class OscarSocket : public OscarConnection
 
 	private:
 	/** The OscarAccount we're assocated with */
-	OscarAccount *m_account;
+	OscarAccount *mAccount;
 	/** The key used to encrypt the password */
 	char * key;
 	/** The user's password */
@@ -428,6 +561,9 @@ class OscarSocket : public OscarConnection
 	  * out more info and the final CLI_READY command which is the end of a login procedure
 	  */
 	int gotAllRights;
+
+	int keepaliveTime;
+	QTimer *keepaliveTimer;
 
 	signals:
 	/** Called when an SSI acknowledgement is recieved */

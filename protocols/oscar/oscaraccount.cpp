@@ -171,6 +171,7 @@ OscarSocket* OscarAccount::getEngine()
 
 bool OscarAccount::isICQ()
 {
+ 	// FIXME: make this a private bool and determine account type on creation/editing
 	bool isicq=(((accountId()[0]).isNumber()) && (accountId().length()>4));
 //	kdDebug(14150) << k_funcinfo << "Returning " << isicq << endl;
 	return isicq;
@@ -380,7 +381,8 @@ void OscarAccount::slotGoAway()
 			(myself()->onlineStatus().status() == KopeteOnlineStatus::Away) // Away could also be a different AWAY mode (like NA or OCC)
 			)
 		{
-			mEngine->sendStatus(ICQ_STATUS_AWAY);
+			mAwayDialog->show();
+//			mEngine->sendStatus(ICQ_STATUS_AWAY);
 		}
 	}
 	else
@@ -532,7 +534,7 @@ void OscarAccount::slotKopeteGroupRemoved( KopeteGroup *group )
 void OscarAccount::slotGotIM(QString /*message*/, QString sender, bool /*isAuto*/)
 {
 	kdDebug(14150) << k_funcinfo << "account='"<< accountId() <<
-		"' got a buddy for the list, sender='" << sender << "'" << endl;
+		"', sender='" << sender << "'" << endl;
 
 	//basically, all this does is add the person to your buddy list
 	// TODO: Right now this has no support for "temporary" buddies
@@ -541,14 +543,14 @@ void OscarAccount::slotGotIM(QString /*message*/, QString sender, bool /*isAuto*
 
 	if (!mInternalBuddyList->findBuddy(sender))
 	{
-		addContact(tocNormalize(sender), sender, 0L, QString::null, false); // last one should be true
+		addContact(tocNormalize(sender), sender, 0L, QString::null, true); // last one should be true
 	}
 }
 
 // Called when we retrieve the buddy list from the server
 void OscarAccount::slotGotServerBuddyList(AIMBuddyList &buddyList)
 {
-	kdDebug(14150) << "[OscarAccount: " << accountId() << "] slotGotServerBuddyList()" << endl;
+	kdDebug(14150) << k_funcinfo << "account='" << accountId() << "'" << endl;
 
 	//save server side contact list
 	*mInternalBuddyList += buddyList;
@@ -764,33 +766,32 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 
 }
 
-void OscarAccount::slotOurStatusChanged( const KopeteOnlineStatus &newStatus )
+void OscarAccount::slotOurStatusChanged(const KopeteOnlineStatus &newStatus)
 {
-	kdDebug( 14150 ) << k_funcinfo << "status=" << newStatus.internalStatus() << endl;
-	// update our own record of our status
-	myself()->setOnlineStatus( newStatus );
+	kdDebug(14150) << k_funcinfo << "status=" << newStatus.description() <<
+		"(" << newStatus.internalStatus() << ")" << endl;
+	myself()->setOnlineStatus(newStatus); // update record of our status
 }
 
 // Called when we have been warned
 void OscarAccount::slotGotWarning(int newlevel, QString warner)
-{  //this is not a natural decrease in level
+{
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
+
+	//this is not a natural decrease in level
 	if (mUserInfo.evil < newlevel)
 	{
 		QString warnMessage;
-
 		if(warner.isNull())
 			warnMessage = i18n("anonymously");
 		else
 			warnMessage = i18n("...warned by...", "by %1").arg(warner);
-
 		QString message =
 			i18n("You have been warned %1. Your new warning level is %2%.").arg(warnMessage).arg(newlevel);
-
 		KMessageBox::sorry(0L,message);
 	}
 	mUserInfo.evil = newlevel;
 }
-
 
 void OscarAccount::slotGotDirectIMRequest(QString sn)
 {
@@ -805,13 +806,9 @@ void OscarAccount::slotGotDirectIMRequest(QString sn)
 	int result = KMessageBox::questionYesNo(qApp->mainWidget(), message, title);
 
 	if (result == KMessageBox::Yes)
-	{
 		getEngine()->sendDirectIMAccept(sn);
-	}
 	else if (result == KMessageBox::No)
-	{
 		getEngine()->sendDirectIMDeny(sn);
-	}
 }
 
 void OscarAccount::slotGotMyUserInfo(UserInfo newInfo)
@@ -821,20 +818,19 @@ void OscarAccount::slotGotMyUserInfo(UserInfo newInfo)
 
 void OscarAccount::slotIdleActivity()
 {
-	kdDebug(14150) << k_funcinfo << "system is ACTIVE, setting idle time with server to 0" << endl;
-	getEngine()->sendIdleTime( 0 );
+//	kdDebug(14150) << k_funcinfo << "system is ACTIVE, setting idle time with server to 0" << endl;
+	getEngine()->sendIdleTime(0);
 }
 
 // Called when there is no activity for a certain amount of time
 void OscarAccount::slotIdleTimeout()
 {
-	kdDebug(14150) << k_funcinfo << "system is IDLE, setting idle time with server" << endl;
-	//idleTimeout() gives a value in minutes, engine wants seconds
+//	kdDebug(14150) << k_funcinfo << "system is IDLE, setting idle time with server" << endl;
+	// idleTimeout() gives a value in minutes, engine wants seconds
 	int idleTimeout = 0;
-	QString idleString = pluginData(protocol(), "IdleTimeOut");
-	idleTimeout = idleString.toInt();
+	idleTimeout = (pluginData(protocol(), "IdleTimeOut")).toInt();
 
-	getEngine()->sendIdleTime( idleTimeout * 60 );
+	getEngine()->sendIdleTime(idleTimeout*60);
 }
 
 int OscarAccount::randomNewBuddyNum()
