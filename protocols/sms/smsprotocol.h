@@ -68,7 +68,6 @@ private:
 
 	SMSContact *m_mySelf;
 signals:
-    void unloading ( void );
 };
 
 #endif

@@ -271,7 +271,7 @@ private slots:
 	 * A child contact was deleted, remove it from the list, if it's still
 	 * there
 	 */
-	void slotContactDestroyed( QObject *obj );
+	void slotContactDestroyed( KopeteContact* );
 
 	/**
 	 * If a plugin is loaded, maybe dada about this plugins are already cached in the metacontact

@@ -55,14 +55,6 @@ ContactNotesPlugin* ContactNotesPlugin::plugin()
 
 ContactNotesPlugin* ContactNotesPlugin::pluginStatic_ = 0L;
 
-void ContactNotesPlugin::init()
-{
-}
-
-bool ContactNotesPlugin::unload()
-{
-	return true;
-}
 
 bool ContactNotesPlugin::serialize( KopeteMetaContact *metaContact, QStringList &strList  ) const
 {

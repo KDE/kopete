@@ -170,7 +170,7 @@ bool JabberProtocol::unload()
 	protocolInstance = 0L;
 	
 //	emit protocolUnloading();
-	return true;
+	return KopeteProtocol::unload();
 
 }
 

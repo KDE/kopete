@@ -56,9 +56,6 @@ public:
 	 *   Re-implementation of KopetePlugin class methods                       *
 	 ***************************************************************************/
 
-	void init();
-	bool unload();
-
 	bool serialize( KopeteMetaContact *metaContact, QStringList &strList) const;
 	void deserialize( KopeteMetaContact *metaContact, const QStringList& data );
 

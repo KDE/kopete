@@ -34,7 +34,8 @@ void KopetePlugin::init()
 
 bool KopetePlugin::unload()
 {
-	return kopeteapp->libraryLoader()->remove( this );
+	emit unloading();
+	return true;
 }
 
 const char *KopetePlugin::id() const

@@ -80,16 +80,6 @@ void CryptographyPlugin::setCachedPass(const QCString& p)
 	pluginStatic_->m_cachedPass=p;
 }
 
-
-void CryptographyPlugin::init()
-{
-}
-
-bool CryptographyPlugin::unload()
-{
-	return true;
-}
-
 bool CryptographyPlugin::serialize( KopeteMetaContact *metaContact,
 			  QStringList &strList  ) const
 {

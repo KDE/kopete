@@ -40,8 +40,7 @@ SMSProtocol::~SMSProtocol()
 
 bool SMSProtocol::unload()
 {
-	emit unloading();
-	return true;
+	return KopeteProtocol::unload();
 }
 
 void SMSProtocol::Connect()

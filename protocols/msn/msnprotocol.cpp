@@ -120,16 +120,6 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 
 MSNProtocol::~MSNProtocol()
 {
-	m_groupList.clear();
-	m_allowList.clear();
-	m_blockList.clear();
-
-	if(m_notifySocket)
-	{
-		kdDebug() << "MSNProtocol::~MSNProtocol: WARNING NotifySocket was not deleted" <<endl;
-		delete m_notifySocket;
-	}
-
 	s_protocol = 0L;
 }
 
@@ -144,8 +134,6 @@ bool MSNProtocol::unload()
 {
 	kdDebug() << "MSNProtocol::unload" << endl;
 
-	//FIXME: Disconnect mean that m_notyfysocket is 'deletedLater' in slotNotitfySocketClose()
-	//But if we're closing kopete, deleteLater has no effect.
 	Disconnect();
 	
 	if( kopeteapp->statusBar() )
@@ -154,9 +142,17 @@ bool MSNProtocol::unload()
 		delete statusBarIcon;
 	}
 
-//	emit protocolUnloading();
-	kdDebug() << "MSNProtocol::unload - done" << endl;
-	return true;
+  	m_groupList.clear();
+	m_allowList.clear();
+	m_blockList.clear();
+
+	if(m_notifySocket)
+	{
+		kdDebug() << "MSNProtocol::unload: WARNING NotifySocket was not deleted" <<endl;
+		delete m_notifySocket;
+	}
+	
+	return KopeteProtocol::unload();
 }
 
 /*

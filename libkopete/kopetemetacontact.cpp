@@ -76,8 +76,8 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 		connect( c, SIGNAL( displayNameChanged( const QString & ) ),
 			this, SLOT( slotContactNameChanged( const QString & ) ) );
 
-		connect( c, SIGNAL( destroyed( QObject * ) ),
-			this, SLOT( slotContactDestroyed( QObject * ) ) );
+		connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
+			this, SLOT( slotContactDestroyed( KopeteContact * ) ) );
 
 		 if (m_displayName == QString::null)
 			 setDisplayName( c->displayName() );
@@ -145,14 +145,13 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 			disconnect( c, SIGNAL( displayNameChanged( const QString & ) ),
 				this, SLOT( slotContactNameChanged( const QString & ) ) );
 	
-			disconnect( c, SIGNAL( destroyed( QObject * ) ),
-				this, SLOT( slotContactDestroyed( QObject * ) ) );
+			disconnect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
+				this, SLOT( slotContactDestroyed( KopeteContact * ) ) );
 
 			kdDebug() << "KopeteMetaContact::removeContact: Contact disconected" << endl;
 		}
 		emit contactRemoved(c);
 	}
-
 	updateOnlineStatus();
 }
 
@@ -462,10 +461,8 @@ KopeteGroupList KopeteMetaContact::groups() const
 	return m_groups;
 }
 
-void KopeteMetaContact::slotContactDestroyed( QObject *obj )
+void KopeteMetaContact::slotContactDestroyed( KopeteContact *contact )
 {
-	KopeteContact *contact = static_cast<KopeteContact *>( obj );
-
 	removeContact(contact,true);
 }
 

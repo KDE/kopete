@@ -43,6 +43,7 @@ public:
 	/**
 	 * Protocol API. Must be reimplemented
 	 */
+ 	virtual bool unload();
 	virtual QString protocolIcon() const = 0;
 	virtual void Connect()=0;
 	virtual void Disconnect()=0;

@@ -156,7 +156,7 @@ GaduProtocol::unload()
         kopeteapp->statusBar()->removeWidget( statusBarIcon_ );
         delete statusBarIcon_;
     }
-    return true;
+	return KopeteProtocol::unload();
 }
 
 QString

@@ -214,7 +214,7 @@ bool IRCProtocol::unload()
 		delete statusBarIcon;
 	}
 
-	return true;
+	return KopeteProtocol::unload();
 }
 
 ///////////////////////////////////////////////////

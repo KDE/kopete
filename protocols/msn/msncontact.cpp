@@ -167,23 +167,13 @@ void MSNContact::slotViewHistory()
 		historyDialog = new KopeteHistoryDialog(QString("msn_logs/%1.log").arg(m_msnId), displayName(), true, 50, 0, "MSNHistoryDialog");
 
 		connect ( historyDialog, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()) );
-		connect ( historyDialog, SIGNAL(destroyed()), this, SLOT(slotHistoryDialogClosing()) );
 	}
 }
 
 void MSNContact::slotCloseHistoryDialog()
 {
-	kdDebug() << "MSN Plugin: slotCloseHistoryDialog()" << endl;
 	delete historyDialog;
-}
-
-void MSNContact::slotHistoryDialogClosing()
-{
-	kdDebug() << "MSN Plugin: slotHistoryDialogClosing()" << endl;
-	if (historyDialog != 0L)
-	{
-		historyDialog = 0L;
-	}
+	historyDialog = 0L;
 }
 
 void MSNContact::slotUserInfo()

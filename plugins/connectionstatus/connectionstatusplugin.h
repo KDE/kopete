@@ -33,8 +33,6 @@ class ConnectionStatusPlugin : public KopetePlugin
 public:
 	ConnectionStatusPlugin( QObject *parent, const char *name, const QStringList &args );
 	~ConnectionStatusPlugin();
-	virtual void init();
-	virtual bool unload();
 
 private slots:
 	void slotCheckStatus();

@@ -146,10 +146,8 @@ private slots:
 
 	void slotBlockUser();
 
-	void slotHistoryDialogClosing();
 	void slotCloseHistoryDialog();
-  /** No descriptions */
-  void slotMoved(KopeteMetaContact* from);
+	void slotMoved(KopeteMetaContact* from);
 
 
 private:

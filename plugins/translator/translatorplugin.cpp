@@ -147,15 +147,6 @@ TranslatorPlugin* TranslatorPlugin::plugin()
 
 TranslatorPlugin* TranslatorPlugin::pluginStatic_ = 0L;
 
-void TranslatorPlugin::init()
-{
-}
-
-bool TranslatorPlugin::unload()
-{
-	return true;
-}
-
 bool TranslatorPlugin::serialize( KopeteMetaContact *metaContact,
 			  QStringList &strList  ) const
 {

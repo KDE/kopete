@@ -104,6 +104,12 @@ public slots:
 	 */
 	virtual void addressBookFieldChanged( KopeteMetaContact *c,
 		const QString &key );
+
+signals: 
+	/*
+	 * Signal emitted when the protocol is unloaded
+	 */
+	void unloading();
 };
 
 #endif

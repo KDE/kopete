@@ -289,13 +289,6 @@ bool LibraryLoader::remove(const KopetePlugin *plugin)
 
 }
 
-/*
-Playlist *LibraryLoader::playlist() const
-{
-        return mPlaylist;
-}
-*/
-
 QValueList<KopeteLibraryInfo> LibraryLoader::loaded() const
 {
 	QValueList<KopeteLibraryInfo> items;
@@ -334,8 +327,8 @@ void LibraryLoader::removeNow(const QString &spec)
 	lib->plugin=0;
 
 	mLibHash.remove(spec);
-//	delete lib->library;
-//	delete lib;
+	lib->library->unload();
+	delete lib;
 }
 
 KopetePlugin* LibraryLoader::searchByID( const QString &Id )

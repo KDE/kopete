@@ -132,7 +132,9 @@ WPProtocol::~WPProtocol()
 {
 	DEBUG(WPDMETHOD, "WPProtocol::~WPProtocol()");
 
-	QPtrList<KopeteMetaContact> metaContacts = KopeteContactList::contactList()->metaContacts();
+	//contacts are now deleted himself when the protocol unload. this code is obsolete
+	/*
+   	QPtrList<KopeteMetaContact> metaContacts = KopeteContactList::contactList()->metaContacts();
 	for(KopeteMetaContact *i = metaContacts.first(); i; i = metaContacts.next())
 	{	DEBUG(WPDINFO, "Checking metacontact: " << i->displayName());
 		QPtrList<KopeteContact> contacts = i->contacts();
@@ -144,11 +146,9 @@ WPProtocol::~WPProtocol()
 			}
 		}
 	}
-
-	delete theInterface;
 	delete theMyself;
-
-	DEBUG(WPDINFO, "Deleted OK.");
+	
+	DEBUG(WPDINFO, "Deleted OK.");*/
 }
 
 QStringList WPProtocol::addressBookFields() const
@@ -255,8 +255,9 @@ bool WPProtocol::unload()
 		delete statusBarIcon;
 	}
 
-	// TODO: check i dont have to call the original!
- 	return true;
+	delete theInterface;
+	
+	return KopeteProtocol::unload();
 }
 
 void WPProtocol::Connect()

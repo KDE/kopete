@@ -27,8 +27,14 @@ KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)
 
 KopeteProtocol::~KopeteProtocol()
 {
-	kopeteapp->sessionFactory()->cleanSessions(this);
 }
+
+bool KopeteProtocol::unload()
+{
+	kopeteapp->sessionFactory()->cleanSessions(this);
+	return KopetePlugin::unload();
+}
+
 
 QString KopeteProtocol::icon() const
 {
@@ -40,5 +46,5 @@ void KopeteProtocol::setIcon( const QString &icon )
 	m_icon = icon;
 }
 
-// vim: set noet ts=4 sts=4 sw=4:
 
+// vim: set noet ts=4 sts=4 sw=4:

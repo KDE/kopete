@@ -50,7 +50,7 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, KopeteMetaContact *paren
 	contextMenu = 0L;
 	mFileCapable = false;
 
-	connect(protocol, SIGNAL(destroyed()), this, SLOT(slotProtocolUnloading()));
+	connect(protocol, SIGNAL(unloading()), this, SLOT(slotProtocolUnloading()));
 	
 	/* Initialize the context Menu */
 	initActions();

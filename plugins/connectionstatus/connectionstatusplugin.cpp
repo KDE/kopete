@@ -49,15 +49,6 @@ ConnectionStatusPlugin::~ConnectionStatusPlugin()
 	delete qtTimer;
 }
 
-void ConnectionStatusPlugin::init()
-{
-}
-
-bool ConnectionStatusPlugin::unload()
-{
-	return true;
-}
-
 void ConnectionStatusPlugin::slotCheckStatus()
 {
 	/* Use KProcess to run netstat -r. We'll then parse the output of

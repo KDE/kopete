@@ -180,7 +180,7 @@ bool YahooProtocol::unload()
 		delete statusBarIcon;
 	}
 
-	return true;
+	return KopeteProtocol::unload();
 }
 
 void YahooProtocol::init()
