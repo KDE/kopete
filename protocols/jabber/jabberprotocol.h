@@ -205,15 +205,7 @@ public slots:
 						int priority = 5);
 
 		/**
-		 * Send a raw message to the server
-		 * (usually called by the dialog widget)
-		 */
-// 		void sendRawMessage(const QString &packet);
-
-		/**
-		 * Sends some sort of presence thing....I guess
-		 * I wish someone would write docs when they write
-		 * code - Ph0nK
+		 * Sends a presence packet to a node
 		 */
 		void sendPresenceToNode(const Presence &, const QString &);
 

@@ -868,16 +868,6 @@ void JabberProtocol::slotSendRaw()
 
 }
 
-// void JabberProtocol::sendRawMessage(const QString &packet)
-// {
-
-// 		kdDebug(JABBER_DEBUG_GLOBAL) << "--- Sending raw message ---" << endl << packet
-// 									 << "---------------------------" << endl ;
-
-// 		jabberClient->send(packet);
-
-// }
-
 void JabberProtocol::subscribe(const Jabber::Jid &jid)
 {
 
