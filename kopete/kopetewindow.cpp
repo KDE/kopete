@@ -246,13 +246,8 @@ void KopeteWindow::initSystray()
 
 KopeteWindow::~KopeteWindow()
 {
-	delete m_pluginConfig;
-}
-
-bool KopeteWindow::queryExit()
-{
 	saveOptions();
-	return true;
+	delete m_pluginConfig;
 }
 
 void KopeteWindow::loadOptions()
@@ -297,7 +292,6 @@ void KopeteWindow::saveOptions()
 
 	saveMainWindowSettings( config, "General Options" );
 
-	globalAccel->writeSettings();
 	config->setGroup("General Options");
 	config->writeEntry("Position", pos());
 	config->writeEntry("Geometry", size());
@@ -390,7 +384,16 @@ void KopeteWindow::slotConfigurePlugins()
 
 void KopeteWindow::slotConfGlobalKeys()
 {
-	KKeyDialog::configure( globalAccel );
+	if(KKeyDialog::configure( globalAccel, this ) )
+	{
+		//KKeyDialog::configure is supposed to save itself. but it does it wrong.
+		// KGlobalAccel::writeSettings / readSettings  uses the group "Global Shortcuts"
+		// but KAccelShortcutList::save() which is called by the KKeyDialog, use an empty
+		//  group which is replaced by "Shortcuts" in KShortcutList::writeSettings
+		globalAccel->writeSettings();
+		//as the result: the config is saved in two different group. - Olivier  07-2004
+	}
+
 }
 
 void KopeteWindow::slotConfToolbar()

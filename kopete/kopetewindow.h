@@ -56,7 +56,6 @@ public:
 
 protected:
 	virtual void closeEvent( QCloseEvent *ev );
-	virtual bool queryExit();
 
 private slots:
 	void showMenubar();
