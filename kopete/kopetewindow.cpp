@@ -212,7 +212,11 @@ void KopeteWindow::slotShowHide()
 		// to a bug in QT or in KDE  (qt3.1.x or KDE 3.1.x) then, i have to call KWin's method
 		if(isMinimized())
 			KWin::deIconifyWindow(winId());
+#if KDE_IS_VERSION(3, 1, 90)
 		if(!KWin::windowInfo(winId(),NET::WMDesktop).onAllDesktops())
+#else
+		if(!KWin::info(winId()).onAllDesktops)
+#endif
 			KWin::setOnDesktop(winId(), KWin::currentDesktop());
 		raise();
 		setActiveWindow();
