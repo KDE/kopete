@@ -34,22 +34,20 @@ ConfigModule::ConfigModule(const QString &name, const QString &description, QObj
 	: QWidget( PreferencesDialog::preferencesDialog()->addPage( name, description ) )
 {
 	if (owner)
-		connect(owner, SIGNAL(destroyed()), SLOT(ownerDeleted()));
+		connect(owner, SIGNAL(destroyed()), parent(), SLOT(deleteLater()));
 	PreferencesDialog::preferencesDialog()->add(this);
 
-	QFrame *page=static_cast<QFrame*>(parent());
-	(new QHBoxLayout(page))->addWidget(this);
+	(new QHBoxLayout(parentWidget()))->addWidget(this);
 }
 
 ConfigModule::ConfigModule(const QString &name, const QString &description, const QString &pixmap, QObject *owner)
 	: QWidget(PreferencesDialog::preferencesDialog()->addPage(name, description, KGlobal::iconLoader()->loadIcon(pixmap,KIcon::NoGroup, KIcon::SizeMedium)  ))
 {
 	if (owner)
-		connect(owner, SIGNAL(destroyed()), SLOT(ownerDeleted()));
+		connect(owner, SIGNAL(destroyed()), parent(), SLOT(deleteLater()));
 	PreferencesDialog::preferencesDialog()->add(this);
 
-	QFrame *page=static_cast<QFrame*>(parent());
-	(new QHBoxLayout(page))->addWidget(this);
+	(new QHBoxLayout(parentWidget()))->addWidget(this);
 }
 
 
@@ -68,15 +66,9 @@ ConfigModule::~ConfigModule()
 	PreferencesDialog::preferencesDialog()->remove(this);
 }
 
-void ConfigModule::ownerDeleted()
-{
-	parent()->deleteLater();
-}
-
 void ConfigModule::activate()
 {
-	QFrame *page=static_cast<QFrame*>(parent());
-	PreferencesDialog::preferencesDialog()->showPage(PreferencesDialog::preferencesDialog()->pageIndex(page));
+	PreferencesDialog::preferencesDialog()->showPage(PreferencesDialog::preferencesDialog()->pageIndex(parentWidget()));
 	PreferencesDialog::preferencesDialog()->show();
 	PreferencesDialog::preferencesDialog()->raise();
 }

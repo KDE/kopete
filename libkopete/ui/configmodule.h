@@ -61,9 +61,6 @@ public slots:
 	void activate();
 
 
-private slots:
-	void ownerDeleted();
-
 };
 
 #endif
