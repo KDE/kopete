@@ -86,6 +86,11 @@ void ConnectionList::registerAuthConnection( Connection* authConnection )
 	m_authConnection = authConnection;
 }
 
+void ConnectionList::registerIconConnection( Connection* iconConnection )
+{
+	m_iconConnection = iconConnection;
+}
+
 void ConnectionList::removeConnection( Connection* connection )
 {
 	if ( connection == m_bosConnection )

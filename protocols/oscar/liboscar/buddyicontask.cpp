@@ -109,7 +109,7 @@ bool BuddyIconTask::take( Transfer* transfer )
 
 void BuddyIconTask::sendAIMBuddyIconRequest()
 {
-	FLAP f = { 0x02, 0, client()->flapSequence() };
+	FLAP f = { 0x02, client()->flapSequence(), 0 };
 	SNAC s = { 0x0010, 0x0004, 0x0000, client()->snacSequence() };
 	Buffer* b = new Buffer;
 
@@ -121,7 +121,6 @@ void BuddyIconTask::sendAIMBuddyIconRequest()
 	b->addString( m_hash, 0x10 ); //MD5 Hash
 	Transfer* t = createTransfer( f, s, b );
 	send( t );
-	delete( t );
 }
 
 void BuddyIconTask::handleAIMBuddyIconResponse()

@@ -70,6 +70,7 @@ public:
 
 	//Protocol specific data
 	bool isIcq;
+	bool redirectRequested;
 	QByteArray cookie;
 	DWORD connectAsStatus; // icq only
 	QString connectWithMessage; // icq only
@@ -102,6 +103,7 @@ Client::Client( QObject* parent )
 	d->tzoffset = 0;
 	d->active = false;
 	d->isIcq = false; //default to AIM
+	d->redirectRequested = false;
 	d->connectAsStatus = 0x0; // default to online
 	d->ssiManager = new SSIManager( this );
 	d->errorTask = 0L;
@@ -712,7 +714,7 @@ void Client::requestBuddyIcon( const QString& user, const QByteArray& hash )
 
 	BuddyIconTask* bit = new BuddyIconTask( d->connections.iconConnection()->rootTask() );
 	connect( bit, SIGNAL( haveIcon( const QString&, const QByteArray& ) ),
-					 this, SIGNAL( haveIconForContact( const QString&, const QByteArray& ) ) );
+	         this, SIGNAL( haveIconForContact( const QString&, const QByteArray& ) ) );
 	bit->requestIconFor( user );
 	bit->setHash( hash );
 	bit->go( true );
@@ -721,11 +723,16 @@ void Client::requestBuddyIcon( const QString& user, const QByteArray& hash )
 
 void Client::requestServerRedirect( WORD family )
 {
-	ServerRedirectTask* srt = new ServerRedirectTask( d->connections.bosConnection()->rootTask() );
-	connect( srt, SIGNAL( haveServer( const QString&, const QByteArray&, WORD ) ),
-					 this, SLOT( haveServerForRedirect( const QString&, const QByteArray& cookie, WORD ) ) );
-	srt->setService( family );
-	srt->go( true );
+	if ( d->redirectRequested == false  )
+	{
+		d->redirectRequested = true;
+		ServerRedirectTask* srt = new ServerRedirectTask( d->connections.bosConnection()->rootTask() );
+		connect( srt, SIGNAL( haveServer( const QString&, const QByteArray&, WORD ) ),
+		         this, SLOT( haveServerForRedirect( const QString&, const QByteArray&, WORD ) ) );
+		srt->setService( family );
+		srt->go( true );
+	}
+
 }
 
 void Client::haveServerForRedirect( const QString& host, const QByteArray& cookie, WORD family )
@@ -742,10 +749,10 @@ void Client::haveServerForRedirect( const QString& host, const QByteArray& cooki
 	{
 		realHost = host;
 		realPort = QString::fromLatin1("5190");
-}
+	}
 
 	Connection* c = createConnection( realHost, realPort );
-
+	d->connections.registerIconConnection( c );
 	//create the new login task
 	m_loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
 	m_loginTaskTwo->setCookie( cookie );
@@ -753,7 +760,7 @@ void Client::haveServerForRedirect( const QString& host, const QByteArray& cooki
 
 	
 	//connect
-	connectToServer( c, d->host, false ) ;
+	connectToServer( c, d->host, false );
 	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
 }
 

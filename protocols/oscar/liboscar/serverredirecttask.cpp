@@ -65,13 +65,13 @@ bool ServerRedirectTask::take( Transfer* transfer )
 
 void ServerRedirectTask::requestNewService()
 {
-	FLAP f = { 0x02, 0x00, client()->flapSequence() };
+	FLAP f = { 0x02, client()->flapSequence(), 0x00 };
 	SNAC s = { 0x0001, 0x0004, 0x0000, client()->snacSequence() };
-	Buffer* b = new Buffer;
+	Buffer* b = new Buffer();
 	b->addWord( m_service );
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Requesting server for service " << m_service << endl;
 	Transfer* t = createTransfer( f, s, b );
 	send( t );
-	delete t;
 }
 
 bool ServerRedirectTask::handleRedirect()
