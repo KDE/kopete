@@ -31,6 +31,18 @@
 #include "yahooaccount.h"
 #include "yahoocontact.h"
 
+YahooAwayDialog::YahooAwayDialog(YahooAccount* account, QWidget *parent, const char *name) :
+	KopeteAwayDialog(parent, name)
+{
+	theAccount = account;
+}
+
+void YahooAwayDialog::setAway(int awayType)
+{
+	theAccount->setAway(awayType, getSelectedAwayMessage());
+}
+
+
 YahooAccount::YahooAccount(YahooProtocol *parent, const QString& AccountID, const char *name)
 : KopeteAccount(parent, AccountID, name)
 {
@@ -39,7 +51,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& AccountID, cons
 	// first things first - initialise internals
 	theHaveContactList = false;
 	stateOnConnection = 0;
-	theAwayDialog = 0L;
+	theAwayDialog = new YahooAwayDialog(this);
 
 	// we need this quite early (before initActions at least)
 	kdDebug(14180) << "Yahoo: Creating myself with name = " << accountId() << endl;
@@ -51,6 +63,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& AccountID, cons
 
 YahooAccount::~YahooAccount()
 {
+  delete theAwayDialog;
 }
 
 void YahooAccount::slotGoStatus(int status, const QString &awayMessage)
@@ -399,12 +412,6 @@ void YahooAccount::slotRemoveHandler( int /* fd */ )
 {
 //	kdDebug(14180) << k_funcinfo << endl;
 }
-
-void YahooAwayDialog::setAway(int awayType)
-{
-	theAccount->setAway(awayType, getSelectedAwayMessage());
-}
-
 
 #include "yahooaccount.moc"
 

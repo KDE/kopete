@@ -40,9 +40,7 @@ class YahooAccount;
 class YahooAwayDialog : public KopeteAwayDialog
 {
 public:
-	YahooAwayDialog(YahooAccount *account, QWidget *parent = 0, const char *name = 0) :
-		KopeteAwayDialog(parent, name) { theAccount = account; }
-
+	YahooAwayDialog(YahooAccount *account, QWidget *parent = 0, const char *name = 0);
 	virtual void setAway(int awayType);
 
 private:
