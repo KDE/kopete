@@ -410,7 +410,7 @@ void KMSNServiceSocket::parseCommand(QString str)
 		//emit connected(true);
 		// set the status to online
 		// create an option in config dialog to select the state to be set
-		setStatus(NLN);
+		setStatus(KMSNService::NLN);
 		sendCVR();
 		return;
 	}
@@ -548,17 +548,17 @@ void KMSNServiceSocket::addContact( const QString &handle, QString publicName, u
 	QString command;
 	QString strGroup;
 	strGroup.setNum(group);
-	if( list == FL )
+	if( list == KMSNService::FL )
 	{
 		command.sprintf("ADD %lu FL ",ID);
 		command += handle.utf8() + " " + handle.utf8() + " " +strGroup.utf8() + "\r\n";
 	}
-	if( list == AL )
+	if( list == KMSNService::AL )
 	{
 		command.sprintf("ADD %lu AL ",ID);
 		command += handle.utf8() + " " + publicName.replace(QRegExp(" "),"%20").utf8() + "\r\n";
 	}
-	if( list == BL )
+	if( list == KMSNService::BL )
 	{
 		command.sprintf("ADD %lu BL ",ID);
 		command += handle.utf8() + " " + publicName.replace(QRegExp(" "),"%20").utf8() + "\r\n";
@@ -574,19 +574,19 @@ void KMSNServiceSocket::removeContact( const QString &handle, uint group, int li
 	strGroup.setNum(group);
 	switch(list)
 	{
-		case FL:
+		case KMSNService::FL:
 		{
 			command.sprintf("REM %lu FL ",ID);
 			command += handle.utf8() + " " +strGroup.utf8() + "\r\n";
 			break;
 		}
-		case AL:
+		case KMSNService::AL:
 		{
 			command.sprintf("REM %lu AL ",ID);
 			command += handle.utf8() + "\r\n";
 			break;
 		}
-		case BL:
+		case KMSNService::BL:
 		{
 			command.sprintf("REM %lu BL ",ID);
 			command += handle.utf8() + "\r\n";
@@ -603,47 +603,47 @@ void KMSNServiceSocket::setStatus( int status )
 	QString command;
 	switch(status)
 	{
-		case NLN:
+		case KMSNService::NLN:
 		{
 			command.sprintf("CHG %lu NLN\r\n",ID);
 			break;
 		}
-		case BSY:
+		case KMSNService::BSY:
 		{
 			command.sprintf("CHG %lu BSY\r\n",ID);
 			break;
 		}
-		case BRB:
+		case KMSNService::BRB:
 		{
 			command.sprintf("CHG %lu BRB\r\n",ID);
 			break;
 		}
-		case AWY:
+		case KMSNService::AWY:
 		{
 			command.sprintf("CHG %lu AWY\r\n",ID);
 			break;
 		}
-		case PHN:
+		case KMSNService::PHN:
 		{	
 			command.sprintf("CHG %lu PHN\r\n", ID);
 			break;
 		}
-		case LUN:
+		case KMSNService::LUN:
 		{
 			command.sprintf("CHG %lu LUN\r\n",ID);
 			break;
 		}
-		case FLN:
+		case KMSNService::FLN:
 		{
 			command.sprintf("CHG %lu FLN\r\n",ID);
 			break;
 		}
-		case HDN:
+		case KMSNService::HDN:
 		{
 			command.sprintf("CHG %lu HDN\r\n",ID);
 			break;
 		}
-		case IDL:
+		case KMSNService::IDL:
 		{
 			command.sprintf("CHG %lu IDL\r\n",ID);
 			break;

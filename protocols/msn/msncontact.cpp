@@ -180,7 +180,7 @@ void MSNContact::slotUpdateContact ( QString handle, uint status)
 	mStatus = status;
 	QString tmppublicname = m_protocol->publicName( handle );
 
-	if (mStatus == BLO)
+	if (mStatus == KMSNService::BLO)
 		setName( i18n("%1 (Blocked)").arg(tmppublicname) );
 	else
 		setName( tmppublicname );
@@ -233,17 +233,17 @@ MSNContact::ContactStatus MSNContact::status() const
 {
 	switch ( mStatus )
 	{
-		case NLN: // Online
+		case KMSNService::NLN: // Online
 		{
 			return Online;
 			break;
 		}
-		case BSY: // Busy
-		case IDL: // Idle
-		case AWY: // Away from computer
-		case PHN: // On the phone
-		case BRB: // Be right back
-		case LUN: // Out to lunch
+		case KMSNService::BSY: // Busy
+		case KMSNService::IDL: // Idle
+		case KMSNService::AWY: // Away from computer
+		case KMSNService::PHN: // On the phone
+		case KMSNService::BRB: // Be right back
+		case KMSNService::LUN: // Out to lunch
 		{
 			return Away;
 			break;
@@ -262,42 +262,42 @@ QString MSNContact::statusText() const
 {
 	switch ( mStatus )
 	{
-		case BLO: // blocked
+		case KMSNService::BLO: // blocked
 		{
 			return i18n("Blocked");
 			break;
 		}
-		case NLN: // Online
+		case KMSNService::NLN: // Online
 		{
 			return i18n("Online");
 			break;
 		}
-		case BSY: // Busy
+		case KMSNService::BSY: // Busy
 		{
 			return i18n("Busy");
 			break;
 		}
-		case IDL: // Idle
+		case KMSNService::IDL: // Idle
 		{
 			return i18n("Idle");
 			break;
 		}
-		case AWY: // Away from computer
+		case KMSNService::AWY: // Away from computer
 		{
 			return i18n("Away From Computer");
 			break;
 		}
-		case PHN: // On the phone
+		case KMSNService::PHN: // On the phone
 		{
 			return i18n("On The Phone");
 			break;
 		}
-		case BRB: // Be right back
+		case KMSNService::BRB: // Be right back
 		{
 			return i18n("Be Right Back");
 			break;
 		}
-		case LUN: // Out to lunch
+		case KMSNService::LUN: // Out to lunch
 		{
 			return i18n("Out To Lunch");
 			break;
@@ -314,21 +314,21 @@ QString MSNContact::statusIcon() const
 {
 	switch ( mStatus )
 	{
-		case NLN: // Online
+		case KMSNService::NLN: // Online
 		{
 			return "msn_online";
 			break;
 		}
-		case BSY: // Busy
-		case PHN: // On the phone
+		case KMSNService::BSY: // Busy
+		case KMSNService::PHN: // On the phone
 		{
 			return "msn_na";
 			break;
 		}
-		case IDL: // Idle
-		case AWY: // Away from computer
-		case BRB: // Be right back
-		case LUN: // Out to lunch
+		case KMSNService::IDL: // Idle
+		case KMSNService::AWY: // Away from computer
+		case KMSNService::BRB: // Be right back
+		case KMSNService::LUN: // Out to lunch
 		{
 			return "msn_away";
 			break;
@@ -342,42 +342,42 @@ int MSNContact::importance() const
 {
 	switch ( mStatus )
 	{
-		case BLO: // blocked
+		case KMSNService::BLO: // blocked
 		{
 			return 1;
 			break;
 		}
-		case NLN: // Online
+		case KMSNService::NLN: // Online
 		{
 			return 20;
 			break;
 		}
-		case BSY: // Busy
+		case KMSNService::BSY: // Busy
 		{
 			return 13;
 			break;
 		}
-		case IDL: // Idle
+		case KMSNService::IDL: // Idle
 		{
 			return 15;
 			break;
 		}
-		case AWY: // Away from computer
+		case KMSNService::AWY: // Away from computer
 		{
 			return 10;
 			break;
 		}
-		case PHN: // On the phone
+		case KMSNService::PHN: // On the phone
 		{
 			return 12;
 			break;
 		}
-		case BRB: // Be right back
+		case KMSNService::BRB: // Be right back
 		{
 			return 14;
 			break;
 		}
-		case LUN: // Out to lunch
+		case KMSNService::LUN: // Out to lunch
 		{
 			return 11;
 			break;

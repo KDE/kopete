@@ -187,18 +187,18 @@ bool MSNProtocol::isAway(void) const
 	status = m_msnService->status();
 	switch(status)
 	{
-		case NLN:
+		case KMSNService::NLN:
 		{
 			return false;
 			break;
 		}
-		case FLN:
-		case BSY:
-		case IDL:
-		case AWY:
-		case PHN:
-		case BRB:
-		case LUN:
+		case KMSNService::FLN:
+		case KMSNService::BSY:
+		case KMSNService::IDL:
+		case KMSNService::AWY:
+		case KMSNService::PHN:
+		case KMSNService::BRB:
+		case KMSNService::LUN:
 		{
 	    	return true;
 			break;
@@ -425,7 +425,7 @@ void MSNProtocol::slotGoOnline()
 	if (!isConnected() )
 		Connect();
 	else
-		m_msnService->changeStatus( NLN );
+		m_msnService->changeStatus( KMSNService::NLN );
 }
 void MSNProtocol::slotGoOffline()
 {
@@ -444,7 +444,7 @@ void MSNProtocol::slotGoAway()
 	kdDebug() << "MSN Plugin: Going Away" << endl;
 	if (!isConnected() )
 		Connect();
-	m_msnService->changeStatus( AWY );
+	m_msnService->changeStatus( KMSNService::AWY );
 }
 
 void MSNProtocol::slotConnectedToMSN(bool c)
@@ -467,42 +467,42 @@ void MSNProtocol::slotStateChanged( uint newstate ) const
 	kdDebug() << "MSN Plugin: My Status Changed to " << newstate <<"\n";
 	switch(newstate)
 	{
-		case NLN:
+		case KMSNService::NLN:
 		{
 			statusBarIcon->setPixmap(onlineIcon);
 			break;
 		}
-		case FLN:
+		case KMSNService::FLN:
 		{
 			statusBarIcon->setPixmap(offlineIcon);
 			break;
 		}
-		case AWY:
+		case KMSNService::AWY:
 		{
 			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
-		case BSY:
+		case KMSNService::BSY:
 		{
 			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
-		case IDL:
+		case KMSNService::IDL:
 		{
 			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
-		case PHN:
+		case KMSNService::PHN:
 		{
 			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
-		case BRB:
+		case KMSNService::BRB:
 		{
 			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
-		case LUN:
+		case KMSNService::LUN:
 		{
 			statusBarIcon->setPixmap(awayIcon);
 			break;
