@@ -31,7 +31,6 @@ namespace KWallet { class Wallet; }
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
-#include <qguardedptr.h>
 
 #include <kactivelabel.h>
 #include <kapplication.h>
@@ -63,11 +62,23 @@ class Kopete::Password::Private
 {
 public:
 	Private( const QString &group, uint maxLen )
-	 : configGroup( group ), remembered( false ), maximumLength( maxLen ), isWrong( false )
+	 : refCount( 1 ), configGroup( group ), remembered( false ), maximumLength( maxLen ), isWrong( false )
 	{
 	}
+	Private *incRef()
+	{
+		++refCount;
+		return this;
+	}
+	void decRef()
+	{
+		if( --refCount == 0 )
+			delete this;
+	}
+	/** Reference count */
+	int refCount;
 	/** Group to use for KConfig and KWallet */
-	QString configGroup;
+	const QString configGroup;
 	/** Is the password being remembered? */
 	bool remembered;
 	/** The current password in the KConfig file, or QString::null if no password there */
@@ -88,8 +99,8 @@ public:
 class KopetePasswordRequest : public KopetePasswordRequestBase
 {
 public:
-	KopetePasswordRequest( Kopete::Password &pass )
-	 : QObject( &pass ), mPassword( pass ), mWallet( 0 )
+	KopetePasswordRequest( QObject *owner, Kopete::Password &pass )
+	 : QObject( owner ), mPassword( pass ), mWallet( 0 )
 	{
 	}
 
@@ -122,7 +133,7 @@ public:
 	void slotCancelPressed() {}
 
 protected:
-	Kopete::Password &mPassword;
+	Kopete::Password mPassword;
 	KWallet::Wallet *mWallet;
 };
 
@@ -134,8 +145,8 @@ protected:
 class KopetePasswordGetRequest : public KopetePasswordRequest
 {
 public:
-	KopetePasswordGetRequest( Kopete::Password &pass )
-	 : KopetePasswordRequest( pass )
+	KopetePasswordGetRequest( QObject *owner, Kopete::Password &pass )
+	 : KopetePasswordRequest( owner, pass )
 	{
 	}
 
@@ -173,8 +184,8 @@ public:
 class KopetePasswordGetRequestPrompt : public KopetePasswordGetRequest
 {
 public:
-	KopetePasswordGetRequestPrompt( Kopete::Password &pass,  const QPixmap &image, const QString &prompt, Kopete::Password::PasswordSource source )
-	 : KopetePasswordGetRequest( pass ), mImage( image ), mPrompt( prompt ), mSource( source ), mView( 0 )
+	KopetePasswordGetRequestPrompt( QObject *owner, Kopete::Password &pass,  const QPixmap &image, const QString &prompt, Kopete::Password::PasswordSource source )
+	 : KopetePasswordGetRequest( owner, pass ), mImage( image ), mPrompt( prompt ), mSource( source ), mView( 0 )
 	{
 	}
 
@@ -203,6 +214,7 @@ public:
 		int maxLength = mPassword.maximumLength();
 		if ( maxLength != 0 )
 			mView->m_password->setMaxLength( maxLength );
+		mView->m_password->setFocus();
 
 		// FIXME: either document what these are for or remove them - lilac
 		mView->adjustSize();
@@ -239,8 +251,8 @@ private:
 class KopetePasswordGetRequestNoPrompt : public KopetePasswordGetRequest
 {
 public:
-	KopetePasswordGetRequestNoPrompt( Kopete::Password &pass )
-	 : KopetePasswordGetRequest( pass )
+	KopetePasswordGetRequestNoPrompt( QObject *owner, Kopete::Password &pass )
+	 : KopetePasswordGetRequest( owner, pass )
 	{
 	}
 
@@ -259,7 +271,7 @@ class KopetePasswordSetRequest : public KopetePasswordRequest
 {
 public:
 	KopetePasswordSetRequest( Kopete::Password &pass, const QString &newPass )
-	 : KopetePasswordRequest( pass ), mNewPass( newPass )
+	 : KopetePasswordRequest( 0, pass ), mNewPass( newPass )
 	{
 		if ( KApplication *app = KApplication::kApplication() )
 			app->ref();
@@ -314,13 +326,9 @@ public:
 			// If we end up here, the wallet is enabled, but failed somehow.
 			// Ask the user what to do now.
 
-			// if the Kopete::Password object is destroyed during this message box's
-			// nested event loop, and the user clicks 'Store Unsafe', we will crash!
-
-			// solution: reparent to none, and track the parent. if it's deleted, don't use it.
-			mPassword.removeChild( this );
-			QGuardedPtr<Kopete::Password> watchParent = &mPassword;
-
+			//NOTE: This will start a nested event loop. However, this is fine; the only code we
+			// call after this point is in Kopete::Password, so as long as we've not been deleted
+			// everything should work out OK. We have no parent QObject, so we should survive.
 			if ( KMessageBox::warningContinueCancel( Kopete::UI::Global::mainWidget(),
 			        i18n( "<qt>Kopete is unable to save your password securely in your wallet!<br>"
 			              "Do you want to save the password in the <b>unsafe</b> configuration file instead?</qt>" ),
@@ -328,19 +336,6 @@ public:
 			        KGuiItem( i18n( "Store &Unsafe" ), QString::fromLatin1( "unlock" ) ),
 			        QString::fromLatin1( "KWalletFallbackToKConfig" ) ) != KMessageBox::Continue )
 			{
-				return false;
-			}
-
-			// if our parent was deleted, we can't save the password.
-			// this is a corner case, so we don't worry about handling it properly. just make
-			// sure we don't crash; tell the user and abort.
-			//TODO: either handle this properly (ie make sure we actually save the password) or
-			//      don't stop the app from closing when we're waiting to save it.
-			// solution: reference count the password object. (TODO)
-			if ( watchParent.isNull() )
-			{
-				KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n( "Sorry, your password could not be saved at this time." ),
-				                    i18n( "Unable to Store Password" ) );
 				return false;
 			}
 		}
@@ -361,9 +356,22 @@ Kopete::Password::Password( const QString &configGroup, uint maximumLength, cons
 	readConfig();
 }
 
+Kopete::Password::Password( Password &other, const char *name )
+ : QObject( 0, name ), d( other.d->incRef() )
+{
+}
+
 Kopete::Password::~Password()
 {
-	delete d;
+	d->decRef();
+}
+
+Kopete::Password &Kopete::Password::operator=( Password &other )
+{
+	if ( d == other.d ) return *this;
+	d->decRef();
+	d = other.d->incRef();
+	return *this;
 }
 
 void Kopete::Password::readConfig()
@@ -425,7 +433,7 @@ void Kopete::Password::setWrong( bool bWrong )
 
 void Kopete::Password::requestWithoutPrompt( QObject *returnObj, const char *slot )
 {
-	KopetePasswordRequest *request = new KopetePasswordGetRequestNoPrompt( *this );
+	KopetePasswordRequest *request = new KopetePasswordGetRequestNoPrompt( returnObj, *this );
 	// call connect on returnObj so we can still connect if 'slot' is protected/private
 	returnObj->connect( request, SIGNAL( requestFinished( const QString & ) ), slot );
 	request->begin();
@@ -433,11 +441,12 @@ void Kopete::Password::requestWithoutPrompt( QObject *returnObj, const char *slo
 
 void Kopete::Password::request( QObject *returnObj, const char *slot, const QPixmap &image, const QString &prompt, Kopete::Password::PasswordSource source )
 {
-	KopetePasswordRequest *request = new KopetePasswordGetRequestPrompt( *this, image, prompt, source );
+	KopetePasswordRequest *request = new KopetePasswordGetRequestPrompt( returnObj, *this, image, prompt, source );
 	returnObj->connect( request, SIGNAL( requestFinished( const QString & ) ), slot );
 	request->begin();
 }
 
+// ASYNC password grab. TODO: remove this when it's no longer used.
 QString Kopete::Password::retrieve( const QPixmap &image, const QString &prompt, Kopete::Password::PasswordSource source )
 {
 	uint maxLength = maximumLength();

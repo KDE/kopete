@@ -50,8 +50,17 @@ public:
 	 * @param configGroup The configuration group to save passwords in.
 	 * @param maxLength The maximum length of the password, or 0 if no maximum exists.
 	 */
-	Password(const QString &configGroup, uint maxLength = 0, const char *name = 0);
+	explicit Password( const QString &configGroup, uint maxLength = 0, const char *name = 0 );
+	/**
+	 * Create a shallow copy of this object
+	 */
+	Password( Password &other, const char *name = 0 );
 	~Password();
+
+	/**
+	 * Assignment operator for passwords: make this object represent a different password
+	 */
+	Password &operator=( Password &other );
 
 	/**
 	 * Returns the preferred size for images passed to the retrieve and request functions.
