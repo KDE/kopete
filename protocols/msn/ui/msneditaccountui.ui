@@ -566,7 +566,7 @@ a conversation</string>
                             <string>Block all users not in 'Allowed' &amp;list</string>
                         </property>
                         <property name="whatsThis" stdset="0">
-                            <string>Checking this box will block all users not explicitely shown in the allowed list here, including any contacts not on your contact list.</string>
+                            <string>Checking this box will block all users not explicitly shown in the allowed list here, including any contacts not on your contact list.</string>
                         </property>
                     </widget>
                     <widget class="QFrame">
