@@ -1276,15 +1276,15 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 					if ((u.lastExtStatusUpdateTime == 0xFFFFFFFFL) &&
 						(u.lastExtInfoUpdateTime == 0xFFFFFFFFL))
 					{
-						u.clientName=i18n("Gaim");
+						u.clientName=QString::fromLatin1("Gaim");
 					}
 					else
 					{
 						//kdDebug(14150) << k_funcinfo << "update times revealed MIRANDA" << endl;
 						if (u.lastExtStatusUpdateTime & 0x80000000)
-							u.clientName=i18n("Miranda alpha");
+							u.clientName=QString::fromLatin1("Miranda alpha");
 						else
-							u.clientName=i18n("Miranda");
+							u.clientName=QString::fromLatin1("Miranda");
 
 						DWORD version = (u.lastExtInfoUpdateTime & 0xFFFFFF);
 						BYTE major1 = ((version >> 24) & 0xFF);
@@ -1307,25 +1307,25 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 					}
 					break;
 				case 0xFFFFFF8FL:
-					u.clientName=i18n("StrICQ");
+					u.clientName=QString::fromLatin1("StrICQ");
 					break;
 				case 0xFFFFFF42L:
-					u.clientName=i18n("mICQ");
+					u.clientName=QString::fromLatin1("mICQ");
 					break;
 				case 0xFFFFFFBEL:
-					u.clientName=i18n("alicq");
+					u.clientName=QString::fromLatin1("alicq");
 					break;
 				case 0xFFFFFF7FL:
-					u.clientName=i18n("&RQ");
+					u.clientName=QString::fromLatin1("&RQ");
 					break;
 				case 0xFFFFFFABL:
-					u.clientName=i18n("YSM");
+					u.clientName=QString::fromLatin1("YSM");
 					break;
 				case 0x3AA773EEL:
 					if ((u.lastExtStatusUpdateTime == 0x3AA66380L) &&
 						(u.lastExtInfoUpdateTime == 0x3A877A42L))
 					{
-						u.clientName=i18n("libicq2000");
+						u.clientName=QString::fromLatin1("libicq2000");
 					}
 					break;
 				default:
@@ -1349,45 +1349,45 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 				switch (u.version)
 				{
 					case 10:
-						u.clientName=i18n("ICQ 2003b");
+						u.clientName=QString::fromLatin1("ICQ 2003b");
 						break;
 					case 9:
-						u.clientName=i18n("ICQ Lite");
+						u.clientName=QString::fromLatin1("ICQ Lite");
 						break;
 					default:
-						u.clientName=i18n("ICQ2go");
+						u.clientName=QString::fromLatin1("ICQ2go");
 				}
 			}
 			else if (u.hasCap(CAP_BUDDYICON)) // only gaim seems to advertize this on ICQ
 			{
-				u.clientName=i18n("Gaim");
+				u.clientName=QString::fromLatin1("Gaim");
 			}
 			else if (u.hasCap(CAP_XTRAZ))
 			{
-				u.clientName=i18n("ICQ 4.0 Lite");
+				u.clientName=QString::fromLatin1("ICQ 4.0 Lite");
 			}
 			else if ((u.hasCap(CAP_STR_2001) || u.hasCap(CAP_ICQSERVERRELAY)) &&
 				u.hasCap(CAP_IS_2001))
 			{
-				u.clientName=i18n("ICQ 2001");
+				u.clientName=QString::fromLatin1( "ICQ 2001");
 			}
 			else if ((u.hasCap(CAP_STR_2001) || u.hasCap(CAP_ICQSERVERRELAY)) &&
 				u.hasCap(CAP_STR_2002))
 			{
-				u.clientName=i18n("ICQ 2002");
+				u.clientName=QString::fromLatin1("ICQ 2002");
 			}
 			else if (u.hasCap(CAP_RTFMSGS) && u.hasCap(CAP_UTF8) &&
 				u.hasCap(CAP_ICQSERVERRELAY) && u.hasCap(CAP_ISICQ))
 			{
-				u.clientName=i18n("ICQ 2003a");
+				u.clientName=QString::fromLatin1("ICQ 2003a");
 			}
 			else if (u.hasCap(CAP_ICQSERVERRELAY) && u.hasCap(CAP_ISICQ))
 			{
-				u.clientName=i18n("ICQ 2001b");
+				u.clientName=QString::fromLatin1("ICQ 2001b");
 			}
 			else if ((u.version == 7) && u.hasCap(CAP_RTFMSGS))
 			{
-				u.clientName=i18n("GnomeICU");
+				u.clientName=QString::fromLatin1("GnomeICU");
 			}
 		}
 		//kdDebug(14150) << k_funcinfo << "|| clientName     = " << u.clientName << endl;
