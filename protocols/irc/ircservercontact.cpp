@@ -21,7 +21,9 @@
 #include <kdebug.h>
 #include <qlayout.h>
 #include "ircconsoleview.h"
-#include <ktabctl.h>
+#include <qtabwidget.h>
+#include <qvbox.h>
+#include <kdialogbase.h>
 
 IRCServerContact::IRCServerContact(const QString &server, const QString &nickname, bool connectNow, IRCServerManager *manager)
 	: KListViewItem( kopeteapp->contactList() )
@@ -36,19 +38,12 @@ IRCServerContact::IRCServerContact(const QString &server, const QString &nicknam
 	mServer = server;
 	mWindow = new IRCChatWindow(mServer);
 
-	QFrame *mChatViewContainer = new QFrame(mWindow->mChannelsTabCtl);
-	mChatViewContainer->sizeHint();
-	QVBoxLayout *containerLayout = new QVBoxLayout(mChatViewContainer);
-	containerLayout->setMargin(KDialog::marginHint());
-	
-	IRCConsoleView *consoleView = new IRCConsoleView(mServer, engine, mChatViewContainer, this);
+	IRCConsoleView *consoleView = new IRCConsoleView(mServer, engine, this, mWindow->addVBoxPage(mServer));
+
 	QObject::connect(consoleView, SIGNAL(quitRequested()), this, SLOT(slotQuitServer()));
 	QObject::connect(this, SIGNAL(connecting()), consoleView, SLOT(slotConnecting()));
-	containerLayout->addWidget(consoleView);
-	mWindow->mChannelsTabCtl->addTab(mChatViewContainer, mServer);
 
 	mWindow->show();
-	mChatViewContainer->show();
 	consoleView->show();
 
 	QString title = nickname;

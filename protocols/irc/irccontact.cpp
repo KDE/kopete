@@ -24,6 +24,9 @@
 #include <ktabctl.h>
 #include <kstddirs.h>
 #include <ircchatwindow.h>
+#include <qtabwidget.h>
+#include <kdialogbase.h>
+#include <qvbox.h>
 
 IRCContact::IRCContact(QListViewItem *parent, const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact)
 	: IMContact(parent)
@@ -167,20 +170,14 @@ void IRCContact::slotIncomingMotd(const QString &motd)
 
 void IRCContact::joinNow()
 {
-	
-	/* This is a frame inside the tab, where we put the widgets in */
-	mChatViewContainer = new QFrame(mContact->mWindow->mChannelsTabCtl);
-	mChatViewContainer->sizeHint();
-	QVBoxLayout *containerLayout;
-	containerLayout = new QVBoxLayout(mChatViewContainer);
 
-	chatView = new IRCChatView(mServer, mTarget, this, mChatViewContainer);
-	containerLayout->addWidget(chatView);
-	mContact->mWindow->mChannelsTabCtl->addTab(mChatViewContainer, mTarget);
+	QVBox *parent = mContact->mWindow->addVBoxPage(mTarget);
+	chatView = new IRCChatView(mServer, mTarget, this, parent);
 
 	mContact->mWindow->show();
-	mChatViewContainer->show();
 	chatView->show();
+	mContact->mWindow->showPage(mContact->mWindow->pageIndex(parent));
+	mContact->mWindow->resize(640, 480);
 	QObject::connect(mContact->engine, SIGNAL(userJoinedChannel(const QString &, const QString &)), chatView, SLOT(userJoinedChannel(const QString &, const QString &)));
 	QObject::connect(mContact->engine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)), chatView, SLOT(incomingMessage(const QString &, const QString &, const QString &)));
 	QObject::connect(mContact->engine, SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)), chatView, SLOT(userPartedChannel(const QString &, const QString &, const QString &)));

@@ -26,6 +26,7 @@
 #include <qtimer.h>
 #include <ircchatwindow.h>
 #include <imcontact.h>
+#include <qdict.h>
 
 #include "kirc.h"
 

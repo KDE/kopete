@@ -52,7 +52,6 @@ private:
 	QString mNickname;
 	bool mJoinOnConnect;
 	IRCChatView *chatView;
-	QFrame *mChatViewContainer;
 	KPopupMenu *popup;
 private slots:
 	void slotIncomingMotd(const QString &);
