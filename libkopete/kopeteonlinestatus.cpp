@@ -211,7 +211,25 @@ QPixmap KopeteOnlineStatus::iconFor( const KopeteContact *contact, int size ) co
 	else
 		iconName = contact->icon();
 
-	return cacheLookup( iconName, size, contact->account()->color(),contact->idleTime() >= 10*60 );
+	return cacheLookupByObject( iconName, size, contact->account()->color(),contact->idleTime() >= 10*60 );
+
+}
+
+QString KopeteOnlineStatus::mimeSourceFor( const KopeteContact *contact, int size ) const
+{
+	// figure out what icon we should use for this contact
+ 	QString iconName;
+	if ( contact->icon().isNull() )
+	{
+		if ( d->protocol )
+			iconName = d->protocol->pluginIcon();
+		else
+			iconName = QString::fromLatin1( "unknown" );
+	}
+	else
+		iconName = contact->icon();
+
+	return mimeSource( iconName, size, contact->account()->color(),contact->idleTime() >= 10*60 );
 
 }
 
@@ -226,7 +244,26 @@ QPixmap KopeteOnlineStatus::iconFor( const KopeteAccount *account, int size ) co
 
 	QColor color = account->color();
 
-	return cacheLookup( iconName, size, color, false );
+	return cacheLookupByObject( iconName, size, color, false );
+}
+
+QString KopeteOnlineStatus::mimeSourceFor( const KopeteAccount *account, int size ) const
+{
+	//FIXME: support KopeteAccount having knowledge of a custom icon
+	QString iconName;
+	if ( d->protocol )
+		iconName = d->protocol->pluginIcon();
+	else
+		iconName = QString::fromLatin1( "unknown" );
+
+	QColor color = account->color();
+
+	return mimeSource( iconName, size, color, false );
+}
+
+QPixmap KopeteOnlineStatus::iconFor( const QString &mimeSource ) const
+{
+	return cacheLookupByMimeSource( mimeSource );
 }
 
 QPixmap KopeteOnlineStatus::protocolIcon() const
@@ -237,14 +274,26 @@ QPixmap KopeteOnlineStatus::protocolIcon() const
 	else
 		iconName = QString::fromLatin1( "unknown" );
 
-	return cacheLookup( iconName, 16, QColor() );
+	return cacheLookupByObject( iconName, 16, QColor() );
 }
 
-QPixmap KopeteOnlineStatus::cacheLookup( const QString& icon, int size, QColor color, bool idle) const
+QPixmap KopeteOnlineStatus::cacheLookupByObject( const QString& icon, int size, QColor color, bool idle) const
 {
-	return Kopete::Global::onlineStatusIconCache()->cacheLookup( *this, icon, size, color, idle );
+	return Kopete::Global::onlineStatusIconCache()->cacheLookupByObject( *this, icon, size, color, idle );
 }
 
+QPixmap KopeteOnlineStatus::cacheLookupByMimeSource( const QString &mimeSource ) const
+{
+	return Kopete::Global::onlineStatusIconCache()->cacheLookupByMimeSource( mimeSource );
+}
+
+QString KopeteOnlineStatus::mimeSource( const QString& icon, int size, QColor color, bool idle) const
+{
+	// make sure the item is in the cache
+	Kopete::Global::onlineStatusIconCache()->cacheLookupByObject( *this, icon, size, color, idle );
+	// now return the fingerprint instead
+	return Kopete::Global::onlineStatusIconCache()->fingerprint( *this, icon, size, color, idle );
+}
 
 Kopete::OnlineStatusIconCache *Kopete::Global::onlineStatusIconCache()
 {
@@ -260,17 +309,20 @@ class Kopete::OnlineStatusIconCache::Private
 public:
 	Private() {}
 	QDict< QPixmap > iconCache;
+	QPixmap *nullPixmap;
 };
 
 Kopete::OnlineStatusIconCache::OnlineStatusIconCache()
  : d( new Private() )
 {
 	d->iconCache.setAutoDelete( true );
+	d->nullPixmap = new QPixmap;
 	connect( kapp, SIGNAL( iconChanged(int) ), this, SLOT( slotIconsChanged() ) );
 }
 
 Kopete::OnlineStatusIconCache::~OnlineStatusIconCache()
 {
+	delete d->nullPixmap;
 	delete d;
 }
 
@@ -280,26 +332,43 @@ void Kopete::OnlineStatusIconCache::slotIconsChanged()
 	emit iconsChanged();
 }
 
-QPixmap Kopete::OnlineStatusIconCache::cacheLookup( const KopeteOnlineStatus &statusFor, const QString& icon, int size, QColor color, bool idle)
+QString Kopete::OnlineStatusIconCache::fingerprint( const KopeteOnlineStatus &statusFor, const QString& icon, int size, QColor color, bool idle)
 {
 	// create a 'fingerprint' to use as a hash key
 	// fingerprint consists of description/icon name/color/overlay name/size/idle state
-	QString fingerprint = QString::fromLatin1("%1/%2/%3/%4/%5/%6")
-	                                .arg( statusFor.d->description )
-	                                .arg( icon )
-	                                .arg( color.name() )
-	                                .arg( statusFor.d->overlayIcon )
-	                                .arg( size )
-	                                .arg( idle ? 'i' : 'a' );
+	return QString::fromLatin1("%1/%2/%3/%4/%5/%6")
+								.arg( statusFor.d->description )
+								.arg( icon )
+								.arg( color.name() )
+								.arg( statusFor.d->overlayIcon )
+								.arg( size )
+								.arg( idle ? 'i' : 'a' );
+}
+
+QPixmap Kopete::OnlineStatusIconCache::cacheLookupByObject( const KopeteOnlineStatus &statusFor, const QString& icon, int size, QColor color, bool idle)
+{
+	QString fp = fingerprint( statusFor, icon, size, color, idle );
 
 	// look it up in the cache
-	QPixmap *theIcon= d->iconCache.find( fingerprint );
+	QPixmap *theIcon= d->iconCache.find( fp );
 	if ( !theIcon  )
 	{
 		// cache miss
 //		kdDebug(14010) << k_funcinfo << "Missed " << fingerprint << " in icon cache!" << endl;
 		theIcon = renderIcon( statusFor, icon, size, color, idle);
-		d->iconCache.insert( fingerprint, theIcon );
+		d->iconCache.insert( fp, theIcon );
+	}
+	return *theIcon;
+}
+
+QPixmap Kopete::OnlineStatusIconCache::cacheLookupByMimeSource( const QString &mimeSource )
+{
+	// look it up in the cache
+	const QPixmap *theIcon= d->iconCache.find( mimeSource );
+	if ( !theIcon )
+	{
+		// need to return an invalid pixmap
+		theIcon = d->nullPixmap;
 	}
 	return *theIcon;
 }

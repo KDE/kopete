@@ -226,6 +226,20 @@ public:
 	QPixmap iconFor( const KopeteContact *contact, int size = 16 ) const;
 
 	/**
+	 * \brief Return the mime source for a status icon generated for the given KopeteContact
+	 *
+	 * This behaves essentially like the method above, except for that
+	 * it returns a mime source string that can be used to render the
+	 * image in richtext components and the like. The returned key
+	 * is only valid until the cache is cleared for the next time,
+	 * so no assumptions should be made about long-time availability
+	 * of the referenced data.
+	 * @param contact is the contact the icon should apply to.
+	 * @param size is the size we the icon should be scaled to - 16 is default and so costs nothing
+	 */
+	QString mimeSourceFor( const KopeteContact *contact, int size = 16 ) const;
+
+	/**
 	 * \brief Return a status icon generated for the given KopeteAccount
 	 *
 	 * This will draw an overlay representing the online status
@@ -237,6 +251,32 @@ public:
 	 * @param size is the size we the icon should be scaled to - 16 is default and so costs nothing
 	 */
 	QPixmap iconFor( const KopeteAccount *account, int size = 16 ) const;
+
+	/**
+	 * \brief Return the mime source for a status icon generated for the given KopeteAccount
+	 *
+	 * This behaves essentially like the method above, except for that
+	 * it returns a mime source string that can be used to render the
+	 * image in richtext components and the like. The returned key
+	 * is only valid until the cache is cleared for the next time,
+	 * so no assumptions should be made about long-time availability
+	 * of the referenced data.
+	 * @param account is the account the icon should apply to.
+	 * The account's color causes tinting, if it's plain QColor(), no tinting takes place.
+	 * @param size is the size we the icon should be scaled to - 16 is default and so costs nothing
+	 */
+	QString mimeSourceFor( const KopeteAccount *account, int size = 16 ) const;
+
+	/**
+	 * \brief Return a previously rendered status icon for a mime source key
+	 *
+	 * You can access icons with this method that have previously been rendered
+	 * using mimeSourceFor(). Note that only a cache lookup will be done, so
+	 * if the cache has been invalidated due to a change of icon sets between
+	 * requesting the key (thus rendering the icon) and trying to access the
+	 * icon by key, an invalid pixmap will be returned.
+	 */
+	QPixmap iconFor( const QString &mimeSource ) const;
 
 	/**
 	 * \brief Returns the status icon for the protocol.
@@ -282,7 +322,9 @@ public:
 
 private:
 	KopeteOnlineStatusPrivate *d;
-	QPixmap cacheLookup( const QString& icon, int size, QColor color, bool idle = false) const;
+	QPixmap cacheLookupByObject( const QString& icon, int size, QColor color, bool idle = false) const;
+	QPixmap cacheLookupByMimeSource( const QString &mimeSource ) const;
+	QString KopeteOnlineStatus::mimeSource( const QString& icon, int size, QColor color, bool idle) const;
 	friend class Kopete::OnlineStatusIconCache;
 };
 
@@ -301,7 +343,9 @@ class OnlineStatusIconCache : public QObject
 	OnlineStatusIconCache();
 public:
 	~OnlineStatusIconCache();
-	QPixmap cacheLookup( const KopeteOnlineStatus &statusFor, const QString& icon, int size, QColor color, bool idle = false);
+	QPixmap cacheLookupByObject( const KopeteOnlineStatus &statusFor, const QString& icon, int size, QColor color, bool idle = false);
+	QPixmap cacheLookupByMimeSource( const QString &mimeSource );
+	QString fingerprint( const KopeteOnlineStatus &statusFor, const QString& icon, int size, QColor color, bool idle = false);
 
 signals:
 	void iconsChanged();
@@ -315,6 +359,7 @@ private:
 	friend OnlineStatusIconCache *Global::onlineStatusIconCache();
 	class Private;
 	Private *d;
+	QPixmap *nullPixmap;
 };
 
 }

@@ -115,7 +115,35 @@ const QMimeSource *MimeSourceFactory::data( const QString &abs_name ) const
 			kdDebug( 14010 ) << k_funcinfo << "kopete-metacontact-icon: insufficient information in abs_name: " << parts << endl;
 	}
 
-	
+	if ( parts[0] == QString::fromLatin1("kopete-onlinestatus-icon") )
+	{
+		if ( parts.size() >= 2 )
+		{
+			/*
+			 * We are using a dirty trick here: this mime source is supposed to return the
+			 * icon for an arbitrary KOS instance. To do this, the caller needs to ask
+			 * the KOS for the mime source key first, which also ensures the icon is
+			 * currently in the cache. The cache is global, so we just need to find any
+			 * existing KOS instance to return us the rendered icon from the cache.
+			 * To find a valid KOS, we ask Kopete's account manager to locate an existing
+			 * account. We'll use the myself() instance of that account to reference its
+			 * current KOS object, which in turn has access to the global KOS icon cache.
+			 * Note that if the cache has been invalidated in the meantime, we'll just
+			 * get an empty pixmap back.
+			 */
+			KopeteAccount *account = KopeteAccountManager::manager()->accounts().getFirst();
+			if ( account )
+			{
+				img = account->myself()->onlineStatus().iconFor( parts[1] );
+				completed = true;
+			}
+			else
+				kdDebug( 14010 ) << k_funcinfo << "kopete-onlinestatus-icon: no active account found" << endl;
+		}
+		else
+			kdDebug( 14010 ) << k_funcinfo << "kopete-onlinestatus-icon: insufficient information in abs_name: " << parts << endl;
+	}
+
 	delete d->lastMimeSource;
 	if ( completed )
 		d->lastMimeSource = new QImageDrag( img.convertToImage() );
