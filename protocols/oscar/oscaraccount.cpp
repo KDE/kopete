@@ -455,9 +455,8 @@ void OscarAccount::slotGotServerBuddyList()
 					kdDebug(14150) << k_funcinfo << "Adding SSI contact '" <<
 						bit.current()->name << "' to kopete contact list" << endl;
 
-					addMetaContact(tocNormalize(bit.current()->name),
-						bit.current()->name, 0L,
-						Kopete::Account::Temporary);
+					addMetaContact( tocNormalize(bit.current()->name),
+						bit.current()->name, 0L );
 				}
 				else  //make sure we set the contact to be on the SSI
 				{
@@ -629,6 +628,10 @@ bool OscarAccount::createContact(const QString &contactId,
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"Found contact on internal list. Making new OscarContact" << endl;
+		SSI* ssiGroupItem = engine()->ssiData().findGroup( ssiItem->gid );
+		if ( ssiGroupItem )
+			parentContact->addToGroup( Kopete::ContactList::self()->findGroup( ssiGroupItem->name ) );
+
 		OscarContact* newContact = createNewContact(contactId, parentContact->displayName(), parentContact, true);
 		if ( newContact )
 		{
