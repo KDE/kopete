@@ -70,11 +70,6 @@ JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList) : Kop
 	reasonDialog = 0L;
 	sendRawDialog = 0L;
 
-	// initialize icon that sits in Kopete's status bar
-	statusBarIcon = new StatusBarIcon();
-	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint&)), this, SLOT(slotIconRightClicked(const QPoint&)));
-	statusBarIcon->setPixmap(offlineIcon);
-
 	mPrefs = new JabberPreferences("jabber_protocol_32", this);
 	connect (mPrefs, SIGNAL(saved()), this, SLOT(slotSettingsChanged()));
 
@@ -93,6 +88,11 @@ JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList) : Kop
 	// setup icons and actions
 	initIcons();
 	initActions();
+
+	// initialize icon that sits in Kopete's status bar
+	statusBarIcon = new StatusBarIcon();
+	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint&)), this, SLOT(slotIconRightClicked(const QPoint&)));
+	statusBarIcon->setPixmap(offlineIcon);
 
 	// if we need to connect on startup, do it now
 	if (KGlobal::config()->readBoolEntry("AutoConnect", "0"))
