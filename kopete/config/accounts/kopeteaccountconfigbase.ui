@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>KopeteAccountConfigBase</class>
 <author>Olivier Goffart</author>
 <widget class="QWidget">
@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>397</width>
-            <height>351</height>
+            <height>353</height>
         </rect>
     </property>
     <property name="caption">
@@ -52,7 +52,7 @@
                 <cstring>mButtonUp</cstring>
             </property>
             <property name="text">
-                <string></string>
+                <string>Move &amp;Up</string>
             </property>
         </widget>
         <widget class="KListView" row="0" column="0" rowspan="9" colspan="1">
@@ -132,7 +132,7 @@
                 <cstring>mButtonDown</cstring>
             </property>
             <property name="text">
-                <string></string>
+                <string>Move &amp;Down</string>
             </property>
         </widget>
         <widget class="KColorButton" row="5" column="2">
