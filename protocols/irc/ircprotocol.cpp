@@ -65,10 +65,10 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	// Load all ICQ icons from KDE standard dirs
 
 	m_ChannelOnline = KopeteOnlineStatus( KopeteOnlineStatus::Online,  25, this, 0, "irc_protocol",   i18n( "Go O&nline" ),  i18n( "Online" ));
-	m_ChannelOffline = KopeteOnlineStatus( KopeteOnlineStatus::Offline, 25, this, 1, "irc_protocol_offline", i18n( "Go O&ffline" ), i18n( "Offline" ));
+	m_ChannelOffline = KopeteOnlineStatus( KopeteOnlineStatus::Offline, 25, this, 1, QString::null, i18n( "Go O&ffline" ), i18n( "Offline" ));
 
 	m_UserOnline = KopeteOnlineStatus( KopeteOnlineStatus::Online,  25, this, 0, "irc_normal",   i18n( "Go O&nline" ),  i18n( "Online" ));
-	m_UserOffline = KopeteOnlineStatus( KopeteOnlineStatus::Offline, 25, this, 1, "irc_offline", i18n( "Go O&ffline" ), i18n( "Offline" ));
+	m_UserOffline = KopeteOnlineStatus( KopeteOnlineStatus::Offline, 25, this, 1, QString::null, i18n( "Go O&ffline" ), i18n( "Offline" ));
 
 	setStatusIcon( "irc_protocol_offline" );
 
