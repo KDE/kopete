@@ -458,8 +458,8 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
 
 void KopeteMetaContact::setDisplayName( const QString &name )
 {
-	kdDebug( 14000 ) << k_funcinfo << "Set new contact name to " << name  <<
-		", m_trackChildNameChanges=" << m_trackChildNameChanges << endl;
+	kdDebug( 14000 ) << k_funcinfo << "Change displayName from " << m_displayName <<
+		" to " << name  << ", m_trackChildNameChanges=" << m_trackChildNameChanges << endl;
 
 	if( name == m_displayName )
 		return;
@@ -467,8 +467,15 @@ void KopeteMetaContact::setDisplayName( const QString &name )
 	m_displayName = name;
 	m_trackChildNameChanges = false;
 
+	// Don't rename contacts on the server automagically as not everyone seems
+	// to like it. We need a GUI for this first, but that's post-0.6 work.
+	// After Kopete 0.6 is out we can think about the required options and/or
+	// heuristics for when to sync to or from the server (and in what way)
+	// - Martijn
+#if 0
 	for( KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
 		c->rename( name );
+#endif
 
 	emit displayNameChanged( this, name );
 }
