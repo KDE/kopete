@@ -961,7 +961,11 @@ void OscarSocket::sendIM(const QString &message, OscarContact *contact, bool isA
 		if(codec->canEncode(message)) // this returns true for some accented western european chars but kopete can't decode on receipt
 		{
 			//kdDebug(14150) << k_funcinfo << "Going to encode as US-ASCII" << endl;
-			charset=0x0000; // send US-ASCII
+			// We are forcing kopete to send messages using ISO-8859-1
+			// It's a hack and should be reimplemented in a better way
+			charset=0x0003;
+			codec=QTextCodec::codecForMib(4);
+			//kdDebug(14150) << k_funcinfo << "Now trying ISO-8859-1" << endl;
 		}
 		else
 		{
