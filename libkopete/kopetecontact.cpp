@@ -63,7 +63,7 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	}
 
 	// Initialize the context menu
-	actionSendMessage = KopeteStdAction::sendMessage( this,
+	actionSendMessage = KopeteStdAction::chat( this,
 		SLOT( execute() ), this, "actionSendMessage" );
 	actionViewHistory = KopeteStdAction::viewHistory( this,
 		SLOT( slotViewHistory() ), this, "actionViewHistory" );
