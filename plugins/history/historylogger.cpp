@@ -432,7 +432,10 @@ unsigned int HistoryLogger::getFistMonth(const KopeteContact *c)
 		return getFistMonth();
 
 
-	QDir d( locateLocal( "data", QString::fromLatin1( "kopete/logs/" + c->protocol()->pluginId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) ) ));
+	QDir d(locateLocal("data",QString("kopete/logs/%1").arg(c->protocol()->pluginId().replace(
+		QRegExp(QString::fromLatin1("[./~?*]")),QString::fromLatin1("-"))))
+		);
+
 	d.setFilter( QDir::Files | QDir::NoSymLinks );
 	d.setSorting( QDir::Name );
 
