@@ -37,18 +37,12 @@ class AppearanceConfig_ContactList;
 
 class KopeteAppearanceConfigPrivate;
 
-namespace Kopete
-{
-	class Contact;
-}
-
 namespace KTextEditor
 {
 	class View;
 	class Document;
 }
 
-typedef QPtrList<Kopete::Contact> ContactPtrList;
 typedef QMap<QString,QString> KopeteChatStyleMap;
 
 /**
