@@ -189,6 +189,7 @@ public:
 	QTimer layoutTimer;
 	int layoutSteps;
 	static const int layoutStepsTotal = 10;
+	static const int padding = 2;
 };
 
 BoxComponent::BoxComponent( ComponentBase *parent, Direction dir )
@@ -206,7 +207,7 @@ int BoxComponent::widthForHeight( int height )
 	if ( d->direction != Horizontal )
 		return Component::widthForHeight( height );
 
-	int width = 0;
+	int width = components() * Private::padding;
 	for ( uint n = 0; n < components(); ++n )
 		width += component( n )->widthForHeight( height );
 	return width;
@@ -217,7 +218,7 @@ int BoxComponent::heightForWidth( int width )
 	if ( d->direction == Horizontal )
 		return Component::heightForWidth( width );
 
-	int height = 0;
+	int height = components() * Private::padding;
 	for ( uint n = 0; n < components(); ++n )
 		height += component( n )->heightForWidth( width );
 	return height;
@@ -225,7 +226,7 @@ int BoxComponent::heightForWidth( int width )
 
 void BoxComponent::calcMinSize()
 {
-	int sum = 0, max = 0;
+	int sum = components() * Private::padding, max = 0;
 	bool stretchH = false, stretchV = false;
 	for ( uint n = 0; n < components(); ++n )
 	{
@@ -288,7 +289,7 @@ void BoxComponent::layout( const QRect &rect )
 	int numFixed = components() - numVariable;
 
 	// remaining space after all fixed items have been allocated
-	const int padding = 2;
+	const int padding = Private::padding;
 	int remaining = (horiz ? rect.width() : rect.height()) - fixedSize - padding * components();
 
 	// extra space for each variable-size and each fixed-size item
