@@ -144,6 +144,18 @@ void Buffer::print()
 	kdDebug() << output << endl;
 }
 
+// Returns a QString representation
+QString Buffer::toString(){
+	QString output;
+	for (int i=0;i<length;i++)
+	{
+		if (static_cast<unsigned char>(buf[i]) < 0x10)
+			output += "0";
+		output += QString("%1 ").arg(static_cast<unsigned char>(buf[i]),0,16);
+	}
+	return output;
+}
+
 /** Adds a SNAC to the end of the buffer with given family, subtype, flags, and request ID */
 int Buffer::addSnac(const WORD family, const WORD subtype, const WORD flags, const DWORD id)
 {

@@ -49,6 +49,7 @@ struct RateClass { //rate info
 };
 
 class ServiceSocket;
+class OscarDebugDialog;
 
 #define OSCAR_SERVER 	"login.oscar.aol.com"
 #define OSCAR_PORT 		5190
@@ -127,6 +128,9 @@ public:
   void sendBlock(const QString &sname);
   /** Removes the block on user sname */
   void sendRemoveBlock(const QString &sname);
+	/** Sets the pointer to the debug dialog */
+	void setDebugDialog(OscarDebugDialog *dialog);
+	
 public slots: // Public slots
   /** This is called when a connection is established */
   void OnConnect(void);
@@ -289,6 +293,11 @@ private: // Private attributes
   QString myUserProfile;
   /** Tells if we are connected to the server and ready to operate */
   bool isConnected;
+	/** Pointer to the debug dialog, should not delete */
+	OscarDebugDialog *mDebugDialog;
+	/** Bool indicating whether or not we have a debug dialog */
+	bool mHaveDebugDialog;
+		
 signals: // Signals
   /** Called when an SSI acknowledgement is recieved */
   void SSIAck();

@@ -2,7 +2,7 @@
 
 noinst_LTLIBRARIES = libkopeteoscarsocket.la
 
-AM_CPPFLAGS = -I../ -I../oscarsocket/ -Wall -DDATADIR=\"$(kde_datadir)/kopete\"
+AM_CPPFLAGS = -I../ -I../ui -I../oscarsocket/ -Wall -DDATADIR=\"$(kde_datadir)/kopete\"
 
 libkopeteoscarsocket_la_SOURCES = oscarsocket.cpp protocolsocket.cpp oncomingsocket.cpp buffer.cpp md5.c tbuddylist.cpp servicesocket.cpp aim.cpp ssidata.cpp
 

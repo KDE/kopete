@@ -67,6 +67,8 @@ public:
   int addFlap(const BYTE channel);
   /** Prints out the buffer */
   void print();
+	/** Returns a QString representation of the buffer */
+	QString toString();
   /** Adds a SNAC to the end of the buffer with given family, subtype, flags, and request ID */
   int addSnac(const WORD, const WORD, const WORD, const DWORD);
   /** gets a Dword out of the buffer */

@@ -1,4 +1,4 @@
- /*
+/*
     oscarsocket.cpp  -  Oscar Protocol Implementation
 
     Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
@@ -25,6 +25,8 @@ extern "C" {
 #include "oscarsocket.h"
 #include "oscarsocket.moc"
 #include "oncomingsocket.h"
+#include "oscardebugdialog.h"
+
 #include <qdatetime.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -244,10 +246,11 @@ void OscarSocket::OnRead(void)
 
 	inbuf.setBuf(buf,bytesread);
 
-#ifdef OSCAR_PACKETLOG
-	kdDebug() << "[OSCAR] Input: " << endl;
-	inbuf.print();
-#endif
+	//kdDebug() << "[OSCAR] Input: " << endl;
+	//inbuf.print();
+	if(mHaveDebugDialog){
+			mDebugDialog->addMessageFromServer(inbuf.toString());
+	}
 
 	switch(fl.channel)
 	{
@@ -520,14 +523,16 @@ void OscarSocket::OnConnAckReceived(void)
 /** Sends the output buffer, and clears it */
 void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 {
-#ifdef OSCAR_PACKETLOG
-	kdDebug() << "[OSCAR] Output: " << endl;
-	outbuf.print();
-#endif
 
-	outbuf.addFlap(chan);
-	writeBlock(outbuf.getBuf(),outbuf.getLength());
-	outbuf.clear();
+		//kdDebug() << "[OSCAR] Output: " << endl;
+		//outbuf.print();
+		if(mHaveDebugDialog){
+				mDebugDialog->addMessageFromClient(outbuf.toString());
+		}
+		
+		outbuf.addFlap(chan);
+		writeBlock(outbuf.getBuf(),outbuf.getLength());
+		outbuf.clear();
 }
 
 /** Logs in the user! */
@@ -2157,6 +2162,16 @@ void OscarSocket::sendRemoveBlock(const QString &sname)
 
 	// NOTE TO TOM: use snac headers and SSI acks to do this more correctly
 	emit denyRemoved(sname);
+}
+
+
+void OscarSocket::setDebugDialog(OscarDebugDialog *dialog){
+		if(dialog){
+				mDebugDialog = dialog;
+				mHaveDebugDialog = true;
+		} else {
+				mHaveDebugDialog = false;
+		}
 }
 
 /*
