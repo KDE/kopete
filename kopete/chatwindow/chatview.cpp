@@ -103,6 +103,7 @@ class KopeteChatViewPrivate
 		bool isActive;
 		bool sendInProgress;
 		bool visibleMembers;
+		QTimer sortMembersTimer;
 };
 
 class ChatViewMembersTip : public QToolTip
@@ -193,6 +194,8 @@ ChatView::ChatView( Kopete::MessageManager *mgr, const char *name )
 	d = new KopeteChatViewPrivate;
 
 	d->xsltParser = new Kopete::XSLT( KopetePrefs::prefs()->styleContents() );
+	
+	connect( &d->sortMembersTimer, SIGNAL( timeout() ), this, SLOT( sortMembers() ) );
 
 	hide();
 	
@@ -2026,10 +2029,20 @@ void ChatView::dropEvent ( QDropEvent * event )
 
 }
 
+void ChatView::sortMembersLater()
+{
+	d->sortMembersTimer.start(10, true);
+}
+
+void ChatView::sortMembers()
+{
+	membersList->sort();
+}
+
 //-------------------------------------------------------------------------------------------------------
 //-- class KopeteContactLVI --
 
-KopeteContactLVI::KopeteContactLVI( KopeteView *view, const Kopete::Contact *contact, KListView *parent ) : KListViewItem( parent )
+KopeteContactLVI::KopeteContactLVI( ChatView *view, const Kopete::Contact *contact, KListView *parent ) : KListViewItem( parent )
 {
 	m_contact = const_cast<Kopete::Contact*> ( contact );
 	m_parentView = parent;
@@ -2058,17 +2071,18 @@ void KopeteContactLVI::slotPropertyChanged( Kopete::Contact*, const QString &key
 	if ( key == Kopete::Global::Properties::self()->nickName().key() )
 	{
 		setText( 0, /*QString::fromLatin1( " " ) +*/ newValue.toString() );
-		m_parentView->sort();
+		m_view->sortMembersLater();
 	}
 }
 
-void KopeteContactLVI::slotStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &status,
-	const Kopete::OnlineStatus & )
+void KopeteContactLVI::slotStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &newStatus,
+	const Kopete::OnlineStatus &oldStatus )
 {
 	if ( contact == m_contact )
 	{
-		setPixmap( 0, status.iconFor( m_contact ) );
-		m_parentView->sort();
+		setPixmap( 0, newStatus.iconFor( m_contact ) );
+		if ( newStatus.weight() != oldStatus.weight() )
+			m_view->sortMembersLater();
 	}
 }
 

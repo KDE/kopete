@@ -57,18 +57,20 @@ typedef QPtrList<Contact> ContactPtrList;
 
 namespace KParts { struct URLArgs; class Part; }
 
+class ChatView;
+
 class KopeteContactLVI : public QObject, public KListViewItem
 {
 	Q_OBJECT
 
 public:
-	KopeteContactLVI( KopeteView *view, const Kopete::Contact *contact, KListView *parent );
+	KopeteContactLVI( ChatView *view, const Kopete::Contact *contact, KListView *parent );
 	const Kopete::Contact *contact() const { return m_contact; }
 	virtual QString key( int column, bool /*ascending*/ ) const;
 private:
 	Kopete::Contact *m_contact;
 	KListView *m_parentView;
-	KopeteView *m_view;
+	ChatView *m_view;
 
 private slots:
 	void slotPropertyChanged( Kopete::Contact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
@@ -221,7 +223,8 @@ public:
 	bool isTyping();
 	
 	
-
+	void sortMembersLater();
+	
 
 public slots:
 	/**
@@ -421,6 +424,7 @@ private slots:
 
 	void slotToggleRtfToolbar( bool enabled );
 	
+	void sortMembers();
 	
 protected:
 	virtual void dragEnterEvent ( QDragEnterEvent * );
