@@ -9,53 +9,74 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>430</width>
-            <height>114</height>
+            <width>369</width>
+            <height>168</height>
         </rect>
     </property>
     <property name="caption">
         <string>Form1</string>
     </property>
-    <widget class="QLayoutWidget">
+    <widget class="QLabel">
         <property name="name">
-            <cstring>Layout1</cstring>
+            <cstring>TextLabel2</cstring>
         </property>
         <property name="geometry">
             <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>100</width>
+                <x>15</x>
+                <y>10</y>
+                <width>185</width>
                 <height>30</height>
             </rect>
         </property>
-        <hbox>
-            <property name="name">
-                <cstring>unnamed</cstring>
-            </property>
-            <property name="margin">
-                <number>0</number>
-            </property>
-            <property name="spacing">
-                <number>6</number>
-            </property>
-            <widget class="QLabel">
-                <property name="name">
-                    <cstring>TextLabel2</cstring>
-                </property>
-                <property name="text">
-                    <string>My native language is: </string>
-                </property>
-            </widget>
-            <widget class="QComboBox">
-                <property name="name">
-                    <cstring>m_LangBox</cstring>
-                </property>
-            </widget>
-        </hbox>
+        <property name="text">
+            <string>My default native language</string>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>TextLabel2_2</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>15</x>
+                <y>45</y>
+                <width>185</width>
+                <height>30</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Translation Service:</string>
+        </property>
+    </widget>
+    <widget class="QComboBox">
+        <property name="name">
+            <cstring>m_LangBox</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>200</x>
+                <y>10</y>
+                <width>155</width>
+                <height>30</height>
+            </rect>
+        </property>
+    </widget>
+    <widget class="QComboBox">
+        <property name="name">
+            <cstring>m_ServiceBox</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>200</x>
+                <y>45</y>
+                <width>155</width>
+                <height>30</height>
+            </rect>
+        </property>
     </widget>
     <spacer>
         <property name="name">
-            <cstring>Spacer41</cstring>
+            <cstring>Spacer2</cstring>
         </property>
         <property name="orientation">
             <enum>Vertical</enum>
@@ -65,10 +86,10 @@
         </property>
         <property name="geometry">
             <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>30</width>
-                <height>100</height>
+                <x>155</x>
+                <y>80</y>
+                <width>20</width>
+                <height>85</height>
             </rect>
         </property>
     </spacer>

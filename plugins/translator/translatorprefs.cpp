@@ -1,7 +1,7 @@
 /*
     translatorprefs.cpp
 
-    Kopete Translatorfish Translator plugin
+    Kopete Translator plugin
 
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett   <duncan@kde.org>
 
@@ -20,6 +20,7 @@
 
 #include "translatorprefs.moc"
 #include "translatorprefsbase.h"
+#include "translatorplugin.h"
 
 #include <qlayout.h>
 #include <kconfig.h>
@@ -29,7 +30,7 @@
 #include <kdebug.h>
 #include <qlabel.h>
 #include <qgroupbox.h>
-
+#include <qmap.h>
 
 #include <knuminput.h>
 
@@ -38,17 +39,41 @@ TranslatorPreferences::TranslatorPreferences(const QString &pixmap,QObject *pare
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 
-	m_lc = 0;
+	m_lc = 0; m_sc = 0;
 
 	preferencesDialog = new TranslatorPrefsUI(this);
 
-	addLanguage( "en" , "English" );
-    addLanguage( "es" , "Spanish" );
-	addLanguage( "de" , "German" );
+    QMap<QString,QString>::ConstIterator i;
+	QMap<QString,QString> m;
+
+	m = TranslatorPlugin::plugin()->languagesMap();
+
+	for ( i = m.begin(); i != m.end() ; ++i )
+	{
+		m_langIntKeyMap[m_lc] = i.key();
+		m_langKeyIntMap[i.key()] = m_lc;
+
+		preferencesDialog->m_LangBox->insertItem( i.data(), m_lc);
+
+		m_lc++;
+	}
+
+	m = TranslatorPlugin::plugin()->servicesMap();
+
+	for ( i = m.begin(); i != m.end() ; ++i )
+	{
+		m_servicesIntKeyMap[m_sc] = i.key();
+		m_servicesKeyIntMap[i.key()] = m_sc;
+
+		preferencesDialog->m_ServiceBox->insertItem( i.data(), m_sc);
+
+		m_sc++;
+	}	
 
 	KGlobal::config()->setGroup("Translator Plugin");
 
-	preferencesDialog->m_LangBox->setCurrentItem( m_keyMap[KGlobal::config()->readEntry("myLang", "en")]);
+	preferencesDialog->m_LangBox->setCurrentItem( m_langKeyIntMap[KGlobal::config()->readEntry("myLang", "en")]);
+	preferencesDialog->m_ServiceBox->setCurrentItem( m_servicesKeyIntMap[KGlobal::config()->readEntry("Service", "babelfish")]);
 }
 
 TranslatorPreferences::~TranslatorPreferences()
@@ -57,20 +82,12 @@ TranslatorPreferences::~TranslatorPreferences()
 
 const QString& TranslatorPreferences::myLang()
 {
-	return m_langMap[ preferencesDialog->m_LangBox->currentItem() ];
+	return m_langIntKeyMap[ preferencesDialog->m_LangBox->currentItem() ];
 }
 
-void TranslatorPreferences::addLanguage( const QString &key, const QString &name)
+const QString& TranslatorPreferences::service()
 {
-	m_langMap[m_lc] = key;
-    m_keyMap[key] = m_lc;
-
-	m_descMap[key] = name;
-
-	preferencesDialog->m_LangBox->insertItem( name, m_lc);
-
-	m_lc++;
-
+	return m_langIntKeyMap[ preferencesDialog->m_ServiceBox->currentItem() ];
 }
 
 void TranslatorPreferences::save()
@@ -78,6 +95,7 @@ void TranslatorPreferences::save()
 	KConfig *config = KGlobal::config();
 	config->setGroup("Translator Plugin");
 	config->writeEntry("myLang", myLang() );
+	config->writeEntry("Service", myLang() );
 	config->sync();
 	emit saved();
 

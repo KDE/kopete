@@ -42,21 +42,31 @@ public:
 	~TranslatorPreferences();
    virtual void save();
 
-	void addLanguage( const QString &key, const QString &name);
-	const QString &myLang();
+	const QString& myLang();
+	const QString& service();
 
 signals:
 	void saved();
 
 private:
 	TranslatorPrefsUI *preferencesDialog;	
+
 	/* int to lang key and viceversa*/
-    QMap<int, QString> m_langMap;
-	QMap<QString, int> m_keyMap;
+    QMap<int, QString> m_langIntKeyMap;
+	QMap<QString, int> m_langKeyIntMap;
+
+	/* int to lang key and viceversa*/
+    QMap<int, QString> m_servicesIntKeyMap;
+	QMap<QString, int> m_servicesKeyIntMap;
+
     /* key to description */
     QMap<QString, QString> m_descMap;
+
 	/* Lang counter */
 	int m_lc;
+	/* Service counter */
+	int m_sc;
+
 };
 
 #endif
