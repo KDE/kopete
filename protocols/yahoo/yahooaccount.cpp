@@ -120,6 +120,10 @@ QString YahooAccount::stripMsgColorCodes(const QString& msg)
 	//Handle bold, underline and italic messages
 	filteredMsg.replace( QRegExp("\033\\[1m"), "<b>" );
 	filteredMsg.replace( QRegExp("\033\\[x1m"), "</b>" );
+    //work around gaim's broken sending
+    filteredMsg.remove( QRegExp( "\033\\[xlm" ) );
+    filteredMsg.remove( QRegExp( "\033\\[lm" ) );
+    //end work around
 	filteredMsg.replace( QRegExp("\033\\[3m"), "<i>" );
 	filteredMsg.replace( QRegExp("\033\\[x3m"), "</i>" );
 	filteredMsg.replace( QRegExp("\033\\[4m"), "<u>" );
@@ -609,6 +613,32 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 		addContact( who, who, 0L, KopeteAccount::DontChangeKABC, QString::null, true );
 	}
 
+    //Parse the message for it's properties
+    kdDebug(14180) << "Original message is '" << msg << "'" << endl;
+    //kdDebug(14180) << "Message color is " << getMsgColor(msg) << endl;
+    QColor fgColor = getMsgColor( msg );
+	if (tm == 0)
+		msgDT.setTime_t(time(0L));
+	else
+		msgDT.setTime_t(tm, Qt::LocalTime);
+
+    QString newMsgText = stripMsgColorCodes( msg );
+
+    kdDebug(14180) << "Message after stripping color codes '" << newMsgText << "'" << endl;
+
+   	if (newMsgText.find("<font") != -1)
+	{
+		msgFont.setFamily(newMsgText.section('"', 1,1));
+
+		if (newMsgText.find("size"))
+			msgFont.setPointSize(newMsgText.section('"', 3,3).toInt());
+
+		//remove the font encoding since we handle them ourselves
+		newMsgText.remove(newMsgText.mid(0, newMsgText.find('>')+1));
+	}
+
+    kdDebug(14180) << "Message after removing font tags '" << newMsgText << "'" << endl;
+
 	KopeteMessageManager *mm = contact(who)->manager();
 
 	// Tell the message manager that the buddy is done typing
@@ -616,31 +646,10 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 
 	justMe.append(myself());
 
-	if (tm == 0)
-		msgDT.setTime_t(time(0L));
-	else
-		msgDT.setTime_t(tm, Qt::LocalTime);
+	KopeteMessage kmsg(msgDT, contact(who), justMe, newMsgText,
+					KopeteMessage::Inbound , KopeteMessage::RichText);
 
-	KopeteMessage kmsg(msgDT, contact(who), justMe, msg,
-					KopeteMessage::Inbound , KopeteMessage::PlainText);
-
-	QString newMsg = stripMsgColorCodes(kmsg.plainBody());
-
-	kmsg.setFg(getMsgColor(msg));
-//	kdDebug(14180) << "Message color is " << getMsgColor(msg) << endl;
-
-	if (newMsg.find("<font") != -1)
-	{
-		msgFont.setFamily(newMsg.section('"', 1,1));
-
-		if (newMsg.find("size"))
-			msgFont.setPointSize(newMsg.section('"', 3,3).toInt());
-
-		//remove the font encoding since we handle them ourselves
-		newMsg.remove(newMsg.mid(0, newMsg.find('>')+1));
-	}
-	//set the new body that has correct HTML
-	kmsg.setBody(newMsg, KopeteMessage::RichText);
+	kmsg.setFg( fgColor );
 	kmsg.setFont(msgFont);
 	mm->appendMessage(kmsg);
 
