@@ -86,6 +86,30 @@ int KopeteContact::importance() const
 	return 0;
 }
 
+QStringList KopeteContact::groups()
+{
+	return QStringList();
+}
+
+void KopeteContact::addToGroup( const QString & /* group */ )
+{
+	kdDebug() << "KopeteContact::addToGroup: WARNING: "
+		<< "Default implementation called! Function not implemented?" << endl;
+}
+
+void KopeteContact::removeFromGroup( const QString & /* group */ )
+{
+	kdDebug() << "KopeteContact::removeFromGroup: WARNING: "
+		<< "Default implementation called! Function not implemented?" << endl;
+}
+
+void KopeteContact::moveToGroup( const QString & /* from */,
+	const QString & /* to */ )
+{
+	kdDebug() << "KopeteContact::moveToGroup: WARNING: "
+		<< "Default implementation called! Function not implemented?" << endl;
+}
+
 #include "kopetecontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

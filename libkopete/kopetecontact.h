@@ -47,6 +47,38 @@ public:
 	 */
 	bool isOnline() const { return status() != Offline; }
 
+	/**
+	 * The groups in which the user is physically located.
+	 * The logical groups are stored in the Meta Contact. Physical groups
+	 * can be different from the logical groups!
+	 * Not the whole API supports multi-group membership yet, be careful
+	 * relying on this for now!
+	 * FIXME: When all protocols support the group API, make these methods
+	 *        pure virtual or have different defaults!
+	 */
+	virtual QStringList groups();
+
+	/**
+	 * Add a contact to a physical group. If the protocol doesn't support
+	 * multi-group memberships this method can do nothing. The group name
+	 * passed is the logical group. Protocols with server-side contact lists
+	 * can use this to keep the local and remote lists in sync.
+	 */
+	virtual void addToGroup( const QString &group );
+
+	/**
+	 * Remove a contact from a physical group.
+	 * If the logical group passed is different from the physical group, or
+	 * if this kind of changes is not supported this method may do nothing.
+	 */
+	virtual void removeFromGroup( const QString &group );
+
+	/**
+	 * Move a contact from one group to another. Again, this method may do
+	 * nothing if there's no support for this in the protocol.
+	 */
+	virtual void moveToGroup( const QString &from, const QString &to );
+
 		/**
 		* Usually a contact is owned by a protocol plugin
 		**/
@@ -104,7 +136,7 @@ public:
 		* a contact can be in multiple groups and you have to move
 		* a specific instance from one group to another.
 		**/
-		virtual void showContextMenu(QPoint, QString) {}
+		virtual void showContextMenu( QPoint /* p */, QString /* group */ ) {}
 
 		/**
 		 * Return the unique id that identifies a contact. Id is required

@@ -92,6 +92,11 @@ public:
 	QString displayName() const;
 	void setDisplayName( const QString &name );
 
+	/**
+	 * The groups the contact is stored in
+	 */
+	QStringList groups() const;
+
 public slots:
 	/**
 	 * Contact another user.
@@ -116,6 +121,11 @@ public slots:
 	 */
 	void startChat();
 
+	/**
+	 * Move a contact from one group to another.
+	 */
+	void moveToGroup( const QString &from, const QString &to );
+
 signals:
 	/**
 	 * The contact's online status changed
@@ -127,6 +137,11 @@ signals:
 	 * The meta contact's display name changed
 	 */
 	void displayNameChanged( KopeteMetaContact *c, const QString &name );
+
+	/**
+	 * The contact was moved
+	 */
+	void movedToGroup( const QString &from, const QString &to );
 
 private slots:
 	/**
@@ -155,6 +170,8 @@ private:
 	 * the meta contact's display name too
 	 */
 	bool m_trackChildNameChanges;
+
+	QStringList m_groups;
 };
 
 #endif

@@ -57,6 +57,7 @@ void KopeteMetaContact::addContact( KopeteContact *c,
 		setDisplayName( c->name() );
 
 		// FIXME: Group handling!!!!
+		m_groups = groups;
 		for( QStringList::ConstIterator it = groups.begin();
 			it != groups.end(); ++it )
 		{
@@ -237,6 +238,27 @@ void KopeteMetaContact::slotContactNameChanged( const QString &name )
 {
 	if( m_trackChildNameChanges )
 		setDisplayName( name );
+}
+
+void KopeteMetaContact::moveToGroup( const QString &from,
+	const QString &to )
+{
+	if( from == to )
+		return;
+
+	m_groups.remove( from );
+	m_groups.append( to );
+
+	QPtrListIterator<KopeteContact> it( m_contacts );
+	for( ; it.current(); ++it )
+		it.current()->moveToGroup( from, to );
+
+	emit movedToGroup( from, to );
+}
+
+QStringList KopeteMetaContact::groups() const
+{
+	return m_groups;
 }
 
 #include "kopetemetacontact.moc"
