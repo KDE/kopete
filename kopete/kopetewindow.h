@@ -110,13 +110,13 @@ private slots:
 	void slotAccountStatusIconChanged( KopeteAccount *account, const KopeteOnlineStatus& status );
 
 	/**
-	 * Show a context icon for a protocol
+	 * Show a context menu for a protocol
 	 */
 	void slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
 		const QPoint &p );
 
 	/**
-	 * Show a context icon for an account
+	 * Show a context menu for an account
 	 */
 	void slotAccountStatusIconRightClicked( KopeteAccount *a,
 		const QPoint &p );
@@ -128,6 +128,11 @@ private slots:
 	 */
 	void showAddContactDialog();
 
+	/**
+	 * Carry out any changes resulting from a change to preferences
+	 */
+	 void slotSettingsChanged();
+	 
 public:
 	KopeteContactListView *contactlist;
 

@@ -70,6 +70,9 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	m_statusBarWidget->setMargin( 2 );
 	statusBar()->addWidget(m_statusBarWidget, 0, true);
 
+	connect( KopetePrefs::prefs(), SIGNAL( saved() ),
+		SLOT( slotSettingsChanged() ) );
+
 	/* -------------------------------------------------------------------------------- */
 	initView();
 	initActions();
@@ -660,5 +663,28 @@ void KopeteWindow::showAddContactDialog()
 	(new AddContactWizard(qApp->mainWidget()))->show();
 }
 
+void KopeteWindow::slotSettingsChanged()
+{
+	// Account colouring may have changed, so tell our status bar to redraw
+	kdDebug(14000) << k_funcinfo << endl;
+	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
+	QPtrListIterator<KopetePlugin> it( plugins );
+	KopetePlugin *plugin = 0L;
+	while ( ( plugin = it.current() ) != 0 )
+	{
+		++it;
+		KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( plugin );
+		if( !proto )
+			continue;
+		QDict<KopeteAccount> dict = KopeteAccountManager::manager()->accounts( proto );
+		QDictIterator<KopeteAccount> it( dict );
+		KopeteAccount *a;
+		while ( ( a = it.current() ) != 0 )
+		{
+			++it;
+			slotAccountStatusIconChanged( a, a->myself()->onlineStatus() );
+		}
+	}
+}
 #include "kopetewindow.moc"
 // vim: set noet ts=4 sts=4 sw=4:
