@@ -47,10 +47,21 @@ void NLJuk::update()
 		QCString replyType;
 		QString result;
 
+		if ( m_client->call( "juk", "Player", "currentTime()", data, 
+					replyType, replyData ) )
+		{
+			QDataStream reply( replyData, IO_ReadOnly );
+			int currentTime;
+			if ( replyType == "int" ) {
+				reply >> currentTime;
+				if ( currentTime != -1 )
+					m_playing = true;
+			}
+		}
+		
 		if ( m_client->call( "juk", "Player", "playingString()", data,
 					replyType, replyData ) )
 		{
-			m_playing = true;
 			QDataStream reply( replyData, IO_ReadOnly );
 
 			if ( replyType == "QString" ) {
