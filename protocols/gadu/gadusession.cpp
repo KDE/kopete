@@ -43,9 +43,9 @@ GaduSession::login( const struct gg_login_params& p )
 {
     if ( !isConnected() ) {
 	if ( !(session_ = gg_login( &p ))) {
-            emit connectionFailed( 0L );
             gg_free_session( session_ );
             session_ = 0;
+            emit connectionFailed( 0L );
             return;
 	}
 	read_ = new QSocketNotifier( session_->fd, QSocketNotifier::Read, this );
@@ -69,10 +69,10 @@ GaduSession::login( const struct gg_login_params& p )
 void
 GaduSession::enableNotifiers( int checkWhat )
 {
-    if( checkWhat & GG_CHECK_READ ) {
+    if( (checkWhat & GG_CHECK_READ) && read_ ) {
         read_->setEnabled( true );
     }
-    if( checkWhat & GG_CHECK_WRITE ) {
+    if( (checkWhat & GG_CHECK_WRITE) && write_ ) {
         write_->setEnabled( true );
     }
 }
@@ -80,8 +80,10 @@ GaduSession::enableNotifiers( int checkWhat )
 void
 GaduSession::disableNotifiers()
 {
-    read_->setEnabled( false );
-    write_->setEnabled( false );
+    if ( read_ )
+        read_->setEnabled( false );
+    if ( write_ )
+        write_->setEnabled( false );
 }
 
 void
@@ -232,6 +234,7 @@ GaduSession::checkDescriptor()
     if (!(e = gg_watch_fd(session_))) {
         emit error( i18n("Connection broken!"),
                     i18n(strerror(errno)) );
+        QObject::disconnect( this, SLOT(checkDescriptor()) );
         delete read_;
         delete write_;
         read_ = 0;
@@ -261,24 +264,26 @@ GaduSession::checkDescriptor()
         break;
     case GG_EVENT_CONN_FAILED:
         if ( session_ ) {
-            delete read_;
-            delete write_;
-            read_ = 0;
-            write_ = 0;
             gg_free_session( session_ );
             session_ = 0L;
         }
+        QObject::disconnect( this, SLOT(checkDescriptor()) );
+        delete read_;
+        delete write_;
+        read_ = 0;
+        write_ = 0;
         emit connectionFailed( e );
         break;
     case GG_EVENT_DISCONNECT:
         if ( session_ ) {
-            delete read_;
-            delete write_;
-            read_ = 0;
-            write_ = 0;
             gg_free_session( session_ );
             session_ = 0L;
         }
+        QObject::disconnect( this, SLOT(checkDescriptor()) );
+        delete read_;
+        delete write_;
+        read_ = 0;
+        write_ = 0;
         emit disconnect();
         break;
     case GG_EVENT_PONG:
@@ -295,7 +300,8 @@ GaduSession::checkDescriptor()
 
     if ( e ) gg_free_event( e );
 
-    enableNotifiers( session_->check );
+    if ( session_ )
+        enableNotifiers( session_->check );
 }
 
 #include "gadusession.moc"
