@@ -20,14 +20,7 @@ libiris_xmpp_core_la_SOURCES = \
 	parser.cpp \
 	simplesasl.cpp
 
-#
-# The rules below are hacks, the first is for unsermake-type naming schemes,
-# the second one for automake-type naming schemes. We need to process this
-# moc before the object gets compiled in. The additional rule will be
-# ignored.
-#
-securestream.lo: securestream.moc
-libiris_xmpp_core_la-securestream.lo: securestream.moc
+libiris_xmpp_core_la_COMPILE_FIRST = securestream.moc
 
 CLEANFILES = securestream.moc
 securestream.moc: $(srcdir)/securestream.cpp $(srcdir)/securestream.h
