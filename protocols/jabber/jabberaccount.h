@@ -95,10 +95,10 @@ public:
 
 	/*
 	 * Handle TLS warnings. Displays a dialog and returns the user's choice.
-	 * Parameters: Warning code from QCA::TLS, server name
+	 * Parameters: Warning code from QCA::TLS, server name, account ID
 	 * Returns KMessageBox::ButtonCode
 	 */
-	static int handleTLSWarning (int warning, QString server);
+	static int handleTLSWarning (int warning, QString server, QString accountId);
 
 	/*
 	 * Handle stream errors. Displays a dialog and returns.

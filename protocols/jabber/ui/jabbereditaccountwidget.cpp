@@ -480,7 +480,7 @@ void JabberEditAccountWidget::slotTLSHandshaken ()
 		kdDebug(14131) << k_funcinfo << "Certificate is not valid, asking user what to do next." << endl;
 
 		// certificate is not valid, query the user
-		if(JabberAccount::handleTLSWarning (validityResult, mServer->text ()) == KMessageBox::Continue)
+		if(JabberAccount::handleTLSWarning (validityResult, mServer->text (), mID->text ()) == KMessageBox::Continue)
 		{
 			jabberTLSHandler->continueAfterHandshake ();
 		}

@@ -550,7 +550,7 @@ void JabberAccount::slotPsiDebug (const QString & _msg)
 
 }
 
-int JabberAccount::handleTLSWarning (int warning, QString server)
+int JabberAccount::handleTLSWarning (int warning, QString server, QString accountId)
 {
 	QString validityString, code;
 
@@ -610,9 +610,11 @@ int JabberAccount::handleTLSWarning (int warning, QString server)
 		}
 
 	return KMessageBox::warningContinueCancel(Kopete::UI::Global::mainWidget (),
-						  i18n("The server's certificate could not be validated: %1").
+						  i18n("The certificate of server %1 could not be validated for account %2: %3").
+						  arg(server).
+						  arg(accountId).
 						  arg(validityString),
-						  i18n("Connection Certificate Problem"),
+						  i18n("Jabber Connection Certificate Problem"),
 						  KStdGuiItem::cont(),
 						  QString("KopeteTLSWarning") + server + code);
 
@@ -637,7 +639,7 @@ void JabberAccount::slotTLSHandshaken ()
 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Certificate is not valid, asking user what to do next." << endl;
 
 		// certificate is not valid, query the user
-		if(handleTLSWarning (validityResult, server ()) == KMessageBox::Continue)
+		if(handleTLSWarning (validityResult, server (), myself()->contactId ()) == KMessageBox::Continue)
 		{
 			jabberTLSHandler->continueAfterHandshake ();
 		}
