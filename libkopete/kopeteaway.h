@@ -201,6 +201,11 @@ signals:
 	 * this signal is emit when activity has been discover after being autoAway.
 	 */
 	void activity();
+	
+	/**
+	 * @brief Default messages were changed
+	 */
+	void messagesChanged();
 };
 
 #endif

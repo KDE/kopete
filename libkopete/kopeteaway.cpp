@@ -218,6 +218,8 @@ void KopeteAway::save()
 	/* Write out the titles */
 	config->writeEntry("Titles", titles);
 	config->sync();
+	
+	emit( messagesChanged() );
 }
 
 void KopeteAway::load()

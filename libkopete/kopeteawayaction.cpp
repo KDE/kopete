@@ -60,7 +60,7 @@ void KopeteAwayAction::slotSelectAway( int index )
 		awayReason = mAway->getMessage( awayTitles[index] );
 	}
 	else
-		awayReason = KInputDialog::getText( i18n( "Kopete" ), i18n( "Please enter your away reason:" ), QString::null);
+		awayReason = KInputDialog::getText( i18n( "Custom Away Message" ), i18n( "Please enter your away reason:" ), QString::null);
 	
 	if( !awayReason.isEmpty() )
 	{

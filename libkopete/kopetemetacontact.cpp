@@ -161,16 +161,14 @@ void KopeteMetaContact::updateOnlineStatus()
 
 unsigned long int KopeteMetaContact::idleTime() const
 {
-	unsigned long int time=0;
-
+	unsigned long int time = 0;
 	QPtrListIterator<KopeteContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
-		unsigned long int i= it.current()->idleTime();
-
-		if(i!=0 && (i < time || time==0))
+		unsigned long int i = it.current()->idleTime();
+		if( i < time || time == 0 )
 		{
-			time=i;
+			time = i;
 		}
 	}
 	return time;

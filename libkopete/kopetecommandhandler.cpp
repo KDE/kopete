@@ -329,7 +329,7 @@ CommandList KopeteCommandHandler::commands( KopeteProtocol *protocol )
 {
 	CommandList commandList(63, false);
 	
-	//Add pluginuser aliases first
+	//Add plugin user aliases first
 	addCommands( p->pluginCommands[protocol], commandList, UserAlias );
 	
 	//Add plugin system aliases next
