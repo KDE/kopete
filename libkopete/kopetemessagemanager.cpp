@@ -78,8 +78,6 @@ void KopeteMessageManager::newChatWindow() {
 		mChatWindow = new KopeteChatWindow(mUser, mContactList);
 		mChatWindow->setSendEnabled(mSendEnabled);	
 
-		if (mContactList.first() != 0L)
-			mChatWindow->setCaption(mContactList.first()->name()); //TODO: add multi-user support
 		/* When the window is shown, we have to delete this contact event */
 		kdDebug() << "[KopeteMessageManager] Connecting message box shown() to event killer" << endl;
 		connect (mChatWindow, SIGNAL(shown()), this, SLOT(slotCancelUnreadMessageEvent()));
@@ -89,8 +87,6 @@ void KopeteMessageManager::newChatWindow() {
 	if (mWidget == Email) {
 		mEmailWindow = new KopeteEmailWindow(mUser, mContactList);
 		mEmailWindow->setSendEnabled(mSendEnabled);
-		if (mContactList.first() != 0L)
-			mEmailWindow->setCaption(mContactList.first()->name());
 		connect (mEmailWindow, SIGNAL(shown()), this, SLOT(slotCancelUnreadMessageEvent()));
 		connect (mEmailWindow, SIGNAL(sendMessage(const KopeteMessage &)), this, SLOT(slotMessageSent(const KopeteMessage &)));
 		connect (mEmailWindow, SIGNAL(closeClicked()), this, SLOT(slotChatWindowClosing()));
@@ -106,8 +102,6 @@ void KopeteMessageManager::newReplyWindow() {
 		mEmailReplyWindow->setReplyMode(true);
 		mEmailReplyWindow->show();
 		mEmailReplyWindow->raise();
-		if (mContactList.first() != 0L)
-			mEmailReplyWindow->setCaption(mContactList.first()->name());
 		connect (mEmailReplyWindow, SIGNAL(sendMessage(const KopeteMessage &)), this, SLOT(slotMessageSent(const KopeteMessage &)));
 		connect (mEmailReplyWindow, SIGNAL(closeClicked()), this, SLOT(slotReplyWindowClosing()));
 	}
