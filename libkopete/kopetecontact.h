@@ -24,6 +24,8 @@
 #include <qobject.h>
 
 class QString;
+class QPixmap;
+
 class KopeteEvent;
 
 /**
@@ -111,6 +113,12 @@ public:
 		**/
 		virtual QString statusIcon() const;
 		/**
+		* This method provides an scaled version of the status icon.
+		* useful for metacontacts, and it uses a primitive cache so
+		* we dont have to scale at every repaint, it asumes square.
+		**/
+		virtual QPixmap scaledStatusIcon(int size);
+		/**
 		* The "importance" of this contact, used for sorting
 		* This is almost always related to the contact's status
 		* Here is how ICQ does it:
@@ -191,5 +199,12 @@ signals:
 
 		QString m_id;
 		QString m_protocolId;
+
+		/**
+		* Scaled icon cache
+		*/
+		QPixmap m_cachedScaledIcon;
+		int m_cachedSize;
+		ContactStatus m_cachedOldStatus;
 };
 #endif

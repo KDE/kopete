@@ -20,6 +20,8 @@
 #include "kopete.h"
 
 #include <qtimer.h>
+#include <qpixmap.h>
+#include <qimage.h>
 #include <klistview.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -54,7 +56,7 @@ QString KopeteContact::statusText() const
 {
 	ContactStatus stat = status();
 
-	kdDebug() << "[KopeteContact] statusText() with status= " << stat << endl;
+	//kdDebug() << "[KopeteContact] statusText() with status= " << stat << endl;
 
 	switch( stat )
 	{
@@ -71,6 +73,22 @@ QString KopeteContact::statusText() const
 QString KopeteContact::statusIcon() const
 {
 	return "unknown";
+}
+
+QPixmap KopeteContact::scaledStatusIcon(int size)
+{
+    if ( (this->status() != m_cachedOldStatus) || ( size != m_cachedSize ) )
+	{
+		QImage afScal = ((QPixmap(SmallIcon(this->statusIcon()))).convertToImage()).smoothScale( size, size);
+		m_cachedScaledIcon = QPixmap(afScal);
+		m_cachedOldStatus = this->status();
+		m_cachedSize = size;
+		return m_cachedScaledIcon;
+	}
+	else
+	{
+		return m_cachedScaledIcon;	
+	}
 }
 
 int KopeteContact::importance() const
