@@ -313,15 +313,15 @@ protected:
 	/**
 	 * \brief Set the 'myself' contact.
 	 *
-	 * This contact HAS to be defined for every  account, because it
-	 * holds the online status of an account! 
-	 * You must call this function in the constructor of your account
+	 * This contact @em must be defined for every  account, because it
+	 * holds the online status of an account!
+	 * You must call this function in the constructor of your account.
 	 *
-	 * The myself contact can't be deleted as long as the account still
-	 * exists. The myself contact is used in each Kopete::MessageManager,
-	 * the myself contactId should be the accountID, the onlineStatus
+	 * The @p myself contact can't be deleted as long as the account still
+	 * exists. The @p myself contact is used in each Kopete::MessageManager,
+	 * the @p myself contactId should be the accountID, the onlineStatus
 	 * should represent the current user's status. The statusbar icon
-	 * is connected to myself-> @ref onlineStatusChanged()
+	 * is connected to @p myself's @ref Kopete::Contact::onlineStatusChanged()
 	 * to update the icon.
 	 */
 	void setMyself( Contact *myself );

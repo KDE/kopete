@@ -189,6 +189,15 @@ bool MimeTypeHandler::dispatchToHandler( const KURL &url, const QString &mimeTyp
 	return true;
 }
 
+void MimeTypeHandler::handleURL( const KURL &url ) const
+{
+}
+
+void MimeTypeHandler::handleURL( const QString &mimeType, const KURL &url ) const
+{
+}
+
+
 EmoticonMimeTypeHandler::EmoticonMimeTypeHandler()
  : MimeTypeHandler( false )
 {

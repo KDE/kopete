@@ -64,7 +64,7 @@ namespace Global
 			static Properties *self();
 
 			/**
-			 * Return a template with defined by @param key, if no such template has
+			 * Return a template with defined by @p key, if no such template has
 			 * been registered ContactPropertyTmpl::null will be returned
 			 */
 			const ContactPropertyTmpl &tmpl(const QString &key) const;

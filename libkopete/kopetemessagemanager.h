@@ -184,7 +184,7 @@ signals:
 
 	/**
 	 * a message will be soon shown in the chatwindow.
-	 * See @ref Kopete::MessageManagerFactory::aboutToShow() signal
+	 * See @ref Kopete::MessageManagerFactory::aboutToDisplay() signal
 	 */
 	void messageAppended( Kopete::Message &msg, Kopete::MessageManager *kmm = 0L );
 
@@ -277,7 +277,7 @@ public slots:
 
 	/**
 	 * Remove a contact from the session
-	 * @param c is the contact
+	 * @param contact is the contact
 	 * @param reason is the optional raison message showed in the chatwindow
 	 * @param format The format of the message
 	 * @param suppressNotification prevents a notification of the removal in the chat view.  See note in @ref addContact

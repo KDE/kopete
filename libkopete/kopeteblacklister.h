@@ -28,7 +28,7 @@ class Contact;
  *
  * This class manages the list of contacts the user wishes
  * to ignore permanently. In order to use the this class, there is no need to
- * create an instance. Use the @ref Kopete::Account::blacklister() instead.
+ * create an instance. Use the @ref Kopete::Account::blackLister() instead.
  *
  * Keep in mind that this class does not discard messages from blocked
  * users - It only manages the list. It is the up to the protocol to

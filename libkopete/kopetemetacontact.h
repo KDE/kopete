@@ -51,7 +51,7 @@ namespace Kopete
  * A metacontact represent a person. This is a kind of entry to
  * the contactlist. All information of a contact is contained in
  * the metacontact. Plugins can store data in it with all
- * @ref KopetePluginData methods
+ * @ref Kopete::PluginDataObject methods
  */
 class MetaContact : public PluginDataObject, public NotifyDataObject
 {

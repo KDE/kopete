@@ -68,7 +68,7 @@ public:
 	 *
 	 * @param url The url to handle
 	 */
-	virtual void handleURL( const KURL & /*url*/ ) const {};
+	virtual void handleURL( const KURL &url ) const;
 
 	/**
 	 * Handles the URL @p url, which has the mime type @p mimeType
@@ -76,7 +76,7 @@ public:
 	 * @param mimeType The mime type of the URL
 	 * @param url The url to handle
 	 */
-	virtual void handleURL( const QString & /*mimeType*/, const KURL & /*url*/ ) const {};
+	virtual void handleURL( const QString &mimeType, const KURL &url ) const;
 
 protected:
 	/**

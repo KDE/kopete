@@ -117,9 +117,9 @@ public:
 	bool setPluginEnabled( const QString &name, bool enabled = true );
 	
 	/**
-	 * Plugin loading mode. Used by @loadPlugin. Code that doesn't want to block
-	 * the GUI and/or lot a lot of plugins at once should use Async loading.
-	 * The default is sync loading.
+	 * Plugin loading mode. Used by @ref loadPlugin(). Code that doesn't want to block
+	 * the GUI and/or lot a lot of plugins at once should use asynchronous loading (@c LoadAsync).
+	 * The default is synchronous loading (@c LoadSync).
 	 */
 	enum PluginLoadMode { LoadSync, LoadAsync };
 

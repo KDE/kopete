@@ -52,8 +52,8 @@ class KopeteEditAccountWidgetPrivate;
  *   To set the password use @ref Kopete::Account::setPassword(). If the user has not selected the
  *   'remember password' checkbox, set the password to QString::null.
  *
- * - The auto connect checkbox: use @ref Kopete::Account::autoConnect() and
- *   @ref Kopete::Account::setAutoConnect() to get/set this flag.
+ * - The auto connect checkbox: use @ref Kopete::Account::autoLogin() and
+ *   @ref Kopete::Account::setAutoLogin() to get/set this flag.
  *
  * You may add other custom fields, e.g. the nickname. To save or retrieve these settings use
  * @ref Kopete::PluginDataObject::pluginData() with your protocol as plugin.
