@@ -56,8 +56,6 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent, const char* name)
 
 	//mKopeteIcon = kapp->miniIcon();
 	mKopeteIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ), 22 ) );
-	mBlinkIcon = KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "newmsg" ), KIcon::User);
-	mMovie = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::User);
 
 	connect(mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()));
 	connect(KopeteViewManager::viewManager() , SIGNAL(newMessageEvent(KopeteEvent*)),
@@ -108,47 +106,41 @@ void KopeteSystemTray::contextMenuAboutToShow( KPopupMenu *me )
 	emit aboutToShowMenu( me );
 }
 
-void KopeteSystemTray::startBlink( QString icon )
+void KopeteSystemTray::startBlink( const QString &icon )
 {
-	mBlinkIcon = QPixmap ( KGlobal::iconLoader()->loadIcon( icon , KIcon::User) );
-	startBlinkPrivate();
+	startBlink( KGlobal::iconLoader()->loadIcon( icon , KIcon::User ) );
 }
 
-void KopeteSystemTray::startBlink( QPixmap icon )
+void KopeteSystemTray::startBlink( const QPixmap &icon )
 {
 	mBlinkIcon = icon;
-	startBlinkPrivate();
-}
-
-void KopeteSystemTray::startBlink( QMovie icon )
-{
-	kdDebug(14010) << k_funcinfo << "starting movie." << endl;
-	setMovie(icon);
-	mIsBlinking = true;
-}
-
-void KopeteSystemTray::startBlink()
-{
-//	mBlinkIcon = QPixmap ( KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "newmsg" ), KIcon::User) );
-//	startBlinkPrivate();
-	startBlink(mMovie);
-}
-
-void KopeteSystemTray::startBlinkPrivate()
-{
-	if (mBlinkTimer->isActive() == false)
+	if ( mBlinkTimer->isActive() == false )
 	{
 		mIsBlinkIcon = true;
 		mIsBlinking = true;
-		mBlinkTimer->start(1000, false);
+		mBlinkTimer->start( 1000, false );
 	}
 	else
 	{
 		mBlinkTimer->stop();
 		mIsBlinkIcon = true;
 		mIsBlinking = true;
-		mBlinkTimer->start(1000, false);
+		mBlinkTimer->start( 1000, false );
 	}
+}
+
+void KopeteSystemTray::startBlink( const QMovie &icon )
+{
+	kdDebug( 14010 ) << k_funcinfo << "starting movie." << endl;
+	setMovie( icon );
+	mIsBlinking = true;
+}
+
+void KopeteSystemTray::startBlink()
+{
+	if( mMovie.isNull() )
+		mMovie = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::User );
+	startBlink( mMovie );
 }
 
 void KopeteSystemTray::stopBlink()
@@ -288,3 +280,4 @@ void KopeteSystemTray::slotConfigChanged()
 #include "systemtray.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
+

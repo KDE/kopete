@@ -51,9 +51,9 @@ public:
 	~KopeteSystemTray();
 
 	// One method, multiple interfaces :-)
-	void startBlink( QString );
-	void startBlink( QPixmap );
-	void startBlink( QMovie );
+	void startBlink( const QString &icon );
+	void startBlink( const QPixmap &icon );
+	void startBlink( const QMovie &movie );
 	void startBlink();
 
 	void stopBlink();
@@ -85,8 +85,6 @@ private:
 
 	bool mIsBlinkIcon;
 	bool mIsBlinking;
-
-	void startBlinkPrivate();
 
 	static KopeteSystemTray* s_systemTray;
 
