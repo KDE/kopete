@@ -218,8 +218,7 @@ void OscarContact::slotDeleteContact()
 
 	if ( mAccount->engine()->isICQ() )
 		mAccount->engine()->sendDelBuddylist(contactName());
-/*	if (waitAuth())
-		mAccount->engine()->sendDelBuddy(contactName(), grpName ); */
+	mAccount->engine()->sendDelBuddy(contactName(), grpName ); 
 	
 	deleteLater();
 }
