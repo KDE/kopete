@@ -40,7 +40,7 @@ public:
 	GaduEditContact( GaduAccount*, GaduContact*, 
 		    QWidget* parent = 0, const char* name = 0 );
 protected slots:
-	void slotApply()
+	void slotApply();
 
 private:
 	GaduAccount*	account_;
