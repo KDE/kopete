@@ -353,9 +353,9 @@ void KopeteMetaContact::slotContactNameChanged( const QString &name )
 
 void KopeteMetaContact::moveToGroup( const QString &from, const QString &to )
 {
-	if(m_temporary && to!="temporaryGroup")  
+	if(m_temporary && to!="temporaryGroup")
 		return;
-	
+
 	if(  m_groups.contains( to ) || (to.isNull() && isTopLevel()) ||  (!m_groups.contains( from ) && !from.isNull() ) || (from.isNull() && !isTopLevel()))
 		return;
 	
@@ -658,7 +658,7 @@ bool KopeteMetaContact::isTemporary() const
 {
 	return m_temporary;
 }
-void KopeteMetaContact::setTemporary( bool b  )
+void KopeteMetaContact::setTemporary( bool b , QString group )
 {
 	m_temporary=b;
 
@@ -672,7 +672,7 @@ void KopeteMetaContact::setTemporary( bool b  )
 		}
 	}
 	else
-		moveToGroup("temporaryGroup",QString::null);  //move to top-level
+		moveToGroup("temporaryGroup",group);  
 }
 
 bool KopeteMetaContact::isDirty() const

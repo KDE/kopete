@@ -316,8 +316,8 @@ bool MSNProtocol::serialize( KopeteMetaContact *metaContact,
 void MSNProtocol::deserialize( KopeteMetaContact *metaContact,
 	const QStringList &strList )
 {
-	kdDebug() << "MSNProtocol::deserialize: " << metaContact->displayName()
-		<< ", [ " << strList.join( ", " ) << " ]" << endl;
+/*	kdDebug() << "MSNProtocol::deserialize: " << metaContact->displayName()
+		<< ", [ " << strList.join( ", " ) << " ]" << endl;*/
 
 	QString protocolId = this->id();
 
@@ -328,9 +328,9 @@ void MSNProtocol::deserialize( KopeteMetaContact *metaContact,
 		QString displayName = strList[ idx + 1 ];
 		QStringList groups  = QStringList::split( ",", strList[ idx + 2 ] );
 
-		kdDebug() << "new MSNContact( " << protocolId << ", " << passport
+/*		kdDebug() << "new MSNContact( " << protocolId << ", " << passport
 			<< ", " << displayName << ", " << groups.first()
-			<< ", " << metaContact->displayName() << endl;
+			<< ", " << metaContact->displayName() << endl;*/
 
 		// Create MSN contact
 		// FIXME: I think this should go in a single method, as it is
@@ -751,7 +751,6 @@ void MSNProtocol::addContactToGroup( MSNContact *c, QString group)
 	}
 	else
 	{
-		//FIXME: Correct my bad english.. thanks :-}
 		KMessageBox::information( 0l,
 			i18n( "<qt>Changes in the contact list when you are offline don't update the contact list server-side. Your changes may be lost</qt>" ),
 				i18n( "MSN Plugin" ), "msn_OfflineContactList" );
@@ -786,7 +785,6 @@ void MSNProtocol::removeContact(MSNContact *c )
 	}
 	else
 	{
-		//FIXME: Correct my bad english.. thanks :-}
 		KMessageBox::error( 0l,
 			i18n( "<qt>Please go online to remove contact</qt>" ),
 				i18n( "MSN Plugin" ));
@@ -814,7 +812,6 @@ void MSNProtocol::removeContactFromGroup(  MSNContact *c, const QString &group )
 	}
 	else
 	{
-		//FIXME: Correct my bad english.. thanks :-}
 		KMessageBox::information( 0l,
 			i18n( "<qt>Changes in the contact list when you are offline don't update the contact list server-side. Your changes may be lost</qt>" ),
 				i18n( "MSN Plugin" ), "msn_OfflineContactList" );
@@ -834,7 +831,6 @@ void MSNProtocol::moveContact( MSNContact *c, const QString &oldGroup, const QSt
    }
 	else
 	{
-		//FIXME: Correct my bad english.. thanks :-}
 		KMessageBox::information( 0l,
 			i18n( "<qt>Changes in the contact list when you are offline don't update the contact list server-side. Your changes may be lost</qt>" ),
 				i18n( "MSN Plugin" ), "msn_OfflineContactList" );
@@ -1198,8 +1194,6 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 	QString list, uint /* serial */, uint group )
 {
 	QString gn = groupName( group );
-	if( gn.isNull() )
-		gn = "Unknown";
 
 	if( list == "FL" )
 	{
@@ -1243,9 +1237,9 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 		if(!new_contact)
 		{
 			MSNContact *c=m_contacts[ handle ];
-			if(c->metaContact()->isTemporary())
-				c->metaContact()->setTemporary(false);
 			c->addedToGroup( gn );
+			if(c->metaContact()->isTemporary())
+				c->metaContact()->setTemporary(false,gn);
 		}
 		
 		if(!m_allowList.contains(handle))
@@ -1294,8 +1288,7 @@ void MSNProtocol::slotPublicNameChanged(QString handle, QString publicName)
 			m_myself->setDisplayName(publicName);
 
 			actionStatusMenu->popupMenu()->changeTitle( m_menuTitleId,
-				*( statusBarIcon->pixmap() ),
-				i18n( "%1 (%2)" ).arg( m_publicName ).arg( m_msnId ) );
+				*( statusBarIcon->pixmap() ), QString( m_publicName+" ("+ m_msnId +")" ));
 
 			// Also sync the config file
 			KConfig *config=KGlobal::config();
@@ -1604,8 +1597,6 @@ void MSNProtocol::slotUpdateChatMember(QString handle, QString publicName, bool 
 		return;
 	}
 
-	kdDebug() << "MSNProtocol::slotUpdateChatMember : ok"  << endl;
-	
 	if(add)
 		manager->addContact(c);
 	else

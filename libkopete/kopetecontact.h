@@ -235,7 +235,7 @@ public:
 	  * If the protocol has a contact-list server-side, it is needed to derive this fontction.  
 	  * TODO: Write a better description of this, this doc doesn't make sense
 	  */
-	 virtual void addThisTemporaryContact();
+	 virtual void addThisTemporaryContact(QString group=QString::null);
 	 
 	 
 public slots:

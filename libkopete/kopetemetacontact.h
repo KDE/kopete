@@ -144,7 +144,7 @@ public:
 	 * Temporary contacts will not be sarialized
 	 */
 	bool isTemporary() const;
-	void setTemporary( bool b = true );
+	void setTemporary( bool b = true ,QString group=QString::null );
 
 	/**
 	 * When true, the meta-contact needs to be serialized

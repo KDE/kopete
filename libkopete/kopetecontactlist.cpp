@@ -99,10 +99,6 @@ void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 		SIGNAL( removedFromGroup( KopeteMetaContact *, const QString & ) ),
 		SLOT( slotRemovedFromGroup( KopeteMetaContact *, const QString & ) ) );
 
-	kdDebug() << "KopeteContactList::addMetaContact: "
-		<< "Adding meta contact to groups '" << mc->groups().join( "', '" )
-		<< "'" << endl;
-
 	emit metaContactAdded( mc );
 }
 

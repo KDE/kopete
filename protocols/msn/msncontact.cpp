@@ -47,7 +47,6 @@ MSNContact::MSNContact( QString &protocolId, const QString &msnId,
 	m_msnId = msnId;
 	if( !group.isEmpty() )
 		m_groups = group;
-	hasLocalGroup = false;
 
 	connect ( this, SIGNAL( chatToUser( QString ) ),
 		MSNProtocol::protocol(),
@@ -431,9 +430,12 @@ void MSNContact::removedFromGroup(QString group)
 	m_groups.remove(group);
 }
 
-void MSNContact::addThisTemporaryContact()
+void MSNContact::addThisTemporaryContact(QString group)
 {
-	MSNProtocol::protocol()->addContact( m_msnId );
+	if(group.isNull())
+		MSNProtocol::protocol()->addContact( m_msnId );
+	else
+		MSNProtocol::protocol()->addContactToGroup( this, group );
 }
 
 #include "msncontact.moc"

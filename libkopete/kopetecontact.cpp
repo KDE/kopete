@@ -218,10 +218,10 @@ void KopeteContact::slotChangeDisplayName(){
 	}	
 }
 
-void KopeteContact::addThisTemporaryContact()
+void KopeteContact::addThisTemporaryContact(QString group)
 {
 	if(m_metaContact->isTemporary())
-		m_metaContact->setTemporary(false);
+		m_metaContact->setTemporary(false,group);
 }
 
 void KopeteContact::slotChangeMetaContact()
