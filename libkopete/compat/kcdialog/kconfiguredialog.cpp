@@ -33,6 +33,9 @@
 #include "kselectentriesdialog.h"
 #include "kplugininfo.h"
 
+#include <kdeversion.h>
+
+
 class KCMISortedList : public QPtrList<KCModuleInfo>
 {
 	public:
@@ -123,7 +126,7 @@ QValueList<KService::Ptr> KConfigureDialog::instanceServices() const
 {
 	kdDebug( 700 ) << k_funcinfo << endl;
 	QString instanceName = KGlobal::instance()->instanceName();
-	kdDebug( 700 ) << "calling KServiceGroup::childGroup( " << instanceName << " )" << endl;
+//	kdDebug( 700 ) << "calling KServiceGroup::childGroup( " << instanceName << " )" << endl;
 	KServiceGroup::Ptr service = KServiceGroup::childGroup( instanceName );
 
 	QValueList<KService::Ptr> ret;
@@ -170,7 +173,7 @@ void KConfigureDialog::createDialogFromServices()
 			// and if the user of this class requested to hide disabled modules
 			// we check whether it should be enabled or not
 			bool enabled = false;
-			kdDebug( 700 ) << "check whether the " << moduleinfo->moduleName() << " KCM should be shown" << endl;
+//			kdDebug( 700 ) << "check whether the " << moduleinfo->moduleName() << " KCM should be shown" << endl;
 			// for all parent components
 			for( QStringList::ConstIterator pcit = moduleinfo->parentComponents().begin();
 					pcit != moduleinfo->parentComponents().end(); ++pcit )
@@ -187,7 +190,7 @@ void KConfigureDialog::createDialogFromServices()
 				KPluginInfo * pinfo = d->plugininfomap[ *pcit ];
 				pinfo->load();
 				enabled = pinfo->pluginEnabled();
-				kdDebug( 700 ) << "parent " << *pcit << " is " << ( enabled ? "enabled" : "disabled" ) << endl;
+//				kdDebug( 700 ) << "parent " << *pcit << " is " << ( enabled ? "enabled" : "disabled" ) << endl;
 				// if it is enabled we're done for this KCModuleInfo
 				if( enabled )
 					break;
@@ -211,7 +214,9 @@ void KConfigureDialog::createDialogFromServices()
 		// we need a treelist dialog
 		d->dlg = new KCMultiDialog( KJanusWidget::TreeList, i18n( "Preferences" ) );
 		d->dlg->setShowIconsInTreeList( true );
+#if KDE_IS_VERSION( 3, 1, 90 )
 		d->dlg->unfoldTreeList( true );
+#endif
 		// We need to find the .desktop files for all group names (those where
 		// Name=<group name>)
 
@@ -231,15 +236,17 @@ void KConfigureDialog::createDialogFromServices()
 	else
 		d->dlg = new KCMultiDialog( KJanusWidget::IconList, i18n( "Preferences" ) );
 
+#if KDE_IS_VERSION( 3, 1, 90 )
 	if( ! d->staticlistview )
 		d->dlg->addButtonBelowList( i18n( "Configure ..." ), this, SLOT( configureTree() ) );
+#endif
 
 	connect( d->dlg, SIGNAL( okClicked() ), KCDDispatcher::self(), SLOT( syncConfiguration() ) );
 	connect( d->dlg, SIGNAL( applyClicked() ), KCDDispatcher::self(), SLOT( syncConfiguration() ) );
 	connect( d->dlg, SIGNAL( configCommitted( const QCString & ) ), KCDDispatcher::self(), SLOT( reparseConfiguration( const QCString & ) ) );
 	for( KCModuleInfo * info = d->moduleinfos.first(); info; info = d->moduleinfos.next() )
 	{
-		kdDebug( 700 ) << "add module: " << info->fileName() << " with ParentComponents=" << info->parentComponents() << endl;
+//		kdDebug( 700 ) << "add module: " << info->fileName() << " with ParentComponents=" << info->parentComponents() << endl;
 		d->dlg->addModule( *info );
 	}
 }
@@ -263,7 +270,7 @@ void KConfigureDialog::updateTreeList()
 		// we create the KCModuleInfo
 		KCModuleInfo * moduleinfo = new KCModuleInfo( *it );
 		bool enabled = false;
-		kdDebug( 700 ) << "check whether the " << moduleinfo->moduleName() << " KCM should be shown" << endl;
+//		kdDebug( 700 ) << "check whether the " << moduleinfo->moduleName() << " KCM should be shown" << endl;
 		// for all parent components
 		for( QStringList::ConstIterator pcit = moduleinfo->parentComponents().begin();
 				pcit != moduleinfo->parentComponents().end(); ++pcit )
