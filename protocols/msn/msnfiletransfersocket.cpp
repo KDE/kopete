@@ -31,6 +31,7 @@
 
 #include "kopetetransfermanager.h"
 #include "kopetecontact.h"
+#include "kopetemetacontact.h"
 #include "msnmessagemanager.h"
 #include "msnswitchboardsocket.h"
 
@@ -148,23 +149,32 @@ void MSNFileTransferSocket::slotSocketClosed()
 	m_file=0L;
 	delete m_server;
 	m_server=0L;
-	if(m_kopeteTransfer && (m_downsize!=m_size  || m_downsize==0 ) )
-		m_kopeteTransfer->setError(KopeteTransfer::Other);
+	if(m_kopeteTransfer)
+	{
+		if( (m_downsize!=m_size  || m_downsize==0 ) )
+			m_kopeteTransfer->slotError(  KIO::ERR_UNKNOWN , i18n( "An unknown error occurred" ) );
+		else 
+			m_kopeteTransfer->slotComplete();
+	}	
 	emit done(this);
 }
 
 void MSNFileTransferSocket::slotReadBlock(const QByteArray &block)
 {
 	m_file->writeBlock( block.data(), block.size() );      // write to file
-	m_downsize+=block.size();
-	int percent=0;
-	if(m_size!=0)   percent=100*m_downsize/m_size;
 
-	if(m_kopeteTransfer) m_kopeteTransfer->slotProcessed(percent);
-	kdDebug(14140) << "MSNFileTransferSocket  -  " <<percent <<"% done"<<endl;
+	m_downsize+=block.size();
+	if(m_kopeteTransfer) m_kopeteTransfer->slotProcessed(m_downsize);
+	kdDebug(14140) << "MSNFileTransferSocket  -  " << m_downsize << " of " << m_size <<" done"<<endl;
 
 	if(m_downsize==m_size)
+	{
+		//the transfer seems to be finished.  
 		sendCommand( "BYE" ,"16777989",false);
+		//  if we are not already disconected in 30 seconds, do it.
+		QTimer::singleShot( 30000 , this, SLOT(disconnect() ) );
+
+	}
 }
 
 void MSNFileTransferSocket::setKopeteTransfer(KopeteTransfer *kt)
@@ -197,7 +207,7 @@ void MSNFileTransferSocket::slotAcceptConnection()
 	if(!accept(m_server))
 	{
 		if( m_kopeteTransfer)
-			m_kopeteTransfer->setError(KopeteTransfer::Other);
+				m_kopeteTransfer->slotError(  KIO::ERR_UNKNOWN , i18n( "An unknown error occurred" ) );
 		emit done(this);
 	}
 }
@@ -209,7 +219,7 @@ void MSNFileTransferSocket::slotTimer()
 	kdDebug(14140) << "MSNFileTransferSocket::slotTimer: timeout "<<  endl;
 	if( m_kopeteTransfer)
 	{
-		m_kopeteTransfer->setError(KopeteTransfer::Timeout);
+		m_kopeteTransfer->slotError( KIO::ERR_CONNECTION_BROKEN , i18n( "Connection timed out" ) );
 	}
 
 	MSNMessageManager* manager=dynamic_cast<MSNMessageManager*>(m_contact->manager());
@@ -270,7 +280,12 @@ void MSNFileTransferSocket::slotSendFile()
 {
 //	kdDebug(14140) <<"MSNFileTransferSocket::slotSendFile()" <<endl;
 	if( m_downsize >= m_size)
+	{
+		//the transfer seems to be finished.  
+		//  if we are not already disconected in 30 seconds, do it.
+		QTimer::singleShot( 30000 , this, SLOT(disconnect() ) );
 		return;
+	}
 
 	if(ready)
 	{
@@ -292,12 +307,10 @@ void MSNFileTransferSocket::slotSendFile()
 
 		sendBytes(block);
 
-		int percent=0;
 		m_downsize+=bytesRead;
-		if(m_size!=0)   percent=100*m_downsize/m_size;
 		if(m_kopeteTransfer)
-			 m_kopeteTransfer->slotProcessed(percent);
-		kdDebug(14140) << "MSNFileTransferSocket::slotSendFile:  " <<percent <<"% done"<<endl;
+			 m_kopeteTransfer->slotProcessed(m_downsize);
+		kdDebug(14140) << "MSNFileTransferSocket::slotSendFile: " << m_downsize << " of " << m_size <<" done"<<endl;
 	}
 	ready=false;
 
@@ -363,7 +376,7 @@ void MSNFileTransferSocket::parseInvitation(const QString& msg)
 			unsigned long int auth = (rand()%(999999))+1;
 			setAuthCookie(QString::number(auth));
 
-			setKopeteTransfer(KopeteTransferManager::transferManager()->addTransfer(m_contact, fileName(), size(),  m_contact->displayName(), KopeteFileTransferInfo::Outgoing));
+			setKopeteTransfer(KopeteTransferManager::transferManager()->addTransfer(m_contact, fileName(), size(),  m_contact->metaContact() ? m_contact->metaContact()->displayName() : m_contact->contactId() , KopeteFileTransferInfo::Outgoing));
 
 			MSNMessageManager* manager=dynamic_cast<MSNMessageManager*>(m_contact->manager());
 			if(manager && manager->service())
@@ -390,7 +403,7 @@ void MSNFileTransferSocket::parseInvitation(const QString& msg)
 	{
 		MSNInvitation::parseInvitation(msg);
 		if( m_kopeteTransfer)
-			m_kopeteTransfer->setError(KopeteTransfer::CanceledRemote);
+			m_kopeteTransfer->slotError( KIO::ERR_ABORTED , i18n( "The remote user aborted" ) );
 		emit done(this);
 
 	}
@@ -427,7 +440,7 @@ void MSNFileTransferSocket::slotFileTransferAccepted(KopeteTransfer *trans, cons
 	else
 	{
 		if( m_kopeteTransfer)
-			m_kopeteTransfer->setError(KopeteTransfer::Other);
+			m_kopeteTransfer->slotError(  KIO::ERR_UNKNOWN , i18n( "An unknown error occurred" ) );
 		emit done(this);
 
 	}
