@@ -31,10 +31,10 @@ libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)
 libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(LIB_KIO) $(LIB_XSS) $(LIBXML_LIBS) $(LIBXSLT_LIBS)
 
 #AM_CXXFLAGS = -DQT_PLUGIN 
-kde_widget_LTLIBRARIES = kopetewidgets.la
-kopetewidgets_la_LDFLAGS = $(KDE_PLUGIN) -module $(all_libraries)
-kopetewidgets_la_LIBADD = $(LIB_KIO) libkopete.la ui/libkopeteui.la
-kopetewidgets_la_SOURCES = ui/kopetewidgets.cpp 
+kde_widget_LTLIBRARIES = libkopetewidgets.la
+widget.includeFile = QString::fromLatin1("kopete/ui/kopetelistview.h");_LDFLAGS = $(KDE_PLUGIN) -module $(all_libraries)
+libkopetewidgets_la_LIBADD = $(LIB_KIO) libkopete.la ui/libkopeteui.la
+libkopetewidgets_la_SOURCES = ui/kopetewidgets.cpp 
 
 #kopetewidgets.cpp: $(srcdir)/kopete.widgets
 #	$(MAKEKDEWIDGETS) -o kopetewidgets.cpp $(srcdir)/kopete.widgets

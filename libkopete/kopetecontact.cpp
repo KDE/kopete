@@ -31,6 +31,7 @@
 #include <klocale.h>
 #include <kpopupmenu.h>
 #include <kmessagebox.h>
+#include <klistviewsearchline.h>
 
 #include "kopetecontactlist.h"
 #include "kopeteglobal.h"
@@ -42,6 +43,7 @@
 #include "kopeteview.h"
 #include "kopetemetacontact.h"
 #include "kopeteprefs.h"
+#include "metacontactselectorwidget.h"
 
 //For the moving to another metacontact dialog
 #include <qlabel.h>
@@ -265,44 +267,19 @@ void Contact::changeMetaContact()
 		KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
 
 	QVBox *w = new QVBox( moveDialog );
-	w->setSpacing( 8 );
-        new QLabel( i18n( "Select the meta contact to which you want to move this contact:" ), w );
-	KListView *selectMetaContactListBox = new KListView ( w, "selectMetaContactListBox" );
-	selectMetaContactListBox->addColumn( i18n( "Display Name" ) );
-	selectMetaContactListBox->addColumn( i18n( "Contact IDs" ) );
-
-	QMap<QListViewItem*,MetaContact*> map;
-	QPtrList<MetaContact> metaContacts = ContactList::self()->metaContacts();
-	for( MetaContact *mc = metaContacts.first(); mc ; mc = metaContacts.next() )
-	{
-		if( !mc->isTemporary() && mc != metaContact() )
-		{
-			QString t;
-			bool f=true;
-			QPtrList<Contact> contacts = mc->contacts();
-			for( Contact *c = contacts.first(); c ; c = contacts.next() )
-			{
-				if( !f )
-					t += QString::fromLatin1( " ; " );
-				t += c->contactId();
-				f = false;
-			}
-
-			map.insert(  new QListViewItem(selectMetaContactListBox, mc->displayName(),t) , mc  ) ;
-		}
-	}
-
-	selectMetaContactListBox->sort();
+	w->setSpacing( KDialog::spacingHint() );
+	MetaContactSelectorWidget *selector = new MetaContactSelectorWidget(w);
+	selector->setLabelMessage(i18n( "Select the meta contact to which you want to move this contact:" ));	
 
 	QCheckBox *chkCreateNew = new QCheckBox( i18n( "Create a new metacontact for this contact" ), w );
 	QWhatsThis::add( chkCreateNew , i18n( "If you select this option, a new metacontact will be created in the top-level group "
 		"with the name of this contact and the contact will be moved to it." ) );
-	QObject::connect( chkCreateNew , SIGNAL( toggled(bool) ) ,  selectMetaContactListBox , SLOT ( setDisabled(bool) ) ) ;
+	QObject::connect( chkCreateNew , SIGNAL( toggled(bool) ) ,  selector , SLOT ( setDisabled(bool) ) ) ;
 
-	moveDialog->setMainWidget( w );
+	moveDialog->setMainWidget(w);
 	if( moveDialog->exec() == QDialog::Accepted )
 	{
-		Kopete::MetaContact *mc = map[selectMetaContactListBox->currentItem()];
+		Kopete::MetaContact *mc = selector->metaContact();
 		if(chkCreateNew->isChecked())
 		{
 			mc=new Kopete::MetaContact();
