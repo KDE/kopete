@@ -1,5 +1,3 @@
-//Code from KGPG
-
 /***************************************************************************
                           popuppublic.cpp  -  description
                              -------------------
@@ -22,14 +20,26 @@
 #include <qptrlist.h>
 #include <qwhatsthis.h>
 #include <qpainter.h>
-
-#include <klocale.h>
-#include <kapp.h>
+#include <qiconset.h>
+#include <qhbuttongroup.h>
 #include <kconfig.h>
+#include <klistview.h>
+#include <klocale.h>
+#include <kglobal.h>
+#include <kiconloader.h>
+#include <kprocess.h>
+#include <kprocio.h>
+#include <qcheckbox.h>
+#include <qlayout.h>
+#include <kapplication.h>
+#include <kbuttonbox.h>
+#include <qpushbutton.h>
+#include <klineedit.h>
+#include <qlabel.h>
+
+
 
 #include "popuppublic.h"
-//#include "kgpgview.h"
-//#include "kgpg.h"
 
 /////////////////   klistviewitem special
 
@@ -62,15 +72,19 @@ void UpdateViewItem2::paintCell(QPainter *p, const QColorGroup &cg,int column, i
 
 popupPublic::popupPublic(QWidget *parent, const char *name,QString sfile,bool filemode):QDialog(parent,name,TRUE)
 {
-  QLabel *labeltxt;
   QString caption(i18n("Encryption"));
   config=kapp->config();
-  config->setGroup("General Options");
+  config->setGroup("Cryptography Plugin");
   bool isascii=config->readBoolEntry("Ascii armor",true);
-  bool istrust=config->readBoolEntry("Allow untrusted keys",false);
+  bool istrust=config->readBoolEntry("Allow untrusted keys",true);
+  bool hideid=config->readBoolEntry("Hide user id",false);
+  displayMailFirst=config->readBoolEntry("display mail first",true);
   //pgpcomp=config->readBoolEntry("PGP compatibility",false);
   encryptToDefault=config->readBoolEntry("encrypt to default key",false);
   defaultKey=config->readEntry("default key");
+  allowcustom=config->readBoolEntry("allow custom option",false);
+  if (allowcustom) customOptions=config->readEntry("custom option");
+  
 //  encryptfileto=config->readBoolEntry("encrypt files to",false);
 //  filekey=config->readEntry("file key");
 
@@ -82,8 +96,6 @@ defaultName="";
 
   keyPair=loader->loadIcon("kgpg_key2",KIcon::Small,20);
   keySingle=loader->loadIcon("kgpg_key1",KIcon::Small,20);
-  dkeyPair=loader->loadIcon("kgpg_dkey2",KIcon::Small,20);
-  dkeySingle=loader->loadIcon("kgpg_dkey1",KIcon::Small,20);
 
   //setMinimumSize(300,120);
   setCaption(caption);
@@ -92,9 +104,7 @@ defaultName="";
 
   keysList = new KListView( this );
   keysList->setRootIsDecorated(true);
-  keysList->addColumn( i18n( "Keys" ) );
-  //keysList->addColumn( i18n( "Trust" ) );
-  //keysList->addColumn( i18n( "Validity" ) );
+  
   keysList->setShowSortIndicator(true);
   keysList->setFullWidth(true);
   keysList->setSelectionModeExt(KListView::Extended);
@@ -102,70 +112,97 @@ defaultName="";
   QVBoxLayout *vbox=new QVBoxLayout(this,3);
 
   if (sfile.isEmpty())
-    labeltxt=new QLabel(i18n("Choose encryption key(s):"),this);
+  keysList->addColumn(i18n("Encryption key(s):"));
   else
-    {
-      caption=i18n("Choose encryption key(s) for %1:").arg(sfile);
-      labeltxt=new QLabel(caption,this);
-    }
+      keysList->addColumn(i18n("Encryption key(s) for %1:").arg(sfile));
+  
+  boutonboxoptions=new QButtonGroup(5,Qt::Vertical ,this,0);  
 
-  KButtonBox *boutonbox=new KButtonBox(this,KButtonBox::Horizontal,15,10);
+  CBarmor=new QCheckBox(i18n("ASCII armored encryption"),boutonboxoptions);
+  CBuntrusted=new QCheckBox(i18n("Allow encryption with untrusted keys"),boutonboxoptions);
+  CBhideid=new QCheckBox(i18n("Hide user id"),boutonboxoptions);
 
-  checkbox1=new QCheckBox(i18n("ASCII armored encryption"),this);
-  checkbox2=new QCheckBox(i18n("Allow encryption with untrusted keys"),this);
+//boutonboxoptions->insert(CBarmor);
+//boutonboxoptions->insert(CBuntrusted);
 
-   QWhatsThis::add(keysList,i18n("<b>Public keys list</b>: select the key that will be used for encryption."));
-  QWhatsThis::add(checkbox1,i18n("<b>ASCII encryption</b>: makes it possible to open the encrypted file/message in a text editor"));
-  QWhatsThis::add(checkbox2,i18n("<b>Allow encryption with untrusted keys</b>: when you import a public key, it is usually "
-"marked as untrusted and you cannot use it unless you sign it in order to make it 'trusted'. Checking this "
-"box enables you to use any key, even if it has not be signed."));
+  QWhatsThis::add(keysList,i18n("<b>Public keys list</b>: select the key that will be used for encryption."));
+  QWhatsThis::add(CBarmor,i18n("<b>ASCII encryption</b>: makes it possible to open the encrypted file/message in a text editor"));
+  QWhatsThis::add(CBhideid,i18n("<b>Hide user ID</b>: Do not put the keyid into encrypted packets. This option hides the receiver "
+                                 "of the message and is a countermeasure against traffic analysis. It may slow down the decryption process because " 
+								 "all available secret keys are tried."));
+  QWhatsThis::add(CBuntrusted,i18n("<b>Allow encryption with untrusted keys</b>: when you import a public key, it is usually "
+                                 "marked as untrusted and you cannot use it unless you sign it in order to make it 'trusted'. Checking this "
+                                 "box enables you to use any key, even if it has not be signed."));
 
-  if (filemode==true)
+  if (filemode)
   {
-  checkbox3=new QCheckBox(i18n("Shred source file"),this);
-  QWhatsThis::add(checkbox3,i18n("<b>Shred source file</b>: permanently remove source file. No recovery will be possible"));
+  CBshred=new QCheckBox(i18n("Shred source file"),boutonboxoptions);
+  QWhatsThis::add(CBshred,i18n("<b>Shred source file</b>: permanently remove source file. No recovery will be possible"));
 
-  checkbox4=new QCheckBox(i18n("Symmetrical encryption"),this);
-  QWhatsThis::add(checkbox3,i18n("<b>Symmetrical encryption</b>: encryption doesn't use keys. You just need to give a password "
-  "to encrypt/decrypt the file"));
+  CBsymmetric=new QCheckBox(i18n("Symmetrical encryption"),boutonboxoptions);
+  QWhatsThis::add(CBsymmetric,i18n("<b>Symmetrical encryption</b>: encryption doesn't use keys. You just need to give a password "
+                                 "to encrypt/decrypt the file"));
+  QObject::connect(CBsymmetric,SIGNAL(toggled(bool)),this,SLOT(isSymetric(bool)));
   }
 
+KButtonBox *boutonbox=new KButtonBox(this,KButtonBox::Horizontal,15,12);
+  bouton0=boutonbox->addButton(i18n("&Options"),this,SLOT(toggleOptions()),TRUE);
+  bouton0->setIconSet(QIconSet(KGlobal::iconLoader()->loadIcon("up",KIcon::Small)));
   boutonbox->addStretch(1);
-  bouton1=boutonbox->addButton(i18n("&OK"),TRUE);
-  bouton2=boutonbox->addButton(i18n("&Cancel"),TRUE);
+  bouton1=boutonbox->addButton(i18n("&Select"),this,SLOT(crypte()),TRUE);
+  bouton2=boutonbox->addButton(i18n("&Cancel"),this,SLOT(annule()),TRUE);
+  boutonbox->layout();
+  bouton1->setDefault(true);
+  if (isascii) CBarmor->setChecked(true);
+  if (istrust) CBuntrusted->setChecked(true);
+  if (hideid) CBhideid->setChecked(true);
 
-  if (isascii==true) checkbox1->setChecked(true);
-  if (istrust==true) checkbox2->setChecked(true);
-
-  vbox->addWidget(labeltxt);
   vbox->addWidget(keysList);
-  vbox->addWidget(checkbox1);
-  vbox->addWidget(checkbox2);
-  if (filemode==true)
+  if (allowcustom)
   {
-  vbox->addWidget(checkbox3);
-  vbox->addWidget(checkbox4);
-  QObject::connect(checkbox4,SIGNAL(toggled(bool)),this,SLOT(isSymetric(bool)));
+  QHButtonGroup *bGroup = new QHButtonGroup(this);
+  bGroup->setLineWidth(0);
+  bGroup->setInsideMargin(2);
+  (void) new QLabel(i18n("Custom option "),bGroup);
+  KLineEdit *optiontxt=new KLineEdit(bGroup);
+  optiontxt->setText(customOptions);
+  QWhatsThis::add(optiontxt,i18n("<b>Custom option</b>: for experienced users only, allows you to enter a gpg command line option, like: '--armor'"));
+  vbox->addWidget(bGroup);
+  QObject::connect(optiontxt,SIGNAL(textChanged ( const QString & )),this,SLOT(customOpts(const QString & )));
   }
+  vbox->addWidget(boutonboxoptions);
+  boutonboxoptions->hide();
   vbox->addWidget(boutonbox);
 
   QObject::connect(keysList,SIGNAL(doubleClicked(QListViewItem *,const QPoint &,int)),this,SLOT(precrypte()));
-  QObject::connect(bouton1,SIGNAL(clicked()),this,SLOT(crypte()));
-  QObject::connect(bouton2,SIGNAL(clicked()),this,SLOT(annule()));
-  QObject::connect(checkbox2,SIGNAL(toggled(bool)),this,SLOT(refresh(bool)));
+  QObject::connect(CBuntrusted,SIGNAL(toggled(bool)),this,SLOT(refresh(bool)));
 
 
- char gpgcmd2[1024] = "\0",line[200]="\0";
+ char line[200]="\0";
  FILE *fp2;
  seclist="";
 
-              strcat(gpgcmd2,"gpg --no-secmem-warning --no-tty --list-secret-keys ");
-              fp2 = popen(gpgcmd2, "r");
+              fp2 = popen("gpg --no-secmem-warning --no-tty --list-secret-keys ", "r");
               while ( fgets( line, sizeof(line), fp2))  seclist+=line;
               pclose(fp2);
 
 trusted=istrust;
 refreshkeys();
+}
+
+
+void popupPublic::toggleOptions()
+{
+if (boutonboxoptions->isVisible())
+{
+boutonboxoptions->hide();
+bouton0->setIconSet(QIconSet(KGlobal::iconLoader()->loadIcon("up",KIcon::Small)));
+}
+else
+{
+boutonboxoptions->show();
+bouton0->setIconSet(QIconSet(KGlobal::iconLoader()->loadIcon("down",KIcon::Small)));
+}
 }
 
 
@@ -185,7 +222,7 @@ current->setVisible(true);
 void popupPublic::sort()
 {
 bool reselect=false;
-QString block="Undefined, ?,Unknown,None";
+QString block=i18n("Undefined")+" , "+i18n("?")+" , "+i18n("Unknown")+" , "+i18n("None");
 QListViewItem *current = keysList->firstChild();
 if (current==NULL) return;
 
@@ -193,7 +230,7 @@ if (current==NULL) return;
 	trust=trust.section(',',1,1);
 	trust=trust.section(':',1,1);
 	trust=trust.stripWhiteSpace();
-	if (block.find(trust)!=-1)
+	if (block.find(trust,0,false)!=-1)
 	{
 	if (current->isSelected()) {current->setSelected(false);reselect=true;}
 	current->setVisible(false);
@@ -204,15 +241,15 @@ if (current==NULL) return;
 		QString trust=current->firstChild()->text(0);
 	trust=trust.section(',',1,1);
 	trust=trust.section(':',1,1);
-	trust.stripWhiteSpace();
-		if (block.find(trust)!=-1)
+	trust=trust.stripWhiteSpace();
+		if (block.find(trust,0,false)!=-1)
 		{
 		if (current->isSelected()) {current->setSelected(false);reselect=true;}
 		current->setVisible(false);
 		}
 		}
 
-if (reselect==true)
+if (reselect)
 {
 QListViewItem *firstvisible;
 firstvisible=keysList->firstChild();
@@ -229,9 +266,15 @@ keysList->setCurrentItem(firstvisible);
 void popupPublic::isSymetric(bool state)
 {
 keysList->setEnabled(!state);
-checkbox2->setEnabled(!state);
+CBuntrusted->setEnabled(!state);
+CBhideid->setEnabled(!state);
 }
 
+
+void popupPublic::customOpts(const QString &str)
+{
+customOptions=str;
+}
 
 void popupPublic::refresh(bool state)
 {
@@ -277,78 +320,77 @@ void popupPublic::slotprocread(KProcIO *p)
 {
 ///////////////////////////////////////////////////////////////// extract  encryption keys
 bool dead;
-QString tst,keyname;
+QString tst;
 
   while (p->readln(tst)!=-1)
   {
+   
+  //tst=QString::fromUtf8(tst);
        if (tst.startsWith("pub"))
         {
 	dead=false;
           const QString trust=tst.section(':',1,1);
           QString val=tst.section(':',6,6);
 	  QString id=QString("0x"+tst.section(':',4,4).right(8));
-          if (val.isEmpty()) val="Unlimited";
+          if (val=="") val=i18n("Unlimited");
           QString tr;
           switch( trust[0] )
             {
             case 'o':
-              tr= "Unknown" ;
+              tr=i18n("Unknown");
               break;
             case 'i':
-              tr= "Invalid";
+              tr=i18n("Invalid");
 	      dead=true;
               break;
             case 'd':
-              tr="Disabled";
+              tr=i18n("Disabled");
 	      dead=true;
               break;
             case 'r':
-              tr="Revoked";
+              tr=i18n("Revoked");
 	      dead=true;
               break;
             case 'e':
-              tr="Expired";
+              tr=i18n("Expired");
 	      dead=true;
               break;
             case 'q':
-              tr="Undefined";
+              tr=i18n("Undefined");
               break;
             case 'n':
-              tr="None";
+              tr=i18n("None");
               break;
             case 'm':
-              tr="Marginal";
+              tr=i18n("Marginal");
 	      break;
             case 'f':
-              tr="Full";
+              tr=i18n("Full");
               break;
             case 'u':
-              tr="Ultimate";
+              tr=i18n("Ultimate");
               break;
             default:
-              tr="?";
+              tr=i18n("?");
               break;
             }
 tst=tst.section(':',9,9);
 
-keyname=tst.section('<',1,1);
-		    keyname=keyname.section('>',0,0);
-		    keyname+=" ("+tst.section('<',0,0)+")";
-if ( !tst.isEmpty() && dead==false )
+if ((!dead) && (!tst.isEmpty()))
 	{
-	if ((id==defaultKey) && (encryptToDefault==true))
+	if ((id==defaultKey) && (encryptToDefault))
 	      {
-	      defaultName=keyname;
-	      UpdateViewItem2 *item=new UpdateViewItem2(keysList,keyname);
-	      KListViewItem *sub= new KListViewItem(item,QString("ID: "+id+", trust: "+tr+", validity: "+val));
+	      defaultName=extractKeyName(tst);
+	      UpdateViewItem2 *item=new UpdateViewItem2(keysList,defaultName);
+	      KListViewItem *sub= new KListViewItem(item,i18n("ID: %1, trust: %2, validity: %3").arg(id).arg(tr).arg(val));
 	      sub->setSelectable(false);
 	      if (seclist.find(tst,0,FALSE)!=-1) item->setPixmap(0,keyPair);
               else item->setPixmap(0,keySingle);
 	      }
 	      else
 	      {
-	      KListViewItem *item=new KListViewItem(keysList,keyname);
-	      KListViewItem *sub= new KListViewItem(item,QString("ID: "+id+", trust: "+tr+", validity: "+val));
+	      KListViewItem *item=new KListViewItem(keysList,extractKeyName(tst));
+	      KListViewItem *sub= new KListViewItem(item,i18n("ID: %1, trust: %2, validity: %3").arg(id).arg(tr).arg(val));
 	      sub->setSelectable(false);
 	      if (seclist.find(tst,0,FALSE)!=-1) item->setPixmap(0,keyPair);
               else item->setPixmap(0,keySingle);
@@ -356,6 +398,20 @@ if ( !tst.isEmpty() && dead==false )
 	  }
 }
 }
+}
+
+QString popupPublic::extractKeyName(QString fullName)
+{
+QString kMail;
+if (fullName.find("<")!=-1)
+{
+kMail=fullName.section('<',-1,-1);
+kMail.truncate(kMail.length()-1);
+}
+QString kName=fullName.section('<',0,0);
+if (kName.find("(")!=-1) kName=kName.section('(',0,0);
+if (displayMailFirst) return QString(kMail+" ("+kName+")").stripWhiteSpace();
+return QString(kName+" ("+kMail+")").stripWhiteSpace();
 }
 
 void popupPublic::annule()
@@ -375,7 +431,7 @@ void popupPublic::crypte()
 {
 //////   emit selected data
 
-QString res="",userid;
+QString res,userid;
 QPtrList<QListViewItem> list=keysList->selectedItems();
 
 for ( uint i = 0; i < list.count(); ++i )
@@ -384,14 +440,20 @@ if ( list.at(i) )
 userid=list.at(i)->firstChild()->text(0);
 	userid=userid.section(',',0,0);
 	userid=userid.section(':',1,1);
-	userid.stripWhiteSpace();
+	userid=userid.stripWhiteSpace();
 res+=" "+userid;
 }
-if (res.isEmpty()) {reject();return;}
-if ((encryptToDefault==true) && (res.find(defaultKey)==-1)) res+=" "+defaultKey;
-if (fmode==true)
-    emit selectedKey(res,checkbox2->isChecked(),checkbox1->isChecked(),checkbox3->isChecked(),checkbox4->isChecked());
-  else emit selectedKey(res,checkbox2->isChecked(),checkbox1->isChecked(),false,false);
+if (res.isEmpty()) return;
+if ((encryptToDefault) && (res.find(defaultKey)==-1)) res+=" "+defaultKey;
+QString returnOptions;
+if (CBuntrusted->isChecked()) returnOptions=" --always-trust ";
+if (CBarmor->isChecked()) returnOptions+=" --armor ";
+if (CBhideid->isChecked()) returnOptions+=" --throw-keyid ";
+if ((allowcustom) && (!customOptions.stripWhiteSpace().isEmpty())) returnOptions+=customOptions;
+
+if (fmode)
+	emit selectedKey(res,returnOptions,CBshred->isChecked(),CBsymmetric->isChecked());
+else emit selectedKey(res,returnOptions,false,false);
   accept();
 }
 

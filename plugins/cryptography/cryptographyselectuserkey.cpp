@@ -17,6 +17,8 @@
 
 #include <klocale.h>
 #include <klineedit.h>
+#include <qpushbutton.h>
+#include <qlabel.h>
  
 #include "cryptographyuserkey_ui.h"
 #include "kopetemetacontact.h"
@@ -43,13 +45,13 @@ CryptographySelectUserKey::~CryptographySelectUserKey()
 void CryptographySelectUserKey::slotSelectPressed()
 {
 	popupPublic *dialogue=new popupPublic(this, "public_keys", 0,false);
-	connect(dialogue,SIGNAL(selectedKey(QString &,bool,bool,bool,bool)),this,SLOT(keySelected(QString &,bool,bool,bool,bool)));
+	connect(dialogue,SIGNAL(selectedKey(QString &,QString,bool,bool)),this,SLOT(keySelected(QString &)));
 	dialogue->exec();
 	delete dialogue;
 }
 
 
-void CryptographySelectUserKey::keySelected(QString &key,bool,bool,bool,bool)
+void CryptographySelectUserKey::keySelected(QString &key)
 {
 	view->m_editKey->setText(key);
 }

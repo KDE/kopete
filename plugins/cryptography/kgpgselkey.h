@@ -1,4 +1,4 @@
-//Code taken from KGPG 
+//Code from KGPG
 
 /***************************************************************************
                           listkeys.h  -  description
@@ -20,12 +20,23 @@
 #ifndef LISTKEYS_H
 #define LISTKEYS_H
 
+
 #include <kdialogbase.h>
 
 class KListView;
-class QPixmap;
 class QCheckBox;
-class QListViewItem;
+
+typedef struct gpgKey{
+  QString gpgkeymail;
+  QString gpgkeyname;
+  QString gpgkeyid;
+  QString gpgkeytrust;
+  QString gpgkeyvalidity;
+  QString gpgkeysize;
+  QString gpgkeycreation;
+  QString gpgkeyexpiration;
+  QString gpgkeyalgo;
+};
 
 class KgpgSelKey : public KDialogBase
 {
@@ -40,10 +51,13 @@ private slots:
 void slotOk();
 void slotpreOk();
 void slotSelect(QListViewItem *item);
+QString extractKeyName(QString fullName);
 public slots:
 QString getkeyID();
 QString getkeyMail();
 bool getlocal();
 };
+
+
 
 #endif

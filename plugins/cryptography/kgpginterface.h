@@ -1,5 +1,7 @@
+//Code from KGPG
+
 /***************************************************************************
-                          popuppublic.h  -  description
+                          kgpginterface.h  -  description
                              -------------------
     begin                : Sat Jun 29 2002
     copyright            : (C) 2002 by 
@@ -33,7 +35,18 @@
 #include <kprocio.h>
 #include <kdialogbase.h>
 #include <kurl.h>
+#include <kiconloader.h>
+#include <kio/netaccess.h>
 
+
+/*
+#include <kdeversion.h>
+#if (KDE_VERSION >= 310)
+#include <kpassivepopup.h>
+#else
+#include <qtimer.h>
+#endif
+*/
 
 /**
  * Encrypt a file using gpg.
@@ -56,7 +69,7 @@ class KgpgInterface : public QObject {
 	 * @param Options String with the wanted gpg options. ex: "--armor"
 	 * @param symetrical bool whether the encryption should be symmetrical.
 	 */
-	void KgpgEncryptFile(QString userIDs,KURL srcUrl,KURL destUrl,QString Options="",bool symetrical=false);
+	void KgpgEncryptFile(QString encuserIDs,KURL srcUrl,KURL destUrl,QString Options="",bool symetrical=false);
 	
 	/**Encrypt file function
 	 * @param userIDs the key user identification.
@@ -64,25 +77,42 @@ class KgpgInterface : public QObject {
 	 * @param destUrl Kurl for the decrypted file.
 	 * @param chances int number of trials left for decryption (used only as an info displayed in the password dialog)
 	 */
-	int KgpgDecryptFile(QString userIDs="",KURL srcUrl=0,KURL destUrl=0,int chances=0);
+	void KgpgDecryptFile(KURL srcUrl=0,KURL destUrl=0,QString Options="");
 	
 	/**Sign file function
-	 * @param keyName QString the signing key name.
 	 * @param keyID QString the signing key ID.
 	 * @param srcUrl Kurl of the file to sign.
 	 * @param Options String with the wanted gpg options. ex: "--armor"
 	 */
-	void KgpgSignFile(QString keyName="",QString keyID="",KURL srcUrl=0,QString Options="");
+	void KgpgSignFile(QString keyID="",KURL srcUrl=0,QString Options="");
 	
 	/**Verify file function
-	 * @param srcUrl Kurl of the file to verify.
-	 * @param srcUrl Kurl of the signature file.
+	 * @param sigUrl Kurl of the signature file.
+	 * @param srcUrl Kurl of the file to be verified. If empty, gpg will try to find it using the signature file name (by removing the .sig extensio)
 	 */
-	void KgpgVerifyFile(KURL srcUrl,KURL sigUrl) ;
-	
-	
+	void KgpgVerifyFile(KURL sigUrl,KURL srcUrl=NULL) ;
+
+ 	/**Import key function
+ 	 * @param url Kurl the url of the key file. Allows public & secret key import.
+ 	 */
+void importKeyURL(KURL url, bool importSecret=false);
+	/**Import key function
+	 * @param keystr QString containing th key. Allows public & secret key import.
+ */
+void importKey(QString keystr, bool importSecret=false);
+		
+	/**Key signature function
+	 * @param keyID QString the ID of the key to be signed
+	 * @param signKeyID QString the ID of the signing key
+	 * @param signKeyMail QString the name of the signing key (only used to prompt user for passphrase)
+	 * @param local bool should the signature be local
+	 */
 	void KgpgSignKey(QString keyID="",QString signKeyID="",QString signKeyMail="",bool local=false);
 	
+	/**Key signature deletion function
+	 * @param keyID QString the ID of the key
+	 * @param signKeyID QString the ID of the signature key
+	 */
 	void KgpgDelSignature(QString keyID="",QString signKeyID="");
 	
 	/**Encrypt text function
@@ -91,9 +121,17 @@ class KgpgInterface : public QObject {
 	 * @param Options String with the wanted gpg options. ex: "--armor"
 	 * returns the encrypted text or empty string if encyption failed
 	 */
-	static QString KgpgEncryptText(QString text,QString userIDs, QString Options="");
+	 static QString KgpgEncryptText(QString text,QString userIDs, QString Options="");
 	
-	static QString KgpgDecryptText(QString text,QString userID="");
+	 /**Decrypt text function
+	 * @param text QString text to be decrypted.
+	 * @param userID QString the name of the decryption key (only used to prompt user for passphrase)
+	 */
+	static QString KgpgDecryptText(QString text,QString userID);
+	static QString KgpgDecryptFileToText(KURL srcUrl,QString userID);
+	
+	static QString extractKeyName(QString txt="");
+	static QString extractKeyName(KURL url=0);
 
 	/*
 	 * Destructor for the class.
@@ -104,9 +142,15 @@ class KgpgInterface : public QObject {
 	
     private slots:
 	
-	void signover(KProcess *p);
-	void sigprocess(KProcIO *p);//ess *p,char *buf, int buflen);
-
+	void openSignConsole();
+	  /**
+         * Checks output of the signature process
+         */
+	void signover(KProcess *);
+	/**
+         * Read output of the signature process
+         */
+	void sigprocess(KProcIO *p);
 	
         /**
          * Checks if the encrypted file was saved.
@@ -121,46 +165,135 @@ class KgpgInterface : public QObject {
 	/**
          * Checks if the signing was successfull.
          */
-	void timerDone();
 	void signfin(KProcess *p);
+	
+	/**
+         * Checks the number of uid's for a key-> if greater than one, key signature will switch to konsole mode
+         */
 	int checkuid(QString KeyID);
+	
+	/**
+         * Reads output of the delete signature process
+         */
 	void delsigprocess(KProcIO *p);
+	/**
+         * Checks output of the delete signature process
+         */
 	void delsignover(KProcess *p);
-	
-	void readprocess(KProcIO *p);//ess *p, char *buff, int bufflen);
-	
+	/**
+         * Checks output of the import process
+         */
+	void importURLover(KProcess *);
+	void importover(KProcess *);
+/**
+         * Read output of the import process
+         */
+	void importprocess(KProcIO *p);
+/**
+         * Reads output of the current process + allow overwriting of a file
+         */
+	void readprocess(KProcIO *p);
+	/**
+         * Reads output of the current encryption process + allow overwriting of a file
+         */
+	void readencprocess(KProcIO *p);
+	/**
+         * Reads output of the current signing process + allow overwriting of a file
+         */
+	void readsignprocess(KProcIO *p);
+	/**
+         * Reads output of the current decryption process + allow overwriting of a file
+         */
+	void readdecprocess(KProcIO *p);
+/**
+         * Checks output of the verify process
+         */
 	void verifyfin(KProcess *p);
-
+	
+	void txtreadencprocess(KProcIO *p);
+void txtencryptfin(KProcess *);
+void signkillDisplayClip();
+	//void txtreaddecprocess(KProcIO *p);
+//void txtdecryptfin(KProcess *);
 signals:
-	/**
-         * returns true if encryption successfull, false on error.
+		/**
+         *  emitted when an txt encryption finished
          */
-    void encryptionfinished(bool);	
-	/**
-         * returns true if decryption successfull, false on error.
+    void txtencryptionfinished(QString);	
+		/**
+         *  emitted when an error occured
          */
-	void signatureFinished(int); //// 0=successfull, 1=error, 2=bad passphrase
-    void decryptionfinished(bool);
+    void errormessage(QString);	
+	/**
+         *  true if encryption successfull, false on error.
+         */
+    void encryptionfinished();	
+	/**
+         *  true if key signature deletion successfull, false on error.
+         */
+    void delsigfinished(bool);	
+	
+	/**
+         * Signature process result: 0=successfull, 1=error, 2=bad passphrase
+         */
+	void signatureFinished(int); 
+	/**
+         *  emitted when user cancels process
+         */
+    void processaborted(bool);
+	/**
+         *  emitted when the process starts
+         */
+	void processstarted();
+	/**
+         *  true if decryption successfull, false on error.
+         */
+    void decryptionfinished();
+	/**
+         * emitted if bad passphrase was giver
+         */
 	void badpassphrase(bool);
+	/**
+         *  true if import successfull, false on error.
+         */
+	void importfinished();
+	/**
+         *  true if verify successfull, false on error.
+         */
+	void verifyfinished();
+	/**
+         *  true if signature successfull, false on error.
+         */
+	void signfinished();
 
 	        
     private:
     /**
 	 * @internal structure for communication
 	 */
-        QString message;
+        QString message,tempKeyFile,userIDs,txtprocess,output;
 		QCString passphrase;
-		bool deleteSuccess;
+		bool deleteSuccess,konsLocal,anonymous,txtsent,decfinished,decok,badmdc;
 		int signSuccess;
 		int step,signb,sigsearch;
+		QString konsSignKey, konsKeyID;
+		
+/*
+#if (KDE_VERSION >= 310)
+KPassivePopup *pop;
+#else
+QDialog *clippop;
+#endif
+*/		
+		
 	/**
 	 * @internal structure for the file information
 	 */
-        KURL file,filedec;
+        KURL file;
 	/**
 	 * @internal structure to send signal only once on error.
 	 */
-	bool encError,decError;
+	bool encError;
 };
 
  class  Md5Widget :public KDialogBase
