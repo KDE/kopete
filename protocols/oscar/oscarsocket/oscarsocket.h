@@ -681,7 +681,7 @@ class OscarSocket : public OscarConnection
 		 * parses incoming contactlist (roster) data
 		 */
 		void parseSSIData(Buffer &inbuf);
-		
+
 		/**
 		 * Parts of @ref parseSSIData()
 		 **/
@@ -881,7 +881,7 @@ class OscarSocket : public OscarConnection
 		/** Immediately send data */
 		void writeData(Buffer &outbuf);
 		/** Called when a connection has been closed */
-		void slotConnectionClosed();
+		void slotConnectionClosed(const QString &connName, bool expected);
 		/** Called when the server aknowledges the connection */
 		void OnConnAckReceived();
 		/** called when a conn ack is received for the BOS connection */
@@ -908,7 +908,6 @@ class OscarSocket : public OscarConnection
 			const unsigned long size, const QString &recipient);*/
 
 		void slotKeepaliveTimer();
-		//void slotBytesWritten(int n);
 
 	signals:
 		/**

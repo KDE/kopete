@@ -84,6 +84,8 @@ OscarConnection::ConnectionStatus OscarConnection::socketStatus() const
 			return Connecting;
 		case (KExtendedSocket::connected):
 			return Connected;
+		case (KExtendedSocket::closing):
+			return Disconnecting;
 		default:
 			break;
 	}
@@ -114,6 +116,18 @@ void OscarConnection::connectTo(const QString &host, const QString &port)
 	#else
 	mSocket->connect(host, port);
 	#endif
+}
+
+
+void OscarConnection::close()
+{
+	mSocket->close();
+}
+
+
+void OscarConnection::reset()
+{
+	mSocket->reset();
 }
 
 
@@ -197,7 +211,8 @@ void OscarConnection::slotSocketClosed()
 
 	//emit protocolError(i18n("Connection with %1 lost").arg(mSocket->host()), 1);
 	//emit connectionClosed(connectionName());
-	emit socketClosed(connectionName());
+
+	emit socketClosed(connectionName(), (socketStatus() != Disconnecting));
 }
 
 

@@ -688,6 +688,9 @@ ICQInfoItemList OscarSocket::extractICQItemList(Buffer& theBuffer)
 
 void OscarSocket::sendICQStatus(unsigned long status)
 {
+	if (!mIsICQ)
+		return;
+
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_SETSTATUS)" << endl;
 
 	if (status & ICQ_STATUS_SET_INVIS)
@@ -716,7 +719,8 @@ void OscarSocket::fillDirectInfo(Buffer &directInfo)
 	directInfo.addWord(0x000C); // TLV(12)
 	directInfo.addWord(0x0025); // length 25
 
-	/*if(mDirectIMMgr)
+#if 0
+	if(mDirectIMMgr)
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"bindhost=" << mDirectIMMgr->socket()->bindHost() <<
@@ -730,10 +734,9 @@ void OscarSocket::fillDirectInfo(Buffer &directInfo)
 		directInfo.addWord(0x0000);
 		directInfo.addWord(mDirectIMMgr->socket()->port().toUShort()); // Port
 	}
-	else*/
+	else
+#endif
 	{
-		/*kdDebug(14150) << k_funcinfo <<
-			"No direct-connection socket, filling in dummy values" << endl;*/
 		directInfo.addDWord(0x00000000);
 		directInfo.addWord(0x0000);
 		directInfo.addWord(0x0000);
@@ -763,7 +766,7 @@ void OscarSocket::sendKeepalive()
 void OscarSocket::startKeepalive()
 {
 //	kdDebug(14150) << k_funcinfo << "Called." << endl;
-	if (keepaliveTime==0) // nobody wants keepalive, so shut up ;)
+	if (keepaliveTime==0 || !mIsICQ) // nobody wants keepalive, so shut up ;)
 		return;
 
 	if (!keepaliveTimer)
@@ -772,7 +775,6 @@ void OscarSocket::startKeepalive()
 		keepaliveTimer = new QTimer(this, "keepaliveTimer");
 		QObject::connect(keepaliveTimer, SIGNAL(timeout()),
 			this, SLOT(slotKeepaliveTimer()));
-		//bSomethingOutgoing = true;
 		keepaliveTimer->start(keepaliveTime*1000);
 	}
 }
@@ -780,7 +782,7 @@ void OscarSocket::startKeepalive()
 void OscarSocket::stopKeepalive()
 {
 //	kdDebug(14150) << k_funcinfo << "Called." << endl;
-	if(keepaliveTimer)
+	if(keepaliveTimer && mIsICQ)
 	{
 		//kdDebug(14150) << k_funcinfo << "Deleting keepaliveTimer" << endl;
 		delete keepaliveTimer;
@@ -790,15 +792,6 @@ void OscarSocket::stopKeepalive()
 
 void OscarSocket::slotKeepaliveTimer()
 {
-	//kdDebug(14150) << k_funcinfo << "Called." << endl;
-	/*if(!bSomethingOutgoing)
-	{
-		kdDebug(14150) << k_funcinfo <<
-			"ERROR, didnt send something since last ping sent to socket!" << endl;
-		emit protocolError(
-			i18n("Connection to %1 timed out").arg((mIsICQ ? "ICQ" : "AIM")), 0);
-	}
-	bSomethingOutgoing = false;*/
 	sendKeepalive();
 }
 
@@ -1290,6 +1283,9 @@ void OscarSocket::sendCLI_SEARCHWP(
 
 void OscarSocket::sendReqOfflineMessages()
 {
+	if (!mIsICQ) // NOT ON AIM
+		return;
+
 	kdDebug(14150) << k_funcinfo <<
 		"SEND (CLI_REQOFFLINEMSGS), requesting offline messages" << endl;
 

@@ -54,7 +54,7 @@ class OscarConnection : public QObject
 
 		enum ConnectionStatus
 		{
-			Disconnected=0, Connecting, Connected
+			Disconnected=0, Connecting, Connected, Disconnecting
 		};
 
 		OscarConnection(const QString &connName, ConnectionType type,
@@ -84,6 +84,9 @@ class OscarConnection : public QObject
 		inline const QByteArray &cookie() const { return mCookie; };
 
 		void connectTo(const QString &host, const QString &port);
+
+		void close();
+		void reset();
 
 		QString localHost() const;
 		QString localPort() const;
@@ -133,7 +136,7 @@ class OscarConnection : public QObject
 		 * Emitted when the connection is closed
 		 * @p name name of this connection
 		 */
-		void socketClosed(const QString &name);
+		void socketClosed(const QString &name, bool expected);
 
 		/**
 		 * Emitted when a lowlevel socket error occured

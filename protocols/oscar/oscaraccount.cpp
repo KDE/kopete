@@ -195,12 +195,12 @@ bool OscarAccount::passwordWasWrong()
 
 void OscarAccount::initEngine(bool icq)
 {
-	//kdDebug(14150) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
+	kdDebug(14150) << k_funcinfo << "for account '" << accountId() << "'" << endl;
 
 	QByteArray cook;
 	cook.duplicate("01234567",8);
 	d->engine = new OscarSocket(pluginData(protocol(),"Server"), cook,
-		this, this, "d->engine", icq);
+		this, this, "engine", icq);
 }
 
 void OscarAccount::slotGoOffline()
