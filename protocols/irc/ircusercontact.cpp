@@ -424,6 +424,7 @@ QPtrList<KAction> *IRCUserContact::customContextMenuActions( Kopete::ChatSession
 
 		mCustomActions->append( actionCtcpMenu );
 		mCustomActions->append( actionModeMenu );
+		mCustomActions->append( actionKick );
 		mCustomActions->append( actionBanMenu );
 		mCustomActions->append( codecAction );
 
