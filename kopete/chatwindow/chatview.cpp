@@ -993,7 +993,7 @@ void ChatView::addChatMessage( KopeteMessage &m )
 	KopeteContactPtrList members = msgManager()->members();
 	for( KopeteContact *c = members.first(); c; c = members.next() )
 	{
-		resultHTML.replace( QRegExp( QString::fromLatin1("(^|>|\\b)(%1)($|\\b|[<:])")
+		resultHTML.replace( QRegExp( QString::fromLatin1("(^|>|\\w)(%1)($|\\w|[<:])")
 			.arg( QRegExp::escape( c->displayName() ) ) ), 
 			QString::fromLatin1("\\1<span class=\"KopeteDisplayName\">\\2</span>\\3") );
 	}
