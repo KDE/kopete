@@ -359,14 +359,21 @@ KopetePlugin* LibraryLoader::searchByID( const QString &Id )
 
 void LibraryLoader::slotPluginDestroyed( QObject *o )
 {
-	KopetePlugin *p = dynamic_cast<KopetePlugin *>( o );
-	if( p )
-	{
-		m_addressBookFields.remove( p );
+	m_addressBookFields.remove( static_cast<KopetePlugin *>( o ) );
 
-		// FIXME: Most likely most data structures here leak and are bound
-		// to cause crashes. Find and identify those.
+	QDictIterator<PluginLibrary> it( mLibHash );
+	for( ; it.current(); ++it )
+	{
+		if( it.current()->plugin == o )
+		{
+			delete it.current();
+			mLibHash.remove( it.currentKey() );
+			break;
+		}
 	}
+
+	// FIXME: Most likely most data structures here leak and are bound
+	// to cause crashes. Find and identify those.
 }
 
 QStringList LibraryLoader::addressBookFields( KopetePlugin *p ) const
