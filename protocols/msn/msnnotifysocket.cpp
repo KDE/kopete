@@ -91,8 +91,6 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 215:
 	{
 		QString msg = i18n( "This MSN user already exists in this group!\n"
-			"Please note that Kopete doesn't really handle users that exist "
-			"in multiple groups yet!\n"
 			"If this is not the case, please send us a detailed bug report "
 			"at kopete-devel@kde.org containing the raw output on the "
 			"console (in gzipped format, as it is probably a lot of output!)" );
@@ -406,8 +404,7 @@ void MSNNotifySocket::setStatus( int status )
 
 void MSNNotifySocket::changePublicName( const QString &publicName )
 {
-	QString pn = publicName;
-	sendCommand( "REA", msnId() + " " + escape( pn ) );
+	sendCommand( "REA", msnId() + " " + escape (publicName) );
 }
 
 void MSNNotifySocket::createChatSession()

@@ -54,6 +54,7 @@ void MSNSocket::connect( const QString &server, uint port )
 	{
 		// Cleanup first.
 		// FIXME: More generic!!!
+		kdDebug() << "MSNSocket::connect: WARNING: status is set to 'Disconnecting'" << endl;
 		delete m_socket;
 	}
 
@@ -343,7 +344,7 @@ void MSNSocket::parseLine( const QString &str )
 
 void MSNSocket::handleError( uint code, uint id )
 {
-	if(code==500);
+	if(code==500)
 	{
 		QString msg = i18n( "Internal server error!\n"
 				"The server is maybe down for maintenance. Try later " );

@@ -1283,17 +1283,20 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 	if( list == "AL" )
 	{
 		if( m_contacts.contains( handle ) )
-			m_contacts[ handle ]->setBlocked( false );
+			m_contacts[ handle ]->setAllowed( true );
 		if( !m_allowList.contains( handle ) )
 			m_allowList.append( handle );
 	}
 	if( list == "RL" )
 	{
-		NewUserImpl *authDlg = new NewUserImpl(0);
-		authDlg->setHandle(handle, publicName);
-		connect( authDlg, SIGNAL(addUser( QString )), this, SLOT(slotAddContact( QString )));
-		connect( authDlg, SIGNAL(blockUser( QString )), this, SLOT(slotBlockContact( QString )));
-		authDlg->show();
+		if(!m_contacts.contains( handle ))
+		{
+			NewUserImpl *authDlg = new NewUserImpl(0);
+			authDlg->setHandle(handle, publicName);
+			connect( authDlg, SIGNAL(addUser( QString )), this, SLOT(slotAddContact( QString )));
+			connect( authDlg, SIGNAL(blockUser( QString )), this, SLOT(slotBlockContact( QString )));
+			authDlg->show();
+		}
 	}
 
 
