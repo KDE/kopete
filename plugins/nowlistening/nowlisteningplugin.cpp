@@ -123,33 +123,11 @@ void NowListeningPlugin::slotPollPlayers()
 		if ( m_mediaPlayer[ i ]->playing() && m_mediaPlayer[ i ]->newTrack() )
 		{
 			sthToAdvertise = true;
-			// SIMPLE MESSAGE WITH STATIC HEADER, NO SUBSTITUTION
 			// generate a message 
-			kdDebug() << m_mediaPlayer[ i ]->name() << " says it's playing "
-				<< " a " << ( m_mediaPlayer[ i ]->newTrack() ? " new" : "old" )  << " track" << endl;
-			/*if ( message != m_message ) // > 1 track playing!
-			  message = message + "\nand: ";
-			  message = message + m_mediaPlayer[ i ]->track();
-			  if ( !m_mediaPlayer[ i ]->artist().isEmpty() )
-			  message += " by " + m_mediaPlayer[ i ]->artist();
-			  if ( !m_mediaPlayer[ i ]->album().isEmpty( ) )
-			  message = message + " on " + m_mediaPlayer[ i ]->album();
-		
-			// SUBSTITUTION MESSAGE
-			// get the prototype (header, per track, and conjunction)
-			// substitutable strings are
-			// %artist, %track, %album
-			if ( message != header ) // > 1 track playing!
-			  message = message + conjunction;
-			  QString thisTrack = perTrack;
-			  thisTrack.replace( "%track", m_mediaPlayer[  i ]->track() );
-			  thisTrack.replace( "%artist", m_mediaPlayer[  i ]->artist() );
-			  thisTrack.replace( "%album", m_mediaPlayer[  i ]->album() );
-			  message = message + thisTrack;
-			  */
+			//kdDebug() << m_mediaPlayer[ i ]->name() << " says it's playing "
+			//	<< "a " << ( m_mediaPlayer[ i ]->newTrack() ? "new" : "old" )  << " track" << endl;
 			// CLEVER SUBSTITUTION WITH DEPTH FIRST SEARCH FOR 
 			// INCLUSION CONDITIONAL ON SUBSTITUTION BEING MADE
-			
 			if (  message != header ) // > 1 track playing!
 				message = message + conjunction;
 			//kdDebug() << m_mediaPlayer[ i ]->track() << m_mediaPlayer[ i ]->artist() << m_mediaPlayer[ i ]->album() << m_mediaPlayer[ i ]->name() << endl;
@@ -233,7 +211,6 @@ QString NowListeningPlugin::substDepthFirst( NLMediaPlayer *player,
 
 void NowListeningPlugin::advertiseNewTracks(QString message)
 {
-	
 	// tell each active chat about the new song 
 	
 	// get the list of active chats
@@ -247,24 +224,22 @@ void NowListeningPlugin::advertiseNewTracks(QString message)
 		if ( it.current()->widget() != 0L )
 		{
 			// then we have a live session?
-			kdDebug() << "NowListeningPlugin::advertiseNewTracks() " <<
-				it.currentKey() << " : " << it.current() << endl;
-			// send message to all contacts (except self?)
-			// Debug the to list
-			/*KopeteContactPtrList pl = it.current()->members();
-			QString tolist;
-			for ( pl.first(); pl.current(); pl.next() )
-				tolist = tolist + (long)pl.current();
-			kdDebug() << "NowListeningPlugin::advertiseNewTracks() to list is " << tolist << endl;
-			*/
-			// make the destination the set of members who are interested
+
+			// reduce the recipients to the set of members who are interested
 			// in our output
 			KopeteContactPtrList pl = it.current()->members();
-			for ( pl.first(); pl.current(); pl.next() )
-			{ 
-				QStringList myData = pl.current()->metaContact()->pluginData( this );
-				if ( !myData.isEmpty( ) && myData.first() != "true" )
+			QStringList myData;
+			// avoid skipping one member when removing 
+			// (old version's pl.remove(); pl.next() skipped because 
+			// remove() moves on to next for you.
+			pl.first();
+			while ( pl.current() )
+			{
+				myData = pl.current()->metaContact()->pluginData( this );
+				if ( !myData.isEmpty() && myData.first() != "true" )
 					pl.remove();
+				else
+					pl.next();
 			}
 			// get on with it
 			kdDebug() << "NowListeningPlugin::advertiseNewTracks() - " <<
@@ -276,10 +251,10 @@ void NowListeningPlugin::advertiseNewTracks(QString message)
 			if ( pl.isEmpty() )
 				break;
 			KopeteMessage msg( it.current()->user(),
-					/*it.current()->members(),*/
 					pl,
 					message,
-					KopeteMessage::Outbound);
+					KopeteMessage::Outbound,
+					KopeteMessage::RichText );
 			it.current()->slotMessageSent( msg );
 		}
 	}
@@ -307,6 +282,6 @@ NowListeningPlugin::~NowListeningPlugin()
 	m_client->detach();
 }
 
-//#include "nowlisteningplugin.moc"
+#include "nowlisteningplugin.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

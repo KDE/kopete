@@ -8,143 +8,184 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>387</width>
+            <width>382</width>
             <height>320</height>
         </rect>
     </property>
     <property name="caption">
         <string>Form1</string>
     </property>
-    <widget class="QLayoutWidget">
+    <widget class="QFrame">
         <property name="name">
-            <cstring>layout4</cstring>
+            <cstring>frame4</cstring>
         </property>
         <property name="geometry">
             <rect>
                 <x>0</x>
-                <y>20</y>
-                <width>238</width>
-                <height>145</height>
+                <y>40</y>
+                <width>380</width>
+                <height>16</height>
             </rect>
         </property>
-        <vbox>
+        <property name="frameShape">
+            <enum>HLine</enum>
+        </property>
+        <property name="frameShadow">
+            <enum>Sunken</enum>
+        </property>
+    </widget>
+    <widget class="QLayoutWidget">
+        <property name="name">
+            <cstring>layout1</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>10</y>
+                <width>360</width>
+                <height>25</height>
+            </rect>
+        </property>
+        <hbox>
             <property name="name">
                 <cstring>unnamed</cstring>
             </property>
-            <widget class="QLayoutWidget">
-                <property name="name">
-                    <cstring>layout1</cstring>
-                </property>
-                <hbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>textLabel1</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Check for new songs every (s): </string>
-                        </property>
-                    </widget>
-                    <widget class="QSpinBox">
-                        <property name="name">
-                            <cstring>m_freq</cstring>
-                        </property>
-                        <property name="maxValue">
-                            <number>3600</number>
-                        </property>
-                        <property name="minValue">
-                            <number>5</number>
-                        </property>
-                        <property name="lineStep">
-                            <number>5</number>
-                        </property>
-                        <property name="value">
-                            <number>180</number>
-                        </property>
-                    </widget>
-                </hbox>
-            </widget>
-            <widget class="QFrame">
-                <property name="name">
-                    <cstring>frame4</cstring>
-                </property>
-                <property name="frameShape">
-                    <enum>HLine</enum>
-                </property>
-                <property name="frameShadow">
-                    <enum>Sunken</enum>
-                </property>
-            </widget>
             <widget class="QLabel">
                 <property name="name">
-                    <cstring>textLabel3</cstring>
+                    <cstring>textLabel1</cstring>
                 </property>
                 <property name="text">
-                    <string>Use this message when advertising:</string>
+                    <string>Check for new songs every (s): </string>
                 </property>
             </widget>
-            <widget class="QLayoutWidget">
+            <widget class="QSpinBox">
                 <property name="name">
-                    <cstring>layout3</cstring>
+                    <cstring>m_freq</cstring>
                 </property>
-                <grid>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QLineEdit" row="0" column="1">
-                        <property name="name">
-                            <cstring>m_header</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Now Listening To: </string>
-                        </property>
-                    </widget>
-                    <widget class="QLineEdit" row="1" column="1">
-                        <property name="name">
-                            <cstring>m_perTrack</cstring>
-                        </property>
-                        <property name="text">
-                            <string>%track (by %artist)(on %album)</string>
-                        </property>
-                    </widget>
-                    <widget class="QLineEdit" row="2" column="1">
-                        <property name="name">
-                            <cstring>m_conjunction</cstring>
-                        </property>
-                        <property name="text">
-                            <string>, and </string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="2" column="0">
-                        <property name="name">
-                            <cstring>textLabel1_2_2_2</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Conjunction:
-(&gt;1 track)</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="1" column="0">
-                        <property name="name">
-                            <cstring>textLabel1_2_2</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Each track: </string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="0" column="0">
-                        <property name="name">
-                            <cstring>textLabel1_2</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Start with: </string>
-                        </property>
-                    </widget>
-                </grid>
+                <property name="buttonSymbols">
+                    <enum>UpDownArrows</enum>
+                </property>
+                <property name="maxValue">
+                    <number>3600</number>
+                </property>
+                <property name="minValue">
+                    <number>5</number>
+                </property>
+                <property name="lineStep">
+                    <number>5</number>
+                </property>
+                <property name="value">
+                    <number>180</number>
+                </property>
             </widget>
-        </vbox>
+        </hbox>
+    </widget>
+    <widget class="QLayoutWidget">
+        <property name="name">
+            <cstring>layout3</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>90</y>
+                <width>360</width>
+                <height>170</height>
+            </rect>
+        </property>
+        <grid>
+            <property name="name">
+                <cstring>unnamed</cstring>
+            </property>
+            <widget class="QLineEdit" row="0" column="1">
+                <property name="name">
+                    <cstring>m_header</cstring>
+                </property>
+                <property name="text">
+                    <string>Now Listening To: </string>
+                </property>
+            </widget>
+            <widget class="QLineEdit" row="1" column="1">
+                <property name="name">
+                    <cstring>m_perTrack</cstring>
+                </property>
+                <property name="text">
+                    <string>%track (by %artist)(on %album)</string>
+                </property>
+            </widget>
+            <widget class="QLineEdit" row="2" column="1">
+                <property name="name">
+                    <cstring>m_conjunction</cstring>
+                </property>
+                <property name="text">
+                    <string>, and </string>
+                </property>
+            </widget>
+            <widget class="QLabel" row="2" column="0">
+                <property name="name">
+                    <cstring>textLabel1_2_2_2</cstring>
+                </property>
+                <property name="text">
+                    <string>Conjunction (if &gt;1 track): </string>
+                </property>
+            </widget>
+            <widget class="QLabel" row="1" column="0">
+                <property name="name">
+                    <cstring>textLabel1_2_2</cstring>
+                </property>
+                <property name="text">
+                    <string>For each track: </string>
+                </property>
+            </widget>
+            <widget class="QLabel" row="0" column="0">
+                <property name="name">
+                    <cstring>textLabel1_2</cstring>
+                </property>
+                <property name="text">
+                    <string>Start with: </string>
+                </property>
+            </widget>
+        </grid>
+    </widget>
+    <spacer>
+        <property name="name">
+            <cstring>spacer3</cstring>
+        </property>
+        <property name="orientation">
+            <enum>Vertical</enum>
+        </property>
+        <property name="sizeType">
+            <enum>Expanding</enum>
+        </property>
+        <property name="sizeHint">
+            <size>
+                <width>20</width>
+                <height>40</height>
+            </size>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>180</x>
+                <y>270</y>
+                <width>20</width>
+                <height>40</height>
+            </rect>
+        </property>
+    </spacer>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>textLabel3</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>60</y>
+                <width>214</width>
+                <height>20</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Use this message when advertising:</string>
+        </property>
     </widget>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
