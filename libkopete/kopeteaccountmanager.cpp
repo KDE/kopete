@@ -120,7 +120,7 @@ void AccountManager::setAwayAll( const QString &awayReason )
 		Contact *self = it.current()->myself();
 		bool isInvisible = self && self->onlineStatus().status() == OnlineStatus::Invisible;
 		if ( it.current()->isConnected() && !isInvisible )
-			it.current()->setAway( true, awayReason.isNull() ? Kopete::Away::message() : awayReason );
+			it.current()->setAway( true, awayReason );
 	}
 }
 

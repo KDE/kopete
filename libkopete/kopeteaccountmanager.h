@@ -127,7 +127,10 @@ public slots:
 	/**
 	 * \brief Set all accounts to away at once.
 	 *
-	 * This is a slot, so you can connect directly to it from e.g. a KAction.
+	 * All account that are connected, but not invisible will be set to away
+	 * @see Account::setAway
+	 * @param awayReason is the away message that will be set.
+	 *
 	 * @todo find a way to set globaly away with some other onlinestatus
 	 */
 	void setAwayAll( const QString &awayReason = QString::null );
