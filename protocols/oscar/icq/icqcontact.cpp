@@ -59,13 +59,13 @@ ICQContact::ICQContact( ICQAccount *account, const QString &name, Kopete::MetaCo
 	//QObject::connect( mAccount->engine(), SIGNAL( userIsOnline( const QString& ) ), this, SLOT( userOnline( const QString&, UserDetails ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( userIsOffline( const QString& ) ), this, SLOT( userOffline( const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( authRequestReceived( const QString&, const QString& ) ),
-		              this, SLOT( slotGotAuthRequest( const QString&, const QString& ) ) );
+	                  this, SLOT( slotGotAuthRequest( const QString&, const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( authReplyReceived( const QString&, const QString&, bool ) ),
-		              this, SLOT( slotGotAuthReply(const QString&, const QString&, bool ) ) );
+	                  this, SLOT( slotGotAuthReply(const QString&, const QString&, bool ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedIcqShortInfo( const QString& ) ),
-					  this, SLOT( receivedShortInfo( const QString& ) ) );
+	                  this, SLOT( receivedShortInfo( const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedIcqLongInfo( const QString& ) ),
-					  this, SLOT( receivedLongInfo( const QString& ) ) );
+	                  this, SLOT( receivedLongInfo( const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
 	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
 
