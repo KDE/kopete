@@ -510,7 +510,6 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 				return;
 			}
 			tryReconnect = true;
-			return;
 		break;
 		default:
 			if ( connectWithSSL ) {
