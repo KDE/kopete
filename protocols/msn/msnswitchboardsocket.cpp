@@ -219,7 +219,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		QString message;
 		message = msg.right( msg.length() - msg.findRev( " " ) - 1 );
 		message = message.replace(  "\r\n" ,"" );
-		emit receivedTypingMsg( message, true );
+		emit receivedTypingMsg( message.lower(), true );
 	}
 	else if(type=="text/plain"   || type.isEmpty() )
 	{

@@ -50,7 +50,7 @@
 #endif
 
 MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const char *name )
-: Kopete::PasswordedAccount ( parent, AccountID, 0, name )
+	: Kopete::PasswordedAccount ( parent, AccountID.lower(), 0, name )
 {
 	m_notifySocket = 0L;
 	m_connectstatus = MSNProtocol::protocol()->NLN;
