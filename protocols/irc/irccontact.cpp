@@ -142,6 +142,7 @@ void IRCContact::messageManagerDestroyed()
 
 	m_msgManager = 0L;
 	m_isConnected = false;
+
 }
 
 void IRCContact::slotUserDisconnected(const QString &user, const QString &reason)
@@ -300,7 +301,7 @@ void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 	QStringList messages = QStringList::split( '\n', KopeteMessage::unescape( htmlString ) );
 	for( QStringList::Iterator it = messages.begin(); it != messages.end(); ++it )
 	{
-		KopeteMessage msg(message.from(), message.to(), htmlString, message.direction(),
+		KopeteMessage msg(message.from(), message.to(), *it, message.direction(),
 			KopeteMessage::RichText, message.type() );
 
 		m_engine->messageContact(m_nickName, *it );
