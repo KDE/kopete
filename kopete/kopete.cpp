@@ -109,8 +109,8 @@ void Kopete::initialize()
 	// Ok, load saved plugins
 	loadPlugins();
 
-	(KopeteContactList::contactList())->loadXML();
-	kdDebug() << endl << (KopeteContactList::contactList())->toXML() << endl;
+	KopeteContactList::contactList()->load();
+//	kdDebug() << endl << KopeteContactList::contactList())->toXML() << endl;
 }
 
 

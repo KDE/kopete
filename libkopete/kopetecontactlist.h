@@ -3,7 +3,7 @@
 
     Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
 
-	Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -20,8 +20,9 @@
 
 #include <qobject.h>
 #include <qptrlist.h>
-#include <qdom.h>
 #include <qstringlist.h>
+
+class QDomDocument;
 
 class KopeteMetaContact;
 
@@ -46,6 +47,12 @@ public:
 	 * Find the meta contact that belongs to a given contact. If contact
 	 * is not found, a new meta contact is created instead.
 	 * For now, just compare the ID field.
+	 *
+	 * NOTE: Even though the new contact list generally doesn't require this
+	 *       method, it's not completely obsolete either, because protocols
+	 *       with server-side contact lists ( MSN, Jabber, etc. ) may detect
+	 *       new contacts having been added upon reconnect.
+	 *
 	 * FIXME: Also take protocol and identity into account!
 	 */
 	KopeteMetaContact *findContact( const QString &contactId );
@@ -53,50 +60,66 @@ public:
 	/**
 	 * add a metacontact into the contact list
 	 * It always create a new one
+	 *
+	 * FIXME: Require an id instead of a pointer. The pointer-version should
+	 *        be removed. - Martijn
+	 * FIXME: When we do that, can't we just use findContact again instead?
+	 *        with some clever naming the same method can probably be used
+	 *        - Martijn
 	 */
-	void addMetaContact(KopeteMetaContact *);
+	void addMetaContact( KopeteMetaContact *c );
 
 	/**
 	 * Return all meta contacts
 	 */
-	static QStringList meta_all();
+	QStringList contacts() const;
 
 	/**
 	 * Return all meta contacts that are reachable
 	 */
-	static QStringList meta_reachable();
+	QStringList reachableContacts() const;
 
 	/**
 	 * Return all meta contacts that are online
 	 */
-	static QStringList meta_online();
+	QStringList onlineContacts() const;
 
 	/**
 	 * Return all meta contacts with their current status
+	 *
+	 * FIXME: Do we *need* this one? Sounds error prone to me, because
+	 * nicknames can contain parentheses too. - Martijn
 	 */
-	static QStringList meta_status();
+	QStringList contactStatuses() const;
 
+	/**
+	 * Load the contact list
+	 *
+	 * FIXME: Use a better way, without exposing the XML backend, though.
+	 */
+	void load() { loadXML(); }
+
+private:
 	/**
 	 * Return a XML representation of the contact list
 	 */
 	QString toXML();
 
-    /**
+	/**
 	 * Load the contact list from XML file
 	 */
-    void loadXML();
+	void loadXML();
 
 	/**
 	 * Save the contact list to XML file
 	 */
-    void saveXML();
+	void saveXML();
 
-private:
 	/**
 	 * Private constructor: we are a singleton
 	 */
 	KopeteContactList();
-	
+
 	/**
 	 * The list of contacts embodied in the meta contact
 	 */
@@ -106,8 +129,13 @@ private:
 	 * Our contact list instance
 	 */
 	static KopeteContactList *s_contactList;
+
 	/**
-	 * The DOM representation of the contact list.
+	 * The DOM representation of the contact list
+	 *
+	 * FIXME: Why do we keep the DOM tree in memory anyway? Shouldn't we
+	 *        just create one on load and save, but use the much faster and
+	 *        efficient C++ API internally??? - Martijn
 	 */
 	QDomDocument *m_dom;
 };

@@ -226,18 +226,18 @@ QString KopeteContactList::toXML()
 }
 
 
-QStringList KopeteContactList::meta_all()
+QStringList KopeteContactList::contacts() const
 {
-	QStringList meta_contacts;
+	QStringList contacts;
 	QPtrListIterator<KopeteMetaContact> it( KopeteContactList::contactList()->m_contacts );
 	for( ; it.current(); ++it )
 	{
-		meta_contacts.append( it.current()->displayName() );
+		contacts.append( it.current()->displayName() );
 	}
-	return meta_contacts;
+	return contacts;
 }
 
-QStringList KopeteContactList::meta_status()
+QStringList KopeteContactList::contactStatuses() const
 {
 	QStringList meta_contacts;
 	QPtrListIterator<KopeteMetaContact> it( KopeteContactList::contactList()->m_contacts );
@@ -248,30 +248,29 @@ QStringList KopeteContactList::meta_status()
 	return meta_contacts;
 }
 
-QStringList KopeteContactList::meta_reachable()
+QStringList KopeteContactList::reachableContacts() const
 {
-	QStringList meta_contacts;
+	QStringList contacts;
 	QPtrListIterator<KopeteMetaContact> it( KopeteContactList::contactList()->m_contacts );
 	for( ; it.current(); ++it )
 	{
 		if ( it.current()->isReachable() )
-			meta_contacts.append( it.current()->displayName() );
+			contacts.append( it.current()->displayName() );
 	}
-	return meta_contacts;
+	return contacts;
 }
 
-QStringList KopeteContactList::meta_online()
+QStringList KopeteContactList::onlineContacts() const
 {
-	QStringList meta_contacts;
+	QStringList contacts;
 	QPtrListIterator<KopeteMetaContact> it( KopeteContactList::contactList()->m_contacts );
 	for( ; it.current(); ++it )
 	{
 		if ( it.current()->isOnline() )
-			meta_contacts.append( it.current()->displayName() );
+			contacts.append( it.current()->displayName() );
 	}
-	return meta_contacts;
+	return contacts;
 }
-
 
 #include "kopetecontactlist.moc"
 
