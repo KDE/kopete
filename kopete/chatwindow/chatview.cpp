@@ -30,7 +30,7 @@
 #include <dom/html_inline.h>
 #include <khtmlview.h>
 #include <khtml_part.h>
-
+#include <kparts/part.h>
 #include <kfiledialog.h>
 #include <kiconloader.h>
 #include <kapplication.h>
@@ -108,7 +108,7 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 		close();
 	}
 
-	editpart = static_cast<KRichTextEditPart *>( factory->create( editDock, "krichtexteditpart", "KParts::ReadWritePart" ) );
+	editpart = static_cast<KParts::Part*> (factory->create( editDock, "krichtexteditpart", "KParts::ReadWritePart" ) );
 	if ( !editpart )
 	{
 		KMessageBox::error( this, QString::fromLatin1("Could not create editor part, aborting") );
@@ -125,7 +125,7 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	doc.documentElement().removeChild( doc.documentElement().childNodes().item(1) ); //Remove MainToolbar
 	doc.documentElement().removeChild( doc.documentElement().lastChild() ); // Remove Edit popup
 
-	m_edit = editpart->widget();
+	m_edit = static_cast<QTextEdit*>( editpart->widget() );
 	//m_edit = new KTextEdit( editDock, "m_edit" );
 
 	//Set params on the edit widget

@@ -28,7 +28,6 @@
 #include <qtextedit.h>
 #include <dom/html_element.h>
 
-#include "krichtexteditpart.h"
 #include "kopeteview.h"
 
 class QPixmap;
@@ -49,7 +48,7 @@ using namespace DOM;
 
 typedef QPtrList<KopeteContact> KopeteContactPtrList;
 
-namespace KParts { struct URLArgs; }
+namespace KParts { struct URLArgs; class Part; }
 
 namespace Kopete
 {
@@ -269,7 +268,7 @@ public slots:
 
 	virtual bool closeView( bool force = false );
 
-	KRichTextEditPart *part() const { return editpart; }
+	KParts::Part *part() const { return editpart; }
 
 signals:
 	/**
@@ -399,7 +398,7 @@ private:
 	KDockWidget *membersDock;
 	KDockWidget *editDock;
 	KTabWidget *m_tabBar;
-	KRichTextEditPart *editpart;
+	KParts::Part *editpart;
 
 	KAction *copyAction;
 	KAction  *saveAction;
