@@ -174,8 +174,7 @@ GaduAccount::slotLogoff()
 	if ( session_->isConnected() ) {
 		status_ = GaduProtocol::protocol()->convertStatus( 0 );
 		changeStatus( status_ );
-	} else
-		protocol()->setStatusIcon( "gg_offline" );
+	}
 }
 
 void
@@ -349,7 +348,6 @@ GaduAccount::connectionFailed( struct gg_event* /*e*/ )
 {
 	KMessageBox::error( qApp->mainWidget(), i18n("Plugin unable to connect to the Gadu-Gadu server."),
 											i18n("Connection Error") );
-  protocol()->setStatusIcon( "gg_offline" );
 }
 
 void

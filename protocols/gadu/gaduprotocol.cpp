@@ -74,8 +74,6 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
     prefs_ = new GaduPreferences( "gadu_protocol", this );
     QObject::connect( prefs_, SIGNAL(saved()), this, SLOT(settingsChanged()) );
 
-    setStatusIcon( "gg_connecting" );
-
     addAddressBookField( "messaging/gadu", KopetePlugin::MakeIndexField );
 }
 
