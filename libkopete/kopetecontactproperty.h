@@ -51,10 +51,11 @@ class ContactPropertyTmpl
 		 * @param persistent if true, properties based on this template will be
 		 *  saved to the contactlist
 		 **/
-		ContactPropertyTmpl(const QString &key,
+		ContactPropertyTmpl( const QString &key,
 			const QString &label,
 			const QString &icon = QString::null,
-			bool persistent = false);
+			bool persistent = false,
+			bool richText = false );
 
 		/**
 		 * Copy constructor
@@ -90,6 +91,11 @@ class ContactPropertyTmpl
 		 * be saved across Kopete sessions, false otherwise.
 		 **/
 		bool persistent() const;
+
+		/**
+		 * Returns true if properties based on this template are HTML formatted
+		 **/
+		bool isRichText() const;
 
 		/**
 		 * An empty template, check for it using isNull()
@@ -156,6 +162,11 @@ class ContactProperty
 		 * value), false otherwise.
 		 **/
 		bool isNull() const;
+
+		/**
+		 * Returns true if this property is HTML formatted
+		 **/
+		bool isRichText() const;
 
 		/**
 		 * A map of key,ContactProperty items

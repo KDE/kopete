@@ -29,6 +29,7 @@ struct ContactPropertyTmplPrivate
 	QString label;
 	QString icon;
 	bool persistent;
+	bool richText;
 	unsigned int refCount;
 };
 
@@ -44,7 +45,7 @@ ContactPropertyTmpl::ContactPropertyTmpl()
 }
 
 ContactPropertyTmpl::ContactPropertyTmpl(const QString &key,
-	const QString &label, const QString &icon, bool persistent)
+	const QString &label, const QString &icon, bool persistent, bool richText)
 {
 	ContactPropertyTmpl other = Kopete::Global::Properties::self()->tmpl(key);
 	if(other.isNull())
@@ -58,6 +59,7 @@ ContactPropertyTmpl::ContactPropertyTmpl(const QString &key,
 		d->label = label;
 		d->icon = icon;
 		d->persistent = persistent;
+		d->richText = richText;
 		Kopete::Global::Properties::self()->registerTemplate(key, (*this));
 	}
 	else
@@ -142,6 +144,11 @@ bool ContactPropertyTmpl::persistent() const
 	return d->persistent;
 }
 
+bool ContactPropertyTmpl::isRichText() const
+{
+	return d->richText;
+}
+
 bool ContactPropertyTmpl::isNull() const
 {
 	return (!d || d->key.isNull());
@@ -182,6 +189,11 @@ const ContactPropertyTmpl &ContactProperty::tmpl() const
 bool ContactProperty::isNull() const
 {
 	return mValue.isNull();
+}
+
+bool ContactProperty::isRichText() const
+{
+	return mTemplate.isRichText();
 }
 
 } // END namespace Kopete

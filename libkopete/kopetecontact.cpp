@@ -757,6 +757,7 @@ QString KopeteContact::toolTip() const
 			{
 				QVariant val = p.value();
 				QString valueText;
+
 				switch(val.type())
 				{
 					case QVariant::DateTime:
@@ -769,12 +770,15 @@ QString KopeteContact::toolTip() const
 						valueText = KGlobal::locale()->formatTime(val.toTime());
 						break;
 					default:
-						valueText = val.toString();
+						if( p.isRichText() )
+							valueText = val.toString();
+						else
+							valueText = QStyleSheet::escape( val.toString() );
 				}
 
 				tip += i18n("<br><b>PROPERTY LABEL:</b>&nbsp;PROPERTY VALUE",
 					"<br><nobr><b>%2:</b></nobr>&nbsp;%1").
-					arg( QStyleSheet::escape( valueText ), p.tmpl().label() );
+					arg( valueText, p.tmpl().label() );
 			}
 		}
 	}
