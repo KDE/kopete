@@ -621,6 +621,27 @@
         </widget>
     </vbox>
 </widget>
+<tabstops>
+    <tabstop>TabWidget3</tabstop>
+    <tabstop>mID</tabstop>
+    <tabstop>mAutoConnect</tabstop>
+    <tabstop>mServer</tabstop>
+    <tabstop>mPort</tabstop>
+    <tabstop>chkHighlightNick</tabstop>
+    <tabstop>chkHighlightOthers</tabstop>
+    <tabstop>phraseHighlight</tabstop>
+    <tabstop>highlightColor</tabstop>
+    <tabstop>useMDI</tabstop>
+    <tabstop>chkMinimizeQueries</tabstop>
+    <tabstop>useSDI</tabstop>
+    <tabstop>chkSideIcons</tabstop>
+    <tabstop>chkShowTimes</tabstop>
+    <tabstop>chkLogChans</tabstop>
+    <tabstop>chkLogQuery</tabstop>
+    <tabstop>chkLogDcc</tabstop>
+    <tabstop>chkLogServers</tabstop>
+    <tabstop>chkHideConsole</tabstop>
+</tabstops>
 <includes>
     <include location="local" impldecl="in implementation">ircprefs.ui.h</include>
 </includes>
