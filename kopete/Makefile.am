@@ -1,5 +1,5 @@
 INCLUDES = $(all_includes) -I$(top_srcdir)/kopete/library -I$(top_srcdir)/kopete/library/ui -I$(top_srcdir)/kopete/protocols/icq -I$(top_srcdir)/kopete/protocols/icq/kxengine
-SUBDIRS = library protocols
+SUBDIRS = library protocols pics
 
 KDE_ICON = AUTO
 
