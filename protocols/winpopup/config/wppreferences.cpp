@@ -38,3 +38,5 @@ WPPreferences::WPPreferences(QWidget *parent, const char *, const QStringList &a
 	preferencesDialog->SMBClientPath->setFilter(i18n("smbclient|Samba Client Binary\n*|All Files"));
 	setMainWidget(preferencesDialog, "WinPopup");
 }
+
+#include "wppreferences.moc"
