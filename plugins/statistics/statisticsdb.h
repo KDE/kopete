@@ -14,6 +14,9 @@
     *************************************************************************
 */
 
+#ifndef _STATISTICSDB_H_H
+#define _STATISTICSDB_H_H 1
+
 typedef struct sqlite3;
 
 class StatisticsDB
@@ -28,3 +31,6 @@ public:
 private:
 	sqlite3 *m_db;
 };
+
+#endif
+
