@@ -51,9 +51,11 @@ public:
 	 *       method, it's not completely obsolete either, because protocols
 	 *       with server-side contact lists ( MSN, Jabber, etc. ) may detect
 	 *       new contacts having been added upon reconnect.
+	 * ADDITIONAL NOTE: sameNameAsKC isn't needed unless your meta
+	 *       contact's name is different than your kopete contact's name
 	 */
 	KopeteMetaContact *findContact( const QString &protocolId,
-		const QString &identityId, const QString &contactId );
+		const QString &identityId, const QString &contactId, bool sameNameAsKC = true );
 
 	/**
 	 * Return all meta contacts

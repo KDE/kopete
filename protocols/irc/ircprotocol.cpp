@@ -143,9 +143,11 @@ void IRCProtocol::addContact( const QString &groupName, const QString &server, c
 	IRCServerContact *serverContact = m_serverManager->findServer(serverAndNick);
 
 	KopeteContactList *l = KopeteContactList::contactList();
-	KopeteMetaContact *m = l->findContact( this->id(), QString::null, serverAndNick );
+	KopeteMetaContact *m = l->findContact( this->id(), QString::null, server, false);
+	if (!m) m = new KopeteMetaContact();
+	KopeteContact *c = m->findContact(this->id(), QString::null, nick);
 
-	if( m )
+	if( c )
 	{
 		// Existing contact, update data
 		// FIXME: TODO!
@@ -157,7 +159,6 @@ void IRCProtocol::addContact( const QString &groupName, const QString &server, c
 	}
 	else
 	{
-		m = new KopeteMetaContact();
 		if (serverContact != 0)
 		{
 			m->addContact( new IRCContact(groupName, server, contact, 6667, joinNow, serverContact, m, protocolID));

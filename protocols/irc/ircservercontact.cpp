@@ -264,7 +264,7 @@ void IRCServerContact::incomingPrivMessage(const QString &originating, const QSt
 
 	if (m_activeContacts.find(queryName.lower()) == m_activeContacts.end())
 	{
-		KopeteMetaContact *m = KopeteContactList::contactList()->findContact(m_protocol->id(), QString::null, queryName);
+		KopeteMetaContact *m = KopeteContactList::contactList()->findContact(m_protocol->id(), QString::null, m_serverName, false);
 		//FIXME: make this better
 		if(!m)
 		{
@@ -286,7 +286,7 @@ void IRCServerContact::incomingPrivAction(const QString &originating, const QStr
 
 	if (m_activeContacts.find(queryName.lower()) == m_activeContacts.end())
 	{
-		KopeteMetaContact *m = KopeteContactList::contactList()->findContact(m_protocol->id(), QString::null,queryName);
+		KopeteMetaContact *m = KopeteContactList::contactList()->findContact(m_protocol->id(), QString::null,m_serverName, false);
 		//FIXME: make this better
 		if(!m)
 		{
