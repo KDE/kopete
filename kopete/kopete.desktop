@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=kopete
+Name[es]=
+Exec=kopete %i %m -caption "%c"
+Type=Application
+Terminal=0
