@@ -53,7 +53,8 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 	mainwindow = new KopeteWindow();
 	setMainWidget(mainwindow);
 
-	mAppearance = new AppearanceConfig ( mainwindow );
+	mAppearance = new AppearanceConfig(mainwindow);
+	mNotifier = new KopeteNotifier;
 
 	KConfig *config=KGlobal::config();
 	config->setGroup("");
@@ -146,6 +147,21 @@ void Kopete::loadPlugins()
 {
 	mLibraryLoader->loadAll();
 }
+
+/** Add a Event for notify */
+void Kopete::notifyEvent( KopeteEvent *event)
+{
+	/* See KopeteNotifier and KopeteEvent class */
+	mNotifier->notifyEvent( event );
+}
+/** Cancel an event */
+void Kopete::cancelEvent( KopeteEvent *event)
+{
+	/* See KopeteNotifier and KopeteEvent class */
+	mNotifier->cancelEvent( event );	
+}
+
+
 
 /** init the emoticons */
 void Kopete::initEmoticons()

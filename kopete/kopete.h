@@ -33,6 +33,8 @@
 
 #include "preferencesdialog.h"
 #include "kopetewindow.h"
+#include <kopeteevent.h>
+#include <kopetenotifier.h>
 
 #include "plugin.h"
 #include "configmodule.h"
@@ -81,6 +83,8 @@ class Kopete : public KUniqueApplication
 
 	QString parseEmoticons(QString);
 	QString parseHTML( QString message, bool parseURLs = true );
+	void notifyEvent( KopeteEvent *);
+	void cancelEvent( KopeteEvent *);
 	void initEmoticons();
 
 private:
@@ -94,7 +98,7 @@ private:
 	KopeteEmoticons mEmoticons;
 	AppearanceConfig *mAppearance;
 	QString mEmoticonTheme;
-
+    KopeteNotifier *mNotifier;
 	void loadPlugins();
 
 public slots:

@@ -19,6 +19,7 @@
 #include "kopetewindow.moc"
 
 #include <kopete.h>
+#include <kopeteballoon.h>
 #include <contactlist.h>
 
 #include <qlayout.h>

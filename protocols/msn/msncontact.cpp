@@ -15,6 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <klocale.h>
 #include "msncontact.h"
 #include "msncontact.moc"
 

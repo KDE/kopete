@@ -150,23 +150,26 @@ type=DATA
 [Config for BinMakefileAm]
 addcxxflags=
 bin_program=kopete
+cflags=
+cppflags=
 cxxflags=\s-O1
 ldadd=
-ldflags=
+ldflags=\s
 libtool_dir=
 path_to_bin_program=kopete/.
 
 [General]
 AMChanged=false
-author=duncan
+author=Duncan Mac-Vicar Prett
+configure_args=\s--build=i386-linux --host=i386-linux --target=i386-linux\s
 dir_where_make_will_be_called=./
-email=duncan@tarro
+email=duncan@kde.org
 kdevprj_version=1.3
 lfv_open_groups=
 make_options=\s-j1
 makefiles=./Makefile.am,po/Makefile.am,kopete/Makefile.am,kopete/templates/Makefile.am,kopete/protocols/Makefile.am,kopete/protocols/msn/Makefile.am,kopete/protocols/msn/libkmsn/Makefile.am,kopete/protocols/icq/Makefile.am,kopete/protocols/icq/kxengine/Makefile.am,kopete/pixmaps/Makefile.am,kopete/pixmaps/.pics/Makefile.am,kopete/pixmaps/.pics/small/Makefile.am,kopete/library/Makefile.am,kopete/library/ui/Makefile.am,kopete/gui/Makefile.am,doc-api/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,admin/Makefile.am,kopete/protocols/irc/Makefile.am,kopete/protocols/irc/libkirc/Makefile.am,kopete/protocols/aim/Makefile.am,kopete/protocols/msn/ui/Makefile.am,kopete/protocols/msn/libkmerlin/Makefile.am,kopete/protocols/irc/ui/Makefile.am
 modifyMakefiles=false
-project_name=kopete
+project_name=Kopete
 project_type=normal_empty
 short_info=
 sub_dir=kopete/
@@ -358,7 +361,7 @@ install_location=
 type=DATA
 
 [kopete/library/Makefile.am]
-files=kopete/library/contactlist.cpp,kopete/library/contactlist.h,kopete/library/imcontact.cpp,kopete/library/imcontact.h,kopete/library/improtocol.cpp,kopete/library/improtocol.h,kopete/library/kopete.cpp,kopete/library/kopete.h,kopete/library/plugin.cpp,kopete/library/plugin.h,kopete/library/pluginloader.cpp,kopete/library/pluginloader.h,kopete/library/kopetenotifier.cpp,kopete/library/kopetenotifier.h
+files=kopete/library/contactlist.cpp,kopete/library/contactlist.h,kopete/library/imcontact.cpp,kopete/library/imcontact.h,kopete/library/improtocol.cpp,kopete/library/improtocol.h,kopete/library/kopete.cpp,kopete/library/kopete.h,kopete/library/plugin.cpp,kopete/library/plugin.h,kopete/library/pluginloader.cpp,kopete/library/pluginloader.h,kopete/library/kopetenotifier.cpp,kopete/library/kopetenotifier.h,kopete/library/kopeteevent.cpp,kopete/library/kopeteevent.h
 sub_dirs=ui,
 type=static_library
 
@@ -410,6 +413,18 @@ install=false
 install_location=
 type=HEADER
 
+[kopete/library/kopeteevent.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/library/kopeteevent.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
 [kopete/library/kopetenotifier.cpp]
 dist=true
 install=false
@@ -447,7 +462,7 @@ install_location=
 type=HEADER
 
 [kopete/library/ui/Makefile.am]
-files=kopete/library/ui/aboutplugins.cpp,kopete/library/ui/aboutplugins.h,kopete/library/ui/configmodule.cpp,kopete/library/ui/configmodule.h,kopete/library/ui/kopetewindow.cpp,kopete/library/ui/kopetewindow.h,kopete/library/ui/preferencesdialog.cpp,kopete/library/ui/preferencesdialog.h,kopete/library/ui/connectionlabel.cpp,kopete/library/ui/connectionlabel.h,kopete/library/ui/pluginmodule.cpp,kopete/library/ui/pluginmodule.h,kopete/library/ui/kopetelistview.h,kopete/library/ui/statusbaricon.cpp,kopete/library/ui/statusbaricon.h,kopete/library/ui/addwizardimpl.cpp,kopete/library/ui/addwizardimpl.h,kopete/library/ui/protocolboxitem.cpp,kopete/library/ui/protocolboxitem.h,kopete/library/ui/addcontactpage.cpp,kopete/library/ui/addcontactpage.h,kopete/library/ui/contactlist.cpp,kopete/library/ui/contactlist.h,kopete/library/ui/systemtray.cpp,kopete/library/ui/systemtray.h,kopete/library/ui/appearanceconfig.h,kopete/library/ui/appearanceconfig.cpp,kopete/library/ui/groupseparator.cpp,kopete/library/ui/groupseparator.h
+files=kopete/library/ui/aboutplugins.cpp,kopete/library/ui/aboutplugins.h,kopete/library/ui/configmodule.cpp,kopete/library/ui/configmodule.h,kopete/library/ui/kopetewindow.cpp,kopete/library/ui/kopetewindow.h,kopete/library/ui/preferencesdialog.cpp,kopete/library/ui/preferencesdialog.h,kopete/library/ui/connectionlabel.cpp,kopete/library/ui/connectionlabel.h,kopete/library/ui/pluginmodule.cpp,kopete/library/ui/pluginmodule.h,kopete/library/ui/kopetelistview.h,kopete/library/ui/statusbaricon.cpp,kopete/library/ui/statusbaricon.h,kopete/library/ui/addwizardimpl.cpp,kopete/library/ui/addwizardimpl.h,kopete/library/ui/protocolboxitem.cpp,kopete/library/ui/protocolboxitem.h,kopete/library/ui/addcontactpage.cpp,kopete/library/ui/addcontactpage.h,kopete/library/ui/contactlist.cpp,kopete/library/ui/contactlist.h,kopete/library/ui/systemtray.cpp,kopete/library/ui/systemtray.h,kopete/library/ui/appearanceconfig.h,kopete/library/ui/appearanceconfig.cpp,kopete/library/ui/groupseparator.cpp,kopete/library/ui/groupseparator.h,kopete/library/ui/kopeteballoon.cpp,kopete/library/ui/kopeteballoon.h,kopete/library/ui/balloonbase.ui,kopete/library/ui/balloonbase.h,kopete/library/ui/balloonbase.cpp
 sub_dirs=
 type=static_library
 
@@ -499,6 +514,24 @@ install=false
 install_location=
 type=HEADER
 
+[kopete/library/ui/balloonbase.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/library/ui/balloonbase.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/library/ui/balloonbase.ui]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
 [kopete/library/ui/configmodule.cpp]
 dist=true
 install=false
@@ -542,6 +575,18 @@ install_location=
 type=SOURCE
 
 [kopete/library/ui/groupseparator.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/library/ui/kopeteballoon.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/library/ui/kopeteballoon.h]
 dist=true
 install=false
 install_location=

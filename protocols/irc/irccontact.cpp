@@ -15,6 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <klocale.h>
 #include "irccontact.h"
 #include <kmessagebox.h>
 #include <qlayout.h>
