@@ -27,6 +27,7 @@
 #include <kopeteaccount.h>
 #include <kopetemessage.h>
 #include <kopetepasswordedaccount.h>
+#include <managedconnectionaccount.h>
 
 #include "gwerror.h"
 #include "gwfield.h"
@@ -60,7 +61,7 @@ const QString GroupWiseAccount::server() const
 
 using namespace GroupWise;
 
-class GroupWiseAccount : public Kopete::PasswordedAccount
+class GroupWiseAccount : public Kopete::ManagedConnectionAccount
 {
 	Q_OBJECT
 public:
@@ -145,7 +146,7 @@ public slots:
 	void slotTestRTFize();
 
 	/* Connects to the server. */
-	virtual void connectWithPassword ( const QString &password );
+	void performConnectWithPassword ( const QString &password );
 
 	/* Disconnects from the server. */
 	virtual void disconnect();
