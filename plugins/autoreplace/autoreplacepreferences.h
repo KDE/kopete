@@ -42,7 +42,6 @@ public:
 
 	typedef QMap<QString, QString> WordsToReplace;
 	WordsToReplace getMap() { return map; };	// O(1) implicity shared
-	WordsToReplace getIrc() { return irc; };	// O(1) implicity shared
 	bool getAutoreplaceIncoming() { return autoreplaceIncoming; };
 	bool getAddDot() { return addDot; };
 	bool getUpper() { return upper; };
@@ -50,14 +49,11 @@ public:
 private:
 	AutoReplacePrefsUI * preferencesDialog;
 	WordsToReplace map;
-	WordsToReplace irc;
 	QStringList wordsList;
 
 	bool autoreplaceIncoming;
 	bool addDot;
 	bool upper;
-
-	void string2map( QStringList, QMap );
 
 private slots:
 	void slotAddCouple();
