@@ -268,6 +268,7 @@ void IRCUserContact::newWhoIsOperator()
 void IRCUserContact::newWhoIsIdentified()
 {
 	mInfo.isIdentified = true;
+	setProperty( m_protocol->propIsIdentified, i18n("True") );
 }
 
 void IRCUserContact::newWhoIsChannels(const QString &channel)

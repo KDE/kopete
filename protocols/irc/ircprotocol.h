@@ -115,6 +115,7 @@ public:
 	const Kopete::ContactPropertyTmpl propChannels;
 	const Kopete::ContactPropertyTmpl propHops;
 	const Kopete::ContactPropertyTmpl propFullName;
+	const Kopete::ContactPropertyTmpl propIsIdentified;
 
 	bool commandInProgress(){ return m_commandInProgress; }
 	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }

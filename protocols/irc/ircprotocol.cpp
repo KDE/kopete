@@ -132,7 +132,8 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	propServer(QString::fromLatin1("ircServer"), i18n("IRC Server")),
 	propChannels( QString::fromLatin1("ircChannels"), i18n("IRC Channels")),
 	propHops(QString::fromLatin1("ircHops"), i18n("IRC Hops")),
-	propFullName(QString::fromLatin1("FormattedName"), i18n("Full Name"))
+	propFullName(QString::fromLatin1("FormattedName"), i18n("Full Name")),
+	propIsIdentified(QString::fromLatin1("identifiedUser"), i18n("User Is Authenticated"))
 {
 //	kdDebug(14120) << k_funcinfo << endl;
 
