@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>390</width>
-            <height>295</height>
+            <width>371</width>
+            <height>337</height>
         </rect>
     </property>
     <property name="caption">
@@ -25,6 +25,12 @@
         <widget class="QGroupBox">
             <property name="name">
                 <cstring>groupBox5</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>GroupBoxPanel</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
             </property>
             <property name="title">
                 <string>Account Information</string>
@@ -148,6 +154,22 @@
                     </property>
                 </widget>
             </hbox>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>chkHideIP</cstring>
+            </property>
+            <property name="text">
+                <string>Hide IP</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>chkWebAware</cstring>
+            </property>
+            <property name="text">
+                <string>Web Aware</string>
+            </property>
         </widget>
         <spacer>
             <property name="name">

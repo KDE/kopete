@@ -45,6 +45,7 @@ class ICQAccount : public OscarAccount
 			const QString &awayMessage = QString::null);
 
 		void setInvisible(bool);
+		void reloadPluginData();
 
 	public slots:
 		void slotGoNA();

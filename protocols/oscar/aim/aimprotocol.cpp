@@ -26,7 +26,7 @@
 
 #include "kopeteaccountmanager.h"
 #include "aimcontact.h"
-#include "oscarpreferences.h"
+//#include "oscarpreferences.h"
 
 K_EXPORT_COMPONENT_FACTORY( kopete_aim, KGenericFactory<AIMProtocol> );
 
@@ -46,7 +46,7 @@ AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
 	{
 		protocolStatic_ = this;
 		// Create the config widget, this does it's magic I think
-		new OscarPreferences("aim_protocol", this);
+//		new OscarPreferences("aim_protocol", this);
 	}
 	addAddressBookField("messaging/aim", KopetePlugin::MakeIndexField);
 }

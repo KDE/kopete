@@ -52,15 +52,7 @@ void ICQAccount::loaded()
 	static_cast<ICQContact *>(mMyself)->setOwnDisplayName(
 		pluginData(protocol(), "NickName"));
 
-	if (pluginData(protocol(), "WebAware").toUInt() == 1)
-		mWebAware = true;
-	else
-		mWebAware = false;
-
-	if (pluginData(protocol(), "HideIP").toUInt() == 1)
-		mHideIP = true;
-	else
-		mHideIP = false;
+	reloadPluginData();
 }
 
 ICQAccount::~ICQAccount()
@@ -245,7 +237,7 @@ void ICQAccount::setStatus(const unsigned long status,
 			sendStatus |= ICQ_STATUS_SHOWIP;
 		}
 
-		if(!mWebAware)
+		if(mWebAware)
 		{
 			kdDebug(14200) << k_funcinfo << "ORing with web aware flag" << endl;
 			sendStatus |= ICQ_STATUS_WEBAWARE;
@@ -299,6 +291,30 @@ void ICQAccount::slotAwayDialogReturned(const int awaytype, const QString &messa
 			kdDebug(14200) << k_funcinfo << "calling setStatus for OCC" << endl;
 			setStatus(ICQ_STATUS_SET_OCC, message);
 			break;
+	}
+}
+
+void ICQAccount::reloadPluginData()
+{
+	kdDebug(14200) << k_funcinfo << "Called." << endl;
+	bool oldwebaware=mWebAware;
+	bool oldhideip=mHideIP;
+
+	if (pluginData(protocol(), "WebAware").toUInt() == 1)
+		mWebAware = true;
+	else
+		mWebAware = false;
+
+	if (pluginData(protocol(), "HideIP").toUInt() == 1)
+		mHideIP = true;
+	else
+		mHideIP = false;
+
+	if(isConnected() && (oldhideip != mHideIP || oldwebaware != mWebAware))
+	{
+		kdDebug(14200) << k_funcinfo <<
+			"sending status to reflect HideIP and WebAware settings" << endl;
+		setStatus(mStatus, QString::null);
 	}
 }
 

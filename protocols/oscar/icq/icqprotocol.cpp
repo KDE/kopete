@@ -37,7 +37,7 @@
 
 #include <kopeteaccountmanager.h>
 
-#include "oscarpreferences.h" // TODO: remove this
+//#include "oscarpreferences.h" // TODO: remove this
 
 
 K_EXPORT_COMPONENT_FACTORY( kopete_icq, KGenericFactory<ICQProtocol> );
@@ -62,7 +62,7 @@ ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 	{
 		protocolStatic_ = this;
 		// Create the config widget, this does it's magic I think
-		new OscarPreferences("icq_protocol", this);
+//		new OscarPreferences("icq_protocol", this);
 	}
 	addAddressBookField("messaging/icq", KopetePlugin::MakeIndexField);
 
@@ -710,7 +710,6 @@ void ICQProtocol::deserializeContact(KopeteMetaContact *metaContact,
 	QString displayName=serializedData["displayName"];
 
 	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts(this);
-
 
 	if(accountId.isNull())
 	{

@@ -257,11 +257,18 @@ class OscarSocket : public OscarConnection
 		void sendDirectIMAccept(const QString &sn);
 		/** Sends our capabilities to the server */
 		void sendCapabilities(unsigned long caps);
-		/** Signs the user off */
+		/*
+		 * Signs ourselves off
+		 */
 		virtual void doLogoff();
-		/** Adds a buddy to the server side buddy list */
+		/*
+		 * Adds a buddy to the server side buddy list
+		 */
 		virtual void sendAddBuddy(const QString &name, const QString &group);
-		/** Changes a buddy's group on the server */
+
+		/*
+		 * Changes a buddy's group on the server
+		 */
 		virtual void sendChangeBuddyGroup(const QString &buddyName,
 			const QString &oldGroup, const QString &newGroup);
 
@@ -270,16 +277,40 @@ class OscarSocket : public OscarConnection
 		 */
 		void sendChangeVisibility(int value);
 
-		/** Adds a group to the server side buddy list */
+		/*
+		 * Changes a contacts alias on the serverside contactlist
+		 * @p budName real contact name
+		 * @p budGroup name of group this contact is in
+		 * @p newAlias alias to set for this contact
+		 */
+		void sendRenameBuddy(const QString &budName,
+			const QString &budGroup, const QString &newAlias);
+
+		/*
+		 * Adds a group to the server side buddy list
+		 */
 		virtual void sendAddGroup(const QString &name);
-		/** Changes a group's name on the server side buddy list */
+
+		/*
+		 * Changes a group's name on the server side buddy list
+		 */
 		virtual void sendChangeGroupName(const QString &currentName,
-										const QString &newName);
-		/** Removes a group from the server side information */
+			const QString &newName);
+
+		/*
+		 * Removes a group from the server side information
+		 */
 		virtual void sendDelGroup(const QString &groupName);
-		/** Deletes a buddy from the server side buddy list */
+
+		/*
+		 * Deletes a buddy from the server side buddy list
+		 */
 		virtual void sendDelBuddy(const QString &budName, const QString &budGroup);
-		/** Sends the server lots of  information about the currently logged in user */
+
+		/*
+		 * Sends the server lots of information
+		 * about the currently logged in user
+		 */
 		void sendInfo();
 
 		/*
@@ -288,12 +319,19 @@ class OscarSocket : public OscarConnection
 		 */
 //		void sendStatus(const unsigned int status, const QString &awayMessage = QString::null);
 
-		/** Sets the away message for AIM, makes user away */
+		/*
+		 * Sets the away message for AIM, makes user away
+		 */
 		void sendAIMAway(bool away, const QString &message=0L);
-		/** send status, i.e. AWAY, NA, OCC (ICQ method) */
+
+		/*
+		 * send status, i.e. AWAY, NA, OCC (ICQ method)
+		 */
 		void sendICQStatus(unsigned long status);
 
-		/** Sends the user's profile to the server */
+		/*
+		 * Sends the user's profile to the server
+		 */
 		void sendMyProfile();
 		/** Sets the user's profile */
 		void setMyProfile(const QString &profile);

@@ -94,6 +94,8 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		mAccountSettings->chkAutoLogin->setChecked(mAccount->autoLogin());
 		mAccountSettings->edtServerAddress->setText(mAccount->pluginData(mProtocol, "Server"));
 		mAccountSettings->edtServerPort->setValue(mAccount->pluginData(mProtocol, "Port").toInt());
+		mAccountSettings->chkHideIP->setChecked((mAccount->pluginData(mProtocol,"HideIP").toUInt()==1));
+		mAccountSettings->chkWebAware->setChecked((mAccount->pluginData(mProtocol,"WebAware").toUInt()==1));
 
 		mUserInfoSettings->rwNickName->setText(
 			mAccount->pluginData(mProtocol,"NickName"));
@@ -140,9 +142,9 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 
 		connect(fetch, SIGNAL(clicked()), this, SLOT(slotFetchInfo()));
 // 		connect(send, SIGNAL(clicked()), this, SLOT(slotSend()));
- 		connect(
- 			mAccount->myself(), SIGNAL(updatedUserInfo()),
- 			this, SLOT(slotReadInfo()));
+		connect(
+			mAccount->myself(), SIGNAL(updatedUserInfo()),
+			this, SLOT(slotReadInfo()));
 	}
 	else
 	{
@@ -155,6 +157,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 
 ICQEditAccountWidget::~ICQEditAccountWidget()
 {
+	kdDebug(14200) << k_funcinfo << "Called." << endl;
 }
 
 KopeteAccount *ICQEditAccountWidget::apply()
@@ -181,6 +184,10 @@ KopeteAccount *ICQEditAccountWidget::apply()
 		mAccountSettings->edtServerAddress->text());
 	static_cast<OscarAccount *>(mAccount)->setServerPort(
 		mAccountSettings->edtServerPort->value());
+	mAccount->setPluginData(mProtocol, "HideIP",
+		QString::number(mAccountSettings->chkHideIP->isChecked()));
+	mAccount->setPluginData(mProtocol, "WebAware",
+		QString::number(mAccountSettings->chkWebAware->isChecked()));
 
 	mAccount->setPluginData(mProtocol, "NickName",
 		mUserInfoSettings->rwNickName->text());
@@ -206,6 +213,8 @@ KopeteAccount *ICQEditAccountWidget::apply()
 
 	static_cast<ICQContact *>(mAccount->myself())->setOwnDisplayName(
 		mUserInfoSettings->rwNickName->text());
+
+	static_cast<ICQAccount *>(mAccount)->reloadPluginData();
 
 	// TODO: optionally send updated userinfo to server if connected
 	return mAccount;
@@ -255,7 +264,8 @@ void ICQEditAccountWidget::slotFetchInfo()
 		static_cast<ICQContact *>(mAccount->myself())->requestUserInfo(); // initiate retrival of userinfo
 	}
 	else
-		kdDebug(14200) << k_funcinfo << "Ignore request to fetch User Info, NOT online!" << endl;
+		kdDebug(14200) << k_funcinfo <<
+			"Ignore request to fetch User Info, NOT online!" << endl;
 }
 
 void ICQEditAccountWidget::slotReadInfo()
@@ -265,7 +275,8 @@ void ICQEditAccountWidget::slotReadInfo()
 
 	mUserInfoSettings->setDisabled(false);
 
-	mProtocol->contactInfo2UserInfoWidget(static_cast<ICQContact *>(mAccount->myself()), mUserInfoSettings, true);
+	mProtocol->contactInfo2UserInfoWidget(
+		static_cast<ICQContact *>(mAccount->myself()), mUserInfoSettings, true);
 } // END slotReadInfo()
 
 #include "icqeditaccountwidget.moc"

@@ -2510,57 +2510,88 @@ void OscarSocket::sendChangeVisibility(int value)
 	kdDebug(14150) << k_funcinfo << "Completed" << endl;
 }
 
-/** Renames a buddy on the server side buddy list */
-/*
 void OscarSocket::sendRenameBuddy(const QString &budName,
 	const QString &budGroup, const QString &newAlias)
 {
-	kdDebug(14150) << k_funcinfo << "Sending rename buddy..." << endl;
-	SSI *renameitem = ssiData.findBuddy(budName,budGroup);
-	ssiData.print();
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
 
-	if (!renameitem)
+	SSI *ssi = ssiData.findBuddy(budName, budGroup);
+
+	if (!ssi)
 	{
-		kdDebug(14150) << k_funcinfo << "Item with name " << budName << " and group "
-			<< budGroup << "not found" << endl;
+		kdDebug(14150) << k_funcinfo << "Item with name '" << budName << "' and group '"
+			<< budGroup << "' not found!" << endl;
 
 		emit protocolError(
 			i18n("%1 in group %2 was not found on the server's " \
-			"buddy list and cannot be renamed.").arg(budName).arg(budGroup),0);
+			"contact list and cannot be renamed.").arg(budName).arg(budGroup),0);
 		return;
 	}
 
-	Buffer buf(ssi->tlvlist,ssi->tlvlength);
-	QPtrList<TLV> lst = buf.getTLVList();
+	// BEGIN DEBUG, remove if working
+	Buffer tmpBuf(ssi->tlvlist, ssi->tlvlength);
+	QPtrList<TLV> lst = tmpBuf.getTLVList();
+	lst.setAutoDelete(FALSE);
 
-	kdDebug(14150) << k_funcinfo << "contained TLVs:" << endl;
-	TLV *t;
-	for(t=lst.first(); t; t=lst.next())
-	{
-		kdDebug(14150) << k_funcinfo << "TLV(" << t->type << ") with length " <<
-			t->length << endl;
-	}
-	lst.setAutoDelete(TRUE);
-	TLV *nick= findTLV(lst,0x0131);
-	if(nick && nick->length > 0)
-	{
+	TLV *oldNick = findTLV(lst,0x0131);
+	// END DEBUG
 
-	kdDebug(14150) << k_funcinfo << "Renaming " << renameitem->name <<
-		", gid " << renameitem->gid << ", bid " << renameitem->bid <<
-		", type " << renameitem->type << ", datalength " <<
-		renameitem->tlvlength << endl;
-
-	sendSSIAddModDel(renameitem,0x0009);
-	}
-	else
+//	if (oldNick)
 	{
-		kdDebug(14150) << k_funcinfo <<
-			"FIXME: cannot rename a buddy without an alias set on the server!" << endl;
+		if (oldNick)
+		{
+			kdDebug(14150) << k_funcinfo <<
+				"Renaming contact, current alias='" << oldNick->data << "'" << endl;
+			lst.remove(oldNick); // get rid of TLV copy
+		}
+		else
+		{
+			kdDebug(14150) << k_funcinfo <<
+				"Renaming contact, no alias had been given before." << endl;
+		}
+
+		// construct new SSI entry replacing the old one
+		SSI *newSSI = new SSI();
+		newSSI->name = ssi->name;
+		newSSI->gid = ssi->gid;
+		newSSI->bid = ssi->bid;
+		newSSI->type = ssi->type;
+		Buffer *newSSITLV = new Buffer();
+
+		for(TLV* t = lst.first(); t; t = lst.next())
+		{
+			if(t->type != 0x0131)
+			{
+				newSSITLV->addTLV(t->type, t->length, t->data);
+				lst.remove(t);
+			}
+		}
+
+		const char *newNickData = newAlias.local8Bit().copy();
+		newSSITLV->addTLV(0x0131, newAlias.local8Bit().length(), newNickData);
+
+		if (!ssiData.remove(ssi))
+		{
+			kdDebug(14150) << k_funcinfo <<
+				"Couldn't remove old ssi containing visibility value" << endl;
+			delete newSSITLV;
+			delete newSSI;
+			return;
+		}
+		newSSI->tlvlist = newSSITLV->buffer();
+		newSSI->tlvlength = newSSITLV->length();
+
+		ssiData.append(newSSI);
+
+		kdDebug(14150) << k_funcinfo << "Renaming, new SSI block: name=" << newSSI->name <<
+			", gid=" << newSSI->gid << ", bid=" << newSSI->bid <<
+			", type=" << newSSI->type << ", datalength=" <<
+			newSSI->tlvlength << endl;
+
+		sendSSIAddModDel(newSSI,0x0009);
 	}
 }
-*/
 
-// Adds a group to the server side buddy list
 void OscarSocket::sendAddGroup(const QString &name)
 {
 	kdDebug(14150) << k_funcinfo << "Called." << endl;

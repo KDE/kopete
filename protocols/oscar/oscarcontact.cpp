@@ -220,7 +220,7 @@ void OscarContact::slotMainStatusChanged(const unsigned int newStatus)
 
 void OscarContact::slotOffgoingBuddy(QString sn)
 {
-	if(tocNormalize(sn)==tocNormalize(mName)) //if we are the contact that is offgoing
+	if(tocNormalize(sn) == mName) //if we are the contact that is offgoing
 	{
 		setStatus(OSCAR_OFFLINE);
 		slotUpdateBuddy();
@@ -297,9 +297,6 @@ void OscarContact::slotWarn()
 		mAccount->engine()->sendWarning(mName, false);
 }
 
-
-
-/** Called when we want to block the contact */
 void OscarContact::slotBlock()
 {
 	QString message = i18n( "<qt>Are you sure you want to block %1? \
@@ -314,16 +311,17 @@ void OscarContact::slotBlock()
 	}
 }
 
-/** Called when we want to connect directly to this contact */
 void OscarContact::slotDirectConnect()
 {
-	kdDebug(14150) << "[OscarContact] Requesting direct IM with " << mName << endl;
-	QString message = i18n( "<qt>Are you sure you want to establish a direct connection to %1? \
-		This will allow %2 to know your IP address, which can be dangerous if you do not trust this contact</qt>" ).arg(mName).arg(mName);
-	QString title = i18n("Request Direct IM with %1?").arg(mName);
+	kdDebug(14150) << k_funcinfo << "Requesting direct IM with " << mName << endl;
 
-	int result = KMessageBox::questionYesNo(qApp->mainWidget(), message, title);
-	if ( result == KMessageBox::Yes )
+	int result = KMessageBox::questionYesNo(
+		qApp->mainWidget(),
+		i18n("<qt>Are you sure you want to establish a direct connection to %1? \
+		This will allow %2 to know your IP address, which can be dangerous if \
+		you do not trust this contact</qt>").arg(mName).arg(mName),
+		i18n("Request Direct IM with %1?").arg(mName));
+	if(result == KMessageBox::Yes)
 	{
 		execute();
 		KopeteContactPtrList p;
@@ -452,7 +450,7 @@ void OscarContact::syncGroups()
 void OscarContact::slotGotFileSendRequest(QString sn, QString message, QString filename,
 	unsigned long filesize)
 {
-	if(tocNormalize(sn)!=tocNormalize(mName))
+	if(tocNormalize(sn) != mName)
 		return;
 
 	kdDebug(14150) << k_funcinfo << "Got file transfer request for '" <<
@@ -467,7 +465,8 @@ void OscarContact::slotTransferAccepted(KopeteTransfer *tr, const QString &fileN
 	if (tr->info().contact() != this)
 		return;
 
-	kdDebug(14150) << k_funcinfo << "Transfer of '" << fileName << "' from '" << mName << "' accepted." << endl;
+	kdDebug(14150) << k_funcinfo << "Transfer of '" << fileName <<
+		"' from '" << mName << "' accepted." << endl;
 
 	OscarConnection *fs = mAccount->engine()->sendFileSendAccept(mName, fileName);
 
@@ -493,7 +492,7 @@ void OscarContact::slotTransferBegun(OscarConnection *con,
 	const unsigned long size,
 	const QString &recipient)
 {
-	if (tocNormalize(con->connectionName()) != tocNormalize(mName))
+	if (tocNormalize(con->connectionName()) != mName)
 		return;
 
 	kdDebug(14150) << k_funcinfo << "adding transfer of " << file << endl;
@@ -511,13 +510,30 @@ void OscarContact::rename(const QString &newNick)
 	kdDebug(14150) << k_funcinfo << "Rename '" << displayName() << "' to '" <<
 		newNick << "'" << endl;
 
+	if(mAccount->isConnected())
+	{
+		//FIXME: group handling!
+		AIMGroup *currentOscarGroup =
+			mAccount->internalBuddyList()->findGroup(mListContact->groupID());
+		if(currentOscarGroup)
+		{
+			mAccount->engine()->sendRenameBuddy(mName,
+				currentOscarGroup->name(), newNick);
+		}
+		else
+		{
+			kdDebug(14150) << k_funcinfo <<
+				"couldn't find AIMGroup for contact, can't rename on server" << endl;
+		}
+	}
+
 	mListContact->setAlias(newNick);
 	setDisplayName(newNick);
 }
 
 void OscarContact::slotParseUserInfo(const UserInfo &u)
 {
-	if(tocNormalize(u.sn) != tocNormalize(mName))
+	if(tocNormalize(u.sn) != mName)
 		return;
 
 	mRealIP = u.realip;

@@ -8,7 +8,7 @@ AM_CPPFLAGS = -I../../libkopete/ui $(KOPETE_INCLUDES) \
 
 lib_LTLIBRARIES = libkopete_oscar.la
 
-libkopete_oscar_la_SOURCES = oscaraccount.cpp oscarpreferences.cpp oscarprefswidget.ui oscarcontact.cpp
+libkopete_oscar_la_SOURCES = oscaraccount.cpp oscarcontact.cpp
 
 libkopete_oscar_la_LDFLAGS = -no-undefined $(all_libraries)
 libkopete_oscar_la_LIBADD  = ./oscarsocket/libkopeteoscarsocket.la \
