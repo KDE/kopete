@@ -69,16 +69,16 @@ public:
 	WPProtocol(QObject *parent, QString name, QStringList);		// Constructor
 	~WPProtocol();		// Destructor
 	bool unload();		// Unload statusbar icon
-	
+
 	WPContact *addContact(const QString &Name);	// Return the contact named "Name", adding one if neccessary
-	WPContact *myself();	// Return the user's contact object
+	KopeteContact *myself() const;	// Return the user's contact object
 	bool checkHost(const QString &Name) { return theInterface->checkHost(Name); }
 
 	const QStringList getGroups() { return theInterface->getGroups(); }
 	const QStringList getHosts(const QString &Group) { return theInterface->getHosts(Group); }
 
 	static const WPProtocol *protocol();
-	
+
 public slots:
 	void Connect();			// Connect to server
 	void Disconnect();		// Disconnect from server
@@ -94,7 +94,7 @@ public slots:
 
 	AddContactPage *createAddContactWidget(QWidget * parent);
 							// Return "add contact" dialog
-	void slotIconRightClicked(const QPoint);	
+	void slotIconRightClicked(const QPoint);
 							// CallBack when clicking on statusbar icon
 	void slotSettingsChanged(void);
 							// Callback when settings changed
@@ -122,7 +122,7 @@ private:
 	QPixmap iconAway;				// Icons
 	QPixmap iconAvailable;
 	QPixmap iconOffline;
-		
+
 	void initIcons();	// Load Icons
 	void initActions();	// Load Status Actions
 

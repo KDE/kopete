@@ -75,7 +75,7 @@ WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProto
 	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)), this, SLOT(slotIconRightClicked(const QPoint)));
 	setAvailable();
 	Connect();
-	
+
 	// Create preferences menu
 	mPrefs = new WPPreferences("wp_icon", this);
 	connect(mPrefs, SIGNAL(saved(void)), this, SLOT(slotSettingsChanged(void)));
@@ -153,7 +153,7 @@ void WPProtocol::slotGotNewMessage(const QString &Body, const QDateTime &Arrival
 		if(available)
 			addContact(From)->slotNewMessage(Body, Arrival);
 		else
-		{	
+		{
 			// add message quietly?
 			KGlobal::config()->setGroup("WinPopup");
 			theInterface->slotSendMessage(KGlobal::config()->readEntry("AwayMessage"), From);
@@ -165,18 +165,18 @@ bool WPProtocol::unload()
 {
 	DEBUG(WPDMETHOD, "WPProtocol::unload()");
 
-    DEBUG(WPDINFO, "Unloading WPProtocol...");
-    if(kopeteapp->statusBar())
+	DEBUG(WPDINFO, "Unloading WPProtocol...");
+	if(kopeteapp->statusBar())
 	{
 		kopeteapp->statusBar()->removeWidget(statusBarIcon);
 		delete statusBarIcon;
-    }
+	}
 
-    emit protocolUnloading();
-    return true;
+	emit protocolUnloading();
+	return true;
 }
 
-WPContact *WPProtocol::myself()
+KopeteContact *WPProtocol::myself() const
 {
 	return theMyself;
 }
@@ -362,12 +362,12 @@ void WPProtocol::installSamba()
 		f.close();
 	}
 	else { qDebug("Couldn't read smb.conf!"); return; }
-	
+
 	// modify the config...
 	QRegExp msgLine("\n   message command = [^\n]*\n");
 	msgLine.search(SmbDotConf);
 	SmbDotConf.replace(msgLine, "\n   message command = " + KStandardDirs::findExe("winpopup-send.sh") + " %s %f &\n");
-	
+
 	// write (modified) config out...
 	QString TempFile = "/tmp/smb.conf.new";
 	QFile f2(TempFile);
@@ -377,7 +377,7 @@ void WPProtocol::installSamba()
 		f2.close();
 	}
 	else { qDebug("Couldn't write new smb.conf!"); return; }
-	
+
 	QStringList args;
 	args += SmbConfPath;
 	args += "/tmp/smb.conf.old";

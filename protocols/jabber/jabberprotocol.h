@@ -74,7 +74,7 @@ public:
 	void setAway();
 	void setAvailable();
 
-	JabberContact *myself() { return myContact; }
+	KopeteContact *myself() const;
 
 	void removeUser(QString);
 	void renameContact(QString, QString, QString);
@@ -86,50 +86,50 @@ public:
 	static const JabberProtocol *protocol();
 
 public slots:
-    void slotConnect();
-    void slotDisconnect();
+	void slotConnect();
+	void slotDisconnect();
 	void slotConnected();
-    void slotDisconnected();
-    void slotConnecting();
+	void slotDisconnected();
+	void slotConnecting();
 	void slotError(JabError *);
 
-    void slotGoOnline();
-    void slotGoOffline();
-    void slotSetAway();
-    void slotSetXA();
-    void slotSetDND();
+	void slotGoOnline();
+	void slotGoOffline();
+	void slotSetAway();
+	void slotSetXA();
+	void slotSetDND();
 	void setPresence(int, QString, int = 0);
-	
-    void slotIconRightClicked(const QPoint);
 
-    void slotNewContact(JabRosterEntry *);
-    void slotContactUpdated(JabRosterEntry *);
-    void slotUserWantsAuth(const Jid &);
-    void slotSettingsChanged(void);
+	void slotIconRightClicked(const QPoint);
+
+	void slotNewContact(JabRosterEntry *);
+	void slotContactUpdated(JabRosterEntry *);
+	void slotUserWantsAuth(const Jid &);
+	void slotSettingsChanged(void);
 	void slotResourceAvailable(const Jid &, const JabResource &);
 	void slotResourceUnavailable(const Jid &);
 
-    void slotSendMsg(JabMessage);
-    void slotNewMessage(const JabMessage &);
-	
+	void slotSendMsg(JabMessage);
+	void slotNewMessage(const JabMessage &);
+
 	void slotSnarfVCard (QString &);
 	void slotGotVCard(JabTask *);
 
-  signals:
+signals:
 	void protocolUnloading();
 
-  private:
-    void initIcons();
-    void initActions();
-    bool mIsConnected;
+private:
+	void initIcons();
+	void initActions();
+	bool mIsConnected;
 
-    StatusBarIcon *statusBarIcon;
+	StatusBarIcon *statusBarIcon;
 
-    QPixmap onlineIcon;
-    QPixmap offlineIcon;
-    QPixmap awayIcon;
-    QPixmap naIcon;
-    QMovie connectingIcon;
+	QPixmap onlineIcon;
+	QPixmap offlineIcon;
+	QPixmap awayIcon;
+	QPixmap naIcon;
+	QMovie connectingIcon;
 
 	KAction *actionGoOnline;
 	KAction *actionGoAway;
@@ -138,14 +138,14 @@ public slots:
 	KAction *actionGoOffline;
 	KPopupMenu *popup;
 	KActionMenu *actionStatusMenu;
-  
+
 	QString mUsername, mPassword, mServer, mResource;
-    int mPort;
+	int mPort;
 	bool doRegister;
 	int mStatus; /* If you use this for any purpose other than to determine the initial status, I will slice your testicles
 				  * off and have them on toast in the morning. */
 
-    JabberPreferences *mPrefs;
+	JabberPreferences *mPrefs;
 	static const JabberProtocol *sProtocol;
 	Jabber *mProtocol;
 	JabberContact *myContact;

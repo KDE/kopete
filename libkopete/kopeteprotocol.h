@@ -86,6 +86,14 @@ public:
 	 */
 	bool canSendOffline() const { return false; }
 
+	/**
+	 * Function has to be reimplemented in every single protocol
+	 * and return the KopeteContact associated with the 'home' user.
+	 *
+	 * @return contact associated with the currently logged in user
+	 */
+	virtual KopeteContact* myself() const=0;
+
 private:
 	QString m_icon;
 
@@ -93,10 +101,6 @@ private:
 };
 
 #endif
-
-
-
-
 
 /*
  * Local variables:

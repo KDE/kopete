@@ -226,6 +226,11 @@ void JabberProtocol::setAvailable(void) {
     slotGoOnline();
 }
 
+KopeteContact* JabberProtocol::myself() const
+{
+	return myContact;
+}
+
 bool JabberProtocol::isAway(void) const
 {
 	if (isConnected())

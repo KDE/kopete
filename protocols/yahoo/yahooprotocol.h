@@ -49,6 +49,7 @@ public:
 	~YahooProtocol();	// Destructor
 	bool unload();		// Unload statusbar icon
 
+	KopeteContact* myself() const;
 	void addContact(QString);
 
 public slots:
@@ -64,14 +65,14 @@ public slots:
 	AddContactPage *createAddContactWidget(QWidget * parent);
 									// Return "add contact" dialog
 
-	void slotIconRightClicked(const QPoint);	
+	void slotIconRightClicked(const QPoint);
 						// CallBack when clicking on statusbar icon
 	void slotSettingsChanged(void);
 						// Callback when settings changed
 	void slotNewContact(QString, QString, QString);
 						// XXX ?
 
-	// XXX void slotConnect();		
+	// XXX void slotConnect();
 	// XXX void slotDisconnect();
 
 signals:
@@ -79,7 +80,7 @@ signals:
 
 private:
 	bool mIsConnected;				// Am I connected ?
-	QString mUsername, mPassword, mServer; int mPort;	
+	QString mUsername, mPassword, mServer; int mPort;
 									// Configuration data
 	StatusBarIcon *statusBarIcon;	// Statusbar Icon Object
 	KPopupMenu *popup;				// Statusbar Popup
@@ -91,14 +92,14 @@ private:
 	QPixmap busyIcon;
 	QPixmap idleIcon;
 	QPixmap mobileIcon;
-	
+
 	void initIcons();	// Load Icons
 	void initActions();	// Load Status Actions
 
 	KActionMenu *actionStatusMenu; // Statusbar Popup
 	KAction *actionGoOnline;	// Available
 	KAction *actionGoOffline;	// Disconnected
-	KAction *actionGoStatus001; // Be Right Back 
+	KAction *actionGoStatus001; // Be Right Back
 	KAction *actionGoStatus002; // Busy
 	KAction *actionGoStatus003; // Not At Home
 	KAction *actionGoStatus004; // Not At My Desk

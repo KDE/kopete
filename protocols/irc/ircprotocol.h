@@ -55,6 +55,8 @@ public:
 	virtual void setAway(void);
 	virtual void setAvailable(void);
 	virtual bool isAway(void) const;
+	//following implementation is incorrect
+	KopeteContact* myself() const { return 0L; }
 	/** Internal */
 	StatusBarIcon *statusBarIcon;
 

@@ -80,7 +80,7 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name,
 
 	/* Call slotSettingsChanged() to get it all registered. */
 	slotSettingsChanged();
-   
+
 	if (KGlobal::config()->readBoolEntry("AutoConnect", "0"))
 		Connect();
 }
@@ -109,6 +109,12 @@ bool YahooProtocol::unload()
 }
 
 
+KopeteContact YahooProtocol::myself() const
+{
+#warning "For future maintainers : reimplement this!"
+	return 0L;
+}
+
 // Connect to server
 void YahooProtocol::Connect()
 {
@@ -118,12 +124,12 @@ void YahooProtocol::Connect()
 		DEBUG(YDINFO, "Attempting to connect to Yahoo server <"
 			<< mServer << ":" << mPort << "< with user <" << mUsername << ">");
 		protocol->Connect(mServer, mPort, mUsername, mPassword);
-    } 
-	else if (isAway()) {	// They're really away, and they want to un-away. 
+    }
+	else if (isAway()) {	// They're really away, and they want to un-away.
 		// XXX slotGoOnline();
-    } 
-	else {			// Nope, just your regular crack junky. 
-		DEBUG(YDINFO, 
+    }
+	else {			// Nope, just your regular crack junky.
+		DEBUG(YDINFO,
 		"Yahoo plugin: Ignoring connect request (already connected).");
     }
 }
@@ -138,9 +144,9 @@ void YahooProtocol::Disconnect()
 		DEBUG(YDINFO, "Attempting to disconnect from Yahoo server "
 			<< mServer);
 		protocol->Disconnect();
-    } 
-	else {			// Again, what's with the crack? Sheez. 
-		DEBUG(YDINFO, 
+    }
+	else {			// Again, what's with the crack? Sheez.
+		DEBUG(YDINFO,
 			"Ignoring disconnect request (not connected).");
     }
 }
@@ -164,7 +170,7 @@ void YahooProtocol::setAway()
 bool YahooProtocol::isConnected() const
 {
 	DEBUG(YDMETHOD, "YahooProtocol::isConnected()");
-	return false; // XXX 
+	return false; // XXX
 }
 
 
@@ -173,7 +179,7 @@ bool YahooProtocol::isAway() const
 {
 	DEBUG(YDMETHOD, "YahooProtocol::isAway()");
 
-	return false; // XXX 
+	return false; // XXX
 }
 
 
@@ -238,7 +244,7 @@ void YahooProtocol::slotSettingsChanged()
 void YahooProtocol::slotNewContact(QString userID, QString name,
 				    QString group)
 {
-	DEBUG(YDMETHOD, "YahooProtocol::slotNewContact(" << userID << ", " 
+	DEBUG(YDMETHOD, "YahooProtocol::slotNewContact(" << userID << ", "
 			<< name << ", " << group << ")");
 
     if (group == QString("")) {
@@ -269,34 +275,34 @@ void YahooProtocol::initActions()
 {
 	DEBUG(YDMETHOD, "YahooProtocol::initActions()");
 
-    actionGoOnline = new KAction(YSTAvailable, "yahoo_online", 
+    actionGoOnline = new KAction(YSTAvailable, "yahoo_online",
 			0, this, SLOT(Connect()), this, "actionYahooConnect");
-    actionGoOffline = new KAction(i18n("Offline"), "yahoo_offline", 
+    actionGoOffline = new KAction(i18n("Offline"), "yahoo_offline",
 			0, this, SLOT(Disconnect()), this, "actionYahooDisconnect");
-    actionGoStatus001 = new KAction(YSTBeRightBack, "yahoo_busy", 
+    actionGoStatus001 = new KAction(YSTBeRightBack, "yahoo_busy",
 			0, this, SLOT(Connect()), this, "actionYahooConnect");
-    actionGoStatus002 = new KAction(YSTBusy, "yahoo_busy", 
+    actionGoStatus002 = new KAction(YSTBusy, "yahoo_busy",
 			0, this, SLOT(Connect()), this, "actionYahooConnect");
-    actionGoStatus003 = new KAction(YSTNotAtHome, "yahoo_busy", 
+    actionGoStatus003 = new KAction(YSTNotAtHome, "yahoo_busy",
 			0, this, SLOT(Connect()), this, "actionYahooConnect");
-    actionGoStatus004 = new KAction(YSTNotAtMyDesk, "yahoo_busy", 
+    actionGoStatus004 = new KAction(YSTNotAtMyDesk, "yahoo_busy",
 			0, this, SLOT(Connect()), this, "actionYahooConnect");
-    actionGoStatus005 = new KAction(YSTNotInTheOffice, "yahoo_busy", 
+    actionGoStatus005 = new KAction(YSTNotInTheOffice, "yahoo_busy",
 			0, this, SLOT(Connect()), this, "actionYahooConnect");
-    actionGoStatus006 = new KAction(YSTOnThePhone, "yahoo_busy", 
+    actionGoStatus006 = new KAction(YSTOnThePhone, "yahoo_busy",
 			0, this, SLOT(Connect()), this, "actionYahooConnect");
-    actionGoStatus007 = new KAction(YSTOnVacation, "yahoo_busy", 
+    actionGoStatus007 = new KAction(YSTOnVacation, "yahoo_busy",
 			0, this, SLOT(Connect()), this, "actionYahooConnect");
-    actionGoStatus008 = new KAction(YSTOutToLunch, "yahoo_busy", 
+    actionGoStatus008 = new KAction(YSTOutToLunch, "yahoo_busy",
 			0, this, SLOT(Connect()), this, "actionYahooConnect");
-    actionGoStatus009 = new KAction(YSTSteppedOut, "yahoo_busy", 
+    actionGoStatus009 = new KAction(YSTSteppedOut, "yahoo_busy",
 			0, this, SLOT(Connect()), this, "actionYahooConnect");
-    actionGoStatus012 = new KAction(i18n("Invisible"), "yahoo_offline", 
+    actionGoStatus012 = new KAction(i18n("Invisible"), "yahoo_offline",
 			0, this, SLOT(Connect()), this, "actionYahooConnect"); // XXX Connect with invisible on
-    actionGoStatus099 = new KAction(i18n("Custom"), "yahoo_online", 
+    actionGoStatus099 = new KAction(i18n("Custom"), "yahoo_online",
 			0, this, SLOT(Connect()), this, "actionYahooConnect"); // XXX Get some dialogbox
-    actionGoStatus999 = new KAction(YSTIdle, "yahoo_idle", 
-			0, this, SLOT(Connect()), this, "actionYahooConnect"); 
+    actionGoStatus999 = new KAction(YSTIdle, "yahoo_idle",
+			0, this, SLOT(Connect()), this, "actionYahooConnect");
 
     actionStatusMenu = new KActionMenu("Yahoo", this);
     actionStatusMenu->insert(actionGoOnline);
