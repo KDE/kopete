@@ -5,6 +5,7 @@
 
 #include <qobject.h>
 
+#include "gwerror.h"
 #include "transfer.h"
 
 class Client;
