@@ -41,6 +41,7 @@
 #include <kwin.h>
 #include <kdeversion.h>
 #include <kinputdialog.h>
+#include <kurl.h>
 
 #include "addcontactwizard.h"
 #include "kopeteapplication.h"
@@ -598,13 +599,17 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 	{
 		QToolTip::remove(m_tray);
 		
-		QString tt;
-		
+		QString tt = QString::fromLatin1("<qt><table>");
 		QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
 		for(KopeteAccount *a=accounts.first() ; a; a=accounts.next() )
 		{
-			tt+=QString::fromLatin1("<p>")+a->myself()->toolTip()+QString::fromLatin1("</p>");
+			KopeteContact *self = a->myself();
+			tt += i18n("<tr><td>STATUS ICON <b>PROTOCOL NAME</b> (ACCOUNT NAME)</td><td>STATUS DESCRIPTION</td></tr>",
+			           "<tr><td><img src=\"kopete-account-icon:%3:%4\">&nbsp;<b>%1</b>&nbsp;(%2)</td><td align=\"right\">%5</td></tr>")
+			           .arg( a->protocol()->displayName() ).arg( a->accountId(), KURL::encode_string( a->protocol()->pluginId() ),
+			                 KURL::encode_string( a->accountId() ), self->onlineStatus().description() );
 		}
+		tt += QString::fromLatin1("</table></qt>");
 		QToolTip::add(m_tray,tt);
 	}
 }
