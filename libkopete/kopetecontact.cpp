@@ -666,7 +666,7 @@ QString KopeteContact::toolTip() const
 			QString time = formattedIdleTime();
 			if(!time.isNull())
 				tip += i18n("<br><b>Idle:</b>&nbsp;formattedIdleTime",
-					"<br>Idle:</b>&nbsp;%1").arg(time);
+					"<br><b>Idle:</b>&nbsp;%1").arg(time);
 		}
 		else
 		{
