@@ -71,86 +71,30 @@ class AIMBuddy
 		// Returns the alias for this buddy
 		QString alias() const { return mAlias; }
 
-		// Returns the capabilities of this buddy
-		const AIMBuddyCaps &capabilities() const { return mCapabilities; }
-
 		// Returns the status of this buddy
 		const int status() const {  return mStatus; }
-
-		// Returns the user class of this buddy
-		int userClass() const { return mUserClass; }
-
-		// Returns the last known sign on time
-		long signOnTime() const { return mSignOnTime; }
-
-		// Returns the idle time
-//		Q_UINT32 idleTime() { return mIdleTime; }
-
-		// Returns how long this user has been a member since
-		long memberSince() const { return mMemberSince; }
-
-		// Returns the users evil (warning) level
-		Q_UINT32 evil() const { return mEvil; }
-
-		// Returns the users last sign on time
-		long lastSignOnTime() const { return mLastOn; }
-
-		// Returns the string version of the last sign on time
-		QString stringLastOn() const { return mStringLastOn; }
 
 		// Sets the alias for this buddy
 		void setAlias(const QString &alias) { mAlias = alias; }
 
-		// Sets the capabilities of this buddy.
-		void setCapabilities(const AIMBuddyCaps &cap) { mCapabilities = cap; }
-
 		// Sets the online/offline/away status of a user
 		void setStatus(const int status) { mStatus = status; }
-
-		// Sets the users user class
-		void setUserClass(int userClass) { mUserClass = userClass; }
-
-		// Sets the last known sign on time
-		void setSignOnTime(long signOnTime) { mSignOnTime = signOnTime; }
-
-		// Sets the idle time
-//		void setIdleTime(Q_UINT32 idleTime) { mIdleTime = idleTime; }
-
-		// Sets how long this user has been a member since
-		void setMemberSince(long memberSince) { mMemberSince = memberSince; }
-
-		// Sets their 'evil' rating. Usually referred to as their 'warning level'
-		void setEvil(Q_UINT32 evil) { mEvil = evil; }
-
-		// Sets the last time this member was signed on
-		void setLastSignOnTime(long lastOn) { mLastOn = lastOn; }
-
-		// Sets the string version of the last time the member was on
-		void setStringLastOn(const QString &stringLastOn) { mStringLastOn = stringLastOn; }
 
 		void setWaitAuth(bool b) { mWaitAuth = b; }
 		bool waitAuth() { return mWaitAuth; }
 
-	protected:
+	private:
 		friend class AIMBuddyList;
+
 		void setGroupID(const int groupID) { mGroupID = groupID; }
 
-	private:
 		QString mScreenName;
 		QString mAlias;
 		int mBuddyID;
 		int mGroupID;
-		AIMBuddyCaps mCapabilities;
 	//	KopeteOnlineStatus mStatus;
 		unsigned int mStatus;
-		int mUserClass;
-		long mSignOnTime;
-//		Q_UINT32 mIdleTime;
-		long mMemberSince;
-		Q_UINT32 mEvil;
-		long mLastOn;
 		bool mWaitAuth;
-		QString mStringLastOn;
 };
 
 class AIMGroup
@@ -268,4 +212,6 @@ class AIMBuddyList : public QObject
 };
 
 #endif
+
 // vim: set noet ts=4 sts=4 sw=4:
+
