@@ -85,11 +85,6 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 
 AddAccountWizard::~AddAccountWizard()
 {
-	delete m_intro;
-	delete m_selectService;
-	delete m_finish;
-	m_protocolItems.clear();
-	
 	//kdDebug( 14100 ) << k_funcinfo << endl;
 }
 
