@@ -177,19 +177,23 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint  id ,
 
 void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 {
+	QRegExp rx("Content-Type: ([A-Za-z0-9$!*/\\-]*)");
+	rx.search(msg);
+	QString type=rx.cap(1);
+
 	// incoming message for File-transfer
-	if( msg.contains("Content-Type: text/x-msmsgsinvite; charset=UTF-8") )
+	if( type== "text/x-msmsgsinvite"  )
 	{
 		emit invitation(m_msgHandle,msg);
 	}
-	else if( msg.contains( "MIME-Version: 1.0\r\nContent-Type: text/x-msmsgscontrol\r\nTypingUser:" ) )
+	else if( type== "text/x-msmsgscontrol" )
 	{
 		QString message;
 		message = msg.right( msg.length() - msg.findRev( " " ) - 1 );
 		message = message.replace(  "\r\n" ,"" );
 		emit receivedTypingMsg( message, true );
 	}
-	else// if(msg.contains("Content-Type: text/plain;"))
+	else if(type=="text/plain"   || type.isEmpty() )
 	{
 		// Some MSN Clients (like CCMSN) don't like to stick to the rules.
 		// In case of CCMSN, it doesn't send what the content type is when
@@ -286,6 +290,10 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		kmsg.setFont( font );
 
 		emit msgReceived( kmsg );
+	}
+	else
+	{
+		kdDebug(14140) << "MSNSwitchBoardSocket::slotReadMessage: Unknown type '" << type << "' message: \n"<< msg <<endl;
 	}
 }
 
