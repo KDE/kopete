@@ -207,7 +207,10 @@ void KopeteMessageManager::appendMessage( KopeteMessage &msg )
 		emit( messageReceived( msg, this ) );
 
 		if( KopetePrefs::prefs()->highlightEnabled()  && msg.plainBody().contains( QRegExp( QString::fromLatin1("\\b(%1)\\b").arg( d->mUser->displayName() ) ) ) )
+		{
 			msg.highlight();
+			KNotifyClient::event( QString::fromLatin1( "kopete_highlight"), i18n("A Message For You Arrived") );
+		}
 	}
 
 	emit messageAppended( msg, this );

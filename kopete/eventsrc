@@ -207,3 +207,9 @@ Comment[pt_BR]=Utilizador mudou o seu estado de ligação
 Comment[sv]=Användaren ändrade uppkopplingsstatus
 default_sound=Kopete_Event.ogg
 default_presentation=0
+
+[kopete_highlight]
+Name=Highlight
+Comment=A message was highlighted because it contained your nickname
+default_sound=Kopete_Received.ogg
+default_presentation=1
