@@ -546,12 +546,11 @@ class OscarSocket : public OscarConnection
 		 */
 		void sendCLI_METASETGENERAL(const ICQGeneralUserInfo &i);
 
-		void sendCLI_METASETWORK(const ICQWorkUserInfo &i);
-
 		/*
 		 * sends the work info for the uin owner to icq
 		 */
-		void sendCLI_METASETWORK(ICQWorkUserInfo &i);
+		void sendCLI_METASETWORK(const ICQWorkUserInfo &i);
+
 
 		void sendCLI_METASETSECURITY(bool requireauth, bool webaware, BYTE direct);
 
