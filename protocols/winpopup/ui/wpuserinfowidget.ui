@@ -74,7 +74,7 @@
                                 <cstring>textLabel3</cstring>
                             </property>
                             <property name="text">
-                                <string>Operating &amp;System:</string>
+                                <string>Operating &amp;system:</string>
                             </property>
                             <property name="buddy" stdset="0">
                                 <cstring>sOS</cstring>
