@@ -989,6 +989,15 @@ void ChatView::addChatMessage( KopeteMessage &m )
 	QDomDocument message = m.asXML();
 	message.documentElement().setAttribute( QString::fromLatin1("id"), QString::number(messageId) );
 	QString resultHTML = KopeteXSL::xsltTransform( message.toString(), xslStyleString() );
+	
+	KopeteContactPtrList members = msgManager()->members();
+	for( KopeteContact *c = members.first(); c; c = members.next() )
+	{
+		resultHTML.replace( QRegExp( QString::fromLatin1("(^|>|\\b)(%1)($|\\b|[<:])")
+			.arg( QRegExp::escape( c->displayName() ) ) ), 
+			QString::fromLatin1("\\1<span class=\"KopeteDisplayName\">\\2</span>\\3") );
+	}
+	
 	HTMLElement newNode = chatView->document().createElement( QString::fromLatin1("span") );
 	newNode.setInnerHTML( resultHTML );
 
