@@ -25,11 +25,11 @@
  *
  * @author Martijn Klingens <klingens@kde.org>
  */
-class KopetePluginConfig : public KSettings::PluginPage
+class KopetePluginPage : public KSettings::PluginPage
 {
 
 public:
-	KopetePluginConfig( QWidget *parent, const char *name, const QStringList &args );
+	KopetePluginPage( QWidget *parent, const char *name, const QStringList &args );
 };
 
 #endif // KOPETEPLUGINPAGE_H
