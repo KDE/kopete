@@ -83,6 +83,7 @@ class JabberProtocol:public QObject, public KopeteProtocol {
 	void slotConnected();
     void slotDisconnected();
     void slotConnecting();
+	void slotError(JabError *);
 
     void slotGoOnline();
     void slotGoOffline();

@@ -20,7 +20,7 @@
 
 #include "kopetecontact.h"
 #include "jabberprotocol.h"
-#include "kopetechatwindow.h"
+#include "kopetemessagemanager.h"
 #include "kopetehistorydialog.h"
 #include "dlgrename.h"
 #include "jabcommon.h"
@@ -60,8 +60,6 @@ class JabberContact:public KopeteContact {
     int importance() const;
     void execute();
 
-    QString userID() { return mUserID; }
-    QString nickname() { return mName; }
     QString resource() { return mResource; }
     QString group() { return mGroup; }
     bool localGroup() { return hasLocalGroup; }
@@ -74,7 +72,7 @@ class JabberContact:public KopeteContact {
     void slotNewMessage(const JabMessage &);
     void slotCloseHistoryDialog();
     void slotViewHistory();
-    void slotSendMsg(const QString &);
+    void slotSendMsg(const KopeteMessage &);
     void slotResourceAvailable(const Jid &, const JabResource &);
     void slotResourceUnavailable(const Jid &);
     void slotRemoveFromGroup();
@@ -98,6 +96,7 @@ class JabberContact:public KopeteContact {
     JabberProtocol *mProtocol;
 
     QPtrList<JabberResource> resources;
+    QPtrList<KopeteContact> theContacts;
     
     bool hasLocalGroup;
     QString mUserID, mName, mResource, mGroup, mReason;
@@ -108,8 +107,9 @@ class JabberContact:public KopeteContact {
     KListAction *actionContactMove;
 
     dlgJabberRename *dlgRename;
-    KopeteChatWindow *msgDialog;
+    KopeteMessageManager *msgManager;
     KopeteHistoryDialog *historyDialog;
+
 };
 
 class JabberResource : public QObject {

@@ -45,27 +45,22 @@ KopeteProtocol()
     authContact = new KMessageBox;
 	reasonDialog = 0L;
     protocol = new Jabber;
-    connect(protocol, SIGNAL(contactNew(JabRosterEntry *)), this,
-	    SLOT(slotNewContact(JabRosterEntry *)));
-	connect(protocol, SIGNAL(contactChanged(JabRosterEntry *)), this,
-		SLOT(slotContactUpdated(JabRosterEntry *)));
-	connect(protocol, SIGNAL(resourceAvailable(const Jid &, const JabResource &)), this,
-		SIGNAL(resourceAvailable(const Jid &, const JabResource &)));
-	connect(protocol, SIGNAL(resourceUnavailable(const Jid &)), this,
-		SIGNAL(resourceUnavailable(const Jid &)));
-	connect(protocol, SIGNAL(authRequest(const Jid &)), this,
-		SLOT(slotUserWantsAuth(const Jid &)));
-	connect(protocol, SIGNAL(messageReceived(const JabMessage &)), this,
-		SLOT(slotNewMessage(const JabMessage &)));
+	connect(protocol, SIGNAL(connected()), this, SLOT(slotConnected()));
+	connect(protocol, SIGNAL(disconnected()), this, SLOT(slotDisconnected()));
+	connect(protocol, SIGNAL(contactNew(JabRosterEntry *)), this, SLOT(slotNewContact(JabRosterEntry *)));
+	connect(protocol, SIGNAL(contactChanged(JabRosterEntry *)), this, SLOT(slotContactUpdated(JabRosterEntry *)));
+	connect(protocol, SIGNAL(resourceAvailable(const Jid &, const JabResource &)), this, SIGNAL(resourceAvailable(const Jid &, const JabResource &)));
+	connect(protocol, SIGNAL(resourceUnavailable(const Jid &)), this, SIGNAL(resourceUnavailable(const Jid &)));
+	connect(protocol, SIGNAL(authRequest(const Jid &)), this, SLOT(slotUserWantsAuth(const Jid &)));
+	connect(protocol, SIGNAL(messageReceived(const JabMessage &)), this, SLOT(slotNewMessage(const JabMessage &)));
+	connect(protocol, SIGNAL(error(JabError *)), this, SLOT(slotError(JabError *)));
 
     statusBarIcon = new StatusBarIcon();
-    QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)),
-		     this, SLOT(slotIconRightClicked(const QPoint)));
+    QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)), this, SLOT(slotIconRightClicked(const QPoint)));
     statusBarIcon->setPixmap(offlineIcon);
 
     mPrefs = new JabberPreferences("jabber_protocol_32", this);
-    connect(mPrefs, SIGNAL(saved(void)), this,
-	    SLOT(slotSettingsChanged(void)));
+    connect(mPrefs, SIGNAL(saved(void)), this, SLOT(slotSettingsChanged(void)));
 
     KGlobal::config()->setGroup("Jabber");
     if ((KGlobal::config()->readEntry("UserID", "") == "")
@@ -125,7 +120,6 @@ void JabberProtocol::Connect()
 		}
 		myContact = new JabberContact(QString("%1@%2").arg(mUsername, 1).arg(mServer, 2), mUsername, i18n("Unknown"), this);
 		mIsConnected = true;
-		statusBarIcon->setPixmap(onlineIcon);
     } 
 	else if (isAway()) {	/* They're really away, and they want to un-away. */
 		slotGoOnline();
@@ -160,6 +154,37 @@ void JabberProtocol::slotConnect()
 void JabberProtocol::slotDisconnect()
 {
     Disconnect();
+}
+
+void JabberProtocol::slotConnecting()
+{				/* Aw, look at the cute widdle MNG. */
+    statusBarIcon->setMovie(connectingIcon);
+}
+
+void JabberProtocol::slotConnected()
+{
+    mIsConnected = true;
+    kdDebug() << "Jabber plugin: Connected to Jabber server." << endl;
+}
+
+void JabberProtocol::slotDisconnected()
+{
+    mIsConnected = false;
+	kdDebug() << "Jabber plugin: Disconnected from Jabber server." << endl;
+	statusBarIcon->setPixmap(offlineIcon);
+	emit nukeContacts(false);
+}
+
+void JabberProtocol::slotError(JabError *error) { /* "Bugger." */
+	switch(error->type) {
+		case JABERR_CONNECT:
+			KMessageBox::error(kopeteapp->mainWindow(), i18n("Sorry, but there was an error connecting to the Jabber server (%1).").arg(error->msg, 1), i18n("Error connecting to Jabber server"));
+		case JABERR_AUTH:   /* FIXME FIXME FIXME FIXME!!! */
+		case JABERR_CREATE: /* Isn't red-on-orange just so PRETTY? */
+		default: /* o/~ cause i'm that fool who broke the key/i'm unlockable so don't check me/
+					    i got weight on my shoulders and things on my mind/ the sky is falling, and i'm falling behind */
+			KMessageBox::error(kopeteapp->mainWindow(), i18n("Sorry, but you were disconnected for an unspecified reason (%1).").arg(error->type, 1), i18n("Disconnected from Jabber server"));
+	}
 }
 
 bool JabberProtocol::isConnected() const
@@ -237,23 +262,6 @@ void JabberProtocol::initActions()
     actionStatusMenu->insert(actionGoDND);
     actionStatusMenu->insert(actionGoOffline);
     actionStatusMenu->plug(kopeteapp->systemTray()->contextMenu(), 1);
-}
-
-void JabberProtocol::slotConnecting()
-{				/* Aw, look at the cute widdle MNG. */
-    statusBarIcon->setMovie(connectingIcon);
-}
-
-void JabberProtocol::slotConnected()
-{
-    mIsConnected = true;
-    kdDebug() << "Jabber plugin: Connected to Jabber server." << endl;
-    slotGoOnline();
-}
-
-void JabberProtocol::slotDisconnected()
-{
-    mIsConnected = false;
 }
 
 void JabberProtocol::slotGoOnline()
