@@ -15,16 +15,17 @@
     *************************************************************************
 */
 
-#include <qlineedit.h>
+#include <qapplication.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
-#include <qapplication.h>
+#include <qlineedit.h>
+#include <qtimer.h>
 
 #include <kconfig.h>
 #include <kdebug.h>
-#include <klocale.h>
+#include <kdeversion.h>
 #include <kdialogbase.h>
-#include <qtimer.h>
+#include <klocale.h>
 
 #include "kopetecontactlist.h"
 #include "kopeteaccount.h"
@@ -33,6 +34,10 @@
 #include "kopetepassworddialog.h"
 #include "kopeteprotocol.h"
 #include "pluginloader.h"
+
+#if KDE_IS_VERSION( 3, 1, 90 )
+#include <kwallet.h>
+#endif
 
 /*
  * Function for (en/de)crypting strings for config file, taken from KMail
@@ -197,12 +202,31 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 	if( ok )
 		*ok = true;
 
+#if KDE_IS_VERSION( 3, 1, 90 )
+	KWallet::Wallet *wallet = 0L;
+	if ( KWallet::Wallet::folderDoesNotExist( KWallet::Wallet::NetworkWallet(), QString::fromLatin1( "Kopete" ) ) )
+	{
+		// The folder might exist, try to open the wallet
+		wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), KWallet::Wallet::Synchronous );
+		QString pwd;
+		if ( wallet && wallet->setFolder( QString::fromLatin1( "Kopete" ) ) &&
+			wallet->readPassword( protocol()->pluginId() + QString::fromLatin1( "_" ) + accountId(), pwd ) == 0 )
+		{
+			if ( !error )
+				return pwd;
+			else
+				d->password = QString::null; // Clear password so the code below will show the dialog
+		}
+	}
+#endif
+
 	if ( !d->password.isNull() )
 	{
 		//if the cached password was wrong, we remove it
 		if ( error )
 			d->password = QString::null;
 		else
+			// FIXME: Try to move the password to KWallet if possible - Martijn
 			return d->password;
 	}
 
@@ -251,6 +275,25 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 
 void KopeteAccount::setPassword( const QString &pass )
 {
+#if KDE_IS_VERSION( 3, 1, 90 )
+	kdDebug() << k_funcinfo << endl;
+	KWallet::Wallet *wallet =
+		KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), KWallet::Wallet::Synchronous );
+
+	if ( wallet )
+	{
+		if ( !wallet->hasFolder( QString::fromLatin1( "Kopete" ) ) )
+			wallet->createFolder( QString::fromLatin1( "Kopete" ) );
+
+		if ( wallet->setFolder( QString::fromLatin1( "Kopete" ) ) &&
+			wallet->writePassword( protocol()->pluginId() + QString::fromLatin1( "_" ) + accountId(), pass ) == 0 )
+		{
+			// FIXME: Remove any pass from KConfig if it's set - Martijn
+			return;
+		}
+	}
+#endif
+
 	d->password = pass;
 	writeConfig( configGroup() );
 }
