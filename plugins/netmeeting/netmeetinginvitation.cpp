@@ -25,9 +25,12 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kdebug.h>
+#include <kconfig.h>
+#include <kglobal.h>
+
 
 #include <qtimer.h>
-#include <qprocess.h>
+#include <kprocess.h>
 
 NetMeetingInvitation::NetMeetingInvitation(bool incoming, MSNContact *c, QObject *parent)
  : QObject(parent) , MSNInvitation( incoming, NetMeetingInvitation::applicationID() , i18n("NetMeeting") )
@@ -61,7 +64,7 @@ void NetMeetingInvitation::parseInvitation(const QString& msg)
 		MSNInvitation::parseInvitation(msg); //for the cookie
 
 		unsigned int result = KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
-					i18n("%1 wants to start a chat with GnomeMeeting. Do you want to accept it? " ).arg(m_contact->metaContact()->displayName()),
+					i18n("%1 wants to start a chat with Neteeting. Do you want to accept it? " ).arg(m_contact->metaContact()->displayName()),
 					i18n("MSN Plugin") , i18n("Accept"),i18n("Refuse"));
 
 		MSNMessageManager* manager=dynamic_cast<MSNMessageManager*>(m_contact->manager());
@@ -155,15 +158,22 @@ void NetMeetingInvitation::slotTimeout()
 
 void NetMeetingInvitation::startMeeting(const QString & ip_address)
 {
-	kdDebug() << k_funcinfo << endl ;
-
 	//TODO: use KProcess
-
-  QProcess process;
-  process.addArgument("gnomemeeting");
-  process.addArgument("-c");
-  process.addArgument(  "callto://" + ip_address );
-  process.start();
+	
+	KConfig *config=KGlobal::config();
+	config->setGroup("Netmeeting Plugin");
+	QString app=config->readEntry("NetmeetingApplication","gnomemeeting -c callto://%1").arg(ip_address);
+	
+	kdDebug() << k_funcinfo << app <<  endl ;
+	
+	QStringList args=QStringList::split(" ", app);
+	
+	KProcess p;
+	for(QStringList::Iterator it=args.begin() ; it != args.end() ; ++it)
+	{
+		p << *it;
+	}
+	p.start();
 }
 
 #include "netmeetinginvitation.moc"

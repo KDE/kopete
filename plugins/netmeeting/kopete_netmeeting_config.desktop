@@ -1,19 +1,15 @@
 [Desktop Entry]
 Encoding=UTF-8
+Icon=highlight
 Type=Service
-X-Kopete-Version=1000900
-Icon=phone
-ServiceTypes=Kopete/Plugin
+ServiceTypes=KCModule
+
+X-KDE-ModuleType=Library
 X-KDE-Library=kopete_netmeeting
-X-KDE-PluginInfo-Author=Olivier Goffart
-X-KDE-PluginInfo-Email=ogoffart@tiscalinet.be
-X-KDE-PluginInfo-Name=kopete_netmeeting
-X-KDE-PluginInfo-Version=0.8.0
-X-KDE-PluginInfo-Website=http://kopete.kde.org
-X-KDE-PluginInfo-Category=Plugins
-X-KDE-PluginInfo-Depends=kopete_msn
-X-KDE-PluginInfo-License=GPL
-X-KDE-PluginInfo-EnabledByDefault=false
+X-KDE-FactoryName=NetmeetingConfigFactory
+X-KDE-ParentApp=kopete_netmeeting
+X-KDE-ParentComponents=kopete_netmeeting
+
 Name=Netmeeting
 Name[ar]=الاجتماع على الشبكة
 Name[bg]=Видео чат
