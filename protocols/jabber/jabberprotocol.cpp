@@ -184,6 +184,14 @@ void JabberProtocol::Connect()
 	QString userId = KGlobal::config()->readEntry("UserID", "");
 	QString server = KGlobal::config()->readEntry("Server", "jabber.org");
 	int port = KGlobal::config()->readNumEntry("Port", 5222);
+
+	// check if we are capable of using SSL if requested
+	bool sslPossible = jabberClient->setSSLEnabled(KGlobal::config()->readBoolEntry("UseSSL", "0"));
+	if(!sslPossible)
+	{
+		KMessageBox::error(kopeteapp->mainWindow(), i18n("Sorry, SSL is not supported. QSSL was probably not compiled in."), i18n("SSL error"));
+		return;
+	}
 	
 	if(myContact)
 	{
@@ -203,7 +211,6 @@ void JabberProtocol::Connect()
 	kdDebug() << "                 with UserID " << userId << endl;
 
 	// now connect
-	jabberClient->setSSLEnabled(KGlobal::config()->readBoolEntry("UseSSL", "0"));
 	jabberClient->connectToHost(server, port);
 
 	// play movie to indicate connection attempt
