@@ -106,10 +106,10 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	loadOptions();
 
 	// If some plugins are already loaded, merge the GUI
-	QMap<KPluginInfo *, Kopete::Plugin *> plugins = Kopete::PluginManager::self()->loadedPlugins();
-	QMap<KPluginInfo *, Kopete::Plugin *>::ConstIterator it;
+	Kopete::PluginList plugins = Kopete::PluginManager::self()->loadedPlugins();
+	Kopete::PluginList::ConstIterator it;
 	for ( it = plugins.begin(); it != plugins.end(); ++it )
-		slotPluginLoaded( it.data() );
+		slotPluginLoaded( *it );
 
 	// If some account alrady loaded, build the status icon
 	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::manager()->accounts();

@@ -136,14 +136,14 @@ QValueList<KPluginInfo *> Kopete::PluginManager::availablePlugins( const QString
 	return result;
 }
 
-QMap<KPluginInfo *, Kopete::Plugin *> Kopete::PluginManager::loadedPlugins( const QString &category ) const
+Kopete::PluginList Kopete::PluginManager::loadedPlugins( const QString &category ) const
 {
-	QMap<KPluginInfo *, Kopete::Plugin *> result;
+	Kopete::PluginList result;
 	QMap<KPluginInfo *, Kopete::Plugin *>::ConstIterator it;
 	for ( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
 	{
 		if ( category.isEmpty() || it.key()->category() == category )
-			result.insert( it.key(), it.data() );
+			result.append( it.data() );
 	}
 
 	return result;

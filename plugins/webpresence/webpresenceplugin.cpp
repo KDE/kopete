@@ -349,15 +349,16 @@ bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
 #endif
 }
 
+// FIXME: use Kopete::PluginList instead of QPtrList<Kopete::Protocol>
 QPtrList<Kopete::Protocol> WebPresencePlugin::allProtocols()
 {
 	kdDebug( 14309 ) << k_funcinfo << endl;
 
-	QMap<KPluginInfo *, Kopete::Plugin *> plugins = Kopete::PluginManager::self()->loadedPlugins( "Protocols" );
-	QMap<KPluginInfo *, Kopete::Plugin *>::ConstIterator it;
+	Kopete::PluginList plugins = Kopete::PluginManager::self()->loadedPlugins( "Protocols" );
+	Kopete::PluginList::ConstIterator it;
 	QPtrList<Kopete::Protocol> result;
 	for ( it = plugins.begin(); it != plugins.end(); ++it )
-		result.append( static_cast<Kopete::Protocol *>( it.data() ) );
+		result.append( static_cast<Kopete::Protocol *>( *it ) );
 
 	return result;
 }

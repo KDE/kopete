@@ -32,6 +32,8 @@ namespace Kopete
 
 class Plugin;
 
+typedef QValueList<Plugin*> PluginList;
+
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  * @author Martijn Klingens <klingens@kde.org>
@@ -65,7 +67,7 @@ public:
 	 * If you omit the category you get all, otherwise it's a filtered list.
 	 * See also @ref availablePlugins().
 	 */
-	QMap<KPluginInfo *, Plugin *> loadedPlugins( const QString &category = QString::null ) const;
+	PluginList loadedPlugins( const QString &category = QString::null ) const;
 
 	/**
 	 * @brief Search by plugin name. This is the key used as X-KDE-PluginInfo-Name in
