@@ -294,12 +294,7 @@ QString KopeteMessage::plainBody() const
 	if( d->format == PlainText )
 		return bodyText.text();
 	else
-	{
-		QString body = unescape( bodyText.text() );
-		body.replace( QRegExp( QString::fromLatin1( "<br/>" ) ), QString::fromLatin1( "\n" ) );
-		body.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null );
-		return body;
-	}
+		return unescape( bodyText.text() ).replace( QRegExp( QString::fromLatin1( "<br>" ) ), QString::fromLatin1( "\n" ) ).replace( QRegExp( QString::fromLatin1( "<br/>" ) ), QString::fromLatin1( "\n" ) ).replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::fromLatin1( "" ) );
 }
 
 QString KopeteMessage::escapedBody() const
