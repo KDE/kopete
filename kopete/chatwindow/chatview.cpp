@@ -403,7 +403,7 @@ void ChatView::createMembersList(void)
 			visibleMembers = ( memberContactMap.count() > 1 );
 		else
 			visibleMembers = ( membersStatus == Visible );
-			
+		
 		placeMembersList( membersDockPosition );
 
 		//Connect the popup menu
@@ -428,7 +428,8 @@ void ChatView::toggleMembersVisibility()
 
 void ChatView::placeMembersList( KDockWidget::DockPosition dp )
 {
-	kdDebug(14000) << k_funcinfo << "Members Status: " << membersStatus << ", visible:" << visibleMembers << endl;
+	kdDebug(14000) << k_funcinfo << "Members list policy " << membersStatus << 
+			", visible " << visibleMembers << endl;
 
 	if ( visibleMembers )
 	{
@@ -438,30 +439,31 @@ void ChatView::placeMembersList( KDockWidget::DockPosition dp )
 		int dockWidth;
 		KGlobal::config()->setGroup( QString::fromLatin1("ChatViewDock") );
 		if( membersDockPosition == KDockWidget::DockLeft )
-			dockWidth = KGlobal::config()->readNumEntry( QString::fromLatin1("membersDock,viewDock:sepPos"), 30);
+			dockWidth = KGlobal::config()->readNumEntry( 
+				QString::fromLatin1("membersDock,viewDock:sepPos"), 30);
 		else
-			dockWidth = KGlobal::config()->readNumEntry( QString::fromLatin1("viewDock,membersDock:sepPos"), 70);
+			dockWidth = KGlobal::config()->readNumEntry(
+				QString::fromLatin1("viewDock,membersDock:sepPos"), 70);
 
 		// Make sure it is shown then place it wherever
 		membersDock->setEnableDocking( KDockWidget::DockLeft | KDockWidget::DockRight );
 		membersDock->manualDock( viewDock, membersDockPosition, dockWidth );
 		membersDock->show();
 		membersDock->setEnableDocking( KDockWidget::DockNone );
-		visibleMembers = true;
 	}
 	else
 	{
 		// Dock it to the desktop then hide it
 		membersDock->undock();
 		membersDock->hide();
-		visibleMembers = false;
+
 		if ( root )
 			root->repaint( true );
 	}
 	
 	if( isActive )
 		m_mainWindow->updateMembersActions();
-
+	
 	refreshView();
 }
 
@@ -491,15 +493,17 @@ void ChatView::remoteTyping( const KopeteContact *c, bool isTyping )
 		m_remoteTypingMap[ key ]->start( 6000, true );
 	}
 
- // Loop through the map, constructing a string of people typing
+	// Loop through the map, constructing a string of people typing
 	QStringList typingList;
 	QString statusTyping;
 	QPtrDictIterator<QTimer> it( m_remoteTypingMap );
-    for( ; it.current(); ++it )
+	
+	for( ; it.current(); ++it )
 	{
 		KopeteContact *c=static_cast<KopeteContact*>(it.currentKey());
 		typingList.append( c->metaContact() ? c->metaContact()->displayName() : c->displayName() );
 	}
+	
 	statusTyping = typingList.join( QString::fromLatin1( ", " ) );
 
 	// Update the status area
@@ -546,8 +550,6 @@ void ChatView::nickComplete()
 
 		QString word = txt.mid( firstSpace, lastSpace - firstSpace );
 		QString m_Match;
-
-//		kdDebug( 14000 ) <<  "Word is '" << word << "', last match is '" << m_lastMatch << "'" << endl;
 
 		if( word != m_lastMatch )
 		{
@@ -616,18 +618,21 @@ void ChatView::slotContactAdded(const KopeteContact *c, bool surpress)
 			this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
 		if( !surpress && memberContactMap.count() > 1 )
-		{
 			sendInternalMessage(  i18n("%1 has joined the chat.").arg(contactName) );
-		}
 
 		memberContactMap.insert(c, new KopeteContactLVI( this, c, membersList ) );
 
-		if( membersStatus == Smart )
+		if( membersStatus == Smart && membersDock )
 		{
-			visibleMembers = ( memberContactMap.count() > 1 );
-			placeMembersList( membersDockPosition );
+			bool currStatus = ( memberContactMap.count() > 1 );
+			if( currStatus != visibleMembers )
+			{
+				visibleMembers = currStatus;
+				placeMembersList( membersDockPosition );
+			}
 		}
 	}
+
 	setTabState();
 	emit updateStatusIcon( this );
 }
@@ -648,9 +653,7 @@ void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &
 			this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
 		if ( reason.isEmpty() )
-		{
 			sendInternalMessage( i18n( "%1 has left the chat." ).arg( contactName ) ) ;
-		}
 		else
 		{
 			sendInternalMessage( i18n( "%1 has left the chat (%2)." ).
@@ -664,12 +667,6 @@ void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &
 
 		delete memberContactMap[ contact ];
 		memberContactMap.remove( contact );
-		
-		if( membersStatus == Smart )
-		{
-			visibleMembers = ( memberContactMap.count() > 1 );
-			placeMembersList( membersDockPosition );
-		}
 	}
 
 	setTabState();
