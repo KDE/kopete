@@ -33,14 +33,12 @@ ConnectionStatusPlugin::ConnectionStatusPlugin(QObject *parent, const char *name
 	qtTimer = new QTimer();
 	connect(qtTimer, SIGNAL(timeout()), this,
 		 SLOT(slotCheckStatus()) );
-	qtTimer->start(2500);
+	qtTimer->start(60000);
 	
 	kpIfconfig = new KProcess;
 	connect(kpIfconfig, SIGNAL(receivedStdout(KProcess *, char *, int)),
 		this, SLOT(slotProcessStdout(KProcess *, char *, int)));
 
-
-	
 	m_boolPluginConnected = false;
 }
 
