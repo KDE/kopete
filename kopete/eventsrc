@@ -112,7 +112,7 @@ default_presentation=65
 
 [kopete_incoming]
 Name=Incoming
-Name[bg]=Входящо
+Name[bg]=Пристигна ново съобщение
 Name[bs]=Ulazni
 Name[ca]=Entrant
 Name[cs]=Příchozí
@@ -150,6 +150,7 @@ Name[xh]=Engenayo
 Name[xx]=xxIncomingxx
 Name[zh_CN]=收到
 Comment=An incoming message has been received
+Comment[bg]=Пристигна ново съобщение
 Comment[da]=En indkommende besked er blevet modtaget
 Comment[et]=Saabus sõnum
 Comment[fr]=Un message entrant a été reçu
@@ -163,7 +164,7 @@ default_presentation=64
 
 [kopete_outgoing]
 Name=Outgoing
-Name[bg]=Изходящо
+Name[bg]=Изпратено е съобщение
 Name[bs]=Izlazni
 Name[ca]=Sortint
 Name[cs]=Odchozí
@@ -201,6 +202,7 @@ Name[xh]=Ephumayo
 Name[xx]=xxOutgoingxx
 Name[zh_CN]=发出
 Comment=An outgoing message has been sent
+Comment[bg]=Изпратено е съобщение
 Comment[da]=En udgående besked er blevet sendt
 Comment[et]=Saadeti sõnum
 Comment[fr]=Un message sortant a été envoyé
@@ -215,7 +217,7 @@ default_presentation=0
 
 [kopete_online]
 Name=Online
-Name[bg]=Онлайн
+Name[bg]=Включи се приятел
 Name[ca]=Connectat
 Name[cy]=Ar-lein
 Name[el]=Σε σύνδεση
@@ -245,6 +247,7 @@ Name[wa]=So les fyis
 Name[xx]=xxOnlinexx
 Name[zh_CN]=上线
 Comment=A contact has come online
+Comment[bg]=Включи се приятел
 Comment[da]=En kontakt er gået på nettet
 Comment[et]=Kontakt tuli võrku
 Comment[fr]=Un contact s'est connecté
@@ -257,7 +260,7 @@ default_presentation=16
 
 [kopete_offline]
 Name=Offline
-Name[bg]=Офлайн
+Name[bg]=Изключи се приятел
 Name[ca]=Desconnectat
 Name[cy]=All-lein
 Name[da]=Gå offline
@@ -286,6 +289,7 @@ Name[uz]=Офлайн
 Name[xx]=xxOfflinexx
 Name[zh_CN]=离线
 Comment=A contact has gone offline
+Comment[bg]=Изключи се приятел
 Comment[da]=En kontakt er gået af nettet
 Comment[et]=Kontakt läks võrgust ära
 Comment[fr]=Un contact s'est déconnecté
@@ -300,7 +304,7 @@ default_presentation=0
 [kopete_status_change]
 Name=Status Change
 Name[be]=Зьмяненьне статусу
-Name[bg]=Промяна на статуса
+Name[bg]=Променен статус на приятел
 Name[ca]=Canvia estatus
 Name[cs]=Změna stavu
 Name[cy]=Newid Cyflwr
@@ -335,6 +339,7 @@ Name[wa]=Candjmint di statut
 Name[xx]=xxStatus Changexx
 Name[zh_CN]=状态更改
 Comment=A contact's online status has changed
+Comment[bg]=Променен статус на приятел
 Comment[da]=En kontakts status på nettet er ændret
 Comment[et]=Kontakt muutis oma võrgusoleku staatust
 Comment[fr]=Un contact a changé son état de connexion
@@ -348,7 +353,7 @@ default_presentation=0
 [kopete_highlight]
 Name=Highlight
 Name[be]=Падсьветка
-Name[bg]=Открояване
+Name[bg]=Пристигна специално съобщение
 Name[ca]=Ressaltat
 Name[cs]=Zvýraznit
 Name[cy]=Amlygu
@@ -380,6 +385,7 @@ Name[wa]=E sorbiyance
 Name[xx]=xxHighlightxx
 Name[zh_CN]=突出显示
 Comment=A highlighted message has been received
+Comment[bg]=Пристигна специално съобщение
 Comment[da]=En fremhævet besked er blevet modtaget
 Comment[et]=Saabus esiletõstetud sõnum
 Comment[fr]=Un message surligné a été reçu
@@ -393,10 +399,12 @@ default_presentation=65
 
 [yahoo_mail]
 Name=Yahoo Mail
+Name[bg]=Пристигна нова поща в Yahoo
 Name[fr]=Courrier Yahoo
 Name[sv]=Yahoo e-post
 Name[xx]=xxYahoo Mailxx
 Comment=New email has arrived in your Yahoo inbox
+Comment[bg]=Пристигна нова поща в Yahoo
 Comment[da]=Ny e-post ankom til din Yahoo-indbakke
 Comment[et]=Saabus uus meil sinu Yahoo Inboxi
 Comment[fr]=Un nouveau message est arrivé dans votre boîte aux lettres Yahoo
@@ -407,7 +415,7 @@ Comment[xx]=xxNew email has arrived in your Yahoo inboxxx
 [msn_mail]
 Name=MSN Mail
 Name[be]=Пошта MSN
-Name[bg]=Поща от MSN
+Name[bg]=Пристигна нова поща в MSN
 Name[ca]=Correu de MSN
 Name[cs]=MSN pošta
 Name[da]=MSN-Mail
@@ -434,6 +442,7 @@ Name[tr]=MSN Posta
 Name[xx]=xxMSN Mailxx
 Name[zh_CN]=MSN 邮件
 Comment=New email has arrived in your MSN inbox
+Comment[bg]=Пристигна нова поща в MSN
 Comment[da]=Ny e-post ankom til din MSN-indbakke
 Comment[et]=Saabus uus meil sinu MSN Inboxi
 Comment[fr]=Un nouveau message est arrivé dans votre boîte aux lettres MSN
