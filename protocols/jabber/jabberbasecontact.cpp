@@ -149,17 +149,17 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 	for ( Kopete::Group *group = groupsToRemoveFrom.first (); group; group = groupsToRemoveFrom.next () )
 	{
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Removing " << contactId() << " from group " << group->displayName () << endl;
-		account()->dontsync=true;
+		account()->dontSync=true;
 		metaContact()->removeFromGroup ( group );
-		account()->dontsync=false;
+		account()->dontSync=false;
 	}
 	
 	for ( Kopete::Group *group = groupsToAddTo.first (); group; group = groupsToAddTo.next () )
 	{
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Adding " << contactId() << " to group " << group->displayName () << endl;
-		account()->dontsync=true;
+		account()->dontSync=true;
 		metaContact()->addToGroup ( group );
-		account()->dontsync=false;
+		account()->dontSync=false;
 	}
 
 }
