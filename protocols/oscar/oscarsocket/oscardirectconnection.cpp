@@ -66,11 +66,8 @@ void OscarDirectConnection::slotRead()
 		kdDebug(14150) << k_funcinfo << "'" << connectionName() <<
 			"': inbuf not empty" << endl;
 
-	if(fl.sn)
-		delete fl.sn;
-
-	if(fl.cookie)
-		delete fl.cookie;
+	delete fl.sn;
+	delete fl.cookie;
 }
 
 ODC2 OscarDirectConnection::getODC2(void)

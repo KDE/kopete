@@ -91,14 +91,10 @@ OscarSocket::~OscarSocket()
 		socket()->closeNow();
 	}
 
-	if (mDirectIMMgr)
-		delete mDirectIMMgr;
-	if (mFileTransferMgr)
-		delete mFileTransferMgr;
-	if (mCookie)
-		delete [] mCookie;
-	if (key)
-		delete [] key;
+	delete mDirectIMMgr;
+	delete mFileTransferMgr;
+	delete[] mCookie;
+	delete[] key;
 
 	rateClasses.clear();
 }
@@ -685,8 +681,7 @@ void OscarSocket::parsePasswordKey(Buffer &inbuf)
 	kdDebug(14150) << k_funcinfo << "Got the key" << endl;
 
 	WORD keylen=inbuf.getWord();
-	if (key)
-		delete [] key;
+	delete[] key;
 	key=inbuf.getBlock(keylen);
 	sendLoginAIM();
 }
@@ -901,8 +896,7 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 		delete [] passChangeUrl->data;
 	}
 
-	if (mCookie)
-		delete[] mCookie;
+	delete[] mCookie;
 
 	if (err)
 	{
@@ -1113,8 +1107,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 		const char *itemName = inbuf.getBSTR(); //name
 		ssi->name = ServerToQString(itemName, 0L, false); // just guess encoding
 		//ssi->name = QString::fromLocal8Bit(itemName);
-		if (itemName)
-			delete [] itemName;
+		delete[] itemName;
 
 		ssi->gid = inbuf.getWord();
 		ssi->bid = inbuf.getWord();

@@ -46,11 +46,8 @@ OncomingSocket::OncomingSocket(OscarSocket *server, const QString &address,
 OncomingSocket::~OncomingSocket()
 {
 	mConns.clear();
-	for (DirectInfo *tmp=mPendingConnections.first(); tmp; tmp = mPendingConnections.next())
-	{
-		if (tmp->finfo)
-			delete tmp->finfo;
-	}
+	for ( DirectInfo *tmp = mPendingConnections.first(); tmp; tmp = mPendingConnections.next() )
+		delete tmp->finfo;
 
 	mPendingConnections.clear();
 	delete mSocket;
