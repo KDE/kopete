@@ -41,6 +41,8 @@ private slots:
 	void showToolbar(void);
 	void slotExecuted( QListViewItem * );
 
+
+        void closeEvent(QCloseEvent*);
 public:
 	ContactList *contactlist;
 

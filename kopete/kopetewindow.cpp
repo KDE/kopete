@@ -30,6 +30,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kstdaction.h>
+#include <kmessagebox.h>
 
 KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(parent,name)
 {
@@ -119,6 +120,10 @@ void KopeteWindow::initSystray ( void )
 	tm->insertSeparator();
 	actionPrefs->plug( tm );
 //	tm->insertSeparator();
+
+#if KDE_VERSION >= 305
+	connect(tray,SIGNAL(quitSelected()),qApp,SLOT(quit()));
+#endif
 }
 
 KopeteWindow::~KopeteWindow()
@@ -214,6 +219,19 @@ void KopeteWindow::slotExecuted( QListViewItem *item )
 	KopeteContactViewItem *contactvi = dynamic_cast<KopeteContactViewItem *>(item);
 	if ( contactvi )
 		contactvi->contact()->execute();
+}
+
+void KopeteWindow::closeEvent(QCloseEvent *e)
+{
+#if KDE_VERSION >= 305
+        KMessageBox::information(this,
+				 i18n("<qt>Closing the main window will keep kopete running in the system tray. Use Quit from the File menu to quit the application?</qt>"),
+				 i18n("Docking in system tray"),
+				 "hideOnCloseInfo");
+	hide();
+#else
+	KMainWindow::closeEvent(e);
+#endif
 }
 
 // vim: set noet sw=4 ts=4 sts=4:
