@@ -95,7 +95,7 @@ void KopeteAccount::slotMyselfCreated()
 	emit onlineStatusIconChanged(this, myself()->onlineStatus() );
 }
 
-void KopeteAccount::slotMyselfStatusChanged( KopeteContact *contact, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus )
+void KopeteAccount::slotMyselfStatusChanged( KopeteContact */*contact*/, const KopeteOnlineStatus &status, const KopeteOnlineStatus &/*oldStatus*/ )
 {
 	emit onlineStatusIconChanged(this, status);
 }
@@ -145,6 +145,13 @@ const QDomElement KopeteAccount::toXML()
 	if( d->autologin )
 		account.documentElement().appendChild( account.createElement( QString::fromLatin1("autologin") ) );
 
+	if( d->color.isValid() )
+	{
+		QDomElement col = account.createElement( QString::fromLatin1("color") );
+		col.appendChild( account.createTextNode( d->color.name()  ) );
+		account.documentElement().appendChild( col );
+	}
+
 	// Store other plugin data
 	QValueList<QDomElement> pluginData = KopetePluginDataObject::toXML();
 	for( QValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
@@ -165,6 +172,10 @@ bool KopeteAccount::fromXML(const QDomElement& accountElement)
 		else if( accountData.tagName() == QString::fromLatin1( "autologin" ) )
 		{
 			d->autologin=true;
+		}
+		else if( accountData.tagName() == QString::fromLatin1( "color" ) )
+		{
+			d->color=accountData.text();
 		}
 		else if( accountData.tagName() == QString::fromLatin1( "plugin-data" ) )
 		{
