@@ -35,11 +35,8 @@
 #include <kconfig.h>
 
 #include <kdeversion.h>
-#if KDE_IS_VERSION( 3, 1, 90 )
 #include <kinputdialog.h>
-#else
-#include <klineeditdlg.h>
-#endif
+
 
 #include "addcontactpage.h"
 #include "kopeteaccount.h"
@@ -408,13 +405,9 @@ void KopeteMetaContactLVI::slotAddToNewGroup()
 	if ( m_metaContact->isTemporary() )
 		return;
 
-#if KDE_IS_VERSION( 3, 1, 90 )
 	QString groupName = KInputDialog::getText(
 		i18n( "New Group" ), i18n( "Please enter the name for the new group:" ) );
-#else
-	QString groupName = KLineEditDlg::getText(
-		i18n( "New Group" ), i18n( "Please enter the name for the new group:" ) );
-#endif
+
 	if ( !groupName.isEmpty() )
 		m_metaContact->addToGroup( KopeteContactList::contactList()->getGroup( groupName ) );
 }
