@@ -20,6 +20,8 @@
 
 #include <qimage.h>
 #include <qpixmap.h>
+#include <qvbox.h>
+#include <qlabel.h>
 
 #include <kdebug.h>
 #include <kiconloader.h>
@@ -32,6 +34,8 @@
 #include "kopete.h"
 #include "kopetemetacontact.h"
 #include "kopetestdaction.h"
+#include "kopetecontactlist.h"
+#include "kopetecontactlistview.h"
 
 KopeteContact::KopeteContact( const QString &protocolId, KopeteMetaContact *parent )
 	: QObject( parent )
@@ -174,13 +178,7 @@ void KopeteContact::initActions()
 	actionChangeAlias = KopeteStdAction::changeAlias( this, SLOT(slotChangeDisplayName()), this, "actionChangeAlias" );
 }
 
-void KopeteContact::slotChangeMetaContact(){
-	// TODO:Actually make this (mETz), see header file for description of
-	// what it should do.
-
-}
-
-void KopeteContact::showContextMenu(const QPoint& p, const QString& group){
+void KopeteContact::showContextMenu(const QPoint& p, const QString&){
 	/* Build the menu */	
 	contextMenu = new KPopupMenu();
 	contextMenu->insertTitle( QString("%1 <%2> (%3)").arg(displayName()).arg(id()).arg(statusText()) ); // Name (status)
@@ -216,12 +214,87 @@ void KopeteContact::slotChangeDisplayName(){
 	}	
 }
 
+void KopeteContact::slotChangeMetaContact()
+{
+	KDialogBase *moveDialog= new KDialogBase(kopeteapp->contactList(), "moveDialog" , true, i18n("Move Contact") , KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true )  ;
+	QVBox *w=new QVBox(moveDialog);
+	new QLabel(i18n("Please chose the meta contact into you want to move this contact") , w);
+	m_selectMetaContactListBox= new KListBox ( w , "m_selectMetaContactListBox");
+
+	QPtrList<KopeteMetaContact> metaContacts = KopeteContactList::contactList()->metaContacts();
+	for( 	KopeteMetaContact *mc = metaContacts.first(); mc ; mc = metaContacts.next() )
+	{
+		new MetaContactListBoxItem(mc , m_selectMetaContactListBox  ) ;
+	}
+
+	moveDialog->setMainWidget(w);
+	connect( moveDialog, SIGNAL( okClicked()) , this, SLOT( slotMoveDialogOkClicked() ) );
+	moveDialog->show();
+}
+
+void KopeteContact::slotMoveDialogOkClicked()
+{
+	KopeteMetaContact *mc= static_cast<MetaContactListBoxItem*>(m_selectMetaContactListBox->item(m_selectMetaContactListBox->currentItem())) ->metaContact;
+	if(!mc)
+	{
+		kdDebug() << "KopeteContact::slotMoveDialogOkClicked : WARNING metaContact not found" << endl;
+		return;
+	}
+	moveToMetaContact(mc);
+}
+
+void KopeteContact::moveToMetaContact(KopeteMetaContact *m)
+{
+	m_metaContact->removeContact(this);
+	m->addContact(this);
+
+	QStringList groups_new=m->groups();
+	QStringList groups_old=m_metaContact->groups();
+	QStringList groups_current=groups();
+
+	for( QStringList::ConstIterator it = groups_new.begin(); it != groups_new.end(); ++it )
+	{
+		QString group=*it;
+		if(!groups_current.contains(group))
+			addToGroup(group);
+	}
+	for( QStringList::ConstIterator it = groups_old.begin(); it != groups_old.end(); ++it )
+	{
+		QString group=*it;
+		if(groups_current.contains(group) && !groups_new.contains(group))
+			removeFromGroup(group);
+	}
+
+	m_metaContact->removeChild(this);
+	m->insertChild(this);
+	m_metaContact=m;
+
+	//TODO: connect this signal in each protocol for uptade the KopeteMetaContact map
+	emit moved(this);
+}
+
+KopeteContact::MetaContactListBoxItem::MetaContactListBoxItem(KopeteMetaContact *m, QListBox *p)
+		:QListBoxText(p)
+{
+
+	metaContact=m;
+	QString t=m->displayName();
+   bool f=true;
+	
+	QPtrList<KopeteContact> contacts = metaContact->contacts();
+	for( 	KopeteContact *c = contacts.first(); c ; c = contacts.next() )
+	{
+		if(f) t+=" [";
+		else t+=" ; ";
+		t+=c->id();
+		f=false;
+	}
+	if(!f) t+="]";
+
+	setText(t);
+}
 
 #include "kopetecontact.moc"
-
-
-
-
 
 /*
  * Local variables:

@@ -46,13 +46,17 @@ KopeteMetaContact::~KopeteMetaContact()
 
 void KopeteMetaContact::addContact( KopeteContact *c )
 {
-	addContact(c,QStringList());
+	// If the meta contact doesn't contains any group, add group of the metaContact
+	// Else, don't care about Contact group
+	if(m_groups.isEmpty())
+		addContact(c,c->groups());
+	else
+		addContact(c,QStringList());
 }
 
 
 void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &groups )
 {
-//	bool isUnknown = false;
 
 	if( m_contacts.contains( c ) )
 	{
@@ -85,6 +89,33 @@ void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &groups 
 		emit contactAdded(c);
 	}
 }
+
+void KopeteMetaContact::removeContact(KopeteContact *c)
+{
+	if( !m_contacts.contains( c ) )
+	{
+		kdDebug() << "KopeteMetaContact::removeContact: WARNING: "
+			<< "Contact is not in this metaContact :" << c->id() << "!" << endl;
+	}
+	else
+	{
+		m_contacts.remove( c );
+
+		disconnect( c, SIGNAL( statusChanged( KopeteContact *,
+			KopeteContact::ContactStatus ) ),
+			this, SLOT( slotContactStatusChanged( KopeteContact *,
+			KopeteContact::ContactStatus ) ) );
+
+		disconnect( c, SIGNAL( displayNameChanged( const QString & ) ),
+			this, SLOT( slotContactNameChanged( const QString & ) ) );
+
+		disconnect( c, SIGNAL( destroyed( QObject * ) ),
+			this, SLOT( slotMetaContactDestroyed( QObject * ) ) );
+
+		emit contactRemoved(c);
+	}
+}
+
 
 bool KopeteMetaContact::isTopLevel() const
 {
@@ -584,4 +615,5 @@ void KopeteMetaContact::setTemporary( bool b  )
 #include "kopetemetacontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
+
 

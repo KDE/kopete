@@ -154,6 +154,8 @@ public:
 	 */
 	void setTopLevel( bool b = true );
 
+	void removeContact(KopeteContact *c);
+
 public slots:
 	/**
 	 * Contact another user.
@@ -220,6 +222,7 @@ signals:
 
 
 	void contactAdded (KopeteContact *) ;
+	void contactRemoved(KopeteContact *) ;
 
 	/**
 	 * The metacontact is at top level

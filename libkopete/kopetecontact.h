@@ -21,15 +21,17 @@
 
 #include <qobject.h>
 #include <qpixmap.h>
+#include <qlistbox.h>
 
 class QString;
 class QPixmap;
 
 class KopeteEvent;
 class KopeteMetaContact;
-class KPopupMenu;
 class KAction;
 class KActionCollection;
+class KListBox;
+class KPopupMenu;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -203,8 +205,11 @@ public:
 	 * a specific instance from one group to another.
 	 */
 	void showContextMenu( const QPoint& p, const QString& group );
-	
-	
+
+
+	void moveToMetaContact(KopeteMetaContact *m);
+
+
 public slots:
 	/**
 	 * This should typically pop up a KopeteChatWindow
@@ -215,9 +220,6 @@ public slots:
 	 * Changes the MetaContact that this contact is a part of.  This function
 	 * is called by the KAction changeMetaContact that is part of the context 
 	 * menu.
-	 * TODO: add popup dialog to choose new metacontact
-	 * TODO: get new metacontact name (or id) from the dialog and move this contact
-	 *	   to the new metacontact
 	 */
 	void slotChangeMetaContact();
 	
@@ -247,6 +249,8 @@ private slots:
 	 * setDisplayName with the returned value
 	 */
 	void slotChangeDisplayName();
+
+	void slotMoveDialogOkClicked();
 
 signals:
 	/**
@@ -278,6 +282,11 @@ signals:
 	 */
 	void contactDestroyed( KopeteContact *c );
 
+	/**
+	 * Called when the contact is moved to another MetaContact
+	 */
+	void moved(KopeteContact *)  ;
+
 private:
 	
 	QString m_displayName;
@@ -291,7 +300,7 @@ private:
 	ContactStatus m_cachedOldStatus;
 
 	KopeteMetaContact *m_metaContact;
-	
+
 	/* Function to build the contextMenu */
 	void initActions();
 	/* Context Menu Entries */
@@ -301,16 +310,22 @@ private:
 	KAction *actionViewHistory;
 	KAction *actionChangeAlias;
 	KAction *actionUserInfo;
-	
-	/* This is THE context menu.  It will be populated with standard actions that
-	 * are protocol independant, and individual protocols can add menu items to it.
-	 */
+
 	KPopupMenu *contextMenu;
+
+	/**
+	 * Followed declarations are needed to move a contact into another metacontact
+	 */
+	KListBox *m_selectMetaContactListBox;
+	class MetaContactListBoxItem : public QListBoxText
+	{
+		public:
+			KopeteMetaContact *metaContact;
+			MetaContactListBoxItem(KopeteMetaContact *m, QListBox *p);
+	};
 };
 
 #endif
-
-
 
 
 
