@@ -20,7 +20,7 @@ CreateFolderTask::~CreateFolderTask()
 {
 }
 
-void CreateFolderTask::contact( const int parentId, const int sequence, const QString & displayName )
+void CreateFolderTask::folder( const int parentId, const int sequence, const QString & displayName )
 {
 	Field::FieldList lst;
 	lst.append( new Field::SingleField( NM_A_SZ_PARENT_ID, 0, NMFIELD_TYPE_UTF8, QString::number( parentId ) ) );
