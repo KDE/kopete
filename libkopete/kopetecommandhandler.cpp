@@ -50,7 +50,7 @@ KopeteCommandHandler::KopeteCommandHandler() : QObject( qApp )
 {
 	p->s_handler = this;
 
-	CommandList mCommands(63, false);
+	CommandList mCommands(31, false);
 	mCommands.setAutoDelete( true );
 	p->pluginCommands.insert( this, mCommands );
 
@@ -116,15 +116,12 @@ bool KopeteCommandHandler::processMessage( KopeteMessage &msg, KopeteMessageMana
 
 	//Try to find a plugin specified command first
 	CommandList mCommands = commands( msg.from()->protocol() );
-	QDictIterator<KopeteCommand> it( mCommands );
-	for( ; it.current(); ++it )
+	KopeteCommand *c = mCommands[ command ];
+	if( c )
 	{
-		if( it.current()->command() == command )
-		{
-			kdDebug(14010) << k_funcinfo << "Handled Command" << endl;
-			it.current()->processCommand( args, manager );
-			return true;
-		}
+		kdDebug(14010) << k_funcinfo << "Handled Command" << endl;
+		c->processCommand( args, manager );
+		return true;
 	}
 
 	return false;
@@ -259,12 +256,8 @@ bool KopeteCommandHandler::commandHandled( const QString &command )
 {
 	for( PluginCommandMap::Iterator it = p->pluginCommands.begin(); it != p->pluginCommands.end(); ++it )
 	{
-		QDictIterator<KopeteCommand> itDict( it.data() );
-		for( ; itDict.current(); ++itDict )
-		{
-			if( itDict.currentKey() == command )
-				return true;
-		}
+		if( it.data()[ command ] )
+			return true;
 	}
 
 	return false;
@@ -272,7 +265,7 @@ bool KopeteCommandHandler::commandHandled( const QString &command )
 
 CommandList KopeteCommandHandler::commands( KopeteProtocol *protocol )
 {
-	CommandList commandList;
+	CommandList commandList(63, false);
 
 	//Add the commands for this protocol *first*
 	addCommands( p->pluginCommands[protocol], commandList );
@@ -306,7 +299,7 @@ void KopeteCommandHandler::slotPluginLoaded( KopetePlugin *plugin )
 	if( !p->pluginCommands.contains( plugin ) )
 	{
 		//Create a QDict optomized for a larger # of commands, and case insensitive
-		CommandList mCommands(63, false);
+		CommandList mCommands(31, false);
 		mCommands.setAutoDelete( true );
 		p->pluginCommands.insert( plugin, mCommands );
 	}
