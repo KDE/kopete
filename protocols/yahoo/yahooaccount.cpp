@@ -115,7 +115,17 @@ YahooSession *YahooAccount::yahooSession()
 
 QString YahooAccount::stripMsgColorCodes(const QString& msg)
 {
-	return QString(msg).remove(QRegExp("\033\\[(..m|#......)"));
+	QString filteredMsg = msg;
+	filteredMsg.remove(QRegExp("\033\\[(..m|#......)"));
+	
+	//Handle bold, underline and italic messages
+	filteredMsg.replace( QRegExp("\033\\[1m"), "<b>" );
+	filteredMsg.replace( QRegExp("\033\\[x1m"), "</b>" );
+	filteredMsg.replace( QRegExp("\033\\[3m"), "<i>" );
+	filteredMsg.replace( QRegExp("\033\\[x3m"), "</i>" );
+	filteredMsg.replace( QRegExp("\033\\[4m"), "<u>" );
+	filteredMsg.replace( QRegExp("\033\\[x4m"), "</u>" );
+	return filteredMsg;
 }
 
 QColor YahooAccount::getMsgColor(const QString& msg)
