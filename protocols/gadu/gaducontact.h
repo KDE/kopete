@@ -55,10 +55,12 @@ public:
     virtual QString       data() const;
     virtual bool          isReachable();
     virtual KActionCollection *customContextMenuActions();
+    virtual QString identityId() const;
+
+    void  setParentIdentity( const QString& );
     void  setGaduStatus( Q_UINT32 );
     Q_UINT32  gaduStatus() const;
     uin_t uin() const;
-
 public slots:
     void showContextMenu(const QPoint& p, const QString& group);
     void execute();
@@ -81,6 +83,7 @@ private:
     uin_t                 uin_;
     QString               name_;
     QStringList           groups_;
+    QString               parentIdentity_;
     GaduProtocol         *protocol_;
     Q_UINT32              status_;
     KopeteContactPtrList  thisContact_;

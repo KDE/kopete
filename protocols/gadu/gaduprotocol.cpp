@@ -243,11 +243,16 @@ GaduProtocol::addContact( const QString& uin, const QString& nick,
 
     if( !c ) {
         uin_t uinNumber = uin.toUInt();
-        QString uins = m->addressBookField( this, "messaging/gadu" )
-                       + "\n" + uin;
+        QString uins;
+        if ( m->addressBookField( this, "messaging/gadu" ).isEmpty() )
+            uins = uin;
+        else
+            uins = m->addressBookField( this, "messaging/gadu" )
+                   + "\n" + uin;
         m->setAddressBookField( this, "messaging/gadu", uins );
         GaduContact *contact = new GaduContact( this->id(), uinNumber,
                                                 nick, m );
+        contact->setParentIdentity( QString::number( userUin_ ) );
         m->addContact( contact, group );
         contactsMap_.insert( uinNumber, contact );
         addNotify( uinNumber );
@@ -556,10 +561,11 @@ GaduProtocol::pingServer()
 
 bool
 GaduProtocol::serialize( KopeteMetaContact *metaContact,
-                             QStringList &strList ) const
+                         QStringList &strList ) const
 {
     KopeteContact *c;
     bool done = false;
+    kdDebug()<<" HERE @@@@@ "<<endl;
     for( c = metaContact->contacts().first(); c ; c = metaContact->contacts().next() ) {
         if ( c->protocol() == this->id() ) {
             kdDebug() << "*** Do it!" << endl;
@@ -581,10 +587,10 @@ GaduProtocol::deserialize( KopeteMetaContact *metaContact,
     QString uin, nick;
     int numContacts = strList.size();
     int idx = 0;
-
+    kdDebug()<<" %%%%% HERE "<<endl;
     QStringList uins = QStringList::split( "\n",
                                            metaContact->addressBookField( this, "messaging/gadu" ) );
-
+    kdDebug()<<"contacts = "<<numContacts<<endl;
     while( numContacts ) {
         nick = strList[ idx ];
         uin = uins[ idx++ ];

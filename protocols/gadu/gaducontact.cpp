@@ -219,6 +219,18 @@ GaduContact::data() const
     return QString::number( uin_ );
 }
 
+QString
+GaduContact::identityId() const
+{
+    return parentIdentity_;
+}
+
+void
+GaduContact::setParentIdentity( const QString& id)
+{
+    parentIdentity_ = id;
+}
+
 void
 GaduContact::setGaduStatus( Q_UINT32 status )
 {
