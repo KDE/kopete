@@ -29,6 +29,7 @@
 #include <kcmdlineargs.h>
 #include <kmessagebox.h>
 
+#include "kabcpersistence.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
 #include "kopetecommandhandler.h"
@@ -119,6 +120,11 @@ KopeteApplication::~KopeteApplication()
 
 void KopeteApplication::slotLoadPlugins()
 {
+	// we have to load the address book early, because calling this enters the Qt event loop when there are remote resources.
+	// The plugin manager is written with the assumption that Kopete will not reenter the event loop during plugin load,
+	// otherwise lots of things break as plugins are loaded, then contacts are added to incompletely initialised MCLVIs
+	Kopete::KABCPersistence::self()->addressBook();
+
 	//Create the command handler (looks silly)
 	Kopete::CommandHandler::commandHandler();
 
