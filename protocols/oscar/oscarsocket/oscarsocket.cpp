@@ -739,7 +739,7 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 	    bosPort = ip.toInt();
 	    kdDebug(14150) << "[OSCAR] server is " << bosServer << ", ip.right(index) is " << ip
 		      << ", bosPort is " << bosPort << endl;
-	    delete bosip->data;
+	    delete[] bosip->data;
 	}
     if (cook)
 	{
