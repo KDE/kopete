@@ -2,7 +2,7 @@
     kyahoo.cpp - QT libyahoo2 wrapper
 
     Copyright (c) 2003 by Matt Rogers <mattrogers@sbcglobal.net>
-    Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2003 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
     Copyright (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -664,20 +664,18 @@ void YahooSessionManager::gotConfInviteReceiver(int id, char *who, char *room, c
 
 	for (l = members; l; l = l->next)
 	{
-		struct yahoo_buddy *bud = (yahoo_buddy *) l->data;
-
-		if ( !bud )
+		char *buddy = (char *) l->data;
+		if ( !buddy )
 		{
 			kdDebug(14180) << k_funcinfo << " Null Id" << endl;
 			continue;
 		}
 		else
 		{
-			kdDebug(14180) <<  k_funcinfo << " " << bud->id << endl;
-			member_list.append(QString(bud->id));
+
+			member_list.append(QString::fromLocal8Bit(buddy));
 		}
 	}
-
 
 	emit session->gotConfInvite( QString::fromLocal8Bit(who), QString::fromLocal8Bit(room),
 								 QString::fromLocal8Bit(msg), member_list);

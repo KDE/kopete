@@ -1,7 +1,7 @@
 /*
     kyahoo.h - QT libyahoo2 wrapper
 
-    Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2003 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
     Copyright (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
