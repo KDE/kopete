@@ -46,8 +46,12 @@ void GroupWiseMessageManager::Dict::insert( const ConferenceGuid & key, GroupWis
 
 GroupWiseMessageManager * GroupWiseMessageManager::Dict::operator[]( const ConferenceGuid & key )
 {
-	//return (*( QMap< ConferenceGuid, GroupWiseMessageManager * > *)this)[ key.left( CONF_GUID_END ) ];
 	return QMap< ConferenceGuid, GroupWiseMessageManager * >::operator[]( key.left( CONF_GUID_END ) );
+}
+
+void GroupWiseMessageManager::Dict::remove( const ConferenceGuid & key )
+{
+	QMap< ConferenceGuid, GroupWiseMessageManager * >::remove( key.left( CONF_GUID_END ) );
 }
 
 GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const GroupWise::ConferenceGuid & guid, int id, const char* name): KopeteMessageManager(user, others, protocol, 0, name), m_guid( guid ), m_flags( 0 ), m_searchDlg( 0 ), m_memberCount( others.count() )

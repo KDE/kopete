@@ -37,10 +37,11 @@ class GroupWiseMessageManager : public KopeteMessageManager
 Q_OBJECT
 
 friend class GroupWiseAccount;
+
 public:
 	/**
-	 * INNER CLASS 
 	 * Specialised dictionary that only keys on the first CONF_GUID_END characters of a conference GUID
+	 * INNER CLASS derived from an INSTANCE of a TEMPLATE CLASS with an OVERLOADED OPERATOR []
 	 */
 	class Dict : public QMap< ConferenceGuid, GroupWiseMessageManager * >
 	{
@@ -48,9 +49,11 @@ public:
 		public:
 		void insert( const ConferenceGuid & key, GroupWiseMessageManager * item );
 		GroupWiseMessageManager * operator[]( const ConferenceGuid & key );
+		void remove( const ConferenceGuid & k );
 	};
-	
-		~GroupWiseMessageManager();
+
+
+	~GroupWiseMessageManager();
 	/**
 	 * The conference's globally unique identifier, which is given to it by the server
 	 */
