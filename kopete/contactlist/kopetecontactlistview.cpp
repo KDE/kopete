@@ -136,24 +136,15 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 		if ( contact )
 		{
 			QRect iconRect = metaLVI->contactRect( contact );
-			itemRect = QRect( iconRect.left() + xAdjust,
-				iconRect.top() + yAdjust, iconRect.width(), iconRect.height() );
-			toolTip = i18n( "<b>%3</b><br>%2<br><img src=\"kopete:icon\">&nbsp;%1" ).
-#if QT_VERSION < 0x030200
-				arg( contact->onlineStatus().description() ).arg( QStyleSheet::escape( contact->contactId() ) ).
-				arg( QStyleSheet::escape( contact->displayName() ) );
-#else
-				arg( contact->onlineStatus().description(), QStyleSheet::escape( contact->contactId() ),
-					QStyleSheet::escape( contact->displayName() ) );
-#endif
-			QMimeSourceFactory::defaultFactory()->setImage( "kopete:icon",
-				contact->onlineStatus().iconFor( contact ).convertToImage() );
 
-			if( contact->idleTime() > 0 )
-				toolTip += idleTime2String(contact->idleTime());
+			itemRect = QRect(
+				iconRect.left() + xAdjust,
+				iconRect.top() + yAdjust,
+				iconRect.width(),
+				iconRect.height() );
 
-			if ( !contact->statusDescription().isNull() )
-				toolTip += i18n( "<br><blockquote>%1</blockquote>" ).arg( contact->statusDescription() );
+			if ( !contact->toolTip().isNull() )
+				toolTip = contact->toolTip();
 		}
 		else
 		{
