@@ -257,7 +257,7 @@ void JabberProtocol::slotConnected(bool success, int statusCode, const QString &
 	{
 		kdDebug() << "[JabberProtocol] Connection failed! Status: " << statusCode << ", " << statusString << endl;
 		jabberClient->close();
-		KMessageBox::error(kopeteapp->mainWindow(), i18n("Connection failed with reason \"%1\"").arg(statusString, 1), i18n("Connection failed"));
+		KMessageBox::error(kopeteapp->mainWindow(), i18n("Connection failed with reason \"%1\"").arg(statusString, 1), i18n("Connection Failed"));
 	}
 
 }
