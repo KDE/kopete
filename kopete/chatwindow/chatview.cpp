@@ -896,7 +896,14 @@ void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnl
 		{
 			// Separate notification for the 'self' contact
 			if ( newStatus.status() != KopeteOnlineStatus::Connecting )
+			{
+				if ( newStatus.status() == KopeteOnlineStatus::Offline )
+					mainWindow()->setSendEnabled( false );
+				else
+					mainWindow()->setSendEnabled( true );
+
 				sendInternalMessage( i18n( "You are now marked as %1." ).arg( newStatus.description() ) );
+			}
 		}
 		else if ( !contact->account() || !contact->account()->suppressStatusNotification() )
 		{
