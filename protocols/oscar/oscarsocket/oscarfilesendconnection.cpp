@@ -2,8 +2,7 @@
     oscarfilesendconnection.cpp  -  Implementation of an oscar file send connection
 
     Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
-
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -41,7 +40,7 @@ OscarFileSendConnection::~OscarFileSendConnection()
 /** Called when there is data to be read */
 void OscarFileSendConnection::slotRead(void)
 {
-	if ( !mSending)
+	if (!mSending)
 	{
 		OFT2 hdr = getOFT2();
 
@@ -73,9 +72,11 @@ void OscarFileSendConnection::slotRead(void)
 
 		char *data = new char[bytesToRead];
 		mBytesTransferred += readBlock(data,bytesToRead);
-    mBuffer.addString(data,bytesToRead);
-    emit percentComplete( 100 * mBytesTransferred / mFileSize );
-    mFile->resume(); //resume processing of KIO transfer
+		mBuffer.addString(data,bytesToRead);
+
+		emit percentComplete( 100 * mBytesTransferred / mFileSize );
+
+		mFile->resume(); //resume processing of KIO transfer
 		delete [] data;
 		if ( mBytesTransferred >= mFileSize ) //we are done
 		{
@@ -94,21 +95,26 @@ OFT2 OscarFileSendConnection::getOFT2(void)
 {
 	OFT2 oft;
 	int theword, theword2;
-  int start;
+	int start;
 	//the ODC2 start byte
-  if (((start = getch()) == 0x4f) &&
-    		((start = getch()) == 0x46) &&
-      	((start = getch()) == 0x54) &&
-        ((start = getch()) == 0x32))
+	if (((start = getch()) == 0x4f) &&
+		((start = getch()) == 0x46) &&
+		((start = getch()) == 0x54) &&
+		((start = getch()) == 0x32))
 	{
 		//get the header length
-		if ((theword = getch()) == -1) {
+		if ((theword = getch()) == -1)
+		{
 			kdDebug(14150) << "[OSCAR] Error reading length, byte 1: nothing to be read" << endl;
 			oft.headerlen = 0x00;
-		} else if((theword2 = getch()) == -1){
+		}
+		else if((theword2 = getch()) == -1)
+		{
 			kdDebug(14150) << "[OSCAR] Error reading data field length, byte 2: nothing to be read" << endl;
 			oft.headerlen = 0x00;
-		} else {
+		}
+		else
+		{
 			oft.headerlen = (theword << 8) | theword2;
 		}
 
@@ -220,12 +226,12 @@ void OscarFileSendConnection::sendOFT2Block(const OFT2 &oft, const Buffer &/*dat
 	kdDebug(14150) << k_funcinfo <<  "Output: " << endl;
 	outbuf.print();
 
-	writeBlock(outbuf.getBuf(),outbuf.getLength());
+	writeBlock(outbuf.buffer(), outbuf.length());
 }
 
 /** Calls OscarConnection::setSocket
 		sends file send request header */
-void OscarFileSendConnection::setSocket( int socket )
+void OscarFileSendConnection::setSocket(int socket)
 {
 	OscarConnection::setSocket(socket);
 	//sendFileSendRequest();
@@ -239,14 +245,14 @@ void OscarFileSendConnection::sendFileSendRequest(void)
 	oft.encrypt = 0x0000;
 	oft.compression = 0x0000;
 
-	//these will need to be changed when we go for multiple file support
+	// TODO: these will need to be changed when we go for multiple file support
 	oft.totfiles = 0x0001;
 	oft.filesleft = 0x0001;
 
 	oft.totparts = 0x0001;
 	oft.partsleft = 0x0001;
 
-	//this will need to be changed when we go for multiple file support
+	// TODO: this will need to be changed when we go for multiple file support
 	oft.totsize = mFileInfo->size();
 
 	oft.size = mFileInfo->size();
@@ -289,22 +295,28 @@ void OscarFileSendConnection::sendAcceptTransfer(OFT2 &hdr)
 	Buffer outbuf;
 	sendOFT2Block(hdr, outbuf, false);
 
-	if ( !mFileInfo )
+	if(!mFileInfo)
 	{
-		kdDebug(14150) << k_funcinfo <<  "mfileinfo is null :-(  can't accept transfer" << endl;
+		kdDebug(14150) << k_funcinfo <<
+			"mfileinfo is null :-(  can't accept transfer" << endl;
 		return;
 	}
 
 	KURL ku = mFileInfo->url();
 	ku.setFileName(hdr.filename);
 	mFileInfo->setURL(ku);
-	kdDebug(14150) << "[OscarFileSendConnection] Accepting transfer of " << mFileInfo->url().path() << ", size: " << mFileSize << endl;
- 	mFile = KIO::put(mFileInfo->url(), -1, true, false, false);
+
+	kdDebug(14150) << "[OscarFileSendConnection] Accepting transfer of " <<
+		mFileInfo->url().path() << ", size: " << mFileSize << endl;
+
+	mFile = KIO::put(mFileInfo->url(), -1, true, false, false);
 	mFile->suspend();
+
 	connect( mFile, SIGNAL(result(KIO::Job*)),
 		this, SLOT(slotKIOResult(KIO::Job*)) );
-  //allow the KIO to write to file
-  connect( mFile, SIGNAL(dataReq(KIO::Job*, QByteArray &)),
+
+	//allow the KIO to write to file
+	connect( mFile, SIGNAL(dataReq(KIO::Job*, QByteArray &)),
 		this, SLOT(slotKIODataReq(KIO::Job*, QByteArray &)) );
 
 	mSending = true;
@@ -314,15 +326,18 @@ void OscarFileSendConnection::sendAcceptTransfer(OFT2 &hdr)
 void OscarFileSendConnection::sendFile(void)
 {
 	mSending = true;
-	kdDebug(14150) << k_funcinfo <<  "The transfer of " << mFileInfo->url().path() << " has begun." << endl;
+	kdDebug(14150) << k_funcinfo <<  "The transfer of " <<
+		mFileInfo->url().path() << " has begun." << endl;
+
 	emit transferBegun(this, mFileName, mFileSize, connectionName());
 	mFile = KIO::get(mFileInfo->url(), true, true);
+
 	connect( this, SIGNAL(bytesWritten( int )),
 		this, SLOT(slotBytesWritten( int )) );
 	connect( mFile, SIGNAL(result(KIO::Job*)),
-  	this, SLOT(slotKIOResult(KIO::Job*)) );
-  connect( mFile, SIGNAL(data(KIO::Job*, const QByteArray &)),
-  	this, SLOT(slotKIOData(KIO::Job*, const QByteArray &)) );
+		this, SLOT(slotKIOResult(KIO::Job*)) );
+	connect( mFile, SIGNAL(data(KIO::Job*, const QByteArray &)),
+		this, SLOT(slotKIOData(KIO::Job*, const QByteArray &)) );
 }
 
 /** Tells the peer we have received the file */
@@ -375,39 +390,46 @@ void OscarFileSendConnection::sendReadConfirm()
 void OscarFileSendConnection::slotKIOResult(KIO::Job *job)
 {
 	if (job->error())
-  	job->showErrorDialog();
-  else
-  {
+	{
+		job->showErrorDialog();
+	}
+	else
+	{
 		mSending = false;
-		kdDebug(14150) << "[OscarFileSendConnection] Finished transferring file" << endl;
-  }
+		kdDebug(14150) << k_funcinfo << "Finished transferring file" << endl;
+	}
 }
 
-/** Called when the KIO job sends data */
 void OscarFileSendConnection::slotKIOData(KIO::Job *job, const QByteArray &data)
 {
 	//kdDebug(14150) << "[OscarFileSendConnection] got data " << ((KIO::SimpleJob *)(job))->url().fileName() << ", size " << data.size() << endl;
 	writeBlock(data.data(),data.size());
 }
 
-/** Called when the KIO slave wants data */
 void OscarFileSendConnection::slotKIODataReq(KIO::Job *job, QByteArray &data)
 {
-  int len = mBuffer.getLength();
+	int len = mBuffer.length();
 	data.assign(mBuffer.getBlock(len), len);
-	//kdDebug(14150) << "[OscarFileSendConnection] writing data " << ((KIO::SimpleJob *)(job))->url().fileName() << ", size " << data.size() << endl;
-	if ( mSending )
+/*
+	kdDebug(14150) << k_funcinfo << "Writing data " <<
+		((KIO::SimpleJob *)(job))->url().fileName() <<
+		", size " << data.size() << endl;
+*/
+	if(mSending)
 		((KIO::TransferJob *)job)->suspend();
 }
 
-/** Called when bytes are written */
 void OscarFileSendConnection::slotBytesWritten( int nBytes )
 {
 	mBytesTransferred += nBytes;
-	emit percentComplete( 100 * mBytesTransferred / mFileSize );
+
+	emit percentComplete(100 * mBytesTransferred / mFileSize);
+
 	if ( mBytesTransferred >= mFileSize )
-	disconnect( this, SIGNAL(bytesWritten( int )),
-		this, SLOT(slotBytesWritten( int )) );
+	{
+		disconnect(this, SIGNAL(bytesWritten(int)),
+			this, SLOT(slotBytesWritten(int)));
+	}
 }
 
 #include "oscarfilesendconnection.moc"

@@ -41,7 +41,6 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 	mInvisible = false;
 	setOnlineStatus(mProtocol->statusOffline);
 
-
 	infoDialog = 0L;
 	userinfoRequestSequence=0;
 	userinfoReplyCount = 0;
@@ -124,8 +123,6 @@ void ICQContact::slotContactChanged(const UserInfo &u)
 
 	mInvisible = (u.icqextstatus & ICQ_STATUS_IS_INVIS);
 
-//	kdDebug(14200) << k_funcinfo << "mInvisible=" << mInvisible << endl;
-
 	if (u.icqextstatus & ICQ_STATUS_IS_FFC)
 		setStatus(OSCAR_FFC);
 	else if (u.icqextstatus & ICQ_STATUS_IS_DND)
@@ -165,7 +162,6 @@ void ICQContact::slotIMReceived(QString message, QString sender, bool /*isAuto*/
 	manager(true)->appendMessage(msg);
 }
 
-/** Called when we want to send a message */
 void ICQContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 {
 	if (message.plainBody().isEmpty()) // no text, do nothing
@@ -197,7 +193,6 @@ bool ICQContact::isReachable()
 	return true;
 }
 
-// Returns a set of custom menu items for the context menu
 KActionCollection *ICQContact::customContextMenuActions()
 {
 	actionCollection = new KActionCollection(this);
@@ -257,9 +252,10 @@ void ICQContact::setOnlineStatus(const KopeteOnlineStatus& status)
 	{
 		KopeteContact::setOnlineStatus(status);
 	}
-
+/*
 	kdDebug(14200) << k_funcinfo << "'" << displayName() << "' is now " <<
 		onlineStatus().description() << endl;
+*/
 }
 
 

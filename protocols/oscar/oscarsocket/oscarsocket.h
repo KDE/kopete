@@ -105,13 +105,13 @@ const unsigned int OSCAR_CONNECTING = 10;
 #define OSCAR_SERVER 			"login.oscar.aol.com"
 #define OSCAR_PORT 				5190
 
-#define USERCLASS_TRIAL					0x0001
-#define USERCLASS_UNKNOWN2 			0x0002
-#define USERCLASS_AOL					0x0004
-#define USERCLASS_UNKNOWN4				0x0008
-#define USERCLASS_AIM					0x0010
-#define USERCLASS_AWAY					0x0020
-#define USERCLASS_ACTIVEBUDDY			0x0400
+#define USERCLASS_TRIAL				0x0001
+#define USERCLASS_UNKNOWN2 		0x0002
+#define USERCLASS_AOL				0x0004
+#define USERCLASS_UNKNOWN4			0x0008
+#define USERCLASS_AIM				0x0010
+#define USERCLASS_AWAY				0x0020
+#define USERCLASS_ACTIVEBUDDY		0x0400
 
 
 #define AIM_CAPS_BUDDYICON			0x00000001
@@ -264,6 +264,12 @@ class OscarSocket : public OscarConnection
 		/** Changes a buddy's group on the server */
 		virtual void sendChangeBuddyGroup(const QString &buddyName,
 			const QString &oldGroup, const QString &newGroup);
+
+		/*
+		 * changes the visibility setting to @value
+		 */
+		void sendChangeVisibility(int value);
+
 		/** Adds a group to the server side buddy list */
 		virtual void sendAddGroup(const QString &name);
 		/** Changes a group's name on the server side buddy list */

@@ -94,7 +94,7 @@ void OscarSocket::sendLoginICQ()
 	outbuf.addTLV(0x000e,0x0002,ICQ_COUNTRY);
 	outbuf.addTLV(0x000f,0x0002,ICQ_LANG);
 
-//	kdDebug(14150) << "Outbuf length before flap is: " << outbuf.getLength() << endl;
+//	kdDebug(14150) << "Outbuf length before flap is: " << outbuf.length() << endl;
 
 	sendBuf(outbuf,0x01);
 	kdDebug(14150) << k_funcinfo "emitting connectionChanged" << endl;
@@ -662,8 +662,8 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 								/*DWORD fgColor=*/messageBuf.getDWord();
 								/*DWORD bgColor=*/messageBuf.getDWord();
 								kdDebug(14150) << k_funcinfo <<
-									"messageBuf.getLength() after message and colors =" <<
-									messageBuf.getLength() << endl;
+									"messageBuf.length() after message and colors =" <<
+									messageBuf.length() << endl;
 
 								DWORD guidlen = messageBuf.getDWord();
 								char *guid = messageBuf.getBlock(guidlen);
@@ -713,7 +713,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 			}
 		}
 
-		if(buf.getLength() > 0)
+		if(buf.length() > 0)
 			moreTLVs=true;
 		else
 			moreTLVs=false;
@@ -825,7 +825,7 @@ WORD OscarSocket::sendCLI_TOICQSRV(const WORD subcommand, Buffer &data)
 	// usage on the LEWord added some lines under this comment ;)
 	toicqsrv_seq++;
 
-	int tlvLen = 10 + data.getLength();
+	int tlvLen = 10 + data.length();
 
 	kdDebug(14150) << k_funcinfo <<
 		"snacid=" << snacid <<
@@ -840,8 +840,8 @@ WORD OscarSocket::sendCLI_TOICQSRV(const WORD subcommand, Buffer &data)
 	outbuf.addLEWord(subcommand); // subcommand
 	outbuf.addLEWord(toicqsrv_seq); // TODO: make this the snac sequence's upper Word minus 1!
 
-	if (data.getLength() > 0)
-		outbuf.addString(data.getBuf(), data.getLength());
+	if (data.length() > 0)
+		outbuf.addString(data.buffer(), data.length());
 
 // 	kdDebug(14150) << "==========================================" << endl;
 // 	outbuf.print();

@@ -29,21 +29,22 @@ SSIData::~SSIData()
 	clear();
 }
 
-/** Adds a buddy to the SSI data list */
 SSI * SSIData::addBuddy(const QString &name, const QString &group)
 {
  	SSI *newitem = new SSI;
 	newitem->name = name;
 	SSI *tmp = findGroup(group);
+
 	if (!tmp) //the group does not exist
 		return NULL;
+
 	newitem->gid = tmp->gid;
 	//find the largest bid (=buddy id) in our group
 	unsigned short maxbid = 0;
 	for (SSI *i=first(); i; i = next())
 	{
-			if ((newitem->gid == i->gid) && (i->bid > maxbid))
-				maxbid = i->bid;
+		if ((newitem->gid == i->gid) && (i->bid > maxbid))
+			maxbid = i->bid;
 	}
 	newitem->bid = maxbid + 1;
 	newitem->type = 0x0000; // the type here is buddy
@@ -144,13 +145,13 @@ void SSIData::print(void)
 {
 	for (SSI *i=first(); i; i = next())
 	{
-		kdDebug(14150) << "[OSCAR][SSIData] name: " << i->name << ", gid: " << i->gid << ", bid: " << i->bid << ", type: "
-			  << i->type << ", tbslen: " << i->tlvlength << endl;
+		kdDebug(14150) << k_funcinfo << "name: " << i->name <<
+			", gid: " << i->gid << ", bid: " << i->bid <<
+			", type: " << i->type << ", tbslen: " << i->tlvlength << endl;
 	}
 }
 
-/** Adds the given sn to the list of blocked sn's */
-SSI *SSIData::addBlock(const QString &name)
+SSI *SSIData::addDeny(const QString &name)
 {
 	SSI *newitem = new SSI;
 	newitem->name = name;
@@ -159,8 +160,8 @@ SSI *SSIData::addBlock(const QString &name)
 	unsigned short maxbid = 0;
 	for (SSI *i=first(); i; i = next())
 	{
-			if ((newitem->gid == i->gid) && (i->bid > maxbid))
-				maxbid = i->bid;
+		if ((newitem->gid == i->gid) && (i->bid > maxbid))
+			maxbid = i->bid;
 	}
 	newitem->bid = maxbid + 1;
 	newitem->type = 0x0003; // the type here is deny
@@ -170,7 +171,6 @@ SSI *SSIData::addBlock(const QString &name)
 	return newitem;
 }
 
-/** Finds the given buddy in the deny list... return NULL if not found */
 SSI *SSIData::findDeny(const QString &name)
 {
 	for (SSI *i=first(); i; i = next())
@@ -181,4 +181,13 @@ SSI *SSIData::findDeny(const QString &name)
 	return 0L;
 }
 
+SSI *SSIData::findVisibilitySetting()
+{
+	for (SSI *i=first(); i; i = next())
+	{
+		if ((current()->name.isEmpty()) && (current()->type == 0x0004))
+			return current();
+	}
+	return 0L;
+}
 // vim: set noet ts=4 sts=4 sw=4:

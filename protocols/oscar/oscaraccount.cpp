@@ -1,18 +1,18 @@
 /*
-  oscaraccount.cpp  -  Oscar Account Class
+    oscaraccount.cpp  -  Oscar Account Class
 
-  Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
-  Copyright (c) 2002 by Chris TenHarmsel <tenharmsel@staticmethod.net>
-  Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
+    Copyright (c) 2002 by Chris TenHarmsel <tenharmsel@staticmethod.net>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
-  *************************************************************************
-  *                                                                       *
-  * This program is free software; you can redistribute it and/or modify  *
-  * it under the terms of the GNU General Public License as published by  *
-  * the Free Software Foundation; either version 2 of the License, or     *
-  * (at your option) any later version.                                   *
-  *                                                                       *
-  *************************************************************************
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
 */
 
 #include "oscaraccount.h"
@@ -407,7 +407,6 @@ void OscarAccount::syncLocalWithServerBuddyList( AIMBuddyList& serverList )
 	}
 }
 
-//
 // Looks for the group localGroup in the server-side list.
 // If it doesn't find it there, creates and returns it.
 //
@@ -574,7 +573,7 @@ void OscarAccount::setServerAddress(const QString &server)
 void OscarAccount::setServerPort(int port)
 {
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
-	if (port>0)// Do a little error checkin on it
+	if (port > 0)// Do a little error checkin on it
 		setPluginData(protocol(), "Port", QString::number(port));
 }
 
@@ -635,8 +634,8 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 	else // It was not on our internal list yet
 	{
 		kdDebug(14150) << k_funcinfo << "New Contact '" << contactId
-					   << "' wasn't in internal list. Creating new "
-					   << "internal list entry" << endl;
+			<< "' wasn't in internal list. Creating new "
+			<< "internal list entry" << endl;
 
 		// Check to see if it's a temporary contact, ie. not on our list
 		// but IMed us anyway
@@ -709,9 +708,9 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			engine()->sendAddBuddy(tocNormalize(contactId),
 									  internalGroup->name());
 
-            // Increase these counters, I'm not sure what this does
-            mRandomNewGroupNum++;
-            mRandomNewBuddyNum++;
+			// Increase these counters, I'm not sure what this does
+			mRandomNewGroupNum++;
+			mRandomNewBuddyNum++;
 
 			// Create the actual contact, which adds it to the metacontact
 			return ( createNewContact( contactId, displayName, parentContact ) == 0L);

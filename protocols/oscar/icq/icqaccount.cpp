@@ -1,9 +1,8 @@
-
 /*
   icqaccount.cpp  -  ICQ Account Class
 
-  Copyright (c) 2003 by Stefan Gehn
-  Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+  Copyright (c) 2002 by Chris TenHarmsel <tenharmsel@staticmethod.net>
+  Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -13,7 +12,8 @@
   * (at your option) any later version.                                   *
   *                                                                       *
   *************************************************************************
-  */
+
+*/
 
 #include "icqaccount.h"
 #include "icqcontact.h"
@@ -266,7 +266,14 @@ void ICQAccount::setInvisible(bool invis)
 	mInvisible = invis;
 
 	if(isConnected())
+	{
 		setStatus(mStatus); // also sends the new invis flag
+
+		if(mInvisible)
+			engine()->sendChangeVisibility(3);
+		else
+			engine()->sendChangeVisibility(4);
+	}
 }
 
 

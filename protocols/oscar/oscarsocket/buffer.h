@@ -2,28 +2,25 @@
                           buffer.h  -  description
                              -------------------
     begin                : Thu Jun 6 2002
-    copyright            : (C) 2002 by twl6
-    email                : twl6@paranoia.STUDENT.CWRU.Edu
- ***************************************************************************/
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #ifndef BUFFER_H
 #define BUFFER_H
 
 #include <qobject.h>
 #include <qptrlist.h>
-
-/**The buffer that is sent to the oscar server
-  *@author twl6
-  */
 
 typedef unsigned char BYTE;
 typedef unsigned short WORD;
@@ -53,40 +50,59 @@ class Buffer : public QObject
 		Buffer(char *b, Q_ULONG len, QObject *parent=0, const char *name=0);
 		~Buffer();
 
-		/** returns the actual buffer */
-		inline char *getBuf() const { return buf; };
-		/** returns the length of the buffer */
-		inline int getLength() const { return length; };
+		/*
+		 * returns the actual buffer
+		 */
+		inline char *buffer() const { return mBuf; };
 
-		/** adds the given string to the buffer (make sure it's NULL-terminated) */
+		/*
+		 * returns the length of the buffer
+		 */
+		inline int length() const { return mLength; };
+
+		/*
+		 * adds the given string to the buffer (make sure it's NULL-terminated)
+		 */
 		int addString(const char *, const DWORD);
 		int addString(const unsigned char *, const DWORD);
+
+		/*
+		 * Little-endian version of addString
+		 */
 		int addLEString(const char *, const DWORD);
 
-		/* adds the given string to the buffer with the length in front of it
+		/*
+		 * adds the given string to the buffer with the length in front of it
 		 * (make sure it's NULL-terminated)
 		 */
 		int addLNTS(const char * s);
 		int addLELNTS(const char * s);
 
-		/** adds the given DWord to the buffer */
+		/*
+		 * adds the given DWord to the buffer
+		 */
 		int addDWord(const DWORD);
 
-		/** adds the given word to the buffer */
+		/*
+		 * adds the given word to the buffer
+		 */
 		int addWord(const WORD);
 
-		/* adds the given word to the buffer in
-		* little-endian format as needed by old icq server
-		*/
+		/*
+		 * adds the given word to the buffer in
+		 * little-endian format as needed by old icq server
+		 */
 		int addLEWord(const WORD w);
 
-		/* adds the given DWord to the buffer in
-		* little-endian format as needed by old icq server
-		*/
+		/*
+		 *adds the given DWord to the buffer in
+		 * little-endian format as needed by old icq server
+		 */
 		int addLEDWord(const DWORD dw);
 
-
-		/** adds the given byte to the buffer */
+		/*
+		 * adds the given byte to the buffer
+		 */
 		int addByte(const BYTE);
 		int addLEByte(const BYTE);
 
@@ -94,28 +110,48 @@ class Buffer : public QObject
 		 * deletes the current buffer
 		 */
 		void clear();
+
 		/*
 		 * Adds a TLV with the given type and data
 		 */
 		int addTLV(WORD, WORD, const char *);
+
 		/*
 		 * adds the given flap header to the beginning of the buffer,
 		 * returns new buffer length
 		 */
 		int addFlap(const BYTE channel, const WORD flapSequenceNum);
+
 		/*
 		 * Prints out the buffer, just for debug reasons
 		 */
 		void print() const;
-		/** Returns a QString representation of the buffer */
+
+		/*
+		 * Returns a QString representation of the buffer
+		 */
 		QString toString() const;
-		/** Adds a SNAC to the end of the buffer with given family, subtype, flags, and request ID */
-		int addSnac(const WORD, const WORD, const WORD, const DWORD);
-		/** gets a Dword out of the buffer */
+
+		/*
+		 * Adds a SNAC to the end of the buffer with given
+		 * family, subtype, flags, and request ID
+		 */
+		int addSnac(const WORD family, const WORD subtype,
+			const WORD flags, const DWORD id);
+
+		/*
+		 * gets a DWord out of the buffer
+		 */
 		DWORD getDWord();
-		/** Gets a word out of the buffer */
+
+		/*
+		 * Gets a word out of the buffer
+		 */
 		WORD getWord();
-		/** Gets a byte out of the buffer */
+
+		/*
+		 * Gets a byte out of the buffer
+		 */
 		BYTE getByte();
 
 		/*
@@ -197,9 +233,9 @@ class Buffer : public QObject
 
 	private:
 		/*
-		 * length of buffer (buf)
+		 * length of buffer (mBuf)
 		 */
-		DWORD length;
+		DWORD mLength;
 		/*
 		 * allocated size of the buffer
 		 */
@@ -207,11 +243,11 @@ class Buffer : public QObject
 		/*
 		 * The actual buffer
 		 */
-		char * alloc_buf;
+		char *alloc_buf;
 		/*
 		 * The usable buffer
 		 */
-		char * buf;
+		char *mBuf;
 
 	public slots:
 		/*

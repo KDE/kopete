@@ -2,18 +2,19 @@
                           ssidata.h  -  description
                              -------------------
     begin                : Wed Aug 14 2002
-    copyright            : (C) 2002 by Tom Linsky
-    email                : twl6@po.cwru.edu
-***************************************************************************/
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #ifndef SSIDATA_H
 #define SSIDATA_H
@@ -95,10 +96,12 @@ public:
 	 * method to pass to the server to actually change
 	 * the name on the SSI data
 	 */
-	SSI *addBlock(const QString &name);
+	SSI *addDeny(const QString &name);
 
 	/** Finds the given buddy in the deny list... return NULL if not found */
 	SSI *findDeny(const QString &name);
+
+	SSI *findVisibilitySetting();
 };
 
 #endif
