@@ -129,6 +129,13 @@
 #include <qvariant.h>
 #include <qvaluelist.h>	
 
+/**
+ * Fields are typed units of information interchanged between the groupwise server and its clients.
+ * In this implementation Fields are assumed to have a straight data flow from a Task to a socket and vice versa,
+ * so the @ref Task::take() is responsible for deleting incoming Fields and the netcode is responsible for
+ * deleting outgoing Fields.
+ */
+
 struct GWFolderItem
 {
 	int id; 
@@ -143,13 +150,10 @@ struct GWContactItem
 	int sequence;
 	QString dn;
 	QString displayName;
-
 };
 
 namespace Field
 {
-	//enum Tag
-	
 	/**
 	 * Abstract base class of all field types
 	 */
@@ -204,7 +208,7 @@ namespace Field
 			void dump( bool recursive = false, int offset = 0 );
 	};
 
-	/** 
+	/**
 	 * This class is responsible for storing all Groupwise single value field types, eg
 	 * NMFIELD_TYPE_INVALID, NMFIELD_TYPE_NUMBER, NMFIELD_TYPE_BINARY, NMFIELD_TYPE_BYTE
 	 * NMFIELD_TYPE_UBYTE, NMFIELD_TYPE_DWORD, NMFIELD_TYPE_UDWORD, NMFIELD_TYPE_UTF8, NMFIELD_TYPE_BOOL

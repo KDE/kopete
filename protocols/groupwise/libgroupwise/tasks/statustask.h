@@ -4,7 +4,7 @@
 // Description: 
 //
 //
-// Author: Kopete Developers <kopete-devel@kde.org>, (C) 2004
+// Author: SUSE AG (C) 2004
 //
 // Copyright: See COPYING file that comes with this distribution
 //
@@ -25,7 +25,7 @@ public:
 	~StatusTask();
 	bool take( Transfer * transfer );
 signals:
-	void gotStatusChange();
+	void gotStatus( QCString contactId, Q_UINT16 status, QString & statusText );
 };
 
 #endif

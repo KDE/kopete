@@ -85,7 +85,7 @@ protected:
 	/**
 	 * Read in an eventconst
 	 */
-	void readEvent(/* const Q_UINT32 eventType */);
+	void readEvent( const QByteArray& wire );
 	/**
 	 * Read in a response
 	 */

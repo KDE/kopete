@@ -56,7 +56,7 @@ protected:
 	/**
 	 * Sets the transfer the task is about to send or receive
 	 */
-	void setTransfer( Transfer * transfer );
+	virtual void setTransfer( Transfer * transfer );
 	
 private slots:
 	void clientDisconnected();

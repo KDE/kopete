@@ -11,8 +11,8 @@
 //
 #include "eventtransfer.h"
 
-EventTransfer::EventTransfer( const Q_UINT32 eventType, QCString& source, QTime timeStamp )
- : Transfer(), m_eventType( eventType ), m_source( source ), m_timeStamp( timeStamp )
+EventTransfer::EventTransfer( const Q_UINT32 eventType, QCString& source, QTime timeStamp, const QByteArray & payload )
+ : Transfer(), m_eventType( eventType ), m_source( source ), m_timeStamp( timeStamp ), m_payload( payload )
 {
 }
 
@@ -34,4 +34,9 @@ QCString EventTransfer::source()
 QTime EventTransfer::timeStamp()
 {
 	return m_timeStamp;
+}
+
+QByteArray EventTransfer::payload()
+{
+	return m_payload;
 }

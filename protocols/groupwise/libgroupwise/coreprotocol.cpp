@@ -136,9 +136,9 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 	Field::FieldList fields = request->fields();
 	if ( fields.isEmpty() )
 	{
-		cout << " CoreProtocol::outgoingTransfer: Transfer contained no fields!" << endl;
-		m_error = NMERR_BAD_PARM;
-		return;
+		cout << " CoreProtocol::outgoingTransfer: Transfer contained no fields, it must be a ping." << endl;
+/*		m_error = NMERR_BAD_PARM;
+		return;*/
 	}
 	// Append field containing transaction id
 	fields.append( new Field::SingleField( NM_A_SZ_TRANSACTION_ID, NMFIELD_METHOD_VALID, 
@@ -292,12 +292,12 @@ void CoreProtocol::wireToTransfer( const QByteArray& wire )
 	m_din = new QDataStream( wire, IO_ReadOnly );
 	m_din->setByteOrder( QDataStream::LittleEndian );
 	
-	// does protocol state indicate we are partially through reading an
+	// does protocol state indicate we are partially through reading an Event?
 	// if so, call readEvent which will create an EventTransfer out of the event code already received 
 	// and the event data that is on the wire
 	if ( m_state == ReadingEvent )
 	{
-		readEvent();
+		readEvent( wire );
 		m_state = Available;
 		emit incomingData();
 	}
@@ -330,17 +330,19 @@ void CoreProtocol::wireToTransfer( const QByteArray& wire )
 	delete m_din;
 }
 
-void CoreProtocol::readEvent()
+void CoreProtocol::readEvent( const QByteArray& wire )
 {
+	// wire == m_din at this point
 	qDebug( "Reading event of type %i", m_collatingEvent);
-	// discover the length of the event's source, then read it
 	QCString source;
 	Q_UINT32 len;
 	char* rawData;
 	m_din->readBytes( rawData, len );
 	source = QCString( rawData ); // shallow copy, QCString's destructor will delete the allocated space
-	// now create an event object
-	m_inTransfer = new EventTransfer( m_collatingEvent, source, QTime::currentTime() );
+	// now create an event object, passing it the wire data minus the source we just read
+	QByteArray remainder( wire.size() - 4 - len );
+	memcpy( remainder.data(), wire.data() + 4 + len, wire.size() - 4 - len );
+	m_inTransfer = new EventTransfer( m_collatingEvent, source, QTime::currentTime(), remainder );
 	m_collatingEvent = 0;
 }
 
