@@ -73,6 +73,8 @@ void KopeteRichTextEditPart::slotSetRichTextEnabled( bool enable )
 		editor->setTextFormat( Qt::PlainText );
 	}
 
+	m_richTextEnabled = enable;
+
 	// Spellchecking disabled when using rich text because the
 	// text we were getting from widget was coloured HTML!
 	editor->setCheckSpellingEnabled( !richTextEnabled() );
