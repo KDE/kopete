@@ -82,7 +82,7 @@ void GroupWiseEditAccountWidget::reOpen()
 	m_preferencesDialog->m_password->load( &account()->password() );
 	m_preferencesDialog->m_server->setText( account()->configGroup()->readEntry( "Server") );
 	m_preferencesDialog->m_port->setValue( account()->configGroup()->readNumEntry( "Port" ) );
-	m_preferencesDialog->m_autoConnect->setChecked( account()->autoConnect() );
+	m_preferencesDialog->m_autoConnect->setChecked( account()->excludeConnect() );
 	m_preferencesDialog->m_alwaysAccept->setChecked( account()->configGroup()->readBoolEntry( "AlwaysAcceptInvitations" ) );
 }
 
@@ -118,7 +118,7 @@ void GroupWiseEditAccountWidget::writeConfig()
 	account()->configGroup()->writeEntry( "AlwaysAcceptInvitations", 
 			m_preferencesDialog->m_alwaysAccept->isChecked() ? "true" : "false" );
 	
-	account()->setAutoConnect( m_preferencesDialog->m_autoConnect->isChecked() );
+	account()->setExcludeConnect( m_preferencesDialog->m_autoConnect->isChecked() );
 	m_preferencesDialog->m_password->save( &account()->password() );
 	settings_changed = false;
 }

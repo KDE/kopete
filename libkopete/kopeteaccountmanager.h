@@ -114,8 +114,8 @@ public slots:
 	/**
 	 * \brief Connect all accounts at once.
 	 *
-	 * Connect every account if the flag autoConnect is on
-	 * @see @ref Account::autoConnect()
+	 * Connect every account if the flag excludeConnect is false
+	 * @see @ref Account::excludeConnect()
 	 */
 	void connectAll();
 

@@ -72,7 +72,7 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, Q
 		
 		nickName->setText( nick );
 
-		autoLoginCheck_->setChecked( account()->autoConnect() );
+		autoLoginCheck_->setChecked( account()->excludeConnect() );
 		dccCheck_->setChecked( static_cast<GaduAccount*>(account())->dccEnabled() );
 		useTls_->setCurrentItem( isSsl ?  ( static_cast<GaduAccount*> (account()) ->useTls() ) : 2 );
 	}
@@ -141,7 +141,7 @@ GaduEditAccount::apply()
 		setAccount( new GaduAccount( protocol_, loginEdit_->text() ) );
 	}
 
-	account()->setAutoConnect( autoLoginCheck_->isChecked() );
+	account()->setExcludeConnect( autoLoginCheck_->isChecked() );
 
 	passwordWidget_->save( &static_cast<GaduAccount*>(account())->password() );
 
@@ -150,7 +150,7 @@ GaduEditAccount::apply()
 	// this is changed only here, so i won't add any proper handling now
         account()->configGroup()->writeEntry( QString::fromAscii( "nickName" ), nickName->text() );
 		
-	account()->setAutoConnect( autoLoginCheck_->isChecked() );
+	account()->setExcludeConnect( autoLoginCheck_->isChecked() );
 	( static_cast<GaduAccount*> (account()) )->setUseTls( (GaduAccount::tlsConnection) useTls_->currentItem() );
 
 	if ( static_cast<GaduAccount*>(account())->setDcc( dccCheck_->isChecked() ) == false ) {

@@ -51,7 +51,7 @@ class Account::Private
 public:
 	Private( Protocol *protocol, const QString &accountId )
 	 : protocol( protocol ), id( accountId )
-	 , autoconnect( true ), priority( 0 ), myself( 0 )
+	 , excludeconnect( true ), priority( 0 ), myself( 0 )
 	 , suppressStatusTimer( 0 ), suppressStatusNotification( false )
 	 , blackList( new Kopete::BlackLister( protocol->pluginId(), accountId ) )
 	{ }
@@ -61,7 +61,7 @@ public:
 
 	Protocol *protocol;
 	QString id;
-	bool autoconnect;
+	bool excludeconnect;
 	uint priority;
 	QDict<Contact> contacts;
 	QColor color;
@@ -77,7 +77,7 @@ Account::Account( Protocol *parent, const QString &accountId, const char *name )
 {
 	d->configGroup=new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Account_%1_%2" ).arg( d->protocol->pluginId(), d->id ));
 
-	d->autoconnect = d->configGroup->readBoolEntry( "AutoConnect", true );
+	d->excludeconnect = d->configGroup->readBoolEntry( "ExcludeConnect", false );
 	d->color = d->configGroup->readColorEntry( "Color", &d->color );
 	d->priority = d->configGroup->readNumEntry( "Priority", 0 );
 	
@@ -171,15 +171,15 @@ KConfigGroup* Kopete::Account::configGroup() const
 }
 
 
-void Account::setAutoConnect( bool b )
+void Account::setExcludeConnect( bool b )
 {
-	d->autoconnect = b;
-	d->configGroup->writeEntry( "AutoConnect", d->autoconnect );
+	d->excludeconnect = b;
+	d->configGroup->writeEntry( "ExcludeConnect", d->excludeconnect );
 }
 
-bool Account::autoConnect() const
+bool Account::excludeConnect() const
 {
-	return d->autoconnect;
+	return d->excludeconnect;
 }
 
 void Account::registerContact( Contact *c )

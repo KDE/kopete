@@ -68,7 +68,7 @@ class KOPETE_EXPORT Account : public QObject
 	Q_OBJECT
 
 	Q_PROPERTY( QString accountId READ accountId )
-	Q_PROPERTY( bool autoConnect READ autoConnect WRITE setAutoConnect )
+	Q_PROPERTY( bool excludeConnect READ excludeConnect WRITE setExcludeConnect )
 	Q_PROPERTY( QColor color READ color WRITE setColor )
 	Q_PROPERTY( QPixmap accountIcon READ accountIcon )
 	Q_PROPERTY( bool isConnected READ isConnected )
@@ -129,19 +129,19 @@ public:
 	void setPriority( uint priority );
 
 	/**
-	 * \brief Set if the account should log in automatically.
+	 * \brief Set if the account should not log in automatically.
 	 *
-	 * This function can be used by the EditAccountPage. Kopete handles autoconnection automatically.
-	 * @sa @ref autoConnect
+	 * This function can be used by the EditAccountPage. Kopete handles connection automatically.
+	 * @sa @ref excludeConnect
 	 */
-	void setAutoConnect(bool);
+	void setExcludeConnect(bool);
 
 	/**
-	 * \brief Get if the account should log in automatically.
+	 * \brief Get if the account should not log in. 
 	 *
- 	 * @return @c true if the account should be connected automatically at startup, @c false otherwise.
+ 	 * @return @c true if the account should not be connected when connectAll at startup, @c false otherwise.
 	 */
-	bool autoConnect() const;
+	bool excludeConnect() const;
 
 	/**
 	 * \brief Get the color for this account.

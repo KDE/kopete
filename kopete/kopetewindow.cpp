@@ -131,11 +131,11 @@ void KopeteWindow::initActions()
 		0, this, SLOT( showAddContactDialog() ),
 		actionCollection(), "AddContact" );
 
-	actionConnect = new KAction( i18n( "&Connect All" ), "connect_creating",
+	actionConnect = new KAction( i18n( "&Connect Accounts" ), "connect_creating",
 		0, Kopete::AccountManager::self(), SLOT( connectAll() ),
 		actionCollection(), "ConnectAll" );
 
-	actionDisconnect = new KAction( i18n( "&Disconnect All" ), "connect_no",
+	actionDisconnect = new KAction( i18n( "&Disconnect Accounts" ), "connect_no",
 		0, Kopete::AccountManager::self(), SLOT( disconnectAll() ),
 		actionCollection(), "DisconnectAll" );
 

@@ -222,7 +222,7 @@ void KopeteApplication::slotAllPluginsLoaded()
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
 	// --noconnect not specified?
-	if ( args->isSet( "connect" ) )
+	if ( args->isSet( "connect" )  && KopetePrefs::prefs()->autoConnect() )
 		Kopete::AccountManager::self()->connectAll();
 
 	QCStringList connectArgs = args->getOptionList( "autoconnect" );

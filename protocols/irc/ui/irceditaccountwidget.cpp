@@ -71,7 +71,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 
 		preferSSL->setChecked(account()->configGroup()->readBoolEntry("PreferSSL"));
 
-		autoConnect->setChecked( static_cast<Kopete::Account*>(account())->autoConnect() );
+		autoConnect->setChecked( static_cast<Kopete::Account*>(account())->excludeConnect() );
 
 		QStringList cmds = account()->connectCommands();
 		for( QStringList::Iterator i = cmds.begin(); i != cmds.end(); ++i )
@@ -233,7 +233,7 @@ Kopete::Account *IRCEditAccountWidget::apply()
 
 	account()->setDefaultPart( partMessage->text() );
 	account()->setDefaultQuit( quitMessage->text() );
-	account()->setAutoConnect( autoConnect->isChecked() );
+	account()->setExcludeConnect( autoConnect->isChecked() );
 
 	account()->configGroup()->writeEntry("PreferSSL", preferSSL->isChecked());
 

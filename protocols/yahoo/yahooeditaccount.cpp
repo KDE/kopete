@@ -51,7 +51,7 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 	{	mScreenName->setText(acct->accountId());
 		mScreenName->setReadOnly(true); //the accountId is Constant FIXME: remove soon!
 		mScreenName->setDisabled(true);
-		mAutoConnect->setChecked(acct->autoConnect());
+		mAutoConnect->setChecked(acct->excludeConnect());
 		mPasswordWidget->load( &acct->password() );
 	}
 
@@ -86,7 +86,7 @@ Kopete::Account *YahooEditAccount::apply()
 
 	YahooAccount *yahooAccount = static_cast<YahooAccount *>( account() );
 
-	yahooAccount->setAutoConnect( mAutoConnect->isChecked() );
+	yahooAccount->setExcludeConnect( mAutoConnect->isChecked() );
 
 	mPasswordWidget->save( &yahooAccount->password() );
 

@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>YahooEditAccountBase</class>
 <widget class="QWidget">
     <property name="name">
@@ -94,16 +94,10 @@
                                     <cstring>mAutoConnect</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Connect automatically at &amp;startup</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Check to connect automatically when Kopete is started.</string>
+                                    <string>&amp;Exclude from connection</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
-                                </property>
-				<property name="checked">
-                                    <bool>true</bool>
+                                    <string>Check to don't connect automatically.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
                                 </property>
                             </widget>
                         </vbox>

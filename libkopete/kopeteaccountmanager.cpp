@@ -87,7 +87,7 @@ AccountManager::~AccountManager()
 void AccountManager::connectAll()
 {
 	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
-		if(it.current()->autoConnect())
+		if(!it.current()->excludeConnect())
 			it.current()->connect();
 }
 
@@ -341,11 +341,6 @@ void AccountManager::slotPluginLoaded( Plugin *plugin )
 			kdWarning( 14010 ) << k_funcinfo <<
 				"Failed to create account for '" << accountId << "'" << endl;
 			continue;
-		}
-		else
-		{
-			if ( account->autoConnect() )
-				account->connect(); //default to online
 		}
 	}
 }

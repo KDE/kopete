@@ -42,7 +42,7 @@ WPEditAccount::WPEditAccount(WPProtocol *protocol, Kopete::Account *theAccount, 
 	theProtocol = protocol;
 	if(account())
 	{	mHostName->setText(account()->accountId());
-		mAutoConnect->setChecked(account()->autoConnect());
+		mAutoConnect->setChecked(account()->excludeConnect());
 		mHostName->setReadOnly(true);
 	}
 	else
@@ -88,7 +88,7 @@ Kopete::Account *WPEditAccount::apply()
 		setAccount(new WPAccount(theProtocol, mHostName->text()));
 //	else
 //		account()->setAccountId(mHostName->text());
-	account()->setAutoConnect(mAutoConnect->isChecked());
+	account()->setExcludeConnect(mAutoConnect->isChecked());
 	
 	return account();
 }

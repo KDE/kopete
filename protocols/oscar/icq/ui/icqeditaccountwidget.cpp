@@ -123,7 +123,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 
 		mAccountSettings->mPasswordWidget->load(&mAccount->password());
 		
-		mAccountSettings->chkAutoLogin->setChecked(mAccount->autoConnect());
+		mAccountSettings->chkAutoLogin->setChecked(mAccount->excludeConnect());
 
 		if ( mAccount->pluginData(mProtocol, "Server") != "login.icq.com" || ( mAccount->pluginData(mProtocol, "Port").toInt() != 5190) ) {
 			mAccountSettings->optionOverrideServer->setChecked( true );
@@ -269,7 +269,7 @@ Kopete::Account *ICQEditAccountWidget::apply()
 
 	mAccountSettings->mPasswordWidget->save(&mAccount->password());
 
-	mAccount->setAutoConnect(mAccountSettings->chkAutoLogin->isChecked());
+	mAccount->setExcludeConnect(mAccountSettings->chkAutoLogin->isChecked());
 
 	if (mAccountSettings->optionOverrideServer->isChecked() ) {
 		static_cast<OscarAccount *>(mAccount)->setServerAddress(

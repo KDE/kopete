@@ -141,6 +141,7 @@ void KopetePrefs::load()
 	// Load the reconnection setting
 	config->setGroup("General");
 	mReconnectOnDisconnect = config->readBoolEntry("ReconnectOnDisconnect", true);
+	mAutoConnect = config->readBoolEntry("AutoConnect", false);
 
 	// Nothing has changed yet
 	mWindowAppearanceChanged = false;
@@ -212,6 +213,7 @@ void KopetePrefs::save()
 	//Save the reconnection setting
 	config->setGroup("General");
 	config->writeEntry("ReconnectOnDisconnect", mReconnectOnDisconnect);
+	config->writeEntry("AutoConnect", mAutoConnect);
 
 	config->sync();
 	emit saved();
@@ -552,6 +554,12 @@ void KopetePrefs::setContactListFolding( bool n )
 void KopetePrefs::setReconnectOnDisconnect( bool newSetting )
 {
 	mReconnectOnDisconnect = newSetting;
+}
+
+
+void KopetePrefs::setAutoConnect(bool b)
+{
+	mAutoConnect=b;
 }
 
 #include "kopeteprefs.moc"

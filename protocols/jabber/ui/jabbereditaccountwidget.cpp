@@ -181,7 +181,7 @@ void JabberEditAccountWidget::writeConfig ()
 	account()->setPluginData (m_protocol, "Priority", QString::number (mPriority->value ()));
 	account()->setPluginData (m_protocol, "Port", QString::number (mPort->value ()));
 
-	account()->setAutoConnect(cbAutoConnect->isChecked());
+	account()->setExcludeConnect(cbAutoConnect->isChecked());
 
 	KGlobal::config()->setGroup("Jabber");
 	KGlobal::config()->writeEntry("LocalIP", leLocalIP->text());
