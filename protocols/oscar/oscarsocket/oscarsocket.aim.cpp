@@ -114,14 +114,14 @@ void OscarSocket::sendMiniTypingNotify(const QString &screenName, TypingNotify n
 //	kdDebug(14150) << k_funcinfo << "SEND (SRV_TYPINGNOTIFY)" << endl;
 
 	//look for direct connection before sending through server
+	#if 0
 	OscarConnection *dc = mDirectIMMgr->findConnection(screenName);
 	if(dc)
 	{
-//		kdDebug(14150) << k_funcinfo <<
-//			"Found direct connection, sending typing notify directly" << endl;
 		dc->sendTypingNotify(notifyType);
 		return;
 	}
+	#endif
 
 	Buffer outbuf;
 	// This is header stuff for the SNAC

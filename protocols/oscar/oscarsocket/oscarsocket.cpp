@@ -2236,7 +2236,8 @@ void OscarSocket::sendIM(
 	bool isAuto)
 {
 	//check to see if we have a direct connection to the contact
-	/*OscarConnection *dc = mDirectIMMgr->findConnection(contact->contactName());
+	#if 0
+	OscarConnection *dc = mDirectIMMgr->findConnection(contact->contactName());
 	if (dc)
 	{
 		kdDebug(14150) << k_funcinfo <<
@@ -2245,7 +2246,8 @@ void OscarSocket::sendIM(
 
 		dc->sendIM(message, isAuto);
 		return;
-	}*/
+	}
+	#endif
 
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_SENDMSG), msg='" << message <<
 		"' to '" << contact->contactName() << "'" << endl;
