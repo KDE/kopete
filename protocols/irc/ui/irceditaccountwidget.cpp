@@ -1,7 +1,8 @@
 /*
-    msneditaccountwidget.cpp - MSN Account Widget
+    irceditaccountwidget.cpp - IRC Account Widget
 
     Copyright (c) 2003 by Olivier Goffart  <ogoffart@tiscalinet.be>
+    Copyright (c) 2003 by Jason Keirstead  <jason@keirstead.org>
 
     Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -45,8 +46,9 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		mServer->setText( serverInfo.section(':', 0, 0) );
 		mPort->setValue( serverInfo.section(':',1).toUInt() );
 
-		mNickName->setReadOnly(true);
-		mServer->setReadOnly(true);
+		mNickName->setDisabled(true);
+		mServer->setDisabled(true);
+		mPort->setDisabled(true);
 
 		mUserName->setText( m_IRCAccount->userName() );
 		mAltNickname->setText( m_IRCAccount->altNick() );

@@ -1,5 +1,5 @@
 /*
-   irceditaccountwidget.h - MSN Account Widget
+   irceditaccountwidget.h - IRC Account Widget
 
     Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -41,7 +41,7 @@ class IRCEditAccountWidget : public IRCEditAccountBase, public KopeteEditAccount
 		void slotContextMenu( KListView*, QListViewItem*, const QPoint & );
 		void slotAddCommand();
 		void slotAddCtcp();
-	
+
 	private:
 		IRCProtocol *mProtocol;
 		IRCAccount *m_IRCAccount;
