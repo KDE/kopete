@@ -21,3 +21,5 @@ kcm_DATA = kopete_latex_config.desktop
 kcmdir = $(kde_servicesdir)/kconfiguredialog
 
 bin_SCRIPTS = kopete_latexconvert.sh
+kde_kcfg_DATA = latexconfig.kcfg
+
