@@ -35,6 +35,7 @@ class KActionCollection;
 class QStringList;
 class QWidget;
 class KSParser;
+class KopeteView;
 
 /**
  * @author Nick Betcher <nbetcher@kde.org>
@@ -73,7 +74,9 @@ public:
 	const KopeteOnlineStatus m_ChannelStatusOffline;
 
 	const KopeteOnlineStatus m_UserStatusOp;
+	const KopeteOnlineStatus m_UserStatusOpAway;
 	const KopeteOnlineStatus m_UserStatusVoice;
+	const KopeteOnlineStatus m_UserStatusVoiceAway;
 	const KopeteOnlineStatus m_UserStatusOnline;
 	const KopeteOnlineStatus m_UserStatusAway;
 	const KopeteOnlineStatus m_UserStatusConnecting;
@@ -107,6 +110,8 @@ private slots:
 	void slotQuitCommand( const QString &args, KopeteMessageManager *manager);
 	void slotPartCommand( const QString &args, KopeteMessageManager *manager);
 	void slotInviteCommand( const QString &args, KopeteMessageManager *manager);
+	
+	void slotViewCreated( KopeteView * );
 
 private:
 	static IRCProtocol *s_protocol;

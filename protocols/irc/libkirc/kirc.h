@@ -91,6 +91,8 @@ public:
 	EngineStatus status() const { return m_status; }
 	inline bool isDisconnected() const { return m_status == Disconnected; }
 	inline bool isConnected() const { return m_status == Connected; }
+	inline void setCodec( const QString &nick, const QTextCodec *codec )
+		{ KIRCMessage::codecs.insert( nick, codec ); }
 	
 	QString &customCtcp( const QString &s ) { return customCtcpMap[s];  }
 	void addCustomCtcp( const QString &ctcp, const QString &reply ) { 
@@ -410,7 +412,6 @@ protected:
 	QStringList m_motdBuffer;
 
 	QDict<KIRCMethodFunctorCall> m_IrcMethods;
-
 	QDict<KIRCMethodFunctorCall> m_IrcCTCPQueryMethods;
 	QDict<KIRCMethodFunctorCall> m_IrcCTCPReplyMethods;
 	QMap<QString, QString> customCtcpMap;

@@ -22,6 +22,7 @@
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qtextcodec.h>
+#include <qdict.h>
 
 #include <kbufferedio.h>
 
@@ -66,6 +67,9 @@ public:
 		{ return prefix.section('!', 0, 0); }
 
 	static KIRCMessage parse(KBufferedIO *dev, bool *parseSuccess=0, QTextCodec *codec=0);
+	static KIRCMessage parse(const QString &line, bool *parseSuccess=0);
+	
+	static QDict<QTextCodec> codecs;
 
 	QString toString() const;
 
@@ -122,8 +126,6 @@ protected:
 	 */
 	QString m_ctcpRaw;
 	
-	static KIRCMessage parse(const QString &line, bool *parseSuccess=0);
-
 	// low level quoting, message quoting
 	static QString quote(const QString &str);
 	static QString unquote(const QString &str);

@@ -35,6 +35,8 @@ class IRCProtocol;
 class IRCAccount;
 class IRCContactManager;
 
+class QTextCodec;
+
 struct whoIsInfo;
 
 /**
@@ -85,6 +87,10 @@ class IRCContact : public KopeteContact
 		virtual KopeteMessageManager *manager(bool canCreate = true);
 		
 		virtual void appendMessage( KopeteMessage & );
+		
+		void setCodec( const QTextCodec *codec );
+		
+		const QTextCodec *codec();
 	
 		KopeteView *view();
 	

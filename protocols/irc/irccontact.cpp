@@ -18,6 +18,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <qregexp.h>
+#include <qtextcodec.h>
 
 #include "ircaccount.h"
 
@@ -88,6 +89,8 @@ IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, K
 
 	QObject::connect(m_engine, SIGNAL(statusChanged(KIRC::EngineStatus)),
 			this, SLOT(updateStatus()));
+			
+	m_engine->setCodec( m_nickName, codec() );
 }
 
 IRCContact::~IRCContact()
@@ -111,6 +114,20 @@ void IRCContact::privateMessage(IRCContact *, IRCContact *, const QString &)
 
 void IRCContact::action(IRCContact *, IRCContact *, const QString &)
 {
+}
+
+void IRCContact::setCodec( const QTextCodec *codec )
+{
+	m_engine->setCodec( m_nickName, codec );
+}
+
+const QTextCodec *IRCContact::codec()
+{
+	QString codecName = metaContact()->pluginData( m_protocol, QString::fromLatin1("Codec") );
+	if( codecName.isEmpty() )
+		return QTextCodec::codecForName( "utf8" );
+	else
+		return QTextCodec::codecForName( codecName.latin1() );
 }
 
 KopeteMessageManager *IRCContact::manager(bool canCreate)

@@ -450,7 +450,8 @@ KIRCMessage KIRC::writeMessage(const QString &command, const QString &arg, const
 {
 	if(canSend(mustBeConnected))
 	{
-		KIRCMessage ircmsg = KIRCMessage::writeMessage(&m_sock, command, arg, suffix);
+		KIRCMessage ircmsg = KIRCMessage::writeMessage(&m_sock, command, arg, 
+			suffix, KIRCMessage::codecs[ arg ] );
 		emit sentMessage(ircmsg);
 		return ircmsg;
 	}
@@ -462,7 +463,8 @@ KIRCMessage KIRC::writeCtcpMessage(const char *command, const QString &to /* pre
 		const QString &ctcpMessage, bool emitRepliedCtcp)
 {
 	KIRCMessage msg = KIRCMessage::writeCtcpMessage(&m_sock,
-			QString::fromLatin1(command), getNickFromPrefix(to), suffix, ctcpMessage);
+		QString::fromLatin1(command), getNickFromPrefix(to), suffix, ctcpMessage,
+		KIRCMessage::codecs[  getNickFromPrefix(to) ]);
 
 	emit sentMessage(msg);
 	if(emitRepliedCtcp && msg.isValid() && msg.hasCtcpMessage())
@@ -475,7 +477,8 @@ KIRCMessage KIRC::writeCtcpMessage(const char *command, const QString &to /* pre
 		const QString &ctcpCommand, const QString &ctcpArg, const QString &ctcpSuffix, bool emitRepliedCtcp)
 {
 	KIRCMessage msg = KIRCMessage::writeCtcpMessage(&m_sock,
-			QString::fromLatin1(command), getNickFromPrefix(to), suffix, ctcpCommand, ctcpArg, ctcpSuffix);
+		QString::fromLatin1(command), getNickFromPrefix(to), suffix, ctcpCommand, ctcpArg,
+		ctcpSuffix, KIRCMessage::codecs[  getNickFromPrefix(to) ]);
 
 	emit sentMessage(msg);
 	if(emitRepliedCtcp && msg.isValid() && msg.hasCtcpMessage())
@@ -488,7 +491,8 @@ KIRCMessage KIRC::writeCtcpMessage(const char *command, const QString &to /* pre
 		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix, bool emitRepliedCtcp)
 {
 	KIRCMessage msg = KIRCMessage::writeCtcpMessage(&m_sock,
-			QString::fromLatin1(command), getNickFromPrefix(to), suffix, ctcpCommand, ctcpArgs, ctcpSuffix);
+			QString::fromLatin1(command), getNickFromPrefix(to), suffix, ctcpCommand, ctcpArgs,
+			ctcpSuffix,   KIRCMessage::codecs[ getNickFromPrefix(to) ] );
 
 	emit sentMessage(msg);
 	if(emitRepliedCtcp && msg.isValid() && msg.hasCtcpMessage())
@@ -565,13 +569,23 @@ bool KIRC::nickChange(const KIRCMessage &msg)
 	/* Nick name of a user changed
 	 * "<nickname>" */
 	QString oldNick = msg.prefix().section('!', 0, 0);
+	QString newNick = msg.suffix();
+	
+	if( KIRCMessage::codecs[ oldNick ] )
+	{
+		QTextCodec *c = KIRCMessage::codecs[ oldNick ];
+		KIRCMessage::codecs.remove( oldNick );
+		KIRCMessage::codecs.insert( newNick, c );
+	}
+	
 	if (oldNick.lower() == m_Nickname.lower())
 	{
-		emit successfullyChangedNick(oldNick, msg.suffix());
+		emit successfullyChangedNick(oldNick,newNick);
 		m_Nickname = msg.args()[0];
 	}
 	else
-		emit incomingNickChange(oldNick, msg.suffix());
+		emit incomingNickChange(oldNick, newNick);
+		
 	return true;
 }
 
@@ -768,18 +782,26 @@ bool KIRC::privateMessage(const KIRCMessage &msg)
 {
 	/* This is a signal that indicates there is a new message.
 	 * This can be either from a channel or from a specific user. */
-
-	if (!msg.suffix().isEmpty())
+	KIRCMessage m = msg;
+	if (!m.suffix().isEmpty())
 	{
-		QString tmp = msg.args()[0][0];
-		if (tmp == QChar('#') || tmp == QChar('!') || tmp == QChar('&'))
-			emit incomingMessage(getNickFromPrefix(msg.prefix()), msg.args()[0], msg.suffix());
+		QString user = m.args()[0];
+		
+		// FIXME: This is very inefficient, we're now parsing the message
+		// twice. Gotta figure a way to do this better
+		if( KIRCMessage::codecs[ user ] )
+			m = KIRCMessage::parse( KIRCMessage::codecs[ user ]->toUnicode( m.raw() ) );
+		
+		QString message = m.suffix();
+		QChar tmpChar = user[0];
+		if (tmpChar == QChar('#') || tmpChar == QChar('!') || tmpChar == QChar('&'))
+			emit incomingMessage(getNickFromPrefix(msg.prefix()), msg.args()[0], message );
 		else
-			emit incomingPrivMessage(getNickFromPrefix(msg.prefix()), msg.args()[0], msg.suffix());
+			emit incomingPrivMessage(getNickFromPrefix(msg.prefix()), msg.args()[0], message );
 	}
 
-	if(msg.hasCtcpMessage())
-		invokeCtcpCommandOfMessage(msg, m_IrcCTCPQueryMethods);
+	if(m.hasCtcpMessage())
+		invokeCtcpCommandOfMessage(m, m_IrcCTCPQueryMethods);
 
 	return true;
 }

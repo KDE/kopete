@@ -34,6 +34,7 @@ const QRegExp KIRCMessage::m_IRCCommandType2(QString::fromLatin1(
 
 const QRegExp KIRCMessage::m_IRCNumericCommand(QString::fromLatin1("^\\d{3,3}$"));
 
+QDict<QTextCodec> KIRCMessage::codecs;
 
 KIRCMessage::KIRCMessage()
 	: m_ctcpMessage(0)
@@ -82,9 +83,9 @@ KIRCMessage KIRCMessage::writeRawMessage(QIODevice *dev, const QString &message,
 	QCString s;
 	QString txt = message + QString::fromLatin1("\r\n");
 	
-	if( !codec ) // FIXME: Per-convo. Codec selector
+	if( !codec )
 		codec = QTextCodec::codecForName("utf8");
-	
+
 	s = codec->fromUnicode(txt);
 
 	kdDebug(14121) << ">> " << s;
@@ -166,15 +167,10 @@ KIRCMessage KIRCMessage::parse(KBufferedIO *dev, bool *parseSuccess, QTextCodec 
 			raw.resize(length);
 			raw.replace("\r\n",""); //remove the trailling \r\n if any(there must be in fact)
 
-			int idx = raw.findRev( QCString(QChar(001)) + ":" );
-			kdDebug(14121) << "idx: " << idx << endl;
-		
 			if( !codec ) // FIXME: Per-convo. Codec selector
 				codec = QTextCodec::codecForName("utf8");
 
 			line = codec->toUnicode(raw);
-			
-			kdDebug(14121) << "<< Using codec " << codec->name() << " << " << line << endl;
 			
 			KIRCMessage msg = parse( line, parseSuccess );
 			msg.m_raw = raw;

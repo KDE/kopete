@@ -29,6 +29,8 @@
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
 #include "kopetecommandhandler.h"
+#include "kopetemessagemanagerfactory.h"
+#include "kopeteview.h"
 
 #include "ircaccount.h"
 #include "ircprotocol.h"
@@ -80,11 +82,15 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 		
 	QObject::connect(m_engine, SIGNAL(successfulQuit()),
 		this, SLOT(slotDisconnected()));
-
+		
 	m_contactManager = new IRCContactManager(mNickName, m_server, this);
 	setMyself( m_contactManager->mySelf() );
 	m_myServer = m_contactManager->myServer();
 
+	mAwayAction = new KopeteAwayAction ( i18n("Set Away"), 
+		m_protocol->m_UserStatusAway.iconFor( this ), 0, this, 
+		SLOT(slotGoAway( const QString & )), this );
+		
 	//Warning: requesting the password may ask to kwallet, this will open a dcop call and call QApplication::enter_loop
 	//
 	// Never load passwords here, the initializer doesn't have a chance 
@@ -235,7 +241,7 @@ KActionMenu *IRCAccount::actionMenu()
 	mActionMenu->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ), menuTitle );
 
 	mActionMenu->insert( new KAction ( i18n("Go Online"), m_protocol->m_UserStatusOnline.iconFor( this ), 0, this, SLOT(connect()), mActionMenu ) );
-	mActionMenu->insert( new KopeteAwayAction ( i18n("Set Away"), m_protocol->m_UserStatusAway.iconFor( this ), 0, this, SLOT(slotGoAway( const QString & )), mActionMenu ) );
+	mActionMenu->insert( mAwayAction );
 	mActionMenu->insert( new KAction ( i18n("Go Offline"), m_protocol->m_UserStatusOffline.iconFor( this ), 0, this, SLOT(disconnect()), mActionMenu ) );
 	mActionMenu->popupMenu()->insertSeparator();
 	mActionMenu->insert( new KAction ( i18n("Join Channel..."), "", 0, this, SLOT(slotJoinChannel()), mActionMenu ) );
