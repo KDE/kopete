@@ -157,7 +157,7 @@ void MSNFileTransferSocket::slotReadBlock(const QByteArray &block)
 	int percent=0;
 	if(m_size!=0)   percent=100*m_downsize/m_size;
 
-	if(m_kopeteTransfer) m_kopeteTransfer->slotPercentCompleted(percent);
+	if(m_kopeteTransfer) m_kopeteTransfer->slotProcessed(percent);
 	kdDebug(14140) << "MSNFileTransferSocket  -  " <<percent <<"% done"<<endl;
 
 	if(m_downsize==m_size)
@@ -296,7 +296,7 @@ void MSNFileTransferSocket::slotSendFile()
 		m_downsize+=bytesRead;
 		if(m_size!=0)   percent=100*m_downsize/m_size;
 		if(m_kopeteTransfer)
-			 m_kopeteTransfer->slotPercentCompleted(percent);
+			 m_kopeteTransfer->slotProcessed(percent);
 		kdDebug(14140) << "MSNFileTransferSocket::slotSendFile:  " <<percent <<"% done"<<endl;
 	}
 	ready=false;

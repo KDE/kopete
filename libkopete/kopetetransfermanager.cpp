@@ -118,14 +118,6 @@ KURL KopeteTransfer::destinationURL()
 	return mTarget;
 }
 
-void KopeteTransfer::slotPercentCompleted(unsigned int percent)
-{
-	// horribly inaccurate, but scheduled to be removed.
-	slotProcessed(percent * (mInfo.size() / 100));
-	if( percent >= 100 )
-		slotComplete();
-}
-
 void KopeteTransfer::slotProcessed(unsigned int bytes)
 {
 	emitPercent( bytes, mInfo.size() );

@@ -167,11 +167,6 @@ public:
 	KURL destinationURL();
 
 public slots:
-	/**
-	 * Deprecated!! Use @ref slotProcessed and slotFinished instead.
-	 * FIXME: find all uses, change to slotProcessed, and remove this function.
-	 */
-	void slotPercentCompleted(unsigned int);
 
 	/**
 	 * @brief Set the file size processed so far
