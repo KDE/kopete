@@ -71,7 +71,7 @@ void KgpgInterface::KgpgEncryptFile(QString userIDs,KURL srcUrl,KURL destUrl, QS
       int ppass[2];
       FILE *pass;
       QCString password;
-      int code=KPasswordDialog::getNewPassword(password,i18n("Enter passphrase for file %1 (symmetrical encryption):".arg(srcUrl.filename())));
+      int code=KPasswordDialog::getNewPassword(password,i18n("Enter passphrase for file %1 (symmetrical encryption):").arg(srcUrl.filename()));
       if (code!=QDialog::Accepted)
         {
           emit encryptionfinished(true);
