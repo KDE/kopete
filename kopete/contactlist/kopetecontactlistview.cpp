@@ -25,7 +25,6 @@
 
 #include <qcursor.h>
 #include <qheader.h>
-#include <qtooltip.h>
 #include <qstylesheet.h>
 #include <qdragobject.h>
 #include <kurldrag.h>
@@ -45,6 +44,10 @@
 #include "kopeteprefs.h"
 #include "kopetestatusgroupviewitem.h"
 #include "kopeteviewmanager.h"
+
+#if QT_VERSION < 0x030100
+#include <qtooltip.h>
+#endif
 
 KopeteContactListView::KopeteContactListView( QWidget *parent,
 	const char *name )
@@ -150,10 +153,7 @@ KopeteContactListView::KopeteContactListView( QWidget *parent,
 	setDropHighlighter(true);
 	setAutoOpen(true);
 
-//	root = 0L;
-
-//	m_onItem=0; //we are not on any item, thus, no tooltip has been added yet
-
+//	setTooltipColumn(0);
 }
 
 KopeteContactListView::~KopeteContactListView()
@@ -1092,6 +1092,17 @@ void KopeteContactListView::keyPressEvent( QKeyEvent *e )
 
 void KopeteContactListView::contentsMouseMoveEvent( QMouseEvent *e )
 {
+
+#if QT_VERSION < 0x030100
+//tooltips does not works for QT >= 3.1.   FIXME: but what is the problem???????
+// If i remove this code, AND call setTooltipColumn(0) in the constructor, default toolTip works (i.e:
+//  just the item's text, if it is turncated).
+// I tried to reimpement KListView::toolTip , without succes. When looking at the KListView's code, I
+// see that KListView::tooltip() , KListView::showTooltip, class KListView::Tooltip dos not seems to be
+// even  KListView::setTooltipColumn() seems useless.. but then, WHT even default Tooltips DOES NOT WORK
+// if i don't call setTooltipColumn(0) in KopeteContactListView's constructor  (which is set to 0 by default)??
+// HELP ME! HELP ME! HELP ME! HELP ME! HELP ME! HELP ME! HELP ME! HELP ME! HELP ME!   -Olivier
+
 	if( e->state() != Qt::NoButton )
 	{
 		KListView::contentsMouseMoveEvent( e );
@@ -1175,6 +1186,7 @@ void KopeteContactListView::contentsMouseMoveEvent( QMouseEvent *e )
 	{
 //		kdDebug(14000) << "KopeteContactListView::contentsMouseMoveEvent - Already has a tooltip, not adding a new one" << endl;
 	}
+#endif //qt < 3.1
 
 	// Also call parent, or we'll break drag-n-drop
 	KListView::contentsMouseMoveEvent( e );
