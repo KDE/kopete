@@ -32,7 +32,7 @@
 #include <kdialog.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
-#include <kactivelabel.h>
+//#include <kactivelabel.h>
 
 #include "kopeteballoon.h"
 #include "systemtray.h"

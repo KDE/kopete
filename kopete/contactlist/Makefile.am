@@ -12,7 +12,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 noinst_LTLIBRARIES = libkopetecontactlist.la
 
 libkopetecontactlist_la_SOURCES = kopetemetacontactlvi.cpp kopetestatusgroupviewitem.cpp kopetegroupviewitem.cpp \
-	kopetecontactlistview.cpp
+	kopetecontactlistview.cpp kopetegvipropswidget.ui kopetemetalvipropswidget.ui kopetelviprops.cpp
 
 libkopetecontactlist_la_LDFLAGS = $(all_libraries)
 libkopetecontactlist_la_LIBADD = ../../libkopete/libkopete.la ../addcontactwizard/libkopeteaddcontactwizard.la  ../../libkopete/compat/libkopetecompat.la  $(LIB_KDEUI)

@@ -71,14 +71,12 @@ public:
 	/**
 	 * parent when top-level
 	 */
-	QListView *parentView() const
-	{ return m_parentView; };
+	QListView *parentView() const { return m_parentView; };
 
 	/**
 	 * parent when not top-level
 	 */
-	KopeteGroupViewItem *parentGroup() const
-	{ return m_parentGroup; };
+	KopeteGroupViewItem *parentGroup() const { return m_parentGroup; };
 
 //	virtual void setup();
 	virtual void paintCell ( QPainter *p, const QColorGroup &cg, int column, int width, int align );
@@ -134,21 +132,17 @@ public:
 	bool isGrouped() const;
 
 public slots:
-
 	/**
 	 * Call the meta contact's execute as I don't want to expose m_contact
 	 * directly.
 	 */
 	void execute() const;
 
-
 	void catchEvent(KopeteEvent *);
 
 	void slotRename();
 
 	void updateVisibility();
-
-
 
 private slots:
 	void slotUpdateIcons();

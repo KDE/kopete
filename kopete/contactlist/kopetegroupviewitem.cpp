@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include <klocale.h>
+#include <kiconloader.h>
 #include <kdebug.h>
 
 #include "kopetegroupviewitem.h"
@@ -24,11 +25,12 @@
 #include "kopetemetacontactlvi.h"
 #include "kopetemetacontact.h"
 
-KopeteGroupViewItem::KopeteGroupViewItem(KopeteGroup *group_, QListView *parent, const char *name )
+KopeteGroupViewItem::KopeteGroupViewItem(KopeteGroup *group_,
+	QListView *parent, const char *name )
 		: QObject(group_), QListViewItem(parent,name)
 {
-	setVisible(false);
-	m_group=group_;
+	setVisible( false );
+	m_group = group_;
 	refreshDisplayName();
 	connect( m_group, SIGNAL( renamed( KopeteGroup*, const QString& ) ),
 		this, SLOT( refreshDisplayName() ) );
@@ -36,11 +38,12 @@ KopeteGroupViewItem::KopeteGroupViewItem(KopeteGroup *group_, QListView *parent,
 		SLOT( updateVisibility() ) );
 }
 
-KopeteGroupViewItem::KopeteGroupViewItem(KopeteGroup *group_, QListViewItem *parent, const char *name )
+KopeteGroupViewItem::KopeteGroupViewItem(KopeteGroup *group_,
+	QListViewItem *parent, const char *name )
 		: QObject(group_), QListViewItem(parent,name)
 {
-	setVisible(false);
-	m_group=group_;
+	setVisible( false );
+	m_group = group_;
 	refreshDisplayName();
 	connect( m_group, SIGNAL( renamed( KopeteGroup*, const QString& ) ),
 		this, SLOT( refreshDisplayName() ) );
@@ -82,8 +85,8 @@ void KopeteGroupViewItem::refreshDisplayName()
 	m_renameText = newText;
 	newText += "  ("+QString::number(onlineMemberCount)+"/"+QString::number(totalMemberCount)+")";
 
-//	kdDebug(14000) << k_funcinfo << "newText='" << newText <<
-//		"', old text= " << text(0) << endl;
+	/*kdDebug(14000) << k_funcinfo << "newText='" << newText <<
+		"', old text= " << text(0) << endl;*/
 
 	setText( 0, newText );
 	updateVisibility();
@@ -94,7 +97,7 @@ QString KopeteGroupViewItem::key( int, bool ) const
 {
 	//Groups are placed after topLevel contact.
 	//Temporary group is the first group
-	if(group()->type()!=KopeteGroup::Classic)
+	if( group()->type() != KopeteGroup::Classic )
 		return "L"+text(0);
 	return "M"+text(0);
 }
@@ -129,23 +132,59 @@ void KopeteGroupViewItem::updateVisibility()
 	if( KopetePrefs::prefs()->showOffline() )
 		visibleUsers = totalMemberCount;
 
-	bool visible= KopetePrefs::prefs()->showEmptyGroups() || visibleUsers > 0 ;
+	bool visible =
+		KopetePrefs::prefs()->showEmptyGroups() ||
+		( visibleUsers > 0 );
 
-	if(isVisible() != visible)
+	if( isVisible() != visible )
 	{
-		setVisible(visible);
-		if(visible)
+		setVisible( visible );
+		if( visible )
 		{
-			//when calling setVisible(true)  EVERY child item will be shown, even if they should be hiden
-			// so we re-update the fisibility of all child items
-			for(QListViewItem *lvi = firstChild() ; lvi; lvi = lvi->nextSibling() )
+			// When calling setVisible(true) EVERY child item will be shown,
+			// even if they should be hidden.
+			// We just re-update the visibility of all child items
+			QListViewItem *lvi;
+			for( lvi = firstChild(); lvi; lvi = lvi->nextSibling() )
 			{
 				KopeteMetaContactLVI *kc = dynamic_cast<KopeteMetaContactLVI*>( lvi );
-				if ( kc )
+				if( kc )
 					kc->updateVisibility();
 			}
 		}
 	}
-
 }
+
+void KopeteGroupViewItem::updateCustomIcons(bool treeView)
+{
+	//kdDebug(14000) << k_funcinfo << "Called, treeView=" << treeView << endl;
+
+	// TODO: clever caching
+	if( !group()->useCustomIcon() )
+		return;
+
+	if(treeView)
+	{
+		if( isOpen() )
+		{
+			open = SmallIcon( group()->icon( KopetePluginDataObject::Open ) );
+			setPixmap( 0, open );
+			/*kdDebug(14000) << k_funcinfo << "setting open icon name='" <<
+				group()->icon( KopetePluginDataObject::Open ) << "'" << endl;*/
+		}
+		else
+		{
+			closed = SmallIcon( group()->icon( KopetePluginDataObject::Closed ) );
+			setPixmap( 0, closed );
+			/*kdDebug(14000) << k_funcinfo << "setting closed icon name='" <<
+				group()->icon( KopetePluginDataObject::Closed ) << "'" << endl;*/
+		}
+	}
+	else // classic view
+	{
+		open = SmallIcon( group()->icon( KopetePluginDataObject::Open ) );
+		setPixmap( 0, open );
+	}
+}
+
 #include "kopetegroupviewitem.moc"

@@ -65,10 +65,13 @@
 		<Separator lineSeparator="true" />
 		<Merge />
 		<Separator lineSeparator="true" />
+		<Action name="contactProperties" />
 	</Menu>
 	<Menu name="group_popup">
 		<Action name="contactRemove" />
 		<Action name="contactRename" />
+		<Separator lineSeparator="true" />
+		<Action name="contactProperties" />
 	</Menu>
 	<Menu name="contactlistitems_popup">
 		<Action name="contactRemove" />

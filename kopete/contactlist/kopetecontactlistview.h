@@ -92,8 +92,8 @@ private slots:
 	void slotSelectionChanged();
 	void slotContextMenu(KListView*,QListViewItem *item, const QPoint &point );
 	void slotExpanded( QListViewItem *item );
-	void slotDoubleClicked( QListViewItem *item );
 	void slotCollapsed( QListViewItem *item );
+	void slotDoubleClicked( QListViewItem *item );
 
 	void slotSettingsChanged( void );
 	void slotExecuted( QListViewItem *item, const QPoint &pos, int c );
@@ -130,10 +130,9 @@ private slots:
 	void slotRemove();
 	void slotRename();
 	void slotAddContact();
-
+	void slotProperties();
 
 private:
-
 	bool mShowAsTree;
 
 	QPixmap open;
@@ -165,11 +164,11 @@ private:
 	KAction *actionRemove;
 	KAction *actionRemoveFromGroup;
 	KAction *actionAddTemporaryContact;
-public: KActionMenu *actionAddContact; //it is public so the chatwinodw can handle sub actions
+	KAction *actionProperties;
 
+	public:
+		// This is public so the chatwinodw can handle sub actions
+		KActionMenu *actionAddContact;
 };
-
 #endif
-
 // vim: set noet ts=4 sts=4 sw=4:
-

@@ -88,8 +88,8 @@ void KopeteMetaContactLVI::initLVI()
 	m_actionMove = 0L;
 	m_actionCopy = 0L;
 
-	m_oldStatus=m_metaContact->status();
-	m_oldStatusIcon=m_metaContact->statusIcon();
+	m_oldStatus = m_metaContact->status();
+	m_oldStatusIcon = m_metaContact->statusIcon();
 
 	connect( m_metaContact, SIGNAL( displayNameChanged( const QString &, const QString & ) ),
 		SLOT( slotDisplayNameChanged() ) );
@@ -112,11 +112,10 @@ void KopeteMetaContactLVI::initLVI()
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ),
 		SLOT( slotConfigChanged() ) );
 
-	mBlinkTimer = new QTimer(this, "mBlinkTimer" );
-	QObject::connect(mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()));
+	mBlinkTimer = new QTimer( this, "mBlinkTimer" );
+	QObject::connect( mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()) );
 	mIsBlinkIcon=false;
 	m_event=0L;
-
 
 	//if(!mBlinkIcon) mBlinkIcon = new QPixmap(KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "newmsg" ), KIcon::Small));
 
@@ -180,10 +179,13 @@ void KopeteMetaContactLVI::slotContactStatusChanged()
 	// multiple times if the user is in multiple groups - Jason
 
 	// NOTE: this assume that the use don't want a notification when the contact was away and goes online
-	QString event = (m_metaContact->status() == KopeteOnlineStatus::Online  && ( m_oldStatus == KopeteOnlineStatus::Offline || m_oldStatus == KopeteOnlineStatus::Unknown )  ) ?
-		"kopete_online" : "kopete_status_change";
+	QString event =
+		( m_metaContact->status() == KopeteOnlineStatus::Online &&
+			( m_oldStatus == KopeteOnlineStatus::Offline ||
+			m_oldStatus == KopeteOnlineStatus::Unknown )
+		) ? "kopete_online" : "kopete_status_change";
 
-	m_oldStatus=m_metaContact->status();
+	m_oldStatus = m_metaContact->status();
 
 	int winId = KopeteSystemTray::systemTray() ?
 		KopeteSystemTray::systemTray()->winId() : 0;
@@ -192,11 +194,12 @@ void KopeteMetaContactLVI::slotContactStatusChanged()
 		i18n("%2 is now %1!").arg(m_metaContact->statusString()).arg(m_metaContact->displayName()),
 		i18n("Chat") , this, SLOT(execute()));
 
-	if(!mBlinkTimer->isActive() && m_metaContact->statusIcon() != m_oldStatusIcon)
+	if( !mBlinkTimer->isActive() &&
+		( m_metaContact->statusIcon() != m_oldStatusIcon ) )
 	{
-		mIsBlinkIcon=false;
-		m_blinkLeft=3;
-		mBlinkTimer->start(400, false);
+		mIsBlinkIcon = false;
+		m_blinkLeft = 3;
+		mBlinkTimer->start( 400, false );
 	}
 
 	slotUpdateIcons();
@@ -211,11 +214,10 @@ void KopeteMetaContactLVI::slotUpdateIcons()
 	if (sender())
 		kdDebug(14000) << k_funcinfo << "sender name: " << sender()->name() << endl;
 */
-	KopetePrefs *prefs = KopetePrefs::prefs();
 
 	QPixmap statusIcon = SmallIcon( m_metaContact->statusIcon() );
 	if(
-		prefs->greyIdleMetaContacts() &&
+		KopetePrefs::prefs()->greyIdleMetaContacts() &&
 		(m_metaContact->idleTime() >= 10*60) )
 	{
 		KIconEffect::semiTransparent( statusIcon );
@@ -532,29 +534,32 @@ bool KopeteMetaContactLVI::isGrouped() const
 void KopeteMetaContactLVI::slotIdleStateChanged()
 {
 	QPixmap theIcon = SmallIcon( m_metaContact->statusIcon() );
-	if ( KopetePrefs::prefs()->greyIdleMetaContacts() && ( m_metaContact->idleTime() >= 10*60 ) )
+	if( KopetePrefs::prefs()->greyIdleMetaContacts() &&
+		( m_metaContact->idleTime() >= 10*60 ) )
 	{
 		KIconEffect::semiTransparent(theIcon);
 	}
 	setPixmap(0, theIcon);
-/*	if ( m_parentGroup )
+	/*if ( m_parentGroup )
 		m_parentGroup->refreshDisplayName();*/
 }
 
 void KopeteMetaContactLVI::catchEvent(KopeteEvent *event)
 {
-	if(m_event)
+	if( m_event )
 	{
 		return; //ignore the new event.
 		//TODO: add a queue
 	}
-	m_event=event;
-	connect(event , SIGNAL(done(KopeteEvent*)) , this , SLOT( slotEventDone(KopeteEvent *) ));
+
+	m_event = event;
+	connect( event, SIGNAL( done( KopeteEvent* ) ),
+		this, SLOT( slotEventDone( KopeteEvent * ) ) );
 
 	if (mBlinkTimer->isActive())
 		mBlinkTimer->stop();
 
-	m_oldStatusIcon=m_metaContact->statusIcon();
+	m_oldStatusIcon = m_metaContact->statusIcon();
 
 	mBlinkTimer->start(500, false);
 }
@@ -596,10 +601,5 @@ void KopeteMetaContactLVI::slotEventDone(KopeteEvent* )
 	mIsBlinkIcon = false;
 }
 
-
-
 #include "kopetemetacontactlvi.moc"
-
 // vim: set noet ts=4 sts=4 sw=4:
-
-

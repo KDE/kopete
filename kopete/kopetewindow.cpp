@@ -182,7 +182,7 @@ void KopeteWindow::initActions()
 		CTRL+SHIFT+Key_C, KKey::QtWIN+CTRL+Key_C, this, SLOT(slotShowHide()) );
 
 	globalAccel->readSettings();
-        globalAccel->updateConnections();
+	globalAccel->updateConnections();
 }
 
 void KopeteWindow::slotShowHide()

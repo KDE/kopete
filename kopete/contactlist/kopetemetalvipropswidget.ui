@@ -1,0 +1,194 @@
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>KopeteMetaLVIPropsWidget</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>KopeteMetaLVIPropsWidget</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>197</width>
+            <height>201</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Form1</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>lblDisplayName</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Name:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>edtDisplayName</cstring>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="0" column="1">
+            <property name="name">
+                <cstring>edtDisplayName</cstring>
+            </property>
+        </widget>
+        <spacer row="2" column="1">
+            <property name="name">
+                <cstring>spacerVertical1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>16</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QGroupBox" row="1" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>grpIcons</cstring>
+            </property>
+            <property name="title">
+                <string>Group Icons</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="KIconButton" row="4" column="1">
+                    <property name="name">
+                        <cstring>icnbUnknown</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                </widget>
+                <widget class="KIconButton" row="3" column="1">
+                    <property name="name">
+                        <cstring>icnbOffline</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>lblAway</cstring>
+                    </property>
+                    <property name="text">
+                        <string>A&amp;way:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>icnbAway</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>lblOnline</cstring>
+                    </property>
+                    <property name="text">
+                        <string>O&amp;nline:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>icnbOnline</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="4" column="0">
+                    <property name="name">
+                        <cstring>lblUnknown</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Un&amp;known:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>icnbUnknown</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>lblOffline</cstring>
+                    </property>
+                    <property name="text">
+                        <string>O&amp;ffline:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>icnbOffline</cstring>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>chkUseCustomIcons</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Use custom &amp;icons</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+I</string>
+                    </property>
+                </widget>
+                <widget class="KIconButton" row="2" column="1">
+                    <property name="name">
+                        <cstring>icnbAway</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                </widget>
+                <spacer row="1" column="2">
+                    <property name="name">
+                        <cstring>spacerHorizontal1</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>16</width>
+                            <height>16</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="KIconButton" row="1" column="1">
+                    <property name="name">
+                        <cstring>icnbOnline</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+    </grid>
+</widget>
+<customwidgets>
+</customwidgets>
+<tabstops>
+    <tabstop>edtDisplayName</tabstop>
+    <tabstop>chkUseCustomIcons</tabstop>
+    <tabstop>icnbOnline</tabstop>
+    <tabstop>icnbAway</tabstop>
+    <tabstop>icnbOffline</tabstop>
+    <tabstop>icnbUnknown</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kicondialog.h</includehint>
+    <includehint>kicondialog.h</includehint>
+    <includehint>kicondialog.h</includehint>
+    <includehint>kicondialog.h</includehint>
+</includehints>
+</UI>

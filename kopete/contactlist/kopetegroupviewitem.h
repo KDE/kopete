@@ -19,33 +19,36 @@
 #define KOPETEGROUPVIEWITEM_H
 
 #include <klistview.h>
+#include <qpixmap.h>
 
 /**
   *@author Olivier Goffart
   */
 
 class KopeteGroup;
- 
 
 class KopeteGroupViewItem : public QObject , public QListViewItem
 {
 	Q_OBJECT
-public: 
-	KopeteGroupViewItem(KopeteGroup *group , QListView *parent, const char *name=0);
-	KopeteGroupViewItem(KopeteGroup *group , QListViewItem *parent, const char *name=0);
+public:
+	KopeteGroupViewItem( KopeteGroup *group , QListView *parent,
+		const char *name=0 );
+	KopeteGroupViewItem( KopeteGroup *group , QListViewItem *parent,
+		const char *name=0 );
 	~KopeteGroupViewItem();
 
 	KopeteGroup * group() const;
 
-	virtual void startRename(int col);
+	virtual void startRename( int col );
+	void updateCustomIcons( bool );
 
 protected:
-	virtual void okRename(int col);
-	virtual void cancelRename(int col);
-	
-private:
+	virtual void okRename( int col );
+	virtual void cancelRename( int col );
 
+private:
 	KopeteGroup *m_group;
+	QPixmap open, closed;
 
 	QString key( int column, bool ascending ) const;
 
@@ -53,7 +56,7 @@ private:
 
 	unsigned int onlineMemberCount;
 	unsigned int totalMemberCount;
-		
+
 public slots:
 	void refreshDisplayName();
 	void updateVisibility();
