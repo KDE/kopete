@@ -25,6 +25,10 @@ Add an iconName() function to contacts, metacontacts and accounts returning a st
 can be put in an <img src="%1"> in any rich text to give the appropriate icon. See the
 MimeSourceFactory.
 
+Add an Unknown status to KopeteOnlineStatus for when the status of a contact is unknown (in
+the case that they've not authorised you) or unknowable (in the case that your account is offline,
+etc).
+
 Some sort of async message processing API needs to be designed and implemented
 Richard's proposal: (email questions to the list or to kde@metafoo.co.uk)
 - how do we order the various message filters available properly?
