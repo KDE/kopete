@@ -127,7 +127,7 @@ static const char* const servers_ip[ NUM_SERVERS ] = {
 	p->serverIP = 0;
 
 	// initialize KGaduLogin structure to default values
-	p->loginInfo.uin		=  accountId().toInt();
+	p->loginInfo.uin		= accountId().toInt();
 	p->loginInfo.useTls		= false;
 	p->loginInfo.status		= GG_STATUS_AVAIL;
 	p->loginInfo.server		= 0;
@@ -153,7 +153,7 @@ GaduAccount::initActions()
 {
 	p->searchAction		= new KAction( i18n( "&Search for Friends" ), "", 0,
 							this, SLOT( slotSearch() ), this, "actionSearch" );
-	p->listputAction		= new KAction( i18n( "Export Contacts on Server" ), "", 0,
+	p->listputAction		= new KAction( i18n( "Export Contacts to Server" ), "", 0,
 							this, SLOT( slotExportContactsList() ), this, "actionListput" );
 	p->listToFileAction	= new KAction( i18n( "Export Contacts to File" ), "", 0,
 							this, SLOT( slotExportContactsListToFile() ), this, "actionListputFile" );
