@@ -4,7 +4,7 @@
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2001-2002 by Stefan Gehn            <metz AT gehn.net>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -207,7 +207,6 @@ void KopeteWindow::initActions()
 	KWidgetAction *quickSearch = new KWidgetAction( searchBar, i18n( "Quick Search Bar" ), 0, 0, 0, actionCollection(), "quicksearch_bar" );
 	new KWidgetAction( searchLabel, i18n( "Search:" ), 0, 0, 0, actionCollection(), "quicksearch_label" );
 	quickSearch->setAutoSized( true );
-	connect( searchLabel, SIGNAL( activated() ), searchBar, SLOT( setFocus() ) );
 	// quick search bar - clear button
 	KAction *resetQuickSearch = new KAction( i18n( "Reset Quick Search" ),
 		QApplication::reverseLayout() ? "clear_left" : "locationbar_erase",
@@ -296,6 +295,11 @@ void KopeteWindow::loadOptions()
 		resize(size);
 
 	KopetePrefs *p = KopetePrefs::prefs();
+
+	m_autoHide = p->contactListAutoHide();
+	m_autoHideTimeout = p->contactListAutoHideTimeout();
+
+	
 	QString tmp = config->readEntry("State", "Shown");
 	if ( tmp == "Minimized" && p->showTray())
 	{
@@ -310,8 +314,6 @@ void KopeteWindow::loadOptions()
 
 	menubarAction->setChecked( !menuBar()->isHidden() );
 	statusbarAction->setChecked( !statusBar()->isHidden() );
-	m_autoHide = p->contactListAutoHide();
-	m_autoHideTimeout = p->contactListAutoHideTimeout();
 }
 
 void KopeteWindow::saveOptions()
