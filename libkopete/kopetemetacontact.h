@@ -21,6 +21,7 @@
 
 #include <qobject.h>
 #include <qptrlist.h>
+#include <qdom.h>
 
 #include "kopetecontact.h"
 #include "kopeteplugindataobject.h"
@@ -139,7 +140,7 @@ public:
 	/**
 	 * Return a XML representation of the metacontact
 	 */
-	QString toXML();
+	const QDomElement toXML();
 
 	/**
 	 * Creates a metacontact from XML
@@ -147,7 +148,7 @@ public:
 	 * creation failed and this contact should be
 	 * discarded.
 	 */
-	bool fromXML( const QDomNode& cnode );
+	bool fromXML( const QDomElement& cnode );
 
 	/**
 	 * Move a contact from one group to another.
@@ -197,7 +198,10 @@ public:
 	 */
 	void removeContact( KopeteContact *c , bool deleted = false );
 
-
+	/**
+	 * Returns this metacontact's ID. Every metacontact has a unique id.
+	 */
+	uint contactId() const;
 	/**
 	 * Get or set a field for the KDE address book backend. Fields not
 	 * registered during the call to KopetePlugin::addressBookFields()

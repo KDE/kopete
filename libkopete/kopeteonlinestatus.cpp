@@ -191,7 +191,6 @@ KopeteProtocol* KopeteOnlineStatus::protocol() const
 
 QPixmap KopeteOnlineStatus::iconFor( const KopeteContact *contact ) const
 {
-	kdDebug() << k_funcinfo << contact->displayName() << " : " << contact->icon() << endl;
 	if ( contact->icon().isNull() )
 	{
 		if ( d->protocol )

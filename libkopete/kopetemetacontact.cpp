@@ -19,7 +19,6 @@
 #include "kopetemetacontact.h"
 
 #include <qapplication.h>
-#include <qdom.h>
 #include <qstylesheet.h>
 
 #include <kdebug.h>
@@ -52,7 +51,7 @@ struct KopeteMetaContactPrivate
 
 	bool temporary;
 	bool dirty;
-
+	uint contactId;
 	KopeteMetaContact::OnlineStatus onlineStatus;
 	KopeteMetaContact::IdleState    idleState;
 };
@@ -233,7 +232,7 @@ KopeteContact *KopeteMetaContact::findContact( const QString &protocolId,
 		{
 			if ( accountId.isEmpty() )
 				return it.current();
-		
+
 			if(it.current()->account())
 			{
 				if(it.current()->account()->accountId() == accountId)
@@ -592,43 +591,38 @@ void KopeteMetaContact::slotContactDestroyed( KopeteContact *contact )
 	removeContact(contact,true);
 }
 
-QString KopeteMetaContact::toXML()
+const QDomElement KopeteMetaContact::toXML()
 {
 	emit aboutToSave(this);
 
-//	kdDebug(14010) << "[KopeteMetaContact] toXML(), d->trackChildNameChanges=" << d->trackChildNameChanges << "." << endl;
+	QDomDocument metaContact;
+	metaContact.appendChild( metaContact.createElement( QString::fromLatin1("meta-contact") ) );
+	metaContact.documentElement().setAttribute( QString::fromLatin1("contactId"), QString::number(d->contactId) );
 
-	QString xml = QString::fromLatin1( "  <meta-contact>\n    <display-name trackChildNameChanges=\"" ) +
-		QString::number( static_cast<int>( d->trackChildNameChanges ) ) +
-		QString::fromLatin1( "\">" ) + QStyleSheet::escape( d->displayName ) +
-		QString::fromLatin1( "</display-name>\n" );
-
-//	kdDebug(14010) << "[KopeteMetaContact] toXML(), xml=" << xml << "." << endl;
+	QDomElement displayName = metaContact.createElement( QString::fromLatin1("display-name") );
+	displayName.setAttribute( QString::fromLatin1("trackChildNameChanges"), QString::null );
+	displayName.appendChild( metaContact.createTextNode( QStyleSheet::escape( d->displayName ) ) );
+	metaContact.documentElement().appendChild( displayName );
 
 	// Store groups
+	QDomElement groups = metaContact.createElement( QString::fromLatin1("groups") );
 	if ( !d->groups.isEmpty() )
 	{
-		xml += QString::fromLatin1( "    <groups>\n" );
 		KopeteGroup *g;;
 		for ( g = d->groups.first(); g; g = d->groups.next() )
 		{
-			QString group_s=g->displayName();
-			if(!group_s.isNull())
+			QString group_s = g->displayName();
+			if( !group_s.isEmpty() )
 			{
-				if ( !group_s.isEmpty() )
-					xml += QString::fromLatin1( "      <group>" ) + QStyleSheet::escape( group_s ) + QString::fromLatin1( "</group>\n" );
-				//else
-				//	xml += QString::fromLatin1( "      <group>" ) + QStyleSheet::escape( i18n("Unknown" ) ) + QString::fromLatin1( "</group>\n" );
+				QDomElement group = metaContact.createElement( QString::fromLatin1("group") );
+				group.appendChild( metaContact.createTextNode( QStyleSheet::escape( group_s ) ) );
+				groups.appendChild( group );
 			}
 		}
 
 		// The contact is also at top-level
 		if ( isTopLevel() )
-		{
-			xml += QString::fromLatin1( "      <top-level/>\n" );
-		}
-
-		xml += QString::fromLatin1( "    </groups>\n" );
+			groups.appendChild( metaContact.createElement( QString::fromLatin1("top-level") ) );
 	}
 	else
 	{
@@ -639,8 +633,9 @@ QString KopeteMetaContact::toXML()
 		   hidden contact, also for toplevel contacts saved before
 		   we added the <top-level> tag.
 		*/
-		xml += QString::fromLatin1( "    <groups><top-level/></groups>\n" );
+		groups.appendChild( metaContact.createElement( QString::fromLatin1("top-level") ) );
 	}
+	metaContact.documentElement().appendChild( groups );
 
 	// Store address book fields
 	QMap<QString, QMap<QString, QString> >::ConstIterator appIt = d->addressBook.begin();
@@ -649,71 +644,84 @@ QString KopeteMetaContact::toXML()
 		QMap<QString, QString>::ConstIterator addrIt = appIt.data().begin();
 		for( ; addrIt != appIt.data().end(); ++addrIt )
 		{
-			xml += QString::fromLatin1( "    <address-book-field app=\"" ) + QStyleSheet::escape( appIt.key() ) +
-				QString::fromLatin1( "\" key=\"" ) + QStyleSheet::escape( addrIt.key() ) + QString::fromLatin1( "\">" ) +
-				QStyleSheet::escape( addrIt.data() ) + QString::fromLatin1( "</address-book-field>\n" );
+			QDomElement addressBook = metaContact.createElement( QString::fromLatin1("address-book-field") );
+			addressBook.setAttribute( QString::fromLatin1("app"), QStyleSheet::escape( appIt.key() ) );
+			addressBook.setAttribute( QString::fromLatin1("key"), QStyleSheet::escape( addrIt.key() ) );
+			addressBook.appendChild( metaContact.createTextNode( addrIt.data() ) );
+			metaContact.documentElement().appendChild( addressBook );
 		}
 	}
 
 	// Store other plugin data
-	xml += KopetePluginDataObject::toXML();
+	QValueList<QDomElement> pluginData = KopetePluginDataObject::toXML();
+	for( QValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
+		metaContact.documentElement().appendChild( metaContact.importNode( *it, true ) );
 
-	xml += QString::fromLatin1( "  </meta-contact>\n" );
-
-	return xml;
+	return metaContact.documentElement();
 }
 
-bool KopeteMetaContact::fromXML( const QDomNode& cnode )
+bool KopeteMetaContact::fromXML( const QDomElement& element )
 {
-	QDomNode contactNode = cnode;
-	while( !contactNode.isNull() )
+	//Unique contact id per metacontact
+	static uint contactId = 0;
+
+	if( !element.hasChildNodes() )
+		return false;
+
+	QString strContactId = element.attribute( QString::fromLatin1("contactId") );
+	if( strContactId.isEmpty() )
+		d->contactId = ++contactId;
+	else
+		d->contactId = strContactId.toUInt();
+
+	if( d->contactId > contactId )
+		contactId = d->contactId;
+
+	QDomElement contactElement = element.firstChild().toElement();
+	while( !contactElement.isNull() )
 	{
-		QDomElement contactElement = contactNode.toElement();
-		if( !contactElement.isNull() )
+		if( contactElement.tagName() == QString::fromLatin1( "display-name" ) )
 		{
-			if( contactElement.tagName() == QString::fromLatin1( "display-name" ) )
+			if ( contactElement.text().isEmpty() )
+				return false;
+			d->displayName = contactElement.text();
+
+			//TODO: d->trackChildNameChanges is currently used only when contact creation
+			//later, we will add a GUI to make it configurable
+
+			/*d->trackChildNameChanges =
+				( contactElement.attribute( QString::fromLatin1( "trackChildNameChanges" ),
+				QString::fromLatin1( "1" ) ) == QString::fromLatin1( "1" ) );*/
+			d->trackChildNameChanges = false;
+		}
+		else if( contactElement.tagName() == QString::fromLatin1( "groups" ) )
+		{
+			QDomNode group = contactElement.firstChild();
+			while( !group.isNull() )
 			{
-				if ( contactElement.text().isEmpty() )
-					return false;
-				d->displayName = contactElement.text();
+				QDomElement groupElement = group.toElement();
 
-				//TODO: d->trackChildNameChanges is currently used only when contact creation
-				//later, we will add a GUI to make it configurable
+				if( groupElement.tagName() == QString::fromLatin1( "group" ) )
+					d->groups.append( KopeteContactList::contactList()->getGroup( groupElement.text() ) );
+				else if( groupElement.tagName() == QString::fromLatin1( "top-level" ) )
+					d->groups.append( KopeteGroup::toplevel );
 
-				/*d->trackChildNameChanges =
-					( contactElement.attribute( QString::fromLatin1( "trackChildNameChanges" ),
-					QString::fromLatin1( "1" ) ) == QString::fromLatin1( "1" ) );*/
-				d->trackChildNameChanges = false;
-			}
-			else if( contactElement.tagName() == QString::fromLatin1( "groups" ) )
-			{
-				QDomNode group = contactElement.firstChild();
-				while( !group.isNull() )
-				{
-					QDomElement groupElement = group.toElement();
-
-					if( groupElement.tagName() == QString::fromLatin1( "group" ) )
-						d->groups.append( KopeteContactList::contactList()->getGroup( groupElement.text() ) );
-					else if( groupElement.tagName() == QString::fromLatin1( "top-level" ) )
-						d->groups.append( KopeteGroup::toplevel );
-
-					group = group.nextSibling();
-				}
-			}
-
-			else if( contactElement.tagName() == QString::fromLatin1( "address-book-field" ) )
-			{
-				QString app = contactElement.attribute( QString::fromLatin1( "app" ), QString::null );
-				QString key = contactElement.attribute( QString::fromLatin1( "key" ), QString::null );
-				QString val = contactElement.text();
-				d->addressBook[ app ][ key ] = val;
-			}
-			else if( contactElement.tagName() == QString::fromLatin1( "plugin-data" ) )
-			{
-				KopetePluginDataObject::fromXML(contactElement);
+				group = group.nextSibling();
 			}
 		}
-		contactNode = contactNode.nextSibling();
+
+		else if( contactElement.tagName() == QString::fromLatin1( "address-book-field" ) )
+		{
+			QString app = contactElement.attribute( QString::fromLatin1( "app" ), QString::null );
+			QString key = contactElement.attribute( QString::fromLatin1( "key" ), QString::null );
+			QString val = contactElement.text();
+			d->addressBook[ app ][ key ] = val;
+		}
+		else if( contactElement.tagName() == QString::fromLatin1( "plugin-data" ) )
+		{
+			KopetePluginDataObject::fromXML(contactElement);
+		}
+		contactElement = contactElement.nextSibling().toElement();
 	}
 
 	// If a plugin is loaded, load data cached
@@ -786,6 +794,11 @@ void KopeteMetaContact::slotPluginLoaded( KopetePlugin *p )
 KopeteMetaContact::IdleState KopeteMetaContact::idleState() const
 {
 	return d->idleState;
+}
+
+uint KopeteMetaContact::contactId() const
+{
+	return d->contactId;
 }
 
 void KopeteMetaContact::slotContactIdleStateChanged( KopeteContact *c, KopeteContact::IdleState s )

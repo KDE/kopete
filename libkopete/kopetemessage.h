@@ -253,6 +253,8 @@ public:
 
 	const QDomDocument asXML() const;
 
+	const QDomDocument asCompressedXML() const;
+
 	void setBgOverride( bool enable );
 
 private:

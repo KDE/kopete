@@ -25,6 +25,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kiconloader.h>
+#include <kmdcodec.h>
 
 #include "kopeteemoticons.h"
 #include "kopetemessage.h"
@@ -185,14 +186,14 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 	messageNode.setAttribute( QString::fromLatin1("subject"), subject );
 	messageNode.setAttribute( QString::fromLatin1("direction"), direction );
 	messageNode.setAttribute( QString::fromLatin1("importance"), d->importance );
-	if( from )
-		messageNode.setAttribute( QString::fromLatin1("contactId"), (direction == Inbound) ? from->contactId() : d->to.first()->contactId() );
+
 	d->xmlDoc.appendChild( messageNode );
 
 	if( from )
 	{
 		QDomElement fromNode = d->xmlDoc.createElement( QString::fromLatin1("from") );
 		QDomElement fromContactNode = d->xmlDoc.createElement( QString::fromLatin1("contact") );
+		fromContactNode.setAttribute( QString::fromLatin1("contactId"), from->contactId() );
 		fromContactNode.setAttribute( QString::fromLatin1("contactDisplayName"), from->displayName() );
 		QString fromName = from->metaContact() ? from->metaContact()->displayName() : from->displayName();
 		fromContactNode.setAttribute( QString::fromLatin1("metaContactDisplayName"), fromName );
@@ -215,6 +216,7 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 	for( KopeteContact *c = d->to.first(); c; c = d->to.next() )
 	{
 		QDomElement cNode = d->xmlDoc.createElement( QString::fromLatin1("contact") );
+		cNode.setAttribute( QString::fromLatin1("contactId"), c->contactId() );
 		cNode.setAttribute( QString::fromLatin1("contactDisplayName"), c->displayName() );
 		cNode.setAttribute( QString::fromLatin1("metaContactDisplayName"), c->metaContact() ? c->metaContact()->displayName() : c->displayName() );
 		toNode.appendChild( cNode );
@@ -293,6 +295,15 @@ const QDomDocument KopeteMessage::asXML() const
 	QDomDocument doc = d->xmlDoc.cloneNode().toDocument();
 	QDomCDATASection bodyText = doc.elementsByTagName( QString::fromLatin1("body") ).item(0).firstChild().toCDATASection();
 	bodyText.setData( parsedBody() );
+	return doc;
+}
+
+const QDomDocument KopeteMessage::asCompressedXML() const
+{
+	QDomDocument doc;
+	doc.appendChild( doc.createElement( QString::fromLatin1("compressedMessage") ) );
+	doc.documentElement().setAttribute( QString::fromLatin1("timestamp"), d->xmlDoc.documentElement().attribute( QString::fromLatin1("timestamp") ) );
+	doc.documentElement().appendChild( doc.createTextNode( KCodecs::base64Encode( qCompress( d->xmlDoc.toString().utf8() ) ) ) );
 	return doc;
 }
 

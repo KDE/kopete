@@ -71,7 +71,7 @@ KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId,
 	KopeteContact *c=i->contacts()[contactId];
 	if(c)
 		return c->metaContact();
-	
+
 	/*QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
@@ -145,52 +145,45 @@ void KopeteContactList::loadXML()
 		list = contactList.documentElement();
 	}
 
-	QDomNode node = list.firstChild();
-	while( !node.isNull() )
+	QDomElement element = list.firstChild().toElement();
+	while( !element.isNull() )
 	{
-		QDomElement element = node.toElement();
-		if( !element.isNull() )
+		if( element.tagName() == QString::fromLatin1("meta-contact") )
 		{
-			if( element.tagName() == QString::fromLatin1("meta-contact") )
+			//TODO: id isn't used
+			//QString id = element.attribute( "id", QString::null );
+			KopeteMetaContact *metaContact = new KopeteMetaContact();
+			if ( !metaContact->fromXML( element ) )
 			{
-				//TODO: id isn't used
-				//QString id = element.attribute( "id", QString::null );
-				KopeteMetaContact *metaContact = new KopeteMetaContact();
-
-				QDomNode contactNode = node.firstChild();
-				if ( !metaContact->fromXML( contactNode ) )
-				{
-					delete metaContact;
-					metaContact = 0;
-				}
-				else
-				{
-					KopeteContactList::contactList()->addMetaContact(
-						metaContact );
-				}
-			}
-			else if( element.tagName() == QString::fromLatin1("kopete-group") )
-			{
-				KopeteGroup *group = new KopeteGroup();
-				if( !group->fromXML( element ) )
-				{
-					delete group;
-					group = 0;
-				}
-				else
-				{
-					KopeteContactList::contactList()->addGroup( group );
-				}
+				delete metaContact;
+				metaContact = 0;
 			}
 			else
 			{
-				kdWarning(14010) << "KopeteContactList::loadXML: "
-					  << "Unknown element '" << element.tagName()
-					  << "' in contact list!" << endl;
+				KopeteContactList::contactList()->addMetaContact(
+					metaContact );
 			}
-
 		}
-		node = node.nextSibling();
+		else if( element.tagName() == QString::fromLatin1("kopete-group") )
+		{
+			KopeteGroup *group = new KopeteGroup();
+			if( !group->fromXML( element ) )
+			{
+				delete group;
+				group = 0;
+			}
+			else
+			{
+				KopeteContactList::contactList()->addGroup( group );
+			}
+		}
+		else
+		{
+			kdWarning(14010) << "KopeteContactList::loadXML: "
+				<< "Unknown element '" << element.tagName()
+				<< "' in contact list!" << endl;
+		}
+		element = element.nextSibling().toElement();
 	}
 	contactListFile.close();
 }
@@ -573,17 +566,12 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 void KopeteContactList::saveXML()
 {
 	QString contactListFileName = locateLocal( "appdata", QString::fromLatin1( "contactlist.xml" ) );
-
-	//kdDebug(14010) << "KopeteContactList::saveXML: Contact List File: "
-	//	<< contactListFileName << endl;
-
 	KSaveFile contactListFile( contactListFileName );
 	if( contactListFile.status() == 0 )
 	{
 		QTextStream *stream = contactListFile.textStream();
 		stream->setEncoding( QTextStream::UnicodeUTF8 );
-
-		*stream << toXML();
+		toXML().save( *stream, 4 );
 
 		if ( !contactListFile.close() )
 		{
@@ -595,52 +583,26 @@ void KopeteContactList::saveXML()
 		kdWarning(14010) << "Couldn't open contact list file "
 			<< contactListFileName << ". Contact list not saved." << endl;
 	}
-
-/*	QFile contactListFile( contactListFileName );
-	if( contactListFile.open( IO_WriteOnly ) )
-	{
-		QTextStream stream( &contactListFile );
-		stream.setEncoding( QTextStream::UnicodeUTF8 );
-
-		stream << toXML();
-
-		contactListFile.close();
-	}
-	else
-	{
-		kdWarning(14010) << "Couldn't open contact list file "
-			<< contactListFileName << ". Contact list not saved." << endl;
-	}
-*/
 }
 
-QString KopeteContactList::toXML()
+const QDomDocument KopeteContactList::toXML()
 {
-	QString xml = QString::fromLatin1(
-		"<?xml version=\"1.0\"?>\n"
-		"<!DOCTYPE kopete-contact-list>\n"
-		"<kopete-contact-list version=\"1.0\">\n" );
+	QDomDocument doc;
+	doc.appendChild( doc.createElement( QString::fromLatin1("kopete-contact-list") ) );
+	doc.documentElement().setAttribute( QString::fromLatin1("version"), QString::fromLatin1("1.0"));
 
 	// Save group information. ie: Open/Closed, pehaps later icons? Who knows.
-	KopeteGroup *groupIt;
-	for( groupIt = m_groupList.first(); groupIt; groupIt = m_groupList.next() )
-		xml += groupIt->toXML();
+	for( KopeteGroup *g = m_groupList.first(); g; g = m_groupList.next() )
+		doc.documentElement().appendChild( doc.importNode( g->toXML(), true ) );
 
 	// Save metacontact information.
-	QPtrListIterator<KopeteMetaContact> metaContactIt( m_contacts );
-	for( ; metaContactIt.current(); ++metaContactIt )
+	for( KopeteMetaContact *m = m_contacts.first(); m; m = m_contacts.next() )
 	{
-		if(!(*metaContactIt)->isTemporary())
-		{
-//			kdDebug(14010) << "KopeteContactList::toXML: Saving meta contact "
-//				<< ( *metaContactIt )->displayName() << endl;
-			xml +=  ( *metaContactIt)->toXML();
-		}
+		if( !m->isTemporary() )
+			doc.documentElement().appendChild( doc.importNode( m->toXML(), true ) );
 	}
 
-	xml += QString::fromLatin1( "</kopete-contact-list>\n" );
-
-	return xml;
+	return doc;
 }
 
 

@@ -217,26 +217,22 @@ void KopeteAccountManager::unregisterAccount( KopeteAccount *account )
 
 void KopeteAccountManager::save()
 {
+	QDomDocument accounts;
 	QString fileName = locateLocal( "appdata", QString::fromLatin1( "accounts.xml" ) );
 
 	KSaveFile file( fileName );
 	if( file.status() == 0 )
 	{
+		accounts.appendChild( accounts.createElement( QString::fromLatin1("kopete-accounts") ) );
+		accounts.documentElement().setAttribute( QString::fromLatin1("version"), QString::fromLatin1("1.0") );
+
 		QTextStream *stream = file.textStream();
 		stream->setEncoding( QTextStream::UnicodeUTF8 );
 
-		QString xml = QString::fromLatin1("<?xml version=\"1.0\"?>\n"
-			"<!DOCTYPE kopete-accounts>\n"
-		"<kopete-accounts version=\"1.0\">\n" );
+		for(KopeteAccount *i = m_accounts.first() ; i; i = m_accounts.next() )
+			accounts.documentElement().appendChild( accounts.importNode( i->toXML(), true ) );
 
-		for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
-		{
-			xml +=  i->toXML();
-		}
-
-		xml += QString::fromLatin1( "</kopete-accounts>\n" );
-
-		*stream << xml;
+		accounts.save( *stream, 4 );
 		if ( !file.close() )
 		{
 			kdDebug(14010) << "KopeteAccountManager::save: ERROR: failed to write accounts, error code is: " << file.status() << endl;
@@ -277,47 +273,42 @@ void KopeteAccountManager::loadProtocol( KopetePlugin *plu )
 
 	kdDebug(14010) << k_funcinfo <<endl;
 
-	QDomNode node = m_accountList.documentElement().firstChild();
-	while( !node.isNull() )
+	QDomElement element = m_accountList.documentElement().firstChild().toElement();
+	while( !element.isNull() )
 	{
-		QDomElement element = node.toElement();
-		if( !element.isNull() )
+		if( element.tagName() == QString::fromLatin1("account") )
 		{
-			if( element.tagName() == QString::fromLatin1("account") )
-			{
-				QString accountId = element.attribute( QString::fromLatin1("account-id"), QString::null );
-				QString protocolId = element.attribute( QString::fromLatin1("protocol-id"), QString::null );
+			QString accountId = element.attribute( QString::fromLatin1("account-id"), QString::null );
+			QString protocolId = element.attribute( QString::fromLatin1("protocol-id"), QString::null );
 
-				if( (protocolId == protocol->pluginId()) )
+			if( (protocolId == protocol->pluginId()) )
+			{
+				if ( !accountId.isEmpty() )
 				{
-					if ( !accountId.isEmpty() )
+					kdWarning(14010) << k_funcinfo << "Creating account for " << accountId << endl;
+					KopeteAccount *account = protocol->createNewAccount(accountId);
+					if (account && !account->fromXML( element ) )
 					{
-						kdWarning(14010) << k_funcinfo << "Creating account for " << accountId << endl;
-						KopeteAccount *account = protocol->createNewAccount(accountId);
-						QDomNode accountNode = node.firstChild();
-						if (account && !account->fromXML( accountNode ) )
-						{
-							delete account;
-							account = 0L;
-						}
-					}
-					else
-					{
-						kdWarning(14010) << k_funcinfo << "Account with emtpy id!" << endl;
+						delete account;
+						account = 0L;
 					}
 				}
 				else
 				{
-					kdWarning(14010) << k_funcinfo << "This account belong to another protocol!" << endl;
+					kdWarning(14010) << k_funcinfo << "Account with emtpy id!" << endl;
 				}
 			}
 			else
 			{
-				kdWarning(14010) << k_funcinfo << "Unknown element '" << element.tagName()
-					  << "' in contact list!" << endl;
+				kdWarning(14010) << k_funcinfo << "This account belong to another protocol!" << endl;
 			}
 		}
-		node = node.nextSibling();
+		else
+		{
+			kdWarning(14010) << k_funcinfo << "Unknown element '" << element.tagName()
+				<< "' in contact list!" << endl;
+		}
+		element = element.nextSibling().toElement();
 	}
 }
 

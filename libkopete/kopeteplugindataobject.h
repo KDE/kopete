@@ -21,7 +21,7 @@
 
 #include <qobject.h>
 #include <qmap.h>
-#include <qstring.h>
+#include <qdom.h>
 
 class KopetePlugin;
 class QDomElement;
@@ -31,7 +31,7 @@ class QDomElement;
  * this class hanlde the saving to xml's file plugin data.
  * KopeteMetaContact, KopeteGroup, and KopeteAccount inherits from it
  */
- 
+
 class KopetePluginDataObject : public QObject
 {
 public:
@@ -74,13 +74,13 @@ public:
 	 * @ref KopeteContact::serialize() API may yield unexpected results.
 	 */
 	QString pluginData( KopetePlugin *p, const QString &key ) const;
-	
+
 protected:
 
 	/**
 	 * Return a XML representation of plugin datas
 	 */
-	QString toXML();
+	const QValueList<QDomElement> toXML();
 
 	/**
 	 * Load plugin datas from one Dom Element:

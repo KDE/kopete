@@ -21,6 +21,7 @@
 #include "kopeteplugindataobject.h"
 #include <qstringlist.h>
 #include <qvaluelist.h>
+#include <qdom.h>
 
 class QDomElement;
 class KopetePlugin;
@@ -54,7 +55,7 @@ public:
 	GroupType type() const ;
 	void setType(GroupType);
 
-	QString toXML();
+	const QDomElement toXML();
 	bool fromXML( const QDomElement &data );
 
 	void setExpanded(bool in_expanded) ;

@@ -101,7 +101,7 @@ public:
 	/**
 	 * Exposed via DCOP in kopeteiface
 	 * Used to send a file to a MetaContact using the highest ranked protocol
-	 * 
+	 *
 	 * FIXME: We need to change this to us ea unique ID instea dof displayName
 	 *
 	 * @param displayName Metacontact to send file to
@@ -158,10 +158,10 @@ public:
 	 * Get a group
 	 */
 	KopeteGroup * getGroup(const QString& displayName, KopeteGroup::GroupType type=KopeteGroup::Classic);
-	
+
 	/**
 	 * Adds a contact with the specified params. This function is exposed via DCOP
-	 * 
+	 *
 	 * @param protocolName The name of the protocol this contact is for ("ICQ", etc)
 	 * @param userId The unique ID for this protocol
 	 * @param nickName The nickname of the contact (may equal userId for some protocols
@@ -217,7 +217,7 @@ private:
 	/**
 	 * Return a XML representation of the contact list
 	 */
-	QString toXML();
+	const QDomDocument toXML();
 
 	/**
 	 * Load the contact list from XML file

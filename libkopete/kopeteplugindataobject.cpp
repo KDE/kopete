@@ -65,28 +65,35 @@ QString KopetePluginDataObject::pluginData( KopetePlugin *p, const QString &key 
 }
 
 
-QString KopetePluginDataObject::toXML()
+const QValueList<QDomElement> KopetePluginDataObject::toXML()
 {
-	QString xml;
+	QDomDocument pluginData;
+	QValueList<QDomElement> pluginNodes;
+	pluginData.appendChild( pluginData.createElement( QString::fromLatin1("plugin-data")) );
+
 	if( !m_pluginData.isEmpty() )
 	{
 		QMap<QString, QMap<QString, QString> >::ConstIterator pluginIt;
 		for( pluginIt = m_pluginData.begin(); pluginIt != m_pluginData.end(); ++pluginIt )
 		{
-			xml += QString::fromLatin1( "    <plugin-data plugin-id=\"" ) + QStyleSheet::escape( pluginIt.key() ) + QString::fromLatin1( "\">\n" );
+			QDomElement pluginElement = pluginData.createElement( QString::fromLatin1("plugin-data") );
+			pluginElement.setAttribute( QString::fromLatin1("plugin-id"), QStyleSheet::escape( pluginIt.key() ) );
 
 			QMap<QString, QString>::ConstIterator it;
 			for( it = pluginIt.data().begin(); it != pluginIt.data().end(); ++it )
 			{
-				if(!it.key().isNull())
-					xml += QString::fromLatin1( "      <plugin-data-field key=\"" ) + QStyleSheet::escape( it.key() ) + QString::fromLatin1( "\">" )
-						+ QStyleSheet::escape( it.data() ) + QString::fromLatin1( "</plugin-data-field>\n" );
+				QDomElement pluginDataField = pluginData.createElement( QString::fromLatin1("plugin-data-field") );
+				pluginDataField.setAttribute( QString::fromLatin1("key"), QStyleSheet::escape( it.key() ) );
+				pluginDataField.appendChild( pluginData.createTextNode( QStyleSheet::escape( it.data() ) ) );
+				pluginElement.appendChild( pluginDataField );
 			}
 
-			xml += QString::fromLatin1( "    </plugin-data>\n" );
+			pluginData.documentElement().appendChild( pluginElement );
+			pluginNodes.append( pluginElement );
 		}
 	}
-	return xml;
+
+	return pluginNodes;
 }
 
 

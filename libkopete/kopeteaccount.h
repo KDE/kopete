@@ -148,12 +148,12 @@ public:
 	/**
 	 * Save the account to an XML string. Only used internaly
 	 */
-	QString toXML();
+	const QDomElement toXML();
 
 	/**
 	 * Load account from XML
 	 */
-	bool fromXML(const QDomNode& cnode);
+	bool fromXML(const QDomElement& cnode);
 
 	/**
 	 * @internal

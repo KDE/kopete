@@ -19,7 +19,6 @@
 #include "kopetecontactlist.h"
 #include "kopeteplugin.h"
 
-#include <qdom.h>
 #include <qregexp.h>
 #include <qstylesheet.h>
 
@@ -55,26 +54,27 @@ KopeteGroup::~KopeteGroup()
 	delete d;
 }
 
-QString KopeteGroup::toXML()
+const QDomElement KopeteGroup::toXML()
 {
-	QString xml = QString::fromLatin1( "  <kopete-group type=\"" );
+	QDomDocument group;
+	group.appendChild( group.createElement(QString::fromLatin1("kopete-group")) );
 
+	QString type;
 	if( d->type == Temporary )
-		xml += QString::fromLatin1( "temporary" );
+		type = QString::fromLatin1( "temporary" );
 	else if( d->type == TopLevel )
-		xml += QString::fromLatin1( "top-level" );
+		type += QString::fromLatin1( "top-level" );
 	else
-		xml += QString::fromLatin1( "standard" );
+		type += QString::fromLatin1( "standard" );
 
-	xml += QString::fromLatin1( "\" view=\"" ) + QString::fromLatin1( d->expanded ? "expanded" : "collapsed" ) + QString::fromLatin1( "\">\n" );
+	group.documentElement().setAttribute( QString::fromLatin1("type"), type );
+	group.documentElement().setAttribute( QString::fromLatin1("view"), QString::fromLatin1( d->expanded ? "expanded" : "collapsed" )  );
 
-	xml += QString::fromLatin1( "    <display-name>" ) + QStyleSheet::escape( d->displayName ) + QString::fromLatin1( "</display-name>\n" );
+	QDomElement displayName = group.createElement(QString::fromLatin1("display-name"));
+	displayName.appendChild( group.createTextNode(QStyleSheet::escape( d->displayName )) );
+	group.documentElement().appendChild( displayName );
 
-	// Store other plugin data
-	xml +=KopetePluginDataObject::toXML();
-
-	xml += QString::fromLatin1( "  </kopete-group>\n" );
-	return xml;
+	return group.documentElement();
 }
 
 bool KopeteGroup::fromXML( const QDomElement& data )

@@ -98,55 +98,53 @@ void KopeteAccount::setAccountId( const QString &accountId )
 	emit ( accountIdChanged() );
 }
 
-QString KopeteAccount::toXML()
+const QDomElement KopeteAccount::toXML()
 {
-	QString xml = QString::fromLatin1( "  <account account-id=\"" ) + QStyleSheet::escape(d->id) +
-		QString::fromLatin1( "\" protocol-id=\"" )  + QStyleSheet::escape( d->protocol->pluginId() ) + QString::fromLatin1( "\">\n" );
+	QDomDocument account;
+	account.appendChild( account.createElement( QString::fromLatin1("account") ) );
+	account.documentElement().setAttribute( QString::fromLatin1("account-id"), QStyleSheet::escape(d->id) );
+	account.documentElement().setAttribute( QString::fromLatin1("protocol-id"), QStyleSheet::escape(d->protocol->pluginId()) );
 
 	if( !d->password.isNull())
 	{
-		xml += QString::fromLatin1( "    <password>" ) + QStyleSheet::escape( cryptStr(d->password) ) + QString::fromLatin1( "</password>\n" );
+		QDomElement password = account.createElement( QString::fromLatin1("password") );
+		password.appendChild( account.createTextNode( QStyleSheet::escape( cryptStr(d->password) ) ) );
+		account.documentElement().appendChild( password );
 	}
 
 	if( d->autologin )
-		xml += QString::fromLatin1("    <autologin/>\n");
-
+		account.documentElement().appendChild( account.createElement( QString::fromLatin1("autologin") ) );
 
 	// Store other plugin data
-	xml += KopetePluginDataObject::toXML();
+	QValueList<QDomElement> pluginData = KopetePluginDataObject::toXML();
+	for( QValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
+		account.documentElement().appendChild( account.importNode( *it, true ) );
 
-	xml += QString::fromLatin1( "  </account>\n" );
-
-	return xml;
-
+	return account.documentElement();
 }
 
-bool KopeteAccount::fromXML(const QDomNode& cnode)
+bool KopeteAccount::fromXML(const QDomElement& accountElement)
 {
-	QDomNode accountNode = cnode;
-	while( !accountNode.isNull() )
+	QDomElement accountData = accountElement.firstChild().toElement();
+	while( !accountData.isNull() )
 	{
-		QDomElement accountElement = accountNode.toElement();
-		if( !accountElement.isNull() )
+		if( accountData.tagName() == QString::fromLatin1( "password" ) )
 		{
-			if( accountElement.tagName() == QString::fromLatin1( "password" ) )
-			{
-				d->password= cryptStr(accountElement.text());
-			}
-			else if( accountElement.tagName() == QString::fromLatin1( "autologin" ) )
-			{
-				d->autologin=true;
-			}
-			else if( accountElement.tagName() == QString::fromLatin1( "plugin-data" ) )
-			{
-				KopetePluginDataObject::fromXML(accountElement) ;
-			}
-			else
-			{
-				kdDebug(14010) << "KopeteAccount::fromXML: unknown tag " << accountElement.tagName() <<  endl;
-			}
+			d->password= cryptStr(accountData.text());
 		}
-		accountNode = accountNode.nextSibling();
+		else if( accountData.tagName() == QString::fromLatin1( "autologin" ) )
+		{
+			d->autologin=true;
+		}
+		else if( accountData.tagName() == QString::fromLatin1( "plugin-data" ) )
+		{
+			KopetePluginDataObject::fromXML(accountData) ;
+		}
+		else
+		{
+			kdDebug(14010) << "KopeteAccount::fromXML: unknown tag " << accountData.tagName() <<  endl;
+		}
+		accountData = accountData.nextSibling().toElement();
 	}
 	loaded();
 	return true;
