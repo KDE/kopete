@@ -294,9 +294,9 @@ void KopeteContactListView::initActions(KActionCollection* ac)
 	new KAction( i18n("Create New Group..."), 0, 0,
 		this, SLOT( addGroup() ), ac, "AddGroup" );
 
-	KAction *actionSendMessage = KopeteStdAction::sendMessage( this,
+	actionSendMessage = KopeteStdAction::sendMessage( this,
 		SLOT( slotSendMessage() ), ac, "contactSendMessage" );
-	KAction *actionStartChat = KopeteStdAction::chat( this,
+	actionStartChat = KopeteStdAction::chat( this,
 		SLOT( slotStartChat() ), ac, "contactStartChat" );
 
 	actionRemoveFromGroup = KopeteStdAction::deleteContact( this,
@@ -314,24 +314,17 @@ void KopeteContactListView::initActions(KActionCollection* ac)
 	actionSendFile = KopeteStdAction::sendFile( this,
 		SLOT( slotSendFile() ), ac, "contactSendFile" );
 
-	actionAddContact= new KActionMenu( i18n( "&Add Contact" ),
+	actionAddContact = new KActionMenu( i18n( "&Add Contact" ),
 		QString::fromLatin1( "bookmark_add" ), ac , "contactAddContact" );
 	actionAddContact->popupMenu()->insertTitle( i18n("Select Account") );
 
-	connect(KopeteContactList::contactList(), SIGNAL(metaContactSelected(bool)),
-		actionSendMessage, SLOT(setEnabled(bool)));
-	connect(KopeteContactList::contactList(), SIGNAL(metaContactSelected(bool)),
-		actionStartChat, SLOT(setEnabled(bool)));
-	connect(KopeteContactList::contactList(), SIGNAL(metaContactSelected(bool)),
-		actionMove, SLOT(setEnabled(bool))); //TODO: make available for several contacts
-	connect(KopeteContactList::contactList(), SIGNAL(metaContactSelected(bool)),
-		actionCopy, SLOT(setEnabled(bool))); //TODO: make available for several contacts
-	//TODO: make available for several contacts, and unavailable when the contact is only in one group
-	connect(KopeteContactList::contactList(), SIGNAL(metaContactSelected(bool)),
-		actionRemoveFromGroup, SLOT(setEnabled(bool)));
-	connect(KopeteContactList::contactList(), SIGNAL(metaContactSelected(bool)),
-		actionAddContact, SLOT(setEnabled(bool)));
+	actionAddTemporaryContact = new KAction(
+		i18n( "Add to Your Contact List" ), "bookmark_add", 0,
+		this, SLOT( slotAddTemporaryContact() ),
+		ac, "contactAddTemporaryContact" );
 
+	connect(KopeteContactList::contactList(), SIGNAL(metaContactSelected(bool)),
+		this, SLOT(slotMetaContactSelected(bool)));
 
 	QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
 	KAction *action;
@@ -345,12 +338,6 @@ void KopeteContactListView::initActions(KActionCollection* ac)
 
 	actionProperties = new KAction( i18n( "&Properties" ), "", Qt::Key_Alt+Qt::Key_Return,
 		this, SLOT( slotProperties() ), ac, "contactProperties" );
-
-	//TODO
-	actionAddTemporaryContact = new KAction(
-		i18n( "Add to Your Contact List" ), "bookmark_add", 0,
-		this, SLOT( slotAddTemporaryContact() ),
-		ac, "actionAddTemporaryContact" );
 
 	//update enabled/disabled actions
 	slotSelectionChanged();
@@ -408,6 +395,28 @@ void KopeteContactListView::slotMetaContactAdded( KopeteMetaContact *mc )
 void KopeteContactListView::slotMetaContactDeleted( KopeteMetaContact *mc )
 {
 	removeContact( mc );
+}
+
+void KopeteContactListView::slotMetaContactSelected( bool sel )
+{
+	bool set = sel;
+
+	int mccount = KopeteContactList::contactList()->selectedMetaContacts().count();
+	if( mccount == 1 )
+	{
+		KopeteMetaContact *kmc = KopeteContactList::contactList()->selectedMetaContacts().first();
+		set = kmc->isReachable() && sel;
+		actionAddTemporaryContact->setEnabled( sel && kmc->isTemporary() );
+	}
+
+	actionSendMessage->setEnabled( set );
+	actionStartChat->setEnabled( set );
+	actionMove->setEnabled( set ); // TODO: make available for several contacts
+	actionCopy->setEnabled( set ); // TODO: make available for several contacts
+	// TODO: make available for several contacts
+	// and unavailable when the contact is only in one group
+	actionRemoveFromGroup->setEnabled( set );
+	actionAddContact->setEnabled( set );
 }
 
 void KopeteContactListView::slotAddedToGroup( KopeteMetaContact *mc, KopeteGroup *to )
@@ -1758,6 +1767,21 @@ void KopeteContactListView::slotAddContact()
 	}
 }
 
+void KopeteContactListView::slotAddTemporaryContact()
+{
+	KopeteMetaContact *metacontact =
+		KopeteContactList::contactList()->selectedMetaContacts().first();
+	if( metacontact )
+	{
+		int r=KMessageBox::questionYesNo( qApp->mainWidget(),
+			i18n( "<qt>Would you like to add this contact to your contact list?</qt>" ),
+			i18n( "Kopete" ), KStdGuiItem::yes(), KStdGuiItem::no(),
+			"addTemporaryWhenMoving" );
+
+		if(r==KMessageBox::Yes)
+			metacontact->setTemporary( false );
+	}
+}
 
 void KopeteContactListView::slotProperties()
 {

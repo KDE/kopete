@@ -112,7 +112,8 @@ private slots:
 	 * A meta contact was added to the contact list - update the view
 	 */
 	void slotMetaContactAdded( KopeteMetaContact *mc );
-	void slotMetaContactDeleted( KopeteMetaContact *mc);
+	void slotMetaContactDeleted( KopeteMetaContact *mc );
+	void slotMetaContactSelected( bool sel );
 
 	void slotGroupAdded(KopeteGroup *);
 
@@ -136,6 +137,7 @@ private slots:
 	void slotRemove();
 	void slotRename();
 	void slotAddContact();
+	void slotAddTemporaryContact();
 	void slotProperties();
 
 private:
@@ -163,6 +165,8 @@ private:
 	KopeteContactListViewToolTip *m_tooltip;
 
 	/* ACTIONS */
+	KAction *actionSendMessage;
+	KAction *actionStartChat;
 	KAction *actionSendFile;
 	KListAction *actionMove;
 	KListAction *actionCopy;
