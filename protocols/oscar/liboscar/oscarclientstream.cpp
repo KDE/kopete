@@ -321,7 +321,8 @@ void ClientStream::cp_incomingData()
 	}
 	else
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << 
-			"client signalled incomingData but none was available, state is: " << d->client.state();
+			"client signalled incomingData but none was available, state is: " <<
+			d->client.state() << endl;
 }
 
 void ClientStream::cr_connected()
