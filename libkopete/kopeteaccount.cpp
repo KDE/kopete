@@ -202,40 +202,34 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 	if( ok )
 		*ok = true;
 
-#if KDE_IS_VERSION( 3, 1, 90 )
-	KWallet::Wallet *wallet = 0L;
-	if ( KWallet::Wallet::folderDoesNotExist( KWallet::Wallet::NetworkWallet(), QString::fromLatin1( "Kopete" ) ) )
+	if ( !error )
 	{
-		// The folder might exist, try to open the wallet
-		wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), KWallet::Wallet::Synchronous );
-		QString pwd;
-
-		// Before trying to read from the wallet, check if the config file holds a password.
-		// If so, remove it from the config and set it through KWallet instead.
-		if ( !error && !d->password.isNull() )
+#if KDE_IS_VERSION( 3, 1, 90 )
+		KWallet::Wallet *wallet = 0L;
+		if ( KWallet::Wallet::folderDoesNotExist( KWallet::Wallet::NetworkWallet(), QString::fromLatin1( "Kopete" ) ) )
 		{
-			pwd = d->password;
-			setPassword( pwd );
-			return pwd;
-		}
+			// The folder might exist, try to open the wallet
+			wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), KWallet::Wallet::Synchronous );
+			QString pwd;
 
-		if ( wallet && wallet->setFolder( QString::fromLatin1( "Kopete" ) ) &&
-			wallet->readPassword( protocol()->pluginId() + QString::fromLatin1( "_" ) + accountId(), pwd ) == 0 )
-		{
-			if ( !error )
+			// Before trying to read from the wallet, check if the config file holds a password.
+			// If so, remove it from the config and set it through KWallet instead.
+			if ( !d->password.isNull() )
+			{
+				pwd = d->password;
+				setPassword( pwd );
 				return pwd;
-			else
-				d->password = QString::null; // Clear password so the code below will show the dialog
+			}
+
+			if ( wallet && wallet->setFolder( QString::fromLatin1( "Kopete" ) ) &&
+				wallet->readPassword( protocol()->pluginId() + QString::fromLatin1( "_" ) + accountId(), pwd ) == 0 )
+			{
+				return pwd;
+			}
 		}
-	}
 #endif
 
-	if ( !d->password.isNull() )
-	{
-		//if the cached password was wrong, we remove it
-		if ( error )
-			d->password = QString::null;
-		else
+		if ( !d->password.isNull() )
 			return d->password;
 	}
 
@@ -248,6 +242,9 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 	{
 		view->m_text->setText( i18n( "<b>The password was wrong! Please re-enter your password for %1</b>" ).
 			arg( protocol()->displayName() ) );
+
+		// Invalidate any stored pass
+		setPassword( QString::null );
 	}
 	else
 	{
