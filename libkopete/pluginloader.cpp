@@ -295,7 +295,11 @@ void LibraryLoader::removeNow(const QString &spec)
 	PluginLibrary *lib=mLibHash[spec];
 
 	if (!lib) return;
-
+  /////////////////////////////////////////////////
+	// Added by Duncan 20/01/2002
+	// We need to call unload function for the plugin
+	lib->plugin->unload();
+	/////////////////////////////////////////////////
 	delete lib->plugin;
 	lib->plugin=0;
 	mLibHash.remove(spec);
