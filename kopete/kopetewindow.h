@@ -8,6 +8,7 @@ class KAction;
 class KToggleAction;
 class KSelectAction;
 class ContactList;
+class KopeteSystemTray;
 
 class KopeteWindow : public KMainWindow
 {
@@ -24,7 +25,6 @@ class KopeteWindow : public KMainWindow
 		ContactList *contactlist;
 		/* Some Actions */
 		KAction* actionAddContact;
-		KAction* actionAboutPlugins;
 		KAction* actionSetAway;
 		KAction* actionQuit;
 		KSelectAction* actionStatus;
@@ -33,6 +33,8 @@ class KopeteWindow : public KMainWindow
 		KAction* actionPrefs;
 		KAction* actionHide;
 		KToggleAction *toolbarAction;
+		
+		KopeteSystemTray *tray;
 
 	private:
 		bool queryExit(void);

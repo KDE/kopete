@@ -10,6 +10,8 @@
 #include <kaction.h>
 #include <kdebug.h>
 
+#include "systemtray.h"
+
 KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(parent,name)
 {
 	kdDebug() << "KopeteWindow::KopeteWindow()" << endl;
@@ -35,10 +37,6 @@ KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(pare
 							kopeteapp, SLOT(slotDisconnectAll()),
 							actionCollection(), "Disconnect" );
 
-	actionAboutPlugins = new KAction( i18n("&Plugins"),"input_devices_settings", 0,
-							kopeteapp, SLOT(slotAboutPlugins()),
-							actionCollection(), "AboutPlugins" );
-
 	actionPrefs = KStdAction::preferences(kopeteapp, SLOT(slotPreferences()), actionCollection());
 
 	actionQuit = KStdAction::quit(kopeteapp, SLOT(slotExit()), actionCollection());
@@ -50,8 +48,18 @@ KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(pare
 	createGUI("kopeteui.rc");
 	
 	loadOptions();
-
 	toolbarAction->setChecked( !toolBar("mainToolBar")->isHidden() );
+
+	tray = new KopeteSystemTray(this);
+	KPopupMenu *tm = tray->getContextMenu();
+
+	tm->insertSeparator();
+	actionAddContact->plug( tm );
+	tm->insertSeparator();
+	actionConnect->plug( tm );
+	actionDisconnect->plug( tm );
+	actionPrefs->plug( tm );
+	tm->insertSeparator();
 
 	statusBar()->show();
 //	mainwidget->show();
@@ -61,6 +69,7 @@ KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(pare
 
 KopeteWindow::~KopeteWindow()
 {
+//	delete tray;
 	kdDebug() << "KopeteWindow::~KopeteWindow()" << endl;
 }
 

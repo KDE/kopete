@@ -1,8 +1,7 @@
 INCLUDES = -I$(top_srcdir)/kopete/library $(all_includes)
 noinst_LTLIBRARIES = libkopeteui.la
 
-noinst_HEADERS = aboutplugins.h\     
-		contactlist.h\   
+noinst_HEADERS = contactlist.h\   
 		pluginmodule.h\
 		configmodule.h\
 		kopetelistview.h\
@@ -18,7 +17,7 @@ noinst_HEADERS = aboutplugins.h\
 #CXXFLAGS = -g -O2 -Wall
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 
-libkopeteui_la_SOURCES = aboutplugins.cpp configmodule.cpp\
+libkopeteui_la_SOURCES = configmodule.cpp\
 			kopetewindow.cpp preferencesdialog.cpp\
 			contactlist.cpp \
 			pluginmodule.cpp statusbaricon.cpp\
