@@ -129,6 +129,7 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 	connect(mContact->engine, SIGNAL(connectionClosed()), this, SLOT(unloading()));
 
 	mPendingMessage = pendingMessage;
+	minimizeQuery = KGlobal::config()->readBoolEntry("MinimizeNewQueries", false);
 
 	if (joinOnConnect == true)
 	{
@@ -147,6 +148,7 @@ IRCContact::IRCContact(const QString &groupName, const QString &server, const QS
 	engine = contact->engine;
 	requestedQuit = false;
 	KGlobal::config()->setGroup("IRC");
+	minimizeQuery = false;
 	QString newServer;
 
 	if (server.isEmpty() == true)
@@ -280,7 +282,7 @@ void IRCContact::slotRemoveThis()
 {
 	if (mTarget[0] == '#' || mTarget[0] == '!' || mTarget[0] == '&')
 	{
-		return;
+		slotPart();
 	}
 	mContact->mProtocol->mConfig->deleteGroup(mTarget.lower());
 	mContact->mProtocol->mConfig->sync();
@@ -330,23 +332,38 @@ void IRCContact::showContextMenu(QPoint point)
 	popup->insertTitle(mTarget);
 	if (mTarget[0] == '#' || mTarget[0] == '!' || mTarget[0] == '&')
 	{
-		popup->insertItem("Part", this, SLOT(slotPart()));
+		if (mTabPage != 0)
+		{
+			popup->insertItem(i18n("Part"), this, SLOT(slotPart()));
+		}
 // TODO:	popup->insertItem("Hop (Part and Re-join)", this, SLOT(slotHop()));
 // TODO:	popup->insertItem("Remove", this, SLOT(slotRemoveThis()));
 	} else {
 		if (mTabPage != 0)
 		{
-			popup->insertItem("Close", this, SLOT(unloading()));
-		} else {
-			if (mContact->engine->isLoggedIn())
+			popup->insertItem(i18n("Close"), this, SLOT(unloading()));
+		}
+	}
+	if (mTabPage == 0)
+	{
+		if (mContact->engine->isLoggedIn())
+		{
+			if (mTarget[0] == '#' || mTarget[0] == '!' || mTarget[0] == '&')
 			{
-				popup->insertItem("Open", this, SLOT(slotOpen()));
+				popup->insertItem(i18n("Join"), this, SLOT(slotOpen()));
 			} else {
-				popup->insertItem("Open and Connect", this, SLOT(slotOpenConnect()));
+				popup->insertItem(i18n("Open"), this, SLOT(slotOpen()));
+			}
+		} else {
+			if (mTarget[0] == '#' || mTarget[0] == '!' || mTarget[0] == '&')
+			{
+				popup->insertItem(i18n("Connect and Join"), this, SLOT(slotOpenConnect()));
+			} else {
+				popup->insertItem(i18n("Connect and Open"), this, SLOT(slotOpenConnect()));
 			}
 		}
-		popup->insertItem("Remove", this, SLOT(slotRemoveThis()));
 	}
+	popup->insertItem(i18n("Remove"), this, SLOT(slotRemoveThis()));
 	popup->popup(point);
 }
 
@@ -435,6 +452,9 @@ void IRCContact::joinNow()
 	}
 
 	mContact->mWindow->show();
-	mContact->mWindow->mTabWidget->showPage(mTabPage);
+	if (!minimizeQuery)
+	{
+		mContact->mWindow->mTabWidget->showPage(mTabPage);
+	}
 }
 #include "irccontact.moc"

@@ -511,25 +511,6 @@
                         <bool>true</bool>
                     </property>
                 </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>chkMinimizeQueries</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>35</x>
-                            <y>50</y>
-                            <width>371</width>
-                            <height>16</height>
-                        </rect>
-                    </property>
-                    <property name="text">
-                        <string>Minimize private conversation (query) tabs when first messsaged.</string>
-                    </property>
-                </widget>
                 <widget class="QRadioButton">
                     <property name="name">
                         <cstring>useSDI</cstring>
@@ -547,6 +528,22 @@
                     </property>
                     <property name="text">
                         <string>Open a new window for each new contact. e.g. channel, query, server (SDI)</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>chkMinimizeQueries</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>35</x>
+                            <y>50</y>
+                            <width>371</width>
+                            <height>16</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Minimize private conversation (query) tabs when first messsaged.</string>
                     </property>
                 </widget>
             </widget>

@@ -69,6 +69,7 @@ private:
 	QVBox *mTabPage;
 	IRCQueryView *queryView;
 	void init();
+	bool minimizeQuery;
 private slots:
 //	void slotHop();
 	void slotPartedChannel(const QString &, const QString &, const QString &);
