@@ -1,4 +1,4 @@
-SUBDIRS = Default phpBB set1
+SUBDIRS = Default phpBB set1 CompuMessenger
 
 
 
