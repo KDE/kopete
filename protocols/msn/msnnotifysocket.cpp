@@ -57,8 +57,6 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 	QObject::connect( this, SIGNAL( blockRead( const QString & ) ),
 		this, SLOT( slotReadMessage( const QString & ) ) );
 
-	m_tmpMailFile = 0L;
-
 	m_keepaliveTimer = new QTimer( this, "m_keepaliveTimer" );
 	QObject::connect( m_keepaliveTimer, SIGNAL( timeout() ), SLOT( slotSendKeepAlive() ) );
 
@@ -67,7 +65,6 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 
 MSNNotifySocket::~MSNNotifySocket()
 {
-	delete m_tmpMailFile;
 	kdDebug(14140) << k_funcinfo << endl;
 }
 
@@ -548,18 +545,11 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 					"<input type=\"hidden\" name=\"js\" value=\"yes\">\n"
 				"</form></body>\n</html>\n";
 
-		delete m_tmpMailFile;
-		m_tmpMailFile = new KTempFile( locateLocal( "tmp", "kopetehotmail-" ), ".html" );
-		*m_tmpMailFile->textStream() << hotmailRequest;
-		m_tmpMailFile->file()->flush();
+		KTempFile tmpMailFile( locateLocal( "tmp", "kopetehotmail-" ), ".html" );
+		*tmpMailFile.textStream() << hotmailRequest;
+		tmpMailFile.file()->flush();
 
-		// runURL should handle itself the deletion of the file with the third argument (false) ][since kde 3.2]
-		// Anyway, this is auto-deletion is broken, since kioexec delete the file BEFORE konqueror has the time to open it
-		// FIXME: when it's fixed in kdelibs use the correct way to delete the file with the KRun's API
-		//  (this is just a workaround)
-		// see Bug 62555 for more information  (http://bugs.kde.org/show_bug.cgi?id=62555)
-		KRun::runURL( KURL::fromPathOrURL( m_tmpMailFile->name() ), "text/html" /*, true */);
-		m_tmpMailFile->setAutoDelete(true);
+		KRun::runURL( KURL::fromPathOrURL( tmpMailFile.name() ), "text/html" , true );
 
 	}
 	else

@@ -151,8 +151,6 @@ private:
 	MSNAccount *m_account;
 	QString m_password;
 
-	KTempFile *m_tmpMailFile; //Workaround.. see note in parseCommand (URL)
-
 	unsigned int mailCount;
 
 	Kopete::OnlineStatus m_newstatus;
