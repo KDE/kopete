@@ -15,7 +15,10 @@
 		-<font color="cyan">--</font>
 	</xsl:when>
 	<xsl:when test="@direction='3'"><!--action message-->
-		<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/><xsl:text disable-output-escaping="yes">&#160;</xsl:text>
+		<span>
+			<xsl:attribute name="title">Contact ID: <xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/></xsl:attribute>
+			<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/><xsl:text disable-output-escaping="yes">&#160;</xsl:text>
+		</span>
 	</xsl:when>
 	<xsl:otherwise>
 		<font color="blue">&lt;</font>
@@ -30,9 +33,12 @@
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:attribute>
-			<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/>
+			<span>
+				<xsl:attribute name="title"><xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/></xsl:attribute>
+				<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/>
+			</span>
 		</font>
-		<font color="blue">&gt; </font>
+		<font color="blue">&gt;</font>
 	</xsl:otherwise>
 </xsl:choose>
 <span>

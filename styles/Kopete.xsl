@@ -8,11 +8,19 @@
 			<xsl:choose>
 			<xsl:when test="@direction='1'">
 				<xsl:attribute name="style"><xsl:text>color:red;font-weight:bold;</xsl:text></xsl:attribute>
-				<xsl:text>Message to </xsl:text><xsl:value-of disable-output-escaping="yes" select="to/contact/@contactDisplayName"/>
+				<xsl:text>Message to </xsl:text>
+				<span>
+					<xsl:attribute name="title"><xsl:value-of disable-output-escaping="yes" select="to/contact/@contactId"/></xsl:attribute>
+					<xsl:value-of disable-output-escaping="yes" select="to/contact/@contactDisplayName"/>
+				</span>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:attribute name="style"><xsl:text>color:blue;font-weight:bold;</xsl:text></xsl:attribute>
-				<xsl:text>Message from </xsl:text><xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/>
+				<xsl:text>Message from </xsl:text>
+				<span>
+					<xsl:attribute name="title"><xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/></xsl:attribute>
+					<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/>
+				</span>
 			</xsl:otherwise>
 			</xsl:choose>
 			<xsl:text> at </xsl:text><xsl:value-of select="@time"/>
@@ -28,7 +36,10 @@
 		<xsl:choose>
 		<xsl:when test="@direction='3'">
 			<span style="color:darkgreen">
-				* <xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/> <xsl:text> </xsl:text> <xsl:value-of disable-output-escaping="yes" select="body"/>
+				* <span>
+					<xsl:attribute name="title"><xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/></xsl:attribute>
+					<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/>
+				</span><xsl:text> </xsl:text> <xsl:value-of disable-output-escaping="yes" select="body"/>
 			</span>
 		</xsl:when>
 		<xsl:when test="@direction='2'">
