@@ -461,8 +461,8 @@ void MSNMessageManager::sendFile(const QString &fileLocation, const QString &fil
 	{
 		//If the alternate filename is null, then get the filename from the location
 		if( fileName.isNull() ) {
-			theFileName = fileLocation.right( fileLocation.length() - 
-				fileLocation.findRev( QRegExp("/") ) - 1 );
+			theFileName = fileLocation.right( fileLocation.length()
+				- fileLocation.findRev( QRegExp("/") ) - 1 );
 		} else {
 			theFileName = fileName;
 		}
@@ -484,7 +484,7 @@ void MSNMessageManager::sendFile(const QString &fileLocation, const QString &fil
 			"Application-GUID: {5D3E02AB-6190-11d3-BBBB-00C04F795683}\r\n"
 			"Invitation-Command: INVITE\r\n"
 			"Invitation-Cookie: " +QString::number(cookie) +"\r\n"
-			"Application-File: "+ fileName +"\r\n"
+			"Application-File: "+ theFileName +"\r\n"
 			"Application-FileSize: "+ QString::number(MFTS->size()) +"\r\n\r\n").utf8();
 
 		m_chatService->sendCommand( "MSG" , "N", true, message );
@@ -493,4 +493,6 @@ void MSNMessageManager::sendFile(const QString &fileLocation, const QString &fil
 
 
 #include "msnmessagemanager.moc"
+
+// vim: set noet ts=4 sts=4 sw=4:
 
