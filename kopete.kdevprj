@@ -358,7 +358,7 @@ install_location=
 type=DATA
 
 [kopete/library/Makefile.am]
-files=kopete/library/contactlist.cpp,kopete/library/contactlist.h,kopete/library/imcontact.cpp,kopete/library/imcontact.h,kopete/library/improtocol.cpp,kopete/library/improtocol.h,kopete/library/kopete.cpp,kopete/library/kopete.h,kopete/library/plugin.cpp,kopete/library/plugin.h,kopete/library/pluginloader.cpp,kopete/library/pluginloader.h
+files=kopete/library/contactlist.cpp,kopete/library/contactlist.h,kopete/library/imcontact.cpp,kopete/library/imcontact.h,kopete/library/improtocol.cpp,kopete/library/improtocol.h,kopete/library/kopete.cpp,kopete/library/kopete.h,kopete/library/plugin.cpp,kopete/library/plugin.h,kopete/library/pluginloader.cpp,kopete/library/pluginloader.h,kopete/library/kopetenotifier.cpp,kopete/library/kopetenotifier.h
 sub_dirs=ui,
 type=static_library
 
@@ -405,6 +405,18 @@ install_location=
 type=SOURCE
 
 [kopete/library/kopete.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/library/kopetenotifier.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/library/kopetenotifier.h]
 dist=true
 install=false
 install_location=

@@ -12,7 +12,7 @@ noinst_LTLIBRARIES = libkopete.la
 
 libkopete_la_SOURCES = kopete.cpp improtocol.cpp imcontact.cpp \
                        pluginloader.cpp plugin.cpp \
-                       messagelog.cpp kopetemessage.cpp
+                       messagelog.cpp kopetemessage.cpp kopetenotifier.cpp
 libkopete_la_METASOURCES = AUTO
 libkopete_la_LDFLAGS     = 
 libkopete_la_LIBADD      = $(top_builddir)/kopete/library/ui/libkopeteui.la
