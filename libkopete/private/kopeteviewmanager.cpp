@@ -151,7 +151,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 	if( !outgoingMessage || d->managerMap.contains( manager ) )
 	{
 		d->foreignMessage=!outgoingMessage; //let know for the view we are about to create
-		manager->view(true)->appendMessage( msg );
+		manager->view(true,msg.requestedPlugin())->appendMessage( msg );
 		d->foreignMessage=false; //the view is created, reset the flag
 
 		if ( d->useQueue && !view( manager )->isVisible()  )
