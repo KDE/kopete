@@ -576,23 +576,16 @@ public:
 	void attach( QObject *target, const char *slot )
 	{
 		connect( this, SIGNAL(timeout()), target, slot );
+		if( users++ == 0 )
+			start( period );
+		//kdDebug(14000) << "SharedTimer::attach: users is now " << users << "\n";
 	}
 	void detach( QObject *target, const char *slot )
 	{
 		disconnect( this, SIGNAL(timeout()), target, slot );
-	}
-protected:
-	void connectNotify( const char *signal )
-	{
-		if( signal == SIGNAL(timeout()) )
-			if( users++ == 0 )
-				start( period );
-	}
-	void disconnectNotify( const char *signal )
-	{
-		if( signal == SIGNAL(timeout()) )
-			if( --users == 0 )
-				stop();
+		if( --users == 0 )
+			stop();
+		//kdDebug(14000) << "SharedTimer::detach: users is now " << users << "\n";
 	}
 };
 
@@ -744,12 +737,12 @@ void Item::slotLayoutItems()
 		//kdDebug(14000) << k_funcinfo << "Component " << n << " is " << width << " x " << height << endl;
 	}
 
-	if ( Private::animateChanges && d->animateLayout )
+	if ( Private::animateChanges && d->animateLayout && !d->visibilityTimer.isActive() )
 	{
 		d->layoutAnimateTimer.start();
 		//if ( !d->layoutAnimateTimer.isActive() )
 		//	d->layoutAnimateTimer.start( 10 );
-		d->layoutAnimateSteps = -1;
+		d->layoutAnimateSteps = 0;
 	}
 	else
 	{
