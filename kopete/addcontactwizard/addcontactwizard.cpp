@@ -330,7 +330,7 @@ void AddContactWizard::next()
 				addPage->show();
 
 				insertPage( addPage, i18n( "The account name is prepended here",
-					"%1 contact information" ).arg( item->text(0) ), indexOf( finis ) );
+					"%1 Contact Information" ).arg( item->text(0) ), indexOf( finis ) );
 				protocolPages.insert( m_accountItems[item] , addPage );
 			}
 		}

@@ -96,9 +96,9 @@ GaduAccount::initActions()
 							this, SLOT( slotSearch() ), this, "actionSearch" );
 	listputAction		= new KAction( i18n( "Export Contacts on Server" ), "", 0,
 							this, SLOT( slotExportContactsList() ), this, "actionListput" );
-	listToFileAction	= new KAction( i18n( "Export Contacts to file" ), "", 0,
+	listToFileAction	= new KAction( i18n( "Export Contacts to File" ), "", 0,
 							this, SLOT( slotExportContactsListToFile() ), this, "actionListputFile" );
-	listFromFileAction	= new KAction( i18n( "Import Contacts from file" ), "", 0,
+	listFromFileAction	= new KAction( i18n( "Import Contacts From File" ), "", 0,
 							this, SLOT( slotImportContactsFromFile() ), this, "actionListgetFile" );
 	friendsModeAction	= new KToggleAction( i18n( "Only for Friends" ), "", 0,
 							this, SLOT( slotFriendsMode() ), this,

@@ -39,7 +39,7 @@
 
 GaduEditContact::GaduEditContact( GaduAccount* account, GaduContact* contact,
 		    QWidget* parent, const char* name )
-: KDialogBase( parent, name, true, i18n( "Edit Contacts properties" ),
+: KDialogBase( parent, name, true, i18n( "Edit Contacts Properties" ),
 			 KDialogBase::Ok | KDialogBase::Cancel,
 			 KDialogBase::Ok, true ), account_( account ), contact_( contact )
 {
@@ -60,7 +60,7 @@ GaduEditContact::GaduEditContact( GaduAccount* account, GaduContact* contact,
 
 GaduEditContact::GaduEditContact( GaduAccount* account,  GaduContactsList::ContactLine* clin,
 		    QWidget* parent , const char* name  )
-: KDialogBase( parent, name, true, i18n( "Edit Contacts properties" ),
+: KDialogBase( parent, name, true, i18n( "Edit Contacts Properties" ),
 			 KDialogBase::Ok | KDialogBase::Cancel,
 			 KDialogBase::Ok, true ), account_( account ), contact_( NULL )
 {
