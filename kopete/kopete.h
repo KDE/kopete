@@ -33,7 +33,6 @@
 #include <kiconloader.h>
 
 #include "preferencesdialog.h"
-#include "aboutplugins.h"
 #include "kopetewindow.h"
 
 #include "plugin.h"
@@ -45,7 +44,6 @@
 class AppearanceConfig;
 class LibraryLoader;
 class KopeteLibraryInfo;
-class KopeteSystemTray;
 
 struct KopeteEmoticons
 {
@@ -81,7 +79,7 @@ class Kopete : public KUniqueApplication
 	KopeteWindow *mainWindow() const { return mainwindow; };
 	ContactList *contactList() const { return mainwindow->contactlist; };
 	KStatusBar *statusBar() const { return mainwindow->statusBar(); };
-	KopeteSystemTray *systemTray() const {return tray; };
+	KopeteSystemTray *systemTray() const {return mainwindow->tray; };
 
 	/** No descriptions */
 	void saveOptions();
@@ -110,7 +108,6 @@ private:
 	KIconLoader *mIconLoader;
 	KopeteEmoticons mEmoticons;
 	AppearanceConfig *mAppearance;
-	KopeteSystemTray *tray;
 	QString mEmoticonTheme;
 
 	static void cleverKCrashHack(int);
@@ -121,7 +118,6 @@ public slots:
 	void slotExit();
 	void slotConnectAll();
 	void slotDisconnectAll();
-	void slotAboutPlugins();
 	void slotAddContact();
 	void slotSetAway();
 };

@@ -38,7 +38,6 @@
 #include "pluginloader.h"
 #include "pluginmodule.h"
 #include <addwizardimpl.h>
-#include "systemtray.h"
 
 class Plugins;
 
@@ -71,15 +70,6 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 		config->writeEntry("Modules", modules);
 	}
 
-	tray = new KopeteSystemTray();
-	tray->getContextMenu()->insertSeparator();
-	mainwindow->actionAddContact->plug( tray->getContextMenu() );
-	tray->getContextMenu()->insertSeparator();
-	mainwindow->actionConnect->plug( tray->getContextMenu() );
-	mainwindow->actionDisconnect->plug( tray->getContextMenu() );
-	mainwindow->actionPrefs->plug( tray->getContextMenu() );
-	tray->getContextMenu()->insertSeparator();
-
 	/* Ok, load saved plugins */
 	loadPlugins();
 }
@@ -95,13 +85,18 @@ Kopete::~Kopete()
 	if (mLibraryLoader)
 		delete mLibraryLoader;
 
-	if (tray)
+/*	if (tray)
 	{
+		kdDebug() << "~Kopete(), deleting tray" << endl;
 		delete tray;
-	}
+	}*/
+
 
 	if (mainwindow)
+	{
+		kdDebug() << "~Kopete(), deleting mainwindow" << endl;
 		delete mainwindow;
+	}
 
 
 	// Only use this if cant find crash cause :-)
@@ -219,14 +214,6 @@ void Kopete::slotDisconnectAll()
 			prot->Disconnect();
 		}
 	}
-}
-
-/** No descriptions */
-void Kopete::slotAboutPlugins()
-{
-	AboutPlugins *aboutPl;
-	aboutPl = new AboutPlugins(mainwindow);
-	aboutPl->show();
 }
 
 /** Add a contact through Wizard */
