@@ -27,6 +27,9 @@
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
 #include <kstdaction.h>
+#include <kaccel.h>
+#include <kkeydialog.h>
+#include <kedittoolbar.h>
 
 #include "kopete.h"
 #include "kopeteballoon.h"
@@ -34,6 +37,8 @@
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
 #include "systemtray.h"
+
+#include "kopeteprefs.h"
 
 KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 : KMainWindow( parent, name )
@@ -109,7 +114,7 @@ void KopeteWindow::initActions ( void )
 
 	actionPrefs = KStdAction::preferences(kopeteapp, SLOT(slotPreferences()), actionCollection());
 
-	actionSave = new KAction( i18n("Save &ContactList"), "filesave", 0 ,
+	actionSave = new KAction( i18n("Save &ContactList"), "filesave", KStdAccel::shortcut(KStdAccel::Save),
 							KopeteContactList::contactList(), SLOT(save()),
 							actionCollection(), "save_contactlist" );
 
@@ -117,6 +122,15 @@ void KopeteWindow::initActions ( void )
 	KStdAction::quit(this, SLOT(slotQuit()), actionCollection());
 
 	toolbarAction = KStdAction::showToolbar(this, SLOT(showToolbar()), actionCollection());
+	KStdAction::keyBindings(this, SLOT(slotConfKeys()), actionCollection());
+	KStdAction::configureToolbars(this, SLOT(slotConfToolbar()), actionCollection());
+
+	actionShowOffliners = new KToggleAction( i18n("Show offline &users"), "viewmag", CTRL+Key_V,
+			this, SLOT(slotToggleShowOffliners()), actionCollection(), "options_show_offliners" );
+
+	// sync actions, config and prefs-dialog
+	connect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
+	slotConfigChanged();
 
 	createGUI ( "kopeteui.rc" );
 }
@@ -240,6 +254,47 @@ void KopeteWindow::slotExecuted( QListViewItem *item )
 		contactvi->contact()->execute();
 }
 
+void KopeteWindow::slotToggleShowOffliners ( void )
+{
+	kdDebug() << "[KopeteWindow] slotToggleShowOffliners()" << endl;
+	kdDebug() << "[KopeteWindow] show offliners KAction is " << actionShowOffliners->isChecked() << endl;
+
+	KopetePrefs *p = KopetePrefs::prefs();
+	p->setShowOffline ( actionShowOffliners->isChecked() );
+
+	disconnect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
+	p->save();
+	connect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
+}
+
+void KopeteWindow::slotConfigChanged()
+{
+	kdDebug() << "[KopeteWindow] slotConfigChanged()" << endl;
+	kdDebug() << "[KopeteWindow] show offliners is " << KopetePrefs::prefs()->showOffline() << endl;
+
+	actionShowOffliners->setChecked( KopetePrefs::prefs()->showOffline() );
+}
+
+
+void KopeteWindow::slotConfKeys()
+{
+	KKeyDialog::configureKeys(actionCollection(), xmlFile(), true, this);
+}
+
+
+void KopeteWindow::slotConfToolbar()
+{
+	saveMainWindowSettings(KGlobal::config(), "General Options");
+	KEditToolbar *dlg = new KEditToolbar(actionCollection(), "kopeteui.rc");
+	if (dlg->exec())
+	{
+		createGUI("kopeteui.rc");
+		applyMainWindowSettings(KGlobal::config(), "General Options");
+	}
+	delete dlg;
+}
+
+
 void KopeteWindow::closeEvent( QCloseEvent *e )
 {
 	if(isClosing)
@@ -262,7 +317,7 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 
 void KopeteWindow::slotQuit()
 {
-	kdDebug() << "KopeteWindow::slotQuit()" <<endl;
+	kdDebug() << "KopeteWindow::slotQuit()" << endl;
 
 	//I don't know why, but when this slot is called by the toolbar, that work fine
 	// but when this slot is called by the system try, the closeEvent's message is showed

@@ -50,7 +50,11 @@ protected:
 
 private slots:
 	void showToolbar();
-	void slotExecuted( QListViewItem * );
+	void slotExecuted(QListViewItem *);
+	void slotToggleShowOffliners(void);
+	void slotConfigChanged(void);
+	void slotConfKeys(void);
+	void slotConfToolbar(void);
 
 	void slotQuit();
 public:
@@ -71,10 +75,8 @@ public:
 	KAction* actionQuit;
 	KAction* actionSave;
 	KToggleAction *toolbarAction;
+	KToggleAction *actionShowOffliners;
 	KAction *actionShowTransfers;
-
-//	KSelectAction* actionStatus;
-//	KAction* actionHide;
 
 	KopeteSystemTray *tray;
 
