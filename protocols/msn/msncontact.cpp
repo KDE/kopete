@@ -338,7 +338,7 @@ void MSNContact::setMsnStatus( MSNProtocol::Status _status )
 	m_status = _status;
 
 	emit statusChanged( this, status() );
-	emit statusChanged(  );
+//	emit statusChanged(  );
 }
 
 bool MSNContact::isBlocked() const

@@ -27,16 +27,6 @@ AddContactPage::~AddContactPage()
 
 }
 
-void AddContactPage::slotFinish()
-{
-
-}
-void AddContactPage::slotFinish(KopeteMetaContact*)
-{
-
-}
-
-
 /*
  * Local variables:
  * c-indentation-style: k&r

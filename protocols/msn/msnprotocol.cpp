@@ -1134,8 +1134,6 @@ void MSNProtocol::slotContactRemoved( QString handle, QString list,
 	uint /* serial */, uint group )
 {
 	QString gn = groupName( group );
-	if( gn.isNull() )
-		gn = i18n( "Unknown" );
 
 	if( list == "BL" )
 	{

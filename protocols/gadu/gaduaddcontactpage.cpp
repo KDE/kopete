@@ -38,8 +38,8 @@ GaduAddContactPage::validateData()
 }
 
 void
-GaduAddContactPage::slotFinish()
-{
+GaduAddContactPage::slotFinish(KopeteMetaContact *)
+{	//FIXME: use the metacontat!!!
     if ( canAdd_ ) {
         if ( validateData() ) {
             QString userid = addUI_->addEdit_->text();

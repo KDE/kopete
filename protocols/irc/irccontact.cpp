@@ -395,7 +395,7 @@ void IRCContact::unloading()
 			delete this;
 		} */
 	}
-	emit statusChanged();
+//	emit statusChanged();
 	emit statusChanged(this, Offline);
 }
 
@@ -425,7 +425,7 @@ void IRCContact::joinNow()
 			m_serverContact->chatWindow()->mTabWidget->showPage(mTabPage);
 		}
 	}
-	emit statusChanged();
+//	emit statusChanged();
 	emit statusChanged(this, Online);
 
 }

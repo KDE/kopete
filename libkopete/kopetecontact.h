@@ -289,7 +289,7 @@ signals:
 	/**
 	 * Deprecated, old signal! Use the above one instead
 	 */
-	void statusChanged();
+	//void statusChanged();
 
 	/**
 	 * Connect to this signal to know when the contact

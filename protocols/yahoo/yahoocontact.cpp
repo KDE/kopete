@@ -49,7 +49,7 @@ YahooContact::YahooContact(QString userID, QString fullName, QString group,
 
 	// Update ContactList
     setDisplayName(mFullName);
-	emit statusChanged();
+	emit statusChanged(this, status());
 
     // XXX initActions();
 }

@@ -35,9 +35,7 @@ public:
 	//KopeteProtocol *protocol;
 	virtual bool validateData()=0;
 public slots: // Public slots
-  /** No descriptions */
-  virtual void slotFinish(); //OBSOLETE
-  virtual void slotFinish(KopeteMetaContact*);   //TODO: make this pure virtual
+  virtual void slotFinish(KopeteMetaContact*)=0;
 };
 #endif
 /*

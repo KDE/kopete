@@ -16,7 +16,7 @@ public:
     ~GaduAddContactPage();
      virtual bool  validateData();
 public slots:
-    virtual void slotFinish();
+    virtual void slotFinish(KopeteMetaContact *);
 private:
     GaduProtocol *protocol_;
     gaduAddUI    *addUI_;

@@ -130,8 +130,6 @@ int KopeteContact::importance() const
 {
 	ContactStatus stat = status();
 
-	kdDebug() << "[KopeteContact] importance() with status= " << stat << endl;
-
 	if (stat == Online)
 		return 20;
 

@@ -220,8 +220,8 @@ QString KopeteContactList::toXML()
 	{
 		if(!(*metaContactIt)->isTemporary())
 		{
-			kdDebug() << "KopeteContactList::toXML: Saving meta contact "
-				<< ( *metaContactIt )->displayName() << endl;
+//			kdDebug() << "KopeteContactList::toXML: Saving meta contact "
+//				<< ( *metaContactIt )->displayName() << endl;
 			xml +=  ( *metaContactIt)->toXML();
 		}
 	}
