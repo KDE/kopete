@@ -230,6 +230,7 @@ void IRCServerContact::nickInUseOnLogin(const QString &oldNickname)
 
 void IRCServerContact::forceDisconnect()
 {
+	tryingQuit = true;
 	engine->close();
 	slotQuitServer();
 	mWindow->mToolBar->removeItem(1);
