@@ -244,17 +244,28 @@ void KopeteAccountManager::slotPluginLoaded( KopetePlugin *plugin )
 		config->setGroup( *it );
 
 		if ( config->readEntry( "Protocol" ) != protocol->pluginId() )
-			return;
+		{
+			kdDebug(14010) << k_funcinfo << "protocol mismatch, " << config->readEntry("Protocol") <<
+				" != " << protocol->pluginId() << endl;
+			continue; //return;
+		}
 
 		QString accountId = config->readEntry( "AccountId" );
 		if ( accountId.isEmpty() )
-			return;
+		{
+			kdDebug(14010) << k_funcinfo << "NOT creating account for empty accountId" << endl;
+			continue; //return;
+		}
 
-		kdDebug( 14010 ) << k_funcinfo << "Creating account for " << accountId << endl;
-		
+		kdDebug(14010) << k_funcinfo << "Creating account for " << accountId << endl;
+
 		KopeteAccount *account = protocol->createNewAccount( accountId );
-		if ( !account )
-			return;
+		if (!account)
+		{
+			kdDebug(14010) << k_funcinfo << "FAILED creating account for " << accountId << endl;
+			continue; //return;
+		}
+		account->readConfig( *it );
 	}
 }
 
