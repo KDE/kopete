@@ -5,7 +5,6 @@ AM_CPPFLAGS = -I$(srcdir)/conf \
 	-I$(top_srcdir)/kopete/libkopete/private \
 	$(KOPETE_INCLUDES) \
 	$(all_includes)
-
 KDE_ICON = AUTO
 METASOURCES = AUTO
 
@@ -20,7 +19,7 @@ kopete_SOURCES = main.cpp \
 
 kopete_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH) -lktexteditor
 kopete_LDADD = ../libkopete/libkopete.la conf/libkopeteconf.la \
-	addcontactwizard/libkopeteaddcontactwizard.la
+	addcontactwizard/libkopeteaddcontactwizard.la  $(LIBXML_LIBS) $(LIBXSLT_LIBS)
 
 icondir = $(kde_datadir)/kopete/pics
 icon_DATA =

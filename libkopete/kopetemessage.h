@@ -20,6 +20,7 @@
 
 #include <qptrlist.h>
 #include <qstring.h>
+#include <qdom.h>
 
 #include "kopetecontact.h"
 
@@ -205,7 +206,7 @@ public:
 	 * @return The message importance (low/normal/highlight)
 	 */
 	MessageImportance importance() const;
-	
+
 	/**
 	 * set the importance
 	 */
@@ -262,6 +263,8 @@ public:
 	 */
 	QString asHTML() const;
 
+	QDomDocument asXML();
+
 	QString transformMessage( const QString &model ) const;
 
 	void setBgOverride( bool enable );
@@ -300,12 +303,12 @@ private:
 	 * readable.
 	 */
 	void compareColors( QColor &colorFg, QColor &colorBg );
-	
+
 	/**
 	 * Helper method for transformMessage for formatting names for display
 	 */
 	QString formatDisplayName( const QString &name ) const;
-	 
+
 	/**
 	 * Helper method for transformMessage for finding closing % tag
 	 */
