@@ -62,7 +62,6 @@ public:
 	GaduDCC*	gaduDcc_;
 
 	QTimer*		pingTimer_;
-//	QString		nick_;
 
 	QTextCodec*	textcodec_;
 	KFileDialog*	saveListDialog;
@@ -540,23 +539,15 @@ GaduAccount::ackReceived( unsigned int recipient  )
 void
 GaduAccount::notify( KGaduNotifyList* notifyList )
 {
-	GaduContact* contact;
 	QPtrListIterator<KGaduNotify>notifyListIterator( *notifyList );
 	unsigned int i;
 
 	for ( i = notifyList->count() ; i-- ; ++notifyListIterator ) {
 		kdDebug(14100) << "### NOTIFY " << (*notifyListIterator)->contact_id << " " << (*notifyListIterator)->status << endl;
-		contact = static_cast<GaduContact*> ( contacts()[ QString::number( (*notifyListIterator)->contact_id ) ] );
-
-		if ( !contact ) {
-			kdDebug(14100) << "Notify not in the list " << (*notifyListIterator)->contact_id << endl;
-			p->session_->removeNotify((*notifyListIterator)->contact_id );
-			continue;
-		}
-
-		contact->changedStatus( (*notifyListIterator) );
+		contactStatusChanged( (*notifyListIterator) );
 	}
 }
+
 
 void
 GaduAccount::contactStatusChanged( KGaduNotify* gaduNotify )
@@ -567,23 +558,11 @@ GaduAccount::contactStatusChanged( KGaduNotify* gaduNotify )
 
 	contact = static_cast<GaduContact*>( contacts()[ QString::number( gaduNotify->contact_id ) ] );
 	if( !contact ) {
+		kdDebug(14100) << "Notify not in the list " << gaduNotify->contact_id << endl;
 		return;
 	}
 
-	if ( gaduNotify->description.isEmpty() ) {
-		contact->setOnlineStatus( GaduProtocol::protocol()->convertStatus( gaduNotify->status ) );
-		contact->removeProperty( GaduProtocol::protocol()->propAwayMessage );
-	}
-	else {
-		contact->setOnlineStatus( GaduProtocol::protocol()->convertStatus( gaduNotify->status ) );
-		contact->setProperty( GaduProtocol::protocol()->propAwayMessage, gaduNotify->description );
-	}
-
-/// FIXME: again, store this information
-//	e->event.status60.r emote_ip;
-//	e->event.status60.remote_port;
-//	e->event.status60.version;
-//	e->event.status60.image_size;
+	contact->changedStatus( gaduNotify );
 }
 
 void
