@@ -109,7 +109,7 @@ protected:
 	 *
 	 * FIXME: Make this const!
 	 */
-	QDict<KopeteContact>& contacts();
+	const QDict<KopeteContact>& contacts();
 
 private slots:
 	/**
