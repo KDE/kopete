@@ -90,8 +90,7 @@ KopeteChatWindow *KopeteChatWindow::window( KopeteMessageManager *manager )
 	KopeteContactPtrList members = manager->members();
 	KopeteMetaContact *m = members.first()->metaContact();
 
-	//Don't do group by group for temporary contacts  //Why not? -Olivier
-	if(m && !m->isTemporary() )
+	if(m)
 	{
 		KopeteGroupList gList = m->groups();
 		g = gList.first();
