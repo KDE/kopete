@@ -798,7 +798,7 @@ void MSNProtocol::slotKopeteGroupRemoved(KopeteGroup *g)
 			if(g == KopeteGroup::toplevel)
 				return;
 
-			KopeteGroup::toplevel->setPluginData(this,"id","0");
+			KopeteGroup::toplevel->setPluginData(this,"id",0);
 			KopeteGroup::toplevel->setPluginData(this,"displayName",g->pluginData(this,"displayName"));
 			g->setPluginData(this,"id",QString::null); //the group should be soon deleted, but make sure
 
