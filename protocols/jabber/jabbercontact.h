@@ -148,7 +148,7 @@ public slots:
 	 * Received a message for this contact
 	 */
 	void slotReceivedMessage(const Jabber::Message &message);
-	
+
 	/**
 	 * Sync Groups with server
 	 */
@@ -207,10 +207,6 @@ private slots:
 	void slotSendMessage(KopeteMessage &message);
 
 private:
-	/**
-	 * Initialize popup menu
-	 */
-	void initActions();
 
 	/**
 	 * Convert KopeteMessage to Jabber::Message

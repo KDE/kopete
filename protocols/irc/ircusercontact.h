@@ -44,7 +44,7 @@ public:
 	IRCUserContact(IRCAccount *, const QString &nickname,KopeteMetaContact *mc  );
 
 	// KopeteContact stuff
-	virtual KActionCollection *customContextMenuActions() { return mCustomActions; };
+	virtual KActionCollection *customContextMenuActions();
 	virtual const QString caption() const;
 	virtual KopeteMessageManager* manager( bool canCreate = false );
 

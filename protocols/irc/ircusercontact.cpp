@@ -34,29 +34,6 @@ IRCUserContact::IRCUserContact(IRCAccount *account, const QString &nickname, Kop
 {
 	mNickName = nickname;
 
-	mCustomActions = new KActionCollection(this);
-
-	actionCtcpMenu = new KActionMenu(i18n("C&TCP"), 0, mCustomActions );
-	actionCtcpMenu->insert( new KAction(i18n("&Version"), 0, this, SLOT(slotCtcpVersion()), this) );
-	actionCtcpMenu->insert(  new KAction(i18n("&Ping"), 0, this, SLOT(slotCtcpPing()), this) );
-
-	actionModeMenu = new KActionMenu(i18n("&Modes"), 0, mCustomActions, "actionModeMenu");
-	actionModeMenu->insert( new KAction(i18n("&Op"), 0, this, SLOT(slotOp()), this, "actionOp") );
-	actionModeMenu->insert( new KAction(i18n("&Deop"), 0, this, SLOT(slotDeop()), this, "actionDeop") );
-	actionModeMenu->insert( new KAction(i18n("&Voice"), 0, this, SLOT(slotVoice()), this, "actionVoice") );
-	actionModeMenu->insert( new KAction(i18n("Devoice"), 0, this, SLOT(slotDevoice()), this, "actionDevoice") );
-	actionModeMenu->setEnabled( false );
-
-	actionKick = new KAction(i18n("&Kick"), 0, this, SLOT(slotKick()), mCustomActions);
-	actionKick->setEnabled( false );
-
-	actionBanMenu = new KActionMenu(i18n("&Ban"), 0, mCustomActions, "actionBanMenu");
-	actionBanMenu->insert( new KAction(i18n("Ban *!*@*.host"), 0, this, SLOT(slotBanHost()), this ) );
-	actionBanMenu->insert( new KAction(i18n("Ban *!*@domain"), 0, this, SLOT(slotBanDomain()), this ) );
-	actionBanMenu->insert( new KAction(i18n("Ban *!*user@*.host"), 0, this, SLOT(slotBanUserHost()), this ) );
-	actionBanMenu->insert( new KAction(i18n("Ban *!*user@domain"), 0, this, SLOT(slotBanUserDomain()), this ) );
-	actionBanMenu->setEnabled( false );
-
 	mOnlineTimer = new QTimer( this );
 	connect( mOnlineTimer, SIGNAL(timeout()), this, SLOT( slotUserOffline() ) );
 
@@ -187,6 +164,39 @@ void IRCUserContact::slotCtcpVersion()
 	mEngine->sendCtcpVersion(mNickName);
 }
 
+KActionCollection *IRCUserContact::customContextMenuActions()
+{
+	mCustomActions = new KActionCollection(this);
+
+	actionCtcpMenu = new KActionMenu(i18n("C&TCP"), 0, mCustomActions );
+	actionCtcpMenu->insert( new KAction(i18n("&Version"), 0, this, SLOT(slotCtcpVersion()), mCustomActions) );
+	actionCtcpMenu->insert(  new KAction(i18n("&Ping"), 0, this, SLOT(slotCtcpPing()), mCustomActions) );
+
+	actionModeMenu = new KActionMenu(i18n("&Modes"), 0, mCustomActions, "actionModeMenu");
+	actionModeMenu->insert( new KAction(i18n("&Op"), 0, this, SLOT(slotOp()), actionModeMenu, "actionOp") );
+	actionModeMenu->insert( new KAction(i18n("&Deop"), 0, this, SLOT(slotDeop()), actionModeMenu, "actionDeop") );
+	actionModeMenu->insert( new KAction(i18n("&Voice"), 0, this, SLOT(slotVoice()), actionModeMenu, "actionVoice") );
+	actionModeMenu->insert( new KAction(i18n("Devoice"), 0, this, SLOT(slotDevoice()), actionModeMenu, "actionDevoice") );
+	actionModeMenu->setEnabled( false );
+
+	actionKick = new KAction(i18n("&Kick"), 0, this, SLOT(slotKick()), mCustomActions);
+	actionKick->setEnabled( false );
+
+	actionBanMenu = new KActionMenu(i18n("&Ban"), 0, mCustomActions, "actionBanMenu");
+	actionBanMenu->insert( new KAction(i18n("Ban *!*@*.host"), 0, this, SLOT(slotBanHost()), actionBanMenu ) );
+	actionBanMenu->insert( new KAction(i18n("Ban *!*@domain"), 0, this, SLOT(slotBanDomain()), actionBanMenu ) );
+	actionBanMenu->insert( new KAction(i18n("Ban *!*user@*.host"), 0, this, SLOT(slotBanUserHost()), actionBanMenu ) );
+	actionBanMenu->insert( new KAction(i18n("Ban *!*user@domain"), 0, this, SLOT(slotBanUserDomain()), actionBanMenu ) );
+	actionBanMenu->setEnabled( false );
+
+	//bool isOperator = ( chan->manager()->contactOnlineStatus( mAccount->myself() ) == IRCProtocol::IRCUserOp() );
+	//actionModeMenu->setEnabled(isOperator);
+	//actionBanMenu->setEnabled(isOperator);
+	//actionKick->setEnabled(isOperator);
+
+	return mCustomActions;
+}
+
 void IRCUserContact::slotIncomingModeChange( const QString &, const QString &channel, const QString &mode )
 {
 	IRCChannelContact *chan = mAccount->findChannel( channel );
@@ -208,11 +218,6 @@ void IRCUserContact::slotIncomingModeChange( const QString &, const QString &cha
 
 			emit( onlineStatusChanged( static_cast<KopeteContact*>(this), onlineStatus() ) );
 		}
-
-		bool isOperator = ( chan->manager()->contactOnlineStatus( mAccount->myself() ) == IRCProtocol::IRCUserOp() );
-		actionModeMenu->setEnabled(isOperator);
-		actionBanMenu->setEnabled(isOperator);
-		actionKick->setEnabled(isOperator);
 	}
 }
 

@@ -77,8 +77,6 @@ public:
 
 	KListView *selectMetaContactListBox;
 
-	KPopupMenu *contextMenu;
-
 	QString contactId;
 
 	QString icon;
@@ -111,7 +109,6 @@ KopeteContact::KopeteContact( KopeteAccount *account,
 	d->metaContact = parent;
 	d->protocol = 0l;
 	d->cachedSize = 0;
-	d->contextMenu = 0L;
 	d->fileCapable = false;
 	d->conversations = 0;
 	d->historyDialog = 0L;
@@ -150,7 +147,6 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	d->metaContact = parent;
 	d->protocol = protocol;
 	d->cachedSize = 0;
-	d->contextMenu = 0L;
 	d->fileCapable = false;
 	d->conversations = 0;
 	d->historyDialog = 0L;
@@ -280,7 +276,7 @@ void KopeteContact::slotAddContact()
 	}
 }
 
-KPopupMenu* KopeteContact::createContextMenu()
+KPopupMenu* KopeteContact::popupMenu()
 {
 	//FIXME: This should perhaps be KActionCollection * KopeteContact::contactActions() to
 	//FIXME: 	avoid passing around KPopupMenu's
@@ -338,6 +334,10 @@ KPopupMenu* KopeteContact::createContextMenu()
 		{
 			customActions->action( i )->plug( menu );
 		}
+
+		//Reparent the collection
+		customActions->parent()->removeChild( customActions );
+		menu->insertChild( customActions );
 	}
 
 	menu->insertSeparator();
@@ -355,22 +355,6 @@ KPopupMenu* KopeteContact::createContextMenu()
 	return menu;
 }
 
-KPopupMenu *KopeteContact::popupMenu()
-{
-	if( d->contextMenu )
-		delete d->contextMenu;
-
-	d->contextMenu = createContextMenu();
-	return d->contextMenu;
-}
-
-void KopeteContact::showContextMenu( const QPoint& p )
-{
-	popupMenu()->exec( p );
-	delete d->contextMenu;
-	d->contextMenu = 0L;
-}
-
 void KopeteContact::slotChangeDisplayName(){
 	bool okClicked;
 	QString newName = KLineEditDlg::getText( i18n( "Change Alias" ), i18n( "New alias for %1:" ).arg( contactId() ),
@@ -384,6 +368,7 @@ void KopeteContact::slotChangeMetaContact()
 {
 	KDialogBase *moveDialog= new KDialogBase( qApp->mainWidget(), "moveDialog", true, i18n( "Move Contact" ),
 		KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
+
 	QVBox *w = new QVBox( moveDialog );
 	w->setSpacing( 8 );
 	new QLabel( i18n( "Choose the meta contact into which you want to move this contact." ), w );

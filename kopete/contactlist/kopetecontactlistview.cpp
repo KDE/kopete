@@ -111,7 +111,7 @@ KopeteContactListView::KopeteContactListView( QWidget *parent,
 	connect( KopeteContactList::contactList(),
 		SIGNAL( groupAdded( KopeteGroup * ) ),
 		SLOT( slotGroupAdded( KopeteGroup * ) ) );
-		
+
 	connect( KopeteViewManager::viewManager() , SIGNAL( newMessageEvent(KopeteEvent *) ),
 		this, SLOT( slotNewMessageEvent(KopeteEvent *) ) );
 
@@ -122,7 +122,7 @@ KopeteContactListView::KopeteContactListView( QWidget *parent,
 
 //	connect( this , SIGNAL ( onItem(QListViewItem *) ) ,
 //		this, SLOT (slotOnItem(QListViewItem *) ));
-	
+
 	addColumn( i18n("Contacts") );
 
 	closed  = SmallIcon( "folder_green" );
@@ -539,7 +539,11 @@ void KopeteContactListView::slotContextMenu( KListView*, QListViewItem *item,
 //		kdDebug(14000) << "KopeteContactListView::showContextMenu: x: " << px << ", y: " << py << endl;
 		KopeteContact *c = metaLVI->getContactFromIcon( QPoint( px, py ) ) ;
 		if( c )
-			c->showContextMenu( point );
+		{
+			KPopupMenu *p = c->popupMenu();
+			p->exec( point );
+			delete p;
+		}
 		else
 			metaLVI->showContextMenu( point );
 	}
@@ -716,7 +720,7 @@ void KopeteContactListView::slotSettingsChanged( void )
 	{
 		if (!mShowAsTree)
 			gi->setPixmap( 0, classic );
-		else 
+		else
 		{
 			if (isOpen(gi))
 				gi->setPixmap( 0, open );
@@ -866,7 +870,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem */*parent*/
 		{
 			int r=KMessageBox::questionYesNo( qApp->mainWidget(), i18n( "<qt>Would you like to add this contact to your contaclist</qt>" ),
 				i18n( "Kopete" ), KStdGuiItem::yes(),KStdGuiItem::no(),"addTemporaryWhenMoving" );
-			
+
 			if(r==KMessageBox::Yes)
 				source_metaLVI->metaContact()->setTemporary( false, dest_groupLVI->group() );
 		}
@@ -885,7 +889,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem */*parent*/
 		{
 			int r=KMessageBox::questionYesNo( qApp->mainWidget(), i18n( "<qt>Would you like to add this contact to your contaclist</qt>" ),
 				i18n( "Kopete" ), KStdGuiItem::yes(),KStdGuiItem::no(),"addTemporaryWhenMoving" );
-			
+
 			if(r==KMessageBox::Yes)
 				source_metaLVI->metaContact()->setTemporary( false, KopeteGroup::toplevel );
 		}
@@ -1071,7 +1075,7 @@ void KopeteContactListView::slotNewMessageEvent(KopeteEvent *event)
 		if(!m)
 			return;
 
-		
+
 		for(KopeteMetaContactLVI *li = m_metaContacts.first(); li; li = m_metaContacts.next() )
 		{
 			if ( li->metaContact() == m )

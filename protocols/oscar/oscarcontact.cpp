@@ -103,7 +103,6 @@ OscarContact::OscarContact(const QString name, const QString displayName,
 	}
 
 	initSignals();
-	initActions();
 /*
 	if ( !(mListContact->alias().isEmpty()) )
 	{
@@ -288,15 +287,6 @@ void OscarContact::slotUpdateBuddy()
 			setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE) );
 		}
 	}
-}
-
-void OscarContact::initActions()
-{
-//	kdDebug(14150) << k_funcinfo << "Called" << endl;
-	actionCollection = 0L;
-	actionWarn = new KAction(i18n("&Warn"), 0, this, SLOT(slotWarn()), this, "actionWarn");
-	actionBlock = new KAction(i18n("&Block"), 0, this, SLOT(slotBlock()), this, "actionBlock");
-	actionDirectConnect = new KAction(i18n("&Direct IM"), 0, this, SLOT(slotDirectConnect()), this, "actionDirectConnect");
 }
 
 void OscarContact::slotBuddyChanged(UserInfo u)
@@ -559,15 +549,14 @@ bool OscarContact::isReachable()
 }
 
 // Returns a set of custom menu items for the context menu
-KActionCollection *OscarContact::customContextMenuActions(void)
+KActionCollection *OscarContact::customContextMenuActions()
 {
-	if( actionCollection != 0L )
-	delete actionCollection;
-
 	actionCollection = new KActionCollection(this);
-	actionCollection->insert( actionWarn );
-	actionCollection->insert( actionBlock );
-	actionCollection->insert( actionDirectConnect ); // experimental
+
+	actionWarn = new KAction(i18n("&Warn"), 0, this, SLOT(slotWarn()), actionCollection, "actionWarn");
+	actionBlock = new KAction(i18n("&Block"), 0, this, SLOT(slotBlock()), actionCollection, "actionBlock");
+	actionDirectConnect = new KAction(i18n("&Direct IM"), 0, this, SLOT(slotDirectConnect()), actionCollection, "actionDirectConnect");
+
 	return actionCollection;
 }
 

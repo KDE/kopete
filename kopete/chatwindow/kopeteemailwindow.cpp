@@ -140,6 +140,7 @@ KopeteEmailWindow::KopeteEmailWindow( KopeteMessageManager *manager, bool foreig
 	h->addWidget( d->btnReplySend, 0, Qt::AlignRight | Qt::AlignVCenter );
 
 	initActions();
+	setWFlags(Qt::WDestructiveClose);
 
 	d->blnShowingMessage = false;
 

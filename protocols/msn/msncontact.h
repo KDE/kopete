@@ -101,10 +101,10 @@ public:
 
 	/**
 	 * MSNAccount and MSNSwhitchBoardSocket need to change the displayName of contacts.
-	 * Then, we do this fuction public  
+	 * Then, we do this fuction public
 	 **/
 	void setDisplayName(const QString &Dname);
-	
+
 	/**
 	 * Because blocked contact have a small auto-modified status
 	 */
@@ -114,7 +114,7 @@ public slots:
 	virtual void slotUserInfo();
 	virtual void slotDeleteContact();
 	virtual void sendFile(const KURL &sourceURL, const QString &altFileName, uint fileSize);
-	
+
 	/**
 	 * Everytime the kopete's contactlist is modified, we sync the serverlist with it
 	 */

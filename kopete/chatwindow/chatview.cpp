@@ -440,7 +440,9 @@ void ChatView::slotContactsContextMenu( KListView*, QListViewItem *item, const Q
 	if( item )
 	{
 		KopeteContactLVI *contactLVI = dynamic_cast<KopeteContactLVI*>( item );
-		((KopeteContact*)contactLVI->contact())->showContextMenu( point );
+		KPopupMenu *p = ((KopeteContact*)contactLVI->contact())->popupMenu();
+		p->exec( point );
+		delete p;
 	}
 }
 
@@ -949,7 +951,9 @@ void ChatView::slotRightClick( const QString &, const QPoint &point )
 		{
 			if( msgManager()->members().contains( m.from() ) )
 			{
-				((KopeteContact*)m.from())->showContextMenu( point );
+				KPopupMenu *p = ((KopeteContact*)m.from())->popupMenu();
+				p->exec( point );
+				delete p;
 				delete chatWindowPopup;
 				chatWindowPopup = 0L;
 			}
@@ -1001,7 +1005,8 @@ void ChatView::slotRightClick( const QString &, const QPoint &point )
 		chatWindowPopup->insertSeparator();
 		closeAction->plug( chatWindowPopup );
 
-		chatWindowPopup->popup( point );
+		chatWindowPopup->exec( point );
+		delete chatWindowPopup;
 	}
 }
 

@@ -174,9 +174,10 @@ KopeteChatWindow::KopeteChatWindow(QWidget *parent, const char* name) : KMainWin
 	toolBar()->alignItemRight( 99 );
 
 	readOptions();
+	setWFlags(Qt::WDestructiveClose);
 
 	windows.append( this );
-	
+
 	kdDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
 }
 
@@ -185,7 +186,7 @@ KopeteChatWindow::~KopeteChatWindow()
 	kdDebug( 14010 ) << k_funcinfo << endl;
 
 	emit( closing( this ) );
-	
+
 	bool repeat = true;
 	while( repeat )
 	{
@@ -209,7 +210,7 @@ KopeteChatWindow::~KopeteChatWindow()
 	windows.remove( this );
 
 	kdDebug( 14010 ) << "Open Windows: " << windows.count() << endl;
-	
+
 	saveOptions();
 
 	if( backgroundFile )
@@ -297,7 +298,7 @@ void KopeteChatWindow::slotTabContextMenu( QWidget *tab, const QPoint &pos )
 	actionDetachMenu->plug( p );
 	tabClose->plug( p );
 	p->exec( pos );
-
+	delete p;
 	m_popupView = 0;
 }
 
@@ -846,10 +847,12 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 	// 'Contacts' action, or something cleverer.
 	for ( contact = m_them.first(); contact != 0; contact = m_them.next() )
 	{
+		KPopupMenu *p = contact->popupMenu();
+		connect ( actionContactMenu->popupMenu(), SIGNAL(aboutToHide()), p, SLOT(deleteLater() ) );
 		if( contact->metaContact() )
-			contactsMenu->insertItem( contact->onlineStatus().iconFor( contact ) , contact->metaContact()->displayName(), contact->popupMenu() );
+			contactsMenu->insertItem( contact->onlineStatus().iconFor( contact ) , contact->metaContact()->displayName(), p );
 		else
-			contactsMenu->insertItem( contact->onlineStatus().iconFor( contact ) , contact->displayName(), contact->popupMenu() );
+			contactsMenu->insertItem( contact->onlineStatus().iconFor( contact ) , contact->displayName(), p );
 	}
 }
 

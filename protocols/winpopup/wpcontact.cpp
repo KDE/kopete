@@ -61,14 +61,18 @@ WPContact::WPContact(KopeteAccount *account, const QString &newHostName, const Q
 
 	m_manager = 0L;
 
-	// Set up the context menu
-	myActionCollection = new KActionCollection(this);
+}
+
+KActionCollection * WPContact::customContextMenuActions()
+{
+	//myActionCollection = new KActionCollection(parent);
+	return 0L;
 }
 
 void WPContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData)
 {
 	kdDebug(14180) << "WP::serialize(...)" << endl;
-	
+
 	KopeteContact::serialize(serializedData, addressBookData);
 }
 
@@ -127,7 +131,7 @@ void WPContact::slotCheckStatus()
 
 	myWasConnected = protocol() != 0 && account() != 0;
 	if(account()) newIsOnline = static_cast<WPAccount *>(account())->checkHost(theHostName);
-	
+
 	if(newIsOnline != isOnline() || myWasConnected != oldWasConnected)
 		setOnlineStatus(myWasConnected ? newIsOnline ? WPProtocol::protocol()->WPOnline : WPProtocol::protocol()->WPOffline : WPProtocol::protocol()->WPOffline );
 }
@@ -153,10 +157,10 @@ void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 void WPContact::slotSendMessage( KopeteMessage& message )
 {
 	DEBUG(WPDMETHOD, "WPContact::slotSendMessage(<message>)");
-	
+
 	QString Message = (!message.subject().isEmpty() ? "Subject: " + message.subject() + "\n" : QString("")) + message.plainBody();
 	static_cast<WPAccount *>(account())->slotSendMessage( Message, dynamic_cast<WPContact *>( message.to().first() )->hostName() );
-	
+
 	emit messageSuccess();
 }
 

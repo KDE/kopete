@@ -77,13 +77,12 @@ KopeteMessageManager *MSNContact::manager( bool canCreate )
 
 KActionCollection *MSNContact::customContextMenuActions()
 {
-	delete m_actionCollection;
 	m_actionCollection = new KActionCollection(this);
 
 	// Block/unblock Contact
 	QString label = isBlocked() ? i18n( "Unblock User" ) : i18n( "Block User" );
 	KAction* actionBlock = new KAction( label, 0, this, SLOT( slotBlockUser() ), m_actionCollection, "actionBlock" );
-	
+
 	//show profile
 	KAction* actionShowProfile = new KAction( i18n("Show Profile") , 0, this, SLOT( slotShowProfile() ), m_actionCollection, "actionShowProfile" );
 
@@ -263,8 +262,8 @@ void MSNContact::syncGroups( )
 		//We need to make sure that syncGroups is not called twice succesively
 		// because m_serverGroups will be only updated with the reply of the server
 		// and then, the same command can be sent twice.
-		// FIXME: if this method is called a seconds times, that mean change can be 
-		//        done in the contactlist. we should found a way to recall this 
+		// FIXME: if this method is called a seconds times, that mean change can be
+		//        done in the contactlist. we should found a way to recall this
 		//        method later. (a QTimer?)
 		kdDebug() << k_funcinfo << " This contact is already moving. Abort sync " << endl;
 		return;
@@ -273,7 +272,7 @@ void MSNContact::syncGroups( )
 	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
 	if( !notify )
 	{
-		//We are not connected, we will doing it next connection. 
+		//We are not connected, we will doing it next connection.
 		//Force to reload the whole contactlist from server to suync groups when connecting
 		account()->setPluginData(protocol(),"serial", QString::null );
 		return;
@@ -310,7 +309,7 @@ void MSNContact::syncGroups( )
 			}
 		}
 	}
-	
+
 	//STEP TWO : remove the contact from groups where the MC is not, but let it at least in one group
 	for( QMap<uint, KopeteGroup*>::Iterator it = m_serverGroups.begin();(count > 1 && it != m_serverGroups.end()); ++it )
 	{
@@ -362,7 +361,7 @@ void MSNContact::rename( const QString &newName )
 
 void MSNContact::slotShowProfile()
 {
-	KRun::runURL( QString::fromLatin1("http://members.msn.com/default.msnw?mem=") + contactId()  , "text/html" ); 
+	KRun::runURL( QString::fromLatin1("http://members.msn.com/default.msnw?mem=") + contactId()  , "text/html" );
 }
 
 
@@ -378,14 +377,14 @@ void MSNContact::sendFile( const KURL &sourceURL, const QString &altFileName, ui
 		filePath = KFileDialog::getOpenFileName( QString::null ,"*", 0l  , i18n( "Kopete File Transfer" ));
 	else
 		filePath = sourceURL.path(-1);
-		
+
 	//kdDebug(14140) << "MSNContact::sendFile: File chosen to send:" << fileName << endl;
 
 	if ( !filePath.isEmpty() )
 	{
 		//Send the file
 		static_cast<MSNMessageManager*>( manager(true) )->sendFile( filePath, altFileName, fileSize );
-		
+
 	}
 }
 
@@ -399,11 +398,11 @@ void MSNContact::setOnlineStatus(const KopeteOnlineStatus& status)
 	if(isBlocked() && status.internalStatus() < 15)
 	{
 		KopeteContact::setOnlineStatus(KopeteOnlineStatus(status.status() , (status.weight()==0) ? 0 : (status.weight() -1)  ,
-			protocol() , status.internalStatus()+15 , 
+			protocol() , status.internalStatus()+15 ,
 			(status.status()==KopeteOnlineStatus::Offline)? QString::fromLatin1("msn_offline_blocked") : QString::fromLatin1("msn_online_blocked")  ,
 			status.caption() ,  i18n("%1|Blocked").arg( status.description() ) ) );
 	}
-	else 
+	else
 	{
 		if(status.internalStatus() >= 15)
 		{	//the user is not blocked, but the status is blocked

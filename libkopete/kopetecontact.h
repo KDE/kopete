@@ -155,7 +155,7 @@ public:
 	 * @return the contact's protocol
 	 */
 	KopeteProtocol* protocol() const;
-	
+
 	/**
 	 * Return the account that the contact belongs to.
 	 *
@@ -169,8 +169,6 @@ public:
 	 * @return the contact's account
 	 */
 	KopeteAccount* account() const;
-	
-
 
 	/**
 	 * Returns a set of custom menu items for the context menu
@@ -182,17 +180,11 @@ public:
 	 */
 	virtual KActionCollection *customContextMenuActions();
 
-	/**
-	 * Show a context menu of actions pertaining to this contact
-	 *
-	 * @param p The point at which to show the context menu
-	 */
-	void showContextMenu( const QPoint& p );
 
 	/**
 	 * Get the Context Menu for this contact
 	 */
-	KPopupMenu *createContextMenu();
+	KPopupMenu *popupMenu();
 
 	/**
 	 * Moves this contact to a new MetaContact.
@@ -232,8 +224,6 @@ public:
 	 * If this function is not called by a plugin, the idle state is set to Unknown
 	 */
 	void setIdleState( KopeteContact::IdleState newState );
-
-	KPopupMenu *popupMenu();
 
 	/**
 	 * Rename a contact's display name.
@@ -309,9 +299,9 @@ public slots:
 	 *                file size (such as over  asocket
 	 */
 	virtual void sendFile( const KURL &sourceURL = KURL(), const QString &fileName = QString::null, uint fileSize = 0L );
-	
+
 	/**
-	 * Protocols with server-side contact lists can implement this to 
+	 * Protocols with server-side contact lists can implement this to
 	 * sync the server groups with the metaContact groups.
 	 * This method is called everytime the metacontact has been moved
 	 *

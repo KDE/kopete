@@ -55,10 +55,10 @@ class WPContact: public KopeteContact
 
 public:
 	WPContact(KopeteAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact);
-	
+
 //	virtual bool isOnline() const;
 	virtual bool isReachable();
-	virtual KActionCollection *customContextMenuActions() { return myActionCollection; }
+	virtual KActionCollection *customContextMenuActions();
 	virtual KopeteMessageManager *manager(bool canCreate = false);
 	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
 
@@ -80,7 +80,7 @@ private slots:
 private:
 	QString theHostName;
 	bool myWasConnected;	// true if protocol connected at last check
-	
+
 	QTimer checkStatus;		// checks the status of this contact every second or so
 	KActionCollection *myActionCollection;
 							// holds all the protocol specific actions (not many!)

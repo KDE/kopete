@@ -149,41 +149,22 @@ bool JabberContact::isReachable()
 	return true;
 }
 
-/**
- * Create actions
- */
-void JabberContact::initActions()
-{
-	actionRename = new KAction(i18n("Rename Contact"), "editrename", 0, this, SLOT(slotRenameContact()), this, "actionRename");
-	actionSelectResource = new KSelectAction(i18n("Select Resource"), "selectresource", 0, this, SLOT(slotSelectResource()), this, "actionSelectResource");
-	actionSendAuth = new KAction(i18n("(Re)send Authorization To"), "", 0, this, SLOT(slotSendAuth()), this, "actionSendAuth");
-	actionRequestAuth = new KAction(i18n("(Re)request Authorization From"), "", 0, this, SLOT(slotRequestAuth()), this, "actionRequestAuth");
-	actionSetAvailability = new KActionMenu(i18n("Set Availability"), "jabber_online");
-	actionStatusOnline = new KAction(i18n("Online"), "jabber_online", 0, this, SLOT(slotStatusOnline()), this, "actionOnline");
-	actionStatusChatty = new KAction(i18n("Free to Chat"), "jabber_chatty", 0, this, SLOT(slotStatusChatty()), this, "actionChatty");
-	actionStatusAway = new KAction(i18n("Away"), "jabber_away", 0, this,SLOT(slotStatusAway()), this,  "actionAway");
-	actionStatusXA = new KAction(i18n("Extended Away"), "jabber_away", 0, this, SLOT(slotStatusXA()),this, "actionXA");
-	actionStatusDND = new KAction(i18n("Do Not Disturb"), "jabber_na", 0, this, SLOT(slotStatusDND()), this, "actionDND");
-	actionStatusInvisible = new KAction(i18n("Invisible"), "jabber_invisible", 0, this, SLOT(slotStatusInvisible()), this, "actionInvisible");
-
-	actionSetAvailability->insert(actionStatusOnline);
-	actionSetAvailability->insert(actionStatusChatty);
-	actionSetAvailability->insert(actionStatusAway);
-	actionSetAvailability->insert(actionStatusXA);
-	actionSetAvailability->insert(actionStatusDND);
-	actionSetAvailability->insert(actionStatusInvisible);
-
-}
-
 KActionCollection *JabberContact::customContextMenuActions()
 {
-
-	delete actionCollection;
-
 	actionCollection = new KActionCollection(this);
+	actionRename = new KAction(i18n("Rename Contact"), "editrename", 0, this, SLOT(slotRenameContact()), actionCollection, "actionRename");
+	actionSendAuth = new KAction(i18n("(Re)send Authorization To"), "", 0, this, SLOT(slotSendAuth()), actionCollection, "actionSendAuth");
+	actionRequestAuth = new KAction(i18n("(Re)request Authorization From"), "", 0, this, SLOT(slotRequestAuth()), actionCollection, "actionRequestAuth");
+	actionSetAvailability = new KActionMenu(i18n("Set Availability"), 0, actionCollection, "jabber_online");
+
+	actionStatusOnline = new KAction(i18n("Online"), "jabber_online", 0, this, SLOT(slotStatusOnline()), actionSetAvailability, "actionOnline");
+	actionStatusChatty = new KAction(i18n("Free to Chat"), "jabber_chatty", 0, this, SLOT(slotStatusChatty()), actionSetAvailability, "actionChatty");
+	actionStatusAway = new KAction(i18n("Away"), "jabber_away", 0, this,SLOT(slotStatusAway()), actionSetAvailability,  "actionAway");
+	actionStatusXA = new KAction(i18n("Extended Away"), "jabber_away", 0, this, SLOT(slotStatusXA()),actionSetAvailability, "actionXA");
+	actionStatusDND = new KAction(i18n("Do Not Disturb"), "jabber_na", 0, this, SLOT(slotStatusDND()), actionSetAvailability, "actionDND");
+	actionStatusInvisible = new KAction(i18n("Invisible"), "jabber_invisible", 0, this, SLOT(slotStatusInvisible()), actionSetAvailability, "actionInvisible");
 
 	KGlobal::config()->setGroup("Jabber");
-
 
 	// if the contact is online,
 	// display the resources we have for it
@@ -223,21 +204,14 @@ KActionCollection *JabberContact::customContextMenuActions()
 			}
 		}
 
+		actionSelectResource = new KSelectAction(i18n("Select Resource"), "selectresource", 0, this, SLOT(slotSelectResource()), actionCollection, "actionSelectResource");
+
 		// attach list to the menu action
 		actionSelectResource->setItems(items);
 
 		// make sure the active item is selected
 		actionSelectResource->setCurrentItem(activeItem);
-
-		// plug it to the menu
-		actionCollection->insert(actionSelectResource);
 	}
-
-	actionCollection->insert(actionSendAuth);
-	actionCollection->insert(actionRequestAuth);
-
-	// Availability popup menu
-	actionCollection->insert(actionSetAvailability);
 
 	return actionCollection;
 

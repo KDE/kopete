@@ -100,7 +100,7 @@ public:
 private:
 	// All KopeteChatWindows are created by the findWindow function
 	KopeteChatWindow(QWidget *parent = 0, const char* name = "KopeteChatWindow" );
-	
+
 	void initActions(void);
 	void saveOptions(void);
 	void readOptions(void);

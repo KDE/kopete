@@ -5,8 +5,8 @@ AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CA
 
 noinst_LTLIBRARIES = libkopeteprivate.la
 
-libkopeteprivate_la_SOURCES = kopetemessagelog.cpp kopeteevent.cpp kopeteemoticons.cpp \
-	kopeteprefs.cpp kopetecommand.cpp kopetexsl.cpp
+libkopeteprivate_la_SOURCES = kopeteevent.cpp kopeteemoticons.cpp \
+	kopeteprefs.cpp kopetecommand.cpp kopetexsl.cpp kopetexmllogger.cpp
 libkopeteprivate_la_LDFLAGS = $(all_libraries)
 libkopeteprivate_la_LIBADD = $(LIB_KDEUI) $(LIBXML_LIBS) $(LIBXSLT_LIBS)
 # vim: set noet:

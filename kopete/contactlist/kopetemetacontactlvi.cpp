@@ -312,11 +312,12 @@ void KopeteMetaContactLVI::showContextMenu( const QPoint &point )
 			popup->insertSeparator();
 			sep = false;
 		}
-
+		KPopupMenu *contactMenu = it.current()->popupMenu();
+		popup->insertChild( contactMenu );
 		popup->insertItem( c->scaledStatusIcon( 16 ),
 			i18n( "Format: 'displayName (id)'", "%2 (%1)" ).arg(
 			c->contactId() ).arg( c->displayName() ),
-			it.current()->createContextMenu() );
+			contactMenu );
 	}
 
 	popup->exec( point );

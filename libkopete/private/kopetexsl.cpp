@@ -23,52 +23,44 @@
 #include <qregexp.h>
 #include <qsignal.h>
 
-//#define XSL_DEBUG 1
-
-extern int xmlLoadExtDtdDefaultValue;
-
-const QString KopeteXSL::xsltTransform( const QString &xmlString, const QString &xslString )
+/**
+ * @author Jason Keirstead <jason@keirstead.org>
+ *
+ * The thread class that actually performs the XSL processing.
+ * Using a thread allows for async operation.
+ */
+class KopeteXSLThread : public QThread
 {
-	KopeteXSLThread mThread( xmlString, xslString );
-	mThread.start();
-	mThread.wait();
-	return mThread.result();
-}
+	public:
+		/**
+		 * Thread constructor
+		 *
+		 * @param xmlString The XML to be transformed
+		 * @param xslString The XSL string we will use to transform
+		 * @param target Target object to connect to for async operation
+		 * @param slotCompleted Slot to fire on completion in asnc operation
+		 */
+		KopeteXSLThread( const QString &xmlString, const QString &xslString,
+			QObject *target = 0L, const char* slotCompleted = 0L );
 
-void KopeteXSL::xsltTransformAsync( const QString &xmlString, const QString &xslString,
-			QObject *target, const char* slotCompleted )
-{
-	KopeteXSLThread *mThread = new KopeteXSLThread( xmlString, xslString, target, slotCompleted );
-	mThread->start();
-}
+		/**
+		 * Re implimented from QThread. Does the processing.
+		 */
+		virtual void run();
 
-bool KopeteXSL::isValid( const QString &xslString )
-{
-	xsltStylesheetPtr style_sheet = NULL;
-	xmlDocPtr xslDoc = NULL;
-	bool retVal = false;
+		/**
+		 * Returns the result string
+		 */
+		const QString &result() { return m_resultString; };
 
-	// Convert QString into a C string
-	QCString xslCString = xslString.utf8();
+	private:
+		QString m_xml;
+		QString m_xsl;
+		QString m_resultString;
+		QObject *m_target;
+		const char* m_slotCompleted;
+};
 
-	xslDoc = xmlParseMemory( xslCString, xslCString.length() );
-
-	if( xslDoc != NULL )
-	{
-		style_sheet = xsltParseStylesheetDoc( xslDoc );
-		if( style_sheet != NULL )
-		{
-			retVal = true;
-			xsltFreeStylesheet(style_sheet);
-		}
-		else
-		{
-			xmlFreeDoc(xslDoc);
-		}
-	}
-
-	return retVal;
-}
 
 KopeteXSLThread::KopeteXSLThread( const QString &xmlString, const QString &xslString, QObject *target, const char* slotCompleted )
 {
@@ -149,6 +141,52 @@ void KopeteXSLThread::run()
 	}
 }
 
+extern int xmlLoadExtDtdDefaultValue;
+
+const QString KopeteXSL::xsltTransform( const QString &xmlString, const QString &xslString )
+{
+	KopeteXSLThread mThread( xmlString, xslString );
+	mThread.start();
+	mThread.wait();
+	return mThread.result();
+}
+
+void KopeteXSL::xsltTransformAsync( const QString &xmlString, const QString &xslString,
+			QObject *target, const char* slotCompleted )
+{
+	KopeteXSLThread *mThread = new KopeteXSLThread( xmlString, xslString, target, slotCompleted );
+	mThread->start();
+}
+
+bool KopeteXSL::isValid( const QString &xslString )
+{
+	xsltStylesheetPtr style_sheet = NULL;
+	xmlDocPtr xslDoc = NULL;
+	bool retVal = false;
+
+	// Convert QString into a C string
+	QCString xslCString = xslString.utf8();
+
+	xslDoc = xmlParseMemory( xslCString, xslCString.length() );
+
+	if( xslDoc != NULL )
+	{
+		style_sheet = xsltParseStylesheetDoc( xslDoc );
+		if( style_sheet != NULL )
+		{
+			retVal = true;
+			xsltFreeStylesheet(style_sheet);
+		}
+		else
+		{
+			xmlFreeDoc(xslDoc);
+		}
+	}
+
+	return retVal;
+}
+
+
 QString KopeteXSL::unescape( const QString &xml )
 {
 	QString data = xml;
@@ -161,3 +199,5 @@ QString KopeteXSL::unescape( const QString &xml )
 
 	return data;
 }
+
+

@@ -202,8 +202,7 @@ void KopeteMessageManager::appendMessage( KopeteMessage &msg )
 
 	emit messageAppended( msg, this );
 
-	if( msg.direction() != KopeteMessage::Internal )
-		KopeteMessageLog::logMessage( msg );
+	KopeteMessageLog::logMessage( msg );
 }
 
 void KopeteMessageManager::addContact( const KopeteContact *c, bool surpress )

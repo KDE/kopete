@@ -52,7 +52,7 @@ class OscarContact : public KopeteContact
 		* Returns a set of custom menu items for
 		* the context menu
 		*/
-		virtual KActionCollection *customContextMenuActions(void);
+		virtual KActionCollection *customContextMenuActions();
 
 		/* Return whether or not this contact is REACHABLE. */
 		virtual bool isReachable();

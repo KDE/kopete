@@ -277,7 +277,7 @@ void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 	QStringList messages = QStringList::split( QRegExp( QString::fromLatin1("[\\r\\n]+") ), message.plainBody() );
 	for(QStringList::Iterator it = messages.begin(); it != messages.end(); ++it)
 	{
-		KopeteMessage msg( message.from(), message.to(), *it, KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat );
+		KopeteMessage msg( message.from(), message.to(), *it, KopeteMessage::Outbound, KopeteMessage::PlainText, KopeteMessage::Chat );
 		msg.setBg( QColor() );
 		msg.setFg( QColor() );
 		mEngine->messageContact(mNickName, msg.plainBody() );

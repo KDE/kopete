@@ -68,42 +68,4 @@ class KopeteXSL
 		 static bool isValid( const QString &xslString );
 };
 
-/**
- * @author Jason Keirstead <jason@keirstead.org>
- *
- * The thread class that actually performs the XSL processing.
- * Using a thread allows for async operation.
- */
-class KopeteXSLThread : public QThread
-{
-	public:
-		/**
-		 * Thread constructor
-		 *
-		 * @param xmlString The XML to be transformed
-		 * @param xslString The XSL string we will use to transform
-		 * @param target Target object to connect to for async operation
-		 * @param slotCompleted Slot to fire on completion in asnc operation
-		 */
-		KopeteXSLThread( const QString &xmlString, const QString &xslString,
-			QObject *target = 0L, const char* slotCompleted = 0L );
-
-		/**
-		 * Re implimented from QThread. Does the processing.
-		 */
-		virtual void run();
-
-		/**
-		 * Returns the result string
-		 */
-		const QString &result() { return m_resultString; };
-
-	private:
-		QString m_xml;
-		QString m_xsl;
-		QString m_resultString;
-		QObject *m_target;
-		const char* m_slotCompleted;
-};
-
 #endif
