@@ -20,6 +20,7 @@
 
 #include "kopetewindow.h"
 
+#include <qcursor.h>
 #include <qlayout.h>
 #include <qhbox.h>
 #include <qtooltip.h>
@@ -81,6 +82,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	statusBar()->addWidget(m_statusBarWidget, 0, true);
 
 	m_pluginConfig = 0L;
+	m_autoHideTimer = new QTimer( this );
 
 	// --------------------------------------------------------------------------------
 	initView();
@@ -102,6 +104,10 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 		this, SLOT(slotAccountRegistered(Kopete::Account*)));
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account*)),
 		this, SLOT(slotAccountUnregistered(const Kopete::Account*)));
+	
+	connect( m_autoHideTimer, SIGNAL( timeout() ), this, SLOT( slotAutoHide() ) );
+	connect( KopetePrefs::prefs(), SIGNAL( contactListAppearanceChanged() ),
+		this, SLOT( slotContactListAppearanceChanged() ) );
 
 	createGUI ( "kopeteui.rc", false );
 
@@ -227,7 +233,10 @@ void KopeteWindow::initActions()
 void KopeteWindow::slotShowHide()
 {
 	if(isActiveWindow())
+	{
+		m_autoHideTimer->stop(); //no timeouts if active
 		hide();
+	}
 	else
 	{
 		show();
@@ -301,6 +310,8 @@ void KopeteWindow::loadOptions()
 
 	menubarAction->setChecked( !menuBar()->isHidden() );
 	statusbarAction->setChecked( !statusBar()->isHidden() );
+	m_autoHide = p->contactListAutoHide();
+	m_autoHideTimeout = p->contactListAutoHideTimeout();
 }
 
 void KopeteWindow::saveOptions()
@@ -377,6 +388,15 @@ void KopeteWindow::slotConfigChanged()
 
 	actionShowOffliners->setChecked( pref->showOffline() );
 	actionShowEmptyGroups->setChecked( pref->showEmptyGroups() );
+}
+
+void KopeteWindow::slotContactListAppearanceChanged()
+{
+	KopetePrefs* p = KopetePrefs::prefs();
+	m_autoHide = p->contactListAutoHide();
+	m_autoHideTimeout = p->contactListAutoHideTimeout();
+	
+	startAutoHideTimer();
 }
 
 void KopeteWindow::slotConfNotifications()
@@ -654,6 +674,33 @@ void KopeteWindow::showAddContactDialog()
 void KopeteWindow::showExportDialog()
 {
 	( new KabcExportWizard( this, "export_contact_dialog" ) )->show();
+}
+
+void KopeteWindow::leaveEvent( QEvent * )
+{
+	startAutoHideTimer();
+}
+
+void KopeteWindow::showEvent( QShowEvent * )
+{
+	startAutoHideTimer();
+}
+
+void KopeteWindow::slotAutoHide()
+{
+	if ( this->geometry().contains( QCursor::pos() ) == false )
+	{
+		/* The autohide-timer doesn't need to emit
+		* timeouts when the window is hidden already. */
+		m_autoHideTimer->stop();
+		hide();
+	}
+}
+
+void KopeteWindow::startAutoHideTimer()
+{
+	if ( m_autoHideTimeout > 0 && m_autoHide == true && isVisible() )
+		m_autoHideTimer->start( m_autoHideTimeout * 1000 );
 }
 
 #include "kopetewindow.moc"

@@ -169,6 +169,10 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 		this, SLOT(emitChanged()));
 	connect(mPrfsContactList->mFoldVisibility, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
+	connect(mPrfsContactList->mAutoHide, SIGNAL(toggled(bool)),
+		this, SLOT(emitChanged()));
+	connect(mPrfsContactList->mAutoHideTimeout, SIGNAL(valueChanged(int)),
+		this, SLOT(emitChanged()));
 
 	// don't enable the checkbox if XRender is not available
 	#ifdef HAVE_XRENDER
@@ -269,6 +273,8 @@ void AppearanceConfig::save()
 	p->setContactListCustomSmallFont(mPrfsColors->mSmallFont->font());
 	p->setContactListCustomNormalFont(mPrfsColors->mNormalFont->font());
 	p->setContactListGroupNameColor(mPrfsColors->mGroupNameColor->color());
+	p->setContactListAutoHide(mPrfsContactList->mAutoHide->isChecked());
+	p->setContactListAutoHideTimeout(mPrfsContactList->mAutoHideTimeout->value());
 
 	p->setBgOverride( mPrfsColors->mBgOverride->isChecked() );
 	p->setFgOverride( mPrfsColors->mFgOverride->isChecked() );
@@ -325,6 +331,8 @@ void AppearanceConfig::load()
 	mPrfsContactList->mFadeVisibility->setChecked( false );
 #endif
 	mPrfsContactList->mFoldVisibility->setChecked( p->contactListFolding() );
+	mPrfsContactList->mAutoHide->setChecked( p->contactListAutoHide() );
+	mPrfsContactList->mAutoHideTimeout->setValue( p->contactListAutoHideTimeout() );
 
 	// "Colors & Fonts" TAB =====================================================
 	mPrfsColors->foregroundColor->setColor(p->highlightForeground());

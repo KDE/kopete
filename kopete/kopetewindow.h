@@ -25,6 +25,7 @@
 #include <kmainwindow.h>
 
 class QHBox;
+class QTimer;
 
 class KAction;
 class KActionMenu;
@@ -60,6 +61,8 @@ public:
 
 protected:
 	virtual void closeEvent( QCloseEvent *ev );
+	virtual void leaveEvent( QEvent* ev );
+	virtual void showEvent( QShowEvent* ev );
 
 private slots:
 	void showMenubar();
@@ -73,7 +76,20 @@ private slots:
 	void slotConfigurePlugins();
 	void slotConfGlobalKeys();
 	void slotShowHide();
-
+	
+	/**
+	 * Checks if the mousecursor is in the contact list.
+	 * If not, the window will be hidden.
+	 */
+	void slotAutoHide();
+	
+	/**
+	 * This slot will apply settings that change the 
+	 * contactlist's appearance. Only autohiding is 
+	 * handled here at the moment
+	 */
+	void slotContactListAppearanceChanged();
+	
 	/**
 	 * This slot will show an away dialog and then
 	 * set all the protocols to away
@@ -172,6 +188,7 @@ private:
 	void saveOptions();
 	
 	void makeTrayToolTip();
+	void startAutoHideTimer();
 
 private:
 	int docked;
@@ -180,6 +197,9 @@ private:
 	QPoint position;
 	QHBox *m_statusBarWidget;
 	KopeteSystemTray *m_tray;
+	bool m_autoHide;
+	unsigned int m_autoHideTimeout;
+	QTimer* m_autoHideTimer;
 
 	KopetePluginConfig *m_pluginConfig;
 

@@ -137,6 +137,8 @@ void KopetePrefs::load()
 	mContactListAnimation = config->readBoolEntry("AnimateChanges", true);
 	mContactListFading = config->readBoolEntry("FadeItems", true);
 	mContactListFolding = config->readBoolEntry("FoldItems", true);
+	mContactListAutoHide = config->readBoolEntry("AutoHide", false);
+	mContactListAutoHideTimeout = config->readUnsignedNumEntry("AutoHideTimeout", 30);
 
 	// Load the reconnection setting
 	config->setGroup("General");
@@ -209,6 +211,8 @@ void KopetePrefs::save()
 	config->writeEntry("AnimateChanges", mContactListAnimation);
 	config->writeEntry("FadeItems", mContactListFading);
 	config->writeEntry("FoldItems", mContactListFolding);
+	config->writeEntry("AutoHide", mContactListAutoHide);
+	config->writeEntry("AutoHideTimeout", mContactListAutoHideTimeout);
 
 	//Save the reconnection setting
 	config->setGroup("General");
@@ -549,6 +553,18 @@ void KopetePrefs::setContactListFolding( bool n )
 {
 	if( n != mContactListFolding ) mContactListAppearanceChanged = true;
 	mContactListFolding = n;
+}
+
+void KopetePrefs::setContactListAutoHide( bool n )
+{
+	if( n != mContactListAutoHide ) mContactListAppearanceChanged = true;
+	mContactListAutoHide = n;
+}
+
+void KopetePrefs::setContactListAutoHideTimeout( unsigned int n )
+{
+	if( n != mContactListAutoHideTimeout ) mContactListAppearanceChanged = true;
+	mContactListAutoHideTimeout = n;
 }
 
 void KopetePrefs::setReconnectOnDisconnect( bool newSetting )

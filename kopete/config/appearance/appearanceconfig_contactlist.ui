@@ -158,6 +158,95 @@
                 </widget>
             </vbox>
         </widget>
+        <widget class="QGroupBox">
+            <property name="name">
+                <cstring>groupBox3</cstring>
+            </property>
+            <property name="title">
+                <string>Contact List Auto-Hide</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>When enabled, the contact list will automatically be hidden a fixed amount of time after the mouse cursor leaves the window. You can set the amount of time in the 'Time until autohide' box below.</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>mAutoHide</cstring>
+                    </property>
+                    <property name="text">
+                        <string>A&amp;uto-Hide Contact List</string>
+                    </property>
+                </widget>
+                <spacer row="1" column="0">
+                    <property name="name">
+                        <cstring>spacer4</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Fixed</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>16</width>
+                            <height>16</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QSpinBox" row="1" column="1">
+                    <property name="name">
+                        <cstring>mAutoHideTimeout</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="suffix">
+                        <string> Sec</string>
+                    </property>
+                    <property name="maxValue">
+                        <number>300</number>
+                    </property>
+                    <property name="minValue">
+                        <number>3</number>
+                    </property>
+                    <property name="value">
+                        <number>30</number>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="2">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="text">
+                        <string>after the cursor left the window</string>
+                    </property>
+                </widget>
+                <spacer row="1" column="3">
+                    <property name="name">
+                        <cstring>spacer5</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>81</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+            </grid>
+        </widget>
         <widget class="QLayoutWidget">
             <property name="name">
                 <cstring>layout8</cstring>
@@ -206,7 +295,7 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>40</height>
+                    <height>100</height>
                 </size>
             </property>
         </spacer>
@@ -218,6 +307,18 @@
         <signal>toggled(bool)</signal>
         <receiver>mIndentContacts</receiver>
         <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>mAutoHide</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>mAutoHideTimeout</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>mAutoHide</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel1</receiver>
+        <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
 <layoutdefaults spacing="6" margin="11"/>
