@@ -217,11 +217,11 @@ GaduPublicDir::slotSearchResult( const SearchResult& result )
 		kdDebug(14100) << "adding" << (*r).uin << endl;
 		sl= new QListViewItem(
 					list, QString::fromAscii(""),
-					(*r).firstname.latin1(),
-					(*r).nickname.latin1(),
-					(*r).age.latin1(),
-					(*r).city.latin1(),
-					(*r).uin.latin1()
+					(*r).firstname,
+					(*r).nickname,
+					(*r).age,
+					(*r).city,
+					(*r).uin
 						);
 		sl->setPixmap( 0, iconForStatus( (*r).status ) );
 	}
