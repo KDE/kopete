@@ -278,6 +278,11 @@ private:
 	 * readable.
 	 */
 	void compareColors( QColor &colorFg, QColor &colorBg );
+	
+	/**
+	 * Helper method for transforMessage for formatting names for display
+	 */
+	 QString formatDisplayName( QString name );
 };
 
 #endif

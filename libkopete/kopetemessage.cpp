@@ -332,6 +332,15 @@ QString KopeteMessage::parsedBody() const
 	return KopeteEmoticons::parseEmoticons(parseHTML(escapedBody()));
 }
 
+
+QString KopeteMessage::formatDisplayName(QString name)
+{
+	return QString::fromLatin1(
+		"<span class=\"KopeteDisplayName\" style=\"cursor:pointer\">") + 
+		QStyleSheet::escape(name) + QString::fromLatin1("</span>");
+}
+
+
 QString KopeteMessage::transformMessage( const QString &model ) const
 {
 	QString message;
@@ -409,112 +418,63 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 				case 'i': //only inbound
 					if(d->direction != Inbound)
 					{
-						bool b=false;
-						bool fin;
-						do
-						{
-							fin=false;
-							f++;
-							QChar c2 = model[ f ];
-							if(c2=='i' && b)
-								fin=true;
-							b = (c2=='%');
-						}
-						while( f < model.length() && !fin );
+						f = model.find(QString::fromLatin1("%i"), f) + 1;
+						if(!f) f = model.length();
 					}
 					break;
 
 				case 'o': //only outbound
 					if(d->direction != Outbound)
 					{
-						bool b=false;
-						bool fin;
-						do
-						{
-							fin=false;
-							f++;
-							QChar c2 = model[ f ];
-							if(c2=='o' && b)
-								fin=true;
-							b=(c2=='%');
-						}
-						while( f < model.length() && !fin );
+						f = model.find(QString::fromLatin1("%o"), f) + 1;
+						if(!f) f = model.length();
 					}
 					break;
+
 				case 's': //only internal
 					if(d->direction != Internal)
 					{
-						bool b=false;
-						bool fin;
-						do
-						{
-							fin=false;
-							f++;
-							QChar c2 = model[ f ];
-							if(c2=='s' && b)
-								fin=true;
-							b=(c2=='%');
-						}
-						while( f < model.length() && !fin );
+						f = model.find(QString::fromLatin1("%s"), f) + 1;
+						if(!f) f = model.length();
 					}
 					break;
 				case 'a': //action
 					if(d->direction != Action)
 					{
-						bool b=false;
-						bool fin;
-						do
-						{
-							fin=false;
-							f++;
-							QChar c2 = model[ f ];
-							if(c2=='a' && b)
-								fin=true;
-							b=(c2=='%');
-						}
-						while( f < model.length() && !fin );
+						f = model.find(QString::fromLatin1("%a"), f) + 1;
+						if(!f) f = model.length();
 					}
 					break;
 				case 'e': //not internal (external)
 					if( (d->direction == Internal) || (d->direction == Action) )
 					{
-						bool b=false;
-						bool fin;
-						do
-						{
-							fin=false;
-							f++;
-							QChar c2 = model[ f ];
-							if(c2=='e' && b)
-								fin=true;
-							b=(c2=='%');
-						}
-						while( f < model.length() && !fin );
+						f = model.find(QString::fromLatin1("%e"), f) + 1;
+						if(!f) f = model.length();
 					}
 					break;
 
 				case 'f': //insert the 'from' metaContact's displayName
 					if (d->from->metaContact())
-						message.append( QString::fromLatin1("<span class=\"KopeteDisplayName\" style=\"cursor:pointer\">") + QStyleSheet::escape(d->from->metaContact()->displayName()) + QString::fromLatin1("</span") );
+						message.append( formatDisplayName(d->from->metaContact()->displayName()) );
 					else
-						message.append( QString::fromLatin1("<span class=\"KopeteDisplayName\" style=\"cursor:pointer\">") + QStyleSheet::escape(d->from->displayName()) + QString::fromLatin1("</span") );
+						message.append( formatDisplayName(d->from->displayName()) );
 					break;
 
 				case 't': //insert the 'to' metaContact's displayName
 					if (to().first()->metaContact())
-						message.append( QString::fromLatin1("<span class=\"KopeteDisplayName\" style=\"cursor:pointer\">") + QStyleSheet::escape(to().first()->metaContact()->displayName()) + QString::fromLatin1("</span") );
+						message.append( formatDisplayName(to().first()->metaContact()->displayName()) );
 					else
-						message.append( QString::fromLatin1("<span class=\"KopeteDisplayName\" style=\"cursor:pointer\">") + QStyleSheet::escape(to().first()->displayName()) + QString::fromLatin1("</span") );
+						message.append( formatDisplayName(to().first()->displayName()) );
 					break;
 
 				case 'c': //the 'from' KopeteContact displayName
 					if (to().first())
-						message.append( QString::fromLatin1("<span class=\"KopeteDisplayName\" style=\"cursor:pointer\">") + QStyleSheet::escape(to().first()->displayName()) + QString::fromLatin1("</span") );
+						message.append( formatDisplayName(to().first()->displayName()) );
 					break;
 
 				case 'C': //the 'to' KopeteContact displayName
 					if (d->from)
-						message.append( QString::fromLatin1("<span class=\"KopeteDisplayName\" style=\"cursor:pointer\">") + QStyleSheet::escape(d->from->displayName()) + QString::fromLatin1("</span") );
+						message.append( formatDisplayName(d->from->displayName()) );
 					break;
 
 				case 'I': //insert the statusicon path
