@@ -30,6 +30,7 @@
 #include <qlayout.h>
 #include <qspinbox.h>
 #include <qcheckbox.h>
+#include <qslider.h>
 
 // KDE Includes
 #include <kconfig.h>
@@ -58,6 +59,8 @@ WPPreferences::WPPreferences(const QString & pixmap,
 	preferencesDialog->inHostName->setText(KGlobal::config()->readEntry("HostName", "LOCAL"));
 	preferencesDialog->inSMBClientPath->setURL(KGlobal::config()->readEntry("SMBClientPath", "/usr/bin/smbclient"));
 	preferencesDialog->inInitialSearchHost->setText(KGlobal::config()->readEntry("InitialSearchHost", "127.0.0.1"));
+	preferencesDialog->inHostCheckFrequency->setValue(KGlobal::config()->readNumEntry("HostCheckFrequency", 60));
+	preferencesDialog->inMessageCheckFrequency->setValue(KGlobal::config()->readNumEntry("MessageCheckFrequency", 5));
 	preferencesDialog->inAwayMessage->setText(KGlobal::config()->readEntry("AwayMessage", ""));
 	preferencesDialog->inSendAwayMessage->setChecked(KGlobal::config()->readBoolEntry("SendAwayMessage", true));
 	preferencesDialog->inEmailDefault->setChecked(KGlobal::config()->readBoolEntry("EmailDefault", true));
@@ -84,6 +87,8 @@ void WPPreferences::save()
 	KGlobal::config()->writeEntry("HostName", preferencesDialog->inHostName->text());
 	KGlobal::config()->writeEntry("InitialSearchHost", preferencesDialog->inInitialSearchHost->text());
 	KGlobal::config()->writeEntry("SMBClientPath", preferencesDialog->inSMBClientPath->url());
+	KGlobal::config()->writeEntry("HostCheckFrequency", preferencesDialog->inHostCheckFrequency->value());
+	KGlobal::config()->writeEntry("MessageCheckFrequency", preferencesDialog->inMessageCheckFrequency->value());
 	KGlobal::config()->writeEntry("AwayMessage", preferencesDialog->inAwayMessage->text());
 	KGlobal::config()->writeEntry("SendAwayMessage", preferencesDialog->inSendAwayMessage->isChecked());
 	KGlobal::config()->writeEntry("EmailDefault", preferencesDialog->inEmailDefault->isChecked());
@@ -92,12 +97,4 @@ void WPPreferences::save()
 }
 
 #include "wppreferences.moc"
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
-// vim: set noet ts=4 sts=4 sw=4:
 

@@ -1,20 +1,19 @@
 <!DOCTYPE kdevelop>
 <kdevelop>
 <general>
-<author>duncan</author>
-  <email>duncan@tarro</email>
-  <projectmanagement>KDevCustomProject</projectmanagement>
+<author>Kopete developers</author>
+  <email>kopete-devel@kde.org</email>
+  <projectmanagement>KDevKDEAutoProject</projectmanagement>
   <primarylanguage>C++</primarylanguage>
-  <keywords/>
-  <ignoreparts/> </general>
+  <keywords>
+<keyword>Qt</keyword>
+   <keyword>KDE</keyword>  </keywords> </general>
  <kdevfileview>
 <groups>
-<group pattern="*.h,*.hxx,*.hpp,*.H" name="Headers" />
-   <group pattern="*.cpp,*.c,*.cc,*.C,*.cxx,*.ec,*.ecpp,*.lxx,*.l++,*.ll,*.l" name="Sources" />
-   <group pattern="AUTHORS,COPYING,ChangeLog,INSTALL,README,TODO,NEWS" name="GNU" />
-   <group pattern="*.ts,*.po" name="Translations" />
-   <group pattern="*.ui,*.kdevdlg,*.rc" name="User Interface" />
-   <group pattern="*.desktop" name="Desktop" />
+<group pattern="*.cpp;*.cxx;*.h" name="Sources" />
+   <group pattern="*.ui" name="User Interface" />
+   <group pattern="*.png" name="Icons" />
+   <group pattern="*.po;*.ts" name="Translations" />
    <group pattern="*" name="Others" />  </groups>
   <tree>
 <hidenonprojectfiles>false</hidenonprojectfiles>
@@ -26,58 +25,16 @@
    <toc>python</toc>
    <toc>php</toc>
    <toc>perl</toc>  </ignoretocs> </kdevdoctreeview>
- <kdevcustomproject>
-<run>
-<mainprogram>kopete/kopete</mainprogram>
-   <programargs/>  </run>
-  <envvars/>
-  <build>
-<buildtool>make</buildtool>
-   <builddir/>  </build>
-  <make>
-<abortonerror>false</abortonerror>
-   <numberofjobs>1</numberofjobs>
-   <dontact>false</dontact>
-   <makebin/>  </make> </kdevcustomproject>
- <cppsupportpart>
-<codecompletion>
-<enablecc>false</enablecc>
-   <codehinting outputview="1" enablech="0" selectview="0" />  </codecompletion>
-  <classstore>
-<enablepcs>false</enablepcs>
-   <enablepp>false</enablepp>
-   <preparsing/>  </classstore>
-  <filetemplates>
-<choosefiles>false</choosefiles>
-   <interfaceURL/>
-   <implementationURL/>
-   <interfacesuffix>.h</interfacesuffix>
-   <implementationsuffix>.cpp</implementationsuffix>
-   <lowercasefilenames>true</lowercasefilenames>  </filetemplates> </cppsupportpart>
- <kdevclassview>
-<folderhierarchy>true</folderhierarchy>
-  <depthoffolders>2</depthoffolders> </kdevclassview>
  <kdevdebugger>
 <general>
-<programargs/>
-   <gdbpath/>
-   <dbgshell>../libtool</dbgshell>
-   <breakonloadinglibs>true</breakonloadinglibs>
-   <separatetty>false</separatetty>
-   <floatingtoolbar>false</floatingtoolbar>  </general>
-  <display>
-<staticmembers>false</staticmembers>
-   <demanglenames>true</demanglenames>  </display>
+<dbgshell>libtool</dbgshell>  </general>
   <breakpoints/> </kdevdebugger>
- <kdevcvs>
-<cvsoptions/>
-  <commitoptions/>
-  <updateoptions>-dP</updateoptions>
-  <addoptions/>
-  <removeoptions>-f</removeoptions>
-  <diffoptions/>
-  <logoptions/> </kdevcvs>
  <workspace>
 <openfiles>
-<file url="file:/home/sheeplet/KDE/source/kdenonbeta/kopete/libkopete/kopetecontact.h" />
-   <file url="file:/home/sheeplet/KDE/source/kdenonbeta/kopete/libkopete/kopetecontact.cpp" />  </openfiles> </workspace></kdevelop>
+<file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/wpprotocol.h" />
+   <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/wpcontact.cpp" />
+   <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/wpcontact.h" />
+   <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/libwinpopup/libwinpopup.cpp" />
+   <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/libwinpopup/libwinpopup.h" />
+   <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/wpprotocol.cpp" />
+   <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/wppreferences.cpp" />  </openfiles> </workspace></kdevelop>

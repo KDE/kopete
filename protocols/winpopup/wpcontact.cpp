@@ -79,7 +79,7 @@ WPContact::WPContact(const QString &host, WPProtocol *protocol, KopeteMetaContac
 
 void WPContact::slotCheckStatus()
 {
-	DEBUG(WPDMETHOD, "WPContact::slotCheckStatus()");
+//	DEBUG(WPDMETHOD, "WPContact::slotCheckStatus()");
 
 	bool oldIsOnline = myIsOnline;
 	if(myProtocol)
@@ -87,9 +87,7 @@ void WPContact::slotCheckStatus()
 	else
 		myIsOnline = false;
 	if(oldIsOnline != myIsOnline)
-	{
 		emit statusChanged(this, status());
-	}
 }
 
 void WPContact::execute()
@@ -131,8 +129,6 @@ void WPContact::slotSendMessage(const KopeteMessage& message)
 	myProtocol->slotSendMessage(Message, dynamic_cast<WPContact *>(message.to().first())->host());
 }
 
-// TODO: could be done better with permenant dialog & show/hide?
-
 void WPContact::slotViewHistory()
 {
 	if(!myHistoryDialog)
@@ -149,4 +145,3 @@ void WPContact::slotCloseHistoryDialog()
 }
 
 #include "wpcontact.moc"
-

@@ -82,10 +82,12 @@ class KWinPopup: public QObject
 
 private:
 	QString myHostName, myInitialSearchHost, mySMBClientPath;
+	int myMessageCheckFrequency, myHostCheckFrequency;
 	QTimer checkForMessages, updateData;
 	UpdateThread theUpdateThread;
 	QSemaphore updating, reading;
 	QMap<QString, WorkGroup> theGroups;
+	bool online;				// TODO: implement going offline as stopping timers & clearing data
 
 	void messageHandler();
 	QPair<stringMap, stringMap> grabData(const QString &Host, QString *theGroup = 0, QString *theOS = 0, QString *theSoftware = 0);	// theGroup gets populated
@@ -96,7 +98,7 @@ private:
 public slots:
 	void doCheck();
 	void updateNoWait() { update(false); }
-	void updateInBackground() { theUpdateThread.start(); }
+	void updateInBackground() { if(!theUpdateThread.running()) theUpdateThread.start(); }
 	void update(bool Wait = true);
 
 // API section:
@@ -112,23 +114,16 @@ public:
 	void setSMBClientPath(const QString &SMBClientPath) { mySMBClientPath = SMBClientPath; }
 	void setInitialSearchHost(const QString &InitialSearchHost) { myInitialSearchHost = InitialSearchHost; }
 	void setHostName(const QString &HostName) { myHostName = HostName; }
+	void setMessageCheckFrequency(int MessageCheckFrequency) { myMessageCheckFrequency = MessageCheckFrequency; checkForMessages.changeInterval(MessageCheckFrequency * 1000); }
+	void setHostCheckFrequency(int HostCheckFrequency) { myHostCheckFrequency = HostCheckFrequency; updateData.changeInterval(HostCheckFrequency * 1000); }
 
 	const QStringList getGroups();
 	const QStringList getHosts(const QString &Group);
 	const Host getHostInfo(const QString &Group, const QString &Host);
 	bool checkHost(const QString &Name);
 
-	KWinPopup(const QString &SMBClientPath, const QString &InitialSearchHost, const QString &HostName);
+	KWinPopup(const QString &SMBClientPath, const QString &InitialSearchHost, const QString &HostName, int HostCheckFrequency, int MessageCheckFrequency);
 	~KWinPopup();
 };
 
 #endif
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
-// vim: set noet ts=4 sts=4 sw=4:
-

@@ -44,12 +44,12 @@ void UpdateThread::run()
 	theOwner->update(false);
 }
 
-KWinPopup::KWinPopup(const QString &SMBClientPath, const QString &InitialSearchHost, const QString &HostName): theUpdateThread(this), updating(1), reading(1)
+KWinPopup::KWinPopup(const QString &SMBClientPath, const QString &InitialSearchHost, const QString &HostName, int HostCheckFrequency, int MessageCheckFrequency): theUpdateThread(this), updating(1), reading(1)
 {
 	checkForMessages.connect(&checkForMessages, SIGNAL(timeout()), this, SLOT(doCheck()));
-	checkForMessages.start(1000, false);
+	checkForMessages.start(MessageCheckFrequency * 1000, false);
 	connect(&updateData, SIGNAL(timeout()), this, SLOT(updateInBackground()));
-	updateData.start(10000, false);		// should be made into a process - it holds up the gui!
+	updateData.start(HostCheckFrequency * 1000, false);
 	mySMBClientPath = SMBClientPath;
 	myInitialSearchHost = InitialSearchHost;
 	myHostName = HostName;
