@@ -69,13 +69,44 @@ KActionMenu* AIMAccount::actionMenu()
 //	kdDebug(14152) << k_funcinfo << accountId() << ": Called." << endl;
 	// mActionMenu is managed by Kopete::Account.  It is deleted when
 	// it is no longer shown, so we can (safely) just make a new one here.
-	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
+	KActionMenu *mActionMenu = new KActionMenu(accountId(),
+		myself()->onlineStatus().iconFor( this ), this, "AIMAccount::mActionMenu");
 
+	AIMProtocol *p = AIMProtocol::protocol();
+
+	mActionMenu->popupMenu()->insertTitle(
+		myself()->onlineStatus().iconFor(myself()),
+		i18n("%2 <%1>")
+#if QT_VERSION < 0x030200
+			.arg(accountId()).arg(myself()->displayName()));
+#else
+			.arg(accountId(), myself()->displayName()));
+#endif
+
+	mActionMenu->insert(
+		new KAction(i18n("Online"),
+			p->statusOnline.iconFor(this), 0,
+			this, SLOT(slotGoOnline()), mActionMenu,
+			"AIMAccount::mActionOnline"));
+
+	mActionMenu->insert(
+		new Kopete::AwayAction(i18n("Away"),
+		p->statusAway.iconFor(this), 0,
+		this, SLOT(slotGoAway( const QString & )), this, "AIMAccount::mActionNA" ) );
+
+	KAction* mActionOffline = new KAction(i18n("Offline"),
+		p->statusOffline.iconFor(this),
+		0, this, SLOT(slotGoOffline()), mActionMenu,
+		"AIMAccount::mActionOffline");
+	mActionOffline->setEnabled(isConnected());
+
+	mActionMenu->insert(mActionOffline);
 	mActionMenu->popupMenu()->insertSeparator();
 
 	mActionMenu->insert(
 		KopeteStdAction::contactInfo(this, SLOT(slotEditInfo()),
 			mActionMenu, "AIMAccount::mActionEditInfo"));
+	mActionOffline->setEnabled(isConnected());
 
 	return mActionMenu;
 }

@@ -61,7 +61,38 @@ KActionMenu* ICQAccount::actionMenu()
 	// mActionMenu is managed by Kopete::Account.  It is deleted when
 	// it is no longer shown, so we can (safely) just make a new one here.
 
-	KActionMenu* mActionMenu = Kopete::Account::actionMenu();
+	KActionMenu* mActionMenu = new KActionMenu(accountId(),
+		myself()->onlineStatus().iconFor(this), this, "ICQAccount::mActionMenu");
+
+	ICQProtocol *p = ICQProtocol::protocol();
+
+	KAction* mActionOnline = new KAction(i18n("Online"),
+		p->statusOnline.iconFor(this), 0,
+		this, SLOT(slotGoOnline()), this, "ICQAccount::mActionOnline");
+
+	KAction* mActionOffline = new KAction(i18n("Offline"),
+		p->statusOffline.iconFor(this), 0,
+		this, SLOT(slotGoOffline()), this, "ICQAccount::mActionOffline");
+
+	Kopete::AwayAction* mActionAway = new Kopete::AwayAction(i18n("Away"),
+		p->statusAway.iconFor(this), 0,
+		this, SLOT(slotGoAway( const QString & )), this, "ICQAccount::mActionAway" );
+
+	Kopete::AwayAction* mActionNA = new Kopete::AwayAction(i18n("Not A&vailable"),
+		p->statusNA.iconFor(this), 0,
+		this, SLOT(slotGoNA( const QString & )), this, "ICQAccount::mActionNA" );
+
+	Kopete::AwayAction* mActionDND = new Kopete::AwayAction(i18n("&Do Not Disturb"),
+		p->statusDND.iconFor(this), 0,
+		this, SLOT(slotGoDND( const QString & )), this, "ICQAccount::mActionDND" );
+
+	Kopete::AwayAction* mActionOCC = new Kopete::AwayAction(i18n("O&ccupied"),
+		p->statusOCC.iconFor(this), 0,
+		this, SLOT(slotGoOCC( const QString & )), this, "ICQAccount::mActionOCC" );
+
+	Kopete::AwayAction* mActionFFC = new Kopete::AwayAction(i18n("&Free for Chat"),
+		p->statusFFC.iconFor(this), 0,
+		this, SLOT(slotGoFFC( const QString & )), this, "ICQAccount::mActionFCC" );
 
 	KToggleAction* mActionInvisible = new KToggleAction(i18n("Invisible"),
 		"icq_invisible", 0, this, SLOT(slotToggleInvisible()), this, "ICQAccount::mActionInvisible");
@@ -70,6 +101,19 @@ KActionMenu* ICQAccount::actionMenu()
 	KToggleAction* mActionSendSMS = new KToggleAction(i18n("Send SMS..."),
 		0, 0, this, SLOT(slotSendSMS()), this, "ICQAccount::mActionSendSMS");
 
+	mActionOffline->setEnabled(isConnected());
+
+	mActionMenu->popupMenu()->insertTitle(
+		myself()->onlineStatus().iconFor(myself()),
+		i18n("%2 <%1>").arg(accountId()).arg(myself()->displayName()));
+
+	mActionMenu->insert(mActionOnline); // always first
+	mActionMenu->insert(mActionFFC);
+	mActionMenu->insert(mActionAway);
+	mActionMenu->insert(mActionNA);
+	mActionMenu->insert(mActionDND);
+	mActionMenu->insert(mActionOCC);
+	mActionMenu->insert(mActionOffline);
 	mActionMenu->popupMenu()->insertSeparator();
 	mActionMenu->insert(mActionInvisible);
 	mActionMenu->popupMenu()->insertSeparator();
