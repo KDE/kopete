@@ -78,7 +78,7 @@ signals:
 protected:
 	virtual bool queryExit();
 	virtual void windowActivationChange( bool activated );
-	virtual bool KopeteEmailWindow::eventFilter( QObject *o, QEvent *e );
+	virtual bool eventFilter( QObject *o, QEvent *e );
 
 private slots:
 	void slotReplySendClicked();
