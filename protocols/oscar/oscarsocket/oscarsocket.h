@@ -18,8 +18,8 @@
 #ifndef OSCARSOCKET_H
 #define OSCARSOCKET_H
 
-#include "oscarconnection.h"
-#include <qlist.h>
+#include "oscardirectconnection.h"
+#include <qptrlist.h>
 #include "oncomingsocket.h"
 #include "ssidata.h"
 #include "tbuddylist.h"
@@ -67,6 +67,11 @@ struct UserInfo { //user info
 	long capabilities;
 	long sessionlen;
 	int idletime;
+};
+
+struct DirectInfo { //info used for keeping track of direct connections
+	BYTE cookie[8];
+	QString sn;
 };
 
 #define OSCAR_SERVER 	"login.oscar.aol.com"
@@ -159,6 +164,7 @@ public:
 	 * @param notifyType Type of notify to send
 	 */
 	void sendMiniTypingNotify(QString screenName, TypingNotify notifyType);
+	inline QPtrList<DirectInfo> *getPendingConnections(void) { return &pendingDirect; };
 
 public slots:
   /** This is called when a connection is established */
@@ -287,6 +293,8 @@ private: // Private methods
   void parseSSIRights(Buffer &inbuf);
   /** Sends parameters for ICBM messages */
   void sendMsgParams(void);
+  /** looks for a connection named thename.  If such a connection exists, return it, otherwise, return NULL */
+  OscarConnection * findConnection(const QString &thename);
 private slots: // Private slots
   /** Called when a connection has been closed */
   void OnConnectionClosed(void);
@@ -329,14 +337,6 @@ signals: // Signals
      WARNING: this is emitted every time the server notifies us about our warning level,
      so natural decreases in level will be signalled.*/
   void gotWarning(int, QString);
-	/**
-	 * Emitted when we get a minityping notifications
-	 * First param is the screen name, second is the type
-	 * 0: Finished
-	 * 1: Typed
-	 * 2: Begun (is typing)
-	 */
-	void gotMiniTypeNotification(QString, int);
 private: // Private attributes
   /** The key used to encrypt the password */
   char * key;
@@ -353,13 +353,11 @@ private: // Private attributes
   /** The port of the bos server */
   int bosPort;
   /** Stores rate class information */
-  QList<RateClass> rateClasses;
+  QPtrList<RateClass> rateClasses;
   /** tells whether we are idle */
   bool idle;
   /** A collections of the sockets we are connected with */
-  QList<OscarConnection> sockets;
-  /** A temp socket, used for making temporary connectionz */
-//  QSocket * tmpSocket;
+  QPtrList<OscarConnection> sockets;
   /** Socket for direct connections */
   OncomingSocket *serverSocket;
   /** SSI server stored data */
@@ -370,6 +368,8 @@ private: // Private attributes
   QString myUserProfile;
   /** Tells if we are connected to the server and ready to operate */
   bool isConnected;
+  /** A list of pending direct connections */
+	QPtrList<DirectInfo> pendingDirect;
 		
 signals: // Signals
   /** Called when an SSI acknowledgement is recieved */

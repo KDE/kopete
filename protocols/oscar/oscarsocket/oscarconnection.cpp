@@ -63,3 +63,8 @@ void OscarConnection::setDebugDialog(OscarDebugDialog *dialog)
 		}
 }
 
+/** Sends an IM */
+void OscarConnection::sendIM(const QString &message, const QString &dest, bool isAuto)
+{
+	kdDebug() << "SendIM() called in OscarConnection, this is not good" << endl;
+}

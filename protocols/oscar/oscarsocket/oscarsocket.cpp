@@ -206,6 +206,8 @@ OscarSocket::OscarSocket(const QString &connName, QObject *parent, const char *n
     idle = false;
 //    tmpSocket = NULL;
     rateClasses.setAutoDelete(TRUE);
+    pendingDirect.setAutoDelete(TRUE);
+    sockets.setAutoDelete(TRUE);
     myUserProfile = "Visit the Kopete website at <a href=""http://kopete.kde.org"">http://kopete.kde.org</a>";
     isConnected = false;
 }
@@ -1146,7 +1148,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
     unsigned int remotePort = 0;
     QHostAddress qh;
     QString message;
-    QSocket *s = new QSocket;
+    OscarDirectConnection *s;
     WORD msgtype; //used to tell whether it is a direct IM requst, deny, or accept
     switch(channel)
 		{
@@ -1348,9 +1350,9 @@ void OscarSocket::parseIM(Buffer &inbuf)
 				{
 						kdDebug() << "[OSCAR] Ch 2 IM: unknown TLV type " << type << endl;
 				}
-				connect(s,SIGNAL(connected()),this,SLOT(OnConnect()));
+				s = new OscarDirectConnection(this, QString(u.sn));
 				kdDebug() << "[OSCAR] Connecting to " << qh.toString() << ":" << remotePort << endl;
-				s->connectToHost(qh.toString(),remotePort);
+				s->connectToHost(qh.toString(),DIRECTIM_PORT);
 				break;
 		default: //unknown channel
 				kdDebug() << "[OSCAR] Error: unknown ICBM channel " << channel << endl;
@@ -1441,6 +1443,13 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 /** Sends message to dest */
 void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAuto)
 {
+	//check to see if we have a direct connection to the contact
+	OscarConnection *dc = findConnection(dest);
+	if (dc)
+	{
+		dc->sendIM(message,dest,isAuto);
+		return;
+	}
     kdDebug() << "[OSCAR] Sending " << message << " to " << dest << endl;
     static const char deffeatures[] = {
 	0x01, 0x01, 0x01, 0x02
@@ -1703,7 +1712,7 @@ void OscarSocket::parseRedirect(Buffer &inbuf)
 /** Request a direct IM session with someone
 	type == 0: request
 	type == 1: deny
-	type == 2 :accept */
+	type == 2: accept */
 void OscarSocket::sendDirectIMRequest(const QString &sn)
 {
 	sendDirectIMInit(sn,0x0000);
@@ -1919,9 +1928,18 @@ void OscarSocket::sendDirectIMInit(const QString &sn, WORD type)
     char ck[8];
     //generate a random message cookie
     for (int i=0;i<8;i++)
-	{
+		{
 	    ck[i] = static_cast<BYTE>(rand());
-	}
+		}
+		//add this to the list of pending connections if it is a request
+		if ( type == 0 )
+		{
+			DirectInfo *dinfo = new DirectInfo;
+			dinfo->sn = sn;
+			for (int i=0;i<8;i++)
+				dinfo->cookie[i] = ck[i];
+			pendingDirect.append(dinfo);
+		}
     outbuf.addString(ck,8);
     //channel 2
     outbuf.addWord(0x0002);
@@ -2248,6 +2266,19 @@ void OscarSocket::OnDirectIMError(QString errmsg, int num)
 	emit protocolError(errmsg, num);
 }
 
+/** looks for a connection named thename.  If such a connection exists, return it, otherwise, return NULL */
+OscarConnection * OscarSocket::findConnection(const QString &thename)
+{
+	OscarConnection *tmp;
+	for (tmp = sockets.first(); tmp; tmp = sockets.next())
+	{
+		if ( !thename.compare(tmp->connectionName()) )
+		{
+			return tmp;
+		}
+	}
+	return 0L;
+}
 
 
 /*

@@ -33,11 +33,17 @@ struct ODC2 { //direct connect header
   char *message;	
 };
 
+class OscarSocket;
+
 class OscarDirectConnection : public OscarConnection  {
 	Q_OBJECT
 public: 
-	OscarDirectConnection(const QString &connName, QObject *parent=0, const char *name=0);
+	OscarDirectConnection(OscarSocket *serverconn, const QString &connName, QObject *parent=0, const char *name=0);
 	~OscarDirectConnection();
+  /** Sets the socket to use socket, state() to connected, and emit connected() */
+  virtual void setSocket( int socket );
+  /** Sends the direct IM message to buddy */
+  void sendIM(const QString &message, const QString &dest, bool isAuto);
 	
 protected slots: // Protected slots
   /** Called when there is data to be read from peer */
@@ -46,6 +52,16 @@ protected slots: // Protected slots
 private: // Private methods
   /** Gets an ODC2 header */
   ODC2 getODC2(void);
+  
+private slots: // Private slots
+  /** Called when we have established a connection */
+  void slotConnected(void);
+
+private: //private members
+	/** The main oscar connection */
+	OscarSocket *mMainConn;
+	/** the message cookie */
+	char mCookie[8];
 };
 
 #endif

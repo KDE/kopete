@@ -18,11 +18,17 @@
 #include <kdebug.h>
 #include "oscardirectconnection.h"
 #include "oscardebugdialog.h"
+#include "oscarsocket.h"
 
-OscarDirectConnection::OscarDirectConnection(const QString &connName,
+OscarDirectConnection::OscarDirectConnection(OscarSocket *serverconn, const QString &connName,
 	QObject *parent, const char *name)
 	: OscarConnection(connName, CONN_TYPE_DIRECTIM, parent, name)
 {
+	if (serverconn)
+		mMainConn = serverconn;
+	else
+		kdDebug() << "[OscarDirectConnection] serverconn is NULL!!!  BAD!" << endl;
+	connect(this, SIGNAL(connected()), this, SLOT(slotConnected()));
 }
 
 OscarDirectConnection::~OscarDirectConnection()
@@ -32,19 +38,6 @@ OscarDirectConnection::~OscarDirectConnection()
 /** Called when there is data to be read from peer */
 void OscarDirectConnection::slotRead(void)
 {
-/*	kdDebug() << "[OSCAR] OscarDirectConnection: in slotRead(), " << bytesAvailable() << " bytes, name: " << connectionName() << endl;
-  Buffer inbuf;
-  int len = bytesAvailable();
-	char *buf = new char[len];
-	readBlock(buf,len);
-	inbuf.setBuf(buf,len);
-  inbuf.print();
-
-	if(hasDebugDialog()){
-			debugDialog()->addMessageFromServer(inbuf.toString(),connectionName());
-	}
-
-	delete buf; */
 	ODC2 fl = getODC2();
 	char *buf = new char[fl.length];
 	Buffer inbuf;
@@ -73,7 +66,7 @@ void OscarDirectConnection::slotRead(void)
 	if ( inbuf.getLength() )
 		kdDebug() << "[OscarDirectConnection] slotread (" << connectionName() << "): inbuf not empty" << endl;
 
-	if (fl.message && fl.sn)
+	if ( (fl.length > 0) && fl.message && fl.sn)
 		emit gotIM(fl.message, fl.sn, false);
 			
   if (fl.sn)
@@ -131,6 +124,9 @@ ODC2 OscarDirectConnection::getODC2(void)
 		//get the 8 byte cookie
 		odc.cookie = inbuf.getBlock(8);
 
+		for (int i=0;i<8;i++)
+			mCookie[i] = odc.cookie[i];
+
 		// 10 bytes of 0
 		if (inbuf.getDWord() != 0x00000000)
 			kdDebug() << "[OscarDirectConnection] getODC2: 3: expected a 0x00000000, didn't get it" << endl;
@@ -171,4 +167,48 @@ ODC2 OscarDirectConnection::getODC2(void)
 		<< ", type: " << odc.type << ", screen name: " << odc.sn << endl;
 
   return odc;
+}
+
+/** Called when we have established a connection */
+void OscarDirectConnection::slotConnected(void)
+{
+ 	// Connect protocol error signal
+	QObject::connect(this, SIGNAL(protocolError(QString, int)),
+			mMainConn, SLOT(OnDirectIMError(QString, int)));
+	// Got IM
+	QObject::connect(this, SIGNAL(gotIM(QString, QString, bool)),
+			mMainConn, SLOT(OnDirectIMReceived(QString,QString,bool)));
+}
+
+/** Sets the socket to use socket, state() to connected, and emit connected() */
+void OscarDirectConnection::setSocket( int socket )
+{
+	QSocket::setSocket(socket);
+	emit connected();
+}
+
+/** Sends the direct IM message to buddy */
+void OscarDirectConnection::sendIM(const QString &message, const QString &/*dest*/, bool /*isAuto*/)
+{
+	Buffer outbuf;
+	outbuf.addDWord(0x4f444332); // "ODC2"
+	outbuf.addWord(0x004c); // not sure if this is always the header length
+	outbuf.addWord(0x0001); // channel
+	outbuf.addWord(0x0006); // 0x0006
+	outbuf.addWord(0x0000); // 0x0000
+  outbuf.addString(mCookie,8);
+	outbuf.addDWord(0x00000000);
+	outbuf.addDWord(0x00000000);
+	outbuf.addWord(0x0000);
+	outbuf.addWord(message.length());
+  outbuf.addDWord(0x00000000);
+  outbuf.addWord(0x0000);
+  outbuf.addWord(0x0000); // this is 0 because we are sending a message
+  outbuf.addDWord(0x00000000);
+  outbuf.addString(connectionName().latin1(),connectionName().length());
+  while (outbuf.getLength() < 0x004c)
+  	outbuf.addByte(0x00);
+  kdDebug() << "Sending Direct IM!" << endl;
+  outbuf.print();
+  writeBlock(outbuf.getBuf(),outbuf.getLength());
 }

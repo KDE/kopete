@@ -48,12 +48,23 @@ public:
   inline QString connectionName(void) const { return mConnName; };
   /** Returns the type of this connection */
   inline int connectionType(void) const { return mConnType; };
+  /** Sends an IM */
+  virtual void sendIM(const QString &message, const QString &dest, bool isAuto);
 
 signals: // Signals
 	/** Emitted when an IM comes in */
   void gotIM(QString, QString, bool);
   /** called when an AIM protocol error occurs */
   void protocolError(QString, int);
+ 	/**
+	 * Emitted when we get a minityping notifications
+	 * First param is the screen name, second is the type
+	 * 0: Finished
+	 * 1: Typed
+	 * 2: Begun (is typing)
+	 */
+	void gotMiniTypeNotification(QString, int);
+
 	
 protected slots: // Private slots
   /** Called when there is data to be read.
@@ -64,7 +75,7 @@ protected slots: // Private slots
 
 private: //private attributes
 	/** The cookie used to authenticate */
-	char mAuthCookie[256];
+	//char mAuthCookie[256];
 	/** The name of the connection */
 	QString mConnName;
 	/** The connection type */

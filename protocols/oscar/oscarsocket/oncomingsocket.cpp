@@ -41,20 +41,27 @@ OncomingSocket::~OncomingSocket()
 /** Called when someone connects to the server socket */
 void OncomingSocket::newConnection( int socket )
 {
-	OscarConnection *newsock = new OscarDirectConnection("DIRECT");
+	QPtrList<DirectInfo> *p = mServer->getPendingConnections();
+	if ( !p )
+	{
+		kdDebug() << "[OncomingSocket] Pending connections list is null!  ignoring connection" << endl;
+		return;
+	}
+
+	// TODO: fix this later so that it searches the whole list
+	DirectInfo *tmp = p->first();
+	OscarDirectConnection *newsock = new OscarDirectConnection(mServer, tmp->sn);
 	newsock->setSocket(socket);
+
 	if (mServer)
 		newsock->setDebugDialog(mServer->debugDialog());
-	// Connect protocol error signal
-	QObject::connect(newsock, SIGNAL(protocolError(QString, int)),
-			mServer, SLOT(OnDirectIMError(QString, int)));
-	// Got IM
-	QObject::connect(newsock, SIGNAL(gotIM(QString, QString, bool)),
-			mServer, SLOT(OnDirectIMReceived(QString,QString,bool)));
 
 	if (conns)
 		conns->append(newsock);
 	else
 		kdDebug() << "[Oscar] Oncomingsocket::newConnection: conns is NULL!" << endl;
+
+	p->remove(tmp);
+	
 	kdDebug() << "[Oscar][OncomingSocket]newConnection called!  socket " << socket << endl;
 }
