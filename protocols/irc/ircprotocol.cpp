@@ -97,6 +97,10 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		cfg->sync();
 	}
 
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("join"),
+		SLOT( slotJoinCommand( const QString &, KopeteMessageManager*) ),
+		i18n("USAGE: /join <#channel> - Joins the sepecified channel.") );
+
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("topic"),
 		SLOT( slotTopicCommand( const QString &, KopeteMessageManager*) ),
 		i18n("USAGE: /topic [<topic>] - Sets and/or displays the topic for the active channel.") );
@@ -168,7 +172,7 @@ void IRCProtocol::slotMessageFilter( KopeteMessage &msg )
 		kdDebug(14120) << k_funcinfo << messageText << endl;
 
 		//Add right click for channels, only replace text not in HTML tags
-		messageText.replace( QRegExp( QString::fromLatin1("(?![^<]+>)(#\\w+)(?![^<]+>)") ), QString::fromLatin1("<span class=\"KopeteLink\" type=\"IRCChannel\">\\1</span>") );
+		messageText.replace( QRegExp( QString::fromLatin1("(?![^<]+>)(#[^#\\s]+)(?![^<]+>)") ), QString::fromLatin1("<span class=\"KopeteLink\" type=\"IRCChannel\">\\1</span>") );
 
 		msg.setBody( messageText, KopeteMessage::RichText );
 	}
