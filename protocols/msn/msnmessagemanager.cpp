@@ -154,6 +154,7 @@ void MSNMessageManager::slotMessageSent(KopeteMessage &message,KopeteMessageMana
 		{
 			m_messagesSent.insert( id, message );
 			message.setBg(QColor()); // clear the bgColor
+			message.setBody(message.plainBody() , KopeteMessage::PlainText ); //clear every custom tag which are not sent
 			appendMessage(message); // send the own msg to chat window
 		}
 	}
