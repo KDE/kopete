@@ -80,6 +80,7 @@ char *strchr (), *strrchr ();
 #include "yahoo2.h"
 #include "yahoo_httplib.h"
 #include "yahoo_util.h"
+#include "yahoo_fn.h"
 
 #include "yahoo2_callbacks.h"
 #include "yahoo_debug.h"
@@ -126,7 +127,7 @@ int yahoo_set_log_level(enum yahoo_log_level level)
 }
 
 /* default values for servers */
-static char pager_host[] = "scs.yahoo.com";
+static char pager_host[] = "scs.msg.yahoo.com";
 static int pager_port = 5050;
 static int fallback_ports[]={23, 25, 80, 20, 119, 8001, 8002, 5050, 0};
 static char filetransfer_host[]="filetransfer.msg.yahoo.com";
@@ -1596,6 +1597,7 @@ static void yahoo_process_auth_0x0b(struct yahoo_input_data *yid, const char *se
 	unsigned char crypt_hash_xor2[64];
 	char resp_6[100];
 	char resp_96[100];
+	char chal[7];
 
 	unsigned char digest1[20];
 	unsigned char digest2[20];
@@ -1606,7 +1608,9 @@ static void yahoo_process_auth_0x0b(struct yahoo_input_data *yid, const char *se
 	unsigned int  magic_work;
 	unsigned int  value = 0;
 
-	int x;
+	char comparison_src[20]; 
+	int x, i, j;
+	int depth = 0, table = 0;
 	int cnt = 0;
 	int magic_cnt = 0;
 	int magic_len;
@@ -1710,61 +1714,69 @@ static void yahoo_process_auth_0x0b(struct yahoo_input_data *yid, const char *se
 	 * key. */
 
 	magic_cnt = 1;
-
-	for (;;) {
-		unsigned int cl = magic[magic_cnt] & 0xff;
-		unsigned int bl = magic[magic_cnt+1] & 0xff;
-
-		if (!bl || !cl)
-			break;
-
+	x = 0;
+	
+	do {
+		unsigned int bl = 0;
+		unsigned int cl = magic[magic_cnt++];
+		
 		if (magic_cnt > magic_len)
 			break;
-
-		if (cl <= 0x7f)
-			bl = cl;
-		else {
-			if (cl >= 0x0e0) {
-			        cl = cl & 0x0f;
-			        cl = cl << 6;
-			        bl = bl & 0x3f;
-			        bl = cl + bl;
-			        bl = bl << 6;
-			} else {
-			        cl = cl & 0x1f;
-			        cl = cl << 6;
-			        bl = cl;
+				
+		if (cl > 0x7f) {
+			if ( cl < 0xe0 )
+				bl = cl = (cl & 0x1f) << 6;
+			else {
+				bl = magic[magic_cnt++];
+				cl = (cl & 0x0f) << 6;
+				bl = ((bl & 0x3f) + cl) << 6;
 			}
+			
+			cl = magic[magic_cnt++];
+			bl = (cl & 0x3f) + bl;
+		} else
+			bl = cl;
+		
+		comparison_src[x++] = (bl & 0xff00) >> 8;
+		comparison_src[x++] = bl & 0xff;
+	} while ( x < 20 );
+	
 
-			cl = magic[magic_cnt+2];
-
-			if (!cl)
-			        break;
-
-			cl = cl & 0x3f;
-			bl = bl + cl;
+	/* First four bytes are magic key */
+	for (x = 0; x < 4; x++)
+		magic_key_char[x] = comparison_src[x];
+	
+	/* Compute values for recursive function table! */
+	memcpy( chal, magic_key_char, 4 );
+	 x = 1;
+	for( i = 0; i < 0xFFFF && x; i++ )
+	{
+		for( j = 0; j < 5 && x; j++ )
+		{
+			chal[4] = i;
+			chal[5] = i >> 8;
+			chal[6] = j;
+			md5_init( &ctx );
+			md5_append( &ctx, chal, 7 );
+			md5_finish( &ctx, result );
+			if( memcmp( comparison_src + 4, result, 16 ) == 0 )
+			{
+				depth = i;
+				table = j;
+				x = 0;
+			}
 		}
-
-		/* Result is bl.
-		 */
-
-		magic_cnt += 3;
-
-		if (times == 0) {
-			value |= (bl & 0xff) << 8; 
-			value |= (bl & 0xff00) >> 8;           
-		} else { 
-			value |= (bl & 0xff) << 24; 
-			value |= (bl & 0xff00) << 8;           
-			break; 
-		} 
-
-		times++;
 	}
 
-	/* Dump magic key into a char for SHA1 action. */
-		
-	memcpy(&magic_key_char[0], &value, sizeof(int));
+	/* Transform magic_key_char using transform table */
+	x = magic_key_char[3] << 24  | magic_key_char[2] << 16 
+		| magic_key_char[1] << 8 | magic_key_char[0];
+	x = yahoo_xfrm( table, depth, x );
+	x = yahoo_xfrm( table, depth, x );
+	magic_key_char[0] = x & 0xFF;
+	magic_key_char[1] = x >> 8 & 0xFF;
+	magic_key_char[2] = x >> 16 & 0xFF;
+	magic_key_char[3] = x >> 24 & 0xFF;
 
 	/* Get password and crypt hashes as per usual. */
 	md5_init(&ctx);

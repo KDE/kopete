@@ -20,6 +20,7 @@
 #include "kyahoo.h"
 
 
+
 // QT Includes
 #include <qfile.h>
 
@@ -36,7 +37,7 @@
 
 /* exported to libyahoo */
 #define MAX_PREF_LEN 255
-char pager_host[MAX_PREF_LEN] = "scs.yahoo.com";
+char pager_host[MAX_PREF_LEN] = "scs.msg.yahoo.com";
 char pager_port[MAX_PREF_LEN] = "5050";
 char filetransfer_host[MAX_PREF_LEN] = "filetransfer.msg.yahoo.com";
 char filetransfer_port[MAX_PREF_LEN] = "80";
@@ -1002,10 +1003,9 @@ int YahooSession::_hostAsyncConnectReceiver( char *host, int port,
 {
 	struct connect_callback_data *ccd;
 	int error;
-
 	kdDebug(14181) << k_funcinfo << endl;
 	m_socket = new KExtendedSocket( host, port );
-
+	
 	// TODO Do an async connect in the future
 	error = m_socket->connect();
 

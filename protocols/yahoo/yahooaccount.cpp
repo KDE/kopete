@@ -160,7 +160,7 @@ QColor YahooAccount::getMsgColor(const QString& msg)
 
 void YahooAccount::connect()
 {
-	QString server = "scs.yahoo.com";
+	QString server = "scs.msg.yahoo.com";
 	int port = 5050;
 
 	/* call loaded() here. It shouldn't hurt anything
@@ -171,11 +171,13 @@ void YahooAccount::connect()
 	YahooSessionManager::manager()->setPager(server, port);
 	
 	
-		
-	if ((password(m_needNewPassword)).isEmpty())
-	{ //cancel the connection attempt
-		static_cast<YahooContact*>(myself())->setYahooStatus(YahooStatus::Offline);
-		return;
+	if (m_needNewPassword)
+	{
+		if ((password(m_needNewPassword)).isEmpty())
+		{ //cancel the connection attempt
+			static_cast<YahooContact*>(myself())->setYahooStatus(YahooStatus::Offline);
+			return;
+		}
 	}
 	
 	m_session = YahooSessionManager::manager()->createSession(accountId(), password());
