@@ -1,6 +1,6 @@
 METASOURCES = AUTO
 
-AM_CPPFLAGS = $(KOPETE_INCLUDES) $(all_includes) -I$(top_srcdir)/kopete/protocols/msn
+AM_CPPFLAGS = $(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/protocols/msn $(all_includes)
 
 kde_module_LTLIBRARIES = kopete_netmeeting.la
 
