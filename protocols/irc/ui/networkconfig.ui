@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>NetworkConfig</class>
 <widget class="QDialog">
     <property name="name">
@@ -19,7 +19,12 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLabel" row="0" column="3">
+        <widget class="QLineEdit" row="1" column="4" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>description</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="3">
             <property name="name">
                 <cstring>textLabel10</cstring>
             </property>
@@ -38,28 +43,7 @@
                 <cstring>description</cstring>
             </property>
         </widget>
-        <widget class="QLineEdit" row="0" column="4" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>description</cstring>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="2" column="5">
-            <property name="name">
-                <cstring>saveButton</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Save</string>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="2" column="6">
-            <property name="name">
-                <cstring>cancelButton</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Cancel</string>
-            </property>
-        </widget>
-        <widget class="QGroupBox" row="1" column="3" rowspan="1" colspan="4">
+        <widget class="QGroupBox" row="2" column="3" rowspan="1" colspan="4">
             <property name="name">
                 <cstring>groupBox2</cstring>
             </property>
@@ -75,7 +59,7 @@
                 <number>4</number>
             </property>
             <property name="title">
-                <string>Host &amp;Configuration</string>
+                <string>Host Con&amp;figuration</string>
             </property>
             <grid>
                 <property name="name">
@@ -116,7 +100,7 @@
                         <cstring>textLabel6</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Port:</string>
+                        <string>Por&amp;t:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>port</cstring>
@@ -182,7 +166,7 @@
                 </widget>
                 <widget class="QPushButton" row="6" column="3" rowspan="1" colspan="2">
                     <property name="name">
-                        <cstring>removeButton</cstring>
+                        <cstring>removeHost</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
@@ -198,7 +182,7 @@
                 </widget>
                 <widget class="QPushButton" row="6" column="2">
                     <property name="name">
-                        <cstring>newButton</cstring>
+                        <cstring>newHost</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
@@ -276,7 +260,44 @@
                 </widget>
             </grid>
         </widget>
-        <spacer row="2" column="3" rowspan="1" colspan="2">
+        <widget class="QPushButton" row="3" column="6">
+            <property name="name">
+                <cstring>cancelButton</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Cancel</string>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="3" column="5">
+            <property name="name">
+                <cstring>saveButton</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Save</string>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="3" column="0">
+            <property name="name">
+                <cstring>newNetwork</cstring>
+            </property>
+            <property name="text">
+                <string>Ne&amp;w</string>
+            </property>
+        </widget>
+        <widget class="QListBox" row="0" column="0" rowspan="3" colspan="3">
+            <property name="name">
+                <cstring>networkList</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>3</hsizetype>
+                    <vsizetype>7</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+        </widget>
+        <spacer row="3" column="3" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>spacer5</cstring>
             </property>
@@ -293,50 +314,20 @@
                 </size>
             </property>
         </spacer>
-        <spacer row="2" column="0">
+        <widget class="QPushButton" row="3" column="1">
             <property name="name">
-                <cstring>spacer3_2</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>40</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QPushButton" row="2" column="1">
-            <property name="name">
-                <cstring>newNetwork</cstring>
+                <cstring>renameNetwork</cstring>
             </property>
             <property name="text">
-                <string>New</string>
+                <string>Rena&amp;me</string>
             </property>
         </widget>
-        <widget class="QPushButton" row="2" column="2">
+        <widget class="QPushButton" row="3" column="2">
             <property name="name">
                 <cstring>removeNetwork</cstring>
             </property>
             <property name="text">
                 <string>Remo&amp;ve</string>
-            </property>
-        </widget>
-        <widget class="QListBox" row="0" column="0" rowspan="2" colspan="3">
-            <property name="name">
-                <cstring>networkList</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>3</hsizetype>
-                    <vsizetype>7</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
             </property>
         </widget>
     </grid>
@@ -355,6 +346,24 @@
         <slot>accept()</slot>
     </connection>
 </connections>
+<tabstops>
+    <tabstop>networkList</tabstop>
+    <tabstop>newNetwork</tabstop>
+    <tabstop>renameNetwork</tabstop>
+    <tabstop>removeNetwork</tabstop>
+    <tabstop>description</tabstop>
+    <tabstop>hostList</tabstop>
+    <tabstop>upButton</tabstop>
+    <tabstop>downButton</tabstop>
+    <tabstop>host</tabstop>
+    <tabstop>port</tabstop>
+    <tabstop>password</tabstop>
+    <tabstop>useSSL</tabstop>
+    <tabstop>newHost</tabstop>
+    <tabstop>removeHost</tabstop>
+    <tabstop>saveButton</tabstop>
+    <tabstop>cancelButton</tabstop>
+</tabstops>
 <includes>
     <include location="local" impldecl="in implementation">networkconfig.ui.h</include>
 </includes>

@@ -121,6 +121,7 @@ signals:
 	void networkConfigUpdated();
 
 private slots:
+	// FIXME: All the code for managing the networks list should be in another class - Will 
 	void slotUpdateNetworkConfig();
 	void slotUpdateNetworkHostConfig();
 	void slotMoveServerUp();
@@ -129,7 +130,12 @@ private slots:
 	void slotReadNetworks();
 	void slotDeleteNetwork();
 	void slotDeleteHost();
-
+	void slotNewNetwork();
+	void slotRenameNetwork();
+	void slotNewHost();
+	void slotHostPortChanged( int value );
+	// end of network list specific code
+	
 	void slotMessageFilter( KopeteMessage &msg );
 
 	void slotRawCommand( const QString &args, KopeteMessageManager *manager );
@@ -166,6 +172,15 @@ private:
 
 	void simpleModeChange( const QString &, KopeteMessageManager *, const QString &mode );
 
+	// FIXME: All the code for managing the networks list should be in another class - Will 
+	void storeCurrentNetwork();
+	void storeCurrentHost();
+
+	NetworkConfig *netConf;
+	QString m_uiCurrentNetworkSelection;
+	QString m_uiCurrentHostSelection;
+	// end of network list specific code
+	
 	DOM::Node activeNode;
 	IRCAccount *activeAccount;
 
@@ -173,7 +188,6 @@ private:
 
 	QDict<IRCNetwork> m_networks;
 	QDict<IRCHost> m_hosts;
-	NetworkConfig *netConf;
 	IRCProtocolHandler *m_protocolHandler;
 };
 
