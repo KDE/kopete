@@ -219,6 +219,18 @@ public slots:
 	void pageDown();
 
 	/**
+	 * Sets the foreground color of the entry area, and outgoing messages
+	 * @param newColor The new foreground color.
+	 */
+	void setFgColor( const QColor &newColor );
+
+	/**
+	 * Sets the font of the edit area and outgoing messages to the specified value.
+	 * @param newFont The new font to use.
+	 */
+	void setFont( const QFont &newFont );
+
+	/**
 	 * Sets the background color of the entry area, and outgoing messages
 	 * @param newColor The new background color. If this is QColor(), then
 	 * a color chooser dialog is opened

@@ -832,6 +832,8 @@ void ChatView::saveOptions()
 
 	config->setGroup( QString::fromLatin1("ChatViewSettings") );
 	config->writeEntry ( QString::fromLatin1("BackgroundColor"), mBgColor );
+	config->writeEntry ( QString::fromLatin1("Font"), m_edit->font() );
+	config->writeEntry ( QString::fromLatin1("TextColor"), m_edit->color() );
 
 	//config->writeEntry ( "SplitterWidth", editDock->parent()->seperatorPos() );
 
@@ -858,8 +860,14 @@ void ChatView::readOptions()
 
 	config->setGroup( QString::fromLatin1("ChatViewSettings") );
 
+	QFont tmpFont = KGlobalSettings::generalFont();
+	setFont( config->readFontEntry( QString::fromLatin1("Font"), &tmpFont) );
 	QColor tmpColor = KGlobalSettings::baseColor();
 	setBgColor( config->readColorEntry ( QString::fromLatin1("BackgroundColor"), &tmpColor) );
+	tmpColor = KGlobalSettings::textColor();
+	setFgColor( config->readColorEntry ( QString::fromLatin1("TextColor"), &tmpColor ) );
+
+
 	//editDock->parent()->setSeperatorPos( config->readNumEntry ( "SplitterWidth", 70 ) );
 }
 
@@ -1099,15 +1107,19 @@ void ChatView::slotScrollView()
 void ChatView::setCurrentMessage( const KopeteMessage &message )
 {
 	m_edit->setText( message.plainBody() );
-	m_edit->setFont( message.font() );
-	m_edit->setColor( message.fg() );
+
+	setFont( message.font() );
+	setFgColor( message.fg() );
 	setBgColor( message.bg() );
 }
 
 KopeteMessage ChatView::currentMessage()
 {
 	KopeteMessage currentMsg = KopeteMessage( m_manager->user(), m_manager->members(), m_edit->text(), KopeteMessage::Outbound, editpart ? KopeteMessage::RichText : KopeteMessage::PlainText );
+
 	currentMsg.setBg( mBgColor );
+	currentMsg.setFg( m_edit->color() );
+	currentMsg.setFont( m_edit->font() );
 
 	return currentMsg;
 }
@@ -1165,6 +1177,29 @@ void ChatView::setBgColor( const QColor &newColor )
 	else
 		m_edit->setPalette(pal);
 }
+
+void ChatView::setFont( const QFont &newFont )
+{
+	m_edit->setFont(newFont);
+}
+
+void ChatView::setFgColor( const QColor &newColor )
+{
+	m_edit->setColor( newColor);
+
+	QPalette pal = m_edit->palette();
+	pal.setColor(QPalette::Active, QColorGroup::Text, m_edit->color() );
+	pal.setColor(QPalette::Inactive, QColorGroup::Text, m_edit->color() );
+
+	// unsetPalette() so that color changes in kcontrol are honoured
+	// if we ever have a subclass of KTextEdit, reimplement setPalette()
+	// and check it there.
+	if ( pal == QApplication::palette( m_edit ) )
+		m_edit->unsetPalette();
+	else
+		m_edit->setPalette(pal);
+}
+
 
 void ChatView::slotRepeatTimer()
 {
