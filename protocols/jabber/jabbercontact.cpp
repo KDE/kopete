@@ -136,22 +136,6 @@ void JabberContact::slotMessageManagerDeleted()
 
 }
 
-/* Return the group this contact resides in */
-KopeteGroupList JabberContact::groups() const
-{
-	QStringList groupStrings;
-	groupStrings = rosterItem.groups();
-
-	KopeteGroupList result;
-	for( QStringList::ConstIterator it = groupStrings.begin(); it != groupStrings.end(); ++it )
-	{
-		KopeteGroup *group_;
-		group_ = KopeteContactList::contactList()->getGroup( *it, KopeteGroup::Classic);
-		if ( group_ )
-			result.append( group_ );
-	}
-	return result;
-}
 
 /* Return the reason why we are away */
 QString JabberContact::reason() const
@@ -344,44 +328,18 @@ void JabberContact::slotRequestAuth()
 
 }
 
-void JabberContact::addToGroup(KopeteGroup *group)
+void JabberContact::syncGroups()
 {
-
-	kdDebug(14130) << "[JabberContact] Adding user " << userId() << " to group " << group->displayName() << endl;
-
-	QStringList groups = rosterItem.groups();
-	groups.append(group->displayName());
+	QStringList groups;
+	KopeteGroupList groupList = metaContact()->groups();
+	for( KopeteGroup *g = groupList.first(); g; g = groupList.next() )
+	{
+		if(!g->displayName().isEmpty())
+			groups.append( g->displayName() );
+	}
+	//FIXME: isn't there a problem is there are no groups (top-level only)
 	rosterItem.setGroups(groups);
-
 	protocol->updateContact(rosterItem);
-
-}
-
-void JabberContact::moveToGroup(KopeteGroup *from, KopeteGroup *to)
-{
-
-	kdDebug(14130) << "[JabberContact] Moving user " << userId() << " from group " << from->displayName() << " to group " << to->displayName() << endl;
-
-	QStringList groups = rosterItem.groups();
-	groups.append(to->displayName());
-	groups.remove(from->displayName());
-	rosterItem.setGroups(groups);
-
-	protocol->updateContact(rosterItem);
-
-}
-
-void JabberContact::removeFromGroup(KopeteGroup *group)
-{
-
-	kdDebug(14130) << "[JabberContact] Removing user " << userId() << " from group " << group->displayName() << endl;
-
-	QStringList groups = rosterItem.groups();
-	groups.remove(group->displayName());
-	rosterItem.setGroups(groups);
-
-	protocol->updateContact(rosterItem);
-
 }
 
 void JabberContact::km2jm(const KopeteMessage &km, Jabber::Message &jm)
@@ -797,15 +755,7 @@ void JabberContact::serialize( QMap<QString, QString> &serializedData,
 	// Contact id and display name are already set for us, only add the rest
 	serializedData[ "identityId" ] = identityId();
 
-	QString myGroups;
-	for( KopeteGroup *g = groups().first(); g; g = groups().next() )
-	{
-		myGroups.append( g->displayName() );
-		if( g != groups().last() )
-			myGroups.append( QString::fromLatin1(",") );
-	}
-
-	serializedData[ "groups" ] = myGroups;
+	serializedData[ "groups" ] = rosterItem.groups().join( QString::fromLatin1(",") );
 }
 
 #include "jabbercontact.moc"

@@ -59,13 +59,6 @@ public:
 	 ********************************************************************/
 
 	/**
-	 * Add/Remove user to/from a group
-	 */
-	virtual void addToGroup( KopeteGroup * );
-	virtual void removeFromGroup( KopeteGroup * );
-	virtual void moveToGroup( KopeteGroup * , KopeteGroup * );
-
-	/**
 	 * Return the identity ID
 	 */
 	virtual QString identityId() const;
@@ -79,11 +72,6 @@ public:
 	 * Return the currently used resource for this contact
 	 */
 	QString resource() const;
-
-	/*
-	 * Return the group this contact resides in
-	 */
-	virtual KopeteGroupList groups() const;
 
 	/**
 	 * Return the reason why we are away
@@ -160,6 +148,11 @@ public slots:
 	 * Received a message for this contact
 	 */
 	void slotReceivedMessage(const Jabber::Message &message);
+	
+	/**
+	 * Sync Groups with server
+	 */
+	virtual void syncGroups();
 
 protected slots:
 	/**
