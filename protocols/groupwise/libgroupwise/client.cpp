@@ -318,8 +318,9 @@ void Client::ct_messageReceived( const ConferenceEvent & messageEvent )
 // 	QRegExp rx( "(\\u\d+) (\?)"
 //     QString line1 = "This & that";
 //     line1.replace( rx, "&amp;" );
-	
-	transformedEvent.message = parser.Parse( rtf.latin1(), "" );
+	if ( !rtf.isEmpty() )
+		transformedEvent.message = parser.Parse( rtf.latin1(), "" );
+
 	emit messageReceived( transformedEvent );
 }
 
