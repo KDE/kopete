@@ -272,15 +272,13 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 void
 GaduAccount::slotLogin( int status, const QString& dscr )
 {
-	QString pass;
-
 	lastStatus		= status;
 	lastDescription	= dscr;
 
 	myself()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING ), dscr );
 
 	if ( !session_->isConnected() ) { 
-		session_->login( accountId().toInt(), pass, connectWithSSL, status, dscr, serverIP );
+		session_->login( accountId().toInt(), password(), connectWithSSL, status, dscr, serverIP );
 	}
 	else {
 		session_->changeStatus( status );
