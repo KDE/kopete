@@ -22,6 +22,14 @@ Beware: It's totally unsorted ;)
 
 - Import emoticon themes and/or styles (mETz)
 
+- Save the account order in the config file !!!!!!
+
+- Make the chatwindow a plugin (or make all in libkopete to allow this in the
+    future without changing the api)   same for the contactlist  (Olivier)
+
+- Interface for application invitations, and better filetransfers support
+- KAB integration
+
 ================================================================================
 
 OSCAR ICQ/AIM TODO ITEMS (generously added by mETz *g*)
@@ -106,8 +114,9 @@ For 1.0/kdenetwork:
 	- Improve the EditAccountWidget, add privacy setting, phone number setting,
 	   and a way to handle the ''hidden'' contactlist
 	- Handle the MSN PLUS! color codes
-	  Handle the MSN6 cutoms emoticon (at least add the capacity to view them)
+	- Handle the MSN6 cutoms emoticon (at least add the capacity to view them)
+	- Handle the MSN6 buddy icons
 	- Show internals messages in chat window when filetransfers, and make the
-	   possibility to send files without opening previously a chat
+	   possibility to send files without opening previously a chat.
 
 ================================================================================
