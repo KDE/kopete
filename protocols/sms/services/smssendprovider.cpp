@@ -6,7 +6,7 @@
 #if KDE_VERSION > 305
 #include <kprocio.h>
 #else
-#include <kshellprocess.h>
+#include <kprocess.h>
 #endif
 #include <qregexp.h>
 #include <klistview.h>

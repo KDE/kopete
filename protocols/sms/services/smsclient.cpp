@@ -13,7 +13,7 @@
 #if KDE_VERSION > 305
 #include <kprocio.h>
 #else
-#include <kshellprocess.h>
+#include <kprocess.h>
 #endif
 
 SMSClient::SMSClient(SMSContact* m_contact)
