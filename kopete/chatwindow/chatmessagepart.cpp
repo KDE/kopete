@@ -44,6 +44,7 @@
 #include <kstringhandler.h>
 #include <ktempfile.h>
 #include <kurldrag.h>
+#include <kio/netaccess.h>
 
 #include "chatmemberslistwidget.h"
 #include "kopetechatwindow.h"
@@ -249,40 +250,40 @@ void ChatMessagePart::save()
 	if ( dlg.exec() != QDialog::Accepted )
 		return;
 
-	QString fileName = dlg.selectedFile();
-	QFile file( fileName );
-
-	if( file.open( IO_WriteOnly ) )
+	KURL saveURL = dlg.selectedURL();
+	KTempFile tempFile;
+	tempFile.setAutoDelete( true );
+	QFile* file = tempFile.file();
+	
+	QTextStream stream ( file );
+	if ( dlg.currentFilter() == QString::fromLatin1( "text/xml" ) )
 	{
-		QTextStream stream ( &file );
-		if ( dlg.currentFilter() == QString::fromLatin1( "text/xml" ) )
+		stream << QString::fromLatin1( "<document>" );
+		stream << messageMap.join("\n");
+		stream << QString::fromLatin1( "</document>\n" );
+	}
+	else if ( dlg.currentFilter() == QString::fromLatin1( "text/plain" ) )
+	{
+		for( QStringList::Iterator it = messageMap.begin(); it != messageMap.end(); ++it)
 		{
-			stream << QString::fromLatin1( "<document>" );
-			stream << messageMap.join("\n");
-			stream << QString::fromLatin1( "</document>\n" );
+			QDomDocument doc;
+			doc.setContent(*it);
+			stream << "[" << doc.elementsByTagName("message").item(0).toElement().attribute("formattedTimestamp");
+			stream << "] " << doc.elementsByTagName("contact").item(0).toElement().attribute("contactId") ;
+			stream << ": " << doc.elementsByTagName("body").item(0).toElement().text() << "\n";
 		}
-		else if ( dlg.currentFilter() == QString::fromLatin1( "text/plain" ) )
-		{
-			for( QStringList::Iterator it = messageMap.begin(); it != messageMap.end(); ++it)
-			{
-				QDomDocument doc;
-				doc.setContent(*it);
-				stream << "[" << doc.elementsByTagName("message").item(0).toElement().attribute("formattedTimestamp");
-				stream << "] " << doc.elementsByTagName("contact").item(0).toElement().attribute("contactId") ;
-				stream << ": " << doc.elementsByTagName("body").item(0).toElement().text() << "\n";
-			}
-		}
-		else
-		{
-			stream << htmlDocument().toHTML() << '\n';
-		}
-
-		file.close(); // maybe unneeded but I like to close opened files ;)
 	}
 	else
 	{
+		stream << htmlDocument().toHTML() << '\n';
+	}
+	
+	tempFile.close();
+	
+	if ( !KIO::NetAccess::move( KURL( tempFile.name() ), saveURL ) )
+	{
 		KMessageBox::queuedMessageBox( view(), KMessageBox::Error,
-				i18n("<qt>Could not open <b>%1</b> for writing.</qt>").arg(fileName), // Message
+				i18n("<qt>Could not open <b>%1</b> for writing.</qt>").arg( saveURL.prettyURL() ), // Message
 				i18n("Error While Saving") ); //Caption
 	}
 }
