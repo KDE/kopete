@@ -3,6 +3,7 @@
 	<xsl:output method="html"/>
 	<xsl:template match="message">
 		<div class="KopeteMessage">
+			<xsl:attribute name="id"><xsl:value-of select="@id"/>
 			<xsl:attribute name="style">
 				<xsl:choose>
 					<xsl:when test="@direction='2'"><!-- Internal message -->
