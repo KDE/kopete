@@ -32,88 +32,68 @@ Modified by Jason Keirstead <jason@keirstead.org>
 
 QString KSParser::parse( const QString &message )
 {
-    QString res;
-    m_tags.clear();
-    m_attributes.clear();
+	QString res;
+	m_tags.clear();
+	m_attributes.clear();
 
-    for (unsigned int i = 0; i < message.length();)
-    {
-        QChar ch = message[i++];
+	for (uint i = 0; i < message.length(); i++)
+	{
+		QChar ch = message[i];
 
-        if (ch.latin1() == 0x03 || ch == '~' && i < message.length())
-        {
-            QChar next = message[ i++ ];
-            if (next.latin1() >= 0x30 && next.latin1() <= 0x39)
-            {
-                int fg = -1, len;
-                int bg = -1;
-                QRegExp colorRex("^[0-9]+");
-                if (colorRex.search(message.mid(--i)) >= 0)
-                {
-                    len = colorRex.matchedLength();
-                    fg = message.mid(i, len).toInt();
-                    i += len;
-                }
-                if (message[i] == ',')
-                {
-                    if (colorRex.search(message.mid(++i)) >= 0)
-                    {
-                        len = colorRex.matchedLength();
-                        bg = message.mid(i, len).toInt();
-                        i += len;
-                    }
-                }
-                QColor c = ircColor(fg);
-                if ( c.isValid() )
-                    res += pushTag( "font", QString( "color=\"%1\"" ).arg( c.name() ) );
-                //else
-                //        res += popTag( "font" );
+		switch( ((int)ch) )
+		{
+			case 3:
+			{
+				if ( message[++i].digitValue() > -1 )
+				{
+					QString tagStyle;
+					QString fgColor = QString( message[i] );
+					while( message[++i].digitValue() > -1 )
+						fgColor += message[i];
 
-                c = ircColor(bg);
-                if ( c.isValid() )
-                    res += pushTag( "font", QString( "style=\"background-color:%1;\"" ).arg( c.name() ) );
-            }
-            else if (ch.latin1() == 0x03)
-                res += popTag( "font" );
-            else if (ch == '~')
-            {
-                switch (next)
-                {
-                case 'c':
-                    res += popTag( "font" );
-                    break;
-                case 'C':
-                    res += popAll();
-                    break;
-                case 'r': break;
-                case 's': break;
-                case 'b':
-		case 'B':
-                    res += toggleTag( "b" );
-                    break;
-                case 'u':
-		case 'U':
-                    res += toggleTag( "u" );
-                    break;
-                case 'n':
-                    //res += pushTag( "font", QString( "color=\"%1\"" ).arg( ksopts->nickForeground.name() ) );
-                    break;
-                case 'o':
-                    //res += pushTag( "font", QString( "color=\"%1\"" ).arg( ksopts->ownNickColor.name() ) );
-                    break;
-                case '~':
-                    res += ch;
-                }
-            }
-        }
-        else
-            res += ch;
+					QString bgColor;
+					if( message[i] == ',' )
+					{
+						while( message[++i].digitValue() > -1 )
+							bgColor += message[i];
+					}
 
-    }
+					QColor c = ircColor( fgColor.toInt() );
+					if ( c.isValid() )
+						tagStyle += QString::fromLatin1( "color:%1;" ).arg( c.name() );
 
-    res.append( popAll() );
+					if( !bgColor.isEmpty() )
+					{
+						c = ircColor( bgColor.toInt() );
+						if ( c.isValid() )
+							tagStyle += QString::fromLatin1( "background-color:%1;" ).arg( c.name() );
+					}
 
-    return res;
+					if( !tagStyle.isEmpty() )
+						res += pushTag(  QString::fromLatin1("span"), QString::fromLatin1("style=\"%1\"").arg( tagStyle ) );
+
+					i--;
+				}
+				else
+					res += popTag( QString::fromLatin1("span") );
+				break;
+			}
+			case 2:
+				res += toggleTag("b");
+				break;
+
+			case 31:
+				res += toggleTag("u");
+				break;
+
+			default:
+				res += ch;
+		}
+	}
+
+	res.append( popAll() );
+
+	return res;
 }
 
 QString KSParser::pushTag(const QString &tag, const QString &attributes)

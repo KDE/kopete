@@ -274,7 +274,7 @@ void IRCContact::slotNewCtcpReply(const QString &type, const QString &target, co
 void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 {
 	QString htmlString = message.escapedBody();
-	QRegExp findTags( QString::fromLatin1("<span style=\"color:(#\\w+)\">.*</span>") );
+	QRegExp findTags( QString::fromLatin1("<span style=\"(.*)\">(.*)</span>") );
 	findTags.setMinimal( true );
 	int pos = 0;
 	while ( pos >= 0 )
@@ -282,15 +282,30 @@ void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 		pos = findTags.search( htmlString );
 		if ( pos > -1 )
 		{
-			QString colorHTML = findTags.cap( 1 );
-			QRegExp replaceTags( QString::fromLatin1("<span style=\"color:%1\">(.*)</span>").arg( colorHTML ) );
-			replaceTags.setMinimal( true );
+			QString styleHTML = findTags.cap(1);
+			QString replacement = findTags.cap(2);
+			QStringList styleAttrs = QStringList::split( ';', styleHTML );
 
-			int ircColor = mAccount->protocol()->parser()->colorForHTML( colorHTML );
-			if( ircColor > -1 )
-				htmlString.replace( replaceTags, QString::fromLatin1("%1%2\\1%3").arg( QChar( 0x03 ) ).arg( QString::number( ircColor ) ).arg( QChar( 0x03 ) ) );
-			else
-				htmlString.replace( replaceTags, QString::fromLatin1("\\1") );
+			for( QStringList::Iterator attrPair = styleAttrs.begin(); attrPair != styleAttrs.end(); ++attrPair )
+			{
+				QString attribute = (*attrPair).section(':',0,0);
+				QString value = (*attrPair).section(':',1);
+				kdDebug() << k_funcinfo << "Attribute:" << attribute << ", Value:" << value << endl;
+				if( attribute == QString::fromLatin1("color") )
+				{
+					int ircColor = mAccount->protocol()->parser()->colorForHTML( value );
+					if( ircColor > -1 )
+						replacement.prepend( QString( QChar(0x03) ).append( QString::number(ircColor) ) ).append( QChar( 0x03 ) );
+				}
+				else if( attribute == QString::fromLatin1("font-weight") && value == QString::fromLatin1("600") )
+					replacement.prepend( QChar(0x02) ).append( QChar(0x02) );
+				else if( attribute == QString::fromLatin1("text-decoration")  && value == QString::fromLatin1("underline") )
+					replacement.prepend( QChar(31) ).append( QChar(31) );
+			}
+
+			QRegExp rx( QString::fromLatin1("<span style=\"%1\">.*</span>" ).arg( styleHTML ) );
+			rx.setMinimal( true );
+			htmlString.replace( rx, replacement );
 		}
 	}
 
