@@ -122,6 +122,10 @@ protected slots:
 	void ssiContactAdded( const Oscar::SSI& );
 	void ssiContactRemoved( const Oscar::SSI& ) {}
 
+	/* slots for receiving typing notifications, and notify the appropriate OscarContact */
+	void userStartedTyping( const QString & contact );
+	void userStoppedTyping( const QString & contact );
+	
 signals:
 	
 	void accountDisconnected( Kopete::Account::DisconnectReason reason );
