@@ -265,9 +265,9 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			m_authData=data.section( ' ' , 2 , 2 );
 			m_kv=QString::null;
 
-			if( m_account->accountId().contains("@hotmail.com") )
+			if( m_account->accountId().contains("@hotmail.") )
 				m_sid="loginnet.passport.com";
-			else if( m_account->accountId().contains("@msn.com") ||  m_account->accountId().contains("@compaq.net") ||  m_account->accountId().contains("@webtv.net") )
+			else if( m_account->accountId().contains("@msn.") ||  m_account->accountId().contains("@compaq.net") ||  m_account->accountId().contains("@webtv.net") )
 				m_sid="msnialogin.passport.com";
 			else
 				m_sid="login.passport.com";
