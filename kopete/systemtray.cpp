@@ -241,7 +241,7 @@ void KopeteSystemTray::addBalloon()
 			m_balloon= new KopeteBalloon(
 				i18n("<qt><nobr><b>New Message from %1:</b></nobr><br><br><nobr>\"%2\"</nobr></qt>")
 					.arg( msg.from()->metaContact()->displayName() ).arg( msgText ), QString::null );
-			connect(m_balloon, SIGNAL(signalBalloonClicked()), mEventList.first() , SLOT(apply()));
+			connect(m_balloon, SIGNAL(signalBalloonClicked()), mEventList.first() , SLOT(deleteLater()));
 			connect(m_balloon, SIGNAL(signalButtonClicked()), mEventList.first() , SLOT(apply()));
 			m_balloon->setAnchor( KopeteSystemTray::systemTray()->mapToGlobal(pos()) );
 			m_balloon->show();
