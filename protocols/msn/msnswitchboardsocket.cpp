@@ -254,7 +254,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		QString message;
 		message = msg.right(msg.length() - msg.findRev(" ")-1);
 		message = message.replace(QRegExp("\r\n"),"");
-		emit userTypingMsg(message);  
+		emit userTypingMsg(message.lower());
 	}
 	else// if(msg.contains("Content-Type: text/plain;"))
 	{
