@@ -47,6 +47,7 @@ struct KMMPrivate
 	KopeteProtocol *mProtocol;
 	bool mSendEnabled;
 	int mId;
+	bool mLog;
 };
 
 KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteContactPtrList others,
@@ -64,6 +65,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteCon
 	d->mProtocol = protocol;
 	d->mWidget = widget;
 	d->mId = id;
+	d->mLog = (logFile.isEmpty()) ? false : true;
 
 	readModeChanged();
 	connect( KopetePrefs::prefs(), SIGNAL(queueChanged()), this, SLOT(readModeChanged()));
@@ -96,6 +98,16 @@ void KopeteMessageManager::slotSendEnabled(bool e)
 		if (d->mEmailWindow)
 			d->mEmailWindow->setSendEnabled(e);
 	}
+}
+
+void KopeteMessageManager::setLogging( bool on )
+{
+	d->mLog = on;
+}
+
+bool KopeteMessageManager::logging() const
+{
+	return d->mLog;
 }
 
 void KopeteMessageManager::newChatWindow()
@@ -201,7 +213,7 @@ void KopeteMessageManager::readMessages()
 		newChatWindow();
 	}
 
-	// for some reason gcc 2.96 doesn't like the line below (and gcc 2.65.3 give a warnign) 
+	// for some reason gcc 2.96 doesn't like the line below (and gcc 2.65.3 give a warnign)
 	//QWidget *window = (d->mWidget == ChatWindow) ? d->mChatWindow : ((d->mWidget == Email) ? d->mEmailWindow : 0L);
 	QWidget *window = 0L;
 
@@ -344,7 +356,7 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 {
 	d->mMessageQueue.append(msg);
 
-	if( d->mLogger )
+	if( d->mLogger && d->mLog )
 	{
 		d->mLogger->append( msg );
 	}

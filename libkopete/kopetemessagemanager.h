@@ -75,6 +75,12 @@ public:
 	 */
 	int readMode() const;
 
+	/**
+	 * true if logging is turned on (which is the default
+	 * is KMM is constructed with a logFile)
+	 */
+	bool logging() const;
+
 	WidgetType widget() const;
 
 	/**
@@ -108,7 +114,7 @@ signals:
 	 */
 	void messageSent(const KopeteMessage& msg, KopeteMessageManager *);
 	void dying(KopeteMessageManager *);
-	
+
 	/**
 	 * The following signals are used internally by Kopete.
 	 * They allow plugins to change message before
@@ -127,6 +133,12 @@ public slots:
 	void readModeChanged();
 	void slotSendEnabled(bool);
 
+	/**
+	 * Enables/disables logging
+	 * WARNING: logging will only work if KMM is constructed
+	 *          with a valid logFile variable
+	 */
+	void setLogging( bool on );
   	/**
 	 * Append a message to the queue
 	 */
@@ -169,7 +181,7 @@ private:
 	 * if a foreign message exists
 	 */
 	bool emptyMessageBuffer();
-	
+
 	KMMPrivate *d;
 };
 
