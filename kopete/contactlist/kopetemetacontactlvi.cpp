@@ -22,6 +22,7 @@
 #include <qpainter.h>
 #include <qtimer.h>
 #include <qvariant.h>
+#include <qmime.h>
 
 #include "kopetenotifyclient.h"
 #include <kdebug.h>
@@ -72,13 +73,32 @@ public:
 	}
 	QString operator()( ComponentBase *, const QPoint &, QRect & )
 	{
+		QString toolTip = QString::fromLatin1("<qt>");
+		toolTip += QString::fromLatin1("<table>");
+		if ( ! metaContact->photo().isNull() )
+		{
+			QString photoName = QString::fromLatin1("kopete-metacontact-photo:%1").arg( KURL::encode_string( metaContact->metaContactId() ));
+			//QMimeSourceFactory::defaultFactory()->setImage( "contactimg", metaContact->photo() );
+			toolTip += QString::fromLatin1("<tr><td><img src=\"%1\"></td></tr>").arg( photoName );
+			
+		}
+		else
+		{
+			kdDebug( 14010 ) << k_funcinfo << "null picture" << endl; 
+		}
+		toolTip += QString::fromLatin1("<tr><td>%1</td></tr>").arg(metaContact->displayName());
+		toolTip += QString::fromLatin1("</table>");
+		
 		QPtrList<Contact> contacts = metaContact->contacts();
 		if( contacts.count() == 1 )
-			return contacts.first()->toolTip();
-
+		{
+			return toolTip + contacts.first()->toolTip();
+		}
 		// We are over a metacontact with > 1 child contacts, and not over a specific contact
 		// Iterate through children and display a summary tooltip
-		QString toolTip = QString::fromLatin1("<qt><table>");
+		
+		
+		toolTip += QString::fromLatin1("<table>");
 		for(Contact *c = contacts.first(); c; c = contacts.next())
 		{
 			QString iconName = QString::fromLatin1("kopete-contact-icon:%1:%2:%3")
