@@ -58,7 +58,7 @@
 #include "ui/gwreceiveinvitationdialog.h"
 #include "qcatlshandler.h"
 #include "tasks/createcontacttask.h"
-
+#include "tasks/deleteitemtask.h"
 
 GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& accountID, const char *name )
 : Kopete::PasswordedAccount ( parent, accountID, 0, "groupwiseaccount" )
@@ -68,6 +68,12 @@ GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& ac
 	KopeteMetaContact *metaContact = new KopeteMetaContact;
 	setMyself( new GroupWiseContact( this, accountId(), metaContact, 0, 0, 0 ) );
 	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOffline );
+
+	// Contact list management
+	QObject::connect( KopeteContactList::contactList(), SIGNAL( groupRenamed( KopeteGroup *, const QString & ) ),
+			SLOT( slotKopeteGroupRenamed( KopeteGroup * ) ) );
+	QObject::connect( KopeteContactList::contactList(), SIGNAL( groupRemoved( KopeteGroup * ) ),
+			SLOT( slotKopeteGroupRemoved( KopeteGroup * ) ) );
 	
 	m_connector = 0;
 	m_QCATLS = 0;
@@ -370,6 +376,24 @@ void GroupWiseAccount::slotLoginFailed()
 	password().setWrong();
 	disconnect();
 	connect();
+}
+
+void GroupWiseAccount::slotKopeteGroupRenamed( KopeteGroup * )
+{
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	// rename the group on the server
+}
+
+void GroupWiseAccount::slotKopeteGroupRemoved( KopeteGroup * group )
+{
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	// the member contacts should be deleted separately, so just delete the folder here
+	// get the folder object id
+	int objectId = group->pluginData( protocol(), group->pluginData( protocol(), accountId() + " objectId" ) ).toInt();
+	DeleteItemTask * dit = new DeleteItemTask( client()->rootTask() );
+	dit->item( 0, objectId );
+	// the group is deleted synchronously after this slot returns; so there is no point listening for signals
+	dit->go( true );
 }
 
 void GroupWiseAccount::slotConnError()

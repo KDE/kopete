@@ -103,12 +103,12 @@ public:
 	 * Returns a KopeteMessageManager associated with this contact
 	 */
 	virtual KopeteMessageManager *manager( bool canCreate = false );
+
 	/** 
 	 * Locate or create a messagemanager for the specified group of contacts
 	 */
 	GroupWiseMessageManager *manager ( KopeteContactPtrList chatMembers, bool canCreate = false );
-	
-	
+
 	/**
 	 * Received a message from the server.
 	 * Find the conversation that this message belongs to, and display it there.

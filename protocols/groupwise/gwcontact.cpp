@@ -28,7 +28,7 @@
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
 
-#include "tasks/deletecontacttask.h"
+#include "tasks/deleteitemtask.h"
 
 #include "client.h"
 #include "gwaccount.h"
@@ -347,10 +347,10 @@ void GroupWiseContact::slotDeleteContact()
 	const QValueListConstIterator< ContactListInstance > end = m_instances.end();
 	for ( ; it != end; ++it )
 	{
-		DeleteContactTask * dct = new DeleteContactTask( account()->client()->rootTask() );
-		dct->contact( (*it).parentId, (*it).objectId );
-		connect( dct, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
-		dct->go( true );
+		DeleteItemTask * dit = new DeleteItemTask( account()->client()->rootTask() );
+		dit->item( (*it).parentId, (*it).objectId );
+		connect( dit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
+		dit->go( true );
 	}
 }
 

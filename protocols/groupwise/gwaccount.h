@@ -34,6 +34,7 @@
 
 class KActionMenu;
 class KopeteContact;
+class KopeteGroup;
 class KopeteMetaContact;
 
 class GroupWiseContact;
@@ -144,6 +145,9 @@ protected slots:
 	 * TODO: Extend KopeteAwayAction so you can set multiple ones there.
 	 */
 	void slotSetAutoReply();
+ 	void slotKopeteGroupRenamed( KopeteGroup * );
+	void slotKopeteGroupRemoved( KopeteGroup * );
+
 	// SERVER SIDE CONTACT LIST PROCESSING
 	/**
 	 * Called when we receive a FOLDER from the server side contact list

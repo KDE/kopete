@@ -1,5 +1,5 @@
 //
-// C++ Implementation: deletecontacttask
+// C++ Implementation: DeleteItemTask
 //
 // Description: 
 //
@@ -9,18 +9,18 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "deletecontacttask.h"
+#include "deleteitemtask.h"
 
-DeleteContactTask::DeleteContactTask(Task* parent): ModifyContactListTask(parent)
+DeleteItemTask::DeleteItemTask(Task* parent): ModifyContactListTask(parent)
 {
 }
 
 
-DeleteContactTask::~DeleteContactTask()
+DeleteItemTask::~DeleteItemTask()
 {
 }
 
-void DeleteContactTask::contact( const int parentFolder, const int objectId )
+void DeleteItemTask::item( const int parentFolder, const int objectId )
 {
 	Field::FieldList lst;
 	lst.append( new Field::SingleField( NM_A_SZ_PARENT_ID, 0, NMFIELD_TYPE_UTF8, QString::number( parentFolder ) ) );
@@ -29,4 +29,4 @@ void DeleteContactTask::contact( const int parentFolder, const int objectId )
 	createTransfer( "deletecontact", lst );
 }
 
-#include "deletecontacttask.moc"
+#include "deleteitemtask.moc"
