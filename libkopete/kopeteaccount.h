@@ -318,6 +318,11 @@ private slots:
 	 */
 	void slotAccountReady();
 
+	/**
+	 * Called when the wallet is closed externally.
+	 */
+	void walletClosed();
+
 private:
 	KopeteAccountPrivate *d;
 };

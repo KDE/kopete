@@ -99,6 +99,7 @@ KopeteAccount::~KopeteAccount()
 
 #if KDE_IS_VERSION( 3, 1, 90 )
 	delete d->wallet;
+	d->wallet = 0L;
 #endif
 
 	delete d;
@@ -230,8 +231,12 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 		if ( KWallet::Wallet::folderDoesNotExist( KWallet::Wallet::NetworkWallet(), QString::fromLatin1( "Kopete" ) ) )
 		{
 			// The folder might exist, try to open the wallet
-			if ( !d->wallet )
-				d->wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), KWallet::Wallet::Synchronous );
+			if ( !d->wallet ) {
+				d->wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), /*FIXME: put a real wId here */0, KWallet::Wallet::Synchronous );
+				if (d->wallet) {
+					QObject::connect(d->wallet, SIGNAL(walletClosed()), this, SLOT(walletClosed()));
+				}
+			}
 			QString pwd;
 
 			// Before trying to read from the wallet, check if the config file holds a password.
@@ -520,6 +525,14 @@ KopeteContact * KopeteAccount::myself() const
 void KopeteAccount::setMyself( KopeteContact *myself )
 {
 	d->myself = myself;
+}
+
+void KopeteAccount::walletClosed()
+{
+#if KDE_IS_VERSION( 3, 1, 90 )
+	delete d->wallet;
+	d->wallet = 0L;
+#endif
 }
 
 #include "kopeteaccount.moc"
