@@ -465,8 +465,8 @@ GaduSession::checkDescriptor()
 		sendResult( e->event.pubdir50 );
 	        break;
   default:
-		emit error( i18n("Unknown Event"),
-								i18n("Can't handle an event. Please report this to zack@kde.org") );
+//		emit error( i18n("Unknown Event"),
+//		i18n("Can't handle an event. Please report this to zack@kde.org") );
 		kdDebug(14100)<<"GaduGadu Event = "<<e->type<<endl;
 		break;
 	}

@@ -35,7 +35,6 @@
 
 #include "gadueditaccount.h"
 #include "gaduaddcontactpage.h"
-#include "gadupreferences.h"
 
 #include <libgadu.h>
 
@@ -75,8 +74,6 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
 	else
 		protocolStatic_ = this;
 
-	prefs_ = new GaduPreferences( "gadu_protocol", this );
-	QObject::connect( prefs_, SIGNAL(saved()), this, SLOT(settingsChanged()) );
 	addAddressBookField( "messaging/gadu", KopetePlugin::MakeIndexField );
 }
 

@@ -5,8 +5,8 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 
 noinst_LTLIBRARIES = libgaduui.la
 
-libgaduui_la_SOURCES = gaduadd.ui gadusearch.ui gaduprefs.ui gadueditaccountui.ui gaduawayui.ui  \
+libgaduui_la_SOURCES = gaduadd.ui gadusearch.ui gadueditaccountui.ui gaduawayui.ui  \
 	empty.cpp
 
-EXTRA_DIST = gaduadd.ui gadusearch.ui gaduprefs.ui gadueditaccountui.ui gaduawayui.ui \
+EXTRA_DIST = gaduadd.ui gadusearch.ui gadueditaccountui.ui gaduawayui.ui \
 	 empty.cpp
