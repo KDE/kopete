@@ -135,7 +135,7 @@ void KMSNServiceSocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "MSG" )
 	{
-		readBlock( data.section( ' ', 1, 1 ).toUInt() );
+		readBlock( data.section( ' ', 2, 2 ).toUInt() );
 	}
 	else if( cmd == "FLN" )
 	{
