@@ -13,4 +13,3 @@ TODO for Jabber:
 - do a std translation of resource.status().show() to JabberProtocol::Presence
 - JabberProtocol and JabberContact are now friends. Move all methods that only
   relate to the API between them to private
-- JabberPreferences: click on apply, jabber plugin must go offline to save the new settings
