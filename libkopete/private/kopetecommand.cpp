@@ -26,7 +26,7 @@ KopeteCommand::KopeteCommand( QObject *parent, const QString &command, const cha
 	m_type = type;
 	m_formatString = formatString;
 	
-	if(  m_type == Normal )
+	if(  m_type == KopeteCommandHandler::Normal )
 		QObject::connect( this, SIGNAL( handleCommand( const QString &, KopeteMessageManager *) ), parent, handlerSlot );
 }
 
