@@ -19,7 +19,7 @@
 #ifndef MSNPREFERENCES_H
 #define MSNPREFERENCES_H
 
-#include <kcmodule.h>
+#include "kcmodule.h"
 
 class msnPrefsUI;
 

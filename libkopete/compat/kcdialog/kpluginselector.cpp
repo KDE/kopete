@@ -82,7 +82,7 @@
 #include <qvaluelist.h>
 #include <kservice.h>
 #include <ktrader.h>
-#include <ktabwidget.h>
+#include "ktabwidget.h"
 #include <kiconloader.h>
 #include <kcmodule.h>
 #include "kcmoduleinfo.h"

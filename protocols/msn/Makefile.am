@@ -2,8 +2,9 @@ METASOURCES = AUTO
 SUBDIRS = ui . pixmaps icons config
 AM_CPPFLAGS = -I$(srcdir)/ui \
 	-I./ui \
-	$(KOPETE_INCLUDES) \
 	-I$(top_srcdir)/kopete/libkopete/compat \
+	-I$(top_srcdir)/kopete/libkopete/compat/kcdialog \
+	$(KOPETE_INCLUDES) \
 	$(all_includes)
 
 kde_module_LTLIBRARIES = kopete_msn.la

@@ -149,14 +149,16 @@ void KConfigureDialog::createDialogFromServices( const QValueList<KService::Ptr>
 	if( dialogface == KJanusWidget::TreeList )
 	{
 		d->dlg->setShowIconsInTreeList( true );
-		d->dlg->unfoldTreeList( true );
+
+		kdWarning( 700 ) << "WARNING!!  i commented here a line because it does not compiles with KDE 3.1 and i don't know what to do" << endl;
+		//d->dlg->unfoldTreeList( true );
 	}
 	connect( d->dlg, SIGNAL( okClicked() ), KCDDispatcher::self(), SLOT( syncConfiguration() ) );
 	connect( d->dlg, SIGNAL( applyClicked() ), KCDDispatcher::self(), SLOT( syncConfiguration() ) );
 	connect( d->dlg, SIGNAL( configCommitted( const QCString & ) ), KCDDispatcher::self(), SLOT( reparseConfiguration( const QCString & ) ) );
 	for( KCModuleInfo * info = d->moduleinfos.first(); info; info = d->moduleinfos.next() )
 	{
-		kdDebug( 700 ) << "add module: " << info->fileName() << " with ParentComponents=" << info->parentComponents() << endl;
+//		kdDebug( 700 ) << "add module: " << info->fileName() << " with ParentComponents=" << info->parentComponents() << endl;
 		d->dlg->addModule( *info );
 	}
 }
