@@ -257,13 +257,13 @@ QString MSNContact::statusIcon() const
 	{
 		case MSNProtocol::NLN: // Online
 		{
-			return "msn_online";
+			return isBlocked() ? "msn_online_blocked" : "msn_online";
 			break;
 		}
 		case MSNProtocol::BSY: // Busy
 		case MSNProtocol::PHN: // On the phone
 		{
-			return "msn_na";
+			return isBlocked() ? "msn_online_blocked" : "msn_na";
 			break;
 		}
 		case MSNProtocol::IDL: // Idle
@@ -271,11 +271,11 @@ QString MSNContact::statusIcon() const
 		case MSNProtocol::BRB: // Be right back
 		case MSNProtocol::LUN: // Out to lunch
 		{
-			return "msn_away";
+			return isBlocked() ? "msn_online_blocked" : "msn_away";
 			break;
 		}
 		default:
-			return "msn_offline";
+			return isBlocked() ? "msn_offline_blocked" : "msn_offline";
 	}
 }
 
