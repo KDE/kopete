@@ -21,14 +21,14 @@
 #include <qpainter.h>
 #include <qtimer.h>
 
-#include <kdebug.h>
-#include <klocale.h>
-#include <kpopupmenu.h>
-#include <kiconloader.h>
-#include <kmessagebox.h>
-#include <kiconeffect.h>
-#include <kpassivepopup.h>
 #include "kopetenotifyclient.h"
+#include <kdebug.h>
+#include <kiconeffect.h>
+#include <kiconloader.h>
+#include <klocale.h>
+#include <kmessagebox.h>
+#include <kpassivepopup.h>
+#include <kpopupmenu.h>
 
 #include <kdeversion.h>
 #if KDE_IS_VERSION( 3, 1, 90 )
@@ -37,26 +37,22 @@
 #include <klineeditdlg.h>
 #endif
 
-
-#include "kopetecontactlistview.h"
-#include "kopeteaccountmanager.h"
-#include "kopetemetacontactlvi.h"
-#include "kopetegroupviewitem.h"
-#include "kopetecontactlist.h"
-#include "kopetemetacontact.h"
-#include "kopetestdaction.h"
 #include "addcontactpage.h"
-#include "kopetepluginmanager.h"
 #include "kopeteaccount.h"
-#include "kopeteprefs.h"
-#include "systemtray.h"
+#include "kopeteaccountmanager.h"
+#include "kopetecontactlist.h"
+#include "kopetecontactlistview.h"
 #include "kopetegroup.h"
-
-#include <kdeversion.h>
-
+#include "kopetegroupviewitem.h"
+#include "kopetemetacontact.h"
+#include "kopetemetacontactlvi.h"
+#include "kopetepluginmanager.h"
+#include "kopeteprefs.h"
+#include "kopetestdaction.h"
+#include "systemtray.h"
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, KopeteGroupViewItem *parent )
-	: QObject( contact, "KopeteMetaContactLVI" ), KListViewItem( parent )
+: QObject( contact, "KopeteMetaContactLVI" ), KListViewItem( parent )
 {
 	m_metaContact = contact;
 	m_isTopLevel = false;
@@ -103,7 +99,7 @@ void KopeteMetaContactLVI::initLVI()
 		SLOT( slotUpdateIcons() ) );
 
 	connect( m_metaContact, SIGNAL( contactStatusChanged( KopeteContact *, const KopeteOnlineStatus & ) ),
-		SLOT( slotContactStatusChanged(KopeteContact *) ) );
+		SLOT( slotContactStatusChanged( KopeteContact * ) ) );
 
 	connect( m_metaContact, SIGNAL( contactAdded( KopeteContact * ) ),
 		SLOT( slotUpdateIcons() ) );
@@ -118,11 +114,12 @@ void KopeteMetaContactLVI::initLVI()
 		SLOT( slotConfigChanged() ) );
 
 	mBlinkTimer = new QTimer( this, "mBlinkTimer" );
-	QObject::connect( mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()) );
-	mIsBlinkIcon=false;
-	m_event=0L;
+	QObject::connect( mBlinkTimer, SIGNAL( timeout() ), this, SLOT( slotBlink() ) );
+	mIsBlinkIcon = false;
+	m_event = 0L;
 
-	//if(!mBlinkIcon) mBlinkIcon = new QPixmap(KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "newmsg" ), KIcon::Small));
+	//if ( !mBlinkIcon )
+	//	mBlinkIcon = new QPixmap( KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "newmsg" ), KIcon::Small ) );
 
 	slotUpdateIcons();
 	slotDisplayNameChanged();
@@ -130,22 +127,21 @@ void KopeteMetaContactLVI::initLVI()
 
 KopeteMetaContactLVI::~KopeteMetaContactLVI()
 {
-//	if(m_parentGroup)
-//		m_parentGroup->refreshDisplayName();
+	//if ( m_parentGroup )
+	//	m_parentGroup->refreshDisplayName();
 }
 
-void KopeteMetaContactLVI::movedToGroup(KopeteGroup *to)
+void KopeteMetaContactLVI::movedToGroup( KopeteGroup *to )
 {
-	KopeteContactListView *lv =
-		dynamic_cast<KopeteContactListView *>( listView() );
-	if( !lv )
+	KopeteContactListView *lv = dynamic_cast<KopeteContactListView *>( listView() );
+	if ( !lv )
 		return;
 
-	if(m_parentGroup)
+	if ( m_parentGroup )
 		m_parentGroup->refreshDisplayName();
 
 	KopeteGroupViewItem *group_item = lv->getGroup( to );
-	if(group_item)
+	if ( group_item )
 	{
 		m_isTopLevel = false;
 		m_parentGroup = group_item;
@@ -162,10 +158,10 @@ void KopeteMetaContactLVI::movedToGroup(KopeteGroup *to)
 
 void KopeteMetaContactLVI::rename( const QString& newName )
 {
-	if( newName.isEmpty() )
+	if ( newName.isEmpty() )
 	{
-		//reset the last display name
-		QListViewItem::setText(0, m_metaContact->displayName());
+		// Reset the last display name
+		QListViewItem::setText( 0, m_metaContact->displayName() );
 		m_metaContact->setTrackChildNameChanges( true );
 	}
 	else // user changed name manually, disable tracking of contact nickname and update displayname
@@ -174,30 +170,28 @@ void KopeteMetaContactLVI::rename( const QString& newName )
 		m_metaContact->setDisplayName( newName );
 	}
 
-	kdDebug( 14000 ) << k_funcinfo << "newName=" << newName <<
-		", TrackChildNameChanges=" << m_metaContact->trackChildNameChanges() << endl;
+	kdDebug( 14000 ) << k_funcinfo << "newName=" << newName << ", TrackChildNameChanges=" << m_metaContact->trackChildNameChanges() << endl;
 }
 
-void KopeteMetaContactLVI::slotContactStatusChanged(KopeteContact *c)
+void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 {
 	// FIXME: All this code should be in kopetemetacontact.cpp.. having it in the LVI makes it all fire
 	// multiple times if the user is in multiple groups - Jason
-
-	if(c->account()->myself()->onlineStatus().status() != KopeteOnlineStatus::Connecting && ( !c->account()->isAway() || KopetePrefs::prefs()->soundIfAway()  ))
+	if ( c->account()->myself()->onlineStatus().status() != KopeteOnlineStatus::Connecting &&
+		( !c->account()->isAway() || KopetePrefs::prefs()->soundIfAway() ) )
 	{
-		int winId = KopeteSystemTray::systemTray() ?
-			KopeteSystemTray::systemTray()->winId() : 0;
+		int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 
-		QString text=i18n("%2 is now %1!").arg(m_metaContact->statusString()).arg(m_metaContact->displayName());
+		QString text = i18n( "%2 is now %1!" ).arg( m_metaContact->statusString() ).arg( m_metaContact->displayName() );
 
-		if( m_metaContact->isOnline()  && m_oldStatus == KopeteOnlineStatus::Offline )
-			KNotifyClient::event(winId, "kopete_online", text , i18n("Chat") , this, SLOT(execute()));
-		else if( !m_metaContact->isOnline() && m_oldStatus != KopeteOnlineStatus::Offline && m_oldStatus != KopeteOnlineStatus::Unknown  )
-			KNotifyClient::event(winId, "kopete_offline", text );
-		else if(m_oldStatus != KopeteOnlineStatus::Unknown)
-			KNotifyClient::event(winId, "kopete_status_change", text , i18n("Chat") , this, SLOT(execute()));
+		if ( m_metaContact->isOnline()  && m_oldStatus == KopeteOnlineStatus::Offline )
+			KNotifyClient::event( winId, "kopete_online", text, i18n( "Chat" ), this, SLOT( execute() ) );
+		else if ( !m_metaContact->isOnline() && m_oldStatus != KopeteOnlineStatus::Offline && m_oldStatus != KopeteOnlineStatus::Unknown  )
+			KNotifyClient::event( winId, "kopete_offline", text );
+		else if ( m_oldStatus != KopeteOnlineStatus::Unknown )
+			KNotifyClient::event( winId, "kopete_status_change", text, i18n( "Chat" ), this, SLOT( execute() ) );
 
-		if( !mBlinkTimer->isActive() &&
+		if ( !mBlinkTimer->isActive() &&
 			( m_metaContact->statusIcon() != m_oldStatusIcon ) )
 		{
 			mIsBlinkIcon = false;
@@ -213,39 +207,31 @@ void KopeteMetaContactLVI::slotContactStatusChanged(KopeteContact *c)
 void KopeteMetaContactLVI::slotUpdateIcons()
 {
 /*
-	kdDebug(14000) << k_funcinfo << m_metaContact->displayName() <<
+	kdDebug( 14000 ) << k_funcinfo << m_metaContact->displayName() <<
 		": new status " << m_metaContact->status() << ", init=" << init << endl;
 
-	if (sender())
-		kdDebug(14000) << k_funcinfo << "sender name: " << sender()->name() << endl;
+	if ( sender() )
+		kdDebug( 14000 ) << k_funcinfo << "sender name: " << sender()->name() << endl;
 */
 
 	QPixmap statusIcon = SmallIcon( m_metaContact->statusIcon() );
-	if(
-		KopetePrefs::prefs()->greyIdleMetaContacts() &&
-		(m_metaContact->idleTime() >= 10*60) )
-	{
+	if ( KopetePrefs::prefs()->greyIdleMetaContacts() && ( m_metaContact->idleTime() >= 10 * 60 ) )
 		KIconEffect::semiTransparent( statusIcon );
-	}
 
 	setPixmap( 0, statusIcon );
 
 	updateVisibility();
 
-	if( m_parentGroup )
+	if ( m_parentGroup )
 		m_parentGroup->refreshDisplayName();
 }
 
 void KopeteMetaContactLVI::execute() const
 {
-	if(m_event)
-	{
+	if ( m_event )
 		m_event->apply();
-	}
 	else
-	{
 		m_metaContact->execute();
-	}
 }
 
 void KopeteMetaContactLVI::slotDisplayNameChanged()
@@ -253,13 +239,14 @@ void KopeteMetaContactLVI::slotDisplayNameChanged()
 	setText( 0, m_metaContact->displayName() );
 }
 
-/*void KopeteMetaContactLVI::slotRemoveThisUser()
+/*
+void KopeteMetaContactLVI::slotRemoveThisUser()
 {
-	kdDebug(14000) << k_funcinfo << " Removing user" << endl;
-//	m_metaContact->removeThisUser();
+	kdDebug( 14000 ) << k_funcinfo << " Removing user" << endl;
+	//m_metaContact->removeThisUser();
 
-	if( KMessageBox::questionYesNo( qApp->mainWidget(), i18n("Are you sure you want to remove"
-		" %1 from your contact list?").arg( m_metaContact->displayName() ), i18n("Remove Contact")) == KMessageBox::Yes )
+	if ( KMessageBox::questionYesNo( qApp->mainWidget(), i18n( "Are you sure you want to remove %1 from your contact list?" ).
+		arg( m_metaContact->displayName() ), i18n( "Remove Contact - Kopete" ) ) == KMessageBox::Yes )
 	{
 		KopeteContactList::contactList()->removeMetaContact( m_metaContact );
 	}
@@ -267,52 +254,51 @@ void KopeteMetaContactLVI::slotDisplayNameChanged()
 
 void KopeteMetaContactLVI::slotRemoveFromGroup()
 {
-	if(m_metaContact->isTemporary())
+	if ( m_metaContact->isTemporary() )
 		return;
 
 	m_metaContact->removeFromGroup( group() );
 }
 */
+
 void KopeteMetaContactLVI::slotRename()
 {
-	setRenameEnabled(0, true);
-	startRename(0);
+	setRenameEnabled( 0, true );
+	startRename( 0 );
 }
 
-void KopeteMetaContactLVI::okRename(int col)
+void KopeteMetaContactLVI::okRename( int col )
 {
-	KListViewItem::okRename(col);
-	emit rename(text(col));
-	setRenameEnabled(col, false); // Yeah, that's on purpose...
+	KListViewItem::okRename( col );
+	emit rename( text( col ) );
+	setRenameEnabled( col, false ); // Yeah, that's on purpose...
 }
 
 /*
 void KopeteMetaContactLVI::slotMoveToGroup()
 {
-
-	if( m_actionMove && !m_metaContact->isTemporary() )
+	if ( m_actionMove && !m_metaContact->isTemporary() )
 	{
-		if( m_actionMove->currentItem() == 0 )
+		if ( m_actionMove->currentItem() == 0 )
 		{
 			// we are moving to top-level
-			if( group() != KopeteGroup::toplevel )
+			if ( group() != KopeteGroup::toplevel )
 				m_metaContact->moveToGroup( group(), KopeteGroup::toplevel );
 		}
 		else
 		{
 			KopeteGroup *to = KopeteContactList::contactList()->getGroup( m_actionMove->currentText() );
-			if( !m_metaContact->groups().contains( to ) )
+			if ( !m_metaContact->groups().contains( to ) )
 				m_metaContact->moveToGroup( group(), to );
 		}
 	}
 }
 
-
 void KopeteMetaContactLVI::slotAddToGroup()
 {
-	if( m_actionCopy )
+	if ( m_actionCopy )
 	{
-		kdDebug(14000) << "KopeteMetaContactLVI::slotAddToGroup " << endl;
+		kdDebug( 14000 ) << "KopeteMetaContactLVI::slotAddToGroup " << endl;
 		if ( m_actionCopy->currentItem() == 0 )
 		{
 			// we are adding to top-level
@@ -329,24 +315,19 @@ void KopeteMetaContactLVI::slotAddToGroup()
 //FIXME: this is not used... remove?
 void KopeteMetaContactLVI::slotAddToNewGroup()
 {
-	if( m_metaContact->isTemporary() )
+	if ( m_metaContact->isTemporary() )
 		return;
 
 #if KDE_IS_VERSION( 3, 1, 90 )
 	QString groupName = KInputDialog::getText(
-		i18n( "New Group" ),
-		i18n( "Please enter the name for the new group:" )
-		);
+		i18n( "New Group" ), i18n( "Please enter the name for the new group:" ) );
 #else
 	QString groupName = KLineEditDlg::getText(
-		i18n( "New Group" ),
-		i18n( "Please enter the name for the new group:" )
-		);
+		i18n( "New Group" ), i18n( "Please enter the name for the new group:" ) );
 #endif
-	if( !groupName.isEmpty() )
-		m_metaContact->addToGroup( KopeteContactList::contactList()->getGroup(groupName) );
+	if ( !groupName.isEmpty() )
+		m_metaContact->addToGroup( KopeteContactList::contactList()->getGroup( groupName ) );
 }
-
 
 void KopeteMetaContactLVI::slotAddTemporaryContact()
 {
@@ -357,47 +338,44 @@ void KopeteMetaContactLVI::slotConfigChanged()
 {
 	updateVisibility();
 	slotIdleStateChanged();
-//	repaint();
+	//repaint();
 }
 
 void KopeteMetaContactLVI::updateVisibility()
 {
-	if ( KopetePrefs::prefs()->showOffline() /*|| mEventCount */)
-		setVisible(true);
+	if ( KopetePrefs::prefs()->showOffline() /*|| mEventCount */ )
+		setVisible( true );
 	else if ( m_metaContact->status() == KopeteOnlineStatus::Offline && !mBlinkTimer->isActive() )
-		setVisible(false);
+		setVisible( false );
 	else
-		setVisible(true);
+		setVisible( true );
 }
 
 void KopeteMetaContactLVI::paintCell( QPainter *p, const QColorGroup &cg,
 	int column, int width, int align )
 {
-	if( column == 0 )
+	if ( column == 0 )
 	{
 		QPtrList<KopeteContact> contacts = m_metaContact->contacts();
 		int cellWidth = width - ( contacts.count() * 16 ) - 4;
-		if( cellWidth < 0 )
+		if ( cellWidth < 0 )
 			cellWidth = 0;
 
 		QColorGroup modcg = cg;
 		KopetePrefs *prefs = KopetePrefs::prefs();
-		if (prefs->greyIdleMetaContacts() &&
-			(m_metaContact->idleTime() >= 10*60)
-			)
-		{
-			modcg.setColor(QColorGroup::Text, prefs->idleContactColor());
-		}
+		if ( prefs->greyIdleMetaContacts() && ( m_metaContact->idleTime() >= 10 * 60 ) )
+			modcg.setColor( QColorGroup::Text, prefs->idleContactColor() );
+
 		QListViewItem::paintCell( p, modcg, column, cellWidth, align );
 		QFontMetrics fm( p->font() );
 		int pixelsWide = fm.width( text( 0 ) ) + 16 + 4;
-		if( pixelsWide > cellWidth )
+		if ( pixelsWide > cellWidth )
 			pixelsWide = cellWidth;
 		m_pixelWide = pixelsWide;
 
 		// Draw the rest of the background
 		QListView *lv = listView();
-		if( !lv )
+		if ( !lv )
 			return;
 
 		int marg = lv->itemMargin();
@@ -408,22 +386,21 @@ void KopeteMetaContactLVI::paintCell( QPainter *p, const QColorGroup &cg,
 		p->fillRect( cellWidth, 0, width - cellWidth, height(),
 			cg.brush( crole ) );
 
-		if( isSelected() &&
-			( column == 0 || listView()->allColumnsShowFocus() ) )
+		if ( isSelected() && ( column == 0 || listView()->allColumnsShowFocus() ) )
 		{
 			p->fillRect( QMAX( cellWidth, r - marg ), 0,
 				width - cellWidth - r + marg, height(),
 				cg.brush( QColorGroup::Highlight ) );
-			if( isEnabled() || !lv )
+			if ( isEnabled() || !lv )
 				p->setPen( cg.highlightedText() );
-			else if( !isEnabled() && lv)
+			else if ( !isEnabled() && lv )
 				p->setPen( lv->palette().disabled().highlightedText() );
 		}
 
 		// And last, draw the online status icons
 		int mc_x = 0;
 		QPtrListIterator<KopeteContact> it( contacts );
-		for( ; it.current(); ++it )
+		for ( ; it.current(); ++it )
 		{
 			QPixmap icon = ( *it )->onlineStatus().iconFor( *it, 12 );
 			p->drawPixmap( mc_x + pixelsWide + 4, height() - 16,
@@ -443,9 +420,9 @@ KopeteContact *KopeteMetaContactLVI::contactForPoint( const QPoint &p ) const
 	QPtrList<KopeteContact> contacts = m_metaContact->contacts();
 	QPtrListIterator<KopeteContact> it( contacts );
 	int mc_x = 0;
-	for( ; it.current(); ++it )
+	for ( ; it.current(); ++it )
 	{
-		if( QRect( mc_x + m_pixelWide+ 4, 0, 12, height() ).contains( p ) )
+		if ( QRect( mc_x + m_pixelWide + 4, 0, 12, height() ).contains( p ) )
 		{
 			return *it;
 		}
@@ -462,9 +439,9 @@ QRect KopeteMetaContactLVI::contactRect( const KopeteContact *c ) const
 	QPtrList<KopeteContact> contacts = m_metaContact->contacts();
 	QPtrListIterator<KopeteContact> it( contacts );
 	int mc_x = 0;
-	for( ; it.current(); ++it )
+	for ( ; it.current(); ++it )
 	{
-		if( it.current() == c )
+		if ( it.current() == c )
 			return QRect( mc_x + m_pixelWide + 4, 0, 12, height() );
 
 		mc_x += 16;
@@ -487,7 +464,7 @@ uint KopeteMetaContactLVI::lastContactIconX() const
 
 	QPtrListIterator<KopeteContact> it( contacts );
 	int mc_x = 0;
-	for( ; it.current(); ++it )
+	for ( ; it.current(); ++it )
 		mc_x += 16;
 
 	return mc_x + m_pixelWide + 4;
@@ -503,24 +480,24 @@ KopeteGroup *KopeteMetaContactLVI::group()
 
 QString KopeteMetaContactLVI::key( int, bool ) const
 {
-	char importance_char;
-	switch (m_metaContact->status())
+	char importanceChar;
+	switch ( m_metaContact->status() )
 	{
-	 case KopeteOnlineStatus::Online:
-		importance_char = 'A';
+	case KopeteOnlineStatus::Online:
+		importanceChar = 'A';
 		break;
-	 case KopeteOnlineStatus::Away:
-		importance_char = 'B';
+	case KopeteOnlineStatus::Away:
+		importanceChar = 'B';
 		break;
-	 case KopeteOnlineStatus::Offline:
-		importance_char = 'C';
+	case KopeteOnlineStatus::Offline:
+		importanceChar = 'C';
 		break;
-	 case KopeteOnlineStatus::Unknown:
-	 default:
-		importance_char = 'D';
+	case KopeteOnlineStatus::Unknown:
+	default:
+		importanceChar = 'D';
 	}
 
-	return importance_char + text( 0 ).lower();
+	return importanceChar + text( 0 ).lower();
 }
 
 bool KopeteMetaContactLVI::isTopLevel() const
@@ -544,22 +521,21 @@ bool KopeteMetaContactLVI::isGrouped() const
 
 void KopeteMetaContactLVI::slotIdleStateChanged()
 {
-	QPixmap theIcon = SmallIcon( m_metaContact->statusIcon() );
-	if( KopetePrefs::prefs()->greyIdleMetaContacts() &&
-		( m_metaContact->idleTime() >= 10*60 ) )
-	{
-		KIconEffect::semiTransparent(theIcon);
-	}
-	setPixmap(0, theIcon);
-	/*if ( m_parentGroup )
-		m_parentGroup->refreshDisplayName();*/
+	QPixmap icon = SmallIcon( m_metaContact->statusIcon() );
+	if ( KopetePrefs::prefs()->greyIdleMetaContacts() && ( m_metaContact->idleTime() >= 10 * 60 ) )
+		KIconEffect::semiTransparent( icon );
+
+	setPixmap( 0, icon );
+	//if ( m_parentGroup )
+	//	m_parentGroup->refreshDisplayName();
 }
 
-void KopeteMetaContactLVI::catchEvent(KopeteEvent *event)
+void KopeteMetaContactLVI::catchEvent( KopeteEvent *event )
 {
-	if( m_event )
+	if ( m_event )
 	{
-		return; //ignore the new event.
+		//ignore the new event.
+		return;
 		//TODO: add a queue
 	}
 
@@ -567,33 +543,35 @@ void KopeteMetaContactLVI::catchEvent(KopeteEvent *event)
 	connect( event, SIGNAL( done( KopeteEvent* ) ),
 		this, SLOT( slotEventDone( KopeteEvent * ) ) );
 
-	if (mBlinkTimer->isActive())
+	if ( mBlinkTimer->isActive() )
 		mBlinkTimer->stop();
 
 	m_oldStatusIcon = m_metaContact->statusIcon();
 
-	mBlinkTimer->start(500, false);
+	mBlinkTimer->start( 500, false );
 }
 
 void KopeteMetaContactLVI::slotBlink()
 {
-	if (mIsBlinkIcon)
+	if ( mIsBlinkIcon )
 	{
-		setPixmap(0,SmallIcon(m_metaContact->statusIcon()));
-		if(!m_event && m_blinkLeft <= 0)
+		setPixmap( 0, SmallIcon( m_metaContact->statusIcon() ) );
+		if ( !m_event && m_blinkLeft <= 0 )
 		{
 			mBlinkTimer->stop();
-			m_oldStatusIcon=m_metaContact->statusIcon();
+			m_oldStatusIcon = m_metaContact->statusIcon();
 			updateVisibility();
 		}
 	}
 	else
 	{
-		if(m_event)
-			setPixmap(0,SmallIcon("newmsg"));
+		if ( m_event )
+		{
+			setPixmap( 0, SmallIcon( "newmsg" ) );
+		}
 		else
 		{
-			setPixmap(0,SmallIcon(m_oldStatusIcon));
+			setPixmap( 0, SmallIcon( m_oldStatusIcon ) );
 			m_blinkLeft--;
 		}
 	}
@@ -601,16 +579,17 @@ void KopeteMetaContactLVI::slotBlink()
 	mIsBlinkIcon = !mIsBlinkIcon;
 }
 
-void KopeteMetaContactLVI::slotEventDone(KopeteEvent* )
+void KopeteMetaContactLVI::slotEventDone( KopeteEvent *event )
 {
-	m_event=0L;
-	if (mBlinkTimer->isActive())
-	{
+	m_event = 0L;
+	if ( mBlinkTimer->isActive() )
 		mBlinkTimer->stop();
-	}
-	setPixmap(0,SmallIcon(m_metaContact->statusIcon()));
+
+	setPixmap( 0, SmallIcon( m_metaContact->statusIcon() ) );
 	mIsBlinkIcon = false;
 }
 
 #include "kopetemetacontactlvi.moc"
+
 // vim: set noet ts=4 sts=4 sw=4:
+
