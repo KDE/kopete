@@ -164,7 +164,9 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	chatView->setMetaRefreshEnabled( false );
 
 	chatView->begin();
-	chatView->write( QString::fromLatin1( "<html><head><style>") + styleHTML() +
+	chatView->write( QString::fromLatin1( "<html><head>\n"
+		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=") +
+		chatView->encoding() + QString::fromLatin1("\">\n<style>") + styleHTML() +
 		QString::fromLatin1("</style></head><body></body></html>") );
 	chatView->end();
 
