@@ -36,6 +36,7 @@
 #include <kurl.h>
 
 #include "kopeteplugin.h"
+#include "kopeteidentitymanager.h"
 
 class KopeteLibraryInfo;
 
@@ -239,6 +240,10 @@ bool LibraryLoader::loadPlugin( const QString &spec )
 		m_addressBookFields.insert( plugin, plugin->addressBookFields() );
 
 		kdDebug(14010) << "LibraryLoader::loadPlugin: Successfully loaded plugin '" << spec << "'."<< endl;
+
+		if( plugin->inherits("KopeteProtocol") )
+			KopeteIdentityManager::manager()->loadProtocol( (KopeteProtocol*)plugin );
+
 		emit pluginLoaded( plugin );
 		return true;
 	}

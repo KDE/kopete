@@ -93,7 +93,7 @@ Kopete::~Kopete()
 
 void Kopete::slotLoadPlugins()
 {
-	KopeteContactList::contactList()->load();
+ 	KopeteContactList::contactList()->load();
 
 	KConfig *config = KGlobal::config();
 	config->setGroup("");
@@ -102,7 +102,7 @@ void Kopete::slotLoadPlugins()
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
 	QStringList modules;
-	
+
 	if( config->hasKey( "Plugins" ) )
 	{
 		modules = config->readListEntry( "Plugins" );
@@ -148,13 +148,14 @@ void Kopete::slotLoadPlugins()
 
 	config->writeEntry( "Plugins", modules );
 
-	LibraryLoader::pluginLoader()->loadAll();
-	
-	//FIXME: identities should be loaded before contacts
 	KopeteIdentityManager::manager()->load();
-	
+
+	LibraryLoader::pluginLoader()->loadAll();
+
+	//FIXME: identities should be loaded before contacts
+
 	KopeteIdentityManager::manager()->autoConnect();
-	
+
 }
 
 void Kopete::slotMainWindowDestroyed()
