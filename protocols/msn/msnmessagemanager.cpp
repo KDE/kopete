@@ -1,9 +1,9 @@
 /*
     msnmessagemanager.cpp - MSN Message Manager
 
-    Copyright (c) 2002 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -31,6 +31,7 @@
 #include <ktempfile.h>
 #include <kmainwindow.h>
 #include <ktoolbar.h>
+#include <krun.h>
 
 #include "kopetecontactaction.h"
 #include "kopetecontactlist.h"
@@ -81,7 +82,7 @@ MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteCont
 	{
 		connect( c, SIGNAL( displayPictureChanged() ), this, SLOT( slotDisplayPictureChanged() ) );
 		m_image = new QLabel( 0L, "kde toolbar widget" );
-		new KWidgetAction( m_image, i18n( "MSN Display Picture" ), 0, 0, 0, actionCollection(), "msnDisplayPicture" );
+		new KWidgetAction( m_image, i18n( "MSN Display Picture" ), 0, this, SLOT( slotRequestPicture() ), actionCollection(), "msnDisplayPicture" );
 		if(c->displayPicture())
 		{
 			//if the view doesn't exist yet, we will be unable to get the size of the toolbar
@@ -492,14 +493,24 @@ void MSNMessageManager::initInvitation(MSNInvitation* invitation)
 void MSNMessageManager::slotRequestPicture()
 {
 	QPtrList<KopeteContact> mb=members();
-	if(m_chatService)
+	MSNContact *c = static_cast<MSNContact*>( mb.first() );
+	if(!c)
+	 return;
+	
+	if( !c->displayPicture())
 	{
-		MSNContact *c = static_cast<MSNContact*>( mb.first() );
-		if(c && !c->displayPicture() && !c->object().isEmpty() )
-			m_chatService->requestDisplayPicture();
+		if(m_chatService)
+		{
+			if( !c->object().isEmpty() )
+				m_chatService->requestDisplayPicture();
+		}
+		else
+			static_cast<MSNAccount*>( account() )->slotStartChatSession( mb.first()->contactId() );
 	}
 	else
-		static_cast<MSNAccount*>( account() )->slotStartChatSession( mb.first()->contactId() );
+	{ //we already have the picture, just show it.
+		KRun::runURL( KURL::fromPathOrURL( c->displayPicture()->name() ), "image/png" );
+	}
 
 }
 
