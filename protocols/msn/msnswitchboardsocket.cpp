@@ -257,7 +257,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		QString message;
 		message = msg.right(msg.length() - msg.findRev(" ")-1);
 		message = message.replace(QRegExp("\r\n"),"");
-		emit userTypingMsg(message);    // changed 20.10.2001
+		emit userTypingMsg(message,this);  
 	}
 	else// if(msg.contains("Content-Type: text/plain;"))
 	{
@@ -361,6 +361,7 @@ void MSNSwitchBoardSocket::slotTypingMsg()
 	// Length is appended by sendCommand()
 	QString args = "U";
 	sendCommand( "MSG", args, true, message );
+	m_lastId++;  //FIXME:  there is no ACK for this command ; without m_lastId++, future messages are queued  (MSNSocket::m_lastId should be private)
 }
 
 // this Invites an Contact

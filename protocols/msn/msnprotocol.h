@@ -301,6 +301,8 @@ private slots:
 	 * Recieved phone numbers
 	 */
 	void slotRecievedInfo(QString handle,QString type,QString data);
+  /** No descriptions */
+  void slotUserTypingMsg( QString ,MSNSwitchBoardSocket* );
 
 
 private:

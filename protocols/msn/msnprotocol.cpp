@@ -1475,6 +1475,15 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 			SIGNAL( switchBoardClosed(MSNSwitchBoardSocket *) ),
 			this, SLOT( slotSwitchBoardClosed(MSNSwitchBoardSocket * ) ) );
 
+		connect( chatService, SIGNAL( userTypingMsg( QString, MSNSwitchBoardSocket* ) ),
+			this, SLOT( slotUserTypingMsg( QString ,MSNSwitchBoardSocket* ) ) );
+		disconnect( manager, SIGNAL( typingMsg() ),
+			chatService, SLOT( slotTypingMsg() ) );
+		connect( manager, SIGNAL( typingMsg() ),
+			chatService, SLOT( slotTypingMsg() ) );
+
+		
+
 		// We may have a new KMM here, but it could just as well be an
 		// existing instance. To avoid connecting multiple times, try to
 		// disconnect the existing connection first
@@ -1687,6 +1696,33 @@ void MSNProtocol::slotRecievedInfo(QString handle,QString type,QString data)
 	}
 	c->setInfo(type,data);
 }
+
+void MSNProtocol::slotUserTypingMsg( QString handle ,MSNSwitchBoardSocket* service )
+{
+	if( !m_contacts.contains( handle ) )
+	{
+		kdDebug() << "MSNProtocol::slotUserTypingMsg : WARNING - KopeteContact not found"  << endl;
+		return;
+	}
+	MSNContact *c=m_contacts[handle];
+	if(!c)
+	{
+		kdDebug() << "MSNProtocol::slotUserTypingMsg : WARNING - KopeteContact not found"  << endl;
+		return;
+	}
+
+
+	KopeteMessageManager *manager =  kopeteapp->sessionFactory()->findKopeteMessageManager(service->id());
+	if(!manager)
+	{
+		kdDebug() << "MSNProtocol::slotUserTypingMsg : WARNING - no KopeteMessageManager found with id " << service->id() << endl;
+		return;
+	}
+
+	manager->userTypingMsg(c);
+
+}
+
 
 #include "msnprotocol.moc"
 

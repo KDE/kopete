@@ -93,7 +93,7 @@ private slots:
 signals:
 	void msgReceived( const KopeteMessage &msg );
 	void startChat(MSNSwitchBoardSocket* switchoard);
-	void userTypingMsg(QString);
+	void userTypingMsg(QString , MSNSwitchBoardSocket* );
 	void msgAcknowledgement(bool);
 	void switchBoardIsActive(bool);  
 	/**
