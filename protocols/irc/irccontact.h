@@ -31,10 +31,6 @@ class IRCQueryView;
 class IRCServerContact;
 class KIRC;
 
-class KAction;
-class KListAction;
-class KPopupMenu;
-
 class QStringList;
 class QVBox;
 
@@ -51,14 +47,14 @@ public:
 	// KopeteContact virtual functions
 	virtual ContactStatus status() const;
 	virtual QString statusIcon() const;
-	virtual void execute();
-	virtual void showContextMenu(const QPoint&, const QString&);
+	virtual bool isReachable() { return true; }
+	virtual KActionCollection *customContextMenuActions();
 	
 	bool waitingPart() { return m_waitingPart ;};
 	bool requestedQuit() { return m_requestedQuit; };
 
 	IRCServerContact *serverContact() { return m_serverContact; };
-    KIRC *engine() { return m_engine; };
+	KIRC *engine() { return m_engine; };
 
 	QVBox *tabPage() { return mTabPage; };
 	IRCChatView *getChatView() { return chatView; };
@@ -67,11 +63,17 @@ public:
 	QString targetName() { return m_targetName; } ;
 	QString groupName() { return m_groupName; };
 
-
 	virtual QString id() const;
-	virtual QString data() const;
 
 private:
+
+	bool init();
+
+	/**
+	 * Returns true, if targetName() begins with '#', '&', '!' or '+'.
+	 */
+	bool isChannel() const;
+
 	QString m_serverName;
 	QString m_targetName;
 	QString m_groupName;
@@ -82,7 +84,6 @@ private:
 
 	KIRC *m_engine;
 	IRCServerContact *m_serverContact;
-	void initActions();
 	unsigned int m_port;
 
 	QString m_username;
@@ -90,34 +91,32 @@ private:
 
 	bool mJoinOnConnect;
 	IRCChatView *chatView;
-	KPopupMenu *popup;
 	QVBox *mTabPage;
 	IRCQueryView *queryView;
-	bool init();
 	bool added;
 	bool contactOnList;
 
-	KAction* actionAddGroup;
-	KListAction *actionContactMove;
-	KAction* actionRemove;
+	KActionCollection* m_pActionCollection;
 
 private slots:
 //	void slotHop();
 	void slotPartedChannel(const QString &, const QString &, const QString &);
 	void slotUserKicked(const QString &, const QString &, const QString &, const QString &);
-	void slotRemoveThis();
 	void slotOpen();
 	void slotOpenConnect();
 	void incomingPrivMessage(const QString &, const QString &, const QString &);
 	void incomingPrivAction(const QString &, const QString &, const QString &);
-	void slotGroupRemoved(const QString &);
 
 public slots:
-	void slotMoveThisUser();
 
 	void slotPart();
 	void joinNow();
 	void unloading();
+
+	virtual void execute();
+	virtual void slotViewHistory() {}
+	virtual void slotDeleteContact();
+	virtual void slotUserInfo() {}
 };
 
 #endif

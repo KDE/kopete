@@ -28,27 +28,27 @@
 #include "kirc.h"
 #include "kopete.h"
 #include "kopetecontactlist.h"
-#include "kopetestdaction.h"
-#include "kopetewindow.h"
 #include "tabcompleter.h"
 
-#include <qlayout.h>
-#include <qiconset.h>
-#include <qvbox.h>
-
-#include <kdebug.h>
+#include <kaction.h>
 #include <kconfig.h>
-#include <klocale.h>
+#include <kdebug.h>
 #include <kglobal.h>
-#include <kpopupmenu.h>
-#include <ksimpleconfig.h>
-#include <ktextbrowser.h>
 #include <kiconloader.h>
+#include <klocale.h>
+#include <kmessagebox.h>
+#include <ksimpleconfig.h>
+
+#include <qiconset.h>
+#include <qlayout.h>
+#include <qtextedit.h>
+#include <qvbox.h>
 
 
 
 IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, QString &protocolID)
-	: KopeteContact(protocolID, parent)
+	: KopeteContact(protocolID, parent),
+	  m_pActionCollection(new KActionCollection(this, "IRCActionCollection"))
 {
 	m_engine = contact->engine();
 	m_requestedQuit = false;
@@ -56,8 +56,6 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 	contactOnList = false;
 	KGlobal::config()->setGroup("IRC");
 	QString newServer;
-
-	initActions();
 
 	if (server.isEmpty() == true)
 	{
@@ -108,7 +106,8 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect,
 		       IRCServerContact *contact, const QStringList /*pendingMessage*/,
 		       KopeteMetaContact *parent, QString &protocolID)
-	: KopeteContact(protocolID, parent)
+	: KopeteContact(protocolID, parent),
+	  m_pActionCollection(new KActionCollection(this, "IRCActionCollection"))
 {
 	m_engine = contact->engine();
 	m_requestedQuit = false;
@@ -116,8 +115,6 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 	contactOnList = false;
 	KGlobal::config()->setGroup("IRC");
 	QString newServer;
-
-	initActions();
 
 	if (server.isEmpty() == true)
 	{
@@ -165,7 +162,8 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 }
 
 IRCContact::IRCContact(const QString &groupName, const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, QString &protocolID)
-	: KopeteContact(protocolID, parent)
+	: KopeteContact(protocolID, parent),
+	  m_pActionCollection(new KActionCollection(this, "IRCActionCollection"))
 {
 	m_engine = contact->engine();
 	m_requestedQuit = false;
@@ -173,8 +171,6 @@ IRCContact::IRCContact(const QString &groupName, const QString &server, const QS
 	contactOnList = true;
 	KGlobal::config()->setGroup("IRC");
 	QString newServer;
-
-	initActions();
 
 	if (server.isEmpty() == true)
 	{
@@ -202,8 +198,6 @@ IRCContact::IRCContact(const QString &groupName, const QString &server, const QS
 	mTabPage = 0L;
 	queryView = 0L;
 	chatView = 0L;
-
-	connect(KopeteContactList::contactList(), SIGNAL(groupRemoved(const QString &)), this, SLOT(slotGroupRemoved(const QString &)));
 
 	if (!init())
 	{
@@ -234,14 +228,6 @@ IRCContact::IRCContact(const QString &groupName, const QString &server, const QS
 	}
 }
 
-void IRCContact::slotGroupRemoved(const QString &group)
-{
-	if (group == m_groupName)
-	{
-		slotRemoveThis();
-	}
-}
-
 bool IRCContact::init()
 {
 	if (m_serverContact->activeContacts().contains(m_targetName.lower()) > 0)
@@ -256,6 +242,14 @@ bool IRCContact::init()
 	connect(m_engine, SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)), this, SLOT(incomingPrivMessage(const QString &, const QString &, const QString &)));
 	connect(m_engine, SIGNAL(incomingPrivAction(const QString &, const QString &, const QString &)), this, SLOT(incomingPrivAction(const QString &, const QString &, const QString &)));
 	return true;
+}
+
+bool IRCContact::isChannel() const
+{
+	static QString const sChannelChars(QString::fromLatin1("#!&+"));
+
+	return ((m_targetName.isEmpty() == false)
+		&& (sChannelChars.contains(m_targetName[0]) > 0));
 }
 
 KopeteContact::ContactStatus IRCContact::status() const
@@ -301,27 +295,6 @@ void IRCContact::incomingPrivAction(const QString &/*originating*/, const QStrin
 	}
 }
 
-void IRCContact::slotRemoveThis()
-{
-	if (m_targetName[0] == '#' || m_targetName[0] == '!' || m_targetName[0] == '&')
-	{
-		slotPart();
-	}
-	m_serverContact->protocol()->config()->deleteGroup(m_targetName.lower());
-	m_serverContact->protocol()->config()->sync();
-	if (mTabPage !=0)
-	{
-		m_serverContact->chatWindow()->mTabWidget->removePage(mTabPage);
-		delete mTabPage;
-		mTabPage = 0L;
-		queryView = 0L;
-		chatView = 0L;
-		delete this;
-		return;
-	}
-	delete this;
-}
-
 void IRCContact::slotOpen()
 {
 	if (!m_serverContact->engine()->isLoggedIn())
@@ -349,51 +322,52 @@ void IRCContact::slotOpenConnect()
 	}
 }
 
-void IRCContact::showContextMenu(const QPoint& point, const QString& /*group*/)
+KActionCollection* IRCContact::customContextMenuActions()
 {
-	popup = new KPopupMenu();
-	popup->insertTitle(m_targetName);
-	if (m_targetName[0] == '#' || m_targetName[0] == '!' || m_targetName[0] == '&')
+	m_pActionCollection->clear();
+
+	if (isChannel())
 	{
 		if (mTabPage != 0)
 		{
-			popup->insertItem(i18n("Part"), this, SLOT(slotPart()));
+			new KAction(i18n("Part"), KShortcut(),
+				    this, SLOT(slotPart()),
+				    m_pActionCollection, "part");
 		}
 // TODO:	popup->insertItem("Hop (Part and Re-join)", this, SLOT(slotHop()));
-// TODO:	popup->insertItem("Remove", this, SLOT(slotRemoveThis()));
-	} else {
+	}
+	else
+	{
 		if (mTabPage != 0)
 		{
-			popup->insertItem(i18n("Close"), this, SLOT(unloading()));
+			new KAction(i18n("Close"), KShortcut(),
+				    this, SLOT(unloading()),
+				    m_pActionCollection, "close");
 		}
 	}
 	if (mTabPage == 0)
 	{
 		if (m_serverContact->engine()->isLoggedIn())
 		{
-			if (m_targetName[0] == '#' || m_targetName[0] == '!' || m_targetName[0] == '&')
-			{
-				popup->insertItem(i18n("Join"), this, SLOT(slotOpen()));
-			} else {
-				popup->insertItem(i18n("Open"), this, SLOT(slotOpen()));
-			}
-		} else {
-			if (m_targetName[0] == '#' || m_targetName[0] == '!' || m_targetName[0] == '&')
-			{
-				popup->insertItem(i18n("Connect && Join"), this, SLOT(slotOpenConnect()));
-			} else {
-				popup->insertItem(i18n("Connect && Open"), this, SLOT(slotOpenConnect()));
-			}
+			QString const sLabel(isChannel()
+					     ? i18n("Join")
+					     : i18n("Open"));
+			new KAction(sLabel, KShortcut(),
+				    this, SLOT(slotOpen()),
+				    m_pActionCollection, "open");
+		}
+		else
+		{
+			QString const sLabel(isChannel()
+					     ? i18n("Connect && Join")
+					     : i18n("Connect && Open"));
+			new KAction(sLabel, KShortcut(),
+				    this, SLOT(slotOpen()),
+				    m_pActionCollection, "open_connect");
 		}
 	}
 
-	popup->insertSeparator();
-
-	actionAddGroup->plug( popup );
-	actionContactMove->plug( popup );
-	actionRemove->plug( popup );
-
-	popup->popup(point);
+	return m_pActionCollection;
 }
 
 void IRCContact::execute()
@@ -418,6 +392,32 @@ void IRCContact::execute()
 	}
 }
 
+void IRCContact::slotDeleteContact()
+{
+#ifdef 0
+	if (KMessageBox::warningYesNo(qApp->mainWidget(),
+				      i18n("<qt>Are you sure you want to remove %1 from your contact list?</qt>").arg(displayName()),
+				      i18n("Confirmation")) == KMessageBox::Yes)
+	{
+		if (isChannel())
+		{
+			slotPart();
+		}
+		m_serverContact->protocol()->config()->deleteGroup(m_targetName.lower());
+		m_serverContact->protocol()->config()->sync();
+		if (mTabPage !=0)
+		{
+			m_serverContact->chatWindow()->mTabWidget->removePage(mTabPage);
+			delete mTabPage;
+			mTabPage = 0L;
+			queryView = 0L;
+			chatView = 0L;
+		}
+		delete this;
+	}
+#endif
+}
+
 void IRCContact::slotPart()
 {
 	if (chatView != 0)
@@ -426,7 +426,7 @@ void IRCContact::slotPart()
 		QString partWarning = "<font color=";
 		partWarning.append(color.name());
 		partWarning.append(">Attempting to part channel. If this takes an unusual amount of time, please click the close button on this window again, or right click on the contact in the Kopete window and click \"Part\" again.</font><br>");
-		if (m_targetName[0] == '#' || m_targetName[0] == '!' || m_targetName[0] == '&')
+		if (isChannel())
 		{
 			if (chatView !=0)
 			{
@@ -486,7 +486,7 @@ void IRCContact::joinNow()
 {
 	kdDebug() << "IRC Plugin: IRCContact::joinNow() creating mTabPage!" << endl;
 	mTabPage = new QVBox(m_serverContact->chatWindow()->mTabWidget);
-	if (m_targetName[0] == '#' || m_targetName[0] == '!' || m_targetName[0] == '&')
+	if (isChannel())
 	{
 		chatView = new IRCChatView(m_serverName, m_targetName, this, mTabPage);
 		m_serverContact->chatWindow()->mTabWidget->addTab(mTabPage, SmallIconSet("irc_privmsg"), m_targetName);
@@ -499,7 +499,7 @@ void IRCContact::joinNow()
 
 	KGlobal::config()->setGroup("IRC");
 	bool minimize = KGlobal::config()->readBoolEntry("MinimizeNewQueries", false);
-	if (m_targetName[0] == '#' || m_targetName[0] == '!' || m_targetName[0] == '&')
+	if (isChannel())
 	{
 		m_serverContact->chatWindow()->mTabWidget->showPage(mTabPage);
 	} else {
@@ -510,30 +510,11 @@ void IRCContact::joinNow()
 	}
 }
 
-void IRCContact::slotMoveThisUser() {
-	QString mGroup = actionContactMove->currentText();
-
-	m_serverContact->protocol()->config()->setGroup(m_targetName.lower());
-	m_serverContact->protocol()->config()->writeEntry("Group", mGroup);
-	m_serverContact->protocol()->config()->sync();
-}
-
-void IRCContact::initActions()
-{
-	actionAddGroup = KopeteStdAction::addGroup( KopeteContactList::contactList(), SLOT(addGroup()), this, "actionAddGroup" );
-	actionContactMove = KopeteStdAction::moveContact( this, SLOT(slotMoveThisUser()), this, "actionMove" );
-	actionRemove = KopeteStdAction::deleteContact( this, SLOT(slotRemoveThis()), this, "actionDelete" );
-}
-
 QString IRCContact::id() const
 {
 	return m_username+m_nickname; //FIXME Is this the righway(TM)
 }
 
-QString IRCContact::data() const
-{
-	return m_username+m_nickname; //FIXME Is this the righway(TM)
-}
 #include "irccontact.moc"
 /*
  * Local variables:
