@@ -26,18 +26,18 @@
 #include "icqcontact.h"
 #include "icquserinfowidget.h"
 
-#include <netinet/in.h> // for ntohl()
-
 #include <qcombobox.h>
 #include <qspinbox.h>
 #include <qtextedit.h>
 
 #include <kapplication.h>
 #include <kmessagebox.h>
+
 #include <kdatewidget.h>
 #include <klineedit.h>
 #include <klocale.h>
 #include <kurllabel.h>
+
 
 ICQUserInfo::ICQUserInfo(ICQContact *c, ICQAccount *account, bool editable,
 	QWidget *parent, const char* name)
@@ -79,12 +79,7 @@ ICQUserInfo::ICQUserInfo(ICQContact *c, ICQAccount *account, bool editable,
 		c, SIGNAL(updatedUserInfo()),
 		this, SLOT(slotReadInfo()));
 
-	p->fillComboFromTable(mMainWidget->rwGender, p->genders());
-	p->fillComboFromTable(mMainWidget->rwLang1, p->languages());
-	p->fillComboFromTable(mMainWidget->rwLang2, p->languages());
-	p->fillComboFromTable(mMainWidget->rwLang3, p->languages());
-	p->fillComboFromTable(mMainWidget->rwPrsCountry, p->countries());
-	p->fillComboFromTable(mMainWidget->rwWrkCountry, p->countries());
+	p->initUserinfoWidget(mMainWidget); // fill combos with values
 
 	slotFetchInfo();
 }
@@ -113,217 +108,15 @@ void ICQUserInfo::slotReadInfo()
 	kdDebug(14200) << k_funcinfo << "called for user '" <<
 		mContact->displayName() << "'." << endl;
 
-	setCaption( i18n("User Info for %1").arg(mContact->displayName()));
+	setCaption(i18n("User Info for %1").arg(mContact->displayName()));
 
 	mMainWidget->setDisabled( false );
 	enableButton(User1,true);
 	enableButton(User2,true);
 
-	QString homepage;
-
-	if(!mEditable) // no idea how to get ip for ourselves
-	{
-		QHostAddress mIP(ntohl(mContact->localIP()));
-		QHostAddress mRealIP(ntohl(mContact->realIP()));
-		unsigned short mPort = mContact->port();
-
-		if ( !(mIP == mRealIP) && !(mRealIP == QHostAddress()) )
-		{
-			mMainWidget->roIPAddress->setText(
-				QString("%1 (%2:%3)").arg(mIP.toString()).arg(mRealIP.toString()).arg(mPort)
-				);
-		}
-		else
-		{
-			mMainWidget->roIPAddress->setText(
-				QString("%1:%2").arg(mIP.toString()).arg(mPort)
-				);
-		}
-	}
-
-	if(mContact->signonTime().isValid())
-		mMainWidget->roSignonTime->setText(mContact->signonTime().toString(Qt::LocalDate));
-
-	mMainWidget->rwNickName->setText(mContact->generalInfo.nickName);
-	mMainWidget->rwAlias->setText(mContact->displayName());
-	mMainWidget->rwFirstName->setText(mContact->generalInfo.firstName);
-	mMainWidget->rwLastName->setText(mContact->generalInfo.lastName);
-
-	QString email = mContact->generalInfo.eMail;
-	if (mEditable)
-		mMainWidget->prsEmailEdit->setText(email);
-	else
-	{
-		if (email.isEmpty()) // either NULL or ""
-		{
-			mMainWidget->prsEmailLabel->setText(i18n("unspecified"));
-			mMainWidget->prsEmailLabel->setURL(QString::null);
-			mMainWidget->prsEmailLabel->setDisabled( true );
-			mMainWidget->prsEmailLabel->setUseCursor( false ); // disable hand cursor on mouseover
-		}
-		else
-		{
-			mMainWidget->prsEmailLabel->setText(email);
-			mMainWidget->prsEmailLabel->setURL(email);
-			mMainWidget->prsEmailLabel->setDisabled(false);
-			mMainWidget->prsEmailLabel->setUseCursor(true); // enable hand cursor on mouseover
-		}
-	}
-
-	// PRIVATE COUNTRY ==============================
-	p->setComboFromTable(
-		mMainWidget->rwPrsCountry,
-		p->countries(),
-		mContact->generalInfo.countryCode);
-	if (!mEditable)
-		mMainWidget->roPrsCountry->setText( mMainWidget->rwPrsCountry->currentText() );
-
-	mMainWidget->prsStateEdit->setText(mContact->generalInfo.state);
-	mMainWidget->prsCityEdit->setText(mContact->generalInfo.city);
-	mMainWidget->prsZipcodeEdit->setText(mContact->generalInfo.zip);
-	mMainWidget->prsAddressEdit->setText(mContact->generalInfo.street);
-
-	mMainWidget->prsPhoneEdit->setText(mContact->generalInfo.phoneNumber);
-	mMainWidget->prsCellphoneEdit->setText(mContact->generalInfo.cellularNumber);
-	mMainWidget->prsFaxEdit->setText(mContact->generalInfo.faxNumber);
-/*
-	// TIMEZONE ======================================
-	initTZCombo (mMainWidget->rwTimezone, mUser->TimeZone );
-	if ( !mEditable )
-		mMainWidget->roTimezone->setText( mMainWidget->rwTimezone->currentText() );
-*/
-
-	// AGE ===========================================
-	if(!mEditable) // fixed value for readonly
-	{
-		mMainWidget->rwAge->setMinValue(mContact->moreInfo.age);
-		mMainWidget->rwAge->setMaxValue(mContact->moreInfo.age);
-	}
-	mMainWidget->rwAge->setValue(mContact->moreInfo.age);
-
-	// GENDER ========================================
-
-	p->setComboFromTable(mMainWidget->rwGender, p->genders(), mContact->moreInfo.gender);
-	if(!mEditable) // get text from hidden combobox and insert into readonly lineedit
-		mMainWidget->roGender->setText( mMainWidget->rwGender->currentText() );
-
-	// BIRTHDAY ========================================
-
-	if(!mContact->moreInfo.birthday.isValid()) // no birthday defined
-	{
-		if(mEditable)
-			mMainWidget->rwBday->setDate(QDate());
-		else
-			mMainWidget->roBday->setText("");
-	}
-	else
-	{
-		if(mEditable)
-		{
-			mMainWidget->rwBday->setDate(mContact->moreInfo.birthday);
-		}
-		else
-		{
-			mMainWidget->roBday->setText(
-				KGlobal::locale()->formatDate(mContact->moreInfo.birthday,true));
-		}
-	}
-
-	// Personal HOMEPAGE ========================================
-	homepage = QString::fromLocal8Bit(mContact->moreInfo.homepage);
-	if(mEditable)
-	{
-		mMainWidget->prsHomepageEdit->setText( homepage );
-	}
-	else
-	{
-		if(homepage.isEmpty())
-		{
-			mMainWidget->prsHomepageLabel->setText( i18n("unspecified") );
-			mMainWidget->prsHomepageLabel->setURL( QString::null );
-			mMainWidget->prsHomepageLabel->setDisabled( true );
-			mMainWidget->prsHomepageLabel->setUseCursor( false ); // disable hand cursor on mouseover
-		}
-		else
-		{
-			QString tmpHP = homepage; // copy it, do not work on the original
-			mMainWidget->prsHomepageLabel->setText( tmpHP );
-
-			if ( !tmpHP.contains("://") ) // assume http-protocol if no protocol given
-				tmpHP.prepend("http://");
-			mMainWidget->prsHomepageLabel->setURL( tmpHP );
-
-			mMainWidget->prsHomepageLabel->setDisabled( false );
-			mMainWidget->prsHomepageLabel->setUseCursor( true ); // enable hand cursor on mouseover
-		}
-	}
-
-	// LANGUAGES =========================================
-
-	p->setComboFromTable(mMainWidget->rwLang1, p->languages(), mContact->moreInfo.lang1);
-	p->setComboFromTable(mMainWidget->rwLang2, p->languages(), mContact->moreInfo.lang2);
-	p->setComboFromTable(mMainWidget->rwLang3, p->languages(), mContact->moreInfo.lang3);
-	if(!mEditable)
-	{
-		mMainWidget->roLang1->setText( mMainWidget->rwLang1->currentText() );
-		mMainWidget->roLang2->setText( mMainWidget->rwLang2->currentText() );
-		mMainWidget->roLang3->setText( mMainWidget->rwLang3->currentText() );
-	}
-
-	// WORK INFO ========================================
-
-	mMainWidget->wrkCityEdit->setText(mContact->workInfo.city);
-	mMainWidget->wrkStateEdit->setText(mContact->workInfo.state);
-	mMainWidget->wrkPhoneEdit->setText (mContact->workInfo.phone);
-	mMainWidget->wrkFaxEdit->setText (mContact->workInfo.fax);
-	mMainWidget->wrkAddressEdit->setText(mContact->workInfo.address);
-	// TODO: mContact->workInfo.zip
-	mMainWidget->wrkNameEdit->setText(mContact->workInfo.company);
-	mMainWidget->wrkDepartmentEdit->setText(mContact->workInfo.department);
-	mMainWidget->wrkPositionEdit->setText(mContact->workInfo.position);
-	// TODO: mContact->workInfo.occupation
-
-	// WORK HOMEPAGE =====================================
-
-	homepage = mContact->workInfo.homepage;
-	if ( mEditable )
-	{
-		mMainWidget->wrkHomepageEdit->setText(homepage);
-	}
-	else
-	{
-		if(homepage.isEmpty())
-		{
-			mMainWidget->wrkHomepageLabel->setText(i18n("unspecified"));
-			mMainWidget->wrkHomepageLabel->setURL(QString::null);
-			mMainWidget->wrkHomepageLabel->setDisabled(true);
-			mMainWidget->wrkHomepageLabel->setUseCursor(false); // disable hand cursor on mouseover
-		}
-		else
-		{
-			QString tmpHP = homepage; // copy it, do not work on the original
-			mMainWidget->wrkHomepageLabel->setText(tmpHP);
-
-			if ( !tmpHP.contains("://") ) // assume http-protocol if not protocol given
-				tmpHP.prepend("http://");
-			mMainWidget->wrkHomepageLabel->setURL(tmpHP);
-
-			mMainWidget->wrkHomepageLabel->setDisabled(false);
-			mMainWidget->wrkHomepageLabel->setUseCursor(true); // enable hand cursor on mouseover
-		}
-	}
-
-	p->setComboFromTable(
-		mMainWidget->rwWrkCountry,
-		p->countries(),
-		mContact->workInfo.countryCode);
-	if (!mEditable)
-		mMainWidget->roWrkCountry->setText(mMainWidget->rwWrkCountry->currentText());
-
-	// ABOUT USER ========================================
-	mMainWidget->rwAboutUser->setText(mContact->aboutInfo);
-
+	p->contactInfo2UserInfoWidget(mContact, mMainWidget, false);
 } // END slotReadInfo()
+
 /*
 void ICQUserInfo::sendInfo()
 {

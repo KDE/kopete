@@ -47,7 +47,7 @@ class ICQContact : public OscarContact
 	Q_OBJECT
 	// don't want to expose userinfo
 	// for the dialog we make an exception to save a ton of var() {return mvar;}
-	friend class ICQUserInfo;
+	friend class ICQProtocol;
 
 	public:
 		ICQContact(const QString name, const QString displayName,

@@ -20,15 +20,25 @@
 #include "icqcontact.h"
 #include "icqaddcontactpage.h"
 #include "icqeditaccountwidget.h"
+#include "icquserinfowidget.h"
+
+#include <netinet/in.h> // for ntohl()
 
 #include <qcombobox.h>
+#include <qspinbox.h>
+#include <qtextedit.h>
+
+#include <kdatewidget.h>
+#include <klineedit.h>
+#include <klocale.h>
+#include <kurllabel.h>
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
 
 #include <kopeteaccountmanager.h>
 
-#include "oscarpreferences.h"
+#include "oscarpreferences.h" // TODO: remove this
 
 
 K_EXPORT_COMPONENT_FACTORY( kopete_icq, KGenericFactory<ICQProtocol> );
@@ -420,6 +430,265 @@ int ICQProtocol::getCodeForCombo(QComboBox *cmb, const QMap<int, QString> &map)
 	}
 	return 0; // unspecified is always first 0
 }
+
+void ICQProtocol::fillTZCombo(QComboBox *combo)
+{
+// 	unsigned n = 0;
+	QString tmp("");
+	for (int i = 24; i >= -24; i--)
+	{
+		tmp.sprintf("GMT%+.f:%02u", -i/2.0, (i & 1) * 30);
+		combo->insertItem(tmp);
+		tmp="";
+	}
+}
+
+void ICQProtocol::setTZComboValue(QComboBox *combo, const char &tz)
+{
+// 	kdDebug(14200) << k_funcinfo << "tz=" << int(tz) << endl;
+	if ((tz < -24) || (tz > 24))
+		combo->setCurrentItem(24); // GMT+0:00 as default
+	else
+		combo->setCurrentItem(24 + tz);
+}
+
+char ICQProtocol::getTZComboValue(QComboBox *combo)
+{
+	char ret =  combo->currentItem() - 24;
+// 	kdDebug(14200) << k_funcinfo << "return value=" << int(ret) << endl;
+	return ret;
+}
+
+void ICQProtocol::initUserinfoWidget(ICQUserInfoWidget *widget)
+{
+	fillComboFromTable(widget->rwGender, genders());
+	fillComboFromTable(widget->rwLang1, languages());
+	fillComboFromTable(widget->rwLang2, languages());
+	fillComboFromTable(widget->rwLang3, languages());
+	fillComboFromTable(widget->rwPrsCountry, countries());
+	fillComboFromTable(widget->rwWrkCountry, countries());
+	fillTZCombo(widget->rwTimezone);
+}
+
+
+void ICQProtocol::contactInfo2UserInfoWidget(ICQContact *c, ICQUserInfoWidget *widget, bool editMode)
+{
+	QString homepage;
+
+	if(!editMode) // no idea how to get ip for ourselves
+	{
+		QHostAddress mIP(ntohl(c->localIP()));
+		QHostAddress mRealIP(ntohl(c->realIP()));
+		unsigned short mPort = c->port();
+
+		if ( !(mIP == mRealIP) && !(mRealIP == QHostAddress()) )
+		{
+			widget->roIPAddress->setText(
+				QString("%1 (%2:%3)").arg(mIP.toString()).arg(mRealIP.toString()).arg(mPort)
+				);
+		}
+		else
+		{
+			widget->roIPAddress->setText(
+				QString("%1:%2").arg(mIP.toString()).arg(mPort)
+				);
+		}
+	}
+
+	if(c->signonTime().isValid())
+		widget->roSignonTime->setText(c->signonTime().toString(Qt::LocalDate));
+
+	widget->rwNickName->setText(c->generalInfo.nickName);
+	widget->rwAlias->setText(c->displayName());
+	widget->rwFirstName->setText(c->generalInfo.firstName);
+	widget->rwLastName->setText(c->generalInfo.lastName);
+
+	QString email = c->generalInfo.eMail;
+	if (editMode)
+		widget->prsEmailEdit->setText(email);
+	else
+	{
+		if (email.isEmpty()) // either NULL or ""
+		{
+			widget->prsEmailLabel->setText(i18n("unspecified"));
+			widget->prsEmailLabel->setURL(QString::null);
+			widget->prsEmailLabel->setDisabled( true );
+			widget->prsEmailLabel->setUseCursor( false ); // disable hand cursor on mouseover
+		}
+		else
+		{
+			widget->prsEmailLabel->setText(email);
+			widget->prsEmailLabel->setURL(email);
+			widget->prsEmailLabel->setDisabled(false);
+			widget->prsEmailLabel->setUseCursor(true); // enable hand cursor on mouseover
+		}
+	}
+
+	// PRIVATE COUNTRY ==============================
+	setComboFromTable(widget->rwPrsCountry,countries(),
+		c->generalInfo.countryCode);
+	if (!editMode)
+		widget->roPrsCountry->setText( widget->rwPrsCountry->currentText() );
+
+	widget->prsStateEdit->setText(c->generalInfo.state);
+	widget->prsCityEdit->setText(c->generalInfo.city);
+	widget->prsZipcodeEdit->setText(c->generalInfo.zip);
+	widget->prsAddressEdit->setText(c->generalInfo.street);
+
+	widget->prsPhoneEdit->setText(c->generalInfo.phoneNumber);
+	widget->prsCellphoneEdit->setText(c->generalInfo.cellularNumber);
+	widget->prsFaxEdit->setText(c->generalInfo.faxNumber);
+
+	// TIMEZONE ======================================
+	fillTZCombo(widget->rwTimezone);
+	setTZComboValue(widget->rwTimezone, c->generalInfo.timezoneCode);
+	kdDebug(14200) << k_funcinfo << "timezonecode=" << c->generalInfo.timezoneCode << endl;
+/*
+	widget->rwTimezone->setCurrentText(c->generalInfo.timezoneCode)
+		QString("GMT%1%2:%3")
+			.arg(c->generalInfo.timezoneCode > 0 ? "-" : "+")
+			.arg(abs(c->generalInfo.timezoneCode / 2))
+			.arg(c->generalInfo.timezoneCode % 2 ? "30" : "00")
+			);*/
+
+	if(!editMode)
+		widget->roTimezone->setText(widget->rwTimezone->currentText());
+
+	// AGE ===========================================
+	if(!editMode) // fixed value for readonly
+	{
+		widget->rwAge->setMinValue(c->moreInfo.age);
+		widget->rwAge->setMaxValue(c->moreInfo.age);
+	}
+	widget->rwAge->setValue(c->moreInfo.age);
+
+	// GENDER ========================================
+
+	setComboFromTable(widget->rwGender, genders(), c->moreInfo.gender);
+	if(!editMode) // get text from hidden combobox and insert into readonly lineedit
+		widget->roGender->setText( widget->rwGender->currentText() );
+
+	// BIRTHDAY ========================================
+
+	if(!c->moreInfo.birthday.isValid()) // no birthday defined
+	{
+		if(editMode)
+			widget->rwBday->setDate(QDate());
+		else
+			widget->roBday->setText("");
+	}
+	else
+	{
+		if(editMode)
+		{
+			widget->rwBday->setDate(c->moreInfo.birthday);
+		}
+		else
+		{
+			widget->roBday->setText(
+				KGlobal::locale()->formatDate(c->moreInfo.birthday,true));
+		}
+	}
+
+	// Personal HOMEPAGE ========================================
+	homepage = QString::fromLocal8Bit(c->moreInfo.homepage);
+	if(editMode)
+	{
+		widget->prsHomepageEdit->setText( homepage );
+	}
+	else
+	{
+		if(homepage.isEmpty())
+		{
+			widget->prsHomepageLabel->setText( i18n("unspecified") );
+			widget->prsHomepageLabel->setURL( QString::null );
+			widget->prsHomepageLabel->setDisabled( true );
+			widget->prsHomepageLabel->setUseCursor( false ); // disable hand cursor on mouseover
+		}
+		else
+		{
+			QString tmpHP = homepage; // copy it, do not work on the original
+			widget->prsHomepageLabel->setText( tmpHP );
+
+			if ( !tmpHP.contains("://") ) // assume http-protocol if no protocol given
+				tmpHP.prepend("http://");
+			widget->prsHomepageLabel->setURL( tmpHP );
+
+			widget->prsHomepageLabel->setDisabled( false );
+			widget->prsHomepageLabel->setUseCursor( true ); // enable hand cursor on mouseover
+		}
+	}
+
+	// LANGUAGES =========================================
+
+	setComboFromTable(widget->rwLang1, languages(), c->moreInfo.lang1);
+	setComboFromTable(widget->rwLang2, languages(), c->moreInfo.lang2);
+	setComboFromTable(widget->rwLang3, languages(), c->moreInfo.lang3);
+	if(!editMode)
+	{
+		widget->roLang1->setText( widget->rwLang1->currentText() );
+		widget->roLang2->setText( widget->rwLang2->currentText() );
+		widget->roLang3->setText( widget->rwLang3->currentText() );
+	}
+
+	// WORK INFO ========================================
+
+	widget->wrkCityEdit->setText(c->workInfo.city);
+	widget->wrkStateEdit->setText(c->workInfo.state);
+	widget->wrkPhoneEdit->setText (c->workInfo.phone);
+	widget->wrkFaxEdit->setText (c->workInfo.fax);
+	widget->wrkAddressEdit->setText(c->workInfo.address);
+	// TODO: c->workInfo.zip
+	widget->wrkNameEdit->setText(c->workInfo.company);
+	widget->wrkDepartmentEdit->setText(c->workInfo.department);
+	widget->wrkPositionEdit->setText(c->workInfo.position);
+	// TODO: c->workInfo.occupation
+
+	// WORK HOMEPAGE =====================================
+
+	homepage = c->workInfo.homepage;
+	if ( editMode )
+	{
+		widget->wrkHomepageEdit->setText(homepage);
+	}
+	else
+	{
+		if(homepage.isEmpty())
+		{
+			widget->wrkHomepageLabel->setText(i18n("unspecified"));
+			widget->wrkHomepageLabel->setURL(QString::null);
+			widget->wrkHomepageLabel->setDisabled(true);
+			widget->wrkHomepageLabel->setUseCursor(false); // disable hand cursor on mouseover
+		}
+		else
+		{
+			QString tmpHP = homepage; // copy it, do not work on the original
+			widget->wrkHomepageLabel->setText(tmpHP);
+
+			if ( !tmpHP.contains("://") ) // assume http-protocol if not protocol given
+				tmpHP.prepend("http://");
+			widget->wrkHomepageLabel->setURL(tmpHP);
+
+			widget->wrkHomepageLabel->setDisabled(false);
+			widget->wrkHomepageLabel->setUseCursor(true); // enable hand cursor on mouseover
+		}
+	}
+
+	setComboFromTable(widget->rwWrkCountry, countries(), c->workInfo.countryCode);
+	if (!editMode)
+		widget->roWrkCountry->setText(widget->rwWrkCountry->currentText());
+
+	// ABOUT USER ========================================
+	widget->rwAboutUser->setText(c->aboutInfo);
+
+
+
+
+
+}
+
+
+
 
 // Called when we want to return the active instance of the protocol
 ICQProtocol *ICQProtocol::protocol()

@@ -165,7 +165,7 @@ class ICQGeneralUserInfo
 		QString cellularNumber;
 		QString zip;
 		int countryCode;
-		int timezoneCode;
+		char timezoneCode;
 		bool publishEmail;
 		bool showOnWeb;
 };

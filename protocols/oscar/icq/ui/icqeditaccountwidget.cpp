@@ -51,15 +51,11 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 
 	// ----------------------------------------------------------------
 
-	mProtocol->fillComboFromTable(mUserInfoSettings->rwGender, mProtocol->genders());
-	mProtocol->fillComboFromTable(mUserInfoSettings->rwLang1, mProtocol->languages());
-	mProtocol->fillComboFromTable(mUserInfoSettings->rwLang2, mProtocol->languages());
-	mProtocol->fillComboFromTable(mUserInfoSettings->rwLang3, mProtocol->languages());
-	mProtocol->fillComboFromTable(mUserInfoSettings->rwPrsCountry, mProtocol->countries());
-	mProtocol->fillComboFromTable(mUserInfoSettings->rwWrkCountry, mProtocol->countries());
+	mProtocol->initUserinfoWidget(mUserInfoSettings); // fill combos with values
 
 	mUserInfoSettings->rwAge->setValue(0);
 	mUserInfoSettings->rwBday->setDate(QDate());
+
 	mUserInfoSettings->rwAlias->hide();
 	mUserInfoSettings->lblAlias->hide();
 
@@ -102,22 +98,36 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 
 		mUserInfoSettings->rwNickName->setText(
 			mAccount->pluginData(mProtocol,"NickName"));
+
 		mUserInfoSettings->rwFirstName->setText(
 			mAccount->pluginData(mProtocol,"FirstName"));
+
 		mUserInfoSettings->rwLastName->setText(
 			mAccount->pluginData(mProtocol,"LastName"));
+
 		mUserInfoSettings->rwBday->setDate(
 			QDate::fromString(mAccount->pluginData(mProtocol,"Birthday"), Qt::ISODate));
+
 		mUserInfoSettings->rwAge->setValue(
 			mAccount->pluginData(mProtocol, "Age").toInt());
-		mUserInfoSettings->rwGender->setCurrentItem(
+
+		mProtocol->setComboFromTable(mUserInfoSettings->rwGender, mProtocol->genders(),
 			mAccount->pluginData(mProtocol, "Gender").toInt());
-		mUserInfoSettings->rwLang1->setCurrentItem(
+
+		mProtocol->setComboFromTable(mUserInfoSettings->rwLang1, mProtocol->languages(),
 			mAccount->pluginData(mProtocol, "Lang1").toInt());
-		mUserInfoSettings->rwLang2->setCurrentItem(
+
+		mProtocol->setComboFromTable(mUserInfoSettings->rwLang2, mProtocol->languages(),
 			mAccount->pluginData(mProtocol, "Lang2").toInt());
-		mUserInfoSettings->rwLang3->setCurrentItem(
+
+		mProtocol->setComboFromTable(mUserInfoSettings->rwLang3, mProtocol->languages(),
 			mAccount->pluginData(mProtocol, "Lang3").toInt());
+
+		QString tmpTz = mAccount->pluginData(mProtocol, "Timezone");
+		if(tmpTz.isEmpty())
+			mProtocol->setTZComboValue(mUserInfoSettings->rwTimezone, 24);
+		else
+			mProtocol->setTZComboValue(mUserInfoSettings->rwTimezone, tmpTz.toInt());
 
 		QHBoxLayout *buttons = new QHBoxLayout(detLay);
 		buttons->addStretch(1);
@@ -126,11 +136,14 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		QPushButton *send = new QPushButton(i18n("Send to Server"), det, "send");
 		buttons->addWidget(send);
 
+		fetch->setDisabled(!mAccount->isConnected());
+		send->setDisabled(!mAccount->isConnected());
+
 		connect(fetch, SIGNAL(clicked()), this, SLOT(slotFetchInfo()));
 // 		connect(send, SIGNAL(clicked()), this, SLOT(slotSend()));
-// 		connect(
-// 			mAccount->myself(), SIGNAL(updatedUserInfo()),
-// 			this, SLOT(slotReadInfo()));
+ 		connect(
+ 			mAccount->myself(), SIGNAL(updatedUserInfo()),
+ 			this, SLOT(slotReadInfo()));
 	}
 	else
 	{
@@ -189,11 +202,13 @@ KopeteAccount *ICQEditAccountWidget::apply()
 	mAccount->setPluginData(mProtocol, "Lang3", QString::number(
 		mProtocol->getCodeForCombo(mUserInfoSettings->rwLang3, mProtocol->languages())));
 
+	mAccount->setPluginData(mProtocol, "Timezone", QString::number(
+		mProtocol->getTZComboValue(mUserInfoSettings->rwTimezone)));
+
 	static_cast<ICQContact *>(mAccount->myself())->setOwnDisplayName(
 		mUserInfoSettings->rwNickName->text());
 
-	// TODO: send updated userinfo to server if connected
-
+	// TODO: optionally send updated userinfo to server if connected
 	return mAccount;
 }
 
@@ -229,22 +244,30 @@ bool ICQEditAccountWidget::validateData()
 	return true;
 }
 
-
 void ICQEditAccountWidget::slotFetchInfo()
 {
 	if(mAccount->isConnected())
 	{
-		kdDebug(14200) << k_funcinfo << "(DISABLED!) fetching User Info for '" <<
+		kdDebug(14200) << k_funcinfo << "Fetching User Info for '" <<
 			mAccount->myself()->displayName() << "'." << endl;
 
-//		mUserInfoSettings->setDisabled(true);
+		mUserInfoSettings->setDisabled(true);
 
-//		mAccount->myself()->requestUserInfo(); // initiate retrival of userinfo
+		static_cast<ICQContact *>(mAccount->myself())->requestUserInfo(); // initiate retrival of userinfo
 	}
 	else
 		kdDebug(14200) << k_funcinfo << "Ignore request to fetch User Info, NOT online!" << endl;
 }
 
+void ICQEditAccountWidget::slotReadInfo()
+{
+	kdDebug(14200) << k_funcinfo << "Called for user '" <<
+		mAccount->myself()->displayName() << "'." << endl;
+
+	mUserInfoSettings->setDisabled(false);
+
+	mProtocol->contactInfo2UserInfoWidget(static_cast<ICQContact *>(mAccount->myself()), mUserInfoSettings, true);
+} // END slotReadInfo()
 
 #include "icqeditaccountwidget.moc"
 // vim: set noet ts=4 sts=4 sw=4:

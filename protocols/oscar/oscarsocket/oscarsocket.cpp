@@ -1469,7 +1469,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 			{
 //				kdDebug(14150) << k_funcinfo << "Got a normal IM block from '" << u.sn << "'" << endl;
 				type = inbuf.getWord();
-//				kdDebug(14150) << k_funcinfo << "type=" << type << endl;
+				kdDebug(14150) << k_funcinfo << "type=" << type << endl;
 				switch(type)
 				{
 					case 0x0002: //TLV(2), message block
@@ -2002,8 +2002,8 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 		outbuf.addWord(0x0004);
 		outbuf.addWord(0x0000);
 	}
-	outbuf.addWord(0x0006);
-	outbuf.addWord(0x0000); // always empty TLV(6)
+// 	outbuf.addWord(0x0006);
+// 	outbuf.addWord(0x0000); // always empty TLV(6)
 
 	sendBuf(outbuf,0x02);
 }

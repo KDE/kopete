@@ -17,6 +17,8 @@
 #include "oscarsocket.h"
 #include "oscarsocket.icq.h"
 
+#include <stdlib.h>
+
 #include <qtimer.h>
 
 #include <kdebug.h>
@@ -304,8 +306,6 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 
 					res.countryCode = fromicqsrv.getLEWord();
 					res.timezoneCode = fromicqsrv.getLEByte(); // UTC+(tzcode * 30min)
-// 					kdDebug(14150) << k_funcinfo << "timezoneCode=" <<
-// 						res.timezoneCode << endl;
 					res.publishEmail = (fromicqsrv.getLEByte()==0x01);
 					res.showOnWeb = (fromicqsrv.getLEWord()==0x0001);
 

@@ -24,6 +24,8 @@
 #include "kopeteprotocol.h"
 
 class QComboBox;
+class ICQUserInfoWidget;
+class ICQContact;
 
 class ICQProtocol : public KopeteProtocol
 {
@@ -60,9 +62,14 @@ class ICQProtocol : public KopeteProtocol
 		const QMap<int, QString> &countries() { return mCountries; }
 		const QMap<int, QString> &languages() { return mLanguages; }
 
+		void initUserinfoWidget(ICQUserInfoWidget *widget);
 		void fillComboFromTable(QComboBox *, const QMap<int, QString> &);
 		void setComboFromTable(QComboBox *, const QMap<int, QString> &, int);
 		int getCodeForCombo(QComboBox *, const QMap<int, QString> &);
+		void fillTZCombo(QComboBox *combo);
+		void setTZComboValue(QComboBox *combo, const char &tz);
+		char getTZComboValue(QComboBox *combo);
+		void contactInfo2UserInfoWidget(ICQContact *c, ICQUserInfoWidget *widget, bool editMode);
 
 	private:
 		void initGenders();

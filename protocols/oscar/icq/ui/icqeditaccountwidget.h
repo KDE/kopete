@@ -47,6 +47,7 @@ class ICQEditAccountWidget : public QWidget, public EditAccountWidget
 
 	private slots:
 		void slotFetchInfo();
+		void slotReadInfo();
 
 	protected:
 		/** Our account we're editing */
