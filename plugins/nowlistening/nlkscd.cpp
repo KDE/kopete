@@ -40,7 +40,7 @@ void NLKscd::update()
 	m_playing = false;
 	QString newTrack;
 	// see if it's registered with DCOP
-	if (  m_client->isApplicationRegistered( "kscd" ) )
+	if ( m_client->isApplicationRegistered( "kscd" ) )
 	{
 		// see if it's playing
 		QByteArray data, replyData;
@@ -50,7 +50,7 @@ void NLKscd::update()
 		{
 			// we're talking to a KsCD without the playing() method
 			m_playing = true;
-//			kdDebug(14307) << "NLKscd::update() - KsCD without playing()"
+//			kdDebug( 14307 ) << "NLKscd::update() - KsCD without playing()"
 //				<< endl;
 		}
 		else
@@ -58,7 +58,7 @@ void NLKscd::update()
 			QDataStream reply( replyData, IO_ReadOnly );
 			if ( replyType == "bool" ) {
 				reply >> m_playing;
-//				kdDebug(14307) << "NLKscd::update() - KsCD is " <<
+//				kdDebug( 14307 ) << "NLKscd::update() - KsCD is " <<
 //					( m_playing ? "" : "not " ) << "playing!" << endl;
 			}
 		}
@@ -66,7 +66,7 @@ void NLKscd::update()
 		// 'data' here is an unused input parameter
 		if ( !m_client->call( "kscd", "CDPlayer",
 					"trackList()", data, replyType, replyData ) )
-			kdDebug(14307 ) <<  "NLKscd::update() DCOP error"
+			kdDebug( 14307 ) <<  "NLKscd::update() DCOP error"
 				<< endl;
 		else {
 			QDataStream reply( replyData, IO_ReadOnly );
@@ -76,23 +76,23 @@ void NLKscd::update()
 				QString artistAlbum = result.first();
 				m_artist = artistAlbum.section( '/', 0, 0 ).left( artistAlbum.length() - 1 ).stripWhiteSpace();
 				m_album = artistAlbum.section( '/', 1, 1 ).right( artistAlbum.length() - 1 ).stripWhiteSpace();
-//				kdDebug(14307) << "NLKscd::update() artist:" << m_artist <<
+//				kdDebug( 14307 ) << "NLKscd::update() artist:" << m_artist <<
 //					" album:" << m_album << endl;
 			} else
-				kdDebug(14307) << "NLKscd::update() trackList returned unexpected reply type!"
+				kdDebug( 14307 ) << "NLKscd::update() trackList returned unexpected reply type!"
 					<< endl;
 			// Get the current track title
 			if ( !m_client->call( "kscd", "CDPlayer",
 						"currentTrackTitle()", data, replyType, replyData ) )
-				kdDebug(14307 ) << "NLKscd::update() - there was some error using DCOP." << endl;
+				kdDebug( 14307 ) << "NLKscd::update() - there was some error using DCOP." << endl;
 			else {
 				QDataStream reply( replyData, IO_ReadOnly );
 				if ( replyType == "QString" ) {
 					reply >> newTrack;
-					//kdDebug(14307) << "the result is: " << newTrack.latin1()
+					//kdDebug( 14307 ) << "the result is: " << newTrack.latin1()
 					//	<< endl;
 				} else
-					kdDebug(14307) << "NLKscd::update()-  currentTrackTitle "
+					kdDebug( 14307 ) << "NLKscd::update()-  currentTrackTitle "
 						<< "returned unexpected reply type!" << endl;
 			}
 		}
@@ -104,12 +104,12 @@ void NLKscd::update()
 		}
 		else
 			m_newTrack = false;
-//		kdDebug(14307) << "NLKscd::update() - found kscd - "
+//		kdDebug( 14307 ) << "NLKscd::update() - found kscd - "
 //			<< m_track << endl;
 
 	}
 //	else
-//		kdDebug(14307) << "NLKscd::update() - kscd not found" << endl;
+//		kdDebug( 14307 ) << "NLKscd::update() - kscd not found" << endl;
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

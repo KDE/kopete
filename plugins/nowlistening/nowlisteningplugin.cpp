@@ -34,6 +34,7 @@
 #include "nlkscd.h"
 #include "nlnoatun.h"
 #include "nljuk.h"
+#include "nlamarok.h"
 #include "nowlisteningguiclient.h"
 
 #ifdef HAVE_XMMS
@@ -47,7 +48,7 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 : KopetePlugin( NowListeningPluginFactory::instance(), parent, name )
 {
 	if ( pluginStatic_ )
-		kdDebug(14307)<<"####"<<"Now Listening already initialized"<<endl;
+		kdDebug( 14307 )<<"####"<<"Now Listening already initialized"<<endl;
 	else
 		pluginStatic_ = this;
 
@@ -80,6 +81,7 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 	m_mediaPlayer->append( new NLKscd( m_client ) );
 	m_mediaPlayer->append( new NLNoatun( m_client ) );
 	m_mediaPlayer->append( new NLJuk( m_client ) );
+	//m_mediaPlayer->append( new NLAmaroK( m_client ) );
 
 #ifdef HAVE_XMMS
 	m_mediaPlayer->append( new NLXmms() );
@@ -87,13 +89,13 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 
 	// watch for '/media' getting typed
 	connect(  KopeteMessageManagerFactory::factory(),
-			SIGNAL(  aboutToSend(  KopeteMessage & ) ),
-			SLOT(  slotOutgoingMessage(  KopeteMessage & ) ) );
+			SIGNAL( aboutToSend( KopeteMessage & ) ),
+			SLOT( slotOutgoingMessage( KopeteMessage & ) ) );
 }
 
 NowListeningPlugin::~NowListeningPlugin()
 {
-	kdDebug(14307) << k_funcinfo << endl;
+	//kdDebug( 14307 ) << k_funcinfo << endl;
 
 	delete m_mediaPlayer;
 	delete m_config;
@@ -103,7 +105,7 @@ NowListeningPlugin::~NowListeningPlugin()
 
 void NowListeningPlugin::slotNewKMM(KopeteMessageManager *KMM)
 {
-	new NowListeningGUIClient(KMM);
+	new NowListeningGUIClient( KMM );
 }
 
 NowListeningPlugin* NowListeningPlugin::plugin()
@@ -140,7 +142,7 @@ QString NowListeningPlugin::allPlayerAdvert() const
 		i->update();
 		if ( i->playing() )
 		{
-			kdDebug(14307) << k_funcinfo << i->name() << " is playing" << endl;
+			kdDebug( 14307 ) << k_funcinfo << i->name() << " is playing" << endl;
 			if ( message.isEmpty() )
 				message = m_config->header();
 
@@ -149,7 +151,7 @@ QString NowListeningPlugin::allPlayerAdvert() const
 			message = message + substDepthFirst( i, perTrack, false );
 		}
 	}
-	kdDebug(14307) << k_funcinfo << message << endl;
+	kdDebug( 14307 ) << k_funcinfo << message << endl;
 	return message;
 }
 
