@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>HistoryPrefsUI</class>
 <author>Olivier Goffart</author>
 <widget class="QWidget">
@@ -12,6 +12,9 @@
             <width>350</width>
             <height>367</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>HistoryPrefsWidget</string>
     </property>
     <vbox>
         <property name="name">
@@ -66,11 +69,8 @@
                     <property name="name">
                         <cstring>Number_Auto_chatwindow</cstring>
                     </property>
-                    <property name="buttonSymbols">
-                        <enum>PlusMinus</enum>
-                    </property>
                     <property name="maxValue">
-                        <number>256</number>
+                        <number>32768</number>
                     </property>
                     <property name="minValue">
                         <number>1</number>
@@ -129,17 +129,14 @@
                     <property name="name">
                         <cstring>Number_ChatWindow</cstring>
                     </property>
-                    <property name="buttonSymbols">
-                        <enum>PlusMinus</enum>
-                    </property>
                     <property name="maxValue">
-                        <number>256</number>
+                        <number>32768</number>
                     </property>
                     <property name="minValue">
                         <number>1</number>
                     </property>
                     <property name="value">
-                        <number>50</number>
+                        <number>10</number>
                     </property>
                 </widget>
             </hbox>
@@ -179,6 +176,8 @@
         </widget>
     </vbox>
 </widget>
+<customwidgets>
+</customwidgets>
 <tabstops>
     <tabstop>chkShowPrevious</tabstop>
     <tabstop>Number_Auto_chatwindow</tabstop>
@@ -187,4 +186,9 @@
     <tabstop>History_Style</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>klistview.h</includehint>
+</includehints>
 </UI>
