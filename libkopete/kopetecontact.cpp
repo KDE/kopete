@@ -403,7 +403,6 @@ void KopeteContact::serialize( QMap<QString, QString> &/*serializedData*/,
 
 void KopeteContact::serializeProperties(QMap<QString, QString> &serializedData)
 {
-	//kdDebug(14010) << k_funcinfo << "for contact " << d->displayName << endl;
 
 	Kopete::ContactProperty::Map::ConstIterator it;// = d->properties.ConstIterator;
 	for (it=d->properties.begin(); it != d->properties.end(); ++it)
@@ -414,14 +413,10 @@ void KopeteContact::serializeProperties(QMap<QString, QString> &serializedData)
 		QVariant val = it.data().value();
 		QString key = QString::fromLatin1("prop_%1_%2").arg(QString::fromLatin1(val.typeName()), it.key());
 
-		/*kdDebug(14010) << k_funcinfo << "storing data of property '" <<
-			it.key() << "' for contact " << d->displayName <<
-			" using xmlized key " << key << endl;*/
-
 		serializedData[key] = val.toString();
 
-	} // END for()
-} // END serializeProperties()
+	} // end for()
+} // end serializeProperties()
 
 void KopeteContact::deserializeProperties(
 	QMap<QString, QString> &serializedData )
@@ -441,14 +436,12 @@ void KopeteContact::deserializeProperties(
 		key = keyList[2]; // overwrite key var with the real key name this property has
 		QString type( keyList[1] ); // needed for QVariant casting
 
-		kdDebug( 14010 ) << k_funcinfo <<
-			"key=" << key << ", type=" << type << endl;
-
 		QVariant variant( it.data() );
 		if( !variant.cast(QVariant::nameToType(type.latin1())) )
 		{
 			kdDebug(14010) << k_funcinfo <<
-				"Casting QVariant to needed type FAILED" << endl;
+				"Casting QVariant to needed type FAILED" <<
+				"key=" << key << ", type=" << type << endl;
 			continue;
 		}
 
@@ -461,7 +454,7 @@ void KopeteContact::deserializeProperties(
 		}
 
 		setProperty(tmpl, variant);
-	} // END for()
+	} // end for()
 }
 
 
@@ -612,7 +605,6 @@ QStringList KopeteContact::properties() const
 
 bool KopeteContact::hasProperty(const QString &key) const
 {
-	//kdDebug(14000) << k_funcinfo << "For key " << key << endl;
 	return d->properties.contains(key);
 }
 
@@ -655,8 +647,6 @@ void KopeteContact::setProperty(const Kopete::ContactPropertyTmpl &tmpl,
 		Kopete::ContactProperty prop(tmpl, value);
 		d->properties.insert(tmpl.key(), prop, true);
 
-		/*kdDebug(14000) << k_funcinfo << "set property " << tmpl.key() <<
-			" for contact " << displayName() << " to " << value.toString() << endl;*/
 		emit propertyChanged(this, tmpl.key(), oldValue, value);
 	}
 }
@@ -665,8 +655,6 @@ void KopeteContact::removeProperty(const Kopete::ContactPropertyTmpl &tmpl)
 {
 	if(!tmpl.isNull() && !tmpl.key().isEmpty())
 	{
-		/*kdDebug(14000) << k_funcinfo << "removing property " << tmpl.key() <<
-			" for contact " << displayName() << endl;*/
 
 		QVariant oldValue = property(tmpl.key()).value();
 		d->properties.remove(tmpl.key());
@@ -680,8 +668,6 @@ QString KopeteContact::toolTip() const
 	Kopete::ContactProperty p;
 	QString tip;
 	QStringList shownProps = KopetePrefs::prefs()->toolTipContents();
-
-	//kdDebug(14000) << k_funcinfo << "Configured Tips: " << shownProps << endl;
 
 	// --------------------------------------------------------------------------
 	// Fixed part of tooltip

@@ -151,7 +151,7 @@ QMap<KPluginInfo *, KopetePlugin *> KopetePluginManager::loadedPlugins( const QS
 
 void KopetePluginManager::shutdown()
 {
-	kdDebug( 14010 ) << k_funcinfo << endl;
+//	kdDebug( 14010 ) << k_funcinfo << endl;
 
 	d->shutdownMode = KopetePluginManagerPrivate::ShuttingDown;
 
@@ -303,7 +303,7 @@ KopetePlugin * KopetePluginManager::loadPlugin( const QString &_pluginId, Plugin
 
 KopetePlugin *KopetePluginManager::loadPluginInternal( const QString &pluginId )
 {
-	kdDebug( 14010 ) << k_funcinfo << pluginId << endl;
+//	kdDebug( 14010 ) << k_funcinfo << pluginId << endl;
 
 	KPluginInfo *info = infoForPluginId( pluginId );
 	if ( !info )
@@ -368,7 +368,7 @@ KopetePlugin *KopetePluginManager::loadPluginInternal( const QString &pluginId )
 
 bool KopetePluginManager::unloadPlugin( const QString &spec )
 {
-	kdDebug(14010) << k_funcinfo << spec << endl;
+//	kdDebug(14010) << k_funcinfo << spec << endl;
 
 	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
 	for ( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
