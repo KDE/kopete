@@ -46,6 +46,7 @@ ConnectionStatusPlugin::~ConnectionStatusPlugin()
 {
 	kdDebug() << "ConnectionStatusPlugin::~ConnectionStatusPlugin()" << endl;
 	delete qtTimer;
+	delete kpIfconfig;
 }
 
 void ConnectionStatusPlugin::slotCheckStatus()
