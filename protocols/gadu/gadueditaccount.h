@@ -41,11 +41,15 @@ public:
 	virtual bool validateData();
 	KopeteAccount* apply();
 
+private slots:
+	void registerNewAccount();
+
 private:
 	GaduProtocol*		protocol_;
 	bool				reg_in_progress;
 	bool				isSsl;
 	RegisterCommand*	rcmd;
+	GaduRegisterAccount* regDialog;
 };
 
 #endif

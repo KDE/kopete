@@ -31,6 +31,7 @@
 #include <qlineedit.h>
 #include <qbutton.h>
 #include <qregexp.h>
+#include <qpushbutton.h>
 
 #include <klineedit.h>
 #include <kmessagebox.h>
@@ -49,10 +50,12 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, KopeteAccount* ident, QWi
 
 	useTls_->setDisabled( !isSsl );
 
-	if ( !account() ) {
+	if ( account() == NULL ) {
 		useTls_->setCurrentItem( isSsl ? 0 : 2 );
+		registerNew->setEnabled( true );
 	}
 	else {
+		registerNew->setDisabled( true );
 		loginEdit_->setDisabled( true );
 		loginEdit_->setText( account()->accountId() );
 
@@ -69,10 +72,30 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, KopeteAccount* ident, QWi
 		autoLoginCheck_->setChecked( account()->autoLogin() );
 		useTls_->setCurrentItem( isSsl ? ( static_cast<GaduAccount*> (account()) )->isConnectionEncrypted() : 2 );
 	}
+	
+	QObject::connect( registerNew, SIGNAL( clicked( ) ), SLOT( registerNewAccount( ) ) );
+}
+
+void GaduEditAccount::registerNewAccount()
+{
+	registerNew->setDisabled( true );
+	regDialog = new GaduRegisterAccount( NULL , "Register account dialog" );
+	;
+	if ( regDialog->exec() != QDialog::Accepted ){
+		registerNew->setDisabled( false );
+		return;
+	}
+
+	kdDebug( 14100 ) << "dupa123" << endl;
 }
 
 bool GaduEditAccount::validateData()
 {
+
+	if ( loginEdit_->text().isEmpty() ) {
+		KMessageBox::sorry( this, i18n( "<b>Enter UIN please.</b>" ), i18n( "Gadu-Gadu" ) );
+		return false;
+	}
 
 	if ( loginEdit_->text().toInt() < 0 || loginEdit_->text().toInt() == 0 ) {
 		KMessageBox::sorry( this, i18n( "<b>UIN should be a positive number.</b>" ), i18n( "Gadu-Gadu" ) );
