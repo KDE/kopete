@@ -31,7 +31,7 @@ class KopeteMessage;
 class KopeteContact;
 class KopeteProtocol;
 
-typedef QPtrList<KopeteContact>        KopeteContactList;
+typedef QPtrList<KopeteContact>        KopeteContactPtrList;
 typedef QValueList<KopeteMessage>        KopeteMessageList;
 typedef QPtrList<KopeteMessageManager> KopeteMessageManagerList;
 
@@ -49,7 +49,7 @@ public:
 	 * it will be reused. Otherwise a new session is created.
 	 */
 	KopeteMessageManager* create(const KopeteContact *user,
-		KopeteContactList _contacts, KopeteProtocol *protocol,
+		KopeteContactPtrList _contacts, KopeteProtocol *protocol,
 		QString logFile = QString::null,
 		KopeteMessageManager::WidgetType widget = KopeteMessageManager::ChatWindow);
 	

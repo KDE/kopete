@@ -280,7 +280,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			<< m_msgHandle << endl;
 
 		// FIXME: THIS IS UGLY!!!!!!!!!!!!!!!!!!!!!!
-		KopeteContactList others;
+		KopeteContactPtrList others;
 		others.append( MSNProtocol::protocol()->myself() );
 
 		KopeteMessage kmsg(
@@ -342,7 +342,7 @@ void MSNSwitchBoardSocket::slotSendMsg( const KopeteMessage &msg )
 	sendCommand( "MSG", args + head, false );
 
 	// TODO: send our fonts and colors as well
-	KopeteContactList others;
+	KopeteContactPtrList others;
 	others.append( MSNProtocol::protocol()->contacts()[ m_myHandle ] );
 	emit msgReceived( msg );    // send the own msg to chat window
 }

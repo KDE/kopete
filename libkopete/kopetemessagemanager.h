@@ -37,7 +37,7 @@ class KopeteEvent;
 class KopeteMessageLog;
 
 
-typedef QPtrList<KopeteContact>        KopeteContactList;
+typedef QPtrList<KopeteContact>        KopeteContactPtrList;
 typedef QValueList<KopeteMessage>        KopeteMessageList;
 typedef QPtrList<KopeteMessageManager> KopeteMessageManagerList;
 
@@ -94,15 +94,18 @@ public:
 	WidgetType widget() { return mWidget; };
 
 	/**
-	 *	Read Messages
+	 * Read Messages
 	 */
 	void readMessages();
 
 	/**
 	 * Get a list of all contacts in the session
+	 * Sorry, had to change this to members(), it was conflicting with
+	 * kxContact
 	 */
-	const KopeteContactList& members() const { return mContactList; }; /* kxContact takes it in the arse from a donkey. */ 
-    /**
+	const KopeteContactPtrList& members() const { return mContactList; }
+
+	/**
 	 * Get the local user in the session
 	 */
 	const KopeteContact* user() const { return mUser; };
@@ -134,11 +137,11 @@ private:
 	 * static factory method createSession() creates the object. You may
 	 * not create instances yourself directly!
 	 */
-	KopeteMessageManager( const KopeteContact *user, KopeteContactList others,
+	KopeteMessageManager( const KopeteContact *user, KopeteContactPtrList others,
 		KopeteProtocol *protocol, QString logFile = QString::null, enum WidgetType widget = ChatWindow,
 		QObject *parent = 0, const char *name = 0 );
 
-	KopeteContactList mContactList;
+	KopeteContactPtrList mContactList;
 	const KopeteContact *mUser;
 	KopeteChatWindow *mChatWindow;
 	KopeteEmailWindow *mEmailWindow, *mEmailReplyWindow;

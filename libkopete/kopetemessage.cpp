@@ -28,23 +28,23 @@ KopeteMessage::KopeteMessage()
 
 
 KopeteMessage::KopeteMessage(const KopeteContact *fromKC,
-		KopeteContactList toKC, QString body, MessageDirection direction) {
+		KopeteContactPtrList toKC, QString body, MessageDirection direction) {
 	init(QDateTime::currentDateTime(), fromKC, toKC, body, QString::null, direction);
 }
 
 KopeteMessage::KopeteMessage(const KopeteContact *fromKC,
-		KopeteContactList toKC, QString body, QString subject, MessageDirection direction) {
+		KopeteContactPtrList toKC, QString body, QString subject, MessageDirection direction) {
 	init(QDateTime::currentDateTime(), fromKC, toKC, body, subject, direction);
 }
 
 KopeteMessage::KopeteMessage(QDateTime timeStamp,
-		const KopeteContact *fromKC, KopeteContactList toKC, QString body,
+		const KopeteContact *fromKC, KopeteContactPtrList toKC, QString body,
 		MessageDirection direction) {
 	init(timeStamp, fromKC, toKC, body, QString::null, direction);
 }
 
 KopeteMessage::KopeteMessage(QDateTime timeStamp,
-		const KopeteContact *fromKC, KopeteContactList toKC, QString body,
+		const KopeteContact *fromKC, KopeteContactPtrList toKC, QString body,
 		QString subject, MessageDirection direction) {
 	init(timeStamp, fromKC, toKC, body, subject, direction);
 }
@@ -62,7 +62,7 @@ void KopeteMessage::setFont(QFont font) {
 }
 
 void KopeteMessage::init(QDateTime timeStamp, const KopeteContact * from,
-		KopeteContactList to, QString body, QString subject, MessageDirection direction) {
+		KopeteContactPtrList to, QString body, QString subject, MessageDirection direction) {
 	mTimestamp = timeStamp;
 	mFrom = from;
 	mTo = to;

@@ -1,0 +1,100 @@
+/*
+    kopetemetacontact.h - Kopete Meta Contact
+
+    Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
+    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
+
+#ifndef __kopetemetacontact_h__
+#define __kopetemetacontact_h__
+
+#include <qobject.h>
+
+#include "kopetecontact.h"
+
+/**
+ * @author Martijn Klingens <klingens@kde.org>
+ *
+ */
+class KopeteMetaContact : public KopeteContact
+{
+	Q_OBJECT
+
+public:
+	KopeteMetaContact();
+	~KopeteMetaContact();
+
+	/**
+	 * Retrieve the list of contacts that are part of the meta contact
+	 */
+	QPtrList<KopeteContact> contacts() const { return m_contacts; }
+
+	/**
+	 * Add contact to the meta contact
+	 */
+	void addContact( KopeteContact *c, const QStringList &groups );
+
+	/**
+	 * Find the KopeteContact to a given contact. If contact
+	 * is not found, a null pointer is returned.
+	 * For now, just compare the ID field.
+	 * FIXME: Also take protocol and identity into account!
+	 */
+	KopeteContact *findContact( const QString &contactId );
+
+	/**
+	 * The name of the icon associated with the contact's status
+	 */
+	virtual QString statusIcon() const;
+
+	/**
+	 * Returns whether this contact can be reached online for at least one
+	 * protocol. Protocols are processed in loading order.
+	 * FIXME: Make that user preference order!
+	 * FIXME: Make that an enum, because status can be unknown for certain
+	 *        protocols
+	 */
+	bool isOnline() const;
+
+	/**
+	 * Like isOnline, but returns true even if the contact is not online, but
+	 * can be reached trough offline-messages.
+	 * FIXME: Here too, use preference order, not append order!
+	 * FIXME: Here too an enum.
+	 */
+	bool isReachable() const;
+
+public slots:
+	/**
+	 * Send a single message, classic ICQ style.
+	 * The actual sending is done by the KopeteContact, but the meta contact
+	 * does the GUI side of things.
+	 * This is a slot to allow being called easily from e.g. a GUI.
+	 */
+	void sendMessage();
+
+	/**
+	 * Like sendMessage, but this time a full-blown chat will be opened.
+	 * Most protocols can't distinguish between the two and are either
+	 * completely session based like MSN or completely message based like
+	 * ICQ the only true difference is the GUI shown to the user.
+	 */
+	void startChat();
+
+private:
+	QPtrList<KopeteContact> m_contacts;
+};
+
+#endif
+
+// vim: set noet ts=4 sts=4 sw=4:
+

@@ -62,8 +62,25 @@ public:
 	QString icon() const;
 	void setIcon( const QString &icon );
 
+	/**
+	 * If the protocol supports the new experimental contact list stuff, set
+	 * this to true. Otherwise, leave the default and don't change!
+	 */
+	bool canStream() const { return m_canStream; }
+	void enableStreaming( bool b ) { m_canStream = b; }
+
+	/**
+	 * Return whether the protocol supports offline messages.
+	 * FIXME: Make pure virtual, or define protected method
+	 *        setOfflineCapable(), instead of default implementation always
+	 *        returning false.
+	 */
+	bool canSendOffline() const { return false; }
+
 private:
 	QString m_icon;
+
+	bool m_canStream;
 };
 
 #endif

@@ -20,6 +20,7 @@
 KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)
     : Plugin( parent, name )
 {
+	m_canStream = false;
 }
 
 KopeteProtocol::~KopeteProtocol()

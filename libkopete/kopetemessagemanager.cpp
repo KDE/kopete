@@ -29,7 +29,7 @@
 
 #include <qstylesheet.h>
 
-KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteContactList others,
+KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteContactPtrList others,
 		KopeteProtocol *protocol, QString logFile, enum WidgetType widget,
 		QObject *parent, const char *name) : QObject( parent, name)
 {

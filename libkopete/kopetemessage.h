@@ -23,7 +23,7 @@
 #include <qcolor.h>
 #include "kopetecontact.h"
 
-typedef QPtrList<KopeteContact> KopeteContactList;
+typedef QPtrList<KopeteContact> KopeteContactPtrList;
 
 class KopeteMessage
 {
@@ -40,17 +40,17 @@ public:
 		characters must be escaped.
 	*/
 	KopeteMessage();
-	KopeteMessage(const KopeteContact *, KopeteContactList, QString, MessageDirection );
-	KopeteMessage(const KopeteContact*, KopeteContactList, QString, QString, MessageDirection );
+	KopeteMessage(const KopeteContact *, KopeteContactPtrList, QString, MessageDirection );
+	KopeteMessage(const KopeteContact*, KopeteContactPtrList, QString, QString, MessageDirection );
 
-	KopeteMessage(QDateTime, const KopeteContact *, KopeteContactList, QString, MessageDirection);
-	KopeteMessage(QDateTime, const KopeteContact *, KopeteContactList, QString, QString, MessageDirection);
+	KopeteMessage(QDateTime, const KopeteContact *, KopeteContactPtrList, QString, MessageDirection);
+	KopeteMessage(QDateTime, const KopeteContact *, KopeteContactPtrList, QString, QString, MessageDirection);
 
 	// Accessors
 	QDateTime timestamp() const { return mTimestamp; }
 
 	const KopeteContact *from() const { return mFrom; }
-	KopeteContactList to() const { return mTo; }
+	KopeteContactPtrList to() const { return mTo; }
 	QColor fg() const { return mFg; }
 	QColor bg() const { return mBg; }
 	QFont font() const { return mFont; }
@@ -66,7 +66,7 @@ public:
 
 protected:
 	// Helper for constructors
-	void init(QDateTime timeStamp, const KopeteContact * from, KopeteContactList to, 
+	void init(QDateTime timeStamp, const KopeteContact * from, KopeteContactPtrList to, 
 			  QString body, QString subject, MessageDirection direction);
 	
 	QDateTime mTimestamp;

@@ -34,7 +34,7 @@ KopeteMessageManagerFactory::~KopeteMessageManagerFactory()
 }
 
 KopeteMessageManager *KopeteMessageManagerFactory::create(
-	const KopeteContact *user, KopeteContactList _contacts, /* Touch that underscore and you die, along with ICQ not compiling. Fuck the underscore, that BLOWS CHUNKS. */
+	const KopeteContact *user, KopeteContactPtrList _contacts, /* Touch that underscore and you die, along with ICQ not compiling. Fuck the underscore, that BLOWS CHUNKS. */
 	KopeteProtocol *protocol, QString logFile, enum KopeteMessageManager::WidgetType widget)
 {
 	/* We build the sessions list for this protocol */

@@ -70,7 +70,8 @@ QString KopeteContact::statusIcon() const
 	return "unknown";
 }
 
-int KopeteContact::importance() const {
+int KopeteContact::importance() const
+{
 	ContactStatus stat = status();
 
 	if (stat == Online)
@@ -81,6 +82,11 @@ int KopeteContact::importance() const {
 
 	if (stat == Offline)
 		return 0;
+
+	return 0;
 }
 
 #include "kopetecontact.moc"
+
+// vim: set noet ts=4 sts=4 sw=4:
+

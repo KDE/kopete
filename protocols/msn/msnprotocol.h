@@ -348,6 +348,9 @@ private:
 
 	MSNIdentity *m_identity;
 	QPtrDict<MSNSwitchBoardSocket> m_switchBoardSockets;
+
+	QStringList m_allowList;
+	QStringList m_blockList;
 };
 
 #endif

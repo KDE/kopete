@@ -262,7 +262,7 @@ void JabberContact::slotNewMessage(const JabMessage &message) {
     }
 
 	kdDebug() << "Jabber contact: It's for us! *swoon*" << endl;
-	KopeteContactList contactList;
+	KopeteContactPtrList contactList;
 	kdDebug() << "Jabber contact: Past new KCL" << endl;
 	contactList.append(mProtocol->myself());
 	KopeteMessage jabberMessage(this, contactList, message.body, message.subject, KopeteMessage::Inbound);

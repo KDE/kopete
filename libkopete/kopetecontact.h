@@ -26,18 +26,26 @@ class QString;
 class KopeteEvent;
 
 /**
-* This class abstracts a generic contact/buddie.
-* Use it for inserting contacts in the contact list for example.
-*/
-
+ * This class abstracts a generic contact/buddie.
+ * Use it for inserting contacts in the contact list for example.
+ */
 class KopeteContact : public QObject
 {
 	Q_OBJECT
-	public:
-		/**
-		* Contact's status
-		**/
-		enum ContactStatus { Online, Away, Offline };
+
+public:
+	/**
+	 * Contact's status
+	 */
+	enum ContactStatus { Online, Away, Offline };
+
+	/**
+	 * Return whether this contact is online or not.
+	 * FIXME: Make the return value an enum, because this value might
+	 *        be Unknown or NotApplicable!
+	 * FIXME: When all plugins support this, make this pure virtual!
+	 */
+	bool isOnline() const { return status() != Offline; }
 
 		/**
 		* Usually a contact is owned by a protocol plugin
@@ -98,6 +106,18 @@ class KopeteContact : public QObject
 		**/
 		virtual void showContextMenu(QPoint, QString) {}
 
+		/**
+		 * Return the unique id that identifies a contact. Id is required
+		 * to be unique per protocol and per identity. Across those boundaries
+		 * ids may occur multiple times.
+		 * The id is solely for comparing items safely (using pointers is
+		 * more crash-prone). DO NOT assume anything regarding the id's
+		 * value! Even if it may look like an ICQ UIN or an MSN passport,
+		 * this is undefined and may change at any time!
+		 */
+		QString id() const { return m_id; }
+		void setId( const QString &id ) { m_id = id; }
+
 	signals:
 		/**
 		* Connect to this signal to know when the contact
@@ -114,8 +134,10 @@ class KopeteContact : public QObject
 		* this contact.
 		**/
 		void incomingEvent(KopeteEvent *);
-		
+
 	private:
 		QString mName;
+
+		QString m_id;
 };
 #endif

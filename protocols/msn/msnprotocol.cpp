@@ -18,6 +18,7 @@
 #include <qcursor.h>
 
 #include <kdebug.h>
+#include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <klineeditdlg.h>
 #include <klocale.h>
@@ -28,6 +29,8 @@
 #include "msnswitchboardsocket.h"
 #include "msnnotifysocket.h"
 #include "kopete.h"
+#include "kopetecontactlist.h"
+#include "kopetemetacontact.h"
 #include "msnaddcontactpage.h"
 #include "msncontact.h"
 #include "msndebugrawcmddlg.h"
@@ -38,8 +41,6 @@
 #include "msnprotocol.h"
 #include "newuserimpl.h"
 #include "statusbaricon.h"
-
-#include <kgenericfactory.h>
 
 K_EXPORT_COMPONENT_FACTORY( kopete_msn, KGenericFactory<MSNProtocol> );
 
@@ -115,6 +116,8 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 MSNProtocol::~MSNProtocol()
 {
 	m_groupList.clear();
+	m_allowList.clear();
+	m_blockList.clear();
 
 	s_protocol = 0L;
 }
@@ -459,7 +462,10 @@ void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 			it = m_contacts.begin();
 		}
 
+		m_allowList.clear();
+		m_blockList.clear();
 		m_groupList.clear();
+
 		mIsConnected = false;
 		statusBarIcon->setPixmap(offlineIcon);
 
@@ -785,36 +791,50 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 	if( handle.isEmpty() )
 		return;
 
-	MSNContact *c;
 	QStringList groups;
 	groups = QStringList::split(",", group, false );
 	if( list == "FL" )
 	{
-		// FIXME: Proper MSNContact CTOR!
-		c = new MSNContact( handle, publicName, QString::null, 0L );
-		for( QStringList::Iterator it = groups.begin();
-			it != groups.end(); ++it )
+		KopeteContactList *l = KopeteContactList::contactList();
+		KopeteMetaContact *m = l->findContact( handle );
+		KopeteContact *c = m->findContact( handle );
+
+		if( c )
 		{
-			c->addToGroup( groupName( (*it).toUInt() ) );
-			addToContactList( c, groupName( (*it).toUInt() ) );
+			// Existing contact, update data
+			// FIXME: TODO!
+			kdDebug() << "MSNProtocol::slotContactList: Not implemented: "
+				<< "Meta contact already contains contact " << handle
+				<< "???" << endl;
+		}
+		else
+		{
+			// New contact
+			MSNContact *msnContact = new MSNContact( handle, publicName,
+				QString::null, m );
+			for( QStringList::Iterator it = groups.begin();
+				it != groups.end(); ++it )
+			{
+				msnContact->addToGroup( groupName( (*it).toUInt() ) );
+			}
+			c = msnContact;
+			m->addContact( c, msnContact->groups() );
+
+			// FIXME: Try to remove this
+			m_contacts.insert( msnContact->msnId(), msnContact );
 		}
 	}
 	else if( list == "BL" )
 	{
+		if( !m_blockList.contains( handle ) )
+			m_blockList.append( handle );
 		if( m_contacts.contains( handle ) )
 			m_contacts[ handle ]->setBlocked( true );
 	}
 	else if( list == "AL" )
 	{
-		// deleted Contacts might still be in allow list.
-		// Don't show them in the GUI, though.
-		if( !m_contacts.contains( handle ) )
-		{
-			// FIXME: Proper MSNContact ctor required!
-			c = new MSNContact( handle, publicName, QString::null, 0L );
-			c->setDeleted( true );
-			m_contacts.insert( c->msnId(), c );
-		}
+		if( !m_allowList.contains( handle ) )
+			m_allowList.append( handle );
 	}
 	else if( list == "RL" )
 	{
@@ -907,24 +927,39 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 		// contact not found, create new one
 		if( list == "FL" )
 		{
-			// FIXME: Proper MSNContact ctor!
-			MSNContact *c = new MSNContact( handle, publicName, gn, 0L );
-			c->setDeleted( true );
-			addToContactList( c, gn );
-		}
-		else if( list == "AL" )
-		{
-			// deleted Contacts might still be in allow list.
-			// Don't show them in the GUI, though.
-			if( !m_contacts.contains( handle ) )
+			KopeteContactList *l = KopeteContactList::contactList();
+			KopeteMetaContact *m = l->findContact( handle );
+			KopeteContact *c = m->findContact( handle );
+
+			if( c )
 			{
-				// FIXME: Proper MSNContact ctor required!
-				MSNContact *c = new MSNContact( handle, publicName,
-					QString::null, 0L );
-				c->setDeleted( true );
+				// Existing contact, update data
+				// FIXME: TODO!
+				kdDebug() << "MSNProtocol::slotContactAdded: Not implemented: "
+					<< "Meta contact already contains contact " << handle
+					<< "???" << endl;
+			}
+			else
+			{
+				// New contact
+				MSNContact *c = new MSNContact( handle, publicName, gn, m );
+				m->addContact( c, gn );
+
+				// FIXME: Try to remove this
 				m_contacts.insert( c->msnId(), c );
 			}
 		}
+	}
+
+	if( list == "AL" )
+	{
+		if( !m_allowList.contains( handle ) )
+			m_allowList.append( handle );
+	}
+	else if( list == "BL" )
+	{
+		if( !m_blockList.contains( handle ) )
+			m_blockList.append( handle );
 	}
 }
 
@@ -981,7 +1016,7 @@ void MSNProtocol::slotExecute( QString userid )
 {
 	if ( m_contacts.contains( userid ) && m_myself )
 	{
-		KopeteContactList chatmembers;
+		KopeteContactPtrList chatmembers;
 
 		chatmembers.append( m_contacts[ userid ] );
 		KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
@@ -995,7 +1030,7 @@ void MSNProtocol::slotMessageReceived( const KopeteMessage &msg )
 	kdDebug() << "MSNProtocol::slotMessageReceived: Message received from " <<
 		msg.from()->name() << endl;
 
-	KopeteContactList chatmembers;
+	KopeteContactPtrList chatmembers;
 
 	if ( msg.direction() == KopeteMessage::Inbound )
 	{
@@ -1063,7 +1098,7 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 	KopeteContact *c = m_contacts[ handle ];
 	if ( c && m_myself )
 	{
-		KopeteContactList chatmembers;
+		KopeteContactPtrList chatmembers;
 		chatmembers.append(c);
 
 		KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
@@ -1101,7 +1136,7 @@ void MSNProtocol::slotStartChatSession( QString handle )
 	KopeteContact *c = m_contacts[ handle ];
 	if( isConnected() && c && m_myself && handle != m_msnId )
 	{
-		KopeteContactList chatmembers;
+		KopeteContactPtrList chatmembers;
 		chatmembers.append(c);
 
 		KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
