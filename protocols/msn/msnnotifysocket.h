@@ -29,6 +29,8 @@
 class MSNDispatchSocket;
 class MSNAccount;
 
+#include <kio/job.h>
+
 /**
  * @author Olaf Lueg
  */
@@ -62,7 +64,7 @@ public slots:
 
 signals:
 	void newContactList();
-	void contactList(const QString&, const QString&, const QString&, const QString&);
+	void contactList(const QString& handle, const QString& displayname, uint lists, const QString& groups);
 //	void contactList(const QString&, const QString&, uint);
 	void contactStatus(const QString&, const QString&, const QString& );
 	void contactAdded(const QString&, const QString&, const QString&, uint);
@@ -78,7 +80,7 @@ signals:
 
 	void publicNameChanged( const QString& );
 	void statusChanged( const KopeteOnlineStatus &newStatus );
-	
+
 	void hotmailSeted(bool) ;
 
 protected:
@@ -118,6 +120,12 @@ private slots:
 	 */
 	void slotResetKeepAlive();
 
+
+
+	void slotAuthJobDataReceived ( KIO::Job *, const QByteArray &data);
+	void slotAuthJobDone ( KIO::Job *);
+
+
 private:
 	/**
 	 * Convert the MSN status strings to a KopeteOnlineStatus
@@ -148,6 +156,7 @@ private:
 	QString m_kv;
 	QString m_sid;
 	QString m_loginTime;
+	QString m_authData;
 
 	QTimer *m_keepaliveTimer;
 

@@ -36,6 +36,8 @@
 #include <kstandarddirs.h>
 #include <ktempfile.h>
 #include <krun.h>
+#include <kio/job.h>
+
 #include "knotifyclient.h"
 
 #include <ctime>
@@ -193,18 +195,27 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 {
 	//kdDebug(14140) << "MSNNotifySocket::parseCommand: Command: " << cmd << endl;
 
+	//// here follow the auth processus
 	if( cmd == "USR" )
 	{
 		if( data.section( ' ', 1, 1 ) == "S" )
 		{
-			kdDebug(14140) << "MSNNotifySocket::parseCommand: Sending response Authentication" << endl;
+			m_authData=data.section( ' ' , 2 , 2 );
+			m_kv=QString::null;
+		//	QString authURL="https://loginnet.passport.com/login.srf?" + m_authData;
+			QString authURL="https://login.passport.com/login.srf?" + m_authData;
+			authURL.replace("," , "&" ) ;
 
-			KMD5 context( data.section( ' ', 2, 2 ) + m_password );
-			sendCommand( "USR", "MD5 S " + context.hexDigest() );
+			kdDebug(14140) << "MSNNotifySocket::parseCommand: " << authURL << endl;
+
+			KIO::Job *job = KIO::get( authURL , false, false );
+			QObject::connect( job, SIGNAL(result( KIO::Job *)), this, SLOT(slotAuthJobDone( KIO::Job *)) );
 		}
 		else
 		{
-			// Successful auth, sync contact list
+			// Successful auth
+			m_badPassword=false;
+			// sync contact list
 			QString serial=m_account->pluginData(m_account->protocol() , "serial" );
 			if(serial.isEmpty())
 				serial= "0";
@@ -231,10 +242,10 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "LST" )
 	{
-		// handle, publicName, group, list
-		emit contactList( data.section( ' ', 4, 4 ),
-			unescape( data.section( ' ', 5, 5 ) ), data.section( ' ', 6, 6 ),
-			data.section( ' ', 0, 0 ) );
+		// handle, publicName, lists, group
+		emit contactList( data.section( ' ', 0, 0 ),
+			unescape( data.section( ' ', 1, 1 ) ), data.section( ' ', 2, 2 ).toUInt(),
+			data.section( ' ', 3, 3 ) );
 	}
 	else if( cmd == "MSG" )
 	{
@@ -324,7 +335,16 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "LSG" )
 	{
-		emit groupListed( unescape( data.section( ' ', 4, 4 ) ), data.section( ' ', 3, 3 ).toUInt() );
+		//the LSG syntax depends if it is called from SYN or from LSG
+		if(data.contains(' ') > 4) //FROM LSG
+		{
+			emit groupListed( unescape( data.section( ' ', 4, 4 ) ), data.section( ' ', 3, 3 ).toUInt() );
+		}
+		else //from SYN
+		{
+			//this command has not id, and the first param is a number, so MSNSocket think it is the ID
+			emit groupListed( unescape( data.section( ' ', 0, 0 ) ), id );
+		}
 	}
 	else if( cmd == "ADG" )
 	{
@@ -450,6 +470,61 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 }
 
+
+void MSNNotifySocket::slotAuthJobDataReceived ( KIO::Job */*job*/,const  QByteArray &data)
+{
+	m_authData += QCString( data, data.size()+1 );
+//	kdDebug(14140) << "MSNNotifySocket::slotAuthJobDataReceived: " << data << endl;
+}
+
+void MSNNotifySocket::slotAuthJobDone ( KIO::Job *job)
+{
+	kdDebug(14140) << "MSNNotifySocket::slotAuthJobDone: "<< m_authData << endl;
+
+	if(job->error())
+	{
+		//FIXME: Shouldn't we say that we are the MSN plugin?
+		job->showErrorDialog();
+		disconnect();
+	}
+
+	if(m_kv.isNull())
+	{
+		//Now KDE has stored cookie of the previous page, we can send the auth
+
+		//QRegExp rx("lc=([1-9]*),id=([1-9]*),tw=([1-9]*),fs=[1-9]*,ru=[1-9a-zA-Z%]*,ct=[1-9]*,kpp=[1-9]*,kv=([1-9]*),");
+		QRegExp rx("lc=([0-9]*),id=([0-9]*),tw=([0-9]*),.*kv=([0-9]*),");
+		rx.search(m_authData);
+
+		/*QString authURL="https://loginnet.passport.com/ppsecure/post.srf?lc=" + rx.cap(1) + "&id=" +rx.cap(2) +"&tw=" +rx.cap(3) +"&cbid=" + rx.cap(2)
+			+ "&da=passport.com&login=" + m_account->accountId() + "&domain=hotmail.com&passwd=" + escape ( m_password ) ;*/
+
+
+		QString authURL="https://login.passport.com/ppsecure/post.srf?lc=" + rx.cap(1) + "&id=" +rx.cap(2) +"&tw=" +rx.cap(3) +"&cbid=" + rx.cap(2)
+			+ "&da=passport.com&login=" + m_account->accountId() + "&domain=passport.com&passwd=" + escape ( m_password ) ;
+
+		kdDebug(14140) << "MSNNotifySocket::slotAuthJobDone: " << authURL << endl;
+
+		KIO::Job *job = KIO::get( authURL , false, false );
+
+		m_authData = QString::null;
+		m_kv=rx.cap(4);
+		if(m_kv.isNull()) m_kv="";
+
+		QObject::connect( job, SIGNAL(data( KIO::Job *,const QByteArray&)), this, SLOT(slotAuthJobDataReceived( KIO::Job *,const QByteArray&)) );
+		QObject::connect( job, SIGNAL(result( KIO::Job *)), this, SLOT(slotAuthJobDone( KIO::Job *)) );
+	}
+	else
+	{
+		QRegExp rx(/*URL=http://memberservices.passport.net/memberservice.srf*/"\\?did=[0-9]*&(t=[0-9A-Za-z!$*]*&p=[0-9A-Za-z!$*]*)\"");
+		rx.search(m_authData);
+
+		m_badPassword=true;  //if this disconnect, that mean the password was bad
+		sendCommand("USR" , "TWN S " + rx.cap(1));
+	}
+}
+
+
 void MSNNotifySocket::slotOpenInbox()
 {
 	sendCommand("URL", "INBOX" );
@@ -522,6 +597,12 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 			rx.search(msg);
 			m_loginTime=rx.cap(1);
 		}
+			else //IN MSNP9  there are no logintime it seems, so set it manualy
+			{
+				time_t actualTime;
+				time(&actualTime);
+				m_loginTime=QString::number((unsigned long)actualTime);
+			}
 		if(msg.contains("EmailEnabled:"))
 		{
 			QRegExp rx("EmailEnabled: ([0-9]*)");
@@ -608,6 +689,12 @@ void MSNNotifySocket::setStatus( const KopeteOnlineStatus &status )
 
 void MSNNotifySocket::changePublicName( const QString &publicName, const QString &handle )
 {
+	if( escape(publicName).length() > 387 )
+	{
+		kdDebug(14140) << "MSNNotifySocket::changePublicName: nickname too long! aborting " << endl;
+		return;
+	}
+
 	m_tmpLastHandle=handle;
 	if( handle.isNull() )
 	{

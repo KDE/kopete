@@ -124,8 +124,8 @@ void MSNAccount::connect()
 		SLOT( slotGroupAdded( const QString&, uint ) ) );
 	QObject::connect( m_notifySocket, SIGNAL(groupRemoved( uint ) ),
 		SLOT( slotGroupRemoved( uint ) ) );
-	QObject::connect( m_notifySocket, SIGNAL( contactList( const QString&, const QString&, const QString&, const QString& ) ),
-		SLOT( slotContactListed( const QString&, const QString&, const QString&, const QString& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( contactList( const QString&, const QString&, uint, const QString& ) ),
+		SLOT( slotContactListed( const QString&, const QString&, uint, const QString& ) ) );
 	QObject::connect( m_notifySocket, SIGNAL( contactAdded( const QString&, const QString&, const QString&, uint ) ),
 		SLOT( slotContactAdded( const QString&, const QString&, const QString&, uint ) ) );
 	QObject::connect( m_notifySocket, SIGNAL( contactRemoved( const QString&, const QString&, uint ) ),
@@ -327,11 +327,10 @@ void MSNAccount::slotChangePublicName()
 	{
 		// For some stupid reasons the public name is not allowed to contain
 		// the text 'msn'. It would result in an error 209 from the server.
-		if( name.contains( "msn", false ) )
+		if( name.length() > 387 )
 		{
 			KMessageBox::error( 0L,
-				i18n( "Your display name is "
-					"not allowed to contain the text 'MSN'.\n"
+				i18n( "The display name you enter is too long.  Please enter one smaller.\n"
 					"Your display name has not been changed." ),
 				i18n( "Change Nickname - MSN Plugin" ) );
 			return;
@@ -663,22 +662,20 @@ void MSNAccount::slotNewContactList()
 		}
 }
 
-void MSNAccount::slotContactListed( const QString& handle, const QString& publicName, const QString& group, const QString& list )
+void MSNAccount::slotContactListed( const QString& handle, const QString& publicName, uint lists, const QString& group )
 {
 	// On empty lists handle might be empty, ignore that
 	if( handle.isEmpty() )
 		return;
 
-	QStringList contactGroups = QStringList::split( ",", group, false );
-	if( list == "FL" )
+	if(lists & 1)	//FL
 	{
+		QStringList contactGroups = QStringList::split( ",", group, false );
 		KopeteMetaContact *metaContact = KopeteContactList::contactList()->findContact( protocol()->pluginId(), accountId(), handle );
 		if( metaContact )
 		{
 			// Contact exists, update data.
 			// Merging difference between server contact list and KopeteContact's contact list into MetaContact's contact-list
-			// FIXME: every time we move a metaContact, syncGroups is called.here, the contact can change in the server, when
-			//        the new serverGroups are not yet set in the metacontact (Olivier)
 			MSNContact *c = static_cast<MSNContact*>( metaContact->findContact( protocol()->pluginId(), accountId(), handle ) );
 			c->setOnlineStatus( MSNProtocol::protocol()->FLN );
 			c->setDisplayName( publicName );
@@ -691,6 +688,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 				{
 					// The contact has been added in a group by another client
 					c->contactAddedToGroup( serverGroup, m_groupList[ serverGroup ] );
+					c->setDontSync(true); //prevent the moving of the metacontact change the server
 					metaContact->addToGroup( m_groupList[ serverGroup ] );
 				}
 			}
@@ -701,11 +699,13 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 				{
 					// The contact has been removed from a group by another client
 					c->contactRemovedFromGroup( it.key() );
+					c->setDontSync(true); //prevent the moving of the metacontact change the server
 					metaContact->removeFromGroup( m_groupList[ it.key() ] );
 				}
 			}
 
 			//Update server if the contact has been moved to another group while MSN was offline
+			c->setDontSync(false); //now, allow to change the server
 			c->syncGroups();
 		}
 		else
@@ -725,11 +725,12 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 			KopeteContactList::contactList()->addMetaContact( metaContact );
 		}
 	}
-	else
-	{
-		//FIXME: merge theses two method
-		slotContactAdded(handle , publicName , list , 0  );
-	}
+	if(lists & 2)
+		slotContactAdded(handle , publicName , "AL" , 0  );
+	if(lists & 4)
+		slotContactAdded(handle , publicName , "BL" , 0  );
+	if(lists & 8)
+		slotContactAdded(handle , publicName , "RL" , 0  );
 
 }
 

@@ -472,6 +472,11 @@ void MSNContact::slotSendMail()
 	}
 }
 
+void MSNContact::setDontSync(bool b)
+{
+	m_moving=b;
+}
+
 #include "msncontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

@@ -114,6 +114,13 @@ public:
 	 */
 	void setOnlineStatus(const KopeteOnlineStatus&);
 
+	/**
+	 * set the m_moving
+	 * prevent change in the serverside contactlist when moving metacontacts
+	 * used when syncing contactlist
+	 */
+	void setDontSync(bool b);
+
 public slots:
 	virtual void slotUserInfo();
 	virtual void slotDeleteContact();

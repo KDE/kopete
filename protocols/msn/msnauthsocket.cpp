@@ -24,6 +24,11 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kapplication.h>
+#include <kaboutdata.h>
+
+
+#include <sys/utsname.h>
 
 MSNAuthSocket::MSNAuthSocket( const QString &msnId , QObject* parent) : MSNSocket(parent)
 {
@@ -39,7 +44,7 @@ MSNAuthSocket::~MSNAuthSocket()
 void MSNAuthSocket::reconnect()
 {
 //	connect( server(),port() );
-} 
+}
 
 void MSNAuthSocket::handleError( uint code, uint id )
 {
@@ -79,15 +84,17 @@ void MSNAuthSocket::parseCommand( const QString &cmd, uint id,
 {
 	if( cmd == "VER" )
 	{
-		kdDebug(14140) << "MSNAuthSocket: Requesting authentication method"
-			<< endl;
-		sendCommand( "INF" );
+	//	sendCommand("CVR" , "0x0409 winnt 5.1 i386 MSNMSGR 5.0.0 MSMSGS " + m_msnId );
+
+		struct utsname utsBuf;
+		uname (&utsBuf);
+
+		sendCommand("CVR" ,  i18n("MS Local code, see http://www.microsoft.com/globaldev/reference/oslocversion.mspx","0x0409") +
+		   " " + escape(utsBuf.sysname) + " " + escape(utsBuf.release) + " " + escape(utsBuf.machine) +" Kopete "+ escape(kapp->aboutData()->version()) + " Kopete " + m_msnId );
 	}
-	else if( cmd == "INF" )
+	else if ( cmd == "CVR" ) //else if( cmd == "INF" )
 	{
-		kdDebug(14140) << "MSNAuthSocket: Requesting MD5 authentication "
-			<< "for Passport " << m_msnId << endl;
-		sendCommand( "USR", "MD5 I " + m_msnId);
+		sendCommand( "USR", "TWN I " + m_msnId);
 	}
 	else
 	{
@@ -100,7 +107,7 @@ void MSNAuthSocket::doneConnect()
 {
 	kdDebug(14140) << "MSNAuthSocket: Negotiating server protocol version"
 		<< endl;
-	sendCommand( "VER", "MSNP7 MSNP6 MSNP5 MSNP4 CVR0" );
+	sendCommand( "VER", "MSNP9" );
 }
 
 #include "msnauthsocket.moc"
