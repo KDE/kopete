@@ -120,7 +120,7 @@ public:
 	/**
 	 * Invite someone to join a conference
 	 */
-	void sendInvitation( const QString & guid, const GroupWiseContact * contact/*, const message */);
+	void sendInvitation( const QString & guid, const GroupWiseContact * contact, const QString & message );
 public slots:
 
 	void slotTestRTFize();

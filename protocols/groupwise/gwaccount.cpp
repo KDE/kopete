@@ -354,13 +354,12 @@ void GroupWiseAccount::createConference( const int clientId, const QStringList& 
 	m_client->createConference( clientId , invitees );
 }
 
-void GroupWiseAccount::sendInvitation( const QString & guid, const GroupWiseContact * contact/*, const message*/ )
+void GroupWiseAccount::sendInvitation( const QString & guid, const GroupWiseContact * contact, const QString & message )
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	GroupWise::OutgoingMessage msg;
 	msg.guid = guid;
-	msg.message = "Default invitation message";
-	msg.rtfMessage = protocol()->rtfizeText( msg.message );
+	msg.message = message;
 	m_client->sendInvitation( guid, contact->dn(), msg );
 }
 
@@ -922,8 +921,7 @@ void GroupWiseAccount::receiveInviteNotify( const ConferenceEvent & event )
 		GroupWiseContact * c = contactForDN( event.user );
 		if ( c )
 		{
-			QString from = c->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-			KopeteMessage declined = KopeteMessage( mgr->user(), mgr->members(), i18n("%1 has been invited to join this conversation.").arg( from ), KopeteMessage::Internal, KopeteMessage::PlainText );
+			KopeteMessage declined = KopeteMessage( mgr->user(), mgr->members(), i18n("%1 has been invited to join this conversation.").arg( c->metaContact()->displayName() ), KopeteMessage::Internal, KopeteMessage::PlainText );
 			mgr->appendMessage( declined );
 		}
 	}

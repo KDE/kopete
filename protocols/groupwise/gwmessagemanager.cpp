@@ -11,16 +11,21 @@
 //
 
 #include <qlabel.h>
+#include <qvalidator.h>
 #include <kdebug.h>
 #include <kiconloader.h>
+#include <kinputdialog.h>
 #include <klocale.h>
+#include <kmainwindow.h>
 #include <kpopupmenu.h>
 #include <kshortcut.h>
 
 #include <kopetecontact.h>
 #include <kopetecontactaction.h>
+#include <kopeteuiglobal.h>
 #include <kopetemessagemanagerfactory.h>
 #include <kopeteprotocol.h>
+#include <kopeteview.h>
 
 #include "client.h"
 #include "gwaccount.h"
@@ -272,8 +277,19 @@ void GroupWiseMessageManager::slotActionInviteAboutToShow()
 
 void GroupWiseMessageManager::slotInviteContact( KopeteContact * contact )
 {
-	GroupWiseContact * gwc = static_cast< GroupWiseContact *>( contact );
-	static_cast< GroupWiseAccount * >(account())->sendInvitation( m_guid, gwc );
+	QWidget * w = view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) : 0L;
+	
+	bool ok;
+	QRegExp rx( ".*" );
+    QRegExpValidator validator( rx, this );
+	QString inviteMessage = KInputDialog::getText( i18n( "Enter Invitation Message" ),
+			 i18n( "Enter the reason for the invitation, or leave blank for no reason" ), QString(),
+			 &ok, w ? w : Kopete::UI::Global::mainWidget(), "invitemessagedlg", &validator );
+	if ( ok )
+	{	
+		GroupWiseContact * gwc = static_cast< GroupWiseContact *>( contact );
+		static_cast< GroupWiseAccount * >(account())->sendInvitation( m_guid, gwc, inviteMessage );
+	}
 }
 
 #include "gwmessagemanager.moc"
