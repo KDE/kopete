@@ -65,7 +65,7 @@ Q_OBJECT
 		 * Protocol action P11
 		 * @param message contains the text and the recipient.
 		 */
-		void sendMessage( const Message &message );
+		void sendMessage( const QStringList & addresseeDNs, const OutgoingMessage & message );
 		  
 		/**
 		 * Send a typing notification
@@ -95,6 +95,16 @@ Q_OBJECT
 		 * Remove a contact from the contact list
 		 * Protocol action P14
 		 */
+		
+		/**
+		 * Instantiate a conference on the server
+		 * Protocol action P5
+		 */
+		void createConference( const int clientId );
+		/**
+		 * Overloaded version of the above to create a conference with a supplied list of invitees
+		 */
+		void createConference( const int clientId, const QStringList & participants );
 		
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
@@ -179,10 +189,16 @@ Q_OBJECT
 		 * Our status changed on the server
 		 */
 		void ourStatusChanged( GroupWise::Status status, const QString & statusText, const QString & autoReply );
+		/** 
+		 * A conference was successfully created on the server
+		 */
+		void conferenceCreated( const int clientId, const QString & guid );
 	public slots:
-		// INTERNAL, FOR USE BY TASKS' SIGNALS //
+		// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
 		void lt_loginFinished();
 		void sst_statusChanged();
+		void cct_conferenceCreated();
+		
 	protected:
 		/**
 		 * Instantiate all the event handling tasks

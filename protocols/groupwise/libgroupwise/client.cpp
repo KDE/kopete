@@ -4,9 +4,11 @@
 #include "requestfactory.h"
 #include "task.h"
 #include "tasks/conferencetask.h"
+#include "tasks/createconferencetask.h"
 #include "tasks/getdetailstask.h"
 #include "tasks/getstatustask.h"
 #include "tasks/logintask.h"
+#include "tasks/sendmessagetask.h"
 #include "tasks/setstatustask.h"
 #include "tasks/statustask.h"
 
@@ -148,6 +150,7 @@ void Client::initialiseEventTasks()
 
 void Client::setStatus( GroupWise::Status status, const QString & reason )
 {
+	qDebug( "Setting status to %i", status );
 	SetStatusTask * sst = new SetStatusTask( d->root );
 	sst->status( status, reason, QString::null );
 	connect( sst, SIGNAL( finished() ), this, SLOT( sst_statusChanged() ) );
@@ -164,10 +167,11 @@ void Client::requestStatus( const QString & userDN )
 	gst->go( true );
 }
 
-void Client::sendMessage( const Message &message )
+void Client::sendMessage( const QStringList & addresseeDNs, const OutgoingMessage & message )
 {
-	//TODO Implement sendMessage
-	qDebug( "TODO: sendMessage" );
+	SendMessageTask * smt = new SendMessageTask( d->root );
+	smt->message( addresseeDNs, message );
+	smt->go( true );
 }
 
 void Client::sendTyping( /*Conference &conference ,*/ bool typing )
@@ -176,6 +180,19 @@ void Client::sendTyping( /*Conference &conference ,*/ bool typing )
 	qDebug( "TODO: sendTyping" );
 }
 
+void Client::createConference( const int clientId )
+{
+	QStringList dummy;
+	createConference( clientId, dummy );
+}
+
+void Client::createConference( const int clientId, const QStringList & participants )
+{
+	CreateConferenceTask * cct = new CreateConferenceTask( d->root );
+	cct->conference( clientId, participants );
+	connect( cct, SIGNAL( finished() ), SLOT( cct_conferenceCreated() ) );
+	cct->go( true );
+}
 void Client::requestDetails( const QStringList & userDNs )
 {
 	GetDetailsTask * gdt = new GetDetailsTask( d->root );
@@ -224,6 +241,16 @@ void Client::sst_statusChanged()
 	}
 }
 
+void Client::cct_conferenceCreated()
+{
+	const CreateConferenceTask * cct = ( CreateConferenceTask * )sender();
+	if ( cct->success() )
+	{
+		qDebug( "conference created" );
+		emit conferenceCreated( cct->clientConfId(), cct->conferenceGUID() );
+	}
+	// TODO: signal failure too
+}
 // INTERNALS //
 
 QString Client::userId()
