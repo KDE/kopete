@@ -611,13 +611,23 @@ void KopeteEmailWindow::slotReplySendClicked()
 		sendMessage();
 }
 
+//FIXME: Activate bool no longer needed due to setActiveWindow not being allowed
 void KopeteEmailWindow::raise(bool activate)
 {
 	makeVisible();
 	KWin::setOnDesktop( winId(), KWin::currentDesktop() );
 	KMainWindow::raise();
+	
+	/* Removed Nov 2003
+	According to Zack, the user double-clicking a contact is not valid reason for a non-pager
+	to grab window focus. While I don't agree with this, and it runs contradictory to every other
+	IM out there, commenting this code out to agree with KWin policy.
+	
+	Redirect any bugs relating to the widnow now not grabbing focus on clicking a contact to KWin.
+		- Jason K
 	if(activate)
 		setActiveWindow();
+	*/
 }
 
 void KopeteEmailWindow::windowActivationChange( bool )

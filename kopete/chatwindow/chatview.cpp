@@ -207,6 +207,7 @@ ChatView::~ChatView()
 	delete d;
 }
 
+//FIXME: Activate bool no longer needed due to setActiveWindow not being allowed
 void ChatView::raise(bool activate)
 {
 	//this shouldn't change the focus. When the window is reased when a new mesage arrive
@@ -226,8 +227,18 @@ void ChatView::raise(bool activate)
 	if(m_mainWindow->isMinimized())
 		KWin::deIconifyWindow(m_mainWindow->winId() );
 	m_mainWindow->raise();
+	
+	/* Removed Nov 2003
+	According to Zack, the user double-clicking a contact is not valid reason for a non-pager
+	to grab window focus. While I don't agree with this, and it runs contradictory to every other
+	IM out there, commenting this code out to agree with KWin policy.
+	
+	Redirect any bugs relating to the widnow now not grabbing focus on clicking a contact to KWin.
+		- Jason K
+
 	if(activate)
 		m_mainWindow->setActiveWindow();  //this set the focus to the window
+	*/
 }
 
 void ChatView::slotScrollingTo( int /*x*/, int y)
