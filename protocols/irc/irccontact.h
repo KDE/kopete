@@ -66,12 +66,12 @@ private:
 	void init();
 private slots:
 	void slotIncomingMotd(const QString &);
-	void slotConnectedToHost();
-	void slotUserJoinedChannel(const QString &, const QString &);
-	void slotNamesList(const QString &, const QString &, int);
+//	void slotConnectedToHost();
+//	void slotUserJoinedChannel(const QString &, const QString &);
+//	void slotNamesList(const QString &, const QString &, int);
 	void joinNow();
 	void slotQuitServer();
-	void slotHop();
+//	void slotHop();
 	void slotPartedChannel(const QString &, const QString &, const QString &);
 	void slotServerIsQuitting();
 	void slotServerHasQuit();
