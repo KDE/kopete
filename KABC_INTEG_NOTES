@@ -135,7 +135,7 @@ This try to do all in as few step as possible.
 
 
 
- KAB Windget in Kopete
+ KAB Widget in Kopete
 =========================
 
  in the metacontact popup menu:
@@ -145,10 +145,11 @@ B)  "View information"   if the metacontact is already in KAB
 
 A)  show the step  2 and A/B  of my addcontactwizard  (Olivier)
 
-B) KParts showing the KAdressBook entries information, and allow to edit it of course
+B) KParts showing the KAddressBook entries information, and allow to edit it of 
+course
 
 
-so kopete becomes in fact a adressbook itself
+so kopete becomes in fact a addressbook itself
 
 
 
