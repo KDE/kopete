@@ -163,8 +163,11 @@ void YahooSession::logOff()
 {
 	kdDebug(14180)<< k_funcinfo << " " << m_connId<<endl;
 	yahoo_logoff(m_connId);
-	m_socket->close();
-	m_socket->reset();
+	if ( m_socket ) 
+	{
+	    m_socket->close();
+	    m_socket->reset();
+	}
 }
 
 void YahooSession::refresh()
@@ -983,6 +986,7 @@ int YahooSession::_hostAsyncConnectReceiver(char *host, int port,  yahoo_connect
 	{
 		kdDebug(14180) << k_funcinfo << " Failed!" << endl;
 		m_socket->close();
+		m_socket = NULL;
 		return -1;
 	}
 }
