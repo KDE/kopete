@@ -37,7 +37,17 @@
 
 #include "kopeteplugin.h"
 
-class KopeteLibraryInfo;
+struct KopeteLibraryInfo
+{
+	QString specfile;
+	QString filename;
+	QString type;
+	QString name;
+	QString icon;
+	QString messagingProtocol;
+};
+
+bool operator ==(const KopeteLibraryInfo &, const KopeteLibraryInfo &);
 
 // Put the static deleter in its anonymous namespace
 namespace
@@ -103,33 +113,9 @@ QPtrList<KopetePlugin> LibraryLoader::plugins() const
 	return list;
 }
 
-QValueList<KopeteLibraryInfo> LibraryLoader::loaded() const
-{
-	QValueList<KopeteLibraryInfo> items;
-
-	QDictIterator<KopetePlugin> i( m_loadedPlugins );
-	for( ; i.current(); ++i )
-	{
-		if( m_loadedPlugins[ i.currentKey() ] )
-			items.append( getInfo( i.currentKey() ) );
-	}
-
-	return items;
-}
-
 bool LibraryLoader::loadAll()
 {
 	// FIXME: We need session management here - Martijn
-	// Session management...
-/*
-	for(QStringList::ConstIterator i=modules.begin(); i!=modules.end(); ++i)
-	{
-		KopeteLibraryInfo info=getInfo(*i);
-		if (!info.type.contains("sm"))
-			continue;
-		loadPlugin( *i );
-	}
-*/
 
 	slotKopeteSettingsChanged();
 
@@ -158,7 +144,6 @@ KopeteLibraryInfo LibraryLoader::getInfo( const QString &spec ) const
 	info.filename = file.readEntry( "X-KDE-Library" );
 	info.type     = file.readEntry( "ServiceTypes" );
 	info.name     = file.readEntry( "Name" );
-	info.comment  = file.readEntry( "Comment" );
 	info.icon     = file.readEntry( "Icon" );
 	info.messagingProtocol = file.readEntry( "X-Kopete-Messaging-Protocol" );
 
@@ -169,30 +154,9 @@ KopeteLibraryInfo LibraryLoader::getInfo( const QString &spec ) const
 	return info;
 }
 
-bool LibraryLoader::isLoaded( const QString &spec ) const
-{
-	KopetePlugin *p = m_loadedPlugins[ spec ];
-	return p;
-}
-
-QValueList<KopeteLibraryInfo> LibraryLoader::available() const
-{
-	QValueList<KopeteLibraryInfo> items;
-	QStringList files = KGlobal::dirs()->findAllResources( "services", QString::fromLatin1( "*.desktop" ), false, true );
-	for( QStringList::Iterator i=files.begin(); i!=files.end(); ++i )
-	{
-		KopeteLibraryInfo info = getInfo( *i );
-		if ( info.type == QString::fromLatin1( "Kopete/Plugin" ) || info.type == QString::fromLatin1( "Kopete/Protocol" ) )
-			items.append( info );
-	}
-
-	return items;
-}
-
 KopetePlugin *LibraryLoader::loadPlugin( const QString &spec_ )
 {
-	QString spec = spec_;
-	spec.remove( QRegExp( QString::fromLatin1( ".desktop$" ) ) );
+	QString spec = spec_.lower().remove( QRegExp( QString::fromLatin1( ".desktop$" ) ) );
 
 	kdDebug( 14010 ) << k_funcinfo << spec << endl;
 
@@ -246,9 +210,9 @@ KopetePlugin *LibraryLoader::loadPlugin( const QString &spec_ )
 				break;
 		}
 
-		kdDebug(14010) << k_funcinfo << "Loading plugin '"<< spec <<
-			"'failed, KLibLoader reported error:" << endl <<
-			KLibLoader::self()->lastErrorMessage() << endl;
+		kdDebug(14010) << k_funcinfo << "Loading plugin '" << spec <<
+			"' failed, KLibLoader reported error: '" << endl <<
+			KLibLoader::self()->lastErrorMessage() << "'" << endl;
 	}
 
 	return plugin;
@@ -305,15 +269,13 @@ KopetePlugin* LibraryLoader::searchByID( const QString &Id )
 {
 	kdDebug() << k_funcinfo << Id << endl;
 
-	QValueList<KopeteLibraryInfo> l = loaded();
-
-	for ( QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i )
+	for ( QDictIterator<KopetePlugin> it( m_loadedPlugins ); it.current(); ++it )
 	{
-		KopetePlugin *tmp_plug = m_loadedPlugins[ ( *i ).specfile.remove( QString::fromLatin1( ".desktop" ) ) ];
-		if( tmp_plug && tmp_plug->pluginId() == Id )
-			return tmp_plug;
+		if ( it.current()->pluginId() == Id )
+			return it.current();
 	}
-	return NULL;
+
+	return 0L;
 }
 
 QString LibraryLoader::pluginName( const KopetePlugin *plugin ) const

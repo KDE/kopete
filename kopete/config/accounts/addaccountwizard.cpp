@@ -155,7 +155,7 @@ void AddAccountWizard::next()
 		if ( lvi )
 		{
 			kdDebug( 14100 ) << k_funcinfo << "Trying to load plugin " << m_protocolItems[ lvi ]->name() << " by name" << endl;
-			KopetePlugin *pl = LibraryLoader::self()->searchByName( m_protocolItems[ lvi ]->name() );
+			KopetePlugin *pl = LibraryLoader::self()->loadPlugin( m_protocolItems[ lvi ]->name() );
 
 			m_proto = dynamic_cast<KopeteProtocol *>( pl );
 			if ( m_proto )

@@ -35,18 +35,7 @@ class KopetePlugin;
 
 class KPluginInfo;
 
-struct KopeteLibraryInfo
-{
-	QString specfile;
-	QString filename;
-	QString type;
-	QString name;
-	QString comment;
-	QString icon;
-	QString messagingProtocol;
-};
-
-bool operator ==(const KopeteLibraryInfo &, const KopeteLibraryInfo &);
+struct KopeteLibraryInfo;
 
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
@@ -64,17 +53,6 @@ public:
 
 	~LibraryLoader();
 
-	 // FIXME: These 6 methods are only used internally and by
-	 //        pluginconfig. Fix that code and remove them or
-	 //        make them private.
-	 // This is needed for the Plugin-List-View
-	 // to see what plugins are required to show
-	 // (when required by another kopete-plugin)
-	KopeteLibraryInfo getInfo(const QString &spec) const;
-	QValueList<KopeteLibraryInfo> available() const;
-	QValueList<KopeteLibraryInfo> loaded() const;
-
-	bool isLoaded(const QString &spec) const;
 	KopetePlugin *loadPlugin( const QString &spec );
 
 	/**
@@ -170,6 +148,14 @@ private slots:
 	void slotKopeteSettingsChanged();
 
 private:
+	 // FIXME: These 6 methods are only used internally and by
+	 //        pluginconfig. Fix that code and remove them or
+	 //        make them private.
+	 // This is needed for the Plugin-List-View
+	 // to see what plugins are required to show
+	 // (when required by another kopete-plugin)
+	KopeteLibraryInfo getInfo(const QString &spec) const;
+
 	LibraryLoader();
 
 	QDict<KopetePlugin> m_loadedPlugins;
