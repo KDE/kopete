@@ -689,7 +689,11 @@ void Client::updateProfile( const QString& profile )
 	pt->go(true);
 }
 
-
+void Client::sendTyping( const QString & contact, bool typing )
+{
+d->typingNotifyTask->setParams( contact, ( typing ? TypingNotifyTask::Begin : TypingNotifyTask::Finished ) );
+	d->typingNotifyTask->go( false ); 	// don't delete the task after sending
+}
 #include "client.moc"
 
 //kate: tab-width 4; indent-mode csands; space-indent off; replace-tabs off;

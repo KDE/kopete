@@ -231,6 +231,9 @@ public:
 	QString host();
 	int port();
 
+	/** Send a typing notification */
+	void sendTyping( const QString & contact, bool typing );
+
 	/*************
 	  INTERNAL (FOR USE BY TASKS) METHODS 
 	 *************/

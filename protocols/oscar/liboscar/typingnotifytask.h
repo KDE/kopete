@@ -38,7 +38,7 @@ public:
 	virtual bool take( Transfer* transfer );
 	virtual void onGo();
 	
-	void setNotification( int notifyType );
+	void setParams( const QString & contact, int notifyType );
 	
 signals:
 	//! somebody started typing on the other end
@@ -54,6 +54,7 @@ private:
 	
 private:
 	WORD m_notificationType;
+	QString m_contact;
 };
 
 #endif

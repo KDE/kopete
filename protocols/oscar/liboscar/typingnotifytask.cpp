@@ -71,7 +71,7 @@ void TypingNotifyTask::onGo()
 	
 	b->addWord( 0x0001 ); //mtn messages are always sent as type 1 messages
 	
-	b->addBUIN( client()->userId().latin1() );
+	b->addBUIN( m_contact.latin1() );
 	
 	b->addWord( m_notificationType );
 	
@@ -109,6 +109,12 @@ void TypingNotifyTask::handleNotification()
 	default:
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << contact << " typed an unknown typing notification - " << word << endl;
 	}
+}
+
+void TypingNotifyTask::setParams( const QString& contact, int notifyType )
+{
+	m_contact = contact;
+	m_notificationType = notifyType;
 }
 
 #include "typingnotifytask.moc"
