@@ -680,9 +680,6 @@
                         <property name="text">
                             <string>Create New G&amp;roup...</string>
                         </property>
-                        <property name="accel">
-                            <string>Alt+R</string>
-                        </property>
                         <property name="toolTip" stdset="0">
                             <string>Click here to create a new group</string>
                         </property>
