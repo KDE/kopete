@@ -34,6 +34,7 @@
 #include <contactlist.h>
 #include <kmsnchatservice.h>
 
+/* Not ussefull yet */
 struct MSNMessageStruct
 {
 	QString userid;
@@ -55,6 +56,8 @@ class MSNContact : public IMContact
 		virtual void leftButtonDoubleClicked();
 		QString mUserID;
 		QString mName;
+		bool hasLocalGroup;
+		QListViewItem *parentGroup;
 	public slots:
 		void slotMessageBoxClosing();
 		void slotIncomingChat(KMSNChatService *, QString);
@@ -62,6 +65,7 @@ class MSNContact : public IMContact
 		void slotChatThisUser();
 	private slots:
 		void slotRemoveThisUser();
+		void slotMoveThisUser();
 		void slotUpdateContact (QString, uint);
 		// We have to delete the contact if MSN disconenct
 		// We will use the engine signal
@@ -85,7 +89,7 @@ class MSNContact : public IMContact
 		KAction* actionRemove;
 		KAction* actionChat;
 		KAction* actionInfo;
-
+        KListAction *actionGroupList;
 	signals:
 		void chatToUser( QString );
 };

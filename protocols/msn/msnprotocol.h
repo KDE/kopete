@@ -22,6 +22,7 @@
 #include <qwidget.h>
 #include <qstringlist.h>
 #include <qmovie.h>
+#include <qlist.h>
 
 #include "msnpreferences.h"
 #include <statusbaricon.h>
@@ -31,9 +32,23 @@
 #include <newuserimpl.h>
 #include <kpopupmenu.h>
 #include <kaction.h>
+#include <ksimpleconfig.h>
 /**
   *@author duncan
   */
+struct MSNContactStruct
+{
+	QString UserID;
+	QString Nick;
+	bool isdeleted;
+	bool isnew;
+};
+struct MSNGroupStruct
+{
+	QString Name;
+	bool isdeleted;
+	bool isnew;
+};
 
 class MSNProtocol : public QObject, public IMProtocol
 {
@@ -50,7 +65,7 @@ public:
 	virtual void Connect();
 	virtual void Disconnect();
 	virtual bool isConnected();
-	bool connected;
+	bool mIsConnected;
 	/** Internal */
 	StatusBarIcon *statusBarIcon;
 	/** The MSN Engine */
@@ -77,12 +92,18 @@ public:
 	KAction* actionPrefs;
 	KAction* actionUnload;
 
-
+    /* Files to store contacts locally */
+    KSimpleConfig *mContactsFile;
+	KSimpleConfig *mGroupsFile;
 private:
+	QList<MSNContactStruct> contactList;
+	QList<MSNGroupStruct> groupList;
+
 	void initIcons();
 	void initActions();
 public slots: // Public slots
-  /** No descriptions */
+   	void slotSyncContactList();
+    /** No descriptions */
 	void slotConnected();
 	void slotDisconnected();
 	// To go online we need to check if connected
@@ -104,6 +125,9 @@ public slots: // Public slots
 	void slotAuthenticate(QString);	// Ask user to auth the new contact
     void slotAddContact(QString);	// Add a Contact
 	void slotBlockContact(QString);	// Block a Contact
+	/* Group slots */
+	void slotGroupAdded(const QString);
+	void slotDeletingGroup(const QString);
 signals:
 	void userStateChange (QString, QString, QString);
 	void protocolUnloading();	

@@ -17,7 +17,7 @@
 #include <kdebug.h>
 #include <kconfig.h>
 #include <kglobal.h>
- #include <kstandarddirs.h>
+#include <kstandarddirs.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <klocale.h>
@@ -36,17 +36,24 @@
 
 MSNProtocol::MSNProtocol(): QObject(0, "MSN"), IMProtocol()
 {
-	connected = 0;
-	// Remember to move all this to init()
+	QString path;
+	path = locateLocal("data","kopete/msn.contacts");
+	mContactsFile=new KSimpleConfig(path);
+	path = locateLocal("data","kopete/msn.groups");
+	mGroupsFile=new KSimpleConfig(path);
 
+	mIsConnected = false;
 	kdDebug() << "\nMSN Plugin Loading\n";
-	// Load all ICQ icons from KDE standard dirs
+	
+	/* Load all ICQ icons from KDE standard dirs */
  	initIcons();
+	
 	kdDebug() << "MSN Protocol Plugin: Creating Status Bar icon\n";
 	statusBarIcon = new StatusBarIcon();
 	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)), this, SLOT(slotIconRightClicked(const QPoint)));
+	
+	/* We init the actions to plug them in the Kopete gui */
 	initActions();
-
 	actionStatusMenu->plug( kopeteapp->systemTray()->getContextMenu() );	
 
 	kdDebug() << "MSN Protocol Plugin: Setting icon offline\n";
@@ -61,14 +68,12 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSN"), IMProtocol()
 	connect(engine, SIGNAL(connectedToService(bool)), this, SLOT(slotConnectedToMSN(bool)));
 	connect(engine, SIGNAL(contactStatusChanged(QString, QString, int)), this, SIGNAL(userStateChange (QString, QString, int) ) );
 	connect(engine, SIGNAL(statusChanged( uint)), this, SLOT(slotStateChanged ( uint) ) );
-	//connect(engine, SIGNAL(userStateChange (QString, QString, QString)), this, SLOT(slotUserStateChange (QString, QString, QString) ) );
-	//connect(engine, SIGNAL(userStateChange (QString, QString, QString)), this, SLOT(slotInitContacts(QString, QString, QString) ) );
-	//connect(engine, SIGNAL(userSetOffline (QString) ), this, SLOT(slotUserSetOffline(QString) ) );
-	// Someone unknown talk to us
-	connect(engine, SIGNAL( newContact(QString) ), this, SLOT(slotAuthenticate(QString) ) );
-	
-	kdDebug() << "MSN Protocol Plugin: Done\n";
 
+	connect(engine, SIGNAL( newContact(QString) ), this, SLOT(slotAuthenticate(QString) ) );
+
+	connect(kopeteapp->contactList(), SIGNAL( groupAdded(QString) ), this, SLOT(slotGroupAdded(QString) ) );
+	connect(kopeteapp->contactList(), SIGNAL( deletingGroup(QString) ), this, SLOT(slotDeletingGroup(QString) ) );
+		
 	KGlobal::config()->setGroup("MSN");
 
 	/** Autoconnect if is selected in config */
@@ -143,7 +148,7 @@ void MSNProtocol::Disconnect()
 
 bool MSNProtocol::isConnected()
 {
-	return connected;	
+	return mIsConnected;	
 }
 
 /** This i used for al protocol selection dialogs */
@@ -184,22 +189,15 @@ void MSNProtocol::initActions()
 	actionStatusMenu = new KActionMenu("MSN",this);
 	actionStatusMenu->insert( actionGoOnline );
 	actionStatusMenu->insert( actionGoOffline );
-	actionStatusMenu->insert( actionGoAway );
-	//actionPrefs = = new KAction ( i18n("Connect to MSN"), "msn_online", 0, this, "slotConnect", this, "actionMSNConnect" );
-	//actionUnload = = new KAction ( i18n("Connect to MSN"), "msn_online", 0, this, "slotConnect", this, "actionMSNConnect" );
-	
+	actionStatusMenu->insert( actionGoAway );	
 }
 
 void MSNProtocol::slotIconRightClicked(const QPoint point)
 {
-	//  \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/
-	//
-	// DO NOT USE 'POINT' FOR YOUR popup() VALUE! This value is relative to the Status Bar, not the Application.
-	//
-	// /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\
 	KGlobal::config()->setGroup("MSN");
 	QString handle = KGlobal::config()->readEntry("UserID", i18n("(User ID not set)"));
-    popup = new KPopupMenu(statusBarIcon);
+
+	popup = new KPopupMenu(statusBarIcon);
 	popup->insertTitle(handle);
 	actionGoOnline->plug( popup );
 	actionGoOffline->plug( popup );
@@ -213,10 +211,30 @@ void MSNProtocol::slotConnecting()
 	//statusBarIcon->setMovie(connectingIcon);	
 }
 
+/** NOTE: CALL THIS ONLY BEING CONNECTED */
+void MSNProtocol::slotSyncContactList()
+{
+	if ( ! mIsConnected )
+	{
+		return;
+	}
+	/* First, delete D marked contacts */
+	QStringList localcontacts;
+    /*
+	contactsFile->setGroup("Default");
+
+   	contactsFile->readListEntry("Contacts",localcontacts);
+   	QString tmpUin;
+   	tmpUin.sprintf("%d",uin);
+   	tmp.append(tmpUin);
+   	cnt=contactsFile->readNumEntry("Count",0);
+    */
+}
+
 /** OK! We are connected , let's do some work */
 void MSNProtocol::slotConnected()
 {
- 	connected = true;
+ 	mIsConnected = true;
 	MSNContact *tmpcontact;
 		
  	QStringList groups, contacts;
@@ -315,7 +333,7 @@ void MSNProtocol::slotConnected()
 
 void MSNProtocol::slotDisconnected()
 {
-		connected = false;
+		mIsConnected = false;
 		statusBarIcon->setPixmap(offlineIcon);
 }
 
@@ -353,7 +371,7 @@ void MSNProtocol::slotGoAway()
 
 void MSNProtocol::slotConnectedToMSN(bool c)
 {
-		connected = c;
+		mIsConnected = c;
 		if (c)
 		{
 			slotConnected();
@@ -470,4 +488,12 @@ void MSNProtocol::slotBlockContact( QString handle)
 {
 	engine->contactBlock( handle );
 }		
+
+void MSNProtocol::slotGroupAdded( QString handle)
+{
 		
+}
+void MSNProtocol::slotDeletingGroup( QString handle)
+{
+
+}		

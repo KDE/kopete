@@ -16,8 +16,9 @@
  ***************************************************************************/
 
 #include "msncontact.h"
-
+#include <contactlist.h>
 #include <qcursor.h>
+#include <qstringlist.h>
 
 #include <kmessagebox.h>
 #include <kdebug.h>
@@ -31,7 +32,7 @@ MSNContact::MSNContact(QString userid, const QString name, MSNProtocol *protocol
 	mProtocol = protocol;
 	mName = name;
 	mUserID = userid;
-
+    hasLocalGroup = false;
 	initContact(userid, name, protocol);
 	
 }
@@ -42,7 +43,8 @@ MSNContact::MSNContact(QListViewItem *parent, QString userid, const QString name
 	mProtocol = protocol;
 	mName = name;
 	mUserID = userid;
-
+    hasLocalGroup = true;
+	parentGroup = parent;
 	initContact(userid, name, protocol);
 	
 }
@@ -74,15 +76,19 @@ void MSNContact::initActions()
 {
 	actionChat = new KAction ( i18n("Start Chat"), "idea", 0, this, SLOT(slotChat()), this, "actionChat" );
 	actionRemove = new KAction ( i18n("Delete contact"), "edittrash", 0, this, SLOT(slotRemoveThisUser()), this, "actionRemove" );
-		
+	actionGroupList = new KListAction ( i18n("Move contact"), "editcut", 0, this, SLOT(slotMoveThisUser()), this, "actionMove" );	
 }
 
 void MSNContact::rightButtonPressed(const QPoint &point)
 {
+	QStringList grouplist = *(kopeteapp->contactList()->groupStringList);
+	actionGroupList->setItems(grouplist);
+
 	popup = new KPopupMenu();
 	popup->insertTitle(mUserID);
 	actionChat->plug( popup );
 	actionRemove->plug( popup );
+	actionGroupList->plug( popup );
 	popup->popup(QCursor::pos());
 }
 
@@ -130,6 +136,31 @@ void MSNContact::slotRemoveThisUser()
 {
 	mProtocol->engine->contactDelete(mUserID);
 	delete this;
+}
+
+void MSNContact::slotMoveThisUser()
+{
+	QString newgroup;
+	QString oldgroup;
+	QStringList grouplist;
+	int counter;
+
+	grouplist = mProtocol->engine->getGroups();
+	newgroup = actionGroupList->currentText();
+	oldgroup = parentGroup->text(0);
+	for ( QStringList::Iterator it = grouplist.begin(); it != grouplist.end(); ++it )
+	{
+		if (*it == newgroup );
+		{
+			counter++;
+		}
+    }
+	if ( counter == 0 )
+	{
+		/* Group dont exist in server, we create it */
+		mProtocol->engine->groupAdd( newgroup);
+	}
+	mProtocol->engine->contactMove( mUserID, oldgroup, newgroup);
 }
 
 void MSNContact::slotContactRemoved(QString handle, QString nick)
