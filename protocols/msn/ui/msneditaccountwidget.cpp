@@ -204,7 +204,7 @@ void MSNEditAccountWidget::slotBlock()
 void MSNEditAccountWidget::slotShowReverseList()
 {
 	QStringList reverseList=QStringList::split(',' ,m_account->pluginData(m_protocol,QString::fromLatin1("reverseList")) );
-	KMessageBox::informationList( this, i18n("Here you can see a list of contact which added you in their contactlist") , reverseList , i18n("Reverse List - MSN Plugin") );
+	KMessageBox::informationList( this, i18n("Here you can see a list of contact which added you in their contact list") , reverseList , i18n("Reverse List - MSN Plugin") );
 }
 
 void MSNEditAccountWidget::slotSelectImage()

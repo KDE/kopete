@@ -116,7 +116,7 @@
                 <cstring>groupBox1</cstring>
             </property>
             <property name="title">
-                <string>Contactlist</string>
+                <string>Contact List</string>
             </property>
             <vbox>
                 <property name="name">

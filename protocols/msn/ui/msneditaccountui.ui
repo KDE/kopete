@@ -441,8 +441,8 @@
                             <cstring>label_font</cstring>
                         </property>
                         <property name="text">
-                            <string>&lt;i&gt;Italics&lt;/i&gt; contacts are contact which are not on your contactlist.&lt;br&gt;
-&lt;b&gt;bold&lt;/b&gt; contacts are in your contactlist but you are not in their contactlist</string>
+                            <string>&lt;i&gt;Italics&lt;/i&gt; contacts are contact which are not on your contact list.&lt;br&gt;
+&lt;b&gt;bold&lt;/b&gt; contacts are in your contact list but you are not in their contact list</string>
                         </property>
                     </widget>
                     <widget class="QLayoutWidget">
@@ -580,7 +580,7 @@
                                     </sizepolicy>
                                 </property>
                                 <property name="text">
-                                    <string>The reverse list is the list of contact who added you in their own contactlist</string>
+                                    <string>The reverse list is the list of contact who added you in their own contact list</string>
                                 </property>
                                 <property name="alignment">
                                     <set>WordBreak|AlignVCenter</set>
