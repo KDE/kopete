@@ -142,17 +142,8 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 
 IRCAccount::~IRCAccount()
 {
-	if ( engine()->isConnected() )
-		engine()->quitIRC(i18n("Plugin Unloaded"), true);
-
-	delete m_contactManager;
-	m_contactManager = 0;
-
-	delete m_engine;
-	m_engine = 0;
-
-	if( m_channelList )
-		m_channelList->delayedDestruct();
+	if (m_engine->isConnected())
+		m_engine->quitIRC(i18n("Plugin Unloaded"), true);
 }
 
 void IRCAccount::loaded()
@@ -167,7 +158,7 @@ void IRCAccount::loaded()
 		m_engine->setDefaultCodec( mCodec );
 	}
 	else
-		mCodec = 0L;
+		mCodec = 0;
 
 	QString m_accountId = accountId();
 	if( networkName.isEmpty() && QRegExp( "[^#+&\\s]+@[\\w-\\.]+:\\d+" ).exactMatch( m_accountId ) )
@@ -454,10 +445,10 @@ void IRCAccount::connect()
 					}
 					for ( it = hosts.begin(); it != hosts.end(); ++it )
 						sslFirst.append( *it );
-	
+
 					hosts = sslFirst;
 				}
-				
+
 				if( currentHost == hosts.count() )
 					currentHost = 0;
 
@@ -503,8 +494,8 @@ void IRCAccount::slotDisconnected()
 	if (m_contactManager)
 		m_contactManager->removeFromNotifyList( m_engine->nickName() );
 
-	if( !autoConnect.isNull() )
-		KopeteAccountManager::manager()->removeAccount( this );
+//	if (m_contactManager && !autoConnect.isNull())
+//		KopeteAccountManager::manager()->removeAccount( this );
 }
 
 void IRCAccount::disconnect()
