@@ -139,8 +139,8 @@ do
     cd "$i"
     for j in `ls *.diff *.patch 2>/dev/null`
     do
-        echo "Applying $i/$j"
         echo
+        echo "Applying $i/$j"
         patch -p0 < "$j"
         [ $? -ne 0 ] && FAILED="$FAILED $i/$j"
     done

@@ -17,7 +17,7 @@ diff -u -p -b -B -r1.6 kcmoduleinfo.cpp
    // read weight
 -  tmp = _service->property( "X-KDE-Weight", QVariant::Int );
 +  tmp = _service->property( "X-KDE-Weight" );
-   setWeight( tmp.isValid() ? tmp.toInt() : -1 );
+   setWeight( tmp.isValid() ? tmp.toInt() : 100 );
  
    // does the module need super user privileges?
 -  tmp = _service->property( "X-KDE-RootOnly", QVariant::Bool );
@@ -44,15 +44,15 @@ diff -u -p -b -B -r1.8 kcmultidialog.cpp
 --- kcmultidialog.cpp	9 Sep 2003 18:13:23 -0000	1.8
 +++ kcmultidialog.cpp	9 Sep 2003 20:14:32 -0000
 @@ -243,8 +243,7 @@ void KCMultiDialog::slotAboutToShow(QWid
+         module = new KCModuleProxy( moduleinfo, withfallback, page );
+         QStringList parentComponents = moduleinfo.service()->property(
+                 "X-KDE-ParentComponents" ).toStringList();
+-        kdDebug(710) << k_funcinfo << "ParentComponents=" << parentComponents
+-            << endl;
++        //kdDebug(710) << k_funcinfo << "ParentComponents=" << parentComponents << endl;
+         moduleParentComponents.insert( module,
+                 new QStringList( parentComponents ) );
  
-     QStringList parentComponents = loadInfo->info.service()->property(
-             "X-KDE-ParentComponents" ).toStringList();
--    kdDebug(710) << k_funcinfo << "ParentComponents=" << parentComponents
--        << endl;
-+//    kdDebug(710) << k_funcinfo << "ParentComponents=" << parentComponents << endl;
-     moduleParentComponents.insert( module,
-             new QStringList( parentComponents ) );
-     module->reparent(page,0,QPoint(0,0),true);
 Index: ktabbar.cpp
 ===================================================================
 RCS file: /home/kde/kdenetwork/kopete/libkopete/compat/kcdialog/ktabbar.cpp,v

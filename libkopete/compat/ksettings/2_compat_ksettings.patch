@@ -1,4 +1,3 @@
-? 2_compat_ksettings.patch
 Index: dialog.cpp
 ===================================================================
 RCS file: /home/kde/kdenetwork/kopete/libkopete/compat/ksettings/dialog.cpp,v
@@ -6,12 +5,13 @@ retrieving revision 1.4
 diff -u -p -b -B -r1.4 dialog.cpp
 --- dialog.cpp	9 Sep 2003 18:13:23 -0000	1.4
 +++ dialog.cpp	9 Sep 2003 20:14:56 -0000
-@@ -281,7 +281,7 @@ void Dialog::createDialogFromServices()
- 		for( KCModuleInfo * info = d->moduleinfos.first(); info;
- 				info = d->moduleinfos.next() )
- 		{
--			QVariant tmp = info->service()->property( "X-KDE-CfgDlgHierarchy", QVariant::String );
-+			QVariant tmp = info->service()->property( "X-KDE-CfgDlgHierarchy" );
- 			if( ! tmp.isValid() )
- 				continue;
- 			QString id = tmp.toString();
+@@ -552,8 +552,7 @@ void Dialog::createDialogFromServices()
+ 		// we create the KCModuleInfo
+ 		KCModuleInfo * info = new KCModuleInfo( *it );
+ 		QString parentid;
+-		QVariant tmp = info->service()->property( "X-KDE-CfgDlgHierarchy",
+-			QVariant::String );
++		QVariant tmp = info->service()->property( "X-KDE-CfgDlgHierarchy" );
+ 		if( tmp.isValid() )
+ 			parentid = tmp.toString();
+ 		d->pagetree.insert( info, parentid );

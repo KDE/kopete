@@ -14,24 +14,24 @@ diff -u -p -r1.1 dialog.cpp
  namespace KSettings
  {
  
-@@ -277,9 +274,11 @@ void Dialog::createDialogFromServices()
-	// touch the plugin selections.
-	// I have no idea how to check that in KPluginSelector::load()...
-	//d->dlg->showButton( KDialogBase::User1, true );
+@@ -591,9 +591,11 @@ void Dialog::createDialogFromServices()
+ 	// I have no idea how to check that in KPluginSelector::load()...
+ 	//d->dlg->showButton( KDialogBase::User1, true );
+ 
 +#if KDE_IS_VERSION( 3, 1, 90 )
  	if( ! d->staticlistview )
  		d->dlg->addButtonBelowList( i18n( "Configure..." ), this,
  			SLOT( configureTree() ) );
 +#endif
  
- 	connect( d->dlg, SIGNAL( okClicked() ), Dispatcher::self(), SLOT( syncConfiguration() ) );
- 	connect( d->dlg, SIGNAL( applyClicked() ), Dispatcher::self(), SLOT( syncConfiguration() ) );
-@@ -288,8 +283,10 @@ void Dialog::createDialogFromServices()
- 		d->dlg->addModule( *info );
- 	}
+ 	connect( d->dlg, SIGNAL( okClicked() ), Dispatcher::self(),
+ 		SLOT( syncConfiguration() ) );
+@@ -601,8 +601,10 @@ void Dialog::createDialogFromServices()
+ 
+ 	d->pagetree.addToDialog( d->dlg );
  
 +#if KDE_IS_VERSION( 3, 1, 90 )
- 	if( d->groupmap.size() > 1 )
+ 	if( dialogface == KJanusWidget::TreeList )
  		d->dlg->unfoldTreeList( true );
 +#endif
  }
