@@ -190,7 +190,7 @@ void KopeteContact::slotAddContact()
 	}
 }
 
-KPopupMenu* KopeteContact::popupMenu()
+KPopupMenu* KopeteContact::popupMenu( KopeteMessageManager *manager )
 {
 	// FIXME:
 	// This should perhaps be KActionCollection * KopeteContact::contactActions() to
@@ -252,7 +252,7 @@ KPopupMenu* KopeteContact::popupMenu()
 	// through the use of the customContextMenuActions() function
 
 	// Get the custom actions from the protocols ( pure virtual function )
-	KActionCollection *customActions = customContextMenuActions();
+	KActionCollection *customActions = customContextMenuActions( manager );
 	if( customActions != 0L )
 	{
 		if ( !customActions->isEmpty() )
@@ -499,6 +499,11 @@ KopeteAccount * KopeteContact::account() const
 KActionCollection * KopeteContact::customContextMenuActions()
 {
 	return 0L;
+}
+
+KActionCollection * KopeteContact::customContextMenuActions( KopeteMessageManager *manager )
+{
+	return customContextMenuActions();
 }
 
 bool KopeteContact::isFileCapable() const

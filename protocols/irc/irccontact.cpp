@@ -320,21 +320,20 @@ KopeteContact *IRCContact::locateUser( const QString &nick )
 
 bool IRCContact::isChatting() const
 {
-	bool result=false;
 	QIntDict<KopeteMessageManager> sessions = KopeteMessageManagerFactory::factory()->sessions();
-
-	QIntDictIterator<KopeteMessageManager> it( sessions );
-	for ( ; it.current() ; ++it )
-	{
-		result |= it.current()->members().contains(this);
+	for ( QIntDictIterator<KopeteMessageManager> it( sessions ); it.current() ; ++it )
+	{	
+		if( it.current()->members().contains(this) )
+			return true;
 	}
-	return result;
+
+	return false;
 }
 
 void IRCContact::slotDeleteContact()
 {
 	kdDebug(14120) << k_funcinfo << m_nickName << endl;
-	if(!isChatting())
+	if( !isChatting() )
 	{
 		kdDebug(14120) << k_funcinfo << "will delete " << m_nickName << endl;
 		KopeteContact::slotDeleteContact();
@@ -360,7 +359,7 @@ void IRCContact::appendMessage( KopeteMessage &msg )
 
 KopeteView *IRCContact::view()
 {
-	if(manager(false))
+	if( m_msgManager )
 		return manager()->view(false);
 	return 0L;
 }

@@ -646,7 +646,9 @@ bool KIRC::modeChange(const KIRCMessage &msg)
 	/* Change the mode of a user.
 	 * "<nickname> *( ( "+" / "-" ) *( "i" / "w" / "o" / "O" / "r" ) )"
 	 */
-	emit incomingModeChange(msg.prefix(), msg.args()[0], msg.args()[1]);
+	QStringList args = msg.args();
+	args.pop_front();
+	emit incomingModeChange( msg.prefix().section('!',0,0), msg.args()[0], args.join(" "));
 	return true;
 }
 
@@ -698,7 +700,7 @@ bool KIRC::kick(const KIRCMessage &msg)
 	/* The given user is kicked.
 	 * "<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]"
 	 */
-	emit incomingKick(msg.args()[1], msg.args()[0], msg.prefix(), msg.suffix());
+	emit incomingKick( msg.prefix().section('!',0,0), msg.args()[0], msg.args()[1], msg.suffix());
 	return true;
 }
 

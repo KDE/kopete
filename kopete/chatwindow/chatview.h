@@ -61,13 +61,14 @@ class KopeteContactLVI : public QObject, public KListViewItem
 		const KopeteContact *contact() const { return m_contact; }
 
 	private:
-		const KopeteContact *m_contact;
+		KopeteContact *m_contact;
 		KListView *m_parentView;
 		KopeteView *m_view;
 
 	private slots:
 		void slotDisplayNameChanged(const QString &, const QString&);
-		void slotStatusChanged();
+		void slotStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, 
+			const KopeteOnlineStatus & );
 		void slotExecute( QListViewItem* );
 };
 

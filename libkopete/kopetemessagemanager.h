@@ -194,6 +194,11 @@ signals:
 	 * @brief a contact in this chat has changed his displayname or his status
 	 */
 	void contactChanged();
+	
+	/**
+	 * @brief a contact in this chat has changed his status
+	 */
+	void onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & );
 
 	/**
 	 * @brief The name of the chat is changed

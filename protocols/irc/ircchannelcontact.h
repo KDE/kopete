@@ -105,6 +105,8 @@ private slots:
 	void slotUserJoinedChannel(const QString &, const QString &);
 	void slotJoin();
 	void slotUserPartedChannel(const QString &user, const QString &channel, const QString &reason);
+	void slotUserKicked(const QString &nick, const QString &channel,
+		const QString &nickKicked, const QString &reason);
 	void slotChannelTopic(const QString &channel, const QString &topic);
 	void slotTopicChanged(const QString &channel, const QString &nick, const QString &newtopic);
 	void slotNamesList(const QString &channel, const QStringList &nicknames);

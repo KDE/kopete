@@ -151,24 +151,16 @@ void IRCUserContact::slotBanUserDomain()
 
 void IRCUserContact::slotKick()
 {
-	/* TODO: rewrite this code
-	KopeteView *activeView = KopeteViewManager::viewManager()->activeView();
-	if( activeView && activeView->msgManager()->user()->inherits("IRCUserContact") )
-	{
-		QString channelName = activeView->msgManager()->displayName().section(' ', 0, 0);
-		mEngine->kickUser(mNickName, channelName, QString::null);
-	}*/
+	KopeteContactPtrList members = mActiveManager->members();
+	QString channelName = static_cast<IRCContact*>( members.first() )->nickName();
+	m_engine->kickUser(m_nickName, channelName, QString::null);
 }
 
-void IRCUserContact::contactMode( const QString & /* mode */ )
+void IRCUserContact::contactMode( const QString &mode )
 {
-	/* TODO: rewrite this code
-	KopeteView *activeView = KopeteViewManager::viewManager()->activeView();
-	if( activeView && activeView->msgManager()->user()->inherits("IRCUserContact") )
-	{
-		QString channelName = activeView->msgManager()->displayName().section(' ', 0, 0);
-		mEngine->changeMode( channelName, QString::fromLatin1("%1 %2").arg(mode).arg(mNickName) );
-	}*/
+	KopeteContactPtrList members = mActiveManager->members();
+	QString channelName = static_cast<IRCContact*>( members.first() )->nickName();
+	m_engine->changeMode( channelName, QString::fromLatin1("%1 %2").arg(mode).arg(m_nickName) );
 }
 
 void IRCUserContact::slotCtcpPing()
@@ -181,37 +173,50 @@ void IRCUserContact::slotCtcpVersion()
 	m_engine->sendCtcpVersion(m_nickName);
 }
 
-KActionCollection *IRCUserContact::customContextMenuActions()
+KActionCollection *IRCUserContact::customContextMenuActions( KopeteMessageManager *manager )
 {
-	mCustomActions = new KActionCollection(this);
-
-	actionCtcpMenu = new KActionMenu(i18n("C&TCP"), 0, mCustomActions );
-	actionCtcpMenu->insert( new KAction(i18n("&Version"), 0, this, SLOT(slotCtcpVersion()), actionCtcpMenu) );
-	actionCtcpMenu->insert(  new KAction(i18n("&Ping"), 0, this, SLOT(slotCtcpPing()), actionCtcpMenu) );
-
-	actionModeMenu = new KActionMenu(i18n("&Modes"), 0, mCustomActions, "actionModeMenu");
-	actionModeMenu->insert( new KAction(i18n("&Op"), 0, this, SLOT(slotOp()), actionModeMenu, "actionOp") );
-	actionModeMenu->insert( new KAction(i18n("&Deop"), 0, this, SLOT(slotDeop()), actionModeMenu, "actionDeop") );
-	actionModeMenu->insert( new KAction(i18n("&Voice"), 0, this, SLOT(slotVoice()), actionModeMenu, "actionVoice") );
-	actionModeMenu->insert( new KAction(i18n("Devoice"), 0, this, SLOT(slotDevoice()), actionModeMenu, "actionDevoice") );
-	actionModeMenu->setEnabled( false );
-
-	actionKick = new KAction(i18n("&Kick"), 0, this, SLOT(slotKick()), mCustomActions);
-	actionKick->setEnabled( false );
-
-	actionBanMenu = new KActionMenu(i18n("&Ban"), 0, mCustomActions, "actionBanMenu");
-	actionBanMenu->insert( new KAction(i18n("Ban *!*@*.host"), 0, this, SLOT(slotBanHost()), actionBanMenu ) );
-	actionBanMenu->insert( new KAction(i18n("Ban *!*@domain"), 0, this, SLOT(slotBanDomain()), actionBanMenu ) );
-	actionBanMenu->insert( new KAction(i18n("Ban *!*user@*.host"), 0, this, SLOT(slotBanUserHost()), actionBanMenu ) );
-	actionBanMenu->insert( new KAction(i18n("Ban *!*user@domain"), 0, this, SLOT(slotBanUserDomain()), actionBanMenu ) );
-	actionBanMenu->setEnabled( false );
-
-	//bool isOperator = ( chan->manager()->contactOnlineStatus( mAccount->myself() ) == IRCProtocol::IRCUserOp() );
-	//actionModeMenu->setEnabled(isOperator);
-	//actionBanMenu->setEnabled(isOperator);
-	//actionKick->setEnabled(isOperator);
-
-	return mCustomActions;
+	if( manager )
+	{
+		mCustomActions = new KActionCollection(this);
+		mActiveManager = manager;
+		KopeteContactPtrList members = mActiveManager->members();
+		IRCChannelContact *isChannel = dynamic_cast<IRCChannelContact*>( members.first() );
+		
+		actionCtcpMenu = new KActionMenu(i18n("C&TCP"), 0, mCustomActions );
+		actionCtcpMenu->insert( new KAction(i18n("&Version"), 0, this, SLOT(slotCtcpVersion()), actionCtcpMenu) );
+		actionCtcpMenu->insert(  new KAction(i18n("&Ping"), 0, this, SLOT(slotCtcpPing()), actionCtcpMenu) );
+	
+		if( isChannel )
+		{
+			actionModeMenu = new KActionMenu(i18n("&Modes"), 0, mCustomActions, "actionModeMenu");
+			actionModeMenu->insert( new KAction(i18n("&Op"), 0, this, SLOT(slotOp()), actionModeMenu, "actionOp") );
+			actionModeMenu->insert( new KAction(i18n("&Deop"), 0, this, SLOT(slotDeop()), actionModeMenu, "actionDeop") );
+			actionModeMenu->insert( new KAction(i18n("&Voice"), 0, this, SLOT(slotVoice()), actionModeMenu, "actionVoice") );
+			actionModeMenu->insert( new KAction(i18n("Devoice"), 0, this, SLOT(slotDevoice()), actionModeMenu, "actionDevoice") );
+			actionModeMenu->setEnabled( false );
+		
+			actionKick = new KAction(i18n("&Kick"), 0, this, SLOT(slotKick()), mCustomActions);
+			actionKick->setEnabled( false );
+		
+			actionBanMenu = new KActionMenu(i18n("&Ban"), 0, mCustomActions, "actionBanMenu");
+			actionBanMenu->insert( new KAction(i18n("Ban *!*@*.host"), 0, this, SLOT(slotBanHost()), actionBanMenu ) );
+			actionBanMenu->insert( new KAction(i18n("Ban *!*@domain"), 0, this, SLOT(slotBanDomain()), actionBanMenu ) );
+			actionBanMenu->insert( new KAction(i18n("Ban *!*user@*.host"), 0, this, SLOT(slotBanUserHost()), actionBanMenu ) );
+			actionBanMenu->insert( new KAction(i18n("Ban *!*user@domain"), 0, this, SLOT(slotBanUserDomain()), actionBanMenu ) );
+			actionBanMenu->setEnabled( false );
+		
+			bool isOperator = ( manager->contactOnlineStatus( account()->myself() ) == m_protocol->m_UserStatusOp );
+			actionModeMenu->setEnabled(isOperator);
+			actionBanMenu->setEnabled(isOperator);
+			actionKick->setEnabled(isOperator);
+		}
+	
+		return mCustomActions;
+	}
+	
+	mActiveManager = 0L;
+	
+	return 0L;
 }
 
 void IRCUserContact::slotIncomingModeChange( const QString &, const QString &channel, const QString &mode )
@@ -220,7 +225,7 @@ void IRCUserContact::slotIncomingModeChange( const QString &, const QString &cha
 	if( chan->locateUser( m_nickName ) )
 	{
 		QString user = mode.section(' ', 1, 1);
-		kdDebug(14120) << k_funcinfo << user << ", " << m_nickName << endl;
+		kdDebug(14120) << k_funcinfo << mode << ", " << user << ", " << m_nickName << endl;
 		if( user == m_nickName )
 		{
 			QString modeChange = mode.section(' ', 0, 0);

@@ -463,13 +463,11 @@ void ChatView::showMembersList( bool visible )
 	}
 }
 
-
-
 void ChatView::slotContactsContextMenu( KListView*, QListViewItem *item, const QPoint &point )
 {
 	KopeteContactLVI *contactLVI = dynamic_cast<KopeteContactLVI*>( item );
 	if (contactLVI) {
-		KPopupMenu *p = ((KopeteContact*)contactLVI->contact())->popupMenu();
+		KPopupMenu *p = ((KopeteContact*)contactLVI->contact())->popupMenu( m_manager );
 		connect(p,SIGNAL(aboutToHide()),p,SLOT(deleteLater()));
 		p->popup( point );
 	}
@@ -1087,7 +1085,7 @@ void ChatView::slotRightClick( const QString &, const QPoint &point )
 		{
 			if( msgManager()->members().contains( m.from() ) )
 			{
-				KPopupMenu *p = ((KopeteContact*)m.from())->popupMenu();
+				KPopupMenu *p = ((KopeteContact*)m.from())->popupMenu( m_manager );
 				connect(p,SIGNAL(aboutToHide()),p,SLOT(deleteLater()));
 				p->popup( point );
 				delete chatWindowPopup;
@@ -1373,12 +1371,15 @@ KopeteContactLVI::KopeteContactLVI( KopeteView *view, const KopeteContact *conta
 		this, SLOT( slotDisplayNameChanged(const QString &, const QString &) ) );
 
 	connect( m_contact, SIGNAL( destroyed() ), this, SLOT( deleteLater() ) );
-	connect( m_contact, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
-		this, SLOT( slotStatusChanged() ) );
+	
+	connect( view->msgManager(), SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
+		this, SLOT( slotStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
+	
 	connect( m_parentView, SIGNAL( executed( QListViewItem* ) ),
 		this, SLOT( slotExecute( QListViewItem * ) ) );
 
-	slotStatusChanged();
+	slotStatusChanged( m_contact, view->msgManager()->contactOnlineStatus(m_contact),
+		view->msgManager()->contactOnlineStatus(m_contact) );
 }
 
 void KopeteContactLVI::slotDisplayNameChanged(const QString &, const QString &newName)
@@ -1387,11 +1388,15 @@ void KopeteContactLVI::slotDisplayNameChanged(const QString &, const QString &ne
 	m_parentView->sort();
 }
 
-void KopeteContactLVI::slotStatusChanged()
+void KopeteContactLVI::slotStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, 
+	const KopeteOnlineStatus & )
 {
-	setText( 0, QChar( -m_view->msgManager()->contactOnlineStatus( m_contact ).weight() ) );
-	setPixmap( 0, m_view->msgManager()->contactOnlineStatus( m_contact ).iconFor(m_contact) );
-	m_parentView->sort();
+	if( c == m_contact )
+	{
+		setText( 0, QChar( -status.weight() ) );
+		setPixmap( 0, status.iconFor(m_contact) );
+		m_parentView->sort();
+	}
 }
 
 void KopeteContactLVI::slotExecute( QListViewItem *item )

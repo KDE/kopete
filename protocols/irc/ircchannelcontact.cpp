@@ -38,18 +38,26 @@ IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QS
 	// KIRC Engine stuff
 	QObject::connect(m_engine, SIGNAL(userJoinedChannel(const QString &, const QString &)),
 		this, SLOT(slotUserJoinedChannel(const QString &, const QString &)));
+	
 	QObject::connect(m_engine, SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)),
 		this, SLOT(slotUserPartedChannel(const QString &, const QString &, const QString &)));
+	
+	QObject::connect(m_engine, SIGNAL(incomingKick(const QString &, const QString &,const QString &, const QString &)),
+		this, SLOT(slotUserKicked(const QString &, const QString &, const QString &, const QString &)));
+	
 	QObject::connect(m_engine, SIGNAL(incomingNamesList(const QString &, const QStringList &)),
 		this, SLOT(slotNamesList(const QString &, const QStringList &)));
 	QObject::connect(m_engine, SIGNAL(incomingExistingTopic(const QString &, const QString &)),
 		this, SLOT(slotChannelTopic(const QString&, const QString &)));
 	QObject::connect(m_engine, SIGNAL(incomingTopicChange(const QString &, const QString &, const QString &)),
 		this, SLOT(slotTopicChanged(const QString&,const QString&,const QString&)));
+	
 	QObject::connect(m_engine, SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)),
 		this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
+	
 	QObject::connect(m_engine, SIGNAL(incomingChannelMode(const QString&, const QString&, const QString&)),
 		this, SLOT(slotIncomingChannelMode(const QString&,const QString&, const QString&)));
+	
 	QObject::connect(m_engine, SIGNAL(connectedToServer()),
 		this, SLOT(slotConnectedToServer()));
 
@@ -57,6 +65,12 @@ IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QS
 	QObject::connect(m_engine, SIGNAL(incomingFailedChankey(const QString &)),
 			this, SLOT(slotFailedChankey(const QString&)));
 
+	actionModeT = new KToggleAction(i18n("Only Operators Can Change &Topic"), 0, this, SLOT(slotModeChanged()), this );
+	actionModeN = new KToggleAction(i18n("&No Outside Messages"), 0, this, SLOT(slotModeChanged()), this );
+	actionModeS = new KToggleAction(i18n("&Secret"), 0, this, SLOT(slotModeChanged()), this );
+	actionModeM = new KToggleAction(i18n("&Moderated"), 0, this, SLOT(slotModeChanged()), this );
+	actionModeI = new KToggleAction(i18n("&Invite Only"), 0, this, SLOT(slotModeChanged()), this );
+	
 	updateStatus();
 }
 
@@ -71,17 +85,17 @@ void IRCChannelContact::updateStatus()
 	KIRC::EngineStatus status = m_engine->status();
 	switch( status )
 	{
-	case KIRC::Disconnected:
-	case KIRC::Connecting:
-	case KIRC::Authentifying:
-		setOnlineStatus(m_protocol->m_ChannelStatusOffline);
-		break;
-	case KIRC::Connected:
-	case KIRC::Closing:
-		setOnlineStatus(m_protocol->m_ChannelStatusOnline);
-		break;
-	default:
-		setOnlineStatus(m_protocol->m_StatusUnknown);
+		case KIRC::Disconnected:
+		case KIRC::Connecting:
+		case KIRC::Authentifying:
+			setOnlineStatus(m_protocol->m_ChannelStatusOffline);
+			break;
+		case KIRC::Connected:
+		case KIRC::Closing:
+			setOnlineStatus(m_protocol->m_ChannelStatusOnline);
+			break;
+		default:
+			setOnlineStatus(m_protocol->m_StatusUnknown);
 	}
 }
 
@@ -224,6 +238,23 @@ void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString
 	}
 }
 
+void IRCChannelContact::slotUserKicked(const QString &nick, const QString &channel,
+		const QString &nickKicked, const QString &reason)
+{
+	if ( m_isConnected && channel.lower() == m_nickName.lower() && nickKicked.lower() != m_engine->nickName().lower() )
+	{
+		KopeteContact *c = locateUser( nickKicked );
+		if ( c )
+		{
+			QString r = i18n("Kicked by %1.").arg( nick );
+			if( reason != nick )
+				r.append( i18n(" Reason: %2").arg( reason ) );
+			manager()->removeContact( c, r );
+			m_account->unregisterUser( nickKicked );
+		}
+	}
+}
+
 void IRCChannelContact::setTopic(const QString &topic)
 {
 	if ( m_isConnected )
@@ -258,7 +289,7 @@ void IRCChannelContact::slotIncomingModeChange( const QString &nick, const QStri
 	kdDebug(14120) << k_funcinfo << "Nick: " << nick << " : " << mode << endl;
 	if( m_isConnected && m_nickName.lower() == channel.lower() )
 	{
-		KopeteMessage msg((KopeteContact *)this, mMyself, i18n("%1 sets mode %2 %3").arg(nick).arg(mode).arg(m_nickName), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+		KopeteMessage msg((KopeteContact *)this, mMyself, i18n("%1 sets mode %2 on  %3").arg(nick).arg(mode).arg(m_nickName), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 		msg.setImportance( KopeteMessage::Low); //set the importance manualy to low
 		appendMessage(msg);
 
@@ -312,11 +343,11 @@ void IRCChannelContact::setMode( const QString &mode )
 
 void IRCChannelContact::slotModeChanged()
 {
-	/*toggleMode( 't', actionModeT->isChecked(), true );
+	toggleMode( 't', actionModeT->isChecked(), true );
 	toggleMode( 'n', actionModeN->isChecked(), true );
 	toggleMode( 's', actionModeS->isChecked(), true );
 	toggleMode( 'm', actionModeM->isChecked(), true );
-	toggleMode( 'i', actionModeI->isChecked(), true );*/
+	toggleMode( 'i', actionModeI->isChecked(), true );
 }
 
 // JLN
@@ -348,7 +379,7 @@ void IRCChannelContact::toggleMode( QChar mode, bool enabled, bool update )
 {
 	if( m_isConnected )
 	{
-		/*switch( mode )
+		switch( mode )
 		{
 			case 't':
    				actionModeT->setChecked( enabled );
@@ -365,7 +396,7 @@ void IRCChannelContact::toggleMode( QChar mode, bool enabled, bool update )
 			case 'i':
 				actionModeI->setChecked( enabled );
 				break;
-		}*/
+		}
 	}
 
 	if( update )
@@ -399,12 +430,6 @@ KActionCollection *IRCChannelContact::customContextMenuActions()
 	actionPart = new KAction(i18n("&Part"), 0, this, SLOT(part()), mCustomActions, "actionPart");
 	actionTopic = new KAction(i18n("Change &Topic..."), 0, this, SLOT(setTopic()), mCustomActions, "actionTopic");
 	actionModeMenu = new KActionMenu(i18n("Channel Modes"), 0, mCustomActions, "actionModeMenu");
-
-	actionModeT = new KToggleAction(i18n("Only Operators Can Change &Topic"), 0, this, SLOT(slotModeChanged()), actionModeMenu );
-	actionModeN = new KToggleAction(i18n("&No Outside Messages"), 0, this, SLOT(slotModeChanged()), actionModeMenu );
-	actionModeS = new KToggleAction(i18n("&Secret"), 0, this, SLOT(slotModeChanged()), actionModeMenu );
-	actionModeM = new KToggleAction(i18n("&Moderated"), 0, this, SLOT(slotModeChanged()), actionModeMenu );
-	actionModeI = new KToggleAction(i18n("&Invite Only"), 0, this, SLOT(slotModeChanged()), actionModeMenu );
 
 	actionModeMenu->insert( actionModeT );
 	actionModeMenu->insert( actionModeN );

@@ -177,7 +177,8 @@ signals:
 	void incomingUnknown(const QString &);
 	void incomingUnknownCtcp(const QString &);
 	void incomingPrivAction(const QString &, const QString &, const QString &);
-	void incomingKick(const QString &, const QString &, const QString &, const QString &);
+	void incomingKick(const QString &nick, const QString &channel,
+		const QString &nickKicked, const QString &reason);
 	void incomingEndOfWhois(const QString &nickname);
 	void incomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 	void incomingChannelMode(const QString &channel, const QString &mode, const QString &params);

@@ -185,7 +185,7 @@ public:
 	 * @return Collection of menu items to be show on the context menu
 	 */
 	virtual KActionCollection *customContextMenuActions();
-
+	virtual KActionCollection *customContextMenuActions( KopeteMessageManager *manager );
 
 	/**
 	 * @brief Get the Context Menu for this contact
@@ -193,7 +193,7 @@ public:
 	 * this menu include generic actions common to each protocol, and action defined in
 	 * @ref customContextMenuActions()
 	 */
-	KPopupMenu *popupMenu();
+	KPopupMenu *popupMenu( KopeteMessageManager *manager = 0L );
 
 	/**
 	 * Moves this contact to a new MetaContact.

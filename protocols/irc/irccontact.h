@@ -122,10 +122,10 @@ protected:
 	KopeteMessageManager *m_msgManager;
 	bool m_isConnected;
 
-		QPtrList<KopeteContact> mMyself;
-		QMap<QString, whoIsInfo*> mWhoisMap;
-		QValueList<KopeteMessage> messageQueue;
-		KopeteMessage::MessageDirection execDir;
+	QPtrList<KopeteContact> mMyself;
+	QMap<QString, whoIsInfo*> mWhoisMap;
+	QValueList<KopeteMessage> messageQueue;
+	KopeteMessage::MessageDirection execDir;
 
 };
 
