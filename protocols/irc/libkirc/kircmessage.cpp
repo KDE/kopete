@@ -20,6 +20,8 @@
 #include <kmessagebox.h>
 #include <kextsock.h>
 
+#include "kopetemessage.h"
+
 #include "kirc.h"
 #include "kircmessage.h"
 
@@ -141,7 +143,7 @@ KIRCMessage KIRCMessage::parse(KIRC *engine, const QTextCodec *codec, bool *pars
 			raw.resize(length);
 			raw.replace("\r\n",""); //remove the trailling \r\n if any(there must be in fact)
 
-			line = codec->toUnicode(raw);
+			line = KopeteMessage::decodeString(raw, codec);
 
 			kdDebug(14121) << "<< " << line << endl;
 

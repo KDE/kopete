@@ -14,7 +14,7 @@ libkirc_la_SOURCES = \
 libkirc_la_LDFLAGS = -no-undefined $(KDE_PLUGIN)
 libkirc_la_LIBADD = $(all_libraries) $(KDE_RPATH) $(LIB_KIO)
 
-AM_CPPFLAGS = $(all_includes)
+AM_CPPFLAGS = $(all_includes) $(KOPETE_INCLUDES)
 METASOURCES = AUTO
 
 #Generates some warnings!!!
