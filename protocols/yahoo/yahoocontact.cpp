@@ -80,6 +80,28 @@ void YahooContact::syncToServer()
 	}
 }
 
+void YahooContact::syncGroups()
+{
+	if ( !m_account->isConnected() )
+		return;
+
+	if ( !m_account->isOnServer( contactId() ) )
+	{
+		//TODO: Share this code with the above function
+		kdDebug(14180) << k_funcinfo << "Contact isn't on the server. Adding..." << endl;
+		KopeteGroupList groupList = metaContact()->groups();
+		for ( KopeteGroup *g = groupList.first(); g; g = groupList.next() )
+			m_account->yahooSession()->addBuddy(m_userId, g->displayName() );
+	}
+	else
+	{
+		QString newGroup = metaContact()->groups().first()->displayName();
+		m_account->yahooSession()->changeBuddyGroup( contactId(), m_groupName, newGroup );
+		m_groupName = newGroup;
+	}
+}
+
+
 bool YahooContact::isOnline() const
 {
 	//kdDebug(14180) << k_funcinfo << endl;
