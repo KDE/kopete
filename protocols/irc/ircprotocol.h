@@ -157,6 +157,7 @@ private slots:
 	void slotWhoWasCommand( const QString &args, Kopete::ChatSession *manager);
 	void slotWhoCommand( const QString &args, Kopete::ChatSession *manager);
 	void slotMeCommand( const QString &args, Kopete::ChatSession *manager);
+	void slotAllMeCommand( const QString &args, Kopete::ChatSession *manager);
 	void slotModeCommand( const QString &args, Kopete::ChatSession *manager);
 	void slotQueryCommand( const QString &args, Kopete::ChatSession *manager);
 

@@ -92,7 +92,9 @@ void IRCServerContact::updateStatus()
 
 const QString IRCServerContact::caption() const
 {
-	return i18n("%1 @ %2").arg(ircAccount()->mySelf()->nickName() ).arg( kircEngine()->currentHost() );
+	return i18n("%1 @ %2").arg(ircAccount()->mySelf()->nickName() ).arg(
+		kircEngine()->currentHost().isEmpty() ? ircAccount()->networkName() : kircEngine()->currentHost()
+	);
 }
 
 void IRCServerContact::engineInternalError(KIRC::Engine::Error engineError, KIRC::Message &ircmsg)

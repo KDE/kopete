@@ -127,12 +127,12 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	propChannelTopic(QString::fromLatin1("channelTopic"), i18n("Topic"), QString::null, false, true ),
 	propChannelMembers(QString::fromLatin1("channelMembers"), i18n("Members")),
 	propHomepage(QString::fromLatin1("homePage"), i18n("Home Page")),
-	propFullName(QString::fromLatin1("FormattedName"), i18n("Full Name")),
 	propLastSeen(Kopete::Global::Properties::self()->lastSeen()),
 	propUserInfo(QString::fromLatin1("userInfo"), i18n("IRC User")),
 	propServer(QString::fromLatin1("ircServer"), i18n("IRC Server")),
 	propChannels( QString::fromLatin1("ircChannels"), i18n("IRC Channels")),
-	propHops(QString::fromLatin1("ircHops"), i18n("IRC Hops"))
+	propHops(QString::fromLatin1("ircHops"), i18n("IRC Hops")),
+	propFullName(QString::fromLatin1("FormattedName"), i18n("Full Name"))
 {
 //	kdDebug(14120) << k_funcinfo << endl;
 
@@ -201,6 +201,10 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("me"),
 		SLOT( slotMeCommand( const QString &, Kopete::ChatSession*) ),
 		i18n("USAGE: /me <action> - Do something."), 1 );
+
+	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("ame"),
+		SLOT( slotAllMeCommand( const QString &, Kopete::ChatSession*) ),
+		i18n("USAGE: /ame <action> - Do something in every open chat."), 1 );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("kick"),
 		SLOT( slotKickCommand( const QString &, Kopete::ChatSession*) ),
@@ -565,9 +569,21 @@ void IRCProtocol::slotModeCommand(const QString &args, Kopete::ChatSession *mana
 void IRCProtocol::slotMeCommand(const QString &args, Kopete::ChatSession *manager)
 {
 	Kopete::ContactPtrList members = manager->members();
-	QStringList argsList = Kopete::CommandHandler::parseArguments( args );
 	static_cast<IRCAccount*>( manager->account() )->engine()->CtcpRequest_action(
-		static_cast<const IRCContact*>(members.first())->nickName(), args );
+		static_cast<const IRCContact*>(members.first())->nickName(), args
+	);
+}
+
+void IRCProtocol::slotAllMeCommand(const QString &args, Kopete::ChatSession *)
+{
+	QValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
+
+	for( QValueList<Kopete::ChatSession*>::iterator it = sessions.begin(); it != sessions.end(); ++it )
+	{
+		Kopete::ChatSession *session = *it;
+		if( session->protocol() == this )
+			slotMeCommand(args, session);
+	}
 }
 
 void IRCProtocol::slotKickCommand(const QString &args, Kopete::ChatSession *manager)
