@@ -23,3 +23,4 @@ TODO for Jabber:
 - allow synchronization of offline changes / online changes, this requires adding
   groups to the serialized data
 - group() does not seem to work with JabberContact serialization
+- "Re(send) authorization to" and "Rerequest athorization from" like in PSI client by robertgogolok at gmx.de (gogo@myjabber.net)
