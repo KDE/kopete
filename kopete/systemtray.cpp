@@ -56,7 +56,11 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent, const char* name)
 	mBlinkTimer = new QTimer(this, "mBlinkTimer");
 
 	//mKopeteIcon = kapp->miniIcon();
+#if KDE_IS_VERSION( 3, 1, 90 )
+	mKopeteIcon = loadIcon( "kopete" );
+#else
 	mKopeteIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ), 22 ) );
+#endif
 
 	connect(mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()));
 	connect(KopeteMessageManagerFactory::factory() , SIGNAL(newEvent(KopeteEvent*)),
