@@ -1,7 +1,7 @@
 /*
     historyplugin.cpp
 
-    Copyright (c) 2003 by Olivier Goffart             <ogoffart@tiscalinet.be>
+    Copyright (c) 2003-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
               (c) 2003 by Stefan Gehn                 <metz AT gehn.net>
     Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -134,13 +134,13 @@ void HistoryPlugin::slotViewHistory()
 
 void HistoryPlugin::slotViewCreated( KopeteView* v )
 {
-	kdDebug(14310) << k_funcinfo << "called." << endl;
+//	kdDebug(14310) << k_funcinfo << "called." << endl;
+	if (v->viewType() == KopeteMessage::Email)
+		return;  //Email chat windows are not supported.
 
 	bool autoChatWindow = HistoryConfig::auto_chatwindow();
 	int nbAutoChatWindow = HistoryConfig::number_Auto_chatwindow();
-	kdDebug(14310) << k_funcinfo <<
-		"show old chat in chatwindow = " << autoChatWindow <<
-		" Number of old lines to show = " << nbAutoChatWindow << endl;
+//	kdDebug(14310) << k_funcinfo << "show old chat in chatwindow = " << autoChatWindow << " Number of old lines to show = " << nbAutoChatWindow << endl;
 
 	KopeteView *m_currentView = v;
 	KopeteMessageManager *m_currentMessageManager = v->msgManager();
