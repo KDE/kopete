@@ -9,7 +9,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>457</width>
+            <width>477</width>
             <height>316</height>
         </rect>
     </property>
@@ -23,18 +23,21 @@
         <property name="margin">
             <number>0</number>
         </property>
-        <widget class="QPushButton" row="0" column="1" rowspan="1" colspan="3">
+        <widget class="QPushButton" row="0" column="1" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>mButtonNew</cstring>
             </property>
             <property name="text">
                 <string>&amp;New...</string>
             </property>
+            <property name="accel">
+                <string>Alt+N</string>
+            </property>
             <property name="toolTip" stdset="0">
                 <string>Add new account</string>
             </property>
         </widget>
-        <widget class="QPushButton" row="1" column="1" rowspan="1" colspan="3">
+        <widget class="QPushButton" row="1" column="1" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>mButtonEdit</cstring>
             </property>
@@ -48,7 +51,7 @@
                 <string>Let you edit the account's properties.</string>
             </property>
         </widget>
-        <widget class="QPushButton" row="2" column="1" rowspan="1" colspan="3">
+        <widget class="QPushButton" row="2" column="1" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>mButtonRemove</cstring>
             </property>
@@ -62,7 +65,7 @@
                 <string>Remove selected account</string>
             </property>
         </widget>
-        <widget class="KListView" row="0" column="0" rowspan="9" colspan="1">
+        <widget class="KListView" row="0" column="0" rowspan="8" colspan="1">
             <column>
                 <property name="text">
                     <string>Protocol</string>
@@ -92,7 +95,7 @@
                 <bool>true</bool>
             </property>
         </widget>
-        <widget class="QCheckBox" row="4" column="1" rowspan="1" colspan="3">
+        <widget class="QCheckBox" row="4" column="1" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>mUseColor</cstring>
             </property>
@@ -106,41 +109,7 @@
                 <string>Allows you to set a custom color for this account</string>
             </property>
         </widget>
-        <spacer row="6" column="3" rowspan="3" colspan="1">
-            <property name="name">
-                <cstring>spacer1</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <spacer row="3" column="3">
-            <property name="name">
-                <cstring>spacer3</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Fixed</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="KColorButton" row="5" column="2" rowspan="1" colspan="2">
+        <widget class="KColorButton" row="5" column="2">
             <property name="name">
                 <cstring>mColorButton</cstring>
             </property>
@@ -172,9 +141,78 @@ The icon of every contact of this account will be coloured with this color. Usef
                 </size>
             </property>
         </spacer>
-        <spacer row="6" column="1">
+        <widget class="QLayoutWidget" row="7" column="1" rowspan="1" colspan="2">
             <property name="name">
-                <cstring>spacer4</cstring>
+                <cstring>layout27</cstring>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="KPushButton" row="0" column="0">
+                    <property name="name">
+                        <cstring>mButtonUp</cstring>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>60</width>
+                            <height>10</height>
+                        </size>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Increase the priority</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Uses these buttons to increase or decrease the priority.
+The priority is used to determine which contact to use when you click on a metacontact: Kopete will use the contact of the account with the greatest priority (if all contacts have the same online status.)</string>
+                    </property>
+                </widget>
+                <spacer row="0" column="1" rowspan="2" colspan="1">
+                    <property name="name">
+                        <cstring>spacer41</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>40</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="KPushButton" row="1" column="0">
+                    <property name="name">
+                        <cstring>mButtonDown</cstring>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>60</width>
+                            <height>10</height>
+                        </size>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Decrease the priority</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Uses these buttons to increase or decrease the priority.
+The priority is used to determine which contact to use when you click on a metacontact: Kopete will use the contact of the account with the greatest priority (if all contacts have the same online status.)</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <spacer row="6" column="1" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>spacer1</cstring>
             </property>
             <property name="orientation">
                 <enum>Vertical</enum>
@@ -184,41 +222,28 @@ The icon of every contact of this account will be coloured with this color. Usef
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>20</width>
-                    <height>101</height>
+                    <width>70</width>
+                    <height>50</height>
                 </size>
             </property>
         </spacer>
-        <widget class="KPushButton" row="7" column="1" rowspan="1" colspan="2">
+        <spacer row="3" column="1" rowspan="1" colspan="2">
             <property name="name">
-                <cstring>mButtonUp</cstring>
+                <cstring>spacer3</cstring>
             </property>
-            <property name="text">
-                <string></string>
+            <property name="orientation">
+                <enum>Vertical</enum>
             </property>
-            <property name="toolTip" stdset="0">
-                <string>Increase the priority</string>
+            <property name="sizeType">
+                <enum>Fixed</enum>
             </property>
-            <property name="whatsThis" stdset="0">
-                <string>Uses these buttons to increase or decrease the priority.
-The priority is used to determine which contact to use when you click on a metacontact: Kopete will use the contact of the account with the greatest priority (if all contacts have the same online status.)</string>
+            <property name="sizeHint">
+                <size>
+                    <width>70</width>
+                    <height>20</height>
+                </size>
             </property>
-        </widget>
-        <widget class="KPushButton" row="8" column="1" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>mButtonDown</cstring>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-            <property name="toolTip" stdset="0">
-                <string>Decrease the priority</string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>Uses these buttons to increase or decrease the priority.
-The priority is used to determine which contact to use when you click on a metacontact: Kopete will use the contact of the account with the greatest priority (if all contacts have the same online status.)</string>
-            </property>
-        </widget>
+        </spacer>
     </grid>
 </widget>
 <customwidgets>
