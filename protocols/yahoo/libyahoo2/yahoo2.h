@@ -29,10 +29,12 @@
 # define HAVE_GLIB 0
 #endif
 
+#ifdef HAVE_GLIB
 #if HAVE_GLIB
 # include <glib.h>
 # define snprintf g_snprintf
 # define vsnprintf g_vsnprintf
+#endif
 #endif
 
 #ifdef __cplusplus

@@ -17,6 +17,7 @@
     *************************************************************************
 */
 #include "kopetemessagemanagerfactory.h"
+#include "kopetegroup.h"
 
 // Local Includes
 #include "yahoodebug.h"
@@ -37,6 +38,7 @@ YahooContact::YahooContact(QString userId, QString fullName,
 	kdDebug(14180) << "YahooContact::YahooContact("<< userId << ", " << fullName << ")" << endl;
 
 	m_fullName = fullName;
+	m_userId = userId;
 	m_manager = 0L;
 	m_status.setStatus(YahooStatus::Offline);
 
@@ -47,7 +49,10 @@ YahooContact::YahooContact(QString userId, QString fullName,
 	// XXX initActions();
 
 	QObject::connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ), this, SLOT (slotMovedToMetaContact() ));
-	QObject::connect (metaContact , SIGNAL( aboutToSave(KopeteMetaContact*) ), pluginInstance, SLOT (serialize(KopeteMetaContact*) ));
+	QObject::connect (metaContact , SIGNAL( aboutToSave(KopeteMetaContact*) ), pluginInstance, SLOT (serialize(KopeteMetaContact*) ));	
+	
+	if(static_cast<YahooProtocol *>(protocol())->haveContactList())
+		syncToServer();
 }
 
 YahooContact::~YahooContact()
@@ -58,31 +63,31 @@ YahooContact::~YahooContact()
 // Return status text
 QString YahooContact::statusText() const
 {
-	kdDebug(14180) << "Yahoo::statusText()";
+	kdDebug(14180) << "Yahoo::statusText() = " << m_status.text() << endl;
 	return m_status.text();
 }
 
 // Return status icon
 QString YahooContact::statusIcon() const
 {
+	kdDebug(14180) << "Yahoo::statusIcon() = " << m_status.icon() << endl;
+	kdDebug(14180) << "*" << endl << "*" << endl << "*" << endl << "*" << endl << "*" << endl;
 	return m_status.icon();
 }
 
-void YahooContact::setYahooStatus( YahooStatus::Status status_, const QString &msg, int away)
+void YahooContact::setYahooStatus( YahooStatus::Status status_, const QString &msg, int /*away*/)
 {
+	kdDebug(14180) << "Yahoo::setYahooStatus( " << status_ << ", " << msg << ")" << endl;
 	m_status.setStatus(status_);
 	setOnlineStatus( m_status.translate() );
+	emit onlineStatusChanged( this, m_status.translate() );
 }
 
-
-/* XXX
-void YahooContact::slotUpdateStatus(QString status, QString statusText == NULL)
+/*
+void YahooContact::slotUpdateStatus(QString status, QString statusText = QString::null)
 {
-	DEBUG(YDMETHOD, "Yahoo::slotUpdateStatus(" << status << ")");
-
-	DEBUG(YDINFO, "Buddy  - updating " << handle << " to "
-			<< status << "." << endl;
-
+	kdDebug(14180) << "[YahooContact::slotUpdateStatus(" << status << ")]" << endl;
+	kdDebug(14180) "Buddy  - updating " << handle << " to " << status << "." << endl;
 	if (status != QString("")) {
 		mStatus = status;
 		kdDebug(14180) << "Yahoo plugin: Updating status." << endl;
@@ -91,6 +96,18 @@ void YahooContact::slotUpdateStatus(QString status, QString statusText == NULL)
 	setOnlineStatus( m_status.translate() );
 }
 */
+
+void YahooContact::syncToServer()
+{
+	kdDebug(14180) << "[YahooContact::syncToServer()]" << endl;
+	if(!static_cast<YahooProtocol *>(protocol())->isOnServer(m_userId))
+	{	kdDebug(14180) << "Contact " << m_userId << " doesn't exist on server-side. Adding..." << endl;
+		QStringList theGroups = metaContact()->groups().toStringList();
+		if(!theGroups.size()) theGroups += "Exported Kopete contacts";
+		for(unsigned j = 0; j < theGroups.size(); j++)
+			static_cast<YahooProtocol *>(protocol())->yahooSession()->addBuddy(m_userId, theGroups[j]);
+	}
+}
 
 bool YahooContact::isOnline() const
 {
@@ -107,7 +124,7 @@ bool YahooContact::isReachable()
 QString YahooContact::identityId() const
 {
 	kdDebug(14180) << "[YahooContact::identityId()]" << endl;
-	return QString::null;
+	return m_userId;
 }
 
 KopeteMessageManager *YahooContact::manager( bool )
@@ -126,9 +143,14 @@ KopeteMessageManager *YahooContact::manager( bool )
 
 void YahooContact::slotSendMessage(KopeteMessage &message, KopeteMessageManager * )
 {
+	kdDebug(14180) << "[YahooContact::slotSendMessage(" << message.escapedBody() << ", <MessageManager>)]" << endl;
+	
 	KopeteContactPtrList m_them = manager()->members();
 	KopeteContact *target = m_them.first();
 	YahooProtocol *p = static_cast<YahooProtocol*>( protocol() );
+	
+	kdDebug(14180) << "Yahoo: Sending message from " << p->myself()->identityId() << ", to " << target->identityId() << endl;
+	
 	p->yahooSession()->sendIm( p->myself()->identityId(), target->identityId(), message.escapedBody() );
 
 	// append message to window

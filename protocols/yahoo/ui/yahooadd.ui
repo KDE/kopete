@@ -1,5 +1,5 @@
 <!DOCTYPE UI><UI version="3.1" stdsetdef="1">
-<class>Form1</class>
+<class>YahooAddContactBase</class>
 <widget class="QWidget">
     <property name="name">
         <cstring>Form1</cstring>
@@ -8,32 +8,129 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>560</width>
+            <width>379</width>
             <height>281</height>
         </rect>
     </property>
     <property name="caption">
-        <string>Form1</string>
+        <string>Add Yahoo Contact</string>
     </property>
-    <widget class="QLabel">
+    <vbox>
         <property name="name">
-            <cstring>textLabel1</cstring>
+            <cstring>unnamed</cstring>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>80</x>
-                <y>90</y>
-                <width>361</width>
-                <height>51</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Hello</string>
-        </property>
-    </widget>
+        <widget class="QGroupBox">
+            <property name="name">
+                <cstring>groupBox1</cstring>
+            </property>
+            <property name="title">
+                <string>Contact details</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Yahoo ID:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kLineEdit1</cstring>
+                    </property>
+                </widget>
+                <widget class="KLineEdit" row="0" column="1">
+                    <property name="name">
+                        <cstring>contactID</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>5</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>textLabel2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>For example: &lt;b&gt;joebloggs68&lt;/b&gt;</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QGroupBox">
+            <property name="name">
+                <cstring>groupBox1_2</cstring>
+            </property>
+            <property name="title">
+                <string>Viewing preferences</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>textLabel1_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Display name:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>contactID_2</cstring>
+                    </property>
+                </widget>
+                <widget class="KLineEdit" row="0" column="1">
+                    <property name="name">
+                        <cstring>displayName</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>5</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>textLabel2_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>For example: &lt;b&gt;Joe Bloggs&lt;/b&gt;</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>100</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>qwidget.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>klineedit.h</includehint>
 </includehints>
 </UI>

@@ -67,10 +67,16 @@ KopeteContact::OnlineStatus YahooStatus::translate() const
 
 QString YahooStatus::text() const
 {
-	kdDebug(14180) << "YahooStatus::text()";
+	kdDebug(14180) << "YahooStatus::text()" << endl;
 
-	if(m_status == Offline || m_status == Available || m_status == Mobile || m_status == Invisible)
+	if(/*m_status == Offline || m_status == Available || */m_status == Mobile/* || m_status == Invisible*/)
 		return "";
+	else if(m_status == Offline)
+		return i18n(YSTOffline);
+	else if(m_status == Invisible)
+		return i18n(YSTInvisible);
+	else if(m_status == Available)
+		return i18n(YSTAvailable);
 	else if(m_status == Idle)
 		return i18n("Idle");
 	else if(m_status == Custom || m_status == CustomBusy || m_status == CustomMobile)
@@ -103,7 +109,6 @@ QString YahooStatus::text() const
 QString YahooStatus::icon() const
 {
 	kdDebug(14180) << "YahooStatus::icon()" << endl;
-
 	if(m_status == Offline || m_status == Invisible)
 	{
 		return "yahoo_offline";
@@ -135,9 +140,10 @@ QString YahooStatus::icon() const
 	}
 }
 
-void YahooStatus::setStatus( Status status_ )
+void YahooStatus::setStatus( Status status_, const QString &statusText_ )
 {
 	m_status = status_;
+	m_statusText = statusText_;
 }
 
 YahooStatus::Status YahooStatus::fromLibYahoo2( int status_ )
@@ -175,4 +181,6 @@ YahooStatus::Status YahooStatus::fromLibYahoo2( int status_ )
 		case YAHOO_STATUS_TYPING :
 			return Typing;
 	}
+	
+	return Offline;
 }

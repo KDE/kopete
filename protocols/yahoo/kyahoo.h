@@ -131,6 +131,7 @@ public:
 	int sendFile( const QString &who, const QString &msg, const QString &name, long size);
 	int getUrlHandle( const QString &url, const QString &filename, unsigned long *filesize);
 	enum yahoo_status currentStatus();
+	const YList *getLegacyBuddyList();
 	QStringList getBuddylist();
 	QStringList getIgnorelist();
 	QStringList getIdentities();

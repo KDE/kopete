@@ -59,13 +59,16 @@ public:
 
 	KopeteContact* myself() const;
 	bool addContactToMetaContact(const QString &contactId, const QString &displayName,
-				KopeteMetaContact *parentContact);
+	KopeteMetaContact *parentContact);
 
 	virtual KActionMenu* protocolActions();
 	YahooContact *contact( const QString &id );
 	YahooSession *yahooSession();
 	virtual const QString protocolIcon();
-
+	
+	bool isOnServer(const QString &id) { return IDs.contains(id); }	// returns true is contact id is on SS contact list
+	bool haveContactList() { return theHaveContactList; }
+	
 public slots:
 	void connect();			// Connect to server
 	void disconnect();		// Disconnect from server
@@ -83,7 +86,7 @@ public slots:
 	void slotGoOffline();
 	
 	void slotLoginResponse( int succ, const QString &url);
-	void slotGotBuddies(YList * buds);
+	void slotGotBuddies(const YList * buds);
 	void slotGotBuddy(const QString &userid, const QString &alias, const QString &group);
 	void slotGotIgnore( YList * igns);
 	void slotGotIdentities( const QStringList &);
@@ -107,6 +110,8 @@ public slots:
 	void slotRemoveHandler( int fd);
 	//void slotHostConnect(const QString &host, int port);
 
+	void slotGotBuddiesTimeout();				// timeout for reception of buddies list
+
 signals:
 //	void protocolUnloading();	// Unload Protocol
 
@@ -115,6 +120,8 @@ protected slots:
 
 private:
 	QMap <QString, YahooContact *> m_contactsMap;
+	QMap<QString, QPair<QString, QString> > IDs;	// this should be kept in sync with server - if a buddy is removed, this should be changed accordingly.
+	bool theHaveContactList;
 
 	int m_sessionId;	
 	

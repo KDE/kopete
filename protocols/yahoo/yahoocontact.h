@@ -57,6 +57,7 @@ public slots:
 	virtual void slotDeleteContact();
 	virtual void slotUserInfo();
 	virtual void slotSendFile();
+	void syncToServer();		// must be called after the contact list has been received, or it wont work very well!
 
 private slots:
 	void slotMessageManagerDestroyed();
@@ -64,7 +65,7 @@ private slots:
 	void slotTyping(bool);
 
 private:
-	QString m_fullName;
+	QString m_fullName, m_userId;
 	YahooStatus m_status;
 	KopeteMessageManager *m_manager;
 };

@@ -23,6 +23,8 @@
 #include "kopetecontact.h"
 #include "libyahoo2/yahoo2_types.h"
 
+#define YSTOffline			I18N_NOOP("Offline")
+#define YSTInvisible		I18N_NOOP("Invisible")
 #define YSTAvailable		I18N_NOOP("Available")
 #define YSTBeRightBack		I18N_NOOP("Be Right Back")
 #define YSTBusy			I18N_NOOP("Busy")
@@ -70,7 +72,7 @@ public:
 	/* Returns status asscociated icon */
 	QString icon() const;
 	/* Set current status */
-	void setStatus( Status );
+	void setStatus( Status, const QString & = QString::null );
 	static Status fromLibYahoo2( int );
 private:
 	Status m_status;

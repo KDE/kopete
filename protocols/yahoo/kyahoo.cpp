@@ -30,13 +30,13 @@
 #include <kiconloader.h>
 
 // System Includes
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "libyahoo2/yahoo2.h"
 #include "libyahoo2/yahoo2_callbacks.h"
 #include "libyahoo2/yahoo2_types.h"
 #include "libyahoo2/yahoo_list.h"
-#include <iostream.h>
+#include <iostream>
 #include <errno.h>
 
 /* Those gave me undefined reference errors */
@@ -355,6 +355,11 @@ enum yahoo_status YahooSession::currentStatus()
 	return yahoo_current_status(m_connId);
 }
 
+const YList *YahooSession::getLegacyBuddyList()
+{
+	return yahoo_get_buddylist(m_connId);
+}
+
 QStringList YahooSession::getBuddylist()
 {
 	//return yahoo_get_buddylist(m_connId);
@@ -528,9 +533,10 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_error)(int id, char *err, int fatal)
 
 }
 
-int YAHOO_CALLBACK_TYPE(ext_yahoo_log)(char *fmt, ...)
+int YAHOO_CALLBACK_TYPE(ext_yahoo_log)(char */*fmt*/, ...)
 {
 	/* Do nothing? */
+	return 0;
 }
 
 void YAHOO_CALLBACK_TYPE(ext_yahoo_add_handler)(int id, int fd, yahoo_input_condition cond)
@@ -774,6 +780,7 @@ int YahooSessionManager::logReceiver(char *fmt, ...)
 {
 	kdDebug(14180) << "[YahooSessionManager::logReceiver]" << endl;
 	//emit session->
+	return 0;
 }
 
 void YahooSessionManager::addHandlerReceiver(int id, int fd, yahoo_input_condition cond)
@@ -802,14 +809,14 @@ void YahooSessionManager::addHandlerReceiver(int id, int fd, yahoo_input_conditi
 	}
 }
 
-void YahooSession::addHandler(int fd, yahoo_input_condition cond)
+void YahooSession::addHandler(int /*fd*/, yahoo_input_condition /*cond*/)
 {
 }
 
 void YahooSessionManager::removeHandlerReceiver(int id, int fd)
 {
 	kdDebug(14180) << "[YahooSessionManager::removeHandlerReceiver]" << endl;
-	YahooSession *session = getSession(id);
+//	YahooSession *session = getSession(id);
 
 	KExtendedSocket *_socket = m_socketsMap[fd];
 	YahooSession *_session = m_sessionsMap[id];
@@ -835,7 +842,7 @@ void YahooSessionManager::removeHandlerReceiver(int id, int fd)
 	}
 }
 
-void YahooSession::removeHandler(int fd)
+void YahooSession::removeHandler(int /*fd*/)
 {
 }
 
