@@ -477,6 +477,11 @@ void JabberAccount::slotError (const Jabber::StreamError & error)
 	}
 
 	disconnect ();
+
+	// manually force the slot to be called since in case of an error,
+	// libpsi will most likely be confused and not emit signals anymore
+	slotDisconnected();
+
 }
 
 /* Set presence (usually called by dialog widget). */
