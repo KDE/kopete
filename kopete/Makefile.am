@@ -6,7 +6,7 @@ KDE_ICON = AUTO
 lib_LTLIBRARIES = libkopetemain.la
 libkopetemain_la_SOURCES = main.cpp
 libkopetemain_la_LDFLAGS = $(all_libraries) $(LIB_KDEUI) $(KDE_RPATH)
-libkopetemain_la_LIBADD = $(top_srcdir)/kopete/library/libkopete.la
+libkopetemain_la_LIBADD = $(top_builddir)/kopete/library/libkopete.la
 
 bin_PROGRAMS = kopete
 kopete_SOURCES = dummy.cpp
