@@ -885,7 +885,7 @@ void ChatView::saveOptions()
 	config->writeEntry ( QString::fromLatin1("Font"), mFont );
 	config->writeEntry ( QString::fromLatin1("TextColor"), mFgColor );
 
-	//config->writeEntry ( "SplitterWidth", editDock->parent()->seperatorPos() );
+ //config->writeEntry ( "SplitterWidth", editDock->parent()->seperatorPos() );
 
 	config->sync();
 }
