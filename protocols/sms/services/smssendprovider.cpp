@@ -162,7 +162,7 @@ void SMSSendProvider::send(const KopeteMessage& msg)
 	connect( p, SIGNAL(receivedStderr(KProcess*, char*, int)),
 		this, SLOT(slotReceivedOutput(KProcess*, char*, int)));
 
-	p->start(KProcess::Block);
+	p->start(KProcess::Block, KProcess::AllOutput);
 }
 
 void SMSSendProvider::slotSendFinished(KProcess* p)
