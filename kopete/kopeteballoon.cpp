@@ -43,12 +43,15 @@ KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 {
 	setCaption("");
 
-	QVBoxLayout *BalloonLayout = new QVBoxLayout(this, 22, KDialog::spacingHint(), "BalloonLayout");
+	QVBoxLayout *BalloonLayout = new QVBoxLayout(this, 22,
+		KDialog::spacingHint(), "BalloonLayout");
 
 	// BEGIN Layout1
-	QHBoxLayout *Layout1 = new QHBoxLayout(BalloonLayout, KDialog::spacingHint(), "Layout1");
-	KActiveLabel *mCaption = new KActiveLabel(text, this, "mCaption");
-	mCaption->setPalette( QToolTip::palette() );
+	QHBoxLayout *Layout1 = new QHBoxLayout(BalloonLayout,
+		KDialog::spacingHint(), "Layout1");
+	QLabel *mCaption = new QLabel(text, this, "mCaption");
+	/*KActiveLabel *mCaption = new KActiveLabel(text, this, "mCaption");
+	mCaption->setPalette(QToolTip::palette());*/
 
 	if (!pix.isEmpty())
 	{
@@ -63,9 +66,12 @@ KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 
 
 	// BEGIN Layout2
-	QHBoxLayout *Layout2 = new QHBoxLayout(BalloonLayout, KDialog::spacingHint(), "Layout2");
-	QPushButton *mViewButton = new QPushButton(i18n("to view", "View"), this, "mViewButton");
-	QPushButton *mIgnoreButton = new QPushButton(i18n("Ignore" ), this, "mIgnoreButton");
+	QHBoxLayout *Layout2 = new QHBoxLayout(BalloonLayout,
+		KDialog::spacingHint(), "Layout2");
+	QPushButton *mViewButton = new QPushButton(i18n("to view", "View"), this,
+		"mViewButton");
+	QPushButton *mIgnoreButton = new QPushButton(i18n("Ignore"), this,
+		"mIgnoreButton");
 
 	Layout2->addStretch();
 	Layout2->addWidget(mViewButton);
@@ -76,15 +82,18 @@ KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 	setPalette(QToolTip::palette());
 	setAutoMask(TRUE);
 
-	connect(mViewButton, SIGNAL(clicked()), SIGNAL(signalButtonClicked()));
-	connect(mViewButton, SIGNAL(clicked()), SLOT(deleteLater()));
-
-	connect(mIgnoreButton, SIGNAL(clicked()), SIGNAL(signalIgnoreButtonClicked()));
-	connect(mIgnoreButton, SIGNAL(clicked()), SLOT(deleteLater()));
-
-	connect( mCaption, SIGNAL( linkClicked( const QString & ) ),
-			SIGNAL( signalIgnoreButtonClicked() ) );
-	connect( mCaption, SIGNAL( linkClicked( const QString & ) ), SLOT( deleteLater() ) );
+	connect(mViewButton, SIGNAL(clicked()),
+		this, SIGNAL(signalButtonClicked()));
+	connect(mViewButton, SIGNAL(clicked()),
+		this, SLOT(deleteLater()));
+	connect(mIgnoreButton, SIGNAL(clicked()),
+		this, SIGNAL(signalIgnoreButtonClicked()));
+	connect(mIgnoreButton, SIGNAL(clicked()),
+		this, SLOT(deleteLater()));
+	/*connect(mCaption, SIGNAL(linkClicked(const QString &)),
+		this, SIGNAL(signalIgnoreButtonClicked()));
+	connect(mCaption, SIGNAL(linkClicked(const QString &)),
+		this, SLOT(deleteLater()));*/
 }
 
 void KopeteBalloon::setAnchor(const QPoint &anchor)
@@ -111,7 +120,8 @@ void KopeteBalloon::updateMask()
 	for (int i = 0; i < 4; ++i)
 	{
 		QPointArray corner;
-		corner.makeArc(corners[i].x(), corners[i].y(), 40, 40, i * 16 * 90, 16 * 90);
+		corner.makeArc(corners[i].x(), corners[i].y(), 40, 40,
+			i * 16 * 90, 16 * 90);
 		corner.resize(corner.size() + 1);
 		corner.setPoint(corner.size() - 1, corners[i + 4]);
 		mask -= corner;
@@ -131,8 +141,10 @@ void KopeteBalloon::updateMask()
 
 	QPointArray arrow(4);
 	arrow.setPoint(0, QPoint(right ? width() : 0, bottom ? height() : 0));
-	arrow.setPoint(1, QPoint(right ? width() - 10 : 10, bottom ? height() - 30 : 30));
-	arrow.setPoint(2, QPoint(right ? width() - 30 : 30, bottom ? height() - 10 : 10));
+	arrow.setPoint(1, QPoint(right ? width() - 10 : 10,
+		bottom ? height() - 30 : 30));
+	arrow.setPoint(2, QPoint(right ? width() - 30 : 30,
+		bottom ? height() - 10 : 10));
 	arrow.setPoint(3, arrow[0]);
 	mask += arrow;
 	setMask(mask);
