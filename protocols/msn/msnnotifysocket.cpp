@@ -30,8 +30,6 @@
 //qt
 #include <qregexp.h>
 
-
-
 KMSNServiceSocket::KMSNServiceSocket()
 {
 }
@@ -56,6 +54,7 @@ void KMSNServiceSocket::connectToMSN( const QString &handle,
 void KMSNServiceSocket::connectInternal( const QString &server, uint port )
 {
 	isConnected = false;
+	m_id = 0;
 
 	socket = new KExtendedSocket( server, port, 0x600000 );
 	socket->enableRead( true );
@@ -69,20 +68,17 @@ void KMSNServiceSocket::connectInternal( const QString &server, uint port )
 	// We're connected. Send the protocol. Reply from the server should be
 	// a 'VER' reply, handled in slotDataReceived
 	kdDebug() << "Sending protocol" << endl;
-	ID = time( ( time_t * ) NULL );
-	sendData( QString().sprintf( "VER %lu MSNP7 MSNP6 MSNP5 MSNP4 CVR0\r\n",
-		ID ) );
+	sendCommand( "VER", "MSNP7 MSNP6 MSNP5 MSNP4 CVR0" );
 }
 
 void KMSNServiceSocket::close()
 {
-
 }
 
 void KMSNServiceSocket::kill()
 {
 	emit connected(false);
-	
+
 	isConnected = false;
 	delete socket;
 	socket = 0L;
@@ -134,63 +130,17 @@ void KMSNServiceSocket::slotSocketError(int error)
 void KMSNServiceSocket::slotDataReceived()
 {
 	// incoming data
-	QString data;
-	int ret;
 	char buf[1025];
-	ret =socket->readBlock(buf,1024);
+	int ret = socket->readBlock(buf,1024);
 	if( ret <= 0 )
 		return;
 	buf[ ret ] = '\0'; // Make it properly null-terminated
-	data = QString::fromUtf8( buf );
+	QString data = QString::fromUtf8( buf );
 	kdDebug() << QTime::currentTime().toString() <<
 		" - KMSNServiceSocket::slotDataReceived: Received '" <<
 		data << "'" << endl;
 //	showError(data);
-	if((data.left(3)) == "911")
-	{
-		emit connected(false);
-		if(!_silent)
-		{
-			KMessageBox::error(0,i18n("Authentication failed"));
-		}
-		return;
-	}
-	if(!isConnected)
-	{
-		if((data.left(3)) == "XFR")
-		{
-			// new server reconnect
-			newConnect(data);
-			return;
-		}
-	}
-	if(data.left(3) == "VER")
-	{
-		sendServerPolicy();
-		return;
-	}
-	if(data.left(3) == "INF")
-	{
-		sendInitialInfo();
-		return;
-	}
-	if(data.left(3) == "USR")
-	{
-		if(kstr.word(data,3) == "S")
-		{
-			hashRes =data.right(data.length() - data.findRev(" ",-1,false)-1);
-			sendResponseInfo();
-		}
-		else
-		{
-			sendSerial();
-			_publicName = kstr.word( data, 4 ).replace( QRegExp( "%20" ), " " );
-			emit newPublicName(_publicName);
-			// this is our current user and friendly name
-			// do some nice things with it  :-)
-		}
-		return;
-	}
+
 	buffer += data; // fill the buffer with the received data
 	while(canReadLine()) // if we have a complete command in the buffer - parseCommand
 	{
@@ -232,17 +182,77 @@ QString KMSNServiceSocket::readBlock(uint len)
 
 void KMSNServiceSocket::parseCommand(QString str)
 {
-	kdDebug() << "MSN Plugin: LibKmerlin: Parsing command " << str << endl;
-	QString miss,len;
-	str = str.replace(QRegExp("\r\n"),"");
-	QString command = str.left(3);
-	if(command == "NLN")
+	m_id = str.section( ' ', 1, 1 ).toUInt();
+
+	QString cmd  = str.section( ' ', 0, 0 );
+	QString data = str.section( ' ', 2 ).replace( QRegExp( "\r\n" ), "" );
+
+	kdDebug() << "KMSNServiceSocket::parseCommand: Parsing command " << cmd <<
+		" (ID " << m_id << "): '" << data << "'" << endl;
+
+	str.replace( QRegExp( "\r\n" ), "" );
+	if( cmd == "911" )
+	{
+		emit connected(false);
+		if(!_silent)
+			KMessageBox::error(0,i18n("Authentication failed"));
+	}
+	else if( cmd == "XFR" )
+	{
+		// XFR is a bit special. When connected it's used to start a chat,
+		// but when connecting it's a redirect to another server, essentially
+		// aborting the connect
+		if( isConnected )
+		{
+			// Address, AuthInfo
+			emit startChat( kstr.word( str, 3 ), kstr.word( str, 5 ) );
+		}
+		else
+		{
+			// new server reconnect
+			newConnect(str);
+		}
+	}
+	else if( cmd == "VER" )
+	{
+		kdDebug() << "Sending server policy" << endl;
+		sendCommand( "INF" );
+	}
+	else if( cmd == "INF" )
+	{
+		kdDebug() << "Sending initial Authentication" << endl;
+		sendCommand( "USR", "MD5 I " + _handle );
+	}
+	else if( cmd == "USR" )
+	{
+		if(kstr.word(str,3) == "S")
+		{
+			kdDebug() << "Sending response Authentication" << endl;
+
+			hashRes = str.right(str.length() - str.findRev(" ",-1,false)-1);
+			if(hashRes.contains("\r\n",true))
+				hashRes = hashRes.left(hashRes.find("\r\n",0,true));
+
+			KMD5 context( hashRes + _password );
+			sendCommand( "USR", "MD5 S " + context.hexDigest() );
+		}
+		else
+		{
+			kdDebug() << "Sending serial number" << endl;
+			sendCommand( "SYN", QString::number( _serial ) );
+
+			_publicName = kstr.word( str, 4 ).replace( QRegExp( "%20" ), " " );
+			emit newPublicName(_publicName);
+			// this is our current user and friendly name
+			// do some nice things with it  :-)
+		}
+	}
+	else if( cmd == "NLN" )
 	{
 		// handle, publicName, status
 		emit contactStatusChanged( kstr.word(str,2), kstr.word(str,3).replace(QRegExp("%20")," "), kstr.word(str,1) );
-		return;
 	}
-	if(command == "LST")
+	else if( cmd == "LST" )
 	{
 		if( kstr.word(str,2) == "FL")
 		{
@@ -254,10 +264,10 @@ void KMSNServiceSocket::parseCommand(QString str)
 			// handle, publicName, 0L,  list
 			emit contactList( kstr.word(str,6), kstr.word(str,7).replace(QRegExp("%20")," "), 0L, kstr.word(str,2) );
 		}
-		return;
 	}
-	if(command == "MSG")
+	else if( cmd == "MSG" )
 	{
+		QString miss, len;
 		len = kstr.word(str,3);
 		miss = readBlock(len.toUInt());
 		miss = QString::fromUtf8(miss);
@@ -290,43 +300,30 @@ void KMSNServiceSocket::parseCommand(QString str)
 			 emit newMail(miss,mailCount);
 			 return;
 		}
-		return;
 	}
-	if(command == "FLN")
+	else if( cmd == "FLN" )
 	{
 		emit contactStatusChanged(kstr.word(str,1), "", "FLN" );
-		return;
 	}
-	if(command == "ILN")
+	else if( cmd == "ILN" )
 	{
 		// handle, publicName, Status
 		emit contactStatus(kstr.word(str,3), kstr.word(str,4).replace(QRegExp("%20")," "), kstr.word(str,2) );
-		return;
 	}
-	if(command == "GTC")
+	else if( cmd == "GTC" )
 	{
 		kdDebug() << "GTC: is not implemented!" << endl;
-		return;
 	}
-	if(command == "BLP")
+	else if( cmd == "BLP" )
 	{
 		kdDebug() << "BLP: is not implemented!" << endl;
-		return;
 	}
-	if(command == "RNG")
+	else if( cmd == "RNG" )
 	{
 		// SessionID, Address, AuthInfo, handle, publicName
 		emit invitedToChat( kstr.word(str,1), kstr.word(str,2), kstr.word(str,4), kstr.word(str,5), kstr.word(str,6).replace(QRegExp("%20")," ") );
-		return;
 	}
-
-	if(command == "XFR")
-	{
-		// Address, AuthInfo
-		emit startChat(kstr.word(str,3), kstr.word(str,5) );
-		return;
-	}
-	if(command == "ADD")
+	else if( cmd == "ADD" )
 	{
 		//
 		if( kstr.word(str,2) == "FL")
@@ -339,9 +336,8 @@ void KMSNServiceSocket::parseCommand(QString str)
 			// handle, publicName, List, serial
 			emit contactAdded( kstr.word(str,4), kstr.word(str,4).replace(QRegExp("%20")," "), kstr.word(str,2), kstr.word(str,3).toUInt(), 0L );
 		}
-		return;
 	}
-	if(command == "REM") // someone is removed from a list
+	else if( cmd == "REM" ) // someone is removed from a list
 	{
 		if( kstr.word(str, 2) == "FL")
 		{
@@ -352,19 +348,16 @@ void KMSNServiceSocket::parseCommand(QString str)
 		{
 			contactRemoved( kstr.word(str,4), kstr.word(str,2), kstr.word(str,3).toUInt(), 0L );
 		}
-		return;
 	}
-	if(command == "OUT")
+	else if( cmd == "OUT" )
 	{
 		if( kstr.word(str,1) == "OTH" )
-		{
 			KMessageBox::error(0,i18n("You have connected\r\nfrom an other client"));
-		}
+
 		slotSocketClose();
 		emit sessionClosed( kstr.word(str,1) );
-		return;
 	}
-	if(command == "CHG")
+	else if( cmd == "CHG" )
 	{
 		if(!isConnected)
 		{
@@ -372,15 +365,13 @@ void KMSNServiceSocket::parseCommand(QString str)
 			emit connected(true);
 		}
 		statusChanged( kstr.word(str,2) );
-		return;
 	}
-	if(command == "REA")
+	else if( cmd == "REA" )
 	{
 		emit publicNameChanged(kstr.word(str,3),kstr.word(str,4).replace(QRegExp("%20")," ") );
 		kdDebug() << str << endl;
-		return;
 	}
-	if( command == "LSG" )
+	else if( cmd == "LSG" )
 	{
 		if( str.contains("1 1 0 ~ 0") )
 		{
@@ -393,30 +384,30 @@ void KMSNServiceSocket::parseCommand(QString str)
 			emit groupName( kstr.word(str,6).replace(QRegExp("%20")," "),
 				kstr.word(str,5).toUInt() );
 		}
-		return;
 	}
-	if( command == "ADG" )
+	else if( cmd == "ADG" )
 	{
 		// groupName, serial, group
 		emit groupAdded( kstr.word(str,3).replace(QRegExp("%20")," "), kstr.word(str,2).toUInt(), kstr.word(str,4).toUInt() );
-		return;
 	}
-	if( command == "REG" )
+	else if( cmd == "REG" )
 	{
 		// groupName, serial, group
 		emit groupRenamed( kstr.word(str,4).replace(QRegExp("%20")," "), kstr.word(str,2).toUInt(), kstr.word(str,3).toUInt() );
-		return;
 	}
-	if( command == "RMG" )
+	else if( cmd == "RMG" )
 	{
 		emit groupRemoved(kstr.word(str,2).toUInt(), kstr.word(str,3).toUInt() );
 	}
-	if( command  == "CHL")
+	else if( cmd  == "CHL" )
 	{
-		sendFinalAuthentication(kstr.word(str,2));
-		return;
+		kdDebug() << "Sending final Authentication" << endl;
+		QString res = kstr.word( str, 2 ).replace(QRegExp("\r\n"),"");
+		KMD5 context( res + "Q1P7W2E4J9R8U3S5" );
+		sendCommand( "QRY", "msmsgs@msnmsgr.com 32\r\n" +
+			context.hexDigest() );
 	}
-	if(command == "SYN")
+	else if( cmd == "SYN" )
 	{
 		// this is the current serial on the server, if its different with the own we can get the user list
 		//isConnected = true;
@@ -431,10 +422,12 @@ void KMSNServiceSocket::parseCommand(QString str)
 		// create an option in config dialog to select the state to be set
 		setStatus(MSNProtocol::NLN);
 		sendCVR();
-		return;
 	}
-
-
+	else
+	{
+		kdDebug() << "KMSNServiceSocket::parseCommand: Unknown command '" <<
+			cmd << " " << m_id << " " << data << "'!" << endl;
+	}
 }
 
 void KMSNServiceSocket::sendCVR()
@@ -442,22 +435,15 @@ void KMSNServiceSocket::sendCVR()
 
 }
 
-void KMSNServiceSocket::sendFinalAuthentication(QString res)
+void KMSNServiceSocket::sendCommand( const QString &cmd, const QString &args )
 {
-	ID = time((time_t *)NULL);
-	res.replace(QRegExp("\r\n"),"");
-	QString command;
-	QString str3 = res + "Q1P7W2E4J9R8U3S5" ;
-	KMD5 context(str3);
-	QString str5 = context.hexDigest();
-	command.sprintf("QRY %lu msmsgs@msnmsgr.com 32\r\n",ID);
-	command += str5 ;
-	socket->writeBlock(command,command.length());
-	kdDebug() << "Sending final Authentication" << endl;
-}
+	QString data = cmd + " " + QString::number( m_id );
+	if( !args.isEmpty() )
+		data += " " + args;
+	data += "\r\n";
 
-void KMSNServiceSocket::sendData( const QString &data )
-{
+	kdDebug() << "KMSNServiceSocket::sendCommand: Sending command " << data;
+
 	socket->writeBlock( data, data.length() );
 }
 
@@ -477,206 +463,115 @@ void KMSNServiceSocket::newConnect( QString data)
 	connectInternal( server, port.toUInt() );
 }
 
-void KMSNServiceSocket::sendServerPolicy()
-{
-	ID = time((time_t *)NULL);
-	QString command;
-	command.sprintf("INF %lu\r\n",ID);
-	socket->writeBlock(command,command.length());
-	kdDebug() << "Sending server policy" << endl;
-}
-
-void KMSNServiceSocket::sendInitialInfo()
-{
-	md5_tr = time((time_t *)NULL);
-	QString command;
-	command.sprintf("USR %lu MD5 I ",md5_tr);
-	command += _handle.utf8() +"\r\n";
-	socket->writeBlock(command,command.length());
-	kdDebug() << "Sending initial Authentication" << endl;
-}
-
-void KMSNServiceSocket::sendResponseInfo()
-{
-	if(hashRes.contains("\r\n",true))
-	{
-	  hashRes = hashRes.left(hashRes.find("\r\n",0,true));
-	}
-	QString str3 = hashRes +_password;
-	KMD5 context(str3);
-	QString strcommand1,str5 = context.hexDigest();
-	strcommand1.sprintf("USR %lu ",md5_tr);
-	strcommand1 += "MD5 S ";
-	strcommand1 += str5 + "\r\n";
-	socket->writeBlock(strcommand1,strcommand1.length());
-	kdDebug() << "Sending response Authentication" << endl;
-}
-
-void KMSNServiceSocket::sendSerial()
-{
-	ID = time((time_t *)NULL);
-	QString command;
-	command.sprintf("SYN %lu %u\r\n",ID,_serial);
-	socket->writeBlock(command,command.length());
-	kdDebug() << "Sending serial number" << endl;
-}
-// end
-
-
-
 void KMSNServiceSocket::addGroup(QString groupName)
 {
-	groupName.replace(QRegExp(" "),"%20");        // convert whitespaces to %20
-	ID = time((time_t *)NULL);
-	QString command;
-	command.sprintf("ADG %lu ",ID);
-	command += groupName.utf8() + " 0\r\n";
-	socket->writeBlock(command,command.length());
+	// escape spaces
+	sendCommand( "ADG", groupName.replace( QRegExp( " " ), "%20" ) + " 0" );
 }
 
-void KMSNServiceSocket::renameGroup(QString groupName, uint group)
+void KMSNServiceSocket::renameGroup( QString groupName, uint group )
 {
-	groupName.replace(QRegExp(" "),"%20");        // convert whitespaces to %20
-	ID = time((time_t *)NULL);
-	QString command;
-	command.sprintf("REG %lu %u ",ID, group);
-	command += groupName.utf8() + " 0\r\n";
-	socket->writeBlock(command,command.length());
+	// escape spaces
+	sendCommand( "REG", QString::number( group ) + " " +
+		groupName.replace( QRegExp( " " ), "%20" ) + " 0" );
 }
 
-void KMSNServiceSocket::removeGroup(uint group)
+void KMSNServiceSocket::removeGroup( uint group )
 {
-	QString command;
-	ID = time((time_t *)NULL);
-	command.sprintf("RMG %lu %u\r\n",ID, group);
-	socket->writeBlock(command,command.length());
+	sendCommand( "RMG", QString::number( group ) );
 }
 
-void KMSNServiceSocket::addContact( const QString &handle, QString publicName, uint group, int list )
+void KMSNServiceSocket::addContact( const QString &handle,
+	QString publicName, uint group, int list )
 {
-	time_t ID = time((time_t *)NULL);
-	QString command;
-	QString strGroup;
-	strGroup.setNum(group);
-	if( list == MSNProtocol::FL )
+	QString args;
+	switch( list )
 	{
-		command.sprintf("ADD %lu FL ",ID);
-		command += handle.utf8() + " " + handle.utf8() + " " +strGroup.utf8() + "\r\n";
+	case MSNProtocol::FL:
+		args = "FL " + handle + " " + handle + " " + QString::number( group );
+		break;
+	case MSNProtocol::AL:
+		args = "AL " + handle + " " +
+			publicName.replace( QRegExp( " " ), "%20" );
+		break;
+	case MSNProtocol::BL:
+		args = "BL " + handle + " " +
+			publicName.replace( QRegExp( " " ), "%20" );
+		break;
+	default:
+		kdDebug() << "KMSNServiceSocket::addContact: WARNING! Unknown list " <<
+			list << "!" << endl;
+		return;
 	}
-	if( list == MSNProtocol::AL )
-	{
-		command.sprintf("ADD %lu AL ",ID);
-		command += handle.utf8() + " " + publicName.replace(QRegExp(" "),"%20").utf8() + "\r\n";
-	}
-	if( list == MSNProtocol::BL )
-	{
-		command.sprintf("ADD %lu BL ",ID);
-		command += handle.utf8() + " " + publicName.replace(QRegExp(" "),"%20").utf8() + "\r\n";
-	}
-	socket->writeBlock(command,command.length());
+	sendCommand( "ADD", args );
 }
 
-void KMSNServiceSocket::removeContact( const QString &handle, uint group, int list )
+void KMSNServiceSocket::removeContact( const QString &handle, uint group,
+	int list )
 {
-	ID = time((time_t *)NULL);
-	QString command;
-	QString strGroup;
-	strGroup.setNum(group);
-	switch(list)
+	QString args;
+	switch( list )
 	{
-		case MSNProtocol::FL:
-		{
-			command.sprintf("REM %lu FL ",ID);
-			command += handle.utf8() + " " +strGroup.utf8() + "\r\n";
-			break;
-		}
-		case MSNProtocol::AL:
-		{
-			command.sprintf("REM %lu AL ",ID);
-			command += handle.utf8() + "\r\n";
-			break;
-		}
-		case MSNProtocol::BL:
-		{
-			command.sprintf("REM %lu BL ",ID);
-			command += handle.utf8() + "\r\n";
-			break;
-		}
+	case MSNProtocol::FL:
+		args = "FL " + handle + " " + QString::number( group );
+		break;
+	case MSNProtocol::AL:
+		args = "AL " + handle;
+		break;
+	case MSNProtocol::BL:
+		args = "BL " + handle;
+		break;
+	default:
+		kdDebug() << "KMSNServiceSocket::removeContact: " <<
+			"WARNING! Unknown list " << list << "!" << endl;
+		return;
 	}
-	kdDebug() << "Send command: " << command << endl;
-	socket->writeBlock(command,command.length());
+	sendCommand( "REM", args );
 }
 
 void KMSNServiceSocket::setStatus( int status )
 {
-	ID = time((time_t *)NULL);
-	QString command;
-	switch(status)
-	{
-		case MSNProtocol::NLN:
-		{
-			command.sprintf("CHG %lu NLN\r\n",ID);
-			break;
-		}
-		case MSNProtocol::BSY:
-		{
-			command.sprintf("CHG %lu BSY\r\n",ID);
-			break;
-		}
-		case MSNProtocol::BRB:
-		{
-			command.sprintf("CHG %lu BRB\r\n",ID);
-			break;
-		}
-		case MSNProtocol::AWY:
-		{
-			command.sprintf("CHG %lu AWY\r\n",ID);
-			break;
-		}
-		case MSNProtocol::PHN:
-		{	
-			command.sprintf("CHG %lu PHN\r\n", ID);
-			break;
-		}
-		case MSNProtocol::LUN:
-		{
-			command.sprintf("CHG %lu LUN\r\n",ID);
-			break;
-		}
-		case MSNProtocol::FLN:
-		{
-			command.sprintf("CHG %lu FLN\r\n",ID);
-			break;
-		}
-		case MSNProtocol::HDN:
-		{
-			command.sprintf("CHG %lu HDN\r\n",ID);
-			break;
-		}
-		case MSNProtocol::IDL:
-		{
-			command.sprintf("CHG %lu IDL\r\n",ID);
-			break;
-		}
-	}
-	socket->writeBlock(command,command.length());
+	sendCommand( "CHG", statusToString( status ) );
 }
 
-void KMSNServiceSocket::changePublicName(QString publicName )
+void KMSNServiceSocket::changePublicName( const QString &publicName )
 {
-	QString command;
-	ID = time(( time_t*)NULL);
-	command.sprintf("REA %lu ",ID);
-	command += _handle.utf8() + " " + publicName.replace(QRegExp(" "),"%20").utf8() +"\r\n";
-	socket->writeBlock(command, command.length());
+	QString pn = publicName;
+	sendCommand( "REA", _handle + " " + pn.replace( QRegExp( " " ), "%20" ) );
 }
 
 void KMSNServiceSocket::createChatSession()
 {
-	ID = time((time_t *)NULL);
-	QString command;
-	command.sprintf("XFR %lu SB\r\n",ID);
-	socket->writeBlock(command,command.length());
+	sendCommand( "XFR", "SB" );
+}
+
+QString KMSNServiceSocket::statusToString( int status ) const
+{
+	switch( status )
+	{
+	case MSNProtocol::NLN:
+		return "NLN";
+	case MSNProtocol::BSY:
+		return "BSY";
+	case MSNProtocol::BRB:
+		return "BRB";
+	case MSNProtocol::AWY:
+		return "AWY";
+	case MSNProtocol::PHN:
+		return "PHN";
+	case MSNProtocol::LUN:
+		return "LUN";
+	case MSNProtocol::FLN:
+		return "FLN";
+	case MSNProtocol::HDN:
+		return "HDN";
+	case MSNProtocol::IDL:
+		return "IDL";
+	default:
+		kdDebug() << "KMSNServiceSocket::statusToString: " <<
+			"WARNING! Unknown status " << status << "!" << endl;
+		return QString::null;
+	}
 }
 
 #include "kmsnservicesocket.moc"

@@ -68,12 +68,7 @@ protected slots:
 protected:
 	void sendProtocol();
 	void newConnect( QString data);
-	void sendServerPolicy();
-	void sendInitialInfo();
-	void sendResponseInfo();
-	void sendSerial();
 	void sendCVR();
-	void sendFinalAuthentication(QString res);
 
 	void parseCommand( QString str);
 
@@ -92,7 +87,7 @@ public:
 	void removeGroup( uint group );
 	void renameGroup(QString groupName, uint group);
 
-	void changePublicName(QString publicName );
+	void changePublicName( const QString &publicName );
 	QString getPublicName() { return _publicName;}
 
 	void createChatSession();
@@ -130,9 +125,20 @@ private:
 	void connectInternal( const QString &server, uint port );
 
 	/**
-	 * Send raw data to the socket
+	 * Send an MSN command to the socket
 	 */
-	void sendData( const QString &data );
+	void sendCommand( const QString &cmd, const QString &args = QString::null );
+
+	/**
+	 * The id of the message sent to the MSN server. This ID will increment
+	 * for each subsequent message sent or received.
+	 */
+	uint m_id;
+
+	/**
+	 * Convert an entry of the Status enum back to a string
+	 */
+	QString statusToString( int status ) const;
 };
 
 #endif
