@@ -56,10 +56,10 @@ class JabberProtocol : public KopeteProtocol
 
 	friend class JabberContact;
 	friend class JabberGroupChat;
-	friend class DlgJabberServices;
-	friend class DlgJabberRegister;
-	friend class DlgJabberBrowse;
-	friend class DlgJabberChatJoin;
+	friend class dlgJabberServices;
+	friend class dlgJabberRegister;
+	friend class dlgJabberBrowse;
+	friend class dlgJabberChatJoin;
 	friend class dlgJabberStatus;
 
 public:

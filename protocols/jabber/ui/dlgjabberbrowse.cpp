@@ -27,7 +27,7 @@
 #include "jabberprotocol.h"
 #include "dlgjabberbrowse.h"
 
-DlgJabberBrowse::DlgJabberBrowse(const Jabber::Jid &jid, QWidget *parent, const char *name ) : dlgBrowse(parent,name)
+dlgJabberBrowse::dlgJabberBrowse(const Jabber::Jid &jid, QWidget *parent, const char *name ) : dlgBrowse(parent,name)
 {
 
 	// disable the left margin
@@ -47,7 +47,7 @@ DlgJabberBrowse::DlgJabberBrowse(const Jabber::Jid &jid, QWidget *parent, const 
 	task->go(true);
 }
 
-void DlgJabberBrowse::slotGotForm()
+void dlgJabberBrowse::slotGotForm()
 {
 	Jabber::JT_Search *task = (Jabber::JT_Search *)sender();
 	
@@ -85,7 +85,7 @@ void DlgJabberBrowse::slotGotForm()
 
 }
 
-void DlgJabberBrowse::slotSendForm()
+void dlgJabberBrowse::slotSendForm()
 {
 
 	Jabber::JT_Search *task = new Jabber::JT_Search(JabberProtocol::protocol()->jabberClient->rootTask());
@@ -100,7 +100,7 @@ void DlgJabberBrowse::slotSendForm()
 
 }
 
-void DlgJabberBrowse::slotSentForm()
+void dlgJabberBrowse::slotSentForm()
 {
 	Jabber::JT_Search *task = (Jabber::JT_Search *)sender();
 
@@ -131,7 +131,7 @@ void DlgJabberBrowse::slotSentForm()
 	
 }
 
-DlgJabberBrowse::~DlgJabberBrowse()
+dlgJabberBrowse::~dlgJabberBrowse()
 {
 }
 

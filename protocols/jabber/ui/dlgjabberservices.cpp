@@ -35,7 +35,7 @@
 
 #include "dlgjabberservices.moc"
 
-DlgJabberServices::DlgJabberServices(QWidget *parent, const char *name ) : dlgServices(parent,name)
+dlgJabberServices::dlgJabberServices(QWidget *parent, const char *name ) : dlgServices(parent,name)
 {
 
 	if(JabberProtocol::protocol()->isConnected())
@@ -77,7 +77,7 @@ DlgJabberServices::DlgJabberServices(QWidget *parent, const char *name ) : dlgSe
 
 }
 
-void DlgJabberServices::slotSetSelection(int row, int, int, const QPoint &)
+void dlgJabberServices::slotSetSelection(int row, int, int, const QPoint &)
 {
 
 	tblServices->clearSelection(true);
@@ -98,7 +98,7 @@ void DlgJabberServices::slotSetSelection(int row, int, int, const QPoint &)
 	
 }
 
-void DlgJabberServices::slotQuery()
+void dlgJabberServices::slotQuery()
 {
 
 	if(!JabberProtocol::protocol()->isConnected())
@@ -116,16 +116,16 @@ void DlgJabberServices::slotQuery()
 	if(leServer->text().isEmpty())
 		leServer->setText(Jid(JabberProtocol::protocol()->myContact->contactId()).host());
 
-	kdDebug(14130) << "[DlgJabberServices] Trying to fetch a list of services at " << leServer->text() << endl;
+	kdDebug(14130) << "[dlgJabberServices] Trying to fetch a list of services at " << leServer->text() << endl;
 
 	serviceTask->get(leServer->text());
 	serviceTask->go(false);
 
 }
 
-void DlgJabberServices::slotQueryFinished()
+void dlgJabberServices::slotQueryFinished()
 {
-	kdDebug(14130) << "[DlgJabberServices] Query task finished" << endl;
+	kdDebug(14130) << "[dlgJabberServices] Query task finished" << endl;
 
 	Jabber::JT_GetServices *task = (Jabber::JT_GetServices *)sender();
 
@@ -149,27 +149,27 @@ void DlgJabberServices::slotQueryFinished()
 
 }
 
-void DlgJabberServices::slotRegister()
+void dlgJabberServices::slotRegister()
 {
 
-	DlgJabberRegister *registerDialog = new DlgJabberRegister(serviceTask->agents()[selectedRow].jid());
+	dlgJabberRegister *registerDialog = new dlgJabberRegister(serviceTask->agents()[selectedRow].jid());
 
 	registerDialog->show();
 	registerDialog->raise();
 
 }
 
-void DlgJabberServices::slotBrowse()
+void dlgJabberServices::slotBrowse()
 {
 
-	DlgJabberBrowse *browseDialog = new DlgJabberBrowse(serviceTask->agents()[selectedRow].jid());
+	dlgJabberBrowse *browseDialog = new dlgJabberBrowse(serviceTask->agents()[selectedRow].jid());
 
 	browseDialog->show();
 	browseDialog->raise();
 
 }
 
-DlgJabberServices::~DlgJabberServices()
+dlgJabberServices::~dlgJabberServices()
 {
 
 	delete serviceTask;

@@ -20,12 +20,12 @@
 #include "jabberprotocol.h"
 #include "dlgjabberchatjoin.h"
 
-DlgJabberChatJoin::DlgJabberChatJoin(QWidget *parent, const char *name ) : dlgChatJoin(parent,name)
+dlgJabberChatJoin::dlgJabberChatJoin(QWidget *parent, const char *name ) : dlgChatJoin(parent,name)
 {
 	connect(buttonOk, SIGNAL(clicked()), this, SLOT(slotDialogDone()));
 }
 
-void DlgJabberChatJoin::slotDialogDone()
+void dlgJabberChatJoin::slotDialogDone()
 {
 
 	if(!JabberProtocol::protocol()->isConnected())
@@ -39,7 +39,7 @@ void DlgJabberChatJoin::slotDialogDone()
 
 }
 
-DlgJabberChatJoin::~DlgJabberChatJoin()
+dlgJabberChatJoin::~dlgJabberChatJoin()
 {
 }
 

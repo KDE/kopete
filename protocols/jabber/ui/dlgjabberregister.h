@@ -33,15 +33,15 @@
   *@author Kopete developers
   */
 
-class DlgJabberRegister : public dlgRegister
+class dlgJabberRegister : public dlgRegister
 {
 
    Q_OBJECT
 
 public: 
 
-	DlgJabberRegister(const Jabber::Jid &jid, QWidget *parent=0, const char *name=0);
-	~DlgJabberRegister();
+	dlgJabberRegister(const Jabber::Jid &jid, QWidget *parent=0, const char *name=0);
+	~dlgJabberRegister();
 
 private slots:
 	void slotGotForm();

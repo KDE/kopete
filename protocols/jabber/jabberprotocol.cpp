@@ -64,24 +64,23 @@ JabberProtocol *JabberProtocol::protocolInstance = 0;
 
 K_EXPORT_COMPONENT_FACTORY(kopete_jabber, KGenericFactory<JabberProtocol>);
 
-JabberProtocol::JabberProtocol( QObject *parent, QString name, QStringList )
-: KopeteProtocol( parent, name ),
-	JabberOnline(    KopeteOnlineStatus::Online,  25, this, 0,  "jabber_online",  i18n( "Go O&nline" ),         i18n( "Online" ) ),
-	JabberChatty(    KopeteOnlineStatus::Online,  20, this, 1,  "jabber_chatty",  i18n( "Go F&ree to Chat" ),   i18n( "Free to Chat" ) ),
-	JabberAway(      KopeteOnlineStatus::Away,    25, this, 2,  "jabber_away",    i18n( "Go A&way" ),           i18n( "Away" ) ),
-	JabberXA(        KopeteOnlineStatus::Away,    20, this, 3,  "jabber_away",    i18n( "Go E&xtended Away" ),  i18n( "Extended Away" ) ),
-	JabberDND(       KopeteOnlineStatus::Away,    15, this, 4,  "jabber_na",      i18n( "Go &Do not Disturb" ), i18n( "Do not Disturb" ) ),
-	JabberOffline(   KopeteOnlineStatus::Offline, 20, this, 5,  "jabber_offline", i18n( "Go O&ffline" ),        i18n( "Offline" ) ),
-	JabberInvisible( KopeteOnlineStatus::Online,   5, this, 6,  "jabber_offline", i18n( "Go I&nvisible" ),      i18n( "Invisible" ) )
+JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList)
+	: KopeteProtocol(parent, name),
+	JabberOnline(KopeteOnlineStatus::Online, 25, this, 0, "jabber_online", i18n("Go O&nline" ), i18n("Online")),
+	JabberChatty(KopeteOnlineStatus::Online, 20, this, 1, "jabber_chatty", i18n("Set F&ree to Chat" ), i18n("Free to Chat")),
+	JabberAway(KopeteOnlineStatus::Away, 25, this, 2, "jabber_away", i18n("Set A&way"), i18n("Away")),
+	JabberXA(KopeteOnlineStatus::Away, 20, this, 3, "jabber_away", i18n("Set E&xtended Away"), i18n("Extended Away")),
+	JabberDND(KopeteOnlineStatus::Away, 15, this, 4, "jabber_na", i18n("Set &Do not Disturb"), i18n("Do not Disturb")),
+	JabberOffline(KopeteOnlineStatus::Offline, 20, this, 5, "jabber_offline", i18n("Go O&ffline"), i18n("Offline")),
+	JabberInvisible(KopeteOnlineStatus::Online, 5, this, 6, "jabber_offline", i18n("Set I&nvisible"), i18n("Invisible"))
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Loading ..." << endl;
 
-	// this is meant to be a singleton, so we will check if we have
-	// been loaded before
-	if (protocolInstance)
-	{
+	/* This is meant to be a singleton, so we will check if we have
+	 * been loaded before. */
+	if (protocolInstance) {
 		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Warning: Protocol already "
-				<< "loaded, not initializing again." << endl;
+				             << "loaded, not initializing again." << endl;
 		return;
 	}
 
@@ -90,9 +89,9 @@ JabberProtocol::JabberProtocol( QObject *parent, QString name, QStringList )
 	jabberClient = 0L;
 	registerFlag = 0;
 
-	// This is deleted in the destructor
+	/* This is deleted in the destructor. */
 	reasonDialog = 0L;
-	// This is not yet
+	/* This is not yet implemented. */
 	sendRawDialog = 0L;
 
 	myContact = 0L;
@@ -100,8 +99,8 @@ JabberProtocol::JabberProtocol( QObject *parent, QString name, QStringList )
 	initialPresence = JabberOnline;
 
 	preferences = new JabberPreferences("jabber_protocol", this);
-	QObject::connect( preferences, SIGNAL(saved()),
-					this, SLOT(slotSettingsChanged()));
+	QObject::connect(preferences, SIGNAL(saved()), this,
+			 SLOT(slotSettingsChanged()));
 
 	// read the Jabber ID from Kopete's configuration
 	KGlobal::config()->setGroup("Jabber");
@@ -114,105 +113,38 @@ JabberProtocol::JabberProtocol( QObject *parent, QString name, QStringList )
 	addAddressBookField( "messaging/xmpp", KopetePlugin::MakeIndexField );
 }
 
-JabberProtocol::~JabberProtocol()
-{
+JabberProtocol::~JabberProtocol() {
 	disconnect();
 
-	if(jabberClient)
-	{
+	if(jabberClient) {
 		delete jabberClient;
 		jabberClient = 0L;
 	}
 
-	// kick the SSL library
+	/* Kick the SSL library. */
 	Jabber::Stream::unloadSSL();
 
-	// make sure that the next attempt to load Jabber
-	// re-initializes the protocol class
+	/* make sure that the next attempt to load Jabber
+	 * re-initializes the protocol class. */
 	protocolInstance = 0L;
 
-	delete actionGoOnline;
-	delete actionGoChatty;
-	delete actionGoAway;
-	delete actionGoXA;
-	delete actionGoDND;
-	delete actionGoInvisible;
-	delete actionGoOffline;
-
-	delete actionServices;
-	delete actionSendRaw;
-	delete actionEditVCard;
-	delete actionEmptyMail;
-
-	delete actionStatusMenu;
-
-	// Delete the send raw dialog
+	/* Delete the send raw dialog. */
 	delete sendRawDialog;
 }
 
-void JabberProtocol::errorConnectFirst()
-{
-	KMessageBox::error( qApp->mainWidget(),
-			i18n( "Please connect first" ), i18n( "Error" ) );
+void JabberProtocol::errorConnectFirst() {
+	KMessageBox::error(qApp->mainWidget(), i18n("Please connect first"),
+			   i18n("Error"));
 }
 
-KActionMenu *JabberProtocol::protocolActions()
-{
-	return actionStatusMenu;
+KActionMenu *JabberProtocol::protocolActions() {
+	KActionMenu *protocolMenu = new KActionMenu();
+	for (JabberAccount *tmpAccount = accounts.first(); tmpAccount != accounts.last(); tmpAccount = accounts.next())
+		protocolMenu->insert(tmpAccount->actionMenu());
+	return protocolMenu;
 }
 
-void JabberProtocol::initActions()
-{
-
-	actionGoOnline = new KAction(i18n("Online"), "jabber_online", 0,
-					this, SLOT(slotGoOnline()), this, "actionJabberConnect");
-	actionGoChatty = new KAction(i18n("Free to Chat"), "jabber_chatty", 0,
-					this, SLOT(slotGoChatty()), this, "actionJabberChatty");
-	actionGoAway = new KAction(i18n("Away"), "jabber_away", 0,
-					this, SLOT(slotGoAway()), this, "actionJabberAway");
-	actionGoXA = new KAction(i18n("Extended Away"), "jabber_away", 0,
-					this, SLOT(slotGoXA()), this, "actionJabberXA");
-	actionGoDND = new KAction(i18n("Do Not Disturb"), "jabber_na", 0,
-					this, SLOT(slotGoDND()), this, "actionJabberDND");
-	actionGoInvisible = new KAction(i18n("Invisible"), "jabber_invisible", 0,
-					this, SLOT(slotGoInvisible()), this, "actionJabberInvisible");
-	actionGoOffline = new KAction(i18n("Offline"), "jabber_offline", 0,
-					this, SLOT(slotGoOffline()), this, "actionJabberDisconnect");
-	actionJoinChat = new KAction(i18n("Join Groupchat..."), "filenew", 0,
-					this, SLOT(slotJoinNewChat()), this, "actionJoinChat");
-	actionServices = new KAction(i18n("Services..."), "filenew", 0,
-					this, SLOT(slotGetServices()), this, "actionJabberServices");
-	actionSendRaw = new KAction(i18n("Send Raw Packet to Server..."),
-					"filenew", 0, this, SLOT(slotSendRaw()),
-					this, "actionJabberSendRaw");
-	actionEditVCard = new KAction(i18n("Edit User Info..."), "identity", 0,
-					this, SLOT(slotEditVCard()), this, "actionEditVCard");
-	actionEmptyMail = new KAction(i18n("New Email Message..."), "filenew", 0,
-					this, SLOT(slotEmptyMail()), this, "actionEmptyMail");
-
-	actionStatusMenu = new KActionMenu("Jabber", this);
-
-	// will be overwritten in slotSettingsChanged to contain the active JID
-	menuTitleId = actionStatusMenu->popupMenu()->insertTitle("");
-
-	actionStatusMenu->insert(actionGoOnline);
-	actionStatusMenu->insert(actionGoChatty);
-	actionStatusMenu->insert(actionGoAway);
-	actionStatusMenu->insert(actionGoXA);
-	actionStatusMenu->insert(actionGoDND);
-	actionStatusMenu->insert(actionGoInvisible);
-	actionStatusMenu->insert(actionGoOffline);
-	actionStatusMenu->popupMenu()->insertSeparator();
-
-	actionStatusMenu->insert(actionJoinChat);
-	actionStatusMenu->popupMenu()->insertSeparator();
-	actionStatusMenu->insert(actionServices);
-
-	actionStatusMenu->insert(actionSendRaw);
-	actionStatusMenu->insert(actionEditVCard);
-	actionStatusMenu->popupMenu()->insertSeparator();
-	actionStatusMenu->insert(actionEmptyMail);
-
+void JabberProtocol::initActions() {
 	// initialize icon that sits in Kopete's status bar
 	setStatusIcon("jabber_offline");
 
@@ -240,10 +172,9 @@ void JabberProtocol::initActions()
 	// create a contact instance for self
 	QString userId = KGlobal::config()->readEntry("UserID", "");
 	QString server = KGlobal::config()->readEntry("Server", "jabber.org");
-	myContact = new JabberContact(
-					QString("%1@%2").arg(userId, 1).arg(server, 2),
-					userId, QStringList(i18n("Unknown")),
-					this, 0L, QString::null);
+	myContact = new JabberContact(QString("%1@%2").arg(userId, 1).arg(server, 2),
+				      userId, QStringList(i18n("Unknown")),
+				      this, 0L, QString::null);
 
 }
 
@@ -251,26 +182,27 @@ void JabberProtocol::connect()
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] connect()" << endl;
 
-	// don't do anything if we are already connected
+	/* Don't do anything if we are already connected. */
 	if (isConnected())
-			return;
+		return;
 
-	// this is dirty but has to be done:
-	// if a previous connection attempt failed, psi
-	// doesn't handle recovering too well. we are not
-	// allowed to call close in the slotConnected() slot
-	// since it causes a crash, so we have to delete the
-	// psi backend altogether here for safety if it still
-	// exists
-	if(jabberClient)
-	{
+	/* this is dirty but has to be done:
+	 * if a previous connection attempt failed, psi
+	 * doesn't handle recovering too well. we are not
+	 * allowed to call close in the slotConnected() slot
+	 * since it causes a crash, so we have to delete the
+	 * psi backend altogether here for safety if it still
+	 * exists.
+	 *
+	 * yo, right, but use c-style comments for multi-line, eh? -ds */
+	if(jabberClient) {
 		jabberClient->close();
 		delete jabberClient;
 		jabberClient = 0L;
 	}
 
-	// instantiate new Psi backend class for handling the protocol
-	// and setup slots and signals
+	/* instantiate new Psi backend class for handling the protocol
+	 * and setup slots and signals */
 	if(!jabberClient)
 	{
 		jabberClient = new Jabber::Client(this);
@@ -1294,7 +1226,7 @@ void JabberProtocol::slotJoinNewChat()
 		return;
 	}
 
-	DlgJabberChatJoin *dlg = new DlgJabberChatJoin(qApp->mainWidget());
+	dlgJabberChatJoin *dlg = new dlgJabberChatJoin(qApp->mainWidget());
 	dlg->show();
 	dlg->raise();
 
@@ -1493,7 +1425,7 @@ void JabberProtocol::removeContact(const Jabber::RosterItem &item)
 void JabberProtocol::slotGetServices()
 {
 
-	DlgJabberServices *dialog = new DlgJabberServices();
+	dlgJabberServices *dialog = new dlgJabberServices();
 
 	dialog->show();
 	dialog->raise();

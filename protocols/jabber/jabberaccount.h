@@ -31,7 +31,6 @@ class JabberAccount : public KopeteAccount
 	Q_OBJECT
 
 public:
-
 	/****************************************
 	 * KopeteAccount reimplementation start *
 	 ****************************************/
@@ -86,6 +85,26 @@ private:
 	 */
 	Jabber::Client *client;
 
+	/* Set up our actions for the status menu. */
+	void initActions();
+	
+	/* Actions for the menu. */
+        KAction *actionGoOnline;
+        KAction *actionGoChatty;
+        KAction *actionGoAway;
+        KAction *actionGoXA;
+        KAction *actionGoDND;
+        KAction *actionGoInvisible;
+        KAction *actionGoOffline;
+        KAction *actionJoinChat;
+        KAction *actionServices;
+        KAction *actionSendRaw;
+        KAction *actionEditVCard;
+        KAction *actionEmptyMail;
+        KActionMenu *actionStatusMenu;
+
+        dlgJabberStatus *reasonDialog;
+        dlgJabberSendRaw *sendRawDialog;
 };
 
 #endif

@@ -30,14 +30,14 @@
   *@author Kopete developers
   */
 
-class DlgJabberBrowse : public dlgBrowse
+class dlgJabberBrowse : public dlgBrowse
 {
 
    Q_OBJECT
 
 public: 
-	DlgJabberBrowse(const Jabber::Jid &jid, QWidget *parent=0, const char *name=0);
-	~DlgJabberBrowse();
+	dlgJabberBrowse(const Jabber::Jid &jid, QWidget *parent=0, const char *name=0);
+	~dlgJabberBrowse();
 
 private slots:
 	void slotGotForm();

@@ -29,14 +29,14 @@
   *@author Kopete developers
   */
 
-class DlgJabberServices : public dlgServices
+class dlgJabberServices : public dlgServices
 {
 
    Q_OBJECT
 
 public: 
-	DlgJabberServices(QWidget *parent=0, const char *name=0);
-	~DlgJabberServices();
+	dlgJabberServices(QWidget *parent=0, const char *name=0);
+	~dlgJabberServices();
 
 private slots:
 	void slotSetSelection(int row, int, int, const QPoint &);

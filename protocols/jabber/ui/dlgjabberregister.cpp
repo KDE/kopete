@@ -31,7 +31,7 @@
 #include "jabberformtranslator.h"
 #include "dlgjabberregister.h"
 
-DlgJabberRegister::DlgJabberRegister(const Jabber::Jid &jid, QWidget *parent, const char *name ) : dlgRegister(parent,name)
+dlgJabberRegister::dlgJabberRegister(const Jabber::Jid &jid, QWidget *parent, const char *name ) : dlgRegister(parent,name)
 {
 
 	Jabber::JT_Register *task = new Jabber::JT_Register(JabberProtocol::protocol()->jabberClient->rootTask());
@@ -45,7 +45,7 @@ DlgJabberRegister::DlgJabberRegister(const Jabber::Jid &jid, QWidget *parent, co
 
 }
 
-void DlgJabberRegister::slotGotForm()
+void dlgJabberRegister::slotGotForm()
 {
 	Jabber::JT_Register *task = (Jabber::JT_Register *)sender();
 
@@ -75,7 +75,7 @@ void DlgJabberRegister::slotGotForm()
 
 }
 
-void DlgJabberRegister::slotSendForm()
+void dlgJabberRegister::slotSendForm()
 {
 
 	Jabber::JT_Register *task = new Jabber::JT_Register(JabberProtocol::protocol()->jabberClient->rootTask());
@@ -90,7 +90,7 @@ void DlgJabberRegister::slotSendForm()
 
 }
 
-void DlgJabberRegister::slotSentForm()
+void dlgJabberRegister::slotSentForm()
 {
 	Jabber::JT_Register *task = (Jabber::JT_Register *)sender();
 
@@ -114,7 +114,7 @@ void DlgJabberRegister::slotSentForm()
 
 }
 
-DlgJabberRegister::~DlgJabberRegister()
+dlgJabberRegister::~dlgJabberRegister()
 {
 
 	delete translator;

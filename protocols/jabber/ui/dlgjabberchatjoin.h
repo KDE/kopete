@@ -25,14 +25,14 @@
   *@author Kopete developers
   */
 
-class DlgJabberChatJoin : public dlgChatJoin
+class dlgJabberChatJoin : public dlgChatJoin
 {
 
 	Q_OBJECT
 
 public: 
-	DlgJabberChatJoin(QWidget *parent=0, const char *name=0);
-	~DlgJabberChatJoin();
+	dlgJabberChatJoin(QWidget *parent=0, const char *name=0);
+	~dlgJabberChatJoin();
 
 private slots:
 	void slotDialogDone();
