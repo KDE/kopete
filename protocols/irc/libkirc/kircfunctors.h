@@ -23,7 +23,8 @@
 class KIRCMethodFunctorCall
 {
 public:
-	inline operator bool() { return isValid(); }
+	inline operator bool(void)
+		{ return isValid(); }
 
 	virtual bool isValid()=0;
 
@@ -83,7 +84,7 @@ public:
 
 	virtual bool operator()(const KIRCMessage &msg)=0;
 
-	KIRCMethodFunctorBase<TClass>(TClass *obj,  bool (*method)(const KIRCMessage &msg),
+	KIRCMethodFunctorBase<TClass>(TClass *obj,  bool (TClass::*method)(const KIRCMessage &msg),
 			 int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0)
 		: m_obj(obj),m_method(method),
 		  m_argsSize_min(argsSize_min), m_argsSize_max(argsSize_max), m_helpMessage(QString::fromLatin1(helpMessage))
