@@ -71,6 +71,7 @@ class  MetaContact::Private
 	QString metaContactId;
 	OnlineStatus::StatusType onlineStatus;
 	static bool s_addrBookWritePending;
+	bool photoSyncedWithKABC;
 };
 
 KABC::AddressBook* MetaContact::m_addressBook = 0L;
@@ -104,6 +105,7 @@ MetaContact::MetaContact()
 	setNameSource( 0 );
 	setPhotoSource( 0 );
 	d->temporary = false;
+	d->photoSyncedWithKABC=false;
 
 	d->onlineStatus = Kopete::OnlineStatus::Offline;
 
@@ -697,36 +699,17 @@ void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 	}
 	else if ( key == Global::Properties::self()->photo().key() )
 	{
-#if 0 //the export of the image to the adressbook is actualy disabled.
-		// If the metacontact is linked to a kabc entry
-		if ( !d->metaContactId.isEmpty() && !newValue.isNull())
-		{
-			KABC::Addressee theAddressee = addressBook()->findByUid( metaContactId() );
-
-			if ( !theAddressee.isEmpty() && (subcontact== photoSource() || photo().isNull() ) )
-			{
-				QImage img;
-				if(newValue.canCast( QVariant::Image ))
-					img=newValue.toImage();
-				else if(newValue.canCast( QVariant::Pixmap ))
-					img=newValue.toPixmap().convertToImage();
-
-				if(img.isNull())
-					theAddressee.setPhoto(newValue.toString());
-				else
-					theAddressee.setPhoto(img);
-
-				addressBook()->insertAddressee(theAddressee);
-				writeAddressBook();
-				setPhotoSource(subcontact);
-			}
-		}
-#endif
 		if(photo().isNull() && photoSource() == 0L)
+		{
 			setPhotoSource(subcontact);
+			setPhotoSyncedWithKABC(true);
+		}
 		else if(photoSource() == subcontact)
+		{
+			if(d->photoSyncedWithKABC)
+				setPhotoSyncedWithKABC(true);
 			emit photoChanged();
-
+		}
 	}
 
 	//TODO:  check if the property was persistent, and emit, not only when it's the displayname
@@ -840,7 +823,7 @@ const QDomElement MetaContact::toXML()
 	if( !d->metaContactId.isEmpty()  )
 	{
 		QDomElement photo = metaContact.createElement( QString::fromLatin1("photo" ) );
-		//photo.setAttribute( QString::fromLatin1("track") , QString::fromLatin1( d->isTrackingPhoto ? "1" : "0" ) );
+		photo.setAttribute( QString::fromLatin1("syncWithKABC") , QString::fromLatin1( d->photoSyncedWithKABC ? "1" : "0" ) );
 		displayName.setAttribute( PSCID_ELEM, d->nameSourceCID );
 		displayName.setAttribute( PSPID_ELEM, d->nameSourcePID );
 		displayName.setAttribute( PSAID_ELEM, d->nameSourceAID );
@@ -901,6 +884,7 @@ bool MetaContact::fromXML( const QDomElement& element )
 			d->photoSourceCID = contactElement.attribute( PSCID_ELEM );
 			d->photoSourcePID = contactElement.attribute( PSPID_ELEM );
 			d->photoSourceAID = contactElement.attribute( PSAID_ELEM );
+			d->photoSyncedWithKABC = contactElement.attribute( QString::fromLatin1( "syncWithKABC" ) ) == QString::fromLatin1("1") ;
 		}
 		else if( contactElement.tagName() == QString::fromLatin1( "groups" ) )
 		{
@@ -1034,6 +1018,44 @@ void MetaContact::setMetaContactId( const QString& newMetaContactId )
 
 	emit onlineStatusChanged( this, d->onlineStatus );
 	emit persistentDataChanged();
+}
+
+bool MetaContact::isPhotoSyncedWithKABC() const
+{
+	return d->photoSyncedWithKABC;
+}
+
+void MetaContact::setPhotoSyncedWithKABC(bool b)
+{
+	d->photoSyncedWithKABC=b;
+	if(b)
+	{
+		Contact *source=photoSource();
+		if(!source)
+			return;
+		QVariant newValue=source->property( Kopete::Global::Properties::self()->photo() ).value();
+		if ( !d->metaContactId.isEmpty() && !newValue.isNull())
+		{
+			KABC::Addressee theAddressee = addressBook()->findByUid( metaContactId() );
+
+			if ( !theAddressee.isEmpty() )
+			{
+				QImage img;
+				if(newValue.canCast( QVariant::Image ))
+					img=newValue.toImage();
+				else if(newValue.canCast( QVariant::Pixmap ))
+					img=newValue.toPixmap().convertToImage();
+
+				if(img.isNull())
+					theAddressee.setPhoto(newValue.toString());
+				else
+					theAddressee.setPhoto(img);
+
+				addressBook()->insertAddressee(theAddressee);
+				writeAddressBook();
+			}
+		}
+	}
 }
 
 void MetaContact::updateKABC()

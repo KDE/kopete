@@ -156,6 +156,19 @@ public:
 	void setPhotoSource( Contact* contact );
 
 	/**
+	 * @return true if when a subcontact change his photo, the photo will be set to the kabc contact.
+	 */
+	bool isPhotoSyncedWithKABC() const;
+
+	/**
+	 * Set if the photo should be synced with the adressbook when the photosource change his photo
+	 * 
+	 * If  \p b is true, the photo will be synced immediatly if possible
+	 */
+	void setPhotoSyncedWithKABC(bool b);
+		
+
+	/**
 	 * Temporary contacts will not be serialized.
 	 * If they are added to the contactlist, they appears in a special "Not in your contactlist" group.
 	 * (the @ref Group::temporary  group)
