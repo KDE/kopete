@@ -37,10 +37,8 @@ class OscarSocket;
 class OscarDirectConnection : public OscarConnection  {
 	Q_OBJECT
 public: 
-	OscarDirectConnection(const QString &sn, const QString &connName, char cookie[8], QObject *parent=0, const char *name=0);
+	OscarDirectConnection(const QString &sn, const QString &connName, const QByteArray &cookie, QObject *parent=0, const char *name=0);
 	~OscarDirectConnection();
-  /** Sets the socket to use socket, state() to connected, and emit connected() */
-  virtual void setSocket( int socket );
   /** Sends the direct IM message to buddy */
   virtual void sendIM(const QString &message, bool isAuto);
   /** Sends a typing notification to the server

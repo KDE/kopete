@@ -192,7 +192,7 @@ static const char *msgerrreason[] = {
 
 static const int msgerrreasonlen = 25;
 
-OscarSocket::OscarSocket( const QString &connName, char *cookie, QObject *parent, const char *name)
+OscarSocket::OscarSocket( const QString &connName, const QByteArray &cookie, QObject *parent, const char *name)
     : OscarConnection("unknown", connName, Server, cookie, parent,name)
 {
     connect(this, SIGNAL(connectionClosed()), this, SLOT(OnConnectionClosed()));
@@ -1124,7 +1124,7 @@ void OscarSocket::parseMsgRights(Buffer &/*inbuf*/)
 void OscarSocket::parseIM(Buffer &inbuf)
 {
 		Buffer tmpbuf;
-		char *cook = 0L;
+		QByteArray cook(8);
     WORD type = 0;
     WORD length = 0;
     //This is probably the hardest thing to do in oscar
@@ -1272,7 +1272,9 @@ void OscarSocket::parseIM(Buffer &inbuf)
 		    // 2 - Accept
 		    msgtype = tmpbuf.getWord();
 		    //next comes the cookie, which should match the ICBM cookie
-		    cook = tmpbuf.getBlock(8);
+		    char *c = tmpbuf.getBlock(8);
+		    cook.duplicate(c,8);
+		    delete [] c;
 		    //the next 16 bytes are the capability block (what kind of request is this?)
 		    char *cap = tmpbuf.getBlock(0x10);
 		    int identified = 0;
@@ -1397,12 +1399,12 @@ void OscarSocket::parseIM(Buffer &inbuf)
 					kdDebug(14150) << k_funcinfo << "adding " << u.sn << " to pending list." << endl;
 					if ( capflag & AIM_CAPS_IMIMAGE ) //if it is a direct IM rendezvous
 					{
-						sockToUse->addPendingConnection(u.sn, cook, 0L, qh.toString(), 4443);
+						sockToUse->addPendingConnection(u.sn, cook, 0L, qh.toString(), 4443, DirectInfo::Outgoing);
 						emit gotDirectIMRequest(u.sn);
 					}
 					else // file send
 					{
-						sockToUse->addPendingConnection(u.sn, cook, 0L, qh.toString(), remotePort);
+						sockToUse->addPendingConnection(u.sn, cook, 0L, qh.toString(), remotePort, DirectInfo::Outgoing);
 						emit gotFileSendRequest(u.sn, message, fileName, fileSize);
 					}
 				}
@@ -1418,8 +1420,6 @@ void OscarSocket::parseIM(Buffer &inbuf)
 					}
 					sockToUse->removeConnection(u.sn);
 				}
-        if (cook)
-		    	delete [] cook;
 				break;
 		default: //unknown channel
 				kdDebug(14150) << "[OSCAR] Error: unknown ICBM channel " << channel << endl;
@@ -1727,8 +1727,10 @@ void OscarSocket::sendChatJoin(const QString &/*name*/, const int /*exchange*/)
 /** Handles a redirect */
 void OscarSocket::parseRedirect(Buffer &inbuf)
 {
+		// NOTE: this function does not work, but it is never
+		// called unless you want to connect to the advertisements server
     kdDebug(14150) << "[OSCAR] Parsing redirect" << endl;
-    OscarConnection *servsock = new OscarConnection(getSN(),"Redirect",Redirect);
+    OscarConnection *servsock = new OscarConnection(getSN(),"Redirect",Redirect,QByteArray(8));
     QList<TLV> tl = inbuf.getTLVList();
     int n;
     QString host;
@@ -1994,7 +1996,7 @@ void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousT
 		OncomingSocket *sockToUse = serverSocket(rendezvousType);
     Buffer outbuf;
     outbuf.addSnac(0x0004,0x0006,0x0000,0x00000000);
-    char ck[8];
+    QByteArray ck(8);
    	//generate a random message cookie
    	for (int i=0;i<8;i++)
 		{
@@ -2004,7 +2006,7 @@ void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousT
 		//add this to the list of pending connections if it is a request
 		if ( type == 0 )
 		{
-			sockToUse->addPendingConnection(sn, ck, finfo, QString::null, 0);
+			sockToUse->addPendingConnection(sn, ck, finfo, QString::null, 0, DirectInfo::Incoming);
 		}
     outbuf.addString(ck,8);
     //channel 2
@@ -2397,12 +2399,11 @@ void OscarSocket::sendFileSendRequest(const QString &sn, const KFileItem &finfo)
 }
 
 /** Accepts a file transfer from sn */
-void OscarSocket::sendFileSendAccept(const QString &sn, const QString &fileName)
+OscarConnection * OscarSocket::sendFileSendAccept(const QString &sn, const QString &fileName)
 {
 	sendRendezvous(sn, 0x0001, AIM_CAPS_SENDFILE);
 	mFileTransferMgr->addFileInfo(sn, new KFileItem(KFileItem::Unknown, KFileItem::Unknown, fileName));
-	if ( !mFileTransferMgr->establishOutgoingConnection(sn) )
-		kdDebug(14150) << k_funcinfo << sn << " not found in pending connection list" << endl;
+	return mFileTransferMgr->establishOutgoingConnection(sn);
 }
 
 /** Returns the appropriate server socket, based on the capability flag it is passed. */
@@ -2418,6 +2419,13 @@ OncomingSocket * OscarSocket::serverSocket(DWORD capflag)
 void OscarSocket::sendFileSendDeny(const QString &sn)
 {
 	sendRendezvous(sn, 0x0002, AIM_CAPS_SENDFILE);
+}
+
+/** Called when a file transfer begins */
+void OscarSocket::OnFileTransferBegun(OscarConnection *con, const QString& file, const unsigned long size, const QString &recipient)
+{
+	kdDebug() << k_funcinfo << "emitting transferBegun()" << endl;
+	emit transferBegun(con, file, size, recipient);
 }
 
 /*

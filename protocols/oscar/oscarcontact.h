@@ -32,7 +32,7 @@ struct UserInfo;
 class QTimer;
 class OscarProtocol;
 class KopeteMessageManager;
-class OscarProtocol;
+class OscarConnection;
 
 class OscarContact : public KopeteContact
 {
@@ -149,20 +149,22 @@ private slots: // Private slots
 	void slotWarn(void);
 	/** Called when the status of the Kopete user(behind this computer)'s status has changed */
 	void slotMainStatusChanged(int);
-	/** Called when we want to block the contact */
-	void slotBlock(void);
-	/** Called when we want to connect directly to this contact */
-	void slotDirectConnect();
-	/** Called when we become directly connected to the contact */
-	void slotDirectIMReady(QString name);
-	/** Called when the direct connection to name has been terminated */
-	void slotDirectIMConnectionClosed(QString name);
-	/** Called when someone wants to send us a file */
-	void slotGotFileSendRequest(QString sn, QString message, QString filename, unsigned long filesize);
-	/** Called when we deny a transfer */
-	void slotTransferDenied(KopeteTransfer *tr);
-	/** Called when a pending transfer has been accepted */
-	void slotTransferAccepted(KopeteTransfer *, const QString &fileName);
+  /** Called when we want to block the contact */
+  void slotBlock(void);
+  /** Called when we want to connect directly to this contact */
+  void slotDirectConnect();
+  /** Called when we become directly connected to the contact */
+  void slotDirectIMReady(QString name);
+  /** Called when the direct connection to name has been terminated */
+  void slotDirectIMConnectionClosed(QString name);
+  /** Called when someone wants to send us a file */
+  void slotGotFileSendRequest(QString sn, QString message, QString filename, unsigned long filesize);
+  /** Called when we deny a transfer */
+  void slotTransferDenied(const KopeteFileTransferInfo &tr);
+  /** Called when a pending transfer has been accepted */
+  void slotTransferAccepted(KopeteTransfer *, const QString &fileName);
+  /** Called when a file transfer begins */
+  void slotTransferBegun(OscarConnection *con, const QString& file, const unsigned long size, const QString &recipient);
 };
 
 #endif

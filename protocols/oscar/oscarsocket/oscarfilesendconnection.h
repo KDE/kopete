@@ -60,19 +60,19 @@ struct OFT2 { //OFT2 header
 class OscarFileSendConnection : public OscarConnection  {
 	Q_OBJECT
 public: 
-	OscarFileSendConnection(const KFileItem *finfo, const QString &sn, const QString &connName, char cookie[8], QObject *parent=0, const char *name=0);
+	OscarFileSendConnection(const KFileItem *finfo, const QString &sn, const QString &connName, const QByteArray &cookie, QObject *parent=0, const char *name=0);
 	~OscarFileSendConnection();
   /** Sends out an OFT2 block to the peer, using the specified header and buffer data */
   void sendOFT2Block(const OFT2 &oft, const Buffer &data, bool nullCookie);
   /** Calls OscarConnection::setSocket
 			sends file send request header */
   virtual void setSocket( int socket );
-  
+  /** Sends request to the client telling he/she that we want to send this file */
+  virtual void sendFileSendRequest(void);
+
 private: // Private methods
   /** Gets an OFT2 header from the socket */
   OFT2 getOFT2(void);
-  /** Sends request to the client telling he/she that we want to send this file */
-  void sendFileSendRequest(void);
   /** Sends an acceptance of the information the peer has sent us and tell the peer we are ready for the file(s) */
   void sendAcceptTransfer(OFT2 &hdr);
   /** Sends the file to the peer, just raw data */
@@ -99,6 +99,10 @@ private: // Private members
   Buffer mBuffer;
   /** The name (from peer) of the file to be transferred */
   QString mFileName;
+  /** The checksum reported by the peer */
+  DWORD mCheckSum;
+  /** The mod time reported by peer */
+  DWORD mModTime;
 
 private slots: // Private slots
   /** Called when the kio job is done */
@@ -107,6 +111,8 @@ private slots: // Private slots
   void slotKIOData(KIO::Job *job, const QByteArray &data);
   /** Called when the KIO slave wants data */
   void slotKIODataReq(KIO::Job *job, QByteArray &data);
+  /** Called when bytes are written */
+  void slotBytesWritten( int nBytes );
 };
 
 #endif

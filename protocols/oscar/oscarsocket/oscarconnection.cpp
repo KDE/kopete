@@ -20,14 +20,13 @@
 #include "oscarconnection.h"
 
 OscarConnection::OscarConnection(const QString &sn, const QString &connName,
-	ConnectionType type, char *cookie, QObject *parent, const char *name)
+	ConnectionType type, const QByteArray &cookie, QObject *parent, const char *name)
 	: QSocket(parent, name)
 {
 	mConnName = connName;
 	mConnType = type;
 	mSN = sn;
-  for (int i=0;i<8;i++)
-	 	mCookie[i] = cookie[i];
+	mCookie.duplicate(cookie);
 
   connect(this, SIGNAL(readyRead()), this, SLOT(slotRead()));
  	connect(this, SIGNAL(connected()), this, SLOT(slotConnected()));
@@ -75,23 +74,23 @@ void OscarConnection::setSN(const QString &newSN)
 }
 
 /** Sends the direct IM message to buddy */
-void OscarConnection::sendIM(const QString &message, bool isAuto)
+void OscarConnection::sendIM(const QString &/*message*/, bool /*isAuto*/)
 {
-	kdDebug() << "[OscarConnection] sendIM not implemented in this object! " << endl;
+	kdDebug(14150) << "[OscarConnection] sendIM not implemented in this object! " << endl;
 }
 
 /** Sends a typing notification to the server
 		@param notifyType Type of notify to send
  */
-void OscarConnection::sendTypingNotify(TypingNotify notifyType)
+void OscarConnection::sendTypingNotify(TypingNotify /*notifyType*/)
 {
-	kdDebug() << "[OscarConnection] sendTypingNotify not implemented in this object! " << endl;
+	kdDebug(14150) << "[OscarConnection] sendTypingNotify not implemented in this object! " << endl;
 }
 
 /** Called when we have established a connection */
 void OscarConnection::slotConnected(void)
 {
-	kdDebug() << "[OscarConnection] We are connected to " << connectionName() << endl;
+	kdDebug(14150) << "[OscarConnection] We are connected to " << connectionName() << endl;
 	// Announce that we are ready for use, if it's not the server socket
 	if ( mConnType != Server )
 		emit connectionReady(connectionName());
@@ -100,9 +99,23 @@ void OscarConnection::slotConnected(void)
 /** Called when the connection is closed */
 void OscarConnection::slotConnectionClosed(void)
 {
-	kdDebug() << "[OscarDirectConnection] connection with " << connectionName() << "lost." << endl;
+	kdDebug(14150) << "[OscarDirectConnection] connection with " << connectionName() << "lost." << endl;
 	emit protocolError(QString("Connection with %1 lost").arg(connectionName()), 0);
 	emit connectionClosed(connectionName());
 }
+
+/** Sends request to the client telling he/she that we want to send this file */
+void OscarConnection::sendFileSendRequest(void)
+{
+	kdDebug(14150) << k_funcinfo << "sendFileSendRequest not implemented in this object! " << endl;
+}
+
+/** Sets the socket to use socket, state() to connected, and emit connected() */
+void OscarConnection::setSocket( int socket )
+{
+	QSocket::setSocket(socket);
+	emit connected();
+}
+
 
 #include "oscarconnection.moc"

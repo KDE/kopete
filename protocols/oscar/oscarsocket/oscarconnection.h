@@ -43,7 +43,7 @@ public:
 	};
 
 	OscarConnection(const QString &sn, const QString &connName, ConnectionType type,
-		char *cookie = "ABCDEFGH", QObject *parent=0, const char *name=0);
+		const QByteArray &cookie, QObject *parent=0, const char *name=0);
 	~OscarConnection();
 
 	/** Sets the pointer to the debug dialog */
@@ -61,7 +61,9 @@ public:
   /** Sets the currently logged in user's screen name */
   void setSN(const QString &newSN);
   /** Gets the message cookie */
-  inline const char *cookie(void) const { return mCookie; };
+  inline const QByteArray &cookie(void) const { return mCookie; };
+  /** Sets the socket to use socket, state() to connected, and emit connected() */
+  virtual void setSocket( int socket );
 
   //VIRTUAL FUNCTIONS THAT CAN BE OVERLOADED BY CHILD CLASSES
   /** Sends the direct IM message to buddy */
@@ -70,6 +72,9 @@ public:
 			@param notifyType Type of notify to send
 	 */
   virtual void sendTypingNotify(TypingNotify notifyType);
+  /** Sends request to the client telling he/she that we want to send a file */
+  virtual void sendFileSendRequest(void);
+
 
 
 signals: // Signals
@@ -91,6 +96,10 @@ signals: // Signals
   void connectionClosed(QString name);
   /** Emitted when a file transfer is complete */
   void transferComplete(QString name);
+  /** Emitted when data is received.. parameter is percentage of transfer complete */
+  void percentComplete( unsigned int percent );
+  /** Emitted when a file transfer begins */
+  void transferBegun(OscarConnection *con, const QString& file, const unsigned long size, const QString &recipient);
 	
 protected slots: // Protected slots
   /** Called when there is data to be read.
@@ -107,7 +116,7 @@ private slots: // Private slots
 
 private: //private attributes
 	/** The ICBM cookie used to authenticate */
-	char mCookie[8];
+	QByteArray mCookie;
 	/** The name of the connection */
 	QString mConnName;
 	/** The connection type */

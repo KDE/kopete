@@ -21,7 +21,7 @@
 #include "oscarsocket.h"
 
 OscarDirectConnection::OscarDirectConnection(const QString &sn, const QString &connName,
-	char cookie[8],	QObject *parent, const char *name)
+	const QByteArray &cookie,	QObject *parent, const char *name)
 	: OscarConnection(sn, connName, DirectIM, cookie, parent, name)
 {
 	connect(this, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
@@ -174,13 +174,6 @@ ODC2 OscarDirectConnection::getODC2(void)
   return odc;
 }
 
-/** Sets the socket to use socket, state() to connected, and emit connected() */
-void OscarDirectConnection::setSocket( int socket )
-{
-	QSocket::setSocket(socket);
-	emit connected();
-}
-
 /** Sends the direct IM message to buddy */
 void OscarDirectConnection::sendIM(const QString &message, bool /*isAuto*/)
 {
@@ -215,7 +208,7 @@ void OscarDirectConnection::sendODC2Block(const QString &message, WORD typingnot
 	outbuf.addWord(0x0001); // channel
 	outbuf.addWord(0x0006); // 0x0006
 	outbuf.addWord(0x0000); // 0x0000
-  outbuf.addString(cookie(),8);
+  outbuf.addString(cookie().data(),8);
 	outbuf.addDWord(0x00000000);
 	outbuf.addDWord(0x00000000);
 	outbuf.addWord(0x0000);

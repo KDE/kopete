@@ -57,23 +57,47 @@ void OncomingSocket::newConnection( int socket )
   }
 	// TODO: fix this later so that it searches the whole list
   DirectInfo *tmp = mPendingConnections.first();
+  if (!tmp)
+  {
+  	kdDebug(14150) << k_funcinfo << "no pending connection exists!  uh oh" << endl;
+   	return;
+  }
   OscarConnection *newsock = createAppropriateType(tmp);
 	setupConnection(newsock);
 	newsock->setSocket(socket);
-	mPendingConnections.remove(tmp);
-
+	//The line below needs to be here if one person is behind a firewall, because
+	//AIM clients will try to reverse the connection if that is the case
+	//if ( tmp->type == DirectInfo::Incoming )  && mType == OscarConnection::SendFile )
+  	newsock->sendFileSendRequest();
+   
 	kdDebug(14150) << "[Oscar][OncomingSocket]newConnection called!  socket " << socket << endl;
 }
 
-/** Finds the connection named name and returns a pointer to it.
+/** Finds the connection with cookie @cookie and returns a pointer to it.
 		If no such connection is found, return NULL */
+OscarConnection * OncomingSocket::findConnection(const QByteArray &cookie) 
+{
+	OscarConnection *tmp;
+	kdDebug(14150) << "[OncomingSocket] there are " << mConns.count() << " connections." << endl;
+	for (tmp = mConns.first(); tmp; tmp = mConns.next())
+	{
+		if ( cookie == tmp->cookie() )
+		{
+			return tmp;
+		}
+	}
+	return 0L;
+}
+
+/** Finds the connection named @name and returns a pointer to it.
+			If no such connection is found, return NULL */
 OscarConnection * OncomingSocket::findConnection(const QString &name)
 {
 	OscarConnection *tmp;
 	kdDebug(14150) << "[OncomingSocket] there are " << mConns.count() << " connections." << endl;
 	for (tmp = mConns.first(); tmp; tmp = mConns.next())
 	{
-		if ( !tmp->connectionName().compare(tocNormalize(name)) )
+		if ( tmp->connectionName().compare(tocNormalize(name)) )
 		{
 			return tmp;
 		}
@@ -82,11 +106,10 @@ OscarConnection * OncomingSocket::findConnection(const QString &name)
 }
 
 /** Adds the connection to the list of pending connections */
-DirectInfo *OncomingSocket::addPendingConnection(const QString &sn, char cookie[8], const KFileItem *finfo, const QString &host, int port)
+DirectInfo *OncomingSocket::addPendingConnection(const QString &sn, const QByteArray &cookie, const KFileItem *finfo, const QString &host, int port, DirectInfo::Type typ)
 {
 	DirectInfo *ninfo = new DirectInfo;
-	for (int i=0;i<8;i++)
-		ninfo->cookie[i] = cookie[i];
+	ninfo->cookie.duplicate(cookie);
 	ninfo->sn = tocNormalize(sn);
 	if ( finfo )
 		ninfo->finfo = new KFileItem( *finfo );
@@ -94,6 +117,7 @@ DirectInfo *OncomingSocket::addPendingConnection(const QString &sn, char cookie[
 		ninfo->finfo = 0L;
 	ninfo->host = host;
 	ninfo->port = port;
+	ninfo->type = typ;
 	mPendingConnections.append(ninfo);
 	return ninfo;
 }
@@ -101,13 +125,23 @@ DirectInfo *OncomingSocket::addPendingConnection(const QString &sn, char cookie[
 /** Called when a connection is ready */
 void OncomingSocket::slotConnectionReady(QString name)
 {
-	OscarConnection *dc = findConnection(name);
+  OscarConnection *dc = 0L;
+	for (DirectInfo *tmp=mPendingConnections.first(); tmp; tmp = mPendingConnections.next())
+	{
+		if ( tmp->sn == tocNormalize(name) )
+		{
+			dc = findConnection(tmp->cookie);
+			mPendingConnections.remove(tmp);
+			break;
+		}
+	}
+
 	if (!dc)
 	{
 		kdDebug(14150) << "[OncomingSocket] Connection " << name << " not found!!!  exiting slotConnectionReady()" << endl;
 		return;
 	}
-
+	
 	kdDebug(14150) << "[OncomingSocket] slotConnectionReady(): Setting up direct IM signals!" << endl;
   // Connect protocol error signal
 	QObject::connect(dc, SIGNAL(protocolError(QString, int)),
@@ -126,8 +160,9 @@ void OncomingSocket::slotConnectionReady(QString name)
 	// File transfer complete
 	QObject::connect(dc, SIGNAL(transferComplete(QString)),
 			mServer, SLOT(OnFileTransferComplete(QString)));
-	QObject::connect(dc, SIGNAL(transferComplete(QString)),
-			this, SLOT(slotTransferComplete(QString)));
+	// File transfer begun
+	QObject::connect(dc, SIGNAL(transferBegun(OscarConnection *, const QString &, const unsigned long, const QString &)),
+			mServer, SLOT(OnFileTransferBegun(OscarConnection *, const QString &, const unsigned long, const QString &)));
 }
 
 /** Set up a connection before adding it to the list of connections */
@@ -139,15 +174,20 @@ void OncomingSocket::setupConnection(OscarConnection *newsock)
 	// Ready signal
 	QObject::connect(newsock, SIGNAL(connectionReady(QString)),
 		this, SLOT(slotConnectionReady(QString)));
-	QObject::connect(newsock, SIGNAL(connectionReady(QString)),
+	
+	//only connect this if it is a direct IM connection
+	if ( mType == OscarConnection::DirectIM )
+	{
+		QObject::connect(newsock, SIGNAL(connectionReady(QString)),
 		mServer, SLOT(OnDirectIMReady(QString)));
+	}
 
 	kdDebug(14150) << "[OncomingSocket] setting up connection.. .there are currently " << mConns.count() << endl;
 	mConns.append(newsock);
 }
 
 /** Adds an outgoing connection to the list and attempts to connect */
-bool OncomingSocket::establishOutgoingConnection(const QString &sn)
+OscarConnection *OncomingSocket::establishOutgoingConnection(const QString &sn)
 {
 	for (DirectInfo *tmp=mPendingConnections.first(); tmp; tmp = mPendingConnections.next())
 	{
@@ -157,11 +197,11 @@ bool OncomingSocket::establishOutgoingConnection(const QString &sn)
 			setupConnection(s);
 			kdDebug(14150) << "[OncomingSocket] Connecting to " << tmp->host << ":" << tmp->port << endl;
 			s->connectToHost(tmp->host,tmp->port);
-			mPendingConnections.remove(tmp);
-			return true;
+			return s;
 		}
   }
-  return false;
+  kdDebug(14150) << k_funcinfo << "WARNING: outgoing connection not found in pending list, returning NULL" << endl;
+  return 0L;
 }
 
 /** Called when connection named name has been closed */
@@ -213,16 +253,13 @@ void OncomingSocket::addFileInfo(const QString &sn, KFileItem *finfo)
 }
 
 /** Gets the cookie associated with the pending connection for @sn, stores it in cook */
-bool OncomingSocket::getPendingCookie(const QString &sn, char cook[8])
+bool OncomingSocket::getPendingCookie(const QString &sn, QByteArray &cook)
 {
 	for (DirectInfo *tmp=mPendingConnections.first(); tmp; tmp = mPendingConnections.next())
 	{
 		if ( tmp->sn == sn )
 		{
-			for (int i=0;i<8;i++)
-			{
-				cook[i] = tmp->cookie[i];
-			}
+			cook.assign(tmp->cookie);
 			return true;
 		}
   }

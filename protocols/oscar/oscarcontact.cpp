@@ -81,11 +81,14 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	//File transfer request
 	QObject::connect(mProtocol->engine, SIGNAL(gotFileSendRequest(QString,QString,QString,unsigned long)),
 		this, SLOT(slotGotFileSendRequest(QString,QString,QString,unsigned long)));
-	//File transfer manager stuff
+	//File transfer started
+	QObject::connect(mProtocol->engine, SIGNAL(transferBegun(OscarConnection *, const QString &, const unsigned long, const QString &)),
+		this, SLOT(slotTransferBegun(OscarConnection *, const QString &, const unsigned long, const QString &)));
+  //File transfer manager stuff
 	QObject::connect( KopeteTransferManager::transferManager(), SIGNAL(accepted(KopeteTransfer *, const QString &)),
 		this, SLOT(slotTransferAccepted(KopeteTransfer *, const QString &)) );
-	QObject::connect( KopeteTransferManager::transferManager(), SIGNAL(refused(KopeteTransfer *, const QString &)),
-		this, SLOT(slotTransferDeleted(KopeteTransfer *, const QString &)) );
+	QObject::connect( KopeteTransferManager::transferManager(), SIGNAL(refused(const KopeteFileTransferInfo &)),
+		this, SLOT(slotTransferDenied(const KopeteFileTransferInfo &)) );
 
 	initActions();
 	TBuddy tmpBuddy;
@@ -203,20 +206,22 @@ void OscarContact::slotUpdateBuddy(int buddyNum)
 		return;
 
 	// if we have become idle
-	if ( tmpBuddy.idleTime > 0 )
+	if ( mProtocol->isConnected() )
 	{
-		kdDebug(14150) << "[OscarContact] setting " << mName << " idle! Idletime: " << tmpBuddy.idleTime << endl;
-		setIdleState(Idle);			
-	}
-	// we have become un-idle
-	else 
-	{
-		kdDebug(14150) << "[OscarContact] setting " << mName << " active!" << endl;
-		setIdleState(Active);
-	}
-
+		if ( tmpBuddy.idleTime > 0 )
+		{
+			kdDebug(14150) << "[OscarContact] setting " << mName << " idle! Idletime: " << tmpBuddy.idleTime << endl;
+			setIdleState(Idle);			
+		}
+		// we have become un-idle
+		else if ( mProtocol->isConnected() ) 
+		{
+			kdDebug(14150) << "[OscarContact] setting " << mName << " active!" << endl;
+			setIdleState(Active);
+		}
+	  mIdle = tmpBuddy.idleTime;
+  }
 	mStatus = tmpBuddy.status;
-  mIdle = tmpBuddy.idleTime;
 	kdDebug(14150) << "[OscarContact] slotUpdateBuddy(), Contact " << mName << " is now " << mStatus << endl;
 
 	if ( mProtocol->isConnected() ) // oscar-plugin is online
@@ -767,8 +772,8 @@ void OscarContact::slotDirectIMConnectionClosed(QString name)
 }
 
 /** Sends a file */
-void OscarContact::sendFile(const KURL &sourceURL, const QString &altFileName,
-	const long unsigned int fileSize)
+void OscarContact::sendFile(const KURL &sourceURL, const QString &/*altFileName*/,
+	const long unsigned int /*fileSize*/)
 {
 	KURL filePath;
 
@@ -806,18 +811,36 @@ void OscarContact::slotTransferAccepted(KopeteTransfer *tr, const QString &fileN
 		return;
 	
 	kdDebug(14150) << k_funcinfo << "Transfer of " << fileName << " accepted." << endl;
-	mProtocol->engine->sendFileSendAccept(mName, fileName);
+	OscarConnection *fs = mProtocol->engine->sendFileSendAccept(mName, fileName);
+	
+	//connect to transfer manager
+	QObject::connect( fs, SIGNAL( percentComplete( unsigned int ) ),
+		tr, SLOT(slotPercentCompleted( unsigned int )) ); 
 }
 
 /** Called when we deny a transfer */
-void OscarContact::slotTransferDenied(KopeteTransfer *tr)
+void OscarContact::slotTransferDenied(const KopeteFileTransferInfo &tr)
 {
 	// Check if we're the one who is directly connected
-	if ( tr->info().contact() != this )
+	if ( tr.contact() != this )
 		return;
 
 	kdDebug(14150) << k_funcinfo << "Transfer denied." << endl;
 	mProtocol->engine->sendFileSendDeny(mName);
+}
+
+/** Called when a file transfer begins */
+void OscarContact::slotTransferBegun(OscarConnection *con, const QString& file, const unsigned long size, const QString &recipient)
+{
+  if ( tocNormalize(con->connectionName()) != tocNormalize(mName) )
+  	return;
+
+  kdDebug(14150) << k_funcinfo << "adding transfer of " << file << endl; 
+	KopeteTransfer *tr = KopeteTransferManager::transferManager()->addTransfer( this, file, size, recipient, KopeteFileTransferInfo::Outgoing );
+
+	//connect to transfer manager
+	QObject::connect( con, SIGNAL( percentComplete( unsigned int ) ),
+		tr, SLOT(slotPercentCompleted( unsigned int )) );
 }
 
 /*	if ( (status() != m_cachedOldStatus) || ( size != m_cachedSize ) )

@@ -92,7 +92,7 @@ struct UserInfo { //user info
 class OscarSocket : public OscarConnection  {
 	Q_OBJECT
 public:
-	OscarSocket(const QString &connName, char *cookie = "ABCDEFGH", QObject *parent=0, const char *name=0);
+	OscarSocket(const QString &connName, const QByteArray &cookie, QObject *parent=0, const char *name=0);
 	~OscarSocket();
 
   /** Sends an authorization request to the server */
@@ -159,8 +159,8 @@ public:
   void sendFileSendRequest(const QString &sn, const KFileItem &finfo);
   /** Sends a file transfer deny to @sn */
   void sendFileSendDeny(const QString &sn);
-  /** Accepts a file transfer from sn */
-  void sendFileSendAccept(const QString &sn, const QString &fileName);
+  /** Accepts a file transfer from sn, returns OscarConnection created */
+  OscarConnection *sendFileSendAccept(const QString &sn, const QString &fileName);
 
 public slots:
   /** This is called when a connection is established */
@@ -313,6 +313,8 @@ private slots: // Private slots
   void OnDirectMiniTypeNotification(QString screenName, int notify);
   /** Called when a direct connection is set up and ready for use */
   void OnDirectIMReady(QString name);
+  /** Called when a file transfer begins */
+  void OnFileTransferBegun(OscarConnection *con, const QString& file, const unsigned long size, const QString &recipient);
 signals: // Signals
   /** The server has sent the key with which to encrypt the password */
   void keyReceived(void);
