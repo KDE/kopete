@@ -1073,110 +1073,108 @@ void JabberProtocol::createAddContact(KopeteMetaContact *mc,
 void JabberProtocol::slotSubscription(const Jabber::Jid &jid,
 				const QString &type)
 {
-		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] slotSubscription("
-									 << jid.userHost() << ", " << type << ");" << endl;
+	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] slotSubscription("
+								 << jid.userHost() << ", " << type << ");" << endl;
 
-		if(type == "subscribe")
+	if(type == "subscribe")
+	{
+		// a new user wants to subscribe
+		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] slotSubscription(): "
+									 << jid.userHost()
+									 << " asks for authorization to subscribe."
+									 << endl;
+
+		switch(KMessageBox::questionYesNoCancel(qApp->mainWidget(),
+									 i18n("The Jabber user %1 wants to add you to their "
+													 "contact list. Do you want to authorize them?"
+													 " Selecting cancel will ignore the request."
+											 ).arg(jid.userHost(), 1),
+									 i18n("Authorize Jabber User?"),
+									 i18n("Authorize"), i18n("Deny")))
 		{
-				// a new user wants to subscribe
-				kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] slotSubscription(): "
-											 << jid.userHost()
-											 << " asks for authorization to subscribe."
-											 << endl;
+			Jabber::JT_Presence *task;
+			KopeteMetaContact *mc;
 
-				switch(KMessageBox::questionYesNoCancel(qApp->mainWidget(),
-											 i18n("The Jabber user %1 wants to add you to their "
-															 "contact list. Do you want to authorize them?"
-															 " Selecting cancel will ignore the request."
-													 ).arg(jid.userHost(), 1),
-											 i18n("Authorize Jabber User?"),
-											 i18n("Authorize"), i18n("Deny")))
-				{
-						Jabber::JT_Presence *task;
-						KopeteMetaContact *mc;
+			case KMessageBox::Yes:
+				// authorize user
+				subscribed(jid);
 
-				case KMessageBox::Yes:
-						// authorize user
-						subscribed(jid);
+				// is the user already in our contact list?
+				mc = KopeteContactList::contactList()->findContact(pluginId(),
+								myContact->userId(), jid.userHost());
 
-						// is the user already in our contact list?
-						mc = KopeteContactList::contactList()->findContact(pluginId(),
-										myContact->userId(), jid.userHost());
-
-						// if it is not, ask the user if he wants to subscribe in return
-						if(!mc && (KMessageBox::questionYesNo(
-															 qApp->mainWidget(),
-															 i18n("Do you want to add %1 to your contact "
-																			 "list in return?").arg(
-																							 jid.userHost(), 1),
-															 i18n("Add Jabber User?"))
+				// if it is not, ask the user if he wants to subscribe in return
+				if(!mc && (KMessageBox::questionYesNo(
+													 qApp->mainWidget(),
+													 i18n("Do you want to add %1 to your contact "
+														 "list in return?").arg(jid.userHost(), 1),
+													 i18n("Add Jabber User?"))
 											 == KMessageBox::Yes))
-						{
-								// subscribe to user
-								subscribe(jid);
-						}
-
-						break;
-
-				case KMessageBox::No:
-						// deny subscription
-						task = new Jabber::JT_Presence(jabberClient->rootTask());
-
-						task->sub(jid, "unsubscribed");
-						task->go(true);
-
-						break;
-
-				case KMessageBox::Cancel:
-						// leave user uninformed
-						break;
-				}
-
-		}
-		else
-				if(type == "unsubscribed")
 				{
-						// a user deleted auth for us
-						kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] " << jid.userHost()
-													 << " deleted auth!" << endl;
-
-						KMessageBox::information(0L,
-										i18n("%1 unsubscribed you!").arg(jid.userHost()),
-										i18n("Notification"));
-
-						// delete the item from the roster
-						Jabber::JT_Roster *task =
-								new Jabber::JT_Roster(jabberClient->rootTask());
-						
-						task->remove(jid);
-						task->go(true);
+					// subscribe to user
+					subscribe(jid);
 				}
+
+				break;
+
+			case KMessageBox::No:
+				// deny subscription
+				task = new Jabber::JT_Presence(jabberClient->rootTask());
+
+				task->sub(jid, "unsubscribed");
+				task->go(true);
+
+				break;
+
+			case KMessageBox::Cancel:
+				// leave user uninformed
+				break;
+		}
+
+	}
+	else
+		if(type == "unsubscribed")
+		{
+			// a user deleted auth for us
+			kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] " << jid.userHost()
+										 << " deleted auth!" << endl;
+
+			KMessageBox::information(0L,
+							i18n("%1 unsubscribed you!").arg(jid.userHost()),
+							i18n("Notification"));
+
+			// delete the item from the roster
+			Jabber::JT_Roster *task = new Jabber::JT_Roster(jabberClient->rootTask());
+
+			task->remove(jid);
+			task->go(true);
+		}
 }
 
 void JabberProtocol::slotNewContact(const Jabber::RosterItem &item)
 {
-		/**
-		 * Subscription types are: Both, From, To, Remove, None.
-		 * Both:   Both sides have authed each other, each side
-		 *         can see each other's presence
-		 * From:   The other side can see us.
-		 * To:     We can see the other side. (implies we are
-		 *         authed)
-		 * Remove: Other side revoked our subscription request.
-		 *         Not to be handled here.
-		 * None:   No subscription.
-		 *
-		 * Regardless of the subscription type, we have to add
-		 * a roster item here. FIXME: To be done is uniform
-		 * check of the ask() value to see if we are waiting
-		 * for authorization ("subscribe")
-		 */
+	/**
+	 * Subscription types are: Both, From, To, Remove, None.
+	 * Both:   Both sides have authed each other, each side
+	 *         can see each other's presence
+	 * From:   The other side can see us.
+	 * To:     We can see the other side. (implies we are
+	 *         authed)
+	 * Remove: Other side revoked our subscription request.
+	 *         Not to be handled here.
+	 * None:   No subscription.
+	 *
+	 * Regardless of the subscription type, we have to add
+	 * a roster item here. FIXME: To be done is uniform
+	 * check of the ask() value to see if we are waiting
+	 * for authorization ("subscribe")
+	 */
 
-		QString debugStr = "[JabberProtocol] New Contact "
-				+ item.jid().userHost() + " (Subscription::";
+	QString debugStr = "[JabberProtocol] New Contact "
+		+ item.jid().userHost() + " (Subscription::";
 
-		switch(item.subscription().type())
-		{
+	switch(item.subscription().type())
+	{
 		case Jabber::Subscription::Both:    // both sides can see the contact
 				debugStr += "Both | <->";
 				break;
@@ -1192,53 +1190,53 @@ void JabberProtocol::slotNewContact(const Jabber::RosterItem &item)
 		case Jabber::Subscription::None:    // waiting for authorization
 				debugStr += "None | ---";
 				break;
-		}
+	}
 
-		debugStr += ") " + item.ask();
+	debugStr += ") " + item.ask();
 
-		kdDebug(JABBER_DEBUG_GLOBAL) << debugStr << endl;
+	kdDebug(JABBER_DEBUG_GLOBAL) << debugStr << endl;
 
-		// add the contact to the GUI
-		createAddContact(0L, item);
+	// add the contact to the GUI
+	createAddContact(0L, item);
 }
 
 void JabberProtocol::slotContactDeleted(const Jabber::RosterItem &item)
 {
-		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Deleting contact "
-									 << item.jid().userHost() << endl;
+	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Deleting contact "
+								 << item.jid().userHost() << endl;
 
-		if( !contacts()[ item.jid().userHost() ] )
-		{
-				kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocl] WARNING: slotContactDeleted() "
-											 << "was asked to delete a non-existing contact."
-											 << endl;
-				return;
-		}
+	if( !contacts()[ item.jid().userHost() ] )
+	{
+		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocl] WARNING: slotContactDeleted() "
+									 << "was asked to delete a non-existing contact."
+									 << endl;
+		return;
+	}
 
-		JabberContact *jc =
-				static_cast<JabberContact*>( contacts()[ item.jid().userHost() ] );
+	JabberContact *jc =
+			static_cast<JabberContact*>( contacts()[ item.jid().userHost() ] );
 
-		// this will also cause the contact to disappear from the metacontact
-		delete jc;
+	// this will also cause the contact to disappear from the metacontact
+	delete jc;
 }
 
 void JabberProtocol::slotContactUpdated(const Jabber::RosterItem &item)
 {
-		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Status update for "
-									 << item.jid().userHost() << endl;
+	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Status update for "
+								 << item.jid().userHost() << endl;
 
-		// sanity check
-		if( !contacts()[ item.jid().userHost() ] )
-		{
-				kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] WARNING: slotContactUpdated() "
-											 << "was requested to update a non-existing contact."
-											 << endl;
-				return;
-		}
+	// sanity check
+	if( !contacts()[ item.jid().userHost() ] )
+	{
+		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] WARNING: slotContactUpdated() "
+									 << "was requested to update a non-existing contact."
+									 << endl;
+		return;
+	}
 
-		// update the contact data
-		static_cast<JabberContact*>(
-						contacts()[ item.jid().userHost() ] )->slotUpdateContact( item );
+	// update the contact data
+	static_cast<JabberContact*>(
+					contacts()[ item.jid().userHost() ] )->slotUpdateContact( item );
 }
 
 void JabberProtocol::slotSettingsChanged()
@@ -1257,9 +1255,9 @@ void JabberProtocol::slotSettingsChanged()
 void JabberProtocol::slotSendMessage(Jabber::Message message)
 {
 
-		// just pass the message on to the Psi backend if we are connected
-		if (isConnected())
-				jabberClient->sendMessage(message);
+	// just pass the message on to the Psi backend if we are connected
+	if (isConnected())
+		jabberClient->sendMessage(message);
 
 }
 
@@ -1371,54 +1369,57 @@ void JabberProtocol::slotReceivedMessage(const Jabber::Message &message)
 void JabberProtocol::slotEmptyMail()
 {
 
-		if(!isConnected())
-		{
-				errorConnectFirst();
-				return;
-		}
+	if(!isConnected())
+	{
+		errorConnectFirst();
+		return;
+	}
 
-		KLineEditDlg *dlg = new KLineEditDlg(i18n("Please enter a recipient:"),
-						QString::null, qApp->mainWidget());
+	KLineEditDlg *dlg = new KLineEditDlg(i18n("Please enter a recipient:"),
+				QString::null, qApp->mainWidget());
 		
-		QObject::connect(dlg, SIGNAL(okClicked()),
-						this, SLOT(slotOpenEmptyMail()));
-		dlg->show();
-		dlg->raise();
+	QObject::connect(dlg, SIGNAL(okClicked()),
+					this, SLOT(slotOpenEmptyMail()));
+
+	dlg->show();
+	dlg->raise();
 
 }
 
 void JabberProtocol::slotOpenEmptyMail()
 {
-		QString emailAddress = ((KLineEditDlg *)sender() )->text();
-		if( !emailAddress.isEmpty() && !emailAddress.isNull() )
-		{
-				KopeteMetaContact *metaContact = new KopeteMetaContact();
-				metaContact->setTemporary(true);
+	QString emailAddress = ((KLineEditDlg *)sender() )->text();
 
-				JabberContact *contact = createContact(emailAddress, emailAddress,
-								QStringList(), metaContact, myContact->userId());
+	if( !emailAddress.isEmpty() && !emailAddress.isNull() )
+	{
+		KopeteMetaContact *metaContact = new KopeteMetaContact();
+		metaContact->setTemporary(true);
 
-				KopeteContactList::contactList()->addMetaContact(metaContact);
+		JabberContact *contact = createContact(emailAddress, emailAddress,
+						QStringList(), metaContact, myContact->userId());
 
-				messageManagerMap[emailAddress] = createMessageManager(contact);
+		KopeteContactList::contactList()->addMetaContact(metaContact);
 
-				KopeteViewManager::viewManager()->launchWindow( messageManagerMap[emailAddress], KopeteView::Email );
-		}
+		messageManagerMap[emailAddress] = createMessageManager(contact);
+
+		KopeteViewManager::viewManager()->launchWindow( messageManagerMap[emailAddress], KopeteView::Email );
+	}
+
 }
 
 void JabberProtocol::slotJoinNewChat()
 {
 
-		if(!isConnected())
-		{
-				errorConnectFirst();
-				return;
-		}
+	if(!isConnected())
+	{
+		errorConnectFirst();
+		return;
+	}
 
-		DlgJabberChatJoin *dlg = new DlgJabberChatJoin(qApp->mainWidget());
-		QObject::connect(dlg, SIGNAL(okClicked()), this, SLOT(slotJoinChat()));
-		dlg->show();
-		dlg->raise();
+	DlgJabberChatJoin *dlg = new DlgJabberChatJoin(qApp->mainWidget());
+	QObject::connect(dlg, SIGNAL(okClicked()), this, SLOT(slotJoinChat()));
+	dlg->show();
+	dlg->raise();
 
 }
 
@@ -1524,21 +1525,21 @@ void JabberProtocol::slotResourceAvailable(const Jabber::Jid &jid,
 				const Jabber::Resource &resource)
 {
 
-		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] New resource available for "
-									 << jid.userHost() << endl;
+	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] New resource available for "
+								 << jid.userHost() << endl;
 
-		if( !contacts()[ jid.userHost() ] )
-		{
-				kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Trying to add a resource, but "
-											 << "couldn't find an entry for " << jid.userHost()
-											 << endl;
-				return;
-		}
+	if( !contacts()[ jid.userHost() ] )
+	{
+		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Trying to add a resource, but "
+									 << "couldn't find an entry for " << jid.userHost()
+									 << endl;
+		return;
+	}
 
-		// By the way, this is SO ugly
-		static_cast<JabberContact*>(
-						contacts()[jid.userHost()])->slotResourceAvailable(
-										jid, resource );
+	// By the way, this is SO ugly
+	static_cast<JabberContact*>(
+					contacts()[jid.userHost()])->slotResourceAvailable(
+									jid, resource );
 
 }
 
@@ -1546,129 +1547,129 @@ void JabberProtocol::slotResourceUnavailable(const Jabber::Jid &jid,
 				const Jabber::Resource &resource)
 {
 
-		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Resource now unavailable for "
+	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Resource now unavailable for "
+								 << jid.userHost() << endl;
+
+	if( !contacts()[ jid.userHost() ] )
+	{
+		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Trying to remove a resource, "
+									 << "but couldn't find an entry for "
 									 << jid.userHost() << endl;
+		return;
+	}
 
-		if( !contacts()[ jid.userHost() ] )
-		{
-				kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Trying to remove a resource, "
-											 << "but couldn't find an entry for "
-											 << jid.userHost() << endl;
-				return;
-		}
-
-		static_cast<JabberContact*>(
-						contacts()[jid.userHost()])->slotResourceUnavailable(
-										jid, resource );
+	static_cast<JabberContact*>(
+					contacts()[jid.userHost()])->slotResourceUnavailable(
+									jid, resource );
 }
 
 void JabberProtocol::slotEditVCard()
 {
 
-		myContact->slotEditVCard();
+	myContact->slotEditVCard();
 
 }
 
 void JabberProtocol::registerUser()
 {
 
-		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Registering user" << endl;
+	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Registering user" << endl;
 
-		// save the current preferences
-		preferences->save();
+	// save the current preferences
+	preferences->save();
 
-		// set the flag to register an account during registration
-		registerFlag = 1;
+	// set the flag to register an account during registration
+	registerFlag = 1;
 
-		// now connect, initiating the registration
-		connect();
+	// now connect, initiating the registration
+	connect();
 }
 
 void JabberProtocol::slotRegisterUserDone()
 {
-		Jabber::JT_Register *task = (Jabber::JT_Register *)sender();
+	Jabber::JT_Register *task = (Jabber::JT_Register *)sender();
 
-		if(task->success())
-				KMessageBox::information(qApp->mainWidget(),
-								i18n("Account successfully registered."),
-								i18n("Account Registration"));
-		else
-				KMessageBox::information(qApp->mainWidget(),
-								i18n("Unable to create account on the server."),
-								i18n("Account Registration"));
+	if(task->success())
+		KMessageBox::information(qApp->mainWidget(),
+						i18n("Account successfully registered."),
+						i18n("Account Registration"));
+	else
+		KMessageBox::information(qApp->mainWidget(),
+						i18n("Unable to create account on the server."),
+						i18n("Account Registration"));
 
-		registerFlag = 0;
+	registerFlag = 0;
 
-		disconnect();
+	disconnect();
 
 }
 
 void JabberProtocol::addContact(KopeteMetaContact *mc, const QString &userId)
 {
 
-		// first of all, create a Jabber::RosterItem from the information found
-		// in the KopeteMetaContact
-		Jabber::RosterItem item;
+	// first of all, create a Jabber::RosterItem from the information found
+	// in the KopeteMetaContact
+	Jabber::RosterItem item;
 
-		item.setJid(Jabber::Jid(userId));
-		item.setName(userId);
-		item.setGroups(mc->groups().toStringList());
+	item.setJid(Jabber::Jid(userId));
+	item.setName(userId);
+	item.setGroups(mc->groups().toStringList());
 
-		createAddContact(mc, item);
+	createAddContact(mc, item);
 
-		// add the new contact to our roster
-		Jabber::JT_Roster *rosterTask =
-				new Jabber::JT_Roster(jabberClient->rootTask());
-		
-		rosterTask->set(item.jid(), item.name(), item.groups());
-		rosterTask->go(true);
+	// add the new contact to our roster
+	Jabber::JT_Roster *rosterTask =
+			new Jabber::JT_Roster(jabberClient->rootTask());
 
-		// send a subscription request
-		subscribe(item.jid());
+	rosterTask->set(item.jid(), item.name(), item.groups());
+	rosterTask->go(true);
+
+	// send a subscription request
+	subscribe(item.jid());
 
 }
 
 void JabberProtocol::updateContact(const Jabber::RosterItem &item)
 {
 
-		if(!isConnected())
-		{
-				errorConnectFirst();
-				return;
-		}
+	if(!isConnected())
+	{
+		errorConnectFirst();
+		return;
+	}
 
-		Jabber::JT_Roster *rosterTask =
-				new Jabber::JT_Roster(jabberClient->rootTask());
-		
-		rosterTask->set(item.jid(), item.name(), item.groups());
-		rosterTask->go(true);
+	Jabber::JT_Roster *rosterTask =
+			new Jabber::JT_Roster(jabberClient->rootTask());
+
+	rosterTask->set(item.jid(), item.name(), item.groups());
+	rosterTask->go(true);
 
 }
 
 void JabberProtocol::removeContact(const Jabber::RosterItem &item)
 {
 
-		if(!isConnected())
-		{
-				errorConnectFirst();
-				return;
-		}
+	if(!isConnected())
+	{
+		errorConnectFirst();
+		return;
+	}
 
-		Jabber::JT_Roster *rosterTask =
-				new Jabber::JT_Roster(jabberClient->rootTask());
-		
-		rosterTask->remove(item.jid());
-		rosterTask->go(true);
+	Jabber::JT_Roster *rosterTask =
+			new Jabber::JT_Roster(jabberClient->rootTask());
+
+	rosterTask->remove(item.jid());
+	rosterTask->go(true);
 
 }
 
 void JabberProtocol::slotGetServices()
 {
 
-		DlgJabberServices *dialog = new DlgJabberServices();
+	DlgJabberServices *dialog = new DlgJabberServices();
 
-		dialog->show();
-		dialog->raise();
+	dialog->show();
+	dialog->raise();
 
 }
 
