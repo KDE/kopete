@@ -249,4 +249,44 @@ const QString Oscar::capName( int capNumber )
 	return capString;
 }
 
+DWORD Oscar::getNumericalIP(const QString &address)
+{
+	QString a=address.simplifyWhiteSpace();
+	
+	QStringList ipv4Addr=QStringList::split(".", a, FALSE);
+	if (ipv4Addr.count() == 4)
+	{
+		unsigned long newAddr=0;
+		int i=0;
+		bool ok=true;
+		while (ok && i < 4)
+		{
+			unsigned long value=ipv4Addr[i].toUInt(&ok);
+			if (value > 255)
+				ok=false;
+			if (ok)
+				newAddr=newAddr * 256 + value;
+			i++;
+		}
+		if (ok)
+			return newAddr;
+	}
+	return 0;
+}
+
+QString Oscar::getDottedDecimal( DWORD address )
+{
+	QString a;
+	a = QString::number( (address & 0xff000000) >> 24 );
+	a += ".";
+	a += QString::number( ( address & 0x00FF0000 ) >> 16 );
+	a += ".";
+	a += QString::number( ( address & 0x0000FF00 ) >> 8);
+	a += ".";
+	a += QString::number( address & 0x000000FF );
+	return a;
+}
+
+	
+
 //kate: tab-width 4; indent-mode csands;

@@ -68,6 +68,19 @@ DWORD parseCapabilities(Buffer &inbuf, QString &versionString);
  */
 const QString capName( int capNumber );
 
+/**
+ * Convert an IP address in dotted decimal notation to a 
+ * numerical constant
+ */
+DWORD getNumericalIP( const QString& address );
+
+/**
+ * Convert a numerical constant that is an IP address to
+ * dotted decimal format
+ */
+QString getDottedDecimal( DWORD address );
+
+
 }
 
 #endif
