@@ -47,7 +47,7 @@ void KopeteGroupListAction::slotUpdateList()
 
 	// Top Level is special, separate it from the other groups
 	m_groupList << i18n( "Contacts are put in groups. Top Level holds all groups (but can contain contacts too) Similar to KMail's folders", "Top Level" );
-	
+
 	KopeteGroupList groups=KopeteContactList::contactList()->groups();
 	// Add groups to our list
 	for( KopeteGroup *it = groups.first(); it; it = groups.next() )
@@ -71,7 +71,7 @@ KAction* KopeteStdAction::sendMessage(const QObject *recvr, const char *slot, QO
 
 KAction* KopeteStdAction::contactInfo(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KAction( i18n( "User &Info" ), QString::fromLatin1( "account" ), 0, recvr, slot, parent, name );
+	return new KAction( i18n( "User &Info" ), QString::fromLatin1( "messagebox_info" ), 0, recvr, slot, parent, name );
 }
 
 KAction* KopeteStdAction::sendFile(const QObject *recvr, const char *slot, QObject* parent, const char *name)
