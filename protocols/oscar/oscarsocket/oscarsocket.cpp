@@ -50,15 +50,15 @@ extern "C" {
 #define AIM_CAPS_SENDBUDDYLIST  0x00000100
 #define AIM_CAPS_GAMES2         0x00000200
 #define AIM_CAPS_ICQ            0x00000400
-#define AIM_CAPS_APINFO         0x00000800
-#define AIM_CAPS_ICQRTF					0x00001000
-#define AIM_CAPS_EMPTY					0x00002000
+#define AIM_CAPS_APINFO			0x00000800
+#define AIM_CAPS_ICQRTF			0x00001000
+#define AIM_CAPS_EMPTY			0x00002000
 #define AIM_CAPS_ICQSERVERRELAY 0x00004000
 #define AIM_CAPS_ICQUNKNOWN     0x00008000
 #define AIM_CAPS_TRILLIANCRYPT  0x00010000
 #define AIM_CAPS_LAST           0x00020000
 
-#define KOPETE_CAPS		AIM_CAPS_IMIMAGE
+#define KOPETE_CAPS				AIM_CAPS_IMIMAGE
 
 static const struct {
     DWORD flag;
@@ -164,7 +164,7 @@ OscarSocket::OscarSocket(QObject *parent, const char *name)
     connect(this, SIGNAL(cookieReceived()), this, SLOT(OnCookieReceived()));
     connect(this, SIGNAL(serverReady()), this, SLOT(OnServerReady()));
     connect(this, SIGNAL(gotBOSRights(WORD,WORD)), this, SLOT(OnGotBOSRights(WORD,WORD)));
-    connect(this, SIGNAL(gotConfig(TAimConfig)), this, SLOT(OnGotConfig(TAimConfig)));
+//    connect(this, SIGNAL(gotConfig(TAimConfig)), this, SLOT(OnGotConfig(TAimConfig)));
     key = NULL;
     cookie = NULL;
     idle = false;

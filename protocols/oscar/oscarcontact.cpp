@@ -39,6 +39,8 @@
 OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 		KopeteMetaContact *parent) : KopeteContact(protocol, parent)
 {
+	kdDebug() << "[OscarContact] OscarContact(), name=" << name << endl;
+	
 	mName = name;
 	mProtocol = protocol;
 	mMsgManager = 0L;
@@ -75,7 +77,7 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 
 OscarContact::~OscarContact()
 {
-		//kdDebug() << "[OscarContact] ~OscarContact()" << endl;
+	kdDebug() << "[OscarContact] ~OscarContact()" << endl;
 }
 
 /** Pops up a chat window */
