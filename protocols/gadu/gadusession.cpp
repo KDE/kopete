@@ -157,7 +157,14 @@ GaduSession::login( uin_t uin, const QString& password, bool useTls,
 	params_.async = 1;
 	params_.tls = useTls;
 	params_ .server_addr = server;
-	 
+	
+	if ( useTls ) {
+		params_.server_port = GG_HTTPS_PORT;
+	} 
+	else {
+		params_.server_port = GG_DEFAULT_PORT;
+	}
+	
 	kdDebug(14100)<<"gadusession::login, server ( " << server << " ), tls(" << useTls << ") " <<endl;
 	login( &params_ );
 }

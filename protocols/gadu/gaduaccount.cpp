@@ -47,15 +47,15 @@
 
 #include <netinet/in.h>
 
-const int NUM_SERVERS = 7;
+// FIXME: use dynamic cache please, i consider this as broken resolution of this problem
+// FIXME: needs to be resolved before 0.8/kde3.2 will be out !
+const int NUM_SERVERS = 5;
 const char* const servers_ip[ NUM_SERVERS ] = {
 	"217.17.41.88",
- 	"217.17.41.89",
-	"217.17.41.82", 
-	"217.17.41.84", 
-	"217.17.41.85", 
+ 	"217.17.41.85",
+	"217.17.41.87", 
 	"217.17.41.86", 
-	"217.17.41.87" 	
+	"217.17.41.84", 
 };
 
  GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const char* name )
@@ -519,7 +519,7 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 					kdDebug( 14100 ) << "try without tls now" << endl;
 					connectWithSSL = false;
 					tryReconnect = true;
-					currentServer = 0;
+					currentServer = -1;
 					serverIP = 0;
 					break;
 				}
@@ -530,8 +530,8 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 					currentServer = -1;
 				}
 				else {
-					serverIP = htons( servers_[ ++currentServer ].ip4Addr() );
-					kdDebug(14100) << "trying : " << servers_ip[ currentServer ]  << endl;
+					serverIP = htonl( servers_[ ++currentServer ].ip4Addr() );
+					kdDebug(14100) << "trying : " << currentServer << endl;
 					tryReconnect = true;
 				}
 			}
