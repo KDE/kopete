@@ -5,15 +5,16 @@
 
 #include <qdir.h>
 #include <qcombobox.h>
-#include <qgroupbox.h>
+#include <qvgroupbox.h>
 #include <qpushbutton.h>
 #include <qinputdialog.h>
-#include <klistview.h>
+#include <qlayout.h>
+#include <qlabel.h>
+#include <klineedit.h>
 #include <klocale.h>
 #include <kfile.h>
 #include <kurlrequester.h>
 #include <kmessagebox.h>
-#include <kdebug.h>
 
 SMSSend::SMSSend(SMSContact* contact)
 	: SMSService(contact)
@@ -27,8 +28,6 @@ SMSSend::~SMSSend()
 
 void SMSSend::send(const KopeteMessage& msg)
 {
-	kdDebug() << "SMSSend::send()" << endl;
-
 	QString provider = SMSGlobal::readConfig("SMSSend", "ProviderName", m_contact);
 
 	if (provider == QString::null)
@@ -76,11 +75,6 @@ QWidget* SMSSend::configureWidget(QWidget* parent)
 		}
 	}
 	
-	connect(prefWidget->descButton, SIGNAL(clicked()), this, SLOT(showDescription()));
-	connect(prefWidget->saveButton, SIGNAL(clicked()), this, SLOT(saveProviderPreferences()));
-	connect(prefWidget->providerSettings, SIGNAL(executed(QListViewItem*)),
-		this, SLOT(changeOption(QListViewItem*)));
-
 	return prefWidget;
 }
 
@@ -90,15 +84,10 @@ void SMSSend::savePreferences()
 	{
 		SMSGlobal::writeConfig("SMSSend", "Prefix", m_contact, prefWidget->program->url());
 		SMSGlobal::writeConfig("SMSSend", "ProviderName", m_contact, prefWidget->provider->currentText());
-		if (prefWidget->providerSettings->childCount() > 0)
-			saveProviderPreferences();
+		SMSSendProvider* s = new SMSSendProvider(prefWidget->provider->currentText(),
+			prefWidget->program->url(), m_contact, this);
+		s->save(args);
 	}
-}
-
-void SMSSend::saveProviderPreferences()
-{
-	SMSSendProvider* s = new SMSSendProvider(prefWidget->provider->currentText(), prefWidget->program->url(), m_contact, this);
-	s->save(prefWidget->providerSettings);
 }
 
 QStringList SMSSend::providers()
@@ -119,36 +108,24 @@ QStringList SMSSend::providers()
 void SMSSend::setOptions(const QString& name)
 {
 	prefWidget->settingsBox->setTitle(name);
-	prefWidget->providerSettings->clear();
+
+	args.setAutoDelete(true);
+	args.clear();
 
 	SMSSendProvider* s = new SMSSendProvider(name, prefWidget->program->url(), m_contact, this);
 
 	for (int i=0; i < s->count(); i++)
 	{
-		QListViewItem* item = s->listItem(prefWidget->providerSettings, i);
-		if (item != 0L)
-			prefWidget->providerSettings->insertItem(item);
+		if (s->name(i) != QString::null)
+		{
+			SMSSendArg* a = new SMSSendArg(prefWidget->settingsBox);
+			a->argName->setText(s->name(i));
+			a->value->setText(s->value(i));
+			a->description->setText(s->description(i));
+			args.append(a);
+			a->show();
+		}
 	}
-}
-
-void SMSSend::showDescription()
-{
-	if (prefWidget->providerSettings->currentItem() != 0L)
-	{
-		SMSSendProvider* s = new SMSSendProvider(prefWidget->provider->currentText(), prefWidget->program->url(), m_contact, this);
-		s->showDescription(prefWidget->providerSettings->currentItem()->text(0));
-	}
-}
-
-void SMSSend::changeOption(QListViewItem* i)
-{
-	bool ok;
-	QString text = QInputDialog::getText(
-		i->text(0), i18n("Enter a value for %1:").arg(i->text(0)),
-		QLineEdit::Normal, QString::null, &ok);
-
-	if ( ok )
-		i->setText(1, text);
 }
 
 int SMSSend::maxSize()

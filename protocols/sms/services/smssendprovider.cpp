@@ -9,10 +9,11 @@
 #include <kprocess.h>
 #endif
 #include <qregexp.h>
-#include <klistview.h>
+#include <qlabel.h>
+#include <qfile.h>
+#include <klineedit.h>
 #include <kmessagebox.h>
 #include <klocale.h>
-#include <kdebug.h>
 
 SMSSendProvider::SMSSendProvider(QString providerName, QString prefixValue, SMSContact* contact, QObject* parent, const char *name)
 	: QObject( parent, name )
@@ -25,23 +26,69 @@ SMSSendProvider::SMSSendProvider(QString providerName, QString prefixValue, SMSC
 	messagePos = -1;
 	telPos = -1;
 
-	optionsLoaded = false;
+	QString file = prefix + "/share/smssend/" + provider + ".sms";
+	QFile f(file);
+	if (f.open(IO_ReadOnly))
+	{
+		QTextStream t(&f);
+		QString group = QString("SMSSend-%1").arg(provider);
+		while( !t.eof())
+		{
+			QString s = t.readLine();
+			if( s[0] == '%')
+			{
+				QStringList args = QStringList::split(':',s);
+				QStringList options = QStringList::split(' ', args[0]);
 
-#if KDE_VERSION > 305
-	KProcIO* p = new KProcIO;
-	p->setUseShell(true);
-#else
-	KShellProcess* p = new KShellProcess;
-#endif
+				names.append(options[0].replace(0,1,""));
+				descriptions.append(args[1]);
+				values.append(SMSGlobal::readConfig(group, names[names.count()-1], m_contact));
 
-	*p << QString("%1/bin/smssend").arg(prefix) << provider << "-help";
-	connect( p, SIGNAL(processExited(KProcess *)), this, SLOT(slotOptionsFinished(KProcess*)));
-	connect( p, SIGNAL(receivedStdout(KProcess*, char*, int)),
-		this, SLOT(slotReceivedOutput(KProcess*, char*, int)));
-	connect( p, SIGNAL(receivedStderr(KProcess*, char*, int)),
-		this, SLOT(slotReceivedOutput(KProcess*, char*, int)));
-	output.clear();
-	p->start(KProcess::Block);
+				if( args[0].contains("Message") || args[0].contains("message")
+					|| args[0].contains("message") || args[0].contains("nachricht")
+					|| args[0].contains("Msg") || args[0].contains("Mensagem") )
+				{
+					for( int i = 0; i < options.count(); i++)
+					{
+						if (options[i].contains("Size="))
+						{
+							QString option = options[i];
+							option.replace(0,5,"");
+							m_maxSize = option.toInt();
+						}
+					}
+					messagePos = names.count()-1;
+				}
+				else if ( args[0].contains("Tel") || args[0].contains("Number")
+					|| args[0].contains("number") || args[0].contains("TelNum")
+					|| args[0].contains("Recipient") || args[0].contains("Tel1")
+					|| args[0].contains("To") || args[0].contains("nummer")
+					|| args[0].contains("telefone") || args[0].contains("ToPhone") )
+				{
+					telPos = names.count() - 1;
+				}
+			}
+		}
+	}
+	f.close();
+
+	if ( messagePos == -1 )
+	{
+		canSend = false;
+		KMessageBox::error(0L, i18n("Could not determine which argument which should contain the message"),
+			i18n("Could not send message"));
+		return;
+	}
+	if ( telPos == -1 )
+	{
+		canSend = false;
+
+		KMessageBox::error(0L, i18n("Could not determine which argument which should contain the number"),
+			i18n("Could not send message"));
+		return;
+	}
+
+	canSend = true;
 }
 
 SMSSendProvider::~SMSSendProvider()
@@ -49,37 +96,35 @@ SMSSendProvider::~SMSSendProvider()
 
 }
 
-QListViewItem* SMSSendProvider::listItem(KListView* parent, int pos)
+QString SMSSendProvider::name(int i)
 {
-	while (optionsLoaded == false)
-		;
-
-	if ( telPos == pos || messagePos == pos)
-		return 0L;
+	if ( telPos == i || messagePos == i)
+		return QString::null;
 	else
-		return new KListViewItem(parent, names[pos], values[pos]);
+		return names[i];
 }
 
-void SMSSendProvider::save(KListView* data)
+QString SMSSendProvider::value(int i)
 {
-	QListViewItem* p;
+	return values[i];
+}
+
+QString SMSSendProvider::description(int i)
+{
+	return descriptions[i];
+}
+
+void SMSSendProvider::save(QPtrList<SMSSendArg> args)
+{
 	QString group = QString("SMSSend-%1").arg(provider);
 
-	for (int i=0; i < data->childCount(); i++)
+	for (unsigned i=0; i < args.count(); i++)
 	{
-		p = data->itemAtIndex(i);
-		if (p->text(1) == "")
-			SMSGlobal::deleteConfig(group, p->text(0), m_contact);
+		if (args.at(i)->value->text() == "")
+			SMSGlobal::deleteConfig(group, args.at(i)->argName->text(), m_contact);
 		else
-			SMSGlobal::writeConfig(group, p->text(0), m_contact, p->text(1));
+			SMSGlobal::writeConfig(group, args.at(i)->argName->text(), m_contact, args.at(i)->value->text());
 	}
-}
-
-void SMSSendProvider::showDescription(QString name)
-{
-	int pos = names.findIndex(name);
-	if (pos > -1)
-		KMessageBox::information(0L, descriptions[pos], name);
 }
 
 int SMSSendProvider::count()
@@ -89,9 +134,6 @@ int SMSSendProvider::count()
 
 void SMSSendProvider::send(const KopeteMessage& msg)
 {
-	while (optionsLoaded == false)
-		;
-
 	m_msg = msg;
 
 	QString message = msg.plainBody();
@@ -138,91 +180,6 @@ void SMSSendProvider::slotSendFinished(KProcess* p)
 	}
 }
 
-void SMSSendProvider::slotOptionsFinished(KProcess* p)
-{
-	QString n = "  ([^ ]*) ";
-	QString valueInfo = "(.*)"; // Should be changed later to match "(info abut the format)"
-	QString valueDesc = "/\\* (.*) \\*/";
-
-	QRegExp r = n + valueInfo + valueDesc;
-	QString group = QString("SMSSend-%1").arg(provider);
-
-	for (unsigned i=0; i < output.count(); i++)
-	{
-		QString tmp = output[i];
-
-		int pos = r.search(tmp);
-		if (pos > -1)
-		{
-			QString name = r.cap(1);
-
-			names.append(name);
-			
-			if (name == "Message")
-				messagePos = values.count();
-			else if (name == "message")
-				messagePos = values.count();
-			else if (name == "nachricht")
-				messagePos = values.count();
-			else if (name == "Msg")
-				messagePos = values.count();
-			else if (name == "Mensagem")
-				messagePos = values.count();
-			else if (name == "Tel")
-				telPos = values.count();
-			else if (name == "Number")
-				telPos = values.count();
-			else if (name == "number")
-				telPos = values.count();
-			else if (name == "TelNum")
-				telPos = values.count();
-			else if (name == "Recipient")
-				telPos = values.count();
-			else if (name == "Tel1")
-				telPos = values.count();
-			else if (name == "To")
-				telPos = values.count();
-			else if (name == "nummer")
-				telPos = values.count();
-			else if (name == "telefone")
-				telPos = values.count();
-			else if (name == "ToPhone")
-				telPos = values.count();
-
-			descriptions.append(r.cap(3));
-			rules.append("");
-			values.append(SMSGlobal::readConfig(group, r.cap(1), m_contact));
-			QRegExp max("\\(Max size ([^)]*)\\)");
-
-			max.search(r.cap(2));
-			if (max.cap(1) != QString::null)
-				m_maxSize = QString(max.cap(1)).toInt();
-		}
-	}
-
-	optionsLoaded = true;
-
-	if ( messagePos == -1 )
-	{
-		canSend = false;
-		KMessageBox::error(0L, i18n("Could not determine which argument which should contain the message"),
-			i18n("Could not send message"));
-		return;
-	}
-	if ( telPos == -1 )
-	{
-		canSend = false;
-
-		KMessageBox::error(0L, i18n("Could not determine which argument which should contain the number"),
-			i18n("Could not send message"));
-		return;
-	}
-
-	canSend = true;
-
-	delete p;
-}
-
 void SMSSendProvider::slotReceivedOutput(KProcess*, char  *buffer, int  buflen)
 {
 	QStringList lines = QStringList::split("\n", QString::fromLocal8Bit(buffer, buflen));
@@ -232,9 +189,6 @@ void SMSSendProvider::slotReceivedOutput(KProcess*, char  *buffer, int  buflen)
 
 int SMSSendProvider::maxSize()
 {
-	while ( ! optionsLoaded )
-		;
-
 	return m_maxSize;
 }
 

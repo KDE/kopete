@@ -2,12 +2,12 @@
 #define SMSSENDPROVIDER_H
 
 #include "kopetemessage.h"
+#include "smssendarg.h"
 
 #include <qstring.h>
 #include <qstringlist.h>
+#include <qptrlist.h>
 
-class KListView;
-class QListViewItem;
 class KProcess;
 class SMSContact;
 
@@ -18,21 +18,21 @@ public:
 	SMSSendProvider(QString providerName, QString prefixValue, SMSContact* contact, QObject* parent = 0, const char* name = 0);
 	~SMSSendProvider();
 
-	QListViewItem* listItem(KListView* parent, int pos);
-	void save(KListView* data);
-	void showDescription(QString name);
 	int count();
+	QString name(int i);
+	QString value(int i);
+	QString description(int i);
+
+	void save(QPtrList<SMSSendArg> args);
 	void send(const KopeteMessage& msg);
 
 	int maxSize();
 private slots:
 	void slotReceivedOutput(KProcess*, char  *buffer, int  buflen);
 	void slotSendFinished(KProcess*);
-	void slotOptionsFinished(KProcess*);
 private:
 	QStringList names;
 	QStringList descriptions;
-	QStringList rules;
 	QStringList values;
 
 	int messagePos;
@@ -44,8 +44,6 @@ private:
 	QStringList output;
 
 	SMSContact* m_contact;
-
-	bool optionsLoaded;
 
 	KopeteMessage m_msg;
 

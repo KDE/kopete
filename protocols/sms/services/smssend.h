@@ -2,6 +2,7 @@
 #define SMSSEND_H
 
 #include "smsservice.h"
+#include "smssendarg.h"
 #include <qobject.h>
 #include <qmap.h>
 
@@ -24,14 +25,11 @@ public slots:
 	void savePreferences();
 
 private slots:
-	void saveProviderPreferences();
 	void setOptions(const QString& name);
-	void showDescription();
-	void changeOption(QListViewItem* i);
 
 private:
 	SMSSendPrefsUI* prefWidget;
-	QMap<QString, QString> descriptions;
+	QPtrList<SMSSendArg> args;
 	QStringList providers();
 } ;
 
