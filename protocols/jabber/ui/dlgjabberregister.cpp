@@ -59,8 +59,9 @@ void dlgJabberRegister::slotGotForm ()
 
 	// translate the form and create it inside the box widget
 	translator = new JabberFormTranslator (task->form (), grpForm);
-	grpForm->layout()->add (translator);
+	static_cast<QBoxLayout*>(grpForm->layout())->insertWidget(1, translator);
 	translator->show();
+	resize(sizeHint());
 
 	// enable the send button
 	btnRegister->setEnabled (true);

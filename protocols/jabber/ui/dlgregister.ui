@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>dlgRegister</class>
 <widget class="QDialog">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>338</width>
-            <height>158</height>
+            <height>119</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -68,6 +68,23 @@
                         <string>Please wait while querying the server...</string>
                     </property>
                 </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer6</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>0</height>
+                        </size>
+                    </property>
+                </spacer>
             </vbox>
         </widget>
         <widget class="QLayoutWidget">
@@ -111,6 +128,9 @@
                     <property name="text">
                         <string>&amp;Register</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+R</string>
+                    </property>
                     <property name="autoDefault">
                         <bool>true</bool>
                     </property>
@@ -124,6 +144,9 @@
                     </property>
                     <property name="text">
                         <string>&amp;Cancel</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+C</string>
                     </property>
                     <property name="autoDefault">
                         <bool>true</bool>

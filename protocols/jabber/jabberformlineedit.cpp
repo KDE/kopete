@@ -38,4 +38,21 @@ JabberFormLineEdit::~JabberFormLineEdit ()
 {
 }
 
+JabberFormPasswordEdit::JabberFormPasswordEdit (const int type, const QString & realName, const QString & value, QWidget * parent, const char *name):KPasswordEdit(parent, name)
+{
+
+	setText(value);
+	fieldType = type;
+	fieldName = realName;
+
+}
+
+void JabberFormPasswordEdit::slotGatherData (XMPP::Form & form)
+{
+
+	form += XMPP::FormField (fieldName, password());
+
+}
+
+
 #include "jabberformlineedit.moc"
