@@ -212,13 +212,13 @@ void OscarSocket::parseSSIContact(SSI *pSsi, QStringList &blmContacts)
 		{
 			case 0x0131: // nickname
 			{
-				if(t->length > 0)
+				/*if(t->length > 0)
 				{
 					kdDebug(14150) << k_funcinfo <<
 						"TODO: contact '" << pSsi->name <<
 						"' has alias on serverside-list: '" <<
 						t->data << "'" << endl;
-				}
+				}*/
 				break;
 			}
 

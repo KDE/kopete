@@ -22,10 +22,20 @@
 
 #include "kopeteprotocol.h"
 #include "kopetecontactproperty.h"
+#include "kopetemimetypehandler.h"
 
 class QComboBox;
 class ICQUserInfoWidget;
 class ICQContact;
+
+
+class ICQProtocolHandler : public Kopete::MimeTypeHandler
+{
+	public:
+		ICQProtocolHandler();
+		void handleURL(const QString &mimeType, const KURL & url) const;
+};
+
 
 class ICQProtocol : public KopeteProtocol
 {
@@ -89,6 +99,7 @@ class ICQProtocol : public KopeteProtocol
 		QMap<int, QString> mCountries;
 		QMap<int, QString> mLanguages;
 		QMap<int, QString> mEncodings;
+		ICQProtocolHandler protohandler;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

@@ -21,6 +21,7 @@
 #include "icqeditaccountwidget.h"
 #include "icquserinfowidget.h"
 #include "kopeteglobal.h"
+#include "kopeteuiglobal.h"
 
 #include <netinet/in.h> // for ntohl()
 
@@ -37,7 +38,8 @@
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
-
+#include <ksimpleconfig.h>
+#include <kmessagebox.h>
 #include <kopeteaccountmanager.h>
 
 
@@ -46,6 +48,70 @@ typedef KGenericFactory<ICQProtocol> ICQProtocolFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_icq, ICQProtocolFactory( "kopete_icq_protocol" ) )
 
 ICQProtocol* ICQProtocol::protocolStatic_ = 0L;
+
+
+
+ICQProtocolHandler::ICQProtocolHandler() : Kopete::MimeTypeHandler(false)
+{
+	registerAsMimeHandler(QString::fromLatin1("application/x-icq"));
+}
+
+void ICQProtocolHandler::handleURL(const QString &mimeType, const KURL & url) const
+{
+	/**
+	 * File Format usually looks like
+	 *
+	 * [ICQ User]
+	 * UIN=123456789
+	 * Email=
+	 * NickName=
+	 * FirstName=
+	 * LastName=
+	 */
+
+	KSimpleConfig file(url.path(), true);
+	if (file.hasGroup("ICQ User"))
+	{
+		ICQProtocol *proto = ICQProtocol::protocol();
+
+		file.setGroup("ICQ User");
+
+		QString uin = file.readEntry("UIN");
+		if (uin.isEmpty())
+			return;
+
+		QString nick = file.readEntry("NickName");
+		QString first = file.readEntry("FirstName");
+		QString last = file.readEntry("LastName");
+		// TODO: email, yes i am lazy :P
+
+
+		// TODO: select account with UI, I'm lazy right now
+		QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts(proto);
+		QDictIterator<KopeteAccount> it(accounts);
+		KopeteAccount *account = it.current();
+
+		if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
+			i18n("Wanna add this contact?"), i18n("Add Contact")) == KMessageBox::No)
+			return;
+
+		kdDebug(14200) << k_funcinfo <<
+			"Adding Contact; uin = " << uin << ", nick = '" << nick <<
+			"', firstname = '" << first << "', lastname = '" << last <<"'" << endl;
+		if (account->addContact(uin, nick, 0L, KopeteAccount::DontChangeKABC, QString::null, true))
+		{
+			KopeteContact *contact = account->contacts()[uin];
+
+			if (!first.isEmpty())
+				contact->setProperty(Kopete::Global::Properties::self()->firstName(), first);
+
+			if (!last.isEmpty())
+				contact->setProperty(Kopete::Global::Properties::self()->lastName(), last);
+		}
+	}
+}
+
+
 
 ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 : KopeteProtocol( ICQProtocolFactory::instance(), parent, name ),
