@@ -48,6 +48,8 @@ public:
 	virtual void serialize( QMap<QString, QString> &serializedData,
 		QMap<QString, QString> &addressBookData );
 
+	virtual bool isReachable();
+
 	KopeteMessageManager* manager( bool canCreate = false );
 
 public slots:

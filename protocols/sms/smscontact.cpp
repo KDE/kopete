@@ -66,6 +66,11 @@ void SMSContact::serialize( QMap<QString, QString> &serializedData,
 		serializedData[ "contactId" ] = m_phoneNumber;
 }
 
+bool SMSContact::isReachable()
+{
+  return true;
+}
+
 KopeteMessageManager* SMSContact::manager( bool )
 {
 	kdWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
