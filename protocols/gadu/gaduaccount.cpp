@@ -34,6 +34,7 @@
 #include "kopetegroup.h"
 #include "kopetepassword.h"
 #include "kopeteuiglobal.h"
+#include "kopeteglobal.h"
 
 #include <kpassdlg.h>
 #include <kconfig.h>
@@ -83,6 +84,7 @@ public:
 	QString		lastDescription;
 	bool		forFriends;
 
+	KConfigGroup*	config;
 	QPtrList<GaduCommand>		commandList_;
 	Kopete::OnlineStatus		status_;
 	QValueList<QHostAddress>	servers_;
@@ -141,12 +143,18 @@ static const char* const servers_ip[ NUM_SERVERS ] = {
 
 	p->gaduDcc_ = NULL;
 
+	p->config = configGroup();
+
 	initActions();
 	initConnections();
 
-	QString nick = configGroup()->readEntry( QString::fromAscii( "nickName" ) );
+	QString nick = p->config->readEntry( QString::fromAscii( "nickName" ) );
 	if ( !nick.isNull() ) {
-		myself()->rename( nick );
+		myself()->setProperty( Kopete::Global::Properties::self()->nickName(), nick );
+	}
+	else {
+		myself()->setProperty( Kopete::Global::Properties::self()->nickName(), accountId() );
+		p->config->writeEntry( QString::fromAscii( "nickName" ), accountId() );
 	}
 }
 
@@ -222,8 +230,11 @@ KActionMenu*
 GaduAccount::actionMenu()
 {
 	kdDebug(14100) << "actionMenu() " << endl;
-
+	
+	p->actionMenu_ = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ), this );
 	p->actionMenu_ = Kopete::Account::actionMenu();
+	p->actionMenu_->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> " ).
+	    arg( myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString(), accountId() ) );
 
 	if ( p->session_->isConnected() ) {
 		p->searchAction->setEnabled( TRUE );
@@ -256,9 +267,23 @@ GaduAccount::actionMenu()
 	else {
 		p->listFromFileAction->setEnabled( TRUE );
 	}
+	p->actionMenu_->insert( new KAction( i18n( "Go O&nline" ),
+				GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ).iconFor( this ),
+				0, this, SLOT( slotGoOnline() ), this, "actionGaduConnect" ) );
 
-	p->actionMenu_->insert( new KAction( i18n( "Set &Description..." ),
-			"info",
+	p->actionMenu_->insert( new KAction( i18n( "Set &Busy" ),
+				GaduProtocol::protocol()->convertStatus( GG_STATUS_BUSY ).iconFor( this ),
+				0, this, SLOT( slotGoBusy() ), this, "actionGaduConnect" ) );
+
+	p->actionMenu_->insert( new KAction( i18n( "Set &Invisible" ),
+				GaduProtocol::protocol()->convertStatus( GG_STATUS_INVISIBLE ).iconFor( this ),
+				0, this, SLOT( slotGoInvisible() ), this, "actionGaduConnect" ) );
+
+	p->actionMenu_->insert( new KAction( i18n( "Go &Offline" ),
+				GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ).iconFor( this ),
+				0, this, SLOT( slotGoOffline() ), this, "actionGaduConnect" ) );
+
+	p->actionMenu_->insert( new KAction( i18n( "Set &Description..." ), "info",
 			0, this, SLOT( slotDescription() ), this, "actionGaduDescription" ) );
 
 	p->actionMenu_->insert( p->friendsModeAction );
@@ -315,7 +340,7 @@ GaduAccount::createContact( const QString& contactId, Kopete::MetaContact* paren
 	kdDebug(14100) << "createContact " << contactId << endl;
 
 	uin_t uinNumber = contactId.toUInt();
-	GaduContact* newContact = new GaduContact( uinNumber, parentContact->displayName(), this, parentContact );
+	GaduContact* newContact = new GaduContact( uinNumber, parentContact->displayName(),this, parentContact );
 	newContact->setParentIdentity( accountId() );
 	addNotify( uinNumber );
 
@@ -831,7 +856,9 @@ GaduAccount::slotExportContactsListToFile()
 
 	p->saveListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null,
 					Kopete::UI::Global::mainWidget(), "gadu-list-save", false );
-	p->saveListDialog->setCaption( i18n("Save Contacts List for Account %1 As").arg( myself()->displayName() ) );
+	p->saveListDialog->setCaption( 
+	    i18n("Save Contacts List for Account %1 As").arg(
+	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
 
 	if ( p->saveListDialog->exec() == QDialog::Accepted ) {
 
@@ -873,7 +900,9 @@ GaduAccount::slotImportContactsFromFile()
 
 	p->loadListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null,
 					Kopete::UI::Global::mainWidget(), "gadu-list-load", true );
-	p->loadListDialog->setCaption( i18n("Load Contacts List for Account %1 As").arg( myself()->displayName() ) );
+	p->loadListDialog->setCaption( 
+	    i18n("Load Contacts List for Account %1 As").arg(
+	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
 
 	if ( p->loadListDialog->exec() == QDialog::Accepted ) {
 
@@ -1021,7 +1050,7 @@ GaduAccount::dccRequest( GaduContact* peer )
 bool
 GaduAccount::dccEnabled()
 {
-	QString s = pluginData( protocol(), QString::fromAscii( "useDcc" ) );
+	QString s = p->config->readEntry( QString::fromAscii( "useDcc" ) );
 	kdDebug( 14100 ) << "dccEnabled: "<<s<<endl;
 	if ( s == QString::fromAscii( "enabled" ) ) {
 		return true;
@@ -1043,7 +1072,7 @@ GaduAccount::setDcc( bool d )
 		s = QString::fromAscii( "enabled" );
 	}
 
-	setPluginData( protocol(), QString::fromAscii( "useDcc" ), s );
+	p->config->writeEntry( QString::fromAscii( "useDcc" ), s );
 
 	if ( p->session_->isConnected() & d ) {
 		dccOn();
@@ -1061,7 +1090,7 @@ GaduAccount::useTls()
 	unsigned int oldC;
 	tlsConnection Tls;
 
-	s = pluginData( protocol(), QString::fromAscii( "useEncryptedConnection" ) );
+	s = p->config->readEntry( QString::fromAscii( "useEncryptedConnection" ) );
 	oldC = s.toUInt( &c );
 	// we have old format
 	if ( c ) {
@@ -1069,7 +1098,7 @@ GaduAccount::useTls()
 				oldC << " willl be converted to new string value" << endl;
 		setUseTls( (tlsConnection) oldC );
 		// should be string now, unless there was an error reading
-		s = pluginData( protocol(), QString::fromAscii( "useEncryptedConnection" ) );
+		s = p->config->readEntry( QString::fromAscii( "useEncryptedConnection" ) );
 		kdDebug( 14100 ) << "new useEncryptedConnection value : " << s << endl;
 	}
 
@@ -1103,7 +1132,7 @@ GaduAccount::setUseTls( tlsConnection ut )
 		break;
 	}
 
-	setPluginData( protocol(), QString::fromAscii( "useEncryptedConnection" ), s );
+	p->config->writeEntry( QString::fromAscii( "useEncryptedConnection" ), s );
 }
 
 #include "gaduaccount.moc"
