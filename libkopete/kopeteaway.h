@@ -149,6 +149,8 @@ friend class KopeteAwayDialog;
 	
 	private:
 	KopeteAway();
+	KopeteAway( const KopeteAway &rhs );
+	KopeteAway &operator=( const KopeteAway &rhs );
 	static KopeteAway *instance;
 	QString mAwayMessage;
 	bool mGlobalAway;
