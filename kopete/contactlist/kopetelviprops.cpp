@@ -84,7 +84,7 @@ KopeteGVIProps::KopeteGVIProps(KopeteGroupViewItem *gvi, QWidget *parent, const 
 	if(closeName.isEmpty())
 		closeName = KOPETE_GROUP_DEFAULT_CLOSED_ICON;
 	mainWidget->icnbOpen->setIcon( openName );
-    mainWidget->icnbClosed->setIcon( closeName );
+	mainWidget->icnbClosed->setIcon( closeName );
 
 	connect( this, SIGNAL(okClicked()), this, SLOT( slotOkClicked() ) );
 	connect( mainWidget->chkUseCustomIcons, SIGNAL( toggled( bool ) ),

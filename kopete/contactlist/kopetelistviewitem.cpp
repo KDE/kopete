@@ -437,11 +437,14 @@ ImageComponent::~ImageComponent()
 	delete d;
 }
 
-void ImageComponent::setPixmap( const QPixmap &img )
+void ImageComponent::setPixmap( const QPixmap &img, bool adjustSize)
 {
 	d->image = img;
-	setMinWidth( img.width() );
-	setMinHeight( img.height() );
+	if ( adjustSize )
+	{
+		setMinWidth( img.width() );
+		setMinHeight( img.height() );
+	}
 	repaint();
 }
 

@@ -499,16 +499,24 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 		QPixmap photoPixmap;
 		//QPixmap defaultIcon( KGlobal::iconLoader()->loadIcon( "vcard", KIcon::Desktop ) );
 		QImage photoImg = m_metaContact->photo();
-		
 		if ( (photoImg.width() > 0) &&  (photoImg.height() > 0) )
 		{
 			int photoSize = d->photoSize;
 			if ( photoImg.width() > photoImg.height() )
+			{
 				photoPixmap = photoImg.scaleWidth( photoSize );
+			}
 			else
+			{
 				photoPixmap = photoImg.scaleHeight( photoSize );
-			
-			d->metaContactPhoto->setPixmap( photoPixmap );
+			}
+			QPainter p(&photoPixmap);
+			p.setPen(Qt::black);
+			p.drawLine(0, 0, photoPixmap.width()-1, 0);
+			p.drawLine(0, photoPixmap.height()-1, photoPixmap.width()-1, photoPixmap.height()-1);
+			p.drawLine(0, 0, 0, photoPixmap.height()-1);
+			p.drawLine(photoPixmap.width()-1, 0, photoPixmap.width()-1, photoPixmap.height()-1);
+			d->metaContactPhoto->setPixmap( photoPixmap, false);
 		}
 	}
 }
@@ -677,7 +685,8 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 		d->contactIconSize = IconSize( KIcon::Small );
 		Component *imageBox = new BoxComponent( hbox, BoxComponent::Vertical );
 		new VSpacerComponent( imageBox );
-		d->metaContactPhoto = new ImageComponent( imageBox, d->photoSize*110/140, d->photoSize );
+		// include borders in size
+		d->metaContactPhoto = new ImageComponent( imageBox, d->photoSize + 2 , d->photoSize + 2 );
 		new VSpacerComponent( imageBox );
 		Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
 		d->nameText = new TextComponent( vbox );

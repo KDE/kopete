@@ -256,7 +256,7 @@ public:
 	ImageComponent( ComponentBase *parent, int minW, int minH );
 	~ImageComponent();
 
-	void setPixmap( const QPixmap &img );
+	void setPixmap( const QPixmap &img, bool adjustSize = true);
 	void paint( QPainter *painter, const QColorGroup &cg );
 
 private:
