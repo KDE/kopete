@@ -72,7 +72,7 @@ KopeteContactList::KopeteContactList()
 {
 	d=new KopeteContactListPrivate;
 	
-	d->myself=new KopeteMetaContact();
+	d->myself=0L;
 
 	//no contactlist loaded yet, don't save them
 	d->loaded=false;
@@ -979,6 +979,8 @@ void KopeteContactList::slotSaveLater()
 
 KopeteMetaContact* KopeteContactList::myself()
 {
+	if(!d->myself)
+		d->myself=new KopeteMetaContact();
 	return d->myself;
 }
 
