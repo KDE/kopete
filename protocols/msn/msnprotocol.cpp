@@ -31,12 +31,10 @@
 #include <kpopupmenu.h>
 #include <kstandarddirs.h>
 
-#include "kopete.h"
 #include "kopetecontactlist.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
-#include "systemtray.h"
 
 #include "msnaddcontactpage.h"
 #include "msncontact.h"
@@ -414,8 +412,6 @@ void MSNProtocol::initActions()
 
 	m_debugMenu->insert( m_debugRawCommand );
 #endif
-
-	actionStatusMenu->plug( kopeteapp->systemTray()->contextMenu(), 1 );
 }
 
 KActionMenu* MSNProtocol::protocolActions()
