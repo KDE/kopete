@@ -28,13 +28,15 @@
 class QString;
 class QPixmap;
 
-class KopeteEvent;
-class KopeteMetaContact;
-class KopeteGroup;
 class KAction;
 class KActionCollection;
 class KListBox;
 class KPopupMenu;
+
+class KopeteEvent;
+class KopeteGroup;
+class KopeteHistoryDialog;
+class KopeteMetaContact;
 class KopeteProtocol;
 
 /**
@@ -43,7 +45,6 @@ class KopeteProtocol;
  * This class abstracts a generic contact/buddie.
  * Use it for inserting contacts in the contact list for example.
  */
-
 class KopeteContact : public QObject
 {
 	Q_OBJECT
@@ -54,7 +55,7 @@ public:
 	 */
 	KopeteContact( KopeteProtocol *protocol, KopeteMetaContact *parent );
 	~KopeteContact();
-	
+
 	/**
 	 * Contact's status
 	 */
@@ -86,11 +87,11 @@ public:
 	 * Returns the identity this contact belongs to (i.e. for
 	 * having multiple contacts of the same protocol in the metacontact)
 	 * FIXME: This is a bad description, could someone clear it up?
-	 * 
+	 *
 	 * @return THe identity of the ID
 	 */
 	virtual QString identityId() const;
-	
+
 	/**
 	 * The groups in which the user is physically located.
 	 * The logical groups are stored in the Meta Contact. Physical groups
@@ -127,7 +128,7 @@ public:
 	 * @param name Then new display name
 	 */
 	void setDisplayName( const QString &name );
-	
+
 	/**
 	 * Get the current display name
 	 * @return The display name
@@ -145,11 +146,11 @@ public:
 	 * The default implement does what you'd expect,
 	 * but you might want to reimplement it for more
 	 * fine-grained reporting of status
-	 * 
+	 *
 	 * @return Formatted status text
 	 */
 	virtual QString statusText() const;
-	
+
 	/**
 	 * The name of the icon associated with the contact's status
 	 * @return name of the icon associated with the contact's status
@@ -195,9 +196,9 @@ public:
 	virtual QString id() const = 0;
 
 	/**
-	 * Return the protocol id that identifies a contact. 
+	 * Return the protocol id that identifies a contact.
 	 *
-	 * Note: Id is required to be unique per protocol and per identity. 
+	 * Note: Id is required to be unique per protocol and per identity.
 	 * Across those boundaries ids may occur multiple times.
 	 * The id is solely for comparing items safely (using pointers is
 	 * more crash-prone). DO NOT assume anything regarding the id's
@@ -207,17 +208,17 @@ public:
 	 * @return the unique protocol id of the contact
 	 */
 	KopeteProtocol* protocol() const { return m_protocol; }
-	
+
 	/**
 	 * Returns a set of custom menu items for the context menu
 	 * which is displayed in showContextMenu (private).  Protocols
-	 * should use this to add protocol-specific actions to the 
+	 * should use this to add protocol-specific actions to the
 	 * popup menu
 	 *
 	 * @return Collection of menu items to be show on the context menu
 	 */
 	 virtual KActionCollection *customContextMenuActions() {return 0L;};
-	 
+
 	 /**
 	  * Show a context menu of actions pertaining to this contact
 	  *
@@ -229,26 +230,26 @@ public:
 	  * Get the Context Menu for this contact
 	  */
 	KPopupMenu *createContextMenu();
-	
+
 	 /**
 	  * Moves this contact to a new MetaContact
 	  *
 	  * @param m The new MetaContact to move this contact to
 	  */
 	 void moveToMetaContact(KopeteMetaContact *m);
-	 
+
 	 /**
 	  * Add this contact to the contact-list if this is a temporary contact.
-	  * If the protocol has a contact-list server-side, it is needed to derive this fontction.  
+	  * If the protocol has a contact-list server-side, it is needed to derive this fontction.
 	  * TODO: Write a better description of this, this doc doesn't make sense
 	  */
 	 virtual void addThisTemporaryContact(KopeteGroup *group=0l);
-	 
+
 	 /**
 	  * Returns whether or not this contact is capable of file transfers or not
 	  */
 	 bool isFileCapable() const { return mFileCapable; }
-	 
+
 	 /*
 	  * Sets the capability of file transfers for this user. Once this is changed it will
 	  * immediately add a new menu entry called "Send File...", and will call the
@@ -261,33 +262,28 @@ public slots:
 	 * This should typically pop up a KopeteChatWindow
 	 */
 	virtual void execute() = 0;
- 
+
 	/**
 	 * Changes the MetaContact that this contact is a part of.  This function
-	 * is called by the KAction changeMetaContact that is part of the context 
+	 * is called by the KAction changeMetaContact that is part of the context
 	 * menu.
 	 */
 	void slotChangeMetaContact();
-	
+
 	/**
-	 * Method to view the history, should be implemented by the protocol plugin
-	 */
-	virtual void slotViewHistory() = 0;
-	
-	/**
-	 * Method to delete a contact from the contact list, 
+	 * Method to delete a contact from the contact list,
 	 * should be implemented by protocol plugin to handle
 	 * protocol-specific actions required to delete a contact
 	 * (ie. messages to the server, etc)
 	 */
 	virtual void slotDeleteContact() = 0;
-	
+
 	/**
 	 * Method to retrieve user information.  Should be implemented by
 	 * the protocols, and popup some sort of dialog box
 	 */
 	virtual void slotUserInfo() = 0;
-	
+
 	/**
 	 * Method to send a file. Should be implemented by the protocols
 	 */
@@ -302,8 +298,17 @@ private slots:
 	void slotChangeDisplayName();
 
 	void slotMoveDialogOkClicked();
-  /** No descriptions */
-  void slotProtocolUnloading();
+	void slotProtocolUnloading();
+
+	/**
+	 * View the chat history
+	 */
+	void slotViewHistory();
+
+	/**
+	 * Chat history widget got closed, remove the reference
+	 */
+	void slotHistoryDialogDestroyed();
 
 signals:
 	/**
@@ -341,7 +346,7 @@ signals:
 	void moved(KopeteMetaContact *from , KopeteContact *)  ;
 
 private:
-	
+	KopeteHistoryDialog *m_historyDialog;
 	QString m_displayName;
 	KopeteProtocol *m_protocol;
 	bool mFileCapable;
@@ -382,14 +387,5 @@ private:
 
 #endif
 
-
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 

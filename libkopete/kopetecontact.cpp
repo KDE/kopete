@@ -19,24 +19,25 @@
 #include "kopetecontact.h"
 
 #include <qimage.h>
-#include <qpixmap.h>
-#include <qvbox.h>
 #include <qlabel.h>
+#include <qpixmap.h>
+#include <qregexp.h>
+#include <qvbox.h>
 
 #include <kdebug.h>
 #include <kiconloader.h>
-//#include <klistview.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
 #include <kaction.h>
 #include <klineeditdlg.h>
 
 #include "kopete.h"
-#include "kopetemetacontact.h"
-#include "kopetestdaction.h"
 #include "kopetecontactlist.h"
-#include "kopeteprotocol.h"
 #include "kopetecontactlistview.h"
+#include "kopetehistorydialog.h"
+#include "kopetemetacontact.h"
+#include "kopeteprotocol.h"
+#include "kopetestdaction.h"
 
 KopeteContact::KopeteContact( KopeteProtocol *protocol, KopeteMetaContact *parent )
 	: QObject( parent )
@@ -49,6 +50,7 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, KopeteMetaContact *paren
 	m_cachedOldStatus = Unknown;
 	contextMenu = 0L;
 	mFileCapable = false;
+	m_historyDialog = 0L;
 
 	connect(protocol, SIGNAL(unloading()), this, SLOT(slotProtocolUnloading()));
 	
@@ -155,17 +157,47 @@ int KopeteContact::importance() const
 	return 0;
 }
 
-
 void KopeteContact::initActions()
 {
-	/* Build the actions */
-	actionSendMessage = KopeteStdAction::sendMessage(this, SLOT(execute()), this, "actionMessage" ); // "Send Message"
-	actionViewHistory = KopeteStdAction::viewHistory( this, SLOT(slotViewHistory()), this, "actionViewHistory" );  // "View History"
-	actionChangeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT(slotChangeMetaContact()), this, "actionChangeMetaContact" ); // "Change MetaContact"
-	actionDeleteContact = KopeteStdAction::deleteContact( this, SLOT(slotDeleteContact()), this, "actionDeleteContact" );
-	actionUserInfo = KopeteStdAction::contactInfo( this, SLOT(slotUserInfo()), this, "actionUserInfo" );
-	actionChangeAlias = KopeteStdAction::changeAlias( this, SLOT(slotChangeDisplayName()), this, "actionChangeAlias" );
-	actionSendFile = KopeteStdAction::sendFile( this, SLOT(slotSendFile()), this, "actionSendFile");
+	actionSendMessage = KopeteStdAction::sendMessage( this,
+		SLOT( execute() ), this, "actionMessage" );
+	actionViewHistory = KopeteStdAction::viewHistory( this,
+		SLOT( slotViewHistory() ), this, "actionViewHistory" );
+	actionChangeMetaContact = KopeteStdAction::changeMetaContact( this,
+		SLOT( slotChangeMetaContact() ), this, "actionChangeMetaContact" );
+	actionDeleteContact = KopeteStdAction::deleteContact( this,
+		SLOT( slotDeleteContact() ), this, "actionDeleteContact" );
+	actionUserInfo = KopeteStdAction::contactInfo( this,
+		SLOT( slotUserInfo() ), this, "actionUserInfo" );
+	actionChangeAlias = KopeteStdAction::changeAlias( this,
+		SLOT( slotChangeDisplayName() ), this, "actionChangeAlias" );
+	actionSendFile = KopeteStdAction::sendFile( this,
+		SLOT( slotSendFile() ), this, "actionSendFile");
+}
+
+void KopeteContact::slotViewHistory()
+{
+	kdDebug() << "KopteContact::slotViewHistory()" << endl;
+
+	if( m_historyDialog )
+	{
+		m_historyDialog->raise();
+	}
+	else
+	{
+		m_historyDialog = new KopeteHistoryDialog(
+			QString( protocol()->id() ) + "/" +
+			id().replace( QRegExp( "[./~]" ), "-" ) + ".log", displayName(),
+			true, 50, qApp->mainWidget(), "KopeteHistoryDialog" );
+
+		connect ( m_historyDialog, SIGNAL( destroyed()),
+			this, SLOT( slotHistoryDialogDestroyed() ) );
+	}
+}
+
+void KopeteContact::slotHistoryDialogDestroyed()
+{
+	m_historyDialog = 0L;
 }
 
 void KopeteContact::slotSendFile()
