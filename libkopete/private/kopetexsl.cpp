@@ -29,6 +29,7 @@
 //        be documented - Martijn
 #include <stdlib.h>
 
+#include <qregexp.h>
 #include <qsignal.h>
 #include <qthread.h>
 
@@ -184,8 +185,92 @@ KopeteXSLT::~KopeteXSLT()
 	delete d;
 }
 
-void KopeteXSLT::setXSLT( const QString &document )
+void KopeteXSLT::setXSLT( const QString &_document )
 {
+	// Search for '<kopete-i18n>' elements and feed them through i18n().
+	// After that replace the %VAR% variables with their proper XSLT counterpart.
+	//
+	// FIXME: Preprocessing the document using the QString API is fast and simple,
+	//        but also error-sensitive.
+	//        In fact, there are a couple of known issues with this algorithm that
+	//        depend on the strings in the current styles. If these strings change
+	//        they may break the parsing here.
+	//
+	//        The reason I'm doing it like this is because of issues with QDOM and
+	//        namespaces in earlier Qt versions. When we drop Qt 3.1.x support we
+	//        should probably convert this to more accurate DOM code. - Martijn
+	QRegExp elementMatch( QString::fromLatin1( "<kopete-i18n>(.*)</kopete-i18n>" ) );
+	elementMatch.setMinimal( true );
+	QString document = _document;
+	int pos;
+	while ( ( pos = elementMatch.search( document ) ) != -1 )
+	{
+		QString orig = elementMatch.cap( 1 );
+		//kdDebug( 14010 ) << k_funcinfo << "Original text: " << orig << endl;
+
+		// Split on % and go over all parts
+		QStringList parts = QStringList::split( '%', i18n( orig.utf8() ), true );
+
+		// The first part is always text, as our variables are written like %FOO%
+		QStringList::Iterator it = parts.begin();
+		QString trans = *it;
+		bool prependPercent = true;
+		it = parts.remove( it );
+		for ( it = parts.begin(); it != parts.end(); ++it )
+		{
+			prependPercent = false;
+			if ( *it == QString::fromLatin1( "TIME" ) )
+			{
+				trans += QString::fromLatin1( "<xsl:value-of select=\"@time\"/>" );
+			}
+			else if ( *it == QString::fromLatin1( "FROM_CONTACT_DISPLAYNAME" ) )
+			{
+				trans += QString::fromLatin1( "<span><xsl:attribute name=\"title\">"
+					"<xsl:value-of disable-output-escaping=\"yes\" select=\"from/contact/@contactId\"/></xsl:attribute>"
+					"<xsl:value-of disable-output-escaping=\"yes\" select=\"from/contact/@contactDisplayName\"/></span>" );
+			}
+			else if ( *it == QString::fromLatin1( "TO_CONTACT_DISPLAYNAME" ) )
+			{
+				trans += QString::fromLatin1( "<span><xsl:attribute name=\"title\">"
+					"<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/@contactId\"/></xsl:attribute>"
+					"<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/@contactDisplayName\"/></span>" );
+			}
+			else if ( *it == QString::fromLatin1( "FROM_METACONTACT_DISPLAYNAME" ) )
+			{
+				trans += QString::fromLatin1( "<xsl:value-of disable-output-escaping=\"yes\" select=\"from/contact/@metaContactDisplayName\"/>" );
+			}
+			else if ( *it == QString::fromLatin1( "TO_METACONTACT_DISPLAYNAME" ) )
+			{
+				trans += QString::fromLatin1( "<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/@metaContactDisplayName\"/>" );
+			}
+			else if ( *it == QString::fromLatin1( "FROM_CONTACT_ID" ) )
+			{
+				trans += QString::fromLatin1( "<span><xsl:attribute name=\"title\">"
+					"<xsl:value-of disable-output-escaping=\"yes\" select=\"from/contact/@contactDisplayName\"/></xsl:attribute>"
+					"<xsl:value-of disable-output-escaping=\"yes\" select=\"from/contact/@contactId\"/></span>" );
+			}
+			else if ( *it == QString::fromLatin1( "TO_CONTACT_ID" ) )
+			{
+				trans += QString::fromLatin1( "<span><xsl:attribute name=\"title\">"
+					"<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/@contactDisplayName\"/></xsl:attribute>"
+					"<xsl:value-of disable-output-escaping=\"yes\" select=\"to/contact/@contactId\"/></span>" );
+			}
+			else if ( *it == QString::fromLatin1( "BODY" ) )
+			{
+				trans += QString::fromLatin1( "<xsl:value-of disable-output-escaping=\"yes\" select=\"body\"/>" );
+			}
+			else
+			{
+				if ( prependPercent )
+					trans += '%';
+				trans += *it;
+				prependPercent = true;
+			}
+		}
+		//kdDebug( 14010 ) << k_funcinfo << "Translated text: " << trans << endl;
+		// Add "<kopete-i18n>" and "</kopete-i18n>" to length, hence the '+ 27'
+		document.replace( uint( pos ), orig.length() + 27, trans );
+	}
 	d->document = document.utf8();
 }
 
@@ -226,5 +311,6 @@ bool KopeteXSLT::isValid()
 }
 
 #include "kopetexsl.moc"
+
 // vim: set noet ts=4 sts=4 sw=4:
 
