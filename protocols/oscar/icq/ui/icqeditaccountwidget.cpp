@@ -125,17 +125,9 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 
 		mAccountSettings->chkAutoLogin->setChecked(mAccount->autoLogin());
 
-
-
-        if ( mAccount->pluginData(mProtocol, "Server") != "login.icq.com" || ( mAccount->pluginData(mProtocol, "Port").toInt() != 5190) ) {
-            mAccountSettings->optionOverrideServer->setChecked( true );
-        }
-
-
-
-
-
-
+		if ( mAccount->pluginData(mProtocol, "Server") != "login.icq.com" || ( mAccount->pluginData(mProtocol, "Port").toInt() != 5190) ) {
+			mAccountSettings->optionOverrideServer->setChecked( true );
+		}
 		mAccountSettings->edtServerAddress->setText(mAccount->pluginData(mProtocol, "Server"));
 		mAccountSettings->edtServerPort->setValue(mAccount->pluginData(mProtocol, "Port").toInt());
 		mAccountSettings->chkHideIP->setChecked((mAccount->pluginData(mProtocol,"HideIP").toUInt()==1));
