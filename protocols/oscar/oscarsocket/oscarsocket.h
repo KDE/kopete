@@ -147,7 +147,9 @@ const unsigned int OSCAR_CONNECTING = 10;
 
 // DON'T touch these if you're not 100% sure what they are for!
 #define KOPETE_AIM_CAPS			AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE
-#define KOPETE_ICQ_CAPS			AIM_CAPS_ISICQ | AIM_CAPS_IS_2001 | AIM_CAPS_ICQSERVERRELAY /*| AIM_CAPS_RTFMSGS | AIM_CAPS_UTF8*/
+#define KOPETE_ICQ_CAPS			AIM_CAPS_ICQSERVERRELAY | /*AIM_CAPS_UTF8 | AIM_CAPS_RTFMSGS |*/ AIM_CAPS_ISICQ
+
+//ICQ 2002b sends: CAP_AIM_SERVERRELAY, CAP_UTF8, CAP_RTFMSGS, CAP_AIM_ISICQ
 
 class ICQSearchResult
 {
@@ -253,21 +255,41 @@ class OscarSocket : public OscarConnection
 		/**
 		 * Logs in the user!
 		 *
-		 * @param host		The login server.
-		 * @param port		login port.
-		 * @param s			Screen name
-		 * @param password 	password
+		 * @param host				Login server.
+		 * @param port				Login port.
+		 * @param name				Screen name/UIN
+		 * @param password 			password
+		 * @param profile			UserProfile for AIM connection
+		 * @param initialStatus		Login Status (Online, Away, etc)
 		 */
-		void doLogin(const QString &host, int port, const QString &s, const QString &password);
-		/** Gets the rate info from the server */
+		void doLogin(
+			const QString &host,
+			int port,
+			const QString &name,
+			const QString &password,
+			const QString &userProfile,
+			const unsigned long initialStatus,
+			const QString &awayMessage);
+
+		/*
+		 * Gets the rate info from the server
+		 */
 		void sendRateInfoRequest();
-		/** requests the current user's info */
+		/*
+		 * requests the current user's info
+		 */
 		void requestMyUserInfo();
-		/** Sets idle time */
+		/*
+		 * Sets idle time
+		 */
 		void sendIdleTime(DWORD time);
-		/** requests ssi data from the server */
+		/*
+		 * requests ssi data from the server
+		 */
 		void sendBuddyListRequest();
-		/** Sends message to dest */
+		/*
+		 * Sends message to dest
+		 */
 		void sendIM(const QString &message, const QString &dest, bool isAuto);
 		/** Requests sn's user info */
 		void sendUserProfileRequest(const QString &sn);
@@ -283,12 +305,20 @@ class OscarSocket : public OscarConnection
 		void sendDirectIMDeny(const QString &sn);
 		/** Sends a direct IM accept */
 		void sendDirectIMAccept(const QString &sn);
-		/** Sends our capabilities to the server */
-		void sendCapabilities(unsigned long caps);
+
+		/*
+		 * Sends our capabilities to the server
+		 * for AIM this also sends the userprofile
+		 * @param profile AIM UserProfile or QString:null if no profile to send
+		 * @param caps supported capabilites or 0 if you want default caps to be sent
+		 */
+		void sendLocationInfo(const QString &profile, const unsigned long caps=0);
+
 		/*
 		 * Signs ourselves off
 		 */
 		virtual void doLogoff();
+
 		/*
 		 * Adds a buddy to the server side buddy list
 		 */
@@ -303,7 +333,7 @@ class OscarSocket : public OscarConnection
 		/*
 		 * changes the visibility setting to @value
 		 */
-		void sendChangeVisibility(int value);
+		void sendChangeVisibility(BYTE value);
 
 		/*
 		 * Changes a contacts alias on the serverside contactlist
@@ -362,14 +392,6 @@ class OscarSocket : public OscarConnection
 		 */
 		void fillDirectInfo(Buffer &directInfo);
 
-		/*
-		 * Sends the user's profile to the server
-		 */
-		void sendMyProfile();
-		/** Sets the user's profile */
-		void setMyProfile(const QString &profile);
-		/** Returns the user's profile */
-		inline QString getMyProfile() const { return myUserProfile; };
 		/** Blocks user sname */
 		void sendBlock(const QString &sname);
 		/** Removes the block on user sname */
@@ -585,7 +607,7 @@ class OscarSocket : public OscarConnection
 	/** Parses a warning notification */
 	void parseWarningNotify(Buffer &inbuf);
 	/** Parses a message sending error */
-	void parseError(Buffer &inbuf);
+	void parseError(WORD family, Buffer &inbuf);
 	/** Parses a missed message notification */
 	void parseMissedMessage(Buffer &inbuf);
 	/** Request, deny, or accept a rendezvous session with someone
@@ -651,7 +673,7 @@ class OscarSocket : public OscarConnection
 	/** A buddy has arrived! */
 	void gotBuddyChange(const UserInfo &);
 	/** A user profile has arrived */
-	void gotUserProfile(const UserInfo &, const QString);
+	void gotUserProfile(const UserInfo &, const QString &profile, const QString &away);
 	/** Emitted when the status of the connection changes during login */
 //	void connectionChanged(int, QString);
 	/** Emitted when my user info is received */
@@ -699,12 +721,28 @@ class OscarSocket : public OscarConnection
 		ICQInfoItemList extractICQItemList( Buffer& theBuffer );
 
 	private:
-		/** The OscarAccount we're assocated with */
+		/*
+		 * The OscarAccount we're assocated with
+		 */
 		OscarAccount *mAccount;
-		/** The key used to encrypt the password */
+
+		/*
+		 * The key used to encrypt the password
+		 */
 		char * key;
-		/** The user's password */
-		QString pass;
+		/*
+		 * The user's password
+		 */
+		QString loginPassword;
+		 /*
+		  * AIM profile sent at login
+		  */
+		QString loginProfile;
+		 /*
+		  * status sent at login, contents depend on AIM or ICQ being used
+		  */
+		unsigned long loginStatus;
+
 		/** The authorization cookie */
 		char * mCookie;
 		/** ip address of the bos server */
@@ -725,8 +763,6 @@ class OscarSocket : public OscarConnection
 		SSIData ssiData;
 		/** Socket for direct connections */
 		QSocket * connsock;
-		/** The currently logged in user's profile */
-		QString myUserProfile;
 		// Tells if we are connected to the server and ready to operate
 		bool isLoggedIn;
 

@@ -161,7 +161,7 @@ int OscarSocket::encodePassword(unsigned char *digest)
 	md5_state_t state;
 	md5_init(&state);
 	md5_append(&state, (const md5_byte_t *)key, strlen(key));
-	md5_append(&state, (const md5_byte_t *)pass.latin1(), pass.length());
+	md5_append(&state, (const md5_byte_t *)loginPassword.latin1(), loginPassword.length());
 	md5_append(&state, (const md5_byte_t *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
 	md5_finish(&state, (md5_byte_t *)digest);
 	return 0;

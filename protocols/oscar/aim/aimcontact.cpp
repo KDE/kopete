@@ -35,8 +35,10 @@ AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount
 	setOnlineStatus(mProtocol->statusOffline);
 
 	mLastAutoResponseTime = 0;
+	mUserProfile = "";
+	infoDialog=0L;
 
-	// Buddy Changed
+	// Contact Changed
 	QObject::connect(
 		account->engine(), SIGNAL(gotBuddyChange(const UserInfo &)),
 		this, SLOT(slotContactChanged(const UserInfo &)));
@@ -48,13 +50,41 @@ AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount
 	QObject::connect(
 		account->engine(), SIGNAL(gotMiniTypeNotification(QString, int)),
 		this, SLOT(slotGotMiniType(QString, int)));
+	// received userprofile
+	QObject::connect(
+		account->engine(), SIGNAL(gotUserProfile(const UserInfo &, const QString &, const QString &)),
+		this, SLOT(slotGotProfile(const UserInfo &, const QString &, const QString &)));
 
 // 	kdDebug(14190) << k_funcinfo "name='" << name <<
 // 		"', displayName='" << displayName << "' " << endl;
 }
 
+void AIMContact::setOwnProfile(const QString &profile)
+{
+	kdDebug(14200) << k_funcinfo << "Called." << endl;
+	if(this == account()->myself())
+	{
+		mUserProfile = profile;
+		if(mAccount->isConnected())
+			mAccount->engine()->sendLocationInfo(mUserProfile);
+	}
+}
+
+void AIMContact::slotGotProfile(const UserInfo &user, const QString &profile, const QString &away)
+{
+	if(tocNormalize(user.sn) != tocNormalize(mName))
+		return;
+	kdDebug(14200) << k_funcinfo << "Called for contact '" << displayName() << "'" << endl;
+	mUserProfile = profile;
+	mAwayMessage = away;
+	mUserInfo = user;
+	emit updatedProfile();
+}
+
+
 AIMContact::~AIMContact()
-{}
+{
+}
 
 bool AIMContact::isReachable()
 {
@@ -78,7 +108,7 @@ KActionCollection *AIMContact::customContextMenuActions()
 
 	return actionCollection;
 }
-
+/*
 KopeteMessageManager* AIMContact::manager(bool)
 {
 	// Check to see if we already have a message manager
@@ -95,7 +125,7 @@ KopeteMessageManager* AIMContact::manager(bool)
 
 	// Return the message manager
 	return mMsgManager;
-}
+}*/
 
 void AIMContact::setStatus(const unsigned int newStatus)
 {
@@ -133,7 +163,7 @@ void AIMContact::slotGotMiniType(QString screenName, int type)
 {
 	//TODO
 	// Check to see if it's us
-	if(tocNormalize(screenName) != tocNormalize(mName))
+	if(tocNormalize(screenName) != contactName())
 		return;
 
 	kdDebug(14190) << k_funcinfo << "Got minitype notification for " << mName << endl;
@@ -162,7 +192,7 @@ void AIMContact::slotGotMiniType(QString screenName, int type)
 
 void AIMContact::slotContactChanged(const UserInfo &u)
 {
-	if (tocNormalize(u.sn) != tocNormalize(contactName()))
+	if (tocNormalize(u.sn) != contactName())
 		return; //this is not this contact
 
 //	kdDebug(14190) << k_funcinfo << "Called for '"
@@ -188,6 +218,8 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 	else
 		setStatus(OSCAR_ONLINE);
 
+	mUserInfo = u;
+
 	slotUpdateBuddy();
 }
 
@@ -207,7 +239,7 @@ void AIMContact::slotOffgoingBuddy(QString sn)
 void AIMContact::slotIMReceived( QString message, QString sender, bool /* isAuto */ )
 {
 	// Check if we're the one who sent the message
-	if(tocNormalize(sender)!=tocNormalize(mName))
+	if(tocNormalize(sender) != contactName())
 		return;
 
 	// Tell the message manager that the buddy is done typing
@@ -256,10 +288,11 @@ void AIMContact::slotIMReceived( QString message, QString sender, bool /* isAuto
 	}
 }
 
-/** Called when we want to send a message */
 void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 {
-	if ( message.plainBody().isEmpty() ) // no text, do nothing
+	QString plainMessage = message.plainBody();
+
+	if (plainMessage.isEmpty()) // no text, do nothing
 		return;
 
 	// Check to see if we're even online
@@ -273,7 +306,7 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 
 	// Check to see if the person we're sending the message to is online
 	if (
-			( mListContact->status() == int( OSCAR_OFFLINE ) ) ||
+			( mListContact->status() == static_cast<int>( OSCAR_OFFLINE ) ) ||
 			( onlineStatus().status() == KopeteOnlineStatus::Offline )
 		)
 	{
@@ -288,7 +321,7 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	// we might be able to do that in AIM and we might also convert
 	// HTML to RTF for ICQ type-2 messages  [mETz]
 	// Will asks: Does this still apply in AIM?
-	mAccount->engine()->sendIM(message.plainBody(), mName, false);
+	mAccount->engine()->sendIM(plainMessage, mName, false);
 
 	// Show the message we just sent in the chat window
 	manager()->appendMessage(message);
@@ -315,9 +348,15 @@ KopeteMessage AIMContact::parseAIMHTML ( QString m )
 	kdDebug(14190) << k_funcinfo << "Original MSG: " << m << endl;
 
 	QString result = m;
-	result.replace( QRegExp( QString::fromLatin1("<[hH][tT][mM][lL].*>(.*)</[hH][tT][mM][lL]>") ), QString::fromLatin1("\\1") );
-	result.replace( QRegExp( QString::fromLatin1("<[bB][oO][dD][yY].*>(.*)</[bB][oO][dD][yY]>") ), QString::fromLatin1("\\1") );
-	result.replace( QRegExp( QString::fromLatin1("<[bB][rR]>") ), QString::fromLatin1("<br/>") );
+	result.replace( QRegExp(
+		QString::fromLatin1("<[hH][tT][mM][lL].*>(.*)</[hH][tT][mM][lL]>") ),
+		QString::fromLatin1("\\1") );
+	result.replace( QRegExp(
+		QString::fromLatin1("<[bB][oO][dD][yY].*>(.*)</[bB][oO][dD][yY]>") ),
+		QString::fromLatin1("\\1") );
+	result.replace( QRegExp(
+		QString::fromLatin1("<[bB][rR]>") ),
+		QString::fromLatin1("<br/>") );
 
 	KopeteContactPtrList tmpList;
 	tmpList.append(mAccount->myself());
@@ -327,13 +366,27 @@ KopeteMessage AIMContact::parseAIMHTML ( QString m )
 	return msg;
 }
 
-// Called when the user requests a contact's user info
 void AIMContact::slotUserInfo()
 {
-	kdDebug(14190) << k_funcinfo << "Creating User Profile/Info dialog" << endl;
-	AIMUserInfo *userInfoDialog = new AIMUserInfo(mName, displayName(), mAccount, this);
-	kdDebug(14190) << k_funcinfo << "Showing User Profile/Info dialog" << endl;
-	userInfoDialog->show();
+	if (!infoDialog)
+	{
+		infoDialog = new AIMUserInfoDialog(this, static_cast<AIMAccount*>(account()),
+			false, 0L, displayName()+"_userInfoDialog");
+		if(!infoDialog)
+			return;
+		connect(infoDialog, SIGNAL(closing()), this, SLOT(slotCloseUserInfoDialog()));
+		infoDialog->show();
+	}
+	else
+	{
+		infoDialog->raise();
+	}
+}
+
+void AIMContact::slotCloseUserInfoDialog()
+{
+	infoDialog->delayedDestruct();
+	infoDialog = 0L;
 }
 
 void AIMContact::slotWarn()
@@ -356,6 +409,4 @@ void AIMContact::slotWarn()
 	else if (result == KMessageBox::No)
 		mAccount->engine()->sendWarning(mName, false);
 }
-
-
 #include "aimcontact.moc"

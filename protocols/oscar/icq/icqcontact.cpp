@@ -220,6 +220,7 @@ void ICQContact::setStatus(const unsigned int newStatus)
 			setOnlineStatus(mProtocol->statusFFC);
 			break;
 		case OSCAR_OFFLINE:
+			mInvisible = false;
 			setOnlineStatus(mProtocol->statusOffline);
 			break;
 		case OSCAR_AWAY:

@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>778</width>
-            <height>575</height>
+            <width>578</width>
+            <height>439</height>
         </rect>
     </property>
     <property name="caption">
@@ -18,6 +18,9 @@
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
         </property>
         <widget class="QTabWidget" row="0" column="0">
             <property name="name">
@@ -214,7 +217,7 @@
                                         <property name="name">
                                             <cstring>rwBday</cstring>
                                         </property>
-                                        <property name="date" stdset="0">
+                                        <property name="date">
                                             <date>
                                                 <year>2000</year>
                                                 <month>1</month>
@@ -474,7 +477,7 @@
                         <property name="sizeHint">
                             <size>
                                 <width>16</width>
-                                <height>40</height>
+                                <height>8</height>
                             </size>
                         </property>
                     </spacer>
@@ -1104,7 +1107,7 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>70</height>
+                                <height>16</height>
                             </size>
                         </property>
                     </spacer>
@@ -1121,7 +1124,7 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>70</height>
+                                <height>16</height>
                             </size>
                         </property>
                     </spacer>
@@ -1286,7 +1289,7 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>31</height>
+                                <height>16</height>
                             </size>
                         </property>
                     </spacer>
@@ -1316,7 +1319,7 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>111</height>
+                                <height>16</height>
                             </size>
                         </property>
                     </spacer>
@@ -1572,7 +1575,7 @@
                                 <property name="sizeHint">
                                     <size>
                                         <width>20</width>
-                                        <height>20</height>
+                                        <height>16</height>
                                     </size>
                                 </property>
                             </spacer>
@@ -1591,7 +1594,7 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>61</height>
+                                <height>16</height>
                             </size>
                         </property>
                     </spacer>
@@ -1600,6 +1603,8 @@
         </widget>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>intrCategoryCombo1</sender>

@@ -17,6 +17,8 @@
 #include "oscarsocket.h"
 #include "oscarsocket.icq.h"
 
+#include <netinet/in.h> // for htons()
+
 #include <stdlib.h>
 
 #include <qtimer.h>
@@ -65,7 +67,8 @@ const unsigned char SHARED_FILES_SIGN[16] =
  */
 QCString OscarSocket::encodePasswordXOR()
 {
-	const char *password = pass.latin1(); // TODO: check if latin1 is the right conversion
+	// TODO: check if latin1 is the right conversion
+	const char *password = loginPassword.latin1();
 	QCString encoded;
 
 	kdDebug(14150) << k_funcinfo << endl;
@@ -568,15 +571,14 @@ void OscarSocket::sendICQStatus(unsigned long status)
 {
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_SETSTATUS)" << endl;
 
+	if (status & ICQ_STATUS_SET_INVIS)
+		sendChangeVisibility(0x03);
+	else
+		sendChangeVisibility(0x04);
+
 	Buffer outbuf;
 	outbuf.addSnac(0x0001,0x001e,0x0000,0x00000000);
 
-	// TODO: or 'status' with values for
-	// - web-aware
-	// - hideip
-	// - birthday
-	// - direct-conn only with auth
-	// - direct-conn only if on contactlist
 	outbuf.addWord(0x0006);
 	outbuf.addWord(0x0004);
 	outbuf.addDWord(status);
@@ -708,12 +710,12 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 
 						WORD tcpVer = messageBuf.getWord(); //WORD tcpver
 						kdDebug(14150) << k_funcinfo << "len=" << lenUntilSeq1 << ", tcpver=" << tcpVer << endl;
-
+/*
 						kdDebug(14150) << k_funcinfo << "rest after this is:" << endl <<
 						"------------------------------------------------------" << endl <<
 						messageBuf.toString() << endl <<
 						"------------------------------------------------------" << endl;
-
+*/
 						char *cap=messageBuf.getBlock(16);
 
 						QString capString;
@@ -758,7 +760,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 						kdDebug(14150) << k_funcinfo << "status=" << status << endl;
 
 						WORD priority = messageBuf.getWord(); // Usually 0, seen 0x0002 in information request messages
-						if(priority == 0x0002)
+						if(priority == 0x02)
 							kdDebug(14150) << k_funcinfo << "priority flag says this is an 'information request'" << endl;
 						else
 							kdDebug(14150) << k_funcinfo << "priority flag = " << priority << endl;
@@ -780,7 +782,8 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 							{
 								kdDebug(14150) << k_funcinfo <<
 									"fetching type-2 messagtext..." << endl;
-								char *messagetext = messageBuf.getLNTS();
+								WORD length = htons(messageBuf.getWord());
+								char *messagetext = messageBuf.getBlock(length);
 								QString message = QString::fromLocal8Bit(messagetext);
 								delete [] messagetext;
 								kdDebug(14150) << k_funcinfo <<
@@ -798,10 +801,11 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 
 									if(messageBuf.length() > 0)
 									{
-										DWORD guidlen = messageBuf.getDWord();
+										DWORD guidlen = htonl(messageBuf.getDWord());
 										kdDebug(14150) << k_funcinfo << "guidlen=" << guidlen << endl;
 										char *guid = messageBuf.getBlock(guidlen);
-										kdDebug(14150) << k_funcinfo << "type-2 guid=" << guid << endl;
+										kdDebug(14150) << k_funcinfo <<
+											"type-2 guid='" << guid << "'" << endl;
 										delete [] guid;
 									}
 

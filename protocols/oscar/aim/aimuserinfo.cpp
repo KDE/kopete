@@ -22,7 +22,8 @@
 #include "aimprotocol.h"
 
 #include <qlineedit.h>
-#include <qpushbutton.h>
+#include <qlabel.h>
+#include <qlayout.h>
 
 #include <klocale.h>
 #include <kstandarddirs.h>
@@ -30,117 +31,144 @@
 #include <kdebug.h>
 #include <kapplication.h>
 
-AIMUserInfo::AIMUserInfo(const QString name, const QString nick,
-						 OscarAccount *account, AIMContact *contact)
-	: AIMUserInfoBase()
+#include <ktextedit.h>
+#include <khtmlview.h>
+#include <khtml_part.h>
+
+AIMUserInfoDialog::AIMUserInfoDialog(AIMContact *c, AIMAccount *acc, bool modal,
+	QWidget *parent, const char* name)
+	: KDialogBase(parent, name, modal, i18n("User Information on %1").arg(c->displayName()), Close | User1, Close, true,
+		i18n("&Save Nickname"))
 {
-// 	QMimeSourceFactory::defaultFactory()->addFilePath(
-// 		kapp->dirs()->findDirs("data","kopete/")[0]);
-// 	QMimeSourceFactory::defaultFactory()->addFilePath(
-// 		kapp->dirs()->findDirs("data","kopete/pics/")[0]);
-	m_name = name;
-	m_nick = nick;
-	m_account = account;
-	// Set the caption
-	setCaption( i18n("User Information on %1").arg(name) );
+	kdDebug(14200) << k_funcinfo << "for contact '" << c->displayName() << "'" << endl;
 
-	// Save
-	QObject::connect(cmdSave, SIGNAL(clicked()),
-					 this, SLOT(slotSaveClicked()));
+	mContact = c;
+	mAccount = acc;
 
-	// Close
-	QObject::connect(cmdClose, SIGNAL(clicked()),
-					 this, SLOT(slotCloseClicked()));
+	mMainWidget = new AIMUserInfoWidget(this, "aimuserinfowidget");
+	setMainWidget(mMainWidget);
 
-	// Engine got user profile
-	QObject::connect(m_account->engine(),
-					 SIGNAL(gotUserProfile(const UserInfo &, const QString)),
-					 this, SLOT(slotSearchFound(const UserInfo &, const QString)));
+	QObject::connect(this, SIGNAL(user1Clicked()), this, SLOT(slotSaveClicked()));
+	QObject::connect(this, SIGNAL(closeClicked()), this, SLOT(slotCloseClicked()));
+	QObject::connect(mContact, SIGNAL(updatedProfile()), this, SLOT(slotUpdateProfile()));
 
-	screenNameLabel->setText(name);
-	if (nick.isEmpty()){
-		nickNameLE->setText(name);
-	} else {
-		nickNameLE->setText(nick);
+	mMainWidget->txtScreenName->setText(c->contactName());
+
+	if(mContact->displayName().isEmpty())
+		mMainWidget->txtNickName->setText(mContact->contactName());
+	else
+		mMainWidget->txtNickName->setText(mContact->displayName());
+
+	if(mContact == mAccount->myself()) // edit own account profile
+	{
+		mMainWidget->lblWarnLevel->hide();
+		mMainWidget->txtWarnLevel->hide();
+		mMainWidget->lblIdleTime->hide();
+		mMainWidget->txtIdleTime->hide();
+		mMainWidget->lblOnlineSince->hide();
+		mMainWidget->txtOnlineSince->hide();
+		mMainWidget->txtAwayMessage->hide();
+		mMainWidget->lblAwayMessage->hide();
+
+		userInfoView=0L;
+		mMainWidget->htmlFrame->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
+		QVBoxLayout *l = new QVBoxLayout(mMainWidget->htmlFrame);
+		userInfoEdit = new KTextEdit(QString::null, QString::null,
+			mMainWidget->htmlFrame, "userInfoEdit");
+		userInfoEdit->setTextFormat(PlainText);
+		userInfoEdit->setText(mContact->userProfile());
+		setButtonText(User1, "&Save Profile");
+		l->addWidget(userInfoEdit);
 	}
+	else
+	{
+		userInfoEdit=0L;
+		mMainWidget->htmlFrame->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
+		QVBoxLayout *l = new QVBoxLayout(mMainWidget->htmlFrame);
+		userInfoView = new KHTMLPart(mMainWidget->htmlFrame, "preview");
+		userInfoView->setJScriptEnabled(false);
+		userInfoView->setJavaEnabled(false);
+		userInfoView->setPluginsEnabled(false);
+		userInfoView->setMetaRefreshEnabled(false);
+		KHTMLView *htmlWidget = userInfoView->view();
+		htmlWidget->setMarginWidth(4);
+		htmlWidget->setMarginHeight(4);
+		htmlWidget->setFocusPolicy(NoFocus);
+		htmlWidget->setSizePolicy(
+			QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+		l->addWidget(htmlWidget);
 
-	// If we're conneced
-	if( m_account->isConnected() )
-	{  // And our buddy is not offline
-		if(contact->onlineStatus() != AIMProtocol::protocol()->statusOffline)
-		{  // Update the user view to indicate that we're requesting the user's profile
-			userInfoView->setText(i18n("Requesting User Profile, please wait"));
-			// Ask the engine for the profile
-			m_account->engine()->sendUserProfileRequest(name);
+		if(mAccount->isConnected())
+		{  // And our buddy is not offline
+			if(mContact->onlineStatus() != AIMProtocol::protocol()->statusOffline)
+			{
+				// Update the user view to indicate that we're requesting the user's profile
+				userInfoView->begin();
+				userInfoView->write(i18n("Requesting User Profile, please wait"));
+				userInfoView->end();
+				// Ask the engine for the profile
+				mAccount->engine()->sendUserProfileRequest(mContact->contactName());
+			}
 		}
 	}
 }
 
-// This constructor is called when we want to edit
-// our own profile
-AIMUserInfo::AIMUserInfo(const QString name, const QString nick,
-						 OscarAccount *account, const QString &profile)
-	: AIMUserInfoBase()
+AIMUserInfoDialog::~AIMUserInfoDialog()
 {
-	QMimeSourceFactory::defaultFactory()->addFilePath(
-		kapp->dirs()->findDirs("data","kopete/")[0]);
-	QMimeSourceFactory::defaultFactory()->addFilePath(
-		kapp->dirs()->findDirs("data","kopete/pics/")[0]);
+	kdDebug(14200) << k_funcinfo << "Called." << endl;
+}
 
-	m_name = name;
-	m_nick = nick;
-	setCaption( i18n("User Information on %1").arg(name) );
-
-	m_account = account;
-
-	// Save
-	QObject::connect(cmdSave, SIGNAL(clicked()),
-					 this, SLOT(slotSaveClicked()));
-
-	// Close
-	QObject::connect(cmdClose, SIGNAL(clicked()),
-					 this, SLOT(slotCloseClicked()));
-
-	screenNameLabel->setText(name);
-	if (nick.isEmpty()){
-		nickNameLE->setText(name);
-	} else {
-		nickNameLE->setText(nick);
+void AIMUserInfoDialog::slotSaveClicked()
+{
+	kdDebug(14200) << k_funcinfo << "Called." << endl;
+	QString newNick = mMainWidget->txtNickName->text();
+	if(!newNick.isEmpty() && (newNick != mContact->displayName()))
+	{
+		mContact->rename(newNick);
+//		emit updateNickname(newNick);
+		setCaption(i18n("User Information on %1").arg(newNick));
 	}
-	cmdSave->setText("&Save Profile");
-	userInfoView->setReadOnly(false);
-	userInfoView->setTextFormat(PlainText);
-	userInfoView->setText(profile);
+
+	if (userInfoEdit) // editable mode, set profile
+		mAccount->setUserProfile(userInfoEdit->text());
 }
 
-void AIMUserInfo::slotSaveClicked()
+void AIMUserInfoDialog::slotCloseClicked()
 {
-	emit updateNickname(nickNameLE->text());
-	setCaption( i18n("User Information on %1").arg(nickNameLE->text()) );
+	kdDebug(14200) << k_funcinfo << "Called." << endl;
+	emit closing();
+}
 
-	// If the user view is not read only, then it's editable, and we should
-	// save it if the user requests to do so
-	if (!userInfoView->isReadOnly())
-	{  // Tell the engine to set my profile
-		m_account->engine()->setMyProfile(userInfoView->text());
+void AIMUserInfoDialog::slotUpdateProfile()
+{
+	kdDebug(14190) << k_funcinfo << "Got User Profile." << endl;
+
+	QObject::disconnect(mContact, SIGNAL(updatedProfile()), this, SLOT(slotUpdateProfile()));
+
+	QDateTime qdt;
+	qdt.setTime_t(static_cast<uint>(mContact->userInfo().onlinesince));
+	mMainWidget->txtOnlineSince->setText(qdt.toString());
+	mMainWidget->txtIdleTime->setText(QString::number(mContact->userInfo().idletime));
+	mMainWidget->txtAwayMessage->setText(mContact->awayMessage());
+	mMainWidget->txtWarnLevel->setText(QString::number(mContact->userInfo().evil));
+
+	QString contactProfile = mContact->userProfile();
+	if(contactProfile.isNull())
+	{
+		contactProfile =
+			i18n("<html><body><I>No user information provided</I></body></html>");
 	}
-}
 
-void AIMUserInfo::slotCloseClicked()
-{
-	delete this;
-}
-
-void AIMUserInfo::slotSearchFound(const UserInfo &/*u*/, const QString profile)
-{
-	kdDebug(14190) << k_funcinfo << "Got User Profile: " << endl
-				   << profile << endl;
-	userInfoView->setText(profile);
-	//disconnect so we can have more than one user profile window open with
-	//different users' info in them
-	QObject::disconnect(m_account->engine(),
-						SIGNAL(gotUserProfile(const UserInfo &, const QString)),
-						this, SLOT(slotSearchFound(const UserInfo &, const QString)));
+	if(userInfoEdit)
+	{
+		userInfoEdit->setText(contactProfile);
+	}
+	else if(userInfoView)
+	{
+		userInfoView->begin();
+		userInfoView->write(contactProfile);
+		userInfoView->end();
+	}
 }
 
 #include "aimuserinfo.moc"

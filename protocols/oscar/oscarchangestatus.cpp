@@ -21,19 +21,17 @@
 
 #include "oscarsocket.h"
 
-OscarChangeStatus::OscarChangeStatus(OscarSocket *engine, QWidget *parent, const char *name)
+OscarChangeStatus::OscarChangeStatus(OscarSocket *eng, QWidget *parent, const char *name)
 	: KopeteAwayDialog(parent, name)
 {
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
-
-	mEngine = engine; // Pointer to the oscar engine
+	mEngine = eng; // Pointer to the oscar engine
 	setCaption(i18n("Select Away Message")); // Set our caption (from KDialog)
 }
 
 void OscarChangeStatus::setAway(int awayType)
 {
 	kdDebug(14150) << k_funcinfo << "awayType=" << awayType << endl;
-
 	emit goAway(awayType, getSelectedAwayMessage());
 }
 #include "oscarchangestatus.moc"

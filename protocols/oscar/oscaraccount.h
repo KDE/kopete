@@ -45,7 +45,7 @@ public:
 	virtual ~OscarAccount();
 
 	/** Connects this account */
-	void connect();
+	virtual void connect()=0;
 
 	/** Disconnects this account  */
 	void disconnect();
@@ -86,11 +86,14 @@ public:
 		const QString &awayMessage = QString::null) =0;
 
 public slots:
-	/** Slot for telling this account to go online */
-	void slotGoOnline();
-	/** Slot for telling this account to go offline */
+	/*
+	 * Slot for telling this account to go offline
+	 */
 	void slotGoOffline();
-	/** Slot for telling this account to go away */
+
+	/*
+	 * Slot for telling this account to go away
+	 */
 	void slotGoAway();
 
 protected slots:

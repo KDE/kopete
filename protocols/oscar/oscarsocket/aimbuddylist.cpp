@@ -157,6 +157,8 @@ void AIMBuddyList::removeBuddyDeny(AIMBuddy *buddy)
 	mBuddiesDeny.remove(buddy->ID());
 }
 
+
+
 AIMGroup::AIMGroup(const int id)
 {
 	mGroupID = id;
@@ -176,6 +178,8 @@ bool AIMGroup::addBuddy(AIMBuddy *buddy)
 	}
 	return false;
 }
+
+
 
 AIMBuddy::AIMBuddy(const int buddyID, const int groupID, const QString &screenName)
 {

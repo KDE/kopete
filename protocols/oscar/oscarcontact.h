@@ -96,7 +96,9 @@ class OscarContact : public KopeteContact
 		void slotUpdateBuddy();
 
 	protected:
-		/** The account we're associated with */
+		/*
+		 * The account we're associated with
+		 */
 		OscarAccount *mAccount;
 
 		/** The name of the contact */

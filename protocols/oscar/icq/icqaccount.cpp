@@ -107,13 +107,14 @@ KActionMenu* ICQAccount::actionMenu()
 
 	// FIXME: allow setting these on connect
 	// OscarSocket needs to be fixed for that
+/*
 	mActionAway->setEnabled(isConnected());
 	mActionNA->setEnabled(isConnected());
 	mActionDND->setEnabled(isConnected());
 	mActionOCC->setEnabled(isConnected());
 	mActionFFC->setEnabled(isConnected());
 	mActionInvisible->setEnabled(isConnected());
-
+*/
 	mActionMenu->popupMenu()->insertTitle(
 		mMyself->onlineStatus().iconFor(mMyself),
 		i18n("%2 <%1>").arg(accountId()).arg(mMyself->displayName()));
@@ -131,14 +132,97 @@ KActionMenu* ICQAccount::actionMenu()
 	return mActionMenu;
 }
 
+void ICQAccount::connect()
+{
+	kdDebug(14200) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
+	setStatus(ICQ_STATUS_ONLINE, QString::null);
+}
+
+void ICQAccount::connect(const unsigned long status, const QString &awMessage)
+{
+	kdDebug(14200) << k_funcinfo << "accountId='" << accountId() <<
+		"', status=" << status << ", awaymessage=" << awMessage << endl;
+
+	// Get the screen name for this account
+	QString screenName = accountId();
+	QString server = pluginData(protocol(), "Server");
+	QString port = pluginData(protocol(), "Port");
+
+	if(server.isEmpty())
+	{
+		slotError(i18n("You have not specified a server address in the " \
+			"account set up yet, please do so."), 0);
+	}
+	else if(port.isEmpty() || (port.toInt() < 1))
+	{
+		slotError(i18n("You have not specified a server port in the " \
+			"account set up yet, please do so."), 0);
+	}
+	else if (screenName != i18n("(No Screen Name Set)") ) // FIXME: Is this needed at all?
+	{
+		QString password = getPassword();
+		if (password.isEmpty())
+		{
+			slotError(i18n("Kopete is unable to attempt to signon to the " \
+				"ICQ network because no password was specified in the " \
+				"preferences."), 0);
+		}
+		else
+		{
+			kdDebug(14150) << k_funcinfo << accountId() <<
+				": Logging in as " << screenName << endl;
+
+			// Connect, need to normalize the name first
+			mEngine->doLogin(
+				server,
+				port.toInt(),
+				screenName,
+				password,
+				QString::null,
+				status,
+				awMessage);
+		}
+	}
+	else
+	{
+		slotError(i18n("You have not specified your account name in the " \
+			"account set up yet, please do so."), 0);
+	}
+}
+
+void ICQAccount::slotGoOnline()
+{
+	if(
+		myself()->onlineStatus().status() == KopeteOnlineStatus::Away ||
+		myself()->onlineStatus().internalStatus() == OSCAR_FFC)
+	{ // If we're away , set us available
+		kdDebug(14150) << k_funcinfo << accountId() <<
+			": Was AWAY or FFC, marking back" << endl;
+
+		setAway(false, QString::null);
+	}
+	else if(myself()->onlineStatus().status() == KopeteOnlineStatus::Offline)
+	{ // If we're offline, connect
+		kdDebug(14150) << k_funcinfo << accountId() <<
+			": Was OFFLINE, now connecting" << endl;
+
+		ICQAccount::connect();
+	}
+	else
+	{
+		kdDebug(14150) << k_funcinfo << accountId() <<
+			": Already ONLINE" << endl;
+	}
+}
+
 void ICQAccount::slotGoNA()
 {
 	kdDebug(14200) << k_funcinfo << "Called" << endl;
 	// Away could also be a different AWAY mode (like NA or OCC)
-	if(
+/*	if(
 		(myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
 		(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
-		)
+		)*/
 	{
 		mAwayDialog->show(OSCAR_NA);
 	}
@@ -148,10 +232,10 @@ void ICQAccount::slotGoOCC()
 {
 	kdDebug(14200) << k_funcinfo << "Called" << endl;
 	// Away could also be a different AWAY mode (like NA or OCC)
-	if(
+/*	if(
 		(myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
 		(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
-		)
+		)*/
 	{
 		mAwayDialog->show(OSCAR_OCC);
 	}
@@ -161,10 +245,10 @@ void ICQAccount::slotGoFFC()
 {
 	kdDebug(14200) << k_funcinfo << "Called" << endl;
 	// Away could also be a different AWAY mode (like NA or OCC)
-	if(
+/*	if(
 		(myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
 		(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
-		)
+		)*/
 	{
 		setStatus(ICQ_STATUS_SET_FFC);
 	}
@@ -174,10 +258,10 @@ void ICQAccount::slotGoDND()
 {
 	kdDebug(14200) << k_funcinfo << "Called" << endl;
 	// Away could also be a different AWAY mode (like NA or OCC)
-	if(
+/*	if(
 		(myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
 		(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
-		)
+		)*/
 	{
 		mAwayDialog->show(OSCAR_DND);
 	}
@@ -194,57 +278,67 @@ void ICQAccount::setAway(bool away, const QString &awayReason)
 	kdDebug(14200) << k_funcinfo << " " << accountId() << endl;
 	if(away)
 	{
-		if((myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
-			(myself()->onlineStatus().status() == KopeteOnlineStatus::Away))
+/*		if((myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
+			(myself()->onlineStatus().status() == KopeteOnlineStatus::Away))*/
 		{
 			setStatus(ICQ_STATUS_SET_AWAY, awayReason);
 		}
 	}
 	else
 	{
-		if(myself()->onlineStatus().status() == KopeteOnlineStatus::Away ||
-			myself()->onlineStatus().internalStatus() == OSCAR_FFC)
+/*		if(myself()->onlineStatus().status() == KopeteOnlineStatus::Away ||
+			myself()->onlineStatus().internalStatus() == OSCAR_FFC)*/
 		{
 			setStatus(ICQ_STATUS_ONLINE);
 		}
 	}
 }
 
+const unsigned long ICQAccount::fullStatus(const unsigned long plainStatus)
+{
+	unsigned long sendStatus = plainStatus;
+
+	if(mInvisible)
+	{
+		kdDebug(14200) << k_funcinfo << "ORing with invisible flag" << endl;
+		sendStatus |= ICQ_STATUS_SET_INVIS;
+	}
+
+	if(!mHideIP)
+	{
+		kdDebug(14200) << k_funcinfo << "ORing with show ip flag" << endl;
+		sendStatus |= ICQ_STATUS_SHOWIP;
+	}
+
+	if(mWebAware)
+	{
+		kdDebug(14200) << k_funcinfo << "ORing with web aware flag" << endl;
+		sendStatus |= ICQ_STATUS_WEBAWARE;
+	}
+	return sendStatus;
+}
+
 void ICQAccount::setStatus(const unsigned long status,
 	const QString &awayMessage)
 {
-	kdDebug(14200) << k_funcinfo << "new status=" << status << ", old status=" << mStatus << endl;
+	kdDebug(14200) << k_funcinfo <<
+		"new status=" << status <<
+		", old status=" << mStatus << endl;
 
 	mStatus = status;
-
 	if(!awayMessage.isNull())
 		mAwayMessage = awayMessage;
-// TODO: Make use of away message as well
 
+	unsigned long outgoingStatus = fullStatus(status);
 	if (isConnected())
 	{
-		unsigned long sendStatus = mStatus;
-
-		if(mInvisible)
-		{
-			kdDebug(14200) << k_funcinfo << "ORing with invisible flag" << endl;
-			sendStatus |= ICQ_STATUS_SET_INVIS;
-		}
-
-		if(!mHideIP)
-		{
-			kdDebug(14200) << k_funcinfo << "ORing with show ip flag" << endl;
-			sendStatus |= ICQ_STATUS_SHOWIP;
-		}
-
-		if(mWebAware)
-		{
-			kdDebug(14200) << k_funcinfo << "ORing with web aware flag" << endl;
-			sendStatus |= ICQ_STATUS_WEBAWARE;
-		}
-
-		kdDebug(14200) << k_funcinfo << "calling sendICQStatus(), sendStatus=" << sendStatus << endl;
-		engine()->sendICQStatus(sendStatus);
+		kdDebug(14200) << k_funcinfo << "calling sendICQStatus(), outgoingStatus=" << outgoingStatus << endl;
+		engine()->sendICQStatus(outgoingStatus);
+	}
+	else
+	{
+		kdDebug(14200) << k_funcinfo << "calling connect(), outgoingStatus=" << outgoingStatus << endl;
+		ICQAccount::connect(fullStatus(status), awayMessage);
 	}
 }
 
@@ -259,12 +353,12 @@ void ICQAccount::setInvisible(bool invis)
 
 	if(isConnected())
 	{
-		setStatus(mStatus); // also sends the new invis flag
-
-		if(mInvisible)
+/*		if(mInvisible)
 			engine()->sendChangeVisibility(3);
 		else
 			engine()->sendChangeVisibility(4);
+*/
+		setStatus(mStatus); // also sends the new invis flag
 	}
 }
 
@@ -276,19 +370,19 @@ void ICQAccount::slotAwayDialogReturned(const int awaytype, const QString &messa
 	switch(awaytype)
 	{
 		case OSCAR_AWAY:
-			kdDebug(14200) << k_funcinfo << "calling setStatus for AWAY" << endl;
+//			kdDebug(14200) << k_funcinfo << "calling setStatus for AWAY" << endl;
 			setStatus(ICQ_STATUS_SET_AWAY, message);
 			break;
 		case OSCAR_DND:
-			kdDebug(14200) << k_funcinfo << "calling setStatus for DND" << endl;
+//			kdDebug(14200) << k_funcinfo << "calling setStatus for DND" << endl;
 			setStatus(ICQ_STATUS_SET_DND, message);
 			break;
 		case OSCAR_NA:
-			kdDebug(14200) << k_funcinfo << "calling setStatus for NA" << endl;
+//			kdDebug(14200) << k_funcinfo << "calling setStatus for NA" << endl;
 			setStatus(ICQ_STATUS_SET_NA, message);
 			break;
 		case OSCAR_OCC:
-			kdDebug(14200) << k_funcinfo << "calling setStatus for OCC" << endl;
+//			kdDebug(14200) << k_funcinfo << "calling setStatus for OCC" << endl;
 			setStatus(ICQ_STATUS_SET_OCC, message);
 			break;
 	}
@@ -300,15 +394,8 @@ void ICQAccount::reloadPluginData()
 	bool oldwebaware=mWebAware;
 	bool oldhideip=mHideIP;
 
-	if (pluginData(protocol(), "WebAware").toUInt() == 1)
-		mWebAware = true;
-	else
-		mWebAware = false;
-
-	if (pluginData(protocol(), "HideIP").toUInt() == 1)
-		mHideIP = true;
-	else
-		mHideIP = false;
+	mWebAware=(pluginData(protocol(), "WebAware").toUInt() == 1);
+	mHideIP=(pluginData(protocol(), "HideIP").toUInt() == 1);
 
 	if(isConnected() && (oldhideip != mHideIP || oldwebaware != mWebAware))
 	{
@@ -324,7 +411,7 @@ OscarContact *ICQAccount::createNewContact(
 	KopeteMetaContact *parentContact)
 {
 	kdDebug(14200) << k_funcinfo << "contactId='" << contactId << "', displayName='" <<
-		displayName << "', ptr parentContact=" << parentContact << endl;
+		displayName << /*"', ptr parentContact=" << parentContact <<*/ endl;
 	return new ICQContact(contactId,displayName,this,parentContact);
 }
 

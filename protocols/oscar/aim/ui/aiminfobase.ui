@@ -1,177 +1,46 @@
 <!DOCTYPE UI><UI version="3.1" stdsetdef="1">
-<class>AIMUserInfoBase</class>
-<widget class="QDialog">
+<class>AIMUserInfoWidget</class>
+<widget class="QWidget">
     <property name="name">
-        <cstring>AIMUserInfoBase</cstring>
+        <cstring>AIMUserInfoWidget</cstring>
     </property>
     <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>367</width>
-            <height>261</height>
+            <width>360</width>
+            <height>406</height>
         </rect>
     </property>
+    <property name="minimumSize">
+        <size>
+            <width>360</width>
+            <height>400</height>
+        </size>
+    </property>
     <property name="caption">
-        <string>AIMUserInfoBase</string>
+        <string>AIMUserInfoWidget</string>
     </property>
     <property name="layoutMargin" stdset="0">
     </property>
-    <property name="layoutSpacing" stdset="0">
-    </property>
-    <grid>
+    <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
         <property name="margin">
             <number>0</number>
         </property>
-        <property name="spacing">
-            <number>6</number>
-        </property>
-        <widget class="QPushButton" row="2" column="1">
+        <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>cmdSave</cstring>
+                <cstring>layout9</cstring>
             </property>
-            <property name="text">
-                <string>&amp;Save Nickname</string>
-            </property>
-        </widget>
-        <spacer row="2" column="2">
-            <property name="name">
-                <cstring>Spacer9_2</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>59</width>
-                    <height>0</height>
-                </size>
-            </property>
-        </spacer>
-        <spacer row="2" column="0">
-            <property name="name">
-                <cstring>Spacer9</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>58</width>
-                    <height>0</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QPushButton" row="2" column="3">
-            <property name="name">
-                <cstring>cmdClose</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Close</string>
-            </property>
-            <property name="default">
-                <bool>true</bool>
-            </property>
-        </widget>
-        <spacer row="2" column="4">
-            <property name="name">
-                <cstring>Spacer7</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>58</width>
-                    <height>0</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QGroupBox" row="0" column="0" rowspan="1" colspan="5">
-            <property name="name">
-                <cstring>GroupBox1</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>5</hsizetype>
-                    <vsizetype>4</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="frameShape">
-                <enum>Box</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Sunken</enum>
-            </property>
-            <property name="title">
-                <string>User Information</string>
-            </property>
-            <property name="layoutMargin" stdset="0">
-            </property>
-            <property name="layoutSpacing" stdset="0">
-            </property>
-            <grid>
+            <hbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <property name="margin">
-                    <number>11</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QLabel" row="0" column="3">
+                <widget class="QLabel">
                     <property name="name">
-                        <cstring>screenNameLabel</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>3</hsizetype>
-                            <vsizetype>1</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="frameShape">
-                        <enum>StyledPanel</enum>
-                    </property>
-                    <property name="frameShadow">
-                        <enum>Sunken</enum>
-                    </property>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="0" column="1">
-                    <property name="name">
-                        <cstring>nickNameLE</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>4</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>TextLabel2</cstring>
+                        <cstring>lblNickName</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
@@ -185,9 +54,22 @@
                         <string>Nickname:</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="0" column="2">
+                <widget class="QLineEdit">
                     <property name="name">
-                        <cstring>TextLabel3</cstring>
+                        <cstring>txtNickName</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>lblScreenName</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
@@ -201,21 +83,170 @@
                         <string>Screen name:</string>
                     </property>
                 </widget>
-            </grid>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>txtScreenName</cstring>
+                    </property>
+                    <property name="readOnly">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+            </hbox>
         </widget>
-        <widget class="KTextBrowser" row="1" column="0" rowspan="1" colspan="5">
+        <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>userInfoView</cstring>
+                <cstring>layout10</cstring>
             </property>
-            <property name="readOnly">
-                <bool>true</bool>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>lblWarnLevel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Warning Level:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>txtWarnLevel</cstring>
+                    </property>
+                    <property name="readOnly">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>lblIdleTime</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Idle Minutes:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>txtIdleTime</cstring>
+                    </property>
+                    <property name="readOnly">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout11</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>lblOnlineSince</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Online Since:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>txtOnlineSince</cstring>
+                    </property>
+                    <property name="readOnly">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblAwayMessage</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>1</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>Away Message:</string>
+            </property>
+            <property name="alignment">
+                <set>AlignTop</set>
             </property>
         </widget>
-    </grid>
+        <widget class="KTextBrowser">
+            <property name="name">
+                <cstring>txtAwayMessage</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>5</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="textFormat">
+                <enum>PlainText</enum>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Profile:</string>
+            </property>
+        </widget>
+        <widget class="QFrame">
+            <property name="name">
+                <cstring>htmlFrame</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>7</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>64</width>
+                    <height>16</height>
+                </size>
+            </property>
+            <property name="frameShape">
+                <enum>NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Plain</enum>
+            </property>
+            <property name="lineWidth">
+                <number>0</number>
+            </property>
+        </widget>
+    </vbox>
 </widget>
-<includes>
-    <include location="global" impldecl="in declaration">kurllabel.h</include>
-</includes>
+<customwidgets>
+</customwidgets>
+<tabstops>
+    <tabstop>txtNickName</tabstop>
+    <tabstop>txtScreenName</tabstop>
+    <tabstop>txtWarnLevel</tabstop>
+    <tabstop>txtIdleTime</tabstop>
+    <tabstop>txtOnlineSince</tabstop>
+    <tabstop>txtAwayMessage</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>ktextbrowser.h</includehint>

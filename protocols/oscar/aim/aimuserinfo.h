@@ -18,45 +18,39 @@
 #ifndef AIMUSERINFO_H
 #define AIMUSERINFO_H
 
+#include <kdialogbase.h>
 #include "aiminfobase.h"
 #include "oscarsocket.h"
 
-class KTextBrowser;
+class KTextEdit;
 class OscarAccount;
 class AIMContact;
+class AIMAccount;
+class KHTMLPart;
 
-class AIMUserInfo : public AIMUserInfoBase
+class AIMUserInfoDialog : public KDialogBase
 {
 	Q_OBJECT
-public:
-	/**
-	 * This constructor is used to show the user info
-	 * for a contact.  This constructor will tell the
-	 * engine to send the User Profile Request, and will
-	 * update it's view with the info when it is returned
-	 * by the AIM server
-	 */
-	AIMUserInfo(const QString name, const QString nick,
-				OscarAccount *account, AIMContact *contact);
-	/**
-	 * This constructor is called when we want to edit our
-	 * own profile
-	 */
-	AIMUserInfo(const QString name, const QString nick,
-				OscarAccount *account, const QString &profile);
+	public:
+		AIMUserInfoDialog(AIMContact *c, AIMAccount *acc, bool modal,
+			QWidget *parent, const char* name);
+		~AIMUserInfoDialog();
 
-private:
-	QString m_nick;
-	OscarAccount *m_account;
-	QString m_name;
+	private:
+		AIMAccount *mAccount;
+		AIMContact *mContact;
+		AIMUserInfoWidget *mMainWidget;
+		KHTMLPart *userInfoView;
+		KTextEdit *userInfoEdit;
 
-private slots:
-	void slotSaveClicked();
-	void slotCloseClicked();
-	void slotSearchFound(const UserInfo &/*u*/, const QString /*profile*/);
+	private slots:
+		void slotSaveClicked();
+		void slotCloseClicked();
+		void slotUpdateProfile();
 
-signals:
-	void updateNickname(const QString);
+	signals:
+//		void updateNickname(const QString &);
+		void closing();
 };
 
 #endif

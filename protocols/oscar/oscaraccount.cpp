@@ -95,17 +95,23 @@ OscarSocket* OscarAccount::engine() const
 	return mEngine;
 }
 
+/*
 void OscarAccount::connect()
 {
-	kdDebug(14150) << k_funcinfo <<
-		"accountId='" << accountId() << "'" << endl;
+	kdDebug(14150) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
 
 	// Get the screen name for this account
 	QString screenName = accountId();
+	QString server = pluginData(protocol(), "Server");
+	QString port = pluginData(protocol(), "Port");
 
-	if (screenName != i18n("(No Screen Name Set)") ) // FIXME: Is this needed at all?
-	{	// If we have a screen name set
-		// Get the password
+	if(server.isEmpty() || port.isEmpty())
+	{
+		slotError(i18n("You have not specified a server address and/or port in the " \
+			"account set up yet, please do so."), 0);
+	}
+	else if (screenName != i18n("(No Screen Name Set)") ) // FIXME: Is this needed at all?
+	{
 		QString password = getPassword();
 		if (password.isEmpty())
 		{
@@ -118,17 +124,6 @@ void OscarAccount::connect()
 			kdDebug(14150) << k_funcinfo << accountId() <<
 				": Logging in as " << screenName << endl;
 
-			// Get the server and port from the preferences
-			// TODO: check server and port are set
-			QString server = pluginData(protocol(), "Server");
-			QString port = pluginData(protocol(), "Port");
-
-			if(server.isEmpty() || port.isEmpty())
-			{
-				kdDebug(14150) << k_funcinfo <<
-					"Thank pluginData() for this one to break, no server and/or port set => can't connect." << endl;
-			}
-
 			// Connect, need to normalize the name first
 			mEngine->doLogin(server, port.toInt(), tocNormalize(screenName), password);
 		}
@@ -138,7 +133,7 @@ void OscarAccount::connect()
 		slotError(i18n("You have not specified your account name in the " \
 			"account set up yet, please do so."), 0);
 	}
-}
+}*/
 
 void OscarAccount::disconnect()
 {
@@ -217,31 +212,6 @@ void OscarAccount::initSignals()
 		this, SLOT(slotReTryServerContacts()));
 }
 
-void OscarAccount::slotGoOnline()
-{
-	if(
-		myself()->onlineStatus().status() == KopeteOnlineStatus::Away ||
-		myself()->onlineStatus().internalStatus() == OSCAR_FFC)
-	{ // If we're away , set us available
-		kdDebug(14150) << k_funcinfo << accountId() <<
-			": Was AWAY or FFC, marking back" << endl;
-
-		setAway(false);
-	}
-	else if(myself()->onlineStatus().status() == KopeteOnlineStatus::Offline)
-	{ // If we're offline, connect
-		kdDebug(14150) << k_funcinfo << accountId() <<
-			": Was OFFLINE, now connecting" << endl;
-
-		OscarAccount::connect();
-	}
-	else
-	{
-		kdDebug(14150) << k_funcinfo << accountId() <<
-			": Already ONLINE" << endl;
-	}
-}
-
 void OscarAccount::slotGoOffline()
 {
 	// This will ask the server to log us off
@@ -255,10 +225,10 @@ void OscarAccount::slotGoAway()
 	kdDebug(14150) << k_funcinfo << "Called" << endl;
 
 	// Away could also be a different AWAY mode (like NA or OCC)
-	if(
+/*	if(
 		(myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
 		(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
-		)
+		)*/
 	{
 		mAwayDialog->show(OSCAR_AWAY);
 	}
@@ -526,8 +496,6 @@ void OscarAccount::slotGotDirectIMRequest(QString sn)
 #else
 			.arg(sn,sn);
 #endif
-
-
 
 	int result = KMessageBox::questionYesNo(qApp->mainWidget(), message, title);
 

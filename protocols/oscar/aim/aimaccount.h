@@ -46,28 +46,30 @@ class AIMAccount : public OscarAccount
 		AIMAccount(KopeteProtocol *parent, QString accountID, const char *name=0L);
 		virtual ~AIMAccount();
 
-		/*
-		 * Accessor method for the action menu
-		 */
+		// Accessor method for the action menu
 		virtual KActionMenu* actionMenu();
 
-		/*
-		 * Called from AIMUserInfo
-		 */
-		void setUserProfile(QString profile);
+		// Called from AIMUserInfo
+		void setUserProfile(const QString &profile);
 
 		void setAway(bool away, const QString &awayReason);
 
 		virtual void setStatus(const unsigned long status,
 			const QString &awayMessage = QString::null);
 
+		virtual void connect();
+
 	public slots:
 		void slotEditInfo();
-
+		void slotGoOnline();
 
 	protected slots:
-		/** Called when we have been warned */
+		// called after XML is read in, cannot access pluginData in constructor
+		virtual void loaded();
+
+		// Called when we have been warned
 		void slotGotWarning(int newlevel, QString warner);
+
 		void slotGotMyUserInfo(UserInfo &);
 		void slotAwayDialogReturned(const int, const QString&);
 
@@ -84,6 +86,9 @@ class AIMAccount : public OscarAccount
 		 */
 		OscarContact *createNewContact( const QString &contactId,
 			const QString &displayName, KopeteMetaContact *parentContact );
+
+	private:
+		void connect(const unsigned long status, const QString &awMessage);
 
 	private:
 		UserInfo mUserInfo;

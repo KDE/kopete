@@ -44,10 +44,13 @@ class ICQAccount : public OscarAccount
 		virtual void setStatus(const unsigned long status,
 			const QString &awayMessage = QString::null);
 
+		virtual void connect();
+
 		void setInvisible(bool);
 		void reloadPluginData();
 
 	public slots:
+		void slotGoOnline();
 		void slotGoNA();
 		void slotGoOCC();
 		void slotGoFFC();
@@ -64,7 +67,11 @@ class ICQAccount : public OscarAccount
 			const QString &displayName, KopeteMetaContact *parentContact);
 
 	private:
-		unsigned long mStatus;
+		const unsigned long fullStatus(const unsigned long plainStatus);
+		void connect(const unsigned long status, const QString &awMessage);
+
+	private:
+		unsigned long mStatus; // icq status minux flags for web-aware, hide-ip and invisible
 		QString mAwayMessage;
 		bool mWebAware;
 		bool mHideIP;

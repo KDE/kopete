@@ -171,33 +171,38 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	toicqsrv_seq = 1;
 //	flapSequenceNum = 0x010f; // old value from oscar
 	flapSequenceNum = rand() & 0x7FFF; // value taken from libicq
-	key = NULL;
-	mCookie = NULL;
+	key = 0L;
+	loginPassword = QString::null;
+	loginProfile = QString::null;
+	loginStatus = 0;
+	mCookie = 0L;
 	idle = false;
 	gotAllRights=0;
 	keepaliveTime=60;
 	keepaliveTimer=0L;
 	rateClasses.setAutoDelete(TRUE);
-	mDirectConnnectionCookie = rand();
-
-	// TODO: move this to OscarContact or even AIMContact, it's unused by ICQ
-	myUserProfile = "Visit the Kopete website at <a href=\"http://kopete.kde.org\">http://kopete.kde.org</a>";
-
-	// FIXME: really needed? We have QSocket::status()!
 	isLoggedIn = false;
+	mDirectConnnectionCookie = rand();
 	mAccount = account;
 
+	// from OscarConnection
+	connect(this, SIGNAL(connectionClosed(QString)), this, SLOT(OnConnectionClosed()));
+	// from QSocket
 	connect(this, SIGNAL(connectionClosed()), this, SLOT(OnConnectionClosed()));
 	connect(this, SIGNAL(serverReady()), this, SLOT(OnServerReady()));
 }
 
-OscarSocket::~OscarSocket(void)
+OscarSocket::~OscarSocket()
 {
+	if(state() != QSocket::Idle)
+	{
+		clearPendingData();
+		close();
+	}
 	rateClasses.clear();
 }
 
-/** This is called when a connection is established */
-void OscarSocket::OnConnect(void)
+void OscarSocket::OnConnect()
 {
 	kdDebug(14150) << k_funcinfo << "Connected to " << peerName() << ", port " << peerPort() << endl;
 
@@ -210,8 +215,7 @@ void OscarSocket::OnConnect(void)
 //	emit connectionChanged(1, QString("Connected to %2, port %1").arg(peerPort()).arg(peerName()));
 }
 
-/** This function is called when there is data to be read */
-void OscarSocket::slotRead(void)
+void OscarSocket::slotRead()
 {
 	FLAP fl = getFLAP();
 	char *buf = new char[fl.length];
@@ -330,6 +334,9 @@ void OscarSocket::slotRead(void)
 				{
 					switch(s.subtype)
 					{
+						case 0x0001:
+							parseError(s.family, inbuf);
+							break;
 						case 0x0003: //locate rights
 							parseLocateRights(inbuf);
 							break;
@@ -375,7 +382,7 @@ void OscarSocket::slotRead(void)
 					switch(s.subtype)
 					{
 						case 0x0001: //msg error
-							parseError(inbuf);
+							parseError(s.family, inbuf);
 							break;
 						case 0x0005: //msg rights
 							parseMsgRights(inbuf);
@@ -655,6 +662,10 @@ void OscarSocket::OnConnectionClosed()
 
 	rateClasses.clear();
 	isLoggedIn = false;
+
+	clearPendingData();
+	kdDebug(14150) << k_funcinfo << "Socket state is " << state() << endl;
+
 	if (mDirectIMMgr)
 		delete mDirectIMMgr;
 
@@ -703,43 +714,50 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 }
 
 // Logs in the user!
-void OscarSocket::doLogin(const QString &host, int port, const QString &s, const QString &password)
+void OscarSocket::doLogin(
+	const QString &host,
+	int port,
+	const QString &name,
+	const QString &password,
+	const QString &userProfile,
+	const unsigned long initialStatus,
+	const QString &/*awayMessage*/)
 {
 	if (isLoggedIn)
 	{
 		kdDebug(14150) << k_funcinfo << "We're already connected, aborting!" << endl;
 		return;
 	}
-
-	bool error = false;
-	if ( host.isEmpty() )
+	if(host.isEmpty())
 	{
-		kdDebug( 14150 ) << k_funcinfo << " Tried to connect without a hostname, oops!" << endl;
-		error = true;
-	}
-	if ( port == 0 )
-	{
-		kdDebug( 14150 ) << k_funcinfo << " Tried to connect to port 0, oops!" << endl;
-		error = true;
-	}
-	if ( password.isEmpty() )
-	{
-		kdDebug( 14150 ) << k_funcinfo << " Tried to connect without a password, oops!" << endl;
-		error = true;
-	}
-	if ( error )
+		kdDebug(14150) << k_funcinfo << " Tried to connect without a hostname!" << endl;
 		return;
+	}
+	if(port < 1)
+	{
+		kdDebug(14150) << k_funcinfo << " Tried to connect to port < 1!" << endl;
+		return;
+	}
+	if(password.isEmpty())
+	{
+		kdDebug(14150) << k_funcinfo << " Tried to connect without a password!" << endl;
+		return;
+	}
 
-	kdDebug(14150) << k_funcinfo "Connecting to '" << host << "', port=" << port << endl;
+	kdDebug(14150) << k_funcinfo << "Connecting to '" << host << "', port=" << port << endl;
 
 	disconnect(this, SIGNAL(connAckReceived()), this, SLOT(OnBosConnAckReceived()));
 	connect(this, SIGNAL(connAckReceived()), this, SLOT(OnConnAckReceived()));
 
 	disconnect(this, SIGNAL(connected()), this, SLOT(OnBosConnect()));
 	connect(this, SIGNAL(connected()), this, SLOT(OnConnect()));
+	//TODO: start connecting animation after host has been found
+//	connect(this, SIGNAL(hostFound()), this, SLOT(slotHostFound()));
 
-	setSN(s);
-	pass = password;
+	setSN(name);
+	loginPassword = password;
+	loginProfile = userProfile;
+	loginStatus = initialStatus;
 
 	kdDebug(14150) << k_funcinfo << "emitting statusChanged(OSCAR_CONNECTING)" << endl;
 	emit statusChanged(OSCAR_CONNECTING);
@@ -2122,6 +2140,7 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 					kdDebug(14150) << k_funcinfo << "Unknown TLV(" << t.type <<
 						") length=" << t.length << " in userinfo for user '" <<
 						u.sn << "'" << endl;
+					kdDebug(14150) << k_funcinfo << t.data << endl;
 				}
 			}; // END switch()
 			delete [] t.data;
@@ -2188,7 +2207,7 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 
 	tlv2.addWord(0x0101); //add TLV(0x0101) also known as TLV(257)
 	tlv2.addWord(message.length() + 0x04); // add TLV length
-	tlv2.addDWord(0x00000000); // normal char set
+	tlv2.addDWord(0x0000ffff); // normal char set
 	QCString tmp = message.local8Bit();
 	tlv2.addString(tmp, tmp.length()); // the actual message
 	// ---------------------------------------------------
@@ -2201,8 +2220,8 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 		outbuf.addWord(0x0000);
 	}
 
-//	outbuf.addWord(0x0003); // TLV.Type(0x03) - request an ack from server
-//	outbuf.addWord(0x0000);
+	outbuf.addWord(0x0003); // TLV.Type(0x03) - request an ack from server
+	outbuf.addWord(0x0000);
 
 	outbuf.addWord(0x0006); // TLV.Type(0x06) - store message if recipient offline
 	outbuf.addWord(0x0000);
@@ -2234,64 +2253,49 @@ void OscarSocket::parseUserOffline(Buffer &inbuf)
 
 void OscarSocket::sendUserProfileRequest(const QString &sn)
 {
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
+
 	Buffer outbuf;
 	outbuf.addSnac(0x0002,0x0005,0x0000,0x00000000);
-	/*AIM_GETINFO_GENERALINFO 0x00001
-		AIM_GETINFO_AWAYMESSAGE 0x00003
-		AIM_GETINFO_CAPABILITIES 0x0004 */
+
+	/*
+	AIM_GETINFO_GENERALINFO 0x00001
+	AIM_GETINFO_AWAYMESSAGE 0x00003
+	AIM_GETINFO_CAPABILITIES 0x0004
+	*/
 	outbuf.addWord(0x0005);
+
 	outbuf.addByte(sn.length());
 	outbuf.addString(sn.latin1(),sn.length());
+
 	sendBuf(outbuf,0x02);
 }
 
-/** Parses someone's user info */
 void OscarSocket::parseUserProfile(Buffer &inbuf)
 {
-	// FIXME: THIS IS CRAP! [mETz]
-
 	UserInfo u = parseUserInfo(inbuf);
 	QPtrList<TLV> tl = inbuf.getTLVList();
-	tl.setAutoDelete(true);
+	tl.setAutoDelete(TRUE);
 
-	QString profile = "<HTML><HEAD><TITLE>User Information for %n</TITLE><HEAD><BODY BGCOLOR=#CCCCCC>";
-	profile += "Username: <B>" + u.sn + "</B>";
-
-	profile += "<IMG SRC=\"";
-	if (u.userclass & 0x0004) //AOL user
-		profile += "aol_icon.png";
-	else if (u.userclass & 0x0010) //AIM user
-		profile += "free_icon.png";
-	else  //other
-		profile += "dt_icon.png";
-
-	profile += "\"><br>\n";
-	profile += QString("Warning Level: <B>%1 %</B><br>\n").arg(u.evil);
-
-	QDateTime qdt;
-//  kdDebug(14150) << "ONLINE SINCE TIME IS " << u.onlinesince << endl;
-	qdt.setTime_t(static_cast<uint>(u.onlinesince));
-	profile += "Online Since: <B>" + qdt.toString() + "</B><br>\n";
-	profile += QString("Idle Minutes: <B>%1</B><br>\n<hr><br>").arg(u.idletime);
-	QString away, prof;
-
+	QString profile;
+	QString away;
 	for (TLV *cur = tl.first();cur;cur = tl.next())
 	{
 		switch(cur->type)
 		{
-			case 0x0001: //profile text encoding
+/*			case 0x0001: //profile text encoding
 				kdDebug(14150) << k_funcinfo << "text encoding is: " << cur->data << endl;
-				break;
+				break;*/
 			case 0x0002: //profile text
 				kdDebug(14150) << k_funcinfo << "The profile is: " << cur->data << endl;
-				prof += cur->data;
+				profile += QString::fromAscii(cur->data); // aim always seems to use us-ascii encoding
 				break;
-			case 0x0003: //away message encoding
+/*			case 0x0003: //away message encoding
 				kdDebug(14150) << k_funcinfo << "Away message encoding is: " << cur->data << endl;
-				break;
+				break;*/
 			case 0x0004: //away message
 				kdDebug(14150) << k_funcinfo << "Away message is: " << cur->data << endl;
-				away += cur->data;
+				away += QString::fromAscii(cur->data); // aim always seems to use us-ascii encoding
 				break;
 			case 0x0005: //capabilities
 				kdDebug(14150) << k_funcinfo << "Got capabilities" << endl;
@@ -2300,28 +2304,12 @@ void OscarSocket::parseUserProfile(Buffer &inbuf)
 				kdDebug(14150) << k_funcinfo << "Unknown user info type " << cur->type << endl;
 					break;
 		};
-//		delete [] cur->data; // should be taken care of by QPtrList
 	}
-
-	if (away.length())
-		profile += "<B>Away Message:</B><br>" + away + "<br><hr>";
-
-	if (prof.length())
-		profile += prof;
-	else
-		profile += "<I>No user information provided</I>";
-
 	tl.clear();
-/*
-	profile += "<br><hr><I>Legend:</I><br><br><IMG SRC=\"free_icon.png\">: Normal AIM User<br>" \
-		"<IMG SRC=\"aol_icon.png\">: AOL User<br><IMG SRC=\"dt_icon.png\">: Trial AIM User <br>" \
-		"<IMG SRC=\"admin_icon.png\">: Administrator</HTML>";*/
-	profile += "</HTML>";
-
-	emit gotUserProfile(u,profile);
+	emit gotUserProfile(u, profile, away);
 }
 
-/** Sends someone a warning */
+
 void OscarSocket::sendWarning(const QString &target, bool isAnonymous)
 {
 	Buffer outbuf;
@@ -2335,7 +2323,6 @@ void OscarSocket::sendWarning(const QString &target, bool isAnonymous)
 	sendBuf(outbuf,0x02);
 }
 
-/** Changes a user's password */
 void OscarSocket::sendChangePassword(const QString &newpw, const QString &oldpw)
 {
 	// FIXME: This does not work :-(
@@ -2348,7 +2335,6 @@ void OscarSocket::sendChangePassword(const QString &newpw, const QString &oldpw)
 	sendBuf(outbuf,0x02);
 }
 
-/** Joins the given chat room */
 void OscarSocket::sendChatJoin(const QString &/*name*/, const int /*exchange*/)
 {
 	Buffer outbuf;
@@ -2359,7 +2345,6 @@ void OscarSocket::sendChatJoin(const QString &/*name*/, const int /*exchange*/)
 	kdDebug(14150) << "Send chat join thingie (That's a technical term)" << endl;
 }
 
-/** Handles a redirect */
 void OscarSocket::parseRedirect(Buffer &inbuf)
 {
 	// FIXME: this function does not work, but it is never
@@ -2424,16 +2409,17 @@ void OscarSocket::parseRedirect(Buffer &inbuf)
 	kdDebug(14150) << "Socket added to connection list!" << endl;
 }
 
-/** Request a direct IM session with someone
+/*
+  Request a direct IM session with someone
 	type == 0: request
 	type == 1: deny
-	type == 2: accept */
+	type == 2: accept
+*/
 void OscarSocket::sendDirectIMRequest(const QString &sn)
 {
 	sendRendezvous(sn,0x0000,AIM_CAPS_IMIMAGE);
 }
 
-/** Parses a message ack from the server */
 void OscarSocket::parseMsgAck(Buffer &inbuf)
 {
 	//8 byte cookie is first
@@ -2447,31 +2433,45 @@ void OscarSocket::parseMsgAck(Buffer &inbuf)
 	emit gotAck(nm,typ);
 }
 
-// Sends our capabilities to the server (CLI_SETUSERINFO)
-void OscarSocket::sendCapabilities(unsigned long caps)
+void OscarSocket::sendLocationInfo(const QString &profile, const unsigned long caps)
 {
-	Buffer outbuf;
-	int sz = 0;
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_SETUSERINFO/CLI_SET_LOCATION_INFO)" << endl;
+	Buffer outbuf, capBuf;
+
+	unsigned long sendCaps;
+	if(caps==0)
+	{
+		if(mIsICQ)
+			sendCaps = KOPETE_ICQ_CAPS;
+		else
+			sendCaps = KOPETE_AIM_CAPS;
+	}
+	else
+		sendCaps = caps;
 
 	outbuf.addSnac(0x0002,0x0004,0x0000,0x00000000);
-	for (int i=0;oscar_caps[i].flag != AIM_CAPS_LAST;i++)
+	if(!profile.isNull() && !mIsICQ)
 	{
-		if (oscar_caps[i].flag & caps)
-			sz += 16;
+		static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
+		outbuf.addTLV(0x0001, defencoding.length(), defencoding.latin1());
+		outbuf.addTLV(0x0002, profile.length(), profile.local8Bit());
+		kdDebug(14150) << k_funcinfo << "adding profile=" << profile << endl;
 	}
-
-	kdDebug(14150) << "SEND (CLI_SETUSERINFO) Sending capabilities, size=" << sz << endl;
-
-	outbuf.addWord(0x0005); //TLV (type 5)
-	outbuf.addWord(sz);
 
 	for (int i=0; oscar_caps[i].flag != AIM_CAPS_LAST; i++)
 	{
-		if (oscar_caps[i].flag & caps)
-			outbuf.addString(oscar_caps[i].data, 16);
+		if (oscar_caps[i].flag & sendCaps)
+			capBuf.addString(oscar_caps[i].data, 16);
 	}
+	kdDebug(14150) << k_funcinfo << "adding capabilities, size=" << capBuf.length() << endl;
+	outbuf.addTLV(0x0005, capBuf.length(), capBuf.buffer());
 
-	outbuf.print();
+#ifdef OSCAR_PACKETLOG
+	kdDebug(14150) << k_funcinfo << endl <<
+		"------------------------------------" << endl <<
+		outbuf.toString() << endl <<
+		"------------------------------------" << endl;
+#endif
 
 	sendBuf(outbuf,0x02);
 }
@@ -2556,7 +2556,13 @@ void OscarSocket::doLogoff()
 	}
 	else
 	{
-		kdDebug(14150) << k_funcinfo << "while isLoggedIn is false, FIXME: How to disconnect with no (proper) connection?" << endl;
+		if(state() != QSocket::Idle)
+		{
+			kdDebug(14150) << k_funcinfo <<
+				"QSocket state wasn't idle, closing down socket..." << endl;
+			clearPendingData();
+			close();
+		}
 	}
 }
 
@@ -2621,9 +2627,9 @@ void OscarSocket::sendChangeBuddyGroup(const QString &buddyName,
 }
 
 
-void OscarSocket::sendChangeVisibility(int value)
+void OscarSocket::sendChangeVisibility(BYTE value)
 {
-	kdDebug(14150) << k_funcinfo << "Setting visibility to " << value << endl;
+//	kdDebug(14150) << k_funcinfo << "Setting visibility to " << value << endl;
 
 	// Check to make sure that the group has actually changed
 	SSI *ssi = ssiData.findVisibilitySetting();
@@ -2636,12 +2642,23 @@ void OscarSocket::sendChangeVisibility(int value)
 
 	Buffer tmpBuf(ssi->tlvlist, ssi->tlvlength);
 	QPtrList<TLV> lst = tmpBuf.getTLVList();
+
+	// important, we are acting on our fetched serverside data
+	// which should NOT get deleted!
 	lst.setAutoDelete(FALSE);
 
 	TLV *visibility = findTLV(lst,0x00ca);
 
 	if (visibility)
 	{
+
+		if(visibility->data[0] == value)
+		{
+			kdDebug(14150) << k_funcinfo <<
+				"Visibility already set to value " << value << ", aborting!" << endl;
+			return;
+		}
+
 		kdDebug(14150) << k_funcinfo <<
 			"Modifying visibility, current value=" << visibility->data[0] << endl;
 
@@ -2903,7 +2920,9 @@ void OscarSocket::sendSSIAddModDel(SSI *item, WORD requestType)
 		outbuf.addString(item->tlvlist,item->tlvlength);
 	}
 
+#ifdef OSCAR_PACKETLOG
 	kdDebug(14150) << k_funcinfo << outbuf.toString() << endl;
+#endif
 	sendBuf(outbuf,0x02);
 }
 
@@ -2942,7 +2961,7 @@ void OscarSocket::sendDelBuddy(const QString &budName, const QString &budGroup)
 	}
 }
 
-void OscarSocket::parseError(Buffer &inbuf)
+void OscarSocket::parseError(WORD family, Buffer &inbuf)
 {
 	QString msg;
 	WORD reason = inbuf.getWord();
@@ -2950,9 +2969,24 @@ void OscarSocket::parseError(Buffer &inbuf)
 		reason << endl;
 
 	if (reason < msgerrreasonlen)
-		msg = i18n("Your message did not get sent: %1").arg(msgerrreason[reason]);
+	{
+		if(family==OSCAR_FAM_2)
+			msg = i18n("Sending userprofile failed: %1").arg(msgerrreason[reason]);
+		else if(family==OSCAR_FAM_4)
+			msg = i18n("Your message did not get sent: %1").arg(msgerrreason[reason]);
+		else
+			msg = i18n("Generic Packet error: %1").arg(msgerrreason[reason]);
+
+	}
 	else
-		msg = i18n("Your message did not get sent: Unknown reason.");
+	{
+		if(family==OSCAR_FAM_2)
+			msg = i18n("Sending userprofile failed: Unknown Error");
+		else if(family==OSCAR_FAM_4)
+			msg = i18n("Your message did not get sent: Unknown Error");
+		else
+			msg = i18n("Generic Packet error: Unknown Error");
+	}
 
 	emit protocolError(msg,reason);
 }
@@ -3178,15 +3212,10 @@ void OscarSocket::sendInfo()
 
 	// greater 7 and thus sendInfo() is not getting called again
 	// except on reconnnect
-	gotAllRights=8;
+	gotAllRights=99;
 
-	if(!mIsICQ)
-		sendMyProfile(); // CLI_SETUSERINFO
-
-	if(mIsICQ)
-		sendCapabilities(KOPETE_ICQ_CAPS); // CLI_SETUSERINFO
-	else
-		sendCapabilities(KOPETE_AIM_CAPS); // CLI_SETUSERINFO (again?)
+	sendLocationInfo(loginProfile); // CLI_SETUSERINFO
+	loginProfile = QString::null;
 
 	sendMsgParams(); // CLI_SETICBM
 
@@ -3198,7 +3227,7 @@ void OscarSocket::sendInfo()
 
 	// FIXME: find a way to send a different status on connect, not only online
 	if(mIsICQ)
-		sendICQStatus(ICQ_STATUS_ONLINE);
+		sendICQStatus(loginStatus);
 
 	if (!mIsICQ)
 	{
@@ -3214,21 +3243,8 @@ void OscarSocket::sendInfo()
 	}
 }
 
-/** Sends the user's profile to the server */
-void OscarSocket::sendMyProfile(void)
-{
-	kdDebug(14150) << k_funcinfo << "Called." << endl;
-
-	static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
-	Buffer outbuf;
-	outbuf.addSnac(0x0002,0x0004,0x0000,0x00000004);
-	outbuf.addTLV(0x0001,defencoding.length(),defencoding.latin1());
-	outbuf.addTLV(0x0002,myUserProfile.length(),myUserProfile.local8Bit());
-	sendBuf(outbuf,0x02);
-}
-
 // Sends parameters for ICBM messages (CLI_SETICBM)
-void OscarSocket::sendMsgParams(void)
+void OscarSocket::sendMsgParams()
 {
 	Buffer outbuf;
 	outbuf.addSnac(0x0004,0x0002,0x0000,0x00000002);
@@ -3251,16 +3267,6 @@ void OscarSocket::sendMsgParams(void)
 	outbuf.addDWord(0x00000000);
 
 	sendBuf(outbuf,0x02);
-}
-
-// Sets the user's profile
-void OscarSocket::setMyProfile(const QString &profile)
-{
-	kdDebug(14150) << k_funcinfo << "Called." << endl;
-
-	myUserProfile = profile;
-	if (isLoggedIn)
-		sendMyProfile();
 }
 
 void OscarSocket::sendBlock(const QString &sname)
@@ -3463,45 +3469,6 @@ OncomingSocket *OscarSocket::serverSocket(DWORD capflag)
 	else  //must be a file transfer?
 		return mFileTransferMgr;
 }
-/*
-void OscarSocket::sendStatus(const unsigned int status,
-	const QString &awayMessage)
-{
-	if(mIsICQ)
-	{
-		kdDebug(14150) << k_funcinfo << "Called for ICQ, status=" <<
-			status << endl;
-		switch(status)
-		{
-			case OSCAR_AWAY:
-				sendICQStatus(ICQ_STATUS_AWAY);
-				break;
-			case OSCAR_DND:
-				sendICQStatus(ICQ_STATUS_DND);
-				break;
-			case OSCAR_NA:
-				sendICQStatus(ICQ_STATUS_NA);
-				break;
-			case OSCAR_OCC:
-				sendICQStatus(ICQ_STATUS_OCC);
-				break;
-			case OSCAR_FFC:
-				sendICQStatus(ICQ_STATUS_FFC);
-				break;
-			default:
-				sendICQStatus(ICQ_STATUS_ONLINE);
-		}
-	}
-	else // AIM
-	{
-		kdDebug(14150) << k_funcinfo << "Called for AIM, status=" <<
-			status << endl;
-		if (status == OSCAR_AWAY)
-			sendAIMAway(true, awayMessage);
-		else
-			sendAIMAway(false, awayMessage);
-	}
-}
-*/
+
 #include "oscarsocket.moc"
 // vim: set noet ts=4 sts=4 sw=4:

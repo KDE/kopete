@@ -15,10 +15,12 @@
 #define AIMCONTACT_H
 
 #include "oscarcontact.h"
+#include "oscarsocket.h"
 
 class AIMAccount;
 class AIMProtocol;
 class KopeteMessageManager;
+class AIMUserInfoDialog;
 
 class AIMContact : public OscarContact
 {
@@ -30,8 +32,17 @@ class AIMContact : public OscarContact
 
 		bool isReachable();
 		KActionCollection *customContextMenuActions();
-		KopeteMessageManager* manager( bool canCreate = false );
+//		KopeteMessageManager* manager( bool canCreate = false );
 		virtual void setStatus(const unsigned int newStatus);
+
+		const QString &userProfile() { return mUserProfile; }
+		const UserInfo &userInfo() { return mUserInfo; }
+		const QString &awayMessage() { return mAwayMessage; }
+
+		/*
+		 * Only usable for the myself() contact
+		 */
+		void setOwnProfile(const QString &profile);
 
 	protected:
 		/**
@@ -48,6 +59,9 @@ class AIMContact : public OscarContact
 		* autoresponse again.
 		*/
 		long mLastAutoResponseTime;
+
+	signals:
+		void updatedProfile();
 
 	private slots:
 		/*
@@ -79,7 +93,15 @@ class AIMContact : public OscarContact
 		 * Warn the user
 		 */
 		void slotWarn();
+
+		void slotGotProfile(const UserInfo &user, const QString &profile, const QString &away);
+
+		void slotCloseUserInfoDialog();
+
+	private:
+		QString mUserProfile;
+		UserInfo mUserInfo;
+		QString mAwayMessage;
+		AIMUserInfoDialog *infoDialog;
 };
-
 #endif
-
