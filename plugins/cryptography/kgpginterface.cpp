@@ -133,7 +133,7 @@ int KgpgInterface::KgpgDecryptFile(QString userIDs,KURL srcUrl,KURL destUrl,int 
     /// pipe for passphrase
 
 
-      if (userIDs=="")
+      if (userIDs.isEmpty())
         passdlg=i18n("Enter passphrase for file %1:").arg(srcUrl.filename());
       else
         passdlg=i18n("Enter passphrase for %1:").arg(userIDs);
@@ -160,7 +160,7 @@ int KgpgInterface::KgpgDecryptFile(QString userIDs,KURL srcUrl,KURL destUrl,int 
       /// create gpg command
 
         KProcIO *proc=new KProcIO();
-      if (destUrl.filename()!="") // a filename was entered
+      if (!destUrl.filename().isEmpty()) // a filename was entered
 	        *proc<<"gpg"<<"--no-tty"<<"--no-secmem-warning"<<"--status-fd=2"<<"--passphrase-fd"<<QString::number(ppass[0])<<"-o"<<destUrl.path().local8Bit()<<"-d"<<srcUrl.path().local8Bit();
 
       else //// no filename -> decrypt to editor
@@ -214,7 +214,7 @@ QString KgpgInterface::KgpgEncryptText(QString text,QString userIDs, QString Opt
   while ( fgets( buffer, sizeof(buffer), fp))
     encResult+=buffer;
   pclose(fp);
-  if (encResult!="") return encResult;
+  if (!encResult.isEmpty()) return encResult;
   else return QString::null;
 }
 
@@ -228,7 +228,7 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
   int counter=0,ppass[2];
   QCString password = CryptographyPlugin::cachedPass();
 
-    while ((counter<3) && (encResult==""))
+    while ( counter<3 && encResult.isEmpty())
     {
 		/// pipe for passphrase
 		if(password.isNull())
@@ -257,7 +257,7 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
 
 		password=QCString();
   }
-  if (encResult!="") return encResult;
+  if (!encResult.isEmpty()) return encResult;
   else return "";
 }
 
@@ -398,7 +398,7 @@ void KgpgInterface::KgpgVerifyFile(KURL srcUrl,KURL sigUrl)
       KProcIO *proc=new KProcIO();
 
     *proc<<"gpg"<<"--no-tty"<<"--no-secmem-warning"<<"--status-fd=2"<<"--verify";
-    if (sigUrl.filename()!="") *proc<<sigUrl.path().local8Bit();
+    if (!sigUrl.filename().isEmpty()) *proc<<sigUrl.path().local8Bit();
 *proc<<srcUrl.path().local8Bit();
 
   QObject::connect(proc, SIGNAL(processExited(KProcess *)),this,SLOT(verifyfin(KProcess *)));
@@ -552,7 +552,7 @@ KMessageBox::sorry(0,"bla");
 void KgpgInterface::delsigprocess(KProcIO *p)//ess *p,char *buf, int buflen)
 {
 
-QString required="";
+QString required;
 while (p->readln(required,true)!=-1)
 {
  if ((step==0) && (required.find("keyedit.prompt")!=-1)) {p->writeStdin("uid 1");step=1;required="";}

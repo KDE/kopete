@@ -408,7 +408,7 @@ void MSNSocket::handleError( uint code, uint id )
 
 	}
 
-	if (msg != "")
+	if (!msg.isEmpty())
 	{
 		KMessageBox::error(0, msg, i18n( "MSN Plugin - Kopete" ) );
 	}

@@ -101,7 +101,7 @@ defaultName="";
 
   QVBoxLayout *vbox=new QVBoxLayout(this,3);
 
-  if (sfile=="")
+  if (sfile.isEmpty())
     labeltxt=new QLabel(i18n("Choose encryption key(s):"),this);
   else
     {
@@ -287,7 +287,7 @@ QString tst,keyname;
           const QString trust=tst.section(':',1,1);
           QString val=tst.section(':',6,6);
 	  QString id=QString("0x"+tst.section(':',4,4).right(8));
-          if (val=="") val="Unlimited";
+          if (val.isEmpty()) val="Unlimited";
           QString tr;
           switch( trust[0] )
             {
@@ -334,7 +334,7 @@ tst=tst.section(':',9,9);
 keyname=tst.section('<',1,1);
 		    keyname=keyname.section('>',0,0);
 		    keyname+=" ("+tst.section('<',0,0)+")";
-if ((tst!="") && (dead==false))
+if ( !tst.isEmpty() && dead==false )
 	{
 	if ((id==defaultKey) && (encryptToDefault==true))
 	      {
@@ -387,7 +387,7 @@ userid=list.at(i)->firstChild()->text(0);
 	userid.stripWhiteSpace();
 res+=" "+userid;
 }
-if (res=="") {reject();return;}
+if (res.isEmpty()) {reject();return;}
 if ((encryptToDefault==true) && (res.find(defaultKey)==-1)) res+=" "+defaultKey;
 if (fmode==true)
     emit selectedKey(res,checkbox2->isChecked(),checkbox1->isChecked(),checkbox3->isChecked(),checkbox4->isChecked());

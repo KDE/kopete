@@ -69,7 +69,7 @@ SSI * SSIData::addGroup(const QString &name)
 {
 	SSI *newitem = new SSI;
 	newitem->name = name;
-	if ((name != "") && (!name.isNull()))
+	if (!name.isEmpty())
 	{
 		unsigned short maxgid = 0;
 		//find the highest gid, add 1 to it, and assign it to this group

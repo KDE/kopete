@@ -74,7 +74,7 @@ WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProto
 	int theMessageCheckFrequency = KGlobal::config()->readNumEntry("MessageCheckFrequency", 5);
 	bool theSendAwayMessage = KGlobal::config()->readBoolEntry("SendAwayMessage", true);
 	bool theEmailDefault = KGlobal::config()->readBoolEntry("EmailDefault", true);
-	if(theHostName == "")
+	if(theHostName.isEmpty())
 	{	QFile infile("/etc/hostname");
 		if(infile.open(IO_ReadOnly))
 		{	QTextStream in(&infile);

@@ -91,7 +91,7 @@ bool WPAddContact::validateData()
 {
 	DEBUG(WPDMETHOD, "WPAddContact::validateData()");
     
-	return theDialog->HostName->currentText() != "";
+	return !theDialog->HostName->currentText().isEmpty();
 }
 
 void WPAddContact::slotFinish(KopeteMetaContact *theMetaContact)

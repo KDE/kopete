@@ -125,7 +125,7 @@ void WPContact::slotSendMessage(KopeteMessage& message)
 {
 	DEBUG(WPDMETHOD, "WPContact::slotSendMessage(<message>)");
 	
-	QString Message = (message.subject() != "" ? "Subject: " + message.subject() + "\n" : QString("")) + message.plainBody();
+	QString Message = (!message.subject().isEmpty() ? "Subject: " + message.subject() + "\n" : QString("")) + message.plainBody();
 	myProtocol->slotSendMessage(Message, dynamic_cast<WPContact *>(message.to().first())->host());
 }
 

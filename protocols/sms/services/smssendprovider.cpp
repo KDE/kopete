@@ -107,7 +107,7 @@ void SMSSendProvider::save(QPtrList<SMSSendArg>& args)
 
 	for (unsigned i=0; i < args.count(); i++)
 	{
-		if (args.at(i)->value->text() == "")
+		if (args.at(i)->value->text().isEmpty())
 			SMSGlobal::deleteConfig(group, args.at(i)->argName->text(), m_contact);
 		else
 			SMSGlobal::writeConfig(group, args.at(i)->argName->text(), m_contact, args.at(i)->value->text());

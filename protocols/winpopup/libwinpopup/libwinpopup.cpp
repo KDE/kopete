@@ -237,7 +237,7 @@ QPair<stringMap, stringMap> KWinPopup::grabData(const QString &Host, QString *th
 			hosts[base.cap(1)] = "";
 		if(Phase == 6 && pair.search(Line) != -1)
 			groups[pair.cap(1)] = pair.cap(2);
-		if(sep.search(Line) != -1 || Line == "") Phase++;
+		if(sep.search(Line) != -1 || Line.isEmpty()) Phase++;
 	}
 
 	delete sender;
@@ -261,9 +261,9 @@ QPair<stringMap, stringMap> KWinPopup::newGrabData(const QString &Host, QString 
 	stringMap hosts, groups;
 
 
-	for(QString Line = ""; sender->isRunning() || sender->readln(Line) > -1; Line = "")
+	for(QString Line; sender->isRunning() || sender->readln(Line) > -1; Line = "")
 	{
-		if(Line == "") while(sender->readln(Line) == -1 && sender->isRunning());
+		if(Line.isEmpty()) while(sender->readln(Line) == -1 && sender->isRunning());
 		if(Phase == 0 && info.search(Line) != -1)
 		{	if(theGroup) *theGroup = info.cap(1);
 			if(theOS) *theOS = info.cap(2);
@@ -275,7 +275,7 @@ QPair<stringMap, stringMap> KWinPopup::newGrabData(const QString &Host, QString 
 			hosts[base.cap(1)] = "";
 		if(Phase == 6 && pair.search(Line) != -1)
 			groups[pair.cap(1)] = pair.cap(2);
-		if(sep.search(Line) != -1 || Line == "") Phase++;
+		if(sep.search(Line) != -1 || Line.isEmpty()) Phase++;
 	}
 
 	sender->closeStdout();

@@ -192,7 +192,7 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 // if (selec==NULL) {KMessageBox::sorry(0,i18n("You have not choosen an encryption key..."));return;}
 
 	QString resultat=KgpgInterface::KgpgEncryptText(original,key,encryptOptions);
-	if (resultat!="")
+	if (!resultat.isEmpty())
 	{
 		msg.setBody(resultat,KopeteMessage::PlainText);
 		m_cachedMessages.insert(resultat,original);
