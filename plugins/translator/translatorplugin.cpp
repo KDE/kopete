@@ -206,6 +206,11 @@ void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 	if ( (msg.direction() == KopeteMessage::Inbound) && ( !msg.body().isNull() ) )
 	{
 		KopeteMetaContact *from = msg.from()->metaContact();
+		if( !from )
+		{
+			kdDebug(14308) << "TranslatorPlugin::slotIncomingMessage : No metaContact for source contact" << endl;
+			return;
+		}
 		src_lang = from->pluginData( this, "languageKey" );
 		if( src_lang.isEmpty() || src_lang == "null" )
 		{
