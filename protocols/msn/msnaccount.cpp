@@ -1058,6 +1058,14 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 
 		manager->createChat( handle, address, auth, ID );
 
+		/**
+		 *  This code should open a chatwindow when a socket is open
+		 * It has been disabled because gaim open switchboeard too often
+		 *
+		 * the solution is to open the window only when the contact start typing
+		 * see MSNChatSession::receivedTypingMsg
+		 *
+
 		KGlobal::config()->setGroup( "MSN" );
 		bool notifyNewChat = KGlobal::config()->readBoolEntry( "NotifyNewChat", false );
 		if ( !ID.isEmpty() && notifyNewChat )
@@ -1067,6 +1075,7 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 			Kopete::Message tmpMsg = Kopete::Message( c, manager->members(), body, Kopete::Message::Internal, Kopete::Message::PlainText );
 			manager->appendMessage( tmpMsg );
 		}
+		 */
 	}
 
 	m_msgHandle = QString::null;

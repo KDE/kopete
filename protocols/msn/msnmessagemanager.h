@@ -61,6 +61,12 @@ public slots:
 
 	void slotRequestPicture();
 
+	/**
+	 * this is a reimplementation of ChatSesstion slot.
+	 * the original slot is not virtual, but that's not a problem because it's a slot.
+	 */
+	virtual void receivedTypingMsg( const QString &, bool );
+
 private slots:
 	void slotMessageSent( Kopete::Message &message, Kopete::ChatSession *kmm );
 	void slotMessageReceived( Kopete::Message &message );
@@ -97,6 +103,11 @@ private:
 	QMap<long unsigned int, MSNInvitation*> m_invitations;
 
 	QTime m_awayMessageTime;
+
+	/**
+	 * weither or not the "has opened a new chat" message need to be sent if the user is typing
+	 */
+	bool m_newSession;
 
 	QLabel *m_image;
 

@@ -34,6 +34,7 @@
 #include <krun.h>
 
 #include "kopetecontactaction.h"
+#include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteuiglobal.h"
@@ -56,6 +57,7 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 	Kopete::ChatSessionManager::self()->registerChatSession( this );
 	m_chatService = 0l;
 //	m_msgQueued = 0L;
+	m_newSession = true;
 
 	setInstance(protocol->instance());
 
@@ -124,6 +126,11 @@ MSNChatSession::~MSNChatSession()
 void MSNChatSession::createChat( const QString &handle,
 	const QString &address, const QString &auth, const QString &ID )
 {
+	/** disabled because i don't want to reopen a chatwindow if we just closed it
+	 * and the contact take much time to type his message
+	 m_newSession= !(ID.isEmpty());
+	*/
+	
 	if( m_chatService )
 	{
 		kdDebug(14140) << k_funcinfo << "Service already exists, disconnect them." << endl;
@@ -207,6 +214,7 @@ void MSNChatSession::slotSwitchBoardClosed()
 
 void MSNChatSession::slotMessageSent(Kopete::Message &message,Kopete::ChatSession *)
 {
+	m_newSession=false;
  	if(m_chatService)
 	{
 		int id = m_chatService->sendMsg(message);
@@ -244,6 +252,7 @@ void MSNChatSession::slotMessageSent(Kopete::Message &message,Kopete::ChatSessio
 
 void MSNChatSession::slotMessageReceived( Kopete::Message &msg )
 {
+	m_newSession=false;
 	if( msg.plainBody().startsWith( "AutoMessage: " ) )
 	{
 		//FIXME: HardCodded color are not so good
@@ -588,6 +597,26 @@ void MSNChatSession::slotDebugRawCommand()
 #endif
 }
 
+
+void MSNChatSession::receivedTypingMsg( const QString &contactId, bool b )
+{
+	MSNContact *c = dynamic_cast<MSNContact *>( account()->contacts()[ contactId ] );
+	if(c && m_newSession &&  !view(false))
+	{
+		//this was originaly in MSNAccount::slotCreateChat
+		KGlobal::config()->setGroup( "MSN" );
+		bool notifyNewChat = KGlobal::config()->readBoolEntry( "NotifyNewChat", false );
+		if (  notifyNewChat  )
+		{
+			// this internal message should open the window if they not exist
+			QString body = i18n( "%1 has started a chat with you" ).arg( c->metaContact()->displayName() );
+			Kopete::Message tmpMsg = Kopete::Message( c, members(), body, Kopete::Message::Internal, Kopete::Message::PlainText );
+			appendMessage( tmpMsg );
+		}
+	}
+	m_newSession=false;
+	Kopete::ChatSession::receivedTypingMsg(c,b);
+}
 
 #include "msnmessagemanager.moc"
 
