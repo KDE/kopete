@@ -1097,10 +1097,10 @@ const DWORD OscarSocket::parseCapabilities(Buffer &inbuf, QString &versionString
 
 					// Did a bad mistake in CVS :(
 					if (
-						(int)cap[12] == 0 &&
+						((int)cap[12] == 0 &&
 						(int)cap[13] == 8 &&
 						(int)cap[14] == 90 &&
-						(int)cap[15] == 0)
+						(int)cap[15] == 0) || ((int)cap[14] + (int)cap[15] == 0))
 					{
 						versionString.sprintf("%d.%d.%d",
 							cap[12], cap[13], cap[14]);
