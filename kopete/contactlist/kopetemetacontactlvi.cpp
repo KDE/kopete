@@ -146,6 +146,7 @@ void KopeteMetaContactLVI::initLVI()
 	connect( &d->opacityTimer, SIGNAL( timeout() ), SLOT( slotOpacityTimer() ) );
 
 	setOpacity( 0.0 );
+	setVisible( false );
 
 	mBlinkTimer = new QTimer( this, "mBlinkTimer" );
 	connect( mBlinkTimer, SIGNAL( timeout() ), SLOT( slotBlink() ) );
