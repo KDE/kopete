@@ -413,7 +413,7 @@ void IRCContact::execute()
 	}
 	if (queryView !=0)
 	{
-		queryView->messageBox->setFocus();
+		queryView->messageEdit()->setFocus();
 		return;
 	}
 }
