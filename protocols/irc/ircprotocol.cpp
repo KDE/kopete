@@ -43,11 +43,11 @@ IRCProtocol *IRCProtocol::s_protocol = 0L;
 IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
 : KopeteProtocol( IRCProtocolFactory::instance(), parent, name ),
 
-	m_ServerStatusOnline(KopeteOnlineStatus::Online,	90, this, 21, "irc_server",	i18n("Go O&nline"),	i18n("Online")),
-	m_ServerStatusOffline(KopeteOnlineStatus::Offline,	80, this, 20, "irc_server",	i18n("Go O&ffline"),	i18n("Offline")),
+	m_ServerStatusOnline(KopeteOnlineStatus::Online,	90, this, 21, QString::null,	i18n("Go O&nline"),	i18n("Online")),
+	m_ServerStatusOffline(KopeteOnlineStatus::Offline,	80, this, 20, QString::null,	i18n("Go O&ffline"),	i18n("Offline")),
 
-	m_ChannelStatusOnline(KopeteOnlineStatus::Online,	70, this, 11, "irc_channel",	i18n("Go O&nline"),	i18n("Online")),
-	m_ChannelStatusOffline(KopeteOnlineStatus::Offline,	60, this, 10, "irc_channel",	i18n("Go O&ffline"),	i18n("Offline")),
+	m_ChannelStatusOnline(KopeteOnlineStatus::Online,	70, this, 11, QString::null,	i18n("Go O&nline"),	i18n("Online")),
+	m_ChannelStatusOffline(KopeteOnlineStatus::Offline,	60, this, 10, QString::null,	i18n("Go O&ffline"),	i18n("Offline")),
 
 	m_UserStatusOp(KopeteOnlineStatus::Online,		50, this, 5, "irc_op",		i18n("Go &Op"),		i18n("Op")),
 	m_UserStatusVoice(KopeteOnlineStatus::Online,		40, this, 4, "irc_voice",	i18n("Go &Voice"),	i18n("Voice")),
