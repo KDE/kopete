@@ -45,7 +45,7 @@ Porting from Kopete 0.9 to Kopete 0.10
 	.) getGroup has been renamed to group() or findGroup()
 	.) findContact now return a Contact
 	.) findContactByDisplayName has been renamed findMetaContactByDisplayName
-	.) metaContactDeleted signal has been renamed MetaContactRemoved for consistency
+	.) metaContactDeleted signal has been renamed metaContactRemoved for consistency
 	
 *) KopeteMetaContact has been renamed to Kopete::MetaContact
 	.) persistentDataChanged  take no more argument
@@ -71,3 +71,15 @@ Porting from Kopete 0.9 to Kopete 0.10
 
 *) KopeteMessage  =>  Kopete::Message
 
+
+*) KopeteMessageManager  =>  Kopete::ChatSession
+	.) there are not anymore mmId()
+	.) user() has been renamed myself()
+	.) closed() has been renamed  chatSessionDestroyed();
+	.) typingMsg has been renamed  userTyping
+	
+
+*) KopeteMessageManagerFactory =>  Kopete::ChatSessionManager
+	.) every function with messageManager has been renamed with ChatSession 
+		.) addKopeteMessageManager  => registerChatSession
+	
