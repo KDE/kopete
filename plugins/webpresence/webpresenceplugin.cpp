@@ -242,7 +242,7 @@ KTempFile* WebPresencePlugin::generateFile()
 
 			QDomElement accStatus = doc.createElement( "accountstatus" );
 			QDomText statusText = doc.createTextNode( ( me )
-					? statusAsString( me->onlineStatus() )
+					? statusAsString( me->onlineStatus() ).latin1()
 					: notKnown.latin1() ) ;
 			accStatus.appendChild( statusText );
 			acc.appendChild( accStatus );
