@@ -22,6 +22,7 @@
 #include <kdebug.h>
 #include <klineedit.h>
 #include <klocale.h>
+#include <kstringhandler.h>
 
 #include "kopeteaway.h"
 #include "kopeteawaydialogbase.h"
@@ -57,11 +58,11 @@ KopeteAwayDialog::~KopeteAwayDialog()
 	delete d;
 }
 
-void KopeteAwayDialog::slotComboBoxSelection( int /* index */ )
+void KopeteAwayDialog::slotComboBoxSelection( int index )
 {
 	// If they selected something out of the combo box
 	// They probably want to use it
-	d->base->txtOneShot->setText( awayInstance->getMessage( d->base->cmbHistory->currentText() ) );
+	d->base->txtOneShot->setText( awayInstance->getMessage(index) );
 	d->base->txtOneShot->setCursorPosition( 0 );
 }
 
@@ -98,9 +99,15 @@ void KopeteAwayDialog::cancelAway( int /* awayType */ )
 
 void KopeteAwayDialog::init()
 {
+	QStringList awayMessages = awayInstance->getMessages();
+	for( QStringList::iterator it = awayMessages.begin(); it != awayMessages.end(); ++it )
+	{
+		*it = KStringHandler::rsqueeze( *it );
+	}
+
 	d->base->cmbHistory->clear();
-	d->base->cmbHistory->insertStringList( awayInstance->getTitles() );
-	d->base->txtOneShot->setText( awayInstance->getMessage( d->base->cmbHistory->currentText() ) );
+	d->base->cmbHistory->insertStringList( awayMessages );
+	d->base->txtOneShot->setText( awayMessages[0] );
 
 	d->base->txtOneShot->setFocus();
 	d->base->txtOneShot->setCursorPosition( 0 );

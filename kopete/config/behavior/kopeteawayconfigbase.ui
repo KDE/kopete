@@ -9,177 +9,96 @@
             <x>0</x>
             <y>0</y>
             <width>444</width>
-            <height>363</height>
+            <height>365</height>
         </rect>
     </property>
     <property name="caption">
         <string>Away Configuration</string>
     </property>
-    <grid>
+    <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
+        <widget class="QGroupBox">
             <property name="name">
-                <cstring>mNotifyAway</cstring>
-            </property>
-            <property name="text">
-                <string>Notify all open chats when I go away</string>
-            </property>
-        </widget>
-        <widget class="QGroupBox" row="3" column="0" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>predefinedGroupBox</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>5</hsizetype>
-                    <vsizetype>7</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
+                <cstring>groupBox2</cstring>
             </property>
             <property name="title">
-                <string>Predefined Messages</string>
+                <string>General</string>
             </property>
             <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel" row="0" column="0">
+                <widget class="QLabel" row="1" column="0">
                     <property name="name">
-                        <cstring>lblAway</cstring>
+                        <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>Away messages:</string>
+                        <string>Number of away messages to remember:</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Kopete will remember this manyaway messages to use at a later date. Once this limit is exceeded, the least used message will be removed.</string>
                     </property>
                 </widget>
-                <widget class="KListBox" row="1" column="0" rowspan="4" colspan="1">
+                <widget class="QSpinBox" row="1" column="1">
                     <property name="name">
-                        <cstring>lstTitles</cstring>
+                        <cstring>rememberedMessages</cstring>
                     </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>5</hsizetype>
-                            <vsizetype>7</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
+                    <property name="minValue">
+                        <number>1</number>
                     </property>
-                    <property name="resizePolicy">
-                        <enum>AutoOneFit</enum>
+                    <property name="value">
+                        <number>5</number>
                     </property>
                 </widget>
-                <spacer row="4" column="2">
+                <spacer row="1" column="2">
                     <property name="name">
-                        <cstring>spacer7</cstring>
+                        <cstring>spacer6</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Vertical</enum>
+                        <enum>Horizontal</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Expanding</enum>
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>20</width>
+                            <width>61</width>
                             <height>20</height>
                         </size>
                     </property>
                 </spacer>
-                <widget class="KPushButton" row="3" column="2">
+                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="3">
                     <property name="name">
-                        <cstring>btnEditAwayMsg</cstring>
+                        <cstring>mNotifyAway</cstring>
                     </property>
                     <property name="text">
-                        <string>Edit...</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Save message text</string>
-                    </property>
-                </widget>
-                <widget class="KPushButton" row="2" column="2">
-                    <property name="name">
-                        <cstring>btnDeleteAwayMsg</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Remove</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Delete selected message</string>
-                    </property>
-                </widget>
-                <widget class="KPushButton" row="1" column="2">
-                    <property name="name">
-                        <cstring>btnAddAwayMsg</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Add...</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Create new away message</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="1">
-                    <property name="name">
-                        <cstring>lblMessage</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Message text:</string>
-                    </property>
-                </widget>
-                <widget class="QTextEdit" row="1" column="1" rowspan="4" colspan="1">
-                    <property name="name">
-                        <cstring>txtMessage</cstring>
-                    </property>
-                    <property name="readOnly">
-                        <bool>true</bool>
+                        <string>Notify all open chats when I go away</string>
                     </property>
                 </widget>
             </grid>
         </widget>
-        <spacer row="2" column="0">
+        <widget class="QGroupBox">
             <property name="name">
-                <cstring>spacer69</cstring>
+                <cstring>groupBox3</cstring>
             </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Fixed</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>17</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>mUseAutoAway</cstring>
-            </property>
-            <property name="text">
-                <string>Use auto away</string>
-            </property>
-        </widget>
-        <widget class="QLayoutWidget" row="2" column="1">
-            <property name="name">
-                <cstring>layout4</cstring>
+            <property name="title">
+                <string>Auto Away</string>
             </property>
             <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel" row="0" column="2">
+                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="4">
                     <property name="name">
-                        <cstring>TextLabel3</cstring>
+                        <cstring>mUseAutoAway</cstring>
                     </property>
                     <property name="text">
-                        <string>minutes of user inactivity</string>
+                        <string>Use auto away</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="0" column="0">
+                <widget class="QLabel" row="1" column="0">
                     <property name="name">
                         <cstring>TextLabel2</cstring>
                     </property>
@@ -187,7 +106,7 @@
                         <string>Become away after</string>
                     </property>
                 </widget>
-                <widget class="QSpinBox" row="0" column="1">
+                <widget class="QSpinBox" row="1" column="1">
                     <property name="name">
                         <cstring>mAutoAwayTimeout</cstring>
                     </property>
@@ -198,7 +117,32 @@
                         <number>1</number>
                     </property>
                 </widget>
-                <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="3">
+                <widget class="QLabel" row="1" column="2">
+                    <property name="name">
+                        <cstring>TextLabel3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>minutes of user inactivity</string>
+                    </property>
+                </widget>
+                <spacer row="1" column="3">
+                    <property name="name">
+                        <cstring>spacer7</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>81</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="4">
                     <property name="name">
                         <cstring>mGoAvailable</cstring>
                     </property>
@@ -208,7 +152,24 @@
                 </widget>
             </grid>
         </widget>
-    </grid>
+        <spacer>
+            <property name="name">
+                <cstring>spacer5</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>70</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
 </widget>
 <connections>
     <connection>
@@ -241,10 +202,6 @@
     <tabstop>mUseAutoAway</tabstop>
     <tabstop>mAutoAwayTimeout</tabstop>
     <tabstop>mGoAvailable</tabstop>
-    <tabstop>lstTitles</tabstop>
-    <tabstop>btnAddAwayMsg</tabstop>
-    <tabstop>btnDeleteAwayMsg</tabstop>
-    <tabstop>btnEditAwayMsg</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

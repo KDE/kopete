@@ -23,7 +23,7 @@
 #include <qobject.h>
 #include <qvaluelist.h>
 
-struct KopeteAwayPrivate;
+struct  KopeteAwayPrivate;
 
 /* Forward Declarations */
 class QStringList;
@@ -35,12 +35,12 @@ class KopeteGlobalAwayDialog;
  * KopeteAway is a singleton class that manages away messages
  * for Kopete. It stores a global away message, as well as
  * a list of user defined away messages.
- * This class is used by KopeteAwayDialog, which gets its
- * list of user-defined away messages from here.  Protocol
+ * This class is used by KopeteAwayDialog, which gets it's
+ * list of user-defined away messages from this.  Protocol
  * plugins' individual away dialogs should also get away
  * messages from this object.
  *
- * It also handles global idle time and all the auto away stuff
+ * It also handle global Idle Time, and all auto away stuff
  *
  * @author Hendrik vom Lehn <hvl@linux-4-ever.de>
  * @author Chris TenHarmsel <tenharmsel@users.sourceforge.net>
@@ -56,8 +56,8 @@ friend class KopeteAwayDialog;
 public:
 
 	/**
-	 * @brief Gets the single instance of KopeteAway
-	 * @return A KopeteAway instance pointer
+	 * @brief Method to get the single instance of KopeteAway
+	 * @return KopeteAway instance pointer
 	 */
 	static KopeteAway *getInstance();
 
@@ -68,9 +68,9 @@ public:
 	static QString message();
 
 	/**
-	 * @brief Sets the global away message.
-	 *
-	 * It does not set you away, just sets the message.
+	 * This method sets the global away message,
+	 * it does not set you away, just sets the message.
+	 * @brief Sets the global away message
 	 * @param message The message you want to set
 	 */
 	void setGlobalAwayMessage(const QString &message);
@@ -87,71 +87,33 @@ public:
 	static bool globalAway();
 
 	/**
-	 * @brief Saves the away messages to disk
-	 *
-	 * This function will save the current list of away messages to the disk
-	 * using KConfig
-	 */
-	void save();
-
-	/**
-	 * @brief Get the titles of the user defined away messages
+	 * @brief Function to get the titles of user defined away messages
 	 * @return List of away message titles
 	 *
 	 * This function can be used to retrieve a QStringList of the away message titles,
 	 * these titles can be passed to getMessage(QString title) to retrieve the
 	 * corresponding message.
 	 */
-	QStringList getTitles();
+	QStringList getMessages();
 
 	/**
-	 * @brief Get an away message
+	 * @brief Function to get an away message
 	 * @return The away message corresponding to the title
-	 * @param title Title of the away message to retrieve
+	 * @param messageNumber Number of the away message to retrieve
 	 *
-	 * This function retrieves the away message that corresponds to the title passed in.
-	 * If the requested away message is not found an empty string ("") is returned.
+	 * This function retrieves the away message that corresponds to the ringbuffer index
+	 * passed in.
 	 */
-	 QString getMessage(const QString &title);
+	 QString getMessage( uint messageNumber );
 
 	 /**
-	  * @brief Adds an away message
-	  * @param title The away message title
+	  * @brief Adds an away message to the ringbuffer
 	  * @param message The away message
-	  * @return true if the away message was successfully added
-	  * @return false if the away message was not added
 	  *
-	  * This function will add an away message with the given title to the list of user defined
-	  * away messages.  If the title conflicts with an already defined away message, nothing
-	  * will be changed and the return value will be false.  Otherwise, the away message will
-	  * be added and true will be returned.  save() should be called when finished adding messages
-	  * in order to write the new message configuration to disk.
+	  * This function will add an away message to the ringbuffer of user defined
+	  * away messages.
 	  */
-	 bool addMessage(const QString &title, const QString &message);
-
-	 /**
-	  * @brief Deletes an away message
-	  * @param title The title of the away message to delete
-	  * @return true if function succeeds in deleting message
-	  * @return false if function fails to delete message (indicated message does not exist)
-	  *
-	  * This function will delete an away message with the given title from the list of user
-	  * defined away messages.  save() should be called after any changes to the current away
-	  * message list in order to write the new away message list to disk.
-	  */
-	 bool deleteMessage(const QString &title);
-
-	 /**
-	 * @brief Updates an existing away message
-	 * @param title Title of away message to be updated
-	 * @param message New text of away message
-	 * @return true if message was successfully updated
-	 * @return false if message was not successfully update (message does not exist)
-	 *
-	 * This function will update an existing message and replace its text with the
-	 * text specified.
-	 */
-	bool updateMessage(const QString &title, const QString &message);
+	 void addMessage(const QString &message);
 
 	/**
 	 * time in seconds the user has been idle
@@ -161,6 +123,15 @@ public:
 private:
 	KopeteAway();
 	~KopeteAway();
+
+	/**
+	 * @brief Saves the away messages to disk
+	 *
+	 * This function will save the current list of away messages to the disk
+	 * using KConfig. It is called automatically.
+	 */
+	void save();
+
 	//KopeteAway( const KopeteAway &rhs );
 	//KopeteAway &operator=( const KopeteAway &rhs );
 	static KopeteAway *instance;
@@ -182,8 +153,6 @@ public slots:
 	void setActivity();
 
 	/**
-	 * @brief Go in to auto away mode
-	 *
 	 * Use this method if you want to go in the autoaway mode.
 	 * This will go autoaway even if the idle time is not yet reached. (and even if the user
 	 * did not selected to go autoaway automaticaly)
@@ -195,7 +164,7 @@ signals:
 	/**
 	 * @brief Activity was detected
 	 *
-	 * This signal is emitted when activity has been discovered after being set away automatically.
+	 * this signal is emit when activity has been discover after being autoAway.
 	 */
 	void activity();
 

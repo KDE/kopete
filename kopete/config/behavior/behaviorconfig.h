@@ -23,7 +23,7 @@ class QTabWidget;
 
 class BehaviorConfig_General;
 class BehaviorConfig_Chat;
-class KopeteAwayConfigUI;
+class KopeteAwayConfigBaseUI;
 
 class BehaviorConfig : public KCModule
 {
@@ -45,7 +45,7 @@ class BehaviorConfig : public KCModule
 		QTabWidget* mBehaviorTabCtl;
 		BehaviorConfig_General *mPrfsGeneral;
 		BehaviorConfig_Chat *mPrfsChat;
-		KopeteAwayConfigUI *mAwayConfigUI;
+		KopeteAwayConfigBaseUI *mAwayConfigUI;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

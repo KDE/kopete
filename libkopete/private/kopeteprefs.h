@@ -68,6 +68,7 @@ public:
 	int transparencyValue() const { return mTransparencyValue; }
 	QColor transparencyColor() const { return mTransparencyColor; }
 	int chatViewBufferSize() const { return mChatViewBufferSize; }
+	int rememberedMessages() const { return mRememberedMessages; }
 	const QColor &highlightBackground() const { return mHighlightBackground; }
 	const QColor &highlightForeground() const { return mHighlightForeground; }
 	const QColor &textColor() const { return mTextColor; }
@@ -101,7 +102,7 @@ public:
 	QFont contactListCustomSmallFont() const { return mContactListSmallFont; }
 	QFont contactListSmallFont() const;
 	QColor contactListGroupNameColor() const { return mContactListGroupNameColor; }
-	
+
 	void setIconTheme(const QString &value);
 	void setUseEmoticons(bool value);
 	void setShowOffline(bool value);
@@ -136,6 +137,7 @@ public:
 	void setShowTray(bool);
 	void setNotifyAway(bool);
 	void setRichText(bool);
+	void setRememberedMessages(int);
 	void setToolTipContents(const QStringList &);
 	void setContactListIndentContacts( bool v );
 	void setContactListDisplayMode( ContactDisplayMode v );
@@ -188,6 +190,7 @@ private:
 	bool mSoundIfAway;
 	bool mTransparencyEnabled;
 	int mTransparencyValue;
+	int mRememberedMessages;
 	ChatWindowPref mInterfacePreference;
 	QColor mTransparencyColor;
 	int mChatViewBufferSize;

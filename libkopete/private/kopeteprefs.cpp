@@ -68,6 +68,7 @@ void KopetePrefs::load()
 	mNotifyAway = config->readBoolEntry("Notification Away", false);
 	mRichText = config->readBoolEntry("RichText editor", false);
 	mChatWShowSend = config->readBoolEntry("Show Chatwindow Send Button", true);
+	mRememberedMessages = config->readNumEntry("Remembered Messages", 5);
 
 	mTransparencyColor = config->readColorEntry("ChatView Transparency Tint Color", &Qt::white);
 	mChatViewBufferSize = config->readNumEntry("ChatView BufferSize", 250);
@@ -166,6 +167,7 @@ void KopetePrefs::save()
 	config->writeEntry("Highlighting Enabled", mHighlightEnabled );
 	config->writeEntry("Font Face", mFontFace);
 	config->writeEntry("Text Color",mTextColor);
+	config->writeEntry("Remembered Messages",mRememberedMessages);
 	config->writeEntry("Bg Color", mBgColor);
 	config->writeEntry("Link Color", mLinkColor);
 	config->writeEntry("Idle Contact Color", mIdleContactColor);
@@ -258,6 +260,11 @@ void KopetePrefs::setUseQueue(bool value)
 void KopetePrefs::setRaiseMsgWindow(bool value)
 {
 	mRaiseMsgWindow = value;
+}
+
+void KopetePrefs::setRememberedMessages(int value)
+{
+	mRememberedMessages = value;
 }
 
 void KopetePrefs::setShowEvents(bool value)

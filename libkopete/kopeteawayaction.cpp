@@ -18,6 +18,7 @@
 #include <klocale.h>
 #include <kdeversion.h>
 #include <kinputdialog.h>
+#include <kstringhandler.h>
 
 #include "kopeteawayaction.h"
 #include "kopeteaway.h"
@@ -26,13 +27,13 @@ KopeteAwayAction::KopeteAwayAction(const QString &text, const QIconSet &pix, con
 	const QObject *receiver, const char *slot, QObject *parent, const char *name ) :
 	KSelectAction(text, pix, cut, parent, name )
 {
-	QObject::connect( KopeteAway::getInstance(), SIGNAL( messagesChanged() ), 
+	QObject::connect( KopeteAway::getInstance(), SIGNAL( messagesChanged() ),
 		this, SLOT( slotAwayChanged() ) );
-		
-	QObject::connect( this, SIGNAL( awayMessageSelected( const QString & ) ), 
+
+	QObject::connect( this, SIGNAL( awayMessageSelected( const QString & ) ),
 		receiver, slot );
-		
-	QObject::connect( this, SIGNAL( activated( int ) ), 
+
+	QObject::connect( this, SIGNAL( activated( int ) ),
 		this, SLOT( slotSelectAway( int ) ) );
 
 	reasonCount = 0;
@@ -42,10 +43,15 @@ KopeteAwayAction::KopeteAwayAction(const QString &text, const QIconSet &pix, con
 
 void KopeteAwayAction::slotAwayChanged()
 {
-	QStringList awayTitles = KopeteAway::getInstance()->getTitles();
-	reasonCount = awayTitles.count();
-	awayTitles.append( i18n( "Custom Message..." ) );
-	setItems( awayTitles );
+	QStringList awayMessages = KopeteAway::getInstance()->getMessages();
+	for( QStringList::iterator it = awayMessages.begin(); it != awayMessages.end(); ++it )
+	{
+		(*it) = KStringHandler::rsqueeze( *it );
+	}
+
+	reasonCount = awayMessages.count();
+	awayMessages.append( i18n( "New Message..." ) );
+	setItems( awayMessages );
 	setCurrentItem( -1 );
 }
 
@@ -53,18 +59,20 @@ void KopeteAwayAction::slotSelectAway( int index )
 {
 	KopeteAway *mAway = KopeteAway::getInstance();
 	QString awayReason;
-	
+
 	if( index < reasonCount )
 	{
-		QStringList awayTitles = mAway->getTitles();
-		awayReason = mAway->getMessage( awayTitles[index] );
+		awayReason = mAway->getMessage( index );
 	}
 	else
 	{
 		awayReason = KInputDialog::getText(
-			i18n( "Custom Away Message" ),
+			i18n( "New Away Message" ),
 			i18n( "Please enter your away reason:" )
 			);
+
+		if( !awayReason.isEmpty() )
+			KopeteAway::getInstance()->addMessage( awayReason );
 	}
 
 	if( !awayReason.isEmpty() )

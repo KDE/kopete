@@ -32,7 +32,7 @@
 
 #include "kopeteprefs.h"
 #include "kopeteaway.h"
-#include "kopeteawayconfigui.h"
+#include "kopeteawayconfigbase.h"
 
 #include <qtabwidget.h>
 
@@ -55,7 +55,7 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 	mBehaviorTabCtl->addTab(mPrfsGeneral, i18n("&General"));
 
 	// "Away" TAB ===============================================================
-	mAwayConfigUI = new KopeteAwayConfigUI(mBehaviorTabCtl);
+	mAwayConfigUI = new KopeteAwayConfigBaseUI(mBehaviorTabCtl);
 	mBehaviorTabCtl->addTab(mAwayConfigUI, i18n("&Away Settings"));
 
 	// "Chat" TAB ===============================================================
@@ -101,8 +101,6 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 		this, SLOT(slotSettingsChanged(bool)));
 	connect( mAwayConfigUI->mNotifyAway, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
-	connect( mAwayConfigUI, SIGNAL(awayMessagesChanged(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
 }
 
 void BehaviorConfig::save()
@@ -122,6 +120,7 @@ void BehaviorConfig::save()
 
 	// "Away" TAB ===============================================================
 	p->setNotifyAway( mAwayConfigUI->mNotifyAway->isChecked());
+	p->setRememberedMessages( mAwayConfigUI->rememberedMessages->value() );
 
 	KConfig *config = KGlobal::config();
 	config->setGroup("AutoAway");
@@ -167,8 +166,7 @@ void BehaviorConfig::load()
 	mAwayConfigUI->mGoAvailable->setChecked(config->readBoolEntry("GoAvailable", true));
 	mAwayConfigUI->mUseAutoAway->setChecked(config->readBoolEntry("UseAutoAway", true));
 	mAwayConfigUI->mNotifyAway->setChecked( p->notifyAway() );
-
-	mAwayConfigUI->updateView();
+	mAwayConfigUI->rememberedMessages->setValue( p->rememberedMessages() );
 
 	// "Chat" TAB ===============================================================
 	mPrfsChat->cb_RaiseMsgWindowChk->setChecked(p->raiseMsgWindow());

@@ -24,6 +24,7 @@
 
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
+#include "kopeteprefs.h"
 
 #include <kconfig.h>
 #include <qtimer.h>
@@ -51,17 +52,12 @@
 #undef HAVE_XIDLE
 #undef HasXidle
 
-struct KopeteAwayMessage
-{
-	QString title;
-	QString message;
-};
 
 struct KopeteAwayPrivate
 {
 	QString awayMessage;
 	bool globalAway;
-	QValueList<KopeteAwayMessage> awayMessageList;
+	QStringList awayMessageList;
 	QTime idleTime;
 	QTimer *timer;
 	bool autoaway;
@@ -136,34 +132,28 @@ KopeteAway::KopeteAway() : QObject( kapp , "KopeteAway")
 	/* Load the saved away messages */
 	config->setGroup("Away Messages");
 
-	/* If Kopete has been run before, this will be true.
-	* It's only false the first time Kopete is run
+	/*
+	* Old config format
 	*/
 	if(config->hasKey("Titles"))
 	{
 		QStringList titles = config->readListEntry("Titles");  // Get the titles
-		KopeteAwayMessage temp; // Temporary away message....
 		for(QStringList::iterator i = titles.begin(); i != titles.end(); i++)
 		{
-			temp.title = (*i); // Grab the title from the list of messages
-			temp.message = config->readEntry(temp.title); // And the message (from disk)
-			d->awayMessageList.append(temp); // And add it to the list
+			d->awayMessageList.append( config->readEntry(*i) ); // And add it to the list
 		}
+
+		/* Save this list to disk */
+		save();
+	}
+	else if(config->hasKey("Messages"))
+	{
+		d->awayMessageList = config->readListEntry("Messages");
 	}
 	else
 	{
-		/* There are no away messages, so we'll create a default one */
-		/* Create an away message */
-		KopeteAwayMessage temp;
-		temp.title = i18n( "Busy" );
-		temp.message = i18n( "Sorry, I'm busy right now" );
-
-		/* Add it to the vector */
-		d->awayMessageList.append(temp);
-
-		temp.title = i18n( "Gone" );
-		temp.message = i18n( "I'm gone right now, but I'll be back later" );
-		d->awayMessageList.append(temp);
+		d->awayMessageList.append( i18n( "Sorry, I'm busy right now" ) );
+		d->awayMessageList.append( i18n( "I'm gone right now, but I'll be back later" ) );
 
 		/* Save this list to disk */
 		save();
@@ -220,16 +210,7 @@ void KopeteAway::save()
 	KConfig *config = KGlobal::config();
 	/* Set the away message settings in the Away Messages config group */
 	config->setGroup("Away Messages");
-	QStringList titles;
-	/* For each message, keep track of the title, and write out the message */
-	for(QValueList<KopeteAwayMessage>::iterator i = d->awayMessageList.begin(); i != d->awayMessageList.end(); i++)
-	{
-		titles.append((*i).title); // Append the title to list of titles
-		config->writeEntry((*i).title, (*i).message); // Append Title->message pair to the config
-	}
-
-	/* Write out the titles */
-	config->writeEntry("Titles", titles);
+	config->writeEntry("Messages", d->awayMessageList);
 	config->sync();
 
 	emit( messagesChanged() );
@@ -242,102 +223,36 @@ void KopeteAway::load()
 	d->awayTimeout=config->readNumEntry("Timeout", 600);
 	d->goAvailable=config->readBoolEntry("GoAvailable", true);
 	d->useAutoAway=config->readBoolEntry("UseAutoAway", true);
-
 }
 
-QStringList KopeteAway::getTitles()
+QStringList KopeteAway::getMessages()
 {
-	QStringList titles;
-	for(QValueList<KopeteAwayMessage>::iterator i = d->awayMessageList.begin(); i != d->awayMessageList.end(); i++)
-		titles.append((*i).title);
-
-	return titles;
+	return d->awayMessageList;
 }
 
-QString KopeteAway::getMessage(const QString &title)
+QString KopeteAway::getMessage( uint messageNumber )
 {
-	for(QValueList<KopeteAwayMessage>::iterator i = d->awayMessageList.begin(); i != d->awayMessageList.end(); i++)
+	QStringList::iterator it = d->awayMessageList.at( messageNumber );
+	if( it != d->awayMessageList.end() )
 	{
-		if((*i).title == title)
-			return (*i).message;
-	}
-
-	/* Return an empty string if none was found */
-	return QString::null;
-}
-
-bool KopeteAway::addMessage(const QString &title, const QString &message)
-{
-	bool found = false;
-	/* Check to see if it exists already */
-	for(QValueList<KopeteAwayMessage>::iterator i = d->awayMessageList.begin(); i != d->awayMessageList.end(); i++)
-	{
-		if((*i).title == title)
-		{
-			found = true;
-			break;
-		}
-	}
-
-	/* If not, add it */
-	if(!found)
-	{
-		KopeteAwayMessage temp;
-		temp.title = title;
-		temp.message = message;
-		d->awayMessageList.append(temp);
+		QString str = *it;
+		d->awayMessageList.prepend( str );
+		d->awayMessageList.remove( it );
 		save();
-		return true;
+		return str;
 	}
 	else
 	{
-		return false;
+		return QString::null;
 	}
 }
 
-bool KopeteAway::deleteMessage(const QString &title)
+void KopeteAway::addMessage(const QString &message)
 {
-	/* Search for the message */
-	QValueList<KopeteAwayMessage>::iterator itemToDelete = d->awayMessageList.begin();
-	while( (itemToDelete != d->awayMessageList.end()) && ((*itemToDelete).title != title) )
-		itemToDelete++;
-
-	/* If it was found, delete it */
-	if(itemToDelete != d->awayMessageList.end())
-	{
-		/* Remove it from the config entry, if it's there */
-		if(KGlobal::config()->hasKey((*itemToDelete).title))
-			KGlobal::config()->deleteEntry((*itemToDelete).title);
-
-		/* Remove it from the list */
-		d->awayMessageList.remove(itemToDelete);
-		save();
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-bool KopeteAway::updateMessage(const QString &title, const QString &message)
-{
-	/* Search for the message */
-	QValueList<KopeteAwayMessage>::iterator itemToUpdate = d->awayMessageList.begin();
-	while( (itemToUpdate != d->awayMessageList.end()) && ((*itemToUpdate).title != title) )
-		itemToUpdate++;
-
-	/* If it was found, update it */
-	if(itemToUpdate != d->awayMessageList.end())
-	{
-		(*itemToUpdate).message = message;
-		save();
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	d->awayMessageList.prepend( message );
+	if( (int)d->awayMessageList.count() > KopetePrefs::prefs()->rememberedMessages() )
+		d->awayMessageList.pop_back();
+	save();
 }
 
 long int KopeteAway::idleTime()
