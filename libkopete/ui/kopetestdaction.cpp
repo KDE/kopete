@@ -42,6 +42,7 @@ KopeteGroupListAction::KopeteGroupListAction( const QString &text, const QString
 
 	connect( KopeteContactList::contactList(), SIGNAL( groupAdded( KopeteGroup * ) ), this, SLOT( slotUpdateList() ) );
 	connect( KopeteContactList::contactList(), SIGNAL( groupRemoved( KopeteGroup * ) ), this, SLOT( slotUpdateList() ) );
+	connect( KopeteContactList::contactList(), SIGNAL( groupRenamed(KopeteGroup*, const QString& ) ), this, SLOT( slotUpdateList() ) );
 	slotUpdateList();
 }
 
