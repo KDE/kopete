@@ -72,7 +72,7 @@ KopeteAccount *AIMEditAccountWidget::apply()
 
 	// Check to see if we're saving the password, and set it if so
 	if (mGui->mSavePassword->isChecked())
-		mAccount->setPassword(mGui->edtPassword->text());
+		mAccount->setPassword(QString::fromLocal8Bit(mGui->edtPassword->password()));
 	else
 		mAccount->setPassword(QString::null);
 
