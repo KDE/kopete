@@ -25,8 +25,8 @@
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 
-#include "kmsnchatservice.h"
-#include "kmsnservicesocket.h"
+#include "msnswitchboardsocket.h"
+#include "msnnotifysocket.h"
 #include "kopete.h"
 #include "msnaddcontactpage.h"
 #include "msncontact.h"

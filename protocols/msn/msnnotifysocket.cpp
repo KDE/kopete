@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "kmsnservicesocket.h"
+#include "msnnotifysocket.h"
 #include "msndispatchsocket.h"
 #include "msnprotocol.h"
 
@@ -439,7 +439,7 @@ void KMSNServiceSocket::slotDispatchFailed()
 	m_dispatchSocket = 0L;
 }
 
-#include "kmsnservicesocket.moc"
+#include "msnnotifysocket.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

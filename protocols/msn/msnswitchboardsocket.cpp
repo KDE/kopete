@@ -16,7 +16,7 @@
  ***************************************************************************/
 
 
-#include "kmsnchatservice.h"
+#include "msnswitchboardsocket.h"
 #include "msnprotocol.h"
 #include "msncontact.h"
 #include <time.h>
@@ -366,7 +366,7 @@ QString MSNSwitchBoardSocket::parseFontAttr(QString str, QString attr)
 	return tmp;
 }
 
-#include "kmsnchatservice.moc"
+#include "msnswitchboardsocket.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 
