@@ -18,17 +18,15 @@
 #ifndef AutoReplacePREFERENCES_H
 #define AutoReplacePREFERENCES_H
 
-//#include <qstring.h>
-//#include <qmap.h>
-
 #include "configmodule.h"
 
 class AutoReplacePrefsUI;
 
 	// TODO
-	// add only when k and v are present (pita)
-	// remove only when a QListViewItem is selected (pita)
+	// add button enabled only when k and v are present 
+	// remove button enabled only when a QListViewItem is selected 
 	// signal/slot when map changes (needed?)
+	// dont autoreplace outgoing messages checkbox
 
 class AutoReplacePreferences : public ConfigModule  {
    Q_OBJECT
@@ -41,6 +39,7 @@ public:
 	virtual void reopen();
 
 	typedef QMap<QString, QString> WordsToReplace;
+	
 	WordsToReplace getMap() const { return map; };	// O(1) implicity shared
 	bool getAutoreplaceIncoming() const { return autoreplaceIncoming; };
 	bool getAddDot() const { return addDot; };
@@ -52,6 +51,7 @@ private:
 	QStringList wordsList;
 
 	bool autoreplaceIncoming;
+	bool autoreplaceOutgoing;
 	bool addDot;
 	bool upper;
 
