@@ -18,34 +18,30 @@
 #ifndef TextEffectPREFERENCES_H
 #define TextEffectPREFERENCES_H
 
-#include "configmodule.h"
+#include <kcmodule.h>
 
 class TextEffectPrefs;
+class TextEffectConfig;
+class QStringList;
 
 /**
   *@author Olivier Goffart
   */
 
-class TextEffectPreferences : public ConfigModule  {
+class TextEffectPreferences : public KCModule  {
    Q_OBJECT
 public:
 
-	TextEffectPreferences(const QString &pixmap, QObject *parent=0);
+	TextEffectPreferences(QWidget *parent = 0, const char* name = 0, const QStringList &args = QStringList());
 	~TextEffectPreferences();
 
 	virtual void save();
-	virtual void reopen();
-	
-	QStringList colors();
-	bool color_lines();
-	bool color_words();
-	bool color_char();
-	bool color_random();
-	bool lamer();
-	bool waves();
+	virtual void load();
 
 private:
+	QStringList colors();
 	TextEffectPrefs *preferencesDialog;
+	TextEffectConfig *config;
 private slots: // Public slots
 	void slotAddPressed();
 	void slotRemovePressed();

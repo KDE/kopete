@@ -33,7 +33,7 @@ class QString;
 class KopeteMessage;
 class KopeteMetaContact;
 class KopeteMessageManager;
-class TextEffectPreferences;
+class TextEffectConfig;
 
 /**
   * @author Olivier Goffart
@@ -68,7 +68,7 @@ public slots:
 private:
 	static TextEffectPlugin* pluginStatic_;
 	unsigned int last_color;
-	TextEffectPreferences *m_prefs;
+	TextEffectConfig *m_config;
 };
 
 #endif

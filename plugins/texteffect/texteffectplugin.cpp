@@ -23,7 +23,7 @@
 #include "kopetemessagemanagerfactory.h"
 
 #include "texteffectplugin.h"
-#include "texteffectpreferences.h"
+#include "texteffectconfig.h"
 
 typedef KGenericFactory<TextEffectPlugin> TextEffectPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_texteffect, TextEffectPluginFactory( "kopete_texteffect" )  );
@@ -34,7 +34,7 @@ TextEffectPlugin::TextEffectPlugin( QObject *parent, const char *name, const QSt
 	if( !pluginStatic_ )
 		pluginStatic_=this;
 
-	m_prefs = new TextEffectPreferences ( "texteffect", this );
+	m_config = new TextEffectConfig;
 
 	connect( KopeteMessageManagerFactory::factory(),
 		SIGNAL( aboutToSend( KopeteMessage & ) ),
@@ -45,6 +45,7 @@ TextEffectPlugin::TextEffectPlugin( QObject *parent, const char *name, const QSt
 
 TextEffectPlugin::~TextEffectPlugin()
 {
+	delete m_config;
 	pluginStatic_ = 0L;
 }
 
@@ -61,9 +62,9 @@ void TextEffectPlugin::slotOutgoingMessage( KopeteMessage& msg )
 	if(msg.direction() != KopeteMessage::Outbound)
 		return;
 
-	QStringList colors=m_prefs->colors();
+	QStringList colors=m_config->colors();
 
-	if(m_prefs->color_char() || m_prefs->color_words() || m_prefs->lamer() || m_prefs->waves() )
+	if(m_config->colorChar() || m_config->colorWords() || m_config->lamer() || m_config->waves() )
 	{
 		QString original=msg.plainBody();
 		QString resultat;
@@ -74,13 +75,13 @@ void TextEffectPlugin::slotOutgoingMessage( KopeteMessage& msg )
 		for(unsigned int f=0;f<original.length();f++)
 		{
 			char x=original[f].latin1();
-			if(f==0 || m_prefs->color_char() || (m_prefs->color_words() && x==' ' ))
+			if(f==0 || m_config->colorChar() || (m_config->colorWords() && x==' ' ))
 			{
 				if(f!=0)
 					resultat+="</font>";
 				resultat+="<font color=\"";
 				resultat+=colors[c];
-				if(m_prefs->color_random())
+				if(m_config->colorRandom())
 					c=rand()%colors.count();
 				else
 				{
@@ -105,55 +106,55 @@ void TextEffectPlugin::slotOutgoingMessage( KopeteMessage& msg )
 					resultat+="<br>";
 				case 'a':
 				case 'A':
-					if(m_prefs->lamer())
+					if(m_config->lamer())
 					{
 						resultat+="4";
 						break;
 					}
 				case 'e':
 				case 'E':
-					if(m_prefs->lamer())
+					if(m_config->lamer())
 					{
 						resultat+="3";
 						break;
 					}
 				case 'i':
 				case 'I':
-					if(m_prefs->lamer())
+					if(m_config->lamer())
 					{
 						resultat+="1";
 						break;
 					}
 				case 'l':
 				case 'L':
-					if(m_prefs->lamer())
+					if(m_config->lamer())
 					{
 						resultat+="|";
 						break;
 					}
 				case 't':
 				case 'T':
-					if(m_prefs->lamer())
+					if(m_config->lamer())
 					{
 						resultat+="7";
 						break;
 					}
 				case 's':
 				case 'S':
-					if(m_prefs->lamer())
+					if(m_config->lamer())
 					{
 						resultat+="5";
 						break;
 					}
 				case 'o':
 				case 'O':
-					if(m_prefs->lamer())
+					if(m_config->lamer())
 					{
 						resultat+="0";
 						break;
 					}
 				default:
-					if(m_prefs->waves())
+					if(m_config->waves())
 					{
 						QString q=QString(QChar(x));
 						resultat+= wavein ? q.lower() : q.upper();
@@ -164,14 +165,14 @@ void TextEffectPlugin::slotOutgoingMessage( KopeteMessage& msg )
 					break;
 			}
 		}
-		if( m_prefs->color_char() || m_prefs->color_words() )
+		if( m_config->colorChar() || m_config->colorWords() )
 			resultat+="</font>";
 		msg.setBody(resultat,KopeteMessage::RichText);
 	}
-	
-	if(m_prefs->color_lines())
+
+	if(m_config->colorLines())
 	{
-		if(m_prefs->color_random())
+		if(m_config->colorRandom())
 		{
 			last_color=rand()%colors.count();
 		}
@@ -181,7 +182,7 @@ void TextEffectPlugin::slotOutgoingMessage( KopeteMessage& msg )
 			if(last_color >= colors.count())
 				last_color=0;
 		}
-	
+
 		msg.setFg(QColor (colors[last_color]));
 	}
 }
