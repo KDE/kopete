@@ -497,16 +497,16 @@ QStringList MSNContact::groups()
 
 void MSNContact::moveToGroup( KopeteGroup *to, KopeteGroup *from )
 {
-/*	if(to.isNull())
+	if(!to)
 	{
 		removeFromGroup(from);
 		return;
 	}
-	if(from.isNull())
+	if(!from)
 	{
 		addToGroup(to);
 		return;
-	}*/
+	}
 
 //	kdDebug() << "MSNContact::moveToGroup" <<endl;
 	MSNNotifySocket *notify=MSNProtocol::protocol()->notifySocket();
@@ -529,6 +529,8 @@ void MSNContact::moveToGroup( KopeteGroup *to, KopeteGroup *from )
 void MSNContact::addToGroup( KopeteGroup *group )
 {
 //	kdDebug() << "MSNContact::addToGroup" <<endl;
+	if(!group)
+		return;
 	if(group->displayName().isNull())
 	{
 		kdDebug() << "MSNContact::addToGroup: ignoring top-level group" << endl;
@@ -561,6 +563,8 @@ void MSNContact::addToGroup( KopeteGroup *group )
 void MSNContact::removeFromGroup( KopeteGroup * group )
 {
 //	kdDebug() << "MSNContact::removeFromGroup" <<endl;
+	if(!group)
+		return;
 	if(group->displayName().isNull())
 	{
 		kdDebug() << "MSNContact::removeFromGroup: ignoring top-level group" << endl;
@@ -605,7 +609,7 @@ void MSNContact::removedFromGroup(QString group)
 
 void MSNContact::addThisTemporaryContact(KopeteGroup* group)
 {
-	if(group->displayName().isNull())
+	if(!group || group->displayName().isNull())
 		MSNProtocol::protocol()->addContact( m_msnId );
 	else
 		addToGroup(  group );
