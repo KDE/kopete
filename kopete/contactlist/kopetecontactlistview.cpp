@@ -773,7 +773,7 @@ void KopeteContactListView::slotContextMenu( KListView*, QListViewItem *item,
 	if( !window )
 	{
 		kdError(14000) << k_funcinfo <<
-			"ERROR: main window not found, cannot display context-menu" << endl;
+			"ERROR: main window not found, cannot display context-menu; kapp->mainWidget()=" << (void *)kapp->mainWidget() << endl;
 		return;
 	}
 
