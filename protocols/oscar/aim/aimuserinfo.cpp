@@ -71,10 +71,10 @@ AIMUserInfoDialog::AIMUserInfoDialog(AIMContact *c, AIMAccount *acc, bool modal,
 		mMainWidget->lblAwayMessage->hide();
 
 		userInfoView=0L;
-		mMainWidget->htmlFrame->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
-		QVBoxLayout *l = new QVBoxLayout(mMainWidget->htmlFrame);
+		mMainWidget->userInfoFrame->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
+		QVBoxLayout *l = new QVBoxLayout(mMainWidget->userInfoFrame);
 		userInfoEdit = new KTextEdit(QString::null, QString::null,
-			mMainWidget->htmlFrame, "userInfoEdit");
+			mMainWidget->userInfoFrame, "userInfoEdit");
 		userInfoEdit->setTextFormat(PlainText);
 		userInfoEdit->setText(mContact->userProfile());
 		setButtonText(User1, "&Save Profile");
@@ -83,29 +83,20 @@ AIMUserInfoDialog::AIMUserInfoDialog(AIMContact *c, AIMAccount *acc, bool modal,
 	else
 	{
 		userInfoEdit=0L;
-		mMainWidget->htmlFrame->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
-		QVBoxLayout *l = new QVBoxLayout(mMainWidget->htmlFrame);
-		userInfoView = new KHTMLPart(mMainWidget->htmlFrame, "preview");
-		userInfoView->setJScriptEnabled(false);
-		userInfoView->setJavaEnabled(false);
-		userInfoView->setPluginsEnabled(false);
-		userInfoView->setMetaRefreshEnabled(false);
-		KHTMLView *htmlWidget = userInfoView->view();
-		htmlWidget->setMarginWidth(4);
-		htmlWidget->setMarginHeight(4);
-		htmlWidget->setFocusPolicy(NoFocus);
-		htmlWidget->setSizePolicy(
-			QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
-		l->addWidget(htmlWidget);
+		mMainWidget->userInfoFrame->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
+		QVBoxLayout *l = new QVBoxLayout(mMainWidget->userInfoFrame);
+		userInfoView = new KTextBrowser( mMainWidget->userInfoFrame, "userInfoView" );
+		userInfoView->setTextFormat(AutoText);
+		l->addWidget(userInfoView);
+
 
 		if(mAccount->isConnected())
 		{  // And our buddy is not offline
 			if(mContact->onlineStatus() != AIMProtocol::protocol()->statusOffline)
 			{
 				// Update the user view to indicate that we're requesting the user's profile
-				userInfoView->begin();
-				userInfoView->write(i18n("Requesting User Profile, please wait"));
-				userInfoView->end();
+				userInfoView->setText(i18n("Requesting User Profile, please wait"));
+
 				// Ask the engine for the profile
 				mAccount->engine()->sendUserProfileRequest(mContact->contactName());
 			}
@@ -152,6 +143,15 @@ void AIMUserInfoDialog::slotUpdateProfile()
 	mMainWidget->txtAwayMessage->setText(mContact->awayMessage());
 	mMainWidget->txtWarnLevel->setText(QString::number(mContact->userInfo().evil));
 
+	if(mContact->awayMessage().isNull()){
+		mMainWidget->txtAwayMessage->hide();
+		mMainWidget->lblAwayMessage->hide();
+	}
+	else{
+		mMainWidget->txtAwayMessage->show();
+		mMainWidget->lblAwayMessage->show();
+	}
+
 	QString contactProfile = mContact->userProfile();
 	if(contactProfile.isNull())
 	{
@@ -165,9 +165,7 @@ void AIMUserInfoDialog::slotUpdateProfile()
 	}
 	else if(userInfoView)
 	{
-		userInfoView->begin();
-		userInfoView->write(contactProfile);
-		userInfoView->end();
+		userInfoView->setText(contactProfile);
 	}
 }
 

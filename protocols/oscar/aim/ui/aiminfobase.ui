@@ -184,9 +184,6 @@
             <property name="name">
                 <cstring>txtAwayMessage</cstring>
             </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
             <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>7</hsizetype>
@@ -209,7 +206,7 @@
         </widget>
         <widget class="QFrame">
             <property name="name">
-                <cstring>htmlFrame</cstring>
+                <cstring>userInfoFrame</cstring>
             </property>
             <property name="sizePolicy">
                 <sizepolicy>

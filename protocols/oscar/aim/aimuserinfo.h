@@ -40,7 +40,7 @@ class AIMUserInfoDialog : public KDialogBase
 		AIMAccount *mAccount;
 		AIMContact *mContact;
 		AIMUserInfoWidget *mMainWidget;
-		KHTMLPart *userInfoView;
+		KTextBrowser *userInfoView;
 		KTextEdit *userInfoEdit;
 
 	private slots:
