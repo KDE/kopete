@@ -248,11 +248,6 @@ void KopeteMessageManager::setCanBeDeleted ( bool b )
 		deleteLater();
 }
 
-void KopeteMessageManager::slotReadMessages()
-{
-	emit( readMessages( this, true ) );
-}
-
 #include "kopetemessagemanager.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

@@ -111,8 +111,6 @@ signals:
 	void contactAdded(const KopeteContact *);
 	void contactRemoved(const KopeteContact *);
 
-	void readMessages( KopeteMessageManager *, bool );
-
 	/**
 	 * The name of the chat is changed
 	 */
@@ -175,9 +173,6 @@ public slots:
 	 * Tell the KMM that someone is typing
 	 */
 	void typing(bool t);
-
-	void slotReadMessages();
-
 
 protected:
 	/**
