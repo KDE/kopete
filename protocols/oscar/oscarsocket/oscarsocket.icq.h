@@ -5,14 +5,28 @@
 #define ICQ_SERVER "login.icq.com"
 #define ICQ_PORT 5190
 
-//** Internal status for the ICQ protocol **/
-const unsigned short ICQ_STATUS_ONLINE		= 0x0000;
-const unsigned short ICQ_STATUS_OFFLINE	= 0xFFFF;
-const unsigned short ICQ_STATUS_AWAY		= 0x0001;
-const unsigned short ICQ_STATUS_DND			= 0x0002;
-const unsigned short ICQ_STATUS_NA			= 0x0004;
-const unsigned short ICQ_STATUS_OCC			= 0x0010;
-const unsigned short ICQ_STATUS_FFC			= 0x0020;
+// Internal status for the ICQ protocol
+// some are dupliated because setting and getting the status
+// do not use the same value
+const unsigned long ICQ_STATUS_OFFLINE			= 0xFFFFFFFF;
+const unsigned long ICQ_STATUS_ONLINE			= 0x00000000;
+
+const unsigned long ICQ_STATUS_IS_INVIS		= 0x00000100;
+const unsigned long ICQ_STATUS_IS_DND			= 0x00000002;
+const unsigned long ICQ_STATUS_IS_OCC			= 0x00000010;
+const unsigned long ICQ_STATUS_IS_NA			= 0x00000004;
+const unsigned long ICQ_STATUS_IS_AWAY			= 0x00000001;
+const unsigned long ICQ_STATUS_IS_FFC			= 0x00000020;
+
+const unsigned long ICQ_STATUS_SET_INVIS		= 0x00000100;
+const unsigned long ICQ_STATUS_SET_DND			= 0x00000013;
+const unsigned long ICQ_STATUS_SET_OCC			= 0x00000011;
+const unsigned long ICQ_STATUS_SET_NA			= 0x00000005;
+const unsigned long ICQ_STATUS_SET_AWAY		= 0x00000001;
+const unsigned long ICQ_STATUS_SET_FFC			= 0x00000020;
+
+const unsigned long ICQ_STATUS_WEBAWARE		= 0x00010000;
+const unsigned long ICQ_STATUS_SHOWIP			= 0x00020000;
 
 const unsigned short ICQ_SEARCHSTATE_OFFLINE = 0;
 const unsigned short ICQ_SEARCHSTATE_ONLINE = 1;

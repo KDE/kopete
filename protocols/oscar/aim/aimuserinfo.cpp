@@ -53,7 +53,7 @@ AIMUserInfo::AIMUserInfo(const QString name, const QString nick,
 					 this, SLOT(slotCloseClicked()));
 
 	// Engine got user profile
-	QObject::connect(m_account->getEngine(),
+	QObject::connect(m_account->engine(),
 					 SIGNAL(gotUserProfile(const UserInfo &, const QString)),
 					 this, SLOT(slotSearchFound(const UserInfo &, const QString)));
 
@@ -71,7 +71,7 @@ AIMUserInfo::AIMUserInfo(const QString name, const QString nick,
 		{  // Update the user view to indicate that we're requesting the user's profile
 			userInfoView->setText(i18n("Requesting User Profile, please wait"));
 			// Ask the engine for the profile
-			m_account->getEngine()->sendUserProfileRequest(name);
+			m_account->engine()->sendUserProfileRequest(name);
 		}
 	}
 }
@@ -122,7 +122,7 @@ void AIMUserInfo::slotSaveClicked()
 	// save it if the user requests to do so
 	if (!userInfoView->isReadOnly())
 	{  // Tell the engine to set my profile
-		m_account->getEngine()->setMyProfile(userInfoView->text());
+		m_account->engine()->setMyProfile(userInfoView->text());
 	}
 }
 
@@ -138,7 +138,7 @@ void AIMUserInfo::slotSearchFound(const UserInfo &/*u*/, const QString profile)
 	userInfoView->setText(profile);
 	//disconnect so we can have more than one user profile window open with
 	//different users' info in them
-	QObject::disconnect(m_account->getEngine(),
+	QObject::disconnect(m_account->engine(),
 						SIGNAL(gotUserProfile(const UserInfo &, const QString)),
 						this, SLOT(slotSearchFound(const UserInfo &, const QString)));
 }

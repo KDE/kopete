@@ -490,28 +490,28 @@ void OscarSocket::sendICQStatus(unsigned long status)
 
 	// convert the weird hex crap from icq to our internal OSCAR_ ints
 	// as they are better to handle and not protocol specific
-
-	if (status & ICQ_STATUS_FFC)
+/*
+	if (status & ICQ_STATUS_IS_FFC)
 	{
 		kdDebug(14150) << k_funcinfo << "setting to FFC" << endl;
 		emit statusChanged(OSCAR_FFC);
 	}
-	else if (status & ICQ_STATUS_DND)
+	else if (status & ICQ_STATUS_IS_DND)
 	{
 		kdDebug(14150) << k_funcinfo << "setting to DND" << endl;
 		emit statusChanged(OSCAR_DND);
 	}
-	else if (status & ICQ_STATUS_OCC)
+	else if (status & ICQ_STATUS_IS_OCC)
 	{
 		kdDebug(14150) << k_funcinfo << "setting to OCC" << endl;
 		emit statusChanged(OSCAR_OCC);
 	}
-	else if (status & ICQ_STATUS_NA)
+	else if (status & ICQ_STATUS_IS_NA)
 	{
 		kdDebug(14150) << k_funcinfo << "setting to NA" << endl;
 		emit statusChanged(OSCAR_NA);
 	}
-	else if (status & ICQ_STATUS_AWAY)
+	else if (status & ICQ_STATUS_IS_AWAY)
 	{
 		kdDebug(14150) << k_funcinfo << "setting to AWAY" << endl;
 		emit statusChanged(OSCAR_AWAY);
@@ -521,7 +521,9 @@ void OscarSocket::sendICQStatus(unsigned long status)
 		kdDebug(14150) << k_funcinfo << "setting to ONLINE" << endl;
 		emit statusChanged(OSCAR_ONLINE);
 	}
-} // END OscarSocket::sendStatus
+	*/
+} // END OscarSocket::sendICQStatus
+
 /*
 void OscarSocket::fillDirectInfo(Buffer &directInfo)
 {

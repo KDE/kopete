@@ -74,6 +74,12 @@ class ICQContact : public OscarContact
 		 */
 		void setOwnDisplayName(const QString &);
 
+	/**
+	 * Reimplemented because invisible contacts have a
+	 * small auto-modifying status
+	 */
+	void setOnlineStatus(const KopeteOnlineStatus&);
+
 	public slots:
 		virtual void slotUserInfo();
 
@@ -91,6 +97,7 @@ class ICQContact : public OscarContact
 
 		int userinfoRequestSequence;
 		int userinfoReplyCount;
+		bool mInvisible;
 
 	private slots:
 		/** Called when the userinfo dialog is getting closed */

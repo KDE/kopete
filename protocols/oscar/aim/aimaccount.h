@@ -46,11 +46,20 @@ class AIMAccount : public OscarAccount
 		AIMAccount(KopeteProtocol *parent, QString accountID, const char *name=0L);
 		virtual ~AIMAccount();
 
-		/** Accessor method for the action menu */
+		/*
+		 * Accessor method for the action menu
+		 */
 		virtual KActionMenu* actionMenu();
-		/** Called from AIMUserINfo */
+
+		/*
+		 * Called from AIMUserInfo
+		 */
 		void setUserProfile(QString profile);
+
 		void setAway(bool away, const QString &awayReason);
+
+		virtual void setStatus(const unsigned long status,
+			const QString &awayMessage = QString::null);
 
 	public slots:
 		void slotEditInfo();
@@ -60,6 +69,7 @@ class AIMAccount : public OscarAccount
 		/** Called when we have been warned */
 		void slotGotWarning(int newlevel, QString warner);
 		void slotGotMyUserInfo(UserInfo &);
+		void slotAwayDialogReturned(const int, const QString&);
 
 	protected:
 		void initSignals();
@@ -74,7 +84,12 @@ class AIMAccount : public OscarAccount
 		 */
 		OscarContact *createNewContact( const QString &contactId,
 			const QString &displayName, KopeteMetaContact *parentContact );
+
+	private:
 		UserInfo mUserInfo;
+		unsigned long mStatus;
+		QString mAwayMessage;
+
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

@@ -31,8 +31,19 @@ ICQAccount::ICQAccount(KopeteProtocol *parent, QString accountID, const char *na
 	: OscarAccount(parent, accountID, name, true)
 {
 	//myself() has to be created in constructor!
+
+	// FIXME: Bad initial setting but this does not change on
+	// first connect (status is set differently there)
+	// Fixing this also involves fixing OscarSocket
+	mStatus = ICQ_STATUS_ONLINE;
+
+	mWebAware = true;
+	mHideIP = false;
+	mInvisible = false;
 	mMyself = new ICQContact(accountId(), "", this, 0L);
-	mAwayDialog = new ICQChangeStatus(getEngine());
+	mAwayDialog = new ICQChangeStatus(engine());
+	QObject::connect(mAwayDialog, SIGNAL(goAway(const int, const QString&)),
+		this, SLOT(slotAwayDialogReturned(const int, const QString&)));
 }
 
 void ICQAccount::loaded()
@@ -40,6 +51,16 @@ void ICQAccount::loaded()
 	// needs to be here because pluginData() does not work in constructor
 	static_cast<ICQContact *>(mMyself)->setOwnDisplayName(
 		pluginData(protocol(), "NickName"));
+
+	if (pluginData(protocol(), "WebAware").toUInt() == 1)
+		mWebAware = true;
+	else
+		mWebAware = false;
+
+	if (pluginData(protocol(), "HideIP").toUInt() == 1)
+		mHideIP = true;
+	else
+		mHideIP = false;
 }
 
 ICQAccount::~ICQAccount()
@@ -78,13 +99,28 @@ KActionMenu* ICQAccount::actionMenu()
 		p->statusDND.iconFor(this), 0,
 		this, SLOT(slotGoDND()), this, "ICQAccount::mActionDND");
 
-	KAction* mActionOccupied = new KAction(p->statusOCC.caption(),
+	KAction* mActionOCC = new KAction(p->statusOCC.caption(),
 		p->statusOCC.iconFor(this), 0,
-		this, SLOT(slotGoOCC()), this, "ICQAccount::mActionOccupied");
+		this, SLOT(slotGoOCC()), this, "ICQAccount::mActionOCC");
 
 	KAction* mActionFFC = new KAction(p->statusFFC.caption(),
 		p->statusFFC.iconFor(this), 0,
 		this, SLOT(slotGoFFC()), this, "ICQAccount::mActionFFC");
+
+	KToggleAction* mActionInvisible = new KToggleAction(i18n("Invisible"),
+		"icq_invisible", 0, this, SLOT(slotToggleInvisible()), this, "ICQAccount::mActionInvisible");
+	mActionInvisible->setChecked(mInvisible);
+
+	mActionOffline->setEnabled(isConnected());
+
+	// FIXME: allow setting these on connect
+	// OscarSocket needs to be fixed for that
+	mActionAway->setEnabled(isConnected());
+	mActionNA->setEnabled(isConnected());
+	mActionDND->setEnabled(isConnected());
+	mActionOCC->setEnabled(isConnected());
+	mActionFFC->setEnabled(isConnected());
+	mActionInvisible->setEnabled(isConnected());
 
 	mActionMenu->popupMenu()->insertTitle(
 		mMyself->onlineStatus().iconFor(mMyself),
@@ -95,8 +131,10 @@ KActionMenu* ICQAccount::actionMenu()
 	mActionMenu->insert(mActionAway);
 	mActionMenu->insert(mActionNA);
 	mActionMenu->insert(mActionDND);
-	mActionMenu->insert(mActionOccupied);
+	mActionMenu->insert(mActionOCC);
 	mActionMenu->insert(mActionOffline);
+	mActionMenu->popupMenu()->insertSeparator();
+	mActionMenu->insert(mActionInvisible);
 
 	return mActionMenu;
 }
@@ -135,7 +173,9 @@ void ICQAccount::slotGoFFC()
 		(myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
 		(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
 		)
-		mEngine->sendStatus(ICQ_STATUS_FFC);
+	{
+		setStatus(ICQ_STATUS_SET_FFC);
+	}
 }
 
 void ICQAccount::slotGoDND()
@@ -146,25 +186,112 @@ void ICQAccount::slotGoDND()
 		(myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
 		(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
 		)
-		mEngine->sendStatus(ICQ_STATUS_DND);
+	{
+		mAwayDialog->show(OSCAR_DND);
+	}
+}
+
+void ICQAccount::slotToggleInvisible()
+{
+	kdDebug(14200) << k_funcinfo << "Called" << endl;
+	setInvisible(!mInvisible);
 }
 
 void ICQAccount::setAway(bool away, const QString &awayReason)
 {
 	kdDebug(14200) << k_funcinfo << " " << accountId() << endl;
-// TODO: Make use of away message as well
 	if(away)
 	{
 		if((myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
 			(myself()->onlineStatus().status() == KopeteOnlineStatus::Away))
 		{
-			mEngine->sendStatus(ICQ_STATUS_AWAY);
+			setStatus(ICQ_STATUS_SET_AWAY, awayReason);
 		}
 	}
 	else
 	{
-		if(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
-			mEngine->sendStatus(ICQ_STATUS_ONLINE);
+		if(myself()->onlineStatus().status() == KopeteOnlineStatus::Away ||
+			myself()->onlineStatus().internalStatus() == OSCAR_FFC)
+		{
+			setStatus(ICQ_STATUS_ONLINE);
+		}
+	}
+}
+
+void ICQAccount::setStatus(const unsigned long status,
+	const QString &awayMessage)
+{
+	kdDebug(14200) << k_funcinfo << "new status=" << status << ", old status=" << mStatus << endl;
+
+	mStatus = status;
+
+	if(!awayMessage.isNull())
+		mAwayMessage = awayMessage;
+// TODO: Make use of away message as well
+
+	if (isConnected())
+	{
+		unsigned long sendStatus = mStatus;
+
+		if(mInvisible)
+		{
+			kdDebug(14200) << k_funcinfo << "ORing with invisible flag" << endl;
+			sendStatus |= ICQ_STATUS_SET_INVIS;
+		}
+
+		if(!mHideIP)
+		{
+			kdDebug(14200) << k_funcinfo << "ORing with show ip flag" << endl;
+			sendStatus |= ICQ_STATUS_SHOWIP;
+		}
+
+		if(!mWebAware)
+		{
+			kdDebug(14200) << k_funcinfo << "ORing with web aware flag" << endl;
+			sendStatus |= ICQ_STATUS_WEBAWARE;
+		}
+
+		kdDebug(14200) << k_funcinfo << "calling sendICQStatus(), sendStatus=" << sendStatus << endl;
+		engine()->sendICQStatus(sendStatus);
+	}
+}
+
+void ICQAccount::setInvisible(bool invis)
+{
+	if (invis == mInvisible)
+		return;
+
+	kdDebug(14200) << k_funcinfo << "changing invisible setting to " << invis << endl;
+
+	mInvisible = invis;
+
+	if(isConnected())
+		setStatus(mStatus); // also sends the new invis flag
+}
+
+
+void ICQAccount::slotAwayDialogReturned(const int awaytype, const QString &message)
+{
+	kdDebug(14200) << k_funcinfo << "awaytype=" << awaytype << endl;
+
+	switch(awaytype)
+	{
+		case OSCAR_AWAY:
+			kdDebug(14200) << k_funcinfo << "calling setStatus for AWAY" << endl;
+			setStatus(ICQ_STATUS_SET_AWAY, message);
+			break;
+		case OSCAR_DND:
+			kdDebug(14200) << k_funcinfo << "calling setStatus for DND" << endl;
+			setStatus(ICQ_STATUS_SET_DND, message);
+			break;
+		case OSCAR_NA:
+			kdDebug(14200) << k_funcinfo << "calling setStatus for NA" << endl;
+			setStatus(ICQ_STATUS_SET_NA, message);
+			break;
+		case OSCAR_OCC:
+			kdDebug(14200) << k_funcinfo << "calling setStatus for OCC" << endl;
+			setStatus(ICQ_STATUS_SET_OCC, message);
+			break;
 	}
 }
 

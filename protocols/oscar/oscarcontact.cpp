@@ -77,38 +77,38 @@ void OscarContact::initSignals()
 //	kdDebug(14150) << k_funcinfo << "Called" << endl;
 	// Buddy offline
 	QObject::connect(
-		mAccount->getEngine(), SIGNAL(gotOffgoingBuddy(QString)),
+		mAccount->engine(), SIGNAL(gotOffgoingBuddy(QString)),
 		this, SLOT(slotOffgoingBuddy(QString)));
 
 	// kopete-users's status changed
 	QObject::connect(
-		mAccount->getEngine(), SIGNAL(statusChanged(const unsigned int)),
+		mAccount->engine(), SIGNAL(statusChanged(const unsigned int)),
 		this, SLOT(slotMainStatusChanged(const unsigned int)));
 
 	QObject::connect(
-		mAccount->getEngine(), SIGNAL(gotBuddyChange(const UserInfo &)),
+		mAccount->engine(), SIGNAL(gotBuddyChange(const UserInfo &)),
 		this, SLOT(slotParseUserInfo(const UserInfo &)));
 	// Got IM
 /*
 	QObject::connect(
-		mAccount->getEngine(), SIGNAL(gotIM(QString,QString,bool)),
+		mAccount->engine(), SIGNAL(gotIM(QString,QString,bool)),
 		this, SLOT(slotIMReceived(QString,QString,bool)));
 */
 	// New direct connection
 	QObject::connect(
-		mAccount->getEngine(), SIGNAL(connectionReady(QString)),
+		mAccount->engine(), SIGNAL(connectionReady(QString)),
 		this, SLOT(slotDirectIMReady(QString)));
 	// Direct connection closed
 	QObject::connect(
-		mAccount->getEngine(), SIGNAL(directIMConnectionClosed(QString)),
+		mAccount->engine(), SIGNAL(directIMConnectionClosed(QString)),
 		this, SLOT(slotDirectIMConnectionClosed(QString)));
 	// File transfer request
 	QObject::connect(
-		mAccount->getEngine(), SIGNAL(gotFileSendRequest(QString,QString,QString,unsigned long)),
+		mAccount->engine(), SIGNAL(gotFileSendRequest(QString,QString,QString,unsigned long)),
 		this, SLOT(slotGotFileSendRequest(QString,QString,QString,unsigned long)));
 	// File transfer started
 	QObject::connect(
-		mAccount->getEngine(), SIGNAL(transferBegun(OscarConnection *, const QString &,
+		mAccount->engine(), SIGNAL(transferBegun(OscarConnection *, const QString &,
 			const unsigned long, const QString &)),
 		this, SLOT(slotTransferBegun(OscarConnection *,
 			const QString &,
@@ -243,7 +243,7 @@ void OscarContact::slotDeleteContact()
 		return;
 
 	mAccount->internalBuddyList()->removeBuddy(mListContact);
-	mAccount->getEngine()->sendDelBuddy(mListContact->screenname(),group->name());
+	mAccount->engine()->sendDelBuddy(mListContact->screenname(),group->name());
 	deleteLater();
 }
 
@@ -292,9 +292,9 @@ void OscarContact::slotWarn()
 
 	int result = KMessageBox::questionYesNoCancel(qApp->mainWidget(), message, title);
 	if (result == KMessageBox::Yes)
-		mAccount->getEngine()->sendWarning(mName, true);
+		mAccount->engine()->sendWarning(mName, true);
 	else if (result == KMessageBox::No)
-		mAccount->getEngine()->sendWarning(mName, false);
+		mAccount->engine()->sendWarning(mName, false);
 }
 
 
@@ -310,7 +310,7 @@ void OscarContact::slotBlock()
 	int result = KMessageBox::questionYesNo(qApp->mainWidget(), message, title);
 	if (result == KMessageBox::Yes)
 	{
-		mAccount->getEngine()->sendBlock(mName);
+		mAccount->engine()->sendBlock(mName);
 	}
 }
 
@@ -334,7 +334,7 @@ void OscarContact::slotDirectConnect()
 			KopeteMessage::Internal, KopeteMessage::PlainText );
 
 		manager()->appendMessage(msg);
-		mAccount->getEngine()->sendDirectIMRequest(mName);
+		mAccount->engine()->sendDirectIMRequest(mName);
 	}
 }
 
@@ -390,7 +390,7 @@ void OscarContact::sendFile(const KURL &sourceURL, const QString &/*altFileName*
 		kdDebug(14150) << k_funcinfo << "File size is " << (unsigned long)finfo.size() << endl;
 
 		//Send the file
-		mAccount->getEngine()->sendFileSendRequest(mName, finfo);
+		mAccount->engine()->sendFileSendRequest(mName, finfo);
 	}
 }
 
@@ -437,12 +437,12 @@ void OscarContact::syncGroups()
 				<< "asking server to create it first"
 				<< endl;
 			// Ask the server to create the group
-			mAccount->getEngine()->sendAddGroup(newKopeteGroup->displayName());
+			mAccount->engine()->sendAddGroup(newKopeteGroup->displayName());
 		}
 
 		// The group has changed, so ask the engine to change
 		// our group on the server
-		mAccount->getEngine()->sendChangeBuddyGroup(
+		mAccount->engine()->sendChangeBuddyGroup(
 			tocNormalize(mListContact->screenname()),
 			currentOscarGroup->name(),
 			newKopeteGroup->displayName());
@@ -469,7 +469,7 @@ void OscarContact::slotTransferAccepted(KopeteTransfer *tr, const QString &fileN
 
 	kdDebug(14150) << k_funcinfo << "Transfer of '" << fileName << "' from '" << mName << "' accepted." << endl;
 
-	OscarConnection *fs = mAccount->getEngine()->sendFileSendAccept(mName, fileName);
+	OscarConnection *fs = mAccount->engine()->sendFileSendAccept(mName, fileName);
 
 	//connect to transfer manager
 	QObject::connect(
@@ -484,7 +484,7 @@ void OscarContact::slotTransferDenied(const KopeteFileTransferInfo &tr)
 		return;
 
 	kdDebug(14150) << k_funcinfo << "Transfer denied." << endl;
-	mAccount->getEngine()->sendFileSendDeny(mName);
+	mAccount->engine()->sendFileSendDeny(mName);
 }
 
 /** Called when a file transfer begins */

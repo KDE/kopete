@@ -57,7 +57,7 @@ public:
 	virtual KopeteContact* myself() const;
 
 	/** Accessor method for our engine object */
-	virtual OscarSocket* getEngine();
+	virtual OscarSocket* engine() const;
 
 	/** Accessor method for the action menu */
 	virtual KActionMenu* actionMenu() = 0L;
@@ -76,6 +76,14 @@ public:
 
 	/** Sets the server we connect to */
 	void setServerAddress(const QString &server);
+
+	/* Pure virtual to be implemented by ICQAccount and AIMAccount
+	 * sets the users status and if connected should send a status update to the server
+	 * in disconnected state it just updates the local status variable that
+	 * gets used on connect
+	 */
+	virtual void setStatus(const unsigned long status,
+		const QString &awayMessage = QString::null) =0;
 
 public slots:
 	/** Slot for telling this account to go online */

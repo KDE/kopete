@@ -1930,19 +1930,6 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 					Buffer tmpBuf(t.data,t.length);
 					DWORD status = tmpBuf.getDWord();
 //					kdDebug(14150) << k_funcinfo << "TLV(6) [STATUS] status=" << status << endl;
-/*
-					if (status & 0x00000100)
-						kdDebug(14150) << "INVISIBLE" << endl;
-
-					if (status & 0x00080000)
-						kdDebug(14150) << "TODAY IS BIRTHDAY" << endl;
-
-					if (status & 0x10000000)
-						kdDebug(14150) << "NEED AUTH FOR direct connection" << endl;
-
-					if (status & 0x20000000)
-						kdDebug(14150) << "NEED TO BE ON LIST FOR direct connection" << endl;
-*/
 					u.icqextstatus = status;
 					break;
 				}
@@ -2878,9 +2865,13 @@ void OscarSocket::sendInfo()
 
 	sendIdleTime(0); // CLI_SNAC1_11, sent before CLI_SETSTATUS
 
-	// FIXME: is this allowed while logging into AIM?
+	// Is this allowed while logging into AIM?
 	// This is just here to state that we're online
-	sendStatus(OSCAR_ONLINE); // CLI_SETSTATUS for ICQ, weird away SNAC for AIM
+//	sendStatus(OSCAR_ONLINE); // CLI_SETSTATUS for ICQ, weird away SNAC for AIM
+
+	// FIXME: find a way to send a different status on connect, not only online
+	if(mIsICQ)
+		sendICQStatus(ICQ_STATUS_ONLINE);
 
 	if (!mIsICQ)
 	{
@@ -3133,7 +3124,7 @@ OncomingSocket *OscarSocket::serverSocket(DWORD capflag)
 	else  //must be a file transfer?
 		return mFileTransferMgr;
 }
-
+/*
 void OscarSocket::sendStatus(const unsigned int status,
 	const QString &awayMessage)
 {
@@ -3172,6 +3163,6 @@ void OscarSocket::sendStatus(const unsigned int status,
 			sendAIMAway(false, awayMessage);
 	}
 }
-
+*/
 #include "oscarsocket.moc"
 // vim: set noet ts=4 sts=4 sw=4:

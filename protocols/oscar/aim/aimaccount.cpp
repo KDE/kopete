@@ -30,8 +30,13 @@ AIMAccount::AIMAccount(KopeteProtocol *parent, QString accountID, const char *na
 	: OscarAccount(parent, accountID, name, false)
 {
 	kdDebug(14190) << k_funcinfo << accountID << ": Called."<< endl;
+	mAwayMessage = QString::null;
+	mStatus = OSCAR_OFFLINE;
+
 	mMyself = new AIMContact(accountID, accountID, this, 0L);
-	mAwayDialog = new AIMChangeStatus(getEngine());
+	mAwayDialog = new AIMChangeStatus(engine());
+	QObject::connect(mAwayDialog, SIGNAL(goAway(const int, const QString&)),
+		this, SLOT(slotAwayDialogReturned(const int, const QString&)));
 }
 
 AIMAccount::~AIMAccount()
@@ -90,12 +95,12 @@ void AIMAccount::initSignals()
 {
 	// Got my user info
 	QObject::connect(
-		getEngine(), SIGNAL(gotMyUserInfo(UserInfo &)),
+		engine(), SIGNAL(gotMyUserInfo(UserInfo &)),
 		this, SLOT(slotGotMyUserInfo(UserInfo &)));
 
 	// Got warning
 	QObject::connect(
-		getEngine(), SIGNAL(gotWarning(int,QString)),
+		engine(), SIGNAL(gotWarning(int,QString)),
 		this, SLOT(slotGotWarning(int,QString)));
 }
 
@@ -108,7 +113,7 @@ void AIMAccount::slotGotMyUserInfo(UserInfo &newInfo)
 void AIMAccount::setUserProfile(QString profile)
 {
 	// Tell the engine to set the profile
-	getEngine()->setMyProfile( profile );
+	engine()->setMyProfile( profile );
 	// Save the user profile
 	setPluginData(protocol(), "Profile", profile);
 }
@@ -143,7 +148,7 @@ void AIMAccount::slotEditInfo()
 
 	myInfo = new AIMUserInfo(
 		accountId(), accountId(),
-		this, getEngine()->getMyProfile());
+		this, engine()->getMyProfile());
 
 	myInfo->exec(); // This is a modal dialog
 }
@@ -153,9 +158,30 @@ void AIMAccount::setAway(bool away, const QString &awayReason)
 	kdDebug(14180) << k_funcinfo << accountId() << ": setAway()" << endl;
 
 	if(away)
-		mEngine->sendStatus(OSCAR_AWAY, awayReason);
+		setStatus(OSCAR_AWAY, awayReason);
 	else
-		mEngine->sendStatus(OSCAR_ONLINE, QString::null);
+		setStatus(OSCAR_ONLINE, QString::null);
+}
+
+
+void AIMAccount::setStatus(const unsigned long status,
+	const QString &awayMessage)
+{
+	kdDebug(14180) << k_funcinfo << "new status=" << status << ", old status=" << mStatus << endl;
+	mStatus = status;
+
+	if(!awayMessage.isNull())
+		mAwayMessage = awayMessage;
+
+	if (isConnected())
+	{
+		engine()->sendAIMAway((status==OSCAR_AWAY), awayMessage);
+	}
+}
+
+void AIMAccount::slotAwayDialogReturned(const int status, const QString &message)
+{
+	setStatus(status,message);
 }
 
 #include "aimaccount.moc"

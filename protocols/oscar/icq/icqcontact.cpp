@@ -38,7 +38,9 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 {
 	mProtocol = static_cast<ICQProtocol *>(protocol());
 
+	mInvisible = false;
 	setOnlineStatus(mProtocol->statusOffline);
+
 
 	infoDialog = 0L;
 	userinfoRequestSequence=0;
@@ -73,24 +75,34 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 	workInfo.occupation=0;
 	workInfo.homepage="";
 
-	// Buddy Changed
+	if(name == account()->accountId())
+	{
+		QObject::connect(
+			acc->engine(), SIGNAL(gotMyUserInfo(const UserInfo &)),
+			this, SLOT(slotContactChanged(const UserInfo &)));
+	}
+	else
+	{
+		// Buddy Changed
+		QObject::connect(
+			acc->engine(), SIGNAL(gotBuddyChange(const UserInfo &)),
+			this, SLOT(slotContactChanged(const UserInfo &)));
+	}
+
 	QObject::connect(
-		acc->getEngine(), SIGNAL(gotBuddyChange(const UserInfo &)),
-		this, SLOT(slotContactChanged(const UserInfo &)));
-	QObject::connect(
-		acc->getEngine(), SIGNAL(gotIM(QString,QString,bool)),
+		acc->engine(), SIGNAL(gotIM(QString,QString,bool)),
 		this, SLOT(slotIMReceived(QString,QString,bool)));
 	QObject::connect(
-		acc->getEngine(), SIGNAL(gotICQGeneralUserInfo(const int, const ICQGeneralUserInfo &)),
+		acc->engine(), SIGNAL(gotICQGeneralUserInfo(const int, const ICQGeneralUserInfo &)),
 		this, SLOT(slotUpdGeneralInfo(const int, const ICQGeneralUserInfo &)));
 	QObject::connect(
-		acc->getEngine(), SIGNAL(gotICQWorkUserInfo(const int, const ICQWorkUserInfo &)),
+		acc->engine(), SIGNAL(gotICQWorkUserInfo(const int, const ICQWorkUserInfo &)),
 		this, SLOT(slotUpdWorkInfo(const int, const ICQWorkUserInfo &)));
 	QObject::connect(
-		acc->getEngine(), SIGNAL(gotICQMoreUserInfo(const int, const ICQMoreUserInfo &)),
+		acc->engine(), SIGNAL(gotICQMoreUserInfo(const int, const ICQMoreUserInfo &)),
 		this, SLOT(slotUpdMoreUserInfo(const int, const ICQMoreUserInfo &)));
 	QObject::connect(
-		acc->getEngine(), SIGNAL(gotICQAboutUserInfo(const int, const QString &)),
+		acc->engine(), SIGNAL(gotICQAboutUserInfo(const int, const QString &)),
 		this, SLOT(slotUpdAboutUserInfo(const int, const QString &)));
 }
 
@@ -110,15 +122,19 @@ void ICQContact::slotContactChanged(const UserInfo &u)
 	if (u.sn != contactname())
 		return;
 
-	if (u.icqextstatus & ICQ_STATUS_FFC)
+	mInvisible = (u.icqextstatus & ICQ_STATUS_IS_INVIS);
+
+//	kdDebug(14200) << k_funcinfo << "mInvisible=" << mInvisible << endl;
+
+	if (u.icqextstatus & ICQ_STATUS_IS_FFC)
 		setStatus(OSCAR_FFC);
-	else if (u.icqextstatus & ICQ_STATUS_DND)
+	else if (u.icqextstatus & ICQ_STATUS_IS_DND)
 		setStatus(OSCAR_DND);
-	else if (u.icqextstatus & ICQ_STATUS_OCC)
+	else if (u.icqextstatus & ICQ_STATUS_IS_OCC)
 		setStatus(OSCAR_OCC);
-	else if (u.icqextstatus & ICQ_STATUS_NA)
+	else if (u.icqextstatus & ICQ_STATUS_IS_NA)
 		setStatus(OSCAR_NA);
-	else if (u.icqextstatus & ICQ_STATUS_AWAY)
+	else if (u.icqextstatus & ICQ_STATUS_IS_AWAY)
 		setStatus(OSCAR_AWAY);
 	else
 		setStatus(OSCAR_ONLINE);
@@ -168,7 +184,7 @@ void ICQContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	// FIXME: We don't do HTML in ICQ
 	// we might be able to do that in AIM and we might also convert
 	// HTML to RTF for ICQ type-2 messages  [mETz]
-	static_cast<ICQAccount*>(account())->getEngine()->sendIM(
+	static_cast<ICQAccount*>(account())->engine()->sendIM(
 		message.plainBody(), contactname(), false);
 
 	// Show the message we just sent in the chat window
@@ -190,7 +206,7 @@ KActionCollection *ICQContact::customContextMenuActions()
 
 void ICQContact::setStatus(const unsigned int newStatus)
 {
-	if(onlineStatus().internalStatus() == newStatus)
+	if((onlineStatus().internalStatus() == newStatus) && !mInvisible)
 		return;
 
 	switch(newStatus)
@@ -219,10 +235,33 @@ void ICQContact::setStatus(const unsigned int newStatus)
 		default: // emergency choose, also OSCAR_ONLINE
 			setOnlineStatus(mProtocol->statusOnline);
 	}
+}
+
+void ICQContact::setOnlineStatus(const KopeteOnlineStatus& status)
+{
+	if(mInvisible)
+	{
+		kdDebug(14200) << k_funcinfo << "'" << displayName() << "' is invisible!" << endl;
+		KopeteContact::setOnlineStatus(
+			KopeteOnlineStatus(
+				status.status() , (status.weight()==0) ? 0 : (status.weight() -1),
+				protocol(),
+				status.internalStatus()+15,
+				QString::fromLatin1("icq_invisible"),
+				status.caption(),
+				i18n("%1|Invisible").arg(status.description())
+				)
+			);
+	}
+	else
+	{
+		KopeteContact::setOnlineStatus(status);
+	}
 
 	kdDebug(14200) << k_funcinfo << "'" << displayName() << "' is now " <<
 		onlineStatus().description() << endl;
 }
+
 
 void ICQContact::slotUserInfo()
 {
@@ -251,7 +290,7 @@ void ICQContact::requestUserInfo()
 	kdDebug(14200) << k_funcinfo << "called" << endl;
 	userinfoReplyCount = 0;
 	userinfoRequestSequence =
-		account()->getEngine()->sendReqInfo(contactname().toULong());
+		account()->engine()->sendReqInfo(contactname().toULong());
 }
 
 void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf)

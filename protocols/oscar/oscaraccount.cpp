@@ -84,6 +84,11 @@ KopeteContact* OscarAccount::myself() const
 	return mMyself;
 }
 
+OscarSocket* OscarAccount::engine() const
+{
+	return mEngine;
+}
+
 void OscarAccount::connect()
 {
 	kdDebug(14150) << k_funcinfo <<
@@ -129,11 +134,6 @@ void OscarAccount::disconnect()
 	mEngine->doLogoff();
 }
 
-OscarSocket* OscarAccount::getEngine()
-{
-	return mEngine;
-}
-
 void OscarAccount::initEngine(bool icq)
 {
 	kdDebug(14150) << k_funcinfo << "accountId="<< accountId() << endl;
@@ -162,27 +162,27 @@ void OscarAccount::initSignals()
 
 	// own status changed
 	QObject::connect(
-		getEngine(), SIGNAL(statusChanged(const unsigned int)),
+		engine(), SIGNAL(statusChanged(const unsigned int)),
 		this, SLOT(slotOurStatusChanged(const unsigned int)));
 
 	// Protocol error
 	QObject::connect(
-		getEngine(), SIGNAL(protocolError(QString, int)),
+		engine(), SIGNAL(protocolError(QString, int)),
 		this, SLOT(slotError(QString, int)));
 
 	// Got IM
 	QObject::connect(
-		getEngine(), SIGNAL(gotIM(QString,QString,bool)),
+		engine(), SIGNAL(gotIM(QString,QString,bool)),
 		this, SLOT(slotGotIM(QString,QString,bool)));
 
 	// Got Config (Buddy List)
 	QObject::connect(
-		getEngine(), SIGNAL(gotConfig(AIMBuddyList &)),
+		engine(), SIGNAL(gotConfig(AIMBuddyList &)),
 		this, SLOT(slotGotServerBuddyList(AIMBuddyList &)));
 
 	// Got direct IM request
 	QObject::connect(
-		getEngine(), SIGNAL(gotDirectIMRequest(QString)),
+		engine(), SIGNAL(gotDirectIMRequest(QString)),
 		this, SLOT(slotGotDirectIMRequest(QString)));
 
 	// Set our idle time every 100 seconds to the server
@@ -205,23 +205,26 @@ void OscarAccount::initSignals()
 		this, SLOT(slotReTryServerContacts()));
 }
 
-// TODO: this is only for debugging purposes!
 void OscarAccount::slotGoOnline()
 {
-	if(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
+	if(
+		myself()->onlineStatus().status() == KopeteOnlineStatus::Away ||
+		myself()->onlineStatus().internalStatus() == OSCAR_FFC)
 	{ // If we're away , set us available
 		kdDebug(14150) << k_funcinfo << accountId() <<
-			": Was AWAY, marking back" << endl;
+			": Was AWAY or FFC, marking back" << endl;
+
 		setAway(false);
 	}
 	else if(myself()->onlineStatus().status() == KopeteOnlineStatus::Offline)
 	{ // If we're offline, connect
 		kdDebug(14150) << k_funcinfo << accountId() <<
 			": Was OFFLINE, now connecting" << endl;
+
 		connect();
 	}
 	else
-	{ // We're already online
+	{
 		kdDebug(14150) << k_funcinfo << accountId() <<
 			": Already ONLINE" << endl;
 	}
@@ -232,7 +235,7 @@ void OscarAccount::slotGoOffline()
 	// This will ask the server to log us off
 	// and then when that is complete, engine
 	// will notify us of a status change
-	getEngine()->doLogoff();
+	engine()->doLogoff();
 }
 
 void OscarAccount::slotGoAway()
@@ -298,7 +301,7 @@ void OscarAccount::slotGroupAdded(KopeteGroup *group)
 		mRandomNewGroupNum++;
 		kdDebug(14150) << k_funcinfo << accountId() << ":addGroup() being called" << endl;
 		if (isConnected())
-			getEngine()->sendAddGroup(groupName);
+			engine()->sendAddGroup(groupName);
 	}
 	else
 	{ // The server already has it in it's list, don't worry about it
@@ -309,7 +312,7 @@ void OscarAccount::slotGroupAdded(KopeteGroup *group)
 void OscarAccount::slotKopeteGroupRenamed(KopeteGroup *group, const QString &oldName)
 {
 	kdDebug(14150) << k_funcinfo << "Sending 'group rename' to server" << endl;
-	getEngine()->sendChangeGroupName(oldName, group->displayName());
+	engine()->sendChangeGroupName(oldName, group->displayName());
 }
 
 void OscarAccount::slotKopeteGroupRemoved(KopeteGroup *group)
@@ -330,7 +333,7 @@ void OscarAccount::slotKopeteGroupRemoved(KopeteGroup *group)
 
 	AIMGroup *aGroup = mInternalBuddyList->findGroup(groupName);
 	if (aGroup)
-		getEngine()->sendDelGroup(groupName);
+		engine()->sendDelGroup(groupName);
 }
 
 // Called when we have gotten an IM
@@ -399,7 +402,7 @@ void OscarAccount::syncLocalWithServerBuddyList( AIMBuddyList& serverList )
 			const KopeteGroupList& groups = it.current()->metaContact()->groups();
 			AIMGroup *group = findOrCreateGroup( groups.isEmpty() ? QString::null : groups.getFirst()->displayName(), serverList);
 			if ( group )
-				getEngine()->sendAddBuddy(tocNormalize(contactId), group->name());
+				engine()->sendAddBuddy(tocNormalize(contactId), group->name());
 		}
 	}
 }
@@ -426,7 +429,7 @@ AIMGroup * OscarAccount::findOrCreateGroup( const QString& localGroup, AIMBuddyL
 
 		// Add the group on the server list
 		if ( internalGroup )
-			getEngine()->sendAddGroup(internalGroup->name());
+			engine()->sendAddGroup(internalGroup->name());
 	}
 
 	return internalGroup;
@@ -505,9 +508,9 @@ void OscarAccount::slotGotDirectIMRequest(QString sn)
 	int result = KMessageBox::questionYesNo(qApp->mainWidget(), message, title);
 
 	if (result == KMessageBox::Yes)
-		getEngine()->sendDirectIMAccept(sn);
+		engine()->sendDirectIMAccept(sn);
 	else if (result == KMessageBox::No)
-		getEngine()->sendDirectIMDeny(sn);
+		engine()->sendDirectIMDeny(sn);
 }
 
 void OscarAccount::slotIdleActivity()
@@ -525,7 +528,7 @@ void OscarAccount::slotIdleActivity()
 		kdDebug(14150) << k_funcinfo
 					   << "system change to ACTIVE, setting idle "
 					   << "time with server to 0" << endl;
-		getEngine()->sendIdleTime(0);
+		engine()->sendIdleTime(0);
 		mAreIdle = false;
 	}
 }
@@ -536,7 +539,7 @@ void OscarAccount::slotIdleTimeout()
 	kdDebug(14150) << k_funcinfo
 				   << "system is IDLE, setting idle time with "
 				   << "server" << endl;
-	getEngine()->sendIdleTime(
+	engine()->sendIdleTime(
 		KopeteAway::getInstance()->idleTime());
 	// Restart the idle timer, so that we keep
 	// updating idle times while we're idle
@@ -686,7 +689,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 					mInternalBuddyList->addGroup(mRandomNewGroupNum, groupName);
 				kdDebug(14150) << "created internal group for new contact" << endl;
 				// Add the group on the server list
-				getEngine()->sendAddGroup(internalGroup->name());
+				engine()->sendAddGroup(internalGroup->name());
 			}
 
 			// Create a new internal buddy for this contact
@@ -703,7 +706,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 
 			// Add the buddy to the server's list, with the group,
 			// need to normalize the contact name
-			getEngine()->sendAddBuddy(tocNormalize(contactId),
+			engine()->sendAddBuddy(tocNormalize(contactId),
 									  internalGroup->name());
 
             // Increase these counters, I'm not sure what this does
@@ -727,7 +730,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 				// the engine that this causes
 				kdDebug(14150) << k_funcinfo <<
 					"Requesting user info for '" << contactId << "'" << endl;
-				getEngine()->sendUserProfileRequest(tocNormalize(contactId));
+				engine()->sendUserProfileRequest(tocNormalize(contactId));
 				return true;
 			}
 			else

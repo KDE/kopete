@@ -110,7 +110,7 @@ void ICQAddContactPage::slotStartSearch()
 	{
 		case 0: // search by name
 		{
-			mAccount->getEngine()->sendCLI_SEARCHWP(
+			mAccount->engine()->sendCLI_SEARCHWP(
 				icqdata->firstName->text(),
 				icqdata->lastName->text(),
 				icqdata->nickName->text(),
@@ -131,7 +131,7 @@ void ICQAddContactPage::slotStartSearch()
 		}
 
 		case 1: // search by uin
-			mAccount->getEngine()->sendCLI_SEARCHBYUIN( icqdata->uin->text().toULong() );
+			mAccount->engine()->sendCLI_SEARCHBYUIN( icqdata->uin->text().toULong() );
 			searching = true;
 			break;
 	}
@@ -142,7 +142,7 @@ void ICQAddContactPage::slotStartSearch()
 //		icqdata->progressPixmap->setMovie( QMovie( locate("data","kopete/pics/icq_connecting.mng") ) );
 		icqdata->progressPixmap->setPixmap(SmallIcon("icq_online"));
 		connect(
-			mAccount->getEngine(), SIGNAL(gotSearchResult(ICQSearchResult &, const int)),
+			mAccount->engine(), SIGNAL(gotSearchResult(ICQSearchResult &, const int)),
 			this, SLOT(slotSearchResult(ICQSearchResult &, const int)));
 	}
 
@@ -221,7 +221,7 @@ void ICQAddContactPage::removeSearch(void)
 {
 	searching=false;
 	disconnect(
-		mAccount->getEngine(), SIGNAL(gotSearchResult(ICQSearchResult &, const int)),
+		mAccount->engine(), SIGNAL(gotSearchResult(ICQSearchResult &, const int)),
 		this, SLOT(slotSearchResult(ICQSearchResult &, const int)));
 }
 

@@ -280,7 +280,12 @@ class OscarSocket : public OscarConnection
 		 * sends a status change, status is one of OSCAR_
 		 * awayMessage is only used for AIM currently
 		 */
-		void sendStatus(const unsigned int status, const QString &awayMessage = QString::null);
+//		void sendStatus(const unsigned int status, const QString &awayMessage = QString::null);
+
+		/** Sets the away message for AIM, makes user away */
+		void sendAIMAway(bool away, const QString &message=0L);
+		/** send status, i.e. AWAY, NA, OCC (ICQ method) */
+		void sendICQStatus(unsigned long status);
 
 		/** Sends the user's profile to the server */
 		void sendMyProfile();
@@ -485,11 +490,6 @@ class OscarSocket : public OscarConnection
 	void sendMsgParams();
 	/** Returns the appropriate server socket, based on the capability flag it is passed. */
 	OncomingSocket * serverSocket(DWORD capflag);
-
-	/** Sets the away message for AIM, makes user away */
-	void sendAIMAway(bool away, const QString &message=0L);
-	/** send status, i.e. AWAY, NA, OCC (ICQ method) */
-	void sendICQStatus(unsigned long status);
 
 	/*
 	 * send a CLI_TOICQSRV with subcommand and DATA supplied in data

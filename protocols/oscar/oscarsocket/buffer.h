@@ -125,9 +125,14 @@ class Buffer : public QObject
 		DWORD getLEDWord();
 		BYTE getLEByte();
 
-			/** Gets a SNAC header from the head of the buffer */
+		/*
+		 * Gets a SNAC header from the head of the buffer
+		 */
 		SNAC getSnacHeader();
-		/** sets the buffer and length to the given values */
+
+		/*
+		 * sets the buffer and length to the given values
+		 */
 		void setBuf(char *, const WORD);
 
 		/*
@@ -159,6 +164,7 @@ class Buffer : public QObject
 		 * Gets a TLV, storing it in a struct and returning it
 		 */
 		TLV getTLV();
+
 		/*
 		 * Gets a list of TLV's
 		 */

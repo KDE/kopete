@@ -38,15 +38,15 @@ AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount
 
 	// Buddy Changed
 	QObject::connect(
-		account->getEngine(), SIGNAL(gotBuddyChange(const UserInfo &)),
+		account->engine(), SIGNAL(gotBuddyChange(const UserInfo &)),
 		this, SLOT(slotContactChanged(const UserInfo &)));
 	// Received IM
 	QObject::connect(
-		account->getEngine(), SIGNAL(gotIM(QString,QString,bool)),
+		account->engine(), SIGNAL(gotIM(QString,QString,bool)),
 		this, SLOT(slotIMReceived(QString,QString,bool)));
 	// Incoming minitype notification
 	QObject::connect(
-		account->getEngine(), SIGNAL(gotMiniTypeNotification(QString, int)),
+		account->engine(), SIGNAL(gotMiniTypeNotification(QString, int)),
 		this, SLOT(slotGotMiniType(QString, int)));
 
 // 	kdDebug(14190) << k_funcinfo "name='" << name <<
@@ -124,7 +124,7 @@ void AIMContact::setStatus(const unsigned int newStatus)
 void AIMContact::slotTyping(bool typing)
 {
 //	kdDebug(14190) << k_funcinfo << "Typing: " << typing << endl;
-	mAccount->getEngine()->sendMiniTypingNotify(tocNormalize(mName),
+	mAccount->engine()->sendMiniTypingNotify(tocNormalize(mName),
 		typing ? OscarSocket::TypingBegun : OscarSocket::TypingFinished );
 }
 
@@ -217,7 +217,7 @@ void AIMContact::slotIMReceived(QString message, QString sender, bool isAuto)
 			kdDebug(14190) << k_funcinfo << " while we are away, " \
 				"sending away-message to annoy buddy :)" << endl;
 			// Send the autoresponse
-			mAccount->getEngine()->sendIM(
+			mAccount->engine()->sendIM(
 				KopeteAway::getInstance()->message(),
 				mName, true);
 			// Build a pointerlist to insert this contact into
@@ -273,7 +273,7 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	// we might be able to do that in AIM and we might also convert
 	// HTML to RTF for ICQ type-2 messages  [mETz]
 	// Will asks: Does this still apply in AIM?
-	mAccount->getEngine()->sendIM(message.plainBody(), mName, false);
+	mAccount->engine()->sendIM(message.plainBody(), mName, false);
 
 	// Show the message we just sent in the chat window
 	manager()->appendMessage(message);

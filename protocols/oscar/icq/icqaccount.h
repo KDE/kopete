@@ -42,19 +42,33 @@ class ICQAccount : public OscarAccount
 		KActionMenu* actionMenu();
 		virtual void setAway(bool away, const QString &awayReason);
 
+		virtual void setStatus(const unsigned long status,
+			const QString &awayMessage = QString::null);
+
+		void setInvisible(bool);
+
 	public slots:
 		void slotGoNA();
 		void slotGoOCC();
 		void slotGoFFC();
 		void slotGoDND();
+		void slotToggleInvisible();
 
 	protected slots:
 		// called after XML is read in, cannot access pluginData in constructor
 		virtual void loaded();
+		void slotAwayDialogReturned(const int, const QString&);
 
 	protected:
 		virtual OscarContact *createNewContact(const QString &contactId,
 			const QString &displayName, KopeteMetaContact *parentContact);
+
+	private:
+		unsigned long mStatus;
+		QString mAwayMessage;
+		bool mWebAware;
+		bool mHideIP;
+		bool mInvisible;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:
