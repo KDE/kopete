@@ -1,13 +1,13 @@
 <?xml version="1.0" ?>
 <!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" "dtd/kdex.dtd" [
-  <!ENTITY kappname "&kopete;">
+  <!ENTITY kopete "<application>kopete</application>">
   <!ENTITY package "kdenetwork">
+  <!ENTITY kappname "&kopete;">
   <!ENTITY % addindex "IGNORE">
   <!ENTITY % English "INCLUDE">
 ]>
 
 <book lang="&language;">
-
 <bookinfo>
 <title>The &kopete; Handbook</title>
 
@@ -30,7 +30,7 @@
 
 <!-- Abstract about this handbook -->
 
-<abstract>
+<abstrac>
 <para>
 
 </para>
@@ -57,6 +57,7 @@ Team</emphasis></para>
 </chapter>
 
 &documentation.index; 
+
 </book>
 
 <!--
