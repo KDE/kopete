@@ -101,13 +101,13 @@ void AutoReplacePlugin::autoReplaceMessage( KopeteMessage & msg )
 	if( m_prefs->getAddDot() && msg.direction()!=KopeteMessage::Inbound )
 		// the next one is used if use no emoticons, for it will add . after
 		// lines that end up with emoticons
-		// replaced_message.replace(QRegExp( "[^!?]$" ), "\\1." );
+		// replaced_message.replace(QRegExp( "[^:;,!?]$" ), "\\1." );
 		// the next one is used if use emoticons like :d AND :D
-		// replaced_message.replace(QRegExp( "([^=!?()@/OoSsPpDd])$" ), "\\1." );
+		// replaced_message.replace(QRegExp( "([^:;,=!?()@/OoSsPpDd])$" ), "\\1." );
 		// the next one is used if use emoticons like :d and NOT :D
-		// replaced_message.replace(QRegExp( "([^=!?()@/ospd])$" ), "\\1." );
+		// replaced_message.replace(QRegExp( "([^:;,=!?()@/ospd])$" ), "\\1." );
 		// the next one is used if use emoticons like :D and NOT :d
-		replaced_message.replace(QRegExp( "([^=!?()@/OSPD])$" ), "\\1." );
+		replaced_message.replace(QRegExp( "([^:;,=!?()@/OSPD])$" ), "\\1." );
 
 	// eventually start each sent line with capital letter
 	if( m_prefs->getUpper() && msg.direction()!=KopeteMessage::Inbound )

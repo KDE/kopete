@@ -71,8 +71,8 @@ void AutoReplacePreferences::reopen()
 	if( wordsList.isEmpty() )
 	{
 		// basic list, key/value
-		wordsList = QStringList::split( ",",
-			"ur,your,i,I,r,are,u,you,theres,there is,arent,are not,dont,do not" );
+		wordsList = QStringList::split( ",", "i,I" );
+			//"ur,your,r,are,u,you,theres,there is,arent,are not,dont,do not" );
 	}
 
 	// Removes and deletes all the items in this list view and triggers an update
@@ -90,12 +90,12 @@ void AutoReplacePreferences::reopen()
 	}
 
 	// checkboxes
-	preferencesDialog->m_cb_incoming->setChecked(
-		KGlobal::config()->readBoolEntry( "AutoReplaceIncoming" , false ) );
-	preferencesDialog->m_cb_dot->setChecked(
-		KGlobal::config()->readBoolEntry( "DotEndSentence" , false ) );
-	preferencesDialog->m_cb_upper->setChecked(
-		KGlobal::config()->readBoolEntry( "CapitalizeBeginningSentence" , false ) );
+	autoreplaceIncoming = KGlobal::config()->readBoolEntry( "AutoReplaceIncoming" , false );
+	addDot = KGlobal::config()->readBoolEntry( "DotEndSentence" , false );
+	upper = KGlobal::config()->readBoolEntry( "CapitalizeBeginningSentence" , false );
+	preferencesDialog->m_cb_incoming->setChecked( autoreplaceIncoming );
+	preferencesDialog->m_cb_dot->setChecked( addDot );
+	preferencesDialog->m_cb_upper->setChecked( upper );
 
 	// MAP NEEDS TO BE FIRST CREATED HERE
 	QStringList::Iterator itl = wordsList.begin();
