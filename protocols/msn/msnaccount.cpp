@@ -26,6 +26,7 @@
 #include <kpopupmenu.h>
 #include <kstandarddirs.h>
 #include <kmdcodec.h>
+#include <klocale.h>
 
 #include <qfile.h>
 #include <qregexp.h>
@@ -33,13 +34,13 @@
 #include "msncontact.h"
 #include "msnnotifysocket.h"
 #include "msnmessagemanager.h"
-#include "newuserimpl.h"
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
 #include "kopetemetacontact.h"
 #include "kopetepassword.h"
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
+#include "contactaddednotifydialog.h"
 
 #include "sha1.h"
 
@@ -925,13 +926,15 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 			// before I declare it good :- )
 			if ( !m_allowList.contains( handle ) && !m_blockList.contains( handle ) )
 			{
-				NewUserImpl *authDlg = new NewUserImpl( 0 );
-				authDlg->setHandle( handle, publicName );
-				QObject::connect( authDlg, SIGNAL( addUser( const QString &, const QString& ) ),
-					this, SLOT( slotAddContact( const QString &, const QString& ) ) );
-				QObject::connect( authDlg, SIGNAL( blockUser( const QString& ) ),
-					this, SLOT( slotBlockContact( const QString& ) ) );
-				authDlg->show();
+				QString nick;			//in most case, the public name is not know
+				if(publicName!=handle)  // so we don't whos it if it is not know
+					nick=publicName;
+				Kopete::UI::ContactAddedNotifyDialog *dialog=
+						new Kopete::UI::ContactAddedNotifyDialog(  handle,nick,this,
+								Kopete::UI::ContactAddedNotifyDialog::InfoButton );
+				QObject::connect(dialog,SIGNAL(applyClicked(const QString&)),
+								 this,SLOT(slotContactAddedNotifyDialogClosed(const QString& )));
+				dialog->show();
 			}
 		}
 		else
@@ -1097,21 +1100,32 @@ void MSNAccount::slotStartChatSession( const QString& handle )
 	}
 }
 
-void MSNAccount::slotBlockContact( const QString &handle )
+void MSNAccount::slotContactAddedNotifyDialogClosed(const QString& handle)
 {
-	if ( m_notifySocket )
+	const Kopete::UI::ContactAddedNotifyDialog *dialog =
+			dynamic_cast<const Kopete::UI::ContactAddedNotifyDialog *>(sender());
+	if(!dialog || !m_notifySocket)
+		return;
+
+	if ( !dialog->authorized() )
 	{
 		if ( m_allowList.contains( handle ) )
 			m_notifySocket->removeContact( handle, 0, MSNProtocol::AL );
 		else if ( !m_blockList.contains( handle ) )
 			m_notifySocket->addContact( handle, handle, 0, MSNProtocol::BL );
 	}
-}
+	else
+	{
+		if ( m_blockList.contains( handle ) )
+			m_notifySocket->removeContact( handle, 0, MSNProtocol::BL );
+		else if ( !m_allowList.contains( handle ) )
+			m_notifySocket->addContact( handle, handle, 0, MSNProtocol::AL );
+	}
 
-void MSNAccount::slotAddContact( const QString &userName, const QString &displayName )
-{
-	if ( m_notifySocket )
-		m_notifySocket->addContact( userName, displayName, 0, MSNProtocol::FL );
+	if(dialog->added())
+	{
+		dialog->addContact();
+	}
 }
 
 bool MSNAccount::createContact( const QString &contactId, Kopete::MetaContact *metaContact )

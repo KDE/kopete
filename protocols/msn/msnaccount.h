@@ -162,10 +162,10 @@ private slots:
 	 **/
 	void slotKopeteGroupRemoved( Kopete::Group* );
 
-	/********************/
-	/** add contact ui **/
-	void slotBlockContact( const QString& passport ) ;
-	void slotAddContact( const QString &userName , const QString& displayName);
+	/**
+	 * add contact ui
+	 */
+	void slotContactAddedNotifyDialogClosed( const QString &handle);
 
 	/**
 	 * When the dispatch server sends us the notification server to use.
