@@ -68,7 +68,10 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal):KDialog
   FILE *fp,*fp2;
   QString tst,tst2;
   char line[130];
-  fp = popen(QString("gpg --no-tty --with-colon --list-secret-keys"), "r");
+
+  // FIXME: Why use popen instead of KProcess, QProcess or KProcIO?!?
+  //        Are we interested in having buffer overflows now? - Martijn
+  fp = popen( "gpg --no-tty --with-colon --list-secret-keys", "r" );
   while ( fgets( line, sizeof(line), fp))
   {
     tst=line;
@@ -118,7 +121,8 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal):KDialog
       }
       tst=tst.section(":",9,9);
 
-      fp2 = popen(QString("gpg --no-tty --with-colon --list-key %1").arg(KShellProcess::quote(id)), "r");
+      // FIXME: Same here: don't use popen! - Martijn
+      fp2 = popen( QString( "gpg --no-tty --with-colon --list-key %1" ).arg( KShellProcess::quote( id ) ).latin1(), "r" );
       bool dead=true;
       while ( fgets( line, sizeof(line), fp2))
       {
