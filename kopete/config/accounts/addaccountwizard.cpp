@@ -38,9 +38,8 @@
 #include "kopetepluginmanager.h"
 
 AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool modal )
-: KWizard( parent, name, modal )
+: KWizard( parent, name, modal, WDestructiveClose )
 {
-	setWFlags( WDestructiveClose );
 
 	//kdDebug( 14100 ) << k_funcinfo << endl;
 	m_accountPage = 0L;
