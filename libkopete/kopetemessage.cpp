@@ -495,26 +495,26 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 
 				case 'f': //insert the 'from' metaContact's displayName
 					if (d->from->metaContact())
-						message.append( QStyleSheet::escape(d->from->metaContact()->displayName()) );
+						message.append( QString::fromLatin1("<span class=\"KopeteDisplayName\" style=\"cursor:pointer\">") + QStyleSheet::escape(d->from->metaContact()->displayName()) + QString::fromLatin1("</span") );
 					else
-						message.append( QStyleSheet::escape(d->from->displayName()) );
+						message.append( QString::fromLatin1("<span class=\"KopeteDisplayName\" style=\"cursor:pointer\">") + QStyleSheet::escape(d->from->displayName()) + QString::fromLatin1("</span") );
 					break;
 
 				case 't': //insert the 'to' metaContact's displayName
 					if (to().first()->metaContact())
-						message.append( QStyleSheet::escape(to().first()->metaContact()->displayName()) );
+						message.append( QString::fromLatin1("<span class=\"KopeteDisplayName\" style=\"cursor:pointer\">") + QStyleSheet::escape(to().first()->metaContact()->displayName()) + QString::fromLatin1("</span") );
 					else
-						message.append( QStyleSheet::escape(to().first()->displayName()) );
+						message.append( QString::fromLatin1("<span class=\"KopeteDisplayName\" style=\"cursor:pointer\">") + QStyleSheet::escape(to().first()->displayName()) + QString::fromLatin1("</span") );
 					break;
-					
+
 				case 'c': //the 'from' KopeteContact displayName
 					if (to().first())
-						message.append( QStyleSheet::escape(to().first()->displayName()) );
+						message.append( QString::fromLatin1("<span class=\"KopeteDisplayName\" style=\"cursor:pointer\">") + QStyleSheet::escape(to().first()->displayName()) + QString::fromLatin1("</span") );
 					break;
-					
+
 				case 'C': //the 'to' KopeteContact displayName
 					if (d->from)
-						message.append( QStyleSheet::escape(d->from->displayName()) );
+						message.append( QString::fromLatin1("<span class=\"KopeteDisplayName\" style=\"cursor:pointer\">") + QStyleSheet::escape(d->from->displayName()) + QString::fromLatin1("</span") );
 					break;
 
 				case 'I': //insert the statusicon path
