@@ -32,8 +32,6 @@ IRCPreferences::IRCPreferences(const QString &pixmap,QObject *parent)
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	preferencesDialog = new ircPrefsUI(this);
 	KGlobal::config()->setGroup("IRC");
-
-	QColor color(175, 8, 8);
 }
 IRCPreferences::~IRCPreferences()
 {
