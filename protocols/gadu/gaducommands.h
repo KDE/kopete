@@ -80,34 +80,6 @@ private:
 	QSocketNotifier *write_;
 };
 
-//due to a bug in moc. moc will remove the keyword
-// "struct" in the signals definitions breaking compilation
-typedef struct gg_search gg_search_qt;
-
-class SearchCommand : public GaduCommand
-{
-	Q_OBJECT
-public:
-	SearchCommand( QObject *parent=0, const char* name=0 );
-	~SearchCommand();
-
-	void searchMode0( const QString& nickname, const QString& first_name,
-										const QString& last_name, const QString& city,
-										int gender, int min_birth, int max_birth,
-										int active, int start );
-	void searchMode1( const QString& email, int active, int start );
-	void searchMode2( const QString& phone, int active, int start );
-	void searchMode3( uin_t uin, int active, int start );
-	void execute();
-signals:
-	void done( gg_search_qt* );
-protected slots:
-	void watcher();
-private:
-	const struct gg_search_request *request_;
-	struct gg_http	*session_;
-};
-
 class RegisterCommand : public GaduCommand
 {
 	Q_OBJECT
