@@ -19,8 +19,9 @@
 #include "kopetepluginmanager.h"
 
 #include <ksettings/dispatcher.h>
+#include <kplugininfo.h>
 
-class KopetePluginPrivate
+class Kopete::Plugin::Private
 {
 public:
 	QStringList addressBookFields;
@@ -28,10 +29,8 @@ public:
 };
 
 Kopete::Plugin::Plugin( KInstance *instance, QObject *parent, const char *name )
-: QObject( parent, name ), KXMLGUIClient()
+: QObject( parent, name ), KXMLGUIClient(), d( new Private )
 {
-	d = new KopetePluginPrivate;
-
 	setInstance( instance );
 	KSettings::Dispatcher::self()->registerInstance( instance, this, SIGNAL( settingsChanged() ) );
 }
@@ -41,6 +40,11 @@ Kopete::Plugin::~Plugin()
 	delete d;
 }
 
+KPluginInfo *Kopete::Plugin::pluginInfo() const
+{
+	return static_cast<Kopete::PluginManagerBackdoorForPlugin*>(Kopete::PluginManager::self())->pluginInfo( this );
+}
+
 QString Kopete::Plugin::pluginId() const
 {
 	return QString::fromLatin1( className() );
@@ -48,12 +52,12 @@ QString Kopete::Plugin::pluginId() const
 
 QString Kopete::Plugin::displayName() const
 {
-	return Kopete::PluginManager::self()->pluginName( this );
+	return pluginInfo()->name();
 }
 
 QString Kopete::Plugin::pluginIcon() const
 {
-	return Kopete::PluginManager::self()->pluginIcon( this );
+	return pluginInfo()->icon();
 }
 
 void Kopete::Plugin::deserialize( Kopete::MetaContact * /* metaContact */,

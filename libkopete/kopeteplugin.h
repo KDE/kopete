@@ -25,13 +25,12 @@
 
 class KActionCollection;
 class KMainWindow;
+class KPluginInfo;
 
 namespace DOM
 {
 	class Node;
 }
-
-class KopetePluginPrivate;
 
 namespace Kopete
 {
@@ -58,8 +57,30 @@ public:
 	virtual ~Plugin();
 
 	/**
-	 * return the plugin id. this is practically the name of the class.
-	 * see @ref QObject::className()
+	 * Returns the KPluginInfo object associated with this plugin
+	 */
+	KPluginInfo *pluginInfo() const;
+
+	/**
+	 * Get the name of the icon for this plugin. The icon name is taken from the
+	 * .desktop file.
+	 *
+	 * May return an empty string if the .desktop file for this plugin specifies
+	 * no icon name to use.
+	 *
+	 * This is a convenience method that simply calls @ref pluginInfo()->icon().
+	 */
+	QString pluginIcon() const;
+
+	/**
+	 * Returns the display name of this plugin.
+	 *
+	 * This is a convenience method that simply calls @ref pluginInfo()->name().
+	 */
+	QString displayName() const;
+
+	/**
+	 * Returns the plugin id, defined to be the result of calling @ref QObject::className().
 	 */
 	QString pluginId() const;
 
@@ -102,24 +123,6 @@ public:
 	virtual QPtrList<KAction> *customChatWindowPopupActions( const Message &, DOM::Node &node );
 
 	/**
-	 * Get the name of the icon for this plugin. The icon name is taken from the
-	 * .desktop file.
-	 *
-	 * May return an empty string if the .desktop file for this plugin specifies
-	 * no icon name to use.
-	 *
-	 * This is a convenience method that simply calls @ref PluginLoader::pluginIcon().
-	 */
-	QString pluginIcon() const;
-
-	/**
-	 * Returns the display name of this plugin.
-	 *
-	 * This is a convenience method that simply calls @ref PluginLoader::pluginName().
-	 */
-	QString displayName() const;
-
-	/**
 	 * @brief Prepare for unloading a plugin
 	 *
 	 * When unloading a plugin the plugin manager first calls aboutToUnload()
@@ -158,7 +161,8 @@ public slots:
 	virtual void deserialize( Kopete::MetaContact *metaContact, const QMap<QString, QString> &data );
 
 private:
-	KopetePluginPrivate *d;
+	class Private;
+	Private *d;
 };
 
 }

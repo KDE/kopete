@@ -44,15 +44,18 @@
 #include "kopeteplugin.h"
 #include "kopeteaccountmanager.h"
 
-class Kopete::PluginManager::KopetePluginManagerPrivate
+class Kopete::PluginManager::Private
 {
 public:
+	Private() : shutdownMode( StartingUp ) {}
+
 	// All available plugins, regardless of category, and loaded or not
 	QValueList<KPluginInfo *> plugins;
 
 	// Dict of all currently loaded plugins, mapping the KPluginInfo to
 	// a plugin
-	QMap<KPluginInfo *, Kopete::Plugin *> loadedPlugins;
+	typedef QMap<KPluginInfo *, Kopete::Plugin *> InfoToPluginMap;
+	InfoToPluginMap loadedPlugins;
 
 	// The plugin manager's mode. The mode is StartingUp until loadAllPlugins()
 	// has finished loading the plugins, after which it is set to Running.
@@ -63,55 +66,48 @@ public:
 
 	// Plugins pending for loading
 	QValueStack<QString> pluginsToLoad;
+
+	static KStaticDeleter<Kopete::PluginManager> deleter;
+	static Kopete::PluginManager *instance;
 };
 
-// Put the static deleter in its anonymous namespace -- why?
-namespace
-{
-	KStaticDeleter<Kopete::PluginManager> sd;
-}
-
-Kopete::PluginManager* Kopete::PluginManager::s_self = 0L;
+Kopete::PluginManager *Kopete::PluginManager::Private::instance = 0;
+KStaticDeleter<Kopete::PluginManager> Kopete::PluginManager::Private::deleter;
 
 Kopete::PluginManager* Kopete::PluginManager::self()
 {
-	if ( !s_self )
-		sd.setObject( s_self, new Kopete::PluginManager() );
+	if ( !Private::instance )
+		Private::deleter.setObject( Private::instance, new Kopete::PluginManager() );
 
-	return s_self;
+	return Private::instance;
 }
 
 Kopete::PluginManager::PluginManager()
-: QObject( qApp )
+ : QObject( qApp ), d( new Private )
 {
-	d = new KopetePluginManagerPrivate;
-
+	d->plugins = KPluginInfo::fromServices( KTrader::self()->query( QString::fromLatin1( "Kopete/Plugin" ),
+		QString::fromLatin1( "[X-Kopete-Version] == 1000900" ) ) );
+	
 	// We want to add a reference to the application's event loop so we
 	// can remain in control when all windows are removed.
 	// This way we can unload plugins asynchronously, which is more
 	// robust if they are still doing processing.
 	kapp->ref();
-	d->shutdownMode = KopetePluginManagerPrivate::StartingUp;
-
-	d->plugins = KPluginInfo::fromServices( KTrader::self()->query( QString::fromLatin1( "Kopete/Plugin" ),
-		QString::fromLatin1( "[X-Kopete-Version] == 1000900" ) ) );
 }
 
 Kopete::PluginManager::~PluginManager()
 {
-	if ( d->shutdownMode != KopetePluginManagerPrivate::DoneShutdown )
+	if ( d->shutdownMode != Private::DoneShutdown )
 		kdWarning( 14010 ) << k_funcinfo << "Destructing plugin manager without going through the shutdown process!" << endl << kdBacktrace() << endl;
 
 	// Quick cleanup of the remaining plugins, hope it helps
-	QMap<KPluginInfo *, Kopete::Plugin *>::ConstIterator it;
-	for ( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); /* EMPTY */ )
+	// Note that deleting it.data() causes slotPluginDestroyed to be called, which
+	// removes the plugin from the list of loaded plugins.
+	while ( !d->loadedPlugins.empty() )
 	{
-		// Remove causes the iterator to become invalid, so pre-increment first
-		QMap<KPluginInfo *, Kopete::Plugin *>::ConstIterator nextIt( it );
-		++nextIt;
+		Private::InfoToPluginMap::ConstIterator it = d->loadedPlugins.begin();
 		kdWarning( 14010 ) << k_funcinfo << "Deleting stale plugin '" << it.data()->name() << "'" << endl;
 		delete it.data();
-		it = nextIt;
 	}
 
 	delete d;
@@ -136,36 +132,52 @@ QValueList<KPluginInfo *> Kopete::PluginManager::availablePlugins( const QString
 Kopete::PluginList Kopete::PluginManager::loadedPlugins( const QString &category ) const
 {
 	Kopete::PluginList result;
-	QMap<KPluginInfo *, Kopete::Plugin *>::ConstIterator it;
-	for ( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
+	
+	for ( Private::InfoToPluginMap::ConstIterator it = d->loadedPlugins.begin();
+	      it != d->loadedPlugins.end(); ++it )
 	{
 		if ( category.isEmpty() || it.key()->category() == category )
 			result.append( it.data() );
 	}
-
+	
 	return result;
+}
+
+KPluginInfo *Kopete::PluginManager::pluginInfo( const Kopete::Plugin *plugin ) const
+{
+	for ( Private::InfoToPluginMap::ConstIterator it = d->loadedPlugins.begin();
+	      it != d->loadedPlugins.end(); ++it )
+	{
+		if ( it.data() == plugin )
+			return it.key();
+	}
+	return 0;
 }
 
 void Kopete::PluginManager::shutdown()
 {
-//	kdDebug( 14010 ) << k_funcinfo << endl;
-
-	d->shutdownMode = KopetePluginManagerPrivate::ShuttingDown;
-
+	//kdDebug( 14010 ) << k_funcinfo << endl;
+	
+	d->shutdownMode = Private::ShuttingDown;
+	
 	// Remove any pending plugins to load, we're shutting down now :)
 	d->pluginsToLoad.clear();
-
+	
 	// Ask all plugins to unload
-	QMap<KPluginInfo *, Kopete::Plugin *>::ConstIterator it;
-	for ( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); /* EMPTY */ )
+	for ( Private::InfoToPluginMap::ConstIterator it = d->loadedPlugins.begin();
+	      it != d->loadedPlugins.end(); /* EMPTY */ )
 	{
-		// Remove causes the iterator to become invalid, so pre-increment first
-		QMap<KPluginInfo *, Kopete::Plugin *>::ConstIterator nextIt( it );
-		++nextIt;
-		it.data()->aboutToUnload();
-		it = nextIt;
+		// Plugins could emit their ready for unload signal directly in response to this,
+		// which would invalidate the current iterator. Therefore, we copy the iterator
+		// and increment it beforehand.
+		Private::InfoToPluginMap::ConstIterator current( it );
+		++it;
+		// FIXME: a much cleaner approach would be to just delete the plugin now. if it needs
+		//  to do some async processing, it can grab a reference to the app itself and create
+		//  another object to do it.
+		current.data()->aboutToUnload();
 	}
-
+	
 	// When running under valgrind, don't enable the timer because it will almost
 	// certainly fire due to valgrind's much slower processing
 #if defined(HAVE_VALGRIND_H) && !defined(NDEBUG) && defined(__i386__)
@@ -181,13 +193,15 @@ void Kopete::PluginManager::slotPluginReadyForUnload()
 	// Using QObject::sender() is on purpose here, because otherwise all
 	// plugins would have to pass 'this' as parameter, which makes the API
 	// less clean for plugin authors
+	// FIXME: I don't buy the above argument. Add a Kopete::Plugin::emitReadyForUnload(void),
+	//        and make readyForUnload be passed a plugin. - Richard
 	Kopete::Plugin *plugin = dynamic_cast<Kopete::Plugin *>( const_cast<QObject *>( sender() ) );
 	if ( !plugin )
 	{
 		kdWarning( 14010 ) << k_funcinfo << "Calling object is not a plugin!" << endl;
 		return;
 	}
-
+	
 	plugin->deleteLater();
 }
 
@@ -195,11 +209,11 @@ void Kopete::PluginManager::slotShutdownTimeout()
 {
 	// When we were already done the timer might still fire.
 	// Do nothing in that case.
-	if ( d->shutdownMode == KopetePluginManagerPrivate::DoneShutdown )
+	if ( d->shutdownMode == Private::DoneShutdown )
 		return;
 
 	QStringList remaining;
-	for ( QMap<KPluginInfo *, Kopete::Plugin *>::ConstIterator it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
+	for ( Private::InfoToPluginMap::ConstIterator it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
 		remaining.append( it.data()->pluginId() );
 
 	kdWarning( 14010 ) << k_funcinfo << "Some plugins didn't shutdown in time!" << endl
@@ -213,7 +227,7 @@ void Kopete::PluginManager::slotShutdownDone()
 {
 	kdDebug( 14010 ) << k_funcinfo << endl;
 
-	d->shutdownMode = KopetePluginManagerPrivate::DoneShutdown;
+	d->shutdownMode = Private::DoneShutdown;
 
 	kapp->deref();
 }
@@ -257,9 +271,9 @@ void Kopete::PluginManager::slotLoadNextPlugin()
 {
 	if ( d->pluginsToLoad.isEmpty() )
 	{
-		if ( d->shutdownMode == KopetePluginManagerPrivate::StartingUp )
+		if ( d->shutdownMode == Private::StartingUp )
 		{
-			d->shutdownMode = KopetePluginManagerPrivate::Running;
+			d->shutdownMode = Private::Running;
 			emit allPluginsLoaded();
 		}
 		return;
@@ -280,6 +294,7 @@ Kopete::Plugin * Kopete::PluginManager::loadPlugin( const QString &_pluginId, Pl
 	QString pluginId = _pluginId;
 
 	// Try to find legacy code
+	// FIXME: Find any cases causing this, remove them, and remove this too - Richard
 	if ( pluginId.endsWith( QString::fromLatin1( ".desktop" ) ) )
 	{
 		kdWarning( 14010 ) << "Trying to use old-style API!" << endl << kdBacktrace() << endl;
@@ -300,7 +315,7 @@ Kopete::Plugin * Kopete::PluginManager::loadPlugin( const QString &_pluginId, Pl
 
 Kopete::Plugin *Kopete::PluginManager::loadPluginInternal( const QString &pluginId )
 {
-//	kdDebug( 14010 ) << k_funcinfo << pluginId << endl;
+	//kdDebug( 14010 ) << k_funcinfo << pluginId << endl;
 
 	KPluginInfo *info = infoForPluginId( pluginId );
 	if ( !info )
@@ -313,8 +328,12 @@ Kopete::Plugin *Kopete::PluginManager::loadPluginInternal( const QString &plugin
 		return d->loadedPlugins[ info ];
 
 	int error = 0;
-	Kopete::Plugin *plugin = KParts::ComponentFactory::createInstanceFromQuery<Kopete::Plugin>( QString::fromLatin1( "Kopete/Plugin" ),
-		QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( pluginId ), this, 0, QStringList(), &error );
+	Kopete::Plugin *plugin = KParts::ComponentFactory::createInstanceFromQuery<Kopete::Plugin>
+	(
+		QString::fromLatin1( "Kopete/Plugin" ),
+		QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( pluginId ),
+		this, 0, QStringList(), &error
+	);
 
 	if ( plugin )
 	{
@@ -363,25 +382,20 @@ Kopete::Plugin *Kopete::PluginManager::loadPluginInternal( const QString &plugin
 
 bool Kopete::PluginManager::unloadPlugin( const QString &spec )
 {
-//	kdDebug(14010) << k_funcinfo << spec << endl;
-
-	QMap<KPluginInfo *, Kopete::Plugin *>::ConstIterator it;
-	for ( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
+	//kdDebug(14010) << k_funcinfo << spec << endl;
+	if( Kopete::Plugin *thePlugin = plugin( spec ) )
 	{
-		if ( it.key()->pluginName() == spec )
-		{
-			it.data()->aboutToUnload();
-			return true;
-		}
+		thePlugin->aboutToUnload();
+		return true;
 	}
-
-	return false;
+	else
+		return false;
 }
 
 void Kopete::PluginManager::slotPluginDestroyed( QObject *plugin )
 {
-	QMap<KPluginInfo *, Kopete::Plugin *>::Iterator it;
-	for ( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
+	for ( Private::InfoToPluginMap::Iterator it = d->loadedPlugins.begin();
+	      it != d->loadedPlugins.end(); ++it )
 	{
 		if ( it.data() == plugin )
 		{
@@ -390,7 +404,7 @@ void Kopete::PluginManager::slotPluginDestroyed( QObject *plugin )
 		}
 	}
 
-	if ( d->shutdownMode == KopetePluginManagerPrivate::ShuttingDown && d->loadedPlugins.isEmpty() )
+	if ( d->shutdownMode == Private::ShuttingDown && d->loadedPlugins.isEmpty() )
 	{
 		// Use a timer to make sure any pending deleteLater() calls have
 		// been handled first
@@ -422,42 +436,6 @@ Kopete::Plugin* Kopete::PluginManager::plugin( const QString &_pluginId ) const
 		return 0L;
 }
 
-QString Kopete::PluginManager::pluginName( const Kopete::Plugin *plugin ) const
-{
-	QMap<KPluginInfo *, Kopete::Plugin *>::ConstIterator it;
-	for ( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
-	{
-		if ( it.data() == plugin )
-			return it.key()->name();
-	}
-
-	return QString::fromLatin1( "Unknown" );
-}
-
-QString Kopete::PluginManager::pluginId( const Kopete::Plugin *plugin ) const
-{
-	QMap<KPluginInfo *, Kopete::Plugin *>::ConstIterator it;
-	for ( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
-	{
-		if ( it.data() == plugin )
-			return it.key()->pluginName();
-	}
-
-	return QString::fromLatin1( "unknown" );
-}
-
-QString Kopete::PluginManager::pluginIcon( const Kopete::Plugin *plugin ) const
-{
-	QMap<KPluginInfo *, Kopete::Plugin *>::ConstIterator it;
-	for ( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
-	{
-		if ( it.data() == plugin )
-			return it.key()->icon();
-	}
-
-	return QString::fromLatin1( "Unknown" );
-}
-
 KPluginInfo * Kopete::PluginManager::infoForPluginId( const QString &pluginId ) const
 {
 	QValueList<KPluginInfo *>::ConstIterator it;
@@ -477,6 +455,7 @@ bool Kopete::PluginManager::setPluginEnabled( const QString &_pluginId, bool ena
 	KConfig *config = KGlobal::config();
 	config->setGroup( "Plugins" );
 
+	// FIXME: What is this for? This sort of thing is kconf_update's job - Richard
 	if ( !pluginId.startsWith( QString::fromLatin1( "kopete_" ) ) )
 		pluginId.prepend( QString::fromLatin1( "kopete_" ) );
 

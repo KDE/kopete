@@ -35,12 +35,23 @@ class Plugin;
 typedef QValueList<Plugin*> PluginList;
 
 /**
+ * Private parts of Kopete::PluginManager that Kopete::Plugin may play with
+ */
+struct PluginManagerBackdoorForPlugin
+{
+	friend class Plugin;
+protected:
+	virtual KPluginInfo *pluginInfo( const Kopete::Plugin *plugin ) const = 0;
+};
+
+/**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  * @author Martijn Klingens <klingens@kde.org>
  */
-class PluginManager : public QObject
+class PluginManager : public QObject, public PluginManagerBackdoorForPlugin
 {
 	Q_OBJECT
+	Q_ENUMS( PluginLoadMode )
 
 public:
 	/**
@@ -80,39 +91,7 @@ public:
 	 * the pointer to the plugin if it's already loaded.
 	 */
 	Plugin *plugin( const QString &pluginName ) const;
-
-	/**
-	 * @brief Return the short user-visible name of the plugin.
-	 *
-	 * If you want to have the internal name, use @ref pluginId() instead.
-	 *
-	 * @return The name of the protocol, in the user's locale.
-	 */
-	QString pluginName( const Plugin *plugin ) const;
-
-	/**
-	 * @brief Return the internal name of the plugin.
-	 *
-	 * You cannot display this name on the screen, it's used internally for
-	 * passing around IDs. Use @ref pluginName() for a string ready for display.
-	 *
-	 * @return The name of the protocol, in the user's locale.
-	 */
-	QString pluginId( const Plugin *plugin ) const;
-
-	/**
-	 * @brief Unload the plugin specified by @p pluginName
-	 */
-	bool unloadPlugin( const QString &pluginName );
-
-	/**
-	 * @brief Retrieve the name of the icon for a @ref Kopete::Plugin.
-	 *
-	 * @return An empty string if the given plugin is not loaded
-	 * or the filename of the icon to use.
-	 */
-	QString pluginIcon( const Plugin *plugin ) const;
-
+	
 	/**
 	 * Shuts down the plugin manager on Kopete shutdown, but first
 	 * unloads all plugins asynchronously.
@@ -159,7 +138,12 @@ public slots:
 	 *
 	 * See also @ref plugin().
 	 */
-	Plugin * loadPlugin( const QString &pluginId, PluginLoadMode mode = LoadSync );
+	Plugin *loadPlugin( const QString &pluginId, PluginLoadMode mode = LoadSync );
+
+	/**
+	 * @brief Unload the plugin specified by @p pluginName
+	 */
+	bool unloadPlugin( const QString &pluginName );
 
 	/**
 	 * @brief Loads all the enabled plugins. Also used to reread the
@@ -223,7 +207,16 @@ private slots:
 	 * Schedules itself again if more plugins are pending.
 	 */
 	void slotLoadNextPlugin();
-
+	
+protected:
+	/**
+	 * @internal
+	 *
+	 * From PluginManagerBackdoorForPlugin
+	 * Used by Kopete::Plugin to grab the information about this plugin
+	 */
+	KPluginInfo *pluginInfo( const Kopete::Plugin *plugin ) const;
+	
 private:
 	/**
 	 * @internal
@@ -245,10 +238,8 @@ private:
 
 	PluginManager();
 
-	static PluginManager *s_self;
-
-	class KopetePluginManagerPrivate;
-	KopetePluginManagerPrivate *d;
+	class Private;
+	Private *d;
 };
 
 }
@@ -256,4 +247,3 @@ private:
 #endif // KOPETEPLUGINMANAGER_H
 
 // vim: set noet ts=4 sts=4 sw=4:
-
