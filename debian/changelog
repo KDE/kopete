@@ -1,3 +1,13 @@
+kopete (0.4.1-1) unstable; urgency=low
+
+  * New upstream version
+  * Introduced a custom configure line as
+    --enable-final broke compilation
+  * Removed SGML version of the manpage and
+    replaced it by an already converted one
+
+ -- Till Gerken <till@tantalo.net>  Mon,  1 Jul 2002 18:28:50 +0200
+
 kopete (0.4-1) unstable; urgency=low
 
   * Initial Release.

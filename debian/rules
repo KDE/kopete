@@ -31,7 +31,7 @@ debian/debiandirs: admin/debianrules
 # KDE options
 config.status: configure
 	dh_testdir
-	./configure $(configkde)
+	./configure --disable-debug --disable-rpath --prefix=$(kde_prefix) --libexecdir=$(kde_bindir) --sysconfdir=$(sysconfdir) --libdir=$(kde_libdir) --includedir=$(kde_includedir) --with-qt-includes=/usr/include/qt --mandir=$(mandir) --infodir=$(infodir)
 
 build: build-stamp
 
@@ -39,14 +39,13 @@ build-stamp:  config.status
 	dh_testdir
 
 	$(MAKE)
-	/usr/bin/docbook-to-man debian/kopete.sgml > kopete.1
 
 	touch build-stamp
 
 clean:
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp kopete.1
+	rm -f build-stamp
 
 	-$(MAKE) distclean
 	-test -r /usr/share/misc/config.sub && \
@@ -78,11 +77,8 @@ binary-arch: build install
 	dh_testdir
 	dh_testroot
 	dh_installdocs
-	dh_installexamples
 	dh_installmenu
-	dh_installcron
 	dh_installman
-	dh_installinfo
 	dh_installchangelogs 
 	dh_link
 	dh_strip
