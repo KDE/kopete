@@ -37,6 +37,7 @@
 #include <kmessagebox.h>
 
 #include "kopetecontactlist.h"
+#include "kopeteglobal.h"
 #include "kopeteuiglobal.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
@@ -55,11 +56,6 @@
 #include <klistview.h>
 #include <qcheckbox.h>
 #include <qwhatsthis.h>
-
-
-// FIXME: What are these doing here and why are they #defines and not const ints? - Martijn
-#define EMAIL_WINDOW 0
-#define CHAT_WINDOW 1
 
 struct KopeteContactPrivate
 {
@@ -87,7 +83,7 @@ public:
 	QTime idleTimer;
 	unsigned long int idleTime;
 
-	QMap< QString, KopeteContactProperty> properties;
+	Kopete::ContactProperty::Map properties;
 };
 
 KopeteContact::KopeteContact( KopeteAccount *account, const QString &contactId, KopeteMetaContact *parent, const QString &icon )
@@ -235,8 +231,6 @@ KPopupMenu* KopeteContact::popupMenu( KopeteMessageManager *manager )
 	d->actionChat->setEnabled( reach );
 	d->actionSendFile->setEnabled( reach && d->fileCapable );
 	d->actionSendMessage->setEnabled( reach );
-	// FIXME: is userinfo supposed to work while being offline.
-	// Some protocols might have valid userinfo while the contact is offline [mETz]
 
 	QString titleText;
 #if QT_VERSION < 0x030200
@@ -458,13 +452,13 @@ void KopeteContact::execute()
 	{
 		switch ( KopetePrefs::prefs()->interfacePreference() )
 		{
-		case EMAIL_WINDOW:
-			sendMessage();
-			break;
-		case CHAT_WINDOW:
-		default:
-			startChat();
-			break;
+			case KopetePrefs::EmailWindow:
+				sendMessage();
+				break;
+			case KopetePrefs::ChatWindow:
+			default:
+				startChat();
+				break;
 		}
 	}
 	else
@@ -475,26 +469,21 @@ void KopeteContact::execute()
 	}
 }
 
-/*KopeteMessageManager *KopeteContact::manager( bool )
-{
-	kdDebug( 14010 ) << "Manager() not implimented for " << protocol()->displayName() << ", crash!" << endl;
-	return 0L;
-}*/
-
 void KopeteContact::slotDeleteContact()
 {
-	/* Default implementation simply delete the contact */
+	// Default implementation simply deletes the contact
 	deleteLater();
 }
 
 void KopeteContact::slotUserInfo()
 {
-	/* Default implementation does nothing */
+	// Default implementation does nothing
 }
 
 bool KopeteContact::isOnline() const
 {
-	return d->onlineStatus.status() != KopeteOnlineStatus::Offline && d->onlineStatus.status() != KopeteOnlineStatus::Unknown;
+	return (d->onlineStatus.status() != KopeteOnlineStatus::Offline) &&
+		(d->onlineStatus.status() != KopeteOnlineStatus::Unknown);
 }
 
 KopeteMetaContact * KopeteContact::metaContact() const
@@ -575,14 +564,14 @@ void KopeteContact::setIcon( const QString& icon )
 	return;
 }
 
-const KopeteContactProperty &KopeteContact::property(const QString &key) const
+const Kopete::ContactProperty &KopeteContact::property(const QString &key) const
 {
 	if(hasProperty(key))
 		return d->properties[key];
 	else
 	{
 		//kdDebug(14000) << k_funcinfo << "Property not found, returning null-property" << endl;
-		return KopeteContactProperty::null;
+		return Kopete::ContactProperty::null;
 	}
 }
 
@@ -596,29 +585,17 @@ const QString &KopeteContact::propertyLabel(const QString &key) const
 
 void KopeteContact::setProperty(const QString &key, const QVariant &value)
 {
-	QString label;
-	if(key == QString::fromLatin1("firstName"))
-		label = i18n("First Name");
-	else if (key == QString::fromLatin1("lastName"))
-		label = i18n("Last Name");
-	else if (key == QString::fromLatin1("emailAddress"))
-		label = i18n("Email");
-	else if (key == QString::fromLatin1("privPhoneNum"))
-		label = i18n("Private Phone");
-	else if (key == QString::fromLatin1("privFaxNum"))
-		label = i18n("Private Fax");
-	else if (key == QString::fromLatin1("privMobileNum"))
-		label = i18n("Private Mobile");
-	else if (key == QString::fromLatin1("awayMessage"))
-		label = i18n("Away Message");
-	else if (key == QString::fromLatin1("onlineSince"))
-		label = i18n("Online Since");
-
-	if(!label.isNull())
-		setProperty(key, label, value);
+	Kopete::ContactProperty tmpl(Kopete::Global::Properties::self()->property(key));
+	if(!tmpl.isNull())
+	{
+		// TODO: icon
+		setProperty(key, tmpl.label(), value);
+	}
 	else
-		kdDebug(14000) << k_funcinfo << "No known default property with key: " << key << endl;
-
+	{
+		kdDebug(14000) << k_funcinfo <<
+			"No known default property with key: " << key << endl;
+	}
 }
 
 void KopeteContact::setProperty(const QString &key, const QString &label, const QVariant &value)
@@ -629,7 +606,7 @@ void KopeteContact::setProperty(const QString &key, const QString &label, const 
 		return;
 	}
 
-	KopeteContactProperty prop( label, value );
+	Kopete::ContactProperty prop(value, label);
 	d->properties.insert(key, prop);
 }
 
@@ -652,7 +629,7 @@ bool KopeteContact::hasProperty(const QString &key) const
 
 QString KopeteContact::toolTip() const
 {
-	KopeteContactProperty p;
+	Kopete::ContactProperty p;
 	QString tip;
 	QStringList shownProps = KopetePrefs::prefs()->toolTipContents();
 
@@ -750,7 +727,7 @@ QString KopeteContact::toolTip() const
 QString KopeteContact::formattedName() const
 {
 	QString ret;
-	KopeteContactProperty first, last;
+	Kopete::ContactProperty first, last;
 
 	first = property(QString::fromLatin1("firstName"));
 	last = property(QString::fromLatin1("lastName"));

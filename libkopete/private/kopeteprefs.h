@@ -74,7 +74,9 @@ public:
 	const QColor &idleContactColor() const { return mIdleContactColor; }
 	bool highlightEnabled() const { return mHighlightEnabled; }
 	bool bgOverride() const { return mBgOverride; }
-	int interfacePreference() const { return mInterfacePreference; }
+
+	enum ChatWindowPref { EmailWindow=0, ChatWindow };
+	ChatWindowPref interfacePreference() const { return mInterfacePreference; }
 	bool showTray() const { return mShowTray; }
 	bool notifyAway() const { return mNotifyAway; }
 	bool richText() const { return mRichText; }
@@ -86,7 +88,6 @@ public:
 	QString defaultTheme() const { return QString::fromLatin1("Default"); }
 
 	QStringList toolTipContents() const { return mToolTipContents; }
-
 
 	void setIconTheme(const QString &value);
 	void setUseEmoticons(bool value);
@@ -113,7 +114,7 @@ public:
 	void setHighlightEnabled(bool);
 	void setTransparencyValue(int);
 	void setBgOverride(bool);
-	void setInterfacePreference(int);
+	void setInterfacePreference(ChatWindowPref);
 	void setTextColor(const QColor &);
 	void setBgColor(const QColor &);
 	void setLinkColor(const QColor &);
@@ -123,7 +124,6 @@ public:
 	void setNotifyAway(bool);
 	void setRichText(bool);
 	void setToolTipContents(const QStringList &);
-
 
 signals:
 	/**
@@ -168,7 +168,7 @@ private:
 	bool mSoundIfAway;
 	bool mTransparencyEnabled;
 	int mTransparencyValue;
-	int mInterfacePreference;
+	ChatWindowPref mInterfacePreference;
 	QColor mTransparencyColor;
 	int mChatViewBufferSize;
 	QColor mHighlightBackground;

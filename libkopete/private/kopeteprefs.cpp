@@ -76,7 +76,7 @@ void KopetePrefs::load()
 	mHighlightForeground = config->readColorEntry("Highlight Foreground Color", &tmpColor);
 	mHighlightEnabled = config->readBoolEntry("Highlighting Enabled", true);
 	mBgOverride = config->readBoolEntry("ChatView Override Background", true);
-	mInterfacePreference = config->readNumEntry("Interface Preference", 1);
+	mInterfacePreference = (ChatWindowPref)config->readNumEntry("Interface Preference", ChatWindow);
 	tmpColor = KGlobalSettings::textColor();
 	mTextColor = config->readColorEntry("Text Color", &tmpColor );
 	tmpColor = KGlobalSettings::baseColor();
@@ -88,9 +88,9 @@ void KopetePrefs::load()
 	mIdleContactColor = config->readColorEntry("Idle Contact Color", &tmpColor);
 
 	mShowTray = config->readBoolEntry("Show Systemtray", true);
-	
+
 	/*
-	The stylesheet config value is now just the basename of the xsl file ie: Messenger, Kopete 
+	The stylesheet config value is now just the basename of the xsl file ie: Messenger, Kopete
 	T avoid having fallback duplicate code, I used the extract method pattern and left all in _setStyleSheet
 	*/
 	_setStyleSheet(config->readEntry("Stylesheet", QString::fromLatin1(KOPETE_DEFAULT_CHATSTYLE)));
@@ -253,7 +253,7 @@ void KopetePrefs::setStyleSheet(const QString &value)
 void KopetePrefs::_setStyleSheet(const QString &value)
 {
 	QString styleFileName  = locate( "appdata", QString::fromLatin1("styles/") + value + QString::fromLatin1(".xsl"));
-	
+
 	/* In case the user had selected a style not available now */
 	if ( !QFile::exists(styleFileName) || value.isEmpty() )
 	{
@@ -265,9 +265,9 @@ void KopetePrefs::_setStyleSheet(const QString &value)
 	{
 		mStyleSheet = value;
 	}
-	
+
 	styleFileName = locate( "appdata", QString::fromLatin1("styles/") + mStyleSheet + QString::fromLatin1(".xsl"));
-	mStyleContents = fileContents(styleFileName);	
+	mStyleContents = fileContents(styleFileName);
 }
 
 void KopetePrefs::setFontFace( const QFont &value )
@@ -299,7 +299,7 @@ void KopetePrefs::setChatWindowPolicy(int value)
 	mChatWindowPolicy = value;
 }
 
-void KopetePrefs::setInterfacePreference(int value)
+void KopetePrefs::setInterfacePreference(ChatWindowPref value)
 {
 	mInterfacePreference = value;
 }

@@ -17,7 +17,9 @@
 #include "tooltipeditdialog.h"
 #include "tooltipeditwidget.h"
 
-#include <kopeteprefs.h>
+#include "kopetecontactproperty.h"
+#include "kopeteglobal.h"
+#include "kopeteprefs.h"
 
 #include <qapplication.h>
 #include <qtoolbutton.h>
@@ -55,27 +57,13 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent, const char* name)
 {
 	mMainWidget = new TooltipEditWidget(this, "TooltipEditDialog::mMainWidget");
 	setMainWidget(mMainWidget);
-
-	// TODO: Make this list global to Kopete, these are the known properties
-	// plus some special ones (starting with a capitcal letter)
-	QMap<QString, QString> propmap;
-	propmap["FormattedName"]		= i18n("Full Name");
-	propmap["FormattedIdleTime"]	= i18n("Idle Time");
-	propmap["firstName"]				= i18n("First Name");
-	propmap["lastName"]				= i18n("Last Name");
-	propmap["emailAddress"]			= i18n("Email Address");
-	propmap["privPhoneNum"]			= i18n("Private Phone");
-	propmap["privFaxNum"]			= i18n("Private Fax");
-	propmap["privMobileNum"]		= i18n("Private Mobile");
-	propmap["awayMessage"]			= i18n("Away Message");
-	propmap["ircChannel"]			= i18n("Channel");
-	propmap["onlineSince"]			= i18n("Online Since");
-
-	QStringList usedKeys = KopetePrefs::prefs()->toolTipContents();
 	mMainWidget->lstUsedItems->header()->hide();
 	mMainWidget->lstUnusedItems->header()->hide();
 	mMainWidget->lstUsedItems->setSorting( -1 );
 	mMainWidget->lstUnusedItems->setSorting( 0 );
+
+	const Kopete::ContactProperty::Map propmap(Kopete::Global::Properties::self()->map());
+	QStringList usedKeys = KopetePrefs::prefs()->toolTipContents();
 
 	// first fill the "used" list
 	QStringList::Iterator usedIt=usedKeys.end();
@@ -83,16 +71,16 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent, const char* name)
 	{
 		usedIt--;
 		if(propmap.contains(*usedIt)) // only add if that property key is really known
-			new TooltipItem(mMainWidget->lstUsedItems, propmap[*usedIt], *usedIt);
+			new TooltipItem(mMainWidget->lstUsedItems, propmap[*usedIt].label(), *usedIt);
 	} while(usedIt != usedKeys.begin());
 
-	// tthen iterate over all known properties and insert the remaining ones
+	// then iterate over all known properties and insert the remaining ones
 	// into the "unused" list
-	QMap<QString, QString>::Iterator it;
+	Kopete::ContactProperty::Map::ConstIterator it;
 	for(it = propmap.begin(); it != propmap.end(); ++it)
 	{
 		if(usedKeys.contains(it.key())==0)
-			new TooltipItem(mMainWidget->lstUnusedItems, it.data(), it.key());
+			new TooltipItem(mMainWidget->lstUnusedItems, it.data().label(), it.key());
 	}
 
 	connect(mMainWidget->lstUnusedItems, SIGNAL(selectionChanged(QListViewItem *)),

@@ -145,8 +145,8 @@ void BehaviorConfig::save()
 	p->setHighlightEnabled(mPrfsChat->highlightEnabled->isChecked());
 	p->setChatWindowPolicy(mPrfsChat->chatWindowGroup->id(
 			mPrfsChat->chatWindowGroup->selected()));
-	p->setInterfacePreference(mPrfsChat->interfaceGroup->id(
-			mPrfsChat->interfaceGroup->selected()) );
+	p->setInterfacePreference(static_cast<KopetePrefs::ChatWindowPref>
+		(mPrfsChat->interfaceGroup->id(mPrfsChat->interfaceGroup->selected())) );
 	p->setChatViewBufferSize(mPrfsChat->mChatViewBufferSize->value());
 
 	p->save();

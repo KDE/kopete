@@ -3,9 +3,8 @@
 
     KopeteContact Property class
 
-    Copyright (c) 2004      by Stefan Gehn            <metz AT gehn.net>
-
-    Kopete    (c) 2004      by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2004    by Stefan Gehn <metz AT gehn.net>
+    Kopete    (c) 2004    by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -20,40 +19,46 @@
 #include "kopetecontactproperty.h"
 #include <kdebug.h>
 
-// -----------------------------------------------------------------------------
-KopeteContactProperty KopeteContactProperty::null;
-
-KopeteContactProperty::KopeteContactProperty()
+namespace Kopete
 {
-	/*kdDebug(14000) << k_funcinfo <<
-		"EMPTY, this = " << (void*) this << endl;*/
+
+ContactProperty ContactProperty::null;
+
+ContactProperty::ContactProperty()
+{
 }
 
-KopeteContactProperty::KopeteContactProperty( const QString &lbl,
-	const QVariant &val )
+ContactProperty::ContactProperty(const QVariant &value,
+	const QString &label, const QString &icon)
 {
-	mLabel = lbl;
-	mValue = val;
-	/*kdDebug(14000) << k_funcinfo <<
-		"label=" << mLabel << ", this = " << (void*) this << endl;*/
+	mValue = value;
+	mLabel = label;
+	mIcon = icon;
 }
 
-KopeteContactProperty::~KopeteContactProperty()
+ContactProperty::~ContactProperty()
 {
 	//kdDebug(14000) << k_funcinfo << "this = " << (void *)this << endl;
 }
 
-const QString &KopeteContactProperty::label() const
+const QString &ContactProperty::label() const
 {
 	return mLabel;
 }
 
-const QVariant &KopeteContactProperty::value() const
+const QString &ContactProperty::icon() const
+{
+	return mIcon;
+}
+
+const QVariant &ContactProperty::value() const
 {
 	return mValue;
 }
 
-bool KopeteContactProperty::isNull() const
+bool ContactProperty::isNull() const
 {
 	return (mValue.isNull() && mLabel.isNull());
 }
+
+} // END namespace Kopete

@@ -281,7 +281,7 @@ public:
 	 * You should either know the type of the returned QVariant
 	 * or check for it.
 	 **/
-	const KopeteContactProperty &property(const QString &key) const;
+	const Kopete::ContactProperty &property(const QString &key) const;
 
 	/**
 	 * Return the i18ned name for a property with "key"
@@ -404,17 +404,20 @@ public slots:
 	virtual void slotUserInfo();
 
 	/**
-	 * This is the KopeteContact level slot for sending files. It should be implemented by all
-	 * contacts which have the setFileCapable() flag set to true. If the function is called through
-	 * the GUI, no parameters are sent and they take on default values (the file is chosen with
-	 * a file open dialog)
+	 * This is the KopeteContact level slot for sending files. It should be
+	 * implemented by all contacts which have the setFileCapable() flag set to
+	 * true. If the function is called through the GUI, no parameters are sent
+	 * and they take on default values (the file is chosen with a file open dialog)
 	 *
 	 * @param sourceURL The actual KURL of the file you are sending
-	 * @param fileName (Optional) An alternate name for the file - what the receiver will see
-	 * @param fileSize (Optional) Size of the file being sent. Used when sending a nondeterminate
+	 * @param fileName (Optional) An alternate name for the file - what the
+	 * receiver will see
+	 * @param fileSize (Optional) Size of the file being sent. Used when sending
+	 * a nondeterminate
 	 *                file size (such as over  asocket
 	 */
-	virtual void sendFile( const KURL &sourceURL = KURL(), const QString &fileName = QString::null, uint fileSize = 0L );
+	virtual void sendFile( const KURL &sourceURL = KURL(),
+		const QString &fileName = QString::null, uint fileSize = 0L );
 
 	/**
 	 * Protocols with server-side contact lists can implement this to
@@ -455,7 +458,8 @@ signals:
 	/**
 	 * The contact's online status changed
 	 */
-	void onlineStatusChanged( KopeteContact *contact, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus );
+	void onlineStatusChanged( KopeteContact *contact,
+		const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus );
 
 	/**
 	 * Connect to this signal to know when the contact
@@ -468,7 +472,8 @@ signals:
 	 * Called when entering the destructor. Useful for cleanup, since
 	 * metaContact() is still accessible at this point.
 	 *
-	 * @warning this signal is emit in the KopeteContact destructor, so all virtual method are not available
+	 * @warning this signal is emit in the KopeteContact destructor, so all
+	 * virtual method are not available
 	 */
 	void contactDestroyed( KopeteContact *contact );
 

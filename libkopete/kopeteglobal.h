@@ -18,9 +18,9 @@
 #ifndef KOPETEGLOBAL_H
 #define KOPETEGLOBAL_H
 
-#include <kurl.h>
+#include "kopetecontactproperty.h"
 
-class QString;
+//class QString;
 
 namespace Kopete
 {
@@ -32,7 +32,7 @@ namespace Global
 {
 	/**
 	 * \brief Installs one or more kopete emoticon themes from a tarball
-	 * (either .kopete-emoticons or tar.gz or tar.bz2)
+	 * (either .kopete-emoticons or .tar.gz or .tar.bz2)
 	 *
 	 * @p archiveName Full path to a local emoticon archive, use KIO to download
 	 * files in case their are non-local.
@@ -42,7 +42,26 @@ namespace Global
 	 *
 	 * TODO: If possible, port it to KIO instead of using ugly blocking KTar
 	 **/
-	void installEmoticonTheme( const QString &localPath );
+	void installEmoticonTheme(const QString &localPath);
+
+	/**
+	 * \brief TODO
+	 **/
+	class Properties
+	{
+		public:
+			static Properties *self();
+			const ContactProperty &property(const QString &key) const;
+			const ContactProperty::Map &map() const;
+
+		private:
+			Properties();
+
+		private:
+			static Properties *mSelf;
+			ContactProperty::Map mProps;
+	}; // END class Properties
+
 } // Global
 
 } // Kopete

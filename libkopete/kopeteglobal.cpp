@@ -18,8 +18,6 @@
 #include "kopeteglobal.h"
 #include "kopeteuiglobal.h"
 
-#include <qwidget.h>
-
 #include <kapplication.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -33,7 +31,62 @@
 namespace Kopete
 {
 
-void Global::installEmoticonTheme(const QString &archiveName)
+namespace Global
+{
+
+Properties *Properties::mSelf = 0L;
+
+Properties *Properties::self()
+{
+	if(!mSelf)
+		mSelf = new Properties;
+	return mSelf;
+}
+
+Properties::Properties()
+{
+	// TODO: move uncommon ones to their respective protocols
+
+	mProps.insert(QString::fromLatin1("FormattedName"),
+		ContactProperty(QVariant(), i18n("Full Name")));
+	mProps.insert(QString::fromLatin1("FormattedIdleTime"),
+		ContactProperty(QVariant(), i18n("Idle time")));
+	mProps.insert(QString::fromLatin1("firstName"),
+		ContactProperty(QVariant(), i18n("First Name")));
+	mProps.insert(QString::fromLatin1("lastName"),
+		ContactProperty(QVariant(), i18n("Last Name")));
+	mProps.insert(QString::fromLatin1("emailAddress"),
+		ContactProperty(QVariant(), i18n("Email Address"),
+			QString::fromLatin1("mail_generic")));
+	mProps.insert(QString::fromLatin1("privPhoneNum"),
+		ContactProperty(QVariant(), i18n("Private Phone")));
+	mProps.insert(QString::fromLatin1("privFaxNum"),
+		ContactProperty(QVariant(), i18n("Private Fax")));
+	mProps.insert(QString::fromLatin1("privMobileNum"),
+		ContactProperty(QVariant(), i18n("Private Mobile")));
+	mProps.insert(QString::fromLatin1("awayMessage"),
+		ContactProperty(QVariant(), i18n("Away Message")));
+	mProps.insert(QString::fromLatin1("ircChannel"),
+		ContactProperty(QVariant(), i18n("Channel")));
+	mProps.insert(QString::fromLatin1("onlineSince"),
+		ContactProperty(QVariant(), i18n("Online Since")));
+}
+
+const ContactProperty &Properties::property(const QString &key) const
+{
+	if(mProps.contains(key))
+		return mProps[key];
+	else
+		return ContactProperty::null;
+}
+
+const ContactProperty::Map &Properties::map() const
+{
+	return mProps;
+}
+
+
+void installEmoticonTheme(const QString &archiveName)
 {
 	QStringList foundThemes;
 	KArchiveEntry *currentEntry = 0L;
@@ -144,6 +197,8 @@ void Global::installEmoticonTheme(const QString &archiveName)
 
 	delete progressDlg;
 }
+
+} // END namespace Global
 
 } // END namespace Kopete
 
