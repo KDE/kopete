@@ -70,7 +70,6 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	chatView->setPluginsEnabled( false );
 	chatView->setMetaRefreshEnabled( false );
 
-
 	chatView->begin();
 	chatView->write( QString::fromLatin1( "<html><head><style>") + styleHTML() +
 		QString::fromLatin1("</style></head><body></body></html>") );
@@ -930,7 +929,7 @@ void ChatView::readOptions()
 	viewDock->setDockSite(KDockWidget::DockLeft | KDockWidget::DockRight );
 	editDock->setEnableDocking(KDockWidget::DockNone);
 	membersDockPosition = static_cast<KDockWidget::DockPosition>(
-		config->readNumEntry( QString::fromLatin1("membersDockPosition"), KDockWidget::DockNone ) );
+		config->readNumEntry( QString::fromLatin1("membersDockPosition"), KDockWidget::DockRight ) );
 	visibleMembers = config->readBoolEntry( QString::fromLatin1("visibleMembers"), false );
 
 	config->setGroup( QString::fromLatin1("ChatViewSettings") );
