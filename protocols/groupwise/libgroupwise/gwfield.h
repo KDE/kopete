@@ -246,6 +246,6 @@ namespace Field
 		FieldList m_fields; // nb implicitly shared, copy-on-write - is there a case where this is bad?
 	};
 	
-};
+}
 
 #endif

@@ -75,9 +75,6 @@
                                 <property name="text">
                                     <string>User &amp;ID:</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+I</string>
-                                </property>
                                 <property name="checked">
                                     <bool>true</bool>
                                 </property>
@@ -91,9 +88,6 @@
                                 </property>
                                 <property name="text">
                                     <string>Userna&amp;me:</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+M</string>
                                 </property>
                             </widget>
                             <widget class="QLineEdit" row="1" column="1">

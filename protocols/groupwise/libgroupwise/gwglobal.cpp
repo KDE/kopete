@@ -34,4 +34,4 @@ namespace GroupWise
 	{
 		return s.left( CONF_GUID_END ) == g.left( CONF_GUID_END );
 	}
-};
+}

@@ -92,7 +92,7 @@ void ClientStreamTest::slotTLSHandshaken()
 		/*			}
 					else
 					{
-					disconnect ( KopeteAccount::Manual );
+					disconnect ( Kopete::Account::Manual );
 					}*/
 	}
 
