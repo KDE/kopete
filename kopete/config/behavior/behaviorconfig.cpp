@@ -16,6 +16,7 @@
 #include "behaviorconfig.h"
 #include "behaviorconfig_general.h"
 #include "behaviorconfig_chat.h"
+#include "tooltipeditdialog.h"
 
 #include <qcheckbox.h>
 #include <qlayout.h>
@@ -29,7 +30,6 @@
 #include <kgenericfactory.h>
 #include <ktrader.h>
 #include <kconfig.h>
-
 
 #include "kopeteprefs.h"
 #include "kopeteaway.h"
@@ -63,10 +63,11 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 	mPrfsChat = new BehaviorConfig_Chat(mBehaviorTabCtl);
 	mBehaviorTabCtl->addTab(mPrfsChat, i18n("&Chat"));
 
+
 	load();
-	//connect a whole bunch of signals and slots so the thing works
-	//TODO: There's gotta be a better way to do this --Matt  | I hope so too --Will
-	
+
+
+	// "General" TAB ============================================================
 	connect(mPrfsGeneral->mStartDockedChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
 	connect(mPrfsGeneral->mUseQueueChk, SIGNAL(toggled(bool)),
@@ -81,8 +82,10 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 		this, SLOT(slotSettingsChanged(bool)));
 	connect(mPrfsGeneral->mSortByGroup, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
-	
-	//"Chat" TAB signals
+	connect(mPrfsGeneral->mEditTooltips, SIGNAL(clicked()),
+		this, SLOT(slotEditTooltips()));
+
+	// "Chat" TAB ===============================================================
 	connect( mPrfsChat->cb_RaiseMsgWindowChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
 	connect( mPrfsChat->cb_ShowEventsChk, SIGNAL(toggled(bool)),
@@ -95,8 +98,8 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 		this, SLOT(slotValueChanged(int)));
 	connect( mPrfsChat->mChatViewBufferSize, SIGNAL(valueChanged(int)),
 		this, SLOT(slotValueChanged(int)));
-		
-	//"Away" TAB signals
+
+	// "Away" TAB ===============================================================
 	connect( mAwayConfigUI->mAutoAwayTimeout, SIGNAL(valueChanged(int)),
 		this, SLOT(slotValueChanged(int)));
 	connect( mAwayConfigUI->mGoAvailable, SIGNAL(toggled(bool)),
@@ -186,7 +189,7 @@ void BehaviorConfig::load()
 	mPrfsChat->interfaceGroup->setButton(p->interfacePreference());
 	mPrfsChat->mChatViewBufferSize->setValue(p->chatViewBufferSize());
 
-	//TODO: make the whole thing working corretly insteads of this ugly hack...
+	//TODO: make the whole thing working correctly insteads of this ugly hack...
 	// emit changed(false);
 	// emit changed(true);
 }
@@ -215,5 +218,14 @@ void BehaviorConfig::slotValueChanged(int)
 {
 	emit changed( true );
 }
+
+void BehaviorConfig::slotEditTooltips()
+{
+	TooltipEditDialog *dlg = new TooltipEditDialog(this);
+	connect(dlg, SIGNAL(changed(bool)), this, SIGNAL(changed(bool)));
+	dlg->exec();
+	delete dlg;
+}
+
 #include "behaviorconfig.moc"
 // vim: set noet ts=4 sts=4 sw=4:

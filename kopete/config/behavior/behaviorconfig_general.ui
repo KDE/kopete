@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>BehaviorConfig_General</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>245</width>
-            <height>345</height>
+            <width>305</width>
+            <height>400</height>
         </rect>
     </property>
     <property name="caption">
@@ -25,6 +25,9 @@
             </property>
             <property name="text">
                 <string>Show the system tray &amp;icon</string>
+            </property>
+            <property name="accel">
+                <string>Alt+I</string>
             </property>
         </widget>
         <widget class="QCheckBox">
@@ -91,6 +94,9 @@
                     <property name="text">
                         <string>Con&amp;figure Sounds &amp;&amp; Events...</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+F</string>
+                    </property>
                 </widget>
                 <spacer row="3" column="1">
                     <property name="name">
@@ -105,7 +111,7 @@
                     <property name="sizeHint">
                         <size>
                             <width>8</width>
-                            <height>20</height>
+                            <height>16</height>
                         </size>
                     </property>
                 </spacer>
@@ -118,27 +124,61 @@
             <property name="title">
                 <string>Contact List</string>
             </property>
-            <vbox>
+            <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QCheckBox">
+                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>mTreeContactList</cstring>
                     </property>
                     <property name="text">
                         <string>Show as a t&amp;ree</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+R</string>
+                    </property>
                 </widget>
-                <widget class="QCheckBox">
+                <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>mSortByGroup</cstring>
                     </property>
                     <property name="text">
                         <string>Sort by &amp;group</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+G</string>
+                    </property>
                 </widget>
-            </vbox>
+                <widget class="QPushButton" row="2" column="0">
+                    <property name="name">
+                        <cstring>mEditTooltips</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Edit Tooltips...</string>
+                    </property>
+                    <property name="accel">
+                        <string></string>
+                    </property>
+                </widget>
+                <spacer row="2" column="1">
+                    <property name="name">
+                        <cstring>spacer3</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>8</width>
+                            <height>16</height>
+                        </size>
+                    </property>
+                </spacer>
+            </grid>
         </widget>
         <spacer>
             <property name="name">
@@ -152,7 +192,7 @@
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>20</width>
+                    <width>16</width>
                     <height>8</height>
                 </size>
             </property>
