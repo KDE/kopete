@@ -41,6 +41,7 @@ GaduSession::GaduSession( QObject* parent, const char* name )
 : QObject( parent, name ), session_( 0 ), searchSeqNr_( 0 )
 {
 	textcodec = QTextCodec::codecForName( "CP1250" );
+	rtf = new GaduRichTextFormat;
 }
 
 GaduSession::~GaduSession()
@@ -236,7 +237,7 @@ GaduSession::sendMessage( uin_t recipient, const KopeteMessage& msg, int msgClas
 	KGaduMessage* gadumessage;
 
 	if ( isConnected() ) {
-		gadumessage = GaduRichTextFormat::convertToGaduMessage( msg );
+		gadumessage = rtf->convertToGaduMessage( msg );
 		if ( gadumessage ) {
 			const void* data = (const void*)gadumessage->rtf.data();
 			cpMsg = textcodec->fromUnicode( gadumessage->message );
@@ -624,7 +625,7 @@ GaduSession::checkDescriptor()
 					textcodec->toUnicode((const char*)event->event.msg.message);
 				gaduMessage.sender_id = event->event.msg.sender;
 				gaduMessage.sendTime.setTime_t( event->event.msg.time, Qt::LocalTime );
-				gaduMessage.message = GaduRichTextFormat::convertToHtml( gaduMessage.message, event->event.msg.formats_length, event->event.msg.formats );
+				gaduMessage.message = rtf->convertToHtml( gaduMessage.message, event->event.msg.formats_length, event->event.msg.formats );
 				emit messageReceived( &gaduMessage );
 				break;
 			}

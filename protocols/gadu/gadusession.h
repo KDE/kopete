@@ -70,6 +70,7 @@ typedef QValueList<ResLine> SearchResult;
 class QSocketNotifier;
 class QStringList;
 class KopeteMessage;
+class GaduRichTextFormat;
 
 class GaduSession : public QObject
 {
@@ -150,9 +151,10 @@ private:
 	gg_session*		session_;
 	QSocketNotifier*	read_;
 	QSocketNotifier*	write_;
-	gg_login_params	params_;
+	gg_login_params		params_;
 	QTextCodec*		textcodec;
-	int				searchSeqNr_;
+	int			searchSeqNr_;
+	GaduRichTextFormat*	rtf;
 };
 
 #endif

@@ -29,7 +29,6 @@
 #include "gadupubdir.h"
 #include "gadueditcontact.h"
 #include "gaducontactlist.h"
-#include "gadurichtextformat.h"
 #include "gadusession.h"
 
 #include "kopetemessagemanagerfactory.h"

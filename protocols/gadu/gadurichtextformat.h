@@ -20,6 +20,11 @@
 // 02111-1307, USA.
 
 
+#ifndef GADURTF_H
+#define GADURTF_H
+
+#include <libgadu.h>
+
 class Qstring;
 class KopeteMessage;
 class KGaduMessage;
@@ -28,10 +33,21 @@ class GaduRichTextFormat {
 public:
 	GaduRichTextFormat();
 	~GaduRichTextFormat();
-	static QString convertToHtml( const QString&, unsigned int, void* );
-	static KGaduMessage* convertToGaduMessage( const KopeteMessage& );
+	QString convertToHtml( const QString&, unsigned int, void* );
+	KGaduMessage* convertToGaduMessage( const KopeteMessage& );
 
 private:
-	static QString formatOpeningTag( const QString& , const QString& = QString::null );
-	static QString formatClosingTag( const QString& tag );
+	QString formatOpeningTag( const QString& , const QString& = QString::null );
+	QString formatClosingTag( const QString& );
+	bool insertRtf( uint );
+	QString unescapeGaduMessage( QString& );
+	void parseAttributes( QString, QString );
+
+	QColor 			color;
+	gg_msg_richtext_format	rtfs;
+	gg_msg_richtext_color	rtcs;
+	gg_msg_richtext*	header;
+	QByteArray		rtf;
+
 };
+#endif
