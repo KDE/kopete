@@ -53,7 +53,9 @@
 #include <qsocket.h>
 #include <qvbox.h>
 
-#include <stdio.h>
+#include <unistd.h>
+#include <pwd.h>
+#include <sys/types.h>
 
 IRCServerContact::IRCServerContact(const QString &server, const QString &nickname, bool connectNow, IRCProtocol *protocol)
 {
@@ -76,10 +78,7 @@ IRCServerContact::IRCServerContact(const QString &server, const QString &nicknam
 void IRCServerContact::init()
 {
 	// Get the currently logged in username
-	char *name = new char;
-	cuserid(name);
-	m_userName = name;
-	delete name;
+	m_userName = getpwuid(getuid())->pw_name;
 	if (m_userName.isEmpty())
 		m_userName = "kopete";
 
