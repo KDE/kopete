@@ -32,6 +32,7 @@
 #include <qstringlist.h>
 #include <qdatetime.h>
 #include <qcstring.h>
+#include <qhostaddress.h>
 
 #include "gaducontactlist.h"
 
@@ -58,7 +59,7 @@ struct KGaduLoginParams {
 
 struct KGaduNotify {
 	int status;
-	unsigned int remote_ip;
+	QHostAddress remote_ip;
 	unsigned short remote_port;
 	bool fileCap;
 	int version;
@@ -146,6 +147,7 @@ signals:
 	void pubDirSearchResult( const SearchResult& );
 	void userListRecieved( const QString& );
 	void userListExported();
+	void incomingCtcp( unsigned int );
 
 protected slots:
 	void enableNotifiers( int );

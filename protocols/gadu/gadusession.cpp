@@ -36,6 +36,7 @@
 
 #include <errno.h>
 #include <string.h>
+#include <netinet/in.h>
 
 GaduSession::GaduSession( QObject* parent, const char* name )
 : QObject( parent, name ), session_( 0 ), searchSeqNr_( 0 )
@@ -75,7 +76,7 @@ GaduSession::login( struct gg_login_params* p )
 
 // turn on in case you have any problems, and  you want
 // to report it better. libgadu needs to be recompiled with debug enabled
-//		gg_debug_level=GG_DEBUG_MISC|GG_DEBUG_FUNCTION;
+		gg_debug_level=GG_DEBUG_MISC|GG_DEBUG_FUNCTION;
 
 		kdDebug(14100) << "Login" << endl;
 
@@ -162,6 +163,8 @@ GaduSession::login( KGaduLoginParams* loginp )
 	params_.client_addr	= loginp->client_addr;
 	params_.client_port	= loginp->client_port;
 
+	kdDebug(14100) << "LOGIN IP: " << loginp->client_addr << " loginp->uin" << endl;
+	
 	if ( loginp->useTls ) {
 		params_.server_port = GG_HTTPS_PORT;
 	}
@@ -579,9 +582,9 @@ GaduSession::notify60( gg_event* event )
 		gn = new KGaduNotify;
 		gn->contact_id	= event->event.notify60[n].uin;
 		gn->status	= event->event.notify60[n].status;
-		gn->remote_ip	= event->event.notify60[n].remote_ip;
+		gn->remote_ip.setAddress( ntohl( event->event.notify60[n].remote_ip ) );
 		gn->remote_port	= event->event.notify60[n].remote_port;
-		if ( gn->remote_ip && gn->remote_port > 10 ) {
+		if ( event->event.notify60[n].remote_ip && gn->remote_port > 10 ) {
 			gn->fileCap = true;
 		}
 		else {
@@ -603,6 +606,7 @@ GaduSession::checkDescriptor()
 	disableNotifiers();
 
 	struct gg_event* event;
+	struct gg_dcc*   dccSock;
 	KGaduMessage	gaduMessage;
 	KGaduNotify	gaduNotify;
 
@@ -625,6 +629,7 @@ GaduSession::checkDescriptor()
 			if ( event->event.msg.msgclass == GG_CLASS_CTCP ) {
 				kdDebug( 14100 ) << "incomming ctcp " << endl;
 				// TODO: DCC CONNECTION
+				emit incomingCtcp( event->event.msg.sender );
 				break;
 			}
 			if ( event->event.msg.msgclass == GG_CLASS_MSG ||  event->event.msg.msgclass == GG_CLASS_CHAT ) {
@@ -649,7 +654,6 @@ GaduSession::checkDescriptor()
 			else {
 				gaduNotify.description = QString::null;
 			}
-			gaduNotify.remote_ip	= 0;
 			gaduNotify.remote_port	= 0;
 			gaduNotify.version	= 0;
 			gaduNotify.image_size	= 0;
@@ -667,12 +671,12 @@ GaduSession::checkDescriptor()
 			else {
 				gaduNotify.description = QString::null;
 			}
-			gaduNotify.remote_ip	= event->event.status60.remote_ip;
+			gaduNotify.remote_ip.setAddress( ntohl( event->event.status60.remote_ip ) );
 			gaduNotify.remote_port	= event->event.status60.remote_port;
 			gaduNotify.version	= event->event.status60.version;
 			gaduNotify.image_size	= event->event.status60.image_size;
 			gaduNotify.time		= event->event.status60.time;
-			if ( gaduNotify.remote_ip && gaduNotify.remote_port > 10 ) {
+			if ( event->event.status60.remote_ip && gaduNotify.remote_port > 10 ) {
 				gaduNotify.fileCap = true;
 			}
 			else {

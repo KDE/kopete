@@ -49,7 +49,6 @@ GaduContact::GaduContact( uin_t uin, const QString& name, KopeteAccount* account
 	msgManager_ = 0L;
 	account_ = static_cast<GaduAccount*>( account );
 
-	remote_ip	= 0;
 	remote_port	= 0;
 	version		= 0;
 	image_size	= 0;
@@ -125,11 +124,11 @@ GaduContact::changedStatus( KGaduNotify* newstatus )
 
 	setFileCapable( newstatus->fileCap );
 
-	kdDebug(14100) << "uin:" << uin() << " port: " << remote_port << " remote ip: " <<  remote_ip << " image size: " << image_size << "  version: "  << version  << endl;
+	kdDebug(14100) << "uin:" << uin() << " port: " << remote_port << " remote ip: " <<  remote_ip.ip4Addr() << " image size: " << image_size << "  version: "  << version  << endl;
 
 }
 
-unsigned int 
+QHostAddress& 
 GaduContact::contactIp()
 {
 	return remote_ip;

@@ -24,6 +24,7 @@
 #define GADUCONTACT_H
 
 #include <qpoint.h>
+#include <qhostaddress.h>
 
 #include "gaducontactlist.h"
 
@@ -69,7 +70,7 @@ public:
 
 	uin_t uin() const;
 
-	unsigned int contactIp();
+	QHostAddress&  contactIp();
 	unsigned short contactPort();
 	
 public slots:
@@ -104,7 +105,7 @@ private:
 	KopeteContactPtrList	thisContact_;
 
 
-	unsigned int remote_ip;
+	QHostAddress remote_ip;
 	unsigned int remote_port;
 	unsigned int version;
 	unsigned int image_size;
