@@ -8,15 +8,15 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>785</width>
-            <height>557</height>
+            <width>446</width>
+            <height>292</height>
         </rect>
     </property>
     <property name="caption">
         <string>Jabber Service Management</string>
     </property>
     <property name="sizeGripEnabled">
-        <bool>true</bool>
+        <bool>false</bool>
     </property>
     <vbox>
         <property name="name">
