@@ -68,8 +68,9 @@ void MSNAccount::loaded()
 	m_allowList=QStringList::split(',' ,pluginData(protocol(),QString::fromLatin1("allowList")) );
 }
 
-void MSNAccount::setAway( bool away, const QString & /*awayReason*/ )
+void MSNAccount::setAway( bool away, const QString & awayReason )
 {
+	m_awayReason=awayReason;
 	if( away )
 		setOnlineStatus( MSNProtocol::protocol()->IDL );
 	else //if( m_myself->onlineStatus() == MSNProtocol::statusIDL )
@@ -190,6 +191,7 @@ MSNNotifySocket *MSNAccount::notifySocket()
 void MSNAccount::slotGoOnline()
 {
 	//m_connectstatus=NLN;
+	m_awayReason=QString::null;
 	if( !isConnected() )
 		connect();
 	else
@@ -204,31 +206,37 @@ void MSNAccount::slotGoOffline()
 
 void MSNAccount::slotGoAway()
 {
+	m_awayReason=QString::null;
 	setOnlineStatus( MSNProtocol::protocol()->AWY );
 }
 
 void MSNAccount::slotGoBusy()
 {
+	m_awayReason=QString::null;
 	setOnlineStatus( MSNProtocol::protocol()->BSY );
 }
 
 void MSNAccount::slotGoBeRightBack()
 {
+	m_awayReason=QString::null;
 	setOnlineStatus( MSNProtocol::protocol()->BRB );
 }
 
 void MSNAccount::slotGoOnThePhone()
 {
+	m_awayReason=QString::null;
 	setOnlineStatus( MSNProtocol::protocol()->PHN );
 }
 
 void MSNAccount::slotGoOutToLunch()
 {
+	m_awayReason=QString::null;
 	setOnlineStatus( MSNProtocol::protocol()->LUN );
 }
 
 void MSNAccount::slotGoInvisible()
 {
+	m_awayReason=QString::null;
 	setOnlineStatus( MSNProtocol::protocol()->HDN );
 }
 

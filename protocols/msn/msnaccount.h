@@ -62,6 +62,10 @@ public:
 	// FIXME: Make generic - Martijn
 	void setOnlineStatus( const KopeteOnlineStatus &status );
 
+
+	QString awayReason()
+		{ return m_awayReason; }
+
 public slots:
 	virtual void connect() ;
 	virtual void disconnect() ;
@@ -175,6 +179,8 @@ private:
 
 	QMap<unsigned int, KopeteGroup*> m_groupList;
 	KopeteMetaContact *m_addWizard_metaContact;
+
+	QString m_awayReason;
 };
 
 #endif
