@@ -43,9 +43,27 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 
 	// KAction stuff
 	mCustomActions = new KActionCollection(this);
-	actionJoin = new KAction(i18n("&Join"), 0, this, SLOT(slotJoin()), mCustomActions, "actionJoin");
-	actionPart = new KAction(i18n("&Part"), 0, this, SLOT(slotPart()), mCustomActions, "actionPart");
-	actionTopic = new KAction(i18n("Change &Topic"), 0, this, SLOT(setTopic()), mCustomActions, "actionTopic");
+	actionJoin = new KAction(i18n("&Join"), 0, this, SLOT(slotJoin()), this, "actionJoin");
+	actionPart = new KAction(i18n("&Part"), 0, this, SLOT(slotPart()), this, "actionPart");
+	actionTopic = new KAction(i18n("Change &Topic"), 0, this, SLOT(setTopic()), this, "actionTopic");
+	actionModeMenu = new KActionMenu(i18n("Channel Modes"), 0, this, "actionModeMenu");
+
+	mCustomActions->insert( actionJoin );
+	mCustomActions->insert( actionPart );
+	mCustomActions->insert( actionTopic );
+	mCustomActions->insert( actionModeMenu );
+
+	actionModeT = new KToggleAction(i18n("Only Operators Can Change &Topic"), 0, this, SLOT(slotModeChanged()), actionModeMenu );
+	actionModeN = new KToggleAction(i18n("&No Outside Messages"), 0, this, SLOT(slotModeChanged()), actionModeMenu );
+	actionModeS = new KToggleAction(i18n("&Secret"), 0, this, SLOT(slotModeChanged()), actionModeMenu );
+	actionModeM = new KToggleAction(i18n("&Moderated"), 0, this, SLOT(slotModeChanged()), actionModeMenu );
+	actionModeI = new KToggleAction(i18n("&Invite Only"), 0, this, SLOT(slotModeChanged()), actionModeMenu );
+
+	actionModeMenu->insert( actionModeT );
+	actionModeMenu->insert( actionModeN );
+	actionModeMenu->insert( actionModeS );
+	actionModeMenu->insert( actionModeM );
+	actionModeMenu->insert( actionModeI );
 
 	// KIRC Engine stuff
 	QObject::connect(identity->engine(), SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()));
@@ -55,6 +73,7 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 	QObject::connect(identity->engine(), SIGNAL(incomingNamesList(const QString &, const QString &, const int)), this, SLOT(slotNamesList(const QString &, const QString &, const int)));
 	QObject::connect(identity->engine(), SIGNAL(incomingExistingTopic(const QString &, const QString &)), this, SLOT( slotChannelTopic(const QString&, const QString &)));
 	QObject::connect(identity->engine(), SIGNAL(incomingTopicChange(const QString &, const QString &, const QString &)), this, SLOT( slotTopicChanged(const QString&,const QString&,const QString&)));
+	QObject::connect(identity->engine(), SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)), this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
 
 	QObject::connect( this, SIGNAL( endSession() ), this, SLOT( slotPart() ) );
 
@@ -70,8 +89,8 @@ IRCChannelContact::~IRCChannelContact()
 
 void IRCChannelContact::slotConnectedToServer()
 {
-	// TODO: make this configurable: (on connect, join)
-	mEngine->joinChannel(mNickName);
+	// TODO: make this configurable: (if this channel is join on connetct, run this)
+	//mEngine->joinChannel(mNickName);
 }
 
 void IRCChannelContact::slotNamesList(const QString &channel, const QString &nickname, const int mode)
@@ -126,6 +145,7 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 	}
 	else {
 		IRCUserContact *contact = new IRCUserContact(mIdentity, nickname, KIRC::Normal);
+		contact->setOnlineStatus( KopeteContact::Online );
 		manager()->addContact((KopeteContact *)contact, true);
 
 		KopeteMessage msg((KopeteContact *)this, mContact,
@@ -154,15 +174,17 @@ void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString
 	}
 }
 
-void IRCChannelContact::setTopic( QString topic )
+void IRCChannelContact::setTopic( const QString &topic )
 {
 	bool okPressed = true;
-	if( topic.isNull() )
-		topic = KLineEditDlg::getText( i18n("New Topic"), i18n("Enter the new topic:"), mTopic, &okPressed, 0L );
+	QString newTopic = topic;
+	if( newTopic.isNull() )
+		newTopic = KLineEditDlg::getText( i18n("New Topic"), i18n("Enter the new topic:"), mTopic, &okPressed, 0L );
+
 	if( okPressed )
 	{
-		mTopic = topic;
-		mEngine->setTopic( mNickName, topic );
+		mTopic = newTopic;
+		mEngine->setTopic( mNickName, newTopic );
 	}
 }
 
@@ -177,6 +199,51 @@ void IRCChannelContact::slotTopicChanged( const QString &channel, const QString 
 	}
 }
 
+void IRCChannelContact::slotIncomingModeChange( const QString &nick, const QString &channel, const QString &mode )
+{
+	if( mNickName.lower() == channel.lower() )
+	{
+		KopeteMessage msg((KopeteContact *)this, mContact, i18n("%1 sets mode %2 %3").arg(nick).arg(mode).arg(mNickName), KopeteMessage::Internal);
+		manager()->appendMessage(msg);
+	}
+}
+
+void IRCChannelContact::setMode( const QString &mode )
+{
+	mEngine->changeMode( mNickName, mode );
+}
+
+void IRCChannelContact::slotModeChanged()
+{
+	QString modeString;
+	if( actionModeT->isChecked() )
+		modeString.append( QString::fromLatin1("+t") );
+	else
+		modeString.append( QString::fromLatin1("-t") );
+
+	if( actionModeN->isChecked() )
+		modeString.append( QString::fromLatin1("+n") );
+	else
+		modeString.append( QString::fromLatin1("-n") );
+
+	if( actionModeS->isChecked() )
+		modeString.append( QString::fromLatin1("+s") );
+	else
+		modeString.append( QString::fromLatin1("-s") );
+
+	if( actionModeM->isChecked() )
+		modeString.append( QString::fromLatin1("+m") );
+	else
+		modeString.append( QString::fromLatin1("-m") );
+
+	if( actionModeI->isChecked() )
+		modeString.append( QString::fromLatin1("+i") );
+	else
+		modeString.append( QString::fromLatin1("-i") );
+
+	setMode( modeString );
+}
+
 void IRCChannelContact::slotConnectionClosed()
 {
 	setOnlineStatus( KopeteContact::Offline );
@@ -188,11 +255,15 @@ KActionCollection *IRCChannelContact::customContextMenuActions()
 	{
 		actionJoin->setEnabled( true );
 		actionPart->setEnabled( false );
+		actionTopic->setEnabled( false );
+		actionModeMenu->setEnabled( false );
 	}
 	else if ( onlineStatus() == KopeteContact::Online || onlineStatus() == KopeteContact::Away )
 	{
 		actionJoin->setEnabled( false );
 		actionPart->setEnabled( true );
+		actionTopic->setEnabled( true );
+		actionModeMenu->setEnabled( true );
 	}
 
 	return mCustomActions;

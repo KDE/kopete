@@ -20,7 +20,7 @@
 
 #include "kopeteprotocol.h"
 #include "ircidentity.h"
-#include "irccontact.h"
+#include "ircusercontact.h"
 
 #include <qpixmap.h>
 

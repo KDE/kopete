@@ -57,7 +57,9 @@ public:
 	void whoisUser(const QString &user);
 	void requestDccConnect(const QString &, const QString &, unsigned int port, DCCClient::Type type);
 	void sendNotice(const QString &target, const QString &message);
-	void setPassword(const QString &passwd) { mPasswd = passwd; }
+	void setPassword(const QString &passwd) { mPasswd = passwd; };
+	void changeMode( const QString &target, const QString &mode);
+
 enum UserClass
 {
 	Normal = 0,
@@ -121,6 +123,8 @@ signals:
 	void incomingDccSendRequest(const QHostAddress &, unsigned int port, const QString &nickname, const QString &, unsigned int, DCCClient &chatObject);
 	void incomingEndOfWhois(const QString &nickname);
 	void incomingNotice(const QString &originating, const QString &message);
+	void incomingModeChange(const QString &nick, const QString &channel, const QString &mode);
+
 private:
 	bool waitingFinishMotd;
 	bool loggedIn;

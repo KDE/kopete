@@ -24,6 +24,7 @@ class IRCIdentity;
 class KActionCollection;
 class KAction;
 class KActionMenu;
+class IRCChannelContact;
 
 class IRCUserContact : public IRCContact
 {
@@ -44,11 +45,17 @@ class IRCUserContact : public IRCContact
 
 	private slots:
 		void slotWhois();
+		void slotOp();
+		void slotDeop();
+		void slotVoice();
+		void slotDevoice();
+		void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 
 	private:
 		KIRC::UserClass mUserclass;
 
 		KActionCollection *mCustomActions;
+		KActionMenu *actionModeMenu;
 		KAction *actionOp;
 		KAction *actionDeop;
 		KAction *actionVoice;
@@ -56,6 +63,8 @@ class IRCUserContact : public IRCContact
 		KActionMenu *actionKick;
 		KActionMenu *actionBan;
 		KAction *actionWhois;
+
+		void contactMode( const QString &mode );
 };
 
 #endif

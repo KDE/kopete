@@ -43,10 +43,12 @@ class IRCContact : public KopeteContact
 
 		// Nickname stuff
 		void setNickName(const QString &nickname) { mNickName = nickname; }
-		const QString &nickName() { return mNickName; }
+		const QString &nickName() const { return mNickName; }
 
 		virtual KopeteMessageManager* manager( bool canCreate = false );
 		virtual const QString caption() const;
+
+		KopeteContact *locateUser( const QString &nickName );
 
 	signals:
 		void endSession();
@@ -76,7 +78,7 @@ class IRCContact : public KopeteContact
 		IRCIdentity *mIdentity;
 		QString mNickName;
 
-		KopeteContact *locateUser( const QString &nickName );
+
 };
 
 #endif

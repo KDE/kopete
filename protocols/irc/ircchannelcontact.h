@@ -24,6 +24,8 @@ class IRCIdentity;
 class KopeteMetaContact;
 class KActionCollection;
 class KAction;
+class KActionMenu;
+class KToggleAction;
 class KopeteMessageManager;
 class KopeteMessage;
 
@@ -45,7 +47,8 @@ class IRCChannelContact : public IRCContact
 		// FINISH
 
 	public slots:
-		void setTopic( QString topic = QString::null );
+		void setTopic( const QString &topic = QString::null );
+		void setMode( const QString &mode = QString::null );
 
 	private slots:
 		void slotConnectedToServer();
@@ -57,6 +60,8 @@ class IRCChannelContact : public IRCContact
 		void slotTopicChanged(const QString &channel, const QString &nick, const QString &newtopic);
 		void slotConnectionClosed();
 		void slotNamesList(const QString &channel, const QString &nickname, const int);
+		void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
+		void slotModeChanged();
 
 	private:
 		// KAction stuff:
@@ -64,6 +69,15 @@ class IRCChannelContact : public IRCContact
 		KAction *actionJoin;
 		KAction *actionPart;
 		KAction *actionTopic;
+		KActionMenu *actionModeMenu;
+
+		KToggleAction *actionModeT;
+		KToggleAction *actionModeN;
+		KToggleAction *actionModeS;
+		KToggleAction *actionModeI;
+		KToggleAction *actionModeP;
+		KToggleAction *actionModeM;
+		KToggleAction *actionModeB;
 
 		QString mTopic;
 };

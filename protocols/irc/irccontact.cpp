@@ -27,6 +27,7 @@
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
+#include "ircusercontact.h"
 #include "irccontact.h"
 
 struct whoIsInfo
@@ -80,7 +81,7 @@ KopeteMessageManager* IRCContact::manager(bool)
 		mMsgManager->setDisplayName( caption() );
 		QObject::connect( mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
 		QObject::connect( mMsgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
-		if( mEngine->isLoggedIn() )
+		if( inherits("IRCChannelContact") && mEngine->isLoggedIn() )
 			mEngine->joinChannel(mNickName);
 	}
 	return mMsgManager;
@@ -121,6 +122,10 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 					KopeteMessage msg((KopeteContact*)this, mContact, i18n("Topic for %1 is %2").arg(mNickName).arg(chan->topic()), KopeteMessage::Internal);
 					manager()->appendMessage(msg);
 				}
+			}
+			else if( command == QString::fromLatin1("mode") && commandCount > 2 )
+			{
+				mEngine->changeMode( *commandLine.at(1), commandArgs.section(' ', 1) );
 			}
 			else if( command == QString::fromLatin1("whois") && commandCount > 1 )
 			{
@@ -235,6 +240,12 @@ void IRCContact::slotWhoIsComplete(const QString &nickname)
 		//User info
 		msg = KopeteMessage( c, mContact, QString::fromLatin1("[%1] (%2@%3) : %4\n").arg(nickname).arg(w->userName).arg(w->hostName).arg(w->realName), KopeteMessage::Internal );
 		manager()->appendMessage(msg);
+
+		if( w->isOperator )
+		{
+			msg = KopeteMessage( c, mContact, i18n("[%1] is an IRC operator").arg(nickname), KopeteMessage::Internal );
+			manager()->appendMessage(msg);
+		}
 
 		//Channels
 		QString channelText;

@@ -299,7 +299,8 @@ void KIRC::slotReadyRead()
 
 			emit incomingNotice(originating.section('!', 0, 0), message);
 			continue;
-		} else if (command == QString("PART"))
+		}
+		else if (command == QString("PART"))
 		{
 			/*
 			This signal emits when a user parts a channel
@@ -349,7 +350,7 @@ void KIRC::slotReadyRead()
 			/*
 			The topic of a channel changed. emit the channel, new topic, and the person who changed it
 			*/
-			QString channel = line.section(' ', 2, 2);
+   			QString channel = line.section(' ', 2, 2);
 			QString newTopic = line.section(' ', 3);
 			newTopic = newTopic.remove(0, 1);
 			QString changer = line.section('!', 0, 0);
@@ -357,12 +358,16 @@ void KIRC::slotReadyRead()
 			emit incomingTopicChange(channel, changer, newTopic);
 			continue;
 		}
-		else if (command == "MODE")
+		else if (command == QString::fromLatin1("MODE") )
 		{
+			QString nick = line.section('!', 0, 0);
+			QString target = line.section(' ', 2, 2);
+			QString mode = line.section(' ', 3);
 
+			emit( incomingModeChange( nick, target, mode ) );
+			continue;
 			//emit incomingGiveOp(nickname, channel);
 			//emit incomingTakeOp(nickname, channel);
-
 		}
 		else if (command == "KICK")
 		{
@@ -375,6 +380,7 @@ void KIRC::slotReadyRead()
 			by.remove(0,1);
 
 			emit incomingKick(nickname, channel, by, reason);
+			continue;
 		}
 		else if (number.contains(QRegExp("^\\d\\d\\d$")))
 		{
@@ -671,6 +677,7 @@ void KIRC::slotReadyRead()
 					break;
 				}
 			}
+			continue;
 		}
 		else if ( line.section(' ', 0, 0) == "PING" )
 		{
@@ -753,6 +760,14 @@ void KIRC::sendCtcpVersion(const QString &target)
 	statement.append(0x01);
 	statement.append("\r\n");
 	writeString(statement);
+}
+
+void KIRC::changeMode(const QString &target, const QString &mode)
+{
+	if (state() == QSocket::Connected && loggedIn == true)
+	{
+		writeString( QString::fromLatin1("MODE %1 %2\r\n").arg( target ).arg( mode ) );
+	}
 }
 
 void KIRC::partChannel(const QString &name, const QString &reason)
