@@ -33,8 +33,7 @@
 #include <kapplication.h>
 
 #include <ktextedit.h>
-#include <khtmlview.h>
-#include <khtml_part.h>
+#include <krun.h>
 
 AIMUserInfoDialog::AIMUserInfoDialog(AIMContact *c, AIMAccount *acc, bool modal,
 	QWidget *parent, const char* name)
@@ -88,8 +87,15 @@ AIMUserInfoDialog::AIMUserInfoDialog(AIMContact *c, AIMAccount *acc, bool modal,
 		userInfoEdit=0L;
 		mMainWidget->userInfoFrame->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
 		QVBoxLayout *l = new QVBoxLayout(mMainWidget->userInfoFrame);
-		userInfoView = new KTextBrowser( mMainWidget->userInfoFrame, "userInfoView" );
+		userInfoView = new KTextBrowser(mMainWidget->userInfoFrame, "userInfoView");
 		userInfoView->setTextFormat(AutoText);
+		userInfoView->setNotifyClick(true);
+		QObject::connect(
+			userInfoView, SIGNAL(urlClick(const QString&)),
+			this, SLOT(slotUrlClicked(const QString&)));
+		QObject::connect(
+			userInfoView, SIGNAL(mailClick(const QString&, const QString&)),
+			this, SLOT(slotMailClicked(const QString&, const QString&)));
 		showButton(Cancel, false);
 		setButtonText(Ok, i18n("Close"));
 		setEscapeButton(Ok);
@@ -187,6 +193,16 @@ void AIMUserInfoDialog::slotUpdateProfile()
 	{
 		userInfoView->setText(contactProfile);
 	}
+}
+
+void AIMUserInfoDialog::slotUrlClicked(const QString &url)
+{
+	new KRun(KURL(url));
+}
+
+void AIMUserInfoDialog::slotMailClicked(const QString&, const QString &address)
+{
+	new KRun(KURL(address));
 }
 
 #include "aimuserinfo.moc"

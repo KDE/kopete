@@ -48,6 +48,8 @@ class AIMUserInfoDialog : public KDialogBase
 		void slotCloseClicked();
 		void slotUpdateClicked();
 		void slotUpdateProfile();
+		void slotUrlClicked(const QString&);
+		void slotMailClicked(const QString&, const QString&);
 
 	signals:
 //		void updateNickname(const QString &);
