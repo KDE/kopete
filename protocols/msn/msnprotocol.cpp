@@ -71,7 +71,7 @@ void MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 	QString displayName = serializedData[ "displayName" ];
 	QString lists = serializedData[ "lists" ];
 	QStringList groups  = QStringList::split( ",", serializedData[ "groups" ] );
-	
+
 	QDict<KopeteAccount> accounts=KopeteAccountManager::manager()->accounts(this);
 
 	if(accountId.isNull())
@@ -79,7 +79,7 @@ void MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 		//Kopete 0.6.x contactlist
 		// FIXME: This should be in a KConfUpdate - Martijn
 		KGlobal::config()->setGroup("MSN");
-		accountId=KGlobal::config()->readEntry( "UserID", "" );;
+		accountId=KGlobal::config()->readEntry( "UserID", "" );
 	}
 	KopeteAccount *account=accounts[accountId];
 	if( !account )
@@ -90,11 +90,11 @@ void MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 	c->setOnlineStatus( FLN );
 	for( QStringList::Iterator it = groups.begin() ; it != groups.end(); ++it )
 		c->contactAddedToGroup( ( *it ).toUInt(), 0L  /* FIXME - m_groupList[ ( *it ).toUInt() ]*/ );
-		
+
 	c->setInfo( "PHH" , serializedData[ "PHH" ] );
 	c->setInfo( "PHW" , serializedData[ "PHW" ] );
 	c->setInfo( "PHM" , serializedData[ "PHM" ] );
-	
+
 	//kdDebug( 14140 ) << k_funcinfo << lists << " does it contains R ? : " << (bool)(lists.contains("R" )) << endl;
 
 	c->setBlocked(  (bool)(lists.contains('B')) );
