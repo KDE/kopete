@@ -20,6 +20,9 @@
 
 #include "kopetecontactproperty.h"
 
+/**
+ * This namespace contains all of Kopete's core classes and functions.
+ */
 namespace Kopete
 {
 
@@ -153,7 +156,7 @@ namespace Global
 		private:
 			static Properties *mSelf;
 			PropertiesPrivate *d;
-	}; // END class Properties
+	}; // end class Properties
 
 } // Global
 
