@@ -71,8 +71,10 @@ void AutoReplacePreferences::reopen()
 	if( wordsList.isEmpty() )
 	{
 		// basic list, key/value
-		wordsList = QStringList::split( ",", "i,I" );
-			//"ur,your,r,are,u,you,theres,there is,arent,are not,dont,do not" );
+		// a list based on i18n should be provided, i.e. for italian
+		// "qsa,qualcosa,qno,qualcuno" remember UTF-8 accents
+		wordsList = QStringList::split( ",", i18n( "w2r", 
+			"ur,your,r,are,u,you,theres,there is,arent,are not,dont,do not" ) );
 	}
 
 	// Removes and deletes all the items in this list view and triggers an update
@@ -173,7 +175,7 @@ void AutoReplacePreferences::slotAddCouple()
 void AutoReplacePreferences::slotRemoveCouple()
 {
 	QListViewItem * lvi = preferencesDialog->m_list->selectedItem();
-      if(lvi)
+      	if(lvi)
 		delete lvi;
 }
 /*
