@@ -35,6 +35,7 @@ public:
 		File = 1
 	};
 	DCCClient(QHostAddress host, unsigned int port, unsigned int size, Type type);
+	~DCCClient();
 	void dccAccept();
 	void dccAccept(const QString &filename);
 	void dccCancel();
@@ -69,6 +70,7 @@ public:
 		File = 1
 	};
 	DCCServer(Type type, const QString filename = "");
+	~DCCServer();
 	virtual void newConnection(int socket);
 	bool sendMessage(const QString &message);
 	DCCClient *mClient;

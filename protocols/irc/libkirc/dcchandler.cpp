@@ -62,6 +62,11 @@ DCCClient::DCCClient(QHostAddress host, unsigned int port, unsigned int size, Ty
 	}
 }
 
+DCCClient::~DCCClient()
+{
+	delete mFile;
+}
+
 void DCCClient::dccAccept(const QString &filename)
 {
 	if (mType == File)
@@ -184,6 +189,13 @@ DCCServer::DCCServer(Type type, const QString filename)
 	}
 }
 
+DCCServer::~DCCServer()
+{
+	delete mFile;
+	delete mSocket;
+}
+
+
 void DCCServer::newConnection(int socket)
 {
 	if (mType == Chat)
@@ -234,14 +246,14 @@ void DCCServer::slotError(int error)
 void DCCServer::slotReadyRead()
 {
 	uint32_t ack;
-	
+
 	mSocket->readBlock((char*)&ack, sizeof(ack));
 	ack = ntohl(ack);
-	
+
 	int percentage = (ack * 100 / mFile->size());
-	
+
 	emit incomingAckPercent(percentage);
-	
+
 	if (mFile->atEnd())
 		emit sendFinished();
 	else
