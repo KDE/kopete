@@ -51,6 +51,7 @@ public:
 	Kopete::Protocol *mProtocol;
 	bool isEmpty;
 	bool mCanBeDeleted;
+	unsigned int refcount;
 	bool customDisplayName;
 	QDateTime awayTime;
 	QString displayName;
@@ -68,6 +69,7 @@ Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
 	d->mProtocol = protocol;
 	d->isEmpty = others.isEmpty();
 	d->mCanBeDeleted = true;
+	d->refcount = 0;
 	d->view = 0L;
 	d->customDisplayName = false;
 	d->mayInvite = false;
@@ -402,7 +404,18 @@ void Kopete::ChatSession::receivedEventNotification( const QString& notification
 void Kopete::ChatSession::setCanBeDeleted ( bool b )
 {
 	d->mCanBeDeleted = b;
-	if ( b && !d->view )
+	if (d->refcount < b && !d->view )
+		deleteLater();
+}
+
+void Kopete::ChatSession::ref ()
+{
+	d->refcount++;
+}
+void Kopete::ChatSession::deref ()
+{
+	d->refcount--;
+	if ( d->refcount < 1 && d->mCanBeDeleted && !d->view )
 		deleteLater();
 }
 
@@ -428,7 +441,7 @@ KopeteView* Kopete::ChatSession::view( bool canCreate, const QString &requestedP
 void Kopete::ChatSession::slotViewDestroyed()
 {
 	d->view = 0L;
-	if ( d->mCanBeDeleted )
+	if ( d->mCanBeDeleted && d->refcount < 1)
 		deleteLater();
 }
 

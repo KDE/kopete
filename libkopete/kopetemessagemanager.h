@@ -80,7 +80,7 @@ public:
 	/**
 	 * Delete a chat manager instance
 	 * You shouldn't delete the KMM yourself. it will be deleted when the chatwindow is closed
-	 * see also @ref setCanBeDeleted()
+	 * see also @ref setCanBeDeleted() , @ref deref() 
 	 */
 	~ChatSession();
 
@@ -312,8 +312,24 @@ public slots:
 	 *  this method.
 	 * default is true.
 	 * If there are no chatwindow when setting it to true, the kmm will be deleted.
+	 *
+	 * @deprecated  use ref and deref
 	 */
 	void setCanBeDeleted ( bool canBeDeleted );
+
+	/**
+	 * reference count the chat session.
+	 * the chat session may be deleted only if the count reach 0
+	 * if you ref, don't forget to deref
+	 * @see deref()
+	 */
+	void ref();
+	/**
+	 * dereference count the chat session
+	 * if the reference counter reach 0 and there is no chat window open, the chat session will be deleted.
+	 */
+	void deref();
+		
 
 	/**
 	 * Send a message to the user

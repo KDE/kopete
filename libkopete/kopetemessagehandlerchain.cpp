@@ -17,6 +17,7 @@
 #include "kopetemessagehandlerchain.h"
 #include "kopetemessagehandler.h"
 #include "kopetemessageevent.h"
+#include "kopetemessagemanager.h"
 
 #include <kdebug.h>
 
@@ -152,6 +153,7 @@ ProcessMessageTask::ProcessMessageTask( MessageHandlerChain::Ptr chain, MessageE
 {
 	QTimer::singleShot( 0, this, SLOT( slotStart() ) );
 	connect( event, SIGNAL( done( Kopete::MessageEvent* ) ), this, SLOT( slotDone() ) );
+	event->message().manager()->ref();
 }
 
 ProcessMessageTask::~ProcessMessageTask()
@@ -167,6 +169,7 @@ void ProcessMessageTask::slotStart()
 void ProcessMessageTask::slotDone()
 {
 	emitResult();
+	d->event->message().manager()->deref();
 }
 
 MessageEvent *ProcessMessageTask::event()
