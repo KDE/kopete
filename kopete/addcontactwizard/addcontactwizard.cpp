@@ -37,7 +37,7 @@
 AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 : AddContactWizard_Base( parent, name )
 {
-	QStringList groups =KopeteContactList::contactList()->groups().toStringList();
+	QStringList groups = KopeteContactList::contactList()->groups().toStringList();
 
 	QStringList::ConstIterator it = groups.begin();
 	for( ; it != groups.end(); ++it )
@@ -64,10 +64,13 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	}
 
 	if ( pluginCount == 1 )
+	{
 		pluginItem->setOn( true );
+		setAppropriate( selectService, false );
+	}
 
-	setNextEnabled(page3, (pluginCount == 1));
-	setFinishEnabled(page4, true);
+	setNextEnabled(selectService, (pluginCount == 1));
+	setFinishEnabled(finis, true);
 
 	connect( addGroupButton, SIGNAL(clicked()) , SLOT(slotAddGroupClicked()) );
 	connect( protocolListView, SIGNAL(clicked(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
@@ -81,20 +84,18 @@ void AddContactWizard::slotProtocolListClicked( QListViewItem *)
 {
 	// Just makes sure a protocol is selected before allowing the user to continue
 	bool oneIsChecked = false;
-	for (QListViewItem *listItem = protocolListView->firstChild(); listItem != 0; listItem = listItem->itemBelow())
+
+	for (QListViewItemIterator it(protocolListView); it.current(); ++it)
 	{
-		QCheckListItem *check = dynamic_cast<QCheckListItem *>(listItem);
-		if (!check)
-		{
-			kdDebug(14000) << "WARNING : AddContactWizard::slotProtocolListClicked : one listItem is not a CheckListItem" << endl;
-		}
-		else if (check->isOn())
+		QCheckListItem *check = dynamic_cast<QCheckListItem *>(it.current());
+		if (check && check->isOn())
 		{
 			oneIsChecked = true;
 			break;
 		}
 	}
-	setNextEnabled(page3,oneIsChecked);
+
+	setNextEnabled(selectGroup ,oneIsChecked);
 }
 
 void AddContactWizard::slotGroupListClicked( QListViewItem *)
@@ -129,33 +130,33 @@ void AddContactWizard::slotAddGroupClicked()
 
 	if ( !groupName.isNull() && ok)
 		new QCheckListItem( groupList, groupName, QCheckListItem::CheckBox);
-
 }
 
 void AddContactWizard::slotRemoveGroupClicked()
 {
 }
-
+#include <iostream>
 void AddContactWizard::accept()
 {
-	KopeteMetaContact *m=new KopeteMetaContact();
-
-	for (QListViewItem *listItem = groupList->firstChild(); listItem != 0; listItem = listItem->itemBelow())
+	KopeteMetaContact *m = new KopeteMetaContact();
+	bool topLevel = true;
+	for (QListViewItemIterator it(groupList); it.current(); ++it)
 	{
-		QCheckListItem *check = dynamic_cast<QCheckListItem *>(listItem);
-		if (!check)
-		{
-			kdDebug(14000) << "WARNING : AddContactWizard::slotGroupListClicked : one listItem is not a CheckListItem" << endl;
-		}
-		else 	if (check->isOn())
+		QCheckListItem *check = dynamic_cast<QCheckListItem *>(it.current());
+		if (check && check->isOn())
 		{
 			m->addToGroup(KopeteContactList::contactList()->getGroup(check->text()));
+			topLevel = false;
 		}
 	}
-
+	m->setTopLevel(topLevel);
 	
-	for (AddContactPage *ePage = protocolPages.first(); ePage ; ePage = protocolPages.next())
+cout << "finishing page: " << protocolPages.first() << endl;
+	for (AddContactPage *ePage = protocolPages.first(); 
+		 ePage; 
+		 ePage = protocolPages.next())
 	{
+cout << "finishing page: " << ePage << endl;
 		ePage->slotFinish(m); 
 	}
 	KopeteContactList::contactList()->addMetaContact(m);
@@ -164,42 +165,48 @@ void AddContactWizard::accept()
 
 void AddContactWizard::next()
 {
-	if (currentPage() == page3)
+	if (currentPage() == selectService ||
+		(currentPage() == intro && !appropriate( selectService )))
 	{
-
-		for (AddContactPage *ePage = protocolPages.first(); ePage != 0; ePage = protocolPages.first())
+		for (AddContactPage *ePage = protocolPages.first(); 
+			 ePage != 0; 
+			 ePage = protocolPages.first())
 		{
 			protocolPages.remove(ePage);
-			if(ePage) delete ePage;
+			delete ePage;
 		}
 
 		// We don't keep track of this pointer because it gets deleted when the wizard does (which is what we want)
-		for (ProtocolBoxItem *item = dynamic_cast<ProtocolBoxItem *>(protocolListView->firstChild()); item != 0; item = dynamic_cast<ProtocolBoxItem *>(item->itemBelow()))
+		for (QListViewItemIterator it(protocolListView); it.current(); ++it)
 		{
-			if (!item) break; // this shouldn't happen
-			if (item->isOn())
+			ProtocolBoxItem *item = dynamic_cast<ProtocolBoxItem *>(it.current());
+			if (item && item->isOn())
 			{
-				if (!item->protocol) break; // this shouldn't happen either, but I hate crashes
+				// this shouldn't happen either, but I hate crashes
+				if (!item->protocol) continue;
+
 				AddContactPage *addPage = item->protocol->createAddContactWidget(this);
-				if (!addPage) break;
+				if (!addPage) continue;
+
 				QString title = i18n( "The protocol name is prepended here",
-					"%1 protocol contact information" ).arg( item->text() );
+									  "%1 contact information" )
+									 .arg( item->text() );
 				addPage->show();
-				insertPage(addPage, title, indexOf(page4));
-				protocolPages.append(addPage);
+				insertPage( addPage, title, indexOf( selectGroup) );
+				protocolPages.append( addPage );
 			}
 		}
 		QWizard::next();
 		return;
 	}
-	if (currentPage() != page1 && currentPage() != page2 && currentPage() != page3 && currentPage() != page4)
+	if (currentPage() != intro && 
+		currentPage() != selectService && 
+		currentPage() != selectGroup && 
+		currentPage() != finis)
 	{
 		AddContactPage *ePage = dynamic_cast<AddContactPage *>(currentPage());
-		if (!ePage) return;
-		if (!ePage->validateData())
+		if (!ePage || !ePage->validateData())
 			return;
-		QWizard::next();
-		return;
 	}
 	QWizard::next();
 }
