@@ -489,39 +489,38 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					break;
 				} // END SRV_METAABOUT
 
-				case 235:
+				case 235: // SRV_METAEMAILS
 				{
 					ICQMailList mailList;
 					kdDebug(14150) << k_funcinfo << "RECV (SRV_METAEMAILS)" << endl;
 					BYTE numMails = fromicqsrv.getLEByte();
 //					kdDebug(14150) << k_funcinfo << "numMails=" << numMails << endl;
-					if (numMails > 0)
+					//the server is returning zero even if there are mail addresses
+					while (fromicqsrv.length() > 0 )
 					{
 						BYTE publishMail;
 						char *tmptxt;
 						QString mailAddress;
 
-						for(unsigned int mailx=0; mailx <= numMails; mailx++)
-						{
-							publishMail = fromicqsrv.getLEByte();
-							tmptxt = fromicqsrv.getLELNTS();
-							mailAddress = QString::fromLocal8Bit(tmptxt); // TODO: encoding
-							mailList.insert(mailAddress, (publishMail==0x01));
-							delete [] tmptxt;
+						publishMail = fromicqsrv.getLEByte();
+						tmptxt = fromicqsrv.getLELNTS();
+						mailAddress = QString::fromLocal8Bit(tmptxt); // TODO: encoding
+						mailList.insert(mailAddress, (publishMail==0x01));
+						delete [] tmptxt;
 
-							kdDebug(14150) << k_funcinfo <<
+						kdDebug(14150) << k_funcinfo <<
 								"mail address:" << mailAddress <<
 								", publish=" << publishMail << endl;
-						}
 					}
-					else
+					
+					if ( mailList.count() == 0)
 					{
 						kdDebug(14150) << k_funcinfo <<
 							"no mail addresses in SRV_METAEMAILS" << endl;
 					}
 					emit gotICQEmailUserInfo(sequence, mailList);
 					break;
-				}
+				} // END SRV_METAEMAILS
 
 				case 240:
 				{
