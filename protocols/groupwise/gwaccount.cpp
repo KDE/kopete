@@ -25,6 +25,9 @@
 #include <klocale.h>
 #include <kpopupmenu.h>
 
+#include "kopeteawayaction.h"
+#include "kopetecontactlist.h"
+#include "kopetegroup.h"
 #include "kopetemetacontact.h"
 #include "kopetepassword.h"
 
@@ -40,7 +43,7 @@
 #include <sys/utsname.h>
 
 GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& accountID, const char *name )
-: Kopete::PasswordedAccount ( parent, accountID, 0, name )
+: Kopete::PasswordedAccount ( parent, accountID, 0, "groupwiseaccount" )
 {
 	// Init the myself contact
 	// FIXME: I think we should add a global self metaContact (Olivier)
@@ -67,12 +70,11 @@ KActionMenu* GroupWiseAccount::actionMenu()
 	theActionMenu->insert( new KAction (GroupWiseProtocol::protocol()->groupwiseAvailable.caption(),
 		GroupWiseProtocol::protocol()->groupwiseAvailable.iconFor(this), 0, this, SLOT ( slotGoOnline() ), this,
 		"actionGroupWiseConnect") );
-	theActionMenu->insert( new KAction (GroupWiseProtocol::protocol()->groupwiseAway.caption(),
-		GroupWiseProtocol::protocol()->groupwiseAway.iconFor(this), 0, this, SLOT ( slotGoAway() ), this,
+	theActionMenu->insert( new KopeteAwayAction (GroupWiseProtocol::protocol()->groupwiseAway.caption(),
+		GroupWiseProtocol::protocol()->groupwiseAway.iconFor(this), 0, this, SLOT ( slotGoAway( const QString & ) ), this,
 		"actionGroupWiseAway") );
-	// CUSTOMS GO HERE ?
-	theActionMenu->insert( new KAction (GroupWiseProtocol::protocol()->groupwiseBusy.caption(),
-		GroupWiseProtocol::protocol()->groupwiseBusy.iconFor(this), 0, this, SLOT ( slotGoBusy() ), this,
+	theActionMenu->insert( new KopeteAwayAction (GroupWiseProtocol::protocol()->groupwiseBusy.caption(),
+		GroupWiseProtocol::protocol()->groupwiseBusy.iconFor(this), 0, this, SLOT ( slotGoBusy( const QString & ) ), this,
 		"actionGroupWiseBusy") );
 	theActionMenu->insert( new KAction ( "A&ppear Offline", "jabber_invisible", 0, this, 
 		SLOT( slotGoAppearOffline() ), this, 
@@ -96,21 +98,26 @@ bool GroupWiseAccount::addContactToMetaContact(const QString& contactId, const Q
 const int GroupWiseAccount::port() const
 {
 	return 8300;
-	return pluginData( protocol(), "Port" ).toInt();
+	return pluginData( KopeteAccount::protocol(), "Port" ).toInt();
 }
 
 const QString GroupWiseAccount::server() const
 {
 	return "reiser.suse.de";
-	return pluginData( protocol(), "Server" );
+	return pluginData( KopeteAccount::protocol(), "Server" );
 }
 
-void GroupWiseAccount::setAway( bool away, const QString & /* reason */ )
+GroupWiseProtocol *GroupWiseAccount::protocol()
+{
+	return static_cast<GroupWiseProtocol *>( KopeteAccount::protocol() );
+}
+
+void GroupWiseAccount::setAway( bool away, const QString & reason )
 {
 	if ( away )
-		slotGoAway();
+		setStatus( GroupWise::Away, reason);
 	else
-		slotGoOnline();
+		setStatus( GroupWise::Available );
 }
 
 void GroupWiseAccount::connectWithPassword( const QString &password )
@@ -154,6 +161,20 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	m_client = new Client( this );
 	
 	// TODO: Connect Client signals
+	// we connected successfully
+	QObject::connect( m_client, SIGNAL( loggedIn() ), SLOT( slotLoggedIn() ) );
+	// folder listed
+	QObject::connect( m_client, SIGNAL( folderReceived( const FolderItem & ) ), SLOT( receiveFolder( const FolderItem & ) ) );
+	// contact listed
+	QObject::connect( m_client, SIGNAL( contactReceived( const ContactItem & ) ), SLOT( receiveContact( const ContactItem & ) ) );
+	// contact details listed
+	QObject::connect( m_client, SIGNAL( contactUserDetailsReceived( const ContactDetails & ) ), SLOT( receiveContactUserDetails( const ContactDetails & ) ) );
+	// contact status changed
+	QObject::connect( m_client, SIGNAL( statusReceived( const QString &, Q_UINT16, const QString & ) ), SLOT( receiveStatus( const QString &, Q_UINT16 , const QString & ) ) );
+	// incoming message
+	QObject::connect( m_client, SIGNAL( messageReceived( const ConferenceEvent &, const Message & ) ), SLOT( receiveMessage( const ConferenceEvent &, const Message & ) ) );
+	
+	QObject::connect( m_client, SIGNAL( ourStatusChanged( GroupWise::Status, const QString &, const QString & ) ), SLOT( changeOurStatus( GroupWise::Status, const QString &, const QString & ) ) );
 	
 	struct utsname utsBuf;
 
@@ -168,6 +189,7 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	NovellDN dn;
 	dn.dn = "maeuschen";
 	dn.server = "reiser.suse.de";
+	myself()->setOnlineStatus( protocol()->groupwiseConnecting );
 	m_client->connectToServer( m_clientStream, dn, true ); 
 }
 
@@ -177,51 +199,59 @@ void GroupWiseAccount::disconnect()
 	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOffline );
 }
 
+void GroupWiseAccount::setStatus( GroupWise::Status status, const QString & reason )
+{
+	if ( !(myself()->onlineStatus() == protocol()->groupwiseConnecting ) )
+	{
+		if ( isConnected() )
+		{
+			m_client->setStatus( status, reason );
+			//myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAway );
+		}
+		else
+		{
+			kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Must be connected before changing status" << endl;
+			m_initialStatus = status;
+			m_initialReason = reason;
+			connect();
+		}
+	}
+}
+
 void GroupWiseAccount::slotGoOnline()
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-
-	if (!isConnected ())
-		connect ();
-	else
-		myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAvailable );
+	setStatus( GroupWise::Available );
 }
 
-void GroupWiseAccount::slotGoAway()
+void GroupWiseAccount::slotGoAway( const QString & reason )
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-
-	if (!isConnected ())
-		connect();
-	
-	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAway );
+	setStatus( GroupWise::Away, reason );
 }
 
-void GroupWiseAccount::slotGoBusy()
+void GroupWiseAccount::slotGoBusy( const QString & reason )
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-
-	if (!isConnected ())
-		connect();
-	
-	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseBusy );
+	setStatus( GroupWise::Busy, reason );
 }
 
 void GroupWiseAccount::slotGoAppearOffline()
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-
-	if (!isConnected ())
-		connect();
+	setStatus( GroupWise::Offline );
 }
 
 void GroupWiseAccount::slotGoOffline()
 {
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "NOT IMPLEMENTED" << endl;
+	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOffline );
+}
 
-	if (isConnected ())
-		disconnect ();
-	updateContactStatus();
+void GroupWiseAccount::slotLoggedIn()
+{
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	myself()->setOnlineStatus( protocol()->groupwiseAvailable );
 }
 
 void GroupWiseAccount::slotConnError()
@@ -242,6 +272,7 @@ void GroupWiseAccount::slotCSDisconnected()
 void GroupWiseAccount::slotCSConnected()
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Connected to Groupwise server." << endl;
+	
 }
 
 void GroupWiseAccount::slotCSError( int error )
@@ -289,19 +320,16 @@ void GroupWiseAccount::slotTLSReady( int secLayerCode )
 	m_client->start( server(), accountId(), password().cachedValue() );
 }
 
-void GroupWiseAccount::receivedMessage( const QString &message )
+void GroupWiseAccount::receiveMessage( const ConferenceEvent & event, const Message & message )
 {
-	// Look up the contact the message is from
-	QString from;
-	GroupWiseContact* messageSender;
-	
-	from = message.section( ':', 0, 0 );
-	//from = QString::fromLatin1("echo");
-	messageSender = static_cast<GroupWiseContact *>( contacts ()[ from ] );
-	
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " got a message from " << from << ", " << messageSender << ", is: " << message << endl;
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " got a message in conference: " << event.guid << ",  from: " << event.user << ", message is: " << message << endl;
+
+	// Look up the contact the message is from in the contact list
+	//GroupWiseContact* messageSender;
+	//messageSender = static_cast<GroupWiseContact *>( contacts ()[ from ] );
+	// if not found, create a new temporary contactt
 	// Pass it on to the contact to process and display via a KMM
-	messageSender->receivedMessage( message );
+	//messageSender->receivedMessage( message );
 }
 
 void GroupWiseAccount::updateContactStatus()
@@ -340,5 +368,124 @@ void GroupWiseAccount::slotGotMyDetails( Field::FieldList & fields )
 	myself()->setProperty( GroupWiseProtocol::protocol()->propLastName, surname );
 	myself()->setProperty( GroupWiseProtocol::protocol()->propFullName, fullName );
 	myself()->setProperty( GroupWiseProtocol::protocol()->propAwayMessage, awayMessage );
+}
+
+void GroupWiseAccount::receiveFolder( const FolderItem & folder )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo 
+			<< " objectId: " << folder.id 
+			<< " sequence: " << folder.sequence 
+			<< " parentId: " << folder.parentId 
+			<< " displayName: " << folder.name << endl;
+	if ( folder.parentId != 0 )
+	{
+		kdWarning( GROUPWISE_DEBUG_GLOBAL ) << " - received a nested folder.  These werre not supported in GroupWise or Kopete as of Sept 2004, aborting! (parentId = " << folder.parentId << ")" << endl;
+		return;
+	}
+	
+	bool found = false;
+	QPtrList<KopeteGroup> groupList = KopeteContactList::contactList()->groups();
+	for ( KopeteGroup *grp = groupList.first(); grp; grp = groupList.next() )
+		if ( grp->displayName() == folder.name )
+		{
+			grp->setPluginData( protocol(), accountId() + " objectId", QString::number( folder.id ) );
+			found = true;
+			break;
+		}
+
+	if ( found )
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - folder already exists locally" << endl;
+	else
+	{
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - creating local folder" << endl;
+		KopeteGroup * grp = new KopeteGroup( folder.name );
+		grp->setPluginData( protocol(), accountId() + " objectId", QString::number( folder.id ) );
+		KopeteContactList::contactList()->addGroup( grp );
+	}
+}
+
+void GroupWiseAccount::receiveContact( const ContactItem & contact )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo 
+			<< " objectId: " << contact.id 
+			<< ", sequence: " << contact.sequence 
+			<< ", parentId: " << contact.parentId 
+			<< ", dn: " << contact.dn 
+			<< ", displayName: " << contact.displayName << endl;
+			
+	// HACK: lowercased DN
+	GroupWiseContact * c = static_cast<GroupWiseContact *>( contacts()[ contact.dn.lower() ] );
+	if ( c )
+	{
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - found contact in list, checking to see it's in this group " << endl;
+		// check the metacontact is in the group this listing-of-the-contact is in...
+		KopeteMetaContact *metaContact = c->metaContact();
+		KopeteGroupList groupList = KopeteContactList::contactList()->groups();
+		for ( KopeteGroup *grp = groupList.first(); grp; grp = groupList.next() )
+		{
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - seeking in group named: " << grp->displayName() << ", id: " << grp->pluginData( protocol(), accountId() + " objectId" ).toInt() << " our parentId is: " << contact.parentId << endl;
+			if ( grp->pluginData( protocol(), accountId() + " objectId" ).toInt() == contact.parentId )
+			{
+				kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - matches, adding." << endl;
+				metaContact->addToGroup( grp ); //addToGroup() is safe to call if already a member
+				break;
+			}
+		}
+		// need to update parentId? and sequence
+	}
+	else
+	{
+		KopeteMetaContact *metaContact = new KopeteMetaContact();
+		// HACK: lowercased DN
+		GroupWiseContact * c = new GroupWiseContact( this, contact.dn.lower(), metaContact, contact.displayName, contact.id, contact.parentId, contact.sequence );
+		KopeteGroupList groupList = KopeteContactList::contactList()->groups();
+		for ( KopeteGroup *grp = groupList.first(); grp; grp = groupList.next() )
+		{
+			if ( grp->pluginData( protocol(), accountId() + " objectId" ).toInt() == contact.parentId )
+			{
+				metaContact->addToGroup( grp );
+				break;
+			}
+		}
+		KopeteContactList::contactList()->addMetaContact( metaContact );
+	}
+}
+
+void GroupWiseAccount::receiveContactUserDetails( const ContactDetails & details )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo 
+		<< "Auth attribute: " << details.authAttribute
+		<< "Away message: " << details.awayMessage
+		<< "CN" << details.cn
+		<< "DN" << details.dn
+		<< "fullName" << details.fullName
+		<< "surname" << details.surname
+		<< "givenname" << details.givenName
+		<< "status" << details.status
+		<< endl;
+	// HACK: lowercased DN
+	GroupWiseContact * c = static_cast<GroupWiseContact *>( contacts()[ details.dn.lower() ] );
+	Q_ASSERT( c );
+	c->updateDetails( details );
+}
+
+void GroupWiseAccount::receiveStatus( const QString & contactId, Q_UINT16 status, const QString &awayMessage )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "got status for: " << contactId << ", status: " << status << ", away message: " << awayMessage << endl;
+	GroupWiseContact * c = static_cast<GroupWiseContact *>( contacts()[ contactId ] );
+	if ( c )
+	{
+		c->setOnlineStatus( protocol()->gwStatusToKOS( status ) );
+		c->setProperty( protocol()->propAwayMessage, awayMessage );
+	}
+	else
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " couldn't find " << contactId << endl;
+}
+
+void GroupWiseAccount::changeOurStatus( GroupWise::Status status, const QString & awayMessage, const QString & autoReply )
+{
+	myself()->setOnlineStatus( protocol()->gwStatusToKOS( status ) );
+	myself()->setProperty( protocol()->propAwayMessage, awayMessage );
+	myself()->setProperty( protocol()->propAutoReply, autoReply );
 }
 #include "gwaccount.moc"
