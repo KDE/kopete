@@ -43,6 +43,7 @@ public:
 
 private slots:
 	void registerNewAccount();
+	void newUin();
 
 private:
 	GaduProtocol*		protocol_;
