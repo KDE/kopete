@@ -36,6 +36,7 @@ public:
 
 	uint components();
 	Component *component( uint n );
+	Component *componentAt( const QPoint &pt );
 
 	/** Repaint this item */
 	virtual void repaint() = 0;

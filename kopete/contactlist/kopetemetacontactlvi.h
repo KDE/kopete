@@ -43,9 +43,7 @@ class KopeteEvent;
 /**
  * @author Martijn Klingens <klingens@kde.org>
  */
-class KopeteMetaContactLVI :
-//public QObject, public KListViewItem
-public Kopete::UI::ListView::Item
+class KopeteMetaContactLVI : public Kopete::UI::ListView::Item
 {
 	Q_OBJECT
 
@@ -53,12 +51,6 @@ public:
 	KopeteMetaContactLVI( KopeteMetaContact *contact, KopeteGroupViewItem *parent );
 	KopeteMetaContactLVI( KopeteMetaContact *contact, QListViewItem *parent );
 	KopeteMetaContactLVI( KopeteMetaContact *contact, QListView *parent );
-	/**
-	 * Copy constructor.
-	 * Makes a second view of the same meta contact, if the meta contact
-	 * resides in multiple groups.
-	 */
-//	KopeteMetaContactLVI( KopeteMetaContactLVI *other, QListViewItem *parent );
 	~KopeteMetaContactLVI();
 
 	/**
@@ -81,14 +73,6 @@ public:
 	 * parent when not top-level
 	 */
 	KopeteGroupViewItem *parentGroup() const { return m_parentGroup; };
-
-	/* Duncan experiment */
-/*	virtual void setColor( const QColor &color );
-	virtual void setColor( const QString &color );
-	virtual void setText( int column, const QString &text );
-	QColor color();
-	QString colorName();*/
-
 
 	void movedToGroup(KopeteGroup * );
 	void rename( const QString& name );
@@ -116,19 +100,6 @@ public:
 	 * the actual icon width.
 	 */
 	QRect contactRect( const KopeteContact *c ) const;
-
-	/**
-	 * Returns the first X position used by contact icons.
-	 * Returns the entire width of the LVI if there are no KopeteContacts.
-	 */
-	uint firstContactIconX() const;
-
-	/**
-	 * Returns the last X position used by contact icons, i.e. the first
-	 * position AFTER the last icon.
-	 * Returns the entire width of the LVI if there are no KopeteContacts.
-	 */
-	uint lastContactIconX() const;
 
 	bool isGrouped() const;
 

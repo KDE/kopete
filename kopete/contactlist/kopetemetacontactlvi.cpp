@@ -440,26 +440,6 @@ QRect KopeteMetaContactLVI::contactRect( const KopeteContact *c ) const
 	return QRect();
 }
 
-uint KopeteMetaContactLVI::firstContactIconX() const
-{
-	return m_pixelWide;
-}
-
-uint KopeteMetaContactLVI::lastContactIconX() const
-{
-	QPtrList<KopeteContact> contacts = m_metaContact->contacts();
-
-	if ( contacts.isEmpty() )
-		return m_pixelWide;
-
-	QPtrListIterator<KopeteContact> it( contacts );
-	int mc_x = 0;
-	for ( ; it.current(); ++it )
-		mc_x += 16;
-
-	return mc_x + m_pixelWide + 4;
-}
-
 KopeteGroup *KopeteMetaContactLVI::group()
 {
 	if ( m_parentGroup && m_parentGroup->group() != KopeteGroup::topLevel() )

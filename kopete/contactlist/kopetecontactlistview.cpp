@@ -106,7 +106,6 @@ KopeteContactListViewToolTip::KopeteContactListViewToolTip( QWidget *parent,
 
 KopeteContactListViewToolTip::~KopeteContactListViewToolTip()
 {
-	QMimeSourceFactory::defaultFactory()->setImage( "kopete:icon", 0 );
 }
 
 void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
@@ -129,9 +128,15 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 
 	if( metaLVI )
 	{
+		//FIXME: this should be in the metacontact lvi, not here...
+
 		uint leftMargin = m_listView->treeStepSize() *
-				( item->depth() + ( m_listView->rootIsDecorated() ? 1 : 0 ) ) +
-				m_listView->itemMargin();
+		                  ( item->depth() + ( m_listView->rootIsDecorated() ? 1 : 0 ) ) +
+		                  m_listView->itemMargin();
+
+		uint xAdjust = itemRect.left() + leftMargin;
+		uint yAdjust = itemRect.top();
+		QPoint relativePos( pos.x() - xAdjust, pos.y() - yAdjust );
 
 		if( metaLVI->metaContact()->contacts().count() == 1 )
 		{
@@ -141,20 +146,14 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 		{
 			// Check if we are hovering over a protocol icon. If so, use that
 			// tooltip in the code below
-			uint xAdjust = itemRect.left() + leftMargin;
-			uint yAdjust = itemRect.top();
-			QPoint relativePos( pos.x() - xAdjust, pos.y() - yAdjust );
 			contact = metaLVI->contactForPoint( relativePos );
 
 			if( contact )
 			{
 				QRect iconRect = metaLVI->contactRect( contact );
 
-				itemRect = QRect(
-					iconRect.left() + xAdjust,
-					iconRect.top() + yAdjust,
-					iconRect.width(),
-					iconRect.height() );
+				itemRect = QRect( iconRect.left() + xAdjust, iconRect.top() + yAdjust,
+				                  iconRect.width(), iconRect.height() );
 			}
 		}
 
@@ -166,28 +165,17 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 		else
 		{
 			KopeteMetaContact *mc = metaLVI->metaContact();
-			toolTip = i18n( "<b>%2</b><br><img src=\"kopete:icon\">&nbsp;%1" ).
-#if QT_VERSION < 0x030200
-				arg( mc->statusString() ).arg( QStyleSheet::escape( mc->displayName() ) );
-#else
-				arg( mc->statusString(), QStyleSheet::escape( mc->displayName() ) );
-#endif
-			QMimeSourceFactory::defaultFactory()->setImage( "kopete:icon",
-				SmallIcon( mc->statusIcon() ).convertToImage() );
+			toolTip = i18n( "<b>%2</b><br><img src=\"kopete-metacontact-icon:%3\">&nbsp;%1" ).
+			                arg( mc->statusString(), QStyleSheet::escape( mc->displayName() ), mc->metaContactId() );
 
 			if( mc->idleTime() > 0 )
 				toolTip += idleTime2String(mc->idleTime());
 
-			// Adjust the item rect on the right
-			uint first = metaLVI->firstContactIconX();
-			uint last  = metaLVI->lastContactIconX();
-
-			if ( first != last )
+			if ( Kopete::UI::ListView::Component *comp = metaLVI->componentAt( relativePos ) )
 			{
-				if ( pos.x() > int( itemRect.left() + leftMargin + first ) )
-					itemRect.setLeft( itemRect.left() + leftMargin + last );
-				else
-					itemRect.setWidth( leftMargin + first );
+				QRect iconRect = comp->rect();
+				itemRect = QRect( iconRect.left() + xAdjust, iconRect.top() + yAdjust,
+				                  iconRect.width(), iconRect.height() );
 			}
 		}
 	}
