@@ -256,3 +256,5 @@ void UserInfoDialog::show()
 }
 
 }
+
+#include "userinfodialog.moc"
