@@ -285,7 +285,7 @@ void KMSNChatService::slotSendMsg(QString message)
 	command += head;
 	msgSocket->writeBlock(command,command.length());
 #warning TODO: send our colors as well
-	emit msgReceived(myHandle, imService->getPublicName(), message, QFont(), QColor() );    // send the own msg to chat window
+	emit msgReceived(myHandle, MSNProtocol::protocol()->publicName(), message, QFont(), QColor() );    // send the own msg to chat window
 }
 
 void KMSNChatService::slotSocketClosed()

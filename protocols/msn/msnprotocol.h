@@ -83,6 +83,14 @@ public:
 		BLO     // blocked
 	};
 
+	enum List
+	{
+		FL,    // forward
+		AL,    // allow
+		BL,    // blocked
+		RL     // reverse
+	};
+
 	// KopeteProtocol reimplementation
 	virtual QString protocolIcon() const;
 	virtual AddContactPage *createAddContactWidget( QWidget *parent );
@@ -118,6 +126,17 @@ public:
 
 	KMSNService* msnService() const;
 
+	void setSilent( bool s ) { m_silent = s; }
+	bool isSilent() { return m_silent; }
+
+	QString msnId() const { return m_msnId; }
+
+	QString publicName() const { return m_publicName; }
+	/**
+	 * change the publicName to this new name
+	 */
+	void setPublicName( const QString &name );
+
 public slots:
 	void slotMessageDialogClosing( QString );
 	void slotIncomingChat( KMSNChatService *, QString );
@@ -131,13 +150,18 @@ public slots:
 	void slotIconRightClicked( const QPoint );
 
 	void slotConnectedToMSN( bool c );
-	void slotConnecting();
 
 	void slotUserStateChange( QString, QString, int ) const;
 	void slotStateChanged( QString status );
 	void slotUserSetOffline( QString ) const;
 	void slotInitContacts( QString, QString, QString );
 	void slotNewUserFound( QString );
+
+	/**
+	 * The publicName has successful changed
+	 * This is an anwser from setMyPublicName
+	 */
+	void slotPublicNameChanged(QString handle, QString publicName);
 
 	// Someone tries to talk with us
 	void slotNewUser( QString );
@@ -173,6 +197,11 @@ private slots:
 	 * Group name received during an LSG ( 'list groups' ) command
 	 */
 	void slotGroupListed( QString groupName, uint group );
+
+	/**
+	 * MSN has send the current publicName
+	 */
+	void slotPublicNameReceived(QString publicName);
 
 	/**
 	 * Contact was removed from the list
@@ -250,6 +279,11 @@ private:
 
 	static const MSNProtocol *s_protocol;
 	Status m_status;
+	uint m_serial;
+	bool m_silent;
+	QString m_msnId;
+	QString m_password;
+	QString m_publicName;
 };
 
 #endif

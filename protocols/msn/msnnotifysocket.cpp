@@ -558,17 +558,17 @@ void KMSNServiceSocket::addContact( const QString &handle, QString publicName, u
 	QString command;
 	QString strGroup;
 	strGroup.setNum(group);
-	if( list == KMSNService::FL )
+	if( list == MSNProtocol::FL )
 	{
 		command.sprintf("ADD %lu FL ",ID);
 		command += handle.utf8() + " " + handle.utf8() + " " +strGroup.utf8() + "\r\n";
 	}
-	if( list == KMSNService::AL )
+	if( list == MSNProtocol::AL )
 	{
 		command.sprintf("ADD %lu AL ",ID);
 		command += handle.utf8() + " " + publicName.replace(QRegExp(" "),"%20").utf8() + "\r\n";
 	}
-	if( list == KMSNService::BL )
+	if( list == MSNProtocol::BL )
 	{
 		command.sprintf("ADD %lu BL ",ID);
 		command += handle.utf8() + " " + publicName.replace(QRegExp(" "),"%20").utf8() + "\r\n";
@@ -584,19 +584,19 @@ void KMSNServiceSocket::removeContact( const QString &handle, uint group, int li
 	strGroup.setNum(group);
 	switch(list)
 	{
-		case KMSNService::FL:
+		case MSNProtocol::FL:
 		{
 			command.sprintf("REM %lu FL ",ID);
 			command += handle.utf8() + " " +strGroup.utf8() + "\r\n";
 			break;
 		}
-		case KMSNService::AL:
+		case MSNProtocol::AL:
 		{
 			command.sprintf("REM %lu AL ",ID);
 			command += handle.utf8() + "\r\n";
 			break;
 		}
-		case KMSNService::BL:
+		case MSNProtocol::BL:
 		{
 			command.sprintf("REM %lu BL ",ID);
 			command += handle.utf8() + "\r\n";
