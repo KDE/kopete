@@ -279,9 +279,9 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 				case 'F':  //insert Fonts
 					if( F_first ) // <font>....
 					{
-						message += QString::fromLatin1( "<font " );
+						message += QString::fromLatin1( "<font" );
 						if ( d->fgColor.isValid() )
-							message += QString::fromLatin1( "color=\"" ) + d->fgColor.name() + QString::fromLatin1( "\"" );
+							message += QString::fromLatin1( " color=\"" ) + d->fgColor.name() + QString::fromLatin1( "\"" );
 						if ( d->font != QFont() )
 							message += QString::fromLatin1( " face=\"" ) + d->font.family() + QString::fromLatin1( "\"" );
 						message += QString::fromLatin1( ">" );
