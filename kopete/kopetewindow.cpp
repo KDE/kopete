@@ -407,6 +407,14 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 		i18n( "<qt>Closing the main window will keep Kopete running in the "
 		"system tray. Use 'Quit' from the 'File' menu to quit the application.</qt>" ),
 		i18n( "Docking in System Tray" ), "hideOnCloseInfo" );
+
+	// FIXME: Instead of ignoring the close event it's much better to have
+	//        KopeteSystemTray ref() the KApplication object and deref it on
+	//        quit. This way we can pass on the event to Qt unmodified instead.
+	//        We may or may not need to remove the destructive close from the
+	//        WFlags of the window though when doing this. Ideally the code
+	//        should be able to handle the case where no main window exists,
+	//        but I'm not 100% sure this is actually the case. - Martijn
 	hide();
 	e->ignore();
 }
