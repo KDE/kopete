@@ -3,7 +3,7 @@
 
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
-    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2004 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -50,6 +50,9 @@ namespace Kopete {
 const QString NSCID_ELEM = QString::fromLatin1( "nameSourceContactId" );
 const QString NSPID_ELEM = QString::fromLatin1( "nameSourcePluginId" );
 const QString NSAID_ELEM = QString::fromLatin1( "nameSourceAccountId" );
+const QString PSCID_ELEM = QString::fromLatin1( "photoSourceContactId" );
+const QString PSPID_ELEM = QString::fromLatin1( "photoSourcePluginId" );
+const QString PSAID_ELEM = QString::fromLatin1( "photoSourceAccountId" );
 
 class  MetaContact::Private
 { public:
@@ -59,13 +62,15 @@ class  MetaContact::Private
 	QString nameSourceCID;
 	QString nameSourcePID;
 	QString nameSourceAID;
+	QString photoSourceCID;
+	QString photoSourcePID;
+	QString photoSourceAID;
 	QPtrList<Group> groups;
 	QMap<QString, QMap<QString, QString> > addressBook;
 	bool temporary;
 	QString metaContactId;
 	OnlineStatus::StatusType onlineStatus;
 	static bool s_addrBookWritePending;
-	bool isTrackingPhoto;
 };
 
 KABC::AddressBook* MetaContact::m_addressBook = 0L;
@@ -97,6 +102,7 @@ MetaContact::MetaContact()
 	d = new Private;
 
 	setNameSource( 0 );
+	setPhotoSource( 0 );
 	d->temporary = false;
 
 	d->onlineStatus = Kopete::OnlineStatus::Offline;
@@ -116,9 +122,6 @@ MetaContact::MetaContact()
 	addToGroup( Group::topLevel() );
 			 //i'm not sure this is correct -Olivier
 			 // we probably should do the check in groups() instead
-
-
-	d->isTrackingPhoto=false;
 }
 
 MetaContact::~MetaContact()
@@ -208,13 +211,18 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 	else
 	{
 		// must check before removing, or will always be false
-		bool wasTracking = ( nameSource() == c );
+		bool wasTrackingName = ( nameSource() == c );
+		// must check before removing, or will always be false
+		bool wasTrackingPhoto = ( photoSource() == c );
 
 		d->contacts.remove( c );
 
-		// Set new name tracking (or disable if no subcontacts left -- implicit
-		if( wasTracking )
+		// Set new name and photo tracking (or disable if no subcontacts left -- implicit
+		if( wasTrackingName )
 			setNameSource( d->contacts.first() );
+			
+		if( wasTrackingPhoto )
+			setPhotoSource( d->contacts.first() );
 
 		if(!deleted)
 		{  //If this function is tell by slotContactRemoved, c is maybe just a QObject
@@ -585,6 +593,27 @@ Contact *MetaContact::nameSource() const
 	return 0;
 }
 
+Contact *MetaContact::photoSource() const
+{
+	// quick-out for contacts not tracking
+	if( d->photoSourceCID.isEmpty() )
+		return 0;
+	
+	for( QPtrListIterator< Contact > it ( d->contacts ); it.current(); ++it )
+	{
+		if( d->photoSourceCID == it.current()->contactId() &&
+			d->photoSourcePID == it.current()->protocol()->pluginId() &&
+			d->photoSourceAID == it.current()->account()->accountId() )
+		{
+			return it;
+		}
+	}
+	
+	// Invalid tracking information.  We don't clear the tracking  it in case the contact 
+	// is only temporarily unavailable (ie. plugin was disabled / broken).
+	return 0;
+}
+
 void MetaContact::setNameSource( Contact *contact )
 {
 	if ( contact != 0 )
@@ -606,6 +635,24 @@ void MetaContact::setNameSource( Contact *contact )
 	emit persistentDataChanged();
 }
 
+void MetaContact::setPhotoSource( Contact *contact )
+{
+	if ( contact != 0 )
+	{
+		d->photoSourceCID = contact->contactId();
+		d->photoSourcePID = contact->protocol()->pluginId();
+		d->photoSourceAID = contact->account()->accountId();
+	}
+	else
+	{
+		// Clear our name tracking
+		d->photoSourceCID = "";
+		d->photoSourcePID = "";
+		d->photoSourceAID = "";
+	}
+	emit persistentDataChanged();
+}
+
 void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 		const QVariant&, const QVariant &newValue  )
 {
@@ -623,6 +670,7 @@ void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 			setNameSource( ns );
 		}
 	}
+	/* disabled until gof fixes msn
 	else if ( key == Global::Properties::self()->photo().key() )
 	{
 		// If the metacontact is linked to a kabc entry
@@ -648,6 +696,7 @@ void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 			}
 		}
 	}
+	*/
 
 	//TODO:  check if the property was persistent, and emit, not only when it's the displayname
 	emit persistentDataChanged();
@@ -760,7 +809,10 @@ const QDomElement MetaContact::toXML()
 	if( !d->metaContactId.isEmpty()  )
 	{
 		QDomElement photo = metaContact.createElement( QString::fromLatin1("photo" ) );
-		photo.setAttribute( QString::fromLatin1("track") , QString::fromLatin1( d->isTrackingPhoto ? "1" : "0" ) );
+		//photo.setAttribute( QString::fromLatin1("track") , QString::fromLatin1( d->isTrackingPhoto ? "1" : "0" ) );
+		displayName.setAttribute( PSCID_ELEM, d->nameSourceCID );
+		displayName.setAttribute( PSPID_ELEM, d->nameSourcePID );
+		displayName.setAttribute( PSAID_ELEM, d->nameSourceAID );
 		metaContact.documentElement().appendChild( photo );
 	}
 
@@ -815,7 +867,9 @@ bool MetaContact::fromXML( const QDomElement& element )
 		}
 		else if( contactElement.tagName() == QString::fromLatin1( "photo" ) )
 		{
-			d->isTrackingPhoto = contactElement.attribute(QString::fromLatin1("track")).toUInt() == 1;
+			d->photoSourceCID = contactElement.attribute( PSCID_ELEM );
+			d->photoSourcePID = contactElement.attribute( PSPID_ELEM );
+			d->photoSourceAID = contactElement.attribute( PSAID_ELEM );
 		}
 		else if( contactElement.tagName() == QString::fromLatin1( "groups" ) )
 		{

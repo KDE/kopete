@@ -1,7 +1,7 @@
 /*
     kopetecontact.h - Kopete Contact
 
-    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2004 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @ tiscalinet.be>
 
@@ -27,6 +27,7 @@
 
 #include <kopete_export.h>
 
+class QImage;
 class KPopupMenu;
 class KAction;
 
@@ -231,7 +232,35 @@ public:
 	 */
 	KPopupMenu *popupMenu( ChatSession *manager = 0L );
 	
+	/**
+	 * \brief Get whether or not this contact is capable of showing a contact photo
+	 *
+	 *
+	 * \see setPhotoCapable()
+	 * \return true if the protocol for this contact is capable of providing a contact photo
+	 * \return false if the protocol for this contact is not capable of providing a photo
+	 *
+	 * @todo have a capabilioties. or move to protocol capabilities
+	 */
+	bool isPhotoCapable() const;
 
+	/**
+	 * \brief Set the photo provider capability of this contact
+	 *
+	 * \param photocap The new photo provider capability setting
+	 * @todo have a capabilioties. or move to protocol capabilities
+	 */
+	void setPhotoCapable( bool photocap );
+	
+	/**
+	 * @brief Returns this contact's photo avatar.
+	 *
+	 * Returns a image for the contact. It should be
+	 * implemented by all contacts which have the setPhotoCapable()
+	 * flag set to true.
+	 */
+	virtual QImage photo() const;
+	
 	/**
 	 * \brief Get whether or not this contact is capable of file transfers
 	 *

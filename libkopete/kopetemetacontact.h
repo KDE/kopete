@@ -2,7 +2,7 @@
     kopetemetacontact.h - Kopete Meta Contact
 
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2004 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @tiscalinet.be>
     Copyright (c) 2003      by Will Stephenson        <will@stevello.free-online.co.uk>
 
@@ -131,17 +131,30 @@ public:
 	void setDisplayName( const QString &name );
 
 	/**
-	 * @brief get the subcontact being tracked (null if not tracking)
+	 * @brief get the subcontact being tracked for its displayname (null if not tracking)
 	 *
 	 * The MetaContact will adjust its displayName() every time the 
 	 * "nameSource" changes its name.
 	 */
 	Contact *nameSource() const;
+	
+	/**
+	 * @brief get the subcontact being tracked for its photo(null if not tracking)
+	 *
+	 * The MetaContact will adjust its photo() every time the 
+	 * "nameSource" changes its name.
+	 */
+	Contact *photoSource() const;
 
 	/**
 	 * @brief set the subcontact whose name is to be tracked (set to null to disable tracking)
 	 */
 	void setNameSource( Contact* contact );
+	
+	/**
+	 * @brief set the subcontact whose photo is to be tracked (set to null to disable tracking)
+	 */
+	void setPhotoSource( Contact* contact );
 
 	/**
 	 * Temporary contacts will not be serialized.
@@ -168,15 +181,10 @@ public:
 	 */
 	void removeContact( Contact *c , bool deleted = false );
 	
-	
-	
-	
 	/**
 	 * @return the preferred child Contact for communication, or 0 if none is suitable (all unreachable).
 	 */
 	Contact *preferredContact();
-
-	
 
 public: 
 

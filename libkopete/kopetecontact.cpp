@@ -1,7 +1,7 @@
 /*
     kopetecontact.cpp - Kopete Contact
 
-    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2004 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @tiscalinet.be>
 
@@ -44,6 +44,7 @@
 
 //For the moving to another metacontact dialog
 #include <qlabel.h>
+#include <qimage.h>
 #include <qmime.h>
 #include <qvbox.h>
 #include <klistview.h>
@@ -56,6 +57,7 @@ struct Contact::Private
 {
 public:
 	bool fileCapable;
+	bool photoCapable;
 
 	OnlineStatus onlineStatus;
 	Account *account;
@@ -83,6 +85,7 @@ Contact::Contact( Account *account, const QString &contactId,
 	d->contactId = contactId;
 	d->metaContact = parent;
 	d->fileCapable = false;
+	d->photoCapable = false;
 	d->account = account;
 	d->idleTime = 0;
 	d->icon = icon;
@@ -557,6 +560,25 @@ bool Contact::isFileCapable() const
 void Contact::setFileCapable( bool filecap )
 {
 	d->fileCapable = filecap;
+}
+
+bool Contact::isPhotoCapable() const
+{
+	return d->photoCapable;
+}
+
+void Contact::setPhotoCapable( bool photocap )
+{
+	d->photoCapable = photocap;
+}
+
+QImage Contact::photo() const
+{
+	kdWarning( 14010 ) << k_funcinfo << "Plugin "
+		<< protocol()->pluginId() << " has enabled photo providing, "
+		<< "but didn't implement it!" << endl;
+	// FIXME Duncan: provide a default question mark image or something
+	return QImage();
 }
 
 bool Contact::canAcceptFiles() const
