@@ -60,12 +60,6 @@ public:
 
 	virtual KActionCollection *customChatWindowPopupActions( const KopeteMessage &, DOM::Node & );
 
-	/**
-	 * Returns a pointer to the KSParser. The KSParser changes IRC color codes into HTML
-	 * for use in KopeteMessage.
-	 */
-	KSParser *parser() const { return mParser; };
-
 	static IRCProtocol *protocol();
 
 	static KopeteOnlineStatus IRCServerOnline() { return s_protocol->m_ServerOnline; };
@@ -125,7 +119,6 @@ private:
 
 	void simpleModeChange( const QString &, KopeteMessageManager *, const QString &mode );
 
-	KSParser *mParser;
 	DOM::Node activeNode;
 	IRCAccount *activeAccount;
 };

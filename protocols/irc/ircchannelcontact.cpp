@@ -416,7 +416,7 @@ void IRCChannelContact::privateMessage(IRCContact *from, IRCContact *to, const Q
 	if(to == this)
 	{
 		KopeteMessage msg(from, manager()->members(), message, KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat);
-		msg.setBody( m_account->protocol()->parser()->parse( msg.escapedBody() ), KopeteMessage::RichText );
+		msg.setBody( KSParser::parse( msg.escapedBody() ), KopeteMessage::RichText );
 		/*to->*/appendMessage(msg);
 	}
 }
@@ -426,7 +426,7 @@ void IRCChannelContact::action(IRCContact *from, IRCContact *to, const QString &
 	if(to == this)
 	{
 		KopeteMessage msg(from, manager()->members(), action, KopeteMessage::Action, KopeteMessage::PlainText, KopeteMessage::Chat);
-		msg.setBody( m_account->protocol()->parser()->parse( msg.escapedBody() ), KopeteMessage::RichText );
+		msg.setBody( KSParser::parse( msg.escapedBody() ), KopeteMessage::RichText );
 		/*to->*/appendMessage(msg);
 	}
 }

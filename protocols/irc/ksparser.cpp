@@ -27,6 +27,8 @@ Modified by Jason Keirstead <jason@keirstead.org>
 #include <kdebug.h>
 #include "ksparser.h"
 
+KSParser KSParser::m_parser;
+
 const QColor KSParser::IRC_Colors[17]=
 {
 	Qt::white,
@@ -48,7 +50,23 @@ const QColor KSParser::IRC_Colors[17]=
 	QColor() // default invalid color, must be the last
 };
 
+KSParser::KSParser()
+{
+	kdDebug(14120) << k_funcinfo << endl;
+}
+
+KSParser::~KSParser()
+{
+	kdDebug(14120) << k_funcinfo << endl;
+}
+
+/* NOTE: If thread corruption are seen simply ad a qlock here */
 QString KSParser::parse(const QString &message)
+{
+	return m_parser._parse(message);
+}
+
+QString KSParser::_parse(const QString &message)
 {
 	QString res;
 	m_tags.clear();

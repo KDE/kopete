@@ -139,21 +139,21 @@ void IRCServerContact::engineInternalError(KIRC::EngineError engineError, const 
 	}
 
 	KopeteMessage msg(this, manager()->members(), error+QString(ircmsg.raw()), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-	msg.setBody(m_account->protocol()->parser()->parse(msg.escapedBody().stripWhiteSpace()), KopeteMessage::RichText);
+	msg.setBody(KSParser::parse(msg.escapedBody().stripWhiteSpace()), KopeteMessage::RichText);
 	appendMessage(msg);
 }
 
 void IRCServerContact::engineSentMessage(const KIRCMessage &ircmsg)
 {
 	KopeteMessage msg(m_account->myself(), manager()->members(), QString(ircmsg.raw()), KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat);
-	msg.setBody(m_account->protocol()->parser()->parse(msg.escapedBody().stripWhiteSpace()), KopeteMessage::RichText);
+	msg.setBody(KSParser::parse(msg.escapedBody().stripWhiteSpace()), KopeteMessage::RichText);
 	appendMessage(msg);
 }
 
 void IRCServerContact::engineReceivedMessage(const KIRCMessage &ircmsg)
 {
 	KopeteMessage msg(this, manager()->members(), QString(ircmsg.raw()), KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat);
-	msg.setBody(m_account->protocol()->parser()->parse(msg.escapedBody().stripWhiteSpace()), KopeteMessage::RichText);
+	msg.setBody(KSParser::parse(msg.escapedBody().stripWhiteSpace()), KopeteMessage::RichText);
 	appendMessage(msg);
 }
 

@@ -219,7 +219,7 @@ void IRCUserContact::privateMessage(IRCContact *from, IRCContact *to, const QStr
 		if(to==account()->myself())
 		{
 			KopeteMessage msg(from, from->manager()->members(), message, KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat);
-			msg.setBody( m_account->protocol()->parser()->parse( msg.escapedBody() ), KopeteMessage::RichText );
+			msg.setBody( KSParser::parse( msg.escapedBody() ), KopeteMessage::RichText );
 			from->appendMessage(msg);
 		}
 		else
@@ -237,7 +237,7 @@ void IRCUserContact::action(IRCContact *from, IRCContact *to, const QString &act
 		if(to==account()->myself())
 		{
 			KopeteMessage msg(from, from->manager()->members(), action, KopeteMessage::Action, KopeteMessage::PlainText, KopeteMessage::Chat);
-			msg.setBody( m_account->protocol()->parser()->parse( msg.escapedBody() ), KopeteMessage::RichText );
+			msg.setBody( KSParser::parse( msg.escapedBody() ), KopeteMessage::RichText );
 			from->appendMessage(msg);
 		}
 		else

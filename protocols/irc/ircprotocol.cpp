@@ -65,8 +65,6 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	new IRCPreferences("irc_protocol", this);
 
-	mParser = new KSParser();
-
 	KConfig *cfg = KGlobal::config();
         cfg->setGroup("IRC");
 
@@ -149,7 +147,6 @@ IRCProtocol * IRCProtocol::protocol()
 
 IRCProtocol::~IRCProtocol()
 {
-	delete mParser;
 }
 
 void IRCProtocol::slotMessageFilter( KopeteMessage &msg )

@@ -268,7 +268,7 @@ void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 				kdDebug() << k_funcinfo << "Attribute:" << attribute << ", Value:" << value << endl;
 				if( attribute == QString::fromLatin1("color") )
 				{
-					int ircColor = m_account->protocol()->parser()->colorForHTML( value );
+					int ircColor = KSParser::colorForHTML( value );
 					if( ircColor > -1 )
 						replacement.prepend( QString( QChar(0x03) ).append( QString::number(ircColor) ) ).append( QChar( 0x03 ) );
 				}
@@ -349,7 +349,7 @@ void IRCContact::listedChannel(const QString &channel, uint users, const QString
 	{
 		QString message = i18n("%1\t(%2 Users) Topic is %3").arg(channel).arg(users).arg(topic);
 		KopeteMessage msg(this, manager()->members(), message, KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		msg.setBody( m_account->protocol()->parser()->parse( msg.escapedBody() ), KopeteMessage::RichText );
+		msg.setBody( KSParser::parse( msg.escapedBody() ), KopeteMessage::RichText );
 		appendMessage(msg);
 	}
 }

@@ -24,10 +24,14 @@
 class KSParser
 {
 public:
-	QString parse(const QString &);
+	static QString parse(const QString &);
 	static int colorForHTML( const QString &html );
 
+	~KSParser();
 private:
+	KSParser();
+
+	QString _parse(const QString &);
 	QString pushTag(const QString &, const QString & = QString::null);
 	QString popTag(const QString &);
 	QString toggleTag(const QString &);
@@ -40,6 +44,7 @@ private:
 	}
 
 private:
+	static KSParser m_parser;
 	static const QColor IRC_Colors[17];
 
 	QValueStack<QString> m_tags;
