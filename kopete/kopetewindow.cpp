@@ -410,7 +410,7 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 {
 	// Note that KSystemTray closes all windows when you select quit()
 	// from it. This means that closeEvent will be called twice on exit.
-	Kopete *app = static_cast<Kopete *>( kapp );
+	KopeteApplication *app = static_cast<KopeteApplication *>( kapp );
 
 	// also close if our tray icon is hidden!
 	if( app->isShuttingDown() || !KopetePrefs::prefs()->showTray() || !isShown() )
@@ -438,7 +438,7 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 
 void KopeteWindow::slotQuit()
 {
-	Kopete *app = static_cast<Kopete *>( kapp );
+	KopeteApplication *app = static_cast<KopeteApplication *>( kapp );
 	app->quitKopete();
 }
 

@@ -17,8 +17,8 @@
     *************************************************************************
 */
 
-#ifndef KOPETE_H
-#define KOPETE_H
+#ifndef KOPETEAPPLICATION_H
+#define KOPETEAPPLICATION_H
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -34,13 +34,13 @@ class QSessionManager;
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  */
-class Kopete : public KUniqueApplication
+class KopeteApplication : public KUniqueApplication
 {
 	Q_OBJECT
 
 public:
-	Kopete();
-	~Kopete();
+	KopeteApplication();
+	~KopeteApplication();
 
 	/**
 	 * Method to return whether or not we're shutting down

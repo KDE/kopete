@@ -91,7 +91,7 @@ int main( int argc, char *argv[] )
 	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 	KUniqueApplication::addCmdLineOptions();
 
-	Kopete kopete;
+	KopeteApplication kopete;
 	kapp->dcopClient()->setDefaultObject( (new KopeteIface())->objId() ); // Has to be called before exec
 
 	kopete.exec();

@@ -41,7 +41,7 @@
 #include <config.h>
 #endif
 
-Kopete::Kopete()
+KopeteApplication::KopeteApplication()
 : KUniqueApplication( true, true, true )
 {
 	m_isShuttingDown = false;
@@ -53,7 +53,7 @@ Kopete::Kopete()
 	 * a messagebox, in case the msg configuration is missing. This messagebox
 	 * will result in a QApplication::enter_loop() call, an event loop is
 	 * created. At this point however the loop_level is 0, because this is all
-	 * still inside the Kopete constructor, before the exec() call from main.
+	 * still inside the KopeteApplication constructor, before the exec() call from main.
 	 * When the messagebox is finished the loop_level will drop down to zero and
 	 * QApplication thinks the application shuts down (this is usually the case
 	 * when the loop_level goes down to zero) . So it emits aboutToQuit(), to
@@ -72,7 +72,7 @@ Kopete::Kopete()
 	QTimer::singleShot( 0, this, SLOT( slotLoadPlugins() ) );
 }
 
-Kopete::~Kopete()
+KopeteApplication::~KopeteApplication()
 {
 	kdDebug( 14000 ) << k_funcinfo << endl;
 
@@ -80,7 +80,7 @@ Kopete::~Kopete()
 	//kdDebug( 14000 ) << k_funcinfo << "Done" << endl;
 }
 
-void Kopete::slotLoadPlugins()
+void KopeteApplication::slotLoadPlugins()
 {
 	//Create the command handler (looks silly)
 	KopeteCommandHandler::commandHandler();
@@ -166,7 +166,7 @@ void Kopete::slotLoadPlugins()
 }
 
 
-void Kopete::slotAllPluginsLoaded()
+void KopeteApplication::slotAllPluginsLoaded()
 {
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
@@ -210,7 +210,7 @@ void Kopete::slotAllPluginsLoaded()
 	}
 }
 
-void Kopete::quitKopete()
+void KopeteApplication::quitKopete()
 {
 	kdDebug( 14000 ) << k_funcinfo << endl;
 
@@ -249,7 +249,7 @@ void Kopete::quitKopete()
 	KopetePluginManager::self()->shutdown();
 }
 
-void Kopete::commitData( QSessionManager &sm )
+void KopeteApplication::commitData( QSessionManager &sm )
 {
 	m_isShuttingDown = true;
 	KUniqueApplication::commitData( sm );
