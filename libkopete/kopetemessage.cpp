@@ -303,7 +303,7 @@ QString KopeteMessage::plainBody() const
 	else
 	{
 		QString body = bodyText.text();
-		body.replace( QRegExp( QString::fromLatin1( "<br/>" ) ), QString::fromLatin1( "\n" ) );
+		body.replace( QRegExp( QString::fromLatin1( "< *br */? *>" ) , false ), QString::fromLatin1( "\n" ) );
 		body.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null );
 		body = unescape( body );
 		return body;
@@ -318,8 +318,7 @@ QString KopeteMessage::escapedBody() const
 	if( d->format == PlainText )
 	{
 		escapedBody = QStyleSheet::escape( escapedBody );
-
-		//Replace carriage returns inside the text
+ 		//Replace carriage returns inside the text
 		escapedBody.replace( QRegExp( QString::fromLatin1( "\n" ) ), QString::fromLatin1( "<br/>" ) );
 
 		//Replace a tab with 4 spaces
