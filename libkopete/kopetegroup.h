@@ -44,10 +44,7 @@ public:
 	GroupType type() const ;
 	void setType(GroupType);
 
-	bool isNull();
-
 	static KopeteGroup *toplevel;
-	static KopeteGroup *null;
 	static KopeteGroup *temporary;
 
 private:
@@ -64,8 +61,8 @@ class KopeteGroupList : public  QPtrList<KopeteGroup>
 		QStringList toStringList();
 };
 
-bool operator ==(const KopeteGroup &, const KopeteGroup &);
-bool operator !=(const KopeteGroup &, const KopeteGroup &);
+/*bool operator ==(const KopeteGroup &, const KopeteGroup &);
+bool operator !=(const KopeteGroup &, const KopeteGroup &);*/
 
 
 #endif

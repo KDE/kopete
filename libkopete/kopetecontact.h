@@ -23,13 +23,14 @@
 #include <qpixmap.h>
 #include <qlistbox.h>
 
-#include "kopetegroup.h"
+//#include "kopetegroup.h"
 
 class QString;
 class QPixmap;
 
 class KopeteEvent;
 class KopeteMetaContact;
+class KopeteGroup;
 class KAction;
 class KActionCollection;
 class KListBox;
@@ -235,7 +236,7 @@ public:
 	  * If the protocol has a contact-list server-side, it is needed to derive this fontction.  
 	  * TODO: Write a better description of this, this doc doesn't make sense
 	  */
-	 virtual void addThisTemporaryContact(KopeteGroup *group=KopeteGroup::null);
+	 virtual void addThisTemporaryContact(KopeteGroup *group=0l);
 	 
 	 /**
 	  * Returns whether or not this contact is capable of file transfers or not

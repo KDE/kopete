@@ -364,13 +364,13 @@ void KopeteMetaContact::moveToGroup(  KopeteGroup *from,  KopeteGroup *to )
 	if(m_temporary && to!=KopeteGroup::temporary)
 		return;
 
-	if (!m_groups.contains( from ) || (from==KopeteGroup::toplevel && !isTopLevel()) || from==KopeteGroup::null)
+	if (!from || !m_groups.contains( from ) || (from==KopeteGroup::toplevel && !isTopLevel()))
 	{
 		addToGroup(to);
 		return;
 	}
 	
-	if(  m_groups.contains( to ) || (to==KopeteGroup::toplevel && isTopLevel()) || to==KopeteGroup::null)
+	if(!to ||  m_groups.contains( to ) || (to==KopeteGroup::toplevel && isTopLevel()) )
 	{
 		removeFromGroup(from);
 		return;
@@ -395,7 +395,7 @@ void KopeteMetaContact::removeFromGroup(  KopeteGroup *from)
 	if(m_temporary && from==KopeteGroup::temporary)
 		return ;
 
-	if (!m_groups.contains( from ) || (from==KopeteGroup::toplevel && !isTopLevel()) || from==KopeteGroup::null)
+	if (!from || !m_groups.contains( from ) || (from==KopeteGroup::toplevel && !isTopLevel()))
 	{
 		/*kdDebug() << "KopeteMetaContact::removeFromGroup: This contact is removed from all groups, deleting contact" <<endl;
 		KopeteContactList::contactList()->removeMetaContact(this);*/
@@ -418,7 +418,7 @@ void KopeteMetaContact::addToGroup(  KopeteGroup *to )
 	if(m_temporary && to!=KopeteGroup::temporary)
 		return;
 
-	if(  m_groups.contains( to ) || (to==KopeteGroup::toplevel && isTopLevel()) || to==KopeteGroup::null)
+	if(!to ||  m_groups.contains( to ) || (to==KopeteGroup::toplevel && isTopLevel()))
 	{
 		return;
 	}

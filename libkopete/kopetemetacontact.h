@@ -146,7 +146,7 @@ public:
 	 * Temporary contacts will not be sarialized
 	 */
 	bool isTemporary() const;
-	void setTemporary( bool b = true ,KopeteGroup *group=KopeteGroup::null );
+	void setTemporary( bool b = true ,KopeteGroup *group=0l );
 
 	/**
 	 * When true, the meta-contact needs to be serialized

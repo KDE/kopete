@@ -19,10 +19,9 @@
 #include "kopetecontactlist.h"
 
 KopeteGroup* KopeteGroup::toplevel=new KopeteGroup(QString::null , KopeteGroup::TopLevel);
-KopeteGroup* KopeteGroup::null=new KopeteGroup(QString::null);
 KopeteGroup* KopeteGroup::temporary=new KopeteGroup("temporaryGroup",KopeteGroup::Temporary);
 
-bool operator==(const KopeteGroup &a, const KopeteGroup &b)
+/*bool operator==(const KopeteGroup &a, const KopeteGroup &b)
 {
 	if(a.type()==KopeteGroup::TopLevel && b.type()==KopeteGroup::TopLevel)
 		return true;
@@ -34,7 +33,7 @@ bool operator==(const KopeteGroup &a, const KopeteGroup &b)
 bool operator!=(const KopeteGroup &a, const KopeteGroup &b)
 {
 	return !(a==b);
-}
+}*/
 
 
 KopeteGroupList::KopeteGroupList(){}
@@ -59,8 +58,8 @@ KopeteGroup::KopeteGroup(QString _name, GroupType _type)  : QObject(KopeteContac
 }
 KopeteGroup::KopeteGroup()  : QObject(KopeteContactList::contactList())
 {
-	m_type=null->type();
-	m_displayName=null->displayName();
+	m_type=Classic;
+	m_displayName=QString::null;
 }
 /*KopeteGroup::KopeteGroup(const KopeteGroup &a)
 {
