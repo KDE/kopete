@@ -53,7 +53,7 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name,
 	m_langs.insert("en", i18n("English"));
 	m_langs.insert("zh", i18n("Chinese"));
 	m_langs.insert("fr", i18n("French"));
-	m_langs.insert("de", i18n("Deutsch"));
+	m_langs.insert("de", i18n("German"));
 	m_langs.insert("it", i18n("Italian"));
 	m_langs.insert("ja", i18n("Japanese"));
 	m_langs.insert("ko", i18n("Korean"));
