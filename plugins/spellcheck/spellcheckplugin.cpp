@@ -180,8 +180,6 @@ void SpellCheckPlugin::slotSpellDone( const QString & )
 {
 	manualCheckInProgress = false;
 
-	kdDebug() << k_funcinfo << endl;
-
 	KSpell::spellStatus status = mSpell->status();
 
 	if (status == KSpell::Error)

@@ -44,9 +44,9 @@ int SpellingHighlighter::highlightParagraph( const QString & text, int )
 	int stringPos = 0;
 	for( ReplacementMap::Iterator it = mReplacements->begin(); it != mReplacements->end(); ++it )
 	{
-		while( ( stringPos = text.find( QRegExp( QString::fromLatin1("[\\s\\W](%1)[\\s\\W]").arg(it.key()) ), stringPos + 1 ) ) > -1 )
+		while( ( stringPos = text.find( QRegExp( QString::fromLatin1("\\b(%1)\\b").arg(it.key()) ), stringPos + 1 ) ) > -1 )
 		{
-			setFormat( stringPos + 1, it.key().length(), highlightColor );
+			setFormat( stringPos, it.key().length(), highlightColor );
 		}
 	}
 
