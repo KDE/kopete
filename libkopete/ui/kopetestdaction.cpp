@@ -148,7 +148,7 @@ KListAction * KopeteStdAction::copyContact( const QObject *recvr, const char *sl
 
 KAction * KopeteStdAction::deleteContact( const QObject *recvr, const char *slot, QObject *parent, const char *name )
 {
-	return new KAction( i18n( "&Delete Contact..." ), QString::fromLatin1( "edittrash" ), 0, recvr, slot, parent, name );
+	return new KAction( i18n( "&Delete Contact" ), QString::fromLatin1( "editdelete" ), 0, recvr, slot, parent, name );
 }
 
 KAction * KopeteStdAction::changeAlias( const QObject *recvr, const char *slot, QObject *parent, const char *name )

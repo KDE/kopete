@@ -558,7 +558,7 @@ void AppearanceConfig::slotDeleteStyle()
 {
 	if( KMessageBox::warningContinueCancel( this, i18n("Are you sure you want to delete the style \"%1\"?")
 		.arg( mPrfsChatWindow->styleList->selectedItem()->text() ),
-		i18n("Delete Style"), i18n("Delete Style")) == KMessageBox::Continue )
+		i18n("Delete Style"), KGuiItem(i18n("Delete Style"),"editdelete")) == KMessageBox::Continue )
 	{
 		QListBoxItem *style = mPrfsChatWindow->styleList->selectedItem();
 		QString filePath = itemMap[ style ];
