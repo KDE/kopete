@@ -425,7 +425,7 @@ void AliasPreferences::slotEditAlias()
 
 void AliasPreferences::slotDeleteAliases()
 {
-	if( KMessageBox::questionYesNo(this, i18n("Are you sure you want to delete the selected aliases?"), i18n("Delete Aliases") ) == KMessageBox::Yes )
+	if( KMessageBox::warningContinueCancel(this, i18n("Are you sure you want to delete the selected aliases?"), i18n("Delete Aliases"), KGuiItem(i18n("Delete"), "editdelete") ) == KMessageBox::Continue )
 	{
 		QPtrList< QListViewItem > items = preferencesDialog->aliasList->selectedItems();
 		for( QListViewItem *i = items.first(); i; i = items.next() )

@@ -736,7 +736,7 @@ void IRCProtocol::slotDeleteNetwork()
 		Kopete::UI::Global::mainWidget(), i18n("<qt>Are you sure you want to delete the network <b>%1</b>?<br>"
 		"Any accounts which use this network will have to be modified.</qt>")
 		.arg(network), i18n("Deleting Network"),
-		i18n("&Delete Network"), QString::fromLatin1("AskIRCDeleteNetwork") ) == KMessageBox::Continue )
+		KGuiItem(i18n("&Delete Network"),"editdelete"), QString::fromLatin1("AskIRCDeleteNetwork") ) == KMessageBox::Continue )
 	{
 		IRCNetwork *net = m_networks[ network ];
 		for( QValueList<IRCHost*>::iterator it = net->hosts.begin(); it != net->hosts.end(); ++it )
@@ -754,7 +754,7 @@ void IRCProtocol::slotDeleteHost()
 	if( KMessageBox::warningContinueCancel(
 		Kopete::UI::Global::mainWidget(), i18n("<qt>Are you sure you want to delete the host <b>%1</b>?</qt>")
 		.arg(hostName), i18n("Deleting Host"),
-		i18n("&Delete Host"), QString::fromLatin1("AskIRCDeleteHost")) == KMessageBox::Continue )
+		KGuiItem(i18n("&Delete Host"),"editdelete"), QString::fromLatin1("AskIRCDeleteHost")) == KMessageBox::Continue )
 	{
 
 	}

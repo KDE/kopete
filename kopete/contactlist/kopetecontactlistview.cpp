@@ -98,7 +98,7 @@ public:
 		QPtrList<KopeteGroup> grps = KopeteContactList::contactList()->groups();
 		for ( QPtrListIterator<KopeteGroup> groupIt( grps ); groupIt.current(); ++groupIt )
 			addGroup( groupIt.current() );
-	
+
 		// Add the already existing meta contacts now
 		QPtrList<KopeteMetaContact> metaContacts = KopeteContactList::contactList()->metaContacts();
 		for ( QPtrListIterator<KopeteMetaContact> it( metaContacts ); it.current(); ++it )
@@ -1631,7 +1631,8 @@ void KopeteContactListView::slotRemove()
 		else
 			return; // this should never happen
 
-		if( KMessageBox::warningYesNo( this, msg, i18n( "Remove" ) ) != KMessageBox::Yes )
+		if( KMessageBox::warningContinueCancel( this, msg, i18n( "Remove" ), KGuiItem(i18n("Remove"),"editdelete") ) !=
+			KMessageBox::Continue )
 		{
 			return;
 		}
@@ -1644,8 +1645,9 @@ void KopeteContactListView::slotRemove()
 		   i18n( "Are you sure you want to remove these groups and " \
 		         "contacts from your contact list?" );
 
-		if( KMessageBox::questionYesNoList( this, msg, items, i18n("Remove"),
-		    KStdGuiItem::yes(), KStdGuiItem::no(), "askRemovingContactOrGroup" ) != KMessageBox::Yes )
+		if( KMessageBox::warningContinueCancelList( this, msg, items, i18n("Remove"),
+			KGuiItem(i18n("Remove"),"editdelete"), "askRemovingContactOrGroup" )
+			!= KMessageBox::Continue )
 		{
 			return;
 		}
