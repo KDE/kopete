@@ -145,7 +145,7 @@ void KopeteContact::setDisplayName( const QString &name )
 	if( name == d->displayName )
 		return;
 
-	QString old= d->displayName ;
+	QString old = d->displayName;
 	d->displayName = name;
 	emit displayNameChanged( old , name );
 }
@@ -173,10 +173,13 @@ void KopeteContact::setOnlineStatus( const KopeteOnlineStatus &status )
 		status.status() != KopeteOnlineStatus::Offline )
 	{
 		setProperty( QString::fromLatin1("onlineSince"), QDateTime::currentDateTime() );
+		removeProperty( QString::fromLatin1("lastSeen") );
 	}
-	else if( status.status() == KopeteOnlineStatus::Offline ) // Contact went back offline
+	else if( oldStatus.status() != KopeteOnlineStatus::Offline &&
+		status.status() == KopeteOnlineStatus::Offline ) // Contact went back offline
 	{
 		removeProperty( QString::fromLatin1("onlineSince") );
+		setProperty( QString::fromLatin1("lastSeen"), QDateTime::currentDateTime() );
 	}
 
 	emit onlineStatusChanged( this, status, oldStatus );
@@ -539,10 +542,10 @@ unsigned long int KopeteContact::idleTime() const
 	return d->idleTime+(d->idleTimer.elapsed()/1000);
 }
 
-void KopeteContact::setIdleTime(unsigned long int t )
+void KopeteContact::setIdleTime( unsigned long int t )
 {
 	d->idleTime=t;
-	if(t)
+	if(t > 0)
 		d->idleTimer.start();
 //	else
 //		d->idleTimer.stop();
@@ -644,24 +647,24 @@ QString KopeteContact::toolTip() const
 	// Fixed part of tooltip
 
 	QString iconName = QString::fromLatin1("kopete-contact-icon:%1:%2:%3")
-	                               .arg( KURL::encode_string( protocol()->pluginId() ),
-	                                     KURL::encode_string( account()->accountId() ),
-	                                     KURL::encode_string( contactId() ) );
+		.arg( KURL::encode_string( protocol()->pluginId() ),
+				KURL::encode_string( account()->accountId() ),
+				KURL::encode_string( contactId() ) );
 
 	if ( displayName() == contactId() )
 	{
 		tip = i18n( "<b>DISPLAY NAME</b><br><img src=\"%2\">&nbsp;CONTACT STATUS",
-		            "<b><nobr>%3</nobr></b><br><img src=\"%2\">&nbsp;%1" ).
-		      arg( QStyleSheet::escape( onlineStatus().description() ), iconName,
-		           QStyleSheet::escape( displayName() ) );
+			"<b><nobr>%3</nobr></b><br><img src=\"%2\">&nbsp;%1" ).
+			arg( QStyleSheet::escape( onlineStatus().description() ), iconName,
+				QStyleSheet::escape( displayName() ) );
 	}
 	else
 	{
 		tip = i18n( "<b>DISPLAY NAME</b> (CONTACT ID)<br><img src=\"%2\">&nbsp;CONTACT STATUS",
-		            "<nobr><b>%4</b> (%3)</nobr><br><img src=\"%2\">&nbsp;%1" ).
-		      arg( QStyleSheet::escape( onlineStatus().description() ), iconName,
-		           QStyleSheet::escape( contactId() ),
-		           QStyleSheet::escape( displayName() ) );
+			"<nobr><b>%4</b> (%3)</nobr><br><img src=\"%2\">&nbsp;%1" ).
+				arg( QStyleSheet::escape( onlineStatus().description() ), iconName,
+					QStyleSheet::escape( contactId() ),
+					QStyleSheet::escape( displayName() ) );
 	}
 
 	// --------------------------------------------------------------------------
@@ -675,7 +678,7 @@ QString KopeteContact::toolTip() const
 			if(!name.isEmpty())
 			{
 				tip += i18n("<br><b>Full Name:</b>&nbsp;FORMATTED NAME",
-				            "<br><b>Full Name:</b>&nbsp;<nobr>%1</nobr>").arg(name);
+					"<br><b>Full Name:</b>&nbsp;<nobr>%1</nobr>").arg(name);
 			}
 		}
 		else if ((*it) == QString::fromLatin1("FormattedIdleTime"))
@@ -684,7 +687,7 @@ QString KopeteContact::toolTip() const
 			if(!time.isEmpty())
 			{
 				tip += i18n("<br><b>Idle:</b>&nbsp;FORMATTED IDLE TIME",
-				            "<br><b>Idle:</b>&nbsp;<nobr>%1</nobr>").arg(time);
+					"<br><b>Idle:</b>&nbsp;<nobr>%1</nobr>").arg(time);
 			}
 		}
 		else if ((*it) == QString::fromLatin1("homePage"))
@@ -693,9 +696,8 @@ QString KopeteContact::toolTip() const
 			if(!url.isEmpty())
 			{
 				url += i18n("<br><b>Home Page:</b>&nbsp;FORMATTED URL",
-				            "<br><b>Home Page:</b>&nbsp;<a href=\"%1\"><nobr>%2</nobr></a>").
-				       arg( KURL::encode_string( url ),
-				            QStyleSheet::escape( url ) );
+					"<br><b>Home Page:</b>&nbsp;<a href=\"%1\"><nobr>%2</nobr></a>").
+					arg( KURL::encode_string( url ), QStyleSheet::escape( url ) );
 			}
 		}
 		else
@@ -720,8 +722,9 @@ QString KopeteContact::toolTip() const
 						valueText = val.toString();
 				}
 
-				tip += i18n("<br><b>PROPERTY LABEL:</b>&nbsp;PROPERTY VALUE", "<br><nobr><b>%2:</b></nobr>&nbsp;%1").
-				       arg( QStyleSheet::escape( valueText ), p.label() );
+				tip += i18n("<br><b>PROPERTY LABEL:</b>&nbsp;PROPERTY VALUE",
+					"<br><nobr><b>%2:</b></nobr>&nbsp;%1").
+					arg( QStyleSheet::escape( valueText ), p.label() );
 			}
 		}
 	}

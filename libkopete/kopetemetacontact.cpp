@@ -41,9 +41,6 @@
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
 
-#define EMAIL_WINDOW 0
-#define CHAT_WINDOW 1
-
 struct KopeteMetaContactPrivate
 {
 	QPtrList<KopeteContact> contacts;
@@ -121,14 +118,16 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 
 		if( d->displayName.isNull() )
 		{
+			/*kdDebug(14010) << k_funcinfo <<
+				"empty displayname, using contacts display" << endl;*/
 			setDisplayName( c->displayName() );
 			d->trackChildNameChanges = true;
 		}
 
 		if( d->contacts.count() > 1 )
 		{
-//			kdDebug(14010) << "[KopeteMetaContact] addContact(); disabling trackChildNameChanges,"
-//			" more than ONE Contact in MetaContact" << endl;
+			/*kdDebug(14010) << k_funcinfo << "Disabling trackChildNameChanges,"
+				" more than ONE Contact in MetaContact" << endl;*/
 			d->trackChildNameChanges = false;
 		}
 
@@ -344,13 +343,12 @@ KopeteContact *KopeteMetaContact::preferredContact()
 
 KopeteContact *KopeteMetaContact::execute()
 {
-	switch( KopetePrefs::prefs()->interfacePreference() )
+	switch ( KopetePrefs::prefs()->interfacePreference() )
 	{
-		case EMAIL_WINDOW:
+		case KopetePrefs::EmailWindow:
 			return sendMessage();
 			break;
-
-		case CHAT_WINDOW:
+		case KopetePrefs::ChatWindow:
 		default:
 			return startChat();
 			break;
@@ -478,8 +476,9 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c, const Kopet
 
 void KopeteMetaContact::setDisplayName( const QString &name )
 {
-//	kdDebug( 14010 ) << k_funcinfo << "Change displayName from " << d->displayName <<
-//		" to " << name  << ", d->trackChildNameChanges=" << d->trackChildNameChanges << endl;
+	/*kdDebug( 14010 ) << k_funcinfo << "Change displayName from " << d->displayName <<
+		" to " << name  << ", d->trackChildNameChanges=" << d->trackChildNameChanges << endl;
+	kdDebug(14010) << kdBacktrace(6) << endl;*/
 
 	if( name == d->displayName )
 		return;
@@ -529,8 +528,8 @@ void KopeteMetaContact::setTrackChildNameChanges( bool  track  )
 
 void KopeteMetaContact::slotContactNameChanged( const QString &/*oldName*/, const QString &newName )
 {
-//	kdDebug(14010) << "[KopeteMetaContact] slotContactNameChanged(); name=" << name <<
-//		", d->trackChildNameChanges=" << d->trackChildNameChanges << "." << endl;
+	/*kdDebug(14010) << k_funcinfo << "name=" << newName <<
+		", d->trackChildNameChanges=" << d->trackChildNameChanges << "." << endl;*/
 
 	if( d->trackChildNameChanges || d->displayName.isEmpty() )
 	{
@@ -625,7 +624,8 @@ const QDomElement KopeteMetaContact::toXML()
 	metaContact.documentElement().setAttribute( QString::fromLatin1( "contactId" ), metaContactId() );
 
 	QDomElement displayName = metaContact.createElement( QString::fromLatin1("display-name" ) );
-	displayName.setAttribute( QString::fromLatin1("trackChildNameChanges"), QString::fromLatin1( d->trackChildNameChanges ? "1":"0" ) );
+	displayName.setAttribute( QString::fromLatin1("trackChildNameChanges"),
+		QString::fromLatin1( d->trackChildNameChanges ? "1":"0" ) );
 	displayName.appendChild( metaContact.createTextNode( d->displayName ) );
 	metaContact.documentElement().appendChild( displayName );
 

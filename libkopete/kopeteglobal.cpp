@@ -70,6 +70,8 @@ Properties::Properties()
 		ContactProperty(QVariant(), i18n("Channel")));
 	mProps.insert(QString::fromLatin1("onlineSince"),
 		ContactProperty(QVariant(), i18n("Online Since")));
+	mProps.insert(QString::fromLatin1("lastSeen"),
+		ContactProperty(QVariant(), i18n("Last Seen")));
 }
 
 const ContactProperty &Properties::property(const QString &key) const
@@ -84,6 +86,7 @@ const ContactProperty::Map &Properties::map() const
 {
 	return mProps;
 }
+
 
 
 void installEmoticonTheme(const QString &archiveName)
