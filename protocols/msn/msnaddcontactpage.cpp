@@ -1,3 +1,18 @@
+/*
+    Copyright (c) 2002-2005 by Olivier Goffart       <ogoffart@ kde.org>
+    Kopete    (c) 2002-2005 by The Kopete developers <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
+
+
 #include <qlayout.h>
 #include <qlineedit.h>
 
@@ -14,8 +29,8 @@ MSNAddContactPage::MSNAddContactPage(bool connected, QWidget *parent, const char
 				  : AddContactPage(parent,name)
 {
 	(new QVBoxLayout(this))->setAutoAdd(true);
-	if ( connected )
-	{
+/*	if ( connected )
+	{*/
 			msndata = new msnAddUI(this);
 			/*
 			msndata->cmbGroup->insertStringList(owner->getGroups());
@@ -23,13 +38,13 @@ MSNAddContactPage::MSNAddContactPage(bool connected, QWidget *parent, const char
 			*/
 			canadd = true;
 
-	}
+/*	}
 	else
 	{
 			noaddMsg1 = new QLabel( i18n( "You need to be connected to be able to add contacts." ), this );
 			noaddMsg2 = new QLabel( i18n( "Please connect to the MSN network and try again." ), this );
 			canadd = false;
-	}
+}*/
 
 }
 MSNAddContactPage::~MSNAddContactPage()

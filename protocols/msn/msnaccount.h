@@ -1,8 +1,8 @@
 /*
     msnaccount.h - Manages a single MSN account
 
-    Copyright (c) 2003-2004 by Olivier Goffart       <ogoffart@tiscalinet.be>
-    Kopete    (c) 2003-2004 by The Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2003-2005 by Olivier Goffart       <ogoffart@ kde.org>
+    Kopete    (c) 2003-2005 by The Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -193,12 +193,22 @@ private:
 
 	QString m_msgHandle;
 
+	bool m_newContactList;
+
+
+	/**
+	 * Add the contact on the server in the given groups.
+	 * this is a helper function called bu createContact and slotStatusChanged
+	 */
+	void addContactServerside(const QString &contactId, QPtrList<Kopete::Group> groupList);
+
 public: //FIXME: should be private
 	QMap<unsigned int, Kopete::Group*> m_groupList;
 
 	void addGroup( const QString &groupName, const QString &contactToAdd = QString::null );
 
 private:
+
 	// server data
 	QStringList m_allowList;
 	QStringList m_blockList;

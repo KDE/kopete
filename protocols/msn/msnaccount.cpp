@@ -55,6 +55,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 	m_notifySocket = 0L;
 	m_connectstatus = MSNProtocol::protocol()->NLN;
 	m_addWizard_metaContact = 0L;
+	m_newContactList=false;
 
 	// Init the myself contact
 	// FIXME: I think we should add a global self metaContact ( Olivier )
@@ -117,6 +118,7 @@ void MSNAccount::setAway( bool away, const QString & awayReason )
 
 void MSNAccount::connectWithPassword( const QString &passwd )
 {
+	m_newContactList=false;
 	if ( isConnected() )
 	{
 		kdDebug( 14140 ) << k_funcinfo <<"Ignoring Connect request "
@@ -495,6 +497,26 @@ void MSNAccount::slotStatusChanged( const Kopete::OnlineStatus &status )
 {
 //	kdDebug( 14140 ) << k_funcinfo  << status.internalStatus() <<  endl;
 	myself()->setOnlineStatus( status );
+
+	if(m_newContactList)
+	{
+		m_newContactList=false;
+
+		QDictIterator<Kopete::Contact> it( contacts() );
+		for ( ; it.current(); ++it )
+		{
+			MSNContact *c = static_cast<MSNContact *>( *it );
+			if(c->isDeleted() && c->metaContact() && !c->metaContact()->isTemporary())
+			{
+				if(c->serverGroups().isEmpty())
+				{ //the contact is new, add it on the server
+					addContactServerside( c->contactId() , c->metaContact()->groups() );
+				}
+				else //the contact had been deleted, give him the unknown status
+					c->setOnlineStatus( MSNProtocol::protocol()->UNK );
+			}
+		}
+	}
 }
 
 void MSNAccount::slotPublicNameChanged( const QString& publicName )
@@ -767,6 +789,7 @@ void MSNAccount::slotNewContactList()
 			c->setInfo( "PHW", QString::null );
 			c->setInfo( "PHM", QString::null );
 		}
+		m_newContactList=true;
 }
 
 void MSNAccount::slotContactListed( const QString& handle, const QString& publicName, uint lists, const QString& group )
@@ -1151,69 +1174,71 @@ void MSNAccount::slotAddContact( const QString &userName, const QString &display
 
 bool MSNAccount::createContact( const QString &contactId, Kopete::MetaContact *metaContact )
 {
-	if ( m_notifySocket )
+	if ( !metaContact->isTemporary() && m_notifySocket)
 	{
-		if ( !metaContact->isTemporary() )
-		{
-			m_addWizard_metaContact = metaContact;
-			// This is a normal contact. Get all the groups this MetaContact is in
-			bool added = false;
-			QPtrList<Kopete::Group> groupList = metaContact->groups();
-			for ( Kopete::Group *group = groupList.first(); group; group = groupList.next() )
-			{
+		m_addWizard_metaContact = metaContact;
+		
+		addContactServerside(contactId, metaContact->groups());
+
+		// FIXME: Find out if this contact was really added or not!
+		return true;
+	}
+	else
+	{
+		// This is a temporary contact. ( a person who messaged us but is not on our conntact list.
+		// We don't want to create it on the server.Just create the local contact object and add it
+		// Or we are diconnected, and in that case, the contact will be added when connecting
+		MSNContact *newContact = new MSNContact( this, contactId, metaContact );
+		newContact->setDeleted(true);
+		return true;
+	}
+
+}
+
+void MSNAccount::addContactServerside(const QString &contactId, QPtrList<Kopete::Group> groupList)
+{
+	bool added = false;
+	for ( Kopete::Group *group = groupList.first(); group; group = groupList.next() )
+	{
 				// For each group, ensure it is on the MSN server
-				if ( !group->pluginData( protocol(), accountId() + " id" ).isEmpty() )
-				{
-					int Gid=group->pluginData( protocol(), accountId() + " id" ).toUInt();
-					if(!m_groupList.contains(Gid))
-					{ // ohoh!   something is corrupted on the contactlist.xml
+		if ( !group->pluginData( protocol(), accountId() + " id" ).isEmpty() )
+		{
+			int Gid=group->pluginData( protocol(), accountId() + " id" ).toUInt();
+			if(!m_groupList.contains(Gid))
+			{ // ohoh!   something is corrupted on the contactlist.xml
 					  // anyway, we never should add a contact to an unexisting group on the server.
 
 						//repair the problem
-						group->setPluginData( protocol() , accountId() + " id" , QString::null);
-						group->setPluginData( protocol() , accountId() + " displayName" , QString::null);
-						kdDebug( 14140 ) << k_funcinfo << " Group " << group->displayName() << " marked with id #" <<Gid << " does not seems to be anymore on the server" << endl;
+				group->setPluginData( protocol() , accountId() + " id" , QString::null);
+				group->setPluginData( protocol() , accountId() + " displayName" , QString::null);
+				kdDebug( 14140 ) << k_funcinfo << " Group " << group->displayName() << " marked with id #" <<Gid << " does not seems to be anymore on the server" << endl;
 
-					}
-					else
-					{
-						// Add the contact to the group on the server
-						m_notifySocket->addContact( contactId, metaContact->displayName(), Gid, MSNProtocol::FL );
-						added = true;
-					}
-				}
-				if(!added)
-				{
-					if ( !group->displayName().isEmpty() && group->type() == Kopete::Group::Normal )
-					{  // not the top-level
-						// Create the group and add the contact
-						// FIXME: if for a reason or another the group can't be added, the contact will not be added.
-						addGroup( group->displayName(), contactId );
-						added = true;
-					}
-				}
 			}
-			if ( !added )
+			else
 			{
-				// only on top-level, or in no groups ( add it to the default group )
-				m_notifySocket->addContact( contactId, metaContact->displayName(), 0, MSNProtocol::FL );
+				// Add the contact to the group on the server
+				m_notifySocket->addContact( contactId, contactId, Gid, MSNProtocol::FL );
+				added = true;
 			}
-
-			// FIXME: Find out if this contact was really added or not!
-			return true;
 		}
-		else
+		if(!added)
 		{
-			// This is a temporary contact. ( a person who messaged us but is not on our conntact list.
-			// We don't want to create it on the server.Just create the local contact object and add it
-			MSNContact *newContact = new MSNContact( this, contactId, metaContact );
-			return ( newContact != 0L );
+			if ( !group->displayName().isEmpty() && group->type() == Kopete::Group::Normal )
+			{  // not the top-level
+				// Create the group and add the contact
+				// Warning: if for a reason or another the group can't be added, the contact will not be added.
+				addGroup( group->displayName(), contactId );
+				added = true;
+			}
 		}
 	}
-	// else // We aren't connected! Can't add a contact
-	// FIXME: add contact when offline, and sync with server
-	return false;
+	if ( !added )
+	{
+		// only on top-level, or in no groups ( add it to the default group )
+		m_notifySocket->addContact( contactId, contactId, 0, MSNProtocol::FL );
+	}
 }
+
 
 bool MSNAccount::isHotmail() const
 {

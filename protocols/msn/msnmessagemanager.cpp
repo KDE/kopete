@@ -1,9 +1,9 @@
 /*
     msnmessagemanager.cpp - MSN Message Manager
 
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
