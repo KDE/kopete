@@ -30,51 +30,73 @@
         <property name="title">
             <string>Contact Information</string>
         </property>
-        <widget class="QLabel">
+        <grid>
             <property name="name">
-                <cstring>TextLabel1_2</cstring>
+                <cstring>unnamed</cstring>
             </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>50</y>
-                    <width>328</width>
-                    <height>16</height>
-                </rect>
+            <property name="margin">
+                <number>11</number>
             </property>
-            <property name="text">
-                <string>( for example joe@hotmail.com )</string>
+            <property name="spacing">
+                <number>6</number>
             </property>
-        </widget>
-        <widget class="QLineEdit">
-            <property name="name">
-                <cstring>addID</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>65</x>
-                    <y>20</y>
-                    <width>273</width>
-                    <height>21</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>TextLabel1</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>12</x>
-                    <y>20</y>
-                    <width>47</width>
-                    <height>21</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>MSN id</string>
-            </property>
-        </widget>
+            <widget class="QLayoutWidget" row="0" column="0">
+                <property name="name">
+                    <cstring>Layout2</cstring>
+                </property>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
+                        <number>0</number>
+                    </property>
+                    <property name="spacing">
+                        <number>6</number>
+                    </property>
+                    <widget class="QLayoutWidget">
+                        <property name="name">
+                            <cstring>Layout1</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <property name="margin">
+                                <number>0</number>
+                            </property>
+                            <property name="spacing">
+                                <number>6</number>
+                            </property>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>TextLabel1</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>&amp;MSN id:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>addID</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit">
+                                <property name="name">
+                                    <cstring>addID</cstring>
+                                </property>
+                            </widget>
+                        </hbox>
+                    </widget>
+                    <widget class="QLabel">
+                        <property name="name">
+                            <cstring>TextLabel1_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>(for example joe@hotmail.com)</string>
+                        </property>
+                    </widget>
+                </vbox>
+            </widget>
+        </grid>
     </widget>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
