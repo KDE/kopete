@@ -66,7 +66,7 @@ void IRCContactManager::slotNewNickChange(const QString &oldnick, const QString 
 	if( c )
 	{
 		m_users[ newnick ] = c;
-		m_users[ oldnick ] = 0L;
+		m_users.remove(oldnick);
 	}
 }
 
