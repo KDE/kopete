@@ -32,8 +32,8 @@ CryptographySelectUserKey::CryptographySelectUserKey(const QString& key ,Kopete:
 	view = new CryptographyUserKey_ui(this,"CryptographyUserKey_ui");
 	setMainWidget(view);
 
-	connect (view->m_selectKey , SIGNAL(pressed()) , this , SLOT(slotSelectPressed()));
-	connect (view->m_removeButton , SIGNAL(pressed()) , this , SLOT(slotRemovePressed()));
+	connect (view->m_selectKey , SIGNAL(clicked()) , this , SLOT(slotSelectPressed()));
+	connect (view->m_removeButton , SIGNAL(clicked()) , this , SLOT(slotRemovePressed()));
 
 	view->m_titleLabel->setText(i18n("Select public key for %1").arg(mc->displayName()));
 	view->m_editKey->setText(key);
@@ -46,8 +46,7 @@ void CryptographySelectUserKey::slotSelectPressed()
 {
 	popupPublic *dialog=new popupPublic(this, "public_keys", 0,false);
 	connect(dialog,SIGNAL(selectedKey(QString &,QString,bool,bool)),this,SLOT(keySelected(QString &)));
-	dialog->exec();
-	delete dialog;
+	dialog->show();
 }
 
 

@@ -95,7 +95,6 @@ QString UpdateViewItem2 :: key(int c,bool ) const
 popupPublic::popupPublic(QWidget *parent, const char *name,QString sfile,bool filemode,KShortcut goDefaultKey):
 KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent, name,true)
 {
-
 	QWidget *page = plainPage();
 	QVBoxLayout *vbox=new QVBoxLayout(page,0,spacingHint());
 	vbox->setAutoAdd(true);
@@ -193,6 +192,10 @@ KDialogBase( Plain, i18n("Select Public Key"), Details | Ok | Cancel, Ok, parent
                 QObject::connect(CBsymmetric,SIGNAL(toggled(bool)),this,SLOT(isSymetric(bool)));
 
 //BEGIN modified for Kopete
+
+	setWFlags( getWFlags() | Qt::WDestructiveClose );
+
+				
 	/*CBarmor->setChecked( KGpgSettings::asciiArmor() );
 	CBuntrusted->setChecked( KGpgSettings::allowUntrustedKeys() );
 	CBhideid->setChecked( KGpgSettings::hideUserID() );
