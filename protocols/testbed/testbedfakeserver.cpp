@@ -43,6 +43,14 @@ void TestbedFakeServer::sendMessage( QString contactId, QString message )
 		m_incomingMessages.append( msg );
 		QTimer::singleShot( 3000, msg, SLOT( deliver() ) );
 	}
+	if ( contactId == "statuschanger" )
+	{
+		kdDebug( 14210 ) << "recipient is statuschanger, passing it a command" << endl;
+		TestbedIncomingMessage* msg = new TestbedIncomingMessage( this, message );
+		m_incomingMessages.append( msg );
+		QTimer::singleShot( 3000, msg, SLOT( deliver() ) );
+	}
+
 	else
 		kdWarning( 14210 ) << "message recipient: " << contactId << " is unknown." << endl;
 	

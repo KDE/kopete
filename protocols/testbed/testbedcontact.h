@@ -18,6 +18,7 @@
 #define TESTBEDCONTACT_H
 
 #include <qmap.h>
+#include <qtimer.h>
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
@@ -37,7 +38,7 @@ public:
 	/**
 	 * The range of possible contact types
 	 */
-	enum TestbedContactType { Null, Echo };
+	enum TestbedContactType { Null, Echo, StatusChanger };
 
 	TestbedContact( KopeteAccount* _account, const QString &uniqueName, 
 			const TestbedContact::TestbedContactType type, const QString &displayName, 
@@ -84,12 +85,17 @@ protected slots:
 	 * destroyed - probably by the chatwindow being closed
 	 */
 	void slotMessageManagerDestroyed();
+	/**
+	 * Perform another action - eg change status
+	 */
+	void slotNextAction();
 	
 protected:
 	KopeteMessageManager* m_msgManager;
 	KActionCollection* m_actionCollection;
 	TestbedContactType m_type;
 	KAction* m_actionPrefs;
+	QTimer m_actionTimer;
 };
 
 #endif

@@ -47,7 +47,6 @@ KActionMenu* TestbedAccount::actionMenu()
 {
 	KActionMenu *theActionMenu = new KActionMenu(accountId(), myself()->onlineStatus().iconFor(this) , this);
 	theActionMenu->popupMenu()->insertTitle(myself()->icon(), i18n("Testbed (%1)").arg(accountId()));
-	// NEED FSCKING GO ONLINE OFFLINE ACTIONS HERE!
 	theActionMenu->insert(new KAction (TestbedProtocol::protocol()->testbedOnline.caption(),
 		TestbedProtocol::protocol()->testbedOnline.iconFor(this), 0, this, SLOT (slotGoOnline ()), this,
 		"actionTestbedConnect"));
@@ -67,7 +66,11 @@ bool TestbedAccount::addContactToMetaContact(const QString& contactId, const QSt
 {
 	kdDebug ( 14210 ) << k_funcinfo << "contactId: " << contactId << " displayName: " << displayName
 			<< endl;
-	TestbedContact* newContact = new TestbedContact( this, contactId, TestbedContact::Echo, displayName, parentContact );
+	TestbedContact* newContact = 0;
+	if ( contactId == "echo" )
+		newContact = new TestbedContact( this, contactId, TestbedContact::Echo, displayName, parentContact );
+	else if ( contactId == "statuschanger" )
+		newContact = new TestbedContact( this, contactId, TestbedContact::StatusChanger, displayName, parentContact );
 	return newContact != 0L;
 }
 
@@ -138,11 +141,14 @@ void TestbedAccount::receivedMessage( const QString &message )
 	
 	from = message.section( ':', 0, 0 );
 	//from = QString::fromLatin1("echo");
+	if ( from != "echo" )
+		from = "statuschanger";
 	messageSender = static_cast<TestbedContact *>( contacts ()[ from ] );
 	
 	kdDebug( 14210 ) << k_funcinfo << " got a message from " << from << ", " << messageSender << ", is: " << message << endl;
 	// Pass it on to the contact to process and display via a KMM
-	messageSender->receivedMessage( message );
+	if ( messageSender )
+		messageSender->receivedMessage( message );
 }
 
 void TestbedAccount::updateContactStatus()

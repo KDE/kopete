@@ -21,6 +21,7 @@
 #include <klocale.h>
 
 #include "kopeteaccount.h"
+#include "kopeteglobal.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
 
@@ -34,8 +35,10 @@ TestbedContact::TestbedContact( KopeteAccount* _account, const QString &uniqueNa
 {
 	kdDebug( 14210 ) << k_funcinfo << " uniqueName: " << uniqueName << ", displayName: " << displayName << endl;
 	m_type = type;
-	setDisplayName( displayName );
+	setProperty( Kopete::Global::Properties::self()->nickName(), displayName );
 	m_msgManager = 0L;
+	
+	connect( &m_actionTimer, SIGNAL( timeout() ), SLOT ( slotNextAction() ) );
 
 	setOnlineStatus( TestbedProtocol::protocol()->testbedOffline );
 }
@@ -58,6 +61,8 @@ void TestbedContact::serialize( QMap< QString, QString > &serializedData, QMap< 
 		value = "null";
 	case Echo:
 		value = "echo";
+	case StatusChanger:
+		value = "statuschanger";
 	}
 	serializedData[ "contactType" ] = value;
 }
@@ -116,16 +121,35 @@ void TestbedContact::sendMessage( KopeteMessage &message )
 
 void TestbedContact::receivedMessage( const QString &message )
 {
-	// Create a KopeteMessage
+	// Create a KopeteMessage as a reply
 	KopeteMessage *newMessage;
 	KopeteContactPtrList contactList;
-	account();
 	contactList.append( account()->myself() );
-	newMessage = new KopeteMessage( this, contactList, message, KopeteMessage::Inbound );
-
+	QString reply;
+	// perform contact specific actions
+	if ( contactId() == "echo" )
+	{	
+		reply = message;
+		kdDebug( 14210 ) << k_funcinfo << " message for echo is: " << message << endl;
+	
+	}
+	else if ( contactId() == "statuschanger" )
+	{
+		kdDebug( 14210 ) << k_funcinfo << " message for statuschanger is: " << message << endl;
+		if ( m_actionTimer.isActive() )
+		{
+			reply = "stopping.";
+			m_actionTimer.stop();
+		}
+		else
+		{
+			reply = "starting.";
+			m_actionTimer.start( 5000 ); // todo: read interval from message
+		}
+	}
 	// Add it to the manager
+	newMessage = new KopeteMessage( this, contactList, reply, KopeteMessage::Inbound );
 	manager()->appendMessage (*newMessage);
-
 	delete newMessage;
 }
 
@@ -133,6 +157,25 @@ void TestbedContact::slotMessageManagerDestroyed()
 {
 	//FIXME: the chat window was closed?  Take appropriate steps.
 	m_msgManager = 0L;
+}
+
+void TestbedContact::slotNextAction()
+{
+	if ( onlineStatus() ==  TestbedProtocol::protocol()->testbedOffline )
+	{
+		kdDebug( 14210 ) << "offline, going online" << endl;
+		setOnlineStatus( TestbedProtocol::protocol()->testbedOnline );
+	}
+	else if ( onlineStatus() == TestbedProtocol::protocol()->testbedOnline )
+	{
+		kdDebug( 14210 ) << "online, going away" << endl;
+		setOnlineStatus( TestbedProtocol::protocol()->testbedAway );
+	}
+	else
+	{
+		kdDebug( 14210 ) << "away, going offline" << endl;
+		setOnlineStatus( TestbedProtocol::protocol()->testbedOffline );
+	}
 }
 
 #include "testbedcontact.moc"

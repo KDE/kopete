@@ -50,6 +50,12 @@ bool TestbedAddContactPage::apply( KopeteAccount* a, KopeteMetaContact* m )
 			name = QString::fromLatin1( "Echo Contact" );
 			ok = true;
 		}
+		else if ( m_testbedAddUI->m_rbStatusChanger->isOn() )
+		{
+			type = QString::fromLatin1( "statuschanger" );
+			name = QString::fromLatin1( "Status Changer Contact" );
+			ok = true;
+		}
 		if ( ok )
 			return a->addContact(type, name, m, KopeteAccount::ChangeKABC );
 		else
