@@ -1360,7 +1360,16 @@ KopeteContact *ChatView::contactFromNode( const Node &n ) const
 
 void ChatView::slotRightClick( const QString &, const QPoint &point )
 {
-	activeElement = chatView->nodeUnderMouse();
+	// look through parents until we find an Element
+	DOM::Node activeNode = chatView->nodeUnderMouse();
+	while ( !activeNode.isNull() && activeNode.nodeType() != DOM::Node::ELEMENT_NODE )
+		activeNode = activeNode.parentNode();
+
+	// make sure it's valid
+	activeElement = activeNode;
+	if ( activeElement.isNull() )
+		return;
+
 	KopeteContact *c = contactFromNode( activeElement );
 
 	if( c )
