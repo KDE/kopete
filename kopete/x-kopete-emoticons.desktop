@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Type=MimeType
 MimeType=application/x-kopete-emoticons
-DefaultApp=kdevelop
+DefaultApp=kopete
 Icon=kopete_emoticons
 Patterns=*.kopete-emoticons
 X-KDE-AutoEmbed=false
