@@ -22,6 +22,8 @@ namespace GroupWise
 	ConferenceGuid::ConferenceGuid() {}
 	ConferenceGuid::ConferenceGuid( const QString & string ) : QString( string ) {}
 	
+	ConferenceGuid::~ConferenceGuid() {}
+	
 	bool operator==( const ConferenceGuid & g1, const ConferenceGuid & g2 )
 	{
 		return g1.left( CONF_GUID_END ) == g2.left( CONF_GUID_END );

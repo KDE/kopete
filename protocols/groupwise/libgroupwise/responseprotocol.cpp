@@ -125,7 +125,7 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 			tId = sf->value().toInt();
 			qDebug( "CoreProtocol::readResponse() - transaction ID is %i", tId );
 			m_collatingFields.remove( it );
-			delete *it;
+			delete sf;
 		}
 	}
 	it = m_collatingFields.find( NM_A_SZ_RESULT_CODE );
@@ -137,7 +137,7 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 			resultCode = sf->value().toInt();
 			qDebug( "CoreProtocol::readResponse() - result code is %i", resultCode );
 			m_collatingFields.remove( it );
-			delete *it;
+			delete sf;
 		}
 	}
 	// append to inQueue

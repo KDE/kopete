@@ -192,7 +192,7 @@ GroupWiseMessageManager * GroupWiseContact::manager( KopeteContactPtrList chatMe
 	if ( !mgr && canCreate )
 	{
 		mgr = account()->messageManager( account()->myself(), chatMembers, protocol(), QString::null );
-		connect( mgr, SIGNAL( destroyed ( QObject * ) ), SLOT( slotMessageManagerDeleted ( QObject * ) ) );
+		connect( mgr, SIGNAL( leavingConference ( GroupWiseMessageManager * ) ), SLOT( slotLeavingConference ( GroupWiseMessageManager * ) ) );
 		connect( mgr, SIGNAL( conferenceCreated() ), SLOT( slotConferenceCreated() ) );
 		//m_pendingManagers.append( mgr );
 	
@@ -216,7 +216,8 @@ GroupWiseMessageManager * GroupWiseContact::manager( const GroupWise::Conference
 			KopeteContactPtrList chatMembers;
 			chatMembers.append ( this );
 			mgr = account()->messageManager( account()->myself(), chatMembers, protocol(), guid );
-			connect( mgr, SIGNAL( destroyed( QObject * ) ), this, SLOT( slotMessageManagerDeleted ( QObject * ) ) );
+			connect( mgr, SIGNAL( leavingConference( GroupWiseMessageManager * ) ), 
+					this, SLOT( slotLeavingConference( GroupWiseMessageManager * ) ) );
 			m_msgManagers.insert( guid, mgr );
 		}
 		else
@@ -287,12 +288,9 @@ void GroupWiseContact::slotConferenceCreated()
 	dumpManagers();
 }
 
-void GroupWiseContact::slotMessageManagerDeleted( QObject *sender )
+void GroupWiseContact::slotLeavingConference( GroupWiseMessageManager *manager )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Message manager deleted, collecting the pieces..." << endl;
-
-	GroupWiseMessageManager *manager = static_cast<GroupWiseMessageManager *>(sender);
-
 	m_msgManagers.remove( manager->guid() );
 }
 

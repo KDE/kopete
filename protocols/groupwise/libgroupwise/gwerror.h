@@ -85,6 +85,7 @@ namespace GroupWise
 	public:
 		ConferenceGuid();
 		ConferenceGuid( const QString & string );
+		~ConferenceGuid();
 	};
 	
 	bool operator==( const ConferenceGuid & g1, const ConferenceGuid & g2 );

@@ -220,7 +220,7 @@ protected slots:
 	 * Notify the contact that a KopeteMessageManager was
 	 * destroyed - probably by the chatwindow being closed
 	 */
-	void slotMessageManagerDeleted( QObject *sender );
+	void slotLeavingConference( GroupWiseMessageManager * );
 	/**
 	 * Block or unblock the contact, toggle its current blocking state
 	 */
