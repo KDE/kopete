@@ -58,24 +58,23 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	//enableStreaming( true );
 
 	m_status = FLN;
-	m_connectstatus=NLN;
+	m_connectstatus = NLN;
 	mIsConnected = false;
 	m_notifySocket = 0L;
-	m_myself=0L;
+	m_myself = 0L;
 
 	m_identity = new MSNIdentity( this, "m_identity" );
 
 	kdDebug() << "MSNProtocol::MSNProtocol: MSN Plugin Loading" << endl;
 
 	mPrefs= new MSNPreferences( "msn_protocol", this );
-	QObject::connect( mPrefs, SIGNAL(saved()) , this , SLOT ( slotPreferencesSaved() ));
+	QObject::connect( mPrefs, SIGNAL( saved() ), this , SLOT( slotPreferencesSaved() ) );
 	slotPreferencesSaved();
 
 	m_publicNameSyncMode = SyncFromServer;
 	m_publicNameSyncNeeded = false;
 
 	m_addWizard_metaContact=0L;
-	m_connectstatus=NLN;
 
 	initActions();
 
@@ -84,11 +83,15 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	// FIXME: I think we should add a global self metaContact (Olivier)
 	m_myself = new MSNContact( this, m_msnId, m_publicName, 0L );
 
-	if ( mPrefs->autoConnect() )
+	if( mPrefs->autoConnect() )
 		connect();
 
-	QObject::connect( KopeteContactList::contactList() , SIGNAL(groupRenamed(KopeteGroup*,const QString&)) , SLOT (slotKopeteGroupRenamed(KopeteGroup*)));
-	QObject::connect( KopeteContactList::contactList() , SIGNAL(groupRemoved(KopeteGroup*)) , SLOT (slotKopeteGroupRemoved(KopeteGroup*)));
+	QObject::connect( KopeteContactList::contactList(),
+		SIGNAL( groupRenamed( KopeteGroup *, const QString & ) ),
+		SLOT( slotKopeteGroupRenamed( KopeteGroup * ) ) );
+	QObject::connect( KopeteContactList::contactList(),
+		SIGNAL( groupRemoved( KopeteGroup * ) ),
+		SLOT( slotKopeteGroupRemoved( KopeteGroup * ) ) );
 }
 
 MSNProtocol::~MSNProtocol()
@@ -239,7 +242,7 @@ bool MSNProtocol::isAway(void) const
 	}
 }
 
-void MSNProtocol::serialize( KopeteMetaContact *metaContact)
+void MSNProtocol::serialize( KopeteMetaContact *metaContact )
 {
 	QStringList stream;
 	QPtrList<KopeteContact> contacts = metaContact->contacts();
