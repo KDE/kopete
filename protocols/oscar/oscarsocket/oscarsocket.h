@@ -301,7 +301,7 @@ class OscarSocket : public OscarConnection
 		 * required QHostAddress::setAddress in the past
 		 */
 		DWORD setIPv4Address(const QString &address);
-		
+
 		/**
 		 * \brief Get the SSI List
 		 */
@@ -310,30 +310,30 @@ class OscarSocket : public OscarConnection
 		/** \return true if we're in ICQ mode, false if not */
 		bool isICQ() { return mIsICQ; }
 
-		/*
+		/**
 		 * Sends an authorization request to the server
 		 */
 		void sendLoginRequest();
 
-		/*
-		 * encodes a password using md5, outputs to digest [AIM]
+		/**
+		 * \brief encodes a password using md5, outputs to digest [AIM]
 		 */
 		void encodePassword(char *digest);
-		/*
+		/**
 		 * same as above but for icq which needs a XOR method to encode the password
 		 *  returns the encoded password  [ICQ]
 		 */
 		void encodePasswordXOR(const QString &originalPassword, QString &encodedPassword);
 
-		/*
-		 * Logs in the user!  [OSCAR]
+		/**
+		 * \brief Logs in the user!  [OSCAR]
 		 *
 		 * @param host				Login server.
 		 * @param port				Login port.
 		 * @param name				Screen name/UIN
-		 * @param password 			password
+		 * @param password 		password
 		 * @param profile			UserProfile for AIM connection
-		 * @param initialStatus		Login Status (Online, Away, etc)
+		 * @param initialStatus	Login Status (Online, Away, etc)
 		 */
 		void doLogin(
 			const QString &host,
@@ -344,23 +344,23 @@ class OscarSocket : public OscarConnection
 			const unsigned long initialStatus,
 			const QString &awayMessage);
 
-		/*
+		/**
 		 * Gets the rate info from the server
 		 */
 		void sendRateInfoRequest();
-		/*
+		/**
 		 * requests the current user's info [AIM]
 		 */
 		void requestMyUserInfo();
-		/*
+		/**
 		 * Sends idle time  [OSCAR]
 		 */
 		void sendIdleTime(DWORD time);
-		/*
+		/**
 		 * requests ssi data from the server  [OSCAR]
 		 */
 		void sendRosterRequest();
-		/*
+		/**
 		 * Sends message to dest
 		 */
 		void sendIM(
@@ -368,14 +368,14 @@ class OscarSocket : public OscarConnection
 			OscarContact *contact,
 			bool isAuto);
 
-		/*
+		/**
 		 * cool eh ;)
 		 */
 		bool sendType2IM(OscarContact *c, const QString &text, WORD type);
 
 		void requestAwayMessage(OscarContact *c);
 
-		/*
+		/**
 		 * Request user info [AIM]
 		 * @p name is the contact name
 		 * @p type is one of AIM_LOCINFO_* (see oscartypes.h)
@@ -400,7 +400,7 @@ class OscarSocket : public OscarConnection
 		/** Sends a direct IM accept */
 		void sendDirectIMAccept(const QString &sn);
 
-		/*
+		/**
 		 * Sends our capabilities to the server
 		 * for AIM this also sends the userprofile
 		 * @param profile AIM UserProfile or QString:null if no profile to send
@@ -408,33 +408,33 @@ class OscarSocket : public OscarConnection
 		 */
 		void sendLocationInfo(const QString &profile, const unsigned long caps=0);
 
-		/*
+		/**
 		 * Signs ourselves off
 		 */
 		virtual void doLogoff();
 
-		/*
+		/**
 		 * Adds a buddy to the server side buddy list
 		 */
 		virtual void sendAddBuddy(const QString &name, const QString &group, bool addingAuthBuddy);
 
-		/*
+		/**
 		 * Adds a buddy to the BLM service (not permanent, local only)
 		 */
 		void sendAddBuddylist(const QString &contactName);
 
-		/*
+		/**
 		 * Changes a buddy's group on the server
 		 */
 		virtual void sendChangeBuddyGroup(const QString &buddyName,
 			const QString &oldGroup, const QString &newGroup);
 
-		/*
+		/**
 		 * changes the visibility setting to @value
 		 */
 		void sendChangeVisibility(BYTE value);
 
-		/*
+		/**
 		 * Changes a contacts alias on the serverside contactlist
 		 * @p budName real contact name
 		 * @p budGroup name of group this contact is in
@@ -443,55 +443,55 @@ class OscarSocket : public OscarConnection
 		void sendRenameBuddy(const QString &budName,
 			const QString &budGroup, const QString &newAlias);
 
-		/*
+		/**
 		 * Adds a group to the server side buddy list
 		 */
 		virtual int sendAddGroup(const QString &name);
 
-		/*
+		/**
 		 * Changes a group's name on the server side buddy list
 		 */
 		virtual void sendChangeGroupName(const QString &currentName,
 			const QString &newName);
 
-		/*
+		/**
 		 * Removes a group from the server side information
 		 */
 		virtual void sendDelGroup(const QString &groupName);
 
-		/*
+		/**
 		 * Deletes a buddy from the server side buddy list
 		 */
 		virtual void sendDelBuddy(const QString &budName, const QString &budGroup);
 
-		/*
+		/**
 		 * Dels a buddy from the BLM service (not permanent, local only)
 		 */
 		 void sendDelBuddylist(const QString &contactName);
 
-		/*
+		/**
 		 * Sends the server lots of information
 		 * about the currently logged in user
 		 */
 		void sendInfo();
 
-		/*
+		/**
 		 * sends a status change, status is one of OSCAR_
 		 * awayMessage is only used for AIM currently
 		 */
 //		void sendStatus(const unsigned int status, const QString &awayMessage = QString::null);
 
-		/*
+		/**
 		 * Sets the away message for AIM, makes user away
 		 */
 		void sendAIMAway(bool away, const QString &message=0L);
 
-		/*
+		/**
 		 * send status, i.e. AWAY, NA, OCC (ICQ method)
 		 */
 		void sendICQStatus(unsigned long status);
 
-		/*
+		/**
 		 * Adds a direct connection info TLV to Buffer directInfo
 		 */
 		void fillDirectInfo(Buffer &directInfo);
@@ -502,7 +502,7 @@ class OscarSocket : public OscarConnection
 		/** Removes the block on user sname */
 		void sendRemoveBlock(const QString &sname);
 
-		/*
+		/**
 		 * Sends a typing notification to the server
 		 * @param screenName The name of the person to send to
 		 * @param notifyType Type of notify to send
@@ -524,12 +524,12 @@ class OscarSocket : public OscarConnection
 		/** sends a KEEPALIVE packet, empty FLAP channel 5 */
 		void sendKeepalive();
 
-		/*
+		/**
 		* start a contact search by providing an UIN, ICQ SPECIFIC
 		*/
 		void sendCLI_SEARCHBYUIN(const unsigned long uin);
 
-		/*
+		/**
 		 * same but more evil than you can imagine ;)
 		 */
 		void sendCLI_SEARCHWP(
@@ -550,29 +550,36 @@ class OscarSocket : public OscarConnection
 			int occupation,
 			bool onlineOnly); /*...*/
 
-		/*
+		/**
 		 * Starts a userinfo request for ICQ, returns the sequence sent out with the request
 		 * Use it to compare a server reply's sequence
 		 */
 		WORD sendReqInfo(const unsigned long uin);
-		
+
 		/**
 		 * Starts a short info request for ICQ, returns the sequence sent out with the request
 		 * Use it to compare a server reply's sequence
 		 */
 		WORD sendShortInfoReq(const unsigned long uin);
 
-		/*
+		/**
 		 * sends the general info for the uin owner to icq
 		 */
 		void sendCLI_METASETGENERAL(const ICQGeneralUserInfo &i);
 
-		/*
+		/**
 		 * sends the work info for the uin owner to icq
 		 */
 		void sendCLI_METASETWORK(const ICQWorkUserInfo &i);
 
+		/**
+		 * sends the work info for the uin owner to icq
+		 */
+		void sendCLI_METASETMORE(const ICQMoreUserInfo &i);
 
+		/**
+		 * sends security infos for the uin owner to icq
+		 */
 		void sendCLI_METASETSECURITY(bool requireauth, bool webaware, BYTE direct);
 
 		void sendCLI_SENDSMS(const QString &, const QString &, const QString &, const QString &);
@@ -580,12 +587,17 @@ class OscarSocket : public OscarConnection
 		void sendAuthRequest(const QString &contact, const QString &reason);
 		void sendAuthReply(const QString &contact, const QString &reason, bool grant);
 
-		/* Map a buddy and his group to a request id */
+		/**
+		 * Map a buddy and his group to a request id
+		 */
 		void addBuddyToAckMap(const QString &contactName, const QString &groupName, const DWORD id);
-		/* Get the buddy for a given request id (will remove the entry from the map) */
+
+		/**
+		 * Get the buddy for a given request id (will remove the entry from the map)
+		 */
 		AckBuddy ackBuddy(const DWORD id);
 
-		/*
+		/**
 		 * Methods to convert incoming/outgoing text to/from the encoding needed.
 		 */
 		const QString ServerToQString(const char* string, OscarContact *contact, bool isUtf8=false);
@@ -593,117 +605,118 @@ class OscarSocket : public OscarConnection
 
 
 	public slots:
-		/*
+		/**
 		 * This is called when a connection is established
 		 */
 		void slotConnected();
 
 	private:
-		/*
-		* adds the flap version to the buffer
-		*/
+		/**
+		 * adds the flap version to the buffer
+		 */
 		void putFlapVer(Buffer &buf);
 
-		/*
-		* Reads a FLAP header from the input
-		*/
+		/**
+		 * Reads a FLAP header from the input
+		 */
 		FLAP getFLAP();
 
-		/*
+		/**
 		* Sends the output buffer, and clears it
 		*/
 		void sendBuf(Buffer &buf, BYTE chan);
-		
-		/*
-		* Sends login information, actually logs
-		* onto the server
-		*/
+
+		/**
+		 * Sends login information, actually logs
+		 * onto the server
+		 */
 		void sendLoginAIM();
 		void sendLoginICQ();
 
-		/*
-		* Called when a cookie is received
-		*/
+		/**
+		 * Called when a cookie is received
+		 */
 		void connectToBos();
-		/*
-		* Sends the authorization cookie to the BOS server
-		*/
+		/**
+		 * Sends the authorization cookie to the BOS server
+		 */
 		void sendCookie();
-		/*
-		* Parses the rate info response
-		*/
+		/**
+		 * Parses the rate info response
+		 */
 		void parseRateInfoResponse(Buffer &inbuf);
-		/*
-		* Tells the server we accept it's communist rate
-		* limits, even though I have no idea what they mean
-		*/
+		/**
+		 * Tells the server we accept it's communist rate
+		 * limits, even though I have no idea what they mean
+		 */
 		void sendRateAck();
-		/*
-		* Sends privacy flags to the server
-		*/
+		/**
+		 * Sends privacy flags to the server
+		 */
 		void sendPrivacyFlags();
-		/*
-		* parse my user info
-		*/
+		/**
+		 * parse my user info
+		 */
 		void parseMyUserInfo(Buffer &inbuf);
-		/*
-		* finds a tlv of type @p typ in the list
-		*/
+
+		/**
+		 * finds a TLV of type @p typ in list @p l
+		 * Returns null if the TLV wasn't found
+		 */
 		TLV *findTLV(QPtrList<TLV> &l, WORD typ);
-		/*
-		* Parse the server's authorization response
-		* (which hopefully contains the cookie)
-		*/
+
+		/**
+		 * Parse the server's authorization response
+		 * (which hopefully contains the cookie)
+		 */
 		void parseAuthResponse(Buffer &inbuf);
-		/*
-		* The program does this when a key is received
-		*/
+
+		/**
+		 * The program does this when a key is received
+		 */
 		void parsePasswordKey(Buffer &inbuf);
-		/*
-		* tells the server that the client is
-		* ready to receive commands & stuff
-		*/
+
+		/**
+		 * tells the server that the client is
+		 * ready to receive commands & stuff
+		 */
 		void sendClientReady();
-		/*
-		* Sends versions so that we get proper rate info
-		*/
+
+		/**
+		 * Sends versions so that we get proper rate info
+		 */
 		void sendVersions(const WORD *families, const int len);
 
-		/*
-		* Handles AOL's evil attempt to thwart 3rd
-		* party apps using Oscar.  It requests a
-		* segment and offset of aim.exe.  We can
-		* thwart it with help from the good people
-		* at Gaim
-		*/
+		/**
+		 * Handles AOL's evil attempt to thwart 3rd
+		 * party apps using Oscar.  It requests a
+		 * segment and offset of aim.exe.  We can
+		 * thwart it with help from the good people
+		 * at Gaim
+		 */
 		void parseMemRequest(Buffer &inbuf);
 
-		/*
-		* parses incoming contactlist (roster) data
-		*/
+		/**
+		 * parses incoming contactlist (roster) data
+		 */
 		void parseRosterData(Buffer &inbuf);
 
-		/*
-		* parses incoming ack for current contactlist timestamp/length
-		* @see sendRosterRequest() for data sent on CLI_CHECKROSTER
-		*/
+		/**
+		 * parses incoming ack for current contactlist timestamp/length
+		 * @see sendRosterRequest() for data sent on CLI_CHECKROSTER
+		 */
 		void parseRosterOk(Buffer &inbuf);
 
-		/*
-		* Requests the user's SSI rights
-		*/
+		/** Requests the user's SSI rights */
 		void requestBOSRights();
-		/*
-		* Parses SSI rights data
-		*/
+
+		/** Parses SSI rights data */
 		void parseBOSRights(Buffer &inbuf);
-		/*
-		* Parses the server ready response
-		*/
+
+		/** Parses the server ready response */
 		void parseServerReady(Buffer &inbuf);
-		/*
-		* parses server version info
-		*/
+
+		/** parses server version info */
 		void parseServerVersions(Buffer &inbuf);
 
 		/** Parses Message of the day */
@@ -733,20 +746,19 @@ class OscarSocket : public OscarConnection
 		/** Parses msg rights info from server */
 		void parseMsgRights(Buffer &inbuf);
 
-		/*
-		* Parses an incoming IM
-		*/
+		/** Parses an incoming IM */
 		void parseIM(Buffer &inbuf);
 
-		/*
-		* parses a type-1 message
+		/**
+		* parses a type-1 message (simple IM, used by AIM and old ICQ clients)
 		* called by parseIM
 		*/
 		void parseSimpleIM(Buffer &inbuf, const UserInfo &u);
-		/*
-		* parses a type-4 message
-		* called by parseIM
-		*/
+
+		/**
+		 * parses a type-4 message
+		 * called by parseIM
+		 */
 		void parseServerIM(Buffer &inbuf, const UserInfo &u);
 
 		void parseMessage(const UserInfo &u, OscarMessage &message, const BYTE type, const BYTE flags);
@@ -754,43 +766,43 @@ class OscarSocket : public OscarConnection
 		/** parses the aim standard user info block */
 		bool parseUserInfo(Buffer &inbuf, UserInfo &u);
 
-		/*
+		/**
 		 * parses a capabilities block contained in inbuf
 		 * inbuf should NOT contain anything else or it'll break ya neck ;)
 		 */
 		const DWORD parseCapabilities(Buffer &inbuf);
 
-		/*
+		/**
 		 * Activates the SSI list on the server
 		 */
 		void sendSSIActivate();
 
-		/*
+		/**
 		 * Parses the oncoming buddy server notification
 		 */
 		void parseUserOnline(Buffer &);
 
-		/*
+		/**
 		 * Parses offgoing buddy message from server
 		 */
 		void parseUserOffline(Buffer &);
 
-		/*
+		/**
 		 * Parses someone's user info (AIM)
 		 */
 		void parseUserLocationInfo(Buffer &);
 
-		/*
+		/**
 		 * Handles a redirect
 		 * TODO: implement and use it!
 		 */
 		// void parseRedirect(Buffer &);
 
-		/*
+		/**
 		 * Parses a message ack from the server
 		 */
 		void parseSrvMsgAck(Buffer &inbuf);
-		/*
+		/**
 		 * Parses a message ack from another client
 		 */
 		void parseMsgAck(Buffer &);
@@ -820,9 +832,10 @@ class OscarSocket : public OscarConnection
 		void parseMissedMessage(Buffer &inbuf);
 
 		/** Request, deny, or accept a rendezvous session with someone
-		type == 0: request
-		type == 1: deny
-		type == 2: accept  */
+		 * type == 0: request
+		 * type == 1: deny
+		 * type == 2: accept
+		 */
 		void sendRendezvous(const QString &sn, WORD type, DWORD rendezvousType, const KFileItem *finfo=0L);
 
 		/** Sends a 0x0013,0x0002 (requests SSI rights information) */
@@ -831,17 +844,17 @@ class OscarSocket : public OscarConnection
 		/** Sends a 0x0013,0x0004 (requests SSI data?) */
 		void sendSSIRequest();
 
-		/*
-		* Parses a SNAC(0x0013,0x0003) (SSI rights) from the server
-		*/
+		/**
+		 * Parses a SNAC(0x0013,0x0003) (SSI rights) from the server
+		 */
 		void parseSSIRights(Buffer &inbuf);
 
-		/*
+		/**
 		* Sends parameters for ICBM messages
 		*/
 		void sendMsgParams();
 
-		/*
+		/**
 		* Returns the appropriate server socket, based on the capability flag it is passed.
 		*/
 #if 0
@@ -851,11 +864,11 @@ class OscarSocket : public OscarConnection
 		// parse DISCONNECT messages on channel 4, ICQ specific
 		void parseConnectionClosed(Buffer &inbuf);
 
-		/*
-		* send a CLI_TOICQSRV with subcommand and DATA supplied in data
-		* returns the sequence sent out with the packet
-		* incoming server replies will have the same sequence!
-		*/
+		/**
+		 * send a CLI_TOICQSRV with subcommand and DATA supplied in data
+		 * returns the sequence sent out with the packet
+		 * incoming server replies will have the same sequence!
+		 */
 		WORD sendCLI_TOICQSRV(const WORD subcommand, Buffer &data);
 
 		void startKeepalive();
@@ -863,7 +876,7 @@ class OscarSocket : public OscarConnection
 
 		void parseAuthReply(Buffer &inbuf);
 
-		/*
+		/**
 		* Adds contacts to the "client-side" contactlist, we probably have to call this after
 		* login with ALL our contactnames and when adding a new contact
 		*/
@@ -900,7 +913,7 @@ class OscarSocket : public OscarConnection
 		/** Called when a direct connection is set up and ready for use */
 		void OnDirectIMReady(QString name);
 
-		/*
+		/**
 		 * Called when a file transfer begins
 		 */
 		/*void OnFileTransferBegun(OscarConnection *con, const QString& file,
@@ -908,16 +921,16 @@ class OscarSocket : public OscarConnection
 
 		void slotKeepaliveTimer();
 		void slotBytesWritten(int n);
-		
+
 	signals:
-		/*
+		/**
 		 * Emitted when there is more information to read from the socket
 		 * This is only used in slotRead() since I haven't found a way to
 		 * emit socket()->readyRead directly yet. (Matt)
 		 */
 		void moreToRead();
 
-		/*
+		/**
 		 * emitted when any kind of Instant Message was received
 		 * @p contact contains the screenname/UIN of the sender
 		 * @p message contains the message as received
@@ -927,49 +940,49 @@ class OscarSocket : public OscarConnection
 
 		void receivedAwayMessage(const QString &contact, const QString &message);
 
-		/*
+		/**
 		 * The server has sent the key with which to encrypt the password
 		 */
 		void keyReceived();
 
-		/*
+		/**
 		 * The bos server is ready to be sent commands
 		 */
 		//void serverReady();
 
-		/*
+		/**
 		 * A contact went offline
 		 */
 		void gotOffgoingBuddy(QString);
-		/*
+		/**
 		 * A contact changed his status to something else then offline
 		 */
 		//void gotBuddyChange(const UserInfo &);
 		void gotContactChange(const UserInfo &);
 
-		/*
+		/**
 		 * A user profile was received
 		 */
 		void gotUserProfile(const UserInfo &, const QString &profile, const QString &away);
-		/*
+		/**
 		 * Emitted when the status of the connection changes during login
 		 */
 		//void connectionChanged(int, QString);
 
-		/*
+		/**
 		 * Emitted when my user info is received
 		 */
 		//void gotMyUserInfo(const UserInfo &);
-		/*
+		/**
 		 * A buddy list has been received
 		 */
 		void gotConfig();
-		/*
+		/**
 		 * emitted when we have received an ack from the server
 		 */
 		void gotAck(QString, int);
 
-		/*
+		/**
 		 * Emitted when our status has changed, internalStatus is one of OSCAR_*
 		 */
 		void statusChanged(const unsigned int internalStatus);
@@ -981,25 +994,25 @@ class OscarSocket : public OscarConnection
 		 * so natural decreases in level will be signalled.
 		 */
 		void gotWarning(int, QString);
-		/*
+		/**
 		 * Emitted when someone has requested a direct IM session with us
 		 */
 		void gotDirectIMRequest(QString);
-		/*
+		/**
 		 * Emitted when the server send the ack for an SSI change
 		 */
 		void gotSSIAck(WORD);
-		/*
+		/**
 		 * Emitted when someone has requested to send a file to us
 		 */
 		void gotFileSendRequest(QString, QString, QString, unsigned long);
 
-		/*
+		/**
 		 * Emitted when a usersearch yielded a result, ICQ SPECIFIC
 		 */
 		void gotSearchResult(ICQSearchResult &, const int);
 
-		/*
+		/**
 		 * Emitted when a userinfo request yielded a result, ICQ SPECIFIC
 		 * first argument = sequence of the server reply
 		 */
@@ -1012,51 +1025,51 @@ class OscarSocket : public OscarConnection
 		void gotICQInfoItemList(const int, const ICQInfoItemList &, const ICQInfoItemList &);
 		void gotICQShortInfo(const int, const ICQSearchResult &);
 
-		/*
+		/**
 		 * emitted after CLIENT_READY packet, the account can now
 		 * do whatever it likes to do after successful login.
 		 */
 		void loggedIn();
 
-		/*
+		/**
 		 * emitted when we received an authorization reply
 		 */
 		void gotAuthReply(const QString &, const QString &, bool);
 
-		/*
+		/**
 		 * Called when an SSI acknowledgment is received
 		 * FIXME: What was this for, nothing connected to this signal [mETz]
 		 */
 		//void SSIAck();
 
-		/*
+		/**
 		 * emitted when BOS rights are received
 		 */
 //		void gotBOSRights(WORD,WORD);
 
-		/*
+		/**
 		 * Emitted when a buddy gets blocked
 		 */
 		void denyAdded(QString);
 
-		/*
+		/**
 		 * emitted when a block is removed on a buddy
 		 */
 		void denyRemoved(QString);
 
-		/*
+		/**
 		 * Tells when the connection ack has been received on channel 1
 		 */
 		void connAckReceived();
 
-		/*
+		/**
 		 * emitted when a direct connection has been terminated
 		 */
 		void directIMConnectionClosed(QString name);
 
 
 	protected slots:
-		/*
+		/**
 		 * This function is called when there is data to be read from the socket
 		 */
 		virtual void slotRead();
@@ -1068,24 +1081,24 @@ class OscarSocket : public OscarConnection
 
 
 	private: // private vars
-		/*
+		/**
 		 * The OscarAccount we're assocated with
 		 */
 		OscarAccount *mAccount;
 
-		/*
+		/**
 		 * The key used to encrypt the password
 		 */
 		char * key;
-		/*
+		/**
 		 * The user's password
 		 */
 		QString loginPassword;
-		 /*
+		 /**
 		  * AIM profile sent at login
 		  */
 		QString loginProfile;
-		 /*
+		 /**
 		  * status sent at login, contents depend on AIM or ICQ being used
 		  */
 		unsigned long loginStatus;
@@ -1125,17 +1138,17 @@ class OscarSocket : public OscarConnection
 
 		bool mIsICQ;
 
-		/*
+		/**
 		 * one up sequence used for packets of type CLI_TOICQSRV
 		 */
 		WORD toicqsrv_seq;
-		/*
+		/**
 		 * sequence number in a FLAP header
 		 * incremented after every command sent to the oscar server
 		 */
 		WORD flapSequenceNum;
 
-		/*
+		/**
 		 * sequence number in type-2 messages [SNAC(4,6)]
 		 * starts at 0xffff
 		 * decremented after every type-2 message sent
@@ -1152,7 +1165,7 @@ class OscarSocket : public OscarConnection
 
 		bool bSomethingOutgoing;
 
-		/* Used to map a buddy and his group to a server ack */
+		/** Used to map a buddy and his group to a server ack */
 		QMap<DWORD, AckBuddy> m_ackBuddyMap;
 };
 

@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>ICQUserInfoWidget</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>538</width>
-            <height>496</height>
+            <width>587</width>
+            <height>558</height>
         </rect>
     </property>
     <property name="caption">
@@ -366,8 +366,8 @@
                                 </property>
                                 <property name="sizeHint">
                                     <size>
-                                        <width>20</width>
-                                        <height>20</height>
+                                        <width>16</width>
+                                        <height>16</height>
                                     </size>
                                 </property>
                             </spacer>
@@ -383,8 +383,8 @@
                                 </property>
                                 <property name="sizeHint">
                                     <size>
-                                        <width>20</width>
-                                        <height>20</height>
+                                        <width>16</width>
+                                        <height>8</height>
                                     </size>
                                 </property>
                             </spacer>
@@ -503,6 +503,14 @@
                                 <property name="name">
                                     <cstring>cmbEncoding</cstring>
                                 </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>5</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
                             </widget>
                             <spacer>
                                 <property name="name">
@@ -516,8 +524,8 @@
                                 </property>
                                 <property name="sizeHint">
                                     <size>
-                                        <width>51</width>
-                                        <height>21</height>
+                                        <width>16</width>
+                                        <height>16</height>
                                     </size>
                                 </property>
                             </spacer>
@@ -535,7 +543,7 @@
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>20</width>
+                                <width>16</width>
                                 <height>8</height>
                             </size>
                         </property>
@@ -1564,8 +1572,6 @@
         </widget>
     </vbox>
 </widget>
-<customwidgets>
-</customwidgets>
 <tabstops>
     <tabstop>TabWidget2</tabstop>
     <tabstop>rwNickName</tabstop>
@@ -1641,10 +1647,4 @@
     <function access="private" specifier="non virtual">init()</function>
 </functions>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kdatewidget.h</includehint>
-    <includehint>kurllabel.h</includehint>
-    <includehint>kurllabel.h</includehint>
-    <includehint>kurllabel.h</includehint>
-</includehints>
 </UI>

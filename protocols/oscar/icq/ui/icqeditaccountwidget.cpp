@@ -426,8 +426,10 @@ void ICQEditAccountWidget::slotSend()
 
 	ICQGeneralUserInfo generalInfo;
 	ICQWorkUserInfo workInfo;
+	ICQMoreUserInfo moreInfo;
 
-	generalInfo.uin=static_cast<ICQContact *>(mAccount->myself())->contactName().toULong();
+	generalInfo.uin=static_cast<ICQContact *>(
+		mAccount->myself())->contactName().toULong();
 	generalInfo.nickName = mUserInfoSettings->rwNickName->text();
 	generalInfo.firstName = mUserInfoSettings->rwFirstName->text();
 	generalInfo.lastName = mUserInfoSettings->rwLastName->text();
@@ -439,10 +441,26 @@ void ICQEditAccountWidget::slotSend()
 	generalInfo.street = mUserInfoSettings->prsAddressEdit->text();
 	generalInfo.cellularNumber = mUserInfoSettings->prsCellphoneEdit->text();
 	generalInfo.zip = mUserInfoSettings->prsZipcodeEdit->text();
-	generalInfo.countryCode = mProtocol->getCodeForCombo(mUserInfoSettings->rwPrsCountry, mProtocol->countries());
-	generalInfo.timezoneCode = mProtocol->getTZComboValue(mUserInfoSettings->rwTimezone);
+	generalInfo.countryCode = mProtocol->getCodeForCombo(
+		mUserInfoSettings->rwPrsCountry, mProtocol->countries());
+	generalInfo.timezoneCode = mProtocol->getTZComboValue(
+		mUserInfoSettings->rwTimezone);
 	generalInfo.publishEmail = false; // TODO
 	generalInfo.showOnWeb = false; // TODO
+
+	QDate bday = mUserInfoSettings->rwBday->date();
+	if(bday.isValid())
+		moreInfo.birthday = bday;
+	moreInfo.age = mUserInfoSettings->rwAge->value();
+	moreInfo.gender = mProtocol->getCodeForCombo(mUserInfoSettings->rwGender,
+		mProtocol->genders());
+	moreInfo.lang1 = mProtocol->getCodeForCombo(mUserInfoSettings->rwLang1,
+		mProtocol->languages());
+	moreInfo.lang2 = mProtocol->getCodeForCombo(mUserInfoSettings->rwLang2,
+		mProtocol->languages());
+	moreInfo.lang3 = mProtocol->getCodeForCombo(mUserInfoSettings->rwLang3,
+		mProtocol->languages());
+	moreInfo.homepage = mUserInfoSettings->prsHomepageEdit->text();
 
 	//Work Info
 	workInfo.company = mUserInfoSettings->wrkNameEdit->text();
@@ -462,6 +480,7 @@ void ICQEditAccountWidget::slotSend()
 	if(osocket)
 	{
 		osocket->sendCLI_METASETGENERAL(generalInfo);
+		osocket->sendCLI_METASETMORE(moreInfo);
 		osocket->sendCLI_METASETWORK(workInfo);
 		osocket->sendCLI_METASETSECURITY(
 			mAccountSettings->chkRequireAuth->isChecked(),

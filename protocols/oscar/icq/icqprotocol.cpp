@@ -64,11 +64,7 @@ ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 	if (protocolStatic_)
 		kdDebug(14200) << k_funcinfo << "ICQ plugin already initialized" << endl;
 	else
-	{
 		protocolStatic_ = this;
-		// Create the config widget, this does it's magic I think
-//		new OscarPreferences("icq_protocol", this);
-	}
 	addAddressBookField("messaging/icq", KopetePlugin::MakeIndexField);
 
 	initGenders();

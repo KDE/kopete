@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>ICQEditAccountUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>640</width>
-            <height>480</height>
+            <width>471</width>
+            <height>419</height>
         </rect>
     </property>
     <property name="caption">
@@ -123,8 +123,8 @@
                                         </property>
                                         <property name="sizeHint">
                                             <size>
-                                                <width>17</width>
-                                                <height>20</height>
+                                                <width>16</width>
+                                                <height>16</height>
                                             </size>
                                         </property>
                                     </spacer>
@@ -218,27 +218,31 @@
                         <property name="name">
                             <cstring>textLabel9</cstring>
                         </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>3</hsizetype>
-                                <vsizetype>3</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="minimumSize">
-                            <size>
-                                <width>650</width>
-                                <height>0</height>
-                            </size>
-                        </property>
                         <property name="text">
-                            <string>&lt;i&gt;To connect to the ICQ network, you will need an ICQ account.&lt;br&gt;&lt;br&gt;If you do not currently have an ICQ account, you may register for one at the site linked below.&lt;/i&gt;</string>
+                            <string>&lt;i&gt;To connect to the ICQ network, you will need an ICQ account.&lt;br&gt;
+If you do not currently have an ICQ account, you may register for one at the site linked below.&lt;/i&gt;</string>
                         </property>
                         <property name="alignment">
-                            <set>WordBreak|AlignTop</set>
+                            <set>WordBreak|AlignVCenter</set>
                         </property>
                     </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer3</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>16</width>
+                                <height>16</height>
+                            </size>
+                        </property>
+                    </spacer>
                     <widget class="KActiveLabel">
                         <property name="name">
                             <cstring>kActiveLabel7</cstring>
@@ -275,16 +279,118 @@
                         <property name="title">
                             <string>Connection Preferences</string>
                         </property>
-                        <vbox>
+                        <grid>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QCheckBox">
+                            <widget class="QLayoutWidget" row="1" column="0">
+                                <property name="name">
+                                    <cstring>layout60</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLabel">
+                                        <property name="name">
+                                            <cstring>lblServer</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Ser&amp;ver:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>edtServerAddress</cstring>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The IP address or hostmask of the ICQ server you wish to connect to.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The IP address or hostmask of the ICQ server you wish to connect to.  Normally you will want the default (login.icq.com).</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLineEdit">
+                                        <property name="name">
+                                            <cstring>edtServerAddress</cstring>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The IP address or hostmask of the ICQ server you wish to connect to.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The IP address or hostmask of the ICQ server you wish to connect to.  Normally you will want the default (login.icq.com).</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                            <widget class="QLayoutWidget" row="1" column="1">
+                                <property name="name">
+                                    <cstring>layout61</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLabel">
+                                        <property name="name">
+                                            <cstring>lblServerPort</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Po&amp;rt:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>edtServerPort</cstring>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The port on the ICQ server that you would like to connect to.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The port on the ICQ server that you would like to connect to.  Normally this is 5190.</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QSpinBox">
+                                        <property name="name">
+                                            <cstring>edtServerPort</cstring>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>65534</number>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>1</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>1</number>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The port on the ICQ server that you would like to connect to.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The port on the ICQ server that you would like to connect to.  Normally this is 5190.</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                            <widget class="QPushButton" row="1" column="2">
+                                <property name="name">
+                                    <cstring>btnServerDefaults</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>&amp;Defaults</string>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>Restore the server and port values to their defaults.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Restore the server and port values to their defaults.</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="0" column="0">
                                 <property name="name">
                                     <cstring>chkAutoLogin</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Connect automatically at &amp;startup</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+S</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check to connect automatically when Kopete is started.</string>
@@ -293,116 +399,7 @@
                                     <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
                                 </property>
                             </widget>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout220</cstring>
-                                </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QLayoutWidget">
-                                        <property name="name">
-                                            <cstring>layout60</cstring>
-                                        </property>
-                                        <hbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>lblServer</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Ser&amp;ver:</string>
-                                                </property>
-                                                <property name="buddy" stdset="0">
-                                                    <cstring>edtServerAddress</cstring>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>The IP address or hostmask of the ICQ server you wish to connect to.</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>The IP address or hostmask of the ICQ server you wish to connect to.  Normally you will want the default (login.icq.com).</string>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLineEdit">
-                                                <property name="name">
-                                                    <cstring>edtServerAddress</cstring>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>The IP address or hostmask of the ICQ server you wish to connect to.</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>The IP address or hostmask of the ICQ server you wish to connect to.  Normally you will want the default (login.icq.com).</string>
-                                                </property>
-                                            </widget>
-                                        </hbox>
-                                    </widget>
-                                    <widget class="QLayoutWidget">
-                                        <property name="name">
-                                            <cstring>layout61</cstring>
-                                        </property>
-                                        <hbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>lblServerPort</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Po&amp;rt:</string>
-                                                </property>
-                                                <property name="buddy" stdset="0">
-                                                    <cstring>edtServerPort</cstring>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>The port on the ICQ server that you would like to connect to.</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>The port on the ICQ server that you would like to connect to.  Normally this is 5190.</string>
-                                                </property>
-                                            </widget>
-                                            <widget class="QSpinBox">
-                                                <property name="name">
-                                                    <cstring>edtServerPort</cstring>
-                                                </property>
-                                                <property name="maxValue">
-                                                    <number>65534</number>
-                                                </property>
-                                                <property name="minValue">
-                                                    <number>1</number>
-                                                </property>
-                                                <property name="value">
-                                                    <number>1</number>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>The port on the ICQ server that you would like to connect to.</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>The port on the ICQ server that you would like to connect to.  Normally this is 5190.</string>
-                                                </property>
-                                            </widget>
-                                        </hbox>
-                                    </widget>
-                                    <widget class="QPushButton">
-                                        <property name="name">
-                                            <cstring>btnServerDefaults</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>&amp;Defaults</string>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>Restore the server and port values to their defaults.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>Restore the server and port values to their defaults.</string>
-                                        </property>
-                                    </widget>
-                                </hbox>
-                            </widget>
-                        </vbox>
+                        </grid>
                     </widget>
                     <spacer>
                         <property name="name">
@@ -416,8 +413,8 @@
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>20</width>
-                                <height>41</height>
+                                <width>16</width>
+                                <height>16</height>
                             </size>
                         </property>
                     </spacer>
@@ -454,7 +451,4 @@
     <tabstop>kActiveLabel7</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kactivelabel.h</includehint>
-</includehints>
 </UI>

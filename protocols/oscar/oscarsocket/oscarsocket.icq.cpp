@@ -1382,6 +1382,28 @@ void OscarSocket::sendCLI_METASETWORK(const ICQWorkUserInfo &i)
 	sendCLI_TOICQSRV(0x07d0, req);
 }
 
+
+void OscarSocket::sendCLI_METASETMORE(const ICQMoreUserInfo &i)
+{
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_METASETMORE)" <<
+		", sending more user information (age, bday, lang)" << endl;
+
+	Buffer req; // Little Endian
+	req.addLEWord(0x03fd); //1021
+	req.addLEWord(i.age); // WORD
+	req.addLEByte(i.gender); // BYTE
+	req.addLELNTS(i.homepage.latin1()); // LNTS
+	req.addLEWord(i.birthday.year()); // WORD
+	req.addLEByte(i.birthday.month()); // BYTE
+	req.addLEByte(i.birthday.day()); // BYTE
+	req.addLEByte(i.lang1); // BYTE
+	req.addLEByte(i.lang2); // BYTE
+	req.addLEByte(i.lang3); // BYTE
+
+	sendCLI_TOICQSRV(0x07d0, req);
+}
+
+
 void OscarSocket::sendCLI_METASETSECURITY(bool requireauth, bool webaware,
 	BYTE direct)
 {
