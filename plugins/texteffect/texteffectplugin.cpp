@@ -36,6 +36,8 @@ TextEffectPlugin::TextEffectPlugin( QObject *parent, const char *name, const QSt
 
 	m_config = new TextEffectConfig;
 
+	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
+
 	connect( KopeteMessageManagerFactory::factory(),
 		SIGNAL( aboutToSend( KopeteMessage & ) ),
 		SLOT( slotOutgoingMessage( KopeteMessage & ) ) );
@@ -185,6 +187,11 @@ void TextEffectPlugin::slotOutgoingMessage( KopeteMessage& msg )
 
 		msg.setFg(QColor (colors[last_color]));
 	}
+}
+
+void TextEffectPlugin::slotSettingsChanged()
+{
+	m_config->load();
 }
 
 

@@ -49,21 +49,9 @@ public:
 	TextEffectPlugin( QObject *parent, const char *name, const QStringList &args );
 	~TextEffectPlugin();
 
-
-	/***************************************************************************
-	 *   Re-implementation of KopetePlugin class methods                       *
-	 ***************************************************************************/
-
-//	virtual KActionCollection *customContextMenuActions(KopeteMetaContact*);
-//	virtual KActionCollection *customChatActions(KopeteMessageManager*);
-
-	/***************************************************************************
-	 *   Plugin's API (used by preferences)                                    *
-	 ***************************************************************************/
-
 public slots:
-
 	void slotOutgoingMessage( KopeteMessage& msg );
+	void slotSettingsChanged();
 
 private:
 	static TextEffectPlugin* pluginStatic_;
