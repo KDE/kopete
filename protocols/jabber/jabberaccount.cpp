@@ -783,10 +783,12 @@ void JabberAccount::slotCSWarning (int /*warning*/)
 
 }
 
-void JabberAccount::handleStreamError (int streamError, int streamCondition, int connectorCode, QString server)
+void JabberAccount::handleStreamError (int streamError, int streamCondition, int connectorCode, QString server, KopeteAccount::DisconnectReason &errorClass)
 {
 	QString errorText;
 	QString errorCondition;
+
+	errorClass = KopeteAccount::Unknown;
 
 	/*
 	 * Display error to user.
@@ -845,6 +847,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			break;
 
 		case XMPP::ClientStream::ErrConnection:
+			errorClass = KopeteAccount::InvalidHost;
 			switch(connectorCode)
 			{
  				case KNetwork::KSocketBase::LookupFailure:
@@ -926,6 +929,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			break;
 
 		case XMPP::ClientStream::ErrTLS:
+			errorClass = KopeteAccount::InvalidHost;
 			switch(streamCondition)
 			{
 				case XMPP::ClientStream::TLSStart:
@@ -943,6 +947,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			break;
 
 		case XMPP::ClientStream::ErrAuth:
+			errorClass = KopeteAccount::InvalidHost;
 			switch(streamCondition)
 			{
 				case XMPP::ClientStream::GenericAuthError:
@@ -987,6 +992,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			break;
 
 		case XMPP::ClientStream::ErrSecurityLayer:
+			errorClass = KopeteAccount::InvalidHost;
 			switch(streamCondition)
 			{
 				case XMPP::ClientStream::LayerTLS:
@@ -1004,6 +1010,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			break;
 
 		case XMPP::ClientStream::ErrBind:
+			errorClass = KopeteAccount::InvalidHost;
 			switch(streamCondition)
 			{
 				case XMPP::ClientStream::BindNotAllowed:
@@ -1053,12 +1060,14 @@ void JabberAccount::slotCSError (int error)
 	}
 	else
 	{
+		KopeteAccount::DisconnectReason errorClass;
+
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Disconnecting." << endl;
 
 		// display message to user
-		handleStreamError (error, jabberClientStream->errorCondition (), jabberClientConnector->errorCode (), server ());
+		handleStreamError (error, jabberClientStream->errorCondition (), jabberClientConnector->errorCode (), server (), errorClass);
 
-		disconnect ( KopeteAccount::ConnectionReset );
+		disconnect ( errorClass );
 
 		// manually force the slot to be called since in case of an error,
 		// libpsi will most likely be confused and not emit signals anymore

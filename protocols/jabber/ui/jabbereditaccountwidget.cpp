@@ -412,8 +412,10 @@ void JabberEditAccountWidget::slotCSError (int error)
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Error in stream signalled, disconnecting." << endl;
 
+	KopeteAccount::DisconnectReason errorClass;
+
 	// display message to user
-	JabberAccount::handleStreamError (error, jabberClientStream->errorCondition (), jabberClientConnector->errorCode (), mServer->text ());
+	JabberAccount::handleStreamError (error, jabberClientStream->errorCondition (), jabberClientConnector->errorCode (), mServer->text (), errorClass);
 
 	disconnect ();
 

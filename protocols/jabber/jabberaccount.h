@@ -104,7 +104,7 @@ public:
 	/*
 	 * Handle stream errors. Displays a dialog and returns.
 	 */
-	static void handleStreamError (int streamError, int streamCondition, int connectorCode, QString server);
+	static void handleStreamError (int streamError, int streamCondition, int connectorCode, QString server, KopeteAccount::DisconnectReason &errorClass);
 
 	/**
 	 * Return the current, shared S5B server instance.
