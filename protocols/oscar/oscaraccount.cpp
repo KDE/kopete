@@ -177,7 +177,14 @@ void OscarAccount::slotGotSSIList()
 		
 		kdDebug( OSCAR_GEN_DEBUG ) << k_funcinfo << "Adding contact '" << ( *bit ).name() << "' to kopete list in group " <<
 			group->displayName() << endl;
-		addContact( ( *bit ).name(), QString::null, group, Kopete::Account::DontChangeKABC );
+		OscarContact* oc = dynamic_cast<OscarContact*>( contacts()[( *bit ).name()] );
+		if ( oc )
+		{
+			Oscar::SSI item = ( *bit );
+			oc->setSSIItem( item );
+		}
+		else
+			addContact( ( *bit ).name(), QString::null, group, Kopete::Account::DontChangeKABC );
 	}
 	QObject::connect( kcl, SIGNAL( groupRenamed( Kopete::Group*,  const QString& ) ), this, SLOT( kopeteGroupRenamed( Kopete::Group*, const QString& ) ) );
 	QObject::connect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ), this, SLOT( kopeteGroupRemoved( Kopete::Group* ) ) );

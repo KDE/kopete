@@ -53,7 +53,7 @@ public:
 	int warningLevel() const;
 
 public slots:
-	void updateSSIItem() {};
+	void updateSSIItem();
 	void slotUserInfo();
 	void userInfoUpdated( const QString& contact, const UserDetails& details );
 	void userOnline( const QString& userId );

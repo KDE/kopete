@@ -123,6 +123,16 @@ int AIMContact::warningLevel() const
 	return m_warningLevel;
 }
 
+void AIMContact::updateSSIItem()
+{
+	if ( m_ssiItem.type() != 0xFFFF && m_ssiItem.waitingAuth() == false &&
+	     onlineStatus() == Kopete::OnlineStatus::Unknown )
+	{
+		//make sure they're offline
+		setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusOffline );
+	}
+}
+
 void AIMContact::slotUserInfo()
 {
 	if ( !m_infoDialog)
