@@ -488,13 +488,14 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
   char buffer[200];
   int counter=0,ppass[2];
   QCString password = CryptographyPlugin::cachedPass();
+  bool passphraseHandling=CryptographyPlugin::passphraseHandling();
 
   while ((counter<3) && (encResult.isEmpty()))
   {
-		if(password.isNull())
+  		counter++;
+		if(passphraseHandling && password.isNull())
 		{
 			/// pipe for passphrase
-			counter++;
 			//userID=QString::fromUtf8(userID);
 			userID.replace(QRegExp("<"),"&lt;");
 			QString passdlg=i18n("Enter passphrase for <b>%1</b>:").arg(userID);
@@ -508,27 +509,32 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
 			CryptographyPlugin::setCachedPass(password);
 		}
 
-      pipe(ppass);
-      pass = fdopen(ppass[1], "w");
-      fwrite(password, sizeof(char), strlen(password), pass);
-      //        fwrite("\n", sizeof(char), 1, pass);
-      fclose(pass);
+		if(passphraseHandling)
+		{
+			pipe(ppass);
+			pass = fdopen(ppass[1], "w");
+			fwrite(password, sizeof(char), strlen(password), pass);
+			//        fwrite("\n", sizeof(char), 1, pass);
+			fclose(pass);
+		}
 
-      gpgcmd="echo ";
-      gpgcmd+=KShellProcess::quote(text);
-      gpgcmd+=" | gpg --no-secmem-warning --no-tty ";
-      gpgcmd+="--passphrase-fd "+QString::number(ppass[0])+" -d ";
-      //////////   encode with untrusted keys or armor if checked by user
-      fp = popen(QFile::encodeName(gpgcmd), "r");
-      while ( fgets( buffer, sizeof(buffer), fp))
-        encResult+=buffer;
-      pclose(fp);
-	  password=QCString();
+		gpgcmd="echo ";
+		gpgcmd+=KShellProcess::quote(text);
+		gpgcmd+=" | gpg --no-secmem-warning --no-tty ";
+		if(passphraseHandling)
+			gpgcmd+="--passphrase-fd "+QString::number(ppass[0]);
+		gpgcmd+=" -d ";
+		//////////   encode with untrusted keys or armor if checked by user
+		fp = popen(QFile::encodeName(gpgcmd), "r");
+		while ( fgets( buffer, sizeof(buffer), fp))
+			encResult+=buffer;
+		pclose(fp);
+		password=QCString();
     }
   if (encResult!="")
     return encResult;
   else
-    return "";
+    return QString::null;
 }
 
 

@@ -52,7 +52,24 @@
                 <string>Encrypt message also with my key</string>
             </property>
         </widget>
-        <widget class="QButtonGroup" row="2" column="0" rowspan="1" colspan="3">
+        <spacer row="5" column="1">
+            <property name="name">
+                <cstring>spacer3</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>21</width>
+                    <height>50</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QButtonGroup" row="4" column="0" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>m_cache</cstring>
             </property>
@@ -135,25 +152,51 @@
                 </widget>
             </grid>
         </widget>
-        <spacer row="3" column="1">
+        <spacer row="2" column="0">
             <property name="name">
-                <cstring>spacer3</cstring>
+                <cstring>spacer2</cstring>
             </property>
             <property name="orientation">
                 <enum>Vertical</enum>
             </property>
             <property name="sizeType">
-                <enum>Expanding</enum>
+                <enum>Fixed</enum>
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>21</width>
-                    <height>91</height>
+                    <width>20</width>
+                    <height>20</height>
                 </size>
             </property>
         </spacer>
+        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>m_noPassphrase</cstring>
+            </property>
+            <property name="text">
+                <string>Don't ask the passphrase (when using gpg-agent)</string>
+            </property>
+        </widget>
     </grid>
 </widget>
+<connections>
+    <connection>
+        <sender>m_noPassphrase</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_cache</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>m_editOwnKey</tabstop>
+    <tabstop>m_selectOwnKey</tabstop>
+    <tabstop>m_alsoMyKey</tabstop>
+    <tabstop>m_noPassphrase</tabstop>
+    <tabstop>m_cache_kopete</tabstop>
+    <tabstop>m_cache_time</tabstop>
+    <tabstop>m_time</tabstop>
+    <tabstop>m_cache_never</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>klineedit.h</includehint>

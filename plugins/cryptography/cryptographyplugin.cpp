@@ -93,6 +93,11 @@ void CryptographyPlugin::setCachedPass(const QCString& p)
 	pluginStatic_->m_cachedPass=p;
 }
 
+bool CryptographyPlugin::passphraseHandling()
+{
+	return !pluginStatic_->m_prefs->noPassphrase();
+}
+
 
 /*KActionCollection *CryptographyPlugin::customChatActions(KopeteMessageManager *KMM)
 {

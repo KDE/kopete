@@ -48,6 +48,7 @@ public:
 	static CryptographyPlugin  *plugin();
 	static QCString cachedPass();
 	static void setCachedPass(const QCString &pass);
+	static bool passphraseHandling();
 
 	CryptographyPlugin( QObject *parent, const char *name, const QStringList &args );
 	~CryptographyPlugin();

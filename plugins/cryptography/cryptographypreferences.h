@@ -49,6 +49,8 @@ public:
 	CacheMode cacheMode();
 	unsigned int cacheTime() const;
 	bool alsoMyKey() const;
+	bool noPassphrase() const;
+
 private:
 	CryptographyPrefsUI *preferencesDialog;
 	QString m_signKeyID;

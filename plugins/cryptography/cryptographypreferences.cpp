@@ -55,7 +55,6 @@ const QString& CryptographyPreferences::privateKey()
 }
 
 
-
 void CryptographyPreferences::reopen()
 {
 	KGlobal::config()->setGroup("Cryptography Plugin");
@@ -66,6 +65,7 @@ void CryptographyPreferences::reopen()
 	preferencesDialog->m_cache->setButton(KGlobal::config()->readNumEntry( "Cache Passphrase", Keep) );
 	preferencesDialog->m_time->setValue(KGlobal::config()->readNumEntry( "Cache Time", 15) );
 	preferencesDialog->m_alsoMyKey->setChecked( KGlobal::config()->readBoolEntry( "Also My Key", false ) );
+	preferencesDialog->m_noPassphrase->setChecked( KGlobal::config()->readBoolEntry( "No Passphrase Handling", false ) );
 
 }
 
@@ -78,6 +78,7 @@ void CryptographyPreferences::save()
 	config->writeEntry("Cache Passphrase",  preferencesDialog->m_cache->id(preferencesDialog->m_cache->selected() ) );
 	config->writeEntry("Cache Time", preferencesDialog->m_time->value() );
 	config->writeEntry("Also My Key", preferencesDialog->m_alsoMyKey->isChecked());
+	config->writeEntry("No Passphrase Handling", preferencesDialog->m_noPassphrase->isChecked());
 
 	config->sync();
 
@@ -110,6 +111,12 @@ unsigned int CryptographyPreferences::cacheTime() const
 bool CryptographyPreferences::alsoMyKey() const
 {
 	return preferencesDialog->m_alsoMyKey->isChecked();
+}
+
+
+bool CryptographyPreferences::noPassphrase() const
+{
+	return preferencesDialog->m_noPassphrase->isChecked();
 }
 
 #include "cryptographypreferences.moc"
