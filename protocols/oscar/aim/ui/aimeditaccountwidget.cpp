@@ -48,7 +48,7 @@ AIMEditAccountWidget::AIMEditAccountWidget(AIMProtocol *protocol,
 	else
 	{
 		// Just set the default saved password to true
-		mGui->mSavePassword->setChecked(true);
+		mGui->mSavePassword->setChecked(false);
 		slotSetDefaultServer();
 	}
 }

@@ -214,12 +214,12 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		// Just set the default saved password to true
 		kdDebug(14200) << k_funcinfo <<
 			"Called with no account object, setting defaults for server and port" << endl;
-		mAccountSettings->chkSavePassword->setChecked(true);
+		mAccountSettings->chkSavePassword->setChecked(false);
 
 		QTime current = QTime::currentTime(Qt::LocalTime);
 		QTime currentUTC = QTime::currentTime(Qt::UTC);
 		int diff = current.hour() - currentUTC.hour();
-		kdDebug(14200) << k_funcinfo << "diff from UTC=" << diff << endl;
+		kdDebug(14200) << k_funcinfo << "Difference from UTC = " << diff << endl;
 
 		mProtocol->setTZComboValue(mUserInfoSettings->rwTimezone, (diff*2));
 		slotSetDefaultServer();
