@@ -18,6 +18,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <qfont.h>
+#include <kconfig.h>
 
 #include "kopetestdaction.h"
 #include "jabbercontact.h"
@@ -75,6 +76,7 @@ KopeteMessageManager* JabberContact::msgManagerKCW() {
 
 void JabberContact::initActions() {
     actionChat = KopeteStdAction::sendMessage(this, SLOT(slotChatThisUser()), this, "actionChat");
+	actionMessage = new KAction(i18n("Send Email Message"), "sendmessage", 0, this, SLOT(slotEmailUser()), this, "actionMessage");
     actionRemoveFromGroup = new KAction(i18n("Remove From Group"), "edittrash", 0, this, SLOT(slotRemoveFromGroup()), this, "actionRemove");
     actionRemove = KopeteStdAction::deleteContact(this, SLOT(slotRemoveThisUser()), this, "actionDelete");
     actionContactMove = KopeteStdAction::moveContact(this, SLOT(slotMoveThisUser()), this, "actionMove");
@@ -86,7 +88,15 @@ void JabberContact::initActions() {
 void JabberContact::showContextMenu(QPoint, QString) {
     popup = new KPopupMenu();
     popup->insertTitle(userID() + " (" + mResource + ")");
-	actionChat->plug(popup);
+	KGlobal::config()->setGroup("Jabber");
+	if (KGlobal::config()->readBoolEntry("EmailDefault", false)) {
+		actionMessage->plug(popup);
+		actionChat->plug(popup);
+	}
+	else {
+		actionChat->plug(popup);
+		actionMessage->plug(popup);
+	}
 	if (mStatus != STATUS_OFFLINE) {
 		QStringList items;
 		int activeItem;
@@ -227,7 +237,14 @@ void JabberContact::slotChatThisUser() {
 	msgManagerKCW()->readMessages();
 }
 
+void JabberContact::slotEmailUser() {
+	kdDebug() << "Jabber contact: Opening message with user " << userID() << endl;
+	msgManagerKEW()->readMessages();
+	msgManagerKEW()->slotSendEnabled(true);
+}
+
 void JabberContact::execute() {
+	KGlobal::config()->setGroup("Jabber");
 	slotChatThisUser();
 }
 
@@ -245,7 +262,11 @@ void JabberContact::slotNewMessage(const JabMessage &message) {
 	contactList.append(mProtocol->myself());
 	KopeteMessage jabberMessage(this, contactList, message.body, message.subject, KopeteMessage::Inbound);
 	kdDebug() << "Jabber contact: Past new KM" << endl;
+	if (message.type == JABMESSAGE_CHAT)
 		msgManagerKCW()->appendMessage(jabberMessage);
+	else
+		msgManagerKEW()->appendMessage(jabberMessage);
+		msgManagerKEW()->slotSendEnabled(false);
 	kdDebug() << "Jabber contact: end slotNewMessage" << endl;
 }
 

@@ -91,6 +91,7 @@ class JabberContact:public KopeteContact {
     void slotDoRenameContact();
     void slotMoveThisUser();
     void slotChatThisUser();
+    void slotEmailUser();
 
   signals:
     void statusChanged();
@@ -110,7 +111,7 @@ class JabberContact:public KopeteContact {
     int mStatus;
     
     KPopupMenu *popup;
-    KAction *actionRemove, *actionRemoveFromGroup, *actionChat, *actionInfo, *actionHistory, *actionRename;
+    KAction *actionMessage, *actionRemove, *actionRemoveFromGroup, *actionChat, *actionInfo, *actionHistory, *actionRename;
     KListAction *actionContactMove;
     KSelectAction *actionSelectResource;
     

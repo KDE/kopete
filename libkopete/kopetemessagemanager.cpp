@@ -58,7 +58,7 @@ KopeteMessageManager::~KopeteMessageManager()
 	emit dying(this);
 }
 
-void KopeteMessageManager::slotSendEnabled( bool e )
+void KopeteMessageManager::slotSendEnabled(bool e)
 {
 	mSendEnabled = e;
 	if (mWidget == ChatWindow) {
@@ -167,6 +167,7 @@ void KopeteMessageManager::slotChatWindowClosing() {
 	}
 	else if (mWidget == Email) {
 		kdDebug() << "[KopeteMessageManager] Email Window closed, now 0L." << endl;
+		delete mEmailWindow;
 		mEmailWindow = 0L;
 	}
 }

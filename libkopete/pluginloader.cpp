@@ -176,7 +176,7 @@ bool LibraryLoader::loadSO(const QString &spec)
 			mLibHash.insert(spec, listitem);
 		}
 
-#if KDE_VERSION < 305
+#if KDE_VERSION < 306
 		// This code works with KDE 3.0.x, but will generate a warning on
 		// stderr if the symbol is not found. For later KDE versions use
 		// the new hasSymbol() method instead

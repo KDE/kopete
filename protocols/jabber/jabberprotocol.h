@@ -56,7 +56,7 @@ class JabberProtocol : public KopeteProtocol
 	Q_OBJECT
 
 public:
-	JabberProtocol();
+	JabberProtocol(QObject *parent, QString name, QStringList);
 	~JabberProtocol();
 
 	void init();
@@ -81,6 +81,8 @@ public:
 	void moveUser(QString, QString, QString, JabberContact * contact);
 	void addContact(QString);
 	void registerUser();
+
+	static const JabberProtocol *protocol();
 
 public slots:
     void slotConnect();
@@ -143,7 +145,8 @@ public slots:
 				  * off and have them on toast in the morning. */
 
     JabberPreferences *mPrefs;
-    Jabber *mProtocol;
+	static const JabberProtocol *sProtocol;
+	Jabber *mProtocol;
 	JabberContact *myContact;
 	KMessageBox *authContact;
 	dlgJabberStatus *reasonDialog;

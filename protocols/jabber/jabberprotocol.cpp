@@ -29,6 +29,7 @@
 #include <kmessagebox.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
+#include <kgenericfactory.h>
 
 #include "kopete.h"
 #include "jabberprotocol.h"
@@ -36,10 +37,17 @@
 #include "statusbaricon.h"
 #include "dlgjabberstatus.h"
 
-JabberProtocol::JabberProtocol() : KopeteProtocol( 0, "JabberProtocol" )
+K_EXPORT_COMPONENT_FACTORY(kopete_jabber, KGenericFactory<JabberProtocol>);
+
+JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList) : KopeteProtocol(parent, name)
 {
     kdDebug() << "Jabber plugin: Loading ..." << endl;
 
+	if (sProtocol)
+		kdDebug() << "[JabberProtocol] Warning: sProtocol already exists! Not redefining." << endl;
+	else
+		sProtocol = this;
+	
     initIcons();
     initActions();
 
@@ -126,6 +134,10 @@ void JabberProtocol::Connect() {
 	else {			/* Nope, just your regular crack junky. */
 		kdDebug() << "Jabber plugin: Ignoring connect request (already connected)." << endl;
     }
+}
+
+static const JabberProtocol *JabberProtocol::protocol() {
+	return sProtocol;
 }
 
 void JabberProtocol::Disconnect() {
