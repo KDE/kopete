@@ -19,6 +19,7 @@
 #include <qspinbox.h>
 #include <qlineedit.h>
 #include <qlayout.h>
+#include <qradiobutton.h>
 
 #include <klocale.h>
 #include <kgenericfactory.h>
@@ -45,6 +46,8 @@ NowListeningPreferences::NowListeningPreferences(QWidget *parent, const char* /*
 		  this, SLOT( slotSettingsChanged() ) );
 	connect ( preferencesDialog->m_conjunction, SIGNAL( textChanged( const QString & ) ),
 		  this, SLOT( slotSettingsChanged() ) );
+	connect ( preferencesDialog->m_autoAdvertising, SIGNAL( toggled( bool ) ),
+		  this, SLOT( slotSettingsChanged() ) );
 	load();
 }
 
@@ -59,6 +62,7 @@ void NowListeningPreferences::save()
 	config->setHeader( preferencesDialog->m_header->text() );
 	config->setPerTrack( preferencesDialog->m_perTrack->text() );
 	config->setConjunction( preferencesDialog->m_conjunction->text() );
+	config->setAutoAdvertising( preferencesDialog->m_autoAdvertising->isChecked() );
 	config->save();
 
 	KCModule::save();
@@ -72,6 +76,7 @@ void NowListeningPreferences::load()
 	preferencesDialog->m_header->setText( config->header() );
 	preferencesDialog->m_perTrack->setText( config->perTrack() );
 	preferencesDialog->m_conjunction->setText( config->conjunction() );
+	preferencesDialog->m_autoAdvertising->setChecked( config->autoAdvertising() );
 
 	KCModule::load();
 
@@ -88,6 +93,7 @@ void NowListeningPreferences::defaults()
 	preferencesDialog->m_header->setText( i18n("Now Listening To: "));
 	preferencesDialog->m_perTrack->setText(i18n("%track( by %artist)( on %album)"));
 	preferencesDialog->m_conjunction->setText( i18n(", and "));
+	preferencesDialog->m_autoAdvertising->setChecked( false );
 }
 
 /*

@@ -124,6 +124,13 @@ void JabberEditAccountWidget::reopen ()
 
 	leProxyJID->setText (account()->configGroup()->readEntry("ProxyJID", QString::null));
 
+	// Privacy
+	cbSendEvents->setChecked( account()->configGroup()->readBoolEntry("SendEvents", true) );
+	cbSendDeliveredEvent->setChecked( account()->configGroup()->readBoolEntry("SendDeliveredEvent", true) );
+	cbSendDisplayedEvent->setChecked( account()->configGroup()->readBoolEntry("SendDisplayedEvent", true) );
+	cbSendComposingEvent->setChecked( account()->configGroup()->readBoolEntry("SendComposingEvent", true) );
+
+	cbHideSystemInfo->setChecked( account()->configGroup()->readBoolEntry("HideSystemInfo", false) );
 }
 
 Kopete::Account *JabberEditAccountWidget::apply ()
@@ -176,6 +183,13 @@ void JabberEditAccountWidget::writeConfig ()
 
 	account()->configGroup()->writeEntry("ProxyJID", leProxyJID->text());
 
+	// Privacy
+	account()->configGroup()->writeEntry("SendEvents", cbSendEvents->isChecked());
+	account()->configGroup()->writeEntry("SendDeliveredEvent", cbSendDeliveredEvent->isChecked());
+	account()->configGroup()->writeEntry("SendDisplayedEvent", cbSendDisplayedEvent->isChecked());
+	account()->configGroup()->writeEntry("SendComposingEvent", cbSendComposingEvent->isChecked());
+	
+	account()->configGroup()->writeEntry("HideSystemInfo", cbHideSystemInfo->isChecked());
 	settings_changed = false;
 }
 

@@ -28,6 +28,7 @@
 // KDE Includes
 #include <kdebug.h>
 #include <kiconloader.h>
+#include <kimageio.h>
 
 // System Includes
 #include <cstdlib>
@@ -55,6 +56,65 @@ struct connect_callback_data
 	void * callback_data;
 	int id;
 };
+
+YahooConnectionManager::YahooConnectionManager()
+{
+}
+
+YahooConnectionManager::~ YahooConnectionManager()
+{
+}
+
+void YahooConnectionManager::addConnection( KExtendedSocket* socket )
+{
+	kdDebug(14181) << k_funcinfo << "Adding socket with fd " << socket->fd() << endl;
+	m_connectionList.append( socket );
+}
+
+KExtendedSocket* YahooConnectionManager::connectionForFD( int fd )
+{
+	kdDebug(14181) << k_funcinfo << "Looking for socket with fd " << fd << endl;
+	QValueList<KExtendedSocket*>::const_iterator it, ycEnd = m_connectionList.constEnd();
+	for ( it = m_connectionList.begin(); it != ycEnd; ++it )
+	{
+		if ( ( *it )->fd() == fd )
+		{
+			kdDebug(14181) << k_funcinfo << "Found socket" << endl;
+			KExtendedSocket* socket = ( *it );
+			return socket;
+		}
+	}
+	
+	return 0L;
+}
+
+void YahooConnectionManager::remove( KExtendedSocket* socket )
+{
+	QValueList<KExtendedSocket*>::iterator it, ycEnd = m_connectionList.end();
+	for ( it = m_connectionList.begin(); it != ycEnd; )
+	{
+		if ( ( *it ) == socket )
+		{
+			it = m_connectionList.remove( it );
+			socket->reset();
+			delete socket;
+		}
+	}
+}
+
+void YahooConnectionManager::reset()
+{
+	QValueList<KExtendedSocket*>::iterator it = m_connectionList.begin();
+	
+	while ( it != m_connectionList.end() && m_connectionList.count() > 0 )
+	{
+		KExtendedSocket* socket = ( *it );
+		it = m_connectionList.remove( it );
+		socket->reset();
+		delete socket;
+	}
+}
+
 
 YahooSessionManager::YahooSessionManager()
 {
@@ -138,12 +198,11 @@ YahooSession::YahooSession(int id, const QString username, const QString passwor
 	m_connId = id;
 	m_Username = username;
 	m_Password = password;
-	m_socket = 0L;
+	m_lastWebcamTimestamp = 0;
 }
 
 int YahooSession::sessionId() const
 {
-	kdDebug(14181) << k_funcinfo << endl;
 	return m_connId;
 }
 
@@ -161,7 +220,7 @@ YahooSession::~YahooSession()
 	kdDebug(14181) << k_funcinfo << endl;
 	yahoo_logoff( m_connId );
 	yahoo_close( m_connId );
-	delete m_socket;
+	m_connManager.reset();
 }
 
 int YahooSession::setLogLevel(enum yahoo_log_level level)
@@ -175,8 +234,7 @@ void YahooSession::logOff()
 	kdDebug(14181)<< k_funcinfo << " " << m_connId <<endl;
 	yahoo_logoff( m_connId );
 
-	if ( m_socket && m_socket->isOpen() )
-		m_socket->reset();
+	m_connManager.reset();
 
 }
 
@@ -442,6 +500,16 @@ QString YahooSession::getProfile_url( void )
 	return QString( yahoo_get_profile_url() );
 }
 
+void YahooSession::requestWebcam( const QString& from )
+{
+	yahoo_webcam_get_feed( m_connId, from.latin1() );
+}
+
+void YahooSession::closeWebcam( const QString& from )
+{
+	yahoo_webcam_close_feed( m_connId, from.latin1() );
+}
+
 void YahooSession::slotLoginResponseReceiver( int /* succ */, char * /* url */ )
 {
 	kdDebug(14181)<< k_funcinfo << endl;
@@ -656,10 +724,12 @@ int YAHOO_CALLBACK_TYPE( ext_yahoo_connect_async )( int id, char *host, int port
 }
 
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_got_webcam_image )( int /*id*/, const char* /*who*/,
-		const unsigned char* /*image*/, unsigned int /*image_size*/, unsigned int /*real_size*/,
-		unsigned int /*timestamp*/ )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_got_webcam_image )( int id, const char* who,
+		const unsigned char* image, unsigned int image_size, unsigned int real_size,
+		unsigned int timestamp )
 {
+	YahooSession* session = YahooSessionManager::manager()->session( id );
+	return session->_gotWebcamImage( who, image, image_size, real_size, timestamp );
 }
 
 void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_invite )( int /*id*/, char* /*from*/ )
@@ -672,9 +742,10 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_invite_reply )( int /*id*/, char* /*f
 	/* Not implemented , No receiver yet */
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_closed )( int /*id*/, char* /*who*/, int /*reason*/ )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_closed )( int id, char* who, int reason )
 {
-	/* Not implemented , No receiver yet */
+	YahooSession* session = YahooSessionManager::manager()->session( id );
+	session->_webcamDisconnected( who, reason );
 }
 
 void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_viewer )( int /*id*/, char* /*who*/, int /*connect*/ )
@@ -927,22 +998,30 @@ void YahooSession::_addHandlerReceiver( int fd, yahoo_input_condition cond, void
 	kdDebug(14181) << k_funcinfo << " " << m_connId << " Socket: " << fd << endl;
 
 	m_data = data;
-
-	if ( fd != -1 )
+	if ( fd == -1 )
+		return;
+	
+	KExtendedSocket* socket = m_connManager.connectionForFD( fd );
+	if ( !socket )
 	{
-		if ( cond == YAHOO_INPUT_READ )
-		{
-			kdDebug(14181) << k_funcinfo << " add handler read" << endl;
-			m_socket->enableRead( true );
-			connect ( m_socket, SIGNAL( readyRead() ), this, SLOT( slotReadReady() ) );
-		}
-		else if ( cond == YAHOO_INPUT_WRITE )
-		{
-			kdDebug(14181) << k_funcinfo << " add handler write" << endl;
-			m_socket->enableWrite( true );
-			connect ( m_socket, SIGNAL( readyWrite() ), this, SLOT( slotWriteReady() ) );
-		}
+		kdDebug(14181) << k_funcinfo << "No existing socket for connection found. We're screwed"
+			<< endl;
+		return;
 	}
+	
+	if ( cond == YAHOO_INPUT_READ )
+	{
+		kdDebug(14181) << k_funcinfo << " add handler read" << endl;
+		socket->enableRead( true );
+		connect ( socket, SIGNAL( readyRead() ), this, SLOT( slotReadReady() ) );
+	}
+	else if ( cond == YAHOO_INPUT_WRITE )
+	{
+		kdDebug(14181) << k_funcinfo << " add handler write" << endl;
+		socket->enableWrite( true );
+		connect ( socket, SIGNAL( readyWrite() ), this, SLOT( slotWriteReady() ) );
+	}
+
 }
 
 void YahooSession::addHandler( int /*fd*/, yahoo_input_condition /*cond*/ )
@@ -951,21 +1030,24 @@ void YahooSession::addHandler( int /*fd*/, yahoo_input_condition /*cond*/ )
 
 void YahooSession::_removeHandlerReceiver( int fd )
 {
-	kdDebug(14181) << k_funcinfo << endl;
-	if ( fd != -1 )
+	if ( fd == -1 )
+		return;
+	
+	KExtendedSocket* socket = m_connManager.connectionForFD( fd );
+	if ( !socket )
 	{
-		kdDebug(14181) << k_funcinfo << " read off" << endl;
-		m_socket->enableRead( false );
-		disconnect ( m_socket, SIGNAL( readyRead() ), this, SLOT( slotReadReady() ) );
-
-		kdDebug(14181) << k_funcinfo << " write off" << endl;
-		m_socket->enableRead( false );
-		disconnect ( m_socket, SIGNAL( readyWrite() ), this, SLOT( slotWriteReady() ) );
+		kdDebug(14181) << k_funcinfo << "No existing socket for connection found. We're screwed"
+			<< endl;
+		return;
 	}
-	else
-	{
-		kdDebug(14181) << k_funcinfo << " FATAL ERROR: socket or session NULL" << endl;
-	}
+	
+	kdDebug(14181) << k_funcinfo << " read off" << endl;
+	socket->enableRead( false );
+	disconnect ( socket, SIGNAL( readyRead() ), this, SLOT( slotReadReady() ) );
+	
+	kdDebug(14181) << k_funcinfo << " write off" << endl;
+	socket->enableRead( false );
+	disconnect ( socket, SIGNAL( readyWrite() ), this, SLOT( slotWriteReady() ) );
 }
 
 void YahooSession::removeHandler( int /*fd*/ )
@@ -983,42 +1065,79 @@ int YahooSession::_hostAsyncConnectReceiver( char *host, int port,
 {
 	struct connect_callback_data *ccd;
 	int error;
-	kdDebug(14181) << k_funcinfo << endl;
-	m_socket = new KExtendedSocket( host, port );
+	KExtendedSocket* yahooSocket = new KExtendedSocket( host, port );
 
 	// TODO Do an async connect in the future
-	error = m_socket->connect();
+	error = yahooSocket->connect();
 
 	if ( !error )
 	{
-		kdDebug(14181) << k_funcinfo << " Connected! fd "<< m_socket->fd() << endl;
-		callback( m_socket->fd(), 0, callback_data );
+		kdDebug(14181) << k_funcinfo << " Connected! fd "<< yahooSocket->fd() << endl;
+		m_connManager.addConnection( yahooSocket );
+		callback( yahooSocket->fd(), 0, callback_data );
 		return 0;
 	}
 	else if( error == -1 && errno == EINPROGRESS )
 	{
 		kdDebug(14181) << k_funcinfo << " In progress?" << endl;
+		m_connManager.addConnection( yahooSocket );
 		ccd = ( struct connect_callback_data* ) calloc( 1, sizeof( struct connect_callback_data ) );
 		ccd->callback = callback;
 		ccd->callback_data = callback_data;
 		ccd->id = m_connId;
-		ext_yahoo_add_handler( -1, m_socket->fd(), YAHOO_INPUT_WRITE, ccd );
+		ext_yahoo_add_handler( -1, yahooSocket->fd(), YAHOO_INPUT_WRITE, ccd );
 		return 1;
 	}
 	else
 	{
 		kdDebug(14181) << k_funcinfo << " Failed!" << endl;
-		m_socket->close();
-		delete m_socket;
-		m_socket = 0L;
+		yahooSocket->close();
+		delete yahooSocket;
+		yahooSocket = 0L;
+		_errorReceiver(0, 1);
 		return -1;
 	}
 }
 
+void YahooSession::_gotWebcamImage( const char* who, const unsigned char* image,
+                                    unsigned int image_size, unsigned int real_size,
+                                    unsigned int timestamp )
+{
+	if ( real_size != image_size )
+		return; //not enough to make a full image
+	
+	if ( timestamp > m_lastWebcamTimestamp )
+	{
+		kdDebug(14181) << k_funcinfo << "Processing webcam image from " << who << endl;
+		//this is the next image in the sequence. If we get images out of
+		//sequence, they're just dropped.
+		m_lastWebcamTimestamp = timestamp;
+		QPixmap webcamImage;
+		webcamImage.loadFromData( image, real_size );
+		emit webcamImageReceived( webcamImage, QString::fromLatin1( who ) );
+	}
+}
+
+void YahooSession::_webcamDisconnected( const char* who, int reason )
+{
+	kdDebug(14181) << k_funcinfo << "Webcam closed remotely, reason: " << reason << endl;
+	emit webcamClosed( QString::fromLocal8Bit( who ), reason );
+}
+
+
 void YahooSession::slotReadReady()
 {
 	int ret = 1;
-	int fd = m_socket->fd();
+	
+	//using sender is the only way to reliably get the socket 
+	const KExtendedSocket* socket = dynamic_cast<const KExtendedSocket*>( sender() );
+	if ( !socket )
+	{
+		kdDebug(14181) << k_funcinfo << "sender() was not a KExtendedSocket!" << endl;
+		return;
+	}
+	
+	int fd = socket->fd();
 	//kdDebug(14181) << k_funcinfo << "Socket FD: " << fd << endl;
 	ret = yahoo_read_ready( m_connId , fd, m_data );
 
@@ -1032,7 +1151,16 @@ void YahooSession::slotReadReady()
 void YahooSession::slotWriteReady()
 {
 	int ret = 1;
-	int fd = m_socket->fd();
+	
+	//using sender is the only way to reliably get the socket 
+	const KExtendedSocket* socket = dynamic_cast<const KExtendedSocket*>( sender() );
+	if ( !socket )
+	{
+		kdDebug(14181) << k_funcinfo << "sender() was not a KExtendedSocket!" << endl;
+		return;
+	}
+	
+	int fd = socket->fd();
 	kdDebug(14181) << k_funcinfo << "Socket FD: " << fd << endl;
 
 	ret = yahoo_write_ready( m_connId , fd, m_data );
@@ -1046,4 +1174,5 @@ void YahooSession::slotWriteReady()
 #include "kyahoo.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
+// kate: indent-mode csands; tab-width 4;
 

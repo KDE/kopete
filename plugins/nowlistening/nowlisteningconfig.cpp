@@ -33,6 +33,7 @@ void NowListeningConfig::load()
 	mHeader = config->readEntry("Header", i18n("Now Listening To: "));
 	mPerTrack = config->readEntry("PerTrack", i18n("%track( by %artist)( on %album)"));
 	mConjunction = config->readEntry("Conjunction", i18n(", and "));
+	mAutoAdvertising = config->readBoolEntry("AutoAdvertising", false);
 }
 
 void NowListeningConfig::save()
@@ -42,6 +43,7 @@ void NowListeningConfig::save()
 	config->writeEntry("Header", mHeader);
 	config->writeEntry("PerTrack", mPerTrack);
 	config->writeEntry("Conjunction", mConjunction);
+	config->writeEntry("AutoAdvertising", mAutoAdvertising);
 	config->sync();
 }
 
@@ -60,6 +62,11 @@ QString NowListeningConfig::conjunction() const
 	return mConjunction;
 }
 
+bool NowListeningConfig::autoAdvertising() const
+{
+	return mAutoAdvertising;
+}
+
 void NowListeningConfig::setHeader(const QString& newHeader)
 {
 	mHeader = newHeader;
@@ -73,4 +80,9 @@ void NowListeningConfig::setPerTrack(const QString& newPerTrack)
 void NowListeningConfig::setConjunction(const QString& newConjunction)
 {
 	mConjunction = newConjunction;
+}
+
+void NowListeningConfig::setAutoAdvertising(bool aa)
+{
+	mAutoAdvertising = aa;
 }

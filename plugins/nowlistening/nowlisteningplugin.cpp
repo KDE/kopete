@@ -18,6 +18,7 @@
 */
 
 #include <qtimer.h>
+#include <qstringlist.h>
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
@@ -65,9 +66,16 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 	// initialise preferences
 	m_config = new NowListeningConfig;
 
+	// Connection for the "/media" command (always needed)
 	connect( Kopete::ChatSessionManager::self(), SIGNAL(
 			chatSessionCreated( Kopete::ChatSession * )) , SLOT( slotNewKMM(
 			Kopete::ChatSession * ) ) );
+
+	// If autoadvertising is on...
+	connect(Kopete::ChatSessionManager::self(),
+			SIGNAL(aboutToSend(Kopete::Message&)),
+			this,
+			SLOT(slotOutgoingMessage(Kopete::Message&)));
 
 	QValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
 	for (QValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
@@ -89,6 +97,8 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 	m_mediaPlayer->append( new NLXmms() );
 #endif
 
+	m_musicSentTo = new QStringList();
+
 	// watch for '/media' getting typed
 	Kopete::CommandHandler::commandHandler()->registerCommand(
 		this,
@@ -107,6 +117,7 @@ NowListeningPlugin::~NowListeningPlugin()
 
 	delete m_mediaPlayer;
 	delete m_config;
+	delete m_musicSentTo;
 
 	pluginStatic_ = 0L;
 }
@@ -142,7 +153,67 @@ void NowListeningPlugin::slotMediaCommand( const QString &args, Kopete::ChatSess
 	theChat->sendMessage( msg );
 }
 
-QString NowListeningPlugin::allPlayerAdvert() const
+void NowListeningPlugin::slotOutgoingMessage(Kopete::Message& msg)
+{
+	// Only do stuff if autoadvertising is on
+	if(!m_config->autoAdvertising())
+		return;
+
+	QString originalBody = msg.plainBody();
+
+	// If it is a /media message, don't process it
+	if(originalBody.startsWith(m_config->header()))
+		return;
+
+	// What will be sent
+	QString newBody;
+
+	// Getting the list of contacts the message will be sent to to determine if at least
+	// one of them has never gotten the current music information.
+	Kopete::ContactPtrList dest = msg.to();
+	bool mustSendAnyway = false;
+	for( Kopete::Contact *c = dest.first() ; c ; c = dest.next() )
+	{
+		const QString& cId = c->contactId();
+		if( 0 == m_musicSentTo->contains( cId ) )
+		{
+			mustSendAnyway = true;
+
+			// The contact will get the music information so we put it in the list.
+			m_musicSentTo->push_back( cId );
+		}
+	}
+
+	bool newTrack = newTrackPlaying();
+
+	// We must send the music information if someone has never gotten it or the track(s)
+	// has changed since it was last sent.
+	if ( mustSendAnyway || newTrack )
+	{
+		QString advert = allPlayerAdvert(false); // false since newTrackPlaying() did the update
+		if( !advert.isEmpty() )
+			newBody = originalBody + "<br>" + advert;
+
+		// If we send because the information has changed since it was last sent, we must
+		// rebuild the list of contacts the latest information was sent to.
+		if( newTrack )
+		{
+			m_musicSentTo->clear();
+			for( Kopete::Contact *c = dest.first() ; c ; c = dest.next() )
+			{
+				m_musicSentTo->push_back( c->contactId() );
+			}
+		}
+	}
+
+	// If the body has been modified, change the message
+	if( !newBody.isEmpty() )
+	{
+		msg.setBody( newBody, Kopete::Message::RichText );
+ 	}
+}
+
+QString NowListeningPlugin::allPlayerAdvert(bool update) const
 {
 	// generate message for all players
 	QString message = "";
@@ -150,7 +221,8 @@ QString NowListeningPlugin::allPlayerAdvert() const
 
 	for ( NLMediaPlayer* i = m_mediaPlayer->first(); i; i = m_mediaPlayer->next() )
 	{
-		i->update();
+		if(update)
+			i->update();
 		if ( i->playing() )
 		{
 			kdDebug( 14307 ) << k_funcinfo << i->name() << " is playing" << endl;
@@ -165,6 +237,17 @@ QString NowListeningPlugin::allPlayerAdvert() const
 	kdDebug( 14307 ) << k_funcinfo << message << endl;
 			
 	return message;
+}
+
+bool NowListeningPlugin::newTrackPlaying(void) const
+{
+	for ( NLMediaPlayer* i = m_mediaPlayer->first(); i; i = m_mediaPlayer->next() )
+	{
+		i->update();
+		if( i->newTrack() )
+		  return true;
+	}
+	return false;
 }
 
 QString NowListeningPlugin::substDepthFirst( NLMediaPlayer *player,
@@ -274,6 +357,16 @@ void NowListeningPlugin::advertiseToChat( Kopete::ChatSession *theChat, QString 
 void NowListeningPlugin::slotSettingsChanged()
 {
 	m_config->load();
+	disconnect(Kopete::ChatSessionManager::self(),
+			   SIGNAL(aboutToSend(Kopete::Message&)),
+			   this,
+			   SLOT(slotOutgoingMessage(Kopete::Message&)));
+	if(m_config->autoAdvertising()) {
+		connect(Kopete::ChatSessionManager::self(),
+				SIGNAL(aboutToSend(Kopete::Message&)),
+				this,
+				SLOT(slotOutgoingMessage(Kopete::Message&)));
+	}
 }
 
 NowListeningPlugin* NowListeningPlugin::pluginStatic_ = 0L;

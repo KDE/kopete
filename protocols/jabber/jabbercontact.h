@@ -65,6 +65,8 @@ public:
 	 */
 	void setPropertiesFromVCard ( const XMPP::VCard &vCard );
 
+	bool isContactRequestingEvent( XMPP::MsgEvent event );
+
 public slots:
 
 	/**
@@ -195,6 +197,11 @@ private:
 	 * being updated or not.
 	 */
 	bool mVCardUpdateInProgress;
+
+	bool mRequestComposingEvent;
+	bool mRequestOfflineEvent;
+	bool mRequestDisplayedEvent;
+	bool mRequestDeliveredEvent;
 
 };
 

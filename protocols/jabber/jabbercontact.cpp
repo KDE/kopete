@@ -89,6 +89,10 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount 
 	// call moved from superclass, see JabberBaseContact for details
 	reevaluateStatus ();
 
+	mRequestOfflineEvent = false;
+	mRequestDisplayedEvent = false;
+	mRequestDeliveredEvent = false;
+	mRequestComposingEvent = false;
 }
 
 QPtrList<KAction> *JabberContact::customContextMenuActions ()
@@ -224,14 +228,33 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	// fetch message manager
 	JabberChatSession *mManager = manager ( message.from().resource (), Kopete::Contact::CanCreate );
 
-	// evaluate typing notifications
+	// evaluate notifications
 	if ( message.type () != "error" )
 	{
-		if ( message.containsEvent ( CancelEvent ) )
-			mManager->receivedTypingMsg ( this, false );
-		else
-			if ( message.containsEvent ( ComposingEvent ) )
+		if (message.body().isEmpty())
+		// Then here could be event notifications
+		{
+			if (message.containsEvent ( CancelEvent ) )
+				mManager->receivedTypingMsg ( this, false );
+			else if (message.containsEvent ( ComposingEvent ) )
 				mManager->receivedTypingMsg ( this, true );
+			else if (message.containsEvent ( DisplayedEvent ) )
+				mManager->receivedEventNotification ( i18n("Message has been displayed") );
+			else if (message.containsEvent ( DeliveredEvent ) )
+				mManager->receivedEventNotification ( i18n("Message has been delivered") );
+			else if (message.containsEvent ( OfflineEvent ) )
+			{
+	        	mManager->receivedEventNotification( i18n("Message stored on the server, contact offline") );
+			}
+		}
+		else
+		// Then here could be event notification requests
+		{
+			mRequestComposingEvent = message.containsEvent ( ComposingEvent ) ? true : false;
+			mRequestOfflineEvent = message.containsEvent ( OfflineEvent ) ? true : false;
+			mRequestDeliveredEvent = message.containsEvent ( DeliveredEvent ) ? true : false;
+			mRequestDisplayedEvent = message.containsEvent ( DisplayedEvent) ? true : false;
+		}
 	}
 
 	/**
@@ -928,5 +951,20 @@ void JabberContact::slotStatusInvisible ()
 	sendPresence ( status );
 
 }
+
+bool JabberContact::isContactRequestingEvent( XMPP::MsgEvent event )
+{
+	if ( event == OfflineEvent )
+		return mRequestOfflineEvent;
+	else if ( event == DeliveredEvent )
+		return mRequestDeliveredEvent;
+	else if ( event == DisplayedEvent )
+		return mRequestDisplayedEvent;
+	else if ( event == ComposingEvent)
+		return mRequestComposingEvent;
+	else
+		return true;
+}
+
 
 #include "jabbercontact.moc"

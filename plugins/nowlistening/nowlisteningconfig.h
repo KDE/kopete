@@ -31,15 +31,18 @@ public:
 	QString header() const;
 	QString perTrack() const;
 	QString conjunction() const;
+	bool autoAdvertising() const;
 
 	void setHeader(const QString& newHeader);
 	void setPerTrack(const QString& newPerTrack);
 	void setConjunction(const QString &newConjunction);
+	void setAutoAdvertising(bool aa);
 
 private:
 	QString mHeader;
 	QString mPerTrack;
 	QString mConjunction;
+	bool    mAutoAdvertising;
 };
 
 #endif

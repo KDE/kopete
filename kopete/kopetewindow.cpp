@@ -148,9 +148,8 @@ void KopeteWindow::initActions()
 		0, Kopete::AccountManager::self(), SLOT( disconnectAll() ),
 		actionCollection(), "DisconnectAll" );
 
-	actionExportContacts = new KAction( i18n( "&Export Contacts..." ), "",
-																			0, this, SLOT( showExportDialog() ),
-																			actionCollection(), "ExportContacts" );
+	actionExportContacts = new KAction( i18n( "&Export Contacts..." ), "", 0, this,
+		SLOT( showExportDialog() ),actionCollection(), "ExportContacts" );
 
 	/* the connection menu has been replaced by the set status menu
 	actionConnectionMenu = new KActionMenu( i18n("Connection"),"connect_established",
@@ -227,7 +226,7 @@ void KopeteWindow::initActions()
 		CTRL+SHIFT+Key_I, KKey::QtWIN+CTRL+Key_I, Kopete::ChatSessionManager::self(), SLOT(slotReadMessage()) );
 
 	globalAccel->insert( QString::fromLatin1("Show/Hide Contact List"), i18n("Show/Hide Contact List"), i18n("Show or hide the contact list"),
-		CTRL+SHIFT+Key_C, KKey::QtWIN+CTRL+Key_C, this, SLOT(slotShowHide()) );
+		CTRL+SHIFT+Key_A, KKey::QtWIN+CTRL+Key_A, this, SLOT(slotShowHide()) );
 
 	globalAccel->readSettings();
 	globalAccel->updateConnections();
@@ -318,6 +317,8 @@ void KopeteWindow::loadOptions()
 
 	menubarAction->setChecked( !menuBar()->isHidden() );
 	statusbarAction->setChecked( !statusBar()->isHidden() );
+	m_autoHide = p->contactListAutoHide();
+	m_autoHideTimeout = p->contactListAutoHideTimeout();
 }
 
 void KopeteWindow::saveOptions()

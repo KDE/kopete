@@ -34,6 +34,43 @@ class YahooSession;
 class KExtendedSocket;
 class QSocketNotifier;
 
+class YahooConnectionManager
+{
+public:
+	YahooConnectionManager();
+	~YahooConnectionManager();
+	
+	/**
+	 * Registers a connection with the connection manager so that it
+	 * can be kept track of. When a connection is closed, it is unregistered
+	 * from the connection manager and a new connection of that type is expected
+	 * to be created.
+	 */
+	void addConnection( KExtendedSocket* socket );
+	
+	/**
+	 * Get the connection by its file descriptor
+	 */
+	KExtendedSocket* connectionForFD( int fd );
+	
+	/**
+	 * Remove a connection from the manager
+	 * @overload
+	 */
+	void remove( KExtendedSocket* socket );
+	
+	/**
+	 * Reset the connection manager.
+	 */
+	void reset();
+	
+private:
+	
+	QValueList<KExtendedSocket*> m_connectionList;
+};
+	
+	
+
 /* Yahoo Protocol Connection Manager */
 class YahooSessionManager : public QObject
 {
@@ -110,6 +147,10 @@ public:
 	QStringList getIdentities();
 	QString getCookie( const QString &which);
 	QString getProfile_url( void );
+	
+	//webcam handlers
+	void requestWebcam( const QString& from );
+	void closeWebcam( const QString& from );
 
 	/* Private Receivers for libyahoo callbacks, we capture them  and emit signals
 	   called only by libyahoo callbacks, don't use them */
@@ -138,6 +179,11 @@ public:
 	void _addHandlerReceiver(int fd, yahoo_input_condition cond, void *data);
 	void _removeHandlerReceiver(int fd);
 	int _hostAsyncConnectReceiver(char *host, int port,  yahoo_connect_callback callback, void *callback_data);
+	
+	//webcam callbacks
+	void _gotWebcamImage( const char* who, const unsigned char* image, unsigned int image_size,
+	                      unsigned int real_size, unsigned int timestamp );
+	void _webcamDisconnected( const char* who, int reason );
 
 signals:
 	/** emitted when server says login OK */
@@ -200,6 +246,12 @@ signals:
 	/** emitted when error */
 	void error( const QString &err, int fatal);
 	//void hostConnect(char *host, int port);
+	
+	/** emitted when we have a webcam image available */
+	void webcamImageReceived( const QPixmap&, const QString& from );
+	
+	/** emitted when the webcam has been closed from the other side */
+	void webcamClosed( const QString& from, int reason );
 
 private slots:
 
@@ -214,7 +266,7 @@ private:
 	void addHandler(int fd, yahoo_input_condition cond);
 	void removeHandler(int fd);
 
-	KExtendedSocket *m_socket;
+	YahooConnectionManager m_connManager;
 	void *m_data;
 
 	QString m_Username, m_Password, m_Server; // User data
@@ -226,9 +278,12 @@ private:
 
 	QString m_BuddyListServer; // Buddy List server
 	int m_BuddyListPort;
+	
+	unsigned int m_lastWebcamTimestamp;
 };
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
+// kate: indent-mode csands; tab-width 4; auto-insert-doxygen on;
 

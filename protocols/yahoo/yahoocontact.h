@@ -24,11 +24,15 @@
 /* Kopete Includes */
 #include "kopetecontact.h"
 
+class KAction;
+
 namespace Kopete { class ChatSession; }
 namespace Kopete { class MetaContact; }
 namespace Kopete { class OnlineStatus; }
+namespace Kopete { class Message; }
 class YahooProtocol;
 class YahooAccount;
+class YahooWebcamDialog;
 
 class YahooContact : public Kopete::Contact
 {
@@ -55,6 +59,10 @@ public slots:
 	virtual void slotUserInfo();
 	virtual void slotSendFile();
 	virtual void deleteContact();
+	void requestWebcam();
+	void closeWebcamDialog();
+	void webcamClosed( const QString& contact, int reason );
+
 
 	/**
 	 * Must be called after the contact list has been received
@@ -64,23 +72,25 @@ public slots:
 
 	void sync(unsigned int flags);
 
+signals:
+	void receivedWebcamImage( const QPixmap& );
+	void webcamClosed( int );
+	
 private slots:
 	void slotChatSessionDestroyed();
 	void slotSendMessage( Kopete::Message& );
 	void slotTyping( bool );
 
 private:
-	//the user id of the contact
-	QString m_userId;
-
-	//the group name of the contact
+	QString m_userId; 
 	QString m_groupName;
-
-	//The message manager
 	Kopete::ChatSession *m_manager;
-
-	//the account that this contact belongs to
 	YahooAccount* m_account;
+	
+	//webcam handling
+	KAction* m_webcamAction;
+	YahooWebcamDialog* m_webcamDialog;
+	
 };
 
 #endif

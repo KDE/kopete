@@ -24,7 +24,7 @@
 #include "kopeteplugin.h"
 #include <qptrlist.h>
 
-namespace Kopete { class ChatSession; }
+namespace Kopete { class ChatSession; class Message; }
 
 class QTimer;
 class DCOPClient;
@@ -32,6 +32,7 @@ class KActionCOllection;
 class KToggleAction;
 class NowListeningConfig;
 class NLMediaPlayer;
+class QStringList;
 
 /**
  * @author Will Stephenson
@@ -48,14 +49,22 @@ friend class NowListeningGUIClient;
 		static NowListeningPlugin* plugin();
 
 	public slots:
-	  	void slotMediaCommand( const QString &, Kopete::ChatSession *theChat );
+		void slotMediaCommand( const QString &, Kopete::ChatSession *theChat );
+		void slotOutgoingMessage(Kopete::Message&);
 
 	protected:
 		/**
 		 * Constructs a string containing the track information for all
-		 * players
+		 * players.
+		 * @param update Whether the players must update their data. It can be
+		 *               useful to set it to false if one already has called
+		 *               update somewhere else, for instance in newTrackPlaying().
 		 */
-		QString allPlayerAdvert() const;
+		QString allPlayerAdvert(bool update = true) const;
+		/**
+		 * @return true if one of the players has changed track since the last message.
+		 */
+		bool newTrackPlaying(void) const;
 		/**
 		 * Creates the string for a single player
 		 * @p player - the media player we're using
@@ -91,6 +100,10 @@ friend class NowListeningGUIClient;
 		Kopete::ChatSession *m_currentChatSession;
 		KToggleAction *m_actionWantsAdvert;
 		Kopete::MetaContact *m_currentMetaContact;
+
+		// Used when using automatic advertising to know who has already gotten
+		// the music information
+		QStringList *m_musicSentTo;
 
 		static NowListeningPlugin* pluginStatic_;
 };

@@ -21,8 +21,6 @@ Color parser code courtesy of ksirc <http://www.kde.org>
 Modified by Jason Keirstead <jason@keirstead.org>
 */
 
-// $Id$
-
 #include <kopetenotifyclient.h>
 #include <kdebug.h>
 #include <qbuffer.h>

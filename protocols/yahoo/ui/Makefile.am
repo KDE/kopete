@@ -6,5 +6,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 		$(all_includes)
 
 
-libkopeteyahooui_la_SOURCES = yahooadd.ui yahooeditaccountbase.ui empty.cpp
+libkopeteyahooui_la_SOURCES = yahooadd.ui yahooeditaccountbase.ui empty.cpp \
+	yahoowebcamdialog.cpp
 EXTRA_DIST = dlgrename.ui
+noinst_HEADERS = yahoowebcamdialog.h

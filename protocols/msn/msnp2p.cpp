@@ -41,6 +41,18 @@
 #include <kopetetransfermanager.h>
 
 
+static QString randomid()
+{
+	return QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
+			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-"
+			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-"
+			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-"
+			+ QString::number(rand()%0xAAFF+0x1111, 16) + "-"
+			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
+			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
+			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16);
+}
+
 
 
 MSNP2P::MSNP2P( unsigned long int sessionID , MSNP2PDisplatcher *parent ) : QObject (parent)

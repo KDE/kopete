@@ -20,6 +20,8 @@
 
 #include "kopetemessagemanager.h"
 
+#include "im.h"
+
 class JabberProtocol;
 class JabberAccount;
 class JabberBaseContact;
@@ -81,8 +83,13 @@ private slots:
 	void slotMessageSent ( Kopete::Message &message, Kopete::ChatSession *kmm );
 
 private:
+	/**
+	 * Send a notification (XMPP::MsgEvent) to the members of the chatsession.
+	 * SlotSendTypingNotification uses it.
+	 */
+	void sendNotification( XMPP::MsgEvent event );
+	
 	QString mResource;
-
 };
 
 #endif

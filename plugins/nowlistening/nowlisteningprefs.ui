@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>348</width>
+            <width>379</width>
             <height>422</height>
         </rect>
     </property>
@@ -47,16 +47,36 @@
                 <enum>Sunken</enum>
             </property>
         </widget>
-        <widget class="QLabel">
+        <widget class="QButtonGroup">
             <property name="name">
-                <cstring>useThisMessageLabel_2</cstring>
+                <cstring>buttonGroup1</cstring>
             </property>
-            <property name="text">
-                <string>To use, select "Tools-&gt;Send Media Info", or type "/media" in the chat window edit area.</string>
+            <property name="title">
+                <string>Advertising mode</string>
             </property>
-            <property name="alignment">
-                <set>WordBreak|AlignVCenter</set>
-            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>m_explicitAdvertising</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Explicit via "Tools-&gt;Send Media Info",
+or by typing "/media" in the chat
+window edit area.</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>m_autoAdvertising</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Automatic (when the track has changed).</string>
+                    </property>
+                </widget>
+            </vbox>
         </widget>
         <widget class="QFrame">
             <property name="name">

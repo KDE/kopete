@@ -502,9 +502,18 @@ void JabberAccount::connectWithPassword ( const QString &password )
 
 	uname (&utsBuf);
 
-	jabberClient->setClientName ("Kopete");
-	jabberClient->setClientVersion (kapp->aboutData ()->version ());
-	jabberClient->setOSName (QString ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2));
+	if (!configGroup()->readBoolEntry("HideSystemInfo", false))
+	{
+		jabberClient->setClientName ("Kopete");
+		jabberClient->setClientVersion (kapp->aboutData ()->version ());
+		jabberClient->setOSName (QString ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2));
+	}
+	else
+	{
+		jabberClient->setClientName ("");
+		jabberClient->setClientVersion ("");
+		jabberClient->setOSName ("");
+	}	
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Connecting to Jabber server " << server() << ":" << port() << endl;
 

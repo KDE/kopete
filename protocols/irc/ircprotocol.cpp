@@ -271,8 +271,6 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	setCapabilities( Kopete::Protocol::RichBFormatting | Kopete::Protocol::RichUFormatting | Kopete::Protocol::RichColor );
 
-	m_commandInProgress = false;
-
 	netConf = 0L;
 
 	slotReadNetworks();
@@ -578,7 +576,7 @@ void IRCProtocol::slotQueryCommand( const QString &args, Kopete::ChatSession *ma
 void IRCProtocol::slotWhoisCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	static_cast<IRCAccount*>( manager->account() )->engine()->whoisUser( args );
-	m_commandInProgress = true;
+	static_cast<IRCAccount*>( manager->account() )->setCurrentCommandSource( manager );
 }
 
 void IRCProtocol::slotWhoCommand( const QString &args, Kopete::ChatSession *manager )
@@ -586,7 +584,7 @@ void IRCProtocol::slotWhoCommand( const QString &args, Kopete::ChatSession *mana
 	QStringList argsList = Kopete::CommandHandler::parseArguments( args );
 	static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage(
 		QString::fromLatin1("WHO %1").arg( argsList.first() ) );
-	m_commandInProgress = true;
+	static_cast<IRCAccount*>( manager->account() )->setCurrentCommandSource( manager );
 }
 
 void IRCProtocol::slotWhoWasCommand( const QString &args, Kopete::ChatSession *manager )
@@ -594,7 +592,7 @@ void IRCProtocol::slotWhoWasCommand( const QString &args, Kopete::ChatSession *m
 	QStringList argsList = Kopete::CommandHandler::parseArguments( args );
 	static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage(
 		QString::fromLatin1("WHOWAS %1").arg( argsList.first() ) );
-	m_commandInProgress = true;
+	static_cast<IRCAccount*>( manager->account() )->setCurrentCommandSource( manager );
 }
 
 void IRCProtocol::slotQuitCommand( const QString &args, Kopete::ChatSession *manager )
