@@ -2,4 +2,4 @@ if include_jabber_SUBDIR
 JABBER_PROTOCOL=jabber
 endif
 
-SUBDIRS = icq_new $(JABBER_PROTOCOL) msn irc gadu oscar yahoo
+SUBDIRS = aim icq_new $(JABBER_PROTOCOL) msn irc gadu oscar yahoo
