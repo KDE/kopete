@@ -34,6 +34,7 @@
 #include <kurl.h>
 
 #include "kopeteplugin.h"
+#include "kopeteaccountmanager.h"
 
 class KopetePluginManager::KopetePluginManagerPrivate
 {
@@ -142,6 +143,10 @@ void KopetePluginManager::shutdown()
 	kdDebug( 14010 ) << k_funcinfo << endl;
 
 	d->shutdownMode = KopetePluginManagerPrivate::ShuttingDown;
+
+	//first: save the accounts before unloading them
+	//FIXME: i don't like this depedence between KopetePluginManager and KopeteAccountManager
+	KopeteAccountManager::manager()->save();
 
 	// Ask all plugins to unload
 	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;

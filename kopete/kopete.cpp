@@ -85,7 +85,7 @@ Kopete::~Kopete()
 	kdDebug( 14000 ) << k_funcinfo << endl;
 
 	KopeteContactList::contactList()->save();
-	KopeteAccountManager::manager()->save();
+	//KopeteAccountManager::manager()->save(); //now called in PluginManager::shutdown
 	delete m_mainWindow;
 	//kdDebug( 14000 ) << k_funcinfo << "Done" << endl;
 }
