@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>414</width>
-            <height>278</height>
+            <height>304</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -27,7 +27,7 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QButtonGroup" row="0" column="0" rowspan="1" colspan="3">
+        <widget class="QButtonGroup" row="0" column="0">
             <property name="name">
                 <cstring>buttonGroup</cstring>
             </property>
@@ -47,84 +47,7 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="4">
-                    <property name="name">
-                        <cstring>radio1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>I already have an account</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QRadioButton" row="3" column="0" rowspan="1" colspan="4">
-                    <property name="name">
-                        <cstring>radio2</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="text">
-                        <string>I want to register as a new user</string>
-                    </property>
-                    <property name="checked">
-                        <bool>false</bool>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="5" column="0" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>textLabel2_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Password:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>kLineEdit1_2</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="4" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>textLabel1_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>E-Mail:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>textLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>UIN:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>kLineEdit1</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="2" column="0" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>textLabel2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Password:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>kLineEdit1_2</cstring>
-                    </property>
-                </widget>
-                <widget class="KLineEdit" row="5" column="3">
-                    <property name="name">
-                        <cstring>passwordEdit2__</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="echoMode">
-                        <enum>Password</enum>
-                    </property>
-                </widget>
-                <widget class="KLineEdit" row="4" column="2" rowspan="1" colspan="2">
+                <widget class="KLineEdit" row="5" column="2" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>emailedit_</cstring>
                     </property>
@@ -141,7 +64,18 @@
                         <bool>false</bool>
                     </property>
                 </widget>
-                <widget class="KLineEdit" row="2" column="3">
+                <widget class="KLineEdit" row="6" column="3">
+                    <property name="name">
+                        <cstring>passwordEdit2__</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="echoMode">
+                        <enum>Password</enum>
+                    </property>
+                </widget>
+                <widget class="KLineEdit" row="3" column="3">
                     <property name="name">
                         <cstring>passwordEdit_</cstring>
                     </property>
@@ -149,7 +83,37 @@
                         <enum>Password</enum>
                     </property>
                 </widget>
-                <widget class="KLineEdit" row="1" column="1" rowspan="1" colspan="3">
+                <widget class="QLabel" row="5" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>textLabel1_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>E-Mail:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="0" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>textLabel2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Password:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kLineEdit1_2</cstring>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="4" column="0" rowspan="1" colspan="4">
+                    <property name="name">
+                        <cstring>radio2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>I want to register as a new user</string>
+                    </property>
+                    <property name="checked">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+                <widget class="KLineEdit" row="2" column="1" rowspan="1" colspan="3">
                     <property name="name">
                         <cstring>loginEdit_</cstring>
                     </property>
@@ -166,38 +130,101 @@
                         <bool>false</bool>
                     </property>
                 </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>UIN:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kLineEdit1</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>textLabel1_3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Nick:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kLineEdit1</cstring>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="4">
+                    <property name="name">
+                        <cstring>radio1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>I already have an account</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="KLineEdit" row="1" column="1" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>NickName</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="maxLength">
+                        <number>16</number>
+                    </property>
+                    <property name="edited">
+                        <bool>true</bool>
+                    </property>
+                    <property name="dragEnabled">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="6" column="0" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>textLabel2_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Password:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kLineEdit1_2</cstring>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="4">
+                    <property name="name">
+                        <cstring>rememberCheck_</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Remember password</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="4">
+                    <property name="name">
+                        <cstring>autoLoginCheck_</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Auto login</string>
+                    </property>
+                </widget>
             </grid>
-        </widget>
-        <widget class="QCheckBox" row="1" column="0" rowspan="2" colspan="3">
-            <property name="name">
-                <cstring>rememberCheck_</cstring>
-            </property>
-            <property name="text">
-                <string>Remember password</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox" row="3" column="0">
-            <property name="name">
-                <cstring>autoLoginCheck_</cstring>
-            </property>
-            <property name="text">
-                <string>Auto login</string>
-            </property>
         </widget>
     </grid>
 </widget>
 <tabstops>
     <tabstop>radio1</tabstop>
+    <tabstop>NickName</tabstop>
     <tabstop>loginEdit_</tabstop>
     <tabstop>passwordEdit_</tabstop>
     <tabstop>radio2</tabstop>
     <tabstop>emailedit_</tabstop>
     <tabstop>passwordEdit2__</tabstop>
-    <tabstop>rememberCheck_</tabstop>
     <tabstop>autoLoginCheck_</tabstop>
+    <tabstop>rememberCheck_</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
+    <includehint>klineedit.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>klineedit.h</includehint>
