@@ -706,16 +706,23 @@ void MSNAccount::slotKopeteGroupRemoved( Kopete::Group *g )
 
 		if ( m_notifySocket )
 		{
-			/*  -not needed anymore  remember that contact are supposed to be deleted when a group is deleted.
-			// if contact are contains only in the group we are removing, move it from the group 0
+			bool still_have_contact=false;
+			// if contact are contains only in the group we are removing, abort the 
 			QDictIterator<Kopete::Contact> it( contacts() );
 			for ( ; it.current(); ++it )
 			{
 				MSNContact *c = static_cast<MSNContact *>( it.current() );
-				if ( c->serverGroups().contains( groupNumber ) && c->serverGroups().count() == 1 )
-					m_notifySocket->addContact( c->contactId(), c->displayName(), 0, MSNProtocol::FL );
-			}*/
-			m_notifySocket->removeGroup( groupNumber );
+				if ( c->serverGroups().contains( groupNumber )  )
+				{
+					/** don't do that becasue theses may already have been sent
+					m_notifySocket->removeContact( c->contactId(), groupNumber, MSNProtocol::FL );
+					*/
+					still_have_contact=true;
+					break;
+				}
+			}
+			if(!still_have_contact)
+				m_notifySocket->removeGroup( groupNumber );
 		}
 		//this is also done later, but he have to do it now!
 		// (in slotGroupRemoved)
@@ -1007,6 +1014,25 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 		{
 			// Contact is removed from the FL list, remove it from the group
 			c->contactRemovedFromGroup( group );
+
+			//check if the group is now empty to remove it
+			if ( m_notifySocket )
+			{
+				bool still_have_contact=false;
+				// if contact are contains only in the group we are removing, abort the 
+				QDictIterator<Kopete::Contact> it( contacts() );
+				for ( ; it.current(); ++it )
+				{
+					MSNContact *c = static_cast<MSNContact *>( it.current() );
+					if ( c->serverGroups().contains( group )  )
+					{
+						still_have_contact=true;
+						break;
+					}
+				}
+				if(!still_have_contact)
+					m_notifySocket->removeGroup( group );
+			}
 		}
 		else if ( list == "BL" )
 		{
