@@ -1,7 +1,7 @@
 /*
     kopetechatwindow.cpp - Chat Window
 
-    Copyright (c) 2002      by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart       <ogoffart@tiscalinet.be>
     Copyright (C) 2002      by James Grant
     Copyright (c) 2002      by Stefan Gehn           <metz AT gehn.net>
     Copyright (c) 2002-2004 by Martijn Klingens      <klingens@kde.org>
@@ -465,7 +465,13 @@ void KopeteChatWindow::initActions(void)
 	connect ( actionContactMenu->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareContactMenu()) );
 
 	// add configure key bindings menu item
-	KStdAction::keyBindings(this, SLOT(slotConfKeys()), coll);
+#if KDE_IS_VERSION(3, 2, 90)
+	KStdAction::keyBindings( guiFactory(), SLOT( configureShortcuts() ), coll );
+#else  // when we will drop the KDE 3.2 compatibility, do not forget to remove  slotConfKeys
+KStdAction::keyBindings( this, SLOT( slotConfKeys() ), coll );
+	#endif
+
+	
 	KStdAction::configureToolbars(this, SLOT(slotConfToolbar()), coll);
 	KopeteStdAction::preferences( coll );
 
@@ -1161,7 +1167,7 @@ void KopeteChatWindow::slotConfKeys()
 		KXMLGUIClient *c = 0;
 		while( (c = it.current()) != 0 )
 		{
-			dlg.insert( c->actionCollection() , i18n("Plugin Actions") );
+			dlg.insert( c->actionCollection() /*, i18n("Plugin Actions")*/ );
 			++it;
 		}
 

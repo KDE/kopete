@@ -173,7 +173,11 @@ void KopeteWindow::initActions()
 	menubarAction = KStdAction::showMenubar(this, SLOT(showMenubar()), actionCollection(), "settings_showmenubar" );
 	statusbarAction = KStdAction::showStatusbar(this, SLOT(showStatusbar()), actionCollection(), "settings_showstatusbar");
 
+#if KDE_IS_VERSION(3, 2, 90)
+	KStdAction::keyBindings( guiFactory(), SLOT( configureShortcuts() ), actionCollection(), "settings_keys" );
+#else  // when we will drop the KDE 3.2 compatibility, do not forget to remove  slotConfKeys
 	KStdAction::keyBindings( this, SLOT( slotConfKeys() ), actionCollection(), "settings_keys" );
+#endif
 	new KAction( i18n( "Configure Plugins..." ), "input_devices_settings", 0, this,
 		SLOT( slotConfigurePlugins() ), actionCollection(), "settings_plugins" );
 	new KAction( i18n( "Configure &Global Shortcuts..." ), "configure_shortcuts", 0, this,
