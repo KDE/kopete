@@ -515,8 +515,36 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 	// useful in case you have many accounts
 	// over one protocol
 	
-	QToolTip::remove(i);
-	QToolTip::add(i, contact->account()->accountId());
+	QToolTip::remove( i );
+	
+	QString contactLabel;
+	if ( contact->displayName() == contact->account()->accountId() )
+	{
+		contactLabel = contact->displayName();
+	}
+	else
+	{
+		// FIXME: Make this string i18n() after 0.7 - Martijn
+		contactLabel = QString::fromLatin1( "%1 <%2>" ).
+#if QT_VERSION < 0x030200
+			arg( contact->displayName() ).arg( contact->account()->accountId() );
+#else
+			arg( contact->displayName(), contact->account()->accountId() );
+#endif
+	}
+
+	// FIXME: Make this string i18n() after 0.7 - Martijn
+	QString tooltip = QString::fromLatin1( "%1 (%2)" ).
+#if QT_VERSION < 0x030200
+		arg( contactLabel ).arg( status.description() );
+#else
+		arg( contactLabel, status.description() );
+#endif
+	
+	if ( !contact->statusDescription().isNull() )
+		tooltip += QString::fromLatin1( "\n" ) + contact->statusDescription();
+
+	QToolTip::add( i, tooltip );
 
 	// Because we want null pixmaps to detect the need for a loadMovie
 	// we can't use the SmallIcon() method directly
