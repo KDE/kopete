@@ -238,7 +238,7 @@ void MSNProtocol::Connect()
 
 void MSNProtocol::Disconnect()
 {
-	if (m_notifySocket)
+	if( m_notifySocket )
 	{
 		m_notifySocket->disconnect();
 
@@ -559,7 +559,7 @@ void MSNProtocol::slotStartChat()
 
 void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status )
 {
-//	kdDebug() << "MSNProtocol::slotOnlineStatusChanged: " << status <<endl;
+	kdDebug() << "MSNProtocol::slotOnlineStatusChanged: " << status <<endl;
 	mIsConnected = (status == MSNSocket::Connected);
 	if ( mIsConnected )
 	{
@@ -629,16 +629,30 @@ void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status 
 	}
 	else if( status == MSNSocket::Disconnected )
 	{
-	/*		QIntDictIterator<KopeteMessageManager> kmmIt( kopeteapp->sessionFactory()->protocolSessions( this ) );
-		for ( ; kmmIt.current() ; ++kmmIt )
+		KopeteMessageManagerDict sessions =
+			kopeteapp->sessionFactory()->protocolSessions( this );
+		QIntDictIterator<KopeteMessageManager> kmmIt( sessions );
+		for( ; kmmIt.current() ; ++kmmIt )
 		{
-			kmmIt.current()->slotSendEnabled(false);
-			MSNMessageManager *msnMM = dynamic_cast<MSNMessageManager *>(kmmIt.current());
-			if(msnMM)
+			// Disconnect all active chats (but don't actually remove the
+			// chat windows, the user might still want to view them!)
+			kmmIt.current()->slotSendEnabled( false );
+			MSNMessageManager *msnMM =
+				dynamic_cast<MSNMessageManager *>( kmmIt.current() );
+			if( msnMM )
+			{
+				kdDebug() << "MSNProtocol::slotOnlineStatusChanged: "
+					<< "Closed MSNMessageManager because the protocol socket "
+					<< "closed." << endl;
 				msnMM->slotCloseSession();
-			else
-				kdDebug()    << "MSNProtocol::slotOnlineStatusChanged - WARNING : msnMM is not valid" <<endl;
-		}*/
+			}
+/*			else
+			{
+				kdDebug() << "MSNProtocol::slotOnlineStatusChanged: "
+					<< "KMM is not an MSN message manager, not closing "
+					<< "connection." << endl;
+			}*/
+		}
 
 		QMap<QString, MSNContact*>::Iterator it;
 		for ( it = m_contacts.begin(); it != m_contacts.end() ; ++it)
@@ -1263,23 +1277,26 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 		KopeteContactPtrList chatmembers;
 		chatmembers.append(c);
 
-		KopeteMessageManager *_manager = kopeteapp->sessionFactory()->findKopeteMessageManager( m_myself, chatmembers, this  );
-		MSNMessageManager *manager= dynamic_cast<MSNMessageManager*>(_manager);
-				
-		if(!manager)
+		KopeteMessageManager *_manager =
+			kopeteapp->sessionFactory()->findKopeteMessageManager( m_myself,
+				chatmembers, this  );
+		MSNMessageManager *manager =
+			dynamic_cast<MSNMessageManager*>( _manager );
+
+		if( !manager )
 		{
-			manager=new MSNMessageManager(m_myself,chatmembers, QString( "msn_logs/" + handle + ".log" ));
+			manager = new MSNMessageManager( m_myself, chatmembers,
+				QString( "msn_logs/" + handle + ".log" ) );
 		}
-		manager->createChat(handle , address, auth, ID);
+		manager->createChat( handle, address, auth, ID );
 
 		//		m_switchBoardSockets.insert( manager, chatService );
 
-		if(mPrefs->openWindow() || !ID)
+		if( mPrefs->openWindow() || !ID )
 		{
 			manager->readMessages();
 		}
 	}
-
 }
 
 void MSNProtocol::slotStartChatSession( QString handle )
@@ -1388,7 +1405,6 @@ void MSNProtocol::slotNotifySocketClosed( int /*state*/ )
 	m_openInboxAction->setEnabled(false);
 	kdDebug() << "MSNProtocol::slotNotifySocketClosed - done" << endl;
 }
-
 
 void MSNProtocol::slotContactDestroyed( KopeteContact *c )
 {

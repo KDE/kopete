@@ -99,7 +99,7 @@ void MSNSocket::disconnect()
 	if(m_socket)
 		m_socket->closeNow();
 	else
-		emit socketClosed(-1);
+		slotSocketClosed( -1 );
 }
 
 void MSNSocket::aboutToConnect()
@@ -151,7 +151,7 @@ void MSNSocket::slotSocketError( int error )
 	m_socket = 0L;
 
 	emit connectionFailed();
-	emit socketClosed(-1); //like the socket is closed
+	slotSocketClosed( -1 ); // Just like when the socket is normally closed
 }
 
 void MSNSocket::slotDataReceived()
