@@ -523,8 +523,10 @@ void OscarAccount::addServerContact(AIMBuddy *buddy)
 
 		contact->setWaitAuth( buddy->waitAuth() );
 
+		/* FIXME: sometimes renames contacts on server to the UIN/screenname
 		if( contact->displayName() != nick )
 			contact->rename(nick);
+		 */
 
 		contact->setGroupId( buddy->groupID() );
 		contact->syncGroups();
