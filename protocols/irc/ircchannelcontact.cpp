@@ -18,6 +18,7 @@
 #include <qtimer.h>
 
 #include <kdebug.h>
+#include <krun.h>
 #include <kinputdialog.h>
 #include <kapplication.h>
 #include <kaboutdata.h>
@@ -57,6 +58,7 @@ IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QS
 	actionModeS = new KToggleAction(i18n("&Secret"), 0, this, SLOT(slotModeChanged()), this );
 	actionModeM = new KToggleAction(i18n("&Moderated"), 0, this, SLOT(slotModeChanged()), this );
 	actionModeI = new KToggleAction(i18n("&Invite Only"), 0, this, SLOT(slotModeChanged()), this );
+	actionHomePage = 0L;
 
 	updateStatus();
 	slotUpdateInfo();
@@ -203,7 +205,8 @@ void IRCChannelContact::channelTopic(const QString &topic)
 
 void IRCChannelContact::channelHomePage(const QString &url)
 {
-	setProperty( QString::fromLatin1("HomePage"), i18n("homePage"), url );
+	kdDebug(14120) << k_funcinfo << endl;
+	setProperty( QString::fromLatin1("homePage"), i18n("Home Page"), url );
 }
 
 void IRCChannelContact::slotJoin()
@@ -515,6 +518,16 @@ QPtrList<KAction> *IRCChannelContact::customContextMenuActions()
 		actionTopic = new KAction(i18n("Change &Topic..."), 0, this, SLOT(setTopic()), this, "actionTopic");
 		actionModeMenu = new KActionMenu(i18n("Channel Modes"), 0, this, "actionModeMenu");
 
+		if( !property("homePage").value().isNull() )
+		{
+			actionHomePage = new KAction( i18n("Visit &Homepage"), 0, this,
+				SLOT(slotHomepage()), this, "actionHomepage");
+		}
+		else if( actionHomePage )
+		{
+			delete actionHomePage;
+		}
+
 		actionModeMenu->insert( actionModeT );
 		actionModeMenu->insert( actionModeN );
 		actionModeMenu->insert( actionModeS );
@@ -533,6 +546,8 @@ QPtrList<KAction> *IRCChannelContact::customContextMenuActions()
 	mCustomActions->append( actionTopic );
 	mCustomActions->append( actionModeMenu );
 	mCustomActions->append( codecAction );
+	if( actionHomePage )
+		mCustomActions->append( actionHomePage );
 
 	bool isOperator = m_isConnected && ( manager()->contactOnlineStatus( m_account->myself() ) == m_protocol->m_UserStatusOp );
 
@@ -547,6 +562,15 @@ QPtrList<KAction> *IRCChannelContact::customContextMenuActions()
 	actionModeI->setEnabled(isOperator);
 
 	return mCustomActions;
+}
+
+void IRCChannelContact::slotHomepage()
+{
+	QString homePage = property("homePage").value().toString();
+	if( !homePage.isEmpty() )
+	{
+	       new KRun( homePage, 0, false);
+	}
 }
 
 const QString IRCChannelContact::caption() const

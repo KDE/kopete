@@ -38,7 +38,6 @@ IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString 
 {
 	mOnlineTimer = new QTimer( this );
 	m_isOnline = m_metaContact->isTemporary();
-	mOnlineTimer->start( 45000, true );
 
 	QObject::connect(mOnlineTimer, SIGNAL(timeout()), this, SLOT( slotUserOffline() ) );
 
@@ -92,7 +91,10 @@ void IRCUserContact::slotUserOffline()
 {
 	m_isOnline = false;
 	m_isAway = false;
-	m_engine->writeMessage( QString::fromLatin1("WHOWAS %1").arg(m_nickName) );
+	updateStatus();
+
+	if( !metaContact()->isTemporary() )
+		m_engine->writeMessage( QString::fromLatin1("WHOWAS %1").arg(m_nickName) );
 
 	removeProperty( QString::fromLatin1("userInfo") );
 	removeProperty( QString::fromLatin1("server") );
@@ -119,10 +121,10 @@ void IRCUserContact::incomingUserIsAway(const QString &reason )
 void IRCUserContact::userOnline()
 {
 	m_isOnline = true;
-	mOnlineTimer->start( 45000, true );
 	updateStatus();
 	if( this != m_account->mySelf() && !metaContact()->isTemporary() )
 	{
+		mOnlineTimer->start( 45000, true );
 		m_engine->writeMessage( QString::fromLatin1("WHOIS %1").arg(m_nickName) );
 	}
 

@@ -191,7 +191,7 @@ KIRC::KIRC( QObject *parent, const char *name) : QObject( parent, name ),
 	addIrcMethod("323",	new KIRCMethodFunctor_Empty<KIRC>(this, &KIRC::incomingEndOfList));
 
 	addIrcMethod("324",	&KIRC::numericReply_324,	2,	4);
-	addIrcMethod("324",	&KIRC::numericReply_328,	2,	2);
+	addIrcMethod("328",	&KIRC::numericReply_328,	2,	2);
 	addIrcMethod("329",	&KIRC::numericReply_329,	3,	3);
 	addIrcMethod("331",	&KIRC::numericReply_331,	2,	2);
 	addIrcMethod("332",	&KIRC::numericReply_332,	2,	2);
@@ -799,7 +799,7 @@ bool KIRC::topicChange(const KIRCMessage &msg)
 	/* The topic of a channel changed. emit the channel, new topic, and the person who changed it.
 	 * "<channel> [ <topic> ]"
 	 */
-	emit incomingTopicChange(msg.nickFromPrefix(), msg.arg(0), msg.suffix());
+	emit incomingTopicChange(msg.arg(0), msg.nickFromPrefix(), msg.suffix());
 	return true;
 }
 

@@ -125,6 +125,7 @@ private slots:
 	void slotConnectedToServer();
 	void slotJoin();
 	void slotUpdateInfo();
+	void slotHomepage();
 	void slotChannelListed(const QString &channel, uint members, const QString &topic);
 
 private:
@@ -132,6 +133,7 @@ private:
 	KAction *actionJoin;
 	KAction *actionPart;
 	KAction *actionTopic;
+	KAction *actionHomePage;
 	KActionMenu *actionModeMenu;
 	KCodecAction *codecAction;
 

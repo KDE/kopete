@@ -653,8 +653,8 @@ void IRCAccount::appendMessage( const QString &message, MessageType type )
 			if( activeView && activeView->msgManager()->account() == this )
 			{
 				KopeteMessageManager *manager = activeView->msgManager();
-				KopeteMessage msg( manager->user(), manager->members(), message,
-					KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
+				KopeteMessage msg( manager->user(), manager->members(), KSParser::parse( message ),
+					KopeteMessage::Internal, KopeteMessage::RichText, KopeteMessage::Chat );
 				activeView->appendMessage(msg);
 
 				return;

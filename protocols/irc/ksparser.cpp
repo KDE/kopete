@@ -124,6 +124,12 @@ QString KSParser::_parse(const QString &message)
 		case 31: 	//Underline
 			res += toggleTag("u");
 			break;
+		case '\n':
+			res += QString::fromLatin1("<br/>");
+			break;
+		case '\t':
+			res += QString::fromLatin1("&nbsp;&nbsp;&nbsp;&nbsp;");
+			break;
 		default:
 			res += message[i];
 		}

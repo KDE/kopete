@@ -130,8 +130,8 @@ void IRCServerContact::appendMessage( const QString &message )
 {
 	KopeteContactPtrList members;
 	members.append( this );
-	KopeteMessage msg( this, members, message, KopeteMessage::Internal,
-		KopeteMessage::PlainText, KopeteMessage::Chat );
+	KopeteMessage msg( this, members, KSParser::parse( message ), KopeteMessage::Internal,
+		KopeteMessage::RichText, KopeteMessage::Chat );
 	msg.setBody( KSParser::parse( msg.escapedBody().stripWhiteSpace() ), KopeteMessage::RichText );
 	appendMessage(msg);
 }

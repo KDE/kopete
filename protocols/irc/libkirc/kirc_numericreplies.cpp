@@ -165,6 +165,7 @@ bool KIRC::numericReply_328(const KIRCMessage &msg)
 {
 	/* "<channel> <mode> <mode params>"
 	 */
+	kdDebug(14120) << k_funcinfo << endl;
 	emit incomingChannelHomePage(msg.args()[1], msg.suffix());
 	return true;
 }
