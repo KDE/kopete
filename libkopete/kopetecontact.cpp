@@ -639,21 +639,21 @@ void KopeteContact::setProperty(const Kopete::ContactPropertyTmpl &tmpl,
 		return;
 	}
 
-	QVariant oldValue = property(tmpl.key()).value();
-
 	if(value.isNull())
 	{
 		removeProperty(tmpl);
 	}
 	else
 	{
+		QVariant oldValue = property(tmpl.key()).value();
+
 		Kopete::ContactProperty prop(tmpl, value);
 		d->properties.insert(tmpl.key(), prop, true);
 
 		/*kdDebug(14000) << k_funcinfo << "set property " << tmpl.key() <<
 			" for contact " << displayName() << " to " << value.toString() << endl;*/
+		emit propertyChanged(this, tmpl.key(), oldValue, value);
 	}
-	emit propertyChanged(this, tmpl.key(), oldValue, value);
 }
 
 void KopeteContact::removeProperty(const Kopete::ContactPropertyTmpl &tmpl)
@@ -662,7 +662,10 @@ void KopeteContact::removeProperty(const Kopete::ContactPropertyTmpl &tmpl)
 	{
 		/*kdDebug(14000) << k_funcinfo << "removing property " << tmpl.key() <<
 			" for contact " << displayName() << endl;*/
+
+		QVariant oldValue = property(tmpl.key()).value();
 		d->properties.remove(tmpl.key());
+		emit propertyChanged(this, tmpl.key(), oldValue, QVariant());
 	}
 }
 
