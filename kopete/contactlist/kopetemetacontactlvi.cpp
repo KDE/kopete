@@ -184,20 +184,17 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 
 		QString text = i18n( "%2 is now %1!" ).arg( m_metaContact->statusString() ).arg( m_metaContact->displayName() );
 
-		// Using the define is a bit hacky, but saves a ton of code duplication.
-		// FIXME: Remove ASAP once we drop KDE 3.1.0 support ;-) - Martijn
-#if KDE_IS_VERSION( 3, 1, 1 )
-#define WIN_ID winId,
-#else
-#define WIN_ID
-#endif
 		if ( m_metaContact->isOnline() && m_oldStatus == KopeteOnlineStatus::Offline )
-			KNotifyClient::event( WIN_ID "kopete_online", text, i18n( "Chat" ), this, SLOT( execute() ) );
+			KNotifyClient::event( winId,  "kopete_online", text, i18n( "Chat" ), this, SLOT( execute() ) );
 		else if ( !m_metaContact->isOnline() && m_oldStatus != KopeteOnlineStatus::Offline && m_oldStatus != KopeteOnlineStatus::Unknown )
-			KNotifyClient::event( WIN_ID "kopete_offline", text );
+#if KDE_IS_VERSION( 3, 1, 1 ) 
+			KNotifyClient::event( winId , "kopete_offline", text );
+#else
+			KNotifyClient::event( "kopete_offline", text );
+#endif
 		else if ( m_oldStatus != KopeteOnlineStatus::Unknown )
-			KNotifyClient::event( WIN_ID "kopete_status_change", text, i18n( "Chat" ), this, SLOT( execute() ) );
-#undef WIN_ID
+			KNotifyClient::event( winId , "kopete_status_change", text, i18n( "Chat" ), this, SLOT( execute() ) );
+
 
 		if ( !mBlinkTimer->isActive() &&
 			( m_metaContact->statusIcon() != m_oldStatusIcon ) )
