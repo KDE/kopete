@@ -113,7 +113,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	{
 		QString msg = i18n( "Invalid user! \n"
 			"This MSN user does not exist: %1 \n Please check the MSN ID." ).arg(m_tmpLastHandle);
-		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+		KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
 	case 209:
@@ -121,14 +121,14 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		if(m_tmpLastHandle==msnId())
 		{
 			QString msg = i18n( "Your nickname has not been changed, maybe it contains incorrect words or it was too long" );
-			KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+			KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
 		}
 		/*else
 		 {
 			QString msg = i18n( "You are trying to change the display name of an user who has not "
 				"confirmed his or her e-mail address.\n"
 				"The contact was not renamed on the server." );
-			KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+			KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
 		}*/
 		break;
 	}
@@ -138,26 +138,26 @@ void MSNNotifySocket::handleError( uint code, uint id )
 			"If this is not the case, please send us a detailed bug report "
 			"at kopete-devel@kde.org containing the raw output on the "
 			"console (in gzipped format, as it is probably a lot of output!)" ).arg(m_tmpLastHandle);
-		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+		KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
 	case 223:
 	{
 		QString msg = i18n( "The maximum number of group is reached.\n"
 			"You can't have more than 30 groups" );
-		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+		KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
 	case 710:
 	{
 		QString msg = i18n( "You can't open a hotmail inbox because you haven't a valid hotmail/msn account." );
-		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+		KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
 	case 913:
 	{
 		QString msg = i18n( "You cannot send messages when you are offline or when you appear offline." );
-		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+		KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
 	case 910:

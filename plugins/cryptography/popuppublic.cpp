@@ -108,11 +108,11 @@ defaultName="";
   QVBoxLayout *vbox=new QVBoxLayout(this,3);
 
   if (sfile.isEmpty())
-  keysList->addColumn(i18n("Encryption key(s):"));
+  keysList->addColumn(i18n("Encryption Key"));
   else
-      keysList->addColumn(i18n("Encryption key(s) for %1:").arg(sfile));
-  
-  boutonboxoptions=new QButtonGroup(5,Qt::Vertical ,this,0);  
+      keysList->addColumn(i18n("Encryption Keys For %1:").arg(sfile));
+
+  boutonboxoptions=new QButtonGroup(5,Qt::Vertical ,this,0);
 
   CBarmor=new QCheckBox(i18n("ASCII armored encryption"),boutonboxoptions);
   CBuntrusted=new QCheckBox(i18n("Allow encryption with untrusted keys"),boutonboxoptions);

@@ -218,7 +218,7 @@ void UserInfoDialog::fillWidgets()
 
 	if ( !d->awayMessage.isEmpty() ) {
 		QVBox *awayBox = new QVBox( d->page );
-		new QLabel( i18n("Away Message :"), awayBox );
+		new QLabel( i18n("Away message:"), awayBox );
 		d->awayBrowser = new KTextBrowser( awayBox );
 		d->awayBrowser->setText( d->awayMessage );
 		d->topLayout->addWidget( awayBox );
@@ -226,7 +226,7 @@ void UserInfoDialog::fillWidgets()
 
 	if ( !d->info.isEmpty() ) {
 		QVBox *infoBox = new QVBox( d->page );
-		new QLabel( i18n("User Info :"), infoBox );
+		new QLabel( i18n("User info:"), infoBox );
 		d->infoBrowser = new KTextBrowser( infoBox );
 		d->infoBrowser->setText( d->info );
 		d->topLayout->addWidget( infoBox );

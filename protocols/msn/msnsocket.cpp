@@ -168,7 +168,7 @@ void MSNSocket::slotSocketError( int error )
 		errormsg += i18n( "Unable to lookup %1" ).arg( m_socket->host() );
 	else
 		errormsg += KExtendedSocket::strError( error, m_socket->systemError() );
-	KMessageBox::error( 0, errormsg, i18n( "MSN Plugin - Kopete" ) );
+	KMessageBox::error( 0, errormsg, i18n( "MSN Plugin" ) );
 }
 
 void MSNSocket::slotDataReceived()
@@ -405,7 +405,7 @@ void MSNSocket::handleError( uint code, uint /*id*/ )
 
 	if (!msg.isEmpty())
 	{
-		KMessageBox::error(0, msg, i18n( "MSN Plugin - Kopete" ) );
+		KMessageBox::error(0, msg, i18n( "MSN Plugin" ) );
 	}
 
 	return;

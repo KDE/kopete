@@ -225,7 +225,7 @@ void KopeteMetaContactLVI::showContextMenu( const QPoint &point )
 
 	KActionMenu *m_actionAddContact= new KActionMenu( i18n( "&Add Contact" ), QString::fromLatin1( "bookmark_add" ), popup );
 
-	m_actionAddContact->popupMenu()->insertTitle(i18n("Select an account"));
+	m_actionAddContact->popupMenu()->insertTitle(i18n("Select Account"));
 	m_addContactActions.clear();
 
 	QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
@@ -236,7 +236,7 @@ void KopeteMetaContactLVI::showContextMenu( const QPoint &point )
 		m_addContactActions.insert(aa,a);
 	}
 
-	KAction *m_actionAddTemporaryContact = new KAction( i18n( "Add to your contact list" ), "bookmark_add", 0,
+	KAction *m_actionAddTemporaryContact = new KAction( i18n( "Add to Your Contact List" ), "bookmark_add", 0,
 		this, SLOT( slotAddTemoraryContact() ), popup, "m_actionAddTemporaryContact" );
 
 	if( m_actionRemoveGroup )

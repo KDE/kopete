@@ -892,7 +892,7 @@ void KopeteChatWindow::slotPrepareActionMenu(void)
 	if ( !actions )
 	{
 		kdDebug(14010) << k_funcinfo << "No Action defined by any Plugin" << endl;
-		int id = actionsMenu->insertItem( i18n("No Action defined by any Plugin") );
+		int id = actionsMenu->insertItem( i18n("No Action Defined by any Plugin") );
 		actionsMenu->setItemEnabled(id, false);
 	}
 }

@@ -66,7 +66,7 @@ KActionCollection *NetMeetingPlugin::customChatActions(KopeteMessageManager *kmm
 		return 0L;
 
 	m_actions = new KActionCollection( this );
-	m_actions->insert(  new KAction( i18n( "Invite to use NetMeeting" ), 0, this, SLOT( slotStartInvitation() ), this ) );
+	m_actions->insert(  new KAction( i18n( "Invite to Use NetMeeting" ), 0, this, SLOT( slotStartInvitation() ), this ) );
 
 	return m_actions;
 }

@@ -131,7 +131,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 
 		QHBoxLayout *buttons = new QHBoxLayout(detLay);
 		buttons->addStretch(1);
-		QPushButton *fetch = new QPushButton(i18n("Fetch from Server"), det, "fetch");
+		QPushButton *fetch = new QPushButton(i18n("Fetch From Server"), det, "fetch");
 		buttons->addWidget(fetch);
 		QPushButton *send = new QPushButton(i18n("Send to Server"), det, "send");
 		buttons->addWidget(send);

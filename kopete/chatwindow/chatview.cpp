@@ -985,7 +985,7 @@ void ChatView::slotRightClick( const QString &, const QPoint &point )
 			}
 			else
 			{
-				chatWindowPopup->insertItem( i18n("User has left"), 1 );
+				chatWindowPopup->insertItem( i18n("User Has Left"), 1 );
 				chatWindowPopup->setItemEnabled( 1, false );
 				chatWindowPopup->insertSeparator();
 			}

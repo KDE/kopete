@@ -609,8 +609,8 @@ void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
 		menu = new KActionMenu( proto->displayName(), proto->pluginIcon(), this);
 		// FIXME: use the commented out KAction when we've solved using the addaccountwizard from
 		// this class
-		//menu->insert( new KAction( i18n("Create an account"), QString::null, 0, qApp->mainWidget(), SLOT( slotAddAccount() ), menu, "actionKWAddAccount" ) );
-		KAction dummy( i18n("Create an Account!") );
+		//menu->insert( new KAction( i18n("Create Account"), QString::null, 0, qApp->mainWidget(), SLOT( slotAddAccount() ), menu, "actionKWAddAccount" ) );
+		KAction dummy( i18n("Create Account") );
 		dummy.setEnabled( false );
 		menu->insert( &dummy );
 	}

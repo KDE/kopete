@@ -1149,7 +1149,7 @@ void JabberAccount::slotReceivedMessage(const Jabber::Message & message) {
 	    "[JabberAccount] New server message for us!" << endl;
 
 	KMessageBox::information(qApp->mainWidget(), message.body(),
-				 i18n("Jabber: Server message"));
+				 i18n("Jabber: Server Message"));
     }
     else {
 	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberAccount] New message from '"

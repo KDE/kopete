@@ -65,7 +65,7 @@ void MSNAuthSocket::handleError( uint code, uint id )
 			"MSN Preferences dialog." );*/
 		m_badPassword=true;
 		disconnect();
-		//KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+		//KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
 	default:
