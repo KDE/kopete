@@ -20,6 +20,8 @@
 #include <kiconloader.h>
 #include <kapplication.h>
 #include <kaboutdata.h>
+#include <klineeditdlg.h>
+#include <kmessagebox.h>
 
 #include "ircaccount.h"
 #include "ircprotocol.h"
@@ -38,6 +40,7 @@
 IRCAccount::IRCAccount(const QString &accountId, const IRCProtocol *protocol) : KopeteAccount( (KopeteProtocol*)protocol, accountId )
 {
 	mManager = 0L;
+	mActionMenu = 0L;
 	mProtocol = protocol;
 
 	mNickName = accountId.section('@',0,0);
@@ -75,12 +78,14 @@ KActionMenu *IRCAccount::actionMenu()
 {
 	QString menuTitle = QString::fromLatin1( " %1 <%2> " ).arg( accountId() ).arg( mMySelf->onlineStatus().description() );
 
-	KActionMenu *mActionMenu = new KActionMenu( accountId(), this );
+	delete mActionMenu;
+	mActionMenu = new KActionMenu( accountId(), this );
 	mActionMenu->popupMenu()->insertTitle( mMySelf->onlineStatus().iconFor( mMySelf ), menuTitle, 1 );
 	mActionMenu->setIconSet( QIconSet ( mMySelf->onlineStatus().iconFor( mMySelf ) ) );
 
 	mActionMenu->insert( actionOnline );
 	mActionMenu->insert( actionOffline );
+	mActionMenu->insert( new KAction ( i18n("Join channel"), "", 0, this, SLOT(slotJoinChannel()), mActionMenu ));
 
 	return mActionMenu;
 }
@@ -279,5 +284,20 @@ bool IRCAccount::addContactToMetaContact( const QString &contactId, const QStrin
 	return false;
 }
 
+void IRCAccount::slotJoinChannel()
+{
+	if(!isConnected())
+		return;
+
+	QString chan = KLineEditDlg::getText( i18n( "Kopete IRC Plugin" ),
+		i18n( "Please enter name of the channel you want to join:" ), QString::null);
+	if( !chan.isNull() )
+	{
+		if( chan.startsWith( QString::fromLatin1("#") ) )
+			findChannel( chan )->startChat();
+		else
+			KMessageBox::error(0l, i18n("<qt>\"%1\" is an invaid channel. Channels must start with '#'.</qt>").arg(chan), i18n("Kopete IRC Plugin"));
+	}
+}
 
 #include "ircaccount.moc"

@@ -109,6 +109,7 @@ private slots:
 	void slotConnectionClosed();
 	void slotNewPrivMessage(const QString &originating, const QString &target, const QString &message);
 	void slotContactDestroyed(KopeteContact *);
+	void slotJoinChannel();
 
 private:
 	const IRCProtocol *mProtocol;
@@ -123,6 +124,7 @@ private:
 	KAction *actionOnline;
 	KAction *actionOffline;
 	KAction *actionAway;
+	KActionMenu *mActionMenu;
 
 };
 
