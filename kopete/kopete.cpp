@@ -100,29 +100,6 @@ void Kopete::initialize()
 		SIGNAL( messageQueued( KopeteMessage & ) ),
 		SIGNAL( aboutToSend( KopeteMessage & ) ) );
 
-	KConfig *config = KGlobal::config();
-	config->setGroup("");
-
-	// Parse command-line arguments
-	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-
-	// --noplugins specified?
-	if (!args->isSet("plugins"))
-	{
-		config->writeEntry("Modules", "");
-	}
-
-	// Ups! the user does not have plugins selected.
-	// TODO: show "first time" wizard and let user decide which modules to load
-	if (!config->hasKey("Modules"))
-	{
-		QStringList modules;
-		//modules.append("icq.plugin");
-		//modules.append("msn.plugin");
-		modules.append("autoaway.plugin");
-		config->writeEntry("Modules", modules);
-	}
-
 	QTimer::singleShot( 0, this, SLOT( slotLoadPlugins() ) );
 
 	// Ok, load saved plugins
@@ -145,6 +122,56 @@ Kopete::~Kopete()
 
 void Kopete::slotLoadPlugins()
 {
+	KConfig *config = KGlobal::config();
+	config->setGroup("");
+
+	// Parse command-line arguments
+	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+
+	QStringList modules;
+	
+	if (config->hasKey("Modules"))
+		modules = config->readListEntry("Modules");
+	else
+	{
+		// Ups! the user does not have plugins selected.
+		// TODO: show "first time" wizard and let user decide which modules to load
+		modules.append("autoaway.plugin");
+		// Other modules to load for the first time?
+	}
+
+	// Listen to arguments
+	if (args->count() > 0)
+		modules.clear();
+
+	for (int i = 0; i < args->count(); i++)
+	{
+		QString argument = args->arg(i);
+		if (!argument.endsWith(".plugin"))
+			argument.append(".plugin");
+
+		modules.append(argument);
+	}
+
+	// Prevent plugins from loading?
+	QCStringList disableArgs = args->getOptionList("disable");
+	for (QCStringList::ConstIterator i = disableArgs.begin(); i != disableArgs.end(); ++i)
+	{
+		QString argument = QString::fromLatin1(*i);
+		if (!argument.endsWith(".plugin"))
+			argument.append(".plugin");
+
+		modules.remove(argument);
+	}
+
+	// --noplugins specified?
+	if (!args->isSet("plugins"))
+	{
+		modules.clear();
+	}
+
+	config->writeEntry("Modules", modules);
+
 	mLibraryLoader->loadAll();
 }
 
