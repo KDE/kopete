@@ -45,7 +45,10 @@ KopeteGroupList::~KopeteGroupList()
 
 void KopeteGroupList::slotUpdateList()
 {
-	setItems( KopeteContactList::contactList()->groups() );
+    m_groupList = QStringList();
+	m_groupList << "Top Level";
+	m_groupList += KopeteContactList::contactList()->groups();
+	setItems( m_groupList );
 }
 
 KAction* KopeteStdAction::chat( const QObject *recvr, const char *slot,

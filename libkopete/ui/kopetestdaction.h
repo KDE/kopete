@@ -58,6 +58,8 @@ class KopeteGroupList : public KListAction
 
 	protected slots:
 		void slotUpdateList();
+	private:
+		QStringList m_groupList;
 };
 
 #endif

@@ -150,7 +150,7 @@ public:
 	bool isTopLevel() const;
 
 	/**
-	 * Return true if the contact is shown at toplevel
+	 * add or remove from top-level
 	 */
 	void setTopLevel( bool b = true );
 

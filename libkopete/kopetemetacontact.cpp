@@ -326,11 +326,31 @@ void KopeteMetaContact::moveToGroup( const QString &from, const QString &to )
 {
 	if(m_temporary && to!="temporaryGroup")  
 		return;
-		
-	kdDebug() << "KopeteMetaContact::moveToGroup: "<<from <<" => "<<to << endl;
+	/*
 	if(  m_groups.contains( to ) || to.isNull() ||  (!m_groups.contains( from ) && !from.isNull()))
 		return;
- 
+	*/
+
+	kdDebug() << "KopeteMetaContact::moveToGroup: "<<from <<" => "<<to << endl;
+
+	if ( from.isNull() && to.isNull() )
+		return;
+
+    // from top-level to a group
+	if ( from.isNull() && !to.isNull() )
+	{
+    	addToGroup(to);
+		setTopLevel(false);
+		return;
+	}
+    // from group to top-level
+	if ( !from.isNull() && to.isNull() )
+	{
+        setTopLevel(true);
+		removeFromGroup(from);
+		return;
+	}
+
 	m_groups.remove( from );
 	m_groups.append( to );
 
@@ -346,8 +366,14 @@ void KopeteMetaContact::removeFromGroup( const QString &from)
 {
 	if(m_temporary && from=="temporaryGroup")
 		return ;
+
+	if ( from.isNull() )
+	{
+		setTopLevel(false);
+		return;
+	}
 	
-  if( !m_groups.contains( from ) )
+	if( !m_groups.contains( from ) )
 		return;
 
 	m_groups.remove( from );
@@ -366,7 +392,13 @@ void KopeteMetaContact::addToGroup( const QString &to )
 	if(m_temporary && to!="temporaryGroup")
 		return;
 
-	if( m_groups.contains( to ) || to.isNull() )
+	if ( to.isNull() )
+	{
+		setTopLevel(true);
+		return;
+	}
+
+	if( m_groups.contains( to ) )
 		return ;
 
 	m_groups.append( to );
