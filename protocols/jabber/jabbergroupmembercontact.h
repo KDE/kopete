@@ -22,6 +22,7 @@
 
 class KopeteMetaContact;
 class JabberGroupChatManager;
+class JabberMessageManager;
 
 class JabberGroupMemberContact : public JabberBaseContact
 {
@@ -32,6 +33,8 @@ public:
 
 	JabberGroupMemberContact (const XMPP::RosterItem &rosterItem,
 							  JabberAccount *account, KopeteMetaContact * mc);
+
+	~JabberGroupMemberContact ();
 
 	/**
 	 * Create custom context menu items for the contact
@@ -47,7 +50,7 @@ public:
 	/**
 	 * Return message manager for this instance.
 	 */
-	KopeteMessageManager *manager ( bool canCreate );
+	KopeteMessageManager *manager ( bool canCreate = false );
 
 	/**
 	 * Deal with incoming messages.
@@ -72,6 +75,15 @@ public slots:
 	 * Retrieve a vCard for the contact
 	 */
 	void slotUserInfo ();
+
+private slots:
+	/**
+	 * Catch a dying message manager
+	 */
+	void slotMessageManagerDeleted ();
+
+private:
+	JabberMessageManager *mManager;
 
 };
 
