@@ -3,7 +3,7 @@
 	<xsl:output method="html"/>
 	<xsl:template match="message">
 		<div style="height:5px;">
-		 
+
 		</div>
 		<div class="KopeteMessage">
 			<xsl:attribute name="id">
@@ -57,7 +57,7 @@
 								<xsl:value-of select="to/contact/@protocolIcon"/>
 							</xsl:attribute>
 						</img>
-						<kopete-i18n>To %TO_CONTACT_DISPLAYNAME% at %TIME%</kopete-i18n>
+						<kopete-i18n>To %TO_CONTACT_DISPLAYNAME% at %FORMATTEDTIMESTAMP%</kopete-i18n>
 					</xsl:when>
 					<xsl:otherwise>
 						<!-- Incoming / Action message -->
@@ -66,7 +66,7 @@
 								<xsl:value-of select="from/contact/@protocolIcon"/>
 							</xsl:attribute>
 						</img>
-						<kopete-i18n>From %FROM_CONTACT_DISPLAYNAME% at %TIME%</kopete-i18n>
+						<kopete-i18n>From %FROM_CONTACT_DISPLAYNAME% at %FORMATTEDTIMESTAMP%</kopete-i18n>
 					</xsl:otherwise>
 				</xsl:choose>
 			</div>
