@@ -355,13 +355,6 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 	generalHTMLPart->write(i18n("<b>Total offline time :</b> %1 hour(s)").arg(stringFromSeconds(totalOfflineTime)));
 	generalHTMLPart->write(QString("</div>"));
 
-	/// @todo Do previsions but needs offline status
-	generalHTMLPart->write(QString("<div class=\"statgroup\">"));
-	generalHTMLPart->write(i18n("<b>Next offline event :</b> %1 <br>").arg(m_contact->nextOfflineEvent().toString()));
-	generalHTMLPart->write(i18n("<b>Next online event :</b> %1 <br>").arg(m_contact->nextOfflineEvent().toString()));
-	generalHTMLPart->write(QString("</div>"));
-	
-	
 	if (subTitle == "General informations")
 	/*
 	 * General stats that should not be shown on "day" or "month" pages
