@@ -82,7 +82,6 @@ public:
 
 	QString contactId;
 	QString icon;
-	QString statusDescription;
 
 	QTime idleTimer;
 	unsigned long int idleTime;
@@ -164,29 +163,15 @@ const KopeteOnlineStatus& KopeteContact::onlineStatus() const
 	return d->onlineStatus;
 }
 
-void KopeteContact::setOnlineStatus( const KopeteOnlineStatus &status, const QString &statusDescription )
+void KopeteContact::setOnlineStatus( const KopeteOnlineStatus &status )
 {
-	if( status == d->onlineStatus && statusDescription == d->statusDescription )
+	if( status == d->onlineStatus )
 		return;
 
 	KopeteOnlineStatus oldStatus = d->onlineStatus;
 	d->onlineStatus = status;
-	d->statusDescription = statusDescription;
 
 	emit onlineStatusChanged( this, status, oldStatus );
-}
-
-void KopeteContact::setStatusDescription( const QString &statusDescription  )
-{
-	if( statusDescription == d->statusDescription )
-		return;
-
-	d->statusDescription = statusDescription;
-}
-
-QString KopeteContact::statusDescription() const
-{
-    return d->statusDescription;
 }
 
 void KopeteContact::sendFile( const KURL & /* sourceURL */, const QString & /* fileName */, uint /* fileSize */ )
@@ -596,6 +581,33 @@ const QString &KopeteContact::propertyLabel(const QString &key) const
 		return QString::null;
 }
 
+void KopeteContact::setProperty(const QString &key, const QVariant &value)
+{
+	QString label;
+	if(key == QString::fromLatin1("firstName"))
+		label = i18n("First Name");
+	else if (key == QString::fromLatin1("lastName"))
+		label = i18n("Last Name");
+	else if (key == QString::fromLatin1("emailAddress"))
+		label = i18n("Email");
+	else if (key == QString::fromLatin1("privPhoneNum"))
+		label = i18n("Private Phone");
+	else if (key == QString::fromLatin1("privFaxNum"))
+		label = i18n("Private Fax");
+	else if (key == QString::fromLatin1("privMobileNum"))
+		label = i18n("Private Mobile");
+	else if (key == QString::fromLatin1("awayMessage"))
+		label = i18n("Away Message");
+	else if (key == QString::fromLatin1("ircChannel"))
+		label = i18n("Channel");
+
+	if(!label.isNull())
+		setProperty(key, label, value);
+	else
+		kdDebug(14000) << k_funcinfo << "No known default property with key: " << key << endl;
+
+}
+
 void KopeteContact::setProperty(const QString &key, const QString &label, const QVariant &value)
 {
 	if(value.isNull())
@@ -637,17 +649,35 @@ QString KopeteContact::toolTip() const
 	// --------------------------------------------------------------------------
 	// Fixed part of tooltip
 
-	tip = i18n( "<b>%3</b>&nbsp;(%2)<br><img src=\"kopete:icon\">&nbsp;%1" ).
-#if QT_VERSION < 0x030200
-		arg( onlineStatus().description() ).arg( QStyleSheet::escape( contactId() ) ).
-		arg( QStyleSheet::escape( displayName() ) );
-#else
-		arg( onlineStatus().description(), QStyleSheet::escape( contactId() ),
-			QStyleSheet::escape( displayName() ) );
-#endif
-
-	QMimeSourceFactory::defaultFactory()->setImage( QString::fromLatin1("kopete:icon"),
+	QMimeSourceFactory::defaultFactory()->setImage( QString::fromLatin1("kopete:%1icon").arg(contactId()),
 		onlineStatus().iconFor( this ).convertToImage() );
+
+	if ( displayName() == contactId() )
+	{
+		tip = i18n( "<b>DISPLAY NAME</b><br><img src=\"kopete:%4icon\">&nbsp;CONTACT STATUS",
+			"<b>%3</b><br><img src=\"kopete:%2icon\">&nbsp;%1" ).
+#if QT_VERSION < 0x030200
+			arg( onlineStatus().description() ).
+			arg( contactId() ).
+			arg( QStyleSheet::escape( displayName() ) );
+#else
+			arg( onlineStatus().description(), contactId(), QStyleSheet::escape( displayName() ) );
+#endif
+	}
+	else
+	{
+		tip = i18n( "<b>DISPLAY NAME</b>&nbsp;(CONTACT ID)<br><img src=\"kopete:%4icon\">&nbsp;CONTACT STATUS",
+			"<b>%4</b>&nbsp;(%3)<br><img src=\"kopete:%2icon\">&nbsp;%1" ).
+#if QT_VERSION < 0x030200
+			arg( onlineStatus().description() ).
+			arg( contactId() ).
+			arg( QStyleSheet::escape( contactId() ) ).
+			arg( QStyleSheet::escape( displayName() ) );
+#else
+			arg( onlineStatus().description(), contactId(), QStyleSheet::escape( contactId() ),
+				QStyleSheet::escape( displayName() ) );
+#endif
+	}
 
 	// --------------------------------------------------------------------------
 	// Configurable part of tooltip
@@ -658,14 +688,14 @@ QString KopeteContact::toolTip() const
 		{
 			QString name = formattedName();
 			if(!name.isNull())
-				tip += i18n("<br><b>Name:</b>&nbsp;formattedName",
+				tip += i18n("<br><b>Name:</b>&nbsp;FORMATTED NAME",
 					"<br><b>Name:</b>&nbsp;%1").arg(name);
 		}
 		else if ((*it) == QString::fromLatin1("FormattedIdleTime"))
 		{
 			QString time = formattedIdleTime();
 			if(!time.isNull())
-				tip += i18n("<br><b>Idle:</b>&nbsp;formattedIdleTime",
+				tip += i18n("<br><b>Idle:</b>&nbsp;FORMATTED IDLE TIME",
 					"<br><b>Idle:</b>&nbsp;%1").arg(time);
 		}
 		else
@@ -673,7 +703,7 @@ QString KopeteContact::toolTip() const
 			p = property(*it);
 			if(!p.isNull())
 			{
-				tip += i18n("<br><b>%2:</b>&nbsp;%1")
+				tip += i18n("<br><b>PROPERTY LABEL:</b>&nbsp;PROPERTY VALUE", "<br><b>%2:</b>&nbsp;%1")
 					.arg(p.value().toString())
 					.arg(p.label());
 			}

@@ -134,25 +134,9 @@ public:
 	const KopeteOnlineStatus& onlineStatus() const;
 
 	/**
-	 * Set the contact's online status and status description
-	 * When unused description is set to QString::null
+	 * Set the contact's online status
 	 */
-	void setOnlineStatus(const KopeteOnlineStatus &status,
-			const QString &statusDescription=QString::null);
-
-	/**
-	 * Set the contact's status description for its current status
-	 * This is handy if a protocol receives its status description
-	 * after the status change itself
-	 */
-	void setStatusDescription( const QString &statusDescription  );
-
-	/**
-	 * Returns QString::null if protocol do not use it,
-	 * or current status does not require description.
-	 */
-
-	QString statusDescription() const;
+	void setOnlineStatus(const KopeteOnlineStatus &status);
 
 	/**
 	 * Return the unique id that identifies a contact. Id is required
@@ -297,6 +281,26 @@ public:
 	 **/
 	const QString &propertyLabel(const QString &key) const;
 
+	/**
+	 * Add or Set a 'known' property for this contact.
+	 *
+	 * @param key Key this property will be accessible through, if the key is
+	 * not from a known property no property will be set!
+	 * @param value The value to store
+	 *
+	 * Known property keys, their QVariant types and i18n label
+	 * (and optional description if the key might be unclear):
+	 *
+	 * firstName		- QString - "First Name"
+	 * lastName			- QString - "Last Name"
+	 * emailAddress	- QString - "Email Address"
+	 * privPhoneNum	- QString - "Private Phone"
+	 * privFaxNum		- QString - "Private Fax"
+	 * privMobileNum	- QString - "Private Mobile"
+	 * awayMessage		- QString - "Away Message"
+	 * ircChannel		- QString - "Channel"
+	 **/
+	void setProperty(const QString &key, const QVariant &value);
 	/**
 	 * Add or Set a property for this contact.
 	 *
