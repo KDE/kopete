@@ -29,7 +29,7 @@
 static const char *description =
 	I18N_NOOP("Kopete, the KDE Instant Messenger");
 
-#define KOPETE_VERSION "CVS>=20020808"
+#define KOPETE_VERSION "CVS>=20020908"
 	
 static KCmdLineOptions options[] =
 {
@@ -49,8 +49,9 @@ int main(int argc, char *argv[])
 	aboutData.addAuthor ( "Richard Stellingwerff", I18N_NOOP("Developer"), "remenic@linuxfromscratch.org");
 	aboutData.addAuthor ( "Daniel Stone", I18N_NOOP("Core developer, Jabber plugin"), "dstone@kde.org", "http://raging.dropbear.id.au/daniel/");
 	aboutData.addAuthor ( "Till Gerken", I18N_NOOP("Core developer, Jabber plugin"), "till@tantalo.net");
-    aboutData.addAuthor ( "Hendrik vom Lehn", I18N_NOOP("Developer"), "hennevl@hennevl.de", "http://www.hennevl.de");
-    aboutData.addAuthor ( "Stefan Gehn", I18N_NOOP("Developer"), "sgehn@gmx.net", "http://metz81.mine.nu" );
+	aboutData.addAuthor ( "Olivier Goffart", I18N_NOOP("Core developer"), "ogoffart@tiscalinet.be");
+	aboutData.addAuthor ( "Hendrik vom Lehn", I18N_NOOP("Developer"), "hennevl@hennevl.de", "http://www.hennevl.de");
+	aboutData.addAuthor ( "Stefan Gehn", I18N_NOOP("Developer"), "sgehn@gmx.net", "http://metz81.mine.nu" );
 	aboutData.addAuthor ( "Andres Krapf", I18N_NOOP("Random hacks and bugfixes"), "dae@chez.com" );
 	aboutData.addAuthor ( "Gav Wood", I18N_NOOP("Winpopup plugin"), "gjw102@york.ac.uk" );
 
