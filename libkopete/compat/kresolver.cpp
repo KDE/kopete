@@ -567,7 +567,8 @@ QString KResolver::errorString(int errorcode, int syserror)
     I18N_NOOP("requested service not supported for this socket type"), // UnsupportedService
     I18N_NOOP("requested socket type not supported"),	// UnsupportedSocketType
     I18N_NOOP("unknown error"),			// UnknownError
-    I18N_NOOP("system error: %1")		// SystemError
+    I18N_NOOP2("1: the i18n'ed system error code, from errno",
+	      "system error: %1")		// SystemError
   };
 
   // handle the special value
@@ -627,7 +628,11 @@ QStrList KResolver::protocolName(int protonum)
   do
     {
       buf = new char[buflen];
+# ifdef USE_SOLARIS // Solaris uses a 4 argument getprotobynumber_r which returns struct *protoent or NULL
+      if ((pe = getprotobynumber_r(protonum, &protobuf, buf, buflen)) && (errno == ERANGE))
+# else
       if (getprotobynumber_r(protonum, &protobuf, buf, buflen, &pe) == ERANGE)
+# endif
 	{
 	  buflen += 1024;
 	  delete [] buf;
@@ -669,7 +674,11 @@ QStrList KResolver::protocolName(const char *protoname)
   do
     {
       buf = new char[buflen];
+# ifdef USE_SOLARIS // Solaris uses a 4 argument getprotobyname_r which returns struct *protoent or NULL
+      if ((pe = getprotobyname_r(protoname, &protobuf, buf, buflen)) && (errno == ERANGE))
+# else
       if (getprotobyname_r(protoname, &protobuf, buf, buflen, &pe) == ERANGE)
+# endif
 	{
 	  buflen += 1024;
 	  delete [] buf;
@@ -711,7 +720,11 @@ int KResolver::protocolNumber(const char *protoname)
   do
     {
       buf = new char[buflen];
+# ifdef USE_SOLARIS // Solaris uses a 4 argument getprotobyname_r which returns struct *protoent or NULL
+      if ((pe = getprotobyname_r(protoname, &protobuf, buf, buflen)) && (errno == ERANGE))
+# else
       if (getprotobyname_r(protoname, &protobuf, buf, buflen, &pe) == ERANGE)
+# endif
 	{
 	  buflen += 1024;
 	  delete [] buf;
@@ -749,7 +762,11 @@ int KResolver::servicePort(const char *servname, const char *protoname)
   do
     {
       buf = new char[buflen];
+# ifdef USE_SOLARIS // Solaris uses a 5 argument getservbyname_r which returns struct *servent or NULL
+      if ((se = getservbyname_r(servname, protoname, &servbuf, buf, buflen)) && (errno == ERANGE))
+# else
       if (getservbyname_r(servname, protoname, &servbuf, buf, buflen, &se) == ERANGE)
+# endif
 	{
 	  buflen += 1024;
 	  delete [] buf;
@@ -787,7 +804,11 @@ QStrList KResolver::serviceName(const char* servname, const char *protoname)
   do
     {
       buf = new char[buflen];
+# ifdef USE_SOLARIS // Solaris uses a 5 argument getservbyname_r which returns struct *servent or NULL
+      if ((se = getservbyname_r(servname, protoname, &servbuf, buf, buflen)) && (errno == ERANGE))
+# else
       if (getservbyname_r(servname, protoname, &servbuf, buf, buflen, &se) == ERANGE)
+# endif
 	{
 	  buflen += 1024;
 	  delete [] buf;
@@ -829,7 +850,11 @@ QStrList KResolver::serviceName(int port, const char *protoname)
   do
     {
       buf = new char[buflen];
+# ifdef USE_SOLARIS // Solaris uses a 5 argument getservbyport_r which returns struct *servent or NULL
+      if ((se = getservbyport_r(port, protoname, &servbuf, buf, buflen)) && (errno == ERANGE))
+# else
       if (getservbyport_r(port, protoname, &servbuf, buf, buflen, &se) == ERANGE)
+# endif
 	{
 	  buflen += 1024;
 	  delete [] buf;
