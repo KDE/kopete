@@ -17,7 +17,8 @@ noinst_HEADERS = contactlist.h\
 		appearanceconfig.h\
 		groupseparator.h\
 		balloonbase.h\
-		kopeteballoon.h
+		kopeteballoon.h \
+		historydialog.h
 
 #CXXFLAGS = -g -O2 -Wall
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
@@ -29,7 +30,9 @@ libkopeteui_la_SOURCES = configmodule.cpp\
 			addwizard.ui addwizardimpl.cpp\
 			protocolboxitem.cpp addcontactpage.cpp\
 			systemtray.cpp chatview.cpp appearanceconfig.cpp\
-			groupseparator.cpp balloonbase.cpp kopeteballoon.cpp
+			groupseparator.cpp balloonbase.cpp kopeteballoon.cpp \
+			historydialog.cpp
+
 libkopeteui_la_METASOURCES = AUTO
 libkopeteui_la_LDFLAGS     =
 libkopeteui_la_LIBADD      =
