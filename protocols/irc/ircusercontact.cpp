@@ -196,13 +196,13 @@ void IRCUserContact::slotIncomingModeChange( const QString &, const QString &cha
 		{
 			QString modeChange = mode.section(' ', 0, 0);
 			if(modeChange == QString::fromLatin1("+o"))
-				manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserOp() );
+				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserOp() );
 			else if(modeChange == QString::fromLatin1("-o"))
-				manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserOnline() );
+				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserOnline() );
 			else if(modeChange == QString::fromLatin1("+v"))
-				manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserVoice() );
+				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserVoice() );
 			else if(modeChange == QString::fromLatin1("-v"))
-				manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserOnline() );
+				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserOnline() );
 		}
 
 		bool isOperator = ( chan->manager()->contactOnlineStatus( mAccount->myself() ) == IRCProtocol::IRCUserOp() );
