@@ -36,9 +36,9 @@
 										<xsl:attribute name="style">
 											color: <xsl:value-of select="$curr/from/contact/@color"/>;
 										</xsl:attribute>
-										<b><xsl:value-of select="$curr/from/contact/metaContactDisplayName/@text"/></b>
+										<b><xsl:value-of select="$curr/from/contact/metaContactDisplayName/@text" disable-output-escaping="yes"/></b>
 										<xsl:if test="$curr/from/contact/metaContactDisplayName/@text != $curr/from/contact/contactDisplayName/@text">
-											<i> (<xsl:value-of select="$curr/from/contact/contactDisplayName/@text"/>)</i>
+											<i> (<xsl:value-of select="$curr/from/contact/contactDisplayName/@text" disable-output-escaping="yes"/>)</i>
 										</xsl:if>
 									</span>
 								</td>
@@ -101,7 +101,7 @@
 	<xsl:template name="renderMessageBody">
 		<xsl:choose>
 			<xsl:when test="@type='action'">
-				<i><xsl:value-of select="from/contact/contactDisplayName/@text"/><xsl:text> </xsl:text><xsl:value-of select="body" disable-output-escaping="yes"/></i>
+				<i><xsl:value-of select="from/contact/contactDisplayName/@text" disable-output-escaping="yes"/><xsl:text> </xsl:text><xsl:value-of select="body" disable-output-escaping="yes"/></i>
 			</xsl:when>
 			<xsl:when test="@route='internal'">
 				<span style="font-weight: bold; font-size: xx-small;">
