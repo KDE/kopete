@@ -1,4 +1,4 @@
-SUBDIRS = tests
+SUBDIRS = . tests
 METASOURCES = AUTO
 noinst_LTLIBRARIES = libkyahoo.la
 
