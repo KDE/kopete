@@ -28,6 +28,8 @@
 #include <qtextcodec.h>
 #include <qregexp.h>
 
+#include <kopetemessage.h>
+
 // Uncoment this if you want a really rfc compliant message handling.
 // This is due to some changes of the message encoding with 14 arguments.(not very frequent :)
 // #define _IRC_STRICTNESS_
@@ -62,7 +64,7 @@ public:
 		const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null );
 
 	inline const QString nickFromPrefix() const
-		{ return KIRC::Entity::userNick(m_prefix); }
+	{ return Kopete::Message::unescape(KIRC::Entity::userNick(m_prefix)); }
 
 	QString toString() const;
 

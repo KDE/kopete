@@ -96,9 +96,9 @@ void Engine::join(Message &msg)
 	* Remember that this will be emitted when *you* /join a room for the first time */
 
 	if (msg.argsSize()==1)
-		emit incomingJoinedChannel(msg.arg(0), msg.nickFromPrefix());
+		emit incomingJoinedChannel(Kopete::Message::unescape(msg.arg(0)), msg.nickFromPrefix());
 	else
-		emit incomingJoinedChannel(msg.suffix(), msg.nickFromPrefix());
+		emit incomingJoinedChannel(Kopete::Message::unescape(msg.suffix()), msg.nickFromPrefix());
 }
 
 void Engine::kick(const QString &user, const QString &channel, const QString &reason)
@@ -111,7 +111,7 @@ void Engine::kick(Message &msg)
 	/* The given user is kicked.
 	* "<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]"
 	*/
-	emit incomingKick( msg.arg(0), msg.nickFromPrefix(), msg.arg(1), msg.suffix());
+	emit incomingKick( Kopete::Message::unescape(msg.arg(0)), msg.nickFromPrefix(), msg.arg(1), msg.suffix());
 }
 
 void Engine::mode(const QString &target, const QString &mode)
@@ -278,9 +278,9 @@ void Engine::privmsg(Message &msg)
 			msg.decodeAgain( codec );
 
 		if( Entity::isChannel(user) )
-			emit incomingMessage(msg.nickFromPrefix(), msg.arg(0), message );
+			emit incomingMessage(msg.nickFromPrefix(), Kopete::Message::unescape(msg.arg(0)), message );
 		else
-			emit incomingPrivMessage(msg.nickFromPrefix(), msg.arg(0), message );
+			emit incomingPrivMessage(msg.nickFromPrefix(), Kopete::Message::unescape(msg.arg(0)), message );
 	}
 
 	if( msg.hasCtcpMessage() )

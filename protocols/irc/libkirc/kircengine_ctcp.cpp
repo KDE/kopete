@@ -78,9 +78,9 @@ void Engine::CtcpRequest_action(const QString &contact, const QString &message)
 		writeCtcpQueryMessage(contact, QString::null, "ACTION", message);
 
 		if( Entity::isChannel(contact) )
-			emit incomingAction(contact, m_Nickname, message);
+			emit incomingAction(Kopete::Message::unescape(contact), Kopete::Message::unescape(m_Nickname), message);
 		else
-			emit incomingPrivAction(m_Nickname, contact, message);
+			emit incomingPrivAction(Kopete::Message::unescape(m_Nickname), Kopete::Message::unescape(contact), message);
 	}
 }
 
@@ -90,7 +90,7 @@ void Engine::CtcpQuery_action(Message &msg)
 	if (target[0] == '#' || target[0] == '!' || target[0] == '&')
 		emit incomingAction(target, msg.nickFromPrefix(), msg.ctcpMessage().ctcpRaw());
 	else
-		emit incomingPrivAction(msg.nickFromPrefix(), target, msg.ctcpMessage().ctcpRaw());
+		emit incomingPrivAction(msg.nickFromPrefix(), Kopete::Message::unescape(target), msg.ctcpMessage().ctcpRaw());
 }
 
 /*

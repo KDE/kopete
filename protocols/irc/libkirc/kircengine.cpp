@@ -37,6 +37,8 @@
 #include <sys/types.h>
 #include <pwd.h>
 
+#include <kopetemessage.h>
+
 using namespace KIRC;
 
 // FIXME: Remove slotConnected() and error(int errCode) while going to KNetwork namespace
