@@ -37,7 +37,7 @@ ContactNotesPlugin::ContactNotesPlugin( QObject *parent, const char *name,
 	else
 		pluginStatic_ = this;
 
-	KAction *m_actionEdit=new KAction( i18n("&Notes..."), "identity", 0, this, SLOT (slotEditInfo()), actionCollection() , "editContactNotes");
+	KAction *m_actionEdit=new KAction( i18n("&Notes"), "identity", 0, this, SLOT (slotEditInfo()), actionCollection() , "editContactNotes");
 	connect ( KopeteContactList::contactList() , SIGNAL( metaContactSelected(bool)) , m_actionEdit , SLOT(setEnabled(bool)));
 	m_actionEdit->setEnabled(KopeteContactList::contactList()->selectedMetaContacts().count()==1 );
 

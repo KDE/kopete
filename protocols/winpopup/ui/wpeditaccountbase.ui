@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>420</width>
+            <width>677</width>
             <height>405</height>
         </rect>
     </property>
@@ -64,7 +64,7 @@
                         <cstring>label1</cstring>
                     </property>
                     <property name="text">
-                        <string>Your Computer's Network &amp;Name:</string>
+                        <string>Your computer's network &amp;name:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>mHostName</cstring>
@@ -186,4 +186,7 @@
     <slot>installSamba()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kpushbutton.h</includehint>
+</includehints>
 </UI>

@@ -942,8 +942,8 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 	TLV *url = findTLV(lst,0x0004);  //error url
 	TLV *bosip = findTLV(lst,0x0005); //bos server address
 	TLV *cook = findTLV(lst,0x0006); //authorization cookie
-	TLV *email = findTLV(lst,0x0007); //the e-mail address attached to the account
-	TLV *regstatus = findTLV(lst,0x0013); //whether the e-mail address is available to others
+	TLV *email = findTLV(lst,0x0007); //the email address attached to the account
+	TLV *regstatus = findTLV(lst,0x0013); //whether the email address is available to others
 	TLV *err = findTLV(lst,0x0008); //whether an error occurred
 
 	if (mCookie)
@@ -959,9 +959,9 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 			case 1: { errorString = i18n("Sign on failed because the screen name you provided is not registered on the AIM network. Please visit http://aim.aol.com to create a screen name for use on the AIM network."); errorCode = 1; break;  }
 			case 5: { errorString = i18n("Sign on failed because the password supplied for this screen name is invalid. Please check your password and try again."); errorCode = 5; break; }
 			case 0x11: { errorString = i18n("Sign on failed because your account is currently suspended."); errorCode = 0x11; break; }
-			case 0x14: { errorString = i18n("The AOL Instant Messenger service is temporarily unavailable.  Please try again later."); errorCode = 0x14; break; }
+			case 0x14: { errorString = i18n("The AOL Instant Messenger service is temporarily unavailable. Please try again later."); errorCode = 0x14; break; }
 			case 0x18: { errorString = i18n("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."); errorCode = 0x18; break; }
-			case 0x1c: { errorString = i18n("The client you are using is too old.  Please upgrade."); errorCode = 0x1c; break; }
+			case 0x1c: { errorString = i18n("The client you are using is too old. Please upgrade."); errorCode = 0x1c; break; }
 			default: { errorString = i18n("Authentication failed."); errorCode = (err->data[0] << 8) | err->data[1]; break; }
 		}
 

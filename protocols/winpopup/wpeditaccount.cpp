@@ -73,7 +73,7 @@ bool WPEditAccount::validateData()
 	kdDebug(14180) << "WPEditAccount::validateData()";
 
 	if(mHostName->text() == "")
-	{	KMessageBox::sorry(this, i18n("<qt>You must enter a valid screen name.</qt>"), i18n("WP"));
+	{	KMessageBox::sorry(this, i18n("<qt>You must enter a valid screen name.</qt>"), i18n("WinPopup"));
 		return false;
 	}
 

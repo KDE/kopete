@@ -430,7 +430,7 @@ void MSNAccount::slotNotifySocketClosed( int /*state*/ )
 	//FIXME: Kopete crash when i show this message box...
 /*	if ( state == 0x10 ) // connection died unexpectedly
 	{
-		KMessageBox::error( qApp->mainWidget(), i18n( "Connection with the MSN server was lost unexpectedly.\nIf you are unable to reconnect, please try again later." ), i18n( "Connection lost - MSN Plugin" ) );
+		KMessageBox::error( qApp->mainWidget(), i18n( "Connection with the MSN server was lost unexpectedly.\nIf you are unable to reconnect, please try again later." ), i18n( "Connection Lost - MSN Plugin" ) );
 	}*/
 	m_badpassword=m_notifySocket->badPassword();
 	m_notifySocket->deleteLater();

@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>401</width>
-            <height>398</height>
+            <height>413</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -154,7 +154,7 @@
                         <cstring>m_out_dialog</cstring>
                     </property>
                     <property name="text">
-                        <string>Show a dialog before sending</string>
+                        <string>Show dialog before sending</string>
                     </property>
                 </widget>
             </vbox>

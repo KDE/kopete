@@ -54,7 +54,7 @@ KopeteFileConfirmDialog::~KopeteFileConfirmDialog()
 
 void KopeteFileConfirmDialog::slotBrowsePressed()
 {
-	QString saveFileName = KFileDialog::getSaveFileName( m_view->m_saveto->text(), QString::fromLatin1( "*.*" ), 0L , i18n( "Kopete File Transfer" ) );
+	QString saveFileName = KFileDialog::getSaveFileName( m_view->m_saveto->text(), QString::fromLatin1( "*" ), 0L , i18n( "Kopete File Transfer" ) );
 	if ( !saveFileName.isNull())
 	{
 		m_view->m_saveto->setText(saveFileName);

@@ -88,7 +88,7 @@
                         <cstring>textLabel1_2</cstring>
                     </property>
                     <property name="text">
-                        <string>E-Mail:</string>
+                        <string>Email:</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="3" column="0" rowspan="1" colspan="3">

@@ -43,7 +43,7 @@
                         <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Telephone Number:</string>
+                        <string>&amp;Telephone number:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>addNr</cstring>
@@ -54,7 +54,7 @@
                         <cstring>textLabel1_2</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Contact Name:</string>
+                        <string>&amp;Contact name:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>addName</cstring>

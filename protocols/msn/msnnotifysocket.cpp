@@ -126,7 +126,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		/*else
 		 {
 			QString msg = i18n( "You are trying to change the display name of an user who has not "
-				"confirmed his or her e-mail address.\n"
+				"confirmed his or her email address.\n"
 				"The contact was not renamed on the server." );
 			KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
 		}*/
@@ -298,7 +298,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		disconnect();
 		if( data.section( ' ', 0, 0 ) == "OTH" )
 		{
-			KMessageBox::information( 0, i18n( "You have connected from another client" ) , i18n ("MSN Plugin") );
+			KMessageBox::information( 0, i18n( "You have connected from another client." ) , i18n ("MSN Plugin") );
 		}
 	}
 	else if( cmd == "CHG" )
@@ -495,7 +495,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 
 		if(MSNPreferences::mailNotifications())
 		{
-			int answer=KMessageBox::questionYesNo( 0l, i18n( "<qt>You have one new e-mail from %1.<br>Would you like to open your inbox now?</qt>" ).arg(m), i18n( "MSN Plugin" ) );
+			int answer=KMessageBox::questionYesNo( 0l, i18n( "<qt>You have one new email from %1.<br>Would you like to open your inbox now?</qt>" ).arg(m), i18n( "MSN Plugin" ) );
 
 			if(answer==KMessageBox::Yes)
 			{
@@ -666,7 +666,7 @@ void MSNNotifySocket::slotDispatchClosed()
 	if(!dispatchOK)
 	{
 		if(!badPassword())
-			KMessageBox::error( 0, i18n( "Connection failed\nTry again later." ) , i18n ("MSN Plugin") );
+			KMessageBox::error( 0, i18n( "Connection failed.\nTry again later." ) , i18n ("MSN Plugin") );
 		//because "this socket" isn't already connected, doing this manualy
 		emit onlineStatusChanged( Disconnected );
 		emit socketClosed(-1);

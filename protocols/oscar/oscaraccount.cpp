@@ -103,7 +103,7 @@ void OscarAccount::connect()
 	// Get the screen name for this account
 	QString screenName = accountId();
 
-	if (screenName != i18n("(No ScreenName Set)") )
+	if (screenName != i18n("(No Screen Name Set)") )
 	{	// If we have a screen name set
 		// Get the password
 		QString password = getPassword();

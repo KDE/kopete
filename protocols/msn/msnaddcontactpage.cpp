@@ -56,7 +56,7 @@ bool MSNAddContactPage::validateData()
 	if(MSNProtocol::validContactId(userid))
 		return true;
 	
-	KMessageBox::sorry(this, i18n("<qt>You must enter a valid email address</qt>"), i18n("MSN Plugin"));
+	KMessageBox::sorry(this, i18n("<qt>You must enter a valid email address.</qt>"), i18n("MSN Plugin"));
 	return false;
 
 }

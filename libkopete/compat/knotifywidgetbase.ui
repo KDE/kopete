@@ -221,7 +221,7 @@
                                         <string></string>
                                     </property>
                                     <property name="toolTip" stdset="0">
-                                        <string>Test the Sound</string>
+                                        <string>Test the sound</string>
                                     </property>
                                 </widget>
                             </hbox>

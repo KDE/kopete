@@ -59,7 +59,7 @@ void dlgJabberBrowse::slotGotForm ()
 
 	if (!task->success ())
 	{
-		KMessageBox::information (this, i18n ("Unable to retrieve search form"), i18n ("Jabber Error"));
+		KMessageBox::information (this, i18n ("Unable to retrieve search form."), i18n ("Jabber Error"));
 
 		return;
 	}
@@ -110,7 +110,7 @@ void dlgJabberBrowse::slotSentForm ()
 
 	if (!task->success ())
 	{
-		KMessageBox::error (this, i18n ("The Jabber server declined the search"), i18n ("Jabber Search"));
+		KMessageBox::error (this, i18n ("The Jabber server declined the search."), i18n ("Jabber Search"));
 
 		return;
 	}

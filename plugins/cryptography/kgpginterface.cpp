@@ -938,7 +938,7 @@ void KgpgInterface::sigprocess(KProcIO *p)//ess *p,char *buf, int buflen)
 		  p->closeWhenDone();
 /-*
 pop = new KPassivePopup();
-pop->setView(i18n("Unexpected gpg query"),i18n("Kgpg cannot sign this key in GUI mode... switching to konsole"),KGlobal::iconLoader()->loadIcon("kgpg",KIcon::Desktop));
+pop->setView(i18n("Unexpected gpg query"),i18n("Kgpg cannot sign this key in GUI mode. Switching to Konsole"),KGlobal::iconLoader()->loadIcon("kgpg",KIcon::Desktop));
 		pop->setTimeout(3200);
 	  	pop->show();	  
 	  	QRect qRect(QApplication::desktop()->screenGeometry());

@@ -53,7 +53,7 @@ KopeteCommandHandler::KopeteCommandHandler() : QObject( qApp )
 	p->pluginCommands.insert( this, mCommands );
 
 	registerCommand( this, QString::fromLatin1("help"), SLOT( slotHelpCommand( const QString &, KopeteMessageManager * ) ),
-		i18n("USAGE: /help [<command>] - Used to list avaialble commands, or show help for a specified command.") );
+		i18n("USAGE: /help [<command>] - Used to list available commands, or show help for a specified command.") );
 
 	registerCommand( this, QString::fromLatin1("close"), SLOT( slotCloseCommand( const QString &, KopeteMessageManager * ) ),
 		i18n("USAGE: /close - Closes the current view.") );

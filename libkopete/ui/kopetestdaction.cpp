@@ -88,7 +88,7 @@ KAction* KopeteStdAction::addGroup(const QObject *recvr, const char *slot, QObje
 
 KAction* KopeteStdAction::changeMetaContact(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KAction( i18n( "Cha&nge MetaContact" ), QString::fromLatin1( "move" ), 0, recvr, slot, parent, name );
+	return new KAction( i18n( "Cha&nge Meta Contact..." ), QString::fromLatin1( "move" ), 0, recvr, slot, parent, name );
 }
 
 KListAction *KopeteStdAction::moveContact(const QObject *recvr, const char *slot, QObject* parent, const char *name)

@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>507</width>
-            <height>314</height>
+            <width>573</width>
+            <height>327</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -79,7 +79,7 @@
                         </sizepolicy>
                     </property>
                     <property name="text">
-                        <string>&amp;Substitute Leading Zero With Code:</string>
+                        <string>&amp;Substitute leading zero with code:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>subCode</cstring>
@@ -112,7 +112,7 @@
                         <cstring>subEnable</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Enable Phone Number Internationalisation</string>
+                        <string>&amp;Enable phone number internationalisation</string>
                     </property>
                     <property name="accel">
                         <string>Alt+E</string>
@@ -147,7 +147,7 @@
                 </font>
             </property>
             <property name="text">
-                <string>Behaviour</string>
+                <string>Behavior</string>
             </property>
         </widget>
         <widget class="Line">
@@ -169,7 +169,7 @@
                 <cstring>buttonGroup1</cstring>
             </property>
             <property name="title">
-                <string>If A Message Is Too Long</string>
+                <string>If Message is Too Long</string>
             </property>
             <vbox>
                 <property name="name">
@@ -180,7 +180,7 @@
                         <cstring>msgCancel</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Cancel The Message Without Sending</string>
+                        <string>&amp;Cancel the message without sending</string>
                     </property>
                     <property name="accel">
                         <string>Alt+C</string>
@@ -191,7 +191,7 @@
                         <cstring>msgAsk</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Ask How To Proceed (Recommended)</string>
+                        <string>&amp;Ask how to proceed (recommended)</string>
                     </property>
                     <property name="accel">
                         <string>Alt+A</string>
@@ -202,7 +202,7 @@
                         <cstring>msgSplit</cstring>
                     </property>
                     <property name="text">
-                        <string>S&amp;plit The Message Into Smaller Sections And Send</string>
+                        <string>S&amp;plit the message into smaller sections and send</string>
                     </property>
                     <property name="accel">
                         <string>Alt+P</string>
@@ -251,4 +251,7 @@
     <include location="global" impldecl="in implementation">knuminput.h</include>
 </includes>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>krestrictedline.h</includehint>
+</includehints>
 </UI>

@@ -28,7 +28,7 @@
 #include "smsprefs.h"
 
 SMSPreferences::SMSPreferences( const QString &pixmap, QObject *parent )
-	: ConfigModule( i18n( "SMS Plugin" ), i18n( "Sending messages to cellphones" ), pixmap, parent )
+	: ConfigModule( i18n( "SMS Plugin" ), i18n( "Sending Messages to Cellphones" ), pixmap, parent )
 {
 	(new QBoxLayout(this, QBoxLayout::Down))->setAutoAdd(true);
 	theUI = new SMSPrefsUI(this);

@@ -231,14 +231,14 @@ void IRCAccount::slotJoinChannel()
 	if(!isConnected())
 		return;
 
-	QString chan = KLineEditDlg::getText( i18n( "Kopete IRC Plugin" ),
+	QString chan = KLineEditDlg::getText( i18n( "IRC Plugin" ),
 		i18n( "Please enter name of the channel you want to join:" ), QString::null);
 	if( !chan.isNull() )
 	{
 		if( chan.startsWith( QString::fromLatin1("#") ) )
 			findChannel( chan )->startChat();
 		else
-			KMessageBox::error(0l, i18n("<qt>\"%1\" is an invalid channel. Channels must start with '#'.</qt>").arg(chan), i18n("Kopete IRC Plugin"));
+			KMessageBox::error(0l, i18n("<qt>\"%1\" is an invalid channel. Channels must start with '#'.</qt>").arg(chan), i18n("IRC Plugin"));
 	}
 }
 

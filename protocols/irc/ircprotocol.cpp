@@ -88,7 +88,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("join"),
 		SLOT( slotJoinCommand( const QString &, KopeteMessageManager*) ),
-		i18n("USAGE: /join <#channel> - Joins the sepecified channel.") );
+		i18n("USAGE: /join <#channel> - Joins the specified channel.") );
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("topic"),
 		SLOT( slotTopicCommand( const QString &, KopeteMessageManager*) ),

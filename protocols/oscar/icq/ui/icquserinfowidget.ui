@@ -1041,7 +1041,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>EMail</string>
+                    <string>Email</string>
                 </attribute>
                 <vbox>
                     <property name="name">

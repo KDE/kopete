@@ -130,7 +130,7 @@ bool GaduEditAccount::validateData()
     }
     else{
 	if (emailedit_->text().isEmpty()){
-	    KMessageBox::sorry(this, i18n("<b>Please enter a valid email addres</b>"), i18n("Gadu-Gadu"));
+	    KMessageBox::sorry(this, i18n("<b>Please enter a valid email address.</b>"), i18n("Gadu-Gadu"));
 	    return false;
 	}
 

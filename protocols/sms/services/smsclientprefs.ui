@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>375</width>
-            <height>145</height>
+            <height>168</height>
         </rect>
     </property>
     <property name="caption">
@@ -79,7 +79,7 @@
                         <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>SMSClient &amp;Program:</string>
+                        <string>SMSClient &amp;program:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>program</cstring>
@@ -116,7 +116,7 @@
                         <cstring>textLabel2</cstring>
                     </property>
                     <property name="text">
-                        <string>SMSClient &amp;Config Path:</string>
+                        <string>SMSClient &amp;config path:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>configDir</cstring>
@@ -126,11 +126,13 @@
         </widget>
     </vbox>
 </widget>
-<customwidgets>
-</customwidgets>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
+    <includehint>kurlrequester.h</includehint>
+    <includehint>klineedit.h</includehint>
     <includehint>kpushbutton.h</includehint>
+    <includehint>kurlrequester.h</includehint>
+    <includehint>klineedit.h</includehint>
     <includehint>kpushbutton.h</includehint>
 </includehints>
 </UI>

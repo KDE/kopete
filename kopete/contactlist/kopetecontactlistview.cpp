@@ -169,7 +169,7 @@ KopeteContactListView::KopeteContactListView( QWidget *parent,
 void KopeteContactListView::initActions(KActionCollection* ac)
 {
 //	KAction *actionNewGroup=
-	new KAction( i18n("Create New Group") , 0,0,this, SLOT( addGroup() ) , ac , "AddGroup"  );
+	new KAction( i18n("Create New Group...") , 0,0,this, SLOT( addGroup() ) , ac , "AddGroup"  );
 
 	KAction *actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( slotSendMessage() ), ac, "contactSendMessage" );
 	KAction *actionStartChat =  KopeteStdAction::chat( this, SLOT( slotStartChat() ), ac, "contactStartChat" );
@@ -1414,7 +1414,7 @@ void KopeteContactListView::slotSelectionChanged()
 	}
 	else if(groups.count() == 1 && contacts.isEmpty())
 	{
-		actionRename->setText(i18n("Rename Group"));
+		actionRename->setText(i18n("Rename Group..."));
 		actionRemove->setText(i18n("Remove Group"));
 		actionRename->setEnabled(true);
 		actionRemove->setEnabled(true);
