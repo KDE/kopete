@@ -44,7 +44,7 @@ class IRCContact : public KopeteContact
 	Q_OBJECT
 
 	public:
-		IRCContact(IRCAccount *account, const QString &nick, KopeteMetaContact *metac, const QString& icon = "irc_normal" );
+		IRCContact(IRCAccount *account, const QString &nick, KopeteMetaContact *metac, const QString& icon = QString::null );
 
 		/**
 		 * Sets the nickname of this contact. The nickname is distinct from the displayName
