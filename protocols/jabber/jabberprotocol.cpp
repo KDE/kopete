@@ -158,8 +158,7 @@ void JabberProtocol::Connect()
 	}
 }
 
-static const JabberProtocol *JabberProtocol::protocol()
-{
+const JabberProtocol *JabberProtocol::protocol() {
 	return sProtocol;
 }
 
