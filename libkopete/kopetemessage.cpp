@@ -227,8 +227,16 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 	}
 	messageNode.appendChild( toNode );
 
+	QString theBody = body;
+	if( f == RichText )
+	{
+		//This is coming from the RichTextEditor component.
+		//Strip off the containing HTML document
+		theBody.replace( QRegExp( QString::fromLatin1(".*<body.*>(.*)</body>.*") ), QString::fromLatin1("\\1") );
+	}
+
 	QDomElement bodyNode = d->xmlDoc.createElement( QString::fromLatin1("body") );
-	QDomCDATASection bodyText = d->xmlDoc.createCDATASection( body );
+	QDomCDATASection bodyText = d->xmlDoc.createCDATASection( theBody );
 	bodyNode.appendChild( bodyText );
 
 	messageNode.appendChild( bodyNode );

@@ -25,9 +25,10 @@
 #include <kopetecontact.h>
 #include <kdockwidget.h>
 #include <klistview.h>
-#include <ktextedit.h>
+#include <qtextedit.h>
 #include <dom/html_element.h>
 
+#include "krichtexteditpart.h"
 #include "kopeteview.h"
 
 class QPixmap;
@@ -268,6 +269,8 @@ public slots:
 
 	virtual bool closeView( bool force = false );
 
+	KRichTextEditPart *part() const { return editpart; }
+
 signals:
 	/**
 	 * Emits when a message is sent
@@ -371,7 +374,7 @@ private:
 	QString unreadMessageFrom;
 	QMap<const KopeteContact *, bool> typingMap;
 	QMap<const KopeteContact *, KopeteContactLVI *> memberContactMap;
-	KTextEdit* m_edit;
+	QTextEdit* m_edit;
 	QFont mFont;
 	QColor mFgColor;
 	QColor mBgColor;
@@ -396,6 +399,7 @@ private:
 	KDockWidget *membersDock;
 	KDockWidget *editDock;
 	KTabWidget *m_tabBar;
+	KRichTextEditPart *editpart;
 
 	KAction *copyAction;
 	KAction  *saveAction;

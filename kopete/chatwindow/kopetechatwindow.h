@@ -18,7 +18,7 @@
 #ifndef KOPETECHATWINDOW_H
 #define KOPETECHATWINDOW_H
 
-#include <kmainwindow.h>
+#include <kparts/mainwindow.h>
 #include <qmovie.h>
 #include "kopetecontact.h"
 
@@ -50,7 +50,7 @@ class KopeteView;
 
 typedef  QPtrList<KopeteContact>  KopeteContactPtrList;
 
-class KopeteChatWindow : public KMainWindow
+class KopeteChatWindow : public KParts::MainWindow
 {
 	Q_OBJECT
 

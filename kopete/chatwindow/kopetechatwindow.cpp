@@ -125,7 +125,7 @@ KopeteChatWindow *KopeteChatWindow::window( KopeteProtocol *p )
 	return myWindow;
 }
 
-KopeteChatWindow::KopeteChatWindow(QWidget *parent, const char* name) : KMainWindow(parent, name)
+KopeteChatWindow::KopeteChatWindow(QWidget *parent, const char* name) : KParts::MainWindow(parent, name)
 {
 	m_activeView = 0L;
 	m_popupView = 0L;
@@ -415,7 +415,8 @@ void KopeteChatWindow::initActions(void)
 	KStdAction::configureToolbars(this, SLOT(slotConfToolbar()), coll);
 	KStdAction::preferences( PreferencesDialog::preferencesDialog() , SLOT( show() ), coll );
 
-	createGUI( QString::fromLatin1( "kopetechatwindow.rc" ) );
+	setXMLFile( QString::fromLatin1( "kopetechatwindow.rc" ) );
+	createGUI( 0L );
 }
 
 void KopeteChatWindow::slotStopAnimation( ChatView* view )
@@ -739,6 +740,8 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	if( m_activeView == view )
 		return;
 
+	createGUI( view->part() );
+
 	if( !chatViewList.contains( view ) )
 		attachChatView( view );
 
@@ -1034,7 +1037,7 @@ void KopeteChatWindow::slotConfToolbar()
 	KEditToolbar *dlg = new KEditToolbar(actionCollection(), QString::fromLatin1("kopetechatwindow.rc") );
 	if (dlg->exec())
 	{
-		createGUI( QString::fromLatin1("kopetechatwindow.rc") );
+		createGUI( 0L );
 		applyMainWindowSettings(KGlobal::config(), QString::fromLatin1( "KopeteChatWindow" ));
 	}
 	delete dlg;
