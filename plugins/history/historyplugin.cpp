@@ -20,6 +20,7 @@
 #include <kaction.h>
 #include <kmessagebox.h>
 //#include <kconfig.h>
+#include <kplugininfo.h>
 #include <kdeversion.h>
 
 #include "kopetemessagemanagerfactory.h"
@@ -139,13 +140,11 @@ void HistoryPlugin::slotViewHistory()
 
 void HistoryPlugin::slotViewCreated( KopeteView* v )
 {
-//	kdDebug(14310) << k_funcinfo << "called." << endl;
-	if(v->plugin()->name() != QString::fromLatin1("kopete_chatwindow") )
+	if(v->plugin()->pluginInfo()->pluginName() != QString::fromLatin1("kopete_chatwindow") )
 		return;  //Email chat windows are not supported.
 
 	bool autoChatWindow = HistoryConfig::auto_chatwindow();
 	int nbAutoChatWindow = HistoryConfig::number_Auto_chatwindow();
-//	kdDebug(14310) << k_funcinfo << "show old chat in chatwindow = " << autoChatWindow << " Number of old lines to show = " << nbAutoChatWindow << endl;
 
 	KopeteView *m_currentView = v;
 	Kopete::ChatSession *m_currentChatSession = v->msgManager();
