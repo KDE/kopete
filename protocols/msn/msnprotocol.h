@@ -317,6 +317,8 @@ private:
 
 	StatusBarIcon *statusBarIcon;
 
+	MSNPreferences *m_configModule;
+
 	QPixmap onlineIcon;
 	QPixmap offlineIcon;
 	QPixmap awayIcon;

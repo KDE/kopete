@@ -207,6 +207,19 @@ void JabberProtocol::Connect()
 	QString server = KGlobal::config()->readEntry("Server", "jabber.org");
 	int port = KGlobal::config()->readNumEntry("Port", 5222);
 
+	if(userId.isEmpty())
+	{
+		int r=KMessageBox::warningContinueCancel(kopeteapp->mainWindow(),
+			i18n("<qt>You have not yet configure Jabber, please do so in the Kopete configuration<br>Do you want to configure now?</qt>"),
+			i18n("Jabber not yet configured"), KGuiItem(i18n("C&onfigure")));
+		if(r!=KMessageBox::Cancel)
+		{
+			preferences->activate();
+		}
+		return;
+	}
+
+
 	// check if we are capable of using SSL if requested
 	bool sslPossible = jabberClient->setSSLEnabled(KGlobal::config()->readBoolEntry("UseSSL", "0"));
 	if(!sslPossible)

@@ -282,8 +282,6 @@ QString Kopete::parseEmoticons( QString message )
 	if ( !KopetePrefs::prefs()->useEmoticons() )
 		return message;
 
-	//kdDebug() << "[[" << message << "]]" << endl;
-
 	QStringList emoticons = KopeteEmoticons::emoticons()->emoticonList();
 	QString em;
 

@@ -65,6 +65,14 @@ void ConfigModule::ownerDeleted()
 	delete p;
 }
 
+void ConfigModule::activate()
+{
+	QFrame *page=static_cast<QFrame*>(parent());
+	kopeteapp->preferencesBox()->showPage(kopeteapp->preferencesBox()->pageIndex(page));
+	kopeteapp->preferencesBox()->show();
+	kopeteapp->preferencesBox()->raise();
+}
+
 #include "configmodule.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

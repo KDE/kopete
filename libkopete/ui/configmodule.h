@@ -54,6 +54,13 @@ public slots:
 	 **/
 	virtual void reopen() {}
 
+
+	/**
+	 *  show the config page
+	 */
+	void activate();
+
+
 private slots:
 	void ownerDeleted();
 

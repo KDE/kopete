@@ -74,7 +74,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	kdDebug() << "MSNProtocol::MSNProtocol: MSN Plugin Loading" << endl;
 
 	initIcons();
-	new MSNPreferences( "msn_protocol", this );
+	m_configModule= new MSNPreferences( "msn_protocol", this );
 
 	kdDebug() << "MSN Protocol Plugin: Creating Status Bar icon\n";
 	statusBarIcon = new StatusBarIcon();
@@ -183,6 +183,18 @@ void MSNProtocol::Connect()
 	KGlobal::config()->setGroup( "MSN" );
 	m_msnId      = KGlobal::config()->readEntry( "UserID", "" );
 	m_password   = KGlobal::config()->readEntry( "Password", "" );
+
+	if(m_msnId.isEmpty())
+	{        
+		int r=KMessageBox::warningContinueCancel(kopeteapp->mainWindow(),
+			i18n("<qt>You have not yet specified a username for MSN, please do so in the Kopete configuration<br>Do you want to configure now?</qt>"),
+			i18n("MSN not yet configured"), KGuiItem(i18n("C&onfigure")));
+		if(r!=KMessageBox::Cancel)
+		{
+			m_configModule->activate();
+		}
+		return;
+	}
 
 	kdDebug() << "MSNProtocol::connect: Connecting to MSN with Passport "
 		<< m_msnId << endl;
