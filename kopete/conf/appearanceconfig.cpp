@@ -22,6 +22,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpixmap.h>
+#include <qwhatsthis.h>
 #include <qpushbutton.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
@@ -276,8 +277,23 @@ void AppearanceConfig::reopen()
 	mPrfsChatWindow->interfaceGroup->setButton( p->interfacePreference() );
 
 	// "Chat Appearance" TAB
-	mPrfsChatAppearance->mle_codehtml->setText( p->kindMessagesHtml() );
+  const QString wthis = i18n("Code:                                <br>\
+	<b>%M</b> : insert the Message                                   <br>\
+	<b>%T</b> : insert Timestamp                                     <br>\
+	<b>%F</b> : insert Fonts (the first open and the second close)   <br>\
+	<b>%b</b> : background color in html format ( #ABABAB )          <br>\
+	<b>%f</b> : insert the displayName of the sender                 <br>\
+	<b>%t</b> : insert the displayName of the reciever               <br>\
+                                                                   <br>\
+	<b>%i ... %i </b> : code between is parsed only if inbound        <br>\
+	<b>%o ... %o </b> : code between is parsed only if outbound       <br>\
+	<b>%s ... %s </b>: code between is parsed only if internal       <br>\
+	<b>%e ... %e </b>: code between is parsed only if not internal (external) <br>\
+                                                                     <br>\
+	<b>%%</b> : insert a '%'");
 
+	mPrfsChatAppearance->mle_codehtml->setText( p->kindMessagesHtml() );
+  QWhatsThis::add( mPrfsChatAppearance->mle_codehtml, wthis );
 	mAwayConfigUI->updateView();
 
 	slotUpdatePreview();

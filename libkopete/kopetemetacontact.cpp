@@ -241,12 +241,15 @@ KopeteContact *KopeteMetaContact::findContact( const QString &protocolId,
 	QPtrListIterator<KopeteContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
-		//kdDebug(14010) << "*** Trying " << it.current()->contactId() << ", proto " << it.current()->protocol()->pluginId() << ", identity " << it.current()->identityId() << endl;
+		//kdDebug(14010) << "*** Trying " << it.current()->contactId() << ", proto "
+		//<< it.current()->protocol()->pluginId() << ", identity " << it.current()->identityId() << endl;
 		if( ( it.current()->contactId() == contactId ) &&
-			( QString::fromLatin1( it.current()->protocol()->pluginId() ) == protocolId ) &&
-			( it.current()->identityId() == identityId ) )
+				( QString::fromLatin1( it.current()->protocol()->pluginId() ) == protocolId ) )
 		{
-			return it.current();
+      if ( identityId.isEmpty() )
+				return it.current();
+			else if (it.current()->identityId() == identityId)
+				return it.current();
 		}
 	}
 
@@ -461,12 +464,12 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
 			KPassivePopup::message(
 				i18n( "%2 is now %1!" ).arg(statusString()).arg(displayName()),
 				QString(),
-				QPixmap( KGlobal::iconLoader()->iconPath(statusIcon(), KIcon::Small) ), 
+				QPixmap( KGlobal::iconLoader()->iconPath(statusIcon(), KIcon::Small) ),
 				qApp->mainWidget() ); //KopeteSystemTray::systemTray() );
 		}
 		#endif*/
 
-		KopeteProtocol* proto = dynamic_cast<KopeteProtocol*>(c->protocol());
+		KopeteProtocol* proto = c->protocol();
 		if (!proto)
 		{
 			kdDebug(14010) << k_funcinfo << "KopeteContact is not from a valid Protocol" <<endl;
@@ -733,9 +736,9 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 				if ( contactElement.text().isEmpty() )
 					return false;
 				d->displayName = contactElement.text();
-				
+
 				//TODO: d->trackChildNameChanges is currently used only when contact creation
-				//later, we will add a GUI to make it configurable 
+				//later, we will add a GUI to make it configurable
 
 				/*d->trackChildNameChanges =
 					( contactElement.attribute( QString::fromLatin1( "trackChildNameChanges" ),

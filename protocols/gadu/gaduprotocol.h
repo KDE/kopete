@@ -65,7 +65,8 @@ public:
     bool canSendOffline() const { return true; }
     KopeteContact *myself() const;
     virtual void deserializeContact( KopeteMetaContact *metaContact,
-                                     const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
+                                     const QMap<QString, QString> &serializedData,
+                                     const QMap<QString, QString> &addressBookData );
 
     virtual KActionMenu* protocolActions();
     // }

@@ -21,6 +21,7 @@
 #include <qapplication.h>
 #include <qcursor.h>
 #include <qtimer.h>
+#include <qstringlist.h>
 
 #include <kaction.h>
 #include <kdebug.h>
@@ -37,6 +38,7 @@
 #include "kopetemetacontact.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
+#include "kopetegroup.h"
 
 #include "gaduprotocol.h"
 #include "gaducontact.h"
@@ -204,14 +206,18 @@ GaduProtocol::myself() const
 }
 
 bool GaduProtocol::addContactToMetaContact( const QString &contactId, const QString &displayName,
-    KopeteMetaContact* parentContact )
+                                            KopeteMetaContact* parentContact )
 {
     uin_t uinNumber = contactId.toUInt();
 
-    GaduContact *newContact = new GaduContact( pluginId(), uinNumber, displayName, parentContact );
-    newContact->setParentIdentity( QString::number( userUin_ ) );
-    contactsMap_.insert( uinNumber, newContact );
-    addNotify( uinNumber );
+    QStringList l = parentContact->groups().toStringList();
+
+    if ( !parentContact->findContact( pluginId(), myself_->contactId(), contactId ) ) {
+        GaduContact *newContact = new GaduContact( pluginId(), uinNumber, displayName, parentContact );
+        newContact->setParentIdentity( QString::number( userUin_ ) );
+        contactsMap_.insert( uinNumber, newContact );
+        addNotify( uinNumber );
+    }
 
     return true;
 }
@@ -256,7 +262,7 @@ GaduProtocol::slotLogin()
     if ( !session_->isConnected() ) {
         session_->login( userUin_, password_, GG_STATUS_AVAIL );
         status_ = GG_STATUS_AVAIL;
-        myself_->setGaduStatus( status_);
+        myself_->setGaduStatus( status_ );
         changeStatus( status_ );
     } else {
         session_->changeStatus( GG_STATUS_AVAIL );
@@ -480,6 +486,7 @@ GaduProtocol::userlist( const QStringList& u )
                 uin = *it;
             }
         }
+        kdDebug(14100)<<"uin = "<< uin << "; name = "<< name << "; group = " << group <<endl;
         addContact( uin, name, 0L, group );
     }
 }
@@ -529,6 +536,7 @@ GaduProtocol::deserializeContact( KopeteMetaContact *metaContact,
                                   const QMap<QString, QString> &serializedData,
                                   const QMap<QString, QString> & /* addressBookData */ )
 {
+    kdDebug()<<"Adding "<<serializedData[ "contactId" ]<<" || "<< serializedData[ "displayName" ] <<endl;
     addContact( serializedData[ "contactId" ], serializedData[ "displayName" ], metaContact );
 }
 

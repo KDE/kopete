@@ -40,12 +40,6 @@ public:
     GaduContact( const QString &protocolId, uin_t uin, const QString& name,
                  KopeteMetaContact *parent );
 
-/*    virtual void          addToGroup( const QString &group );
-    virtual void          removeFromGroup( const QString &group );
-    virtual void          moveToGroup( const QString &from, const QString &to );
-    virtual QStringList   groups() const;
-    virtual void          setName( const QString &name );
-    virtual QString       name() const;  */
     virtual ContactStatus status() const;
     virtual QString       statusText() const;
     virtual QString       statusIcon() const;
@@ -61,8 +55,6 @@ public:
     QString   description() const;
     uin_t uin() const;
 public slots:
-//    void showContextMenu(const QPoint& p, const QString& group);
-
     void slotUserInfo();
     void slotDeleteContact();
     void messageReceived( KopeteMessage& );
@@ -75,9 +67,7 @@ protected:
 private:
     KopeteMessageManager *msgManager_;
     uin_t                 uin_;
-//    QString               name_;
     QString               description_;
-//    QStringList           groups_;
     QString               parentIdentity_;
     GaduProtocol         *protocol_;
     Q_UINT32              status_;

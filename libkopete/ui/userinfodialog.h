@@ -20,6 +20,7 @@
 #include <kdialogbase.h>
 #include <qstring.h>
 
+class KLineEdit;
 
 namespace Kopete {
 
@@ -55,13 +56,14 @@ namespace Kopete {
 		void addCustomField( const QString& name, const QString& txt );
 		void addHTMLText( const QString& str );
 
+		///Shows the dialog
+		virtual void show();
+	protected:
 		/**
 		 * This function has to be called after setting all the fields.
-		 * It builds the GUI for the dialog.
+		 * It builds the GUI for the dialog. By default show() calls it.
 		 */
 		virtual void create();
-
-	protected:
 		//Fills the dialog HTML if DialogStyle is HTML
 		virtual void fillHTML();
 		//Fills the dialog with widgets if DialogStyle is Widget
@@ -75,8 +77,7 @@ namespace Kopete {
 		 */
 		void setStyleSheet( const QString& css );
 
-		void   constructGUI();
-		QHBox* addLabelEdit( const QString& label, const QString& text );
+		QHBox* addLabelEdit( const QString& label, const QString& text, KLineEdit*& edit );
 
 	private:
 		struct UserInfoDialogPrivate;

@@ -1,12 +1,17 @@
 #include "userinfodialog.h"
 
 #include <khtml_part.h>
+#include <ktextbrowser.h>
 #include <kapplication.h>
 #include <klineedit.h>
 #include <klocale.h>
-#include <ktextbrowser.h>
-#include <qmap.h>
+#include <kdebug.h>
+
+#include <qlabel.h>
+#include <qvbox.h>
+#include <qhbox.h>
 #include <qlayout.h>
+#include <qmap.h>
 #include <qstring.h>
 
 namespace Kopete {
@@ -23,6 +28,7 @@ struct UserInfoDialog::UserInfoDialogPrivate {
 	QString phone;
 	QMap<QString,QString> customFields;
 	QVBoxLayout *topLayout;
+	QWidget     *page;
 	DialogStyle style;
 	KHTMLPart   *htmlPart;
 
@@ -43,10 +49,10 @@ UserInfoDialog::UserInfoDialog( const QString& descr )
 								 KDialogBase::Ok )
 {
 	d = new UserInfoDialogPrivate;
-	QWidget *page = new QWidget( this );
-	setMainWidget( page );
-	d->topLayout = new QVBoxLayout( page, 0, spacingHint() );
-	d->style = HTML;
+	d->page = new QWidget( this );
+	setMainWidget( d->page );
+	d->topLayout = new QVBoxLayout( d->page, 0, spacingHint() );
+	d->style = Widget;
 }
 
 UserInfoDialog::~UserInfoDialog()
@@ -114,9 +120,15 @@ void UserInfoDialog::addHTMLText( const QString& /*str*/ )
 
 }
 
-QHBox* UserInfoDialog::addLabelEdit( const QString& /*label*/, const QString& /*text*/ )
+QHBox* UserInfoDialog::addLabelEdit( const QString& label, const QString& text, KLineEdit*& edit )
 {
-	return 0;
+	QHBox *box = new QHBox( d->page );
+	new QLabel( label, box );
+	edit = new KLineEdit( box );
+  edit->setAlignment( Qt::AlignHCenter );
+	edit->setText( text );
+	edit->setReadOnly( true );
+	return box;
 }
 
 void UserInfoDialog::fillHTML()
@@ -178,18 +190,69 @@ void UserInfoDialog::fillHTML()
 
 void UserInfoDialog::fillWidgets()
 {
+	kdDebug()<<"Creating widgets"<<endl;
+	if ( !d->name.isEmpty() ) {
+		d->topLayout->addWidget( addLabelEdit( i18n("Name :"), d->name, d->nameEdit ) );
+	}
+
+	if ( !d->id.isEmpty() ) {
+		d->topLayout->addWidget( addLabelEdit( i18n("ID :"), d->id, d->idEdit ) );
+	}
+
+	if ( !d->status.isEmpty() ) {
+		d->topLayout->addWidget( addLabelEdit( i18n("Status :"), d->status, d->statusEdit ) );
+	}
+
+	if ( !d->warningLevel.isEmpty() ) {
+		d->topLayout->addWidget( addLabelEdit( i18n("Warning Level :"), d->warningLevel, d->warningEdit ) );
+	}
+
+	if ( !d->onlineSince.isEmpty() ) {
+		d->topLayout->addWidget( addLabelEdit( i18n("Online Since :"), d->onlineSince, d->onlineEdit ) );
+	}
+
+	if ( !d->address.isEmpty() ) {
+		d->topLayout->addWidget( addLabelEdit( i18n("Address :"), d->address, d->addressEdit ) );
+	}
+
+	if ( !d->phone.isEmpty() ) {
+		d->topLayout->addWidget( addLabelEdit( i18n("Phone :"), d->phone, d->phoneEdit ) );
+	}
+
+	if ( !d->awayMessage.isEmpty() ) {
+		QVBox *awayBox = new QVBox( d->page );
+		new QLabel( i18n("Away Message :"), awayBox );
+		d->awayBrowser = new KTextBrowser( awayBox );
+		d->awayBrowser->setText( d->awayMessage );
+		d->topLayout->addWidget( awayBox );
+	}
+
+	if ( !d->info.isEmpty() ) {
+		QVBox *infoBox = new QVBox( d->page );
+		new QLabel( i18n("User Info :"), infoBox );
+		d->infoBrowser = new KTextBrowser( infoBox );
+		d->infoBrowser->setText( d->info );
+		d->topLayout->addWidget( infoBox );
+	}
 }
 
 void UserInfoDialog::setStyleSheet( const QString& /*css*/ )
 {
 }
 
-void UserInfoDialog::constructGUI()
-{
-}
-
 void UserInfoDialog::create()
 {
+	if ( d->style == HTML ) {
+		fillHTML();
+	} else {
+		fillWidgets();
+	}
+}
+
+void UserInfoDialog::show()
+{
+	create();
+	KDialogBase::show();
 }
 
 }

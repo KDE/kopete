@@ -231,8 +231,8 @@ void KopeteProtocol::deserializeContact( KopeteMetaContact * /* metaContact */, 
 bool KopeteProtocol::addContact( const QString &contactId, const QString &displayName,
 	KopeteMetaContact *parentContact, const QString &groupName, bool isTemporary )
 {
-//	kdDebug(14010) << "[KopeteProtocol] addMetaContact() contactId:" << contactId << "; displayName: " << displayName
-//		<< "; groupName: " << groupName  << endl;
+	//kdDebug(14010) << "[KopeteProtocol] addMetaContact() contactId:" << contactId << "; displayName: " << displayName
+	//<< "; groupName: " << groupName  << "; parentContact" << parentContact << endl;
 
 	KopeteGroup *parentGroup=0L;
 	//If this is a temporary contact, use the temporary group
@@ -257,7 +257,6 @@ bool KopeteProtocol::addContact( const QString &contactId, const QString &displa
 			//Create a new MetaContact
 			parentContact = new KopeteMetaContact();
 			parentContact->setDisplayName( displayName );
-			KopeteContactList::contactList()->addMetaContact( parentContact );
 
 			//Set it as a temporary contact if requested
 			if( isTemporary )
@@ -267,6 +266,8 @@ bool KopeteProtocol::addContact( const QString &contactId, const QString &displa
 		//Add the MetaContact to the correct group
 		if( !isTemporary )
 			parentContact->addToGroup( parentGroup );
+
+		KopeteContactList::contactList()->addMetaContact( parentContact );;
 	}
 
 	//We should now have a parentContact.

@@ -11,13 +11,15 @@
 #include "kopetemetacontact.h"
 #include "kopetestdaction.h"
 #include "kopeteaway.h"
+#include "userinfodialog.h"
+using Kopete::UserInfoDialog;
 
 #include "gaduprotocol.h"
 #include "gaducontact.h"
 
 GaduContact::GaduContact( const QString& /*protocolId*/, uin_t uin,
                           const QString& name, KopeteMetaContact* parent )
-    : KopeteContact( GaduProtocol::protocol(), QString::number( uin_ ), parent )
+    : KopeteContact( GaduProtocol::protocol(), QString::number( uin ), parent )
 {
     msgManager_ = 0L;
     uin_ = uin;
@@ -29,62 +31,6 @@ GaduContact::GaduContact( const QString& /*protocolId*/, uin_t uin,
     setDisplayName( name );
     thisContact_.append( this );
 }
-
-/*void
-GaduContact::showContextMenu( const QPoint& p, const QString&  )
-{
-    KPopupMenu *popup = new KPopupMenu();
-
-    popup->insertTitle( QString("%1 (%2)").arg(name_).arg(statusText()) );
-
-    actionSendMessage_->plug( popup );
-    popup->insertSeparator();
-
-    actionInfo_->plug( popup );
-    popup->insertSeparator();
-
-    actionRemove_->plug( popup );
-
-    popup->exec( p );
-
-    delete popup;
-} */
-
-/*void
-GaduContact::addToGroup( const QString& group )
-{
-    groups_.append( group );
-}
-
-void
-GaduContact::removeFromGroup( const QString& group )
-{
-    groups_.remove( group );
-}
-
-void
-GaduContact::moveToGroup( const QString& from, const QString& to )
-{
-    //GaduProtocol::protocol()->moveContact( this, from, to );
-}
-
-QStringList
-GaduContact::groups() const
-{
-    return groups_;
-} */
-
-/*void
-GaduContact::setName( const QString& name )
-{
-    name_ = name;
-}
-
-QString
-GaduContact::name() const
-{
-    return name_;
-} */
 
 KopeteContact::ContactStatus
 GaduContact::status() const
@@ -306,6 +252,13 @@ GaduContact::customContextMenuActions()
 void
 GaduContact::slotUserInfo()
 {
+    UserInfoDialog *dlg = new UserInfoDialog( i18n("Gadu contact") );
+
+    dlg->setName( name() );
+    dlg->setId( QString::number( uin_ ) );
+    dlg->setStatus( statusText() );
+    dlg->setAwayMessage( description_ );
+    dlg->show();
 }
 
 void
