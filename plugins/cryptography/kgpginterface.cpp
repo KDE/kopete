@@ -71,7 +71,7 @@ void KgpgInterface::KgpgEncryptFile(QString userIDs,KURL srcUrl,KURL destUrl, QS
       int ppass[2];
       FILE *pass;
       QCString password;
-      int code=KPasswordDialog::getNewPassword(password,QString(i18n("Enter passphrase for file %1(symmetrical encryption):").arg(srcUrl.filename())));
+      int code=KPasswordDialog::getNewPassword(password,QString(i18n("Enter passphrase for file %1 (symmetrical encryption):").arg(srcUrl.filename())));
       if (code!=QDialog::Accepted)
         {
           emit encryptionfinished(true);
@@ -137,8 +137,13 @@ int KgpgInterface::KgpgDecryptFile(QString userIDs,KURL srcUrl,KURL destUrl,int 
         passdlg=i18n("Enter passphrase for file %1:").arg(srcUrl.filename());
       else
         passdlg=i18n("Enter passphrase for %1:").arg(userIDs);
-      if (chances!=0)
-        passdlg.prepend(i18n("<b>Bad passphrase</b><br> You have %1 trial(s) left.<br>").arg(QString::number(chances)));
+	if( chances != 0 )
+	{
+		passdlg.prepend( i18n(
+			"<b>Bad passphrase</b><br>You have only one attempt left.<br>",
+			"<b>Bad passphrase</b><br>You have %n attempts left.<br>",
+			chances ) );
+	}
 
       /// pipe for passphrase
       int code=KPasswordDialog::getPassword(password,passdlg);
@@ -448,7 +453,7 @@ void KgpgInterface::verifyfin(KProcess *)
 
 void KgpgInterface::KgpgSignKey(QString keyID,QString signKeyID,QString signKeyMail,bool local)
 {
-if (checkuid(keyID)>0){KMessageBox::sorry(0,i18n("This key has more than one user id...\nEdit the key manually to sign it."));return;}
+if (checkuid(keyID)>0){KMessageBox::sorry(0,i18n("This key has more than one user ID...\nEdit the key manually to sign it."));return;}
 signSuccess=0;
 step=0;
 message="sign";
