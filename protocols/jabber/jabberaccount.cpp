@@ -480,8 +480,10 @@ void JabberAccount::slotError (const Jabber::StreamError & error)
 void JabberAccount::setPresence (const KopeteOnlineStatus & status, const QString & reason, int priority)
 {
 
-	// if we are in the process of connecting, only update our local presence
-	// and don't send anything across the wire
+	/*
+	 * If we are in the process of connecting, only update our local presence
+	 * and don't send anything across the wire.
+	 */
 	if(status == protocol()->JabberConnecting)
 	{
 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting new presence locally (-> connecting)." << endl;
@@ -490,9 +492,13 @@ void JabberAccount::setPresence (const KopeteOnlineStatus & status, const QStrin
 	}
 	else
 	{
-		// if we are already connected and changing our presence or if we are connecting
-		// and set our initial presence, send new presence packet to the server
-		if (isConnected ())
+		/*
+		 * If we are already connected and changing our presence or if we are connecting
+		 * and set our initial presence, send new presence packet to the server.
+		 * Sorry for the ugly if() below but the requirement for certain timings to send out presence
+		 * packets and the silly implementation of KopeteAccount::isOnline() leave no other choice.
+		 */
+		if (isConnected())
 		{
 			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Sending new presence to the server." << endl;
 
@@ -564,8 +570,11 @@ void JabberAccount::slotGoOnline ()
 		initialPresence = protocol()->JabberOnline;
 		connect ();
 	}
+	else
+	{
+		setPresence (protocol()->JabberOnline, "");
+	}
 
-	setPresence (protocol()->JabberOnline, "");
 }
 
 void JabberAccount::slotGoOffline ()
@@ -585,8 +594,10 @@ void JabberAccount::slotGoChatty ()
 		initialPresence = protocol()->JabberChatty;
 		connect ();
 	}
-
-	setPresence (protocol()->JabberChatty, "");
+	else
+	{
+		setPresence (protocol()->JabberChatty, "");
+	}
 
 }
 
@@ -600,8 +611,10 @@ void JabberAccount::slotGoAway ()
 		initialPresence = protocol()->JabberAway;
 		connect ();
 	}
-
-	setPresence (protocol()->JabberAway, KopeteAway::message());
+	else
+	{
+		setPresence (protocol()->JabberAway, KopeteAway::message());
+	}
 
 }
 
@@ -615,8 +628,10 @@ void JabberAccount::slotGoXA ()
 		initialPresence = protocol()->JabberXA;
 		connect ();
 	}
-
-	setPresence (protocol()->JabberXA, KopeteAway::message());
+	else
+	{
+		setPresence (protocol()->JabberXA, KopeteAway::message());
+	}
 
 }
 
@@ -630,8 +645,10 @@ void JabberAccount::slotGoDND ()
 		initialPresence = protocol()->JabberDND;
 		connect ();
 	}
-
-	setPresence (protocol()->JabberDND, KopeteAway::message());
+	else
+	{
+		setPresence (protocol()->JabberDND, KopeteAway::message());
+	}
 
 }
 
@@ -645,8 +662,10 @@ void JabberAccount::slotGoInvisible ()
 		initialPresence = protocol()->JabberInvisible;
 		connect ();
 	}
-
-	setPresence (protocol()->JabberInvisible, "");
+	else
+	{
+		setPresence (protocol()->JabberInvisible, "");
+	}
 
 }
 
