@@ -23,7 +23,7 @@
 #include "ircaccount.h"
 #include "irceditaccountwidget.h"
 
-IRCEditAccountWidget::IRCEditAccountWidget(const IRCProtocol *proto, IRCAccount *ident, QWidget *parent, const char * )
+IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident, QWidget *parent, const char * )
 				  : IRCEditAccountBase(parent), EditAccountWidget(ident)
 {
 	mProtocol = proto;
@@ -54,7 +54,7 @@ KopeteAccount *IRCEditAccountWidget::apply()
 	QString mAccountId = mNickName->text() + QString::fromLatin1("@") + mServer->text() + QString::fromLatin1(":") + QString::number( mPort->value() );
 
 	if( !m_account )
-		m_account = new IRCAccount( mAccountId, mProtocol );
+		m_account = new IRCAccount( mProtocol, mAccountId );
 //	else
 //		m_account->setAccountId( mAccountId );
 

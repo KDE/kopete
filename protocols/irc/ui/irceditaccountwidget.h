@@ -29,14 +29,14 @@ class IRCEditAccountWidget : public IRCEditAccountBase, public EditAccountWidget
 	Q_OBJECT
 
 	public:
-		IRCEditAccountWidget(const IRCProtocol *proto, IRCAccount *, QWidget *parent=0, const char *name=0);
+		IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *, QWidget *parent=0, const char *name=0);
 		~IRCEditAccountWidget();
 
 		virtual bool validateData();
 		virtual KopeteAccount *apply();
 
 	private:
-		const IRCProtocol *mProtocol;
+		IRCProtocol *mProtocol;
 };
 
 #endif
