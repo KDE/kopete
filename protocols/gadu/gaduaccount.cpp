@@ -226,8 +226,11 @@ GaduAccount::actionMenu()
 	
 	actionMenu_->popupMenu()->insertSeparator();
 
-	actionMenu_->insert( listputAction );
 	actionMenu_->insert( searchAction );
+	
+	actionMenu_->popupMenu()->insertSeparator();
+
+	actionMenu_->insert( listputAction );
 	
 	actionMenu_->popupMenu()->insertSeparator();
 	
