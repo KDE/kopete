@@ -57,7 +57,6 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), IMProtocol()
 	
 	/* We init the actions to plug them in the Kopete gui */
 	initActions();
-	actionStatusMenu->plug( kopeteapp->systemTray()->getContextMenu() );	
 
 	kdDebug() << "MSN Protocol Plugin: Setting icon offline\n";
 	statusBarIcon->setPixmap(offlineIcon);
@@ -244,6 +243,8 @@ void MSNProtocol::initActions()
 	actionStatusMenu->insert( actionGoOnline );
 	actionStatusMenu->insert( actionGoOffline );
 	actionStatusMenu->insert( actionGoAway );	
+	
+	actionStatusMenu->plug( kopeteapp->systemTray()->getContextMenu(), 1 );
 }
 
 void MSNProtocol::slotIconRightClicked(const QPoint point)
