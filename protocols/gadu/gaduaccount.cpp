@@ -525,10 +525,8 @@ GaduAccount::userlist( const QString& u)
 		    continue;
 		}
 
-		// if exists, don't add it
-		// FIXME: this does not work, i don't know reason why :/
-		// 	  contacts map didn't work either
-		if (contacts()[uin]){
+ 		if (contactsMap_.contains(uin.toUInt())){
+		    kdDebug(14100) << "UIN allready exists in contacts "<< uin << endl; 
 		    continue;
 		}
 
