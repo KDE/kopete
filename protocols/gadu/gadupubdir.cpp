@@ -28,6 +28,7 @@
 #include <qwidgetstack.h>
 #include <qlistview.h>
 #include <qptrlist.h>
+#include <qradiobutton.h>
 
 #include <kapplication.h>
 #include <kdatewidget.h>
@@ -54,24 +55,25 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* pare
 	createWidget();
 	initConnections();
 
-	// now it is time to switch to Right Page(tm)
-	fName	=  fSurname =  fNick = fCity = QString::null;
-	fUin		= searchFor;
-	fGender	= 0;
-	fOnlyOnline= false;
-	fAgeFrom	= 0;
-	fAgeTo	= 0;
-
+	kdDebug( 14100 ) << "search for Uin: " << fUin << endl;
+	
 	mMainWidget->listFound->clear();
 	show();
 
 	mMainWidget->pubsearch->raiseWidget( 1 );
+	mMainWidget->radioByUin->setChecked( true );
 
 	setButtonText( User2, i18n( "Search &More..." ) );
 	showButton( User3, true );
 	showButton( User1, true );
 	enableButton( User3, false );
 	enableButton( User2, false );
+
+	// now it is time to switch to Right Page(tm)
+	fName	=  fSurname =  fNick = fCity = QString::null;
+	fUin		= searchFor;
+	fOnlyOnline= false;
+	fGender	= fAgeFrom = fAgeTo = 0;
 
 	mAccount->pubDirSearch( fName, fSurname, fNick,
 				fUin, fCity, fGender, fAgeFrom, fAgeTo, fOnlyOnline );
@@ -95,6 +97,9 @@ GaduPublicDir::createWidget()
 
 	showButton( User1, false );
 	showButton( User3, false );
+	enableButton( User2, false );
+	
+	mMainWidget->radioByData->setChecked( true );
 
 	mAccount->pubDirSearchClose();
 
@@ -108,6 +113,33 @@ GaduPublicDir::initConnections()
 
 	connect( mAccount, SIGNAL( pubDirSearchResult( const searchResult& ) ),
 				SLOT( slotSearchResult( const searchResult& ) ) );
+
+	connect( mMainWidget->nameS,		SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
+	connect( mMainWidget->surname,	SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
+	connect( mMainWidget->nick,		SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
+	connect( mMainWidget->UIN,		SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
+	connect( mMainWidget->cityS,		SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
+	connect( mMainWidget->gender,		SIGNAL( activated( const QString &) ), SLOT( inputChanged( const QString & ) ) );
+	connect( mMainWidget->ageFrom,	SIGNAL( valueChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
+	connect( mMainWidget->ageTo,		SIGNAL( valueChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
+	connect( mMainWidget->radioByData,	SIGNAL( toggled( bool ) ), SLOT( inputChanged( bool ) ) );
+}
+
+void 
+GaduPublicDir::inputChanged( bool )
+{
+	inputChanged( QString::null );
+}
+
+void 
+GaduPublicDir::inputChanged( const QString& )
+{
+	if ( validateData() == false ) {
+		enableButton( User2, false );
+	}
+	else {
+		enableButton( User2, true );
+	}
 }
 
 void 
@@ -124,10 +156,27 @@ GaduPublicDir::getData()
 	fCity		= mMainWidget->cityS->text();
 }
 
+// return true if not empty
+#define CHECK_STRING(A) { if ( !A.isEmpty() ) { return true; } }
+#define CHECK_INT(A) { if ( A ) { return true; } }
+
 bool 
 GaduPublicDir::validateData()
 {
-	return true;
+	getData();
+    
+	if ( mMainWidget->radioByData->isChecked() ) {
+		CHECK_STRING( fName );
+		CHECK_STRING( fSurname );
+		CHECK_STRING( fNick );
+		CHECK_INT( fGender );
+		CHECK_INT( fAgeFrom );
+		CHECK_INT( fAgeTo );
+	}
+	else {
+		CHECK_INT( fUin );
+	}
+	return false;
 }
 
 // Move to GaduProtocol someday
@@ -186,7 +235,7 @@ GaduPublicDir::slotNewSearch()
 
 	showButton( User1, false );
 	showButton( User3, false );
-	enableButton( User2, true );
+	enableButton( User2, false );
 	mAccount->pubDirSearchClose();
 }
 
@@ -194,9 +243,10 @@ void
 GaduPublicDir::slotSearch()
 {
 
-	// search more, or search ?
 	mMainWidget->listFound->clear();
+	QString empty;
 
+	// search more, or search ?
 	if ( mMainWidget->pubsearch->id( mMainWidget->pubsearch->visibleWidget() ) == 0 ) {
 		kdDebug(14100) << "start search... " << endl;
 		getData();
@@ -221,8 +271,14 @@ GaduPublicDir::slotSearch()
 	enableButton( User3, false );
 	enableButton( User2, false );
 
-	mAccount->pubDirSearch( fName, fSurname, fNick,
-				fUin, fCity, fGender, fAgeFrom, fAgeTo, fOnlyOnline );
+	if ( mMainWidget->radioByData->isChecked() ) {
+		mAccount->pubDirSearch( fName, fSurname, fNick,
+								0, fCity, fGender, fAgeFrom, fAgeTo, fOnlyOnline );
+	}
+	else {
+		mAccount->pubDirSearch( empty, empty, empty,
+								fUin, empty, 0, 0, 0,  fOnlyOnline );
+	}
 }
 
 #include "gadupubdir.moc"

@@ -54,6 +54,8 @@ private slots:
 	void slotSearch();
 	void slotNewSearch();
 	void slotSearchResult( const searchResult& result );
+	void inputChanged( const QString& );
+	void inputChanged( bool );
 
 private:
 	void getData();

@@ -792,7 +792,7 @@ GaduAccount::pubDirSearch( QString& name, QString& surname, QString& nick,
 			    int UIN, QString& city, int gender,
 			    int ageFrom, int ageTo, bool onlyAlive )
 {
-    return session_->pubDirSearch( name, surname, nick, UIN, city, gender,
+	return session_->pubDirSearch( name, surname, nick, UIN, city, gender,
 							ageFrom, ageTo, onlyAlive );
 }
 
