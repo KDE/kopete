@@ -30,10 +30,36 @@
 #include <kdialog.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
-#include <kactivelabel.h>
+#include <kprotocolinfo.h>
+#include <kurl.h>
+#include <krun.h>
 
 #include "kopeteballoon.h"
 #include "systemtray.h"
+
+KopeteActiveLabel::KopeteActiveLabel( QWidget *parent, const char *name )
+	: KActiveLabel( parent, name ) 
+{
+}
+
+KopeteActiveLabel::KopeteActiveLabel( const QString& text, QWidget *parent,
+	const char *name ) : KActiveLabel( text, parent, name )
+{
+}
+
+void KopeteActiveLabel::openLink( const QString& link )
+{
+	KURL url( link );
+	QString protocol = url.protocol();
+	
+	if ( protocol == "mailto" )
+		kapp->invokeMailer(url);
+	else 
+	{
+		if ( KProtocolInfo::protocolClass( protocol ) == ":internet" ) // http, ftp, etc.
+			new KRun( url, this );
+	}
+}
 
 KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 : QWidget(0L, "KopeteBalloon", WStyle_StaysOnTop | WStyle_Customize |
@@ -48,7 +74,7 @@ KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 	QHBoxLayout *Layout1 = new QHBoxLayout(BalloonLayout,
 		KDialog::spacingHint(), "Layout1");
 	//QLabel *mCaption = new QLabel(text, this, "mCaption");
-	KActiveLabel *mCaption = new KActiveLabel(text, this, "mCaption");
+	KopeteActiveLabel *mCaption = new KopeteActiveLabel(text, this, "mCaption");
 	mCaption->setPalette(QToolTip::palette());
 	mCaption->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum );
 
