@@ -198,8 +198,22 @@ KopeteAccount* KopeteAccountManager::findAccount(const QString& protocolId, cons
 	return 0L;
 }
 
+void KopeteAccountManager::removeAccount( KopeteAccount *account )
+{
+	kdDebug(14010) << k_funcinfo << "Removing account and cleanning up config" << account->accountId() << endl;
+
+	KConfig *config = KGlobal::config();
+	QString groupName = QString::fromLatin1( "Account_%2_%1" ).arg( account->accountId() ).arg( account->protocol()->pluginId() );
+
+	delete account;
+	/* Clean up configuration */
+	config->deleteGroup(groupName);
+	config->sync();
+}
+
 void KopeteAccountManager::unregisterAccount( KopeteAccount *account )
 {
+	kdDebug(14010) << k_funcinfo << "Unregistering account " << account->accountId() << endl;
 	m_accounts.remove( account );
 	emit accountUnregistered( account );
 }

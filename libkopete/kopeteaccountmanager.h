@@ -74,9 +74,14 @@ public:
 	KopeteAccount* findAccount( const QString &protocolId, const QString &accountId );
 
 	/**
+	 * Delete the account and cleans the config data
+	 */
+	void removeAccount( KopeteAccount *account );
+
+	/**
 	 * Tries to guess a color for the next account in the given protocol based on the already registered ones
 	 */
-	QColor guessColor( KopeteProtocol* protocol );
+	QColor guessColor( KopeteProtocol *protocol );
 
 public slots:
 	/**
