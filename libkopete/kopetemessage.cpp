@@ -335,7 +335,7 @@ QDomDocument KopeteMessage::asXML()
 		messageNode.appendChild( toNode );
 
 		QDomElement bodyNode = doc.createElement( QString::fromLatin1("body") );
-		if( d->bgColor.isValid() )
+		if( !d->bgOverride && d->bgColor.isValid() )
 			bodyNode.setAttribute( QString::fromLatin1("bgcolor"), d->bgColor.name() );
 		if( d->fgColor.isValid() )
 			bodyNode.setAttribute( QString::fromLatin1("color"), d->fgColor.name() );
