@@ -90,7 +90,7 @@ void DCCClient::slotReadyReadFile()
 	QCString data(bytes);
 	int actualBytes = readBlock(data.data(), bytes);
 	mFile->writeBlock(data.data(), actualBytes);
-	uint32_t ack = ::htonl(mFile->at());
+	uint32_t ack = htonl(mFile->at());
 	writeBlock((char *)&ack, sizeof(ack));
 	if (mSize != 0)
 	{
@@ -216,7 +216,7 @@ void DCCServer::slotReadyRead()
 	uint32_t ack;
 	
 	mSocket->readBlock((char*)&ack, sizeof(ack));
-	ack = ::ntohl(ack);
+	ack = ntohl(ack);
 	
 	int percentage = (ack * 100 / mFile->size());
 	

@@ -194,9 +194,7 @@ int JabberContact::importance() const {
 }
 
 void JabberContact::slotChatThisUser() {
-    kdDebug() << "Jabber contact: Opening chat with user " << mUserID <<
-	endl;
-	kdDebug() << "Jabber contact: It's for us! *swoon*" << endl;
+    kdDebug() << "Jabber contact: Opening chat with user " << mUserID << endl;
 	msgManager->readMessages();
 }
 
@@ -218,7 +216,6 @@ void JabberContact::slotNewMessage(const JabMessage &message) {
 	}
 
 	msgManager->appendMessage(jabberMessage);
-	msgManager->readMessages();
 	kdDebug() << "Jabber contact: end slotNewMessage" << endl;
 }
 
@@ -248,7 +245,6 @@ void JabberContact::slotSendMsg(const KopeteMessage &message) {
 	jabMessage.subject = "";
 	mProtocol->slotSendMsg(jabMessage);
 	msgManager->appendMessage(message);
-	msgManager->readMessages();
 }
 
 void JabberContact::slotResourceAvailable(const Jid &jid, const JabResource &resource) {

@@ -89,7 +89,7 @@ void KopeteMessageManager::readMessages()
 void KopeteMessageManager::messageSentFromWindow(const QString &message)
 {
 	QString body = message;
-	KopeteMessage tmpmessage( mUser->name() , (mContactList.first())->name(), body , KopeteMessage::Outbound);
+	KopeteMessage tmpmessage(mUser->userID(), (mContactList.first())->userID(), body, KopeteMessage::Outbound);
 	emit messageSent (tmpmessage);
 }
 
