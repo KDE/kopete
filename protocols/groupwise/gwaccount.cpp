@@ -422,19 +422,27 @@ void GroupWiseAccount::slotKopeteGroupRenamed( KopeteGroup * renamedGroup )
 {
 	if ( isConnected() )
 	{
-		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+		QString objectIdString = renamedGroup->pluginData( protocol(), accountId() + " objectId" );
+		// if this group exists on the server
+		if ( !objectIdString.isEmpty() )
+		{
+			kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+			
+			GroupWise::FolderItem fi;
+			fi.id = objectIdString.toInt();
+			if ( fi.id != 0 )
+			{
+				fi.sequence = renamedGroup->pluginData( protocol(), accountId() + " sequence" ).toInt();
+				fi.name	= renamedGroup->pluginData( protocol(), accountId() + " serverDisplayName" );
 		
-		GroupWise::FolderItem fi;
-		fi.id = renamedGroup->pluginData( protocol(), accountId() + " objectId" ).toInt();
-		fi.sequence = renamedGroup->pluginData( protocol(), accountId() + " sequence" ).toInt();
-		fi.name	= renamedGroup->pluginData( protocol(), accountId() + " serverDisplayName" );
-
-		UpdateFolderTask * uft = new UpdateFolderTask( client()->rootTask() );
-		uft->renameFolder( renamedGroup->displayName(), fi );
-		uft->go( true );
-		// would be safer to do this in a slot fired on uft's finished() signal
-		renamedGroup->setPluginData( protocol(), accountId() + " serverDisplayName",
-		renamedGroup->displayName() );
+				UpdateFolderTask * uft = new UpdateFolderTask( client()->rootTask() );
+				uft->renameFolder( renamedGroup->displayName(), fi );
+				uft->go( true );
+				// would be safer to do this in a slot fired on uft's finished() signal
+				renamedGroup->setPluginData( protocol(), accountId() + " serverDisplayName",
+				renamedGroup->displayName() );
+			}
+		}
 	}
 	//else
 	// errornotconnected
@@ -470,6 +478,10 @@ void GroupWiseAccount::slotKopeteGroupRemoved( KopeteGroup * group )
 void GroupWiseAccount::slotConnError()
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
+				i18n( "Error shown when connecting failed", "Kopete was not able to connect to the GroupWise Messenger server for account '%1'.\nPlease check your server and port settings and try again." ).arg( accountId() ) , i18n ("Unable to connect '%1'").arg( accountId() ) );
+	
+	disconnect ( KopeteAccount::Manual );
 }
 
 void GroupWiseAccount::slotConnConnected()
