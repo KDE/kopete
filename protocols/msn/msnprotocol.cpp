@@ -542,6 +542,14 @@ void MSNProtocol::setStatus(Status s)
 
 void MSNProtocol::slotStartChat()
 {
+	if ( !isConnected() )
+	{
+		KMessageBox::error( 0l,
+			i18n( "<qt>Please go online before you start a chat</qt>" ),
+			i18n( "MSN Plugin" ));
+		return;
+	}
+
 	bool ok;
 	QString handle = KLineEditDlg::getText(
 		i18n( "Start chat - MSN Plugin" ),
@@ -552,7 +560,8 @@ void MSNProtocol::slotStartChat()
 		if( handle.contains('@') ==1 && handle.contains('.') >=1)
 		{
 			m_msgHandle = handle;
-			m_notifySocket->createChatSession();
+			// don't crash when we were disconnected before we got the address
+			if ( m_notifySocket ) m_notifySocket->createChatSession();
 		}
 		else
 		{
@@ -1525,7 +1534,7 @@ void MSNProtocol::slotDebugRawCommand()
 {
 	MSNDebugRawCmdDlg *dlg = new MSNDebugRawCmdDlg( 0L );
 	int result = dlg->exec();
-	if( result == QDialog::Accepted )
+	if( result == QDialog::Accepted && m_notifySocket )
 	{
 		m_notifySocket->sendCommand( dlg->command(), dlg->params(),
 					     dlg->addId() );
