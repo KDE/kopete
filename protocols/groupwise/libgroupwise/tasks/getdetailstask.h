@@ -31,7 +31,7 @@ public:
 	bool take( Transfer * transfer );
 	void userDNs( const QStringList & userDNs );
 signals:
-	void gotContactUserDetails( const ContactDetails & );
+	void gotContactUserDetails( const GroupWise::ContactDetails & );
 protected:
 	GroupWise::ContactDetails extractUserDetails( Field::MultiField * details );
 
