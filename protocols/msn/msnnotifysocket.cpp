@@ -36,6 +36,7 @@
 #include <krun.h>
 #include <kio/job.h>
 #include <qfile.h>
+#include <kconfig.h>
 
 #include "kopetenotifyclient.h"
 #include "kopeteuiglobal.h"
@@ -290,8 +291,8 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			// Successful auth
 			m_badPassword=false;
 			// sync contact list
-			QString serial=m_account->pluginData(m_account->protocol() , "serial" );
-			if(serial.isEmpty())
+			QString serial=m_account->configGroup()->readEntry( "serial" , "0" );
+			if(serial.isEmpty()) //0.9 comatibility
 				serial= "0";
 			sendCommand( "SYN", serial );
 
@@ -371,7 +372,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		// handle, publicName, List,  group
 		emit contactAdded( msnId, unescape( data.section( ' ', 2, 2 ) ),
 			data.section( ' ', 0, 0 ), group );
-		m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 1, 1 ) );
+		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 1, 1 ) );
 	}
 	else if( cmd == "REM" ) // someone is removed from a list
 	{
@@ -383,7 +384,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 
 		// handle, list, group
 		emit contactRemoved( data.section( ' ', 2, 2 ), data.section( ' ', 0, 0 ), group );
-		m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 1, 1 ) );
+		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 1, 1 ) );
 	}
 	else if( cmd == "OUT" )
 	{
@@ -411,7 +412,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			if( c )
 				c->setProperty( Kopete::Global::Properties::self()->nickName() , unescape( data.section( ' ', 2, 2 ) ) );
 		}
-		m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 0,0) );
+		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
 	}
 	else if( cmd == "LSG" )
 	{
@@ -431,20 +432,20 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		// groupName, group
 		emit groupAdded( unescape( data.section( ' ', 1, 1 ) ),
 			data.section( ' ', 2, 2 ).toUInt() );
-		m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 0, 0 ) );
+		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
 	}
 	else if( cmd == "REG" )
 	{
 		// groupName, group
 		emit groupRenamed( unescape( data.section( ' ', 2, 2 ) ),
 			data.section( ' ', 1, 1 ).toUInt() );
-		m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 0, 0 ) );
+		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
 	}
 	else if( cmd == "RMG" )
 	{
 		// group
 		emit groupRemoved( data.section( ' ', 1, 1 ).toUInt() );
-		m_account->setPluginData(m_account->protocol() , "serial" ,  data.section( ' ', 0, 0 ) );
+		m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
 	}
 	else if( cmd  == "CHL" )
 	{
@@ -457,10 +458,10 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		// this is the current serial on the server, if its different with the own we can get the user list
 		QString serial = data.section( ' ', 0, 0 );
-		if( serial != m_account->pluginData(m_account->protocol() , "serial") )
+		if( serial != m_account->configGroup()->readEntry("serial") )
 		{
 			emit newContactList();  // remove all contacts datas, msn sends a new contact list
-			m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 0, 0 ) );
+			m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
 		}
 		// set the status
 		setStatus( m_newstatus );
@@ -478,14 +479,14 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		{
 			if( id > 0 ) //FROM PRP
 			{
-				m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 0, 0 ) );
-				m_account->setPluginData(m_account->protocol() ,data.section( ' ', 1, 1 ),unescape(data.section( ' ', 2, 2 ) ));
+				m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
+				m_account->configGroup()->writeEntry( data.section( ' ', 1, 1 ),unescape(data.section( ' ', 2, 2 ) )); //SECURITY????????
 				c->setInfo(data.section( ' ', 1, 1 ),unescape(data.section( ' ', 2, 2 )));
 			}
 			else //FROM SYN
 			{
 				c->setInfo(data.section( ' ', 0, 0 ),unescape(data.section( ' ', 1, 1 )));
-				m_account->setPluginData(m_account->protocol() ,data.section( ' ', 0, 0 ),unescape(data.section( ' ', 1, 1 ) ));
+				m_account->configGroup()->writeEntry(data.section( ' ', 0, 0 ),unescape(data.section( ' ', 1, 1 ) )); //SECURITY????????
 			}
 		}
 	}
@@ -493,11 +494,11 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		if( id > 0 ) //FROM BLP
 		{
-			m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 0, 0 ) );
-			m_account->setPluginData(m_account->protocol() , "BLP" , data.section( ' ', 1, 1 ) );
+			m_account->configGroup()->writeEntry( "serial" , data.section( ' ', 0, 0 ) );
+			m_account->configGroup()->writeEntry( "BLP" , data.section( ' ', 1, 1 ) );
 		}
 		else //FROM SYN
-			m_account->setPluginData(m_account->protocol() , "BLP" , data.section( ' ', 0, 0 ) );
+			m_account->configGroup()->writeEntry( "BLP" , data.section( ' ', 0, 0 ) );
 	}
 	else if( cmd == "QRY" )
 	{

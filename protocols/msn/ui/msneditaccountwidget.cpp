@@ -38,6 +38,7 @@
 #include <kdebug.h>
 #include <kpassdlg.h>
 #include <krun.h>
+#include <kconfig.h>
 
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
@@ -78,6 +79,8 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 	// default fields
 	if ( account )
 	{
+		KConfigGroup * config=account->configGroup();
+	
 		d->ui->m_login->setText( account->accountId() );
 		d->ui->m_password->load( &static_cast<MSNAccount *>(account)->password() );
 
@@ -91,9 +94,9 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 		MSNContact *myself = static_cast<MSNContact *>( account->myself() );
 
 		d->ui->m_displayName->setText( myself->property( Kopete::Global::Properties::self()->nickName()).value().toString() );
-		d->ui->m_phw->setText( account->pluginData( d->protocol, "PHW") );
-		d->ui->m_phm->setText( account->pluginData( d->protocol, "PHM") );
-		d->ui->m_phh->setText( account->pluginData( d->protocol, "PHH") );
+		d->ui->m_phw->setText( config->readEntry("PHW") );
+		d->ui->m_phm->setText( config->readEntry("PHM") );
+		d->ui->m_phh->setText( config->readEntry("PHH") );
 
 		bool connected = account->isConnected();
 		if ( connected )
@@ -110,9 +113,9 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 		d->ui->m_serverName->setText( m_account->serverName() );
 		d->ui->m_serverPort->setValue( m_account->serverPort() );
 
-		QStringList blockList = QStringList::split( ',', account->pluginData( d->protocol, QString::fromLatin1( "blockList" ) ) );
-		QStringList allowList = QStringList::split( ',', account->pluginData( d->protocol, QString::fromLatin1( "allowList" ) ) );
-		//QStringList reverseList = QStringList::split( ',', account->pluginData( d->protocol, QString::fromLatin1( "reverseList" ) ) );
+		QStringList blockList = config->readListEntry( "blockList" );
+		QStringList allowList = config->readListEntry( "allowList" );
+		//QStringList reverseList =  config->readListEntry("reverseList" );
 
 		for ( QStringList::Iterator it = blockList.begin(); it != blockList.end(); ++it )
 			d->ui->m_BL->insertItem( *it );
@@ -120,7 +123,7 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 		for ( QStringList::Iterator it = allowList.begin(); it != allowList.end(); ++it )
 			d->ui->m_AL->insertItem( *it );
 
-		d->ui->m_blp->setChecked( account->pluginData( d->protocol, QString::fromLatin1( "BLP" ) ) == "BL" );
+		d->ui->m_blp->setChecked( config->readEntry( "BLP" ) == "BL" );
 
 		d->ui->m_displayPicture->setPixmap( locateLocal( "appdata", "msnpicture-" +
 			account->accountId().lower().replace( QRegExp("[./~]" ), "-" ) + ".png" ) );
@@ -131,7 +134,7 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 		connect( d->ui->m_RLButton, SIGNAL( pressed() ), this, SLOT( slotShowReverseList() ) );
 		QObject::connect( d->ui->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
 
-		d->ui->m_useDisplayPicture->setChecked( account->pluginData( d->protocol, "exportCustomPicture" ) == "1" );
+		d->ui->m_useDisplayPicture->setChecked( config->readBoolEntry( "exportCustomPicture" ));
 	}
 	else
 	{
@@ -151,18 +154,20 @@ Kopete::Account * MSNEditAccountWidget::apply()
 
 	if ( !account() )
 		setAccount( new MSNAccount( d->protocol, d->ui->m_login->text() ) );
+	
+	KConfigGroup *config=account()->configGroup();
 
 	account()->setAutoConnect( d->ui->m_autologin->isChecked() );
 	d->ui->m_password->save( &static_cast<MSNAccount *>(account())->password() );
 
-	account()->setPluginData( d->protocol, "exportCustomPicture", d->ui->m_useDisplayPicture->isChecked() ? "1" : QString::null );
+	config->writeEntry( "exportCustomPicture", d->ui->m_useDisplayPicture->isChecked() );
 	if (d->ui->optionOverrideServer->isChecked() ) {
-		account()->setPluginData( d->protocol, "serverName", d->ui->m_serverName->text() );
-		account()->setPluginData( d->protocol, "serverPort", QString::number( d->ui->m_serverPort->value() ) );
+		config->writeEntry( "serverName", d->ui->m_serverName->text() );
+		config->writeEntry( "serverPort", d->ui->m_serverPort->value()  );
 	}
 	else {
-		account()->setPluginData( d->protocol, "serverName", "messenger.hotmail.com" );
-		account()->setPluginData( d->protocol, "serverPort", "1863" );
+		config->writeEntry( "serverName", "messenger.hotmail.com" );
+		config->writeEntry( "serverPort", "1863" );
 	}
 
 	static_cast<MSNAccount *>( account() )->resetPictureObject();
@@ -184,7 +189,7 @@ Kopete::Account * MSNEditAccountWidget::apply()
 				notify->changePhoneNumber( "PHM", d->ui->m_phm->text() );
 			// (the && .isEmpty is because one can be null and the other empty)
 
-			if ( ( account()->pluginData( d->protocol, QString::fromLatin1( "BLP" ) ) == "BL" ) != d->ui->m_blp->isChecked() )
+			if ( ( config->readEntry("BLP") == "BL" ) != d->ui->m_blp->isChecked() )
 			{
 				// Yes, I know, calling sendCommand here is not very clean - Olivier
 				notify->sendCommand( "BLP", d->ui->m_blp->isChecked() ? "BL" : "AL" );
@@ -244,7 +249,7 @@ void MSNEditAccountWidget::slotBlock()
 
 void MSNEditAccountWidget::slotShowReverseList()
 {
-	QStringList reverseList = QStringList::split( ',', account()->pluginData( d->protocol, QString::fromLatin1( "reverseList" ) ) );
+	QStringList reverseList = account()->configGroup()->readListEntry( "reverseList" );
 	KMessageBox::informationList( this, i18n( "Here you can see a list of contacts who added you to their contact list" ), reverseList,
 		i18n( "Reverse List - MSN Plugin" ) );
 }

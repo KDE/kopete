@@ -70,20 +70,19 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 	m_changeDNAction = new KAction( i18n( "&Change Display Name..." ), QString::null, 0, this, SLOT( slotChangePublicName() ), this, "renameAction" );
 	m_startChatAction = new KAction( i18n( "&Start Chat..." ), "mail_generic", 0, this, SLOT( slotStartChat() ), this, "startChatAction" );
 
-}
-
-void MSNAccount::loaded()
-{
-	QString publicName = pluginData( protocol(), QString::fromLatin1( "displayName" ) );
+	
+	KConfigGroup *config=configGroup();	
+	
+	QString publicName = config->readEntry(  QString::fromLatin1( "displayName" ) );
 	if ( !publicName.isNull() )
 		myself()->setProperty( Kopete::Global::Properties::self()->nickName() , publicName );
-	m_blockList   = QStringList::split( ',', pluginData( protocol(), QString::fromLatin1( "blockList" ) ) );
-	m_allowList   = QStringList::split( ',', pluginData( protocol(), QString::fromLatin1( "allowList" ) ) );
-	m_reverseList = QStringList::split( ',', pluginData( protocol(), QString::fromLatin1( "reverseList" ) ) );
+	m_blockList   = config->readListEntry(  "blockList" ) ;
+	m_allowList   = config->readListEntry(  "allowList" ) ;
+	m_reverseList = config->readListEntry(  "reverseList"  ) ;
 
-	static_cast<MSNContact *>( myself() )->setInfo( "PHH", pluginData( protocol(), "PHH" ) );
-	static_cast<MSNContact *>( myself() )->setInfo( "PHM", pluginData( protocol(), "PHM" ) );
-	static_cast<MSNContact *>( myself() )->setInfo( "PHW", pluginData( protocol(), "PHW" ) );
+	static_cast<MSNContact *>( myself() )->setInfo( "PHH", config->readEntry("PHH") );
+	static_cast<MSNContact *>( myself() )->setInfo( "PHM", config->readEntry("PHM") );
+	static_cast<MSNContact *>( myself() )->setInfo( "PHW", config->readEntry("PHW") );
 
 	//construct the group list
 	//Before 2003-11-14 the MSN server allowed us to download the group list without downloading the whole contactlist, but it's not possible anymore
@@ -96,24 +95,15 @@ void MSNAccount::loaded()
 	}
 }
 
+
 QString MSNAccount::serverName()
 {
-	//FIXME: After need for backwards compatability is removed, just return serverName
-	QString sName = pluginData( protocol(), QString::fromLatin1( "serverName" ) );
-	if( !sName.isEmpty() )
-		return sName;
-	else
-		return QString::fromLatin1("messenger.hotmail.com");
+	return configGroup()->readEntry(  "serverName" , "messenger.hotmail.com" );
 }
 
 uint MSNAccount::serverPort()
 {
-	//FIXME: After need for backwards compatability is removed, just return serverPort
-	QString serverPort = pluginData( protocol(), QString::fromLatin1( "serverPort" ) );
-	if( !serverPort.isEmpty() )
-		return serverPort.toUInt();
-	else
-		return 1863;
+	return configGroup()->readNumEntry(  "serverPort" , 1863 );
 }
 
 void MSNAccount::setAway( bool away, const QString & awayReason )
@@ -153,7 +143,7 @@ void MSNAccount::connectWithPassword( const QString &passwd )
 	{
 		// Maybe the contactlist.xml has been removed, and the serial number not updated
 		// ( the 1 is for the myself contact )
-		setPluginData( protocol(), "serial", "0" );
+		configGroup()->writeEntry( "serial", 0 );
 	}
 	
 	m_openInboxAction->setEnabled( false );
@@ -528,7 +518,7 @@ void MSNAccount::slotPublicNameChanged( const QString& publicName )
 	if ( publicName != oldNick )
 	{
 		myself()->setProperty( Kopete::Global::Properties::self()->nickName(), publicName );
-		setPluginData( protocol(), QString::fromLatin1( "displayName" ), publicName );
+		configGroup()->writeEntry( "displayName" , publicName );
 	}
 }
 
@@ -770,9 +760,10 @@ void MSNAccount::slotNewContactList()
 		m_blockList.clear();
 		m_reverseList.clear();
 		m_groupList.clear();
-		setPluginData( protocol(), QString::fromLatin1( "blockList" ), QString::null ) ;
-		setPluginData( protocol(), QString::fromLatin1( "allowList" ), QString::null );
-		setPluginData( protocol(), QString::fromLatin1( "reverseList" ), QString::null );
+		KConfigGroup *config=configGroup();
+		config->writeEntry( "blockList" , QString::null ) ;
+		config->writeEntry( "allowList" , QString::null );
+		config->writeEntry( "reverseList" , QString::null );
 
 		// clear all date information which will be received.
 		// if the information is not anymore on the server, it will not be received
@@ -951,7 +942,7 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 		if ( !m_blockList.contains( handle ) )
 		{
 			m_blockList.append( handle );
-			setPluginData( protocol(), QString::fromLatin1( "blockList" ), m_blockList.join( "," ) );
+			configGroup()->writeEntry( "blockList" , m_blockList ) ;
 		}
 	}
 	else if ( list == "AL" )
@@ -961,7 +952,7 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 		if ( !m_allowList.contains( handle ) )
 		{
 			m_allowList.append( handle );
-			setPluginData( protocol(), QString::fromLatin1( "allowList" ), m_allowList.join( "," ) );
+			configGroup()->writeEntry( "allowList" , m_allowList ) ;
 		}
 	}
 	else if ( list == "RL" )
@@ -990,7 +981,7 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 			static_cast<MSNContact *>( ct )->setReversed( true );
 		}
 		m_reverseList.append( handle );
-		setPluginData( protocol(), QString::fromLatin1( "reverseList" ), m_reverseList.join( "," ) );
+		configGroup()->writeEntry( "reversekList" , m_reverseList ) ;
 	}
 }
 
@@ -999,21 +990,21 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 	if ( list == "BL" )
 	{
 		m_blockList.remove( handle );
-		setPluginData( protocol(), QString::fromLatin1( "blockList" ), m_blockList.join( "," ) );
+		configGroup()->writeEntry( "blockList" , m_blockList ) ;
 		if ( !m_allowList.contains( handle ) )
 			notifySocket()->addContact( handle, handle, 0, MSNProtocol::AL );
 	}
 	else if ( list == "AL" )
 	{
 		m_allowList.remove( handle );
-		setPluginData( protocol(), QString::fromLatin1( "allowList" ), m_allowList.join( "," ) );
+		configGroup()->writeEntry( "allowList" , m_allowList ) ;
 		if ( !m_blockList.contains( handle ) )
 			notifySocket()->addContact( handle, handle, 0, MSNProtocol::BL );
 	}
 	else if ( list == "RL" )
 	{
 		m_reverseList.remove( handle );
-		setPluginData( protocol(), QString::fromLatin1( "reverseList" ), m_reverseList.join( "," ) );
+		configGroup()->writeEntry( "reversekList" , m_reverseList ) ;
 	}
 
 	MSNContact *c = static_cast<MSNContact *>( contacts()[ handle ] );
@@ -1239,7 +1230,7 @@ void MSNAccount::resetPictureObject(bool silent)
 {
 	QString old=m_pictureObj;
 
-	if(pluginData(protocol(),"exportCustomPicture") != "1")
+	if(configGroup()->readBoolEntry("exportCustomPicture"))
 		m_pictureObj="";
 	else
 	{

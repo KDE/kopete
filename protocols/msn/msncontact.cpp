@@ -361,7 +361,7 @@ void MSNContact::syncGroups( )
 	{
 		//We are not connected, we will doing it next connection.
 		//Force to reload the whole contactlist from server to suync groups when connecting
-		account()->setPluginData(protocol(),"serial", QString::null );
+		account()->configGroup()->writeEntry("serial", 0 );
 		return;
 	}
 

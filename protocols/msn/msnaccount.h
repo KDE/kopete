@@ -104,8 +104,6 @@ public slots:
 protected:
 	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName, Kopete::MetaContact *parentContact );
 
-protected slots:
-	virtual void loaded();
 
 private slots:
 	// Actions related
