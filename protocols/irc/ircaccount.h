@@ -96,6 +96,11 @@ class IRCAccount
 	Q_OBJECT
 
 public:
+	static const QString CONFIG_CODECMIB;
+	static const QString CONFIG_NETWORKNAME;
+	static const QString CONFIG_NICKNAME;
+	static const QString CONFIG_USERNAME;
+
 	enum MessageType
 	{
 		ConnectReply = 1,

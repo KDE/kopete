@@ -2,9 +2,10 @@
     ircaccount.cpp - IRC Account
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
-    Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
+    Copyright (c) 2003-2004 by Jason Keirstead <jason@keirstead.org>
+    Copyright (c) 2003-2004 by Michel Hermier <michel.hermier@wanadoo.fr>
 
-    Kopete    (c) 2002      by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -85,6 +86,11 @@ void ChannelListDialog::slotChannelDoubleClicked( const QString & )
 	close();
 }
 
+const QString IRCAccount::CONFIG_CODECMIB = QString::fromLatin1("Codec");
+const QString IRCAccount::CONFIG_NETWORKNAME = QString::fromLatin1("NetworkName");
+const QString IRCAccount::CONFIG_NICKNAME = QString::fromLatin1("NickName");
+const QString IRCAccount::CONFIG_USERNAME = QString::fromLatin1("UserName");
+
 IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QString &autoChan )
 	: Kopete::Account(protocol, accountId), autoConnect( autoChan )
 {
@@ -152,9 +158,11 @@ IRCAccount::~IRCAccount()
 
 void IRCAccount::loaded()
 {
-	QString networkName = pluginData( m_protocol, QString::fromLatin1("NetworkName"));
-	mNickName = pluginData( m_protocol, QString::fromLatin1("NickName"));
-	QString codecMib = pluginData( m_protocol, QString::fromLatin1("Codec"));
+	KConfigGroup *config = configGroup();
+	QString networkName = config->readEntry(CONFIG_NETWORKNAME);
+	mNickName = config->readEntry(CONFIG_NICKNAME);
+	QString codecMib = config->readEntry(CONFIG_CODECMIB);
+	//	int codecMib = config->readNumEntry(CONFIG_CODECMIB, UTF-8);
 
 	if( !codecMib.isEmpty() )
 	{
@@ -207,13 +215,13 @@ void IRCAccount::loaded()
 			m_network->hosts.append( host );
 			m_protocol->addNetwork( m_network );
 
-			setPluginData(m_protocol, QString::fromLatin1( "NickName" ), mNickName );
-			setPluginData(m_protocol, QString::fromLatin1( "NetworkName" ), m_network->name );
+			config->writeEntry(CONFIG_NETWORKNAME, m_network->name);
+			config->writeEntry(CONFIG_NICKNAME, mNickName);
 		}
 	}
 	else if( !networkName.isEmpty() )
 	{
-		setNetwork( networkName );
+		setNetwork(networkName);
 	}
 	else
 	{
@@ -251,12 +259,12 @@ void IRCAccount::slotNickInUseAlert( const QString &nick )
 
 void IRCAccount::setAltNick( const QString &altNick )
 {
-	setPluginData(protocol(), QString::fromLatin1( "altNick" ), altNick);
+	configGroup()->writeEntry(QString::fromLatin1( "altNick" ), altNick);
 }
 
 const QString IRCAccount::altNick() const
 {
-	return pluginData(protocol(), QString::fromLatin1("altNick"));
+	return configGroup()->readEntry(QString::fromLatin1("altNick"));
 }
 
 const QString IRCAccount::networkName() const
@@ -270,12 +278,12 @@ const QString IRCAccount::networkName() const
 void IRCAccount::setUserName( const QString &userName )
 {
 	m_engine->setUserName(userName);
-	setPluginData(protocol(), QString::fromLatin1( "userName" ), userName);
+	configGroup()->writeEntry(CONFIG_USERNAME, userName);
 }
 
 const QString IRCAccount::userName() const
 {
-	return pluginData(protocol(), QString::fromLatin1("userName"));
+	return configGroup()->readEntry(CONFIG_USERNAME);
 }
 
 void IRCAccount::setNetwork( const QString &network )
@@ -284,7 +292,7 @@ void IRCAccount::setNetwork( const QString &network )
 	if( net )
 	{
 		m_network = net;
-		setPluginData(protocol(), QString::fromLatin1( "NetworkName" ), network );
+		configGroup()->writeEntry(CONFIG_NETWORKNAME, network);
 	}
 	else
 	{
@@ -299,15 +307,16 @@ void IRCAccount::setNetwork( const QString &network )
 void IRCAccount::setNickName( const QString &nick )
 {
 	mNickName = nick;
-	setPluginData(protocol(), QString::fromLatin1( "NickName" ), mNickName );
+	configGroup()->writeEntry(CONFIG_NICKNAME, mNickName);
 	if( mySelf() )
 		mySelf()->setNickName( mNickName );
 }
 
+// FIXME: Possible null pointer usage here
 void IRCAccount::setCodec( QTextCodec *codec )
 {
 	mCodec = codec;
-	setPluginData( protocol(), QString::fromLatin1( "Codec" ), QString::number(codec->mibEnum()) );
+	configGroup()->writeEntry(CONFIG_CODECMIB, codec->mibEnum());
 	if( mCodec )
 		m_engine->setDefaultCodec( mCodec );
 }
@@ -317,19 +326,22 @@ QTextCodec *IRCAccount::codec() const
 	return mCodec;
 }
 
+// FIXME: Move this to a dictionnary
 void IRCAccount::setDefaultPart( const QString &defaultPart )
 {
-	setPluginData( protocol(), QString::fromLatin1( "defaultPart" ), defaultPart );
+	configGroup()->writeEntry( QString::fromLatin1( "defaultPart" ), defaultPart );
 }
 
+// FIXME: Move this to a dictionnary
 void IRCAccount::setDefaultQuit( const QString &defaultQuit )
 {
-	setPluginData( protocol(), QString::fromLatin1( "defaultQuit" ), defaultQuit );
+	configGroup()->writeEntry( QString::fromLatin1( "defaultQuit" ), defaultQuit );
 }
 
+// FIXME: Move this to a dictionnary
 const QString IRCAccount::defaultPart() const
 {
-	QString partMsg = pluginData(protocol(), QString::fromLatin1("defaultPart"));
+	QString partMsg = configGroup()->readEntry(QString::fromLatin1("defaultPart"));
 	if( partMsg.isEmpty() )
 		return QString::fromLatin1("Kopete %1 : http://kopete.kde.org").arg( kapp->aboutData()->version() );
 	return partMsg;
@@ -337,7 +349,7 @@ const QString IRCAccount::defaultPart() const
 
 const QString IRCAccount::defaultQuit() const
 {
-	QString quitMsg = pluginData(protocol(), QString::fromLatin1("defaultQuit"));
+	QString quitMsg = configGroup()->readEntry(QString::fromLatin1("defaultQuit"));
 	if( quitMsg.isEmpty() )
 		return QString::fromLatin1("Kopete %1 : http://kopete.kde.org").arg(kapp->aboutData()->version());
 	return quitMsg;
@@ -430,7 +442,7 @@ void IRCAccount::connect()
 			else
 			{
 				// if prefer SSL is set, sort by SSL first
-				if ( pluginData (m_protocol, "PreferSSL") == QString::fromLatin1("true") )
+				if (configGroup()->readBoolEntry("PreferSSL"))
 				{
 					typedef QValueList<IRCHost*> IRCHostList;
 					IRCHostList sslFirst;

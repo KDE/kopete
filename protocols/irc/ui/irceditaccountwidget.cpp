@@ -44,7 +44,7 @@
 #include <qlineedit.h>
 
 IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident, QWidget *parent, const char * )
-				  : IRCEditAccountBase(parent), KopeteEditAccountWidget(ident)
+	  : IRCEditAccountBase(parent), KopeteEditAccountWidget(ident)
 {
 	mProtocol = proto;
 
@@ -66,8 +66,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 
 		//mPass->load ( &account()->password() );
 
-		preferSSL->setChecked(
-			account()->pluginData (m_protocol, "PreferSSL") == QString::fromLatin1("true") );
+		preferSSL->setChecked(account()->configGroup()->readBoolEntry("PreferSSL"));
 
 		autoConnect->setChecked( static_cast<Kopete::Account*>(account())->autoConnect() );
 
@@ -238,10 +237,7 @@ Kopete::Account *IRCEditAccountWidget::apply()
 	// password - No time to sort out the password handling or move to KopetePasswordedAccount before 3.3
 	// remember password cb - disabling the UI for this.
 
-	if ( preferSSL->isChecked () )
-		account()->setPluginData (m_protocol, "PreferSSL", "true");
-	else
-		account()->setPluginData (m_protocol, "PreferSSL", "false");
+	account()->configGroup()->writeEntry("PreferSSL", preferSSL->isChecked());
 
 	QStringList cmds;
 	for( QListViewItem *i = commandList->firstChild(); i; i = i->nextSibling() )
