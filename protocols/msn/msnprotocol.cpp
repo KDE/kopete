@@ -698,8 +698,6 @@ void MSNProtocol::addContact( const QString &userID , KopeteMetaContact *m)
 	if( isConnected() )
 	{
 		m_addWizard_metaContact=m;
-		if(!m_allowList.contains(userID))
-			m_notifySocket->addContact( userID, userID, 0, AL );
 
 		if(m && !m->groups().isEmpty())
 		{
@@ -727,11 +725,11 @@ void MSNProtocol::addContact( const QString &userID , KopeteMetaContact *m)
 
 void MSNProtocol::addContactToGroup( MSNContact *c, QString group) 
 {
+	if(c->groups().contains(group))
+		return;
+
 	if( isConnected() )
 	{
-		if(!m_allowList.contains(c->msnId()))
-			m_notifySocket->addContact( c->msnId(), c->msnId(), 0, AL );
-
 		int g = groupNumber( group );
 		if(g!=-1)
 		{
@@ -791,6 +789,9 @@ void MSNProtocol::removeContact(MSNContact *c )
 
 void MSNProtocol::removeContactFromGroup(  MSNContact *c, const QString &group ) 
 {
+	if(!c->groups().contains(group))
+		return;
+
 	if( isConnected() )
 	{
 		if(c->groups().count()==1)
@@ -821,7 +822,7 @@ void MSNProtocol::moveContact( MSNContact *c, const QString &oldGroup, const QSt
 		c->setMoving();
 		addContactToGroup(c,newGroup);
 		int g = groupNumber( oldGroup );
-		if( g != -1 )
+		if( g != -1 && c->groups().contains(oldGroup))
 			m_notifySocket->removeContact( c->msnId(), g, FL );
    }
 	else
@@ -1239,6 +1240,9 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 				c->metaContact()->setTemporary(false);
 			c->addedToGroup( gn );
 		}
+		
+		if(!m_allowList.contains(handle))
+			m_notifySocket->addContact( handle, handle, 0, AL );
 	}
 	if( list == "BL" )
 	{

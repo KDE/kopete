@@ -154,7 +154,11 @@ public:
 	 */
 	void setTopLevel( bool b = true );
 
-	void removeContact(KopeteContact *c);
+	/**
+	 * remove the contact from this metacontact
+	 * set 'deleted' to true if the KopeteContact is already deleted
+	 */
+	void removeContact(KopeteContact *c , bool deleted=false);
 
 public slots:
 	/**
@@ -247,7 +251,7 @@ private slots:
 	 * A child contact was deleted, remove it from the list, if it's still
 	 * there
 	 */
-	void slotMetaContactDestroyed( QObject *obj );
+	void slotContactDestroyed( QObject *obj );
 
 private:
 	QPtrList<KopeteContact> m_contacts;

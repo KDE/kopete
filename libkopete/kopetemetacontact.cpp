@@ -78,7 +78,7 @@ void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &groups 
 			this, SLOT( slotContactNameChanged( const QString & ) ) );
 
 		connect( c, SIGNAL( destroyed( QObject * ) ),
-			this, SLOT( slotMetaContactDestroyed( QObject * ) ) );
+			this, SLOT( slotContactDestroyed( QObject * ) ) );
 
 		 if (displayName() == "")
 			 setDisplayName( c->displayName() );
@@ -89,32 +89,41 @@ void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &groups 
 		}
 		emit contactAdded(c);
 	}
+	// If a contact has been removed, we need to re-evaluate the on-line status
+	emit onlineStatusChanged( this, status() );
+
 }
 
-void KopeteMetaContact::removeContact(KopeteContact *c)
+void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 {
 	if( !m_contacts.contains( c ) )
 	{
-		kdDebug() << "KopeteMetaContact::removeContact: WARNING: "
-			<< "Contact is not in this metaContact :" << c->id() << "!" << endl;
+		kdDebug() << "KopeteMetaContact::removeContact: Contact is not in this metaContact " << endl;
 	}
 	else
 	{
 		m_contacts.remove( c );
 
-		disconnect( c, SIGNAL( statusChanged( KopeteContact *,
-			KopeteContact::ContactStatus ) ),
-			this, SLOT( slotContactStatusChanged( KopeteContact *,
-			KopeteContact::ContactStatus ) ) );
+		if(!deleted)
+		{  //If this function is tell by slotContactRemoved, c is maybe just a QObject
+			disconnect( c, SIGNAL( statusChanged( KopeteContact *,
+				KopeteContact::ContactStatus ) ),
+				this, SLOT( slotContactStatusChanged( KopeteContact *,
+				KopeteContact::ContactStatus ) ) );
 
-		disconnect( c, SIGNAL( displayNameChanged( const QString & ) ),
-			this, SLOT( slotContactNameChanged( const QString & ) ) );
+			disconnect( c, SIGNAL( displayNameChanged( const QString & ) ),
+				this, SLOT( slotContactNameChanged( const QString & ) ) );
+	
+			disconnect( c, SIGNAL( destroyed( QObject * ) ),
+				this, SLOT( slotContactDestroyed( QObject * ) ) );
 
-		disconnect( c, SIGNAL( destroyed( QObject * ) ),
-			this, SLOT( slotMetaContactDestroyed( QObject * ) ) );
-
+			kdDebug() << "KopeteMetaContact::removeContact: Contact disconected" << endl;
+		}
 		emit contactRemoved(c);
 	}
+	// If a contact has been removed, we need to re-evaluate the on-line status
+	emit onlineStatusChanged( this, status() );
+
 }
 
 
@@ -432,16 +441,13 @@ QStringList KopeteMetaContact::groups() const
 	return m_groups;
 }
 
-void KopeteMetaContact::slotMetaContactDestroyed( QObject *obj )
+void KopeteMetaContact::slotContactDestroyed( QObject *obj )
 {
 
 	KopeteContact *contact = static_cast<KopeteContact *>( obj );
 
-	removeContact(contact);
+	removeContact(contact,true);
 	
-	// If a contact has been removed, we need to re-evaluate the
-	// online status
-	emit onlineStatusChanged( this, status() );
 }
 
 QString KopeteMetaContact::toXML()
