@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Icon=cryptography_plugin
+Name=HighLight
+ServiceTypes=Kopete/Plugin
+X-KDE-Library=kopete_highlight
+X-Kopete-Plugin-Id=highlight
+X-Kopete-Author=Olivier Goffart
+X-Kopete-Site=http://kopete.kde.org
+X-Kopete-Email=ogoffart@tiscalinet.be
+X-Kopete-License=GPL
+Comment=Highlight messages
