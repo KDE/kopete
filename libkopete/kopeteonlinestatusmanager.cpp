@@ -248,7 +248,9 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 		KAction *action;
 		if(options & OnlineStatusManager::HasAwayMessage)
 		{
-			action=new AwayAction( status, caption, status.iconFor(account) , 0, account,  SLOT(setOnlineStatus(const Kopete::OnlineStatus&, const QString&)) ,  parent);
+			action = new AwayAction( status, caption, status.iconFor(account), 0, account,
+					SLOT( setOnlineStatus( const Kopete::OnlineStatus&, const QString& ) ),
+					account );
 		}
 		else
 		{
