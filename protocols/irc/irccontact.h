@@ -82,6 +82,7 @@ private:
 private slots:
 //	void slotHop();
 	void slotPartedChannel(const QString &, const QString &, const QString &);
+	void slotUserKicked(const QString &, const QString &, const QString &, const QString &);
 	void slotRemoveThis();
 	void slotOpen();
 	void slotOpenConnect();

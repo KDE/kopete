@@ -48,6 +48,7 @@ public:
 	void setSourceString(const QString &sourceString) { mSourceString = sourceString; };
 	void sendCtcpPing(const QString &target);
 	void setTopic(const QString &channel, const QString &topic);
+	void kickUser(const QString &user, const QString &channel, const QString &reason);
 enum UserClass
 {
 	Normal = 0,
@@ -99,6 +100,7 @@ signals:
 	void incomingPrivMessage(const QString &, const QString &, const QString &);
 	void repliedCtcp(const QString &type, const QString &target, const QString &messageSent);
 	void incomingCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
+	void incomingKick(const QString &, const QString &, const QString &, const QString &);
 private:
 	bool waitingFinishMotd;
 	bool loggedIn;

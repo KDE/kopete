@@ -274,6 +274,25 @@ void KIRC::slotReadyRead()
 			emit incomingTopicChange(channel, changer, newTopic);
 			continue;
 		}
+		else if (command == "MODE")
+		{
+
+			//emit incomingGiveOp(nickname, channel);
+			//emit incomingTakeOp(nickname, channel);
+
+		}
+		else if (command == "KICK")
+		{
+			QString nickname, channel, reason, by;
+
+			channel = line.section(' ', 2, 2);
+			nickname = line.section(' ', 3, 3);
+			reason = line.section(':', 2);
+			by = line.section('!', 0, 0);
+			by.remove(0,1);
+
+			emit incomingKick(nickname, channel, by, reason);
+		}
 		else if (number.contains(QRegExp("^\\d\\d\\d$")))
 		{
 			QRegExp getServerText("\\s\\d+\\s+[^\\s]+\\s+:(.*)");
@@ -700,4 +719,13 @@ void KIRC::setTopic(const QString &channel, const QString &topic)
 
 	writeBlock(command.latin1(), command.length());
 }
+
+void KIRC::kickUser(const QString &user, const QString &channel, const QString &reason)
+{
+	QString command = "KICK " + channel + " " + user + " :" + reason + "\r\n";
+
+	writeBlock(command.latin1(), command.length());
+}
+
+
 #include "kirc.moc"
