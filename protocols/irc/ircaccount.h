@@ -193,7 +193,7 @@ private slots:
 	void slotServerBusy();
 	void slotSearchChannels();
 	void slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
-	void slotJoinedUnknownChannel( const QString &user,  const QString &channel );
+	void slotJoinedUnknownChannel( const QString &channel, const QString &nick );
 
 private:
 	IRCProtocol *m_protocol;

@@ -44,9 +44,6 @@ IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QS
 	mInfoTimer = new QTimer( this );
 	QObject::connect(mInfoTimer, SIGNAL(timeout()), this, SLOT( slotUpdateInfo() ) );
 
-	QObject::connect(KopeteMessageManagerFactory::factory(), SIGNAL(viewCreated(KopeteView*)),
-			this, SLOT(slotJoinChannel(KopeteView*)) );
-
 	QObject::connect(m_engine, SIGNAL(incomingUserIsAway( const QString &, const QString & )),
 		this, SLOT(slotIncomingUserIsAway(const QString &, const QString &)));
 
@@ -138,10 +135,15 @@ void IRCChannelContact::messageManagerDestroyed()
 	IRCContact::messageManagerDestroyed();
 }
 
-void IRCChannelContact::slotJoinChannel( KopeteView *view )
+void IRCChannelContact::initConversation()
 {
-	if( view->msgManager() == manager(false) )
-		m_engine->joinChannel(m_nickName, password());
+	kdDebug() << k_funcinfo << "Me:" << this << endl;
+	kdDebug() << k_funcinfo << "My nickname:" << m_nickName << endl;
+	kdDebug() << k_funcinfo << "My manager:" << manager(false) << endl;
+		if( manager(false) )
+			kdDebug() << k_funcinfo << "My view:" << manager(false)->view(false) << endl;
+
+	m_engine->joinChannel(m_nickName, password());
 }
 
 void IRCChannelContact::slotConnectedToServer()
@@ -163,6 +165,7 @@ void IRCChannelContact::slotAddNicknames()
 	if( !m_isConnected || mJoinedNicks.isEmpty() )
 	{
 		slotUpdateInfo();
+		setMode( QString::null );
 		return;
 	}
 
@@ -210,10 +213,16 @@ void IRCChannelContact::channelHomePage(const QString &url)
 	setProperty( m_protocol->propHomepage, url );
 }
 
-void IRCChannelContact::slotJoin()
+void IRCChannelContact::join()
 {
 	if ( !m_isConnected && onlineStatus().status() == KopeteOnlineStatus::Online )
-		execute();
+	{
+		kdDebug() << k_funcinfo << "My nickname:" << m_nickName << endl;
+		kdDebug() << k_funcinfo << "My manager:" << manager(false) << endl;
+		if( manager(false) )
+			kdDebug() << k_funcinfo << "My view:" << manager(false)->view(false) << endl;
+		startChat();
+	}
 }
 
 void IRCChannelContact::part()
@@ -248,19 +257,19 @@ void IRCChannelContact::slotIncomingUserIsAway( const QString &nick, const QStri
 
 void IRCChannelContact::userJoinedChannel(const QString &nickname)
 {
-	if ( nickname.lower() == m_account->mySelf()->nickName().lower() )
+	if( nickname.lower() == m_account->mySelf()->nickName().lower() )
 	{
+		kdDebug() << k_funcinfo << "Me:" << this << endl;
+		kdDebug() << k_funcinfo << "My nickname:" << m_nickName << endl;
+		kdDebug() << k_funcinfo << "My manager:" << manager(false) << endl;
+		if( manager(false) )
+			kdDebug() << k_funcinfo << "My view:" << manager(false)->view(false) << endl;
+
 		KopeteMessage msg((KopeteContact *)this, mMyself,
 			i18n("You have joined channel %1").arg(m_nickName),
 			KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 		msg.setImportance( KopeteMessage::Low); //set the importance manualy to low
 		appendMessage(msg);
-		while( !messageQueue.isEmpty() )
-		{
-			slotSendMsg( messageQueue.front(), manager() );
-			messageQueue.pop_front();
-		}
-		setMode( QString::null );
 	}
 	else
 	{
@@ -515,7 +524,7 @@ QPtrList<KAction> *IRCChannelContact::customContextMenuActions()
 	QPtrList<KAction> *mCustomActions = new QPtrList<KAction>();
 	if( !actionJoin )
 	{
-		actionJoin = new KAction(i18n("&Join"), 0, this, SLOT(slotJoin()), this, "actionJoin");
+		actionJoin = new KAction(i18n("&Join"), 0, this, SLOT(join()), this, "actionJoin");
 		actionPart = new KAction(i18n("&Part"), 0, this, SLOT(part()), this, "actionPart");
 		actionTopic = new KAction(i18n("Change &Topic..."), 0, this, SLOT(setTopic()), this, "actionTopic");
 		actionModeMenu = new KActionMenu(i18n("Channel Modes"), 0, this, "actionModeMenu");

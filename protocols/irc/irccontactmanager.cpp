@@ -160,12 +160,13 @@ IRCChannelContact *IRCContactManager::existChannel( const QString &channel ) con
 
 void IRCContactManager::unregisterChannel(KopeteContact *contact)
 {
-	const IRCChannelContact *channel = (const IRCChannelContact *)contact;
+	IRCChannelContact *channel = (IRCChannelContact*)contact;
 	if(	channel!=0 &&
 		!channel->isChatting() &&
-		channel->metaContact())
+		channel->metaContact()->isTemporary() )
 	{
 		m_channels.remove( channel->nickName() );
+		channel->deleteLater();
 	}
 }
 
@@ -226,13 +227,15 @@ IRCContact *IRCContactManager::existContact( const QString &id ) const
 
 void IRCContactManager::unregisterUser(KopeteContact *contact)
 {
-	const IRCUserContact *user = (const IRCUserContact *)contact;
+	IRCUserContact *user = (IRCUserContact *)contact;
 	if(	user!=0 &&
 		user!=mySelf() &&
-		!user->isChatting())
+		!user->isChatting() &&
+		user->metaContact()->isTemporary() )
 	{
 		kdDebug(14120) << k_funcinfo << user->nickName() << endl;
 		m_users.remove( user->nickName() );
+		user->deleteLater();
 	}
 }
 

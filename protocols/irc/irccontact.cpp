@@ -18,6 +18,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <qregexp.h>
+#include <qtimer.h>
 #include <qtextcodec.h>
 
 #include "ircaccount.h"
@@ -132,6 +133,8 @@ KopeteMessageManager *IRCContact::manager(bool canCreate)
 			this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
 		QObject::connect( m_msgManager, SIGNAL(closing(KopeteMessageManager*)),
 			this, SLOT(messageManagerDestroyed()));
+
+		QTimer::singleShot( 0, this, SLOT( initConversation() ) );
 	}
 
 	return m_msgManager;

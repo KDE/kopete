@@ -109,21 +109,20 @@ public slots:
 
 	void part();
 
+	void join();
+
 protected slots:
 	void messageManagerDestroyed();
 
 	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
 	virtual void action(IRCContact *from, IRCContact *to, const QString &action);
-
-public slots: // should be viewCreated( KopeteView* )
-	void slotJoinChannel( KopeteView* );
+	virtual void initConversation();
 
 private slots:
 	void slotIncomingUserIsAway( const QString &nick, const QString &reason );
 	void slotModeChanged();
 	void slotAddNicknames();
 	void slotConnectedToServer();
-	void slotJoin();
 	void slotUpdateInfo();
 	void slotHomepage();
 	void slotChannelListed(const QString &channel, uint members, const QString &topic);

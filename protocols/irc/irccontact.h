@@ -105,6 +105,7 @@ class IRCContact : public KopeteContact
 		virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
 		virtual void action(IRCContact *from, IRCContact *to, const QString &action);
 		virtual void updateStatus() = 0;
+		virtual void initConversation() {};
 
 	protected:
 
@@ -117,7 +118,6 @@ class IRCContact : public KopeteContact
 		bool m_isConnected;
 
 		QPtrList<KopeteContact> mMyself;
-		QValueList<KopeteMessage> messageQueue;
 		KopeteMessage::MessageDirection execDir;
 };
 

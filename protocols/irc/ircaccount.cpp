@@ -16,6 +16,7 @@
     *************************************************************************
 */
 #include <qlayout.h>
+#include <qtimer.h>
 #include <kaction.h>
 #include <kaboutdata.h>
 #include <kapplication.h>
@@ -463,11 +464,12 @@ void IRCAccount::slotConnectedToServer()
 	}
 }
 
-void IRCAccount::slotJoinedUnknownChannel( const QString &user, const QString &channel )
+void IRCAccount::slotJoinedUnknownChannel( const QString &channel, const QString &nick )
 {
-	QString nickname = user.section('!', 0, 0);
-	if ( nickname.lower() == m_contactManager->mySelf()->nickName().lower() )
-		m_contactManager->findChannel( channel )->startChat();
+	/*if ( nick.lower() == m_contactManager->mySelf()->nickName().lower() )
+	{
+		QTimer::singleShot( 500, m_contactManager->findChannel( channel ), SLOT( join() ) );
+	} */
 }
 
 void IRCAccount::slotDisconnected()
