@@ -23,60 +23,64 @@
 #include <qmap.h>
 #include <qdom.h>
 
-class KopetePlugin;
 class QDomElement;
 
 class KopetePluginDataObjectPrivate;
+
+namespace Kopete
+{
+
+class Plugin;
 
 /**
  * @author Olivier Goffart  <ogoffart@tiscalinet.be>
  *
  * this class handles the saving of the plugin data to xml files.
- * KopeteMetaContact, KopeteGroup, and KopeteAccount inherits from it
+ * Kopete::MetaContact, Kopete::Group, and Kopete::Account inherits from it
  *
  * It also allow to store an icon for this element.
- * Note than the icon support is not availiable  for KopeteAccount
+ * Note than the icon support is not availiable  for Kopete::Account
  */
 
-class KopetePluginDataObject : public QObject
+class PluginDataObject : public QObject
 {
 	Q_OBJECT
 
 public:
-	KopetePluginDataObject( QObject *parent = 0L, const char *name = 0L );
+	PluginDataObject( QObject *parent = 0L, const char *name = 0L );
 
-	~KopetePluginDataObject();
+	~PluginDataObject();
 
 	/**
 	 * Set the plugin-specific data.
 	 * The data in the provided QMap is a set of key/value pairs.
 	 * Note that protocol plugins usually shouldn't use this method, but
-	 * reimplement @ref KopeteContact::serialize() instead. This method
-	 * is called by @ref KopeteProtocol for those classes.
+	 * reimplement @ref Kopete::Contact::serialize() instead. This method
+	 * is called by @ref Kopete::Protocol for those classes.
 	 *
 	 * WARNING: This erases all old data stored for this object!
 	 *          You may want to consider the @ref setPluginData() overload
 	 *          that takes a single field as parameter.
 	 */
-	void setPluginData( KopetePlugin *plugin, const QMap<QString, QString> &value );
+	void setPluginData( Plugin *plugin, const QMap<QString, QString> &value );
 
 	/**
 	 * Convenience method to store or change only a single field of the
 	 * plugin data. As with the other @ref setPluginData() method, protocols
 	 * are advised not to use this method and reimplement
-	 * @ref KopeteContact::serialize() instead.
+	 * @ref Kopete::Contact::serialize() instead.
 	 *
 	 * Note that you should save the file after adding data or it will get lost.
 	 */
-	void setPluginData( KopetePlugin *plugin, const QString &key, const QString &value );
+	void setPluginData( Plugin *plugin, const QString &key, const QString &value );
 
 	/**
 	 * Get the settings as stored previously by calls to @ref setPluginData()
 	 *
 	 * Note that calling this method for protocol plugins that use the
-	 * @ref KopeteContact::serialize() API may yield unexpected results.
+	 * @ref Kopete::Contact::serialize() API may yield unexpected results.
 	 */
-	QMap<QString, QString> pluginData( KopetePlugin *plugin ) const;
+	QMap<QString, QString> pluginData( Plugin *plugin ) const;
 
 	/**
 	 * Convenience method to retrieve only a single field from the plugin
@@ -86,7 +90,7 @@ public:
 	 * from the XML file. Don't call this method before then (e.g. in
 	 * constructors).
 	 */
-	QString pluginData( KopetePlugin *plugin, const QString &key ) const;
+	QString pluginData( Plugin *plugin, const QString &key ) const;
 
 	/**
 	 * The various icon states. Some state are reserved for Groups,
@@ -94,7 +98,7 @@ public:
 	 * 'None' is the default icon.
 	 *
 	 * FIXME: This icon stuff looks far too specialized to me for
-	 *        KopetePluginDataObject, it should be made a lot more generic
+	 *        Kopete::PluginDataObject, it should be made a lot more generic
 	 *        remain here - Martijn
 	 */
 	enum IconState { None, Open, Closed, Online, Away, Offline, Unknown };
@@ -133,7 +137,7 @@ signals:
 	/**
 	 * The icon to use for some state has changed
 	 */
-	void iconChanged( KopetePluginDataObject::IconState, const QString & );
+	void iconChanged( Kopete::PluginDataObject::IconState, const QString & );
 
 	/**
 	 * The visual appearance of some of our icons has changed
@@ -166,6 +170,8 @@ protected:
 private:
 	KopetePluginDataObjectPrivate *d;
 };
+
+}
 
 #endif
 

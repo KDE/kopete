@@ -14,14 +14,14 @@
 K_EXPORT_COMPONENT_FACTORY( kopete_msginfo, KGenericFactory<MsgInfoPlugin>( "kopete_msginfo" )  )
 
 MsgInfoPlugin::MsgInfoPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
-: KopetePlugin( KGlobal::instance(), parent, name )
+: Kopete::Plugin( KGlobal::instance(), parent, name )
 {
 	connect( KopeteMessageManagerFactory::factory(),
-		SIGNAL( aboutToDisplay( KopeteMessage & ) ),
-		SLOT( slotProcessDisplay( KopeteMessage & ) ) );
+		SIGNAL( aboutToDisplay( Kopete::Message & ) ),
+		SLOT( slotProcessDisplay( Kopete::Message & ) ) );
 	connect( KopeteMessageManagerFactory::factory(),
-		SIGNAL( aboutToSend( KopeteMessage & ) ),
-		SLOT( slotProcessSend( KopeteMessage & ) ) );
+		SIGNAL( aboutToSend( Kopete::Message & ) ),
+		SLOT( slotProcessSend( Kopete::Message & ) ) );
 }
 
 MsgInfoPlugin::~MsgInfoPlugin()
@@ -29,7 +29,7 @@ MsgInfoPlugin::~MsgInfoPlugin()
 }
 
 bool
-MsgInfoPlugin::serialize( KopeteMetaContact *metaContact,
+MsgInfoPlugin::serialize( Kopete::MetaContact *metaContact,
 			  QStringList &strList  ) const
 {
 	if ( mMsgCountMap.contains( metaContact ) )
@@ -40,38 +40,38 @@ MsgInfoPlugin::serialize( KopeteMetaContact *metaContact,
 }
 
 void
-MsgInfoPlugin::deserialize( KopeteMetaContact *metaContact, const QStringList& data )
+MsgInfoPlugin::deserialize( Kopete::MetaContact *metaContact, const QStringList& data )
 {
 	mMsgCountMap[ metaContact ] = data.first().toUInt();
 }
 
 void
-MsgInfoPlugin::slotProcessDisplay( KopeteMessage& msg )
+MsgInfoPlugin::slotProcessDisplay( Kopete::Message& msg )
 {
 	//we got a message
-	if ( msg.direction() == KopeteMessage::Inbound ) {
-		KopeteMetaContact *meta = msg.from()->metaContact();
+	if ( msg.direction() == Kopete::Message::Inbound ) {
+		Kopete::MetaContact *meta = msg.from()->metaContact();
 		++(mMsgCountMap[ meta ]);
 	}
 	changeMessage( msg );
 }
 
 void
-MsgInfoPlugin::slotProcessSend( KopeteMessage& msg )
+MsgInfoPlugin::slotProcessSend( Kopete::Message& msg )
 {
 	changeMessage( msg );
 }
 
 void
-MsgInfoPlugin::changeMessage( KopeteMessage& msg )
+MsgInfoPlugin::changeMessage( Kopete::Message& msg )
 {
 	msg.setBody( msg.body().replace( "%K%", "Kopete - The best IM client") );
 	msg.setBody( msg.body().replace( "%U%", "http://kopete.kde.org") );
-	if ( msg.direction() == KopeteMessage::Inbound ) {
+	if ( msg.direction() == Kopete::Message::Inbound ) {
 		int num = mMsgCountMap[ msg.from()->metaContact() ];
 		msg.setBody( msg.body().replace( "%#%", QString::number(num) ) );
 	} else {
-		KopeteMetaContact *meta = msg.to().first()->metaContact();
+		Kopete::MetaContact *meta = msg.to().first()->metaContact();
 		int num = mMsgCountMap[ meta ];
 		msg.setBody( msg.body().replace( "%#%", QString::number(num) ) );
 	}

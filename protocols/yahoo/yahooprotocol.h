@@ -39,12 +39,12 @@ class YahooContact;
 class KPopupMenu;
 class KActionMenu;
 class KAction;
-class KopeteMetaContact;
-class KopeteMessage;
+namespace Kopete { class MetaContact; }
+namespace Kopete { class Message; }
 class YahooPreferences;
-class KopeteOnlineStatus;
+namespace Kopete { class OnlineStatus; }
 
-class YahooProtocol : public KopeteProtocol
+class YahooProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 public:
@@ -52,37 +52,37 @@ public:
 	~YahooProtocol();
 
 	//Online Statuses
-	const KopeteOnlineStatus Offline;
-	const KopeteOnlineStatus Online;
-	const KopeteOnlineStatus BeRightBack;
-	const KopeteOnlineStatus Busy;
-	const KopeteOnlineStatus NotAtHome;
-	const KopeteOnlineStatus NotAtMyDesk;
-	const KopeteOnlineStatus NotInTheOffice;
-	const KopeteOnlineStatus OnThePhone;
-	const KopeteOnlineStatus OnVacation;
-	const KopeteOnlineStatus OutToLunch;
-	const KopeteOnlineStatus SteppedOut;
-	const KopeteOnlineStatus Invisible;
-	const KopeteOnlineStatus Custom;
-	const KopeteOnlineStatus Idle;
-	const KopeteOnlineStatus Connecting;
+	const Kopete::OnlineStatus Offline;
+	const Kopete::OnlineStatus Online;
+	const Kopete::OnlineStatus BeRightBack;
+	const Kopete::OnlineStatus Busy;
+	const Kopete::OnlineStatus NotAtHome;
+	const Kopete::OnlineStatus NotAtMyDesk;
+	const Kopete::OnlineStatus NotInTheOffice;
+	const Kopete::OnlineStatus OnThePhone;
+	const Kopete::OnlineStatus OnVacation;
+	const Kopete::OnlineStatus OutToLunch;
+	const Kopete::OnlineStatus SteppedOut;
+	const Kopete::OnlineStatus Invisible;
+	const Kopete::OnlineStatus Custom;
+	const Kopete::OnlineStatus Idle;
+	const Kopete::OnlineStatus Connecting;
 
 	const Kopete::ContactPropertyTmpl awayMessage;
 
 	/** Protocol Accessor **/
 	static YahooProtocol *protocol();
 
-	virtual KopeteContact *deserializeContact( KopeteMetaContact *metaContact,
+	virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
 					 const QMap<QString,QString> &serializedData,
 					 const QMap<QString, QString> &addressBookData );
 
-	KopeteOnlineStatus statusFromYahoo( int status );
+	Kopete::OnlineStatus statusFromYahoo( int status );
 
 public slots:
-	virtual AddContactPage *createAddContactWidget(QWidget * parent, KopeteAccount* a);
-	virtual KopeteEditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
-	virtual KopeteAccount *createNewAccount(const QString &accountId);
+	virtual AddContactPage *createAddContactWidget(QWidget * parent, Kopete::Account* a);
+	virtual KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent);
+	virtual Kopete::Account *createNewAccount(const QString &accountId);
 
 
 private:

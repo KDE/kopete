@@ -30,9 +30,9 @@
 #include "smsaccount.h"
 #include "smsuserpreferences.h"
 
-SMSContact::SMSContact( KopeteAccount* _account, const QString &phoneNumber,
-	const QString &displayName, KopeteMetaContact *parent )
-: KopeteContact( _account, phoneNumber, parent ), m_phoneNumber( phoneNumber )
+SMSContact::SMSContact( Kopete::Account* _account, const QString &phoneNumber,
+	const QString &displayName, Kopete::MetaContact *parent )
+: Kopete::Contact( _account, phoneNumber, parent ), m_phoneNumber( phoneNumber )
 {
 	kdWarning( 14160 ) << k_funcinfo << " this = " << this << ", phone = " << phoneNumber << endl;
 	setDisplayName( displayName );
@@ -43,14 +43,14 @@ SMSContact::SMSContact( KopeteAccount* _account, const QString &phoneNumber,
 	setOnlineStatus( SMSProtocol::protocol()->SMSUnknown );
 }
 
-void SMSContact::slotSendingSuccess(const KopeteMessage &msg)
+void SMSContact::slotSendingSuccess(const Kopete::Message &msg)
 {
 //	KMessageBox::information(Kopete::UI::Global::mainWidget(), i18n("Message sent"), output.join("\n"), i18n("Message Sent"));
 	manager()->messageSucceeded();
-	manager()->appendMessage((KopeteMessage &)msg);
+	manager()->appendMessage((Kopete::Message &)msg);
 }
 
-void SMSContact::slotSendingFailure(const KopeteMessage &/*msg*/, const QString &error)
+void SMSContact::slotSendingFailure(const Kopete::Message &/*msg*/, const QString &error)
 {
 	KMessageBox::detailedError(Kopete::UI::Global::mainWidget(), i18n("Something went wrong when sending message."), error,
 			i18n("Could Not Send Message"));
@@ -67,7 +67,7 @@ void SMSContact::serialize( QMap<QString, QString> &serializedData,
 		serializedData[ "contactId" ] = m_phoneNumber;
 }
 
-KopeteMessageManager* SMSContact::manager( bool )
+Kopete::MessageManager* SMSContact::manager( bool )
 {
 	kdWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
 	if ( m_msgManager )
@@ -76,11 +76,11 @@ KopeteMessageManager* SMSContact::manager( bool )
 	}
 	else
 	{
-		QPtrList<KopeteContact> contacts;
+		QPtrList<Kopete::Contact> contacts;
 		contacts.append(this);
 		m_msgManager = KopeteMessageManagerFactory::factory()->create(account()->myself(), contacts, protocol());
-		connect(m_msgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager*)),
-		this, SLOT(slotSendMessage(KopeteMessage&)));
+		connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::MessageManager*)),
+		this, SLOT(slotSendMessage(Kopete::Message&)));
 		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
 		connect(this, SIGNAL(messageSuccess()), m_msgManager, SIGNAL(messageSuccess()));
 		return m_msgManager;
@@ -92,7 +92,7 @@ void SMSContact::slotMessageManagerDestroyed()
 	m_msgManager = 0L;
 }
 
-void SMSContact::slotSendMessage(KopeteMessage &msg)
+void SMSContact::slotSendMessage(Kopete::Message &msg)
 {
 	kdWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
 	QString sName = account()->pluginData(protocol(), "ServiceName");
@@ -101,8 +101,8 @@ void SMSContact::slotSendMessage(KopeteMessage &msg)
 
 	if (s == 0L) return;
 
-	connect (s, SIGNAL(messageSent(const KopeteMessage &)), this, SLOT(slotSendingSuccess(const KopeteMessage &)));
-	connect (s, SIGNAL(messageNotSent(const KopeteMessage &, const QString &)), this, SLOT(slotSendingFailure(const KopeteMessage &, const QString &)));
+	connect (s, SIGNAL(messageSent(const Kopete::Message &)), this, SLOT(slotSendingSuccess(const Kopete::Message &)));
+	connect (s, SIGNAL(messageNotSent(const Kopete::Message &, const QString &)), this, SLOT(slotSendingFailure(const Kopete::Message &, const QString &)));
 
 	int msgLength = msg.plainBody().length();
 
@@ -113,7 +113,7 @@ void SMSContact::slotSendMessage(KopeteMessage &msg)
 			for (int i=0; i < msgLength / s->maxSize() + 1; i++)
 			{	QString text = msg.plainBody();
 				text = text.mid( s->maxSize() * i, s->maxSize() );
-				KopeteMessage m( msg.from(), msg.to(), text, KopeteMessage::Outbound);
+				Kopete::Message m( msg.from(), msg.to(), text, Kopete::Message::Outbound);
 				s->send(m);
 			}
 		else

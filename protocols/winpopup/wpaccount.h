@@ -47,11 +47,11 @@ class KopeteWinPopup;
 /**
  * The actual Account class used by Kopete.
  */
-class WPAccount : public KopeteAccount
+class WPAccount : public Kopete::Account
 {
 	Q_OBJECT
 
-// KopeteAccount overloading
+// Kopete::Account overloading
 public:
 	WPAccount(WPProtocol *parent, const QString& accountID, const char *name = 0);
 	~WPAccount();
@@ -86,7 +86,7 @@ public slots:
 	void slotSendMessage(const QString &Body, const QString &Destination);
 
 protected:
-	virtual bool addContactToMetaContact(const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact);
+	virtual bool addContactToMetaContact(const QString &contactId, const QString &displayName, Kopete::MetaContact *parentContact);
 
 private slots:
 	/**

@@ -255,22 +255,22 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 						unsigned long int filesize= (unsigned char)(binaryContext[8]) + (unsigned char)(binaryContext[9]) *256 + (unsigned char)(binaryContext[10]) *65536 + (unsigned char)(binaryContext[11]) *16777216 ;
 	
 	
-						//ugly hack to get the KopeteContact.
-						KopeteContact *c=0L;
+						//ugly hack to get the Kopete::Contact.
+						Kopete::Contact *c=0L;
 						if(parent())
 						{
-							KopeteMessageManager *kmm=dynamic_cast<KopeteMessageManager*>(parent()->parent());
+							Kopete::MessageManager *kmm=dynamic_cast<Kopete::MessageManager*>(parent()->parent());
 							if(kmm)
 								c=kmm->account()->contacts()[m_msgHandle];
 						}
-						disconnect(KopeteTransferManager::transferManager(), 0L , this, 0L);
-						connect(KopeteTransferManager::transferManager() , SIGNAL(accepted(KopeteTransfer*, const QString& )) ,
-								this, SLOT(slotTransferAccepted(KopeteTransfer*, const QString& )));
-						connect(KopeteTransferManager::transferManager() , SIGNAL(refused( const KopeteFileTransferInfo & ) ),
-								this, SLOT( slotFileTransferRefused( const KopeteFileTransferInfo & ) ) );
+						disconnect(Kopete::TransferManager::transferManager(), 0L , this, 0L);
+						connect(Kopete::TransferManager::transferManager() , SIGNAL(accepted(Kopete::Transfer*, const QString& )) ,
+								this, SLOT(slotTransferAccepted(Kopete::Transfer*, const QString& )));
+						connect(Kopete::TransferManager::transferManager() , SIGNAL(refused( const Kopete::FileTransferInfo & ) ),
+								this, SLOT( slotFileTransferRefused( const Kopete::FileTransferInfo & ) ) );
 	
 						//show a dialog to ask the transfer.
-						KopeteTransferManager::transferManager()->askIncomingTransfer(c  , filename , filesize, QString::null, QString::number(m_sessionId)+":"+m_branch+":"+m_CallID);
+						Kopete::TransferManager::transferManager()->askIncomingTransfer(c  , filename , filesize, QString::null, QString::number(m_sessionId)+":"+m_branch+":"+m_CallID);
 	
 					}
 					else  //unknwon AppID
@@ -610,7 +610,7 @@ void MSNP2P::slotSendData()
 
 
 
-void MSNP2P::slotTransferAccepted(KopeteTransfer* transfer, const QString& /*filename*/ )
+void MSNP2P::slotTransferAccepted(Kopete::Transfer* transfer, const QString& /*filename*/ )
 {
 	QStringList internalId=QStringList::split(":" , transfer->info().internalId() );
 	if(internalId[0].toUInt() == m_sessionId )
@@ -629,7 +629,7 @@ void MSNP2P::slotTransferAccepted(KopeteTransfer* transfer, const QString& /*fil
 	}
 }
 
-void MSNP2P::slotFileTransferRefused( const KopeteFileTransferInfo &info )
+void MSNP2P::slotFileTransferRefused( const Kopete::FileTransferInfo &info )
 {
 	QStringList internalId=QStringList::split(":" , info.internalId() );
 	kdDebug(14140) << k_funcinfo << internalId << endl;

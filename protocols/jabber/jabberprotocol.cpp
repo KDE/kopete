@@ -64,15 +64,15 @@ typedef KGenericFactory<JabberProtocol> JabberProtocolFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_jabber, JabberProtocolFactory( "kopete_jabber" )  )
 
 JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStringList &)
-: KopeteProtocol( JabberProtocolFactory::instance(), parent, name ),
-	JabberKOSChatty(KopeteOnlineStatus::Online,        100, this, 1, "jabber_chatty",     i18n ("Set F&ree to Chat"), i18n ("Free to Chat")),
-	JabberKOSOnline(KopeteOnlineStatus::Online,         90, this, 0, QString::null,       i18n ("Go O&nline"), i18n ("Online")),
-	JabberKOSAway(KopeteOnlineStatus::Away,             80, this, 2, "jabber_away",       i18n ("Set A&way"), i18n ("Away")),
-	JabberKOSXA(KopeteOnlineStatus::Away,               70, this, 3, "jabber_xa",       i18n ("Set E&xtended Away"), i18n ("Extended Away")),
-	JabberKOSDND(KopeteOnlineStatus::Away,              60, this, 4, "jabber_na",         i18n ("Set &Do not Disturb"), i18n ("Do not Disturb")),
-	JabberKOSOffline(KopeteOnlineStatus::Offline,       50, this, 5, QString::null,       i18n ("Go O&ffline"), i18n ("Offline")),
-	JabberKOSInvisible(KopeteOnlineStatus::Invisible,   40, this, 6, "jabber_invisible",  i18n ("Set I&nvisible"), i18n ("Invisible")),
-	JabberKOSConnecting(KopeteOnlineStatus::Connecting, 30, this, 7, "jabber_connecting", i18n ("FIXME: You should not see this"), i18n("Connecting")),
+: Kopete::Protocol( JabberProtocolFactory::instance(), parent, name ),
+	JabberKOSChatty(Kopete::OnlineStatus::Online,        100, this, 1, "jabber_chatty",     i18n ("Set F&ree to Chat"), i18n ("Free to Chat")),
+	JabberKOSOnline(Kopete::OnlineStatus::Online,         90, this, 0, QString::null,       i18n ("Go O&nline"), i18n ("Online")),
+	JabberKOSAway(Kopete::OnlineStatus::Away,             80, this, 2, "jabber_away",       i18n ("Set A&way"), i18n ("Away")),
+	JabberKOSXA(Kopete::OnlineStatus::Away,               70, this, 3, "jabber_xa",       i18n ("Set E&xtended Away"), i18n ("Extended Away")),
+	JabberKOSDND(Kopete::OnlineStatus::Away,              60, this, 4, "jabber_na",         i18n ("Set &Do not Disturb"), i18n ("Do not Disturb")),
+	JabberKOSOffline(Kopete::OnlineStatus::Offline,       50, this, 5, QString::null,       i18n ("Go O&ffline"), i18n ("Offline")),
+	JabberKOSInvisible(Kopete::OnlineStatus::Invisible,   40, this, 6, "jabber_invisible",  i18n ("Set I&nvisible"), i18n ("Invisible")),
+	JabberKOSConnecting(Kopete::OnlineStatus::Connecting, 30, this, 7, "jabber_connecting", i18n ("FIXME: You should not see this"), i18n("Connecting")),
 	propAwayMessage(Kopete::Global::Properties::self()->awayMessage()),
 	propFirstName(Kopete::Global::Properties::self()->firstName()),
 	propLastName(Kopete::Global::Properties::self()->lastName()),
@@ -102,7 +102,7 @@ JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStrin
 
 	protocolInstance = this;
 
-	addAddressBookField ("messaging/xmpp", KopetePlugin::MakeIndexField);
+	addAddressBookField ("messaging/xmpp", Kopete::Plugin::MakeIndexField);
 }
 
 JabberProtocol::~JabberProtocol ()
@@ -116,29 +116,29 @@ JabberProtocol::~JabberProtocol ()
 
 
 
-AddContactPage *JabberProtocol::createAddContactWidget (QWidget * parent, KopeteAccount * i)
+AddContactPage *JabberProtocol::createAddContactWidget (QWidget * parent, Kopete::Account * i)
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create Add Contact  Widget\n" << endl;
 	return new JabberAddContactPage (i, parent);
 }
 
-KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (KopeteAccount * account, QWidget * parent)
+KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (Kopete::Account * account, QWidget * parent)
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Edit Account Widget\n" << endl;
 	return new JabberEditAccountWidget (this, static_cast < JabberAccount * >(account), parent);
 }
 
-KopeteAccount *JabberProtocol::createNewAccount (const QString & accountId)
+Kopete::Account *JabberProtocol::createNewAccount (const QString & accountId)
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create New Account. ID: " << accountId << "\n" << endl;
 	return new JabberAccount (this, accountId);
 }
 
-KopeteOnlineStatus JabberProtocol::resourceToKOS ( const XMPP::Resource &resource )
+Kopete::OnlineStatus JabberProtocol::resourceToKOS ( const XMPP::Resource &resource )
 {
 
 	// update to offline by default
-	KopeteOnlineStatus status = JabberKOSOffline;
+	Kopete::OnlineStatus status = JabberKOSOffline;
 
 	if ( !resource.status().isAvailable () )
 	{
@@ -191,7 +191,7 @@ JabberProtocol *JabberProtocol::protocol ()
 	return protocolInstance;
 }
 
-KopeteContact *JabberProtocol::deserializeContact (KopeteMetaContact * metaContact,
+Kopete::Contact *JabberProtocol::deserializeContact (Kopete::MetaContact * metaContact,
 										 const QMap < QString, QString > &serializedData, const QMap < QString, QString > & /* addressBookData */ )
 {
 //  kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Deserializing data for metacontact " << metaContact->displayName () << "\n" << endl;
@@ -200,8 +200,8 @@ KopeteContact *JabberProtocol::deserializeContact (KopeteMetaContact * metaConta
 	QString displayName = serializedData["displayName"];
 	QString accountId = serializedData["accountId"];
 
-	QDict < KopeteAccount > accounts = KopeteAccountManager::manager ()->accounts (this);
-	KopeteAccount *account = accounts[accountId];
+	QDict < Kopete::Account > accounts = Kopete::AccountManager::manager ()->accounts (this);
+	Kopete::Account *account = accounts[accountId];
 
 	if (!account)
 	{

@@ -20,7 +20,7 @@
 #include <kdebug.h>
 #include "kopetestatusgroupviewitem.h"
 
-KopeteStatusGroupViewItem::KopeteStatusGroupViewItem( KopeteOnlineStatus::OnlineStatus status_ , QListView *parent, const char *name )
+KopeteStatusGroupViewItem::KopeteStatusGroupViewItem( Kopete::OnlineStatus::StatusType status_ , QListView *parent, const char *name )
 		: QListViewItem(parent,name)
 {
 	m_status = status_;
@@ -34,16 +34,16 @@ QString KopeteStatusGroupViewItem::key( int, bool ) const
 {
 	switch (m_status)
 	{
-		case KopeteOnlineStatus::Online :
+		case Kopete::OnlineStatus::Online :
 		return "A";
 		break;
-		case KopeteOnlineStatus::Away :
+		case Kopete::OnlineStatus::Away :
 		return "B";
 		break;
-		case KopeteOnlineStatus::Offline :
+		case Kopete::OnlineStatus::Offline :
 		return "C";
 		break;
-		case KopeteOnlineStatus::Unknown :
+		case Kopete::OnlineStatus::Unknown :
 		default:
 		return "D";
 	}

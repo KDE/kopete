@@ -42,8 +42,8 @@ public:
 	Kopete::ContactPropertyTmpl mStickFullName;
 };
 
-KopeteProtocol::KopeteProtocol( KInstance *instance, QObject *parent, const char *name )
-: KopetePlugin( instance, parent, name )
+Kopete::Protocol::Protocol( KInstance *instance, QObject *parent, const char *name )
+: Kopete::Plugin( instance, parent, name )
 {
 	d = new KopeteProtocolPrivate;
 	d->mStickLastSeen = Kopete::Global::Properties::self()->lastSeen();
@@ -52,35 +52,35 @@ KopeteProtocol::KopeteProtocol( KInstance *instance, QObject *parent, const char
 	d->capabilities = 0;
 }
 
-KopeteProtocol::~KopeteProtocol()
+Kopete::Protocol::~Protocol()
 {
 	// Remove all active accounts
-	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
+	QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts( this );
 	if ( !accounts.isEmpty() )
 	{
 		kdWarning( 14010 ) << k_funcinfo << "Deleting protocol with existing accounts! Did the account unloading go wrong?" << endl;
 
-		for( QDictIterator<KopeteAccount> it( accounts ); it.current() ; ++it )
+		for( QDictIterator<Kopete::Account> it( accounts ); it.current() ; ++it )
 			delete *it;
 	}
 
 	delete d;
 }
 
-int KopeteProtocol::richTextCapabilities() const
+int Kopete::Protocol::richTextCapabilities() const
 {
 	return d->capabilities;
 }
 
-void KopeteProtocol::setRichTextCapabilities( int capabilities )
+void Kopete::Protocol::setRichTextCapabilities( int capabilities )
 {
 	d->capabilities = capabilities;
 }
 
-KActionMenu* KopeteProtocol::protocolActions()
+KActionMenu* Kopete::Protocol::protocolActions()
 {
-	QDict<KopeteAccount> dict=KopeteAccountManager::manager()->accounts(this);
-	QDictIterator<KopeteAccount> it( dict );
+	QDict<Kopete::Account> dict=Kopete::AccountManager::manager()->accounts(this);
+	QDictIterator<Kopete::Account> it( dict );
 	if(dict.count() == 1 )
 	{
 		return (it.current())->actionMenu();
@@ -88,7 +88,7 @@ KActionMenu* KopeteProtocol::protocolActions()
 
 	KActionMenu *m_menu = new KActionMenu(displayName(),pluginIcon(),this);
 
-	for( ; KopeteAccount *account = it.current(); ++it )
+	for( ; Kopete::Account *account = it.current(); ++it )
 	{
 		KActionMenu *accountMenu = account->actionMenu();
 		if(accountMenu->parent())
@@ -101,16 +101,16 @@ KActionMenu* KopeteProtocol::protocolActions()
 }
 
 
-void KopeteProtocol::slotMetaContactAboutToSave( KopeteMetaContact *metaContact )
+void Kopete::Protocol::slotMetaContactAboutToSave( Kopete::MetaContact *metaContact )
 {
 	QMap<QString, QString> serializedData, sd;
 	QMap<QString, QString> addressBookData, ad;
 	QMap<QString, QString>::Iterator it;
 
-	//kdDebug( 14010 ) << "KopeteProtocol::metaContactAboutToSave: protocol " << pluginId() << ": serializing " << metaContact->displayName() << endl;
+	//kdDebug( 14010 ) << "Kopete::Protocol::metaContactAboutToSave: protocol " << pluginId() << ": serializing " << metaContact->displayName() << endl;
 
-	QPtrList<KopeteContact> contacts=metaContact->contacts();
-	for (KopeteContact *c=contacts.first() ; c ; c=contacts.next() )
+	QPtrList<Kopete::Contact> contacts=metaContact->contacts();
+	for (Kopete::Contact *c=contacts.first() ; c ; c=contacts.next() )
 	{
 		if( c->protocol()->pluginId() != pluginId() )
 			continue;
@@ -164,7 +164,7 @@ void KopeteProtocol::slotMetaContactAboutToSave( KopeteMetaContact *metaContact 
 
 	for( it = addressBookData.begin(); it != addressBookData.end(); ++it )
 	{
-		//kdDebug( 14010 ) << "KopeteProtocol::metaContactAboutToSave: addressBookData: key: " << it.key() << ", data: " << it.data() << endl;
+		//kdDebug( 14010 ) << "Kopete::Protocol::metaContactAboutToSave: addressBookData: key: " << it.key() << ", data: " << it.data() << endl;
 		// FIXME: This is a terrible hack to check the key name for the phrase "messaging/"
 		//        to indicate what app name to use, but for now it's by far the easiest
 		//        way to get this working.
@@ -182,9 +182,9 @@ void KopeteProtocol::slotMetaContactAboutToSave( KopeteMetaContact *metaContact 
 	}
 }
 
-void KopeteProtocol::deserialize( KopeteMetaContact *metaContact, const QMap<QString, QString> &data )
+void Kopete::Protocol::deserialize( Kopete::MetaContact *metaContact, const QMap<QString, QString> &data )
 {
-	/*kdDebug( 14010 ) << "KopeteProtocol::deserialize: protocol " <<
+	/*kdDebug( 14010 ) << "Kopete::Protocol::deserialize: protocol " <<
 		pluginId() << ": deserializing " << metaContact->displayName() << endl;*/
 
 	QMap<QString, QStringList> serializedData;
@@ -238,10 +238,10 @@ void KopeteProtocol::deserialize( KopeteMetaContact *metaContact, const QMap<QSt
 		// who migrate from 0.6, as there's only one account in that case
 		if( sd[ QString::fromLatin1( "accountId" ) ].isNull() )
 		{
-			QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
+			QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts( this );
 			if ( accounts.count() > 0 )
 			{
-				sd[ QString::fromLatin1( "accountId" ) ] = QDictIterator<KopeteAccount>( accounts ).currentKey();
+				sd[ QString::fromLatin1( "accountId" ) ] = QDictIterator<Kopete::Account>( accounts ).currentKey();
 			}
 			else
 			{
@@ -253,14 +253,14 @@ void KopeteProtocol::deserialize( KopeteMetaContact *metaContact, const QMap<QSt
 			}
 		}
 
-		KopeteContact *c = deserializeContact( metaContact, sd, ad );
+		Kopete::Contact *c = deserializeContact( metaContact, sd, ad );
 		if (c) // should never be null but I do not like crashes
 			c->deserializeProperties( sd );
 	}
 }
 
-KopeteContact *KopeteProtocol::deserializeContact(
-	KopeteMetaContact */*metaContact */,
+Kopete::Contact *Kopete::Protocol::deserializeContact(
+	Kopete::MetaContact */*metaContact */,
 	const QMap<QString, QString> & /* serializedData */,
 	const QMap<QString, QString> & /* addressBookData */ )
 {
@@ -268,10 +268,10 @@ KopeteContact *KopeteProtocol::deserializeContact(
 	return 0;
 }
 
-void KopeteProtocol::slotAccountOnlineStatusChanged( KopeteContact *self, const KopeteOnlineStatus &newStatus,
-	const KopeteOnlineStatus & /* old */ )
+void Kopete::Protocol::slotAccountOnlineStatusChanged( Kopete::Contact *self, const Kopete::OnlineStatus &newStatus,
+	const Kopete::OnlineStatus & /* old */ )
 {
-	if ( !self || !self->account() || newStatus.status() != KopeteOnlineStatus::Offline )
+	if ( !self || !self->account() || newStatus.status() != Kopete::OnlineStatus::Offline )
 		return;
 
 	connect( self->account(), SIGNAL( destroyed( QObject * ) ),
@@ -280,9 +280,9 @@ void KopeteProtocol::slotAccountOnlineStatusChanged( KopeteContact *self, const 
 	self->account()->deleteLater();
 }
 
-void KopeteProtocol::slotAccountDestroyed( QObject * /* account */ )
+void Kopete::Protocol::slotAccountDestroyed( QObject * /* account */ )
 {
-	QDict<KopeteAccount> dict = KopeteAccountManager::manager()->accounts( this );
+	QDict<Kopete::Account> dict = Kopete::AccountManager::manager()->accounts( this );
 	if ( dict.isEmpty() )
 	{
 		// While at this point we are still in a stack trace from the destroyed
@@ -293,15 +293,15 @@ void KopeteProtocol::slotAccountDestroyed( QObject * /* account */ )
 	}
 }
 
-void KopeteProtocol::aboutToUnload()
+void Kopete::Protocol::aboutToUnload()
 {
 	bool allDisconnected = true;
 
 	d->unloading = true;
 
 	// Disconnect all accounts
-	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
-	for ( QDictIterator<KopeteAccount> it( accounts ); it.current() ; ++it )
+	QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts( this );
+	for ( QDictIterator<Kopete::Account> it( accounts ); it.current() ; ++it )
 	{
 		if ( it.current()->myself() && it.current()->myself()->isOnline() )
 		{
@@ -309,8 +309,8 @@ void KopeteProtocol::aboutToUnload()
 				" is still connected, disconnecting..." << endl;
 
 			QObject::connect( it.current()->myself(),
-				SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
-				this, SLOT( slotAccountOnlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
+				SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
+				this, SLOT( slotAccountOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 			it.current()->disconnect();
 
 			allDisconnected = false;

@@ -39,6 +39,9 @@ class KURL;
 
 struct KopeteMetaContactPrivate;
 
+namespace Kopete
+{
+
 /**
  * @author Will Stephenson <will@stevello.free-online.co.uk>
  * @author Martijn Klingens <klingens@kde.org>
@@ -50,7 +53,7 @@ struct KopeteMetaContactPrivate;
  * the metacontact. Plugins can store data in it with all
  * @ref KopetePluginData methods
  */
-class KopeteMetaContact : public KopetePluginDataObject, public KopeteNotifyDataObject
+class MetaContact : public PluginDataObject, public NotifyDataObject
 {
 	Q_OBJECT
 
@@ -67,25 +70,25 @@ class KopeteMetaContact : public KopetePluginDataObject, public KopeteNotifyData
 public:
 	enum GroupSyncMode { SyncGroups, DontSyncGroups };
 
-	KopeteMetaContact();
-	~KopeteMetaContact();
+	MetaContact();
+	~MetaContact();
 
 	/**
 	 * @brief Retrieve the list of contacts that are part of the meta contact
 	 */
-	QPtrList<KopeteContact> contacts() const;
+	QPtrList<Contact> contacts() const;
 
 	/**
 	 * @brief Add a brand new contact to the meta contact.  Updates KABC
-	 * @param c The KopeteContact being added
+	 * @param c The Kopete::Contact being added
 	 */
-	void addContact( KopeteContact *c );
+	void addContact( Contact *c );
 
 	/**
-	 * Find the KopeteContact to a given contact. If contact
+	 * Find the Kopete::Contact to a given contact. If contact
 	 * is not found, a null pointer is returned.
 	 */
-	KopeteContact *findContact( const QString &protocolId, const QString &accountId, const QString &contactId );
+	Contact *findContact( const QString &protocolId, const QString &accountId, const QString &contactId );
 	/**
 	 * @brief The name of the icon associated with the contact's status
 	 */
@@ -118,7 +121,7 @@ public:
 	 * Online means at least one sub-contact is online, away means at least
 	 * one is away, but nobody is online and offline speaks for itself
 	 */
-	KopeteOnlineStatus::OnlineStatus status() const;
+	OnlineStatus::StatusType status() const;
 
 	/**
 	 * Like isOnline, but returns true even if the contact is not online, but
@@ -171,7 +174,7 @@ public:
 	/**
 	 * @brief The groups the contact is stored in
 	 */
-	KopeteGroupList groups() const;
+	GroupList groups() const;
 
 	/**
 	 * Return a XML representation of the metacontact
@@ -191,13 +194,13 @@ public:
 	/**
 	 * Temporary contacts will not be serialized.
 	 * If they are added to the contactlist, they appears in a special "Not in your contactlist" group.
-	 * (the @ref KopeteGroup::temporary  group)
+	 * (the @ref Kopete::Group::temporary  group)
 	 */
 	bool isTemporary() const;
 
 	/**
 	 * @brief Return true if the contact is shown at toplevel.
-	 * You may also check if @ref groups() contains @ref KopeteGroup::topLevel()
+	 * You may also check if @ref groups() contains @ref Kopete::Group::topLevel()
 	 */
 	bool isTopLevel() const;
 
@@ -216,10 +219,10 @@ public:
 
 	/**
 	 * Get or set a field for the KDE address book backend. Fields not
-	 * registered during the call to KopetePlugin::addressBookFields()
+	 * registered during the call to Kopete::Plugin::addressBookFields()
 	 * cannot be altered!
 	 *
-	 * @param p The KopetePlugin by which uses this field
+	 * @param p The Kopete::Plugin by which uses this field
 	 * @param app refers to the application id in the libkabc database.
 	 * This should be a standardized format to make sense in the address
 	 * book in the first place - if you could use "kopete" as application
@@ -232,34 +235,34 @@ public:
 	 *        Probably it requires once more some rewrites to get it working
 	 *        properly :( - Martijn
 	 */
-	QString addressBookField( KopetePlugin *p, const QString &app, const QString &key ) const;
+	QString addressBookField( Plugin *p, const QString &app, const QString &key ) const;
 
 public slots:
 
 	/**
 	 * @brief Move a contact from one group to another.
 	 */
-	void moveToGroup( KopeteGroup *from, KopeteGroup *to, GroupSyncMode syncMode = SyncGroups );
+	void moveToGroup( Kopete::Group *from, Kopete::Group *to, GroupSyncMode syncMode = SyncGroups );
 
 	/**
 	 * @brief Remove a contact from one group
 	 */
-	void removeFromGroup( KopeteGroup *from, GroupSyncMode syncMode = SyncGroups );
+	void removeFromGroup( Kopete::Group *from, GroupSyncMode syncMode = SyncGroups );
 
 	/**
 	 * @brief Add a contact to another group.
 	 */
-	void addToGroup( KopeteGroup *to, GroupSyncMode syncMode = SyncGroups );
+	void addToGroup( Kopete::Group *to, GroupSyncMode syncMode = SyncGroups );
 
 	/**
 	 * @brief remove the contact from this metacontact
 	 *
-	 * set 'deleted' to true if the KopeteContact is already deleted
+	 * set 'deleted' to true if the Kopete::Contact is already deleted
 	 *
 	 * @param c is the contact to remove
 	 * @param deleted : if it is false, it will disconnect the old contact, and call some method.
 	 */
-	void removeContact( KopeteContact *c , bool deleted = false );
+	void removeContact( Kopete::Contact *c , bool deleted = false );
 
 	/**
 	 * @brief Set if this is a temporary contact. (see @ref isTemporary)
@@ -268,15 +271,15 @@ public slots:
 	 * @param group if the contact was temporary and b is true, then the contact will be moved to this group.
 	 *  if group is null, it will be moved to top-level
 	 */
-	void setTemporary( bool b = true ,KopeteGroup *group = 0L );
+	void setTemporary( bool b = true, Kopete::Group *group = 0L );
 
 	/**
 	 * @brief set an address book field
 	 *
 	 * @see also @ref addressBookField()
-	 * @param p The KopetePlugin by which uses this field
+	 * @param p The Kopete::Plugin by which uses this field
 	 */
-	void setAddressBookField( KopetePlugin *p, const QString &app, const QString &key, const QString &value );
+	void setAddressBookField( Kopete::Plugin *p, const QString &app, const QString &key, const QString &value );
 
 	/**
 	 * @brief Contact another user.
@@ -284,20 +287,20 @@ public slots:
 	 * Depending on the config settings, call sendMessage() or
 	 * startChat()
 	 *
-	 * returns the KopeteContact that was chosen as the preferred
+	 * returns the Kopete::Contact that was chosen as the preferred
 	 */
-	KopeteContact *execute();
+	Contact *execute();
 
 	/**
 	 * @brief Send a single message, classic ICQ style.
 	 *
-	 * The actual sending is done by the KopeteContact, but the meta contact
+	 * The actual sending is done by the Kopete::Contact, but the meta contact
 	 * does the GUI side of things.
 	 * This is a slot to allow being called easily from e.g. a GUI.
 	 *
-	 * returns the KopeteContact that was chosen as the preferred
+	 * returns the Kopete::Contact that was chosen as the preferred
 	 */
-	KopeteContact *sendMessage();
+	Contact *sendMessage();
 
 	/**
 	 * @brief Start a chat in a persistent chat window
@@ -307,14 +310,14 @@ public slots:
 	 * completely session based like MSN or completely message based like
 	 * ICQ the only true difference is the GUI shown to the user.
 	 *
-	 * returns the KopeteContact that was chosen as the preferred
+	 * returns the Kopete::Contact that was chosen as the preferred
 	 */
-	KopeteContact *startChat();
+	Contact *startChat();
 
 	/**
 	 * @brief Send a file to this metacontact
 	 *
-	 * This is the KopeteMetaContact level slot for sending files. It may be called through the
+	 * This is the Kopete::MetaContact level slot for sending files. It may be called through the
 	 * "Send File" entry in the GUI, or over DCOP. If the function is called through the GUI,
 	 * no parameters are sent and they assume default values. This slot calls the slotSendFile
 	 * with identical params of the highest ranked contact capable of sending files (if any)
@@ -348,9 +351,9 @@ public slots:
 	bool syncWithKABC();
 
 	/**
-	 * @return the preferred child KopeteContact for communication, or 0 if none is suitable (all unreachable).
+	 * @return the preferred child Kopete::Contact for communication, or 0 if none is suitable (all unreachable).
 	 */
-	KopeteContact *preferredContact();
+	Contact *preferredContact();
 signals:
 	/**
 	 *  @brief The MetaContact online status changed
@@ -359,7 +362,7 @@ signals:
 	 * cache m_onlineStatus value! In all other cases, just call
 	 * updateOnlineStatus() instead.
 	 */
-	void onlineStatusChanged( KopeteMetaContact *contact, KopeteOnlineStatus::OnlineStatus status );
+	void onlineStatusChanged( Kopete::MetaContact *contact, Kopete::OnlineStatus::StatusType status );
 
 	/**
 	 * @brief A contact's online status changed
@@ -368,7 +371,7 @@ signals:
 	 * change his status without changing MetaContact status. It is mainly used to update the small icons
 	 * in the contactlist
 	 */
-	void contactStatusChanged( KopeteContact *contact, const KopeteOnlineStatus &status );
+	void contactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &status );
 
 	/**
 	 * @brief The meta contact's display name changed
@@ -378,48 +381,48 @@ signals:
 	/**
 	 * @brief  The contact was moved
 	 */
-	void movedToGroup( KopeteMetaContact *contact, KopeteGroup *from, KopeteGroup *to );
+	void movedToGroup( Kopete::MetaContact *contact, Kopete::Group *from, Kopete::Group *to );
 
 	/**
 	 * @brief The contact was removed from group
 	 */
-	void removedFromGroup( KopeteMetaContact *contact, KopeteGroup *group );
+	void removedFromGroup( Kopete::MetaContact *contact, Kopete::Group *group );
 
 	/**
 	 * @brief The contact was added to another group
 	 */
-	void addedToGroup( KopeteMetaContact *contact, KopeteGroup *to );
+	void addedToGroup( Kopete::MetaContact *contact, Kopete::Group *to );
 
 	/**
 	 * @brief a contact has been added into this metacontact
 	 *
 	 * This signal is emitted when a contact is added to this metacontact
 	 */
-	void contactAdded( KopeteContact *c );
+	void contactAdded( Kopete::Contact *c );
 
 	/**
 	 * @brief a contact has been removed from this metacontact
 	 *
 	 * This signal is emitted when a contact is removed from this metacontact
 	 */
-	void contactRemoved( KopeteContact *c );
+	void contactRemoved( Kopete::Contact *c );
 
 	/**
 	 * This metaContact is going to be saved to the contactlist. Plugins should
 	 * connect to this signal to update data with setPluginData()
 	 */
-	void aboutToSave( KopeteMetaContact *metaContact );
+	void aboutToSave( Kopete::MetaContact *metaContact );
 
 	/**
 	 * One of the subcontacts' idle status has changed.  As with online status,
 	 * this can occur without the metacontact changing idle state
 	 */
-	void contactIdleStateChanged( KopeteContact *contact );
+	void contactIdleStateChanged( Kopete::Contact *contact );
 
 	/**
 	 * Some part of this object's persistent data (as returned by toXML) has changed.
 	 */
-	void persistentDataChanged( KopeteMetaContact *metaContact );
+	void persistentDataChanged( Kopete::MetaContact *metaContact );
 
 private slots:
 	/**
@@ -431,23 +434,23 @@ private slots:
 	/**
 	 * One of the child contact's online status changed
 	 */
-	void slotContactStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus );
+	void slotContactStatusChanged( Kopete::Contact *c, const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus );
 
 	/**
 	 * One of the child contact's property changed
 	 */
-	void slotPropertyChanged( KopeteContact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
+	void slotPropertyChanged( Kopete::Contact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
 
 	/**
 	 * A child contact was deleted, remove it from the list, if it's still
 	 * there
 	 */
-	void slotContactDestroyed( KopeteContact* );
+	void slotContactDestroyed( Kopete::Contact* );
 
 	/**
 	 * If a plugin is loaded, maybe data about this plugin are already cached in the metacontact
 	 */
-	void slotPluginLoaded( KopetePlugin *plugin );
+	void slotPluginLoaded( Kopete::Plugin *plugin );
 
 	/**
 	 * Perform a delayed address book write
@@ -455,7 +458,7 @@ private slots:
 	void slotWriteAddressBook();
 
 	/**
-	 * Emits the persistentDataChanged signal, passing this as the KopeteMetaContact* argument
+	 * Emits the persistentDataChanged signal, passing this as the Kopete::MetaContact* argument
 	 */
 	void emitPersistentDataChanged();
 private:
@@ -473,6 +476,8 @@ private:
 	
 	static KABC::AddressBook* m_addressBook;
 };
+
+}
 
 #endif
 

@@ -27,7 +27,7 @@ KopeteAwayAction::KopeteAwayAction(const QString &text, const QIconSet &pix, con
 	const QObject *receiver, const char *slot, QObject *parent, const char *name ) :
 	KSelectAction(text, pix, cut, parent, name )
 {
-	QObject::connect( KopeteAway::getInstance(), SIGNAL( messagesChanged() ),
+	QObject::connect( Kopete::Away::getInstance(), SIGNAL( messagesChanged() ),
 		this, SLOT( slotAwayChanged() ) );
 
 	QObject::connect( this, SIGNAL( awayMessageSelected( const QString & ) ),
@@ -43,7 +43,7 @@ KopeteAwayAction::KopeteAwayAction(const QString &text, const QIconSet &pix, con
 
 void KopeteAwayAction::slotAwayChanged()
 {
-	QStringList awayMessages = KopeteAway::getInstance()->getMessages();
+	QStringList awayMessages = Kopete::Away::getInstance()->getMessages();
 	for( QStringList::iterator it = awayMessages.begin(); it != awayMessages.end(); ++it )
 	{
 		(*it) = KStringHandler::rsqueeze( *it );
@@ -57,7 +57,7 @@ void KopeteAwayAction::slotAwayChanged()
 
 void KopeteAwayAction::slotSelectAway( int index )
 {
-	KopeteAway *mAway = KopeteAway::getInstance();
+	Kopete::Away *mAway = Kopete::Away::getInstance();
 	QString awayReason;
 
 	// Index == -1 means this is a result of Global Away all.
@@ -77,7 +77,7 @@ void KopeteAwayAction::slotSelectAway( int index )
 			);
 
 		if( !awayReason.isEmpty() )
-			KopeteAway::getInstance()->addMessage( awayReason );
+			Kopete::Away::getInstance()->addMessage( awayReason );
 	}
 
 	if( !awayReason.isEmpty() )

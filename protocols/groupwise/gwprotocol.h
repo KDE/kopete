@@ -30,7 +30,7 @@
  * Encapsulates the generic actions associated with this protocol
  * @author Will Stephenson
  */
-class GroupWiseProtocol : public KopeteProtocol
+class GroupWiseProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 public:
@@ -38,33 +38,33 @@ public:
     ~GroupWiseProtocol();
 	/**
 	 * Convert the serialised data back into a GroupWiseContact and add this
-	 * to its KopeteMetaContact
+	 * to its Kopete::MetaContact
 	 */
-	virtual KopeteContact *deserializeContact(
-			KopeteMetaContact *metaContact,
+	virtual Kopete::Contact *deserializeContact(
+			Kopete::MetaContact *metaContact,
 			const QMap< QString, QString > & serializedData,
 			const QMap< QString, QString > & addressBookData
 		);
 	/**
 	 * Generate the widget needed to add GroupWiseContacts
 	 */
-	virtual AddContactPage * createAddContactWidget( QWidget *parent, KopeteAccount *account );
+	virtual AddContactPage * createAddContactWidget( QWidget *parent, Kopete::Account *account );
 	/**
 	 * Generate the widget needed to add/edit accounts for this protocol
 	 */
-	virtual KopeteEditAccountWidget * createEditAccountWidget( KopeteAccount *account, QWidget *parent );
+	virtual KopeteEditAccountWidget * createEditAccountWidget( Kopete::Account *account, QWidget *parent );
 	/**
 	 * Generate a GroupWiseAccount
 	 */
-	virtual KopeteAccount * createNewAccount( const QString &accountId );
+	virtual Kopete::Account * createNewAccount( const QString &accountId );
 	/**
 	 * Access the instance of this protocol
 	 */
 	static GroupWiseProtocol *protocol();
 	/**
-	 * Transform a GroupWise internal status into a KopeteOnlineStatus
+	 * Transform a GroupWise internal status into a Kopete::OnlineStatus
 	 */
-	KopeteOnlineStatus gwStatusToKOS( const int gwInternal );
+	Kopete::OnlineStatus gwStatusToKOS( const int gwInternal );
 	/**
 	 * Wrap unformatted text in RTF formatting so that other GroupWise clients will display it
 	 * @param plain unformatted text
@@ -80,15 +80,15 @@ public:
 	/**
 	 * Online statuses used for contacts' presence
 	 */
-	const KopeteOnlineStatus groupwiseUnknown;
-	const KopeteOnlineStatus groupwiseOffline;
-	const KopeteOnlineStatus groupwiseAvailable;
-	const KopeteOnlineStatus groupwiseBusy;
-	const KopeteOnlineStatus groupwiseAway;
-	const KopeteOnlineStatus groupwiseAwayIdle;
-	const KopeteOnlineStatus groupwiseInvalid;
-	const KopeteOnlineStatus groupwiseConnecting;
-	const KopeteOnlineStatus groupwiseAppearOffline;
+	const Kopete::OnlineStatus groupwiseUnknown;
+	const Kopete::OnlineStatus groupwiseOffline;
+	const Kopete::OnlineStatus groupwiseAvailable;
+	const Kopete::OnlineStatus groupwiseBusy;
+	const Kopete::OnlineStatus groupwiseAway;
+	const Kopete::OnlineStatus groupwiseAwayIdle;
+	const Kopete::OnlineStatus groupwiseInvalid;
+	const Kopete::OnlineStatus groupwiseConnecting;
+	const Kopete::OnlineStatus groupwiseAppearOffline;
 
 	/**
 	 * Represents contacts that are Away

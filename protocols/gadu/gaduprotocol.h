@@ -37,8 +37,8 @@ class KActionMenu;
 class QWidget;
 class QString;
 
-class KopeteContact;
-class KopeteMetaContact;
+namespace Kopete { class Contact; }
+namespace Kopete { class MetaContact; }
 
 class GaduSession;
 class GaduContact;
@@ -47,7 +47,7 @@ class GaduPreferences;
 
 #define GG_STATUS_CONNECTING 0x0100
 
-class GaduProtocol : public KopeteProtocol
+class GaduProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 
@@ -59,21 +59,21 @@ public:
 
 	// Plugin reimplementation
 	// {
-	AddContactPage* createAddContactWidget( QWidget* parent, KopeteAccount* account );
-	KopeteAccount* createNewAccount( const QString& accountId );
-	KopeteEditAccountWidget *createEditAccountWidget( KopeteAccount* account, QWidget* parent );
+	AddContactPage* createAddContactWidget( QWidget* parent, Kopete::Account* account );
+	Kopete::Account* createNewAccount( const QString& accountId );
+	KopeteEditAccountWidget *createEditAccountWidget( Kopete::Account* account, QWidget* parent );
 	bool canSendOffline() const { return true; }
 
-	virtual KopeteContact *deserializeContact( KopeteMetaContact* metaContact,
+	virtual Kopete::Contact *deserializeContact( Kopete::MetaContact* metaContact,
 						 const QMap<QString, QString>& serializedData,
 						 const QMap<QString, QString>& addressBookData );
 	// }
 	//!Plugin reimplementation
 
-	KopeteOnlineStatus convertStatus( uint ) const;
+	Kopete::OnlineStatus convertStatus( uint ) const;
 	bool statusWithDesciption( uint status );
 
-	uint statusToWithDescription( KopeteOnlineStatus status );
+	uint statusToWithDescription( Kopete::OnlineStatus status );
 
 	const Kopete::ContactPropertyTmpl propFirstName;
 	const Kopete::ContactPropertyTmpl propLastName;
@@ -90,16 +90,16 @@ private:
 	GaduAccount*		defaultAccount_;
 	//GaduPreferences*	prefs_;
 
-	const KopeteOnlineStatus gaduStatusBlocked_;
-	const KopeteOnlineStatus gaduStatusOffline_;
-	const KopeteOnlineStatus gaduStatusOfflineDescr_;
-	const KopeteOnlineStatus gaduStatusBusy_;
-	const KopeteOnlineStatus gaduStatusBusyDescr_;
-	const KopeteOnlineStatus gaduStatusInvisible_;
-	const KopeteOnlineStatus gaduStatusInvisibleDescr_;
-	const KopeteOnlineStatus gaduStatusAvail_;
-	const KopeteOnlineStatus gaduStatusAvailDescr_;
-	const KopeteOnlineStatus gaduConnecting_;
+	const Kopete::OnlineStatus gaduStatusBlocked_;
+	const Kopete::OnlineStatus gaduStatusOffline_;
+	const Kopete::OnlineStatus gaduStatusOfflineDescr_;
+	const Kopete::OnlineStatus gaduStatusBusy_;
+	const Kopete::OnlineStatus gaduStatusBusyDescr_;
+	const Kopete::OnlineStatus gaduStatusInvisible_;
+	const Kopete::OnlineStatus gaduStatusInvisibleDescr_;
+	const Kopete::OnlineStatus gaduStatusAvail_;
+	const Kopete::OnlineStatus gaduStatusAvailDescr_;
+	const Kopete::OnlineStatus gaduConnecting_;
 
 };
 

@@ -47,10 +47,10 @@ K_EXPORT_COMPONENT_FACTORY( kopete_wp, WPProtocolFactory( "kopete_wp" )  )
 
 // WP Protocol
 WPProtocol::WPProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
-: KopeteProtocol( WPProtocolFactory::instance(), parent, name ),
-	WPOnline(  KopeteOnlineStatus::Online,  25, this, 0,  QString::null,    i18n( "Go O&nline" ),   i18n( "Online" ) ),
-	WPAway(    KopeteOnlineStatus::Away,    20, this, 1,  "wp_away",      i18n( "Go &Away" ),     i18n( "Away" ) ),
-	WPOffline( KopeteOnlineStatus::Offline, 0,  this, 2,  QString::null,   i18n( "Go O&ffline" ),  i18n( "Offline" ) )
+: Kopete::Protocol( WPProtocolFactory::instance(), parent, name ),
+	WPOnline(  Kopete::OnlineStatus::Online,  25, this, 0,  QString::null,    i18n( "Go O&nline" ),   i18n( "Online" ) ),
+	WPAway(    Kopete::OnlineStatus::Away,    20, this, 1,  "wp_away",      i18n( "Go &Away" ),     i18n( "Away" ) ),
+	WPOffline( Kopete::OnlineStatus::Offline, 0,  this, 2,  QString::null,   i18n( "Go O&ffline" ),  i18n( "Offline" ) )
 {
 	DEBUG(WPDMETHOD, "WPProtocol::WPProtocol()");
 
@@ -76,7 +76,7 @@ WPProtocol::WPProtocol( QObject *parent, const char *name, const QStringList & /
 
 	connect(this, SIGNAL(settingsChanged()), SLOT(slotSettingsChanged()));
 
-	addAddressBookField( "messaging/winpopup", KopetePlugin::MakeIndexField );
+	addAddressBookField( "messaging/winpopup", Kopete::Plugin::MakeIndexField );
 }
 
 // Destructor
@@ -87,7 +87,7 @@ WPProtocol::~WPProtocol()
 	sProtocol = 0L;
 }
 
-AddContactPage *WPProtocol::createAddContactWidget(QWidget *parent, KopeteAccount *theAccount)
+AddContactPage *WPProtocol::createAddContactWidget(QWidget *parent, Kopete::Account *theAccount)
 {
 	DEBUG(WPDMETHOD, "WPProtocol::~createAddContactWidget(<parent>, " << theAccount << ")");
 
@@ -112,14 +112,14 @@ void WPProtocol::destroyInterface(KopeteWinPopup *theInterface)
 	delete theInterface;
 }
 
-KopeteContact *WPProtocol::deserializeContact( KopeteMetaContact *metaContact,
+Kopete::Contact *WPProtocol::deserializeContact( Kopete::MetaContact *metaContact,
 	const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> & /* addressBookData */ )
 {
 	QString contactId = serializedData[ "contactId" ];
 	QString accountId = serializedData[ "accountId" ];
 
-	WPAccount *theAccount = static_cast<WPAccount *>(KopeteAccountManager::manager()->findAccount(protocol()->pluginId(), accountId));
+	WPAccount *theAccount = static_cast<WPAccount *>(Kopete::AccountManager::manager()->findAccount(protocol()->pluginId(), accountId));
 	if(!theAccount)
 	{	DEBUG(WPDINFO, "Account " << accountId << " not found");
 		return 0;
@@ -130,16 +130,16 @@ KopeteContact *WPProtocol::deserializeContact( KopeteMetaContact *metaContact,
 		return 0;
 	}
 
-	theAccount->addContact(contactId, serializedData["displayName"], metaContact, KopeteAccount::DontChangeKABC, serializedData["group"]);
+	theAccount->addContact(contactId, serializedData["displayName"], metaContact, Kopete::Account::DontChangeKABC, serializedData["group"]);
 	return theAccount->contacts()[contactId];
 }
 
-KopeteEditAccountWidget *WPProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
+KopeteEditAccountWidget *WPProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
 {
 	return new WPEditAccount(this, account, parent);
 }
 
-KopeteAccount *WPProtocol::createNewAccount(const QString &accountId)
+Kopete::Account *WPProtocol::createNewAccount(const QString &accountId)
 {
 	return new WPAccount(this, accountId);
 }

@@ -44,7 +44,7 @@
 #include <kstandarddirs.h>
 
 
-HistoryDialog::HistoryDialog(KopeteMetaContact *mc, int count, QWidget* parent,
+HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, int count, QWidget* parent,
 	const char* name) : KDialogBase(parent, name, false,
 		i18n("History for %1").arg(mc->displayName()), Close, Close)
 {
@@ -65,7 +65,7 @@ HistoryDialog::HistoryDialog(KopeteMetaContact *mc, int count, QWidget* parent,
 	}
 	// END TODO
 
-	mXsltParser = new KopeteXSLT(styleContents);
+	mXsltParser = new Kopete::XSLT(styleContents);
 
 	mMainWidget = new HistoryViewer(this, "HistoryDialog::mMainWidget");
 	setMainWidget(mMainWidget);
@@ -137,7 +137,7 @@ void HistoryDialog::init()
 }
 
 
-void HistoryDialog::setMessages(QValueList<KopeteMessage> msgs)
+void HistoryDialog::setMessages(QValueList<Kopete::Message> msgs)
 {
 	// Clear View
 	DOM::HTMLElement htmlBody = mHtmlPart->htmlDocument().body();
@@ -148,7 +148,7 @@ void HistoryDialog::setMessages(QValueList<KopeteMessage> msgs)
 	QString dir = (QApplication::reverseLayout() ? QString::fromLatin1("rtl") :
 		QString::fromLatin1("ltr"));
 
-	QValueList<KopeteMessage>::iterator it;
+	QValueList<Kopete::Message>::iterator it;
 
 	for ( it = msgs.begin(); it != msgs.end(); ++it )
 	{
@@ -166,7 +166,7 @@ void HistoryDialog::setMessages(QValueList<KopeteMessage> msgs)
 
 void HistoryDialog::slotPrevClicked()
 {
-	QValueList<KopeteMessage> msgs = mLogger->readMessages(msgCount, 0,
+	QValueList<Kopete::Message> msgs = mLogger->readMessages(msgCount, 0,
 		!mMainWidget->chkOldestFirst->isChecked() ? HistoryLogger::Chronological :
 		HistoryLogger::AntiChronological, true, false);
 
@@ -180,7 +180,7 @@ void HistoryDialog::slotPrevClicked()
 
 void HistoryDialog::slotNextClicked()
 {
-	QValueList<KopeteMessage> msgs = mLogger->readMessages(msgCount,
+	QValueList<Kopete::Message> msgs = mLogger->readMessages(msgCount,
 		0, mMainWidget->chkOldestFirst->isChecked() ? HistoryLogger::Chronological :
 		HistoryLogger::AntiChronological , false, false);
 
@@ -199,7 +199,7 @@ void HistoryDialog::slotBackClicked()
 	else
 		mLogger->setPositionToLast();
 
-	QValueList<KopeteMessage> msgs=mLogger->readMessages(msgCount, 0,
+	QValueList<Kopete::Message> msgs=mLogger->readMessages(msgCount, 0,
 		mMainWidget->chkOldestFirst->isChecked() ? HistoryLogger::Chronological :
 		HistoryLogger::AntiChronological, false, false);
 
@@ -218,7 +218,7 @@ void HistoryDialog::slotForwardClicked()
 	else
 		mLogger->setPositionToLast();
 
-	QValueList<KopeteMessage> msgs=mLogger->readMessages(msgCount, 0,
+	QValueList<Kopete::Message> msgs=mLogger->readMessages(msgCount, 0,
 		!mMainWidget->chkOldestFirst->isChecked() ? HistoryLogger::Chronological :
 		HistoryLogger::AntiChronological, true, false);
 

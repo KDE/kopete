@@ -16,7 +16,7 @@
 
 const StatusProperties JSStatus::methods;
 
-JSStatus::JSStatus( const KopeteOnlineStatus &status ) : KJS::ObjectImp()
+JSStatus::JSStatus( const Kopete::OnlineStatus &status ) : KJS::ObjectImp()
 {
     s = status;
 }

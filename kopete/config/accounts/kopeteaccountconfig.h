@@ -19,7 +19,12 @@
 #include <kcmodule.h>
 #include <qmap.h>
 #include <qcolor.h>
-class KopeteAccount;
+
+namespace Kopete
+{
+class Account;
+}
+
 class KopeteAccountConfigBase;
 
 /**
@@ -38,7 +43,7 @@ public slots:
 
 private:
 	KopeteAccountConfigBase *m_view;
-	QMap<KopeteAccount* , QColor> m_newColors;
+	QMap<Kopete::Account* , QColor> m_newColors;
 	bool m_protected;
 
 private slots:

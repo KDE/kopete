@@ -20,8 +20,8 @@
 #include <qstrlist.h>
 
 
-class KopeteTransfer;
-struct KopeteFileTransferInfo;
+namespace Kopete { class Transfer; }
+namespace Kopete { struct FileTransferInfo; }
 
 class KTempFile;
 class QFile;
@@ -84,8 +84,8 @@ private:
 
 private slots:
 	void slotSendData();
-	void slotTransferAccepted(KopeteTransfer*, const QString& );
-	void slotFileTransferRefused( const KopeteFileTransferInfo & );
+	void slotTransferAccepted(Kopete::Transfer*, const QString& );
+	void slotFileTransferRefused( const Kopete::FileTransferInfo & );
 	void slotKopeteTransferDestroyed();
 
 public slots:
@@ -117,7 +117,7 @@ private:
 
 	QString m_myHandle;
 	QString m_msgHandle;
-	KopeteTransfer *m_kopeteTransfer;
+	Kopete::Transfer *m_kopeteTransfer;
 
 };
 

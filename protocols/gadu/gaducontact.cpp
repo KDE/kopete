@@ -43,8 +43,8 @@
 
 using Kopete::UserInfoDialog;
 
-GaduContact::GaduContact( uin_t uin, const QString& name, KopeteAccount* account, KopeteMetaContact* parent )
-: KopeteContact( account, QString::number( uin ), parent ), uin_( uin )
+GaduContact::GaduContact( uin_t uin, const QString& name, Kopete::Account* account, Kopete::MetaContact* parent )
+: Kopete::Contact( account, QString::number( uin ), parent ), uin_( uin )
 {
 	msgManager_ = 0L;
 	account_ = static_cast<GaduAccount*>( account );
@@ -142,13 +142,13 @@ GaduContact::contactPort()
 	return remote_port;
 }
 
-KopeteMessageManager*
+Kopete::MessageManager*
 GaduContact::manager( bool /* canCreate */ )
 {
 	if ( !msgManager_ ) {
 		msgManager_ = KopeteMessageManagerFactory::factory()->create( account_->myself(), thisContact_, GaduProtocol::protocol() );
-		connect( msgManager_, SIGNAL( messageSent( KopeteMessage&, KopeteMessageManager*) ),
-			 this, SLOT( messageSend( KopeteMessage&, KopeteMessageManager*) ) );
+		connect( msgManager_, SIGNAL( messageSent( Kopete::Message&, Kopete::MessageManager*) ),
+			 this, SLOT( messageSend( Kopete::Message&, Kopete::MessageManager*) ) );
 		connect( msgManager_, SIGNAL( destroyed() ),  this, SLOT( slotMessageManagerDestroyed() ) );
 
 	}
@@ -170,13 +170,13 @@ GaduContact::initActions()
 }
 
 void
-GaduContact::messageReceived( KopeteMessage& msg )
+GaduContact::messageReceived( Kopete::Message& msg )
 {
 	manager()->appendMessage( msg );
 }
 
 void
-GaduContact::messageSend( KopeteMessage& msg, KopeteMessageManager* mgr )
+GaduContact::messageSend( Kopete::Message& msg, Kopete::MessageManager* mgr )
 {
 	if ( msg.plainBody().isEmpty() ) {
 		return;
@@ -270,7 +270,7 @@ GaduContact::setContactDetails( const GaduContactsList::ContactLine* cl )
 GaduContactsList::ContactLine*
 GaduContact::contactDetails()
 {
-	KopeteGroupList		groupList;
+	Kopete::GroupList		groupList;
 	QString			groups;
 
 	GaduContactsList::ContactLine* cl = new GaduContactsList::ContactLine;
@@ -287,13 +287,13 @@ GaduContact::contactDetails()
 
 	groupList = metaContact()->groups();
 
-	KopeteGroup* gr;
+	Kopete::Group* gr;
 	for ( gr = groupList.first (); gr ; gr = groupList.next () ) {
 // if present in any group, don't export to top level
 // FIXME: again, probably bug in libkopete
-// in case of topLevel group, KopeteGroup::displayName() returns "TopLevel" ineasted of just " " or "/"
+// in case of topLevel group, Kopete::Group::displayName() returns "TopLevel" ineasted of just " " or "/"
 // imo TopLevel group should be detected like i am doing that below
-		if ( gr!=KopeteGroup::topLevel() ) {
+		if ( gr!=Kopete::Group::topLevel() ) {
 			groups += gr->displayName()+",";
 		}
 	}

@@ -29,15 +29,15 @@ K_EXPORT_COMPONENT_FACTORY( kopete_autoreplace, AutoReplacePluginFactory( "kopet
 AutoReplacePlugin * AutoReplacePlugin::pluginStatic_ = 0L;
 
 AutoReplacePlugin::AutoReplacePlugin( QObject *parent, const char * name, const QStringList & )
-: KopetePlugin( AutoReplacePluginFactory::instance(), parent, name )
+: Kopete::Plugin( AutoReplacePluginFactory::instance(), parent, name )
 {
 	if( !pluginStatic_ )
 		pluginStatic_ = this;
 
 	m_prefs = new AutoReplaceConfig;
 
-	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToSend( KopeteMessage & ) ),
-		this, SLOT( slotAboutToSend( KopeteMessage & ) ) );
+	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToSend( Kopete::Message & ) ),
+		this, SLOT( slotAboutToSend( Kopete::Message & ) ) );
 
 	connect( this, SIGNAL( settingsChanged() ), this, SLOT( slotSettingsChanged() ) );
 }
@@ -59,10 +59,10 @@ void AutoReplacePlugin::slotSettingsChanged()
 	m_prefs->load();
 }
 
-void AutoReplacePlugin::slotAboutToSend( KopeteMessage &msg )
+void AutoReplacePlugin::slotAboutToSend( Kopete::Message &msg )
 {
-	if ( ( msg.direction() == KopeteMessage::Outbound && m_prefs->autoReplaceOutgoing() ) ||
-		( msg.direction() == KopeteMessage::Inbound && m_prefs->autoReplaceIncoming() ) )
+	if ( ( msg.direction() == Kopete::Message::Outbound && m_prefs->autoReplaceOutgoing() ) ||
+		( msg.direction() == Kopete::Message::Inbound && m_prefs->autoReplaceIncoming() ) )
 	{
 		QString replaced_message = msg.plainBody();
 		AutoReplaceConfig::WordsToReplace map = m_prefs->map();
@@ -81,10 +81,10 @@ void AutoReplacePlugin::slotAboutToSend( KopeteMessage &msg )
 		}
 
 		// the message is now the one with replaced words
-		msg.setBody( replaced_message, KopeteMessage::PlainText );
+		msg.setBody( replaced_message, Kopete::Message::PlainText );
 	}
 
-	if( msg.direction() == KopeteMessage::Outbound )
+	if( msg.direction() == Kopete::Message::Outbound )
 	{
 		if ( m_prefs->dotEndSentence() )
 		{
@@ -94,7 +94,7 @@ void AutoReplacePlugin::slotAboutToSend( KopeteMessage &msg )
 			// replaced_message.replace(QRegExp( "([\\w])$" ), "\\1." );
 			
 			// the message is now the one with replaced words
-			msg.setBody( replaced_message, KopeteMessage::PlainText );
+			msg.setBody( replaced_message, Kopete::Message::PlainText );
 		}
 
 		if( m_prefs->capitalizeBeginningSentence() )
@@ -105,7 +105,7 @@ void AutoReplacePlugin::slotAboutToSend( KopeteMessage &msg )
 			replaced_message[ 0 ] = replaced_message.at( 0 ).upper();
 			
 			// the message is now the one with replaced words
-			msg.setBody( replaced_message, KopeteMessage::PlainText );
+			msg.setBody( replaced_message, Kopete::Message::PlainText );
 		}
 	}
 }

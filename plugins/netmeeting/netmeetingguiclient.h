@@ -23,7 +23,7 @@
 #include <qobject.h>
 #include <kxmlguiclient.h>
 
-class KopeteMessageManager;
+namespace Kopete { class MessageManager; }
 class MSNMessageManager;
 class NetMeetingPlugin;
 

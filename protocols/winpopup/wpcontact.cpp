@@ -28,8 +28,8 @@
 #include "wpaccount.h"
 #include "wpdebug.h"
 
-WPContact::WPContact(KopeteAccount *account, const QString &newHostName, const QString &displayName, KopeteMetaContact *metaContact)
-	: KopeteContact(account, newHostName, metaContact)
+WPContact::WPContact(Kopete::Account *account, const QString &newHostName, const QString &displayName, Kopete::MetaContact *metaContact)
+	: Kopete::Contact(account, newHostName, metaContact)
 {
 	DEBUG(WPDMETHOD, "WPContact::WPContact(<account>, " << newHostName << ", " << displayName << ", <parent>)");
 	DEBUG(WPDINFO, "I am " << this << "!");
@@ -64,21 +64,21 @@ void WPContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, 
 {
 	kdDebug(14180) << "WP::serialize(...)" << endl;
 
-	KopeteContact::serialize(serializedData, addressBookData);
+	Kopete::Contact::serialize(serializedData, addressBookData);
 }
 
-KopeteMessageManager* WPContact::manager( bool )	// TODO: use the parameter as canCreate
+Kopete::MessageManager* WPContact::manager( bool )	// TODO: use the parameter as canCreate
 {
 	if( !m_manager )
 	{
 		// Set up the message managers
-		QPtrList<KopeteContact> singleContact;
+		QPtrList<Kopete::Contact> singleContact;
 		singleContact.append(this);
 
 		m_manager = KopeteMessageManagerFactory::factory()->create( account()->myself(), singleContact, protocol() );
 
-		connect(m_manager, SIGNAL(messageSent(KopeteMessage &, KopeteMessageManager *)), this, SLOT(slotSendMessage(KopeteMessage &)));
-  		connect(m_manager, SIGNAL(messageSent(KopeteMessage &, KopeteMessageManager *)), m_manager, SLOT(appendMessage(KopeteMessage &)));
+		connect(m_manager, SIGNAL(messageSent(Kopete::Message &, Kopete::MessageManager *)), this, SLOT(slotSendMessage(Kopete::Message &)));
+  		connect(m_manager, SIGNAL(messageSent(Kopete::Message &, Kopete::MessageManager *)), m_manager, SLOT(appendMessage(Kopete::Message &)));
 		connect(m_manager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
 	}
 
@@ -88,13 +88,13 @@ KopeteMessageManager* WPContact::manager( bool )	// TODO: use the parameter as c
 bool WPContact::isOnline() const
 {
 	kdDebug(14180) << "[WPContact::isOnline()]" << endl;
-	return onlineStatus().status() != KopeteOnlineStatus::Offline && onlineStatus().status() != KopeteOnlineStatus::Unknown;
+	return onlineStatus().status() != Kopete::OnlineStatus::Offline && onlineStatus().status() != Kopete::OnlineStatus::Unknown;
 }
 */
 bool WPContact::isReachable()
 {
 	kdDebug(14180) << "[WPContact::isReachable()]" << endl;
-	return onlineStatus().status() != KopeteOnlineStatus::Offline && onlineStatus().status() != KopeteOnlineStatus::Unknown;
+	return onlineStatus().status() != Kopete::OnlineStatus::Offline && onlineStatus().status() != Kopete::OnlineStatus::Unknown;
 }
 
 void WPContact::slotMessageManagerDestroyed()
@@ -154,21 +154,21 @@ void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 {
 	DEBUG(WPDMETHOD, "WPContact::slotNewMessage(" << Body << ", " << Arrival.toString() << ")");
 
-	QPtrList<KopeteContact> contactList;
+	QPtrList<Kopete::Contact> contactList;
 	contactList.append(account()->myself());
 
 	QRegExp subj("^Subject: ([^\n]*)\n(.*)$");
-	KopeteMessage msg;
+	Kopete::Message msg;
 
 	if(subj.search(Body) == -1)
-		msg = KopeteMessage(this, contactList, Body, KopeteMessage::Inbound);
+		msg = Kopete::Message(this, contactList, Body, Kopete::Message::Inbound);
 	else
-		msg = KopeteMessage(this, contactList, subj.cap(2), subj.cap(1), KopeteMessage::Inbound);
+		msg = Kopete::Message(this, contactList, subj.cap(2), subj.cap(1), Kopete::Message::Inbound);
 
 	manager()->appendMessage(msg);
 }
 
-void WPContact::slotSendMessage( KopeteMessage& message )
+void WPContact::slotSendMessage( Kopete::Message& message )
 {
 	DEBUG(WPDMETHOD, "WPContact::slotSendMessage(<message>)");
 	// Warning: this could crash

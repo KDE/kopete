@@ -39,7 +39,7 @@
 #include "ircaccount.h"
 #include "ircprotocol.h"
 
-IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QString &channel, KopeteMetaContact *metac)
+IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QString &channel, Kopete::MetaContact *metac)
 	: IRCContact(contactManager, channel, metac, "irc_channel")
 {
 	mInfoTimer = new QTimer( this );
@@ -130,7 +130,7 @@ void IRCChannelContact::messageManagerDestroyed()
 		KopeteContactPtrList contacts = manager()->members();
 
 		// remove all the users on the channel
-		for( KopeteContact *c = contacts.first(); c; c = contacts.next() )
+		for( Kopete::Contact *c = contacts.first(); c; c = contacts.next() )
 		{
 			if( c->metaContact()->isTemporary() && !static_cast<IRCContact*>(c)->isChatting( manager() ) )
 				c->deleteLater();
@@ -181,7 +181,7 @@ void IRCChannelContact::slotAddNicknames()
 		//kdDebug(14120) << k_funcinfo << m_nickName << " NICK: " << nickToAdd << endl;
 		user = MYACCOUNT->contactManager()->findUser( nickToAdd );
 		user->setOnlineStatus( m_protocol->m_UserStatusOnline );
-		manager()->addContact( static_cast<KopeteContact*>(user) , true);
+		manager()->addContact( static_cast<Kopete::Contact*>(user) , true);
 	}
 	else
 	{
@@ -189,9 +189,9 @@ void IRCChannelContact::slotAddNicknames()
 	}
 
 	if ( firstChar == '@' || firstChar == '%' )
-		manager()->setContactOnlineStatus( static_cast<KopeteContact*>(user), m_protocol->m_UserStatusOp );
+		manager()->setContactOnlineStatus( static_cast<Kopete::Contact*>(user), m_protocol->m_UserStatusOp );
 	else if( firstChar == '+')
-		manager()->setContactOnlineStatus( static_cast<KopeteContact*>(user), m_protocol->m_UserStatusVoice );
+		manager()->setContactOnlineStatus( static_cast<Kopete::Contact*>(user), m_protocol->m_UserStatusVoice );
 
 	QTimer::singleShot(0, this, SLOT( slotAddNicknames() ) );
 }
@@ -201,8 +201,8 @@ void IRCChannelContact::channelTopic(const QString &topic)
 	mTopic = topic;
 	setProperty( m_protocol->propChannelTopic, mTopic );
 	manager()->setDisplayName( caption() );
-	KopeteMessage msg((KopeteContact*)this, mMyself, i18n("Topic for %1 is %2").arg(m_nickName).arg(mTopic),
-		KopeteMessage::Internal, KopeteMessage::RichText, KopeteMessage::Chat);
+	Kopete::Message msg((Kopete::Contact*)this, mMyself, i18n("Topic for %1 is %2").arg(m_nickName).arg(mTopic),
+		Kopete::Message::Internal, Kopete::Message::RichText, Kopete::Message::Chat);
 	appendMessage(msg);
 }
 
@@ -214,7 +214,7 @@ void IRCChannelContact::channelHomePage(const QString &url)
 
 void IRCChannelContact::join()
 {
-	if ( !manager(false) && onlineStatus().status() == KopeteOnlineStatus::Online )
+	if ( !manager(false) && onlineStatus().status() == Kopete::OnlineStatus::Online )
 	{
 		kdDebug() << k_funcinfo << "My nickname:" << m_nickName << endl;
 		kdDebug() << k_funcinfo << "My manager:" << manager(false) << endl;
@@ -237,7 +237,7 @@ void IRCChannelContact::slotIncomingUserIsAway( const QString &nick, const QStri
 		IRCUserContact *c = MYACCOUNT->mySelf();
 		if( manager(false) && manager()->members().contains( c ) )
 		{
-			KopeteOnlineStatus status = manager()->contactOnlineStatus( c );
+			Kopete::OnlineStatus status = manager()->contactOnlineStatus( c );
 			if( status == m_protocol->m_UserStatusOp )
 				manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusOpAway );
 			else if( status == m_protocol->m_UserStatusOpAway )
@@ -264,21 +264,21 @@ void IRCChannelContact::userJoinedChannel(const QString &nickname)
 		if( manager(false) )
 			kdDebug() << k_funcinfo << "My view:" << manager(false)->view(false) << endl;
 
-		KopeteMessage msg((KopeteContact *)this, mMyself,
+		Kopete::Message msg((Kopete::Contact *)this, mMyself,
 			i18n("You have joined channel %1").arg(m_nickName),
-			KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		msg.setImportance( KopeteMessage::Low); //set the importance manualy to low
+			Kopete::Message::Internal, Kopete::Message::PlainText, Kopete::Message::Chat);
+		msg.setImportance( Kopete::Message::Low); //set the importance manualy to low
 		appendMessage(msg);
 	}
 	else
 	{
 		IRCUserContact *contact = MYACCOUNT->contactManager()->findUser( nickname );
 		contact->setOnlineStatus( m_protocol->m_UserStatusOnline );
-		manager()->addContact((KopeteContact *)contact, true);
-		KopeteMessage msg((KopeteContact *)this, mMyself,
+		manager()->addContact((Kopete::Contact *)contact, true);
+		Kopete::Message msg((Kopete::Contact *)this, mMyself,
 			i18n("User <b>%1</b> joined channel %2").arg(nickname).arg(m_nickName),
-			KopeteMessage::Internal, KopeteMessage::RichText, KopeteMessage::Chat);
-		msg.setImportance( KopeteMessage::Low); //set the importance manualy to low
+			Kopete::Message::Internal, Kopete::Message::RichText, Kopete::Message::Chat);
+		msg.setImportance( Kopete::Message::Low); //set the importance manualy to low
 		manager()->appendMessage(msg);
 	}
 }
@@ -287,10 +287,10 @@ void IRCChannelContact::userPartedChannel(const QString &nickname,const QString 
 {
 	if ( nickname.lower() != MYACCOUNT->engine()->nickName().lower() )
 	{
-		KopeteContact *c = locateUser( nickname );
+		Kopete::Contact *c = locateUser( nickname );
 		if ( c )
 		{
-			manager()->removeContact( c, KopeteMessage::unescape(reason) );
+			manager()->removeContact( c, Kopete::Message::unescape(reason) );
 			if( c->metaContact()->isTemporary() && !static_cast<IRCContact*>(c)->isChatting( manager(false) ) )
 				c->deleteLater();
 		}
@@ -305,13 +305,13 @@ void IRCChannelContact::userKicked(const QString &nick, const QString &nickKicke
 
 	if( nickKicked.lower() != MYACCOUNT->engine()->nickName().lower() )
 	{
-		KopeteContact *c = locateUser( nickKicked );
+		Kopete::Contact *c = locateUser( nickKicked );
 		if ( c )
 		{
 			manager()->removeContact( c, r );
-			KopeteMessage msg( (KopeteContact *)this, mMyself,
-				r, KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-			msg.setImportance(KopeteMessage::Low);
+			Kopete::Message msg( (Kopete::Contact *)this, mMyself,
+				r, Kopete::Message::Internal, Kopete::Message::PlainText, Kopete::Message::Chat);
+			msg.setImportance(Kopete::Message::Low);
 			appendMessage(msg);
 			if( c->metaContact()->isTemporary() && !static_cast<IRCContact*>(c)->isChatting( manager(false) ) )
 				c->deleteLater();
@@ -335,7 +335,7 @@ void IRCChannelContact::setTopic(const QString &topic)
 			QString newTopic = topic;
 			if( newTopic.isNull() )
 				newTopic = KInputDialog::getText( i18n("New Topic"), i18n("Enter the new topic:"),
-					KopeteMessage::unescape(mTopic), &okPressed, 0L );
+					Kopete::Message::unescape(mTopic), &okPressed, 0L );
 
 			if( okPressed )
 			{
@@ -345,9 +345,9 @@ void IRCChannelContact::setTopic(const QString &topic)
 		}
 		else
 		{
-			KopeteMessage msg(MYACCOUNT->myServer(), manager()->members(),
+			Kopete::Message msg(MYACCOUNT->myServer(), manager()->members(),
 				i18n("You must be a channel operator on %1 to do that.").arg(m_nickName),
-				KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+				Kopete::Message::Internal, Kopete::Message::PlainText, Kopete::Message::Chat);
 			manager()->appendMessage(msg);
 		}
 	}
@@ -358,27 +358,27 @@ void IRCChannelContact::topicChanged(const QString &nick, const QString &newtopi
 	mTopic = newtopic;
 	setProperty( m_protocol->propChannelTopic, mTopic );
 	manager()->setDisplayName( caption() );
-	KopeteMessage msg(MYACCOUNT->myServer(), mMyself,
+	Kopete::Message msg(MYACCOUNT->myServer(), mMyself,
 		i18n("%1 has changed the topic to: %2").arg(nick).arg(newtopic),
-		KopeteMessage::Internal, KopeteMessage::RichText, KopeteMessage::Chat);
-	msg.setImportance(KopeteMessage::Low); //set the importance manualy to low
+		Kopete::Message::Internal, Kopete::Message::RichText, Kopete::Message::Chat);
+	msg.setImportance(Kopete::Message::Low); //set the importance manualy to low
 	appendMessage(msg);
 }
 
 void IRCChannelContact::topicUser(const QString &nick, const QDateTime &time)
 {
-	KopeteMessage msg( MYACCOUNT->myServer(), mMyself,
+	Kopete::Message msg( MYACCOUNT->myServer(), mMyself,
 		i18n("Topic set by %1 at %2").arg(nick).arg(
 			KGlobal::locale()->formatDateTime(time, true)
-		), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-	msg.setImportance(KopeteMessage::Low); //set the importance manualy to low
+		), Kopete::Message::Internal, Kopete::Message::PlainText, Kopete::Message::Chat);
+	msg.setImportance(Kopete::Message::Low); //set the importance manualy to low
 	appendMessage(msg);
 }
 
 void IRCChannelContact::incomingModeChange( const QString &nick, const QString &mode )
 {
-	KopeteMessage msg((KopeteContact *)this, mMyself, i18n("%1 sets mode %2 on  %3").arg(nick).arg(mode).arg(m_nickName), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-	msg.setImportance( KopeteMessage::Low); //set the importance manualy to low
+	Kopete::Message msg((Kopete::Contact *)this, mMyself, i18n("%1 sets mode %2 on  %3").arg(nick).arg(mode).arg(m_nickName), Kopete::Message::Internal, Kopete::Message::PlainText, Kopete::Message::Chat);
+	msg.setImportance( Kopete::Message::Low); //set the importance manualy to low
 	appendMessage(msg);
 
 	bool inParams = false;
@@ -590,7 +590,7 @@ const QString IRCChannelContact::caption() const
 {
 	QString cap = QString::fromLatin1("%1 @ %2").arg(m_nickName).arg(MYACCOUNT->engine()->currentHost());
 		if( !mTopic.isNull() && !mTopic.isEmpty() )
-			cap.append( QString::fromLatin1(" - %1").arg(KopeteMessage::unescape(mTopic)) );
+			cap.append( QString::fromLatin1(" - %1").arg(Kopete::Message::unescape(mTopic)) );
 
 	return cap;
 }
@@ -599,8 +599,8 @@ void IRCChannelContact::privateMessage(IRCContact *from, IRCContact *to, const Q
 {
 	if(to == this)
 	{
-		KopeteMessage msg(from, manager()->members(), message, KopeteMessage::Inbound,
-			KopeteMessage::RichText, KopeteMessage::Chat);
+		Kopete::Message msg(from, manager()->members(), message, Kopete::Message::Inbound,
+			Kopete::Message::RichText, Kopete::Message::Chat);
 		appendMessage(msg);
 	}
 }
@@ -610,8 +610,8 @@ void IRCChannelContact::newAction(const QString &from, const QString &action)
 	kdDebug(14120) << k_funcinfo << m_nickName << endl;
 
 	IRCUserContact *f = MYACCOUNT->contactManager()->findUser(from);
-	KopeteMessage msg(f, manager()->members(), action, KopeteMessage::Action,
-		KopeteMessage::RichText, KopeteMessage::Chat);
+	Kopete::Message msg(f, manager()->members(), action, Kopete::Message::Action,
+		Kopete::Message::RichText, Kopete::Message::Chat);
 	appendMessage(msg);
 }
 

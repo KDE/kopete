@@ -24,8 +24,12 @@
 #include <knotifyclient.h>
 
 class QObject;
-class KopeteMetaContact;
-class KopeteNotifyDataObject;
+
+namespace Kopete
+{
+class MetaContact;
+class NotifyDataObject;
+}
 
 namespace KNotifyClient
 {
@@ -69,7 +73,7 @@ int event(int winId, const QString &message, const QString &text, const KGuiItem
 	 * @return a value > 0, unique for this event if successful, 0 otherwise
 	 * @since 3.2
 	 */
-int event( int winId, const QString& message, const QString& text, KopeteMetaContact *mc,
+int event( int winId, const QString& message, const QString& text, Kopete::MetaContact *mc,
 		const KGuiItem& action, QObject *receiver, const char *slot );
 
 	/**
@@ -94,7 +98,7 @@ int event( int winId, const QString& message, const QString& text, KopeteMetaCon
 			 const QString &sound, const QString &file, const QString &commandline,
 			 const KGuiItem &action = KGuiItem() , QObject *receiver=0L, const char *slot=0L);
 
-	void performCustomNotifications( int winId, KopeteMetaContact * mc, const QString &message, bool& suppress);
+	void performCustomNotifications( int winId, Kopete::MetaContact * mc, const QString &message, bool& suppress);
 }
 
 #endif

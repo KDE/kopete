@@ -33,7 +33,7 @@
 
 class KPopupMenu;
 
-WPAccount::WPAccount(WPProtocol *parent, const QString &accountID, const char *name) : KopeteAccount(parent, accountID, name)
+WPAccount::WPAccount(WPProtocol *parent, const QString &accountID, const char *name) : Kopete::Account(parent, accountID, name)
 {
 	DEBUG(WPDMETHOD, "WPAccount::WPAccount()");
 
@@ -84,7 +84,7 @@ bool WPAccount::checkHost(const QString &Name)
 	return theInterface->checkHost(Name);
 }
 
-bool WPAccount::addContactToMetaContact(const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact )
+bool WPAccount::addContactToMetaContact(const QString &contactId, const QString &displayName, Kopete::MetaContact *parentContact )
 {
 	kdDebug(14180) << "[WPAccount::addContactToMetaContact] contactId: " << contactId << endl;
 
@@ -105,7 +105,7 @@ void WPAccount::slotGotNewMessage(const QString &Body, const QDateTime &Arrival,
 
 	if(isConnected())
 		if(!isAway())
-		{	if(!contacts()[From]) addContact(From, From, 0, KopeteAccount::DontChangeKABC, QString::null, true);
+		{	if(!contacts()[From]) addContact(From, From, 0, Kopete::Account::DontChangeKABC, QString::null, true);
 			static_cast<WPContact *>(contacts()[From])->slotNewMessage(Body, Arrival);
 		}
 		else

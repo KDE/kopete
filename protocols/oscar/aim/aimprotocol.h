@@ -24,7 +24,7 @@
 
 #include <qmap.h>
 
-class KopeteOnlineStatus;
+namespace Kopete { class OnlineStatus; }
 
 class AIMProtocolHandler : public Kopete::MimeTypeHandler
 {
@@ -33,7 +33,7 @@ class AIMProtocolHandler : public Kopete::MimeTypeHandler
 		void handleURL(const KURL & url) const;
 };
 
-class AIMProtocol : public KopeteProtocol
+class AIMProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 
@@ -54,20 +54,20 @@ class AIMProtocol : public KopeteProtocol
 
 		bool canSendOffline() const { return false; }
 
-		virtual KopeteContact *deserializeContact( KopeteMetaContact *metaContact,
+		virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
 			const QMap<QString, QString> &serializedData,
 			const QMap<QString, QString> &addressBookData );
-		AddContactPage *createAddContactWidget(QWidget *parent, KopeteAccount *account);
-		KopeteEditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
-		KopeteAccount *createNewAccount(const QString &accountId);
+		AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *account);
+		KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent);
+		Kopete::Account *createNewAccount(const QString &accountId);
 
 		/**
 		 * The set of online statuses that AIM contacts can have
 		 */
-		const KopeteOnlineStatus statusOnline;
-		const KopeteOnlineStatus statusOffline;
-		const KopeteOnlineStatus statusAway;
-		const KopeteOnlineStatus statusConnecting;
+		const Kopete::OnlineStatus statusOnline;
+		const Kopete::OnlineStatus statusOffline;
+		const Kopete::OnlineStatus statusAway;
+		const Kopete::OnlineStatus statusConnecting;
 
 		const Kopete::ContactPropertyTmpl awayMessage;
 		const Kopete::ContactPropertyTmpl clientFeatures;

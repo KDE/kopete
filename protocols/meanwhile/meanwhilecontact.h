@@ -24,11 +24,11 @@
 
 class KAction;
 class KActionCollection;
-class KopeteAccount;
-class KopeteMessageManager;
-class KopeteMetaContact;
+namespace Kopete { class Account; }
+namespace Kopete { class MessageManager; }
+namespace Kopete { class MetaContact; }
 
-class MeanwhileContact : public KopeteContact
+class MeanwhileContact : public Kopete::Contact
 {
 	Q_OBJECT
 public:
@@ -36,7 +36,7 @@ public:
 	MeanwhileContact( QString userId,
                       QString nickname,
                       MeanwhileAccount *account,
-                      KopeteMetaContact *parent);
+                      Kopete::MetaContact *parent);
     ~MeanwhileContact();
 
     virtual bool isReachable();
@@ -45,13 +45,13 @@ public:
 
 	virtual QPtrList<KAction> *customContextMenuActions();
 
-	virtual KopeteMessageManager *manager( bool canCreate = false );
+	virtual Kopete::MessageManager *manager( bool canCreate = false );
 
     QString meanwhileId;
 
 public slots:
 
-	void sendMessage( KopeteMessage &message );
+	void sendMessage( Kopete::Message &message );
 	void receivedMessage( const QString &message );
     virtual void slotUserInfo();
 
@@ -61,7 +61,7 @@ protected slots:
     void slotMeTypingMsg(bool isTyping);
 	
 protected:
-	KopeteMessageManager* m_msgManager;
+	Kopete::MessageManager* m_msgManager;
 	KActionCollection* m_actionCollection;
 	KAction* m_actionPrefs;
 };

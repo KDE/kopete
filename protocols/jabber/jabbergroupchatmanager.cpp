@@ -27,17 +27,17 @@
 
 JabberGroupChatManager::JabberGroupChatManager ( JabberProtocol *protocol, const JabberBaseContact *user,
 											 KopeteContactPtrList others, XMPP::Jid roomJid, const char *name )
-											 : KopeteMessageManager ( user, others, protocol, 0, name )
+											 : Kopete::MessageManager ( user, others, protocol, 0, name )
 {
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId () << endl;
 
 	mRoomJid = roomJid;
 
 	// make sure Kopete knows about this instance
-	KopeteMessageManagerFactory::factory()->addKopeteMessageManager ( this );
+	KopeteMessageManagerFactory::factory()->addMessageManager ( this );
 
-	connect ( this, SIGNAL ( messageSent ( KopeteMessage &, KopeteMessageManager * ) ),
-			  this, SLOT ( slotMessageSent ( KopeteMessage &, KopeteMessageManager * ) ) );
+	connect ( this, SIGNAL ( messageSent ( Kopete::Message &, Kopete::MessageManager * ) ),
+			  this, SLOT ( slotMessageSent ( Kopete::Message &, Kopete::MessageManager * ) ) );
 
 	updateDisplayName ();
 
@@ -54,18 +54,18 @@ void JabberGroupChatManager::updateDisplayName ()
 const JabberBaseContact *JabberGroupChatManager::user () const
 {
 
-	return static_cast<const JabberBaseContact *>(KopeteMessageManager::user());
+	return static_cast<const JabberBaseContact *>(Kopete::MessageManager::user());
 
 }
 
 JabberAccount *JabberGroupChatManager::account () const
 {
 
-	return static_cast<JabberAccount *>(KopeteMessageManager::account ());
+	return static_cast<JabberAccount *>(Kopete::MessageManager::account ());
 
 }
 
-void JabberGroupChatManager::slotMessageSent ( KopeteMessage &message, KopeteMessageManager * )
+void JabberGroupChatManager::slotMessageSent ( Kopete::Message &message, Kopete::MessageManager * )
 {
 
 	if( account()->isConnected () )

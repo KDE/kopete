@@ -38,7 +38,7 @@
 
 // -----------------------------------------------------------------------------
 
-HistoryLogger::HistoryLogger( KopeteMetaContact *m,  QObject *parent, const char *name )
+HistoryLogger::HistoryLogger( Kopete::MetaContact *m,  QObject *parent, const char *name )
  : QObject(parent, name)
 {
 	m_saveTimer=0L;
@@ -56,7 +56,7 @@ HistoryLogger::HistoryLogger( KopeteMetaContact *m,  QObject *parent, const char
 }
 
 
-HistoryLogger::HistoryLogger( KopeteContact *c,  QObject *parent, const char *name )
+HistoryLogger::HistoryLogger( Kopete::Contact *c,  QObject *parent, const char *name )
  : QObject(parent, name)
 {
 	m_saveTimer=0L;
@@ -107,7 +107,7 @@ void HistoryLogger::setCurrentMonth(int month)
 
 
 
-QDomDocument HistoryLogger::getDocument(const KopeteContact *c, unsigned int month , bool canLoad , bool* contain)
+QDomDocument HistoryLogger::getDocument(const Kopete::Contact *c, unsigned int month , bool canLoad , bool* contain)
 {
 	if(m_realMonth!=QDate::currentDate().month())
 	{ //We changed month, our indice are not correct anymore, clean memory.
@@ -173,7 +173,7 @@ QDomDocument HistoryLogger::getDocument(const KopeteContact *c, unsigned int mon
 }
 
 
-void HistoryLogger::appendMessage( const KopeteMessage &msg , const KopeteContact *ct )
+void HistoryLogger::appendMessage( const Kopete::Message &msg , const Kopete::Contact *ct )
 {
 	if(!msg.from())
 		return;
@@ -181,14 +181,14 @@ void HistoryLogger::appendMessage( const KopeteMessage &msg , const KopeteContac
 
 	// If no contact are given: If the manager is availiable, use the manager's
 	// first contact (the channel on irc, or the other contact for others protocols
-	const KopeteContact *c = ct;
+	const Kopete::Contact *c = ct;
 	if(!c && msg.manager() )
 	{
-		QPtrList<KopeteContact> mb=msg.manager()->members() ;
+		QPtrList<Kopete::Contact> mb=msg.manager()->members() ;
 		c = mb.first();
 	}
 	if(!c)  //If the contact is still not initialized, use the message author.
-		c =   msg.direction()==KopeteMessage::Outbound ? msg.to().first() : msg.from()  ;
+		c =   msg.direction()==Kopete::Message::Outbound ? msg.to().first() : msg.from()  ;
 
 
 	if(!m_metaContact)
@@ -202,8 +202,8 @@ void HistoryLogger::appendMessage( const KopeteMessage &msg , const KopeteContac
 
 	if(!c || !m_metaContact->contacts().contains(c) )
 	{
-		/*QPtrList<KopeteContact> contacts= m_metaContact->contacts();
-		QPtrListIterator<KopeteContact> it( contacts );
+		/*QPtrList<Kopete::Contact> contacts= m_metaContact->contacts();
+		QPtrListIterator<Kopete::Contact> it( contacts );
 		for( ; it.current(); ++it )
 		{
 			if( (*it)->protocol()->pluginId() == msg.from()->protocol()->pluginId() )
@@ -243,7 +243,7 @@ void HistoryLogger::appendMessage( const KopeteMessage &msg , const KopeteContac
 	}
 
 	QDomElement msgElem = doc.createElement( "msg" );
-	msgElem.setAttribute( "in",  msg.direction()==KopeteMessage::Outbound ? "0" : "1" );
+	msgElem.setAttribute( "in",  msg.direction()==Kopete::Message::Outbound ? "0" : "1" );
 	msgElem.setAttribute( "from",  msg.from()->contactId() );
 	msgElem.setAttribute( "nick",  msg.from()->property( Kopete::Global::Properties::self()->nickName() ).value().toString() ); //do we have to set this?
 	msgElem.setAttribute( "time", msg.timestamp().toString("d h:m:s") );
@@ -308,10 +308,10 @@ void HistoryLogger::saveToDisk()
 	
 }
 
-QValueList<KopeteMessage> HistoryLogger::readMessages(unsigned int lines,
-	const KopeteContact *c, Sens sens, bool reverseOrder, bool colorize)
+QValueList<Kopete::Message> HistoryLogger::readMessages(unsigned int lines,
+	const Kopete::Contact *c, Sens sens, bool reverseOrder, bool colorize)
 {
-	QValueList<KopeteMessage> messages;
+	QValueList<Kopete::Message> messages;
 
 	if(!m_metaContact)
 	{ //this may happen if the contact has been moved, and the MC deleted
@@ -352,7 +352,7 @@ QValueList<KopeteMessage> HistoryLogger::readMessages(unsigned int lines,
 	// has a message with a bigger date.
 
 	QDateTime timeLimit;
-	const KopeteContact *currentContact=c;
+	const Kopete::Contact *currentContact=c;
 	if(!c && m_metaContact->contacts().count()==1)
 		currentContact=m_metaContact->contacts().first();
 
@@ -364,8 +364,8 @@ QValueList<KopeteMessage> HistoryLogger::readMessages(unsigned int lines,
 
 		if(!c && m_metaContact->contacts().count()>1)
 		{ //we have to merge the differents subcontact history
-			QPtrList<KopeteContact> ct=m_metaContact->contacts();
-			QPtrListIterator<KopeteContact> it( ct );
+			QPtrList<Kopete::Contact> ct=m_metaContact->contacts();
+			QPtrListIterator<Kopete::Contact> it( ct );
 			for( ; it.current(); ++it )
 			{ //we loop over each contact. we are searching the contact with the next message with the smallest date,
 			  // it will becomes our current contact, and the contact with the mext message with the second smallest
@@ -465,22 +465,22 @@ QValueList<KopeteMessage> HistoryLogger::readMessages(unsigned int lines,
 			// the timeLimit msgElem is the next message, still not parsed, so
 			// we parse it now
 
-			KopeteMessage::MessageDirection dir = (msgElem.attribute("in") == "1") ?
-				KopeteMessage::Inbound : KopeteMessage::Outbound;
+			Kopete::Message::MessageDirection dir = (msgElem.attribute("in") == "1") ?
+				Kopete::Message::Inbound : Kopete::Message::Outbound;
 
-			if(!m_hideOutgoing || dir != KopeteMessage::Outbound)
+			if(!m_hideOutgoing || dir != Kopete::Message::Outbound)
 			{ //parse only if we don't hide it
 
 				if( m_filter.isNull() || ( m_filterRegExp? msgElem.text().contains(QRegExp(m_filter,m_filterCaseSensitive)) : msgElem.text().contains(m_filter,m_filterCaseSensitive) ))
 				{
 					QString f=msgElem.attribute("from" );
-					const KopeteContact *from=f.isNull()? 0L : currentContact->account()->contacts()[f];
+					const Kopete::Contact *from=f.isNull()? 0L : currentContact->account()->contacts()[f];
 
 					if(!from)
-						from= dir==KopeteMessage::Inbound ? currentContact : currentContact->account()->myself();
+						from= dir==Kopete::Message::Inbound ? currentContact : currentContact->account()->myself();
 
 					KopeteContactPtrList to;
-					to.append( dir==KopeteMessage::Inbound ? currentContact->account()->myself() : currentContact );
+					to.append( dir==Kopete::Message::Inbound ? currentContact->account()->myself() : currentContact );
 
 					if(!timestamp.isValid())
 					{
@@ -491,7 +491,7 @@ QValueList<KopeteMessage> HistoryLogger::readMessages(unsigned int lines,
 						timestamp=QDateTime( QDate(d.year() , d.month() , rx.cap(1).toUInt()), QTime( rx.cap(2).toUInt() , rx.cap(3).toUInt() , rx.cap(5).toUInt() ) );
 					}
 
-					KopeteMessage msg(timestamp, from, to, msgElem.text(), dir);
+					Kopete::Message msg(timestamp, from, to, msgElem.text(), dir);
 					if (colorize)
 						msg.setFg(fgColor);
 
@@ -547,7 +547,7 @@ QValueList<KopeteMessage> HistoryLogger::readMessages(unsigned int lines,
 	return messages;
 }
 
-QString HistoryLogger::getFileName(const KopeteContact* c, unsigned int month)
+QString HistoryLogger::getFileName(const Kopete::Contact* c, unsigned int month)
 {
 	QDate d = QDate::currentDate().addMonths(0-month);
 
@@ -580,7 +580,7 @@ QString HistoryLogger::getFileName(const KopeteContact* c, unsigned int month)
 
 }
 
-unsigned int HistoryLogger::getFirstMonth(const KopeteContact *c)
+unsigned int HistoryLogger::getFirstMonth(const Kopete::Contact *c)
 {
 	if(!c)
 		return getFirstMonth();
@@ -655,8 +655,8 @@ unsigned int HistoryLogger::getFirstMonth()
 		return 0;
 
 	int m=0;
-	QPtrList<KopeteContact> contacts=m_metaContact->contacts();
-	QPtrListIterator<KopeteContact> it( contacts );
+	QPtrList<Kopete::Contact> contacts=m_metaContact->contacts();
+	QPtrListIterator<Kopete::Contact> it( contacts );
 	for( ; it.current(); ++it )
 	{
 		int m2=getFirstMonth(*it);

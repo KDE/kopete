@@ -28,15 +28,19 @@
 
 class AddressBookExportUI;
 class KDialogBase;
-class KopeteContact;
-class KopeteMetaContact;
 class KListBox;
 class KComboBox;
+
+namespace Kopete
+{
+class Contact;
+class MetaContact;
+}
 
 class KopeteAddressBookExport : public QObject
 {
 public:
-	KopeteAddressBookExport( QWidget *parent, KopeteMetaContact *mc );
+	KopeteAddressBookExport( QWidget *parent, Kopete::MetaContact *mc );
 	~KopeteAddressBookExport();
 	
 	/** 
@@ -69,12 +73,12 @@ protected:
 	/**
 	 * Populate a combobox with a contact's IM data
 	 */
-	void populateIM( const KopeteContact *contact, const QPixmap &icon, 
+	void populateIM( const Kopete::Contact *contact, const QPixmap &icon, 
 			QComboBox *combo, const Kopete::ContactPropertyTmpl &property );
 	/**
 	 * Populate a listbox with a contact's IM data
 	 */
-	void populateIM( const KopeteContact *contact, const QPixmap &icon, 
+	void populateIM( const Kopete::Contact *contact, const QPixmap &icon, 
 			KListBox *combo, const Kopete::ContactPropertyTmpl &property );
 	
 	/** Check the selected item is not the first (existing KABC) item, or the same as it */
@@ -86,7 +90,7 @@ protected:
 	KDialogBase * mDialog;
 	QPixmap mAddrBookIcon;
 	AddressBookExportUI *mUI;
-	KopeteMetaContact *mMetaContact;
+	Kopete::MetaContact *mMetaContact;
 	KABC::AddressBook *mAddressBook;
 	KABC::Addressee mAddressee;
 	

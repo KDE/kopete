@@ -29,7 +29,7 @@ typedef KGenericFactory<TextEffectPlugin> TextEffectPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_texteffect, TextEffectPluginFactory( "kopete_texteffect" )  )
 
 TextEffectPlugin::TextEffectPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
-: KopetePlugin( TextEffectPluginFactory::instance(), parent, name )
+: Kopete::Plugin( TextEffectPluginFactory::instance(), parent, name )
 {
 	if( !pluginStatic_ )
 		pluginStatic_=this;
@@ -39,8 +39,8 @@ TextEffectPlugin::TextEffectPlugin( QObject *parent, const char *name, const QSt
 	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
 
 	connect( KopeteMessageManagerFactory::factory(),
-		SIGNAL( aboutToSend( KopeteMessage & ) ),
-		SLOT( slotOutgoingMessage( KopeteMessage & ) ) );
+		SIGNAL( aboutToSend( Kopete::Message & ) ),
+		SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
 
 	 last_color=0;
 }
@@ -59,9 +59,9 @@ TextEffectPlugin* TextEffectPlugin::plugin()
 TextEffectPlugin* TextEffectPlugin::pluginStatic_ = 0L;
 
 
-void TextEffectPlugin::slotOutgoingMessage( KopeteMessage& msg )
+void TextEffectPlugin::slotOutgoingMessage( Kopete::Message& msg )
 {
-	if(msg.direction() != KopeteMessage::Outbound)
+	if(msg.direction() != Kopete::Message::Outbound)
 		return;
 
 	QStringList colors=m_config->colors();
@@ -168,7 +168,7 @@ void TextEffectPlugin::slotOutgoingMessage( KopeteMessage& msg )
 		}
 		if( m_config->colorChar() || m_config->colorWords() )
 			resultat+="</font>";
-		msg.setBody(resultat,KopeteMessage::RichText);
+		msg.setBody(resultat,Kopete::Message::RichText);
 	}
 
 	if(m_config->colorLines())

@@ -26,7 +26,7 @@
 #include <libgadu.h>
 
 class Qstring;
-class KopeteMessage;
+namespace Kopete { class Message; }
 class KGaduMessage;
 
 class GaduRichTextFormat {
@@ -34,7 +34,7 @@ public:
 	GaduRichTextFormat();
 	~GaduRichTextFormat();
 	QString convertToHtml( const QString&, unsigned int, void* );
-	KGaduMessage* convertToGaduMessage( const KopeteMessage& );
+	KGaduMessage* convertToGaduMessage( const Kopete::Message& );
 
 private:
 	QString formatOpeningTag( const QString& , const QString& = QString::null );

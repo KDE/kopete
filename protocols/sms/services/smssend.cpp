@@ -34,7 +34,7 @@
 #include "smssendprovider.h"
 #include "smsprotocol.h"
 
-SMSSend::SMSSend(KopeteAccount* account)
+SMSSend::SMSSend(Kopete::Account* account)
 	: SMSService(account)
 {
 	kdWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
@@ -46,7 +46,7 @@ SMSSend::~SMSSend()
 {
 }
 
-void SMSSend::send(const KopeteMessage& msg)
+void SMSSend::send(const Kopete::Message& msg)
 {
 	kdWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
 	QString provider = m_account->pluginData(SMSProtocol::protocol(), "SMSSend:ProviderName");
@@ -66,8 +66,8 @@ void SMSSend::send(const KopeteMessage& msg)
 
 	m_provider = new SMSSendProvider(provider, prefix, m_account, this);
 
-	connect( m_provider, SIGNAL(messageSent(const KopeteMessage &)), this, SIGNAL(messageSent(const KopeteMessage &)));
-	connect( m_provider, SIGNAL(messageNotSent(const KopeteMessage &, const QString &)), this, SIGNAL(messageNotSent(const KopeteMessage &, const QString &)));
+	connect( m_provider, SIGNAL(messageSent(const Kopete::Message &)), this, SIGNAL(messageSent(const Kopete::Message &)));
+	connect( m_provider, SIGNAL(messageNotSent(const Kopete::Message &, const QString &)), this, SIGNAL(messageNotSent(const Kopete::Message &, const QString &)));
 
 	m_provider->send(msg);
 }
@@ -211,7 +211,7 @@ void SMSSend::setOptions(const QString& name)
 		}
 	}
 }
-void SMSSend::setAccount(KopeteAccount* account)
+void SMSSend::setAccount(Kopete::Account* account)
 {
 	m_provider->setAccount(account);
 	SMSService::setAccount(account);

@@ -403,7 +403,7 @@ void JabberRegisterAccount::slotCSError (int error)
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Error in stream signalled, disconnecting." << endl;
 
-	KopeteAccount::DisconnectReason errorClass;
+	Kopete::Account::DisconnectReason errorClass;
 
 	mMainWidget->lblStatusMessage->setText ( i18n ( "Protocol error." ) );
 

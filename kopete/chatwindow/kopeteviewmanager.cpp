@@ -38,7 +38,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_chatwindow, ViewManagerFactory( "kopete_chatw
 
 
 
-typedef QMap<KopeteMessageManager*,KopeteView*> ManagerMap;
+typedef QMap<Kopete::MessageManager*,KopeteView*> ManagerMap;
 typedef QPtrList<KopeteEvent> EventList;
 
 struct KopeteViewManagerPrivate
@@ -60,7 +60,7 @@ KopeteViewManager *KopeteViewManager::viewManager()
 }
 
 KopeteViewManager::KopeteViewManager (QObject *parent, const char *name, const QStringList &/*args*/ )
-	: KopetePlugin( ViewManagerFactory::instance(), parent, name )
+	: Kopete::Plugin( ViewManagerFactory::instance(), parent, name )
 
 {
 	s_viewManager=this;
@@ -68,10 +68,10 @@ KopeteViewManager::KopeteViewManager (QObject *parent, const char *name, const Q
 	d->activeView = 0L;
 	d->foreignMessage=false;
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ), this, SLOT( slotPrefsChanged() ) );
-	connect( KopeteMessageManagerFactory::factory() , SIGNAL ( requestView(KopeteView*& , KopeteMessageManager * , KopeteMessage::MessageType  ) ) ,
-		this, SLOT (slotRequestView(KopeteView*& , KopeteMessageManager * , KopeteMessage::MessageType  )));
-	connect( KopeteMessageManagerFactory::factory() , SIGNAL( display( KopeteMessage &, KopeteMessageManager *) ),
-		this, SLOT ( messageAppended( KopeteMessage &, KopeteMessageManager *) ) );
+	connect( KopeteMessageManagerFactory::factory() , SIGNAL ( requestView(KopeteView*& , Kopete::MessageManager * , Kopete::Message::MessageType  ) ) ,
+		this, SLOT (slotRequestView(KopeteView*& , Kopete::MessageManager * , Kopete::Message::MessageType  )));
+	connect( KopeteMessageManagerFactory::factory() , SIGNAL( display( Kopete::Message &, Kopete::MessageManager *) ),
+		this, SLOT ( messageAppended( Kopete::Message &, Kopete::MessageManager *) ) );
 
 	connect( KopeteMessageManagerFactory::factory() , SIGNAL ( getActiveView(KopeteView*&  ) ) ,
 		this, SLOT (slotGetActiveView(KopeteView*&)));
@@ -101,7 +101,7 @@ void KopeteViewManager::slotPrefsChanged()
 	d->raiseWindow = KopetePrefs::prefs()->raiseMsgWindow();
 }
 
-KopeteView *KopeteViewManager::view( KopeteMessageManager* manager, bool /*foreignMessage*/, KopeteMessage::MessageType type )
+KopeteView *KopeteViewManager::view( Kopete::MessageManager* manager, bool /*foreignMessage*/, Kopete::Message::MessageType type )
 {
 	/*if( d->eventMap.contains( manager ) )
 	{
@@ -118,19 +118,19 @@ KopeteView *KopeteViewManager::view( KopeteMessageManager* manager, bool /*forei
 		KopeteView *newView;
 		QWidget *newViewWidget;
 
-		if( type == KopeteMessage::Undefined )
+		if( type == Kopete::Message::Undefined )
 		{
 			int t = KopetePrefs::prefs()->interfacePreference();
-			type = static_cast<KopeteMessage::MessageType>( t );    
+			type = static_cast<Kopete::Message::MessageType>( t );    
 		}
 
-		if( type == KopeteMessage::Chat )
+		if( type == Kopete::Message::Chat )
 		{
 			newView = new ChatView( manager );
 			newViewWidget = newView->mainWidget();
 
 			connect (newViewWidget, SIGNAL( typing(bool) ), manager, SLOT( typing(bool) ) );
-			connect (manager, SIGNAL( remoteTyping( const KopeteContact *, bool) ), newViewWidget, SLOT( remoteTyping(const KopeteContact *, bool) ) );
+			connect (manager, SIGNAL( remoteTyping( const Kopete::Contact *, bool) ), newViewWidget, SLOT( remoteTyping(const Kopete::Contact *, bool) ) );
 		}
 		else
 		{
@@ -142,21 +142,21 @@ KopeteView *KopeteViewManager::view( KopeteMessageManager* manager, bool /*forei
 		d->managerMap.insert( manager, newView );
 
 		connect( newViewWidget, SIGNAL( closing( KopeteView * ) ), this, SLOT( slotViewDestroyed( KopeteView * ) ) );
-		connect( newViewWidget, SIGNAL( messageSent(KopeteMessage &) ), manager, SLOT( sendMessage(KopeteMessage &) ) );
+		connect( newViewWidget, SIGNAL( messageSent(Kopete::Message &) ), manager, SLOT( sendMessage(Kopete::Message &) ) );
 		connect( newViewWidget, SIGNAL( activated( KopeteView * ) ), this, SLOT( slotViewActivated( KopeteView * ) ) );
 		connect( manager, SIGNAL( messageSuccess() ), newViewWidget, SLOT( messageSentSuccessfully() ));
-		connect( manager, SIGNAL( closing(KopeteMessageManager *) ), this, SLOT(slotMessageManagerDestroyed(KopeteMessageManager*)) );
+		connect( manager, SIGNAL( closing(Kopete::MessageManager *) ), this, SLOT(slotMessageManagerDestroyed(Kopete::MessageManager*)) );
 
 		return newView;
 	}
 }
 
 
-void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManager *manager)
+void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::MessageManager *manager)
 {
 	kdDebug(14000) << k_funcinfo << endl;
 
-	bool outgoingMessage = ( msg.direction() == KopeteMessage::Outbound );
+	bool outgoingMessage = ( msg.direction() == Kopete::Message::Outbound );
 
 	if( !outgoingMessage || d->managerMap.contains( manager ) )
 	{
@@ -202,10 +202,10 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 
 			switch( msg.importance() )
 			{
-				case KopeteMessage::Low:
+				case Kopete::Message::Low:
 					event = QString::fromLatin1( "kopete_contact_lowpriority" );
 					break;
-				case KopeteMessage::Highlight:
+				case Kopete::Message::Highlight:
 					event = QString::fromLatin1( "kopete_contact_highlight" );
 					body = i18n( "<qt>A highlighted message arrived from %1<br>\"%2\"</qt>" );
 					break;
@@ -213,13 +213,13 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 					event = QString::fromLatin1( "kopete_contact_incoming" );
 			}
 			KNotifyClient::event(winId,  event, body.arg( msgFrom, msgText ), msg.from()->metaContact(),
-				i18n("View") , const_cast<KopeteContact*>(msg.from()) , SLOT(execute()) );
+				i18n("View") , const_cast<Kopete::Contact*>(msg.from()) , SLOT(execute()) );
 
 		}
 	}
 }
 
-void KopeteViewManager::readMessages( KopeteMessageManager *manager, bool outgoingMessage )
+void KopeteViewManager::readMessages( Kopete::MessageManager *manager, bool outgoingMessage )
 {
 	kdDebug( 14000 ) << k_funcinfo << endl;
 	d->foreignMessage=!outgoingMessage; //let know for the view we are about to create
@@ -247,7 +247,7 @@ void KopeteViewManager::readMessages( KopeteMessageManager *manager, bool outgoi
 void KopeteViewManager::slotEventDeleted( KopeteEvent *event )
 {
 	kdDebug(14000) << k_funcinfo << endl;
-	KopeteMessageManager *kmm=event->message().manager();
+	Kopete::MessageManager *kmm=event->message().manager();
 	if(!kmm)
 		return;
 	
@@ -313,7 +313,7 @@ void KopeteViewManager::slotViewDestroyed( KopeteView *closingView )
 		d->activeView = 0L;
 }
 
-void KopeteViewManager::slotMessageManagerDestroyed( KopeteMessageManager *manager )
+void KopeteViewManager::slotMessageManagerDestroyed( Kopete::MessageManager *manager )
 {
 	kdDebug( 14000 ) << k_funcinfo << endl;
 
@@ -328,7 +328,7 @@ KopeteView* KopeteViewManager::activeView() const
 	return d->activeView;
 }
 
-void KopeteViewManager::slotRequestView(KopeteView*& v, KopeteMessageManager *kmm , KopeteMessage::MessageType type )
+void KopeteViewManager::slotRequestView(KopeteView*& v, Kopete::MessageManager *kmm , Kopete::Message::MessageType type )
 {
 	v=view(kmm, false , type);
 }

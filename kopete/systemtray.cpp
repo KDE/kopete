@@ -64,9 +64,9 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent, const char* name)
 		this, SLOT(slotNewEvent(KopeteEvent*)));
 	connect(KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()));
 
-	connect(KopeteAccountManager::manager(),
-		SIGNAL(accountOnlineStatusChanged(KopeteAccount *,
-		const KopeteOnlineStatus &, const KopeteOnlineStatus &)),
+	connect(Kopete::AccountManager::manager(),
+		SIGNAL(accountOnlineStatusChanged(Kopete::Account *,
+		const Kopete::OnlineStatus &, const Kopete::OnlineStatus &)),
 	this, SLOT(slotReevaluateAccountStates()));
 
 	//setPixmap(mKopeteIcon);
@@ -232,7 +232,7 @@ void KopeteSystemTray::addBalloon()
 
 	if( !m_balloon && KopetePrefs::prefs()->showTray() && KopetePrefs::prefs()->balloonNotify() && !mEventList.isEmpty() )
 	{
-		KopeteMessage msg = mEventList.first()->message();
+		Kopete::Message msg = mEventList.first()->message();
 
 		if ( msg.from() )
 		{
@@ -273,20 +273,20 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 	bool bOnline = false;
 	bool bAway = false;
 	bool bOffline = false;
-	KopeteContact *c = 0;
+	Kopete::Contact *c = 0;
 
-	for (QPtrListIterator<KopeteAccount> it(KopeteAccountManager::manager()->accounts()); it.current(); ++it)
+	for (QPtrListIterator<Kopete::Account> it(Kopete::AccountManager::manager()->accounts()); it.current(); ++it)
 	{
 		c = it.current()->myself();
 		if (!c)
 			continue;
 
-		if (c->onlineStatus().status() == KopeteOnlineStatus::Online)
+		if (c->onlineStatus().status() == Kopete::OnlineStatus::Online)
 		{
 			bOnline = true; // at least one contact is online
 		}
-		else if (c->onlineStatus().status() == KopeteOnlineStatus::Away
-		      || c->onlineStatus().status() == KopeteOnlineStatus::Invisible)
+		else if (c->onlineStatus().status() == Kopete::OnlineStatus::Away
+		      || c->onlineStatus().status() == Kopete::OnlineStatus::Invisible)
 		{
 			bAway = true; // at least one contact is away or invisible
 		}
@@ -321,7 +321,7 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 }
 
 
-QString KopeteSystemTray::squashMessage( const KopeteMessage& msg )
+QString KopeteSystemTray::squashMessage( const Kopete::Message& msg )
 {
 	QString msgText = msg.parsedBody();
 
@@ -332,7 +332,7 @@ QString KopeteSystemTray::squashMessage( const KopeteMessage& msg )
 		// no URLs in text, just pick the first 30 chars of
 		// the parsed text if necessary. We used parsed text
 		// so that things like "<knuff>" show correctly
-		msgText = KopeteMessage::escape( msg.plainBody() );
+		msgText = Kopete::Message::escape( msg.plainBody() );
 		if( msgText.length() > 30 )
 			msgText = msgText.left( 30 ) + QString::fromLatin1( " ..." );
 	}

@@ -36,18 +36,18 @@
 
 class KAction;
 class GaduAccount;
-class KopeteAccount;
-class KopeteMessageManager;
+namespace Kopete { class Account; }
+namespace Kopete { class MessageManager; }
 class KGaduNotify;
 class QString;
 class QStringList;
 
-class GaduContact : public KopeteContact
+class GaduContact : public Kopete::Contact
 {
 	Q_OBJECT
 
 public:
-	GaduContact( unsigned int, const QString&, KopeteAccount*, KopeteMetaContact* );
+	GaduContact( unsigned int, const QString&, Kopete::Account*, Kopete::MetaContact* );
 
 	virtual bool isReachable();
 	virtual void serialize( QMap<QString, QString>&, QMap<QString, QString>& );
@@ -76,8 +76,8 @@ public:
 public slots:
 	void slotUserInfo();
 	void slotDeleteContact();
-	void messageReceived( KopeteMessage& );
-	void messageSend( KopeteMessage&, KopeteMessageManager* );
+	void messageReceived( Kopete::Message& );
+	void messageSend( Kopete::Message&, Kopete::MessageManager* );
 	void messageAck();
 	void slotShowPublicProfile();
 	void slotEditContact();
@@ -86,14 +86,14 @@ public slots:
 
 
 protected:
-	virtual KopeteMessageManager* manager( bool canCreate = false );
+	virtual Kopete::MessageManager* manager( bool canCreate = false );
 	void initActions();
 
 private:
 	const uin_t		uin_;
 	bool 			ignored_;
 
-	KopeteMessageManager*	msgManager_;
+	Kopete::MessageManager*	msgManager_;
 	QString			description_;
 	QString			parentIdentity_;
 	GaduAccount*		account_;

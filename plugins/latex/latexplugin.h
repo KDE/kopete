@@ -29,14 +29,14 @@
 class QStringList;
 class QString;
 
-class KopeteMessage;
+namespace Kopete { class Message; }
 class LatexConfig;
 
 /**
   * @author Duncan Mac-Vicar Prett
   */
 
-class LatexPlugin : public KopetePlugin
+class LatexPlugin : public Kopete::Plugin
 {
 	Q_OBJECT
 
@@ -47,7 +47,7 @@ public:
 	~LatexPlugin();
 
 public slots:
-	void slotHandleLatex( KopeteMessage& msg );
+	void slotHandleLatex( Kopete::Message& msg );
 	void slotSettingsChanged();
 
 

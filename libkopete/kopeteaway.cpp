@@ -66,7 +66,7 @@ struct KopeteAwayPrivate
 	bool goAvailable;
 	int awayTimeout;
 	bool useAutoAway;
-	QPtrList<KopeteAccount> autoAwayAccounts;
+	QPtrList<Kopete::Account> autoAwayAccounts;
 
 	int mouse_x;
 	int mouse_y;
@@ -81,9 +81,9 @@ struct KopeteAwayPrivate
 	bool useMit;
 };
 
-KopeteAway *KopeteAway::instance = 0L;
+Kopete::Away *Kopete::Away::instance = 0L;
 
-KopeteAway::KopeteAway() : QObject( kapp , "KopeteAway")
+Kopete::Away::Away() : QObject( kapp , "Kopete::Away")
 {
 	int dummy = 0;
 	dummy = dummy; // shut up
@@ -170,17 +170,17 @@ KopeteAway::KopeteAway() : QObject( kapp , "KopeteAway")
 	setActivity();
 }
 
-KopeteAway::~KopeteAway()
+Kopete::Away::~Away()
 {
 	delete d;
 }
 
-QString KopeteAway::message()
+QString Kopete::Away::message()
 {
 	return getInstance()->d->awayMessage;
 }
 
-void KopeteAway::setGlobalAwayMessage(const QString &message)
+void Kopete::Away::setGlobalAwayMessage(const QString &message)
 {
 	if( !message.isEmpty() )
 	{
@@ -190,24 +190,24 @@ void KopeteAway::setGlobalAwayMessage(const QString &message)
 	}
 }
 
-KopeteAway *KopeteAway::getInstance()
+Kopete::Away *Kopete::Away::getInstance()
 {
 	if (!instance)
-		instance = new KopeteAway;
+		instance = new Kopete::Away;
 	return instance;
 }
 
-bool KopeteAway::globalAway()
+bool Kopete::Away::globalAway()
 {
 	return getInstance()->d->globalAway;
 }
 
-void KopeteAway::setGlobalAway(bool status)
+void Kopete::Away::setGlobalAway(bool status)
 {
 	getInstance()->d->globalAway = status;
 }
 
-void KopeteAway::save()
+void Kopete::Away::save()
 {
 	KConfig *config = KGlobal::config();
 	/* Set the away message settings in the Away Messages config group */
@@ -218,7 +218,7 @@ void KopeteAway::save()
 	emit( messagesChanged() );
 }
 
-void KopeteAway::load()
+void Kopete::Away::load()
 {
 	KConfig *config = KGlobal::config();
 	config->setGroup("AutoAway");
@@ -227,12 +227,12 @@ void KopeteAway::load()
 	d->useAutoAway=config->readBoolEntry("UseAutoAway", true);
 }
 
-QStringList KopeteAway::getMessages()
+QStringList Kopete::Away::getMessages()
 {
 	return d->awayMessageList;
 }
 
-QString KopeteAway::getMessage( uint messageNumber )
+QString Kopete::Away::getMessage( uint messageNumber )
 {
 	QStringList::iterator it = d->awayMessageList.at( messageNumber );
 	if( it != d->awayMessageList.end() )
@@ -249,7 +249,7 @@ QString KopeteAway::getMessage( uint messageNumber )
 	}
 }
 
-void KopeteAway::addMessage(const QString &message)
+void Kopete::Away::addMessage(const QString &message)
 {
 	d->awayMessageList.prepend( message );
 	if( (int)d->awayMessageList.count() > KopetePrefs::prefs()->rememberedMessages() )
@@ -257,14 +257,14 @@ void KopeteAway::addMessage(const QString &message)
 	save();
 }
 
-long int KopeteAway::idleTime()
+long int Kopete::Away::idleTime()
 {
 	//FIXME: the time is reset to zero if more than 24 hours are elapsed
 	// we can imagine someone who leave his PC for several weeks
 	return (d->idleTime.elapsed() / 1000);
 }
 
-void KopeteAway::slotTimerTimeout()
+void Kopete::Away::slotTimerTimeout()
 {
 	// Copyright (c) 1999 Martin R. Jones <mjones@kde.org>
 	//
@@ -352,7 +352,7 @@ void KopeteAway::slotTimerTimeout()
 	}
 }
 
-void KopeteAway::setActivity()
+void Kopete::Away::setActivity()
 {
 //	kdDebug(14010) << k_funcinfo << "Found activity on desktop, resetting away timer" << endl;
 	d->idleTime.start();
@@ -364,7 +364,7 @@ void KopeteAway::setActivity()
 		if (d->goAvailable)
 		{
 			d->autoAwayAccounts.setAutoDelete(false);
-			for(KopeteAccount *i=d->autoAwayAccounts.first() ; i; i=d->autoAwayAccounts.current() )
+			for(Kopete::Account *i=d->autoAwayAccounts.first() ; i; i=d->autoAwayAccounts.current() )
 			{
 				if(i->isConnected() && i->isAway()) {
 					i->setAway(false);
@@ -378,7 +378,7 @@ void KopeteAway::setActivity()
 	}
 }
 
-void KopeteAway::setAutoAway()
+void Kopete::Away::setAutoAway()
 {
 	d->mouse_x=-1; //do not go availiable automaticaly after
 
@@ -388,10 +388,10 @@ void KopeteAway::setAutoAway()
 	// Set all accounts that are not away already to away.
 	// We remember them so later we only set the accounts to
 	// available that we set to away (and not the user).
-	QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
-	for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
+	QPtrList<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts();
+	for(Kopete::Account *i=accounts.first() ; i; i=accounts.next() )
 	{
-		if(i->myself()->onlineStatus().status() == KopeteOnlineStatus::Online)
+		if(i->myself()->onlineStatus().status() == Kopete::OnlineStatus::Online)
 		{
 			d->autoAwayAccounts.append(i);
 			i->setAway( true, getInstance()->d->awayMessage);

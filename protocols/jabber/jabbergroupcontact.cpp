@@ -31,7 +31,7 @@
 /**
  * JabberGroupContact constructor
  */
-JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, JabberAccount *account, KopeteMetaContact * mc)
+JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, JabberAccount *account, Kopete::MetaContact * mc)
 				: JabberBaseContact ( XMPP::RosterItem ( rosterItem.jid().userHost () ), account, mc)
 {
 
@@ -53,7 +53,7 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 	mManager = new JabberGroupChatManager ( protocol (), subContact,
 											KopeteContactPtrList (), XMPP::Jid ( rosterItem.jid().userHost () ) );
 
-	connect ( mManager, SIGNAL ( closing ( KopeteMessageManager* ) ), this, SLOT ( slotMessageManagerDeleted () ) );
+	connect ( mManager, SIGNAL ( closing ( Kopete::MessageManager* ) ), this, SLOT ( slotMessageManagerDeleted () ) );
 
 	/**
 	 * FIXME: The first contact in the list of the message manager
@@ -76,13 +76,13 @@ JabberGroupContact::~JabberGroupContact ()
 
 	delete mManager;
 
-	for ( KopeteContact *contact = mContactList.first (); contact; contact = mContactList.next () )
+	for ( Kopete::Contact *contact = mContactList.first (); contact; contact = mContactList.next () )
 	{
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Deleting KC " << contact->contactId () << endl;
 		delete contact;
 	}
 
-	for ( KopeteMetaContact *metaContact = mMetaContactList.first (); metaContact; metaContact = mMetaContactList.next () )
+	for ( Kopete::MetaContact *metaContact = mMetaContactList.first (); metaContact; metaContact = mMetaContactList.next () )
 	{
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Deleting KMC " << metaContact->metaContactId () << endl;
 		delete metaContact;
@@ -102,7 +102,7 @@ void JabberGroupContact::rename ( const QString &/*newName*/ )
 
 }
 
-KopeteMessageManager *JabberGroupContact::manager ( bool /*canCreate*/ )
+Kopete::MessageManager *JabberGroupContact::manager ( bool /*canCreate*/ )
 {
 
 	return mManager;
@@ -111,8 +111,8 @@ KopeteMessageManager *JabberGroupContact::manager ( bool /*canCreate*/ )
 
 void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 {
-	KopeteMessage::MessageType type;
-	KopeteMessage *newMessage = 0L;
+	Kopete::Message::MessageType type;
+	Kopete::Message *newMessage = 0L;
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;
 
@@ -124,7 +124,7 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 		return;
 
 	// message type is always chat in a groupchat
-	type = KopeteMessage::Chat;
+	type = Kopete::Message::Chat;
 
 	KopeteContactPtrList contactList;
 	contactList.append ( mManager->user () );
@@ -132,10 +132,10 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 	// check for errors
 	if ( message.type () == "error" )
 	{
-		newMessage = new KopeteMessage( message.timeStamp (), this, contactList,
+		newMessage = new Kopete::Message( message.timeStamp (), this, contactList,
 										i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"").
 										arg ( message.body () ).arg ( message.error().text ),
-										message.subject(), KopeteMessage::Inbound, KopeteMessage::PlainText, type );
+										message.subject(), Kopete::Message::Inbound, Kopete::Message::PlainText, type );
 	}
 	else
 	{
@@ -161,10 +161,10 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 			subContact = addSubContact ( XMPP::RosterItem ( message.from () ), false );
 		}
 
-		// convert XMPP::Message into KopeteMessage
-		newMessage = new KopeteMessage ( message.timeStamp (), subContact, contactList, body,
-										 message.subject (), KopeteMessage::Inbound,
-										 KopeteMessage::PlainText, type );
+		// convert XMPP::Message into Kopete::Message
+		newMessage = new Kopete::Message ( message.timeStamp (), subContact, contactList, body,
+										 message.subject (), Kopete::Message::Inbound,
+										 Kopete::Message::PlainText, type );
 	}
 
 	// append message to manager
@@ -188,7 +188,7 @@ JabberBaseContact *JabberGroupContact::addSubContact ( const XMPP::RosterItem &r
 	}
 
 	// Create new meta contact that holds the group chat contact.
-	KopeteMetaContact *metaContact = new KopeteMetaContact ();
+	Kopete::MetaContact *metaContact = new Kopete::MetaContact ();
 	metaContact->setTemporary ( true );
 	mMetaContactList.append ( metaContact );
 

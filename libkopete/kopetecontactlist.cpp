@@ -38,15 +38,15 @@
 #include "kopetegroup.h"
 
 
-class KopeteContactList::KopeteContactListPrivate
+class Kopete::ContactList::KopeteContactListPrivate
 {public:
 	/** Flag:  do not save the contactlist until she is completely loaded */
 	bool loaded ;
 
-	QPtrList<KopeteMetaContact> contacts;
-	QPtrList<KopeteGroup> groups;
-	QPtrList<KopeteMetaContact> selectedMetaContacts;
-	QPtrList<KopeteGroup> selectedGroups;
+	QPtrList<Kopete::MetaContact> contacts;
+	QPtrList<Kopete::Group> groups;
+	QPtrList<Kopete::MetaContact> selectedMetaContacts;
+	QPtrList<Kopete::Group> selectedGroups;
 
 	QTimer *saveTimer;
 
@@ -56,18 +56,18 @@ class KopeteContactList::KopeteContactListPrivate
 	static const uint ContactListVersion = 10;
 };
 
-KopeteContactList *KopeteContactList::s_contactList = 0L;
+Kopete::ContactList *Kopete::ContactList::s_contactList = 0L;
 
-KopeteContactList *KopeteContactList::contactList()
+Kopete::ContactList *Kopete::ContactList::contactList()
 {
 	if( !s_contactList )
-		s_contactList = new KopeteContactList;
+		s_contactList = new Kopete::ContactList;
 
 	return s_contactList;
 }
 
-KopeteContactList::KopeteContactList()
-: QObject( kapp, "KopeteContactList" )
+Kopete::ContactList::ContactList()
+: QObject( kapp, "Kopete::ContactList" )
 {
 	d=new KopeteContactListPrivate;
 
@@ -78,21 +78,21 @@ KopeteContactList::KopeteContactList()
 	d->saveTimer = new QTimer( this, "saveTimer" );
 	connect( d->saveTimer, SIGNAL( timeout() ), SLOT ( save() ) );
 
-	connect( this, SIGNAL( metaContactAdded( KopeteMetaContact * ) ), SLOT( slotSaveLater() ) );
-	connect( this, SIGNAL( metaContactDeleted( KopeteMetaContact * ) ), SLOT( slotSaveLater() ) );
-	connect( this, SIGNAL( groupAdded( KopeteGroup * ) ), SLOT( slotSaveLater() ) );
-	connect( this, SIGNAL( groupRemoved( KopeteGroup * ) ), SLOT( slotSaveLater() ) );
-	connect( this, SIGNAL( groupRenamed( KopeteGroup *, const QString & ) ), SLOT( slotSaveLater() ) );
+	connect( this, SIGNAL( metaContactAdded( Kopete::MetaContact * ) ), SLOT( slotSaveLater() ) );
+	connect( this, SIGNAL( metaContactDeleted( Kopete::MetaContact * ) ), SLOT( slotSaveLater() ) );
+	connect( this, SIGNAL( groupAdded( Kopete::Group * ) ), SLOT( slotSaveLater() ) );
+	connect( this, SIGNAL( groupRemoved( Kopete::Group * ) ), SLOT( slotSaveLater() ) );
+	connect( this, SIGNAL( groupRenamed( Kopete::Group *, const QString & ) ), SLOT( slotSaveLater() ) );
 }
 
-KopeteContactList::~KopeteContactList()
+Kopete::ContactList::~ContactList()
 {
 	delete d;
 }
 
-KopeteMetaContact *KopeteContactList::metaContact( const QString &metaContactId ) const
+Kopete::MetaContact *Kopete::ContactList::metaContact( const QString &metaContactId ) const
 {
-	QPtrListIterator<KopeteMetaContact> it( d->contacts );
+	QPtrListIterator<Kopete::MetaContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		if( it.current()->metaContactId() == metaContactId )
@@ -102,23 +102,23 @@ KopeteMetaContact *KopeteContactList::metaContact( const QString &metaContactId 
 	return 0L;
 }
 
-KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId,
+Kopete::MetaContact *Kopete::ContactList::findContact( const QString &protocolId,
 	const QString &accountId, const QString &contactId )
 {
-	KopeteAccount *i=KopeteAccountManager::manager()->findAccount(protocolId,accountId);
+	Kopete::Account *i=Kopete::AccountManager::manager()->findAccount(protocolId,accountId);
 	if(!i)
 	{
 		kdDebug( 14010 ) << k_funcinfo << "Account not found" << endl;
 		return 0L;
 	}
-	KopeteContact *c=i->contacts()[contactId];
+	Kopete::Contact *c=i->contacts()[contactId];
 	if(c)
 		return c->metaContact();
 
 	return 0L;
 }
 
-void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
+void Kopete::ContactList::addMetaContact( Kopete::MetaContact *mc )
 {
 	if ( d->contacts.contains( mc ) )
 		return;
@@ -126,17 +126,17 @@ void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 	d->contacts.append( mc );
 
 	emit metaContactAdded( mc );
-	connect( mc, SIGNAL( persistentDataChanged( KopeteMetaContact * ) ), SLOT( slotSaveLater() ) );
-	connect( mc, SIGNAL( addedToGroup( KopeteMetaContact *, KopeteGroup * ) ), SIGNAL( metaContactAddedToGroup( KopeteMetaContact *, KopeteGroup * ) ) );
-	connect( mc, SIGNAL( removedFromGroup( KopeteMetaContact *, KopeteGroup * ) ), SIGNAL( metaContactRemovedFromGroup( KopeteMetaContact *, KopeteGroup * ) ) );
+	connect( mc, SIGNAL( persistentDataChanged( Kopete::MetaContact * ) ), SLOT( slotSaveLater() ) );
+	connect( mc, SIGNAL( addedToGroup( Kopete::MetaContact *, Kopete::Group * ) ), SIGNAL( metaContactAddedToGroup( Kopete::MetaContact *, Kopete::Group * ) ) );
+	connect( mc, SIGNAL( removedFromGroup( Kopete::MetaContact *, Kopete::Group * ) ), SIGNAL( metaContactRemovedFromGroup( Kopete::MetaContact *, Kopete::Group * ) ) );
 }
 
-void KopeteContactList::load()
+void Kopete::ContactList::load()
 {
 	loadXML();
 }
 
-void KopeteContactList::loadXML()
+void Kopete::ContactList::loadXML()
 {
 	// don't save when we're in the middle of this...
 	d->loaded = false;
@@ -181,7 +181,7 @@ void KopeteContactList::loadXML()
 		list = contactList.documentElement();
 	}
 
-	addGroup( KopeteGroup::topLevel() );
+	addGroup( Kopete::Group::topLevel() );
 
 	QDomElement element = list.firstChild().toElement();
 	while( !element.isNull() )
@@ -190,7 +190,7 @@ void KopeteContactList::loadXML()
 		{
 			//TODO: id isn't used
 			//QString id = element.attribute( "id", QString::null );
-			KopeteMetaContact *metaContact = new KopeteMetaContact();
+			Kopete::MetaContact *metaContact = new Kopete::MetaContact();
 			if ( !metaContact->fromXML( element ) )
 			{
 				delete metaContact;
@@ -198,13 +198,13 @@ void KopeteContactList::loadXML()
 			}
 			else
 			{
-				KopeteContactList::contactList()->addMetaContact(
+				Kopete::ContactList::contactList()->addMetaContact(
 					metaContact );
 			}
 		}
 		else if( element.tagName() == QString::fromLatin1("kopete-group") )
 		{
-			KopeteGroup *group = new KopeteGroup();
+			Kopete::Group *group = new Kopete::Group();
 			if( !group->fromXML( element ) )
 			{
 				delete group;
@@ -212,12 +212,12 @@ void KopeteContactList::loadXML()
 			}
 			else
 			{
-				KopeteContactList::contactList()->addGroup( group );
+				Kopete::ContactList::contactList()->addGroup( group );
 			}
 		}
 		else
 		{
-			kdWarning(14010) << "KopeteContactList::loadXML: "
+			kdWarning(14010) << "Kopete::ContactList::loadXML: "
 				<< "Unknown element '" << element.tagName()
 				<< "' in contact list!" << endl;
 		}
@@ -227,7 +227,7 @@ void KopeteContactList::loadXML()
 	d->loaded=true;
 }
 
-void KopeteContactList::convertContactList( const QString &fileName, uint /* fromVersion */, uint /* toVersion */ )
+void Kopete::ContactList::convertContactList( const QString &fileName, uint /* fromVersion */, uint /* toVersion */ )
 {
 	// For now, ignore fromVersion and toVersion. These are meant for future
 	// changes to allow incremental (multi-pass) conversion so we don't have
@@ -603,16 +603,16 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 	contactListFile.close();
 }
 
-void KopeteContactList::save()
+void Kopete::ContactList::save()
 {
 	saveXML();
 }
 
-void KopeteContactList::saveXML()
+void Kopete::ContactList::saveXML()
 {
 	if(!d->loaded)
 	{
-		kdDebug(14010) << "KopeteContactList::saveXML: contactlist not loaded, abort saving" << endl;
+		kdDebug(14010) << "Kopete::ContactList::saveXML: contactlist not loaded, abort saving" << endl;
 		return;
 	}
 
@@ -632,12 +632,12 @@ void KopeteContactList::saveXML()
 		}
 		else
 		{
-			kdDebug(14010) << "KopeteContactList::saveXML: failed to write contactlist, error code is: " << contactListFile.status() << endl;
+			kdDebug(14010) << "Kopete::ContactList::saveXML: failed to write contactlist, error code is: " << contactListFile.status() << endl;
 		}
 	}
 	else
 	{
-		kdWarning(14010) << "KopeteContactList::saveXML: Couldn't open contact list file "
+		kdWarning(14010) << "Kopete::ContactList::saveXML: Couldn't open contact list file "
 			<< contactListFileName << ". Contact list not saved." << endl;
 	}
 
@@ -645,28 +645,28 @@ void KopeteContactList::saveXML()
 	d->saveTimer->start( 60000, true /* single-shot: will get restarted by us next time if it's still failing */ );
 }
 
-const QDomDocument KopeteContactList::toXML()
+const QDomDocument Kopete::ContactList::toXML()
 {
 	QDomDocument doc;
 	doc.appendChild( doc.createElement( QString::fromLatin1("kopete-contact-list") ) );
 	doc.documentElement().setAttribute( QString::fromLatin1("version"), QString::fromLatin1("1.0"));
 
 	// Save group information. ie: Open/Closed, pehaps later icons? Who knows.
-	for( KopeteGroup *g = d->groups.first(); g; g = d->groups.next() )
+	for( Kopete::Group *g = d->groups.first(); g; g = d->groups.next() )
 		doc.documentElement().appendChild( doc.importNode( g->toXML(), true ) );
 
 	// Save metacontact information.
-	for( KopeteMetaContact *m = d->contacts.first(); m; m = d->contacts.next() )
+	for( Kopete::MetaContact *m = d->contacts.first(); m; m = d->contacts.next() )
 		if( !m->isTemporary() )
 			doc.documentElement().appendChild( doc.importNode( m->toXML(), true ) );
 
 	return doc;
 }
 
-QStringList KopeteContactList::contacts() const
+QStringList Kopete::ContactList::contacts() const
 {
 	QStringList contacts;
-	QPtrListIterator<KopeteMetaContact> it( d->contacts );
+	QPtrListIterator<Kopete::MetaContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		contacts.append( it.current()->displayName() );
@@ -674,10 +674,10 @@ QStringList KopeteContactList::contacts() const
 	return contacts;
 }
 
-QStringList KopeteContactList::contactStatuses() const
+QStringList Kopete::ContactList::contactStatuses() const
 {
 	QStringList meta_contacts;
-	QPtrListIterator<KopeteMetaContact> it( d->contacts );
+	QPtrListIterator<Kopete::MetaContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		meta_contacts.append( QString::fromLatin1( "%1 (%2)" ).
@@ -686,10 +686,10 @@ QStringList KopeteContactList::contactStatuses() const
 	return meta_contacts;
 }
 
-QStringList KopeteContactList::reachableContacts() const
+QStringList Kopete::ContactList::reachableContacts() const
 {
 	QStringList contacts;
-	QPtrListIterator<KopeteMetaContact> it( d->contacts );
+	QPtrListIterator<Kopete::MetaContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		if ( it.current()->isReachable() )
@@ -698,16 +698,16 @@ QStringList KopeteContactList::reachableContacts() const
 	return contacts;
 }
 
-QPtrList<KopeteContact> KopeteContactList::onlineContacts() const
+QPtrList<Kopete::Contact> Kopete::ContactList::onlineContacts() const
 {
-	QPtrList<KopeteContact> result;
-	QPtrListIterator<KopeteMetaContact> it( d->contacts );
+	QPtrList<Kopete::Contact> result;
+	QPtrListIterator<Kopete::MetaContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		if ( it.current()->isOnline() )
 		{
-			QPtrList<KopeteContact> contacts = it.current()->contacts();
-			QPtrListIterator<KopeteContact> cit( contacts );
+			QPtrList<Kopete::Contact> contacts = it.current()->contacts();
+			QPtrListIterator<Kopete::Contact> cit( contacts );
 			for( ; cit.current(); ++cit )
 			{
 				if ( cit.current()->isOnline() )
@@ -718,10 +718,10 @@ QPtrList<KopeteContact> KopeteContactList::onlineContacts() const
 	return result;
 }
 
-QPtrList<KopeteMetaContact> KopeteContactList::onlineMetaContacts() const
+QPtrList<Kopete::MetaContact> Kopete::ContactList::onlineMetaContacts() const
 {
-	QPtrList<KopeteMetaContact> result;
-	QPtrListIterator<KopeteMetaContact> it( d->contacts );
+	QPtrList<Kopete::MetaContact> result;
+	QPtrListIterator<Kopete::MetaContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		if ( it.current()->isOnline() )
@@ -730,17 +730,17 @@ QPtrList<KopeteMetaContact> KopeteContactList::onlineMetaContacts() const
 	return result;
 }
 
-QPtrList<KopeteMetaContact> KopeteContactList::onlineMetaContacts( const QString &protocolId ) const
+QPtrList<Kopete::MetaContact> Kopete::ContactList::onlineMetaContacts( const QString &protocolId ) const
 {
-	QPtrList<KopeteMetaContact> result;
-	QPtrListIterator<KopeteMetaContact> it( d->contacts );
+	QPtrList<Kopete::MetaContact> result;
+	QPtrListIterator<Kopete::MetaContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		// FIXME: This loop is not very efficient :(
 		if ( it.current()->isOnline() )
 		{
-			QPtrList<KopeteContact> contacts = it.current()->contacts();
-			QPtrListIterator<KopeteContact> cit( contacts );
+			QPtrList<Kopete::Contact> contacts = it.current()->contacts();
+			QPtrListIterator<Kopete::Contact> cit( contacts );
 			for( ; cit.current(); ++cit )
 			{
 				if( cit.current()->isOnline() && cit.current()->protocol()->pluginId() == protocolId )
@@ -751,17 +751,17 @@ QPtrList<KopeteMetaContact> KopeteContactList::onlineMetaContacts( const QString
 	return result;
 }
 
-QPtrList<KopeteContact> KopeteContactList::onlineContacts( const QString &protocolId ) const
+QPtrList<Kopete::Contact> Kopete::ContactList::onlineContacts( const QString &protocolId ) const
 {
-	QPtrList<KopeteContact> result;
-	QPtrListIterator<KopeteMetaContact> it( d->contacts );
+	QPtrList<Kopete::Contact> result;
+	QPtrListIterator<Kopete::MetaContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		// FIXME: This loop is not very efficient :(
 		if ( it.current()->isOnline() )
 		{
-			QPtrList<KopeteContact> contacts = it.current()->contacts();
-			QPtrListIterator<KopeteContact> cit( contacts );
+			QPtrList<Kopete::Contact> contacts = it.current()->contacts();
+			QPtrListIterator<Kopete::Contact> cit( contacts );
 			for( ; cit.current(); ++cit )
 			{
 				if( cit.current()->isOnline() && cit.current()->protocol()->pluginId() == protocolId )
@@ -772,10 +772,10 @@ QPtrList<KopeteContact> KopeteContactList::onlineContacts( const QString &protoc
 	return result;
 }
 
-QStringList KopeteContactList::fileTransferContacts() const
+QStringList Kopete::ContactList::fileTransferContacts() const
 {
 	QStringList contacts;
-	QPtrListIterator<KopeteMetaContact> it( d->contacts );
+	QPtrListIterator<Kopete::MetaContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 		if ( it.current()->canAcceptFiles() )
@@ -784,32 +784,32 @@ QStringList KopeteContactList::fileTransferContacts() const
 	return contacts;
 }
 
-void KopeteContactList::sendFile( const QString &displayName, const KURL &sourceURL,
+void Kopete::ContactList::sendFile( const QString &displayName, const KURL &sourceURL,
 	const QString &altFileName, const long unsigned int fileSize)
 {
 //	kdDebug(14010) << "Send To Display Name: " << displayName << "\n";
 
-	KopeteMetaContact *c = findContactByDisplayName( displayName );
+	Kopete::MetaContact *c = findContactByDisplayName( displayName );
 	if( c )
 		c->sendFile( sourceURL, altFileName, fileSize );
 }
 
-void KopeteContactList::messageContact( const QString &contactId, const QString &messageText )
+void Kopete::ContactList::messageContact( const QString &contactId, const QString &messageText )
 {
-	KopeteMetaContact *mc = findMetaContactByContactId( contactId );
+	Kopete::MetaContact *mc = findMetaContactByContactId( contactId );
 	if (!mc) return;
 
-	KopeteContact *c = mc->execute(); //We need to know which contact was chosen as the preferred in order to message it
+	Kopete::Contact *c = mc->execute(); //We need to know which contact was chosen as the preferred in order to message it
 	if (!c) return;
 
-	KopeteMessage msg(c->account()->myself(), c, messageText, KopeteMessage::Outbound);
+	Kopete::Message msg(c->account()->myself(), c, messageText, Kopete::Message::Outbound);
 	c->manager(true)->sendMessage(msg);
 
 }
 
-KopeteMetaContact *KopeteContactList::findContactByDisplayName( const QString &displayName )
+Kopete::MetaContact *Kopete::ContactList::findContactByDisplayName( const QString &displayName )
 {
-	QPtrListIterator<KopeteMetaContact> it( d->contacts );
+	QPtrListIterator<Kopete::MetaContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
 //		kdDebug(14010) << "Display Name: " << it.current()->displayName() << "\n";
@@ -821,14 +821,14 @@ KopeteMetaContact *KopeteContactList::findContactByDisplayName( const QString &d
 	return 0L;
 }
 
-KopeteMetaContact* KopeteContactList::findMetaContactByContactId( const QString &contactId )
+Kopete::MetaContact* Kopete::ContactList::findMetaContactByContactId( const QString &contactId )
 {
-	QPtrListIterator<KopeteMetaContact> it( d->contacts );
+	QPtrListIterator<Kopete::MetaContact> it( d->contacts );
 	//FIXME: This loop isn't very efficient
 	for ( ; it.current(); ++it )
 	{
-		QPtrList<KopeteContact> cl = it.current()->contacts();
-		QPtrListIterator<KopeteContact> kcit ( cl );
+		QPtrList<Kopete::Contact> cl = it.current()->contacts();
+		QPtrListIterator<Kopete::Contact> kcit ( cl );
 
 		for ( ; kcit.current(); ++kcit )
 		{
@@ -839,17 +839,17 @@ KopeteMetaContact* KopeteContactList::findMetaContactByContactId( const QString 
 	return 0L;
 }
 
-QStringList KopeteContactList::contactFileProtocols(const QString &displayName)
+QStringList Kopete::ContactList::contactFileProtocols(const QString &displayName)
 {
 //	kdDebug(14010) << "Get contacts for: " << displayName << "\n";
 	QStringList protocols;
 
-	KopeteMetaContact *c = findContactByDisplayName( displayName );
+	Kopete::MetaContact *c = findContactByDisplayName( displayName );
 	if( c )
 	{
-		QPtrList<KopeteContact> mContacts = c->contacts();
+		QPtrList<Kopete::Contact> mContacts = c->contacts();
 		kdDebug(14010) << mContacts.count() << endl;
-		QPtrListIterator<KopeteContact> jt( mContacts );
+		QPtrListIterator<Kopete::Contact> jt( mContacts );
 		for ( ; jt.current(); ++jt )
 		{
 			kdDebug(14010) << "1" << jt.current()->protocol()->pluginId() << endl;
@@ -864,12 +864,12 @@ QStringList KopeteContactList::contactFileProtocols(const QString &displayName)
 }
 
 
-KopeteGroupList KopeteContactList::groups() const
+Kopete::GroupList Kopete::ContactList::groups() const
 {
 	return d->groups;
 }
 
-void KopeteContactList::removeMetaContact(KopeteMetaContact *m)
+void Kopete::ContactList::removeMetaContact(Kopete::MetaContact *m)
 {
 	if ( !d->contacts.contains(m) )
 	{
@@ -884,8 +884,8 @@ void KopeteContactList::removeMetaContact(KopeteMetaContact *m)
 	}
 
 	//removes subcontact from server here and now.
-	QPtrList<KopeteContact> cts=m->contacts();
-	for( KopeteContact *c = cts.first(); c; c = cts.next() )
+	QPtrList<Kopete::Contact> cts=m->contacts();
+	for( Kopete::Contact *c = cts.first(); c; c = cts.next() )
 	{
 		c->slotDeleteContact();
 	}
@@ -895,22 +895,22 @@ void KopeteContactList::removeMetaContact(KopeteMetaContact *m)
 	m->deleteLater();
 }
 
-QPtrList<KopeteMetaContact> KopeteContactList::metaContacts() const
+QPtrList<Kopete::MetaContact> Kopete::ContactList::metaContacts() const
 {
 	return d->contacts;
 }
 
-void KopeteContactList::addGroup( KopeteGroup * g )
+void Kopete::ContactList::addGroup( Kopete::Group * g )
 {
 	if(!d->groups.contains(g) )
 	{
 		d->groups.append( g );
 		emit groupAdded( g );
-		connect( g , SIGNAL ( renamed(KopeteGroup* , const QString & )) , this , SIGNAL ( groupRenamed(KopeteGroup* , const QString & )) ) ;
+		connect( g , SIGNAL ( renamed(Kopete::Group* , const QString & )) , this , SIGNAL ( groupRenamed(Kopete::Group* , const QString & )) ) ;
 	}
 }
 
-void KopeteContactList::removeGroup( KopeteGroup *g )
+void Kopete::ContactList::removeGroup( Kopete::Group *g )
 {
 	if ( d->selectedGroups.contains( g ) )
 	{
@@ -923,26 +923,26 @@ void KopeteContactList::removeGroup( KopeteGroup *g )
 	delete g;
 }
 
-KopeteGroup * KopeteContactList::getGroup(const QString& displayName, int type)
+Kopete::Group * Kopete::ContactList::getGroup(const QString& displayName, int type)
 {
-	if( type == KopeteGroup::Temporary )
-		return KopeteGroup::temporary();
+	if( type == Kopete::Group::Temporary )
+		return Kopete::Group::temporary();
 
-	KopeteGroup *groupIterator;
+	Kopete::Group *groupIterator;
 	for ( groupIterator = d->groups.first(); groupIterator; groupIterator = d->groups.next() )
 	{
 		if( groupIterator->type() == type && groupIterator->displayName() == displayName )
 			return groupIterator;
 	}
 
-	KopeteGroup *newGroup = new KopeteGroup( displayName, (KopeteGroup::GroupType)type );
+	Kopete::Group *newGroup = new Kopete::Group( displayName, (Kopete::Group::GroupType)type );
 	addGroup( newGroup );
 	return  newGroup;
 }
 
-KopeteGroup * KopeteContactList::getGroup(unsigned int groupId)
+Kopete::Group * Kopete::ContactList::getGroup(unsigned int groupId)
 {
-	KopeteGroup *groupIterator;
+	Kopete::Group *groupIterator;
 	for ( groupIterator = d->groups.first(); groupIterator; groupIterator = d->groups.next() )
 	{
 		if( groupIterator->groupId()==groupId )
@@ -951,17 +951,17 @@ KopeteGroup * KopeteContactList::getGroup(unsigned int groupId)
 	return 0L;
 }
 
-QPtrList<KopeteMetaContact> KopeteContactList::selectedMetaContacts() const
+QPtrList<Kopete::MetaContact> Kopete::ContactList::selectedMetaContacts() const
 {
 	return d->selectedMetaContacts;
 }
-KopeteGroupList KopeteContactList::selectedGroups() const
+Kopete::GroupList Kopete::ContactList::selectedGroups() const
 {
 	return d->selectedGroups;
 }
 
 
-void KopeteContactList::setSelectedItems(QPtrList<KopeteMetaContact> metaContacts , KopeteGroupList groups)
+void Kopete::ContactList::setSelectedItems(QPtrList<Kopete::MetaContact> metaContacts , Kopete::GroupList groups)
 {
 	kdDebug( 14010 ) << k_funcinfo << metaContacts.count() << " metacontacts, " << groups.count() << " groups selected" << endl;
 	d->selectedMetaContacts=metaContacts;
@@ -972,17 +972,17 @@ void KopeteContactList::setSelectedItems(QPtrList<KopeteMetaContact> metaContact
 }
 
 
-void KopeteContactList::slotSaveLater()
+void Kopete::ContactList::slotSaveLater()
 {
 	// if we already have a save scheduled, it will be cancelled. either way,
 	// start a timer to save the contact list a bit later.
 	d->saveTimer->start( 1000 /* 1 second */, true /* single-shot */ );
 }
 
-void KopeteContactList::slotKABCChanged()
+void Kopete::ContactList::slotKABCChanged()
 {
 	// call syncWithKABC on each metacontact to check if its associated kabc entry has changed.
-	for ( KopeteMetaContact * mc = d->contacts.first(); mc; mc = d->contacts.next() )
+	for ( Kopete::MetaContact * mc = d->contacts.first(); mc; mc = d->contacts.next() )
 	{
 		mc->syncWithKABC();
 	}

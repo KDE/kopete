@@ -32,7 +32,7 @@
 #include "nowlisteningplugin.h"
 #include "nowlisteningguiclient.h"
 
-NowListeningGUIClient::NowListeningGUIClient( KopeteMessageManager *parent )
+NowListeningGUIClient::NowListeningGUIClient( Kopete::MessageManager *parent )
 		: QObject(parent) , KXMLGUIClient(parent)
 {
 	m_msgManager = parent;

@@ -57,11 +57,11 @@ void HistoryPlugin::convertOldHistory()
 		QString protocolId;
 		QString accountId;
 
-		if( KopeteProtocol *p = dynamic_cast<KopeteProtocol *>( KopetePluginManager::self()->plugin( fi->fileName() ) ) )
+		if( Kopete::Protocol *p = dynamic_cast<Kopete::Protocol *>( Kopete::PluginManager::self()->plugin( fi->fileName() ) ) )
 		{
 			protocolId=p->pluginId();
-			QDictIterator<KopeteAccount> it(KopeteAccountManager::manager()->accounts(p));
-			KopeteAccount *a = it.current();
+			QDictIterator<Kopete::Account> it(Kopete::AccountManager::manager()->accounts(p));
+			Kopete::Account *a = it.current();
 			if(a)
 				accountId=a->accountId();
 		}
@@ -133,7 +133,7 @@ void HistoryPlugin::convertOldHistory()
 					QDomElement msgelement;
 					QDomNode node;
 					QDomDocument xmllist;
-					KopeteMessage::MessageDirection dir;
+					Kopete::Message::MessageDirection dir;
 					QString body, date, nick;
 					QString buffer, msgBlock;
 					char cbuf[CBUFLENGTH]; // buffer for the log file
@@ -179,9 +179,9 @@ void HistoryPlugin::convertOldHistory()
 							node = msgelement.firstChild();
 
 							if( msgelement.attribute( QString::fromLatin1( "direction" ) ) == QString::fromLatin1( "inbound" ) )
-								dir = KopeteMessage::Inbound;
+								dir = Kopete::Message::Inbound;
 							else
-								dir = KopeteMessage::Outbound;
+								dir = Kopete::Message::Outbound;
 
 							// Read all the elements.
 							QString tagname;
@@ -258,8 +258,8 @@ void HistoryPlugin::convertOldHistory()
 								headElem.appendChild(importElem);
 							}
 							QDomElement msgElem = doc.createElement( "msg" );
-							msgElem.setAttribute( "in",  dir==KopeteMessage::Outbound ? "0" : "1" );
-							msgElem.setAttribute( "from", dir==KopeteMessage::Outbound ? accountId : contactId  );
+							msgElem.setAttribute( "in",  dir==Kopete::Message::Outbound ? "0" : "1" );
+							msgElem.setAttribute( "from", dir==Kopete::Message::Outbound ? accountId : contactId  );
 							msgElem.setAttribute( "nick",  nick ); //do we have to set this?
 							msgElem.setAttribute( "time",  QString::number(dt.date().day()) + " " +  QString::number(dt.time().hour()) + ":" + QString::number(dt.time().minute())  );
 							QDomText msgNode = doc.createTextNode( body.stripWhiteSpace() );
@@ -322,7 +322,7 @@ bool HistoryPlugin::detectOldHistory()
 	QFileInfo *fi;
 	while ( (fi = it.current()) != 0 )
 	{
-		if( dynamic_cast<KopeteProtocol *>( KopetePluginManager::self()->plugin( fi->fileName() ) ) )
+		if( dynamic_cast<Kopete::Protocol *>( Kopete::PluginManager::self()->plugin( fi->fileName() ) ) )
 			return true;
 
 		if(fi->fileName() == "MSNProtocol" || fi->fileName() == "msn_logs" )

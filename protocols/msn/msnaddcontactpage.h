@@ -23,7 +23,7 @@ public:
 	QLabel *noaddMsg2;
 	bool canadd;
 	virtual bool validateData();
-	virtual bool apply( KopeteAccount*, KopeteMetaContact* );
+	virtual bool apply( Kopete::Account*, Kopete::MetaContact* );
 
 };
 

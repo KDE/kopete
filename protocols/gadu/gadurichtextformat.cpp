@@ -138,7 +138,7 @@ GaduRichTextFormat::formatClosingTag( const QString& tag )
 
 // the initial idea stolen from IRC plugin
 KGaduMessage*
-GaduRichTextFormat::convertToGaduMessage( const KopeteMessage& message )
+GaduRichTextFormat::convertToGaduMessage( const Kopete::Message& message )
 {
 	QString htmlString = message.escapedBody();
 	KGaduMessage* output = new KGaduMessage;
@@ -244,7 +244,7 @@ QString
 GaduRichTextFormat::unescapeGaduMessage( QString& ns )
 {
 	QString s;
-	s = KopeteMessage::unescape( ns );
+	s = Kopete::Message::unescape( ns );
 	s.replace( QString::fromAscii( "\n" ), QString::fromAscii( "\r\n" ) );
 	return s;
 }

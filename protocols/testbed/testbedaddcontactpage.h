@@ -19,8 +19,8 @@
 
 #include <addcontactpage.h>
 
-class KopeteAccount;
-class KopeteMetaContact;
+namespace Kopete { class Account; }
+namespace Kopete { class MetaContact; }
 class TestbedAddUI;
 
 /**
@@ -37,7 +37,7 @@ public:
     /**
 	 * Make a contact out of the entered data
 	 */
-	virtual bool apply(KopeteAccount* a, KopeteMetaContact* m);
+	virtual bool apply(Kopete::Account* a, Kopete::MetaContact* m);
 	/**
 	 * Is the data correct?
 	 */

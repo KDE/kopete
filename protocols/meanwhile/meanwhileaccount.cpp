@@ -41,7 +41,7 @@ MeanwhileAccount::MeanwhileAccount(
                         MeanwhileProtocol *parent, 
                         const QString &accountID, 
                         const char *name)
-    : KopeteAccount ( parent, accountID , name )
+    : Kopete::Account ( parent, accountID , name )
 {
     //signal(SIGSEGV,SIG_DFL);
     //LOG("MeanwhileAccount");
@@ -102,7 +102,7 @@ void MeanwhileAccount::setPlugin(MeanwhilePlugin *plugin)
 bool MeanwhileAccount::addContactToMetaContact(
                         const QString & contactId , 
                         const QString & displayName , 
-                        KopeteMetaContact * parentContact)
+                        Kopete::MetaContact * parentContact)
 {
 	MeanwhileContact* newContact = 
                 new MeanwhileContact(contactId,
@@ -235,19 +235,19 @@ void MeanwhileAccount::meanwhileGoOffline()
     }
     myself()->setOnlineStatus(MeanwhileProtocol::protocol()->meanwhileOffline);
 
-    QDictIterator<KopeteContact> it(contacts()); 
+    QDictIterator<Kopete::Contact> it(contacts()); 
 
     for( ; it.current(); ++it )
     {
-        KopeteContact *contact = 
-                static_cast<KopeteContact *>(it.current());
+        Kopete::Contact *contact = 
+                static_cast<Kopete::Contact *>(it.current());
         contact->setOnlineStatus(MeanwhileProtocol::protocol()->meanwhileOffline);
     }
 }
 
 void MeanwhileAccount::meanwhileGoAway()
 {
-    meanwhileGoAway(KopeteAway::getInstance()->message());
+    meanwhileGoAway(Kopete::Away::getInstance()->message());
 }
 
 void MeanwhileAccount::meanwhileGoAway(const QString &statusmsg)
@@ -300,16 +300,16 @@ void MeanwhileAccount::slotMesgReceived(
 {
     MeanwhileContact *contact = static_cast<MeanwhileContact *>(contacts()[fromUser]);
     if(!contact)
-        addContact( fromUser, fromUser, 0L, KopeteAccount::DontChangeKABC, QString::null, true );
+        addContact( fromUser, fromUser, 0L, Kopete::Account::DontChangeKABC, QString::null, true );
 
     contact = static_cast<MeanwhileContact *>(contacts()[fromUser]);
-    // Create a KopeteMessage
+    // Create a Kopete::Message
     KopeteContactPtrList contactList;
     contactList.append( myself() );
-    KopeteMessage newMessage( contact, contactList, msg, KopeteMessage::Inbound );
+    Kopete::Message newMessage( contact, contactList, msg, Kopete::Message::Inbound );
 
     // Add it to the manager
-    KopeteMessageManager *mm = contact->manager();
+    Kopete::MessageManager *mm = contact->manager();
     mm->appendMessage(newMessage);
 }
 
@@ -319,15 +319,15 @@ void MeanwhileAccount::slotUserTyping(
 {
     MeanwhileContact *contact = static_cast<MeanwhileContact *>(contacts()[user]);
     if(!contact)
-        addContact( user, user, 0L, KopeteAccount::DontChangeKABC, QString::null, true );
+        addContact( user, user, 0L, Kopete::Account::DontChangeKABC, QString::null, true );
 
     contact = static_cast<MeanwhileContact *>(contacts()[user]);
-    // Create a KopeteMessage
+    // Create a Kopete::Message
     KopeteContactPtrList contactList;
     contactList.append( myself() );
 
     // Add it to the manager
-    KopeteMessageManager *mm = contact->manager();
+    Kopete::MessageManager *mm = contact->manager();
     mm->receivedTypingMsg(contact, isTyping);
 }
 

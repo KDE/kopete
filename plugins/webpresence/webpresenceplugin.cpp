@@ -51,13 +51,13 @@ typedef KGenericFactory<WebPresencePlugin> WebPresencePluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_webpresence, WebPresencePluginFactory( "kopete_webpresence" )  )
 
 WebPresencePlugin::WebPresencePlugin( QObject *parent, const char *name, const QStringList& /*args*/ )
-: KopetePlugin( WebPresencePluginFactory::instance(), parent, name )
+: Kopete::Plugin( WebPresencePluginFactory::instance(), parent, name )
 {
 	m_writeScheduler = new QTimer( this );
 	connect ( m_writeScheduler, SIGNAL( timeout() ), this, SLOT( slotWriteFile() ) );
-	connect( KopeteAccountManager::manager(), SIGNAL(accountReady(KopeteAccount*)),
+	connect( Kopete::AccountManager::manager(), SIGNAL(accountReady(Kopete::Account*)),
 				this, SLOT( listenToAllAccounts() ) );
-	connect( KopeteAccountManager::manager(), SIGNAL(accountUnregistered(KopeteAccount*)),
+	connect( Kopete::AccountManager::manager(), SIGNAL(accountUnregistered(Kopete::Account*)),
 				this, SLOT( listenToAllAccounts() ) );
 	
 
@@ -91,13 +91,13 @@ void WebPresencePlugin::loadSettings()
 void WebPresencePlugin::listenToAllAccounts()
 {
 	// connect to signals notifying of all accounts' status changes
-	QPtrList<KopeteProtocol> protocols = allProtocols();
-	for ( KopeteProtocol *p = protocols.first();
+	QPtrList<Kopete::Protocol> protocols = allProtocols();
+	for ( Kopete::Protocol *p = protocols.first();
 			p; p = protocols.next() )
 	{
-		QDict<KopeteAccount> dict=KopeteAccountManager::manager()->accounts( p );
-		QDictIterator<KopeteAccount> it( dict );
-		for( ; KopeteAccount *account=it.current(); ++it )
+		QDict<Kopete::Account> dict=Kopete::AccountManager::manager()->accounts( p );
+		QDictIterator<Kopete::Account> it( dict );
+		for( ; Kopete::Account *account=it.current(); ++it )
 		{
 			 listenToAccount( account );
 		}
@@ -105,22 +105,22 @@ void WebPresencePlugin::listenToAllAccounts()
 	slotWaitMoreStatusChanges();
 }
 
-void WebPresencePlugin::listenToAccount( KopeteAccount* account )
+void WebPresencePlugin::listenToAccount( Kopete::Account* account )
 {
 	if(account && account->myself())
 	{
 		// Connect to the account's status changed signal
 		// because we can't know if the account has already connected
 		QObject::disconnect( account->myself(),
-						SIGNAL(onlineStatusChanged( KopeteContact *,
-								const KopeteOnlineStatus &,
-								const KopeteOnlineStatus & ) ),
+						SIGNAL(onlineStatusChanged( Kopete::Contact *,
+								const Kopete::OnlineStatus &,
+								const Kopete::OnlineStatus & ) ),
 						this,
 						SLOT( slotWaitMoreStatusChanges() ) ) ;
 		QObject::connect( account->myself(),
-						SIGNAL(onlineStatusChanged( KopeteContact *,
-								const KopeteOnlineStatus &,
-								const KopeteOnlineStatus & ) ),
+						SIGNAL(onlineStatusChanged( Kopete::Contact *,
+								const Kopete::OnlineStatus &,
+								const Kopete::OnlineStatus & ) ),
 						this,
 						SLOT( slotWaitMoreStatusChanges() ) );
 	}
@@ -219,12 +219,12 @@ KTempFile* WebPresencePlugin::generateFile()
 	QDomElement accounts = doc.createElement( "accounts" );
 	root.appendChild( accounts );
 
-	QPtrList<KopeteAccount> list = KopeteAccountManager::manager()->accounts();
+	QPtrList<Kopete::Account> list = Kopete::AccountManager::manager()->accounts();
 	// If no accounts, stop here
 	if ( !list.isEmpty() )
 	{
-		for( QPtrListIterator<KopeteAccount> it( list );
-			 KopeteAccount *account=it.current();
+		for( QPtrListIterator<Kopete::Account> it( list );
+			 Kopete::Account *account=it.current();
 			 ++it )
 		{
 			QDomElement acc = doc.createElement( "account" );
@@ -236,7 +236,7 @@ KTempFile* WebPresencePlugin::generateFile()
 		protoName.appendChild( protoNameText );
 		acc.appendChild( protoName );
 
-			KopeteContact* me = account->myself();
+			Kopete::Contact* me = account->myself();
 			QDomElement accName = doc.createElement( "accountname" );
 			QDomText accNameText = doc.createTextNode( ( me )
 					? me->displayName().latin1()
@@ -349,32 +349,32 @@ bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
 #endif
 }
 
-QPtrList<KopeteProtocol> WebPresencePlugin::allProtocols()
+QPtrList<Kopete::Protocol> WebPresencePlugin::allProtocols()
 {
 	kdDebug( 14309 ) << k_funcinfo << endl;
 
-	QMap<KPluginInfo *, KopetePlugin *> plugins = KopetePluginManager::self()->loadedPlugins( "Protocols" );
-	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
-	QPtrList<KopeteProtocol> result;
+	QMap<KPluginInfo *, Kopete::Plugin *> plugins = Kopete::PluginManager::self()->loadedPlugins( "Protocols" );
+	QMap<KPluginInfo *, Kopete::Plugin *>::ConstIterator it;
+	QPtrList<Kopete::Protocol> result;
 	for ( it = plugins.begin(); it != plugins.end(); ++it )
-		result.append( static_cast<KopeteProtocol *>( it.data() ) );
+		result.append( static_cast<Kopete::Protocol *>( it.data() ) );
 
 	return result;
 }
 
-QString WebPresencePlugin::statusAsString( const KopeteOnlineStatus &newStatus )
+QString WebPresencePlugin::statusAsString( const Kopete::OnlineStatus &newStatus )
 {
 	QString status;
 	switch ( newStatus.status() )
 	{
-	case KopeteOnlineStatus::Online:
+	case Kopete::OnlineStatus::Online:
 		status = "ONLINE";
 		break;
-	case KopeteOnlineStatus::Away:
+	case Kopete::OnlineStatus::Away:
 		status = "AWAY";
 		break;
-	case KopeteOnlineStatus::Offline:
-	case KopeteOnlineStatus::Invisible:
+	case Kopete::OnlineStatus::Offline:
+	case Kopete::OnlineStatus::Invisible:
 		status = "OFFLINE";
 		break;
 	default:

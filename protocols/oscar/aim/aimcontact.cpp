@@ -34,7 +34,7 @@
 #include "aimuserinfo.h"
 #include "aim.h" //for tocNormalize
 
-AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount *acc, KopeteMetaContact *parent)
+AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount *acc, Kopete::MetaContact *parent)
 	 : OscarContact(name, displayName, acc, parent)
 {
 	mProtocol=static_cast<AIMProtocol *>(protocol());
@@ -211,7 +211,7 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 	if(u.userclass & CLASS_AWAY)
 	{
 		if((this != account()->myself()) &&
-		(account()->myself()->onlineStatus().status() != KopeteOnlineStatus::Connecting))
+		(account()->myself()->onlineStatus().status() != Kopete::OnlineStatus::Connecting))
 		{
 			// request away message
 			mAccount->engine()->sendUserLocationInfoRequest(contactName(),
@@ -236,7 +236,7 @@ void AIMContact::slotOffgoingBuddy(QString sn)
 	setStatus(OSCAR_OFFLINE);
 }
 
-void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
+void AIMContact::slotSendMsg(Kopete::Message& message, Kopete::MessageManager *)
 {
 	if (message.plainBody().isEmpty()) // no text, do nothing
 		return;

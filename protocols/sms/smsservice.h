@@ -24,7 +24,7 @@
 #include "kopetemessage.h"
 
 class SMSContact;
-class KopeteAccount;
+namespace Kopete { class Account; }
 class QGridLayout;
 class QWidget;
 
@@ -32,7 +32,7 @@ class SMSService : public QObject
 {
 	Q_OBJECT
 public:
-	SMSService(KopeteAccount* account = 0);
+	SMSService(Kopete::Account* account = 0);
 	virtual ~SMSService();
 
 	/**
@@ -41,7 +41,7 @@ public:
 	 *
 	 * Don't forget to call SMSService::setAccount(...) after you've finished.
 	 */
-	virtual void setAccount(KopeteAccount* account);
+	virtual void setAccount(Kopete::Account* account);
 
 	/**
 	 * Called when the settings widget has a place to be. @param parent is the
@@ -50,7 +50,7 @@ public:
 	 */
 	virtual void setWidgetContainer(QWidget* parent, QGridLayout* layout) = 0;
 
-	virtual void send(const KopeteMessage& msg) = 0;
+	virtual void send(const Kopete::Message& msg) = 0;
 	virtual int maxSize() = 0;
 	virtual const QString& description() = 0;
 
@@ -58,11 +58,11 @@ public slots:
 	virtual void savePreferences() = 0;
 
 signals:
-	void messageSent(const KopeteMessage &);
-	void messageNotSent(const KopeteMessage &, const QString &);
+	void messageSent(const Kopete::Message &);
+	void messageNotSent(const Kopete::Message &, const QString &);
 
 protected:
-	KopeteAccount* m_account;
+	Kopete::Account* m_account;
 	QGridLayout* m_layout;
 	QWidget* m_parent;
 };

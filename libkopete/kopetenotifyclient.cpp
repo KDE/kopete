@@ -307,7 +307,7 @@ int KNotifyClient::userEvent(int winId, const QString &text, int present,
 }*/
 
 int KNotifyClient::event(int winId, const QString &message, const QString &text,
-                    KopeteMetaContact *mc, const KGuiItem &action,
+                    Kopete::MetaContact *mc, const KGuiItem &action,
                     QObject* receiver , const char* slot)
 {
     if (message.isEmpty()) return 0;
@@ -421,7 +421,7 @@ int KNotifyClient::userEvent(int winId, const QString &message, const QString &t
     return uniqueId;
 }
 
-void KNotifyClient::performCustomNotifications( int winId, KopeteMetaContact * mc, const QString &message, bool& suppress)
+void KNotifyClient::performCustomNotifications( int winId, Kopete::MetaContact * mc, const QString &message, bool& suppress)
 {
 	//kdDebug( 14010 ) << k_funcinfo << endl;
 	if ( suppress )
@@ -437,41 +437,41 @@ void KNotifyClient::performCustomNotifications( int winId, KopeteMetaContact * m
 	 */
 
 	bool checkingMetaContact = true;
-	KopeteNotifyDataObject * dataObj = mc;
+	Kopete::NotifyDataObject * dataObj = mc;
 	do {
 		QString sound;
 		QString text;
 		
 		if ( dataObj )
 		{
-			KopeteNotifyEvent *evt = dataObj->notifyEvent( message );
+			Kopete::NotifyEvent *evt = dataObj->notifyEvent( message );
 			if ( evt )
 			{
 				suppress = evt->suppressCommon();
 				int present = 0;
 				// sound
-				KopeteEventPresentation *pres = evt->presentation( KopeteEventPresentation::Sound );
+				Kopete::EventPresentation *pres = evt->presentation( Kopete::EventPresentation::Sound );
 				if ( pres && pres->enabled() )
 				{
 					present = present | KNotifyClient::Sound;
 					sound = pres->content();
-					evt->firePresentation( KopeteEventPresentation::Sound );
+					evt->firePresentation( Kopete::EventPresentation::Sound );
 				}
 				// message
-				if ( ( pres = evt->presentation( KopeteEventPresentation::Message ) )
+				if ( ( pres = evt->presentation( Kopete::EventPresentation::Message ) )
 					&& pres->enabled() )
 				{
 					present = present | KNotifyClient::PassivePopup;
 					text = pres->content();
-					evt->firePresentation( KopeteEventPresentation::Message );
+					evt->firePresentation( Kopete::EventPresentation::Message );
 				}
 				// chat
-				if ( ( pres = evt->presentation( KopeteEventPresentation::Chat ) )
+				if ( ( pres = evt->presentation( Kopete::EventPresentation::Chat ) )
 					&& pres->enabled() )
 				{
 					if ( mc )
 						mc->execute();
-					evt->firePresentation( KopeteEventPresentation::Chat );
+					evt->firePresentation( Kopete::EventPresentation::Chat );
 				}
 				// fire the event
 				userEvent( winId, message, text, present, 0, sound, QString(), QString() );

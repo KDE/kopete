@@ -117,7 +117,7 @@ protected:
 	/**
 	 * Adds our Yahoo contact to a metacontact
 	 */
-	virtual bool addContactToMetaContact(const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact);
+	virtual bool addContactToMetaContact(const QString &contactId, const QString &displayName, Kopete::MetaContact *parentContact);
 
 	/**
 	 * Gets the just-received message color

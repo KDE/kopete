@@ -44,10 +44,10 @@ IRCTransferHandler::IRCTransferHandler()
 	connect(handler(), SIGNAL(transferCreated(KIRCTransfer *)),
 		this, SLOT(transferCreated(KIRCTransfer *)));
 
-	connect(KopeteTransferManager::transferManager(), SIGNAL(accepted(KopeteTransfer *, const QString &)),
-		this, SLOT(transferAccepted(KopeteTransfer *, const QString&)));
-	connect( KopeteTransferManager::transferManager(), SIGNAL(refused(const KopeteFileTransferInfo &)),
-		this, SLOT(transferRefused(const KopeteFileTransferInfo &)));
+	connect(Kopete::TransferManager::transferManager(), SIGNAL(accepted(Kopete::Transfer *, const QString &)),
+		this, SLOT(transferAccepted(Kopete::Transfer *, const QString&)));
+	connect( Kopete::TransferManager::transferManager(), SIGNAL(refused(const Kopete::FileTransferInfo &)),
+		this, SLOT(transferRefused(const Kopete::FileTransferInfo &)));
 }
 
 void IRCTransferHandler::transferCreated(KIRCTransfer *t)
@@ -69,15 +69,15 @@ void IRCTransferHandler::transferCreated(KIRCTransfer *t)
 //	case KIRCTransfer::Chat:
 	case KIRCTransfer::FileOutgoing:
 		{
-			KopeteTransfer *kt = KopeteTransferManager::transferManager()->addTransfer(
+			Kopete::Transfer *kt = Kopete::TransferManager::transferManager()->addTransfer(
 				contact, fileName, fileSize, contact->metaContact()->displayName(),
-				KopeteFileTransferInfo::Outgoing);
+				Kopete::FileTransferInfo::Outgoing);
 			connectKopeteTransfer(kt, t);
 		}
 		break;
 	case KIRCTransfer::FileIncoming:
 		{
-			int ID = KopeteTransferManager::transferManager()->askIncomingTransfer(
+			int ID = Kopete::TransferManager::transferManager()->askIncomingTransfer(
 				contact , fileName, fileSize);
 			m_idMap.insert(ID, t);
 		}
@@ -88,7 +88,7 @@ void IRCTransferHandler::transferCreated(KIRCTransfer *t)
 	}
 }
 
-void IRCTransferHandler::transferAccepted(KopeteTransfer *kt, const QString &file)
+void IRCTransferHandler::transferAccepted(Kopete::Transfer *kt, const QString &file)
 {
 	kdDebug(14120) << k_funcinfo << endl;
 
@@ -99,7 +99,7 @@ void IRCTransferHandler::transferAccepted(KopeteTransfer *kt, const QString &fil
 		connectKopeteTransfer(kt, t);
 	}
 }
-void IRCTransferHandler::transferRefused(const KopeteFileTransferInfo &info)
+void IRCTransferHandler::transferRefused(const Kopete::FileTransferInfo &info)
 {
 	kdDebug(14120) << k_funcinfo << endl;
 
@@ -110,7 +110,7 @@ void IRCTransferHandler::transferRefused(const KopeteFileTransferInfo &info)
 	}
 }
 
-void IRCTransferHandler::connectKopeteTransfer(KopeteTransfer *kt, KIRCTransfer *t)
+void IRCTransferHandler::connectKopeteTransfer(Kopete::Transfer *kt, KIRCTransfer *t)
 {
 	kdDebug(14120) << k_funcinfo << endl;
 
@@ -147,10 +147,10 @@ void IRCTransferHandler::connectKopeteTransfer(KopeteTransfer *kt, KIRCTransfer 
 
 void IRCTransferHandler::kioresult(KIO::Job *job)
 {
-	KopeteTransfer *kt= (KopeteTransfer *)job; // FIXME: move to *_cast
+	Kopete::Transfer *kt= (Kopete::Transfer *)job; // FIXME: move to *_cast
 	if(!kt)
 	{
-		kdDebug(14120) << k_funcinfo << "KopeteTransfer not found from kio:" << job << endl;
+		kdDebug(14120) << k_funcinfo << "Kopete::Transfer not found from kio:" << job << endl;
 		return;
 	}
 
@@ -173,7 +173,7 @@ void IRCTransferHandler::kioresult(KIO::Job *job)
 	}
 }
 
-KIRCTransfer *IRCTransferHandler::getKIRCTransfer(const KopeteFileTransferInfo &info)
+KIRCTransfer *IRCTransferHandler::getKIRCTransfer(const Kopete::FileTransferInfo &info)
 {
 	KIRCTransfer *t = m_idMap[info.transferId()];
 	m_idMap.remove(info.transferId());

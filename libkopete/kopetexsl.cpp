@@ -189,7 +189,7 @@ public:
 	QCString document;
 };
 
-KopeteXSLT::KopeteXSLT( const QString &document, QObject *parent )
+Kopete::XSLT::XSLT( const QString &document, QObject *parent )
 : QObject( parent )
 {
 	d = new KopeteXSLTPrivate;
@@ -197,12 +197,12 @@ KopeteXSLT::KopeteXSLT( const QString &document, QObject *parent )
 	setXSLT( document );
 }
 
-KopeteXSLT::~KopeteXSLT()
+Kopete::XSLT::~XSLT()
 {
 	delete d;
 }
 
-void KopeteXSLT::setXSLT( const QString &_document )
+void Kopete::XSLT::setXSLT( const QString &_document )
 {
 	// Search for '<kopete-i18n>' elements and feed them through i18n().
 	// After that replace the %VAR% variables with their proper XSLT counterpart.
@@ -340,17 +340,17 @@ void KopeteXSLT::setXSLT( const QString &_document )
 	#endif
 }
 
-QString KopeteXSLT::transform( const QString &xmlString )
+QString Kopete::XSLT::transform( const QString &xmlString )
 {
 	return KopeteXSLThread::xsltTransform( xmlString, d->document );
 }
 
-void KopeteXSLT::transformAsync( const QString &xmlString, QObject *target, const char *slotCompleted )
+void Kopete::XSLT::transformAsync( const QString &xmlString, QObject *target, const char *slotCompleted )
 {
 	( new KopeteXSLThread( xmlString, d->document, target, slotCompleted ) )->start();
 }
 
-bool KopeteXSLT::isValid()
+bool Kopete::XSLT::isValid()
 {
 	bool retVal = false;
 

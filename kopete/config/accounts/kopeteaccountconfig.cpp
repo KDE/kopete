@@ -41,11 +41,11 @@
 class KopeteAccountLVI : public KListViewItem
 {
 	public:
-		KopeteAccountLVI( KopeteAccount *a, KListView *p ) : KListViewItem( p ){  m_account = a; }
-		KopeteAccount *account() { return m_account; }
+		KopeteAccountLVI( Kopete::Account *a, KListView *p ) : KListViewItem( p ){  m_account = a; }
+		Kopete::Account *account() { return m_account; }
 
 	private:
-		KopeteAccount *m_account;
+		Kopete::Account *m_account;
 };
 
 typedef KGenericFactory<KopeteAccountConfig, QWidget> KopeteAccountConfigFactory;
@@ -88,12 +88,12 @@ void KopeteAccountConfig::save()
 		  i = static_cast<KopeteAccountLVI*>( i->nextSibling() );
 	}
 
-	QMap<KopeteAccount *, QColor>::Iterator it;
+	QMap<Kopete::Account *, QColor>::Iterator it;
 	for(it=m_newColors.begin() ; it != m_newColors.end() ; ++it)
 		it.key()->setColor(it.data());
 	m_newColors.clear();
 
-	KopeteAccountManager::manager()->save();
+	Kopete::AccountManager::manager()->save();
 	
 	load(); //refresh the colred accounts (in case of apply)
 }
@@ -104,8 +104,8 @@ void KopeteAccountConfig::load()
 
 	m_view->mAccountList->clear();
 
-	QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
-	for ( KopeteAccount *i = accounts.first() ; i; i = accounts.next() )
+	QPtrList<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts();
+	for ( Kopete::Account *i = accounts.first() ; i; i = accounts.next() )
 	{
 		// Insert the item after the previous one
 		lvi = new KopeteAccountLVI( i, m_view->mAccountList );
@@ -131,7 +131,7 @@ void KopeteAccountConfig::slotItemSelected()
 		m_view->mButtonUp->setEnabled( itemSelected->itemAbove() );
 		m_view->mButtonDown->setEnabled( itemSelected->itemBelow() );
 		
-		KopeteAccount *account = itemSelected->account();
+		Kopete::Account *account = itemSelected->account();
 		QColor color= m_newColors.contains(account) ? m_newColors[account] :  account->color();
 		m_view->mUseColor->setEnabled( true );
 		m_view->mUseColor->setChecked( color.isValid() );
@@ -187,8 +187,8 @@ void KopeteAccountConfig::slotEditAccount()
 	if ( !lvi )
 		return;
 
-	KopeteAccount *ident = lvi->account();
-	KopeteProtocol *proto = ident->protocol();
+	Kopete::Account *ident = lvi->account();
+	Kopete::Protocol *proto = ident->protocol();
 
 	KDialogBase *editDialog = new KDialogBase( this, "KopeteAccountConfig::editDialog", true,
 		i18n( "Edit Account" ), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
@@ -217,7 +217,7 @@ void KopeteAccountConfig::slotEditAccount()
 	// FIXME: Why deleteLater? It shouldn't be in use anymore at this point - Martijn
 	editDialog->deleteLater();
 	load();
-	KopeteAccountManager::manager()->save();
+	Kopete::AccountManager::manager()->save();
 }
 
 void KopeteAccountConfig::slotRemoveAccount()
@@ -226,11 +226,11 @@ void KopeteAccountConfig::slotRemoveAccount()
 	if ( !lvi )
 		return;
 
-	KopeteAccount *i = lvi->account();
+	Kopete::Account *i = lvi->account();
 	if ( KMessageBox::warningContinueCancel( this, i18n( "Are you sure you want to remove the account \"%1\"?" ).arg( i->accountId() ),
 		i18n( "Remove Account" ), KGuiItem(i18n( "Remove Account" ),"editdelete") ) == KMessageBox::Continue )
 	{
-		KopeteAccountManager::manager()->removeAccount( i );
+		Kopete::AccountManager::manager()->removeAccount( i );
 		delete lvi;
 	}
 }
@@ -249,7 +249,7 @@ void KopeteAccountConfig::slotColorChanged()
 	KopeteAccountLVI *lvi = static_cast<KopeteAccountLVI*>( m_view->mAccountList->selectedItem() );
 	if ( !lvi )
 		return;
-	KopeteAccount *account = lvi->account();
+	Kopete::Account *account = lvi->account();
 	
 	if(!account->color().isValid() && !m_view->mUseColor->isChecked() )
 	{  //we don't use color for that account and nothing changed.

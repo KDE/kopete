@@ -37,7 +37,7 @@ class MeanwhileLibrary : public QObject
         bool bad();
         void login(QString username, QString passwd);
         void logoff();
-        void addContacts(const QDict<KopeteContact> &contacts);
+        void addContacts(const QDict<Kopete::Contact> &contacts);
         void addContact(const QString &contact);
         int sendIm(const QString &toUser, const QString &msg);
         void sendTyping(const QString &toUser, bool isTyping);

@@ -30,12 +30,12 @@
  class KopeteStatusGroupViewItem : public QListViewItem
 {
 public: 
-	KopeteStatusGroupViewItem( KopeteOnlineStatus::OnlineStatus status_ , QListView *parent, const char *name=0);
+	KopeteStatusGroupViewItem( Kopete::OnlineStatus::StatusType status_ , QListView *parent, const char *name=0);
 	~KopeteStatusGroupViewItem();
 
 private:
 
-	KopeteOnlineStatus::OnlineStatus m_status;
+	Kopete::OnlineStatus::StatusType m_status;
 	QString key( int column, bool ascending ) const;
 
 };

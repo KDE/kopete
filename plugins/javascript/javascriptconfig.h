@@ -23,7 +23,7 @@
 #include "javascriptplugin.h"
 #include <time.h>
 
-class KopeteAccount;
+namespace Kopete { class Account; }
 class KConfig;
 class JavaScriptConfigPrivate;
 
@@ -91,8 +91,8 @@ class JavaScriptConfig : public QObject, public Kopete::MimeTypeHandler
 			const QString &id = QString::number( time( NULL ) ) );
 		void removeScript( const QString &id );
 
-		void setScriptEnabled( KopeteAccount *account, const QString &scriptId, bool enabled );
-		QValueList<Script*> scriptsFor( KopeteAccount *account );
+		void setScriptEnabled( Kopete::Account *account, const QString &scriptId, bool enabled );
+		QValueList<Script*> scriptsFor( Kopete::Account *account );
 		QValueList<Script*> allScripts() const;
 
 		Script *script( const QString &id );

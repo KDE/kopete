@@ -26,14 +26,18 @@
 class KURL;
 
 class QDomDocument;
-class KopeteMetaContact;
-class KopeteGroup;
-class KopeteContact;
+
+namespace Kopete
+{
+
+class MetaContact;
+class Group;
+class Contact;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
  */
-class KopeteContactList : public QObject
+class ContactList : public QObject
 {
 	Q_OBJECT
 
@@ -42,9 +46,9 @@ public:
 	 * The contact list is a singleton object. Use this method to retrieve
 	 * the instance.
 	 */
-	static KopeteContactList *contactList();
+	static ContactList *contactList();
 
-	~KopeteContactList();
+	~ContactList();
 
 	/**
 	 * Find the meta contact that a given contact belongs to. If contact
@@ -56,16 +60,16 @@ public:
 	 *       with server-side contact lists ( MSN, Jabber, etc. ) may detect
 	 *       new contacts having been added upon reconnect.
 	 *
-	 * @todo return a KopeteContact.  the metacontact can be obtained with contact->metaContact
+	 * @todo return a Kopete::Contact.  the metacontact can be obtained with contact->metaContact
 	 */
-	KopeteMetaContact *findContact( const QString &protocolId,
+	MetaContact *findContact( const QString &protocolId,
 		const QString &accountId, const QString &contactId );
 
 
 	/**
 	 * Return the metacontact referenced by the given id
 	 */
-	KopeteMetaContact *metaContact( const QString &metaContactId ) const;
+	MetaContact *metaContact( const QString &metaContactId ) const;
 
 	/**
 	 * Return all meta contacts
@@ -80,24 +84,24 @@ public:
 	/**
 	 * Return all contacts that are online
 	 */
-	QPtrList<KopeteContact> onlineContacts() const;
+	QPtrList<Contact> onlineContacts() const;
 
 	/**
 	 * Overloaded method of @ref onlineContacts() that only returns
 	 * the online contacts for a single protocol
 	 */
-	QPtrList<KopeteContact> onlineContacts( const QString &protocolId ) const;
+	QPtrList<Contact> onlineContacts( const QString &protocolId ) const;
 
 	/**
 	 * Return all meta contacts that are online
 	 */
-	QPtrList<KopeteMetaContact> onlineMetaContacts() const;
+	QPtrList<MetaContact> onlineMetaContacts() const;
 
 	/**
 	 * Overloaded method of @ref onlineMetaContacts() that only returns
 	 * the online meta contacts for a single protocol
 	 */
-	QPtrList<KopeteMetaContact> onlineMetaContacts( const QString &protocolId ) const;
+	QPtrList<MetaContact> onlineMetaContacts( const QString &protocolId ) const;
 
 	/**
 	 * Returns all contacts which can accept file transfers
@@ -117,7 +121,7 @@ public:
 	/**
 	 * Return all available groups
 	 */
-	QPtrList<KopeteGroup> groups() const;
+	QPtrList<Group> groups() const;
 
 	/**
 	 * Retrieve the list of all available meta contacts.
@@ -129,41 +133,41 @@ public:
 	 * The contained KopeteMetaContacts are obviously _not_ duplicates, so
 	 * changing those *will* have the expected result :-)
 	 */
-	QPtrList<KopeteMetaContact> metaContacts() const;
+	QPtrList<MetaContact> metaContacts() const;
 
 	/**
 	 * Get a group.
 	 * If a group already exists with the given name and the given type, the existing group will be returned.
  	 * Otherwise, a new group will be created.
 	 * @param displayName is the display name to search
-	 * @param type is the KopeteGroup::GroupType to search, the default value is Kopetegroup::Normal
+	 * @param type is the Kopete::Group::GroupType to search, the default value is Kopetegroup::Normal
 	 */
-	KopeteGroup * getGroup( const QString &displayName, int type = 0/*KopeteGroup::Normal*/ );
+	Group * getGroup( const QString &displayName, int type = 0/*Kopete::Group::Normal*/ );
 
 	/**
 	 * return the group with the given unique id. if none is found return 0L
 	 */
-	KopeteGroup * getGroup(unsigned int groupId);
+	Group * getGroup(unsigned int groupId);
 
 	/**
 	 * Find a contact by display name. Returns the first match.
 	 */
-	KopeteMetaContact *findContactByDisplayName( const QString &displayName );
+	MetaContact *findContactByDisplayName( const QString &displayName );
 
 	/**
 	 * Find a meta contact by its contact id. Returns the first match.
 	 */
-	KopeteMetaContact *findMetaContactByContactId( const QString &contactId );
+	MetaContact *findMetaContactByContactId( const QString &contactId );
 
 	/**
 	 * return the list of metacontact actually selected in the contactlist UI
 	 */
-	QPtrList<KopeteMetaContact> selectedMetaContacts() const;
+	QPtrList<MetaContact> selectedMetaContacts() const;
 
 	/**
 	 * return the list of groups actualy selected in the contactlist UI
 	 */
-	QPtrList<KopeteGroup> selectedGroups() const ;
+	QPtrList<Group> selectedGroups() const ;
 	
 public slots:
 
@@ -172,24 +176,24 @@ public slots:
 	 * When calling this method, the contact has to be already placed in the correct group.
 	 * If the contact is not in a  group, it will be added to the top-level group
 	 */
-	void addMetaContact( KopeteMetaContact *c );
+	void addMetaContact( Kopete::MetaContact *c );
 
 	/**
 	 * Remove a metacontact from the contactlist.
 	 * This method delete itself the metacontact.
 	 */
-	void removeMetaContact( KopeteMetaContact *contact );
+	void removeMetaContact( Kopete::MetaContact *contact );
 
 	/**
 	 * Add a group
 	 */
-	void addGroup(KopeteGroup *);
+	void addGroup(Kopete::Group *);
 
 	/**
 	 * Remove a group
 	 * this method delete the group
 	 */
-	void removeGroup(KopeteGroup *);
+	void removeGroup(Kopete::Group *);
 
 	/**
 	 * Exposed via DCOP in kopeteiface
@@ -215,7 +219,7 @@ public slots:
 	 * This method has to be called by the contactlist UI side.
 	 * it stores the selected items, and emits signals
 	 */
-	 void setSelectedItems(QPtrList<KopeteMetaContact> metaContacts , QPtrList<KopeteGroup> groups);
+	 void setSelectedItems(QPtrList<MetaContact> metaContacts , QPtrList<Group> groups);
 
 	/**
 	 * @internal
@@ -233,33 +237,33 @@ signals:
 	 * ( like the listview widgets ) can connect to this signal to receive
 	 * the newly added contacts.
 	 */
-	void metaContactAdded( KopeteMetaContact *mc );
+	void metaContactAdded( Kopete::MetaContact *mc );
 	/**
 	 * a metacontact has just been removed
 	 */
-	void metaContactDeleted( KopeteMetaContact *mc );
+	void metaContactDeleted( Kopete::MetaContact *mc );
 
 	/**
 	 * A group has just been added
 	 */
-	void groupAdded( KopeteGroup * );
+	void groupAdded( Kopete::Group * );
 	/**
 	 * A group has just been removed
 	 */
-	void groupRemoved( KopeteGroup * );
+	void groupRemoved( Kopete::Group * );
 	/**
 	 * A group has just been renamed
 	 */
-	void groupRenamed(KopeteGroup *, const QString & oldname);
+	void groupRenamed(Kopete::Group *, const QString & oldname);
 
 	/**
 	 * A contact has been added to a group
 	 */
-	void metaContactAddedToGroup( KopeteMetaContact *mc, KopeteGroup *to );
+	void metaContactAddedToGroup( Kopete::MetaContact *mc, Kopete::Group *to );
 	/**
 	 * A contact has been removed from a group
 	 */
-	void metaContactRemovedFromGroup( KopeteMetaContact *mc, KopeteGroup *from );
+	void metaContactRemovedFromGroup( Kopete::MetaContact *mc, Kopete::Group *from );
 
 	/**
 	 * This signal is emit when the selection has changed, it is emitted after the following slot
@@ -301,12 +305,12 @@ private:
 	/**
 	 * Private constructor: we are a singleton
 	 */
-	KopeteContactList();
+	ContactList();
 
 	/**
 	 * Our contact list instance
 	 */
-	static KopeteContactList *s_contactList;
+	static ContactList *s_contactList;
 
 	/**
 	 * Convert the contact list from an older version
@@ -316,6 +320,8 @@ private:
 	class KopeteContactListPrivate;
 	KopeteContactListPrivate *d;
 };
+
+}
 
 #endif
 

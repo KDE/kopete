@@ -44,19 +44,19 @@ class QListView;
 class QListViewItem;
 class KPopupMenu;
 class KAction;
-class KopeteMetaContact;
+namespace Kopete { class MetaContact; }
 
-class WPContact: public KopeteContact
+class WPContact: public Kopete::Contact
 {
 	Q_OBJECT
 
 public:
-	WPContact(KopeteAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact);
+	WPContact(Kopete::Account *account, const QString &userId, const QString &fullName, Kopete::MetaContact *metaContact);
 
 //	virtual bool isOnline() const;
 	virtual bool isReachable();
 	virtual QPtrList<KAction> *customContextMenuActions();
-	virtual KopeteMessageManager *manager(bool canCreate = false);
+	virtual Kopete::MessageManager *manager(bool canCreate = false);
 	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
 
 public slots:
@@ -66,7 +66,7 @@ public slots:
 
 private slots:
 	void slotMessageManagerDestroyed();
-	void slotSendMessage(KopeteMessage &message);
+	void slotSendMessage(Kopete::Message &message);
 	void slotCloseUserInfoDialog(); // Called when the userinfo dialog is getting closed
 
 private:
@@ -75,7 +75,7 @@ private:
 	QTimer checkStatus;		// checks the status of this contact every second or so
 	KActionCollection *myActionCollection;
 							// holds all the protocol specific actions (not many!)
-	KopeteMessageManager *m_manager;
+	Kopete::MessageManager *m_manager;
 							// holds the two message managers - one for email and one for chat
 	WPUserInfo *m_infoDialog;
 };

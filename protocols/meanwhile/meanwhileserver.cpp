@@ -115,26 +115,26 @@ void MeanwhileServer::slotConnectionLost()
     emit connectionLost();
 }
 
-void MeanwhileServer::addContacts(const QDict<KopeteContact>& _contacts)
+void MeanwhileServer::addContacts(const QDict<Kopete::Contact>& _contacts)
 {
     library->addContacts(contacts=_contacts);
 }
 
-void MeanwhileServer::addContact(KopeteContact *_contact,
-                                const QDict<KopeteContact>& _contacts)
+void MeanwhileServer::addContact(Kopete::Contact *_contact,
+                                const QDict<Kopete::Contact>& _contacts)
 {
     contacts = _contacts;
     MeanwhileContact *contact = static_cast<MeanwhileContact *>(_contact);
     library->addContact(contact->meanwhileId);
 }
 
-int MeanwhileServer::sendIm(KopeteContact *_contact, const QString &msg)
+int MeanwhileServer::sendIm(Kopete::Contact *_contact, const QString &msg)
 {
     MeanwhileContact *contact = static_cast<MeanwhileContact *>(_contact);
     return library->sendIm(contact->meanwhileId,msg);
 }
 
-void MeanwhileServer::sendTyping(KopeteContact *_contact, bool isTyping)
+void MeanwhileServer::sendTyping(Kopete::Contact *_contact, bool isTyping)
 {
     MeanwhileContact *contact = static_cast<MeanwhileContact *>(_contact);
     library->sendTyping(contact->meanwhileId,isTyping);

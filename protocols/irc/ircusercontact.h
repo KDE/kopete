@@ -53,7 +53,7 @@ struct IRCUserInfo
 /**
  * @author Jason Keirstead <jason@keirstead.org
  *
- * This class is the @ref KopeteContact object representing IRC Users, not channels.
+ * This class is the @ref Kopete::Contact object representing IRC Users, not channels.
  * It is derrived from IRCContact where much of its functionality is shared with @ref IRCChannelContact.
  */
 class IRCUserContact : public IRCContact
@@ -61,11 +61,11 @@ class IRCUserContact : public IRCContact
 	Q_OBJECT
 
 public:
-	// This class provides a KopeteContact for each user on the channel.
-	IRCUserContact(IRCContactManager *, const QString &nickname, KopeteMetaContact *mc);
+	// This class provides a Kopete::Contact for each user on the channel.
+	IRCUserContact(IRCContactManager *, const QString &nickname, Kopete::MetaContact *mc);
 
-	// KopeteContact stuff
-	virtual QPtrList<KAction> *customContextMenuActions( KopeteMessageManager *manager );
+	// Kopete::Contact stuff
+	virtual QPtrList<KAction> *customContextMenuActions( Kopete::MessageManager *manager );
 	virtual const QString caption() const;
 
 	virtual void sendFile(const KURL &sourceURL, const QString&, unsigned int);
@@ -119,7 +119,7 @@ private:
 	KAction *actionKick;
 	KActionMenu *actionBanMenu;
 	KCodecAction *codecAction;
-	KopeteMessageManager *mActiveManager;
+	Kopete::MessageManager *mActiveManager;
 	QTimer *mOnlineTimer;
 	IRCUserInfo mInfo;
 

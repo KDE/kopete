@@ -28,11 +28,11 @@
 
 class QTimer;
 class KTempFile;
-class KopeteMetaContact;
+namespace Kopete { class MetaContact; }
 class KToggleAction;
 class KActionCollection;
 
-class WebPresencePlugin : public KopetePlugin
+class WebPresencePlugin : public Kopete::Plugin
 {
 	Q_OBJECT
 
@@ -50,7 +50,7 @@ private:
 	{
 		const char *name;
 		const char *id;
-		KopeteOnlineStatus status;
+		Kopete::OnlineStatus status;
 	};
 
 public:
@@ -80,7 +80,7 @@ protected slots:
 	/**
 	 * Sets us up to respond to a new account
 	 */
-	void listenToAccount( KopeteAccount* account );
+	void listenToAccount( Kopete::Account* account );
 
 protected:
 	/**
@@ -94,11 +94,11 @@ protected:
 	/** 
 	 * Helper method, generates list of all IM protocols
 	 */
-	QPtrList<KopeteProtocol> allProtocols();
+	QPtrList<Kopete::Protocol> allProtocols();
 	/**
 	 * Converts numeric status to a string
 	 */
-	QString statusAsString( const KopeteOnlineStatus &newStatus );
+	QString statusAsString( const Kopete::OnlineStatus &newStatus );
 	/**
      * Schedules writes
 	 */

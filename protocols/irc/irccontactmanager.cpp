@@ -44,7 +44,7 @@ IRCContactManager::IRCContactManager(const QString &nickName, IRCAccount *accoun
 {
 	m_mySelf = findUser(nickName);
 
-	KopeteMetaContact *m = new KopeteMetaContact();
+	Kopete::MetaContact *m = new Kopete::MetaContact();
 //	m->setTemporary( true );
 	m_myServer = new IRCServerContact(this, account->engine()->currentHost(), m);
 
@@ -109,13 +109,13 @@ void IRCContactManager::slotNewPrivMessage(const QString &originating, const QSt
 	emit privateMessage(from, to, message);
 }
 
-void IRCContactManager::unregister(KopeteContact *contact)
+void IRCContactManager::unregister(Kopete::Contact *contact)
 {
 	unregisterChannel(contact, true);
 	unregisterUser(contact, true);
 }
 
-IRCChannelContact *IRCContactManager::findChannel(const QString &name, KopeteMetaContact *m)
+IRCChannelContact *IRCContactManager::findChannel(const QString &name, Kopete::MetaContact *m)
 {
 	IRCChannelContact *channel = m_channels[ name ];
 
@@ -123,14 +123,14 @@ IRCChannelContact *IRCContactManager::findChannel(const QString &name, KopeteMet
 	{
 		if( !m )
 		{
-			m = new KopeteMetaContact();
+			m = new Kopete::MetaContact();
 			m->setTemporary( true );
 		}
 
 		channel = new IRCChannelContact(this, name, m);
 		m_channels.insert( name, channel );
-		QObject::connect(channel, SIGNAL(contactDestroyed(KopeteContact *)),
-			this, SLOT(unregister(KopeteContact *)));
+		QObject::connect(channel, SIGNAL(contactDestroyed(Kopete::Contact *)),
+			this, SLOT(unregister(Kopete::Contact *)));
 	}
 
 	return channel;
@@ -141,7 +141,7 @@ IRCChannelContact *IRCContactManager::existChannel( const QString &channel ) con
 	return m_channels[ channel ];
 }
 
-void IRCContactManager::unregisterChannel(KopeteContact *contact, bool force )
+void IRCContactManager::unregisterChannel(Kopete::Contact *contact, bool force )
 {
 	IRCChannelContact *channel = (IRCChannelContact*)contact;
 	if( force || (
@@ -153,7 +153,7 @@ void IRCContactManager::unregisterChannel(KopeteContact *contact, bool force )
 	}
 }
 
-IRCUserContact *IRCContactManager::findUser(const QString &name, KopeteMetaContact *m)
+IRCUserContact *IRCContactManager::findUser(const QString &name, Kopete::MetaContact *m)
 {
 	IRCUserContact *user = m_users[name.section('!', 0, 0)];
 
@@ -161,14 +161,14 @@ IRCUserContact *IRCContactManager::findUser(const QString &name, KopeteMetaConta
 	{
 		if( !m )
 		{
-			m = new KopeteMetaContact();
+			m = new Kopete::MetaContact();
 			m->setTemporary( true );
 		}
 
 		user = new IRCUserContact(this, name, m);
 		m_users.insert( name, user );
-		QObject::connect(user, SIGNAL(contactDestroyed(KopeteContact *)),
-				this, SLOT(unregister(KopeteContact *)));
+		QObject::connect(user, SIGNAL(contactDestroyed(Kopete::Contact *)),
+				this, SLOT(unregister(Kopete::Contact *)));
 	}
 
 	return user;
@@ -179,7 +179,7 @@ IRCUserContact *IRCContactManager::existUser( const QString &user ) const
 	return m_users[user];
 }
 
-IRCContact *IRCContactManager::findContact( const QString &id, KopeteMetaContact *m )
+IRCContact *IRCContactManager::findContact( const QString &id, Kopete::MetaContact *m )
 {
 	if( KIRCEntity::isChannel(id) )
 		return findChannel( id, m );
@@ -189,8 +189,8 @@ IRCContact *IRCContactManager::findContact( const QString &id, KopeteMetaContact
 
 IRCContact *IRCContactManager::existContact( const KIRC *engine, const QString &id )
 {
-	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( IRCProtocol::protocol() );
-	QDictIterator<KopeteAccount> it(accounts);
+	QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts( IRCProtocol::protocol() );
+	QDictIterator<Kopete::Account> it(accounts);
 	for( ; it.current(); ++it )
 	{
 		IRCAccount *account = (IRCAccount *)it.current();
@@ -208,7 +208,7 @@ IRCContact *IRCContactManager::existContact( const QString &id ) const
 		return existUser( id );
 }
 
-void IRCContactManager::unregisterUser(KopeteContact *contact, bool force )
+void IRCContactManager::unregisterUser(Kopete::Contact *contact, bool force )
 {
 	IRCUserContact *user = (IRCUserContact *)contact;
 	if( force || (

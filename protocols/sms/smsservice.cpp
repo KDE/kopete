@@ -20,7 +20,7 @@
 
 #include "smsservice.h"
 
-SMSService::SMSService(KopeteAccount* account)
+SMSService::SMSService(Kopete::Account* account)
 	: QObject(), m_account(account)
 {
 }
@@ -30,7 +30,7 @@ SMSService::~SMSService()
 
 }
 
-void SMSService::setAccount(KopeteAccount* account)
+void SMSService::setAccount(Kopete::Account* account)
 {
 	if(!m_account)
 		m_account = account;

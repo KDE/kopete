@@ -1,5 +1,5 @@
 /*
-    Tests for KopeteMessage::parseLinks
+    Tests for Kopete::Message::parseLinks
 
     Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
 
@@ -70,7 +70,7 @@ static TestSet knownBrokenHTML =
 	{ NULL, NULL }
 };
 
-void runTests( QString description, TestSet tests, KopeteMessage::MessageFormat format )
+void runTests( QString description, TestSet tests, Kopete::Message::MessageFormat format )
 {
 	_out << endl;
 	_out << "* Running test set '" << description << "'" << endl;
@@ -81,7 +81,7 @@ void runTests( QString description, TestSet tests, KopeteMessage::MessageFormat 
 		QString input = tests[ i ][ 0 ], expected = tests[ i ][ 1 ];
 		input.replace( "$URL","http://www.kde.org" );
 		expected.replace( "$URL","http://www.kde.org" );
-		QString result = KopeteMessage::parseLinks( input, format );
+		QString result = Kopete::Message::parseLinks( input, format );
 
 		if ( result == expected )
 		{
@@ -104,10 +104,10 @@ int main( int argc, char *argv[] )
 	KCmdLineArgs::init( argc, argv, &aboutData );
 	KApplication app( "kopetelinktest" );
 
-	runTests( "Known working plaintext tests", knownGoodPlain, KopeteMessage::PlainText );
-	runTests( "Known broken plaintext tests", knownBrokenPlain, KopeteMessage::PlainText );
-	runTests( "Known working HTML tests", knownGoodHTML, KopeteMessage::RichText );
-	runTests( "Known broken HTML tests", knownBrokenHTML, KopeteMessage::RichText );
+	runTests( "Known working plaintext tests", knownGoodPlain, Kopete::Message::PlainText );
+	runTests( "Known broken plaintext tests", knownBrokenPlain, Kopete::Message::PlainText );
+	runTests( "Known working HTML tests", knownGoodHTML, Kopete::Message::RichText );
+	runTests( "Known broken HTML tests", knownBrokenHTML, Kopete::Message::RichText );
 
 	return 0;
 }

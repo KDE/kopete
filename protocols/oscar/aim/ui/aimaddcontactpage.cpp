@@ -64,12 +64,12 @@ bool AIMAddContactPage::validateData()
 	return true;
 }
 
-bool AIMAddContactPage::apply(KopeteAccount *account,
-	KopeteMetaContact *metaContact)
+bool AIMAddContactPage::apply(Kopete::Account *account,
+	Kopete::MetaContact *metaContact)
 {
 	if(validateData())
 	{ // If everything is ok
-		return account->addContact(tocNormalize(m_gui->addSN->text()), m_gui->addSN->text(), metaContact, KopeteAccount::ChangeKABC );
+		return account->addContact(tocNormalize(m_gui->addSN->text()), m_gui->addSN->text(), metaContact, Kopete::Account::ChangeKABC );
 	}
 	return false;
 }

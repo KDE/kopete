@@ -24,7 +24,7 @@
 
 class QTimer;
 
-class KopeteMetaContact;
+namespace Kopete { class MetaContact; }
 class KopeteView;
 
 class KIRC;
@@ -53,21 +53,21 @@ class IRCContactManager
 		IRCServerContact *myServer() const { return m_myServer; }
 		IRCUserContact *mySelf() const { return m_mySelf; }
 
-		IRCChannelContact *findChannel(const QString &channel, KopeteMetaContact *m=0);
+		IRCChannelContact *findChannel(const QString &channel, Kopete::MetaContact *m=0);
 		IRCChannelContact *existChannel(const QString &channel) const;
 
-		IRCUserContact *findUser(const QString &nick, KopeteMetaContact *m=0);
+		IRCUserContact *findUser(const QString &nick, Kopete::MetaContact *m=0);
 		IRCUserContact *existUser(const QString &nick) const;
 
-		IRCContact *findContact(const QString &nick, KopeteMetaContact *m=0);
+		IRCContact *findContact(const QString &nick, Kopete::MetaContact *m=0);
 		IRCContact *existContact( const QString &id ) const;
 
 		static IRCContact *existContact(const KIRC *engine, const QString &nick);
 
 	public slots:
-		void unregister(KopeteContact *contact);
-		void unregisterUser(KopeteContact *contact, bool force = false );
-		void unregisterChannel(KopeteContact *contact, bool force = false );
+		void unregister(Kopete::Contact *contact);
+		void unregisterUser(Kopete::Contact *contact, bool force = false );
+		void unregisterChannel(Kopete::Contact *contact, bool force = false );
 
 		void addToNotifyList(const QString &nick);
 		void removeFromNotifyList(const QString &nick);

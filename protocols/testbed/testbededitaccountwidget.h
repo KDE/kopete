@@ -21,7 +21,7 @@
 #include <editaccountwidget.h>
 
 class QVBoxLayout;
-class KopeteAccount;
+namespace Kopete { class Account; }
 class TestbedAccountPreferences;
 
 /**
@@ -32,20 +32,20 @@ class TestbedEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
 Q_OBJECT
 public:
-    TestbedEditAccountWidget( QWidget* parent, KopeteAccount* account);
+    TestbedEditAccountWidget( QWidget* parent, Kopete::Account* account);
 
     ~TestbedEditAccountWidget();
 
 	/**
 	 * Make an account out of the entered data
 	 */
-	virtual KopeteAccount* apply();
+	virtual Kopete::Account* apply();
 	/**
 	 * Is the data correct?
 	 */
 	virtual bool validateData();
 protected:
-	KopeteAccount *m_account;
+	Kopete::Account *m_account;
 	TestbedAccountPreferences *m_preferencesWidget;
 };
 

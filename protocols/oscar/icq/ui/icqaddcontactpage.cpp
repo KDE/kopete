@@ -284,7 +284,7 @@ void ICQAddContactPage::updateGui()
 	}
 }
 
-bool ICQAddContactPage::apply(KopeteAccount* , KopeteMetaContact *parentContact  )
+bool ICQAddContactPage::apply(Kopete::Account* , Kopete::MetaContact *parentContact  )
 {
 	QListViewItem *item = icqdata->resultView->selectedItem();
 
@@ -299,7 +299,7 @@ bool ICQAddContactPage::apply(KopeteAccount* , KopeteMetaContact *parentContact 
 		QString displayName = item->text(0);
 		kdDebug(14153) << k_funcinfo << "uin=" << contactId << ", displayName=" << displayName << endl;
 
-		return mAccount->addContact(contactId, displayName, parentContact, KopeteAccount::ChangeKABC );
+		return mAccount->addContact(contactId, displayName, parentContact, Kopete::Account::ChangeKABC );
 	}
 	return false;
 }

@@ -29,9 +29,9 @@ class QStringList;
 class QString;
 class QTimer;
 
-class KopeteMessage;
-class KopeteMetaContact;
-class KopeteMessageManager;
+namespace Kopete { class Message; }
+namespace Kopete { class MetaContact; }
+namespace Kopete { class MessageManager; }
 
 class HighlightConfig;
 class Filter;
@@ -40,7 +40,7 @@ class Filter;
   * @author Olivier Goffart
   */
 
-class HighlightPlugin : public KopetePlugin
+class HighlightPlugin : public Kopete::Plugin
 {
 	Q_OBJECT
 
@@ -51,7 +51,7 @@ public:
 	~HighlightPlugin();
 
 public slots:
-	void slotIncomingMessage( KopeteMessage& msg );
+	void slotIncomingMessage( Kopete::Message& msg );
 	void slotSettingsChanged();
 
 

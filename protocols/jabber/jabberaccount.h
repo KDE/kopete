@@ -36,7 +36,7 @@ class JabberConnector;
 class JabberProtocol;
 class QString;
 class QStringList;
-class KopeteMetaContact;
+namespace Kopete { class MetaContact; }
 class KActionMenu;
 class JabberResourcePool;
 class JabberContact;
@@ -104,7 +104,7 @@ public:
 	/*
 	 * Handle stream errors. Displays a dialog and returns.
 	 */
-	static void handleStreamError (int streamError, int streamCondition, int connectorCode, QString server, KopeteAccount::DisconnectReason &errorClass);
+	static void handleStreamError (int streamError, int streamCondition, int connectorCode, QString server, Kopete::Account::DisconnectReason &errorClass);
 
 	/**
 	 * Return the current, shared S5B server instance.
@@ -133,7 +133,7 @@ public slots:
 	void disconnect ();
 
 	/* Disconnect with a reason */
-	void disconnect ( KopeteAccount::DisconnectReason reason );
+	void disconnect ( Kopete::Account::DisconnectReason reason );
 
 protected:
 	/**
@@ -141,8 +141,8 @@ protected:
 	 *
 	 * You shouldn't ever call this method yourself, For adding contacts see @ref addContact()
 	 *
-	 * This method is called by @ref KopeteAccount::addContact() in this method, you should
-	 * simply create the new custom @ref KopeteContact in the given metacontact. You should
+	 * This method is called by @ref Kopete::Account::addContact() in this method, you should
+	 * simply create the new custom @ref Kopete::Contact in the given metacontact. You should
 	 * NOT add the contact to the server here as this method gets only called when synchronizing
 	 * the contact list on disk with the one in memory. As such, all created contacts from this
 	 * method should have the "dirty" flag set.
@@ -154,7 +154,7 @@ protected:
 	 * @param displayName The displayname of the contact (may equal userId for some protocols)
 	 * @param parentContact The metacontact to add this contact to
 	 */
-	virtual bool addContactToMetaContact (const QString & contactID, const QString & displayName, KopeteMetaContact * parentContact);
+	virtual bool addContactToMetaContact (const QString & contactID, const QString & displayName, Kopete::MetaContact * parentContact);
 
 private:
 	/* Psi backend for this account. */

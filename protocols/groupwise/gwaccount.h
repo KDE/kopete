@@ -33,9 +33,9 @@
 #include "gwmessagemanager.h"
 
 class KActionMenu;
-class KopeteContact;
-class KopeteGroup;
-class KopeteMetaContact;
+namespace Kopete { class Contact; }
+namespace Kopete { class Group; }
+namespace Kopete { class MetaContact; }
 
 class GroupWiseContact;
 class GroupWiseProtocol;
@@ -75,10 +75,10 @@ public:
 	void dumpManagers();
 	// DEBUG ONLY
 	/**
-	 * Creates a protocol specific KopeteContact subclass and adds it to the supplie
-	 * KopeteMetaContact
+	 * Creates a protocol specific Kopete::Contact subclass and adds it to the supplie
+	 * Kopete::MetaContact
 	 */
-	virtual bool addContactToMetaContact(const QString& contactId, const QString& displayName, KopeteMetaContact* parentContact);
+	virtual bool addContactToMetaContact(const QString& contactId, const QString& displayName, Kopete::MetaContact* parentContact);
 	/**
 	 * Called when Kopete is set globally away
 	 */
@@ -104,7 +104,7 @@ public:
 	/** 
 	 * Utility access to a message manager instance for a given GUID
 	 */
-	GroupWiseMessageManager * messageManager( const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const ConferenceGuid & guid );
+	GroupWiseMessageManager * messageManager( const Kopete::Contact* user, KopeteContactPtrList others, Kopete::Protocol* protocol, const ConferenceGuid & guid );
 	/**
 	 * Look up a contact given a DN
 	 * Returns 0 if none found
@@ -118,7 +118,7 @@ public:
 	/**
 	 * Send a message
 	 */ 
-	void sendMessage( const ConferenceGuid & guid, const KopeteMessage & message );
+	void sendMessage( const ConferenceGuid & guid, const Kopete::Message & message );
 	
 	/**
 	 * Invite someone to join a conference
@@ -143,7 +143,7 @@ public slots:
 
 	/* Disconnects from the server. */
 	virtual void disconnect();
-	virtual void disconnect( KopeteAccount::DisconnectReason reason );
+	virtual void disconnect( Kopete::Account::DisconnectReason reason );
 signals: 
 	void conferenceCreated( const int mmId, const GroupWise::ConferenceGuid & guid );
 	void conferenceCreationFailed( const int mmId, const int statusCode );
@@ -168,8 +168,8 @@ protected slots:
 	 * Manage the user's privacy settings
 	 */
 	void slotPrivacy();
- 	void slotKopeteGroupRenamed( KopeteGroup * );
-	void slotKopeteGroupRemoved( KopeteGroup * );
+ 	void slotKopeteGroupRenamed( Kopete::Group * );
+	void slotKopeteGroupRemoved( Kopete::Group * );
 
 	// SERVER SIDE CONTACT LIST PROCESSING
 	/**
@@ -195,7 +195,7 @@ protected slots:
 	// SLOTS HANDLING PROTOCOL EVENTS
 	/**
 	 * Called when the server has a message for us.  
-	 * This identifies the sending KopeteContact and passes the message on to it,
+	 * This identifies the sending Kopete::Contact and passes the message on to it,
 	 * in order to locate the MessageManager and finally pass to the GUI.
 	 */
 	void receiveMessage( const ConferenceEvent & event );

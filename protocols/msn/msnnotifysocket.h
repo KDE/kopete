@@ -47,7 +47,7 @@ public:
 
 	virtual void disconnect();
 
-	void setStatus( const KopeteOnlineStatus &status );
+	void setStatus( const Kopete::OnlineStatus &status );
 	void addContact( const QString &handle, const QString& pulicName, uint group , int list );
 	void removeContact( const QString &handle, uint group, int list );
 
@@ -85,7 +85,7 @@ signals:
 	void startChat( const QString&, const QString& );
 
 	void publicNameChanged( const QString& );
-	void statusChanged( const KopeteOnlineStatus &newStatus );
+	void statusChanged( const Kopete::OnlineStatus &newStatus );
 
 	void hotmailSeted(bool) ;
 	
@@ -144,9 +144,9 @@ private slots:
 
 private:
 	/**
-	 * Convert the MSN status strings to a KopeteOnlineStatus
+	 * Convert the MSN status strings to a Kopete::OnlineStatus
 	 */
-	KopeteOnlineStatus convertOnlineStatus( const QString &statusString );
+	Kopete::OnlineStatus convertOnlineStatus( const QString &statusString );
 
 	MSNAccount *m_account;
 	QString m_password;
@@ -155,12 +155,12 @@ private:
 
 	unsigned int mailCount;
 
-	KopeteOnlineStatus m_newstatus;
+	Kopete::OnlineStatus m_newstatus;
 
 	/**
 	 * Convert an entry of the Status enum back to a string
 	 */
-	QString statusToString( const KopeteOnlineStatus &status ) const;
+	QString statusToString( const Kopete::OnlineStatus &status ) const;
 
 	//know the last handle used
 	QString m_tmpLastHandle;

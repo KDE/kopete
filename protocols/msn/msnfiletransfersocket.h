@@ -29,10 +29,10 @@ namespace KNetwork {
   class KServerSocket;
 }
 
-class KopeteTransfer;
-class KopeteFileTransferInfo;
-class KopeteProtocol;
-class KopeteContact;
+namespace Kopete { class Transfer; }
+namespace Kopete { class FileTransferInfo; }
+namespace Kopete { class Protocol; }
+namespace Kopete { class Contact; }
 
 /**
  * @author Olivier Goffart
@@ -42,15 +42,15 @@ class MSNFileTransferSocket : public MSNSocket , public MSNInvitation
 	Q_OBJECT
 
 public:
-	MSNFileTransferSocket(const QString &myID,KopeteContact* c, bool incoming, QObject* parent = 0L );
+	MSNFileTransferSocket(const QString &myID,Kopete::Contact* c, bool incoming, QObject* parent = 0L );
 	~MSNFileTransferSocket();
 
 	static QString applicationID() { return "5D3E02AB-6190-11d3-BBBB-00C04F795683"; }
 	QString invitationHead();
 
 
-	void setKopeteTransfer( KopeteTransfer *kt );
-	KopeteTransfer* kopeteTransfer() { return m_kopeteTransfer; }
+	void setKopeteTransfer( Kopete::Transfer *kt );
+	Kopete::Transfer* kopeteTransfer() { return m_kopeteTransfer; }
 	void setFile( const QString &fn, long unsigned int fileSize = 0L );
 	void setAuthCookie( const QString &c ) { m_authcook = c; }
 	QString fileName() { return m_fileName;}
@@ -91,21 +91,21 @@ private slots:
 	void slotTimer();
 	void slotSendFile();
 
-	void slotFileTransferRefused( const KopeteFileTransferInfo &info );
-	void slotFileTransferAccepted( KopeteTransfer *trans, const QString& fileName );
-	/* the KopeteTransfer has been deleted */
+	void slotFileTransferRefused( const Kopete::FileTransferInfo &info );
+	void slotFileTransferAccepted( Kopete::Transfer *trans, const QString& fileName );
+	/* the Kopete::Transfer has been deleted */
 	void slotKopeteTransferDestroyed();
 
 
 private:
 	QString m_handle;
-	KopeteContact *m_contact;
+	Kopete::Contact *m_contact;
 
 	long unsigned int m_size;
 	long unsigned int m_downsize;
 	QString m_authcook;
 	QString m_fileName;
-	KopeteTransfer* m_kopeteTransfer;
+	Kopete::Transfer* m_kopeteTransfer;
 	QFile *m_file ;
 	KNetwork::KServerSocket *m_server;
 

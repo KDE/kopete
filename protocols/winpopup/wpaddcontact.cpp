@@ -84,12 +84,12 @@ bool WPAddContact::validateData()
 	return !theDialog->mHostName->currentText().isEmpty();
 }
 
-bool WPAddContact::apply(KopeteAccount *theAccount, KopeteMetaContact *theMetaContact)
+bool WPAddContact::apply(Kopete::Account *theAccount, Kopete::MetaContact *theMetaContact)
 {
 	DEBUG(WPDMETHOD, "WPAddContact::apply(" << theAccount << ", " << theMetaContact << ")");
 
 	// TODO: make the displayname an option
-	theAccount->addContact(theDialog->mHostName->currentText(), theDialog->mHostName->currentText(), theMetaContact, KopeteAccount::ChangeKABC );
+	theAccount->addContact(theDialog->mHostName->currentText(), theDialog->mHostName->currentText(), theMetaContact, Kopete::Account::ChangeKABC );
 	DEBUG(WPDMETHOD, "WPAddContact::apply()");
 	return true;
 }

@@ -20,13 +20,13 @@
 
 #include "kopeteplugin.h"
 
-class KopeteMessageManager;
+namespace Kopete { class MessageManager; }
 class MSNMessageManager;
 class MSNContact;
 class MSNInvitation;
 
 
-class NetMeetingPlugin : public KopetePlugin
+class NetMeetingPlugin : public Kopete::Plugin
 {
 	Q_OBJECT
 
@@ -35,8 +35,8 @@ public:
 	~NetMeetingPlugin();
 
 private slots:
-	void slotNewKMM(KopeteMessageManager *);
-	void slotPluginLoaded(KopetePlugin*);
+	void slotNewKMM(Kopete::MessageManager *);
+	void slotPluginLoaded(Kopete::Plugin*);
 	void slotInvitation(MSNInvitation*& invitation,  const QString &bodyMSG , long unsigned int cookie , MSNMessageManager* msnMM , MSNContact* c );
 
 

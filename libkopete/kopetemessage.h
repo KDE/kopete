@@ -26,18 +26,26 @@
 #include <qfont.h>
 #include <qdatetime.h>
 
-class KopeteContact;
 class QDateTime;
-class KopeteMessageManager;
 struct KopeteMessagePrivate;
 
-typedef QPtrList<KopeteContact> KopeteContactPtrList;
+namespace Kopete
+{
+class Contact;
+}
+
+typedef QPtrList<Kopete::Contact> KopeteContactPtrList;
+
+namespace Kopete
+{
+
+class MessageManager;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  *
- * KopeteMessage represents any kind of messages shown on a chat view.
+ * Kopete::Message represents any kind of messages shown on a chat view.
  *
  * The message may be a simple plaintext string, or a Richtext HTML like message,
  * this is indicated by the @ref format() flag.
@@ -46,7 +54,7 @@ typedef QPtrList<KopeteContact> KopeteContactPtrList;
  * It is recommended to use these flags, even for RichText messages, so the user can disable
  * custom colors in the chat window style.
  */
-class KopeteMessage
+class Message
 {
 public:
 	/**
@@ -90,76 +98,76 @@ public:
 	/**
 	 * Constructs a new empty message
 	 */
-	KopeteMessage();
+	Message();
 
 	/**
 	 * Deref and clean private object if refcount == 0
 	 */
-	~KopeteMessage();
+	~Message();
 
 	/**
 	 * Constructs a new message. See @ref setBody() to more information about the format
-	 * @param fromKC The KopeteContact that the message is coming from
+	 * @param fromKC The Kopete::Contact that the message is coming from
 	 * @param toKC List of KopeteContacts the message is going to
 	 * @param body Message body
-	 * @param direction The direction of the message, KopeteMessage::Inbound, KopeteMessage::Outbound, KopeteMessage::Internal
+	 * @param direction The direction of the message, Kopete::Message::Inbound, Kopete::Message::Outbound, Kopete::Message::Internal
 	 * @param format Format of the message
 	 * @param type Type of the message, see @ref MessageType
 	 */
-	KopeteMessage( const KopeteContact *fromKC, const KopeteContactPtrList &toKC, const QString &body,
+	Message( const Contact *fromKC, const KopeteContactPtrList &toKC, const QString &body,
 		MessageDirection direction, MessageFormat format = PlainText, MessageType type = Undefined );
 
 	/**
 	 * Constructs a new message. See @ref setBody() to more information about the format
-	 * @param fromKC The KopeteContact that the message is coming from
+	 * @param fromKC The Kopete::Contact that the message is coming from
 	 * @param toKC List of KopeteContacts the message is going to
 	 * @param body Message body
-	 * @param direction The direction of the message, KopeteMessage::Inbound, KopeteMessage::Outbound, KopeteMessage::Internal
+	 * @param direction The direction of the message, Kopete::Message::Inbound, Kopete::Message::Outbound, Kopete::Message::Internal
 	 * @param format Format of the message
 	 * @param type Type of the message, see @ref MessageType
 	 */
-	KopeteMessage( const KopeteContact *fromKC, const KopeteContact *toKC, const QString &body,
+	Message( const Contact *fromKC, const Contact *toKC, const QString &body,
 		MessageDirection direction, MessageFormat format = PlainText, MessageType type = Undefined );
 
 
 	/**
 	 * Constructs a new message. See @ref setBody() to more information about the format
-	 * @param fromKC The KopeteContact that the message is coming from
+	 * @param fromKC The Kopete::Contact that the message is coming from
 	 * @param toKC List of KopeteContacts the message is going to
 	 * @param body Message body
 	 * @param subject The subject of the message
-	 * @param direction The direction of the message, KopeteMessage::Inbound, KopeteMessage::Outbound, KopeteMessage::Internal
+	 * @param direction The direction of the message, Kopete::Message::Inbound, Kopete::Message::Outbound, Kopete::Message::Internal
 	 * @param format Format of the message
 	 * @param type Type of the message, see @ref MessageType
 	 */
-	KopeteMessage( const KopeteContact *fromKC, const KopeteContactPtrList &toKC, const QString &body,
+	Message( const Contact *fromKC, const KopeteContactPtrList &toKC, const QString &body,
 		const QString &subject, MessageDirection direction, MessageFormat format = PlainText, MessageType type = Undefined );
 
 	/**
 	 * Constructs a new message. See @ref setBody() to more information about the format
 	 * @param timeStamp Timestamp for the message
-	 * @param fromKC The KopeteContact that the message is coming from
+	 * @param fromKC The Kopete::Contact that the message is coming from
 	 * @param toKC List of KopeteContacts the message is going to
 	 * @param body Message body
-	 * @param direction The direction of the message, KopeteMessage::Inbound, KopeteMessage::Outbound, KopeteMessage::Internal
+	 * @param direction The direction of the message, Kopete::Message::Inbound, Kopete::Message::Outbound, Kopete::Message::Internal
 	 * @param format Format of the message
 	 * @param type Type of the message, see @ref MessageType
 	 */
-	KopeteMessage( const QDateTime &timeStamp, const KopeteContact *fromKC, const KopeteContactPtrList &toKC,
+	Message( const QDateTime &timeStamp, const Contact *fromKC, const KopeteContactPtrList &toKC,
 		const QString &body, MessageDirection direction, MessageFormat format = PlainText, MessageType type = Undefined );
 
 	/**
 	 * Constructs a new message. See @ref setBody() to more information about the format
 	 * @param timeStamp Timestamp for the message
-	 * @param fromKC The KopeteContact that the message is coming from
+	 * @param fromKC The Kopete::Contact that the message is coming from
 	 * @param toKC List of KopeteContacts the message is going to
 	 * @param body Message body
 	 * @param subject The subject of the message
-	 * @param direction The direction of the message, KopeteMessage::Inbound, KopeteMessage::Outbound, KopeteMessage::Internal
+	 * @param direction The direction of the message, Kopete::Message::Inbound, Kopete::Message::Outbound, Kopete::Message::Internal
 	 * @param format Format of the message
 	 * @param type Type of the message, see @ref MessageType
 	 */
-	KopeteMessage( const QDateTime &timeStamp, const KopeteContact *fromKC, const KopeteContactPtrList &toKC,
+	Message( const QDateTime &timeStamp, const Contact *fromKC, const KopeteContactPtrList &toKC,
 		const QString &body, const QString &subject, MessageDirection direction,
 		MessageFormat format = PlainText, MessageType type = Undefined );
 
@@ -167,13 +175,13 @@ public:
 	 * Copy constructor.
 	 * Just adds a reference, doesn't actually copy.
 	 */
-	KopeteMessage( const KopeteMessage &other );
+	Message( const Message &other );
 
 	/**
 	 * Assignment operator
 	 * Just like the copy constructor it just refs and doesn't copy.
 	 */
-	KopeteMessage & operator=( const KopeteMessage &other );
+	Message & operator=( const Message &other );
 
 	/**
 	 * Accessor method for the timestamp of the message
@@ -182,10 +190,10 @@ public:
 	QDateTime timestamp() const;
 
 	/**
-	 * Accessor method for the KopeteContact that sent this message
-	 * @return The KopeteContact who sent this message
+	 * Accessor method for the Kopete::Contact that sent this message
+	 * @return The Kopete::Contact who sent this message
 	 */
-	const KopeteContact * from() const;
+	const Contact * from() const;
 
 	/**
 	 * Accessor method for the KopeteContacts that this message was sent to
@@ -298,16 +306,16 @@ public:
 	 * Get the related kopete message manager.
 	 * If it is not set, returns 0L.
 	 *
-	 * The @ref KopeteMessageManager is only set if the message is already passed by the manager.
+	 * The @ref Kopete::MessageManager is only set if the message is already passed by the manager.
 	 * We should trust this only in aboutToSend/aboutToReceive signals
 	 */
-	 KopeteMessageManager *manager() const ;
+	 MessageManager *manager() const ;
 
 	 /**
 	  * set the kopetemessagemanager for this message.
 	  * should be only used by the manager itself
 	  */
-	 void setManager(KopeteMessageManager *);
+	 void setManager(MessageManager *);
 
 	/**
 	 * get a XML version of this message
@@ -363,11 +371,11 @@ private:
 	/**
 	 * Helper for constructors
 	 */
-	void init( const QDateTime &timeStamp, const KopeteContact *from, const KopeteContactPtrList &to,
+	void init( const QDateTime &timeStamp, const Contact *from, const KopeteContactPtrList &to,
 		const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, MessageType type );
 
 	/**
-	 * KopeteMessage is implicitly shared.
+	 * Kopete::Message is implicitly shared.
 	 * Detach the instance when modifying data.
 	 */
 	void detach();
@@ -376,6 +384,8 @@ private:
 
 	static QString parseLinks( const QString &message, MessageFormat format );
 };
+
+}
 
 #endif
 

@@ -28,19 +28,23 @@
 class KActionMenu;
 
 class AddContactPage;
-class KopeteContact;
-class KopeteEditAccountWidget;
-class KopeteMetaContact;
-class KopeteAccount;
 
 class KopeteProtocolPrivate;
+class KopeteEditAccountWidget;
+
+namespace Kopete
+{
+
+class Contact;
+class MetaContact;
+class Account;
 
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  * @author Martijn Klingens       <klingens@kde.org>
  * @author Olivier Goffart        <ogoffart@tiscalinet.be>
  */
-class KopeteProtocol : public KopetePlugin
+class Protocol : public Plugin
 {
 	Q_OBJECT
 
@@ -87,42 +91,42 @@ public:
 	};
 
 	/**
-	 * @brief Constructor for KopeteProtocol
+	 * @brief Constructor for Kopete::Protocol
 	 *
 	 * @param instance The protocol's instance, every plugin needs to have a @ref KInstance of its own
 	 * @param parent The protocol's parent object
 	 * @param name The protocol's name
 	 */
-	KopeteProtocol( KInstance *instance, QObject *parent, const char *name );
-	virtual ~KopeteProtocol();
+	Protocol( KInstance *instance, QObject *parent, const char *name );
+	virtual ~Protocol();
 
 	/**
 	 * @brief Create a new AddContactPage widget to be shown in the Add Contact Wizard.
 	 *
 	 * @return A new AddContactPage to be shown in the Add Contact Wizard
 	 */
-	virtual AddContactPage *createAddContactWidget( QWidget *parent, KopeteAccount *account ) = 0;
+	virtual AddContactPage *createAddContactWidget( QWidget *parent, Account *account ) = 0;
 
 	/**
 	 * @brief Create a new KopeteEditAccountWidget
 	 *
 	 * @return A new KopeteEditAccountWidget to be shown in the account part of the configurations.
 	 *
-	 * @param account is the KopeteAccount to edit. If it's 0L, then we create a new account
+	 * @param account is the Kopete::Account to edit. If it's 0L, then we create a new account
 	 * @param parent The parent of the 'to be returned' widget
 	 */
-	virtual KopeteEditAccountWidget * createEditAccountWidget( KopeteAccount *account, QWidget *parent ) = 0;
+	virtual KopeteEditAccountWidget * createEditAccountWidget( Account *account, QWidget *parent ) = 0;
 
 	/**
-	 * @brief Create an empty KopeteAccount
+	 * @brief Create an empty Kopete::Account
 	 *
 	 * This method is called during the loading from the xml file
 	 * @param accountId - the account ID to create the account with. This is usually
 	 * the login name of the account
 	 *
-	 * @return The new @ref KopeteAccount object created by this function
+	 * @return The new @ref Kopete::Account object created by this function
 	 */
-	virtual KopeteAccount *createNewAccount( const QString &accountId ) = 0;
+	virtual Account *createNewAccount( const QString &accountId ) = 0;
 
 	/**
 	 * @brief Determine whether the protocol supports offline messages.
@@ -147,14 +151,14 @@ public:
 	/**
 	 * @brief Deserialize the plugin data for a meta contact.
 	 *
-	 * This method splits up the data into the independent KopeteContact objects
+	 * This method splits up the data into the independent Kopete::Contact objects
 	 * and calls @ref deserializeContact() for each contact.
 	 *
 	 * Note that you can still reimplement this method if you prefer, but you are
 	 * strongly recommended to use this version of the method instead, unless you
 	 * want to do _VERY_ special things with the data...
 	 */
-	virtual void deserialize( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData );
+	virtual void deserialize( MetaContact *metaContact, const QMap<QString, QString> &serializedData );
 
 	/**
 	 * @brief Deserialize a single contact.
@@ -162,14 +166,14 @@ public:
 	 * This method is called by @ref deserialize() for each separate contact,
 	 * so you don't need to add your own hooks for multiple contacts in a single
 	 * meta contact yourself. @p serializedData and @p addressBookData will be
-	 * the data the contact provided in KopeteContact::serialize.
+	 * the data the contact provided in Kopete::Contact::serialize.
 	 *
 	 * The default implementation does nothing.
 	 *
 	 * @return The contact created from the data
-	 * @sa KopeteContact::serialize
+	 * @sa Kopete::Contact::serialize
 	 */
-	virtual KopeteContact *deserializeContact( KopeteMetaContact *metaContact,
+	virtual Contact *deserializeContact( MetaContact *metaContact,
 		const QMap<QString, QString> &serializedData,
 		const QMap<QString, QString> &addressBookData );
 
@@ -179,7 +183,7 @@ public:
 	int richTextCapabilities() const;
 
 	/**
-	 * Reimplemented from KopetePlugin.
+	 * Reimplemented from Kopete::Plugin.
 	 *
 	 * This method disconnects all accounts and deletes them, after which it
 	 * will emit readyForUnload.
@@ -204,7 +208,7 @@ public slots:
 	 * A meta contact is about to save.
 	 * Call serialize() for all contained contacts for this protocol.
 	 */
-	void slotMetaContactAboutToSave( KopeteMetaContact *metaContact );
+	void slotMetaContactAboutToSave( Kopete::MetaContact *metaContact );
 
 protected:
 	/**
@@ -218,7 +222,7 @@ private slots:
 	/**
 	 * The account changed online status. Used while unloading the protocol.
 	 */
-	void slotAccountOnlineStatusChanged( KopeteContact *self, const KopeteOnlineStatus &newStatus, const KopeteOnlineStatus &oldStatus );
+	void slotAccountOnlineStatusChanged( Kopete::Contact *self, const Kopete::OnlineStatus &newStatus, const Kopete::OnlineStatus &oldStatus );
 
 	/**
 	 * The account is destroyed. When it's the last account we emit the
@@ -229,6 +233,8 @@ private slots:
 private:
 	KopeteProtocolPrivate *d;
 };
+
+}
 
 #endif
 

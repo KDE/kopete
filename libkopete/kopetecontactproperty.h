@@ -1,7 +1,7 @@
 /*
     kopetecontactproperty.h
 
-    KopeteContact Property class
+    Kopete::Contact Property class
 
     Copyright (c) 2004    by Stefan Gehn <metz AT gehn.net>
     Kopete    (c) 2004    by the Kopete developers <kopete-devel@kde.org>
@@ -31,7 +31,7 @@ struct ContactPropertyTmplPrivate;
  *
  * The template class for registering properties in Kopete
  * You need to use this if you want to set properties for a
- * KopeteContact
+ * Kopete::Contact
  **/
 class ContactPropertyTmpl
 {
@@ -129,7 +129,7 @@ class ContactPropertyTmpl
  * @author Stefan Gehn <metz AT gehn.net>
  *
  * A data container for whatever information Kopete or any of its
- * plugins want to store for a KopeteContact
+ * plugins want to store for a Kopete::Contact
  **/
 class ContactProperty
 {

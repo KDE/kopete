@@ -34,10 +34,10 @@ class JabberAddContactPage:public AddContactPage
   Q_OBJECT
 
 public:
-	  JabberAddContactPage (KopeteAccount * owner, QWidget * parent = 0, const char *name = 0);
+	  JabberAddContactPage (Kopete::Account * owner, QWidget * parent = 0, const char *name = 0);
 	 ~JabberAddContactPage ();
 	virtual bool validateData ();
-	virtual bool apply (KopeteAccount *, KopeteMetaContact *);
+	virtual bool apply (Kopete::Account *, Kopete::MetaContact *);
 	dlgAddContact *jabData;
 	QLabel *noaddMsg1;
 	QLabel *noaddMsg2;

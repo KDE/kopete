@@ -66,14 +66,14 @@ private:
 } // END namespace UI
 } // END namespace Kopete
 
-KopeteGroupViewItem::KopeteGroupViewItem( KopeteGroup *group_, QListView *parent, const char *name )
+KopeteGroupViewItem::KopeteGroupViewItem( Kopete::Group *group_, QListView *parent, const char *name )
 : Kopete::UI::ListView::Item( parent, group_, name )
 {
 	m_group = group_;
 	initLVI();
 }
 
-KopeteGroupViewItem::KopeteGroupViewItem( KopeteGroup *group_, QListViewItem *parent, const char *name )
+KopeteGroupViewItem::KopeteGroupViewItem( Kopete::Group *group_, QListViewItem *parent, const char *name )
  : Kopete::UI::ListView::Item( parent, group_, name )
 {
 	m_group = group_;
@@ -101,7 +101,7 @@ void KopeteGroupViewItem::initLVI()
 	d->name->setToolTipSource( d->toolTipSource.get() );
 	d->count->setToolTipSource( d->toolTipSource.get() );
 
-	connect( m_group, SIGNAL( renamed( KopeteGroup*, const QString& ) ),
+	connect( m_group, SIGNAL( renamed( Kopete::Group*, const QString& ) ),
 		this, SLOT( refreshDisplayName() ) );
 
 	connect( KopetePrefs::prefs(), SIGNAL( contactListAppearanceChanged() ),
@@ -113,7 +113,7 @@ void KopeteGroupViewItem::initLVI()
 	slotConfigChanged();
 }
 
-KopeteGroup* KopeteGroupViewItem::group() const
+Kopete::Group* KopeteGroupViewItem::group() const
 {
 	return m_group;
 }
@@ -176,7 +176,7 @@ QString KopeteGroupViewItem::key( int, bool ) const
 {
 	//Groups are placed after topLevel contact.
 	//Exepted Temporary group which is the first group
-	if ( group()->type() != KopeteGroup::Normal )
+	if ( group()->type() != Kopete::Group::Normal )
 		return "0" + d->name->text();
 	return "M" + d->name->text();
 }
@@ -234,8 +234,8 @@ void KopeteGroupViewItem::updateIcon()
 	// TODO: clever caching
 	if ( isOpen() )
 	{
-		if ( group()->useCustomIcon() && !group()->icon( KopetePluginDataObject::Open ).isEmpty() )
-			open = SmallIcon( group()->icon( KopetePluginDataObject::Open ) );
+		if ( group()->useCustomIcon() && !group()->icon( Kopete::PluginDataObject::Open ).isEmpty() )
+			open = SmallIcon( group()->icon( Kopete::PluginDataObject::Open ) );
 		else
 			open = SmallIcon( KOPETE_GROUP_DEFAULT_OPEN_ICON );
 
@@ -243,8 +243,8 @@ void KopeteGroupViewItem::updateIcon()
 	}
 	else
 	{
-		if ( group()->useCustomIcon() && !group()->icon( KopetePluginDataObject::Closed ).isEmpty() )
-			closed = SmallIcon( group()->icon( KopetePluginDataObject::Closed ) );
+		if ( group()->useCustomIcon() && !group()->icon( Kopete::PluginDataObject::Closed ).isEmpty() )
+			closed = SmallIcon( group()->icon( Kopete::PluginDataObject::Closed ) );
 		else
 			closed = SmallIcon( KOPETE_GROUP_DEFAULT_CLOSED_ICON );
 

@@ -33,29 +33,29 @@ K_EXPORT_COMPONENT_FACTORY(
 MeanwhileProtocol::MeanwhileProtocol( QObject* parent, 
                                       const char *name, 
                                       const QStringList &/*args*/)
-    : KopeteProtocol(MeanwhileProtocolFactory::instance(), 
+    : Kopete::Protocol(MeanwhileProtocolFactory::instance(), 
                      parent, name ),
-      meanwhileOffline( KopeteOnlineStatus::Offline, 
+      meanwhileOffline( Kopete::OnlineStatus::Offline, 
                         25, this, 0, QString::null,
                         i18n( "Go Offline" ),
                         i18n( "Offline" ) ),
-      meanwhileOnline( KopeteOnlineStatus::Online, 
+      meanwhileOnline( Kopete::OnlineStatus::Online, 
                         25, this, 1, QString::null,
                         i18n( "Go Online" ),
                         i18n( "Online" ) ),
-      meanwhileAway( KopeteOnlineStatus::Away, 
+      meanwhileAway( Kopete::OnlineStatus::Away, 
                         25, this, 2, "meanwhile_away",
                         i18n( "Go Away" ),
                         i18n( "Away" ) ),
-      meanwhileBusy( KopeteOnlineStatus::Away, 
+      meanwhileBusy( Kopete::OnlineStatus::Away, 
                         25, this, 3, "meanwhile_dnd",
                         i18n( "Mark as Busy" ),
                         i18n( "Busy" ) ),
-      meanwhileIdle( KopeteOnlineStatus::Away, 
+      meanwhileIdle( Kopete::OnlineStatus::Away, 
                         25, this, 4, "meanwhile_idle",
                         i18n( "Marked as Idle" ),
                         i18n( "Idle" ) ),
-      meanwhileUnknown( KopeteOnlineStatus::Offline, 
+      meanwhileUnknown( Kopete::OnlineStatus::Offline, 
                         25, this, 5, "meanwhile_unknown",
                         i18n( "Where am I" ),
                         i18n( "Catch me if you can" ) ),
@@ -72,20 +72,20 @@ MeanwhileProtocol::~MeanwhileProtocol()
 
 AddContactPage * MeanwhileProtocol::createAddContactWidget(
                                     QWidget *parent, 
-                                    KopeteAccount * account )
+                                    Kopete::Account * account )
 {
 	return new MeanwhileAddContactPage(parent, account);
 }
 
 KopeteEditAccountWidget * MeanwhileProtocol::createEditAccountWidget( 
-                                    KopeteAccount *account, 
+                                    Kopete::Account *account, 
                                     QWidget *parent )
 {
 //    LOG("createEditAccountWidget");
 	return new MeanwhileEditAccountWidget( parent, account, this );
 }
 
-KopeteAccount *MeanwhileProtocol::createNewAccount( 
+Kopete::Account *MeanwhileProtocol::createNewAccount( 
                                     const QString &accountId )
 {
 	return new MeanwhileAccount( this, accountId, accountId.ascii() );
@@ -96,8 +96,8 @@ MeanwhileProtocol *MeanwhileProtocol::protocol()
     return s_protocol;
 }
 
-KopeteContact *MeanwhileProtocol::deserializeContact( 
-                            KopeteMetaContact *metaContact,
+Kopete::Contact *MeanwhileProtocol::deserializeContact( 
+                            Kopete::MetaContact *metaContact,
                             const QMap<QString, 
                             QString> &serializedData, 
                             const QMap<QString, QString> & /* addressBookData */ )
@@ -107,7 +107,7 @@ KopeteContact *MeanwhileProtocol::deserializeContact(
 
     MeanwhileAccount *theAccount = 
             static_cast<MeanwhileAccount*>(
-                            KopeteAccountManager::manager()->
+                            Kopete::AccountManager::manager()->
                                     findAccount(protocol()->pluginId(), accountId));
 
     if(!theAccount)
@@ -115,7 +115,7 @@ KopeteContact *MeanwhileProtocol::deserializeContact(
         return 0;
     }
 
-    theAccount->addContact(contactId, serializedData["displayName"], metaContact, KopeteAccount::DontChangeKABC, serializedData["group"]);
+    theAccount->addContact(contactId, serializedData["displayName"], metaContact, Kopete::Account::DontChangeKABC, serializedData["group"]);
     return theAccount->contacts()[contactId];
 }
 

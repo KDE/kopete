@@ -184,7 +184,7 @@ void OscarSocket::slotConnectionClosed(const QString & /*connName */, bool expec
 	emit statusChanged(OSCAR_OFFLINE);
 
 	if (!expected)
-		mAccount->disconnect(KopeteAccount::ConnectionReset);
+		mAccount->disconnect(Kopete::Account::ConnectionReset);
 }
 
 
@@ -1900,7 +1900,7 @@ void OscarSocket::parseConnectionClosed(Buffer &inbuf)
 
 		bool disc = parseAuthFailedCode(errorNum);
 		if (disc)
-			mAccount->disconnect(KopeteAccount::Manual); //doLogoff();
+			mAccount->disconnect(Kopete::Account::Manual); //doLogoff();
 	}
 
 	TLV *server = findTLV(lst,0x0005);
@@ -2060,7 +2060,7 @@ const QString OscarSocket::ServerToQString(const char* string, OscarContact *con
 		}
 	}
 
-	return KopeteMessage::decodeString( string, codec );
+	return Kopete::Message::decodeString( string, codec );
 }
 
 

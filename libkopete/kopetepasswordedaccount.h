@@ -19,7 +19,7 @@
 
 #include "kopeteaccount.h"
 
-class KopeteOnlineStatus;
+class Kopete::OnlineStatus;
 
 namespace Kopete
 {
@@ -31,7 +31,7 @@ class Password;
  * An account requiring a password to connect. Instead of reimplementing connect()
  * in your subclass, reimplement connectWithPassword.
  */
-class PasswordedAccount : public KopeteAccount
+class PasswordedAccount : public Account
 {
 	Q_OBJECT
 	
@@ -44,7 +44,7 @@ public:
 	 * @param maxPasswordLength The maximum length for passwords for this account, or 0 for no limit
 	 * @param name The name for this QObject
 	 */
-	PasswordedAccount( KopeteProtocol *parent, const QString &acctId, uint maxPasswordLength = 0, const char *name = 0 );
+	PasswordedAccount( Protocol *parent, const QString &acctId, uint maxPasswordLength = 0, const char *name = 0 );
 	virtual ~PasswordedAccount();
 
 	/**
@@ -53,12 +53,12 @@ public:
 	Password &password();
 
 	void connect();
-	void connect( const KopeteOnlineStatus& );
+	void connect( const OnlineStatus& );
 	
 	/**
 	 * \brief Get the initial status
 	 */
-	KopeteOnlineStatus initialStatus();
+	OnlineStatus initialStatus();
 
 public slots:
 	/**

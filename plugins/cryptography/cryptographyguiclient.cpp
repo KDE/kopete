@@ -27,7 +27,7 @@
 
 class CryptographyPlugin;
 
-CryptographyGUIClient::CryptographyGUIClient(KopeteMessageManager *parent )
+CryptographyGUIClient::CryptographyGUIClient(Kopete::MessageManager *parent )
  : QObject(parent) , KXMLGUIClient(parent)
 {
 	if(!parent || parent->members().isEmpty())
@@ -36,7 +36,7 @@ CryptographyGUIClient::CryptographyGUIClient(KopeteMessageManager *parent )
 		return;
 	}
 
-	QPtrList<KopeteContact> mb=parent->members();
+	QPtrList<Kopete::Contact> mb=parent->members();
 	m_first=mb.first()->metaContact();
 
 	if(!m_first)

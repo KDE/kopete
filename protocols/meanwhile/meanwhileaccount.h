@@ -23,7 +23,7 @@ class MeanwhileServer;
 class MeanwhileProtocol;
 class MeanwhilePlugin;
 
-class MeanwhileAccount : public KopeteAccount
+class MeanwhileAccount : public Kopete::Account
 {
     Q_OBJECT
 public:
@@ -36,7 +36,7 @@ public:
     virtual bool addContactToMetaContact(
                         const QString &contactId, 
                         const QString &displayName, 
-                        KopeteMetaContact *parentContact);
+                        Kopete::MetaContact *parentContact);
                         
     virtual void connect();
     

@@ -23,18 +23,18 @@
 #include <qstring.h>
 
 class SMSAccount;
-class KopeteMessageManager;
-class KopeteMetaContact;
+namespace Kopete { class MessageManager; }
+namespace Kopete { class MetaContact; }
 
 class KActionCollection;
 class KAction;
 
-class SMSContact : public KopeteContact
+class SMSContact : public Kopete::Contact
 {
 	Q_OBJECT
 public:
-	SMSContact( KopeteAccount* _account, const QString &phoneNumber,
-		const QString &displayName, KopeteMetaContact *parent );
+	SMSContact( Kopete::Account* _account, const QString &phoneNumber,
+		const QString &displayName, Kopete::MetaContact *parent );
 
 	QPtrList<KAction>* customContextMenuActions();
 
@@ -48,16 +48,16 @@ public:
 	virtual void serialize( QMap<QString, QString> &serializedData,
 		QMap<QString, QString> &addressBookData );
 
-	KopeteMessageManager* manager( bool canCreate = false );
+	Kopete::MessageManager* manager( bool canCreate = false );
 
 public slots:
 	virtual void slotUserInfo();
 	virtual void slotDeleteContact();
-	void slotSendMessage(KopeteMessage &msg);
+	void slotSendMessage(Kopete::Message &msg);
 
 private slots:
-	void slotSendingSuccess(const KopeteMessage &msg);
-	void slotSendingFailure(const KopeteMessage &msg, const QString &error);
+	void slotSendingSuccess(const Kopete::Message &msg);
+	void slotSendingFailure(const Kopete::Message &msg, const QString &error);
 
 signals:
 	void messageSuccess();
@@ -71,7 +71,7 @@ private:
 
 	QString m_phoneNumber;
 
-	KopeteMessageManager* m_msgManager;
+	Kopete::MessageManager* m_msgManager;
 };
 
 #endif

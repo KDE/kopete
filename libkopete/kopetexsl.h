@@ -23,13 +23,16 @@
 
 class KopeteXSLTPrivate;
 
+namespace Kopete
+{
+
 /**
  * @author Jason Keirstead <jason@keirstead.org>
  *
  * This class provides an easy to use interface to basic
  * libxslt transformations.
  */
-class KopeteXSLT : public QObject
+class XSLT : public QObject
 {
 	Q_OBJECT
 
@@ -39,9 +42,9 @@ public:
 	 *
 	 * Constructs a new Kopete XSLT parser using the provided XSLT document
 	 */
-	KopeteXSLT( const QString &xsltDocument, QObject *parent = 0L );
+	XSLT( const QString &xsltDocument, QObject *parent = 0L );
 
-	virtual ~KopeteXSLT();
+	virtual ~XSLT();
 
 	/**
 	 * Set the XSLT document
@@ -76,6 +79,8 @@ public:
 private:
 	KopeteXSLTPrivate *d;
 };
+
+}
 
 #endif
 

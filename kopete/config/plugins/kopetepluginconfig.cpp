@@ -54,7 +54,7 @@ KopetePluginConfig::KopetePluginConfig( QWidget *parent, const char *name )
 	connect( d->pluginSelector, SIGNAL( configCommitted( const QCString & ) ),
 		KSettings::Dispatcher::self(), SLOT( reparseConfiguration( const QCString & ) ) );
 
-	d->pluginSelector->addPlugins( KopetePluginManager::self()->availablePlugins( "Plugins" ), i18n( "General Plugins" ), "Plugins" );
+	d->pluginSelector->addPlugins( Kopete::PluginManager::self()->availablePlugins( "Plugins" ), i18n( "General Plugins" ), "Plugins" );
 }
 
 void KopetePluginConfig::setChanged( bool c )
@@ -80,7 +80,7 @@ void KopetePluginConfig::apply()
 	if( d->isChanged )
 	{
 		d->pluginSelector->save();
-		KopetePluginManager::self()->loadAllPlugins();
+		Kopete::PluginManager::self()->loadAllPlugins();
 		setChanged( false );
 	}
 }

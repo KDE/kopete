@@ -41,24 +41,24 @@ K_EXPORT_COMPONENT_FACTORY( kopete_groupwise, GroupWiseProtocolFactory( "kopete_
 GroupWiseProtocol *GroupWiseProtocol::s_protocol = 0L;
 
 GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const char *name, const QStringList &/*args*/ )
-	: KopeteProtocol( GroupWiseProtocolFactory::instance(), parent, name ),
-	  groupwiseUnknown    ( KopeteOnlineStatus::Unknown, 25, this, 0, "status_unknown",
+	: Kopete::Protocol( GroupWiseProtocolFactory::instance(), parent, name ),
+	  groupwiseUnknown    ( Kopete::OnlineStatus::Unknown, 25, this, 0, "status_unknown",
 	  		"FIXME: Make this unselectable", i18n( "Unknown" ) ),
-	  groupwiseOffline ( KopeteOnlineStatus::Offline,    0,  this, 1, QString::null, 
+	  groupwiseOffline ( Kopete::OnlineStatus::Offline,    0,  this, 1, QString::null, 
 	  		i18n( "O&ffline" ), i18n( "Offline" ) ),
-	  groupwiseAvailable  ( KopeteOnlineStatus::Online,  25, this, 2, QString::null, 
+	  groupwiseAvailable  ( Kopete::OnlineStatus::Online,  25, this, 2, QString::null, 
 	  		i18n( "A&vailable" ),   i18n( "Available" ) ),
-	  groupwiseBusy       ( KopeteOnlineStatus::Away,    20, this, 3, "groupwise_busy", 
+	  groupwiseBusy       ( Kopete::OnlineStatus::Away,    20, this, 3, "groupwise_busy", 
 	  		i18n( "&Busy" ), i18n( "Busy" ) ),
-	  groupwiseAway       ( KopeteOnlineStatus::Away,    18, this, 4, "groupwise_away", 
+	  groupwiseAway       ( Kopete::OnlineStatus::Away,    18, this, 4, "groupwise_away", 
 	  		i18n( "Go &Away" ), i18n( "Away" ) ),
-	  groupwiseAwayIdle   ( KopeteOnlineStatus::Away,    15, this, 5, "groupwise_away", 
+	  groupwiseAwayIdle   ( Kopete::OnlineStatus::Away,    15, this, 5, "groupwise_away", 
 	  		"FIXME: Make this unselectable", i18n( "Idle" ) ),
-	  groupwiseInvalid( KopeteOnlineStatus::Unknown, 25, this, 6, "status_unknown",
+	  groupwiseInvalid( Kopete::OnlineStatus::Unknown, 25, this, 6, "status_unknown",
 	  		"FIXME: Make this unselectable", i18n( "Invalid Status" ) ),
-	  groupwiseConnecting( KopeteOnlineStatus::Unknown, 0, this, 99, "status_connecting",
+	  groupwiseConnecting( Kopete::OnlineStatus::Unknown, 0, this, 99, "status_connecting",
 	  		"FIXME: Make this unselectable", i18n( "Connecting" ) ),
-	  groupwiseAppearOffline( KopeteOnlineStatus::Online,22, this, 98, "groupwise_invisible",
+	  groupwiseAppearOffline( Kopete::OnlineStatus::Online,22, this, 98, "groupwise_invisible",
 	  		i18n( "A&ppear Offline" ), i18n( "Appear Offline" ) ),
 	  propGivenName( Kopete::Global::Properties::self()->firstName() ),
 	  propLastName( Kopete::Global::Properties::self()->lastName() ),
@@ -78,8 +78,8 @@ GroupWiseProtocol::~GroupWiseProtocol()
 {
 }
 
-KopeteContact *GroupWiseProtocol::deserializeContact(
-	KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
+Kopete::Contact *GroupWiseProtocol::deserializeContact(
+	Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> &/* addressBookData */)
 {
 	QString dn = serializedData[ "DN" ];
@@ -89,9 +89,9 @@ KopeteContact *GroupWiseProtocol::deserializeContact(
 	int parentId = serializedData[ "parentId" ].toInt();
 	int sequence = serializedData[ "sequenceNumber" ].toInt();
 	
-	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
+	QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts( this );
 
-	KopeteAccount *account = accounts[ accountId ];
+	Kopete::Account *account = accounts[ accountId ];
 	if ( !account )
 	{
 		kdDebug(GROUPWISE_DEBUG_GLOBAL) << "Account doesn't exist, skipping" << endl;
@@ -102,19 +102,19 @@ KopeteContact *GroupWiseProtocol::deserializeContact(
 	return new GroupWiseContact(account, dn, metaContact, objectId, parentId, sequence );
 }
 
-AddContactPage * GroupWiseProtocol::createAddContactWidget( QWidget *parent, KopeteAccount *  account )
+AddContactPage * GroupWiseProtocol::createAddContactWidget( QWidget *parent, Kopete::Account *  account )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Creating Add Contact Page" << endl;
 	return new GroupWiseAddContactPage( account, parent, "addcontactpage");
 }
 
-KopeteEditAccountWidget * GroupWiseProtocol::createEditAccountWidget( KopeteAccount *account, QWidget *parent )
+KopeteEditAccountWidget * GroupWiseProtocol::createEditAccountWidget( Kopete::Account *account, QWidget *parent )
 {
 	kdDebug(GROUPWISE_DEBUG_GLOBAL) << "Creating Edit Account Page" << endl;
 	return new GroupWiseEditAccountWidget( parent, account );
 }
 
-KopeteAccount *GroupWiseProtocol::createNewAccount( const QString &accountId )
+Kopete::Account *GroupWiseProtocol::createNewAccount( const QString &accountId )
 {
 	return new GroupWiseAccount( this, accountId );
 }
@@ -124,9 +124,9 @@ GroupWiseProtocol *GroupWiseProtocol::protocol()
 	return s_protocol;
 }
 
-KopeteOnlineStatus GroupWiseProtocol::gwStatusToKOS( const int gwInternal )
+Kopete::OnlineStatus GroupWiseProtocol::gwStatusToKOS( const int gwInternal )
 {
-	KopeteOnlineStatus status;
+	Kopete::OnlineStatus status;
 	switch ( gwInternal )
 	{
 		case GroupWise::Unknown:

@@ -1,4 +1,3 @@
-
 /*
     kopetecommandhandler.h - Command Handler
 
@@ -22,23 +21,28 @@
 #include <kshortcut.h>
 #include "kopetemessage.h"
 
-class KopeteCommand;
-class KopeteMessageManager;
 class KProcess;
-class KopetePlugin;
-class KopeteProtocol;
-class KopeteView;
 
 struct CommandHandlerPrivate;
 
+class KopeteView;
+class KopeteCommand;
+class KopeteCommandGUIClient;
 typedef QDict<KopeteCommand> CommandList;
+
+namespace Kopete
+{
+
+class MessageManager;
+class Plugin;
+class Protocol;
 
 /**
  * @author Jason Keirstead   <jason@keirstead.org>
  *
- * The KopeteCommandHandler can handle /action like messages
+ * The Kopete::CommandHandler can handle /action like messages
  */
-class KopeteCommandHandler : public QObject
+class CommandHandler : public QObject
 {
 	friend class KopeteCommandGUIClient;
 
@@ -53,7 +57,7 @@ class KopeteCommandHandler : public QObject
 		/**
 		 * Returns a pointer to the command handler
 		 */
-		static KopeteCommandHandler *commandHandler();
+		static CommandHandler *commandHandler();
 
 		/**
 		 * \brief Register a command with the command handler.
@@ -63,13 +67,13 @@ class KopeteCommandHandler : public QObject
 		 * handler. This is so that if the first plugin is unloaded, the next
 		 * handler in the sequence will handle the command. However, there are
 		 * certain commands which are reserved (internally handled by the
-		 * KopeteCommandHandler). These commands can also be overridden by
+		 * Kopete::CommandHandler). These commands can also be overridden by
 		 * registering a new duplicate command.
 		 *
 		 * @param parent The plugin who owns this command
 		 * @param command The command we want to handle, not including the '/'
 		 * @param handlerSlot The slot used to handle the command. This slot must
-		 *   accept two parameters, a QString of arguments, and a KopeteMessageManager
+		 *   accept two parameters, a QString of arguments, and a Kopete::MessageManager
 		 *   pointer to the manager under which the command was sent.
 		 * @param help An optional help string to be shown when the user uses
 		 *   /help \<command\>
@@ -137,17 +141,17 @@ class KopeteCommandHandler : public QObject
 		 * @param manager The manager who owns this message
 		 * @return True if the command was handled, false if not
 		 */
-		bool processMessage( KopeteMessage &msg, KopeteMessageManager *manager );
+		bool processMessage( Message &msg, MessageManager *manager );
 
 		/**
 		 * \brief Process a message to see if any commands should be handled
 		 *
-		 * \see processMessage( KopeteMessage &msg, KopeteMessageManager *manager)
+		 * \see processMessage( Kopete::Message &msg, Kopete::MessageManager *manager)
 		 * \param msg A QString contain the message
-		 * \param manager the KopeteMessageManager who will own the message
+		 * \param manager the Kopete::MessageManager who will own the message
 		 * \return true if the command was handled, false if the command was not handled.
 		 */
-		bool processMessage( const QString &msg, KopeteMessageManager *manager );
+		bool processMessage( const QString &msg, MessageManager *manager );
 
 		/**
 		 * Parses a string of command arguments into a QStringList. Quoted
@@ -164,38 +168,40 @@ class KopeteCommandHandler : public QObject
 		bool commandHandled( const QString &command );
 
 	private slots:
-		void slotPluginLoaded( KopetePlugin * );
+		void slotPluginLoaded( Kopete::Plugin * );
 		void slotPluginDestroyed( QObject * );
 		void slotExecReturnedData(KProcess *proc, char *buff, int bufflen );
 		void slotExecFinished(KProcess *proc);
 		void slotViewCreated( KopeteView *view );
 
-		void slotHelpCommand( const QString & args, KopeteMessageManager *manager );
-		void slotClearCommand( const QString & args, KopeteMessageManager *manager );
-		void slotPartCommand( const QString & args, KopeteMessageManager *manager );
-		void slotCloseCommand( const QString & args, KopeteMessageManager *manager );
-		//void slotMeCommand( const QString & args, KopeteMessageManager *manager );
-		void slotExecCommand( const QString & args, KopeteMessageManager *manager );
-		void slotAwayCommand( const QString & args, KopeteMessageManager *manager );
-		void slotAwayAllCommand( const QString & args, KopeteMessageManager *manager );
-		void slotSayCommand( const QString & args, KopeteMessageManager *manager );
+		void slotHelpCommand( const QString & args, Kopete::MessageManager *manager );
+		void slotClearCommand( const QString & args, Kopete::MessageManager *manager );
+		void slotPartCommand( const QString & args, Kopete::MessageManager *manager );
+		void slotCloseCommand( const QString & args, Kopete::MessageManager *manager );
+		//void slotMeCommand( const QString & args, Kopete::MessageManager *manager );
+		void slotExecCommand( const QString & args, Kopete::MessageManager *manager );
+		void slotAwayCommand( const QString & args, Kopete::MessageManager *manager );
+		void slotAwayAllCommand( const QString & args, Kopete::MessageManager *manager );
+		void slotSayCommand( const QString & args, Kopete::MessageManager *manager );
 
 	private:
 		/**
 		 * Helper function. Returns all the commands that can be used by a KMM of this protocol
 		 * (all non-protocol commands, plus this protocols commands)
 		 */
-		CommandList commands( KopeteProtocol * );
+		CommandList commands( Protocol * );
 
 		/**
 		 * Helper function for commands()
 		 */
 		void addCommands( CommandList &from, CommandList &to, CommandType type = Undefined );
 
-		KopeteCommandHandler();
-		~KopeteCommandHandler();
+		CommandHandler();
+		~CommandHandler();
 
 		static CommandHandlerPrivate *p;
 };
+
+}
 
 #endif

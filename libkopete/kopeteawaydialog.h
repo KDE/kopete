@@ -21,7 +21,10 @@
 
 #include <kdialogbase.h>
 
-class KopeteAway;
+namespace Kopete
+{
+class Away;
+}
 
 class KopeteAwayDialogPrivate;
 
@@ -68,7 +71,7 @@ protected:
 	 * Do not delete this, this instance will
 	 * deleted when the application closes
 	 */
-	KopeteAway *awayInstance;
+	Kopete::Away *awayInstance;
 
 	/**
 	 * \brief Gets the last selected away message

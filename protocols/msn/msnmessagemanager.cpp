@@ -49,20 +49,20 @@
 #include "msndebugrawcmddlg.h"
 #endif
 
-MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteContact *user,
+MSNMessageManager::MSNMessageManager( Kopete::Protocol *protocol, const Kopete::Contact *user,
 	KopeteContactPtrList others, const char *name )
-: KopeteMessageManager( user, others, protocol, 0, name )
+: Kopete::MessageManager( user, others, protocol, 0, name )
 {
-	KopeteMessageManagerFactory::factory()->addKopeteMessageManager( this );
+	KopeteMessageManagerFactory::factory()->addMessageManager( this );
 	m_chatService = 0l;
 //	m_msgQueued = 0L;
 
 	setInstance(protocol->instance());
 
-	connect( this, SIGNAL( messageSent( KopeteMessage&,
-		KopeteMessageManager* ) ),
-		this, SLOT( slotMessageSent( KopeteMessage&,
-		KopeteMessageManager* ) ) );
+	connect( this, SIGNAL( messageSent( Kopete::Message&,
+		Kopete::MessageManager* ) ),
+		this, SLOT( slotMessageSent( Kopete::Message&,
+		Kopete::MessageManager* ) ) );
 
 	connect( this, SIGNAL( invitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNMessageManager*  , MSNContact*  ) ) ,
 		protocol,  SIGNAL( invitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNMessageManager*  , MSNContact*  ) ) );
@@ -141,8 +141,8 @@ void MSNMessageManager::createChat( const QString &handle,
 		this, SLOT( slotUserJoined(const QString&,const QString&,bool) ) );
 	connect( m_chatService, SIGNAL( userLeft(const QString&,const QString&)),
 		this, SLOT( slotUserLeft(const QString&,const QString&) ) );
-	connect( m_chatService, SIGNAL( msgReceived( KopeteMessage & ) ),
-		this, SLOT( slotMessageReceived( KopeteMessage & ) ) );
+	connect( m_chatService, SIGNAL( msgReceived( Kopete::Message & ) ),
+		this, SLOT( slotMessageReceived( Kopete::Message & ) ) );
 	connect( m_chatService, SIGNAL( switchBoardClosed() ),
 		this, SLOT( slotSwitchBoardClosed() ) );
 	connect( m_chatService, SIGNAL( receivedTypingMsg( const QString &, bool ) ),
@@ -158,7 +158,7 @@ void MSNMessageManager::createChat( const QString &handle,
 void MSNMessageManager::slotUserJoined( const QString &handle, const QString &publicName, bool IRO )
 {
 	if( !account()->contacts()[ handle ] )
-		account()->addContact( handle, publicName, 0L, KopeteAccount::DontChangeKABC, QString::null, true);
+		account()->addContact( handle, publicName, 0L, Kopete::Account::DontChangeKABC, QString::null, true);
 
 	MSNContact *c = static_cast<MSNContact*>( account()->contacts()[ handle ] );
 
@@ -190,11 +190,11 @@ void MSNMessageManager::slotSwitchBoardClosed()
 	m_chatService->deleteLater();
 	m_chatService=0l;
 
-	for ( QMap<unsigned int , KopeteMessage>::iterator it = m_messagesSent.begin(); it!=m_messagesSent.end(); it = m_messagesSent.begin() )
+	for ( QMap<unsigned int , Kopete::Message>::iterator it = m_messagesSent.begin(); it!=m_messagesSent.end(); it = m_messagesSent.begin() )
 	{
-		KopeteMessage m=it.data();
+		Kopete::Message m=it.data();
 		QString body=i18n("The following message has not been sent correctly: \n%1").arg(m.plainBody());
-		KopeteMessage msg = KopeteMessage(m.to().first() , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText);
+		Kopete::Message msg = Kopete::Message(m.to().first() , members() , body , Kopete::Message::Internal, Kopete::Message::PlainText);
 		appendMessage(msg);
 
 		m_messagesSent.remove(it);
@@ -204,7 +204,7 @@ void MSNMessageManager::slotSwitchBoardClosed()
 		setCanBeDeleted( true );
 }
 
-void MSNMessageManager::slotMessageSent(KopeteMessage &message,KopeteMessageManager *)
+void MSNMessageManager::slotMessageSent(Kopete::Message &message,Kopete::MessageManager *)
 {
  	if(m_chatService)
 	{
@@ -223,7 +223,7 @@ void MSNMessageManager::slotMessageSent(KopeteMessage &message,KopeteMessageMana
 		{
 			m_messagesSent.insert( id, message );
 			message.setBg(QColor()); // clear the bgColor
-			message.setBody(message.plainBody() , KopeteMessage::PlainText ); //clear every custom tag which are not sent
+			message.setBody(message.plainBody() , Kopete::Message::PlainText ); //clear every custom tag which are not sent
 			appendMessage(message); // send the own msg to chat window
 		}
 	}
@@ -232,11 +232,11 @@ void MSNMessageManager::slotMessageSent(KopeteMessage &message,KopeteMessageMana
 		static_cast<MSNAccount*>( user()->account() )->slotStartChatSession( message.to().first()->contactId() );
 		m_messagesQueue.append(message);
 //		sendMessageQueue();
-		//m_msgQueued=new KopeteMessage(message);
+		//m_msgQueued=new Kopete::Message(message);
 	}
 }
 
-void MSNMessageManager::slotMessageReceived( KopeteMessage &msg )
+void MSNMessageManager::slotMessageReceived( Kopete::Message &msg )
 {
 	if( msg.plainBody().startsWith( "AutoMessage: " ) )
 	{
@@ -256,8 +256,8 @@ void MSNMessageManager::slotMessageReceived( KopeteMessage &msg )
 			m_awayMessageTime.elapsed() > 1000 * config->readNumEntry( "AwayMessagesSeconds", 90 ) )  )
 		{
 			// Don't translate "Auto-Message:" This string is caught by MSN Plus! (and also by kopete now)
-			KopeteMessage msg2( user(), members(),
-				"AutoMessage: " + static_cast<MSNAccount *>( account() )->awayReason(), KopeteMessage::Outbound );
+			Kopete::Message msg2( user(), members(),
+				"AutoMessage: " + static_cast<MSNAccount *>( account() )->awayReason(), Kopete::Message::Outbound );
 			msg2.setFg( QColor( "SlateGray3" ) );
 			QFont f;
 			f.setItalic( true );
@@ -279,13 +279,13 @@ void MSNMessageManager::slotActionInviteAboutToShow()
 	m_actionInvite->popupMenu()->clear();
 
 	
-	QDictIterator<KopeteContact> it( account()->contacts() );
+	QDictIterator<Kopete::Contact> it( account()->contacts() );
 	for( ; it.current(); ++it )
 	{
 		if( !members().contains( it.current() ) && it.current()->isOnline() && it.current() != user() )
 		{
 			KAction *a=new KopeteContactAction( it.current(), this,
-				SLOT( slotInviteContact( KopeteContact * ) ), m_actionInvite );
+				SLOT( slotInviteContact( Kopete::Contact * ) ), m_actionInvite );
 			m_actionInvite->insert( a );
 			m_inviteactions.append( a ) ;
 		}
@@ -302,7 +302,7 @@ void MSNMessageManager::slotCloseSession()
 		m_chatService->slotCloseSession();
 }
 
-void MSNMessageManager::slotInviteContact( KopeteContact *contact )
+void MSNMessageManager::slotInviteContact( Kopete::Contact *contact )
 {
 	if(contact)
 		inviteContact( contact->contactId() );
@@ -344,7 +344,7 @@ void MSNMessageManager::sendMessageQueue()
 		return;
 	}
 //	kdDebug(14140) << "MSNMessageManager::sendMessageQueue: " << m_messagesQueue.count() <<endl;
-	for ( QValueList<KopeteMessage>::iterator it = m_messagesQueue.begin(); it!=m_messagesQueue.end(); it = m_messagesQueue.begin() )
+	for ( QValueList<Kopete::Message>::iterator it = m_messagesQueue.begin(); it!=m_messagesQueue.end(); it = m_messagesQueue.begin() )
 	{
 		//m_chatService->sendMsg( *it)  ;
 		slotMessageSent(*it , this);
@@ -373,9 +373,9 @@ void MSNMessageManager::slotAcknowledgement(unsigned int id, bool ack)
 
 	if ( !ack )
 	{
-		KopeteMessage m = m_messagesSent[ id ];
+		Kopete::Message m = m_messagesSent[ id ];
 		QString body = i18n( "The following message has not been sent correctly:\n%1" ).arg( m.plainBody() );
-		KopeteMessage msg = KopeteMessage( m.to().first(), members(), body, KopeteMessage::Internal, KopeteMessage::PlainText );
+		Kopete::Message msg = Kopete::Message( m.to().first(), members(), body, Kopete::Message::Internal, Kopete::Message::PlainText );
 		appendMessage( msg );
 		//stop the stupid animation
 		messageSucceeded();  
@@ -434,7 +434,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 					"%1 has sent an unimplemented invitation, the invitation was rejected.\n"
 					"The invitation was: %2" )
 						.arg( c->property( Kopete::Global::Properties::self()->nickName()).value().toString(), inviteName );
-				KopeteMessage tmpMsg = KopeteMessage( c , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText);
+				Kopete::Message tmpMsg = Kopete::Message( c , members() , body , Kopete::Message::Internal, Kopete::Message::PlainText);
 				appendMessage(tmpMsg);
 
 				m_chatService->sendCommand( "MSG" , "N", true, MSNInvitation::unimplemented(cookie) );
@@ -467,7 +467,7 @@ void MSNMessageManager::sendFile(const QString &fileLocation, const QString &/*f
 			theFileName = fileName;
 		}*/
 
-		QPtrList<KopeteContact>contacts=members();
+		QPtrList<Kopete::Contact>contacts=members();
 		MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(user()->account()->accountId(),contacts.first(), false,this);
 
 		//Call the setFile command to let the MFTS know what file we are sending
@@ -489,14 +489,14 @@ void MSNMessageManager::initInvitation(MSNInvitation* invitation)
 	}
 	else
 	{
-		QPtrList<KopeteContact> mb=members();
+		QPtrList<Kopete::Contact> mb=members();
 		static_cast<MSNAccount*>( account() )->slotStartChatSession( mb.first()->contactId() );
 	}
 }
 
 void MSNMessageManager::slotRequestPicture()
 {
-	QPtrList<KopeteContact> mb=members();
+	QPtrList<Kopete::Contact> mb=members();
 	MSNContact *c = static_cast<MSNContact*>( mb.first() );
 	if(!c)
 	 return;

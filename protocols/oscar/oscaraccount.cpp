@@ -83,8 +83,8 @@ public:
 	bool passwordWrong;
 };
 
-OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, const char *name, bool isICQ)
-: KopeteAccount( parent, accountID, name )
+OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, const char *name, bool isICQ)
+: Kopete::Account( parent, accountID, name )
 {
 	kdDebug(14150) << k_funcinfo << " accountID='" << accountID <<
 		"', isICQ=" << isICQ << endl;
@@ -102,12 +102,12 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 
 	// Contact list signals for group management events
 	QObject::connect(
-		KopeteContactList::contactList(), SIGNAL(groupRenamed(KopeteGroup *, const QString &)),
-		this, SLOT(slotKopeteGroupRenamed(KopeteGroup *, const QString &)));
+		Kopete::ContactList::contactList(), SIGNAL(groupRenamed(Kopete::Group *, const QString &)),
+		this, SLOT(slotKopeteGroupRenamed(Kopete::Group *, const QString &)));
 
 	QObject::connect(
-		KopeteContactList::contactList(), SIGNAL(groupRemoved(KopeteGroup *)),
-		this, SLOT(slotKopeteGroupRemoved(KopeteGroup *)));
+		Kopete::ContactList::contactList(), SIGNAL(groupRemoved(Kopete::Group *)),
+		this, SLOT(slotKopeteGroupRemoved(Kopete::Group *)));
 
 	// own status changed
 	QObject::connect(
@@ -154,7 +154,7 @@ OscarAccount::~OscarAccount()
 {
 	//kdDebug(14150) << k_funcinfo << "'" << accountId() << "'" << endl;
 
-	OscarAccount::disconnect(KopeteAccount::Manual);
+	OscarAccount::disconnect(Kopete::Account::Manual);
 
 	// Delete the backend
 	if (d->engine)
@@ -174,14 +174,14 @@ OscarSocket* OscarAccount::engine() const
 
 void OscarAccount::disconnect()
 {
-	OscarAccount::disconnect(KopeteAccount::Manual);
+	OscarAccount::disconnect(Kopete::Account::Manual);
 }
 
 void OscarAccount::disconnect(DisconnectReason reason)
 {
 	kdDebug(14150) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
 	d->engine->doLogoff();
-	KopeteAccount::disconnect(reason);
+	Kopete::Account::disconnect(reason);
 }
 
 bool OscarAccount::passwordWasWrong()
@@ -201,7 +201,7 @@ void OscarAccount::initEngine(bool icq)
 
 void OscarAccount::slotGoOffline()
 {
-	OscarAccount::disconnect(KopeteAccount::Manual);
+	OscarAccount::disconnect(Kopete::Account::Manual);
 }
 
 void OscarAccount::slotError(QString errmsg, int errorCode, bool isFatal)
@@ -213,7 +213,7 @@ void OscarAccount::slotError(QString errmsg, int errorCode, bool isFatal)
 	QString caption;
 	if (isFatal)
 	{
-		OscarAccount::disconnect(KopeteAccount::Manual);
+		OscarAccount::disconnect(Kopete::Account::Manual);
 		caption = engine()->isICQ() ?
 			i18n("Connection Lost - ICQ Plugin") :
 			i18n("Connection Lost - AIM Plugin");
@@ -231,7 +231,7 @@ void OscarAccount::slotError(QString errmsg, int errorCode, bool isFatal)
 
 void OscarAccount::slotPasswordWrong()
 {
-	OscarAccount::disconnect(KopeteAccount::Manual);
+	OscarAccount::disconnect(Kopete::Account::Manual);
 	d->passwordWrong = true;
 	QTimer::singleShot(0, this, SLOT(connect()));
 }
@@ -255,7 +255,7 @@ void OscarAccount::slotReceivedMessage(const QString &sender, OscarMessage &inco
 			"Message from contact that is not on our contactlist, sender='" <<
 			sender << "'" << endl;
 
-		if (addContact(tocNormalize(sender), sender, 0L, KopeteAccount::DontChangeKABC, QString::null, true))
+		if (addContact(tocNormalize(sender), sender, 0L, Kopete::Account::DontChangeKABC, QString::null, true))
 			contact = static_cast<OscarContact*>(contacts()[tocNormalize(sender)]);
 		else
 			return; // adding contact failed for whatever reason!
@@ -303,9 +303,9 @@ void OscarAccount::slotReceivedMessage(const QString &sender, OscarMessage &inco
 		KopeteContactPtrList tmpList;
 		tmpList.append(myself());
 
-		KopeteMessage kmsg(
-			incomingMessage.timestamp, contact, tmpList, text, KopeteMessage::Inbound,
-			KopeteMessage::RichText);
+		Kopete::Message kmsg(
+			incomingMessage.timestamp, contact, tmpList, text, Kopete::Message::Inbound,
+			Kopete::Message::RichText);
 
 		kmsg.setFg(incomingMessage.fgColor);
 		kmsg.setBg(incomingMessage.bgColor);
@@ -327,13 +327,13 @@ void OscarAccount::slotReceivedAwayMessage(const QString &sender, const QString 
 }
 
 // Called when a group is added by adding a contact
-void OscarAccount::slotGroupAdded(KopeteGroup *group)
+void OscarAccount::slotGroupAdded(Kopete::Group *group)
 {
 	if ( !isConnected() )
 		return;
 
 	//Don't add top level or temp groups to contact lists
-	if ( group->type() == KopeteGroup::TopLevel || group->type() == KopeteGroup::Temporary )
+	if ( group->type() == Kopete::Group::TopLevel || group->type() == Kopete::Group::Temporary )
 		return;
 
 	kdDebug(14150) << k_funcinfo <<
@@ -353,13 +353,13 @@ void OscarAccount::slotGroupAdded(KopeteGroup *group)
 
 }
 
-void OscarAccount::slotKopeteGroupRenamed(KopeteGroup *group, const QString &oldName)
+void OscarAccount::slotKopeteGroupRenamed(Kopete::Group *group, const QString &oldName)
 {
 	if ( !isConnected() )
 		return;
 
 	//We can't rename the top-level or temporary groups
-	if ( group->type() == KopeteGroup::TopLevel || group->type() == KopeteGroup::Temporary )
+	if ( group->type() == Kopete::Group::TopLevel || group->type() == Kopete::Group::Temporary )
 		return;
 
 	kdDebug(14150) << k_funcinfo << "Sending 'group rename' to server" << endl;
@@ -367,14 +367,14 @@ void OscarAccount::slotKopeteGroupRenamed(KopeteGroup *group, const QString &old
 }
 
 
-void OscarAccount::slotKopeteGroupRemoved(KopeteGroup *group)
+void OscarAccount::slotKopeteGroupRemoved(Kopete::Group *group)
 {
 	if (!isConnected())
 		return;
 
 	//We can't rename the top-level or temporary groups
 	//This shouldn't happen here, but it can't hurt.
-	if ( group->type() == KopeteGroup::TopLevel || group->type() == KopeteGroup::Temporary )
+	if ( group->type() == Kopete::Group::TopLevel || group->type() == Kopete::Group::Temporary )
 		return;
 
 	// This method should be called after the contacts have been removed
@@ -399,13 +399,13 @@ void OscarAccount::slotKopeteGroupRemoved(KopeteGroup *group)
 void OscarAccount::slotGotServerBuddyList()
 {
 	kdDebug(14150) << k_funcinfo << "account='" << accountId() << "'" << endl;
-	KopeteContactList* kcl = KopeteContactList::contactList();
+	Kopete::ContactList* kcl = Kopete::ContactList::contactList();
 
 	//disconnect, otherwise groups attempted to get added again after
 	//disconnecting and reconnecting. I could use blockSignals() here,
 	//but I don't want to block all signals, just this one
-	QObject::disconnect(kcl, SIGNAL(groupAdded(KopeteGroup *)),
-		this, SLOT(slotGroupAdded(KopeteGroup *)));
+	QObject::disconnect(kcl, SIGNAL(groupAdded(Kopete::Group *)),
+		this, SLOT(slotGroupAdded(Kopete::Group *)));
 
 	//If we get mysterious results (or crashes) here, it's because the SSIData object
 	//was mysteriously destroyed and since engine()->ssiData() returns a reference
@@ -421,7 +421,7 @@ void OscarAccount::slotGotServerBuddyList()
 		{ //active contact on SSI
 			kdDebug(14150) << k_funcinfo << "Adding SSI group '" <<
 				git.current()->name << "' to kopete contact list" << endl;
-			KopeteContactList::contactList()->getGroup( git.current()->name );
+			Kopete::ContactList::contactList()->getGroup( git.current()->name );
 		}
 	}
 
@@ -512,17 +512,17 @@ void OscarAccount::slotGotServerBuddyList()
 	//metacontact, and then move that new metacontact to a special group
 	//so they're visible to be "broken"
 
-	QDictIterator<KopeteContact> it(contacts());
+	QDictIterator<Kopete::Contact> it(contacts());
 	for (; it.current(); ++it)
 	{
 		OscarContact* c = static_cast<OscarContact*>((*it));
 		if ( !c->serverSide() )
-			c->setOnlineStatus( KopeteOnlineStatus::Unknown );
+			c->setOnlineStatus( Kopete::OnlineStatus::Unknown );
 	} // END for()
 
 	//reconnect the signal here so new stuff gets added
-	QObject::connect(kcl, SIGNAL(groupAdded(KopeteGroup *)),
-		this, SLOT(slotGroupAdded(KopeteGroup *)));
+	QObject::connect(kcl, SIGNAL(groupAdded(Kopete::Group *)),
+		this, SLOT(slotGroupAdded(Kopete::Group *)));
 }
 
 
@@ -568,7 +568,7 @@ void OscarAccount::slotGotDirectIMRequest(QString sn)
 void OscarAccount::slotIdleTimeout()
 {
 	//kdDebug(14150) << k_funcinfo << "called" << endl;
-	int idletime = KopeteAway::getInstance()->idleTime();
+	int idletime = Kopete::Away::getInstance()->idleTime();
 	// not doing anything for more than 5 mins and still not idle
 	if(idletime >= 5*60)
 	{
@@ -613,14 +613,14 @@ void OscarAccount::setServerPort(int port)
 
 
 bool OscarAccount::addContactToMetaContact(const QString &contactId,
-	const QString &displayName, KopeteMetaContact *parentContact)
+	const QString &displayName, Kopete::MetaContact *parentContact)
 {
 	/* We're not even online or connecting
 	 * (when getting server contacts), so don't bother
 	 */
 
 	if ((!myself()->isOnline()) &&
-		(myself()->onlineStatus().status() != KopeteOnlineStatus::Connecting))
+		(myself()->onlineStatus().status() != Kopete::OnlineStatus::Connecting))
 	{
 		kdDebug(14150) << k_funcinfo << "Can't add contact, we are offline!" << endl;
 		return false;
@@ -651,10 +651,10 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			kdDebug(14150) << k_funcinfo << "Adding contact to the server side list" << endl;
 
 			QString groupName;
-			KopeteGroupList kopeteGroups = parentContact->groups(); //get the group list
+			Kopete::GroupList kopeteGroups = parentContact->groups(); //get the group list
 
 			if (kopeteGroups.isEmpty() ||
-				kopeteGroups.first()->type() == KopeteGroup::TopLevel)
+				kopeteGroups.first()->type() == Kopete::Group::TopLevel)
 			{
 				kdDebug(14150) << k_funcinfo << "Contact with NO group. "
 					<< "Adding to group 'Buddies'" << endl;

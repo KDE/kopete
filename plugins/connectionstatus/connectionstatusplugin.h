@@ -26,7 +26,7 @@ class KProcess;
 /**
  * @author Chris Howells <howells@kde.org>
  */
-class ConnectionStatusPlugin : public KopetePlugin
+class ConnectionStatusPlugin : public Kopete::Plugin
 {
 	Q_OBJECT
 

@@ -33,8 +33,8 @@ MeanwhileContact::MeanwhileContact(
 						QString _userId , 
 						QString _nickname,
 						MeanwhileAccount *_account,
-						KopeteMetaContact *_parent )
-	: KopeteContact( _account, _nickname, _parent )
+						Kopete::MetaContact *_parent )
+	: Kopete::Contact( _account, _nickname, _parent )
 {
 	setDisplayName( _nickname );
 	m_msgManager = 0L;
@@ -58,10 +58,10 @@ void MeanwhileContact::serialize(
 			QMap< QString, 
 			QString > & addressBookData )
 {
-	KopeteContact::serialize(serializedData, addressBookData);
+	Kopete::Contact::serialize(serializedData, addressBookData);
 }
 
-KopeteMessageManager* MeanwhileContact::manager( bool )
+Kopete::MessageManager* MeanwhileContact::manager( bool )
 {
 	if ( m_msgManager )
 	{
@@ -69,7 +69,7 @@ KopeteMessageManager* MeanwhileContact::manager( bool )
 	}
 	else
 	{
-		QPtrList<KopeteContact> contacts;
+		QPtrList<Kopete::Contact> contacts;
 		contacts.append(this);
 
 		m_msgManager = 
@@ -78,8 +78,8 @@ KopeteMessageManager* MeanwhileContact::manager( bool )
 									contacts, protocol());
 
 		connect(m_msgManager, 
-				SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager*)),
-				this, SLOT( sendMessage( KopeteMessage& ) ) );
+				SIGNAL(messageSent(Kopete::Message&, Kopete::MessageManager*)),
+				this, SLOT( sendMessage( Kopete::Message& ) ) );
 
 		connect(m_msgManager, SIGNAL(destroyed()), 
 				this, SLOT(slotMessageManagerDestroyed()));
@@ -107,10 +107,10 @@ void MeanwhileContact::slotUserInfo()
 	theAccount->infoPlugin->showUserInfo(meanwhileId);
 }
 
-void MeanwhileContact::sendMessage( KopeteMessage &message )
+void MeanwhileContact::sendMessage( Kopete::Message &message )
 {
 	KopeteContactPtrList m_them = manager()->members();
-    KopeteContact *target = m_them.first();
+    Kopete::Contact *target = m_them.first();
 	(static_cast<MeanwhileAccount *>( account() ))->server->sendIm(
 			static_cast<MeanwhileContact*>(target),
 			message.plainBody() ); 
@@ -120,12 +120,12 @@ void MeanwhileContact::sendMessage( KopeteMessage &message )
 
 void MeanwhileContact::receivedMessage( const QString &message )
 {
-	KopeteMessage *newMessage;
+	Kopete::Message *newMessage;
 	KopeteContactPtrList contactList;
 	account();
 	contactList.append( account()->myself() );
-	newMessage = new KopeteMessage( this, contactList, 
-							message, KopeteMessage::Inbound );
+	newMessage = new Kopete::Message( this, contactList, 
+							message, Kopete::Message::Inbound );
 
 	manager()->appendMessage (*newMessage);
 
@@ -140,7 +140,7 @@ void MeanwhileContact::slotMessageManagerDestroyed()
 void MeanwhileContact::slotMeTypingMsg(bool isTyping)
 {
 	KopeteContactPtrList m_them = manager()->members();
-    KopeteContact *target = m_them.first();
+    Kopete::Contact *target = m_them.first();
 	(static_cast<MeanwhileAccount *>( account() ))->server->sendTyping(
 			static_cast<MeanwhileContact*>(target),isTyping);
 }

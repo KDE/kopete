@@ -18,9 +18,9 @@
 
 #include "wrappers/kopeteonlinestatus_imp.h"
 
-class KopeteAccount;
-class KopeteContact;
-class KopeteMessageManager;
+namespace Kopete { class Account; }
+namespace Kopete { class Contact; }
+namespace Kopete { class MessageManager; }
 class JSMessage;
 class JavaScriptConfig;
 class JavaScriptPluginPrivate;
@@ -31,7 +31,7 @@ namespace KJSEmbed
 	class KJSEmbedPart;
 }
 
-class JavaScriptPlugin : public KopetePlugin
+class JavaScriptPlugin : public Kopete::Plugin
 {
 	Q_OBJECT
 
@@ -44,28 +44,28 @@ class JavaScriptPlugin : public KopetePlugin
 	private slots:
 		void slotReloadScripts();
 
-		void slotAccountCreated( KopeteAccount *a );
-		void slotAccountDestroyed( KopeteAccount *a );
+		void slotAccountCreated( Kopete::Account *a );
+		void slotAccountDestroyed( Kopete::Account *a );
 
-		void slotIncomingMessage( KopeteMessage& msg );
-		void slotOutgoingMessage( KopeteMessage& msg );
-		void slotDisplayMessage( KopeteMessage& msg );
+		void slotIncomingMessage( Kopete::Message& msg );
+		void slotOutgoingMessage( Kopete::Message& msg );
+		void slotDisplayMessage( Kopete::Message& msg );
 
-		void slotAccountChangedStatus( KopeteAccount *c, const KopeteOnlineStatus &,
-			const KopeteOnlineStatus & );
+		void slotAccountChangedStatus( Kopete::Account *c, const Kopete::OnlineStatus &,
+			const Kopete::OnlineStatus & );
 
-		void slotContactChangedStatus( KopeteContact *c, const KopeteOnlineStatus &,
-			const KopeteOnlineStatus & );
+		void slotContactChangedStatus( Kopete::Contact *c, const Kopete::OnlineStatus &,
+			const Kopete::OnlineStatus & );
 
-		void slotContactAdded( KopeteContact *c );
-		void slotContactRemoved( KopeteContact *c );
+		void slotContactAdded( Kopete::Contact *c );
+		void slotContactRemoved( Kopete::Contact *c );
 
-		void slotShowConsole( const QString &, KopeteMessageManager *manager );
-		void slotJsExec( const QString &, KopeteMessageManager *manager );
+		void slotShowConsole( const QString &, Kopete::MessageManager *manager );
+		void slotJsExec( const QString &, Kopete::MessageManager *manager );
 
 	private:
-		void execScripts( KopeteAccount *a );
-		void runScripts( KopeteAccount *a, const QString &scriptType, KJSEmbed::KJSEmbedPart *engine );
+		void execScripts( Kopete::Account *a );
+		void runScripts( Kopete::Account *a, const QString &scriptType, KJSEmbed::KJSEmbedPart *engine );
 		void publishMessage( JSMessage *msg, KJSEmbed::KJSEmbedPart *engine );
 
 		static JavaScriptPlugin* pluginStatic_;

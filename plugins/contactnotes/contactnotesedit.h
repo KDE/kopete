@@ -24,7 +24,7 @@
 
 class QLabel;
 class QTextEdit;
-class KopeteMetaContact;
+namespace Kopete { class MetaContact; }
 class ContactNotesPlugin;
 
 /**
@@ -34,12 +34,12 @@ class ContactNotesPlugin;
 class ContactNotesEdit : public KDialogBase  {
    Q_OBJECT
 public: 
-	ContactNotesEdit(KopeteMetaContact *m,ContactNotesPlugin *p=0 ,const char *name=0);
+	ContactNotesEdit(Kopete::MetaContact *m,ContactNotesPlugin *p=0 ,const char *name=0);
 	~ContactNotesEdit();
 
 private:
 	ContactNotesPlugin *m_plugin;
-	KopeteMetaContact *m_metaContact;
+	Kopete::MetaContact *m_metaContact;
 
 	QLabel *m_label;
 	QTextEdit *m_linesEdit;
@@ -47,7 +47,7 @@ private:
 protected slots: // Protected slots
 	virtual void slotOk();
 signals: // Signals
-	void notesChanged(const QString, KopeteMetaContact*);
+	void notesChanged(const QString, Kopete::MetaContact*);
 };
 
 #endif

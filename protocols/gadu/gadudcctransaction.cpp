@@ -105,10 +105,10 @@ GaduDCCTransaction::setupIncoming( gg_dcc* dccS )
 
 	peer = dccS->uin;
 
-	connect ( KopeteTransferManager::transferManager(), SIGNAL( accepted( KopeteTransfer *, const QString & ) ),
-			  this, SLOT( slotIncomingTransferAccepted ( KopeteTransfer *, const QString & ) ) );
-	connect ( KopeteTransferManager::transferManager(), SIGNAL( refused( const KopeteFileTransferInfo & ) ),
-			  this, SLOT( slotTransferRefused( const KopeteFileTransferInfo & ) ) );
+	connect ( Kopete::TransferManager::transferManager(), SIGNAL( accepted( Kopete::Transfer *, const QString & ) ),
+			  this, SLOT( slotIncomingTransferAccepted ( Kopete::Transfer *, const QString & ) ) );
+	connect ( Kopete::TransferManager::transferManager(), SIGNAL( refused( const Kopete::FileTransferInfo & ) ),
+			  this, SLOT( slotTransferRefused( const Kopete::FileTransferInfo & ) ) );
 
 	incoming = true;
 	createNotifiers( true );
@@ -184,7 +184,7 @@ GaduDCCTransaction::disableNotifiers()
 	}
 }
 void
-GaduDCCTransaction::slotIncomingTransferAccepted ( KopeteTransfer* transfer, const QString& fileName )
+GaduDCCTransaction::slotIncomingTransferAccepted ( Kopete::Transfer* transfer, const QString& fileName )
 {
 
 	if ( (long)transfer->info().transferId () != transferId_ ) {
@@ -253,7 +253,7 @@ GaduDCCTransaction::slotTransferResult()
 {
 	if ( transfer_->error() == KIO::ERR_USER_CANCELED ) {
 		if ( transfer_ ) {
-			transfer_->slotError( KopeteTransfer::CanceledLocal, i18n( "File transfer was cancelled" ) );
+			transfer_->slotError( Kopete::Transfer::CanceledLocal, i18n( "File transfer was cancelled" ) );
 		}
 		closeDCC();
 		deleteLater();
@@ -261,7 +261,7 @@ GaduDCCTransaction::slotTransferResult()
 }
 
 void
-GaduDCCTransaction::slotTransferRefused ( const KopeteFileTransferInfo&  transfer )
+GaduDCCTransaction::slotTransferRefused ( const Kopete::FileTransferInfo&  transfer )
 {
 	if ( (long)transfer.transferId () != transferId_ )
 		return;
@@ -273,7 +273,7 @@ void
 GaduDCCTransaction::askIncommingTransfer()
 {
 
-	transferId_ = KopeteTransferManager::transferManager()->askIncomingTransfer ( contact,
+	transferId_ = Kopete::TransferManager::transferManager()->askIncomingTransfer ( contact,
 		QString( (const char*)dccSock_->file_info.filename ),  dccSock_->file_info.size );
 
 }
@@ -351,24 +351,24 @@ GaduDCCTransaction::watcher() {
 				switch( dccEvent->event.dcc_error ) {
 
 					case GG_ERROR_DCC_REFUSED:
-						transfer_->slotError( KopeteTransfer::Refused, i18n( "Connection to peer was refused; it possibly does not listen for incoming connections." ) );
+						transfer_->slotError( Kopete::Transfer::Refused, i18n( "Connection to peer was refused; it possibly does not listen for incoming connections." ) );
 					break;
 
 					case GG_ERROR_DCC_EOF:
-						transfer_->slotError( KopeteTransfer::CanceledRemote, i18n( "File transfer transaction was not agreed by peer." ) );
+						transfer_->slotError( Kopete::Transfer::CanceledRemote, i18n( "File transfer transaction was not agreed by peer." ) );
 					break;
 
 					case GG_ERROR_DCC_HANDSHAKE:
-						transfer_->slotError( KopeteTransfer::Other, i18n( "File-transfer handshake failure." ) );
+						transfer_->slotError( Kopete::Transfer::Other, i18n( "File-transfer handshake failure." ) );
 					break;
 					case GG_ERROR_DCC_FILE:
-						transfer_->slotError( KopeteTransfer::Other, i18n( "File transfer had problems with the file." ) );
+						transfer_->slotError( Kopete::Transfer::Other, i18n( "File transfer had problems with the file." ) );
 					break;
 					case GG_ERROR_DCC_NET:
-						transfer_->slotError( KopeteTransfer::Other, i18n( "There was network error during file transfer." ) );
+						transfer_->slotError( Kopete::Transfer::Other, i18n( "There was network error during file transfer." ) );
 					break;
 					default:
-						transfer_->slotError( KopeteTransfer::Other, i18n( "Unknown File-Transfer error." ) );
+						transfer_->slotError( Kopete::Transfer::Other, i18n( "Unknown File-Transfer error." ) );
 					break;
 				}
 			}

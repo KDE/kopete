@@ -68,7 +68,7 @@ public:
 	MSNNotifySocket *notifySocket();
 
 	// FIXME: Make generic - Martijn
-	void setOnlineStatus( const KopeteOnlineStatus &status );
+	void setOnlineStatus( const Kopete::OnlineStatus &status );
 
 
 	QString awayReason()
@@ -102,7 +102,7 @@ public slots:
 	void slotStartChatSession( const QString& handle );
 
 protected:
-	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact );
+	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName, Kopete::MetaContact *parentContact );
 
 protected slots:
 	virtual void loaded();
@@ -130,7 +130,7 @@ private slots:
 //#endif
 
 	// notifySocket related
-	void slotStatusChanged( const KopeteOnlineStatus &status );
+	void slotStatusChanged( const Kopete::OnlineStatus &status );
 	void slotNotifySocketClosed();
 	void slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status );
 	void slotPublicNameChanged(const QString& publicName);
@@ -169,12 +169,12 @@ private slots:
 	/**
 	 * A kopetegroup is renamed, rename group on the server
 	 */
-	void slotKopeteGroupRenamed( KopeteGroup *g );
+	void slotKopeteGroupRenamed( Kopete::Group *g );
 
 	/**
 	 * A kopetegroup is removed, remove the group in the server
 	 **/
-	void slotKopeteGroupRemoved( KopeteGroup* );
+	void slotKopeteGroupRemoved( Kopete::Group* );
 
 	/********************/
 	/** add contact ui **/
@@ -194,12 +194,12 @@ private:
 	KAction *m_changeDNAction;
 
 	// status which will be using for connecting
-	KopeteOnlineStatus m_connectstatus;
+	Kopete::OnlineStatus m_connectstatus;
 
 	QString m_msgHandle;
 
 public: //FIXME: should be private
-	QMap<unsigned int, KopeteGroup*> m_groupList;
+	QMap<unsigned int, Kopete::Group*> m_groupList;
 
 	void addGroup( const QString &groupName, const QString &contactToAdd = QString::null );
 
@@ -209,7 +209,7 @@ private:
 	QStringList m_blockList;
 	QStringList m_reverseList;
 
-	KopeteMetaContact *m_addWizard_metaContact;
+	Kopete::MetaContact *m_addWizard_metaContact;
 	QMap< QString, QStringList > tmp_addToNewGroup;
 
 	QString m_awayReason;
@@ -217,7 +217,7 @@ private:
 	QString m_pictureObj; //a cache of the <msnobj>
 
 	//this is the translation between old to new groups id when syncing from server.
-	QMap<unsigned int, KopeteGroup*> m_oldGroupList;
+	QMap<unsigned int, Kopete::Group*> m_oldGroupList;
 	
 	/**
 	 * I need the password in createNotificationServer.

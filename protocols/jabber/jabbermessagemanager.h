@@ -23,13 +23,13 @@
 class JabberProtocol;
 class JabberAccount;
 class JabberBaseContact;
-class KopeteMessage;
+namespace Kopete { class Message; }
 class QString;
 
 /**
  * @author Till Gerken
  */
-class JabberMessageManager : public KopeteMessageManager
+class JabberMessageManager : public Kopete::MessageManager
 {
 	Q_OBJECT
 
@@ -74,11 +74,11 @@ public slots:
 	 * new message managers for messages not originating from the same resource
 	 * a manager already exists for.
 	 */
-	void appendMessage ( KopeteMessage &msg, const QString &fromResource );
+	void appendMessage ( Kopete::Message &msg, const QString &fromResource );
 
 private slots:
 	void slotSendTypingNotification ( bool typing );
-	void slotMessageSent ( KopeteMessage &message, KopeteMessageManager *kmm );
+	void slotMessageSent ( Kopete::Message &message, Kopete::MessageManager *kmm );
 
 private:
 	QString mResource;

@@ -35,7 +35,7 @@ class NLMediaPlayer;
 /**
  * @author Will Stephenson
  */
-class NowListeningPlugin : public KopetePlugin
+class NowListeningPlugin : public Kopete::Plugin
 {
 	Q_OBJECT
 
@@ -50,7 +50,7 @@ friend class NowListeningGUIClient;
 		/**
 		 * Perform any string substitution needed on outgoing messages
 		 */
-		void slotOutgoingMessage( KopeteMessage& msg );
+		void slotOutgoingMessage( Kopete::Message& msg );
 
 	protected:
 		/**
@@ -68,13 +68,13 @@ friend class NowListeningGUIClient;
 		/**
 		 * Sends a message to a single chat
 		 */
-		void advertiseToChat( KopeteMessageManager* theChat, QString message );
+		void advertiseToChat( Kopete::MessageManager* theChat, QString message );
 
 	protected slots:
 		/**
 		 * Reacts to a new chat starting and adds actions to its GUI
 		 */
-		void slotNewKMM( KopeteMessageManager* );
+		void slotNewKMM( Kopete::MessageManager* );
 		
 		/**
 		 * Reacts to the plugin's settings changed signal, originating from the KCModule dispatcher
@@ -90,9 +90,9 @@ friend class NowListeningGUIClient;
 		DCOPClient *m_client;
 		// Support GUI actions
 		KActionCollection *m_actionCollection;
-		KopeteMessageManager *m_currentMessageManager;
+		Kopete::MessageManager *m_currentMessageManager;
 		KToggleAction *m_actionWantsAdvert;
-		KopeteMetaContact *m_currentMetaContact;
+		Kopete::MetaContact *m_currentMetaContact;
 
 		static NowListeningPlugin* pluginStatic_;
 };

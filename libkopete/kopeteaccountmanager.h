@@ -24,71 +24,74 @@
 #include <qdict.h>
 #include <kopeteonlinestatus.h>
 
-class KopeteAccount;
-class KopetePlugin;
-class KopeteProtocol;
-class KopeteContact;
-
 class KopeteAccountManagerPrivate;
+
+namespace Kopete
+{
+
+class Account;
+class Plugin;
+class Protocol;
+class Contact;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  *
- * KopeteAccountManager manages all defined accounts in Kopete. You can
+ * Kopete::AccountManager manages all defined accounts in Kopete. You can
  * query them and globally set them all online or offline from here.
  */
-class KopeteAccountManager : public QObject
+class AccountManager : public QObject
 {
 	Q_OBJECT
 
 	/**
-	 * KopeteAccount needs to be able to call register/unregister,
+	 * Kopete::Account needs to be able to call register/unregister,
 	 * so make it a friend.
 	 */
-	friend class KopeteAccount;
+	friend class Account;
 
 public:
 	/**
-	 * \brief Retrieve the instance of KopeteAccountManager.
+	 * \brief Retrieve the instance of Kopete::AccountManager.
 	 *
 	 * The account manager is a singleton class of which only a single
 	 * instance will exist. If no manager exists yet this function will
 	 * create one for you.
 	 *
-	 * \return the instance of the KopeteAccountManager
+	 * \return the instance of the Kopete::AccountManager
 	 */
-	static KopeteAccountManager* manager();
+	static AccountManager* manager();
 
-	~KopeteAccountManager();
+	~AccountManager();
 
 	/**
 	 * \brief Retrieve the list of accounts
 	 * \return a list of all the accounts
 	 */
-	const QPtrList<KopeteAccount> & accounts() const;
+	const QPtrList<Account> & accounts() const;
 
 	/**
 	 * \brief Retrieve a QDict of accounts for the given protocol
 	 *
 	 * The list is guaranteed to contain only accounts for the specified
 	 * protocol
-	 * \param p is the KopeteProtocol object you want accounts for
+	 * \param p is the Kopete::Protocol object you want accounts for
 	 */
-	QDict<KopeteAccount> accounts( const KopeteProtocol *p );
+	QDict<Account> accounts( const Protocol *p );
 
 	/**
 	 * \brief Return the account asked
 	 * \param protocolId is the ID for the protocol
 	 * \param accountId is the ID for the account you want
-	 * \return the KopeteAccount object found or NULL if no account was found
+	 * \return the Kopete::Account object found or NULL if no account was found
 	 */
-	KopeteAccount* findAccount( const QString &protocolId, const QString &accountId );
+	Account* findAccount( const QString &protocolId, const QString &accountId );
 
 	/**
 	 * \brief Delete the account and clean the config data
 	 */
-	void removeAccount( KopeteAccount *account );
+	void removeAccount( Account *account );
 
 	/**
 	 * \brief Guess the color for a new account
@@ -96,7 +99,7 @@ public:
 	 * Guesses a color for the next account of a given protocol based on the already registered colors
 	 * \return the color guessed for the account
 	 */
-	QColor guessColor( KopeteProtocol *protocol );
+	QColor guessColor( Protocol *protocol );
 
 public slots:
 	/**
@@ -148,59 +151,61 @@ signals:
 	/**
 	 * \brief Signals when an account is ready for use
 	 */
-	void accountReady( KopeteAccount *account );
+	void accountReady( Kopete::Account *account );
 
 	/**
 	 * \brief Signals when an account has been unregistered
 	 */
-	void accountUnregistered( KopeteAccount *account );
+	void accountUnregistered( Kopete::Account *account );
 
 	/**
 	 * \brief An account has changed its onlinestatus
-	 * Technically this monitors KopeteAccount::myself() onlinestatus changes
+	 * Technically this monitors Kopete::Account::myself() onlinestatus changes
 	 * \param account Account which changed its onlinestatus
 	 * \param oldStatus The online status before the change
 	 * \param newStatus The new online status
 	 */
-	void accountOnlineStatusChanged(KopeteAccount *account,
-		const KopeteOnlineStatus &oldStatus, const KopeteOnlineStatus &newStatus);
+	void accountOnlineStatusChanged(Kopete::Account *account,
+		const Kopete::OnlineStatus &oldStatus, const Kopete::OnlineStatus &newStatus);
 
 private:
 	/**
 	 * Private constructor, because we're a singleton
 	 */
-	KopeteAccountManager();
+	AccountManager();
 
 	/**
 	 * \internal
 	 * Register the account.
-	 * To be called ONLY from KopeteAccount, not from any other class!
+	 * To be called ONLY from Kopete::Account, not from any other class!
 	 */
-	bool registerAccount( KopeteAccount *account );
+	bool registerAccount( Account *account );
 
 	/**
 	 * \internal
-	 * Notify the KopeteAccountManager that an account is ready for use
+	 * Notify the Kopete::AccountManager that an account is ready for use
 	 * Same rules apply as for registerAccount()
 	 */
-	void notifyAccountReady( KopeteAccount *account );
+	void notifyAccountReady( Account *account );
 
 	/**
 	 * \internal
 	 * Unregister the account.
-	 * To be called ONLY from KopeteAccount, not from any other class!
+	 * To be called ONLY from Kopete::Account, not from any other class!
 	 */
-	void unregisterAccount( KopeteAccount *account );
+	void unregisterAccount( Account *account );
 
 private slots:
-	void slotPluginLoaded( KopetePlugin *plugin );
-	void slotAccountOnlineStatusChanged(KopeteContact *c,
-		const KopeteOnlineStatus &oldStatus, const KopeteOnlineStatus &newStatus);
+	void slotPluginLoaded( Kopete::Plugin *plugin );
+	void slotAccountOnlineStatusChanged(Kopete::Contact *c,
+		const Kopete::OnlineStatus &oldStatus, const Kopete::OnlineStatus &newStatus);
 
 private:
 	KopeteAccountManagerPrivate *d;
 
 };
+
+}
 
 #endif
 

@@ -36,9 +36,9 @@
 class QString;
 class KSelectAction;
 
-class KopeteMessage;
-class KopeteMetaContact;
-class KopeteMessageManager;
+namespace Kopete { class Message; }
+namespace Kopete { class MetaContact; }
+namespace Kopete { class MessageManager; }
 
 class TranslatorPreferences;
 class TranslatorGUIClient;
@@ -49,7 +49,7 @@ class TranslatorLanguages;
  *
  * Kopete Translator Plugin
  */
-class TranslatorPlugin : public KopetePlugin
+class TranslatorPlugin : public Kopete::Plugin
 {
 	Q_OBJECT
 
@@ -70,13 +70,13 @@ public:
 	};
 
 private slots:
-	void slotIncomingMessage( KopeteMessage& msg );
-	void slotOutgoingMessage( KopeteMessage& msg );
+	void slotIncomingMessage( Kopete::Message& msg );
+	void slotOutgoingMessage( Kopete::Message& msg );
 	void slotDataReceived ( KIO::Job *, const QByteArray &data);
 	void slotJobDone ( KIO::Job *);
 	void slotSetLanguage();
 	void slotSelectionChanged(bool);
-	void slotNewKMM(KopeteMessageManager *);
+	void slotNewKMM(Kopete::MessageManager *);
 	void loadSettings();
 
 public:
@@ -104,7 +104,7 @@ private:
 	unsigned int m_incomingMode;
 
 private:
-	void sendTranslation(KopeteMessage &msg, const QString &translated);
+	void sendTranslation(Kopete::Message &msg, const QString &translated);
 };
 
 #endif

@@ -20,8 +20,8 @@
 #include <kopeteaccount.h>
 
 class KActionMenu;
-class KopeteContact;
-class KopeteMetaContact;
+namespace Kopete { class Contact; }
+namespace Kopete { class MetaContact; }
 
 class TestbedContact;
 class TestbedProtocol;
@@ -31,7 +31,7 @@ class TestbedFakeServer;
  * This represents an account connected to the testbed
  * @author Will Stephenson
 */
-class TestbedAccount : public KopeteAccount
+class TestbedAccount : public Kopete::Account
 {
 	Q_OBJECT
 public:
@@ -43,10 +43,10 @@ public:
 	virtual KActionMenu* actionMenu();
 
 	/**
-	 * Creates a protocol specific KopeteContact subclass and adds it to the supplie
-	 * KopeteMetaContact
+	 * Creates a protocol specific Kopete::Contact subclass and adds it to the supplie
+	 * Kopete::MetaContact
 	 */
-	virtual bool addContactToMetaContact(const QString& contactId, const QString& displayName, KopeteMetaContact* parentContact);
+	virtual bool addContactToMetaContact(const QString& contactId, const QString& displayName, Kopete::MetaContact* parentContact);
 	/**
 	 * Called when Kopete is set globally away
 	 */
@@ -66,7 +66,7 @@ public:
 public slots:
 	/**
 	 * Called by the server when it has a message for us.  
-	 * This identifies the sending KopeteContact and passes it a KopeteMessage
+	 * This identifies the sending Kopete::Contact and passes it a Kopete::Message
 	 */
 	void receivedMessage( const QString &message );
 

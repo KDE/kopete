@@ -16,7 +16,7 @@
 #include "oscartypes.h"
 
 AIMEditAccountWidget::AIMEditAccountWidget(AIMProtocol *protocol,
-	KopeteAccount *account, QWidget *parent, const char *name)
+	Kopete::Account *account, QWidget *parent, const char *name)
 	: QWidget(parent, name), KopeteEditAccountWidget(account)
 {
 	//kdDebug(14152) << k_funcinfo << "Called." << endl;
@@ -58,7 +58,7 @@ AIMEditAccountWidget::~AIMEditAccountWidget()
 {
 }
 
-KopeteAccount *AIMEditAccountWidget::apply()
+Kopete::Account *AIMEditAccountWidget::apply()
 {
 	kdDebug(14152) << k_funcinfo << "Called." << endl;
 

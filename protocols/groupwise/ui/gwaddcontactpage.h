@@ -27,8 +27,8 @@
 #include <addcontactpage.h>
 
 class QLabel;
-class KopeteAccount;
-class KopeteMetaContact;
+namespace Kopete { class Account; }
+namespace Kopete { class MetaContact; }
 class GroupWiseAccount;
 class GroupWiseAddUI;
 class GroupWiseSearch;
@@ -41,13 +41,13 @@ class GroupWiseAddContactPage : public AddContactPage
 {
 	Q_OBJECT
 public:
-    GroupWiseAddContactPage( KopeteAccount * owner, QWidget* parent = 0, const char* name = 0 );
+    GroupWiseAddContactPage( Kopete::Account * owner, QWidget* parent = 0, const char* name = 0 );
     ~GroupWiseAddContactPage();
 	
     /**
 	 * Make a contact out of the entered data
 	 */
-	virtual bool apply(KopeteAccount* a, KopeteMetaContact* m);
+	virtual bool apply(Kopete::Account* a, Kopete::MetaContact* m);
 	/**
 	 * Is the data correct?
 	 */

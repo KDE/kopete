@@ -31,7 +31,7 @@
 #include "smsprotocol.h"
 #include "smscontact.h"
 
-SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& prefixValue, KopeteAccount* account, QObject* parent, const char *name)
+SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& prefixValue, Kopete::Account* account, QObject* parent, const char *name)
 	: QObject( parent, name ), m_account(account)
 {
 	kdWarning( 14160 ) << k_funcinfo << "this = " << this << ", m_account = " << m_account << " (should be ok if zero!!)" << endl;
@@ -140,7 +140,7 @@ SMSSendProvider::~SMSSendProvider()
 	kdWarning( 14160 ) << k_funcinfo << "this = " << this << endl;
 }
 
-void SMSSendProvider::setAccount(KopeteAccount *account)
+void SMSSendProvider::setAccount(Kopete::Account *account)
 {
 	m_account = account;
 }
@@ -203,7 +203,7 @@ int SMSSendProvider::count()
 	return names.count();
 }
 
-void SMSSendProvider::send(const KopeteMessage& msg)
+void SMSSendProvider::send(const Kopete::Message& msg)
 {
 	if ( canSend == false )
 	{

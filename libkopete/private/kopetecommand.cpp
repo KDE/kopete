@@ -26,7 +26,7 @@
 #include "kopeteuiglobal.h"
 
 KopeteCommand::KopeteCommand( QObject *parent, const QString &command, const char* handlerSlot,
-	const QString &help, KopeteCommandHandler::CommandType type, const QString &formatString,
+	const QString &help, Kopete::CommandHandler::CommandType type, const QString &formatString,
 	uint minArgs, int maxArgs, const KShortcut &cut, const QString &pix )
 	: KAction( command[0].upper() + command.right( command.length() - 1).lower(), pix, cut, parent,
 	( command.lower() + QString::fromLatin1("_command") ).latin1() )
@@ -35,7 +35,7 @@ KopeteCommand::KopeteCommand( QObject *parent, const QString &command, const cha
 }
 
 void KopeteCommand::init( const QString &command, const char* slot, const QString &help,
-	KopeteCommandHandler::CommandType type, const QString &formatString, uint minArgs, int maxArgs )
+	Kopete::CommandHandler::CommandType type, const QString &formatString, uint minArgs, int maxArgs )
 {
 	m_command = command;
 	m_help = help;
@@ -44,9 +44,9 @@ void KopeteCommand::init( const QString &command, const char* slot, const QStrin
 	m_minArgs = minArgs;
 	m_maxArgs = maxArgs;
 
-	if(  m_type == KopeteCommandHandler::Normal )
+	if(  m_type == Kopete::CommandHandler::Normal )
 	{
-		QObject::connect( this, SIGNAL( handleCommand( const QString &, KopeteMessageManager *) ),
+		QObject::connect( this, SIGNAL( handleCommand( const QString &, Kopete::MessageManager *) ),
 			parent(), slot );
 	}
 
@@ -55,7 +55,7 @@ void KopeteCommand::init( const QString &command, const char* slot, const QStrin
 
 void KopeteCommand::slotAction()
 {
-	KopeteMessageManager *manager = KopeteMessageManagerFactory::factory()->activeView()->msgManager();
+	Kopete::MessageManager *manager = KopeteMessageManagerFactory::factory()->activeView()->msgManager();
 
 	QString args;
 	if( m_minArgs > 0 )
@@ -68,9 +68,9 @@ void KopeteCommand::slotAction()
 	processCommand( args, manager, true );
 }
 
-void KopeteCommand::processCommand( const QString &args, KopeteMessageManager *manager, bool gui )
+void KopeteCommand::processCommand( const QString &args, Kopete::MessageManager *manager, bool gui )
 {
-	QStringList mArgs = KopeteCommandHandler::parseArguments( args );
+	QStringList mArgs = Kopete::CommandHandler::parseArguments( args );
 	if( mArgs.count() < m_minArgs )
 	{
 		printError( i18n("\"%1\" requires at least %n argument.",
@@ -89,8 +89,8 @@ void KopeteCommand::processCommand( const QString &args, KopeteMessageManager *m
 	}
 	else
 	{
-		if( m_type == KopeteCommandHandler::UserAlias ||
-			m_type == KopeteCommandHandler::SystemAlias )
+		if( m_type == Kopete::CommandHandler::UserAlias ||
+			m_type == Kopete::CommandHandler::SystemAlias )
 		{
 			QString formatString = m_formatString;
 			if( formatString.contains( QString::fromLatin1("%s") ) )
@@ -106,7 +106,7 @@ void KopeteCommand::processCommand( const QString &args, KopeteMessageManager *m
 
 			kdDebug(14010) << "New Command after processing alias: " << formatString << endl;
 
-			KopeteCommandHandler::commandHandler()->processMessage( QString::fromLatin1("/") + formatString, manager );
+			Kopete::CommandHandler::commandHandler()->processMessage( QString::fromLatin1("/") + formatString, manager );
 		}
 		else
 		{
@@ -115,7 +115,7 @@ void KopeteCommand::processCommand( const QString &args, KopeteMessageManager *m
 	}
 }
 
-void KopeteCommand::printError( const QString &error, KopeteMessageManager *manager, bool gui ) const
+void KopeteCommand::printError( const QString &error, Kopete::MessageManager *manager, bool gui ) const
 {
 	if( gui )
 	{
@@ -123,8 +123,8 @@ void KopeteCommand::printError( const QString &error, KopeteMessageManager *mana
 	}
 	else
 	{
-		KopeteMessage msg( manager->user(), manager->members(), error,
-			KopeteMessage::Internal, KopeteMessage::PlainText );
+		Kopete::Message msg( manager->user(), manager->members(), error,
+			Kopete::Message::Internal, Kopete::Message::PlainText );
 		manager->appendMessage( msg );
 	}
 }

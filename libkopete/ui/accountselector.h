@@ -47,7 +47,7 @@ Q_OBJECT
 		 * KListView. @p proto defines the protocol whose accounts are
 		 * shown in the list
 		 */
-		AccountSelector(KopeteProtocol *proto, QWidget *parent=0, const char *name=0);
+		AccountSelector(Kopete::Protocol *proto, QWidget *parent=0, const char *name=0);
 
 		/**
 		 * Destructor.
@@ -57,25 +57,25 @@ Q_OBJECT
 		/**
 		 * Select @p account in the list, in case it's part of the list
 		 */
-		void setSelected(KopeteAccount *account);
+		void setSelected(Kopete::Account *account);
 
 		/**
 		 * Returns true in case @p account is in the list and
 		 * the currently selected item, false otherwise
 		 */
-		bool isSelected(KopeteAccount *account);
+		bool isSelected(Kopete::Account *account);
 
 		/**
 		 * @return the currently selected account.
 		 */
-		KopeteAccount *selectedItem();
+		Kopete::Account *selectedItem();
 
 	signals:
 		/**
 		 * Emitted whenever the selection changed, @p acc is a pointer to the
 		 * newly selected account
 		 */
-		void selectionChanged(KopeteAccount *acc);
+		void selectionChanged(Kopete::Account *acc);
 
 	private slots:
 		void slotSelectionChanged(QListViewItem *item);

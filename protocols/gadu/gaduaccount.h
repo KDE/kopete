@@ -43,20 +43,20 @@ class GaduAccountPrivate;
 
 class GaduContact;
 class GaduProtocol;
-class KopeteProtocol;
-class KopeteMessage;
+namespace Kopete { class Protocol; }
+namespace Kopete { class Message; }
 class GaduCommand;
 class QTimer;
 class KActionMenu;
 class GaduDCC;
 class GaduDCCTransaction;
 
-class GaduAccount : public KopeteAccount
+class GaduAccount : public Kopete::Account
 {
 	Q_OBJECT
 
 public:
-	GaduAccount( KopeteProtocol*, const QString& accountID,  const char* name = 0L );
+	GaduAccount( Kopete::Protocol*, const QString& accountID,  const char* name = 0L );
 	~GaduAccount();
 	//{
 	void setAway( bool isAway, const QString& awayMessage = QString::null );
@@ -71,7 +71,7 @@ public slots:
 	void disconnect();
 	//}
 
-	void changeStatus( const KopeteOnlineStatus& status, const QString& descr = QString::null );
+	void changeStatus( const Kopete::OnlineStatus& status, const QString& descr = QString::null );
 	void slotLogin( int status = GG_STATUS_AVAIL, const QString& dscr = QString::null );
 	void slotLogoff();
 	void slotGoOnline();
@@ -86,7 +86,7 @@ public slots:
 	void addNotify( uin_t );
 	void notify( uin_t*, int );
 
-	void sendMessage( uin_t recipient, const KopeteMessage& msg,
+	void sendMessage( uin_t recipient, const Kopete::Message& msg,
 			int msgClass = GG_CLASS_CHAT );
 
 	void error( const QString& title, const QString& message );
@@ -120,7 +120,7 @@ protected:
 	//{
 	bool addContactToMetaContact( const QString& contactId,
 			const QString& displayName,
-			KopeteMetaContact* parentContact );
+			Kopete::MetaContact* parentContact );
 	//}
 
 private slots:
@@ -130,7 +130,7 @@ private slots:
 	void messageReceived( KGaduMessage* );
 	void ackReceived( unsigned int );
 	void contactStatusChanged( KGaduNotify* );
-	void slotSessionDisconnect( KopeteAccount::DisconnectReason );
+	void slotSessionDisconnect( Kopete::Account::DisconnectReason );
 
 	void slotExportContactsList();
 	void slotExportContactsListToFile();

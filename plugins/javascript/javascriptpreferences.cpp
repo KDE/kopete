@@ -91,14 +91,14 @@ class ScriptItem : public QCheckListItem
 class AccountItem : public QListViewItem
 {
 	public:
-		AccountItem( QListView *parent, KopeteAccount *a ) :
+		AccountItem( QListView *parent, Kopete::Account *a ) :
 		QListViewItem( parent, a->accountId() )
 		{
 			this->setPixmap( 0, a->accountIcon() );
 			account = a;
 		}
 
-		KopeteAccount *account;
+		Kopete::Account *account;
 };
 
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_javascript, JavaScriptPreferencesFactory( "kcm_kopete_javascript" ) )
@@ -129,8 +129,8 @@ JavaScriptPreferences::JavaScriptPreferences( QWidget *parent, const char *, con
 	connect(preferencesDialog->accountList, SIGNAL(selectionChanged()), this, SLOT(slotUpdateScriptList()) );
 	connect(KDirWatch::self(), SIGNAL( dirty( const QString & ) ), this, SLOT( slotFileDirty( const QString & ) ) );
 
-	QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
-	for( KopeteAccount *a = accounts.first(); a; a = accounts.next() )
+	QPtrList<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts();
+	for( Kopete::Account *a = accounts.first(); a; a = accounts.next() )
 	{
 		new AccountItem( preferencesDialog->accountList, a );
 	}

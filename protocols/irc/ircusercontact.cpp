@@ -34,7 +34,7 @@
 #include "kopetemetacontact.h"
 #include "kopeteview.h"
 
-IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString &nickname, KopeteMetaContact *m )
+IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString &nickname, Kopete::MetaContact *m )
 	: IRCContact(contactManager, nickname, m ),
 	  m_isAway(false)
 {
@@ -134,9 +134,9 @@ void IRCUserContact::incomingUserIsAway(const QString &reason )
 {
 	if( manager(false ) )
 	{
-		KopeteMessage msg( (KopeteContact*)MYACCOUNT->myServer(), mMyself,
+		Kopete::Message msg( (Kopete::Contact*)MYACCOUNT->myServer(), mMyself,
 			i18n("%1 is away (%2)").arg( m_nickName ).arg( reason ),
-			KopeteMessage::Internal, KopeteMessage::RichText, KopeteMessage::Chat );
+			Kopete::Message::Internal, Kopete::Message::RichText, Kopete::Message::Chat );
 		manager()->appendMessage(msg);
 	}
 }
@@ -239,7 +239,7 @@ void IRCUserContact::newWhoIsUser(const QString &username, const QString &hostna
 	mInfo.hostName = hostname;
 	mInfo.realName = realname;
 
-	if( onlineStatus().status() == KopeteOnlineStatus::Offline )
+	if( onlineStatus().status() == Kopete::OnlineStatus::Offline )
 	{
 		setProperty( m_protocol->propUserInfo, QString::fromLatin1("%1@%2")
 			.arg(mInfo.userName).arg(mInfo.hostName) );
@@ -250,7 +250,7 @@ void IRCUserContact::newWhoIsUser(const QString &username, const QString &hostna
 void IRCUserContact::newWhoIsServer(const QString &servername, const QString &serverinfo)
 {
 	mInfo.serverName = servername;
-	if( metaContact()->isTemporary() || onlineStatus().status() == KopeteOnlineStatus::Online )
+	if( metaContact()->isTemporary() || onlineStatus().status() == Kopete::OnlineStatus::Online )
 		mInfo.serverInfo = serverinfo;
 	else
 	{
@@ -377,7 +377,7 @@ void IRCUserContact::newWhoReply( const QString &channel, const QString &user, c
 	}
 }
 
-QPtrList<KAction> *IRCUserContact::customContextMenuActions( KopeteMessageManager *manager )
+QPtrList<KAction> *IRCUserContact::customContextMenuActions( Kopete::MessageManager *manager )
 {
 	if( manager )
 	{
@@ -474,8 +474,8 @@ void IRCUserContact::privateMessage(IRCContact *from, IRCContact *to, const QStr
 	{
 		if(to==account()->myself())
 		{
-			KopeteMessage msg(from, from->manager()->members(), message,
-				KopeteMessage::Inbound, KopeteMessage::RichText, KopeteMessage::Chat);
+			Kopete::Message msg(from, from->manager()->members(), message,
+				Kopete::Message::Inbound, Kopete::Message::RichText, Kopete::Message::Chat);
 			from->appendMessage(msg);
 		}
 		else
@@ -492,8 +492,8 @@ void IRCUserContact::newAction(const QString &to, const QString &action)
 
 	IRCContact *t = MYACCOUNT->contactManager()->findUser(to);
 
-	KopeteMessage msg(this, t, action,
-		KopeteMessage::Action, KopeteMessage::RichText, KopeteMessage::Chat);
+	Kopete::Message msg(this, t, action,
+		Kopete::Message::Action, Kopete::Message::RichText, Kopete::Message::Chat);
 
 	//Either this is from me to a guy, or from a guy to me. Either way its a PM
 	if (this == MYACCOUNT->mySelf())

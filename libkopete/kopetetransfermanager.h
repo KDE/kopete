@@ -25,21 +25,24 @@
 
 #include <kio/job.h>
 
-class KopeteTransfer;
-class KopeteContact;
+namespace Kopete
+{
+
+class Transfer;
+class Contact;
 
 /**
  * @author Nick Betcher. <nbetcher@kde.org>
  */
-class KopeteFileTransferInfo
+class FileTransferInfo
 {
 public:
 	enum KopeteTransferDirection { Incoming, Outgoing };
 
-	KopeteFileTransferInfo( KopeteContact *, const QString&, const unsigned long size, const QString &, KopeteTransferDirection di, const unsigned int id, QString internalId=QString::null);
-	~KopeteFileTransferInfo() {}
+	FileTransferInfo( Contact *, const QString&, const unsigned long size, const QString &, KopeteTransferDirection di, const unsigned int id, QString internalId=QString::null);
+	~FileTransferInfo() {}
 	unsigned int transferId() const { return mId; }
-	const KopeteContact* contact() const { return mContact; }
+	const Contact* contact() const { return mContact; }
 	QString file() const { return mFile; }
 	QString recipient() const { return mRecipient; }
 	unsigned long size() const { return mSize; }
@@ -50,7 +53,7 @@ private:
 	unsigned long mSize;
 	QString mRecipient;
 	unsigned int mId;
-	KopeteContact *mContact;
+	Contact *mContact;
 	QString mFile;
 	QString m_intId;
 	KopeteTransferDirection mDirection;
@@ -59,7 +62,7 @@ private:
 /**
  * Creates and manages kopete file transfers
  */
-class KopeteTransferManager : public QObject
+class TransferManager : public QObject
 {
 	Q_OBJECT
 
@@ -67,14 +70,14 @@ public:
 	/**
 	 * Retrieve the transfer manager instance
 	 */
-	static KopeteTransferManager* transferManager();
-	virtual ~KopeteTransferManager() {};
+	static TransferManager* transferManager();
+	virtual ~TransferManager() {};
 
 	/**
-	 * @brief Adds a file transfer to the KopeteTransferManager
+	 * @brief Adds a file transfer to the Kopete::TransferManager
 	 */
-	KopeteTransfer *addTransfer( KopeteContact *contact, const QString& file, const unsigned long size, const QString &recipient , KopeteFileTransferInfo::KopeteTransferDirection di);
-	int askIncomingTransfer( KopeteContact *contact, const QString& file, const unsigned long size, const QString& description=QString::null, QString internalId=QString::null);
+	Transfer *addTransfer( Contact *contact, const QString& file, const unsigned long size, const QString &recipient , FileTransferInfo::KopeteTransferDirection di);
+	int askIncomingTransfer( Contact *contact, const QString& file, const unsigned long size, const QString& description=QString::null, QString internalId=QString::null);
 	void removeTransfer( unsigned int id );
 
 	/**
@@ -97,37 +100,37 @@ public:
 
 signals:
 	/** @brief Signals the transfer is done. */
-	void done( KopeteTransfer* );
+	void done( Kopete::Transfer* );
 
 	/** @brief Signals the transfer has been canceled. */
-	void canceled( KopeteTransfer* );
+	void canceled( Kopete::Transfer* );
 
 	/** @brief Signals the transfer has been accepted */
-	void accepted(KopeteTransfer*, const QString &fileName);
+	void accepted(Kopete::Transfer*, const QString &fileName);
 
 	/** @brief Signals the transfer has been rejected */
-	void refused(const KopeteFileTransferInfo& );
+	void refused(const Kopete::FileTransferInfo& );
 
 	/** @brief Send a file */
 	void sendFile(const KURL &file, const QString &localFile, unsigned int fileSize);
 
 private slots:
-	void slotAccepted(const KopeteFileTransferInfo&, const QString&);
+	void slotAccepted(const Kopete::FileTransferInfo&, const QString&);
 	void slotComplete(KIO::Job*);
 
 private:
-	KopeteTransferManager( QObject *parent );
-	static KopeteTransferManager *s_transferManager;
+	TransferManager( QObject *parent );
+	static TransferManager *s_transferManager;
 
 	int nextID;
-	QMap<unsigned int, KopeteTransfer *> mTransfersMap;
+	QMap<unsigned int, Transfer *> mTransfersMap;
 };
 
 /**
  * A KIO job for a kopete file transfer.
  * @author Richard Smith <kopete@metafoo.co.uk>
  */
-class KopeteTransfer : public KIO::Job
+class Transfer : public KIO::Job
 {
 	Q_OBJECT
 
@@ -144,20 +147,20 @@ public:
 	/**
 	 * Constructor
 	 */
-	KopeteTransfer( const KopeteFileTransferInfo &, const QString &localFile, bool showProgressInfo = true);
+	Transfer( const FileTransferInfo &, const QString &localFile, bool showProgressInfo = true);
 
 	/**
 	 * Constructor
 	 */
-	KopeteTransfer( const KopeteFileTransferInfo &, const KopeteContact *toUser, bool showProgressInfo = true);
+	Transfer( const FileTransferInfo &, const Contact *toUser, bool showProgressInfo = true);
 
 	/**
 	 * Destructor
 	 */
-	~KopeteTransfer();
+	~Transfer();
 
 	/** @brief Get the info for this file transfer */
-	const KopeteFileTransferInfo &info() const { return mInfo; }
+	const FileTransferInfo &info() const { return mInfo; }
 
 	/**
 	 * Use @ref slotError instead.
@@ -206,15 +209,17 @@ signals:
 private:
 	void init( const KURL &, bool );
 
-	static KURL displayURL( const KopeteContact *contact, const QString &file );
+	static KURL displayURL( const Contact *contact, const QString &file );
 
-	KopeteFileTransferInfo mInfo;
+	FileTransferInfo mInfo;
 	KURL mTarget;
 	int mPercent;
 
 private slots:
 	void slotResultEmitted();
 };
+
+}
 
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

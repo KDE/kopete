@@ -37,7 +37,7 @@
 
 using namespace KNetwork;
 
-MSNFileTransferSocket::MSNFileTransferSocket(const QString &handle, KopeteContact *c,bool incoming, QObject* parent)
+MSNFileTransferSocket::MSNFileTransferSocket(const QString &handle, Kopete::Contact *c,bool incoming, QObject* parent)
 	: MSNSocket(parent) , MSNInvitation(incoming, MSNFileTransferSocket::applicationID() , i18n("File Transfer - MSN Plugin"))
 {
 	m_handle=handle;
@@ -177,7 +177,7 @@ void MSNFileTransferSocket::slotReadBlock(const QByteArray &block)
 	}
 }
 
-void MSNFileTransferSocket::setKopeteTransfer(KopeteTransfer *kt)
+void MSNFileTransferSocket::setKopeteTransfer(Kopete::Transfer *kt)
 {
 	m_kopeteTransfer=kt;
 	if(kt)
@@ -348,10 +348,10 @@ void MSNFileTransferSocket::parseInvitation(const QString& msg)
 
 		MSNInvitation::parseInvitation(msg); //for the cookie
 
-		KopeteTransferManager::transferManager()->askIncomingTransfer( m_contact , filename, filesize, QString::null, QString::number( cookie() ) );
+		Kopete::TransferManager::transferManager()->askIncomingTransfer( m_contact , filename, filesize, QString::null, QString::number( cookie() ) );
 
-		QObject::connect( KopeteTransferManager::transferManager(), SIGNAL( accepted( KopeteTransfer *, const QString& ) ),this, SLOT( slotFileTransferAccepted( KopeteTransfer *, const QString& ) ) );
-		QObject::connect( KopeteTransferManager::transferManager(), SIGNAL( refused( const KopeteFileTransferInfo & ) ), this, SLOT( slotFileTransferRefused( const KopeteFileTransferInfo & ) ) );
+		QObject::connect( Kopete::TransferManager::transferManager(), SIGNAL( accepted( Kopete::Transfer *, const QString& ) ),this, SLOT( slotFileTransferAccepted( Kopete::Transfer *, const QString& ) ) );
+		QObject::connect( Kopete::TransferManager::transferManager(), SIGNAL( refused( const Kopete::FileTransferInfo & ) ), this, SLOT( slotFileTransferRefused( const Kopete::FileTransferInfo & ) ) );
 
 	}
 	else if( msg.contains("Invitation-Command: ACCEPT") )
@@ -376,7 +376,7 @@ void MSNFileTransferSocket::parseInvitation(const QString& msg)
 			unsigned long int auth = (rand()%(999999))+1;
 			setAuthCookie(QString::number(auth));
 
-			setKopeteTransfer(KopeteTransferManager::transferManager()->addTransfer(m_contact, fileName(), size(),  m_contact->metaContact() ? m_contact->metaContact()->displayName() : m_contact->contactId() , KopeteFileTransferInfo::Outgoing));
+			setKopeteTransfer(Kopete::TransferManager::transferManager()->addTransfer(m_contact, fileName(), size(),  m_contact->metaContact() ? m_contact->metaContact()->displayName() : m_contact->contactId() , Kopete::FileTransferInfo::Outgoing));
 
 			MSNMessageManager* manager=dynamic_cast<MSNMessageManager*>(m_contact->manager());
 			if(manager && manager->service())
@@ -409,7 +409,7 @@ void MSNFileTransferSocket::parseInvitation(const QString& msg)
 	}
 }
 
-void MSNFileTransferSocket::slotFileTransferAccepted(KopeteTransfer *trans, const QString& fileName)
+void MSNFileTransferSocket::slotFileTransferAccepted(Kopete::Transfer *trans, const QString& fileName)
 {
  	if(trans->info().internalId().toULong() != cookie())
 		return;
@@ -446,7 +446,7 @@ void MSNFileTransferSocket::slotFileTransferAccepted(KopeteTransfer *trans, cons
 	}
 }
 
-void MSNFileTransferSocket::slotFileTransferRefused(const KopeteFileTransferInfo &info)
+void MSNFileTransferSocket::slotFileTransferRefused(const Kopete::FileTransferInfo &info)
 {
 	if(info.internalId().toULong() != cookie())
 		return;

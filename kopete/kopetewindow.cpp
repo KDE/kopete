@@ -87,18 +87,18 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	// --------------------------------------------------------------------------------
 
 	// Trap all loaded plugins, so we can add their status bar icons accordingly , also used to add XMLGUIClient
-	connect( KopetePluginManager::self(), SIGNAL( pluginLoaded( KopetePlugin * ) ),
-		this, SLOT( slotPluginLoaded( KopetePlugin * ) ) );
-	connect( KopetePluginManager::self(), SIGNAL( allPluginsLoaded() ),
+	connect( Kopete::PluginManager::self(), SIGNAL( pluginLoaded( Kopete::Plugin * ) ),
+		this, SLOT( slotPluginLoaded( Kopete::Plugin * ) ) );
+	connect( Kopete::PluginManager::self(), SIGNAL( allPluginsLoaded() ),
 		this, SLOT( slotAllPluginsLoaded() ));
 	//Connect the appropriate account signals
 	/* Please note that I tried to put this in the slotAllPluginsLoaded() function
 	 * but it seemed to break the account icons in the statusbar --Matt */
 
-	connect( KopeteAccountManager::manager(), SIGNAL(accountReady(KopeteAccount*)),
-		this, SLOT(slotAccountRegistered(KopeteAccount*)));
-	connect( KopeteAccountManager::manager(), SIGNAL(accountUnregistered(KopeteAccount*)),
-		this, SLOT(slotAccountUnregistered(KopeteAccount*)));
+	connect( Kopete::AccountManager::manager(), SIGNAL(accountReady(Kopete::Account*)),
+		this, SLOT(slotAccountRegistered(Kopete::Account*)));
+	connect( Kopete::AccountManager::manager(), SIGNAL(accountUnregistered(Kopete::Account*)),
+		this, SLOT(slotAccountUnregistered(Kopete::Account*)));
 
 	createGUI ( "kopeteui.rc", false );
 
@@ -106,14 +106,14 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	loadOptions();
 
 	// If some plugins are already loaded, merge the GUI
-	QMap<KPluginInfo *, KopetePlugin *> plugins = KopetePluginManager::self()->loadedPlugins();
-	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
+	QMap<KPluginInfo *, Kopete::Plugin *> plugins = Kopete::PluginManager::self()->loadedPlugins();
+	QMap<KPluginInfo *, Kopete::Plugin *>::ConstIterator it;
 	for ( it = plugins.begin(); it != plugins.end(); ++it )
 		slotPluginLoaded( it.data() );
 
 	// If some account alrady loaded, build the status icon
-	QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
-	for(KopeteAccount *a=accounts.first() ; a; a=accounts.next() )
+	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::manager()->accounts();
+	for(Kopete::Account *a=accounts.first() ; a; a=accounts.next() )
 		slotAccountRegistered(a);
 }
 
@@ -130,11 +130,11 @@ void KopeteWindow::initActions()
 		actionCollection(), "AddContact" );
 
 	actionConnect = new KAction( i18n( "&Connect All" ), "connect_creating",
-		0, KopeteAccountManager::manager(), SLOT( connectAll() ),
+		0, Kopete::AccountManager::manager(), SLOT( connectAll() ),
 		actionCollection(), "ConnectAll" );
 
 	actionDisconnect = new KAction( i18n( "&Disconnect All" ), "connect_no",
-		0, KopeteAccountManager::manager(), SLOT( disconnectAll() ),
+		0, Kopete::AccountManager::manager(), SLOT( disconnectAll() ),
 		actionCollection(), "DisconnectAll" );
 
 	actionConnectionMenu = new KActionMenu( i18n("Connection"),"connect_established",
@@ -150,7 +150,7 @@ void KopeteWindow::initActions()
 		"SetAwayAll" );
 
 	actionSetAvailable = new KAction( i18n( "Set Availa&ble Globally" ),
-		"kopeteavailable", 0 , KopeteAccountManager::manager(),
+		"kopeteavailable", 0 , Kopete::AccountManager::manager(),
 		SLOT( setAvailableAll() ), actionCollection(),
 		"SetAvailableAll" );
 
@@ -414,8 +414,8 @@ void KopeteWindow::slotUpdateToolbar()
 
 void KopeteWindow::slotGlobalAwayMessageSelect( const QString &awayReason )
 {
-	KopeteAway::getInstance()->setGlobalAwayMessage( awayReason );
-	KopeteAccountManager::manager()->setAwayAll( awayReason );
+	Kopete::Away::getInstance()->setGlobalAwayMessage( awayReason );
+	Kopete::AccountManager::manager()->setAwayAll( awayReason );
 }
 
 void KopeteWindow::closeEvent( QCloseEvent *e )
@@ -463,7 +463,7 @@ void KopeteWindow::slotQuit()
 	app->quitKopete();
 }
 
-void KopeteWindow::slotPluginLoaded( KopetePlugin *  p  )
+void KopeteWindow::slotPluginLoaded( Kopete::Plugin *  p  )
 {
 	guiFactory()->addClient(p);
 }
@@ -474,7 +474,7 @@ void KopeteWindow::slotAllPluginsLoaded()
 	actionDisconnect->setEnabled(true);
 }
 
-void KopeteWindow::slotAccountRegistered( KopeteAccount *account )
+void KopeteWindow::slotAccountRegistered( Kopete::Account *account )
 {
 //	kdDebug(14000) << k_funcinfo << "Called." << endl;
 	if ( !account )
@@ -485,22 +485,22 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *account )
 	actionDisconnect->setEnabled(true);
 
 	connect( account->myself(),
-		SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &) ),
-		this, SLOT( slotAccountStatusIconChanged( KopeteContact * ) ) );
+		SIGNAL(onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus &) ),
+		this, SLOT( slotAccountStatusIconChanged( Kopete::Contact * ) ) );
 
 	connect( account, SIGNAL( iconAppearanceChanged() ), SLOT( slotAccountStatusIconChanged() ) );
 	connect( account, SIGNAL( colorChanged(const QColor& ) ), SLOT( slotAccountStatusIconChanged() ) );
 
 	connect( account->myself(),
-		SIGNAL(propertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ),
-		this, SLOT( slotAccountStatusIconChanged( KopeteContact* ) ) );
+		SIGNAL(propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
+		this, SLOT( slotAccountStatusIconChanged( Kopete::Contact* ) ) );
 
 	KopeteAccountStatusBarIcon *sbIcon = new KopeteAccountStatusBarIcon( account, m_statusBarWidget );
-	connect( sbIcon, SIGNAL( rightClicked( KopeteAccount *, const QPoint & ) ),
-		SLOT( slotAccountStatusIconRightClicked( KopeteAccount *,
+	connect( sbIcon, SIGNAL( rightClicked( Kopete::Account *, const QPoint & ) ),
+		SLOT( slotAccountStatusIconRightClicked( Kopete::Account *,
 		const QPoint & ) ) );
-	connect( sbIcon, SIGNAL( leftClicked( KopeteAccount *, const QPoint & ) ),
-		SLOT( slotAccountStatusIconRightClicked( KopeteAccount *,
+	connect( sbIcon, SIGNAL( leftClicked( Kopete::Account *, const QPoint & ) ),
+		SLOT( slotAccountStatusIconRightClicked( Kopete::Account *,
 		const QPoint & ) ) );
 
 	// this should be placed in contactlistview, but i am lazy to redo a new slot
@@ -512,10 +512,10 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *account )
 	slotAccountStatusIconChanged( account->myself() );
 }
 
-void KopeteWindow::slotAccountUnregistered( KopeteAccount *account)
+void KopeteWindow::slotAccountUnregistered( Kopete::Account *account)
 {
 //	kdDebug(14000) << k_funcinfo << "Called." << endl;
-	QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
+	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::manager()->accounts();
 	if (accounts.isEmpty())
 	{
 		actionConnect->setEnabled(false);
@@ -535,13 +535,13 @@ void KopeteWindow::slotAccountUnregistered( KopeteAccount *account)
 
 void KopeteWindow::slotAccountStatusIconChanged()
 {
-	if ( const KopeteAccount *from = dynamic_cast<const KopeteAccount*>(sender()) )
+	if ( const Kopete::Account *from = dynamic_cast<const Kopete::Account*>(sender()) )
 		slotAccountStatusIconChanged( from->myself() );
 }
 
-void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
+void KopeteWindow::slotAccountStatusIconChanged( Kopete::Contact *contact )
 {
-	KopeteOnlineStatus status = contact->onlineStatus();
+	Kopete::OnlineStatus status = contact->onlineStatus();
 //	kdDebug(14000) << k_funcinfo << "Icon: '" <<
 //		status.overlayIcon() << "'" << endl;
 
@@ -591,10 +591,10 @@ void KopeteWindow::makeTrayToolTip()
 		QToolTip::remove(m_tray);
 
 		QString tt = QString::fromLatin1("<qt><table>");
-		QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
-		for(KopeteAccount *a = accounts.first(); a; a = accounts.next())
+		QPtrList<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts();
+		for(Kopete::Account *a = accounts.first(); a; a = accounts.next())
 		{
-			KopeteContact *self = a->myself();
+			Kopete::Contact *self = a->myself();
 			tt += i18n("<tr><td>STATUS ICON <b>PROTOCOL NAME</b> (ACCOUNT NAME)</td><td>STATUS DESCRIPTION</td></tr>",
 				"<tr><td><img src=\"kopete-account-icon:%3:%4\">&nbsp;<b>%1</b>&nbsp;(%2)</td><td align=\"right\">%5</td></tr>")
 				.arg( a->protocol()->displayName() ).arg( a->accountId(), KURL::encode_string( a->protocol()->pluginId() ),
@@ -605,7 +605,7 @@ void KopeteWindow::makeTrayToolTip()
 	}
 }
 
-void KopeteWindow::slotAccountStatusIconRightClicked( KopeteAccount *account, const QPoint &p )
+void KopeteWindow::slotAccountStatusIconRightClicked( Kopete::Account *account, const QPoint &p )
 {
 	KActionMenu *actionMenu = account->actionMenu();
 	if ( !actionMenu )
@@ -617,8 +617,8 @@ void KopeteWindow::slotAccountStatusIconRightClicked( KopeteAccount *account, co
 
 void KopeteWindow::slotTrayAboutToShowMenu( KPopupMenu * popup )
 {
-	QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
-	for(KopeteAccount *a=accounts.first() ; a; a=accounts.next() )
+	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::manager()->accounts();
+	for(Kopete::Account *a=accounts.first() ; a; a=accounts.next() )
 	{
 		KActionMenu *menu = a->actionMenu();
 		if( menu )
@@ -629,10 +629,10 @@ void KopeteWindow::slotTrayAboutToShowMenu( KPopupMenu * popup )
 
 }
 
-void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto, const QPoint &p )
+void KopeteWindow::slotProtocolStatusIconRightClicked( Kopete::Protocol *proto, const QPoint &p )
 {
 	//kdDebug( 14000 ) << k_funcinfo << endl;
-	if ( KopeteAccountManager::manager()->accounts( proto ).count() > 0 )
+	if ( Kopete::AccountManager::manager()->accounts( proto ).count() > 0 )
 	{
 		KActionMenu *menu = proto->protocolActions();
 

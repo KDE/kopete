@@ -30,8 +30,8 @@
 #define MYACCOUNT ((IRCAccount*)account())
 
 class QTextCodec;
-class KopeteMessageManager;
-class KopeteMetaContact;
+namespace Kopete { class MessageManager; }
+namespace Kopete { class MetaContact; }
 class KopeteView;
 
 class IRCProtocol;
@@ -46,12 +46,12 @@ class IRCContactManager;
  * Common routines and signal connections that are required for both types of
  * contacts reside here, to avoid code duplication between these two classes.
  */
-class IRCContact : public KopeteContact
+class IRCContact : public Kopete::Contact
 {
 	Q_OBJECT
 
 	public:
-		IRCContact(IRCContactManager *contactManager, const QString &nick, KopeteMetaContact *metac, const QString& icon = QString::null);
+		IRCContact(IRCContactManager *contactManager, const QString &nick, Kopete::MetaContact *metac, const QString& icon = QString::null);
 		~IRCContact();
 
 		/**
@@ -71,7 +71,7 @@ class IRCContact : public KopeteContact
 		* exist in this session. More useful for channels. Calling IRCChannelContact::locateUser()
 		* for example tells you if a user is in a certain channel.
 		*/
-		KopeteContact *locateUser( const QString &nickName );
+		Kopete::Contact *locateUser( const QString &nickName );
 
 		virtual bool isReachable();
 
@@ -79,13 +79,13 @@ class IRCContact : public KopeteContact
 		* return true if the contact is in a chat. false if the contact is in no chats
 		* that loop over all manager, and checks the presence of the user
 		*/
-		bool isChatting( KopeteMessageManager *avoid = 0L ) const;
+		bool isChatting( Kopete::MessageManager *avoid = 0L ) const;
 
 		virtual const QString caption() const = 0;
 
-		virtual KopeteMessageManager *manager(bool canCreate = true);
+		virtual Kopete::MessageManager *manager(bool canCreate = true);
 
-		virtual void appendMessage( KopeteMessage & );
+		virtual void appendMessage( Kopete::Message & );
 
 		const QTextCodec *codec();
 
@@ -102,7 +102,7 @@ class IRCContact : public KopeteContact
 		void setCodec( const QTextCodec *codec );
 
 	protected slots:
-		virtual void slotSendMsg(KopeteMessage &message, KopeteMessageManager *);
+		virtual void slotSendMsg(Kopete::Message &message, Kopete::MessageManager *);
 
 		virtual void messageManagerDestroyed();
 
@@ -116,10 +116,10 @@ class IRCContact : public KopeteContact
 
 	protected:
 		QString m_nickName;
-		KopeteMessageManager *m_msgManager;
+		Kopete::MessageManager *m_msgManager;
 
-		QPtrList<KopeteContact> mMyself;
-		KopeteMessage::MessageDirection execDir;
+		QPtrList<Kopete::Contact> mMyself;
+		Kopete::Message::MessageDirection execDir;
 };
 
 #endif

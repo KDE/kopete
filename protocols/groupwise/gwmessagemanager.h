@@ -32,7 +32,7 @@ class GroupWiseSearch;
 
 using namespace GroupWise;
 
-class GroupWiseMessageManager : public KopeteMessageManager
+class GroupWiseMessageManager : public Kopete::MessageManager
 {
 Q_OBJECT
 
@@ -78,7 +78,7 @@ public:
 	/**
 	 * Add invitees to the conference
 	 */
-	void addInvitee( const KopeteContact * );
+	void addInvitee( const Kopete::Contact * );
 	/**
 	 * Add members to the conference
 	 */
@@ -96,7 +96,7 @@ public:
 	 */
 	void updateArchiving();
 	/**
-	 * Reimplemented from KopeteMessageManager - invites contacts via DND
+	 * Reimplemented from Kopete::MessageManager - invites contacts via DND
 	 */
 	virtual void inviteContact(const QString& );
 signals:
@@ -131,7 +131,7 @@ protected slots:
 	void slotCreationFailed( const int mmId,const int statusCode );
 	 
 	void slotSendTypingNotification ( bool typing );
-	void slotMessageSent( KopeteMessage &message, KopeteMessageManager * );
+	void slotMessageSent( Kopete::Message &message, Kopete::MessageManager * );
 	// TODO: slots for us leaving conference, us inviting someone, someone joining, someone leaving, someone sending an invitation, getting typing?
 	void slotGotTypingNotification( const ConferenceEvent & );
 	void slotGotNotTypingNotification( const ConferenceEvent & );
@@ -142,7 +142,7 @@ protected slots:
 	/**
 	 * Invite a contact to join this chat
 	 */
-	void slotInviteContact( KopeteContact * );
+	void slotInviteContact( Kopete::Contact * );
 	/** 
 	 * Show the search dialog to invite another contact to the chat
 	 */
@@ -156,12 +156,12 @@ protected slots:
 	void slotShowArchiving();
 private:
 	
-	GroupWiseMessageManager(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const ConferenceGuid & guid, int id = 0, const char* name = 0);
+	GroupWiseMessageManager(const Kopete::Contact* user, KopeteContactPtrList others, Kopete::Protocol* protocol, const ConferenceGuid & guid, int id = 0, const char* name = 0);
 	
 	ConferenceGuid m_guid; // The conference's globally unique identifier, which is given to it by the server
 	int m_flags; // flags for secure connections, central logging and "conference closed" as given by the server
 	
-	QValueList< KopeteMessage > m_pendingOutgoingMessages; // messages queued while we wait for the server to tell us the conference is created.
+	QValueList< Kopete::Message > m_pendingOutgoingMessages; // messages queued while we wait for the server to tell us the conference is created.
 	KopeteContactPtrList m_pendingInvites; // people we wanted to invite to the conference, queued while waiting for the conference to be created.
 	KActionMenu *m_actionInvite;
 	QPtrList<KAction> m_inviteActions;

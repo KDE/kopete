@@ -42,14 +42,14 @@ public:
 	 * Constructs a KopeteEmailWindowBase as a child of 'parent', with the
 	 * name 'name' and widget flags set to 'f'.
 	 */
-	KopeteEmailWindow( KopeteMessageManager *, bool foreignMessage );
+	KopeteEmailWindow( Kopete::MessageManager *, bool foreignMessage );
 
 	/**
 	 * Destroys the object and frees any allocated resources
 	 */
 	~KopeteEmailWindow();
 
-	virtual void setCurrentMessage( const KopeteMessage &newMessage );
+	virtual void setCurrentMessage( const Kopete::Message &newMessage );
 
 	virtual void raise(bool activate=false);
 
@@ -59,19 +59,19 @@ public:
 
 	virtual bool isVisible();
 
-	virtual KopeteMessage currentMessage();
+	virtual Kopete::Message currentMessage();
 
 	virtual QTextEdit *editWidget();
 	virtual QWidget *mainWidget() { return this; }
 
 public slots:
 	virtual void sendMessage();
-	virtual void appendMessage( KopeteMessage &message );
+	virtual void appendMessage( Kopete::Message &message );
 	virtual void messageSentSuccessfully();
 
 signals:
 	virtual void shown();
-	virtual void messageSent( KopeteMessage &message );
+	virtual void messageSent( Kopete::Message &message );
 	virtual void closing( KopeteView *view );
 	virtual void activated( KopeteView *view );
 
@@ -110,7 +110,7 @@ private:
 	void toggleMode( WindowMode );
 	void updateNextButton();
 	void initActions();
-	void writeMessage( KopeteMessage & );
+	void writeMessage( Kopete::Message & );
 };
 
 #endif // __KOPETEEMAILWINDOW_H__

@@ -22,7 +22,7 @@
 #include "meanwhileeditaccountbase.h"
 
 class QVBoxLayout;
-class KopeteAccount;
+namespace Kopete { class Account; }
 
 class MeanwhileEditAccountWidget : 
           public MeanwhileEditAccountBase,
@@ -31,12 +31,12 @@ class MeanwhileEditAccountWidget :
 Q_OBJECT
 public:
     MeanwhileEditAccountWidget( QWidget* parent, 
-                                KopeteAccount* account,
+                                Kopete::Account* account,
                                 MeanwhileProtocol *protocol);
 
     ~MeanwhileEditAccountWidget();
 
-    virtual KopeteAccount* apply();
+    virtual Kopete::Account* apply();
 
     virtual bool validateData();
 protected slots:

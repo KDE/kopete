@@ -34,8 +34,8 @@
 /**
  * JabberBaseContact constructor
  */
-JabberBaseContact::JabberBaseContact (const XMPP::RosterItem &rosterItem, JabberAccount *account, KopeteMetaContact * mc)
-				: KopeteContact (account, rosterItem.jid().full().lower (), mc)
+JabberBaseContact::JabberBaseContact (const XMPP::RosterItem &rosterItem, JabberAccount *account, Kopete::MetaContact * mc)
+				: Kopete::Contact (account, rosterItem.jid().full().lower (), mc)
 {
 
 	// take roster item and update display name
@@ -55,14 +55,14 @@ JabberBaseContact::JabberBaseContact (const XMPP::RosterItem &rosterItem, Jabber
 JabberProtocol *JabberBaseContact::protocol ()
 {
 
-	return static_cast<JabberProtocol *>(KopeteContact::protocol ());
+	return static_cast<JabberProtocol *>(Kopete::Contact::protocol ());
 
 }
 
 JabberAccount *JabberBaseContact::account ()
 {
 
-	return static_cast<JabberAccount *>(KopeteContact::account ());
+	return static_cast<JabberAccount *>(Kopete::Contact::account ());
 
 }
 
@@ -105,7 +105,7 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 	 * Then, we'll have to synchronize the KMC using
 	 * that information.
 	 */
-	KopeteGroupList groupsToRemoveFrom, groupsToAddTo;
+	Kopete::GroupList groupsToRemoveFrom, groupsToAddTo;
 
 	// find all groups our contact is in but that are not in the server side roster
 	for ( unsigned i = 0; i < metaContact()->groups().count (); i++ )
@@ -129,7 +129,7 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 		
 		if ( !found )
 		{
-			groupsToAddTo.append ( KopeteContactList::contactList()->getGroup ( *item.groups().at(i) ) );
+			groupsToAddTo.append ( Kopete::ContactList::contactList()->getGroup ( *item.groups().at(i) ) );
 		}
 	}
 
@@ -139,21 +139,21 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 	 * risk removing the contact from the visible contact list. In this
 	 * case, we need to make sure at least the top level group stays.
 	 */
-	if ( ( groupsToAddTo.count () == 0 ) && ( groupsToRemoveFrom.contains ( KopeteGroup::topLevel () ) ) )
+	if ( ( groupsToAddTo.count () == 0 ) && ( groupsToRemoveFrom.contains ( Kopete::Group::topLevel () ) ) )
 	{
-		groupsToRemoveFrom.remove ( KopeteGroup::topLevel () );
+		groupsToRemoveFrom.remove ( Kopete::Group::topLevel () );
 	}
 
-	for ( KopeteGroup *group = groupsToRemoveFrom.first (); group; group = groupsToRemoveFrom.next () )
+	for ( Kopete::Group *group = groupsToRemoveFrom.first (); group; group = groupsToRemoveFrom.next () )
 	{
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Removing " << contactId() << " from group " << group->displayName () << endl;
-		metaContact()->removeFromGroup ( group, KopeteMetaContact::DontSyncGroups );
+		metaContact()->removeFromGroup ( group, Kopete::MetaContact::DontSyncGroups );
 	}
 	
-	for ( KopeteGroup *group = groupsToAddTo.first (); group; group = groupsToAddTo.next () )
+	for ( Kopete::Group *group = groupsToAddTo.first (); group; group = groupsToAddTo.next () )
 	{
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Adding " << contactId() << " to group " << group->displayName () << endl;
-		metaContact()->addToGroup ( group, KopeteMetaContact::DontSyncGroups );
+		metaContact()->addToGroup ( group, Kopete::MetaContact::DontSyncGroups );
 	}
 
 }
@@ -162,7 +162,7 @@ void JabberBaseContact::reevaluateStatus ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Determining new status for " << contactId () << endl;
 
-	KopeteOnlineStatus status;
+	Kopete::OnlineStatus status;
 	XMPP::Resource resource = account()->resourcePool()->bestResource ( mRosterItem.jid () );
 
 	status = protocol()->resourceToKOS ( resource );

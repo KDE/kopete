@@ -34,12 +34,12 @@ class SMSSend : public SMSService
 {
 	Q_OBJECT
 public:
-	SMSSend(KopeteAccount* account);
+	SMSSend(Kopete::Account* account);
 	~SMSSend();
 
-	virtual void setAccount(KopeteAccount* account);
+	virtual void setAccount(Kopete::Account* account);
 
-	void send(const KopeteMessage& msg);
+	void send(const Kopete::Message& msg);
 	void setWidgetContainer(QWidget* parent, QGridLayout* container);
 
 	int maxSize();
@@ -52,7 +52,7 @@ private slots:
 	void setOptions(const QString& name);
 	void loadProviders(const QString& prefix);
 //signals:
-//	void messageSent(const KopeteMessage&);
+//	void messageSent(const Kopete::Message&);
 
 private:
 	QGridLayout *settingsBoxLayout;

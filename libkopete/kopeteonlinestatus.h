@@ -25,21 +25,22 @@
 class QString;
 class QPixmap;
 class QColor;
-class KopeteContact;
-class KopeteAccount;
-
-class KopeteProtocol;
 
 namespace Kopete
 {
-	class OnlineStatusIconCache;
-}
+
+class Contact;
+class Account;
+
+class Protocol;
+
+class OnlineStatusIconCache;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
  * @author Will Stephenson (icon generating code)
  *
- * KopeteOnlineStatus is a class that encapsulates all information about the
+ * Kopete::OnlineStatus is a class that encapsulates all information about the
  * various online states that a protocol can be in in a single class. The
  * online status consists of both a 'global' status as it's known to libkopete
  * and used for going online or away, which non-protocol plugins can use,
@@ -54,7 +55,7 @@ namespace Kopete
  * to be const after creation as there really shouldn't be a need to change
  * a status' characteristics during runtime!
  */
-class KopeteOnlineStatus
+class OnlineStatus
 {
 public:
 	/**
@@ -64,7 +65,7 @@ public:
 	 * should make) a distinction.
 	 * The order is important and is used in the < or > operator
 	 */
-	enum OnlineStatus
+	enum StatusType
 	{
 		/**
 		 * Refers to protocols where state cannot be determined. This
@@ -73,7 +74,7 @@ public:
 		 * to e.g. MSN contacts that are not on your contact list,
 		 * since MSN only allows a user to query online state for
 		 * users that are formally on the contact list. Lastly, libkopete
-		 * itself uses the Unknown state in @ref KopeteMetaContact for
+		 * itself uses the Unknown state in @ref Kopete::MetaContact for
 		 * meta contacts that have no child contacts at all.
 		 */
 		Unknown=0,
@@ -120,17 +121,17 @@ public:
 	/**
 	 * Constructor.
 	 *
-	 * Creates an empty KopeteOnlineStatus object. Since you cannot change
-	 * KopeteOnlineStatus objects that are already created other than by their
+	 * Creates an empty Kopete::OnlineStatus object. Since you cannot change
+	 * Kopete::OnlineStatus objects that are already created other than by their
 	 * assignment operator, this constructor is only a convenience method
 	 * for use in e.g. class members and local variables.
 	 */
-	KopeteOnlineStatus();
+	OnlineStatus();
 
 	/**
 	 * Constructor.
 	 *
-	 * Creates a new KopeteOnlineStatus object. All fields are mandatory; there
+	 * Creates a new Kopete::OnlineStatus object. All fields are mandatory; there
 	 * are no default values. Also, you cannot change the object after creation.
 	 *
 	 * @param status is the global online status as used by libkopete
@@ -151,7 +152,7 @@ public:
 	 * @param caption is the description of the status in menus and on buttons.
 	 * @param description is a description in e.g. tooltips.
 	 */
-	KopeteOnlineStatus( OnlineStatus status, unsigned weight, KopeteProtocol *protocol,
+	OnlineStatus( StatusType status, unsigned weight, Protocol *protocol,
 		unsigned internalStatus, const QString &overlayIcon, const QString &caption, const QString &description );
 
 	/**
@@ -161,7 +162,7 @@ public:
 	 * status are set to zero, the strings and icons are set to the meta contact
 	 * strings.
 	 */
-	KopeteOnlineStatus( OnlineStatus status );
+	OnlineStatus( StatusType status );
 
 	/**
 	 * Copy constructor.
@@ -169,17 +170,17 @@ public:
 	 * Just adds a reference to the refcount. Used to copy around the status
 	 * objects with very little overhead.
 	 */
-	KopeteOnlineStatus( const KopeteOnlineStatus &other );
+	OnlineStatus( const OnlineStatus &other );
 
 	/**
 	 * Destructor.
 	 */
-	~KopeteOnlineStatus();
+	~OnlineStatus();
 
 	/**
 	 * \brief Return the status
 	 */
-	OnlineStatus status() const;
+	StatusType status() const;
 
 	/**
 	 * \brief Return the internal status
@@ -209,22 +210,22 @@ public:
 	/**
 	 * \brief Return the protocol this applies to
 	 */
-	KopeteProtocol* protocol() const;
+	Protocol* protocol() const;
 
 	/**
-	 * \brief Return a status icon generated for the given KopeteContact
+	 * \brief Return a status icon generated for the given Kopete::Contact
 	 *
 	 * This will draw an overlay representing the online status
-	 * of the contact the KopeteOnlineStatus applies to
+	 * of the contact the Kopete::OnlineStatus applies to
 	 * over the base icon.
 	 * A cache is employed to reduce CPU and memory usage.
 	 * @param contact is the contact the icon should apply to.
 	 * @param size is the size we the icon should be scaled to - 16 is default and so costs nothing
 	 */
-	QPixmap iconFor( const KopeteContact *contact, int size = 16 ) const;
+	QPixmap iconFor( const Contact *contact, int size = 16 ) const;
 
 	/**
-	 * \brief Return the mime source for a status icon generated for the given KopeteContact
+	 * \brief Return the mime source for a status icon generated for the given Kopete::Contact
 	 *
 	 * This behaves essentially like the method above, except for that
 	 * it returns a mime source string that can be used to render the
@@ -235,23 +236,23 @@ public:
 	 * @param contact is the contact the icon should apply to.
 	 * @param size is the size we the icon should be scaled to - 16 is default and so costs nothing
 	 */
-	QString mimeSourceFor( const KopeteContact *contact, int size = 16 ) const;
+	QString mimeSourceFor( const Contact *contact, int size = 16 ) const;
 
 	/**
-	 * \brief Return a status icon generated for the given KopeteAccount
+	 * \brief Return a status icon generated for the given Kopete::Account
 	 *
 	 * This will draw an overlay representing the online status
-	 * of the account the KopeteOnlineStatus applies to
+	 * of the account the Kopete::OnlineStatus applies to
 	 * over the base icon.
 	 * A cache is employed to reduce CPU and memory usage.
 	 * @param account is the account the icon should apply to.
 	 * The account's color causes tinting, if it's plain QColor(), no tinting takes place.
 	 * @param size is the size we the icon should be scaled to - 16 is default and so costs nothing
 	 */
-	QPixmap iconFor( const KopeteAccount *account, int size = 16 ) const;
+	QPixmap iconFor( const Account *account, int size = 16 ) const;
 
 	/**
-	 * \brief Return the mime source for a status icon generated for the given KopeteAccount
+	 * \brief Return the mime source for a status icon generated for the given Kopete::Account
 	 *
 	 * This behaves essentially like the method above, except for that
 	 * it returns a mime source string that can be used to render the
@@ -263,7 +264,7 @@ public:
 	 * The account's color causes tinting, if it's plain QColor(), no tinting takes place.
 	 * @param size is the size we the icon should be scaled to - 16 is default and so costs nothing
 	 */
-	QString mimeSourceFor( const KopeteAccount *account, int size = 16 ) const;
+	QString mimeSourceFor( const Account *account, int size = 16 ) const;
 
 	/**
 	 * \brief Return a previously rendered status icon for a mime source key
@@ -286,7 +287,7 @@ public:
 	/**
 	 * Assignment operator
 	 */
-	KopeteOnlineStatus & operator=( const KopeteOnlineStatus &other );
+	OnlineStatus & operator=( const OnlineStatus &other );
 
 	/**
 	 * Comparison operator
@@ -294,14 +295,14 @@ public:
 	 * Returns true if both the protocol and the internal status are
 	 * identical.
 	 */
-	bool operator==( const KopeteOnlineStatus &other ) const;
+	bool operator==( const OnlineStatus &other ) const;
 
 	/**
 	 * Comparison operator
 	 *
 	 * This operator works exactly opposite of @ref operator==()
 	 */
-	bool operator!=( const KopeteOnlineStatus &other ) const;
+	bool operator!=( const OnlineStatus &other ) const;
 
 	/**
 	 * Comparison operator
@@ -309,14 +310,14 @@ public:
 	 * Returns true if the status() of this contact is of higher value than the other
 	 * contact or if both statuses are equal and weight() is higher for this contact.
 	 */
-	bool operator>( const KopeteOnlineStatus &other ) const;
+	bool operator>( const OnlineStatus &other ) const;
 
 	/**
 	 * Comparison operator
 	 *
 	 * This operator works exactly opposite of @ref operator>()
 	 */
-	bool operator<( const KopeteOnlineStatus &other ) const;
+	bool operator<( const OnlineStatus &other ) const;
 
 private:
 	class Private;
@@ -325,27 +326,24 @@ private:
 	QPixmap cacheLookupByObject( const QString& icon, int size, QColor color, bool idle = false) const;
 	QPixmap cacheLookupByMimeSource( const QString &mimeSource ) const;
 	QString mimeSource( const QString& icon, int size, QColor color, bool idle ) const;
-	friend class Kopete::OnlineStatusIconCache;
+	friend class OnlineStatusIconCache;
 };
-
-namespace Kopete
-{
 
 namespace Global
 {
 	OnlineStatusIconCache *onlineStatusIconCache();
 }
 
-/** Caches icons for KopeteOnlineStatus **/
+/** Caches icons for Kopete::OnlineStatus **/
 class OnlineStatusIconCache : public QObject
 {
 	Q_OBJECT
 	OnlineStatusIconCache();
 public:
 	~OnlineStatusIconCache();
-	QPixmap cacheLookupByObject( const KopeteOnlineStatus &statusFor, const QString& icon, int size, QColor color, bool idle = false);
+	QPixmap cacheLookupByObject( const OnlineStatus &statusFor, const QString& icon, int size, QColor color, bool idle = false);
 	QPixmap cacheLookupByMimeSource( const QString &mimeSource );
-	QString fingerprint( const KopeteOnlineStatus &statusFor, const QString& icon, int size, QColor color, bool idle = false);
+	QString fingerprint( const OnlineStatus &statusFor, const QString& icon, int size, QColor color, bool idle = false);
 
 signals:
 	void iconsChanged();
@@ -354,7 +352,7 @@ private slots:
 	void slotIconsChanged();
 
 private:
-	QPixmap renderIcon( const KopeteOnlineStatus &statusFor, const QString& baseicon, int size, QColor color, bool idle = false) const;
+	QPixmap renderIcon( const OnlineStatus &statusFor, const QString& baseicon, int size, QColor color, bool idle = false) const;
 
 	friend OnlineStatusIconCache *Global::onlineStatusIconCache();
 

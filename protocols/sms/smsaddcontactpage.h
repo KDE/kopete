@@ -31,7 +31,7 @@ public:
 	~SMSAddContactPage();
 	smsAddUI *smsdata;
 	virtual bool validateData();
-	virtual bool apply( KopeteAccount*, KopeteMetaContact* );
+	virtual bool apply( Kopete::Account*, Kopete::MetaContact* );
 };
 
 

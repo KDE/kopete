@@ -28,7 +28,7 @@
 class GaduAccount;
 class GaduAddUI;
 class QLabel;
-class KopeteMetaContact;
+namespace Kopete { class MetaContact; }
 class QString;
 class QShowEvent;
 class GaduAddUI;
@@ -42,7 +42,7 @@ public:
 	GaduAddContactPage( GaduAccount*, QWidget* parent = 0, const char* name = 0 );
 	~GaduAddContactPage();
 	virtual bool validateData();
-	virtual bool apply( KopeteAccount* , KopeteMetaContact * );
+	virtual bool apply( Kopete::Account* , Kopete::MetaContact * );
 
 	protected:
 		void showEvent(QShowEvent *e);

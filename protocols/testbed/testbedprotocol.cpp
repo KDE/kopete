@@ -30,10 +30,10 @@ K_EXPORT_COMPONENT_FACTORY( kopete_testbed, TestbedProtocolFactory( "kopete_test
 TestbedProtocol *TestbedProtocol::s_protocol = 0L;
 
 TestbedProtocol::TestbedProtocol( QObject* parent, const char *name, const QStringList &/*args*/ )
-	: KopeteProtocol( TestbedProtocolFactory::instance(), parent, name ),
-	  testbedOnline(  KopeteOnlineStatus::Online, 25, this, 0,  QString::null,  i18n( "Go O&nline" ),   i18n( "Online" ) ),
-	  testbedAway(  KopeteOnlineStatus::Away, 25, this, 1, "msn_away",  i18n( "Go &Away" ),   i18n( "Away" ) ),
-	  testbedOffline(  KopeteOnlineStatus::Offline, 25, this, 2,  QString::null,  i18n( "Go O&ffline" ),   i18n( "Offline" ) )
+	: Kopete::Protocol( TestbedProtocolFactory::instance(), parent, name ),
+	  testbedOnline(  Kopete::OnlineStatus::Online, 25, this, 0,  QString::null,  i18n( "Go O&nline" ),   i18n( "Online" ) ),
+	  testbedAway(  Kopete::OnlineStatus::Away, 25, this, 1, "msn_away",  i18n( "Go &Away" ),   i18n( "Away" ) ),
+	  testbedOffline(  Kopete::OnlineStatus::Offline, 25, this, 2,  QString::null,  i18n( "Go O&ffline" ),   i18n( "Offline" ) )
 
 {
 	kdDebug( 14210 ) << k_funcinfo << endl;
@@ -45,8 +45,8 @@ TestbedProtocol::~TestbedProtocol()
 {
 }
 
-KopeteContact *TestbedProtocol::deserializeContact(
-	KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
+Kopete::Contact *TestbedProtocol::deserializeContact(
+	Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> &/* addressBookData */)
 {
 	QString contactId = serializedData[ "contactId" ];
@@ -62,9 +62,9 @@ KopeteContact *TestbedProtocol::deserializeContact(
 	else
 		tbcType = TestbedContact::Null;
 
-	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
+	QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts( this );
 
-	KopeteAccount *account = accounts[ accountId ];
+	Kopete::Account *account = accounts[ accountId ];
 	if ( !account )
 	{
 		kdDebug(14210) << "Account doesn't exist, skipping" << endl;
@@ -74,19 +74,19 @@ KopeteContact *TestbedProtocol::deserializeContact(
 	return new TestbedContact(account, contactId, tbcType, displayName, metaContact);
 }
 
-AddContactPage * TestbedProtocol::createAddContactWidget( QWidget *parent, KopeteAccount * /* account */ )
+AddContactPage * TestbedProtocol::createAddContactWidget( QWidget *parent, Kopete::Account * /* account */ )
 {
 	kdDebug( 14210 ) << "Creating Add Contact Page" << endl;
 	return new TestbedAddContactPage( parent );
 }
 
-KopeteEditAccountWidget * TestbedProtocol::createEditAccountWidget( KopeteAccount *account, QWidget *parent )
+KopeteEditAccountWidget * TestbedProtocol::createEditAccountWidget( Kopete::Account *account, QWidget *parent )
 {
 	kdDebug(14210) << "Creating Edit Account Page" << endl;
 	return new TestbedEditAccountWidget( parent, account );
 }
 
-KopeteAccount *TestbedProtocol::createNewAccount( const QString &accountId )
+Kopete::Account *TestbedProtocol::createNewAccount( const QString &accountId )
 {
 	return new TestbedAccount( this, accountId );
 }

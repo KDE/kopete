@@ -20,7 +20,7 @@
 
 #include "jabberbasecontact.h"
 
-class KopeteMetaContact;
+namespace Kopete { class MetaContact; }
 class JabberGroupChatManager;
 class JabberMessageManager;
 
@@ -32,7 +32,7 @@ Q_OBJECT
 public:
 
 	JabberGroupMemberContact (const XMPP::RosterItem &rosterItem,
-							  JabberAccount *account, KopeteMetaContact * mc);
+							  JabberAccount *account, Kopete::MetaContact * mc);
 
 	~JabberGroupMemberContact ();
 
@@ -50,7 +50,7 @@ public:
 	/**
 	 * Return message manager for this instance.
 	 */
-	KopeteMessageManager *manager ( bool canCreate = false );
+	Kopete::MessageManager *manager ( bool canCreate = false );
 
 	/**
 	 * Deal with incoming messages.

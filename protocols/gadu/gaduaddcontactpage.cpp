@@ -82,7 +82,7 @@ GaduAddContactPage::validateData()
 }
 
 bool
-GaduAddContactPage::apply( KopeteAccount* a , KopeteMetaContact* mc )
+GaduAddContactPage::apply( Kopete::Account* a , Kopete::MetaContact* mc )
 {
 	if ( validateData() ) {
 		QString userid	= addUI_->addEdit_->text().stripWhiteSpace();
@@ -91,7 +91,7 @@ GaduAddContactPage::apply( KopeteAccount* a , KopeteMetaContact* mc )
 			kdDebug(14100) << "Problem because accounts differ: " << a->accountId()
 							<< " , " << account_->accountId() << endl;
 		}
-		if ( a->addContact( userid, name.isEmpty() ? userid : name, mc, KopeteAccount::ChangeKABC ) == false ) {
+		if ( a->addContact( userid, name.isEmpty() ? userid : name, mc, Kopete::Account::ChangeKABC ) == false ) {
 			return false;
 		}
 		GaduContact *contact = static_cast<GaduContact*>( a->contacts()[ userid ] );

@@ -31,17 +31,23 @@
 // FIXME: get rid of this include in header
 #include "kopetemessage.h"
 
-class KopeteContact;
-class KopeteMessage;
-class KopeteProtocol;
-class KopeteView;
-class KopeteOnlineStatus;
-class KopeteAccount;
-
-typedef QPtrList<KopeteContact>   KopeteContactPtrList;
-typedef QValueList<KopeteMessage> KopeteMessageList;
+typedef QPtrList<Kopete::Contact>   KopeteContactPtrList;
+typedef QValueList<Kopete::Message> KopeteMessageList;
 
 class KMMPrivate;
+
+class KopeteView;
+class KopeteMessageManagerFactory;
+
+namespace Kopete
+{
+
+class Contact;
+class Message;
+class Protocol;
+class OnlineStatus;
+class Account;
+
 
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
@@ -50,7 +56,7 @@ class KMMPrivate;
  * @author Olivier Goffart        <ogoffart@tiscalinet.be>
  * @author Jason Keirstead        <jason@keirstead.org>
  *
- * The KopeteMessageManager (also called KMM for simplicity) manages a single chat.
+ * The Kopete::MessageManager (also called KMM for simplicity) manages a single chat.
  * It is an interface between the protocol, and the chatwindow.
  * The protocol can connect to @ref messageSent() signals to send the message, and can
  * append received message with @ref messageReceived()
@@ -59,7 +65,7 @@ class KMMPrivate;
  * so plugins can add childClients of this client to add their own actions in the
  * chatwindow.
  */
-class KopeteMessageManager : public QObject , public KXMLGUIClient
+class MessageManager : public QObject , public KXMLGUIClient
 {
 	// friend class so the object factory can access the protected constructor
 	friend class KopeteMessageManagerFactory;
@@ -72,7 +78,7 @@ public:
 	 * You shouldn't delete the KMM yourself. it will be deleted when the chatwindow is closed
 	 * see also @ref setCanBeDeleted()
 	 */
-	~KopeteMessageManager();
+	~MessageManager();
 
 	/**
 	 * @brief Get a list of all contacts in the session
@@ -83,19 +89,19 @@ public:
 	 * @brief Get the local user in the session
 	 * @return the local user in the session, same as account()->myself()
 	 */
-	const KopeteContact* user() const;
+	const Contact* user() const;
 
 	/**
 	 * @brief Get the protocol being used.
 	 * @return the protocol
 	 */
-	KopeteProtocol* protocol() const;
+	Protocol* protocol() const;
 
 	/**
 	 * @brief get the account
 	 * @return the account
 	 */
-	KopeteAccount *account() const ;
+	Account *account() const ;
 
 	/**
 	 * @brief the KMM unique id
@@ -123,26 +129,26 @@ public:
 	 * Set a special icon for a contact in this kmm only.
 	 * by default, all contact have their own status
 	 */
-	void setContactOnlineStatus( const KopeteContact *contact, const KopeteOnlineStatus &newStatus );
+	void setContactOnlineStatus( const Contact *contact, const OnlineStatus &newStatus );
 
 	/**
 	 * @brief get the status of a contact.
 	 *
 	 * see @ref setContactOnlineStatus()
 	 */
-	const KopeteOnlineStatus contactOnlineStatus( const KopeteContact *contact ) const;
+	const OnlineStatus contactOnlineStatus( const Contact *contact ) const;
 
 	/**
 	 * @brief the manager's view
 	 *
-	 * Return the view for the supplied KopeteMessageManager.  If it already
+	 * Return the view for the supplied Kopete::MessageManager.  If it already
 	 * exists, it will be returned, otherwise, 0L will be returned or a new one
 	 * if canCreate=true
 	 * @param canCreate create a new one if it does not exist
 	 * @param type Specifies the type of view if we have to create one.
 	 */
 	// FIXME: canCreate should definitely be an enum and not a bool - Martijn
-	KopeteView* view( bool canCreate = false, KopeteMessage::MessageType type = KopeteMessage::Undefined );
+	KopeteView* view( bool canCreate = false, Message::MessageType type = Message::Undefined );
 	
 	/**
 	 * says if you may invite contact from the same account to this chat with @ref inviteContact
@@ -154,7 +160,7 @@ public:
 	/**
 	 * this method is called when a contact is dragged to the contactlist.
 	 * @p contactId is the id of the contact. the contact is supposed to be of the same account as
-	 * the @ref account() but we can't be sure the KopeteContact is realy on the contactlist 
+	 * the @ref account() but we can't be sure the Kopete::Contact is realy on the contactlist 
 	 *
 	 * It is possible to drag contact only if @ref mayInvite return true
 	 *
@@ -166,21 +172,21 @@ public:
 signals:
 	/**
 	 * @brief the KMM will be deleted
-	 * Used by a KopeteMessageManager to signal that it is closing.
+	 * Used by a Kopete::MessageManager to signal that it is closing.
 	 */
-	void closing( KopeteMessageManager *kmm );
+	void closing( Kopete::MessageManager *kmm );
 
 	/**
 	 * a message will be soon shown in the chatwindow.
 	 * See @ref KopeteMessageManagerFactory::aboutToShow() signal
 	 */
-	void messageAppended( KopeteMessage &msg, KopeteMessageManager *kmm = 0L );
+	void messageAppended( Kopete::Message &msg, Kopete::MessageManager *kmm = 0L );
 
 	/**
 	 * a message will be soon received
 	 * See @ref KopeteMessageManagerFactory::aboutToReceive() signal
 	 */
-	void messageReceived( KopeteMessage &msg, KopeteMessageManager *kmm = 0L );
+	void messageReceived( Kopete::Message &msg, Kopete::MessageManager *kmm = 0L );
 
 	/**
 	 * @brief a message is going to be sent
@@ -190,7 +196,7 @@ signals:
 	 * the protocol have also to call @ref appendMessage() and @ref messageSucceeded()
 	 * See also @ref KopeteMessageManagerFactory::aboutToSend() signal
 	 */
-	void messageSent( KopeteMessage &msg, KopeteMessageManager *kmm = 0L );
+	void messageSent( Kopete::Message &msg, Kopete::MessageManager *kmm = 0L );
 
 	/**
 	 * The last message has finaly successfully been sent
@@ -201,17 +207,17 @@ signals:
 	 * @brief a new contact is now in the chat
 	 */
 	// FIXME: What's 'suppress'? Shouldn't this be an enum? - Martijn
-	void contactAdded( const KopeteContact *contact, bool suppress );
+	void contactAdded( const Kopete::Contact *contact, bool suppress );
 
 	/**
 	 * @brief a contact is no longer in this chat
 	 */
-	void contactRemoved( const KopeteContact *contact, const QString &reason, KopeteMessage::MessageFormat format = KopeteMessage::PlainText, bool contactRemoved = false );
+	void contactRemoved( const Kopete::Contact *contact, const QString &reason, Kopete::Message::MessageFormat format = Message::PlainText, bool contactRemoved = false );
 
 	/**
 	 * @brief a contact in this chat has changed his status
 	 */
-	void onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & );
+	void onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & );
 
 	/**
 	 * @brief The name of the chat is changed
@@ -232,18 +238,18 @@ signals:
 	 * Signals that a remote user is typing a message.
 	 * the chatwindow connects to this signal to update the statusbar
 	 */
-	void remoteTyping( const KopeteContact *contact, bool isTyping );
+	void remoteTyping( const Kopete::Contact *contact, bool isTyping );
 
 public slots:
 	/**
 	 * @brief Got a typing notification from a user
 	 */
-	void receivedTypingMsg( const KopeteContact *contact , bool isTyping = true );
+	void receivedTypingMsg( const Kopete::Contact *contact , bool isTyping = true );
 
 	/**
 	 * Got a typing notification from a user. This is a convenience version
 	 * of the above method that takes a QString contactId instead of a full
-	 * KopeteContact
+	 * Kopete::Contact
 	 */
 	void receivedTypingMsg( const QString &contactId, bool isTyping = true );
 
@@ -252,7 +258,7 @@ public slots:
 	 * This is the function protocols HAVE TO call for both incoming and outgoing messages
 	 * if the message must be showed in the chatwindow
 	 */
-	void appendMessage( KopeteMessage &msg );
+	void appendMessage( Kopete::Message &msg );
 
 	/**
 	 * Add a contact to the session
@@ -261,7 +267,7 @@ public slots:
 	 *  (note that i don't like the param suppress at all. it is used in irc to show a different notification (with an info text)
 	 *   a QStringinfo would be more interesting, but it is also used to don't show the notification when entering in a channel)
 	 */
-	void addContact( const KopeteContact *c, bool suppress = false );
+	void addContact( const Kopete::Contact *c, bool suppress = false );
 
 	/**
 	 * Remove a contact from the session
@@ -270,7 +276,7 @@ public slots:
 	 * @param format The format of the message
 	 * @param suppressNotification prevents a notification of the removal in the chat view.  See note in @ref addContact
 	 */
-	void removeContact( const KopeteContact *contact, const QString& reason = QString::null, KopeteMessage::MessageFormat format = KopeteMessage::PlainText, bool suppressNotification = false );
+	void removeContact( const Kopete::Contact *contact, const QString& reason = QString::null, Kopete::Message::MessageFormat format = Message::PlainText, bool suppressNotification = false );
 
 	/**
 	 * Set if the KMM will be deleted when the chatwindow is deleted. It is useful if you want
@@ -286,7 +292,7 @@ public slots:
 	/**
 	 * Send a message to the user
 	 */
-	void sendMessage( KopeteMessage &message );
+	void sendMessage( Kopete::Message &message );
 
 	/**
 	 * Tell the KMM that the user is typing
@@ -303,8 +309,8 @@ public slots:
 private slots:
 	void slotUpdateDisplayName();
 	void slotViewDestroyed();
-	void slotOnlineStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus );
-	void slotContactDestroyed( KopeteContact *contact );
+	void slotOnlineStatusChanged( Kopete::Contact *c, const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus );
+	void slotContactDestroyed( Kopete::Contact *contact );
 
 protected:
 	/**
@@ -312,8 +318,8 @@ protected:
 	 * static factory method createSession() creates the object. You may
 	 * not create instances yourself directly!
 	 */
-	KopeteMessageManager( const KopeteContact *user, KopeteContactPtrList others,
-		KopeteProtocol *protocol, int id = 0, const char *name = 0 );
+	MessageManager( const Contact *user, KopeteContactPtrList others,
+		Protocol *protocol, int id = 0, const char *name = 0 );
 
 	void setMMId( int );
 	
@@ -329,6 +335,8 @@ protected:
 private:
 	KMMPrivate *d;
 };
+
+}
 
 #endif
 

@@ -28,7 +28,7 @@ class MeanwhileAccount;
 class MeanwhileEditAccountWidget;
 class MeanwhileAddContactPage;
 
-class MeanwhileProtocol : public KopeteProtocol
+class MeanwhileProtocol : public Kopete::Protocol
 {
     Q_OBJECT
 public:
@@ -41,28 +41,28 @@ public:
     
     virtual AddContactPage * createAddContactWidget( 
                                     QWidget *parent, 
-                                    KopeteAccount *account );
+                                    Kopete::Account *account );
                                     
     virtual KopeteEditAccountWidget * createEditAccountWidget( 
-                                    KopeteAccount *account, 
+                                    Kopete::Account *account, 
                                     QWidget *parent );     
 
-    virtual KopeteAccount * createNewAccount( 
+    virtual Kopete::Account * createNewAccount( 
                                     const QString &accountId );                               
 
-    virtual KopeteContact *deserializeContact( KopeteMetaContact *metaContact,
+    virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
                      const QMap<QString,QString> &serializedData,
                      const QMap<QString, QString> &addressBookData );
 
 /* kopete doesnt know about these funcs */
     static MeanwhileProtocol *protocol();
 
-    const KopeteOnlineStatus meanwhileOffline;
-    const KopeteOnlineStatus meanwhileOnline;
-    const KopeteOnlineStatus meanwhileAway;
-    const KopeteOnlineStatus meanwhileBusy;
-    const KopeteOnlineStatus meanwhileIdle;
-    const KopeteOnlineStatus meanwhileUnknown;
+    const Kopete::OnlineStatus meanwhileOffline;
+    const Kopete::OnlineStatus meanwhileOnline;
+    const Kopete::OnlineStatus meanwhileAway;
+    const Kopete::OnlineStatus meanwhileBusy;
+    const Kopete::OnlineStatus meanwhileIdle;
+    const Kopete::OnlineStatus meanwhileUnknown;
 
     const Kopete::ContactPropertyTmpl statusMessage;
     const Kopete::ContactPropertyTmpl awayMessage;

@@ -41,7 +41,7 @@
 #include "icqcontact.h"
 
 ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
-	KopeteAccount *account, QWidget *parent, const char *name)
+	Kopete::Account *account, QWidget *parent, const char *name)
 	: QWidget(parent, name), KopeteEditAccountWidget(account)
 {
 	kdDebug(14153) << k_funcinfo << "Called." << endl;
@@ -256,7 +256,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	QObject::connect(mAccountSettings->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
 }
 
-KopeteAccount *ICQEditAccountWidget::apply()
+Kopete::Account *ICQEditAccountWidget::apply()
 {
 	kdDebug(14153) << k_funcinfo << "Called." << endl;
 

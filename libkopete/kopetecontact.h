@@ -33,14 +33,18 @@ struct KopeteContactPrivate;
 class KPopupMenu;
 class KURL;
 class KAction;
-class KopeteGroup;
-class KopeteMetaContact;
-class KopeteMessageManager;
-class KopeteOnlineStatus;
-class KopetePlugin;
-class KopeteProtocol;
-class KopeteAccount;
-typedef QPtrList<KopeteGroup> KopeteGroupList;
+
+namespace Kopete
+{
+
+class Group;
+class MetaContact;
+class MessageManager;
+class OnlineStatus;
+class Plugin;
+class Protocol;
+class Account;
+typedef QPtrList<Group> GroupList;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -50,7 +54,7 @@ typedef QPtrList<KopeteGroup> KopeteGroupList;
  * This class abstracts a generic contact
  * Use it for inserting contacts in the contact list for example.
  */
-class KopeteContact : public QObject
+class Contact : public QObject
 {
 	Q_OBJECT
 
@@ -68,7 +72,7 @@ public:
 	/**
 	 * \brief Create new contact.
 	 *
-	 * <b>The parent KopeteMetaContact must not be NULL</b>
+	 * <b>The parent Kopete::MetaContact must not be NULL</b>
 	 *
 	 * \note id is required to be unique per protocol and per account.
 	 * Across those boundaries ids may occur multiple times.
@@ -78,14 +82,14 @@ public:
 	 * this is undefined and may change at any time!
 	 *
 	 * @param account is the parent account. this constructor automatically register the contact to the account
-	 * @param id is the KopeteContact's unique Id (mostly the user's login)
-	 * @param parent is the parent @ref KopeteMetaContact this KopeteContact is part of
+	 * @param id is the Kopete::Contact's unique Id (mostly the user's login)
+	 * @param parent is the parent @ref Kopete::MetaContact this Kopete::Contact is part of
 	 * @param icon is an optional icon
 	 */
-	KopeteContact( KopeteAccount *account, const QString &id, KopeteMetaContact *parent,
+	Contact( Account *account, const QString &id, MetaContact *parent,
 		const QString &icon = QString::null );
 
-	~KopeteContact();
+	~Contact();
 
 	/**
 	 * \brief Get whether this contact is online
@@ -111,9 +115,9 @@ public:
 
 	/**
 	 * \brief Get the metacontact for this contact
-	 * @return The KopeteMetaContact object for this contact
+	 * @return The Kopete::MetaContact object for this contact
 	 */
-	KopeteMetaContact *metaContact() const;
+	MetaContact *metaContact() const;
 
 	/**
 	 * @brief Serialize the contact for storage in the contact list.
@@ -129,11 +133,11 @@ public:
 	 * 'nothing to save'.
 	 *
 	 * The provided addressBookFields QMap contains the index field as
-	 * marked with @ref KopetePlugin::addAddressBookField() with the
+	 * marked with @ref Kopete::Plugin::addAddressBookField() with the
 	 * contact id as value. If no index field is available the QMap is
 	 * simply passed as an empty map.
 	 *
-	 * @sa KopeteProtocol::deserializeContact
+	 * @sa Kopete::Protocol::deserializeContact
 	 */
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
@@ -163,12 +167,12 @@ public:
 	 * @brief Get the online status of the contact
 	 * @return the online status of the contact
 	 */
-	const KopeteOnlineStatus& onlineStatus() const;
+	const OnlineStatus& onlineStatus() const;
 
 	/**
 	 * \brief Set the contact's online status
 	 */
-	void setOnlineStatus(const KopeteOnlineStatus &status);
+	void setOnlineStatus(const OnlineStatus &status);
 
 	/**
 	 * \brief Get the unique id that identifies a contact.
@@ -196,14 +200,14 @@ public:
 	 *
 	 * @return the contact's protocol
 	 */
-	KopeteProtocol* protocol() const;
+	Protocol* protocol() const;
 
 	/**
 	 * \brief Get the account that this contact belongs to
 	 *
-	 * @return the KopeteAccount object for this contact
+	 * @return the Kopete::Account object for this contact
 	 */
-	KopeteAccount* account() const;
+	Account* account() const;
 
 	/**
 	 * \brief Get the set of custom menu items for this contact
@@ -217,7 +221,7 @@ public:
 	 * @return Collection of menu items to be show on the context menu
 	 */
 	virtual QPtrList<KAction> *customContextMenuActions();
-	virtual QPtrList<KAction> *customContextMenuActions( KopeteMessageManager *manager );
+	virtual QPtrList<KAction> *customContextMenuActions( MessageManager *manager );
 
 	/**
 	 * @brief Get the Context Menu for this contact
@@ -225,7 +229,7 @@ public:
 	 * This menu includes generic actions common to each protocol, and action defined in
 	 * @ref customContextMenuActions()
 	 */
-	KPopupMenu *popupMenu( KopeteMessageManager *manager = 0L );
+	KPopupMenu *popupMenu( MessageManager *manager = 0L );
 
 	/**
 	 * \brief Move this contact to a new MetaContact.
@@ -235,7 +239,7 @@ public:
 	 *
 	 * @param m The new MetaContact to move this contact to
 	 */
-	void setMetaContact(KopeteMetaContact *m);
+	void setMetaContact(MetaContact *m);
 
 	/**
 	 * \brief Get whether or not this contact is capable of file transfers
@@ -286,7 +290,7 @@ public:
 	 * to any existing managers. Currently, this is only set to true when
 	 * a chat is initiated by the user by clicking the contact list.
 	 */
-	virtual KopeteMessageManager * manager( bool canCreate = false ) =0;
+	virtual MessageManager * manager( bool canCreate = false ) =0;
 
 	/**
 	 * Returns the name of the icon to use for this contact
@@ -413,7 +417,7 @@ public slots:
 	virtual void slotUserInfo();
 
 	/**
-	 * This is the KopeteContact level slot for sending files. It should be
+	 * This is the Kopete::Contact level slot for sending files. It should be
 	 * implemented by all contacts which have the setFileCapable() flag set to
 	 * true. If the function is called through the GUI, no parameters are sent
 	 * and they take on default values (the file is chosen with a file open dialog)
@@ -471,25 +475,25 @@ signals:
 	/**
 	 * The contact's online status changed
 	 */
-	void onlineStatusChanged( KopeteContact *contact,
-		const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus );
+	void onlineStatusChanged( Kopete::Contact *contact,
+		const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus );
 
 	/**
 	 * The contact is about to be destroyed.
 	 * Called when entering the destructor. Useful for cleanup, since
 	 * metaContact() is still accessible at this point.
 	 *
-	 * @warning this signal is emit in the KopeteContact destructor, so all
+	 * @warning this signal is emit in the Kopete::Contact destructor, so all
 	 * virtual method are not available
 	 */
-	void contactDestroyed( KopeteContact *contact );
+	void contactDestroyed( Kopete::Contact *contact );
 
 	/**
 	 * The contact's idle state changed.
 	 * You need to emit this signal to update the view.
 	 * That mean when activity has been noticed
 	 */
-	void idleStateChanged( KopeteContact *contact );
+	void idleStateChanged( Kopete::Contact *contact );
 
 	/**
 	 * One of the contact's properties has changed.
@@ -498,12 +502,14 @@ signals:
 	 * @param oldValue the value before the change, or an invalid QVariant if the property is new
 	 * @param newValue the value after the change, or an invalid QVariant if the property was removed
 	 */
-	void propertyChanged( KopeteContact *contact, const QString &key,
+	void propertyChanged( Kopete::Contact *contact, const QString &key,
 		const QVariant &oldValue, const QVariant &newValue );
 
 private:
 	KopeteContactPrivate *d;
 };
+
+}
 
 #endif
 

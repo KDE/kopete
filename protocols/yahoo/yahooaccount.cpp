@@ -354,14 +354,14 @@ void YahooAccount::disconnect()
 		m_session->logOff();
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 
-		for ( QDictIterator<KopeteContact> i( contacts() ); i.current(); ++i )
+		for ( QDictIterator<Kopete::Contact> i( contacts() ); i.current(); ++i )
 			static_cast<YahooContact *>( i.current() )->setOnlineStatus( m_protocol->Offline );
 	}
 	else
 	{       //make sure we set everybody else offline explicitly, just for cleanup
 		kdDebug(14180) << "Ignoring disconnect request (not fully connected)." << endl;
 
-		for ( QDictIterator<KopeteContact> i(contacts()); i.current(); ++i )
+		for ( QDictIterator<Kopete::Contact> i(contacts()); i.current(); ++i )
 			static_cast<YahooContact*>( i.current() )->setOnlineStatus( m_protocol->Offline );
 	}
 
@@ -479,7 +479,7 @@ YahooContact *YahooAccount::contact( const QString &id )
 	return static_cast<YahooContact *>(contacts()[id]);
 }
 
-bool YahooAccount::addContactToMetaContact(const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact )
+bool YahooAccount::addContactToMetaContact(const QString &contactId, const QString &displayName, Kopete::MetaContact *parentContact )
 {
 	kdDebug(14180) << k_funcinfo << " contactId: " << contactId << endl;
 
@@ -569,7 +569,7 @@ void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, co
 	{
 		kdDebug(14180) << "SS Contact " << userid << " is not in the contact list. Adding..." << endl;
 		QString groupName = group;
-		addContact(userid, alias.isEmpty() ? userid : alias, 0, KopeteAccount::ChangeKABC, group);
+		addContact(userid, alias.isEmpty() ? userid : alias, 0, Kopete::Account::ChangeKABC, group);
 	}
 
 }
@@ -587,10 +587,10 @@ void YahooAccount::slotGotIdentities( const QStringList & /* ids */ )
 void YahooAccount::slotStatusChanged( const QString &who, int stat, const QString &msg, int /* away */)
 {
 //	kdDebug(14180) << k_funcinfo << endl;
-	KopeteContact *kc = contact( who );
+	Kopete::Contact *kc = contact( who );
 	if ( kc )
 	{
-		KopeteOnlineStatus newStatus = static_cast<YahooProtocol*>( m_protocol )->statusFromYahoo( stat );
+		Kopete::OnlineStatus newStatus = static_cast<YahooProtocol*>( m_protocol )->statusFromYahoo( stat );
 		if ( newStatus == static_cast<YahooProtocol*>( m_protocol )->Custom )
 			kc->setProperty( m_protocol->awayMessage, msg );
 		else
@@ -610,7 +610,7 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	if( !contact( who ) )
 	{
 		kdDebug(14180) << "Adding contact " << who << endl;
-		addContact( who, who, 0L, KopeteAccount::DontChangeKABC, QString::null, true );
+		addContact( who, who, 0L, Kopete::Account::DontChangeKABC, QString::null, true );
 	}
 
     //Parse the message for it's properties
@@ -639,15 +639,15 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 
     kdDebug(14180) << "Message after removing font tags '" << newMsgText << "'" << endl;
 
-	KopeteMessageManager *mm = contact(who)->manager();
+	Kopete::MessageManager *mm = contact(who)->manager();
 
 	// Tell the message manager that the buddy is done typing
 	mm->receivedTypingMsg(contact(who), false);
 
 	justMe.append(myself());
 
-	KopeteMessage kmsg(msgDT, contact(who), justMe, newMsgText,
-					KopeteMessage::Inbound , KopeteMessage::RichText);
+	Kopete::Message kmsg(msgDT, contact(who), justMe, newMsgText,
+					Kopete::Message::Inbound , Kopete::Message::RichText);
 
 	kmsg.setFg( fgColor );
 	kmsg.setFont(msgFont);

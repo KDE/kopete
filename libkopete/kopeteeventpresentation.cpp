@@ -17,12 +17,12 @@
 
 #include "kopeteeventpresentation.h"
 
-KopeteEventPresentation::KopeteEventPresentation( const PresentationType type )
+Kopete::EventPresentation::EventPresentation( const PresentationType type )
 {
 	m_type = type;
 }
 
-KopeteEventPresentation::KopeteEventPresentation( const PresentationType type, 
+Kopete::EventPresentation::EventPresentation( const PresentationType type, 
 	const QString &content, const bool singleShot, const bool enabled )
 {
 	m_type = type;
@@ -31,46 +31,46 @@ KopeteEventPresentation::KopeteEventPresentation( const PresentationType type,
 	m_enabled = enabled;
 }
 
-KopeteEventPresentation::~KopeteEventPresentation()
+Kopete::EventPresentation::~EventPresentation()
 {
 }
 
-KopeteEventPresentation::PresentationType KopeteEventPresentation::type()
+Kopete::EventPresentation::PresentationType Kopete::EventPresentation::type()
 {
 	return m_type;
 }
 
-QString KopeteEventPresentation::content()
+QString Kopete::EventPresentation::content()
 {
 	return m_content;
 }
 
-bool KopeteEventPresentation::enabled()
+bool Kopete::EventPresentation::enabled()
 {
 	return m_enabled;
 }
 
-bool KopeteEventPresentation::singleShot()
+bool Kopete::EventPresentation::singleShot()
 {
 	return m_singleShot;
 }
 
-void KopeteEventPresentation::setContent( const QString &content )
+void Kopete::EventPresentation::setContent( const QString &content )
 {
 	m_content = content;
 }
 
-void KopeteEventPresentation::setEnabled( const bool enabled )
+void Kopete::EventPresentation::setEnabled( const bool enabled )
 {
 	m_enabled = enabled;
 }
 
-void KopeteEventPresentation::setSingleShot( const bool singleShot )
+void Kopete::EventPresentation::setSingleShot( const bool singleShot )
 {
 	m_singleShot = singleShot;
 }
 
-QString KopeteEventPresentation::toString()
+QString Kopete::EventPresentation::toString()
 {
 	QString type;
 	switch ( m_type )

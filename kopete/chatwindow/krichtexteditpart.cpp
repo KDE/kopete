@@ -45,10 +45,10 @@ KopeteRichTextEditPart::KopeteRichTextEditPart( QWidget *parent, const char *nam
 	setWidget( editor );
 
 	m_richTextAvailable = (
-		m_capabilities & KopeteProtocol::RichFormatting ||
-		m_capabilities & KopeteProtocol::Alignment ||
-		m_capabilities & KopeteProtocol::RichFont ||
-		m_capabilities & KopeteProtocol::RichColor
+		m_capabilities & Kopete::Protocol::RichFormatting ||
+		m_capabilities & Kopete::Protocol::Alignment ||
+		m_capabilities & Kopete::Protocol::RichFont ||
+		m_capabilities & Kopete::Protocol::RichColor
 	);
 
 	createActions();
@@ -199,14 +199,14 @@ void KopeteRichTextEditPart::createActions( KActionCollection *ac )
 void KopeteRichTextEditPart::updateActions()
 {
 	bool buttonsEnabled = this->buttonsEnabled();
-	bool enableFgColor = m_capabilities & KopeteProtocol::BaseFgColor || m_capabilities & KopeteProtocol::RichFgColor;
-	bool enableBGColor = m_capabilities & KopeteProtocol::BaseBgColor || m_capabilities & KopeteProtocol::RichBgColor;
-	bool activateAlignment = buttonsEnabled && ( m_capabilities & KopeteProtocol::Alignment );
-	bool activateFont = m_capabilities & KopeteProtocol::BaseFont || m_capabilities & KopeteProtocol::RichFont;
+	bool enableFgColor = m_capabilities & Kopete::Protocol::BaseFgColor || m_capabilities & Kopete::Protocol::RichFgColor;
+	bool enableBGColor = m_capabilities & Kopete::Protocol::BaseBgColor || m_capabilities & Kopete::Protocol::RichBgColor;
+	bool activateAlignment = buttonsEnabled && ( m_capabilities & Kopete::Protocol::Alignment );
+	bool activateFont = m_capabilities & Kopete::Protocol::BaseFont || m_capabilities & Kopete::Protocol::RichFont;
 
-	bool activateBFormat = m_capabilities & KopeteProtocol::BaseBFormatting || m_capabilities & KopeteProtocol::RichBFormatting;
-	bool activateUFormat = m_capabilities & KopeteProtocol::BaseUFormatting || m_capabilities & KopeteProtocol::RichUFormatting;
-	bool activateIFormat = m_capabilities & KopeteProtocol::BaseIFormatting || m_capabilities & KopeteProtocol::RichIFormatting;
+	bool activateBFormat = m_capabilities & Kopete::Protocol::BaseBFormatting || m_capabilities & Kopete::Protocol::RichBFormatting;
+	bool activateUFormat = m_capabilities & Kopete::Protocol::BaseUFormatting || m_capabilities & Kopete::Protocol::RichUFormatting;
+	bool activateIFormat = m_capabilities & Kopete::Protocol::BaseIFormatting || m_capabilities & Kopete::Protocol::RichIFormatting;
 
 	actionFgColor->setEnabled( buttonsEnabled && enableFgColor );
 	actionBgColor->setEnabled( buttonsEnabled && enableBGColor );
@@ -237,15 +237,15 @@ void KopeteRichTextEditPart::clear()
 	setFont( mFont );
 	setFgColor( mFgColor );
 
-	if( m_capabilities & KopeteProtocol::BaseBFormatting || m_capabilities & KopeteProtocol::RichBFormatting )
+	if( m_capabilities & Kopete::Protocol::BaseBFormatting || m_capabilities & Kopete::Protocol::RichBFormatting )
 	{
 		editor->setBold( action_bold->isChecked() );
 	}
-	if( m_capabilities & KopeteProtocol::BaseIFormatting || m_capabilities & KopeteProtocol::RichIFormatting )
+	if( m_capabilities & Kopete::Protocol::BaseIFormatting || m_capabilities & Kopete::Protocol::RichIFormatting )
 	{
 		editor->setItalic( action_italic->isChecked() );
 	}
-	if( m_capabilities & KopeteProtocol::BaseUFormatting || m_capabilities & KopeteProtocol::RichUFormatting )
+	if( m_capabilities & Kopete::Protocol::BaseUFormatting || m_capabilities & Kopete::Protocol::RichUFormatting )
 	{
 		editor->setUnderline( action_underline->isChecked() );
 	}
@@ -323,7 +323,7 @@ void KopeteRichTextEditPart::setFgColor( const QColor &newColor )
 {
 	mFgColor = newColor;
 
-	if( !(m_capabilities & KopeteProtocol::RichColor) )
+	if( !(m_capabilities & Kopete::Protocol::RichColor) )
 	{
 		QPalette pal = editor->palette();
 		pal.setColor(QPalette::Active, QColorGroup::Text, mFgColor );
@@ -385,9 +385,9 @@ void KopeteRichTextEditPart::setFont( const QFont &newFont )
 void KopeteRichTextEditPart::setFont( const QString &newFont )
 {
 	mFont.setFamily( newFont );
-	if( m_capabilities & KopeteProtocol::RichFont)
+	if( m_capabilities & Kopete::Protocol::RichFont)
 		editor->setFamily( newFont );
-	else if( m_capabilities & KopeteProtocol::BaseFont)
+	else if( m_capabilities & Kopete::Protocol::BaseFont)
 		editor->setFont( mFont );
 	writeConfig();
 }
@@ -396,7 +396,7 @@ void KopeteRichTextEditPart::setFont( const QString &newFont )
 void KopeteRichTextEditPart::setBold( bool b )
 {
 	mFont.setBold(b);
-	if( m_capabilities & KopeteProtocol::RichBFormatting || m_capabilities & KopeteProtocol::BaseBFormatting ) 
+	if( m_capabilities & Kopete::Protocol::RichBFormatting || m_capabilities & Kopete::Protocol::BaseBFormatting ) 
 	{
 		if( m_richTextEnabled )
 			editor->setBold(b);
@@ -408,7 +408,7 @@ void KopeteRichTextEditPart::setBold( bool b )
 void KopeteRichTextEditPart::setItalic( bool b )
 {
 	mFont.setItalic( b );
-	if( m_capabilities & KopeteProtocol::RichIFormatting ||  m_capabilities & KopeteProtocol::BaseIFormatting ) 
+	if( m_capabilities & Kopete::Protocol::RichIFormatting ||  m_capabilities & Kopete::Protocol::BaseIFormatting ) 
 	{
 		if(m_richTextEnabled)
 			editor->setItalic(b);
@@ -420,7 +420,7 @@ void KopeteRichTextEditPart::setItalic( bool b )
 void KopeteRichTextEditPart::setUnderline( bool b )
 {
 	mFont.setUnderline( b );
-	if( m_capabilities & KopeteProtocol::RichIFormatting ||  m_capabilities & KopeteProtocol::BaseIFormatting  )
+	if( m_capabilities & Kopete::Protocol::RichIFormatting ||  m_capabilities & Kopete::Protocol::BaseIFormatting  )
 	{
 		if(m_richTextEnabled)
 			editor->setUnderline(b);

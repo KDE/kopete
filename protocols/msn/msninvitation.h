@@ -28,7 +28,7 @@ class QObject;
  * The implemented class must to herits from QObject too.
  * You can accept the invitation by catching @ref MSNProtocol::invitation() signals
  * or create one and insert it to a kmm with @ref MSNMessageManager::initInvitation()
- * you can add action with @ref KopetePlugin::customChatActions()
+ * you can add action with @ref Kopete::Plugin::customChatActions()
  */
 class MSNInvitation
 {

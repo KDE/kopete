@@ -27,7 +27,7 @@
 
 class HistoryPlugin;
 
-HistoryGUIClient::HistoryGUIClient(KopeteMessageManager *parent, const char *name)
+HistoryGUIClient::HistoryGUIClient(Kopete::MessageManager *parent, const char *name)
  : QObject(parent, name), KXMLGUIClient(parent)
 {
 	setInstance(KGenericFactory<HistoryPlugin>::instance());
@@ -38,7 +38,7 @@ HistoryGUIClient::HistoryGUIClient(KopeteMessageManager *parent, const char *nam
 	if(!m_manager || m_manager->members().isEmpty())
 		deleteLater();
 
-	QPtrList<KopeteContact> mb=m_manager->members();
+	QPtrList<Kopete::Contact> mb=m_manager->members();
 	m_logger=new HistoryLogger( mb.first() , this );
 
 	actionLast=new KAction( i18n("History Last" ), QString::fromLatin1( "finish" ), 0, this, SLOT(slotLast()), actionCollection() , "historyLast" );
@@ -64,8 +64,8 @@ void HistoryGUIClient::slotPrevious()
 	KopeteView *m_currentView = m_manager->view(true);
 	m_currentView->clear();
 
-	QPtrList<KopeteContact> mb = m_manager->members();
-	QValueList<KopeteMessage> msgs = m_logger->readMessages(
+	QPtrList<Kopete::Contact> mb = m_manager->members();
+	QValueList<Kopete::Message> msgs = m_logger->readMessages(
 		HistoryConfig::number_ChatWindow(), mb.first() /*FIXME*/,
 		HistoryLogger::AntiChronological, true);
 
@@ -81,9 +81,9 @@ void HistoryGUIClient::slotLast()
 	KopeteView *m_currentView = m_manager->view(true);
 	m_currentView->clear();
 
-	QPtrList<KopeteContact> mb = m_manager->members();
+	QPtrList<Kopete::Contact> mb = m_manager->members();
 	m_logger->setPositionToLast();
-	QValueList<KopeteMessage> msgs = m_logger->readMessages(
+	QValueList<Kopete::Message> msgs = m_logger->readMessages(
 		HistoryConfig::number_ChatWindow(), mb.first() /*FIXME*/,
 		HistoryLogger::AntiChronological, true);
 
@@ -100,8 +100,8 @@ void HistoryGUIClient::slotNext()
 	KopeteView *m_currentView = m_manager->view(true);
 	m_currentView->clear();
 
-	QPtrList<KopeteContact> mb = m_manager->members();
-	QValueList<KopeteMessage> msgs = m_logger->readMessages(
+	QPtrList<Kopete::Contact> mb = m_manager->members();
+	QValueList<Kopete::Message> msgs = m_logger->readMessages(
 		HistoryConfig::number_ChatWindow(), mb.first() /*FIXME*/,
 		HistoryLogger::Chronological, false);
 

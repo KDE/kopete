@@ -12,7 +12,7 @@
 
 #include "kopeteplugin.h"
 
-class AliasPlugin : public KopetePlugin
+class AliasPlugin : public Kopete::Plugin
 {
 	Q_OBJECT
 

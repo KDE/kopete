@@ -189,7 +189,7 @@ GaduSession::destroySession()
 }
 
 void
-GaduSession::logoff( KopeteAccount::DisconnectReason reason )
+GaduSession::logoff( Kopete::Account::DisconnectReason reason )
 {
 	destroySession();
 	emit disconnect( reason );
@@ -234,7 +234,7 @@ GaduSession::removeNotify( uin_t uin )
 }
 
 int
-GaduSession::sendMessage( uin_t recipient, const KopeteMessage& msg, int msgClass )
+GaduSession::sendMessage( uin_t recipient, const Kopete::Message& msg, int msgClass )
 {
 	QString sendMsg;
 	QCString cpMsg;
@@ -613,7 +613,7 @@ GaduSession::checkDescriptor()
 	if ( !( event = gg_watch_fd( session_ ) ) ) {
 		kdDebug(14100)<<"Connection was broken for some reason"<<endl;
 		destroyNotifiers();
-		logoff( KopeteAccount::ConnectionReset );
+		logoff( Kopete::Account::ConnectionReset );
 		return;
 	}
 
@@ -701,7 +701,7 @@ GaduSession::checkDescriptor()
 		case GG_EVENT_DISCONNECT:
 			kdDebug(14100)<<"event Disconnected"<<endl;
 			// it should be called either when we requested disconnect, or when other client connects with our UID
-			logoff( KopeteAccount::Manual );
+			logoff( Kopete::Account::Manual );
 		break;
 		case GG_EVENT_PONG:
 			emit pong();

@@ -27,7 +27,6 @@ class QCheckBox;
 class KListBox;
 class KTextEdit;
 class KHTMLPart;
-class KopeteContact;
 class StyleEditDialog;
 class QListBoxItem;
 
@@ -38,13 +37,18 @@ class AppearanceConfig_ContactList;
 
 class KopeteAppearanceConfigPrivate;
 
+namespace Kopete
+{
+	class Contact;
+}
+
 namespace KTextEditor
 {
 	class View;
 	class Document;
 }
 
-typedef QPtrList<KopeteContact> KopeteContactPtrList;
+typedef QPtrList<Kopete::Contact> KopeteContactPtrList;
 typedef QMap<QString,QString> KopeteChatStyleMap;
 
 /**

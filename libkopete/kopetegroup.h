@@ -27,12 +27,19 @@
 class QDomElement;
 
 class KopeteGroupPrivate;
-class KopeteMetaContact;
+
+namespace Kopete
+{
+
+class Group;
+class MetaContact;
+
+typedef QPtrList<Group> GroupList;
 
 /**
  * @author Olivier Goffart
  */
-class KopeteGroup : public KopetePluginDataObject, public KopeteNotifyDataObject
+class Group : public PluginDataObject, public NotifyDataObject
 {
 	Q_PROPERTY( QString displayName READ displayName WRITE setDisplayName )
 	Q_PROPERTY( uint groupId READ groupId )
@@ -47,16 +54,16 @@ public:
 	 * \brief Create an empty group
 	 *
 	 * Note that the constructor will not add the group automatically to the contact list.
-	 * Use @ref KopeteContactList::addGroup() to add it
+	 * Use @ref Kopete::ContactList::addGroup() to add it
 	 */
-	KopeteGroup();
+	Group();
 
 	/**
 	 * \brief Create a group of the specified type
 	 *
 	 * Overloaded constructor to create a group of the specified type.
 	 */
-	KopeteGroup( const QString &displayName, GroupType type = Normal );
+	Group( const QString &displayName, GroupType type = Normal );
 	
 	/**
 	 * \brief Create a group with the specified internal name
@@ -64,10 +71,10 @@ public:
 	 * Overloaded constructor to create a group with the specified internal
 	 * name
 	 */
-	KopeteGroup( const QString &displayName, const QString& internalName,
+	Group( const QString &displayName, const QString& internalName,
 			 GroupType type = Normal );
 
-	~KopeteGroup();
+	~Group();
 
 	/**
 	 * \brief Return the group's display name
@@ -105,7 +112,7 @@ public:
 	/**
 	 * \return the members of this group
 	 */
-	QPtrList<KopeteMetaContact> members() const;
+	QPtrList<MetaContact> members() const;
 
 	/**
 	 * @internal
@@ -135,29 +142,29 @@ public:
 	bool isExpanded() const;
 
 	/**
-	 * \return a KopeteGroup pointer to the toplevel group
+	 * \return a Kopete::Group pointer to the toplevel group
 	 */
-	static KopeteGroup *topLevel();
+	static Group *topLevel();
 
 	/**
-	 * \return a KopeteGroup pointer to the temporary group
+	 * \return a Kopete::Group pointer to the temporary group
 	 */
-	static KopeteGroup *temporary();
+	static Group *temporary();
 
 signals:
 	/**
 	 * \brief Emitted when the group has been renamed
 	 */
-	void renamed( KopeteGroup *group , const QString &oldName );
+	void renamed( Kopete::Group *group , const QString &oldName );
 
 private:
-	static KopeteGroup *s_topLevel;
-	static KopeteGroup *s_temporary;
+	static Group *s_topLevel;
+	static Group *s_temporary;
 
 	KopeteGroupPrivate *d;
 };
 
-typedef QPtrList<KopeteGroup> KopeteGroupList;
+}
 
 #endif
 

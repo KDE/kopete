@@ -40,7 +40,7 @@
 #include "ircaccount.h"
 #include "irccontact.h"
 
-IRCGUIClient::IRCGUIClient( KopeteMessageManager *parent ) : QObject(parent) , KXMLGUIClient(parent)
+IRCGUIClient::IRCGUIClient( Kopete::MessageManager *parent ) : QObject(parent) , KXMLGUIClient(parent)
 {
 	KopeteContactPtrList members = parent->members();
 	if( members.count() > 0 )

@@ -21,7 +21,7 @@
 #include <qdatetime.h>
 #include "editaccountwidget.h"
 
-class KopeteAccount;
+namespace Kopete { class Account; }
 
 class ICQProtocol;
 class ICQEditAccountUI;
@@ -33,12 +33,12 @@ class ICQEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 	Q_OBJECT
 
 	public:
-		ICQEditAccountWidget(ICQProtocol *, KopeteAccount *,
+		ICQEditAccountWidget(ICQProtocol *, Kopete::Account *,
 			QWidget *parent=0, const char *name=0);
 //		virtual ~ICQEditAccountWidget();
 
 		virtual bool validateData();
-		virtual KopeteAccount *apply();
+		virtual Kopete::Account *apply();
 
 	private slots:
 		void slotFetchInfo();
@@ -59,7 +59,7 @@ class ICQEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 		void slotOpenRegister();
 
 	protected:
-		KopeteAccount *mAccount;
+		Kopete::Account *mAccount;
 		ICQProtocol *mProtocol;
 
 		/*

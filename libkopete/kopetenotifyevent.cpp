@@ -20,7 +20,7 @@
 #include "kopetenotifyevent.h"
 #include "kopeteeventpresentation.h"
 
-KopeteNotifyEvent::KopeteNotifyEvent( const bool suppressCommon )
+Kopete::NotifyEvent::NotifyEvent( const bool suppressCommon )
 {
 	m_suppressCommon = suppressCommon;
 	m_message = 0;
@@ -28,45 +28,45 @@ KopeteNotifyEvent::KopeteNotifyEvent( const bool suppressCommon )
 	m_sound = 0;
 }
 
-KopeteNotifyEvent::~KopeteNotifyEvent()
+Kopete::NotifyEvent::~NotifyEvent()
 {
 	delete m_sound;
 	delete m_message;
 	delete m_chat;
 }
 
-bool KopeteNotifyEvent::suppressCommon() const
+bool Kopete::NotifyEvent::suppressCommon() const
 {
 	return m_suppressCommon;
 }
 
-KopeteEventPresentation *KopeteNotifyEvent::presentation( const KopeteEventPresentation::PresentationType type ) const
+Kopete::EventPresentation *Kopete::NotifyEvent::presentation( const Kopete::EventPresentation::PresentationType type ) const
 {
 	switch ( type )
 	{
-	case KopeteEventPresentation::Sound:
+	case Kopete::EventPresentation::Sound:
 		return m_sound;
-	case KopeteEventPresentation::Message:
+	case Kopete::EventPresentation::Message:
 		return m_message;
-	case KopeteEventPresentation::Chat:
+	case Kopete::EventPresentation::Chat:
 		return m_chat;
 	default:
 		return 0;
 	}
 }
 
-void KopeteNotifyEvent::removePresentation( const KopeteEventPresentation::PresentationType type )
+void Kopete::NotifyEvent::removePresentation( const Kopete::EventPresentation::PresentationType type )
 {
-	KopeteEventPresentation **presToChange;
+	Kopete::EventPresentation **presToChange;
 	switch ( type )
 	{
-	case KopeteEventPresentation::Sound:
+	case Kopete::EventPresentation::Sound:
 		presToChange = &m_sound;
 		break;
-	case KopeteEventPresentation::Message:
+	case Kopete::EventPresentation::Message:
 		presToChange = &m_message;
 		break;
-	case KopeteEventPresentation::Chat:
+	case Kopete::EventPresentation::Chat:
 		presToChange = &m_chat;
 		break;
 	default:
@@ -80,18 +80,18 @@ void KopeteNotifyEvent::removePresentation( const KopeteEventPresentation::Prese
 	}
 }
 
-void KopeteNotifyEvent::setPresentation( const KopeteEventPresentation::PresentationType type, KopeteEventPresentation * notification )
+void Kopete::NotifyEvent::setPresentation( const Kopete::EventPresentation::PresentationType type, Kopete::EventPresentation * notification )
 {
-	KopeteEventPresentation **presToChange;
+	Kopete::EventPresentation **presToChange;
 	switch ( type )
 	{
-	case KopeteEventPresentation::Sound:
+	case Kopete::EventPresentation::Sound:
 		presToChange = &m_sound;
 		break;
-	case KopeteEventPresentation::Message:
+	case Kopete::EventPresentation::Message:
 		presToChange = &m_message;
 		break;
-	case KopeteEventPresentation::Chat:
+	case Kopete::EventPresentation::Chat:
 		presToChange = &m_chat;
 		break;
 	default:
@@ -103,19 +103,19 @@ void KopeteNotifyEvent::setPresentation( const KopeteEventPresentation::Presenta
 	*presToChange = notification;
 }
 
-bool KopeteNotifyEvent::firePresentation( const KopeteEventPresentation::PresentationType type )
+bool Kopete::NotifyEvent::firePresentation( const Kopete::EventPresentation::PresentationType type )
 {
 	kdDebug( 14010 ) << k_funcinfo << endl;
-	KopeteEventPresentation **presToChange;
+	Kopete::EventPresentation **presToChange;
 	switch ( type )
 	{
-	case KopeteEventPresentation::Sound:
+	case Kopete::EventPresentation::Sound:
 		presToChange = &m_sound;
 		break;
-	case KopeteEventPresentation::Message:
+	case Kopete::EventPresentation::Message:
 		presToChange = &m_message;
 		break;
-	case KopeteEventPresentation::Chat:
+	case Kopete::EventPresentation::Chat:
 		presToChange = &m_chat;
 		break;
 	default:
@@ -133,12 +133,12 @@ bool KopeteNotifyEvent::firePresentation( const KopeteEventPresentation::Present
 	return false;
 }
 
-void KopeteNotifyEvent::setSuppressCommon( const bool suppress )
+void Kopete::NotifyEvent::setSuppressCommon( const bool suppress )
 {
 	m_suppressCommon = suppress;
 }
 
-const QValueList<QDomElement> KopeteNotifyEvent::toXML() const
+const QValueList<QDomElement> Kopete::NotifyEvent::toXML() const
 {
 	QDomDocument eventData;
 	QValueList<QDomElement> eventNodes;
@@ -168,7 +168,7 @@ const QValueList<QDomElement> KopeteNotifyEvent::toXML() const
 	return eventNodes;
 }
 
-QString KopeteNotifyEvent::toString()
+QString Kopete::NotifyEvent::toString()
 {
 	QString stringRep = QString::fromLatin1("Event; Suppress common=%1").arg( QString::fromLatin1( suppressCommon() ? "true" : "false" ) );
 	if ( m_sound)

@@ -30,7 +30,6 @@
  *
  * @author Jason Keirstead   <jason@keirstead.org>
  */
-
 class KopeteAwayAction : public KSelectAction
 {
 	Q_OBJECT

@@ -20,23 +20,23 @@
 #include <addcontactpage.h>
 #include "meanwhileaddcontactbase.h"
 
-class KopeteAccount;
-class KopeteMetaContact;
+namespace Kopete { class Account; }
+namespace Kopete { class MetaContact; }
 
 class MeanwhileAddContactPage : public AddContactPage
 {
 	Q_OBJECT
 public:
     MeanwhileAddContactPage( QWidget* parent = 0, 
-                             KopeteAccount *account=0);
+                             Kopete::Account *account=0);
     ~MeanwhileAddContactPage();
 	
-    virtual bool apply(KopeteAccount* a, KopeteMetaContact* m);
+    virtual bool apply(Kopete::Account* a, Kopete::MetaContact* m);
     virtual bool validateData();
 
 protected:
 	MeanwhileAddContactBase *theDialog;
-    KopeteAccount *theAccount;
+    Kopete::Account *theAccount;
     QWidget *theParent;
 public slots:
     void slotFindUser();

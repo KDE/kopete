@@ -30,10 +30,10 @@ class KAction;
 class KActionMenu;
 class KopeteAwayAction;
 
-class KopeteMetaContact;
-class KopeteMessage;
-class KopeteContact;
-class KopeteMessageManager;
+namespace Kopete { class MetaContact; }
+namespace Kopete { class Message; }
+namespace Kopete { class Contact; }
+namespace Kopete { class MessageManager; }
 
 class KIRC;
 class IRCProtocol;
@@ -77,7 +77,7 @@ class ChannelListDialog : public KDialogBase
 		ChannelList *m_list;
 };
 
-class IRCAccount:  public KopeteAccount
+class IRCAccount:  public Kopete::Account
 {
 	friend class IRCEditAccountWidget;
 	friend class IRCProtocolHandler;
@@ -159,10 +159,10 @@ public slots:
 
 	IRCContactManager *contactManager() const { return m_contactManager; }
 
-	// Returns the KopeteContact of the user
+	// Returns the Kopete::Contact of the user
 	IRCUserContact *mySelf() const;
 
-	// Returns the KopeteContact of the server of the user
+	// Returns the Kopete::Contact of the server of the user
 	IRCServerContact *myServer() const;
 
 	void successfullyChangedNick(const QString &, const QString &);
@@ -177,7 +177,7 @@ public slots:
 	void appendMessage( const QString &message, MessageType type = Default );
 
 protected:
-	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact ) ;
+	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName, Kopete::MetaContact *parentContact ) ;
 
 protected slots:
 	virtual void loaded();
@@ -198,7 +198,7 @@ private slots:
 	void slotJoinedUnknownChannel( const QString &channel, const QString &nick );
 
 private:
-	KopeteMessageManager *m_manager;
+	Kopete::MessageManager *m_manager;
 	QString mNickName;
 	KopeteAwayAction *mAwayAction;
 	bool triedAltNick;

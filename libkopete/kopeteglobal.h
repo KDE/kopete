@@ -48,7 +48,7 @@ namespace Global
 	 * \brief Global facility to query/store templates that are needed by KopeteContactProperty
 	 *
 	 * Basically all a plugin author needs to worry about is creating ContactPropertyTmpl
-	 * objects for all the properties he wants to set for a KopeteContact,
+	 * objects for all the properties he wants to set for a Kopete::Contact,
 	 * everything else is handled behind the scenes.
 	 **/
 	class Properties

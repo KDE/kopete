@@ -27,8 +27,8 @@
 #include "oscarsocket.h"
 
 class KToggleAction;
-class KopeteMessageManager;
-class KopeteOnlineStatus;
+namespace Kopete { class MessageManager; }
+namespace Kopete { class OnlineStatus; }
 class OscarConnection;
 class OscarProtocol;
 class OscarAccount;
@@ -39,13 +39,13 @@ class QTimer;
  * @author Tom Linsky <twl6@po.cwru.edu>
  * @author Chris TenHarmsel <tenharmsel@staticmethod.net>
  */
-class OscarContact : public KopeteContact
+class OscarContact : public Kopete::Contact
 {
 	Q_OBJECT
 
 	public:
 		OscarContact(const QString& name, const QString& displayName,
-					KopeteAccount *account, KopeteMetaContact *parent);
+					Kopete::Account *account, Kopete::MetaContact *parent);
 		virtual ~OscarContact();
 
 		virtual void serialize(QMap<QString, QString> &, QMap<QString, QString> &);
@@ -59,14 +59,14 @@ class OscarContact : public KopeteContact
 
 		virtual void rename(const QString &);
 
-		virtual KopeteMessageManager *manager( bool canCreate = false );
+		virtual Kopete::MessageManager *manager( bool canCreate = false );
 
 		const QString &contactName() const { return mName; };
 		OscarAccount *account() const { return mAccount; };
 
 		//virtual void gotIM(OscarSocket::OscarMessageType type, const QString &message) = 0;
 		//void receivedIM(OscarSocket::OscarMessageType type, const OscarMessage &msg);
-		void receivedIM(KopeteMessage &msg);
+		void receivedIM(Kopete::Message &msg);
 
 		/*
 		 * Convert between internal status representation
@@ -142,7 +142,7 @@ class OscarContact : public KopeteContact
 		// The name of the contact as used on the protocol-level
 		QString mName;
 
-		KopeteMessageManager *mMsgManager;
+		Kopete::MessageManager *mMsgManager;
 
 	protected slots:
 		/** Called when a buddy has changed status */
@@ -162,7 +162,7 @@ class OscarContact : public KopeteContact
 		/** Called when a buddy is offgoing */
 		void slotOffgoingBuddy(QString sn);
 		/** Called when we want to send a message */
-		//void slotSendMsg(KopeteMessage&, KopeteMessageManager *);
+		//void slotSendMsg(Kopete::Message&, Kopete::MessageManager *);
 		/** Called when an IM is received */
 //		void slotIMReceived(QString sender, QString msg, bool isAuto);
 		/** Called when nickname needs to be updated */
@@ -190,10 +190,10 @@ class OscarContact : public KopeteContact
 			QString filename, unsigned long filesize);
 
 		// Called when we deny a transfer
-		void slotTransferDenied(const KopeteFileTransferInfo &tr);
+		void slotTransferDenied(const Kopete::FileTransferInfo &tr);
 
 		// Called when a pending transfer has been accepted
-		void slotTransferAccepted(KopeteTransfer *, const QString &fileName);
+		void slotTransferAccepted(Kopete::Transfer *, const QString &fileName);
 
 		// Called when a file transfer begins
 		void slotTransferBegun(OscarConnection *con, const QString& file,

@@ -19,7 +19,10 @@
 #ifndef EDITACCOUNTWIDGET_H
 #define EDITACCOUNTWIDGET_H
 
-class KopeteAccount;
+namespace Kopete
+{
+class Account;
+}
 
 class KopeteEditAccountWidgetPrivate;
 
@@ -35,25 +38,25 @@ class KopeteEditAccountWidgetPrivate;
  *
  * We suggest to put at least these fields in the page:
  *
- * - The User login, or the accountId. you can retrieve it from @ref KopeteAccount::accountId(). This
+ * - The User login, or the accountId. you can retrieve it from @ref Kopete::Account::accountId(). This
  *   field has to be marked as ReadOnly or shown as a label if the account already exists. Remember
  *   that accountId should be constant after account creation!
  *
  * - The password, and the remember password checkboxes. When creating the widget you have to get if
- *   the password is remembered, with @ref KopeteAccount::rememberPassword(). If it returns true
- *   you can use @ref KopeteAccount::password() to get the password field.
+ *   the password is remembered, with @ref Kopete::Account::rememberPassword(). If it returns true
+ *   you can use @ref Kopete::Account::password() to get the password field.
  *
  *   WARNING: Do not use password() if the password is not remembered, or Kopete will popup a dialog
  *            to ask the password!
  *
- *   To set the password use @ref KopeteAccount::setPassword(). If the user has not selected the
+ *   To set the password use @ref Kopete::Account::setPassword(). If the user has not selected the
  *   'remember password' checkbox, set the password to QString::null.
  *
- * - The auto connect checkbox: use @ref KopeteAccount::autoConnect() and
- *   @ref KopeteAccount::setAutoConnect() to get/set this flag.
+ * - The auto connect checkbox: use @ref Kopete::Account::autoConnect() and
+ *   @ref Kopete::Account::setAutoConnect() to get/set this flag.
  *
  * You may add other custom fields, e.g. the nickname. To save or retrieve these settings use
- * @ref KopetePluginDataObject::pluginData() with your protocol as plugin.
+ * @ref Kopete::PluginDataObject::pluginData() with your protocol as plugin.
  */
 class KopeteEditAccountWidget
 {
@@ -64,7 +67,7 @@ public:
 	 * If 'account' is 0L we are in the 'add account wizard', otherwise
 	 * we are editing an existing account.
 	 */
-	KopeteEditAccountWidget( KopeteAccount *account );
+	KopeteEditAccountWidget( Kopete::Account *account );
 
 	/**
 	 * Destructor
@@ -81,21 +84,21 @@ public:
 	 * Create a new account if we are in the 'add account wizard',
 	 * otherwise update the existing account.
 	 */
-	virtual KopeteAccount *apply() = 0;
+	virtual Kopete::Account *apply() = 0;
 
 protected:
 	/**
-	 * Get a pointer to the KopeteAccount passed to the constructor.
+	 * Get a pointer to the Kopete::Account passed to the constructor.
 	 * You can modify it any way you like, just don't delete the object.
 	 */
-	KopeteAccount * account() const;
+	Kopete::Account * account() const;
 
 	/**
 	 * Set the account
 	 */
 	// FIXME: Is it possible to make the API not require this? A const account
 	//        in this widget seems a lot cleaner to me - Martijn
-	void setAccount( KopeteAccount *account );
+	void setAccount( Kopete::Account *account );
 
 private:
 	KopeteEditAccountWidgetPrivate *d;

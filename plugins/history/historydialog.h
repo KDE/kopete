@@ -27,8 +27,8 @@
 class HistoryViewer;
 
 //class HistoryWidget;
-class KopeteMetaContact;
-class KopeteXSLT;
+namespace Kopete { class MetaContact; }
+namespace Kopete { class XSLT; }
 class HistoryLogger;
 class KHTMLView;
 class KHTMLPart;
@@ -46,7 +46,7 @@ class HistoryDialog : public KDialogBase
 	Q_OBJECT
 
 	public:
-		HistoryDialog(KopeteMetaContact *mc, int count=50, QWidget* parent=0,
+		HistoryDialog(Kopete::MetaContact *mc, int count=50, QWidget* parent=0,
 			const char* name="HistoryDialog");
 
 		void init();
@@ -96,18 +96,18 @@ class HistoryDialog : public KDialogBase
 		enum Disabled { Prev=1, Next=2 };
 		void refreshEnabled( /*Disabled*/ uint disabled );
 
-		void setMessages(QValueList<KopeteMessage> m);
+		void setMessages(QValueList<Kopete::Message> m);
 
 		// amount of entries to read at once
 		unsigned int msgCount;
 
 		HistoryLogger *mLogger;
-		KopeteMetaContact *mMetaContact;
+		Kopete::MetaContact *mMetaContact;
 		// History View
 		KHTMLView *mHtmlView;
 		KHTMLPart *mHtmlPart;
 		HistoryViewer *mMainWidget;
-		KopeteXSLT *mXsltParser;
+		Kopete::XSLT *mXsltParser;
 };
 
 #endif

@@ -34,7 +34,7 @@
 #include "smsprotocol.h"
 #include "smsaccount.h"
 
-SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, KopeteAccount *account, QWidget *parent, const char */*name*/)
+SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Account *account, QWidget *parent, const char */*name*/)
 	: QWidget(parent), KopeteEditAccountWidget(account)
 {
 	QVBoxLayout *l = new QVBoxLayout(this, QBoxLayout::Down);
@@ -89,7 +89,7 @@ bool SMSEditAccountWidget::validateData()
 	return true;
 }
 
-KopeteAccount* SMSEditAccountWidget::apply()
+Kopete::Account* SMSEditAccountWidget::apply()
 {
 	if (account())
 		account()->setAccountId(preferencesDialog->accountId->text());

@@ -76,7 +76,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_appearanceconfig, KopeteAppearanceConfigF
 class KopeteAppearanceConfigPrivate
 {
 public:
-	KopeteXSLT *xsltParser;
+	Kopete::XSLT *xsltParser;
 };
 
 AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const QStringList &args )
@@ -86,7 +86,7 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 
 	d = new KopeteAppearanceConfigPrivate;
 
-	d->xsltParser = new KopeteXSLT( KopetePrefs::prefs()->styleContents(), this );
+	d->xsltParser = new Kopete::XSLT( KopetePrefs::prefs()->styleContents(), this );
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	mAppearanceTabCtl = new QTabWidget(this, "mAppearanceTabCtl");
@@ -485,7 +485,7 @@ void AppearanceConfig::slotImportStyle()
 		if ( KIO::NetAccess::download( chosenStyle, stylePath, this ) )
 		{
 			QString styleSheet = fileContents( stylePath );
-			if ( KopeteXSLT( styleSheet ).isValid() )
+			if ( Kopete::XSLT( styleSheet ).isValid() )
 			{
 				QFileInfo fi( stylePath );
 				addStyle( fi.fileName().section( '.', 0, 0 ), styleSheet );
@@ -616,12 +616,12 @@ bool AppearanceConfig::addStyle( const QString &styleName, const QString &styleS
 	return false;
 }
 
-//reimplement KopeteContact and his abstract method
-class TestContact : public KopeteContact
+//reimplement Kopete::Contact and his abstract method
+class TestContact : public Kopete::Contact
 {
 public:
-	TestContact (  const QString &id  ) : KopeteContact ( (KopeteAccount*)0L, id, 0L ) {}
-	virtual KopeteMessageManager* manager(bool) { return 0L; }
+	TestContact (  const QString &id  ) : Kopete::Contact ( (Kopete::Account*)0L, id, 0L ) {}
+	virtual Kopete::MessageManager* manager(bool) { return 0L; }
 };
 
 void AppearanceConfig::slotUpdatePreview()
@@ -632,14 +632,14 @@ void AppearanceConfig::slotUpdatePreview()
 	QListBoxItem *style = mPrfsChatWindow->styleList->selectedItem();
 	if( style && style->text() != currentStyle )
 	{
-		KopeteContact *myself = new TestContact( i18n( "Myself" ) );
-		KopeteContact *jack = new TestContact( i18n( "Jack" ) );
+		Kopete::Contact *myself = new TestContact( i18n( "Myself" ) );
+		Kopete::Contact *jack = new TestContact( i18n( "Jack" ) );
 
-		KopeteMessage msgIn(  jack,   myself, i18n( "Hello, this is an incoming message :-)" ), KopeteMessage::Inbound );
-		KopeteMessage msgOut( myself, jack,   i18n( "Ok, this is an outgoing message" ), KopeteMessage::Outbound );
-		KopeteMessage msgInt( jack,   myself, i18n( "This is an internal message" ), KopeteMessage::Internal );
-		KopeteMessage msgAct( jack,   myself, i18n( "performed an action" ), KopeteMessage::Action );
-		//KopeteMessage msgHigh( jack, myself, i18n( "This is a highlighted message" ), KopeteMessage::Inbound );
+		Kopete::Message msgIn(  jack,   myself, i18n( "Hello, this is an incoming message :-)" ), Kopete::Message::Inbound );
+		Kopete::Message msgOut( myself, jack,   i18n( "Ok, this is an outgoing message" ), Kopete::Message::Outbound );
+		Kopete::Message msgInt( jack,   myself, i18n( "This is an internal message" ), Kopete::Message::Internal );
+		Kopete::Message msgAct( jack,   myself, i18n( "performed an action" ), Kopete::Message::Action );
+		//Kopete::Message msgHigh( jack, myself, i18n( "This is a highlighted message" ), Kopete::Message::Inbound );
 
 		preview->begin();
 		preview->write( QString::fromLatin1(
@@ -666,7 +666,7 @@ void AppearanceConfig::slotUpdatePreview()
 		preview->write( d->xsltParser->transform( msgIn.asXML().toString() ) );
 		preview->write( d->xsltParser->transform( msgInt.asXML().toString() ) );
 		preview->write( d->xsltParser->transform( msgAct.asXML().toString() ) );
-		//msgHigh.setImportance( KopeteMessage::Highlight );
+		//msgHigh.setImportance( Kopete::Message::Highlight );
 		//preview->write( d->xsltParser->transform( msgHigh.asXML().toString() ) ) ;
 		msgOut.setBody( i18n( "Bye" ) );
 		preview->write( d->xsltParser->transform( msgOut.asXML().toString() ) );

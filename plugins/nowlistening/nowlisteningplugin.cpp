@@ -46,7 +46,7 @@ typedef KGenericFactory<NowListeningPlugin> NowListeningPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_nowlistening, NowListeningPluginFactory( "kopete_nowlistening" )  )
 
 NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const QStringList& /*args*/ )
-: KopetePlugin( NowListeningPluginFactory::instance(), parent, name )
+: Kopete::Plugin( NowListeningPluginFactory::instance(), parent, name )
 {
 	if ( pluginStatic_ )
 		kdDebug( 14307 )<<"####"<<"Now Listening already initialized"<<endl;
@@ -64,12 +64,12 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 	m_config = new NowListeningConfig;
 
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL(
-			messageManagerCreated( KopeteMessageManager * )) , SLOT( slotNewKMM(
-			KopeteMessageManager * ) ) );
+			messageManagerCreated( Kopete::MessageManager * )) , SLOT( slotNewKMM(
+			Kopete::MessageManager * ) ) );
 
-	QIntDict<KopeteMessageManager> sessions =
+	QIntDict<Kopete::MessageManager> sessions =
 			KopeteMessageManagerFactory::factory()->sessions();
-	QIntDictIterator<KopeteMessageManager> it( sessions );
+	QIntDictIterator<Kopete::MessageManager> it( sessions );
 	for ( ; it.current() ; ++it )
 		slotNewKMM( it.current() );
 
@@ -91,8 +91,8 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 
 	// watch for '/media' getting typed
 	connect(  KopeteMessageManagerFactory::factory(),
-			SIGNAL( aboutToSend( KopeteMessage & ) ),
-			SLOT( slotOutgoingMessage( KopeteMessage & ) ) );
+			SIGNAL( aboutToSend( Kopete::Message & ) ),
+			SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
 			
 	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
 }
@@ -107,7 +107,7 @@ NowListeningPlugin::~NowListeningPlugin()
 	pluginStatic_ = 0L;
 }
 
-void NowListeningPlugin::slotNewKMM(KopeteMessageManager *KMM)
+void NowListeningPlugin::slotNewKMM(Kopete::MessageManager *KMM)
 {
 	new NowListeningGUIClient( KMM );
 }
@@ -117,7 +117,7 @@ NowListeningPlugin* NowListeningPlugin::plugin()
 	return pluginStatic_ ;
 }
 
-void NowListeningPlugin::slotOutgoingMessage( KopeteMessage& msg )
+void NowListeningPlugin::slotOutgoingMessage( Kopete::Message& msg )
 {
 	QString originalBody = msg.plainBody();
 	// look for messages that we've generated and ignore them
@@ -137,7 +137,7 @@ void NowListeningPlugin::slotOutgoingMessage( KopeteMessage& msg )
 			// replace it with media advert
 			QString newBody = advert + originalBody.right(
 					originalBody.length() - 6 );
-			msg.setBody( newBody, KopeteMessage::RichText );
+			msg.setBody( newBody, Kopete::Message::RichText );
 		}
 		return;
 	}
@@ -251,7 +251,7 @@ QString NowListeningPlugin::substDepthFirst( NLMediaPlayer *player,
 		return in;
 }
 
-void NowListeningPlugin::advertiseToChat( KopeteMessageManager *theChat, QString message )
+void NowListeningPlugin::advertiseToChat( Kopete::MessageManager *theChat, QString message )
 {
 	KopeteContactPtrList pl = theChat->members();
 
@@ -264,11 +264,11 @@ void NowListeningPlugin::advertiseToChat( KopeteMessageManager *theChat, QString
 	// any message
 	if ( pl.isEmpty() )
 		return;
-	KopeteMessage msg( theChat->user(),
+	Kopete::Message msg( theChat->user(),
 			pl,
 			message,
-			KopeteMessage::Outbound,
-			KopeteMessage::RichText );
+			Kopete::Message::Outbound,
+			Kopete::Message::RichText );
 	theChat->sendMessage( msg );
 }
 

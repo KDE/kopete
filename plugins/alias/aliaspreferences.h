@@ -12,13 +12,13 @@
 
 #include "kcmodule.h"
 
-typedef QValueList<KopeteProtocol*> ProtocolList;
+typedef QValueList<Kopete::Protocol*> ProtocolList;
 
 class AliasDialogBase;
-class KopeteProtocol;
+namespace Kopete { class Protocol; }
 class ProtocolItem;
 class AliasItem;
-class KopetePlugin;
+namespace Kopete { class Plugin; }
 
 class AliasPreferences : public KCModule
 {
@@ -37,15 +37,15 @@ class AliasPreferences : public KCModule
 		void slotEditAlias();
 		void slotDeleteAliases();
 		void slotCheckAliasSelected();
-		void slotPluginLoaded( KopetePlugin * );
+		void slotPluginLoaded( Kopete::Plugin * );
 
 	private:
 		AliasDialogBase * preferencesDialog;
 		void addAlias( QString &alias, QString &command, const ProtocolList &p, uint id = 0 );
 		void loadProtocols( AliasDialog *dialog );
 		const ProtocolList selectedProtocols( AliasDialog *dialog );
-		QMap<KopeteProtocol*,ProtocolItem*> itemMap;
-		QMap<QPair<KopeteProtocol*,QString>, bool> protocolMap;
+		QMap<Kopete::Protocol*,ProtocolItem*> itemMap;
+		QMap<QPair<Kopete::Protocol*,QString>, bool> protocolMap;
 		QMap<QString,AliasItem*> aliasMap;
 };
 

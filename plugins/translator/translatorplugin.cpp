@@ -49,7 +49,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_translator, TranslatorPluginFactory( "kopete_
 #endif
 
 TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
-: KopetePlugin( TranslatorPluginFactory::instance(), parent, name )
+: Kopete::Plugin( TranslatorPluginFactory::instance(), parent, name )
 {
 	kdDebug( 14308 ) << k_funcinfo << endl;
 
@@ -61,12 +61,12 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QSt
 
 	m_languages = new TranslatorLanguages;
 
-	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToDisplay( KopeteMessage & ) ),
-		this, SLOT( slotIncomingMessage( KopeteMessage & ) ) );
-	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToSend( KopeteMessage & ) ),
-		this, SLOT( slotOutgoingMessage( KopeteMessage & ) ) );
-	connect( KopeteMessageManagerFactory::factory(), SIGNAL( messageManagerCreated( KopeteMessageManager * ) ),
-		this, SLOT( slotNewKMM( KopeteMessageManager * ) ) );
+	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToDisplay( Kopete::Message & ) ),
+		this, SLOT( slotIncomingMessage( Kopete::Message & ) ) );
+	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToSend( Kopete::Message & ) ),
+		this, SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
+	connect( KopeteMessageManagerFactory::factory(), SIGNAL( messageManagerCreated( Kopete::MessageManager * ) ),
+		this, SLOT( slotNewKMM( Kopete::MessageManager * ) ) );
 
 	QStringList keys;
 	QMap<QString, QString> m = m_languages->languagesMap();
@@ -76,13 +76,13 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QSt
 	m_actionLanguage = new KSelectAction( i18n( "Set &Language" ), "locale", 0, actionCollection(), "contactLanguage" );
 	m_actionLanguage->setItems( keys );
 	connect( m_actionLanguage, SIGNAL( activated() ), this, SLOT(slotSetLanguage() ) );
-	connect( KopeteContactList::contactList(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotSelectionChanged( bool ) ) );
+	connect( Kopete::ContactList::contactList(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotSelectionChanged( bool ) ) );
 
 	setXMLFile( "translatorui.rc" );
 
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
-	QIntDict<KopeteMessageManager> sessions = KopeteMessageManagerFactory::factory()->sessions();
-	QIntDictIterator<KopeteMessageManager> it( sessions );
+	QIntDict<Kopete::MessageManager> sessions = KopeteMessageManagerFactory::factory()->sessions();
+	QIntDictIterator<Kopete::MessageManager> it( sessions );
 	for ( ; it.current() ; ++it )
 		slotNewKMM( it.current() );
 
@@ -140,7 +140,7 @@ void TranslatorPlugin::slotSelectionChanged( bool b )
 	if ( !b )
 		return;
 
-	KopeteMetaContact *m = KopeteContactList::contactList()->selectedMetaContacts().first();
+	Kopete::MetaContact *m = Kopete::ContactList::contactList()->selectedMetaContacts().first();
 
 	if( !m )
 		return;
@@ -152,12 +152,12 @@ void TranslatorPlugin::slotSelectionChanged( bool b )
 		m_actionLanguage->setCurrentItem( m_languages->languageIndex( "null" ) );
 }
 
-void TranslatorPlugin::slotNewKMM( KopeteMessageManager *KMM )
+void TranslatorPlugin::slotNewKMM( Kopete::MessageManager *KMM )
 {
 	new TranslatorGUIClient( KMM );
 }
 
-void TranslatorPlugin::slotIncomingMessage( KopeteMessage &msg )
+void TranslatorPlugin::slotIncomingMessage( Kopete::Message &msg )
 {
 	if ( m_incomingMode == DontTranslate )
 		return;
@@ -165,9 +165,9 @@ void TranslatorPlugin::slotIncomingMessage( KopeteMessage &msg )
 	QString src_lang;
 	QString dst_lang;
 
-	if ( ( msg.direction() == KopeteMessage::Inbound ) && !msg.plainBody().isEmpty() )
+	if ( ( msg.direction() == Kopete::Message::Inbound ) && !msg.plainBody().isEmpty() )
 	{
-		KopeteMetaContact *from = msg.from()->metaContact();
+		Kopete::MetaContact *from = msg.from()->metaContact();
 		if ( !from )
 		{
 //			kdDebug( 14308 ) << k_funcinfo << "No metaContact for source contact" << endl;
@@ -186,7 +186,7 @@ void TranslatorPlugin::slotIncomingMessage( KopeteMessage &msg )
 	}
 }
 
-void TranslatorPlugin::slotOutgoingMessage( KopeteMessage &msg )
+void TranslatorPlugin::slotOutgoingMessage( Kopete::Message &msg )
 {
 	if ( m_outgoingMode == DontTranslate )
 		return;
@@ -194,12 +194,12 @@ void TranslatorPlugin::slotOutgoingMessage( KopeteMessage &msg )
 	QString src_lang;
 	QString dst_lang;
 
-	if ( ( msg.direction() == KopeteMessage::Outbound ) && ( !msg.plainBody().isEmpty() ) )
+	if ( ( msg.direction() == Kopete::Message::Outbound ) && ( !msg.plainBody().isEmpty() ) )
 	{
 		src_lang = m_myLang;
 
 		// Sad, we have to consider only the first To: metacontact
-		KopeteMetaContact *to = msg.to().first()->metaContact();
+		Kopete::MetaContact *to = msg.to().first()->metaContact();
 		if ( !to )
 		{
 //			kdDebug( 14308 ) << k_funcinfo << "No metaContact for first contact" << endl;
@@ -332,7 +332,7 @@ QString TranslatorPlugin::babelTranslateMessage( const QString &msg, const QStri
 	return re.cap( 1 );
 }
 
-void TranslatorPlugin::sendTranslation( KopeteMessage &msg, const QString &translated )
+void TranslatorPlugin::sendTranslation( Kopete::Message &msg, const QString &translated )
 {
 	if ( translated.isEmpty() )
 	{
@@ -344,10 +344,10 @@ void TranslatorPlugin::sendTranslation( KopeteMessage &msg, const QString &trans
 
 	switch ( msg.direction() )
 	{
-	case KopeteMessage::Outbound:
+	case Kopete::Message::Outbound:
 		mode = TranslateMode( m_outgoingMode );
 		break;
-	case KopeteMessage::Inbound:
+	case Kopete::Message::Inbound:
 		mode = TranslateMode( m_incomingMode );
 		break;
 	default:
@@ -391,7 +391,7 @@ void TranslatorPlugin::slotJobDone ( KIO::Job *job )
 
 void TranslatorPlugin::slotSetLanguage()
 {
-	KopeteMetaContact *m = KopeteContactList::contactList()->selectedMetaContacts().first();
+	Kopete::MetaContact *m = Kopete::ContactList::contactList()->selectedMetaContacts().first();
 	if( m && m_actionLanguage )
 		m->setPluginData( this, "languageKey", m_languages->languageKey( m_actionLanguage->currentItem() ) );
 }

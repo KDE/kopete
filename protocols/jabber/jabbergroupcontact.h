@@ -20,7 +20,7 @@
 
 #include "jabberbasecontact.h"
 
-class KopeteMetaContact;
+namespace Kopete { class MetaContact; }
 class JabberGroupChatManager;
 
 class JabberGroupContact : public JabberBaseContact
@@ -31,7 +31,7 @@ Q_OBJECT
 public:
 
 	JabberGroupContact (const XMPP::RosterItem &rosterItem,
-						JabberAccount *account, KopeteMetaContact * mc);
+						JabberAccount *account, Kopete::MetaContact * mc);
 
 	~JabberGroupContact ();
 
@@ -61,7 +61,7 @@ public:
 	 */
 	void removeSubContact ( const XMPP::RosterItem &rosterItem );
 
-	KopeteMessageManager *manager ( bool canCreate = false );
+	Kopete::MessageManager *manager ( bool canCreate = false );
 
 public slots:
 
@@ -91,8 +91,8 @@ private slots:
 
 private:
 
-	QPtrList<KopeteContact> mContactList;
-	QPtrList<KopeteMetaContact> mMetaContactList;
+	QPtrList<Kopete::Contact> mContactList;
+	QPtrList<Kopete::MetaContact> mMetaContactList;
 
 	JabberGroupChatManager *mManager;
 

@@ -59,16 +59,16 @@ KopeteApplication::KopeteApplication()
 	 * and closing the last chatwindow when in that state can cause the app to quit.
 	 *
 	 * KopeteApplication's reference counting scheme is different to that of a normal
-	 * KDE application. It works as follows: the KopetePluginManager has a reference
+	 * KDE application. It works as follows: the Kopete::PluginManager has a reference
 	 * to the application. No windows ever call KMainWindow::closeEvent, so KMainWindow
 	 * doesn't stupidly deref() our application. This ensures that the application
 	 * reference counting still works properly, and that the application terminates
 	 * neither too early (bug 75805) nor too late (bug 71657). - Richard
 	 */
 
-	// KApplication sets the reference count to 1 on startup. KopetePluginManager has a
+	// KApplication sets the reference count to 1 on startup. Kopete::PluginManager has a
 	// reference to us once created, so create it and drop our own reference.
-	KopetePluginManager::self();
+	Kopete::PluginManager::self();
 	deref();
 
 
@@ -118,10 +118,10 @@ KopeteApplication::~KopeteApplication()
 void KopeteApplication::slotLoadPlugins()
 {
 	//Create the command handler (looks silly)
-	KopeteCommandHandler::commandHandler();
+	Kopete::CommandHandler::commandHandler();
 
-	KopeteAccountManager::manager()->load();
-	KopeteContactList::contactList()->load();
+	Kopete::AccountManager::manager()->load();
+	Kopete::ContactList::contactList()->load();
 
 	KConfig *config = KGlobal::config();
 
@@ -148,7 +148,7 @@ void KopeteApplication::slotLoadPlugins()
 	{
 		showConfigDialog = false;
 		for ( int i = 0; i < args->count(); i++ )
-			KopetePluginManager::self()->setPluginEnabled( args->arg( i ), true );
+			Kopete::PluginManager::self()->setPluginEnabled( args->arg( i ), true );
 	}
 	*/
 
@@ -157,7 +157,7 @@ void KopeteApplication::slotLoadPlugins()
 	for ( QStringList::ConstIterator it = disableArgs.begin(); it != disableArgs.end(); ++it )
 	{
 		showConfigDialog = false;
-		KopetePluginManager::self()->setPluginEnabled( *it, false );
+		Kopete::PluginManager::self()->setPluginEnabled( *it, false );
 	}
 
 	// Load some plugins exclusively? (--load-plugins=foo,bar)
@@ -167,7 +167,7 @@ void KopeteApplication::slotLoadPlugins()
 		showConfigDialog = false;
 		QStringList plugins = QStringList::split( ',', args->getOption( "load-plugins" ) );
 		for ( QStringList::ConstIterator it = plugins.begin(); it != plugins.end(); ++it )
-			KopetePluginManager::self()->setPluginEnabled( *it, true );
+			Kopete::PluginManager::self()->setPluginEnabled( *it, true );
 	}
 
 	config->sync();
@@ -186,14 +186,14 @@ void KopeteApplication::slotLoadPlugins()
 	}
 	else
 	{
-		KopetePluginManager::self()->loadAllPlugins();
+		Kopete::PluginManager::self()->loadAllPlugins();
 	}
 
-	connect( KopetePluginManager::self(), SIGNAL( allPluginsLoaded() ),
+	connect( Kopete::PluginManager::self(), SIGNAL( allPluginsLoaded() ),
 		this, SLOT( slotAllPluginsLoaded() ));
 
 	//load the default chatwindow
-	KopetePluginManager::self()->loadPlugin( "kopete_chatwindow" );
+	Kopete::PluginManager::self()->loadPlugin( "kopete_chatwindow" );
 
 	if( showConfigDialog )
 	{
@@ -222,7 +222,7 @@ void KopeteApplication::slotAllPluginsLoaded()
 
 	// --noconnect not specified?
 	if ( args->isSet( "connect" ) )
-		KopeteAccountManager::manager()->autoConnect();
+		Kopete::AccountManager::manager()->autoConnect();
 
 	QCStringList connectArgs = args->getOptionList( "autoconnect" );
 	for ( QCStringList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
@@ -242,8 +242,8 @@ void KopeteApplication::slotAllPluginsLoaded()
 				continue;
 		}
 
-		QPtrListIterator<KopeteAccount> it( KopeteAccountManager::manager()->accounts() );
-		KopeteAccount *account;
+		QPtrListIterator<Kopete::Account> it( Kopete::AccountManager::manager()->accounts() );
+		Kopete::Account *account;
 		while ( ( account = it.current() ) != 0 )
 		{
 			++it;
@@ -340,11 +340,11 @@ void KopeteApplication::quitKopete()
 
 	// save the contact list now, just in case a change was made very recently
 	// and it hasn't autosaved yet
-	KopeteContactList::contactList()->save();
-	KopeteAccountManager::manager()->save();
+	Kopete::ContactList::contactList()->save();
+	Kopete::AccountManager::manager()->save();
 
 	//unload plugins and shutdown
-	KopetePluginManager::self()->shutdown();
+	Kopete::PluginManager::self()->shutdown();
 }
 
 void KopeteApplication::commitData( QSessionManager &sm )

@@ -26,12 +26,12 @@
 #include "kopetemessage.h"
 #include "kopeteplugin.h"
 
-class KopeteMessage;
-class KopeteMetaContact;
-class KopeteMessageManager;
+namespace Kopete { class Message; }
+namespace Kopete { class MetaContact; }
+namespace Kopete { class MessageManager; }
 class AutoReplaceConfig;
 
-class AutoReplacePlugin : public KopetePlugin
+class AutoReplacePlugin : public Kopete::Plugin
 {
 	Q_OBJECT
 
@@ -42,7 +42,7 @@ public:
 	~AutoReplacePlugin();
 
 private slots:
-	void slotAboutToSend( KopeteMessage &msg );
+	void slotAboutToSend( Kopete::Message &msg );
 
 	void slotSettingsChanged();
 

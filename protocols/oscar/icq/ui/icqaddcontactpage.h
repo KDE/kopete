@@ -38,7 +38,7 @@ class ICQAddContactPage : public AddContactPage
 		~ICQAddContactPage();
 
 		virtual bool validateData();
-		virtual bool apply(KopeteAccount* , KopeteMetaContact *parentContact);
+		virtual bool apply(Kopete::Account* , Kopete::MetaContact *parentContact);
 
 	public slots:
 

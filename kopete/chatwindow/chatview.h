@@ -42,7 +42,6 @@ class KRichTextEditPart;
 class KopeteChatWindow;
 class KTabWidget;
 class KopeteRichTextEditPart;
-class KopeteMessageManager;
 class KCompletion;
 class KURL;
 
@@ -50,7 +49,12 @@ class KopeteChatViewPrivate;
 
 using namespace DOM;
 
-typedef QPtrList<KopeteContact> KopeteContactPtrList;
+namespace Kopete
+{
+class MessageManager;
+}
+
+typedef QPtrList<Kopete::Contact> KopeteContactPtrList;
 
 namespace KParts { struct URLArgs; class Part; }
 
@@ -59,17 +63,17 @@ class KopeteContactLVI : public QObject, public KListViewItem
 	Q_OBJECT
 
 public:
-	KopeteContactLVI( KopeteView *view, const KopeteContact *contact, KListView *parent );
-	const KopeteContact *contact() const { return m_contact; }
+	KopeteContactLVI( KopeteView *view, const Kopete::Contact *contact, KListView *parent );
+	const Kopete::Contact *contact() const { return m_contact; }
 	virtual QString key( int column, bool /*ascending*/ ) const;
 private:
-	KopeteContact *m_contact;
+	Kopete::Contact *m_contact;
 	KListView *m_parentView;
 	KopeteView *m_view;
 
 private slots:
-	void slotPropertyChanged( KopeteContact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
-	void slotStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, const KopeteOnlineStatus & );
+	void slotPropertyChanged( Kopete::Contact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
+	void slotStatusChanged( Kopete::Contact *c, const Kopete::OnlineStatus &status, const Kopete::OnlineStatus & );
 	void slotExecute( QListViewItem* );
 };
 
@@ -82,7 +86,7 @@ class ChatView : public KDockMainWindow, public KopeteView
 
 	Q_OBJECT
 public:
-	ChatView( KopeteMessageManager *manager, const char *name = 0 );
+	ChatView( Kopete::MessageManager *manager, const char *name = 0 );
 	~ChatView();
 
 	/**
@@ -129,7 +133,7 @@ public:
 	 * Sets the current message in the chat window
 	 * @param parent The new chat window
 	 */
-	virtual void setCurrentMessage( const KopeteMessage &newMessage );
+	virtual void setCurrentMessage( const Kopete::Message &newMessage );
 
 	void setTabBar( KTabWidget *tabBar );
 
@@ -148,9 +152,9 @@ public:
 	/**
 	 * Returns the message currently in the edit area
 	 * Reimplemented from KopeteView
-	 * @return The KopeteMessage object for the message
+	 * @return The Kopete::Message object for the message
 	 */
-	virtual KopeteMessage currentMessage();
+	virtual Kopete::Message currentMessage();
 
 	/**
 	 * Returns the chat window this view is in
@@ -285,13 +289,13 @@ public slots:
 	 * Appends a message to the chat view display area
 	 * @param message The message to be appended
 	 */
-	void addChatMessage( KopeteMessage &message );
+	void addChatMessage( Kopete::Message &message );
 
 	/**
 	 * Called when a message is received from someone
 	 * @param message The message received
 	 */
-	virtual void appendMessage( KopeteMessage &message );
+	virtual void appendMessage( Kopete::Message &message );
 
 	/**
 	 * Called when a typing event is received from a contact
@@ -299,7 +303,7 @@ public slots:
 	 * @param contact The contact who is / isn't typing
 	 * @param typing If the contact is typing now
 	 */
-	void remoteTyping( const KopeteContact *contact, bool typing );
+	void remoteTyping( const Kopete::Contact *contact, bool typing );
 
 	/** Reimplemented from KopeteView **/
 	virtual void messageSentSuccessfully();
@@ -313,7 +317,7 @@ signals:
 	 * Emits when a message is sent
 	 * @param message The message sent
 	 */
-	void messageSent( KopeteMessage & );
+	void messageSent( Kopete::Message & );
 
 	/**
 	 * Emits every 4 seconds while the user is typing
@@ -353,7 +357,7 @@ private slots:
 	void slotRemoteTypingTimeout();
 	void slotScrollView();
 	void slotAppearanceChanged();
-	void slotPropertyChanged( KopeteContact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
+	void slotPropertyChanged( Kopete::Contact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
 
 	/**
 	 * Called when a contact is added to the KMM instance (A new person joins the chat).
@@ -361,7 +365,7 @@ private slots:
 	 * @param c The contact that joined the chat
 	 * @param suppress mean that no notifications are showed
 	 */
-	void slotContactAdded( const KopeteContact *c, bool surpress );
+	void slotContactAdded( const Kopete::Contact *c, bool surpress );
 
 	/**
 	 * Called when a contact is removed from the KMM instance (A person left the chat).
@@ -371,14 +375,14 @@ private slots:
 	 * @param format The format of the reason message
 	 * @param suppressNotification mean that no notifications are showed
 	 */
-	void slotContactRemoved( const KopeteContact *c, const QString& reason, KopeteMessage::MessageFormat format, bool suppressNotification=false );
+	void slotContactRemoved( const Kopete::Contact *c, const QString& reason, Kopete::Message::MessageFormat format, bool suppressNotification=false );
 
 	/**
 	 * Called when a contact changes status, updates the contact list view and
 	 * @param contact The contact who changed status
 	 * @param status The new status of the contact
 	 */
-	void slotContactStatusChanged( KopeteContact *contact, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldstatus );
+	void slotContactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldstatus );
 
 	/**
 	 * Called when the chat's display name is changed
@@ -427,7 +431,7 @@ private:
 	enum KopeteTabState { Normal , Highlighted , Changed , Typing , Message , Undefined };
 	enum MembersListPolicy { Smart = 0, Visible = 1, Hidden = 2 };
 
-	typedef QMap<unsigned long,KopeteMessage> MessageMap;
+	typedef QMap<unsigned long,Kopete::Message> MessageMap;
 
 	QPtrDict<QTimer> m_remoteTypingMap;
 	KHTMLPart *chatView; //move to d-pointer
@@ -438,7 +442,7 @@ private:
 	int historyPos;
 	bool bgChanged;
 	QString unreadMessageFrom;
-	QMap<const KopeteContact*, KopeteContactLVI*> memberContactMap;
+	QMap<const Kopete::Contact*, KopeteContactLVI*> memberContactMap;
 	KTextEdit* m_edit;
 	KListView *membersList; //move to d-pointer
 	
@@ -488,14 +492,14 @@ private:
 	 */
 	void refreshView();
 
-	KopeteMessage messageFromNode( Node &n );
-	void sendInternalMessage( const QString &msg, KopeteMessage::MessageFormat format = KopeteMessage::PlainText );
+	Kopete::Message messageFromNode( Node &n );
+	void sendInternalMessage( const QString &msg, Kopete::Message::MessageFormat format = Kopete::Message::PlainText );
 
 	const QString styleHTML() const;
 
 	const QString addNickLinks( const QString &html ) const;
 
-	KopeteContact *contactFromNode( const DOM::Node &n ) const;
+	Kopete::Contact *contactFromNode( const DOM::Node &n ) const;
 
 	MessageMap messageMap;
 

@@ -27,9 +27,9 @@ class dlgJabberVCard;
 class JabberProtocol;
 class JabberAccount;
 class JabberResource;
-class KopeteMetaContact;
+namespace Kopete { class MetaContact; }
 
-class JabberBaseContact : public KopeteContact
+class JabberBaseContact : public Kopete::Contact
 {
 
 Q_OBJECT
@@ -38,11 +38,11 @@ friend class JabberAccount;	/* Friends can touch each other's private parts. */
 public:
 
 	JabberBaseContact (const XMPP::RosterItem &rosterItem,
-				   JabberAccount *account, KopeteMetaContact * mc);
+				   JabberAccount *account, Kopete::MetaContact * mc);
 
 	/********************************************************************
 	 *
-	 * KopeteContact reimplementation start
+	 * Kopete::Contact reimplementation start
 	 *
 	 ********************************************************************/
 

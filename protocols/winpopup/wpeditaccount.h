@@ -28,7 +28,7 @@
 // Local Includes
 #include "wpeditaccountbase.h"
 
-class KopeteAccount;
+namespace Kopete { class Account; }
 
 class WPEditAccount: public WPEditAccountBase, public KopeteEditAccountWidget
 {
@@ -38,12 +38,12 @@ private:
 	WPProtocol *theProtocol;
 
 public:
-	WPEditAccount(WPProtocol *protocol, KopeteAccount *theAccount, QWidget *parent = 0, const char *name = 0);
+	WPEditAccount(WPProtocol *protocol, Kopete::Account *theAccount, QWidget *parent = 0, const char *name = 0);
 
 	virtual bool validateData();
 	
 public slots:
-	virtual KopeteAccount *apply();
+	virtual Kopete::Account *apply();
 	virtual void installSamba();
 };
 

@@ -80,7 +80,7 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 	mCurrentPenaltyTime = 0;
 
 	// create metacontact for myself()
-	KopeteMetaContact *metaContact = new KopeteMetaContact;
+	Kopete::MetaContact *metaContact = new Kopete::MetaContact;
 
 	// add our own contact to the pool
 	JabberContact *myContact = contactPool()->addContact ( XMPP::RosterItem ( accountId ), metaContact, false );
@@ -95,7 +95,7 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 
 JabberAccount::~JabberAccount ()
 {
-	disconnect ( KopeteAccount::Manual );
+	disconnect ( Kopete::Account::Manual );
 
 	cleanup ();
 
@@ -279,13 +279,13 @@ JabberContactPool *JabberAccount::contactPool ()
 
 }
 
-bool JabberAccount::addContactToMetaContact (const QString & contactId, const QString &/*displayName*/, KopeteMetaContact * metaContact)
+bool JabberAccount::addContactToMetaContact (const QString & contactId, const QString &/*displayName*/, Kopete::MetaContact * metaContact)
 {
 
 	// collect all group names
 	QStringList groupNames;
-	KopeteGroupList groupList = metaContact->groups();
-	for(KopeteGroup *group = groupList.first(); group; group = groupList.next())
+	Kopete::GroupList groupList = metaContact->groups();
+	for(Kopete::Group *group = groupList.first(); group; group = groupList.next())
 		groupNames += group->displayName();
 
 	XMPP::Jid jid ( contactId );
@@ -350,7 +350,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 	/* Cancel connection process if no password has been supplied. */
 	if ( password.isEmpty () )
 	{
-		disconnect ( KopeteAccount::Manual );
+		disconnect ( Kopete::Account::Manual );
 		return;
 	}
 
@@ -618,7 +618,7 @@ void JabberAccount::slotTLSHandshaken ()
 		}
 		else
 		{
-			disconnect ( KopeteAccount::Manual );
+			disconnect ( Kopete::Account::Manual );
 		}
 	}
 
@@ -725,12 +725,12 @@ void JabberAccount::slotIncomingFileTransfer ()
 
 }
 
-void JabberAccount::disconnect ( KopeteAccount::DisconnectReason reason )
+void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )
 {
 
 	// FIXME: this ugly sequence is a libkopete requirement
 	disconnect ();
-	KopeteAccount::disconnect ( reason );
+	Kopete::Account::disconnect ( reason );
 
 }
 
@@ -768,7 +768,7 @@ void JabberAccount::slotConnect ()
 
 void JabberAccount::slotDisconnect ()
 {
-	disconnect ( KopeteAccount::Manual );
+	disconnect ( Kopete::Account::Manual );
 }
 
 void JabberAccount::slotCSDisconnected ()
@@ -808,12 +808,12 @@ void JabberAccount::slotCSWarning (int /*warning*/)
 
 }
 
-void JabberAccount::handleStreamError (int streamError, int streamCondition, int connectorCode, QString server, KopeteAccount::DisconnectReason &errorClass)
+void JabberAccount::handleStreamError (int streamError, int streamCondition, int connectorCode, QString server, Kopete::Account::DisconnectReason &errorClass)
 {
 	QString errorText;
 	QString errorCondition;
 
-	errorClass = KopeteAccount::Unknown;
+	errorClass = Kopete::Account::Unknown;
 
 	/*
 	 * Display error to user.
@@ -872,7 +872,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			break;
 
 		case XMPP::ClientStream::ErrConnection:
-			errorClass = KopeteAccount::InvalidHost;
+			errorClass = Kopete::Account::InvalidHost;
 			switch(connectorCode)
 			{
  				case KNetwork::KSocketBase::LookupFailure:
@@ -954,7 +954,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			break;
 
 		case XMPP::ClientStream::ErrTLS:
-			errorClass = KopeteAccount::InvalidHost;
+			errorClass = Kopete::Account::InvalidHost;
 			switch(streamCondition)
 			{
 				case XMPP::ClientStream::TLSStart:
@@ -972,7 +972,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			break;
 
 		case XMPP::ClientStream::ErrAuth:
-			errorClass = KopeteAccount::InvalidHost;
+			errorClass = Kopete::Account::InvalidHost;
 			switch(streamCondition)
 			{
 				case XMPP::ClientStream::GenericAuthError:
@@ -1017,7 +1017,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			break;
 
 		case XMPP::ClientStream::ErrSecurityLayer:
-			errorClass = KopeteAccount::InvalidHost;
+			errorClass = Kopete::Account::InvalidHost;
 			switch(streamCondition)
 			{
 				case XMPP::ClientStream::LayerTLS:
@@ -1035,7 +1035,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			break;
 
 		case XMPP::ClientStream::ErrBind:
-			errorClass = KopeteAccount::InvalidHost;
+			errorClass = Kopete::Account::InvalidHost;
 			switch(streamCondition)
 			{
 				case XMPP::ClientStream::BindNotAllowed:
@@ -1085,7 +1085,7 @@ void JabberAccount::slotCSError (int error)
 	}
 	else
 	{
-		KopeteAccount::DisconnectReason errorClass;
+		Kopete::Account::DisconnectReason errorClass;
 
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Disconnecting." << endl;
 
@@ -1192,7 +1192,7 @@ void JabberAccount::slotGoOffline ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
 
-	disconnect ( KopeteAccount::Manual );
+	disconnect ( Kopete::Account::Manual );
 }
 
 void JabberAccount::slotGoChatty ()
@@ -1345,7 +1345,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 		 */
 		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << jid.full () << " is asking for authorization to subscribe." << endl;
 
-		KopeteMetaContact *metaContact;
+		Kopete::MetaContact *metaContact;
 		XMPP::JT_Presence *task;
 
 		switch (KMessageBox::questionYesNoCancel (Kopete::UI::Global::mainWidget (),
@@ -1375,7 +1375,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 				task->go ( true );
 
 				// Is the user already in our contact list?
-				metaContact = KopeteContactList::contactList ()->findContact (protocol ()->pluginId (), accountId (), jid.full().lower () );
+				metaContact = Kopete::ContactList::contactList ()->findContact (protocol ()->pluginId (), accountId (), jid.full().lower () );
 
 				// If it is not, ask the user if he wants to subscribe in return.
 				if ( ( !metaContact || metaContact->isTemporary() ) &&
@@ -1486,7 +1486,7 @@ void JabberAccount::slotNewContact (const XMPP::RosterItem & item)
 	/*
 	 * See if the contact is already on our contact list
 	 */
-	KopeteMetaContact *metaContact = KopeteContactList::contactList()->findContact ( protocol()->pluginId (), accountId (), item.jid().full().lower () );
+	Kopete::MetaContact *metaContact = Kopete::ContactList::contactList()->findContact ( protocol()->pluginId (), accountId (), item.jid().full().lower () );
 
 	if ( !metaContact )
 	{
@@ -1494,15 +1494,15 @@ void JabberAccount::slotNewContact (const XMPP::RosterItem & item)
 		 * No metacontact has been found which contains a contact with this ID,
 		 * so add a new metacontact to the list.
 		 */
-		metaContact = new KopeteMetaContact ();
+		metaContact = new Kopete::MetaContact ();
 		QStringList groups = item.groups ();
 
 		// add this metacontact to all groups the contact is a member of
 		for (QStringList::Iterator it = groups.begin (); it != groups.end (); ++it)
-			metaContact->addToGroup (KopeteContactList::contactList ()->getGroup (*it));
+			metaContact->addToGroup (Kopete::ContactList::contactList ()->getGroup (*it));
 
 		// put it onto contact list
-		KopeteContactList::contactList ()->addMetaContact ( metaContact );
+		Kopete::ContactList::contactList ()->addMetaContact ( metaContact );
 	}
 
 	/*
@@ -1637,13 +1637,13 @@ void JabberAccount::slotReceivedMessage (const XMPP::Message & message)
 			// the contact is not in our pool, add it as a temporary contact
 			kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << jid.full () << " is unknown to us, creating temporary contact." << endl;
 
-			KopeteMetaContact *metaContact = new KopeteMetaContact ();
+			Kopete::MetaContact *metaContact = new Kopete::MetaContact ();
 
 			metaContact->setTemporary (true);
 
 			contactFrom = contactPool()->addContact ( XMPP::RosterItem ( jid ), metaContact, false );
 
-			KopeteContactList::contactList ()->addMetaContact (metaContact);
+			Kopete::ContactList::contactList ()->addMetaContact (metaContact);
 		}
 	}
 
@@ -1671,7 +1671,7 @@ void JabberAccount::slotGroupChatJoined (const XMPP::Jid & jid)
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Joined group chat " << jid.full () << endl;
 
 	// Create new meta contact that holds the group chat contact.
-	KopeteMetaContact *metaContact = new KopeteMetaContact ();
+	Kopete::MetaContact *metaContact = new Kopete::MetaContact ();
 
 	metaContact->setTemporary ( true );
 
@@ -1681,7 +1681,7 @@ void JabberAccount::slotGroupChatJoined (const XMPP::Jid & jid)
 	// Add the groupchat contact to the meta contact.
 	metaContact->addContact ( groupContact );
 
-	KopeteContactList::contactList ()->addMetaContact ( metaContact );
+	Kopete::ContactList::contactList ()->addMetaContact ( metaContact );
 
 	/**
 	 * Add an initial resource for this contact to the pool. We need
@@ -1702,10 +1702,10 @@ void JabberAccount::slotGroupChatLeft (const XMPP::Jid & jid)
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo "Left groupchat " << jid.full () << endl;
 
 	// remove group contact from list
-	KopeteMetaContact *metaContact = KopeteContactList::contactList()->findMetaContactByContactId ( jid.userHost () );
+	Kopete::MetaContact *metaContact = Kopete::ContactList::contactList()->findMetaContactByContactId ( jid.userHost () );
 
 	if ( metaContact )
-		KopeteContactList::contactList()->removeMetaContact ( metaContact );
+		Kopete::ContactList::contactList()->removeMetaContact ( metaContact );
 
 	// now remove it from our pool, which should clean up all subcontacts as well
 	contactPool()->removeContact ( XMPP::Jid ( jid.userHost () ) );

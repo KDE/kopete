@@ -27,11 +27,11 @@ struct Kopete::PasswordedAccount::Private
 {
 	Private( const QString &group, uint maxLen ) : password( group, maxLen, "mPassword" ) {}
 	Kopete::Password password;
-	KopeteOnlineStatus initialStatus;
+	Kopete::OnlineStatus initialStatus;
 };
 
-Kopete::PasswordedAccount::PasswordedAccount( KopeteProtocol *parent, const QString &acctId, uint maxLen, const char *name )
- : KopeteAccount( parent, acctId, name ), d( new Private( configGroup(), maxLen ) )
+Kopete::PasswordedAccount::PasswordedAccount( Kopete::Protocol *parent, const QString &acctId, uint maxLen, const char *name )
+ : Kopete::Account( parent, acctId, name ), d( new Private( configGroup(), maxLen ) )
 {
 }
 
@@ -47,11 +47,11 @@ Kopete::Password &Kopete::PasswordedAccount::password()
 
 void Kopete::PasswordedAccount::connect( )
 {
-	KopeteOnlineStatus s(KopeteOnlineStatus::Online);
+	Kopete::OnlineStatus s(Kopete::OnlineStatus::Online);
 	connect( s );
 }
 
-void Kopete::PasswordedAccount::connect( const KopeteOnlineStatus& initialStatus )
+void Kopete::PasswordedAccount::connect( const Kopete::OnlineStatus& initialStatus )
 {
 	d->initialStatus = initialStatus;
 	QString cached = password().cachedValue();
@@ -75,7 +75,7 @@ QString Kopete::PasswordedAccount::passwordPrompt()
 		return i18n( "Please enter your password for %1 account <b>%2</b>" ).arg( protocol()->displayName(), accountId() );
 }
 
-KopeteOnlineStatus Kopete::PasswordedAccount::initialStatus()
+Kopete::OnlineStatus Kopete::PasswordedAccount::initialStatus()
 {
 	return d->initialStatus;
 }

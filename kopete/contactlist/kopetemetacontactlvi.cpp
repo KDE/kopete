@@ -65,20 +65,20 @@ namespace ListView {
 class MetaContactToolTipSource : public ToolTipSource
 {
 public:
-	MetaContactToolTipSource( KopeteMetaContact *mc )
+	MetaContactToolTipSource( MetaContact *mc )
 	 : metaContact( mc )
 	{
 	}
 	QString operator()( ComponentBase *, const QPoint &, QRect & )
 	{
-		QPtrList<KopeteContact> contacts = metaContact->contacts();
+		QPtrList<Contact> contacts = metaContact->contacts();
 		if( contacts.count() == 1 )
 			return contacts.first()->toolTip();
 
 		// We are over a metacontact with > 1 child contacts, and not over a specific contact
 		// Iterate through children and display a summary tooltip
 		QString toolTip = QString::fromLatin1("<qt><table>");
-		for(KopeteContact *c = contacts.first(); c; c = contacts.next())
+		for(Contact *c = contacts.first(); c; c = contacts.next())
 		{
 			QString iconName = QString::fromLatin1("kopete-contact-icon:%1:%2:%3")
 			.arg( KURL::encode_string( c->protocol()->pluginId() ),
@@ -94,7 +94,7 @@ public:
 		return toolTip + QString::fromLatin1("</table></qt>");
 	}
 private:
-	KopeteMetaContact *metaContact;
+	MetaContact *metaContact;
 };
 
 } // END namespace ListView
@@ -121,9 +121,9 @@ public:
 
 class ContactComponent : public ListView::ImageComponent
 {
-	KopeteContact *mContact;
+	Kopete::Contact *mContact;
 public:
-	ContactComponent( ListView::ComponentBase *parent, KopeteContact *contact )
+	ContactComponent( ListView::ComponentBase *parent, Kopete::Contact *contact )
 	 : ListView::ImageComponent( parent )
 	 , mContact( contact )
 	{
@@ -133,7 +133,7 @@ public:
 	{
 		setPixmap( contact()->onlineStatus().iconFor( contact(), 12 ) );
 	}
-	KopeteContact *contact()
+	Kopete::Contact *contact()
 	{
 		return mContact;
 	}
@@ -156,7 +156,7 @@ public:
 	}
 };
 
-KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, KopeteGroupViewItem *parent )
+KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, KopeteGroupViewItem *parent )
 : ListView::Item( parent, contact, "MetaContactLVI" )
 //: QObject( contact, "MetaContactLVI" ), KListViewItem( parent )
 {
@@ -169,7 +169,7 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, KopeteGr
 	parent->refreshDisplayName();
 }
 
-KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, QListViewItem *parent )
+KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, QListViewItem *parent )
 : ListView::Item( parent, contact, "MetaContactLVI" )
 //: QObject( contact, "MetaContactLVI" ), KListViewItem( parent )
 {
@@ -182,7 +182,7 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, QListVie
 	initLVI();
 }
 
-KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, QListView *parent )
+KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, QListView *parent )
 : ListView::Item( parent, contact, "MetaContactLVI" )
 //: QObject( contact, "MetaContactLVI" ), KListViewItem( parent )
 {
@@ -206,17 +206,17 @@ void KopeteMetaContactLVI::initLVI()
 	connect( m_metaContact, SIGNAL( displayNameChanged( const QString &, const QString & ) ),
 		SLOT( slotDisplayNameChanged() ) );
 
-	connect( m_metaContact, SIGNAL( onlineStatusChanged( KopeteMetaContact *, KopeteOnlineStatus::OnlineStatus ) ),
+	connect( m_metaContact, SIGNAL( onlineStatusChanged( Kopete::MetaContact *, Kopete::OnlineStatus::StatusType ) ),
 		SLOT( slotUpdateMetaContact() ) );
 
-	connect( m_metaContact, SIGNAL( contactStatusChanged( KopeteContact *, const KopeteOnlineStatus & ) ),
-		SLOT( slotContactStatusChanged( KopeteContact * ) ) );
+	connect( m_metaContact, SIGNAL( contactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & ) ),
+		SLOT( slotContactStatusChanged( Kopete::Contact * ) ) );
 
-	connect( m_metaContact, SIGNAL( contactAdded( KopeteContact * ) ),
-		SLOT( slotContactAdded( KopeteContact * ) ) );
+	connect( m_metaContact, SIGNAL( contactAdded( Kopete::Contact * ) ),
+		SLOT( slotContactAdded( Kopete::Contact * ) ) );
 
-	connect( m_metaContact, SIGNAL( contactRemoved( KopeteContact * ) ),
-		SLOT( slotContactRemoved( KopeteContact * ) ) );
+	connect( m_metaContact, SIGNAL( contactRemoved( Kopete::Contact * ) ),
+		SLOT( slotContactRemoved( Kopete::Contact * ) ) );
 
 	connect( m_metaContact, SIGNAL( iconAppearanceChanged() ),
 		SLOT( slotUpdateMetaContact() ) );
@@ -224,8 +224,8 @@ void KopeteMetaContactLVI::initLVI()
 	connect( m_metaContact, SIGNAL( useCustomIconChanged( bool ) ),
 		SLOT( slotUpdateMetaContact() ) );
 
-	connect( m_metaContact, SIGNAL( contactIdleStateChanged( KopeteContact * ) ),
-		SLOT( slotIdleStateChanged( KopeteContact * ) ) );
+	connect( m_metaContact, SIGNAL( contactIdleStateChanged( Kopete::Contact * ) ),
+		SLOT( slotIdleStateChanged( Kopete::Contact * ) ) );
 
 	connect( KopetePrefs::prefs(), SIGNAL( contactListAppearanceChanged() ),
 		SLOT( slotConfigChanged() ) );
@@ -309,7 +309,7 @@ void KopeteMetaContactLVI::rename( const QString& newName )
 	kdDebug( 14000 ) << k_funcinfo << "newName=" << newName << ", TrackChildNameChanges=" << m_metaContact->trackChildNameChanges() << endl;
 }
 
-void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
+void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 {
 	updateContactIcon( c );
 
@@ -317,7 +317,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 	// multiple times if the user is in multiple groups - Jason
 
 	// comparing the status of the previous and new preferred contact is the determining factor in deciding to notify
-	KopeteOnlineStatus newStatus;
+	Kopete::OnlineStatus newStatus;
 	if ( m_metaContact->preferredContact() )
 		newStatus = m_metaContact->preferredContact()->onlineStatus();
 	else
@@ -328,7 +328,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 
 	// ensure we are not suppressing notifications, because connecting or disconnected
 	if ( !(c->account()->suppressStatusNotification()
-		 || ( c->account()->myself()->onlineStatus().status() == KopeteOnlineStatus::Connecting )
+		 || ( c->account()->myself()->onlineStatus().status() == Kopete::OnlineStatus::Connecting )
 		 || !c->account()->isConnected() ) )
 	{
 		if ( !c->account()->isAway() || KopetePrefs::prefs()->soundIfAway() )
@@ -344,24 +344,24 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 			//kdDebug( 14000 ) << k_funcinfo << m_metaContact->displayName() <<
 			//" - Old MC Status: " << m_oldStatus.status() << ", New MC Status: " << newStatus.status() << endl;
 			// first, exclude changes due to blocking or subscription changes at the protocol level
-			if ( ( m_oldStatus.status() == KopeteOnlineStatus::Unknown
-						|| newStatus.status() == KopeteOnlineStatus::Unknown ) )
+			if ( ( m_oldStatus.status() == Kopete::OnlineStatus::Unknown
+						|| newStatus.status() == Kopete::OnlineStatus::Unknown ) )
 				t = noEvent;	// This means the contact's changed from or to unknown - due to a protocol state change, not a contact state change
 			else	// we're dealing with a genuine contact state change
 			{
-				if ( m_oldStatus.status() == KopeteOnlineStatus::Offline )
+				if ( m_oldStatus.status() == Kopete::OnlineStatus::Offline )
 				{
-					if ( newStatus.status() != KopeteOnlineStatus::Offline )
+					if ( newStatus.status() != Kopete::OnlineStatus::Offline )
 					{
 						//kdDebug( 14000 ) << "signed in" << endl;
 						t = signedIn;	// contact has gone from offline to something else, it's a sign-in
 					}
 				}
-				else if ( m_oldStatus.status() == KopeteOnlineStatus::Online
-						  || m_oldStatus.status() == KopeteOnlineStatus::Away
-						  || m_oldStatus.status() == KopeteOnlineStatus::Invisible)
+				else if ( m_oldStatus.status() == Kopete::OnlineStatus::Online
+						  || m_oldStatus.status() == Kopete::OnlineStatus::Away
+						  || m_oldStatus.status() == Kopete::OnlineStatus::Invisible)
 				{
-					if ( newStatus.status() == KopeteOnlineStatus::Offline )
+					if ( newStatus.status() == Kopete::OnlineStatus::Offline )
 					{
 						//kdDebug( 14000 ) << "signed OUT" << endl;
 						t = signedOut;	// contact has gone from an online state to an offline state, it's a sign out
@@ -462,7 +462,7 @@ void KopeteMetaContactLVI::slotRemoveThisUser()
 		arg( m_metaContact->displayName() ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"),"editdelete") )
 		== KMessageBox::Continue )
 	{
-		KopeteContactList::contactList()->removeMetaContact( m_metaContact );
+		Kopete::ContactList::contactList()->removeMetaContact( m_metaContact );
 	}
 }
 
@@ -500,12 +500,12 @@ void KopeteMetaContactLVI::slotMoveToGroup()
 		if ( m_actionMove->currentItem() == 0 )
 		{
 			// we are moving to top-level
-			if ( group() != KopeteGroup::toplevel )
-				m_metaContact->moveToGroup( group(), KopeteGroup::toplevel );
+			if ( group() != Kopete::Group::toplevel )
+				m_metaContact->moveToGroup( group(), Kopete::Group::toplevel );
 		}
 		else
 		{
-			KopeteGroup *to = KopeteContactList::contactList()->getGroup( m_actionMove->currentText() );
+			Kopete::Group *to = Kopete::ContactList::contactList()->getGroup( m_actionMove->currentText() );
 			if ( !m_metaContact->groups().contains( to ) )
 				m_metaContact->moveToGroup( group(), to );
 		}
@@ -520,11 +520,11 @@ void KopeteMetaContactLVI::slotAddToGroup()
 		if ( m_actionCopy->currentItem() == 0 )
 		{
 			// we are adding to top-level
-			m_metaContact->addToGroup( KopeteGroup::toplevel );
+			m_metaContact->addToGroup( Kopete::Group::toplevel );
 		}
 		else
 		{
-			m_metaContact->addToGroup( KopeteContactList::contactList()->getGroup( m_actionCopy->currentText() ) );
+			m_metaContact->addToGroup( Kopete::ContactList::contactList()->getGroup( m_actionCopy->currentText() ) );
 		}
 	}
 }
@@ -540,7 +540,7 @@ void KopeteMetaContactLVI::slotAddToNewGroup()
 		i18n( "New Group" ), i18n( "Please enter the name for the new group:" ) );
 
 	if ( !groupName.isEmpty() )
-		m_metaContact->addToGroup( KopeteContactList::contactList()->getGroup( groupName ) );
+		m_metaContact->addToGroup( Kopete::ContactList::contactList()->getGroup( groupName ) );
 }
 
 void KopeteMetaContactLVI::slotConfigChanged()
@@ -642,8 +642,8 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 	slotDisplayNameChanged();
 
 	// finally, re-add all contacts so their icons appear. remove them first for consistency.
-	QPtrList<KopeteContact> contacts = m_metaContact->contacts();
-	for ( QPtrListIterator<KopeteContact> it( contacts ); it.current(); ++it )
+	QPtrList<Kopete::Contact> contacts = m_metaContact->contacts();
+	for ( QPtrListIterator<Kopete::Contact> it( contacts ); it.current(); ++it )
 	{
 		slotContactRemoved( *it );
 		slotContactAdded( *it );
@@ -660,7 +660,7 @@ void KopeteMetaContactLVI::updateVisibility()
 		setTargetVisibility( true );
 }
 
-void KopeteMetaContactLVI::slotContactPropertyChanged( KopeteContact *,
+void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact *,
 	const QString &key, const QVariant &old, const QVariant &newVal )
 {
 	if ( key == QString::fromLatin1("awayMessage") && d->extraText && old != newVal )
@@ -672,11 +672,11 @@ void KopeteMetaContactLVI::slotContactPropertyChanged( KopeteContact *,
 	}
 }
 
-void KopeteMetaContactLVI::slotContactAdded( KopeteContact *c )
+void KopeteMetaContactLVI::slotContactAdded( Kopete::Contact *c )
 {
-	connect( c, SIGNAL( propertyChanged( KopeteContact *, const QString &,
+	connect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &,
 			const QVariant &, const QVariant & ) ),
-		this, SLOT( slotContactPropertyChanged( KopeteContact *, const QString &,
+		this, SLOT( slotContactPropertyChanged( Kopete::Contact *, const QString &,
 			const QVariant &, const QVariant & ) ) );
 	connect( c->account() , SIGNAL( colorChanged(const QColor& ) ) , this, SLOT( updateContactIcons() ) );
 
@@ -686,11 +686,11 @@ void KopeteMetaContactLVI::slotContactAdded( KopeteContact *c )
 		QVariant(), c->property( QString::fromLatin1("awayMessage") ).value() );
 }
 
-void KopeteMetaContactLVI::slotContactRemoved( KopeteContact *c )
+void KopeteMetaContactLVI::slotContactRemoved( Kopete::Contact *c )
 {
-	disconnect( c, SIGNAL( propertyChanged( KopeteContact *, const QString &,
+	disconnect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &,
 			const QVariant &, const QVariant & ) ),
-		this, SLOT( slotContactPropertyChanged( KopeteContact *,
+		this, SLOT( slotContactPropertyChanged( Kopete::Contact *,
 			const QString &, const QVariant &, const QVariant & ) ) );
 	disconnect( c->account() , SIGNAL( colorChanged(const QColor& ) ) , this, SLOT( updateContactIcons() ) );
 
@@ -704,12 +704,12 @@ void KopeteMetaContactLVI::slotContactRemoved( KopeteContact *c )
 void KopeteMetaContactLVI::updateContactIcons()
 {
 	// show offline contacts setting may have changed
-	QPtrList<KopeteContact> contacts = m_metaContact->contacts();
-	for ( QPtrListIterator<KopeteContact> it( contacts ); it.current(); ++it )
+	QPtrList<Kopete::Contact> contacts = m_metaContact->contacts();
+	for ( QPtrListIterator<Kopete::Contact> it( contacts ); it.current(); ++it )
 		updateContactIcon( *it );
 }
 
-void KopeteMetaContactLVI::updateContactIcon( KopeteContact *c )
+void KopeteMetaContactLVI::updateContactIcon( Kopete::Contact *c )
 {
 	KGlobal::config()->setGroup( QString::fromLatin1("ContactList") );
 	bool bHideOffline = KGlobal::config()->readBoolEntry(
@@ -727,14 +727,14 @@ void KopeteMetaContactLVI::updateContactIcon( KopeteContact *c )
 		comp->updatePixmap();
 }
 
-KopeteContact *KopeteMetaContactLVI::contactForPoint( const QPoint &p ) const
+Kopete::Contact *KopeteMetaContactLVI::contactForPoint( const QPoint &p ) const
 {
 	if ( ContactComponent *comp = dynamic_cast<ContactComponent*>( d->contactIconBox->componentAt( p ) ) )
 		return comp->contact();
 	return 0L;
 }
 
-ContactComponent *KopeteMetaContactLVI::contactComponent( const KopeteContact *c ) const
+ContactComponent *KopeteMetaContactLVI::contactComponent( const Kopete::Contact *c ) const
 {
 	for ( uint n = 0; n < d->contactIconBox->components(); ++n )
 	{
@@ -747,19 +747,19 @@ ContactComponent *KopeteMetaContactLVI::contactComponent( const KopeteContact *c
 	return 0;
 }
 
-QRect KopeteMetaContactLVI::contactRect( const KopeteContact *c ) const
+QRect KopeteMetaContactLVI::contactRect( const Kopete::Contact *c ) const
 {
 	if ( ListView::Component *comp = contactComponent( c ) )
 		return comp->rect();
 	return QRect();
 }
 
-KopeteGroup *KopeteMetaContactLVI::group()
+Kopete::Group *KopeteMetaContactLVI::group()
 {
-	if ( m_parentGroup && m_parentGroup->group() != KopeteGroup::topLevel() )
+	if ( m_parentGroup && m_parentGroup->group() != Kopete::Group::topLevel() )
 		return m_parentGroup->group();
 	else
-		return KopeteGroup::topLevel();
+		return Kopete::Group::topLevel();
 }
 
 QString KopeteMetaContactLVI::key( int, bool ) const
@@ -767,16 +767,16 @@ QString KopeteMetaContactLVI::key( int, bool ) const
 	char importanceChar;
 	switch ( m_metaContact->status() )
 	{
-	case KopeteOnlineStatus::Online:
+	case Kopete::OnlineStatus::Online:
 		importanceChar = 'A';
 		break;
-	case KopeteOnlineStatus::Away:
+	case Kopete::OnlineStatus::Away:
 		importanceChar = 'B';
 		break;
-	case KopeteOnlineStatus::Offline:
+	case Kopete::OnlineStatus::Offline:
 		importanceChar = 'C';
 		break;
-	case KopeteOnlineStatus::Unknown:
+	case Kopete::OnlineStatus::Unknown:
 	default:
 		importanceChar = 'D';
 	}
@@ -797,13 +797,13 @@ bool KopeteMetaContactLVI::isGrouped() const
 	if ( !m_parentGroup || !m_parentGroup->group() )
 		return false;
 
-	if ( m_parentGroup->group() == KopeteGroup::temporary() && !KopetePrefs::prefs()->sortByGroup() )
+	if ( m_parentGroup->group() == Kopete::Group::temporary() && !KopetePrefs::prefs()->sortByGroup() )
 		return false;
 
 	return true;
 }
 
-void KopeteMetaContactLVI::slotIdleStateChanged( KopeteContact *c )
+void KopeteMetaContactLVI::slotIdleStateChanged( Kopete::Contact *c )
 {
 	QPixmap icon = SmallIcon( m_metaContact->statusIcon(), d->iconSize );
 	if ( KopetePrefs::prefs()->greyIdleMetaContacts() && ( m_metaContact->idleTime() >= 10 * 60 ) )

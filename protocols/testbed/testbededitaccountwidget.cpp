@@ -24,7 +24,7 @@
 #include "testbedaccount.h"
 #include "testbedprotocol.h"
 
-TestbedEditAccountWidget::TestbedEditAccountWidget( QWidget* parent, KopeteAccount* account)
+TestbedEditAccountWidget::TestbedEditAccountWidget( QWidget* parent, Kopete::Account* account)
 : QWidget( parent ), KopeteEditAccountWidget( account )
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
@@ -36,7 +36,7 @@ TestbedEditAccountWidget::~TestbedEditAccountWidget()
 {
 }
 
-KopeteAccount* TestbedEditAccountWidget::apply()
+Kopete::Account* TestbedEditAccountWidget::apply()
 {
 	QString accountName;
 	if ( m_preferencesWidget->m_acctName->text().isEmpty() )

@@ -24,7 +24,7 @@
  * Encapsulates the generic actions associated with this protocol
  * @author Will Stephenson
  */
-class TestbedProtocol : public KopeteProtocol
+class TestbedProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 public:
@@ -32,25 +32,25 @@ public:
     ~TestbedProtocol();
 	/**
 	 * Convert the serialised data back into a TestbedContact and add this
-	 * to its KopeteMetaContact
+	 * to its Kopete::MetaContact
 	 */
-	virtual KopeteContact *deserializeContact(
-			KopeteMetaContact *metaContact,
+	virtual Kopete::Contact *deserializeContact(
+			Kopete::MetaContact *metaContact,
 			const QMap< QString, QString > & serializedData,
 			const QMap< QString, QString > & addressBookData
 		);
 	/**
 	 * Generate the widget needed to add TestbedContacts
 	 */
-	virtual AddContactPage * createAddContactWidget( QWidget *parent, KopeteAccount *account );
+	virtual AddContactPage * createAddContactWidget( QWidget *parent, Kopete::Account *account );
 	/**
 	 * Generate the widget needed to add/edit accounts for this protocol
 	 */
-	virtual KopeteEditAccountWidget * createEditAccountWidget( KopeteAccount *account, QWidget *parent );
+	virtual KopeteEditAccountWidget * createEditAccountWidget( Kopete::Account *account, QWidget *parent );
 	/**
 	 * Generate a TestbedAccount
 	 */
-	virtual KopeteAccount * createNewAccount( const QString &accountId );
+	virtual Kopete::Account * createNewAccount( const QString &accountId );
 	/**
 	 * Access the instance of this protocol
 	 */
@@ -58,15 +58,15 @@ public:
 	/**
 	 * Represents contacts that are Online
 	 */
-	const KopeteOnlineStatus testbedOnline;
+	const Kopete::OnlineStatus testbedOnline;
 	/**
 	 * Represents contacts that are Away
 	 */
-	const KopeteOnlineStatus testbedAway;
+	const Kopete::OnlineStatus testbedAway;
 	/**
 	 * Represents contacts that are Offline
 	 */
-	const KopeteOnlineStatus testbedOffline;
+	const Kopete::OnlineStatus testbedOffline;
 protected:
 	static TestbedProtocol *s_protocol;
 };

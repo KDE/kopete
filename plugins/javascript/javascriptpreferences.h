@@ -18,7 +18,7 @@
 #include <kcmodule.h>
 #include "javascriptconfig.h"
 
-typedef QValueList<KopeteAccount*> AccountList;
+typedef QValueList<Kopete::Account*> AccountList;
 
 class JavaScriptPrefsBase;
 class KTempFile;

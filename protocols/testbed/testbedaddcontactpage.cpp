@@ -37,7 +37,7 @@ TestbedAddContactPage::~TestbedAddContactPage()
 {
 }
 
-bool TestbedAddContactPage::apply( KopeteAccount* a, KopeteMetaContact* m )
+bool TestbedAddContactPage::apply( Kopete::Account* a, Kopete::MetaContact* m )
 {
     if ( validateData() )
 	{
@@ -51,7 +51,7 @@ bool TestbedAddContactPage::apply( KopeteAccount* a, KopeteMetaContact* m )
 			ok = true;
 		}
 		if ( ok )
-			return a->addContact(type, name, m, KopeteAccount::ChangeKABC );
+			return a->addContact(type, name, m, Kopete::Account::ChangeKABC );
 		else
 			return false;
 	}

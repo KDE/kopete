@@ -20,7 +20,7 @@
 
 #include <kdialogbase.h>
 
-class KopeteMetaContact;
+namespace Kopete { class MetaContact; }
 class CryptographyUserKey_ui;
 
 /**
@@ -30,7 +30,7 @@ class CryptographyUserKey_ui;
 class CryptographySelectUserKey : public KDialogBase {
 	Q_OBJECT
 public:
-	CryptographySelectUserKey(const QString &key, KopeteMetaContact *mc);
+	CryptographySelectUserKey(const QString &key, Kopete::MetaContact *mc);
 	~CryptographySelectUserKey();
 
 
@@ -44,7 +44,7 @@ private slots:
 
 private:
 	CryptographyUserKey_ui *view;
-	KopeteMetaContact *m_metaContact;
+	Kopete::MetaContact *m_metaContact;
 
 };
 

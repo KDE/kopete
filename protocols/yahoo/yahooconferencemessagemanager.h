@@ -28,12 +28,12 @@ class KActionMenu;
 /**
  * @author Duncan Mac-Vicar Prett
  */
-class YahooConferenceMessageManager : public KopeteMessageManager
+class YahooConferenceMessageManager : public Kopete::MessageManager
 {
 	Q_OBJECT
 
 public:
-	YahooConferenceMessageManager( const QString &m_yahooRoom, KopeteProtocol *protocol, const KopeteContact *user, KopeteContactPtrList others, const char *name = 0 );
+	YahooConferenceMessageManager( const QString &m_yahooRoom, Kopete::Protocol *protocol, const Kopete::Contact *user, KopeteContactPtrList others, const char *name = 0 );
 	~YahooConferenceMessageManager();
 private:
 	QString m_yahooRoom;

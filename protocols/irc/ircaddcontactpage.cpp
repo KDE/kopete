@@ -58,10 +58,10 @@ void IRCAddContactPage::slotChannelDoubleClicked( const QString &channel )
 	ircdata->tabWidget3->setCurrentPage(0);
 }
 
-bool IRCAddContactPage::apply(KopeteAccount *account , KopeteMetaContact *m)
+bool IRCAddContactPage::apply(Kopete::Account *account , Kopete::MetaContact *m)
 {
 	QString name = ircdata->addID->text();
-	return account->addContact(name, name, m, KopeteAccount::ChangeKABC );
+	return account->addContact(name, name, m, Kopete::Account::ChangeKABC );
 }
 
 bool IRCAddContactPage::validateData()

@@ -163,7 +163,7 @@ void GroupWiseSearch::slotGotSearchResults()
 	{
 		// it's necessary to change the status used for the LVIs,
 		// because the status returned by the server does not go linearly from Unknown to Available
-		// which is no use for us to sort on, and converting it to a KopeteOnlineStatus is overkill here
+		// which is no use for us to sort on, and converting it to a Kopete::OnlineStatus is overkill here
 		int statusOrdered;
 		switch ( (*it).status )
 		{

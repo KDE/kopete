@@ -20,14 +20,14 @@
 #include <qobject.h>
 #include "kopetemessage.h" //TODO: REMOVE
 
-class KopeteContact;
-class KopeteMetaContact;
+namespace Kopete { class Contact; }
+namespace Kopete { class MetaContact; }
 class QFile;
 class QDomDocument;
 class QTimer;
 
 /**
- * One hinstance of this class is opened for every KopeteMessageManager,
+ * One hinstance of this class is opened for every Kopete::MessageManager,
  * or for the history dialog
  *
  * @author Olivier Goffart
@@ -46,8 +46,8 @@ public:
 	/**
 	 * Constructor, takes the contact, and the color of messages
 	 */
-	HistoryLogger( KopeteMetaContact *m , QObject *parent = 0, const char *name = 0);
-	HistoryLogger( KopeteContact *c , QObject *parent = 0, const char *name = 0);
+	HistoryLogger( Kopete::MetaContact *m , QObject *parent = 0, const char *name = 0);
+	HistoryLogger( Kopete::Contact *c , QObject *parent = 0, const char *name = 0);
 
 
 	~HistoryLogger();
@@ -77,14 +77,14 @@ public:
 	 * log a message
 	 * @param c add a presision to the contact to use, if null, autodetect.
 	 */
-	void appendMessage( const KopeteMessage &msg , const KopeteContact *c=0L );
+	void appendMessage( const Kopete::Message &msg , const Kopete::Contact *c=0L );
 
 	/**
 	 * read @param lines message from the current position
-	 * from KopeteContact @param c in the given @param sens
+	 * from Kopete::Contact @param c in the given @param sens
 	 */
-	QValueList<KopeteMessage> readMessages(unsigned int lines,
-		const KopeteContact *c=0, Sens sens=Default,
+	QValueList<Kopete::Message> readMessages(unsigned int lines,
+		const Kopete::Contact *c=0, Sens sens=Default,
 		bool reverseOrder=false, bool colorize=true);
 
 	/**
@@ -113,24 +113,24 @@ private:
 	/*
 	 *contais all QDomDocument, for a KC, for a specified Month
 	 */
-	QMap<const KopeteContact*,QMap<unsigned int , QDomDocument> > m_documents;
+	QMap<const Kopete::Contact*,QMap<unsigned int , QDomDocument> > m_documents;
 
 	/**
 	 * Contains the current message.
 	 * in fact, this is the next, still not showed
 	 */
-	QMap<const KopeteContact*, QDomElement>  m_currentElements;
+	QMap<const Kopete::Contact*, QDomElement>  m_currentElements;
 
 	/**
 	 * Get the document, open it is @param canload is true, contain is set to false if the document
 	 * is not already contained
 	 */
-	QDomDocument getDocument(const KopeteContact *c, unsigned int month , bool canLoad=true , bool* contain=0L);
+	QDomDocument getDocument(const Kopete::Contact *c, unsigned int month , bool canLoad=true , bool* contain=0L);
 
 	/**
 	 * look over files to get the last month for this contact
 	 */
-	unsigned int getFirstMonth(const KopeteContact *c);
+	unsigned int getFirstMonth(const Kopete::Contact *c);
 	unsigned int getFirstMonth();
 
 
@@ -148,17 +148,17 @@ private:
 	 * get the filename of the xml file which contains the history from the
 	 * contact in the specified month
 	 */
-	static QString getFileName(const KopeteContact* , unsigned int month);
+	static QString getFileName(const Kopete::Contact* , unsigned int month);
 
 	/*
 	 * the metacontact we are using
 	 */
-	KopeteMetaContact *m_metaContact;
+	Kopete::MetaContact *m_metaContact;
 
 	/*
 	 * keep the old position in memory, so if we change the sens, we can begin here
 	 */
-	QMap<const KopeteContact*, QDomElement>  m_oldElements;
+	QMap<const Kopete::Contact*, QDomElement>  m_oldElements;
 	unsigned int m_oldMonth;
 	Sens m_oldSens;
 	 

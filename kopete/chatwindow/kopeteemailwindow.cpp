@@ -61,7 +61,7 @@
 class KopeteEmailWindowPrivate
 {
 public:
-	QValueList<KopeteMessage> messageQueue;
+	QValueList<Kopete::Message> messageQueue;
 	bool blnShowingMessage;
 	bool sendInProgress;
 	bool visible;
@@ -87,15 +87,15 @@ public:
 	KActionMenu *actionActionMenu;
 	KopeteEmoticonAction *actionSmileyMenu;
 
-	KopeteXSLT *xsltParser;
+	Kopete::XSLT *xsltParser;
 };
 
-KopeteEmailWindow::KopeteEmailWindow( KopeteMessageManager *manager, bool foreignMessage )
+KopeteEmailWindow::KopeteEmailWindow( Kopete::MessageManager *manager, bool foreignMessage )
 :  KParts::MainWindow( ), KopeteView( manager )
 {
 	d = new KopeteEmailWindowPrivate;
 
-	d->xsltParser = new KopeteXSLT( KopetePrefs::prefs()->styleContents(), this );
+	d->xsltParser = new Kopete::XSLT( KopetePrefs::prefs()->styleContents(), this );
 
 	QVBox *v = new QVBox( this );
 	setCentralWidget( v );
@@ -209,7 +209,7 @@ KopeteEmailWindow::KopeteEmailWindow( KopeteMessageManager *manager, bool foreig
 
 	setCaption( manager->displayName() );
 
-	m_type = KopeteMessage::Email;
+	m_type = Kopete::Message::Email;
 
 	d->txtEntry->installEventFilter( this );
 	KCursor::setAutoHideCursor( d->txtEntry, true, true );
@@ -441,7 +441,7 @@ void KopeteEmailWindow::slotCopy()
 }
 
 
-void KopeteEmailWindow::appendMessage(KopeteMessage &message)
+void KopeteEmailWindow::appendMessage(Kopete::Message &message)
 {
 	if( message.from() != m_manager->user() )
 	{
@@ -526,11 +526,11 @@ void KopeteEmailWindow::slotReadPrev()
 
 void KopeteEmailWindow::slotRefreshAppearance()
 {
-	KopeteMessage m = currentMessage();
+	Kopete::Message m = currentMessage();
 	writeMessage( m );
 }
 
-void KopeteEmailWindow::writeMessage( KopeteMessage &msg )
+void KopeteEmailWindow::writeMessage( Kopete::Message &msg )
 {
 	QString dir = ( QApplication::reverseLayout() ? QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
 	d->htmlPart->begin();
@@ -558,7 +558,7 @@ void KopeteEmailWindow::sendMessage()
 	d->animIcon.unpause();
 	d->btnReplySend->setEnabled( false );
 	d->txtEntry->setEnabled( false );
-	KopeteMessage sentMessage = currentMessage();
+	Kopete::Message sentMessage = currentMessage();
 	emit messageSent( sentMessage );
 }
 
@@ -706,10 +706,10 @@ bool KopeteEmailWindow::isVisible()
 	return d->visible;
 }
 
-KopeteMessage KopeteEmailWindow::currentMessage()
+Kopete::Message KopeteEmailWindow::currentMessage()
 {
-	KopeteMessage currentMsg = KopeteMessage( m_manager->user(), m_manager->members(), d->txtEntry->text(),
-		KopeteMessage::Outbound, d->editpart ? KopeteMessage::RichText : KopeteMessage::PlainText );
+	Kopete::Message currentMsg = Kopete::Message( m_manager->user(), m_manager->members(), d->txtEntry->text(),
+		Kopete::Message::Outbound, d->editpart ? Kopete::Message::RichText : Kopete::Message::PlainText );
 
 	currentMsg.setFont( d->font );
 	currentMsg.setBg( d->bgColor );
@@ -718,7 +718,7 @@ KopeteMessage KopeteEmailWindow::currentMessage()
 	return currentMsg;
 }
 
-void KopeteEmailWindow::setCurrentMessage( const KopeteMessage &newMessage )
+void KopeteEmailWindow::setCurrentMessage( const Kopete::Message &newMessage )
 {
 	d->txtEntry->setText( newMessage.plainBody() );
 }

@@ -23,7 +23,7 @@
 
 #include "editaccountwidget.h"
 
-class KopeteAccount;
+namespace Kopete { class Account; }
 
 class MSNProtocol;
 
@@ -37,10 +37,10 @@ class MSNEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 	Q_OBJECT
 
 public:
-	MSNEditAccountWidget( MSNProtocol *proto, KopeteAccount *account, QWidget *parent = 0, const char *name = 0 );
+	MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account *account, QWidget *parent = 0, const char *name = 0 );
 	~MSNEditAccountWidget();
 	virtual bool validateData();
-	virtual KopeteAccount * apply();
+	virtual Kopete::Account * apply();
 
 private slots:
 	void slotAllow();

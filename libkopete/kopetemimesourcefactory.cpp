@@ -64,10 +64,10 @@ const QMimeSource *MimeSourceFactory::data( const QString &abs_name ) const
 	{
 		if ( parts.size() >= 4 )
 		{
-			KopeteAccount *account = KopeteAccountManager::manager()->findAccount( parts[1], parts[2] );
+			Account *account = AccountManager::manager()->findAccount( parts[1], parts[2] );
 			if ( account ) 
 			{
-				KopeteContact *contact = account->contacts()[ parts[3] ];
+				Contact *contact = account->contacts()[ parts[3] ];
 				if ( contact )
 				{
 					img = contact->onlineStatus().iconFor( contact );
@@ -87,7 +87,7 @@ const QMimeSource *MimeSourceFactory::data( const QString &abs_name ) const
 	{
 		if ( parts.size() >= 3 )
 		{
-			KopeteAccount *account = KopeteAccountManager::manager()->findAccount( parts[1], parts[2] );
+			Account *account = AccountManager::manager()->findAccount( parts[1], parts[2] );
 			if ( account )
 			{
 				img = account->myself()->onlineStatus().iconFor( account->myself() );
@@ -104,7 +104,7 @@ const QMimeSource *MimeSourceFactory::data( const QString &abs_name ) const
 	{
 		if ( parts.size() >= 2 )
 		{
-			KopeteMetaContact *mc = KopeteContactList::contactList()->metaContact( parts[1] );
+			MetaContact *mc = ContactList::contactList()->metaContact( parts[1] );
 			if ( mc )
 			{	
 				img = SmallIcon( mc->statusIcon() );
@@ -131,7 +131,7 @@ const QMimeSource *MimeSourceFactory::data( const QString &abs_name ) const
 			 * Note that if the cache has been invalidated in the meantime, we'll just
 			 * get an empty pixmap back.
 			 */
-			KopeteAccount *account = KopeteAccountManager::manager()->accounts().getFirst();
+			Account *account = AccountManager::manager()->accounts().getFirst();
 			if ( account )
 			{
 				img = account->myself()->onlineStatus().iconFor( parts[1] );

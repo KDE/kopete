@@ -27,9 +27,9 @@ class KActionMenu;
 class KCodecAction;
 class KToggleAction;
 
-class KopeteMetaContact;
-class KopeteMessageManager;
-class KopeteMessage;
+namespace Kopete { class MetaContact; }
+namespace Kopete { class MessageManager; }
+namespace Kopete { class Message; }
 class KopeteView;
 
 class IRCAccount;
@@ -38,7 +38,7 @@ class IRCContactManager;
 /**
  * @author Jason Keirstead <jason@keirstead.org>
  *
- * This class is the @ref KopeteContact object representing IRC Channels, not users.
+ * This class is the @ref Kopete::Contact object representing IRC Channels, not users.
  * It is derrived from IRCContact where much of its functionality is shared with @ref IRCUserContact.
  */
 class IRCChannelContact
@@ -49,7 +49,7 @@ class IRCChannelContact
 	Q_OBJECT
 
 public:
-	IRCChannelContact(IRCContactManager *, const QString &channel, KopeteMetaContact *metac);
+	IRCChannelContact(IRCContactManager *, const QString &channel, Kopete::MetaContact *metac);
 	~IRCChannelContact();
 
 	/**
@@ -72,7 +72,7 @@ public:
 	 */
 	bool modeEnabled( QChar mode, QString *value = 0 );
 
-	// KopeteContact stuff
+	// Kopete::Contact stuff
 	virtual QPtrList<KAction> *customContextMenuActions();
 	virtual const QString caption() const;
 

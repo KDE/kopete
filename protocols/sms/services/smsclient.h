@@ -32,10 +32,10 @@ class SMSClient : public SMSService
 {
 	Q_OBJECT
 public:
-	SMSClient(KopeteAccount* account);
+	SMSClient(Kopete::Account* account);
 	~SMSClient();
 
-	void send(const KopeteMessage& msg);
+	void send(const Kopete::Message& msg);
 	void setWidgetContainer(QWidget* parent, QGridLayout* container);
 
 	int maxSize();
@@ -48,7 +48,7 @@ private slots:
 	void slotReceivedOutput(KProcess*, char  *buffer, int  buflen);
 	void slotSendFinished(KProcess* p);
 signals:
-	void messageSent(const KopeteMessage &);
+	void messageSent(const Kopete::Message &);
 
 private:
 	QWidget* configureWidget(QWidget* parent);
@@ -57,7 +57,7 @@ private:
 	QStringList providers();
 	QStringList output;
 
-	KopeteMessage m_msg;
+	Kopete::Message m_msg;
 
 	QString m_description;
 } ;

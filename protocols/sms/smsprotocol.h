@@ -31,13 +31,13 @@
 class KAction;
 class KActionMenu;
 
-class KopeteContact;
-class KopeteMetaContact;
-class KopeteMessage;
-class KopeteMessageManager;
+namespace Kopete { class Contact; }
+namespace Kopete { class MetaContact; }
+namespace Kopete { class Message; }
+namespace Kopete { class MessageManager; }
 class SMSContact;
 
-class SMSProtocol : public KopeteProtocol
+class SMSProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 
@@ -50,16 +50,16 @@ public:
 	/**
 	 * Deserialize contact data
 	 */
-	virtual KopeteContact *deserializeContact(KopeteMetaContact *metaContact,
+	virtual Kopete::Contact *deserializeContact(Kopete::MetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 
-	virtual AddContactPage *createAddContactWidget(QWidget *parent , KopeteAccount *i);
-	virtual KopeteEditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
-	virtual KopeteAccount *createNewAccount(const QString &accountId);
+	virtual AddContactPage *createAddContactWidget(QWidget *parent , Kopete::Account *i);
+	virtual KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent);
+	virtual Kopete::Account *createNewAccount(const QString &accountId);
 
-	const KopeteOnlineStatus SMSOnline;
-	const KopeteOnlineStatus SMSUnknown;
-	const KopeteOnlineStatus SMSOffline;
+	const Kopete::OnlineStatus SMSOnline;
+	const Kopete::OnlineStatus SMSUnknown;
+	const Kopete::OnlineStatus SMSOffline;
 
 private:
 	static SMSProtocol *s_protocol;

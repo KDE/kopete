@@ -54,7 +54,7 @@ KopeteMessageImp::~KopeteMessageImp()
 
 void KopeteMessageImp::addBindings( KJS::ExecState *exec, KJS::Object &object )
 {
-	KopeteMessage *msg = message(object);
+	Kopete::Message *msg = message(object);
 	if( msg )
 	{
 		JSProxy::MethodTable methods[] =
@@ -87,7 +87,7 @@ void KopeteMessageImp::addBindings( KJS::ExecState *exec, KJS::Object &object )
 	}
 }
 
-KopeteMessage *KopeteMessageImp::message( KJS::Object &object )
+Kopete::Message *KopeteMessageImp::message( KJS::Object &object )
 {
 	JSOpaqueProxy *op = JSProxy::toOpaqueProxy( object.imp() );
 	if ( !op )
@@ -102,12 +102,12 @@ KopeteMessage *KopeteMessageImp::message( KJS::Object &object )
 		return 0;
 	}
 
-	return (KopeteMessage*)op->toVoidStar();
+	return (Kopete::Message*)op->toVoidStar();
 }
 
 KJS::Value KopeteMessageImp::call( KJS::ExecState *exec, KJS::Object &self, const KJS::List &args )
 {
-	KopeteMessage *msg = message( self );
+	Kopete::Message *msg = message( self );
 	if( msg )
 	{
 		switch( mid )
@@ -134,19 +134,19 @@ KJS::Value KopeteMessageImp::call( KJS::ExecState *exec, KJS::Object &self, cons
 				return KJS::String( msg->plainBody() );
 
 			case setPlainBody:
-				msg->setBody( args[0].toString(exec).qstring(), KopeteMessage::PlainText );
+				msg->setBody( args[0].toString(exec).qstring(), Kopete::Message::PlainText );
 
 			case richBody:
 				return KJS::String( msg->parsedBody() );
 
 			case setRichBody:
-				msg->setBody( args[0].toString(exec).qstring(), KopeteMessage::RichText );
+				msg->setBody( args[0].toString(exec).qstring(), Kopete::Message::RichText );
 
 			case importance:
 				return KJS::Number( msg->importance() );
 
 			case setImportance:
-				msg->setImportance( KopeteMessage::MessageImportance(args[0].toInteger(exec)) );
+				msg->setImportance( Kopete::Message::MessageImportance(args[0].toInteger(exec)) );
 
 			case type:
 				return KJS::Number( msg->type() );
@@ -154,7 +154,7 @@ KJS::Value KopeteMessageImp::call( KJS::ExecState *exec, KJS::Object &self, cons
 			case asXML:
 				return KJS::String( msg->asXML().toString() );
 			//case from:
-			//return KJS::Object( new JSContact( const_cast<KopeteContact*>( msg->from() ) ) );
+			//return KJS::Object( new JSContact( const_cast<Kopete::Contact*>( msg->from() ) ) );
 		}
 	}
 

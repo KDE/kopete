@@ -29,7 +29,7 @@
 
 
 TestbedAccount::TestbedAccount( TestbedProtocol *parent, const QString& accountID, const char *name )
-: KopeteAccount ( parent, accountID , name )
+: Kopete::Account ( parent, accountID , name )
 {
 	// Init the myself contact
 	// FIXME: I think we should add a global self metaContact (Olivier)
@@ -63,7 +63,7 @@ KActionMenu* TestbedAccount::actionMenu()
 	return theActionMenu;
 }
 
-bool TestbedAccount::addContactToMetaContact(const QString& contactId, const QString& displayName, KopeteMetaContact* parentContact)
+bool TestbedAccount::addContactToMetaContact(const QString& contactId, const QString& displayName, Kopete::MetaContact* parentContact)
 {
 	kdDebug ( 14210 ) << k_funcinfo << "contactId: " << contactId << " displayName: " << displayName
 			<< endl;
@@ -147,7 +147,7 @@ void TestbedAccount::receivedMessage( const QString &message )
 
 void TestbedAccount::updateContactStatus()
 {
-	QDictIterator<KopeteContact> itr( contacts() );
+	QDictIterator<Kopete::Contact> itr( contacts() );
 	for ( ; itr.current(); ++itr )
 		itr.current()->setOnlineStatus( myself()->onlineStatus() );
 }

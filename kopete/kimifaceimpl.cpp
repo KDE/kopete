@@ -40,9 +40,9 @@
 
 KIMIfaceImpl::KIMIfaceImpl() : DCOPObject( "KIMIface" ), QObject()
 {
-	connect( KopeteContactList::contactList(),
-		SIGNAL( metaContactAdded( KopeteMetaContact * ) ),
-		SLOT( slotMetaContactAdded( KopeteMetaContact * ) ) );
+	connect( Kopete::ContactList::contactList(),
+		SIGNAL( metaContactAdded( Kopete::MetaContact * ) ),
+		SLOT( slotMetaContactAdded( Kopete::MetaContact * ) ) );
 }
 
 KIMIfaceImpl::~KIMIfaceImpl()
@@ -52,8 +52,8 @@ KIMIfaceImpl::~KIMIfaceImpl()
 QStringList KIMIfaceImpl::allContacts()
 {
 	QStringList result;
-	QPtrList<KopeteMetaContact> list = KopeteContactList::contactList()->metaContacts();
-	QPtrListIterator<KopeteMetaContact> it( list );
+	QPtrList<Kopete::MetaContact> list = Kopete::ContactList::contactList()->metaContacts();
+	QPtrListIterator<Kopete::MetaContact> it( list );
 	for( ; it.current(); ++it )
 	{
 		if ( !it.current()->metaContactId().isNull() )
@@ -66,8 +66,8 @@ QStringList KIMIfaceImpl::allContacts()
 QStringList KIMIfaceImpl::reachableContacts()
 {
 	QStringList result;
-	QPtrList<KopeteMetaContact> list = KopeteContactList::contactList()->metaContacts();
-	QPtrListIterator<KopeteMetaContact> it( list );
+	QPtrList<Kopete::MetaContact> list = Kopete::ContactList::contactList()->metaContacts();
+	QPtrListIterator<Kopete::MetaContact> it( list );
 	for( ; it.current(); ++it )
 	{
 		if ( it.current()->isReachable() && !it.current()->metaContactId().isNull() )
@@ -80,8 +80,8 @@ QStringList KIMIfaceImpl::reachableContacts()
 QStringList KIMIfaceImpl::onlineContacts()
 {
 	QStringList result;
-	QPtrList<KopeteMetaContact> list = KopeteContactList::contactList()->metaContacts();
-	QPtrListIterator<KopeteMetaContact> it( list );
+	QPtrList<Kopete::MetaContact> list = Kopete::ContactList::contactList()->metaContacts();
+	QPtrListIterator<Kopete::MetaContact> it( list );
 	for( ; it.current(); ++it )
 	{
 		if ( it.current()->isOnline() && !it.current()->metaContactId().isNull() )
@@ -94,8 +94,8 @@ QStringList KIMIfaceImpl::onlineContacts()
 QStringList KIMIfaceImpl::fileTransferContacts()
 {
 	QStringList result;
-	QPtrList<KopeteMetaContact> list = KopeteContactList::contactList()->metaContacts();
-	QPtrListIterator<KopeteMetaContact> it( list );
+	QPtrList<Kopete::MetaContact> list = Kopete::ContactList::contactList()->metaContacts();
+	QPtrListIterator<Kopete::MetaContact> it( list );
 	for( ; it.current(); ++it )
 	{
 		if ( it.current()->canAcceptFiles() && !it.current()->metaContactId().isNull() )
@@ -107,8 +107,8 @@ QStringList KIMIfaceImpl::fileTransferContacts()
 
 bool KIMIfaceImpl::isPresent( const QString & uid )
 {
-	KopeteMetaContact *mc;
-	mc = KopeteContactList::contactList()->metaContact( uid );
+	Kopete::MetaContact *mc;
+	mc = Kopete::ContactList::contactList()->metaContact( uid );
 
 	return ( mc != 0 );
 }
@@ -116,8 +116,8 @@ bool KIMIfaceImpl::isPresent( const QString & uid )
 
 QString KIMIfaceImpl::displayName( const QString & uid )
 {
-	KopeteMetaContact *mc;
-	mc = KopeteContactList::contactList()->metaContact( uid );
+	Kopete::MetaContact *mc;
+	mc = Kopete::ContactList::contactList()->metaContact( uid );
 	QString name;
 	if ( mc )
 		name = mc->displayName();
@@ -129,26 +129,26 @@ int KIMIfaceImpl::presenceStatus( const QString & uid )
 {
 	kdDebug( 14000 ) << k_funcinfo << endl;
 	int p = -1;
-	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( uid );
+	Kopete::MetaContact *m = Kopete::ContactList::contactList()->metaContact( uid );
 	if ( m )
 	{
-		KopeteOnlineStatus status = m->status();
+		Kopete::OnlineStatus status = m->status();
 		switch ( status.status() )
 		{
-			case KopeteOnlineStatus::Unknown:
+			case Kopete::OnlineStatus::Unknown:
 				p = 0;
 			break;
-			case KopeteOnlineStatus::Offline:
-			case KopeteOnlineStatus::Invisible:
+			case Kopete::OnlineStatus::Offline:
+			case Kopete::OnlineStatus::Invisible:
 				p = 1;
 			break;
-			case KopeteOnlineStatus::Connecting:
+			case Kopete::OnlineStatus::Connecting:
 				p = 2;
 			break;
-			case KopeteOnlineStatus::Away:
+			case Kopete::OnlineStatus::Away:
 				p = 3;
 			break;
-			case KopeteOnlineStatus::Online:
+			case Kopete::OnlineStatus::Online:
 				p = 4;
 			break;
 		}
@@ -160,10 +160,10 @@ QString KIMIfaceImpl::presenceString( const QString & uid )
 {
 	kdDebug( 14000 ) <<  "KIMIfaceImpl::presenceString" << endl;
 	QString p;
-	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( uid );
+	Kopete::MetaContact *m = Kopete::ContactList::contactList()->metaContact( uid );
 	if ( m )
 	{
-		KopeteOnlineStatus status = m->status();
+		Kopete::OnlineStatus status = m->status();
 			p = status.description();
 		kdDebug( 14000 ) << "Got presence for " <<  uid << " : " << p.ascii() << endl;
 	}
@@ -177,8 +177,8 @@ QString KIMIfaceImpl::presenceString( const QString & uid )
 
 bool KIMIfaceImpl::canReceiveFiles( const QString & uid )
 {
-	KopeteMetaContact *mc;
-	mc = KopeteContactList::contactList()->metaContact( uid );
+	Kopete::MetaContact *mc;
+	mc = Kopete::ContactList::contactList()->metaContact( uid );
 
 	if ( mc )
 		return mc->canAcceptFiles();
@@ -188,14 +188,14 @@ bool KIMIfaceImpl::canReceiveFiles( const QString & uid )
 
 bool KIMIfaceImpl::canRespond( const QString & uid )
 {
-	KopeteMetaContact *mc;
-	mc = KopeteContactList::contactList()->metaContact( uid );
+	Kopete::MetaContact *mc;
+	mc = Kopete::ContactList::contactList()->metaContact( uid );
 
 	if ( mc )
 	{
-		QPtrList<KopeteContact> list = mc->contacts();
-		QPtrListIterator<KopeteContact> it( list );
-		KopeteContact *contact;
+		QPtrList<Kopete::Contact> list = mc->contacts();
+		QPtrListIterator<Kopete::Contact> it( list );
+		Kopete::Contact *contact;
 		while ( ( contact = it.current() ) != 0 )
 		{
 			++it;
@@ -208,27 +208,27 @@ bool KIMIfaceImpl::canRespond( const QString & uid )
 
 QString KIMIfaceImpl::locate( const QString & contactId, const QString & protocolId )
 {
-	KopeteMetaContact *mc = locateProtocolContact( contactId, protocolId );
+	Kopete::MetaContact *mc = locateProtocolContact( contactId, protocolId );
 	if ( mc )
 		return mc->metaContactId();
 	else
 		return QString::null;
 }
 
-KopeteMetaContact * KIMIfaceImpl::locateProtocolContact( const QString & contactId, const QString & protocolId )
+Kopete::MetaContact * KIMIfaceImpl::locateProtocolContact( const QString & contactId, const QString & protocolId )
 {
-	KopeteMetaContact *mc = 0;
+	Kopete::MetaContact *mc = 0;
 	// find a matching protocol
-	KopeteProtocol *protocol = dynamic_cast<KopeteProtocol*>( KopetePluginManager::self()->plugin( protocolId ) );
+	Kopete::Protocol *protocol = dynamic_cast<Kopete::Protocol*>( Kopete::PluginManager::self()->plugin( protocolId ) );
 
 	if ( protocol )
 	{
 		// find its accounts
-		QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( protocol );
-		QDictIterator<KopeteAccount> it( accounts );
+		QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts( protocol );
+		QDictIterator<Kopete::Account> it( accounts );
 		for( ; it.current(); ++it )
 		{
-			mc = KopeteContactList::contactList()->findContact( protocolId, it.currentKey(), contactId  );
+			mc = Kopete::ContactList::contactList()->findContact( protocolId, it.currentKey(), contactId  );
 			if (mc)
 				break;
 		}
@@ -238,7 +238,7 @@ KopeteMetaContact * KIMIfaceImpl::locateProtocolContact( const QString & contact
 
 QPixmap KIMIfaceImpl::icon( const QString & uid )
 {
-	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( uid );
+	Kopete::MetaContact *m = Kopete::ContactList::contactList()->metaContact( uid );
 	QPixmap p;
 	if ( m )
 		p = SmallIcon( m->statusIcon() );
@@ -256,7 +256,7 @@ QString KIMIfaceImpl::context( const QString & uid )
 
 QStringList KIMIfaceImpl::protocols()
 {
-	QValueList<KPluginInfo *> protocols = KopetePluginManager::self()->availablePlugins( "Protocols" );
+	QValueList<KPluginInfo *> protocols = Kopete::PluginManager::self()->availablePlugins( "Protocols" );
 	QStringList protocolList;
 	for ( QValueList<KPluginInfo *>::Iterator it = protocols.begin(); it != protocols.end(); ++it )
 		protocolList.append( (*it)->name() );
@@ -268,7 +268,7 @@ void KIMIfaceImpl::messageContact( const QString &uid, const QString& messageTex
 {
 	// TODO: make it possible to specify the message here
 	Q_UNUSED( messageText );
-	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( uid );
+	Kopete::MetaContact *m = Kopete::ContactList::contactList()->metaContact( uid );
 	if ( m )
 		m->sendMessage();
 	else
@@ -277,14 +277,14 @@ void KIMIfaceImpl::messageContact( const QString &uid, const QString& messageTex
 
 void KIMIfaceImpl::messageNewContact( const QString &contactId, const QString &protocol )
 {
-	KopeteMetaContact *mc = locateProtocolContact( contactId, protocol );
+	Kopete::MetaContact *mc = locateProtocolContact( contactId, protocol );
 	if ( mc )
 		mc->sendMessage();
 }
 
 void KIMIfaceImpl::chatWithContact( const QString &uid )
 {
-	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( uid );
+	Kopete::MetaContact *m = Kopete::ContactList::contactList()->metaContact( uid );
 	if ( m )
 		m->execute();
 	else
@@ -294,7 +294,7 @@ void KIMIfaceImpl::chatWithContact( const QString &uid )
 void KIMIfaceImpl::sendFile(const QString &uid, const KURL &sourceURL,
 		const QString &altFileName, uint fileSize)
 {
-	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( uid );
+	Kopete::MetaContact *m = Kopete::ContactList::contactList()->metaContact( uid );
 	if ( m )
 		m->sendFile( sourceURL, altFileName, fileSize );
     // else, prompt to create a new MC associated with UID
@@ -303,14 +303,14 @@ void KIMIfaceImpl::sendFile(const QString &uid, const KURL &sourceURL,
 bool KIMIfaceImpl::addContact( const QString &contactId, const QString &protocolId )
 {
 	// find a matching protocol
-	KopeteProtocol *protocol = dynamic_cast<KopeteProtocol*>( KopetePluginManager::self()->plugin( protocolId ) );
+	Kopete::Protocol *protocol = dynamic_cast<Kopete::Protocol*>( Kopete::PluginManager::self()->plugin( protocolId ) );
 
 	if ( protocol )
 	{
 		// find its accounts
-		QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( protocol );
-		QDictIterator<KopeteAccount> it( accounts );
-		KopeteAccount *ac = it.toFirst();
+		QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts( protocol );
+		QDictIterator<Kopete::Account> it( accounts );
+		Kopete::Account *ac = it.toFirst();
 		if ( ac )
 		{
 			ac->addContact( contactId );
@@ -320,34 +320,34 @@ bool KIMIfaceImpl::addContact( const QString &contactId, const QString &protocol
 	return false;
 }
 
-void KIMIfaceImpl::slotMetaContactAdded( KopeteMetaContact *mc )
+void KIMIfaceImpl::slotMetaContactAdded( Kopete::MetaContact *mc )
 {
-	connect( mc, SIGNAL( onlineStatusChanged( KopeteMetaContact *, KopeteOnlineStatus::OnlineStatus ) ),
-		SLOT( slotContactStatusChanged( KopeteMetaContact * ) ) );
+	connect( mc, SIGNAL( onlineStatusChanged( Kopete::MetaContact *, Kopete::OnlineStatus::StatusType ) ),
+		SLOT( slotContactStatusChanged( Kopete::MetaContact * ) ) );
 }
 
-void KIMIfaceImpl::slotContactStatusChanged( KopeteMetaContact *mc )
+void KIMIfaceImpl::slotContactStatusChanged( Kopete::MetaContact *mc )
 {
 	if ( !mc->metaContactId().isNull() )
 	{
 		int p = -1;
-		KopeteOnlineStatus status = mc->status();
+		Kopete::OnlineStatus status = mc->status();
 		switch ( status.status() )
 		{
-			case KopeteOnlineStatus::Unknown:
+			case Kopete::OnlineStatus::Unknown:
 				p = 0;
 			break;
-			case KopeteOnlineStatus::Offline:
-			case KopeteOnlineStatus::Invisible:
+			case Kopete::OnlineStatus::Offline:
+			case Kopete::OnlineStatus::Invisible:
 				p = 1;
 			break;
-			case KopeteOnlineStatus::Connecting:
+			case Kopete::OnlineStatus::Connecting:
 				p = 2;
 			break;
-			case KopeteOnlineStatus::Away:
+			case Kopete::OnlineStatus::Away:
 				p = 3;
 			break;
-			case KopeteOnlineStatus::Online:
+			case Kopete::OnlineStatus::Online:
 				p = 4;
 			break;
 		}

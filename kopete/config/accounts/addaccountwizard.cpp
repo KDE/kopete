@@ -55,7 +55,7 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 
 	QListViewItem *pluginItem = 0L;
 
-	QValueList<KPluginInfo *> protocols = KopetePluginManager::self()->availablePlugins( "Protocols" );
+	QValueList<KPluginInfo *> protocols = Kopete::PluginManager::self()->availablePlugins( "Protocols" );
 
 	for ( QValueList<KPluginInfo *>::Iterator it = protocols.begin(); it != protocols.end(); ++it )
 	{
@@ -107,7 +107,7 @@ void AddAccountWizard::slotProtocolListDoubleClicked( QListViewItem *lvi)
 void AddAccountWizard::accept()
 {
 	//kdDebug( 14100 ) << k_funcinfo << endl;
-	KopeteAccount *account = m_accountPage->apply();
+	Kopete::Account *account = m_accountPage->apply();
 	if ( account && m_finish->mUseColor->isChecked() )
 		account->setColor( m_finish->mColorButton->color() );
 
@@ -115,7 +115,7 @@ void AddAccountWizard::accept()
 	{
 		//Make sur the protocol is correctly enabled.  This is not realy needed, but still good
 		QString protocol_name=m_proto->pluginId().remove( "Protocol" ).lower();
-		KopetePluginManager::self()->setPluginEnabled( protocol_name , true );
+		Kopete::PluginManager::self()->setPluginEnabled( protocol_name , true );
 	}
 	
 	KWizard::accept();
@@ -127,13 +127,13 @@ void AddAccountWizard::accept()
 
 void AddAccountWizard::reject()
 {
-	if(m_proto && KopeteAccountManager::manager()->accounts(m_proto).isEmpty())
+	if(m_proto && Kopete::AccountManager::manager()->accounts(m_proto).isEmpty())
 	{
 		//FIXME: we should use a decent way to do that
 		QString protocol_name=m_proto->pluginId().remove( "Protocol" ).lower();
 
-//		KopetePluginManager::self()->setPluginEnabled( protocol_name , false );
-		KopetePluginManager::self()->unloadPlugin( protocol_name );
+//		Kopete::PluginManager::self()->setPluginEnabled( protocol_name , false );
+		Kopete::PluginManager::self()->unloadPlugin( protocol_name );
 
 	}
 
@@ -183,7 +183,7 @@ void AddAccountWizard::next()
 		QListViewItem *lvi = m_selectService->protocolListView->selectedItem();
 		if ( lvi )
 		{
-			m_proto = dynamic_cast<KopeteProtocol *>( KopetePluginManager::self()->loadPlugin( m_protocolItems[ lvi ]->pluginName() ) );
+			m_proto = dynamic_cast<Kopete::Protocol *>( Kopete::PluginManager::self()->loadPlugin( m_protocolItems[ lvi ]->pluginName() ) );
 			if ( m_proto )
 			{
 				if ( m_accountPage )
@@ -226,7 +226,7 @@ void AddAccountWizard::next()
 		if ( !m_accountPage->validateData() )
 			return;
 
-		QColor col = KopeteAccountManager::manager()->guessColor( m_proto );
+		QColor col = Kopete::AccountManager::manager()->guessColor( m_proto );
 
 		m_finish->mColorButton->setColor( col );
 		m_finish->mUseColor->setChecked( col.isValid() );

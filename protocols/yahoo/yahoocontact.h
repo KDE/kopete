@@ -24,27 +24,27 @@
 /* Kopete Includes */
 #include "kopetecontact.h"
 
-class KopeteMessageManager;
-class KopeteMetaContact;
-class KopeteOnlineStatus;
+namespace Kopete { class MessageManager; }
+namespace Kopete { class MetaContact; }
+namespace Kopete { class OnlineStatus; }
 class YahooProtocol;
 class YahooAccount;
 
-class YahooContact : public KopeteContact
+class YahooContact : public Kopete::Contact
 {
 	Q_OBJECT
 public:
-	YahooContact( YahooAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact );
+	YahooContact( YahooAccount *account, const QString &userId, const QString &fullName, Kopete::MetaContact *metaContact );
 	~YahooContact();
 
 	/** Base Class Reimplementations **/
 	virtual bool isOnline() const;
 	virtual bool isReachable();
 	virtual QPtrList<KAction> *customContextMenuActions();
-	virtual KopeteMessageManager *manager( bool canCreate = false );
+	virtual Kopete::MessageManager *manager( bool canCreate = false );
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
-	void setYahooStatus( const KopeteOnlineStatus& );
+	void setYahooStatus( const Kopete::OnlineStatus& );
 
 	/** The group name getter and setter methods**/
 	QString group() const;
@@ -66,7 +66,7 @@ public slots:
 
 private slots:
 	void slotMessageManagerDestroyed();
-	void slotSendMessage( KopeteMessage& );
+	void slotSendMessage( Kopete::Message& );
 	void slotTyping( bool );
 
 private:
@@ -77,7 +77,7 @@ private:
 	QString m_groupName;
 
 	//The message manager
-	KopeteMessageManager *m_manager;
+	Kopete::MessageManager *m_manager;
 
 	//the account that this contact belongs to
 	YahooAccount* m_account;

@@ -51,23 +51,23 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, XMPP::FileTrans
 	{
 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "No matching local contact found, creating a new one." << endl;
 
-		KopeteMetaContact *metaContact = new KopeteMetaContact ();
+		Kopete::MetaContact *metaContact = new Kopete::MetaContact ();
 
 		metaContact->setTemporary (true);
 
 		contact = mAccount->contactPool()->addContact ( mXMPPTransfer->peer (), metaContact, false );
 
-		KopeteContactList::contactList ()->addMetaContact ( metaContact );
+		Kopete::ContactList::contactList ()->addMetaContact ( metaContact );
 	}
 
-	connect ( KopeteTransferManager::transferManager (), SIGNAL ( accepted ( KopeteTransfer *, const QString & ) ),
-			  this, SLOT ( slotIncomingTransferAccepted ( KopeteTransfer *, const QString & ) ) );
-	connect ( KopeteTransferManager::transferManager (), SIGNAL ( refused ( const KopeteFileTransferInfo & ) ),
-			  this, SLOT ( slotTransferRefused ( const KopeteFileTransferInfo & ) ) );
+	connect ( Kopete::TransferManager::transferManager (), SIGNAL ( accepted ( Kopete::Transfer *, const QString & ) ),
+			  this, SLOT ( slotIncomingTransferAccepted ( Kopete::Transfer *, const QString & ) ) );
+	connect ( Kopete::TransferManager::transferManager (), SIGNAL ( refused ( const Kopete::FileTransferInfo & ) ),
+			  this, SLOT ( slotTransferRefused ( const Kopete::FileTransferInfo & ) ) );
 
 	initializeVariables ();
 
-	mTransferId = KopeteTransferManager::transferManager()->askIncomingTransfer ( contact,
+	mTransferId = Kopete::TransferManager::transferManager()->askIncomingTransfer ( contact,
 																				  mXMPPTransfer->fileName (),
 																				  mXMPPTransfer->fileSize (),
 																				  mXMPPTransfer->description () );
@@ -82,11 +82,11 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberBaseConta
 	mLocalFile.setName ( file );
 	mLocalFile.open ( IO_ReadOnly );
 
-	mKopeteTransfer = KopeteTransferManager::transferManager()->addTransfer ( contact,
+	mKopeteTransfer = Kopete::TransferManager::transferManager()->addTransfer ( contact,
 																			  mLocalFile.name (),
 																			  mLocalFile.size (),
 																			  contact->contactId (),
-																			  KopeteFileTransferInfo::Outgoing );
+																			  Kopete::FileTransferInfo::Outgoing );
 
  	connect ( mKopeteTransfer, SIGNAL ( result ( KIO::Job * ) ), this, SLOT ( slotTransferResult () ) );
 
@@ -123,7 +123,7 @@ void JabberFileTransfer::initializeVariables ()
 
 }
 
-void JabberFileTransfer::slotIncomingTransferAccepted ( KopeteTransfer *transfer, const QString &fileName )
+void JabberFileTransfer::slotIncomingTransferAccepted ( Kopete::Transfer *transfer, const QString &fileName )
 {
 
 	if ( (long)transfer->info().transferId () != mTransferId )
@@ -194,7 +194,7 @@ void JabberFileTransfer::slotIncomingTransferAccepted ( KopeteTransfer *transfer
 
 }
 
-void JabberFileTransfer::slotTransferRefused ( const KopeteFileTransferInfo &transfer )
+void JabberFileTransfer::slotTransferRefused ( const Kopete::FileTransferInfo &transfer )
 {
 
 	if ( (long)transfer.transferId () != mTransferId )

@@ -526,10 +526,10 @@ void MeanwhileLibrary::slotSocketClosed(int reason)
 //    }
 }
 
-void MeanwhileLibrary::addContacts(const QDict<KopeteContact>& contacts)
+void MeanwhileLibrary::addContacts(const QDict<Kopete::Contact>& contacts)
 {
 HERE
-    QDictIterator<KopeteContact> it(contacts); 
+    QDictIterator<Kopete::Contact> it(contacts); 
 
     struct mwAwareIdBlock *buddies,*aBuddy;
     int count;

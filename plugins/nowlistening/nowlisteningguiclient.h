@@ -34,13 +34,13 @@ class NowListeningGUIClient : public QObject , public KXMLGUIClient
 {
 Q_OBJECT
 	public:
-		NowListeningGUIClient( KopeteMessageManager *parent );
+		NowListeningGUIClient( Kopete::MessageManager *parent );
 		virtual ~NowListeningGUIClient() {}
 	protected slots:
 		void slotAdvertToCurrentChat();
 
 	private:
-		KopeteMessageManager* m_msgManager;
+		Kopete::MessageManager* m_msgManager;
 };
 
 #endif

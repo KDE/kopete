@@ -30,17 +30,17 @@
 #include "smsaccount.h"
 
 class KProcess;
-class KopeteAccount;
+namespace Kopete { class Account; }
 class SMSContact;
 
 class SMSSendProvider : public QObject
 {
 	Q_OBJECT
 public:
-	SMSSendProvider(const QString& providerName, const QString& prefixValue, KopeteAccount* account, QObject* parent = 0, const char* name = 0);
+	SMSSendProvider(const QString& providerName, const QString& prefixValue, Kopete::Account* account, QObject* parent = 0, const char* name = 0);
 	~SMSSendProvider();
 
-	void setAccount(KopeteAccount *account);
+	void setAccount(Kopete::Account *account);
 
 	int count();
 	const QString& name(int i);
@@ -49,7 +49,7 @@ public:
 	const bool isHidden(int i);
 
 	void save(QPtrList<KLineEdit>& args);
-	void send(const KopeteMessage& msg);
+	void send(const Kopete::Message& msg);
 
 	int maxSize();
 private slots:
@@ -69,14 +69,14 @@ private:
 	QString prefix;
 	QCString output;
 
-	KopeteAccount* m_account;
+	Kopete::Account* m_account;
 
-	KopeteMessage m_msg;
+	Kopete::Message m_msg;
 
 	bool canSend;
 signals:
-	void messageSent(const KopeteMessage& msg);
-	void messageNotSent(const KopeteMessage& msg, const QString &error);
+	void messageSent(const Kopete::Message& msg);
+	void messageNotSent(const Kopete::Message& msg, const QString &error);
 } ;
 
 #endif //SMSSENDPROVIDER_H

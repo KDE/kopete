@@ -24,20 +24,23 @@
 #define KOPETE_GROUP_DEFAULT_OPEN_ICON "folder_green_open"
 #define KOPETE_GROUP_DEFAULT_CLOSED_ICON "folder_green"
 
+namespace Kopete
+{
+class Group;
+}
+
 /**
  * @author Olivier Goffart
  */
-class KopeteGroup;
-
 class KopeteGroupViewItem : public Kopete::UI::ListView::Item
 {
 	Q_OBJECT
 public:
-	KopeteGroupViewItem( KopeteGroup *group , QListView *parent, const char *name = 0 );
-	KopeteGroupViewItem( KopeteGroup *group , QListViewItem *parent, const char *name = 0 );
+	KopeteGroupViewItem( Kopete::Group *group , QListView *parent, const char *name = 0 );
+	KopeteGroupViewItem( Kopete::Group *group , QListViewItem *parent, const char *name = 0 );
 	~KopeteGroupViewItem();
 
-	KopeteGroup * group() const;
+	Kopete::Group * group() const;
 
 	virtual void startRename( int col );
 
@@ -61,7 +64,7 @@ protected:
 private:
 	void initLVI();
 
-	KopeteGroup *m_group;
+	Kopete::Group *m_group;
 	QPixmap open, closed;
 
 	QString key( int column, bool ascending ) const;

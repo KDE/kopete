@@ -45,32 +45,32 @@ K_EXPORT_COMPONENT_FACTORY( kopete_gadu, KGenericFactory<GaduProtocol>( "kopete_
 GaduProtocol* GaduProtocol::protocolStatic_ = 0L;
 
 GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList& )
-:KopeteProtocol( GaduProtocolFactory::instance(), parent, name ),
+:Kopete::Protocol( GaduProtocolFactory::instance(), parent, name ),
 			propFirstName(Kopete::Global::Properties::self()->firstName()),
 			propLastName(Kopete::Global::Properties::self()->lastName()),
 			propEmail(Kopete::Global::Properties::self()->emailAddress()),
 			propAwayMessage(Kopete::Global::Properties::self()->awayMessage()),
 			propPhoneNr(Kopete::Global::Properties::self()->privatePhone()),
 			defaultAccount_( 0 ),
-			gaduStatusBlocked_( KopeteOnlineStatus::Away, GG_STATUS_BLOCKED, this, GG_STATUS_BLOCKED,
+			gaduStatusBlocked_( Kopete::OnlineStatus::Away, GG_STATUS_BLOCKED, this, GG_STATUS_BLOCKED,
 				"gg_ignored", "", i18n( "Blocked" ) ),
-			gaduStatusOffline_( KopeteOnlineStatus::Offline, GG_STATUS_NOT_AVAIL, this, GG_STATUS_NOT_AVAIL,
+			gaduStatusOffline_( Kopete::OnlineStatus::Offline, GG_STATUS_NOT_AVAIL, this, GG_STATUS_NOT_AVAIL,
 				"gg_offline", i18n( "Go O&ffline" ), i18n( "Offline" ) ),
-			gaduStatusOfflineDescr_( KopeteOnlineStatus::Away, GG_STATUS_NOT_AVAIL_DESCR, this, GG_STATUS_NOT_AVAIL_DESCR,
+			gaduStatusOfflineDescr_( Kopete::OnlineStatus::Away, GG_STATUS_NOT_AVAIL_DESCR, this, GG_STATUS_NOT_AVAIL_DESCR,
 				"gg_offline_d", i18n( "Go A&way" ), i18n( "Offline" ) ),
-			gaduStatusBusy_(KopeteOnlineStatus::Away, GG_STATUS_BUSY, this, GG_STATUS_BUSY,
+			gaduStatusBusy_(Kopete::OnlineStatus::Away, GG_STATUS_BUSY, this, GG_STATUS_BUSY,
 				"gg_busy", i18n( "Go B&usy" ), i18n( "Busy" ) ),
-			gaduStatusBusyDescr_(KopeteOnlineStatus::Away, GG_STATUS_BUSY_DESCR, this, GG_STATUS_BUSY_DESCR,
+			gaduStatusBusyDescr_(Kopete::OnlineStatus::Away, GG_STATUS_BUSY_DESCR, this, GG_STATUS_BUSY_DESCR,
 				"gg_busy_d", i18n( "Go B&usy" ), i18n( "Busy" ) ),
-			gaduStatusInvisible_( KopeteOnlineStatus::Invisible, GG_STATUS_INVISIBLE, this, GG_STATUS_INVISIBLE,
+			gaduStatusInvisible_( Kopete::OnlineStatus::Invisible, GG_STATUS_INVISIBLE, this, GG_STATUS_INVISIBLE,
 				"gg_invi", i18n( "Go I&nvisible" ), i18n( "Invisible" ) ),
-			gaduStatusInvisibleDescr_(KopeteOnlineStatus::Invisible, GG_STATUS_INVISIBLE_DESCR, this, GG_STATUS_INVISIBLE_DESCR,
+			gaduStatusInvisibleDescr_(Kopete::OnlineStatus::Invisible, GG_STATUS_INVISIBLE_DESCR, this, GG_STATUS_INVISIBLE_DESCR,
 				"gg_invi_d", i18n( "Go I&nvisible" ), i18n( "Invisible" ) ),
-			gaduStatusAvail_(KopeteOnlineStatus::Online, GG_STATUS_AVAIL, this, GG_STATUS_AVAIL,
+			gaduStatusAvail_(Kopete::OnlineStatus::Online, GG_STATUS_AVAIL, this, GG_STATUS_AVAIL,
 				"gg_online", i18n( "Go &Online" ), i18n( "Online" ) ),
-			gaduStatusAvailDescr_(KopeteOnlineStatus::Online, GG_STATUS_AVAIL_DESCR, this, GG_STATUS_AVAIL_DESCR,
+			gaduStatusAvailDescr_(Kopete::OnlineStatus::Online, GG_STATUS_AVAIL_DESCR, this, GG_STATUS_AVAIL_DESCR,
 				"gg_online_d", i18n( "Go &Online" ), i18n( "Online" ) ),
-			gaduConnecting_(KopeteOnlineStatus::Offline, GG_STATUS_CONNECTING, this, GG_STATUS_CONNECTING,
+			gaduConnecting_(Kopete::OnlineStatus::Offline, GG_STATUS_CONNECTING, this, GG_STATUS_CONNECTING,
 				"gg_con", i18n( "Connect" ), i18n( "Connecting" ) )
 {
 	if ( protocolStatic_ ) {
@@ -80,9 +80,9 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
 		protocolStatic_ = this;
 	}
 
-	addAddressBookField( "messaging/gadu", KopetePlugin::MakeIndexField );
+	addAddressBookField( "messaging/gadu", Kopete::Plugin::MakeIndexField );
 
-	setRichTextCapabilities( KopeteProtocol::RichFormatting | KopeteProtocol::RichFgColor );
+	setRichTextCapabilities( Kopete::Protocol::RichFormatting | Kopete::Protocol::RichFgColor );
 
 }
 
@@ -98,7 +98,7 @@ GaduProtocol::protocol()
 }
 
 AddContactPage*
-GaduProtocol::createAddContactWidget( QWidget* parent, KopeteAccount* account )
+GaduProtocol::createAddContactWidget( QWidget* parent, Kopete::Account* account )
 {
 	return new GaduAddContactPage( static_cast<GaduAccount*>( account ), parent );
 }
@@ -108,8 +108,8 @@ GaduProtocol::settingsChanged()
 {
 }
 
-KopeteContact *
-GaduProtocol::deserializeContact( KopeteMetaContact* metaContact,
+Kopete::Contact *
+GaduProtocol::deserializeContact( Kopete::MetaContact* metaContact,
 				const QMap<QString, QString>& serializedData,
 				const QMap<QString, QString>&  /* addressBookData */ )
 {
@@ -118,9 +118,9 @@ GaduProtocol::deserializeContact( KopeteMetaContact* metaContact,
 	const QString cid	= serializedData[ "contactId" ];
 	const QString dn	= serializedData[ "displayName" ];
 
-	QDict<KopeteAccount> daccounts = KopeteAccountManager::manager()->accounts( this );
+	QDict<Kopete::Account> daccounts = Kopete::AccountManager::manager()->accounts( this );
 
-	KopeteAccount* account = daccounts[ aid ];
+	Kopete::Account* account = daccounts[ aid ];
 	if (!account) {
 		account = createNewAccount(aid);
 	}
@@ -141,7 +141,7 @@ GaduProtocol::deserializeContact( KopeteMetaContact* metaContact,
 }
 
 uint
-GaduProtocol::statusToWithDescription( KopeteOnlineStatus status )
+GaduProtocol::statusToWithDescription( Kopete::OnlineStatus status )
 {
 
 	if ( status == gaduStatusOffline_ || status == gaduStatusOfflineDescr_ ) {
@@ -179,7 +179,7 @@ GaduProtocol::statusWithDesciption( uint status )
 	return false;
 }
 
-KopeteOnlineStatus
+Kopete::OnlineStatus
 GaduProtocol::convertStatus( uint status ) const
 {
 	switch( status ){
@@ -208,7 +208,7 @@ GaduProtocol::convertStatus( uint status ) const
 	}
 }
 
-KopeteAccount*
+Kopete::Account*
 GaduProtocol::createNewAccount( const QString& accountId )
 {
 	defaultAccount_ = new GaduAccount( this, accountId );
@@ -216,7 +216,7 @@ GaduProtocol::createNewAccount( const QString& accountId )
 }
 
 KopeteEditAccountWidget*
-GaduProtocol::createEditAccountWidget( KopeteAccount* account, QWidget* parent )
+GaduProtocol::createEditAccountWidget( Kopete::Account* account, QWidget* parent )
 {
 	return( new GaduEditAccount( this, account, parent ) );
 }

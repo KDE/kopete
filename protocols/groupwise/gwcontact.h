@@ -39,18 +39,18 @@
 
 class KAction;
 class KActionCollection;
-class KopeteAccount;
+namespace Kopete { class Account; }
 class GroupWiseAccount;
 class GroupWiseMessageManager;
 class GroupWiseProtocol;
-class KopeteMetaContact;
+namespace Kopete { class MetaContact; }
 
 using namespace GroupWise;
 
 /**
 @author Will Stephenson
 */
-class GroupWiseContact : public KopeteContact
+class GroupWiseContact : public Kopete::Contact
 {
 	Q_OBJECT
 public:
@@ -58,24 +58,24 @@ public:
 	 * Constructor
 	 * @param account The GroupWiseAccount this belongs to.
 	 * @param uniqueName The userId for this contact.  May be a DN, in which case it will be converted to dotted format for the contactId and stored.
-	 * @param parent The KopeteMetaContact this contact is part of.
+	 * @param parent The Kopete::MetaContact this contact is part of.
 	 * @param objectId The contact's numeric object ID.
 	 * @param parentId The ID of this contact's parent (folder).
 	 * @param sequence This contact's sequence number (The position it appears in within its parent).
 	 */
-	GroupWiseContact( KopeteAccount* account, const QString &uniqueName, 
-			KopeteMetaContact *parent, 
+	GroupWiseContact( Kopete::Account* account, const QString &uniqueName, 
+			Kopete::MetaContact *parent, 
 			const int objectId, const int parentId, const int sequence );
 
     ~GroupWiseContact();
 
 	/** 
-	 * Access this contact's KopeteAccount subclass
+	 * Access this contact's Kopete::Account subclass
 	 */
 	GroupWiseAccount * account();
 
 	/** 
-	 * Access this contact's KopeteProtocol subclass
+	 * Access this contact's Kopete::Protocol subclass
 	 */
 	GroupWiseProtocol * protocol();
 
@@ -102,9 +102,9 @@ public:
 	virtual QPtrList<KAction> *customContextMenuActions();
 	
 	/**
-	 * Returns a KopeteMessageManager associated with this contact
+	 * Returns a Kopete::MessageManager associated with this contact
 	 */
-	virtual KopeteMessageManager *manager( bool canCreate = false );
+	virtual Kopete::MessageManager *manager( bool canCreate = false );
 
 	/** 
 	 * Locate or create a messagemanager for the specified group of contacts
@@ -173,7 +173,7 @@ public:
 	/**
 	 * Updates this contact's online status, including blocking status
 	 */
-	void setOnlineStatus(const KopeteOnlineStatus& status);
+	void setOnlineStatus(const Kopete::OnlineStatus& status);
 	/**
 	 * Are this contact's chats being administratively logged?
 	 */
@@ -183,9 +183,9 @@ public slots:
 	/**
 	 * Transmits an outgoing message to the server 
 	 * Called when the chat window send button has been pressed
-	 * (in response to the relevant KopeteMessageManager signal)
+	 * (in response to the relevant Kopete::MessageManager signal)
 	 */
-	void sendMessage( KopeteMessage &message );
+	void sendMessage( Kopete::Message &message );
 	/**
 	 * Delete this contact on the server
 	 */
@@ -202,7 +202,7 @@ public slots:
 	
 protected:
 	/**
-	 * Returns the KopeteMessageManager for the GroupWise conference with the supplied GUID, or creates a new one.
+	 * Returns the Kopete::MessageManager for the GroupWise conference with the supplied GUID, or creates a new one.
 	 */
 	GroupWiseMessageManager *manager( const ConferenceGuid & guid, bool canCreate = false );
 	// debug function to see what message managers we have on the server
@@ -217,7 +217,7 @@ protected slots:
 	 */
 	void slotConferenceCreated();
 	/**
-	 * Notify the contact that a KopeteMessageManager was
+	 * Notify the contact that a Kopete::MessageManager was
 	 * destroyed - probably by the chatwindow being closed
 	 */
 	void slotMessageManagerDeleted( QObject *sender );

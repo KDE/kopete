@@ -17,17 +17,17 @@
 
 #include "kopeteview.h"
 
-KopeteView::KopeteView( KopeteMessageManager *manager )
+KopeteView::KopeteView( Kopete::MessageManager *manager )
 {
 	m_manager = manager;
 }
 
-KopeteMessageManager *KopeteView::msgManager() const
+Kopete::MessageManager *KopeteView::msgManager() const
 {
 	return m_manager;
 }
 
-KopeteMessage::MessageType KopeteView::viewType()
+Kopete::Message::MessageType KopeteView::viewType()
 {
 	return m_type;
 }
@@ -37,9 +37,9 @@ void KopeteView::clear()
 	//Do nothing
 }
 
-void KopeteView::appendMessages(QValueList<KopeteMessage> msgs)
+void KopeteView::appendMessages(QValueList<Kopete::Message> msgs)
 {
-	QValueList<KopeteMessage>::iterator it;
+	QValueList<Kopete::Message>::iterator it;
     for ( it = msgs.begin(); it != msgs.end(); ++it )
 	{
 		appendMessage(*it);

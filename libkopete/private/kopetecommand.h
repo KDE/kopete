@@ -22,7 +22,7 @@
 #include <kaction.h>
 #include "kopetecommandhandler.h"
 
-class KopeteMessageManager;
+class Kopete::MessageManager;
 
 class KopeteCommand : public KAction
 {
@@ -35,7 +35,7 @@ class KopeteCommand : public KAction
 		 * @param parent The plugin who owns this command
 		 * @param command The command we want to handle, not including the '/'
 		 * @param handlerSlot The slot used to handle the command. This slot must
-		 *   accept two parameters, a QString of arguments, and a KopeteMessageManager
+		 *   accept two parameters, a QString of arguments, and a Kopete::MessageManager
 		 *   pointer to the Manager under which the command was sent.
 		 * @param help An optional help string to be shown when the user uses
 		 *   /help <command>
@@ -43,14 +43,14 @@ class KopeteCommand : public KAction
 		 * @param formatString The formatString of the alias if any
 		 */
 		 KopeteCommand( QObject *parent, const QString &command, const char* handlerSlot,
-		 	const QString &help = QString::null, KopeteCommandHandler::CommandType type = KopeteCommandHandler::Normal, const QString &formatString = QString::null,
+		 	const QString &help = QString::null, Kopete::CommandHandler::CommandType type = Kopete::CommandHandler::Normal, const QString &formatString = QString::null,
 			uint minArgs = 0, int maxArgs = -1, const KShortcut &cut = 0,
 			const QString &pix = QString::null );
 
 		/**
 		 * Process this command
 		 */
-		void processCommand( const QString &args, KopeteMessageManager *manager, bool gui = false );
+		void processCommand( const QString &args, Kopete::MessageManager *manager, bool gui = false );
 
 		/**
 		 * Returns the command this object handles
@@ -65,7 +65,7 @@ class KopeteCommand : public KAction
 		 /**
 		  * Returns the type of the command
 		  */
-		 const KopeteCommandHandler::CommandType type() const { return m_type; };
+		 const Kopete::CommandHandler::CommandType type() const { return m_type; };
 
 	signals:
 		/**
@@ -73,7 +73,7 @@ class KopeteCommand : public KAction
 		 * has been handled, all processing on it stops by the command handler
 		 * (a command cannot be handled twice)
 		 */
-		void handleCommand( const QString &args, KopeteMessageManager *manager );
+		void handleCommand( const QString &args, Kopete::MessageManager *manager );
 
 	private slots:
 		/**
@@ -83,17 +83,17 @@ class KopeteCommand : public KAction
 
 	private:
 		void init( const QString &command, const char* slot, const QString &help,
-			KopeteCommandHandler::CommandType type, const QString &formatString,
+			Kopete::CommandHandler::CommandType type, const QString &formatString,
 			uint minArgs, int maxArgs );
 
-		void printError( const QString &error, KopeteMessageManager *manager, bool gui = false ) const;
+		void printError( const QString &error, Kopete::MessageManager *manager, bool gui = false ) const;
 
 		QString m_command;
 		QString m_help;
 		QString m_formatString;
 		uint m_minArgs;
 		int m_maxArgs;
-		KopeteCommandHandler::CommandType m_type;
+		Kopete::CommandHandler::CommandType m_type;
 };
 
 #endif

@@ -45,7 +45,7 @@ class JabberContact;
 class dlgJabberStatus;
 class dlgJabberSendRaw;
 
-class JabberProtocol:public KopeteProtocol
+class JabberProtocol:public Kopete::Protocol
 {
 	Q_OBJECT
 
@@ -60,27 +60,27 @@ public:
 	/**
 	 * Creates the "add contact" dialog specific to this protocol
 	 */
-	virtual AddContactPage *createAddContactWidget (QWidget * parent, KopeteAccount * i);
-	virtual KopeteEditAccountWidget *createEditAccountWidget (KopeteAccount * account, QWidget * parent);
-	virtual KopeteAccount *createNewAccount (const QString & accountId);
+	virtual AddContactPage *createAddContactWidget (QWidget * parent, Kopete::Account * i);
+	virtual KopeteEditAccountWidget *createEditAccountWidget (Kopete::Account * account, QWidget * parent);
+	virtual Kopete::Account *createNewAccount (const QString & accountId);
 
 	/**
 	 * Deserialize contact data
 	 */
-	virtual KopeteContact *deserializeContact (KopeteMetaContact * metaContact,
+	virtual Kopete::Contact *deserializeContact (Kopete::MetaContact * metaContact,
 									 const QMap < QString, QString > &serializedData, const QMap < QString, QString > &addressBookData);
 
 	enum OnlineStatus { JabberOnline, JabberChatty, JabberAway, JabberXA, JabberDND,
 						JabberOffline, JabberInvisible, JabberConnecting };
 
-	const KopeteOnlineStatus JabberKOSChatty;
-	const KopeteOnlineStatus JabberKOSOnline;
-	const KopeteOnlineStatus JabberKOSAway;
-	const KopeteOnlineStatus JabberKOSXA;
-	const KopeteOnlineStatus JabberKOSDND;
-	const KopeteOnlineStatus JabberKOSOffline;
-	const KopeteOnlineStatus JabberKOSInvisible;
-	const KopeteOnlineStatus JabberKOSConnecting;
+	const Kopete::OnlineStatus JabberKOSChatty;
+	const Kopete::OnlineStatus JabberKOSOnline;
+	const Kopete::OnlineStatus JabberKOSAway;
+	const Kopete::OnlineStatus JabberKOSXA;
+	const Kopete::OnlineStatus JabberKOSDND;
+	const Kopete::OnlineStatus JabberKOSOffline;
+	const Kopete::OnlineStatus JabberKOSInvisible;
+	const Kopete::OnlineStatus JabberKOSConnecting;
 
 	const Kopete::ContactPropertyTmpl propAwayMessage;
 	const Kopete::ContactPropertyTmpl propFirstName;
@@ -108,9 +108,9 @@ public:
 	bool canSendOffline() const { return true; }
 
 	/**
-	 * Convert an XMPP::Resource status to a KopeteOnlineStatus
+	 * Convert an XMPP::Resource status to a Kopete::OnlineStatus
 	 */
-	KopeteOnlineStatus resourceToKOS ( const XMPP::Resource &resource );
+	Kopete::OnlineStatus resourceToKOS ( const XMPP::Resource &resource );
 
 private:
 	/*

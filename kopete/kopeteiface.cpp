@@ -51,19 +51,19 @@ KopeteIface::KopeteIface() : DCOPObject( "KopeteIface" )
 
 QStringList KopeteIface::contacts()
 {
-	return KopeteContactList::contactList()->contacts();
+	return Kopete::ContactList::contactList()->contacts();
 }
 
 QStringList KopeteIface::reachableContacts()
 {
-	return KopeteContactList::contactList()->reachableContacts();
+	return Kopete::ContactList::contactList()->reachableContacts();
 }
 
 QStringList KopeteIface::onlineContacts()
 {
 	QStringList result;
-	QPtrList<KopeteContact> list = KopeteContactList::contactList()->onlineContacts();
-	QPtrListIterator<KopeteContact> it( list );
+	QPtrList<Kopete::Contact> list = Kopete::ContactList::contactList()->onlineContacts();
+	QPtrListIterator<Kopete::Contact> it( list );
 	for( ; it.current(); ++it )
 		result.append( it.current()->contactId() );
 
@@ -72,24 +72,24 @@ QStringList KopeteIface::onlineContacts()
 
 QStringList KopeteIface::contactsStatus()
 {
-	return KopeteContactList::contactList()->contactStatuses();
+	return Kopete::ContactList::contactList()->contactStatuses();
 }
 
 QStringList KopeteIface::fileTransferContacts()
 {
-	return KopeteContactList::contactList()->fileTransferContacts();
+	return Kopete::ContactList::contactList()->fileTransferContacts();
 }
 
 QStringList KopeteIface::contactFileProtocols(const QString &displayName)
 {
-	return KopeteContactList::contactList()->contactFileProtocols(displayName);
+	return Kopete::ContactList::contactList()->contactFileProtocols(displayName);
 }
 
 QString KopeteIface::messageContact( const QString &contactId, const QString &messageText )
 {
-	KopeteMetaContact *mc = KopeteContactList::contactList()->findMetaContactByContactId( contactId );
+	Kopete::MetaContact *mc = Kopete::ContactList::contactList()->findMetaContactByContactId( contactId );
 	if ( mc && mc->isReachable() )
-		KopeteContactList::contactList()->messageContact( contactId, messageText );
+		Kopete::ContactList::contactList()->messageContact( contactId, messageText );
 	else
 		return "Unable to send message. The contact is not reachable";
 	
@@ -100,17 +100,17 @@ QString KopeteIface::messageContact( const QString &contactId, const QString &me
 void KopeteIface::sendFile(const QString &displayName, const KURL &sourceURL,
 	const QString &altFileName, uint fileSize)
 {
-	return KopeteContactList::contactList()->sendFile(displayName, sourceURL, altFileName, fileSize);
+	return Kopete::ContactList::contactList()->sendFile(displayName, sourceURL, altFileName, fileSize);
 }
 
 */
 
 QString KopeteIface::onlineStatus( const QString &metaContactId )
 {
-	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( metaContactId );
+	Kopete::MetaContact *m = Kopete::ContactList::contactList()->metaContact( metaContactId );
 	if( m )
 	{
-		KopeteOnlineStatus status = m->status();
+		Kopete::OnlineStatus status = m->status();
 		return status.description();
 	}
 
@@ -119,7 +119,7 @@ QString KopeteIface::onlineStatus( const QString &metaContactId )
 
 void KopeteIface::messageContactById( const QString &metaContactId )
 {
-	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( metaContactId );
+	Kopete::MetaContact *m = Kopete::ContactList::contactList()->metaContact( metaContactId );
 	if( m )
 	{
 		m->execute();
@@ -130,7 +130,7 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &accoun
 	const QString &displayName, const QString &groupName )
 {
 		//Get the protocol instance
-	KopeteAccount *myAccount = KopeteAccountManager::manager()->findAccount( protocolName, accountId );
+	Kopete::Account *myAccount = Kopete::AccountManager::manager()->findAccount( protocolName, accountId );
 
 	if( myAccount )
 	{
@@ -153,7 +153,7 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &accoun
 			.arg( protocolName ).arg( contactName ), i18n( "Allow Contact?" ) ) == 3 ) // Yes == 3
 		{
 			//User said Yes
-			myAccount->addContact( contactId, contactName, 0L, KopeteAccount::DontChangeKABC, realGroupName, false );
+			myAccount->addContact( contactId, contactName, 0L, Kopete::Account::DontChangeKABC, realGroupName, false );
 			return true;
 		} else {
 			//User said No
@@ -174,9 +174,9 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &accoun
 QStringList KopeteIface::accounts()
 {
 	QStringList list;
-	QPtrList<KopeteAccount> m_accounts=KopeteAccountManager::manager()->accounts();
-	QPtrListIterator<KopeteAccount> it( m_accounts );
-	KopeteAccount *account;
+	QPtrList<Kopete::Account> m_accounts=Kopete::AccountManager::manager()->accounts();
+	QPtrListIterator<Kopete::Account> it( m_accounts );
+	Kopete::Account *account;
 	while ( ( account = it.current() ) != 0 )
 	{
 		++it;
@@ -190,8 +190,8 @@ QStringList KopeteIface::accounts()
 
 void KopeteIface::connect(const QString &protocolId, const QString &accountId )
 {
-	QPtrListIterator<KopeteAccount> it( KopeteAccountManager::manager()->accounts() );
-	KopeteAccount *account;
+	QPtrListIterator<Kopete::Account> it( Kopete::AccountManager::manager()->accounts() );
+	Kopete::Account *account;
 	while ( ( account = it.current() ) != 0 )
 	{
 		++it;
@@ -209,8 +209,8 @@ void KopeteIface::connect(const QString &protocolId, const QString &accountId )
 
 void KopeteIface::disconnect(const QString &protocolId, const QString &accountId )
 {
-	QPtrListIterator<KopeteAccount> it( KopeteAccountManager::manager()->accounts() );
-	KopeteAccount *account;
+	QPtrListIterator<Kopete::Account> it( Kopete::AccountManager::manager()->accounts() );
+	Kopete::Account *account;
 	while ( ( account = it.current() ) != 0 )
 	{
 		++it;
@@ -228,22 +228,22 @@ void KopeteIface::disconnect(const QString &protocolId, const QString &accountId
 
 void KopeteIface::connectAll()
 {
-	KopeteAccountManager::manager()->connectAll();
+	Kopete::AccountManager::manager()->connectAll();
 }
 
 void KopeteIface::disconnectAll()
 {
-	KopeteAccountManager::manager()->disconnectAll();
+	Kopete::AccountManager::manager()->disconnectAll();
 }
 
 bool KopeteIface::loadPlugin( const QString &name )
 {
-	if ( KopetePluginManager::self()->setPluginEnabled( name ) )
+	if ( Kopete::PluginManager::self()->setPluginEnabled( name ) )
 	{
 		QString argument = name;
 		if ( !argument.startsWith( "kopete_" ) )
 			argument.prepend( "kopete_" );
-		return KopetePluginManager::self()->loadPlugin( argument );
+		return Kopete::PluginManager::self()->loadPlugin( argument );
 	}
 	else
 	{
@@ -253,12 +253,12 @@ bool KopeteIface::loadPlugin( const QString &name )
 
 bool KopeteIface::unloadPlugin( const QString &name )
 {
-	if ( KopetePluginManager::self()->setPluginEnabled( name, false ) )
+	if ( Kopete::PluginManager::self()->setPluginEnabled( name, false ) )
 	{
 		QString argument = name;
 		if ( !argument.startsWith( "kopete_" ) )
 			argument.prepend( "kopete_" );
-		return KopetePluginManager::self()->unloadPlugin( argument );
+		return Kopete::PluginManager::self()->unloadPlugin( argument );
 	}
 	else
 	{
@@ -268,22 +268,22 @@ bool KopeteIface::unloadPlugin( const QString &name )
 
 void KopeteIface::setAway()
 {
-	KopeteAccountManager::manager()->setAwayAll();
+	Kopete::AccountManager::manager()->setAwayAll();
 }
 
 void KopeteIface::setAway(const QString &msg)
 {
-	KopeteAccountManager::manager()->setAwayAll(msg);
+	Kopete::AccountManager::manager()->setAwayAll(msg);
 }
 
 void KopeteIface::setAvailable()
 {
-	KopeteAccountManager::manager()->setAvailableAll();
+	Kopete::AccountManager::manager()->setAvailableAll();
 }
 
 void KopeteIface::setAutoAway()
 {
-	KopeteAway::getInstance()->setAutoAway();
+	Kopete::Away::getInstance()->setAutoAway();
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

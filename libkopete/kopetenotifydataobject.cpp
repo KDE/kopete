@@ -20,32 +20,32 @@
 #include "kopetenotifydataobject.h"
 #include "kopetenotifyevent.h"
 
-KopeteNotifyDataObject::KopeteNotifyDataObject()
+Kopete::NotifyDataObject::NotifyDataObject()
 {
 	m_events.setAutoDelete( true );
 }
 
-KopeteNotifyDataObject::~KopeteNotifyDataObject()
+Kopete::NotifyDataObject::~NotifyDataObject()
 {
 }
 
-KopeteNotifyEvent * KopeteNotifyDataObject::notifyEvent( const QString &event ) const
+Kopete::NotifyEvent * Kopete::NotifyDataObject::notifyEvent( const QString &event ) const
 {
-	KopeteNotifyEvent *evt = m_events.find( event );
+	Kopete::NotifyEvent *evt = m_events.find( event );
 	return evt;
 }
 
-void KopeteNotifyDataObject::setNotifyEvent( const QString& event, KopeteNotifyEvent *notifyEvent )
+void Kopete::NotifyDataObject::setNotifyEvent( const QString& event, Kopete::NotifyEvent *notifyEvent )
 {
 	m_events.replace( event, notifyEvent );
 }
 
-bool KopeteNotifyDataObject::removeNotifyEvent( const QString &event )
+bool Kopete::NotifyDataObject::removeNotifyEvent( const QString &event )
 {
 	return m_events.remove( event );
 }
 
-QDomElement KopeteNotifyDataObject::notifyDataToXML()
+QDomElement Kopete::NotifyDataObject::notifyDataToXML()
 {
 	QDomDocument notify;
 	QDomElement notifications;
@@ -53,7 +53,7 @@ QDomElement KopeteNotifyDataObject::notifyDataToXML()
 	{
 		//<custom-notifications>
 		notifications = notify.createElement( QString::fromLatin1( "custom-notifications" ) );
-		QDictIterator<KopeteNotifyEvent> it( m_events );
+		QDictIterator<Kopete::NotifyEvent> it( m_events );
 		for ( ; it.current(); ++it )
 		{
 			//<event name="..." suppress-common="true|false">
@@ -70,7 +70,7 @@ QDomElement KopeteNotifyDataObject::notifyDataToXML()
 	return notifications;
 }
 
-bool KopeteNotifyDataObject::notifyDataFromXML( const QDomElement& element )
+bool Kopete::NotifyDataObject::notifyDataFromXML( const QDomElement& element )
 {
 	if ( element.tagName() == QString::fromLatin1( "custom-notifications" ) )
 	{
@@ -84,7 +84,7 @@ bool KopeteNotifyDataObject::notifyDataFromXML( const QDomElement& element )
 				// get its attributes
 				QString name = fieldElement.attribute( QString::fromLatin1( "name" ), QString::null );
 				QString suppress = fieldElement.attribute( QString::fromLatin1( "suppress-common" ), QString::null );
-				KopeteNotifyEvent *evt = new KopeteNotifyEvent( suppress == QString::fromLatin1( "true" ) );
+				Kopete::NotifyEvent *evt = new Kopete::NotifyEvent( suppress == QString::fromLatin1( "true" ) );
 			
 				// get its children
 				QDomNode child = fieldElement.firstChild();
@@ -97,10 +97,10 @@ bool KopeteNotifyDataObject::notifyDataFromXML( const QDomElement& element )
 						QString src = childElement.attribute( QString::fromLatin1( "src" ) );
 						QString enabled = childElement.attribute( QString::fromLatin1( "enabled" ) );
 						QString singleShot = childElement.attribute( QString::fromLatin1( "single-shot" ) );
-						KopeteEventPresentation *pres = new KopeteEventPresentation( KopeteEventPresentation::Sound, src,
+						Kopete::EventPresentation *pres = new Kopete::EventPresentation( Kopete::EventPresentation::Sound, src,
 								( singleShot == QString::fromLatin1( "true" ) ),
 								( enabled == QString::fromLatin1( "true" ) ) );
-						evt->setPresentation( KopeteEventPresentation::Sound, pres );
+						evt->setPresentation( Kopete::EventPresentation::Sound, pres );
 						kdDebug(14010) << k_funcinfo << "after sound: " << evt->toString() << endl;
 					}
 					if ( childElement.tagName() == QString::fromLatin1( "message-presentation" ) )
@@ -109,10 +109,10 @@ bool KopeteNotifyDataObject::notifyDataFromXML( const QDomElement& element )
 						QString src = childElement.attribute( QString::fromLatin1( "src" ) );
 						QString enabled = childElement.attribute( QString::fromLatin1( "enabled" ) );
 						QString singleShot = childElement.attribute( QString::fromLatin1( "single-shot" ) );
-						KopeteEventPresentation *pres = new KopeteEventPresentation(  KopeteEventPresentation::Message, src,
+						Kopete::EventPresentation *pres = new Kopete::EventPresentation(  Kopete::EventPresentation::Message, src,
 								( singleShot == QString::fromLatin1( "true" ) ),
 								( enabled == QString::fromLatin1( "true" ) ) );
-						evt->setPresentation( KopeteEventPresentation::Message, pres );
+						evt->setPresentation( Kopete::EventPresentation::Message, pres );
 						kdDebug(14010) << k_funcinfo << "after message: " << evt->toString() << endl;
 					}
 					if ( childElement.tagName() == QString::fromLatin1( "chat-presentation" ) )
@@ -120,10 +120,10 @@ bool KopeteNotifyDataObject::notifyDataFromXML( const QDomElement& element )
 						kdDebug(14010) << k_funcinfo << "read: chat" << endl;
 						QString enabled = childElement.attribute( QString::fromLatin1( "enabled" ) );
 						QString singleShot = childElement.attribute( QString::fromLatin1( "single-shot" ) );
-						KopeteEventPresentation *pres = new KopeteEventPresentation( KopeteEventPresentation::Chat, QString::null,
+						Kopete::EventPresentation *pres = new Kopete::EventPresentation( Kopete::EventPresentation::Chat, QString::null,
 								( singleShot == QString::fromLatin1( "true" ) ),
 								( enabled == QString::fromLatin1( "true" ) ) );
-						evt->setPresentation( KopeteEventPresentation::Chat, pres );
+						evt->setPresentation( Kopete::EventPresentation::Chat, pres );
 						kdDebug(14010) << k_funcinfo << "after chat: " << evt->toString() << endl;
 					}
 					child = child.nextSibling();

@@ -38,7 +38,7 @@
 #include "yahooeditaccount.h"
 
 // Yahoo Add Contact page
-YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, KopeteAccount *theAccount, QWidget *parent, const char* /*name*/): YahooEditAccountBase(parent), KopeteEditAccountWidget(theAccount)
+YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *theAccount, QWidget *parent, const char* /*name*/): YahooEditAccountBase(parent), KopeteEditAccountWidget(theAccount)
 {
 	kdDebug(14180) << k_funcinfo << endl;
 
@@ -77,7 +77,7 @@ bool YahooEditAccount::validateData()
 	return true;
 }
 
-KopeteAccount *YahooEditAccount::apply()
+Kopete::Account *YahooEditAccount::apply()
 {
 	kdDebug(14180) << k_funcinfo << endl;
 

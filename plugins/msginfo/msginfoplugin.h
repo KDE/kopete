@@ -29,28 +29,28 @@
 #include "kopeteplugin.h"
 
 class QStringList;
-class KopeteMessage;
-class KopeteMetaContact;
+namespace Kopete { class Message; }
+namespace Kopete { class MetaContact; }
 
-class MsgInfoPlugin : public KopetePlugin
+class MsgInfoPlugin : public Kopete::Plugin
 {
 	Q_OBJECT
 public:
 	MsgInfoPlugin( QObject *parent, const char *name, const QStringList &args );
 	~MsgInfoPlugin();
 
-	bool serialize( KopeteMetaContact *metaContact,
+	bool serialize( Kopete::MetaContact *metaContact,
 			QStringList &strList) const;
-	void deserialize( KopeteMetaContact *metaContact, const QStringList& data );
+	void deserialize( Kopete::MetaContact *metaContact, const QStringList& data );
 
 public slots:
-	void slotProcessDisplay( KopeteMessage& msg );
-	void slotProcessSend( KopeteMessage& msg );
+	void slotProcessDisplay( Kopete::Message& msg );
+	void slotProcessSend( Kopete::Message& msg );
 
 protected:
-	void changeMessage( KopeteMessage& msg );
+	void changeMessage( Kopete::Message& msg );
 private:
-	QMap<const KopeteMetaContact*, Q_UINT32> mMsgCountMap;
+	QMap<const Kopete::MetaContact*, Q_UINT32> mMsgCountMap;
 };
 
 #endif

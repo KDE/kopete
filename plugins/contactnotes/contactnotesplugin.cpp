@@ -30,7 +30,7 @@ typedef KGenericFactory<ContactNotesPlugin> ContactNotesPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_contactnotes, ContactNotesPluginFactory( "kopete_contactnotes" )  )
 
 ContactNotesPlugin::ContactNotesPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
-: KopetePlugin( ContactNotesPluginFactory::instance(), parent, name )
+: Kopete::Plugin( ContactNotesPluginFactory::instance(), parent, name )
 {
 	if ( pluginStatic_ )
 		kdDebug(14302)<<"ContactNotesPlugin::ContactNotesPlugin : plugin already initialized"<<endl;
@@ -38,8 +38,8 @@ ContactNotesPlugin::ContactNotesPlugin( QObject *parent, const char *name, const
 		pluginStatic_ = this;
 
 	KAction *m_actionEdit=new KAction( i18n("&Notes"), "identity", 0, this, SLOT (slotEditInfo()), actionCollection() , "editContactNotes");
-	connect ( KopeteContactList::contactList() , SIGNAL( metaContactSelected(bool)) , m_actionEdit , SLOT(setEnabled(bool)));
-	m_actionEdit->setEnabled(KopeteContactList::contactList()->selectedMetaContacts().count()==1 );
+	connect ( Kopete::ContactList::contactList() , SIGNAL( metaContactSelected(bool)) , m_actionEdit , SLOT(setEnabled(bool)));
+	m_actionEdit->setEnabled(Kopete::ContactList::contactList()->selectedMetaContacts().count()==1 );
 
 	setXMLFile("contactnotesui.rc");
 }
@@ -59,22 +59,22 @@ ContactNotesPlugin* ContactNotesPlugin::pluginStatic_ = 0L;
 
 void ContactNotesPlugin::slotEditInfo()
 {
-	KopeteMetaContact *m=KopeteContactList::contactList()->selectedMetaContacts().first();
+	Kopete::MetaContact *m=Kopete::ContactList::contactList()->selectedMetaContacts().first();
 	if(!m)
 		return;
 	ContactNotesEdit *e=new ContactNotesEdit(m,this);
-	connect( e, SIGNAL( notesChanged( const QString, KopeteMetaContact*) ),this,
-			SLOT( setNotes( const QString, KopeteMetaContact * ) ) );
+	connect( e, SIGNAL( notesChanged( const QString, Kopete::MetaContact*) ),this,
+			SLOT( setNotes( const QString, Kopete::MetaContact * ) ) );
 	e->show();
 }
 
 
-QString ContactNotesPlugin::notes(KopeteMetaContact *m)
+QString ContactNotesPlugin::notes(Kopete::MetaContact *m)
 {
 	return m->pluginData( this, "notes" );
 }
 
-void ContactNotesPlugin::setNotes( const QString n, KopeteMetaContact *m )
+void ContactNotesPlugin::setNotes( const QString n, Kopete::MetaContact *m )
 {
 	m->setPluginData( this, "notes", n );
 }

@@ -21,7 +21,7 @@
 
 class AIMAccount;
 class AIMProtocol;
-class KopeteMessageManager;
+namespace Kopete { class MessageManager; }
 class AIMUserInfoDialog;
 
 class AIMContact : public OscarContact
@@ -29,7 +29,7 @@ class AIMContact : public OscarContact
 	Q_OBJECT
 
 	public:
-		AIMContact(const QString , const QString , AIMAccount *, KopeteMetaContact *);
+		AIMContact(const QString , const QString , AIMAccount *, Kopete::MetaContact *);
 		virtual ~AIMContact();
 
 		bool isReachable();
@@ -64,7 +64,7 @@ class AIMContact : public OscarContact
 		/**
 		 * Called when we want to send a message
 		 */
-		void slotSendMsg(KopeteMessage&, KopeteMessageManager *);
+		void slotSendMsg(Kopete::Message&, Kopete::MessageManager *);
 
 		/**
 		 * Called when the user requests a contact's user info

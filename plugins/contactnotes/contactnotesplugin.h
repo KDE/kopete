@@ -28,7 +28,7 @@ class QString;
 class KAction;
 class KActionCollection;
 
-class KopeteMetaContact;
+namespace Kopete { class MetaContact; }
 
 /**
   * @author Olivier Goffart <ogoffart@tiscalinet.be>
@@ -37,7 +37,7 @@ class KopeteMetaContact;
   *
   */
 
-class ContactNotesPlugin : public KopetePlugin
+class ContactNotesPlugin : public Kopete::Plugin
 {
 	Q_OBJECT
 
@@ -47,11 +47,11 @@ public:
 	ContactNotesPlugin( QObject *parent, const char *name, const QStringList &args );
 	~ContactNotesPlugin();
 
-	QString notes(KopeteMetaContact *m);
+	QString notes(Kopete::MetaContact *m);
 
 
 public slots:
-	void setNotes(const QString n, KopeteMetaContact *m);
+	void setNotes(const QString n, Kopete::MetaContact *m);
 
 private:
 	static ContactNotesPlugin* pluginStatic_;

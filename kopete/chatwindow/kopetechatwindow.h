@@ -24,13 +24,9 @@
 #include "kopetecontact.h"
 #include "kdeversion.h"
 
-class KopeteMessage;
-class KopeteMessageManager;
 class KAction;
 class KToggleAction;
 class KActionMenu;
-class KopeteContact;
-class KopeteProtocol;
 class KTempFile;
 class QPixmap;
 class QTabWidget;
@@ -46,7 +42,15 @@ class KopeteView;
 class KSelectAction;
 class ChatView;
 
-typedef QPtrList<KopeteContact>  KopeteContactPtrList;
+namespace Kopete
+{
+class Message;
+class MessageManager;
+class Contact;
+class Protocol;
+}
+
+typedef QPtrList<Kopete::Contact>  KopeteContactPtrList;
 
 class KopeteChatWindow : public KParts::MainWindow
 {
@@ -62,7 +66,7 @@ public:
 	 * @return A KopeteChatWindow suitable for docking a ChatView into. Guaranteed
 	 *  to be a valid pointer.
 	 */
-	static KopeteChatWindow *window( KopeteMessageManager *manager );
+	static KopeteChatWindow *window( Kopete::MessageManager *manager );
 	~KopeteChatWindow();
 
 	/**

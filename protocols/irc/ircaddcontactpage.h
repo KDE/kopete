@@ -21,7 +21,7 @@
 #include "addcontactpage.h"
 
 class ircAddUI;
-class KopeteMetaContact;
+namespace Kopete { class MetaContact; }
 class IRCAccount;
 class QListViewItem;
 class ChannelList;
@@ -38,7 +38,7 @@ public:
 	ircAddUI *ircdata;
 
 public slots:
-	virtual bool apply(KopeteAccount *account , KopeteMetaContact *m);
+	virtual bool apply(Kopete::Account *account , Kopete::MetaContact *m);
 
 private slots:
 	virtual bool validateData();

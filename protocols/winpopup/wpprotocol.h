@@ -37,7 +37,7 @@
 #include "libwinpopup.h"
 #include "wpaddcontact.h"
 
-class KopeteAccount;
+namespace Kopete { class Account; }
 class KPopupMenu;
 class KActionMenu;
 class KAction;
@@ -69,22 +69,22 @@ public:
 /**
  * The actual Protocol class used by Kopete.
  */
-class WPProtocol : public KopeteProtocol
+class WPProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 
-// KopeteProtocol overloading
+// Kopete::Protocol overloading
 public:
 	WPProtocol( QObject *parent, const char *name, const QStringList &args );
 	~WPProtocol();
 
-	virtual AddContactPage *createAddContactWidget(QWidget *parent, KopeteAccount *theAccount);
-	virtual KopeteEditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
-	virtual KopeteAccount *createNewAccount(const QString &accountId);
+	virtual AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *theAccount);
+	virtual KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent);
+	virtual Kopete::Account *createNewAccount(const QString &accountId);
 
-// KopetePlugin overloading
+// Kopete::Plugin overloading
 public:
-	virtual KopeteContact *deserializeContact(KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData);
+	virtual Kopete::Contact *deserializeContact(Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData);
 
 // Stuff used internally & by colleague classes
 public:
@@ -92,9 +92,9 @@ public:
 	KopeteWinPopup *createInterface(const QString &theHostName);
 	void destroyInterface(KopeteWinPopup *theInterface);
 
-	const KopeteOnlineStatus WPOnline;
-	const KopeteOnlineStatus WPAway;
-	const KopeteOnlineStatus WPOffline;
+	const Kopete::OnlineStatus WPOnline;
+	const Kopete::OnlineStatus WPAway;
+	const Kopete::OnlineStatus WPOffline;
 
 public slots:
 	void slotSettingsChanged(void);			// Callback when settings changed

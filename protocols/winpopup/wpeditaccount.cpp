@@ -35,7 +35,7 @@
 #include "wpaccount.h"
 #include "wpeditaccount.h"
 
-WPEditAccount::WPEditAccount(WPProtocol *protocol, KopeteAccount *theAccount, QWidget *parent, const char *name): WPEditAccountBase(parent), KopeteEditAccountWidget(theAccount)
+WPEditAccount::WPEditAccount(WPProtocol *protocol, Kopete::Account *theAccount, QWidget *parent, const char *name): WPEditAccountBase(parent), KopeteEditAccountWidget(theAccount)
 {
 	kdDebug(14180) << "WPEditAccount::WPEditAccount(<protocol>, <theAccount>, <parent>, " << name << ")";
 
@@ -80,7 +80,7 @@ bool WPEditAccount::validateData()
 	return true;
 }
 
-KopeteAccount *WPEditAccount::apply()
+Kopete::Account *WPEditAccount::apply()
 {
 	kdDebug(14180) << "WPEditAccount::apply()";
 

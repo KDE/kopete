@@ -27,12 +27,12 @@
 
 #define m_protocol ((IRCProtocol*)IRCProtocol::protocol())
 
-class KopeteMetaContact;
+namespace Kopete { class MetaContact; }
 class AddContactPage;
 class KIRC;
 
 class EditAccountWidget;
-class KopeteAccount;
+namespace Kopete { class Account; }
 class IRCAccount;
 
 class QStringList;
@@ -55,7 +55,7 @@ class IRCProtocolHandler : public Kopete::MimeTypeHandler
 /**
  * @author Nick Betcher <nbetcher@kde.org>
  */
-class IRCProtocol : public KopeteProtocol
+class IRCProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 
@@ -63,39 +63,39 @@ public:
 	IRCProtocol( QObject *parent, const char *name, const QStringList &args );
 	~IRCProtocol();
 
-	/** KopeteProtocol reimplementation */
-	virtual AddContactPage *createAddContactWidget(QWidget *parent, KopeteAccount *account);
+	/** Kopete::Protocol reimplementation */
+	virtual AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *account);
 
 	/**
 	 * Deserialize contact data
 	 */
-	virtual KopeteContact *deserializeContact( KopeteMetaContact *metaContact,
+	virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 
-	virtual KopeteEditAccountWidget* createEditAccountWidget(KopeteAccount *account, QWidget *parent);
+	virtual KopeteEditAccountWidget* createEditAccountWidget(Kopete::Account *account, QWidget *parent);
 
-	virtual KopeteAccount* createNewAccount(const QString &accountId);
+	virtual Kopete::Account* createNewAccount(const QString &accountId);
 
-	virtual QPtrList<KAction> *customChatWindowPopupActions( const KopeteMessage &, DOM::Node & );
+	virtual QPtrList<KAction> *customChatWindowPopupActions( const Kopete::Message &, DOM::Node & );
 
 	static IRCProtocol *protocol();
 
-	const KopeteOnlineStatus m_ServerStatusOnline;
-	const KopeteOnlineStatus m_ServerStatusOffline;
+	const Kopete::OnlineStatus m_ServerStatusOnline;
+	const Kopete::OnlineStatus m_ServerStatusOffline;
 
-	const KopeteOnlineStatus m_ChannelStatusOnline;
-	const KopeteOnlineStatus m_ChannelStatusOffline;
+	const Kopete::OnlineStatus m_ChannelStatusOnline;
+	const Kopete::OnlineStatus m_ChannelStatusOffline;
 
-	const KopeteOnlineStatus m_UserStatusOp;
-	const KopeteOnlineStatus m_UserStatusOpAway;
-	const KopeteOnlineStatus m_UserStatusVoice;
-	const KopeteOnlineStatus m_UserStatusVoiceAway;
-	const KopeteOnlineStatus m_UserStatusOnline;
-	const KopeteOnlineStatus m_UserStatusAway;
-	const KopeteOnlineStatus m_UserStatusConnecting;
-	const KopeteOnlineStatus m_UserStatusOffline;
+	const Kopete::OnlineStatus m_UserStatusOp;
+	const Kopete::OnlineStatus m_UserStatusOpAway;
+	const Kopete::OnlineStatus m_UserStatusVoice;
+	const Kopete::OnlineStatus m_UserStatusVoiceAway;
+	const Kopete::OnlineStatus m_UserStatusOnline;
+	const Kopete::OnlineStatus m_UserStatusAway;
+	const Kopete::OnlineStatus m_UserStatusConnecting;
+	const Kopete::OnlineStatus m_UserStatusOffline;
 
-	const KopeteOnlineStatus m_StatusUnknown;
+	const Kopete::OnlineStatus m_StatusUnknown;
 
 	// irc channnel-contact properties
 	const Kopete::ContactPropertyTmpl propChannelTopic;
@@ -136,41 +136,41 @@ private slots:
 	void slotHostPortChanged( int value );
 	// end of network list specific code
 	
-	void slotMessageFilter( KopeteMessage &msg );
+	void slotMessageFilter( Kopete::Message &msg );
 
-	void slotRawCommand( const QString &args, KopeteMessageManager *manager );
-	void slotQuoteCommand( const QString &args, KopeteMessageManager *manager );
-	void slotCtcpCommand( const QString &args, KopeteMessageManager *manager );
-	void slotPingCommand( const QString &args, KopeteMessageManager *manager );
+	void slotRawCommand( const QString &args, Kopete::MessageManager *manager );
+	void slotQuoteCommand( const QString &args, Kopete::MessageManager *manager );
+	void slotCtcpCommand( const QString &args, Kopete::MessageManager *manager );
+	void slotPingCommand( const QString &args, Kopete::MessageManager *manager );
 
-	void slotMotdCommand( const QString &args, KopeteMessageManager *manager);
-	void slotListCommand( const QString &args, KopeteMessageManager *manager);
-	void slotTopicCommand( const QString &args, KopeteMessageManager *manager);
-	void slotJoinCommand( const QString &args, KopeteMessageManager *manager);
-	void slotNickCommand( const QString &args, KopeteMessageManager *manager);
-	void slotWhoisCommand( const QString &args, KopeteMessageManager *manager);
-	void slotWhoWasCommand( const QString &args, KopeteMessageManager *manager);
-	void slotWhoCommand( const QString &args, KopeteMessageManager *manager);
-	void slotMeCommand( const QString &args, KopeteMessageManager *manager);
-	void slotModeCommand( const QString &args, KopeteMessageManager *manager);
-	void slotQueryCommand( const QString &args, KopeteMessageManager *manager);
+	void slotMotdCommand( const QString &args, Kopete::MessageManager *manager);
+	void slotListCommand( const QString &args, Kopete::MessageManager *manager);
+	void slotTopicCommand( const QString &args, Kopete::MessageManager *manager);
+	void slotJoinCommand( const QString &args, Kopete::MessageManager *manager);
+	void slotNickCommand( const QString &args, Kopete::MessageManager *manager);
+	void slotWhoisCommand( const QString &args, Kopete::MessageManager *manager);
+	void slotWhoWasCommand( const QString &args, Kopete::MessageManager *manager);
+	void slotWhoCommand( const QString &args, Kopete::MessageManager *manager);
+	void slotMeCommand( const QString &args, Kopete::MessageManager *manager);
+	void slotModeCommand( const QString &args, Kopete::MessageManager *manager);
+	void slotQueryCommand( const QString &args, Kopete::MessageManager *manager);
 
-	void slotKickCommand( const QString &args, KopeteMessageManager *manager);
-	void slotBanCommand( const QString &args, KopeteMessageManager *manager);
-	void slotOpCommand( const QString &args, KopeteMessageManager *manager);
-	void slotDeopCommand( const QString &args, KopeteMessageManager *manager);
-	void slotVoiceCommand( const QString &args, KopeteMessageManager *manager);
-	void slotDevoiceCommand( const QString &args, KopeteMessageManager *manager);
-	void slotQuitCommand( const QString &args, KopeteMessageManager *manager);
-	void slotPartCommand( const QString &args, KopeteMessageManager *manager);
-	void slotInviteCommand( const QString &args, KopeteMessageManager *manager);
+	void slotKickCommand( const QString &args, Kopete::MessageManager *manager);
+	void slotBanCommand( const QString &args, Kopete::MessageManager *manager);
+	void slotOpCommand( const QString &args, Kopete::MessageManager *manager);
+	void slotDeopCommand( const QString &args, Kopete::MessageManager *manager);
+	void slotVoiceCommand( const QString &args, Kopete::MessageManager *manager);
+	void slotDevoiceCommand( const QString &args, Kopete::MessageManager *manager);
+	void slotQuitCommand( const QString &args, Kopete::MessageManager *manager);
+	void slotPartCommand( const QString &args, Kopete::MessageManager *manager);
+	void slotInviteCommand( const QString &args, Kopete::MessageManager *manager);
 
 	void slotViewCreated( KopeteView * );
 
 private:
 	static IRCProtocol *s_protocol;
 
-	void simpleModeChange( const QString &, KopeteMessageManager *, const QString &mode );
+	void simpleModeChange( const QString &, Kopete::MessageManager *, const QString &mode );
 
 	// FIXME: All the code for managing the networks list should be in another class - Will 
 	void storeCurrentNetwork();

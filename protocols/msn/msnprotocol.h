@@ -38,18 +38,18 @@ class MSNNotifySocket;
 class MSNSwitchBoardSocket;
 class MSNMessageManager;
 class MSNInvitation;
-class KopeteMessageManager;
-class KopeteMetaContact;
-class KopeteContact;
-class KopeteMessage;
-class KopeteGroup;
+namespace Kopete { class MessageManager; }
+namespace Kopete { class MetaContact; }
+namespace Kopete { class Contact; }
+namespace Kopete { class Message; }
+namespace Kopete { class Group; }
 
 /**
  * @author duncan
  * @author Martijn Klingens <klingens@kde.org>
  * @author Olivier Goffart  <ogoffart@tiscalinet.be>
  */
-class MSNProtocol : public KopeteProtocol
+class MSNProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 
@@ -89,17 +89,17 @@ public:
 	/**
 	 * The possible MSN online statuses
 	 */
-	const KopeteOnlineStatus NLN;  //online
-	const KopeteOnlineStatus BSY;  //busy
-	const KopeteOnlineStatus BRB;  //be right back
-	const KopeteOnlineStatus AWY;  //away
-	const KopeteOnlineStatus PHN;  //on the phone
-	const KopeteOnlineStatus LUN;  //out to lunch
-	const KopeteOnlineStatus FLN;  //offline
-	const KopeteOnlineStatus HDN;  //invisible
-	const KopeteOnlineStatus IDL;  //idle
-	const KopeteOnlineStatus UNK;  //inknown (internal)
-	const KopeteOnlineStatus CNT;  //connecting (internal)
+	const Kopete::OnlineStatus NLN;  //online
+	const Kopete::OnlineStatus BSY;  //busy
+	const Kopete::OnlineStatus BRB;  //be right back
+	const Kopete::OnlineStatus AWY;  //away
+	const Kopete::OnlineStatus PHN;  //on the phone
+	const Kopete::OnlineStatus LUN;  //out to lunch
+	const Kopete::OnlineStatus FLN;  //offline
+	const Kopete::OnlineStatus HDN;  //invisible
+	const Kopete::OnlineStatus IDL;  //idle
+	const Kopete::OnlineStatus UNK;  //inknown (internal)
+	const Kopete::OnlineStatus CNT;  //connecting (internal)
 
 	const Kopete::ContactPropertyTmpl propEmail;
 	const Kopete::ContactPropertyTmpl propPhoneHome;
@@ -114,12 +114,12 @@ public:
 		RL     // reverse
 	};
 
-	virtual KopeteContact *deserializeContact( KopeteMetaContact *metaContact,
+	virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 
-	virtual AddContactPage *createAddContactWidget( QWidget *parent , KopeteAccount *i);
-	virtual KopeteEditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
-	virtual KopeteAccount *createNewAccount(const QString &accountId);
+	virtual AddContactPage *createAddContactWidget( QWidget *parent , Kopete::Account *i);
+	virtual KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent);
+	virtual Kopete::Account *createNewAccount(const QString &accountId);
 
 	static MSNProtocol* protocol();
 	static bool validContactId(const QString&);

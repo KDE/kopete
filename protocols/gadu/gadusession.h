@@ -85,7 +85,7 @@ typedef QValueList<ResLine> SearchResult;
 
 class QSocketNotifier;
 class QStringList;
-class KopeteMessage;
+namespace Kopete { class Message; }
 class GaduRichTextFormat;
 
 class GaduSession : public QObject
@@ -105,11 +105,11 @@ public:
 
 public slots:
 	void	login( KGaduLoginParams* login );
-	void	logoff( KopeteAccount::DisconnectReason reason = KopeteAccount::Manual );
+	void	logoff( Kopete::Account::DisconnectReason reason = Kopete::Account::Manual );
 	int	notify( uin_t*, int );
 	int	addNotify( uin_t );
 	int	removeNotify( uin_t );
-	int	sendMessage( uin_t recipient, const KopeteMessage& msg, int msgClass );
+	int	sendMessage( uin_t recipient, const Kopete::Message& msg, int msgClass );
 	int	changeStatus( int, bool forFriends = false );
 	int	changeStatusDescription( int, const QString&, bool forFriends = false );
 	int	ping();
@@ -143,7 +143,7 @@ signals:
 	void pong();
 	void connectionFailed( gg_failure_t failure );
 	void connectionSucceed( );
-	void disconnect( KopeteAccount::DisconnectReason );
+	void disconnect( Kopete::Account::DisconnectReason );
 	void pubDirSearchResult( const SearchResult& );
 	void userListRecieved( const QString& );
 	void userListExported();

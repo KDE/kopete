@@ -54,7 +54,7 @@ void GroupWiseMessageManager::Dict::remove( const ConferenceGuid & key )
 	QMap< ConferenceGuid, GroupWiseMessageManager * >::remove( key.left( CONF_GUID_END ) );
 }
 
-GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const GroupWise::ConferenceGuid & guid, int id, const char* name): KopeteMessageManager(user, others, protocol, 0, name), m_guid( guid ), m_flags( 0 ), m_searchDlg( 0 ), m_memberCount( others.count() )
+GroupWiseMessageManager::GroupWiseMessageManager(const Kopete::Contact* user, KopeteContactPtrList others, Kopete::Protocol* protocol, const GroupWise::ConferenceGuid & guid, int id, const char* name): Kopete::MessageManager(user, others, protocol, 0, name), m_guid( guid ), m_flags( 0 ), m_searchDlg( 0 ), m_memberCount( others.count() )
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId() << endl;
 
@@ -62,10 +62,10 @@ GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, Kope
 	setInstance( protocol->instance() );
 	
 	// make sure Kopete knows about this instance
-	KopeteMessageManagerFactory::factory()->addKopeteMessageManager ( this );
+	KopeteMessageManagerFactory::factory()->addMessageManager ( this );
 
-	connect ( this, SIGNAL( messageSent ( KopeteMessage &, KopeteMessageManager * ) ),
-			  SLOT( slotMessageSent ( KopeteMessage &, KopeteMessageManager * ) ) );
+	connect ( this, SIGNAL( messageSent ( Kopete::Message &, Kopete::MessageManager * ) ),
+			  SLOT( slotMessageSent ( Kopete::Message &, Kopete::MessageManager * ) ) );
 	connect( this, SIGNAL( typingMsg ( bool ) ), SLOT( slotSendTypingNotification ( bool ) ) );
 	connect( account(), SIGNAL( contactTyping( const ConferenceEvent & ) ), 
 						SLOT( slotGotTypingNotification( const ConferenceEvent & ) ) );
@@ -142,7 +142,7 @@ void GroupWiseMessageManager::setSecure( bool secure )
 
 GroupWiseAccount *  GroupWiseMessageManager::account()
 {
-	return static_cast<GroupWiseAccount *>( KopeteMessageManager::account() );
+	return static_cast<GroupWiseAccount *>( Kopete::MessageManager::account() );
 }
 
 void GroupWiseMessageManager::createConference()
@@ -153,7 +153,7 @@ void GroupWiseMessageManager::createConference()
 		// form a list of invitees
 		QStringList invitees;
 		KopeteContactPtrList chatMembers = members();
-		for ( KopeteContact * contact = chatMembers.first(); contact; contact = chatMembers.next() )
+		for ( Kopete::Contact * contact = chatMembers.first(); contact; contact = chatMembers.next() )
 		{
 			invitees.append( static_cast< GroupWiseContact * >( contact )->dn() );
 		}
@@ -179,8 +179,8 @@ void GroupWiseMessageManager::receiveGuid( const int newMmId, const GroupWise::C
 		// they are removed from the chat member list GUI.  By re-adding them here, we guarantee they appear
 		// in the UI again, at the price of a debug message when starting up a new chatwindow
 		
-		QPtrListIterator< KopeteContact > it( members() );
-		KopeteContact * contact;
+		QPtrListIterator< Kopete::Contact > it( members() );
+		Kopete::Contact * contact;
 		while ( ( contact = it.current() ) )
 		{
 			++it;
@@ -200,7 +200,7 @@ void GroupWiseMessageManager::slotCreationFailed( const int failedId, const int 
 	{
 		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't start a chat, no GUID.\n" << endl;
 		//emit creationFailed();
-		KopeteMessage failureNotify = KopeteMessage( user(), members(), i18n("An error occurred when trying to start a chat: %1").arg( statusCode ), KopeteMessage::Internal, KopeteMessage::PlainText);
+		Kopete::Message failureNotify = Kopete::Message( user(), members(), i18n("An error occurred when trying to start a chat: %1").arg( statusCode ), Kopete::Message::Internal, Kopete::Message::PlainText);
 		appendMessage( failureNotify );
 		setClosed();
 	}
@@ -214,20 +214,20 @@ void GroupWiseMessageManager::slotSendTypingNotification( bool typing )
 				account()->client()->sendTyping( guid(), typing );
 }
 
-void GroupWiseMessageManager::slotMessageSent( KopeteMessage & message, KopeteMessageManager * )
+void GroupWiseMessageManager::slotMessageSent( Kopete::Message & message, Kopete::MessageManager * )
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	if( account()->isConnected() )
 	{
 		/*if ( closed() )
 		{
-			KopeteMessage failureNotify = KopeteMessage( user(), members(), i18n("Your message could not be sent. This conversation has been closed by the server, because all the other participants left or declined invitations. "), KopeteMessage::Internal, KopeteMessage::PlainText);
+			Kopete::Message failureNotify = Kopete::Message( user(), members(), i18n("Your message could not be sent. This conversation has been closed by the server, because all the other participants left or declined invitations. "), Kopete::Message::Internal, Kopete::Message::PlainText);
 			appendMessage( failureNotify );
 			messageSucceeded();
 		}
 		else*/ if ( account()->myself()->onlineStatus() == ( static_cast<GroupWiseProtocol *>( protocol() ) )->groupwiseAppearOffline )
 		{
-			KopeteMessage failureNotify = KopeteMessage( user(), members(), i18n("Your message could not be sent. You cannot send messages while your status is Appear Offline. "), KopeteMessage::Internal, KopeteMessage::PlainText);
+			Kopete::Message failureNotify = Kopete::Message( user(), members(), i18n("Your message could not be sent. You cannot send messages while your status is Appear Offline. "), Kopete::Message::Internal, Kopete::Message::PlainText);
 			appendMessage( failureNotify );
 			messageSucceeded();
 		}
@@ -280,15 +280,15 @@ void GroupWiseMessageManager::slotGotNotTypingNotification( const ConferenceEven
 void GroupWiseMessageManager::dequeueMessagesAndInvites()
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	for ( QValueListIterator< KopeteMessage > it = m_pendingOutgoingMessages.begin();
+	for ( QValueListIterator< Kopete::Message > it = m_pendingOutgoingMessages.begin();
 		  it != m_pendingOutgoingMessages.end();
 		  ++it )
 	{
 		slotMessageSent( *it, this );
 	}
 	m_pendingOutgoingMessages.clear();
-	QPtrListIterator< KopeteContact > it( m_pendingInvites );
-	KopeteContact * contact;
+	QPtrListIterator< Kopete::Contact > it( m_pendingInvites );
+	Kopete::Contact * contact;
 	while ( ( contact = it.current() ) )
 	{
 		++it;
@@ -308,13 +308,13 @@ void GroupWiseMessageManager::slotActionInviteAboutToShow()
 	m_actionInvite->popupMenu()->clear();
 
 	
-	QDictIterator<KopeteContact> it( account()->contacts() );
+	QDictIterator<Kopete::Contact> it( account()->contacts() );
 	for( ; it.current(); ++it )
 	{
 		if( !members().contains( it.current() ) && it.current()->isOnline() && it.current() != user() )
 		{
 			KAction *a=new KopeteContactAction( it.current(), this,
-				SLOT( slotInviteContact( KopeteContact * ) ), m_actionInvite );
+				SLOT( slotInviteContact( Kopete::Contact * ) ), m_actionInvite );
 			m_actionInvite->insert( a );
 			m_inviteActions.append( a ) ;
 		}
@@ -325,7 +325,7 @@ void GroupWiseMessageManager::slotActionInviteAboutToShow()
 	m_inviteActions.append( b ) ;
 }
 
-void GroupWiseMessageManager::slotInviteContact( KopeteContact * contact )
+void GroupWiseMessageManager::slotInviteContact( Kopete::Contact * contact )
 {
 	if ( m_guid.isEmpty() )
 	{
@@ -352,7 +352,7 @@ void GroupWiseMessageManager::slotInviteContact( KopeteContact * contact )
 
 void GroupWiseMessageManager::inviteContact( const QString &contactId )
 {
-	KopeteContact * contact = account()->contacts()[ contactId ];
+	Kopete::Contact * contact = account()->contacts()[ contactId ];
 	if ( contact )
 		slotInviteContact( contact );
 }
@@ -397,12 +397,12 @@ void GroupWiseMessageManager::slotSearchedForUsers()
 	}
 }
 
-void GroupWiseMessageManager::addInvitee( const KopeteContact * c )
+void GroupWiseMessageManager::addInvitee( const Kopete::Contact * c )
 {
 	// create a placeholder contact for each invitee
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	QString pending = i18n("label attached to contacts who have been invited but are yet to join a chat", "(pending)");
-	KopeteMetaContact * inviteeMC = new KopeteMetaContact();
+	Kopete::MetaContact * inviteeMC = new Kopete::MetaContact();
 	inviteeMC->setDisplayName( c->metaContact()->displayName() + pending );
 	GroupWiseContact * invitee = new GroupWiseContact( account(), c->contactId() + " " + pending, inviteeMC, 0, 0, 0 );
 	invitee->setOnlineStatus( c->onlineStatus() );
@@ -420,12 +420,12 @@ void GroupWiseMessageManager::joined( GroupWiseContact * c )
 	c->joinConference( m_guid );
 	
 	// look for the invitee and remove it
-	KopeteContact * pending;
+	Kopete::Contact * pending;
 	for ( pending = m_invitees.first(); pending; pending = m_invitees.next() )
 	{
 		if ( pending->contactId().startsWith( c->contactId() ) )
 		{
-			removeContact( pending, QString::null, KopeteMessage::PlainText, true );
+			removeContact( pending, QString::null, Kopete::Message::PlainText, true );
 			break;
 		}
 	}
@@ -449,9 +449,9 @@ void GroupWiseMessageManager::left( GroupWiseContact * c )
 	{
 		if ( m_invitees.count() )
 		{
-			KopeteMessage failureNotify = KopeteMessage( user(), members(), 
+			Kopete::Message failureNotify = Kopete::Message( user(), members(), 
 						i18n("All the other participants have left, and other invitations are still pending. Your messages will not be delivered until someone else joins the chat."), 
-						KopeteMessage::Internal, KopeteMessage::PlainText );
+						Kopete::Message::Internal, Kopete::Message::PlainText );
 			appendMessage( failureNotify );
 		}
 		else
@@ -462,12 +462,12 @@ void GroupWiseMessageManager::left( GroupWiseContact * c )
 void GroupWiseMessageManager::inviteDeclined( GroupWiseContact * c )
 {
 	// look for the invitee and remove it
-	KopeteContact * pending;
+	Kopete::Contact * pending;
 	for ( pending = m_invitees.first(); pending; pending = m_invitees.next() )
 	{
 		if ( pending->contactId().startsWith( c->contactId() ) )
 		{
-			removeContact( pending, QString::null, KopeteMessage::PlainText, true );
+			removeContact( pending, QString::null, Kopete::Message::PlainText, true );
 			break;
 		}
 	}
@@ -475,16 +475,16 @@ void GroupWiseMessageManager::inviteDeclined( GroupWiseContact * c )
 	
 	QString from = c->metaContact()->displayName();
 
-	KopeteMessage declined = KopeteMessage( user(), members(), 
+	Kopete::Message declined = Kopete::Message( user(), members(), 
 				i18n("%1 has rejected an invitation to join this conversation.").arg( from ), 
-				KopeteMessage::Internal, KopeteMessage::PlainText );
+				Kopete::Message::Internal, Kopete::Message::PlainText );
 	appendMessage( declined );
 }
 
 void GroupWiseMessageManager::updateArchiving()
 {
 	bool archiving = false;
-	QPtrListIterator< KopeteContact > it( members() );
+	QPtrListIterator< Kopete::Contact > it( members() );
 	GroupWiseContact * contact;
 	while ( ( contact = static_cast<GroupWiseContact*>( it.current() ) ) )
 	{

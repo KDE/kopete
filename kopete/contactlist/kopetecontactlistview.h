@@ -33,10 +33,7 @@
 #include <qtimer.h>
 #include <qguardedptr.h>
 
-class KopeteContact;
-class KopeteMetaContact;
 class KopeteMetaContactLVI;
-class KopeteGroup;
 class KopeteGroupViewItem;
 class KopeteStatusGroupViewItem;
 class KRootPixmap;
@@ -47,6 +44,13 @@ class KListAction;
 class KActionMenu;
 
 class KopeteContactListViewPrivate;
+
+namespace Kopete
+{
+class Contact;
+class MetaContact;
+class Group;
+}
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -79,7 +83,7 @@ public slots:
 	/**
 	 * Remove all KopeteMetaContactLVI of a metaContact
 	 */
-	void removeContact( KopeteMetaContact *contact );
+	void removeContact( Kopete::MetaContact *contact );
 
 	/**
 	 * Prompt the user for the group name (slot)
@@ -106,7 +110,7 @@ protected:
 	/**
 	 * The selected items have changed; update our actions to show what's possible.
 	 */
-	void updateActionsForSelection( QPtrList<KopeteMetaContact> contacts, QPtrList<KopeteGroup> groups );
+	void updateActionsForSelection( QPtrList<Kopete::MetaContact> contacts, QPtrList<Kopete::Group> groups );
 
 private slots:
 	void slotViewSelectionChanged();
@@ -119,22 +123,22 @@ private slots:
 	void slotUpdateAllGroupIcons();
 	void slotExecuted( QListViewItem *item, const QPoint &pos, int c );
 
-	void slotAddedToGroup( KopeteMetaContact *mc, KopeteGroup *to );
-	void slotRemovedFromGroup( KopeteMetaContact *mc, KopeteGroup *from );
-	void slotMovedToGroup( KopeteMetaContact *mc, KopeteGroup *from, KopeteGroup *to );
+	void slotAddedToGroup( Kopete::MetaContact *mc, Kopete::Group *to );
+	void slotRemovedFromGroup( Kopete::MetaContact *mc, Kopete::Group *from );
+	void slotMovedToGroup( Kopete::MetaContact *mc, Kopete::Group *from, Kopete::Group *to );
 
 	void slotSyncKABC();
 
 	/**
 	 * A meta contact was added to the contact list - update the view
 	 */
-	void slotMetaContactAdded( KopeteMetaContact *mc );
-	void slotMetaContactDeleted( KopeteMetaContact *mc );
+	void slotMetaContactAdded( Kopete::MetaContact *mc );
+	void slotMetaContactDeleted( Kopete::MetaContact *mc );
 	void slotMetaContactSelected( bool sel );
 
-	void slotGroupAdded(KopeteGroup *);
+	void slotGroupAdded(Kopete::Group *);
 
-	void slotContactStatusChanged( KopeteMetaContact *mc );
+	void slotContactStatusChanged( Kopete::MetaContact *mc );
 
 	void slotDropped(QDropEvent *e, QListViewItem *parent, QListViewItem*);
 
@@ -213,13 +217,13 @@ struct KopeteContactListView::UndoItem
 {
 	enum Type { MetaContactAdd, MetaContactRemove , MetaContactCopy , MetaContactRename, MetaContactChange, ContactAdd, GroupRename } type;
 	QStringList args;
-	QGuardedPtr<KopeteMetaContact> metacontact;
-	QGuardedPtr<KopeteGroup> group;
+	QGuardedPtr<Kopete::MetaContact> metacontact;
+	QGuardedPtr<Kopete::Group> group;
 	UndoItem *next;
 	bool isStep;
 	
 	UndoItem() : isStep(true) {}
-	UndoItem(Type t, KopeteMetaContact *m=0L ,KopeteGroup *g=0L)
+	UndoItem(Type t, Kopete::MetaContact *m=0L ,Kopete::Group *g=0L)
 	{
 		isStep=true;
 		type=t;

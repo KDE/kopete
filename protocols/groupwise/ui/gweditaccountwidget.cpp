@@ -40,7 +40,7 @@
 
 #include "gweditaccountwidget.h"
 
-GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, KopeteAccount* theAccount)
+GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, Kopete::Account* theAccount)
 : QWidget( parent ), KopeteEditAccountWidget( theAccount )
 {
 	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
@@ -86,7 +86,7 @@ void GroupWiseEditAccountWidget::reOpen()
 	m_preferencesDialog->m_alwaysAccept->setChecked( account()->pluginData( GroupWiseProtocol::protocol(), "AlwaysAcceptInvitations" ) == "true" );
 }
 
-KopeteAccount* GroupWiseEditAccountWidget::apply()
+Kopete::Account* GroupWiseEditAccountWidget::apply()
 {
 	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
 		

@@ -21,13 +21,13 @@
 
 //#include <kdebug.h>
 
-KopeteAccountStatusBarIcon::KopeteAccountStatusBarIcon( KopeteAccount *acc, QWidget *parent,
+KopeteAccountStatusBarIcon::KopeteAccountStatusBarIcon( Kopete::Account *acc, QWidget *parent,
 	const char *name )
 : QLabel( parent, name )
 {
 // 	kdDebug(14000) << "[KopeteAccountStatusBarIcon] Setting Initial Protocol Icon" << endl;
 	//setMask(initialPixmap->mask());
-	//setPixmap( KopeteOnlineStatus( KopeteOnlineStatus::Unknown, 0, proto, 0, "status_unknown", QString::null, QString::null ).protocolIcon() );
+	//setPixmap( Kopete::OnlineStatus( Kopete::OnlineStatus::Unknown, 0, proto, 0, "status_unknown", QString::null, QString::null ).protocolIcon() );
 	//setPixmap( proto->status().protocolIcon() );
 
 	setFixedSize ( 16, 16 );

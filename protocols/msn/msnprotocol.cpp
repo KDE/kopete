@@ -44,19 +44,19 @@ K_EXPORT_COMPONENT_FACTORY( libkopete_msn_shared, MSNProtocolFactory( "kopete_ms
 MSNProtocol *MSNProtocol::s_protocol = 0L;
 
 MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
-: KopeteProtocol( MSNProtocolFactory::instance(), parent, name ),
+: Kopete::Protocol( MSNProtocolFactory::instance(), parent, name ),
 
-	NLN( KopeteOnlineStatus::Online,    25, this, 1, QString::null,   i18n( "Set O&nline" ),        i18n( "Online" ) ),
-	BSY( KopeteOnlineStatus::Away,      20, this, 2, "msn_busy",      i18n( "Set &Busy" ),          i18n( "Busy" ) ),
-	BRB( KopeteOnlineStatus::Away,      22, this, 3, "msn_brb",       i18n( "Set Be &Right Back" ), i18n( "Be Right Back" ) ),
-	AWY( KopeteOnlineStatus::Away,      18, this, 4, "msn_away",      i18n( "Set &Away" ),          i18n( "Away From Computer" ) ),
-	PHN( KopeteOnlineStatus::Away,      12, this, 5, "msn_phone",     i18n( "Set On The &Phone" ),  i18n( "On the Phone" ) ),
-	LUN( KopeteOnlineStatus::Away,      15, this, 6, "msn_lunch",     i18n( "Set Out To &Lunch" ),  i18n( "Out to Lunch" ) ),
-	FLN( KopeteOnlineStatus::Offline,    0, this, 7, QString::null,   i18n( "Set &Offline" ),       i18n( "Offline" ) ),
-	HDN( KopeteOnlineStatus::Invisible,       3, this, 8, "msn_invisible", i18n( "Set &Invisible" ),     i18n( "Invisible" ) ), //We use away because we don't want to see this state changed when autoaway.
-	IDL( KopeteOnlineStatus::Away,      10, this, 9, "msn_away",      "FIXME: Make this unselectable", i18n( "Idle" ) ),
-	UNK( KopeteOnlineStatus::Unknown,   25, this, 0, "status_unknown","FIXME: Make this unselectable", i18n( "Status not available" ) ),
-	CNT( KopeteOnlineStatus::Connecting, 2, this, 10,"msn_connecting","FIXME: Make this unselectable", i18n( "Connecting" ) ),
+	NLN( Kopete::OnlineStatus::Online,    25, this, 1, QString::null,   i18n( "Set O&nline" ),        i18n( "Online" ) ),
+	BSY( Kopete::OnlineStatus::Away,      20, this, 2, "msn_busy",      i18n( "Set &Busy" ),          i18n( "Busy" ) ),
+	BRB( Kopete::OnlineStatus::Away,      22, this, 3, "msn_brb",       i18n( "Set Be &Right Back" ), i18n( "Be Right Back" ) ),
+	AWY( Kopete::OnlineStatus::Away,      18, this, 4, "msn_away",      i18n( "Set &Away" ),          i18n( "Away From Computer" ) ),
+	PHN( Kopete::OnlineStatus::Away,      12, this, 5, "msn_phone",     i18n( "Set On The &Phone" ),  i18n( "On the Phone" ) ),
+	LUN( Kopete::OnlineStatus::Away,      15, this, 6, "msn_lunch",     i18n( "Set Out To &Lunch" ),  i18n( "Out to Lunch" ) ),
+	FLN( Kopete::OnlineStatus::Offline,    0, this, 7, QString::null,   i18n( "Set &Offline" ),       i18n( "Offline" ) ),
+	HDN( Kopete::OnlineStatus::Invisible,       3, this, 8, "msn_invisible", i18n( "Set &Invisible" ),     i18n( "Invisible" ) ), //We use away because we don't want to see this state changed when autoaway.
+	IDL( Kopete::OnlineStatus::Away,      10, this, 9, "msn_away",      "FIXME: Make this unselectable", i18n( "Idle" ) ),
+	UNK( Kopete::OnlineStatus::Unknown,   25, this, 0, "status_unknown","FIXME: Make this unselectable", i18n( "Status not available" ) ),
+	CNT( Kopete::OnlineStatus::Connecting, 2, this, 10,"msn_connecting","FIXME: Make this unselectable", i18n( "Connecting" ) ),
 	propEmail(Kopete::Global::Properties::self()->emailAddress()),
 	propPhoneHome(Kopete::Global::Properties::self()->privatePhone()),
 	propPhoneWork(Kopete::Global::Properties::self()->workPhone()),
@@ -64,14 +64,14 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList &
 {
 	s_protocol = this;
 
-	addAddressBookField( "messaging/msn", KopetePlugin::MakeIndexField );
+	addAddressBookField( "messaging/msn", Kopete::Plugin::MakeIndexField );
 
-	setRichTextCapabilities( KopeteProtocol::BaseFgColor | KopeteProtocol::BaseFont | KopeteProtocol::BaseFormatting );
+	setRichTextCapabilities( Kopete::Protocol::BaseFgColor | Kopete::Protocol::BaseFont | Kopete::Protocol::BaseFormatting );
 
 	// m_status = m_unknownStatus = UNK;
 }
 
-KopeteContact *MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
+Kopete::Contact *MSNProtocol::deserializeContact( Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> & /* addressBookData */ )
 {
 	QString contactId   = serializedData[ "contactId" ] ;
@@ -79,9 +79,9 @@ KopeteContact *MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, 
 	QString lists = serializedData[ "lists" ];
 	QStringList groups  = QStringList::split( ",", serializedData[ "groups" ] );
 
-	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
+	QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts( this );
 
-	KopeteAccount *account = accounts[ accountId ];
+	Kopete::Account *account = accounts[ accountId ];
 	if( !account )
 		account = createNewAccount( accountId );
 
@@ -101,17 +101,17 @@ KopeteContact *MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, 
 	return c;
 }
 
-AddContactPage *MSNProtocol::createAddContactWidget(QWidget *parent , KopeteAccount *i)
+AddContactPage *MSNProtocol::createAddContactWidget(QWidget *parent , Kopete::Account *i)
 {
 	return (new MSNAddContactPage(i->isConnected(),parent));
 }
 
-KopeteEditAccountWidget *MSNProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
+KopeteEditAccountWidget *MSNProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
 {
 	return new MSNEditAccountWidget(this,account,parent);
 }
 
-KopeteAccount *MSNProtocol::createNewAccount(const QString &accountId)
+Kopete::Account *MSNProtocol::createNewAccount(const QString &accountId)
 {
 	return new MSNAccount(this, accountId);
 }

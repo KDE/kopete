@@ -37,8 +37,8 @@ FastAddContactWizard::FastAddContactWizard( QWidget *parent, const char *name )
 
 	// Populate the accounts list
 	QListViewItem* accountLVI = 0L;
-	QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
-	for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
+	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::manager()->accounts();
+	for(Kopete::Account *i=accounts.first() ; i; i=accounts.next() )
 	{
 		accountLVI= new QListViewItem( protocolListView, i->accountId() );
 		accountLVI->setText(1,i->protocol()->displayName() + QString::fromLatin1(" ") );
@@ -74,7 +74,7 @@ void FastAddContactWizard::next()
 	// the chosen protocol
 	if ( currentPage() == selectService )
 	{
-		QMap <KopeteAccount*,AddContactPage*>::Iterator it;
+		QMap <Kopete::Account*,AddContactPage*>::Iterator it;
 		for ( it = protocolPages.begin(); it != protocolPages.end(); ++it )
 		{
 			delete it.data();
@@ -110,21 +110,21 @@ void FastAddContactWizard::next()
 
 void FastAddContactWizard::accept()
 {
-	KopeteMetaContact *metaContact = new KopeteMetaContact();
+	Kopete::MetaContact *metaContact = new Kopete::MetaContact();
 	
-	metaContact->addToGroup( KopeteGroup::topLevel() );
+	metaContact->addToGroup( Kopete::Group::topLevel() );
 	
 	bool ok = protocolPages.isEmpty();
 
 	// get each protocol's contact
-	QMap <KopeteAccount*,AddContactPage*>::Iterator it;
+	QMap <Kopete::Account*,AddContactPage*>::Iterator it;
 	for ( it = protocolPages.begin(); it != protocolPages.end(); ++it )
 		ok |= it.data()->apply( it.key(), metaContact );
 
 	if ( ok )
 	{
 		// add it to the contact list
-		KopeteContactList::contactList()->addMetaContact( metaContact );
+		Kopete::ContactList::contactList()->addMetaContact( metaContact );
 	}
 	else
 		delete metaContact;

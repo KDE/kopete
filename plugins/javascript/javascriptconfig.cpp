@@ -195,7 +195,7 @@ void JavaScriptConfig::removeScript( const QString &id )
 	d->scripts.remove( id );
 }
 
-QValueList<Script*> JavaScriptConfig::scriptsFor( KopeteAccount *account )
+QValueList<Script*> JavaScriptConfig::scriptsFor( Kopete::Account *account )
 {
 	QString key;
 	if( account )
@@ -214,7 +214,7 @@ QValueList<Script*> JavaScriptConfig::scriptsFor( KopeteAccount *account )
 	return retVal;
 }
 
-void JavaScriptConfig::setScriptEnabled( KopeteAccount *account, const QString &script, bool enabled )
+void JavaScriptConfig::setScriptEnabled( Kopete::Account *account, const QString &script, bool enabled )
 {
 	QString key;
 	if( account )

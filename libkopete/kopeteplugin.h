@@ -23,11 +23,8 @@
 
 #include <kxmlguiclient.h>
 
-class KopeteMetaContact;
-class KopeteMessageManager;
 class KActionCollection;
 class KMainWindow;
-class KopeteMessage;
 
 namespace DOM
 {
@@ -36,22 +33,29 @@ namespace DOM
 
 class KopetePluginPrivate;
 
+namespace Kopete
+{
+
+class MetaContact;
+class MessageManager;
+class Message;
+
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  *
- * KopetePlugin is the base class for all Kopete plugins, and can implement
+ * Kopete::Plugin is the base class for all Kopete plugins, and can implement
  * virtually anything you like.
- * KopetePlugin inherits from KXMLGUIClient. it is used in the contactlist.
+ * Kopete::Plugin inherits from KXMLGUIClient. it is used in the contactlist.
  * please note the the client is added *RIGHT* after the plugin is created.
  * so you have to make every actions in the constructor
  */
-class KopetePlugin : public QObject, public KXMLGUIClient
+class Plugin : public QObject, public KXMLGUIClient
 {
 	Q_OBJECT
 
 public:
-	KopetePlugin( KInstance *instance, QObject *parent, const char *name );
-	virtual ~KopetePlugin();
+	Plugin( KInstance *instance, QObject *parent, const char *name );
+	virtual ~Plugin();
 
 	/**
 	 * return the plugin id. this is practically the name of the class.
@@ -63,7 +67,7 @@ public:
 	 * Return the list of all keys from the address book in which the plugin
 	 * is interested. Those keys are monitored for changes upon load and
 	 * during runtime. When the key actually changes, the plugin's
-	 * addressBookKeyChanged( KopeteMetaContact *mc, const QString &key )
+	 * addressBookKeyChanged( Kopete::MetaContact *mc, const QString &key )
 	 * is called.
 	 * You can add fields to the list using @ref addAddressBookField()
 	 */
@@ -84,7 +88,7 @@ public:
 	 * for a description of the fields.
 	 *
 	 * Set mode to MakeIndexField to make this the index field. Index fields
-	 * are currently used by KopeteContact::serialize to autoset the index
+	 * are currently used by Kopete::Contact::serialize to autoset the index
 	 * when possible.
 	 *
 	 * Only one field can be index field. Calling this method multiple times
@@ -95,7 +99,7 @@ public:
 	/**
 	 * The user right-click on the chatwindow
 	 */
-	virtual QPtrList<KAction> *customChatWindowPopupActions( const KopeteMessage &, DOM::Node &node );
+	virtual QPtrList<KAction> *customChatWindowPopupActions( const Message &, DOM::Node &node );
 
 	/**
 	 * Get the name of the icon for this plugin. The icon name is taken from the
@@ -147,15 +151,17 @@ public slots:
 	 * to apply the previously stored data again.
 	 * This method is also responsible for retrieving the settings from the
 	 * address book. Settings that were registered can be retrieved with
-	 * @ref KopeteMetaContact::addressBookField().
+	 * @ref Kopete::MetaContact::addressBookField().
 	 *
 	 * The default implementation does nothing.
 	 */
-	virtual void deserialize( KopeteMetaContact *metaContact, const QMap<QString, QString> &data );
+	virtual void deserialize( Kopete::MetaContact *metaContact, const QMap<QString, QString> &data );
 
 private:
 	KopetePluginPrivate *d;
 };
+
+}
 
 #endif
 

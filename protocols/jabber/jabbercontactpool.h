@@ -21,8 +21,8 @@
 #include <qobject.h>
 #include <im.h>
 
-class KopeteMetaContact;
-class KopeteContact;
+namespace Kopete { class MetaContact; }
+namespace Kopete { class Contact; }
 class JabberContactPoolItem;
 class JabberBaseContact;
 class JabberContact;
@@ -51,8 +51,8 @@ public:
 	/**
 	 * Add a contact to the pool
 	 */
-	JabberContact *addContact ( const XMPP::RosterItem &contact, KopeteMetaContact *metaContact, bool dirty = true );
-	JabberBaseContact *addGroupContact ( const XMPP::RosterItem &contact, bool roomContact, KopeteMetaContact *metaContact, bool dirty = true );
+	JabberContact *addContact ( const XMPP::RosterItem &contact, Kopete::MetaContact *metaContact, bool dirty = true );
+	JabberBaseContact *addGroupContact ( const XMPP::RosterItem &contact, bool roomContact, Kopete::MetaContact *metaContact, bool dirty = true );
 
 	/**
 	 * Remove a contact from the pool
@@ -94,7 +94,7 @@ public:
 	QPtrList<JabberBaseContact> findRelevantSources ( const XMPP::Jid &jid );
 
 private slots:
-	void slotContactDestroyed ( KopeteContact *contact );
+	void slotContactDestroyed ( Kopete::Contact *contact );
 
 private:
 	JabberContactPoolItem *findPoolItem ( const XMPP::RosterItem &contact );

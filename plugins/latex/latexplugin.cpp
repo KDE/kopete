@@ -38,13 +38,13 @@ typedef KGenericFactory<LatexPlugin> LatexPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_latex, LatexPluginFactory( "kopete_latex" )  )
 
 LatexPlugin::LatexPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
-: KopetePlugin( LatexPluginFactory::instance(), parent, name )
+: Kopete::Plugin( LatexPluginFactory::instance(), parent, name )
 {
 //	kdDebug() << k_funcinfo << endl;
 	if( !s_pluginStatic )
 		s_pluginStatic = this;
 
-	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToDisplay( KopeteMessage & ) ), SLOT( slotHandleLatex( KopeteMessage & ) ) );
+	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToDisplay( Kopete::Message & ) ), SLOT( slotHandleLatex( Kopete::Message & ) ) );
 	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
 
 	m_config = new LatexConfig;
@@ -67,7 +67,7 @@ LatexPlugin* LatexPlugin::plugin()
 LatexPlugin* LatexPlugin::s_pluginStatic = 0L;
 
 
-void LatexPlugin::slotHandleLatex( KopeteMessage& msg )
+void LatexPlugin::slotHandleLatex( Kopete::Message& msg )
 {
 	QString messageText = msg.plainBody();
 	if( !messageText.contains("$$"))
@@ -151,12 +151,12 @@ void LatexPlugin::slotHandleLatex( KopeteMessage& msg )
 		messageText.replace(it.key(), " <img src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
 	}
 
-	//Finish the "HTMLisation" of the message.  TODO: do it in a KopeteMessage::escape
+	//Finish the "HTMLisation" of the message.  TODO: do it in a Kopete::Message::escape
 	messageText.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br />" ) )
 				.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) )
 				.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
 				
-	msg.setBody( messageText, KopeteMessage::RichText );
+	msg.setBody( messageText, Kopete::Message::RichText );
 }
 
 void LatexPlugin::slotSettingsChanged()

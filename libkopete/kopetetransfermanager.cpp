@@ -30,10 +30,10 @@
 #include "kopetefileconfirmdialog.h"
 
 /***************************
- *  KopeteFileTransferInfo *
+ *  Kopete::FileTransferInfo *
  ***************************/
 
-KopeteFileTransferInfo::KopeteFileTransferInfo(  KopeteContact *contact, const QString& file, const unsigned long size, const QString &recipient, KopeteTransferDirection di, const unsigned int id, QString internalId)
+Kopete::FileTransferInfo::FileTransferInfo(  Kopete::Contact *contact, const QString& file, const unsigned long size, const QString &recipient, KopeteTransferDirection di, const unsigned int id, QString internalId)
 {
 	mContact = contact;
 	mFile = file;
@@ -45,18 +45,18 @@ KopeteFileTransferInfo::KopeteFileTransferInfo(  KopeteContact *contact, const Q
 }
 
 /***************************
- *     KopeteTransfer      *
+ *     Kopete::Transfer      *
  ***************************/
 
 
-KopeteTransfer::KopeteTransfer( const KopeteFileTransferInfo &kfti, const QString &localFile, bool showProgressInfo)
+Kopete::Transfer::Transfer( const Kopete::FileTransferInfo &kfti, const QString &localFile, bool showProgressInfo)
 	: KIO::Job(showProgressInfo), mInfo(kfti)
 {
 	KURL targ; targ.setPath( localFile );
 	init( targ, showProgressInfo );
 }
 
-KopeteTransfer::KopeteTransfer( const KopeteFileTransferInfo &kfti, const KopeteContact *contact, bool showProgressInfo)
+Kopete::Transfer::Transfer( const Kopete::FileTransferInfo &kfti, const Kopete::Contact *contact, bool showProgressInfo)
 	: KIO::Job(showProgressInfo), mInfo(kfti)
 {
 	// TODO: use mInfo.url().fileName() after move to protocol-aware filetransfers
@@ -64,7 +64,7 @@ KopeteTransfer::KopeteTransfer( const KopeteFileTransferInfo &kfti, const Kopete
 	init( displayURL( contact, targ.fileName() ), showProgressInfo );
 }
 
-void KopeteTransfer::init( const KURL &target, bool showProgressInfo )
+void Kopete::Transfer::init( const KURL &target, bool showProgressInfo )
 {
 	mTarget = target;
 
@@ -76,11 +76,11 @@ void KopeteTransfer::init( const KURL &target, bool showProgressInfo )
 	setAutoErrorHandlingEnabled( true, 0 );
 }
 
-KopeteTransfer::~KopeteTransfer()
+Kopete::Transfer::~Transfer()
 {
 }
 
-KURL KopeteTransfer::displayURL( const KopeteContact *contact, const QString &file )
+KURL Kopete::Transfer::displayURL( const Kopete::Contact *contact, const QString &file )
 {
 	KURL url;
 	url.setProtocol( QString::fromLatin1("kopete") );
@@ -102,9 +102,9 @@ KURL KopeteTransfer::displayURL( const KopeteContact *contact, const QString &fi
 
 // TODO: add possibility of network file transfers;
 //  call mInfo->url() not file()
-KURL KopeteTransfer::sourceURL()
+KURL Kopete::Transfer::sourceURL()
 {
-	if( mInfo.direction() == KopeteFileTransferInfo::Incoming )
+	if( mInfo.direction() == Kopete::FileTransferInfo::Incoming )
 		return displayURL( mInfo.contact(), mInfo.file() );
 	else
 	{
@@ -113,22 +113,22 @@ KURL KopeteTransfer::sourceURL()
 	}
 }
 
-KURL KopeteTransfer::destinationURL()
+KURL Kopete::Transfer::destinationURL()
 {
 	return mTarget;
 }
 
-void KopeteTransfer::slotProcessed(unsigned int bytes)
+void Kopete::Transfer::slotProcessed(unsigned int bytes)
 {
 	emitPercent( bytes, mInfo.size() );
 }
 
-void KopeteTransfer::slotComplete()
+void Kopete::Transfer::slotComplete()
 {
 	emitResult();
 }
 
-void KopeteTransfer::setError(KopeteTransferError kopeteError)
+void Kopete::Transfer::setError(KopeteTransferError kopeteError)
 {
 	QString errorText;
 	int error;
@@ -156,7 +156,7 @@ void KopeteTransfer::setError(KopeteTransferError kopeteError)
 	slotError( error, errorText );
 }
 
-void KopeteTransfer::slotError( int error, const QString &errorText )
+void Kopete::Transfer::slotError( int error, const QString &errorText )
 {
 	m_error = error;
 	m_errorText = errorText;
@@ -164,84 +164,84 @@ void KopeteTransfer::slotError( int error, const QString &errorText )
 	emitResult();
 }
 
-void KopeteTransfer::slotResultEmitted()
+void Kopete::Transfer::slotResultEmitted()
 {
 	if( error() == KIO::ERR_USER_CANCELED )
 		emit transferCanceled();
 }
 
 /***************************
- *  KopeteTransferManager  *
+ *  Kopete::TransferManager  *
  ***************************/
 
-static KStaticDeleter<KopeteTransferManager> deleteManager;
-KopeteTransferManager *KopeteTransferManager::s_transferManager = 0;
+static KStaticDeleter<Kopete::TransferManager> deleteManager;
+Kopete::TransferManager *Kopete::TransferManager::s_transferManager = 0;
 
-KopeteTransferManager* KopeteTransferManager::transferManager()
+Kopete::TransferManager* Kopete::TransferManager::transferManager()
 {
 	if(!s_transferManager)
-		deleteManager.setObject(s_transferManager, new KopeteTransferManager(0));
+		deleteManager.setObject(s_transferManager, new Kopete::TransferManager(0));
 
 	return s_transferManager;
 }
 
-KopeteTransferManager::KopeteTransferManager( QObject *parent ) : QObject( parent )
+Kopete::TransferManager::TransferManager( QObject *parent ) : QObject( parent )
 {
 	nextID = 0;
 }
 
-KopeteTransfer* KopeteTransferManager::addTransfer(  KopeteContact *contact, const QString& file, const unsigned long size, const QString &recipient , KopeteFileTransferInfo::KopeteTransferDirection di)
+Kopete::Transfer* Kopete::TransferManager::addTransfer(  Kopete::Contact *contact, const QString& file, const unsigned long size, const QString &recipient , Kopete::FileTransferInfo::KopeteTransferDirection di)
 {
 //	if (nextID != 0)
 		nextID++;
-	KopeteFileTransferInfo info(contact, file, size, recipient,di,  nextID);
-	KopeteTransfer *trans = new KopeteTransfer(info, contact);
+	Kopete::FileTransferInfo info(contact, file, size, recipient,di,  nextID);
+	Kopete::Transfer *trans = new Kopete::Transfer(info, contact);
 	connect(trans, SIGNAL(result(KIO::Job *)), this, SLOT(slotComplete(KIO::Job *)));
 	mTransfersMap.insert(nextID, trans);
 	return trans;
 }
 
-void KopeteTransferManager::slotAccepted(const KopeteFileTransferInfo& info, const QString& filename)
+void Kopete::TransferManager::slotAccepted(const Kopete::FileTransferInfo& info, const QString& filename)
 {
-	KopeteTransfer *trans = new KopeteTransfer(info, filename);
+	Kopete::Transfer *trans = new Kopete::Transfer(info, filename);
 	connect(trans, SIGNAL(result(KIO::Job *)), this, SLOT(slotComplete(KIO::Job *)));
 	mTransfersMap.insert(info.transferId(), trans);
 	emit accepted(trans,filename);
 }
 
-int KopeteTransferManager::askIncomingTransfer(  KopeteContact *contact, const QString& file, const unsigned long size, const QString& description, QString internalId)
+int Kopete::TransferManager::askIncomingTransfer(  Kopete::Contact *contact, const QString& file, const unsigned long size, const QString& description, QString internalId)
 {
 //	if (nextID != 0)
 		nextID++;
 		
 	QString dn= contact ? (contact->metaContact() ? contact->metaContact()->displayName() : contact->contactId()) : i18n("<unknown>");
 
-	KopeteFileTransferInfo info(contact, file, size, dn, KopeteFileTransferInfo::Incoming , nextID , internalId);
+	Kopete::FileTransferInfo info(contact, file, size, dn, Kopete::FileTransferInfo::Incoming , nextID , internalId);
 
 	//FIXME!!! this will not be deleted if it's still open when kopete exits
 	KopeteFileConfirmDialog *diag= new KopeteFileConfirmDialog(info, description , 0 )  ;
 
-	connect( diag, SIGNAL( accepted(const KopeteFileTransferInfo&, const QString&)) , this, SLOT( slotAccepted(const KopeteFileTransferInfo&, const QString&) ) );
-	connect( diag, SIGNAL( refused(const KopeteFileTransferInfo&)) , this, SIGNAL( refused(const KopeteFileTransferInfo&) ) );
+	connect( diag, SIGNAL( accepted(const Kopete::FileTransferInfo&, const QString&)) , this, SLOT( slotAccepted(const Kopete::FileTransferInfo&, const QString&) ) );
+	connect( diag, SIGNAL( refused(const Kopete::FileTransferInfo&)) , this, SIGNAL( refused(const Kopete::FileTransferInfo&) ) );
 	diag->show();
 	return nextID;
 }
 
-void KopeteTransferManager::removeTransfer( unsigned int id )
+void Kopete::TransferManager::removeTransfer( unsigned int id )
 {
 	mTransfersMap.remove(id);
 	//we don't need to delete the job, the job get deleted itself
 }
 
-void KopeteTransferManager::slotComplete(KIO::Job *job)
+void Kopete::TransferManager::slotComplete(KIO::Job *job)
 {
-	KopeteTransfer *transfer=dynamic_cast<KopeteTransfer*>(job);
+	Kopete::Transfer *transfer=dynamic_cast<Kopete::Transfer*>(job);
 	if(!transfer)
 		return;
 
 	emit done(transfer);
 
-	for( QMap<unsigned, KopeteTransfer*>::Iterator it = mTransfersMap.begin();
+	for( QMap<unsigned, Kopete::Transfer*>::Iterator it = mTransfersMap.begin();
 	     it != mTransfersMap.end(); ++it )
 	{
 		if( it.data() == transfer )
@@ -252,7 +252,7 @@ void KopeteTransferManager::slotComplete(KIO::Job *job)
 	}
 }
 
-void KopeteTransferManager::sendFile( const KURL &file, const QString &fname, unsigned long sz,
+void Kopete::TransferManager::sendFile( const KURL &file, const QString &fname, unsigned long sz,
 	 bool mustBeLocal,	QObject *sendTo, const char *slot )
 {
 	KURL url(file);

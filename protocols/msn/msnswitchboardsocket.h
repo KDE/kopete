@@ -28,7 +28,7 @@
 
 #include "msnsocket.h"
 
-class KopeteMessage;
+namespace Kopete { class Message; }
 class MSNAccount;
 class QTimer;
 
@@ -63,10 +63,10 @@ private:
 	MSNP2P *m_p2p ;
 
 	//used for emoticons
-	QValueList<const KopeteMessage> m_msgQueue;
+	QValueList<const Kopete::Message> m_msgQueue;
 	unsigned  m_recvIcons;
 	QMap<QString , QPair<QString , KTempFile*> >  m_emoticons;
-	KopeteMessage &parseCustomEmoticons(KopeteMessage &msg);
+	Kopete::Message &parseCustomEmoticons(Kopete::Message &msg);
 	QTimer *m_emoticonTimer;
 
 protected:
@@ -92,7 +92,7 @@ public:
 	const QStringList &chatMembers() { return m_chatMembers; }
 
 	void userLeftChat( const QString &handle , const QString &reason );
-	int sendMsg( const KopeteMessage &msg );
+	int sendMsg( const Kopete::Message &msg );
 
 public slots:
 	void slotCloseSession();
@@ -114,7 +114,7 @@ private slots:
 	void cleanQueue();
 
 signals:
-	void msgReceived( KopeteMessage &msg );
+	void msgReceived( Kopete::Message &msg );
 	void receivedTypingMsg( const QString &contactId, bool isTyping );
 	void msgAcknowledgement(unsigned int, bool);
 	void userJoined(const QString& handle , const QString &publicName , bool IRO);

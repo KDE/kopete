@@ -34,14 +34,14 @@ SMSAddContactPage::~SMSAddContactPage()
 
 }
 
-bool SMSAddContactPage::apply(KopeteAccount* a, KopeteMetaContact* m)
+bool SMSAddContactPage::apply(Kopete::Account* a, Kopete::MetaContact* m)
 {
 	if ( validateData() )
 	{
 		QString nr = smsdata->addNr->text();
 		QString name = smsdata->addName->text();
 
-		return a->addContact( nr, name, m, KopeteAccount::ChangeKABC );
+		return a->addContact( nr, name, m, Kopete::Account::ChangeKABC );
 	}
 
 	return false;

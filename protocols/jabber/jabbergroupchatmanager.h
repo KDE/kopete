@@ -24,13 +24,13 @@
 class JabberProtocol;
 class JabberAccount;
 class JabberBaseContact;
-class KopeteMessage;
+namespace Kopete { class Message; }
 class QString;
 
 /**
  * @author Till Gerken
  */
-class JabberGroupChatManager : public KopeteMessageManager
+class JabberGroupChatManager : public Kopete::MessageManager
 {
 	Q_OBJECT
 
@@ -56,7 +56,7 @@ public:
 	void updateDisplayName ();
 
 private slots:
-	void slotMessageSent ( KopeteMessage &message, KopeteMessageManager *kmm );
+	void slotMessageSent ( Kopete::Message &message, Kopete::MessageManager *kmm );
 
 private:
 	XMPP::Jid mRoomJid;

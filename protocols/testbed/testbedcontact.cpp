@@ -28,9 +28,9 @@
 #include "testbedfakeserver.h"
 #include "testbedprotocol.h"
 
-TestbedContact::TestbedContact( KopeteAccount* _account, const QString &uniqueName,
-		const TestbedContactType type, const QString &displayName, KopeteMetaContact *parent )
-: KopeteContact( _account, uniqueName, parent )
+TestbedContact::TestbedContact( Kopete::Account* _account, const QString &uniqueName,
+		const TestbedContactType type, const QString &displayName, Kopete::MetaContact *parent )
+: Kopete::Contact( _account, uniqueName, parent )
 {
 	kdDebug( 14210 ) << k_funcinfo << " uniqueName: " << uniqueName << ", displayName: " << displayName << endl;
 	m_type = type;
@@ -62,7 +62,7 @@ void TestbedContact::serialize( QMap< QString, QString > &serializedData, QMap< 
 	serializedData[ "contactType" ] = value;
 }
 
-KopeteMessageManager* TestbedContact::manager( bool )
+Kopete::MessageManager* TestbedContact::manager( bool )
 {
 	kdDebug( 14210 ) << k_funcinfo << endl;
 	if ( m_msgManager )
@@ -71,11 +71,11 @@ KopeteMessageManager* TestbedContact::manager( bool )
 	}
 	else
 	{
-		QPtrList<KopeteContact> contacts;
+		QPtrList<Kopete::Contact> contacts;
 		contacts.append(this);
 		m_msgManager = KopeteMessageManagerFactory::factory()->create(account()->myself(), contacts, protocol());
-		connect(m_msgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager*)),
-				this, SLOT( sendMessage( KopeteMessage& ) ) );
+		connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::MessageManager*)),
+				this, SLOT( sendMessage( Kopete::Message& ) ) );
 		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
 		return m_msgManager;
 	}
@@ -99,7 +99,7 @@ void TestbedContact::showContactSettings()
 	//p->show();
 }
 
-void TestbedContact::sendMessage( KopeteMessage &message )
+void TestbedContact::sendMessage( Kopete::Message &message )
 {
 	kdDebug( 14210 ) << k_funcinfo << endl;
 	// convert to the what the server wants
@@ -116,12 +116,12 @@ void TestbedContact::sendMessage( KopeteMessage &message )
 
 void TestbedContact::receivedMessage( const QString &message )
 {
-	// Create a KopeteMessage
-	KopeteMessage *newMessage;
+	// Create a Kopete::Message
+	Kopete::Message *newMessage;
 	KopeteContactPtrList contactList;
 	account();
 	contactList.append( account()->myself() );
-	newMessage = new KopeteMessage( this, contactList, message, KopeteMessage::Inbound );
+	newMessage = new Kopete::Message( this, contactList, message, Kopete::Message::Inbound );
 
 	// Add it to the manager
 	manager()->appendMessage (*newMessage);

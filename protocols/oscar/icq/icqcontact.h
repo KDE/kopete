@@ -27,8 +27,8 @@
 struct UserInfo;
 class KAction;
 class KToggleAction;
-class KopeteMessageManager;
-class KopeteOnlineStatus;
+namespace Kopete { class MessageManager; }
+namespace Kopete { class OnlineStatus; }
 class ICQProtocol;
 class ICQAccount;
 class OscarAccount;
@@ -51,7 +51,7 @@ class ICQContact : public OscarContact
 
 	public:
 		ICQContact(const QString name, const QString displayName,
-			ICQAccount *account, KopeteMetaContact *parent);
+			ICQAccount *account, Kopete::MetaContact *parent);
 
 		virtual ~ICQContact();
 
@@ -83,7 +83,7 @@ class ICQContact : public OscarContact
 		 * Reimplemented because invisible contacts have a
 		 * small auto-modifying status
 		 */
-		void setOnlineStatus(const KopeteOnlineStatus&);
+		void setOnlineStatus(const Kopete::OnlineStatus&);
 
 		virtual const QString awayMessage();
 		virtual void setAwayMessage(const QString &message);
@@ -140,7 +140,7 @@ class ICQContact : public OscarContact
 		/*
 		 * Called when we want to send a message
 		 */
-		void slotSendMsg(KopeteMessage&, KopeteMessageManager *);
+		void slotSendMsg(Kopete::Message&, Kopete::MessageManager *);
 
 		void slotUpdGeneralInfo(const int, const ICQGeneralUserInfo &);
 		void slotUpdWorkInfo(const int, const ICQWorkUserInfo &);

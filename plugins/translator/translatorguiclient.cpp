@@ -33,7 +33,7 @@
 #include "translatorguiclient.h"
 #include "translatorlanguages.h"
 
-TranslatorGUIClient::TranslatorGUIClient( KopeteMessageManager *parent, const char *name )
+TranslatorGUIClient::TranslatorGUIClient( Kopete::MessageManager *parent, const char *name )
 : QObject( parent, name ), KXMLGUIClient( parent )
 {
 	setInstance( TranslatorPlugin::plugin()->instance() );
@@ -55,7 +55,7 @@ void TranslatorGUIClient::slotTranslateChat()
 	if ( !m_manager->view() )
 		return;
 
-	KopeteMessage msg = m_manager->view()->currentMessage();
+	Kopete::Message msg = m_manager->view()->currentMessage();
 	QString body = msg.plainBody();
 	if ( body.isEmpty() )
 		return;
@@ -63,8 +63,8 @@ void TranslatorGUIClient::slotTranslateChat()
 	QString src_lang = TranslatorPlugin::plugin()->m_myLang;
 	QString dst_lang;
 
-	QPtrList<KopeteContact> list = m_manager->members();
-	KopeteMetaContact *to = list.first()->metaContact();
+	QPtrList<Kopete::Contact> list = m_manager->members();
+	Kopete::MetaContact *to = list.first()->metaContact();
 	dst_lang = to->pluginData( TranslatorPlugin::plugin(), "languageKey" );
 	if ( dst_lang.isEmpty() || dst_lang == "null" )
 	{
@@ -89,7 +89,7 @@ void TranslatorGUIClient::messageTranslated( const QVariant &result )
 	if ( !m_manager->view() )
 		return;
 
-	KopeteMessage msg = m_manager->view()->currentMessage();
+	Kopete::Message msg = m_manager->view()->currentMessage();
 	msg.setBody( translated );
 	m_manager->view()->setCurrentMessage( msg );
 }

@@ -30,7 +30,7 @@
 // Local Includes
 #include "yahooeditaccountbase.h"
 
-class KopeteAccount;
+namespace Kopete { class Account; }
 
 class YahooEditAccount: public YahooEditAccountBase, public KopeteEditAccountWidget
 {
@@ -41,12 +41,12 @@ private:
 	Kopete::UI::PasswordWidget *mPasswordWidget;
 
 public:
-	YahooEditAccount(YahooProtocol *protocol, KopeteAccount *theAccount, QWidget *parent = 0, const char *name = 0);
+	YahooEditAccount(YahooProtocol *protocol, Kopete::Account *theAccount, QWidget *parent = 0, const char *name = 0);
 
 	virtual bool validateData();
 
 public slots:
-	virtual KopeteAccount *apply();
+	virtual Kopete::Account *apply();
 
 private slots:
 	void slotOpenRegister();

@@ -57,7 +57,7 @@ public:
 	MSNEditAccountUI *ui;
 };
 
-MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, KopeteAccount *account, QWidget *parent, const char * /* name */ )
+MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account *account, QWidget *parent, const char * /* name */ )
 : QWidget( parent ), KopeteEditAccountWidget( account )
 {
 	d = new MSNEditAccountWidgetPrivate;
@@ -145,7 +145,7 @@ MSNEditAccountWidget::~MSNEditAccountWidget()
 	delete d;
 }
 
-KopeteAccount * MSNEditAccountWidget::apply()
+Kopete::Account * MSNEditAccountWidget::apply()
 {
 	d->autoConfig->saveSettings();
 

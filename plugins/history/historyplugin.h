@@ -26,18 +26,18 @@
 
 #include "kopetemessage.h"
 
-class KopeteMessage;
+namespace Kopete { class Message; }
 class KopeteView;
 class KActionCollection;
-class KopeteMetaContact;
-class KopeteMessageManager;
+namespace Kopete { class MetaContact; }
+namespace Kopete { class MessageManager; }
 class HistoryPreferences;
 class HistoryGUIClient;
 
 /**
   * @author Olivier Goffart
   */
-class HistoryPlugin : public KopetePlugin
+class HistoryPlugin : public Kopete::Plugin
 {
 	Q_OBJECT
 	public:
@@ -54,15 +54,15 @@ class HistoryPlugin : public KopetePlugin
 		static bool detectOldHistory();
 
 	private slots:
-		void slotMessageDisplayed(KopeteMessage &msg);
+		void slotMessageDisplayed(Kopete::Message &msg);
 		void slotViewCreated( KopeteView* );
 		void slotViewHistory();
-		void slotKMMClosed( KopeteMessageManager* );
+		void slotKMMClosed( Kopete::MessageManager* );
 		void slotSettingsChanged();
 
 	private:
-		QMap<KopeteMessageManager*,HistoryGUIClient*> m_loggers;
-		KopeteMessage m_lastmessage;
+		QMap<Kopete::MessageManager*,HistoryGUIClient*> m_loggers;
+		Kopete::Message m_lastmessage;
 };
 
 #endif

@@ -82,7 +82,7 @@ void ChannelListDialog::slotChannelDoubleClicked( const QString & )
 }
 
 IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QString &autoChan )
-	: KopeteAccount(protocol, accountId), autoConnect( autoChan )
+	: Kopete::Account(protocol, accountId), autoConnect( autoChan )
 {
 	m_manager = 0L;
 	m_channelList = 0L;
@@ -470,13 +470,13 @@ void IRCAccount::slotConnectedToServer()
 
 	m_contactManager->addToNotifyList( m_engine->nickName() );
 
-	KopeteMessageManager *manager = myServer()->manager();
+	Kopete::MessageManager *manager = myServer()->manager();
 	if( !autoConnect.isEmpty() )
-		KopeteCommandHandler::commandHandler()->processMessage( QString::fromLatin1("/join %1").arg(autoConnect), manager );
+		Kopete::CommandHandler::commandHandler()->processMessage( QString::fromLatin1("/join %1").arg(autoConnect), manager );
 
 	QStringList m_connectCommands = connectCommands();
 	for( QStringList::Iterator it = m_connectCommands.begin(); it != m_connectCommands.end(); ++it )
-		KopeteCommandHandler::commandHandler()->processMessage( *it, manager );
+		Kopete::CommandHandler::commandHandler()->processMessage( *it, manager );
 }
 
 void IRCAccount::slotJoinedUnknownChannel( const QString &channel, const QString &nick )
@@ -495,7 +495,7 @@ void IRCAccount::slotDisconnected()
 		m_contactManager->removeFromNotifyList( m_engine->nickName() );
 
 //	if (m_contactManager && !autoConnect.isNull())
-//		KopeteAccountManager::manager()->removeAccount( this );
+//		Kopete::AccountManager::manager()->removeAccount( this );
 }
 
 void IRCAccount::disconnect()
@@ -558,7 +558,7 @@ void IRCAccount::setAway( bool isAway, const QString &awayMessage )
 void IRCAccount::slotFailedServerPassword()
 {
 	// JLN
-	QString servPass = KopeteAccount::password();
+	QString servPass = Kopete::Account::password();
 	m_engine->setPassword(servPass);
 	connect();
 }
@@ -574,7 +574,7 @@ void IRCAccount::slotShowServerWindow()
 
 bool IRCAccount::isConnected()
 {
-	return ( myself()->onlineStatus().status() != KopeteOnlineStatus::Offline );
+	return ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline );
 }
 
 
@@ -588,15 +588,15 @@ void IRCAccount::successfullyChangedNick(const QString &oldnick, const QString &
 }
 
 bool IRCAccount::addContactToMetaContact( const QString &contactId, const QString &displayName,
-	 KopeteMetaContact *m )
+	 Kopete::MetaContact *m )
 {
 	kdDebug(14120) << k_funcinfo << contactManager() << endl;
 	IRCContact *c;
 
 	if( !m )
 	{//This should NEVER happen
-		m = new KopeteMetaContact();
-		KopeteContactList::contactList()->addMetaContact(m);
+		m = new Kopete::MetaContact();
+		Kopete::ContactList::contactList()->addMetaContact(m);
 		m->setDisplayName( displayName );
 	}
 
@@ -610,11 +610,11 @@ bool IRCAccount::addContactToMetaContact( const QString &contactId, const QStrin
 
 	if( c->metaContact() != m )
 	{//This should NEVER happen
-		KopeteMetaContact *old = c->metaContact();
+		Kopete::MetaContact *old = c->metaContact();
 		c->setMetaContact( m );
 		KopeteContactPtrList children = old->contacts();
 		if( children.isEmpty() )
-			KopeteContactList::contactList()->removeMetaContact( old );
+			Kopete::ContactList::contactList()->removeMetaContact( old );
 	}
 	else if( c->metaContact()->isTemporary() )
 		m->setTemporary(false);
@@ -697,9 +697,9 @@ void IRCAccount::appendMessage( const QString &message, MessageType type )
 		KopeteView *activeView = KopeteMessageManagerFactory::factory()->activeView();
 		if( activeView && activeView->msgManager()->account() == this )
 		{
-			KopeteMessageManager *manager = activeView->msgManager();
-			KopeteMessage msg( manager->user(), manager->members(), message,
-				KopeteMessage::Internal, KopeteMessage::RichText, KopeteMessage::Chat );
+			Kopete::MessageManager *manager = activeView->msgManager();
+			Kopete::Message msg( manager->user(), manager->members(), message,
+				Kopete::Message::Internal, Kopete::Message::RichText, Kopete::Message::Chat );
 			activeView->appendMessage(msg);
 		}
 	}

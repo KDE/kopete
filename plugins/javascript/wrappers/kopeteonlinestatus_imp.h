@@ -27,7 +27,7 @@ class StatusProperties
 class JSStatus : public KJS::ObjectImp
 {
     public:
-        JSStatus( const KopeteOnlineStatus &status );
+        JSStatus( const Kopete::OnlineStatus &status );
 
         virtual KJS::UString className() const { return "OnlineStatus"; };
 
@@ -38,10 +38,10 @@ class JSStatus : public KJS::ObjectImp
 
         virtual bool canPut(KJS::ExecState *exec, const KJS::Identifier &propertyName) const;
 
-        const KopeteOnlineStatus &status() { return s; }
+        const Kopete::OnlineStatus &status() { return s; }
 
     private:
-        KopeteOnlineStatus s;
+        Kopete::OnlineStatus s;
 
         static const StatusProperties methods;
 };

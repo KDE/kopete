@@ -24,30 +24,35 @@
 
 class QDomElement;
 
-class KopeteNotifyEvent
+namespace Kopete
+{
+
+class NotifyEvent
 {
 public:
-	KopeteNotifyEvent( const bool suppressCommon = false );
-	~KopeteNotifyEvent();
+	NotifyEvent( const bool suppressCommon = false );
+	~NotifyEvent();
 
 	bool suppressCommon() const;
-	KopeteEventPresentation *presentation( const KopeteEventPresentation::PresentationType type ) const;
-	void setPresentation( const KopeteEventPresentation::PresentationType type, KopeteEventPresentation * );
-	void removePresentation( const KopeteEventPresentation::PresentationType type );
+	EventPresentation *presentation( const EventPresentation::PresentationType type ) const;
+	void setPresentation( const EventPresentation::PresentationType type, EventPresentation * );
+	void removePresentation( const EventPresentation::PresentationType type );
 	/**
 	 * @return true if the presentation was single shot 
 	 */
-	bool firePresentation( const KopeteEventPresentation::PresentationType type );
+	bool firePresentation( const EventPresentation::PresentationType type );
 	
 	void setSuppressCommon( bool suppress );
 	const QValueList<QDomElement> toXML() const;
 	QString toString();
 private:
 	QString m_event;
-	KopeteEventPresentation *m_sound;
-	KopeteEventPresentation *m_message;
-	KopeteEventPresentation *m_chat;
+	EventPresentation *m_sound;
+	EventPresentation *m_message;
+	EventPresentation *m_chat;
 	bool m_suppressCommon;
 };
+
+}
 
 #endif

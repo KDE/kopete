@@ -56,13 +56,13 @@ bool YahooAddContact::validateData()
 	return !theDialog->contactID->text().isEmpty();
 }
 
-bool YahooAddContact::apply(KopeteAccount *theAccount, KopeteMetaContact *theMetaContact)
+bool YahooAddContact::apply(Kopete::Account *theAccount, Kopete::MetaContact *theMetaContact)
 {
 	kdDebug(14180) << k_funcinfo << endl;
 
 	QString displayName = theDialog->contactID->text();
 	YahooAccount* myAccount = static_cast<YahooAccount*>(theAccount);
-	myAccount->addContact(theDialog->contactID->text(), displayName, theMetaContact, KopeteAccount::ChangeKABC );
+	myAccount->addContact(theDialog->contactID->text(), displayName, theMetaContact, Kopete::Account::ChangeKABC );
 	return true;
 }
 

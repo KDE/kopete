@@ -26,7 +26,7 @@
 #include "contactnotesplugin.h"
 #include "contactnotesedit.h"
 
-ContactNotesEdit::ContactNotesEdit(KopeteMetaContact *m,ContactNotesPlugin *p,const char *name) : KDialogBase(0L, name , false, i18n("Contact Notes") , KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok)
+ContactNotesEdit::ContactNotesEdit(Kopete::MetaContact *m,ContactNotesPlugin *p,const char *name) : KDialogBase(0L, name , false, i18n("Contact Notes") , KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok)
 {
 	m_plugin=p;
 	m_metaContact=m;

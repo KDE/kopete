@@ -26,7 +26,7 @@ class SMSContact;
 class ServiceLoader
 {
 public:
-	static SMSService* loadService(const QString& name, KopeteAccount* account);
+	static SMSService* loadService(const QString& name, Kopete::Account* account);
 	static QStringList services();
 } ;
 

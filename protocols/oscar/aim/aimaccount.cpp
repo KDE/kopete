@@ -29,9 +29,9 @@
 #include "aimcontact.h"
 #include "aimuserinfo.h"
 
-class KopeteMetaContact;
+namespace Kopete { class MetaContact; }
 
-AIMAccount::AIMAccount(KopeteProtocol *parent, QString accountID, const char *name)
+AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID, const char *name)
 	: OscarAccount(parent, accountID, name, false)
 {
 	kdDebug(14152) << k_funcinfo << accountID << ": Called."<< endl;
@@ -59,7 +59,7 @@ void AIMAccount::loaded()
 }
 
 OscarContact *AIMAccount::createNewContact( const QString &contactId,
-		const QString &displayName, KopeteMetaContact *parentContact, bool isOnSSI )
+		const QString &displayName, Kopete::MetaContact *parentContact, bool isOnSSI )
 {
 	AIMContact* contact = new AIMContact(contactId, displayName, this, parentContact);
 	contact->setServerSide( isOnSSI );
@@ -69,7 +69,7 @@ OscarContact *AIMAccount::createNewContact( const QString &contactId,
 KActionMenu* AIMAccount::actionMenu()
 {
 //	kdDebug(14152) << k_funcinfo << accountId() << ": Called." << endl;
-	// mActionMenu is managed by KopeteAccount.  It is deleted when
+	// mActionMenu is managed by Kopete::Account.  It is deleted when
 	// it is no longer shown, so we can (safely) just make a new one here.
 	KActionMenu *mActionMenu = new KActionMenu(accountId(),
 		myself()->onlineStatus().iconFor( this ), this, "AIMAccount::mActionMenu");
@@ -204,13 +204,13 @@ void AIMAccount::setStatus(const unsigned long status,
 
 void AIMAccount::slotGoOnline()
 {
-	if(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
+	if(myself()->onlineStatus().status() == Kopete::OnlineStatus::Away)
 	{
 		kdDebug(14152) << k_funcinfo << "'" << accountId() <<
 			"' was AWAY, marking back" << endl;
 		setStatus(OSCAR_ONLINE, QString::null);
 	}
-	else if(myself()->onlineStatus().status() == KopeteOnlineStatus::Offline)
+	else if(myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline)
 	{
 		kdDebug(14152) << k_funcinfo << "'" << accountId() <<
 			"' was OFFLINE, now connecting" << endl;

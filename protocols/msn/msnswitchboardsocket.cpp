@@ -286,7 +286,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			}
 		}
 
-		QPtrList<KopeteContact> others;
+		QPtrList<Kopete::Contact> others;
 		others.append( m_account->myself() );
 		QStringList::iterator it2;
 		for( it2 = m_chatMembers.begin(); it2 != m_chatMembers.end(); ++it2 )
@@ -310,9 +310,9 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			emit userJoined( m_msgHandle , m_msgHandle , false);
 		}
 
-		KopeteMessage kmsg( m_account->contacts()[ m_msgHandle ], others,
+		Kopete::Message kmsg( m_account->contacts()[ m_msgHandle ], others,
 			message,
-			KopeteMessage::Inbound , KopeteMessage::PlainText );
+			Kopete::Message::Inbound , Kopete::Message::PlainText );
 
 		kmsg.setFg( fontColor );
 		kmsg.setFont( font );
@@ -413,7 +413,7 @@ void MSNSwitchBoardSocket::slotInviteContact(const QString &handle)
 }
 
 // this sends a short message to the server
-int MSNSwitchBoardSocket::sendMsg( const KopeteMessage &msg )
+int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 {
 	if ( onlineStatus() != Connected || m_chatMembers.empty())
 	{
@@ -608,16 +608,16 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString
 
 void MSNSwitchBoardSocket::cleanQueue()
 {
-	QValueList<const KopeteMessage>::Iterator it_msg;
+	QValueList<const Kopete::Message>::Iterator it_msg;
 	for ( it_msg = m_msgQueue.begin(); it_msg != m_msgQueue.end(); ++it_msg )
 	{
-	 	KopeteMessage kmsg = (*it_msg);
+	 	Kopete::Message kmsg = (*it_msg);
 	 	emit msgReceived( parseCustomEmoticons( kmsg ) );
 	}
 	m_msgQueue.clear();
 }
 
-KopeteMessage &MSNSwitchBoardSocket::parseCustomEmoticons(KopeteMessage &kmsg)
+Kopete::Message &MSNSwitchBoardSocket::parseCustomEmoticons(Kopete::Message &kmsg)
 {
 	QString message=kmsg.escapedBody();
 	QMap<QString , QPair<QString , KTempFile*> >::Iterator it;
@@ -644,7 +644,7 @@ KopeteMessage &MSNSwitchBoardSocket::parseCustomEmoticons(KopeteMessage &kmsg)
 						QString::fromLatin1("\" src=\"") + imgPath +
 						QString::fromLatin1("\" title=\"") + es +
 						QString::fromLatin1( "\"/>" ) );
-			kmsg.setBody(message, KopeteMessage::RichText);
+			kmsg.setBody(message, Kopete::Message::RichText);
 		}
 	}
 	return kmsg;

@@ -18,9 +18,9 @@
 #include <qobject.h>
 #include <kxmlguiclient.h>
 
-class KopeteMessageManager;
+namespace Kopete { class MessageManager; }
 class KToggleAction;
-class KopeteMetaContact;
+namespace Kopete { class MetaContact; }
 
 /**
  *@author Olivier Goffart
@@ -29,12 +29,12 @@ class CryptographyGUIClient : public QObject, public KXMLGUIClient
 {
 Q_OBJECT
 public:
-	CryptographyGUIClient(KopeteMessageManager *parent = 0);
+	CryptographyGUIClient(Kopete::MessageManager *parent = 0);
 	~CryptographyGUIClient();
 
 private:
 	KToggleAction *m_action;
-	KopeteMetaContact *m_first;
+	Kopete::MetaContact *m_first;
 
 private slots:
 	void slotToggled();

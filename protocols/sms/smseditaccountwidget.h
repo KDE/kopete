@@ -23,18 +23,18 @@
 class SMSProtocol;
 class SMSService;
 class smsActPrefsUI;
-class KopeteAccount;
+namespace Kopete { class Account; }
 class QGridLayout;
 
 class SMSEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
 	Q_OBJECT
 public:
-	SMSEditAccountWidget(SMSProtocol *protocol, KopeteAccount *theAccount, QWidget *parent = 0, const char *name = 0);
+	SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Account *theAccount, QWidget *parent = 0, const char *name = 0);
 	~SMSEditAccountWidget();
 
 	bool validateData();
-	KopeteAccount* apply();
+	Kopete::Account* apply();
 public slots:
 	void setServicePreferences(const QString& serviceName);
 	void showDescription();

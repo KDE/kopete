@@ -40,18 +40,18 @@ K_EXPORT_COMPONENT_FACTORY( kopete_netmeeting, KGenericFactory<NetMeetingPlugin>
 #endif
 
 NetMeetingPlugin::NetMeetingPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
-: KopetePlugin( KGlobal::instance(), parent, name )
+: Kopete::Plugin( KGlobal::instance(), parent, name )
 {
 	if(MSNProtocol::protocol())
 		slotPluginLoaded(MSNProtocol::protocol());
 	else
-		connect(KopetePluginManager::self() , SIGNAL(pluginLoaded(KopetePlugin*) ), this, SLOT(slotPluginLoaded(KopetePlugin*)));
+		connect(Kopete::PluginManager::self() , SIGNAL(pluginLoaded(Kopete::Plugin*) ), this, SLOT(slotPluginLoaded(Kopete::Plugin*)));
 
 
-	connect( KopeteMessageManagerFactory::factory(), SIGNAL( messageManagerCreated( KopeteMessageManager * )) , SLOT( slotNewKMM( KopeteMessageManager * ) ) );
+	connect( KopeteMessageManagerFactory::factory(), SIGNAL( messageManagerCreated( Kopete::MessageManager * )) , SLOT( slotNewKMM( Kopete::MessageManager * ) ) );
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
-	QIntDict<KopeteMessageManager> sessions = KopeteMessageManagerFactory::factory()->sessions();
-	QIntDictIterator<KopeteMessageManager> it( sessions );
+	QIntDict<Kopete::MessageManager> sessions = KopeteMessageManagerFactory::factory()->sessions();
+	QIntDictIterator<Kopete::MessageManager> it( sessions );
 	for ( ; it.current() ; ++it )
 	{
 		slotNewKMM(it.current());
@@ -63,7 +63,7 @@ NetMeetingPlugin::~NetMeetingPlugin()
 
 }
 
-void NetMeetingPlugin::slotPluginLoaded(KopetePlugin *p)
+void NetMeetingPlugin::slotPluginLoaded(Kopete::Plugin *p)
 {
 	if(p->pluginId()=="MSNProtocol")
 	{
@@ -72,7 +72,7 @@ void NetMeetingPlugin::slotPluginLoaded(KopetePlugin *p)
 	}
 }
 
-void NetMeetingPlugin::slotNewKMM(KopeteMessageManager *KMM)
+void NetMeetingPlugin::slotNewKMM(Kopete::MessageManager *KMM)
 {
 	MSNMessageManager *msnMM=dynamic_cast<MSNMessageManager*>(KMM);
 	if(msnMM)

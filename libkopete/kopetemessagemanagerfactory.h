@@ -26,21 +26,25 @@
 #include "kopetemessagemanager.h"
 #include "kopetemessage.h"
 
-class KopeteMessageManager;
-class KopeteMessage;
-class KopeteContact;
-class KopeteProtocol;
-class KopeteEvent;
 class KopeteView;
+class KopeteEvent;
 
-typedef QPtrList<KopeteContact>        KopeteContactPtrList;
-typedef QValueList<KopeteMessage>      KopeteMessageList;
-typedef QIntDict<KopeteMessageManager> KopeteMessageManagerDict;
+namespace Kopete
+{
+
+class Contact;
+class Protocol;
+
+}
+
+typedef QPtrList<Kopete::Contact>        KopeteContactPtrList;
+typedef QValueList<Kopete::Message>      KopeteMessageList;
+typedef QIntDict<Kopete::MessageManager> KopeteMessageManagerDict;
 
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  *
- * KopeteMessageManagerFactory is responsible for creating and tracking KopeteMessageManager
+ * KopeteMessageManagerFactory is responsible for creating and tracking Kopete::MessageManager
  * instances for each chat.
  */
 class KopeteMessageManagerFactory : public QObject
@@ -59,32 +63,32 @@ public:
 	 * @param user The local user in the session.
 	 * @param chatContacts The list of contacts taking part in the chat.
 	 * @param protocol The protocol that the chat is using.
-	 * @return A pointer to a new or reused KopeteMessageManager.
+	 * @return A pointer to a new or reused Kopete::MessageManager.
 	 */
-	KopeteMessageManager* create( const KopeteContact *user,
-		KopeteContactPtrList chatContacts, KopeteProtocol *protocol);
+	Kopete::MessageManager* create( const Kopete::Contact *user,
+		KopeteContactPtrList chatContacts, Kopete::Protocol *protocol);
 
 	/**
 	 * Find a chat session, if one exists, that matches the given list of contacts.
 	 * @param user The local user in the session.
 	 * @param chatContacts The list of contacts taking part in the chat.
 	 * @param protocol The protocol that the chat is using.
-	 * @return A pointer to an existing KopeteMessageManager, or 0L if none was found.
+	 * @return A pointer to an existing Kopete::MessageManager, or 0L if none was found.
 	 */
-	KopeteMessageManager* findKopeteMessageManager( const KopeteContact *user,
-		KopeteContactPtrList chatContacts, KopeteProtocol *protocol);
+	Kopete::MessageManager* findMessageManager( const Kopete::Contact *user,
+		KopeteContactPtrList chatContacts, Kopete::Protocol *protocol);
 
 	/**
-	 * Registers a KopeteMessageManager (or subclass thereof) with the KopeteMessageManagerFactory
+	 * Registers a Kopete::MessageManager (or subclass thereof) with the KopeteMessageManagerFactory
 	 */
-	void addKopeteMessageManager(KopeteMessageManager *);
+	void addMessageManager(Kopete::MessageManager *);
 
 	/**
-	 * Find the idth KopeteMessageManager that the factory knows of.
-	 * @param id The number of the desired KopeteMessageManager.
-	 * @return A pointer to the KopeteMessageManager, or 0 if it was not found.
+	 * Find the idth Kopete::MessageManager that the factory knows of.
+	 * @param id The number of the desired Kopete::MessageManager.
+	 * @return A pointer to the Kopete::MessageManager, or 0 if it was not found.
 	 */
-	KopeteMessageManager *findKopeteMessageManager( int id );
+	Kopete::MessageManager *findMessageManager( int id );
 
 	/**
 	 * Get a list of all open sessions.
@@ -95,13 +99,13 @@ public:
 	 * @internal
 	 * called by the kmm itself when it gets deleted
 	 */
-	void removeSession( KopeteMessageManager *session );
+	void removeSession( Kopete::MessageManager *session );
 
 	/**
 	 * create a new view for the manager.
 	 * only the manager should call this function
 	 */
-	KopeteView *createView( KopeteMessageManager * , KopeteMessage::MessageType type );
+	KopeteView *createView( Kopete::MessageManager * , Kopete::Message::MessageType type );
 
 	/**
 	 * Post a new event. this will emit the @ref newEvent signal
@@ -122,14 +126,14 @@ signals:
 	 * Plugins may connect to this signal to change
 	 * the message contents before it's going to be displayed.
 	 */
-	void aboutToDisplay( KopeteMessage& message );
+	void aboutToDisplay( Kopete::Message& message );
 
 	/**
 	 * Plugins may connect to this signal
 	 * to manipulate the contents of the
 	 * message that is being sent.
 	 */
-	void aboutToSend( KopeteMessage& message );
+	void aboutToSend( Kopete::Message& message );
 
 	/**
 	 * Plugins may connect to this signal
@@ -138,7 +142,7 @@ signals:
 	 *
 	 * This signal is emitted before @ref aboutToDisplay()
 	 */
-	void aboutToReceive( KopeteMessage& message );
+	void aboutToReceive( Kopete::Message& message );
 
 	/**
 	 * A new view has been created
@@ -158,17 +162,17 @@ signals:
 	/**
 	 * a new KMM has been created
 	 */
-	void messageManagerCreated( KopeteMessageManager *);
+	void messageManagerCreated( Kopete::MessageManager *);
 
 	/*
 	 * Request the creation of a new view
 	 */
-	void requestView(KopeteView*& , KopeteMessageManager * , KopeteMessage::MessageType type );
+	void requestView(KopeteView*& , Kopete::MessageManager * , Kopete::Message::MessageType type );
 
 	/**
 	 * the message is ready to be displayed
 	 */
-	void display( KopeteMessage& message, KopeteMessageManager * );
+	void display( Kopete::Message& message, Kopete::MessageManager * );
 
 	/**
 	 * A new event has been posted.

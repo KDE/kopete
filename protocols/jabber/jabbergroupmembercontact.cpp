@@ -32,7 +32,7 @@
  * JabberGroupMemberContact constructor
  */
 JabberGroupMemberContact::JabberGroupMemberContact (const XMPP::RosterItem &rosterItem,
-													JabberAccount *account, KopeteMetaContact * mc)
+													JabberAccount *account, Kopete::MetaContact * mc)
 													: JabberBaseContact ( rosterItem, account, mc)
 {
 
@@ -66,7 +66,7 @@ void JabberGroupMemberContact::rename ( const QString &/*newName*/ )
 
 }
 
-KopeteMessageManager *JabberGroupMemberContact::manager ( bool canCreate )
+Kopete::MessageManager *JabberGroupMemberContact::manager ( bool canCreate )
 {
 
 	if ( mManager )
@@ -98,8 +98,8 @@ void JabberGroupMemberContact::slotMessageManagerDeleted ()
 
 void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &message )
 {
-	KopeteMessage::MessageType type;
-	KopeteMessage *newMessage = 0L;
+	Kopete::Message::MessageType type;
+	Kopete::Message *newMessage = 0L;
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;
 
@@ -111,7 +111,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 		return;
 
 	// message type is always chat in a groupchat
-	type = KopeteMessage::Chat;
+	type = Kopete::Message::Chat;
 
 	KopeteContactPtrList contactList;
 	contactList.append ( manager( true )->user () );
@@ -119,10 +119,10 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 	// check for errors
 	if ( message.type () == "error" )
 	{
-		newMessage = new KopeteMessage( message.timeStamp (), this, contactList,
+		newMessage = new Kopete::Message( message.timeStamp (), this, contactList,
 										i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"").
 										arg ( message.body () ).arg ( message.error().text ),
-										message.subject(), KopeteMessage::Inbound, KopeteMessage::PlainText, type );
+										message.subject(), Kopete::Message::Inbound, Kopete::Message::PlainText, type );
 	}
 	else
 	{
@@ -134,10 +134,10 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 			body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QString ("\n-----END PGP MESSAGE-----\n");
 		}
 
-		// convert XMPP::Message into KopeteMessage
-		newMessage = new KopeteMessage ( message.timeStamp (), this, contactList, body,
-										 message.subject (), KopeteMessage::Inbound,
-										 KopeteMessage::PlainText, type );
+		// convert XMPP::Message into Kopete::Message
+		newMessage = new Kopete::Message ( message.timeStamp (), this, contactList, body,
+										 message.subject (), Kopete::Message::Inbound,
+										 Kopete::Message::PlainText, type );
 	}
 
 	// append message to manager

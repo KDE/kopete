@@ -209,7 +209,7 @@ QString IRCEditAccountWidget::generateAccountId( const QString &network )
 	return nextId;
 }
 
-KopeteAccount *IRCEditAccountWidget::apply()
+Kopete::Account *IRCEditAccountWidget::apply()
 {
 	QString nickName = mNickName->text();
 	QString networkName = network->currentText();

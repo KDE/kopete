@@ -93,7 +93,7 @@ typedef KGenericFactory<MotionAwayPlugin> MotionAwayPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_motionaway, MotionAwayPluginFactory( "kopete_motionaway" )  )
 
 MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
-: KopetePlugin( MotionAwayPluginFactory::instance(), parent, name )
+: Kopete::Plugin( MotionAwayPluginFactory::instance(), parent, name )
 {
 	kdDebug(14305) << k_funcinfo << "Called." << endl;
 	/* This should be read from config someday may be */
@@ -262,7 +262,7 @@ void MotionAwayPlugin::slotCapture()
             kdDebug(14305) << k_funcinfo << "Motion Detected. [" << diffs << "] Reseting Timeout" << endl;
 
 			/* If we were away, now we are available again */
-			if ( becomeAvailableWithActivity && !KopeteAway::globalAway() && m_wentAway)
+			if ( becomeAvailableWithActivity && !Kopete::Away::globalAway() && m_wentAway)
 			{
 				slotActivity();
 			}
@@ -291,16 +291,16 @@ void MotionAwayPlugin::slotActivity()
 {
 	kdDebug(14305) << k_funcinfo << "User activity!, going available" << endl;
 	m_wentAway = false;
-	KopeteAccountManager::manager()->setAvailableAll();
+	Kopete::AccountManager::manager()->setAvailableAll();
 }
 
 void MotionAwayPlugin::slotTimeout()
 {
-	if(!KopeteAway::globalAway() && !m_wentAway)
+	if(!Kopete::Away::globalAway() && !m_wentAway)
 	{
 		kdDebug(14305) << k_funcinfo << "Timeout and no user activity, going away" << endl;
 		m_wentAway = true;
-		KopeteAccountManager::manager()->setAwayAll();
+		Kopete::AccountManager::manager()->setAwayAll();
 	}
 }
 

@@ -55,10 +55,10 @@
 
 using namespace GroupWise;
 
-GroupWiseContact::GroupWiseContact( KopeteAccount* account, const QString &dn, 
-			KopeteMetaContact *parent, 
+GroupWiseContact::GroupWiseContact( Kopete::Account* account, const QString &dn, 
+			Kopete::MetaContact *parent, 
 			const int objectId, const int parentId, const int sequence )
-: KopeteContact( account, GroupWiseProtocol::dnToDotted( dn ), parent ), m_objectId( objectId ), m_parentId( parentId ),
+: Kopete::Contact( account, GroupWiseProtocol::dnToDotted( dn ), parent ), m_objectId( objectId ), m_parentId( parentId ),
   m_sequence( sequence ), m_actionBlock( 0 ), m_archiving( false ), m_deleting( false )
 {
 	//kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " id supplied: " << dn << endl;
@@ -106,7 +106,7 @@ void GroupWiseContact::updateDetails( const ContactDetails & details )
 	
 	if ( details.status != GroupWise::Invalid )
 	{	
-		KopeteOnlineStatus status = protocol()->gwStatusToKOS( details.status );
+		Kopete::OnlineStatus status = protocol()->gwStatusToKOS( details.status );
 		//kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "setting initial status to " << status.description() << endl;
 		setOnlineStatus( status );
 	}
@@ -116,12 +116,12 @@ void GroupWiseContact::updateDetails( const ContactDetails & details )
 
 GroupWiseProtocol *GroupWiseContact::protocol()
 {
-	return static_cast<GroupWiseProtocol *>( KopeteContact::protocol() );
+	return static_cast<GroupWiseProtocol *>( Kopete::Contact::protocol() );
 }
 
 GroupWiseAccount *GroupWiseContact::account()
 {
-	return static_cast<GroupWiseAccount *>( KopeteContact::account() );
+	return static_cast<GroupWiseAccount *>( Kopete::Contact::account() );
 }
 
 bool GroupWiseContact::isReachable()
@@ -153,7 +153,7 @@ void GroupWiseContact::serialize( QMap< QString, QString > &serializedData, QMap
 	serializedData[ "DN" ] = m_dn;
 }
 
-KopeteMessageManager * GroupWiseContact::manager( bool canCreate )
+Kopete::MessageManager * GroupWiseContact::manager( bool canCreate )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "called, canCreate: " << canCreate << endl;
 
@@ -168,11 +168,11 @@ KopeteMessageManager * GroupWiseContact::manager( bool canCreate )
 	}
 	else
 	{
-		QPtrList<KopeteContact> contacts;
+		QPtrList<Kopete::Contact> contacts;
 		contacts.append(this);
 		m_msgManager = KopeteMessageManagerFactory::factory()->create(account()->myself(), contacts, protocol());
-		connect(m_msgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager*)),
-				this, SLOT( sendMessage( KopeteMessage& ) ) );
+		connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::MessageManager*)),
+				this, SLOT( sendMessage( Kopete::Message& ) ) );
 		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
 		return m_msgManager;
 	}*/
@@ -182,7 +182,7 @@ GroupWiseMessageManager * GroupWiseContact::manager( KopeteContactPtrList chatMe
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	
-	KopeteMessageManager *_manager = KopeteMessageManagerFactory::factory()->findKopeteMessageManager ( account()->myself(), chatMembers, protocol() );
+	Kopete::MessageManager *_manager = KopeteMessageManagerFactory::factory()->findMessageManager ( account()->myself(), chatMembers, protocol() );
 	GroupWiseMessageManager *mgr = dynamic_cast<GroupWiseMessageManager*>( _manager );
 
 	/*
@@ -262,7 +262,7 @@ QMap< QString, QString > GroupWiseContact::serverProperties()
 	return m_serverProperties;
 }
 
-void GroupWiseContact::sendMessage( KopeteMessage &message )
+void GroupWiseContact::sendMessage( Kopete::Message &message )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	manager()->appendMessage( message );
@@ -312,9 +312,9 @@ void GroupWiseContact::handleIncomingMessage( const ConferenceEvent & message, b
 				"Auto reply from %1: " ).arg( metaContact()->displayName() );
 		messageMunged = autoReplyPrefix + message.message;
 	}
-	KopeteMessage * newMessage = new KopeteMessage ( message.timeStamp, this, contactList, messageMunged, 
-									KopeteMessage::Inbound,
-									autoReply ? KopeteMessage::PlainText : KopeteMessage::RichText );
+	Kopete::Message * newMessage = new Kopete::Message ( message.timeStamp, this, contactList, messageMunged, 
+									Kopete::Message::Inbound,
+									autoReply ? Kopete::Message::PlainText : Kopete::Message::RichText );
 	Q_ASSERT( mgr );
 	mgr->appendMessage( *newMessage );
 	delete newMessage;
@@ -429,8 +429,8 @@ void GroupWiseContact::syncGroups()
 
 		// start by discoverint the next free group sequence number in case we have to add any groups
 		int nextFreeSequence = 0;
-		QPtrList< KopeteGroup > groupList = KopeteContactList::contactList()->groups();
-		QPtrListIterator< KopeteGroup > it( groupList );
+		QPtrList< Kopete::Group > groupList = Kopete::ContactList::contactList()->groups();
+		QPtrListIterator< Kopete::Group > it( groupList );
 		while( *it )
 		{
 			bool ok = true;
@@ -446,10 +446,10 @@ void GroupWiseContact::syncGroups()
 		CLInstanceList contactInstanceList = m_instances;
 		// seek corresponding pairs in both lists and remove
 		// ( for each group )
-		QPtrListIterator< KopeteGroup > grpIt( groupList );
+		QPtrListIterator< Kopete::Group > grpIt( groupList );
 		while ( *grpIt )
 		{
-			QPtrListIterator< KopeteGroup > candidateGrp( groupList );
+			QPtrListIterator< Kopete::Group > candidateGrp( groupList );
 			candidateGrp = grpIt;
 			++grpIt;
 	
@@ -481,7 +481,7 @@ void GroupWiseContact::syncGroups()
 		// ( take the first pair and carry out a move )
 		while ( *grpIt && !contactInstanceList.isEmpty() )
 		{
-			QPtrListIterator< KopeteGroup > candidateGrp( groupList );
+			QPtrListIterator< Kopete::Group > candidateGrp( groupList );
 			candidateGrp = grpIt;
 			++grpIt;
 			QValueList< ContactListInstance >::Iterator instIt = contactInstanceList.begin();
@@ -509,7 +509,7 @@ void GroupWiseContact::syncGroups()
 		grpIt.toFirst();
 		while ( *grpIt )
 		{
-			QPtrListIterator< KopeteGroup > candidateGrp( groupList );
+			QPtrListIterator< Kopete::Group > candidateGrp( groupList );
 			candidateGrp = grpIt;
 			++grpIt;
 			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - add a contact instance for group '" << ( *candidateGrp )->pluginData( protocol(), account()->accountId() + " objectId" ) << "'" << endl;
@@ -596,7 +596,7 @@ void GroupWiseContact::receivePrivacyChanged( const QString & dn, bool allow )
 		setOnlineStatus( this->onlineStatus() );
 }
 
-void GroupWiseContact::setOnlineStatus( const KopeteOnlineStatus& status )
+void GroupWiseContact::setOnlineStatus( const Kopete::OnlineStatus& status )
 {
 	bool idleChanged = false;
 	if ( status == protocol()->groupwiseAwayIdle && status != onlineStatus() )
@@ -612,7 +612,7 @@ void GroupWiseContact::setOnlineStatus( const KopeteOnlineStatus& status )
 
 	if ( account()->isContactBlocked( m_dn ) && status.internalStatus() < 15 )
 	{
-		KopeteContact::setOnlineStatus(KopeteOnlineStatus(status.status() , (status.weight()==0) ? 0 : (status.weight() -1)  ,
+		Kopete::Contact::setOnlineStatus(Kopete::OnlineStatus(status.status() , (status.weight()==0) ? 0 : (status.weight() -1)  ,
 			protocol() , status.internalStatus()+15 , QString::fromLatin1("msn_blocked"),
 			status.caption() ,  i18n("%1|Blocked").arg( status.description() ) ) );
 	}
@@ -623,30 +623,30 @@ void GroupWiseContact::setOnlineStatus( const KopeteOnlineStatus& status )
 			switch(status.internalStatus()-15)
 			{
 				case 0:
-					KopeteContact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseUnknown );
+					Kopete::Contact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseUnknown );
 					break;
 				case 1:
-					KopeteContact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOffline );
+					Kopete::Contact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOffline );
 					break;
 				case 2:
-					KopeteContact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAvailable );
+					Kopete::Contact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAvailable );
 					break;
 				case 3:
-					KopeteContact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseBusy );
+					Kopete::Contact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseBusy );
 					break;
 				case 4:
-					KopeteContact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAway );
+					Kopete::Contact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAway );
 					break;
 				case 5:
-					KopeteContact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAwayIdle );
+					Kopete::Contact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAwayIdle );
 					break;
 				default:
-					KopeteContact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseUnknown );
+					Kopete::Contact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseUnknown );
 					break;
 			}
 		}
 		else
-			KopeteContact::setOnlineStatus(status);
+			Kopete::Contact::setOnlineStatus(status);
 	}
 	if ( idleChanged )
 		emit idleStateChanged( this );

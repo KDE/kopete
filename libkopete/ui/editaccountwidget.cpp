@@ -21,10 +21,10 @@
 class KopeteEditAccountWidgetPrivate
 {
 public:
-	KopeteAccount *account;
+	Kopete::Account *account;
 };
 
-KopeteEditAccountWidget::KopeteEditAccountWidget( KopeteAccount *account )
+KopeteEditAccountWidget::KopeteEditAccountWidget( Kopete::Account *account )
 {
 	d = new KopeteEditAccountWidgetPrivate;
 	d->account = account;
@@ -35,12 +35,12 @@ KopeteEditAccountWidget::~KopeteEditAccountWidget()
 	delete d;
 }
 
-KopeteAccount * KopeteEditAccountWidget::account() const
+Kopete::Account * KopeteEditAccountWidget::account() const
 {
 	return d->account;
 }
 
-void KopeteEditAccountWidget::setAccount( KopeteAccount *account )
+void KopeteEditAccountWidget::setAccount( Kopete::Account *account )
 {
 	d->account = account;
 }

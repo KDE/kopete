@@ -23,16 +23,19 @@
 #include <qobject.h>
 #include <qvaluelist.h>
 
-struct  KopeteAwayPrivate;
-
-/* Forward Declarations */
 class QStringList;
+
+struct KopeteAwayPrivate;
+
 class KopeteGlobalAwayDialog;
 
+namespace Kopete
+{
+
 /**
- * @class KopeteAway kopeteaway.h
+ * @class Kopete::Away kopeteaway.h
  *
- * KopeteAway is a singleton class that manages away messages
+ * Kopete::Away is a singleton class that manages away messages
  * for Kopete. It stores a global away message, as well as
  * a list of user defined away messages.
  * This class is used by KopeteAwayDialog, which gets it's
@@ -47,7 +50,7 @@ class KopeteGlobalAwayDialog;
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
 
  */
-class KopeteAway : public QObject
+class Away : public QObject
 {
 Q_OBJECT
 
@@ -56,10 +59,10 @@ friend class KopeteAwayDialog;
 public:
 
 	/**
-	 * @brief Method to get the single instance of KopeteAway
-	 * @return KopeteAway instance pointer
+	 * @brief Method to get the single instance of Kopete::Away
+	 * @return Kopete::Away instance pointer
 	 */
-	static KopeteAway *getInstance();
+	static Away *getInstance();
 
 	/**
 	 * @brief Gets the current global away message
@@ -121,8 +124,8 @@ public:
 	long int idleTime();
 
 private:
-	KopeteAway();
-	~KopeteAway();
+	Away();
+	~Away();
 
 	/**
 	 * @brief Saves the away messages to disk
@@ -132,9 +135,9 @@ private:
 	 */
 	void save();
 
-	//KopeteAway( const KopeteAway &rhs );
-	//KopeteAway &operator=( const KopeteAway &rhs );
-	static KopeteAway *instance;
+	//Away( const Away &rhs );
+	//Away &operator=( const Away &rhs );
+	static Away *instance;
 	KopeteAwayPrivate *d;
 
 private slots:
@@ -173,6 +176,8 @@ signals:
 	 */
 	void messagesChanged();
 };
+
+}
 
 #endif
 /*

@@ -35,7 +35,7 @@
 
 MeanwhileEditAccountWidget::MeanwhileEditAccountWidget( 
                                 QWidget* parent, 
-                                KopeteAccount* theAccount,
+                                Kopete::Account* theAccount,
                                 MeanwhileProtocol *theProtocol)
     : MeanwhileEditAccountBase(parent),
       KopeteEditAccountWidget( theAccount )
@@ -73,7 +73,7 @@ MeanwhileEditAccountWidget::~MeanwhileEditAccountWidget()
 }
 
 
-KopeteAccount* MeanwhileEditAccountWidget::apply()
+Kopete::Account* MeanwhileEditAccountWidget::apply()
 {
     if(!account())
         setAccount(

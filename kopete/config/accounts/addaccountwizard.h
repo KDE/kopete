@@ -27,7 +27,10 @@ class QListViewItem;
 
 class KPluginInfo;
 
-class KopeteProtocol;
+namespace Kopete
+{
+class Protocol;
+}
 
 class AddAccountWizardPage1;
 class AddAccountWizardPage2;
@@ -61,7 +64,7 @@ private:
 	AddAccountWizardPage1 *m_intro;
 	AddAccountWizardPage2 *m_selectService;
 	AddAccountWizardPage3 *m_finish;
-	KopeteProtocol *m_proto;
+	Kopete::Protocol *m_proto;
 };
 
 #endif

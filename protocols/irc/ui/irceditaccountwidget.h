@@ -36,7 +36,7 @@ class IRCEditAccountWidget : public IRCEditAccountBase, public KopeteEditAccount
 
 		IRCAccount *account();
 		virtual bool validateData();
-		virtual KopeteAccount *apply();
+		virtual Kopete::Account *apply();
 
 	private slots:
 		void slotCommandContextMenu( KListView*, QListViewItem*, const QPoint & );

@@ -27,13 +27,16 @@
 
 class KPluginInfo;
 
-class KopetePlugin;
+namespace Kopete
+{
+
+class Plugin;
 
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  * @author Martijn Klingens <klingens@kde.org>
  */
-class KopetePluginManager : public QObject
+class PluginManager : public QObject
 {
 	Q_OBJECT
 
@@ -41,9 +44,9 @@ public:
 	/**
 	 * Retrieve the plugin loader instance.
 	 */
-	static KopetePluginManager* self();
+	static PluginManager* self();
 
-	~KopetePluginManager();
+	~PluginManager();
 
 	/**
 	 * Returns a list of all available plugins for the given category.
@@ -62,19 +65,19 @@ public:
 	 * If you omit the category you get all, otherwise it's a filtered list.
 	 * See also @ref availablePlugins().
 	 */
-	QMap<KPluginInfo *, KopetePlugin *> loadedPlugins( const QString &category = QString::null ) const;
+	QMap<KPluginInfo *, Plugin *> loadedPlugins( const QString &category = QString::null ) const;
 
 	/**
 	 * @brief Search by plugin name. This is the key used as X-KDE-PluginInfo-Name in
 	 * the .desktop file, e.g. "kopete_jabber"
 	 *
-	 * @return The @ref KopetePlugin object found by the search, or a null
+	 * @return The @ref Kopete::Plugin object found by the search, or a null
 	 * pointer if the plugin is not loaded.
 	 *
 	 * If you want to also load the plugin you can better use @ref loadPlugin, which returns
 	 * the pointer to the plugin if it's already loaded.
 	 */
-	KopetePlugin *plugin( const QString &pluginName ) const;
+	Plugin *plugin( const QString &pluginName ) const;
 
 	/**
 	 * @brief Return the short user-visible name of the plugin.
@@ -83,7 +86,7 @@ public:
 	 *
 	 * @return The name of the protocol, in the user's locale.
 	 */
-	QString pluginName( const KopetePlugin *plugin ) const;
+	QString pluginName( const Plugin *plugin ) const;
 
 	/**
 	 * @brief Return the internal name of the plugin.
@@ -93,7 +96,7 @@ public:
 	 *
 	 * @return The name of the protocol, in the user's locale.
 	 */
-	QString pluginId( const KopetePlugin *plugin ) const;
+	QString pluginId( const Plugin *plugin ) const;
 
 	/**
 	 * @brief Unload the plugin specified by @p pluginName
@@ -107,15 +110,15 @@ public:
 	 * available to the plugin.
 	 * @return An empty QStringList if the plugin is invalid.
 	 */
-	QStringList addressBookFields( KopetePlugin *p ) const;
+	QStringList addressBookFields( Plugin *p ) const;
 
 	/**
-	 * @brief Retrieve the name of the icon for a @ref KopetePlugin.
+	 * @brief Retrieve the name of the icon for a @ref Kopete::Plugin.
 	 *
 	 * @return An empty string if the given plugin is not loaded
 	 * or the filename of the icon to use.
 	 */
-	QString pluginIcon( const KopetePlugin *plugin ) const;
+	QString pluginIcon( const Plugin *plugin ) const;
 
 	/**
 	 * Shuts down the plugin manager on Kopete shutdown, but first
@@ -163,7 +166,7 @@ public slots:
 	 *
 	 * See also @ref plugin().
 	 */
-	KopetePlugin * loadPlugin( const QString &pluginId, PluginLoadMode mode = LoadSync );
+	Plugin * loadPlugin( const QString &pluginId, PluginLoadMode mode = LoadSync );
 
 	/**
 	 * @brief Loads all the enabled plugins. Also used to reread the
@@ -175,7 +178,7 @@ signals:
 	/**
 	 * @brief Signals a new plugin has just been loaded.
 	 */
-	void pluginLoaded( KopetePlugin *plugin );
+	void pluginLoaded( Kopete::Plugin *plugin );
 
 	/**
 	 * @brief All plugins have been loaded by the plugin manager.
@@ -218,7 +221,7 @@ private slots:
 	void slotShutdownDone();
 
 	/**
-	 * Emitted by a KopetePlugin when it's ready for unload
+	 * Emitted by a Kopete::Plugin when it's ready for unload
 	 */
 	void slotPluginReadyForUnload();
 
@@ -236,7 +239,7 @@ private:
 	 * Called by @ref loadPlugin directly or through the queue for async plugin
 	 * loading.
 	 */
-	KopetePlugin * loadPluginInternal( const QString &pluginId );
+	Plugin * loadPluginInternal( const QString &pluginId );
 
 	/**
 	 * @internal
@@ -247,13 +250,15 @@ private:
 	 */
 	KPluginInfo * infoForPluginId( const QString &pluginId ) const;
 
-	KopetePluginManager();
+	PluginManager();
 
-	static KopetePluginManager *s_self;
+	static PluginManager *s_self;
 
 	class KopetePluginManagerPrivate;
 	KopetePluginManagerPrivate *d;
 };
+
+}
 
 #endif // KOPETEPLUGINMANAGER_H
 

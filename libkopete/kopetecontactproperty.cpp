@@ -1,7 +1,7 @@
 /*
     kopetecontactproperty.cpp
 
-    KopeteContact Property class
+    Kopete::Contact Property class
 
     Copyright (c) 2004    by Stefan Gehn <metz AT gehn.net>
     Kopete    (c) 2004    by the Kopete developers <kopete-devel@kde.org>

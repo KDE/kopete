@@ -50,7 +50,7 @@ NetMeetingGUIClient::~NetMeetingGUIClient()
 
 void NetMeetingGUIClient::slotStartInvitation()
 {
-	QPtrList<KopeteContact> c=m_manager->members();
+	QPtrList<Kopete::Contact> c=m_manager->members();
 	NetMeetingInvitation *i=new NetMeetingInvitation(false, static_cast<MSNContact*>(c.first()),m_manager);
 	m_manager->initInvitation(i);
 }

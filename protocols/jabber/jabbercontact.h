@@ -33,7 +33,7 @@ Q_OBJECT
 public:
 
 	JabberContact (const XMPP::RosterItem &rosterItem,
-				   JabberAccount *account, KopeteMetaContact * mc);
+				   JabberAccount *account, Kopete::MetaContact * mc);
 
 	/**
 	 * Create custom context menu items for the contact
@@ -57,7 +57,7 @@ public:
 	 * not suitable for groupchat, as it only looks for
 	 * managers with ourselves in the contact list.
 	 */
-	KopeteMessageManager *manager ( bool canCreate = false );
+	Kopete::MessageManager *manager ( bool canCreate = false );
 	
 	/**
 	 * Reads a vCard object and updates the contact's

@@ -38,7 +38,7 @@
 
 namespace
 {
-QString configGroup( KopeteProtocol *protocol, const QString &accountId )
+QString configGroup( Kopete::Protocol *protocol, const QString &accountId )
 {
 	return QString::fromLatin1( "Account_%2_%1" ).arg( accountId, protocol->pluginId() );
 }
@@ -48,7 +48,7 @@ QString configGroup( KopeteProtocol *protocol, const QString &accountId )
 class KopeteAccountPrivate
 {
 public:
-	KopeteAccountPrivate( KopeteProtocol *protocol, const QString &accountId )
+	KopeteAccountPrivate( Kopete::Protocol *protocol, const QString &accountId )
 	 : protocol( protocol ), id( accountId )
 	 , password( configGroup( protocol, accountId ) )
 	 , autologin( false ), priority( 0 ), myself( 0 )
@@ -56,52 +56,52 @@ public:
 	{
 	}
 
-	KopeteProtocol *protocol;
+	Kopete::Protocol *protocol;
 	QString id;
 	Kopete::Password password;
 	bool autologin;
 	uint priority;
-	QDict<KopeteContact> contacts;
+	QDict<Kopete::Contact> contacts;
 	QColor color;
-	KopeteContact *myself;
+	Kopete::Contact *myself;
 	QTimer *suppressStatusTimer;
 	bool suppressStatusNotification;
 };
 
-KopeteAccount::KopeteAccount( KopeteProtocol *parent, const QString &accountId, const char *name )
- : KopetePluginDataObject( parent, name ), d( new KopeteAccountPrivate( parent, accountId ) )
+Kopete::Account::Account( Kopete::Protocol *parent, const QString &accountId, const char *name )
+ : Kopete::PluginDataObject( parent, name ), d( new KopeteAccountPrivate( parent, accountId ) )
 {
 	d->suppressStatusTimer = new QTimer( this, "suppressStatusTimer" );
 	QObject::connect( d->suppressStatusTimer, SIGNAL( timeout() ),
 		this, SLOT( slotStopSuppression() ) );
 
-	if ( KopeteAccountManager::manager()->registerAccount( this ) )
+	if ( Kopete::AccountManager::manager()->registerAccount( this ) )
 		QTimer::singleShot( 0, this, SLOT( slotAccountReady() ) );
 	else
 		deleteLater();
 }
 
-KopeteAccount::~KopeteAccount()
+Kopete::Account::~Account()
 {
 	// Delete all registered child contacts first
 	while ( !d->contacts.isEmpty() )
-		delete *QDictIterator<KopeteContact>( d->contacts );
-	KopeteAccountManager::manager()->unregisterAccount( this );
+		delete *QDictIterator<Kopete::Contact>( d->contacts );
+	Kopete::AccountManager::manager()->unregisterAccount( this );
 
 	delete d;
 }
 
-void KopeteAccount::slotAccountReady()
+void Kopete::Account::slotAccountReady()
 {
-	KopeteAccountManager::manager()->notifyAccountReady( this );
+	Kopete::AccountManager::manager()->notifyAccountReady( this );
 }
 
-void KopeteAccount::connect( const KopeteOnlineStatus& )
+void Kopete::Account::connect( const Kopete::OnlineStatus& )
 {
 	//do nothing
 }
 
-void KopeteAccount::disconnect( DisconnectReason reason )
+void Kopete::Account::disconnect( DisconnectReason reason )
 {
 	//reconnect if needed
 	if ( KopetePrefs::prefs()->reconnectOnDisconnect() == true && reason > Manual )
@@ -109,38 +109,38 @@ void KopeteAccount::disconnect( DisconnectReason reason )
 		QTimer::singleShot(0, this, SLOT(connect()));
 }
 
-KopeteProtocol *KopeteAccount::protocol() const
+Kopete::Protocol *Kopete::Account::protocol() const
 {
 	return d->protocol;
 }
 
-QString KopeteAccount::accountId() const
+QString Kopete::Account::accountId() const
 {
 	return d->id;
 }
 
-const QColor KopeteAccount::color() const
+const QColor Kopete::Account::color() const
 {
 	return d->color;
 }
 
-void KopeteAccount::setColor( const QColor &color )
+void Kopete::Account::setColor( const QColor &color )
 {
 	d->color = color;
 	emit colorChanged( color );
 }
 
-void KopeteAccount::setPriority( uint priority )
+void Kopete::Account::setPriority( uint priority )
 {
  	d->priority = priority;
 }
 
-const uint KopeteAccount::priority() const
+const uint Kopete::Account::priority() const
 {
 	return d->priority;
 }
 
-void KopeteAccount::setAccountId( const QString &accountId )
+void Kopete::Account::setAccountId( const QString &accountId )
 {
 	if ( d->id != accountId )
 	{
@@ -149,9 +149,9 @@ void KopeteAccount::setAccountId( const QString &accountId )
 	}
 }
 
-QPixmap KopeteAccount::accountIcon(const int size) const
+QPixmap Kopete::Account::accountIcon(const int size) const
 {
-	// FIXME: this code is duplicated with KopeteOnlineStatus, can we merge it somehow?
+	// FIXME: this code is duplicated with Kopete::OnlineStatus, can we merge it somehow?
 	QPixmap base = KGlobal::instance()->iconLoader()->loadIcon(
 		d->protocol->pluginIcon(), KIcon::Small, size );
 
@@ -169,12 +169,12 @@ QPixmap KopeteAccount::accountIcon(const int size) const
 	return base;
 }
 
-QString KopeteAccount::configGroup() const
+QString Kopete::Account::configGroup() const
 {
 	return ::configGroup( protocol(), accountId() );
 }
 
-void KopeteAccount::writeConfig( const QString &configGroupName )
+void Kopete::Account::writeConfig( const QString &configGroupName )
 {
 	KConfig *config = KGlobal::config();
 	config->setGroup( configGroupName );
@@ -191,10 +191,10 @@ void KopeteAccount::writeConfig( const QString &configGroupName )
 		config->deleteEntry( "Color" );
 
 	// Store other plugin data
-	KopetePluginDataObject::writeConfig( configGroupName );
+	Kopete::PluginDataObject::writeConfig( configGroupName );
 }
 
-void KopeteAccount::readConfig( const QString &configGroupName )
+void Kopete::Account::readConfig( const QString &configGroupName )
 {
 	KConfig *config = KGlobal::config();
 	config->setGroup( configGroupName );
@@ -225,7 +225,7 @@ void KopeteAccount::readConfig( const QString &configGroupName )
 	QMap<QString, QMap<QString, QString> >::Iterator pluginDataIt;
 	for ( pluginDataIt = pluginData.begin(); pluginDataIt != pluginData.end(); ++pluginDataIt )
 	{
-		KopetePlugin *plugin = KopetePluginManager::self()->plugin( pluginDataIt.key() );
+		Kopete::Plugin *plugin = Kopete::PluginManager::self()->plugin( pluginDataIt.key() );
 		if ( plugin )
 			setPluginData( plugin, pluginDataIt.data() );
 		else
@@ -237,12 +237,12 @@ void KopeteAccount::readConfig( const QString &configGroupName )
 	loaded();
 }
 
-void KopeteAccount::loaded()
+void Kopete::Account::loaded()
 {
 	/* do nothing in default implementation */
 }
 
-QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength ) const
+QString Kopete::Account::password( bool error, bool *ok, unsigned int maxLength ) const
 {
 	d->password.setMaximumLength( maxLength );
 	QString prompt;
@@ -267,47 +267,47 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength ) 
 	return pass;
 }
 
-void KopeteAccount::setPassword( const QString &pass )
+void Kopete::Account::setPassword( const QString &pass )
 {
 	d->password.set( pass );
 }
 
-void KopeteAccount::setAutoLogin( bool b )
+void Kopete::Account::setAutoLogin( bool b )
 {
 	d->autologin = b;
 }
 
-bool KopeteAccount::autoLogin() const
+bool Kopete::Account::autoLogin() const
 {
 	return d->autologin;
 }
 
-bool KopeteAccount::rememberPassword() const
+bool Kopete::Account::rememberPassword() const
 {
 	return d->password.remembered();
 }
 
-void KopeteAccount::registerContact( KopeteContact *c )
+void Kopete::Account::registerContact( Kopete::Contact *c )
 {
 	d->contacts.insert( c->contactId(), c );
-	QObject::connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
-		SLOT( slotKopeteContactDestroyed( KopeteContact * ) ) );
+	QObject::connect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ),
+		SLOT( slotKopeteContactDestroyed( Kopete::Contact * ) ) );
 }
 
-void KopeteAccount::slotKopeteContactDestroyed( KopeteContact *c )
+void Kopete::Account::slotKopeteContactDestroyed( Kopete::Contact *c )
 {
-	//kdDebug( 14010 ) << "KopeteProtocol::slotKopeteContactDestroyed: " << c->contactId() << endl;
+	//kdDebug( 14010 ) << "Kopete::Protocol::slotKopeteContactDestroyed: " << c->contactId() << endl;
 	d->contacts.remove( c->contactId() );
 }
 
-const QDict<KopeteContact>& KopeteAccount::contacts()
+const QDict<Kopete::Contact>& Kopete::Account::contacts()
 {
 	return d->contacts;
 }
 
 
-bool KopeteAccount::addContact( const QString &contactId, const QString &displayName,
-	KopeteMetaContact *parentContact, const AddMode mode, const QString &groupName, bool isTemporary )
+bool Kopete::Account::addContact( const QString &contactId, const QString &displayName,
+	Kopete::MetaContact *parentContact, const AddMode mode, const QString &groupName, bool isTemporary )
 {
 	if ( contactId == accountId() )
 	{
@@ -316,34 +316,34 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 		return false;
 	}
 
-	KopeteGroup *parentGroup = 0L;
+	Kopete::Group *parentGroup = 0L;
 	//If this is a temporary contact, use the temporary group
 	if ( !groupName.isNull() )
-		parentGroup = isTemporary ? KopeteGroup::temporary() : KopeteContactList::contactList()->getGroup( groupName );
+		parentGroup = isTemporary ? Kopete::Group::temporary() : Kopete::ContactList::contactList()->getGroup( groupName );
 
 	if(!parentGroup && parentContact)
 		parentGroup=parentContact->groups().first();
 
 
-	KopeteContact *c = d->contacts[ contactId ];
+	Kopete::Contact *c = d->contacts[ contactId ];
 	if ( c && c->metaContact() )
 	{
 		if ( c->metaContact()->isTemporary() && !isTemporary )
 		{
 			kdDebug( 14010 ) <<
-				"KopeteAccount::addContact: You are trying to add an existing temporary contact. Just add it on the list" << endl;
+				"Kopete::Account::addContact: You are trying to add an existing temporary contact. Just add it on the list" << endl;
 			/* //FIXME: calling this can produce a message to delete the old contazct which should be deleted in many case.
 			if(c->metaContact() != parentContact)
 				c->setMetaContact(parentContact);*/
 
 			c->metaContact()->setTemporary(false, parentGroup );
-			if(!KopeteContactList::contactList()->metaContacts().contains(c->metaContact()))
-				KopeteContactList::contactList()->addMetaContact(c->metaContact());
+			if(!Kopete::ContactList::contactList()->metaContacts().contains(c->metaContact()))
+				Kopete::ContactList::contactList()->addMetaContact(c->metaContact());
 		}
 		else
 		{
 			// should we here add the contact to the parentContact if any?
-			kdDebug( 14010 ) << "KopeteAccount::addContact: Contact already exists" << endl;
+			kdDebug( 14010 ) << "Kopete::Account::addContact: Contact already exists" << endl;
 		}
 		return false; //(the contact is not in the correct metacontact, so false)
 	}
@@ -360,7 +360,7 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 	else
 	{
 		//Create a new MetaContact
-		parentContact = new KopeteMetaContact();
+		parentContact = new Kopete::MetaContact();
 		//parentContact->setDisplayName( displayName );
 
 		//Set it as a temporary contact if requested
@@ -369,7 +369,7 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 		else
 			parentContact->addToGroup( parentGroup );
 
-		KopeteContactList::contactList()->addMetaContact( parentContact );
+		Kopete::ContactList::contactList()->addMetaContact( parentContact );
 	}
 
 	//Fix for 77835 (forward the metacontact name is displayName is empty)
@@ -403,41 +403,41 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 	return true;
 }
 
-KActionMenu * KopeteAccount::actionMenu()
+KActionMenu * Kopete::Account::actionMenu()
 {
 	//default implementation
 	return 0L;
 }
 
-bool KopeteAccount::isConnected() const
+bool Kopete::Account::isConnected() const
 {
-	return d->myself && ( d->myself->onlineStatus().status() != KopeteOnlineStatus::Offline ) ;
+	return d->myself && ( d->myself->onlineStatus().status() != Kopete::OnlineStatus::Offline ) ;
 }
 
-bool KopeteAccount::isAway() const
+bool Kopete::Account::isAway() const
 {
-	return d->myself && ( d->myself->onlineStatus().status() == KopeteOnlineStatus::Away );
+	return d->myself && ( d->myself->onlineStatus().status() == Kopete::OnlineStatus::Away );
 }
 
-KopeteContact * KopeteAccount::myself() const
+Kopete::Contact * Kopete::Account::myself() const
 {
 	return d->myself;
 }
 
-void KopeteAccount::setMyself( KopeteContact *myself )
+void Kopete::Account::setMyself( Kopete::Contact *myself )
 {
 	d->myself = myself;
 
-	QObject::connect( myself, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
-		this, SLOT( slotOnlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
+	QObject::connect( myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
+		this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 }
 
-void KopeteAccount::slotOnlineStatusChanged( KopeteContact * /* contact */,
-	const KopeteOnlineStatus &newStatus, const KopeteOnlineStatus &oldStatus )
+void Kopete::Account::slotOnlineStatusChanged( Kopete::Contact * /* contact */,
+	const Kopete::OnlineStatus &newStatus, const Kopete::OnlineStatus &oldStatus )
 {
-	if ( oldStatus.status() == KopeteOnlineStatus::Offline ||
-		oldStatus.status() == KopeteOnlineStatus::Connecting ||
-		newStatus.status() == KopeteOnlineStatus::Offline )
+	if ( oldStatus.status() == Kopete::OnlineStatus::Offline ||
+		oldStatus.status() == Kopete::OnlineStatus::Connecting ||
+		newStatus.status() == Kopete::OnlineStatus::Offline )
 	{
 		// Wait for five seconds until we treat status notifications for contacts
 		// as unrelated to our own status change.
@@ -450,12 +450,12 @@ void KopeteAccount::slotOnlineStatusChanged( KopeteContact * /* contact */,
 	}
 }
 
-void KopeteAccount::slotStopSuppression()
+void Kopete::Account::slotStopSuppression()
 {
 	d->suppressStatusNotification = false;
 }
 
-bool KopeteAccount::suppressStatusNotification() const
+bool Kopete::Account::suppressStatusNotification() const
 {
 	return d->suppressStatusNotification;
 }

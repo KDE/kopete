@@ -40,7 +40,7 @@ public:
 	JabberEditAccountWidget (JabberProtocol * proto, JabberAccount *, QWidget * parent = 0, const char *name = 0);
 	~JabberEditAccountWidget ();
 	virtual bool validateData ();
-	virtual KopeteAccount *apply ();
+	virtual Kopete::Account *apply ();
 	bool settings_changed;
 	JabberAccount *account ();
 

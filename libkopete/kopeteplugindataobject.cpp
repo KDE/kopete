@@ -29,11 +29,11 @@ class KopetePluginDataObjectPrivate
 {
 public:
 	QMap<QString, QMap<QString, QString> > pluginData;
-	QMap<KopetePluginDataObject::IconState, QString> icons;
+	QMap<Kopete::PluginDataObject::IconState, QString> icons;
 	bool useCustomIcon;
 };
 
-KopetePluginDataObject::KopetePluginDataObject( QObject *parent, const char *name )
+Kopete::PluginDataObject::PluginDataObject( QObject *parent, const char *name )
 : QObject( parent, name )
 {
 	d = new KopetePluginDataObjectPrivate;
@@ -43,12 +43,12 @@ KopetePluginDataObject::KopetePluginDataObject( QObject *parent, const char *nam
 	connect( Kopete::Global::onlineStatusIconCache(), SIGNAL( iconsChanged() ), SIGNAL( iconAppearanceChanged() ) );
 }
 
-KopetePluginDataObject::~KopetePluginDataObject()
+Kopete::PluginDataObject::~PluginDataObject()
 {
 	delete d;
 }
 
-void KopetePluginDataObject::setPluginData( KopetePlugin *plugin, const QMap<QString, QString> &pluginData )
+void Kopete::PluginDataObject::setPluginData( Kopete::Plugin *plugin, const QMap<QString, QString> &pluginData )
 {
 	if ( pluginData.isEmpty() )
 	{
@@ -61,14 +61,14 @@ void KopetePluginDataObject::setPluginData( KopetePlugin *plugin, const QMap<QSt
 	emit pluginDataChanged();
 }
 
-void KopetePluginDataObject::setPluginData( KopetePlugin *p, const QString &key, const QString &value )
+void Kopete::PluginDataObject::setPluginData( Kopete::Plugin *p, const QString &key, const QString &value )
 {
 	d->pluginData[ p->pluginId() ][ key ] = value;
 
 	emit pluginDataChanged();
 }
 
-QMap<QString, QString> KopetePluginDataObject::pluginData( KopetePlugin *plugin ) const
+QMap<QString, QString> Kopete::PluginDataObject::pluginData( Kopete::Plugin *plugin ) const
 {
 	if ( !d->pluginData.contains( plugin->pluginId() ) )
 		return QMap<QString, QString>();
@@ -76,7 +76,7 @@ QMap<QString, QString> KopetePluginDataObject::pluginData( KopetePlugin *plugin 
 	return d->pluginData[ plugin->pluginId() ];
 }
 
-QString KopetePluginDataObject::pluginData( KopetePlugin *plugin, const QString &key ) const
+QString Kopete::PluginDataObject::pluginData( Kopete::Plugin *plugin, const QString &key ) const
 {
 	if ( !d->pluginData.contains( plugin->pluginId() ) || !d->pluginData[ plugin->pluginId() ].contains( key ) )
 		return QString::null;
@@ -84,7 +84,7 @@ QString KopetePluginDataObject::pluginData( KopetePlugin *plugin, const QString 
 	return d->pluginData[ plugin->pluginId() ][ key ];
 }
 
-void KopetePluginDataObject::writeConfig( const QString &configGroup ) const
+void Kopete::PluginDataObject::writeConfig( const QString &configGroup ) const
 {
 	KConfig *config = KGlobal::config();
 	config->setGroup( configGroup );
@@ -104,7 +104,7 @@ void KopetePluginDataObject::writeConfig( const QString &configGroup ) const
 	config->sync();
 }
 
-const QValueList<QDomElement> KopetePluginDataObject::toXML()
+const QValueList<QDomElement> Kopete::PluginDataObject::toXML()
 {
 	QDomDocument pluginData;
 	QValueList<QDomElement> pluginNodes;
@@ -175,7 +175,7 @@ const QValueList<QDomElement> KopetePluginDataObject::toXML()
 	return pluginNodes;
 }
 
-bool KopetePluginDataObject::fromXML( const QDomElement& element )
+bool Kopete::PluginDataObject::fromXML( const QDomElement& element )
 {
 	if ( element.tagName() == QString::fromLatin1( "plugin-data" ) )
 	{
@@ -238,7 +238,7 @@ bool KopetePluginDataObject::fromXML( const QDomElement& element )
 	return true;
 }
 
-QString KopetePluginDataObject::icon( KopetePluginDataObject::IconState state ) const
+QString Kopete::PluginDataObject::icon( Kopete::PluginDataObject::IconState state ) const
 {
 	if ( d->icons.contains( state ) )
 		return d->icons[state];
@@ -246,7 +246,7 @@ QString KopetePluginDataObject::icon( KopetePluginDataObject::IconState state ) 
 	return d->icons[ None ];
 }
 
-void KopetePluginDataObject::setIcon( const QString& icon , KopetePluginDataObject::IconState state )
+void Kopete::PluginDataObject::setIcon( const QString& icon , Kopete::PluginDataObject::IconState state )
 {
 	if ( icon.isNull() )
 		d->icons.remove( state );
@@ -257,12 +257,12 @@ void KopetePluginDataObject::setIcon( const QString& icon , KopetePluginDataObje
 	emit iconAppearanceChanged();
 }
 
-bool KopetePluginDataObject::useCustomIcon() const
+bool Kopete::PluginDataObject::useCustomIcon() const
 {
 	return d->useCustomIcon;
 }
 
-void KopetePluginDataObject::setUseCustomIcon( bool useCustomIcon )
+void Kopete::PluginDataObject::setUseCustomIcon( bool useCustomIcon )
 {
 	if ( d->useCustomIcon != useCustomIcon )
 	{

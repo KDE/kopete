@@ -25,15 +25,15 @@ class QStringList;
 class QString;
 class QTimer;
 
-class KopeteMessage;
-class KopeteMetaContact;
-class KopeteMessageManager;
+namespace Kopete { class Message; }
+namespace Kopete { class MetaContact; }
+namespace Kopete { class MessageManager; }
 
 /**
   * @author Olivier Goffart
   */
 
-class CryptographyPlugin : public KopetePlugin
+class CryptographyPlugin : public Kopete::Plugin
 {
 	Q_OBJECT
 
@@ -56,8 +56,8 @@ public:
 
 public slots:
 
-	void slotIncomingMessage( KopeteMessage& msg );
-	void slotOutgoingMessage( KopeteMessage& msg );
+	void slotIncomingMessage( Kopete::Message& msg );
+	void slotOutgoingMessage( Kopete::Message& msg );
 
 private slots:
 
@@ -65,7 +65,7 @@ private slots:
 	void slotForgetCachedPass();
 	void loadSettings();
 	
-	void slotNewKMM(KopeteMessageManager *);
+	void slotNewKMM(Kopete::MessageManager *);
 
 private:
 	static CryptographyPlugin* pluginStatic_;

@@ -28,16 +28,16 @@
 
 class GaduAccount;
 class GaduProtocol;
-class KopeteAccount;
+namespace Kopete { class Account; }
 
 class GaduEditAccount : public GaduAccountEditUI, public KopeteEditAccountWidget
 {
     Q_OBJECT
 
 public:
-	GaduEditAccount( GaduProtocol*, KopeteAccount*, QWidget* parent = 0, const char* name = 0 );
+	GaduEditAccount( GaduProtocol*, Kopete::Account*, QWidget* parent = 0, const char* name = 0 );
 	virtual bool validateData();
-	KopeteAccount* apply();
+	Kopete::Account* apply();
 
 private slots:
 	void registerNewAccount();

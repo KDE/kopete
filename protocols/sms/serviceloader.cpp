@@ -23,7 +23,7 @@
 #include "smsclient.h"
 #include "kopeteuiglobal.h"
 
-SMSService* ServiceLoader::loadService(const QString& name, KopeteAccount* account)
+SMSService* ServiceLoader::loadService(const QString& name, Kopete::Account* account)
 {
 	kdWarning( 14160 ) << k_funcinfo << endl;
 

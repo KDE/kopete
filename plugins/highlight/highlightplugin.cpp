@@ -29,12 +29,12 @@ typedef KGenericFactory<HighlightPlugin> HighlightPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_highlight, HighlightPluginFactory( "kopete_highlight" )  )
 
 HighlightPlugin::HighlightPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
-: KopetePlugin( HighlightPluginFactory::instance(), parent, name )
+: Kopete::Plugin( HighlightPluginFactory::instance(), parent, name )
 {
 	if( !pluginStatic_ )
 		pluginStatic_=this;
 
-	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToDisplay( KopeteMessage & ) ), SLOT( slotIncomingMessage( KopeteMessage & ) ) );
+	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToDisplay( Kopete::Message & ) ), SLOT( slotIncomingMessage( Kopete::Message & ) ) );
 	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
 
 	m_config = new HighlightConfig;
@@ -56,9 +56,9 @@ HighlightPlugin* HighlightPlugin::plugin()
 HighlightPlugin* HighlightPlugin::pluginStatic_ = 0L;
 
 
-void HighlightPlugin::slotIncomingMessage( KopeteMessage& msg )
+void HighlightPlugin::slotIncomingMessage( Kopete::Message& msg )
 {
-	if(msg.direction() != KopeteMessage::Inbound)
+	if(msg.direction() != Kopete::Message::Inbound)
 		return;	// FIXME: highlighted internal/actions messages are not showed correctly in the chat window (bad style)
 				//  but they should maybe be highlinghted if needed
 
@@ -77,7 +77,7 @@ void HighlightPlugin::slotIncomingMessage( KopeteMessage& msg )
 			if(f->setFG)
 				msg.setFg(f->FG);
 			if(f->setImportance)
-				msg.setImportance((KopeteMessage::MessageImportance)f->importance);
+				msg.setImportance((Kopete::Message::MessageImportance)f->importance);
 			if(f->playSound)
 				KNotifyClient::userEvent (QString::null, KNotifyClient::Sound, KNotifyClient::Default, f->soundFN );
 

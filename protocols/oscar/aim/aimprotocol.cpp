@@ -95,12 +95,12 @@ void AIMProtocolHandler::handleURL(const KURL &url) const
 
 		QString screenname = tocNormalize(command);
 
-		KopeteAccount *account = 0;
-		QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts(proto);
+		Kopete::Account *account = 0;
+		QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts(proto);
 		// do not show chooser if we only have one account to "choose" from
 		if (accounts.count() == 1)
 		{
-			QDictIterator<KopeteAccount> it(accounts);
+			QDictIterator<Kopete::Account> it(accounts);
 			account = it.current();
 
 			if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
@@ -121,7 +121,7 @@ void AIMProtocolHandler::handleURL(const KURL &url) const
 			chooser->setMainWidget(accSelector);
 
 			int ret = chooser->exec();
-			KopeteAccount *account = accSelector->selectedItem();
+			Kopete::Account *account = accSelector->selectedItem();
 
 			delete chooser;
 			if (ret == QDialog::Rejected || account == 0)
@@ -135,9 +135,9 @@ void AIMProtocolHandler::handleURL(const KURL &url) const
 		kdDebug(14152) << k_funcinfo <<
 			"Adding Contact; screenname = " << screenname << endl;
 		if (account->addContact(screenname, command, 0L,
-			KopeteAccount::DontChangeKABC, QString::null, true))
+			Kopete::Account::DontChangeKABC, QString::null, true))
 		{
-			//KopeteContact *contact = account->contacts()[screenname];
+			//Kopete::Contact *contact = account->contacts()[screenname];
 		}
 
 
@@ -152,11 +152,11 @@ void AIMProtocolHandler::handleURL(const KURL &url) const
 
 
 AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
-: KopeteProtocol( AIMProtocolFactory::instance(), parent, name ),
-	statusOnline(KopeteOnlineStatus::Online, 1, this, OSCAR_ONLINE, QString::null, i18n("Online"), i18n("Online")),
-	statusOffline(KopeteOnlineStatus::Offline, 1, this, OSCAR_OFFLINE, QString::null, i18n("Offline"), i18n("Offline")),
-	statusAway(KopeteOnlineStatus::Away, 1, this, OSCAR_AWAY, "aim_away", i18n("Away"), i18n("Away")),
-	statusConnecting(KopeteOnlineStatus::Connecting, 99, this, OSCAR_CONNECTING, "aim_connecting", i18n("Connecting..."), i18n("Connecting...")),
+: Kopete::Protocol( AIMProtocolFactory::instance(), parent, name ),
+	statusOnline(Kopete::OnlineStatus::Online, 1, this, OSCAR_ONLINE, QString::null, i18n("Online"), i18n("Online")),
+	statusOffline(Kopete::OnlineStatus::Offline, 1, this, OSCAR_OFFLINE, QString::null, i18n("Offline"), i18n("Offline")),
+	statusAway(Kopete::OnlineStatus::Away, 1, this, OSCAR_AWAY, "aim_away", i18n("Away"), i18n("Away")),
+	statusConnecting(Kopete::OnlineStatus::Connecting, 99, this, OSCAR_CONNECTING, "aim_connecting", i18n("Connecting..."), i18n("Connecting...")),
 	awayMessage(Kopete::Global::Properties::self()->awayMessage()),
 	clientFeatures("clientFeatures", i18n("Client Features"), 0, false)
 {
@@ -168,7 +168,7 @@ AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
 		// Create the config widget, this does it's magic I think
 //		new OscarPreferences("aim_protocol", this);
 	}
-	addAddressBookField("messaging/aim", KopetePlugin::MakeIndexField);
+	addAddressBookField("messaging/aim", Kopete::Plugin::MakeIndexField);
 }
 
 AIMProtocol::~AIMProtocol()
@@ -181,7 +181,7 @@ AIMProtocol *AIMProtocol::protocol(void)
 	return protocolStatic_;
 }
 
-KopeteContact *AIMProtocol::deserializeContact(KopeteMetaContact *metaContact,
+Kopete::Contact *AIMProtocol::deserializeContact(Kopete::MetaContact *metaContact,
 	const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> &/*addressBookData*/)
 {
@@ -190,8 +190,8 @@ KopeteContact *AIMProtocol::deserializeContact(KopeteMetaContact *metaContact,
 	QString displayName=serializedData["displayName"];
 
 	// Get the account it belongs to
-	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts(this);
-	KopeteAccount *account = accounts[accountId];
+	QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts(this);
+	Kopete::Account *account = accounts[accountId];
 
 	if(!account)
 	{
@@ -205,17 +205,17 @@ KopeteContact *AIMProtocol::deserializeContact(KopeteMetaContact *metaContact,
 	return c;
 }
 
-AddContactPage *AIMProtocol::createAddContactWidget(QWidget *parent, KopeteAccount *account)
+AddContactPage *AIMProtocol::createAddContactWidget(QWidget *parent, Kopete::Account *account)
 {
 	return (new AIMAddContactPage(account->isConnected(), parent));
 }
 
-KopeteEditAccountWidget *AIMProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
+KopeteEditAccountWidget *AIMProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
 {
 	return (new AIMEditAccountWidget(this, account, parent));
 }
 
-KopeteAccount *AIMProtocol::createNewAccount(const QString &accountId)
+Kopete::Account *AIMProtocol::createNewAccount(const QString &accountId)
 {
 	return (new AIMAccount(this, accountId));
 }

@@ -36,15 +36,15 @@ class KAction;
 class KActionCollection;
 class KTempFile;
 
-class KopeteProtocol;
-class KopeteOnlineStatus;
+namespace Kopete { class Protocol; }
+namespace Kopete { class OnlineStatus; }
 
-class MSNContact : public KopeteContact
+class MSNContact : public Kopete::Contact
 {
 	Q_OBJECT
 
 public:
-	MSNContact( KopeteAccount *account, const QString &id, KopeteMetaContact *parent );
+	MSNContact( Kopete::Account *account, const QString &id, Kopete::MetaContact *parent );
 	~MSNContact();
 
 	/**
@@ -79,7 +79,7 @@ public:
 	/**
 	 * The groups in which the user is located on the server.
 	 */
-	const QMap<uint, KopeteGroup *>  serverGroups() const;
+	const QMap<uint, Kopete::Group *>  serverGroups() const;
 	/**
 	 * clear that map
 	 */
@@ -93,7 +93,7 @@ public:
 	 * update the server group map
 	 */
 	void contactRemovedFromGroup( unsigned int group );
-	void contactAddedToGroup( uint groupNumber, KopeteGroup *group );
+	void contactAddedToGroup( uint groupNumber, Kopete::Group *group );
 
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
@@ -105,13 +105,13 @@ public:
 	/**
 	 * Returns the MSN Message Manager associated with this contact
 	 */
-	virtual KopeteMessageManager *manager( bool canCreate = false );
+	virtual Kopete::MessageManager *manager( bool canCreate = false );
 
 
 	/**
 	 * Because blocked contact have a small auto-modified status
 	 */
-	void setOnlineStatus(const KopeteOnlineStatus&);
+	void setOnlineStatus(const Kopete::OnlineStatus&);
 
 	QString phoneHome();
 	QString phoneWork();
@@ -147,7 +147,7 @@ private slots:
 	void slotUserInfoDialogReversedToggled();
 
 private:
-	QMap<uint, KopeteGroup *> m_serverGroups;
+	QMap<uint, Kopete::Group *> m_serverGroups;
 
 	bool m_blocked;
 	bool m_allowed;

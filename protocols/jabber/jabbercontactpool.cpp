@@ -59,7 +59,7 @@ JabberContactPoolItem *JabberContactPool::findPoolItem ( const XMPP::RosterItem 
 
 }
 
-JabberContact *JabberContactPool::addContact ( const XMPP::RosterItem &contact, KopeteMetaContact *metaContact, bool dirty )
+JabberContact *JabberContactPool::addContact ( const XMPP::RosterItem &contact, Kopete::MetaContact *metaContact, bool dirty )
 {
 
 	// see if the contact already exists
@@ -90,7 +90,7 @@ JabberContact *JabberContactPool::addContact ( const XMPP::RosterItem &contact, 
 	// create new contact instance and add it to the dictionary
 	JabberContact *newContact = new JabberContact ( contact, mAccount, metaContact );
 	JabberContactPoolItem *newContactItem = new JabberContactPoolItem ( newContact );
-	connect ( newContact, SIGNAL ( contactDestroyed ( KopeteContact * ) ), this, SLOT ( slotContactDestroyed ( KopeteContact * ) ) );
+	connect ( newContact, SIGNAL ( contactDestroyed ( Kopete::Contact * ) ), this, SLOT ( slotContactDestroyed ( Kopete::Contact * ) ) );
 	newContactItem->setDirty ( dirty );
 	mPool.append ( newContactItem );
 
@@ -98,7 +98,7 @@ JabberContact *JabberContactPool::addContact ( const XMPP::RosterItem &contact, 
 
 }
 
-JabberBaseContact *JabberContactPool::addGroupContact ( const XMPP::RosterItem &contact, bool roomContact, KopeteMetaContact *metaContact, bool dirty )
+JabberBaseContact *JabberContactPool::addGroupContact ( const XMPP::RosterItem &contact, bool roomContact, Kopete::MetaContact *metaContact, bool dirty )
 {
 
 	XMPP::RosterItem mContact ( roomContact ? contact.jid().userHost () : contact.jid().full() );
@@ -128,7 +128,7 @@ JabberBaseContact *JabberContactPool::addGroupContact ( const XMPP::RosterItem &
 
 	JabberContactPoolItem *newContactItem = new JabberContactPoolItem ( newContact );
 
-	connect ( newContact, SIGNAL ( contactDestroyed ( KopeteContact * ) ), this, SLOT ( slotContactDestroyed ( KopeteContact * ) ) );
+	connect ( newContact, SIGNAL ( contactDestroyed ( Kopete::Contact * ) ), this, SLOT ( slotContactDestroyed ( Kopete::Contact * ) ) );
 
 	newContactItem->setDirty ( dirty );
 	mPool.append ( newContactItem );
@@ -158,7 +158,7 @@ void JabberContactPool::removeContact ( const XMPP::Jid &jid )
 
 }
 
-void JabberContactPool::slotContactDestroyed ( KopeteContact *contact )
+void JabberContactPool::slotContactDestroyed ( Kopete::Contact *contact )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Contact deleted, collecting the pieces..." << endl;
 

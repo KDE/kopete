@@ -83,7 +83,7 @@ public:
 	bool		forFriends;
 
 	QPtrList<GaduCommand>		commandList_;
-	KopeteOnlineStatus		status_;
+	Kopete::OnlineStatus		status_;
 	QValueList<QHostAddress>	servers_;
 	KGaduLoginParams		loginInfo;
 };
@@ -99,8 +99,8 @@ static const char* const servers_ip[ NUM_SERVERS ] = {
 	"217.17.41.84",
 };
 
- GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const char* name )
-: KopeteAccount( parent, accountID, name )
+ GaduAccount::GaduAccount( Kopete::Protocol* parent, const QString& accountID,const char* name )
+: Kopete::Account( parent, accountID, name )
 {
 	QHostAddress ip;
 	p = new GaduAccountPrivate;
@@ -115,7 +115,7 @@ static const char* const servers_ip[ NUM_SERVERS ] = {
 
 	KGlobal::config()->setGroup( "Gadu" );
 
-	setMyself( new GaduContact(  accountId().toInt(), accountId(), this, new KopeteMetaContact() ) );
+	setMyself( new GaduContact(  accountId().toInt(), accountId(), this, new Kopete::MetaContact() ) );
 
 	p->status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL );
 	p->lastDescription = QString::null;
@@ -180,8 +180,8 @@ GaduAccount::initConnections()
 				SLOT( connectionFailed( gg_failure_t ) ) );
 	QObject::connect( p->session_, SIGNAL( connectionSucceed( ) ),
 				SLOT( connectionSucceed( ) ) );
-	QObject::connect( p->session_, SIGNAL( disconnect( KopeteAccount::DisconnectReason ) ),
-				SLOT( slotSessionDisconnect( KopeteAccount::DisconnectReason ) ) );
+	QObject::connect( p->session_, SIGNAL( disconnect( Kopete::Account::DisconnectReason ) ),
+				SLOT( slotSessionDisconnect( Kopete::Account::DisconnectReason ) ) );
 	QObject::connect( p->session_, SIGNAL( ackReceived( unsigned int ) ),
 				SLOT( ackReceived( unsigned int ) ) );
 	QObject::connect( p->session_, SIGNAL( pubDirSearchResult( const SearchResult& ) ),
@@ -309,7 +309,7 @@ GaduAccount::disconnect()
 {
 	slotGoOffline();
 	p->connectWithSSL = true;
-	KopeteAccount::disconnect( Manual );
+	Kopete::Account::disconnect( Manual );
 }
 
 void
@@ -317,12 +317,12 @@ GaduAccount::disconnect( DisconnectReason reason )
 {
 	slotGoOffline();
 	p->connectWithSSL = true;
-	KopeteAccount::disconnect( reason );
+	Kopete::Account::disconnect( reason );
 }
 
 bool
 GaduAccount::addContactToMetaContact( const QString& contactId, const QString& displayName,
-					 KopeteMetaContact* parentContact )
+					 Kopete::MetaContact* parentContact )
 {
 	kdDebug(14100) << "addContactToMetaContact " << contactId << endl;
 
@@ -335,7 +335,7 @@ GaduAccount::addContactToMetaContact( const QString& contactId, const QString& d
 }
 
 void
-GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& descr )
+GaduAccount::changeStatus( const Kopete::OnlineStatus& status, const QString& descr )
 {
 	kdDebug(14101) << "### Status = " << p->session_->isConnected() << endl;
 
@@ -488,7 +488,7 @@ GaduAccount::notify( uin_t* userlist, int count )
 }
 
 void
-GaduAccount::sendMessage( uin_t recipient, const KopeteMessage& msg, int msgClass )
+GaduAccount::sendMessage( uin_t recipient, const Kopete::Message& msg, int msgClass )
 {
 	if ( p->session_->isConnected() ) {
 		p->session_->sendMessage( recipient, msg, msgClass );
@@ -519,16 +519,16 @@ GaduAccount::messageReceived( KGaduMessage* gaduMessage )
 	contact = static_cast<GaduContact*> ( contacts()[ QString::number( gaduMessage->sender_id ) ] );
 
 	if ( !contact ) {
-		KopeteMetaContact* metaContact = new KopeteMetaContact ();
+		Kopete::MetaContact* metaContact = new Kopete::MetaContact ();
 		metaContact->setTemporary ( true );
 		contact = new GaduContact( gaduMessage->sender_id,
 				QString::number( gaduMessage->sender_id ), this, metaContact );
-		KopeteContactList::contactList ()->addMetaContact( metaContact );
+		Kopete::ContactList::contactList ()->addMetaContact( metaContact );
 		addNotify( gaduMessage->sender_id );
 	}
 
 	contactsListTmp.append( myself() );
-	KopeteMessage msg( gaduMessage->sendTime, contact, contactsListTmp, gaduMessage->message, KopeteMessage::Inbound, KopeteMessage::RichText );
+	Kopete::Message msg( gaduMessage->sendTime, contact, contactsListTmp, gaduMessage->message, Kopete::Message::Inbound, Kopete::Message::RichText );
 	contact->messageReceived( msg );
 }
 
@@ -727,7 +727,7 @@ GaduAccount::startNotify()
 		return;
 	}
 
-	QDictIterator<KopeteContact> kopeteContactsList( contacts() );
+	QDictIterator<Kopete::Contact> kopeteContactsList( contacts() );
 
 	uin_t* userlist = 0;
 	userlist = new uin_t[ contacts().count() ];
@@ -741,7 +741,7 @@ GaduAccount::startNotify()
 }
 
 void
-GaduAccount::slotSessionDisconnect( KopeteAccount::DisconnectReason reason )
+GaduAccount::slotSessionDisconnect( Kopete::Account::DisconnectReason reason )
 {
 	uin_t status;
 
@@ -750,7 +750,7 @@ GaduAccount::slotSessionDisconnect( KopeteAccount::DisconnectReason reason )
 	if (p->pingTimer_) {
 		p->pingTimer_->stop();
 	}
-	QDictIterator<KopeteContact> it( contacts() );
+	QDictIterator<Kopete::Contact> it( contacts() );
 
 	for ( ; it.current() ; ++it ) {
 		static_cast<GaduContact*>((*it))->setOnlineStatus(
@@ -773,7 +773,7 @@ GaduAccount::userlist( const QString& contactsListString )
 	QString contactName;
 	QStringList groups;
 	GaduContact* contact;
-	KopeteMetaContact* metaContact;
+	Kopete::MetaContact* metaContact;
 	unsigned int i;
 
 	for ( i = 0; i != contactsList.size() ; i++ ) {
@@ -789,7 +789,7 @@ GaduAccount::userlist( const QString& contactsListString )
 		}
 		else {
 			contactName = GaduContact::findBestContactName( &contactsList[i] );
-			bool s = addContact( contactsList[i].uin, contactName, 0L, KopeteAccount::DontChangeKABC, QString::null, false );
+			bool s = addContact( contactsList[i].uin, contactName, 0L, Kopete::Account::DontChangeKABC, QString::null, false );
 			if ( s == false ) {
 				kdDebug(14100) << "There was a problem adding UIN "<< contactsList[i].uin << "to users list" << endl;
 				continue;
@@ -797,7 +797,7 @@ GaduAccount::userlist( const QString& contactsListString )
 		}
 		contact = static_cast<GaduContact*>( contacts()[ contactsList[i].uin ] );
 		if ( contact == NULL ) {
-			kdDebug(14100) << "oops, no KopeteContact in contacts()[] for some reason, for \"" << contactsList[i].uin << "\"" << endl;
+			kdDebug(14100) << "oops, no Kopete::Contact in contacts()[] for some reason, for \"" << contactsList[i].uin << "\"" << endl;
 			continue;
 		}
 
@@ -808,11 +808,11 @@ GaduAccount::userlist( const QString& contactsListString )
 			// FIXME: libkopete bug i guess, by default contact goes to top level group
 			// if user desrired to see contact somewhere else, remove it from top level one
 			metaContact = contact->metaContact();
-			metaContact->removeFromGroup( KopeteGroup::topLevel() );
+			metaContact->removeFromGroup( Kopete::Group::topLevel() );
 			// put him in all desired groups:
 			groups = QStringList::split( ",", contactsList[i].group );
 			for ( QStringList::Iterator groupsIterator = groups.begin(); groupsIterator != groups.end(); ++groupsIterator ) {
-				metaContact->addToGroup( KopeteContactList::contactList ()->getGroup ( *groupsIterator) );
+				metaContact->addToGroup( Kopete::ContactList::contactList ()->getGroup ( *groupsIterator) );
 			}
 		}
 	}
@@ -951,7 +951,7 @@ GaduAccount::userlist()
 		return contactsList;
 	}
 
-	QDictIterator<KopeteContact> contactsIterator( contacts() );
+	QDictIterator<Kopete::Contact> contactsIterator( contacts() );
 
 	for( i=0 ; contactsIterator.current() ; ++contactsIterator ) {
 		contact = static_cast<GaduContact*>( *contactsIterator );

@@ -74,8 +74,8 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	m_addressBook = 0L;  // so we can tell if it's already loaded
 
 	// Populate the groups list
-	KopeteGroupList groups=KopeteContactList::contactList()->groups();
-	for( KopeteGroup *it = groups.first(); it; it = groups.next() )
+	Kopete::GroupList groups=Kopete::ContactList::contactList()->groups();
+	for( Kopete::Group *it = groups.first(); it; it = groups.next() )
 	{
 		QString groupname = it->displayName();
 		if ( !groupname.isEmpty() )
@@ -87,8 +87,8 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 
 	// Populate the accounts list
 	QCheckListItem* accountLVI = 0;
-	QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
-	for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
+	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::manager()->accounts();
+	for(Kopete::Account *i=accounts.first() ; i; i=accounts.next() )
 	{
 		accountLVI= new QCheckListItem( protocolListView, i->accountId(), QCheckListItem::CheckBox);
 		accountLVI->setText(1,i->protocol()->displayName() + QString::fromLatin1(" ") );
@@ -243,7 +243,7 @@ void AddContactWizard::slotProtocolListClicked( QListViewItem *)
 
 void AddContactWizard::accept()
 {
-	KopeteMetaContact *metaContact = new KopeteMetaContact();
+	Kopete::MetaContact *metaContact = new Kopete::MetaContact();
 
 	// set the display name if required
 	if ( !mDisplayName->text().isEmpty() )
@@ -268,17 +268,17 @@ void AddContactWizard::accept()
 			if(m_groupItems.contains(check))
 				metaContact->addToGroup(m_groupItems[check]);
 			else //it's a new group
-				metaContact->addToGroup( KopeteContactList::contactList()->getGroup( check->text() ) );
+				metaContact->addToGroup( Kopete::ContactList::contactList()->getGroup( check->text() ) );
 			topLevel = false;
 		}
 	}
 	if(topLevel)
-		metaContact->addToGroup( KopeteGroup::topLevel() );
+		metaContact->addToGroup( Kopete::Group::topLevel() );
 
 	bool ok = protocolPages.isEmpty();
 
 	// get each protocol's contact
-	QMap <KopeteAccount*,AddContactPage*>::Iterator it;
+	QMap <Kopete::Account*,AddContactPage*>::Iterator it;
 	for ( it = protocolPages.begin(); it != protocolPages.end(); ++it )
 		ok |= it.data()->apply( it.key(), metaContact );
 
@@ -290,7 +290,7 @@ void AddContactWizard::accept()
 		if ( addresseeListView->isEnabled() && i )
 			metaContact->setMetaContactId( i->addressee().uid() );
 		// add it to the contact list
-		KopeteContactList::contactList()->addMetaContact( metaContact );
+		Kopete::ContactList::contactList()->addMetaContact( metaContact );
 	}
 	else
 		delete metaContact;
@@ -326,7 +326,7 @@ void AddContactWizard::next()
 			QCheckListItem *item = dynamic_cast<QCheckListItem *>(it.current());
 			if (item && item->isOn())
 			{
-				KopeteAccount *i=m_accountItems[item];
+				Kopete::Account *i=m_accountItems[item];
 				// this shouldn't happen either, but I hate crashes
 				if (!i)
 					continue;
@@ -351,10 +351,10 @@ void AddContactWizard::next()
 		}
 
 		//remove pages that were eventualy added previusely, and needs to be removed if the user pressed back.
-		QMap <KopeteAccount*,AddContactPage*>::Iterator it;
+		QMap <Kopete::Account*,AddContactPage*>::Iterator it;
 		for ( it = protocolPages.begin(); it != protocolPages.end(); ++it )
 		{
-			KopeteAccount *i=it.key();
+			Kopete::Account *i=it.key();
 			if( !i || !usedAccounts.contains( i->protocol()->pluginId() + i->accountId() ) )
 			{
 				delete it.data();

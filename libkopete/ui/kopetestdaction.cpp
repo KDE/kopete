@@ -40,9 +40,9 @@ KopeteGroupListAction::KopeteGroupListAction( const QString &text, const QString
 {
 	connect( this, SIGNAL( activated() ), receiver, slot );
 
-	connect( KopeteContactList::contactList(), SIGNAL( groupAdded( KopeteGroup * ) ), this, SLOT( slotUpdateList() ) );
-	connect( KopeteContactList::contactList(), SIGNAL( groupRemoved( KopeteGroup * ) ), this, SLOT( slotUpdateList() ) );
-	connect( KopeteContactList::contactList(), SIGNAL( groupRenamed(KopeteGroup*, const QString& ) ), this, SLOT( slotUpdateList() ) );
+	connect( Kopete::ContactList::contactList(), SIGNAL( groupAdded( Kopete::Group * ) ), this, SLOT( slotUpdateList() ) );
+	connect( Kopete::ContactList::contactList(), SIGNAL( groupRemoved( Kopete::Group * ) ), this, SLOT( slotUpdateList() ) );
+	connect( Kopete::ContactList::contactList(), SIGNAL( groupRenamed(Kopete::Group*, const QString& ) ), this, SLOT( slotUpdateList() ) );
 	slotUpdateList();
 }
 
@@ -55,8 +55,8 @@ void KopeteGroupListAction::slotUpdateList()
 	QStringList groupList;
 
 	// Add groups to our list
-	KopeteGroupList groups = KopeteContactList::contactList()->groups();
-	for ( KopeteGroup *it = groups.first(); it; it = groups.next() )
+	Kopete::GroupList groups = Kopete::ContactList::contactList()->groups();
+	for ( Kopete::Group *it = groups.first(); it; it = groups.next() )
 	{
 		groupList.append( it->displayName() );
 	}

@@ -68,7 +68,7 @@ class KopeteMessageImp : public JSProxyImp
 
 		KJS::Value call( KJS::ExecState *exec, KJS::Object &self, const KJS::List &args );
 
-		static KopeteMessage *message( KJS::Object &object );
+		static Kopete::Message *message( KJS::Object &object );
 
 	private:
 		int extractInt( KJS::ExecState *exec, const KJS::List &args, int idx);

@@ -124,7 +124,7 @@ void JabberEditAccountWidget::reopen ()
 
 }
 
-KopeteAccount *JabberEditAccountWidget::apply ()
+Kopete::Account *JabberEditAccountWidget::apply ()
 {
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << "JabberEditAccount::apply()" << endl;
 

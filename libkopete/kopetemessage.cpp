@@ -36,14 +36,14 @@ struct KopeteMessagePrivate
 {
 	uint refCount;
 
-	const KopeteContact *from;
-	KopeteMessageManager *manager;
+	const Kopete::Contact *from;
+	Kopete::MessageManager *manager;
 	KopeteContactPtrList to;
 
-	KopeteMessage::MessageDirection direction;
-	KopeteMessage::MessageFormat format;
-	KopeteMessage::MessageType type;
-	KopeteMessage::MessageImportance importance;
+	Kopete::Message::MessageDirection direction;
+	Kopete::Message::MessageFormat format;
+	Kopete::Message::MessageType type;
+	Kopete::Message::MessageImportance importance;
 	bool bgOverride;
 	bool fgOverride;
 	bool rtfOverride;
@@ -67,20 +67,20 @@ static const char* nameColors[] =
 	"deeppink", "saddlebrown", "coral", "royalblue"
 };
 
-KopeteMessage::KopeteMessage()
+Kopete::Message::Message()
 {
 	d = new KopeteMessagePrivate;
 	init( QDateTime::currentDateTime(), 0L, KopeteContactPtrList(), QString::null, QString::null, Internal, PlainText, Chat );
 }
 
-KopeteMessage::KopeteMessage( const KopeteContact *fromKC, const KopeteContactPtrList &toKC, const QString &body,
+Kopete::Message::Message( const Kopete::Contact *fromKC, const KopeteContactPtrList &toKC, const QString &body,
 	MessageDirection direction, MessageFormat f, MessageType type )
 {
 	d = new KopeteMessagePrivate;
 	init( QDateTime::currentDateTime(), fromKC, toKC, body, QString::null, direction, f, type );
 }
 
-KopeteMessage::KopeteMessage( const KopeteContact *fromKC, const KopeteContact *toKC, const QString &body,
+Kopete::Message::Message( const Kopete::Contact *fromKC, const Kopete::Contact *toKC, const QString &body,
 	MessageDirection direction, MessageFormat f, MessageType type )
 {
 	d = new KopeteMessagePrivate;
@@ -90,7 +90,7 @@ KopeteMessage::KopeteMessage( const KopeteContact *fromKC, const KopeteContact *
 }
 
 
-KopeteMessage::KopeteMessage( const KopeteContact *fromKC, const KopeteContactPtrList &toKC, const QString &body,
+Kopete::Message::Message( const Kopete::Contact *fromKC, const KopeteContactPtrList &toKC, const QString &body,
 	const QString &subject, MessageDirection direction, MessageFormat f, MessageType type )
 {
 	d = new KopeteMessagePrivate;
@@ -98,7 +98,7 @@ KopeteMessage::KopeteMessage( const KopeteContact *fromKC, const KopeteContactPt
 	init( QDateTime::currentDateTime(), fromKC, toKC, body, subject, direction, f, type );
 }
 
-KopeteMessage::KopeteMessage( const QDateTime &timeStamp, const KopeteContact *fromKC, const KopeteContactPtrList &toKC,
+Kopete::Message::Message( const QDateTime &timeStamp, const Kopete::Contact *fromKC, const KopeteContactPtrList &toKC,
 	const QString &body, MessageDirection direction, MessageFormat f, MessageType type )
 {
 	d = new KopeteMessagePrivate;
@@ -106,7 +106,7 @@ KopeteMessage::KopeteMessage( const QDateTime &timeStamp, const KopeteContact *f
 	init( timeStamp, fromKC, toKC, body, QString::null, direction, f, type );
 }
 
-KopeteMessage::KopeteMessage( const QDateTime &timeStamp, const KopeteContact *fromKC, const KopeteContactPtrList &toKC,
+Kopete::Message::Message( const QDateTime &timeStamp, const Kopete::Contact *fromKC, const KopeteContactPtrList &toKC,
 	const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, MessageType type )
 {
 	d = new KopeteMessagePrivate;
@@ -114,14 +114,14 @@ KopeteMessage::KopeteMessage( const QDateTime &timeStamp, const KopeteContact *f
 	init( timeStamp, fromKC, toKC, body, subject, direction, f, type );
 }
 
-KopeteMessage::KopeteMessage( const KopeteMessage &other )
+Kopete::Message::Message( const Kopete::Message &other )
 {
 	d = other.d;
 	d->refCount++;
 }
 
 
-void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from, const KopeteContactPtrList &to,
+void Kopete::Message::init( const QDateTime &timeStamp, const Kopete::Contact *from, const KopeteContactPtrList &to,
 	const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, MessageType type )
 {
 	d->refCount = 1;
@@ -165,7 +165,7 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 }
 
 
-KopeteMessage& KopeteMessage::operator=( const KopeteMessage &other )
+Kopete::Message& Kopete::Message::operator=( const Kopete::Message &other )
 {
 	if( other.d == d )
 		return *this;
@@ -179,7 +179,7 @@ KopeteMessage& KopeteMessage::operator=( const KopeteMessage &other )
 	return *this;
 }
 
-KopeteMessage::~KopeteMessage()
+Kopete::Message::~Message()
 {
 	d->refCount--;
 	if( !d->refCount )
@@ -187,7 +187,7 @@ KopeteMessage::~KopeteMessage()
 }
 
 
-void KopeteMessage::detach()
+void Kopete::Message::detach()
 {
 	if( d->refCount == 1 )
 		return;
@@ -201,43 +201,43 @@ void KopeteMessage::detach()
 	d = newD;
 }
 
-void KopeteMessage::setBgOverride( bool enabled )
+void Kopete::Message::setBgOverride( bool enabled )
 {
 	detach();
 	d->bgOverride = enabled;
 }
 
-void KopeteMessage::setFgOverride( bool enabled )
+void Kopete::Message::setFgOverride( bool enabled )
 {
 	detach();
 	d->fgOverride = enabled;
 }
 
-void KopeteMessage::setRtfOverride( bool enabled )
+void Kopete::Message::setRtfOverride( bool enabled )
 {
 	detach();
 	d->rtfOverride = enabled;
 }
 
-void KopeteMessage::setFg( const QColor &color )
+void Kopete::Message::setFg( const QColor &color )
 {
 	detach();
 	d->fgColor=color;
 }
 
-void KopeteMessage::setBg( const QColor &color )
+void Kopete::Message::setBg( const QColor &color )
 {
 	detach();
 	d->bgColor=color;
 }
 
-void KopeteMessage::setFont( const QFont &font )
+void Kopete::Message::setFont( const QFont &font )
 {
 	detach();
 	d->font = font;
 }
 
-void KopeteMessage::setBody( const QString &body, MessageFormat f )
+void Kopete::Message::setBody( const QString &body, MessageFormat f )
 {
 	detach();
 
@@ -265,13 +265,13 @@ void KopeteMessage::setBody( const QString &body, MessageFormat f )
 	d->format = f;
 }
 
-void KopeteMessage::setImportance(KopeteMessage::MessageImportance i)
+void Kopete::Message::setImportance(Kopete::Message::MessageImportance i)
 {
 	detach();
 	d->importance = i;
 }
 
-QString KopeteMessage::unescape( const QString &xml )
+QString Kopete::Message::unescape( const QString &xml )
 {
 	QString data = xml;
 
@@ -289,7 +289,7 @@ QString KopeteMessage::unescape( const QString &xml )
 	return data;
 }
 
-QString KopeteMessage::escape( const QString &text )
+QString Kopete::Message::escape( const QString &text )
 {
 	QString html = QStyleSheet::escape( text );
  	//Replace carriage returns inside the text
@@ -306,7 +306,7 @@ QString KopeteMessage::escape( const QString &text )
 
 
 
-QString KopeteMessage::plainBody() const
+QString Kopete::Message::plainBody() const
 {
 	QString body=d->body;
 	if( d->format & RichText )
@@ -316,7 +316,7 @@ QString KopeteMessage::plainBody() const
 	return body;
 }
 
-QString KopeteMessage::escapedBody() const
+QString Kopete::Message::escapedBody() const
 {
 	QString escapedBody=d->body;
 
@@ -328,7 +328,7 @@ QString KopeteMessage::escapedBody() const
 	return escapedBody;
 }
 
-QString KopeteMessage::parsedBody() const
+QString Kopete::Message::parsedBody() const
 {
 	//kdDebug(14000) << k_funcinfo << "messageformat: " << d->format << endl;
 
@@ -351,7 +351,7 @@ static QString makeRegExp( const char *pattern )
 	return boundaryStart + QString::fromLatin1(pattern) + boundaryEnd;
 }
 
-QString KopeteMessage::parseLinks( const QString &message, MessageFormat format )
+QString Kopete::Message::parseLinks( const QString &message, MessageFormat format )
 {
 	if ( format == ParsedHTML )
 		return message;
@@ -420,69 +420,69 @@ QString KopeteMessage::parseLinks( const QString &message, MessageFormat format 
 
 
 
-QDateTime KopeteMessage::timestamp() const
+QDateTime Kopete::Message::timestamp() const
 {
 	return d->timeStamp;
 }
 
-const KopeteContact *KopeteMessage::from() const
+const Kopete::Contact *Kopete::Message::from() const
 {
 	return d->from;
 }
 
-KopeteContactPtrList KopeteMessage::to() const
+KopeteContactPtrList Kopete::Message::to() const
 {
 	return d->to;
 }
 
-KopeteMessage::MessageType KopeteMessage::type() const
+Kopete::Message::MessageType Kopete::Message::type() const
 {
 	return d->type;
 }
 
-QColor KopeteMessage::fg() const
+QColor Kopete::Message::fg() const
 {
 	return d->fgColor;
 }
 
-QColor KopeteMessage::bg() const
+QColor Kopete::Message::bg() const
 {
 	return d->bgColor;
 }
 
-QFont KopeteMessage::font() const
+QFont Kopete::Message::font() const
 {
 	//QDomElement bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
 	//return QFont( bodyNode.attribute( QString::fromLatin1("font") ), bodyNode.attribute( QString::fromLatin1("fontsize") ).toInt() );
 	return d->font;
 }
 
-QString KopeteMessage::subject() const
+QString Kopete::Message::subject() const
 {
 	return d->subject;
 }
 
-KopeteMessage::MessageFormat KopeteMessage::format() const
+Kopete::Message::MessageFormat Kopete::Message::format() const
 {
 	return d->format;
 }
 
-KopeteMessage::MessageDirection KopeteMessage::direction() const
+Kopete::Message::MessageDirection Kopete::Message::direction() const
 {
 	return d->direction;
 }
 
-KopeteMessage::MessageImportance KopeteMessage::importance() const
+Kopete::Message::MessageImportance Kopete::Message::importance() const
 {
 	return d->importance;
 }
 
-KopeteMessageManager *KopeteMessage::manager() const
+Kopete::MessageManager *Kopete::Message::manager() const
 {
 	return d->manager;
 }
 
-void KopeteMessage::setManager(KopeteMessageManager *kmm)
+void Kopete::Message::setManager(Kopete::MessageManager *kmm)
 {
 	detach();
 	d->manager=kmm;
@@ -490,7 +490,7 @@ void KopeteMessage::setManager(KopeteMessageManager *kmm)
 
 
 
-const QDomDocument KopeteMessage::asXML() const
+const QDomDocument Kopete::Message::asXML() const
 {
 	QDomDocument doc;
 	QDomElement messageNode = doc.createElement( QString::fromLatin1("message") );
@@ -563,9 +563,9 @@ const QDomDocument KopeteMessage::asXML() const
 	}
 
 	QDomElement toNode = doc.createElement( QString::fromLatin1("to") );
-	///for( KopeteContact *c = d->to.first(); c; c = d->to.next() )
+	///for( Kopete::Contact *c = d->to.first(); c; c = d->to.next() )
 	//{
-		KopeteContact *c = d->to.first();
+		Kopete::Contact *c = d->to.first();
 		if( c )
 		{
 		//the nickname
@@ -630,7 +630,7 @@ const QDomDocument KopeteMessage::asXML() const
 	return doc;
 }
 
-QString KopeteMessage::decodeString( const QCString &message, const QTextCodec *providedCodec, bool *success )
+QString Kopete::Message::decodeString( const QCString &message, const QTextCodec *providedCodec, bool *success )
 {
 	/*
 	Note to everyone. This function is not the most efficient, that is for sure.

@@ -44,8 +44,8 @@
 #include "msnnotifysocket.h"
 #include "msnaccount.h"
 
-MSNContact::MSNContact( KopeteAccount *account, const QString &id, KopeteMetaContact *parent )
-: KopeteContact( account, id, parent )
+MSNContact::MSNContact( Kopete::Account *account, const QString &id, Kopete::MetaContact *parent )
+: Kopete::Contact( account, id, parent )
 {
 	m_displayPicture = 0L;
 
@@ -104,12 +104,12 @@ bool MSNContact::isReachable()
 	return true;
 }
 
-KopeteMessageManager *MSNContact::manager( bool canCreate )
+Kopete::MessageManager *MSNContact::manager( bool canCreate )
 {
 	KopeteContactPtrList chatmembers;
 	chatmembers.append(this);
 
-	KopeteMessageManager *_manager = KopeteMessageManagerFactory::factory()->findKopeteMessageManager(  account()->myself(), chatmembers, protocol() );
+	Kopete::MessageManager *_manager = KopeteMessageManagerFactory::factory()->findMessageManager(  account()->myself(), chatmembers, protocol() );
 	MSNMessageManager *manager = dynamic_cast<MSNMessageManager*>( _manager );
 	if(!manager &&  canCreate)
 	{
@@ -215,7 +215,7 @@ void MSNContact::slotDeleteContact()
 			return;
 		}
 
-		for( QMap<uint, KopeteGroup*>::Iterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
+		for( QMap<uint, Kopete::Group*>::Iterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
 			notify->removeContact( contactId(), it.key(), MSNProtocol::FL );
 	}
 	else
@@ -299,7 +299,7 @@ void MSNContact::serialize( QMap<QString, QString> &serializedData, QMap<QString
 	// Contact id and display name are already set for us, only add the rest
 	QString groups;
 	bool firstEntry = true;
-	for( QMap<uint, KopeteGroup *>::ConstIterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
+	for( QMap<uint, Kopete::Group *>::ConstIterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
 	{
 		if( !firstEntry )
 		{
@@ -329,7 +329,7 @@ QString MSNContact::phoneWork(){ return m_phoneWork ;}
 QString MSNContact::phoneMobile(){ return m_phoneMobile ;}
 
 
-const QMap<uint, KopeteGroup*>  MSNContact::serverGroups() const
+const QMap<uint, Kopete::Group*>  MSNContact::serverGroups() const
 {
 	return m_serverGroups;
 }
@@ -368,8 +368,8 @@ void MSNContact::syncGroups( )
 	unsigned int count=m_serverGroups.count();
 
 	//STEP ONE : add the contact to every kopetegroups where the MC is
-	QPtrList<KopeteGroup> groupList = metaContact()->groups();
-	for ( KopeteGroup *group = groupList.first(); group; group = groupList.next() )
+	QPtrList<Kopete::Group> groupList = metaContact()->groups();
+	for ( Kopete::Group *group = groupList.first(); group; group = groupList.next() )
 	{
 		//For each group, ensure it is on the MSN server
 		if( !group->pluginData( protocol() , account()->accountId() + " id" ).isEmpty() )
@@ -385,7 +385,7 @@ void MSNContact::syncGroups( )
 				group->setPluginData( protocol() , account()->accountId() + " displayName" , QString::null);
 				kdWarning( 14140 ) << k_funcinfo << " Group " << group->displayName() << " marked with id #" <<Gid << " does not seems to be anymore on the server" << endl;
 
-				if(!group->displayName().isEmpty() && group->type() == KopeteGroup::Normal) //not the top-level
+				if(!group->displayName().isEmpty() && group->type() == Kopete::Group::Normal) //not the top-level
 				{
 					//Create the group and add the contact
 					static_cast<MSNAccount*>( account() )->addGroup( group->displayName(),contactId() );
@@ -404,7 +404,7 @@ void MSNContact::syncGroups( )
 		}
 		else
 		{
-			if(!group->displayName().isEmpty() && group->type() == KopeteGroup::Normal) //not the top-level
+			if(!group->displayName().isEmpty() && group->type() == Kopete::Group::Normal) //not the top-level
 			{
 				//Create the group and add the contact
 				static_cast<MSNAccount*>( account() )->addGroup( group->displayName(),contactId() );
@@ -421,7 +421,7 @@ void MSNContact::syncGroups( )
 	
 	QValueList<int> removinglist; //contact is not in that group. on the server. we will remove them dirrectly after the loop
 	
-	for( QMap<uint, KopeteGroup*>::Iterator it = m_serverGroups.begin();(count > 1 && it != m_serverGroups.end()); ++it )
+	for( QMap<uint, Kopete::Group*>::Iterator it = m_serverGroups.begin();(count > 1 && it != m_serverGroups.end()); ++it )
 	{
 		if( !static_cast<MSNAccount*>( account() )->m_groupList.contains(it.key()) )
 		{ // ohoh!   something is corrupted on the contactlist.xml
@@ -437,7 +437,7 @@ void MSNContact::syncGroups( )
 			continue;
 		}
 
-		KopeteGroup *group=it.data();
+		Kopete::Group *group=it.data();
 		if(!group) //we can't trust the data of it()   see in MSNProtocol::deserializeContact why
 			group=static_cast<MSNAccount*>( account() )->m_groupList[it.key()];
 		if( !metaContact()->groups().contains(group) )
@@ -463,7 +463,7 @@ void MSNContact::syncGroups( )
 
 }
 
-void MSNContact::contactAddedToGroup( uint groupNumber, KopeteGroup *group )
+void MSNContact::contactAddedToGroup( uint groupNumber, Kopete::Group *group )
 {
 	m_serverGroups.insert( groupNumber, group );
 	m_moving=false;
@@ -523,11 +523,11 @@ void MSNContact::sendFile( const KURL &sourceURL, const QString &altFileName, ui
 	}
 }
 
-void MSNContact::setOnlineStatus(const KopeteOnlineStatus& status)
+void MSNContact::setOnlineStatus(const Kopete::OnlineStatus& status)
 {
 	if(isBlocked() && status.internalStatus() < 15)
 	{
-		KopeteContact::setOnlineStatus(KopeteOnlineStatus(status.status() , (status.weight()==0) ? 0 : (status.weight() -1)  ,
+		Kopete::Contact::setOnlineStatus(Kopete::OnlineStatus(status.status() , (status.weight()==0) ? 0 : (status.weight() -1)  ,
 			protocol() , status.internalStatus()+15 , QString::fromLatin1("msn_blocked"),
 			status.caption() ,  i18n("%1|Blocked").arg( status.description() ) ) );
 	}
@@ -538,39 +538,39 @@ void MSNContact::setOnlineStatus(const KopeteOnlineStatus& status)
 			switch(status.internalStatus()-15)
 			{
 				case 1:
-					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->NLN);
+					Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->NLN);
 					break;
 				case 2:
-					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->BSY);
+					Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->BSY);
 					break;
 				case 3:
-					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->BRB);
+					Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->BRB);
 					break;
 				case 4:
-					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->AWY);
+					Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->AWY);
 					break;
 				case 5:
-					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->PHN);
+					Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->PHN);
 					break;
 				case 6:
-					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->LUN);
+					Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->LUN);
 					break;
 				case 7:
-					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->FLN);
+					Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->FLN);
 					break;
 				case 8:
-					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->HDN);
+					Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->HDN);
 					break;
 				case 9:
-					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->IDL);
+					Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->IDL);
 					break;
 				default:
-					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->UNK);
+					Kopete::Contact::setOnlineStatus(MSNProtocol::protocol()->UNK);
 					break;
 			}
 		}
 		else
-			KopeteContact::setOnlineStatus(status);
+			Kopete::Contact::setOnlineStatus(status);
 	}
 }
 

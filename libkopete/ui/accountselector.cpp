@@ -29,10 +29,10 @@
 class AccountListViewItem : public KListViewItem
 {
 	private:
-		KopeteAccount *mAccount;
+		Kopete::Account *mAccount;
 
 	public:
-		AccountListViewItem(QListView *parent, KopeteAccount *acc)
+		AccountListViewItem(QListView *parent, Kopete::Account *acc)
 			: KListViewItem(parent)
 		{
 			if (acc==0)
@@ -45,7 +45,7 @@ class AccountListViewItem : public KListViewItem
 			setPixmap(0, mAccount->accountIcon());
 		}
 
-		KopeteAccount *account()
+		Kopete::Account *account()
 		{
 			return mAccount;
 		}
@@ -58,7 +58,7 @@ class AccountSelectorPrivate
 {
 	public:
 		KListView *lv;
-		KopeteProtocol *proto;
+		Kopete::Protocol *proto;
 };
 
 
@@ -72,7 +72,7 @@ AccountSelector::AccountSelector(QWidget *parent, const char *name)
 }
 
 
-AccountSelector::AccountSelector(KopeteProtocol *proto, QWidget *parent,
+AccountSelector::AccountSelector(Kopete::Protocol *proto, QWidget *parent,
 	const char *name) : QWidget(parent, name)
 {
 	//kdDebug(14010) << k_funcinfo << " for protocol " << proto->pluginId() << endl;
@@ -100,9 +100,9 @@ void AccountSelector::initUI()
 	if(d->proto != 0)
 	{
 		kdDebug(14010) << k_funcinfo << "creating list for a certain protocol" << endl;
-		QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts(d->proto);
-		QDictIterator<KopeteAccount> it(accounts);
-		for(; KopeteAccount *account = it.current(); ++it)
+		QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts(d->proto);
+		QDictIterator<Kopete::Account> it(accounts);
+		for(; Kopete::Account *account = it.current(); ++it)
 		{
 			new AccountListViewItem(d->lv, account);
 		}
@@ -110,8 +110,8 @@ void AccountSelector::initUI()
 	else
 	{
 		kdDebug(14010) << k_funcinfo << "creating list of all accounts" << endl;
-		QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
-		KopeteAccount *account = 0;
+		QPtrList<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts();
+		Kopete::Account *account = 0;
 		for(account = accounts.first(); account; account = accounts.next())
 		{
 			new AccountListViewItem(d->lv, account);
@@ -123,7 +123,7 @@ void AccountSelector::initUI()
 }
 
 
-void AccountSelector::setSelected(KopeteAccount *account)
+void AccountSelector::setSelected(Kopete::Account *account)
 {
 	if (account==0)
 		return;
@@ -140,7 +140,7 @@ void AccountSelector::setSelected(KopeteAccount *account)
 }
 
 
-bool AccountSelector::isSelected(KopeteAccount *account)
+bool AccountSelector::isSelected(Kopete::Account *account)
 {
 	if (account==0)
 		return false;
@@ -155,7 +155,7 @@ bool AccountSelector::isSelected(KopeteAccount *account)
 }
 
 
-KopeteAccount *AccountSelector::selectedItem()
+Kopete::Account *AccountSelector::selectedItem()
 {
 	//kdDebug(14010) << k_funcinfo << endl;
 
@@ -170,7 +170,7 @@ void AccountSelector::slotSelectionChanged(QListViewItem *item)
 	//kdDebug(14010) << k_funcinfo << endl;
 	if (item != 0)
 	{
-		KopeteAccount *account = static_cast<AccountListViewItem *>(item)->account();
+		Kopete::Account *account = static_cast<AccountListViewItem *>(item)->account();
 		if (account != 0)
 		{
 			emit selectionChanged(account);

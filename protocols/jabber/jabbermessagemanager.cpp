@@ -27,15 +27,15 @@
 
 JabberMessageManager::JabberMessageManager ( JabberProtocol *protocol, const JabberBaseContact *user,
 											 KopeteContactPtrList others, const QString &resource, const char *name )
-											 : KopeteMessageManager ( user, others, protocol, 0, name )
+											 : Kopete::MessageManager ( user, others, protocol, 0, name )
 {
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId () << endl;
 
 	// make sure Kopete knows about this instance
-	KopeteMessageManagerFactory::factory()->addKopeteMessageManager ( this );
+	KopeteMessageManagerFactory::factory()->addMessageManager ( this );
 
-	connect ( this, SIGNAL ( messageSent ( KopeteMessage &, KopeteMessageManager * ) ),
-			  this, SLOT ( slotMessageSent ( KopeteMessage &, KopeteMessageManager * ) ) );
+	connect ( this, SIGNAL ( messageSent ( Kopete::Message &, Kopete::MessageManager * ) ),
+			  this, SLOT ( slotMessageSent ( Kopete::Message &, Kopete::MessageManager * ) ) );
 
 	connect ( this, SIGNAL ( typingMsg ( bool ) ), this, SLOT ( slotSendTypingNotification ( bool ) ) );
 
@@ -74,14 +74,14 @@ void JabberMessageManager::updateDisplayName ()
 const JabberBaseContact *JabberMessageManager::user () const
 {
 
-	return static_cast<const JabberBaseContact *>(KopeteMessageManager::user());
+	return static_cast<const JabberBaseContact *>(Kopete::MessageManager::user());
 
 }
 
 JabberAccount *JabberMessageManager::account () const
 {
 
-	return static_cast<JabberAccount *>(KopeteMessageManager::account ());
+	return static_cast<JabberAccount *>(Kopete::MessageManager::account ());
 
 }
 
@@ -92,14 +92,14 @@ const QString &JabberMessageManager::resource () const
 
 }
 
-void JabberMessageManager::appendMessage ( KopeteMessage &msg, const QString &fromResource )
+void JabberMessageManager::appendMessage ( Kopete::Message &msg, const QString &fromResource )
 {
 
 	mResource = fromResource;
 
 	updateDisplayName ();
 
-	KopeteMessageManager::appendMessage ( msg );
+	Kopete::MessageManager::appendMessage ( msg );
 
 }
 
@@ -111,8 +111,8 @@ void JabberMessageManager::slotSendTypingNotification ( bool typing )
 	if ( !account()->isConnected () )
 		return;
 
-	KopeteContact *contact;
-	QPtrListIterator<KopeteContact> listIterator ( members () );
+	Kopete::Contact *contact;
+	QPtrListIterator<Kopete::Contact> listIterator ( members () );
 
 	while ( ( contact = listIterator.current () ) != 0 )
 	{
@@ -144,13 +144,13 @@ void JabberMessageManager::slotSendTypingNotification ( bool typing )
 
 }
 
-void JabberMessageManager::slotMessageSent ( KopeteMessage &message, KopeteMessageManager * )
+void JabberMessageManager::slotMessageSent ( Kopete::Message &message, Kopete::MessageManager * )
 {
 
 	if( account()->isConnected () )
 	{
 		XMPP::Message jabberMessage;
-		KopeteContact *recipient = message.to().first ();
+		Kopete::Contact *recipient = message.to().first ();
 
 		XMPP::Jid jid ( message.from()->contactId () );
 		jid.setResource ( account()->pluginData ( protocol (), "Resource" ) );
@@ -195,7 +195,7 @@ void JabberMessageManager::slotMessageSent ( KopeteMessage &message, KopeteMessa
         }
 
 		// determine type of the widget and set message type accordingly
-        if ( view()->viewType () == KopeteMessage::Chat)
+        if ( view()->viewType () == Kopete::Message::Chat)
 		{
 			jabberMessage.setType ( "chat" );
 		}
@@ -208,7 +208,7 @@ void JabberMessageManager::slotMessageSent ( KopeteMessage &message, KopeteMessa
 		account()->client()->sendMessage ( jabberMessage );
 
 		// append the message to the manager
-		KopeteMessageManager::appendMessage ( message );
+		Kopete::MessageManager::appendMessage ( message );
 
 		// tell the manager that we sent successfully
 		messageSucceeded ();

@@ -26,18 +26,18 @@
 #include "oscarcontact.h"
 #include "oscarsocket.h"
 
-class KopeteContact;
-class KopeteGroup;
+namespace Kopete { class Contact; }
+namespace Kopete { class Group; }
 class OscarContact;
 class OscarSocket;
 class OscarAccountPrivate;
 
-class OscarAccount : public KopeteAccount
+class OscarAccount : public Kopete::Account
 {
 	Q_OBJECT
 
 public:
-	OscarAccount(KopeteProtocol *parent, const QString &accountID, const char *name=0L, bool isICQ=false);
+	OscarAccount(Kopete::Protocol *parent, const QString &accountID, const char *name=0L, bool isICQ=false);
 	virtual ~OscarAccount();
 
 	/*
@@ -107,16 +107,16 @@ protected slots:
 //	void slotDisconnected();
 
 	/** Called when a group is added for this account */
-	void slotGroupAdded(KopeteGroup* group);
+	void slotGroupAdded(Kopete::Group* group);
 
 	/** Called when the contact list renames a group */
-	void slotKopeteGroupRenamed(KopeteGroup *group,
+	void slotKopeteGroupRenamed(Kopete::Group *group,
 		const QString &oldName);
 
 	/*
 	 * Called when the contact list removes a group
 	 */
-	void slotKopeteGroupRemoved(KopeteGroup *group);
+	void slotKopeteGroupRemoved(Kopete::Group *group);
 
 	/*
 	 * Called when our status changes on the server
@@ -163,7 +163,7 @@ protected:
 	 * Adds a contact to a meta contact
 	 */
 	virtual bool addContactToMetaContact(const QString &contactId,
-		const QString &displayName, KopeteMetaContact *parentContact );
+		const QString &displayName, Kopete::MetaContact *parentContact );
 
 	/*
 	 * Protocols using Oscar must implement this to perform the instantiation
@@ -174,7 +174,7 @@ protected:
 	 * @return whether the creation succeeded or not
 	 */
 	 virtual OscarContact *createNewContact( const QString &contactId, const QString &displayName,
-		KopeteMetaContact *parentContact, bool isOnSSI = false ) =0;
+		Kopete::MetaContact *parentContact, bool isOnSSI = false ) =0;
 
 	/*
 	 * Initializes the engine

@@ -60,9 +60,9 @@
 #include <qtoolbutton.h>
 #include <kactionclasses.h>
 
-typedef QMap<KopeteAccount*,KopeteChatWindow*> AccountMap;
-typedef QMap<KopeteGroup*,KopeteChatWindow*> GroupMap;
-typedef QMap<KopeteMetaContact*,KopeteChatWindow*> MetaContactMap;
+typedef QMap<Kopete::Account*,KopeteChatWindow*> AccountMap;
+typedef QMap<Kopete::Group*,KopeteChatWindow*> GroupMap;
+typedef QMap<Kopete::MetaContact*,KopeteChatWindow*> MetaContactMap;
 typedef QPtrList<KopeteChatWindow> WindowList;
 
 namespace
@@ -73,19 +73,19 @@ namespace
 	WindowList windows;
 }
 
-KopeteChatWindow *KopeteChatWindow::window( KopeteMessageManager *manager )
+KopeteChatWindow *KopeteChatWindow::window( Kopete::MessageManager *manager )
 {
 	bool windowCreated = false;
 	KopeteChatWindow *myWindow;
 
 	//Take the first and the first? What else?
-	KopeteGroup *group = 0L;
+	Kopete::Group *group = 0L;
 	KopeteContactPtrList members = manager->members();
-	KopeteMetaContact *metaContact = members.first()->metaContact();
+	Kopete::MetaContact *metaContact = members.first()->metaContact();
 
 	if ( metaContact )
 	{
-		KopeteGroupList gList = metaContact->groups();
+		Kopete::GroupList gList = metaContact->groups();
 		group = gList.first();
 	}
 
@@ -649,9 +649,9 @@ void KopeteChatWindow::slotCloseChat( QWidget *chatView )
 
 void KopeteChatWindow::addTab( ChatView *view )
 {
-	QPtrList<KopeteContact> chatMembers=view->msgManager()->members();
-	KopeteContact *c=0L;
-	for ( KopeteContact *contact = chatMembers.first(); contact; contact = chatMembers.next() )
+	QPtrList<Kopete::Contact> chatMembers=view->msgManager()->members();
+	Kopete::Contact *c=0L;
+	for ( Kopete::Contact *contact = chatMembers.first(); contact; contact = chatMembers.next() )
 	{
 		if(!c || c->onlineStatus() < contact->onlineStatus())
 			c=contact;
@@ -902,9 +902,9 @@ void KopeteChatWindow::slotUpdateCaptionIcons( const ChatView *view )
 {
 	if(!view||!m_activeView||view!=m_activeView )
 		return; //(pas de charité)
-	QPtrList<KopeteContact> chatMembers=view->msgManager()->members();
-	KopeteContact *c=0L;
-	for ( KopeteContact *contact = chatMembers.first(); contact; contact = chatMembers.next() )
+	QPtrList<Kopete::Contact> chatMembers=view->msgManager()->members();
+	Kopete::Contact *c=0L;
+	for ( Kopete::Contact *contact = chatMembers.first(); contact; contact = chatMembers.next() )
 	{
 		if(!c || c->onlineStatus() < contact->onlineStatus())
 			c=contact;
@@ -954,7 +954,7 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 	QPopupMenu *contactsMenu = actionContactMenu->popupMenu();
 	contactsMenu->clear();
 
-	KopeteContact *contact;
+	Kopete::Contact *contact;
 	KopeteContactPtrList m_them;
 
 	if( m_popupView )

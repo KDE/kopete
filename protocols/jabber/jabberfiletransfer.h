@@ -23,8 +23,8 @@
 
 class QString;
 class JabberAccount;
-class KopeteTransfer;
-class KopeteFileTransferInfo;
+namespace Kopete { class Transfer; }
+namespace Kopete { class FileTransferInfo; }
 class JabberBaseContact;
 
 class JabberFileTransfer : public QObject
@@ -46,8 +46,8 @@ public:
 	~JabberFileTransfer ();
 
 private slots:
-	void slotIncomingTransferAccepted ( KopeteTransfer *transfer, const QString &fileName );
-	void slotTransferRefused ( const KopeteFileTransferInfo &transfer );
+	void slotIncomingTransferAccepted ( Kopete::Transfer *transfer, const QString &fileName );
+	void slotTransferRefused ( const Kopete::FileTransferInfo &transfer );
 	void slotTransferResult ();
 	void slotTransferError ( int errorCode );
 
@@ -61,7 +61,7 @@ private:
 
 	JabberAccount *mAccount;
 	XMPP::FileTransfer *mXMPPTransfer;
-	KopeteTransfer *mKopeteTransfer;
+	Kopete::Transfer *mKopeteTransfer;
 	QFile mLocalFile;
 	int mTransferId;
 	Q_LLONG mBytesTransferred;

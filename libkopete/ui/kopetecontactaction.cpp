@@ -1,5 +1,5 @@
 /*
-    kopetecontactaction.cpp - KAction for selecting a KopeteContact
+    kopetecontactaction.cpp - KAction for selecting a Kopete::Contact
 
     Copyright (c) 2003 by Martijn Klingens       <klingens@kde.org>
 
@@ -19,7 +19,7 @@
 
 #include "kopetemetacontact.h"
 
-KopeteContactAction::KopeteContactAction( KopeteContact *contact, const QObject *receiver,
+KopeteContactAction::KopeteContactAction( Kopete::Contact *contact, const QObject *receiver,
 	const char *slot, KAction *parent )
 : KAction( contact->metaContact()->displayName(), QIconSet( contact->onlineStatus().iconFor( contact ) ), KShortcut(),
 	parent, contact->contactId().latin1() )
@@ -27,7 +27,7 @@ KopeteContactAction::KopeteContactAction( KopeteContact *contact, const QObject 
 	m_contact = contact;
 
 	connect( this, SIGNAL( activated() ), SLOT( slotContactActionActivated() ) );
-	connect( this, SIGNAL( activated( KopeteContact * ) ), receiver, slot );
+	connect( this, SIGNAL( activated( Kopete::Contact * ) ), receiver, slot );
 }
 
 KopeteContactAction::~KopeteContactAction()
@@ -39,7 +39,7 @@ void KopeteContactAction::slotContactActionActivated()
 	emit activated( m_contact );
 }
 
-KopeteContact * KopeteContactAction::contact() const
+Kopete::Contact * KopeteContactAction::contact() const
 {
 	return m_contact;
 }

@@ -37,7 +37,7 @@ class ICQProtocolHandler : public Kopete::MimeTypeHandler
 };
 
 
-class ICQProtocol : public KopeteProtocol
+class ICQProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 
@@ -53,21 +53,21 @@ class ICQProtocol : public KopeteProtocol
 
 		bool canSendOffline() const;
 
-		KopeteContact *deserializeContact( KopeteMetaContact *metaContact,
+		Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
 			const QMap<QString, QString> &serializedData,
 			const QMap<QString, QString> &addressBookData );
-		AddContactPage *createAddContactWidget(QWidget *parent, KopeteAccount *account);
-		KopeteEditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
-		KopeteAccount *createNewAccount(const QString &accountId);
+		AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *account);
+		KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent);
+		Kopete::Account *createNewAccount(const QString &accountId);
 
-		const KopeteOnlineStatus statusOnline;
-		const KopeteOnlineStatus statusFFC;
-		const KopeteOnlineStatus statusOffline;
-		const KopeteOnlineStatus statusAway;
-		const KopeteOnlineStatus statusDND;
-		const KopeteOnlineStatus statusNA;
-		const KopeteOnlineStatus statusOCC;
-		const KopeteOnlineStatus statusConnecting;
+		const Kopete::OnlineStatus statusOnline;
+		const Kopete::OnlineStatus statusFFC;
+		const Kopete::OnlineStatus statusOffline;
+		const Kopete::OnlineStatus statusAway;
+		const Kopete::OnlineStatus statusDND;
+		const Kopete::OnlineStatus statusNA;
+		const Kopete::OnlineStatus statusOCC;
+		const Kopete::OnlineStatus statusConnecting;
 
 		const Kopete::ContactPropertyTmpl firstName;
 		const Kopete::ContactPropertyTmpl lastName;

@@ -100,12 +100,12 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KURL & url) co
 	QString last = file.readEntry("LastName");
 	QString email = file.readEntry("Email");
 
-	KopeteAccount *account = 0;
-	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts(proto);
+	Kopete::Account *account = 0;
+	QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts(proto);
 	// do not show chooser if we only have one account to "choose" from
 	if (accounts.count() == 1)
 	{
-		QDictIterator<KopeteAccount> it(accounts);
+		QDictIterator<Kopete::Account> it(accounts);
 		account = it.current();
 		QString nickuin = nick.isEmpty() ?
 			i18n("'%1'").arg(uin) :
@@ -129,7 +129,7 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KURL & url) co
 		chooser->setMainWidget(accSelector);
 
 		int ret = chooser->exec();
-		KopeteAccount *account = accSelector->selectedItem();
+		Kopete::Account *account = accSelector->selectedItem();
 
 		delete chooser;
 		if (ret == QDialog::Rejected || account == 0)
@@ -143,9 +143,9 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KURL & url) co
 	kdDebug(14153) << k_funcinfo <<
 		"Adding Contact; uin = " << uin << ", nick = '" << nick <<
 		"', firstname = '" << first << "', lastname = '" << last <<"'" << endl;
-	if (account->addContact(uin, nick, 0L, KopeteAccount::DontChangeKABC, QString::null, true))
+	if (account->addContact(uin, nick, 0L, Kopete::Account::DontChangeKABC, QString::null, true))
 	{
-		KopeteContact *contact = account->contacts()[uin];
+		Kopete::Contact *contact = account->contacts()[uin];
 		if (!first.isEmpty())
 			contact->setProperty(Kopete::Global::Properties::self()->firstName(), first);
 		if (!last.isEmpty())
@@ -158,15 +158,15 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KURL & url) co
 
 
 ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
-: KopeteProtocol( ICQProtocolFactory::instance(), parent, name ),
-	statusOnline(KopeteOnlineStatus::Online, 1, this, OSCAR_ONLINE, QString::null , i18n("Online"), i18n("Online")),
-	statusFFC(KopeteOnlineStatus::Online, 2, this, OSCAR_FFC, "icq_ffc", i18n("&Free for Chat"), i18n("Free For Chat")),
-	statusOffline(KopeteOnlineStatus::Offline, 1, this, OSCAR_OFFLINE, QString::null, i18n("Offline"), i18n("Offline")),
-	statusAway(KopeteOnlineStatus::Away, 1, this, OSCAR_AWAY, "icq_away", i18n("Away"), i18n("Away")),
-	statusDND(KopeteOnlineStatus::Away, 2, this, OSCAR_DND, "icq_dnd", i18n("&Do Not Disturb"), i18n("Do not Disturb")),
-	statusNA(KopeteOnlineStatus::Away, 3, this, OSCAR_NA, "icq_na", i18n("Not A&vailable"), i18n("Not Available")),
-	statusOCC(KopeteOnlineStatus::Away, 4, this, OSCAR_OCC,"icq_occupied" , i18n("O&ccupied"), i18n("Occupied")),
-	statusConnecting(KopeteOnlineStatus::Connecting, 99, this, OSCAR_CONNECTING, "icq_connecting", i18n("Connecting..."), i18n("Connecting...")),
+: Kopete::Protocol( ICQProtocolFactory::instance(), parent, name ),
+	statusOnline(Kopete::OnlineStatus::Online, 1, this, OSCAR_ONLINE, QString::null , i18n("Online"), i18n("Online")),
+	statusFFC(Kopete::OnlineStatus::Online, 2, this, OSCAR_FFC, "icq_ffc", i18n("&Free for Chat"), i18n("Free For Chat")),
+	statusOffline(Kopete::OnlineStatus::Offline, 1, this, OSCAR_OFFLINE, QString::null, i18n("Offline"), i18n("Offline")),
+	statusAway(Kopete::OnlineStatus::Away, 1, this, OSCAR_AWAY, "icq_away", i18n("Away"), i18n("Away")),
+	statusDND(Kopete::OnlineStatus::Away, 2, this, OSCAR_DND, "icq_dnd", i18n("&Do Not Disturb"), i18n("Do not Disturb")),
+	statusNA(Kopete::OnlineStatus::Away, 3, this, OSCAR_NA, "icq_na", i18n("Not A&vailable"), i18n("Not Available")),
+	statusOCC(Kopete::OnlineStatus::Away, 4, this, OSCAR_OCC,"icq_occupied" , i18n("O&ccupied"), i18n("Occupied")),
+	statusConnecting(Kopete::OnlineStatus::Connecting, 99, this, OSCAR_CONNECTING, "icq_connecting", i18n("Connecting..."), i18n("Connecting...")),
 	firstName(Kopete::Global::Properties::self()->firstName()),
 	lastName(Kopete::Global::Properties::self()->lastName()),
 	awayMessage(Kopete::Global::Properties::self()->awayMessage()),
@@ -177,7 +177,7 @@ ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 		kdDebug(14153) << k_funcinfo << "ICQ plugin already initialized" << endl;
 	else
 		protocolStatic_ = this;
-	addAddressBookField("messaging/icq", KopetePlugin::MakeIndexField);
+	addAddressBookField("messaging/icq", Kopete::Plugin::MakeIndexField);
 
 	initGenders();
 	initLang();
@@ -985,12 +985,12 @@ bool ICQProtocol::canSendOffline() const
 	return true;
 }
 
-KopeteContact *ICQProtocol::deserializeContact(KopeteMetaContact *metaContact,
+Kopete::Contact *ICQProtocol::deserializeContact(Kopete::MetaContact *metaContact,
 	const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> &/*addressBookData*/)
 {
 	QString accountId = serializedData["accountId"];
-	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts(this);
+	QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts(this);
 	ICQAccount *account = static_cast<ICQAccount*>(accounts[accountId]);
 
 	if(!account)
@@ -1008,17 +1008,17 @@ KopeteContact *ICQProtocol::deserializeContact(KopeteMetaContact *metaContact,
 	return c;
 }
 
-AddContactPage *ICQProtocol::createAddContactWidget(QWidget *parent, KopeteAccount *account)
+AddContactPage *ICQProtocol::createAddContactWidget(QWidget *parent, Kopete::Account *account)
 {
 	return (new ICQAddContactPage(static_cast<ICQAccount*>(account) , parent));
 }
 
-KopeteEditAccountWidget *ICQProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
+KopeteEditAccountWidget *ICQProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
 {
 	return (new ICQEditAccountWidget(this, account, parent));
 }
 
-KopeteAccount *ICQProtocol::createNewAccount(const QString &accountId)
+Kopete::Account *ICQProtocol::createNewAccount(const QString &accountId)
 {
 	return (new ICQAccount(this, accountId));
 }

@@ -20,7 +20,10 @@
 #include <qobject.h>
 #include "kimiface.h"
 
-class KopeteMetaContact;
+namespace Kopete
+{
+class MetaContact;
+}
 
 class KIMIfaceImpl : public QObject, public KIMIface
 {
@@ -83,11 +86,11 @@ public:
 protected:
 	void unknown( const QString &uid );
 protected slots:
-	void slotMetaContactAdded( KopeteMetaContact *mc );
-	void slotContactStatusChanged( KopeteMetaContact *mc );	
+	void slotMetaContactAdded( Kopete::MetaContact *mc );
+	void slotContactStatusChanged( Kopete::MetaContact *mc );	
 	
 private:
-	KopeteMetaContact *locateProtocolContact( const QString & contactId, const QString & protocolId );
+	Kopete::MetaContact *locateProtocolContact( const QString & contactId, const QString & protocolId );
 };
 
 #endif

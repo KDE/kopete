@@ -46,7 +46,7 @@ KopeteAwayDialog::KopeteAwayDialog( QWidget *parent, const char *name )
 
 	QObject::connect( d->base->cmbHistory, SIGNAL( activated( int ) ), this, SLOT( slotComboBoxSelection( int ) ) );
 
-	awayInstance = KopeteAway::getInstance();
+	awayInstance = Kopete::Away::getInstance();
 	mExtendedAwayType = 0;
 	init();
 

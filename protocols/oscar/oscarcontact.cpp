@@ -42,8 +42,8 @@
 #include <assert.h>
 
 OscarContact::OscarContact(const QString& name, const QString& displayName,
-	KopeteAccount *account, KopeteMetaContact *parent)
-	: KopeteContact(account, name, parent)
+	Kopete::Account *account, Kopete::MetaContact *parent)
+	: Kopete::Contact(account, name, parent)
 {
 	/*kdDebug(14150) << k_funcinfo <<
 		"name='" << name <<
@@ -131,13 +131,13 @@ void OscarContact::initSignals()
 
 	// File transfer manager stuff
 	connect(
-		KopeteTransferManager::transferManager(), SIGNAL(accepted(KopeteTransfer *, const QString &)),
-				this, SLOT(slotTransferAccepted(KopeteTransfer *, const QString &)) );
+		Kopete::TransferManager::transferManager(), SIGNAL(accepted(Kopete::Transfer *, const QString &)),
+				this, SLOT(slotTransferAccepted(Kopete::Transfer *, const QString &)) );
 
 	// When the file transfer is refused
 	connect(
-		KopeteTransferManager::transferManager(), SIGNAL(refused(const KopeteFileTransferInfo &)),
-		this, SLOT(slotTransferDenied(const KopeteFileTransferInfo &)));
+		Kopete::TransferManager::transferManager(), SIGNAL(refused(const Kopete::FileTransferInfo &)),
+		this, SLOT(slotTransferDenied(const Kopete::FileTransferInfo &)));
 #endif
 }
 
@@ -147,22 +147,22 @@ OscarContact::~OscarContact()
 }
 
 
-KopeteMessageManager* OscarContact::manager(bool canCreate)
+Kopete::MessageManager* OscarContact::manager(bool canCreate)
 {
 	if(!mMsgManager && canCreate)
 	{
 		/*kdDebug(14190) << k_funcinfo <<
 			"Creating new MessageManager for contact '" << displayName() << "'" << endl;*/
 
-		QPtrList<KopeteContact> theContact;
+		QPtrList<Kopete::Contact> theContact;
 		theContact.append(this);
 
 		mMsgManager = KopeteMessageManagerFactory::factory()->create(account()->myself(), theContact, protocol());
 
 		// This is for when the user types a message and presses send
 		connect(mMsgManager,
-			SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)),
-			this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
+			SIGNAL(messageSent(Kopete::Message&, Kopete::MessageManager *)),
+			this, SLOT(slotSendMsg(Kopete::Message&, Kopete::MessageManager *)));
 
 		// For when the message manager is destroyed
 		connect(mMsgManager, SIGNAL(destroyed()),
@@ -278,7 +278,7 @@ void OscarContact::syncGroups()
 		"' (" << contactId() << ")" << endl;
 
 	// Get the (kopete) group that we belong to
-	KopeteGroupList groups = metaContact()->groups();
+	Kopete::GroupList groups = metaContact()->groups();
 	if(groups.count() == 0)
 	{
 		kdDebug(14150) << k_funcinfo <<
@@ -289,11 +289,11 @@ void OscarContact::syncGroups()
 	//Don't modify the group if we're moving the contact to the top-level
 	//or the temporary group. This modifies our local list, but doesn't change
 	//the server.
-	if (groups.contains(KopeteGroup::topLevel()) || groups.contains(KopeteGroup::temporary()))
+	if (groups.contains(Kopete::Group::topLevel()) || groups.contains(Kopete::Group::temporary()))
 		return;
 
 	// Oscar only supports one group per contact, so just get the first one
-	KopeteGroup *firstKopeteGroup = groups.first();
+	Kopete::Group *firstKopeteGroup = groups.first();
 
 	if(!firstKopeteGroup)
 	{
@@ -356,11 +356,11 @@ void OscarContact::slotGotFileSendRequest(QString sn, QString message, QString f
 	kdDebug(14150) << k_funcinfo << "Got file transfer request for '" <<
 		displayName() << "'" << endl;
 
-	KopeteTransferManager::transferManager()->askIncomingTransfer(
+	Kopete::TransferManager::transferManager()->askIncomingTransfer(
 		this, filename, filesize, message);
 }
 
-void OscarContact::slotTransferAccepted(KopeteTransfer *tr, const QString &fileName)
+void OscarContact::slotTransferAccepted(Kopete::Transfer *tr, const QString &fileName)
 {
 	if (tr->info().contact() != this)
 		return;
@@ -376,7 +376,7 @@ void OscarContact::slotTransferAccepted(KopeteTransfer *tr, const QString &fileN
 		tr, SLOT(slotPercentCompleted(unsigned int)));
 }
 
-void OscarContact::slotTransferDenied(const KopeteFileTransferInfo &tr)
+void OscarContact::slotTransferDenied(const Kopete::FileTransferInfo &tr)
 {
 	// Check if we're the one who is directly connected
 	if(tr.contact() != this)
@@ -395,8 +395,8 @@ void OscarContact::slotTransferBegun(OscarConnection *con,
 		return;
 
 	kdDebug(14150) << k_funcinfo << "adding transfer of " << file << endl;
-	KopeteTransfer *tr = KopeteTransferManager::transferManager()->addTransfer(
-		this, file, size, recipient, KopeteFileTransferInfo::Outgoing );
+	Kopete::Transfer *tr = Kopete::TransferManager::transferManager()->addTransfer(
+		this, file, size, recipient, Kopete::FileTransferInfo::Outgoing );
 
 	//connect to transfer manager
 	connect(
@@ -424,10 +424,10 @@ void OscarContact::slotDirectConnect()
 		execute();
 		KopeteContactPtrList p;
 		p.append(this);
-		KopeteMessage msg = KopeteMessage(
+		Kopete::Message msg = Kopete::Message(
 			this, p,
 			i18n("Waiting for %1 to connect...").arg(mName),
-			KopeteMessage::Internal, KopeteMessage::PlainText );
+			Kopete::Message::Internal, Kopete::Message::PlainText );
 
 		manager(true)->appendMessage(msg);
 		mAccount->engine()->sendDirectIMRequest(mName);
@@ -446,10 +446,10 @@ void OscarContact::slotDirectIMReady(QString name)
 	mDirectlyConnected = true;
 	KopeteContactPtrList p;
 	p.append(this);
-	KopeteMessage msg = KopeteMessage(
+	Kopete::Message msg = Kopete::Message(
 		this, p,
 		i18n("Direct connection to %1 established").arg(mName),
-		KopeteMessage::Internal, KopeteMessage::PlainText ) ;
+		Kopete::Message::Internal, Kopete::Message::PlainText ) ;
 
 	manager(true)->appendMessage(msg);
 }
@@ -513,7 +513,7 @@ void OscarContact::slotParseUserInfo(const UserInfo &u)
 			emit idleStateChanged(this);
 	}
 
-	// Overwrites the onlineSince property set by KopeteContact, but that's ok :)
+	// Overwrites the onlineSince property set by Kopete::Contact, but that's ok :)
 	if(u.onlinesince.isValid())
 	{
 		//kdDebug(14150) << k_funcinfo << "onlinesince = " << u.onlinesince.toString() << endl;
@@ -603,18 +603,18 @@ void OscarContact::slotGotAuthReply(const QString &contact, const QString &reaso
 }
 
 //void OscarContact::receivedIM(OscarSocket::OscarMessageType type, const OscarMessage &msg)
-void OscarContact::receivedIM(KopeteMessage &msg)
+void OscarContact::receivedIM(Kopete::Message &msg)
 {
 	//kdDebug(14190) << k_funcinfo << "called" << endl;
 	// Tell the message manager that the buddy is done typing
 	manager(true)->receivedTypingMsg(this, false);
 
 /*
-	// Build a KopeteMessage and set the body as Rich Text
+	// Build a Kopete::Message and set the body as Rich Text
 	KopeteContactPtrList tmpList;
 	tmpList.append(account()->myself());
-	KopeteMessage kmsg(this, tmpList, msg.text, KopeteMessage::Inbound,
-		KopeteMessage::RichText);
+	Kopete::Message kmsg(this, tmpList, msg.text, Kopete::Message::Inbound,
+		Kopete::Message::RichText);
 	manager(true)->appendMessage(kmsg);
 */
 	manager(true)->appendMessage(msg);
@@ -630,7 +630,7 @@ void OscarContact::receivedIM(KopeteMessage &msg)
 			kdDebug(14190) << k_funcinfo << " while we are away, " \
 				"sending away-message to annoy buddy :)" << endl;
 			// Send the autoresponse
-			mAccount->engine()->sendIM(KopeteAway::getInstance()->message(), this, true);
+			mAccount->engine()->sendIM(Kopete::Away::getInstance()->message(), this, true);
 			// Build a pointerlist to insert this contact into
 			KopeteContactPtrList toContact;
 			toContact.append(this);
@@ -639,10 +639,10 @@ void OscarContact::receivedIM(KopeteMessage &msg)
 			// UGLY hardcoded color
 			QString responseDisplay =
 				"<font color='#666699'>Autoresponse: </font>" +
-				KopeteAway::getInstance()->message();
+				Kopete::Away::getInstance()->message();
 
-			KopeteMessage message(mAccount->myself(), toContact,
-				responseDisplay, KopeteMessage::Outbound, KopeteMessage::RichText);
+			Kopete::Message message(mAccount->myself(), toContact,
+				responseDisplay, Kopete::Message::Outbound, Kopete::Message::RichText);
 
 			manager(true)->appendMessage(message);
 			// Set the time we last sent an autoresponse

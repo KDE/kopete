@@ -34,7 +34,7 @@
 #include "kopeteaddrbookexport.h"
 #include "kopeteaddrbookexportui.h"
 
-KopeteAddressBookExport::KopeteAddressBookExport( QWidget *parent, KopeteMetaContact *mc ) : QObject( parent )
+KopeteAddressBookExport::KopeteAddressBookExport( QWidget *parent, Kopete::MetaContact *mc ) : QObject( parent )
 {
 	// instantiate dialog and populate widgets
 	mParent = parent;
@@ -122,12 +122,12 @@ void KopeteAddressBookExport::fetchPhoneNumbers( KListBox * listBox, int type, u
 
 void KopeteAddressBookExport::fetchIMData()
 {	
-	QPtrList<KopeteContact> contacts = mMetaContact->contacts();
-	QPtrListIterator<KopeteContact> cit( contacts );
+	QPtrList<Kopete::Contact> contacts = mMetaContact->contacts();
+	QPtrListIterator<Kopete::Contact> cit( contacts );
 	for( ; cit.current(); ++cit )
 	{
 		// for each contact, get the property content
-		KopeteContact* c = cit.current();
+		Kopete::Contact* c = cit.current();
 		QPixmap contactIcon = c->account()->accountIcon( 16 );
 		// given name
 		populateIM( c, contactIcon, mUI->mFirstName, Kopete::Global::Properties::self()->firstName() );
@@ -146,7 +146,7 @@ void KopeteAddressBookExport::fetchIMData()
 	}
 }
 
-void KopeteAddressBookExport::populateIM( const KopeteContact *contact, const QPixmap &icon, QComboBox *combo, const Kopete::ContactPropertyTmpl &property )
+void KopeteAddressBookExport::populateIM( const Kopete::Contact *contact, const QPixmap &icon, QComboBox *combo, const Kopete::ContactPropertyTmpl &property )
 {
 	Kopete::ContactProperty prop = contact->property( property );
 	if ( !prop.isNull() )
@@ -155,7 +155,7 @@ void KopeteAddressBookExport::populateIM( const KopeteContact *contact, const QP
 	}	
 }
 
-void KopeteAddressBookExport::populateIM( const KopeteContact *contact, const QPixmap &icon, KListBox *listBox, const Kopete::ContactPropertyTmpl &property )
+void KopeteAddressBookExport::populateIM( const Kopete::Contact *contact, const QPixmap &icon, KListBox *listBox, const Kopete::ContactPropertyTmpl &property )
 {
 	Kopete::ContactProperty prop = contact->property( property );
 	if ( !prop.isNull() )

@@ -33,7 +33,7 @@
 
 #include "customnotificationprops.h"
 
-CustomNotificationProps::CustomNotificationProps( QWidget *parent, KopeteNotifyDataObject* item, const char * name )
+CustomNotificationProps::CustomNotificationProps( QWidget *parent, Kopete::NotifyDataObject* item, const char * name )
 : QObject( parent, name )
 {
 	m_notifyWidget = new CustomNotificationWidget( parent, "notificationWidget" );
@@ -68,14 +68,14 @@ void CustomNotificationProps::slotEventsComboChanged( int itemNo )
 	storeCurrentCustoms();
 	m_event = m_eventList[ itemNo ];
 	// update the widgets for the selected item
-	// get the corresponding KopeteNotifyEvent
-	KopeteNotifyEvent *evt = m_item->notifyEvent( m_event );
+	// get the corresponding Kopete::NotifyEvent
+	Kopete::NotifyEvent *evt = m_item->notifyEvent( m_event );
 	// set the widgets accordingly
 	resetEventWidgets();
 	if ( evt )
 	{
 		// sound presentation
-		KopeteEventPresentation *pres = evt->presentation( KopeteEventPresentation::Sound );
+		Kopete::EventPresentation *pres = evt->presentation( Kopete::EventPresentation::Sound );
 		if ( pres )
 		{
 			m_notifyWidget->chkCustomSound->setChecked( pres->enabled() );
@@ -83,7 +83,7 @@ void CustomNotificationProps::slotEventsComboChanged( int itemNo )
 			m_notifyWidget->chkSoundSS->setChecked( pres->singleShot() );
 		}
 		// message presentation
-		pres = evt->presentation( KopeteEventPresentation::Message );
+		pres = evt->presentation( Kopete::EventPresentation::Message );
 		if ( pres )
 		{
 			m_notifyWidget->chkCustomMsg->setChecked( pres->enabled() );
@@ -91,7 +91,7 @@ void CustomNotificationProps::slotEventsComboChanged( int itemNo )
 			m_notifyWidget->chkMsgSS->setChecked( pres->singleShot() );
 		}
 		// chat presentation
-		pres = evt->presentation( KopeteEventPresentation::Chat );
+		pres = evt->presentation( Kopete::EventPresentation::Chat );
 		if ( pres )
 		{
 			m_notifyWidget->chkCustomChat->setChecked( pres->enabled() );
@@ -105,7 +105,7 @@ void CustomNotificationProps::slotEventsComboChanged( int itemNo )
 
 void CustomNotificationProps::dumpData()
 {
-	KopeteNotifyEvent *evt = m_item->notifyEvent( m_event );
+	Kopete::NotifyEvent *evt = m_item->notifyEvent( m_event );
 	if ( evt )
 		kdDebug( 14000 ) << k_funcinfo << evt->toString() << endl;
 	else 
@@ -129,33 +129,33 @@ void CustomNotificationProps::storeCurrentCustoms()
 {
 	if ( !m_event.isNull() )
 	{
-		KopeteNotifyEvent *evt = m_item->notifyEvent( m_event );
+		Kopete::NotifyEvent *evt = m_item->notifyEvent( m_event );
 		if ( !evt )
 		{
-			evt = new KopeteNotifyEvent( );
+			evt = new Kopete::NotifyEvent( );
 			// store the changed event
 			m_item->setNotifyEvent( m_event, evt );
 		}
 		evt->setSuppressCommon( m_notifyWidget->chkSuppressCommon->isChecked() );
 		// set different presentations
-		KopeteEventPresentation *eventNotify = 0;
-		eventNotify = new KopeteEventPresentation( KopeteEventPresentation::Sound, 
+		Kopete::EventPresentation *eventNotify = 0;
+		eventNotify = new Kopete::EventPresentation( Kopete::EventPresentation::Sound, 
 				m_notifyWidget->customSound->url(),
 				m_notifyWidget->chkSoundSS->isChecked(),
 				m_notifyWidget->chkCustomSound->isChecked() );
-		evt->setPresentation( KopeteEventPresentation::Sound, eventNotify );
+		evt->setPresentation( Kopete::EventPresentation::Sound, eventNotify );
 		// set message attributes
-		eventNotify = new KopeteEventPresentation( KopeteEventPresentation::Message,
+		eventNotify = new Kopete::EventPresentation( Kopete::EventPresentation::Message,
 				m_notifyWidget->customMsg->text(),
 				m_notifyWidget->chkMsgSS->isChecked(),
 				m_notifyWidget->chkCustomMsg->isChecked() );
-		evt->setPresentation( KopeteEventPresentation::Message, eventNotify );
+		evt->setPresentation( Kopete::EventPresentation::Message, eventNotify );
 		// set chat attributes
-		eventNotify = new KopeteEventPresentation( KopeteEventPresentation::Chat,
+		eventNotify = new Kopete::EventPresentation( Kopete::EventPresentation::Chat,
 				QString::null,
 				m_notifyWidget->chkChatSS->isChecked(),
 				m_notifyWidget->chkCustomChat->isChecked() );
-		evt->setPresentation( KopeteEventPresentation::Chat, eventNotify );
+		evt->setPresentation( Kopete::EventPresentation::Chat, eventNotify );
 		evt->setSuppressCommon( m_notifyWidget->chkSuppressCommon->isChecked() );
 	}
 }

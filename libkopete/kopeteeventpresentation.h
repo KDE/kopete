@@ -20,30 +20,35 @@
 
 #include <qstring.h>
 
-class KopeteEventPresentation
+namespace Kopete
 {
-	public:
-		enum PresentationType { Sound, Message, Chat };
-		KopeteEventPresentation( const PresentationType type );
-		KopeteEventPresentation( const PresentationType type, 
-				const QString &content = QString::null,
-				const bool singleShot = false, const bool enabled = false );
-		~KopeteEventPresentation();
 
-		PresentationType type();
-		QString content();
-		bool enabled();
-		bool singleShot();
+class EventPresentation
+{
+public:
+	enum PresentationType { Sound, Message, Chat };
+	EventPresentation( const PresentationType type );
+	EventPresentation( const PresentationType type, 
+			const QString &content = QString::null,
+			const bool singleShot = false, const bool enabled = false );
+	~EventPresentation();
 
-		void setContent( const QString &content );
-		void setEnabled( const bool enabled );
-		void setSingleShot( const bool singleShot );
-		QString toString();
-	private:
-		PresentationType m_type;
-		QString m_content;
-		bool m_enabled;
-		bool m_singleShot;
+	PresentationType type();
+	QString content();
+	bool enabled();
+	bool singleShot();
+
+	void setContent( const QString &content );
+	void setEnabled( const bool enabled );
+	void setSingleShot( const bool singleShot );
+	QString toString();
+private:
+	PresentationType m_type;
+	QString m_content;
+	bool m_enabled;
+	bool m_singleShot;
 };
+
+}
 
 #endif

@@ -266,10 +266,10 @@ bool KIRCMessage::matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, co
 				}
 
 				if (space > 0)
-					msg.m_ctcpMessage->m_ctcpRaw = KopeteMessage::decodeString(KSParser::parse(msg.m_ctcpRaw.mid(space)).latin1(), codec);
+					msg.m_ctcpMessage->m_ctcpRaw = Kopete::Message::decodeString(KSParser::parse(msg.m_ctcpRaw.mid(space)).latin1(), codec);
 			}
 
-			msg.m_suffix = KopeteMessage::decodeString(KSParser::parse(suffix).latin1(), codec);
+			msg.m_suffix = Kopete::Message::decodeString(KSParser::parse(suffix).latin1(), codec);
 		}
 		else
 			msg.m_suffix = QString::null;

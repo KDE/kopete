@@ -26,7 +26,7 @@
 #include <kpopupmenu.h>
 
 
-ICQAccount::ICQAccount(KopeteProtocol *parent, QString accountID, const char *name)
+ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID, const char *name)
 	: OscarAccount(parent, accountID, name, true)
 {
 	//myself() has to be created in constructor!
@@ -58,7 +58,7 @@ ICQAccount::~ICQAccount()
 
 KActionMenu* ICQAccount::actionMenu()
 {
-	// mActionMenu is managed by KopeteAccount.  It is deleted when
+	// mActionMenu is managed by Kopete::Account.  It is deleted when
 	// it is no longer shown, so we can (safely) just make a new one here.
 
 	KActionMenu* mActionMenu = new KActionMenu(accountId(),
@@ -131,12 +131,12 @@ void ICQAccount::connect(void)
 // ----------------------
 
 
-void ICQAccount::connect(const KopeteOnlineStatus &initialStatus)
+void ICQAccount::connect(const Kopete::OnlineStatus &initialStatus)
 {
 	kdDebug(14153) << k_funcinfo << "accountId='" << accountId() << "'" <<
 		" initialStatus=" << (int)initialStatus.status() << endl;
 
-	if (initialStatus.status() == KopeteOnlineStatus::Away)
+	if (initialStatus.status() == Kopete::OnlineStatus::Away)
 		setStatus(ICQ_STATUS_SET_AWAY);
 	else
 		setStatus(ICQ_STATUS_ONLINE);
@@ -315,7 +315,7 @@ void ICQAccount::reloadPluginData()
 }
 
 OscarContact *ICQAccount::createNewContact(const QString &contactId,
-	const QString &displayName, KopeteMetaContact *parentContact,
+	const QString &displayName, Kopete::MetaContact *parentContact,
 	bool isOnSSI)
 {
 	/*kdDebug(14153) << k_funcinfo <<

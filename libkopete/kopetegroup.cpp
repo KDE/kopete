@@ -27,7 +27,7 @@ struct KopeteGroupPrivate
 {
 	QString displayName;
 	QString internalName;
-	KopeteGroup::GroupType type;
+	Kopete::Group::GroupType type;
 	bool expanded;
 	uint groupId;
 
@@ -35,35 +35,35 @@ struct KopeteGroupPrivate
 	static uint uniqueGroupId;
 };
 
-KopeteGroup *KopeteGroup::s_topLevel  = 0L;
-KopeteGroup *KopeteGroup::s_temporary = 0L;
+Kopete::Group *Kopete::Group::s_topLevel  = 0L;
+Kopete::Group *Kopete::Group::s_temporary = 0L;
 
-KopeteGroup * KopeteGroup::topLevel()
+Kopete::Group * Kopete::Group::topLevel()
 {
 	// Do not translate the internal name, it's not shown in the GUI
 	if ( !s_topLevel )
-		s_topLevel = new KopeteGroup( i18n( "Top Level" ),
+		s_topLevel = new Kopete::Group( i18n( "Top Level" ),
 				QString::fromLatin1( "Top-Level" ), 
-				KopeteGroup::TopLevel );
+				Kopete::Group::TopLevel );
 
 	return s_topLevel;
 }
 
-KopeteGroup * KopeteGroup::temporary()
+Kopete::Group * Kopete::Group::temporary()
 {
 	// Do not translate the internal name, it's not shown in the GUI
 	if ( !s_temporary )
-		s_temporary = new KopeteGroup( i18n( "Not in your contact list" ),
+		s_temporary = new Kopete::Group( i18n( "Not in your contact list" ),
 				 QString::fromLatin1( "Temporary" ), 
-				 KopeteGroup::Temporary );
+				 Kopete::Group::Temporary );
 
 	return s_temporary;
 }
 
 uint KopeteGroupPrivate::uniqueGroupId = 0;
 
-KopeteGroup::KopeteGroup( const QString &_name, GroupType _type )
-: KopetePluginDataObject( KopeteContactList::contactList() )
+Kopete::Group::Group( const QString &_name, GroupType _type )
+: Kopete::PluginDataObject( Kopete::ContactList::contactList() )
 {
 	d = new KopeteGroupPrivate;
 	d->displayName = _name;
@@ -73,8 +73,8 @@ KopeteGroup::KopeteGroup( const QString &_name, GroupType _type )
 	d->groupId = 0;
 }
 
-KopeteGroup::KopeteGroup()
-: KopetePluginDataObject( KopeteContactList::contactList() )
+Kopete::Group::Group()
+: Kopete::PluginDataObject( Kopete::ContactList::contactList() )
 {
 	d = new KopeteGroupPrivate;
 	d->expanded = true;
@@ -84,7 +84,7 @@ KopeteGroup::KopeteGroup()
 	d->groupId = 0;
 }
 
-KopeteGroup::KopeteGroup( const QString &_displayName, const QString &_internalName, GroupType _type )
+Kopete::Group::Group( const QString &_displayName, const QString &_internalName, GroupType _type )
 {
 	d = new KopeteGroupPrivate;
 	d->displayName = _displayName;
@@ -94,14 +94,14 @@ KopeteGroup::KopeteGroup( const QString &_displayName, const QString &_internalN
 	d->groupId = 0;
 }
 
-KopeteGroup::~KopeteGroup()
+Kopete::Group::~Group()
 {
 	delete d;
 }
 
-QPtrList<KopeteMetaContact> KopeteGroup::members() const
+QPtrList<Kopete::MetaContact> Kopete::Group::members() const
 {
-	QPtrList<KopeteMetaContact> members = KopeteContactList::contactList()->metaContacts();
+	QPtrList<Kopete::MetaContact> members = Kopete::ContactList::contactList()->metaContacts();
 	// members is a *copy* of the meta contacts, so using first(), next() and remove() is fine.
 	for( members.first(); members.current(); )
 	{
@@ -113,7 +113,7 @@ QPtrList<KopeteMetaContact> KopeteGroup::members() const
 	return members;
 }
 
-const QDomElement KopeteGroup::toXML()
+const QDomElement Kopete::Group::toXML()
 {
 	QDomDocument group;
 	group.appendChild( group.createElement( QString::fromLatin1( "kopete-group" ) ) );
@@ -141,19 +141,19 @@ const QDomElement KopeteGroup::toXML()
 	group.documentElement().appendChild( displayName );
 
 	// Store other plugin data
-	QValueList<QDomElement> pluginData = KopetePluginDataObject::toXML();
+	QValueList<QDomElement> pluginData = Kopete::PluginDataObject::toXML();
 	for ( QValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
 		group.documentElement().appendChild( group.importNode( *it, true ) );
 
 	// Store custom notification data
-	QDomElement notifyData = KopeteNotifyDataObject::notifyDataToXML();
+	QDomElement notifyData = Kopete::NotifyDataObject::notifyDataToXML();
 	if ( notifyData.hasChildNodes() )
 		group.documentElement().appendChild( group.importNode( notifyData, true ) );
 
 	return group.documentElement();
 }
 
-bool KopeteGroup::fromXML( const QDomElement &data )
+bool Kopete::Group::fromXML( const QDomElement &data )
 {
 	QString strGroupId = data.attribute( QString::fromLatin1( "groupId" ) );
 	if ( !strGroupId.isEmpty() )
@@ -204,11 +204,11 @@ bool KopeteGroup::fromXML( const QDomElement &data )
 		}
 		else if( groupElement.tagName() == QString::fromLatin1( "custom-notifications" ) )
 		{
-			KopeteNotifyDataObject::notifyDataFromXML( groupElement );
+			Kopete::NotifyDataObject::notifyDataFromXML( groupElement );
 		}
 		else
 		{
-			KopetePluginDataObject::fromXML( groupElement );
+			Kopete::PluginDataObject::fromXML( groupElement );
 		}
 
 		groupData = groupData.nextSibling();
@@ -235,7 +235,7 @@ bool KopeteGroup::fromXML( const QDomElement &data )
 	return ( d->type == Normal );
 }
 
-void KopeteGroup::setDisplayName( const QString &s )
+void Kopete::Group::setDisplayName( const QString &s )
 {
 	if ( d->displayName != s )
 	{
@@ -245,32 +245,32 @@ void KopeteGroup::setDisplayName( const QString &s )
 	}
 }
 
-QString KopeteGroup::displayName() const
+QString Kopete::Group::displayName() const
 {
 	return d->displayName;
 }
 
-KopeteGroup::GroupType KopeteGroup::type() const
+Kopete::Group::GroupType Kopete::Group::type() const
 {
 	return d->type;
 }
 
-void KopeteGroup::setType( GroupType t )
+void Kopete::Group::setType( GroupType t )
 {
 	d->type = t;
 }
 
-void KopeteGroup::setExpanded( bool isExpanded )
+void Kopete::Group::setExpanded( bool isExpanded )
 {
 	d->expanded = isExpanded;
 }
 
-bool KopeteGroup::isExpanded() const
+bool Kopete::Group::isExpanded() const
 {
 	return d->expanded;
 }
 
-uint KopeteGroup::groupId() const
+uint Kopete::Group::groupId() const
 {
 	if ( d->groupId == 0 )
 		d->groupId = ++d->uniqueGroupId;
@@ -278,7 +278,7 @@ uint KopeteGroup::groupId() const
 	return d->groupId;
 }
 
-QString KopeteGroup::internalName() const
+QString Kopete::Group::internalName() const
 {
 	return d->internalName;
 }

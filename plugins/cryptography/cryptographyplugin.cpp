@@ -48,35 +48,35 @@ K_EXPORT_COMPONENT_FACTORY( kopete_cryptography, CryptographyPluginFactory( "kop
 #endif
 
 CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
-: KopetePlugin( CryptographyPluginFactory::instance(), parent, name ),
+: Kopete::Plugin( CryptographyPluginFactory::instance(), parent, name ),
 		m_cachedPass()
 {
 	if( !pluginStatic_ )
 		pluginStatic_=this;
 
 	connect( KopeteMessageManagerFactory::factory(),
-		SIGNAL( aboutToDisplay( KopeteMessage & ) ),
-		SLOT( slotIncomingMessage( KopeteMessage & ) ) );
+		SIGNAL( aboutToDisplay( Kopete::Message & ) ),
+		SLOT( slotIncomingMessage( Kopete::Message & ) ) );
 	connect( KopeteMessageManagerFactory::factory(),
-		SIGNAL( aboutToSend( KopeteMessage & ) ),
-		SLOT( slotOutgoingMessage( KopeteMessage & ) ) );
+		SIGNAL( aboutToSend( Kopete::Message & ) ),
+		SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
 
 	m_cachedPass_timer = new QTimer(this, "m_cachedPass_timer" );
 	QObject::connect(m_cachedPass_timer, SIGNAL(timeout()), this, SLOT(slotForgetCachedPass() ));
 
 
 	KAction *action=new KAction( i18n("&Select Cryptography Public Key..."), "kgpg", 0, this, SLOT (slotSelectContactKey()), actionCollection() , "contactSelectKey");
-	connect ( KopeteContactList::contactList() , SIGNAL( metaContactSelected(bool)) , action , SLOT(setEnabled(bool)));
-	action->setEnabled(KopeteContactList::contactList()->selectedMetaContacts().count()==1 );
+	connect ( Kopete::ContactList::contactList() , SIGNAL( metaContactSelected(bool)) , action , SLOT(setEnabled(bool)));
+	action->setEnabled(Kopete::ContactList::contactList()->selectedMetaContacts().count()==1 );
 
 	setXMLFile("cryptographyui.rc");
 	loadSettings();
 	connect(this, SIGNAL(settingsChanged()), this, SLOT( loadSettings() ) );
 	
-	connect( KopeteMessageManagerFactory::factory(), SIGNAL( messageManagerCreated( KopeteMessageManager * )) , SLOT( slotNewKMM( KopeteMessageManager * ) ) );
+	connect( KopeteMessageManagerFactory::factory(), SIGNAL( messageManagerCreated( Kopete::MessageManager * )) , SLOT( slotNewKMM( Kopete::MessageManager * ) ) );
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
-	QIntDict<KopeteMessageManager> sessions = KopeteMessageManagerFactory::factory()->sessions();
-	QIntDictIterator<KopeteMessageManager> it( sessions );
+	QIntDict<Kopete::MessageManager> sessions = KopeteMessageManagerFactory::factory()->sessions();
+	QIntDictIterator<Kopete::MessageManager> it( sessions );
 	for ( ; it.current() ; ++it )
 	{
 		slotNewKMM(it.current());
@@ -135,7 +135,7 @@ bool CryptographyPlugin::passphraseHandling()
 }
 
 
-/*KActionCollection *CryptographyPlugin::customChatActions(KopeteMessageManager *KMM)
+/*KActionCollection *CryptographyPlugin::customChatActions(Kopete::MessageManager *KMM)
 {
 	delete m_actionCollection;
 
@@ -148,14 +148,14 @@ bool CryptographyPlugin::passphraseHandling()
 	return m_actionCollection;
 }*/
 
-void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
+void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
 {
  	QString body = msg.plainBody();
 	if( !body.startsWith( QString::fromLatin1("-----BEGIN PGP MESSAGE----") )
 		 || !body.contains( QString::fromLatin1("-----END PGP MESSAGE----") ) )
 		return;
 
-	if( msg.direction() != KopeteMessage::Inbound )
+	if( msg.direction() != Kopete::Message::Inbound )
 	{
 		QString plainBody;
 		if ( m_cachedMessages.contains( body ) )
@@ -175,7 +175,7 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 			{
 				plainBody = QStyleSheet::escape( plainBody );
 
-				//this is the same algoritm as in KopeteMessage::escapedBody();
+				//this is the same algoritm as in Kopete::Message::escapedBody();
 				plainBody.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br/>" ) )
 					.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) )
 					.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
@@ -186,7 +186,7 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 				+ QString::fromLatin1("</b></font></td></tr><tr><td class=\"highlight\">")
 				+ plainBody
 				+ QString::fromLatin1(" </td></tr></table>")
-				, KopeteMessage::RichText );
+				, Kopete::Message::RichText );
 		}
 
 		//if there are too messages in cache, clear the cache
@@ -203,7 +203,7 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 		//Check if this is a RTF message before escaping it
 		if( isHTML.exactMatch( body ) )
 		{
-			//this is the same algoritm as in KopeteMessage::escapedBody();
+			//this is the same algoritm as in Kopete::Message::escapedBody();
 			body = QStyleSheet::escape( body );
 			body.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br/>" ) )
 				.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) )
@@ -215,19 +215,19 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 			+ QString::fromLatin1("</b></font></td></tr><tr><td class=\"highlight\">")
 			+ body
 			+ QString::fromLatin1(" </td></tr></table>")
-			, KopeteMessage::RichText );
+			, Kopete::Message::RichText );
 	}
 
 }
 
-void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
+void CryptographyPlugin::slotOutgoingMessage( Kopete::Message& msg )
 {
-	if(msg.direction() != KopeteMessage::Outbound)
+	if(msg.direction() != Kopete::Message::Outbound)
 		return;
 
 	QStringList keys;
-	QPtrList<KopeteContact> contactlist = msg.to();
-	for( KopeteContact *c = contactlist.first(); c; c = contactlist.next() )
+	QPtrList<Kopete::Contact> contactlist = msg.to();
+	for( Kopete::Contact *c = contactlist.first(); c; c = contactlist.next() )
 	{
 		QString tmpKey;
 		if( c->metaContact() )
@@ -277,7 +277,7 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 	QString resultat=KgpgInterface::KgpgEncryptText(original,key,encryptOptions);
 	if (!resultat.isEmpty())
 	{
-		msg.setBody(resultat,KopeteMessage::PlainText);
+		msg.setBody(resultat,Kopete::Message::PlainText);
 		m_cachedMessages.insert(resultat,original);
 	}
 	else
@@ -287,7 +287,7 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 
 void CryptographyPlugin::slotSelectContactKey()
 {
-	KopeteMetaContact *m=KopeteContactList::contactList()->selectedMetaContacts().first();
+	Kopete::MetaContact *m=Kopete::ContactList::contactList()->selectedMetaContacts().first();
 	if(!m)
 		return;
 	QString key = m->pluginData( this, "gpgKey" );
@@ -307,7 +307,7 @@ void CryptographyPlugin::slotForgetCachedPass()
 	m_cachedPass_timer->stop();
 }
 
-void CryptographyPlugin::slotNewKMM(KopeteMessageManager *KMM) 
+void CryptographyPlugin::slotNewKMM(Kopete::MessageManager *KMM) 
 {
 	connect(this , SIGNAL( destroyed(QObject*)) ,
 			new CryptographyGUIClient(KMM) , SLOT(deleteLater()));

@@ -37,8 +37,8 @@
 #include <krun.h>
 #include <kmessagebox.h>
 
-YahooContact::YahooContact( YahooAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact )
-	: KopeteContact( account, userId, metaContact )
+YahooContact::YahooContact( YahooAccount *account, const QString &userId, const QString &fullName, Kopete::MetaContact *metaContact )
+	: Kopete::Contact( account, userId, metaContact )
 {
 	kdDebug(14180) << k_funcinfo << endl;
 
@@ -64,7 +64,7 @@ void YahooContact::serialize(QMap<QString, QString> &serializedData, QMap<QStrin
 {
 	//kdDebug(14180) << k_funcinfo << endl;
 
-	KopeteContact::serialize(serializedData, addressBookData);
+	Kopete::Contact::serialize(serializedData, addressBookData);
 }
 
 void YahooContact::syncToServer()
@@ -75,8 +75,8 @@ void YahooContact::syncToServer()
 	if ( !m_account->isOnServer(m_userId) && !metaContact()->isTemporary() )
 	{	kdDebug(14180) << "Contact " << m_userId << " doesn't exist on server-side. Adding..." << endl;
 
-		KopeteGroupList groupList = metaContact()->groups();
-		for( KopeteGroup *g = groupList.first(); g; g = groupList.next() )
+		Kopete::GroupList groupList = metaContact()->groups();
+		for( Kopete::Group *g = groupList.first(); g; g = groupList.next() )
 			m_account->yahooSession()->addBuddy(m_userId, g->displayName() );
 	}
 }
@@ -90,8 +90,8 @@ void YahooContact::syncGroups()
 	{
 		//TODO: Share this code with the above function
 		kdDebug(14180) << k_funcinfo << "Contact isn't on the server. Adding..." << endl;
-		KopeteGroupList groupList = metaContact()->groups();
-		for ( KopeteGroup *g = groupList.first(); g; g = groupList.next() )
+		Kopete::GroupList groupList = metaContact()->groups();
+		for ( Kopete::Group *g = groupList.first(); g; g = groupList.next() )
 			m_account->yahooSession()->addBuddy(m_userId, g->displayName() );
 	}
 	else
@@ -106,7 +106,7 @@ void YahooContact::syncGroups()
 bool YahooContact::isOnline() const
 {
 	//kdDebug(14180) << k_funcinfo << endl;
-	return onlineStatus().status() != KopeteOnlineStatus::Offline && onlineStatus().status() != KopeteOnlineStatus::Unknown;
+	return onlineStatus().status() != Kopete::OnlineStatus::Offline && onlineStatus().status() != Kopete::OnlineStatus::Unknown;
 }
 
 bool YahooContact::isReachable()
@@ -118,7 +118,7 @@ bool YahooContact::isReachable()
 		return false;
 }
 
-KopeteMessageManager *YahooContact::manager( bool )
+Kopete::MessageManager *YahooContact::manager( bool )
 {
 	if( !m_manager )
 	{
@@ -126,7 +126,7 @@ KopeteMessageManager *YahooContact::manager( bool )
 		m_them.append( this );
 		m_manager = KopeteMessageManagerFactory::factory()->create( m_account->myself(), m_them, protocol() );
 		connect( m_manager, SIGNAL( destroyed() ), this, SLOT( slotMessageManagerDestroyed() ) );
-		connect( m_manager, SIGNAL( messageSent ( KopeteMessage&, KopeteMessageManager* ) ), this, SLOT( slotSendMessage( KopeteMessage& ) ) );
+		connect( m_manager, SIGNAL( messageSent ( Kopete::Message&, Kopete::MessageManager* ) ), this, SLOT( slotSendMessage( Kopete::Message& ) ) );
 		connect( m_manager, SIGNAL( typingMsg( bool) ), this, SLOT( slotTyping( bool ) ) );
 		connect( m_account, SIGNAL( receivedTypingMsg( const QString &, bool ) ), m_manager, SLOT( receivedTypingMsg( const QString&, bool ) ) );
 	}
@@ -134,7 +134,7 @@ KopeteMessageManager *YahooContact::manager( bool )
 	return m_manager;
 }
 
-void YahooContact::slotSendMessage( KopeteMessage &message )
+void YahooContact::slotSendMessage( Kopete::Message &message )
 {
 	kdDebug(14180) << k_funcinfo << endl;
 
@@ -144,7 +144,7 @@ void YahooContact::slotSendMessage( KopeteMessage &message )
 	kdDebug(14180) << "Sending message: " << messageText << endl;
 
 	KopeteContactPtrList m_them = manager()->members();
-	KopeteContact *target = m_them.first();
+	Kopete::Contact *target = m_them.first();
 
 	m_account->yahooSession()->sendIm( static_cast<YahooContact*>(m_account->myself())->m_userId,
 		static_cast<YahooContact *>(target)->m_userId, messageText );
@@ -157,7 +157,7 @@ void YahooContact::slotSendMessage( KopeteMessage &message )
 void YahooContact::slotTyping(bool isTyping_ )
 {
 	KopeteContactPtrList m_them = manager()->members();
-	KopeteContact *target = m_them.first();
+	Kopete::Contact *target = m_them.first();
 
 
 	m_account->yahooSession()->sendTyping( static_cast<YahooContact*>(m_account->myself())->m_userId,
@@ -195,7 +195,7 @@ void YahooContact::slotDeleteContact()
 	if ( m_account->isConnected() )
 		m_account->yahooSession()->removeBuddy(m_userId, m_groupName);
 
-	KopeteContact::slotDeleteContact();
+	Kopete::Contact::slotDeleteContact();
 }
 #include "yahoocontact.moc"
 

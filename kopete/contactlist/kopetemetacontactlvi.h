@@ -33,13 +33,17 @@ class QVariant;
 
 class KAction;
 class KListAction;
-class KopeteAccount;
-class KopeteMetaContact;
+
+namespace Kopete
+{
+class Account;
+class MetaContact;
+class Contact;
+class Group;
+}
 
 class AddContactPage;
-class KopeteContact;
 class KopeteGroupViewItem;
-class KopeteGroup;
 class KopeteEvent;
 
 class ContactComponent;
@@ -52,15 +56,15 @@ class KopeteMetaContactLVI : public Kopete::UI::ListView::Item
 	Q_OBJECT
 
 public:
-	KopeteMetaContactLVI( KopeteMetaContact *contact, KopeteGroupViewItem *parent );
-	KopeteMetaContactLVI( KopeteMetaContact *contact, QListViewItem *parent );
-	KopeteMetaContactLVI( KopeteMetaContact *contact, QListView *parent );
+	KopeteMetaContactLVI( Kopete::MetaContact *contact, KopeteGroupViewItem *parent );
+	KopeteMetaContactLVI( Kopete::MetaContact *contact, QListViewItem *parent );
+	KopeteMetaContactLVI( Kopete::MetaContact *contact, QListView *parent );
 	~KopeteMetaContactLVI();
 
 	/**
 	 * metacontact this visual item represents
 	 */
-	KopeteMetaContact *metaContact() const
+	Kopete::MetaContact *metaContact() const
 	{ return m_metaContact; };
 
 	/**
@@ -85,21 +89,21 @@ public:
 	void rename( const QString& name );
 	void startRename( int );
 
-	KopeteGroup *group();
+	Kopete::Group *group();
 
 	/**
-	 * Returns the KopeteContact of the small little icon at the point p
+	 * Returns the Kopete::Contact of the small little icon at the point p
 	 * @param p must be in the list view item's coordinate system.
 	 * Returns a null pointer if p is not on a small icon.
 	 * (This is used for e.g. the context-menu of a contact when
 	 * right-clicking an icon, or the tooltips)
 	 */
-	KopeteContact *contactForPoint( const QPoint &p ) const;
+	Kopete::Contact *contactForPoint( const QPoint &p ) const;
 
 	/**
-	 * Returns the QRect small little icon used for the KopeteContact.
+	 * Returns the QRect small little icon used for the Kopete::Contact.
 	 * The behavior is undefined if @param c doesn't point to a valid
-	 * KopeteContact for this list view item.
+	 * Kopete::Contact for this list view item.
 	 * The returned QRect is using the list view item's coordinate
 	 * system and should probably be transformed into the list view's
 	 * coordinates before being of any practical use.
@@ -107,7 +111,7 @@ public:
 	 * the full list view item's height, only the width is relative to
 	 * the actual icon width.
 	 */
-	QRect contactRect( const KopeteContact *c ) const;
+	QRect contactRect( const Kopete::Contact *c ) const;
 
 	bool isGrouped() const;
 
@@ -130,15 +134,15 @@ public slots:
 
 private slots:
 	void slotUpdateMetaContact();
-	void slotContactStatusChanged( KopeteContact * );
-	void slotContactPropertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & );
-	void slotContactAdded( KopeteContact * );
-	void slotContactRemoved( KopeteContact * );
+	void slotContactStatusChanged( Kopete::Contact * );
+	void slotContactPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & );
+	void slotContactAdded( Kopete::Contact * );
+	void slotContactRemoved( Kopete::Contact * );
 
 	void slotDisplayNameChanged();
 
 	void slotAddToNewGroup();
-	void slotIdleStateChanged( KopeteContact * );
+	void slotIdleStateChanged( Kopete::Contact * );
 
 	void slotConfigChanged();
 
@@ -156,22 +160,22 @@ private:
 	void setDisplayMode( int mode );
 	void setMetaContactToolTipSourceForComponent( Kopete::UI::ListView::Component *comp );
 	QString key( int column, bool ascending ) const;
-	void updateContactIcon( KopeteContact * );
-	ContactComponent *contactComponent( const KopeteContact *c ) const;
+	void updateContactIcon( Kopete::Contact * );
+	ContactComponent *contactComponent( const Kopete::Contact *c ) const;
 
-	KopeteMetaContact *m_metaContact;
+	Kopete::MetaContact *m_metaContact;
 	KopeteGroupViewItem *m_parentGroup;
 	QListView *m_parentView;
 	bool m_isTopLevel;
 
 	int m_pixelWide;
 
-	KopeteOnlineStatus m_oldStatus;
+	Kopete::OnlineStatus m_oldStatus;
 	QString m_oldStatusIcon;
 
 	QTimer *mBlinkTimer;
 
-	QPtrDict<KopeteAccount> m_addContactActions;
+	QPtrDict<Kopete::Account> m_addContactActions;
 
 	bool mIsBlinkIcon;
 	int m_blinkLeft;

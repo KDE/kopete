@@ -26,7 +26,7 @@ class KProcess;
 
 enum SMSMsgAction { ACT_ASK = 0, ACT_CANCEL, ACT_SPLIT };
 
-class SMSAccount : public KopeteAccount
+class SMSAccount : public Kopete::Account
 {
 	Q_OBJECT
 
@@ -55,7 +55,7 @@ public slots:
 	virtual void disconnect();
 
 protected:
-	bool addContactToMetaContact(const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact);
+	bool addContactToMetaContact(const QString &contactId, const QString &displayName, Kopete::MetaContact *parentContact);
 	virtual void loaded();
 
 private:

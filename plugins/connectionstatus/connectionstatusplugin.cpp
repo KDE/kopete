@@ -29,7 +29,7 @@ typedef KGenericFactory<ConnectionStatusPlugin> ConnectionStatusPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_connectionstatus, ConnectionStatusPluginFactory( "kopete_connectionstatus" )  )
 
 ConnectionStatusPlugin::ConnectionStatusPlugin( QObject *parent, const char *name, const QStringList& /* args */ )
-: KopetePlugin( ConnectionStatusPluginFactory::instance(), parent, name )
+: Kopete::Plugin( ConnectionStatusPluginFactory::instance(), parent, name )
 {
 	kdDebug( 14301 ) << k_funcinfo << endl;
 
@@ -113,7 +113,7 @@ void ConnectionStatusPlugin::setConnectedStatus( bool connected )
 		// The machine is connected and plugin thinks we're disconnected
 		kdDebug( 14301 ) << k_funcinfo << "Setting m_pluginConnected to true" << endl;
 		m_pluginConnected = true;
-		KopeteAccountManager::manager()->connectAll();
+		Kopete::AccountManager::manager()->connectAll();
 		kdDebug( 14301 ) << k_funcinfo << "We're connected" << endl;
 	}
 	else if ( !connected && m_pluginConnected )
@@ -121,7 +121,7 @@ void ConnectionStatusPlugin::setConnectedStatus( bool connected )
 		// The machine isn't connected and plugin thinks we're connected
 		kdDebug( 14301 ) << k_funcinfo << "Setting m_pluginConnected to false" << endl;
 		m_pluginConnected = false;
-		KopeteAccountManager::manager()->disconnectAll();
+		Kopete::AccountManager::manager()->disconnectAll();
 		kdDebug( 14301 ) << k_funcinfo << "We're offline" << endl;
 	}
 }

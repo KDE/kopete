@@ -33,15 +33,19 @@ class KGlobalAccel;
 class KSelectAction;
 class KToggleAction;
 
-class KopeteAccount;
 class KopeteAccountStatusBarIcon;
-class KopeteContact;
 class KopeteContactListView;
 class KopeteAwayAction;
-class KopetePlugin;
 class KopetePluginConfig;
-class KopeteProtocol;
 class KopeteSystemTray;
+
+namespace Kopete
+{
+class Account;
+class Contact;
+class Plugin;
+class Protocol;
+}
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -82,24 +86,24 @@ private slots:
 	 * Get a notification when a plugin is loaded, so we can merge
 	 * XMLGUI cruft
 	 */
-	void slotPluginLoaded( KopetePlugin *p );
+	void slotPluginLoaded( Kopete::Plugin *p );
 
 	/**
 	 * Get a notification when an account is created, so we can add a status bar
 	 * icon
 	 */
-	void slotAccountRegistered( KopeteAccount *a );
+	void slotAccountRegistered( Kopete::Account *a );
 
 	/**
 	 * Cleanup the status bar icon when the account is destroyed
 	 */
-	void slotAccountUnregistered( KopeteAccount *a);
+	void slotAccountUnregistered( Kopete::Account *a);
 
 	/**
 	 * The status icon got changed, update it.
 	 * @param contact The account's contact that changed.
 	 */
-	void slotAccountStatusIconChanged( KopeteContact * contact);
+	void slotAccountStatusIconChanged( Kopete::Contact * contact);
 
 	/**
 	 * The status icon of some account changed. Must be sent by the account in question.
@@ -109,13 +113,13 @@ private slots:
 	/**
 	 * Show a context menu for a protocol
 	 */
-	void slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
+	void slotProtocolStatusIconRightClicked( Kopete::Protocol *proto,
 		const QPoint &p );
 
 	/**
 	 * Show a context menu for an account
 	 */
-	void slotAccountStatusIconRightClicked( KopeteAccount *a,
+	void slotAccountStatusIconRightClicked( Kopete::Account *a,
 		const QPoint &p );
 
 	void slotTrayAboutToShowMenu(KPopupMenu *);

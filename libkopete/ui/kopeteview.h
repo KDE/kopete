@@ -22,9 +22,9 @@
 #include "kopetemessage.h"
 #include <qvaluelist.h>
 
-class KopeteMessageManager;
+class Kopete::MessageManager;
 class QTextEdit;
-class KopeteMessage;
+class Kopete::Message;
 
 
 /**
@@ -40,30 +40,30 @@ class KopeteView
 		/**
 		 * constructor
 		 */
-		KopeteView( KopeteMessageManager *manager );
+		KopeteView( Kopete::MessageManager *manager );
 
 		/**
 		 * @brief Returns the message currently in the edit area
-		 * @return The KopeteMessage object containing the message
+		 * @return The Kopete::Message object containing the message
 		 */
-		virtual KopeteMessage currentMessage() = 0;
+		virtual Kopete::Message currentMessage() = 0;
 		/**
 		 * Set the message that the view is currently editing.
-		 * @param newMessage The KopeteMessage object containing the message to be edited.
+		 * @param newMessage The Kopete::Message object containing the message to be edited.
 		 */
-		virtual void setCurrentMessage( const KopeteMessage &newMessage ) = 0;
+		virtual void setCurrentMessage( const Kopete::Message &newMessage ) = 0;
 
 		/**
 		 * @brief Get the message manager
-		 * @return The KopeteMessageManager that the view is in communication with.
+		 * @return The Kopete::MessageManager that the view is in communication with.
 		 */
-		KopeteMessageManager *msgManager() const;
+		Kopete::MessageManager *msgManager() const;
 
 		/**
 		 * @brief Get the view type
 		 * @return The KopeteView::ViewType of the view
 		 */
-		KopeteMessage::MessageType viewType();
+		Kopete::Message::MessageType viewType();
 
 		/**
 		 * @brief add a message to the view
@@ -71,7 +71,7 @@ class KopeteView
 		 * The message gets added at the end of the view and is automatically
 		 * displayed. Classes that inherit from KopeteView should make this a slot.
 		 */
-		virtual void appendMessage( KopeteMessage & ) = 0;
+		virtual void appendMessage( Kopete::Message & ) = 0;
 
 		/**
 		 * @brief append multiple messages to the view
@@ -82,7 +82,7 @@ class KopeteView
 		 *
 		 * The default implementation just call @ref appendMessage() X times
 		 */
-		virtual void appendMessages( QValueList<KopeteMessage> );
+		virtual void appendMessages( QValueList<Kopete::Message> );
 
 		/**
 		 * @brief Raises the view above other windows
@@ -136,13 +136,13 @@ class KopeteView
 
 	protected:
 		/**
-		 * a pointer to the KopeteMessageManager given in the constructor
+		 * a pointer to the Kopete::MessageManager given in the constructor
 		 */
-		KopeteMessageManager *m_manager;
+		Kopete::MessageManager *m_manager;
 		/**
 		 * the type of this view
 		 */
-		KopeteMessage::MessageType m_type;
+		Kopete::Message::MessageType m_type;
 };
 
 #endif

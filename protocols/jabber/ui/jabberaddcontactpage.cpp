@@ -31,7 +31,7 @@
 #include "jabberaccount.h"
 #include "xmpp_tasks.h"
 
-JabberAddContactPage::JabberAddContactPage (KopeteAccount * owner, QWidget * parent, const char *name):AddContactPage (parent, name)
+JabberAddContactPage::JabberAddContactPage (Kopete::Account * owner, QWidget * parent, const char *name):AddContactPage (parent, name)
 {
 	(new QVBoxLayout (this))->setAutoAdd (true);
 	if (owner->isConnected ())
@@ -61,7 +61,7 @@ bool JabberAddContactPage::validateData ()
 }
 
 
-bool JabberAddContactPage::apply ( KopeteAccount *account, KopeteMetaContact *parentContact )
+bool JabberAddContactPage::apply ( Kopete::Account *account, Kopete::MetaContact *parentContact )
 {
 
 	if( canadd && validateData () )
@@ -74,11 +74,11 @@ bool JabberAddContactPage::apply ( KopeteAccount *account, KopeteMetaContact *pa
 
 		// collect all group names
 		QStringList groupNames;
-		KopeteGroupList groupList = parentContact->groups();
-		for(KopeteGroup *group = groupList.first(); group; group = groupList.next())
+		Kopete::GroupList groupList = parentContact->groups();
+		for(Kopete::Group *group = groupList.first(); group; group = groupList.next())
 			groupNames += group->displayName();
 
-		if ( account->addContact ( contactId, displayName, parentContact, KopeteAccount::ChangeKABC ) )
+		if ( account->addContact ( contactId, displayName, parentContact, Kopete::Account::ChangeKABC ) )
 		{
 			XMPP::RosterItem item;
 			XMPP::Jid jid ( contactId );

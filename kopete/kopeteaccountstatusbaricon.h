@@ -22,7 +22,10 @@
 #include <qlabel.h>
 #include <qpoint.h>
 
-class KopeteAccount;
+namespace Kopete
+{
+class Account;
+}
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -35,20 +38,20 @@ public:
 	/**
 	 * Create a statusbar icon.
 	 */
-	KopeteAccountStatusBarIcon( KopeteAccount *acc, QWidget *parent,
+	KopeteAccountStatusBarIcon( Kopete::Account *acc, QWidget *parent,
 		const char *name = 0 );
 
 	~KopeteAccountStatusBarIcon();
 
 signals:
-	void rightClicked( KopeteAccount *acc, const QPoint &p );
-	void leftClicked( KopeteAccount *acc, const QPoint &p );
+	void rightClicked( Kopete::Account *acc, const QPoint &p );
+	void leftClicked( Kopete::Account *acc, const QPoint &p );
 
 protected:
 	virtual void mousePressEvent( QMouseEvent *me );
 
 private:
-	KopeteAccount *m_account;
+	Kopete::Account *m_account;
 };
 
 #endif

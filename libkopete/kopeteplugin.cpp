@@ -27,7 +27,7 @@ public:
 	QString indexField;
 };
 
-KopetePlugin::KopetePlugin( KInstance *instance, QObject *parent, const char *name )
+Kopete::Plugin::Plugin( KInstance *instance, QObject *parent, const char *name )
 : QObject( parent, name ), KXMLGUIClient()
 {
 	d = new KopetePluginPrivate;
@@ -36,55 +36,55 @@ KopetePlugin::KopetePlugin( KInstance *instance, QObject *parent, const char *na
 	KSettings::Dispatcher::self()->registerInstance( instance, this, SIGNAL( settingsChanged() ) );
 }
 
-KopetePlugin::~KopetePlugin()
+Kopete::Plugin::~Plugin()
 {
 	delete d;
 }
 
-QString KopetePlugin::pluginId() const
+QString Kopete::Plugin::pluginId() const
 {
 	return QString::fromLatin1( className() );
 }
 
-QString KopetePlugin::displayName() const
+QString Kopete::Plugin::displayName() const
 {
-	return KopetePluginManager::self()->pluginName( this );
+	return Kopete::PluginManager::self()->pluginName( this );
 }
 
-QString KopetePlugin::pluginIcon() const
+QString Kopete::Plugin::pluginIcon() const
 {
-	return KopetePluginManager::self()->pluginIcon( this );
+	return Kopete::PluginManager::self()->pluginIcon( this );
 }
 
-void KopetePlugin::deserialize( KopeteMetaContact * /* metaContact */,
+void Kopete::Plugin::deserialize( Kopete::MetaContact * /* metaContact */,
 	const QMap<QString, QString> & /* stream */ )
 {
 	// Do nothing in default implementation
 }
 
-QStringList KopetePlugin::addressBookFields() const
+QStringList Kopete::Plugin::addressBookFields() const
 {
 	return d->addressBookFields;
 }
 
-QString KopetePlugin::addressBookIndexField() const
+QString Kopete::Plugin::addressBookIndexField() const
 {
 	return d->indexField;
 }
 
-void KopetePlugin::addAddressBookField( const QString &field, AddressBookFieldAddMode mode )
+void Kopete::Plugin::addAddressBookField( const QString &field, AddressBookFieldAddMode mode )
 {
 	d->addressBookFields.append( field );
 	if( mode == MakeIndexField )
 		d->indexField = field;
 }
 
-QPtrList<KAction> *KopetePlugin::customChatWindowPopupActions( const KopeteMessage &, DOM::Node & )
+QPtrList<KAction> *Kopete::Plugin::customChatWindowPopupActions( const Kopete::Message &, DOM::Node & )
 {
 	return 0L;
 }
 
-void KopetePlugin::aboutToUnload()
+void Kopete::Plugin::aboutToUnload()
 {
 	// Just make the unload synchronous by default
 	emit readyForUnload();

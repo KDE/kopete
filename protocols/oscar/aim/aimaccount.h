@@ -28,8 +28,8 @@
 
 class KAction;
 
-class KopeteContact;
-class KopeteGroup;
+namespace Kopete { class Contact; }
+namespace Kopete { class Group; }
 
 class OscarChangeStatus;
 class OscarContact;
@@ -40,7 +40,7 @@ class AIMAccount : public OscarAccount
 	Q_OBJECT
 
 	public:
-		AIMAccount(KopeteProtocol *parent, QString accountID, const char *name=0L);
+		AIMAccount(Kopete::Protocol *parent, QString accountID, const char *name=0L);
 		virtual ~AIMAccount();
 
 		// Accessor method for the action menu
@@ -82,7 +82,7 @@ class AIMAccount : public OscarAccount
 		 * This allows OscarAccount to take care of adding new contacts
 		 */
 		OscarContact *createNewContact( const QString &contactId,
-			const QString &displayName, KopeteMetaContact *parentContact, bool isOnSSI = false );
+			const QString &displayName, Kopete::MetaContact *parentContact, bool isOnSSI = false );
 
 	private:
 		void connect(const unsigned long status, const QString &awMessage);

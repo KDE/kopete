@@ -37,13 +37,13 @@ class KopeteEvent : public QObject
 	Q_OBJECT
 
 public:
-	KopeteEvent(const KopeteMessage& , QObject* parent=0L, const char *name=0L);
+	KopeteEvent(const Kopete::Message& , QObject* parent=0L, const char *name=0L);
 	~KopeteEvent();
 
 	/**
 	 * @return the message
 	 */
-	KopeteMessage message();
+	Kopete::Message message();
 
 	/**
 	 * The state of the event.
@@ -63,7 +63,7 @@ signals:
 	void done(KopeteEvent *);
 
 private:
-	KopeteMessage m_message;
+	Kopete::Message m_message;
 	EventState m_state;
 
 public slots:

@@ -22,28 +22,34 @@
 #include <qvaluelist.h>
 
 class QDomElement;
-class KopeteNotifyEvent;
+
+namespace Kopete
+{
+
+class NotifyEvent;
 
 /**
  * Contains custom notification control and storage functionality
  */
 
-class KopeteNotifyDataObject
+class NotifyDataObject
 {
 	public:
-		KopeteNotifyDataObject();
-		~KopeteNotifyDataObject();
+		NotifyDataObject();
+		~NotifyDataObject();
 		// Notify events
-		KopeteNotifyEvent *notifyEvent( const QString &event ) const;
+		NotifyEvent *notifyEvent( const QString &event ) const;
 		void setNotifyEvent( const QString &event, 
-				KopeteNotifyEvent *notifyEvent );
+				NotifyEvent *notifyEvent );
 		bool removeNotifyEvent( const QString &event );
 		// Serialization
 	protected:
 		QDomElement notifyDataToXML();
 		bool notifyDataFromXML( const QDomElement& element );
 	private:
-		QDict<KopeteNotifyEvent> m_events;
+		QDict<NotifyEvent> m_events;
 };
+
+}
 
 #endif

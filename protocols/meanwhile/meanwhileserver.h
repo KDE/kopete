@@ -31,11 +31,11 @@ class MeanwhileServer : public QObject
         bool bad();
         int login(QString username, QString passwd);
         void logoff();
-        void addContacts(const QDict<KopeteContact>& contacts);
-        void addContact(KopeteContact *contact,
-                        const QDict<KopeteContact>& contacts);
-        int sendIm(KopeteContact *contact, const QString & msg);
-        void sendTyping(KopeteContact *contact, bool isTyping);
+        void addContacts(const QDict<Kopete::Contact>& contacts);
+        void addContact(Kopete::Contact *contact,
+                        const QDict<Kopete::Contact>& contacts);
+        int sendIm(Kopete::Contact *contact, const QString & msg);
+        void sendTyping(Kopete::Contact *contact, bool isTyping);
         void goAway(const QString &awayMsg);
         void goDND(const QString &dndMsg);
         void goActive(const QString &activeMsg);
@@ -54,7 +54,7 @@ class MeanwhileServer : public QObject
         MeanwhileLibrary *library;
         QString server;
         int port;
-        QDict<KopeteContact> contacts;
+        QDict<Kopete::Contact> contacts;
 
     protected slots:
         void slotLoginDone();

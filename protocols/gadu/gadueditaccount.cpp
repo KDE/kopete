@@ -39,7 +39,7 @@
 #include <klocale.h>
 #include <kpassdlg.h>
 
-GaduEditAccount::GaduEditAccount( GaduProtocol* proto, KopeteAccount* ident, QWidget* parent, const char* name )
+GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, QWidget* parent, const char* name )
 : GaduAccountEditUI( parent, name ), KopeteEditAccountWidget( ident ), protocol_( proto ), rcmd( 0 )
 {
 
@@ -128,7 +128,7 @@ GaduEditAccount::validateData()
 	return true;
 }
 
-KopeteAccount*
+Kopete::Account*
 GaduEditAccount::apply()
 {
 	if ( account() == NULL ) {

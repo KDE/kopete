@@ -28,7 +28,7 @@
 
 MeanwhileAddContactPage::MeanwhileAddContactPage( 
                                 QWidget* parent, 
-                                KopeteAccount *_account)
+                                Kopete::Account *_account)
         : AddContactPage(parent, 0L), theAccount(_account),
             theParent(parent)
 {
@@ -59,12 +59,12 @@ void MeanwhileAddContactPage::slotFindUser()
 }
 
 bool MeanwhileAddContactPage::apply( 
-                    KopeteAccount* a, 
-                    KopeteMetaContact* m )
+                    Kopete::Account* a, 
+                    Kopete::MetaContact* m )
 {
     QString displayName = theDialog->contactID->text();
     MeanwhileAccount* myAccount = static_cast<MeanwhileAccount*>(a);
-    return myAccount->addContact(displayName, displayName, m, KopeteAccount::ChangeKABC );
+    return myAccount->addContact(displayName, displayName, m, Kopete::Account::ChangeKABC );
 }
 
 bool MeanwhileAddContactPage::validateData()

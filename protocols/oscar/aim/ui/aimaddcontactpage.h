@@ -11,8 +11,8 @@
   */
 class aimAddContactUI;
 class AIMAccount;
-class KopeteAccount;
-class KopeteMetaContact;
+namespace Kopete { class Account; }
+namespace Kopete { class MetaContact; }
 
 class AIMAddContactPage : public AddContactPage
 {
@@ -26,7 +26,7 @@ public:
 	/** Validates the data entered */
 	virtual bool validateData();
 	/** Applies the addition to the account */
-	virtual bool apply( KopeteAccount *account, KopeteMetaContact *);
+	virtual bool apply( Kopete::Account *account, Kopete::MetaContact *);
 
 protected:
 	/** The actual GUI */

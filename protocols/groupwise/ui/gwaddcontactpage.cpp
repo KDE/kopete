@@ -45,7 +45,7 @@
 #include "gwaddui.h"
 #include "userdetailsmanager.h"
 
-GroupWiseAddContactPage::GroupWiseAddContactPage( KopeteAccount * owner, QWidget* parent, const char* name )
+GroupWiseAddContactPage::GroupWiseAddContactPage( Kopete::Account * owner, QWidget* parent, const char* name )
 		: AddContactPage(parent, name)
 {
 	m_account = static_cast<GroupWiseAccount *>( owner );
@@ -83,7 +83,7 @@ GroupWiseAddContactPage::~GroupWiseAddContactPage()
 // i18n( "There was an error while carrying out your search.  Please change your search terms or try again later." )
 }
 
-bool GroupWiseAddContactPage::apply( KopeteAccount* account, KopeteMetaContact* parentContact )
+bool GroupWiseAddContactPage::apply( Kopete::Account* account, Kopete::MetaContact* parentContact )
 {
 	if ( m_canadd && validateData() )
 	{
@@ -101,7 +101,7 @@ bool GroupWiseAddContactPage::apply( KopeteAccount* account, KopeteMetaContact* 
 		else
 			return false;
 
-		return ( account->addContact ( contactId, displayName, parentContact, KopeteAccount::ChangeKABC ) );
+		return ( account->addContact ( contactId, displayName, parentContact, Kopete::Account::ChangeKABC ) );
 	}
 	else
 		return false;

@@ -23,14 +23,14 @@
 
 class KAction;
 class KActionCollection;
-class KopeteAccount;
-class KopeteMessageManager;
-class KopeteMetaContact;
+namespace Kopete { class Account; }
+namespace Kopete { class MessageManager; }
+namespace Kopete { class MetaContact; }
 
 /**
 @author Will Stephenson
 */
-class TestbedContact : public KopeteContact
+class TestbedContact : public Kopete::Contact
 {
 	Q_OBJECT
 public:
@@ -39,9 +39,9 @@ public:
 	 */
 	enum TestbedContactType { Null, Echo };
 
-	TestbedContact( KopeteAccount* _account, const QString &uniqueName, 
+	TestbedContact( Kopete::Account* _account, const QString &uniqueName, 
 			const TestbedContact::TestbedContactType type, const QString &displayName, 
-			KopeteMetaContact *parent );
+			Kopete::MetaContact *parent );
 
     ~TestbedContact();
 
@@ -57,17 +57,17 @@ public:
 	 */
 	virtual QPtrList<KAction> *customContextMenuActions();
 	/**
-	 * Returns a KopeteMessageManager associated with this contact
+	 * Returns a Kopete::MessageManager associated with this contact
 	 */
-	virtual KopeteMessageManager *manager( bool canCreate = false );
+	virtual Kopete::MessageManager *manager( bool canCreate = false );
 
 public slots:
 	/**
 	 * Transmits an outgoing message to the server 
 	 * Called when the chat window send button has been pressed
-	 * (in response to the relevant KopeteMessageManager signal)
+	 * (in response to the relevant Kopete::MessageManager signal)
 	 */
-	void sendMessage( KopeteMessage &message );
+	void sendMessage( Kopete::Message &message );
 	/**
 	 * Called when an incoming message arrived
 	 * This displays it in the chatwindow
@@ -80,13 +80,13 @@ protected slots:
 	 */
 	void showContactSettings();
 	/**
-	 * Notify the contact that its current KopeteMessageManager was
+	 * Notify the contact that its current Kopete::MessageManager was
 	 * destroyed - probably by the chatwindow being closed
 	 */
 	void slotMessageManagerDestroyed();
 	
 protected:
-	KopeteMessageManager* m_msgManager;
+	Kopete::MessageManager* m_msgManager;
 	KActionCollection* m_actionCollection;
 	TestbedContactType m_type;
 	KAction* m_actionPrefs;

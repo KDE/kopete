@@ -26,7 +26,7 @@
 #include <editaccountwidget.h>
 
 class QVBoxLayout;
-class KopeteAccount;
+namespace Kopete { class Account; }
 class GroupWiseAccountPreferences;
 
 /**
@@ -37,14 +37,14 @@ class GroupWiseEditAccountWidget : public QWidget, public KopeteEditAccountWidge
 {
 Q_OBJECT
 public:
-    GroupWiseEditAccountWidget( QWidget* parent, KopeteAccount* account);
+    GroupWiseEditAccountWidget( QWidget* parent, Kopete::Account* account);
 
     ~GroupWiseEditAccountWidget();
 
 	/**
 	 * Make an account out of the entered data
 	 */
-	virtual KopeteAccount* apply();
+	virtual Kopete::Account* apply();
 	/**
 	 * Is the data correct?
 	 */
@@ -56,7 +56,7 @@ protected:
 	GroupWiseAccount * account();
 	void reOpen();
 	void writeConfig();
-	KopeteAccount *m_account;
+	Kopete::Account *m_account;
 	QVBoxLayout *m_layout;
 	GroupWiseAccountPreferences *m_preferencesDialog;
 };

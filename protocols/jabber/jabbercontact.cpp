@@ -43,7 +43,7 @@
 /**
  * JabberContact constructor
  */
-JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount *account, KopeteMetaContact * mc)
+JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount *account, Kopete::MetaContact * mc)
 				: JabberBaseContact ( rosterItem, account, mc)
 {
 
@@ -68,21 +68,21 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount 
 	if ( !account->myself () )
 	{
 		connect ( this,
-				  SIGNAL ( onlineStatusChanged ( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
+				  SIGNAL ( onlineStatusChanged ( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 				  this, SLOT ( slotCheckVCard () ) );
 	}
 	else
 	{
 		connect ( account->myself (),
-				  SIGNAL ( onlineStatusChanged ( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
+				  SIGNAL ( onlineStatusChanged ( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 				  this, SLOT ( slotCheckVCard () ) );
 
 		/*
 		 * Trigger update once if we're already connected for contacts
 		 * that are being added while we are online.
 		 */
-		if ( ( account->myself()->onlineStatus().status () == KopeteOnlineStatus::Online ) ||
-			 ( account->myself()->onlineStatus().status () == KopeteOnlineStatus::Away ) )
+		if ( ( account->myself()->onlineStatus().status () == Kopete::OnlineStatus::Online ) ||
+			 ( account->myself()->onlineStatus().status () == Kopete::OnlineStatus::Away ) )
 			slotCheckVCard ();
 	}
 
@@ -124,7 +124,7 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 
 	// if the contact is online, display the resources we have for it,
 	// otherwise disable the menu
-	if (onlineStatus ().status () == KopeteOnlineStatus::Offline)
+	if (onlineStatus ().status () == Kopete::OnlineStatus::Offline)
 	{
 		actionSelectResource->setEnabled ( false );
 	}
@@ -216,8 +216,8 @@ void JabberContact::rename ( const QString &newName )
 
 void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 {
-	KopeteMessage::MessageType type;
-	KopeteMessage *newMessage = 0L;
+	Kopete::Message::MessageType type;
+	Kopete::Message *newMessage = 0L;
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;
 
@@ -243,9 +243,9 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 
 	// determine message type
 	if (message.type () == "chat")
-		type = KopeteMessage::Chat;
+		type = Kopete::Message::Chat;
 	else
-		type = KopeteMessage::Email;
+		type = Kopete::Message::Email;
 
 	KopeteContactPtrList contactList;
 	contactList.append ( account()->myself () );
@@ -253,10 +253,10 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	// check for errors
 	if ( message.type () == "error" )
 	{
-		newMessage = new KopeteMessage( message.timeStamp (), this, contactList,
+		newMessage = new Kopete::Message( message.timeStamp (), this, contactList,
 										i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"").
 										arg ( message.body () ).arg ( message.error().text ),
-										message.subject(), KopeteMessage::Inbound, KopeteMessage::PlainText, type );
+										message.subject(), Kopete::Message::Inbound, Kopete::Message::PlainText, type );
 	}
 	else
 	{
@@ -268,12 +268,12 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QString ("\n-----END PGP MESSAGE-----\n");
 		}
 
-		// convert XMPP::Message into KopeteMessage
+		// convert XMPP::Message into Kopete::Message
 		if ( !message.body().isEmpty () )
 		{
-			newMessage = new KopeteMessage ( message.timeStamp (), this, contactList, body,
-											 message.subject (), KopeteMessage::Inbound,
-											 KopeteMessage::PlainText, type );
+			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList, body,
+											 message.subject (), Kopete::Message::Inbound,
+											 Kopete::Message::PlainText, type );
 		}
 	}
 
@@ -299,10 +299,10 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			QString description = (*it).desc().isEmpty() ? (*it).url() : (*it).desc();
 			QString url = (*it).url ();
 
-			newMessage = new KopeteMessage ( message.timeStamp (), this, contactList,
+			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList,
 											 QString ( "<a href=\"%1\">%2</a>" ).arg ( url ).arg ( description ),
-											 message.subject (), KopeteMessage::Inbound,
-											 KopeteMessage::RichText, type );
+											 message.subject (), Kopete::Message::Inbound,
+											 Kopete::Message::RichText, type );
 
 			mManager->appendMessage ( *newMessage, message.from().resource () );
 
@@ -343,8 +343,8 @@ void JabberContact::slotGetTimedVCard ()
 	mVCardUpdateInProgress = false;
 
 	// check if we are connected
-	if ( ( account()->myself()->onlineStatus().status () != KopeteOnlineStatus::Online ) &&
-		 ( account()->myself()->onlineStatus().status () != KopeteOnlineStatus::Away ) )
+	if ( ( account()->myself()->onlineStatus().status () != Kopete::OnlineStatus::Online ) &&
+		 ( account()->myself()->onlineStatus().status () != Kopete::OnlineStatus::Away ) )
 	{
 		// we are not connected, discard this update
 		return;
@@ -587,7 +587,7 @@ JabberMessageManager *JabberContact::manager ( KopeteContactPtrList chatMembers,
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "called, canCreate: " << canCreate << endl;
 
-	KopeteMessageManager *_manager = KopeteMessageManagerFactory::factory()->findKopeteMessageManager ( account()->myself(), chatMembers, protocol() );
+	Kopete::MessageManager *_manager = KopeteMessageManagerFactory::factory()->findMessageManager ( account()->myself(), chatMembers, protocol() );
 	JabberMessageManager *manager = dynamic_cast<JabberMessageManager*>( _manager );
 
 	/*
@@ -618,7 +618,7 @@ JabberMessageManager *JabberContact::manager ( KopeteContactPtrList chatMembers,
 
 }
 
-KopeteMessageManager *JabberContact::manager ( bool canCreate )
+Kopete::MessageManager *JabberContact::manager ( bool canCreate )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "called, canCreate: " << canCreate << endl;
 
@@ -699,7 +699,7 @@ void JabberContact::slotDeleteContact ()
 void JabberContact::syncGroups ()
 {
 	QStringList groups;
-	KopeteGroupList groupList = metaContact ()->groups ();
+	Kopete::GroupList groupList = metaContact ()->groups ();
 
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Synchronizing groups for " << contactId () << endl;
 
@@ -713,9 +713,9 @@ void JabberContact::syncGroups ()
 	if ( metaContact()->isTemporary () )
 		return;
 
-	for ( KopeteGroup * g = groupList.first (); g; g = groupList.next () )
+	for ( Kopete::Group * g = groupList.first (); g; g = groupList.next () )
 	{
-		if ( g->type () != KopeteGroup::TopLevel )
+		if ( g->type () != Kopete::Group::TopLevel )
 			groups += g->displayName ();
 	}
 

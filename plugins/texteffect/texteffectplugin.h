@@ -29,16 +29,16 @@
 class QStringList;
 class QString;
 
-class KopeteMessage;
-class KopeteMetaContact;
-class KopeteMessageManager;
+namespace Kopete { class Message; }
+namespace Kopete { class MetaContact; }
+namespace Kopete { class MessageManager; }
 class TextEffectConfig;
 
 /**
   * @author Olivier Goffart
   */
 
-class TextEffectPlugin : public KopetePlugin
+class TextEffectPlugin : public Kopete::Plugin
 {
 	Q_OBJECT
 
@@ -49,7 +49,7 @@ public:
 	~TextEffectPlugin();
 
 public slots:
-	void slotOutgoingMessage( KopeteMessage& msg );
+	void slotOutgoingMessage( Kopete::Message& msg );
 	void slotSettingsChanged();
 
 private:

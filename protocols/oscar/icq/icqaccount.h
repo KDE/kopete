@@ -27,7 +27,7 @@
 #include <oscarsocket.icq.h>
 
 class KActionMenu;
-class KopeteProtocol;
+namespace Kopete { class Protocol; }
 
 class OscarChangeStatus;
 class ICQAccount : public OscarAccount
@@ -35,7 +35,7 @@ class ICQAccount : public OscarAccount
 	Q_OBJECT
 
 	public:
-		ICQAccount(KopeteProtocol *parent, QString accountID, const char *name=0L);
+		ICQAccount(Kopete::Protocol *parent, QString accountID, const char *name=0L);
 		~ICQAccount();
 
 		KActionMenu* actionMenu();
@@ -44,7 +44,7 @@ class ICQAccount : public OscarAccount
 		virtual void setStatus(const unsigned long status,
 			const QString &awayMessage = QString::null);
 
-		void connect(const KopeteOnlineStatus &initialStatus);
+		void connect(const Kopete::OnlineStatus &initialStatus);
 
 
 		void setInvisible(bool);
@@ -68,7 +68,7 @@ class ICQAccount : public OscarAccount
 
 	protected:
 		virtual OscarContact *createNewContact(const QString &contactId,
-			const QString &displayName, KopeteMetaContact *parentContact, bool isOnSSI = false);
+			const QString &displayName, Kopete::MetaContact *parentContact, bool isOnSSI = false);
 
 	private:
 		const unsigned long fullStatus(const unsigned long plainStatus);

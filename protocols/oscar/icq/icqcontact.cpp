@@ -37,7 +37,7 @@ static const unsigned int SUPPORTED_INFO_ITEMS = 7;
 
 
 ICQContact::ICQContact(const QString name, const QString displayName,
-	ICQAccount *acc, KopeteMetaContact *parent)
+	ICQAccount *acc, Kopete::MetaContact *parent)
 	: OscarContact(name, displayName, acc, parent)
 {
 	mProtocol = static_cast<ICQProtocol *>(protocol());
@@ -200,16 +200,16 @@ void ICQContact::slotOffgoingBuddy(QString sender)
 #if 0
 void ICQContact::gotIM(OscarSocket::OscarMessageType /*type*/, const QString &message)
 {
-	// Build a KopeteMessage and set the body as Rich Text
+	// Build a Kopete::Message and set the body as Rich Text
 	KopeteContactPtrList tmpList;
 	tmpList.append(account()->myself());
-	KopeteMessage msg(this, tmpList, message, KopeteMessage::Inbound,
-		KopeteMessage::RichText);
+	Kopete::Message msg(this, tmpList, message, Kopete::Message::Inbound,
+		Kopete::Message::RichText);
 	manager(true)->appendMessage(msg);
 }
 #endif
 
-void ICQContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
+void ICQContact::slotSendMsg(Kopete::Message& message, Kopete::MessageManager *)
 {
 	if (message.plainBody().isEmpty()) // no text, do nothing
 		return;
@@ -354,13 +354,13 @@ void ICQContact::setStatus(const unsigned int newStatus)
 	}
 }
 
-void ICQContact::setOnlineStatus(const KopeteOnlineStatus& status)
+void ICQContact::setOnlineStatus(const Kopete::OnlineStatus& status)
 {
 	if(mInvisible)
 	{
 		kdDebug(14153) << k_funcinfo << "'" << displayName() << "' is invisible!" << endl;
-		KopeteContact::setOnlineStatus(
-			KopeteOnlineStatus(
+		Kopete::Contact::setOnlineStatus(
+			Kopete::OnlineStatus(
 				status.status() , (status.weight()==0) ? 0 : (status.weight() -1),
 				protocol(),
 				status.internalStatus()+15,
@@ -372,7 +372,7 @@ void ICQContact::setOnlineStatus(const KopeteOnlineStatus& status)
 	}
 	else
 	{
-		KopeteContact::setOnlineStatus(status);
+		Kopete::Contact::setOnlineStatus(status);
 	}
 /*
 	kdDebug(14153) << k_funcinfo << "'" << displayName() << "' is now " <<

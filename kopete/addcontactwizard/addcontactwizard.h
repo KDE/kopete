@@ -29,10 +29,14 @@
 #include "addcontactwizard_base.h"
 
 class AddContactPage;
-class KopeteProtocol;
 class QCheckListItem;
-class KopeteAccount;
-class KopeteGroup;
+
+namespace Kopete
+{
+class Protocol;
+class Account;
+class Group;
+}
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -47,11 +51,11 @@ public:
 	virtual void showPage( QWidget *page );
 
 private:
-	//KopeteProtocol *currentProtocol;
+	//Kopete::Protocol *currentProtocol;
 	//AddContactPage *currentDataWidget;
-	QMap <KopeteAccount*,AddContactPage*> protocolPages;
-	QMap <QCheckListItem*,KopeteAccount*> m_accountItems;
-	QMap <QCheckListItem*,KopeteGroup*> m_groupItems;
+	QMap <Kopete::Account*,AddContactPage*> protocolPages;
+	QMap <QCheckListItem*,Kopete::Account*> m_accountItems;
+	QMap <QCheckListItem*,Kopete::Group*> m_groupItems;
 	KABC::AddressBook* m_addressBook;
 
 public slots:

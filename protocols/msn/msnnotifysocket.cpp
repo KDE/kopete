@@ -793,7 +793,7 @@ void MSNNotifySocket::removeContact( const QString &handle, uint group,	int list
 	sendCommand( "REM", args );
 }
 
-void MSNNotifySocket::setStatus( const KopeteOnlineStatus &status )
+void MSNNotifySocket::setStatus( const Kopete::OnlineStatus &status )
 {
 //	kdDebug( 14140 ) << k_funcinfo << statusToString( status ) << endl;
 
@@ -831,7 +831,7 @@ void MSNNotifySocket::createChatSession()
 	sendCommand( "XFR", "SB" );
 }
 
-QString MSNNotifySocket::statusToString( const KopeteOnlineStatus &status ) const
+QString MSNNotifySocket::statusToString( const Kopete::OnlineStatus &status ) const
 {
 	if( status == MSNProtocol::protocol()->NLN )
 		return "NLN";
@@ -884,7 +884,7 @@ void MSNNotifySocket::slotResetKeepAlive()
 	m_keepaliveTimer->start( 60000 );
 }
 
-KopeteOnlineStatus MSNNotifySocket::convertOnlineStatus( const QString &status )
+Kopete::OnlineStatus MSNNotifySocket::convertOnlineStatus( const QString &status )
 {
 	if( status == "NLN" )
 		return MSNProtocol::protocol()->NLN;

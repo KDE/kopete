@@ -55,7 +55,7 @@ public:
 	static KAction *sendFile(const QObject *recvr, const char *slot,
 		QObject* parent, const char *name = 0);
 	/**
-	 * Standard action to change a contacts @ref KopeteMetaContact
+	 * Standard action to change a contacts @ref Kopete::MetaContact
 	 */
 	static KAction *changeMetaContact(const QObject *recvr, const char *slot,
 		QObject* parent, const char *name = 0);

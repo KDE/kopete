@@ -30,8 +30,8 @@ class QSocketNotifier;
 class gg_dcc;
 class GaduAccount;
 class GaduContact;
-class KopeteTransfer;
-class KopeteFileTransferInfo;
+namespace Kopete { class Transfer; }
+namespace Kopete { class FileTransferInfo; }
 class GaduDCC;
 
 class GaduDCCTransaction: QObject {
@@ -55,8 +55,8 @@ protected slots:
 
 private slots:
 	void watcher();
-	void slotIncomingTransferAccepted ( KopeteTransfer*, const QString& );
-	void slotTransferRefused ( const KopeteFileTransferInfo& );
+	void slotIncomingTransferAccepted ( Kopete::Transfer*, const QString& );
+	void slotTransferRefused ( const Kopete::FileTransferInfo& );
 	void slotTransferResult();
 
 private:
@@ -75,7 +75,7 @@ private:
 
 	GaduContact* contact;
 
-	KopeteTransfer* transfer_;
+	Kopete::Transfer* transfer_;
 	long transferId_;
 	QFile localFile_;
 	bool peer;

@@ -26,18 +26,21 @@
 class QDomNode;
 class KActionMenu;
 
-class KopeteContact;
-class KopetePlugin;
-class KopeteProtocol;
-class KopeteMetaContact;
-class KopeteOnlineStatus;
-
 struct KopeteAccountPrivate;
+
+namespace Kopete
+{
+
+class Contact;
+class Plugin;
+class Protocol;
+class MetaContact;
+class OnlineStatus;
 
 /**
  * @author Olivier Goffart  <ogoffart@tiscalinet.be>
  *
- * The KopeteAccount class handles one account.
+ * The Kopete::Account class handles one account.
  * Each protocol should subclass this class in their own custom accounts class.
  * There are few pure virtual method that the protocol must implement. Examples are:
  * \li \ref connect()
@@ -51,16 +54,16 @@ struct KopeteAccountPrivate;
  *
  * All account data is automatically saved to @ref KConfig. This includes the
  * accountId, the password (in a encrypted format), the autoconnect flag, the color,
- * and all PluginData. KopeteAccount is a @ref KopetePluginDataObject. In the account,
+ * and all PluginData. Kopete::Account is a @ref Kopete::PluginDataObject. In the account,
  * you can call setPluginData( protocol() , "key" , "value") and pluginData( protocol , "key")
- * see @ref KopetePluginDataObject::setPluginData() and \ref KopetePluginDataObject::pluginData()
+ * see @ref Kopete::PluginDataObject::setPluginData() and \ref Kopete::PluginDataObject::pluginData()
  * Note that plugin data are not availiable in the account constructor. They are
  * only available after the XML file has been totally parsed. You can reimplement
- * @ref KopeteAccount::loaded() to do what you have to do right after the XML file is
+ * @ref Kopete::Account::loaded() to do what you have to do right after the XML file is
  * loaded. in the same way, you can't set pluginData in the destructor, because the
  * XML file has already been written, and new changes will not be updated on the disk.
  */
-class KopeteAccount : public KopetePluginDataObject
+class Account : public PluginDataObject
 {
 	Q_OBJECT
 
@@ -97,19 +100,19 @@ public:
 
 	/**
 	 * constructor:
-	 * The constructor register automatically the account to the @ref KopeteAccountManager
+	 * The constructor register automatically the account to the @ref Kopete::AccountManager
 	 * @param parent it the protocol of this account. the accoun is a child object of the
 	 * protocol, so it will be automatically deleted with the parent.
 	 * @param accountID is the id of this protocol, it shouln't be changed after
 	 * @param name is the QObject name. it can be 0L
 	 */
-	KopeteAccount(KopeteProtocol *parent, const QString &accountID, const char *name=0L);
-	~KopeteAccount();
+	Account(Protocol *parent, const QString &accountID, const char *name=0L);
+	~Account();
 
 	/**
-	 * \return the KopeteProtocol for this account
+	 * \return the Kopete::Protocol for this account
 	 */
-	KopeteProtocol *protocol() const ;
+	Protocol *protocol() const ;
 
 	/**
 	 * \return the unique id of this account used as the login
@@ -217,7 +220,7 @@ public:
 	/**
 	 * @brief Indicate whether the account is connected at all.
 	 *
-	 * This is a convenience method that queries @ref KopeteContact::onlineStatus()
+	 * This is a convenience method that queries @ref Kopete::Contact::onlineStatus()
 	 * on @ref myself()
 	 */
 	bool isConnected() const;
@@ -225,7 +228,7 @@ public:
 	/**
 	 * @brief Indicate whether the account is away.
 	 *
-	 * This is a convenience method that queries @ref KopeteContact::onlineStatus()
+	 * This is a convenience method that queries @ref Kopete::Contact::onlineStatus()
 	 * on @ref myself()
 	 */
 	bool isAway() const;
@@ -233,12 +236,12 @@ public:
 	/**
 	 * \brief Retrieve the 'myself' contact.
 	 *
-	 * \return the pointer to the KopeteContact object for this
+	 * \return the pointer to the Kopete::Contact object for this
 	 * account or NULL if not initialized
 	 *
 	 * \see setMyself().
 	 */
-	KopeteContact * myself() const;
+	Contact * myself() const;
 
 	/**
 	 * @brief Return the menu for this account
@@ -256,7 +259,7 @@ public:
 	 * so you can safely use static_cast to your own derived contact class
 	 * if needed.
 	 */
-	const QDict<KopeteContact>& contacts();
+	const QDict<Contact>& contacts();
 
 	/**
 	 * \brief Read the account's configuration
@@ -276,11 +279,11 @@ public:
 
 	/**
 	 * \internal
-	 * Register a new KopeteContact with the account
-	 * To be called <b>only</b> from @ref KopeteContact constructor
+	 * Register a new Kopete::Contact with the account
+	 * To be called <b>only</b> from @ref Kopete::Contact constructor
 	 * not from any other class! (Not even a derived class).
 	 */
-	void registerContact( KopeteContact *c );
+	void registerContact( Contact *c );
 
 	/**
 	 * @return the name of the config group to be used
@@ -304,21 +307,21 @@ protected:
 	 * You must call this function in the constructor of your account
 	 *
 	 * The myself contact can't be deleted as long as the account still
-	 * exists. The myself contact is used in each KopeteMessageManager,
+	 * exists. The myself contact is used in each Kopete::MessageManager,
 	 * the myself contactId should be the accountID, the onlineStatus
 	 * should represent the current user's status. The statusbar icon
 	 * is connected to myself-> @ref onlineStatusChanged()
 	 * to update the icon.
 	 */
-	void setMyself( KopeteContact *myself );
+	void setMyself( Contact *myself );
 
 	/**
 	 * Create a new contact in the specified metacontact
 	 *
 	 * You shouldn't ever call this method yourself, For adding contacts see @ref addContact()
 	 *
-	 * This method is called by @ref KopeteAccount::addContact() in this method, you should
-	 * simply create the new custom @ref KopeteContact in the given metacontact. And you can
+	 * This method is called by @ref Kopete::Account::addContact() in this method, you should
+	 * simply create the new custom @ref Kopete::Contact in the given metacontact. And you can
 	 * add the contact to the server if the protocol supports it
 	 *
 	 * @param contactId The unique ID for this protocol
@@ -326,7 +329,7 @@ protected:
 	 * @param parentContact The metacontact to add this contact to
 	 */
 	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName,
-		 KopeteMetaContact *parentContact ) =0;
+		 MetaContact *parentContact ) =0;
 
 public slots:
 	/**
@@ -338,7 +341,7 @@ public slots:
 	/**
 	 * @brief Go online for this service using a different status
 	 */
-	virtual void connect( const KopeteOnlineStatus& initialStatus );
+	virtual void connect( const OnlineStatus& initialStatus );
 
 	/**
 	 * @brief Disconnect from this service.
@@ -366,7 +369,7 @@ public slots:
 	 * @return true if the contact was added, false if not
 	 */
 	bool addContact( const QString &contactId, const QString &displayName = QString::null,
-		KopeteMetaContact *parentContact = 0L, const AddMode mode = DontChangeKABC,
+		Kopete::MetaContact *parentContact = 0L, const AddMode mode = DontChangeKABC,
 		const QString &groupName = QString::null, bool isTemporary = false ) ;
 
 	/**
@@ -377,7 +380,7 @@ public slots:
 
 signals:
 	/**
-	 * The accountId should be constant, see @ref KopeteAccount::setAccountId()
+	 * The accountId should be constant, see @ref Kopete::Account::setAccountId()
 	 */
 	void accountIdChanged();
 	
@@ -395,12 +398,12 @@ protected slots:
 
 private slots:
 	/**
-	 * Track the deletion of a KopeteContact and cleanup
+	 * Track the deletion of a Kopete::Contact and cleanup
 	 */
-	void slotKopeteContactDestroyed( KopeteContact * );
+	void slotKopeteContactDestroyed( Kopete::Contact * );
 
 	/**
-	 * Called by a single shot hack to make the account tell its @ref KopeteAccountManager
+	 * Called by a single shot hack to make the account tell its @ref Kopete::AccountManager
 	 * to signal that the account is fully created and ready to use.
 	 */
 	void slotAccountReady();
@@ -411,7 +414,7 @@ private slots:
 	 * Currently this slot is used to set a timer that allows suppressing online status
 	 * notifications just after connecting.
 	 */
-	void slotOnlineStatusChanged( KopeteContact *contact, const KopeteOnlineStatus &newStatus, const KopeteOnlineStatus &oldStatus );
+	void slotOnlineStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &newStatus, const Kopete::OnlineStatus &oldStatus );
 
 	/**
 	 * Stop the suppression of status notification
@@ -422,6 +425,8 @@ private:
 
 	KopeteAccountPrivate *d;
 };
+
+}
 
 #endif
 

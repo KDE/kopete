@@ -30,7 +30,7 @@
 #include "smsclientprefs.h"
 #include "smsprotocol.h"
 
-SMSClient::SMSClient(KopeteAccount* account)
+SMSClient::SMSClient(Kopete::Account* account)
 	: SMSService(account)
 {
 	prefWidget = 0L;
@@ -50,7 +50,7 @@ void SMSClient::setWidgetContainer(QWidget* parent, QGridLayout* layout)
 	configWidget->show();
 }
 
-void SMSClient::send(const KopeteMessage& msg)
+void SMSClient::send(const Kopete::Message& msg)
 {
 	kdWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
 	if (!m_account) return;

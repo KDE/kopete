@@ -33,7 +33,7 @@ class QTimer;
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  */
 
-class MotionAwayPlugin : public KopetePlugin
+class MotionAwayPlugin : public Kopete::Plugin
 {
 	Q_OBJECT
 

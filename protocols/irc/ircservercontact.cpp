@@ -32,7 +32,7 @@
 #include "ircaccount.h"
 #include "ircprotocol.h"
 
-IRCServerContact::IRCServerContact(IRCContactManager *contactManager, const QString &servername, KopeteMetaContact *m)
+IRCServerContact::IRCServerContact(IRCContactManager *contactManager, const QString &servername, Kopete::MetaContact *m)
 	: IRCContact(contactManager, servername, m, "irc_server")
 {
 	QObject::connect(MYACCOUNT->engine(), SIGNAL(internalError(KIRC::EngineError, const KIRCMessage &)),
@@ -119,11 +119,11 @@ void IRCServerContact::engineInternalError( KIRC::EngineError engineError, const
 	MYACCOUNT->appendMessage( error + QString( ircmsg.raw() ), IRCAccount::ErrorReply );
 }
 
-void IRCServerContact::slotSendMsg(KopeteMessage &, KopeteMessageManager *manager )
+void IRCServerContact::slotSendMsg(Kopete::Message &, Kopete::MessageManager *manager )
 {
 	manager->messageSucceeded();
-	KopeteMessage msg( manager->user(), manager->members(),
-		i18n("You can not talk to the server, you can only issue commands here. Type /help for supported commands."), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+	Kopete::Message msg( manager->user(), manager->members(),
+		i18n("You can not talk to the server, you can only issue commands here. Type /help for supported commands."), Kopete::Message::Internal, Kopete::Message::PlainText, Kopete::Message::Chat);
 	manager->appendMessage(msg);
 }
 
@@ -131,8 +131,8 @@ void IRCServerContact::appendMessage( const QString &message )
 {
 	KopeteContactPtrList members;
 	members.append( this );
-	KopeteMessage msg( this, members, message, KopeteMessage::Internal,
-		KopeteMessage::RichText, KopeteMessage::Chat );
+	Kopete::Message msg( this, members, message, Kopete::Message::Internal,
+		Kopete::Message::RichText, Kopete::Message::Chat );
 	appendMessage(msg);
 }
 
@@ -161,9 +161,9 @@ void IRCServerContact::slotCannotSendToChannel( const QString &channel, const QS
 	MYACCOUNT->appendMessage( QString::fromLatin1("%1: %2").arg( channel ).arg( message ), IRCAccount::ErrorReply );
 }
 
-void IRCServerContact::appendMessage( KopeteMessage &msg )
+void IRCServerContact::appendMessage( Kopete::Message &msg )
 {
-	msg.setImportance( KopeteMessage::Low ); //to don't distrub the user
+	msg.setImportance( Kopete::Message::Low ); //to don't distrub the user
 
 	if( m_msgManager && m_msgManager->view(false) )
 		m_msgManager->appendMessage(msg);

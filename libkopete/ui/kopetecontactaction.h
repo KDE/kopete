@@ -1,5 +1,5 @@
 /*
-    kopetecontactaction.cpp - KAction for selecting a KopeteContact
+    kopetecontactaction.cpp - KAction for selecting a Kopete::Contact
 
     Copyright (c) 2003 by Martijn Klingens       <klingens@kde.org>
 
@@ -20,7 +20,10 @@
 
 #include <kaction.h>
 
-class KopeteContact;
+namespace Kopete
+{
+class Contact;
+}
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
@@ -33,22 +36,22 @@ public:
 	/**
 	 * Create a new KopeteContactAction
 	 */
-	KopeteContactAction( KopeteContact *contact, const QObject* receiver, const char* slot, KAction* parent );
+	KopeteContactAction( Kopete::Contact *contact, const QObject* receiver, const char* slot, KAction* parent );
 	~KopeteContactAction();
 
-	KopeteContact * contact() const;
+	Kopete::Contact * contact() const;
 
 signals:
 	/**
 	 * Overloaded signal to get the selected contact
 	 */
-	void activated( KopeteContact *action );
+	void activated( Kopete::Contact *action );
 
 private slots:
 	void slotContactActionActivated();
 
 private:
-	KopeteContact *m_contact;
+	Kopete::Contact *m_contact;
 };
 
 #endif
