@@ -1,8 +1,8 @@
 AC_DEFUN([AC_LIBGADU_DEFINE],
 [
 sed -e "s/#undef __GG_LIBGADU_$1/#define __GG_LIBGADU_$1/" \
-kopete/protocols/gadu/libgadu/libgadu-config.h > kopete/protocols/gadu/libgadu/libgadu-config.h.1
-mv kopete/protocols/gadu/libgadu/libgadu-config.h{.1,}
+${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h > ${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h.1
+mv ${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h{.1,}
 ])
 	 
 LIBGG_INCLUDES=""
@@ -86,7 +86,7 @@ CXXFLAGS="$ac_save_CXXFLAGS"
 
 
 if test "$use_libgadu_copy" = "yes"; then
-	cp kopete/protocols/gadu/libgadu/libgadu-config.h{.in,}
+	cp ${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h{.in,}
 	if test "$ac_cv_c_bigendian" = "yes"; then
 		AC_LIBGADU_DEFINE([BIGENDIAN])	
 	fi
