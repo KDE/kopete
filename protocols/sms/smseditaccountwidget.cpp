@@ -1,7 +1,6 @@
 /*  *************************************************************************
     *   copyright: (C) 2003 Richard Lärkäng <nouseforaname@home.se>         *
     *   copyright: (C) 2003 Gav Wood <gav@kde.org>                          *
-    *   copyright: (C) 2003 Grzegorz Jaskiewicz <gj@pointblue.com.pl>       *
     *************************************************************************
 */
 
