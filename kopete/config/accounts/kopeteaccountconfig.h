@@ -1,7 +1,7 @@
 /*
     accountconfig.h  -  Kopete account config page
 
-    Copyright (c) 2003 by Olivier Goffart <ogoffart@tiscalinet.be>
+    Copyright (c) 2003-2004 by Olivier Goffart <ogoffart@tiscalinet.be>
 
     *************************************************************************
     *                                                                       *
@@ -16,14 +16,15 @@
 #ifndef __ACCOUNTCONFIG_H
 #define __ACCOUNTCONFIG_H
 
-#include "kcmodule.h"
-#include <kopeteaccount.h>
+#include <kcmodule.h>
+#include <qmap.h>
+#include <qcolor.h>
+class KopeteAccount;
+class KopeteAccountConfigBase;
 
 /**
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  */
-class KopeteAccountConfigBase;
-
 class KopeteAccountConfig : public KCModule
 {
 	Q_OBJECT
@@ -37,7 +38,8 @@ public slots:
 
 private:
 	KopeteAccountConfigBase *m_view;
-	KopeteAccount *previousAccount;
+	QMap<KopeteAccount* , QColor> m_newColors;
+	bool m_protected;
 
 private slots:
 	void slotRemoveAccount();
@@ -47,6 +49,7 @@ private slots:
 	void slotItemSelected();
 	void slotAccountUp();
 	void slotAccountDown();
+	void slotColorChanged();
 };
 #endif
 
