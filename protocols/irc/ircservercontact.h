@@ -24,7 +24,6 @@
 #include <klistview.h>
 #include <qtimer.h>
 #include <ircchatwindow.h>
-#include <imcontact.h>
 #include <qdict.h>
 #include <qptrlist.h>
 #include "irccontact.h"
@@ -38,13 +37,14 @@ class QStringList;
 class IRCCmdParser;
 class IRCServerManager;
 class IRCMessage;
+class IRCProtocol;
 
-class IRCServerContact : public IMContact
+class IRCServerContact : public QObject
 {
 Q_OBJECT
 public:
-	IRCServerContact(const QString &, const QString &, bool, IRCServerManager *);
-	IRCServerContact(IRCServerManager *manager);
+	IRCServerContact(const QString &, const QString &, bool, IRCProtocol *protocol);
+	IRCServerContact(IRCProtocol *protocol);
 	KIRC *engine;
 	const QString &nickName() { return mNickname; };
 	const QString &serverName() { return mServer; };
@@ -54,17 +54,15 @@ public:
 	QString mNickname;
 	QString mServer;
 	bool parentClosing();
-	virtual void rightButtonPressed(const QPoint &);
-	virtual void leftButtonDoubleClicked();
 	QString mQuitMessage;
 	QStringList activeQueries;
 	IRCMessage *messenger;
 	IRCCmdParser *parser;
 	QPtrList<IRCContact> activeContacts;
-	void setmWindow(IRCChatWindow *parent);
 	QVBox *mTabView;
 	bool tryingQuit;
 	bool closing;
+	IRCProtocol *mProtocol;
 private:
 	IRCConsoleView *mConsoleView;
 	KPopupMenu *popup;

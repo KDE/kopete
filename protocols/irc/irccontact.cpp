@@ -35,8 +35,8 @@
 #include <qvbox.h>
 #include <qstringlist.h>
 
-IRCContact::IRCContact(QListViewItem *parent, const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact)
-	: IMContact(parent)
+IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact)
+	: KopeteContact(contact->mProtocol)
 {
 	engine = contact->engine;
 	requestedQuit = false;
@@ -82,8 +82,8 @@ IRCContact::IRCContact(QListViewItem *parent, const QString &server, const QStri
 
 }
 
-IRCContact::IRCContact(QListViewItem *parent, const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, const QStringList pendingMessage)
-	: IMContact(parent)
+IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, const QStringList pendingMessage)
+	: KopeteContact(contact->mProtocol)
 {
 	engine = contact->engine;
 	requestedQuit = false;
@@ -92,7 +92,7 @@ IRCContact::IRCContact(QListViewItem *parent, const QString &server, const QStri
 
 	if (server.isEmpty() == true)
 	{
-		newServer = KGlobal::config()->readEntry("Server", "irc.openprojects.net");
+		newServer = KGlobal::config()->readEntry("Server", "");
 		mServer = newServer;
 	} else {
 		mServer = server;
@@ -131,6 +131,75 @@ IRCContact::IRCContact(QListViewItem *parent, const QString &server, const QStri
 	mPendingMessage = pendingMessage;
 }
 
+IRCContact::IRCContact(const QString &groupName, const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact)
+	: KopeteContact(contact->mProtocol)
+{
+	engine = contact->engine;
+	requestedQuit = false;
+	KGlobal::config()->setGroup("IRC");
+	QString newServer;
+
+	if (server.isEmpty() == true)
+	{
+		newServer = KGlobal::config()->readEntry("Server", "");
+		mServer = newServer;
+	} else {
+		mServer = server;
+	}
+	if (port == 0)
+	{
+		port = KGlobal::config()->readEntry("Port", "6667").toUInt();
+	}
+	QString user = "kopeteuser";
+	QString nick = KGlobal::config()->readEntry("Nickname", "KopeteUser");
+
+	mContact = contact;
+	mTarget = target;
+	mPort = port;
+	mUsername = user;
+	mNickname = nick;
+	mJoinOnConnect = joinOnConnect;
+
+	mContact->activeContacts.append(this);
+
+	init();
+
+	kopeteapp->contactList()->addContact(this, groupName);
+	setName(QString("%1@%2").arg(target).arg(mServer));
+
+	connect(mContact->engine, SIGNAL(connectionClosed()), this, SLOT(slotServerQuit()));
+	connect(mContact->engine, SIGNAL(connectedToServer()), this, SLOT(slotServerReady()));
+
+	if (joinOnConnect == true)
+	{
+		if (mContact->engine->isLoggedIn() == true)
+		{
+			joinNow();
+		} else {
+			QObject::connect(mContact->engine, SIGNAL(connectedToServer()), this, SLOT(joinNow()));
+		}
+	}
+}
+
+KopeteContact::ContactStatus IRCContact::status() const
+{
+	if (mContact->engine->isLoggedIn())
+	{
+		return KopeteContact::Online;
+	}
+	return KopeteContact::Offline;
+}
+
+QString IRCContact::statusIcon() const
+{
+	if (mContact->engine->isLoggedIn())
+	{
+		return "connect_established";
+	} else {
+		return "connect_no";
+	}
+}
+
 void IRCContact::slotServerQuit()
 {
 	if (mTabPage != 0)
@@ -144,11 +213,7 @@ void IRCContact::init()
 	// Split up into init() so we can call this multiple times and have multiple constructors
 	if (mTarget[0] == '#' || mTarget[0] == '!' || mTarget[0] == '&')
 	{
-		setPixmap(0, locate("data", "kopete/pics/irc_privmsg.xpm"));
-		QString oldTarget = mTarget;
-		mTarget = mTarget.remove(0,1);
-		setText(0, mTarget);
-		mTarget = oldTarget;
+		// What to do here, what to do, hmm
 	} else {
 		// Gosh darn it I love NULL pointer checks ;)
 		if (mContact->activeQueries.find(mTarget.lower()) != mContact->activeQueries.end())
@@ -172,7 +237,6 @@ void IRCContact::init()
 			delete this;
 			return;
 		}
-		setText(0, mTarget);
 		if (mContact->activeQueries.find(mTarget.lower()) == mContact->activeQueries.end())
 		{
 			mContact->activeQueries.append(mTarget.lower());
@@ -243,7 +307,7 @@ void IRCContact::slotRemoveThis()
 	}
 }
 
-void IRCContact::rightButtonPressed(const QPoint &point)
+void IRCContact::showContextMenu(QPoint point)
 {
 	popup = new KPopupMenu();
 	popup->insertTitle(mTarget);
@@ -264,7 +328,7 @@ void IRCContact::slotQuitServer()
 	mContact->slotQuitServer();
 }
 
-void IRCContact::leftButtonDoubleClicked()
+void IRCContact::execute()
 {
 	// Null pointer paranoia city, check out IRCServerContact, it's pretty h4x0r too :)
 	if (chatView != 0)
@@ -305,7 +369,7 @@ void IRCContact::slotPart()
 	}
 }
 
-void IRCContact::slotPartedChannel(const QString &originating, const QString &channel, const QString &reason)
+void IRCContact::slotPartedChannel(const QString &originating, const QString &channel, const QString &)
 {
 	if (mTarget.lower() == channel.lower() && originating.left(originating.find("!")).lower() == mContact->mNickname.lower())
 	{
@@ -325,11 +389,6 @@ void IRCContact::unloading()
 		delete mTabPage;
 	}
 	delete this;
-}
-
-void IRCContact::slotIncomingMotd(const QString &motd)
-{
-
 }
 
 void IRCContact::joinNow()

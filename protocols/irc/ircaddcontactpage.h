@@ -1,6 +1,6 @@
 
-#ifndef MSNADDCONTACTPAGE_H
-#define MSNADDCONTACTPAGE_H
+#ifndef IRCADDCONTACTPAGE_H
+#define IRCADDCONTACTPAGE_H
 
 #include <qwidget.h>
 #include <addcontactpage.h>

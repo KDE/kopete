@@ -5,10 +5,15 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kglobal.h>
+#include <klocale.h>
+#include <kmessagebox.h>
+#include <qcombobox.h>
 
 #include "ircaddcontactpage.h"
 #include "ircadd.h"
 #include "ircprotocol.h"
+#include "kopete.h"
+#include "contactlist.h"
 
 IRCAddContactPage::IRCAddContactPage(IRCProtocol *owner, QWidget *parent, const char *name )
 				  : AddContactPage(parent,name)
@@ -17,6 +22,8 @@ IRCAddContactPage::IRCAddContactPage(IRCProtocol *owner, QWidget *parent, const 
 	ircdata = new ircAddUI(this);
 	plugin = owner;
 	QObject::connect(ircdata->chkConnectNow, SIGNAL(clicked()), this, SLOT(connectNowClicked()));
+	ircdata->cmbGroup->insertStringList(kopeteapp->contactList()->groups());
+	ircdata->cmbGroup->setCurrentItem(0);
 }
 IRCAddContactPage::~IRCAddContactPage()
 {
@@ -24,7 +31,25 @@ IRCAddContactPage::~IRCAddContactPage()
 /** No descriptions */
 void IRCAddContactPage::slotFinish()
 {
-	plugin->addContact(ircdata->ircServer->text(), ircdata->addID->text(), ircdata->chkConnectNow->isChecked(), ircdata->chkJoinNow->isChecked());
+	QString currentGroup = ircdata->cmbGroup->currentText();
+	if (currentGroup.isEmpty() == true)
+	{
+		KMessageBox::sorry(this, i18n("<qt>Sorry, you need to have a buddy listed under a group. Please create a group first. You may do this by right clicking in the buddy list and selecting \"Add Group...\"</qt>"), i18n("You must select a group"));
+		return;
+	}
+	QString server = ircdata->ircServer->text();
+	if (server.isEmpty() == true)
+	{
+		KMessageBox::sorry(this, i18n("<qt>Sorry, you need to specify a server to connect to. Please try again. Aborting.</qt>"), i18n("You must input a server"));
+		return;
+	}
+	QString name = ircdata->addID->text();
+	if (name.isEmpty() == true)
+	{
+		KMessageBox::sorry(this, i18n("<qt>Sorry, you need to specify a channel to join, or query to open. Please try again. Aborting.</qt>"), i18n("You must input a contact"));
+		return;
+	}
+	plugin->addContact(currentGroup, server, name, ircdata->chkConnectNow->isChecked(), ircdata->chkJoinNow->isChecked());
 }
 
 void IRCAddContactPage::connectNowClicked()

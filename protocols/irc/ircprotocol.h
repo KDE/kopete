@@ -29,6 +29,7 @@
 
 class IRCServerContact;
 class IRCServerManager;
+class KPopupMenu;
 
 /**
   *@author duncan
@@ -60,7 +61,7 @@ public:
 	QPixmap onlineIcon;
 	QPixmap offlineIcon;
 	QPixmap awayIcon;
-	void addContact(const QString &, const QString &, bool, bool);
+	void addContact(const QString &, const QString &, const QString &, bool, bool);
 	bool mIsConnected;
 	KIRC *engine;
 	QPixmap joinIcon;
@@ -68,13 +69,12 @@ public:
 	IRCServerManager *manager;
 private:
 	void initIcons();
+	KPopupMenu *popup;
 public slots: // Public slots
   /** No descriptions */
 private slots:
-	void slotIncomingMotd(const QString &);
-	void slotConnectedToHost();
-	void slotUserJoinedChannel(const QString &, const QString &);
-	void slotNamesList(const QString &, const QString &, int);
+	void slotIconRightClicked(const QPoint);
+	void slotNewConsole();
 };
 
 #endif

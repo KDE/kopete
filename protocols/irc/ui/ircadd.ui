@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>405</width>
-            <height>217</height>
+            <width>346</width>
+            <height>245</height>
         </rect>
     </property>
     <property name="caption">
@@ -23,8 +23,8 @@
             <rect>
                 <x>5</x>
                 <y>10</y>
-                <width>395</width>
-                <height>200</height>
+                <width>335</width>
+                <height>230</height>
             </rect>
         </property>
         <property name="title">
@@ -44,19 +44,6 @@
             </property>
             <property name="text">
                 <string>Channel or nickname:</string>
-            </property>
-        </widget>
-        <widget class="QLineEdit">
-            <property name="name">
-                <cstring>addID</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>147</x>
-                    <y>19</y>
-                    <width>237</width>
-                    <height>20</height>
-                </rect>
             </property>
         </widget>
         <widget class="QLabel">
@@ -83,7 +70,20 @@
                 <rect>
                     <x>82</x>
                     <y>71</y>
-                    <width>302</width>
+                    <width>240</width>
+                    <height>20</height>
+                </rect>
+            </property>
+        </widget>
+        <widget class="QLineEdit">
+            <property name="name">
+                <cstring>addID</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>147</x>
+                    <y>19</y>
+                    <width>175</width>
                     <height>20</height>
                 </rect>
             </property>
@@ -96,12 +96,41 @@
                 <rect>
                     <x>10</x>
                     <y>45</y>
-                    <width>373</width>
+                    <width>310</width>
                     <height>16</height>
                 </rect>
             </property>
             <property name="text">
                 <string>( for example: #kde or SomeNickName )</string>
+            </property>
+        </widget>
+        <widget class="QComboBox">
+            <property name="name">
+                <cstring>cmbGroup</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>90</x>
+                    <y>105</y>
+                    <width>230</width>
+                    <height>21</height>
+                </rect>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>TextLabel1_3</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>15</x>
+                    <y>105</y>
+                    <width>70</width>
+                    <height>21</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>List in group:</string>
             </property>
         </widget>
         <widget class="QCheckBox">
@@ -111,13 +140,32 @@
             <property name="geometry">
                 <rect>
                     <x>15</x>
-                    <y>100</y>
-                    <width>370</width>
+                    <y>140</y>
+                    <width>310</width>
                     <height>16</height>
                 </rect>
             </property>
             <property name="text">
                 <string>Connect to the IRC server now (If not already connected)</string>
+            </property>
+            <property name="checked">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>chkJoinNow</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>30</x>
+                    <y>165</y>
+                    <width>295</width>
+                    <height>16</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Join channel or show query window on connect</string>
             </property>
             <property name="checked">
                 <bool>true</bool>
@@ -130,9 +178,9 @@
             <property name="geometry">
                 <rect>
                     <x>5</x>
-                    <y>150</y>
-                    <width>385</width>
-                    <height>41</height>
+                    <y>190</y>
+                    <width>320</width>
+                    <height>30</height>
                 </rect>
             </property>
             <property name="text">
@@ -140,25 +188,6 @@
             </property>
             <property name="alignment">
                 <set>WordBreak|AlignVCenter</set>
-            </property>
-        </widget>
-        <widget class="QCheckBox">
-            <property name="name">
-                <cstring>chkJoinNow</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>30</x>
-                    <y>130</y>
-                    <width>355</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Join channel or show query window on connect</string>
-            </property>
-            <property name="checked">
-                <bool>true</bool>
             </property>
         </widget>
     </widget>

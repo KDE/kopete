@@ -18,8 +18,6 @@
 #ifndef IRCCONTACT_H
 #define IRCCONTACT_H
 
-#include <qlistview.h>
-#include "imcontact.h"
 #include <qobject.h>
 #include <qframe.h>
 #include <qpixmap.h>
@@ -31,21 +29,26 @@
 #include "ircprotocol.h"
 #include "ircchatview.h"
 #include "kirc.h"
+#include "kopetecontact.h"
 
 class IRCQueryView;
 class QVBox;
 class QStringList;
 class IRCServerContact;
 
-class IRCContact : public IMContact
+class IRCContact : public KopeteContact
 {
 	Q_OBJECT
 public:
-	IRCContact(QListViewItem *parent, const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact);
-	IRCContact(QListViewItem *parent, const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, const QStringList pengingMessages);
+	IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact);
+	IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, const QStringList pengingMessages);
+	IRCContact(const QString &groupName, const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact);
 	~IRCContact();
-	virtual void rightButtonPressed(const QPoint &);
-	virtual void leftButtonDoubleClicked();
+	// KopeteContact virtual functions
+	virtual ContactStatus status() const;
+	virtual QString statusIcon() const;
+	virtual void execute();
+	virtual void showContextMenu(QPoint);
 	KIRC *engine;
 	bool waitingPart;
 	bool requestedQuit;
@@ -67,10 +70,6 @@ private:
 	IRCQueryView *queryView;
 	void init();
 private slots:
-	void slotIncomingMotd(const QString &);
-//	void slotConnectedToHost();
-//	void slotUserJoinedChannel(const QString &, const QString &);
-//	void slotNamesList(const QString &, const QString &, int);
 	void joinNow();
 	void slotQuitServer();
 //	void slotHop();

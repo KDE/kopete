@@ -19,7 +19,9 @@
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
+#include <kpopupmenu.h>
 #include <klocale.h>
+#include <qcursor.h>
 #include "ircprotocol.h"
 #include "irccontact.h"
 #include <ircadd.h>
@@ -48,6 +50,7 @@ IRCProtocol::IRCProtocol(): QObject(0, "IRC"), KopeteProtocol()
 
 	kdDebug() << "IRC Protocol Plugin: Setting icon offline\n";
 	statusBarIcon->setPixmap(protocolSmallIcon);
+	connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)), this, SLOT(slotIconRightClicked(const QPoint)));
 
 	kdDebug() << "IRC Protocol Plugin: Creating Config Module\n";
 	new IRCPreferences(protocolIcon, this);
@@ -62,9 +65,7 @@ IRCProtocol::IRCProtocol(): QObject(0, "IRC"), KopeteProtocol()
 	KGlobal::config()->setGroup("IRC");
 	if (KGlobal::config()->readBoolEntry("HideConsole", false) == false)
 	{
-		IRCServerContact *contact = new IRCServerContact(manager);
-		IRCChatWindow *window = new IRCChatWindow("(Console)", contact);
-		contact->setmWindow(window);
+		(void)new IRCServerContact(this);
 	}
 
 	/** Autoconnect if is selected in config */
@@ -74,27 +75,20 @@ IRCProtocol::IRCProtocol(): QObject(0, "IRC"), KopeteProtocol()
 	}
 }
 
-void IRCProtocol::slotNamesList(const QString &channel, const QString &name, int userClass)
+void IRCProtocol::slotIconRightClicked(const QPoint)
 {
-	kdDebug() << "IRC Plugin: User \"" << name << "\" in channel \"" << channel << "\" as user class type " << userClass << endl;
+	popup = new KPopupMenu(statusBarIcon);
+	popup->insertTitle("IRC");
+	popup->insertItem(i18n("Open New IRC Console"), this, SLOT(slotNewConsole()));
+	popup->popup(QCursor::pos());
 }
 
-void IRCProtocol::slotConnectedToHost()
+void IRCProtocol::slotNewConsole()
 {
-
+	(void)new IRCServerContact(this);
 }
 
-void IRCProtocol::slotUserJoinedChannel(const QString &user, const QString &channel)
-{
-	kdDebug() << "IRC Plugin: User " << user << " joining channel " << channel << endl;
-}
-
-void IRCProtocol::slotIncomingMotd(const QString &message)
-{
-
-}
-
-void IRCProtocol::addContact(const QString &server, const QString &contact, bool connectNow, bool joinNow)
+void IRCProtocol::addContact(const QString &groupName, const QString &server, const QString &contact, bool connectNow, bool joinNow)
 {
 	KGlobal::config()->setGroup("IRC");
 	QString nick = KGlobal::config()->readEntry("Nickname", "KopeteUser");
@@ -105,12 +99,12 @@ void IRCProtocol::addContact(const QString &server, const QString &contact, bool
 	IRCServerContact *serverContact = manager->findServer(serverAndNick);
 	if (serverContact != 0)
 	{
-		IRCContact *listContact = new IRCContact((QListViewItem *)serverContact, server, contact, 6667, joinNow, serverContact);
+		(void)new IRCContact(groupName, server, contact, 6667, joinNow, serverContact);
 	} else {
-		IRCServerContact *serverItem = manager->addServer(serverAndNick, connectNow);
+		IRCServerContact *serverItem = manager->addServer(serverAndNick, connectNow, this);
 		if (serverItem != 0)
 		{
-			IRCContact *listContact = new IRCContact(serverItem, server, contact, 6667, joinNow, serverItem);
+			(void)new IRCContact(groupName, server, contact, 6667, joinNow, serverItem);
 		}
 	}
 }
