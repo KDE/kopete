@@ -332,7 +332,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		//the LSG syntax depends if it is called from SYN or from LSG
 		if(data.contains(' ') > 4) //FROM LSG
-		{
+		{ //   --NOTE:  since 2003-11-14 , The MSN Server does not accept anymere the LSG command.  So this is maybe useless now.
 			emit groupListed( unescape( data.section( ' ', 4, 4 ) ), data.section( ' ', 3, 3 ).toUInt() );
 		}
 		else //from SYN
@@ -377,12 +377,6 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			emit newContactList();  // remove all contacts datas, msn sends a new contact list
 			m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 0, 0 ) );
 		}
-		else //we have already the contactlist
-		{
-			//receive even the grouplist, since it is not correctly saved
-			sendCommand( "LSG" );
-		}
-
 		// set the status
 		setStatus( m_newstatus );
 	}

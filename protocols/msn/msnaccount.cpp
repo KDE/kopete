@@ -81,6 +81,16 @@ void MSNAccount::loaded()
 	static_cast<MSNContact *>( myself() )->setInfo( "PHH", pluginData( protocol(), "PHH" ) );
 	static_cast<MSNContact *>( myself() )->setInfo( "PHM", pluginData( protocol(), "PHM" ) );
 	static_cast<MSNContact *>( myself() )->setInfo( "PHW", pluginData( protocol(), "PHW" ) );
+
+	//construct the group list
+	//Before 2003-11-14 the MSN server allowed us to download the group list without downloading the whole contactlist, but it's not possible anymore
+	QPtrList<KopeteGroup> groupList = KopeteContactList::contactList()->groups();
+	for ( KopeteGroup *g = groupList.first(); g; g = groupList.next() )
+	{
+		QString groupNumber=g->pluginData( protocol(), accountId() + " id" );
+		if ( !groupNumber.isEmpty() )
+			m_groupList.insert( groupNumber.toUInt() , g );
+	}
 }
 
 void MSNAccount::setAway( bool away, const QString & awayReason )
