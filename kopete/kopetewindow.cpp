@@ -39,11 +39,11 @@ void KopeteWindow::initActions()
                           actionCollection(), "AddContact" );
 
 	actionConnect = new KAction( i18n("&Connect"),"connect_no",0 ,
-                          kopeteapp, SLOT(slotConnect()),
+                          kopeteapp, SLOT(slotConnectAll()),
                           actionCollection(), "Connect" );
 	
 	actionDisconnect = new KAction( i18n("&Disconnect"),"connect_established",0 ,
-                          kopeteapp, SLOT(slotDisconnect()),
+                          kopeteapp, SLOT(slotDisconnectAll()),
                           actionCollection(), "Disconnect" );
     actionDisconnect->setEnabled(false);
 
