@@ -41,7 +41,7 @@
 					<xsl:when test="@direction='1'"><!-- Outgoing -->
 						<xsl:text>To </xsl:text>
 						<span class="KopeteDisplayName">
-							<xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/>
+							<xsl:value-of disable-output-escaping="yes" select="to/contact/@metaContactDisplayName"/>
 						</span>
 						<xsl:text> at </xsl:text>
 						<xsl:value-of select="@time"/>
