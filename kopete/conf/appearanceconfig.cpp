@@ -159,7 +159,6 @@ void AppearanceConfig::save()
 	p->setUseQueue ( mPrfsGeneral->mUseQueueChk->isChecked() );
 	p->setTrayflashNotify ( mPrfsGeneral->mTrayflashNotifyChk->isChecked() );
 	p->setBalloonNotify ( mPrfsGeneral->mBalloonNotifyChk->isChecked() );
-	p->setPopupNotify ( mPrfsGeneral->mPopupNotifyChk->isChecked() );
 	p->setSoundNotify ( mPrfsGeneral->mSoundNotifyChk->isChecked() );
 	p->setSoundIfAway( mPrfsGeneral->mSoundIfAwayChk->isChecked() );
 
@@ -221,7 +220,6 @@ void AppearanceConfig::reopen()
 	mPrfsGeneral->mTrayflashNotifyChk->setChecked ( p->trayflashNotify() );
 	mPrfsGeneral->mBalloonNotifyChk->setChecked ( p->balloonNotify() );
 	mPrfsGeneral->mSoundNotifyChk->setChecked ( p->soundNotify() );
-	mPrfsGeneral->mPopupNotifyChk->setChecked ( p->popupNotify() );
 
 	// "Contact List" TAB
 	mPrfsContactlist->mTreeContactList->setChecked( p->treeView() );
