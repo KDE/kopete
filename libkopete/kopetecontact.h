@@ -122,7 +122,8 @@ signals:
 	/**
 	 * The contact's online status changed
 	 */
-	void statusChanged( KopeteContact *contact, ContactStatus status );
+	void statusChanged( KopeteContact *contact,
+		KopeteContact::ContactStatus status );
 
 	/**
 	 * Deprecated, old signal! Use the above one instead

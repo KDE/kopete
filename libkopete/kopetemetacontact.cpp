@@ -22,8 +22,9 @@
 
 #include <kdebug.h>
 
+// FIXME: Add parent!!
 KopeteMetaContact::KopeteMetaContact()
-: KopeteContact( KopeteContactList::contactList() )
+: QObject( KopeteContactList::contactList() )
 {
 }
 
@@ -44,9 +45,10 @@ void KopeteMetaContact::addContact( KopeteContact *c,
 	{
 		m_contacts.append( c );
 
-		connect( c, SIGNAL( statusChanged( KopeteContact *, ContactStatus ) ),
+		connect( c, SIGNAL( statusChanged( KopeteContact *,
+			KopeteContact::ContactStatus ) ),
 			this, SLOT( slotContactStatusChanged( KopeteContact *,
-			ContactStatus ) ) );
+			KopeteContact::ContactStatus ) ) );
 
 		// FIXME: Naming!!!
 		setName( c->name() );
@@ -164,19 +166,19 @@ QString KopeteMetaContact::statusIcon() const
 	}
 }
 
-KopeteContact::ContactStatus KopeteMetaContact::status() const
+KopeteMetaContact::OnlineStatus KopeteMetaContact::status() const
 {
 	QPtrListIterator<KopeteContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
-		if( it.current()->status() == Online )
+		if( it.current()->status() == KopeteContact::Online )
 			return Online;
 	}
 
 	it.toFirst();
 	for( ; it.current(); ++it )
 	{
-		if( it.current()->status() == Away )
+		if( it.current()->status() == KopeteContact::Away )
 			return Away;
 	}
 
@@ -211,10 +213,10 @@ bool KopeteMetaContact::isReachable() const
 }
 
 void KopeteMetaContact::slotContactStatusChanged( KopeteContact * /* c */,
-	ContactStatus /* s */ )
+	KopeteContact::ContactStatus /* s */ )
 {
 	kdDebug() << "KopeteMetaContact::slotContactStatusChanged" << endl;
-	emit statusChanged();
+	emit onlineStatusChanged( this, status() );
 }
 
 #include "kopetemetacontact.moc"

@@ -25,7 +25,7 @@
  * @author Martijn Klingens <klingens@kde.org>
  *
  */
-class KopeteMetaContact : public KopeteContact
+class KopeteMetaContact : public QObject
 {
 	Q_OBJECT
 
@@ -66,11 +66,16 @@ public:
 	bool isOnline() const;
 
 	/**
+	 * Contact's status
+	 */
+	enum OnlineStatus { Online, Away, Offline };
+
+	/**
 	 * Return more fine-grained status.
 	 * Online means at least one sub-contact is online, away means at least
 	 * one is away, but nobody is online and offline speaks for itself
 	 */
-	ContactStatus status() const;
+	OnlineStatus status() const;
 
 	/**
 	 * Like isOnline, but returns true even if the contact is not online, but
@@ -104,11 +109,19 @@ public slots:
 	 */
 	void startChat();
 
+signals:
+	/**
+	 * The contact's online status changed
+	 */
+	void onlineStatusChanged( KopeteMetaContact *contact,
+		KopeteMetaContact::OnlineStatus status );
+
 private slots:
 	/**
 	 * One of the child contact's online status changed
 	 */
-	void slotContactStatusChanged( KopeteContact *c, ContactStatus s );
+	void slotContactStatusChanged( KopeteContact *c,
+		KopeteContact::ContactStatus s );
 
 private:
 	QPtrList<KopeteContact> m_contacts;
