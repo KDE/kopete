@@ -84,14 +84,14 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 		}
 		case 215:
 		{
-			QString msg = i18n( "The user %1 is already on this chat.\n" ).arg( m_msgHandle );
+			QString msg = i18n( "The user %1 is already on this chat." ).arg( m_msgHandle );
 			KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 			userLeftChat(m_msgHandle);
 			break;
 		}
 		case 216:
 		{
-			QString msg = i18n( "The user %1 is online but has blocked you.\n"
+			QString msg = i18n( "The user %1 is online but has blocked you. \n"
 				"You can't start to chat with them." ).arg( m_msgHandle );
 			KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 			userLeftChat(m_msgHandle);
@@ -100,7 +100,7 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 		case 217:
 		{
 			// TODO: we need to know the nickname instead of the handle.
-			QString msg = i18n( "The user %1 is currently not signed in.\n"
+			QString msg = i18n( "The user %1 is currently not signed in. \n"
 				"Messages will not be delivered." ).arg( m_msgHandle );
 			KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 			userLeftChat(m_msgHandle);

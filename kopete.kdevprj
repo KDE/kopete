@@ -131,7 +131,7 @@ email=kopete-devel@kde.org
 kdevprj_version=1.3
 lfv_open_groups=User Interface
 make_options=\s-j1
-makefiles=./Makefile.am,contrib/Makefile.am,doc-api/Makefile.am,doc-api/html/Makefile.am,sounds/Makefile.am,protocols/Makefile.am,protocols/gadu/Makefile.am,protocols/gadu/pixmaps/Makefile.am,protocols/gadu/ui/Makefile.am,protocols/gadu/lib/Makefile.am,protocols/winpopup/Makefile.am,protocols/winpopup/ui/Makefile.am,protocols/winpopup/pixmaps/Makefile.am,protocols/winpopup/libwinpopup/Makefile.am,protocols/icq_new/Makefile.am,protocols/icq_new/ui/Makefile.am,protocols/icq_new/pixmaps/Makefile.am,protocols/icq_new/libicq/Makefile.am,protocols/yahoo/Makefile.am,protocols/yahoo/ui/Makefile.am,protocols/yahoo/pixmaps/Makefile.am,protocols/msn/Makefile.am,protocols/msn/ui/Makefile.am,protocols/msn/pixmaps/Makefile.am,protocols/msn/libkmerlin/Makefile.am,protocols/jabber/Makefile.am,protocols/jabber/ui/Makefile.am,protocols/jabber/psi/Makefile.am,protocols/jabber/pixmaps/Makefile.am,protocols/irc/Makefile.am,protocols/irc/ui/Makefile.am,protocols/irc/pixmaps/Makefile.am,protocols/irc/libkirc/Makefile.am,protocols/icq/Makefile.am,protocols/icq/ui/Makefile.am,protocols/icq/pixmaps/Makefile.am,protocols/icq/kxengine/Makefile.am,protocols/aim/Makefile.am,protocols/aim/ui/Makefile.am,protocols/aim/pixmaps/Makefile.am,protocols/aim/taim/Makefile.am,protocols/aim/data/Makefile.am,plugins/Makefile.am,plugins/autoaway/Makefile.am,pics/Makefile.am,pics/emoticons/Makefile.am,pics/emoticons/set1/Makefile.am,pics/emoticons/phpBB/Makefile.am,pics/emoticons/Default/Makefile.am,libkopete/Makefile.am,libkopete/ui/Makefile.am,kopete/Makefile.am,debian/Makefile.am,Makefile.am,plugins/translator/Makefile.am,plugins/contactnotes/Makefile.am,protocols/oscar/oscarsocket/Makefile.am,protocols/oscar/Makefile.am,plugins/importer/Makefile.am,plugins/connectionstatus/Makefile.am,protocols/sms/Makefile.am,plugins/cryptography/Makefile.am,protocols/sms/services/Makefile.am,plugins/autoanswer/Makefile.am
+makefiles=./Makefile.am,contrib/Makefile.am,doc-api/Makefile.am,doc-api/html/Makefile.am,sounds/Makefile.am,protocols/Makefile.am,protocols/gadu/Makefile.am,protocols/gadu/pixmaps/Makefile.am,protocols/gadu/ui/Makefile.am,protocols/gadu/lib/Makefile.am,protocols/winpopup/Makefile.am,protocols/winpopup/ui/Makefile.am,protocols/winpopup/pixmaps/Makefile.am,protocols/winpopup/libwinpopup/Makefile.am,protocols/icq_new/Makefile.am,protocols/icq_new/ui/Makefile.am,protocols/icq_new/pixmaps/Makefile.am,protocols/icq_new/libicq/Makefile.am,protocols/yahoo/Makefile.am,protocols/yahoo/ui/Makefile.am,protocols/yahoo/pixmaps/Makefile.am,protocols/msn/Makefile.am,protocols/msn/ui/Makefile.am,protocols/msn/pixmaps/Makefile.am,protocols/msn/libkmerlin/Makefile.am,protocols/jabber/Makefile.am,protocols/jabber/ui/Makefile.am,protocols/jabber/psi/Makefile.am,protocols/jabber/pixmaps/Makefile.am,protocols/irc/Makefile.am,protocols/irc/ui/Makefile.am,protocols/irc/pixmaps/Makefile.am,protocols/irc/libkirc/Makefile.am,protocols/icq/Makefile.am,protocols/icq/ui/Makefile.am,protocols/icq/pixmaps/Makefile.am,protocols/icq/kxengine/Makefile.am,protocols/aim/Makefile.am,protocols/aim/ui/Makefile.am,protocols/aim/pixmaps/Makefile.am,protocols/aim/taim/Makefile.am,protocols/aim/data/Makefile.am,plugins/Makefile.am,plugins/autoaway/Makefile.am,pics/Makefile.am,pics/emoticons/Makefile.am,pics/emoticons/set1/Makefile.am,pics/emoticons/phpBB/Makefile.am,pics/emoticons/Default/Makefile.am,libkopete/Makefile.am,libkopete/ui/Makefile.am,kopete/Makefile.am,debian/Makefile.am,Makefile.am,plugins/translator/Makefile.am,plugins/contactnotes/Makefile.am,protocols/oscar/oscarsocket/Makefile.am,protocols/oscar/Makefile.am,plugins/importer/Makefile.am,plugins/connectionstatus/Makefile.am,protocols/sms/Makefile.am,plugins/cryptography/Makefile.am,protocols/sms/services/Makefile.am,plugins/autoanswer/Makefile.am,kio_kopete/Makefile.am,kopete/conf/Makefile.am,plugins/nowlistening/Makefile.am,kopete/addcontactwizard/Makefile.am
 modifyMakefiles=false
 project_name=kopete
 project_type=normal_empty
@@ -155,7 +155,7 @@ groups=Headers,Sources,GNU,Translations,User Interface,Desktop,Others
 files=jabbermap.cpp,jabbermap.h,dlgjabberrename.cpp,dlgjabberrename.h
 sharedlib_LDFLAGS=-version-info 0:0:0
 sharedlib_rootname=.
-sub_dirs=protocols,plugins,libkopete
+sub_dirs=protocols,plugins,libkopete,kio_kopete,kopete
 type=static_library
 
 [contrib/Makefile.am]
@@ -735,10 +735,91 @@ install=false
 install_location=
 type=HEADER
 
-[kopete/Makefile.am]
-files=kopete/eventsrc,kopete/hi16-app-kopete.png,kopete/hi22-app-kopete.png,kopete/hi32-app-kopete.png,kopete/hi48-app-kopete.png,kopete/kopete.desktop,kopete/kopeteui.rc,kopete/main.cpp,kopete/kopeteiface.cpp,kopete/kopeteiface.h,
+[kio_kopete/Makefile.am]
+files=kio_kopete/kio_kopete.cpp,kio_kopete/kio_kopete.h
+sharedlib_LDFLAGS=-version-info 0:0:0
+sharedlib_rootname=kio_kopete
 sub_dirs=
-type=normal
+type=static_library
+
+[kio_kopete/kio_kopete.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kio_kopete/kio_kopete.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/Makefile.am]
+files=kopete/eventsrc,kopete/hi16-app-kopete.png,kopete/hi22-app-kopete.png,kopete/hi32-app-kopete.png,kopete/hi48-app-kopete.png,kopete/kopete.desktop,kopete/kopeteui.rc,kopete/main.cpp,kopete/kopeteiface.cpp,kopete/kopeteiface.h,kopete/kopete.cpp,kopete/kopete.h,kopete/kopetecontactlistview.cpp,kopete/kopetecontactlistview.h,kopete/kopetegroupviewitem.cpp,kopete/kopetegroupviewitem.h,kopete/kopetemetacontactlvi.cpp,kopete/kopetemetacontactlvi.h,kopete/kopetewindow.cpp,kopete/kopetewindow.h,kopete/statusbaricon.cpp,kopete/statusbaricon.h
+sub_dirs=conf,addcontactwizard
+type=static_library
+
+[kopete/addcontactwizard/Makefile.am]
+files=kopete/addcontactwizard/addcontactwizard.cpp,kopete/addcontactwizard/protocolboxitem.cpp,kopete/addcontactwizard/protocolboxitem.h,kopete/addcontactwizard/addcontactwizard.h
+sharedlib_LDFLAGS=-version-info 0:0:0
+sharedlib_rootname=addcontactwizard
+sub_dirs=
+type=static_library
+
+[kopete/addcontactwizard/addcontactwizard.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/addcontactwizard/addcontactwizard.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/addcontactwizard/protocolboxitem.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/addcontactwizard/protocolboxitem.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/conf/Makefile.am]
+files=kopete/conf/appearanceconfig.cpp,kopete/conf/appearanceconfig.h,kopete/conf/pluginconfig.cpp,kopete/conf/pluginconfig.h
+sharedlib_LDFLAGS=-version-info 0:0:0
+sharedlib_rootname=conf
+sub_dirs=
+type=static_library
+
+[kopete/conf/appearanceconfig.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/conf/appearanceconfig.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/conf/pluginconfig.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/conf/pluginconfig.h]
+dist=true
+install=false
+install_location=
+type=HEADER
 
 [kopete/eventsrc]
 dist=true
@@ -770,11 +851,47 @@ install=false
 install_location=
 type=DATA
 
+[kopete/kopete.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
 [kopete/kopete.desktop]
 dist=true
 install=false
 install_location=
 type=DATA
+
+[kopete/kopete.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/kopetecontactlistview.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/kopetecontactlistview.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/kopetegroupviewitem.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/kopetegroupviewitem.h]
+dist=true
+install=false
+install_location=
+type=HEADER
 
 [kopete/kopeteiface.cpp]
 dist=true
@@ -788,11 +905,35 @@ install=false
 install_location=
 type=HEADER
 
+[kopete/kopetemetacontactlvi.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/kopetemetacontactlvi.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
 [kopete/kopeteui.rc]
 dist=true
 install=false
 install_location=
 type=DATA
+
+[kopete/kopetewindow.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/kopetewindow.h]
+dist=true
+install=false
+install_location=
+type=HEADER
 
 [kopete/main.cpp]
 dist=true
@@ -800,8 +941,20 @@ install=false
 install_location=
 type=SOURCE
 
+[kopete/statusbaricon.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/statusbaricon.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
 [libkopete/Makefile.am]
-files=libkopete/kopete.cpp,libkopete/kopete.h,libkopete/kopetecontact.cpp,libkopete/plugin.cpp,libkopete/kopeteevent.cpp,libkopete/kopeteevent.h,libkopete/kopetemessage.cpp,libkopete/kopetemessage.h,libkopete/kopetemessagemanager.cpp,libkopete/kopetemessagemanager.h,libkopete/kopetemessagemanagerfactory.cpp,libkopete/kopetemessagemanagerfactory.h,libkopete/kopetenotifier.cpp,libkopete/kopetenotifier.h,libkopete/kopeteprotocol.cpp,libkopete/kopeteprotocol.h,libkopete/kopetecontactlist.cpp,libkopete/kopetecontactlist.h,libkopete/kopetecontact.h,libkopete/plugin.h,libkopete/kopetemessagelog.h,libkopete/kopeteaway.h,libkopete/kopetemessagelog.cpp,libkopete/kopetecontactlist.h.orig,libkopete/kopetemetacontact.cpp,libkopete/kopetetransfermanager.cpp,libkopete/kopetetransfermanager.h,libkopete/kopetemetacontact.h,libkopete/kopetecontactlist.cpp.orig,libkopete/kopeteuserpreferences.cpp,libkopete/kopeteuserpreferences.h,libkopete/kopeteaway.cpp,libkopete/kopeteawaydialog.cpp,libkopete/kopeteprefs.cpp,libkopete/pluginloader.cpp,libkopete/pluginloader.h,libkopete/kopeteprefs.h,libkopete/kopeteawaydialog.h,libkopete/kopeteemoticons.cpp,libkopete/kopeteemoticons.h,libkopete/kopeteplugin.cpp,libkopete/kopeteplugin.h,libkopete/kopetegroup.cpp,libkopete/kopetegroup.h
+files=libkopete/kopete.cpp,libkopete/kopete.h,libkopete/kopetecontact.cpp,libkopete/plugin.cpp,libkopete/kopeteevent.cpp,libkopete/kopeteevent.h,libkopete/kopetemessage.cpp,libkopete/kopetemessage.h,libkopete/kopetemessagemanager.cpp,libkopete/kopetemessagemanager.h,libkopete/kopetemessagemanagerfactory.cpp,libkopete/kopetemessagemanagerfactory.h,libkopete/kopetenotifier.cpp,libkopete/kopetenotifier.h,libkopete/kopeteprotocol.cpp,libkopete/kopeteprotocol.h,libkopete/kopetecontactlist.cpp,libkopete/kopetecontactlist.h,libkopete/kopetecontact.h,libkopete/plugin.h,libkopete/kopetemessagelog.h,libkopete/kopeteaway.h,libkopete/kopetemessagelog.cpp,libkopete/kopetecontactlist.h.orig,libkopete/kopetemetacontact.cpp,libkopete/kopetetransfermanager.cpp,libkopete/kopetetransfermanager.h,libkopete/kopetemetacontact.h,libkopete/kopetecontactlist.cpp.orig,libkopete/kopeteuserpreferences.cpp,libkopete/kopeteuserpreferences.h,libkopete/kopeteaway.cpp,libkopete/kopeteawaydialog.cpp,libkopete/kopeteprefs.cpp,libkopete/pluginloader.cpp,libkopete/pluginloader.h,libkopete/kopeteprefs.h,libkopete/kopeteawaydialog.h,libkopete/kopeteemoticons.cpp,libkopete/kopeteemoticons.h,libkopete/kopeteplugin.cpp,libkopete/kopeteplugin.h,libkopete/kopetegroup.cpp,libkopete/kopetegroup.h,libkopete/kopeteidentitymanager.cpp,libkopete/kopeteidentitymanager.h
 sub_dirs=ui,
 type=static_library
 
@@ -908,6 +1061,18 @@ install_location=
 type=SOURCE
 
 [libkopete/kopetegroup.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[libkopete/kopeteidentitymanager.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[libkopete/kopeteidentitymanager.h]
 dist=true
 install=false
 install_location=
@@ -1657,7 +1822,7 @@ install_location=
 type=DATA
 
 [plugins/Makefile.am]
-sub_dirs=autoaway,translator,contactnotes,importer,connectionstatus,cryptography,autoanswer
+sub_dirs=autoaway,translator,contactnotes,importer,connectionstatus,cryptography,autoanswer,nowlistening
 type=normal
 
 [plugins/autoanswer/Makefile.am]
@@ -1933,6 +2098,37 @@ dist=true
 install=false
 install_location=
 type=SOURCE
+
+[plugins/nowlistening/Makefile.am]
+files=plugins/nowlistening/nowlisteningplugin.cpp,plugins/nowlistening/nowlisteningplugin.h,plugins/nowlistening/nowlisteningpreferences.cpp,plugins/nowlistening/nowlisteningpreferences.h
+sharedlib_LDFLAGS=-version-info 0:0:0
+sharedlib_rootname=nowlistening
+sub_dirs=
+type=static_library
+
+[plugins/nowlistening/nowlisteningplugin.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[plugins/nowlistening/nowlisteningplugin.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[plugins/nowlistening/nowlisteningpreferences.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[plugins/nowlistening/nowlisteningpreferences.h]
+dist=true
+install=false
+install_location=
+type=HEADER
 
 [plugins/translator/Makefile.am]
 files=plugins/translator/translatorplugin.cpp,plugins/translator/translatorplugin.h,plugins/translator/translatorprefsbase.ui,plugins/translator/translatorprefs.cpp,plugins/translator/translatorprefs.h,plugins/translator/translatordialog.cpp,plugins/translator/translatordialog.h

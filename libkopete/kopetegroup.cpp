@@ -78,11 +78,23 @@ QString KopeteGroup::toXML()
 	xml += QString::fromLatin1( "    <display-name>" ) + QStyleSheet::escape( m_displayName ) + QString::fromLatin1( "</display-name>\n" );
 
 	// Store other plugin data
-	QMap<QString, QString>::ConstIterator it;
-	for( it = m_pluginData.begin(); it != m_pluginData.end(); ++it )
+	if( !m_pluginData.isEmpty() )
 	{
-		xml += QString::fromLatin1( "    <plugin-data plugin-id=\"" ) + QStyleSheet::escape( it.key() ) + QString::fromLatin1( "\">" ) +
-				QStyleSheet::escape( it.data() ) + QString::fromLatin1( "</plugin-data>\n" );
+		QMap<QString, QMap<QString, QString> >::ConstIterator pluginIt;
+		for( pluginIt = m_pluginData.begin(); pluginIt != m_pluginData.end(); ++pluginIt )
+		{
+			xml += QString::fromLatin1( "    <plugin-data plugin-id=\"" ) + QStyleSheet::escape( pluginIt.key() ) + QString::fromLatin1( "\">\n" );
+
+			QMap<QString, QString>::ConstIterator it;
+			for( it = pluginIt.data().begin(); it != pluginIt.data().end(); ++it )
+			{
+				if(!it.key().isNull())
+					xml += QString::fromLatin1( "      <plugin-data-field key=\"" ) + QStyleSheet::escape( it.key() ) + QString::fromLatin1( "\">" )
+						+ QStyleSheet::escape( it.data() ) + QString::fromLatin1( "</plugin-data-field>\n" );
+			}
+
+			xml += QString::fromLatin1( "    </plugin-data>\n" );
+		}
 	}
 
 	xml += QString::fromLatin1( "  </kopete-group>\n" );
@@ -114,10 +126,24 @@ bool KopeteGroup::fromXML( const QDomElement& data )
 		}
 		else if( groupElement.tagName() == QString::fromLatin1( "plugin-data" ) )
 		{
+			QMap<QString, QString> pluginData;
 			QString pluginId = groupElement.attribute( QString::fromLatin1( "plugin-id" ), QString::null );
-			m_pluginData.insert( pluginId, groupElement.text() );
+
+			QDomNode field = groupElement.firstChild();
+			while( !field.isNull() )
+			{
+				QDomElement fieldElement = field.toElement();
+				if( fieldElement.tagName() == QString::fromLatin1( "plugin-data-field" ) )
+				{
+					pluginData.insert( fieldElement.attribute( QString::fromLatin1( "key" ),
+						QString::fromLatin1( "undefined-key" ) ), fieldElement.text() );
+				}
+				field = field.nextSibling();
+			}
+
+			m_pluginData.insert( pluginId, pluginData );
 			if( m_type == TopLevel ) //FIXME:
-				toplevel->m_pluginData.insert( pluginId, groupElement.text() );
+				toplevel->m_pluginData.insert( pluginId, pluginData );
 		}
 
 		groupData = groupData.nextSibling();
@@ -151,36 +177,17 @@ void KopeteGroup::setType(GroupType t)
 	m_type=t;
 }
 
-void KopeteGroup::setPluginData(KopetePlugin *p, QStringList strList )
+QString KopeteGroup::pluginData( KopetePlugin *p, const QString &key ) const
 {
-	if(strList.isEmpty())
-	{
-		m_pluginData.remove( QString::fromLatin1( p->pluginId() ) );
-		return;
-	}
+	if( !m_pluginData.contains( QString::fromLatin1( p->pluginId() ) ) || !m_pluginData[ QString::fromLatin1( p->pluginId() ) ].contains( key ) )
+		return QString::null;
 
-	for ( QStringList::iterator it = strList.begin(); it != strList.end(); ++it )
-	{
-		//escape '||' I don't like this but it is needed
-		( *it ).replace( QRegExp( QString::fromLatin1( "\\\\" ) ),
-			QString::fromLatin1( "\\\\") ).replace( QRegExp( QString::fromLatin1( "\\|" ) ), QString::fromLatin1( "\\|;" ) );
-	}
-	m_pluginData[ QString::fromLatin1( p->pluginId() ) ] = strList.join( QString::fromLatin1( "||" ) );
+	return m_pluginData[ QString::fromLatin1( p->pluginId() ) ][ key ];
 }
 
-QStringList KopeteGroup::pluginData(KopetePlugin *p)
+void KopeteGroup::setPluginData( KopetePlugin *p, const QString &key, const QString &value )
 {
-	if( !m_pluginData.contains( QString::fromLatin1( p->pluginId() ) ) )
-		return QStringList();
-
-	QStringList strList = QStringList::split( QString::fromLatin1( "||" ), m_pluginData[ QString::fromLatin1( p->pluginId() ) ] );
-	for ( QStringList::iterator it2 = strList.begin(); it2 != strList.end(); ++it2 )
-	{
-		//unescape '||'
-		( *it2 ).replace( QRegExp( QString::fromLatin1( "\\\\\\|;" ) ),
-			QString::fromLatin1( "|" ) ).replace( QRegExp( QString::fromLatin1( "\\\\\\\\" ) ), QString::fromLatin1( "\\") );
-	}
-	return strList;
+	m_pluginData[ QString::fromLatin1( p->pluginId() ) ][ key ] = value;
 }
 
 

@@ -60,11 +60,18 @@ public:
 	bool expanded() { return m_expanded; }
 
 	/**
-	 * Set or get data specific for each plugin.
-	 * Theses data are saved to the contactlist
+	 * Convenience method to store or change only a single field of the
+	 * plugin data. As with the other @ref setPluginData() method, protocols
+	 * are advised not to use this method and reimplement
 	 */
-	void setPluginData(KopetePlugin *p, QStringList value );
-	QStringList pluginData(KopetePlugin *p) ;
+	void setPluginData( KopetePlugin *p, const QString &key, const QString &value );
+
+	/**
+	 * Convenience method to retrieve only a single field from the plugin
+	 * data. See @ref setPluginData().
+	 */
+	QString pluginData( KopetePlugin *p, const QString &key ) const;
+
 
 
 	static KopeteGroup *toplevel;
@@ -74,7 +81,11 @@ private:
 	QString m_displayName;
 	GroupType m_type;
 	bool m_expanded;
-  	QMap<QString, QString> m_pluginData;
+	/**
+	 * Data to store in the XML file
+	 */
+	QMap<QString, QMap<QString, QString> > m_pluginData;
+
 
 signals: 
   void renamed(KopeteGroup* , const QString& );
