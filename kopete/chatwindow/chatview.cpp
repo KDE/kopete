@@ -58,6 +58,7 @@
 #include "kopeteaccount.h"
 #include "kopeteglobal.h"
 #include "kopetecontactlist.h"
+#include "kopeteemoticons.h"
 
 #include <ktabwidget.h>
 
@@ -1345,6 +1346,13 @@ const QString ChatView::addNickLinks( const QString &html ) const
 	for ( QPtrListIterator<Kopete::Contact> it( members ); it.current(); ++it )
 	{
 		QString nick = (*it)->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
+		QString parsed_nick = KopeteEmoticons::parseEmoticons( nick );
+		
+		if ( nick.compare( parsed_nick ) )
+		{
+			retVal.replace( QRegExp( QString::fromLatin1("([\\s&;>])%1([\\s&;<:])")
+					.arg( QRegExp::escape( parsed_nick ) )  ), QString::fromLatin1("\\1%1\\2").arg( nick ) );
+		}
 		if ( nick.length() > 0 && ( retVal.find( nick ) > -1 ) )
 		{
 			retVal.replace(
@@ -1355,6 +1363,10 @@ const QString ChatView::addNickLinks( const QString &html ) const
 			);
 		}
 	}
+	QString nick = m_manager->user()->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
+	retVal.replace( QRegExp( QString::fromLatin1("([\\s&;>])%1([\\s&;<:])")
+		.arg( QRegExp::escape( KopeteEmoticons::parseEmoticons( nick ) ) )  ), QString::fromLatin1("\\1%1\\2").arg( nick ) );
+
 
 	return retVal;
 }

@@ -49,7 +49,7 @@ public:
 	 * If nicks is provided, they will not be parsed if they 
 	 * exist in message.
 	 */
-	static QString parseEmoticons ( QString message, QStringList* nicks = 0 );
+	static QString parseEmoticons ( QString message );
 
 	/**
 	 * returns the path to an animation or pixmap
