@@ -169,54 +169,6 @@
                 </spacer>
             </hbox>
         </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>TextLabel3_2</cstring>
-            </property>
-            <property name="font">
-                <font>
-                    <bold>1</bold>
-                </font>
-            </property>
-            <property name="text">
-                <string>Logging</string>
-            </property>
-        </widget>
-        <widget class="QFrame">
-            <property name="name">
-                <cstring>Frame3_3</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>1</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="frameShape">
-                <enum>HLine</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Sunken</enum>
-            </property>
-        </widget>
-        <widget class="QCheckBox">
-            <property name="name">
-                <cstring>mLogAll</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="text">
-                <string>&amp;Log conversations</string>
-            </property>
-        </widget>
         <spacer>
             <property name="name">
                 <cstring>spacer4</cstring>
@@ -329,4 +281,7 @@
     </connection>
 </connections>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kurllabel.h</includehint>
+</includehints>
 </UI>
