@@ -1,0 +1,18 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Icon=alias
+ServiceTypes=Kopete/Plugin
+X-KDE-Library=kopete_alias
+X-KDE-PluginInfo-Author=Jason Keirstead
+X-KDE-PluginInfo-Email=jason@keirstead.org
+X-KDE-PluginInfo-Name=kopete_alias
+X-KDE-PluginInfo-Version=0.8.0
+X-KDE-PluginInfo-Website=http://kopete.kde.org
+X-KDE-PluginInfo-Category=Plugins
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=false
+Name=Alias
+Comment=Adds custom aliases for commands
+
