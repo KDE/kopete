@@ -218,9 +218,7 @@ void OscarAccount::slotGotIM(OscarSocket::OscarMessageType type, QString &messag
 			sender << "'" << endl;
 
 		if (addContact(tocNormalize(sender), sender, 0L, QString::null, true))
-		{
 			contact = static_cast<OscarContact*>(contacts()[tocNormalize(sender)]);
-		}
 	}
 
 	// AIM usually contains HTML, do not escape then

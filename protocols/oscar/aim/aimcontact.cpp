@@ -298,13 +298,30 @@ void AIMContact::gotIM(OscarSocket::OscarMessageType /*type*/, const QString &me
 
 void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 {
-	QString plainMessage = message.plainBody();
-
-	if (plainMessage.isEmpty()) // no text, do nothing
+	if (message.plainBody().isEmpty()) // no text, do nothing
 		return;
 
+	// ===================================================================================
+
+	QString finalMessage = "<HTML>";
+	if(message.bg().isValid())
+		finalMessage += "<BODY BGCOLOR=\"" + message.bg().name() + "\">";
+	else
+		finalMessage += "<BODY>";
+	if(message.fg().isValid())
+		finalMessage += "<FONT COLOR=\"" + message.fg().name() + "\">";
+	// Cannot use KopeteMessage::escape() because AIM only supports very few
+	// tags, we just want special chars to get html-ized
+	finalMessage += message.escapedBody().replace("<br />" , "<br>");
+//	finalMessage += QStyleSheet::escape(message.plainBody());
+	if(message.fg().isValid())
+		finalMessage += "</FONT>";
+	finalMessage += "</BODY></HTML>";
+
+	// ===================================================================================
+
 	// Check to see if we're even online
-	if (!mAccount->isConnected())
+	if(!mAccount->isConnected())
 	{
 		KMessageBox::sorry(qApp->mainWidget(),
 			i18n("<qt>You must be logged on to AIM before you can send a message to a user.</qt>"),
@@ -313,10 +330,8 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	}
 
 	// Check to see if the person we're sending the message to is online
-	if (
-			( mListContact->status() == static_cast<int>( OSCAR_OFFLINE ) ) ||
-			( onlineStatus().status() == KopeteOnlineStatus::Offline )
-		)
+	if((mListContact->status() == static_cast<int>(OSCAR_OFFLINE)) ||
+		(onlineStatus().status() == KopeteOnlineStatus::Offline))
 	{
 		KMessageBox::sorry(qApp->mainWidget(),
 			i18n("<qt>This user is not online at the moment for you to message him/her. "
@@ -329,7 +344,7 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	// we might be able to do that in AIM and we might also convert
 	// HTML to RTF for ICQ type-2 messages  [mETz]
 	// Will asks: Does this still apply in AIM?
-	mAccount->engine()->sendIM(plainMessage, userInfo(), false);
+	mAccount->engine()->sendIM(finalMessage, userInfo(), false);
 
 	// Show the message we just sent in the chat window
 	manager()->appendMessage(message);
