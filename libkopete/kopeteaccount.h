@@ -437,7 +437,7 @@ private slots:
 	/**
 	 * Track the deletion of a Contact and cleanup
 	 */
-	void slotContactDestroyed( Kopete::Contact * );
+	void contactDestroyed( Kopete::Contact * );
 
 	/**
 	 * Our online status changed.

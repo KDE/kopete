@@ -181,10 +181,10 @@ void Account::registerContact( Contact *c )
 {
 	d->contacts.insert( c->contactId(), c );
 	QObject::connect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ),
-		SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
+		SLOT( contactDestroyed( Kopete::Contact * ) ) );
 }
 
-void Account::slotContactDestroyed( Contact *c )
+void Account::contactDestroyed( Contact *c )
 {
 	d->contacts.remove( c->contactId() );
 }
