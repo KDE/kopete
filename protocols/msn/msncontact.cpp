@@ -456,7 +456,7 @@ void MSNContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
 	}
 
 	if( ( to->displayName().isNull() || to->type() != KopeteGroup::Classic ) &&
-		to->pluginData(protocol(),"id").isEmpty() && m_serverGroups.count() == 1 )
+		to->pluginData(protocol(), identity()->identityId() + " id").isEmpty() && m_serverGroups.count() == 1 )
 	{
 		// If this contact is in the last group and the contact moved to top level, do nothing
 		// (except when group 0 is the top-level group)
@@ -469,10 +469,10 @@ void MSNContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
 	{
 		addToGroup( to );
 
-		if( !from->pluginData(protocol(),"id").isEmpty() )
+		if( !from->pluginData(protocol(),identity()->identityId() + " id").isEmpty() )
 		{
-			if( m_serverGroups.contains( from->pluginData(protocol(),"id").toUInt() ) )
-				notify->removeContact( contactId(), from->pluginData(protocol(),"id").toUInt(), MSNProtocol::FL );
+			if( m_serverGroups.contains( from->pluginData(protocol(),identity()->identityId() + " id").toUInt() ) )
+				notify->removeContact( contactId(), from->pluginData(protocol(),identity()->identityId() + " id").toUInt(), MSNProtocol::FL );
 		}
 	}
 	else
@@ -516,10 +516,10 @@ void MSNContact::addToGroup( KopeteGroup *group )
 	MSNNotifySocket *notify = static_cast<MSNIdentity*>( identity() )->notifySocket();
 	if( notify )
 	{
-		if( !group->pluginData( protocol() , "id" ).isEmpty() )
+		if( !group->pluginData( protocol() , identity()->identityId() + " id" ).isEmpty() )
 		{
-			if( !m_serverGroups.contains( group->pluginData(protocol(),"id").toUInt() ) )
-				notify->addContact( contactId(), displayName(), group->pluginData(protocol(),"id").toUInt(), MSNProtocol::FL );
+			if( !m_serverGroups.contains( group->pluginData(protocol(),identity()->identityId() + " id").toUInt() ) )
+				notify->addContact( contactId(), displayName(), group->pluginData(protocol(),identity()->identityId() + " id").toUInt(), MSNProtocol::FL );
 		}
 		else if( group->displayName().isNull() || group->type() != KopeteGroup::Classic )
 		{
@@ -557,10 +557,10 @@ void MSNContact::removeFromGroup( KopeteGroup *group )
 			return;
 		}
 
-		if( !group->pluginData( protocol() , "id" ).isEmpty() )
+		if( !group->pluginData( protocol() , identity()->identityId() + " id" ).isEmpty() )
 		{
-			if( m_serverGroups.contains( group->pluginData(protocol(),"id").toUInt() ) )
-				notify->removeContact( contactId(), group->pluginData(protocol(),"id").toUInt(), MSNProtocol::FL );
+			if( m_serverGroups.contains( group->pluginData(protocol(),identity()->identityId() + " id").toUInt() ) )
+				notify->removeContact( contactId(), group->pluginData(protocol(),identity()->identityId() + " id").toUInt(), MSNProtocol::FL );
 		}
 	}
 	else
