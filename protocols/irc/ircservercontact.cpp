@@ -139,7 +139,7 @@ void IRCServerContact::slotAppendMessage( const QString &message )
 
 void IRCServerContact::slotIncomingNotice( const QString &orig, const QString &notice )
 {
-	slotAppendMessage( i18n("NOTICE %1: %2").arg( orig ).arg( notice ) );
+	slotAppendMessage( i18n("NOTICE %1: %2").arg( orig.section('!',0,0) ).arg( notice ) );
 }
 
 void IRCServerContact::slotIncomingMotd( const QStringList &motd )
