@@ -131,7 +131,7 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, KopeteAccount *a
 	}
 	else
 	{
-		d->ui->m_rememberpasswd->setChecked( true );
+		d->ui->m_rememberpasswd->setChecked( false );
 		d->ui->tab_contacts->setDisabled( true );
 		d->ui->tab_info->setDisabled( true );
 	}
