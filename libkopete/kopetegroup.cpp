@@ -32,7 +32,13 @@ struct KopeteGroupPrivate
 	QString displayName;
 	KopeteGroup::GroupType type;
 	bool expanded;
+	unsigned int groupId;
+
+	//Unique contact id per metacontact
+	static unsigned int uniqueGroupId;
 };
+
+unsigned int KopeteGroupPrivate::uniqueGroupId=0;
 
 KopeteGroup::KopeteGroup(QString _name, GroupType _type)  : KopetePluginDataObject(KopeteContactList::contactList())
 {
@@ -40,6 +46,7 @@ KopeteGroup::KopeteGroup(QString _name, GroupType _type)  : KopetePluginDataObje
 	d->displayName=_name;
 	d->type=_type;
 	d->expanded = true;
+	d->groupId=0;
 }
 KopeteGroup::KopeteGroup()  : KopetePluginDataObject(KopeteContactList::contactList())
 {
@@ -47,6 +54,7 @@ KopeteGroup::KopeteGroup()  : KopetePluginDataObject(KopeteContactList::contactL
 	d->expanded = true;
 	d->type=Classic;
 	d->displayName=QString::null;
+	d->groupId=0;
 }
 
 KopeteGroup::~KopeteGroup()
@@ -58,6 +66,7 @@ const QDomElement KopeteGroup::toXML()
 {
 	QDomDocument group;
 	group.appendChild( group.createElement(QString::fromLatin1("kopete-group")) );
+	group.documentElement().setAttribute( QString::fromLatin1("groupId"), QString::number( groupId()) );
 
 	QString type;
 	if( d->type == Temporary )
@@ -84,6 +93,13 @@ const QDomElement KopeteGroup::toXML()
 
 bool KopeteGroup::fromXML( const QDomElement& data )
 {
+	QString strGroupId = data.attribute( QString::fromLatin1("groupId") );
+	if( !strGroupId.isEmpty() )
+	{
+		d->groupId = strGroupId.toUInt();
+		if( d->groupId > d->uniqueGroupId )
+			d->uniqueGroupId = d->groupId;
+	}
 	QString type = data.attribute( QString::fromLatin1( "type" ), QString::fromLatin1( "standard" ) );
 	if( type == QString::fromLatin1( "temporary" ) )
 	{
@@ -160,6 +176,14 @@ void KopeteGroup::setExpanded(bool in_expanded)
 bool KopeteGroup::expanded()
 {
 	return d->expanded;
+}
+
+unsigned int KopeteGroup::groupId() const
+{
+	if( d->groupId == 0 )
+		d->groupId = ++d->uniqueGroupId;
+
+	return d->groupId;
 }
 
 #include "kopetegroup.moc"

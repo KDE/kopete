@@ -47,19 +47,39 @@ public:
 	 */
 	QString displayName() const ;
 
-	/*
+	/**
 	 *  rename the group
 	 */
 	void setDisplayName (const QString&);
 
+	/**
+	 * return the group type
+	 */
 	GroupType type() const ;
+	/**
+	 * set the group type
+	 */
 	void setType(GroupType);
 
+	/**
+	 * Return the unique id for this group
+	 */
+	unsigned int groupId() const;
+
+	/**
+	 * @internal
+	 */
 	const QDomElement toXML();
+	/**
+	 * @internal
+	 */
 	bool fromXML( const QDomElement &data );
+
 
 	void setExpanded(bool in_expanded) ;
 	bool expanded() ;
+
+
 
 	static KopeteGroup *toplevel;
 	static KopeteGroup *temporary;

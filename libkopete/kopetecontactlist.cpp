@@ -849,6 +849,18 @@ KopeteGroup * KopeteContactList::getGroup(const QString& displayName, KopeteGrou
 	return  newGroup;
 }
 
+KopeteGroup * KopeteContactList::getGroup(unsigned int groupId)
+{
+	KopeteGroup *groupIterator;
+	for ( groupIterator = m_groupList.first(); groupIterator; groupIterator = m_groupList.next() )
+	{
+		if( groupIterator->groupId()==groupId )
+			return groupIterator;
+	}
+	return 0L;
+}
+
+
 #include "kopetecontactlist.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

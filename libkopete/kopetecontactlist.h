@@ -155,9 +155,17 @@ public:
 	void removeGroup(KopeteGroup *);
 
 	/**
-	 * Get a group
+	 * Get a group.
+	 * If a group already exist with the given name and the given type, it return this one.
+	 * else, it create a new one.
 	 */
 	KopeteGroup * getGroup(const QString& displayName, KopeteGroup::GroupType type=KopeteGroup::Classic);
+
+	/**
+	 * return the group with the given unique id. if non is found return 0L
+	 */
+	KopeteGroup * getGroup(unsigned int groupId);
+
 
 	/**
 	 * Find a contact by display name. Returns the first match.

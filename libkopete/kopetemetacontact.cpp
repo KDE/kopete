@@ -50,7 +50,7 @@ struct KopeteMetaContactPrivate
 	QMap<QString, QMap<QString, QString> > addressBook;
 
 	bool temporary;
-	bool dirty;
+//	bool dirty;
 	ulong contactId;
 	KopeteOnlineStatus::OnlineStatus onlineStatus;
 	KopeteMetaContact::IdleState    idleState;
@@ -69,7 +69,6 @@ KopeteMetaContact::KopeteMetaContact()
 
 	d->trackChildNameChanges = true;
 	d->temporary = false;
-//	m_isTopLevel=false;
 
 	d->onlineStatus = KopeteOnlineStatus::Offline;
 	d->idleState = Unspecified;
@@ -608,42 +607,23 @@ const QDomElement KopeteMetaContact::toXML()
 	metaContact.documentElement().setAttribute( QString::fromLatin1("contactId"), QString::number(contactId()) );
 
 	QDomElement displayName = metaContact.createElement( QString::fromLatin1("display-name") );
-	displayName.setAttribute( QString::fromLatin1("trackChildNameChanges"), QString::null );
+	displayName.setAttribute( QString::fromLatin1("trackChildNameChanges"), QString::fromLatin1( d->trackChildNameChanges ? "1":"0" ) );
 	displayName.appendChild( metaContact.createTextNode(  d->displayName  ) );
 	metaContact.documentElement().appendChild( displayName );
 
 	// Store groups
-	QDomElement groups = metaContact.createElement( QString::fromLatin1("groups") );
 	if ( !d->groups.isEmpty() )
 	{
+		QDomElement groups = metaContact.createElement( QString::fromLatin1("groups") );
 		KopeteGroup *g;;
 		for ( g = d->groups.first(); g; g = d->groups.next() )
 		{
-			QString group_s = g->displayName();
-			if( !group_s.isEmpty() )
-			{
-				QDomElement group = metaContact.createElement( QString::fromLatin1("group") );
-				group.appendChild( metaContact.createTextNode( group_s  ) );
-				groups.appendChild( group );
-			}
+			QDomElement group = metaContact.createElement( QString::fromLatin1("group") );
+			group.setAttribute( QString::fromLatin1("id"), g->groupId() );
+			groups.appendChild( group );
 		}
-
-		// The contact is also at top-level
-		if ( isTopLevel() )
-			groups.appendChild( metaContact.createElement( QString::fromLatin1("top-level") ) );
+		metaContact.documentElement().appendChild( groups );
 	}
-	else
-	{
-		/*
-		   Rare case to prevent bug, if contact has no groups
-		   and it is not at top level it should have been deleted.
-		   But we didn't, so we put it in toplevel to prevent a
-		   hidden contact, also for toplevel contacts saved before
-		   we added the <top-level> tag.
-		*/
-		groups.appendChild( metaContact.createElement( QString::fromLatin1("top-level") ) );
-	}
-	metaContact.documentElement().appendChild( groups );
 
 	// Store address book fields
 	QMap<QString, QMap<QString, QString> >::ConstIterator appIt = d->addressBook.begin();
@@ -706,8 +686,14 @@ bool KopeteMetaContact::fromXML( const QDomElement& element )
 				QDomElement groupElement = group.toElement();
 
 				if( groupElement.tagName() == QString::fromLatin1( "group" ) )
-					d->groups.append( KopeteContactList::contactList()->getGroup( groupElement.text() ) );
-				else if( groupElement.tagName() == QString::fromLatin1( "top-level" ) )
+				{
+					QString strGroupId = groupElement.attribute( QString::fromLatin1("id") );
+					if( !strGroupId.isEmpty() )
+						d->groups.append( KopeteContactList::contactList()->getGroup( strGroupId.toUInt() ) );
+					else //kopete 0.6 contactlist
+						d->groups.append( KopeteContactList::contactList()->getGroup( groupElement.text() ) );
+				}
+				else if( groupElement.tagName() == QString::fromLatin1( "top-level" ) ) //kopete 0.6 contactlist
 					d->groups.append( KopeteGroup::toplevel );
 
 				group = group.nextSibling();
@@ -734,7 +720,7 @@ bool KopeteMetaContact::fromXML( const QDomElement& element )
 
 	// track changes only works if ONE Contact is inside the MetaContact
 //	if (d->contacts.count() > 1) // Does NOT work as intended
-		d->trackChildNameChanges=false;
+//		d->trackChildNameChanges=false;
 
 //	kdDebug(14010) << "[KopeteMetaContact] END fromXML(), d->trackChildNameChanges=" << d->trackChildNameChanges << "." << endl;
 	return true;
@@ -773,7 +759,7 @@ void KopeteMetaContact::setTemporary( bool isTemporary, KopeteGroup *group )
 		moveToGroup(temporaryGroup, group);
 }
 
-bool KopeteMetaContact::isDirty() const
+/*bool KopeteMetaContact::isDirty() const
 {
 	return d->dirty;
 }
@@ -781,7 +767,7 @@ bool KopeteMetaContact::isDirty() const
 void KopeteMetaContact::setDirty( bool b  )
 {
 	d->dirty = b;
-}
+}*/
 
 void KopeteMetaContact::slotPluginLoaded( KopetePlugin *p )
 {
