@@ -18,6 +18,7 @@
 #define KOPETEVIEWMANAGER_H
 
 #include "kopetemessage.h"
+#include "kopete_export.h"
 
 namespace Kopete
 {
@@ -35,7 +36,7 @@ struct KopeteViewManagerPrivate;
 /**
  * Relates an actual chat to the means used to view it.
  */
-class KopeteViewManager : public QObject
+class KOPETE_EXPORT KopeteViewManager : public QObject
 {
 	Q_OBJECT
 	public:

@@ -18,6 +18,8 @@
 #ifndef KOPETEADDRESSBOOKLINK_H
 #define KOPETEADDRESSBOOKLINK_H
 
+#include "kopete_export.h"
+
 // Goal is to have all the address book modifying code in one place
 // Currently in 
 // *) Add Contact Wizard
@@ -37,7 +39,7 @@ namespace Kopete
 
 	class MetaContact;
 	
-class KABCPersistence : public QObject
+class KOPETE_EXPORT KABCPersistence : public QObject
 {
 	Q_OBJECT
 	public:
