@@ -242,7 +242,7 @@ private:
 						QString enc = processXmlHeader(h);
 						QTextCodec *codec = 0;
 						if(!enc.isEmpty())
-							codec = QTextCodec::codecForName(enc);
+							codec = QTextCodec::codecForName(enc.latin1());
 
 						// changing codecs
 						if(codec) {
