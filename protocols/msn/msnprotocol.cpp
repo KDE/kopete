@@ -1012,7 +1012,7 @@ void MSNProtocol::slotContactRemoved( QString handle, QString list,
 
 	}
 
-	MSNContact *c=contact(handle);
+	MSNContact *c = static_cast<MSNContact*>( contacts()[ handle ] );
 	if( c )
 	{
 		if( list == "RL" )
@@ -1204,7 +1204,7 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 		}
 	}
 
-	KopeteContact *c = contact( handle );
+	KopeteContact *c = contacts()[ handle ];
 	if ( c && m_myself )
 	{
 		KopeteContactPtrList chatmembers;
@@ -1236,7 +1236,7 @@ void MSNProtocol::slotStartChatSession( QString handle )
 	// First create a message manager, because we might get an existing
 	// manager back, in which case we likely also have an active switchboard
 	// connection to reuse...
-	KopeteContact *c = contact( handle );
+	KopeteContact *c = contacts()[ handle ];
 	if( isConnected() && c && m_myself && handle != m_msnId )
 	{
 		KopeteContactPtrList chatmembers;
@@ -1345,11 +1345,6 @@ KActionCollection * MSNProtocol::customChatActions(KopeteMessageManager * manage
 		return 0L;
 
 	return msnMM->chatActions();
-}
-
-MSNContact *MSNProtocol::contact( const QString &id )
-{
-	return static_cast<MSNContact *>( contacts()[ id ] );
 }
 
 void MSNProtocol::slotPreferencesSaved()

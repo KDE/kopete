@@ -167,7 +167,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		// handle, publicName, status
 
-		MSNContact *c = m_protocol->contact(data.section( ' ', 1, 1 ));
+		MSNContact *c = static_cast<MSNContact*>( m_protocol->contacts()[ data.section( ' ', 1, 1 ) ] );
 		if( c )
 		{
 			c->setMsnStatus( MSNProtocol::convertStatus(data.section( ' ', 0, 0 )));
@@ -189,14 +189,14 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "FLN" )
 	{
-		MSNContact *c = m_protocol->contact(data.section( ' ', 0, 0 ));
+		MSNContact *c = static_cast<MSNContact*>( m_protocol->contacts()[ data.section( ' ', 0, 0 ) ] );
 		if( c )
 			c->setMsnStatus( MSNProtocol::FLN );
 	}
 	else if( cmd == "ILN" )
 	{
 		// handle, publicName, Status
-		MSNContact *c = m_protocol->contact(data.section( ' ', 1, 1 ));
+		MSNContact *c = static_cast<MSNContact*>( m_protocol->contacts()[ data.section( ' ', 1, 1 ) ] );
 		if( c )
 		{
 			c->setMsnStatus( MSNProtocol::convertStatus(data.section( ' ', 0, 0 )));
@@ -262,7 +262,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			emit publicNameChanged( unescape( data.section( ' ', 2, 2 ) ) );
 		else
 		{
-			MSNContact *c = m_protocol->contact( handle );
+			MSNContact *c = static_cast<MSNContact*>( m_protocol->contacts()[ handle ] );
 			if( c )
 			{
 				c->setDisplayName(unescape(data.section( ' ', 2, 2 )));
@@ -315,7 +315,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "BPR" )
 	{
-		MSNContact *c = m_protocol->contact(data.section( ' ', 0, 0));
+		MSNContact *c = static_cast<MSNContact*>( m_protocol->contacts()[ data.section( ' ', 0, 0 ) ] );
 		if( c )
 		{
 			c->setInfo(data.section( ' ', 1, 1 ),unescape(data.section( ' ', 2, 2 )));

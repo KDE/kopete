@@ -148,8 +148,6 @@ public:
 	 */
 	void setPublicName( const QString &name );
 
-	MSNContact *contact( const QString &handle );
-
 	void setStatus(Status);
 	/**
 	 * Returns a set of action items for the chatWindows
@@ -159,9 +157,6 @@ public:
 	MSNNotifySocket *notifySocket() { return m_notifySocket; };
 
 	virtual KActionMenu* protocolActions();
-
-signals:
-//	void protocolUnloading();
 
 public slots:
 	/**

@@ -336,10 +336,13 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		KopeteContactPtrList others;
 		others.append( m_protocol->myself() );
 		QStringList::iterator it;
-		for ( it = m_chatMembers.begin(); it != m_chatMembers.end(); ++it )
-			if(*it != m_msgHandle) others.append( m_protocol->contact(*it) );
+		for( it = m_chatMembers.begin(); it != m_chatMembers.end(); ++it )
+		{
+			if( *it != m_msgHandle )
+				others.append( m_protocol->contacts()[ *it ] );
+		}
 
-		KopeteMessage kmsg( m_protocol->contact(m_msgHandle) , others,
+		KopeteMessage kmsg( m_protocol->contacts()[ m_msgHandle ], others,
 			msg.right( msg.length() - msg.find("\r\n\r\n") - 4 ),
 			KopeteMessage::Inbound , KopeteMessage::PlainText );
 
