@@ -61,6 +61,8 @@ protected:
 	virtual void componentRemoved( Component *component );
 	/** A child item has been resized */
 	virtual void componentResized( Component *component );
+	/** Remove all children */
+	virtual void clear();
 
 	/** @internal animate items */
 	void updateAnimationPosition( int p, int s );
@@ -122,6 +124,18 @@ public:
 	 * @return the rect this component was allocated last time it was laid out
 	 */
 	QRect rect();
+	/**
+	 * Prevents this component to be drawn
+	 */
+	void hide();
+
+	/**
+	 * Makes this component to be drawn
+	 */
+	void show();
+
+	bool isShown();
+	bool isHidden();
 
 	/**
 	 * Returns the smallest this component can become horizontally while still
@@ -162,6 +176,20 @@ public:
 	 */
 	std::pair<QString,QRect> toolTip( const QPoint &relativePos );
 
+	/**
+	 * RTTI: Runtime Type Information
+	 * Exactly the same as Qt's approach to identify types of
+	 * QCanvasItems.
+	 */
+
+	enum RttiValues {
+		Rtti_Component, Rtti_BoxComponent, Rtti_TextComponent, 
+		Rtti_ImageComponent, Rtti_DisplayNameComponent,
+		Rtti_HSpacerComponent, Rtti_VSpacerComponent
+	};
+
+	static int RTTI;
+	virtual int rtti() const { return RTTI; }
 protected:
 	/**
 	 * Change the minimum width, in pixels, this component requires in order
@@ -207,8 +235,11 @@ public:
 
 	void layout( const QRect &rect );
 
-	int widthForHeight( int height );
-	int heightForWidth( int width );
+	virtual int widthForHeight( int height );
+	virtual int heightForWidth( int width );
+	
+	static int RTTI;
+	virtual int rtti() const { return RTTI; }
 
 protected:
 	void componentAdded( Component *component );
@@ -242,6 +273,9 @@ public:
 
 	void paint( QPainter *painter, const QColorGroup &cg );
 
+	static int RTTI;
+	virtual int rtti() const { return RTTI; }
+
 private:
 	void calcMinSize();
 
@@ -257,8 +291,44 @@ public:
 	~ImageComponent();
 
 	void setPixmap( const QPixmap &img, bool adjustSize = true);
+	QPixmap pixmap( void );
+
 	void paint( QPainter *painter, const QColorGroup &cg );
 
+	static int RTTI;
+	virtual int rtti() const { return RTTI; }
+private:
+	class Private;
+	Private *d;
+};
+
+/**
+ * DisplayNameComponent
+ */
+
+class DisplayNameComponent : public BoxComponent
+{
+public:
+	/**
+	 * Constructor
+	 * @param displayName is the display name to be rendered
+	 */
+	DisplayNameComponent( ComponentBase *parent );
+	
+	/**
+	 * Dtor
+	 */
+	~DisplayNameComponent();
+	void layout( const QRect& rect );
+
+	QString text();
+	void setText( const QString& text );
+	void setFont( const QFont& font );
+	void setColor( const QColor& color );
+	void setDefaultColor();
+	static int RTTI;
+	virtual int rtti() const { return RTTI; }
+	
 private:
 	class Private;
 	Private *d;
@@ -269,6 +339,9 @@ class HSpacerComponent : public Component
 public:
 	HSpacerComponent( ComponentBase *parent );
 	int widthForHeight( int );
+
+	static int RTTI;
+	virtual int rtti() const { return RTTI; }
 };
 
 class VSpacerComponent : public Component
@@ -276,6 +349,9 @@ class VSpacerComponent : public Component
 public:
 	VSpacerComponent( ComponentBase *parent );
 	int heightForWidth( int );
+	
+	static int RTTI;
+	virtual int rtti() const { return RTTI; }
 };
 
 /**

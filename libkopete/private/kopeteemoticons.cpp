@@ -3,6 +3,7 @@
 
     Copyright (c) 2002      by Stefan Gehn            <metz AT gehn.net>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2005      by Engin AYDOGAN          <engin@bzzzt.biz>
 
    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -46,15 +47,24 @@ namespace Kopete {
 
 struct Emoticons::Emoticon
 {
+	Emoticon(){}
 	QString matchText;
 	QString replacement;
+	QString	picPath;
 };
 
+/* This is the object we will store each emoticon match in */
+struct Emoticons::EmoticonNode {
+		const Emoticon emoticon;
+		int		pos;
+		EmoticonNode() : emoticon(), pos( -1 ) {}
+		EmoticonNode( const Emoticon e, int p ) : emoticon( e ), pos( p ) {}
+};
 
 class Emoticons::Private
 {
 public:
-	QMap <QChar , QValueList<Emoticon> > emoticonMap;
+	QMap<QChar, QValueList<Emoticon> > emoticonMap;
 	QMap<QString, QString> emoticonAndPicList;
 		
 	/**
@@ -76,11 +86,120 @@ Emoticons *Emoticons::self()
 }
 
 
-QString Emoticons::parseEmoticons(const QString& message)  //static
+QString Emoticons::parseEmoticons(const QString& message, ParseMode mode )  //static
 {
-	 return self()->parse( message );
+	 return self()->parse( message, mode );
 }
 
+QValueList<Emoticons::Token> Emoticons::tokenizeEmoticons( const QString& message, ParseMode mode ) // static
+{
+	return self()->tokenize( message, mode );
+}
+
+QValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode mode )
+{
+	/* previous char, in the firs iteration assume that it is space since we want
+	 * to let emoticons at the beginning, the very first previous QChar must be a space. */
+	QChar p = ' ';
+	QChar c; /* current char */
+	QChar n; /* next character after a match candidate, if strict this should be QChar::null or space */
+
+	/* This is the EmoticonNode container, it will represent each matched emoticon */
+	QValueList<EmoticonNode> foundEmoticons;
+	QValueList<EmoticonNode>::const_iterator found;
+	/* First-pass, store the matched emoticon locations in foundEmoticons */
+	QValueList<Emoticon> emoticonList;
+	QValueList<Emoticon>::const_iterator it;
+	size_t pos;
+
+	bool inHTML = false;
+	for ( pos = 0; pos < message.length(); pos++ )
+	{
+		c = message[ pos ];
+		
+		if ( mode & SkipHTML ) // Shall we skip HTML ?
+		{
+			if ( !inHTML ) // Are we already in an HTML tag ?
+			{
+				if ( c == '<' ) { // If not check if are going into one
+					inHTML = true; // If we are, change the state to inHTML
+					continue;
+				}
+			} 
+			else // We are already in a HTML tag
+			{ 
+				if ( c == '>' ) { // Check if it ends
+					inHTML = false;	 // If so, change the state
+				}
+				continue;
+			}
+		}
+
+		if ( mode & StrictParse )
+			if ( !p.isSpace() )
+			{
+				p = c; 
+				continue; 
+			} /* strict requires space before the emoticon */
+		if ( d->emoticonMap.contains( c ) )
+		{
+			emoticonList = d->emoticonMap[ c ];
+			for ( it = emoticonList.begin(); it != emoticonList.end(); ++it )
+			{
+				if ( ( pos == message.find( (*it).matchText, pos ) ) )
+				{
+					if( mode & StrictParse )
+					{
+					/* check if the character after this match is space or end of string*/
+						n = message[ pos + (*it).matchText.length() ];
+						if( !n.isSpace() &&  !n.isNull() ) break;
+					}
+					/* Perfect match */
+					foundEmoticons.append( EmoticonNode( (*it), pos ) );
+					/* Skip the matched emoticon's matchText */
+					pos += (*it).matchText.length() - 1;
+					break;
+				}
+			}
+		} /* else no emoticons begin with this character, so don't do anything */
+		p = c;
+	}
+
+	/* if no emoticons found just return the text */
+	QValueList<Token> result;
+	if ( foundEmoticons.isEmpty() )
+	{
+		result.append( Token( Text, message ) );
+		return result;
+	}
+
+	/* Second-pass, generate tokens based on the matches */
+
+	pos = 0;
+	int length;
+
+	for ( found = foundEmoticons.begin(); found != foundEmoticons.end(); ++found )
+	{
+		if ( ( length = ( (*found).pos - pos ) ) )
+		{
+			result.append( Token( Text,  message.mid( pos, length ) ) );
+			result.append( Token( Image, (*found).emoticon.matchText, (*found).emoticon.picPath ) );
+			pos += length + (*found).emoticon.matchText.length();
+		}
+		else
+		{
+			result.append( Token( Image, (*found).emoticon.matchText, (*found).emoticon.picPath ) );
+			pos += (*found).emoticon.matchText.length();
+		}
+	}
+
+	if ( message.length() - pos ) // if there is remaining regular text
+	{ 
+		result.append( Token( Text, message.mid( pos ) ) );
+	}
+
+	return result;
+}
 
 Emoticons::Emoticons( const QString &theme ) : QObject( kapp, "KopeteEmoticons" )
 {
@@ -133,6 +252,7 @@ void Emoticons::addIfPossible( const QString& filenameNoExt, const QStringList &
 			QString matchEscaped=QStyleSheet::escape(*it);
 			
 			Emoticon e;
+			e.picPath = pic;
 			e.matchText=matchEscaped;
 			e.replacement=QString::fromLatin1( "<img align=\"center\" width=\"%1\" height=\"%2\" src=\"%3\" title=\"%4\"/>" )
 					.arg( QString::number( width ), QString::number( height ), pic, matchEscaped );
@@ -224,217 +344,34 @@ QMap<QString, QString> Emoticons::emoticonAndPicList()
 }
 
 
-QString Emoticons::parse( const QString &message )
+QString Emoticons::parse( const QString &message, ParseMode mode )
 {
-	// if emoticons are disabled, we do nothing
-	if ( !KopetePrefs::prefs()->useEmoticons() )
-		return message;
-
-//	kdDebug(14010) << k_funcinfo << message << endl;
-	
-	enum LoopState { ReadyToStartAnEmoticon, SkipHTMLEntity, StillInAWord } loopState = ReadyToStartAnEmoticon;
-
-	struct EmoticonsMatches
-	{
-		const Emoticon *emoticon ;
-		unsigned int position; //the position we are in the emoticon text
-		bool verified; //wether or not we checked that there is a whistespace at the end
-		EmoticonsMatches *next;
-		EmoticonsMatches(EmoticonsMatches *n , const Emoticon* e) : emoticon(e),position(1),next(n) {}
-	};
-	EmoticonsMatches *matches=0L;
-	EmoticonsMatches *found=0L;
-	EmoticonsMatches *previous;
-
-	unsigned int message_length = message.length();  //the length of the message
-	unsigned int pos;
-	for(pos=0;  pos < message_length; pos++ )
-	{
-		QChar c=message[pos];
-
-
-		//verrify emoticon that are after a space.
-		if(c.isSpace() || c== '<' || c=='&')
-		{
-			EmoticonsMatches *it=found;
-			while(it && it->position+it->emoticon->matchText.length() >= pos   )
-			{
-				it->verified=true;
-				it=it->next;
-			}
-		}
-		
-		//skip html tags
-		if(c == '<')
-		{
-			unsigned int p2=pos+1;
-			while( p2 < message_length )
-			{
-				QChar c2=message[p2];
-				if(c2=='>')
-				{
-					pos=p2;
-					loopState=ReadyToStartAnEmoticon;
-					break;
-				}
-				p2++;
-			}
-			if( p2 < message_length )
-				continue;
-		}
-
-		EmoticonsMatches *existingMatches=matches;
-		previous=0L;
-		
-
-		if(loopState == ReadyToStartAnEmoticon)
-		{//try to find if an emoticon may start here.
-			if(d->emoticonMap.contains(c))
-			{
-				QValueList<Emoticon> l=d->emoticonMap[c];
-				for ( QValueList<Emoticon>::const_iterator it = l.constBegin(), end = l.constEnd();
-						   it != end; ++it )
-				{
-					matches=new EmoticonsMatches(matches, &(*it) );
-					if(!previous)
-						previous=matches;
-				}
-				
-			}
-		}
-
-		if(c.isSpace())
-			loopState = ReadyToStartAnEmoticon;
-		else if((c.isLetterOrNumber() || c.isSymbol() )&& loopState != SkipHTMLEntity)
-			loopState = StillInAWord;
-
-		//is it possible to continue existingMatches ?
-		while(existingMatches)
-		{
-			if(c == existingMatches->emoticon->matchText[existingMatches->position ])
-			{
-				existingMatches->position++;
-				if(existingMatches->position==existingMatches->emoticon->matchText.length())
-				{
-					EmoticonsMatches *tmp=existingMatches;
-					existingMatches=existingMatches->next;
-					if(previous)
-						previous->next=tmp->next;
-					else
-						matches=tmp->next;
-					tmp->position=pos-tmp->emoticon->matchText.length()+1;
-					tmp->next=found;
-					tmp->verified=(pos+1>=message_length);
-					found=tmp;
-					loopState=ReadyToStartAnEmoticon; //we are after an emoticon so we can start adding new.
-
-					//verify emoticons that stop where it start.
-					tmp=found->next;
-					while(tmp && tmp->position+tmp->emoticon->matchText.length() >= found->position   )
-					{
-						if(tmp->position+tmp->emoticon->matchText.length() == found->position)
-							tmp->verified=true;
-						tmp=tmp->next;
-					}
-
-				}
-				else
-				{
-					previous=existingMatches;
-					existingMatches=existingMatches->next;
-				}
-			}
-			else
-			{ //we may remove it
-				EmoticonsMatches *tmp=existingMatches;
-				existingMatches=existingMatches->next;
-				if(previous)
-					previous->next=tmp->next;
-				else
-					matches=tmp->next;
-				delete tmp;
-			}
-		}
-
-		if(c == '&')
-			loopState = SkipHTMLEntity;
-		else if(loopState == SkipHTMLEntity && c==';')
-			loopState = ReadyToStartAnEmoticon;
-
-	}
-
-	//theses matches are not finished, remove it)
-	while(matches)
-	{
-		previous=matches;
-		matches=matches->next;
-		delete previous;
-	}
-
-	//search for collision and reverse
-	//Items in the list found are sorted in the reversed order by the position of the terminaison of the emoticon.
-	previous=0L;
-	while(found)
-	{
-		EmoticonsMatches *previous2=found;
-		EmoticonsMatches *it=found->next;
-
-		if(!found->verified) 
-		{
-			found=found->next;
-			delete previous2;
-			continue;
-		}
-		while(it && found->position < it->position+it->emoticon->matchText.length())
-		{
-			//we only keep the bigger
-			if(found->emoticon->matchText.length() > it->emoticon->matchText.length() || !it->verified )
-			{
-				//remove it
-				previous2->next=it->next;
-				delete it;
-				it=previous2->next;
-			}
-			else
-				break;
-		}
-		if(it && found->position < it->position+it->emoticon->matchText.length()) //the loop breaked
-		{
-			it=found;
-			found=found->next;
-			delete it;
-			continue;
-		}
-		it=found->next;
-		found->next=previous;
-		previous=found;
-		found=it;
-	}
-	found=previous;
-
-
-	if(!found) //no emoticons in the message, simply return it.
-		return message;
-
+	QValueList<Token> tokens = tokenize( message, mode );
+	QValueList<Token>::const_iterator token;
 	QString result;
-	pos=0;
-	while(found)
+
+	for ( token = tokens.begin(); token != tokens.end(); ++token )
 	{
-		result+=message.mid(pos,found->position-pos);
-		pos=found->position+found->emoticon->matchText.length();
-		result+=found->emoticon->replacement;
-		previous=found;
-		found=found->next;
-		delete previous;
+		switch ( (*token).type )
+		{
+		case Text:
+			result += (*token).text;
+		break;
+		case Image:
+			// Shall we do this at emoticon initialization ? But in that case tokenize() will
+			// return this (useless) information for contact lists too
+			result += QString::fromLatin1( "<img align=\"center\" src=\"" ) + 
+				  (*token).picPath + 
+				  QString::fromLatin1( "\" title=\"" ) +
+				  (*token).text + 
+				  QString::fromLatin1( "\"/>" );
+		break;
+		default:
+			kdDebug( 14010 ) << k_funcinfo << "Unknown token type. Something's broken." << endl;
+		}
 	}
-	//kdDebug(14010) << k_funcinfo << result <<endl;
-
-	return result+message.right(message.length()-pos);
+	return result;
 }
-
-
-
-
 
 } //END namesapce Kopete
 

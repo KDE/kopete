@@ -20,6 +20,7 @@
 #endif
 
 #include "kopetelistviewitem.h"
+#include "kopeteemoticons.h"
 
 #include <kdebug.h>
 #include <kiconloader.h>
@@ -93,6 +94,18 @@ void ComponentBase::componentRemoved( Component *component )
 	d->components.remove( component );
 }
 
+void ComponentBase::clear()
+{
+	/* I'm switching setAutoDelete back and forth instead of turning it
+	 * on permenantly, because original author of this class set it to
+	 * auto delete in the dtor, that might have a reason that I can't
+	 * imagine right now */
+	bool tmp = d->components.autoDelete();
+	d->components.setAutoDelete( true );
+	d->components.clear();
+	d->components.setAutoDelete( tmp );
+}
+
 void ComponentBase::componentResized( Component * )
 {
 }
@@ -138,6 +151,7 @@ public:
 	QRect startRect, targetRect;
 	int minWidth, minHeight;
 	bool growHoriz, growVert;
+	bool show; /** @since 23-03-2005 */
 	ToolTipSource *tipSource;
 };
 
@@ -145,12 +159,36 @@ Component::Component( ComponentBase *parent )
  : d( new Private( parent ) )
 {
 	d->parent->componentAdded( this );
+	d->show = true;
 }
+
+int Component::RTTI = Rtti_Component;
 
 Component::~Component()
 {
 	d->parent->componentRemoved( this );
 	delete d;
+}
+
+
+void Component::hide()
+{
+	d->show = false;
+}
+
+void Component::show()
+{
+	d->show = true;
+}
+
+bool Component::isShown()
+{
+	return d->show;
+}
+
+bool Component::isHidden()
+{
+	return !d->show;
 }
 
 void Component::setToolTipSource( ToolTipSource *source )
@@ -214,7 +252,10 @@ void Component::paint( QPainter *painter, const QColorGroup &cg )
 	/*painter->setPen( Qt::red );
 	painter->drawRect( rect() );*/
 	for ( uint n = 0; n < components(); ++n )
-		component( n )->paint( painter, cg );
+	{
+		if( component( n )->isShown() )
+			component( n )->paint( painter, cg );
+	}
 }
 
 void Component::repaint()
@@ -254,6 +295,9 @@ BoxComponent::BoxComponent( ComponentBase *parent, Direction dir )
  : Component( parent ), d( new Private( dir ) )
 {
 }
+
+int BoxComponent::RTTI = Rtti_BoxComponent;
+
 BoxComponent::~BoxComponent()
 {
 	delete d;
@@ -365,6 +409,7 @@ void BoxComponent::layout( const QRect &rect )
 	for ( uint n = 0; n < components(); ++n )
 	{
 		Component *comp = component( n );
+		
 		QRect rc;
 		if ( horiz )
 		{
@@ -424,6 +469,8 @@ ImageComponent::ImageComponent( ComponentBase *parent )
 {
 }
 
+int ImageComponent::RTTI = Rtti_ImageComponent;
+
 ImageComponent::ImageComponent( ComponentBase *parent, int minW, int minH )
  : Component( parent ), d( new Private )
 {
@@ -435,6 +482,11 @@ ImageComponent::ImageComponent( ComponentBase *parent, int minW, int minH )
 ImageComponent::~ImageComponent()
 {
 	delete d;
+}
+
+QPixmap ImageComponent::pixmap()
+{
+	return d->image;
 }
 
 void ImageComponent::setPixmap( const QPixmap &img, bool adjustSize)
@@ -486,6 +538,8 @@ TextComponent::TextComponent( ComponentBase *parent, const QFont &font, const QS
 	setFont( font );
 	setText( text );
 }
+
+int TextComponent::RTTI = Rtti_TextComponent;
 
 TextComponent::~TextComponent()
 {
@@ -567,6 +621,126 @@ void TextComponent::paint( QPainter *painter, const QColorGroup &cg )
 	painter->drawText( rect(), Qt::SingleLine, dispStr );
 }
 
+// DisplayNameComponent
+
+class DisplayNameComponent::Private
+{
+public:
+	QString text;
+};
+
+DisplayNameComponent::DisplayNameComponent( ComponentBase *parent )
+ : BoxComponent( parent ), d( new Private )
+{
+}
+
+int DisplayNameComponent::RTTI = Rtti_DisplayNameComponent;
+
+DisplayNameComponent::~DisplayNameComponent()
+{
+}
+
+void DisplayNameComponent::layout( const QRect &rect )
+{
+	Component::layout( rect );
+
+	// finally, lay everything out
+	QRect rc;
+	int totalWidth = rect.width();
+	int usedWidth = 0;
+	bool exceeded = false;
+	for ( uint n = 0; n < components(); ++n )
+	{
+		Component *comp = component( n );
+		if ( !exceeded )
+		{
+			if ( ( usedWidth + comp->widthForHeight( rect.height() ) ) > totalWidth )
+			{
+				exceeded = true;
+				// TextComponents can squeeze themselves
+				if ( comp->rtti() == Rtti_TextComponent )
+				{
+					comp->show();
+					comp->layout( QRect( usedWidth+ rect.left(), 0,
+							     totalWidth - usedWidth,
+							     comp->heightForWidth( totalWidth - usedWidth ) ) );
+				} else {
+					comp->hide();
+				}
+			}
+			else 
+			{
+				comp->show();
+				comp->layout( QRect( usedWidth+ rect.left(), 0,
+						     comp->widthForHeight( rect.height() ),
+						     comp->heightForWidth( rect.width() ) ) );
+			}
+			usedWidth+= comp->widthForHeight( rect.height() );
+		}
+		else
+		{
+			// Shall we implement a hide()/show() in Component class ?
+			comp->hide();
+		}
+	}
+}
+
+void DisplayNameComponent::setText( const QString& text )
+{
+	if ( d->text == text ) 
+		return;
+	d->text = text;
+	QValueList<Kopete::Emoticons::Token> tokens;
+	QValueList<Kopete::Emoticons::Token>::const_iterator token;
+	
+	clear(); // clear childs
+
+	tokens = Kopete::Emoticons::tokenizeEmoticons( text );
+	ImageComponent *ic;
+
+	for ( token = tokens.begin(); token != tokens.end(); ++token )
+	{
+		switch ( (*token).type )
+		{
+		case Kopete::Emoticons::Text:
+			new TextComponent( this, QFont(), (*token).text );
+		break;
+		case Kopete::Emoticons::Image:
+			ic = new ImageComponent( this );
+			ic->setPixmap( QPixmap( (*token).picPath ) );
+		break;
+		default:
+			kdDebug( 14010 ) << k_funcinfo << "This should have not happened!" << endl;
+		}
+	}
+}
+
+void DisplayNameComponent::setFont( const QFont& font )
+{
+	for ( uint n = 0; n < components(); ++n )
+		if( component( n )->rtti() == Rtti_TextComponent )
+			((TextComponent*)component(n))->setFont( font );
+}
+
+void DisplayNameComponent::setColor( const QColor& color )
+{
+	for ( uint n = 0; n < components(); ++n )
+		if( component( n )->rtti() == Rtti_TextComponent )
+			((TextComponent*)component(n))->setColor( color );
+}
+
+void DisplayNameComponent::setDefaultColor()
+{
+	for ( uint n = 0; n < components(); ++n )
+		if( component( n )->rtti() == Rtti_TextComponent )
+			((TextComponent*)component(n))->setDefaultColor();
+}
+
+QString DisplayNameComponent::text()
+{
+	return d->text;
+}
+
 // HSpacerComponent --------
 
 HSpacerComponent::HSpacerComponent( ComponentBase *parent )
@@ -575,6 +749,8 @@ HSpacerComponent::HSpacerComponent( ComponentBase *parent )
 	setMinWidth( 0 );
 	setMinHeight( 0 );
 }
+
+int HSpacerComponent::RTTI = Rtti_HSpacerComponent;
 
 int HSpacerComponent::widthForHeight( int )
 {
@@ -589,6 +765,8 @@ VSpacerComponent::VSpacerComponent( ComponentBase *parent )
 	setMinWidth( 0 );
 	setMinHeight( 0 );
 }
+
+int VSpacerComponent::RTTI = Rtti_VSpacerComponent;
 
 int VSpacerComponent::heightForWidth( int )
 {

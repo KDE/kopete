@@ -49,6 +49,7 @@
 #include "kopeteaccountmanager.h"
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
+#include "kopeteemoticons.h"
 #include "kopeteuiglobal.h"
 #include "kopetegroup.h"
 #include "kopetegroupviewitem.h"
@@ -97,7 +98,7 @@ public:
         }
 		
 		toolTip += QString::fromLatin1("</td><td>");
-		toolTip += QString::fromLatin1("<b><font size=\"+1\">%1</font></b><br><br>").arg(metaContact->displayName());
+		toolTip += QString::fromLatin1("<b><font size=\"+1\">%1</font></b><br><br>").arg(Kopete::Emoticons::parseEmoticons( metaContact->displayName()) );
 		
 		QPtrList<Contact> contacts = metaContact->contacts();		
 		if ( contacts.count() == 1 )
@@ -139,7 +140,7 @@ public:
 	            metaContactPhoto( 0L ), currentMode( -1 ) {}
 	ListView::ImageComponent *metaContactPhoto;
 	ListView::ImageComponent *metaContactIcon;
-	ListView::TextComponent *nameText;
+	ListView::DisplayNameComponent *nameText;
 	ListView::TextComponent *extraText;
 	ListView::BoxComponent *contactIconBox;
 	ListView::BoxComponent *spacerBox;
@@ -719,7 +720,7 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 	{
 		d->metaContactIcon = new ImageComponent( hbox );
 		Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
-		d->nameText = new TextComponent( vbox );
+		d->nameText = new DisplayNameComponent( vbox );
 		d->extraText = new TextComponent( vbox );
 
 		Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
@@ -736,7 +737,7 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 		d->metaContactPhoto = new ImageComponent( imageBox, d->photoSize + 2 , d->photoSize + 2 );
 		new VSpacerComponent( imageBox );
 		Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
-		d->nameText = new TextComponent( vbox );
+		d->nameText = new DisplayNameComponent( vbox );
 		d->extraText = new TextComponent( vbox );
 
 		Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
@@ -751,14 +752,14 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 	else if( mode == KopetePrefs::RightAligned )       // old right-aligned contact
 	{
 		d->metaContactIcon = new ImageComponent( hbox );
-		d->nameText = new TextComponent( hbox );
+		d->nameText = new DisplayNameComponent( hbox );
 		new HSpacerComponent( hbox );
 		d->contactIconBox = new BoxComponent( hbox, BoxComponent::Horizontal );
 	}
 	else                                               // older left-aligned contact
 	{
 		d->metaContactIcon = new ImageComponent( hbox );
-		d->nameText = new TextComponent( hbox );
+		d->nameText = new DisplayNameComponent( hbox );
 		d->contactIconBox = new BoxComponent( hbox, BoxComponent::Horizontal );
 	}
 

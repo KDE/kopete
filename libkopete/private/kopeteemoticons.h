@@ -28,12 +28,11 @@ namespace Kopete {
 class KOPETE_EXPORT Emoticons : public QObject
 {
 	Q_OBJECT
-
 public:
 	/**
 	 * Constructor: DON'T use it if you want to use the emoticon theme
 	 * chosen by the user.
-	 * For that one use the singleton stuff
+	 * Instead, use @ref Kopete::Emoticons::self()
 	 **/
 	Emoticons( const QString &theme = QString::null );
 
@@ -46,6 +45,14 @@ public:
 	static Emoticons *self();
 
 	/**
+	 * The possible parse modes
+	 */
+	enum ParseMode { RelaxedParse = 0x0, /** Default parse mode where all possible emoticon matches are allowed */
+			StrictParse = 0x1,			/** Strict parsing requires a space between each emoticon */
+			SkipHTML = 0x2,				/** Skip emoticons within HTML */
+			StrictAndSkipHTML = StrictParse | SkipHTML /** Shortcut combining the above */ };
+
+	/**
 	 * Use it to parse emoticons in a text.
 	 * You don't need to use this for chat windows,
 	 * There is a special class that abstract a chat view
@@ -54,9 +61,67 @@ public:
 	 * If nicks is provided, they will not be parsed if they 
 	 * exist in message.
 	 */
-	static QString parseEmoticons( const QString &message ) ;
+	static QString parseEmoticons( const QString &message, ParseMode = SkipHTML ) ;
+
 	
-	QString parse( const QString &message );
+	QString parse( const QString &message, ParseMode = SkipHTML );
+
+	/**
+	 * TokenType, a token might be an image ( emoticon ) or text.
+	 */
+	enum TokenType { Undefined, /** Undefined, for completeness only */
+					 Image, 	/** Token contains a path to an image */
+					 Text 		/** Token contains test */
+				   };
+	
+	/**
+	 * A token consists of a QString text which is either a regular text
+	 * or a path to image depending on the type.
+	 * If type is Image the text refers to an image path.
+	 * If type is Text the text refers to a regular text.
+	 */
+	struct Token {
+		Token() : type( Undefined ) {}
+		Token( TokenType t, const QString &m ) : type( t ), text(m) {}
+		Token( TokenType t, const QString &m, const QString &p )
+		 : type( t ), text( m ), picPath( p ) {}
+		TokenType	type;
+		QString		text;
+		QString		picPath;
+	};
+	
+
+	/**
+	 * Static function which will call tokenize
+	 * @see tokenize( const QString& )
+	 */
+	static QValueList<Token> tokenizeEmoticons( const QString &message, ParseMode mode = RelaxedParse );
+
+	/**
+	 * Tokenizes an message.
+	 * For example;
+	 * Assume :], (H), :-x are three emoticons.
+	 * A text "(H)(H) foo bar john :] :-x" would be tokenized as follows (not strict):
+	 * 1- /path/to/shades.png
+	 * 2- /path/to/shades.png
+	 * 3- " foo bar john "
+	 * 4- /path/to/bat.png
+	 * 5- " "
+	 * 6- /path/to/kiss.png
+	 *
+	 * Strict tokenization (require spaces around emoticons):
+	 * 1- "(H)(H) foo bar john "
+	 * 2- /path/to/bat.png
+	 * 3- " "
+	 * 4- /path/to/kiss.png
+	 * Note: quotation marks are used to emphasize white spaces.
+	 * @param message is the message to tokenize
+	 * @param strict if true spaces would be required around emoticons
+	 * @return a QValueList which consiste of ordered tokens of the text.
+	 * @author Engin AYDOGAN < engin@bzzzt.biz >
+	 * @since 23-03-05
+	 */
+	QValueList<Token> tokenize( const QString &message, ParseMode mode = RelaxedParse );
 	
 	/**
 	 * Return all emoticons and the corresponding icon.
@@ -78,6 +143,7 @@ private:
 	void addIfPossible( const QString& filenameNoExt, const QStringList &emoticons );
 
 	struct Emoticon;
+	struct EmoticonNode;
 	class Private;
 	Private *d;
 private slots:
