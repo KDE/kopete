@@ -14,6 +14,7 @@
     *************************************************************************
 */
 #include <kgenericfactory.h>
+#include <kdebug.h>
 
 #include "kopeteaccountmanager.h"
 
