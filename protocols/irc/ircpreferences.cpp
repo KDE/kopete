@@ -39,7 +39,7 @@ IRCPreferences::IRCPreferences(const QString &pixmap,QObject *parent)
 	preferencesDialog = new ircPrefsUI(this);
 	KGlobal::config()->setGroup("IRC");
 	preferencesDialog->mID->setText(KGlobal::config()->readEntry("Nickname", "KopeteUser"));
-	preferencesDialog->mServer->setText(KGlobal::config()->readEntry("Server", "irc.openprojects.net"));
+	preferencesDialog->mServer->setText(KGlobal::config()->readEntry("Server", "irc.freenode.net"));
 	preferencesDialog->mPort->setText(KGlobal::config()->readEntry("Port", "6667"));
 	preferencesDialog->mAutoConnect->setChecked(KGlobal::config()->readBoolEntry("AutoConnect", false));
 	QColor color(175, 8, 8);
