@@ -40,6 +40,12 @@ SMSProtocol::~SMSProtocol()
 	s_protocol = 0L;
 }
 
+const QString SMSProtocol::protocolIcon()
+{
+	return QString::null;
+}
+
+
 bool SMSProtocol::unload()
 {
 	return KopeteProtocol::unload();

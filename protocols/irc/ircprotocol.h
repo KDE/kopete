@@ -67,7 +67,8 @@ public:
 	 */
 	virtual void deserializeContact( KopeteMetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
-
+	virtual const QString protocolIcon();
+	
 public slots:
 	virtual void connect();
 	virtual void disconnect();

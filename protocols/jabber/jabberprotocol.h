@@ -184,6 +184,8 @@ public:
 		 * Save a vCard.
 		 */
 		void slotSaveVCard(QDomElement &);
+		
+		virtual const QString protocolIcon();
 
 public slots:
 		/**

@@ -67,6 +67,7 @@ public:
 	virtual KActionMenu* protocolActions();
 	YahooContact *contact( const QString &id );
 	YahooSession *yahooSession();
+	virtual const QString protocolIcon();
 	
 public slots:
 	void connect();			// Connect to server

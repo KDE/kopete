@@ -117,7 +117,8 @@ public:
 
 	bool isConnected() const { return online; }		// Return true if connected
 	bool isAway() const { return !available; }		// Return true if away
-
+	virtual const QString protocolIcon();
+	
 public slots:
 	void connect();						// Connect to server
 	void disconnect();					// Disconnect from server

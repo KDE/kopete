@@ -108,6 +108,11 @@ KActionMenu* IRCProtocol::protocolActions()
 	return m_actionMenu;
 }
 
+const QString IRCProtocol::protocolIcon()
+{
+	return "irc_protocol_small";
+}
+
 void IRCProtocol::slotNewConsole()
 {
 	kdDebug(14120) << k_funcinfo << endl;

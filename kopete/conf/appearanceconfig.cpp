@@ -31,7 +31,9 @@
 #include <qtextedit.h>
 #include <qvgroupbox.h>
 #include <qdatetime.h>
+#include <qslider.h>
 
+#include <kcolorcombo.h>
 #include <kcombobox.h>
 #include <kconfig.h>
 #include <kdebug.h>
@@ -159,6 +161,27 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	mTabWindow = new QRadioButton( i18n("Group all messages in the same chat window"), chatWindowGroup);
 	generalLayout->addWidget( chatWindowGroup );
 	
+	mTransparancyGroupBox = new QVGroupBox( mChatAppearanceTab, i18n("Chat Window Translucency") );
+	
+	mTransparancyEnabled = new QCheckBox ( i18n("Enable Translucency"), mTransparancyGroupBox );
+	QObject::connect( mTransparancyEnabled, SIGNAL(toggled(bool)), this, SLOT(slotTransparancyChanged( bool )));
+	
+	QHBoxLayout *h1 = new QHBoxLayout(mTransparancyGroupBox);
+	
+	QLabel *label1 = new QLabel( i18n( "Tint Color:"), mTransparancyGroupBox );
+	mTransparancyColor = new KColorCombo(mTransparancyGroupBox);
+	h1->addWidget( label1 );
+	h1->addWidget( mTransparancyColor);
+	
+	QHBoxLayout *h2 = new QHBoxLayout(mTransparancyGroupBox);
+	QLabel *label2 = new QLabel( i18n( "Translucency:"), mTransparancyGroupBox );
+	mTransparancyValue = new QSlider ( 0, 100, 1, 50, Qt::Horizontal, mTransparancyGroupBox);
+	mTransparancyValue->setTickmarks( QSlider::NoMarks );
+	h2->addWidget( label2 );
+	h2->addWidget( mTransparancyValue );
+
+	generalLayout->addWidget( mTransparancyGroupBox );
+	
 	generalLayout->addStretch();
 	
 	mAppearanceTab->addTab( mChatAppearanceTab, i18n("Chat &Window") );
@@ -170,6 +193,7 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 
 	reopen();
 	slotSoundChanged(); //Disable Button if no checkboxes selected
+	slotTransparancyChanged( mTransparancyEnabled->isChecked() );
 	
 	// sync actions, config and prefs-dialog
 	connect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
@@ -211,6 +235,9 @@ void AppearanceConfig::save()
 	p->setSendMessageEnter(cb_Enter->isChecked());
 	p->setSendMessageCtrlEnter(cb_CtrlEnter->isChecked());
 	p->setSendMessageShiftEnter(cb_ShiftEnter->isChecked());
+	p->setTransparancyColor( mTransparancyColor->color() );
+	p->setTransparancyEnabled( mTransparancyEnabled->isChecked() );
+	p->setTransparancyValue( mTransparancyValue->value() );
 
 	disconnect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
 	kdDebug(14000) << "[AppearanceConfig] calling KopetePrefs::save()" << endl;
@@ -293,6 +320,10 @@ void AppearanceConfig::reopen()
 	cb_Enter->setChecked(p->sendMessageEnter());
 	cb_CtrlEnter->setChecked(p->sendMessageCtrlEnter());
 	cb_ShiftEnter->setChecked(p->sendMessageShiftEnter());
+	
+	mTransparancyEnabled->setChecked( p->transparancyEnabled() );
+	mTransparancyColor->setColor( p->transparancyColor() );
+	mTransparancyValue->setValue( p->transparancyValue() );
 }
 
 void AppearanceConfig::slotConfigSound()
@@ -323,6 +354,12 @@ void AppearanceConfig::slotSoundChanged()
 void AppearanceConfig::slotUseEmoticonsChanged ( bool checked )
 {
 	icon_theme_list->setEnabled( checked );
+}
+
+void AppearanceConfig::slotTransparancyChanged ( bool checked )
+{
+	mTransparancyColor->setEnabled( checked );
+	mTransparancyValue->setEnabled( checked );
 }
 
 void AppearanceConfig::slotSelectKind(int k)

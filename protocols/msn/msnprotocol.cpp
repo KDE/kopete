@@ -567,6 +567,11 @@ void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status 
 	}
 }
 
+const QString MSNProtocol::protocolIcon( )
+{
+	return "msn_online";
+}
+
 void MSNProtocol::slotStatusChanged( QString status )
 {
 	m_status = convertStatus( status );

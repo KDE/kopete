@@ -154,6 +154,7 @@ public:
 	MSNNotifySocket *notifySocket() { return m_notifySocket; };
 
 	virtual KActionMenu* protocolActions();
+	virtual const QString protocolIcon();
 
 public slots:
 	virtual void connect();

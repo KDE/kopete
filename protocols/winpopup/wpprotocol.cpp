@@ -224,6 +224,11 @@ void WPProtocol::setAway()
 	// do any other stuff?
 }
 
+const QString WPProtocol::protocolIcon()
+{
+	return "wp_available";
+}
+
 KActionMenu* WPProtocol::protocolActions()
 {
 	return actionStatusMenu;

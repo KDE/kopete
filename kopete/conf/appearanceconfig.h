@@ -31,7 +31,10 @@ class QHButtonGroup;
 class QRadioButton;
 class QCheckBox;
 class QFrame;
+class QGroupBox;
 class QPushButton;
+class KColorCombo;
+class QSlider;
 
 class AppearanceConfig_ChatWindow;
 
@@ -57,6 +60,7 @@ private slots:
 	void slotSoundChanged(void);
 	void slotUseEmoticonsChanged(bool);
 	void slotConfigChanged(void);
+	void slotTransparancyChanged(bool);
 
 private:
 	KTabCtl* mAppearanceTab;
@@ -97,6 +101,11 @@ private:
 	QCheckBox *mHideMetaContacts;
 	QCheckBox *mGreyIdleMetaContacts;
 
+	QVGroupBox *mTransparancyGroupBox;
+	KColorCombo *mTransparancyColor;
+	QCheckBox *mTransparancyEnabled;
+	QSlider *mTransparancyValue;
+	
 	// Widgets for Emoticon TAB
 	QFrame* mEmoticonsTab;
 	KListBox *icon_theme_list;

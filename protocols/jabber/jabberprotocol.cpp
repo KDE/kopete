@@ -123,6 +123,11 @@ KActionMenu *JabberProtocol::protocolActions()
 	return actionStatusMenu;
 }
 
+const QString JabberProtocol::protocolIcon()
+{
+	return "jabber_online";
+}
+
 void JabberProtocol::initActions()
 {
 	actionGoOnline = new KAction(i18n("Online"), "jabber_online", 0,

@@ -74,6 +74,8 @@ public:
     KopeteMetaContact *parentContact );
 
     void removeContact( const GaduContact *c );
+    virtual const QString protocolIcon();
+    
 public slots:
     virtual void connect();
     virtual void disconnect();

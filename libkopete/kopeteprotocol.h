@@ -57,6 +57,8 @@ public:
 	// plugins should also return TRUE for modes like occupied not-vailable etc.
 	virtual bool isAway() const = 0;
 
+	virtual const QString protocolIcon() = 0;
+	
 	virtual AddContactPage *createAddContactWidget(QWidget *parent)=0;
 
 	/**

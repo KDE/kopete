@@ -97,6 +97,11 @@ YahooProtocol::~YahooProtocol()
 	s_protocolStatic_ = 0L;
 }
 
+const QString YahooProtocol::protocolIcon()
+{
+	return "yahoo_online";
+}
+
 YahooProtocol* YahooProtocol::s_protocolStatic_ = 0L;
 
 YahooSession *YahooProtocol::yahooSession()

@@ -89,6 +89,12 @@ GaduProtocol::~GaduProtocol()
 
 GaduProtocol* GaduProtocol::protocolStatic_ = 0L;
 
+const 
+QString GaduProtocol::protocolIcon( )
+{
+	return "gg_online";
+}
+
 void
 GaduProtocol::initActions()
 {

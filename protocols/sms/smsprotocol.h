@@ -56,6 +56,8 @@ public:
 	SMSContact* addContact( const QString& nr , const QString& name, KopeteMetaContact *m=0L);
 
 	KopeteContact *myself() const;
+	
+	virtual const QString protocolIcon();
 
 public slots:
 	virtual void connect();
