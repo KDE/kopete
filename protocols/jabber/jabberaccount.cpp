@@ -1605,7 +1605,7 @@ void JabberAccount::slotGroupChatJoined (const XMPP::Jid & jid)
 	 * by slotGroupChatPresence(), since the server will signal our own
 	 * presence back to us.
 	 */
-	resourcePool()->addResource ( jid, XMPP::Resource ( jid.resource () ) );
+	resourcePool()->addResource ( XMPP::Jid ( jid.userHost () ), XMPP::Resource ( jid.resource () ) );
 
 	// lock the room to our own status
 	resourcePool()->lockToResource ( XMPP::Jid ( jid.userHost () ), jid.resource () );
@@ -1652,11 +1652,11 @@ void JabberAccount::slotGroupChatPresence (const XMPP::Jid & jid, const XMPP::St
 	}
 	else
 	{
-		// make sure the contact exists in the room (if it exists already, it won't be added twice)
-		groupContact->addSubContact ( XMPP::RosterItem ( jid ) );
-
 		// add a resource for this contact to the pool (existing resources will be updated)
 		resourcePool()->addResource ( jid, XMPP::Resource ( jid.resource (), status ) );
+
+		// make sure the contact exists in the room (if it exists already, it won't be added twice)
+		groupContact->addSubContact ( XMPP::RosterItem ( jid ) );
 	}
 
 }

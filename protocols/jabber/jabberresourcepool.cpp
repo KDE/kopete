@@ -129,7 +129,9 @@ void JabberResourcePool::removeAllResources ( const XMPP::Jid &jid )
 	{
 		if ( mResource->jid().userHost().lower() == jid.userHost().lower() )
 		{
-			mPool.remove ();
+			// only remove preselected resource in case there is one
+			if ( !jid.resource().isEmpty () && ( jid.resource () == mResource->resource().name () ) )
+				mPool.remove ();
 		}
 	}
 
