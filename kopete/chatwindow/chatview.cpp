@@ -229,7 +229,6 @@ ChatView::ChatView( Kopete::MessageManager *mgr, const char *name )
 	editpart = new KopeteRichTextEditPart( editDock, "kopeterichtexteditpart",
 		mgr->protocol()->capabilities() );
 	connect( editpart, SIGNAL( toggleToolbar(bool)), this, SLOT(slotToggleRtfToolbar(bool)) );
-	connect( this, SIGNAL( windowCreated()), editpart, SLOT(checkToolbarEnabled()) );
 
 	m_edit = static_cast<KTextEdit*>( editpart->widget() );
 
