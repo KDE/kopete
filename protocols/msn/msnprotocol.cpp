@@ -181,7 +181,7 @@ void MSNProtocol::setAvailable(void)
 bool MSNProtocol::isAway(void)
 {
 	uint status;
-	status = m_msnService->getStatus();
+	status = m_msnService->status();
 	switch(status)
 	{
 		case NLN:
@@ -600,6 +600,7 @@ QStringList MSNProtocol::groups()
 	return m_msnService->getGroups();
 }
 
+#include "msnprotocol.moc"
+
 // vim: set ts=4 sts=4 sw=4 noet:
 
-#include "msnprotocol.moc"

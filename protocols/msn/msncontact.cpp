@@ -52,7 +52,7 @@ void MSNContact::initContact( QString /* userid */, const QString name, MSNProto
 	QString tmp = name;
 	setName  ( tmp );
 	initActions();
-	slotUpdateContact( mUserID, mProtocol->msnService()->getStatus( mUserID ) );		
+	slotUpdateContact( mUserID, mProtocol->msnService()->status( mUserID ) );
 }
 
 void MSNContact::initActions()
@@ -288,7 +288,7 @@ QString MSNContact::statusIcon() const
 			break;
 		}
 	}
-	
+
 	return "msn_offline";
 }
 
