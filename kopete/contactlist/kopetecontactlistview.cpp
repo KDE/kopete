@@ -62,6 +62,9 @@
 #include "kopetestatusgroupviewitem.h"
 #include "kopetestdaction.h"
 #include "kopetemessagemanagerfactory.h"
+#include "kopetecontact.h"
+#include "kopetemessagemanager.h" //needed to send the URL
+#include "kopetemessage.h"       //needed to send the URL
 
 #include "kopetelviprops.h"
 
@@ -1148,10 +1151,22 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 
 		for ( KURL::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
 		{
-			if(c)
-				c->sendFile( *it );
+			if( (*it).isLocalFile() )
+			{ //send a file
+				if(c)
+					c->sendFile( *it );
+				else
+					dest_metaLVI->metaContact()->sendFile( *it );
+			}
 			else
-				dest_metaLVI->metaContact()->sendFile( *it );
+			{ //this is a URL, send the URL in a message
+				if(!c)
+					c = dest_metaLVI->metaContact()->execute(); //We need to know which contact was chosen as the preferred in order to message it
+				if (!c) return;
+
+				KopeteMessage msg(c->account()->myself(), c, (*it).url() , KopeteMessage::Outbound);
+				c->manager(true)->sendMessage(msg);
+			}
 		}
 		e->acceptAction();
 	}
@@ -1244,10 +1259,28 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 				treeStepSize() * ( dest_metaLVI->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
 			int py = p.y() - itemRect( dest_metaLVI ).y();
 			KopeteContact *c = dest_metaLVI->contactForPoint( QPoint( px, py ) ) ;
-			if(c)
-				return c->canAcceptFiles();
-			else //to the metacontact
+
+			if( c ? !c->isReachable() : !dest_metaLVI->metaContact()->isReachable() )
+				return false; //If the pointed contact is not reachable, abort
+
+			if( c ? c->canAcceptFiles() : dest_metaLVI->metaContact()->canAcceptFiles()  )
+			{ //If the pointed contact, or the metacontact if no contact are pointed can accept file, return true in everycase
 				return true;
+			}
+			else
+			{
+				if ( !QUriDrag::canDecode( e ) )
+					return false;
+				KURL::List urlList;
+				KURLDrag::decode( e, urlList );
+
+				for ( KURL::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
+				{
+					if( (*it).isLocalFile() )
+						return false; //we can't send links if a locale file is in link
+				}
+				return true; //we will send a link
+			}
 		}
 	}
 
