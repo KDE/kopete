@@ -89,7 +89,7 @@
                                     <cstring>TextLabel1</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>&amp;Message to send</string>
+                                    <string>&amp;Message to send:</string>
                                 </property>
                                 <property name="buddy" stdset="0">
                                     <cstring>inAwayMessage</cstring>
@@ -119,7 +119,7 @@
                                     <cstring>inEmailDefault</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Prefer e-mail style dialogs</string>
+                                    <string>Prefer email style dialogs</string>
                                 </property>
                             </widget>
                         </grid>
@@ -184,7 +184,7 @@
                                     <cstring>TextLabel1_2</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>&amp;Name on local Samba network</string>
+                                    <string>&amp;Name on local Samba network:</string>
                                 </property>
                                 <property name="buddy" stdset="0">
                                     <cstring>inHostName</cstring>
@@ -222,7 +222,7 @@
                                     <cstring>TextLabel2_2</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>&amp;Path to 'smbclient' executable</string>
+                                    <string>&amp;Path to 'smbclient' executable:</string>
                                 </property>
                                 <property name="buddy" stdset="0">
                                     <cstring>inSMBClientPath</cstring>
@@ -233,7 +233,7 @@
                                     <cstring>TextLabel3_2</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>&amp;Initial search host</string>
+                                    <string>&amp;Initial search host:</string>
                                 </property>
                                 <property name="buddy" stdset="0">
                                     <cstring>inInitialSearchHost</cstring>

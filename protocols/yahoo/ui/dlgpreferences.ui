@@ -48,7 +48,7 @@
                         <number>6</number>
                     </property>
                     <spacer row="10" column="1">
-                        <property name="name" stdset="0">
+                        <property name="name">
                             <cstring>Spacer4</cstring>
                         </property>
                         <property name="orientation">
@@ -57,12 +57,6 @@
                         <property name="sizeType">
                             <enum>Expanding</enum>
                         </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>20</height>
-                            </size>
-                        </property>
                     </spacer>
                     <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="3">
                         <property name="name">
@@ -70,7 +64,7 @@
                         </property>
                     </widget>
                     <spacer row="2" column="4">
-                        <property name="name" stdset="0">
+                        <property name="name">
                             <cstring>Spacer7</cstring>
                         </property>
                         <property name="orientation">
@@ -78,12 +72,6 @@
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>20</height>
-                            </size>
                         </property>
                     </spacer>
                     <widget class="QLabel" row="2" column="0">
@@ -121,7 +109,7 @@
                             <cstring>TextLabel7</cstring>
                         </property>
                         <property name="text">
-                            <string>Po&amp;rt</string>
+                            <string>Po&amp;rt:</string>
                         </property>
                         <property name="buddy" stdset="0">
                             <cstring>mPort</cstring>
@@ -149,7 +137,7 @@
                             <cstring>mAutoConnect</cstring>
                         </property>
                         <property name="text">
-                            <string>&amp;Auto-Connect</string>
+                            <string>&amp;Auto-connect</string>
                         </property>
                     </widget>
                     <widget class="QLineEdit" row="8" column="1">
@@ -168,7 +156,7 @@
                             <cstring>TextLabel6</cstring>
                         </property>
                         <property name="text">
-                            <string>&amp;Server</string>
+                            <string>&amp;Server:</string>
                         </property>
                         <property name="buddy" stdset="0">
                             <cstring>mServer</cstring>
@@ -294,11 +282,11 @@
                             </sizepolicy>
                         </property>
                         <property name="text">
-                            <string>&amp;Log Conversations</string>
+                            <string>&amp;Log conversations</string>
                         </property>
                     </widget>
                     <spacer>
-                        <property name="name" stdset="0">
+                        <property name="name">
                             <cstring>Spacer2</cstring>
                         </property>
                         <property name="orientation">
@@ -306,12 +294,6 @@
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>20</height>
-                            </size>
                         </property>
                     </spacer>
                 </vbox>

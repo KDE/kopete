@@ -30,7 +30,7 @@
                 <cstring>TextLabel2</cstring>
             </property>
             <property name="text">
-                <string>&amp;Parameters</string>
+                <string>&amp;Parameters:</string>
             </property>
             <property name="buddy" stdset="0">
                 <cstring>m_params</cstring>
@@ -46,7 +46,7 @@
                 <cstring>TextLabel1</cstring>
             </property>
             <property name="text">
-                <string>Co&amp;mmand</string>
+                <string>Co&amp;mmand:</string>
             </property>
             <property name="buddy" stdset="0">
                 <cstring>m_command</cstring>
@@ -73,7 +73,7 @@
                 <cstring>m_addNewline</cstring>
             </property>
             <property name="text">
-                <string>Add &amp;Newline</string>
+                <string>Add &amp;newline</string>
             </property>
             <property name="checked">
                 <bool>true</bool>

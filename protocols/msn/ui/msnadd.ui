@@ -73,7 +73,7 @@
                                     <cstring>TextLabel1</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>&amp;MSN id:</string>
+                                    <string>&amp;MSN ID:</string>
                                 </property>
                                 <property name="buddy" stdset="0">
                                     <cstring>addID</cstring>

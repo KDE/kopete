@@ -14,7 +14,6 @@
     </property>
     <property name="font">
         <font>
-            <bold>0</bold>
         </font>
     </property>
     <property name="caption">
@@ -65,7 +64,7 @@
                         <cstring>TextLabel2</cstring>
                     </property>
                     <property name="text">
-                        <string>Host &amp;Name</string>
+                        <string>Host &amp;name:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>HostName</cstring>
@@ -76,7 +75,7 @@
                         <cstring>TextLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>Host &amp;Group</string>
+                        <string>Host &amp;group:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>HostGroup</cstring>

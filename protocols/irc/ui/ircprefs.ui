@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>509</width>
-            <height>336</height>
+            <width>645</width>
+            <height>360</height>
         </rect>
     </property>
     <property name="caption">
@@ -75,7 +75,7 @@
                                     <cstring>TextLabel1</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>IRC Nickname:</string>
+                                    <string>IRC nickname:</string>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
@@ -83,7 +83,7 @@
                                     <cstring>TextLabel2_2</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>( for example: KopeteUser )</string>
+                                    <string>(for example: KopeteUser)</string>
                                 </property>
                             </widget>
                             <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="2">
@@ -118,7 +118,7 @@
                                     <cstring>mAutoConnect</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Auto-Connect</string>
+                                    <string>Auto-connect</string>
                                 </property>
                             </widget>
                             <spacer row="0" column="5">
@@ -191,7 +191,7 @@
                                     <cstring>TextLabel6</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>IRC Server:</string>
+                                    <string>IRC server:</string>
                                 </property>
                             </widget>
                             <spacer row="1" column="2">
@@ -253,7 +253,7 @@
                             <cstring>GroupBox5</cstring>
                         </property>
                         <property name="title">
-                            <string>Highlighting:</string>
+                            <string>Highlighting</string>
                         </property>
                         <grid>
                             <property name="name">
@@ -270,7 +270,7 @@
                                     <cstring>chkHighlightNick</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Highlight my nickname when users use it in their messages.</string>
+                                    <string>Highlight my nickname when users use it in their messages</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox" row="1" column="0">
@@ -418,7 +418,7 @@
                             <cstring>ButtonGroup1</cstring>
                         </property>
                         <property name="title">
-                            <string>Window Behavior:</string>
+                            <string>Window Behavior</string>
                         </property>
                         <grid>
                             <property name="name">
@@ -435,7 +435,7 @@
                                     <cstring>useMDI</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Group and add each contact to a tabbed window, per server. (Tabbed MDI)</string>
+                                    <string>Group and add each contact to a tabbed window, per server (tabbed MDI)</string>
                                 </property>
                                 <property name="checked">
                                     <bool>true</bool>
@@ -457,7 +457,7 @@
                                     <cstring>chkMinimizeQueries</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Minimize private conversation (query) tabs when first messaged.</string>
+                                    <string>Minimize private conversation (query) tabs when first messaged</string>
                                 </property>
                             </widget>
                         </grid>
@@ -467,7 +467,7 @@
                             <cstring>GroupBox4</cstring>
                         </property>
                         <property name="title">
-                            <string>Extras:</string>
+                            <string>Extras</string>
                         </property>
                         <grid>
                             <property name="name">
@@ -484,7 +484,7 @@
                                     <cstring>chkSideIcons</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Show task specific icons next to each event in the windows.</string>
+                                    <string>Show task specific icons next to each event in the windows</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox" row="1" column="0">
@@ -492,7 +492,7 @@
                                     <cstring>chkShowTimes</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Show a timestamp to the left of all messages.</string>
+                                    <string>Show a timestamp to the left of all messages</string>
                                 </property>
                             </widget>
                         </grid>
@@ -502,7 +502,7 @@
                             <cstring>GroupBox6</cstring>
                         </property>
                         <property name="title">
-                            <string>Logging:</string>
+                            <string>Logging</string>
                         </property>
                         <grid>
                             <property name="name">
@@ -600,7 +600,7 @@
                                     <cstring>chkHideConsole</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Close the server console window when the IRC plugin loads.</string>
+                                    <string>Close the server console window when the IRC plugin loads</string>
                                 </property>
                             </widget>
                         </hbox>
