@@ -52,6 +52,8 @@ class Kopete : public KUniqueApplication
   void saveOptions();
   /** No descriptions */
   void readOptions();
+  /** No descriptions */
+  void initPlugins();
 
 
 	PluginManager *plugins;

@@ -154,9 +154,10 @@ cxxflags=\s-O1
 ldadd=
 ldflags=
 libtool_dir=
-path_to_bin_program=.
+path_to_bin_program=kopete/.
 
 [General]
+AMChanged=false
 author=duncan
 dir_where_make_will_be_called=./
 email=duncan@tarro

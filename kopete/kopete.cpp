@@ -15,21 +15,23 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "kopete.h"
 #include <qlayout.h>
 #include <kconfig.h>
-#include "ui/preferencesdialog.h"
-#include "ui/kopetewindow.h"
+
+#include <kopete.h>
+#include <preferencesdialog.h>
+#include <kopetewindow.h>
+#include <icqprotocol.h>
 
 Kopete::Kopete(): KUniqueApplication(true, true, true)
 {
-	
+	plugins = new PluginManager;
+	initPlugins();
 	mainwindow = new KopeteWindow;
-	
 	setMainWidget(mainwindow);
 	mPref=new PreferencesDialog;
   mPref->hide();
-	plugins = new PluginManager;
+	
 	
 	
 }
@@ -131,4 +133,8 @@ void Kopete::slotAddContact()
 /** No descriptions */
 void Kopete::slotSetAway()
 {
+}/** No descriptions */
+void Kopete::initPlugins()
+{
+	
 }

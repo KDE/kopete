@@ -10,8 +10,8 @@ KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(pare
 	QBoxLayout *layout = new QBoxLayout(mainwidget,QBoxLayout::TopToBottom);
 
 	contactlist = new ContactList(mainwidget);
-	statuslabel = new QLabel(mainwidget);
-	statuslabel->setText("offline");
+	statuslabel = new ConnectionLabel(mainwidget);
+	//statuslabel->setText("offline");
 	
 	layout->insertWidget(-1,contactlist);
 	layout->insertWidget(-1,statuslabel);

@@ -1,5 +1,5 @@
 SUBDIRS = ui
-INCLUDES = -I$(top_srcdir)/kopete/library $(all_includes)
+INCLUDES = -I$(top_srcdir)/kopete/library -I$(top_srcdir)/kopete/library/ui -I$(top_srcdir)/kopete/protocols/icq -I$(top_srcdir)/kopete/protocols/icq/kxengine $(all_includes)
 lib_LTLIBRARIES = libkopete.la
 # kopete_include_HEADERS = imcontact.h  improtocol.h kopete.h pluginmanager.h
 

@@ -20,7 +20,7 @@
 #include "configmodule.h"
 
 PreferencesDialog::PreferencesDialog(QWidget *parent)
-								: KDialogBase(TreeList, i18n("Preferences"),
+								: KDialogBase(IconList, i18n("Preferences"),
                   Ok|Apply|Close, Ok, parent, 0, false)
 {
 		resize(640, 480); // KDE is required to support 800x600 min.

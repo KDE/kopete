@@ -5,6 +5,7 @@
 #include <kmainwindow.h>
 #include <kaction.h>
 #include "contactlist.h"
+#include "connectionlabel.h"
 
 class KopeteWindow : public KMainWindow
 {
@@ -18,7 +19,7 @@ public:
 	
 	ContactList *contactlist;
 	
-	QLabel *statuslabel;
+	ConnectionLabel *statuslabel;
 
 	/* Some Actions */
   KAction* actionAddContact;
