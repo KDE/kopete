@@ -32,6 +32,8 @@
 #ifdef HAVE_XSLT
 #include <libxml/parser.h>
 #include <libxml/tree.h>
+
+#include <libxslt/xsltconfig.h>
 #include <libxslt/xsltInternals.h>
 #include <libxslt/transform.h>
 #include <libxslt/xsltutils.h>
