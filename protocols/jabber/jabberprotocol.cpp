@@ -653,7 +653,7 @@ void JabberProtocol::setPresence(Presence status, const QString &reason,
 		switch(status)
 		{
 		case STATUS_AWAY:
-				setStatusIcon("jabber_na");
+				setStatusIcon("jabber_away");
 				presence.setShow("away");
 				break;
 
