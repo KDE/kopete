@@ -114,7 +114,8 @@ void Kopete::slotLoadPlugins()
 	{
 		// Ups! the user does not have plugins selected.
 		// TODO: show "first time" wizard and let user decide which modules to load
-		modules.append("history.desktop contactnotes.desktop");
+		modules.append("history.desktop");
+		modules.append("contactnotes.desktop");
 		// Other modules to load for the first time?
 	}
 
