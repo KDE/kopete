@@ -749,7 +749,7 @@ void ChatView::appendMessage(KopeteMessage &message)
 		{
 			case KopeteMessage::Highlight:
 				setTabState( Highlighted );
-#if KDE_VERSION >= 0x030190
+#if KDE_IS_VERSION( 3, 1, 90 )
 				KWin::setState( m_mainWindow->winId(), NET::DemandsAttention );
 #endif
 				break;
