@@ -386,7 +386,7 @@ void KopeteMetaLVIProps::slotClearAddresseeClicked()
 
 void KopeteMetaLVIProps::slotSelectAddresseeClicked()
 {
-	KABC::Addressee a = AddressBookSelectorDialog::getAddressee( i18n("Addressbook association"), i18n("Choose the person who '%1' is.").arg(item->metaContact()->displayName() ), item->metaContact()->metaContactId() , this);
+	KABC::Addressee a = Kopete::UI::AddressBookSelectorDialog::getAddressee( i18n("Addressbook association"), i18n("Choose the person who '%1' is.").arg(item->metaContact()->displayName() ), item->metaContact()->metaContactId() , this);
 
 	if ( !a.isEmpty() )
 	{
