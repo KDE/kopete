@@ -208,53 +208,26 @@ void ICQAccount::slotGoOnline()
 void ICQAccount::slotGoNA()
 {
 	kdDebug(14200) << k_funcinfo << "Called" << endl;
-	// Away could also be a different AWAY mode (like NA or OCC)
-/*	if(
-		(myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
-		(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
-		)*/
-	{
-		mAwayDialog->show(OSCAR_NA);
-	}
+	mAwayDialog->show(OSCAR_NA);
 }
 
 void ICQAccount::slotGoOCC()
 {
 	kdDebug(14200) << k_funcinfo << "Called" << endl;
-	// Away could also be a different AWAY mode (like NA or OCC)
-/*	if(
-		(myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
-		(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
-		)*/
-	{
-		mAwayDialog->show(OSCAR_OCC);
-	}
+	mAwayDialog->show(OSCAR_OCC);
 }
 
 void ICQAccount::slotGoFFC()
 {
 	kdDebug(14200) << k_funcinfo << "Called" << endl;
-	// Away could also be a different AWAY mode (like NA or OCC)
-/*	if(
-		(myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
-		(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
-		)*/
-	{
-		setStatus(ICQ_STATUS_SET_FFC);
-	}
+	// TODO: Find out if FFC has a some kind of "away message"
+	setStatus(ICQ_STATUS_SET_FFC);
 }
 
 void ICQAccount::slotGoDND()
 {
 	kdDebug(14200) << k_funcinfo << "Called" << endl;
-	// Away could also be a different AWAY mode (like NA or OCC)
-/*	if(
-		(myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
-		(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
-		)*/
-	{
-		mAwayDialog->show(OSCAR_DND);
-	}
+	mAwayDialog->show(OSCAR_DND);
 }
 
 void ICQAccount::slotToggleInvisible()
@@ -265,23 +238,11 @@ void ICQAccount::slotToggleInvisible()
 
 void ICQAccount::setAway(bool away, const QString &awayReason)
 {
-	kdDebug(14200) << k_funcinfo << " " << accountId() << endl;
+	kdDebug(14200) << k_funcinfo << "'" << accountId() << "'" << endl;
 	if(away)
-	{
-/*		if((myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
-			(myself()->onlineStatus().status() == KopeteOnlineStatus::Away))*/
-		{
-			setStatus(ICQ_STATUS_SET_AWAY, awayReason);
-		}
-	}
+		setStatus(ICQ_STATUS_SET_AWAY, awayReason);
 	else
-	{
-/*		if(myself()->onlineStatus().status() == KopeteOnlineStatus::Away ||
-			myself()->onlineStatus().internalStatus() == OSCAR_FFC)*/
-		{
-			setStatus(ICQ_STATUS_ONLINE);
-		}
-	}
+		setStatus(ICQ_STATUS_ONLINE);
 }
 
 const unsigned long ICQAccount::fullStatus(const unsigned long plainStatus)
@@ -384,6 +345,7 @@ void ICQAccount::reloadPluginData()
 	bool oldwebaware=mWebAware;
 	bool oldhideip=mHideIP;
 
+//	setIgnoreUnknownContacts(pluginData(protocol(), "IgnoreUnknownContacts").toUInt() == 1);
 	mWebAware=(pluginData(protocol(), "WebAware").toUInt() == 1);
 	mHideIP=(pluginData(protocol(), "HideIP").toUInt() == 1);
 

@@ -989,18 +989,18 @@ void OscarSocket::sendClientReady(void)
 			}
 		}
 	}
+//	outbuf.print();
 	sendBuf(outbuf,0x02);
 
-	outbuf.print();
-
-	kdDebug(14150) << "===========================================" << endl;
-	kdDebug(14150) << "===========================================" << endl;
+	kdDebug(14150) << "================================================================" << endl;
+	kdDebug(14150) << "================================================================" << endl;
 
 	// FIXME: is this needed for AIM? ICQ surely doesn't need that, it gets a reply for changing status
 	if(!mIsICQ)
 		emit statusChanged(OSCAR_ONLINE);
 
 	isLoggedIn = true;
+	emit loggedIn();
 }
 
 // Sends versions so that we get proper rate info
@@ -1129,9 +1129,30 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 
 						case 0x0066: // waitauth flag
 						{
+						/* Signifies that you are awaiting authorization for this buddy.
+						   The client is in charge of putting this TLV, but you will not
+						   receiving status updates for the contact until they authorize
+						   you, regardless if this is here or not. Meaning, this is only
+						   here to tell your client that you are waiting for authorization
+						   for the person. This TLV is always empty.
+						*/
 							kdDebug(14150) << k_funcinfo <<
 								"Contact has WAITAUTH set." << endl;
 							bud->setWaitAuth(true);
+							break;
+						}
+
+						case 0x0137:
+						{
+							// locally assigned email address for contact, TODO
+							break;
+						}
+
+						case 0x0145:
+						{
+							// unix timestamp when you first talked to this contact
+							// set by icqlite
+							// Maybe TODO?
 							break;
 						}
 
@@ -2843,10 +2864,10 @@ void OscarSocket::sendSSIAddModDel(SSI *item, WORD requestType)
 	{
 		case 0x0008:
 		{
-			kdDebug(14150) << k_funcinfo << "SEND (CLI_ADDSTART)" << endl;
+			/*kdDebug(14150) << k_funcinfo << "SEND (CLI_ADDSTART)" << endl;
 			Buffer addstart;
 			addstart.addSnac(0x0013,0x0011,0x0000,0x00000000);
-			sendBuf(addstart,0x02);
+			sendBuf(addstart,0x02);*/
 			kdDebug(14150) << k_funcinfo << "SEND (CLI_ROSTERADD)" << endl;
 			break;
 		}
@@ -2888,11 +2909,8 @@ void OscarSocket::sendSSIAddModDel(SSI *item, WORD requestType)
 		outbuf.addString(item->tlvlist,item->tlvlength);
 	}
 
-#ifdef OSCAR_PACKETLOG
-	kdDebug(14150) << k_funcinfo << outbuf.toString() << endl;
-#endif
 	sendBuf(outbuf,0x02);
-
+/*
 	if(requestType==0x0008)
 	{
 		kdDebug(14150) << k_funcinfo << "SEND (CLI_ADDEND)" << endl;
@@ -2900,6 +2918,7 @@ void OscarSocket::sendSSIAddModDel(SSI *item, WORD requestType)
 		addend.addSnac(0x0013,0x0012,0x0000,0x00000000);
 		sendBuf(addend,0x02);
 	}
+*/
 }
 
 // Parses the SSI acknowledgement

@@ -33,6 +33,8 @@
 #include "oscarsocket.h"
 #include "oscaraccount.h"
 
+#include <assert.h>
+
 OscarContact::OscarContact(const QString& name, const QString& displayName,
 	KopeteAccount *account, KopeteMetaContact *parent)
 	: KopeteContact(account, name, parent)
@@ -40,10 +42,9 @@ OscarContact::OscarContact(const QString& name, const QString& displayName,
 // 	kdDebug(14150) << k_funcinfo "name='" << name <<
 // 		"', displayName='" << displayName << "'"<< endl;
 
-	if (!account)
-		kdDebug(14150) << k_funcinfo << "Account pointer was null!" << endl;
-	else
-		mAccount = static_cast<OscarAccount*>(account);
+	assert(account);
+
+	mAccount = static_cast<OscarAccount*>(account);
 
 	mName = tocNormalize(name); // We store normalized names (lowercase no spaces)
 	mMsgManager = 0L;
@@ -193,8 +194,8 @@ void OscarContact::slotMainStatusChanged(const unsigned int newStatus)
 {
 	if(newStatus == OSCAR_OFFLINE)
 	{
+		mListContact->setStatus(OSCAR_OFFLINE); // TODO: remove AIMBuddy
 		setStatus(OSCAR_OFFLINE);
-		slotUpdateBuddy();
 	}
 }
 

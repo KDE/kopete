@@ -724,6 +724,12 @@ class OscarSocket : public OscarConnection
 	void gotICQInfoItemList(const int, const ICQInfoItemList &);
 	void gotICQInfoItemList(const int, const ICQInfoItemList &, const ICQInfoItemList &);
 
+	/*
+	 * emitted after CLIENT_READY packet, the account can now
+	 * do whatever it likes to do after successful login.
+	 */
+	void loggedIn();
+
 	protected:
 		ICQInfoItemList extractICQItemList( Buffer& theBuffer );
 

@@ -44,38 +44,63 @@ public:
 	OscarAccount(KopeteProtocol *parent, const QString &accountID, const char *name=0L, bool isICQ=false);
 	virtual ~OscarAccount();
 
-	/** Connects this account */
+	/*
+	 * Connects this account
+	 */
 	virtual void connect()=0;
 
-	/** Disconnects this account  */
+	/*
+	 * Disconnects this account
+	 */
 	void disconnect();
 
-	/** Sets the account away */
-	virtual void setAway(bool away, const QString &awayMessage = QString::null) = 0;
+	/*
+	 * Sets the account away
+	 */
+	virtual void setAway(bool away, const QString &awayMessage = QString::null)=0;
 
-	/** Accessor method for this account's contact */
+	/*
+	 * Accessor method for this account's contact
+	 */
 	virtual KopeteContact* myself() const;
 
-	/** Accessor method for our engine object */
+	/*
+	 * Accessor method for our engine object
+	 */
 	virtual OscarSocket* engine() const;
 
-	/** Accessor method for the action menu */
-	virtual KActionMenu* actionMenu() = 0L;
+	/*
+	 * Accessor method for the action menu
+	 */
+	virtual KActionMenu* actionMenu()=0L;
 
-	/** Gets the next random new buddy num */
+	/*
+	 * Gets the next random new buddy num
+	 */
 	int randomNewBuddyNum();
 
-	/** Gets the next random new group num */
+	/*
+	 * Gets the next random new group num
+	 */
 	int randomNewGroupNum();
 
-	/** Gets the internal buddy list */
+	/*
+	 * Gets the internal buddy list
+	 */
 	AIMBuddyList *internalBuddyList() const;
 
-	/** Sets the port we connect to */
+	/*
+	 * Sets the port we connect to
+	 */
 	void setServerPort(int port);
 
-	/** Sets the server we connect to */
+	/*
+	 * Sets the server we connect to
+	 */
 	void setServerAddress(const QString &server);
+
+	bool ignoreUnknownContacts() const { return mIgnoreUnknownContacts; }
+	void setIgnoreUnknownContacts(bool b) { mIgnoreUnknownContacts = b; }
 
 	/* Pure virtual to be implemented by ICQAccount and AIMAccount
 	 * sets the users status and if connected should send a status update to the server
@@ -126,14 +151,8 @@ protected slots:
 	/** Called when we get a request for a direct IM session with @sn */
 	void slotGotDirectIMRequest(QString sn);
 
-	/** Called when the engine notifies us that it got our user info */
-//	void slotGotMyUserInfo(UserInfo newInfo);
-
 	/** Called when there is no activity for a certain amount of time  */
 	void slotIdleTimeout();
-
-	/** Called when there is mouse/keyboard activity */
-	void slotIdleActivity();
 
 	/** Displays an error dialog with the given text */
 	void slotError(QString errmsg, int errorCode);
@@ -145,6 +164,8 @@ protected slots:
 	 * @param group the newly added group.
 	 */
 	void slotReTryServerContacts();
+
+	void slotLoggedIn();
 
 protected:
 	/** Adds a contact to a meta contact */
@@ -169,27 +190,33 @@ protected:
 	 */
 	virtual void addServerContact(AIMBuddy *buddy);
 
-	/** Initializes the engine */
+	/*
+	 * Initializes the engine
+	 */
 	virtual void initEngine(bool);
 
-	/** Initializes the signals */
-	virtual void initSignals();
-
-	/**
-	* Adds a buddy that we queued to
-	* the contact list
-	*/
+	/*
+	 * Adds a buddy that we queued to
+	 * the contact list
+	 */
 	void addOldContact(AIMBuddy *bud, KopeteMetaContact *meta=0l);
 
 protected:
+#if 0
 	void syncLocalWithServerBuddyList( AIMBuddyList& serverList );
+#endif
 	AIMGroup * findOrCreateGroup( const QString& localGroup, AIMBuddyList& serverList );
 
-	/** Flag for remembering the password */
-	bool mRememberPassword;
+protected:
 
-	/** Our Internal buddy list (from the server) */
+	/*
+	 * Our Internal buddy list (from the server)
+	 */
 	AIMBuddyList *mInternalBuddyList;
+
+#if 0
+	AIMBuddyList *mLoginContactlist;
+#endif
 
     /**
 	 * Server-side AIMBuddies that do not have KopeteContacts yet for the reason that
@@ -199,22 +226,38 @@ protected:
 	 */
 	QPtrList<AIMBuddy> mGroupQueue;
 
-	/** Our OSCAR socket object */
+	/*
+	 * Our OSCAR socket object
+	 */
 	OscarSocket *mEngine;
 
-	/** Random new group number for the engine */
+	/*
+	 * Random new group/contact number for the engine
+	 */
 	int mRandomNewGroupNum;
 	int mRandomNewBuddyNum;
 
-	/**
+	/*
 	 * This flag is used internally to keep track
 	 * of if we're idle or not
 	 */
 	bool mAreIdle;
+	/*
+	 * Last idle time in seconds we sent to the server
+	 */
+	int lastIdleValue;
 
-	/** Our away dialog */
+	/*
+	 * anti SPAM feature :)
+	 */
+	bool mIgnoreUnknownContacts;
+
+	/*
+	 * Our away dialog
+	 */
 	KopeteAwayDialog *mAwayDialog;
-	/**
+
+	/*
 	 * This is our idle timer, it is used internally
 	 * to represent idle times and report them to
 	 * the server
