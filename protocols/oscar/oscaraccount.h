@@ -25,6 +25,7 @@
 
 #include "kopeteaccount.h"
 #include "oscarsocket.h"
+#include "oscarprotocol.h"
 #include "xautolock.h"
 
 class KAction;
@@ -33,7 +34,6 @@ class KopeteContact;
 class KopeteGroup;
 
 class OscarChangeStatus;
-class OscarProtocol;
 class OscarContact;
 class OscarDebugDialog;
 
@@ -79,14 +79,16 @@ public:
     int randomNewBuddyNum();
 
     /** Gets the next random new group num */
-    int rancomNewGroupNum();
+    int randomNewGroupNum();
 
     /** Gets the internal buddy list */
     AIMBuddyList *internalBuddyList();
 
-    /** Gets a KopeteOnlineStatus object */
-    KopeteOnlineStatus& getOnlineStatus(
-	int status);
+    /** Sets the port we connect to */
+    void setPort( int port );
+
+    /** Sets the server we connect to */
+    void setServer( QString server );
 
 public slots:
     /** Slot for telling this account to go online */
@@ -162,6 +164,12 @@ protected: // Methods
     virtual bool addContactToMetaContact( const QString &contactId,
                                           const QString &displayName,
                                           KopeteMetaContact *parentContact );
+    /**
+     * Adds a contact to the internal list.
+     * This means that the contact is already
+     * on the server-side list
+     */
+    virtual void addServerContact(AIMBuddy *buddy);
 
     /** Initializes our actions */
     virtual void initActions();
@@ -173,8 +181,6 @@ protected: // Methods
     virtual void initSignals();
 
 protected: // Ivars
-    /** Our protocol object */
-    OscarProtocol *m_protocol;
     /** Flag for remembering the password */
     bool m_rememberPassword;
     /** Our Internal buddy list (from the server) */
