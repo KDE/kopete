@@ -1,12 +1,13 @@
 /*
     pluginloader.h - Kopete Plugin Loader
 
-    Copyright (c) 2002 by Duncan Mac-Vicar Prett       <duncan@kde.org>
+    Copyright (c) 2002-2003 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
 
-    Portions of this code based in Noatun plugin code:
-    Copyright (c) 2000-2002 The Noatun Developers
+    Portions of this code are based on the Noatun plugin code
+    Noatun    (c) 2000-2002 The Noatun Developers
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -50,9 +51,9 @@ struct KopeteLibraryInfo
 
 bool operator ==(const KopeteLibraryInfo &, const KopeteLibraryInfo &);
 
-
 /**
- * @author Duncan Mac-Vicar P. <duncan@kde.org>
+ * @author Duncan Mac-Vicar Prett <duncan@kde.org>
+ * @author Martijn Klingens <klingens@kde.org>
  */
 class LibraryLoader : public QObject
 {
@@ -149,6 +150,11 @@ private slots:
 	 * @brief Cleans up some references if the plugin is destroyed
 	 */
 	void slotPluginDestroyed( QObject *o );
+
+	/**
+	 * The current configuration has changed; reread the config file
+	 */
+	void slotKopeteSettingsChanged();
 
 private:
 	LibraryLoader();

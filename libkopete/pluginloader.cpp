@@ -1,11 +1,11 @@
 /*
     pluginloader.cpp - Kopete Plugin Loader
 
-    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2003 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
 
-    Portions of this code based in Noatun plugin code:
-    Copyright (c) 2000-2002 The Noatun Developers
+    Portions of this code are based on the Noatun plugin code
+    Noatun    (c) 2000-2002 The Noatun Developers
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -25,13 +25,14 @@
 #include <qfile.h>
 #include <qregexp.h>
 
+#include <kapplication.h>
 #include <kdebug.h>
 #include <kparts/componentfactory.h>
+#include <ksettings/dispatcher.h>
 #include <ksimpleconfig.h>
-#include <kstaticdeleter.h>
 #include <kstandarddirs.h>
+#include <kstaticdeleter.h>
 #include <kurl.h>
-#include <kapplication.h>
 
 #include "kopeteplugin.h"
 
@@ -62,6 +63,7 @@ LibraryLoader* LibraryLoader::pluginLoader()
 LibraryLoader::LibraryLoader()
 : QObject( qApp )
 {
+	KSettings::Dispatcher::self()->registerInstance( KGlobal::instance(), this, SLOT( slotKopeteSettingsChanged() ) );
 }
 
 LibraryLoader::~LibraryLoader()
@@ -125,6 +127,9 @@ bool LibraryLoader::loadAll()
 	}
 */
 
+	slotKopeteSettingsChanged();
+
+	// Compatibility until all plugins are ported
 	for(QStringList::ConstIterator i=modules.begin(); i!=modules.end(); ++i)
 	{
 		KopeteLibraryInfo info = getInfo( *i );
@@ -203,8 +208,8 @@ QValueList<KopeteLibraryInfo> LibraryLoader::available() const
 
 KopetePlugin *LibraryLoader::loadPlugin( const QString &spec_ )
 {
-	QString spec=spec_;
-//	kdDebug(14010) << k_funcinfo << spec << endl;
+	QString spec = spec_;
+	kdDebug( 14010 ) << k_funcinfo << spec << endl;
 
 	QString pluginId = spec;
 	pluginId.remove( QRegExp( QString::fromLatin1( ".desktop$" ) ) );
@@ -353,6 +358,49 @@ QString LibraryLoader::pluginIcon( const KopetePlugin *plugin ) const
 			return getInfo( i.currentKey() ).icon;
 	}
 	return QString::fromLatin1( "ERROR: plugin unknown" );
+}
+
+void LibraryLoader::slotKopeteSettingsChanged()
+{
+	kdDebug() << k_funcinfo << endl;
+
+	KConfig *config = KGlobal::config();
+	QMap<QString, QString> entries = config->entryMap( QString::fromLatin1( "Plugins" ) );
+	QMap<QString, QString>::Iterator it;
+	for ( it = entries.begin(); it != entries.end(); ++it )
+	{
+		QString key = it.key();
+		if ( key.endsWith( QString::fromLatin1( "Enabled" ) ) )
+		{
+			key.setLength( key.length() - 7 );
+			kdDebug() << k_funcinfo << "Set " << key << " to " << it.data() << endl;
+
+			// As a workaround until all plugins are ported and this class can be
+			// rewritten just call the old API, assuming the key is prefixed with
+			// "kopete_" - Martijn
+			if ( key.startsWith( QString::fromLatin1( "kopete_" ) ) )
+			{
+				key.remove( 0, 7 );
+				key += QString::fromLatin1( ".desktop" );
+				if ( it.data() == QString::fromLatin1( "true" ) )
+				{
+					if ( !m_loadedPlugins[ key ] )
+						loadPlugin( key );
+				}
+				else
+				{
+					if ( m_loadedPlugins[ key ] )
+						delete m_loadedPlugins[ key ];
+				}
+			}
+			else
+			{
+				kdWarning() << k_funcinfo << "Cannot change settings for plugin '" << key <<
+					"' yet. Change the plugin name to have a 'kopete_' prefix or wait until " <<
+					"the library loader has been rewritten." << endl;
+			}
+		}
+	}
 }
 
 #include "pluginloader.moc"

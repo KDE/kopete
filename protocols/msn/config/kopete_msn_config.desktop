@@ -8,7 +8,7 @@ ServiceTypes=KCModule
 X-KDE-ModuleType=Library
 X-KDE-Library=kopete_msn
 X-KDE-FactoryName=MSNProtocolConfigFactory
-X-KDE-ParentApp=kopete
+X-KDE-ParentApp=kopete_msn
 X-KDE-ParentComponents=kopete_msn
 
 Name=MSN Plugin
