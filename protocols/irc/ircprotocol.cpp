@@ -55,6 +55,21 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	setStatusIcon( "irc_protocol_offline" );
 
 	new IRCPreferences("irc_protocol", this);
+
+	KConfig *cfg = KGlobal::config();
+        cfg->setGroup("IRC");
+
+	//Migration code
+	if( cfg->hasKey("Nickname") )
+	{
+		createNewIdentity( cfg->readEntry("Nickname") + "@" + cfg->readEntry("Server") + ":" + cfg->readEntry("Port") );
+
+		cfg->deleteEntry("Nickname");
+		cfg->deleteEntry("Server");
+		cfg->deleteEntry("Port");
+		cfg->deleteEntry("AutoConnect");
+		cfg->sync();
+	}
 }
 
 IRCProtocol::~IRCProtocol()
@@ -121,17 +136,24 @@ void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 	QString displayName = serializedData[ "displayName" ];
 	QStringList identities  = QStringList::split( ",", serializedData[ "identities" ] );
 
-	if( !identities.isEmpty() && !contactId.isEmpty() )
-	{
-		if( displayName.isEmpty() )
-			displayName = contactId;
+	if( displayName.isEmpty() )
+		displayName = contactId;
 
+	if( !identities.isEmpty() )
+	{
 		for( QStringList::Iterator it = identities.begin() ; it != identities.end(); ++it )
 		{
 			QString server = (*it).section('@',1);
 			if( mIdentityMap.contains( server ) )
 				mIdentityMap[ server ]->addContact( contactId, displayName, metaContact );
 		}
+	}
+	else
+	{
+		//This guy does not have an identity. Must be old data.
+		//Just add him to the first server we have, which would be the default server if
+		//the migration code was run at the beginning
+		mIdentityMap.begin().data()->addContact( contactId, displayName, metaContact );
 	}
 }
 
