@@ -202,9 +202,9 @@ QPixmap KopeteOnlineStatus::customIcon( const QString& baseIcon ) const
 	// use reasonable defaults if not provided or protocol not set
 	QPixmap basis;
 
-	if ( d->status == Away )
+	if ( d->status == Offline )
 	{
-		// Apply standard Disabled effect to generate Away iconOverlay
+		// Apply standard Disabled effect to generate Offline iconOverlay
 		// This will probably look crap on the Unknown icon
 		// FIXME This won't return icons that are not installed using Martijn's
 		// automake magic so we'd have to use UserIcon instead of SmallIcon
