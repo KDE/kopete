@@ -25,15 +25,12 @@
 
 //#include <qwidget.h>
 //#include <klineedit.h>
-#include <qspinbox.h>
-#include <qtextedit.h>
-#include <qlayout.h>
-#include <kglobal.h>
-#include <kconfig.h>
-#include <klocale.h>
 
 #include "configmodule.h"
-#include "nowlisteningprefs.h"
+
+//class QSpinBox;
+//class QTextEdit;
+class NowListeningPrefsUI;
 
 /**
   *@author Will Stephenson
@@ -47,8 +44,8 @@ public:
 	~NowListeningPreferences();
 	virtual void save();
 
-	int pollFrequency() { return preferencesDialog->m_freq->value(); };
-	QString message() { return preferencesDialog->m_message->text(); };
+	int pollFrequency();
+	QString message();
 
 signals:
 	void saved();

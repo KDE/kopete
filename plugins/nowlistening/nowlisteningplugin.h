@@ -20,13 +20,16 @@
 #ifndef NOWLISTENINGPLUGIN_H
 #define NOWLISTENINGPLUGIN_H
 
-#include <kaction.h>
+
 #include "kopeteplugin.h"
-#include "nowlisteningpreferences.h"
-#include "nlmediaplayer.h"
+
 
 class QTimer;
 class DCOPClient;
+class KActionCOllection;
+class KToggleAction;
+class NowListeningPreferences;
+class NLMediaPlayer;
 
 /**
  * @author Will Stephenson

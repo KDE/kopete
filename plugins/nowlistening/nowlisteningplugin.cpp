@@ -32,6 +32,7 @@
 #include "kopetemetacontact.h"
 #include "nowlisteningpreferences.h"
 #include "nowlisteningplugin.h"
+#include "nlmediaplayer.h"
 #include "nlkscd.h"
 #include "nlnoatun.h"
 #include "nlxmms.h"

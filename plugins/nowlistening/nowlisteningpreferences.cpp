@@ -16,6 +16,12 @@
     *                                                                       *
     *************************************************************************
 */
+#include <qspinbox.h>
+#include <qtextedit.h>
+#include <qlayout.h>
+#include <kglobal.h>
+#include <kconfig.h>
+#include <klocale.h>
 
 #include "nowlisteningprefs.h"
 #include "nowlisteningpreferences.h"
@@ -39,6 +45,16 @@ NowListeningPreferences::NowListeningPreferences( const QString &pixmap, QObject
 
 NowListeningPreferences::~NowListeningPreferences( )
 {
+}
+
+int NowListeningPreferences::pollFrequency()
+{
+	return preferencesDialog->m_freq->value(); 
+}
+
+QString NowListeningPreferences::message()
+{
+	return preferencesDialog->m_message->text();
 }
 
 void NowListeningPreferences::save()
