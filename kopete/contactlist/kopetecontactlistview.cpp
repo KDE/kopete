@@ -197,14 +197,19 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 
 QString KopeteContactListViewToolTip::idleTime2String( int idleSeconds )
 {
-	int days, hours, mins, secs, left;
-	days = idleSeconds / (60*60*24);
-	left = idleSeconds % (60*60*24);
-	hours = left / (60*60);
-	left = left % (60*60);
+	unsigned int days, hours, mins, secs, left;
+	days = idleSeconds / ( 60*60*24 );
+	left = idleSeconds % ( 60*60*24 );
+	hours = left / ( 60*60 );
+	left = left % ( 60*60 );
 	mins = left / 60;
 	secs = left % 60;
-	return i18n( "<br>Idle: %1d %2h %3m %4s" ).arg( days ).arg( hours ).arg( mins ).arg( secs );
+	if ( days!=0 )
+		return i18n( "<br>Idle: %1d %2h %3m %4s" ).arg( days ).arg( hours ).arg( mins ).arg( secs );
+	else if ( hours!=0 )
+		return i18n( "<br>Idle: %1h %2m %3s" ).arg( hours ).arg( mins ).arg( secs );
+	else
+		return i18n( "<br>Idle: %1m %2s" ).arg( mins ).arg( secs );
 }
 
 KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name )
@@ -1257,6 +1262,13 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 				return true; //we will send a link
 			}
 		}
+		else
+		{
+			QString text;
+			QTextDrag::decode(e, text);
+			kdDebug(14000) << k_funcinfo << "drop with mimetype:" << e->format() << " data as text:" << text << endl;
+		}
+
 	}
 
 	return false;
