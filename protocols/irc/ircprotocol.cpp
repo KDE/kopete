@@ -217,7 +217,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	QObject::connect( KopeteMessageManagerFactory::factory(), SIGNAL( viewCreated( KopeteView* ) ),
 		this, SLOT( slotViewCreated( KopeteView* ) ) );
 
-	setRichTextCapabilities( KopeteProtocol::RichFormatting | KopeteProtocol::RichColor );
+	setRichTextCapabilities( KopeteProtocol::RichBFormatting | KopeteProtocol::RichUFormatting | KopeteProtocol::RichColor );
 
 	m_commandInProgress = false;
 
