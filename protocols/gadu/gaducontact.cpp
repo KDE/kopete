@@ -122,7 +122,8 @@ GaduContact::changedStatus( KGaduNotify* newstatus )
 	version		= newstatus->version;
 	image_size	= newstatus->image_size;
 
-	setFileCapable( newstatus->fileCap );
+	// FIXME: finish SENDING through DCC after 3.3
+	setFileCapable( false /* newstatus->fileCap */ );
 
 	kdDebug(14100) << "uin:" << uin() << " port: " << remote_port << " remote ip: " <<  remote_ip.ip4Addr() << " image size: " << image_size << "  version: "  << version  << endl;
 
