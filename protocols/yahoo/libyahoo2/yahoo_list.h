@@ -1,7 +1,8 @@
 /*
- * libyahoo2: yahoo_httplib.h
+ * libyahoo2: yahoo_list.h
  *
- * Copyright (C) 2002, Philip S Tellis <philip . tellis AT gmx . net>
+ * Some code copyright (C) 2002, Philip S Tellis <philip . tellis AT gmx . net>
+ * Other code copyright Meredydd Luff <meredydd AT everybuddy.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,26 +20,35 @@
  *
  */
 
-#ifndef YAHOO_HTTPLIB_H
-#define YAHOO_HTTPLIB_H
+#ifndef __YAHOO_LIST_H__
+#define __YAHOO_LIST_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "yahoo2_types.h"
+typedef struct _YList {
+  struct _YList * next;
+  struct _YList * prev;
+  void * data;
+} YList;
 
-int yahoo_tcp_readline(char *ptr, int maxlen, int fd);
-char *yahoo_urlencode(const char *instr);
-char *yahoo_urldecode(const char *instr);
-int yahoo_http_post(const char *url, const struct yahoo_data *yd, long size);
-int yahoo_http_get(const char *url, const struct yahoo_data *yd);
-int yahoo_get_url_fd(const char *url, const struct yahoo_data *yd,
-		char *filename, unsigned long *filesize);
+typedef int (*YListCompFunc)(const void *, const void *);
 
+YList * y_list_append(YList * list, void * data);
+YList * y_list_remove_link(YList * list, YList * link);
+YList * y_list_remove(YList * list, void * data);
+
+YList * y_list_copy(YList * list);
+
+void y_list_free_1(YList * list);
+void y_list_free(YList * list);
+int y_list_length(YList * list);
+
+YList * y_list_find_custom(YList * list, void * data, YListCompFunc comp);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif
+#endif // __YAHOO_LIST_H__

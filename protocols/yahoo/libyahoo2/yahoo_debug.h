@@ -1,5 +1,5 @@
 /*
- * libyahoo2: yahoo_httplib.h
+ * libyahoo2: yahoo_debug.h
  *
  * Copyright (C) 2002, Philip S Tellis <philip . tellis AT gmx . net>
  *
@@ -19,26 +19,18 @@
  *
  */
 
-#ifndef YAHOO_HTTPLIB_H
-#define YAHOO_HTTPLIB_H
+#define NOTICE(x) if(log_level >= YAHOO_LOG_NOTICE) { ext_yahoo_log x; ext_yahoo_log("\n"); }
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#define LOG(x) if(log_level >= YAHOO_LOG_INFO) { ext_yahoo_log("%s:%d: ", __FILE__, __LINE__); \
+	ext_yahoo_log x; \
+	ext_yahoo_log("\n"); }
 
-#include "yahoo2_types.h"
+#define WARNING(x) if(log_level >= YAHOO_LOG_WARNING) { ext_yahoo_log("%s:%d: warning: ", __FILE__, __LINE__); \
+	ext_yahoo_log x; \
+	ext_yahoo_log("\n"); }
 
-int yahoo_tcp_readline(char *ptr, int maxlen, int fd);
-char *yahoo_urlencode(const char *instr);
-char *yahoo_urldecode(const char *instr);
-int yahoo_http_post(const char *url, const struct yahoo_data *yd, long size);
-int yahoo_http_get(const char *url, const struct yahoo_data *yd);
-int yahoo_get_url_fd(const char *url, const struct yahoo_data *yd,
-		char *filename, unsigned long *filesize);
+#define DEBUG_MSG(x) if(log_level >= YAHOO_LOG_DEBUG) { ext_yahoo_log("%s:%d: debug: ", __FILE__, __LINE__); \
+	ext_yahoo_log x; \
+	ext_yahoo_log("\n"); }
 
 
-#ifdef __cplusplus
-}
-#endif
-
-#endif

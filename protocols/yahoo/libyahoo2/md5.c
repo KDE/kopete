@@ -37,8 +37,25 @@
   1999-05-03 lpd Original version.
  */
 
+#if HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "md5.h"
-#include <string.h>
+
+#if STDC_HEADERS
+# include <string.h>
+#else
+# if !HAVE_STRCHR
+#  define strchr index
+#  define strrchr rindex
+# endif
+char *strchr (), *strrchr ();
+# if !HAVE_MEMCPY
+#  define memcpy(d, s, n) bcopy ((s), (d), (n))
+#  define memmove(d, s, n) bcopy ((s), (d), (n))
+# endif
+#endif
 
 #ifdef TEST
 /*
@@ -46,7 +63,6 @@
  * The test program should print out the same values as given in section
  * A.5 of RFC 1321, reproduced below.
  */
-#include <string.h>
 main()
 {
     static const char *const test[7] = {

@@ -1,5 +1,32 @@
+/*
+ * libyahoo2: yahoo2_types.h
+ *
+ * Copyright (C) 2002, Philip S Tellis <philip . tellis AT gmx . net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
+
 #ifndef YAHOO2_TYPES_H
 #define YAHOO2_TYPES_H
+
+#include "yahoo_list.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 enum yahoo_status {
 	YAHOO_STATUS_AVAILABLE = 0,
@@ -27,6 +54,23 @@ enum yahoo_login_status {
 	YAHOO_LOGIN_DUPL = 99
 };
 
+enum yahoo_error {
+	E_IGNOREDUP = 2,
+	E_IGNORENONE = 3,
+	E_IGNORECONF = 12,
+};
+
+enum yahoo_log_level {
+	YAHOO_LOG_NONE = 0,
+	YAHOO_LOG_FATAL,
+	YAHOO_LOG_ERR,
+	YAHOO_LOG_WARNING,
+	YAHOO_LOG_NOTICE,
+	YAHOO_LOG_INFO,
+	YAHOO_LOG_DEBUG
+};
+
+
 /* Yahoo style/color directives */
 #define YAHOO_COLOR_BLACK "\033[30m"
 #define YAHOO_COLOR_BLUE "\033[31m"
@@ -47,30 +91,40 @@ enum yahoo_login_status {
 #define YAHOO_STYLE_URLON "\033[lm"
 #define YAHOO_STYLE_URLOFF "\033[xlm"
 
+enum yahoo_connection_type {
+	YAHOO_CONNECTION_PAGER=0,
+	YAHOO_CONNECTION_HTTP=1
+};
+
 struct yahoo_data {
-	char *user;
-	char *password;
+	char  *user;
+	char  *password;
 
-	char *cookie_y;
-	char *cookie_t;
-	char *login_cookie;
+	char  *cookie_y;
+	char  *cookie_t;
+	char  *cookie_c;
+	char  *login_cookie;
 
-	GList *buddies;
-	GList *identities;
-	char *login_id;
+	YList *buddies;
+	YList *ignore;
+	YList *identities;
+	char  *login_id;
 
-	int fd;
-	unsigned char *rxqueue;
-	int rxlen;
-	GString  *rawbuddylist;
+	int   fd;
+	int   type;
 
-	int current_status;
-	int initial_status;
-	gboolean logged_in;
+	int   current_status;
+	int   initial_status;
+	int   logged_in;
 
-	guint32 id;
+	int id;
 
-	guint32 client_id;
+	int client_id;
+
+	unsigned char	*rxqueue;
+	int   rxlen;
+	char *rawbuddylist;
+	char *ignorelist;
 };
 
 struct yahoo_buddy {
@@ -78,5 +132,9 @@ struct yahoo_buddy {
 	char *id;
 	char *real_name;
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

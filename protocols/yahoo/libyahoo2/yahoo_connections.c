@@ -1,7 +1,7 @@
 /*
  * libyahoo2: yahoo_connections.c
  *
- * Copyright (C) 2002, Philip S Tellis <philip.tellis@iname.com>
+ * Copyright (C) 2002, Philip S Tellis <philip . tellis AT gmx . net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,15 +23,15 @@
  * Linked list routines to handle multiple connections
  */
 
-#include <glib.h>
 #include "yahoo_connections.h"
+#include "yahoo_util.h"
 
 struct yahoo_connection {
 	struct yahoo_data *yd;
 	int fd;
 }; 
 
-static GList * conn = NULL;
+static YList * conn = NULL;
 
 void add_to_list(struct yahoo_data *yd, int fd)
 {
@@ -39,21 +39,21 @@ void add_to_list(struct yahoo_data *yd, int fd)
 	
 	if(!yd)
 		return;
-	c = g_new0(struct yahoo_connection, 1);
+	c = y_new0(struct yahoo_connection, 1);
 	c->yd = yd;
 	c->fd = fd;
 
-	conn = g_list_append(conn, c);
+	conn = y_list_append(conn, c);
 }
 
 void del_from_list(struct yahoo_data *yd)
 {
-	GList *l;
+	YList *l;
 	for(l = conn; l; l=l->next)
 	{
 		struct yahoo_connection * c = l->data;
 		if(c->yd == yd) {
-			conn = g_list_remove_link(conn, l);
+			conn = y_list_remove_link(conn, l);
 			break;
 		}
 	}
@@ -61,20 +61,20 @@ void del_from_list(struct yahoo_data *yd)
 
 void del_from_list_by_fd(int fd)
 {
-	GList *l;
+	YList *l;
 	for(l = conn; l; l=l->next)
 	{
 		struct yahoo_connection * c = l->data;
 		if(c->fd == fd) {
-			conn = g_list_remove_link(conn, l);
+			conn = y_list_remove_link(conn, l);
 			break;
 		}
 	}
 }
 
-struct yahoo_data * find_conn_by_id(guint32 id)
+struct yahoo_data * find_conn_by_id(int id)
 {
-	GList * l;
+	YList * l;
 	for(l = conn; l; l = l->next)
 	{
 		struct yahoo_connection * c = l->data;
@@ -86,7 +86,7 @@ struct yahoo_data * find_conn_by_id(guint32 id)
 
 struct yahoo_data * find_conn_by_fd(int fd)
 {
-	GList * l;
+	YList * l;
 	for(l = conn; l; l = l->next)
 	{
 		struct yahoo_connection * c = l->data;

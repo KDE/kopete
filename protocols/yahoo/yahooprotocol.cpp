@@ -348,6 +348,11 @@ void YahooProtocol::slotSettingsChanged()
     mPort     = KGlobal::config()->readNumEntry("Port", 5050);
 }
 
+// Callback when settings changed
+void YahooProtocol::slotConnected()
+{
+	kdDebug() << "Yahoo: WE ARE CONNECTED YAY!!!!!!" << endl;
+}
 
 // Add a contact to main window
 void YahooProtocol::slotNewContact(QString userID, QString name,

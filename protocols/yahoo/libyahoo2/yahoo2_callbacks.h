@@ -1,5 +1,31 @@
+/*
+ * libyahoo2: yahoo2_callbacks.h
+ *
+ * Copyright (C) 2002, Philip S Tellis <philip . tellis AT gmx . net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
+
 #ifndef YAHOO2_CALLBACKS_H
 #define YAHOO2_CALLBACKS_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "yahoo2_types.h"
 
 /*
@@ -22,7 +48,7 @@
  * 	succ - enum yahoo_login_status
  * 	url  - url to reactivate account if locked
  */
-void ext_yahoo_login_response(guint32 id, int succ, char *url);
+void ext_yahoo_login_response(int id, int succ, char *url);
 
 
 
@@ -34,7 +60,20 @@ void ext_yahoo_login_response(guint32 id, int succ, char *url);
  * 	id   - the id that identifies the server connection
  * 	buds - the buddy list
  */
-void ext_yahoo_got_buddies(guint32 id, GList * buds);
+void ext_yahoo_got_buddies(int id, YList * buds);
+
+
+
+
+/*
+ * Name: ext_yahoo_got_ignore
+ * 	Called when the ignore list is got from the server
+ * Params:
+ * 	id   - the id that identifies the server connection
+ * 	igns - the ignore list
+ */
+void ext_yahoo_got_ignore(int id, YList * igns);
+
 
 
 
@@ -49,7 +88,7 @@ void ext_yahoo_got_buddies(guint32 id, GList * buds);
  * 	msg  - the message if stat == YAHOO_STATUS_CUSTOM
  * 	away - whether the contact is away or not (YAHOO_STATUS_CUSTOM)
  */
-void ext_yahoo_status_changed(guint32 id, char *who, int stat, char *msg, int away);
+void ext_yahoo_status_changed(int id, char *who, int stat, char *msg, int away);
 
 
 
@@ -67,7 +106,7 @@ void ext_yahoo_status_changed(guint32 id, char *who, int stat, char *msg, int aw
  * 				2 == error sending message
  * 				5
  */
-void ext_yahoo_got_im(guint32 id, char *who, char *msg, long tm, int stat);
+void ext_yahoo_got_im(int id, char *who, char *msg, long tm, int stat);
 
 
 
@@ -82,7 +121,7 @@ void ext_yahoo_got_im(guint32 id, char *who, char *msg, long tm, int stat);
  * 	msg  - the message
  *      members - the initial members of the conference (null terminated list)
  */
-void ext_yahoo_got_conf_invite(guint32 id, char *who, char *room, char *msg, char **members);
+void ext_yahoo_got_conf_invite(int id, char *who, char *room, char *msg, YList *members);
 
 
 
@@ -96,7 +135,7 @@ void ext_yahoo_got_conf_invite(guint32 id, char *who, char *room, char *msg, cha
  * 	room - the room
  * 	msg  - the declining message
  */
-void ext_yahoo_conf_userdecline(guint32 id, char *who, char *room, char *msg);
+void ext_yahoo_conf_userdecline(int id, char *who, char *room, char *msg);
 
 
 
@@ -109,7 +148,7 @@ void ext_yahoo_conf_userdecline(guint32 id, char *who, char *room, char *msg);
  * 	who  - the user who has joined
  * 	room - the room joined
  */
-void ext_yahoo_conf_userjoin(guint32 id, char *who, char *room);
+void ext_yahoo_conf_userjoin(int id, char *who, char *room);
 
 
 
@@ -122,7 +161,7 @@ void ext_yahoo_conf_userjoin(guint32 id, char *who, char *room);
  * 	who  - the user who has left
  * 	room - the room left
  */
-void ext_yahoo_conf_userleave(guint32 id, char *who, char *room);
+void ext_yahoo_conf_userleave(int id, char *who, char *room);
 
 
 
@@ -136,7 +175,7 @@ void ext_yahoo_conf_userleave(guint32 id, char *who, char *room);
  * 	room - the room
  * 	msg  - the message
  */
-void ext_yahoo_conf_message(guint32 id, char *who, char *room, char *msg);
+void ext_yahoo_conf_message(int id, char *who, char *room, char *msg);
 
 
 
@@ -153,7 +192,7 @@ void ext_yahoo_conf_message(guint32 id, char *who, char *room, char *msg);
  * 	fname- the file name if direct transfer
  * 	fsize- the file size if direct transfer
  */
-void ext_yahoo_got_file(guint32 id, char *who, char *url, long expires, char *msg, char *fname, unsigned long fesize);
+void ext_yahoo_got_file(int id, char *who, char *url, long expires, char *msg, char *fname, unsigned long fesize);
 
 
 
@@ -167,7 +206,7 @@ void ext_yahoo_got_file(guint32 id, char *who, char *url, long expires, char *ms
  * 	who  - who was added
  * 	msg  - any message sent
  */
-void ext_yahoo_contact_added(guint32 id, char *myid, char *who, char *msg);
+void ext_yahoo_contact_added(int id, char *myid, char *who, char *msg);
 
 
 
@@ -180,7 +219,7 @@ void ext_yahoo_contact_added(guint32 id, char *myid, char *who, char *msg);
  * 	who  - who rejected you
  * 	msg  - any message sent
  */
-void ext_yahoo_rejected(guint32 id, char *who, char *msg);
+void ext_yahoo_rejected(int id, char *who, char *msg);
 
 
 
@@ -193,7 +232,7 @@ void ext_yahoo_rejected(guint32 id, char *who, char *msg);
  * 	who  - the handle of the remote user
  * 	stat - 1 if typing, 0 if stopped typing
  */
-void ext_yahoo_typing_notify(guint32 id, char *who, int stat);
+void ext_yahoo_typing_notify(int id, char *who, int stat);
 
 
 
@@ -206,7 +245,7 @@ void ext_yahoo_typing_notify(guint32 id, char *who, int stat);
  * 	who  - the handle of the remote user
  * 	stat - 1 if game, 0 if stopped gaming
  */
-void ext_yahoo_game_notify(guint32 id, char *who, int stat);
+void ext_yahoo_game_notify(int id, char *who, int stat);
 
 
 
@@ -220,7 +259,7 @@ void ext_yahoo_game_notify(guint32 id, char *who, int stat);
  * 	subj - the subject of the mail - NULL if only mail count
  * 	cnt  - mail count - 0 if new mail notification
  */
-void ext_yahoo_mail_notify(guint32 id, char *from, char *subj, int cnt);
+void ext_yahoo_mail_notify(int id, char *from, char *subj, int cnt);
 
 
 
@@ -232,7 +271,7 @@ void ext_yahoo_mail_notify(guint32 id, char *from, char *subj, int cnt);
  * 	id   - the id that identifies the server connection
  * 	msg  - the message
  */
-void ext_yahoo_system_message(guint32 id, char *msg);
+void ext_yahoo_system_message(int id, char *msg);
 
 
 
@@ -247,7 +286,25 @@ void ext_yahoo_system_message(guint32 id, char *msg);
  * 	err  - the error message
  * 	fatal- whether this error is fatal to the connection or not
  */
-void ext_yahoo_error(guint32 id, char *err, int fatal);
+void ext_yahoo_error(int id, char *err, int fatal);
+
+
+
+
+
+
+
+
+/*
+ * Name: ext_yahoo_log
+ * 	Called to log a message.
+ * Params:
+ * 	fmt  - the printf formatted message
+ * Returns:
+ * 	0
+ */
+int ext_yahoo_log(char *fmt, ...);
+
 
 
 
@@ -266,7 +323,7 @@ typedef enum {
  * 	fd   - the fd on which to listen
  * 	cond - the condition on which to call the callback
  */
-void ext_yahoo_add_handler(guint32 id, int fd, yahoo_input_condition cond);
+void ext_yahoo_add_handler(int id, int fd, yahoo_input_condition cond);
 
 
 
@@ -278,7 +335,7 @@ void ext_yahoo_add_handler(guint32 id, int fd, yahoo_input_condition cond);
  * 	id   - the id that identifies the server connection
  * 	fd   - the fd on which to listen
  */
-void ext_yahoo_remove_handler(guint32 id, int fd);
+void ext_yahoo_remove_handler(int id, int fd);
 
 
 
@@ -294,5 +351,9 @@ void ext_yahoo_remove_handler(guint32 id, int fd);
  * 	a unix file descriptor to the socket
  */
 int ext_yahoo_connect(char *host, int port);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

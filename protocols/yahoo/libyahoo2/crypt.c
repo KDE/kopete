@@ -22,9 +22,18 @@
  * already had. isn't that lovely. people should just use linux or
  * freebsd, crypt works properly on those systems. i hate solaris */
 
-#include <string.h>
+#if HAVE_CONFIG_H
+#  include <config.h>
+#endif
+
+#if HAVE_STRING_H
+#  include <string.h>
+#elif HAVE_STRINGS_H
+#  include <strings.h>
+#endif
+
 #include <stdlib.h>
-#include <glib.h>
+#include "yahoo_util.h"
 
 #include "md5.h"
 
@@ -53,7 +62,7 @@ char *yahoo_crypt(char *key, char *salt)
 
 	if (buflen < needed) {
 		buflen = needed;
-		if ((buffer = g_realloc(buffer, buflen)) == NULL)
+		if ((buffer = realloc(buffer, buflen)) == NULL)
 			return NULL;
 	}
 
@@ -181,8 +190,7 @@ char *yahoo_crypt(char *key, char *salt)
 	b64_from_24bit (alt_result[4], alt_result[10], alt_result[5], 4);
 	b64_from_24bit (0, 0, alt_result[11], 2);
 	if (buflen <= 0) {
-		g_free(buffer);
-		buffer = NULL;
+		FREE(buffer);
 	} else
 		*cp = '\0';	/* Terminate the string.  */
 

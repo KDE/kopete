@@ -29,7 +29,8 @@
 
 // KDE Includes
 #include <kdebug.h>
-
+#include "libyahoo2/yahoo2.h"
+#include "libyahoo2/yahoo2_callbacks.h"
 
 
 
@@ -37,18 +38,54 @@
 // Constructor
 KYahoo::KYahoo() : QObject(0, "KYahoo")
 {
+	if ( engineStatic_ )
+		kdDebug() << "Yahoo engine already initialized" << endl;
+	else
+		engineStatic_ = this;
+
 	DEBUG(YDMETHOD, "KYahoo::KYahoo()");
 
     DEBUG(YDINFO, "Loading Yahoo Protocol Client...");;
     sktSocket = new QSocket;
 }
 
+/****************************************************************
+LIBYAHOO2 WRAPPER
+****************************************************************/
+
+void yahoo_login_response(int id, int succ, char *url)
+{
+	KYahoo::engine()->yahooLoginResponseReceiver( id, succ, url);
+}
+
+void KYahoo::yahooLoginResponseReceiver(int id, int succ, char *url)
+{
+	emit loginResponse( id, succ, url);
+}
+
+void yahoo_got_buddies(int id, YList * buds)
+{
+	KYahoo::engine()->yahooGotBuddiesReceiver(id, buds);
+}
+
+void KYahoo::yahooGotBuddiesReceiver(int id, YList * buds)
+{
+	emit gotBuddies(id, buds);
+}
+
 
 KYahoo::~KYahoo()
 {
 	DEBUG(YDMETHOD, "KYahoo::~KYahoo()");
+	engineStatic_ = 0L;
 }
 
+KYahoo* KYahoo::engineStatic_ = 0L;
+
+KYahoo *KYahoo::engine()
+{
+	return engineStatic_;
+}
 
 // Connect to Yahoo
 void KYahoo::Connect(QString server, int port, QString username, QString password)
@@ -56,23 +93,14 @@ void KYahoo::Connect(QString server, int port, QString username, QString passwor
 	DEBUG(YDMETHOD, "KYahoo::Connect(" << server << ", " << port << ", " << username
 			<< ", " << "<password>)");
 
-    m_Server   = server;
+	int id;
+
+	m_Server   = server;
     m_Port     = port;
     m_Username = username;
     m_Password = password;
 
-	// First step, read buddy list from msg.edit
-	m_BuddyListServer = "msg.edit.yahoo.com";
-	m_BuddyListPort   = 80;
-    DEBUG(YDINFO, "Attempting to read buddy list from Yahoo server <" << 
-			m_BuddyListServer << ">");
-
-    connect(sktSocket, SIGNAL(connected()), this, SLOT(slotBuddyListConnected()));
-    connect(sktSocket, SIGNAL(connectionClosed()), this, 
-			SLOT(slotBuddyListDisconnected()));
-    connect(sktSocket, SIGNAL(readyRead()), this, SLOT(slotBuddyListRead()));
-    connect(sktSocket, SIGNAL(error(int)), this, SLOT(slotBuddyListError(int)));
-    sktSocket->connectToHost(m_BuddyListServer, m_BuddyListPort);
+	//id = yahoo_login( server.latin1(), password.latin1(), 0);
 }
 
 
@@ -89,9 +117,9 @@ void KYahoo::slotBuddyListConnected()
 
 	QString buf = "";
 	// XXX URLEncode user and password
-	buf += "GET /config/ncclogin?.src=bl&login=" + m_Username + "&passwd=" + 
+	buf += "GET /config/ncclogin?.src=bl&login=" + m_Username + "&passwd=" +
 			m_Password + "&n=1 HTTP/1.0\r\n";
-	buf += "Host: " + m_BuddyListServer + (m_BuddyListPort != 80 ? ":" + 
+	buf += "Host: " + m_BuddyListServer + (m_BuddyListPort != 80 ? ":" +
 			m_BuddyListPort : "" ) + "\r\n";
 	buf += "User-Agent: Mozilla/4.0\r\n";
 	buf += "\r\n";
@@ -130,7 +158,7 @@ void KYahoo::slotBuddyListRead()
 	while ( pos >= 0 ) {
 		pos = groups.search( buddylist, pos );
 		if ( pos > -1 ) {
-			DEBUG(YDDEBUG, "Buddy List: group <" << groups.cap(1) << "> has <" << 
+			DEBUG(YDDEBUG, "Buddy List: group <" << groups.cap(1) << "> has <" <<
 					groups.cap(2) << ">");
 			pos  += groups.matchedLength()-1;
 

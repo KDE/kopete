@@ -88,6 +88,9 @@ public slots:
 signals:
 	void protocolUnloading();	// Unload Protocol
 
+protected slots:
+	void slotConnected();
+
 private:
 	bool mIsConnected;				// Am I connected ?
 	QString mUsername, mPassword, mServer; int mPort;
