@@ -255,7 +255,9 @@ void OscarAccount::slotReceivedAwayMessage(const QString &sender, const QString 
 
 	OscarContact *contact = static_cast<OscarContact*>(contacts()[tocNormalize(sender)]);
 	if(contact)
+	{
 		contact->setAwayMessage(message);
+	}
 }
 
 // Called when a group is added by adding a contact

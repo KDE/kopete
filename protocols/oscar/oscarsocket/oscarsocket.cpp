@@ -2799,7 +2799,7 @@ void OscarSocket::parseRateChange(Buffer &inbuf)
 	int newLevel = ((windowSize - 1) / windowSize) * ((currentLevel + 1) / windowSize) * lastTime;
 	kdDebug(14150) << "New Level is: " << newLevel << endl;
 
-	if (currentLevel >= disconnectLevel)
+	if (currentLevel <= disconnectLevel)
 	{
 		emit protocolError(i18n("The account %1 will be disconnected for exceeding the rate limit." \
 					"Please wait approximately 10 minutes before reconnecting.")

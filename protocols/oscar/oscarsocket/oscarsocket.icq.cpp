@@ -766,7 +766,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 
 	kdDebug(14150) << k_funcinfo << "RECV TYPE-2 message" << endl;
 
-	kdDebug(14150) << "packet:" << endl << messageBuf.toString() << endl;
+	//kdDebug(14150) << "packet:" << endl << messageBuf.toString() << endl;
 
 	if(mAccount->myself()->onlineStatus().internalStatus() == OSCAR_NA)
 		ackStatus = P2P_NA;
@@ -916,6 +916,7 @@ void OscarSocket::requestAwayMessage(OscarContact *c)
 {
 	if(!c)
 		return;
+
 	kdDebug(14150) << k_funcinfo << "Called for '" << c->displayName() << "'" << endl;
 
 	DWORD receiverStatus = c->userInfo().icqextstatus;
@@ -935,6 +936,15 @@ bool OscarSocket::sendType2IM(OscarContact *c, const QString &text, WORD type)
 {
 	if(!c)
 		return false;
+
+	if(!c->hasCap(AIM_CAPS_ICQSERVERRELAY))
+	{
+		kdDebug(14150) << k_funcinfo <<
+			"Contact '" << c->displayName() <<
+			"' does not support type-2 messages" << endl;
+		return false;
+	}
+
 	kdDebug(14150) << k_funcinfo << "Called for '" << c->displayName() <<
 		"', text='" << text << "' type=" << type << endl;
 

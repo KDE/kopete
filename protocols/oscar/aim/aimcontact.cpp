@@ -234,7 +234,10 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 	//kdDebug(14190) << k_funcinfo << "decoded userclass=[" << uclass << "]" << endl;
 
 	if(u.userclass & CLASS_AWAY)
+	{
+		//mAccount->engine()->sendLocationInfoRequest(contactName(), 0x0003); // request away message
 		setStatus(OSCAR_AWAY);
+	}
 	else
 		setStatus(OSCAR_ONLINE);
 

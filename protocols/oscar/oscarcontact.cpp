@@ -149,7 +149,6 @@ OscarContact::~OscarContact()
 
 KopeteMessageManager* OscarContact::manager(bool /*canCreate*/)
 {
-
 	// FIXME: What was this canCreate for, we only allow one
 	// manager and create it if necessary so why use this bool? [mETz, 26.10.2003]
 	if(!mMsgManager /*&& canCreate*/)
@@ -220,14 +219,14 @@ void OscarContact::slotMainStatusChanged(const unsigned int newStatus)
 
 void OscarContact::slotOffgoingBuddy(QString sn)
 {
-	if(tocNormalize(sn) == mName) //if we are the contact that is offgoing
-	{
-		setStatus(OSCAR_OFFLINE);
-		slotUpdateBuddy();
-		mInfo.idletime = 0;
-		setIdleTime(0);
-		emit idleStateChanged(this);
-	}
+	if(tocNormalize(sn) != contactName())
+		return;
+
+	setStatus(OSCAR_OFFLINE);
+	slotUpdateBuddy();
+	mInfo.idletime = 0;
+	setIdleTime(0);
+	emit idleStateChanged(this);
 }
 
 void OscarContact::slotUpdateNickname(const QString newNickname)
@@ -714,7 +713,12 @@ const QString &OscarContact::awayMessage()
 
 void OscarContact::setAwayMessage(const QString &message)
 {
+	kdDebug(14150) << k_funcinfo <<
+		"Called for '" << displayName() << "', away msg='" << message << "'" << endl;
+
 	mAwayMessage = message;
+	setOnlineStatus(onlineStatus(), message);
+
 	emit awayMessageChanged();
 }
 

@@ -88,7 +88,7 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 		kdDebug(14200) << k_funcinfo << "ICQ Contact with no nickname, grabbing userinfo" << endl;
 		requestUserInfo();
 	}
-	
+
 	actionReadAwayMessage = 0L;
 }
 
@@ -111,20 +111,25 @@ void ICQContact::slotContactChanged(const UserInfo &u)
 	/*kdDebug(14190) << k_funcinfo << "Called for '"
 		<< displayName() << "', contactName()=" << contactName() << endl;*/
 
+	unsigned int newStatus = 0;
 	mInvisible = (u.icqextstatus & ICQ_STATUS_IS_INVIS);
+	if (u.icqextstatus & ICQ_STATUS_IS_FFC)			newStatus = OSCAR_FFC;
+	else if (u.icqextstatus & ICQ_STATUS_IS_DND)	newStatus = OSCAR_DND;
+	else if (u.icqextstatus & ICQ_STATUS_IS_OCC)	newStatus = OSCAR_OCC;
+	else if (u.icqextstatus & ICQ_STATUS_IS_NA)		newStatus = OSCAR_NA;
+	else if (u.icqextstatus & ICQ_STATUS_IS_AWAY)	newStatus = OSCAR_AWAY;
+	else											newStatus = OSCAR_ONLINE;
 
-	if (u.icqextstatus & ICQ_STATUS_IS_FFC)
-		setStatus(OSCAR_FFC);
-	else if (u.icqextstatus & ICQ_STATUS_IS_DND)
-		setStatus(OSCAR_DND);
-	else if (u.icqextstatus & ICQ_STATUS_IS_OCC)
-		setStatus(OSCAR_OCC);
-	else if (u.icqextstatus & ICQ_STATUS_IS_NA)
-		setStatus(OSCAR_NA);
-	else if (u.icqextstatus & ICQ_STATUS_IS_AWAY)
-		setStatus(OSCAR_AWAY);
-	else
-		setStatus(OSCAR_ONLINE);
+	if((this != account()->myself()) &&
+	   (newStatus != onlineStatus().internalStatus()) &&
+	   (newStatus != OSCAR_ONLINE) &&
+	   (account()->myself()->onlineStatus().status() != KopeteOnlineStatus::Connecting))
+	{
+		// TODO: Add queues for away message requests
+		mAccount->engine()->requestAwayMessage(this);
+	}
+
+	setStatus(newStatus);
 
 	slotUpdateBuddy();
 }
@@ -213,7 +218,7 @@ QPtrList<KAction> *ICQContact::customContextMenuActions()
 			awIcn = "icq_away";
 			break;
 	}
-	
+
 	if( !actionReadAwayMessage )
 	{
 		actionReadAwayMessage = new KAction(awTxt, awIcn, 0,
