@@ -242,7 +242,7 @@ void KopeteContact::addThisTemporaryContact(KopeteGroup *group)
 
 void KopeteContact::slotChangeMetaContact()
 {
-	KDialogBase *moveDialog= new KDialogBase(kopeteapp->contactList(), "moveDialog" , true, i18n("Move Contact") , KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true )  ;
+	KDialogBase *moveDialog= new KDialogBase( qApp->mainWidget(), "moveDialog" , true, i18n("Move Contact") , KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true )  ;
 	QVBox *w=new QVBox(moveDialog);
 	new QLabel(i18n("Choose the meta contact into which you want to move this contact.") , w);
 	m_selectMetaContactListBox= new KListBox ( w , "m_selectMetaContactListBox");

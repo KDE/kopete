@@ -288,7 +288,7 @@ void Kopete::slotSetAvailableAll(void)
 /** Add a contact through Wizard */
 void Kopete::slotAddContact()
 {
-	AddWizardImpl *tmpdialog = new AddWizardImpl( mainWindow() );
+	AddWizardImpl *tmpdialog = new AddWizardImpl( m_mainWindow );
 	tmpdialog->show();
 }
 
