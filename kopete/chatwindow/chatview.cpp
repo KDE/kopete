@@ -57,6 +57,7 @@
 #include "kopetexsl.h"
 #include "kopeteaccount.h"
 #include "kopeteglobal.h"
+#include "kopetecontactlist.h"
 
 #include <ktabwidget.h>
 
@@ -1918,19 +1919,100 @@ void ChatView::slotUpdateBackground( const QPixmap &pixmap )
 
 void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 {
-	if ( event->provides( "text/uri-list" ) && m_manager->members().count() == 1 )
+	if( event->provides( "kopete/x-contact" ) )
+	{
+		QStringList lst=QStringList::split( QChar( 0xE000 ) , QString::fromUtf8(event->encodedData ( "kopete/x-contact" )) );
+		if(m_manager->mayInvite() && m_manager->protocol()->pluginId() == lst[0] && m_manager->account()->accountId() == lst[1])
+		{
+			QString contact=lst[2];
+						
+			bool found =false;
+			QPtrList<KopeteContact> cts=m_manager->members();
+			for ( QPtrListIterator<KopeteContact> it( cts ); it.current(); ++it )
+			{
+				if(it.current()->contactId() == contact)
+				{
+					found=true;
+					break;
+				}
+			}
+		
+			if(!found && contact != m_manager->user()->contactId())
+				event->accept();
+		}
+	}
+	else if( event->provides( "kopete/x-metacontact" ) )
+	{
+		QString metacontactID=QString::fromUtf8(event->encodedData ( "kopete/x-metacontact" ));
+		KopeteMetaContact *m=KopeteContactList::contactList()->metaContact(metacontactID);
+
+		if( m && m_manager->mayInvite())
+		{
+			QPtrList<KopeteContact> cts=m->contacts();
+			for ( QPtrListIterator<KopeteContact> it( cts ); it.current(); ++it )
+			{
+				KopeteContact *c=it.current();
+				if(c && c->account() == m_manager->account())
+				{
+					if( c != m_manager->user() &&  !m_manager->members().contains(c)  && c->isOnline())
+						event->accept();
+				}
+			}
+		}
+	}
+	else if ( event->provides( "text/uri-list" ) && m_manager->members().count() == 1 )
 	{
 		KopeteContactPtrList members = m_manager->members();
 		KopeteContact *contact = members.first();
 		if ( contact && contact->canAcceptFiles() );
 			event->accept();
 	}
-	KDockMainWindow::dragEnterEvent( event );
+	else 
+		KDockMainWindow::dragEnterEvent(event);
 }
 
 void ChatView::dropEvent ( QDropEvent * event )
 {
-	if ( event->provides( "text/uri-list" ) && m_manager->members().count() == 1 )
+	if( event->provides( "kopete/x-contact" ) )
+	{
+		QStringList lst=QStringList::split( QChar( 0xE000 ) , QString::fromUtf8(event->encodedData ( "kopete/x-contact" )) );
+		if(m_manager->mayInvite() && m_manager->protocol()->pluginId() == lst[0] && m_manager->account()->accountId() == lst[1])
+		{
+			QString contact=lst[2];
+			
+			bool found =false;
+			QPtrList<KopeteContact> cts=m_manager->members();
+			for ( QPtrListIterator<KopeteContact> it( cts ); it.current(); ++it )
+			{
+				if(it.current()->contactId() == contact)
+				{
+					found=true;
+					break;
+				}
+			}
+			if(!found && contact != m_manager->user()->contactId())
+				m_manager->inviteContact(contact);
+		}
+	}
+	else if( event->provides( "kopete/x-metacontact" ) )
+	{
+		QString metacontactID=QString::fromUtf8(event->encodedData ( "kopete/x-metacontact" ));
+		KopeteMetaContact *m=KopeteContactList::contactList()->metaContact(metacontactID);
+		if(m && m_manager->mayInvite())
+		{
+			QPtrList<KopeteContact> cts=m->contacts();
+			for ( QPtrListIterator<KopeteContact> it( cts ); it.current(); ++it )
+			{
+				KopeteContact *c=it.current();
+				if(c && c->account() == m_manager->account() && c->isOnline())
+				{
+					if( c != m_manager->user() &&  !m_manager->members().contains(c) )
+						m_manager->inviteContact(c->contactId());
+				}
+			}
+		}
+	}
+	else if ( event->provides( "text/uri-list" ) && m_manager->members().count() == 1 )
 	{
 		KopeteContactPtrList members = m_manager->members();
 		KopeteContact *contact = members.first();
@@ -1958,7 +2040,8 @@ void ChatView::dropEvent ( QDropEvent * event )
 		event->acceptAction();
 		return;
 	}
-	KDockMainWindow::dropEvent( event );
+	else
+		KDockMainWindow::dropEvent(event);
 
 }
 
