@@ -396,6 +396,13 @@ public:
 	
 #endif
 
+	/**
+	 * used in @ref sync()   
+	 */
+	enum Changed{ MovedBetweenGroup = 0x01, /** the contact has been moved between groups */ 
+				DisplayNameChanged = 0x02 }; /** the displayname of the contact changed  */
+
+
 public slots:
 	/**
 	 * This should typically pop up a KopeteChatWindow
@@ -427,7 +434,6 @@ public slots:
 	 */
 	virtual void userInfo() =0;
 
-
 	/**
 	 * @brief Syncronise the server and the metacontact.
 	 * Protocols with server-side contact lists can implement this to
@@ -436,8 +442,10 @@ public slots:
 	 * This method is called every time the metacontact has been moved or renamed.
 	 *
 	 * default implementation does nothing
+	 *
+	 * @param changed is a bitmask of the @ref Changed enum which say why the call to this funtion is done.
 	 */
-	virtual void sync();
+	virtual void sync(unsigned int changed = 0xFF);
 
 	/**
 	 * Method to delete a contact from the contact list,
@@ -497,6 +505,10 @@ signals:
 	void propertyChanged( Contact *contact, const QString &key,
 		const QVariant &oldValue, const QVariant &newValue );
 #endif
+
+protected:
+	virtual void virtual_hook(uint id, void *data);
+
 private:
 	class Private;
 	Private *d;

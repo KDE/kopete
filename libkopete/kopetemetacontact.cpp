@@ -532,7 +532,7 @@ void MetaContact::setDisplayName( const QString &name )
 	emit displayNameChanged( old , name );
 
 	for( QPtrListIterator<Contact> it( d->contacts ) ; it.current(); ++it )
-		( *it )->sync();
+		( *it )->sync(Contact::DisplayNameChanged);
 
 
 }
@@ -610,7 +610,7 @@ void MetaContact::moveToGroup( Group *from, Group *to )
 	d->groups.append( to );
 
 	for( Contact *c = d->contacts.first(); c ; c = d->contacts.next() )
-		c->sync();
+		c->sync(Contact::MovedBetweenGroup);
 
 	emit movedToGroup( this, from, to );
 }
@@ -632,7 +632,7 @@ void MetaContact::removeFromGroup( Group *group )
 	}
 
 	for( Contact *c = d->contacts.first(); c ; c = d->contacts.next() )
-		c->sync();
+		c->sync(Contact::MovedBetweenGroup);
 	
 	emit removedFromGroup( this, group );
 }
@@ -654,7 +654,7 @@ void MetaContact::addToGroup( Group *to )
 	d->groups.append( to );
 
 	for( Contact *c = d->contacts.first(); c ; c = d->contacts.next() )
-		c->sync();
+		c->sync(Contact::MovedBetweenGroup);
 
 	emit addedToGroup( this, to );
 }

@@ -539,7 +539,7 @@ Account * Contact::account() const
 	return d->account;
 }
 
-void Contact::sync()
+void Contact::sync(unsigned int)
 {
 	/* Default implementation does nothing */
 }
@@ -853,6 +853,11 @@ QString KopeteContact::formattedIdleTime() const
 }
 
 #endif
+
+
+void Contact::virtual_hook( uint , void * )
+{ }
+
 
 } //END namespace Kopete
 
