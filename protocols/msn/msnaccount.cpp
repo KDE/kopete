@@ -62,10 +62,10 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 	KAction* actionGoOnline = new KAction ( i18n("Go O&nline"), "msn_online", 0, this, SLOT(slotGoOnline()), m_actionMenu, "actionMSNConnect" );
 	KAction* actionGoOffline = new KAction ( i18n("Go &Offline"), "msn_offline", 0, this, SLOT(slotGoOffline()), m_actionMenu, "actionMSNConnect" );
 	KAction* actionGoAway = new KAction ( i18n("Set &Away"), "msn_away", 0, this, SLOT(slotGoAway()), m_actionMenu, "actionMSNConnect" );
-	KAction* actionGoBusy = new KAction ( i18n("Set &Busy"), "msn_na", 0, this, SLOT(slotGoBusy()), m_actionMenu, "actionMSNConnect" );
+	KAction* actionGoBusy = new KAction ( i18n("Set &Busy"), "msn_busy", 0, this, SLOT(slotGoBusy()), m_actionMenu, "actionMSNConnect" );
 	KAction* actionGoBeRightBack = new KAction ( i18n("Set Be &Right Back"), "msn_away", 0, this, SLOT(slotGoBeRightBack()), m_actionMenu, "actionMSNConnect" );
-	KAction* actionGoOnThePhone = new KAction ( i18n("Set on the &Phone"), "msn_na", 0, this, SLOT(slotGoOnThePhone()), m_actionMenu, "actionMSNConnect" );
-	KAction* actionGoOutToLunch = new KAction ( i18n("Set Out to &Lunch"), "msn_away", 0, this, SLOT(slotGoOutToLunch()), m_actionMenu, "actionMSNConnect" );
+	KAction* actionGoOnThePhone = new KAction ( i18n("Set on the &Phone"), "msn_phone", 0, this, SLOT(slotGoOnThePhone()), m_actionMenu, "actionMSNConnect" );
+	KAction* actionGoOutToLunch = new KAction ( i18n("Set Out to &Lunch"), "msn_lunch", 0, this, SLOT(slotGoOutToLunch()), m_actionMenu, "actionMSNConnect" );
 	KAction* actionGoInvisible = new KAction ( i18n("Set &Invisible"), "msn_offline", 0, this, SLOT(slotGoInvisible()), m_actionMenu, "actionMSNConnect" );
 
 	KAction* renameAction = new KAction ( i18n( "&Change Nickname..." ), QString::null, 0, this, SLOT( slotChangePublicName() ), m_actionMenu, "renameAction" );
