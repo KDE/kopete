@@ -1,8 +1,0 @@
---- kdenetwork/kopete/protocols/jabber/libxmpp/xmpp/src/xmpp_vcard.cpp  #1.1:1.2
-@@ -440,5 +440,5 @@ QDomElement VCard::toXml(QDomDocument *d
-                                 w.appendChild( emptyTag(doc, "X400") );
- 
--                        if ( e.userid )
-+                        if ( !e.userid.isEmpty() )
-                                 w.appendChild( textTag(doc, "USERID",   e.userid) );
- 
