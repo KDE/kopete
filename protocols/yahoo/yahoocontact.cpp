@@ -42,7 +42,7 @@ YahooContact::YahooContact(KopeteAccount *account, const QString &userId, const 
 
 	// Update ContactList
 	setDisplayName(fullName);
-	setOnlineStatus(m_status.translate());
+	setOnlineStatus(m_status.ys2kos());
 
 	// XXX initActions();
 
@@ -65,7 +65,7 @@ void YahooContact::setYahooStatus( YahooStatus::Status status_, const QString &m
 {
 	kdDebug(14180) << "Yahoo::setYahooStatus( " << status_ << ", " << msg << ")" << endl;
 	m_status.setStatus(status_);
-	setOnlineStatus( m_status.translate() );
+	setOnlineStatus( m_status.ys2kos() );
 }
 
 /*
@@ -78,7 +78,7 @@ void YahooContact::slotUpdateStatus(QString status, QString statusText = QString
 		kdDebug(14180) << "Yahoo plugin: Updating status." << endl;
 	}
 	mStatusText = statusText;
-	setOnlineStatus( m_status.translate() );
+	setOnlineStatus( m_status.ys2kos() );
 }
 */
 

@@ -193,21 +193,21 @@ KActionMenu *YahooAccount::actionMenu()
 	KActionMenu *theActionMenu = new KActionMenu("Yahoo", this);
 	theActionMenu->popupMenu()->insertTitle(m_myself->icon(), "Yahoo ("+m_myself->displayName()+")");
 
-	theActionMenu->insert(new KAction(i18n(YSTAvailable), YahooStatus(YahooStatus::Available).translate().iconFor(this), 0, this, SLOT(slotGoOnline()), this, "actionYahooGoOnline"));
-	theActionMenu->insert(new KAction(i18n(YSTBeRightBack), YahooStatus(YahooStatus::BeRightBack).translate().iconFor(this), 0, this, SLOT(slotGoStatus001()), this, "actionYahooGoStatus001"));
-	theActionMenu->insert(new KAction(i18n(YSTBusy), YahooStatus(YahooStatus::Busy).translate().iconFor(this), 0, this, SLOT(slotGoStatus002()), this, "actionYahooGoStatus002"));
-	theActionMenu->insert(new KAction(i18n(YSTNotAtHome), YahooStatus(YahooStatus::NotAtHome).translate().iconFor(this), 0, this, SLOT(slotGoStatus003()), this, "actionYahooGoStatus003"));
-	theActionMenu->insert(new KAction(i18n(YSTNotAtMyDesk), YahooStatus(YahooStatus::NotAtMyDesk).translate().iconFor(this), 0, this, SLOT(slotGoStatus004()), this, "actionYahooGoStatus004"));
-	theActionMenu->insert(new KAction(i18n(YSTNotInTheOffice), YahooStatus(YahooStatus::NotInTheOffice).translate().iconFor(this), 0, this, SLOT(slotGoStatus005()), this, "actionYahooGoStatus005"));
-	theActionMenu->insert(new KAction(i18n(YSTOnThePhone), YahooStatus(YahooStatus::OnThePhone).translate().iconFor(this), 0, this, SLOT(slotGoStatus006()), this, "actionYahooGoStatus006"));
-	theActionMenu->insert(new KAction(i18n(YSTOnVacation), YahooStatus(YahooStatus::OnVacation).translate().iconFor(this), 0, this, SLOT(slotGoStatus007()), this, "actionYahooGoStatus007"));
-	theActionMenu->insert(new KAction(i18n(YSTOutToLunch), YahooStatus(YahooStatus::OutToLunch).translate().iconFor(this), 0, this, SLOT(slotGoStatus008()), this, "actionYahooGoStatus008"));
-	theActionMenu->insert(new KAction(i18n(YSTSteppedOut), YahooStatus(YahooStatus::SteppedOut).translate().iconFor(this), 0, this, SLOT(slotGoStatus009()), this, "actionYahooGoStatus009"));
-	theActionMenu->insert(new KAction(i18n(YSTInvisible), YahooStatus(YahooStatus::Invisible).translate().iconFor(this), 0, this, SLOT(slotGoStatus012()), this, "actionYahooGoStatus012"));
-	theActionMenu->insert(new KAction(i18n("Custom"), YahooStatus(YahooStatus::Custom).translate().iconFor(this), 0, this, SLOT(slotGoStatus099()), this, "actionYahooGoStatus099"));
-	theActionMenu->insert(new KAction(i18n(YSTOffline), YahooStatus(YahooStatus::Offline).translate().iconFor(this), 0, this, SLOT(slotGoOffline()), this, "actionYahooGoOffline"));
+	theActionMenu->insert(new KAction(i18n(YSTAvailable), YahooStatus(YahooStatus::Available).ys2kos().iconFor(this), 0, this, SLOT(slotGoOnline()), this, "actionYahooGoOnline"));
+	theActionMenu->insert(new KAction(i18n(YSTBeRightBack), YahooStatus(YahooStatus::BeRightBack).ys2kos().iconFor(this), 0, this, SLOT(slotGoStatus001()), this, "actionYahooGoStatus001"));
+	theActionMenu->insert(new KAction(i18n(YSTBusy), YahooStatus(YahooStatus::Busy).ys2kos().iconFor(this), 0, this, SLOT(slotGoStatus002()), this, "actionYahooGoStatus002"));
+	theActionMenu->insert(new KAction(i18n(YSTNotAtHome), YahooStatus(YahooStatus::NotAtHome).ys2kos().iconFor(this), 0, this, SLOT(slotGoStatus003()), this, "actionYahooGoStatus003"));
+	theActionMenu->insert(new KAction(i18n(YSTNotAtMyDesk), YahooStatus(YahooStatus::NotAtMyDesk).ys2kos().iconFor(this), 0, this, SLOT(slotGoStatus004()), this, "actionYahooGoStatus004"));
+	theActionMenu->insert(new KAction(i18n(YSTNotInTheOffice), YahooStatus(YahooStatus::NotInTheOffice).ys2kos().iconFor(this), 0, this, SLOT(slotGoStatus005()), this, "actionYahooGoStatus005"));
+	theActionMenu->insert(new KAction(i18n(YSTOnThePhone), YahooStatus(YahooStatus::OnThePhone).ys2kos().iconFor(this), 0, this, SLOT(slotGoStatus006()), this, "actionYahooGoStatus006"));
+	theActionMenu->insert(new KAction(i18n(YSTOnVacation), YahooStatus(YahooStatus::OnVacation).ys2kos().iconFor(this), 0, this, SLOT(slotGoStatus007()), this, "actionYahooGoStatus007"));
+	theActionMenu->insert(new KAction(i18n(YSTOutToLunch), YahooStatus(YahooStatus::OutToLunch).ys2kos().iconFor(this), 0, this, SLOT(slotGoStatus008()), this, "actionYahooGoStatus008"));
+	theActionMenu->insert(new KAction(i18n(YSTSteppedOut), YahooStatus(YahooStatus::SteppedOut).ys2kos().iconFor(this), 0, this, SLOT(slotGoStatus009()), this, "actionYahooGoStatus009"));
+	theActionMenu->insert(new KAction(i18n(YSTInvisible), YahooStatus(YahooStatus::Invisible).ys2kos().iconFor(this), 0, this, SLOT(slotGoStatus012()), this, "actionYahooGoStatus012"));
+	theActionMenu->insert(new KAction(i18n("Custom"), YahooStatus(YahooStatus::Custom).ys2kos().iconFor(this), 0, this, SLOT(slotGoStatus099()), this, "actionYahooGoStatus099"));
+	theActionMenu->insert(new KAction(i18n(YSTOffline), YahooStatus(YahooStatus::Offline).ys2kos().iconFor(this), 0, this, SLOT(slotGoOffline()), this, "actionYahooGoOffline"));
 	// TODO: do something(?!) with it
-//	theActionMenu->insert(new KAction(i18n(YSTIdle), YahooStatus(YahooStatus::Idle).translate().iconFor(this), 0, this, SLOT(slotGoStatus999()), this, "actionYahooGoStatus999");
+//	theActionMenu->insert(new KAction(i18n(YSTIdle), YahooStatus(YahooStatus::Idle).ys2kos().iconFor(this), 0, this, SLOT(slotGoStatus999()), this, "actionYahooGoStatus999");
 
 	return theActionMenu;
 }

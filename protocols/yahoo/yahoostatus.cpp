@@ -30,7 +30,7 @@ YahooStatus::YahooStatus()
 	m_status = Offline;
 }
 
-KopeteOnlineStatus YahooStatus::translate() const
+KopeteOnlineStatus YahooStatus::ys2kos() const
 {
 	if(m_status == Available)
 		return KopeteOnlineStatus(KopeteOnlineStatus::Online,  25, YahooProtocol::protocol(), m_status + 1, QString::null,  i18n(YSTAvailable), i18n(YSTAvailable));
