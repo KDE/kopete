@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
-X-Kopete-Version=1000793
+X-Kopete-Version=1000800
 Icon=yahoo_protocol
 ServiceTypes=Kopete/Protocol
 X-KDE-Library=kopete_yahoo

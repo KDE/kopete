@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
-X-Kopete-Version=1000793
+X-Kopete-Version=1000800
 Icon=highlight
 ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_highlight
