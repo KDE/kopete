@@ -1,20 +1,20 @@
  /*
-    jabbercontact.cpp  -  Base class for the Kopete Jabber protocol contact
-
-    Copyright (c) 2002 by Daniel Stone <dstone@kde.org>
-    Copyright (c) 2002 by Till Gerken <till@tantalo.net>
-
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
-
-    *************************************************************************
-    *                                                                       *
-    * This program is free software; you can redistribute it and/or modify  *
-    * it under the terms of the GNU General Public License as published by  *
-    * the Free Software Foundation; either version 2 of the License, or     *
-    * (at your option) any later version.                                   *
-    *                                                                       *
-    *************************************************************************
-*/
+  * jabbercontact.cpp  -  Base class for the Kopete Jabber protocol contact
+  * 
+  * Copyright (c) 2002 by Daniel Stone <dstone@kde.org>
+  * Copyright (c) 2002 by Till Gerken <till@tantalo.net>
+  * 
+  * Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+  * 
+  * *************************************************************************
+  * *                                                                       *
+  * * This program is free software; you can redistribute it and/or modify  *
+  * * it under the terms of the GNU General Public License as published by  *
+  * * the Free Software Foundation; either version 2 of the License, or     *
+  * * (at your option) any later version.                                   *
+  * *                                                                       *
+  * *************************************************************************
+  */
 
 #include <qapplication.h>
 #include <qcursor.h>
@@ -48,90 +48,96 @@
 /**
  * JabberContact constructor
  */
-JabberContact::JabberContact(QString userId, QString nickname, QStringList groups, JabberProtocol *p, KopeteMetaContact *mc, QString identity)
-: KopeteContact( p, userId, mc )
-{
+JabberContact::JabberContact(QString userId, QString nickname,
+			     QStringList groups, JabberProtocol * p,
+			     KopeteMetaContact * mc, QString identity)
+:  KopeteContact(p, userId, mc) {
 
-	// save parent protocol object
-	protocol = p;
+    // save parent protocol object
+    protocol = p;
 
-	parentMetaContact = mc;
+    parentMetaContact = mc;
 
-	actionCollection = 0L;
+    actionCollection = 0L;
 
-	resourceOverride = false;
+    resourceOverride = false;
 
-	messageManager = 0L;
+    messageManager = 0L;
 
-	mIdentityId = identity;
+    mIdentityId = identity;
 
-	rosterItem.setJid(Jabber::Jid(userId));
-	rosterItem.setName(nickname);
-	rosterItem.setGroups(groups);
+    rosterItem.setJid(Jabber::Jid(userId));
+    rosterItem.setName(nickname);
+    rosterItem.setGroups(groups);
 
-	initActions();
+    initActions();
 
-	// create a default (empty) resource for the contact
-	JabberResource *defaultResource = new JabberResource( QString::null, -1, QDateTime::currentDateTime(), JabberProtocol::protocol()->JabberOffline, "" );
-	resources.append(defaultResource);
+    // create a default (empty) resource for the contact
+    JabberResource *defaultResource =
+	new JabberResource(QString::null, -1, QDateTime::currentDateTime(),
+			   JabberProtocol::protocol()->JabberOffline, "");
+    resources.append(defaultResource);
 
-	activeResource = defaultResource;
+    activeResource = defaultResource;
 
-	// update the displayed name
-	setDisplayName(rosterItem.name());
+    // update the displayed name
+    setDisplayName(rosterItem.name());
 
-	// specifically cause this instance to update this contact as offline
-	slotUpdatePresence( p->JabberOffline, QString::null );
+    // specifically cause this instance to update this contact as offline
+    slotUpdatePresence(p->JabberOffline, QString::null);
 }
 
 /* Return the identity ID */
 QString JabberContact::identityId() const
 {
-	return mIdentityId;
+    return mIdentityId;
 }
 
 /* Return the user ID */
 QString JabberContact::userId() const
 {
-	return rosterItem.jid().userHost();
+    return rosterItem.jid().userHost();
 }
 
 /* Return the currently used resource for this contact */
 QString JabberContact::resource() const
 {
-	return activeResource->resource();
+    return activeResource->resource();
 }
 
-KopeteMessageManager *JabberContact::manager( bool )
-{
+KopeteMessageManager *JabberContact::manager(bool) {
 
-	// create a new message manager if there is none
-	if(!messageManager)
-	{
-		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberContact] Creating new message manager." << endl;
+    // create a new message manager if there is none
+    if (!messageManager) {
+	kdDebug(JABBER_DEBUG_GLOBAL) <<
+	    "[JabberContact] Creating new message manager." << endl;
 
-		KopeteContactPtrList contactList;
-		contactList.append(this);
+	KopeteContactPtrList contactList;
+	contactList.append(this);
 
-		messageManager = KopeteMessageManagerFactory::factory()->create(
-							protocol->myself(), contactList, protocol);
+	messageManager =
+	    KopeteMessageManagerFactory::factory()->create(protocol->myself(),
+							   contactList,
+							   protocol);
 
-		QObject::connect(messageManager, SIGNAL(destroyed()),
-			this, SLOT(slotMessageManagerDeleted()));
-		QObject::connect(messageManager, SIGNAL(messageSent(KopeteMessage &, KopeteMessageManager *)),
-			this, SLOT(slotSendMessage(KopeteMessage &)));
-	}
+	QObject::connect(messageManager, SIGNAL(destroyed()),
+			 this, SLOT(slotMessageManagerDeleted()));
+	QObject::connect(messageManager,
+			 SIGNAL(messageSent
+				(KopeteMessage &, KopeteMessageManager *)),
+			 this, SLOT(slotSendMessage(KopeteMessage &)));
+    }
 
-	return static_cast<KopeteMessageManager*>(messageManager);
+    return static_cast<KopeteMessageManager *>(messageManager);
 
 }
 
-void JabberContact::slotMessageManagerDeleted()
-{
+void JabberContact::slotMessageManagerDeleted() {
 
-	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberContact] Message manager has been deleted." << endl;
+    kdDebug(JABBER_DEBUG_GLOBAL) <<
+	"[JabberContact] Message manager has been deleted." << endl;
 
-	messageManager = 0L;
+    messageManager = 0L;
 
 }
 
@@ -139,598 +145,616 @@ void JabberContact::slotMessageManagerDeleted()
 /* Return the reason why we are away */
 QString JabberContact::reason() const
 {
-	return awayReason;
+    return awayReason;
 }
 
 /* Return if we are reachable (defaults to true because
    we can send on- and offline */
-bool JabberContact::isReachable()
-{
-	return true;
+bool JabberContact::isReachable() {
+    return true;
 }
 
-KActionCollection *JabberContact::customContextMenuActions()
-{
-	actionCollection = new KActionCollection(this);
-	actionRename = new KAction(i18n("Rename Contact"), "editrename", 0, this, SLOT(slotRenameContact()), actionCollection, "actionRename");
-	actionSendAuth = new KAction(i18n("(Re)send Authorization To"), "", 0, this, SLOT(slotSendAuth()), actionCollection, "actionSendAuth");
-	actionRequestAuth = new KAction(i18n("(Re)request Authorization From"), "", 0, this, SLOT(slotRequestAuth()), actionCollection, "actionRequestAuth");
-	actionSetAvailability = new KActionMenu(i18n("Set Availability"), 0, actionCollection, "jabber_online");
+KActionCollection *JabberContact::customContextMenuActions() {
+    actionCollection = new KActionCollection(this);
+    actionRename =
+	new KAction(i18n("Rename Contact"), "editrename", 0, this,
+		    SLOT(slotRenameContact()), actionCollection,
+		    "actionRename");
+    actionSendAuth =
+	new KAction(i18n("(Re)send Authorization To"), "", 0, this,
+		    SLOT(slotSendAuth()), actionCollection, "actionSendAuth");
+    actionRequestAuth =
+	new KAction(i18n("(Re)request Authorization From"), "", 0, this,
+		    SLOT(slotRequestAuth()), actionCollection,
+		    "actionRequestAuth");
+    actionSetAvailability =
+	new KActionMenu(i18n("Set Availability"), 0, actionCollection,
+			"jabber_online");
 
-	actionStatusOnline = new KAction(i18n("Online"), "jabber_online", 0, this, SLOT(slotStatusOnline()), actionSetAvailability, "actionOnline");
-	actionStatusChatty = new KAction(i18n("Free to Chat"), "jabber_chatty", 0, this, SLOT(slotStatusChatty()), actionSetAvailability, "actionChatty");
-	actionStatusAway = new KAction(i18n("Away"), "jabber_away", 0, this,SLOT(slotStatusAway()), actionSetAvailability,  "actionAway");
-	actionStatusXA = new KAction(i18n("Extended Away"), "jabber_away", 0, this, SLOT(slotStatusXA()),actionSetAvailability, "actionXA");
-	actionStatusDND = new KAction(i18n("Do Not Disturb"), "jabber_na", 0, this, SLOT(slotStatusDND()), actionSetAvailability, "actionDND");
-	actionStatusInvisible = new KAction(i18n("Invisible"), "jabber_invisible", 0, this, SLOT(slotStatusInvisible()), actionSetAvailability, "actionInvisible");
+    actionStatusOnline =
+	new KAction(i18n("Online"), "jabber_online", 0, this,
+		    SLOT(slotStatusOnline()), actionSetAvailability,
+		    "actionOnline");
+    actionStatusChatty =
+	new KAction(i18n("Free to Chat"), "jabber_chatty", 0, this,
+		    SLOT(slotStatusChatty()), actionSetAvailability,
+		    "actionChatty");
+    actionStatusAway =
+	new KAction(i18n("Away"), "jabber_away", 0, this,
+		    SLOT(slotStatusAway()), actionSetAvailability,
+		    "actionAway");
+    actionStatusXA =
+	new KAction(i18n("Extended Away"), "jabber_away", 0, this,
+		    SLOT(slotStatusXA()), actionSetAvailability, "actionXA");
+    actionStatusDND =
+	new KAction(i18n("Do Not Disturb"), "jabber_na", 0, this,
+		    SLOT(slotStatusDND()), actionSetAvailability, "actionDND");
+    actionStatusInvisible =
+	new KAction(i18n("Invisible"), "jabber_invisible", 0, this,
+		    SLOT(slotStatusInvisible()), actionSetAvailability,
+		    "actionInvisible");
 
-	KGlobal::config()->setGroup("Jabber");
+    KGlobal::config()->setGroup("Jabber");
 
-	// if the contact is online,
-	// display the resources we have for it
-	if( onlineStatus().status() != KopeteOnlineStatus::Offline )
-	{
-		QStringList items;
-		int activeItem = 0;
-		JabberResource *tmpBestResource = bestResource();
+    // if the contact is online,
+    // display the resources we have for it
+    if (onlineStatus().status() != KopeteOnlineStatus::Offline) {
+	QStringList items;
+	int activeItem = 0;
+	JabberResource *tmpBestResource = bestResource();
 
-		// put best resource first
-		items.append(i18n("Automatic (best resource)"));
+	// put best resource first
+	items.append(i18n("Automatic (best resource)"));
 
-		if(!tmpBestResource->resource().isNull())
-			items.append(tmpBestResource->resource());
+	if (!tmpBestResource->resource().isNull())
+	    items.append(tmpBestResource->resource());
 
-		// iterate through available resources
-		int i = 1;
-		for (JabberResource *tmpResource = resources.first(); tmpResource; tmpResource = resources.next(), i++)
-		{
-			// skip the default (empty) resource
-			if(tmpResource->resource().isNull())
-			{
-				i--;
-				continue;
-			}
+	// iterate through available resources
+	int i = 1;
+	for (JabberResource * tmpResource = resources.first(); tmpResource;
+	     tmpResource = resources.next(), i++) {
+	    // skip the default (empty) resource
+	    if (tmpResource->resource().isNull()) {
+		i--;
+		continue;
+	    }
 
-			// only add the item if it is not the best resource
-			// (which we already added above)
-			if (tmpResource != tmpBestResource)
-				items.append(tmpResource->resource());
+	    // only add the item if it is not the best resource
+	    // (which we already added above)
+	    if (tmpResource != tmpBestResource)
+		items.append(tmpResource->resource());
 
-			// mark the currently active resource
-			if (tmpResource->resource() == activeResource->resource() && resourceOverride)
-			{
-				kdDebug(14130) << "[JabberContact] Activating item " << i << " as active resource." << endl;
-				activeItem = i;
-			}
-		}
-
-		actionSelectResource = new KSelectAction(i18n("Select Resource"), "selectresource", 0, this, SLOT(slotSelectResource()), actionCollection, "actionSelectResource");
-
-		// attach list to the menu action
-		actionSelectResource->setItems(items);
-
-		// make sure the active item is selected
-		actionSelectResource->setCurrentItem(activeItem);
+	    // mark the currently active resource
+	    if (tmpResource->resource() == activeResource->resource()
+		&& resourceOverride) {
+		kdDebug(14130) << "[JabberContact] Activating item " << i <<
+		    " as active resource." << endl;
+		activeItem = i;
+	    }
 	}
 
-	return actionCollection;
+	actionSelectResource =
+	    new KSelectAction(i18n("Select Resource"), "selectresource", 0,
+			      this, SLOT(slotSelectResource()),
+			      actionCollection, "actionSelectResource");
+
+	// attach list to the menu action
+	actionSelectResource->setItems(items);
+
+	// make sure the active item is selected
+	actionSelectResource->setCurrentItem(activeItem);
+    }
+
+    return actionCollection;
 
 }
 
-void JabberContact::slotUpdatePresence( const KopeteOnlineStatus &newStatus, const QString &reason )
-{
-	awayReason = reason;
+void JabberContact::slotUpdatePresence(const KopeteOnlineStatus & newStatus,
+				       const QString & reason) {
+    awayReason = reason;
 
-	setOnlineStatus( newStatus );
+    setOnlineStatus(newStatus);
 }
 
-void JabberContact::slotUpdateContact(const Jabber::RosterItem &item)
-{
+void JabberContact::slotUpdateContact(const Jabber::RosterItem & item) {
 
-	rosterItem = item;
+    rosterItem = item;
 
-	// only update the nickname if its not empty
-	if(!item.name().isEmpty() && !item.name().isNull())
-		setDisplayName(item.name());
-
-}
-
-void JabberContact::slotRenameContact()
-{
-
-	kdDebug(14130) << "[JabberContact] Renaming contact." << endl;
-
-	dlgJabberRename *renameDialog = new dlgJabberRename;
-
-	renameDialog->setUserId(userId());
-	renameDialog->setNickname(displayName());
-
-	connect(renameDialog, SIGNAL(rename(const QString &)), this, SLOT(slotDoRenameContact(const QString &)));
-
-	renameDialog->show();
+    // only update the nickname if its not empty
+    if (!item.name().isEmpty() && !item.name().isNull())
+	setDisplayName(item.name());
 
 }
 
-void JabberContact::slotDoRenameContact(const QString &nickname)
-{
-	QString name = nickname;
+void JabberContact::slotRenameContact() {
 
-	// if the name has been deleted, revert
-	// to using the user ID instead
-	if (name == QString(""))
-		name = userId();
+    kdDebug(14130) << "[JabberContact] Renaming contact." << endl;
 
-	rosterItem.setName(name);
+    dlgJabberRename *renameDialog = new dlgJabberRename;
 
-	// send rename request to protocol backend
-	protocol->updateContact(rosterItem);
+    renameDialog->setUserId(userId());
+    renameDialog->setNickname(displayName());
 
-	// update display (we cannot use setDisplayName()
-	// as parameter here as the above call is asynch
-	// and thus our changes did not make it to the server
-	// yet)
-	setDisplayName(name);
+    connect(renameDialog, SIGNAL(rename(const QString &)), this,
+	    SLOT(slotDoRenameContact(const QString &)));
+
+    renameDialog->show();
 
 }
 
-void JabberContact::slotDeleteContact()
-{
+void JabberContact::slotDoRenameContact(const QString & nickname) {
+    QString name = nickname;
 
-	kdDebug(14130) << "[JabberContact] Removing user " << userId() << endl;
+    // if the name has been deleted, revert
+    // to using the user ID instead
+    if (name == QString(""))
+	name = userId();
 
-	// unsubscribe
-	protocol->removeContact(rosterItem);
+    rosterItem.setName(name);
 
-}
+    // send rename request to protocol backend
+    protocol->updateContact(rosterItem);
 
-void JabberContact::slotSendAuth()
-{
-
-	kdDebug(14130) << "[JabberContact] (Re)send auth " << userId() << endl;
-
-	protocol->subscribed(Jabber::Jid(userId()));
-
-}
-
-void JabberContact::slotRequestAuth()
-{
-
-	kdDebug(14130) << "[JabberContact] (Re)request auth " << userId() << endl;
-
-	protocol->subscribe(Jabber::Jid(userId()));
+    // update display (we cannot use setDisplayName()
+    // as parameter here as the above call is asynch
+    // and thus our changes did not make it to the server
+    // yet)
+    setDisplayName(name);
 
 }
 
-void JabberContact::syncGroups()
-{
-	QStringList groups;
-	KopeteGroupList groupList = metaContact()->groups();
-	for( KopeteGroup *g = groupList.first(); g; g = groupList.next() )
-	{
-		if(!g->displayName().isEmpty())
-			groups.append( g->displayName() );
-	}
-	//FIXME: isn't there a problem is there are no groups (top-level only)
-	rosterItem.setGroups(groups);
-	protocol->updateContact(rosterItem);
-}
+void JabberContact::slotDeleteContact() {
 
-void JabberContact::km2jm(const KopeteMessage &km, Jabber::Message &jm)
-{
-	JabberContact *to = dynamic_cast<JabberContact *>(km.to().first());
-	const JabberContact *from = dynamic_cast<const JabberContact *>(km.from());
+    kdDebug(14130) << "[JabberContact] Removing user " << userId() << endl;
 
-	// ugly hack, Jabber::Message does not have a setFrom() method
-	Jabber::Message jabMessage(Jabber::Jid(from->userId()));
-
-	// if a resource has been selected for this contact,
-	// send to this special resource - otherwise,
-	// just send to the server and let the server decide
-	if (!to->resource().isNull())
-		jabMessage.setTo(Jabber::Jid(QString("%1/%2").arg(to->userId(), 1).arg(to->resource(), 2)));
-	else
-		jabMessage.setTo(Jabber::Jid(to->userId()));
-
-	//jabMessage.setFrom(from->userId();
-	jabMessage.setBody(km.plainBody());
-	jabMessage.setSubject(km.subject());
-
-	// determine type of the widget and set message type accordingly
-	if( km.type() == KopeteMessage::Chat )
-		jabMessage.setType("chat");
-	else
-		jabMessage.setType("normal");
-
-	jm = jabMessage;
+    // unsubscribe
+    protocol->removeContact(rosterItem);
 
 }
 
-void JabberContact::slotReceivedMessage(const Jabber::Message &message)
-{
-	KopeteMessage::MessageType type;
-	KopeteContactPtrList contactList;
+void JabberContact::slotSendAuth() {
 
-	// determine message type
-	if( message.type() == "chat" )
-		type = KopeteMessage::Chat;
-	else
-		type = KopeteMessage::Email;
+    kdDebug(14130) << "[JabberContact] (Re)send auth " << userId() << endl;
 
-	contactList.append(protocol->myself());
-
-	// convert Jabber::Message into KopeteMessage
-	KopeteMessage newMessage( message.timeStamp(),
-			this,
-			contactList,
-			message.body(),
-			message.subject(),
-			KopeteMessage::Inbound,
-			KopeteMessage::PlainText, type );
-
-	// add it to the manager
-	manager()->appendMessage(newMessage);
+    protocol->subscribed(Jabber::Jid(userId()));
 
 }
 
-void JabberContact::slotSendMessage(KopeteMessage &message)
-{
-	Jabber::Message jabberMessage;
+void JabberContact::slotRequestAuth() {
 
-	if(protocol->isConnected())
-	{
-		// convert the message
-		km2jm(message, jabberMessage);
+    kdDebug(14130) << "[JabberContact] (Re)request auth " << userId() << endl;
 
-		// send it
-		protocol->jabberClient->sendMessage(jabberMessage);
+    protocol->subscribe(Jabber::Jid(userId()));
 
-		// append the message to the manager
-		manager()->appendMessage(message);
+}
 
-		// tell the manager that we sent successfully
-		manager()->messageSucceeded();
-	}
-	else
-	{
-		protocol->errorConnectFirst();
+void JabberContact::syncGroups() {
+    QStringList groups;
+    KopeteGroupList groupList = metaContact()->groups();
+    for (KopeteGroup * g = groupList.first(); g; g = groupList.next()) {
+	if (!g->displayName().isEmpty())
+	    groups.append(g->displayName());
+    }
+    //FIXME: isn't there a problem is there are no groups (top-level only)
+    rosterItem.setGroups(groups);
+    protocol->updateContact(rosterItem);
+}
 
-		// FIXME: there is no messageFailed() yet,
-		// but we need to stop the animation etc.
-		manager()->messageSucceeded();
-	}
+void JabberContact::km2jm(const KopeteMessage & km, Jabber::Message & jm) {
+    JabberContact *to = dynamic_cast<JabberContact *>(km.to().first());
+    const JabberContact *from =
+	dynamic_cast<const JabberContact *>(km.from());
+
+    // ugly hack, Jabber::Message does not have a setFrom() method
+    Jabber::Message jabMessage(Jabber::Jid(from->userId()));
+
+    // if a resource has been selected for this contact,
+    // send to this special resource - otherwise,
+    // just send to the server and let the server decide
+    if (!to->resource().isNull())
+	jabMessage.
+	    setTo(Jabber::
+		  Jid(QString("%1/%2").arg(to->userId(), 1).
+		      arg(to->resource(), 2)));
+    else
+	jabMessage.setTo(Jabber::Jid(to->userId()));
+
+    //jabMessage.setFrom(from->userId();
+    jabMessage.setBody(km.plainBody());
+    jabMessage.setSubject(km.subject());
+
+    // determine type of the widget and set message type accordingly
+    if (km.type() == KopeteMessage::Chat)
+	jabMessage.setType("chat");
+    else
+	jabMessage.setType("normal");
+
+    jm = jabMessage;
+
+}
+
+void JabberContact::slotReceivedMessage(const Jabber::Message & message) {
+    KopeteMessage::MessageType type;
+    KopeteContactPtrList contactList;
+
+    // determine message type
+    if (message.type() == "chat")
+	type = KopeteMessage::Chat;
+    else
+	type = KopeteMessage::Email;
+
+    contactList.append(protocol->myself());
+
+    // convert Jabber::Message into KopeteMessage
+    KopeteMessage newMessage(message.timeStamp(),
+			     this,
+			     contactList,
+			     message.body(),
+			     message.subject(),
+			     KopeteMessage::Inbound,
+			     KopeteMessage::PlainText, type);
+
+    // add it to the manager
+    manager()->appendMessage(newMessage);
+
+}
+
+void JabberContact::slotSendMessage(KopeteMessage & message) {
+    Jabber::Message jabberMessage;
+
+    if (protocol->isConnected()) {
+	// convert the message
+	km2jm(message, jabberMessage);
+
+	// send it
+	protocol->jabberClient->sendMessage(jabberMessage);
+
+	// append the message to the manager
+	manager()->appendMessage(message);
+
+	// tell the manager that we sent successfully
+	manager()->messageSucceeded();
+    }
+    else {
+	protocol->errorConnectFirst();
+
+	// FIXME: there is no messageFailed() yet,
+	// but we need to stop the animation etc.
+	manager()->messageSucceeded();
+    }
 
 }
 
 /**
  * Determine the currently best resource for the contact
  */
-JabberResource *JabberContact::bestResource()
-{
-	JabberResource *resource, *tmpResource;
+JabberResource *JabberContact::bestResource() {
+    JabberResource *resource, *tmpResource;
 
-	// iterate through all available resources
-	for (resource = tmpResource = resources.first(); tmpResource; tmpResource = resources.next())
-	{
-		kdDebug(14130) << "[JabberContact] Processing resource " << tmpResource->resource() << endl;
+    // iterate through all available resources
+    for (resource = tmpResource = resources.first(); tmpResource;
+	 tmpResource = resources.next()) {
+	kdDebug(14130) << "[JabberContact] Processing resource " <<
+	    tmpResource->resource() << endl;
 
-		if (tmpResource->priority() > resource->priority())
-		{
-			kdDebug(14130) << "[JabberContact] Got better resource " << tmpResource->resource() << " through better priority." << endl;
-			resource = tmpResource;
+	if (tmpResource->priority() > resource->priority()) {
+	    kdDebug(14130) << "[JabberContact] Got better resource " <<
+		tmpResource->resource() << " through better priority." << endl;
+	    resource = tmpResource;
+	}
+	else {
+	    if (tmpResource->priority() == resource->priority()) {
+		if (tmpResource->timestamp() >= resource->timestamp()) {
+		    kdDebug(14130) << "[JabberContact] Got better resource " <<
+			tmpResource->
+			resource() << " through newer timestamp." << endl;
+		    resource = tmpResource;
 		}
-		else
-		{
-			if (tmpResource->priority() == resource->priority())
-			{
-				if (tmpResource->timestamp() >= resource->timestamp())
-				{
-					kdDebug(14130) << "[JabberContact] Got better resource " << tmpResource->resource() << " through newer timestamp." << endl;
-					resource = tmpResource;
-				}
-				else
-				{
-					kdDebug(14130) << "[JabberContact] Discarding resource " << tmpResource->resource() << " with older timestamp." << endl;
-				}
-			}
-			else
-			{
-				kdDebug(14130) << "[JabberContact] Discarding resource " << tmpResource->resource() << " with worse priority." << endl;
-			}
+		else {
+		    kdDebug(14130) << "[JabberContact] Discarding resource " <<
+			tmpResource->
+			resource() << " with older timestamp." << endl;
 		}
+	    }
+	    else {
+		kdDebug(14130) << "[JabberContact] Discarding resource " <<
+		    tmpResource->resource() << " with worse priority." << endl;
+	    }
 	}
+    }
 
-	return resource;
+    return resource;
 
 }
 
-void JabberContact::slotResourceAvailable(const Jabber::Jid &, const Jabber::Resource &resource)
-{
+void JabberContact::slotResourceAvailable(const Jabber::Jid &,
+					  const Jabber::Resource & resource) {
 
-	kdDebug(14130) << "[JabberContact] Adding new resource '" << resource.name() << "' for "
-			  << userId() << ", name [" << resource.name() << "], priority "
-			  << resource.priority() << ", status [" << resource.status().status() << endl;
+    kdDebug(14130) << "[JabberContact] Adding new resource '" << resource.
+	name() << "' for " << userId() << ", name [" << resource.
+	name() << "], priority " << resource.
+	priority() << ", status [" << resource.status().status() << endl;
 
-	/*
-	 * if the new resource already exists, remove the current
-	 * instance of it (Psi will emit resourceAvailable()
-	 * whenever a certain resource changes status)
-	 * removing the current instance will prevent double entries
-	 * of the same resource.
-	 * updated resource will be re-added below
-	 * FIXME: this should be done using the QPtrList methods! (needs checking of pointer values)
-	 */
-	for (JabberResource *tmpResource = resources.first(); tmpResource; tmpResource = resources.next())
-	{
-		if (tmpResource->resource() == resource.name())
-		{
-			kdDebug(14130) << "[JabberContact] Resource " << tmpResource->resource() << " already added, removing instance with older timestamp" << endl;
-			resources.remove();
-		}
+    /*
+     * if the new resource already exists, remove the current
+     * instance of it (Psi will emit resourceAvailable()
+     * whenever a certain resource changes status)
+     * removing the current instance will prevent double entries
+     * of the same resource.
+     * updated resource will be re-added below
+     * FIXME: this should be done using the QPtrList methods! (needs checking of pointer values)
+     */
+    for (JabberResource * tmpResource = resources.first(); tmpResource;
+	 tmpResource = resources.next()) {
+	if (tmpResource->resource() == resource.name()) {
+	    kdDebug(14130) << "[JabberContact] Resource " << tmpResource->
+		resource() <<
+		" already added, removing instance with older timestamp" <<
+		endl;
+	    resources.remove();
 	}
+    }
 
-	KopeteOnlineStatus status = JabberProtocol::protocol()->JabberOnline;
-	if(resource.status().show() == "chat")
-	{
-		status = JabberProtocol::protocol()->JabberChatty;
-	}
-	else
-	if(resource.status().show() == "away")
-	{
-		status = JabberProtocol::protocol()->JabberAway;
-	}
-	else
-	if(resource.status().show() == "xa")
-	{
-		status = JabberProtocol::protocol()->JabberXA;
-	}
-	else
-	if(resource.status().show() == "dnd")
-	{
-		status = JabberProtocol::protocol()->JabberDND;
-	}
+    KopeteOnlineStatus status = JabberProtocol::protocol()->JabberOnline;
+    if (resource.status().show() == "chat") {
+	status = JabberProtocol::protocol()->JabberChatty;
+    }
+    else if (resource.status().show() == "away") {
+	status = JabberProtocol::protocol()->JabberAway;
+    }
+    else if (resource.status().show() == "xa") {
+	status = JabberProtocol::protocol()->JabberXA;
+    }
+    else if (resource.status().show() == "dnd") {
+	status = JabberProtocol::protocol()->JabberDND;
+    }
 
-	JabberResource *newResource = new JabberResource(resource.name(), resource.priority(), resource.status().timeStamp(), status, resource.status().status());
-	resources.append(newResource);
+    JabberResource *newResource =
+	new JabberResource(resource.name(), resource.priority(),
+			   resource.status().timeStamp(), status,
+			   resource.status().status());
+    resources.append(newResource);
 
-	JabberResource *tmpBestResource = bestResource();
+    JabberResource *tmpBestResource = bestResource();
 
-	kdDebug(14130) << "[JabberContact] Best resource is now " << tmpBestResource->resource() << "." << endl;
+    kdDebug(14130) << "[JabberContact] Best resource is now " <<
+	tmpBestResource->resource() << "." << endl;
 
-	slotUpdatePresence(tmpBestResource->status(), tmpBestResource->reason());
+    slotUpdatePresence(tmpBestResource->status(), tmpBestResource->reason());
 
-	// switch active resource if override is not in effect
-	if(!resourceOverride)
-		activeResource = tmpBestResource;
+    // switch active resource if override is not in effect
+    if (!resourceOverride)
+	activeResource = tmpBestResource;
 
 }
 
-void JabberContact::slotResourceUnavailable(const Jabber::Jid &jid, const Jabber::Resource &resource)
-{
-	JabberResource *tmpResource;
+void JabberContact::slotResourceUnavailable(const Jabber::Jid & jid,
+					    const Jabber::Resource & resource) {
+    JabberResource *tmpResource;
 
-	kdDebug(14130) << "[JabberContact] Removing resource '" << jid.resource() << "' for " << userId() << endl;
+    kdDebug(14130) << "[JabberContact] Removing resource '" << jid.
+	resource() << "' for " << userId() << endl;
 
-	for (tmpResource = resources.first(); tmpResource; tmpResource = resources.next())
-	{
-		if (tmpResource->resource() == resource.name())
-		{
-			kdDebug(14130) << "[JabberContact] Got a match in " << tmpResource->resource() << ", removing." << endl;
+    for (tmpResource = resources.first(); tmpResource;
+	 tmpResource = resources.next()) {
+	if (tmpResource->resource() == resource.name()) {
+	    kdDebug(14130) << "[JabberContact] Got a match in " << tmpResource->
+		resource() << ", removing." << endl;
 
-			if (resources.remove())
-				kdDebug(14130) << "[JabberContact] Successfully removed, there are now " << resources.count() << " resources!" << endl;
-			else
-				kdDebug(14130) << "[JabberContact] Ack! Couldn't remove the resource. Bugger!" << endl;
+	    if (resources.remove())
+		kdDebug(14130) <<
+		    "[JabberContact] Successfully removed, there are now " <<
+		    resources.count() << " resources!" << endl;
+	    else
+		kdDebug(14130) <<
+		    "[JabberContact] Ack! Couldn't remove the resource. Bugger!"
+		    << endl;
 
-			break;
-		}
+	    break;
 	}
+    }
 
-	JabberResource *newResource = bestResource();
+    JabberResource *newResource = bestResource();
 
-	kdDebug(14130) << "[JabberContact] Best resource is now " << newResource->resource() << "." << endl;
-	slotUpdatePresence(newResource->status(), newResource->reason());
+    kdDebug(14130) << "[JabberContact] Best resource is now " << newResource->
+	resource() << "." << endl;
+    slotUpdatePresence(newResource->status(), newResource->reason());
 
-	// if override was in effect or we just deleted the current
-	// resource, switch to new resource
-	if(resourceOverride || (activeResource->resource() == resource.name()))
-	{
-		resourceOverride = false;
-		activeResource = newResource;
+    // if override was in effect or we just deleted the current
+    // resource, switch to new resource
+    if (resourceOverride || (activeResource->resource() == resource.name())) {
+	resourceOverride = false;
+	activeResource = newResource;
+    }
+
+}
+
+void JabberContact::slotSelectResource() {
+
+    if (actionSelectResource->currentItem() == 0) {
+	kdDebug(14130) <<
+	    "[JabberContact] Removing active resource, trusting bestResource()."
+	    << endl;
+
+	resourceOverride = false;
+	activeResource = bestResource();
+    }
+    else {
+	QString selectedResource = actionSelectResource->currentText();
+
+	kdDebug(14130) << "[JabberContact] Moving to resource " <<
+	    selectedResource << endl;
+
+	resourceOverride = true;
+
+	for (JabberResource * resource = resources.first(); resource;
+	     resource = resources.next()) {
+	    if (resource->resource() == selectedResource) {
+		kdDebug(14130) << "[JabberContact] New active resource is " <<
+		    resource->resource() << endl;
+
+		activeResource = resource;
+
+		break;
+	    }
 	}
-
-}
-
-void JabberContact::slotSelectResource()
-{
-
-	if (actionSelectResource->currentItem() == 0)
-	{
-		kdDebug(14130) << "[JabberContact] Removing active resource, trusting bestResource()." << endl;
-
-		resourceOverride = false;
-		activeResource = bestResource();
-	}
-	else
-	{
-		QString selectedResource = actionSelectResource->currentText();
-
-		kdDebug(14130) << "[JabberContact] Moving to resource " << selectedResource << endl;
-
-		resourceOverride = true;
-
-		for (JabberResource *resource = resources.first(); resource; resource = resources.next())
-		{
-			if (resource->resource() == selectedResource)
-			{
-				kdDebug(14130) << "[JabberContact] New active resource is " << resource->resource() << endl;
-
-				activeResource = resource;
-
-				break;
-			}
-		}
-	}
+    }
 
 }
 
 
-void JabberContact::slotUserInfo()
-{
+void JabberContact::slotUserInfo() {
 
-	if(!protocol->isConnected())
-	{
-		protocol->errorConnectFirst();
-		return;
-	}
+    if (!protocol->isConnected()) {
+	protocol->errorConnectFirst();
+	return;
+    }
 
-	Jabber::JT_VCard *task = new Jabber::JT_VCard(protocol->jabberClient->rootTask());
+    Jabber::JT_VCard * task =
+	new Jabber::JT_VCard(protocol->jabberClient->rootTask());
 
-	// signal to ourselves when the vCard data arrived
-	QObject::connect(task, SIGNAL(finished()),
-					this, SLOT(slotGotVCard()));
+    // signal to ourselves when the vCard data arrived
+    QObject::connect(task, SIGNAL(finished()), this, SLOT(slotGotVCard()));
 
-	task->get(userId());
+    task->get(userId());
 
-	task->go(true);
+    task->go(true);
 
 }
 
-void JabberContact::slotGotVCard()
-{
-	Jabber::JT_VCard *vCard = (Jabber::JT_VCard *) sender();
+void JabberContact::slotGotVCard() {
+    Jabber::JT_VCard * vCard = (Jabber::JT_VCard *) sender();
 
-	if (!vCard->success() || vCard->vcard().isIncomplete())
-	{
-		// unsuccessful, or incomplete
-		KMessageBox::error(qApp->mainWidget(),
-						i18n("Unable to retrieve vCard for %1").arg(vCard->jid().userHost()));
-		return;
-	}
+    if (!vCard->success() || vCard->vcard().isIncomplete()) {
+	// unsuccessful, or incomplete
+	KMessageBox::error(qApp->mainWidget(),
+			   i18n("Unable to retrieve vCard for %1").arg(vCard->
+								       jid().
+								       userHost
+								       ()));
+	return;
+    }
 
-	kdDebug(14130) << "[JabberContact] Got vCard for user " << vCard->jid().userHost() << ", displaying." << endl;
+    kdDebug(14130) << "[JabberContact] Got vCard for user " << vCard->jid().
+	userHost() << ", displaying." << endl;
 
-	dlgVCard = new dlgJabberVCard( qApp->mainWidget(), "dlgJabberVCard", vCard );
+    dlgVCard = new dlgJabberVCard(qApp->mainWidget(), "dlgJabberVCard", vCard);
 
-	if (mEditingVCard) {
-		connect(dlgVCard, SIGNAL(saveAsXML(QDomElement &)), this, SLOT(slotSaveVCard(QDomElement &)));
-		dlgVCard->setReadOnly(false);
-		mEditingVCard = false;
-	}
-	else
-		connect(dlgVCard, SIGNAL(updateNickname(const QString &)), this, SLOT(slotDoRenameContact(const QString &)));
+    if (mEditingVCard) {
+	connect(dlgVCard, SIGNAL(saveAsXML(QDomElement &)), this,
+		SLOT(slotSaveVCard(QDomElement &)));
+	dlgVCard->setReadOnly(false);
+	mEditingVCard = false;
+    }
+    else
+	connect(dlgVCard, SIGNAL(updateNickname(const QString &)), this,
+		SLOT(slotDoRenameContact(const QString &)));
 
-	dlgVCard->show();
-	dlgVCard->raise();
-
-}
-
-void JabberContact::slotEditVCard()
-{
-
-	mEditingVCard = true;
-	slotUserInfo();
+    dlgVCard->show();
+    dlgVCard->raise();
 
 }
 
-void JabberContact::slotSaveVCard(QDomElement &vCardXML)
-{
+void JabberContact::slotEditVCard() {
 
-	if(!protocol->isConnected())
-	{
-		protocol->errorConnectFirst();
-		return;
-	}
-
-	Jabber::JT_VCard *task = new Jabber::JT_VCard(protocol->jabberClient->rootTask());
-	Jabber::VCard vCard = Jabber::VCard();
-
-	vCard.fromXml(vCardXML);
-
-	task->set(vCard);
-	task->go(true);
+    mEditingVCard = true;
+    slotUserInfo();
 
 }
 
-void JabberContact::slotStatusOnline()
-{
+void JabberContact::slotSaveVCard(QDomElement & vCardXML) {
 
-	QString id = userId();
+    if (!protocol->isConnected()) {
+	protocol->errorConnectFirst();
+	return;
+    }
 
-	if(resourceOverride)
-		id += activeResource->resource();
+    Jabber::JT_VCard * task =
+	new Jabber::JT_VCard(protocol->jabberClient->rootTask());
+    Jabber::VCard vCard = Jabber::VCard();
 
-	protocol->sendPresenceToNode( JabberProtocol::protocol()->JabberOnline, id );
+    vCard.fromXml(vCardXML);
 
-}
-
-void JabberContact::slotStatusChatty()
-{
-
-	QString id = userId();
-
-	if(resourceOverride)
-		id += activeResource->resource();
-
-	protocol->sendPresenceToNode( JabberProtocol::protocol()->JabberChatty, id );
+    task->set(vCard);
+    task->go(true);
 
 }
 
-void JabberContact::slotStatusAway()
-{
+void JabberContact::slotStatusOnline() {
 
-	QString id = userId();
+    QString id = userId();
 
-	if(resourceOverride)
-		id += activeResource->resource();
+    if (resourceOverride)
+	id += activeResource->resource();
 
-	protocol->sendPresenceToNode(JabberProtocol::protocol()->JabberAway, id );
-
-}
-
-void JabberContact::slotStatusXA()
-{
-
-	QString id = userId();
-
-	if(resourceOverride)
-		id += activeResource->resource();
-
-	protocol->sendPresenceToNode(JabberProtocol::protocol()->JabberXA, id );
+    protocol->sendPresenceToNode(JabberProtocol::protocol()->JabberOnline, id);
 
 }
 
-void JabberContact::slotStatusDND()
-{
-	QString id = userId();
+void JabberContact::slotStatusChatty() {
 
-	if(resourceOverride)
-		id += activeResource->resource();
+    QString id = userId();
 
-	protocol->sendPresenceToNode(JabberProtocol::protocol()->JabberDND, id );
+    if (resourceOverride)
+	id += activeResource->resource();
+
+    protocol->sendPresenceToNode(JabberProtocol::protocol()->JabberChatty, id);
 
 }
 
-void JabberContact::slotStatusInvisible()
-{
-	QString id = userId();
+void JabberContact::slotStatusAway() {
 
-	if(resourceOverride)
-		id += activeResource->resource();
+    QString id = userId();
 
-	protocol->sendPresenceToNode(JabberProtocol::protocol()->JabberInvisible, id );
+    if (resourceOverride)
+	id += activeResource->resource();
+
+    protocol->sendPresenceToNode(JabberProtocol::protocol()->JabberAway, id);
+
 }
 
-void JabberContact::serialize( QMap<QString, QString> &serializedData,
-	QMap<QString, QString> & /* addressBookData */ )
-{
+void JabberContact::slotStatusXA() {
 
-	// Contact id and display name are already set for us, only add the rest
-	serializedData[ "identityId" ] = identityId();
+    QString id = userId();
 
-	serializedData[ "groups" ] = rosterItem.groups().join( QString::fromLatin1(",") );
+    if (resourceOverride)
+	id += activeResource->resource();
+
+    protocol->sendPresenceToNode(JabberProtocol::protocol()->JabberXA, id);
+
+}
+
+void JabberContact::slotStatusDND() {
+    QString id = userId();
+
+    if (resourceOverride)
+	id += activeResource->resource();
+
+    protocol->sendPresenceToNode(JabberProtocol::protocol()->JabberDND, id);
+
+}
+
+void JabberContact::slotStatusInvisible() {
+    QString id = userId();
+
+    if (resourceOverride)
+	id += activeResource->resource();
+
+    protocol->sendPresenceToNode(JabberProtocol::protocol()->JabberInvisible,
+				 id);
+}
+
+void JabberContact::serialize(QMap <QString, QString> &serializedData,
+			      QMap <QString,
+			      QString> & /* addressBookData */ ) {
+
+    // Contact id and display name are already set for us, only add the rest
+    serializedData["identityId"] = identityId();
+
+    serializedData["groups"] =
+	rosterItem.groups().join(QString::fromLatin1(","));
 }
 
 #include "jabbercontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-

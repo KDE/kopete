@@ -21,33 +21,37 @@
 #include "jabbergroupchat.h"
 
 JabberGroupChat::JabberGroupChat(Jabber::Jid jid, QStringList groups,
-								 JabberProtocol *p, KopeteMetaContact *mc, QString identity)
-								 : JabberContact( jid.userHost(), jid.userHost(), groups, p, mc, identity )
-{
-	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberGroupChat] Joined room " << jid.user() << " at " << jid.host() << endl;
-	
-	room = jid;
+				 JabberProtocol * p, KopeteMetaContact * mc,
+				 QString identity)
+:  JabberContact(jid.userHost(), jid.userHost(), groups, p, mc, identity) {
+    kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberGroupChat] Joined room " << jid.
+	user() << " at " << jid.host() << endl;
+
+    room = jid;
 
 }
 
-JabberGroupChat::~JabberGroupChat()
-{
-}                                
+JabberGroupChat::~JabberGroupChat() {
+}
 
-void JabberGroupChat::slotMessageManagerDeleted()
-{
-	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberGroupChat] slotMessageManagerDeleted(), leaving room " << room.user() << " at server " << room.host() << endl;
+void JabberGroupChat::slotMessageManagerDeleted() {
+    kdDebug(JABBER_DEBUG_GLOBAL) <<
+	"[JabberGroupChat] slotMessageManagerDeleted(), leaving room " << room.
+	user() << " at server " << room.host() << endl;
 
-	// the message manager has been deleted, leave the chat room
-	JabberProtocol::protocol()->jabberClient->groupChatLeave(room.host(), room.user());
+    // the message manager has been deleted, leave the chat room
+    JabberProtocol::protocol()->jabberClient->groupChatLeave(room.host(),
+							     room.user());
 
-	// pass the slot on to the base class
-	JabberContact::slotMessageManagerDeleted();
+    // pass the slot on to the base class
+    JabberContact::slotMessageManagerDeleted();
 
 }
 
-void JabberGroupChat::updatePresence(const Jabber::Jid &jid, const Jabber::Status &status)
-{
-	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberGroupChat] updatePresence() called for JID " << jid.full() << endl;
+void JabberGroupChat::updatePresence(const Jabber::Jid & jid,
+				     const Jabber::Status & status) {
+    kdDebug(JABBER_DEBUG_GLOBAL) <<
+	"[JabberGroupChat] updatePresence() called for JID " << jid.
+	full() << endl;
 
 }

@@ -25,21 +25,20 @@
   *@author Kopete developers
   */
 
-class JabberGroupChat : public JabberContact
-{
+class JabberGroupChat:public JabberContact {
 
-public: 
-	JabberGroupChat(Jabber::Jid room, QStringList groups,
-					JabberProtocol *p, KopeteMetaContact *mc, QString identity);
-	~JabberGroupChat();
+  public:
+    JabberGroupChat(Jabber::Jid room, QStringList groups,
+		    JabberProtocol * p, KopeteMetaContact * mc,
+		    QString identity);
+    ~JabberGroupChat();
 
-	void updatePresence(const Jabber::Jid &jid, const Jabber::Status &status);
+    void updatePresence(const Jabber::Jid & jid, const Jabber::Status & status);
 
-private slots:
-	virtual void slotMessageManagerDeleted();
+    private slots:virtual void slotMessageManagerDeleted();
 
-private:
-	Jabber::Jid room;
+  private:
+     Jabber::Jid room;
 
 };
 
