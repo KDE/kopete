@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>434</width>
-            <height>546</height>
+            <height>548</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -769,12 +769,23 @@
 </widget>
 <tabstops>
     <tabstop>mNickName</tabstop>
+    <tabstop>mAltNickname</tabstop>
     <tabstop>mUserName</tabstop>
-    <tabstop>mRememberPassword</tabstop>
-    <tabstop>mPassword</tabstop>
-    <tabstop>mAutoConnect</tabstop>
     <tabstop>mServer</tabstop>
     <tabstop>mPort</tabstop>
+    <tabstop>mPassword</tabstop>
+    <tabstop>mRememberPassword</tabstop>
+    <tabstop>mAutoConnect</tabstop>
+    <tabstop>tabWidget2</tabstop>
+    <tabstop>partMessage</tabstop>
+    <tabstop>quitMessage</tabstop>
+    <tabstop>ctcpList</tabstop>
+    <tabstop>newCTCP</tabstop>
+    <tabstop>newReply</tabstop>
+    <tabstop>addReply</tabstop>
+    <tabstop>commandList</tabstop>
+    <tabstop>commandEdit</tabstop>
+    <tabstop>addButton</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
