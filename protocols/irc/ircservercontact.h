@@ -27,6 +27,7 @@
 #include <ircchatwindow.h>
 #include <imcontact.h>
 #include <qdict.h>
+#include "ircmessage.h"
 
 class KIRC;
 class IMContact;
@@ -53,6 +54,7 @@ public:
 	virtual void leftButtonDoubleClicked();
 	QString mQuitMessage;
 	QStringList activeQueries;
+	IRCMessage *messenger;
 private:
 	bool tryingQuit;
 	QVBox *mTabView;

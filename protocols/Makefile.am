@@ -1,1 +1,1 @@
-SUBDIRS = irc icq aim msn
+SUBDIRS = icq aim msn

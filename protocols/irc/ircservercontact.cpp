@@ -32,10 +32,12 @@
 #include "kirc.h"
 #include "imcontact.h"
 #include "irccontact.h"
+#include "ircmessage.h"
 
 IRCServerContact::IRCServerContact(const QString &server, const QString &nickname, bool connectNow, IRCServerManager *manager)
 	: IMContact( kopeteapp->contactList() )
 {
+	messenger = new IRCMessage();
 	tryingQuit = false;
 	closing = false;
 	engine = new KIRC();

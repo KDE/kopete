@@ -8,22 +8,29 @@ o Main App
 		o Flashing Tray Style (Duncan)
 	o History Widget (Richard)
 	o XML History Logger (Ryan)
+	o Emoticons, Emoticons Themes (Duncan)
 
 o IRC Plugin
 
 	o Misc Enhancements (Nick)
 	o Tabbed UI (Nick)
+	o /msg, /nick, and proper /part support.
+	o Query window support
+	o More error checking
+	o The IRC plugin will not be included in this release
+	  as it lacks functionality and stability still. It
+	  may be included in the near future.
 
 o ICQ Plugin
 
 	o ICQ Engine
 		o Uses KExtendedSocket now (Herwin Steehouwer)
-	
+
 	o Contact move (Duncan)
 	o Notifier support (Duncan)
 	o History support (Richard)
 	o Hide offline contacts (Stefan)
-	
+
 o MSN Plugin
 
 	o Hiding offline contacts (Stefan)
@@ -38,7 +45,8 @@ o Released as 0.2
 30-12-2001 - Start
 =======================
 
-Duncan Mac-Vicar Prett 
+Duncan Mac-Vicar Prett
 <duncan@kdedevelopers.net>
-    
-o First Line of code 
+
+o First Line of code
+

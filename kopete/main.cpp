@@ -21,9 +21,9 @@
 #include "kopete.h"
 
 static const char *description =
-	I18N_NOOP("Kopete, the KDE Messenger");
+	I18N_NOOP("Kopete, the KDE Instant Messenger");
 // INSERT A DESCRIPTION FOR YOUR APPLICATION HERE
-static const char *version="0.23";
+static const char *version="0.3";
 	
 static KCmdLineOptions options[] =
 {
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 	aboutData.addAuthor ( "Nick Betcher", I18N_NOOP("core developer, fastest plugin developer on earth."), "nbetcher@usinternet.com", "http://www.kdedevelopers.net" );
 	aboutData.addAuthor ( "Ryan Cumming", I18N_NOOP("core developer"), "bodnar42@phalynx.dhs.org" );
 	aboutData.addAuthor ( "Martijn Klingens", I18N_NOOP("Patches, bugfixes"), "klingens@kde.org" );
-	aboutData.addAuthor ( "Stefan Gehn", I18N_NOOP("some cleanups, features and bugfixes"), "sgehn@gmx.net", "http://metz81.mine.nu" );
+	aboutData.addAuthor ( "Stefan Gehn", I18N_NOOP("cleanups, features and bugfixes"), "sgehn@gmx.net", "http://metz81.mine.nu" );
 	aboutData.addAuthor ( "Richard Stellingwerff", I18N_NOOP("features and bugfixes"), "remenic@linuxfromscratch.org");
 
 	aboutData.addCredit ( "Herwin Jan Steehouwer", I18N_NOOP("KxEngine ICQ code") );

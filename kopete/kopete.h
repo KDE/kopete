@@ -108,6 +108,8 @@ public slots:
 	void slotDisconnectAll();
 	void slotAddContact();
 	void slotSetAway();
+signals:
+	void signalSettingsChanged();
 };
 
 #define kopeteapp (static_cast<Kopete*>(kapp))

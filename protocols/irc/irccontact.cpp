@@ -66,7 +66,6 @@ IRCContact::IRCContact(QListViewItem *parent, const QString &server, const QStri
 	init();
 
 	connect(mContact->engine, SIGNAL(connectionClosed()), this, SLOT(slotServerQuit()));
-	connect(mContact->engine, SIGNAL(connectedToServer()), this, SLOT(slotServerReady()));
 
 	if (joinOnConnect == true)
 	{
@@ -315,10 +314,6 @@ void IRCContact::slotPartedChannel(const QString &originating, const QString &ch
 
 void IRCContact::unloading()
 {
-	if (mTabPage !=0 )
-	{
-		delete mTabPage;
-	}
 	delete this;
 }
 

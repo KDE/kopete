@@ -54,6 +54,7 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 	setMainWidget(mainwindow);
 
 	mAppearance = new AppearanceConfig(mainwindow);
+	connect( mAppearance , SIGNAL(saved()), this, SIGNAL(signalSettingsChanged()));
 	mNotifier = new KopeteNotifier;
 
 	KConfig *config=KGlobal::config();

@@ -3,7 +3,7 @@
 # General configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = kopete
-PROJECT_NUMBER         = 0.1
+PROJECT_NUMBER         = 0.3
 OUTPUT_DIRECTORY       = doc-api
 OUTPUT_LANGUAGE        = English
 EXTRACT_ALL            = NO
