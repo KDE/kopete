@@ -1,5 +1,7 @@
 /*
- * gaim
+ * libyahoo2 - originally from gaim patches by Amatus
+ *
+ * Copyright (C) 2003-2004
  *
  * Some code copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
  * libfaim code copyright 1998, 1999 Adam Fritzler <afritz@auk.cx>

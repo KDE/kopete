@@ -1,7 +1,7 @@
  /*
     kyahoo.cpp - Qt Based libyahoo2 wrapper II
 
-    Copyright (c) 2002-2003 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2004 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2003 by Matt Rogers <mattrogers@sbcglobal.net>
 
     Copyright (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
@@ -132,6 +132,8 @@ YahooSessionManager* YahooSessionManager::manager()
     *************************************************************************
 */
 
+int YahooSession::m_tags = 0;
+
 YahooSession::YahooSession(int id, const QString username, const QString password)
 {
 	kdDebug(14181) << k_funcinfo << endl;
@@ -141,6 +143,7 @@ YahooSession::YahooSession(int id, const QString username, const QString passwor
 	m_socket = 0L;
 	m_waitingForKeepalive = false;
 	m_keepalive = new QTimer(this, "keepaliveTimer");
+	m_tag = 0;
 	connect( m_keepalive, SIGNAL( timeout() ), this, SLOT( refresh() ) );
 }
 
@@ -243,7 +246,9 @@ void YahooSession::setAway( enum yahoo_status state, const QString &msg, int awa
 void YahooSession::addBuddy( const QString &who, const QString &group)
 {
 	kdDebug(14181) << k_funcinfo << endl;
-	yahoo_add_buddy( m_connId, who.local8Bit(), group.local8Bit() );
+	// FIXME we are passing a null message, to keep it up compiling
+	// libyahoo will ignore it, add support for it in the future
+	yahoo_add_buddy( m_connId, who.local8Bit(), group.local8Bit(), 0L );
 }
 
 void YahooSession::removeBuddy( const QString &who, const QString &group)
@@ -473,7 +478,7 @@ void YahooSession::slotLoginResponseReceiver( int /* succ */, char * /* url */ )
 extern "C"
 {
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_login_response ) ( int id, int succ, const char *url )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_login_response ) ( int id, int succ, char *url )
 {
 	YahooSession *session = YahooSessionManager::manager()->session(id);
 	session->_loginResponseReceiver( succ, url );
@@ -562,7 +567,7 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_chat_cat_xml )( int /*id*/, char* /*xml*/ )
 }
 
 void YAHOO_CALLBACK_TYPE( ext_yahoo_chat_join )( int /*id*/, char* /*room*/,
-		char* /*topic*/, YList* /*members*/ )
+		char* /*topic*/, YList* /*members*/, int /*fd*/ )
 {
 	/* Not implemented , No receiver yet */
 }
@@ -640,23 +645,23 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_error )( int id, char *err, int fatal )
 
 }
 
-int YAHOO_CALLBACK_TYPE( ext_yahoo_log )( const char* /*fmt*/, ... )
+int YAHOO_CALLBACK_TYPE( ext_yahoo_log )( char* /*fmt*/, ... )
 {
 	/* Do nothing? */
 	return 0;
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_add_handler )( int id, int fd, yahoo_input_condition cond, void * data )
+int YAHOO_CALLBACK_TYPE( ext_yahoo_add_handler )( int id, int fd, yahoo_input_condition cond, void * data )
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
 	session->_addHandlerReceiver( fd, cond, data );
-
+	return ++YahooSession::m_tags;
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_remove_handler )( int id, int fd )
+void YAHOO_CALLBACK_TYPE( ext_yahoo_remove_handler )( int id, int tag )
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
-	session->_removeHandlerReceiver( fd );
+	session->_removeHandlerReceiver( tag );
 
 }
 
@@ -704,6 +709,21 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_data_request )( int /*id*/, int /*sen
 	/* Not implemented , No receiver yet */
 }
 
+void YAHOO_CALLBACK_TYPE(ext_yahoo_chat_yahoologout)(int /*id*/)
+{
+	/* Not implemented , No receiver yet */
+}
+
+void YAHOO_CALLBACK_TYPE(ext_yahoo_chat_yahooerror)(int /*id*/)
+{
+	/* Not implemented , No receiver yet */
+}
+
+void YAHOO_CALLBACK_TYPE(ext_yahoo_got_search_result)(int /*id*/, int /*found*/, int /*start*/, int /*total*/, YList */*contacts*/)
+{
+	/* Not implemented , No receiver yet */
+}
+
 /* End of extern C */
 }
 
@@ -713,7 +733,7 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_data_request )( int /*id*/, int /*sen
     *************************************************************************
 */
 
-void YahooSession::_loginResponseReceiver( int succ, const char *url )
+void YahooSession::_loginResponseReceiver( int succ, char *url )
 {
 
 	kdDebug(14181) << k_funcinfo << endl;
@@ -969,10 +989,10 @@ void YahooSession::addHandler( int /*fd*/, yahoo_input_condition /*cond*/ )
 {
 }
 
-void YahooSession::_removeHandlerReceiver( int fd )
+void YahooSession::_removeHandlerReceiver( int tag )
 {
 	kdDebug(14181) << k_funcinfo << endl;
-	if ( fd != -1 )
+	if ( m_tag == tag )
 	{
 		kdDebug(14181) << k_funcinfo << " read off" << endl;
 		m_socket->enableRead( false );
@@ -1022,7 +1042,7 @@ int YahooSession::_hostAsyncConnectReceiver( char *host, int port,
 		ccd->callback = callback;
 		ccd->callback_data = callback_data;
 		ccd->id = m_connId;
-		ext_yahoo_add_handler( -1, m_socket->fd(), YAHOO_INPUT_WRITE, ccd );
+		m_tag = ext_yahoo_add_handler( -1, m_socket->fd(), YAHOO_INPUT_WRITE, ccd );
 		return 1;
 	}
 	else

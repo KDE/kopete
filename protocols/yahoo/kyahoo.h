@@ -1,7 +1,7 @@
 /*
     kyahoo.h - Qt based libyahoo2 wrapper II
 
-    Copyright (c) 2002-2003 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2004 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
     Copyright (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -81,7 +81,7 @@ public:
 
 	void setIdentityStatus( const QString &identity, int active);
 	void getList();
-
+	static int m_tags;
 public slots:
 	void keepalive();
 	void refresh();
@@ -114,7 +114,7 @@ public:
 	/* Private Receivers for libyahoo callbacks, we capture them  and emit signals
 	   called only by libyahoo callbacks, don't use them */
 
-	void _loginResponseReceiver(int succ, const char *url);
+	void _loginResponseReceiver(int succ, char *url);
 	void _gotIgnoreReceiver(YList *igns);
 	void _gotBuddiesReceiver(YList *buds);
 	void _gotidentitiesReceiver(char *who, int stat, char *msg, int away);
@@ -136,7 +136,7 @@ public:
 	void _errorReceiver(char *err, int fatal);
 	int _logReceiver(char *fmt, ...);
 	void _addHandlerReceiver(int fd, yahoo_input_condition cond, void *data);
-	void _removeHandlerReceiver(int fd);
+	void _removeHandlerReceiver(int tag);
 	int _hostAsyncConnectReceiver(char *host, int port,  yahoo_connect_callback callback, void *callback_data);
 
 signals:
@@ -212,7 +212,7 @@ private:
 	YahooSession(int id, const QString username, const QString password);
 
 	void addHandler(int fd, yahoo_input_condition cond);
-	void removeHandler(int fd);
+	void removeHandler(int tag);
 
 	KExtendedSocket *m_socket;
 	void *m_data;
@@ -223,6 +223,7 @@ private:
 	int m_Status;
 	int m_connId;
 	int m_fd;
+	int m_tag;
 
 	QString m_BuddyListServer; // Buddy List server
 	int m_BuddyListPort;
