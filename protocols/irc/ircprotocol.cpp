@@ -350,7 +350,7 @@ void IRCProtocol::slotMotdCommand( const QString &args, KopeteMessageManager *ma
 void IRCProtocol::slotPingCommand( const QString &args, KopeteMessageManager *manager )
 {
 	QStringList argsList = KopeteCommandHandler::parseArguments( args );
-	static_cast<IRCAccount*>( manager->account() )->engine()->sendCtcpPing(argsList.front());
+	static_cast<IRCAccount*>( manager->account() )->engine()->CtcpRequest_pingPong(argsList.front());
 }
 
 void IRCProtocol::slotListCommand( const QString &/*args*/, KopeteMessageManager *manager )
@@ -502,7 +502,7 @@ void IRCProtocol::slotMeCommand( const QString &args, KopeteMessageManager *mana
 {
 	KopeteContactPtrList members = manager->members();
 	QStringList argsList = KopeteCommandHandler::parseArguments( args );
-	static_cast<IRCAccount*>( manager->account() )->engine()->actionContact(
+	static_cast<IRCAccount*>( manager->account() )->engine()->CtcpRequest_action(
 		static_cast<const IRCContact*>(members.first())->nickName(), args );
 }
 
