@@ -131,10 +131,11 @@ SSI *SSIData::findGroup(const QString &name)
 
 SSI *SSIData::findGroup(const int groupId)
 {
-	for (SSI *i=first(); i; i = next())
+	kdDebug(14151) << "Looking for gid '" << groupId << "'" << endl;
+	for (QPtrListIterator<SSI> it (*this); it.current(); ++it)
 	{
-		if ((current()->bid == groupId) && (current()->type == ROSTER_GROUP))
-			return current();
+		if ( it.current()->gid == groupId && it.current()->type == ROSTER_GROUP )
+			return it.current();
 	}
 	return 0L;
 }

@@ -2877,6 +2877,7 @@ xx			byte	Current state
 
 void OscarSocket::doLogoff()
 {
+	mSSIData.clear();
 	if(isLoggedIn && (socket()->socketStatus() == KExtendedSocket::connected))
 	{
 		/*if(mIsICQ) // Done in slotConnectionClosed()

@@ -378,10 +378,6 @@ void OscarAccount::slotGotServerBuddyList()
 {
 	kdDebug( 14150 ) << k_funcinfo << "account='" << accountId() << "'" << endl;
 	
-	//We're adding groups from the SSI data. We don't need to add them to the
-	//SSI in slotKopeteGroupAdded
-	
-
 	//If we get mysterious results (or crashes) here, it's because the SSIData object
 	//was mysteriously destroyed and since engine()->ssiData() returns a reference
 	//we'll need to start saving the result of engine()->ssiData() so that we 
@@ -401,17 +397,31 @@ void OscarAccount::slotGotServerBuddyList()
 	
 	//groups are added. Add the contacts
 	QPtrListIterator<SSI> bit( engine()->ssiData() );
+	QString groupName;
 	for ( ; bit.current(); ++bit )
 	{
 		if ( bit.current()->type == 0 )
 		{ //active contact on SSI
 			SSI* ssiGroup = engine()->ssiData().findGroup( bit.current()->gid );
+			if ( ssiGroup )
+			{
+				kdDebug(14150) << k_funcinfo << "ssiGroup is valid using group name = '" << ssiGroup->name << "'" << endl;
+				groupName = ssiGroup->name;
+			}
+			else
+			{
+				kdDebug(14150) << k_funcinfo << "ssiGroup invalid for some reason. Using group name 'Buddies'" << endl;
+				groupName = i18n("Buddies");
+			}
+
+			engine()->ssiData().print();
+
 			OscarContact* contact = static_cast<OscarContact*> (contacts()[bit.current()->name]);
 			if ( !contact )
 			{
 				kdDebug(14150) << "Adding contact '" << bit.current()->name << "' to contact list" << endl;
 				addContact( tocNormalize(bit.current()->name), bit.current()->name, 0L,
-					 DontChangeKABC, ssiGroup ? ssiGroup->name : i18n("Buddies") , false );
+					 DontChangeKABC, groupName , false );
 			}
 		}
 	}
@@ -652,8 +662,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 	if ( (!myself()->isOnline()) && 
 		(myself()->onlineStatus().status() != KopeteOnlineStatus::Connecting) )
 	{
-		kdDebug(14150) << k_funcinfo
-					   << "Can't add contact, we are offline!" << endl;
+		kdDebug(14150) << k_funcinfo << "Can't add contact, we are offline!" << endl;
 		return false;
 	}
 	
