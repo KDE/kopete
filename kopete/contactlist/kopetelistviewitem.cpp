@@ -183,11 +183,18 @@ class BoxComponent::Private
 public:
 	Private( BoxComponent::Direction dir ) : direction( dir ) {}
 	BoxComponent::Direction direction;
+
+	QValueList<QRect> starts;
+	QValueList<QRect> targets;
+	QTimer layoutTimer;
+	int layoutSteps;
+	static const int layoutStepsTotal = 10;
 };
 
 BoxComponent::BoxComponent( ComponentBase *parent, Direction dir )
- : Component( parent ), d( new Private( dir ) )
+ : QObject( 0 ), Component( parent ), d( new Private( dir ) )
 {
+	connect( &d->layoutTimer, SIGNAL( timeout() ), SLOT( layoutTimer() ) );
 }
 BoxComponent::~BoxComponent()
 {
@@ -292,6 +299,8 @@ void BoxComponent::layout( const QRect &rect )
 		eachFixed = remaining / numFixed + padding;
 
 	// finally, lay everything out
+	d->starts.clear();
+	d->targets.clear();
 	int pos = 0;
 	for ( uint n = 0; n < components(); ++n )
 	{
@@ -319,8 +328,36 @@ void BoxComponent::layout( const QRect &rect )
 				rc.setHeight( comp->minHeight() + eachFixed );
 			pos += rc.height();
 		}
-		comp->layout( rc & rect );
+		if ( comp->rect().isNull() )
+			comp->layout( rc & rect );
+		d->starts.append( comp->rect() );
+		d->targets.append( rc & rect );
 	}
+	d->layoutSteps = -1;
+	d->layoutTimer.start( 10 );
+	layoutTimer();
+}
+
+void BoxComponent::layoutTimer()
+{
+	if ( ++d->layoutSteps == Private::layoutStepsTotal )
+		d->layoutTimer.stop();
+
+	const int s = Private::layoutStepsTotal;
+	const int p = d->layoutSteps;
+
+	for ( uint n = 0; n < components(); ++n )
+	{
+		QRect start = d->starts[ n ];
+		QRect target = d->targets[ n ];
+		Component *comp = component( n );
+		QRect rc( start.left() + ((target.left() - start.left()) * p) / s,
+		          start.top() + ((target.top() - start.top()) * p) / s,
+		          start.width() + ((target.width() - start.width()) * p) / s,
+		          start.height() + ((target.height() - start.height()) * p) / s );
+		comp->layout( rc );
+	}
+	repaint();
 }
 
 void BoxComponent::componentAdded( Component *component )
@@ -392,18 +429,20 @@ void ImageComponent::paint( QPainter *painter, const QColorGroup & )
 class TextComponent::Private
 {
 public:
-	Private() : customColor( false ) {}
+	Private() : fixedWidth( false ), customColor( false ) {}
 	QString text;
+	bool fixedWidth;
 	bool customColor;
 	QColor color;
 	QFont font;
 };
 
-TextComponent::TextComponent( ComponentBase *parent, const QFont &font, const QString &text )
+TextComponent::TextComponent( ComponentBase *parent, const QFont &font, const QString &text, bool fixedWidth )
  : Component( parent ), d( new Private )
 {
 	setFont( font );
 	setText( text );
+	setFixedWidth( fixedWidth );
 }
 
 TextComponent::~TextComponent()
@@ -418,6 +457,7 @@ QString TextComponent::text()
 
 void TextComponent::setText( const QString &text )
 {
+	if ( text == d->text ) return;
 	d->text = text;
 	calcMinSize();
 }
@@ -429,17 +469,35 @@ QFont TextComponent::font()
 
 void TextComponent::setFont( const QFont &font )
 {
+	if ( font == d->font ) return;
 	d->font = font;
+	calcMinSize();
+}
+
+bool TextComponent::fixedWidth()
+{
+	return d->fixedWidth;
+}
+
+void TextComponent::setFixedWidth( bool fixedWidth )
+{
+	if ( fixedWidth == d->fixedWidth ) return;
+	d->fixedWidth = fixedWidth;
 	calcMinSize();
 }
 
 void TextComponent::calcMinSize()
 {
-	setMinWidth( 0, true );
-	if ( d->text.isEmpty() )
-		setMinHeight( 0, false );
+	if ( d->fixedWidth )
+		setMinWidth( QFontMetrics( font() ).width( d->text ), false );
 	else
+		setMinWidth( 0, true );
+
+	if ( !d->text.isEmpty() )
 		setMinHeight( QFontMetrics( font() ).height(), false );
+	else
+		setMinHeight( 0, false );
+
 	repaint();
 }
 
@@ -467,7 +525,7 @@ void TextComponent::paint( QPainter *painter, const QColorGroup &cg )
 		painter->setPen( d->color );
 	else
 		painter->setPen( cg.text() );
-	QString dispStr = KStringHandler::cPixelSqueeze( d->text, QFontMetrics( font() ), rect().width() );
+	QString dispStr = KStringHandler::rPixelSqueeze( d->text, QFontMetrics( font() ), rect().width() );
 	painter->setFont( font() );
 	painter->drawText( rect(), Qt::SingleLine, dispStr );
 }
@@ -580,9 +638,14 @@ void Item::setHeight( int )
 
 void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width, int align )
 {
-	KListViewItem::paintCell( p, cg, column, width, align );
+	QPixmap back( width, height() );
+	QPainter paint( &back );
+	KListViewItem::paintCell( &paint, cg, column, width, align );
 	if ( Component *comp = component( column ) )
-		comp->paint( p, cg );
+		comp->paint( &paint, cg );
+	paint.end();
+	p->drawPixmap( 0, 0, back );
+	
 }
 
 void Item::componentAdded( Component *component )

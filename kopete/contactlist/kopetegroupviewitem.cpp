@@ -30,35 +30,63 @@
 #include "kopetemetacontactlvi.h"
 #include "kopetemetacontact.h"
 
-KopeteGroupViewItem::KopeteGroupViewItem( KopeteGroup *group_, QListView *parent, const char *name )
-: QObject( group_ ), KListViewItem( parent, name )
+using namespace Kopete::UI;
+
+class KopeteGroupViewItem::Private
 {
-	setVisible( false );
+public:
+	ListView::ImageComponent *image;
+	ListView::TextComponent *name;
+	ListView::TextComponent *count;
+};
+
+KopeteGroupViewItem::KopeteGroupViewItem( KopeteGroup *group_, QListView *parent, const char *name )
+: Kopete::UI::ListView::Item( parent, group_, name )
+{
 	m_group = group_;
-	refreshDisplayName();
-	connect( m_group, SIGNAL( renamed( KopeteGroup*, const QString& ) ),
-		this, SLOT( refreshDisplayName() ) );
-	connect( KopetePrefs::prefs(), SIGNAL( saved() ),
-		SLOT( updateVisibility() ) );
-	connect( m_group, SIGNAL( iconAppearanceChanged() ), SLOT( updateIcon() ) );
+	initLVI();
 }
 
-KopeteGroupViewItem::KopeteGroupViewItem( KopeteGroup *group_,
-	QListViewItem *parent, const char *name )
-		: QObject( group_ ), KListViewItem( parent, name )
+KopeteGroupViewItem::KopeteGroupViewItem( KopeteGroup *group_, QListViewItem *parent, const char *name )
+ : Kopete::UI::ListView::Item( parent, group_, name )
 {
-	setVisible( false );
 	m_group = group_;
-	refreshDisplayName();
-	connect( m_group, SIGNAL( renamed( KopeteGroup*, const QString& ) ),
-		this, SLOT( refreshDisplayName() ) );
-	connect( KopetePrefs::prefs(), SIGNAL( saved() ),
-		SLOT( updateVisibility() ) );
-	connect( m_group, SIGNAL( iconAppearanceChanged() ), SLOT( updateIcon() ) );
+	initLVI();
 }
 
 KopeteGroupViewItem::~KopeteGroupViewItem()
 {
+	delete d;
+}
+
+void KopeteGroupViewItem::initLVI()
+{
+	d = new Private;
+
+	using namespace ListView;
+	Component *hbox = new BoxComponent( this, BoxComponent::Horizontal );
+	d->image = new ImageComponent( hbox );
+
+	QFont font = listView()->font();
+	font.setBold( true );
+	d->name = new TextComponent( hbox, font );
+	d->name->setColor( darkRed );
+	d->name->setFixedWidth( true );
+
+	QFont smallFont = listView()->font();
+	if ( smallFont.pixelSize() != -1 )
+		smallFont.setPixelSize( (font.pixelSize() * 3) / 4 );
+	else
+		smallFont.setPointSizeFloat( font.pointSizeFloat() * 0.75 );
+	d->count = new TextComponent( hbox, smallFont );
+
+	setVisible( false );
+	refreshDisplayName();
+	connect( m_group, SIGNAL( renamed( KopeteGroup*, const QString& ) ),
+		this, SLOT( refreshDisplayName() ) );
+	connect( KopetePrefs::prefs(), SIGNAL( saved() ),
+		SLOT( updateVisibility() ) );
+	connect( m_group, SIGNAL( iconAppearanceChanged() ), SLOT( updateIcon() ) );
 }
 
 KopeteGroup* KopeteGroupViewItem::group() const
@@ -68,9 +96,6 @@ KopeteGroup* KopeteGroupViewItem::group() const
 
 void KopeteGroupViewItem::refreshDisplayName()
 {
-	//if ( !m_group )
-	//	return;
-
 	QString groupName;
 	// FIXME: I think handling the i18n for temporary and top level
 	//        groups belongs in KopeteGroup instead.
@@ -105,12 +130,9 @@ void KopeteGroupViewItem::refreshDisplayName()
 
 	m_renameText = groupName;
 
-	setText( 0,
-		i18n( "GROUPNAME (NO OF ONLINE CONTACTS/NO OF CONTACTS IN GROUP)",
-			"%1 (%2/%3)").arg(
-				groupName,
-				QString::number( onlineMemberCount ),
-				QString::number( totalMemberCount ) ) );
+	d->name->setText( groupName );
+	d->count->setText( i18n( "(NUMBER OF ONLINE CONTACTS/NUMBER OF CONTACTS IN GROUP)", "(%1/%2)" )
+	                  .arg( QString::number( onlineMemberCount ), QString::number( totalMemberCount ) ) );
 
 	updateVisibility();
 
@@ -129,8 +151,8 @@ QString KopeteGroupViewItem::key( int, bool ) const
 	//Groups are placed after topLevel contact.
 	//Exepted Temporary group which is the first group
 	if ( group()->type() != KopeteGroup::Normal )
-		return "0" + text( 0 );
-	return "M" + text( 0 );
+		return "0" + d->name->text();
+	return "M" + d->name->text();
 }
 
 void KopeteGroupViewItem::startRename( int col )
@@ -138,7 +160,7 @@ void KopeteGroupViewItem::startRename( int col )
 	kdDebug(14000) << k_funcinfo << endl;
 	if ( col != 0 ) return;
 	refreshDisplayName();
-	setText( 0, m_renameText );
+	d->name->setText( m_renameText );
 	setRenameEnabled( 0, true );
 	QListViewItem::startRename( 0 );
 }
@@ -203,7 +225,7 @@ void KopeteGroupViewItem::updateIcon()
 			else
 				open = SmallIcon( "folder_green_open" );
 
-			setPixmap( 0, open );
+			d->image->setPixmap( open );
 		}
 		else
 		{
@@ -212,7 +234,7 @@ void KopeteGroupViewItem::updateIcon()
 			else
 				closed = SmallIcon( "folder_green" );
 
-			setPixmap( 0, closed );
+			d->image->setPixmap( closed );
 		}
 	}
 	else // classic view
@@ -222,18 +244,8 @@ void KopeteGroupViewItem::updateIcon()
 		else
 			open = SmallIcon( "folder_blue" );
 
-		setPixmap( 0, open );
+		d->image->setPixmap( open );
 	}
-}
-
-void KopeteGroupViewItem::paintCell( QPainter *p, const QColorGroup &cg, int column, int width, int align )
-{
-	QColorGroup myColorGroup = cg;
-	myColorGroup.setColor( QColorGroup::Text, darkRed );
-	QFont f = p->font();
-	f.setBold( true );
-	p->setFont( f );
-	KListViewItem::paintCell( p, myColorGroup, column, width, align );
 }
 
 #include "kopetegroupviewitem.moc"

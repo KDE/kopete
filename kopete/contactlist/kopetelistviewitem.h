@@ -152,8 +152,9 @@ private:
 	Private *d;
 };
 
-class BoxComponent : public Component
+class BoxComponent : public QObject, public Component
 {
+	Q_OBJECT
 public:
 	enum Direction { Horizontal, Vertical };
 	BoxComponent( ComponentBase *parent, Direction dir = Horizontal );
@@ -169,6 +170,8 @@ protected:
 	void componentRemoved( Component *component );
 	void componentResized( Component *component );
 
+private slots:
+	void layoutTimer();
 private:
 	void calcMinSize();
 
@@ -179,7 +182,7 @@ private:
 class TextComponent : public Component
 {
 public:
-	TextComponent( ComponentBase *parent, const QFont &font, const QString &text = QString::null );
+	TextComponent( ComponentBase *parent, const QFont &font, const QString &text = QString::null, bool fixedWidth = false );
 	~TextComponent();
 
 	QString text();
@@ -191,6 +194,9 @@ public:
 	QColor color();
 	void setColor( const QColor &color );
 	void setDefaultColor();
+
+	bool fixedWidth();
+	void setFixedWidth( bool fixedWidth );
 
 	void paint( QPainter *painter, const QColorGroup &cg );
 
