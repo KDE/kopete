@@ -38,10 +38,9 @@ OncomingSocket::OncomingSocket(OscarSocket *server, const QString &address,
 	mServer = server;
 	mConns.setAutoDelete(TRUE);
 	mPendingConnections.setAutoDelete(TRUE);
-	mSocket = new KExtendedSocket();
-	mSocket->setSocketFlags( KExtendedSocket::inetSocket | KExtendedSocket::passiveSocket);
-	mSocket->setHost(address);
-	mSocket->setPort(port);
+
+	mSocket = new KExtendedSocket(address, port,
+		KExtendedSocket::inetSocket | KExtendedSocket::passiveSocket);
 }
 
 OncomingSocket::~OncomingSocket()

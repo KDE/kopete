@@ -648,8 +648,12 @@ void OscarSocket::sendICQStatus(unsigned long status)
 
 void OscarSocket::fillDirectInfo(Buffer &directInfo)
 {
-	kdDebug(14150) << k_funcinfo << "IP=" << mDirectIMMgr->socket()->host() <<
+	kdDebug(14150) << k_funcinfo << "bindhost=" << mDirectIMMgr->socket()->bindHost() <<
+		", bindPort=" << mDirectIMMgr->socket()->bindPort() << endl;
+
+	kdDebug(14150) << k_funcinfo << "host=" << mDirectIMMgr->socket()->host() <<
 		", Port=" << mDirectIMMgr->socket()->port() << endl;
+
 
 	directInfo.addWord(0x000C); // TLV(12)
 	directInfo.addWord(0x0025); // length 25
@@ -684,7 +688,7 @@ void OscarSocket::fillDirectInfo(Buffer &directInfo)
 
 void OscarSocket::sendKeepalive()
 {
-//	kdDebug(14150) << k_funcinfo << "SEND KEEPALIVE" << endl;
+	kdDebug(14150) << k_funcinfo << "SEND KEEPALIVE" << endl;
 	Buffer outbuf;
 //	outbuf.print();
 	sendBuf(outbuf, 0x05);

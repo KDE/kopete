@@ -115,18 +115,22 @@ DWORD OscarSocket::setIPv4Address(const QString &address)
 void OscarSocket::slotConnected()
 {
 	kdDebug(14150) << k_funcinfo <<
-		"Connected to " << socket()->host() << ", port " << socket()->port() << endl;
-	QString h = socket()->host();
+		"Connected to '" << socket()->host() <<
+		"', port '" << socket()->port() << "'" << endl;
+
+	QString h = socket()->localAddress()->nodeName();
+
 	mDirectIMMgr=new OncomingSocket(this, h, DirectIM);
 
 #if 0
 	mFileTransferMgr=new OncomingSocket(this, h, SendFile, SENDFILE_PORT);
 #endif
 
-	kdDebug(14150) << k_funcinfo << "address() is " << h <<
+	kdDebug(14150) << k_funcinfo <<
+		" socket()->address() is " << h <<
 		" mDirectIMMgr->address() is " << mDirectIMMgr->socket()->host() << endl;
 
-//	emit connectionChanged(1, QString("Connected to %2, port %1").arg(peerPort()).arg(peerName()));
+	//emit connectionChanged(1, QString("Connected to %2, port %1").arg(peerPort()).arg(peerName()));
 }
 
 void OscarSocket::slotConnectionClosed()
@@ -135,8 +139,12 @@ void OscarSocket::slotConnectionClosed()
 		mAccount->accountId() << "' closed." << endl;
 	kdDebug(14150) << k_funcinfo << "Socket Status: " <<
 			socket()->strError(socket()->socketStatus(), socket()->systemError()) << endl;
+
 	if(socket()->bytesAvailable() > 0)
-		kdDebug(14150) << k_funcinfo <<  socket()->bytesAvailable() << " bytes left to read" << endl;
+	{
+		kdDebug(14150) << k_funcinfo <<
+			socket()->bytesAvailable() << " bytes left to read" << endl;
+	}
 
 	if(mIsICQ)
 		stopKeepalive();
@@ -171,43 +179,94 @@ void OscarSocket::slotConnectionClosed()
 
 void OscarSocket::slotRead()
 {
-	FLAP fl=getFLAP();
-	char *buf=new char[fl.length];
+	int waitCount = 0;
+	char *buf = 0L;
 	Buffer inbuf;
+	FLAP fl;
+	int bytesread = 0;
 
-	if (fl.error) //something went wrong, this shouldn't happen
+	//kdDebug(14150) << k_funcinfo << socket()->bytesAvailable() << " bytes to read" << endl;
+
+	// a FLAP is min 6 bytes, we cannot read more out of
+	// a buffer without these 6 initial bytes
+	if(socket()->bytesAvailable() < 6)
 	{
-		kdDebug(14150) << k_funcinfo << "FLAP() read error occurred!" << endl;
-		//dump packet, try to recover
-		char *tmp=new char[socket()->bytesAvailable()];
-		socket()->readBlock(tmp, socket()->bytesAvailable());
-		inbuf.setBuf(tmp, socket()->bytesAvailable());
+		while(socket()->waitForMore(250) < 6 && (waitCount < 40))
+		{
+			kdDebug(14150) << k_funcinfo <<
+				"Not enough data for reading a FLAP, waiting" << endl;
+			waitCount++;
+		}
 
-#ifdef OSCAR_PACKETLOG
-	kdDebug(14150) << "=== INCOMPLETE INPUT ===" << inbuf.toString();
-#endif
+		if(waitCount == 20)
+		{
+			kdDebug(14150) << k_funcinfo <<
+				"Server did not send data for 10000ms, must be dead" << endl;
+			doLogoff();
+			return;
+		}
+	}
 
-		inbuf.clear();
-		delete [] buf;
+	fl = getFLAP();
+
+	if(fl.error) //something went wrong, this shouldn't happen
+	{
+		kdDebug(14150) << k_funcinfo <<
+			"FLAP() read error occurred, waiting for more data..." << endl;
 		return;
 	}
 
-	if (socket()->bytesAvailable() < fl.length)
+	if(fl.length > 0)
+		buf = new char[fl.length];
+	else
 	{
-		while (socket()->waitForMore(500) < fl.length)
-			kdDebug(14150) << k_funcinfo << "Not enough data read yet... waiting" << endl;
+		kdDebug(14150) << k_funcinfo <<
+			"fl.length() is zero, channel was " << fl.channel << endl;
+		return;
 	}
 
-	int bytesread=socket()->readBlock(buf,fl.length);
-	if (socket()->bytesAvailable() > 0)
-		emit moreToRead();
 
+	if(socket()->bytesAvailable() < fl.length)
+	{
+		waitCount = 0;
+		while(socket()->waitForMore(250) < fl.length && (waitCount < 40))
+		{
+			kdDebug(14150) << k_funcinfo <<
+				"Not enough data for reading a packets content, waiting" << endl;
+			waitCount++;
+		}
+
+		if(waitCount == 20)
+		{
+			kdDebug(14150) << k_funcinfo <<
+				"Server did not send data for 10000ms, must be dead" << endl;
+			doLogoff();
+		}
+	}
+
+	bytesread = socket()->readBlock(buf, fl.length);
 	inbuf.setBuf(buf, bytesread);
+
+	if(bytesread != fl.length)
+	{
+		kdDebug(14150) << k_funcinfo << "EEEK, couldn't read all of that packet" << endl;
+	}
+
+	// another flap is waiting in read buffer
+	if (socket()->bytesAvailable() > 0)
+	{
+		kdDebug(14150) << k_funcinfo << "emitting moreToRead() for " <<
+			socket()->bytesAvailable() << " bytes" << endl;
+		emit moreToRead();
+	}
+
 
 #ifdef OSCAR_PACKETLOG
 	kdDebug(14150) << "=== INPUT ===" << inbuf.toString();
 #endif
-	kdDebug(14150) << "FLAP channel is " << fl.channel << endl;
+
+	//kdDebug(14150) << "FLAP channel is " << fl.channel << endl;
+
 	switch(fl.channel)
 	{
 		case 0x01: //new connection negotiation channel
@@ -533,8 +592,9 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 		if(socket()->writeBlock(outbuf.buffer(), outbuf.length()) == -1)
 		{
 			kdDebug(14150) << k_funcinfo << "writeBlock() call failed!" << endl;
-			kdDebug(14150) << k_funcinfo << socket()->strError(socket()->socketStatus(), socket()->systemError())
-				       << endl;
+			kdDebug(14150) << k_funcinfo <<
+				socket()->strError(socket()->socketStatus(), socket()->systemError())
+				<< endl;
 		}
 	}
 	outbuf.clear(); // get rid of the buffer contents
@@ -892,20 +952,40 @@ void OscarSocket::sendClientReady(void)
 
 	for (RateClass *rc=rateClasses.first();rc;rc=rateClasses.next())
 	{
-/*		if (rc->classid == 0x0015) //0x0015 is ICQ
-			kdDebug(14150) << k_funcinfo "CLI_READY containing SNAC(21,x)" << endl; */
+		/*kdDebug(14150) << "adding family '" << rc->classid <<
+			"' to CLI_READY packet" << endl;*/
 
-//		if (rc->classid != 0x0015) //0x0015 is ICQ
+		outbuf.addWord(rc->classid);
+
+		if (rc->classid == 0x0001)
 		{
-			outbuf.addWord(rc->classid);
-//			kdDebug(14150) << "added family=" << rc->classid << endl;
-
-			if (rc->classid == 0x0001 || rc->classid == 0x0013)
-				outbuf.addWord(0x0003);
+			outbuf.addWord(0x0003);
+		}
+		else if (rc->classid == 0x0013)
+		{
+			if(mIsICQ)
+				outbuf.addWord(0x0002);
 			else
-				outbuf.addWord(0x0001);
+				outbuf.addWord(0x0003); // AIM supports Family 19 at version 3 already
+		}
+		else
+		{
+			outbuf.addWord(0x0001);
+		}
 
-			if (rc->classid == 0x0008 || rc->classid == 0x000b || rc->classid == 0x000c)
+		if(mIsICQ)
+		{
+			if(rc->classid == 0x0002)
+				outbuf.addWord(0x0101);
+			else
+				outbuf.addWord(0x0110);
+			outbuf.addWord(0x047b);
+		}
+		else // AIM
+		{
+			if (rc->classid == 0x0008 ||
+				rc->classid == 0x000b ||
+				rc->classid == 0x000c)
 			{
 				outbuf.addWord(0x0104);
 				outbuf.addWord(0x0001);
@@ -913,20 +993,17 @@ void OscarSocket::sendClientReady(void)
 			else
 			{
 				outbuf.addWord(0x0110);
-				if(mIsICQ)
-					outbuf.addWord(0x047b);
-				else
-					outbuf.addWord(0x059b);
+				outbuf.addWord(0x059b);
 			}
 		}
 	}
-//	outbuf.print();
 	sendBuf(outbuf,0x02);
 
-	kdDebug(14150) << "================================================================" << endl;
-	kdDebug(14150) << "================================================================" << endl;
+	kdDebug(14150) << "======================================================================" << endl;
+	kdDebug(14150) << "======================================================================" << endl;
 
-	// FIXME: is this needed for AIM? ICQ surely doesn't need that, it gets a reply for changing status
+	// FIXME: is this needed for AIM?
+	// ICQ surely doesn't need that, it gets a reply for changing status
 	if(!mIsICQ)
 		emit statusChanged(OSCAR_ONLINE);
 
@@ -934,7 +1011,6 @@ void OscarSocket::sendClientReady(void)
 	emit loggedIn();
 }
 
-// Sends versions so that we get proper rate info
 void OscarSocket::sendVersions(const WORD *families, const int len)
 {
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_FAMILIES)" << endl;
@@ -966,7 +1042,6 @@ void OscarSocket::sendVersions(const WORD *families, const int len)
 	//sendRateInfoRequest();
 }
 
-/** Sets idle time -- time is in minutes */
 void OscarSocket::sendIdleTime(DWORD time)
 {
 	if (!isLoggedIn)
@@ -3342,21 +3417,15 @@ FLAP OscarSocket::getFLAP()
 {
 	FLAP fl;
 	int theword, theword2;
-	int start;
+	char start = 0x00;
 	int chan;
 	fl.error = false;
 
 	//the FLAP start byte
-	if ((start = socket()->getch()) == 0x2a)
+	socket()->peekBlock(&start, 1);
+	if (start == 0x2a)
 	{
-		if (socket()->bytesAvailable() < 5) // length of FLAP header part
-		{
-			while (socket()->waitForMore(500) < 5)
-			{
-				kdDebug(14150) << k_funcinfo <<
-					"Not enough data read yet, waiting for max 500msec., bytesAvailable()=" << socket()->bytesAvailable() << endl;
-			}
-		}
+		start = socket()->getch();
 
 		//get the channel ID
 		if ( (chan = socket()->getch()) == -1)
@@ -3380,7 +3449,7 @@ FLAP OscarSocket::getFLAP()
 		else if((theword2 = socket()->getch()) == -1)
 		{
 			kdDebug(14150) << k_funcinfo <<
-				"Error reading data field length: nothing to be read" << endl;
+				"Error reading sequence number: nothing to be read" << endl;
 			fl.error = true;
 		}
 		else
@@ -3393,7 +3462,7 @@ FLAP OscarSocket::getFLAP()
 		if ((theword = socket()->getch()) == -1)
 		{
 			kdDebug(14150) << k_funcinfo <<
-				"Error reading sequence number: nothing to be read" << endl;
+				"Error reading data field length: nothing to be read" << endl;
 			fl.error = true;
 		}
 		else if((theword2 = socket()->getch()) == -1)
@@ -3412,7 +3481,7 @@ FLAP OscarSocket::getFLAP()
 		kdDebug(14150) << k_funcinfo <<
 			"Error reading FLAP... start byte is " << start << endl;
 		fl.error = true;
-		socket()->putch(start);
+		//socket()->putch(start);
 	}
 
 	return fl;
