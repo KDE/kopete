@@ -249,9 +249,10 @@ QPixmap KopeteOnlineStatus::protocolIcon() const
 QPixmap KopeteOnlineStatus::cacheLookup( const QString& icon, const int size, const bool idle ) const
 {
 	// create a 'fingerprint' to use as a hash key
-	QString fingerprint = icon;
+	QString fingerprint = d->caption;
 
-	fingerprint.append( '/' ).append( d->overlayIcon ).append( '/' ).append(
+	// fingerprint consists of caption/icon name/overlay name/size/idle state
+	fingerprint.append( '/' ).append( icon ).append( '/' ).append( d->overlayIcon ).append( '/' ).append(
 			size ).append( '/' ).append(idle ? 'i' : 'a' );
 
 	// look it up in the cache
@@ -272,57 +273,42 @@ QPixmap KopeteOnlineStatus::renderIcon( const QString& baseIcon, const int size,
 	// use reasonable defaults if not provided or protocol not set
 	QPixmap basis;
 
-	switch ( d->status )
+	if ( baseIcon.isNull() )
+		if ( d->protocol )
+			basis = SmallIcon( d->protocol->pluginIcon() );
+		else
+			basis = SmallIcon( QString::fromLatin1( "unknown" ) );
+	else
+		basis = SmallIcon( baseIcon );
+
+	//composite the iconOverlay for this status and the supplied baseIcon
+	if ( !( d->overlayIcon.isNull() ) ) // otherwise leave the basis as-is
 	{
-		case Offline:
-			// Apply standard Disabled effect to generate Offline iconOverlay
-			// This will probably look crap on the Unknown icon
-			// FIXME This won't return icons that are not installed using Martijn's
-			// automake magic so we'd have to use UserIcon instead of SmallIcon
-			if ( baseIcon.isNull() )
-				if ( d->protocol )
-					basis = SmallIcon( d->protocol->pluginIcon(), 0,
-							KIcon::DisabledState );
-				else
-					basis = SmallIcon( QString::fromLatin1( "unknown" ), 0,
-							KIcon::DisabledState );
-			else
-				basis = SmallIcon( baseIcon, 0, KIcon::DisabledState );
-			break;
-		case Online:
-		default:
-			// get the base icon
-			if ( baseIcon.isNull() )
-				if ( d->protocol )
-					basis = SmallIcon( d->protocol->pluginIcon() );
-				else
-					basis = SmallIcon( QString::fromLatin1( "unknown" ) );
-			else
-				basis = SmallIcon( baseIcon );
-
-			//composite the iconOverlay for this status and the supplied baseIcon
-			if ( !( d->overlayIcon.isNull() ) ) // otherwise leave the basis as-is
+		QPixmap overlay = SmallIcon( d->overlayIcon );
+		if ( !overlay.isNull() )
+		{
+			// first combine the masks of both pixmaps
+			if ( overlay.mask() )
 			{
-				QPixmap overlay = SmallIcon( d->overlayIcon );
-				if ( !overlay.isNull() )
-				{
-					//KIconEffect::overlay( basis, overlay );
+				QBitmap mask = *basis.mask();
+				bitBlt( &mask, 0, 0, const_cast<QBitmap *>(overlay.mask()),
+					0, 0, overlay.width(), overlay.height(), Qt::OrROP );
 
-					// first combine the masks of both pixmaps
-					if ( overlay.mask() )
-					{
-						QBitmap mask = *basis.mask();
-						bitBlt( &mask, 0, 0, const_cast<QBitmap *>(overlay.mask()),
-							0, 0, overlay.width(), overlay.height(), Qt::OrROP );
-
-						basis.setMask(mask);
-					}
-					// draw the overlay on top of it
-					QPainter p( &basis );
-					p.drawPixmap( 0, 0, overlay );
-				}
+				basis.setMask(mask);
 			}
-			break;
+			// draw the overlay on top of it
+			QPainter p( &basis );
+			p.drawPixmap( 0, 0, overlay );
+		}
+	}
+
+	if ( d->status == Offline)
+	{
+		// Apply standard Disabled effect to generate Offline icons
+		// This will probably look crap on the Unknown icon
+		// FIXME This won't return icons that are not installed using Martijn's
+		// automake magic so we'd have to use UserIcon instead of SmallIcon
+		basis = KIconEffect().apply( basis, KIcon::Small, KIcon::DisabledState );
 	}
 
 	// no need to scale if the icon is already of the required size (assuming height == width!)
