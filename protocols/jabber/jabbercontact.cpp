@@ -14,23 +14,30 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+#include <qcursor.h>
+#include <qfont.h>
+#include <qptrlist.h>
 
+#include <kaction.h>
+#include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <qfont.h>
-#include <kconfig.h>
-#include <kaction.h>
 #include <kpopupmenu.h>
 
-#include "kopetewindow.h"
-#include "kopetestdaction.h"
+#include "dlgjabbervcard.h"
+#include "dlgrename.h"
 #include "jabbercontact.h"
-#include "kopetemessage.h"
-#include "kopetemessagemanager.h"
 #include "jabberprotocol.h"
 #include "jabcommon.h"
-#include "dlgjabbervcard.h"
+#include "kopete.h"
+#include "kopetestdaction.h"
+#include "kopetewindow.h"
+#include "kopetemessage.h"
+#include "kopetemessagemanager.h"
+#include "kopetemessagemanagerfactory.h"
+#include "kopetemetacontact.h"
+#include "ui/kopetehistorydialog.h"
 
 JabberContact::JabberContact(QString userID, QString nickname, QString group, JabberProtocol *protocol, KopeteMetaContact *mc) : KopeteContact(protocol->id(), mc) {
     mProtocol = protocol;

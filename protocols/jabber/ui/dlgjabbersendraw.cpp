@@ -1,6 +1,7 @@
 #include <qlayout.h>
 #include <qlineedit.h>
-#include <qlabel.h>
+#include <qpushbutton.h>
+#include <qspinbox.h>
 
 #include <kdebug.h>
 #include <klocale.h>

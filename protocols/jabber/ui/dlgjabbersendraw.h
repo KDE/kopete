@@ -2,11 +2,8 @@
 #ifndef DLGJABBERSENDRAW_H
 #define DLGJABBERSENDRAW_H
 
-#include <qwidget.h>
-#include <qlabel.h>
 #include "jabberprotocol.h"
 #include "dlgsendraw.h"
-#include <qspinbox.h>
 
 /**
   *@author Till Gerken
