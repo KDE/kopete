@@ -191,7 +191,7 @@ public:
 	void moveBuddy(AIMBuddy *buddy, AIMGroup *from, AIMGroup *to);
 
 	// Finds a buddy in the buddy list. Returns 0L if none found.
-	AIMBuddy *findBuddy(const int);
+	AIMBuddy *findBuddy(const int, const int gid);
 
 	// Finds a buddy in the buddy list. Returns 0L if none found.
 	AIMBuddy *findBuddy(const QString &);
@@ -223,11 +223,8 @@ public:
 	// Removes a buddy from the deny list
 	void removeBuddyDeny(AIMBuddy *);
 
-	// Returns a list of all of the groups, you're encouraged not to use this (slow)
-	const QValueList<int> groupNums() { return mGroupMap.keys(); }
-
-	// Returns a list of all of the buddies, you're encouraged not to use this (slow)
-	const QValueList<int> buddyNums() { return mBuddyMap.keys(); }
+	// Returns a list of all of the buddies
+	const QMap<QString, AIMBuddy * > &buddies() { return mBuddyNameMap; }
 
 	// Returns a list of all the buddies in the deny list
 	const QPtrList<AIMBuddy> &denyBuddies() { return mBuddiesDeny; }
@@ -255,7 +252,6 @@ signals:
 private:
 	QPtrList<AIMBuddy> mBuddiesDeny;
 	QPtrList<AIMBuddy> mBuddiesPermit;
-	QMap<int, AIMBuddy * > mBuddyMap;
 	QMap<int, AIMGroup * > mGroupMap;
 	QMap<QString, AIMBuddy * > mBuddyNameMap;
 	QMap<QString, AIMGroup * > mGroupNameMap;

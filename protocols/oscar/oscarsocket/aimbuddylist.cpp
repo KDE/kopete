@@ -38,13 +38,12 @@ AIMBuddyList *AIMBuddyList::operator+= (AIMBuddyList &original)
 	for (int i = 0; i != original.mBuddiesPermit.count(); ++i)
 		mBuddiesPermit.append(original.mBuddiesPermit.at(i));
 
-	for (QMap<int, AIMBuddy * >::Iterator it = original.mBuddyMap.begin(); it != original.mBuddyMap.end(); ++it)
+	for (QMap<QString, AIMBuddy * >::Iterator it = original.mBuddyNameMap.begin(); it != original.mBuddyNameMap.end(); ++it)
 	{
 		if ((*it))
-			if (mBuddyMap.find((*it)->ID()) != mBuddyMap.end())
+			if (mBuddyNameMap.find((*it)->screenname()) != mBuddyNameMap.end())
 				continue; //already have this in our list
 
-		mBuddyMap.insert((*it)->ID(), (*it));
 		mBuddyNameMap.insert((*it)->screenname(), (*it));
 	}
 
@@ -63,14 +62,12 @@ AIMBuddyList *AIMBuddyList::operator+= (AIMBuddyList &original)
 
 void AIMBuddyList::addBuddy(AIMBuddy *buddy)
 {
-	mBuddyMap.insert(buddy->ID(), buddy);
 	mBuddyNameMap.insert(tocNormalize(buddy->screenname()), buddy);
 }
 
 void AIMBuddyList::removeBuddy(AIMBuddy *buddy)
 {
-	mBuddyNameMap.remove(buddy->screenname());
-	mBuddyMap.remove(buddy->ID());
+	mBuddyNameMap.remove(tocNormalize(buddy->screenname()));
 	QMap<int, AIMGroup * >::Iterator group = mGroupMap.find(buddy->groupID());
 	if (group == mGroupMap.end())
 		return;
@@ -82,14 +79,6 @@ void AIMBuddyList::moveBuddy(AIMBuddy *buddy, AIMGroup *from, AIMGroup *to)
 	from->removeBuddy(buddy);
 	buddy->setGroupID(to->ID());
 	to->addBuddy(buddy);
-}
-
-AIMBuddy *AIMBuddyList::findBuddy(const int id)
-{
-	QMap<int, AIMBuddy * >::Iterator it = mBuddyMap.find(id);
-	if (it != mBuddyMap.end() && (*it))
-		return (*it);
-	return 0L;
 }
 
 AIMBuddy *AIMBuddyList::findBuddy(const QString &name)
