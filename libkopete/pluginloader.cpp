@@ -73,19 +73,13 @@ LibraryLoader::~LibraryLoader()
 		// Remove causes the iterator to auto-increment, so
 		// only increment explicitly when not removing
 		if( getInfo( i.currentKey() ).type != "protocol" )
-		{
-			kdDebug() << "LibraryLoader::~LibraryLoader(): removing plugin: " << getInfo( i.currentKey() ).name << endl;
 			remove( i.current() );
-		}
 		else
 			++i;
 	}
 	i.toFirst();
 	while( i.current() )
-	{
-		kdDebug() << "LibraryLoader::~LibraryLoader(): removing protocol: " << getInfo( i.currentKey() ).name << endl;
 		remove( i.current() );
-	}
 
 	kdDebug() << "LibraryLoader::~LibraryLoader(): all plugins removed" << endl;
 }
@@ -266,6 +260,8 @@ bool LibraryLoader::remove( KopetePlugin *p )
 {
 	if( !p )
 		return false;
+
+	kdDebug() << "LibraryLoader::remove: Removing plugin: " << p->pluginId() << endl;
 
 	// Added by Duncan 20/01/2002
 	// We need to call unload function for the plugin
