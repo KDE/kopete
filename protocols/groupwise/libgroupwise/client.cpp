@@ -266,7 +266,7 @@ void Client::sendInvitation( const QString & guid, const QString & dn, const Gro
 	SendInviteTask * sit = new SendInviteTask( d->root );
 	QStringList invitees( dn );
 	sit->invite( guid, dn, message );
-	sit->go();
+	sit->go( true );
 }
 
 // SLOTS //

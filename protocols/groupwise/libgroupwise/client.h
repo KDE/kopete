@@ -101,7 +101,7 @@ Q_OBJECT
 		 * Add a contact to the contact list
 		 * Protocol action P12
 		 */
-		 
+
 		/**
 		 * Remove a contact from the contact list
 		 * Protocol action P13

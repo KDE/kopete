@@ -156,6 +156,10 @@ protected slots:
 	 * These events are queued in the account until the data arrives and then we handle the event.
 	 */
 	void receiveContactUserDetails( const ContactDetails & );
+	/**
+	 * Called after we create a contact on the server 
+	 */
+	void receiveContactCreated();
 	// SLOTS HANDLING PROTOCOL EVENTS
 	/**
 	 * Called when the server has a message for us.  

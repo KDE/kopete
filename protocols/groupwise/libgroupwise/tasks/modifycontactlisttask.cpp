@@ -54,7 +54,7 @@ bool ModifyContactListTask::take( Transfer * transfer )
 				// contact change
 				processContactChange( mf );
 			}
-			else if ( mf->tag() == NM_A_FA_CONTACT )
+			else if ( mf->tag() == NM_A_FA_FOLDER )
 			{
 				// folder change
 				processFolderChange( mf );
@@ -62,6 +62,7 @@ bool ModifyContactListTask::take( Transfer * transfer )
 			++cursor;
 		}
 	}
+	// TODO: call virtual here to read any fields after the contact list...
 	return true;
 }
 

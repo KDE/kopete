@@ -56,6 +56,7 @@
 #include "gwmessagemanager.h"
 #include "ui/gwreceiveinvitationdialog.h"
 #include "qcatlshandler.h"
+#include "tasks/createcontacttask.h"
 
 
 GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& accountID, const char *name )
@@ -103,15 +104,6 @@ KActionMenu* GroupWiseAccount::actionMenu()
 		"actionTestRTFize") );
 
 	return theActionMenu;
-}
-
-bool GroupWiseAccount::addContactToMetaContact(const QString& contactId, const QString& displayName, KopeteMetaContact* parentContact)
-{
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "contactId: " << contactId << " displayName: " << displayName
-			<< endl;
-	//GroupWiseContact* newContact = new GroupWiseContact( this, contactId, GroupWiseContact::Echo, displayName, parentContact );
-	//return newContact != 0L;
-	return false;
 }
 
 const int GroupWiseAccount::port() const
@@ -452,7 +444,7 @@ void GroupWiseAccount::receiveFolder( const FolderItem & folder )
 			<< " displayName: " << folder.name << endl;
 	if ( folder.parentId != 0 )
 	{
-		kdWarning( GROUPWISE_DEBUG_GLOBAL ) << " - received a nested folder.  These werre not supported in GroupWise or Kopete as of Sept 2004, aborting! (parentId = " << folder.parentId << ")" << endl;
+		kdWarning( GROUPWISE_DEBUG_GLOBAL ) << " - received a nested folder.  These were not supported in GroupWise or Kopete as of Sept 2004, aborting! (parentId = " << folder.parentId << ")" << endl;
 		return;
 	}
 	
@@ -462,6 +454,7 @@ void GroupWiseAccount::receiveFolder( const FolderItem & folder )
 		if ( grp->displayName() == folder.name )
 		{
 			grp->setPluginData( protocol(), accountId() + " objectId", QString::number( folder.id ) );
+			grp->setPluginData( protocol(), accountId() + " sequence", QString::number( folder.sequence ) );
 			found = true;
 			break;
 		}
@@ -473,6 +466,7 @@ void GroupWiseAccount::receiveFolder( const FolderItem & folder )
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - creating local folder" << endl;
 		KopeteGroup * grp = new KopeteGroup( folder.name );
 		grp->setPluginData( protocol(), accountId() + " objectId", QString::number( folder.id ) );
+			grp->setPluginData( protocol(), accountId() + " sequence", QString::number( folder.sequence ) );
 		KopeteContactList::contactList()->addGroup( grp );
 	}
 }
@@ -656,6 +650,65 @@ void GroupWiseAccount::sendMessage( const QString &guid, const KopeteMessage & m
 	m_client->sendMessage( addresseeDNs, outMsg );
 }
 
+bool GroupWiseAccount::addContactToMetaContact( const QString& contactId, const QString& displayName, KopeteMetaContact* parentContact )
+{
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "contactId: " << contactId << " displayName: " << displayName
+			<< endl;
+	
+	// first find all the groups that this contact is a member of 
+	// record, in a folderitem, their display names and groupwise object id 
+	// Set object id to 0 if not found - they do not exist on the server
+	QValueList< FolderItem > folders;
+	KopeteGroupList groupList = parentContact->groups();
+	for ( KopeteGroup *group = groupList.first(); group; group = groupList.next() )
+	{
+		bool ok = true;
+		FolderItem fi;
+		fi.parentId = 0;
+		fi.id = ( group->pluginData( protocol(), accountId() + " objectId" ) ).toInt( &ok );
+		if ( !ok )
+			fi.id = 0;
+		fi.name = group->displayName();
+		folders.append( fi );
+	}
+	
+	// find out the highest folder sequence number
+	int highestFreeSequence = 0;
+	groupList = KopeteContactList::contactList()->groups();
+	for ( KopeteGroup *group = groupList.first(); group; group = groupList.next() )
+	{
+		bool ok = true;
+		int sequence = ( group->pluginData( protocol(), accountId() + " sequence" ) ).toInt( &ok );
+		if ( sequence >= highestFreeSequence )
+			highestFreeSequence = sequence + 1;
+	}
+	
+	// send this list along with the contact details to the server
+	// CreateContactTask will create the missing folders on the server
+	// and then add the contact to each one
+	// finally it will signal finished(), and we can query it for the details
+	// we gave it earlier and a list of ContactListInstances, and create the GroupWiseContact
+	// and make sure the contact was successfully created.
+	// 
+	// Since addContactToMetaContact expects synchronous contact creation 
+	// we have to create the contact optimistically.
+	GroupWiseContact * c = new GroupWiseContact( this, contactId, parentContact, 0, 0, 0 );
+
+	// If the CreateContactTask finishes with an error, we'll have to 
+	// delete the contact we just created, in receiveContactCreated :/	
+	
+	CreateContactTask * cct = new CreateContactTask( client()->rootTask() );
+	cct->contactFromUserId( contactId, displayName, highestFreeSequence, folders );
+	QObject::connect( cct, SIGNAL( finished() ), SLOT( receiveContactCreated() ) );
+	cct->go( true );
+	return true;
+}
+
+void GroupWiseAccount::receiveContactCreated()
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+}
+
 void GroupWiseAccount::slotConnectedElsewhere()
 {
 	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information,
@@ -786,11 +839,22 @@ void GroupWiseAccount::slotMessageManagerDestroyed( QObject * obj )
 
 void GroupWiseAccount::slotTestRTFize()
 {
-	bool ok;
+/*	bool ok;
 	const QString query = QString::fromLatin1("Enter a string to rtfize:");
 	QString testText = KLineEditDlg::getText( query, QString::null, &ok, Kopete::UI::Global::mainWidget() );
 	if ( ok )
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Converted text is: '" << protocol()->rtfizeText( testText ) << "'" << endl;
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Converted text is: '" << protocol()->rtfizeText( testText ) << "'" << endl;*/
+	
+	bool ok;
+	const QString query = QString::fromLatin1("Enter a contactId:");
+	QString testText = KLineEditDlg::getText( query, QString::null, &ok, Kopete::UI::Global::mainWidget() );
+	if ( !ok )
+		return;
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Trying to add contact: '" << protocol()->rtfizeText( testText ) << "'" << endl;
+	KopeteMetaContact *metaContact = new KopeteMetaContact ();
+	metaContact->setDisplayName( "Test Add MC" );
+	metaContact->setTemporary (true);
+	addContactToMetaContact( testText, "Test Add Contact", metaContact );
 }
 
 #include "gwaccount.moc"
