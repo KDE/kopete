@@ -52,7 +52,6 @@
 #include "kopetemetacontactlvi.h"
 #include "kopeteaccount.h"
 #include "kopeteprotocol.h"
-#include "linkaddressbookui.h"
 #include "addressbookselectordialog.h"
 
 #include "customnotificationprops.h"
