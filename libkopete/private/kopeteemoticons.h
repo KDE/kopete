@@ -1,8 +1,8 @@
 /*
     kopeteemoticons.cpp - Kopete Preferences Container-Class
 
-    Copyright (c) 2002 by Stefan Gehn            <sgehn@gmx.net>
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2002-2003 by Stefan Gehn            <sgehn@gmx.net>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -19,13 +19,11 @@
 
 #include <qobject.h>
 #include <qmap.h>
-//class QMap;
 
 typedef QMap<QString, QStringList> EmoticonMap;
 
 /**
- * @author Stefan Gehn <sgehn@gmx.net> 
- *
+ * @author Stefan Gehn <sgehn@gmx.net>
  */
 
 class KopeteEmoticons : public QObject
@@ -34,7 +32,14 @@ class KopeteEmoticons : public QObject
 
 public:
 	/**
-	 * The emoticons container-class is a singleton object.
+	 * Constructor: DON'T use it if you want to use the emoticon theme
+	 * chosen by the user.
+	 * For that one use the singleton stuff
+	 **/
+	KopeteEmoticons( const QString &theme = QString() );
+
+	/**
+	 * The emoticons container-class by default is a singleton object.
 	 * Use this method to retrieve the instance.
 	 */
 	static KopeteEmoticons *emoticons();
@@ -47,9 +52,6 @@ public:
 	 * This function will use the selected emoticon theme.
 	 */
 	static QString parseEmoticons ( QString );
-
-
-	~KopeteEmoticons();
 
 	/**
 	 * returns the path to an animation or pixmap
@@ -70,23 +72,18 @@ public:
 	 * creates a list of all emoticons that can be
 	 * mapped to an animation/pixmap
 	 **/
-	QStringList emoticonList ( void );
+	QStringList emoticonList ();
 
 	/**
 	 * creates a list of all animation/pixmap paths
 	 * that are used to replace emoticons
 	 **/
-	QStringList picList ( void );
+	QStringList picList ();
 
-	QMap<QString, QString> emoticonAndPicList(void);
+	QMap<QString, QString> emoticonAndPicList();
 
 
 private:
-	/**
-	 * Private constructor: we are a singleton
-	 **/
-	KopeteEmoticons();
-	
 	/**
 	 * Our instance
 	 **/
@@ -101,7 +98,7 @@ private:
 	 * The current icon theme from KopetePrefs
 	 */
 	QString m_theme;
-    
+
 	/**
 	 * add an emoticon to our mapping if
 	 * an animation/pixmap has been found for it
@@ -114,16 +111,8 @@ private slots:
 	 * Fills the map with paths and emoticons
 	 * This needs to be done on every emoticon-theme change
 	 **/
-	void initEmoticons ( void );
+	void initEmoticons ( const QString &theme = QString() );
 };
 
 #endif
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
-

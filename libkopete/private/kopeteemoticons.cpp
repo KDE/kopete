@@ -39,17 +39,18 @@ KopeteEmoticons *KopeteEmoticons::emoticons()
 	return s_instance;
 }
 
-
-KopeteEmoticons::KopeteEmoticons() : QObject( kapp, "KopeteEmoticons" )
+KopeteEmoticons::KopeteEmoticons( const QString &theme ) : QObject( kapp, "KopeteEmoticons" )
 {
 //	kdDebug(14010) << "KopeteEmoticons::KopeteEmoticons" << endl;
-	connect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(initEmoticons()) );
-	initEmoticons();
-}
-
-KopeteEmoticons::~KopeteEmoticons()
-{
-//	kdDebug(14010) << "KopeteEmoticons::~KopeteEmoticons" << endl;
+	if(theme.isNull())
+	{
+		initEmoticons();
+		connect( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(initEmoticons()) );
+	}
+	else
+	{
+		initEmoticons( theme );
+	}
 }
 
 void KopeteEmoticons::addIfPossible( const QString& filenameNoExt, QStringList emoticons )
@@ -71,14 +72,19 @@ void KopeteEmoticons::addIfPossible( const QString& filenameNoExt, QStringList e
 	}
 }
 
-void KopeteEmoticons::initEmoticons()
+void KopeteEmoticons::initEmoticons( const QString &theme )
 {
-	if ( m_theme == KopetePrefs::prefs()->iconTheme() )
-		return;
+	if(theme.isNull())
+	{
+		if ( m_theme == KopetePrefs::prefs()->iconTheme() )
+			return;
 
-	m_theme = KopetePrefs::prefs()->iconTheme();
+		m_theme = KopetePrefs::prefs()->iconTheme();
+	}
+	else
+		m_theme = theme;
 
-//	kdDebug(14010) << "KopeteEmoticons::initEmoticons()" << endl;
+//	kdDebug(14010) << k_funcinfo << "Called" << endl;
 	map.clear(); // empty the mapping
 
 	QDomDocument emoticonMap( QString::fromLatin1( "messaging-emoticon-map" ) );
@@ -104,7 +110,8 @@ void KopeteEmoticons::initEmoticons()
 		{
 			if( element.tagName() == QString::fromLatin1( "emoticon" ) )
 			{
-				QString emoticon_file = element.attribute( QString::fromLatin1( "file" ), QString::null );
+				QString emoticon_file = element.attribute(
+					QString::fromLatin1( "file" ), QString::null );
 				QStringList items;
 
 				QDomNode emoticonNode = node.firstChild();
@@ -119,8 +126,9 @@ void KopeteEmoticons::initEmoticons()
 						}
 						else
 						{
-							kdDebug(14010) << "KopeteEmoticons::initEmoticons: Warning: Unknown element '" <<
-								element.tagName() << "' in emoticon data" << endl;
+							kdDebug(14010) << k_funcinfo <<
+								"Warning: Unknown element '" << element.tagName() <<
+								"' in emoticon data" << endl;
 						}
 					}
 					emoticonNode = emoticonNode.nextSibling();
@@ -130,8 +138,8 @@ void KopeteEmoticons::initEmoticons()
 			}
 			else
 			{
-				kdDebug(14010) << "KopeteEmoticons::initEmoticons: Warning: Unknown element '" << element.tagName()
-					  << "' in map file" << endl;
+				kdDebug(14010) << k_funcinfo << "Warning: Unknown element '" <<
+					element.tagName() << "' in map file" << endl;
 			}
 		}
 		node = node.nextSibling();
@@ -144,8 +152,10 @@ QString KopeteEmoticons::emoticonToPicPath ( const QString& em )
 	EmoticonMap::Iterator it;
 	for ( it = map.begin(); it != map.end(); ++it )
 	{
-		if ( it.data().findIndex(em) != -1 )	// search in QStringList data for emoticon
-			return it.key();					// if found return path for corresponding animation or pixmap
+		// search in QStringList data for emoticon
+		if ( it.data().findIndex(em) != -1 )
+			return it.key();
+		// if found return path for corresponding animation or pixmap
 	}
 
 	return QString();
@@ -160,7 +170,6 @@ QStringList KopeteEmoticons::picPathToEmoticon ( const QString& path )
 	return QStringList();
 }
 
-
 QStringList KopeteEmoticons::emoticonList()
 {
 	QStringList retVal;
@@ -171,7 +180,6 @@ QStringList KopeteEmoticons::emoticonList()
 
 	return retVal;
 }
-
 
 QStringList KopeteEmoticons::picList()
 {
@@ -210,17 +218,20 @@ QString KopeteEmoticons::parseEmoticons( QString message )
 	{
 		QString em = QRegExp::escape( QStyleSheet::escape(*it) );
 		imgPath = KopeteEmoticons::emoticons()->emoticonToPicPath( *it );
-		iconImage = QImage( imgPath );
-		message.replace( QRegExp( QString::fromLatin1( "(^|[\\W\\s]|%1)(%1)(?!\\w)" ).arg(em).arg(em) ), QString::fromLatin1( "\\1<img align=\"center\" width=\"" ) + QString::number( iconImage.width() ) +
-				QString::fromLatin1("\" height=\"") + QString::number( iconImage.height() ) +
-				QString::fromLatin1("\" src=\"" ) + imgPath + QString::fromLatin1( "\">" ) );
+		iconImage = QImage(imgPath);
+		message.replace(
+			QRegExp(QString::fromLatin1( "(^|[\\W\\s]|%1)(%1)(?!\\w)" ).arg(em).arg(em)),
+			QString::fromLatin1("\\1<img align=\"center\" width=\"") +
+			QString::number(iconImage.width()) +
+			QString::fromLatin1("\" height=\"") +
+			QString::number(iconImage.height()) +
+			QString::fromLatin1("\" src=\"") +
+			imgPath + QString::fromLatin1( "\">" )
+			);
 	}
 
 	return message;
 }
 
-
 #include "kopeteemoticons.moc"
-
 // vim: set noet ts=4 sts=4 sw=4:
-
