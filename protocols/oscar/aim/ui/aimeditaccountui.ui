@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>462</width>
-            <height>510</height>
+            <height>512</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -355,7 +355,7 @@
                 </sizepolicy>
             </property>
             <property name="text">
-                <string>&lt;a href="http://my.screenname.aol.com/_cqr/login/login.psp?mcState=initialized&amp;createSn=1"&gt;Register for an AIM account&lt;/a&gt;</string>
+                <string>&lt;a href="http://my.screenname.aol.com/_cqr/login/login.psp?siteId=snshomepage&amp;mcState=initialized&amp;createSn=1"&gt;Register for an AIM account&lt;/a&gt;</string>
             </property>
         </widget>
     </vbox>
