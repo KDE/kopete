@@ -49,10 +49,10 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, QWidget* parent, const char*
 
 	mMainWidget->UIN->setValidChars( "1234567890" );
 
-	setButtonText( User1, i18n( "New Search" ) );
-	setButtonText( User2, i18n( "Search" ) );
-	setButtonText( User3, i18n( "Add user..." ) );
-	setButtonText( Cancel, i18n( "Exit..." ) );
+	setButtonText( User1, i18n( "&New Search" ) );
+	setButtonText( User2, i18n( "S&earch" ) );
+	setButtonText( User3, i18n( "&Add user..." ) );
+	setButtonText( Cancel, i18n( "&Close" ) );
 
 	showButton( User1, false );
 	showButton( User3, false );
@@ -133,7 +133,7 @@ void GaduPublicDir::slotNewSearch()
 {
 	mMainWidget->pubsearch->raiseWidget( 0 );
 
-	setButtonText( User2, i18n( "Search" ) );
+	setButtonText( User2, i18n( "S&earch" ) );
 
 	showButton( User1, false );
 	showButton( User3, false );
@@ -165,7 +165,7 @@ void GaduPublicDir::slotSearch()
 		// Search for more
 	}
 
-	setButtonText( User2, "Search more..." );
+	setButtonText( User2, "Search &more..." );
 	showButton( User3, true );
 	showButton( User1, true );
 	enableButton( User3, false );
