@@ -358,9 +358,9 @@ install_location=
 type=DATA
 
 [kopete/library/Makefile.am]
-files=kopete/library/contactlist.cpp,kopete/library/contactlist.h,kopete/library/imcontact.cpp,kopete/library/imcontact.h,kopete/library/improtocol.cpp,kopete/library/improtocol.h,kopete/library/kopete.cpp,kopete/library/kopete.h,kopete/library/pluginmanager.cpp,kopete/library/pluginmanager.h,
+files=kopete/library/contactlist.cpp,kopete/library/contactlist.h,kopete/library/imcontact.cpp,kopete/library/imcontact.h,kopete/library/improtocol.cpp,kopete/library/improtocol.h,kopete/library/kopete.cpp,kopete/library/kopete.h,kopete/library/pluginmanager.h,kopete/library/plugin.cpp,kopete/library/plugin.h,kopete/library/pluginloader.cpp,kopete/library/pluginloader.h,kopete/library/pluginmanager.cpp
 sub_dirs=ui,
-type=normal
+type=static_library
 
 [kopete/library/contactlist.cpp]
 dist=true
@@ -410,6 +410,30 @@ install=false
 install_location=
 type=HEADER
 
+[kopete/library/plugin.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/library/plugin.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/library/pluginloader.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/library/pluginloader.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
 [kopete/library/pluginmanager.cpp]
 dist=true
 install=false
@@ -423,7 +447,7 @@ install_location=
 type=HEADER
 
 [kopete/library/ui/Makefile.am]
-files=kopete/library/ui/aboutplugins.cpp,kopete/library/ui/aboutplugins.h,kopete/library/ui/configmodule.cpp,kopete/library/ui/configmodule.h,kopete/library/ui/kopetewindow.cpp,kopete/library/ui/kopetewindow.h,kopete/library/ui/preferencesdialog.cpp,kopete/library/ui/preferencesdialog.h,kopete/library/ui/connectionlabel.cpp,kopete/library/ui/connectionlabel.h
+files=kopete/library/ui/aboutplugins.cpp,kopete/library/ui/aboutplugins.h,kopete/library/ui/configmodule.cpp,kopete/library/ui/configmodule.h,kopete/library/ui/kopetewindow.cpp,kopete/library/ui/kopetewindow.h,kopete/library/ui/preferencesdialog.cpp,kopete/library/ui/preferencesdialog.h,kopete/library/ui/connectionlabel.cpp,kopete/library/ui/connectionlabel.h,kopete/library/ui/pluginmodule.cpp,kopete/library/ui/pluginmodule.h,kopete/library/ui/kopetelistview.h
 sub_dirs=
 type=static_library
 
@@ -463,6 +487,12 @@ install=false
 install_location=
 type=HEADER
 
+[kopete/library/ui/kopetelistview.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
 [kopete/library/ui/kopetewindow.cpp]
 dist=true
 install=false
@@ -470,6 +500,18 @@ install_location=
 type=SOURCE
 
 [kopete/library/ui/kopetewindow.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/library/ui/pluginmodule.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/library/ui/pluginmodule.h]
 dist=true
 install=false
 install_location=
@@ -535,7 +577,7 @@ sub_dirs=icq,msn,
 type=normal
 
 [kopete/protocols/icq/Makefile.am]
-files=kopete/protocols/icq/icqprotocol.cpp,kopete/protocols/icq/icqprotocol.h,kopete/protocols/icq/icqpreferences.cpp,kopete/protocols/icq/icqpreferences.h
+files=kopete/protocols/icq/icqprotocol.cpp,kopete/protocols/icq/icqprotocol.h,kopete/protocols/icq/icqpreferences.cpp,kopete/protocols/icq/icqpreferences.h,kopete/protocols/icq/protocol.cpp
 sub_dirs=kxengine,
 type=static_library
 
@@ -736,10 +778,16 @@ install=false
 install_location=
 type=HEADER
 
+[kopete/protocols/icq/protocol.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
 [kopete/protocols/msn/Makefile.am]
-files=kopete/protocols/msn/msnprotocol.cpp,kopete/protocols/msn/msnprotocol.h,
+files=kopete/protocols/msn/msnprotocol.cpp,kopete/protocols/msn/msnprotocol.h,kopete/protocols/msn/protocol.cpp
 sub_dirs=libkmsn,
-type=normal
+type=static_library
 
 [kopete/protocols/msn/libkmsn/Makefile.am]
 files=kopete/protocols/msn/libkmsn/msn.cpp,kopete/protocols/msn/libkmsn/msn.h,kopete/protocols/msn/libkmsn/msnuser.cpp,kopete/protocols/msn/libkmsn/msnuser.h,kopete/protocols/msn/libkmsn/newuser.cpp,kopete/protocols/msn/libkmsn/newuser.h,kopete/protocols/msn/libkmsn/newuser.ui,kopete/protocols/msn/libkmsn/newuserimpl.cpp,kopete/protocols/msn/libkmsn/newuserimpl.h,kopete/protocols/msn/libkmsn/switchboard.cpp,kopete/protocols/msn/libkmsn/switchboard.h,
@@ -823,6 +871,12 @@ dist=true
 install=false
 install_location=
 type=HEADER
+
+[kopete/protocols/msn/protocol.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
 
 [kopete/templates/Makefile.am]
 files=kopete/templates/cpp_template,kopete/templates/header_template,

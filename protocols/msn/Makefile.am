@@ -1,8 +1,13 @@
 SUBDIRS = libkmsn
 INCLUDES = -I$(top_srcdir)/kopete/library $(all_includes)
-lib_LTLIBRARIES = libmsnprotocol.la
+lib_LTLIBRARIES = libkopetemsn.la
 
-libmsnprotocol_la_SOURCES = msnprotocol.cpp
-libmsnprotocol_la_METASOURCES = AUTO
-libmsnprotocol_la_LDFLAGS     =
-libmsnprotocol_la_LIBADD      =
+libkopetemsn_la_SOURCES = msnprotocol.cpp protocol.cpp
+libkopetemsn_la_METASOURCES = AUTO
+libkopetemsn_la_LDFLAGS     =
+libkopetemsn_la_LIBADD      =
+
+data_DATA = msn.plugin
+datadir = $(kde_datadir)/kopete
+
+

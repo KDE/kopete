@@ -18,13 +18,13 @@
 #ifndef CONFIGMODULE_H
 #define CONFIGMODULE_H
 
-#include "../kopete.h"
 #include <qwidget.h>
 #include <qlist.h>
 /**
   *@author duncan
   */
-class ConfigModule : public QWidget  {
+class ConfigModule : public QWidget
+{
    Q_OBJECT
 public:
 	/**

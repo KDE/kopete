@@ -19,7 +19,6 @@
 #include <kaboutdata.h>
 #include <klocale.h>
 #include "kopete.h"
-#include "protocols/icq/icqprotocol.h"
 
 static const char *description =
 	I18N_NOOP("Kopete");
@@ -44,8 +43,6 @@ int main(int argc, char *argv[])
 
 	
   Kopete kopete;
-	ICQProtocol *icq;
-	icq = new ICQProtocol;
 //kopete->show();
   kopete.exec();
 }

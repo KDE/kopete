@@ -30,11 +30,18 @@
 #include <kpopupmenu.h>
 #include <kaction.h>
 
+#include "preferencesdialog.h"
+#include "aboutplugins.h"
+#include "kopetewindow.h"
 
+#include "plugin.h"
+#include "configmodule.h"
+#include "pluginmodule.h"
+#include "pluginloader.h"
 #include "pluginmanager.h"
-#include "ui/preferencesdialog.h"
-#include "ui/aboutplugins.h"
-#include "ui/kopetewindow.h"
+
+class LibraryLoader;
+class KopeteLibraryInfo;
 
 /** Kopete is the base class of the project */
 class Kopete : public KUniqueApplication
@@ -47,13 +54,15 @@ class Kopete : public KUniqueApplication
 	PreferencesDialog *preferencesBox() const { return mPref; }
   KopeteWindow *popupMenu() const { /*return mainwidget->popupmenu;*/ };
 	PluginManager *Plugins() const { return plugins; }
-	
+	LibraryLoader *libraryLoader() const { return mLibraryLoader; }
 	/** No descriptions */
   void saveOptions();
   /** No descriptions */
   void readOptions();
   /** No descriptions */
   void initPlugins();
+  /** No descriptions */
+  void loadPlugins();
 
 
 	PluginManager *plugins;
@@ -61,7 +70,7 @@ class Kopete : public KUniqueApplication
 	
 	private:
 	KopeteWindow *mainwindow;
-	
+	LibraryLoader *mLibraryLoader;
 	
 public slots:
   void slotPreferences();

@@ -21,15 +21,22 @@
 #include <kopete.h>
 #include <preferencesdialog.h>
 #include <kopetewindow.h>
-#include <icqprotocol.h>
+#include "plugin.h"
+#include "pluginloader.h"
+#include "pluginmodule.h"
+
+class Plugins;
 
 Kopete::Kopete(): KUniqueApplication(true, true, true)
 {
 	plugins = new PluginManager;
-	initPlugins();
+	mLibraryLoader = new LibraryLoader;
+	mPref=new PreferencesDialog;
+	//new Plugins(this);
+
 	mainwindow = new KopeteWindow;
 	setMainWidget(mainwindow);
-	mPref=new PreferencesDialog;
+	
   mPref->hide();
 	
 	
@@ -137,4 +144,9 @@ void Kopete::slotSetAway()
 void Kopete::initPlugins()
 {
 	
+}
+/** No descriptions */
+void Kopete::loadPlugins()
+{
+	mLibraryLoader->loadAll();
 }

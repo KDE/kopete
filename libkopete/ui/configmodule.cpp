@@ -15,10 +15,11 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "configmodule.h"
 #include <klocale.h>
 #include <qlayout.h>
 #include <qlabel.h>
+#include "configmodule.h"
+#include "kopete.h"
 
 ConfigModule::ConfigModule(const QString &name, const QString &description, QObject *owner)
 	: QWidget(kopeteapp->preferencesBox()->addPage(name, description))
