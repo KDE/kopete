@@ -30,9 +30,6 @@ kopete_LDADD = \
 	addcontactwizard/libkopeteaddcontactwizard.la  contactlist/libkopetecontactlist.la \
 	chatwindow/libkopetechatwindow.la conf/libkopeteconf.la ../libkopete/libkopete.la
 
-icondir = $(kde_datadir)/kopete/pics
-icon_DATA =
-
 mydatadir = $(kde_datadir)/kopete
 mydata_DATA = kopeteui.rc eventsrc
 
