@@ -988,7 +988,7 @@ bool KIRC::numericReply_319(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::numericReply_321(const KIRCMessage &msg)
+bool KIRC::numericReply_321( const KIRCMessage & /* msg */ )
 {
 	/* RFC1459: "<channel> :Users  Name" ("Channel :Users  Name")
 	 * RFC2812: Obsolete. Not used.
@@ -1005,7 +1005,7 @@ bool KIRC::numericReply_322(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::numericReply_323(const KIRCMessage &msg)
+bool KIRC::numericReply_323( const KIRCMessage & /* msg */ )
 {
 	/* ":End of LIST"
 	 */
@@ -1021,7 +1021,7 @@ bool KIRC::numericReply_324(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::numericReply_329(const KIRCMessage &msg)
+bool KIRC::numericReply_329( const KIRCMessage & /* msg */ )
 {
 	/* NOT IN RFC1459 NOR RFC2812
 	 * "%s %lu"
@@ -1030,7 +1030,7 @@ bool KIRC::numericReply_329(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::numericReply_331(const KIRCMessage &msg)
+bool KIRC::numericReply_331( const KIRCMessage & /* msg */ )
 {
 	/* Gives the existing topic for a channel after a join.
 	 * "<channel> :No topic is set"
@@ -1048,7 +1048,7 @@ bool KIRC::numericReply_332(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::numericReply_333(const KIRCMessage &msg)
+bool KIRC::numericReply_333( const KIRCMessage & /* msg */ )
 {
 	/* NOT IN RFC1459 NOR RFC2812
 	 * "%s %s %lu"
@@ -1132,7 +1132,7 @@ bool KIRC::CtcpQuery_pingPong(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::CtcpReply_pingPong(const KIRCMessage &msg)
+bool KIRC::CtcpReply_pingPong( const KIRCMessage & /* msg */ )
 {
 /*
 	timeval time;
@@ -1216,7 +1216,7 @@ bool KIRC::CtcpQuery_source(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::CtcpQuery_finger(const KIRCMessage &msg)
+bool KIRC::CtcpQuery_finger( const KIRCMessage & /* msg */ )
 {
 	// To be implemented
 	return true;
