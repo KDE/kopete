@@ -371,7 +371,7 @@ void IRCProtocol::slotQueryCommand( const QString &args, KopeteMessageManager *m
 		QString user = args.section( ' ', 0, 0 );
 		QString rest = args.section( ' ', 1 );
 
-		if( !isChannelRegex.search( user ) != -1 )
+		if( isChannelRegex.search( user ) == -1 )
 		{
 			IRCUserContact *c = static_cast<IRCAccount*>( manager->account() )->findUser( user );
 			c->startChat();
