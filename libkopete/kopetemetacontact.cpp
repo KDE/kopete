@@ -133,13 +133,13 @@ void KopeteMetaContact::updateOnlineStatus()
 			newStatus = Online;
 			break;
 		}
-		else if ( s == KopeteContact::Away )
+		else if ( (s == KopeteContact::Away) && (newStatus != Online) )
 		{
 			// Set status, but don't stop searching, since 'Online' overrules
 			// 'Away'
 			newStatus = Away;
 		}
-		else if (s == KopeteContact::Offline && newStatus!=Away)
+		else if ( (s == KopeteContact::Offline) && (newStatus != Away) && (newStatus != Online))
 		{
 			newStatus = Offline;
 		}
