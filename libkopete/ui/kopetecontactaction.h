@@ -19,6 +19,7 @@
 #define __kopetecontactaction_h__
 
 #include <kaction.h>
+#include <kopete_export.h>
 
 namespace Kopete
 {
@@ -28,7 +29,7 @@ class Contact;
 /**
  * @author Martijn Klingens <klingens@kde.org>
  */
-class KopeteContactAction : public KAction
+class KOPETE_EXPORT KopeteContactAction : public KAction
 {
 	Q_OBJECT
 

@@ -23,6 +23,8 @@
 #include <qobject.h>
 #include <qptrlist.h>
 
+#include <kopete_export.h>
+
 class KConfig;
 class QWidget;
 
@@ -83,7 +85,7 @@ class QWidget;
  * @since 3.2
  * @author Benjamin C Meyer <ben+kdelibs at meyerhome dot net>
  */ 
-class KAutoConfig : public QObject {
+class KOPETE_EXPORT KAutoConfig : public QObject {
 
 Q_OBJECT
 

@@ -18,7 +18,7 @@
 #define KOPETEPASSWORD_H
 
 #include <qobject.h>
-#include <kdemacros.h>
+#include <kopete_export.h>
 
 namespace KWallet { class Wallet; }
 
@@ -41,7 +41,7 @@ namespace Kopete
  * If the KWallet is active, passwords will be stored in it, otherwise, they
  * will be stored in the KConfig, in a slightly mangled form.
  */
-class Password : public QObject
+class KOPETE_EXPORT Password : public QObject
 {
 	Q_OBJECT
 

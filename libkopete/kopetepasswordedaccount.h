@@ -19,6 +19,8 @@
 
 #include "kopeteaccount.h"
 
+#include <kopete_export.h>
+
 class Kopete::OnlineStatus;
 
 namespace Kopete
@@ -32,7 +34,7 @@ class Password;
  *
  * @author Richard Smith <kde@metafoo.co.uk>
  */
-class PasswordedAccount : public Account
+class KOPETE_EXPORT PasswordedAccount : public Account
 {
 	Q_OBJECT
 	

@@ -22,6 +22,7 @@
 #include <qobject.h>
 #include <qstring.h>
 #include <qmap.h>
+#include <kopete_export.h>
 
 #include <kio/job.h>
 
@@ -34,7 +35,7 @@ class Contact;
 /**
  * @author Nick Betcher. <nbetcher@kde.org>
  */
-class FileTransferInfo
+class KOPETE_EXPORT FileTransferInfo
 {
 public:
 	enum KopeteTransferDirection { Incoming, Outgoing };
@@ -62,7 +63,7 @@ private:
 /**
  * Creates and manages kopete file transfers
  */
-class TransferManager : public QObject
+class KOPETE_EXPORT TransferManager : public QObject
 {
 	Q_OBJECT
 
@@ -130,7 +131,7 @@ private:
  * A KIO job for a kopete file transfer.
  * @author Richard Smith <kopete@metafoo.co.uk>
  */
-class Transfer : public KIO::Job
+class KOPETE_EXPORT Transfer : public KIO::Job
 {
 	Q_OBJECT
 
