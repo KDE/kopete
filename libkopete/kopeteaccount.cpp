@@ -103,11 +103,6 @@ void KopeteAccount::connect( const KopeteOnlineStatus& )
 
 void KopeteAccount::disconnect( DisconnectReason reason )
 {
-
-	//since plugins call this method directly, we need
-	//to call their disconnect method first
-	disconnect();
-
 	//reconnect if needed
 	if ( KopetePrefs::prefs()->reconnectOnDisconnect() == true && reason != Manual )
 		connect();
