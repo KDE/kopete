@@ -141,9 +141,9 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 		d->foreignMessage=!outgoingMessage;
 		manager->view(true)->appendMessage( msg );
 
-		if ( !outgoingMessage && d->useQueue && !view( manager, outgoingMessage )->isVisible()  )
+		if ( d->useQueue && !view( manager, outgoingMessage )->isVisible()  )
 		{
-			if (!d->eventMap.contains( manager ))
+			if (!outgoingMessage && !d->eventMap.contains( manager ))
 			{
 				//FIXME: currently there are maximum only one event per kmm.
 				KopeteEvent *event=new KopeteEvent(msg,manager);
