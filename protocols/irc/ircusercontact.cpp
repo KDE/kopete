@@ -490,17 +490,18 @@ void IRCUserContact::newAction(const QString &from, const QString &action)
 {
 	kdDebug(14120) << k_funcinfo << m_nickName << endl;
 
+	IRCContact *f = MYACCOUNT->contactManager()->findUser(from);
+
 	//Either this is from me to a guy, or from a guy to me. Either way its a PM
-	if (this != MYACCOUNT->mySelf())
+	if (this == MYACCOUNT->mySelf())
 	{
-		IRCContact *f = MYACCOUNT->contactManager()->findUser( from );
-		KopeteMessage msg(f, f->manager()->members(), action,
+		KopeteMessage msg(f, this, action,
 			KopeteMessage::Action, KopeteMessage::RichText, KopeteMessage::Chat);
 		f->appendMessage(msg);
 	}
 	else
 	{
-		KopeteMessage msg( MYACCOUNT->mySelf(), manager()->members(), action,
+		KopeteMessage msg(this, f, action,
 			KopeteMessage::Action, KopeteMessage::RichText, KopeteMessage::Chat);
 		appendMessage(msg);
 	}
