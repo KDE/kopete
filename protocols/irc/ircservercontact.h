@@ -82,7 +82,6 @@ private slots:
 public slots:
 	void slotQuitServer();
 	void slotConnectNow();
-	void slotPromptChannelJoin();
 	void slotDisconnectNow();
 signals:
 	void serverQuit();
