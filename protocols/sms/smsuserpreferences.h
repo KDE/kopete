@@ -38,7 +38,6 @@ private:
 	SMSContact* m_contact;
 public slots:
 	void slotOk();
-	void slotApply();
 	void slotCancel();
 } ;
 

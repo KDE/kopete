@@ -24,7 +24,7 @@
 #include "smscontact.h"
 
 SMSUserPreferences::SMSUserPreferences( SMSContact* contact )
-	: KDialogBase( 0L, "userPrefs", true, i18n("User Preferences"), Ok|Apply|Cancel, Ok, true )
+	: KDialogBase( 0L, "userPrefs", true, i18n("User Preferences"), Ok|Cancel, Ok, true )
 {
 	m_contact = contact;
 	topWidget = makeVBoxMainWidget();
@@ -41,14 +41,9 @@ SMSUserPreferences::~SMSUserPreferences()
 
 void SMSUserPreferences::slotOk()
 {
-	slotApply();
-	slotCancel();
-}
-
-void SMSUserPreferences::slotApply()
-{
 	if (userPrefs->telNumber->text() != m_contact->phoneNumber())
 		m_contact->setPhoneNumber(userPrefs->telNumber->text());
+	slotCancel();
 }
 
 void SMSUserPreferences::slotCancel()
