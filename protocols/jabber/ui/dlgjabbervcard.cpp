@@ -19,15 +19,24 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <qpushbutton.h>
 #include <qtextedit.h>
 
+#include <qapplication.h>
+#include <qwidgetstack.h>
+#include <kdebug.h>
+#include <kpushbutton.h>
 #include <klineedit.h>
 #include <klocale.h>
 #include <kurllabel.h>
+#include <kdialogbase.h>
+#include <kmessagebox.h>
+#include <krun.h>
 
 #include "xmpp_tasks.h"
 
+#include "jabberaccount.h"
+#include "jabbercontact.h"
+#include "dlgvcard.h"
 #include "dlgjabbervcard.h"
 
 /*
@@ -35,19 +44,32 @@
  *  name 'name'
  *
  */
-dlgJabberVCard::dlgJabberVCard (QWidget * parent, const char *name, Jabber::JT_VCard * vCard):dlgVCard (parent, name)
+dlgJabberVCard::dlgJabberVCard (JabberAccount *account, const QString &jid, QWidget * parent, const char *name)
+	: KDialogBase (parent, name, false, i18n("Jabber vCard"), Close | User1, Close, false, i18n("&Save vCard"))
 {
 
-	if (vCard != NULL)
-	{
-		// populate all fields from the vCard
-		assignVCard (vCard);
-	}
+	m_account = account;
+	m_jid = jid;
 
-	connect (btnClose, SIGNAL (clicked ()), this, SLOT (slotClose ()));
-	connect (btnSaveNickname, SIGNAL (clicked ()), this, SLOT (slotSaveNickname ()));
+	m_mainWidget = new dlgVCard(this);
+	setMainWidget(m_mainWidget);
 
-	setReadOnly (true);
+	connect (this, SIGNAL (user1Clicked()), this, SLOT (slotSaveVCard ()));
+	connect (m_mainWidget->btnSaveNick, SIGNAL (clicked ()), this, SLOT (slotSaveNickname ()));
+	connect (m_mainWidget->urlHomeEmail, SIGNAL (leftClickedURL(const QString &)), this, SLOT (slotOpenURL (const QString &)));
+	connect (m_mainWidget->urlWorkEmail, SIGNAL (leftClickedURL(const QString &)), this, SLOT (slotOpenURL (const QString &)));
+	connect (m_mainWidget->urlHomepage, SIGNAL (leftClickedURL(const QString &)), this, SLOT (slotOpenURL (const QString &)));
+
+	if(static_cast<JabberContact *>(m_account->myself())->userId() == jid)
+		setReadOnly (false);
+	else
+		setReadOnly (true);
+
+	Jabber::JT_VCard *task = new Jabber::JT_VCard (m_account->client()->rootTask ());
+	// signal to ourselves when the vCard data arrived
+	QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotGotVCard ()));
+	task->get (m_jid);
+	task->go (true);
 
 }
 
@@ -60,37 +82,134 @@ dlgJabberVCard::~dlgJabberVCard ()
 }
 
 /*
- * Assign new vCard data to this dialog
+ * Activated when the close button gets pressed. Deletes the dialog.
  */
-void dlgJabberVCard::assignVCard (Jabber::JT_VCard * vCard)
+void dlgJabberVCard::slotClose()
 {
-/*
-	leJID->setText (vCard->jid ().userHost ());
-	leNickname->setText (vCard->vcard ().field[Jabber::vNickname]);
-	leName->setText (vCard->vcard ().field[Jabber::vFullname]);
-	leBirthday->setText (vCard->vcard ().field[Jabber::vBday]);
-	urlEmail->setText (vCard->vcard ().field[Jabber::vEmail]);
-	leEmail->setText (vCard->vcard ().field[Jabber::vEmail]);
-	urlEmail->setURL (vCard->vcard ().field[Jabber::vEmail]);
-	urlHomepage->setText (vCard->vcard ().field[Jabber::vHomepage]);
-	leHomepage->setText (vCard->vcard ().field[Jabber::vHomepage]);
-	urlHomepage->setURL (vCard->vcard ().field[Jabber::vHomepage]);
-	teAddress->setText (vCard->vcard ().field[Jabber::vStreet]);
-	leCity->setText (vCard->vcard ().field[Jabber::vCity]);
-	leState->setText (vCard->vcard ().field[Jabber::vState]);
-	leZIP->setText (vCard->vcard ().field[Jabber::vPcode]);
-	leCountry->setText (vCard->vcard ().field[Jabber::vCountry]);
-	lePhone->setText (vCard->vcard ().field[Jabber::vPhone]);
-*/
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Deleting dialog." << endl;
+	delayedDestruct();
 }
 
 /*
- * Close the dialog window
+ * Activated when a vCard arrived from the server.
  */
-void dlgJabberVCard::slotClose ()
+void dlgJabberVCard::slotGotVCard()
+{
+	Jabber::JT_VCard * vCard = (Jabber::JT_VCard *) sender ();
+
+	if (!vCard->success() && !vCard->vcard().isEmpty())
+	{
+		// unsuccessful, or incomplete
+		KMessageBox::error (this, i18n ("Unable to retrieve vCard for %1").arg (vCard->jid ().userHost ()));
+		return;
+	}
+
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Got vCard for user " << vCard->jid ().userHost () << ", displaying." << endl;
+
+	assignVCard(vCard->vcard());
+
+	show ();
+	raise ();
+
+}
+
+/*
+ * Assign new vCard data to this dialog
+ */
+void dlgJabberVCard::assignVCard (const Jabber::VCard &vCard)
 {
 
-	delete this;
+	// general tab
+	m_mainWidget->leNick->setText (vCard.nickName());
+	m_mainWidget->leName->setText (vCard.fullName());
+	m_mainWidget->leJID->setText (vCard.jid());
+	m_mainWidget->leBirthday->setText (vCard.bdayStr());
+	m_mainWidget->leTimezone->setText (vCard.timezone());
+	m_mainWidget->leHomepage->setText (vCard.url());
+	m_mainWidget->urlHomepage->setText (vCard.url());
+	m_mainWidget->urlHomepage->setURL (vCard.url());
+
+	// addresses
+	for(Jabber::VCard::AddressList::const_iterator it = vCard.addressList().begin(); it != vCard.addressList().end(); it++)
+	{
+		Jabber::VCard::Address address = (*it);
+
+		if(address.work)
+		{
+			m_mainWidget->leWorkStreet->setText (address.street);
+			m_mainWidget->leWorkExtAddr->setText (address.extaddr);
+			m_mainWidget->leWorkPOBox->setText (address.pobox);
+			m_mainWidget->leWorkCity->setText (address.locality);
+			m_mainWidget->leWorkPostalCode->setText (address.pcode);
+			m_mainWidget->leWorkCountry->setText (address.country);
+		}
+		else
+		//if(address.home)
+		{
+			m_mainWidget->leHomeStreet->setText (address.street);
+			m_mainWidget->leHomeExtAddr->setText (address.extaddr);
+			m_mainWidget->leHomePOBox->setText (address.pobox);
+			m_mainWidget->leHomeCity->setText (address.locality);
+			m_mainWidget->leHomePostalCode->setText (address.pcode);
+			m_mainWidget->leHomeCountry->setText (address.country);
+		}
+	}
+
+	// email
+	for(Jabber::VCard::EmailList::const_iterator it = vCard.emailList().begin(); it != vCard.emailList().end(); it++)
+	{
+		Jabber::VCard::Email email = (*it);
+
+		if(email.work)
+		{
+			m_mainWidget->leWorkEmail->setText (email.userid);
+			m_mainWidget->urlWorkEmail->setText (email.userid);
+			m_mainWidget->urlWorkEmail->setURL ("mailto:" + email.userid);
+		}
+		else
+		//if(email.home)
+		{
+			m_mainWidget->leHomeEmail->setText (email.userid);
+			m_mainWidget->urlHomeEmail->setText (email.userid);
+			m_mainWidget->urlHomeEmail->setURL ("mailto:" + email.userid);
+		}
+	}
+
+	// work information tab
+	m_mainWidget->leCompany->setText (vCard.org().name);
+	m_mainWidget->leDepartment->setText (vCard.org().unit.join(","));
+	m_mainWidget->lePosition->setText (vCard.title());
+	m_mainWidget->leRole->setText (vCard.role());
+
+	// phone numbers tab
+	for(Jabber::VCard::PhoneList::const_iterator it = vCard.phoneList().begin(); it != vCard.phoneList().end(); it++)
+	{
+		Jabber::VCard::Phone phone = (*it);
+
+		if(phone.work)
+		{
+			m_mainWidget->lePhoneWork->setText (phone.number);
+		}
+		else
+		if(phone.fax)
+		{
+			m_mainWidget->lePhoneFax->setText (phone.number);
+		}
+		else
+		if(phone.cell)
+		{
+			m_mainWidget->lePhoneCell->setText (phone.number);
+		}
+		else
+		//if(phone.home)
+		{
+			m_mainWidget->lePhoneHome->setText (phone.number);
+		}
+
+	}
+
+	// about tab
+	m_mainWidget->teAbout->setText (vCard.desc());
 
 }
 
@@ -99,88 +218,191 @@ void dlgJabberVCard::slotClose ()
  */
 void dlgJabberVCard::slotSaveNickname ()
 {
-	if (mIsReadOnly == true)
-		emit updateNickname (leNickname->text ());
 
+	JabberContact *jc = static_cast<JabberContact *>(m_account->contacts()[m_jid]);
+
+	if(!jc)
+	{
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "WARNING: Trying to save new nickname for non-existant contact " << m_jid << endl;
+	}
 	else
 	{
-		doc = QDomDocument ();
-		QDomElement element = doc.createElement ("vcard");
-
-		element.setAttribute ("version", "2.0");
-		element.setAttribute ("xmlns", "vcard-temp");
-		element.setAttribute ("prodid", "-//HandGen//NONSGML vGen v1.0//EN");
-
-		element.appendChild (textTag ("country", leCountry->text ()));
-		element.appendChild (textTag ("pcode", leZIP->text ()));
-		element.appendChild (textTag ("region", leState->text ()));
-		element.appendChild (textTag ("locality", leCity->text ()));
-		element.appendChild (textTag ("street", teAddress->text ()));
-		element.appendChild (textTag ("voice", lePhone->text ()));
-		element.appendChild (textTag ("url", leHomepage->text ()));
-		element.appendChild (textTag ("bday", leBirthday->text ()));
-		element.appendChild (textTag ("email", leEmail->text ()));
-		element.appendChild (textTag ("nickname", leNickname->text ()));
-		element.appendChild (textTag ("fn", leName->text ()));
-
-		emit saveAsXML (element);
+		jc->slotRenameContact(m_mainWidget->leNick->text(), m_mainWidget->leNick->text());
 	}
-
-	delete this;
 
 }
 
-void dlgJabberVCard::setReadOnly (bool b)
+void dlgJabberVCard::setReadOnly (bool state)
 {
 
-	leJID->setReadOnly (b);
-	leNickname->setReadOnly (false);
-	leName->setReadOnly (b);
-	leBirthday->setReadOnly (b);
-	leGender->setReadOnly (b);
+	// general tab
+	m_mainWidget->leNick->setReadOnly (false);
+	m_mainWidget->leName->setReadOnly (state);
+	m_mainWidget->leJID->setReadOnly (state);
+	m_mainWidget->leBirthday->setReadOnly (state);
+	m_mainWidget->leTimezone->setReadOnly (state);
+	m_mainWidget->wsHomepage->raiseWidget(state ? 0 : 1);
 
-	if (b == false)
-	{
-		urlEmail->hide ();
-		urlHomepage->hide ();
-		leEmail->show ();
-		leHomepage->show ();
-		leEmail->setText (urlEmail->text ());
-		leHomepage->setText (urlHomepage->text ());
-	}
-	else
-	{
-		urlEmail->show ();
-		urlHomepage->show ();
-		leEmail->hide ();
-		leHomepage->hide ();
-	}
+	// home address tab
+	m_mainWidget->leHomeStreet->setReadOnly (state);
+	m_mainWidget->leHomeExtAddr->setReadOnly (state);
+	m_mainWidget->leHomePOBox->setReadOnly (state);
+	m_mainWidget->leHomeCity->setReadOnly (state);
+	m_mainWidget->leHomePostalCode->setReadOnly (state);
+	m_mainWidget->leHomeCountry->setReadOnly (state);
+	m_mainWidget->wsHomeEmail->raiseWidget(state ? 0 : 1);
 
-	teAddress->setReadOnly (b);
-	leCity->setReadOnly (b);
-	leState->setReadOnly (b);
-	leZIP->setReadOnly (b);
-	leCountry->setReadOnly (b);
-	lePhone->setReadOnly (b);
+	// work address tab
+	m_mainWidget->leWorkStreet->setReadOnly (state);
+	m_mainWidget->leWorkExtAddr->setReadOnly (state);
+	m_mainWidget->leWorkPOBox->setReadOnly (state);
+	m_mainWidget->leWorkCity->setReadOnly (state);
+	m_mainWidget->leWorkPostalCode->setReadOnly (state);
+	m_mainWidget->leWorkCountry->setReadOnly (state);
+	m_mainWidget->wsWorkEmail->raiseWidget(state ? 0 : 1);
 
-	if (b == false)
-		btnSaveNickname->setText (i18n ("Save vCard"));
-	else
-		btnSaveNickname->setText (i18n ("Save Nickname"));
+	// work information tab
+	m_mainWidget->leCompany->setReadOnly (state);
+	m_mainWidget->leDepartment->setReadOnly (state);
+	m_mainWidget->lePosition->setReadOnly (state);
+	m_mainWidget->leRole->setReadOnly (state);
 
-	mIsReadOnly = b;
+	// phone numbers tab
+	m_mainWidget->lePhoneHome->setReadOnly (state);
+	m_mainWidget->lePhoneWork->setReadOnly (state);
+	m_mainWidget->lePhoneFax->setReadOnly (state);
+	m_mainWidget->lePhoneCell->setReadOnly (state);
+
+	// about tab
+	m_mainWidget->teAbout->setReadOnly (state);
 
 }
 
-QDomElement dlgJabberVCard::textTag (const QString & name, const QString & content)
+/*
+ * Saves a vCard to the server.
+ */
+void dlgJabberVCard::slotSaveVCard()
+{
+	Jabber::VCard vCard;
+	Jabber::VCard::AddressList addressList;
+	Jabber::VCard::EmailList emailList;
+	Jabber::VCard::PhoneList phoneList;
+
+	// general tab
+	vCard.setNickName (m_mainWidget->leNick->text());
+	vCard.setFullName (m_mainWidget->leName->text());
+	vCard.setJid (m_mainWidget->leJID->text());
+	vCard.setBdayStr (m_mainWidget->leBirthday->text());
+	vCard.setTimezone (m_mainWidget->leTimezone->text());
+	vCard.setUrl (m_mainWidget->leHomepage->text());
+
+	// home address tab
+	Jabber::VCard::Address homeAddress;
+
+	homeAddress.home = true;
+	homeAddress.street = m_mainWidget->leHomeStreet->text();
+	homeAddress.extaddr = m_mainWidget->leHomeExtAddr->text();
+	homeAddress.pobox = m_mainWidget->leHomePOBox->text();
+	homeAddress.locality = m_mainWidget->leHomeCity->text();
+	homeAddress.pcode = m_mainWidget->leHomePostalCode->text();
+	homeAddress.country = m_mainWidget->leHomeCountry->text();
+
+	// work address tab
+	Jabber::VCard::Address workAddress;
+
+	workAddress.work = true;
+	workAddress.street = m_mainWidget->leWorkStreet->text();
+	workAddress.extaddr = m_mainWidget->leWorkExtAddr->text();
+	workAddress.pobox = m_mainWidget->leWorkPOBox->text();
+	workAddress.locality = m_mainWidget->leWorkCity->text();
+	workAddress.pcode = m_mainWidget->leWorkPostalCode->text();
+	workAddress.country = m_mainWidget->leWorkCountry->text();
+
+	addressList.append(homeAddress);
+	addressList.append(workAddress);
+
+	vCard.setAddressList(addressList);
+
+	// home email
+	Jabber::VCard::Email homeEmail;
+
+	homeEmail.home = true;
+	homeEmail.userid = m_mainWidget->leHomeEmail->text();
+
+	// work email
+	Jabber::VCard::Email workEmail;
+
+	workEmail.home = true;
+	workEmail.userid = m_mainWidget->leWorkEmail->text();
+
+	emailList.append(homeEmail);
+	emailList.append(workEmail);
+
+	vCard.setEmailList(emailList);
+
+	// work information tab
+	Jabber::VCard::Org org;
+	org.name = m_mainWidget->leCompany->text();
+	org.unit = QStringList::split(",", m_mainWidget->leDepartment->text());
+	vCard.setOrg(org);
+	vCard.setTitle (m_mainWidget->lePosition->text());
+	vCard.setRole (m_mainWidget->leRole->text());
+
+	// phone numbers tab
+	Jabber::VCard::Phone phoneHome;
+	phoneHome.home = true;
+	phoneHome.number = m_mainWidget->lePhoneHome->text();
+
+	Jabber::VCard::Phone phoneWork;
+	phoneWork.work = true;
+	phoneWork.number = m_mainWidget->lePhoneWork->text();
+
+	Jabber::VCard::Phone phoneFax;
+	phoneFax.fax = true;
+	phoneFax.number = m_mainWidget->lePhoneFax->text();
+
+	Jabber::VCard::Phone phoneCell;
+	phoneCell.cell = true;
+	phoneCell.number = m_mainWidget->lePhoneCell->text();
+
+	phoneList.append(phoneHome);
+	phoneList.append(phoneWork);
+	phoneList.append(phoneFax);
+	phoneList.append(phoneCell);
+
+	vCard.setPhoneList(phoneList);
+
+	// about tab
+	vCard.setDesc(m_mainWidget->teAbout->text());
+
+	vCard.setVersion("3.0");
+	vCard.setProdId("Kopete");
+
+	Jabber::JT_VCard *task = new Jabber::JT_VCard (m_account->client()->rootTask ());
+	// signal to ourselves when the vCard data arrived
+	QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotSentVCard ()));
+	task->set (vCard);
+	task->go (true);
+
+}
+
+void dlgJabberVCard::slotSentVCard()
+{
+	Jabber::JT_VCard * vCard = (Jabber::JT_VCard *) sender ();
+
+	if (!vCard->success())
+	{
+		// unsuccessful, or incomplete
+		KMessageBox::error (this, i18n("Unable to store vCard for %1").arg (vCard->jid ().userHost ()));
+		return;
+	}
+
+}
+
+void dlgJabberVCard::slotOpenURL(const QString &url)
 {
 
-	QDomElement tag = doc.createElement (name);
-	QDomText text = doc.createTextNode (content);
-
-	tag.appendChild (text);
-
-	return tag;
+	new KRun(url);
 
 }
 

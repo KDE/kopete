@@ -1,11 +1,11 @@
  /*
   * jabbercontact.h  -  Base class for the Kopete Jabber protocol contact
-  * 
+  *
   * Copyright (c) 2002-2003 by Till Gerken <till@tantalo.net>
   * Copyright (c) 2002 by Daniel Stone <dstone@kde.org>
-  * 
+  *
   * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
-  * 
+  *
   * *************************************************************************
   * *                                                                       *
   * * This program is free software; you can redistribute it and/or modify  *
@@ -125,11 +125,6 @@ public slots:
 	void slotSelectResource ();
 
 	/**
-	 * vCard received from server for this contact
-	 */
-	void slotGotVCard ();
-
-	/**
 	 * Update contact to new roster data
 	 */
 	void slotUpdateContact (const Jabber::RosterItem & item);
@@ -149,6 +144,11 @@ public slots:
 	 */
 	virtual void syncGroups ();
 
+	/**
+	 * Catch the rename dialog's results
+	 */
+	void slotRenameContact (const QString &oldName, const QString &newName);
+
 protected slots:
 
 	/**
@@ -157,12 +157,6 @@ protected slots:
 	virtual void slotMessageManagerDeleted ();
 
 private slots:
-
-	/**
-	 * Catch the rename dialog's results
-	 */
-	void slotRenameContact (const QString &oldName, const QString &newName);
-
 	/**
 	 * Edit a vCard for the contact.
 	 */
@@ -182,7 +176,7 @@ private slots:
 	 * Send type="subscribe" to contact
 	 */
 	void slotRequestAuth ();
-	
+
 	/**
 	 * Send type="unsubscribed" to contact
 	 */

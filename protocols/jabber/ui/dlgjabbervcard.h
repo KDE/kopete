@@ -19,33 +19,37 @@
 #ifndef DLGJABBERVCARD_H
 #define DLGJABBERVCARD_H
 
-#include <qdom.h>
+#include <kdialogbase.h>
+#include <jabberaccount.h>
+#include <qstring.h>
+#include "dlgvcard.h"
 #include "xmpp_types.h"
 #include "xmpp_vcard.h"
-#include "dlgvcard.h"
 
-class QDomElement;
-class QDomDocument;
-
-class dlgJabberVCard:public dlgVCard
+class dlgJabberVCard : public KDialogBase
 {
-  Q_OBJECT public:
-	  dlgJabberVCard (QWidget * parent = 0, const char *name = 0, Jabber::JT_VCard * vCard = 0);
-	 ~dlgJabberVCard ();
+	Q_OBJECT
 
-	void assignVCard (Jabber::JT_VCard * vCard);
+public:
+	dlgJabberVCard (JabberAccount *account, const QString &jid, QWidget * parent = 0, const char *name = 0);
+	~dlgJabberVCard ();
 
-	public slots:void slotClose ();
-	void slotSaveNickname ();
-	void setReadOnly (bool);
+private slots:
+	void slotSaveNickname();
+	void slotSaveVCard();
+	void slotClose();
+	void slotGotVCard();
+	void slotSentVCard();
+	void slotOpenURL(const QString &url);
 
-	  signals:void updateNickname (const QString &);
-	void saveAsXML (QDomElement &);
+private:
+	JabberAccount *m_account;
+	QString m_jid;
+	dlgVCard *m_mainWidget;
 
-  private:
-	  bool mIsReadOnly;
-	QDomDocument doc;
-	QDomElement textTag (const QString &, const QString &);
+	void assignVCard(const Jabber::VCard &vCard);
+	void setReadOnly(bool state);
+
 };
 
 #endif // DLGJABBERVCARD_H
@@ -57,4 +61,3 @@ class dlgJabberVCard:public dlgVCard
  * indent-tabs-mode: t
  * End:
  */
-// vim: set noet ts=4 sts=4 sw=4:

@@ -651,43 +651,7 @@ void JabberContact::slotUserInfo ()
 		return;
 	}
 
-	Jabber::JT_VCard * task = new Jabber::JT_VCard (static_cast<JabberAccount *>(account())->client()->rootTask ());
-
-	// signal to ourselves when the vCard data arrived
-	QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotGotVCard ()));
-
-	task->get (userId ());
-
-	task->go (true);
-
-}
-
-void JabberContact::slotGotVCard ()
-{
-	Jabber::JT_VCard * vCard = (Jabber::JT_VCard *) sender ();
-
-	if (!vCard->success() && !vCard->vcard().isEmpty())
-	{
-		// unsuccessful, or incomplete
-		KMessageBox::error (qApp->mainWidget (), i18n ("Unable to retrieve vCard for %1").arg (vCard->jid ().userHost ()));
-		return;
-	}
-
-	kdDebug (14130) << "[JabberContact] Got vCard for user " << vCard->jid ().userHost () << ", displaying." << endl;
-
-	dlgVCard = new dlgJabberVCard (qApp->mainWidget (), "dlgJabberVCard", vCard);
-
-	if (mEditingVCard)
-	{
-		connect (dlgVCard, SIGNAL (saveAsXML (QDomElement &)), this, SLOT (slotSaveVCard (QDomElement &)));
-		dlgVCard->setReadOnly (false);
-		mEditingVCard = false;
-	}
-//	else
-//		connect (dlgVCard, SIGNAL (updateNickname (const QString &)), this, SLOT (slotDoRenameContact (const QString &)));
-
-	dlgVCard->show ();
-	dlgVCard->raise ();
+	new dlgJabberVCard (static_cast<JabberAccount *>(account()), userId(), qApp->mainWidget());
 
 }
 

@@ -25,7 +25,9 @@ TODO for Jabber:
 - remove KOS from all classes, make them contact specific for Greg's enhancements,
   make all classes use JabberProtocol::OnlineStatus instead
 - allow account ID changes
-- rewrite vCard handling (move protocol logic into the vCard class)
+- clean up slight design glitches in vCard dialog
+- add "querying..." feedback while waiting for vCard
+- add more vCard features if bored
 - clean up class names in the ui directory, no real scheme there right now
 - context menu always shows offline (same in chat members list)
 - a new contact that subscribed to you is added to the contact list (should
@@ -33,3 +35,5 @@ TODO for Jabber:
 - ask if authorization should be removed if a contact is deleted from the
   list
 - provide better feedback for dialogs querying the server
+- verify registration process
+- nickname for myself() doesn't seem to work
