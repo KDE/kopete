@@ -44,6 +44,7 @@ void ClientStreamTest::slotConnected()
 	t->setParam(1, "kopetetest");
 	
 	myTestObject->write(t);
+	while(1);
 }
 
 int main(int argc, char ** argv)

@@ -136,7 +136,8 @@ QByteArray YMSGTransfer::serialize()
 	QByteArray packet;
 	QDataStream bs(packet, IO_WriteOnly);
 	bs << 'Y' << 'M' << 'S' << 'G'; // flag
-	bs << 0x000b << 0x0000; // version
+	//bs << 0x000b << 0x0000; // version
+	bs << 0x09 << 0x00 << 0x00 << 0x00;
 	
 	int len = length();
 	kdDebug(14180) << k_funcinfo << " length is " << len << endl;

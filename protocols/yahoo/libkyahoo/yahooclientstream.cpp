@@ -106,8 +106,9 @@ public:
 ClientStream::ClientStream(Connector *conn, QObject *parent)
 :Stream(parent)
 {
-	qDebug("CLIENTSTREAM::ClientStream");
-
+	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(14180) << k_funcinfo << endl;
+	
 	d = new Private;
 	d->mode = Client;
 	d->conn = conn;
@@ -128,6 +129,7 @@ ClientStream::~ClientStream()
 
 void ClientStream::reset(bool all)
 {
+	kdDebug(14180) << k_funcinfo << endl;
 	d->reset();
 	d->noopTimer.stop();
 
@@ -150,6 +152,7 @@ void ClientStream::reset(bool all)
 
 void ClientStream::connectToServer(const QString& server, bool auth)
 {
+	kdDebug(14180) << k_funcinfo << endl;
 	reset(true);
 	d->state = Connecting;
 	d->doAuth = auth;
@@ -160,6 +163,7 @@ void ClientStream::connectToServer(const QString& server, bool auth)
 
 void ClientStream::continueAfterWarning()
 {
+	kdDebug(14180) << k_funcinfo << endl;
 /* unneeded?
 	if(d->state == WaitVersion) {
 		d->state = Connecting;
@@ -232,6 +236,7 @@ void ClientStream::close()
 
 bool ClientStream::transfersAvailable() const
 {
+	kdDebug(14180) << k_funcinfo << endl;
 	return ( !d->in.isEmpty() );
 }
 
@@ -295,10 +300,8 @@ void cs_dump( const QByteArray &bytes )
 void ClientStream::cp_outgoingData( const QByteArray& outgoingBytes )
 {
 	// take formatted bytes from CoreProtocol and put them on the wire
-#ifdef LIBOSCAR_DEBUG
-	kdDebug(14180) << k_funcinfo << endl;
-	cs_dump( outgoingBytes );
-#endif	
+	kdDebug(14180) << k_funcinfo << "[data size: " << outgoingBytes.size() << "]" << endl;
+	//cs_dump( outgoingBytes );
 	d->bs->write( outgoingBytes );
 }
 
@@ -317,8 +320,11 @@ void ClientStream::cp_incomingData()
 		kdDebug(14180) << k_funcinfo << " - client signalled incomingData but none was available, state is: "<< d->client.state() << endl;
 }
 
+/* Connector connected */
 void ClientStream::cr_connected()
 {
+	kdDebug(14180) << k_funcinfo << endl;
+	
 	d->bs = d->conn->stream();
 	connect(d->bs, SIGNAL(connectionClosed()), SLOT(bs_connectionClosed()));
 	connect(d->bs, SIGNAL(delayedCloseFinished()), SLOT(bs_delayedCloseFinished()));
@@ -359,27 +365,22 @@ void ClientStream::bs_error(int)
 
 void ClientStream::bs_readyRead()
 {
+	kdDebug(14180) << k_funcinfo << endl;
 	QByteArray a;
 	//qDebug( "size of storage for incoming data is %i bytes.", a.size() );
 	a = d->bs->read();
 
-#ifdef LIBOSCAR_DEBUG
-	QCString cs(a.data(), a.size()+1);
+	//QCString cs(a.data(), a.size()+1);
 	//qDebug("ClientStream: recv: %d [%s]\n", a.size(), cs.data());
-	kdDebug(14180) << k_funcinfo << " recv: " << a.size()  <<" bytes" <<endl;
-	cs_dump( a );
-#endif
+	//kdDebug(14180) << k_funcinfo << " recv: " << a.size()  <<" bytes" <<endl;
+	//cs_dump( a );
 
 	d->client.addIncomingData(a);
 }
 
 void ClientStream::bs_bytesWritten(int bytes)
 {
-#ifdef LIBOSCAR_DEBUG
 	kdDebug(14180) << k_funcinfo << " written: " << bytes  <<" bytes" <<endl;
-#else
-	Q_UNUSED( bytes );
-#endif
 }
 
 void ClientStream::srvProcessNext()
@@ -388,6 +389,7 @@ void ClientStream::srvProcessNext()
 
 void ClientStream::doReadyRead()
 {
+	kdDebug(14180) << k_funcinfo << endl;
 	emit readyRead();
 }
 

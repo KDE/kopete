@@ -132,7 +132,7 @@ void CoreProtocol::outgoingTransfer( Transfer* outgoing )
 		//dout.setEncoding( QTextStream::Latin1 );
 		//dout.setByteOrder( QDataStream::LittleEndian );
 		//dout << bytesOut;
-		kdDebug(14181) << k_funcinfo << " " << bytesOut << endl;
+		//kdDebug(14181) << k_funcinfo << " " << bytesOut << endl;
 		emit outgoingData( bytesOut );
 		// now convert 
 		//fieldsToWire( fields );

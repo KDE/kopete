@@ -25,7 +25,7 @@
 KNetworkByteStream::KNetworkByteStream( QObject *parent, const char */*name*/ )
  : ByteStream ( parent )
 {
-	kdDebug( 14151 ) << k_funcinfo << "Instantiating new KNetwork byte stream." << endl;
+	kdDebug( 14180 ) << k_funcinfo << "Instantiating new KNetwork byte stream." << endl;
 
 	// reset close tracking flag
 	mClosing = false;
@@ -45,7 +45,7 @@ KNetworkByteStream::KNetworkByteStream( QObject *parent, const char */*name*/ )
 
 bool KNetworkByteStream::connect( QString host, QString service )
 {
-	kdDebug( 14151 ) << k_funcinfo << "Connecting to " << host << ", service " << service << endl;
+	kdDebug( 14180 ) << k_funcinfo << "Connecting to " << host << ", service " << service << endl;
 
 	return socket()->connect( host, service );
 }
@@ -58,7 +58,7 @@ bool KNetworkByteStream::isOpen() const
 
 void KNetworkByteStream::close ()
 {
-	kdDebug ( 14151 ) << k_funcinfo << "Closing stream." << endl;
+	kdDebug ( 14180 ) << k_funcinfo << "Closing stream." << endl;
 
 	// close the socket and set flag that we are closing it ourselves
 	mClosing = true;
@@ -69,7 +69,9 @@ int KNetworkByteStream::tryWrite ()
 {
 	// send all data from the buffers to the socket
 	QByteArray writeData = takeWrite();
-	socket()->writeBlock( writeData.data (), writeData.size () );
+	kdDebug(14180) << k_funcinfo << "[writeData.size() = " << writeData.size() << "]" <<   endl;
+	
+	socket()->writeBlock( writeData.data(), writeData.size () );
 
 	return writeData.size();
 }
@@ -91,24 +93,25 @@ void KNetworkByteStream::slotConnected()
 
 void KNetworkByteStream::slotConnectionClosed()
 {
-	kdDebug( 14151 ) << k_funcinfo << "Socket has been closed." << endl;
+	kdDebug(14180) << k_funcinfo << "Socket has been closed." << endl;
 
 	// depending on who closed the socket, emit different signals
 	if ( mClosing )
 	{
-		kdDebug( 14151 ) << "..by ourselves!" << endl;
-		kdDebug( 14151 ) << "socket error is " << socket()->errorString( socket()->error() ) << endl;
+		kdDebug( 14180 ) << "..by ourselves!" << endl;
+		kdDebug( 14180 ) << "socket error is " << socket()->errorString( socket()->error() ) << endl;
 		emit connectionClosed ();
 	}
 	else
 	{
-		kdDebug( 14151 ) << "..by the other end" << endl;
+		kdDebug( 14180 ) << "..by the other end" << endl;
 		emit delayedCloseFinished ();
 	}
 }
 
 void KNetworkByteStream::slotReadyRead()
 {
+	kdDebug(14180) <<  endl;
 	// stuff all available data into our buffers
 	QByteArray readBuffer( socket()->bytesAvailable () );
 
@@ -121,12 +124,13 @@ void KNetworkByteStream::slotReadyRead()
 
 void KNetworkByteStream::slotBytesWritten( int bytes )
 {
-	emit bytesWritten( bytes );
+	kdDebug(14180) << "[int bytes]: " << bytes << endl;
+	emit bytesWritten(bytes);
 }
 
 void KNetworkByteStream::slotError( int code )
 {
-	kdDebug( 14151 ) << k_funcinfo << "Socket error " << code << endl;
+	kdDebug( 14180 ) << k_funcinfo << "Socket error " << code << endl;
 
 	emit error( code );
 }
