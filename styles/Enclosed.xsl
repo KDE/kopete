@@ -14,9 +14,7 @@
 								<xsl:text>color:red;font-weight:bold;</xsl:text>
 							</xsl:attribute>
 							Message from 
-							<span class="KopeteDisplayName">
-								<xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/>
-							</span>
+							<xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/>
 							(<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>)
 						</xsl:when>
 						<xsl:when test="@direction='2'"><!-- internal message -->
@@ -30,9 +28,7 @@
 								<xsl:text>color:red;font-weight:bold;</xsl:text>
 							</xsl:attribute>
 							Message to 
-							<span class="KopeteDisplayName">
-								<xsl:value-of disable-output-escaping="yes" select="to/contact/@metaContactDisplayName"/>
-							</span>
+							<xsl:value-of disable-output-escaping="yes" select="to/contact/@metaContactDisplayName"/>
 							(from <xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>)
 						</xsl:when>
 						<xsl:otherwise><!-- Incoming -->
@@ -40,9 +36,7 @@
 								<xsl:text>color:blue;font-weight:bold;</xsl:text>
 							</xsl:attribute>
 							Message from
-							<span class="KopeteDisplayName">
-								<xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/>
-							</span>
+							<xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/>
 							(<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactId"/>)
 						</xsl:otherwise>
 					</xsl:choose>
@@ -75,10 +69,8 @@
 						<xsl:when test="@direction='3'"><!--action message-->
 							<span style="color:darkgreen">
 								<xsl:text>* </xsl:text>
-								<span class="KopeteDisplayName">
-									<xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/>
-								</span>
-									<xsl:text> </xsl:text>
+								<xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/>
+								<xsl:text> </xsl:text>
 								<xsl:value-of disable-output-escaping="yes" select="body"/>
 							</span>
 						</xsl:when>

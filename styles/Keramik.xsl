@@ -45,9 +45,7 @@
 							</xsl:attribute>
 						</img>
 						<xsl:text>To </xsl:text>
-						<span class="KopeteDisplayName">
-							<xsl:value-of disable-output-escaping="yes" select="to/contact/@contactDisplayName"/>
-						</span>
+						<xsl:value-of disable-output-escaping="yes" select="to/contact/@contactDisplayName"/>
 						<xsl:text> at </xsl:text>
 						<xsl:value-of select="@time"/>
 					</xsl:when>
@@ -58,9 +56,7 @@
 							</xsl:attribute>
 						</img>
 						<xsl:text>From </xsl:text>
-						<span class="KopeteDisplayName">
-							<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/>
-						</span>
+						<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/>
 						<xsl:text> at </xsl:text>
 						<xsl:value-of select="@time"/>
 					</xsl:otherwise>
@@ -93,9 +89,7 @@
 				</xsl:attribute>
 				<xsl:if test="@direction='3'"><!-- Action -->
 					<xsl:text>*</xsl:text>
-					<span class="KopeteDisplayName">
-						<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/><xsl:text>&#160;</xsl:text>
-					</span>
+					<xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/><xsl:text>&#160;</xsl:text>
 				</xsl:if>
 				<xsl:value-of disable-output-escaping="yes" select="body"/>
 			</div>

@@ -5,7 +5,7 @@
 <div style="padding-bottom:10px;" class="KopeteMessage"><xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
 	<xsl:if test="@direction &lt; 2">
 		<div style="color:gray">
-			(<xsl:value-of select="@time"/>) <span class="KopeteDisplayName"><xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/></span> says:
+			(<xsl:value-of select="@time"/>) <xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/> says:
 		</div>
 		<xsl:text disable-output-escaping="yes">&#160;&#160;&#160;&#160;</xsl:text>
 	</xsl:if>
@@ -14,7 +14,7 @@
 						 <xsl:if test="body/@font"><xsl:text>; </xsl:text><xsl:value-of select="body/@font"/></xsl:if> </xsl:attribute>
 	<xsl:if test="@direction='3'">
 		<xsl:attribute name="style"><xsl:text>color:darkGreen;bold</xsl:text></xsl:attribute>
-		<xsl:text>* </xsl:text><span class="KopeteDisplayName"><xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/></span><xsl:text> </xsl:text>
+		<xsl:text>* </xsl:text><xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/><xsl:text> </xsl:text>
 	</xsl:if>
 	<xsl:if test="@direction='2'">
 		<xsl:attribute name="style"><xsl:text>color:darkviolet;italic</xsl:text></xsl:attribute>
