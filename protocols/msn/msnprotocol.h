@@ -1,11 +1,11 @@
 /***************************************************************************
                     msnprotocol.h  -  Kopete's MSN Plugin
                              -------------------
-    Copyright (c) 2002   by Duncan Mac-Vicar P. <duncan@kde.org>
-    Copyright (c) 2002   by Martijn Klingens    <klingens@kde.org>
-    Copyright (c) 2002   by Olivier Goffart     <ogoffart@tiscalinet.be>
+   Copyright (c) 2002       by Duncan Mac-Vicar P. <duncan@kde.org>
+   Copyright (c) 2002       by Martijn Klingens    <klingens@kde.org>
+   Copyright (c) 2002-2003  by Olivier Goffart     <ogoffart@tiscalinet.be>
 
-    Copyright (c) 2002  by the Kopete developers  <kopete-devel@kde.org>
+   Copyright (c) 2002-2003  by the Kopete developers  <kopete-devel@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -115,78 +115,32 @@ public:
 	virtual EditIdentityWidget *createEditIdentityWidget(KopeteIdentity *identity, QWidget *parent);
 	virtual KopeteIdentity *createNewIdentity(const QString &identityId);
 	
-	void addGroup( const QString &groupName,
-		const QString &contactToAdd = QString::null );
-
 
 	/**
 	 * Convert string-like status to Status enum
 	 */
 	static Status convertStatus( QString status );
-	Status status() const;
-
-//	QStringList groups() const;
-
-	QString publicName() const { return m_publicName; }
-
 
 	/**
 	 * Returns a set of action items for the chatWindows
 	 */
 	KActionCollection * customChatActions(KopeteMessageManager * );
 
-	MSNNotifySocket *notifySocket();
 	
 	virtual KActionMenu* protocolActions();
 	virtual const QString protocolIcon();
-	
-	MSNPreferences *mPrefs;  //FIXME: made this private
 
 private slots:
 
 	void slotSyncContactList();
 
 
-	void slotPreferencesSaved();
-
 private:
-	bool mIsConnected;
-
-	// Actions we use
-	/*KAction* actionGoOnline;
-	KAction* actionGoOffline;
-	KAction* actionGoAway;
-	KAction* actionGoBusy;
-	KAction* actionGoBeRightBack;
-	KAction* actionGoOnThePhone;
-	KAction* actionGoOutToLunch;
-	KAction* actionGoInvisible;
-	KAction* m_renameAction;
-	KAction* m_startChatAction;
-	KAction* m_openInboxAction;
-
-	KActionMenu *m_debugMenu;
-	KAction *m_debugRawCommand;
-
-	KAction* actionConnect;
-	KAction* actionDisconnect;
-	KAction* actionPrefs;
-	KAction* actionUnload;*/
+	
 	KActionMenu *m_menu;
 
 	static MSNProtocol *s_protocol;
-	Status m_status;
-	Status m_connectstatus;
-	QString m_msnId;
-	QString m_password;
-	QString m_publicName;
-	SyncMode m_publicNameSyncMode;
-	bool m_publicNameSyncNeeded;
-	QString m_msgHandle;
-	KopeteMetaContact *m_addWizard_metaContact;
-
-//	MSNIdentity *m_identity;
-//	QPtrDict<MSNSwitchBoardSocket> m_switchBoardSockets;
+	MSNPreferences *mPrefs;  
 
 };
 

@@ -29,19 +29,17 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
+#include <kconfig.h>
+#include <kglobal.h>
 
 #include "kopetecontactlist.h"
-#include "kopetemessagemanager.h"
-#include "kopetemessagemanagerfactory.h"
 #include "kopeteidentitymanager.h"
 #include "kopetemetacontact.h"
-#include "kopeteviewmanager.h"
 
 #include "msnaddcontactpage.h"
 #include "msneditidentitywidget.h"
 #include "msncontact.h"
 #include "msnidentity.h"
-#include "msnnotifysocket.h"
 #include "msnpreferences.h"
 #include "msnprotocol.h"
 #include "msnmessagemanager.h"
@@ -60,11 +58,6 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	kdDebug(14140) << "MSNProtocol::MSNProtocol: MSN Plugin Loading" << endl;
 
 	mPrefs= new MSNPreferences( "msn_protocol", this );
-	QObject::connect( mPrefs, SIGNAL( saved() ), this , SLOT( slotPreferencesSaved() ) );
-	slotPreferencesSaved();
-
-	m_publicNameSyncMode = SyncFromServer;
-	m_publicNameSyncNeeded = false;
 
 	m_menu=0L;
 
@@ -87,10 +80,11 @@ void MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 	
 	QDict<KopeteIdentity> identities=KopeteIdentityManager::manager()->identities(this);
 	
-	//Kopete 0.6.x contactlist
 	if(identityId.isNull())
 	{
-		identityId=mPrefs->msnId();
+		//Kopete 0.6.x contactlist
+		KGlobal::config()->setGroup("MSN");
+		identityId=KGlobal::config()->readEntry( "UserID", "" );;
 	}
 	KopeteIdentity *identity=identities[identityId];
 	if(!identity)
@@ -143,13 +137,13 @@ KActionMenu* MSNProtocol::protocolActions()
 // NOTE: CALL THIS ONLY BEING CONNECTED
 void MSNProtocol::slotSyncContactList()
 {
-	if ( ! mIsConnected )
+/*	if ( ! mIsConnected )
 	{
 		return;
 	}
 	// First, delete D marked contacts
 	QStringList localcontacts;
-/*
+
 	contactsFile->setGroup("Default");
 
 	contactsFile->readListEntry("Contacts",localcontacts);
@@ -220,12 +214,6 @@ const QString MSNProtocol::protocolIcon()
 	return "msn_online";
 }
 
-
-MSNProtocol::Status MSNProtocol::status() const
-{
-	return m_status;
-}
-
 MSNProtocol::Status MSNProtocol::convertStatus( QString status )
 {
 	if( status == "NLN" )
@@ -259,52 +247,6 @@ KActionCollection * MSNProtocol::customChatActions(KopeteMessageManager * manage
 
 	return msnMM->chatActions();
 }
-
-void MSNProtocol::slotPreferencesSaved()
-{
-	/*m_password   = mPrefs->password();
-//	m_publicName = mPrefs->publicName();
-
-	if(m_msnId != mPrefs->msnId())
-	{
-		m_msnId  = mPrefs->msnId();
-		if( m_myself && m_myself->contactId() != m_msnId )
-		{
-			disconnect();
-			delete m_myself;
-			m_myself = new MSNContact( this, m_msnId, m_publicName, 0L );
-		}
-	}*/
-}
-
-MSNNotifySocket *MSNProtocol::notifySocket()
-{
-	QDict<KopeteIdentity> dict=KopeteIdentityManager::manager()->identities(this);
-	QDictIterator<KopeteIdentity> it( dict ); 
-    for( ; MSNIdentity *identity=static_cast<MSNIdentity*>(it.current()); ++it )
-	{
-		if(identity->notifySocket())
-		{
-			return identity->notifySocket();
-		}
-	}
-	return 0L;
-};
-
-void MSNProtocol::addGroup( const QString &groupName , const QString& contactToAdd )
-{
-QDict<KopeteIdentity> dict=KopeteIdentityManager::manager()->identities(this);
-	QDictIterator<KopeteIdentity> it( dict ); 
-    for( ; MSNIdentity *identity=static_cast<MSNIdentity*>(it.current()); ++it )
-	{
-		if(identity->notifySocket())
-		{
-			identity->addGroup(groupName,contactToAdd);
-			break;
-		}
-	}
-}
-
 
 
 #include "msnprotocol.moc"

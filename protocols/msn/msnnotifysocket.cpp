@@ -441,7 +441,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 			}
 
 			//write the tmp file
-			QString UserID=MSNPreferences::msnId();
+			QString UserID=m_identity->identityId();
 
 			QString md5this(m_MSPAuth+"1"+m_password);
 			KMD5 md5(md5this);
