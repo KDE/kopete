@@ -76,7 +76,7 @@ bool TestbedAccount::addContactToMetaContact(const QString& contactId, const QSt
 	return newContact != 0L;
 }
 
-void TestbedAccount::setAway( bool away, const QString& reason )
+void TestbedAccount::setAway( bool away, const QString & /* reason */ )
 {
 	if ( away )
 		slotGoAway();

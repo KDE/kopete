@@ -49,7 +49,7 @@ bool TestbedContact::isReachable()
     return true;
 }
 
-void TestbedContact::serialize( QMap< QString, QString >& serializedData, QMap< QString, QString >& addressBookData )
+void TestbedContact::serialize( QMap< QString, QString > &serializedData, QMap< QString, QString > & /* addressBookData */ )
 {
     QString value;
 	switch ( m_type )
@@ -59,7 +59,7 @@ void TestbedContact::serialize( QMap< QString, QString >& serializedData, QMap< 
 	case Echo:
 		value = "echo";
 	}
-	serializedData["contactType"] = value;
+	serializedData[ "contactType" ] = value;
 }
 
 KopeteMessageManager* TestbedContact::manager( bool )
@@ -90,6 +90,7 @@ KActionCollection *TestbedContact::customContextMenuActions() //OBSOLETE
 			SLOT( showContactSettings( )), m_actionCollection, "contactSettings" );
 
 	return m_actionCollection;*/
+	return 0L;
 }
 
 void TestbedContact::showContactSettings()
@@ -135,3 +136,6 @@ void TestbedContact::slotMessageManagerDestroyed()
 }
 
 #include "testbedcontact.moc"
+
+// vim: set noet ts=4 sts=4 sw=4:
+

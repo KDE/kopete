@@ -73,9 +73,9 @@ void TestbedProtocol::deserializeContact( KopeteMetaContact *metaContact, const 
 	new TestbedContact(account, contactId, tbcType, displayName, metaContact);
 }
 
-AddContactPage * TestbedProtocol::createAddContactWidget( QWidget *parent, KopeteAccount *account )
+AddContactPage * TestbedProtocol::createAddContactWidget( QWidget *parent, KopeteAccount * /* account */ )
 {
-	kdDebug(14210) << "Creating Add Contact Page" << endl;
+	kdDebug( 14210 ) << "Creating Add Contact Page" << endl;
 	return new TestbedAddContactPage( parent );
 }
 
