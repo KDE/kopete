@@ -88,7 +88,12 @@ public:
 	 * will take place. Any other value will reconnect the account on disconnection.
 	 * The case where the password is wrong will be handled differently.
 	 */
-	enum DisconnectReason { Manual = 0, ConnectionReset = 1, Unknown = 99 };
+	enum DisconnectReason { 
+		BadUserName = -2,
+		InvalidHost = -1,
+		Manual = 0,
+		ConnectionReset = 1,
+		Unknown = 99 };
 
 	/**
 	 * constructor:
