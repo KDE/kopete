@@ -24,19 +24,43 @@ class KopetePassword;
 
 /**
  * @author Richard Smith <kde@metafoo.co.uk>
+ * This widget displays an editable password, including the Remember password checkbox.
  */
 class KopetePasswordWidget : public KopetePasswordWidgetBase
 {
 	Q_OBJECT
 
 public:
+	/**
+	 * Creates a KopetePasswordWidget.
+	 * @param parent The widget to nest this one inside
+	 * @param from The password to load the data for this widget from, or 0 if none
+	 * @param name The name of this QObject
+	 */
 	KopetePasswordWidget( QWidget *parent, KopetePassword *from = 0, const char *name = 0 );
 	~KopetePasswordWidget();
 
+	/**
+	 * Loads the information stored in source into the widget
+	 */
 	void load( KopetePassword *source );
+	/**
+	 * Saves the information in the widget into target
+	 */
 	void save( KopetePassword *target );
 
-	bool validate( int maxLength = 0 );
+	/**
+	 * Returns true if the information in the widget is valid, false if it is not.
+	 * Currently the only way this can fail is if the password is too long.
+	 * @todo this should return an enum of failures.
+	 */
+	bool validate();
+
+signals:
+	/**
+	 * Emitted when the information stored in this widget changes
+	 */
+	void changed();
 
 public slots:
 	/** @internal */

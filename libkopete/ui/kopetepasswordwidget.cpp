@@ -24,7 +24,7 @@
 
 struct KopetePasswordWidget::KopetePasswordWidgetPrivate
 {
-
+	uint maxLength;
 };
 
 KopetePasswordWidget::KopetePasswordWidget( QWidget *parent, KopetePassword *from, const char *name )
@@ -51,8 +51,16 @@ void KopetePasswordWidget::load( KopetePassword *source )
 		mRemembered->setTristate( false );
 		mRemembered->setChecked( false );
 	}
+
+	if ( source )
+		d->maxLength = source->maximumLength();
+	else
+		d->maxLength = 0;
+
 	mPassword->setEnabled( false );
 	connect( mRemembered, SIGNAL( stateChanged( int ) ), SLOT( slotRememberChanged() ) );
+	connect( mPassword, SIGNAL( textChanged( const QString & ) ), SIGNAL( changed() ) );
+	connect( mRemembered, SIGNAL( stateChanged( int ) ), SIGNAL( changed() ) );
 }
 
 void KopetePasswordWidget::slotRememberChanged()
@@ -86,11 +94,11 @@ void KopetePasswordWidget::save( KopetePassword *target )
 		target->set();
 }
 
-bool KopetePasswordWidget::validate( int maxLength )
+bool KopetePasswordWidget::validate()
 {
 	if ( !mRemembered->isChecked() ) return true;
-	if ( maxLength <= 0 ) return true;
-	return QString::fromLocal8Bit( mPassword->password() ).length() < (uint)maxLength;
+	if ( d->maxLength == 0 ) return true;
+	return QString::fromLocal8Bit( mPassword->password() ).length() <= d->maxLength;
 }
 
 #include "kopetepasswordwidget.moc"
