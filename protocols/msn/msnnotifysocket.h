@@ -98,6 +98,7 @@ private slots:
 	void slotReadMessage( const QString &msg );
 	
 	void slotDispatchFailed();
+	void slotWriteHotmailTmpFile();
 
 private:
 	unsigned int mailCount;
@@ -111,6 +112,12 @@ private:
 	QString statusToString( int status ) const;
 
 	MSNDispatchSocket *m_dispatchSocket;
+
+	//for hotmail inbox opening
+	QString m_MSPAuth;
+	QString m_kv;
+	QString m_sid;
+	QString m_HotmailTmpFile;
 };
 
 #endif
