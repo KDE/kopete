@@ -46,6 +46,8 @@ class JabberEditAccountWidget : public DlgPreferences, public EditAccountWidget
 		bool settings_changed;
 
 	private:
+		void reopen();
+		void writeConfig();
 		JabberProtocol *m_protocol;
                 DlgPreferences *jabData;
                 JabberAccount *account;

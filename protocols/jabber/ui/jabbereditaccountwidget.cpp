@@ -24,6 +24,8 @@
 #include <qspinbox.h>
 #include <qcombobox.h>
 
+#include <kconfig.h>
+#include <kglobal.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 
@@ -37,17 +39,7 @@ JabberEditAccountWidget::JabberEditAccountWidget(JabberProtocol *proto, JabberAc
 {
   m_protocol = proto;
 
-  if (m_account)
-  {
-	QString serverInfo = m_account->accountId().section('@',1);
-	QString tport = serverInfo.section(':',1,1);
-
-	mID->setText(m_account->accountId().section('@',0,0));
-	mPass->setText(m_account->getPassword());
-	mServer->setText(serverInfo.section(':',0,0));
-	mPort->setValue(tport.section('/',0,0).toUInt());
-	mResource->setText(serverInfo.section('/',1,1));
-  }
+  kdDebug(14180) << "Jabber Protocol: " << m_protocol << endl;
 
   account = m_account;
 
@@ -74,6 +66,11 @@ JabberEditAccountWidget::JabberEditAccountWidget(JabberProtocol *proto, JabberAc
 
   connect (btnRegister, SIGNAL(clicked()), this, SLOT(registerClicked()));
   connect (chkUseSSL, SIGNAL(toggled(bool)), this, SLOT(sslToggled(bool)));
+  connect (chkRemPass, SIGNAL(toggled(bool)), this, SLOT(remPassToggled(bool)));
+
+  if (m_account) {
+  	this->reopen();
+  }
 
 }
 
@@ -82,24 +79,128 @@ JabberEditAccountWidget::~JabberEditAccountWidget()
 }
 
 
+void JabberEditAccountWidget::reopen() {
+
+    	mID->setText(m_account->accountId());
+    	mPass->setText(m_account->getPassword());
+    	mResource->setText(m_account->pluginData(m_protocol, "Resource"));
+    	mServer->setText(m_account->pluginData(m_protocol, "Server"));
+
+	// START Order Important =====
+	// !!! First set the checkbox, THEN the port
+	// if done the other way round: checking the checkbox triggers +/- 1 for the port-value
+	// ( see dlgJabberPrefs::sslToggled() )
+	chkUseSSL->setChecked(m_account->pluginData(m_protocol, "UseSSL"));
+
+	chkRemPass->setChecked(m_account->pluginData(m_protocol,"RemPass"));
+
+	mPort->setValue(m_account->pluginData(m_protocol, "Port").toInt());
+	// END Order Important =====
+
+	QString auth = m_account->pluginData(m_protocol, "AuthType");
+	cmbAuth->setCurrentItem(0);
+
+	if (auth == QString("plain"))
+		cmbAuth->setCurrentItem(1);
+
+	QString proxyType = m_account->pluginData(m_protocol, "ProxyType");
+	cbProxyType->setCurrentItem(0);
+	if (proxyType == QString("HTTPS"))
+		cbProxyType->setCurrentItem(1);
+	else if (proxyType == QString("SOCKS4"))
+		cbProxyType->setCurrentItem(2);
+	else if (proxyType == QString("SOCKS5"))
+		cbProxyType->setCurrentItem(3);
+
+	leProxyName->setText(m_account->pluginData(m_protocol, "ProxyName"));
+	spbProxyPort->setValue(m_account->pluginData(m_protocol, "ProxyPort").toInt());
+	cbProxyAuth->setChecked(m_account->pluginData(m_protocol, "ProxyAuth"));
+	leProxyUser->setText(m_account->pluginData(m_protocol, "ProxyUser"));
+	leProxyPass->setText(m_account->pluginData(m_protocol, "ProxyPass"));
+	mAutoConnect->setChecked(m_account->pluginData(m_protocol, "AutoConnect"));
+	mLogAll->setChecked(m_account->pluginData(m_protocol, "LogAll"));
+}
+
 KopeteAccount *JabberEditAccountWidget::apply()
 {
-	kdDebug(14180) << "JabberEditAccount::apply()";
+	kdDebug(14180) << "JabberEditAccount::apply()" << endl;
 	if (!m_account) {
-		m_account = new JabberAccount(m_protocol, 
-					      mID->text() + "@" + mServer->text() + ":" + mPort->text() + "/" +
-					      mResource->text(), 
-					      mID->text() + "@" + mServer->text() + ":" + mPort->text() + "/" +
-					      mResource->text()); 
+		m_account = new JabberAccount(m_protocol, mID->text()); 
 	}
 	else {
-		m_account->setAccountId(mID->text() + "@" + mServer->text() + ":" + mPort->text() + "/" +
-		                      mResource->text());
+		m_account->setAccountId(mID->text()); 
 	}
-		
+
+	this->writeConfig();
 	return account;
 }
 
+
+void JabberEditAccountWidget::writeConfig() {
+	m_account->setPluginData( m_protocol, "Server", mServer->text());
+	m_account->setPluginData( m_protocol, "Resource", mResource->text());
+	m_account->setPluginData( m_protocol, "Port", QString::number(mPort->value()));
+
+	if (chkUseSSL->isChecked())
+		m_account->setPluginData(m_protocol, "UseSSL", "true");
+	else
+		m_account->setPluginData(m_protocol, "UseSSL", "false");
+
+	if (chkRemPass->isChecked())
+		m_account->setPluginData(m_protocol, "RemPass", "true");
+	else 
+		m_account->setPluginData(m_protocol, "RemPass", "false");
+
+	if (mLogAll->isChecked())
+		m_account->setPluginData(m_protocol, "LogAll", "true");
+	else
+		m_account->setPluginData(m_protocol, "LogAll", "false");
+
+	switch (cmbAuth->currentItem()) {
+		case 0:
+			m_account->setPluginData(m_protocol, "AuthType", "digest");
+			break;
+		case 1:
+			m_account->setPluginData(m_protocol, "AuthType", "plain");
+			break;
+		default:                    // this case should never happen, just
+			// implemented for safety
+			m_account->setPluginData(m_protocol, "AuthType", "digest");
+			break;
+	}
+
+	switch (cbProxyType->currentItem()) {
+		case 0:
+			m_account->setPluginData(m_protocol, "ProxyType", "None");
+			break;
+		case 1:
+			m_account->setPluginData(m_protocol, "ProxyType", "HTTPS");
+			break;
+		case 2:
+			m_account->setPluginData(m_protocol, "ProxyType", "SOCKS4");
+			break;
+		case 3:
+			m_account->setPluginData(m_protocol, "ProxyType", "SOCKS5");
+			break;
+		default:                    // this case should never happen, just
+			// implemented for safety
+			m_account->setPluginData(m_protocol, "ProxyType", "None");
+			break;
+	}
+
+	m_account->setPluginData(m_protocol, "ProxyName", leProxyName->text());
+	m_account->setPluginData(m_protocol, "ProxyPort", QString::number(spbProxyPort->value()));
+
+	if (cbProxyAuth->isChecked())
+		m_account->setPluginData(m_protocol, "ProxyAuth", "true");
+	else
+		m_account->setPluginData(m_protocol, "ProxyAuth", "false");
+
+	m_account->setPluginData(m_protocol, "ProxyUser", leProxyUser->text());
+	m_account->setPluginData(m_protocol, "ProxyPass", leProxyPass->text());
+	//config->sync();
+	settings_changed = false;
+}
 
 bool JabberEditAccountWidget::validateData()
 {
@@ -114,18 +215,15 @@ void JabberEditAccountWidget::configChanged()
 void JabberEditAccountWidget::registerClicked()
 {
 	if (!m_account) {
-		m_account = new JabberAccount(m_protocol, 
-					      mID->text() + "@" + mServer->text() + ":" + mPort->text() + "/" +
-					      mResource->text(), 
-					      mID->text() + "@" + mServer->text() + ":" + mPort->text() + "/" +
-					      mResource->text()); 
+		m_account = new JabberAccount(m_protocol, mID->text());
 		account = m_account;
 	}
 	else {
-		account->setAccountId(mID->text() + "@" + mServer->text() + ":" + mPort->text() + "/" +
-		                      mResource->text());
+		m_account->setAccountId(mID->text());
+		account = m_account;
 	}
 	
+	this->writeConfig();
 	account->registerUser();
 }
 

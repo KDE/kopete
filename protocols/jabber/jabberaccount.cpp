@@ -66,11 +66,10 @@
 
 
 JabberAccount::JabberAccount(JabberProtocol * parent, const QString & accountId,
-			     const char *name):KopeteAccount(parent, accountId,
-							     name) {
+			     const char *name) : KopeteAccount(parent, accountId, name) {
 
 
-    //protocol = parent;
+    mProtocol = parent;
     /* Create a new JabberContact for this account, to be returned from
      * myself(). */
     myContact = new JabberContact(accountId, accountId, QStringList(),
@@ -92,21 +91,6 @@ JabberAccount::JabberAccount(JabberProtocol * parent, const QString & accountId,
     initActions();
     setAccountId(accountId);
     userID = accountId.section('@',0,0);
-    password = getPassword();
-
-    QString serverInfo =  accountId.section('@',1);
-    server = serverInfo.section(':',0,0);
-    QString tport = serverInfo.section(':',1,1);
-    port = tport.section('/',0,0).toUInt();
-    resource = accountId.section('/',1,1);
-
-    kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberAccount] created\n";
-    kdDebug(JABBER_DEBUG_GLOBAL) << "accountId:" << accountId << "\n";
-    kdDebug(JABBER_DEBUG_GLOBAL) << "password:" <<  password << "\n";
-    kdDebug(JABBER_DEBUG_GLOBAL) << "serverInfo:" << serverInfo << "\n";
-    kdDebug(JABBER_DEBUG_GLOBAL) << "server:" << server << "\n";
-    kdDebug(JABBER_DEBUG_GLOBAL) << "port:" << port << "\n";
-    kdDebug(JABBER_DEBUG_GLOBAL) << "resource:" << resource << "\n";
 }
 
 JabberAccount::~JabberAccount() {
@@ -137,8 +121,14 @@ JabberAccount::~JabberAccount() {
 
 KopeteContact *JabberAccount::myself() const { return myContact; }
 
-//void JabberAccount::setStatus(KopeteOnlineStatus status, const QString &
-//reason) { }
+//void JabberAccount::setStatus(KopeteOnlineStatus status, const QString & reason) { }
+
+void JabberAccount::loaded()
+{
+    server = pluginData(protocol(), QString::fromLatin1("Server"));
+    port = pluginData(protocol(), "Port").toInt();
+    resource = pluginData(protocol(), "Resource");
+}
 
 void JabberAccount::initActions() { 
 
@@ -412,12 +402,13 @@ kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberAccount] connect()" << endl;
 	//			  QString::null);
 
     /* Set the title according to the new changes. */
-    actionStatusMenu->popupMenu()->changeTitle(menuTitleId,
-					       userID + "@" + server);
+    actionStatusMenu->popupMenu()->changeTitle(menuTitleId, accountId());
 
 
     /* Now connect. */
-    QString  jidDomain = userID.section("@", userID.find("@")) + "@" + server;
+    //QString  jidDomain = userID.section("@", userID.find("@")) + "@" + server;
+    QString  jidDomain = accountId();
+    password = getPassword();
 
     kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberAccount] Connecting to Jabber server " << server << ":" << port
 	                         << " with jidDomain " << jidDomain << endl;

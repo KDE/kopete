@@ -501,18 +501,18 @@ void JabberContact::slotResourceAvailable(const Jabber::Jid &,
 	}
     }
 
-    KopeteOnlineStatus status = JabberProtocol::protocol()->JabberOnline;
+    KopeteOnlineStatus status = JabberProtocol::getJabberOnline();
     if (resource.status().show() == "chat") {
-	status = JabberProtocol::protocol()->JabberChatty;
+	status = JabberProtocol::getJabberChatty();
     }
     else if (resource.status().show() == "away") {
-	status = JabberProtocol::protocol()->JabberAway;
+	status = JabberProtocol::getJabberAway();
     }
     else if (resource.status().show() == "xa") {
-	status = JabberProtocol::protocol()->JabberXA;
+	status = JabberProtocol::getJabberXA();
     }
     else if (resource.status().show() == "dnd") {
-	status = JabberProtocol::protocol()->JabberDND;
+	status = JabberProtocol::getJabberDND();
     }
 
     JabberResource *newResource =
@@ -693,7 +693,7 @@ void JabberContact::slotStatusOnline() {
     if (resourceOverride)
 	id += activeResource->resource();
 
-    protocol->sendPresenceToNode(JabberProtocol::protocol()->JabberOnline, id);
+    protocol->sendPresenceToNode(JabberProtocol::getJabberOnline(), id);
 
 }
 
@@ -704,7 +704,7 @@ void JabberContact::slotStatusChatty() {
     if (resourceOverride)
 	id += activeResource->resource();
 
-    protocol->sendPresenceToNode(JabberProtocol::protocol()->JabberChatty, id);
+    protocol->sendPresenceToNode(JabberProtocol::getJabberChatty(), id);
 
 }
 
@@ -715,7 +715,7 @@ void JabberContact::slotStatusAway() {
     if (resourceOverride)
 	id += activeResource->resource();
 
-    protocol->sendPresenceToNode(JabberProtocol::protocol()->JabberAway, id);
+    protocol->sendPresenceToNode(JabberProtocol::getJabberAway(), id);
 
 }
 
@@ -726,7 +726,7 @@ void JabberContact::slotStatusXA() {
     if (resourceOverride)
 	id += activeResource->resource();
 
-    protocol->sendPresenceToNode(JabberProtocol::protocol()->JabberXA, id);
+    protocol->sendPresenceToNode(JabberProtocol::getJabberXA(), id);
 
 }
 
@@ -736,7 +736,7 @@ void JabberContact::slotStatusDND() {
     if (resourceOverride)
 	id += activeResource->resource();
 
-    protocol->sendPresenceToNode(JabberProtocol::protocol()->JabberDND, id);
+    protocol->sendPresenceToNode(JabberProtocol::getJabberDND(), id);
 
 }
 
@@ -746,8 +746,7 @@ void JabberContact::slotStatusInvisible() {
     if (resourceOverride)
 	id += activeResource->resource();
 
-    protocol->sendPresenceToNode(JabberProtocol::protocol()->JabberInvisible,
-				 id);
+    protocol->sendPresenceToNode(JabberProtocol::getJabberInvisible(), id);
 }
 
 void JabberContact::serialize(QMap <QString, QString> &serializedData,

@@ -139,6 +139,8 @@ class JabberAccount:public KopeteAccount {
 					 KopeteMetaContact * parentContact);
 
     //void addContact(KopeteMetaContact*, const QString&);
+  protected slots:
+  	virtual void loaded();
 
   private:
     /* JabberContact for this account. */
@@ -163,7 +165,9 @@ class JabberAccount:public KopeteAccount {
     void initActions();
 
     /* to get the protocol from the account */
-    //JabberProtocol * protocol();
+    JabberProtocol * protocol() { return mProtocol; }
+
+    JabberProtocol * mProtocol;
 
     /* Actions for the menu. */
     KAction *actionGoOnline;
