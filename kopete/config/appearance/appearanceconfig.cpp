@@ -96,24 +96,12 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	mUseEmoticonsChk = new QCheckBox(i18n("&Use emoticons"), mEmoticonsTab);
 	icon_theme_list = new KListBox(mEmoticonsTab, "icon_theme_list");
 	new QLabel(i18n("Preview:"), mEmoticonsTab);
-/*	icon_theme_preview = new KIconView(mEmoticonsTab, "icon_theme_preview");
-	icon_theme_preview->setFixedHeight(64);
-	icon_theme_preview->setItemsMovable(false);
-	icon_theme_preview->setSelectionMode(QIconView::NoSelection);
-	icon_theme_preview->setFocusPolicy(NoFocus);
-	icon_theme_preview->setSpacing(2);
-*/
 	icon_theme_preview = new KTextEdit(mEmoticonsTab, "icon_theme_preview");
 	icon_theme_preview->setFixedHeight(64);
 	icon_theme_preview->setFocusPolicy(NoFocus);
 	icon_theme_preview->setReadOnly(true);
 	icon_theme_preview->setWrapPolicy(QTextEdit::Anywhere);
 	icon_theme_preview->setTextFormat(Qt::RichText);
-/* // Doesn't work, don't ask me why [mETz]
-	QStyleSheet *style = icon_theme_preview->styleSheet();
-	QStyleSheetItem *img = style->item("img");
-	img->setMargin(QStyleSheetItem::MarginAll, 8);
-*/
 	connect(mUseEmoticonsChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotUseEmoticonsChanged(bool)));
 	connect(icon_theme_list, SIGNAL(selectionChanged()),
@@ -190,7 +178,6 @@ void AppearanceConfig::save()
 {
 //	kdDebug(14000) << k_funcinfo << "called." << endl;
 	KopetePrefs *p = KopetePrefs::prefs();
-
 
 	// "Emoticons" TAB ==========================================================
 	p->setIconTheme( icon_theme_list->currentText() );
@@ -314,31 +301,13 @@ void AppearanceConfig::slotUseEmoticonsChanged(bool b)
 
 void AppearanceConfig::slotSelectedEmoticonsThemeChanged()
 {
-//	kdDebug(14000) << k_funcinfo << "called." << endl;
-
-/*	icon_theme_preview->clear();
-
-	KopeteEmoticons emoticons( icon_theme_list->currentText() );
-	QPixmap previewPixmap;
-
-	QStringList smileys = emoticons.picList();
-
-	for ( QStringList::Iterator it = smileys.begin(); it != smileys.end(); ++it )
-	{
-		previewPixmap = QPixmap((*it));
-		if (!previewPixmap.isNull())
-			new KIconViewItem(icon_theme_preview, 0, previewPixmap);
-	}
-*/
-
 	KopeteEmoticons emoticons(icon_theme_list->currentText());
 	QStringList smileys = emoticons.picList();
 	QString newContentText = "<qt>";
 
 	for(QStringList::Iterator it = smileys.begin(); it != smileys.end(); ++it )
-	{
 		newContentText += QString::fromLatin1("<img src=\"%1\"> ").arg(*it);
-	}
+
 	newContentText += QString::fromLatin1("</qt>");
 	icon_theme_preview->setText(newContentText);
 	setChanged(true);
