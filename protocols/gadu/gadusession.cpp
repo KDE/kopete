@@ -115,7 +115,7 @@ GaduSession::disableNotifiers()
 }
 
 void
-GaduSession::login( uin_t uin, const QString& password,
+GaduSession::login( uin_t uin, const QString& password, bool useTls,
 										int status, const QString& statusDescr )
 {
 	memset( &params_, 0, sizeof(params_) );
@@ -124,6 +124,7 @@ GaduSession::login( uin_t uin, const QString& password,
 	params_.status = status;
 	params_.status_descr = statusDescr.local8Bit().data();
 	params_.async = 1;
+	params_.tls = useTls;
 	login( params_ );
 }
 
@@ -177,14 +178,13 @@ GaduSession::removeNotify( uin_t uin )
 }
 
 int
-GaduSession::sendMessage( uin_t recipient, const QString& msg,
-													int msgClass )
+GaduSession::sendMessage( uin_t recipient, const unsigned char *message, int msgClass )
 {
 	if ( isConnected() )
 		return gg_send_message( session_,
 								msgClass,
 								recipient,
-								reinterpret_cast<const unsigned char *>(msg.local8Bit().data()) );
+								message );
 	else
 		emit error( i18n("Not Connected"),
 								i18n("You are not connected to the server!") );

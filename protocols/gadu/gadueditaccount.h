@@ -29,6 +29,7 @@ public slots:
 private:
 	GaduProtocol *protocol_;
 	bool reg_in_progress;
+	bool  isSsl;
 	RegisterCommand *rcmd;	
 };
 

@@ -42,11 +42,18 @@
 GaduEditAccount::GaduEditAccount( GaduProtocol *proto, KopeteAccount *ident,
                                   QWidget *parent, const char *name )
   : GaduAccountEditUI( parent, name ), EditAccountWidget( ident )
-  ,
-    protocol_( proto ), rcmd(0)
+  ,protocol_( proto ), rcmd(0)
 {
 
     reg_in_progress=false;
+
+#ifdef __GG_LIBGADU_HAVE_OPENSSL
+    isSsl=true;
+#else
+    isSsl=false;
+#endif
+
+    useTls_->setDisabled(!isSsl);
     
     if (!m_account){
 	
@@ -54,7 +61,8 @@ GaduEditAccount::GaduEditAccount( GaduProtocol *proto, KopeteAccount *ident,
 	radio2->setDisabled(false);
 	emailedit_->setDisabled(false);
 	passwordEdit2__->setDisabled(false);
-    }
+	useTls_->setChecked(isSsl);
+    }	
     else{
 	radio1->setDisabled(true);
 	radio2->setDisabled(true);
@@ -74,6 +82,8 @@ GaduEditAccount::GaduEditAccount( GaduProtocol *proto, KopeteAccount *ident,
 	
         rememberCheck_->setChecked(m_account->rememberPassword());
 	autoLoginCheck_->setChecked(m_account->autoLogin());
+	useTls_->setChecked( 
+	    (static_cast<GaduAccount*>(m_account))->isConnectionEncrypted() );
     }    
 }
 
@@ -195,6 +205,7 @@ KopeteAccount* GaduEditAccount::apply()
 	    QString::fromLatin1("nickName"), nickName->text());
     
     m_account->setAutoLogin(autoLoginCheck_->isChecked());
+    (static_cast<GaduAccount*>(m_account))->useTls(useTls_->isChecked());
     
     return m_account;
 }

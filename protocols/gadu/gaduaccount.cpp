@@ -31,6 +31,8 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const
 
 	KGlobal::config()->setGroup("Gadu");
 
+	isUsingTls=false;
+
 	myself_ = new GaduContact(  accountId().toInt(), accountId(),
 				    this, new KopeteMetaContact(), KopeteContact::OmitFromKABC );
 
@@ -84,11 +86,14 @@ GaduAccount::initConnections()
 void GaduAccount::loaded()
 {
     QString nick;
-    nick = pluginData(protocol(), QString::fromLatin1("nickName"));
+    nick 	= pluginData(protocol(), QString::fromLatin1("nickName"));
+    isUsingTls	= (bool)(pluginData(protocol(), QString::fromLatin1("useEncryptedConnection")).toInt());
+    
     if (!nick.isNull())
     {
 	myself_->rename(nick);
-    }   
+    }
+       
 }
 
 void GaduAccount::setAway( bool isAway, const QString& awayMessage )
@@ -226,7 +231,7 @@ GaduAccount::slotLogin( int status, const QString& dscr  )
 */
 	myself_->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING ), dscr );
 	if ( !session_->isConnected() ) {
-		session_->login( accountId().toInt(), password(), status, dscr );
+		session_->login( accountId().toInt(), password(), isUsingTls, status, dscr );
 	} else {
 		session_->changeStatus( status );
 	}
@@ -304,12 +309,12 @@ GaduAccount::notify( uin_t* userlist, int count )
 void
 GaduAccount::sendMessage( uin_t recipient, const QString& msg, int msgClass )
 {
-    QString sendMsg, cpmsg;
+    QString sendMsg, cpMsg;
 	if ( session_->isConnected() ){
 	    sendMsg = msg;
 	    sendMsg.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "\r\n" ) );
-            cpmsg = textcodec_->fromUnicode(sendMsg);
-	    session_->sendMessage( recipient, cpmsg, msgClass );
+	    cpMsg = textcodec_->fromUnicode(sendMsg);
+	    session_->sendMessage( recipient, (unsigned char *)(cpMsg.latin1()), msgClass );
 	}
 }
 
@@ -349,6 +354,7 @@ GaduAccount::messageReceived( struct gg_event* e )
 		c = new GaduContact(e->event.msg.sender, QString::number(e->event.msg.sender),
 							 this, metaContact, KopeteContact::OmitFromKABC );
 		KopeteContactList::contactList ()->addMetaContact (metaContact);
+		addNotify( e->event.msg.sender );
 	}
 
 	tmpPtrList.append( myself_ );
@@ -660,6 +666,18 @@ void GaduAccount::pubDirSearchClose()
 void GaduAccount::slotSearchResult( const searchResult &result )
 {
     emit pubDirSearchResult( result );
+}
+
+
+bool GaduAccount::isConnectionEncrypted()
+{
+    return isUsingTls;
+}
+
+void GaduAccount::useTls( bool ut )
+{
+    isUsingTls=ut;
+    setPluginData(protocol(), QString::fromLatin1( "useEncryptedConnection" ), QString::number(ut) );
 }
 
 

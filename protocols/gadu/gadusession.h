@@ -56,14 +56,13 @@ public:
 
 public slots:
 	void login( struct gg_login_params& p );
-	void login( uin_t uin, const QString& password,
+	void login( uin_t uin, const QString& password, bool useTls,
 							int status=GG_STATUS_INVISIBLE , const QString& statusDescr="" );
 	void logoff();
 	int	 notify( uin_t *userlist, int count );
 	int	 addNotify( uin_t uin );
 	int	 removeNotify( uin_t uin );
-	int	 sendMessage( uin_t recipient, const QString& msg,
-										int msgClass );
+	int	 sendMessage( uin_t recipient, const unsigned char *message, int msgClass );
 	int	 sendMessageCtcp( uin_t recipient, const QString& msg,
 												int msgClass );
 	int	 changeStatus( int status );

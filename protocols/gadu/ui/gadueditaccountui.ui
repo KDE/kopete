@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>GaduAccountEditUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>414</width>
-            <height>309</height>
+            <width>440</width>
+            <height>327</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -180,14 +180,6 @@
                         <cstring>kLineEdit1_2</cstring>
                     </property>
                 </widget>
-                <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="4">
-                    <property name="name">
-                        <cstring>autoLoginCheck_</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Auto login</string>
-                    </property>
-                </widget>
                 <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="4">
                     <property name="name">
                         <cstring>radio1</cstring>
@@ -199,12 +191,28 @@
                         <bool>true</bool>
                     </property>
                 </widget>
+                <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="4">
+                    <property name="name">
+                        <cstring>autoLoginCheck_</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Auto login</string>
+                    </property>
+                </widget>
                 <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="4">
                     <property name="name">
                         <cstring>rememberCheck_</cstring>
                     </property>
                     <property name="text">
                         <string>Remember password</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="9" column="0" rowspan="1" colspan="4">
+                    <property name="name">
+                        <cstring>useTls_</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Use protocol encryption</string>
                     </property>
                 </widget>
             </grid>

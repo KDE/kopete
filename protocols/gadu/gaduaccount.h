@@ -84,7 +84,11 @@ public slots:
 			    int ageFrom, int ageTo, bool onlyAlive);
                             
 	void pubDirSearchClose();
-
+	
+	// tls 
+	bool isConnectionEncrypted();
+	void useTls( bool ut );
+	
 signals:
 	void pubDirSearchResult( const searchResult & );
 
@@ -137,6 +141,8 @@ private:
 	KAction* invisibleAction;
 	KAction* descrAction;
 	KAction* searchAction;
+	
+	bool isUsingTls;
 };
 
 #endif
