@@ -311,6 +311,8 @@ QStringList KopeteContactList::groups() const
 		/* We get groups for this metacontact */
 		thisgroups = it.current()->groups();
 
+		if ( thisgroups.isEmpty() ) continue;
+
 		for( QStringList::ConstIterator it = thisgroups.begin(); it != thisgroups.end(); ++it )
 		{
             QString groupname = (*it);

@@ -335,7 +335,7 @@ void KopeteMetaContact::moveToGroup( const QString &from, const QString &to )
 
 void KopeteMetaContact::addToGroup( const QString &to )
 {
-	if( m_groups.contains( to ) )
+	if( m_groups.contains( to ) || to.isNull() )
 		return;
 
 	m_groups.append( to );
