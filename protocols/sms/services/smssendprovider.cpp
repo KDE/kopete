@@ -145,13 +145,12 @@ void SMSSendProvider::send(const KopeteMessage& msg)
 	values[messagePos] = message;
 	values[telPos] = nr;
 
-	QString args = "\"" + values.join("\" \"") + "\"";
+	QString args = values.join("\" \"");
 
 #if KDE_VERSION > 305
 	KProcIO* p = new KProcIO;
-	p->setUseShell(true);
 #else
-	KShellProcess* p = new KShellProcess;
+	KProcess* p = new KProcess;
 #endif
 
 	*p << QString("%1/bin/smssend").arg(prefix) << provider << args;

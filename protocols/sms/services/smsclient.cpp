@@ -44,16 +44,16 @@ void SMSClient::send(const KopeteMessage& msg)
 
 #if KDE_VERSION > 305
 	KProcIO* p = new KProcIO;
-	p->setUseShell(true);
 #else
-	KShellProcess* p = new KShellProcess;
+	KProcess* p = new KProcess;
 #endif
 
 	QString message = msg.plainBody();
 	QString nr = msg.to().first()->id();
 	
 	*p << programName;
-	*p << QString("%1:%2 \"%3\"").arg(provider).arg(nr).arg(message);
+	*p << provider + ":" + nr
+    *p << message;
 
 	connect( p, SIGNAL(processExited(KProcess *)), this, SLOT(slotSendFinished(KProcess*)));
 	connect( p, SIGNAL(receivedStdout(KProcess*, char*, int)),
