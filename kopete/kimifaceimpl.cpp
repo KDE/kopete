@@ -58,7 +58,7 @@ QStringList KIMIfaceImpl::allContacts()
 	QPtrListIterator<Kopete::MetaContact> it( list );
 	for( ; it.current(); ++it )
 	{
-		if ( !it.current()->metaContactId().isNull() )
+		if ( !it.current()->metaContactId().contains(':') )
 			result.append( it.current()->metaContactId() );
 	}
 
@@ -72,7 +72,7 @@ QStringList KIMIfaceImpl::reachableContacts()
 	QPtrListIterator<Kopete::MetaContact> it( list );
 	for( ; it.current(); ++it )
 	{
-		if ( it.current()->isReachable() && !it.current()->metaContactId().isNull() )
+		if ( it.current()->isReachable() && !it.current()->metaContactId().contains(':') )
 			result.append( it.current()->metaContactId() );
 	}
 
@@ -86,7 +86,7 @@ QStringList KIMIfaceImpl::onlineContacts()
 	QPtrListIterator<Kopete::MetaContact> it( list );
 	for( ; it.current(); ++it )
 	{
-		if ( it.current()->isOnline() && !it.current()->metaContactId().isNull() )
+		if ( it.current()->isOnline() && !it.current()->metaContactId().contains(':') )
 			result.append( it.current()->metaContactId() );
 	}
 
@@ -100,7 +100,7 @@ QStringList KIMIfaceImpl::fileTransferContacts()
 	QPtrListIterator<Kopete::MetaContact> it( list );
 	for( ; it.current(); ++it )
 	{
-		if ( it.current()->canAcceptFiles() && !it.current()->metaContactId().isNull() )
+		if ( it.current()->canAcceptFiles() && !it.current()->metaContactId().contains(':') )
 			result.append( it.current()->metaContactId() );
 	}
 
@@ -338,7 +338,7 @@ void KIMIfaceImpl::slotMetaContactAdded( Kopete::MetaContact *mc )
 
 void KIMIfaceImpl::slotContactStatusChanged( Kopete::MetaContact *mc )
 {
-	if ( !mc->metaContactId().isNull() )
+	if ( !mc->metaContactId().contains( ':' ) )
 	{
 		int p = -1;
 		Kopete::OnlineStatus status = mc->status();
