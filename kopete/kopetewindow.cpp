@@ -57,6 +57,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 
 	// for now systemtray is also always shown
 	// TODO: make the configurable
+	isClosing=false;
 	tray->show();
 }
 
@@ -109,7 +110,7 @@ void KopeteWindow::initActions ( void )
 	actionPrefs = KStdAction::preferences(kopeteapp, SLOT(slotPreferences()), actionCollection());
 
 //	actionQuit = KStdAction::quit(kopeteapp, SLOT(slotExit()), actionCollection());
-	KStdAction::quit(kopeteapp, SLOT(quit()), actionCollection());
+	KStdAction::quit(this, SLOT(slotQuit()), actionCollection());
 
 	toolbarAction = KStdAction::showToolbar(this, SLOT(showToolbar()), actionCollection());
 
@@ -133,7 +134,7 @@ void KopeteWindow::initSystray ( void )
 //	tm->insertSeparator();
 
 #if KDE_VERSION >= 305
-	connect(tray,SIGNAL(quitSelected()),qApp,SLOT(quit()));
+	connect(tray,SIGNAL(quitSelected()),this,SLOT(slotQuit()));
 #endif
 }
 
@@ -237,6 +238,12 @@ void KopeteWindow::slotExecuted( QListViewItem *item )
 
 void KopeteWindow::closeEvent( QCloseEvent *e )
 {
+	if(isClosing)
+	{
+		KMainWindow::closeEvent( e );
+		return;
+	}
+	
 #if KDE_VERSION >= 305
 	KMessageBox::information( this,
 		i18n( "<qt>Closing the main window will keep Kopete running in the "
@@ -244,13 +251,20 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 		"application.</qt>" ), i18n( "Docking in System Tray" ),
 		"hideOnCloseInfo" );
 	hide();
-
-	// Do something with 'e' to avoid a compiler warning in this branch
-	// of the #if code
-	e = 0L;
 #else
 	KMainWindow::closeEvent( e );
 #endif
+}
+
+void KopeteWindow::slotQuit()
+{
+	kdDebug() << "KopeteWindow::slotQuit()" <<endl;
+
+	//I don't know why, but when this slot is called by the toolbar, that work fine
+	// but when this slot is called by the system try, the closeEvent's message is showed
+	isClosing=true;
+	
+	kopeteapp->quit();
 }
 
 #include "kopetewindow.moc"

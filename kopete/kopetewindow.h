@@ -48,8 +48,8 @@ private slots:
 	void showToolbar(void);
 	void slotExecuted( QListViewItem * );
 
-
-        void closeEvent(QCloseEvent*);
+	void closeEvent(QCloseEvent*);
+	void slotQuit();
 public:
 	KopeteContactListView *contactlist;
 
@@ -81,6 +81,8 @@ private:
 	bool queryExit(void);
 	void loadOptions(void);
 	void saveOptions(void);
+
+	bool isClosing;
 };
 
 #endif
