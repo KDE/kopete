@@ -603,6 +603,9 @@ void KopeteContactListView::slotExpanded( QListViewItem *item )
 		groupLVI->group()->setExpanded( true );
 		groupLVI->updateIcon();
 	}
+	
+	//workaround a bug in qt which make the items of a closed item not sorted. (qt 3.3.4 here)
+	delayedSort();
 }
 
 void KopeteContactListView::slotCollapsed( QListViewItem *item )
