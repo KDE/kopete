@@ -116,10 +116,9 @@ public:
 	void catchEvent(KopeteEvent *);
 
 private slots:
-	// TODO: Do you like this init flag only used on initalization? I don't [mETz]
-	void slotContactStatusChanged(bool init);
+	void slotUpdateIcons();
 	void slotContactStatusChanged();
-
+	
 	void slotDisplayNameChanged();
 	void slotRemoveThisUser();
 	void slotRemoveFromGroup();

@@ -84,7 +84,7 @@ public:
 	 *         itself uses the Unknown state in @ref KopeteMetaContact for
 	 *         meta contacts that have no child contacts at all.
 	 */
-	enum OnlineStatus { Unknown, Connecting, Offline, Online, Away };
+	enum OnlineStatus { Unknown, Connecting, Offline, Away, Online };
 
 	/**
 	 * Constructor.
