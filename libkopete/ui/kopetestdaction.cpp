@@ -58,10 +58,13 @@ void KopeteGroupListAction::slotUpdateList()
 	QPtrList<Kopete::Group> groups = Kopete::ContactList::self()->groups();
 	for ( Kopete::Group *it = groups.first(); it; it = groups.next() )
 	{
-		groupList.append( it->displayName() );
+		if(it->type() == Kopete::Group::Normal)
+			groupList.append( it->displayName() );
 	}
 
 	groupList.sort();
+	groupList.prepend(QString::null); //add a separator;
+	groupList.prepend( i18n("At top level") ); //the top-level group, with the id 0
 	setItems( groupList );
 }
 
