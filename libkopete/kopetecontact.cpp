@@ -55,8 +55,8 @@ public:
 	int cachedSize;
 	int cachedOldImportance;
 
-	//idle state
 	KopeteContact::IdleState idleState;
+	KopeteContact::OnlineStatus onlineStatus;
 
 	KopeteMetaContact *metaContact;
 
@@ -90,9 +90,10 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 {
 	d = new KopeteContactPrivate;
 
-//	kdDebug() << "KopeteContact::KopeteContact: Creating contact with id " << contactId << endl;
+	//kdDebug() << k_funcinfo << "Creating contact with id " << contactId << endl;
 
 	d->contactId = contactId;
+	d->onlineStatus = Offline;
 
 	d->metaContact = parent;
 	d->protocol = protocol;
@@ -167,16 +168,26 @@ QString KopeteContact::displayName() const
 	return d->displayName;
 }
 
-KopeteContact::ContactStatus KopeteContact::status() const
+KopeteContact::OnlineStatus KopeteContact::onlineStatus() const
 {
-	return Online;
+	return d->onlineStatus;
+}
+
+void KopeteContact::setOnlineStatus( KopeteContact::OnlineStatus status )
+{
+	if( status == d->onlineStatus )
+		return;
+
+	d->onlineStatus = status;
+
+	emit onlineStatusChanged( this, status );
 }
 
 QString KopeteContact::statusText() const
 {
-	ContactStatus stat = status();
+	OnlineStatus stat = onlineStatus();
 
-	//kdDebug( 14010 ) << "[KopeteContact] statusText() with status= " << stat << endl;
+	//kdDebug( 14010 ) << k_funcinfo << "onlineStatus=" << stat << endl;
 
 	switch( stat )
 	{
@@ -217,7 +228,7 @@ QPixmap KopeteContact::scaledStatusIcon( int size )
 
 int KopeteContact::importance() const
 {
-	ContactStatus stat = status();
+	OnlineStatus stat = onlineStatus();
 
 	if( stat == Online )
 		return 20;
@@ -512,7 +523,7 @@ KopeteGroupList KopeteContact::groups() const
 
 bool KopeteContact::isOnline() const
 {
-	return status() != Offline && status() != Unknown;
+	return onlineStatus() != Offline && onlineStatus() != Unknown;
 }
 
 KopeteMetaContact * KopeteContact::metaContact() const

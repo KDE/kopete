@@ -35,7 +35,6 @@ public:
 
 	KActionCollection* customContextMenuActions();
 
-	ContactStatus status() const;
 	int importance() const;
 
 	virtual bool isReachable() { return true; };

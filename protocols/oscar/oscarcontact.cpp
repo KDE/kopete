@@ -170,7 +170,7 @@ void OscarContact::slotMainStatusChanged(int newStatus)
 	if (newStatus == OSCAR_OFFLINE)
 	{
 		mStatus = OSCAR_OFFLINE;
-		emit statusChanged( this, status() );
+		setOnlineStatus( Offline );
 		// Try to do this, otherwise no big deal
 		AIMBuddy *mListContact = mProtocol->buddyList()->findBuddy(mName);
 		if ( !mListContact)
@@ -219,23 +219,17 @@ void OscarContact::slotUpdateBuddy()
 		mStatus = OSCAR_OFFLINE;
 		mListContact->setStatus(OSCAR_OFFLINE);
 
-		emit statusChanged( this, status() );
+		setOnlineStatus( Offline );
 		return;
 	}
 
 	// We can only send messages to online user
-	emit statusChanged( this, status() );
-}
-
-/** Returns the online status of the contact */
-OscarContact::ContactStatus OscarContact::status(void) const
-{
-	if (mStatus == OSCAR_ONLINE)
-		return Online;
-	else if (mStatus == OSCAR_AWAY)
-		return Away;
+	if( mStatus == OSCAR_ONLINE )
+		setOnlineStatus( Online );
+	else if( mStatus == OSCAR_AWAY )
+		setOnlineStatus( Away );
 	else
-		return Offline;
+		setOnlineStatus( Offline );
 }
 
 /** Initialzes the actions */

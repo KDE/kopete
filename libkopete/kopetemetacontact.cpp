@@ -84,10 +84,8 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 	{
 		d->contacts.append( c );
 
-		connect( c, SIGNAL( statusChanged( KopeteContact *,
-			KopeteContact::ContactStatus ) ),
-			this, SLOT( slotContactStatusChanged( KopeteContact *,
-			KopeteContact::ContactStatus ) ) );
+		connect( c, SIGNAL( onlineStatusChanged( KopeteContact *, KopeteContact::OnlineStatus ) ),
+			SLOT( slotContactStatusChanged( KopeteContact *, KopeteContact::OnlineStatus ) ) );
 
 		connect( c, SIGNAL( displayNameChanged( const QString & ) ),
 			this, SLOT( slotContactNameChanged( const QString & ) ) );
@@ -126,20 +124,20 @@ void KopeteMetaContact::updateOnlineStatus()
 	QPtrListIterator<KopeteContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
-		KopeteContact::ContactStatus s = it.current()->status();
+		KopeteContact::OnlineStatus s = it.current()->onlineStatus();
 
-		if ( s == KopeteContact::Online )
+		if( s == KopeteContact::Online )
 		{
 			newStatus = Online;
 			break;
 		}
-		else if ( (s == KopeteContact::Away) && (newStatus != Online) )
+		else if( ( s == KopeteContact::Away ) && ( newStatus != Online ) )
 		{
 			// Set status, but don't stop searching, since 'Online' overrules
 			// 'Away'
 			newStatus = Away;
 		}
-		else if ( (s == KopeteContact::Offline) && (newStatus != Away) && (newStatus != Online))
+		else if( ( s == KopeteContact::Offline ) && ( newStatus != Away ) && ( newStatus != Online ) )
 		{
 			newStatus = Offline;
 		}
@@ -193,10 +191,8 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 
 		if(!deleted)
 		{  //If this function is tell by slotContactRemoved, c is maybe just a QObject
-			disconnect( c, SIGNAL( statusChanged( KopeteContact *,
-				KopeteContact::ContactStatus ) ),
-				this, SLOT( slotContactStatusChanged( KopeteContact *,
-				KopeteContact::ContactStatus ) ) );
+			disconnect( c, SIGNAL( onlineStatusChanged( KopeteContact *, KopeteContact::OnlineStatus ) ),
+				this, SLOT( slotContactStatusChanged( KopeteContact *, KopeteContact::OnlineStatus ) ) );
 
 			disconnect( c, SIGNAL( displayNameChanged( const QString & ) ),
 				this, SLOT( slotContactNameChanged( const QString & ) ) );
@@ -207,9 +203,9 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 			disconnect( c, SIGNAL( idleStateChanged( KopeteContact *, KopeteContact::IdleState ) ),
 				this, SLOT( slotContactIdleStateChanged( KopeteContact *, KopeteContact::IdleState ) ) );
 
-			kdDebug(14010) << "KopeteMetaContact::removeContact: Contact disconected" << endl;
+			kdDebug( 14010 ) << k_funcinfo << "Contact disconected" << endl;
 		}
-		emit contactRemoved(c);
+		emit contactRemoved( c );
 	}
 	updateOnlineStatus();
 }
@@ -447,7 +443,7 @@ void KopeteMetaContact::sendFile( const KURL &sourceURL, const QString &altFileN
 	c->sendFile( sourceURL, altFileName, fileSize );
 }
 
-void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c, KopeteContact::ContactStatus s  )
+void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c, KopeteContact::OnlineStatus s  )
 {
 	updateOnlineStatus();
 

@@ -18,13 +18,10 @@
 #ifndef IRCCONTACT_H
 #define IRCCONTACT_H
 
-
-
 #include "kopetecontact.h"
 
 #include <qstring.h>
 #include <qguardedptr.h>
-
 
 class IRCChatView;
 class IRCQueryView;
@@ -35,8 +32,6 @@ class KIRC;
 class QStringList;
 class QVBox;
 
-
-
 class IRCContact : public KopeteContact
 {
 	Q_OBJECT
@@ -45,7 +40,6 @@ public:
 	IRCContact(const QString &server, const QString &target, unsigned int port, IRCServerContact *contact, const QStringList pengingMessages, KopeteMetaContact *parent, KopeteProtocol *protocol);
 	~IRCContact();
 	// KopeteContact virtual functions
-	virtual ContactStatus status() const;
 	virtual QString statusIcon() const;
 	virtual bool isReachable() { return true; }
 	virtual KActionCollection *customContextMenuActions();

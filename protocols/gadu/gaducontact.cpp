@@ -32,28 +32,6 @@ GaduContact::GaduContact( const QString& /*protocolId*/, uin_t uin,
     thisContact_.append( this );
 }
 
-KopeteContact::ContactStatus
-GaduContact::status() const
-{
-    switch( status_ ) {
-    case GG_STATUS_NOT_AVAIL:
-    case GG_STATUS_NOT_AVAIL_DESCR:
-    case GG_STATUS_BUSY:
-    case GG_STATUS_BUSY_DESCR:
-    case GG_STATUS_INVISIBLE:
-    case GG_STATUS_INVISIBLE_DESCR:
-        return Away;
-        break;
-    case GG_STATUS_AVAIL:
-    case GG_STATUS_AVAIL_DESCR:
-        return Online;
-        break;
-    default:
-        return Offline;
-        break;
-    }
-}
-
 QString
 GaduContact::statusText() const
 {
@@ -167,7 +145,25 @@ GaduContact::setGaduStatus( Q_UINT32 status, const QString& descr )
 {
     status_ = status;
     description_ = descr;
-    emit statusChanged( this, GaduContact::status() );
+
+    switch( status_ )
+    {
+    case GG_STATUS_NOT_AVAIL:
+    case GG_STATUS_NOT_AVAIL_DESCR:
+    case GG_STATUS_BUSY:
+    case GG_STATUS_BUSY_DESCR:
+    case GG_STATUS_INVISIBLE:
+    case GG_STATUS_INVISIBLE_DESCR:
+        setOnlineStatus( Away );
+        break;
+    case GG_STATUS_AVAIL:
+    case GG_STATUS_AVAIL_DESCR:
+        setOnlineStatus( Online );
+        break;
+    default:
+        setOnlineStatus( Offline );
+        break;
+    }
 }
 
 QString

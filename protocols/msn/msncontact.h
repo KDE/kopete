@@ -56,7 +56,6 @@ public:
 
 	virtual QString data() const;
 
-	ContactStatus status() const;
 	QString statusText() const;
 	QString statusIcon() const;
 	int importance() const;

@@ -82,6 +82,7 @@ public:
 	 * @return True if the user is online with a file capable protocol, false otherwise
 	 */
 	bool canAcceptFiles() const;
+
 	/**
 	 * Contact's status
 	 */
@@ -297,15 +298,14 @@ signals:
 	 * cache m_onlineStatus value! In all other case, just call
 	 * updateOnlineStatus() instead.
 	 */
-	void onlineStatusChanged( KopeteMetaContact *contact,
-		KopeteMetaContact::OnlineStatus status );
+	void onlineStatusChanged( KopeteMetaContact *contact, KopeteMetaContact::OnlineStatus status );
 
 	/**
 	 * A contact's online status changed
 	 * this signal differs from onlineStatusChanged because a contact can
 	 * change his status without changing MetaContact status
 	 */
-	void contactStatusChanged( KopeteContact *contact, KopeteContact::ContactStatus status );
+	void contactStatusChanged( KopeteContact *contact, KopeteContact::OnlineStatus status );
 
 	/**
 	 * The meta contact's display name changed
@@ -347,8 +347,7 @@ signals:
 		* The metacontact's idle status changed.  KopeteMetaContactLVI should
 		* connect to this signal
 		*/
-	void idleStateChanged( KopeteMetaContact *contact,
-		KopeteMetaContact::IdleState newState );
+	void idleStateChanged( KopeteMetaContact *contact, KopeteMetaContact::IdleState newState );
 
 	/**
 	 * One of the subcontacts' idle status has changed.  As with online status,
@@ -369,12 +368,10 @@ private slots:
 	  */
 	void updateIdleState();
 
-
 	/**
 	 * One of the child contact's online status changed
 	 */
-	void slotContactStatusChanged( KopeteContact *c,
-		KopeteContact::ContactStatus s );
+	void slotContactStatusChanged( KopeteContact *c, KopeteContact::OnlineStatus s );
 
 	/**
 	 * One of the child contact's display names changed

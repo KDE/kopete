@@ -91,7 +91,6 @@ public:
 	// very basic actions
 	bool isOnline() const { return myIsOnline; }
 	bool isReachable() { return myIsOnline; }
-	KopeteContact::ContactStatus status() const { return myIsOnline ? Online : Offline; }
 	QString statusText() const { return myIsOnline ? "Online" : "Offline"; }
 	QString statusIcon() const { return myIsOnline ? "wp_available" : "wp_offline"; }
 	

@@ -173,7 +173,7 @@ KTempFile* WebPresencePlugin::generateFile()
 
 		output += h.oneLineTag( "protostatus",
 				( me )
-				? statusAsString( me->status() )
+				? statusAsString( me->onlineStatus() )
 				: notKnown );
 
 		if ( m_prefs->showAddresses() )
@@ -286,7 +286,7 @@ QPtrList<KopeteProtocol> WebPresencePlugin::allProtocols()
 	return protos;
 }
 
-QString WebPresencePlugin::statusAsString( KopeteContact::ContactStatus c )
+QString WebPresencePlugin::statusAsString( KopeteContact::OnlineStatus c )
 {
 	QString status;
 	switch ( c )

@@ -29,7 +29,7 @@ YahooStatus::YahooStatus()
 	m_status = Offline;
 }
 
-KopeteContact::ContactStatus YahooStatus::translate() const
+KopeteContact::OnlineStatus YahooStatus::translate() const
 {
 	if(m_status == Offline )
 		return KopeteContact::Offline;

@@ -144,14 +144,6 @@ bool IRCContact::isChannel() const
 		&& (sChannelChars.contains(m_targetName[0]) > 0));
 }
 
-KopeteContact::ContactStatus IRCContact::status() const
-{
-	if (!m_serverContact.isNull() && m_serverContact->engine()->isLoggedIn())
-		return KopeteContact::Online;
-
-	return KopeteContact::Offline;
-}
-
 QString IRCContact::statusIcon() const
 {
 	if (m_serverContact->engine()->isLoggedIn())
@@ -354,7 +346,7 @@ void IRCContact::unloading()
 		chatView = 0L;
 		queryView = 0L;
 	}
-	emit statusChanged(this, Offline);
+	setOnlineStatus( Offline );
 }
 
 void IRCContact::joinNow()
@@ -380,8 +372,7 @@ void IRCContact::joinNow()
 		if (!minimize)
 			m_serverContact->chatWindow()->mTabWidget->showPage(mTabPage);
 	}
-	emit statusChanged(this, Online);
-
+	setOnlineStatus( Online );
 }
 
 #include "irccontact.moc"

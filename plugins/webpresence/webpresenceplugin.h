@@ -41,7 +41,7 @@ class WebPresencePlugin : public KopetePlugin
 	struct ProtoContactStatus {
 		const char *name;
 		const char *id;
-		KopeteContact::ContactStatus status;
+		KopeteContact::OnlineStatus status;
 	};
 	public:
 		WebPresencePlugin( QObject *parent, const char *name, const QStringList &args );
@@ -77,7 +77,7 @@ class WebPresencePlugin : public KopetePlugin
 		/**
 		 * Converts numeric status to a string
 		 */
-		QString statusAsString( KopeteContact::ContactStatus c );
+		QString statusAsString( KopeteContact::OnlineStatus c );
 		// Triggers a write of the current contactlist
 		QTimer *m_timer;
 		// Interface to the preferences GUI

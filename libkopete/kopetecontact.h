@@ -55,7 +55,7 @@ public:
 	/**
 	 * Contact's status
 	 */
-	enum ContactStatus { Online, Away, Offline, Unknown };
+	enum OnlineStatus { Online, Away, Offline, Unknown };
 
 	/**
 	 * Contact's idle status
@@ -158,10 +158,15 @@ public:
 	QString displayName() const;
 
 	/**
-	 * Return the status of the contact
-	 * @return the status of the contact
+	 * Return the online status of the contact
+	 * @return the online status of the contact
 	 */
-	virtual ContactStatus status() const;
+	OnlineStatus onlineStatus() const;
+
+	/**
+	 * Set the contact's online status
+	 */
+	void setOnlineStatus( OnlineStatus status );
 
 	/**
 	 * The text describing the contact's status
@@ -190,12 +195,13 @@ public:
 	 * The "importance" of this contact, used for sorting
 	 * This is almost always related to the contact's status
 	 * Here is how ICQ does it:
+	 *
 	 * 25 = Free For Chat
 	 * 20 = Online
 	 * 15 = Away (temporary away)
 	 * 10 = Not Available (extended away)
-	 * 5 = Invisible
-	 * 0 = Offline
+	 * 5  = Invisible
+	 * 0  = Offline
 	 *
 	 * The default implementation returns 20 for Online,
 	 * 10 for away, and 0 for offline
@@ -398,25 +404,20 @@ signals:
 	/**
 	 * The contact's online status changed
 	 */
-	void statusChanged( KopeteContact *contact, KopeteContact::ContactStatus status );
-
-	/**
-	 * Deprecated, old signal! Use the above one instead
-	 */
-	//void statusChanged();
+	void onlineStatusChanged( KopeteContact *contact, KopeteContact::OnlineStatus status );
 
 	/**
 	 * Connect to this signal to know when the contact
 	 * changed its name/nick
 	 */
-	void displayNameChanged(const QString &name);
+	void displayNameChanged( const QString &name );
 
 	/**
 	 * The contact is about to be destroyed.
 	 * Called when entering the destructor. Useful for cleanup, since
 	 * metaContact() is still accessible at this point.
 	 */
-	void contactDestroyed( KopeteContact *c );
+	void contactDestroyed( KopeteContact *contact );
 
 	/**
 	 * The contact's idle state changed

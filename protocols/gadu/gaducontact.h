@@ -40,12 +40,11 @@ public:
     GaduContact( const QString &protocolId, uin_t uin, const QString& name,
                  KopeteMetaContact *parent );
 
-    virtual ContactStatus status() const;
-    virtual QString       statusText() const;
-    virtual QString       statusIcon() const;
-    virtual int           importance() const;
-    virtual QString       data() const;
-    virtual bool          isReachable();
+    virtual QString statusText() const;
+    virtual QString statusIcon() const;
+    virtual int     importance() const;
+    virtual QString data() const;
+    virtual bool    isReachable();
     virtual KActionCollection *customContextMenuActions();
     virtual QString identityId() const;
 

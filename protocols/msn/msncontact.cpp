@@ -164,38 +164,6 @@ void MSNContact::slotDeleteContact()
 	}
 }
 
-KopeteContact::ContactStatus MSNContact::status() const
-{
-	switch ( m_status )
-	{
-		case MSNProtocol::NLN: // Online
-		{
-			return Online;
-			break;
-		}
-		case MSNProtocol::BSY: // Busy
-		case MSNProtocol::IDL: // Idle
-		case MSNProtocol::AWY: // Away from computer
-		case MSNProtocol::PHN: // On the phone
-		case MSNProtocol::BRB: // Be right back
-		case MSNProtocol::LUN: // Out to lunch
-		{
-			return Away;
-			break;
-		}
-		case MSNProtocol::FLN: // Offline
-		{
-			return Offline;
-			break;
-		}
-		case MSNProtocol::UNK:
-		default:
-		{
-			return Unknown;
-		}
-	}
-}
-
 QString MSNContact::statusText() const
 {
 	QString statusText="";
@@ -346,12 +314,29 @@ void MSNContact::setMsnStatus( MSNProtocol::Status _status )
 	if( m_status == _status )
 		return;
 
-//	kdDebug(14140) << "MSNContact::setMsnStatus: Setting status for " << contactId() <<
-//		" to " << _status << endl;
+	//kdDebug( 14140 ) << k_funcinfo << "Setting status for " << contactId() << " to " << _status << endl;
 	m_status = _status;
 
-	emit statusChanged( this, status() );
-//	emit statusChanged(  );
+	switch ( m_status )
+	{
+		case MSNProtocol::NLN: // Online
+			setOnlineStatus( Online );
+			break;
+		case MSNProtocol::BSY: // Busy
+		case MSNProtocol::IDL: // Idle
+		case MSNProtocol::AWY: // Away from computer
+		case MSNProtocol::PHN: // On the phone
+		case MSNProtocol::BRB: // Be right back
+		case MSNProtocol::LUN: // Out to lunch
+			setOnlineStatus( Away );
+			break;
+		case MSNProtocol::FLN: // Offline
+			setOnlineStatus( Offline );
+			break;
+		case MSNProtocol::UNK:
+		default:
+			setOnlineStatus( Unknown );
+	}
 }
 
 bool MSNContact::isBlocked() const
@@ -362,10 +347,7 @@ bool MSNContact::isBlocked() const
 void MSNContact::setBlocked( bool blocked )
 {
 	if( m_blocked != blocked )
-	{
 		m_blocked = blocked;
-		emit statusChanged( this, MSNContact::status() );
-	}
 }
 
 /*bool MSNContact::isDeleted() const

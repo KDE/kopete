@@ -64,7 +64,7 @@ public:
 	YahooStatus();
 	
 	/* Translates YahooStatus to Kopete standard ones */
-	KopeteContact::ContactStatus translate() const;
+	KopeteContact::OnlineStatus translate() const;
 	/* Returns a status description */
 	QString text() const;
 	/* Returns status asscociated icon */

@@ -49,8 +49,6 @@ public:
 	 * that a plugin may want to store a contact list.
 	 */
 	virtual QString data(void) const;
-	/** Returns the online status of the contact */
-	virtual ContactStatus status(void) const;
 	/** Returns the status icon of the contact */
 	virtual QString statusIcon(void) const;
 	/**

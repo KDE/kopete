@@ -190,7 +190,7 @@ GaduProtocol::setAvailable()
 bool
 GaduProtocol::isAway(void) const
 {
-    return (myself_->status() == KopeteContact::Away);
+    return myself_->onlineStatus() == KopeteContact::Away;
 }
 
 AddContactPage*

@@ -40,6 +40,8 @@ SMSContact::SMSContact( SMSProtocol* _protocol, const QString &phoneNumber,
 	initActions();
 
 	m_msgManager = 0L;
+
+	setOnlineStatus( Unknown );
 }
 
 SMSContact::~SMSContact()
@@ -135,11 +137,6 @@ void SMSContact::slotUserInfo()
 void SMSContact::slotDeleteContact()
 {
 	deleteLater();
-}
-
-KopeteContact::ContactStatus SMSContact::status() const
-{
-	return Unknown;
 }
 
 int SMSContact::importance() const

@@ -42,7 +42,7 @@ YahooContact::YahooContact(QString userId, QString fullName,
 
 	// Update ContactList
 	setDisplayName(m_fullName);
-	emit statusChanged(this, status());
+	setOnlineStatus( m_status.translate() );
 
 	// XXX initActions();
 
@@ -53,13 +53,6 @@ YahooContact::YahooContact(QString userId, QString fullName,
 YahooContact::~YahooContact()
 {
 	kdDebug(14180) << "Yahoo::~YahooContact()" << endl;
-}
-
-// Return status
-KopeteContact::ContactStatus YahooContact::status() const
-{
-	kdDebug(14180) << "YahooContact::status()" << endl;
-	return m_status.translate();
 }
 
 // Return status text
@@ -78,7 +71,7 @@ QString YahooContact::statusIcon() const
 void YahooContact::setYahooStatus( YahooStatus::Status status_, const QString &msg, int away)
 {
 	m_status.setStatus(status_);
-	emit statusChanged( this, m_status.translate() );
+	setOnlineStatus( m_status.translate() );
 }
 
 
@@ -95,14 +88,14 @@ void YahooContact::slotUpdateStatus(QString status, QString statusText == NULL)
 		kdDebug(14180) << "Yahoo plugin: Updating status." << endl;
 	}
 	mStatusText = statusText;
-	emit statusChanged();
+	setOnlineStatus( m_status.translate() );
 }
 */
 
 bool YahooContact::isOnline() const
 {
 	kdDebug(14180) << "[YahooContact::isOnline()]" << endl;
-	return status() != Offline && status() != Unknown;
+	return onlineStatus() != Offline && onlineStatus() != Unknown;
 }
 
 bool YahooContact::isReachable()
