@@ -18,7 +18,6 @@
     *************************************************************************
 */
 
-#include <qapplication.h>
 #include <qpainter.h>
 #include <qtimer.h>
 #include <qvariant.h>
@@ -36,6 +35,7 @@
 #include <kpopupmenu.h>
 #include <kglobal.h>
 #include <kconfig.h>
+#include <kapplication.h>
 
 #include <kabc/addressbook.h>
 #include <kabc/addressee.h>
@@ -274,6 +274,8 @@ void KopeteMetaContactLVI::initLVI()
 
 	connect( KopetePrefs::prefs(), SIGNAL( contactListAppearanceChanged() ),
 		SLOT( slotConfigChanged() ) );
+
+	connect( kapp, SIGNAL( appearanceChanged() ),  SLOT( slotConfigChanged() ) );
 
 	mBlinkTimer = new QTimer( this, "mBlinkTimer" );
 	connect( mBlinkTimer, SIGNAL( timeout() ), SLOT( slotBlink() ) );
