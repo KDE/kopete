@@ -34,31 +34,31 @@ class MeanwhileContact : public Kopete::Contact
 public:
 
 	MeanwhileContact( QString userId,
-                      QString nickname,
-                      MeanwhileAccount *account,
-                      Kopete::MetaContact *parent);
-    ~MeanwhileContact();
+	                  QString nickname,
+	                  MeanwhileAccount *account,
+	                  Kopete::MetaContact *parent);
+	~MeanwhileContact();
 
-    virtual bool isReachable();
+	virtual bool isReachable();
 
-    virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
+	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
 
 	virtual QPtrList<KAction> *customContextMenuActions();
 
-	virtual Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlag canCreate = Kopete::Contact::CanCreate );
+	virtual Kopete::ChatSession *manager( CanCreateFlags canCreate = CanCreate );
 
-    QString meanwhileId;
+	QString meanwhileId;
 
 public slots:
 
 	void sendMessage( Kopete::Message &message );
 	void receivedMessage( const QString &message );
-    virtual void slotUserInfo();
+	virtual void slotUserInfo();
 
 protected slots:
 	void showContactSettings();
 	void slotChatSessionDestroyed();
-    void slotMeTypingMsg(bool isTyping);
+	void slotMeTypingMsg(bool isTyping);
 	
 protected:
 	Kopete::ChatSession* m_msgManager;

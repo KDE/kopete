@@ -155,51 +155,31 @@ KActionMenu * MeanwhileAccount::actionMenu()
                             myself()->icon(),
                             i18n("Meanwhile (%1)").arg(accountId()));
     theMenu->insert(
-           new KAction(
-                MeanwhileProtocol::protocol()->meanwhileOnline.caption(),
-                MeanwhileProtocol::protocol()->meanwhileOnline.iconFor(this),
-                0, this,
-                SLOT(meanwhileGoOnline()),
-                this,
-                "meanwhileGoOnline"));
+           new KAction( i18n( "Go Online" ),
+                        MeanwhileProtocol::protocol()->meanwhileOnline.iconFor(this),
+                        0, this, SLOT(meanwhileGoOnline()), this, "meanwhileGoOnline"));
 
     theMenu->insert(
-           new KAction(
-                MeanwhileProtocol::protocol()->meanwhileOffline.caption(),
-                MeanwhileProtocol::protocol()->meanwhileOffline.iconFor(this),
-                0, this,
-                SLOT(meanwhileGoOffline()),
-                this,
-                "meanwhileGoOffline"));
+           new KAction( i18n( "Go Offline" ),
+                        MeanwhileProtocol::protocol()->meanwhileOffline.iconFor(this),
+                        0, this, SLOT(meanwhileGoOffline()), this, "meanwhileGoOffline"));
 
     theMenu->insert(
-           new KAction(
-                MeanwhileProtocol::protocol()->meanwhileAway.caption(),
-                MeanwhileProtocol::protocol()->meanwhileAway.iconFor(this),
-                0, this,
-                SLOT(meanwhileGoAway()),
-                this,
-                "meanwhileGoAway"));
+           new KAction( i18n( "Go Away" ),
+                        MeanwhileProtocol::protocol()->meanwhileAway.iconFor(this),
+                        0, this, SLOT(meanwhileGoAway()), this, "meanwhileGoAway"));
 
     theMenu->insert(
-           new KAction(
-                MeanwhileProtocol::protocol()->meanwhileBusy.caption(),
-                MeanwhileProtocol::protocol()->meanwhileBusy.iconFor(this),
-                0, this,
-                SLOT(meanwhileGoDND()),
-                this,
-                "meanwhileGoDND"));
+           new KAction( i18n( "Mark as Busy" ),
+                        MeanwhileProtocol::protocol()->meanwhileBusy.iconFor(this),
+                        0, this, SLOT(meanwhileGoDND()), this, "meanwhileGoDND"));
 
     theMenu->popupMenu()->insertSeparator();
 
     theMenu->insert(
-           new KAction(
-                i18n("&Change status message"),
-                QString::null,
-                0, this,
-                SLOT(meanwhileChangeStatus()),
-                this,
-                "meanwhileChangeStatus"));
+           new KAction( i18n("&Change status message"), QString::null,
+                        0, this, SLOT(meanwhileChangeStatus()), this,
+                        "meanwhileChangeStatus"));
 
     infoPlugin->addCustomMenus(theMenu);
 
@@ -269,7 +249,7 @@ void MeanwhileAccount::meanwhileGoDND()
     if ((server!=NULL) &&
         (myself()->onlineStatus() !=
             MeanwhileProtocol::protocol()->meanwhileOffline))
-        server->goDND(QString("Please donot disturb"));
+        server->goDND(QString("Please do not disturb"));
 }
 
 void MeanwhileAccount::slotLoginDone()
