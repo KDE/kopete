@@ -311,7 +311,7 @@ void KopeteRichTextEditPart::setFgColor()
 	QColor col;
 
 	int s = KColorDialog::getColor( col, editor->color(), editor );
-	if ( s != QDialog::Accepted )
+	if ( s != QDialog::Accepted || !col.isValid() )
 		return;
 
 	setFgColor( col );
@@ -343,7 +343,7 @@ void KopeteRichTextEditPart::setBgColor()
 	QColor col;
 
 	int s = KColorDialog::getColor( col, mBgColor, editor );
-	if ( s != QDialog::Accepted )
+	if ( s != QDialog::Accepted || !col.isValid() )
 		return;
 
 	setBgColor( col );
