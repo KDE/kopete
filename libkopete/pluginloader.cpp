@@ -271,7 +271,7 @@ bool LibraryLoader::remove( KopetePlugin *p )
 	p->unload();
 	delete p;
 
-	return false;
+	return true;
 }
 
 void LibraryLoader::slotPluginDestroyed( QObject *o )
