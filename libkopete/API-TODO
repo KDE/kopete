@@ -237,3 +237,18 @@ The user has two ways to initiate such as thing:
 - in the application itself, they could (with the help of KABC) select a
   contactable contact; the invitaiton is transported to Kopete.
 - in Kopete, in the chat window, an "tools" menu, with all possible actions.
+
+
+
+ Blacklist support:
+====================
+
+<brunes> What should be done is, there is a "blacklisting interface", with a
+         default implementation in libkopete that just uses a list of some
+         sort. Then the protocols can re-implement it if they desire for their
+         own server-side methods.
+
+<lilachaze> Implementation: I'm thinking of a class Blacklister, and a function
+            Blacklister &KopeteAccount::blacklister(). Seems cleaner than having
+            the default implementation in KopeteAccount, which would smell of
+            Refused Bequest.
