@@ -252,13 +252,14 @@ void KopeteViewManager::slotEventDeleted( Kopete::MessageEvent *event )
 	if(!kmm)
 		return;
 
+	d->eventList.remove( event );
+	
 	if ( event->state() == Kopete::MessageEvent::Applied )
 	{
 		readMessages( kmm, false );
 	}
 	else if ( event->state() == Kopete::MessageEvent::Ignored )
 	{
-		d->eventList.remove( event );
 		bool bAnotherWithThisManager = false;
 		for( QPtrListIterator<Kopete::MessageEvent> it( d->eventList ); it; ++it )
 		{
