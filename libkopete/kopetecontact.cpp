@@ -701,21 +701,21 @@ QString KopeteContact::toolTip() const
 			QString name = formattedName();
 			if(!name.isNull())
 				tip += i18n("<br><b>Full Name:</b>&nbsp;FORMATTED NAME",
-					"<br><b>Full Name:</b>&nbsp;%1").arg(name);
+					"<br><b>Full Name:</b>&nbsp;<nobr>%1</nobr>").arg(name);
 		}
 		else if ((*it) == QString::fromLatin1("FormattedIdleTime"))
 		{
 			QString time = formattedIdleTime();
 			if(!time.isNull())
 				tip += i18n("<br><b>Idle:</b>&nbsp;FORMATTED IDLE TIME",
-					"<br><b>Idle:</b>&nbsp;%1").arg(time);
+					"<br><b>Idle:</b>&nbsp;<nobr>%1</nobr>").arg(time);
 		}
 		else if ((*it) == QString::fromLatin1("homePage"))
 		{
 			QString url = property(*it).value().toString();
 			if(!url.isNull())
 				url += i18n("<br><b>Home Page:</b>&nbsp;FORMATTED URL",
-					"<br><b>Home Page:</b>&nbsp;<a href=\"%1\">%1</a>").arg(url).arg(url);
+					"<br><b>Home Page:</b>&nbsp;<nobr><a href=\"%1\">%1</a></nobr>").arg(url).arg(url);
 		}
 		else
 		{
