@@ -27,7 +27,7 @@
 
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteview.h"
-#include "irccontact.h"
+#include "ircusercontact.h"
 #include "ircservercontact.h"
 #include "ircaccount.h"
 #include "ircprotocol.h"
@@ -38,29 +38,29 @@ IRCServerContact::IRCServerContact(IRCContactManager *contactManager, const QStr
 {
 	QObject::connect(m_engine, SIGNAL(internalError(KIRC::EngineError, const KIRCMessage &)),
 			this, SLOT(engineInternalError(KIRC::EngineError, const KIRCMessage &)));
-	
+
 	//FIXME: Have some kind of a debug option for raw input/ouput display??
 	/*QObject::connect(m_engine, SIGNAL(sentMessage(const KIRCMessage &)),
 			this, SLOT(engineSentMessage(const KIRCMessage &)));
 	QObject::connect(m_engine, SIGNAL(receivedMessage(const KIRCMessage &)),
 			this, SLOT(engineReceivedMessage(const KIRCMessage &)));*/
-	
+
 	QObject::connect( m_engine, SIGNAL(incomingNotice( const QString &, const QString &)),
 			this, SLOT(slotIncomingNotice(const QString &, const QString &)) );
-			
+
 	QObject::connect( m_engine, SIGNAL(incomingUnknown( const QString &)),
 			this, SLOT(slotAppendMessage(const QString &)) );
-			
+
 	QObject::connect( m_engine, SIGNAL(incomingConnectString( const QString &)),
 			this, SLOT(slotAppendMessage(const QString &)) );
-		
-	//FIXME:: This shouldn't add MOTD stuffs when someone uses /motd	
+
+	//FIXME:: This shouldn't add MOTD stuffs when someone uses /motd
 	QObject::connect( m_engine, SIGNAL(incomingMotd( const QStringList &)),
 			this, SLOT(slotIncomingMotd(const QStringList &)) );
-			
+
 	QObject::connect(KopeteMessageManagerFactory::factory(), SIGNAL(viewCreated(KopeteView*)),
 			this, SLOT(slotViewCreated(KopeteView*)) );
-			
+
 	updateStatus();
 }
 
@@ -73,14 +73,14 @@ void IRCServerContact::updateStatus()
 		case KIRC::Connecting:
 			setOnlineStatus( m_protocol->m_ServerStatusOffline );
 			break;
-		
+
 		case KIRC::Authentifying:
 		case KIRC::Connected:
 		case KIRC::Closing:
 			// should make some extra check here
 			setOnlineStatus( m_protocol->m_ServerStatusOnline );
 			break;
-		
+
 		default:
 			setOnlineStatus( m_protocol->m_StatusUnknown );
 	}
@@ -88,7 +88,7 @@ void IRCServerContact::updateStatus()
 
 const QString IRCServerContact::caption() const
 {
-	return i18n("%1 @ %2").arg( m_engine->nickName() ).arg( m_engine->host() );
+	return i18n("%1 @ %2").arg( m_account->mySelf()->nickName() ).arg( m_engine->host() );
 }
 
 void IRCServerContact::engineInternalError( KIRC::EngineError engineError, const KIRCMessage &ircmsg )
@@ -122,7 +122,7 @@ void IRCServerContact::engineInternalError( KIRC::EngineError engineError, const
 void IRCServerContact::slotSendMsg(KopeteMessage &, KopeteMessageManager *manager )
 {
 	manager->messageSucceeded();
-	KopeteMessage msg( manager->user(), manager->members(), 
+	KopeteMessage msg( manager->user(), manager->members(),
 		i18n("You can not talk to the server, you can only issue commands here. Type /help for supported commands."), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 	manager->appendMessage(msg);
 }
@@ -131,7 +131,7 @@ void IRCServerContact::slotAppendMessage( const QString &message )
 {
 	KopeteContactPtrList members;
 	members.append( this );
-	KopeteMessage msg( this, members, message, KopeteMessage::Internal, 
+	KopeteMessage msg( this, members, message, KopeteMessage::Internal,
 		KopeteMessage::PlainText, KopeteMessage::Chat );
 	msg.setBody( KSParser::parse( msg.escapedBody().stripWhiteSpace() ), KopeteMessage::RichText );
 	appendMessage(msg);
@@ -162,7 +162,7 @@ void IRCServerContact::appendMessage( KopeteMessage &msg )
 void IRCServerContact::slotDumpMessages()
 {
 	for( QValueList<KopeteMessage>::Iterator it = mMsgBuffer.begin(); it != mMsgBuffer.end(); ++it )
-		manager()->appendMessage(*it);	
+		manager()->appendMessage(*it);
 	mMsgBuffer.clear();
 }
 
