@@ -24,7 +24,7 @@
 
 /**
  * @author Hendrik vom Lehn <hvl@linux-4-ever.de>
- * @author Chris TenHarmsel <ctenha56@calvin.edu>
+ * @author Chris TenHarmsel <tenharmsel@users.sourceforge.net>
  */
 
  struct KopeteAwayMessage{
@@ -39,12 +39,15 @@ class QStringList;
 /**
  * @class KopeteAway kopeteaway.h 
  * 
- * KopeteAway is a singleton class that manages away messages for Kopete.  It stores a global
- * away message, as well as a list of user defined away messages.  The messages are primarily
- * configured through the ConfigModule PersonalPrefsConfig, which is a member of the Kopete class.
- * This class is used by KopeteAwayDialog, which gets it's list of user-defined away messages from
- * this.  Protocol plugins' individual away dialogs should also get away messages from this object.
- *
+ * KopeteAway is a singleton class that manages away messages
+ * for Kopete.  It stores a global away message, as well as
+ * a list of user defined away messages.  The messages are
+ * primarily configured through the ConfigModule
+ * PersonalPrefsConfig, which is a member of the Kopete class.
+ * This class is used by KopeteAwayDialog, which gets it's
+ * list of user-defined away messages from this.  Protocol
+ * plugins' individual away dialogs should also get away
+ * messages from this object.
  */
 class KopeteAway
 {
