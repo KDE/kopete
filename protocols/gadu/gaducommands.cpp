@@ -458,7 +458,7 @@ UserlistPutCommand::UserlistPutCommand( QObject* parent, const char* name )
 
 UserlistPutCommand::UserlistPutCommand( uin_t uin, const QString& password, const QStringList& contacts,
                                         QObject* parent, const char* name )
-    :GaduCommand( parent, name ), uin_(uin), password_(password), contacts_(contacts),session_(0)
+    :GaduCommand( parent, name ), session_(0), uin_(uin), password_(password), contacts_(contacts)
 {
 }
 

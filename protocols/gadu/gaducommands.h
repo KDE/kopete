@@ -61,6 +61,7 @@ private:
     QSocketNotifier *write_;
 };
 
+typedef struct gg_search gg_search_qt;
 class SearchCommand : public GaduCommand
 {
     Q_OBJECT
@@ -77,7 +78,7 @@ public:
     void searchMode3( uin_t uin, int active, int start );
     void execute();
 signals:
-    void done( struct gg_search* );
+    void done( gg_search_qt* );
 protected slots:
     void watcher();
 private:
