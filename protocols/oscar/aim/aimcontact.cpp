@@ -53,7 +53,7 @@ AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::M
 	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
 	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
 	//QObject::connect( mAccount->engine(), SIGNAL( userIsOnline( const QString& ) ), this, SLOT( userOnline( const QString& ) ) );
-	//QObject::connect( mAccount->engine(), SIGNAL( userIsOffline( const QString& ) ), this, SLOT( userOffline( const QString& ) ) );	
+	QObject::connect( mAccount->engine(), SIGNAL( userIsOffline( const QString& ) ), this, SLOT( userOffline( const QString& ) ) );	
 	QObject::connect( mAccount->engine(), SIGNAL( receivedAwayMessage( const QString&, const QString& ) ),
 	                  this, SLOT( updateAwayMessage( const QString&, const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedProfile( const QString&, const QString& ) ),
@@ -186,7 +186,7 @@ void AIMContact::userOnline( const QString& userId )
 
 void AIMContact::userOffline( const QString& userId )
 {
-	if ( userId.lower() == contactId().lower() )
+	if ( Oscar::normalize( userId ) == Oscar::normalize( contactId() ) )
 	{
 		setOnlineStatus( mProtocol->statusOffline );
 		removeProperty( mProtocol->awayMessage );
