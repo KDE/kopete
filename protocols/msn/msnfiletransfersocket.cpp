@@ -187,7 +187,6 @@ void MSNFileTransferSocket::listen(int port)
 	kdDebug(14140) << "MSNFileTransferSocket::listen: about to listen"<<endl;
 	bool listenResult = m_server->listen(1);
 	kdDebug(14140) << "MSNFileTransferSocket::listen: result: "<<  listenResult <<endl;
-	m_server->setBlocking(true);
 	QTimer::singleShot( 60000, this, SLOT(slotTimer()) );
 	kdDebug(14140) << "MSNFileTransferSocket::listen done" <<endl;
 }

@@ -617,14 +617,6 @@ QString MSNSocket::getLocalIP()
 
 	QString ip = address.nodeName();
 
-#if 0
-	// FIXME. Addresses can never have -
-	// Why is this here?
-	ip = ip.replace( "-", " " );
-	if ( ip.contains( " " ) )
-		ip = ip.left( ip.find( " " ) );
-#endif
-
 	kdDebug( 14140 ) << k_funcinfo << "IP: " << ip  <<endl;
 	//delete address;
 	return ip;
