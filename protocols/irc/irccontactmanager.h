@@ -63,6 +63,8 @@ class IRCContactManager
 		IRCContact *findContact(const QString &nick, KopeteMetaContact *m=0);
 		IRCContact *existContact( const QString &id ) const;
 
+		static IRCContact *existContact(const KIRC *engine, const QString &nick);
+
 	public slots:
 		void unregister(KopeteContact *contact);
 		void unregisterUser(KopeteContact *contact);

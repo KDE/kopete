@@ -20,8 +20,9 @@
 #include <kconfig.h>
 #include <kstandarddirs.h>
 
-#include "kopetemetacontact.h"
-#include "kopeteview.h"
+#include <kopeteaccountmanager.h>
+#include <kopetemetacontact.h>
+#include <kopeteview.h>
 
 #include "kirc.h"
 
@@ -200,6 +201,19 @@ IRCContact *IRCContactManager::findContact( const QString &id, KopeteMetaContact
 		return findChannel( id, m );
 	else
 		return findUser( id, m );
+}
+
+IRCContact *IRCContactManager::existContact( const KIRC *engine, const QString &id )
+{
+	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( IRCProtocol::protocol() );
+	QDictIterator<KopeteAccount> it(accounts);
+	for( ; it.current(); ++it )
+	{
+		IRCAccount *account = (IRCAccount *)it.current();
+		if( account && account->engine() == engine )
+			account->contactManager()->existContact(id);
+	}
+	return 0L;
 }
 
 IRCContact *IRCContactManager::existContact( const QString &id ) const

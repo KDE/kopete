@@ -16,10 +16,13 @@
 */
 #include <kdebug.h>
 
-#include "kopetetransfermanager.h"
+#include <kopetetransfermanager.h>
 
 #include "libkirc/kirctransfer.h"
 #include "libkirc/kirctransferhandler.h"
+
+#include "irccontact.h"
+#include "irccontactmanager.h"
 
 #include "irctransferhandler.h"
 
@@ -38,9 +41,15 @@ IRCTransferHandler::IRCTransferHandler()
 
 void IRCTransferHandler::transferCreated(KIRCTransfer *t)
 {
-	KopeteContact *contact = 0L; // protocol()->getAccountByEngine(t->engine())->getEntityByName(t->nick());
+	IRCContact *contact = IRCContactManager::existContact(t->engine(), t->nick());
 	QString fileName = t->fileName();
 	unsigned long fileSize = t->fileSize();
+
+	if(!contact)
+	{
+		kdDebug(14120) << k_funcinfo << "Trying to create transfer for a non existing contact(" << t->nick() << ")." << endl;
+		return;
+	}
 
 	switch( t->type() )
 	{
