@@ -3,7 +3,7 @@
 
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -23,7 +23,6 @@
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
- *
  */
 class AddContactPage : public QWidget
 {
@@ -50,14 +49,12 @@ public:
 	 */
 	virtual bool apply(KopeteAccount * , KopeteMetaContact *) = 0;
 
+signals:
+	/**
+	 * New incarnation of validateData, emit it everytime you think the current data is valid/invalid
+	 */
+	void dataValid(bool);
 };
-#endif
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
-// vim: set noet ts=4 sts=4 sw=4:
 
+#endif
+// vim: set noet ts=4 sts=4 sw=4:

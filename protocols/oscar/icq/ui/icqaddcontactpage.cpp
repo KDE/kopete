@@ -69,6 +69,8 @@ ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent, const c
 	connect(icqdata->lastName, SIGNAL(textChanged(const QString &)), this, SLOT(slotTextChanged()));
 	connect(icqdata->uin, SIGNAL(textChanged(const QString &)), this, SLOT(slotTextChanged()));
 	connect(icqdata->email, SIGNAL(textChanged(const QString &)), this, SLOT(slotTextChanged()));
+	connect(icqdata->resultView, SIGNAL(selectionChanged()),
+		this, SLOT(slotSelectionChanged()));
 
 	updateGui();
 
@@ -91,6 +93,12 @@ ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent, const c
 
 ICQAddContactPage::~ICQAddContactPage()
 {
+}
+
+void ICQAddContactPage::showEvent(QShowEvent *e)
+{
+	slotSelectionChanged();
+	AddContactPage::showEvent(e);
 }
 
 void ICQAddContactPage::slotSearchTabChanged(QWidget *tabWidget)
@@ -201,11 +209,15 @@ void ICQAddContactPage::slotSearchResult (ICQSearchResult &res, const int missed
 	{
 		removeSearch();
 		if(missed == 0)
+		{
 			icqdata->progressText->setText(i18n("Search finished"));
+		}
 		else
-			icqdata->progressText->setText(i18n("Search finished. %n search result not shown",
-							    "Search finished. %n search results not shown",
-							     missed));
+		{
+			icqdata->progressText->setText(
+				i18n("Search finished. %n search result not shown",
+				"Search finished. %n search results not shown", missed));
+		}
 
 		if(icqdata->resultView->childCount() == 1)
 			icqdata->resultView->firstChild()->setSelected(true);
@@ -254,6 +266,7 @@ void ICQAddContactPage::updateGui()
 		icqdata->startSearch->setEnabled(mAccount->isConnected());
 		icqdata->stopSearch->setEnabled(false);
 		icqdata->clearResults->setEnabled(icqdata->resultView->childCount()>0 && mAccount->isConnected());
+		slotSelectionChanged();
 
 		switch(searchMode)
 		{
@@ -298,5 +311,12 @@ bool ICQAddContactPage::validateData()
 
 	return (icqdata->resultView->selectedItem() != 0L);
 }
+
+void ICQAddContactPage::slotSelectionChanged()
+{
+	kdDebug(14200) << k_funcinfo << endl;
+	emit dataValid(icqdata->resultView->selectedItem() != 0L);
+}
+
 #include "icqaddcontactpage.moc"
 // vim: set noet ts=4 sts=4 sw=4:

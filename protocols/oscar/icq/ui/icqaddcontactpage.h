@@ -50,6 +50,10 @@ class ICQAddContactPage : public AddContactPage
 		void slotClearResults();
 		void slotSearchTabChanged(QWidget *);
 		void slotTextChanged();
+		void slotSelectionChanged();
+
+	protected:
+		void showEvent(QShowEvent *e);
 
 	private:
 		int searchMode;

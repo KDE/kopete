@@ -3,7 +3,7 @@
 
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -19,20 +19,11 @@
 
 AddContactPage::AddContactPage(QWidget *parent, const char *name ) : QWidget(parent,name)
 {
-
 }
+
 AddContactPage::~AddContactPage()
 {
-
 }
 
 #include "addcontactpage.moc"
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:

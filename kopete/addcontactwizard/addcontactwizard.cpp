@@ -1,10 +1,11 @@
 /*
-    addcontactwizard.cpp - Kopete's Add Contact Wizard
+    addcontactwizard.h - Kopete's Add Contact Wizard
 
+    Copyright (c) 2003 by Will Stephenson        <will@stevello.free-online.co.uk>
     Copyright (c) 2002 by Nick Betcher           <nbetcher@kde.org>
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -89,7 +90,7 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 		accountLVI= new QCheckListItem( protocolListView, i->accountId(), QCheckListItem::CheckBox);
 		accountLVI->setText(1,i->protocol()->displayName() + QString::fromLatin1(" ") );
 		//FIXME - I'm not sure the column 1 is a right place for the colored icon -Olivier
-		accountLVI->setPixmap( 1, i->accountIcon() ); 
+		accountLVI->setPixmap( 1, i->accountIcon() );
 		m_accountItems.insert(accountLVI,i);
 	}
 
@@ -317,16 +318,19 @@ void AddContactWizard::next()
 			if (item && item->isOn())
 			{
 				// this shouldn't happen either, but I hate crashes
-				if (!m_accountItems[item]) continue;
+				if (!m_accountItems[item])
+					continue;
 
 				AddContactPage *addPage = m_accountItems[item]->protocol()->createAddContactWidget(this, m_accountItems[item] );
-				if (!addPage) continue;
+				if (!addPage)
+					continue;
 
-				QString title = i18n( "The account name is prepended here",
-									 "%1 contact information" )
-									 .arg( item->text(0) );
+				connect(addPage, SIGNAL(dataValid(bool)),
+					this, SLOT(slotDataValid(bool)));
 				addPage->show();
-				insertPage( addPage, title, indexOf( finis ) );
+
+				insertPage( addPage, i18n( "The account name is prepended here",
+					"%1 contact information" ).arg( item->text(0) ), indexOf( finis ) );
 				protocolPages.insert( m_accountItems[item] , addPage );
 			}
 		}
@@ -369,6 +373,12 @@ void AddContactWizard::showPage( QWidget *page )
 	}
 	QWizard::showPage( page );
 }
+
+void AddContactWizard::slotDataValid(bool bOn)
+{
+	setNextEnabled(currentPage(), bOn);
+}
+
 
 #include "addcontactwizard.moc"
 

@@ -1,11 +1,11 @@
 /*
     addcontactwizard.h - Kopete's Add Contact Wizard
 
-	Copyright (c) 2003 by Will Stephenson		 <will@stevello.free-online.co.uk>
-	Copyright (c) 2002 by Nick Betcher           <nbetcher@kde.org>
+    Copyright (c) 2003 by Will Stephenson        <will@stevello.free-online.co.uk>
+    Copyright (c) 2002 by Nick Betcher           <nbetcher@kde.org>
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -53,11 +53,11 @@ private:
 	QMap <QCheckListItem*,KopeteAccount*> m_accountItems;
 	QMap <QCheckListItem*,KopeteGroup*> m_groupItems;
 	KABC::AddressBook* m_addressBook;
-	
+
 public slots:
 	virtual void accept();
 	virtual void reject();
-	
+
 	void slotProtocolListClicked( QListViewItem * );
 
 	void slotAddGroupClicked();
@@ -71,6 +71,7 @@ protected slots:
 	 * Utility function, populates the addressee list
 	 */
 	void slotLoadAddressees();
+	void slotDataValid(bool bOn);
 };
 
 #endif
