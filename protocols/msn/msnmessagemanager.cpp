@@ -1,7 +1,7 @@
 /*
     msnmessagemanager.cpp - MSN Message Manager
 
-    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -534,7 +534,8 @@ void MSNChatSession::slotRequestPicture()
 
 void MSNChatSession::slotDisplayPictureChanged()
 {
-	const MSNContact *c = static_cast<const MSNContact *>( members().getFirst() );
+	QPtrList<Kopete::Contact> mb=members();
+	MSNContact *c = static_cast<MSNContact *>( mb.first() );
 	if ( c && m_image )
 	{
 		if(c->hasProperty(Kopete::Global::Properties::self()->photo().key()))
@@ -566,8 +567,15 @@ void MSNChatSession::slotDisplayPictureChanged()
 			}
 			QString imgURL=c->property(Kopete::Global::Properties::self()->photo()).value().toString();
 			QImage scaledImg = QPixmap( imgURL ).convertToImage().smoothScale( sz, sz );
-			m_image->setPixmap( scaledImg );
+			if(!scaledImg.isNull())
+				m_image->setPixmap( scaledImg );
+			else
+			{ //the image has maybe not been transfered correctly..  force to download again
+				c->removeProperty(Kopete::Global::Properties::self()->photo());
+				//slotDisplayPictureChanged(); //don't do that or we might end in a infinite loop
+			}
 			QToolTip::add( m_image, "<qt><img src=\"" + imgURL + "\"></qt>" );
+			
 		}
 		else 
 		{
