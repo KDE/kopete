@@ -17,6 +17,8 @@
 
 #include <qlayout.h>
 #include <kconfig.h>
+#include <kdebug.h>
+#include <kcrash.h>
 
 #include <kopete.h>
 #include <preferencesdialog.h>
@@ -36,6 +38,7 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 
 	mainwindow = new KopeteWindow;
 	setMainWidget(mainwindow);
+	mainwindow->statusBar()->show();
 	
   mPref->hide();
 	
@@ -45,6 +48,12 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 
 Kopete::~Kopete()
 {
+	delete mPref;
+	delete mLibraryLoader;
+	delete mainwindow;
+
+	// Only use this if cant find crash cause :-)
+	//KCrash::setCrashHandler(Kopete::cleverKCrashHack);
 }
 void Kopete::slotPreferences()
 {
@@ -149,4 +158,24 @@ void Kopete::initPlugins()
 void Kopete::loadPlugins()
 {
 	mLibraryLoader->loadAll();
+}
+
+void Kopete::cleverKCrashHack(int)
+{
+	// do nothing
+
+	// Understand that the KDE libraries have a memory leak, and
+	// the playlist cannot be unloaded without causing a crash
+	// in QApplication::windowMapper() or something similar.
+	// this is just to prevent the KCrash window from appearing
+	// and bugging the user regularly
+
+	// someone fix the libraries.
+	kdDebug() << "Crashed.\n" << endl;
+	_exit(255);
+}
+/** No descriptions */
+KStatusBar *Kopete::statusBar()
+{
+	return mainwindow->statusBar();
 }

@@ -29,6 +29,7 @@
 #include <qlabel.h>
 #include <kpopupmenu.h>
 #include <kaction.h>
+#include <kstatusbar.h>
 
 #include "preferencesdialog.h"
 #include "aboutplugins.h"
@@ -62,15 +63,16 @@ class Kopete : public KUniqueApplication
   /** No descriptions */
   void initPlugins();
   /** No descriptions */
-  void loadPlugins();
-
-
+  KStatusBar *statusBar();
+  /** No descriptions */
 	PluginManager *plugins;
 	PreferencesDialog *mPref;
 	
 	private:
 	KopeteWindow *mainwindow;
 	LibraryLoader *mLibraryLoader;
+	static void cleverKCrashHack(int);
+	void loadPlugins();
 	
 public slots:
   void slotPreferences();

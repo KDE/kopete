@@ -7,14 +7,15 @@ KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(pare
 {
 	
 	mainwidget = new QWidget(this);
+	this->statusBar()->show();
 	QBoxLayout *layout = new QBoxLayout(mainwidget,QBoxLayout::TopToBottom);
 
 	contactlist = new ContactList(mainwidget);
-	statuslabel = new ConnectionLabel(mainwidget);
+	//statuslabel = new ConnectionLabel(mainwidget);
 	//statuslabel->setText("offline");
 	
 	layout->insertWidget(-1,contactlist);
-	layout->insertWidget(-1,statuslabel);
+	//layout->insertWidget(-1,statuslabel);
 	
 	setCentralWidget(mainwidget);
 	this->show();

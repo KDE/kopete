@@ -21,7 +21,7 @@ public:
 	
 	ContactList *contactlist;
 	
-	ConnectionLabel *statuslabel;
+	//ConnectionLabel *statuslabel;
 
 	/* Some Actions */
   KAction* actionAddContact;
