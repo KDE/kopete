@@ -55,7 +55,7 @@ public:
 	void setAway( bool isAway, const QString& awayMessage = QString::null );
 	KActionMenu* actionMenu();
 	//}
-	enum tlsConnection{ TLS_ifAvaliable, TLS_only, TLS_no };
+	enum tlsConnection{ TLS_ifAvaliable=0, TLS_only, TLS_no };
 
 public slots:
 	//{
@@ -162,7 +162,7 @@ private:
 	QValueList<QHostAddress> servers_;
 	unsigned int		serverIP;
 
-	int				lastStatus;
+//	int				lastStatus;
 	QString			lastDescription;
 };
 

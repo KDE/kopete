@@ -69,7 +69,7 @@ const char* const servers_ip[ NUM_SERVERS ] = {
 
 	setMyself( new GaduContact(  accountId().toInt(), accountId(), this, new KopeteMetaContact() ) );
 
-	lastStatus = GG_STATUS_AVAIL;
+	status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL );
 	lastDescription = QString::null;
 	
 	for ( int i = 0; i < NUM_SERVERS; i++ ) {
@@ -236,18 +236,18 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 				connectWithSSL = true;
 			}
 			else {
-				connectWithSSL = true;
+				connectWithSSL = false;
 			}
 			serverIP = 0;
 			currentServer = -1;
-			kdDebug(14100) << "#### Connecting..." << endl;
-			lastStatus = status.internalStatus();
+			status_ = status;
+			kdDebug(14100) << "#### Connecting..., tls option "<< (int)useTls() << " " << endl;
 			lastDescription = descr;
 			slotLogin( status.internalStatus(), descr );
-			status_ = status;
 			return;
 		}
 		else {
+			status_ = status;
 			if ( descr.isEmpty() ) {
 				if ( session_->changeStatus( status.internalStatus() ) != 0 )
 					return;
@@ -259,10 +259,9 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 		}
 	}
 
-	status_ = status;
-	myself()->setOnlineStatus( status_, descr );
+	myself()->setOnlineStatus( status, descr );
 
-	if ( status_.internalStatus() == GG_STATUS_NOT_AVAIL || status_.internalStatus() == GG_STATUS_NOT_AVAIL_DESCR ) {
+	if ( status.internalStatus() == GG_STATUS_NOT_AVAIL || status.internalStatus() == GG_STATUS_NOT_AVAIL_DESCR ) {
 		if ( pingTimer_ ){
 			pingTimer_->stop();
 		}
@@ -272,7 +271,6 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 void
 GaduAccount::slotLogin( int status, const QString& dscr )
 {
-	lastStatus		= status;
 	lastDescription	= dscr;
 
 	myself()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING ), dscr );
@@ -298,7 +296,6 @@ GaduAccount::slotLogoff()
 void
 GaduAccount::slotGoOnline()
 {
-	changeStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_INVISIBLE ) );
 	changeStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ) );
 }
 void
@@ -484,7 +481,18 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 {
 	bool tryReconnect = false;
 	QString pass;
-		
+
+	if ( currentServer == NUM_SERVERS || connectWithSSL ) {
+		serverIP = 0;
+		currentServer = -1;
+	}
+	else {
+		serverIP = htons( servers_[ ++currentServer ].ip4Addr() );
+		kdDebug(14100) << "trying : " << servers_ip[ currentServer ]  << endl;
+		tryReconnect = true;
+	}
+
+			
 	switch (failure) {
 		case GG_FAILURE_PASSWORD:
 			pass = password( true );
@@ -504,31 +512,19 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 			tryReconnect = true;
 			return;
 		break;
-		case GG_FAILURE_TLS:
-			if ( currentServer == NUM_SERVERS ) {
-				if ( connectWithSSL && useTls() != TLS_only ) {
-					connectWithSSL = false;
-					tryReconnect = true;
-					return;
-				}
+		default:
+			if ( connectWithSSL && useTls() != TLS_only ) {
+				kdDebug( 14100 ) << "try without tls now" << endl;
+				connectWithSSL = false;
+				tryReconnect = true;
+				currentServer = 0;
+				serverIP = 0;
 			}
 		break;
-		default:
-		break;
-	}
-
-	if ( currentServer == NUM_SERVERS ) {
-		serverIP = 0;
-		currentServer = -1;
-	}
-	else {
-		serverIP = htons( servers_[ ++currentServer ].ip4Addr() );
-		kdDebug(14100) << "trying : " << servers_ip[ currentServer ]  << endl;
-		tryReconnect = true;
 	}
 
 	if ( tryReconnect ) {
-			slotLogin( lastStatus, lastDescription );
+			slotLogin( status_.internalStatus() , lastDescription );
 	}
 	else {
 		error( i18n( "unable to connect to the Gadu-Gadu server(\"%1\")." ).arg( GaduSession::failureDescription( failure ) ),
