@@ -511,23 +511,16 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	removeProperty ( protocol()->propEmailAddress );
 
 	/*
-	 * Note: the following code gives the private email
-	 * preference over the work email if both are given.
+	 * Note: the following code adds email addresses
+	 * in such a way that only the last one will be
+	 * saved.
 	 * This might not be the desired behaviour for all.
 	 */
 	for(XMPP::VCard::EmailList::const_iterator it = vCard.emailList().begin(); it != vCard.emailList().end(); it++)
 	{
 		XMPP::VCard::Email email = (*it);
 
-		if(email.work)
-		{
-			setProperty ( protocol()->propEmailAddress, email.userid );
-		}
-		else
-		if(email.home)
-		{
-			setProperty ( protocol()->propEmailAddress, email.userid );
-		}
+		setProperty ( protocol()->propEmailAddress, email.userid );
 	}
 
 	/*

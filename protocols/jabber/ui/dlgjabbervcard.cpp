@@ -189,6 +189,17 @@ void dlgJabberVCard::assignVCard (const XMPP::VCard &vCard)
 			m_mainWidget->urlHomeEmail->setURL ("mailto:" + email.userid);
 			m_mainWidget->urlHomeEmail->setUseCursor ( !email.userid.isEmpty () );
 		}
+		else
+		// we don't support editing the following addresses but will display them
+		if(email.internet || email.x400)
+		{
+			m_mainWidget->urlHomeEmail->setText (email.userid);
+			m_mainWidget->urlHomeEmail->setURL ("mailto:" + email.userid);
+			m_mainWidget->urlHomeEmail->setUseCursor ( !email.userid.isEmpty () );
+			m_mainWidget->urlWorkEmail->setText (email.userid);
+			m_mainWidget->urlWorkEmail->setURL ("mailto:" + email.userid);
+			m_mainWidget->urlWorkEmail->setUseCursor ( !email.userid.isEmpty () );
+		}
 	}
 
 	// work information tab
