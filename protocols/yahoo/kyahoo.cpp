@@ -31,6 +31,9 @@
 #include <kdebug.h>
 #include <kiconloader.h>
 
+// System Includes
+#include <stdlib.h>
+
 #include "libyahoo2/yahoo2.h"
 #include "libyahoo2/yahoo2_callbacks.h"
 #include "libyahoo2/yahoo2_types.h"
