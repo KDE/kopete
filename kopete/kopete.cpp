@@ -257,7 +257,9 @@ ContactList *Kopete::contactList()
 void Kopete::initEmoticons()
 {
 	KStandardDirs dir;
-	mEmoticonTheme = "Default";
+	KConfig *config=KGlobal::config();
+    config->setGroup("Appearance");
+    mEmoticonTheme = config->readEntry("EmoticonTheme", "Default");
 	/* Happy emoticons */
 	/* :-) */
 	mEmoticons.smile = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/smile.png");
