@@ -65,9 +65,9 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const
 void
 GaduAccount::initActions()
 {
-	searchAction	= new KAction( i18n( "&Search for friends" ), "", 0,
+	searchAction	= new KAction( i18n( "&Search for Friends" ), "", 0,
 							this, SLOT( slotSearch() ), this, "actionSearch" );
-	listputAction	= new KAction( i18n( "Export contacts on server" ), "", 0,
+	listputAction	= new KAction( i18n( "Export Contacts on Server" ), "", 0,
 							this, SLOT( slotExportContactsList() ), this, "actionListput" );
 }
 

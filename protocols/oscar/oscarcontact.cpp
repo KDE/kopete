@@ -560,10 +560,10 @@ void OscarContact::slotRequestAuth()
 
 #if KDE_IS_VERSION( 3, 1, 90 )
 	QString reason = KInputDialog::getText(
-		i18n("Request Authorization"),i18n("Reason for requesting authorization"));
+		i18n("Request Authorization"),i18n("Reason for requesting authorization:"));
 #else
 	QString reason = KLineEditDlg::getText(
-		i18n("Request Authorization"),i18n("Reason for requesting authorization"));
+		i18n("Request Authorization"),i18n("Reason for requesting authorization:"));
 #endif
 	if(!reason.isNull())
 	{
@@ -580,10 +580,10 @@ void OscarContact::slotSendAuth()
 	// TODO: custom dialog also allowing a refusal
 #if KDE_IS_VERSION( 3, 1, 90 )
 	QString reason = KInputDialog::getText(
-		i18n("Request Authorization"),i18n("Reason for requesting authorization"));
+		i18n("Request Authorization"),i18n("Reason for granting authorization:"));
 #else
 	QString reason = KLineEditDlg::getText(
-		i18n("Grant Authorization"),i18n("Reason for granting authorization"));
+		i18n("Grant Authorization"),i18n("Reason for granting authorization:"));
 #endif
 	if(!reason.isNull())
 	{

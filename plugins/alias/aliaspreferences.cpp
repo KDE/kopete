@@ -104,7 +104,7 @@ void AliasPreferences::addAlias( QString &alias, QString &command )
 	}
 	else
 	{
-		KMessageBox::error( this, i18n("<qt>Could not add alias <b>%1</b>. The command <b>%2</b> is not a valid Kopete command.</qt>").arg(alias).arg(newAlias),i18n("Could not add alias") );
+		KMessageBox::error( this, i18n("<qt>Could not add alias <b>%1</b>. The command <b>%2</b> is not a valid Kopete command.</qt>").arg(alias).arg(newAlias),i18n("Could Not Add Alias") );
 	}
 }
 
@@ -115,12 +115,12 @@ void AliasPreferences::slotAddAlias()
 	{
 		QString alias = addDialog.alias->text();
 		QString command = addDialog.command->text();
-		
+
 		if( !KopeteCommandHandler::commandHandler()->commandHandled( alias ) )
 			addAlias( alias, command );
 		else
 		{
-			KMessageBox::error( this, i18n("<qt>Could not add alias <b>%1</b>. This command is already being handled by either another alias or Kopete itself.</qt>").arg(alias),i18n("Could not add alias") );
+			KMessageBox::error( this, i18n("<qt>Could not add alias <b>%1</b>. This command is already being handled by either another alias or Kopete itself.</qt>").arg(alias),i18n("Could Not Add Alias") );
 		}
 	}
 }
@@ -151,7 +151,7 @@ void AliasPreferences::slotEditAlias()
 			}
 			else
 			{
-				KMessageBox::error( this, i18n("<qt>Could not add alias <b>%1</b>. This command is already being handled by either another alias or Kopete itself.</qt>").arg(alias),i18n("Could not add alias") );
+				KMessageBox::error( this, i18n("<qt>Could not add alias <b>%1</b>. This command is already being handled by either another alias or Kopete itself.</qt>").arg(alias),i18n("Could Not Add Alias") );
 			}
 		}
 	}

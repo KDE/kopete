@@ -97,7 +97,7 @@ void IRCServerContact::engineInternalError( KIRC::EngineError engineError, const
 	switch( engineError )
 	{
 		case KIRC::ParsingFailed:
-			error = i18n("KIRC Error - parse error: ");
+			error = i18n("KIRC Error - Parse error: ");
 			break;
 		case KIRC::UnknownCommand:
 			error = i18n("KIRC Error - Unknown command: ");
