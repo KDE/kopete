@@ -471,7 +471,7 @@ void OscarContact::slotParseUserInfo(const UserInfo &u)
 		removeProperty(Kopete::Global::Properties::self()->onlineSince());
 	}
 
-	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() << "'" << endl;
+	//kdDebug(14150) << k_funcinfo << "Called for '" << displayName() << "'" << endl;
 	mInfo.updateInfo(u); // merge data from mInfo and u
 }
 

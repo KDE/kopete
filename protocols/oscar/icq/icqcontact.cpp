@@ -20,8 +20,6 @@
 #include "icqprotocol.h"
 #include "icqaccount.h"
 
-#include <qapplication.h>
-
 #include <kaction.h>
 #include <kactionclasses.h>
 #include <kdebug.h>
@@ -127,120 +125,20 @@ void ICQContact::slotContactChanged(const UserInfo &u)
 	/*kdDebug(14190) << k_funcinfo << "Called for '"
 		<< displayName() << "', contactName()=" << contactName() << endl;*/
 	QStringList capList;
-
-	if (hasCap(CAP_KOPETE))
+	// Append client name and version in case we found one
+	if (!mInfo.clientName.isEmpty())
 	{
-		capList << i18n("Kopete %1").arg(mInfo.clientVersion);
-	}
-	else if (hasCap(CAP_MICQ))
-	{
-		capList << i18n("MICQ");
-		//capList << i18n("MICQ %1").arg(mInfo.clientVersion);
-	}
-	else if (hasCap(CAP_SIMNEW) || hasCap(CAP_SIMOLD))
-	{
-		capList << i18n("SIM %1").arg(mInfo.clientVersion);
-	}
-	else if (hasCap(CAP_TRILLIANCRYPT) || hasCap(CAP_TRILLIAN))
-	{
-		capList << i18n("Trillian");
-	}
-	else if (hasCap(CAP_MACICQ))
-	{
-		capList << i18n("MacICQ");
-	}
-	else if (hasCap(CAP_IS_WEB))
-	{
-		kdDebug(14190) << k_funcinfo << "'"
-			<< displayName() << "' client protocol version = " << mInfo.version << endl;
-
-		switch (mInfo.version)
+		if (!mInfo.clientVersion.isEmpty())
 		{
-			case 10:
-				capList << i18n("ICQ 2003b");
-				break;
-			case 9:
-				capList << i18n("ICQ Lite");
-				break;
-			default:
-				capList << i18n("ICQ2go");
+			capList << i18n("Translators: client-name client-version",
+				"%1 %2").arg(mInfo.clientName, mInfo.clientVersion);
+		}
+		else
+		{
+			capList << mInfo.clientName;
 		}
 	}
-	else if (hasCap(CAP_BUDDYICON)) // only gaim seems to advertize this on ICQ
-	{
-		capList << i18n("Gaim");
-	}
-	else if (hasCap(CAP_XTRAZ))
-	{
-		capList << i18n("ICQ 4.0 Lite");
-	}
-	else if ((hasCap(CAP_STR_2001) || hasCap(CAP_ICQSERVERRELAY)) &&
-		hasCap(CAP_IS_2001))
-	{
-		capList << i18n("ICQ 2001");
-	}
-	else if ((hasCap(CAP_STR_2001) || hasCap(CAP_ICQSERVERRELAY)) &&
-		hasCap(CAP_STR_2002))
-	{
-		capList << i18n("ICQ 2002");
-	}
-	else if (hasCap(CAP_RTFMSGS) && hasCap(CAP_UTF8) &&
-		hasCap(CAP_ICQSERVERRELAY) && hasCap(CAP_ISICQ))
-	{
-		capList << i18n("ICQ 2003a");
-	}
-	else if (hasCap(CAP_ICQSERVERRELAY) && hasCap(CAP_ISICQ))
-	{
-		capList << i18n("ICQ 2001b");
-	}
-	else if ((mInfo.version == 7) && hasCap(CAP_RTFMSGS))
-	{
-		capList << i18n("GnomeICU");
-	}
-	else // some client we could not detect using capabilities
-	{
-		switch (mInfo.lastInfoUpdateTime > 0)
-		{
-			case 0xFFFFFFFFL:
-				if ((mInfo.lastExtStatusUpdateTime == 0xFFFFFFFFL) &&
-					(mInfo.lastExtInfoUpdateTime == 0xFFFFFFFFL))
-				{
-					capList << i18n("Gaim");
-				}
-				else
-				{
-					if (mInfo.lastExtStatusUpdateTime & 0x80000000)
-						capList << i18n("Miranda alpha");
-					else
-						capList << i18n("Miranda");
-				}
-				break;
-			case 0xFFFFFF8FL:
-				capList << i18n("StrICQ");
-				break;
-			case 0xFFFFFF42L:
-				capList << i18n("mICQ");
-				break;
-			case 0xFFFFFFBEL:
-				capList << i18n("alicq");
-				break;
-			case 0xFFFFFF7FL:
-				capList << i18n("&RQ");
-				break;
-			case 0xFFFFFFABL:
-				capList << i18n("YSM");
-				break;
-			case 0x3AA773EEL:
-				if ((mInfo.lastExtStatusUpdateTime == 0x3AA66380L) &&
-					(mInfo.lastExtInfoUpdateTime == 0x3A877A42L))
-				{
-					capList << i18n("libicq2000");
-				}
-				break;
-		}
-	}
-
-
+	// and now for some general informative capabilities
 	if (hasCap(CAP_UTF8))
 		capList << i18n("UTF-8");
 	if (hasCap(CAP_RTFMSGS))
@@ -251,10 +149,9 @@ void ICQContact::slotContactChanged(const UserInfo &u)
 		capList << i18n("Groupchat");
 
 	if (capList.count() > 0)
-	{
 		setProperty(mProtocol->clientFeatures, capList.join(", "));
-		//kdDebug(14190) << k_funcinfo << "Client Features: " << caps << endl;
-	}
+	else
+		removeProperty(mProtocol->clientFeatures);
 
 	unsigned int newStatus = 0;
 	mInvisible = (mInfo.icqextstatus & ICQ_STATUS_IS_INVIS);
@@ -641,7 +538,7 @@ void ICQContact::slotUpdShortInfo(const int seq, const ICQSearchResult &inf)
 	else
 		removeProperty("emailAddress");*/
 
-	if ( contactName() == displayName() && !shortInfo.nickName.isEmpty() )
+	if (contactName() == displayName() && !shortInfo.nickName.isEmpty())
 	{
 		kdDebug(14200) << k_funcinfo <<
 			"setting new displayname for former UIN-only Contact" << endl;

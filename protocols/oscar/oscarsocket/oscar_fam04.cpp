@@ -383,10 +383,11 @@ void OscarSocket::parseIM(Buffer &inbuf)
 			{
 				kdDebug(14150) << k_funcinfo << "IM received on channel 2 from '" << u.sn << "'" << endl;
 				TLV tlv5tlv = inbuf.getTLV();
-				kdDebug(14150) << k_funcinfo << "The first TLV is of type " << tlv5tlv.type << endl;
+				//kdDebug(14150) << k_funcinfo << "The first TLV is of type " << tlv5tlv.type << endl;
 				if (tlv5tlv.type != 0x0005)
 				{
-					kdDebug(14150) << k_funcinfo << "Aborting because first TLV != TLV(5)" << endl;
+					kdDebug(14150) << k_funcinfo <<
+						"Aborting because first TLV != TLV(5)" << endl;
 					break;
 				}
 
@@ -405,7 +406,8 @@ void OscarSocket::parseIM(Buffer &inbuf)
 				TLV *msgTLV = findTLV(lst,0x2711);  //message tlv
 				if(!msgTLV)
 				{
-					kdDebug(14150) << k_funcinfo << "Aborting because TLV(10001) wasn't found (no message?)" << endl;
+					kdDebug(14150) << k_funcinfo <<
+						"Aborting because TLV(10001) wasn't found (no message?)" << endl;
 					break;
 				}
 
@@ -448,8 +450,14 @@ void OscarSocket::parseIM(Buffer &inbuf)
 						parseAdvanceMessage(messageBuf, u, ack);
 						break;
 					}
+
 					default: // TODO
+					{
+						kdDebug(14150) << k_funcinfo <<
+							"Unsupported TYPE-2 message, capability flag is " <<
+							capFlag << endl;
 						break;
+					}
 				} // END switch(capFlag)
 
 				break;
@@ -893,7 +901,7 @@ void OscarSocket::parseMessage(const UserInfo &u, OscarMessage &message, const B
 void OscarSocket::sendIM(const QString &message, OscarContact *contact, bool isAuto)
 {
 	//check to see if we have a direct connection to the contact
-	#if 0
+#if 0
 	OscarConnection *dc = mDirectIMMgr->findConnection(contact->contactName());
 	if (dc)
 	{
@@ -904,7 +912,7 @@ void OscarSocket::sendIM(const QString &message, OscarContact *contact, bool isA
 		dc->sendIM(message, isAuto);
 		return;
 	}
-	#endif
+#endif
 
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_SENDMSG), msg='" << message <<
 		"' to '" << contact->contactName() << "'" << endl;
@@ -1051,7 +1059,7 @@ void OscarSocket::sendIM(const QString &message, OscarContact *contact, bool isA
 void OscarSocket::sendWarning(const QString &target, bool isAnonymous)
 {
 	Buffer outbuf;
-	outbuf.addSnac(0x0004,0x0008,0x0000,0x00000000);
+	outbuf.addSnac(OSCAR_FAM_4,0x0008,0x0000,0x00000000);
 	if (isAnonymous)
 		outbuf.addWord(0x0001);
 	else
@@ -1062,7 +1070,7 @@ void OscarSocket::sendWarning(const QString &target, bool isAnonymous)
 }
 
 
-
+#if 0
 /* Request, deny, or accept a rendezvous session with someone
 type == 0: request
 type == 1: deny
@@ -1071,7 +1079,6 @@ type == 2: accept
 void OscarSocket::sendRendezvous(const QString &/*sn*/, WORD /*type*/, DWORD /*rendezvousType*/, const KFileItem */*finfo*/)
 {
 	kdDebug(14150) << "DISABLED!" << endl;
-#if 0
 	OncomingSocket *sockToUse = serverSocket(rendezvousType);
 	Buffer outbuf;
 	outbuf.addSnac(0x0004,0x0006,0x0000,0x00000000);
@@ -1175,7 +1182,6 @@ void OscarSocket::sendRendezvous(const QString &/*sn*/, WORD /*type*/, DWORD /*r
 		sockToUse->mSocket->host() << ", port " << sockToUse->mSocket->port() << endl;
 
 	sendBuf(outbuf,0x02);
-#endif
 }
 
 
@@ -1185,7 +1191,6 @@ void OscarSocket::sendRendezvous(const QString &/*sn*/, WORD /*type*/, DWORD /*r
 	type == 1: deny
 	type == 2: accept
 */
-#if 0
 void OscarSocket::sendDirectIMRequest(const QString &sn)
 {
 	sendRendezvous(sn,0x0000,AIM_CAPS_IMIMAGE);

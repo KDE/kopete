@@ -1046,17 +1046,17 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 			}
 			case 0x000c: // CLI2CLI
 			{
-				u.localip = htonl(tlvBuf.getDWord());
-				u.port = tlvBuf.getDWord();
-				u.fwType = tlvBuf.getByte();
-				u.version = tlvBuf.getWord();
+				u.localip = htonl(tlvBuf.getDWord()); // DC internal ip address
+				u.port = tlvBuf.getDWord(); // DC tcp port
+				u.fwType = tlvBuf.getByte(); // DC type
+				u.version = tlvBuf.getWord(); // DC protocol version
 				u.dcCookie = tlvBuf.getDWord(); // DC auth cookie
-				u.clientFeatures = tlvBuf.getDWord();
-				u.lastInfoUpdateTime = tlvBuf.getDWord();
-				u.lastExtInfoUpdateTime = tlvBuf.getDWord();
-				u.lastExtStatusUpdateTime = tlvBuf.getDWord();
+				u.webFrontPort = tlvBuf.getDWord(); // Web front port
+				u.clientFeatures = tlvBuf.getDWord(); // Client features
+				u.lastInfoUpdateTime = tlvBuf.getDWord(); // last info update time
+				u.lastExtInfoUpdateTime = tlvBuf.getDWord(); // last ext info update time (i.e. icqphone status)
+				u.lastExtStatusUpdateTime = tlvBuf.getDWord(); //last ext status update time (i.e. phonebook)
 				tlvBuf.getWord(); // unknown
-				// ignore the rest of the packet for now
 				break;
 			}
 			case 0x000d: //capability info
@@ -1071,7 +1071,9 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 				break;
 			}
 			case 0x001e: // unknown, empty
+			{
 				break;
+			}
 			default: // unknown info type
 			{
 				/*kdDebug(14150) << k_funcinfo << "Unknown TLV(" << t.type <<
@@ -1082,6 +1084,149 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 		tlvBuf.clear(); // unlink tmpBuf from tlv data
 		delete [] t.data; // get rid of tlv data.
 	} // END for (unsigned int i=0; i<tlvlen; i++)
+
+
+	if (u.capabilities != 0)
+	{
+		bool clientMatched = false;
+		if (u.hasCap(CAP_KOPETE))
+		{
+			u.clientName=i18n("Kopete");
+			clientMatched=true;
+		}
+		else if (u.hasCap(CAP_MICQ))
+		{
+			u.clientName=i18n("MICQ");
+			clientMatched=true;
+		}
+		else if (u.hasCap(CAP_SIMNEW) || u.hasCap(CAP_SIMOLD))
+		{
+			u.clientName=i18n("SIM");
+			clientMatched=true;
+		}
+		else if (u.hasCap(CAP_TRILLIANCRYPT) || u.hasCap(CAP_TRILLIAN))
+		{
+			u.clientName=i18n("Trillian");
+			clientMatched=true;
+		}
+		else if (u.hasCap(CAP_MACICQ))
+		{
+			u.clientName=i18n("MacICQ");
+			clientMatched=true;
+		}
+		else // some client we could not detect using capabilities
+		{
+			kdDebug(14150) << k_funcinfo << "checking update times" << endl;
+			kdDebug(14150) << k_funcinfo << u.lastInfoUpdateTime << endl;
+			kdDebug(14150) << k_funcinfo << u.lastExtStatusUpdateTime << endl;
+			kdDebug(14150) << k_funcinfo << u.lastExtInfoUpdateTime << endl;
+
+			clientMatched=true; // default case will set it to false again if we did not find anything
+			switch (u.lastInfoUpdateTime)
+			{
+				case 0xFFFFFFFFL:
+					if ((u.lastExtStatusUpdateTime == 0xFFFFFFFFL) &&
+						(u.lastExtInfoUpdateTime == 0xFFFFFFFFL))
+					{
+						kdDebug(14150) << k_funcinfo << "update times revealed GAIM" << endl;
+						u.clientName=i18n("Gaim");
+					}
+					else
+					{
+						kdDebug(14150) << k_funcinfo << "update times revealed MIRANDA" << endl;
+						if (u.lastExtStatusUpdateTime & 0x80000000)
+							u.clientName=i18n("Miranda alpha");
+						else
+							u.clientName=i18n("Miranda");
+					}
+					break;
+				case 0xFFFFFF8FL:
+					u.clientName=i18n("StrICQ");
+					break;
+				case 0xFFFFFF42L:
+					u.clientName=i18n("mICQ");
+					break;
+				case 0xFFFFFFBEL:
+					u.clientName=i18n("alicq");
+					break;
+				case 0xFFFFFF7FL:
+					u.clientName=i18n("&RQ");
+					break;
+				case 0xFFFFFFABL:
+					u.clientName=i18n("YSM");
+					break;
+				case 0x3AA773EEL:
+					if ((u.lastExtStatusUpdateTime == 0x3AA66380L) &&
+						(u.lastExtInfoUpdateTime == 0x3A877A42L))
+					{
+						u.clientName=i18n("libicq2000");
+					}
+					break;
+				default:
+				{
+					kdDebug(14150) << k_funcinfo <<
+						"Could not detect client from update times" << endl;
+					clientMatched=false;
+				}
+			}
+		}
+
+
+		if (!clientMatched) // now the fuzzy clientsearch starts =)
+		{
+			kdDebug(14190) << k_funcinfo <<
+					"Client fuzzy search..." << endl;
+			if (u.hasCap(CAP_IS_WEB))
+			{
+				kdDebug(14190) << k_funcinfo <<
+					"Client protocol version = " << u.version << endl;
+				switch (u.version)
+				{
+					case 10:
+						u.clientName=i18n("ICQ 2003b");
+						break;
+					case 9:
+						u.clientName=i18n("ICQ Lite");
+						break;
+					default:
+						u.clientName=i18n("ICQ2go");
+				}
+			}
+			else if (u.hasCap(CAP_BUDDYICON)) // only gaim seems to advertize this on ICQ
+			{
+				u.clientName=i18n("Gaim");
+			}
+			else if (u.hasCap(CAP_XTRAZ))
+			{
+				u.clientName=i18n("ICQ 4.0 Lite");
+			}
+			else if ((u.hasCap(CAP_STR_2001) || u.hasCap(CAP_ICQSERVERRELAY)) &&
+				u.hasCap(CAP_IS_2001))
+			{
+				u.clientName=i18n("ICQ 2001");
+			}
+			else if ((u.hasCap(CAP_STR_2001) || u.hasCap(CAP_ICQSERVERRELAY)) &&
+				u.hasCap(CAP_STR_2002))
+			{
+				u.clientName=i18n("ICQ 2002");
+			}
+			else if (u.hasCap(CAP_RTFMSGS) && u.hasCap(CAP_UTF8) &&
+				u.hasCap(CAP_ICQSERVERRELAY) && u.hasCap(CAP_ISICQ))
+			{
+				u.clientName=i18n("ICQ 2003a");
+			}
+			else if (u.hasCap(CAP_ICQSERVERRELAY) && u.hasCap(CAP_ISICQ))
+			{
+				u.clientName=i18n("ICQ 2001b");
+			}
+			else if ((u.version == 7) && u.hasCap(CAP_RTFMSGS))
+			{
+				u.clientName=i18n("GnomeICU");
+			}
+		}
+		kdDebug(14150) << k_funcinfo << "|| clientName     = " << u.clientName << endl;
+		kdDebug(14150) << k_funcinfo << "|| clientVersion  = " << u.clientVersion << endl;
+	}
 
 	return true;
 }
@@ -1811,6 +1956,7 @@ void UserInfo::updateInfo(UserInfo other)
 	{
 		//kdDebug(14150)<< k_funcinfo << "Merging capabilities" << endl;
 		capabilities = other.capabilities;
+		clientName = other.clientName;
 		clientVersion = other.clientVersion;
 	}
 

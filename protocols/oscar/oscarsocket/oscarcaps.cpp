@@ -19,14 +19,14 @@
 #include "oscarsocket.h"
 #include <kdebug.h>
 
-DWORD OscarSocket::parseCap(char *cap)
+int OscarSocket::parseCap(char *cap)
 {
-	DWORD capflag = 0x00000000;
+	int capflag = -1;
 	for (int i = 0; i < CAP_LAST; i++)
 	{
 		if (memcmp(&oscar_caps[i], cap, 16) == 0)
 		{
-			capflag |= (1 << i);
+			capflag = i;
 			break; // should only match once...
 		}
 	}

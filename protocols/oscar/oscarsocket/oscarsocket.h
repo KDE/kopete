@@ -79,7 +79,8 @@ class UserInfo
 		DWORD icqextstatus;  // TLV 0x06 ICQ-only
 
 		DWORD capabilities; // TLV 0x0D
-		QString clientVersion;
+		QString clientVersion; // extracted from caps
+		QString clientName; // extracted from caps and other parts
 
 		long sessionlen; // TLV 0x0F
 
@@ -90,6 +91,7 @@ class UserInfo
 		BYTE fwType;
 		WORD version;
 		DWORD dcCookie;
+		DWORD webFrontPort;
 		DWORD clientFeatures;
 		DWORD lastInfoUpdateTime;
 		DWORD lastExtInfoUpdateTime;
@@ -730,7 +732,7 @@ class OscarSocket : public OscarConnection
 		 * type == 1: deny
 		 * type == 2: accept
 		 */
-		void sendRendezvous(const QString &sn, WORD type, DWORD rendezvousType, const KFileItem *finfo=0L);
+		//void sendRendezvous(const QString &sn, WORD type, DWORD rendezvousType, const KFileItem *finfo=0L);
 
 		/** Sends a 0x0013,0x0002 (requests SSI rights information) */
 		void sendSSIRightsRequest();
@@ -771,17 +773,23 @@ class OscarSocket : public OscarConnection
 		void parseAuthReply(Buffer &inbuf);
 
 		/**
-		* Adds contacts to the "client-side" contactlist, we probably have to call this after
-		* login with ALL our contactnames and when adding a new contact
-		*/
+		 * Adds contacts to the "client-side" contactlist, we probably have to call this after
+		 * login with ALL our contactnames and when adding a new contact
+		 */
 		void sendBuddylistAdd(QStringList &contacts);
 		void sendBuddylistDel(QStringList &contacts);
 
 		// see oscarcaps.cpp
-		DWORD parseCap(char *cap);
+		/**
+		 * parses a single capability (length must be 16 bytes)
+		 * @return The capability index (see CAP_* vars), -1 in case
+		 * of an unknown cap
+		 */
+		int parseCap(char *cap);
 		//DWORD parseCapString(char *cap);
 		const QString capToString(char *cap);
 		const QString capName(int capNumber); // return CAP_ string for cap number
+
 
 	private slots:
 		/** Immediately send data */
