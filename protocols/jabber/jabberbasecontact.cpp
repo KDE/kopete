@@ -86,7 +86,6 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 	// only update the nickname if its not empty
 	if ( !item.name ().isEmpty () )
 	{
-		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Display name not set, updating." << endl;
 		metaContact()->setDisplayName ( item.name () );
 	}
 
