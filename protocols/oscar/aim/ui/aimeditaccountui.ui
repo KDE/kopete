@@ -193,7 +193,7 @@
                             </size>
                         </property>
                         <property name="text">
-                            <string>&lt;i&gt;To connect to the AOL Instant Messaging network, you will need to use a screen name from AIM, AOL, or @mac.&lt;br&gt;&lt;br&gt;If you do not currently have an AIM screen name, you may register for one at the site linked below.&lt;/i&gt;</string>
+                            <string>&lt;i&gt;To connect to the AOL Instant Messaging network, you will need to use a screen name from AIM, AOL, or .mac.&lt;br&gt;&lt;br&gt;If you do not currently have an AIM screen name, you may register for one at the site linked below.&lt;/i&gt;</string>
                         </property>
                         <property name="alignment">
                             <set>WordBreak|AlignTop</set>
