@@ -3,8 +3,11 @@
 METASOURCES = ignore_this_warning.moc
 
 noinst_LTLIBRARIES = libiris_xmpp_core.la
+AM_CPPFLAGS = $(IDN_CPPFLAGS)
 INCLUDES = -I$(srcdir)/../include -I$(srcdir)/../xmpp-core -I$(srcdir)/../xmpp-im -I$(srcdir)/../../cutestuff/util -I$(srcdir)/../../cutestuff/network -I$(srcdir)/../../qca/src $(all_includes)
 
+libiris_xmpp_core_la_CPPFLAGS = $(IDN_CPPFLAGS)
+libiris_xmpp_core_la_LDFLAGS = $(IDN_LDFLAGS) $(IDN_LIBS)
 libiris_xmpp_core_la_SOURCES = \
 	connector.cpp \
 	jid.cpp \
