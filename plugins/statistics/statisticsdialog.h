@@ -30,7 +30,7 @@ class StatisticsDialog : public KDialogBase
 	private:
 		QString generateHTMLChart(const int *hours, const int *hours2, const int *hours3, const QString caption, const QString color);
 		QString generateHTMLChartBar(int height, const QString color, const QString caption);
-		QString StatisticsDialog::stringFromSeconds(const int seconds);
+		QString stringFromSeconds(const int seconds);
 		
 		StatisticsWidget *mainWidget;
 		KHTMLPart *generalHTMLPart;
