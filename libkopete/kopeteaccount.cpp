@@ -252,7 +252,7 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength ) 
 	QString prompt;
 	if ( error )
 	{
-		prompt = i18n( "<b>The password was wrong!</b> Please re-enter your"\
+		prompt = i18n( "<b>The password was wrong;</b> please re-enter your"\
 			" password for %1 account <b>%2</b>" ).arg( protocol()->displayName(),
 				accountId() );
 	}

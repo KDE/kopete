@@ -154,8 +154,8 @@ KopeteAway::KopeteAway() : QObject( kapp , "KopeteAway")
 	}
 	else
 	{
-		d->awayMessageList.append( i18n( "Sorry, I'm busy right now" ) );
-		d->awayMessageList.append( i18n( "I'm gone right now, but I'll be back later" ) );
+		d->awayMessageList.append( i18n( "Sorry, I am busy right now" ) );
+		d->awayMessageList.append( i18n( "I am gone right now, but I will be back later" ) );
 
 		/* Save this list to disk */
 		save();

@@ -268,7 +268,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 	{
 		int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 
-		QString text = i18n( "%2 is now %1!" ).arg( m_metaContact->statusString(), m_metaContact->displayName() );
+		QString text = i18n( "%2 is now %1." ).arg( m_metaContact->statusString(), m_metaContact->displayName() );
 
 		/**
 		 * Yes, I know this is a funky order. However, it works as expected this way

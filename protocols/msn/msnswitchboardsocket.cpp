@@ -96,8 +96,8 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 	{
 		case 208:
 		{
-			QString msg = i18n( "Invalid user! \n"
-				"This MSN user does not exist. Please check the MSN ID." );
+			QString msg = i18n( "Invalid user:\n"
+				"this MSN user does not exist; please check the MSN ID." );
 			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 			userLeftChat(m_msgHandle , i18n("user never joined"));
 			break;

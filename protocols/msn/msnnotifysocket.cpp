@@ -114,7 +114,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 			      "MSN Error: %1<br>"
 			      "please send us a detailed bug report "
 			      "at kopete-devel@kde.org containing the raw debug output on the "
-			      "console (in gzipped format, as it is probably a lot of output!)" ).arg(code) ,
+			      "console (in gzipped format, as it is probably a lot of output.)" ).arg(code) ,
 			i18n( "MSN Internal Error" ) );
 		break;
 
@@ -146,9 +146,9 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 215:
 	{
 		QString msg = i18n( "<qt>The user '%1' already exists in this group on the MSN server;<br>"
-			"if Kopete doesn't show the user, please send us a detailed bug report "
+			"if Kopete does not show the user, please send us a detailed bug report "
 			"at kopete-devel@kde.org containing the raw debug output on the "
-			"console (in gzipped format, as it is probably a lot of output!)</qt>" ).arg(m_tmpLastHandle);
+			"console (in gzipped format, as it is probably a lot of output.)</qt>" ).arg(m_tmpLastHandle);
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
@@ -169,7 +169,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 223:
 	{
 		QString msg = i18n( "You have reached the maximum number of groups:\n"
-			"MSN doesn't support more than 30 groups." );
+			"MSN does not support more than 30 groups." );
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
@@ -193,7 +193,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 710:
 	{
-		QString msg = i18n( "You can't open a Hotmail inbox because you don't have an MSN account with a valid "
+		QString msg = i18n( "You cannot open a Hotmail inbox because you do not have an MSN account with a valid "
 			"Hotmail or MSN mailbox." );
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
 		break;

@@ -572,7 +572,7 @@ void OscarAccount::slotGotDirectIMRequest(QString sn)
 	QString message =
 	i18n("%1 has requested a direct IM session with you. " \
 		"Direct IM sessions allow the remote user to see your IP " \
-		"address, which can lead to security problems if you don't " \
+		"address, which can lead to security problems if you do not " \
 		"trust him/her. Do you want to establish a direct connection " \
 		"to %2?")
 #if QT_VERSION < 0x030200

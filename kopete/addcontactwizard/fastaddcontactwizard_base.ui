@@ -180,7 +180,7 @@
                         </property>
                         <property name="text">
                             <string>&lt;p&gt;&lt;h2&gt;Contact added.&lt;/h2&gt;&lt;/p&gt;
-&lt;p&gt;That was &lt;i&gt;fast!&lt;/i&gt;&lt;/p&gt;</string>
+&lt;p&gt;That was &lt;i&gt;fast.&lt;/i&gt;&lt;/p&gt;</string>
                         </property>
                     </widget>
                     <spacer>

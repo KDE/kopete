@@ -673,7 +673,7 @@
                                 </property>
                                 <property name="text">
                                     <string>&lt;i&gt;&lt;ul&gt;&lt;li&gt;The information in the local IP and port fields apply to all Jabber accounts.&lt;/li&gt;
-&lt;li&gt;You can leave the local IP address empty if you don't use NAT.&lt;/li&gt;
+&lt;li&gt;You can leave the local IP address empty if you do not use NAT.&lt;/li&gt;
 &lt;li&gt;A hostname is also valid.&lt;/li&gt;
 &lt;li&gt;Changes to these fields will only take effect the next time you start Kopete.&lt;/li&gt;&lt;li&gt;The Proxy JID can be configured per account.&lt;/li&gt;&lt;/ul&gt;&lt;/i&gt;</string>
                                 </property>

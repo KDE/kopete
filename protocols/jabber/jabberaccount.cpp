@@ -299,7 +299,7 @@ void JabberAccount::errorConnectionLost ()
 	KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
 									KMessageBox::Error,
 									i18n ("Your connection to the server has been lost in the meantime. "
-									"This means that your last action couldn't complete successfully. "
+									"This means that your last action could not complete successfully. "
 									"Please reconnect and try again."), i18n ("Jabber Error") );
 
 }
