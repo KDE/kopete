@@ -26,7 +26,7 @@ libgroupwise_la_SOURCES = connector.cpp bytestream.cpp tlshandler.cpp \
 			request.cpp requestfactory.cpp safedelete.cpp response.cpp client.cpp task.cpp \
 	rtf.cc
 libgroupwise_la_LDFLAGS = -no-undefined $(all_libraries)
-libgroupwise_la_LIBADD = tasks/libgroupwise_tasks.la -lqt-mt qca/src/libqca.la \
+libgroupwise_la_LIBADD = tasks/libgroupwise_tasks.la -lqt-mt qca/src/libqca.la 
 
 tests_COMPILE_FIRST = libgroupwise.la libgwtest.la
 
