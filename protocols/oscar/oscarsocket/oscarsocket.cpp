@@ -182,6 +182,8 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	idle=false;
 	mDirectConnnectionCookie=rand();
 	mAccount=account;
+	mDirectIMMgr=0L;
+	mFileTransferMgr=0L;
 
 	// from OscarConnection
 	connect(this, SIGNAL(connectionClosed(QString)), this, SLOT(slotConnectionClosed()));
@@ -197,6 +199,7 @@ OscarSocket::~OscarSocket()
 	{
 		clearPendingData();
 		close();
+		slotConnectionClosed();
 	}
 
 	if (mCookie)
@@ -241,14 +244,20 @@ void OscarSocket::slotConnectionClosed()
 	clearPendingData();
 	kdDebug(14150) << k_funcinfo << "Socket state is " << state() << endl;
 
-	disconnect(this, SIGNAL(connAckReceived()));
-	disconnect(this, SIGNAL(connected()));
+	QObject::disconnect(this, SIGNAL(connAckReceived()));
+	QObject::disconnect(this, SIGNAL(connected()));
 
 	if (mDirectIMMgr)
+	{
 		delete mDirectIMMgr;
+		mDirectIMMgr=0L;
+	}
 
 	if (mFileTransferMgr)
+	{
 		delete mFileTransferMgr;
+		mFileTransferMgr=0L;
+	}
 
 	kdDebug(14150) << k_funcinfo << "emitting statusChanged(OSCAR_OFFLINE)" << endl;
 	emit statusChanged(OSCAR_OFFLINE);
@@ -2116,8 +2125,8 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 		outbuf.addWord(0x0000);
 	}
 
-	outbuf.addWord(0x0003); // TLV.Type(0x03) - request an ack from server
-	outbuf.addWord(0x0000);
+//	outbuf.addWord(0x0003); // TLV.Type(0x03) - request an ack from server
+//	outbuf.addWord(0x0000);
 
 	outbuf.addWord(0x0006); // TLV.Type(0x06) - store message if recipient offline
 	outbuf.addWord(0x0000);
@@ -2149,6 +2158,8 @@ void OscarSocket::parseUserOffline(Buffer &inbuf)
 
 void OscarSocket::sendUserProfileRequest(const QString &sn)
 {
+	// docs: http://iserverd.khstu.ru/oscar/snac_02_05.html
+
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
 
 	Buffer outbuf;
@@ -2169,6 +2180,8 @@ void OscarSocket::sendUserProfileRequest(const QString &sn)
 
 void OscarSocket::parseUserProfile(Buffer &inbuf)
 {
+	// docs: http://iserverd.khstu.ru/oscar/snac_02_06.html
+
 	UserInfo u = parseUserInfo(inbuf);
 	QPtrList<TLV> tl = inbuf.getTLVList();
 	tl.setAutoDelete(TRUE);
