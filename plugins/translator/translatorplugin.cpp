@@ -38,7 +38,6 @@
 #include "kopetemetacontact.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
-#include "kopeteviewmanager.h"
 #include "kopeteview.h"
 
 #include "translatorplugin.h"
@@ -500,10 +499,10 @@ void TranslatorPlugin::slotSetLanguage()
 
 void TranslatorPlugin::slotTranslateChat()
 {
-	if(!m_currentMessageManager)
+	if(!m_currentMessageManager || !m_currentMessageManager->view())
 		return;
 
-	KopeteMessage msg = KopeteViewManager::viewManager()->view(m_currentMessageManager,false)->currentMessage();
+	KopeteMessage msg = m_currentMessageManager->view()->currentMessage();
 	QString body=msg.plainBody();
 	if(body.isEmpty())
 		return;
@@ -540,8 +539,12 @@ void TranslatorPlugin::slotTranslateChat()
 				kdDebug(14308) << "TranslatorPlugin::slotTranslateChat : empty string returned"  << endl;
 				return;
 			}
+			//if the user close the window before the translation arrive, return
+			if(!m_currentMessageManager || !m_currentMessageManager->view())
+				return;
+
 			msg.setBody(translated);
-			KopeteViewManager::viewManager()->view(m_currentMessageManager,false)->setCurrentMessage(msg);
+			m_currentMessageManager->view()->setCurrentMessage(msg);
 			return;
 		}
 	}

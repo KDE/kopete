@@ -41,7 +41,6 @@
 #include <sys/utsname.h>
 
 #include "../kopete/kopete.h"
-#include "kopeteviewmanager.h"
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
@@ -1282,9 +1281,8 @@ void JabberProtocol::slotOpenEmptyMail()
 			KopeteContactList::contactList()->addMetaContact(metaContact);
 		}
 
-		KopeteViewManager::viewManager()->launchWindow( contact->manager(), KopeteMessage::Email );
+		contact->manager(true)->view(true, KopeteMessage::Email);
 	}
-
 }
 
 void JabberProtocol::slotJoinNewChat()

@@ -32,6 +32,7 @@ class KopeteMessageManager;
 class KopeteEvent;
 class KopeteMessageLog;
 class KopeteProtocol;
+class KopeteView;
 
 typedef QPtrList<KopeteContact>        KopeteContactPtrList;
 typedef QValueList<KopeteMessage>        KopeteMessageList;
@@ -102,6 +103,16 @@ public:
 	void setContactOnlineStatus( const KopeteContact*, const KopeteOnlineStatus & );
 
 	const KopeteOnlineStatus contactOnlineStatus( const KopeteContact* ) const;
+
+	/**
+	 * Return the view for the supplied KopeteMessageManager.  If it already
+	 * exists, it will be returned, otherwise, 0L will be returned or a new one
+	 * if canCreate=true
+	 * @param canCreate create a new one if it does not exist
+	 * @param type Specifies the type of view if we have to create one.
+	 */
+	KopeteView* view(bool canCreate=false  , KopeteMessage::MessageType type = KopeteMessage::Undefined);
+
 
 signals:
 	/**

@@ -151,10 +151,12 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 				}
 			}
 			else if( command == QString::fromLatin1("part") )
-				KopeteViewManager::viewManager()->view( manager(), true )->closeView();
-
+			{ //FIXME: this should be a libkopete fuction
+				if(manager() && manager()->view())
+					manager()->view()->closeView();
+			}
 			else if( command == QString::fromLatin1("exec") && commandCount > 1)
-			{
+			{//FIXME: this should be a libkopete fuction
 				if( !proc )
 				{
 					proc = new QProcess( QString::fromLatin1("sh"), this);
@@ -399,7 +401,8 @@ void IRCContact::slotNewCtcpReply(const QString &type, const QString &target, co
 {
 	if( isConnected )
 	{
-		KopeteView *myView = KopeteViewManager::viewManager()->view( manager(), true);
+		//FIXME: i don't understand how does that works, but it seems ugly
+		KopeteView *myView = manager(true)->view(true);
 		if( myView == KopeteViewManager::viewManager()->activeView() )
 		{
 			KopeteMessage msg((KopeteContact *)this, mMyself, i18n("CTCP %1 REPLY: %2").arg(type).arg(messageReceived), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);

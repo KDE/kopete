@@ -306,6 +306,14 @@ void KopeteMessageManager::setCanBeDeleted ( bool b )
 		deleteLater();
 }
 
+	//TODO: make the kmm the knowledge of the view
+#include "kopeteviewmanager.h"
+KopeteView* KopeteMessageManager::view(bool /*canCreate*/  , KopeteMessage::MessageType type )
+{
+	return KopeteViewManager::viewManager()->view(this, false , type);
+}
+
+
 #include "kopetemessagemanager.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

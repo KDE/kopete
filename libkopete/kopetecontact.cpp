@@ -39,7 +39,8 @@
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopetestdaction.h"
-#include "kopeteviewmanager.h"
+#include "kopetemessagemanager.h"
+#include "kopeteview.h"
 
 // FIXME: What are these doing here and why are they #defines and not const ints? - Martijn
 #define EMAIL_WINDOW 0
@@ -507,12 +508,12 @@ bool KopeteContact::isReachable()
 
 void KopeteContact::startChat()
 {
-	KopeteViewManager::viewManager()->launchWindow( manager( true ), KopeteMessage::Chat );
+	manager(true)->view(true, KopeteMessage::Chat )->raise();
 }
 
 void KopeteContact::sendMessage()
 {
-	KopeteViewManager::viewManager()->launchWindow( manager( true ), KopeteMessage::Email );
+	manager(true)->view(true, KopeteMessage::Email )->raise();
 }
 
 void KopeteContact::execute()
