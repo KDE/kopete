@@ -512,8 +512,11 @@ static QDomElement contactNode( QDomDocument doc, const Kopete::Contact *contact
 	contactNode.appendChild( metacontactNameNode );
 	
 	// FIXME: protocol() returns NULL here in the style preview in appearance config.
-	//  this is probably technically undefined behaviour, but works by coincidence.
-	QString iconName = contact->protocol()->pluginIcon();
+	// this isn't the right place to work around it, since contacts should never have
+	// no protocol, but it works for now.
+	QString iconName = QString::fromLatin1("unknown");
+	if ( Kopete::Protocol *protocol = contact->protocol() )
+		iconName = protocol->pluginIcon();
 	
 	QString iconPath = KGlobal::iconLoader()->iconPath( iconName, KIcon::Small );
 	contactNode.setAttribute( QString::fromLatin1("protocolIcon"), iconPath );
