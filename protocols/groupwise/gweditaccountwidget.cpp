@@ -52,12 +52,12 @@ KopeteAccount* GroupWiseEditAccountWidget::apply()
 	if ( account() )
 		account()->setAccountId( accountName );
 	else
-		setAccount( new GroupWiseAccount( GroupwiseProtocol::protocol(), accountName ) );
+		setAccount( new GroupWiseAccount( GroupWiseProtocol::protocol(), accountName ) );
 
 	return account();
 }
 
-bool GroupwiseEditAccountWidget::validateData()
+bool GroupWiseEditAccountWidget::validateData()
 {
     //return !( m_preferencesDialog->m_acctName->text().isEmpty() );
 	return true;
