@@ -41,7 +41,7 @@
 #include <ktabwidget.h>
 #include <kstandarddirs.h>
 #include <kdialog.h>
-#include <kstringhandler.h> 
+#include <kstringhandler.h>
 
 #include "chatview.h"
 #include "kopetechatwindow.h"
@@ -346,10 +346,11 @@ void KopeteChatWindow::slotTabContextMenu( QWidget *tab, const QPoint &pos )
 	m_popupView = static_cast<ChatView*>( tab );
 
 	KPopupMenu *p = new KPopupMenu;
-	p->insertTitle( KStringHandler::rsqueeze( m_popupView->caption() ) );	
-	
+	p->insertTitle( KStringHandler::rsqueeze( m_popupView->caption() ) );
+
 	actionContactMenu->plug(p);
 	p->insertSeparator();
+	actionTabPlacementMenu->plug( p );
 	tabDetach->plug( p );
 	actionDetachMenu->plug( p );
 	tabClose->plug( p );
@@ -972,20 +973,20 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 	for ( contact = m_them.first(); contact; contact = m_them.next() )
 	{
 		KPopupMenu *p = contact->popupMenu();
-		connect ( actionContactMenu->popupMenu(), SIGNAL(aboutToHide()), 
+		connect ( actionContactMenu->popupMenu(), SIGNAL(aboutToHide()),
 			p, SLOT(deleteLater() ) );
-		
+
 		if( contact->metaContact() )
 			contactsMenu->insertItem( contact->onlineStatus().iconFor( contact ) , contact->metaContact()->displayName(), p );
 		else
 			contactsMenu->insertItem( contact->onlineStatus().iconFor( contact ) , contact->displayName(), p );
-		
-		//FIXME: This number should be a config option	
+
+		//FIXME: This number should be a config option
 		if( ++contactCount == 15 && contact != m_them.getLast() )
 		{
 			KActionMenu *moreMenu = new KActionMenu( i18n("More..."),
 				 QString::fromLatin1("folder_open"), contactsMenu );
-			connect ( actionContactMenu->popupMenu(), SIGNAL(aboutToHide()), 
+			connect ( actionContactMenu->popupMenu(), SIGNAL(aboutToHide()),
 				moreMenu, SLOT(deleteLater() ) );
 			moreMenu->plug( contactsMenu );
 			contactsMenu = moreMenu->popupMenu();
