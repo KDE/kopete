@@ -48,7 +48,6 @@
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
-#include "kopeteglobalawaydialog.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetepluginconfig.h"
 #include "kopetepluginmanager.h"

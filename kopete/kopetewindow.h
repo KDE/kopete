@@ -44,7 +44,7 @@ class KopeteAccount;
 class KopeteAccountStatusBarIcon;
 class KopeteContact;
 class KopeteContactListView;
-class KopeteGlobalAwayDialog;
+class KopeteAwayAction;
 class KopeteOnlineStatus;
 class KopetePlugin;
 class KopetePluginConfig;
@@ -80,7 +80,7 @@ private slots:
 	 * This slot will show an away dialog and then
 	 * set all the protocols to away
 	 */
-	void slotGlobalAwayMessageSelect();
+	void slotGlobalAwayMessageSelect( const QString & );
 	void slotQuit();
 
 	/**
@@ -142,7 +142,7 @@ public:
 
 	KActionMenu* actionAwayMenu;
 	KActionMenu* actionDockMenu;
-	KAction* actionSetAway;
+	KopeteAwayAction* selectAway;
 	KAction* actionSetAvailable;
 
 	KAction* actionPrefs;
@@ -187,11 +187,6 @@ private:
 	 * use QObject instead.
 	 */
 	QPtrDict<QObject> m_accountStatusBarIcons;
-
-	/**
-	 * This is the away message selection dialog
-	 */
-	KopeteGlobalAwayDialog *m_awayMessageDialog;
 };
 
 #endif

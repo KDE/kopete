@@ -23,7 +23,7 @@ bin_PROGRAMS = kopete
 kopete_SOURCES = main.cpp \
 	kopete.cpp kopeteiface.cpp kopeteiface.skel \
 	systemtray.cpp \
-	kopeteballoon.cpp kopetewindow.cpp kopeteglobalawaydialog.cpp \
+	kopeteballoon.cpp kopetewindow.cpp \
 	kopeteaccountstatusbaricon.cpp
 
 kopete_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH) -lktexteditor
