@@ -51,7 +51,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 : KopeteAccount ( parent, AccountID, name )
 {
 	m_notifySocket = 0L;
-	m_connectstatus = MSNProtocol::protocol()->HDN;
+	m_connectstatus = MSNProtocol::protocol()->NLN;
 	m_addWizard_metaContact = 0L;
 	m_badpassword = false;
 
