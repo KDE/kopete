@@ -41,7 +41,7 @@ bool InputProtocolBase::readString( QString &message )
 	QCString rawData;
 	if ( !safeReadBytes( rawData, len ) )
 		return false;
-	message = QString::fromUtf8( rawData.data(), len );
+	message = QString::fromUtf8( rawData.data(), len - 1 );
 	return true;
 }
 
@@ -84,7 +84,7 @@ bool InputProtocolBase::safeReadBytes( QCString & data, uint & len )
 		// so look for that in the last position instead of \0
 		// this caused a crash - guessing that temp.length() is set to the number of bytes actually read...
 		// if ( (Q_UINT8)( * ( temp.data() + ( temp.length() - 1 ) ) ) == 0xFF )
-		if ( temp.length() < ( val -1 ) )
+		if ( temp.length() < ( val - 1 ) )
 		{
 			qDebug( "InputProtocol::safeReadBytes() - string broke, giving up, only got: %i bytes out of %i",  temp.length(), val );
 			m_state = NeedMore;
