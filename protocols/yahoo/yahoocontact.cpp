@@ -67,7 +67,7 @@ YahooContact::ContactStatus YahooContact::status() const
 	DEBUG(YDMETHOD, "Yahoo::ContactStatus()");
 
 	if(mStatus == Offline || mStatus == Invisible) { 
-		return Offline;
+		return KopeteContact::Offline;
 	} 
 	else if(mStatus == Idle) {
 		return Away;
