@@ -38,14 +38,13 @@ YahooContact::YahooContact(KopeteAccount *account, const QString &userId, const 
 {
 	kdDebug(14180) << "YahooContact::YahooContact(" << userId << ", " << fullName << ")" << endl;
 
-	m_fullName = fullName;
 	m_userId = userId;
 	m_manager = 0L;
 	m_status.setStatus(YahooStatus::Offline);
 
 	// Update ContactList
-	setDisplayName(m_fullName);
-	setOnlineStatus( m_status.translate() );
+	setDisplayName(fullName);
+	setOnlineStatus(m_status.translate());
 
 	// XXX initActions();
 
@@ -65,6 +64,7 @@ YahooContact::~YahooContact()
 void YahooContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData)
 {
 	kdDebug(14180) << "Yahoo::serialize(...)" << endl;
+	
 	KopeteContact::serialize(serializedData, addressBookData);
 }
 
@@ -129,15 +129,15 @@ KopeteMessageManager *YahooContact::manager( bool )
 		m_them.append( this );
 		m_manager = KopeteMessageManagerFactory::factory()->create(protocol()->myself(), m_them, protocol() );
 		connect( m_manager, SIGNAL( destroyed() ), this, SLOT( slotMessageManagerDestroyed() ) );
-		connect( m_manager, SIGNAL( messageSent(KopeteMessage &, KopeteMessageManager *) ), this, SLOT( slotSendMessage(KopeteMessage &, KopeteMessageManager * ) ) );
+		connect( m_manager, SIGNAL( messageSent(KopeteMessage &, KopeteMessageManager *) ), this, SLOT( slotSendMessage(KopeteMessage &) ) );
 	}
 
 	return m_manager;
 }
 
-void YahooContact::slotSendMessage(KopeteMessage &message, KopeteMessageManager * )
+void YahooContact::slotSendMessage(KopeteMessage &message)
 {
-	kdDebug(14180) << "[YahooContact::slotSendMessage(" << message.escapedBody() << ", <MessageManager>)]" << endl;
+	kdDebug(14180) << "[YahooContact::slotSendMessage(" << message.escapedBody() << ")]" << endl;
 	
 	KopeteContactPtrList m_them = manager()->members();
 	KopeteContact *target = m_them.first();

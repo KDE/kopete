@@ -62,11 +62,11 @@ public slots:
 
 private slots:
 	void slotMessageManagerDestroyed();
-	void slotSendMessage(KopeteMessage&, KopeteMessageManager* );
+	void slotSendMessage(KopeteMessage &);
 	void slotTyping(bool);
 
 private:
-	QString m_fullName, m_userId;
+	QString m_userId;
 	YahooStatus m_status;
 	KopeteMessageManager *m_manager;
 };

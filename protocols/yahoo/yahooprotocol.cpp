@@ -105,7 +105,7 @@ void YahooProtocol::deserializeContact( KopeteMetaContact *metaContact,
 	QString contactId = serializedData[ "contactId" ];
 	QString accountId = serializedData[ "accountId" ];
 
-	YahooAccount *theAccount = static_cast<YahooAccount *>(KopeteAccountManager::manager()->findAccount("YahooProtocol", accountId));
+	YahooAccount *theAccount = static_cast<YahooAccount *>(KopeteAccountManager::manager()->findAccount(protocol()->pluginId(), accountId));
 	if(!theAccount)
 	{	kdDebug( 14180 ) << k_funcinfo << "Account " << accountId << " not found" << endl;
 		return;
