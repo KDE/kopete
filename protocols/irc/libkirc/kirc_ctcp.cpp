@@ -119,8 +119,7 @@ bool KIRC::CtcpQuery_dcc(const KIRCMessage &msg)
 		if (okayHost && okayPort)
 		{
 			kdDebug(14120) << "Starting DCC chat window." << endl;
-			KIRCTransfer *chatObject = KIRCTransferHandler::self()->createClient(address, port, KIRCTransfer::Chat );
-			emit incomingDccChatRequest(address, port, msg.nickFromPrefix(), chatObject);
+			KIRCTransferHandler::self()->createClient(address, port, KIRCTransfer::Chat );
 			return true;
 		}
 	}
@@ -143,8 +142,7 @@ bool KIRC::CtcpQuery_dcc(const KIRCMessage &msg)
 		if (okayHost && okayPort && okaySize)
 		{
 			kdDebug(14120) << "Starting DCC send file transfert." << endl;
-			KIRCTransfer *chatObject = KIRCTransferHandler::self()->createClient(address, port, KIRCTransfer::FileIncoming, (QFile *)0L, size );
-			emit incomingDccSendRequest(address, port, msg.nickFromPrefix(), realfile.fileName(), size, chatObject);
+			KIRCTransferHandler::self()->createClient(address, port, KIRCTransfer::FileIncoming, (QFile *)0L, size );
 			return true;
 		}
 	}

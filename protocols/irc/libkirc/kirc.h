@@ -20,12 +20,14 @@
 #ifndef KIRC_H
 #define KIRC_H
 
-#include <kdeversion.h>
-
 #include <qdict.h>
+#include <qdatetime.h>
+#include <qhostaddress.h>
 #include <qregexp.h>
 #include <qstring.h>
 #include <qstringlist.h>
+
+#include <kdeversion.h>
 
 #include <kdebug.h>
 #if KDE_VERSION < KDE_MAKE_VERSION( 3, 1, 90 )
@@ -35,9 +37,8 @@
 #include <kextsock.h>
 #include <ksockaddr.h>
 
-#include "dcchandler.h"
+#include "kirctransfer.h"
 #include "kircmessage.h"
-#include "kdebug.h"
 
 class QTimer;
 class QRegExp;
@@ -57,6 +58,7 @@ public:
 	{
 		ParsingFailed,
 		UnknownCommand,
+		UnknownNumericReply,
 		InvalidNumberOfArguments,
 		MethodFailed
 	};
@@ -113,11 +115,6 @@ public:
 		codecs.replace( nick, codec );
 	}
 
-	QString &customCtcp( const QString &s ) { return customCtcpMap[s];  }
-	void addCustomCtcp( const QString &ctcp, const QString &reply ) {
-	kdDebug(14120) << "Adding cusotm CTCP reply: " << ctcp << " = " << reply << endl;
-	customCtcpMap[ ctcp.lower() ] = reply; }
-
 	/**
 	 * Send a quit message for the given reason.
 	 * If now is set to true the connection is closed and no event message is sent.
@@ -125,23 +122,14 @@ public:
 	 */
 	void quitIRC(const QString &reason, bool now=false);
 
-	void requestDccConnect(const QString &, const QString &, unsigned int port, DCCClient::Type type);
-
-	/* IRC with numeric replies only */
+	/* IRC commands with numeric replies only */
 	void isOn(const QStringList &nickList); /* 303 */
 	void setAway(bool isAway, const QString &awayMessage = QString::null); /* 301-305-306 */
 	void whoisUser(const QString &user); /* 311-312-313-317-318-319 */
 	void list(); /* 321-322-323 */
 	void motd(const QString &server = QString::null); /* 372-375-376 */
 
-	//OBSOLETE: use sendCtcpAction instead.
-	inline void actionContact(const QString &contact, const QString &message) { sendCtcpAction(contact, message); }
-
-	void sendCtcpCommand(const QString &contact, const QString &command);
-	void sendCtcpAction(const QString &contact, const QString &message);
-	void sendCtcpPing(const QString &target);
-	void sendCtcpVersion(const QString &target);
-
+	/* IRC usual commands */
 	void changeUser(const QString &newUsername, const QString &hostname, const QString &newRealname);
 	void changeUser(const QString &newUsername, Q_UINT8 mode, const QString &newRealname);
 	void changeNickname(const QString &newNickname);
@@ -154,6 +142,20 @@ public:
 	void partChannel(const QString &name, const QString &reason);
 
 	const QStringList &motd() { return m_motdBuffer; }
+
+	/* CTCP commands */
+	void CtcpRequestCommand(const QString &contact, const QString &command);
+
+	void CtcpRequest_action(const QString &contact, const QString &message);
+	void CtcpRequest_dcc(const QString &, const QString &, unsigned int port, KIRCTransfer::Type type);
+	void CtcpRequest_pingPong(const QString &target);
+	void CtcpRequest_version(const QString &target);
+
+	/* Custom CTCP replies handling */
+	QString &customCtcp( const QString &s ) { return customCtcpMap[s];  }
+	void addCustomCtcp( const QString &ctcp, const QString &reply ) {
+	kdDebug(14120) << "Adding cusotm CTCP reply: " << ctcp << " = " << reply << endl;
+	customCtcpMap[ ctcp.lower() ] = reply; }
 
 public slots:
 	void showInfoDialog();
@@ -239,9 +241,6 @@ signals:
 	void repliedCtcp(const QString &type, const QString &ctcpMessage);
 	void incomingCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
 
-	void incomingDccChatRequest(const QHostAddress &, Q_UINT16 port, const QString &nickname, DCCClient &chatObject);
-	void incomingDccSendRequest(const QHostAddress &, Q_UINT16 port, const QString &nickname, const QString &, unsigned int, DCCClient &chatObject);
-
 public:
 	inline static bool isChannel( const QString &s ) { return isChannelRegex.search(s) != -1; };
 
@@ -315,7 +314,6 @@ private slots:
 	void quitTimeout();
 
 private:
-	inline static QString getNickFromPrefix(const QString &prefix) { return prefix.section('!', 0, 0); }
 	static const QRegExp isChannelRegex;
 
 	typedef bool ircMethod(const KIRCMessage &msg);
@@ -438,11 +436,10 @@ private:
 	QString m_Realname;
 	QString m_Nickname;
 	QString m_Passwd;
-
-	bool m_ReqsPasswd;
-	bool m_FailedNickOnLogin;
-	bool m_useSSL;
-	int connectTimeout;
+	bool	m_ReqsPasswd;
+	bool	m_FailedNickOnLogin;
+	bool	m_useSSL;
+	int	connectTimeout;
 
 	QString m_VersionString;
 	QString m_UserString;

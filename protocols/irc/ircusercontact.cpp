@@ -44,7 +44,6 @@ IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString 
 	QObject::connect(m_engine, SIGNAL(incomingChannelModeChange(const QString&, const QString&, const QString&)),
 		this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
 
-
 	actionCtcpMenu = 0L;
 
 	mInfo.isOperator = false;
@@ -190,12 +189,12 @@ void IRCUserContact::contactMode( const QString &mode )
 
 void IRCUserContact::slotCtcpPing()
 {
-	m_engine->sendCtcpPing(m_nickName);
+	m_engine->CtcpRequest_pingPong(m_nickName);
 }
 
 void IRCUserContact::slotCtcpVersion()
 {
-	m_engine->sendCtcpVersion(m_nickName);
+	m_engine->CtcpRequest_version(m_nickName);
 }
 
 void IRCUserContact::newWhoIsUser(const QString &username, const QString &hostname, const QString &realname)

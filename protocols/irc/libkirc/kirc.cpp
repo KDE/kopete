@@ -25,7 +25,6 @@
 #include <sys/types.h>
 #include <pwd.h>
 
-#include <qfileinfo.h>
 #include <qtextcodec.h>
 #include <qtimer.h>
 
@@ -35,10 +34,9 @@
 #include <kstandarddirs.h>
 
 #include "kircfunctors.h"
-#include "kirc.h"
-#include "kircnumericreplies.h"
-#include "kircctcpqueries.h"
 #include "ksslsocket.h"
+
+#include "kirc.h"
 
 /* Please note that the regular expression "[\\r\\n]*$" is used in a QString::replace statement many times.
  * This gets rid of trailing \r\n, \r, \n, and \n\r characters.
@@ -509,7 +507,7 @@ KIRCMessage KIRC::writeMessage(const QString &command, const QString &arg, const
 KIRCMessage KIRC::writeCtcpMessage(const char *command, const QString &to, const QString &suffix,
 		const QString &ctcpMessage, bool emitRepliedCtcp)
 {
-	QString nick =  getNickFromPrefix(to);
+	QString nick =  KIRCMessage::nickFromPrefix(to);
 	KIRCMessage msg = KIRCMessage::writeCtcpMessage(this, QString::fromLatin1(command),
 		nick, suffix, ctcpMessage, codecForNick( nick ) );
 
@@ -523,7 +521,7 @@ KIRCMessage KIRC::writeCtcpMessage(const char *command, const QString &to, const
 KIRCMessage KIRC::writeCtcpMessage(const char *command, const QString &to, const QString &suffix,
 		const QString &ctcpCommand, const QString &ctcpArg, const QString &ctcpSuffix, bool emitRepliedCtcp)
 {
-	QString nick =  getNickFromPrefix(to);
+	QString nick =  KIRCMessage::nickFromPrefix(to);
 	KIRCMessage msg = KIRCMessage::writeCtcpMessage(this, QString::fromLatin1(command),
 		nick, suffix, ctcpCommand, ctcpArg, ctcpSuffix, codecForNick( nick ) );
 
@@ -537,7 +535,7 @@ KIRCMessage KIRC::writeCtcpMessage(const char *command, const QString &to, const
 KIRCMessage KIRC::writeCtcpMessage(const char *command, const QString &to, const QString &suffix,
 		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix, bool emitRepliedCtcp)
 {
-	QString nick =  getNickFromPrefix(to);
+	QString nick =  KIRCMessage::nickFromPrefix(to);
 	KIRCMessage msg = KIRCMessage::writeCtcpMessage(this, QString::fromLatin1(command),
 		nick, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, codecForNick( nick ) );
 
@@ -562,11 +560,11 @@ void KIRC::slotReadyRead()
 			KIRCMethodFunctorCall *method = m_IrcMethods[msg.command()];
 			if(method && method->isValid())
 			{
-				if (method->checkMsgValidity(msg))
+				if (method->checkMsgValidity(msg) &&
+					(!msg.isNumeric() ||
+					 (/*msg.isNumeric()&&*/msg.count() > 0 && msg.arg(0) == m_Nickname || msg.arg(0) == "*")))
 				{
-					// FIXME: should also check for args[0] == m_nickname/"*" for nummeric replies
-					// If the m_nickname is given, the nickname change is successful(ie we are in).
-						emit receivedMessage(msg);
+					emit receivedMessage(msg);
 					if (!method->operator()(msg))
 					{
 						kdDebug(14120) << "Method error for line:" << msg.raw() << endl;
@@ -578,6 +576,11 @@ void KIRC::slotReadyRead()
 					kdDebug(14120) << "Args are invalid for line:" << msg.raw() << endl;
 					emit internalError(InvalidNumberOfArguments, msg);
 				}
+			}
+			else if (msg.isNumeric())
+			{
+				kdDebug(14120) << "Unknown IRC numeric reply for line:" << msg.raw() << endl;
+				emit internalError(UnknownNumericReply, msg);
 			}
 			else
 			{
@@ -730,10 +733,10 @@ bool KIRC::joinChannel(const KIRCMessage &msg)
 	 * This is the response of someone joining a channel.
 	 * Remember that this will be emitted when *you* /join a room for the first time */
 
-	if (msg.args().size()==1)
-		emit incomingJoinedChannel(msg.args()[0], getNickFromPrefix(msg.prefix()));
+	if (msg.count()==1)
+		emit incomingJoinedChannel(msg.arg(0), msg.nickFromPrefix());
 	else
-		emit incomingJoinedChannel(msg.suffix(), getNickFromPrefix(msg.prefix()));
+		emit incomingJoinedChannel(msg.suffix(), msg.nickFromPrefix());
 
 	return true;
 }
@@ -751,7 +754,7 @@ bool KIRC::partChannel(const KIRCMessage &msg)
 	 * "<channel> *( "," <channel> ) [ <Part Message> ]"
 	 */
 	kdDebug(14120) << "User parting" << endl;
-	emit incomingPartedChannel(msg.args()[0], getNickFromPrefix(msg.prefix()), msg.suffix());
+	emit incomingPartedChannel(msg.arg(0), msg.nickFromPrefix(), msg.suffix());
 	return true;
 }
 
@@ -767,10 +770,10 @@ bool KIRC::modeChange(const KIRCMessage &msg)
 	 */
 	QStringList args = msg.args();
 	args.pop_front();
-	if( isChannel(  msg.args()[0] ) )
-		emit incomingChannelModeChange( msg.args()[0], getNickFromPrefix(msg.prefix()), args.join(" "));
+	if( isChannel( msg.arg(0) ) )
+		emit incomingChannelModeChange( msg.arg(0), msg.nickFromPrefix(), args.join(" "));
 	else
-		emit incomingUserModeChange( getNickFromPrefix(msg.prefix()), args.join(" "));
+		emit incomingUserModeChange( msg.nickFromPrefix(), args.join(" "));
 	return true;
 }
 
@@ -784,7 +787,7 @@ bool KIRC::topicChange(const KIRCMessage &msg)
 	/* The topic of a channel changed. emit the channel, new topic, and the person who changed it.
 	 * "<channel> [ <topic> ]"
 	 */
-	emit incomingTopicChange(msg.prefix().section('!',0,0), msg.args()[0], msg.suffix());
+	emit incomingTopicChange(msg.nickFromPrefix(), msg.arg(0), msg.suffix());
 	return true;
 }
 
@@ -809,7 +812,7 @@ bool KIRC::kick(const KIRCMessage &msg)
 	/* The given user is kicked.
 	 * "<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]"
 	 */
-	emit incomingKick( getNickFromPrefix(msg.prefix()), msg.args()[0], msg.args()[1], msg.suffix());
+	emit incomingKick( msg.nickFromPrefix(), msg.arg(0), msg.arg(1), msg.suffix());
 	return true;
 }
 
@@ -826,15 +829,15 @@ bool KIRC::privateMessage(const KIRCMessage &msg)
 	KIRCMessage m = msg;
 	if (!m.suffix().isEmpty())
 	{
-		QString user = m.args()[0];
+		QString user = m.arg(0);
 		m = KIRCMessage::parse( codecForNick( user )->toUnicode( m.raw() ) );
 
 		QString message = m.suffix();
 
 		if( isChannel(user) )
-			emit incomingMessage(getNickFromPrefix(msg.prefix()), msg.args()[0], message );
+			emit incomingMessage(msg.nickFromPrefix(), msg.arg(0), message );
 		else
-			emit incomingPrivMessage(getNickFromPrefix(msg.prefix()), msg.args()[0], message );
+			emit incomingPrivMessage(msg.nickFromPrefix(), msg.arg(0), message );
 	}
 
 	if( msg.hasCtcpMessage() )
@@ -910,129 +913,8 @@ void KIRC::isOn(const QStringList &nickList)
 	}
 }
 
-
-void KIRC::sendCtcpCommand(const QString &contact, const QString &command)
-{
-	if(m_status == Connected)
-	{
-		writeCtcpQueryMessage(contact, QString::null, command);
-//		emit ctcpCommandMessage( contact, command );
-	}
-}
-
-void KIRC::sendCtcpAction(const QString &contact, const QString &message)
-{
-	if(m_status == Connected)
-	{
-		writeCtcpQueryMessage(contact, QString::null, "ACTION", QStringList(message));
-
-		if( isChannel(contact) )
-			emit incomingPrivAction(m_Nickname, contact, message);
-		else
-			emit incomingAction(m_Nickname, contact, message);
-	}
-}
-
-void KIRC::sendCtcpPing(const QString &target)
-{
-	kdDebug(14120) << k_funcinfo << endl;
-
-	timeval time;
-	if (gettimeofday(&time, 0) == 0)
-	{
-		QString timeReply;
-
-		if( isChannel(target) )
-			timeReply = QString::fromLatin1("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
-		else
-		 	timeReply = QString::number( time.tv_sec );
-
-		writeCtcpQueryMessage(	target, QString::null, "PING", timeReply);
-	}
-}
-
-bool KIRC::CtcpReply_pingPong( const KIRCMessage &msg )
-{
-	timeval time;
-	if (gettimeofday(&time, 0) == 0)
-	{
-		QString originating = msg.prefix();
-
-		// FIXME: the time code is wrong for usec
-		QString timeReply = QString::fromLatin1("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
-		double newTime = timeReply.toDouble();
-		double oldTime = msg.suffix().section(' ',0, 0).toDouble();
-		double difference = newTime - oldTime;
-		QString diffString;
-
-		if (difference < 1)
-		{
-			diffString = QString::number(difference);
-			diffString.remove((diffString.find('.') -1), 2);
-			diffString.truncate(3);
-			diffString.append(i18n("milliseconds"));
-		}
-		else
-		{
-			diffString = QString::number(difference);
-			QString seconds = diffString.section('.', 0, 0);
-			QString millSec = diffString.section('.', 1, 1);
-			millSec.remove(millSec.find('.'), 1);
-			millSec.truncate(3);
-			diffString = QString::fromLatin1("%1 seconds, %2 milliseconds").arg(seconds).arg(millSec);
-		}
-
-		emit incomingCtcpReply(QString::fromLatin1("PING"), originating.section('!', 0, 0), diffString);
-
-		return true;
-	}
-
-	return false;
-}
-
-//void KIRC::queryCtcpVersion(const QString &target)
-void KIRC::sendCtcpVersion(const QString &target)
-{
-	writeCtcpQueryMessage(target, QString::null, "VERSION");
-}
-
-
-bool KIRC::CtcpReply_version(const KIRCMessage &msg)
-{
-	emit incomingCtcpReply(msg.ctcpMessage().command(), getNickFromPrefix(msg.prefix()), msg.ctcpMessage().ctcpRaw());
-	return true;
-}
-
-void KIRC::requestDccConnect(const QString &nickname, const QString &filename, uint port, DCCClient::Type type)
-{
-	if(	m_status != Connected ||
-		m_sock->localAddress() == 0 ||
-		m_sock->localAddress()->nodeName() == QString::null)
-		return;
-
-	if(type == DCCClient::Chat)
-	{
-		writeCtcpQueryMessage(nickname, QString::null,
-			QString("DCC"),
-			QStringList(QString::fromLatin1("CHAT")) << QString::fromLatin1("chat") <<
-			m_sock->localAddress()->nodeName() << QString::number(port));
-	}
-	else if(type == DCCClient::File)
-	{
-		QFileInfo file(filename);
-		QString noWhiteSpace = file.fileName();
-		if (noWhiteSpace.contains(' ') > 0)
-			noWhiteSpace.replace(QRegExp("\\s+"), "_");
-
-		writeCtcpQueryMessage(nickname, QString::null,
-			QString("DCC"),
-			QStringList( QString::fromLatin1( "SEND" ) ) << noWhiteSpace <<
-			    m_sock->localAddress()->nodeName() << QString::number( port ) << QString::number( file.size() ) );
-	}
-}
-
 /*
- * The ctcp commands seems to follaw the same message behaviours has normal IRC command.
+ * The ctcp commands seems to follow the same message behaviours has normal IRC command.
  * (Only missing the \n\r final characters)
  * So applying the same parsing rules to the messages.
  */
