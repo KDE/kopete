@@ -159,8 +159,7 @@ void DCCServer::slotReadyRead()
 	mSocket->readBlock((char*)&ack, sizeof(ack));
 	ack = ::ntohl(ack);
 	
-	// people ask me if I like lisp, I just ask them "What's Lisp?" :)
-	QString percentage = QString::number(ack * 100 / mFile->size());
+	int percentage = (ack * 100 / mFile->size());
 	
 	kdDebug() << "IRC Plugin: percentage == " << percentage << endl;
 	emit incomingAckPercent(percentage);
@@ -174,14 +173,13 @@ void DCCServer::slotReadyRead()
 
 void DCCServer::sendNextPacket()
 {
-	//QCString data = ""; // Assign it to "" so it at least initializes the array internally
 	char data[1024];
 	int len = mFile->readBlock(data, 1024);
 	if (len != -1)
 	{
 		// Use data.length(), not 1024 because we might not have 1024 bytes (if we are at the end of the file for example)
 		mSocket->writeBlock(data, len);
-		QString percentage = QString::number(((mFile->at() * 100) / mFile->size()));
+		int percentage = (mFile->at() * 100 / mFile->size());
 		kdDebug() << "IRC Plugin: sendNextPacket: QString::number(((mFile->at() * 100) / mFile->size())) == " << QString::number(((mFile->at() * 100) / mFile->size())) << endl;
 		emit sendingNonAckPercent(percentage);
 	}

@@ -64,7 +64,7 @@ public:
 	bool closing;
 	IRCProtocol *mProtocol;
 	IRCConsoleView *consoleView() { return mConsoleView; };
-	void initiateDcc(const QString &nickname, DCCServer::Type type);
+	void initiateDcc(const QString &nickname, const QString &, DCCServer::Type type);
 private:
 	IRCConsoleView *mConsoleView;
 	KPopupMenu *popup;

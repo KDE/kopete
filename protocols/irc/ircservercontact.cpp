@@ -169,15 +169,18 @@ void IRCServerContact::disconnectNow()
 	}
 }
 
-void IRCServerContact::initiateDcc(const QString &nickname, DCCServer::Type type)
+void IRCServerContact::initiateDcc(const QString &nickname, const QString &filename, DCCServer::Type type)
 {
-	QString filename;
+	QString newFile = filename;
 	if (type == DCCServer::File)
 	{
-		filename = KFileDialog::getOpenFileName(QString::null, "*.*", mWindow);
-		if (filename.isEmpty())
+		if (newFile.isEmpty())
 		{
-			return;
+			newFile = KFileDialog::getOpenFileName(QString::null, "*.*", mWindow);
+			if (newFile.isEmpty())
+			{
+				return;
+			}
 		}
 	}
 	DCCServer *dccServer = new DCCServer(type, filename);

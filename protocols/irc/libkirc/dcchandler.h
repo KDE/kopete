@@ -75,8 +75,8 @@ private slots:
 signals:
 	void clientConnected();
 	void terminating();
-	void incomingAckPercent(const QString &);
-	void sendingNonAckPercent(const QString &);
+	void incomingAckPercent(int);
+	void sendingNonAckPercent(int);
 	void sendFinished();
 };
 
