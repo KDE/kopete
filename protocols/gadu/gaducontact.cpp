@@ -41,10 +41,9 @@
 using Kopete::UserInfoDialog;
 
 GaduContact::GaduContact( uin_t uin, const QString& name, KopeteAccount* account, KopeteMetaContact* parent )
-: KopeteContact( account, QString::number( uin ), parent )
+: KopeteContact( account, QString::number( uin ), parent ), uin_( uin )
 {
 	msgManager_ = 0L;
-	uin_ = uin;
 	account_ = static_cast<GaduAccount*>( account );
 
 	//offline
@@ -199,6 +198,19 @@ GaduContact::serialize( QMap<QString, QString>& serializedData, QMap<QString, QS
 	serializedData[ "telephone" ]	= property( "privPhoneNum" ).value().toString();
 	serializedData[ "ignored" ]	= property( "ignored" ).value().toString();
 	serializedData[ "nickname" ]	= property( "nickName" ).value().toString();
+}
+
+bool
+GaduContact::setContactDetails( const GaduContactsList::ContactLine* cl )
+{
+	setProperty( "emailAddress", cl->email );
+	setProperty( "firstName", cl->firstname );
+	setProperty( "lastName", cl->surname );
+	setProperty( "privPhoneNum", cl->phonenr );
+	setProperty( "ignored", i18n( "ignored" ), cl->ignored ? "true" : "false" );
+	setProperty( "nickName", i18n( "nick name" ), cl->nickname );
+
+	return true;
 }
 
 GaduContactsList::ContactLine*

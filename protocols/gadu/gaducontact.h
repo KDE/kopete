@@ -54,9 +54,12 @@ public:
 	virtual QPtrList<KAction>* customContextMenuActions();
 	virtual QString identityId() const;
 
-//	void	setInfo( const QString& email, const QString& firstName, const QString& secondName,
-//			 	const QString& nickName, const QString& phonenr );
 	GaduContactsList::ContactLine* contactDetails();
+	
+	// this one set's only:
+	// email, firstname, surname, phonenr, ignored, nickname
+	// uin is const for GaduContact, and displayname needs to be changed through metaContact
+	bool setContactDetails( const GaduContactsList::ContactLine* );
 
 	void	setParentIdentity( const QString& );
 	void	setDescription( const QString& );
@@ -79,11 +82,12 @@ protected:
 	void initActions();
 
 private:
-	KopeteMessageManager* msgManager_;
-	uin_t			uin_;
-	QString		description_;
-	QString		parentIdentity_;
-	GaduAccount*	account_;
+	const uin_t		uin_;
+	
+	KopeteMessageManager*	msgManager_;
+	QString			description_;
+	QString			parentIdentity_;
+	GaduAccount*		account_;
 
 	KAction*		actionSendMessage_;
 	KAction*		actionInfo_;
