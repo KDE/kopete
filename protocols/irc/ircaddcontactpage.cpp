@@ -52,6 +52,30 @@ void IRCAddContactPage::slotFinish()
 	plugin->addContact(currentGroup, server, name, ircdata->chkConnectNow->isChecked(), ircdata->chkJoinNow->isChecked());
 }
 
+/** No descriptions */
+bool IRCAddContactPage::validateData()
+{
+	QString currentGroup = ircdata->cmbGroup->currentText();
+	if (currentGroup.isEmpty() == true)
+	{
+		KMessageBox::sorry(this, i18n("<qt>You need to have a buddy listed under a group. Please create a group first. You may do this by right clicking in the buddy list and selecting \"Add Group...\"</qt>"), i18n("You Must Select a Group"));
+		return false;
+	}
+	QString server = ircdata->ircServer->text();
+	if (server.isEmpty() == true)
+	{
+		KMessageBox::sorry(this, i18n("<qt>You need to specify a server to connect to.</qt>"), i18n("You Must Specify a Server"));
+		return false;
+	}
+	QString name = ircdata->addID->text();
+	if (name.isEmpty() == true)
+	{
+		KMessageBox::sorry(this, i18n("<qt>You need to specify a channel to join, or query to open.</qt>"), i18n("You Must Specify a Channel"));
+		return false;
+	}
+  return true;
+}
+
 void IRCAddContactPage::connectNowClicked()
 {
 	if (ircdata->chkConnectNow->isChecked() == true)
@@ -71,4 +95,5 @@ void IRCAddContactPage::connectNowClicked()
  * End:
  */
 // vim: set noet ts=4 sts=4 sw=4:
+
 

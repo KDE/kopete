@@ -23,6 +23,8 @@ public slots: // Public slots
   /** No descriptions */
   virtual void slotFinish();
 private slots:
+  /** No descriptions */
+  virtual bool validateData();
 	void connectNowClicked();
 };
 

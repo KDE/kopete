@@ -141,6 +141,9 @@ Translations=*.ts,*.po,
 User Interface=*.ui,*.kdevdlg,*.rc,
 groups=Headers,Sources,GNU,Translations,User Interface,Desktop,Others
 
+[Makefile.am]
+sub_dirs=libkopete
+
 [contrib/Makefile.am]
 files=contrib/licq2kopete,contrib/indention_lines.pl,
 sub_dirs=
@@ -760,9 +763,9 @@ install_location=
 type=SOURCE
 
 [libkopete/Makefile.am]
-files=libkopete/kopete.cpp,libkopete/kopete.h,libkopete/kopetecontact.cpp,libkopete/plugin.cpp,libkopete/kopeteevent.cpp,libkopete/kopeteevent.h,libkopete/kopetemessage.cpp,libkopete/kopetemessage.h,libkopete/kopetemessagemanager.cpp,libkopete/kopetemessagemanager.h,libkopete/kopetemessagemanagerfactory.cpp,libkopete/kopetemessagemanagerfactory.h,libkopete/kopetenotifier.cpp,libkopete/kopetenotifier.h,libkopete/kopeteprotocol.cpp,libkopete/kopeteprotocol.h,libkopete/kopetecontactlist.cpp,libkopete/kopetecontactlist.h,libkopete/kopetecontact.h,libkopete/plugin.h,libkopete/kopetemessagelog.h,libkopete/kopeteaway.h,libkopete/kopetemessagelog.cpp,libkopete/kopetecontactlist.h.orig,libkopete/kopetemetacontact.cpp,libkopete/kopetetransfermanager.cpp,libkopete/kopetetransfermanager.h,libkopete/kopetemetacontact.h,libkopete/kopetecontactlist.cpp.orig,libkopete/kopeteuserpreferences.cpp,libkopete/kopeteuserpreferences.h,libkopete/kopeteaway.cpp,libkopete/kopeteawaydialog.cpp,libkopete/kopeteprefs.cpp,libkopete/pluginloader.cpp,libkopete/pluginloader.h,libkopete/kopeteprefs.h,libkopete/kopeteawaydialog.h,libkopete/kopeteemoticons.cpp,libkopete/kopeteemoticons.h,
+files=libkopete/kopete.cpp,libkopete/kopete.h,libkopete/kopetecontact.cpp,libkopete/plugin.cpp,libkopete/kopeteevent.cpp,libkopete/kopeteevent.h,libkopete/kopetemessage.cpp,libkopete/kopetemessage.h,libkopete/kopetemessagemanager.cpp,libkopete/kopetemessagemanager.h,libkopete/kopetemessagemanagerfactory.cpp,libkopete/kopetemessagemanagerfactory.h,libkopete/kopetenotifier.cpp,libkopete/kopetenotifier.h,libkopete/kopeteprotocol.cpp,libkopete/kopeteprotocol.h,libkopete/kopetecontactlist.cpp,libkopete/kopetecontactlist.h,libkopete/kopetecontact.h,libkopete/plugin.h,libkopete/kopetemessagelog.h,libkopete/kopeteaway.h,libkopete/kopetemessagelog.cpp,libkopete/kopetecontactlist.h.orig,libkopete/kopetemetacontact.cpp,libkopete/kopetetransfermanager.cpp,libkopete/kopetetransfermanager.h,libkopete/kopetemetacontact.h,libkopete/kopetecontactlist.cpp.orig,libkopete/kopeteuserpreferences.cpp,libkopete/kopeteuserpreferences.h,libkopete/kopeteaway.cpp,libkopete/kopeteawaydialog.cpp,libkopete/kopeteprefs.cpp,libkopete/pluginloader.cpp,libkopete/pluginloader.h,libkopete/kopeteprefs.h,libkopete/kopeteawaydialog.h,libkopete/kopeteemoticons.cpp,libkopete/kopeteemoticons.h,libkopete/kopeteplugin.cpp,libkopete/kopeteplugin.h
 sub_dirs=ui,
-type=normal
+type=static_library
 
 [libkopete/kopete.cpp]
 dist=true
@@ -927,6 +930,18 @@ install_location=
 type=SOURCE
 
 [libkopete/kopetenotifier.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[libkopete/kopeteplugin.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[libkopete/kopeteplugin.h]
 dist=true
 install=false
 install_location=

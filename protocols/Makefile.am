@@ -1,1 +1,1 @@
-SUBDIRS = icq icq_new  msn aim jabber winpopup irc gadu
+SUBDIRS = icq_new icq  msn aim jabber winpopup irc gadu
