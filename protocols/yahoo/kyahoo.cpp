@@ -404,19 +404,12 @@ void YahooSession::slotLoginResponseReceiver(int succ, char *url)
 	char buff[1024];
 
 	kdDebug(14180)<< k_funcinfo <<endl;
-	kdDebug(14180)<< succ << endl;
 	if (succ == YAHOO_LOGIN_OK)
 	{
 		m_Status = yahoo_current_status(m_connId);
 		kdDebug(14180) << "logged in" << endl;
 		return;
 	}
-	else
-	{
-		m_Status = YAHOO_STATUS_OFFLINE;
-		kdDebug(14180) << "LOGIN FAILED!!!!!" << endl;
-	}
-	/*
 	else if(succ == YAHOO_LOGIN_PASSWD)
 	{
 		snprintf(buff, sizeof(buff), "Could not log into Yahoo service.  Please verify that your username and password are correctly typed.");
@@ -432,7 +425,6 @@ void YahooSession::slotLoginResponseReceiver(int succ, char *url)
 	m_Status = YAHOO_STATUS_OFFLINE;
 	kdDebug(14180)<<buff<<endl;
         //yahoo_logout();
-	*/
 }
 
 
