@@ -71,7 +71,7 @@ class OscarConnection : public QObject
 		 */
 		const QString &getSN() const;
 
-		OscarConnection::ConnectionStatus OscarConnection::socketStatus() const;
+		ConnectionStatus socketStatus() const;
 
 		/**
 		 * Sets the currently logged in users screen name
