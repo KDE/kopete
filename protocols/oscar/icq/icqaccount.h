@@ -20,6 +20,7 @@
 #define ICQACCOUNT_H
 
 #include "oscaraccount.h"
+#include "oscarmyselfcontact.h"
 
 #include "icqpresence.h"
 #include "oscartypeclasses.h"
@@ -27,6 +28,19 @@
 class KAction;
 namespace Kopete { class AwayAction; }
 class ICQProtocol;
+class ICQAccount;
+class ICQMyselfContact : public OscarMyselfContact
+{
+Q_OBJECT
+public:
+	ICQMyselfContact::ICQMyselfContact( ICQAccount *acct );
+	void userInfoUpdated();
+	
+public slots:
+	void receivedShortInfo( const QString& );
+	void fetchShortInfo();
+};
+
 
 class ICQAccount : public OscarAccount
 {

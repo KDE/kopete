@@ -23,26 +23,42 @@
 #include "kopeteawayaction.h"
 
 #include "client.h"
-
-#include "oscarmyselfcontact.h"
+#include "icquserinfo.h"
+#include "oscarutils.h"
 
 #include "icqcontact.h"
 #include "icqprotocol.h"
-
 #include "icqaccount.h"
 
-class ICQMyselfContact : public OscarMyselfContact
+ICQMyselfContact::ICQMyselfContact( ICQAccount *acct ) : OscarMyselfContact( acct )
 {
-public:
-	ICQMyselfContact( ICQAccount *acct ) : OscarMyselfContact( acct ) {}
-	void userInfoUpdated()
-	{
-		DWORD extendedStatus = details().extendedStatus();
-		kdDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << QString::number( extendedStatus, 16 ) << endl;
-		ICQ::Presence presence = ICQ::Presence::fromOscarStatus( extendedStatus & 0xffff );
-		setOnlineStatus( presence.toOnlineStatus() );
-	}
-};
+	QObject::connect( acct->engine(), SIGNAL( loggedIn() ), this, SLOT( fetchShortInfo() ) );
+	QObject::connect( acct->engine(), SIGNAL( receivedIcqShortInfo( const QString& ) ),
+	                  this, SLOT( receivedShortInfo( const QString& ) ) );
+}
+
+void ICQMyselfContact::userInfoUpdated()
+{
+	DWORD extendedStatus = details().extendedStatus();
+	kdDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << QString::number( extendedStatus, 16 ) << endl;
+	ICQ::Presence presence = ICQ::Presence::fromOscarStatus( extendedStatus & 0xffff );
+	setOnlineStatus( presence.toOnlineStatus() );
+}
+
+void ICQMyselfContact::receivedShortInfo( const QString& contact )
+{
+	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
+		return;
+	
+	ICQShortInfo shortInfo = static_cast<ICQAccount*>( account() )->engine()->getShortInfo( contact );
+	if ( !shortInfo.nickname.isEmpty() )
+		setProperty( Kopete::Global::Properties::self()->nickName(), shortInfo.nickname );
+}
+
+void ICQMyselfContact::fetchShortInfo()
+{
+	static_cast<ICQAccount*>( account() )->engine()->requestShortInfo( contactId() );
+}
 
 ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID, const char *name)
 	: OscarAccount(parent, accountID, name, true)
