@@ -37,6 +37,10 @@ typedef QPtrList<KopeteContact>        KopeteContactPtrList;
 typedef QValueList<KopeteMessage>      KopeteMessageList;
 typedef QIntDict<KopeteMessageManager> KopeteMessageManagerDict;
 
+/**
+ * KopeteMessageManagerFactory is responsible for creating and tracking KopeteMessageManager
+ * instances for each chat.
+ */
 class KopeteMessageManagerFactory : public QObject
 {
 	Q_OBJECT
@@ -50,28 +54,47 @@ public:
 	 * Create a new chat session. Provided is the initial list of contacts in
 	 * the session. If a session with exactly these contacts already exists,
 	 * it will be reused. Otherwise a new session is created.
+	 * @param user The local user in the session.
+	 * @param chatContacts The list of contacts taking part in the chat.
+	 * @param protocol The protocol that the chat is using.
+	 * @return A pointer to a new or reused KopeteMessageManager.
 	 */
 	KopeteMessageManager* create( const KopeteContact *user,
 		KopeteContactPtrList chatContacts, KopeteProtocol *protocol);
 
+	/**
+	 * Find a chat session, if one exists, that matches the given list of contacts.
+	 * @param user The local user in the session.
+	 * @param chatContacts The list of contacts taking part in the chat.
+	 * @param protocol The protocol that the chat is using.
+	 * @return A pointer to an existing KopeteMessageManager, or 0L if none was found.
+	 */
 	KopeteMessageManager* findKopeteMessageManager( const KopeteContact *user,
 		KopeteContactPtrList chatContacts, KopeteProtocol *protocol);
 
+	/**
+	 * Registers a KopeteMessageManager (or subclass thereof) with the KopeteMessageManagerFactory
+	 */
 	void addKopeteMessageManager(KopeteMessageManager *);
 
-	KopeteMessageManager *findKopeteMessageManager( int );
+	/**
+	 * Find the idth KopeteMessageManager that the factory knows of.
+	 * @param id The number of the desired KopeteMessageManager.
+	 * @returnA pointer to the KopeteMessageManager, or 0 if it was not found.
+	 */
+	KopeteMessageManager *findKopeteMessageManager( int id );
 
 	/**
-	 * Get a list of all open sessions
+	 * Get a list of all open sessions.
 	 */
 	const KopeteMessageManagerDict& sessions();
 	/**
-	 * Get a list of all open sessions  for a protocol
+	 * Get a list of all open sessions for a protocol.
 	 */
 	KopeteMessageManagerDict protocolSessions( KopeteProtocol *);
 
 	/**
-	 * Clean sessions for a protocol
+	 * Clean sessions for a protocol.
 	 */
 	void cleanSessions( KopeteProtocol *);
 
@@ -101,7 +124,7 @@ signals:
 	 * message that is being received.
 	 */
 	void aboutToReceive( KopeteMessage& message );
-	
+
 private:
 	KopeteMessageManagerFactory( QObject* parent = 0, const char* name = 0 );
 
@@ -114,4 +137,3 @@ private:
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

@@ -37,6 +37,9 @@ typedef QPtrList<KopeteMessageManager> KopeteMessageManagerList;
 
 struct  KMMPrivate;
 
+/**
+ * Each KopeteMessageManager manages a single chat.  More illuminating docs here!
+ */
 class KopeteMessageManager : public QObject
 {
 	friend class KopeteMessageManagerFactory;
@@ -44,9 +47,6 @@ class KopeteMessageManager : public QObject
 	Q_OBJECT
 
 public:
-	/**
-	 * Reading mode
-	 */
 	/**
 	 * Delete a chat manager instance
 	 */
@@ -68,6 +68,10 @@ public:
 	 * Get the local user in the session
 	 */
 	const KopeteContact* user() const;
+
+	/**
+	 * Get the protocol being used.
+	 */
 	KopeteProtocol* protocol() const;
 
 	/**
@@ -77,13 +81,20 @@ public:
 	int mmId() const;
 
 	KopeteMessage currentMessage();
-	
+
+	/**
+	 * Used for named chats
+	 */
 	virtual const QString chatName();
+
 
 	void setCurrentMessage( const KopeteMessage &message );
 
 signals:
-	void closing(KopeteMessageManager *);
+	/**
+	 * Used by a KopeteMessageManager to signal that it is closing.
+	 */
+	 void closing(KopeteMessageManager *);
 
 	/**
 	 * The following signals are used internally by Kopete.
@@ -111,7 +122,9 @@ signals:
 	 * The user is typing a message
 	 */
 	void typingMsg( bool isTyping );
-
+	/**
+	 * Signals that a remote user is typing a message.
+	 */
 	void remoteTyping( const KopeteContact *, bool );
 
 	void dying( QWidget* );
@@ -158,9 +171,11 @@ public slots:
 	 * Send a message to the user
 	 */
 	void sendMessage(KopeteMessage &message);
-
+	/**
+	 * Tell the KMM that someone is typing
+	 */
 	void typing(bool t);
-	
+
 	void slotReadMessages();
 
 
