@@ -29,7 +29,7 @@
 struct OFT2 { //OFT2 header
 	WORD headerlen;
 	WORD channel;
-	char *cookie; //8 bytes
+	QByteArray cookie; //8 bytes
 	WORD encrypt;
 	WORD compression;
 	WORD totfiles;
@@ -46,15 +46,15 @@ struct OFT2 { //OFT2 header
 	DWORD rfcsum;
 	DWORD nrecvd;
 	DWORD recvcsum;
-	char *idstring; //32 bytes
+	QString idstring; //32 bytes
 	BYTE flags;
 	BYTE lnameoffset;
 	BYTE lsizeoffset;
-	char *dummy; //69 bytes
-	char *macinfo; //16 bytes
+	QByteArray dummy; //69 bytes
+	QByteArray macinfo; //16 bytes
 	WORD encode;
 	WORD language;
-	char *filename;
+	QString filename;
 };
 
 class OscarFileSendConnection : public OscarConnection  {

@@ -697,6 +697,7 @@ void OscarSocket::parseMyUserInfo(Buffer &inbuf)
     kdDebug(14150) << "[OSCAR] Parsing my user info" << endl;
     UserInfo u = parseUserInfo(inbuf);
     emit gotMyUserInfo(u);
+    sendInfo();
 }
 
 /** parse the server's authorization response (which hopefully contains the cookie) */
@@ -987,7 +988,7 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 	kdDebug(14150) << "[OSCAR] Finished getting buddy list" << endl;
 	sendSSIActivate();
 	emit gotConfig(blist);
-	sendInfo();
+	//sendInfo();
 }
 
 /** Requests the user's BOS rights */
@@ -1011,8 +1012,8 @@ void OscarSocket::parseBOSRights(Buffer &inbuf)
 		maxdenies = (t->data[0] << 8) | t->data[1];
 	kdDebug(14150) << "[OSCAR] Maxpermits: " << maxpermits << ", maxdenies: " << maxdenies << endl;
 	ql.clear();
-	sendGroupPermissionMask();
-	sendPrivacyFlags();
+	//sendGroupPermissionMask();
+	//sendPrivacyFlags();
 }
 
 /** Parses the server ready response */
@@ -1058,7 +1059,6 @@ void OscarSocket::requestInfo(void)
 {
 	requestMyUserInfo();
 	sendSSIRightsRequest();
-	sendSSIRequest();
 	requestLocateRights();
 	requestBuddyRights();
 	requestMsgRights();
@@ -1563,10 +1563,10 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 /** Activates the SSI list on the server */
 void OscarSocket::sendSSIActivate(void)
 {
-    Buffer outbuf;
-    outbuf.addSnac(0x0013,0x0007,0x0000,0x00000000);
-    kdDebug(14150) << "[OSCAR] Sending SSI ACtivate!" << endl;
-    sendBuf(outbuf,0x02);
+	Buffer outbuf;
+	outbuf.addSnac(0x0013,0x0007,0x0000,0x00000000);
+	kdDebug(14150) << "[OSCAR] Sending SSI ACtivate!" << endl;
+	sendBuf(outbuf,0x02);
 }
 
 /** Parses the oncoming buddy server notification */
@@ -2159,8 +2159,13 @@ void OscarSocket::sendSSIRequest(void)
 /** Parses a 0x0013,0x0003 (SSI rights) from the server */
 void OscarSocket::parseSSIRights(Buffer &/*inbuf*/)
 {
-   //don't really care about this stuff...
-   //maybe write code to parse it into something useful later
+  //List of TLV's
+       //TLV of type 4 contains a bunch of words, representing maxmimums
+       // word 0 of TLV 4 data: maxbuddies
+       // word 1 of TLV 4 data: maxgroups
+       // word 2 of TLV 4 data: maxpermits
+       // word 3 of TLV 4 data: maxdenies
+  sendSSIRequest();
 }
 
 /** Sends the server lots of  information about the currently logged in user */

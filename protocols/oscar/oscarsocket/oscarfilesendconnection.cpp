@@ -63,16 +63,6 @@ void OscarFileSendConnection::slotRead(void)
 			close();
 			emit connectionClosed(connectionName());
 		}
-		if (hdr.filename)
-			delete [] hdr.filename;
-		if (hdr.dummy)
-			delete [] hdr.dummy;
-		if (hdr.cookie)
-			delete [] hdr.cookie;
-		if (hdr.idstring)
-			delete [] hdr.idstring;
-		if (hdr.macinfo)
-			delete [] hdr.macinfo;
 	}
 	else //this is part of the file!
 	{
@@ -129,11 +119,14 @@ OFT2 OscarFileSendConnection::getOFT2(void)
 		Buffer inbuf;
 		inbuf.setBuf(buf,oft.headerlen-6);
 
+		kdDebug(14150) << k_funcinfo << "Input: " << endl;
+		inbuf.print();
+		
 		if(hasDebugDialog()){
 			debugDialog()->addMessageFromServer(inbuf.toString(),connectionName());
 		}
 		oft.channel = inbuf.getWord();
-		oft.cookie = inbuf.getBlock(8);
+		oft.cookie.assign( inbuf.getBlock(8), 8 );
 		oft.encrypt = inbuf.getWord();
 		oft.compression = inbuf.getWord();
 		oft.totfiles = inbuf.getWord();
@@ -154,19 +147,24 @@ OFT2 OscarFileSendConnection::getOFT2(void)
 		oft.flags = inbuf.getByte();
 		oft.lnameoffset = inbuf.getByte();
 		oft.lsizeoffset = inbuf.getByte();
-		oft.dummy = inbuf.getBlock(69);
-		oft.macinfo = inbuf.getBlock(16);
+		oft.dummy.assign( inbuf.getBlock(69), 69 );
+		oft.macinfo.assign( inbuf.getBlock(16), 16 );
 		oft.encode = inbuf.getWord();
 		oft.language = inbuf.getWord();
 		oft.filename = inbuf.getBlock(64);
+
+		//convert "\" characters in filename to "/" characters
+		for (int i=0;i<64;i++)
+			if ( oft.filename[i] == '\\' )
+				oft.filename[i] = '/';
 	}
 	else
 	{
-		kdDebug() << "[OSCAR] Error reading OFT2 header... start byte is " << start << endl;
+		kdDebug(14150) << "[OSCAR] Error reading OFT2 header... start byte is " << start << endl;
 		oft.size = 0;
 	}
 
-	kdDebug() << "[OSCAR] Read an OFT2 header!  header length: " << oft.headerlen
+	kdDebug(14150) << "[OSCAR] Read an OFT2 header!  header length: " << oft.headerlen
 		<< ", channel: " << oft.channel << ", size: " << oft.size
 		<< ", nrecvd: " << oft.nrecvd << ", file name: " << oft.filename << endl;
 
@@ -219,11 +217,18 @@ void OscarFileSendConnection::sendOFT2Block(const OFT2 &oft, const Buffer &/*dat
 	outbuf.addString(oft.macinfo,16);
 	outbuf.addWord(oft.encode);
 	outbuf.addWord(oft.language);
-	outbuf.addString(oft.filename,64);
+	outbuf.addString(oft.filename.latin1(),oft.filename.length());
+	for (int i=oft.filename.length();i<64;i++)
+	{
+		outbuf.addByte(0x00);
+	}
 
 	if(hasDebugDialog()){
 		debugDialog()->addMessageFromClient(outbuf.toString(),connectionName());
 	}
+
+	kdDebug(14150) << k_funcinfo << "Output: " << endl;
+	outbuf.print();
 
 	writeBlock(outbuf.getBuf(),outbuf.getLength());
 }
@@ -267,29 +272,20 @@ void OscarFileSendConnection::sendFileSendRequest(void)
 	oft.flags = 0x02;
 	oft.lnameoffset = 0x00;
 	oft.lsizeoffset = 0x00;
-	oft.dummy = new char[69];
+	oft.dummy.resize(69);
 	for (int i=0;i<69;i++)
 		oft.dummy[i] = 0;
-	oft.macinfo = new char[16];
+	oft.macinfo.resize(16);
 	for (int i=0;i<16;i++)
 		oft.macinfo[i] = 0;
 	oft.encode = 0x0000;
 	oft.language = 0x0000;
-	oft.filename = new char[64];
-	for (unsigned int i=0;i<mFileInfo->url().fileName().length();i++)
-	{
-		oft.filename[i] = mFileInfo->url().fileName()[i].latin1();	
-	}
-	for (unsigned int i=mFileInfo->url().fileName().length();i<64;i++)
-		oft.filename[i] = 0;
+	oft.filename = mFileInfo->url().fileName();	
 
 	mFileSize = mFileInfo->size();
 	mFileName = mFileInfo->url().fileName();
 	Buffer thebuf;
 	sendOFT2Block(oft, thebuf, true);
-	delete [] oft.dummy;
-	delete [] oft.macinfo;
-	delete [] oft.filename;
 }
 
 /** Sends an acceptance of the information the peer has sent us and tell the peer we are ready for the file(s) */
@@ -299,7 +295,6 @@ void OscarFileSendConnection::sendAcceptTransfer(OFT2 &hdr)
 
 	mFileSize = hdr.size;
 	mFileName = hdr.filename;
-	kdDebug(14150) << "[OscarFileSendConnection] Accepting transfer of " << hdr.filename << ", size: " << mFileSize << endl;
 
 	Buffer outbuf;
 	sendOFT2Block(hdr, outbuf, false);
@@ -309,7 +304,11 @@ void OscarFileSendConnection::sendAcceptTransfer(OFT2 &hdr)
 		kdDebug(14150) << k_funcinfo << "mfileinfo is null :-(  can't accept transfer" << endl;
 		return;
 	}
-	
+
+	KURL ku = mFileInfo->url();
+	ku.setFileName(hdr.filename);
+	mFileInfo->setURL(ku);
+	kdDebug(14150) << "[OscarFileSendConnection] Accepting transfer of " << mFileInfo->url().path() << ", size: " << mFileSize << endl;
  	mFile = KIO::put(mFileInfo->url(), -1, true, false, false);
 	mFile->suspend();
 	connect( mFile, SIGNAL(result(KIO::Job*)),
@@ -325,7 +324,7 @@ void OscarFileSendConnection::sendAcceptTransfer(OFT2 &hdr)
 void OscarFileSendConnection::sendFile(void)
 {
 	mSending = true;
-	kdDebug() << k_funcinfo << "The transfer of " << mFileName << " has begun." << endl;
+	kdDebug(14150) << k_funcinfo << "The transfer of " << mFileInfo->url().path() << " has begun." << endl;
 	emit transferBegun(this, mFileName, mFileSize, connectionName());
 	mFile = KIO::get(mFileInfo->url(), true, true);
 	connect( this, SIGNAL(bytesWritten( int )),
@@ -368,27 +367,18 @@ void OscarFileSendConnection::sendReadConfirm()
 	oft.flags = 0x20;
 	oft.lnameoffset = 0x00;
 	oft.lsizeoffset = 0x00;
-	oft.dummy = new char[69];
+	oft.dummy.resize(69);
 	for (int i=0;i<69;i++)
 		oft.dummy[i] = 0;
-	oft.macinfo = new char[16];
+	oft.macinfo.resize(16);
 	for (int i=0;i<16;i++)
 		oft.macinfo[i] = 0;
 	oft.encode = 0x0000;
 	oft.language = 0x0000;
-	oft.filename = new char[64];
-	for (unsigned int i=0;i<mFileName.length();i++)
-	{
-		oft.filename[i] = mFileName[i].latin1();
-	}
-	for (unsigned int i=mFileName.length();i<64;i++)
-		oft.filename[i] = 0;
-
+	oft.filename = mFileName;
+	
 	Buffer thebuf;
 	sendOFT2Block(oft, thebuf, false);
-	delete [] oft.dummy;
-	delete [] oft.macinfo;
-	delete [] oft.filename;
 }
 
 /** Called when the kio job is done */
