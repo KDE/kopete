@@ -812,7 +812,7 @@ void ChatView::sendMessage()
 	emit messageSent( sentMessage );
 	historyList.prepend(m_edit->text());
 	historyPos = -1;
-	m_edit->setText( QString::null );
+	editpart->clear();
 	slotStopTimer();
 }
 

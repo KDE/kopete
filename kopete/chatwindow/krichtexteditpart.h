@@ -37,6 +37,8 @@ class KopeteRichTextEditPart : public KParts::ReadOnlyPart
 		
 		const QColor &bgColor() { return mBgColor; }
 		
+		void clear();
+		
 		bool simple() { return simpleMode; }
 		
 		static KAboutData *createAboutData();

@@ -141,6 +141,20 @@ void KopeteRichTextEditPart::updateCharFmt()
 	action_underline->setChecked( editor->underline() );
 }
 
+void KopeteRichTextEditPart::clear()
+{
+	editor->setText( QString::null );
+	setFont( mFont );
+	setFgColor( mFgColor );
+	
+	if( !simpleMode )
+	{
+		editor->setBold( action_bold->isChecked() );
+		editor->setItalic( action_italic->isChecked() );
+		editor->setUnderline( action_underline->isChecked() );
+	}
+}
+
 void KopeteRichTextEditPart::updateAligment()
 {
 	int align = editor->alignment();
