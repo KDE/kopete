@@ -18,6 +18,7 @@
 #define KOPETE_UICONTACTADDEDNOTIFYDIALOG_H
 
 #include <kdialogbase.h>
+#include "kopete_export.h"
 
 namespace Kopete {
 
@@ -35,17 +36,18 @@ namespace UI {
  * example of usage
  * @code 
 
-	Kopete::UI::ContactAddedNotifyDialog *dialog=new ContactAddedNotifyDialog(contactId,
-			QString::null,account);
+	Kopete::UI::ContactAddedNotifyDialog *dialog =
+			new ContactAddedNotifyDialog(contactId, QString::null,account);
 	QObject::connect(dialog,SIGNAL(applyClicked(const QString&)),this,SLOT(contactAddedDialogApplied()));
 	QObject::connect(dialog,SIGNAL(infoClicked(const QString&)),this,SLOT(contactAddedDialogInfo()));
-	dialog->show()
+	dialog->show();
 	
  * @endcode
  *
  * and in your contactAddedDialogApplied slot
  * @code
-	Kopete::UI::ContactAddedNotifyDialog *dialog=dynamic_cast<ContactAddedNotifyDialog *>(sender());
+	const Kopete::UI::ContactAddedNotifyDialog *dialog =
+			dynamic_cast<const Kopete::UI::ContactAddedNotifyDialog *>(sender());
 	if(!dialog)
 		return;
 	if(dialog->authorized())
@@ -59,7 +61,7 @@ namespace UI {
  * @author Olivier Goffart
  * @since 0.11
  */
-class ContactAddedNotifyDialog : public KDialogBase
+class KOPETE_EXPORT ContactAddedNotifyDialog : public KDialogBase
 {
 Q_OBJECT
 public:
@@ -96,22 +98,22 @@ public:
 	/**
 	 * @brief return if the user has checked the "authorize" checkbox
 	 */
-	bool authorized();
+	bool authorized() const;
 
 	/**
 	 * @brief return if the user has checked the "add" checkbox
 	 */
-	bool added();
+	bool added() const;
 
 	/**
 	 * @brief return the display name the user has entered
 	 */
-	QString displayName();
+	QString displayName() const;
 	/**
 	 * @brief return the group the user has selected
 	 * if the user has entered a group which doesn't exist yet, it will be created now
 	 */
-	Group* group();
+	Group* group() const;
 
 public slots:
 
@@ -125,7 +127,7 @@ public slots:
 	 * 
 	 * @return the new metacontact created, or 0l if the operation failed.
 	 */
-	MetaContact *addContact();
+	MetaContact *addContact() const;
 
 signals:
 	/**

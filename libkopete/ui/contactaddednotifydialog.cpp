@@ -16,6 +16,7 @@
 #include "contactaddednotifydialog.h"
 
 
+#include <qvbox.h>
 #include <qlabel.h>
 #include <qcheckbox.h>
 #include <qgroupbox.h>
@@ -56,16 +57,21 @@ struct ContactAddedNotifyDialog::Private
 
 ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 		const QString& contactNick, Kopete::Account *account, uint hide)
-	: KDialogBase( Plain,  WDestructiveClose |  WStyle_DialogBorder,
-				   Global::mainWidget(), "ContactAddedNotify", /*modal=*/false,
+	: KDialogBase( Global::mainWidget(), "ContactAddedNotify", /*modal=*/false,
 				   i18n("Somone has added you - Kopete"), Ok|Cancel    )
 {
+
+	setWFlags(WDestructiveClose |  getWFlags() );
+	
 	d=new Private;
 	d->widget=new ContactAddedNotifyWidget(this);
+	setMainWidget(d->widget);
+	
 	d->account=account;
 	d->contactId=contactId;
-	d->widget->m_label->setText(i18n("<qt><img src=\"kopete-account-icon:%1\" / >The contact <b>%2</b> has added you in his contactlist. (Account %3)</qt>")
-			.arg( account->protocol()->displayName() + QString::fromLatin1(":")+ account->accountLabel() ,
+	d->widget->m_label->setText(i18n("<qt><img src=\"kopete-account-icon:%1\" /> The contact <b>%2</b> has added you in his contactlist. (Account %3)</qt>")
+			.arg( KURL::encode_string( account->protocol()->pluginId() ) + QString::fromLatin1(":")
+			                  + KURL::encode_string( account->accountId() ) ,
 				  contactNick.isEmpty() ? contactId : contactNick + QString::fromLatin1(" < ") + contactId + QString::fromLatin1(" >")  ,
 				  account->accountLabel()  	)   );
 	if( hide & InfoButton)
@@ -87,6 +93,7 @@ ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 			d->widget->m_groupList->insertItem(groupname);
 		}
 	}
+	d->widget->m_groupList->setCurrentText(QString::null); //default to top-level
 
 	d->widget->btnClear->setIconSet( SmallIconSet( QApplication::reverseLayout() ?
 			 QString::fromLatin1 ( "locationbar_erase" ) : QString::fromLatin1 ("clear_left") ) );
@@ -94,9 +101,8 @@ ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 	connect( d->widget->btnSelectAddressee, SIGNAL( clicked() ), this, SLOT( slotSelectAddresseeClicked() ) );
 	connect( d->widget->m_infoButton, SIGNAL( clicked() ), this, SLOT( slotInfoClicked() ) );
 
-	connect( this, SIGNAL(finished()) , this , SLOT(slotFinished()));
+	connect( this, SIGNAL(okClicked()) , this , SLOT(slotFinished()));
 
-	setMainWidget(d->widget);
 }
 
 
@@ -105,22 +111,22 @@ ContactAddedNotifyDialog::~ContactAddedNotifyDialog()
 	delete d;
 }
 
-bool ContactAddedNotifyDialog::added()
+bool ContactAddedNotifyDialog::added() const
 {
 	return d->widget->m_addCb->isChecked();
 }
 
-bool ContactAddedNotifyDialog::authorized()
+bool ContactAddedNotifyDialog::authorized() const
 {
 	return d->widget->m_authorizeCb->isChecked();
 }
 
-QString ContactAddedNotifyDialog::displayName()
+QString ContactAddedNotifyDialog::displayName() const
 {
 	return d->widget->m_displayNameEdit->text();
 }
 
-Group *ContactAddedNotifyDialog::group()
+Group *ContactAddedNotifyDialog::group() const
 {
 	QString grpName=d->widget->m_groupList->currentText();
 	if(grpName.isEmpty())
@@ -129,7 +135,7 @@ Group *ContactAddedNotifyDialog::group()
 	return ContactList::self()->findGroup( grpName  );
 }
 
-MetaContact *ContactAddedNotifyDialog::addContact()
+MetaContact *ContactAddedNotifyDialog::addContact() const
 {
 	if(!added() || !d->account)
 		return 0L;
@@ -150,7 +156,7 @@ MetaContact *ContactAddedNotifyDialog::addContact()
 void ContactAddedNotifyDialog::slotSelectAddresseeClicked()
 {
 	KABC::Addressee a = Kopete::UI::AddressBookSelectorDialog::getAddressee( i18n("Addressbook association"), i18n("Choose the person who '%1' is.").arg(d->contactId ), d->addressbookId , this);
-
+	
 	if ( !a.isEmpty() )
 	{
 		d->widget->edtAddressee->setText( a.realName() );
@@ -173,8 +179,7 @@ void ContactAddedNotifyDialog::slotInfoClicked()
 
 void ContactAddedNotifyDialog::slotFinished()
 {
-	if(result() == Accepted)
-		emit applyClicked(d->contactId);
+	emit applyClicked(d->contactId);
 }
 
 
