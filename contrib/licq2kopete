@@ -1,0 +1,165 @@
+#!/usr/bin/perl
+# $Id$
+#
+# licq2kopete - Convert licq contact list to Kopete format
+# Copyright (C) 2002  Simon Perreault <nomis80@linuxquebec.com>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+use strict;
+
+# A simple warning
+print "Please make sure Kopete is not running. Press ENTER to continue...\n";
+<STDIN>;
+
+my $timestart = time;
+
+chomp( my $CONFIG = `kde-config --localprefix` );
+unless ($CONFIG) {
+    if ( -d "$ENV{HOME}/.kde3" ) {
+        $CONFIG = "$ENV{HOME}/.kde3";
+    }
+    elsif ( -d "$ENV{HOME}/.kde" ) {
+        $CONFIG = "$ENV{HOME}/.kde";
+    }
+    else {
+        die "Couln't find kde configuration directory\n";
+    }
+}
+
+# Parse the file
+my $kopeterc = parseRC("$CONFIG/share/config/kopeterc");
+
+# Add the "Imported Contacts" contact group (or make sure it's already there)
+my @groups = split /,/, $kopeterc->{groups}{ContactList}{Groups};
+my $groupno;
+for ( my $i ; $i < @groups ; $i++ ) {
+    if ( $groups[$i] eq 'Imported Contacts' ) {
+        $groupno = $i + 1;
+        last;
+    }
+}
+unless ($groupno) {
+    push @groups, 'Imported Contacts';
+    $groupno = @groups;
+}
+$kopeterc->{groups}{ContactList}{Groups} = join ",", @groups;
+
+# Get the contacts from Licq
+my $licqContacts = parseRC("$ENV{HOME}/.licq/users.conf");
+
+my @oldcontacts;
+for ( my $i = 1 ; $i <= $licqContacts->{groups}{users}{NumOfUsers} ; $i++ ) {
+    my $contact = {};
+    $contact->{uin} = $licqContacts->{groups}{users}{"User$i"};
+    my $contactInfo = parseRC("$ENV{HOME}/.licq/users/$contact->{uin}.uin");
+    $contact->{nick}     = $contactInfo->{groups}{user}{Alias};
+    $contact->{cellular} = $contactInfo->{groups}{user}{CellularNumber};
+    push @oldcontacts, $contact;
+}
+
+# Parse the icq.contacts file
+my $icqContacts = parseRC("$CONFIG/share/apps/kopete/icq.contacts");
+
+# Put the old contacts into kopete's config
+foreach (@oldcontacts) {
+    $icqContacts->{groups}{"Contact $_->{uin}"} = {
+        Authorized => 'true',
+        Group      => $groupno,
+        Nick       => $_->{nick},
+        UIN        => $_->{uin},
+    };
+    $icqContacts->{groups}{"Contact $_->{uin}"}{Cellular} = $_->{cellular}
+      if $_->{cellular};
+    print ".";
+}
+
+# Setup some defaults
+my %contacts = map { $_ => 1 } split /,/,
+  $icqContacts->{groups}{Default}{Contacts};
+$contacts{ $_->{uin} } = 1 foreach @oldcontacts;
+$icqContacts->{groups}{Default}{Contacts} = join ",", keys %contacts;
+$icqContacts->{groups}{Default}{Count} = keys %contacts;
+$icqContacts->{groups}{Default}{"Group ID Count"} = @groups;
+$icqContacts->{groups}{Default}{"Group IDs"}      = join ",",
+  ( 1 .. scalar @groups );
+$icqContacts->{groups}{Default}{"Group Names"} =
+  $kopeterc->{groups}{ContactList}{Groups};
+
+system 'cp', "$CONFIG/share/config/kopeterc",
+  "$CONFIG/share/config/kopeterc.bak";
+system 'cp', "$CONFIG/share/apps/kopete/icq.contacts",
+  "$CONFIG/share/apps/kopete/icq.contacts.bak";
+storeRC( $kopeterc,    "$CONFIG/share/config/kopeterc" );
+storeRC( $icqContacts, "$CONFIG/share/apps/kopete/icq.contacts" );
+
+print "\n"
+  . @oldcontacts
+  . " contacts converted in "
+  . ( time - $timestart )
+  . " seconds.\n";
+
+################################################################
+
+# Input: The name of a file which is in the form of a KConfig file
+# Output: A reference to a hash containing the parsed info.
+sub parseRC {
+    my $file = shift;
+
+    open RC, $file or warn "Can't open $file for reading: $!\n";
+    local $/;
+    my $rc = <RC>;
+    close RC;
+
+    my @groups = split /\n{2,}/, $rc;
+    my %rc;
+    foreach my $group (@groups) {
+        if ( $group =~ s/^\s*\[(.+?)\]\n//s ) {
+            my $groupID = $1;
+            foreach my $line ( split /\n/, $group ) {
+                my ( $key, $value ) = $line =~ /^(.+?)\s*=\s*(.*)/;
+                $rc{groups}{$groupID}{$key} = $value;
+            }
+        }
+        else {
+            foreach my $line ( split /\n/, $group ) {
+                my ( $key, $value ) = $line =~ /^(.+?)\s*=\s*(.*)/;
+                $rc{general}{$key} = $value;
+            }
+        }
+    }
+    return \%rc;
+}
+
+# Input: A reference to a hash containing a parsed RC file,
+#        A file name where to store the information.
+# Output: None.
+sub storeRC {
+    my $rc_ref = shift;
+    my $file   = shift;
+
+    open RC, '>', $file or warn "Can't open $file for writing: $!\n";
+
+    foreach ( sort keys %{ $rc_ref->{general} } ) {
+        print RC "$_=$rc_ref->{general}{$_}\n";
+    }
+    print RC "\n" if $rc_ref->{general};
+
+    foreach my $group ( sort keys %{ $rc_ref->{groups} } ) {
+        print RC "[$group]\n";
+        foreach ( sort keys %{ $rc_ref->{groups}{$group} } ) {
+            print RC "$_=$rc_ref->{groups}{$group}{$_}\n";
+        }
+        print RC "\n";
+    }
+
+    close RC;
+}
