@@ -176,7 +176,7 @@ void GroupWisePrivacyDialog::slotAddClicked()
 {
 	if ( !m_searchDlg )
 	{
-		KDialogBase * m_searchDlg = new KDialogBase( this, "invitesearchdialog", false, 
+		m_searchDlg = new KDialogBase( this, "invitesearchdialog", false, 
 				i18n( "Search for contact to invite" ),
 				KDialogBase::Ok|KDialogBase::Cancel|KDialogBase::User1, 
 				KDialogBase::User1, true, KGuiItem( i18n( "&Search" ) ) );
