@@ -289,7 +289,7 @@ GaduAccount::sendMessage( uin_t recipient, const QString& msg, int msgClass )
 	    sendMsg = msg;
 	    sendMsg.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "\r\n" ) );
             cpmsg = codec->fromUnicode(sendMsg);
-	    session_->sendMessage( recipient, sendMsg, msgClass );
+	    session_->sendMessage( recipient, cpmsg, msgClass );
 	}
 }
 
