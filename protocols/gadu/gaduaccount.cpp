@@ -181,6 +181,7 @@ KActionMenu* GaduAccount::actionMenu()
 
 void GaduAccount::connect()
 {
+	connectWithSSL = true;
 	slotGoOnline();
 }
 
@@ -223,6 +224,7 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 	}
 	else {
 		if ( !session_->isConnected() ) {
+			connectWithSSL = true;
 			slotLogin( status.internalStatus(), descr );
 			status_ = status;
 			return;
@@ -304,12 +306,14 @@ GaduAccount::slotLogoff()
 		changeStatus( status_ );
 		session_->logoff();
 	}
+	connectWithSSL = true;
 }
 
 void
 GaduAccount::slotGoOnline()
 {
 	if ( !session_->isConnected() ) {
+	    connectWithSSL = true;
 		kdDebug(14100) << "#### Connecting..." << endl;
 		slotLogin();
 	}

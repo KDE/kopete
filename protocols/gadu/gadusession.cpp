@@ -638,11 +638,14 @@ GaduSession::checkDescriptor()
 			if ( e->event.failure == GG_FAILURE_PASSWORD ) {
 				kdDebug(14100) << "incorrect passwd, retrying" << endl;
 				emit loginPasswordIncorrect();
+				break;
 			}
-			else {
-				kdDebug(14100) << "emit connection failed signal" << endl;
-				emit connectionFailed( failureDescription( (gg_failure_t)e->event.failure ) );
+			if ( e->event.failure == GG_FAILURE_TLS ) {
+				emit tlsConnectionFailed();
 			}
+			kdDebug(14100) << "emit connection failed signal" << endl;
+			emit connectionFailed( failureDescription( (gg_failure_t)e->event.failure ) );
+			
 			break;
 		case GG_EVENT_DISCONNECT:
 			kdDebug(14100)<<"event Disconnected"<<endl;
