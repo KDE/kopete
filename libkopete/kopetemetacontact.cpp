@@ -22,6 +22,7 @@
 #include "kopetecontactlist.h"
 #include "kopetemetacontactlvi.h"
 
+#include <klocale.h>
 #include <kdebug.h>
 
 // FIXME: Add parent!!
@@ -38,6 +39,8 @@ KopeteMetaContact::~KopeteMetaContact()
 void KopeteMetaContact::addContact( KopeteContact *c,
 	const QStringList &groups )
 {
+        bool unknown = false;
+
 	if( m_contacts.contains( c ) )
 	{
 		kdDebug() << "KopeteMetaContact::addContact: WARNING: "
@@ -63,17 +66,27 @@ void KopeteMetaContact::addContact( KopeteContact *c,
 		for( QStringList::ConstIterator it = groups.begin();
 			it != groups.end(); ++it )
 		{
+                        QString group = *it;
+
+                        if ( group.isEmpty() ) {
+                                //already added to the unknown group
+                                //so skip
+                                if ( unknown )
+                                        continue;
+                                group = i18n("Unknown");
+                                unknown = true;
+                        }
 			kdDebug() << "KopeteMetaContact::addContact: adding " << c->id()
-				<< " to group " << *it << endl;
+				<< " to group " << group << endl;
 
 			QListViewItem *group_item =
-				kopeteapp->contactList()->getGroup( *it );
+				kopeteapp->contactList()->getGroup( group );
 
 			// If the group doesn't exist: create it first
 			if ( !group_item )
 			{
-				kopeteapp->contactList()->addGroup( *it );
-				group_item = kopeteapp->contactList()->getGroup( *it );
+				kopeteapp->contactList()->addGroup( group );
+				group_item = kopeteapp->contactList()->getGroup( group );
 			}
 
 			kopeteapp->contactList()->addContact(
@@ -220,7 +233,7 @@ QString KopeteMetaContact::statusString() const
 KopeteMetaContact::OnlineStatus KopeteMetaContact::status() const
 {
 	bool awayFound = false;
-	
+
 	QPtrListIterator<KopeteContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
