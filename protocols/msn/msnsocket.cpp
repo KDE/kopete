@@ -585,7 +585,7 @@ bool MSNSocket::accept( KServerSocket *server )
 		return false;
 	}
 
-	kdDebug( 14140 ) << k_funcinfo << "incoming conneciton accepted" << endl;
+	kdDebug( 14140 ) << k_funcinfo << "incoming connection accepted" << endl;
 
 	setOnlineStatus( Connecting );
 

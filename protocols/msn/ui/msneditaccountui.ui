@@ -35,7 +35,7 @@
             </property>
             <widget class="QWidget">
                 <property name="name">
-                    <cstring>tab_conneciton</cstring>
+                    <cstring>tab_connection</cstring>
                 </property>
                 <attribute name="title">
                     <string>B&amp;asic Setup</string>
