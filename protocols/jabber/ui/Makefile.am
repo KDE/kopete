@@ -1,8 +1,17 @@
-noinst_LTLIBRARIES = libkopetejabberui.la
-INCLUDES = -I$(srcdir)/../../../libkopete -I$(srcdir)/../../../libkopete/ui \
-		-I$(srcdir)/.. -I$(srcdir)/../psi -I../psi \
-		$(all_includes)
+METASOURCES = AUTO
+INCLUDES = -I$(srcdir)/../../../libkopete \
+	-I$(srcdir)/../../../libkopete/ui \
+	-I../../../libkopete/ui \
+	-I$(srcdir)/.. \
+	-I$(srcdir)/../psi \
+	-I../psi \
+	$(all_includes)
 
-libkopetejabberui_la_METASOURCES = AUTO
-libkopetejabberui_la_SOURCES = dlgrename.ui dlgaddcontact.ui dlgpreferences.ui dlgjabberprefs.cpp jabberaddcontactpage.cpp dlgstatus.ui dlgjabberstatus.cpp empty.cpp
+noinst_LTLIBRARIES = libkopetejabberui.la
+
+libkopetejabberui_la_SOURCES = dlgrename.ui dlgaddcontact.ui \
+	dlgpreferences.ui dlgjabberprefs.cpp jabberaddcontactpage.cpp \
+	dlgstatus.ui dlgjabberstatus.cpp empty.cpp
+
 EXTRA_DIST = dlgrename.ui dlgaddcontact.ui dlgpreferences.ui
+
