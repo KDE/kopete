@@ -40,13 +40,9 @@
 AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 : AddContactWizard_Base( parent, name )
 {
-	QStringList groups = KopeteContactList::contactList()->groups().toStringList();
-
-	QStringList::ConstIterator it = groups.begin();
-	for( ; it != groups.end(); ++it )
+	for( KopeteGroup *it = KopeteContactList::contactList()->groups().first(); it; it = KopeteContactList::contactList()->groups().next() )
 	{
-		QString groupname = *it;
-
+		QString groupname = it->displayName();
 		if ( !groupname.isNull() )
 			new QCheckListItem( groupList, groupname, QCheckListItem::CheckBox);
 	}

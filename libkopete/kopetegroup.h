@@ -63,23 +63,13 @@ public:
 	static KopeteGroup *toplevel;
 	static KopeteGroup *temporary;
 
+signals:
+	void renamed(KopeteGroup* , const QString& );
+
 private:
 	KopeteGroupPrivate *d;
-	
-
-
-signals: 
-  void renamed(KopeteGroup* , const QString& );
 };
 
-//FIXME: should be typedef QPtrList<KopeteGroup> KopeteGroupList
-class KopeteGroupList : public  QPtrList<KopeteGroup>
-{
-	public:
-		KopeteGroupList();
-		~KopeteGroupList();
-		QStringList toStringList();
-};
-
+typedef QPtrList<KopeteGroup> KopeteGroupList;
 
 #endif

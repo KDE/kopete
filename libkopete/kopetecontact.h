@@ -31,13 +31,13 @@ class KPopupMenu;
 class KURL;
 
 class KopeteGroup;
-class KopeteGroupList;
 class KopeteMetaContact;
 class KopeteMessageManager;
 class KopeteOnlineStatus;
 class KopetePlugin;
 class KopeteProtocol;
 class KopeteAccount;
+typedef QPtrList<KopeteGroup> KopeteGroupList;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>

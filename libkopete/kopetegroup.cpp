@@ -28,21 +28,6 @@
 KopeteGroup* KopeteGroup::toplevel = new KopeteGroup(QString::null , KopeteGroup::TopLevel);
 KopeteGroup* KopeteGroup::temporary = new KopeteGroup(i18n("Not in your contact list"),KopeteGroup::Temporary);
 
-KopeteGroupList::KopeteGroupList(){}
-KopeteGroupList::~KopeteGroupList(){}
-
-QStringList KopeteGroupList::toStringList() 
-{
-	QStringList rep;
-	KopeteGroup *g;;
-	for ( g = first(); g; g = next() )
-	{
-		//if((*it).type() == KopeteGroup::Classic && !(*it).string().isNull())
-		rep << g->displayName();
-	}
-	return rep;
-}
-
 //-----------------------------------------------------------------------------
 struct KopeteGroupPrivate
 {
