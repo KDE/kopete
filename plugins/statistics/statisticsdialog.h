@@ -43,8 +43,8 @@ class StatisticsDialog : public KDialogBase
 		StatisticsDialog(StatisticsContact *contact, StatisticsDB* db, QWidget* parent=0,
 			const char* name="StatisticsDialog");
 	private:
-		QString generateHTMLChart(const int *hours, const int *hours2, const int *hours3, const QString caption, const QString color);
-		QString generateHTMLChartBar(int height, const QString color, const QString caption);
+		QString generateHTMLChart(const int *hours, const int *hours2, const int *hours3, const QString & caption, const QString & color);
+		QString generateHTMLChartBar(int height, const QString & color, const QString & caption);
 		QString stringFromSeconds(const int seconds);
 		
 		StatisticsWidget *mainWidget;
@@ -55,7 +55,7 @@ class StatisticsDialog : public KDialogBase
 		/// Metacontact for which we get the statistics from m_db
 		StatisticsContact *m_contact;
 		
-		void generatePageFromQStringList(QStringList &values, const QString subTitle);
+		void generatePageFromQStringList(QStringList values, const QString & subTitle);
 		
 		/// Generates the main page
 		void generatePageGeneral();

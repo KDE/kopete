@@ -57,7 +57,7 @@ StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db,
 			  this, SLOT( slotOpenURLRequest( const KURL &, const KParts::URLArgs & ) ) );
 	
 	
-	mainWidget->tabWidget->insertTab(hbox, "General", 0);
+	mainWidget->tabWidget->insertTab(hbox, i18n("General"), 0);
 	mainWidget->tabWidget->setCurrentPage(0);
 	
 	mainWidget->timePicker->setTime(QTime::currentTime());
@@ -161,7 +161,7 @@ void StatisticsDialog::generatePageForDay(const int dayOfWeek)
 }
 
 /// @todo chart problem at midnight.
-void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QString subTitle)
+void StatisticsDialog::generatePageFromQStringList(QStringList values, const QString & subTitle)
 {
 	generalHTMLPart->begin();
 	generalHTMLPart->write(QString("<html><head><style>.bar { margin:0px;} "
@@ -184,10 +184,11 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 	"margin-left: 10px;"
 	"margin-right: 5px;"
 	"padding:3px 3px 3px 10px;}"
-	"</style></head><body>"
-	"<h1>Statistics for %1</h1><h3>%2</h3><hr>").arg(m_contact->metaContact()->displayName()).arg(subTitle));
+	"</style></head><body>" + 
+	i18n("<h1>Statistics for %1</h1>").arg(m_contact->metaContact()->displayName()) +
+	"<h3>%1</h3><hr>").arg(subTitle));
 	
-	generalHTMLPart->write(QString("<div class=\"statgroup\"><b><a href=\"main:generalinfo\" title=\"General summary view\">General</a></b><br>"
+	generalHTMLPart->write(i18n("<div class=\"statgroup\"><b><a href=\"main:generalinfo\" title=\"General summary view\">General</a></b><br>"
 	"<span title=\"Select the a day or a month to view the stat for\"><b>Days: </b>"
 	"<a href=\"dayofweek:1\">Monday</a>&nbsp;"
 	"<a href=\"dayofweek:2\">Tuesday</a>&nbsp;"
@@ -211,16 +212,16 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 	"<a href=\"monthofyear:12\">December</a>&nbsp;"
 	"</span></div><br>"));
 	
-	mainWidget->listView->addColumn("Status");
-	mainWidget->listView->addColumn("Start date");
-	mainWidget->listView->addColumn("End date");
-	mainWidget->listView->addColumn("Start date");
-	mainWidget->listView->addColumn("End date");
+	mainWidget->listView->addColumn(i18n("Status"));
+	mainWidget->listView->addColumn(i18n("Start date"));
+	mainWidget->listView->addColumn(i18n("End date"));
+	mainWidget->listView->addColumn(i18n("Start date"));
+	mainWidget->listView->addColumn(i18n("End date"));
 	
 	
 	
 	QString todayString;
-	todayString.append("<div class=\"statgroup\" title=\"Contact status history for today\"><h2>Today</h2><table width=\"100%\"><tr><td>Status</td><td>From</td><td>To</td></tr>");
+	todayString.append(i18n("<div class=\"statgroup\" title=\"Contact status history for today\"><h2>Today</h2><table width=\"100%\"><tr><td>Status</td><td>From</td><td>To</td></tr>"));
 	
 	bool today;
 	
@@ -280,7 +281,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 		 */
 		 
 		// Number of hours between dateTime1 and dateTime2
-		int nbHours = (double)dateTime1.secsTo(dateTime2)/3600.;
+		int nbHours = (int)(dateTime1.secsTo(dateTime2)/3600.0);
 		
 		uint tempHour = 
 			dateTime1.time().hour() == dateTime2.time().hour()
@@ -379,7 +380,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 	generalHTMLPart->write(i18n("<b title=\"The total time I have seen %1 offline\">Total offline time :</b> %2 hour(s)").arg(m_contact->metaContact()->displayName()).arg(stringFromSeconds(totalOfflineTime)));
 	generalHTMLPart->write(QString("</div>"));
 
-	if (subTitle == "General informations")
+	if (subTitle == i18n("General information"))
 	/*
 	 * General stats that should not be shown on "day" or "month" pages
 	 */
@@ -425,7 +426,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 				+QString("\" src=\"file://")
 				+colorPath
 				+"\" width=\"4%\" title=\""
-				+i18n("Between %1:00 and %2:00, I was able to see %3 status %4% of the hour.").arg(QString::number(i)).arg(QString::number((i+1)%24)).arg(m_contact->metaContact()->displayName()).arg(QString::number(hrWidth))
+				+i18n("Between %1:00 and %2:00, I was able to see %3 status %4% of the hour.").arg(i).arg((i+1)%24).arg(m_contact->metaContact()->displayName()).arg(hrWidth)
 				+QString("\">");
 	}
 	generalHTMLPart->write(chartString);
@@ -439,14 +440,14 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 					"<td valign=\"bottom\" width=\"33%\" class=\"chart\">"));
 	
 	
-	generalHTMLPart->write(generateHTMLChart(hoursOnline, hoursAway, hoursOffline, "online", "blue"));
+	generalHTMLPart->write(generateHTMLChart(hoursOnline, hoursAway, hoursOffline, i18n("online"), "blue"));
 	generalHTMLPart->write(QString("</td><td valign=\"bottom\" width=\"33%\" class=\"chart\">"));
-	generalHTMLPart->write(generateHTMLChart(hoursAway, hoursOnline, hoursOffline, "away", "navy"));
+	generalHTMLPart->write(generateHTMLChart(hoursAway, hoursOnline, hoursOffline, i18n("away"), "navy"));
 	generalHTMLPart->write(QString("</td><td valign=\"bottom\" width=\"33%\" class=\"chart\">"));
-	generalHTMLPart->write(generateHTMLChart(hoursOffline, hoursAway, hoursOnline, "offline", "gray"));
+	generalHTMLPart->write(generateHTMLChart(hoursOffline, hoursAway, hoursOnline, i18n("offline"), "gray"));
 	generalHTMLPart->write(QString("</td></tr></table></div>"));
 		
-	if (subTitle == "General informations")
+	if (subTitle == i18n("General information"))
 	/* On main page, show the different status of the contact today
 	 */
 	{
@@ -464,10 +465,10 @@ void StatisticsDialog::generatePageGeneral()
 	values = m_db->query(QString("SELECT status, datetimebegin, datetimeend "
 				"FROM contactstatus WHERE metacontactid LIKE '%1' ORDER BY datetimebegin;")
 				.arg(m_contact->metaContact()->metaContactId()));
-	generatePageFromQStringList(values, "General informations");
+	generatePageFromQStringList(values, i18n("General information"));
 }
 
-QString StatisticsDialog::generateHTMLChart(const int *hours, const int *hours2, const int *hours3, const QString caption, const QString color)
+QString StatisticsDialog::generateHTMLChart(const int *hours, const int *hours2, const int *hours3, const QString & caption, const QString & color)
 {
 	QString chartString;
 	
@@ -483,12 +484,13 @@ QString StatisticsDialog::generateHTMLChart(const int *hours, const int *hours2,
 				+(totalTime ? QString::number(hrWidth) : QString::number(0))
 				+QString("\" src=\"file://")
 				+colorPath
-				+"\" width=\"4%\" title=\"Between "
-				+QString::number(i)
-				+":00 and " + QString::number((i+1) % 24) +":00, I have seen " 
-				+ m_contact->metaContact()->displayName() 
-				+ " " + QString::number(hrWidth)+"% "
-				+caption
+				+"\" width=\"4%\" title=\""+
+				i18n("Between %1:00 and %2:00, I have seen %3 %4% %5.").
+				arg(i).
+				arg((i+1) % 24).
+				arg(m_contact->metaContact()->displayName()).
+				arg(hrWidth).
+				arg(caption)
 				+".\">";
 	}
 	return chartString;
