@@ -101,12 +101,10 @@ void JabberContact::slotUpdateContact(QString handle, QString resource,
 				      int status, QString reason) {
     if (handle != mUserID)
 		return;
-    kdDebug() << "Jabber plugin: Contact - updating " << handle << " to "
-	<< status << "." << endl;
-    if (status != 0) {
+    kdDebug() << "Jabber plugin: Contact - updating " << handle << " to " << status << "." << endl;
+	if (status != -1) {
 		mStatus = status;
-		kdDebug() << "Jabber plugin: Updating status." << endl;
-    }
+	}
     if (resource != QString("")) {
 		mResource = resource;
     }
