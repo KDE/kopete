@@ -26,6 +26,7 @@
 #include <kglobal.h>
 #include <kconfig.h>
 #include <klocale.h>
+#include <kurlrequester.h>
 
 #include "webpresenceprefs.h"
 #include "webpresencepreferences.h"
@@ -39,7 +40,7 @@ WebPresencePreferences::WebPresencePreferences( const QString &pixmap, QObject *
 	KConfig *theConfig = KGlobal::config();
 	theConfig->setGroup( "Web Presence Plugin" );
 	m_prefsDialog->m_freq->setValue( theConfig->readNumEntry( "UploadFrequency" , 600 ) );
-	m_prefsDialog->m_url->setText( theConfig->readEntry( "DestinationURL", QString::null ) );
+	m_prefsDialog->m_url->setURL( theConfig->readEntry( "DestinationURL", QString::null ) );
 	m_prefsDialog->m_addresses->setChecked( theConfig->readBoolEntry( "ShowAddresses", false ) );
 	m_prefsDialog->m_userName->setText( theConfig->readEntry( "UserName" , QString::null ) );
 	QString format = theConfig->readEntry( "Formatting", QString::null );
@@ -60,7 +61,7 @@ WebPresencePreferences::WebPresencePreferences( const QString &pixmap, QObject *
 		m_prefsDialog->m_rbUseImName->setChecked( false );
 		m_prefsDialog->m_rbUseUserName->setChecked( true );
 	}
-	m_prefsDialog->m_userStyleSheet->setText( 
+	m_prefsDialog->m_userStyleSheet->setURL( 
 		theConfig->readEntry( "UserStyleSheetName" , QString::null ));
 }
 
@@ -72,7 +73,7 @@ void WebPresencePreferences::save()
 	KConfig *theConfig = KGlobal::config();
 	theConfig->setGroup( "Web Presence Plugin" );
 	theConfig->writeEntry( "UploadFrequency", m_prefsDialog->m_freq->value() );
-	theConfig->writeEntry( "DestinationURL", m_prefsDialog->m_url->text() );
+	theConfig->writeEntry( "DestinationURL", m_prefsDialog->m_url->url() );
 	theConfig->writeEntry( "ShowAddresses", m_prefsDialog->m_addresses->isChecked() );
 	theConfig->writeEntry( "UseIMName", m_prefsDialog->m_rbUseImName->isChecked() );
 	theConfig->writeEntry( "UserName", m_prefsDialog->m_userName->text() );
@@ -84,7 +85,7 @@ void WebPresencePreferences::save()
 	if ( m_prefsDialog->m_rbUserStyleSheet->isChecked() )
 		theConfig->writeEntry( "Formatting", "UserStyleSheet" );
 	theConfig->writeEntry( "UserStyleSheetName", 
-		m_prefsDialog->m_userStyleSheet->text() );	
+		m_prefsDialog->m_userStyleSheet->url() );	
 	
 	theConfig->sync();
 	emit saved();
@@ -97,7 +98,7 @@ int WebPresencePreferences::frequency() const
 
 QString WebPresencePreferences::url() const
 {
-	return m_prefsDialog->m_url->text();
+	return m_prefsDialog->m_url->url();
 }
 
 bool WebPresencePreferences::showAddresses() const
@@ -127,7 +128,7 @@ bool WebPresencePreferences::justXml() const
 
 QString WebPresencePreferences::userStyleSheet() const
 {
-	return m_prefsDialog->m_userStyleSheet->text();
+	return m_prefsDialog->m_userStyleSheet->url();
 }
 
 // vim: set noet ts=4 sts=4 sw=4:
