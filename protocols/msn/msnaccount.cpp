@@ -802,7 +802,7 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 	else if( list == "RL" )
 	{
 		// search for new Contacts
-		if( !contacts()[ handle ])
+		if( !contacts()[ handle ] || contacts()[ handle]->metaContact()->isTemporary())
 		{
 			// Users in the allow list or block list now never trigger the
 			// 'new user' dialog, which makes it impossible to add those here.
