@@ -129,10 +129,21 @@ public:
 	const KopeteOnlineStatus& onlineStatus() const;
 
 	/**
-	 * Set the contact's online status
-	 */
-	void setOnlineStatus( const KopeteOnlineStatus &status );
+	 * Set the contact's online status and status descryption
+	 * By default description is set to QString::null, this mean
+	 * that it is not used 
+	*/
+	void setOnlineStatus(const KopeteOnlineStatus &status, 
+			const QString &statusDescription=QString::null);
 
+	/**
+	 * Returns QString::null if protocol do not use it,
+	 * or status description otherwise, empty string (not null), 
+	 * if current status does not require description.
+	 */
+	   
+	QString statusDescription() const;
+	
 	/**
 	 * Return the unique id that identifies a contact. Id is required
 	 * to be unique per protocol and per account. Across those boundaries

@@ -66,6 +66,7 @@ public:
 
 	QString contactId;
 	QString icon;
+	QString statusDescription;
 };
 
 
@@ -145,14 +146,22 @@ const KopeteOnlineStatus& KopeteContact::onlineStatus() const
 	return d->onlineStatus;
 }
 
-void KopeteContact::setOnlineStatus( const KopeteOnlineStatus &status )
+void KopeteContact::setOnlineStatus( const KopeteOnlineStatus &status,
+					const QString &statusDescription )
 {
-	if( status == d->onlineStatus)
+	if( status == d->onlineStatus && statusDescription==d->statusDescription )
 		return;
-
+	
 	KopeteOnlineStatus oldStatus = d->onlineStatus;
 	d->onlineStatus = status;
+	d->statusDescription=statusDescription;
+
 	emit onlineStatusChanged( this, status, oldStatus );
+}
+
+QString KopeteContact::statusDescription() const
+{
+    return d->statusDescription;
 }
 
 void KopeteContact::sendFile( const KURL & /* sourceURL */, const QString & /* fileName */, uint /* fileSize */ )
