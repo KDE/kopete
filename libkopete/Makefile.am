@@ -5,7 +5,8 @@ noinst_LTLIBRARIES = libkopete.la
 
 # kopete_include_HEADERS = imcontact.h  improtocol.h kopete.h pluginmanager.h
 
-libkopete_la_SOURCES = kopete.cpp improtocol.cpp imcontact.cpp pluginmanager.cpp pluginloader.cpp plugin.cpp
+libkopete_la_SOURCES = kopete.cpp improtocol.cpp imcontact.cpp pluginmanager.cpp pluginloader.cpp plugin.cpp \
+                       messagelog.cpp
 libkopete_la_METASOURCES = AUTO
 libkopete_la_LDFLAGS     = 
 libkopete_la_LIBADD      = $(top_srcdir)/kopete/library/ui/libkopeteui.la
