@@ -885,12 +885,12 @@ void KopeteContactListView::removeGroup()
 	QString msg;
 	if ( removeGroupItem->firstChild() )
 	{
-		msg = i18n( "Are you sure you want to remove the group '%1' and all contacts that are contained within it?" ).
+		msg = i18n( "<qt>Are you sure you want to remove the group <b>%1</b> and all contacts that are contained within it?</qt>" ).
 			arg( removeGroupItem->group()->displayName() );
 	}
 	else
 	{
-		msg = i18n( "Are you sure you want to remove the group '%1' from your contact list?" ).arg( removeGroupItem->group()->displayName() );
+		msg = i18n( "<qt>Are you sure you want to remove the group <b>%1</b> from your contact list?</qt>" ).arg( removeGroupItem->group()->displayName() );
 	}
 
 	if( KMessageBox::warningYesNo( this, msg,
@@ -1187,7 +1187,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 	{
 		if(source_metaLVI->metaContact()->isTemporary())
 		{
-			/*int r=KMessageBox::questionYesNo( qApp->mainWidget(), i18n( "<qt>Would you like to add this contact to your contaclist</qt>" ),
+			/*int r=KMessageBox::questionYesNo( qApp->mainWidget(), i18n( "<qt>Would you like to add this contact to your contact list</qt>" ),
 				i18n( "Kopete" ), KStdGuiItem::yes(),KStdGuiItem::no(),"addTemporaryWhenMoving" );
 			if(r==KMessageBox::Yes)
 				TODO*/
@@ -1544,7 +1544,7 @@ void KopeteContactListView::slotMoveToGroup()
 
 	if(m->isTemporary())
 	{
-		if( KMessageBox::questionYesNo( qApp->mainWidget(), i18n( "<qt>Would you like to add this contact to your contaclist?</qt>" ),
+		if( KMessageBox::questionYesNo( qApp->mainWidget(), i18n( "<qt>Would you like to add this contact to your contact list?</qt>" ),
 				i18n( "Kopete" ), KStdGuiItem::yes(),KStdGuiItem::no(),"addTemporaryWhenMoving" ) == KMessageBox::Yes )
 		{
 			m->setTemporary(false,g);
@@ -1621,11 +1621,11 @@ void KopeteContactListView::slotRemove()
 		QString msg;
 		if( !contacts.isEmpty() )
 		{
-			msg = i18n( "Are you sure you want to remove the contact '%1' from your contact list?" ).arg( contacts.first()->displayName() ) ;
+			msg = i18n( "<qt>Are you sure you want to remove the contact <b>%1</b> from your contact list?</qt>" ).arg( contacts.first()->displayName() ) ;
 		}
 		else if( !groups.isEmpty() )
 		{
-			msg = i18n( "Are you sure you want to remove the group '%1' and all contacts that are contained within it?" ).
+			msg = i18n( "<qt>Are you sure you want to remove the group <b>%1</b> and all contacts that are contained within it?</qt>" ).
 				arg( groups.first()->displayName() );
 		}
 		else
