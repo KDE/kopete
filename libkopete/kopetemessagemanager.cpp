@@ -25,6 +25,8 @@
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 
+#include "kopetemetacontact.h"
+
 #include <qregexp.h>
 
 #include <kcolorbutton.h>
@@ -55,7 +57,7 @@ struct KMMPrivate
 	bool mCanBeDeleted;
 
 
-	//say if ye're currently reading message, and don't accept new message durring this time
+	//say if ye're currently reading message, and don't accept new message during this time
 	bool isBusy;
 };
 
@@ -145,7 +147,6 @@ void KopeteMessageManager::newChatWindow()
 		connect (this, SIGNAL(contactAdded(const KopeteContact *)), d->mChatWindow, SLOT(slotContactAdded(const KopeteContact *)));
 		connect (this, SIGNAL(contactRemoved(const KopeteContact *)), d->mChatWindow, SLOT(slotContactRemoved(const KopeteContact *)));
 		connect (d->mChatWindow, SIGNAL(TypingMessage(bool)), this, SLOT(slotTyping(bool)));
-
 
 	}
 	if (d->mWidget == Email)
@@ -386,9 +387,11 @@ void KopeteMessageManager::slotCancelUnreadMessageEvent()
 
 void KopeteMessageManager::slotEventDeleted(KopeteEvent *e)
 {
-	kdDebug() << "[KopeteMessageManager] Event done(), now 0L" << endl;
 	if ( e == d->mUnreadMessageEvent)
+	{
+		kdDebug() << "[KopeteMessageManager] Event done(), now 0L" << endl;
 		d->mUnreadMessageEvent = 0L;
+	}
 }
 
 void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
@@ -396,17 +399,15 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 	d->mMessageQueue.append(msg);
 
 	if( d->mLogger && d->mLog )
-	{
 		d->mLogger->append( msg );
-	}
 
-	/* First stage, see what to do */
+	// First stage, see what to do
 	bool isvisible = false;
 
 	if (!widget())
 		newChatWindow();
 	else
-		isvisible=widget()->isVisible();
+		isvisible = widget()->isVisible();
 
 
 	if (d->mReadMode == Popup)
@@ -415,18 +416,26 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 	}
 	else if (d->mReadMode == Queued)
 	{
-		/* Second stage, do it */
+		// Second stage, do it
 		if (isvisible)
 		{
 			readMessages();
 		}
 		else
-		{ /* Bug, WHOOHOO! If a window's on another desktop, we queue regardless. Grrr. */
-			/* Create an event if a prevoius one not exist */
+		{
+			// Create an event if a previous one does not exist
 			if ((d->mUnreadMessageEvent == 0L) && (msg.direction() == KopeteMessage::Inbound))
 			{
-		 		d->mUnreadMessageEvent = new KopeteEvent( i18n("Message from %1").arg(msg.from()->displayName()),
-									       "kopete/pics/newmsg.png", this, SLOT(slotReadMessages()));
+				if (msg.from()->metaContact())
+				{
+					d->mUnreadMessageEvent = new KopeteEvent( i18n("Message from %1").arg(msg.from()->metaContact()->displayName()),
+						"kopete/pics/newmsg.png", this, SLOT(slotReadMessages()));
+				}
+				else
+				{
+					d->mUnreadMessageEvent = new KopeteEvent( i18n("Message from %1").arg(msg.from()->displayName()),
+						"kopete/pics/newmsg.png", this, SLOT(slotReadMessages()));
+				}
 				connect(d->mUnreadMessageEvent, SIGNAL(done(KopeteEvent *)),
 					this, SLOT(slotEventDeleted(KopeteEvent *)));
 				KopeteNotifier::notifier()->notifyEvent( d->mUnreadMessageEvent );
@@ -516,7 +525,7 @@ void KopeteMessageManager::userTypingMsg ( const KopeteContact *c , bool t )
 		emit typingMsg();
 }*/
 
-void KopeteMessageManager::setCanBeDeleted ( bool b)
+void KopeteMessageManager::setCanBeDeleted ( bool b )
 {
 	d->mCanBeDeleted =b;
 	if(b && !widget())
@@ -528,11 +537,9 @@ KopeteMessage KopeteMessageManager::currentMessage()
 	if (d->mWidget == ChatWindow)
 	{
 		if (d->mChatWindow)
-		{
 			return d->mChatWindow->currentMessage();
-		}
 	}
-	kdDebug() << "KopeteMessageManager::currentText - Chat Window doesn't exits " <<endl;
+	kdDebug() << "KopeteMessageManager::currentMessage(); ChatWindow does not exist!" <<endl;
 	return KopeteMessage();
 }
 
@@ -541,13 +548,10 @@ void KopeteMessageManager::setCurrentMessage(const KopeteMessage& t)
 	if (d->mWidget == ChatWindow)
 	{
 		if (d->mChatWindow)
-		{
 			d->mChatWindow->setCurrentMessage(t);
-		}
 	}
 }
 
 #include "kopetemessagemanager.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-

@@ -35,7 +35,6 @@ KopeteMessage::KopeteMessage()
 	mFormat = PlainText;
 }
 
-
 KopeteMessage::KopeteMessage(const KopeteContact *fromKC,
 		KopeteContactPtrList toKC, QString body, MessageDirection direction, MessageFormat f)
 {
@@ -106,11 +105,16 @@ QString KopeteMessage::plainBody() const
 
 //	kdDebug() << "KopeteMessage::plainBody: WARNING message non unescaped (TODO)" <<endl;
 
-	//FIXME: is there a beter way to unescape HTML?
+	//FIXME: is there a better way to unescape HTML?
 	QString r=mBody;
-	r=r.replace(QRegExp("<br>"), "\n").replace(QRegExp("<[^>]*>"), "").replace(QRegExp("&gt;"), ">").replace(QRegExp("&lt;"), "<").replace(QRegExp("&nbsp;"), " ").replace(QRegExp("&amp;"), "&");
-	kdDebug() << "KopeteMessage::plainBody: " << r <<endl;
+	r = r.replace(QRegExp("<br>"), "\n").
+		replace(QRegExp("<[^>]*>"), "").
+		replace(QRegExp("&gt;"), ">").
+		replace(QRegExp("&lt;"), "<").
+		replace(QRegExp("&nbsp;"), " ").
+		replace(QRegExp("&amp;"), "&");
 
+	kdDebug() << "KopeteMessage::plainBody: " << r <<endl;
 	return r;
 }
 
@@ -420,19 +424,19 @@ QString KopeteMessage::asHTML() const
 {
 	QString msg = parsedBody();
 
-	if ( fg().isValid() ){
+	if ( fg().isValid() )
 		msg.prepend( QString("<FONT COLOR=\"%1\">").arg(fg().name()) );
-	} else {
+	else
 		msg.prepend( QString("<FONT>") );
-	}
+
 	msg.append ( "</FONT>" );
 
 	// we want a custom background-color
-	if ( bg().isValid() ){
+	if ( bg().isValid() )
 		msg.prepend( QString("<HTML><BODY BGCOLOR=\"%1\">").arg(bg().name()) );
-	} else {
+	else
 		msg.prepend ( QString("<HTML><BODY>") );
-	}
+
 	msg.append ( "</BODY></HTML>" );
 	return msg;
 }
