@@ -24,6 +24,11 @@
 #include <klineeditdlg.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
+#include <kstandarddirs.h>
+#include <kmdcodec.h>
+
+#include <qfile.h>
+#include <qregexp.h>
 
 #include "msncontact.h"
 #include "msnnotifysocket.h"
@@ -31,6 +36,10 @@
 #include "newuserimpl.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
+
+
+#include "sha1.h"
+
 
 #if !defined NDEBUG
 #include "msndebugrawcmddlg.h"
@@ -1073,33 +1082,42 @@ bool MSNAccount::isHotmail() const
 	return m_openInboxAction->isEnabled();
 }
 
-#include <qfile.h>
-#include <kstandarddirs.h>
-#include <kmdcodec.h>
-#include "sha1.h"
-
 QString MSNAccount::pictureObject()
 {
-	QString m_pictureObj;
-	//if(!m_pictureObj.isNull())
-	//	return m_pictureObj;
-
-	QFile pictFile(locateLocal( "appdata", QString::fromLatin1( "msnpicture.png" ) ) );
-	if(!pictFile.open(IO_ReadOnly))
-		return m_pictureObj="";
-
-	QByteArray ar=pictFile.readAll();
-	QString sha1d= QString((KCodecs::base64Encode(SHA1::hash(ar))));
-
-	QString size=QString::number( pictFile.size() );
-	QString all= "Creator"+accountId()+"Size"+size+"Type3LocationTFR2C.tmpFriendlyAAA=SHA1D"+ sha1d;
-	m_pictureObj="<msnobj Creator=\"" + accountId() + "\" Size=\"" + size  + "\" Type=\"3\" Location=\"TFR2C.tmp\" Friendly=\"AAA=\" SHA1D=\""+sha1d+"\" SHA1C=\""+ QString(KCodecs::base64Encode(SHA1::hashString(all.utf8())))  +"\"/>";
-
-
-	//kdDebug( 14140 ) << "MSNAccount::PictureObject: file size=" << ar.size() << endl;
-
+	if(m_pictureObj.isNull())
+		resetPictureObject(true); //silent=true to keep infinite loop away
 	return m_pictureObj;
 }
+
+void MSNAccount::resetPictureObject(bool silent)
+{
+	QString old=m_pictureObj;
+
+	if(pluginData(protocol(),"exportCustomPicture") != "1")
+		m_pictureObj="";
+	else
+	{
+		QFile pictFile(locateLocal( "appdata", "msnpicture-"+ accountId().lower().replace(QRegExp("[./~]"),"-")  +".png"  ) );
+		if(!pictFile.open(IO_ReadOnly))
+			m_pictureObj="";
+		else
+		{
+			QByteArray ar=pictFile.readAll();
+			QString sha1d= QString((KCodecs::base64Encode(SHA1::hash(ar))));
+
+			QString size=QString::number( pictFile.size() );
+			QString all= "Creator"+accountId()+"Size"+size+"Type3LocationTFR2C.tmpFriendlyAAA=SHA1D"+ sha1d;
+			m_pictureObj="<msnobj Creator=\"" + accountId() + "\" Size=\"" + size  + "\" Type=\"3\" Location=\"TFR2C.tmp\" Friendly=\"AAA=\" SHA1D=\""+sha1d+"\" SHA1C=\""+ QString(KCodecs::base64Encode(SHA1::hashString(all.utf8())))  +"\"/>";
+		}
+	}
+
+	if(old!=m_pictureObj && isConnected() && m_notifySocket && !silent)
+	{
+		//update the msn pict
+		m_notifySocket->setStatus( myself()->onlineStatus() );
+	}
+}
+
 
 #include "msnaccount.moc"
 

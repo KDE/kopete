@@ -23,6 +23,7 @@
 #include <qlistbox.h>
 #include <qpushbutton.h>
 #include <qimage.h>
+#include <qregexp.h>
 
 
 #include <klocale.h>
@@ -95,6 +96,10 @@ MSNEditAccountWidget::MSNEditAccountWidget(MSNProtocol *proto, KopeteAccount *id
 		connect(m_blockButton,SIGNAL(pressed()), this, SLOT(slotBlock()));
 		connect(m_RLButton,SIGNAL(pressed()), this, SLOT(slotShowReverseList()));
 
+		m_displayPicture->setPixmap( locateLocal( "appdata", "msnpicture-"+ m_account->accountId().lower().replace(QRegExp("[./~]"),"-")  +".png" ) );
+		connect(m_selectImage , SIGNAL(pressed()) , this , SLOT(slotSelectImage()));
+
+		m_useDisplayPicture->setChecked(m_account->pluginData( m_protocol , "exportCustomPicture")=="1");
 	}
 	else
 	{
@@ -102,9 +107,6 @@ MSNEditAccountWidget::MSNEditAccountWidget(MSNProtocol *proto, KopeteAccount *id
 		tab_info->setDisabled(true);
 		tab_contacts->setDisabled(true);
 	}
-
-	connect(m_selectImage , SIGNAL(pressed()) , this , SLOT(slotSelectImage()));
-	m_displayPicture->setPixmap(locateLocal( "appdata", QString::fromLatin1( "msnpicture.png" )));
 }
 
 MSNEditAccountWidget::~MSNEditAccountWidget()
@@ -123,6 +125,9 @@ KopeteAccount *MSNEditAccountWidget::apply()
 		m_account->setPassword( QString::null );
 
 	m_account->setAutoLogin(m_autologin->isChecked());
+
+	m_account->setPluginData( m_protocol , "exportCustomPicture" , m_useDisplayPicture->isChecked() ? "1" : QString::null );
+	static_cast<MSNAccount*>(m_account)->resetPictureObject();
 
 	if(m_account->isConnected())
 	{
@@ -204,13 +209,28 @@ void MSNEditAccountWidget::slotShowReverseList()
 
 void MSNEditAccountWidget::slotSelectImage()
 {
+	//FIXME: the change will take effect imadiatly, even if the user press cancel.
+	if(!m_account) //FIXME: since we need toe accountId to create the file HERE (and it's the problem) we need the account
+		return;
+
 	QString filePath = KFileDialog::getOpenFileName( QString::null ,"*", 0l  , i18n( "MSN Display Picture" ));
 	if(filePath.isEmpty())
 		return;
+
+	QString futurName=locateLocal( "appdata", "msnpicture-"+ m_account->accountId().lower().replace(QRegExp("[./~]"),"-")  +".png" );
+
 	QImage img(filePath);
 	img=img.smoothScale(96,96);
-	img.save(locateLocal( "appdata", QString::fromLatin1( "msnpicture.png" )) , "PNG");
-	m_displayPicture->setPixmap(locateLocal( "appdata", QString::fromLatin1( "msnpicture.png" )));
+	if(!img.isNull() && img.save( futurName , "PNG"))
+	{
+		m_displayPicture->setPixmap( futurName );
+	}
+	else
+	{
+		KMessageBox::sorry(this, i18n("<qt>An error occured when trying to change the display picture. <br>"
+						"Make sure that you have select a correct image file</qt>"), i18n("MSN Messenger"));
+	}
+
 }
 
 #include "msneditaccountwidget.moc"

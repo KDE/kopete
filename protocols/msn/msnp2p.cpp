@@ -197,7 +197,7 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 				sendP2PMessage(initM);
 
 				//prepare to send the file
-				m_Sfile = new QFile( locateLocal( "appdata", QString::fromLatin1( "msnpicture.png" ) ) );
+				m_Sfile = new QFile( locateLocal( "appdata", "msnpicture-"+ m_myHandle.lower().replace(QRegExp("[./~]"),"-")  +".png" ) );
 				if(!m_Sfile->open(IO_ReadOnly))  {/*error?*/}
     			m_totalDataSize=  m_Sfile->size();
 

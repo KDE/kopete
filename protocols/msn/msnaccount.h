@@ -72,7 +72,17 @@ public:
 	bool isHotmail() const;
 
 
+	/**
+	 * return the <msnobj> tag of the display picture
+	 */
 	QString pictureObject();
+
+	/**
+	 * reset the <msnobj>.  This method should be called if the displayimage has changed
+	 * If we are actualy connected, it will imediatly update the <msgobj> on the server, exepted
+	 * if @param silent is set to true
+	 */
+	void resetPictureObject(bool silent=false);
 
 public slots:
 	virtual void connect() ;
@@ -191,7 +201,7 @@ private:
 
 	QString m_awayReason;
 
-//	QString m_pictureObj;
+	QString m_pictureObj; //a cache of the <msnobj>
 };
 
 #endif
