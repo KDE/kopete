@@ -155,8 +155,6 @@ public slots:
 	void slotUserStateChange( QString, QString, int ) const;
 	void slotStateChanged( QString status );
 	void slotUserSetOffline( QString ) const;
-	void slotInitContacts( QString, QString, QString );
-	void slotNewUserFound( QString );
 
 	/**
 	 * The publicName has successful changed
@@ -164,8 +162,6 @@ public slots:
 	 */
 	void slotPublicNameChanged(QString handle, QString publicName);
 
-	// Someone tries to talk with us
-	void slotNewUser( QString );
 	// Add a Contact
 	void slotAddContact( QString );
 	// Block a Contact
