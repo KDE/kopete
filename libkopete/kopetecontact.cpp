@@ -127,17 +127,6 @@ KopeteContact::KopeteContact( KopeteAccount *account,
 
 	d->icon = icon;
 
-	// Initialize the context menu
-	d->actionChat        = KopeteStdAction::chat( this,        SLOT( startChat() ),             this, "actionChat" );
-	d->actionSendFile    = KopeteStdAction::sendFile( this,    SLOT( sendFile() ),              this, "actionSendFile" );
-	d->actionUserInfo    = KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ),          this, "actionUserInfo" );
-	d->actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ),           this, "actionSendMessage" );
-	d->actionViewHistory = KopeteStdAction::viewHistory( this, SLOT( slotViewHistory() ),       this, "actionViewHistory" );
-	d->actionChangeAlias = KopeteStdAction::changeAlias( this, SLOT( slotChangeDisplayName() ), this, "actionChangeAlias" );
-	d->actionDeleteContact = KopeteStdAction::deleteContact( this, SLOT( slotDeleteContact() ), this, "actionDeleteContact" );
-	d->actionChangeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( slotChangeMetaContact() ), this, "actionChangeMetaContact" );
-	d->actionAddContact = new KAction( i18n("&Add Contact"), QString::fromLatin1( "bookmark_add" ),0, this, SLOT( slotAddContact() ), this, "actionAddContact" );
-
 	// Need to check this because myself() has no parent
 	if( parent )
 	{
@@ -171,17 +160,6 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 
 	if( protocol )
 		protocol->registerContact( this );
-
-	// Initialize the context menu
-	d->actionChat        = KopeteStdAction::chat( this,        SLOT( startChat() ),             this, "actionChat" );
-	d->actionSendFile    = KopeteStdAction::sendFile( this,    SLOT( sendFile() ),              this, "actionSendFile" );
-	d->actionUserInfo    = KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ),          this, "actionUserInfo" );
-	d->actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ),           this, "actionSendMessage" );
-	d->actionViewHistory = KopeteStdAction::viewHistory( this, SLOT( slotViewHistory() ),       this, "actionViewHistory" );
-	d->actionChangeAlias = KopeteStdAction::changeAlias( this, SLOT( slotChangeDisplayName() ), this, "actionChangeAlias" );
-	d->actionDeleteContact = KopeteStdAction::deleteContact( this, SLOT( slotDeleteContact() ), this, "actionDeleteContact" );
-	d->actionChangeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( slotChangeMetaContact() ), this, "actionChangeMetaContact" );
-	d->actionAddContact = new KAction( i18n("&Add Contact"), QString::fromLatin1( "bookmark_add" ),0, this, SLOT( slotAddContact() ), this, "actionAddContact" );
 
 	// Need to check this because myself() has no parent
 	if( parent )
@@ -316,6 +294,17 @@ KPopupMenu* KopeteContact::createContextMenu()
 	// Build the menu
 	KPopupMenu *menu = new KPopupMenu();
 
+	// Initialize the context menu
+	d->actionChat        = KopeteStdAction::chat( this,        SLOT( startChat() ),             menu, "actionChat" );
+	d->actionSendFile    = KopeteStdAction::sendFile( this,    SLOT( sendFile() ),              menu, "actionSendFile" );
+	d->actionUserInfo    = KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ),          menu, "actionUserInfo" );
+	d->actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ),           menu, "actionSendMessage" );
+	d->actionViewHistory = KopeteStdAction::viewHistory( this, SLOT( slotViewHistory() ),       menu, "actionViewHistory" );
+	d->actionChangeAlias = KopeteStdAction::changeAlias( this, SLOT( slotChangeDisplayName() ), menu, "actionChangeAlias" );
+	d->actionDeleteContact = KopeteStdAction::deleteContact( this, SLOT( slotDeleteContact() ), menu, "actionDeleteContact" );
+	d->actionChangeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( slotChangeMetaContact() ), menu, "actionChangeMetaContact" );
+	d->actionAddContact = new KAction( i18n("&Add Contact"), QString::fromLatin1( "bookmark_add" ),0, this, SLOT( slotAddContact() ), menu, "actionAddContact" );
+
 	QString titleText;
 	if( displayName() == contactId() )
 		titleText = QString::fromLatin1( "%1 (%2)" ).arg( displayName() ).arg( d->onlineStatus.description() );
@@ -442,7 +431,7 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 		d->metaContact->removeContact( this );
 		disconnect( old, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
 			protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
-		
+
 		if( !old->contacts().isEmpty() )
 			protocol()->slotMetaContactAboutToSave( old );
 
