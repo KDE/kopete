@@ -294,7 +294,7 @@ void MSNFileTransferSocket::slotReadyWrite()
 	MSNSocket::slotReadyWrite();
 }
 
-QCString MSNFileTransferSocket::invitationHead()
+QString MSNFileTransferSocket::invitationHead()
 {
 	QTimer::singleShot( 10 * 60000, this, SLOT(slotTimer()) );  //the user has 10 mins to accept or refuse or initiate the transfer
 

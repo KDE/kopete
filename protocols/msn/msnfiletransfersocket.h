@@ -44,7 +44,7 @@ public:
 	~MSNFileTransferSocket();
 
 	static QString applicationID() { return "5D3E02AB-6190-11d3-BBBB-00C04F795683"; }
-	QCString invitationHead();
+	QString invitationHead();
 
 
 	void setKopeteTransfer( KopeteTransfer *kt );

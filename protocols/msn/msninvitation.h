@@ -66,9 +66,9 @@ public:
 
 	/**
 	 * reimplement this. this is the invitation string used in @ref MSNMessageManager::initInvitation()
-	 * the default implementation return the common head, you can use it in the reimplemntation
+	 * the default implementation return the common begin.
 	 */
-	QString invitationHead();
+	virtual QString invitationHead();
 
 	/**
 	 * This is the reject invitation string
