@@ -3135,9 +3135,9 @@ void OscarSocket::parseMissedMessage(Buffer &inbuf)
 		WORD reason = inbuf.getWord();
 
 		QString errstring = i18n(
-			"You missed one message from %1. Reason given:\n",
-			"You missed %n messages from %1. Reason given:\n",
-			nummissed).arg(u.sn);
+			"You missed one message from %1. Reason given:",
+			"You missed %n messages from %1. Reason given:",
+			nummissed).arg(u.sn) + "\n";
 		switch (reason)
 		{
 			case 0: //invalid message
