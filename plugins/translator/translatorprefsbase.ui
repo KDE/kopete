@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>TranslatorPrefsUI</class>
 <author>Duncan Mac-Vicar P.</author>
 <widget class="QWidget">
@@ -13,86 +13,73 @@
             <height>168</height>
         </rect>
     </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>5</vsizetype>
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </property>
     <property name="caption">
         <string>Form1</string>
     </property>
-    <widget class="QLabel">
+    <grid>
         <property name="name">
-            <cstring>TextLabel2</cstring>
+            <cstring>unnamed</cstring>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>15</x>
-                <y>10</y>
-                <width>185</width>
-                <height>30</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>My default native language</string>
-        </property>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>TextLabel2_2</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>15</x>
-                <y>45</y>
-                <width>185</width>
-                <height>30</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Translation Service:</string>
-        </property>
-    </widget>
-    <widget class="QComboBox">
-        <property name="name">
-            <cstring>m_LangBox</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>200</x>
-                <y>10</y>
-                <width>155</width>
-                <height>30</height>
-            </rect>
-        </property>
-    </widget>
-    <widget class="QComboBox">
-        <property name="name">
-            <cstring>m_ServiceBox</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>200</x>
-                <y>45</y>
-                <width>155</width>
-                <height>30</height>
-            </rect>
-        </property>
-    </widget>
-    <spacer>
-        <property name="name">
-            <cstring>Spacer2</cstring>
-        </property>
-        <property name="orientation">
-            <enum>Vertical</enum>
-        </property>
-        <property name="sizeType">
-            <enum>Expanding</enum>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>155</x>
-                <y>80</y>
-                <width>20</width>
-                <height>85</height>
-            </rect>
-        </property>
-    </spacer>
+        <widget class="QComboBox" row="0" column="1">
+            <property name="name">
+                <cstring>m_LangBox</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>1</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="1" column="1">
+            <property name="name">
+                <cstring>m_ServiceBox</cstring>
+            </property>
+        </widget>
+        <spacer row="2" column="0">
+            <property name="name">
+                <cstring>Spacer2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>TextLabel2_2</cstring>
+            </property>
+            <property name="text">
+                <string>Translation service:</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>TextLabel2</cstring>
+            </property>
+            <property name="text">
+                <string>Default native language:</string>
+            </property>
+        </widget>
+    </grid>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
