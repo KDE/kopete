@@ -1,10 +1,8 @@
 TODO for Jabber:
 
 - support for public channels
-- support for public directories
-- implement forms support
 - implement support for transports/agents
-- support for file transfers (waiting for libpsi)
+- support for file transfers
 - make sure that messages sent via a gateway from a non-subscribed contact
   are actually displayed
 - allow synchronization of offline changes / online changes
