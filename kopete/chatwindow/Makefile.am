@@ -12,9 +12,8 @@ kopete_chatwindow_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_librari
 kopete_chatwindow_la_LIBADD = ../../libkopete/libkopete.la $(LIB_KOPETECOMPAT) $(LIB_KDEUI)
 
 libkrichtexteditpart_la_SOURCES = krichtexteditpart.cpp
-libkrichtexteditpart_la_LDFLAGS = -module $(KDE_PLUGIN)
-libkrichtexteditpart_la_LIBADD = $(KDE_RPATH) $(all_libraries) $(LIB_KPARTS) \
-        $(LIB_KSPELL) $(LIB_KDEPRINT)
+libkrichtexteditpart_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries) $(KDE_RPATH)
+libkrichtexteditpart_la_LIBADD = $(LIB_KPARTS) $(LIB_KSPELL) $(LIB_KDEPRINT)
 
 partdir = $(kde_datadir)/kopeterichtexteditpart
 part_DATA = kopeterichtexteditpartfull.rc
