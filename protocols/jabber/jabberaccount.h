@@ -82,6 +82,19 @@ public slots:
 	/* Sends a presence packet to a node. */
 	void sendPresenceToNode (const KopeteOnlineStatus & status, const QString & reason);
 
+	/**
+	 * Adds a contact to this protocol with the specified details
+	 *
+	 * @param contactId The unique ID for this protocol
+	 * @param displayName The displayname of the contact (may equal userId for some protocols
+	 * @param parentContact The metacontact to add this contact to
+	 * @param groupName The name of the group to add the contact to
+	 * @param isTemporary If this is a temporary contact
+	 * @return Pointer to the KopeteContact object which was added
+	 */
+	bool addContact( const QString &contactId, const QString &displayName = QString::null,
+		KopeteMetaContact *parentContact = 0L, const QString &groupName = QString::null, bool isTemporary = false) ;
+
 signals:
 	void settingsChanged ();
 	void statusChanged (KopeteOnlineStatus status);
@@ -98,8 +111,6 @@ protected:
 	 * @param parentContact The metacontact to add this contact to
 	 */
 	virtual bool addContactToMetaContact (const QString & contactID, const QString & displayName, KopeteMetaContact * parentContact);
-
-	//void addContact(KopeteMetaContact*, const QString&);
 
 private:
 	/* JabberContact for this account. */

@@ -38,11 +38,8 @@ bool JabberAddContactPage::validateData ()
 bool JabberAddContactPage::apply (KopeteAccount * i, KopeteMetaContact * m)
 {
 	if (validateData ())
-	{
-		QString userid = i->myself ()->contactId ();
+		return static_cast<JabberAccount *>(i)->addContact(jabData->addID->text(), jabData->addID->text(), m);
 
-		return i->addContact (userid, userid, m);
-	}
 	return false;
 }
 

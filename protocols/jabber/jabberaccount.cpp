@@ -149,6 +149,7 @@ bool JabberAccount::addContactToMetaContact (const QString & contactId, const QS
 	for(KopeteGroup *group = groupList.first(); group; group = groupList.next())
 		groupNames += group->displayName();
 
+
 	JabberContact *jc = createContact(contactId, displayName, groupNames, metaContact);
 
 	return (jc != 0);
@@ -1100,37 +1101,30 @@ void JabberAccount::slotRegisterUserDone ()
 	registerFlag = 0;
 }
 
-/*
-void JabberAccount::addContact(KopeteMetaContact * mc, const QString & userID)
+bool JabberAccount::addContact( const QString &contactId, const QString &displayName,
+							   KopeteMetaContact *parentContact, const QString &groupName,
+							   bool isTemporary)
 {
-	// First of all, create a Jabber::RosterItem from the information found
-	// in the KopeteMetaContact.
-
 	Jabber::RosterItem item;
-	KopeteGroupList groupList;
-	QStringList groupStringList;
 
-	item.setJid(Jabber::Jid(userID));
-	item.setName(userID);
+	item.setJid(Jabber::Jid(contactId));
+	item.setName(contactId);
+	item.setGroups(groupName);
 
-	groupList = mc->groups();
-	for (KopeteGroup * g = groupList.first(); g; g = groupList.next())
-		groupStringList.append(g->displayName());
-	item.setGroups(groupStringList);
+	//createAddContact(parentContact, item);
 
-	createAddContact(mc, item);
-
-	Add the new contact to our roster.
-	Jabber::JT_Roster * rosterTask =
-		new Jabber::JT_Roster(jabberClient->rootTask());
+	// add the new contact to our roster.
+	Jabber::JT_Roster * rosterTask = new Jabber::JT_Roster(jabberClient->rootTask());
 
 	rosterTask->set(item.jid(), item.name(), item.groups());
 	rosterTask->go(true);
 
-	Send a subscription request.
+	// send a subscription request.
 	subscribe(item.jid());
+
+	return KopeteAccount::addContact(contactId, displayName, parentContact, groupName, isTemporary);
+
 }
-*/
 
 void JabberAccount::updateContact (const Jabber::RosterItem & item)
 {
