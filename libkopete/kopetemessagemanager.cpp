@@ -56,10 +56,6 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	d->isEmpty= others.isEmpty();
 	d->mCanBeDeleted = false;
 
-
-	connect( this, SIGNAL(readMessages( KopeteMessageManager*, bool )), KopeteViewManager::viewManager(), SLOT(readMessages(KopeteMessageManager*,bool)));
-	connect( this, SIGNAL(messageAppended( KopeteMessage &, KopeteMessageManager *) ), KopeteViewManager::viewManager(), SLOT( messageAppended( KopeteMessage &, KopeteMessageManager *) ) );
-
 	// Replace '.', '/' and '~' in the user id with '-' to avoid possible
 	// directory traversal, although appending '.log' and the rest of the
 	// code should really make overwriting files possible anyway.
