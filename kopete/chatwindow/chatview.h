@@ -387,6 +387,8 @@ private:
 	enum KopeteTabState { Normal , Highlighted , Changed , Typing , Message , Undefined };
 	enum MembersListPolicy { Smart = 0, Visible = 1, Hidden = 2 };
 
+	typedef QMap<unsigned long,KopeteMessage> MessageMap;
+
 	QPtrDict<QTimer> m_remoteTypingMap;
 	KHTMLPart *chatView;
 	KHTMLView *htmlWidget;
@@ -413,7 +415,6 @@ private:
 //	QPixmap m_iconLight;
 	KCompletion *mComplete;
 	HTMLElement activeElement;
-	QValueList<KopeteMessage> messageList;
 
 	KopeteTabState m_tabState;
 	KRootPixmap *root;
@@ -464,7 +465,11 @@ private:
 
 	const QString styleHTML() const;
 
-	QMap<unsigned long,KopeteMessage> messageMap;
+	const QString addNickLinks( const QString &html ) const;
+
+	KopeteContact *contactFromNode( const DOM::Node &n ) const;
+
+	MessageMap messageMap;
 
 	KopeteChatViewPrivate *d;
 };

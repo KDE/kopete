@@ -88,6 +88,8 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	chatView->end();
 
 	htmlWidget = chatView->view();
+	htmlWidget->setFocusPolicy( NoFocus );
+
 	viewDock->setWidget(htmlWidget);
 	viewDock->setDockSite(KDockWidget::DockBottom);
 	viewDock->setEnableDocking(KDockWidget::DockNone);
@@ -150,7 +152,6 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	connect( htmlWidget, SIGNAL(contentsMoving(int,int)),
 		this, SLOT(slotScrollingTo(int,int)) );
 
-	htmlWidget->setFocusPolicy( NoFocus );
 	setFocusProxy( m_edit );
 	m_edit->setFocus();
 
@@ -226,16 +227,16 @@ void ChatView::raise(bool activate)
 	if(m_mainWindow->isMinimized())
 		KWin::deIconifyWindow(m_mainWindow->winId() );
 	m_mainWindow->raise();
-	
+
 	/* Removed Nov 2003
 	According to Zack, the user double-clicking a contact is not valid reason for a non-pager
 	to grab window focus. While I don't agree with this, and it runs contradictory to every other
 	IM out there, commenting this code out to agree with KWin policy.
-	
+
 	Redirect any bugs relating to the widnow now not grabbing focus on clicking a contact to KWin.
 		- Jason K
 	*/
-	
+
 	//Will not activate window if user was typing
 	if(activate)
 #if KDE_VERSION < KDE_MAKE_VERSION( 3, 1, 90 )
@@ -267,9 +268,10 @@ void ChatView::save()
 	{
 		QTextStream stream ( &file );
 		QString xmlString;
-		for( QValueList<KopeteMessage>::Iterator it = messageList.begin(); it != messageList.end(); ++it)
+		for( MessageMap::Iterator it = messageMap.begin(); it != messageMap.end(); ++it)
 			xmlString += (*it).asXML().toString();
-		stream << QString::fromLatin1("<document>") + xmlString + QString::fromLatin1("</document>");
+
+		stream << QString::fromLatin1("<document>") << xmlString << QString::fromLatin1("</document>");
 		file.close(); // maybe unneeded but I like to close opened files ;)
 	}
 	else
@@ -422,17 +424,17 @@ void ChatView::createMembersList(void)
 		slotContactAdded( m_manager->user(), true);
 
 		membersDock->setWidget(membersList);
-		
+
 		KopeteContactPtrList members = m_manager->members();
-		membersStatus = static_cast<MembersListPolicy>( 
+		membersStatus = static_cast<MembersListPolicy>(
 			members.first()->metaContact()->pluginData( m_manager->protocol(),
 				QString::fromLatin1("MembersListPolicy") ).toInt() );
-		
+
 		if( membersStatus == Smart )
 			visibleMembers = ( memberContactMap.count() > 2 );
 		else
 			visibleMembers = ( membersStatus == Visible );
-		
+
 		placeMembersList( membersDockPosition );
 
 		//Connect the popup menu
@@ -457,18 +459,18 @@ void ChatView::toggleMembersVisibility()
 
 void ChatView::placeMembersList( KDockWidget::DockPosition dp )
 {
-	kdDebug(14000) << k_funcinfo << "Members list policy " << membersStatus << 
+	kdDebug(14000) << k_funcinfo << "Members list policy " << membersStatus <<
 			", visible " << visibleMembers << endl;
 
 	if ( visibleMembers )
 	{
 		membersDockPosition = dp;
-		
+
 		// look up the dock width
 		int dockWidth;
 		KGlobal::config()->setGroup( QString::fromLatin1("ChatViewDock") );
 		if( membersDockPosition == KDockWidget::DockLeft )
-			dockWidth = KGlobal::config()->readNumEntry( 
+			dockWidth = KGlobal::config()->readNumEntry(
 				QString::fromLatin1("membersDock,viewDock:sepPos"), 30);
 		else
 			dockWidth = KGlobal::config()->readNumEntry(
@@ -489,10 +491,10 @@ void ChatView::placeMembersList( KDockWidget::DockPosition dp )
 		if ( root )
 			root->repaint( true );
 	}
-	
+
 	if( isActive )
 		m_mainWindow->updateMembersActions();
-	
+
 	refreshView();
 }
 
@@ -526,13 +528,13 @@ void ChatView::remoteTyping( const KopeteContact *c, bool isTyping )
 	QStringList typingList;
 	QString statusTyping;
 	QPtrDictIterator<QTimer> it( m_remoteTypingMap );
-	
+
 	for( ; it.current(); ++it )
 	{
 		KopeteContact *c=static_cast<KopeteContact*>(it.currentKey());
 		typingList.append( c->metaContact() ? c->metaContact()->displayName() : c->displayName() );
 	}
-	
+
 	statusTyping = typingList.join( QString::fromLatin1( ", " ) );
 
 	// Update the status area
@@ -813,7 +815,16 @@ void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnl
 void ChatView::slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/*args*/)
 {
 	kdDebug(14000) << k_funcinfo << "url=" << url.url() << endl;
-	new KRun(url, 0, false); // false = non-local files
+	if( url.protocol() == "kopetemessage" )
+	{
+		KopeteContact *c = msgManager()->account()->contacts()[ url.host() ];
+		if( c )
+			c->execute();
+	}
+	else
+	{
+		new KRun(url, 0, false); // false = non-local files
+	}
 }
 
 void ChatView::sendInternalMessage(const QString &msg)
@@ -975,10 +986,10 @@ void ChatView::readOptions()
 
 	//Work-around to restore dock widget positions
 	config->setGroup( QString::fromLatin1("ChatViewDock") );
-	
+
 	membersDockPosition = static_cast<KDockWidget::DockPosition>(
 		config->readNumEntry( QString::fromLatin1("membersDockPosition"), KDockWidget::DockRight ) );
-		
+
 	QString dockKey = QString::fromLatin1("viewDock");
 	if( visibleMembers )
 	{
@@ -1031,35 +1042,44 @@ void ChatView::addChatMessage( KopeteMessage &m )
 	messageMap.insert( ++messageId, m );
 	QDomDocument message = m.asXML();
 	message.documentElement().setAttribute( QString::fromLatin1("id"), QString::number(messageId) );
-	QString resultHTML = d->xsltParser->transform( message.toString() );
-	
-	KopeteContactPtrList members = msgManager()->members();
-	for( KopeteContact *c = members.first(); c; c = members.next() )
-	{
-		resultHTML.replace( 
-			QRegExp( QString::fromLatin1("(?![^<]+>)(\\b%1\\b)(?![^<]+>)")
-					.arg( QRegExp::escape( c->displayName() ) )  ), 
-			QString::fromLatin1("<span class=\"KopeteDisplayName\">\\1</span>")
-		);
-	}
-	
+	QString resultHTML = addNickLinks( d->xsltParser->transform( message.toString() ) );
+
 	QString dir = ( QApplication::reverseLayout() ? QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
 	HTMLElement newNode = chatView->document().createElement( QString::fromLatin1("span") );
 	newNode.setAttribute( QString::fromLatin1("dir"), dir );
 	newNode.setInnerHTML( resultHTML );
 
 	chatView->htmlDocument().body().appendChild( newNode );
-	messageList.append( m );
 
-	if( messageList.count() >= bufferLen )
+	if( messageMap.count() >= bufferLen )
 	{
 		chatView->htmlDocument().body().removeChild( chatView->htmlDocument().body().firstChild() );
 		messageMap.remove( messageMap.begin() );
-		messageList.pop_front();
 	}
 
 	if( !scrollPressed )
 		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
+}
+
+const QString ChatView::addNickLinks( const QString &html ) const
+{
+	QString retVal = html;
+
+	KopeteContactPtrList members = msgManager()->members();
+	for( KopeteContact *c = members.first(); c; c = members.next() )
+	{
+		if( c->displayName().length() > 0 )
+		{
+			retVal.replace(
+				QRegExp( QString::fromLatin1("(?![^<]+>)(\\b%1\\b)(?![^<]+>)")
+					.arg( QRegExp::escape( c->displayName() ) )  ),
+				QString::fromLatin1("<a href=\"kopetemessage://%1\" class=\"KopeteDisplayName\">\\1</a>")
+				.arg( c->contactId() )
+			);
+		}
+	}
+
+	return retVal;
 }
 
 void ChatView::slotRefreshNodes()
@@ -1067,10 +1087,17 @@ void ChatView::slotRefreshNodes()
 	HTMLBodyElement bodyElement = chatView->htmlDocument().body();
 
 	QString xmlString;
-	for( QValueList<KopeteMessage>::Iterator it = messageList.begin(); it != messageList.end(); ++it)
-		xmlString += (*it).asXML().toString();
-	d->xsltParser->transformAsync( QString::fromLatin1( "<document>" ) + xmlString + QString::fromLatin1( "</document>" ),
-		this, SLOT( slotTransformComplete( const QVariant & ) ) );
+	for( MessageMap::Iterator it = messageMap.begin(); it != messageMap.end(); ++it)
+	{
+		QDomDocument message = (*it).asXML();
+	        message.documentElement().setAttribute( QString::fromLatin1("id"), QString::number( it.key() ) );
+		xmlString += message.toString();
+	}
+
+	d->xsltParser->transformAsync(
+		QString::fromLatin1( "<document>" ) + xmlString + QString::fromLatin1( "</document>" ),
+		this, SLOT( slotTransformComplete( const QVariant & ) )
+	);
 }
 
 void ChatView::slotRefreshView()
@@ -1084,7 +1111,7 @@ void ChatView::slotRefreshView()
 
 void ChatView::slotTransformComplete( const QVariant &result )
 {
-	chatView->htmlDocument().body().setInnerHTML( result.toString() );
+	chatView->htmlDocument().body().setInnerHTML( addNickLinks( result.toString() ) );
 
 	if( !scrollPressed )
 		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
@@ -1098,7 +1125,8 @@ const QString ChatView::styleHTML() const
 		"body{margin:4px;background-color:%1;font-family:%2;font-size:%3pt;color:%4;background-repeat:no-repeat;background-attachment:fixed}"
 		"td{font-family:%5;font-size:%6pt;color:%7}"
 		"a{color:%8}a.visited{color:%9}"
-		"span.KopeteDisplayName{cursor:pointer;}span.KopeteDisplayName:hover{text-decoration:underline}"
+		"a.KopeteDisplayName{text-decoration:none;color:inherit;}"
+		"a.KopeteDisplayName:hover{text-decoration:underline;color:inherit}"
 		".KopeteLink{cursor:pointer;}.KopeteLink:hover{text-decoration:underline}" )
 		.arg( p->bgColor().name() )
 		.arg( p->fontFace().family() )
@@ -1129,55 +1157,69 @@ void ChatView::clear()
 	while( body.hasChildNodes() )
 		body.removeChild( body.childNodes().item( body.childNodes().length() - 1 ) );
 
-	messageList.clear();
+	messageMap.clear();
+}
+
+KopeteContact *ChatView::contactFromNode( const Node &n ) const
+{
+	DOM::HTMLElement node = n;
+	KopeteContact *c = 0L;
+
+	if( !node.isNull() )
+	{
+		while( node.nodeType() == Node::TEXT_NODE )
+			node = node.parentNode();
+
+		if( !node.isNull() )
+		{
+			if( node.className() == QString::fromLatin1("KopeteDisplayName") )
+			{
+				KopeteContactPtrList members = msgManager()->members();
+				for( c = members.first(); c; c = members.next() )
+				{
+					if( c->displayName() == node.innerText() )
+						break;
+				}
+			}
+		}
+	}
+
+	return c;
 }
 
 void ChatView::slotRightClick( const QString &, const QPoint &point )
 {
-	KPopupMenu *chatWindowPopup = new KPopupMenu();
 	Node n = chatView->nodeUnderMouse();
 	while( n.nodeType() == Node::TEXT_NODE )
 		n = n.parentNode();
 
 	activeElement = n;
 	KopeteMessage m = messageFromNode( activeElement );
+	KopeteContact *c = contactFromNode( n );
 
-	if( !activeElement.isNull() )
+	if( c )
 	{
+		KPopupMenu *p = c->popupMenu( m_manager );
+		connect(p,SIGNAL(aboutToHide()),p,SLOT(deleteLater()));
+		p->popup( point );
+	}
+	else
+	{
+		KPopupMenu *chatWindowPopup = new KPopupMenu();
+		connect(p,SIGNAL(aboutToHide()),p,SLOT(deleteLater()));
+
 		if( activeElement.className() == QString::fromLatin1("KopeteDisplayName") )
 		{
-			KopeteContactPtrList members = msgManager()->members();
-			KopeteContact *c = 0l;
-			for( c = members.first(); c; c = members.next() )
-			{
-				if( c->displayName() == activeElement.innerText() )
-					break;
-			}
-			
-			if( c )
-			{
-				KPopupMenu *p = c->popupMenu( m_manager );
-				connect(p,SIGNAL(aboutToHide()),p,SLOT(deleteLater()));
-				p->popup( point );
-				delete chatWindowPopup;
-				chatWindowPopup = 0L;
-			}
-			else
-			{
-				chatWindowPopup->insertItem( i18n("User Has Left"), 1 );
-				chatWindowPopup->setItemEnabled( 1, false );
-				chatWindowPopup->insertSeparator();
-			}
+			chatWindowPopup->insertItem( i18n("User Has Left"), 1 );
+			chatWindowPopup->setItemEnabled( 1, false );
+			chatWindowPopup->insertSeparator();
 		}
 		else if( activeElement.tagName().lower() == QString::fromLatin1("a") )
 		{
 			copyURLAction->plug(chatWindowPopup);
 			chatWindowPopup->insertSeparator();
 		}
-	}
 
-	if( chatWindowPopup )
-	{
 		if( !n.isNull() && msgManager()->members().contains( m.from() ) )
 		{
 			bool actions = false;
@@ -1444,10 +1486,10 @@ KopeteContactLVI::KopeteContactLVI( KopeteView *view, const KopeteContact *conta
 		this, SLOT( slotDisplayNameChanged(const QString &, const QString &) ) );
 
 	connect( m_contact, SIGNAL( destroyed() ), this, SLOT( deleteLater() ) );
-	
+
 	connect( view->msgManager(), SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
 		this, SLOT( slotStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
-	
+
 	connect( m_parentView, SIGNAL( executed( QListViewItem* ) ),
 		this, SLOT( slotExecute( QListViewItem * ) ) );
 
@@ -1461,7 +1503,7 @@ void KopeteContactLVI::slotDisplayNameChanged(const QString &, const QString &ne
 	m_parentView->sort();
 }
 
-void KopeteContactLVI::slotStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, 
+void KopeteContactLVI::slotStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status,
 	const KopeteOnlineStatus & )
 {
 	if( c == m_contact )
