@@ -34,7 +34,7 @@
  * JabberBaseContact constructor
  */
 JabberBaseContact::JabberBaseContact (const XMPP::RosterItem &rosterItem, JabberAccount *account, KopeteMetaContact * mc)
-				: KopeteContact (account, rosterItem.jid().full(), mc)
+				: KopeteContact (account, rosterItem.jid().full().lower (), mc)
 {
 
 	// take roster item and update display name

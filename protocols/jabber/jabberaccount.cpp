@@ -1350,7 +1350,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 				task->go ( true );
 
 				// Is the user already in our contact list?
-				metaContact = KopeteContactList::contactList ()->findContact (protocol ()->pluginId (), accountId (), jid.userHost ());
+				metaContact = KopeteContactList::contactList ()->findContact (protocol ()->pluginId (), accountId (), jid.full().lower () );
 
 				// If it is not, ask the user if he wants to subscribe in return.
 				if ( ( !metaContact || metaContact->isTemporary() ) &&
@@ -1457,7 +1457,7 @@ void JabberAccount::slotNewContact (const XMPP::RosterItem & item)
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New roster item " << item.jid().full () << " (Subscription: " << item.subscription().toString () << ")" << endl;
 
 	/*
-	 * See if the contact has already been instantiated previously
+	 * See if the contact is already on our contact list
 	 */
 	KopeteMetaContact *metaContact = KopeteContactList::contactList()->findContact ( protocol()->pluginId (), accountId (), item.jid().full().lower () );
 
@@ -1474,16 +1474,28 @@ void JabberAccount::slotNewContact (const XMPP::RosterItem & item)
 		for (QStringList::Iterator it = groups.begin (); it != groups.end (); ++it)
 			metaContact->addToGroup (KopeteContactList::contactList ()->getGroup (*it));
 
+		/*
+		 * Add the contact to our pool.
+		 * The "dirty" flag is false here, because we just received the contact from
+		 * the server's roster. As such, it is now a synchronized entry.
+		 */
+		JabberContact *contact = contactPool()->addContact ( item, metaContact, false );
+
+		// add contact to meta contact
+		metaContact->addContact ( contact );
+
+		// put it onto contact list
 		KopeteContactList::contactList ()->addMetaContact ( metaContact );
 	}
-
-	/*
-	 * Add the contact to our pool. (this will automatically take care of updating
-	 * the contact, if it's already there)
-	 * The "dirty" flag is false here, because we just received the contact from
-	 * the server's roster. As such, it is now a synchronized entry.
-	 */
-	contactPool()->addContact ( item, metaContact, false );
+	else
+	{
+		/*
+		 * Update the contact in our pool.
+		 * The "dirty" flag is false here, because we just received the contact from
+		 * the server's roster. As such, it is now a synchronized entry.
+		 */
+		contactPool()->addContact ( item, metaContact, false );
+	}
 
 }
 
