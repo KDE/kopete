@@ -1,9 +1,9 @@
 /*
-	kopetemessage.cpp  -  Base class for Kopete messages
+    kopetemessage.cpp  -  Base class for Kopete messages
 
-    Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -82,12 +82,18 @@ void KopeteMessage::setFont(QFont font)
 	mFont = font;
 }
 
-void KopeteMessage::setBody( const QString& body , MessageFormat f )
+void KopeteMessage::setBody( const QString& body, MessageFormat f )
 {
-	if( mDirection == Outbound && body.startsWith("/me ") )
-                mBody = body.section(" ",1).prepend(" ").prepend( mFrom->displayName() ).prepend("*");
+	if( mDirection == Outbound && body.startsWith( QString::fromLatin1( "/me " ) ) )
+	{
+		mBody = body.section( QString::fromLatin1( " " ), 1 ).prepend(
+			QString::fromLatin1( " " ) ).prepend( mFrom->displayName() ).prepend( QString::fromLatin1( "*" ) );
+	}
 	else
+	{
 		mBody = body;
+	}
+
 	mFormat = f;
 }
 
@@ -116,12 +122,12 @@ QString KopeteMessage::plainBody() const
 
 	//FIXME: is there a better way to unescape HTML?
 	QString r=mBody;
-	r = r.replace(QRegExp("<br>"), "\n").
-		replace(QRegExp("<[^>]*>"), "").
-		replace(QRegExp("&gt;"), ">").
-		replace(QRegExp("&lt;"), "<").
-		replace(QRegExp("&nbsp;"), " ").
-		replace(QRegExp("&amp;"), "&");
+	r = r.replace( QRegExp( QString::fromLatin1( "<br>" ) ), QString::fromLatin1( "\n" ) ).
+		replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::fromLatin1( "" ) ).
+		replace( QRegExp( QString::fromLatin1( "&gt;" ) ), QString::fromLatin1( ">" ) ).
+		replace( QRegExp( QString::fromLatin1( "&lt;" ) ), QString::fromLatin1( "<" ) ).
+		replace( QRegExp( QString::fromLatin1( "&nbsp;" ) ), QString::fromLatin1( " " ) ).
+		replace( QRegExp( QString::fromLatin1( "&amp;" ) ), QString::fromLatin1( "&" ) );
 
 	kdDebug(14010) << "KopeteMessage::plainBody: " << r <<endl;
 	return r;
@@ -131,7 +137,7 @@ QString KopeteMessage::escapedBody() const
 {
 	if( mFormat == PlainText )
 	{
-		QString parsedString = QStyleSheet::escape( mBody ).replace( QRegExp( "\n" ), "<br>\n" );
+		QString parsedString = QStyleSheet::escape( mBody ).replace( QRegExp( QString::fromLatin1( "\n" ) ), QString::fromLatin1( "<br>\n" ) );
 		// Replace multiple spaces with '&nbsp;', but leave the first space
 		// intact for any necessary wordwrap:
 		QStringList words = QStringList::split( ' ', parsedString, true );
@@ -139,13 +145,13 @@ QString KopeteMessage::escapedBody() const
 		for( QStringList::Iterator it = words.begin(); it != words.end(); ++it )
 		{
 			if( ( *it ).isEmpty() )
-				parsedString += "&nbsp;";
+				parsedString += QString::fromLatin1( "&nbsp;" );
 			else
-				parsedString += *it + " ";
+				parsedString += *it + QString::fromLatin1( " " );
 		}
 
 		// Lastly, remove trailing whitespace:
-		parsedString.replace( QRegExp( "\\s*$" ), "" );
+		parsedString.replace( QRegExp( QString::fromLatin1( "\\s*$" ) ), QString::null );
 
 		kdDebug(14010) << "KopeteMessage::escapeBody: " << parsedString <<endl;
 		return parsedString;
@@ -165,7 +171,7 @@ QString KopeteMessage::parsedBody() const
 
 QString KopeteMessage::transformMessage( const QString &model ) const
 {
-	QString message = "";
+	QString message;
 	bool F_first = true;
 	unsigned int f = 0;
 
@@ -193,33 +199,33 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 				case 'F':  //insert Fonts
 					if( F_first ) // <font>....
 					{
-						message +="<font ";
+						message += QString::fromLatin1( "<font " );
 						if ( mFg.isValid() )
-							message += "color=\"" + mFg.name() + "\"";
+							message += QString::fromLatin1( "color=\"" ) + mFg.name() + QString::fromLatin1( "\"" );
 						if ( mFont != QFont() )
-							message += " face=\"" + mFont.family() + "\"";
-						message +=">";
+							message += QString::fromLatin1( " face=\"" ) + mFont.family() + QString::fromLatin1( "\"" );
+						message += QString::fromLatin1( ">" );
 						if ( mFont != QFont() && mFont.bold())
-							message += "<b>";
+							message += QString::fromLatin1( "<b>" );
 						if ( mFont != QFont() && mFont.italic())
-							message += "<i>";
+							message += QString::fromLatin1( "<i>" );
 						F_first=false;
 					}
 					else            // </font>
 					{
 						if ( mFont != QFont() && mFont.italic())
-							message += "</i>";
+							message += QString::fromLatin1( "</i>" );
 						if ( mFont != QFont() && mFont.bold())
-							message += "</b>";
+							message += QString::fromLatin1( "</b>" );
 
-						message +="</font>";
+						message += QString::fromLatin1( "</font>" );
 						F_first=true;
 					}
 					break;
 
 				case 'b':   //BgColor
 					if ( mBg.isValid() && !mBgOverride )
-						message += "bgcolor=\"" + mBg.name() + "\"";
+						message += QString::fromLatin1( "bgcolor=\"" ) + mBg.name() + QString::fromLatin1( "\"" );
 					break;
 
 				case 'i': //only inbound
@@ -337,18 +343,18 @@ QString KopeteMessage::parseHTML( QString message, bool parseURLs )
 				break;
 			case '\n':
 				lastReplacement = idx;
-				result += "<br>";
+				result += QString::fromLatin1( "<br>" );
 				break;
 			case '\t':		// tab == 4 spaces
 				lastReplacement = idx;
-				result += "&nbsp;&nbsp;&nbsp;&nbsp;";
+				result += QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" );
 				break;
 			case ' ':		// convert doubles spaces to HTML
 			{
 				if( (idx>0) && (text[idx-1]==' '))
-					result += "&nbsp;";
+					result += QString::fromLatin1( "&nbsp;" );
 				else
-					result += " ";
+					result += QString::fromLatin1( " " );
 				lastReplacement = idx;
 				break;
 			}
@@ -374,7 +380,7 @@ QString KopeteMessage::parseHTML( QString message, bool parseURLs )
 					}
 //					kdDebug(14010) << "found start of email addy at:" << startIdx << endl;
 
-					regExp.setPattern("[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
+					regExp.setPattern( QString::fromLatin1( "[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+" ) );
 					if ( regExp.search(text,startIdx) != -1 )
 					{
 						matchLen = regExp.matchedLength();
@@ -422,7 +428,7 @@ QString KopeteMessage::parseHTML( QString message, bool parseURLs )
 			{
 				if( (parseURLs) && (text[idx+1].latin1()=='t') )
 				{   // don't do all the stuff for every 'h'
-					regExp.setPattern("https?://[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
+					regExp.setPattern( QString::fromLatin1( "https?://[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+" ) );
 					if ( regExp.search(text,idx) == (int)idx )
 					{
 						matchLen = regExp.matchedLength();
@@ -453,7 +459,7 @@ QString KopeteMessage::parseHTML( QString message, bool parseURLs )
 			{
 				if( (parseURLs) && (text[idx+1].latin1()=='w') && (text[idx+2].latin1()=='w') )
 				{   // don't do all the stuff for every 'w'
-					regExp.setPattern("www\\.[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+\\.[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
+					regExp.setPattern( QString::fromLatin1( "www\\.[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+\\.[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+" ) );
 					if (regExp.search(text,idx)==(int)idx)
 					{
 						matchLen = regExp.matchedLength();
@@ -483,7 +489,7 @@ QString KopeteMessage::parseHTML( QString message, bool parseURLs )
 			{
 				if( (parseURLs) && (text[idx+1].latin1()=='t') && (text[idx+2].latin1()=='p') )
 				{   // don't do all the stuff for every 'f'
-					regExp.setPattern("ftp://[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
+					regExp.setPattern( QString::fromLatin1( "ftp://[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+" ) );
 					if ( regExp.search(text,idx)==(int)idx )
 					{
 						matchLen = regExp.matchedLength();
@@ -505,7 +511,7 @@ QString KopeteMessage::parseHTML( QString message, bool parseURLs )
 						break;
 					}
 
-					regExp.setPattern("ftp\\.[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+\\.[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
+					regExp.setPattern( QString::fromLatin1( "ftp\\.[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+\\.[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+" ) );
 					if ( regExp.search(text,idx)==(int)idx )
 					{
 						matchLen = regExp.matchedLength();
@@ -535,7 +541,7 @@ QString KopeteMessage::parseHTML( QString message, bool parseURLs )
 			{
 				if( (parseURLs) && (text[idx+1].latin1()=='a') && (text[idx+2].latin1()=='i') )
 				{   // don't do all the stuff for every 'm'
-					regExp.setPattern("mailto:[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
+					regExp.setPattern( QString::fromLatin1( "mailto:[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+" ) );
 					if (regExp.search(text,idx)==(int)idx)
 					{
 						matchLen = regExp.matchedLength();
@@ -568,7 +574,7 @@ QString KopeteMessage::parseHTML( QString message, bool parseURLs )
 			case '/' :
 			case '*' :
 			{
-				regExp = QString("\\%1[^\\s%2]+\\%3").arg(text[idx]).arg(text[idx]).arg(text[idx]);
+				regExp = QString::fromLatin1( "\\%1[^\\s%2]+\\%3" ).arg( text[ idx ] ).arg( text[ idx ] ).arg( text[ idx ] );
 				if ( regExp.search(text,idx) == (int)idx )
 				{
 					matchLen = regExp.matchedLength();
@@ -580,13 +586,13 @@ QString KopeteMessage::parseHTML( QString message, bool parseURLs )
 						switch (text[idx].latin1())
 						{
 							case '_' :
-								result += QString("<u>%1</u>").arg( parseHTML(text.mid(idx+1,matchLen-2),parseURLs) );
+								result += QString::fromLatin1( "<u>%1</u>" ).arg( parseHTML( text.mid( idx + 1, matchLen - 2 ), parseURLs ) );
 								break;
 							case '/' :
-								result += QString("<i>%1</i>").arg( parseHTML(text.mid(idx+1,matchLen-2),parseURLs) );
+								result += QString::fromLatin1( "<i>%1</i>" ).arg( parseHTML( text.mid( idx + 1, matchLen - 2 ), parseURLs ) );
 								break;
 							case '*' :
-								result += QString("<b>%1</b>").arg( parseHTML(text.mid(idx+1,matchLen-2),parseURLs) );
+								result += QString::fromLatin1( "<b>%1</b>" ).arg( parseHTML( text.mid( idx + 1, matchLen - 2 ), parseURLs ) );
 								break;
 						}
 						idx += matchLen-1;
@@ -611,28 +617,21 @@ QString KopeteMessage::asHTML() const
 	QString msg = parsedBody();
 
 	if ( fg().isValid() )
-		msg.prepend( QString("<FONT COLOR=\"%1\">").arg(fg().name()) );
+		msg.prepend( QString::fromLatin1( "<FONT COLOR=\"%1\">" ).arg(fg().name()) );
 	else
-		msg.prepend( QString("<FONT>") );
+		msg.prepend( QString::fromLatin1( "<FONT>" ) );
 
-	msg.append ( "</FONT>" );
+	msg.append( QString::fromLatin1( "</FONT>" ) );
 
 	// we want a custom background-color
 	if ( bg().isValid() )
-		msg.prepend( QString("<HTML><BODY BGCOLOR=\"%1\">").arg(bg().name()) );
+		msg.prepend( QString::fromLatin1( "<HTML><BODY BGCOLOR=\"%1\">" ).arg( bg().name() ) );
 	else
-		msg.prepend ( QString("<HTML><BODY>") );
+		msg.prepend( QString::fromLatin1( "<HTML><BODY>" ) );
 
-	msg.append ( "</BODY></HTML>" );
+	msg.append ( QString::fromLatin1( "</BODY></HTML>" ) );
 	return msg;
 }
 
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 

@@ -60,7 +60,7 @@ KopeteAwayDialog::KopeteAwayDialog(QWidget *parent, const char *name)
 	init();
 
 	// Set us modal
-	setWFlags(Qt::WType_Modal);
+	setWFlags( Qt::WType_Dialog | Qt::WShowModal );
 
 	kdDebug(14011) << "[KopeteAwayDialog] KopeteAwayDialog Created." << endl;
 }

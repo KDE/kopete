@@ -1,9 +1,9 @@
 /*
   kopeteaway.cpp  -  Kopete Away
 
-  Copyright (c) 2002 by Hendrik vom Lehn <hvl@linux-4-ever.de>
+  Copyright (c) 2002      by Hendrik vom Lehn       <hvl@linux-4-ever.de>
 
-  Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+  Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -13,7 +13,7 @@
   * (at your option) any later version.                                   *
   *                                                                       *
   *************************************************************************
-  */
+*/
 
 #include "kopeteaway.h"
 
@@ -139,7 +139,7 @@ QString KopeteAway::getMessage(QString title)
     }
 
     /* Return an empty string if none was found */
-    return "";
+    return QString::null;
 }
 
 bool KopeteAway::addMessage(QString title, QString message)
@@ -205,10 +205,12 @@ bool KopeteAway::updateMessage(QString title, QString message)
     if(itemToUpdate != mAwayMessageList.end()){
         (*itemToUpdate).message = message;
         return true;
-    } else {
+    }
+    else
+    {
         return false;
     }
 }
 
-// vim: set noet ts=4 sts=4 sw=4:
+// vim: set et ts=4 sts=4 sw=4:
 

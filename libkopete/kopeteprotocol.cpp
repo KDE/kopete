@@ -1,10 +1,10 @@
 /*
     kopeteprotocol.cpp - Kopete Protocol
 
-    Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-    Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -111,8 +111,8 @@ void KopeteProtocol::slotMetaContactAboutToSave( KopeteMetaContact *metaContact 
 
 		// Preset the contactId and displayName, if the plugin doesn't want to save
 		// them, or use its own format, it can call clear() on the provided list
-		sd[ "contactId" ]   = contactIt.current()->contactId();
-		sd[ "displayName" ] = contactIt.current()->displayName();
+		sd[ QString::fromLatin1( "contactId" ) ] =   contactIt.current()->contactId();
+		sd[ QString::fromLatin1( "displayName" ) ] = contactIt.current()->displayName();
 
 		// If there's an index field preset it too
 		QString index = contactIt.current()->protocol()->addressBookIndexField();
@@ -159,13 +159,13 @@ void KopeteProtocol::slotMetaContactAboutToSave( KopeteMetaContact *metaContact 
 		//        we can devise a better API, but with the constantly changing
 		//        requirements every time I learn more about kabc I'd better no touch
 		//        the API yet - Martijn
-		if( it.key().startsWith( "messaging/" ) )
+		if( it.key().startsWith( QString::fromLatin1( "messaging/" ) ) )
 		{
-			metaContact->setAddressBookField( this, it.key(), "All", it.data() );
+			metaContact->setAddressBookField( this, it.key(), QString::fromLatin1( "All" ), it.data() );
 			kdDebug() << k_funcinfo << "metaContact->setAddressBookField( " << this << ", " << it.key() << ", \"All\", " << it.data() << " );" << endl;
 		}
 		else
-			metaContact->setAddressBookField( this, "kopete", it.key(), it.data() );
+			metaContact->setAddressBookField( this, QString::fromLatin1( "kopete" ), it.key(), it.data() );
 	}
 }
 
@@ -212,10 +212,10 @@ void KopeteProtocol::deserialize( KopeteMetaContact *metaContact, const QMap<QSt
 			//        hack in the serialize code.
 			//        Once this code is actually capable of talking to kabc this hack
 			//        should be removed ASAP! - Martijn
-			if( ( *fieldIt ).startsWith( "messaging/" ) )
-				ad[ *fieldIt ] = metaContact->addressBookField( this, *fieldIt, "All" );
+			if( ( *fieldIt ).startsWith( QString::fromLatin1( "messaging/" ) ) )
+				ad[ *fieldIt ] = metaContact->addressBookField( this, *fieldIt, QString::fromLatin1( "All" ) );
 			else
-				ad[ *fieldIt ] = metaContact->addressBookField( this, "kopete", *fieldIt );
+				ad[ *fieldIt ] = metaContact->addressBookField( this, QString::fromLatin1( "kopete" ), *fieldIt );
 		}
 
 		deserializeContact( metaContact, sd, ad );
@@ -230,7 +230,7 @@ void KopeteProtocol::deserializeContact( KopeteMetaContact * /* metaContact */, 
 
 bool KopeteProtocol::addContact( const QString &contactId, const QString &displayName,
 	KopeteMetaContact *parentContact, const QString &groupName, bool isTemporary )
-{	
+{
 	kdDebug(14010) << "[KopeteProtocol] addMetaContact() contactId:" << contactId << "; displayName: " << displayName
 		<< "; groupName: " << groupName  << endl;
 
@@ -245,10 +245,11 @@ bool KopeteProtocol::addContact( const QString &contactId, const QString &displa
 			parentContact->setTemporary( false, parentGroup );
 		else
 			parentContact->addToGroup( parentGroup );
-
-	} else {
+	}
+	else
+	{
 		//Check if this MetaContact exists
-		parentContact = KopeteContactList::contactList()->findContact( pluginId(), QString::null, contactId );
+		parentContact = KopeteContactList::contactList()->findContact( QString::fromLatin1( pluginId() ), QString::null, contactId );
 		if( !parentContact )
 		{
 			//Create a new MetaContact

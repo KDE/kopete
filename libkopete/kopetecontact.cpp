@@ -1,10 +1,10 @@
 /*
     kopetecontact.cpp - Kopete Contact
 
-    Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-    Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -148,7 +148,7 @@ QString KopeteContact::statusText() const
 
 QString KopeteContact::statusIcon() const
 {
-	return "unknown";
+	return QString::fromLatin1( "unknown" );
 }
 
 QPixmap KopeteContact::scaledStatusIcon(int size)
@@ -222,7 +222,7 @@ KPopupMenu* KopeteContact::createContextMenu()
 
 	/* Build the menu */
 	KPopupMenu *menu = new KPopupMenu();
-	menu->insertTitle( displayName()+" <"+contactId()+"> ("+statusText()+")" );
+	menu->insertTitle( i18n( "%1 <%2> (%3)" ).arg( displayName() ).arg( contactId() ).arg( statusText() ) );
 
 	actionSendMessage->plug( menu );
 	actionSendMessage->setEnabled( isReachable() );
@@ -357,12 +357,16 @@ KopeteContact::MetaContactListBoxItem::MetaContactListBoxItem(KopeteMetaContact 
 	QPtrList<KopeteContact> contacts = metaContact->contacts();
 	for( KopeteContact *c = contacts.first(); c ; c = contacts.next() )
 	{
-		if(f) t+=" [";
-		else t+=" ; ";
-		t+=c->contactId();
-		f=false;
+		if( f )
+			t += QString::fromLatin1( " [" );
+		else
+			t += QString::fromLatin1( " ; " );
+
+		t += c->contactId();
+		f = false;
 	}
-	if(!f) t+="]";
+	if( !f )
+		t += QString::fromLatin1( "]" );
 
 	setText(t);
 }

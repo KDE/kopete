@@ -1,19 +1,19 @@
-/***************************************************************************
-                          kopetegroup.cpp  -  description
-                             -------------------
-    begin                : jeu oct 24 2002
-    copyright            : (C) 2002 by Olivier Goffart
-    email                : ogoffart@tiscalinet.be
- ***************************************************************************/
+/*
+    kopeteuserpreferences.cpp  -  Kopete User Preferences
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Copyright (c) 2002      by Olivier Goffart        <ogoffart@tiscalinet.be>
+
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #include "kopetegroup.h"
 #include "kopetecontactlist.h"
@@ -64,34 +64,34 @@ KopeteGroup::~KopeteGroup()
 
 QString KopeteGroup::toXML()
 {
-	QString xml = "  <kopete-group type=\"";
+	QString xml = QString::fromLatin1( "  <kopete-group type=\"" );
 
 	if( m_type == Temporary )
-		xml += "temporary";
+		xml += QString::fromLatin1( "temporary" );
 	else if( m_type == TopLevel )
-		xml += "top-level";
+		xml += QString::fromLatin1( "top-level" );
 	else
-		xml += "standard";
+		xml += QString::fromLatin1( "standard" );
 
-	xml += "\" view=\"" + QString( m_expanded ? "expanded" : "collapsed" ) + "\">\n";
+	xml += QString::fromLatin1( "\" view=\"" ) + QString::fromLatin1( m_expanded ? "expanded" : "collapsed" ) + QString::fromLatin1( "\">\n" );
 
-	xml += "    <display-name>" + QStyleSheet::escape( m_displayName ) + "</display-name>\n";
+	xml += QString::fromLatin1( "    <display-name>" ) + QStyleSheet::escape( m_displayName ) + QString::fromLatin1( "</display-name>\n" );
 
 	// Store other plugin data
 	QMap<QString, QString>::ConstIterator it;
 	for( it = m_pluginData.begin(); it != m_pluginData.end(); ++it )
 	{
-		xml += "    <plugin-data plugin-id=\"" + QStyleSheet::escape(it.key()) + "\">"
-				+ QStyleSheet::escape(it.data()) + "</plugin-data>\n";
+		xml += QString::fromLatin1( "    <plugin-data plugin-id=\"" ) + QStyleSheet::escape( it.key() ) + QString::fromLatin1( "\">" ) +
+				QStyleSheet::escape( it.data() ) + QString::fromLatin1( "</plugin-data>\n" );
 	}
 
-	xml += "  </kopete-group>\n";
+	xml += QString::fromLatin1( "  </kopete-group>\n" );
 	return xml;
 }
 
 bool KopeteGroup::fromXML( const QDomElement& data )
 {
-	QString type = data.attribute( "type", "standard" );
+	QString type = data.attribute( QString::fromLatin1( "type" ), QString::fromLatin1( "standard" ) );
 	if( type == "temporary" )
 		m_type = Temporary;
 	else if( type == "top-level" )
@@ -99,7 +99,7 @@ bool KopeteGroup::fromXML( const QDomElement& data )
 	else
 		m_type = Classic;
 
-	QString view = data.attribute( "view", "expanded" );
+	QString view = data.attribute( QString::fromLatin1( "view" ), QString::fromLatin1( "expanded" ) );
 	m_expanded = ( view != "collapsed" );
 
 	QDomNode groupData = data.firstChild();
@@ -114,7 +114,7 @@ bool KopeteGroup::fromXML( const QDomElement& data )
 		}
 		else if( groupElement.tagName() == "plugin-data" )
 		{
-			QString pluginId = groupElement.attribute( "plugin-id", QString::null );
+			QString pluginId = groupElement.attribute( QString::fromLatin1( "plugin-id" ), QString::null );
 			m_pluginData.insert( pluginId, groupElement.text() );
 			if( m_type == TopLevel ) //FIXME:
 				toplevel->m_pluginData.insert( pluginId, groupElement.text() );
@@ -136,11 +136,11 @@ void KopeteGroup::setDisplayName(const QString &s)
 		emit renamed(this,oldname);
 	}
 }
+
 QString KopeteGroup::displayName() const
 {
 	return m_displayName;
 }
-
 
 KopeteGroup::GroupType KopeteGroup::type() const
 {
@@ -149,34 +149,36 @@ KopeteGroup::GroupType KopeteGroup::type() const
 void KopeteGroup::setType(GroupType t)
 {
 	m_type=t;
-}                                                   
+}
 
 void KopeteGroup::setPluginData(KopetePlugin *p, QStringList strList )
 {
 	if(strList.isEmpty())
 	{
-		m_pluginData.remove(p->pluginId());
+		m_pluginData.remove( QString::fromLatin1( p->pluginId() ) );
 		return;
 	}
 
 	for ( QStringList::iterator it = strList.begin(); it != strList.end(); ++it )
 	{
 		//escape '||' I don't like this but it is needed
-		(*it)=(*it).replace(QRegExp("\\\\"),"\\\\").replace(QRegExp("\\|"),"\\|;");
+		( *it ).replace( QRegExp( QString::fromLatin1( "\\\\" ) ),
+			QString::fromLatin1( "\\\\") ).replace( QRegExp( QString::fromLatin1( "\\|" ) ), QString::fromLatin1( "\\|;" ) );
 	}
-	m_pluginData[p->pluginId()] =  strList.join( "||" ) ;
+	m_pluginData[ QString::fromLatin1( p->pluginId() ) ] = strList.join( QString::fromLatin1( "||" ) );
 }
 
 QStringList KopeteGroup::pluginData(KopetePlugin *p)
 {
-	if(!m_pluginData.contains(p->pluginId()))
+	if( !m_pluginData.contains( QString::fromLatin1( p->pluginId() ) ) )
 		return QStringList();
 
-	QStringList strList = QStringList::split( "||", m_pluginData[p->pluginId()] );
+	QStringList strList = QStringList::split( QString::fromLatin1( "||" ), m_pluginData[ QString::fromLatin1( p->pluginId() ) ] );
 	for ( QStringList::iterator it2 = strList.begin(); it2 != strList.end(); ++it2 )
 	{
-		//unescape '||'  
-		(*it2)=(*it2).replace(QRegExp("\\\\\\|;"),"|").replace(QRegExp("\\\\\\\\"),"\\");
+		//unescape '||'
+		( *it2 ).replace( QRegExp( QString::fromLatin1( "\\\\\\|;" ) ),
+			QString::fromLatin1( "|" ) ).replace( QRegExp( QString::fromLatin1( "\\\\\\\\" ) ), QString::fromLatin1( "\\") );
 	}
 	return strList;
 }

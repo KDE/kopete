@@ -1,10 +1,10 @@
 /*
     kopetemetacontact.cpp - Kopete Meta Contact
 
-    Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -332,13 +332,13 @@ QString KopeteMetaContact::statusIcon() const
 	switch( status() )
 	{
 		case Online:
-			return "metacontact_online";
+			return QString::fromLatin1( "metacontact_online" );
 		case Away:
-			return "metacontact_away";
+			return QString::fromLatin1( "metacontact_away" );
 		case Offline:
 		case Unknown:
 		default:
-			return "metacontact_offline";
+			return QString::fromLatin1( "metacontact_offline" );
 	}
 }
 
@@ -448,7 +448,7 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
 			return;
 		}
 		if ( !p->isAway() || KopetePrefs::prefs()->soundIfAway() )
-			KNotifyClient::event("kopete_online");
+			KNotifyClient::event( QString::fromLatin1( "kopete_online" ) );
 	}
 }
 
@@ -479,7 +479,7 @@ bool KopeteMetaContact::trackChildNameChanges() const
 	return m_trackChildNameChanges;
 }
 
-void KopeteMetaContact::setTrackChildNameChanges(bool track)
+void KopeteMetaContact::setTrackChildNameChanges( bool /* track */ )
 {
 /*
 	if (track && (m_contacts.count() == 1))
@@ -600,19 +600,17 @@ QString KopeteMetaContact::toXML()
 
 //	kdDebug(14010) << "[KopeteMetaContact] toXML(), m_trackChildNameChanges=" << m_trackChildNameChanges << "." << endl;
 
-	QString xml = "  <meta-contact>\n"
-		"    <display-name trackChildNameChanges=\"" +
+	QString xml = QString::fromLatin1( "  <meta-contact>\n    <display-name trackChildNameChanges=\"" ) +
 		QString::number(static_cast<int>(m_trackChildNameChanges)) +
-		"\">" +
-		QStyleSheet::escape( m_displayName ) +
-		"</display-name>\n";
+		QString::fromLatin1( "\">" ) + QStyleSheet::escape( m_displayName ) +
+		QString::fromLatin1( "</display-name>\n" );
 
 //	kdDebug(14010) << "[KopeteMetaContact] toXML(), xml=" << xml << "." << endl;
 
 	// Store groups
 	if ( !m_groups.isEmpty() )
 	{
-		xml += "    <groups>\n";
+		xml += QString::fromLatin1( "    <groups>\n" );
 		KopeteGroup *g;;
 		for ( g = m_groups.first(); g; g = m_groups.next() )
 		{
@@ -620,19 +618,19 @@ QString KopeteMetaContact::toXML()
 			if(!group_s.isNull())
 			{
 				if ( !group_s.isEmpty() )
-					xml += "      <group>" + QStyleSheet::escape( group_s) + "</group>\n";
+					xml += QString::fromLatin1( "      <group>" ) + QStyleSheet::escape( group_s ) + QString::fromLatin1( "</group>\n" );
 				else
-				  xml += "      <group>" + QStyleSheet::escape( i18n("Unknown") ) + "</group>\n";
+					xml += QString::fromLatin1( "      <group>" ) + QStyleSheet::escape( i18n("Unknown" ) ) + QString::fromLatin1( "</group>\n" );
 			}
 		}
 
 		// The contact is also at top-level
 		if ( isTopLevel() )
 		{
-			xml += "      <top-level/>\n";
+			xml += QString::fromLatin1( "      <top-level/>\n" );
 		}
 
-		xml += "    </groups>\n";
+		xml += QString::fromLatin1( "    </groups>\n" );
 	}
 	else
 	{
@@ -643,7 +641,7 @@ QString KopeteMetaContact::toXML()
 		   hidden contact, also for toplevel contacts saved before
 		   we added the <top-level> tag.
 		*/
-		xml += "    <groups><top-level/></groups>\n";
+		xml += QString::fromLatin1( "    <groups><top-level/></groups>\n" );
 	}
 
 	// Store address book fields
@@ -653,9 +651,9 @@ QString KopeteMetaContact::toXML()
 		QMap<QString, QString>::ConstIterator addrIt = appIt.data().begin();
 		for( ; addrIt != appIt.data().end(); ++addrIt )
 		{
-			xml += "    <address-book-field app=\"" + QStyleSheet::escape( appIt.key() ) +
-				"\" key=\"" + QStyleSheet::escape( addrIt.key() ) + "\">" +
-				QStyleSheet::escape( addrIt.data() ) + "</address-book-field>\n";
+			xml += QString::fromLatin1( "    <address-book-field app=\"" ) + QStyleSheet::escape( appIt.key() ) +
+				QString::fromLatin1( "\" key=\"" ) + QStyleSheet::escape( addrIt.key() ) + QString::fromLatin1( "\">" ) +
+				QStyleSheet::escape( addrIt.data() ) + QString::fromLatin1( "</address-book-field>\n" );
 		}
 	}
 
@@ -665,20 +663,20 @@ QString KopeteMetaContact::toXML()
 		QMap<QString, QMap<QString, QString> >::ConstIterator pluginIt;
 		for( pluginIt = m_pluginData.begin(); pluginIt != m_pluginData.end(); ++pluginIt )
 		{
-			xml += "    <plugin-data plugin-id=\"" + QStyleSheet::escape( pluginIt.key() ) + "\">\n";
+			xml += QString::fromLatin1( "    <plugin-data plugin-id=\"" + QStyleSheet::escape( pluginIt.key() ) + "\">\n" );
 
 			QMap<QString, QString>::ConstIterator it;
 			for( it = pluginIt.data().begin(); it != pluginIt.data().end(); ++it )
 			{
-				xml += "      <plugin-data-field key=\"" + QStyleSheet::escape( it.key() ) + "\">"
-						+ QStyleSheet::escape( it.data() ) + "</plugin-data-field>\n";
+				xml += QString::fromLatin1( "      <plugin-data-field key=\"" ) + QStyleSheet::escape( it.key() ) + QString::fromLatin1( "\">" )
+						+ QStyleSheet::escape( it.data() ) + QString::fromLatin1( "</plugin-data-field>\n" );
 			}
 
-			xml += "    </plugin-data>\n";
+			xml += QString::fromLatin1( "    </plugin-data>\n" );
 		}
 	}
 
-	xml += "  </meta-contact>\n";
+	xml += QString::fromLatin1( "  </meta-contact>\n" );
 
 	return xml;
 }
@@ -691,20 +689,20 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 		QDomElement contactElement = contactNode.toElement();
 		if( !contactElement.isNull() )
 		{
-			if( contactElement.tagName() == "display-name" )
+			if( contactElement.tagName() == QString::fromLatin1( "display-name" ) )
 			{
 				if ( contactElement.text().isEmpty() )
 					return false;
 				m_displayName = contactElement.text();
 
-				if( contactElement.attribute("trackChildNameChanges","1") == "1")
+				if( contactElement.attribute( QString::fromLatin1( "trackChildNameChanges" ), QString::fromLatin1( "1" ) ) == "1" )
 					m_trackChildNameChanges = true;
 				else
 					m_trackChildNameChanges = false;
 
 //				m_trackChildNameChanges = false;
 			}
-			else if( contactElement.tagName() == "groups" )
+			else if( contactElement.tagName() == QString::fromLatin1( "groups" ) )
 			{
 				QDomNode group = contactElement.firstChild();
 				while( !group.isNull() )
@@ -723,24 +721,27 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 				}
 			}
 
-			else if( contactElement.tagName() == "address-book-field" )
+			else if( contactElement.tagName() == QString::fromLatin1( "address-book-field" ) )
 			{
-				QString app = contactElement.attribute( "app", QString::null );
-				QString key = contactElement.attribute( "key", QString::null );
+				QString app = contactElement.attribute( QString::fromLatin1( "app" ), QString::null );
+				QString key = contactElement.attribute( QString::fromLatin1( "key" ), QString::null );
 				QString val = contactElement.text();
 				m_addressBook[ app ][ key ] = val;
 			}
-			else if( contactElement.tagName() == "plugin-data" )
+			else if( contactElement.tagName() == QString::fromLatin1( "plugin-data" ) )
 			{
 				QMap<QString, QString> pluginData;
-				QString pluginId = contactElement.attribute( "plugin-id", QString::null );
+				QString pluginId = contactElement.attribute( QString::fromLatin1( "plugin-id" ), QString::null );
 
 				QDomNode field = contactElement.firstChild();
 				while( !field.isNull() )
 				{
 					QDomElement fieldElement = field.toElement();
-					if( fieldElement.tagName() == "plugin-data-field" )
-						pluginData.insert( fieldElement.attribute( "key", "undefined-key" ), fieldElement.text() );
+					if( fieldElement.tagName() == QString::fromLatin1( "plugin-data-field" ) )
+					{
+						pluginData.insert( fieldElement.attribute( QString::fromLatin1( "key" ),
+							QString::fromLatin1( "undefined-key" ) ), fieldElement.text() );
+					}
 
 					field = field.nextSibling();
 				}
@@ -824,32 +825,32 @@ void KopeteMetaContact::setPluginData( KopetePlugin *p, const QMap<QString, QStr
 {
 	if( pluginData.isEmpty() )
 	{
-		m_pluginData.remove( p->pluginId() );
+		m_pluginData.remove( QString::fromLatin1( p->pluginId() ) );
 		return;
 	}
 
-	m_pluginData[ p->pluginId() ] = pluginData;
+	m_pluginData[ QString::fromLatin1( p->pluginId() ) ] = pluginData;
 }
 
 void KopeteMetaContact::setPluginData( KopetePlugin *p, const QString &key, const QString &value )
 {
-	m_pluginData[ p->pluginId() ][ key ] = value;
+	m_pluginData[ QString::fromLatin1( p->pluginId() ) ][ key ] = value;
 }
 
 QMap<QString, QString> KopeteMetaContact::pluginData( KopetePlugin *p ) const
 {
-	if( !m_pluginData.contains( p->pluginId() ) )
+	if( !m_pluginData.contains( QString::fromLatin1( p->pluginId() ) ) )
 		return QMap<QString, QString>();
 
-	return m_pluginData[ p->pluginId() ];
+	return m_pluginData[ QString::fromLatin1( p->pluginId() ) ];
 }
 
 QString KopeteMetaContact::pluginData( KopetePlugin *p, const QString &key ) const
 {
-	if( !m_pluginData.contains( p->pluginId() ) || !m_pluginData[ p->pluginId() ].contains( key ) )
+	if( !m_pluginData.contains( QString::fromLatin1( p->pluginId() ) ) || !m_pluginData[ QString::fromLatin1( p->pluginId() ) ].contains( key ) )
 		return QString::null;
 
-	return m_pluginData[ p->pluginId() ][ key ];
+	return m_pluginData[ QString::fromLatin1( p->pluginId() ) ][ key ];
 }
 
 KopeteMetaContact::IdleState KopeteMetaContact::idleState() const

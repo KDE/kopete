@@ -1,12 +1,13 @@
 /*
     pluginloader.cpp - Kopete Plugin Loader
 
-    Copyright (c) 2002 by Duncan Mac-Vicar Prett       <duncan@kde.org>
+    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
 
     Portions of this code based in Noatun plugin code:
     Copyright (c) 2000-2002 The Noatun Developers
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -31,7 +32,7 @@
 #include <kparts/componentfactory.h>
 #include <ksimpleconfig.h>
 #include <kstaticdeleter.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kurl.h>
 
 #include "kopeteplugin.h"
@@ -128,7 +129,7 @@ bool LibraryLoader::loadAll()
 	for(QStringList::ConstIterator i=modules.begin(); i!=modules.end(); ++i)
 	{
 		KopeteLibraryInfo info=getInfo(*i);
-		if (!info.type.contains("protocol"))
+		if( !info.type.contains( QString::fromLatin1( "protocol" ) ) )
 			continue;
 
 		if ( !loadPlugin( *i ) )
@@ -139,7 +140,7 @@ bool LibraryLoader::loadAll()
 	for(QStringList::ConstIterator i=modules.begin(); i!=modules.end(); ++i)
 	{
 		KopeteLibraryInfo info=getInfo(*i);
-		if (!info.type.contains("other"))
+		if( !info.type.contains( QString::fromLatin1( "other" ) ) )
 			continue;
 
 		if ( !loadPlugin( *i ) )
@@ -197,7 +198,8 @@ void LibraryLoader::setModules(const QStringList &mods)
 QValueList<KopeteLibraryInfo> LibraryLoader::available() const
 {
 	QValueList<KopeteLibraryInfo> items;
-	QStringList files=KGlobal::dirs()->findAllResources("appdata", "*.plugin", false, true);
+	QStringList files = KGlobal::dirs()->findAllResources( QString::fromLatin1( "appdata" ),
+		QString::fromLatin1( "*.plugin" ), false, true );
 	for (QStringList::Iterator i=files.begin(); i!=files.end(); ++i)
 		items.append(getInfo(*i));
 
@@ -329,7 +331,7 @@ QString LibraryLoader::pluginName(KopetePlugin *plugin)
 		if (i.current() == plugin)
 			return getInfo(i.currentKey()).name;
 	}
-	return "ERROR plugin unknown";
+	return QString::fromLatin1( "ERROR plugin unknown" );
 }
 
 QString LibraryLoader::pluginIcon( const QString &pluginId ) const
