@@ -162,7 +162,7 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	d->idleState = Unspecified;
 	d->displayName = contactId;
 	d->account=0l;
-	
+
 	if( protocol )
 		protocol->registerContact( this );
 
@@ -189,6 +189,7 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 
 KopeteContact::~KopeteContact()
 {
+	d->metaContact = 0L;
 	emit( contactDestroyed( this ) );
 
 	delete d;
@@ -438,7 +439,7 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 		
 		if( !old->contacts().isEmpty() )
 			protocol()->slotMetaContactAboutToSave( old );
-			
+
 		// Reparent the contact
 		old->removeChild( this );
 	}

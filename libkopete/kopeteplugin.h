@@ -22,6 +22,9 @@
 #include <qobject.h>
 #include <qstringlist.h>
 
+#include <dom/dom_node.h>
+#include "kopetemessage.h"
+
 class KopeteMetaContact;
 class KopeteMessageManager;
 class KActionCollection;
@@ -92,6 +95,8 @@ public:
 	 */
 	virtual KActionCollection *customToolbarActions() { return 0L; };
 
+	virtual KActionCollection *customChatWindowPopupActions( const KopeteMessage &, DOM::Node & ) { return 0L; };
+
 	/**
 	 * Get the name of the icon for this plugin. The icon name is taken from the
 	 * .desktop file.
@@ -102,7 +107,7 @@ public:
 	 * This is a convenience method that simply calls @ref PluginLoader::pluginIcon().
 	 */
 	QString pluginIcon() const;
-	
+
 	/**
 	 * Returns the display name of this plugin.
 	 *
