@@ -2,6 +2,7 @@
     ircaccount.h - IRC Account
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
+    Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
 
     Kopete    (c) 2002      by the Kopete developers <kopete-devel@kde.org>
 
@@ -20,6 +21,7 @@
 
 #include <qstring.h>
 #include <qstringlist.h>
+#include <kdialogbase.h>
 
 #include "kopeteaccount.h"
 
@@ -33,12 +35,31 @@ class KopeteContact;
 class KopeteMessageManager;
 
 class KIRC;
-
 class IRCProtocol;
 class IRCContactManager;
 class IRCChannelContact;
 class IRCServerContact;
 class IRCUserContact;
+class ChannelList;
+
+class ChannelListDialog : public KDialogBase
+{
+	Q_OBJECT
+
+	public:
+		ChannelListDialog( KIRC *engine, const QString &caption, QObject *target, const char* slotJoinChan );
+
+		void clear();
+
+		void search();
+
+	private slots:
+		void slotChannelDoubleClicked( const QString & );
+
+	private:
+		KIRC *m_engine;
+		ChannelList *m_list;
+};
 
 class IRCAccount
 	: public KopeteAccount
@@ -53,81 +74,39 @@ public:
 	virtual void loaded();
 
 	const QString userName() const;
-	
+
 	const QStringList connectCommands() const;
-	
+
 	void setConnectCommands( const QStringList & ) const;
-	
+
 	void setDefaultPart( const QString & );
-	
+
 	void setDefaultQuit( const QString & );
-	
+
 	void setUserName( const QString & );
-	
+
 	void setAltNick( const QString & );
-	
+
 	const QString defaultPart() const;
-	
+
 	const QString defaultQuit() const;
-	
+
 	const QString altNick() const;
-	
+
 	QMap< QString, QString > customCtcp() const;
-	
+
 	void setCustomCtcpReplies( const QMap< QString, QString > &replys ) const;
-	
+
 	const QMap<QString, QString> customCtcpReplies() const;
-	
+
 public slots:
-
-	void unregister(KopeteContact *);
-
-	IRCServerContact *findServer(const QString &name, KopeteMetaContact *m = 0L);
-
-	/**
-	 * Attempts to find a IRCChannelContact with the specified name in
-	 * our registered channels list. If one exists, it is returned. If not, a new contact
-	 * is created for it, and either assigned to the passed in @ref KopeteMestaContact
-	 * if it exists, or assigned to a temporary @ref KopeteMetaContact. If a temporary
-	 * @ref KopeteMetaContact is created, it is *not* added to the contact list by this
-	 * function.
-	 */
-	IRCChannelContact *findChannel(const QString &name, KopeteMetaContact *m = 0L);
-
-	/**
-	 * Attempts to find a IRCUserContact with the specified name in
-	 * our registered users list. If one exists, it is returned. If not, a new contact
-	 * is created for it, and either assigned to the passed in @ref KopeteMestaContact
-	 * if it exists, or assigned to a temporary @ref KopeteMetaContact. If a temporary
-	 * @ref KopeteMetaContact is created, it is *not* added to the contact list by this
-	 * function.
-	 */
-	IRCUserContact *findUser(const QString &name, KopeteMetaContact *m = 0L);
-
-	void unregisterServer(const QString &name);
-
-	/**
-	 * Unregisters a channel contact. This function checks the channels conversation
-	 * count (the number of conversations it is taking part in), and if it is 0, it deletes the
-	 * contact and removes it from the registered channels list. Channels in the contact
-	 * list are never deleted.
-	 */
-	void unregisterChannel(const QString &name);
-
-	/**
-	 * Unregisters a user contact. This function checks the users conversation
-	 * count (the number of conversations it is taking part in), and if it is 0, it deletes the
-	 * contact and removes it from the registered channels list. Users in the contact
-	 * list are never deleted.
-	 */
-	void unregisterUser(const QString &name);
 
 	virtual KActionMenu *actionMenu();
 
 	virtual void setAway( bool isAway, const QString &awayMessage = QString::null );
 
 	virtual bool isConnected();
-	
+
 	// Returns the KIRC engine instance
 	KIRC *engine() const
 		{ return m_engine; }
@@ -148,9 +127,11 @@ public slots:
 	void successfullyChangedNick(const QString &, const QString &);
 	virtual void connect();
 	virtual void disconnect();
-	
+
 	void quit( const QString &quitMessage = QString::null );
-	
+
+	void listChannels();
+
 protected:
 	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact ) ;
 
@@ -158,12 +139,15 @@ protected:
 private slots:
 	void slotFailedServerPassword();
 	void slotGoAway( const QString &reason );
+	void slotJoinNamedChannel( const QString &channel );
 	void slotJoinChannel();
 	void slotShowServerWindow();
 	void slotNickInUse( const QString &nick );
 	void slotNickInUseAlert( const QString &nick );
 	void slotConnectedToServer();
 	void slotDisconnected();
+	void slotServerBusy();
+	void slotSearchChannels();
 	void slotJoinedUnknownChannel( const QString &user,  const QString &channel );
 
 private:
@@ -178,9 +162,11 @@ private:
 
 	KIRC *m_engine;
 
+	ChannelListDialog *m_channelList;
+
 	IRCContactManager *m_contactManager;
 	IRCServerContact *m_myServer;
-	
+
 	QMap< QString, QString > m_customCtcp;
 };
 

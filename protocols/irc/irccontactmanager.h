@@ -48,63 +48,52 @@ class IRCContactManager
 
 	public:
 		IRCContactManager(const QString &nickName, const QString &serverName, IRCAccount *account, const char *name=0);
-		
+
 		IRCAccount *account() const { return m_account; }
 		IRCServerContact *myServer() const { return m_myServer; }
 		IRCUserContact *mySelf() const { return m_mySelf; }
 		KIRC *engine() const { return m_engine; }
-		
-		IRCServerContact *findServer(const QString &server, KopeteMetaContact *m=0);
-		bool existServer(const QString &server);
-	
+
 		IRCChannelContact *findChannel(const QString &channel, KopeteMetaContact *m=0);
 		bool existChannel(const QString &channel);
-		
+
 		IRCUserContact *findUser(const QString &nick, KopeteMetaContact *m=0);
 		bool existUser(const QString &nick);
-		
+
 	public slots:
 		void unregister(KopeteContact *contact);
-		
-		void unregisterUser(const QString &nick);
 		void unregisterUser(KopeteContact *contact);
-		
+		void unregisterChannel(KopeteContact *contact);
+
 		void addToNotifyList(const QString &nick);
 		void removeFromNotifyList(const QString &nick);
-		
-		void unregisterChannel(const QString &channel);
-		void unregisterChannel(KopeteContact *contact);
-		
-		void unregisterServer(const QString &server);
-		void unregisterServer(KopeteContact *contact);
-		
+
 		void checkOnlineNotifyList();
-	
+
 	signals:
 		void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
 		void action(IRCContact *from, IRCContact *to, const QString &action);
-	
+
 	protected slots:
 		//KIRC slots
 		void slotNewMessage(const QString &originating, const QString &channel, const QString &message);
 		void slotNewPrivMessage(const QString &originating, const QString &, const QString &message);
 		void slotNewAction(const QString &originating, const QString &channel, const QString &action);
 		void slotNewPrivAction(const QString &originating, const QString &, const QString &action);
-	
+
 	protected:
 		IRCAccount *m_account;
 		KIRC *m_engine;
-	
-		QMap<QString, IRCServerContact *> m_servers;
+
 		QMap<QString, IRCChannelContact *> m_channels;
 		QMap<QString, IRCUserContact *> m_users;
-	
+
 		IRCServerContact *m_myServer;
 		IRCUserContact *m_mySelf;
-	
+
 		QStringList m_NotifyList;
 		QTimer *m_NotifyTimer;
-	
+
 	private slots:
 		void slotNewNickChange(const QString &oldnick, const QString &newnick);
 

@@ -2,6 +2,7 @@
     ircaccount.cpp - IRC Account
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
+    Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
 
     Kopete    (c) 2002      by the Kopete developers <kopete-devel@kde.org>
 
@@ -14,6 +15,7 @@
     *                                                                       *
     *************************************************************************
 */
+#include <qlayout.h>
 #include <kaction.h>
 #include <kaboutdata.h>
 #include <kapplication.h>
@@ -37,12 +39,48 @@
 #include "ircchannelcontact.h"
 #include "ircusercontact.h"
 #include "ksparser.h"
+#include "channellist.h"
+
+ChannelListDialog::ChannelListDialog( KIRC *engine, const QString &caption, QObject *target, const char* slotJoinChan )
+ : KDialogBase( 0, "channel_list_widget", false, caption, Close )
+{
+	m_engine = engine;
+	m_list = new ChannelList( this, engine );
+
+	connect( m_list, SIGNAL( channelDoubleClicked( const QString & ) ),
+		target, slotJoinChan );
+
+	connect( m_list, SIGNAL( channelDoubleClicked( const QString & ) ),
+		this, SLOT( slotChannelDoubleClicked( const QString & ) ) );
+
+	new QHBoxLayout( m_list, 0, spacingHint() );
+
+	setInitialSize( QSize( 500, 400 ) );
+	setMainWidget( m_list );
+	show();
+}
+
+void ChannelListDialog::clear()
+{
+	m_list->clear();
+}
+
+void ChannelListDialog::search()
+{
+	m_list->search();
+}
+
+void ChannelListDialog::slotChannelDoubleClicked( const QString & )
+{
+	close();
+}
 
 IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 	: KopeteAccount(protocol, accountId)
 {
 	m_manager = 0L;
 	m_protocol = protocol;
+	m_channelList = 0L;
 
 	mNickName = accountId.section('@',0,0);
 	QString serverInfo = accountId.section('@',1);
@@ -84,6 +122,9 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 	QObject::connect(m_engine, SIGNAL(disconnected()),
 		this, SLOT(slotDisconnected()));
 
+	QObject::connect(m_engine, SIGNAL(incomingServerLoadTooHigh()),
+		this, SLOT(slotServerBusy()));
+
 	m_contactManager = new IRCContactManager(mNickName, m_server, this);
 	setMyself( m_contactManager->mySelf() );
 	m_myServer = m_contactManager->myServer();
@@ -109,6 +150,9 @@ IRCAccount::~IRCAccount()
 
 	delete m_contactManager;
 	delete m_engine;
+
+	if( m_channelList )
+		m_channelList->delayedDestruct();
 }
 
 void IRCAccount::loaded()
@@ -246,6 +290,7 @@ KActionMenu *IRCAccount::actionMenu()
 	mActionMenu->insert( new KAction ( i18n("Go Offline"), m_protocol->m_UserStatusOffline.iconFor( this ), 0, this, SLOT(disconnect()), mActionMenu ) );
 	mActionMenu->popupMenu()->insertSeparator();
 	mActionMenu->insert( new KAction ( i18n("Join Channel..."), "", 0, this, SLOT(slotJoinChannel()), mActionMenu ) );
+	mActionMenu->insert( new KAction ( i18n("Search Channels..."), "", 0, this, SLOT(slotSearchChannels()), mActionMenu ) );
 	mActionMenu->insert( new KAction ( i18n("Show Server Window"), "", 0, this, SLOT(slotShowServerWindow()), mActionMenu ) );
 
 	return mActionMenu;
@@ -295,6 +340,34 @@ void IRCAccount::disconnect()
 	quit();
 }
 
+void IRCAccount::slotServerBusy()
+{
+      KMessageBox::queuedMessageBox(
+		0L, KMessageBox::Error, i18n("The IRC server is currently too busy to respond to this request."),
+		i18n("Server is busy"), 0
+	);
+}
+
+void IRCAccount::slotSearchChannels()
+{
+	if( !m_channelList )
+	{
+		m_channelList = new ChannelListDialog( m_engine,
+			i18n("Channel list for %1").arg(m_server), this,
+			SLOT( slotJoinNamedChannel( const QString & ) ) );
+	}
+	else
+		m_channelList->clear();
+
+	m_channelList->show();
+}
+
+void IRCAccount::listChannels()
+{
+	slotSearchChannels();
+	m_channelList->search();
+}
+
 void IRCAccount::quit( const QString &quitMessage )
 {
 	kdDebug(14120) << "Quitting IRC: " << quitMessage << endl;
@@ -342,40 +415,6 @@ bool IRCAccount::isConnected()
 	return (myself()->onlineStatus().status() == KopeteOnlineStatus::Online);
 }
 
-void IRCAccount::unregister(KopeteContact *contact)
-{
-	m_contactManager->unregister(contact);
-}
-
-IRCServerContact *IRCAccount::findServer( const QString &name, KopeteMetaContact *m )
-{
-	return m_contactManager->findServer(name, m);
-}
-
-void IRCAccount::unregisterServer( const QString &name )
-{
-	m_contactManager->unregisterServer(name);
-}
-
-IRCChannelContact *IRCAccount::findChannel( const QString &name, KopeteMetaContact *m )
-{
-	return m_contactManager->findChannel(name, m);
-}
-
-void IRCAccount::unregisterChannel( const QString &name )
-{
-	m_contactManager->unregisterChannel(name);
-}
-
-IRCUserContact *IRCAccount::findUser(const QString &name, KopeteMetaContact *m)
-{
-	return m_contactManager->findUser(name, m);
-}
-
-void IRCAccount::unregisterUser( const QString &name )
-{
-	m_contactManager->unregisterUser(name);
-}
 
 void IRCAccount::successfullyChangedNick(const QString &/*oldnick*/, const QString &newnick)
 {
@@ -401,11 +440,11 @@ bool IRCAccount::addContactToMetaContact( const QString &contactId, const QStrin
 	}
 
 	if ( contactId.startsWith( QString::fromLatin1("#") ) )
-		c = static_cast<IRCContact*>( findChannel(contactId, m) );
+		c = static_cast<IRCContact*>( contactManager()->findChannel(contactId, m) );
 	else
 	{
 		m_contactManager->addToNotifyList( contactId );
-		c = static_cast<IRCContact*>( findUser(contactId, m) );
+		c = static_cast<IRCContact*>( contactManager()->findUser(contactId, m) );
 	}
 
 	if( c->metaContact() != m )
@@ -422,6 +461,11 @@ bool IRCAccount::addContactToMetaContact( const QString &contactId, const QStrin
 	return true;
 }
 
+void IRCAccount::slotJoinNamedChannel( const QString &chan )
+{
+	contactManager()->findChannel( chan )->startChat();
+}
+
 void IRCAccount::slotJoinChannel()
 {
 	if(!isConnected())
@@ -432,10 +476,10 @@ void IRCAccount::slotJoinChannel()
 
 	if( !chan.isNull() )
 	{
-		if( chan.startsWith( QString::fromLatin1("#") ) )
-			findChannel( chan )->startChat();
+		if( QRegExp( QString::fromLatin1("^[#!+&][^\\s,:]+$") ).search( chan ) != -1 )
+			contactManager()->findChannel( chan )->startChat();
 		else
-			KMessageBox::error(0l, i18n("<qt>\"%1\" is an invalid channel. Channels must start with '#'.</qt>").arg(chan), i18n("IRC Plugin"));
+			KMessageBox::error(0l, i18n("<qt>\"%1\" is an invalid channel. Channels must start with '#','!','+', or '&'.</qt>").arg(chan), i18n("IRC Plugin"));
 	}
 }
 

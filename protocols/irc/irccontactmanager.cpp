@@ -37,7 +37,10 @@ IRCContactManager::IRCContactManager(const QString &nickName, const QString &ser
 	  m_engine(account->engine())
 {
 	m_mySelf = findUser(nickName);
-	m_myServer = findServer(serverName);
+
+	KopeteMetaContact *m = new KopeteMetaContact();
+	m->setTemporary( true );
+	m_myServer = new IRCServerContact(this, serverName.lower(), m);
 
 	QObject::connect(m_engine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)),
 			this, SLOT(slotNewMessage(const QString &, const QString &, const QString &)));
@@ -109,60 +112,8 @@ void IRCContactManager::slotNewPrivAction(const QString &originating, const QStr
 
 void IRCContactManager::unregister(KopeteContact *contact)
 {
-	unregisterServer(contact);
 	unregisterChannel(contact);
 	unregisterUser(contact);
-}
-
-IRCServerContact *IRCContactManager::findServer(const QString &serverName, KopeteMetaContact *m)
-{
-	if( !m )
-	{
-		m = new KopeteMetaContact();
-		m->setTemporary( true );
-	}
-
-	QString lowerServerName = serverName.lower();
-	IRCServerContact *server = 0;
-	if ( !m_servers.contains( lowerServerName ) )
-	{
-		server = new IRCServerContact(this, serverName, m);
-		m_servers.insert( lowerServerName, server );
-		QObject::connect(server, SIGNAL(contactDestroyed(KopeteContact *)),
-				this, SLOT(unregisterServer(KopeteContact *)));
-	}
-	else
-	{
-		server = m_servers[ lowerServerName ];
-//		kdDebug(14120) << k_funcinfo << lowerServerName << " conversations:" << server->conversations() << endl;
-	}
-
-	return server;
-}
-
-void IRCContactManager::unregisterServer(const QString &name)
-{
-	QString lowerName = name.lower();
-	if( m_servers.contains( lowerName ) )
-	{
-		IRCServerContact *server = m_servers[lowerName];
-		if(!server->isChatting() && server->metaContact()->isTemporary())
-		{
-			kdDebug(14120) << k_funcinfo << name << endl;
-//			delete server->metaContact();
-		}
-	}
-}
-
-void IRCContactManager::unregisterServer(KopeteContact *contact)
-{
-	const IRCServerContact *server = (const IRCServerContact *)contact;
-	if(	server != 0 &&
-		server != myServer() &&
-		!server->isChatting())
-	{
-		m_servers.remove( server->nickName().lower() );
-	}
 }
 
 IRCChannelContact *IRCContactManager::findChannel(const QString &name, KopeteMetaContact *m)
@@ -190,20 +141,6 @@ IRCChannelContact *IRCContactManager::findChannel(const QString &name, KopeteMet
 	}
 
 	return channel;
-}
-
-void IRCContactManager::unregisterChannel(const QString &name)
-{
-	QString lowerName = name.lower();
-	if( m_channels.contains( lowerName ) )
-	{
-		IRCChannelContact *channel = m_channels[lowerName];
-		if(!channel->isChatting() && channel->metaContact()->isTemporary())
-		{
-			kdDebug(14120) << k_funcinfo << name << endl;
-//			delete channel->metaContact();
-		}
-	}
 }
 
 void IRCContactManager::unregisterChannel(KopeteContact *contact)
@@ -242,20 +179,6 @@ IRCUserContact *IRCContactManager::findUser(const QString &name, KopeteMetaConta
 	}
 
 	return user;
-}
-
-void IRCContactManager::unregisterUser( const QString & /* name */ )
-{
-/*	QString lowerName = name.lower();
-	if( lowerName != mNickName.lower() && m_users.contains( lowerName ) )
-	{
-		IRCUserContact *user = m_users[lowerName];
-		if(!user->isChatting() && user->metaContact()->isTemporary())
-		{
-			kdDebug(14120) << k_funcinfo << name << endl;
-			delete user->metaContact();
-		}
-	}*/
 }
 
 void IRCContactManager::unregisterUser(KopeteContact *contact)

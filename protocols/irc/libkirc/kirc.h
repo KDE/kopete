@@ -167,6 +167,7 @@ signals:
 	void incomingMessage(const QString &originating, const QString &target, const QString &message);
 	void incomingTopicChange(const QString &, const QString &, const QString &);
 	void incomingExistingTopic(const QString &, const QString &); /* 332 */
+	void incomingTopicUser(const QString &channel, const QString &user, const QDateTime &time); /*333*/
 	void userJoinedChannel(const QString &user, const QString &channel);
 	void incomingNamesList(const QString &channel, const QStringList &nicknames);
 	void incomingEndOfNames(const QString &channel);
@@ -180,6 +181,7 @@ signals:
 	void incomingAction(const QString &originating, const QString &target, const QString &message);
 
 	//General Signals
+	void incomingServerLoadTooHigh();
 	void incomingNickInUse(const QString &usingNick);
 	void incomingNickChange(const QString &, const QString &);
 	void incomingFailedServerPassword();

@@ -24,6 +24,7 @@
 
 #include "ircusercontact.h"
 #include "ircchannelcontact.h"
+#include "irccontactmanager.h"
 #include "ircaccount.h"
 #include "ircprotocol.h"
 #include "kcodecaction.h"
@@ -99,14 +100,13 @@ void IRCUserContact::slotIncomingUserIsAway( const QString &nick, const QString 
 {
 	if( nick.lower() == m_nickName.lower() )
 	{
-		/*
-		Uncomment after string freeze
 		if( manager(false ) )
 		{
-			KopeteMessage msg( , to->manager()->members(), i18n("%1 is away (%2)")
-				.arg( m_nickName ).arg( reason ), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
+			KopeteMessage msg( (KopeteContact*)m_account->myServer(), mMyself,
+				i18n("%1 is away (%2)").arg( m_nickName ).arg( reason ),
+				KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
 			manager()->appendMessage(msg);
-		}*/
+		}
 	}
 }
 
@@ -266,7 +266,7 @@ QPtrList<KAction> *IRCUserContact::customContextMenuActions( KopeteMessageManage
 
 void IRCUserContact::slotIncomingModeChange( const QString &, const QString &channel, const QString &mode )
 {
-	IRCChannelContact *chan = m_account->findChannel( channel );
+	IRCChannelContact *chan = m_account->contactManager()->findChannel( channel );
 	if( chan->locateUser( m_nickName ) )
 	{
 		QString user = mode.section(' ', 1, 1);

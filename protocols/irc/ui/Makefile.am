@@ -8,5 +8,5 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 
 
 libkopeteircui_la_SOURCES = ircadd.ui empty.cpp irceditaccountwidget.cpp \
-	irceditaccount.ui
+	irceditaccount.ui channellist.cpp
 EXTRA_DIST = ircadd.ui ircprefs.ui empty.cpp

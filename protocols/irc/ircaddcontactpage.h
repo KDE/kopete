@@ -24,6 +24,7 @@ class ircAddUI;
 class KopeteMetaContact;
 class IRCAccount;
 class QListViewItem;
+class ChannelList;
 
 /**
   *@author Nick Betcher <nbetcher@kde.org>
@@ -35,18 +36,17 @@ public:
 	IRCAddContactPage(QWidget *parent=0, IRCAccount* account = 0);
 	~IRCAddContactPage();
 	ircAddUI *ircdata;
+
 public slots:
 	virtual bool apply(KopeteAccount *account , KopeteMetaContact *m);
 
 private slots:
 	virtual bool validateData();
-	void slotSearch();
-	void slotListedChannel( const QString &channel, uint users, const QString &topic );
-	void slotListEnd();
-	void slotSelectionChanged( QListViewItem *i );
+	void slotChannelSelected( const QString &channel );
+	void slotChannelDoubleClicked( const QString &channel );
 private:
 	IRCAccount *mAccount;
-	QString search;
+	ChannelList *mSearch;
 };
 
 #endif

@@ -89,6 +89,7 @@ private slots:
 	void slotRawCommand( const QString &args, KopeteMessageManager *manager );
 	void slotQuoteCommand( const QString &args, KopeteMessageManager *manager );
 	void slotCtcpCommand( const QString &args, KopeteMessageManager *manager );
+	void slotPingCommand( const QString &args, KopeteMessageManager *manager );
 
 	void slotMotdCommand( const QString &args, KopeteMessageManager *manager);
 	void slotListCommand( const QString &args, KopeteMessageManager *manager);

@@ -39,10 +39,10 @@ IRCGUIClient::IRCGUIClient( KopeteMessageManager *parent ) : QObject(parent) , K
 	if( members.count() > 0 )
 	{
 		m_user = static_cast<IRCContact*>( members.first() );
-		
+
 		/***
 		FIXME: Why doesn't this work???? Have to use DOM hack below now...
-		
+
 		setXMLFile("ircchatui.rc");
 
 		unplugActionList( "irccontactactionlist" );
@@ -50,9 +50,9 @@ IRCGUIClient::IRCGUIClient( KopeteMessageManager *parent ) : QObject(parent) , K
 		plugActionList( "irccontactactionlist",  *actions );
 		delete actions;
 		*/
-		
+
 		setXMLFile("ircchatui.rc");
-		
+
 		QDomDocument doc = domDocument();
 		QDomNode menu = doc.documentElement().firstChild().firstChild();
 		QPtrList<KAction> *actions = m_user->customContextMenuActions( parent );
@@ -72,7 +72,7 @@ IRCGUIClient::IRCGUIClient( KopeteMessageManager *parent ) : QObject(parent) , K
 		}
 
 		delete actions;
-		
+
 		setDOMDocument( doc );
 	}
 	else

@@ -24,9 +24,11 @@
 
 #include "ksparser.h"
 #include "kopetemetacontact.h"
+#include "kopeteview.h"
 #include "ircusercontact.h"
 #include "irccontact.h"
 #include "ircprotocol.h"
+#include "ircservercontact.h"
 #include "irccontactmanager.h"
 
 struct whoIsInfo
@@ -156,7 +158,7 @@ void IRCContact::messageManagerDestroyed()
 	kdDebug(14120) << k_funcinfo << "for:" << m_nickName << endl;
 	// Removed the unregister() function in favor of just removing the Channel
 	// - JLN
-	m_account->unregisterChannel( m_nickName );
+	m_account->contactManager()->unregisterChannel( this );
 
 	m_msgManager = 0L;
 	m_isConnected = false;
@@ -173,15 +175,15 @@ void IRCContact::slotUserDisconnected(const QString &user, const QString &reason
 		{
 			manager()->removeContact( c, i18n("Quit: \"%1\" ").arg(reason) );
 			c->setOnlineStatus( m_protocol->m_UserStatusOffline );
-			m_account->unregisterUser( nickname );
+			m_account->contactManager()->unregisterUser( c );
 		}
 	}
 }
 
 void IRCContact::slotNewWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname)
 {
-	KopeteContact *user = locateUser( nickname );
-	if( user )
+	if( m_isConnected && manager()->view() ==
+		KopeteMessageManagerFactory::factory()->activeView() )
 	{
 		kdDebug(14120) << k_funcinfo << endl;
 		mWhoisMap[nickname] = new whoIsInfo;
@@ -240,7 +242,7 @@ void IRCContact::slotWhoIsComplete(const QString &nickname)
 		msg += i18n("idle: %2\n").arg( QString::number(w->idle) );
 
 		//End
-		KopeteMessage m( locateUser(nickname), mMyself, msg, KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
+		KopeteMessage m( m_account->myServer(), mMyself, msg, KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
 		appendMessage(m);
 
 		delete w;
@@ -270,9 +272,10 @@ void IRCContact::slotNewNickChange(const QString &oldnickname, const QString &ne
 
 void IRCContact::slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived)
 {
-	if( m_isConnected && locateUser( target ) )
+	if( m_isConnected && manager()->view() ==
+		KopeteMessageManagerFactory::factory()->activeView() )
 	{
-		KopeteMessage msg(this, mMyself, i18n("CTCP %1 REPLY: %2").arg(type).arg(messageReceived), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+		KopeteMessage msg(m_account->myServer(), mMyself, i18n("CTCP %1 REPLY: %2").arg(type).arg(messageReceived), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 		appendMessage(msg);
 	}
 }
@@ -401,7 +404,8 @@ void IRCContact::listedChannel(const QString &channel, uint users, const QString
 //	or the servercontact
 	{
 		QString message = i18n("%1\t(%2 Users) Topic is %3").arg(channel).arg(users).arg(topic);
-		KopeteMessage msg(this, manager()->members(), message, KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+		KopeteMessage msg(m_account->myServer(), manager()->members(), message,
+			KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 		appendMessage(msg);
 	}
 }

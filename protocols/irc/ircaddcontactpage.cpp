@@ -17,96 +17,45 @@
 
 #include <qlayout.h>
 #include <qlineedit.h>
-
+#include <qframe.h>
+#include <qtabwidget.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <qlistview.h>
-#include <qpushbutton.h>
 
 #include "ircaddcontactpage.h"
 #include "ircadd.h"
 #include "ircaccount.h"
 #include "kirc.h"
-
-class ChannelListItem : public QListViewItem
-{
-	public:
-		ChannelListItem( QListView *parent, QString arg1, QString arg2, QString arg3 );
-		virtual int compare( QListViewItem *i, int col, bool ascending ) const;
-};
-
-ChannelListItem::ChannelListItem( QListView *parent, QString arg1, QString arg2, QString arg3 ) :
-	QListViewItem( parent, arg1, arg2, arg3 ) {}
-
-int ChannelListItem::compare( QListViewItem *i, int col, bool ascending ) const
-{
-	if( col == 1 )
-	{
-		if( text(1).toUInt() < i->text(1).toUInt() )
-			return -1;
-		else if ( text(1).toUInt() == i->text(1).toUInt() )
-			return 0;
-		else
-			return 1;
-	}
-	else
-		return QListViewItem::compare( i, col, ascending );
-}
-
+#include "channellist.h"
 
 IRCAddContactPage::IRCAddContactPage( QWidget *parent, IRCAccount *a ) : AddContactPage(parent, 0)
 {
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	ircdata = new ircAddUI(this);
+	mSearch = new ChannelList( (QWidget*)ircdata->hbox, a->engine() );
 	mAccount = a;
 
-	connect( ircdata->searchButton, SIGNAL( clicked() ), this, SLOT( slotSearch() ) );
-	connect( ircdata->searchText, SIGNAL( returnPressed() ), this, SLOT( slotSearch() ) );
-	connect( ircdata->searchResults, SIGNAL( selectionChanged( QListViewItem*)), this,
-		SLOT( slotSelectionChanged( QListViewItem *) ) );
+	connect( mSearch, SIGNAL( channelSelected( const QString & ) ),
+		this, SLOT( slotChannelSelected( const QString & ) ) );
+
+	connect( mSearch, SIGNAL( channelDoubleClicked( const QString & ) ),
+		this, SLOT( slotChannelDoubleClicked( const QString & ) ) );
 }
+
 IRCAddContactPage::~IRCAddContactPage()
 {
 }
 
-void IRCAddContactPage::slotSearch()
+void IRCAddContactPage::slotChannelSelected( const QString &channel )
 {
-	ircdata->searchResults->clear();
-	ircdata->searchResults->setEnabled(false);
-
-	if( mAccount->isConnected() )
-	{
-		ircdata->searchButton->setEnabled(false);
-		search = ircdata->searchText->text();
-		connect( mAccount->engine(), SIGNAL( incomingListedChan( const QString &, uint, const QString & ) ), this,
-			SLOT( slotListedChannel( const QString &, uint, const QString & ) ) );
-		connect( mAccount->engine(), SIGNAL( incomingEndOfList() ), this, SLOT( slotListEnd() ) );
-		mAccount->engine()->list();
-		ircdata->searchButton->setEnabled(true);
-	}
-	else
-		KMessageBox::error( this, i18n("You must be connected to the IRC server to perform a search."), i18n("Not Connected") );
+	ircdata->addID->setText( channel );
 }
 
-void IRCAddContactPage::slotListedChannel( const QString &channel, uint users, const QString &topic )
+void IRCAddContactPage::slotChannelDoubleClicked( const QString &channel )
 {
-	if( search.isEmpty() || channel.contains( search, false ) || topic.contains( search, false ) )
-	{
-		ChannelListItem *i = new ChannelListItem( ircdata->searchResults, channel, QString::number(users), topic );
-		ircdata->searchResults->insertItem( i );
-	}
-}
-
-void IRCAddContactPage::slotListEnd()
-{
-	disconnect( mAccount->engine(), 0, this, 0 );
-	ircdata->searchResults->setEnabled(true);
-}
-
-void IRCAddContactPage::slotSelectionChanged( QListViewItem *i )
-{
-	ircdata->addID->setText( i->text(0) );
+	ircdata->addID->setText( channel );
+	ircdata->tabWidget3->setCurrentPage(0);
 }
 
 bool IRCAddContactPage::apply(KopeteAccount *account , KopeteMetaContact *m)

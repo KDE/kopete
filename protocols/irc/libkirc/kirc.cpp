@@ -152,6 +152,9 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 	 * ":I have <integer> clients and <integer> servers" */
 	addIrcMethod("255",	new KIRCMethodFunctor_S_Suffix<KIRC>(this, &KIRC::incomingConnectString, 1, 1));
 
+	//Server is too busy
+	addIrcMethod("263",	new KIRCMethodFunctor_Empty<KIRC>(this, &KIRC::incomingServerLoadTooHigh));
+
 	/* NOT IN RFC2812
 	 * Tells statistics about the current local server state:
 	 * ":Current local  users: <integer>  Max: <integer>" */
@@ -1223,12 +1226,14 @@ bool KIRC::numericReply_332(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::numericReply_333( const KIRCMessage & /* msg */ )
+bool KIRC::numericReply_333( const KIRCMessage &msg )
 {
-	/* NOT IN RFC1459 NOR RFC2812
-	 * "%s %s %lu"
-	 * FIXME: What is the meaning of this arguments. DAL-ircd say it's a RPL_TOPICWHOTIME
+	/* Gives the nickname and time who changed the topic
 	 */
+	 kdDebug(14120) << k_funcinfo << endl;
+	 QDateTime d;
+	 d.setTime_t( msg.args()[3].toLong() );
+	 emit incomingTopicUser( msg.args()[1], msg.args()[2], d );
 	 return true;
 }
 
@@ -1351,11 +1356,23 @@ bool KIRC::CtcpQuery_action(const KIRCMessage &msg)
 
 void KIRC::sendCtcpPing(const QString &target)
 {
+	kdDebug(14120) << k_funcinfo << endl;
+
 	timeval time;
 	if (gettimeofday(&time, 0) == 0)
 	{
-		// FIXME: the time code is wrong for usec
-		QString timeReply = QString::fromLatin1("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
+		QChar targetChar = target[0];
+		QString timeReply;
+
+		if( targetChar == '#' || targetChar == '&' || targetChar == '!' )
+		{
+			timeReply = QString::fromLatin1("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
+		}
+		else
+		{
+		 	timeReply = QString::number( time.tv_sec );
+		}
+
 		writeCtcpQueryMessage(	target, QString::null,
 					"PING", timeReply);
 	}
@@ -1368,35 +1385,42 @@ bool KIRC::CtcpQuery_pingPong(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::CtcpReply_pingPong( const KIRCMessage & /* msg */ )
+bool KIRC::CtcpReply_pingPong( const KIRCMessage &msg )
 {
-/*
 	timeval time;
 	if (gettimeofday(&time, 0) == 0)
 	{
+		QString originating = msg.prefix();
+
 		// FIXME: the time code is wrong for usec
 		QString timeReply = QString::fromLatin1("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
 		double newTime = timeReply.toDouble();
-		double oldTime = ctcpArgs[0].toDouble();
+		double oldTime = msg.suffix().section(' ',0, 0).toDouble();
 		double difference = newTime - oldTime;
 		QString diffString;
+
 		if (difference < 1)
 		{
 			diffString = QString::number(difference);
 			diffString.remove((diffString.find('.') -1), 2);
 			diffString.truncate(3);
-			diffString.append(i18n("msecs"));
-		} else {
+			diffString.append(i18n("milliseconds"));
+		}
+		else
+		{
 			diffString = QString::number(difference);
 			QString seconds = diffString.section('.', 0, 0);
 			QString millSec = diffString.section('.', 1, 1);
 			millSec.remove(millSec.find('.'), 1);
 			millSec.truncate(3);
-			diffString = QString::fromLatin1("%1 secs %2 msecs").arg(seconds).arg(millSec);
+			diffString = QString::fromLatin1("%1 seconds, %2 milliseconds").arg(seconds).arg(millSec);
 		}
+
 		emit incomingCtcpReply(QString::fromLatin1("PING"), originating.section('!', 0, 0), diffString);
+
 		return true;
-	}*/
+	}
+
 	return false;
 }
 
