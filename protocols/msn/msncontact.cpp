@@ -257,6 +257,9 @@ const QMap<uint, KopeteGroup*> & MSNContact::serverGroups() const
 
 void MSNContact::syncGroups( )
 {
+	if(!metaContact() || metaContact()->isTemporary() )
+		return;
+
 	if(m_moving)
 	{
 		//We need to make sure that syncGroups is not called twice succesively
@@ -320,6 +323,15 @@ void MSNContact::syncGroups( )
 			m_moving=true;
 		}
 	}
+
+	//FINAL TEST: is the contact at least in a group..
+	//   this may happens if we just added a temporary contact to top-level
+	//   we add the contact to the group #0 (the default one)
+	if(count==0)
+	{
+		notify->addContact( contactId(), displayName(), 0 , MSNProtocol::FL );
+	}
+
 
 }
 
