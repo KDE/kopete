@@ -50,6 +50,12 @@ public:
 
 	void setStylesheet( const QString &style  );
 
+	/**
+	 * Immediately scroll the chat to the bottom, as long as it has not been intentionally scrolled away from the bottom
+	 * use 
+	 */
+	void keepScrolledDown();
+
 public slots:
 	/**
 	 * Initiates a copy action

@@ -274,7 +274,11 @@ void ChatView::makeVisible()
 	}
 
 	if ( !m_mainWindow->isVisible() )
+	{
 		m_mainWindow->show();
+		// scroll down post show and layout, otherwise the geometry is wrong to scroll to the bottom.
+		m_messagePart->keepScrolledDown();
+	}
 
 	m_mainWindow->setActiveView( this );
 }

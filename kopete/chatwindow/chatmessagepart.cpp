@@ -461,6 +461,12 @@ void ChatMessagePart::slotTransformComplete( const QVariant &result )
 		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
 }
 
+void ChatMessagePart::keepScrolledDown()
+{
+	if ( !scrollPressed )
+		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
+}
+
 const QString ChatMessagePart::styleHTML() const
 {
 	KopetePrefs *p = KopetePrefs::prefs();
@@ -646,6 +652,9 @@ void ChatMessagePart::slotCopyURL()
 
 void ChatMessagePart::slotScrollView()
 {
+	// NB: view()->contentsHeight() is incorrect before the view has been shown in its window.
+	// Until this happens, the geometry has not been correctly calculated, so this scrollBy call
+	// will usually scroll to the top of the view.
 	view()->scrollBy( 0, view()->contentsHeight() );
 }
 
