@@ -94,9 +94,9 @@ protected:
 	 */
 	void GroupWiseMessageManager::createConference();
 	/** 
-	 * Sends any messages that were queued while waiting for the conference to be created
+	 * Sends any messages and invitations that were queued while waiting for the conference to be created
 	 */
-	void dequeMessages();
+	void dequeueMessagesAndInvites();
 protected slots:
 	/** 
 	 * Receive the GUID returned by the server when we start a chat.
@@ -142,6 +142,7 @@ private:
 	int m_flags; // flags for secure connections, central logging and "conference closed" as given by the server
 	
 	QValueList< KopeteMessage > m_pendingOutgoingMessages; // messages queued while we wait for the server to tell us the conference is created.
+	KopeteContactPtrList m_pendingInvites; // people we wanted to invite to the conference, queued while waiting for the conference to be created.
 	KActionMenu *m_actionInvite;
 	QPtrList<KAction> m_inviteActions;
 	// labels showing secure and logging status
@@ -149,6 +150,7 @@ private:
 	KAction *m_logging;
 	// search widget used for inviting contacts
 	GroupWiseSearch * m_search;
+	// contacts who have been invited to join but have not yet joined the chat
 	KopeteContactPtrList m_invitees;
 	// track the number of members actually in the chat
 	uint m_memberCount;

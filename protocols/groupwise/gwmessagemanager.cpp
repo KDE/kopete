@@ -173,7 +173,7 @@ void GroupWiseMessageManager::receiveGuid( const int newMmId, const QString & gu
 		// notify the contact(s) using this message manager that it's been instantiated on the server
 		emit conferenceCreated();
 		// TODO: send invitations if we're not inviting in the conf create...
-		dequeMessages();
+		dequeueMessagesAndInvites();
 	}
 }
 
@@ -260,7 +260,7 @@ void GroupWiseMessageManager::slotGotNotTypingNotification( const ConferenceEven
 		receivedTypingMsg( static_cast<GroupWiseProtocol *>( protocol() )->dnToDotted( event.user ), false );
 }
 
-void GroupWiseMessageManager::dequeMessages()
+void GroupWiseMessageManager::dequeueMessagesAndInvites()
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	for ( QValueListIterator< KopeteMessage > it = m_pendingOutgoingMessages.begin();
@@ -270,6 +270,14 @@ void GroupWiseMessageManager::dequeMessages()
 		slotMessageSent( *it, this );
 	}
 	m_pendingOutgoingMessages.clear();
+	QPtrListIterator< KopeteContact > it( m_pendingInvites );
+	KopeteContact * contact;
+	while ( ( contact = it.current() ) )
+	{
+		++it;
+		slotInviteContact( contact );
+	}
+	m_pendingInvites.clear();
 }
 
 void GroupWiseMessageManager::slotActionInviteAboutToShow()
@@ -302,18 +310,26 @@ void GroupWiseMessageManager::slotActionInviteAboutToShow()
 
 void GroupWiseMessageManager::slotInviteContact( KopeteContact * contact )
 {
-	QWidget * w = view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) : 0L;
-	
-	bool ok;
-	QRegExp rx( ".*" );
-    QRegExpValidator validator( rx, this );
-	QString inviteMessage = KInputDialog::getText( i18n( "Enter Invitation Message" ),
-			 i18n( "Enter the reason for the invitation, or leave blank for no reason" ), QString(),
-			 &ok, w ? w : Kopete::UI::Global::mainWidget(), "invitemessagedlg", &validator );
-	if ( ok )
-	{	
-		GroupWiseContact * gwc = static_cast< GroupWiseContact *>( contact );
-		static_cast< GroupWiseAccount * >(account())->sendInvitation( m_guid, gwc->dn(), inviteMessage );
+	if ( m_guid.isEmpty() )
+	{
+		m_pendingInvites.append( contact );
+		createConference();
+	}
+	else
+	{
+		QWidget * w = view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) : 0L;
+		
+		bool ok;
+		QRegExp rx( ".*" );
+		QRegExpValidator validator( rx, this );
+		QString inviteMessage = KInputDialog::getText( i18n( "Enter Invitation Message" ),
+				i18n( "Enter the reason for the invitation, or leave blank for no reason" ), QString(),
+				&ok, w ? w : Kopete::UI::Global::mainWidget(), "invitemessagedlg", &validator );
+		if ( ok )
+		{	
+			GroupWiseContact * gwc = static_cast< GroupWiseContact *>( contact );
+			static_cast< GroupWiseAccount * >(account())->sendInvitation( m_guid, gwc->dn(), inviteMessage );
+		}
 	}
 }
 
