@@ -191,7 +191,7 @@ void YahooSession::logOff()
 
 void YahooSession::refresh()
 {
-//	kdDebug(14181) << k_funcinfo << endl;
+	kdDebug(14181) << k_funcinfo << endl;
 	if ( !m_waitingForKeepalive )
 	{
 		m_waitingForKeepalive = true;
@@ -717,7 +717,7 @@ void YahooSession::_loginResponseReceiver( int succ, const char *url )
 {
 
 	kdDebug(14181) << k_funcinfo << endl;
-	
+
 	if ( succ == YAHOO_LOGIN_OK )
 		m_keepalive->start(60000);
 
