@@ -344,11 +344,15 @@ bool ChatView::closeView( bool force )
 
 void ChatView::setTabState( KopeteTabState newState  )
 {
+	if( newState == Undefined )
+		newState = m_tabState;
+	else if( newState != Typing &&  (  newState!=Changed || (m_tabState != Message && m_tabState != Highlighted) ) && ( newState != Message ||  m_tabState != Highlighted ) )
+		m_tabState = newState;
+
+	newState=m_remoteTypingMap.isEmpty() ? m_tabState : Typing ;
+
 	if( m_tabBar )
 	{
-		if( newState == Undefined )
-			newState = m_tabState;
-
 		switch( newState )
 		{
 			case Highlighted:
@@ -356,18 +360,15 @@ void ChatView::setTabState( KopeteTabState newState  )
 				break;
 
 			case Message:
-				if( m_tabState != Highlighted )
-					m_tabBar->setLabelTextColor( this, Qt::red );
+				m_tabBar->setLabelTextColor( this, Qt::red );
 				break;
 
 			case Changed:
-				if( m_tabState != Highlighted && m_tabState != Message  )
-					m_tabBar->setLabelTextColor( this, Qt::darkRed );
+				m_tabBar->setLabelTextColor( this, Qt::darkRed );
 				break;
 
 			case Typing:
-				if( m_tabState != Highlighted && m_tabState != Message  )
-					m_tabBar->setLabelTextColor( this, Qt::darkGreen );
+				m_tabBar->setLabelTextColor( this, Qt::darkGreen );
 				break;
 
 			case Normal:
@@ -375,10 +376,8 @@ void ChatView::setTabState( KopeteTabState newState  )
 				m_tabBar->setLabelTextColor( this, KGlobalSettings::textColor() );
 				break;
 		}
-
-		if( newState != Typing &&  (  newState!=Changed || (m_tabState != Message && m_tabState != Highlighted) ) && ( newState != Message ||  m_tabState != Highlighted ) )
-			m_tabState = newState;
 	}
+
 	if( newState!= Typing )
 		setStatus ( i18n( "%1 people in the chat" ).arg( memberContactMap.count()  ) );
 
@@ -496,18 +495,6 @@ void ChatView::slotContactsContextMenu( KListView*, QListViewItem *item, const Q
 
 void ChatView::remoteTyping( const KopeteContact *c, bool isTyping )
 {
-	// Ensure this contact is in the typing map
-	// Strictly speaking the below code does that, but contactAdded() does
-	// some additional bookkeeping, hence this call
-	if( !typingMap.contains( c ) )
-	{
-		kdDebug( 14000 ) << k_funcinfo << "WARNING: contact was not in the typing map" << endl;
-		slotContactAdded( c, false );
-	}
-
-	// Set his typing status
-	typingMap[ c ] = isTyping;
-
 	// Make sure we (re-)add the timer at the end, because the slot will
 	// remove the first timer
 	// And yes, the const_cast is a bit ugly, but it's only used as key
@@ -522,18 +509,14 @@ void ChatView::remoteTyping( const KopeteContact *c, bool isTyping )
 		m_remoteTypingMap[ key ]->start( 6000, true );
 	}
 
-	// Loop through the map, constructing a string of people typing
+ // Loop through the map, constructing a string of people typing
 	QStringList typingList;
 	QString statusTyping;
-	QMap<const KopeteContact*, bool>::Iterator it;
-	for( it = typingMap.begin(); it != typingMap.end(); ++it )
+	QPtrDictIterator<QTimer> it( m_remoteTypingMap );
+    for( ; it.current(); ++it )
 	{
-		// FIXME: is it really possible to have null pointers here? The check
-		// seems unneeded to me - Martijn
-		if( !it.data() )
-			continue;
-
-		typingList.append( it.key()->metaContact() ? it.key()->metaContact()->displayName() : it.key()->displayName() );
+		KopeteContact *c=static_cast<KopeteContact*>(it.currentKey());
+		typingList.append( c->metaContact() ? c->metaContact()->displayName() : c->displayName() );
 	}
 	statusTyping = typingList.join( QString::fromLatin1( ", " ) );
 
@@ -652,8 +635,6 @@ void ChatView::slotContactAdded(const KopeteContact *c, bool surpress)
 		connect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & , const KopeteOnlineStatus &) ),
 			this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
-		typingMap.insert( c, false );
-
 		if( !surpress && memberContactMap.count() > 1 )
 		{
 			sendInternalMessage(  i18n("%1 has joined the chat.").arg(contactName) );
@@ -668,7 +649,6 @@ void ChatView::slotContactRemoved( const KopeteContact *c, const QString& reason
 {
 	if( memberContactMap.contains(c) && (c != m_manager->user()) )
 	{
-		typingMap.remove( c );
 		m_remoteTypingMap.remove( const_cast<KopeteContact *>( c ) );
 
 		QString contactName;
@@ -732,12 +712,7 @@ void ChatView::setCaption( const QString &text, bool modified )
 
 void ChatView::appendMessage(KopeteMessage &message)
 {
-	//Note: it may happend that message not from contact in the list are hapened.
-	//  this is for example the case with the history
-	//(calling remoteTyping in this case is not fine because it adds the user to the chat)
-
-	if(typingMap.contains(message.from()))
-		remoteTyping( message.from(), false );
+	remoteTyping( message.from(), false );
 
 	//Need to copy this because it comes in as a const
 	KopeteMessage m = message;

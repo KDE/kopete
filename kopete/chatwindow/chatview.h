@@ -389,7 +389,6 @@ private:
 	int historyPos;
 	bool bgChanged;
 	QString unreadMessageFrom;
-	QMap<const KopeteContact *, bool> typingMap;
 	QMap<const KopeteContact *, KopeteContactLVI *> memberContactMap;
 	KTextEdit* m_edit;
 	QColor mBgColor;
