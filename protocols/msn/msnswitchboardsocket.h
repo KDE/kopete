@@ -62,8 +62,8 @@ protected:
 	 */
 	virtual void handleError( uint code, uint id );
 
-
 	QString parseFontAttr( QString str, QString attr );
+
 
 public:
 	void connectToSwitchBoard( QString ID, QString address, QString auth );
@@ -72,6 +72,8 @@ public:
 	void setMsgHandle( QString handle ) { m_msgHandle = handle; }
 
 	const QStringList &chatMembers() { return m_chatMembers; }
+
+ 	void userLeftChat( QString handle );
 
 public slots:
 	void slotReadMessage( const QString &msg );
@@ -89,15 +91,24 @@ signals:
 	void startChat(MSNSwitchBoardSocket* switchoard);
 	void userTypingMsg(QString);
 	void msgAcknowledgement(bool);
-	void userInChat(QString);
-	void chatWith(QString,bool);
-	void switchBoardIsActive(bool);
-	void updateChatMember(QString,QString,bool);
-	void userLeftChat( QString );
+//	void userInChat(QString); //unused
+//	void chatWith(QString,bool);  //unused
+	void switchBoardIsActive(bool);  
+  /**
+   *  updateChatMember(handle, 'true' for add and 'false' for remove, public name );
+   */
+	void updateChatMember(QString,bool,QString);
 	void switchBoardClosed( MSNSwitchBoardSocket* switchboard );
 
 private:
 	QStringList m_chatMembers;
+
+  //Messages sent before the ending of the connection are queued
+  QValueList<KopeteMessage> m_messagesQueue;
+
+private: // Private methods
+  /** No descriptions */
+  void sendMessageQueue();
 };
 
 #endif

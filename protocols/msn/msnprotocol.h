@@ -282,6 +282,10 @@ private slots:
 	 * An MSN contact got deleted. Clean up the necessary data
 	 */
 	void slotContactDestroyed( KopeteContact *c );
+  /** 
+   * eventually add a contact if the contact does not exist  (O.G.)
+   */
+  void slotUpdateChatMember(QString handle, bool add, QString publicName);
 
 private:
 	/**
@@ -338,6 +342,7 @@ private:
 	SyncMode m_publicNameSyncMode;
 	bool m_publicNameSyncNeeded;
 	QString m_msgHandle;
+  KopeteMessage *m_msgQueued; 
 
 	MSNNotifySocket *m_notifySocket;
 	KopeteContact *m_myself;

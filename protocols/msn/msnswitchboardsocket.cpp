@@ -34,6 +34,7 @@
 #include <kmessagebox.h>
 
 
+
 MSNSwitchBoardSocket::MSNSwitchBoardSocket()
 {
 }
@@ -99,25 +100,27 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint /* id */,
 	else if( cmd == "JOI" )
 	{
 		// new user joins the chat, update user in chat list
-		emit switchBoardIsActive(true);
+		emit switchBoardIsActive(true);   
 		QString handle = data.section( ' ', 0, 0 );
-		emit updateChatMember( handle, "JOI", false );
-
+		QString screenname = data.section( ' ', 1, 1 );
+    emit updateChatMember( handle, true, screenname );
+    
 		if( !m_chatMembers.contains( handle ) )
 			m_chatMembers.append( handle );
+
+    if(!m_messagesQueue.empty()) sendMessageQueue();
 	}
 	else if( cmd == "IRO" )
 	{
 		// we have joined a multi chat session- this are the users in this chat
-		emit switchBoardIsActive(true);
-		QString handle = data.section( ' ', 3, 3 );
+    emit switchBoardIsActive(true);
+		QString handle = data.section( ' ', 2, 2 );  
 		if( !m_chatMembers.contains( handle ) )
 			m_chatMembers.append( handle );
 
-		if( data.section( 1, 1 )  == data.section( ' ', 2, 2 ) )
-			emit updateChatMember( handle, "IRO", true );
-		else
-			emit updateChatMember( handle, "IRO", false );
+      
+    QString screenname = data.section( ' ', 3, 3);
+		emit updateChatMember( handle,  true, screenname);
 	}
 	else if( cmd == "USR" )
 	{
@@ -129,23 +132,8 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint /* id */,
 		QString handle = data.section( ' ', 0, 0 ).replace(
 			QRegExp( "\r\n" ), "" );
 
-		emit updateChatMember( handle, "BYE", false );
-		if( m_chatMembers.contains( handle ) )
-			m_chatMembers.remove( handle );
+    userLeftChat(handle);
 
-		kdDebug() << "MSNSwitchBoardSocket::parseCommand: " <<
-			handle << " left the chat." << endl;
-
-		// FIXME: When a user leaves the chat, we still try to contact him by
-		// this socket. We have to let MSNProtocol know the switchboard was
-		// disconnected, so a new one has to be created when sending a message.
-		// Currently, new messages sent when the socket is closed will not appear
-		// in the chat window, nor be sent.
-
-		// When this happens, ANY communication with the other party is
-		// IMPOSSIBLE! We *need* to fix this soon, but it will require
-		// modification to MSNProtocol most likely.
-		disconnect();
 	}
 	else if( cmd == "MSG" )
 	{
@@ -165,7 +153,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	// incoming message for File-transfer
 	if( msg.contains("Content-Type: text/x-msmsgsinvite; charset=UTF-8") )
 	{
-		// filetransfer 
+		// filetransfer  
     if( msg.contains("Invitation-Command: ACCEPT") )
 		{
       QString ip_adress = msg.right( msg.length() - msg.find( "IP-Address:" ) - 12 );
@@ -181,7 +169,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
       MFTS->setKopeteTransfer(kopeteapp->transferManager()->addTransfer(MSNProtocol::protocol()->contacts()[ m_msgHandle ]->metaContact(),m_filetransferName,0,i18n("Kopete")));
       MFTS->connect(ip_adress, port.toUInt());
 
-      m_lastId++;  //FIXME:  there is no ACK at this command, without m_lastId++, future messages are queued
+      m_lastId++;  //FIXME:  there is no ACK for prev command ; without m_lastId++, future messages are queued  (MSNSocket::m_lastId should be private)
   
 		}
 		else  if( msg.contains("Application-File:") )  //not "Application-Name: File Transfer" because the File Transfer label is sometimes translate 
@@ -317,11 +305,13 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		kdDebug() << "MSNSwitchBoardService::slotReadMessage: User handle: "
 			<< m_msgHandle << endl;
 
-		// FIXME: THIS IS UGLY!!!!!!!!!!!!!!!!!!!!!!
 		KopeteContactPtrList others;
-		others.append( MSNProtocol::protocol()->myself() );
+    others.append( MSNProtocol::protocol()->myself() );
+    QStringList::iterator it;
+    for ( it = m_chatMembers.begin(); it != m_chatMembers.end(); ++it )
+       if(*it != m_msgHandle) others.append( MSNProtocol::protocol()->contacts()[*it] );
 
-		KopeteMessage kmsg(
+			KopeteMessage kmsg(
 			MSNProtocol::protocol()->contacts()[ m_msgHandle ] , others,
 			msg.right( msg.length() - msg.find("\r\n\r\n") - 4 ),
 			KopeteMessage::Inbound );
@@ -355,9 +345,12 @@ void MSNSwitchBoardSocket::slotInviteContact(QString handle)
 // this sends a short message to the server
 void MSNSwitchBoardSocket::slotSendMsg( const KopeteMessage &msg )
 {
-	if ( onlineStatus() != Connected )
-	// emit msgAcknowledgement( false ); // should we do this?
+	if ( onlineStatus() != Connected || m_chatMembers.empty())
+  {
+      m_messagesQueue.append(msg);
 		return;
+  }
+
 
 	kdDebug() << "MSNSwitchBoardSocket::slotSendMsg" << endl;
 
@@ -368,7 +361,7 @@ void MSNSwitchBoardSocket::slotSendMsg( const KopeteMessage &msg )
 
 	// Color support
 	if (msg.fg().isValid()) {
-		QString colorCode = msg.fg().name().remove(0,1);
+		QString colorCode = QColor(msg.fg().blue(),msg.fg().green(),msg.fg().red()).name().remove(0,1);  //colours aren't sent in RGB but in BGR (O.G.)
 		head += "CO=" + colorCode;
 	} else {
 		head += "CO=0";
@@ -381,7 +374,7 @@ void MSNSwitchBoardSocket::slotSendMsg( const KopeteMessage &msg )
 	QString args = "A";
 	sendCommand( "MSG", args, true, head );
 
-	// TODO: send our fonts and colors as well
+	// TODO: send our fonts as well
 	KopeteContactPtrList others;
 	others.append( MSNProtocol::protocol()->contacts()[ m_myHandle ] );
 	emit msgReceived( msg );    // send the own msg to chat window
@@ -431,6 +424,33 @@ void MSNSwitchBoardSocket::slotOnlineStatusChanged( MSNSocket::OnlineStatus stat
 	emit switchBoardIsActive(true);
 
 }
+
+
+void MSNSwitchBoardSocket::sendMessageQueue() //O.G.
+{
+	if ( onlineStatus() != Connected || m_chatMembers.empty())
+  		return;
+
+  for ( QValueList<KopeteMessage>::iterator it = m_messagesQueue.begin(); it!=m_messagesQueue.end(); it = m_messagesQueue.begin() )
+  {
+    slotSendMsg( *it)  ;
+    m_messagesQueue.remove(it);
+  }
+
+}
+
+void MSNSwitchBoardSocket::userLeftChat( QString handle ) //O.G.
+{
+		emit updateChatMember( handle, false, QString::null );
+		if( m_chatMembers.contains( handle ) )
+			m_chatMembers.remove( handle );
+
+		kdDebug() << "MSNSwitchBoardSocket::parseCommand: " <<
+			handle << " left the chat." << endl;
+
+		if(m_chatMembers.empty()) disconnect();
+}
+
 
 // FIXME: This is nasty... replace with a regexp or so.
 QString MSNSwitchBoardSocket::parseFontAttr(QString str, QString attr)

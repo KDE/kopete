@@ -15,6 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
+
 #include <qcursor.h>
 
 #include <kaction.h>
@@ -83,6 +84,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	m_publicName = KGlobal::config()->readEntry( "Nick", "Kopete User" );
 	m_publicNameSyncMode = SyncFromServer;
 	m_publicNameSyncNeeded = false;
+  m_msgQueued=0L;
 
 	initActions();
 
@@ -837,7 +839,6 @@ void MSNProtocol::slotContactStatusChanged( const QString &handle,
 
 		if( status == FLN )
 		{
-			// FIXME: Support multi-user chats, this code will surely break!
 			bool done;
 			do
 			{
@@ -850,7 +851,7 @@ void MSNProtocol::slotContactStatusChanged( const QString &handle,
 						kdDebug() << "MSNProtocol::slotContactStatusChanged: "
 							<< "Removing stale switchboard from offline user "
 							<< handle << endl;
-						delete m_switchBoardSockets.take( it.currentKey() );
+					(*it).userLeftChat(handle);
 						done = false;
 						break;
 					}
@@ -1062,6 +1063,8 @@ void MSNProtocol::slotPublicNameChanged(QString handle, QString publicName)
 			m_publicName = publicName;
 			m_publicNameSyncMode = SyncBoth;
 
+      m_myself->setDisplayName(publicName);
+
 			actionStatusMenu->popupMenu()->changeTitle( m_menuTitleId,
 				*( statusBarIcon->pixmap() ),
 				i18n( "%1 (%2)" ).arg( m_publicName ).arg( m_msnId ) );
@@ -1107,7 +1110,6 @@ void MSNProtocol::slotMessageSent( const KopeteMessage& msg, KopeteMessageManage
 	else // There's no switchboard available, so we must create a new one!
 	{
 		MSNContact *contact = dynamic_cast<MSNContact*>( msg.to().first() );
-
 		if ( !contact )
 		{
 			kdDebug() <<
@@ -1115,18 +1117,12 @@ void MSNProtocol::slotMessageSent( const KopeteMessage& msg, KopeteMessageManage
 				"new switchboard!" << endl;
 			return;
 		}
-
 		kdDebug() << "MSNProtocol::slotMessageSent: Creating new "
 			<< "SwitchBoardSocket for " << contact->msnId() << "!" << endl;
 
+     
 		slotStartChatSession( contact->msnId() );
-
-		// *********** NOW WHAT DO WE DO?! ************** //
-		//MSNSwitchBoardSocket *service = m_switchBoardSockets[ manager ];
-
-		//if( service )
-		//	service->slotSendMsg( msg );
-
+    m_msgQueued=new KopeteMessage(msg);
 	}
 }
 
@@ -1152,6 +1148,10 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 		chatService->connectToSwitchBoard( ID, address, auth );
 		m_switchBoardSockets.insert( manager, chatService );
 
+		connect( chatService, SIGNAL( updateChatMember(QString,bool,QString)),
+			this, SLOT( slotUpdateChatMember(QString,bool,QString) ) );
+
+
 		connect( chatService, SIGNAL( msgReceived( const KopeteMessage & ) ),
 			manager, SLOT( appendMessage( const KopeteMessage & ) ) );
 		connect( chatService,
@@ -1166,6 +1166,15 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 		connect( manager, SIGNAL( messageSent( const KopeteMessage&, KopeteMessageManager* ) ),
 			this, SLOT( slotMessageSent( const KopeteMessage& , KopeteMessageManager*) ) );
 		manager->readMessages();
+
+
+    if(m_msgQueued)
+    {
+        chatService->slotSendMsg( *m_msgQueued );
+        delete m_msgQueued;
+        m_msgQueued=0L;
+    }
+
 	}
 }
 
@@ -1188,12 +1197,15 @@ void MSNProtocol::slotStartChatSession( QString handle )
 		{
 			kdDebug() << "MSNProtocol::slotStartChatSession: "
 				<< "Reusing existing switchboard connection" << endl;
-			manager->readMessages();
+
+      manager->readMessages();
 		}
 		else
 		{
 			kdDebug() << "MSNProtocol::slotStartChatSession: "
 				<< "Creating new switchboard connection" << endl;
+
+       //FIXME: what's happend when the user try to open two socket in the same time????  can the m_msgHandle be altered??
 			m_msgHandle = handle;
 			m_notifySocket->createChatSession();
 		}
@@ -1284,6 +1296,16 @@ void MSNProtocol::slotContactDestroyed( KopeteContact *c )
 {
 	m_metaContacts.remove( c->metaContact() );
 }
+
+/** 
+ *  eventually add a contact if the contact does not exist (O.G.)
+ */
+void MSNProtocol::slotUpdateChatMember(QString handle, bool add, QString publicName)
+{
+		if( add && !m_contacts.contains( handle ) )
+      slotContactList( handle, publicName, i18n("Not in Contact List") , "FL" );
+}
+
 
 #include "msnprotocol.moc"
 
