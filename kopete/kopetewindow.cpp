@@ -35,6 +35,7 @@
 #include <kglobalaccel.h>
 #include <kwin.h>
 #include <kdeversion.h>
+#include <qtooltip.h>
 
 #include "addcontactwizard.h"
 #include "kopete.h"
@@ -474,6 +475,11 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *a )
 
 	m_accountStatusBarIcons.insert( a, i );
 
+	// Adds tooltip for each status icon
+	// usefull in case You have many accounts 
+	// over one protocol
+        QToolTip::add(i, a->fullAccountName());
+	
 	// FIXME -Will
 	//slotProtocolStatusIconChanged( proto, proto->statusIcon() );
 
@@ -506,6 +512,10 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteAccount *account )
 	KopeteAccountStatusBarIcon *i = static_cast<KopeteAccountStatusBarIcon *>( m_accountStatusBarIcons[ account ] );
 	if( !i )
 		return;
+		
+	// probably we have to change tooltip :-)
+	QToolTip::remove(i);
+	QToolTip::add(i, account->fullAccountName());
 
 	// Because we want null pixmaps to detect the need for a loadMovie
 	// we can't use the SmallIcon() method directly
