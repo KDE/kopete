@@ -57,6 +57,8 @@ int fileno(FILE * stream);
 
 #define MAX_PREF_LEN 255
 
+static char *local_host = NULL;
+
 static int do_mail_notify = 0;
 static int do_yahoo_debug = 0;
 static int ignore_system = 0;
@@ -73,17 +75,6 @@ static double webcamStart = 0;
 static int webcam_id = 0;
 
 static int poll_loop=1;
-
-/* Exported to libyahoo2 */
-char pager_host[MAX_PREF_LEN]="scs.yahoo.com";
-char pager_port[MAX_PREF_LEN]="23";
-char filetransfer_host[MAX_PREF_LEN]="filetransfer.msg.yahoo.com";
-char filetransfer_port[MAX_PREF_LEN]="80";
-char webcam_host[MAX_PREF_LEN]="webcam.yahoo.com";
-char webcam_port[MAX_PREF_LEN]="5100";
-char webcam_description[MAX_PREF_LEN]="Philips ToUcam Pro";
-char local_host[MAX_PREF_LEN]="";
-int conn_type = 1;
 
 static void register_callbacks();
 
@@ -372,6 +363,7 @@ void ext_yahoo_conf_userdecline(int id, char *who, char *room, char *msg)
 		if(!strcmp(w, who)) {
 			FREE(l->data);
 			cr->members = y_list_remove_link(cr->members, l);
+			y_list_free_1(l);
 			break;
 		}
 	}
@@ -407,6 +399,7 @@ void ext_yahoo_conf_userleave(int id, char *who, char *room)
 		if(!strcmp(w, who)) {
 			FREE(l->data);
 			cr->members = y_list_remove_link(cr->members, l);
+			y_list_free_1(l);
 			break;
 		}
 	}
@@ -814,7 +807,9 @@ void ext_yahoo_login(yahoo_local_account * ylad, int login_mode)
 {
 	LOG(("ext_yahoo_login"));
 
-	ylad->id = yahoo_init(ylad->yahoo_id, ylad->password);
+	ylad->id = yahoo_init_with_attributes(ylad->yahoo_id, ylad->password, 
+			"local_host", local_host,
+			NULL);
 	ylad->status = YAHOO_STATUS_OFFLINE;
 	yahoo_login(ylad->id, login_mode);
 
@@ -1447,7 +1442,7 @@ int main(int argc, char * argv[])
 
 	ylad = y_new0(yahoo_local_account, 1);
 
-	strncpy(local_host, get_local_addresses(), sizeof(local_host));
+	local_host = strdup(get_local_addresses());
 
 	printf("Yahoo Id: ");
 	scanf("%s", ylad->yahoo_id);
@@ -1495,6 +1490,7 @@ int main(int argc, char * argv[])
 				YList *n = y_list_next(l);
 				LOG(("Removing id:%d fd:%d", c->id, c->fd));
 				connections = y_list_remove_link(connections, l);
+				y_list_free_1(l);
 				free(c);
 				l=n;
 			} else {
@@ -1528,10 +1524,13 @@ int main(int argc, char * argv[])
 	}
 	LOG(("Exited loop"));
 
-	for(; connections; connections = y_list_remove_link(connections, connections)) {
+	while(connections) {
+		YList *tmp = connections;
 		struct _conn * c = connections->data;
 		close(c->fd);
 		FREE(c);
+		connections = y_list_remove_link(connections, connections);
+		y_list_free_1(tmp);
 	}
 
 	yahoo_logout();

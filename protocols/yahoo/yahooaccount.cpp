@@ -92,6 +92,7 @@ void YahooAccount::slotGoStatus(int status, const QString &awayMessage)
 
 void YahooAccount::loaded()
 {
+	kdDebug(14180) << k_funcinfo << endl;
 	QString newPluginData;
 
 	newPluginData = pluginData(protocol(), QString::fromLatin1("displayName"));
@@ -138,40 +139,49 @@ void YahooAccount::connect()
 	int port = 5050;
 
 	YahooSessionManager::manager()->setPager(server, port);
-//	kdDebug(14180) << k_funcinfo << endl;
+
 
 	if(!isConnected())
 	{
 		kdDebug(14180) << "Attempting to connect to Yahoo on <" << server << ":" << port << ">. user <" << accountId() << ">" << endl;
 
-		if( m_session > 0)
+		if(m_session)
 		{
 			if( m_session->sessionId() > 0)
 			{
-				kdDebug(14180) << "We appear to have connected (session: " << m_session << endl;
-				m_myself->setYahooStatus(YahooStatus::Available);
-				/* We have a session, time to connect its signals to our plugin slots */
-				QObject::connect( m_session , SIGNAL(loginResponse( int,  const QString &)), this , SLOT(slotLoginResponse( int, const QString &)) );
-				QObject::connect( m_session , SIGNAL(gotBuddy(const QString &, const QString &, const QString &)), this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
-				//QObject::connect( m_session , SIGNAL(gotIgnore( const QStringList & )), this , SLOT(void slotGotIgnore( const QStringList & )) );
-				QObject::connect( m_session , SIGNAL(statusChanged( const QString &, int, const QString &, int)), this , SLOT(slotStatusChanged( const QString &, int , const QString &, int )) );
-				QObject::connect( m_session , SIGNAL(gotIm( const QString &, const QString &, long, int )), this , SLOT(slotGotIm( const QString &, const QString &, long, int)) );
-				QObject::connect( m_session , SIGNAL(gotConfInvite( const QString &, const QString &, const QString &, const QStringList &)), this , SLOT(slotGotConfInvite( const QString &, const QString &, const QString &, const QStringList &)) );
-				QObject::connect( m_session , SIGNAL(confUserDecline( const QString &, const QString &, const QString &)), this , SLOT(slotConfUserDecline( const QString &, const QString &, const QString &)) );
-				QObject::connect( m_session , SIGNAL(confUserJoin( const QString &, const QString &)), this , SLOT(slotConfUserJoin( const QString &, const QString &)) );
-				QObject::connect( m_session , SIGNAL(confUserLeave( const QString &, const QString &)), this , SLOT(slotConfUserLeave( const QString &, const QString &)) );
-				QObject::connect( m_session , SIGNAL(confMessage( const QString &, const QString &, const QString &)), this , SLOT(slotConfMessage( const QString &, const QString &, const QString &)) );
-				QObject::connect( m_session , SIGNAL(gotFile( const QString &, const QString &, long, const QString &, const QString &, unsigned long)), this , SLOT(slotGotFile( const QString &, const QString &, long, const QString &, const QString &, unsigned long )) );
-				QObject::connect( m_session , SIGNAL(contactAdded( const QString &, const QString &, const QString &)), this , SLOT(slotContactAdded( const QString &, const QString &, const QString &)) );
-				QObject::connect( m_session , SIGNAL(rejected( const QString &, const QString &)), this , SLOT(slotRejected( const QString &, const QString &)) );
-				QObject::connect( m_session , SIGNAL(typingNotify( const QString &, int)), this , SLOT(slotTypingNotify( const QString &, int )) );
-				QObject::connect( m_session , SIGNAL(gameNotify( const QString &, int)), this , SLOT(slotGameNotify( const QString &, int )) );
-				QObject::connect( m_session , SIGNAL(mailNotify( const QString &, const QString &, int )), this , SLOT(slotMailNotify( const QString &, const QString &, int )) );
-				QObject::connect( m_session , SIGNAL(systemMessage( const QString &)), this , SLOT(slotSystemMessage( const QString &)) );
-				QObject::connect( m_session , SIGNAL(error( const QString &, int )), this , SLOT(slotError( const QString &, int )) );
-				QObject::connect( m_session , SIGNAL(gotIdentities( const QStringList & )), this , SLOT(slotGotIdentities( const QStringList & )) );
 
+				/* We have a session, time to connect its signals to our plugin slots */
+				QObject::connect(m_session, SIGNAL(loginResponse(int, const QString &)),
+						this, SLOT(slotLoginResponse(int, const QString &)) );
+				QObject::connect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
+						this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
+				//QObject::connect( m_session , SIGNAL(gotIgnore( const QStringList & )), this , SLOT(void slotGotIgnore( const QStringList & )) );
+				QObject::connect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int)),
+						this, SLOT(slotStatusChanged(const QString&, int, const QString&, int)));
+				QObject::connect(m_session, SIGNAL(gotIm(const QString&, const QString&, long, int)),
+						this, SLOT(slotGotIm(const QString &, const QString&, long, int)));
+				QObject::connect(m_session, SIGNAL(gotConfInvite( const QString&, const QString&, const QString&, const QStringList&)),
+						 this , SLOT(slotGotConfInvite(const QString&, const QString&, const QString&, const QStringList&)));
+				QObject::connect(m_session, SIGNAL(confUserDecline(const QString&, const QString &, const QString &)), this , SLOT(slotConfUserDecline( const QString &, const QString &, const QString &)) );
+				QObject::connect(m_session , SIGNAL(confUserJoin( const QString &, const QString &)), this , SLOT(slotConfUserJoin( const QString &, const QString &)) );
+				QObject::connect(m_session , SIGNAL(confUserLeave( const QString &, const QString &)), this , SLOT(slotConfUserLeave( const QString &, const QString &)) );
+				QObject::connect(m_session , SIGNAL(confMessage( const QString &, const QString &, const QString &)), this , SLOT(slotConfMessage( const QString &, const QString &, const QString &)) );
+				QObject::connect(m_session, SIGNAL(gotFile(const QString &, const QString &, long, const QString &, const QString &, unsigned long)),
+					this, SLOT(slotGotFile(const QString&, const QString&, long, const QString&, const QString&, unsigned long)));
+				QObject::connect(m_session , SIGNAL(contactAdded(const QString &, const QString &, const QString &)), this , SLOT(slotContactAdded(const QString &, const QString &, const QString &)));
+				QObject::connect(m_session , SIGNAL(rejected(const QString &, const QString &)), this , SLOT(slotRejected( const QString&, const QString&)));
+				QObject::connect(m_session, SIGNAL(typingNotify(const QString &, int)), this , SLOT(slotTypingNotify( const QString &, int)));
+				QObject::connect(m_session, SIGNAL(gameNotify(const QString &, int)), this , SLOT(slotGameNotify( const QString &, int)));
+				QObject::connect(m_session, SIGNAL(mailNotify(const QString&, const QString&, int)), this , SLOT(slotMailNotify(const QString &, const QString&, int)));
+				QObject::connect(m_session, SIGNAL(systemMessage(const QString&)), this , SLOT(slotSystemMessage(const QString &)));
+				QObject::connect(m_session, SIGNAL(error(const QString&, int)), this , SLOT(slotError(const QString &, int )));
+				QObject::connect(m_session, SIGNAL(gotIdentities(const QStringList &)), this , SLOT(slotGotIdentities( const QStringList&)));
+
+				kdDebug(14180) << "We appear to have connected on session: " << m_session << endl;
+				m_myself->setYahooStatus(YahooStatus::Available);
+				kdDebug(14180) << "Starting the login connection" << endl;
 				m_session->login(YAHOO_STATUS_AVAILABLE);
+
 			}
 			else
 			{
@@ -477,4 +487,5 @@ void YahooAccount::slotRemoveHandler( int /* fd */ )
 
 #include "yahooaccount.moc"
 
+// vim: set noet ts=4 sts=4 sw=4:
 

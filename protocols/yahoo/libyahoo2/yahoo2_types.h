@@ -120,12 +120,15 @@ enum yahoo_webcam_direction_type {
 #define YAHOO_CHAT_DUNNO 0x400
 #define YAHOO_CHAT_WEBCAM 0x10
 
+enum yahoo_webcam_conn_type { Y_WCM_DIALUP, Y_WCM_DSL, Y_WCM_T1 };
+
 struct yahoo_webcam {
 	int direction;     /* Uploading or downloading */
 	int conn_type;     /* 0=Dialup, 1=DSL/Cable, 2=T1/Lan */
 
 	char *user;        /* user we are viewing */
 	char *server;      /* webcam server to connect to */
+	int   port;        /* webcam port to connect on */
 	char *key;         /* key to connect to the server with */
 	char *description; /* webcam description */
 	char *my_ip;       /* own ip number */
@@ -162,6 +165,8 @@ struct yahoo_data {
 
 	char  *rawbuddylist;
 	char  *ignorelist;
+
+	void  *server_settings;
 };
 
 struct yab {

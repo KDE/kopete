@@ -19,6 +19,7 @@
 // Local Includes
 #include "kyahoo.h"
 
+
 // QT Includes
 #include <qfile.h>
 
@@ -134,7 +135,7 @@ YahooSession::YahooSession(int id, const QString username, const QString passwor
 	m_Username = username;
 	m_Password = password;
 	//Uncomment for yahoo packet debugging
-	//yahoo_set_log_level( YAHOO_LOG_DEBUG );
+	yahoo_set_log_level(YAHOO_LOG_DEBUG);
 }
 
 int YahooSession::sessionId() const
@@ -615,7 +616,7 @@ int YAHOO_CALLBACK_TYPE(ext_yahoo_connect_async)(int id, char *host, int port,  
 
 
 void YAHOO_CALLBACK_TYPE(ext_yahoo_got_webcam_image)(int /*id*/, const char* /*who*/,
-		unsigned char* /*image*/, unsigned int /*image_size*/, unsigned int /*real_size*/,
+		const unsigned char* /*image*/, unsigned int /*image_size*/, unsigned int /*real_size*/,
 		unsigned int /*timestamp*/)
 {
 }

@@ -442,7 +442,7 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_system_message)(int id, char *msg);
  *	a timestamp to stay in sync
  */
 void YAHOO_CALLBACK_TYPE(ext_yahoo_got_webcam_image)(int id, const char * who,
-		unsigned char *image, unsigned int image_size, unsigned int real_size,
+		const unsigned char *image, unsigned int image_size, unsigned int real_size,
 		unsigned int timestamp);
 
 
@@ -484,8 +484,7 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_webcam_invite_reply)(int id, char *from, int 
  *	         3 = user declines permission
  *	         4 = user does not have webcam online
  */
-void YAHOO_CALLBACK_TYPE(ext_yahoo_webcam_closed)(int id, char *who, int
-reason);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_webcam_closed)(int id, char *who, int reason);
 
 
 

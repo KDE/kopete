@@ -87,7 +87,9 @@ YList *y_list_remove(YList * list, void *data)
 
 	for (n = list; n != NULL; n = n->next) {
 		if (n->data == data) {
-			return y_list_remove_link(list, n);
+			list=y_list_remove_link(list, n);
+			y_list_free_1(n);
+			break;
 		}
 	}
 
@@ -96,8 +98,8 @@ YList *y_list_remove(YList * list, void *data)
 
 /* Warning */
 /* link MUST be part of list */
-/* link will be freed, caller should copy link->data first */
-YList *y_list_remove_link(YList * list, YList * link)
+/* caller must free link using y_list_free_1 */
+YList *y_list_remove_link(YList * list, const YList * link)
 {
 	if (!link)
 		return list;
@@ -110,8 +112,6 @@ YList *y_list_remove_link(YList * list, YList * link)
 	if (link == list)
 		list = link->next;
 	
-	free(link);
-
 	return list;
 }
 

@@ -48,8 +48,8 @@ static const char b64t[64] =
 
 char *yahoo_crypt(char *key, char *salt)
 {
-	static char *buffer = NULL;
-	static int buflen = 0;
+	char *buffer = NULL;
+	int buflen = 0;
 	int needed = 3 + strlen (salt) + 1 + 26 + 1;
 
 	md5_byte_t alt_result[16];
