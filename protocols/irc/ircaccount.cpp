@@ -35,6 +35,7 @@
 #include "kopeteawayaction.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
+#include "kopeteaccountmanager.h"
 #include "kopetecommandhandler.h"
 #include "kopeteview.h"
 
@@ -195,8 +196,8 @@ void IRCAccount::loaded()
 			/* Could not find this host. Add it to the networks structure */
 
 			m_network = new IRCNetwork;
-			m_network->name = i18n("Imported Network");
-			m_network->description = i18n("Network imported from previous version of Kopete");
+			m_network->name = i18n("Temporary Network - %1").arg( hostName );
+			m_network->description = i18n("Network imported from previous version of Kopete, or an IRC URI");
 
 			IRCHost *host = new IRCHost;
 			host->host = hostName;
@@ -206,7 +207,7 @@ void IRCAccount::loaded()
 			host->ssl = false;
 
 			m_network->hosts.append( host );
-			m_protocol->networks().insert( m_network->name, m_network );
+			m_protocol->addNetwork( m_network );
 
 			setPluginData(m_protocol, QString::fromLatin1( "NickName" ), mNickName );
 			setPluginData(m_protocol, QString::fromLatin1( "NetworkName" ), m_network->name );
@@ -292,8 +293,8 @@ void IRCAccount::setNetwork( const QString &network )
 		KMessageBox::queuedMessageBox(
 		Kopete::UI::Global::mainWidget(), KMessageBox::Error,
 		i18n("<qt>The network associated with this account, <b>%1</b>, no longer exists. Please"
-		" ensure that the account has a valid network.</qt>").arg(network),
-		i18n("Network No Longer Exists"), 0 );
+		" ensure that the account has a valid network. The account will not be enabled until you do so.</qt>").arg(network),
+		i18n("Problem loading %1").arg( accountId() ), 0 );
 	}
 }
 
@@ -478,7 +479,7 @@ void IRCAccount::slotDisconnected()
 	m_contactManager->removeFromNotifyList( m_engine->nickName() );
 
 	if( !autoConnect.isNull() )
-		deleteLater();
+		KopeteAccountManager::manager()->removeAccount( this );
 }
 
 void IRCAccount::disconnect()

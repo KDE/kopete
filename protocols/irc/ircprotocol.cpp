@@ -760,6 +760,12 @@ void IRCProtocol::slotDeleteHost()
 	}
 }
 
+void IRCProtocol::addNetwork( IRCNetwork *network )
+{
+	m_networks.insert( network ->name, network );
+	slotSaveNetworkConfig();
+}
+
 void IRCProtocol::slotSaveNetworkConfig()
 {
 	QDomDocument doc("irc-networks");

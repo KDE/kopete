@@ -113,6 +113,7 @@ public:
 	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }
 
 	QDict<IRCNetwork> &networks(){ return m_networks; }
+	void addNetwork( IRCNetwork *network );
 
 	void editNetworks( const QString &networkName = QString::null );
 
