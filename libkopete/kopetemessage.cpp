@@ -464,6 +464,8 @@ QString KopeteMessage::escapedBody() const
 
 QString KopeteMessage::parsedBody() const
 {
+	kdDebug(14000) << k_funcinfo << "messageformat: " << d->format << endl;
+
 	if( d->format == ParsedHTML )
 	{
 #if MESSAGE_QDOM
@@ -472,6 +474,11 @@ QString KopeteMessage::parsedBody() const
 #else
 		return d->body;
 #endif
+	}
+	else if( d->format & RichText )
+	{
+		// Richtext should already have <a href ...> around URLs, so no link parsing takes place
+		return KopeteEmoticons::parseEmoticons(escapedBody());
 	}
 	else
 	{
@@ -484,12 +491,22 @@ QString KopeteMessage::parseLinks( const QString &message ) const
 	QString result = message;
 
 	//Replace http/https/ftp links
-	result.replace( QRegExp( QString::fromLatin1("(?:\\b|&nbsp;)(\\w+://(\\w+\\@){0,1}[\\+\\-\\w\\./#@&;:=\\?~%_,]*)(?:\\b|&nbsp;)") ), QString::fromLatin1("<a href=\"\\1\" title=\"\\1\">\\1</a>" ) );
-	result.replace( QRegExp( QString::fromLatin1("^(www\\.[\\-\\w\\._]+[\\+\\-\\w\\./#&;:=\\?~%_,]*)(?:\\b|&nbsp;)") ), QString::fromLatin1("<a href=\"http://\\1\" title=\"http://\\1\">\\1</a>" ) );
-	result.replace( QRegExp( QString::fromLatin1("([^\\+\\-\\./#&;=\\?~%_,])\\b(www\\.[\\-\\w\\._]+[\\+\\-\\w\\./#&;:=\\?~%_,]*)(?:\\b|&nbsp;)") ), QString::fromLatin1("\\1<a href=\"http://\\2\" title=\"http://\\2\">\\2</a>" ) );
+	result.replace(
+		QRegExp( QString::fromLatin1("(?:\\b|&nbsp;)(\\w+://(\\w+\\@){0,1}[\\+\\-\\w\\./#@&;:=\\?~%_,]*)(?:\\b|&nbsp;)") ),
+		QString::fromLatin1("<a href=\"\\1\" title=\"\\1\">\\1</a>" ) );
+
+	result.replace(
+		QRegExp( QString::fromLatin1("^(www\\.[\\-\\w\\._]+[\\+\\-\\w\\./#&;:=\\?~%_,]*)(?:\\b|&nbsp;)") ),
+		QString::fromLatin1("<a href=\"http://\\1\" title=\"http://\\1\">\\1</a>" ) );
+
+	result.replace(
+		QRegExp( QString::fromLatin1("([^\\+\\-\\./#&;=\\?~%_,])\\b(www\\.[\\-\\w\\._]+[\\+\\-\\w\\./#&;:=\\?~%_,]*)(?:\\b|&nbsp;)") ),
+		QString::fromLatin1("\\1<a href=\"http://\\2\" title=\"http://\\2\">\\2</a>" ) );
 
 	//Replace Email Links
-	result.replace( QRegExp( QString::fromLatin1("(?:\\b|&nbsp;)([\\w\\+\\-=_\\.]+@(?:[\\+\\-_\\w\\.]+\\.\\w+)+)(?:\\b|&nbsp;)(?!.*</a>)") ), QString::fromLatin1("<a href=\"mailto:\\1\" title=\"mailto:\\1\">\\1</a>") );
+	result.replace(
+		QRegExp( QString::fromLatin1("(?:\\b|&nbsp;)([\\w\\+\\-=_\\.]+@(?:[\\+\\-_\\w\\.]+\\.\\w+)+)(?:\\b|&nbsp;)(?!.*</a>)") ),
+		QString::fromLatin1("<a href=\"mailto:\\1\" title=\"mailto:\\1\">\\1</a>") );
 
 	return result;
 }

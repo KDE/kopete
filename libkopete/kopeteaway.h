@@ -23,12 +23,7 @@
 #include <qobject.h>
 #include <qvaluelist.h>
 
-struct KopeteAwayMessage{
-	QString title;
-	QString message;
-};
-
-struct  KopeteAwayPrivate;
+struct KopeteAwayPrivate;
 
 /* Forward Declarations */
 class QStringList;
@@ -124,7 +119,7 @@ public:
 	  * @param title The away message title
 	  * @param message The away message
 	  * @return true if the away message was successfully added
-	  * @return false if the away message was not added 
+	  * @return false if the away message was not added
 	  *
 	  * This function will add an away message with the given title to the list of user defined
 	  * away messages.  If the title conflicts with an already defined away message, nothing
@@ -203,7 +198,7 @@ signals:
 	 * This signal is emitted when activity has been discovered after being set away automatically.
 	 */
 	void activity();
-	
+
 	/**
 	 * @brief Default messages were changed
 	 */

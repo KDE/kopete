@@ -268,7 +268,7 @@ protected:
 	 * exists. The myself contact is used in each KMM, the myself contactId
 	 * should be the accountID, the onlineStatus should represent the
 	 * current user's status. The statusbar icon is connected to
-	 * @ref myself.onlineStatusChanged() to update the icon.
+	 * myself-> @ref onlineStatusChanged() to update the icon.
 	 *
 	 * @return contact associated with the currently logged in user
 	 */

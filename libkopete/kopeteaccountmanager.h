@@ -85,7 +85,7 @@ public:
 
 	/**
 	 * \brief Guess the color for a new account
-	 * 
+	 *
 	 * Guesses a color for the next account of a given protocol based on the already registered colors
 	 */
 	QColor guessColor( KopeteProtocol *protocol );
@@ -105,7 +105,7 @@ public slots:
 
 	/**
 	 * \brief Disconnect all accounts at once.
-	 * 
+	 *
 	 * This is a slot, so you can connect directly to it from a KAction, for example.
 	 */
 	void disconnectAll();
@@ -177,10 +177,11 @@ private:
 private slots:
 	void slotPluginLoaded( KopetePlugin *plugin );
 
+private:
 	KopeteAccountManagerPrivate *d;
+
 };
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

@@ -51,6 +51,11 @@
 #undef HAVE_XIDLE
 #undef HasXidle
 
+struct KopeteAwayMessage
+{
+	QString title;
+	QString message;
+};
 
 struct KopeteAwayPrivate
 {
@@ -226,7 +231,7 @@ void KopeteAway::save()
 	/* Write out the titles */
 	config->writeEntry("Titles", titles);
 	config->sync();
-	
+
 	emit( messagesChanged() );
 }
 
