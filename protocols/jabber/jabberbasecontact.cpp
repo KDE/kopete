@@ -85,6 +85,18 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 		setDisplayName ( item.jid().full () );
 	}
 
+	/*
+	 * FIXME: synchronize group list here!
+	 * The tricky part: updating the KMC
+	 * group list cannot be done in one
+	 * step, additionally each of these steps
+	 * will cause the KMC to send out a
+	 * synch request which in turn
+	 * causes this method to be called
+	 * once more, resulting in an endless
+	 * loop and a DoS on the server.
+	 */
+
 }
 
 void JabberBaseContact::reevaluateStatus ()

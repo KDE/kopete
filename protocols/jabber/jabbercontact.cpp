@@ -52,10 +52,22 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount 
 	
 	/*
 	 * Catch when we're going online for the first time to
-	 * update our properties from a vCard.
+	 * update our properties from a vCard. (properties are
+	 * not available during startup, so we need to read
+	 * them later - this also serves as a random update
+	 * feature)
 	 */
 	connect ( account->myself (), SIGNAL ( onlineStatusChanged ( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
 			  this, SLOT ( slotCheckVCard () ) );
+
+	/*
+	 * Trigger update once if we're already connected for contacts
+	 * that are being added while we are online.
+	 */
+	if ( ( account->myself() != 0)
+		&& ( ( account->myself()->onlineStatus().status () == KopeteOnlineStatus::Online ) ||
+		 ( account->myself()->onlineStatus().status () == KopeteOnlineStatus::Away ) ) )
+		slotCheckVCard ();
 
 }
 
@@ -147,6 +159,8 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 void JabberContact::rename ( const QString &newName )
 {
 
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Renaming " << contactId () << " to " << newName << endl;
+
 	// our display name has been changed, forward the change to the roster
 	if (!account()->isConnected())
 	{
@@ -154,10 +168,19 @@ void JabberContact::rename ( const QString &newName )
 		return;
 	}
 
-	XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
+	// only forward change if this is not a temporary contact
+	if ( !metaContact()->isTemporary () )
+	{
+		XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
 
-	rosterTask->set ( mRosterItem.jid (), newName, mRosterItem.groups ());
-	rosterTask->go ( true );
+		rosterTask->set ( mRosterItem.jid (), newName, mRosterItem.groups ());
+		rosterTask->go ( true );
+	}
+	else
+	{
+		setDisplayName ( newName );
+	}
+
 }
 
 void JabberContact::handleIncomingMessage (const XMPP::Message & message)
@@ -230,15 +253,15 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 void JabberContact::slotCheckVCard ()
 {
 	QDateTime cacheDate;
-	QString cacheDateString = account()->pluginData ( protocol (), contactId() + "_vCard_timestamp" );
+	Kopete::ContactProperty cacheDateString = property ( protocol()->propVCardCacheTimeStamp );
 
 	// avoid warning if key does not exist in configuration file
-	if ( cacheDateString.isEmpty () )
+	if ( cacheDateString.isNull () )
 		cacheDate = QDateTime::currentDateTime().addDays ( -2 );
 	else
-		cacheDate = QDateTime::fromString ( cacheDateString, Qt::ISODate );
+		cacheDate = QDateTime::fromString ( cacheDateString.value().toString (), Qt::ISODate );
 
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Cached vCard data from " << cacheDate.toString () << endl;
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Cached vCard data for " << contactId () << " from " << cacheDate.toString () << endl;
 
 	if ( cacheDate.addDays ( 1 ) < QDateTime::currentDateTime () )
 	{
@@ -261,7 +284,7 @@ void JabberContact::slotGetTimedVCard ()
 		return;
 	}
 
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Requesting vCard from update timer." << endl;
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Requesting vCard for " << contactId () << " from update timer." << endl;
 
 	// request vCard
 	XMPP::JT_VCard *task = new XMPP::JT_VCard ( account()->client()->rootTask () );
@@ -285,7 +308,7 @@ void JabberContact::slotGotVCard ()
 		 * Manually set the timestamp here so that
 		 * a new request won't be triggered too early.
 		 */
-		account()->setPluginData ( protocol (), contactId() + "_vCard_timestamp", QDateTime::currentDateTime().toString ( Qt::ISODate ) );
+		setProperty ( protocol()->propVCardCacheTimeStamp, QDateTime::currentDateTime().toString ( Qt::ISODate ) );
 		return;
 	}
 
@@ -297,13 +320,51 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 {
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Updating vCard for " << contactId () << endl;
 
-	// update vCard cache timestamp
-	account()->setPluginData ( protocol (), contactId() + "_vCard_timestamp", QDateTime::currentDateTime().toString ( Qt::ISODate ) );
+	// update vCard cache timestamp if this is not a temporary contact
+	if ( !metaContact()->isTemporary () )
+	{
+		setProperty ( protocol()->propVCardCacheTimeStamp, QDateTime::currentDateTime().toString ( Qt::ISODate ) );
+	}
 
-	if ( vCard.nickName().isEmpty () )
-		removeProperty ( protocol()->propNickName );
+	/*
+	 * If a nick name is present in the vCard and if
+	 * no nick name has been set so far, we'll update
+	 * the contact's nick name to the one set in the vCard.
+	 * The check for the display name has to be done before
+	 * we set the actual nick name property, as these are
+	 * connected and displayName() will be updated behind
+	 * the scenes.
+	 * The rename request will update it again by getting
+	 * feedback from the contact list.
+	 */
+	if ( !vCard.nickName().isEmpty () )
+	{
+		if ( displayName().isEmpty () || displayName () == contactId () )
+		{
+			/*
+			 * This will cause the nick name property
+			 * to be updated once we get feedback from
+			 * the server, so no need to set the property
+			 * twice.
+			 */
+			rename ( vCard.nickName () );
+		}
+		else
+		{
+			/*
+			 * The user already specified a nick name
+			 * in the contact list but we want the
+			 * official nick name to show up in the
+			 * contact list tooltip.
+			 */
+			setProperty ( protocol()->propNickName, vCard.nickName () );
+		}
+	}
 	else
-		setProperty ( protocol()->propNickName, vCard.nickName () );
+	{
+		// no nickname has been set, remove it from the prop list
+		removeProperty ( protocol()->propNickName );
+	}
 
 	/**
 	 * Kopete does not allow a modification of the "full name"
@@ -591,11 +652,17 @@ void JabberContact::syncGroups ()
 	QStringList groups;
 	KopeteGroupList groupList = metaContact ()->groups ();
 
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Synchronizing groups for " << contactId () << endl;
+
 	if ( !account()->isConnected() )
 	{
 		account()->errorConnectFirst ();
 		return;
 	}
+
+	// if this is a temporary contact, don't bother
+	if ( metaContact()->isTemporary () )
+		return;
 
 	for ( KopeteGroup * g = groupList.first (); g; g = groupList.next () )
 	{
@@ -606,7 +673,7 @@ void JabberContact::syncGroups ()
 
 	XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
 
-	rosterTask->set ( mRosterItem.jid (), mRosterItem.name (), mRosterItem.groups () );
+	rosterTask->set ( mRosterItem.jid (), displayName (), mRosterItem.groups () );
 	rosterTask->go (true);
 
 }

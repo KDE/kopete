@@ -87,6 +87,7 @@ public:
 	const Kopete::ContactPropertyTmpl propWorkPhone;
 	const Kopete::ContactPropertyTmpl propWorkMobilePhone;
 	const Kopete::ContactPropertyTmpl propNickName;
+	const Kopete::ContactPropertyTmpl propVCardCacheTimeStamp;
 
 	/**
 	 * This returns our protocol instance
