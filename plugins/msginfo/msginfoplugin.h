@@ -22,13 +22,14 @@
 #define AUTOAWAYPLUGIN_H
 
 #include <qobject.h>
-#include <qptrdict.h>
+#include <qmap.h>
 
 #include "kopetemessage.h"
 #include "plugin.h"
 
 class QStringList;
 class KopeteMessage;
+class KopeteMetaContact;
 
 class MsgInfoPlugin : public Plugin
 {
@@ -40,8 +41,9 @@ public:
 	void init();
 	bool unload();
 
-	bool serialize();
-	void deserialize();
+	bool serialize( KopeteMetaContact *metaContact,
+			QStringList &strList) const;
+	void deserialize( KopeteMetaContact *metaContact, const QStringList& data );
 
 public slots:
 	void slotProcessDisplay( KopeteMessage& msg );
@@ -50,7 +52,7 @@ public slots:
 protected:
 	void changeMessage( KopeteMessage& msg );
 private:
-	QPtrDict<Q_UINT32> mMsgCountDict;
+	QMap<const KopeteMetaContact*, Q_UINT32> mMsgCountMap;
 };
 
 #endif

@@ -5,6 +5,7 @@
 #include "kopete.h"
 #include "kopetemessage.h"
 #include "kopetecontact.h"
+#include "kopetemetacontact.h"
 
 #include "msginfoplugin.h"
 
@@ -39,19 +40,30 @@ MsgInfoPlugin::unload()
 }
 
 bool
-MsgInfoPlugin::serialize()
+MsgInfoPlugin::serialize( KopeteMetaContact *metaContact,
+			  QStringList &strList  ) const
 {
-	return false;
+	if ( mMsgCountMap.contains( metaContact ) )
+		strList<< QString::number( mMsgCountMap[ metaContact ] );
+	else
+		strList<< "0";
+	return true;
 }
 
 void
-MsgInfoPlugin::deserialize()
+MsgInfoPlugin::deserialize( KopeteMetaContact *metaContact, const QStringList& data )
 {
+	mMsgCountMap[ metaContact ] = data.first().toUInt();
 }
 
 void
 MsgInfoPlugin::slotProcessDisplay( KopeteMessage& msg )
 {
+	//we got a message
+	if ( msg.direction() == KopeteMessage::Inbound ) {
+		KopeteMetaContact *meta = msg.from()->metaContact();
+		++(mMsgCountMap[ meta ]);
+	}
 	changeMessage( msg );
 }
 
@@ -66,6 +78,14 @@ MsgInfoPlugin::changeMessage( KopeteMessage& msg )
 {
 	msg.setBody( msg.body().replace( QRegExp( "%K%" ), "Kopete - The best IM client") );
 	msg.setBody( msg.body().replace( QRegExp( "%U%" ), "http://kopete.kde.org") );
+	if ( msg.direction() == KopeteMessage::Inbound ) {
+		int num = mMsgCountMap[ msg.from()->metaContact() ];
+		msg.setBody( msg.body().replace( QRegExp( "%#%" ), QString::number(num) ) );
+	} else {
+		KopeteMetaContact *meta = msg.to().first()->metaContact();
+		int num = mMsgCountMap[ meta ];
+		msg.setBody( msg.body().replace( QRegExp( "%#%" ), QString::number(num) ) );
+	}
 }
 
 
