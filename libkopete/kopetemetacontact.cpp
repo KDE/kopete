@@ -61,7 +61,8 @@ void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &groups 
 		connect( c, SIGNAL( destroyed( QObject * ) ),
 			this, SLOT( slotMetaContactDestroyed( QObject * ) ) );
 
-		setDisplayName( c->name() );
+		 if (displayName() == "")
+			 setDisplayName( c->name() );
 
 		// FIXME: Group handling!!!!
 		// Generally, if the groups are explicitly set by the user they
