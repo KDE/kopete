@@ -4,9 +4,9 @@
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2001-2002 by Stefan Gehn            <metz AT gehn.net>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -172,11 +172,7 @@ void KopeteWindow::initActions()
 	menubarAction = KStdAction::showMenubar(this, SLOT(showMenubar()), actionCollection(), "settings_showmenubar" );
 	statusbarAction = KStdAction::showStatusbar(this, SLOT(showStatusbar()), actionCollection(), "settings_showstatusbar");
 
-#if KDE_IS_VERSION(3, 2, 90)
 	KStdAction::keyBindings( guiFactory(), SLOT( configureShortcuts() ), actionCollection(), "settings_keys" );
-#else  // when we will drop the KDE 3.2 compatibility, do not forget to remove  slotConfKeys
-	KStdAction::keyBindings( this, SLOT( slotConfKeys() ), actionCollection(), "settings_keys" );
-#endif
 	new KAction( i18n( "Configure Plugins..." ), "input_devices_settings", 0, this,
 		SLOT( slotConfigurePlugins() ), actionCollection(), "settings_plugins" );
 	new KAction( i18n( "Configure &Global Shortcuts..." ), "configure_shortcuts", 0, this,
@@ -190,10 +186,8 @@ void KopeteWindow::initActions()
 	actionShowEmptyGroups = new KToggleAction( i18n( "Show Empty &Groups" ), "folder_green", CTRL + Key_G,
 			this, SLOT( slotToggleShowEmptyGroups() ), actionCollection(), "settings_show_empty_groups" );
 
-# if KDE_IS_VERSION(3,2,90)
 	actionShowOffliners->setCheckedState(i18n("Hide Offline &Users"));
 	actionShowEmptyGroups->setCheckedState(i18n("Hide Empty &Groups"));
-#endif
 
 	// quick search bar
 	QHBox *quickSearchContainer = new QHBox( 0, "kde toolbar widget" );
@@ -380,11 +374,6 @@ void KopeteWindow::slotConfigChanged()
 	actionShowEmptyGroups->setChecked( pref->showEmptyGroups() );
 }
 
-void KopeteWindow::slotConfKeys()
-{
-	KKeyDialog::configure(actionCollection(), this, true);
-}
-
 void KopeteWindow::slotConfNotifications()
 {
 	KNotifyDialog::configure( this );
@@ -398,25 +387,12 @@ void KopeteWindow::slotConfigurePlugins()
 
 	m_pluginConfig->raise();
 
-	#if KDE_IS_VERSION( 3, 1, 90 )
-		KWin::activateWindow( m_pluginConfig->winId() );
-	#endif
+	KWin::activateWindow( m_pluginConfig->winId() );
 }
 
 void KopeteWindow::slotConfGlobalKeys()
 {
-	if(KKeyDialog::configure( globalAccel, this ) )
-	{
-#if !KDE_IS_VERSION( 3, 2, 92 )
-		//KKeyDialog::configure is supposed to save itself. but it does it wrong.
-		// KGlobalAccel::writeSettings / readSettings  uses the group "Global Shortcuts"
-		// but KAccelShortcutList::save() which is called by the KKeyDialog, use an empty
-		//  group which is replaced by "Shortcuts" in KShortcutList::writeSettings
-		globalAccel->writeSettings();
-		//as the result: the config is saved in two different group. - Olivier  07-2004
-#endif    //(fixed in KDE 3.3)
-	}
-
+	KKeyDialog::configure( globalAccel, this ) ;
 }
 
 void KopeteWindow::slotConfToolbar()

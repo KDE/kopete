@@ -67,7 +67,6 @@ private slots:
 	void slotToggleShowOffliners();
 	void slotToggleShowEmptyGroups();
 	void slotConfigChanged();
-	void slotConfKeys();
 	void slotConfNotifications();
 	void slotConfToolbar();
 	void slotUpdateToolbar();
