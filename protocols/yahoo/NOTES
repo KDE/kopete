@@ -6,6 +6,7 @@
 - Main thing to note is invisible mode, which won't work if you go straight from
     offline->invisible, since it will go offline->online->invisible and the
     opposite end will notice you go online.
-
+- When deleteing contacts from kopete's contact list, they aren't deleted from
+  the server side list
 
 
