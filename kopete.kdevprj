@@ -637,7 +637,7 @@ sub_dirs=icq,msn,
 type=normal
 
 [kopete/protocols/icq/Makefile.am]
-files=kopete/protocols/icq/icqprotocol.cpp,kopete/protocols/icq/icqprotocol.h,kopete/protocols/icq/icqpreferences.cpp,kopete/protocols/icq/icqpreferences.h,kopete/protocols/icq/protocol.cpp,kopete/protocols/icq/icqaddcontactpage.cpp,kopete/protocols/icq/icqaddcontactpage.h,kopete/protocols/icq/icqcontact.cpp,kopete/protocols/icq/icqcontact.h
+files=kopete/protocols/icq/icqprotocol.cpp,kopete/protocols/icq/icqprotocol.h,kopete/protocols/icq/icqpreferences.cpp,kopete/protocols/icq/icqpreferences.h,kopete/protocols/icq/protocol.cpp,kopete/protocols/icq/icqaddcontactpage.cpp,kopete/protocols/icq/icqaddcontactpage.h,kopete/protocols/icq/icqcontact.cpp,kopete/protocols/icq/icqcontact.h,kopete/protocols/icq/icqmessage.cpp,kopete/protocols/icq/icqmessage.h,kopete/protocols/icq/icqchangestatus.cpp,kopete/protocols/icq/icqchangestatus.h,kopete/protocols/icq/icquserinfo.h,kopete/protocols/icq/icquserinfo.cpp
 sub_dirs=kxengine,
 type=static_library
 
@@ -653,6 +653,18 @@ install=false
 install_location=
 type=HEADER
 
+[kopete/protocols/icq/icqchangestatus.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/icq/icqchangestatus.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
 [kopete/protocols/icq/icqcontact.cpp]
 dist=true
 install=false
@@ -660,6 +672,18 @@ install_location=
 type=SOURCE
 
 [kopete/protocols/icq/icqcontact.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/protocols/icq/icqmessage.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/icq/icqmessage.h]
 dist=true
 install=false
 install_location=
@@ -684,6 +708,18 @@ install_location=
 type=SOURCE
 
 [kopete/protocols/icq/icqprotocol.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/protocols/icq/icquserinfo.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/icq/icquserinfo.h]
 dist=true
 install=false
 install_location=
