@@ -394,7 +394,12 @@ void GroupWiseAccount::setOnlineStatus( const Kopete::OnlineStatus& status, cons
 	}
 }
 
-void GroupWiseAccount::disconnect()
+void GroupWiseAccount::disconnect ()
+{
+	disconnect ( Manual );
+}
+
+void GroupWiseAccount::disconnect( Kopete::Account::DisconnectReason reason )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 
@@ -414,7 +419,7 @@ void GroupWiseAccount::disconnect()
 	// in the process of connecting
 	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOffline );
 
-	disconnected( Manual );
+	disconnected( reason );
 	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << "Disconnected." << endl;
 }
 
@@ -574,20 +579,90 @@ void GroupWiseAccount::slotTLSHandshaken()
 	{
 		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "Certificate is not valid, continuing anyway" << endl;
 		// certificate is not valid, query the user
-		/*			if(handleTLSWarning (validityResult, server (), myself()->contactId ()) == KMessageBox::Continue)
-					{*/
-		m_tlsHandler->continueAfterHandshake ();
-		/*			}
-					else
-					{
-					disconnect ( Kopete::Account::Manual );
-					}*/
+		if(handleTLSWarning (validityResult, server (), myself()->contactId ()) == KMessageBox::Continue)
+		{
+			m_tlsHandler->continueAfterHandshake ();
+		}
+		else
+		{
+			disconnect ( Kopete::Account::Manual );
+		}
 	}
+}
+
+int GroupWiseAccount::handleTLSWarning (int warning, QString server, QString accountId)
+{
+	QString validityString, code;
+
+	switch(warning)
+	{
+		case QCA::TLS::NoCert:
+			validityString = i18n("No certificate was presented.");
+			code = "NoCert";
+			break;
+		case QCA::TLS::HostMismatch:
+			validityString = i18n("The host name does not match the one in the certificate.");
+			code = "HostMismatch";
+			break;
+		case QCA::TLS::Rejected:
+			validityString = i18n("The Certificate Authority rejected the certificate.");
+			code = "Rejected";
+			break;
+		case QCA::TLS::Untrusted:
+			// FIXME: write better error message here
+			validityString = i18n("The certificate is untrusted.");
+			code = "Untrusted";
+			break;
+		case QCA::TLS::SignatureFailed:
+			validityString = i18n("The signature is invalid.");
+			code = "SignatureFailed";
+			break;
+		case QCA::TLS::InvalidCA:
+			validityString = i18n("The Certificate Authority is invalid.");
+			code = "InvalidCA";
+			break;
+		case QCA::TLS::InvalidPurpose:
+			// FIXME: write better error  message here
+			validityString = i18n("Invalid certificate purpose.");
+			code = "InvalidPurpose";
+			break;
+		case QCA::TLS::SelfSigned:
+			validityString = i18n("The certificate is self-signed.");
+			code = "SelfSigned";
+			break;
+		case QCA::TLS::Revoked:
+			validityString = i18n("The certificate has been revoked.");
+			code = "Revoked";
+			break;
+		case QCA::TLS::PathLengthExceeded:
+			validityString = i18n("Maximum certificate chain length was exceeded.");
+			code = "PathLengthExceeded";
+			break;
+		case QCA::TLS::Expired:
+			validityString = i18n("The certificate has expired.");
+			code = "Expired";
+			break;
+		case QCA::TLS::Unknown:
+		default:
+			validityString = i18n("An unknown error occurred trying to validate the certificate.");
+			code = "Unknown";
+			break;
+		}
+
+	return KMessageBox::warningContinueCancel(Kopete::UI::Global::mainWidget (),
+						  i18n("The certificate of server %1 could not be validated for account %2: %3").
+						  arg(server).
+						  arg(accountId).
+						  arg(validityString),
+						  i18n("Jabber Connection Certificate Problem"),
+						  KStdGuiItem::cont(),
+						  QString("KopeteTLSWarning") + server + code);
 }
 
 void GroupWiseAccount::slotTLSReady( int secLayerCode )
 {
 	// i don't know what secLayerCode is for...
+	Q_UNUSED( secLayerCode );
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	m_client->start( server(), port(), accountId(), password().cachedValue() );
 }

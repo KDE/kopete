@@ -150,6 +150,7 @@ public slots:
 
 	/* Disconnects from the server. */
 	virtual void disconnect();
+	virtual void disconnect( Kopete::Account::DisconnectReason reason );
 
 	/** Set the online status for the account. Reimplemented from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
@@ -296,6 +297,8 @@ protected:
 	* @param autoReply Indicates that the message is an auto reply - doesn't contain any RTF.
 	*/
 	void handleIncomingMessage( const ConferenceEvent & event, bool autoReply );
+
+	int handleTLSWarning (int warning, QString server, QString accountId);
 
 	GroupWiseChatSession * findChatSessionByGuid( const GroupWise::ConferenceGuid & guid );
 	/**
