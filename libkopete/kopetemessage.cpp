@@ -106,6 +106,9 @@ KopeteMessage::KopeteMessage( const KopeteMessage &other )
 
 KopeteMessage& KopeteMessage::operator=( const KopeteMessage &other )
 {
+	if( other.d == d )
+		return *this;
+
 	detach();
 	delete d;
 
