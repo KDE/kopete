@@ -24,6 +24,7 @@
 #include <klineeditdlg.h>
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
+#include <kdebug.h>
 
 #include "addcontactpage.h"
 #include "addcontactwizard.h"
@@ -135,7 +136,7 @@ void AddContactWizard::slotAddGroupClicked()
 void AddContactWizard::slotRemoveGroupClicked()
 {
 }
-#include <iostream>
+
 void AddContactWizard::accept()
 {
 	KopeteMetaContact *m = new KopeteMetaContact();
@@ -151,12 +152,12 @@ void AddContactWizard::accept()
 	}
 	m->setTopLevel(topLevel);
 	
-cout << "finishing page: " << protocolPages.first() << endl;
-	for (AddContactPage *ePage = protocolPages.first(); 
+	kdDebug(14000) << "finishing page: " << protocolPages.first() << endl;
+	for (AddContactPage *ePage = protocolPages.first();
 		 ePage; 
 		 ePage = protocolPages.next())
 	{
-cout << "finishing page: " << ePage << endl;
+		kdDebug(14000) << "finishing page: " << ePage << endl;
 		ePage->slotFinish(m); 
 	}
 	KopeteContactList::contactList()->addMetaContact(m);
