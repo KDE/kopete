@@ -17,6 +17,7 @@
 */
 
 #include "aimbuddylist.h"
+#include "oscarprotocol.h"
 
 // Project includes
 #include "aim.h"
@@ -183,6 +184,9 @@ AIMBuddy::AIMBuddy(const int buddyID, const int groupID, const QString &screenNa
 	mBuddyID = buddyID;
 	mGroupID = groupID;
 	mScreenName = screenName;
+	// By default set it's status to offline
+	mStatus = OscarProtocol::protocol()->getOnlineStatus(
+	    OscarProtocol::OFFLINE);
 }
 
 AIMBuddyCaps::AIMBuddyCaps()
