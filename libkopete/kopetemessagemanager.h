@@ -173,7 +173,7 @@ public:
 	/**
 	 * Returns the message handler chain for the message direction @p dir.
 	 */
-	MessageHandlerChain::Ref chainForDirection( Message::MessageDirection dir );
+	MessageHandlerChain::Ptr chainForDirection( Message::MessageDirection dir );
 
 signals:
 	/**

@@ -29,14 +29,7 @@ namespace Kopete
 class MessageHandlerChain::Private
 {
 public:
-	// note that the reference count starts from 0. whenever a chain
-	// is created by create() it is immediately passed to a Ref object
-	// which incRef()s it. It must incRef() it, or code which did something
-	// like:
-	//   Ref ref( someRef.get() );
-	// would mess up the reference count.
-	Private() : refCount(0), first(0) {}
-	int refCount;
+	Private() : first(0) {}
 	MessageHandler *first;
 };
 
@@ -55,7 +48,7 @@ public:
 	}
 };
 
-MessageHandlerChain::Ref MessageHandlerChain::create( MessageManager *manager, Message::MessageDirection direction )
+MessageHandlerChain::Ptr MessageHandlerChain::create( MessageManager *manager, Message::MessageDirection direction )
 {
 	// create the handler chain
 	MessageHandlerChain *chain = new MessageHandlerChain;
@@ -123,17 +116,6 @@ MessageHandlerChain::~MessageHandlerChain()
 		handler = next;
 	}
 	delete d;
-}
-
-void MessageHandlerChain::incRef()
-{
-	++d->refCount;
-}
-
-void MessageHandlerChain::decRef()
-{
-	if( --d->refCount == 0 )
-		delete this;
 }
 
 

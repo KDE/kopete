@@ -19,6 +19,7 @@
 
 #include <qobject.h>
 #include <kdemacros.h>
+#include <ksharedptr.h>
 
 #include "kopetemessage.h"
 
@@ -26,7 +27,6 @@ namespace Kopete
 {
 
 class MessageHandler;
-class MessageHandlerChainRef;
 
 /**
  * @brief A chain of message handlers; the processing layer between protocol and chat view
@@ -38,67 +38,28 @@ class MessageHandlerChainRef;
  * MessageHandlers, and acts as a facade for that chain, presenting a
  * more convenient interface.
  */
-class MessageHandlerChain : public QObject
+class MessageHandlerChain : public QObject, private KShared
 {
 	Q_OBJECT
 public:
-	typedef MessageHandlerChainRef Ref;
+	friend class KSharedPtr<MessageHandlerChain>;
+	typedef KSharedPtr<MessageHandlerChain> Ptr;
 	
 	/**
 	 * Create a new MessageHandlerChain object with the appropriate handlers for
 	 * processing messages entering @p manager in direction @p direction.
 	 */
-	static Ref create( MessageManager *manager, Message::MessageDirection direction );
+	static Ptr create( MessageManager *manager, Message::MessageDirection direction );
 
 	void processMessage( const Message &message );
 	int capabilities();
+	
 private:
 	MessageHandlerChain();
 	~MessageHandlerChain();
 	
-	friend class MessageHandlerChainRef;
-	void incRef();
-	void decRef();
-	
 	class Private;
 	Private *d;
-};
-
-/**
- * A smart pointer to MessageHandlerChains implementing reference counting.
- */
-class MessageHandlerChainRef
-{
-	MessageHandlerChain *chain;
-public:
-	MessageHandlerChainRef( MessageHandlerChain *chain = 0 ) : chain(chain) { incRef(); }
-	MessageHandlerChainRef( const MessageHandlerChainRef &o ) : chain(o.chain) { incRef(); }
-	~MessageHandlerChainRef() { decRef(); }
-	MessageHandlerChainRef &operator=(const MessageHandlerChainRef &o)
-	{
-		o.incRef();
-		decRef();
-		chain = o.chain;
-		return *this;
-	}
-	MessageHandlerChain *get() const { return chain; }
-	MessageHandlerChain *operator->() const { return chain; }
-	/**
-	 * Implicit conversion to QObject * for connect() calls
-	 */
-	operator QObject *() { return chain; }
-	
-private:
-	void incRef() const
-	{
-		if(chain)
-			chain->incRef();
-	}
-	void decRef() const
-	{
-		if(chain)
-			chain->decRef();
-	}
 };
 
 }

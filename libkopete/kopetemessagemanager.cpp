@@ -56,7 +56,7 @@ public:
 	QString displayName;
 	KopeteView *view;
 	bool mayInvite;
-	Kopete::MessageHandlerChain::Ref chains[3];
+	Kopete::MessageHandlerChain::Ptr chains[3];
 };
 
 Kopete::MessageManager::MessageManager( const Kopete::Contact *user,
@@ -232,7 +232,7 @@ public:
 // FIXME: might crash on exit. use a KStaticDeleter
 static TempFactory theTempFactory;
 
-Kopete::MessageHandlerChain::Ref Kopete::MessageManager::chainForDirection( Kopete::Message::MessageDirection dir )
+Kopete::MessageHandlerChain::Ptr Kopete::MessageManager::chainForDirection( Kopete::Message::MessageDirection dir )
 {
 	if( dir < 0 || dir > 2)
 		kdFatal(14000) << k_funcinfo << "invalid message direction " << dir << endl;
@@ -282,7 +282,14 @@ void Kopete::MessageManager::appendMessage( Kopete::Message &msg )
 		emit messageReceived( msg, this );
 	}
 
-	chainForDirection( msg.direction() )->processMessage( msg );
+	// outbound messages here are ones the user has sent that are now
+	// getting reflected back to the chatwindow. they should go down
+	// the incoming chain.
+	Kopete::Message::MessageDirection chainDirection = msg.direction();
+	if( chainDirection == Kopete::Message::Outbound )
+		chainDirection = Kopete::Message::Inbound;
+	
+	chainForDirection( chainDirection )->processMessage( msg );
 //	emit messageAppended( msg, this );
 }
 
