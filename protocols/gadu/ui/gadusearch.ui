@@ -191,7 +191,7 @@
                                 </property>
                                 <property name="sizeHint">
                                     <size>
-                                        <width>241</width>
+                                        <width>567</width>
                                         <height>21</height>
                                     </size>
                                 </property>
@@ -471,7 +471,7 @@
                             <enum>Extended</enum>
                         </property>
                         <property name="allColumnsShowFocus">
-                            <bool>false</bool>
+                            <bool>true</bool>
                         </property>
                         <property name="showSortIndicator">
                             <bool>true</bool>
@@ -482,13 +482,13 @@
                         <property name="fullWidth">
                             <bool>true</bool>
                         </property>
-                        <property name="itemsMovable">
+                        <property name="autoOpen" stdset="0">
                             <bool>false</bool>
                         </property>
-                        <property name="autoOpen">
+                        <property name="dropVisualizer" stdset="0">
                             <bool>false</bool>
                         </property>
-                        <property name="dropVisualizer">
+                        <property name="itemsMovable" stdset="0">
                             <bool>false</bool>
                         </property>
                     </widget>
