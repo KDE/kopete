@@ -46,6 +46,7 @@ GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, KopeteA
 	m_layout = new QVBoxLayout( this );
 	m_preferencesDialog = new GroupWiseAccountPreferences( this );
 	m_layout->addWidget( m_preferencesDialog );
+	connect( m_preferencesDialog->m_password, SIGNAL( changed() ), this, SLOT( configChanged() ) );
 	connect( m_preferencesDialog->m_server, SIGNAL( textChanged( const QString & ) ), this, SLOT( configChanged() ) );
 	connect( m_preferencesDialog->m_port, SIGNAL( valueChanged( int ) ), this, SLOT( configChanged() ) );
 	if ( account() )
@@ -73,7 +74,7 @@ void GroupWiseEditAccountWidget::reOpen()
 {
 	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
 	
-	
+	m_preferencesDialog->m_password->load( &account()->password () );
 	// Kopete at least <=0.90 doesn't support changing account IDs
 	m_preferencesDialog->m_userId->setDisabled( true );
 	m_preferencesDialog->m_userId->setText( account()->accountId() );
@@ -114,6 +115,7 @@ void GroupWiseEditAccountWidget::writeConfig()
 	account()->setPluginData( GroupWiseProtocol::protocol(), "Server", m_preferencesDialog->m_server->text() );
 	account()->setPluginData( GroupWiseProtocol::protocol(), "Port", QString::number( m_preferencesDialog->m_port->value() ) );
 	account()->setAutoLogin( m_preferencesDialog->m_autoConnect->isChecked() );
+	m_preferencesDialog->m_password->save( &account()->password() );
 	settings_changed = false;
 }
 
