@@ -147,5 +147,4 @@ bool Global::installTheme(const QString &archiveName)
 
 } // END namespace Kopete
 
-#include "kopeteglobal.moc"
 // vim: set noet ts=4 sts=4 sw=4:
