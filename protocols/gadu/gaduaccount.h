@@ -63,7 +63,7 @@ public slots:
 	//}
 
 	void changeStatus( const KopeteOnlineStatus& status, const QString& descr = QString::null );
-	void slotLogin( int status = GG_STATUS_AVAIL, 
+	void slotLogin( int status = GG_STATUS_AVAIL,
 			const QString& dscr = QString::null, bool lastAttemptFailed = false );
 	void slotLogoff();
 	void slotGoOnline();
@@ -84,6 +84,7 @@ public slots:
 
 	// call when password was incorrect, and you want to ask user again
 	void loginPasswordFailed();
+	void tlsConnectionFailed();
 
 	void error( const QString& title, const QString& message );
 
@@ -99,8 +100,8 @@ public slots:
 	void pubDirSearchClose();
 
 	// tls
-	bool isConnectionEncrypted();
-	void useTls( bool ut );
+	int isConnectionEncrypted();
+	void useTls( int ut );
 
 signals:
 	void pubDirSearchResult( const searchResult& );
@@ -159,8 +160,8 @@ private:
 	KAction*			searchAction;
 	KAction*			listputAction;
 
-	bool				isUsingTls;
-
+	int				isTls;
+	bool				connectWithSSL;
 	int				lastStatus;
 	QString			lastDescription;
 };

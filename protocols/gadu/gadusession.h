@@ -116,6 +116,7 @@ signals:
 	void connectionFailed( const QString& );
 	void connectionSucceed( struct gg_event* );
 	void loginPasswordIncorrect();
+	void tlsConnectionFailed();
 	void disconnect();
 	void pubDirSearchResult( const searchResult& );
 	void userListRecieved( const QString& );
