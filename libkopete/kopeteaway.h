@@ -34,7 +34,7 @@
 
 /* Forward Declarations */
 class QStringList;
-
+class KopeteGlobalAwayDialog;
 
 /**
  * @class KopeteAway kopeteaway.h 
@@ -66,11 +66,14 @@ friend class KopeteAwayDialog;
 	 * @return The global away message
 	 */
 	static QString message();
-	
+
 	/**
-	 * @brief Shows the global away dialog
+	 * This method sets the global away message,
+	 * it does not set you away, just sets the message.
+	 * @brief Sets the global away message
+	 * @param message The message you want to set
 	 */
-	static void show();
+	void setGlobalAwayMessage(QString message);
 	
 	/**
 	 * @brief Sets global away (all protocols)
@@ -152,6 +155,7 @@ friend class KopeteAwayDialog;
 	
 	private:
 	KopeteAway();
+	~KopeteAway();
 	KopeteAway( const KopeteAway &rhs );
 	KopeteAway &operator=( const KopeteAway &rhs );
 	static KopeteAway *instance;

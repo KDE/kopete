@@ -35,7 +35,7 @@ class KopeteContactListView;
 class KopetePlugin;
 class KopeteProtocol;
 class KopeteSystemTray;
-class KopeteAwayDialog;
+class KopeteGlobalAwayDialog;
 class StatusBarIcon;
 
 /**
@@ -142,7 +142,7 @@ private:
 	/**
 	 * This is the away message selection dialog
 	 */
-	KopeteAwayDialog *m_awayMessageDialog;
+	KopeteGlobalAwayDialog *m_awayMessageDialog;
 	
 private slots:
 	/**

@@ -11,7 +11,7 @@ libkopete_la_SOURCES = kopeteprotocol.cpp kopetecontact.cpp \
 	kopetecontactlist.cpp kopetemetacontact.cpp kopeteprefs.cpp \
 	kopeteemoticons.cpp kopeteaway.cpp kopeteawaydialog.cpp \
 	kopetetransfermanager.cpp kopeteuserpreferences.cpp kopetegroup.cpp \
-	kopeteidentitymanager.cpp
+	kopeteidentitymanager.cpp kopeteglobalawaydialog.cpp
 libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)
 libkopete_la_LIBADD = ui/libkopeteui.la $(LIB_KDEUI) $(LIB_KIO)
 
