@@ -538,7 +538,7 @@ public:
 	 * @todo remove
 	 * @deprecated  use the nickName property
 	 */
-	KDE_DEPRECATED void Kopete::Contact::rename( const QString &name )
+	KDE_DEPRECATED void rename( const QString &name )
 	{
 		QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 		if( name == nick )
@@ -551,7 +551,7 @@ public:
 	 * @todo remove
 	 * @deprecated  use the nickName property
 	 */
-	KDE_DEPRECATED void Kopete::Contact::setDisplayName( const QString &name )
+	KDE_DEPRECATED void setDisplayName( const QString &name )
 	{
 		QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 		if( name == nick )
@@ -564,7 +564,7 @@ public:
 	 * @todo remove
 	 * @deprecated  use the nickName property
 	 */
-	KDE_DEPRECATED QString Kopete::Contact::displayName() const
+	KDE_DEPRECATED QString displayName() const
 	{
 		QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 		if( !nick.isEmpty() )
