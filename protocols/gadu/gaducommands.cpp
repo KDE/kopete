@@ -184,11 +184,11 @@ RegisterCommand::execute()
 
 void RegisterCommand::watcher()
 {
-	disableNotifiers();
 	gg_pubdir* gg_pub;
 
-	kdDebug( 14100 ) << "4" << endl;
+	kdDebug( 14100 ) << "4  " << session_->state << endl;
 	if ( state == RegisterStateWaitingForToken  ) {
+		disableNotifiers();
 		if ( gg_token_watch_fd( session_ ) == -1 ) {
 			deleteNotifiers();
 			emit error( i18n( "Gadu-Gadu" ), i18n( "Unknown connection error while retriving token" ) );
@@ -238,6 +238,7 @@ void RegisterCommand::watcher()
 		enableNotifiers( session_->check );
 	}
 	if ( state == RegisterStateWaitingForNumber ) {
+		disableNotifiers();
 		if ( gg_register_watch_fd( session_ ) == -1 ) {
 			deleteNotifiers();
 			emit error( i18n( "Gadu-Gadu" ), i18n( "Unknown connection error while registering" ) );
@@ -259,20 +260,22 @@ void RegisterCommand::watcher()
 				gg_free_register( session_ );
 				session_ = NULL;
 				state = RegisterStateGotToken;
+				return;
 				break;
 	
 			case GG_STATE_DONE:
-				if (gg_pub) {
+				if ( gg_pub->success ) {
 					uin= gg_pub->uin;
 					emit done( i18n( "Registration Finished" ), i18n( "Registration has completed successfully." ) );
+					state = RegisterStateDone;
 				}
 				else {
 					emit error( i18n( "Registration Error" ), i18n( "Data send to server were invalid." ) );
+					state = RegisterStateGotToken;
 				}
 				deleteNotifiers();
 				gg_free_register( session_ );
 				session_ = NULL;
-				state = RegisterStateGotToken;
 				return;
 				break;
 		}
