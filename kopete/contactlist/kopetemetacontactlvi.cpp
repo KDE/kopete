@@ -23,6 +23,7 @@
 #include <qtimer.h>
 #include <qvariant.h>
 #include <qmime.h>
+#include <qstylesheet.h>
 
 #include "kopetenotifyclient.h"
 #include <kdebug.h>
@@ -380,9 +381,19 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 		{
 			int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 
-			//QString text = i18n( "%2 is now %1." ).arg( m_metaContact->statusString(), m_metaContact->displayName() );
-			QString text = i18n( "%2 is now %1." ).arg( c->onlineStatus().description(), m_metaContact->displayName() );
+			QString text;
+			if(!m_metaContact->photo().isNull())
+			{
+				text= i18n("<qt><table cellpadding=\"0\" cellspacing=\"0\"><tr><td><img src=\"kopete-metacontact-photo:%1\"></td><td>%2 is now %3</td></tr></table></qt>")
+						.arg( KURL::encode_string( m_metaContact->metaContactId()) ,  QStyleSheet::escape(m_metaContact->displayName()) , QStyleSheet::escape(c->onlineStatus().description())  );
+			}
+			else
+			{
+				//QString text = i18n( "%2 is now %1." ).arg( m_metaContact->statusString(), m_metaContact->displayName() );
+				text = i18n( "%2 is now %1." ).arg( c->onlineStatus().description(), m_metaContact->displayName() );
+			}
 
+			
 			// figure out what's happened
 			enum ChangeType { noChange, noEvent, signedIn, changedStatus, signedOut };
 			ChangeType t = noChange;
