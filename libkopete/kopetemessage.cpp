@@ -810,20 +810,30 @@ QString KopeteMessage::decodeString( const QCString &message, const QTextCodec *
 	if( success )
 		*success = false;
 
-	//We don't have any clues here. Try latin1 codec
-	QTextCodec *latin1 = QTextCodec::codecForMib(4);
-	if( latin1 && latin1->heuristicContentMatch( message, charsToCheck ) == charsToCheck )
+	//We don't have any clues here.
+
+	//Try codecForContent
+	QTextCodec *testCodec = QTextCodec::codecForContent(message, 256);
+	if( testCodec && testCodec->heuristicContentMatch( message, charsToCheck ) == charsToCheck )
 	{
 		//All chars decodable.
-		return latin1->toUnicode( message );
+		return testCodec->toUnicode( message );
+	}
+
+	//Try latin1 codec
+	testCodec = QTextCodec::codecForMib(4);
+	if( testCodec && testCodec->heuristicContentMatch( message, charsToCheck ) == charsToCheck )
+	{
+		//All chars decodable.
+		return testCodec->toUnicode( message );
 	}
 
 	//Try local codec
-	QTextCodec *locale = QTextCodec::codecForLocale();
-	if( locale && locale->heuristicContentMatch( message, charsToCheck ) == charsToCheck )
+	testCodec = QTextCodec::codecForLocale();
+	if( testCodec && testCodec->heuristicContentMatch( message, charsToCheck ) == charsToCheck )
 	{
 		//All chars decodable.
-		return locale->toUnicode( message );
+		return testCodec->toUnicode( message );
 	}
 
 	//No codec decoded. Just decode latin1, and clean out any junk.
