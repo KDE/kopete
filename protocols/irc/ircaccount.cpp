@@ -112,6 +112,9 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 	QObject::connect(m_engine, SIGNAL(connectedToServer()),
 		this, SLOT(slotConnectedToServer()));
 
+	QObject::connect(m_engine, SIGNAL(connectionTimeout()),
+		this, SLOT(connect()));
+
 	QObject::connect(m_engine, SIGNAL(successfulQuit()),
 		this, SLOT(slotDisconnected()));
 

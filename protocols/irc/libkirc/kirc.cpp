@@ -20,16 +20,9 @@
 #include <config.h>
 #endif
 
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-
+//Needed for getuid / getpwuid
 #include <unistd.h>
+#include <sys/types.h>
 #include <pwd.h>
 
 #include <qfileinfo.h>
@@ -37,8 +30,9 @@
 #include <qtimer.h>
 
 #include <kdebug.h>
+#include <kconfig.h>
 #include <klocale.h>
-#include <kmessagebox.h>
+#include <kstandarddirs.h>
 
 #include "kircfunctors.h"
 #include "kirc.h"
@@ -271,6 +265,14 @@ KIRC::KIRC( QObject *parent, const char *name) : QObject( parent, name ),
 	kdDebug(14120) << "Setting defualt engine codec, " << defaultCodec->name() << endl;
 
 	m_sock = 0L;
+
+	connectTimeout = 20000;
+	QString timeoutPath = locate( "config", "kioslaverc" );
+	if( !timeoutPath.isEmpty() )
+	{
+		KConfig config( timeoutPath );
+		connectTimeout = config.readNumEntry( "ConnectTimeout", 20 ) * 1000;
+	}
 }
 
 KIRC::~KIRC()
@@ -343,6 +345,9 @@ void KIRC::connectToServer(const QString &host, Q_UINT16 port, const QString &ni
 	{
 		kdDebug(14120) << k_funcinfo << "Success!. Status: " << m_sock->socketStatus() << endl;
 		setStatus(Connecting);
+
+		//If we don't get a reply within 15 seconds, give up
+		QTimer::singleShot(connectTimeout, this, SLOT(slotAuthFailed()));
 	}
 	else
 	{
@@ -379,7 +384,7 @@ void KIRC::slotConnected()
 	changeNickname(m_Nickname);
 
 	//If we don't get a reply within 15 seconds, give up
-	//QTimer::singleShot(30000, this, SLOT(slotAuthFailed()));
+	QTimer::singleShot(connectTimeout, this, SLOT(slotAuthFailed()));
 }
 
 void KIRC::slotConnectionClosed()
@@ -804,7 +809,7 @@ bool KIRC::kick(const KIRCMessage &msg)
 	/* The given user is kicked.
 	 * "<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]"
 	 */
-	emit incomingKick( msg.prefix().section('!',0,0), msg.args()[0], msg.args()[1], msg.suffix());
+	emit incomingKick( getNickFromPrefix(msg.prefix()), msg.args()[0], msg.args()[1], msg.suffix());
 	return true;
 }
 
@@ -825,9 +830,8 @@ bool KIRC::privateMessage(const KIRCMessage &msg)
 		m = KIRCMessage::parse( codecForNick( user )->toUnicode( m.raw() ) );
 
 		QString message = m.suffix();
-		QChar tmpChar = user[0];
 
-		if (tmpChar == QChar('#') || tmpChar == QChar('!') || tmpChar == QChar('&'))
+		if( isChannel(user) )
 			emit incomingMessage(getNickFromPrefix(msg.prefix()), msg.args()[0], message );
 		else
 			emit incomingPrivMessage(getNickFromPrefix(msg.prefix()), msg.args()[0], message );
@@ -922,7 +926,7 @@ void KIRC::sendCtcpAction(const QString &contact, const QString &message)
 	{
 		writeCtcpQueryMessage(contact, QString::null, "ACTION", QStringList(message));
 
-		if (contact[0] != '#' && contact[0] != '!' && contact[0] != '&')
+		if( isChannel(contact) )
 			emit incomingPrivAction(m_Nickname, contact, message);
 		else
 			emit incomingAction(m_Nickname, contact, message);
@@ -936,20 +940,14 @@ void KIRC::sendCtcpPing(const QString &target)
 	timeval time;
 	if (gettimeofday(&time, 0) == 0)
 	{
-		QChar targetChar = target[0];
 		QString timeReply;
 
-		if( targetChar == '#' || targetChar == '&' || targetChar == '!' )
-		{
+		if( isChannel(target) )
 			timeReply = QString::fromLatin1("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
-		}
 		else
-		{
 		 	timeReply = QString::number( time.tv_sec );
-		}
 
-		writeCtcpQueryMessage(	target, QString::null,
-					"PING", timeReply);
+		writeCtcpQueryMessage(	target, QString::null, "PING", timeReply);
 	}
 }
 

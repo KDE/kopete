@@ -442,6 +442,7 @@ private:
 	bool m_ReqsPasswd;
 	bool m_FailedNickOnLogin;
 	bool m_useSSL;
+	int connectTimeout;
 
 	QString m_VersionString;
 	QString m_UserString;
