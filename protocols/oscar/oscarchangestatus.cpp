@@ -17,7 +17,6 @@
 #include "oscarchangestatus.h"
 #include "oscarchangestatus.moc"
 
-#include "oscarprotocol.h"
 #include "oscarsocket.h"
 
 //#include <klineedit.h>
@@ -26,6 +25,7 @@
 #include <kdebug.h>
 
 #include "kopeteaway.h"
+#include "kopeteprotocol.h"
 #include "oscarsocket.h"
 
 // TODO: also make this compatible to ICQ
@@ -42,21 +42,7 @@ OscarChangeStatus::OscarChangeStatus(OscarSocket *engine, QWidget *parent, const
 void OscarChangeStatus::setAway(int awayType)
 {
 	kdDebug(14150) << k_funcinfo << "awayType=" << awayType << endl;
-	// We don't really have away types, so we'll
-	// ignore it
-	// Get the away message and set it
-	switch(awayType)
-	{
-		case (OscarProtocol::ICQAWAY):
-			mEngine->sendStatus(ICQ_STATUS_AWAY); // TODO: also handle awaymessage
-			break;
-
-		case (OscarProtocol::AIMAWAY):
-			mEngine->sendAway(true, getSelectedAwayMessage());
-			break;
-
-		default:
-			kdDebug(14150) << k_funcinfo << "Unknown away type, aborting." << endl;
-	}
+	// TODO: OscarEngine needs that func!
+//	mEngine->setAway(awayType)
 }
 // vim: set noet ts=4 sts=4 sw=4:

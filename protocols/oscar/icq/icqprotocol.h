@@ -1,9 +1,9 @@
 /*
   oscarprotocol.h  -  Oscar Protocol Plugin
 
-  Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
+  Copyright (c) 2003 by Olivier Goffart <ogoffart@tiscalinet.be>
 
-  Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+  Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -15,36 +15,49 @@
   *************************************************************************
   */
 
-#ifndef ICQOSCARPROTOCOL_H
-#define ICQOSCARPROTOCOL_H
+#ifndef ICQPROTOCOL_H
+#define ICQPROTOCOL_H
 
 #include <qwidget.h>
 #include <qmap.h>
 
-#include "oscarprotocol.h"
+#include "kopeteprotocol.h"
 
-
-class ICQProtocol : public OscarProtocol
+class ICQProtocol : public KopeteProtocol
 {
 	Q_OBJECT
 
 	public:
 		ICQProtocol(QObject *parent, const char *name, const QStringList &args);
 
-	/**
-	* Return the active instance of the protocol
-	* because it's a singleton,
-	*/
-	static ICQProtocol *protocol();
+		/**
+		* Return the active instance of the protocol
+		* because it's a singleton, can only be used inside ICQ classes, not in oscar lib
+		*/
+		static ICQProtocol *protocol();
+
+		bool canSendOffline() const;
+
+		void deserializeContact( KopeteMetaContact *metaContact,
+			const QMap<QString, QString> &serializedData,
+			const QMap<QString, QString> &addressBookData );
+		AddContactPage *createAddContactWidget(QWidget *parent, KopeteAccount *account);
+		EditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
+		KopeteAccount *createNewAccount(const QString &accountId);
+
+		const KopeteOnlineStatus statusOnline;
+		const KopeteOnlineStatus statusFFC;
+		const KopeteOnlineStatus statusOffline;
+		const KopeteOnlineStatus statusAway;
+		const KopeteOnlineStatus statusDND;
+		const KopeteOnlineStatus statusNA;
+		const KopeteOnlineStatus statusOCC;
+		const KopeteOnlineStatus statusConnecting;
 
 	private:
-		/** The active instance of oscarprotocol */
-	static ICQProtocol *protocolStatic_;
+		static ICQProtocol *protocolStatic_;
 
 };
-
-
-
 
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

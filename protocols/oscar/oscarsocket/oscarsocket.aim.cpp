@@ -20,10 +20,7 @@ extern "C"
 
 #include "oscarsocket.h"
 
-#include "oscarprotocol.h"
 #include "oscaraccount.h"
-#include "oscardebugdialog.h"
-
 #include <kdebug.h>
 
 // ----------------------------------------------------------------------------------------
@@ -45,7 +42,7 @@ static const char AIM_OTHER[] = { 0x00, 0x00, 0x00, 0xbb };
 // Sends login information, actually logs onto the server
 void OscarSocket::sendLoginAIM(void)
 {
-	kdDebug(14150) << k_funcinfo << "Sending AIM login info..." << endl;;
+	kdDebug(14150) << k_funcinfo <<  "Sending AIM login info..." << endl;;
 	unsigned char digest[16];
 	digest[16] = '\0';  //do this so that addTLV sees a NULL-terminator
 
@@ -70,14 +67,14 @@ void OscarSocket::sendLoginAIM(void)
 	outbuf.addTLV8(0x004a,0x01);
 
 	sendBuf(outbuf,0x02);
-	kdDebug(14150) << k_funcinfo << "emitting connectionChanged" << endl;
+	kdDebug(14150) << k_funcinfo <<  "emitting connectionChanged" << endl;
 //	emit connectionChanged(3,"Sending username and password...");
 }
 
 // Parses a minityping notification from the server
 void OscarSocket::parseMiniTypeNotify(Buffer &inbuf)
 {
-	kdDebug(14150) << k_funcinfo << "RECV (SRV_TYPINGNOTIFY) SNAC(4,20)" << endl;
+	kdDebug(14150) << k_funcinfo <<  "RECV (SRV_TYPINGNOTIFY) SNAC(4,20)" << endl;
 	// Throw away 8 bytes which are all zeros
 	inbuf.getDWord();
 	inbuf.getDWord();
@@ -120,13 +117,13 @@ void OscarSocket::parseMiniTypeNotify(Buffer &inbuf)
 
 void OscarSocket::sendMiniTypingNotify(QString screenName, TypingNotify notifyType)
 {
-	kdDebug(14150) << k_funcinfo << "Sending Typing notify " << endl;
+	kdDebug(14150) << k_funcinfo <<  "Sending Typing notify " << endl;
 
 	//look for direct connection before sending through server
 	OscarConnection *dc = mDirectIMMgr->findConnection(screenName);
 	if(dc)
 	{
-		kdDebug(14150) << k_funcinfo << "Found direct connection, sending typing notify directly" << endl;
+		kdDebug(14150) << k_funcinfo <<  "Found direct connection, sending typing notify directly" << endl;
 		dc->sendTypingNotify(notifyType);
 		return;
 	}
@@ -182,11 +179,11 @@ void OscarSocket::parseMemRequest(Buffer &inbuf)
 	QPtrList<TLV> ql = inbuf.getTLVList();
 	ql.setAutoDelete(TRUE);
 
-	kdDebug(14150) << k_funcinfo << "requested offset " << offset << ", length " << len << endl;
+	kdDebug(14150) << k_funcinfo <<  "requested offset " << offset << ", length " << len << endl;
 
 	if (len == 0)
 	{
-		kdDebug(14150) << k_funcinfo << "Length is 0, hashing null!" << endl;
+		kdDebug(14150) << k_funcinfo <<  "Length is 0, hashing null!" << endl;
 		md5_state_t state;
 		BYTE nil = '\0';
 		md5_byte_t digest[0x10];

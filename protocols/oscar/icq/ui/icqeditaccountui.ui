@@ -1,0 +1,212 @@
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<class>OscarEditAccountUI</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>OscarEditAccountUI</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>312</width>
+            <height>375</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>OscarEditAccountUI</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <widget class="QGroupBox">
+            <property name="name">
+                <cstring>groupBox4</cstring>
+            </property>
+            <property name="title">
+                <string>Account Type</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>mAIM</cstring>
+                    </property>
+                    <property name="text">
+                        <string>AIM</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>mICQ</cstring>
+                    </property>
+                    <property name="text">
+                        <string>ICQ</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QGroupBox">
+            <property name="name">
+                <cstring>groupBox5</cstring>
+            </property>
+            <property name="title">
+                <string>Account Information</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>mTxtAccountId</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Account:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>mTxtPassword</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Password:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="1" column="1">
+                    <property name="name">
+                        <cstring>mPassword</cstring>
+                    </property>
+                    <property name="echoMode">
+                        <enum>Password</enum>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="0" column="1">
+                    <property name="name">
+                        <cstring>mAccountId</cstring>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QGroupBox">
+            <property name="name">
+                <cstring>groupBox6</cstring>
+            </property>
+            <property name="title">
+                <string>Account Options</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mSavePassword</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Save password</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mAutoLogon</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Logon at startup</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QGroupBox">
+            <property name="name">
+                <cstring>groupBox3</cstring>
+            </property>
+            <property name="title">
+                <string>Server Information</string>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>mTxtServer</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Server:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>mServer</cstring>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Defaults for this field are:
+&lt;p&gt;AIM: login.oscar.aol.com&lt;/p&gt;
+&lt;p&gt;ICQ: login.icq.com&lt;/p&gt;
+</string>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>mTxtPort</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Port:</string>
+                    </property>
+                </widget>
+                <widget class="QSpinBox">
+                    <property name="name">
+                        <cstring>mPort</cstring>
+                    </property>
+                    <property name="maxValue">
+                        <number>65534</number>
+                    </property>
+                    <property name="minValue">
+                        <number>1</number>
+                    </property>
+                    <property name="value">
+                        <number>1</number>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer8</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>21</width>
+                    <height>50</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
+</widget>
+<tabstops>
+    <tabstop>mAIM</tabstop>
+    <tabstop>mICQ</tabstop>
+    <tabstop>mAccountId</tabstop>
+    <tabstop>mPassword</tabstop>
+    <tabstop>mSavePassword</tabstop>
+    <tabstop>mAutoLogon</tabstop>
+    <tabstop>mServer</tabstop>
+    <tabstop>mPort</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

@@ -1,23 +1,13 @@
-SUBDIRS = ui pixmaps icons oscarsocket data . icq aim
+SUBDIRS = oscarsocket ui . icq aim icons
 METASOURCES = AUTO
-AM_CPPFLAGS = -I$(srcdir)/ui \
-    -I./ui \
-    -I../../libkopete/ui \
-	$(KOPETE_INCLUDES) \
-    -I$(srcdir)/oscarsocket \
-    $(all_includes)
+AM_CPPFLAGS = -I../../libkopete/ui $(KOPETE_INCLUDES) \
+	-I$(srcdir)/oscarsocket \
+	-I$(srcdir)/ui \
+	$(all_includes)
 
 lib_LTLIBRARIES = kopete_oscar.la
 
-#kopete_aim_la_SOURCES = aimprotocol.cpp \
-#    aimcontact.cpp aimchangestatus.cpp aimuserinfo.cpp \
-#    aimmergebuddies.cpp aimpreferences.cpp \
-#    aimprocessbuddies.cpp aimdeleteevent.cpp
-
-kopete_oscar_la_SOURCES = oscarprotocol.cpp oscarcontact.cpp \
-			oscarpreferences.cpp oscarchangestatus.cpp \
-			oscaruserinfo.cpp oscaraccount.cpp
-#			icquserinfo.cpp icqaddcontactpage.cpp
+kopete_oscar_la_SOURCES = oscaraccount.cpp oscarpreferences.cpp oscarprefswidget.ui oscarcontact.cpp
 
 kopete_oscar_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kopete_oscar_la_LIBADD  = ./oscarsocket/libkopeteoscarsocket.la \

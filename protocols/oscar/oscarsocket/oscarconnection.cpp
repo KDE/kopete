@@ -16,13 +16,12 @@
 
 #include "oscarconnection.h"
 #include <kdebug.h>
-#include "oscardebugdialog.h"
 
 OscarConnection::OscarConnection(const QString &sn, const QString &connName,
 	ConnectionType type, const QByteArray &cookie, QObject *parent, const char *name)
 	: QSocket(parent, name)
 {
-	kdDebug(14150) << k_funcinfo << "called, sn='" << sn << "' connName='" << connName << "'" << endl;
+	kdDebug(14150) << k_funcinfo <<  "called, sn='" << sn << "' connName='" << connName << "'" << endl;
 
 	mConnName = connName;
 	mConnType = type;
@@ -45,7 +44,7 @@ OscarConnection::~OscarConnection()
  */
 void OscarConnection::slotRead()
 {
-	kdDebug(14150) << k_funcinfo << bytesAvailable() << " bytes, connection name: " << mConnName << endl;
+	kdDebug(14150) << k_funcinfo <<  bytesAvailable() << " bytes, connection name: " << mConnName << endl;
 
 	Buffer inbuf;
 	int len = bytesAvailable();
@@ -53,9 +52,6 @@ void OscarConnection::slotRead()
 	readBlock(buf,len);
 	inbuf.setBuf(buf,len);
 	inbuf.print();
-
-	if(hasDebugDialog())
-		debugDialog()->addMessageFromServer(inbuf.toString(),mConnName);
 
 	delete buf;
 }
@@ -81,19 +77,6 @@ void OscarConnection::slotError(int errornum)
 			kdDebug(14150) << "[OSCAR] OscarConnection: in slotError() and error is problem with reading socket. Problems may be present from here on out..." << endl;
 			break;
 		}
-	}
-}
-
-void OscarConnection::setDebugDialog(OscarDebugDialog *dialog)
-{
-	if(dialog)
-	{
-		mDebugDialog = dialog;
-		mHaveDebugDialog = true;
-	}
-	else
-	{
-		mHaveDebugDialog = false;
 	}
 }
 
@@ -137,7 +120,7 @@ void OscarConnection::slotConnectionClosed(void)
 /** Sends request to the client telling he/she that we want to send this file */
 void OscarConnection::sendFileSendRequest(void)
 {
-	kdDebug(14150) << k_funcinfo << "sendFileSendRequest not implemented in this object! " << endl;
+	kdDebug(14150) << k_funcinfo <<  "sendFileSendRequest not implemented in this object! " << endl;
 }
 
 /** Sets the socket to use socket, state() to connected, and emit connected() */
@@ -148,3 +131,4 @@ void OscarConnection::setSocket( int socket )
 }
 
 #include "oscarconnection.moc"
+// vim: set noet ts=4 sts=4 sw=4:

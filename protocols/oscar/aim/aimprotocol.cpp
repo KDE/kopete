@@ -15,13 +15,23 @@
   *************************************************************************
   */
 
-#include "aimprotocol.h"
-
 
 #include <kgenericfactory.h>
 #include <klocale.h>
 #include <kdebug.h>
+#include <kopeteaccountmanager.h>
 
+#include "aimprotocol.h"
+#include "aimaccount.h"
+#include "oscarcontact.h"
+#include "oscarsocket.h"
+#include "aimaddcontactpage.h"
+#include "aimeditaccountwidget.h"
+
+#include "kopeteaccount.h"
+#include "kopeteonlinestatus.h"
+#include "kopeteaccountmanager.h"
+#include "aimcontact.h"
 #include "oscarpreferences.h"
 
 K_EXPORT_COMPONENT_FACTORY( kopete_aim, KGenericFactory<AIMProtocol> );
@@ -29,23 +39,91 @@ K_EXPORT_COMPONENT_FACTORY( kopete_aim, KGenericFactory<AIMProtocol> );
 
 AIMProtocol* AIMProtocol::protocolStatic_ = 0L;
 
-AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &l)
-	: OscarProtocol(parent,name,l)
+AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
+	: KopeteProtocol(parent,name),
+	statusOnline(KopeteOnlineStatus::Online, 1, this, OSCAR_ONLINE, "aim_online", i18n("Go Online"), i18n("Online")),
+	statusOffline(KopeteOnlineStatus::Offline, 1, this, OSCAR_OFFLINE, "aim_offline", i18n("Go Offline"), i18n("Offline")),
+	statusAway(KopeteOnlineStatus::Away, 1, this, OSCAR_AWAY, "aim_away", i18n("Go Away"), i18n("Away")),
+	statusConnecting(KopeteOnlineStatus::Connecting, 99, this, OSCAR_CONNECTING, "aim_connecting", i18n("Connecting..."), i18n("Connecting..."))
 {
 	if (protocolStatic_)
-		kdDebug(14150) << k_funcinfo << "Oscar plugin already initialized" << endl;
+		kdDebug(14190) << k_funcinfo << "AIM plugin already initialized" << endl;
 	else
 	{
 		protocolStatic_ = this;
 		// Create the config widget, this does it's magic I think
-		new OscarPreferences("oscar_protocol", this);
+		new OscarPreferences("aim_protocol", this);
 	}
+	addAddressBookField("messaging/aim", KopetePlugin::MakeIndexField);
 }
 
-// Called when we want to return the active instance of the protocol
+AIMProtocol::~AIMProtocol()
+{
+}
+
+
 AIMProtocol *AIMProtocol::protocol(void)
 {
 	return protocolStatic_;
+}
+
+
+
+
+void AIMProtocol::deserializeContact(KopeteMetaContact *metaContact,
+	const QMap<QString, QString> &serializedData,
+	const QMap<QString, QString> &/*addressBookData*/)
+{
+	QString contactId=serializedData["contactId"];
+	QString accountId=serializedData["accountId"];
+	QString displayName=serializedData["displayName"];
+
+	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts(this);
+
+	if(accountId.isNull())
+	{
+		//Kopete 0.6.x contactlist
+		// TODO: Remove this, we should be using pluginData() now
+		KGlobal::config()->setGroup("OSCAR");
+		// Set the account ID to whatever the old single account used to be
+		accountId = KGlobal::config()->readEntry( "UserID", "" );
+	}
+
+	// Get the account it belongs to
+	KopeteAccount *account = accounts[accountId];
+	if(!account)
+	{
+		kdDebug(14190) << k_funcinfo << "Account '" <<
+			accountId << "' was not found, creating new account..." << endl;
+
+		if(!accountId.isEmpty())
+			account = createNewAccount(accountId);
+		else
+			return;
+
+		if (!account)
+			kdDebug(14190) << k_funcinfo << "Error creating new account" << endl;
+	}
+
+	// Create Oscar contact, this adds it to the proper account
+	//TODO
+	new AIMContact(contactId, displayName, static_cast<AIMAccount*>(account), metaContact);
+
+}
+
+AddContactPage *AIMProtocol::createAddContactWidget(QWidget *parent, KopeteAccount *account)
+{
+	return (new AIMAddContactPage(account->isConnected(), parent));
+}
+
+EditAccountWidget *AIMProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
+{
+	return (new AIMEditAccountWidget(this, account, parent));
+}
+
+KopeteAccount *AIMProtocol::createNewAccount(const QString &accountId)
+{
+	return (new AIMAccount(this, accountId));
 }
 
 #include "aimprotocol.moc"

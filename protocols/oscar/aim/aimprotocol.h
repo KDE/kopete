@@ -18,29 +18,53 @@
 #ifndef AIMPROTOCOL_H
 #define AIMPROTOCOL_H
 
-#include "oscarprotocol.h"
+#include "kopeteprotocol.h"
 
-class AIMProtocol : public OscarProtocol
+#include <qmap.h>
+
+class KopeteOnlineStatus;
+
+class AIMProtocol : public KopeteProtocol
 {
 	Q_OBJECT
 
 	public:
 		AIMProtocol(QObject *parent, const char *name, const QStringList &args);
+		virtual ~AIMProtocol();
+		/** Internal status enum */
+		enum AIMInternalStatus
+		{
+			AIMONLINE, AIMOFFLINE, AIMAWAY, AIMCONN
+		};
 
-	/**
-	* Return the active instance of the protocol
-	* because it's a singleton,
-	*/
-	static AIMProtocol *protocol();
+		/**
+		* Return the active instance of the protocol
+		* because it's a singleton, can only be used inside AIM classes, not in oscar lib
+		*/
+		static AIMProtocol *protocol();
+		
+		bool canSendOffline() const { return false; }
+
+		void deserializeContact( KopeteMetaContact *metaContact,
+			const QMap<QString, QString> &serializedData,
+			const QMap<QString, QString> &addressBookData );
+		AddContactPage *createAddContactWidget(QWidget *parent, KopeteAccount *account);
+		EditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
+		KopeteAccount *createNewAccount(const QString &accountId);
+
+		/**
+		 * The set of online statuses that AIM contacts can have
+		 */
+		const KopeteOnlineStatus statusOnline;
+		const KopeteOnlineStatus statusOffline;
+		const KopeteOnlineStatus statusAway;
+		const KopeteOnlineStatus statusConnecting;
 
 	private:
 		/** The active instance of oscarprotocol */
-	static AIMProtocol *protocolStatic_;
+		static AIMProtocol *protocolStatic_;
 
 };
-
-
-
 
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

@@ -57,7 +57,7 @@ OncomingSocket::~OncomingSocket()
 // Called when someone connects to the server socket
 void OncomingSocket::newConnection(int socket)
 {
-	kdDebug(14150) << k_funcinfo << "Called! Socket=" << socket << endl;
+	kdDebug(14150) << k_funcinfo <<  "Called! Socket=" << socket << endl;
 
 	for (DirectInfo *tmp=mPendingConnections.first(); tmp; tmp = mPendingConnections.next())
 	{
@@ -67,7 +67,7 @@ void OncomingSocket::newConnection(int socket)
 	DirectInfo *tmp = mPendingConnections.first();
 	if (!tmp)
 	{
-		kdDebug(14150) << k_funcinfo << "no pending connection exists! uh oh" << endl;
+		kdDebug(14150) << k_funcinfo <<  "no pending connection exists! uh oh" << endl;
 		return;
 	}
 	OscarConnection *newsock = createAppropriateType(tmp);
@@ -86,7 +86,7 @@ void OncomingSocket::newConnection(int socket)
 OscarConnection * OncomingSocket::findConnection(const QByteArray &cookie)
 {
 	OscarConnection *tmp;
-//	kdDebug(14150) << k_funcinfo << "There are " << mConns.count() << " connections." << endl;
+//	kdDebug(14150) << k_funcinfo <<  "There are " << mConns.count() << " connections." << endl;
 	for (tmp = mConns.first(); tmp; tmp = mConns.next())
 	{
 		if (cookie == tmp->cookie())
@@ -105,7 +105,7 @@ OscarConnection * OncomingSocket::findConnection(const QString &name)
 	{
 		if ( !tmp->connectionName().compare(tocNormalize(name)) )
 		{
-			kdDebug(14150) << k_funcinfo << tmp->connectionName() << " matches dest sn " << tocNormalize( name ) << endl;
+			kdDebug(14150) << k_funcinfo <<  tmp->connectionName() << " matches dest sn " << tocNormalize( name ) << endl;
 			return tmp;
 		}
 	}
@@ -175,9 +175,6 @@ void OncomingSocket::slotConnectionReady(QString name)
 /** Set up a connection before adding it to the list of connections */
 void OncomingSocket::setupConnection(OscarConnection *newsock)
 {
-	if (mServer)
-		newsock->setDebugDialog(mServer->debugDialog());
-
 	// Ready signal
 	QObject::connect(newsock, SIGNAL(connectionReady(QString)),
 		this, SLOT(slotConnectionReady(QString)));
@@ -208,7 +205,7 @@ OscarConnection *OncomingSocket::establishOutgoingConnection(const QString &sn)
 		}
 	}
 
-	kdDebug(14150) << k_funcinfo << "WARNING: outgoing connection not found in pending list, returning NULL" << endl;
+	kdDebug(14150) << k_funcinfo <<  "WARNING: outgoing connection not found in pending list, returning NULL" << endl;
 	return 0L;
 }
 

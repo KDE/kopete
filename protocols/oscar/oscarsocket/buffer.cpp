@@ -299,13 +299,14 @@ int Buffer::addChatTLV(const WORD type, const WORD exchange, const QString &room
 /** Make the buffer bigger by inc bytes, reallocating memory if needed */
 void Buffer::doResize(int inc)
 {
-	if ( (length + inc + buf - alloc_buf) > alloc_length ) //if we need a new array
+	if(static_cast<DWORD>(length+inc+buf-alloc_buf) > alloc_length) //if we need a new array
 	{
-		//don't worry, I'll be changing this to a QByteArray pretty soon
-		//in the meantime:
+		// FIXME: do what this comment says!
+		// don't worry, I'll be changing this to a QByteArray pretty soon
+		// in the meantime:
 		// before allocating memory, check to see if we can use what is already discarded
 		// if more than half the buffer has been discarded, we'll just relocate what we have
-		if ( (buf - alloc_buf) > (length + inc) )
+		if(static_cast<DWORD>(buf-alloc_buf) > (length+inc))
 		{
 			for (DWORD i=0;i<length;i++)
 				alloc_buf[i] = buf[i];

@@ -25,8 +25,6 @@
   *@author Tom Linsky
   */
 
-class OscarDebugDialog;
-
 class OscarConnection : public QSocket
 {
 	Q_OBJECT
@@ -48,13 +46,6 @@ class OscarConnection : public QSocket
 			const QByteArray &cookie, QObject *parent=0, const char *name=0);
 		~OscarConnection();
 
-		/** Sets the pointer to the debug dialog */
-		void setDebugDialog(OscarDebugDialog *dialog);
-		/** Returns true if we have a debug dialog, false otherwise */
-		inline bool hasDebugDialog(void) const { return mHaveDebugDialog; };
-		/** Returns pointer to the debug dialog */
-		inline OscarDebugDialog *debugDialog(void) const { return mDebugDialog; };
-		/** Returns the name of this connection */
 		inline QString connectionName(void) const { return mConnName; };
 		/** Returns the type of this connection */
 		inline int connectionType(void) const { return mConnType; };
@@ -127,11 +118,8 @@ class OscarConnection : public QSocket
 		QString mHost;
 		/** The Port we will connect to on the peer machine */
 		int mPort;
-		/** Pointer to the debug dialog, should not delete */
-		OscarDebugDialog *mDebugDialog;
-		/** Bool indicating whether or not we have a debug dialog */
-		bool mHaveDebugDialog;
 		/** The user's screen name */
 		QString mSN;
 };
 #endif
+// vim: set noet ts=4 sts=4 sw=4:

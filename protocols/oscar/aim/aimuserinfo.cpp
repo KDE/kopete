@@ -1,0 +1,156 @@
+/*
+    oscaruserinfo.cpp  -  Oscar Protocol Plugin
+
+    Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
+
+    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
+
+#include "aimuserinfo.h"
+
+#include "aimprotocol.h"
+#include "aimaccount.h"
+
+#include <qlayout.h>
+#include <qlineedit.h>
+#include <qpushbutton.h>
+#include <qfile.h>
+#include <qtextstream.h>
+#include <qstring.h>
+
+#include <klocale.h>
+#include <kmessagebox.h>
+#include <kstandarddirs.h>
+#include <ktextbrowser.h>
+#include <kdebug.h>
+#include <kapplication.h>
+
+AIMUserInfo::AIMUserInfo(const QString name, const QString nick,
+		OscarAccount *account, AIMBuddy &buddy)
+		: AIMUserInfoBase()
+{
+	QMimeSourceFactory::defaultFactory()->addFilePath(
+			kapp->dirs()->findDirs("data","kopete/")[0]);
+	QMimeSourceFactory::defaultFactory()->addFilePath(
+			kapp->dirs()->findDirs("data","kopete/pics/")[0]);
+	m_name = name;
+	m_nick = nick;
+	m_account = account;
+	// Set the caption
+	setCaption( i18n("User Information on %1").arg(name) );
+
+	// Save
+	QObject::connect(cmdSave, SIGNAL(clicked()),
+		this, SLOT(slotSaveClicked()));
+
+	// Close
+	QObject::connect(cmdClose, SIGNAL(clicked()),
+		this, SLOT(slotCloseClicked()));
+
+	// Engine got user profile
+	QObject::connect(m_account->getEngine(),
+		SIGNAL(gotUserProfile(UserInfo,QString)),
+		this, SLOT(slotSearchFound(UserInfo, QString)));
+
+	screenNameLabel->setText(name);
+	if (nick.isEmpty()){
+		nickNameLE->setText(name);
+	} else {
+		nickNameLE->setText(nick);
+	}
+
+	//TODO:
+/*	// If we're conneced
+	if( m_account->isConnected() )
+	{
+		// And our buddy is not offline
+		if(buddy.status()!=OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMOFFLINE))
+		{
+			// FIXME: Should this really be doing file loading?
+			QString location = locate("data","kopete/loading.html");
+			location.prepend("/");
+			QFile fd(location);
+			if (fd.open(IO_ReadOnly))
+			{
+				QTextStream s(&fd);
+				QString loadingCode = s.read();
+				userInfoView->setText(loadingCode);
+				fd.close();
+			}
+			m_account->getEngine()->sendUserProfileRequest(name);
+		}
+	}*/
+}
+
+// This constructor is called when we want to edit
+// our own profile
+AIMUserInfo::AIMUserInfo(const QString name, const QString nick,
+		OscarAccount *account, const QString &profile)
+		: AIMUserInfoBase()
+{
+	QMimeSourceFactory::defaultFactory()->addFilePath(
+			kapp->dirs()->findDirs("data","kopete/")[0]);
+	QMimeSourceFactory::defaultFactory()->addFilePath(
+			kapp->dirs()->findDirs("data","kopete/pics/")[0]);
+
+	m_name = name;
+	m_nick = nick;
+	setCaption( i18n("User Information on %1").arg(name) );
+
+	m_account = account;
+
+	// Save
+	QObject::connect(cmdSave, SIGNAL(clicked()),
+		this, SLOT(slotSaveClicked()));
+
+	// Close
+	QObject::connect(cmdClose, SIGNAL(clicked()),
+		this, SLOT(slotCloseClicked()));
+
+	screenNameLabel->setText(name);
+	if (nick.isEmpty()){
+		nickNameLE->setText(name);
+	} else {
+		nickNameLE->setText(nick);
+	}
+	cmdSave->setText("&Save Profile");
+	userInfoView->setReadOnly(false);
+	userInfoView->setTextFormat(PlainText);
+	userInfoView->setText(profile);
+}
+
+void AIMUserInfo::slotSaveClicked()
+{
+	emit updateNickname(nickNameLE->text());
+	setCaption( i18n("User Information on %1").arg(nickNameLE->text()) );
+
+	// TODO: re add this to AIMAccount!!!
+//	if (!userInfoView->isReadOnly())
+//		m_account->setUserProfile(userInfoView->text());
+}
+
+void AIMUserInfo::slotCloseClicked()
+{
+	delete this;
+}
+
+void AIMUserInfo::slotSearchFound(UserInfo /*u*/, QString profile)
+{
+	userInfoView->setText(profile);
+	//disconnect so we can have more than one user profile window open with
+	//different users' info in them
+	QObject::disconnect(m_account->getEngine(),
+		SIGNAL(gotUserProfile(UserInfo,QString)),
+		this, SLOT(slotSearchFound(UserInfo, QString)));
+}
+
+#include "aimuserinfo.moc"

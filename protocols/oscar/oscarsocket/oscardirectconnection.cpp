@@ -17,7 +17,6 @@
 
 #include <kdebug.h>
 #include "oscardirectconnection.h"
-#include "oscardebugdialog.h"
 #include "oscarsocket.h"
 
 OscarDirectConnection::OscarDirectConnection(const QString &sn, const QString &connName,
@@ -52,11 +51,6 @@ void OscarDirectConnection::slotRead(void)
 
 	inbuf.setBuf(buf,bytesread);
 
-	//kdDebug(14150) << "[OSCAR] Input: " << endl;
- 	if(hasDebugDialog()){
-			debugDialog()->addMessageFromServer(inbuf.toString(),connectionName());
-	}
-
 	if (fl.type == 0x000e) // started typing
 	{
 		emit gotMiniTypeNotification(fl.sn, 2);
@@ -86,23 +80,29 @@ void OscarDirectConnection::slotRead(void)
 ODC2 OscarDirectConnection::getODC2(void)
 {
 	ODC2 odc;
-	int theword, theword2;
-  int start;
-  int chan;
+	int theword, theword2, start, chan;
+
 	//the ODC2 start byte
-  if (((start = getch()) == 0x4f) &&
-    		((start = getch()) == 0x44) &&
-      	((start = getch()) == 0x43) &&
-        ((start = getch()) == 0x32))
+	if (
+		((start = getch()) == 0x4f) &&
+		((start = getch()) == 0x44) &&
+		((start = getch()) == 0x43) &&
+		((start = getch()) == 0x32)
+		)
 	{
 		//get the header length
-		if ((theword = getch()) == -1) {
+		if ((theword = getch()) == -1)
+		{
 			kdDebug(14150) << "[OSCAR] Error reading length, byte 1: nothing to be read" << endl;
 			odc.headerLength = 0x00;
-		} else if((theword2 = getch()) == -1){
+		}
+		else if((theword2 = getch()) == -1)
+		{
 			kdDebug(14150) << "[OSCAR] Error reading data field length, byte 2: nothing to be read" << endl;
 			odc.headerLength = 0x00;
-		} else {
+		}
+		else
+		{
 			odc.headerLength = (theword << 8) | theword2;
 		}
 
@@ -112,11 +112,6 @@ ODC2 OscarDirectConnection::getODC2(void)
 		Buffer inbuf;
 		inbuf.setBuf(buf,odc.headerLength-6);
 
-		//inbuf.print();
-		if(hasDebugDialog()){
-			debugDialog()->addMessageFromServer(inbuf.toString(),connectionName());
-		}
-		
 		//get channel
 		odc.channel = inbuf.getWord();
 		//0x0006 is next
@@ -143,7 +138,7 @@ ODC2 OscarDirectConnection::getODC2(void)
 		// message length
 		odc.length = inbuf.getDWord();
 
-    // 6 bytes of 0
+		// 6 bytes of 0
 		if (inbuf.getDWord() != 0x00000000)
 			kdDebug(14150) << "[OscarDirectConnection] getODC2: 6: expected a 0x00000000, didn't get it" << endl;
 		if (inbuf.getWord() != 0x0000)
@@ -155,15 +150,16 @@ ODC2 OscarDirectConnection::getODC2(void)
 		// 4 bytes of 0
 		if (inbuf.getDWord() != 0x00000000)
 			kdDebug(14150) << "[OscarDirectConnection] getODC2: 8: expected a 0x00000000, didn't get it" << endl;
-		
+
 		// screen name (not sure how to get length yet, so we'll just take it and the 0's after it)
 		odc.sn = inbuf.getBlock(inbuf.getLength());
 
 		// 25 bytes of 0
-		
 		//might as well just clear buffer, since there won't be anything after those 25 0x00's
 		inbuf.clear();
-  } else {
+	}
+	else
+	{
 		kdDebug(14150) << "[OSCAR] Error reading ODC2 header... start byte is " << start << endl;
 	}
 
@@ -171,7 +167,7 @@ ODC2 OscarDirectConnection::getODC2(void)
 		<< ", channel: " << odc.channel << ", message length: " << odc.length
 		<< ", type: " << odc.type << ", screen name: " << odc.sn << endl;
 
-  return odc;
+	return odc;
 }
 
 /** Sends the direct IM message to buddy */
@@ -208,7 +204,7 @@ void OscarDirectConnection::sendODC2Block(const QString &message, WORD typingnot
 	outbuf.addWord(0x0001); // channel
 	outbuf.addWord(0x0006); // 0x0006
 	outbuf.addWord(0x0000); // 0x0000
-  outbuf.addString(cookie().data(),8);
+	outbuf.addString(cookie().data(),8);
 	outbuf.addDWord(0x00000000);
 	outbuf.addDWord(0x00000000);
 	outbuf.addWord(0x0000);
@@ -216,23 +212,22 @@ void OscarDirectConnection::sendODC2Block(const QString &message, WORD typingnot
 		outbuf.addWord(message.length());
 	else
 		outbuf.addWord(0x0000);
-  outbuf.addDWord(0x00000000);
-  outbuf.addWord(0x0000);
-  outbuf.addWord(typingnotify);
-  outbuf.addDWord(0x00000000);
-  outbuf.addString(getSN().latin1(),getSN().length());
-  while (outbuf.getLength() < 0x004c)
-  	outbuf.addByte(0x00);
-  if (typingnotify == 0x0000)
-	  outbuf.addString(message.latin1(), message.length());
-  kdDebug(14150) << "Sending ODC2 block, message: " << message << "typingnotify: " << typingnotify << endl;
-  //outbuf.print();
+	outbuf.addDWord(0x00000000);
+	outbuf.addWord(0x0000);
+	outbuf.addWord(typingnotify);
+	outbuf.addDWord(0x00000000);
+	outbuf.addString(getSN().latin1(),getSN().length());
 
- 	if(hasDebugDialog()){
-			debugDialog()->addMessageFromClient(outbuf.toString(),connectionName());
-	}
+	while (outbuf.getLength() < 0x004c)
+		outbuf.addByte(0x00);
 
-  writeBlock(outbuf.getBuf(),outbuf.getLength());
+	if (typingnotify == 0x0000)
+		outbuf.addString(message.latin1(), message.length());
+
+	kdDebug(14150) << "Sending ODC2 block, message: " << message << "typingnotify: " << typingnotify << endl;
+	//outbuf.print();
+
+	writeBlock(outbuf.getBuf(),outbuf.getLength());
 }
 
 /** Parses the given message */
@@ -242,27 +237,28 @@ void OscarDirectConnection::parseMessage(Buffer &inbuf)
 	// The message will come first, followed by binary files
 	// so let's parse until we see "<BINARY>"
 	QString message;
-	while ( !message.contains("<BINARY>",false) )
+	while (!message.contains("<BINARY>",false))
 	{
 		//kdDebug(14150) << "[OscarDirect] message is: " << message << endl;
 		// while the message does not contain the string "<BINARY>"
 		message.append(inbuf.getByte());
-		if ( !inbuf.getLength() )
+		if(inbuf.getLength()==0)
 		{
 			//if we are at the end of the buffer
 			kdDebug(14150) << "[OscarDirectConnection] got IM: " << message << endl;
+
 			emit gotIM(message, connectionName(), false);
 			return;
 		}
 	}
 	//now, we have the message, and we need to d/l the binary content
-	
-  //TODO: implement a FOR loop to handle multiple binary file ID's
+
+	//TODO: implement a FOR loop to handle multiple binary file ID's
 
 	//first comes the <DATA> tag
 	//fields of <DATA ID="n" SIZE="n">(binary file here)
 	QString datatag;
-	while ( !datatag.contains(">",false) )
+	while (!datatag.contains(">",false))
 	{
 		datatag.append(inbuf.getByte());
 		kdDebug(14150) << "[OscarDirect] datatag matching " << datatag << endl;
@@ -279,3 +275,4 @@ void OscarDirectConnection::parseMessage(Buffer &inbuf)
 }
 
 #include "oscardirectconnection.moc"
+// vim: set noet ts=4 sts=4 sw=4:

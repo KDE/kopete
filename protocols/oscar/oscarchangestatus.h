@@ -33,7 +33,7 @@ class OscarChangeStatus : public KopeteAwayDialog
 	Q_OBJECT
 
 	public:
-		OscarChangeStatus(OscarSocket *engine, QWidget *parent=0, const char *name="OscarchangeStatus");
+		OscarChangeStatus(OscarSocket *engine, QWidget *parent=0, const char *name="OscarChangeStatus");
 
 	protected slots:
 		virtual void setAway(int awayType);

@@ -17,7 +17,6 @@
 
 #include <kdebug.h>
 #include <unistd.h>
-#include "oscardebugdialog.h"
 #include "oscarfilesendconnection.h"
 
 OscarFileSendConnection::OscarFileSendConnection(const KFileItem *finfo, const QString &sn,
@@ -88,7 +87,7 @@ void OscarFileSendConnection::slotRead(void)
 		if ( bytesAvailable() )
 			emit readyRead();
 	}
-}	
+}
 
 /** Gets an OFT2 header from the socket */
 OFT2 OscarFileSendConnection::getOFT2(void)
@@ -112,19 +111,16 @@ OFT2 OscarFileSendConnection::getOFT2(void)
 		} else {
 			oft.headerlen = (theword << 8) | theword2;
 		}
- 	
+
 		//convert header to a buffer
 		char *buf = new char[oft.headerlen-6];  // the -6 is there because we have already read 6 bytes
 		readBlock(buf,oft.headerlen-6);
 		Buffer inbuf;
 		inbuf.setBuf(buf,oft.headerlen-6);
 
-		kdDebug(14150) << k_funcinfo << "Input: " << endl;
+		kdDebug(14150) << k_funcinfo <<  "Input: " << endl;
 		inbuf.print();
-		
-		if(hasDebugDialog()){
-			debugDialog()->addMessageFromServer(inbuf.toString(),connectionName());
-		}
+
 		oft.channel = inbuf.getWord();
 		oft.cookie.assign( inbuf.getBlock(8), 8 );
 		oft.encrypt = inbuf.getWord();
@@ -168,7 +164,7 @@ OFT2 OscarFileSendConnection::getOFT2(void)
 		<< ", channel: " << oft.channel << ", size: " << oft.size
 		<< ", nrecvd: " << oft.nrecvd << ", file name: " << oft.filename << endl;
 
-	return oft;		
+	return oft;
 }
 
 /** Sends out an OFT2 block to the peer, using the specified header and buffer data */
@@ -219,15 +215,9 @@ void OscarFileSendConnection::sendOFT2Block(const OFT2 &oft, const Buffer &/*dat
 	outbuf.addWord(oft.language);
 	outbuf.addString(oft.filename.latin1(),oft.filename.length());
 	for (int i=oft.filename.length();i<64;i++)
-	{
 		outbuf.addByte(0x00);
-	}
 
-	if(hasDebugDialog()){
-		debugDialog()->addMessageFromClient(outbuf.toString(),connectionName());
-	}
-
-	kdDebug(14150) << k_funcinfo << "Output: " << endl;
+	kdDebug(14150) << k_funcinfo <<  "Output: " << endl;
 	outbuf.print();
 
 	writeBlock(outbuf.getBuf(),outbuf.getLength());
@@ -248,7 +238,7 @@ void OscarFileSendConnection::sendFileSendRequest(void)
 	oft.channel = 0x0101;
 	oft.encrypt = 0x0000;
 	oft.compression = 0x0000;
-	
+
 	//these will need to be changed when we go for multiple file support
 	oft.totfiles = 0x0001;
 	oft.filesleft = 0x0001;
@@ -258,10 +248,10 @@ void OscarFileSendConnection::sendFileSendRequest(void)
 
 	//this will need to be changed when we go for multiple file support
 	oft.totsize = mFileInfo->size();
-	
+
 	oft.size = mFileInfo->size();
 	oft.modtime = mFileInfo->time(KIO::UDS_MODIFICATION_TIME);
-	
+
 	oft.checksum = 0x00000000; //we might get crap about this
 	oft.rfrcsum = 0x00000000;
 	oft.rfsize = 0x00000000;
@@ -280,7 +270,7 @@ void OscarFileSendConnection::sendFileSendRequest(void)
 		oft.macinfo[i] = 0;
 	oft.encode = 0x0000;
 	oft.language = 0x0000;
-	oft.filename = mFileInfo->url().fileName();	
+	oft.filename = mFileInfo->url().fileName();
 
 	mFileSize = mFileInfo->size();
 	mFileName = mFileInfo->url().fileName();
@@ -301,7 +291,7 @@ void OscarFileSendConnection::sendAcceptTransfer(OFT2 &hdr)
 
 	if ( !mFileInfo )
 	{
-		kdDebug(14150) << k_funcinfo << "mfileinfo is null :-(  can't accept transfer" << endl;
+		kdDebug(14150) << k_funcinfo <<  "mfileinfo is null :-(  can't accept transfer" << endl;
 		return;
 	}
 
@@ -324,7 +314,7 @@ void OscarFileSendConnection::sendAcceptTransfer(OFT2 &hdr)
 void OscarFileSendConnection::sendFile(void)
 {
 	mSending = true;
-	kdDebug(14150) << k_funcinfo << "The transfer of " << mFileInfo->url().path() << " has begun." << endl;
+	kdDebug(14150) << k_funcinfo <<  "The transfer of " << mFileInfo->url().path() << " has begun." << endl;
 	emit transferBegun(this, mFileName, mFileSize, connectionName());
 	mFile = KIO::get(mFileInfo->url(), true, true);
 	connect( this, SIGNAL(bytesWritten( int )),
@@ -376,7 +366,7 @@ void OscarFileSendConnection::sendReadConfirm()
 	oft.encode = 0x0000;
 	oft.language = 0x0000;
 	oft.filename = mFileName;
-	
+
 	Buffer thebuf;
 	sendOFT2Block(oft, thebuf, false);
 }
@@ -421,3 +411,4 @@ void OscarFileSendConnection::slotBytesWritten( int nBytes )
 }
 
 #include "oscarfilesendconnection.moc"
+// vim: set noet ts=4 sts=4 sw=4:

@@ -17,20 +17,22 @@
 */
 
 #include "aimbuddylist.h"
-#include "oscarprotocol.h"
-#include "aim.h"
-#include <kdebug.h>
 
-AIMBuddyList::AIMBuddyList() : QObject()
+#include "aim.h"
+#include "oscarsocket.h"
+
+//#include <kdebug.h>
+
+AIMBuddyList::AIMBuddyList(QObject *parent, const char *name) : QObject(parent, name)
 {
 }
 
 AIMBuddyList *AIMBuddyList::operator+= (AIMBuddyList &original)
 {
-	for (int i = 0; i != original.mBuddiesDeny.count(); ++i)
+	for (unsigned int i=0; i!=original.mBuddiesDeny.count(); ++i)
 		mBuddiesDeny.append(original.mBuddiesDeny.at(i));
 
-	for (int i = 0; i != original.mBuddiesPermit.count(); ++i)
+	for (unsigned int i=0; i!=original.mBuddiesPermit.count(); ++i)
 		mBuddiesPermit.append(original.mBuddiesPermit.at(i));
 
 	for (QMap<QString, AIMBuddy * >::Iterator it = original.mBuddyNameMap.begin(); it != original.mBuddyNameMap.end(); ++it)
@@ -39,8 +41,10 @@ AIMBuddyList *AIMBuddyList::operator+= (AIMBuddyList &original)
 		{
 			if (mBuddyNameMap.find((*it)->screenname()) != mBuddyNameMap.end())
 				continue; //already have this in our list
+			mBuddyNameMap.insert((*it)->screenname(), (*it));
 		}
-		mBuddyNameMap.insert((*it)->screenname(), (*it));
+		// why was this line outside the if()? [mETz]
+//		mBuddyNameMap.insert((*it)->screenname(), (*it));
 	}
 
 	for (QMap<int, AIMGroup * >::Iterator it = original.mGroupMap.begin(); it != original.mGroupMap.end(); ++it)
@@ -181,10 +185,13 @@ AIMBuddy::AIMBuddy(const int buddyID, const int groupID, const QString &screenNa
 	mGroupID = groupID;
 	mScreenName = screenName;
 	// By default set it's status to offline
+	mStatus = OSCAR_OFFLINE;
+/*
 	if((screenName[0].isNumber()) && (screenName.length()>4))
 		mStatus = OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ICQOFFLINE);
 	else
 		mStatus = OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMOFFLINE);
+*/
 }
 
 AIMBuddyCaps::AIMBuddyCaps()

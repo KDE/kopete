@@ -102,7 +102,7 @@ SSI *SSIData::changeGroup(const QString &currentName, const QString &newName)
 	// No sense in trying to change the group's name if it doesn't exist
 	if (group != 0L)
 	{ // Printing some debugging info
-		kdDebug(14150) << k_funcinfo << "Building group name change request"
+		kdDebug(14150) << k_funcinfo <<  "Building group name change request"
 					   << endl;
 		// Change the info in the SSI for the group name
 		// Sending the OSCAR serverthis SNAC, where the

@@ -24,26 +24,25 @@
 #include <qwidget.h>
 
 #include "kopeteaccount.h"
-#include "oscarsocket.h"
-#include "oscarprotocol.h"
-
-class KAction;
+#include "oscarcontact.h"
 
 class KopeteContact;
 class KopeteGroup;
 
-class OscarChangeStatus;
+class KopeteAwayDialog;
 class OscarContact;
-class OscarDebugDialog;
 
 class AIMBuddyList;
+class OscarSocket;
+class AIMBuddy;
+class AIMGroup;
 
 class OscarAccount : public KopeteAccount
 {
 	Q_OBJECT
 
 public:
-	OscarAccount(KopeteProtocol *parent, QString accountID, const char *name=0L);
+	OscarAccount(KopeteProtocol *parent, const QString &accountID, const char *name=0L, bool isICQ=false);
 	virtual ~OscarAccount();
 
 	/** Connects this account */
@@ -53,19 +52,16 @@ public:
 	void disconnect();
 
 	/** Sets the account away */
-	virtual void setAway( bool away, const QString &awayMessage = QString::null );
+	virtual void setAway(bool away, const QString &awayMessage = QString::null) = 0;
 
 	/** Accessor method for this account's contact */
 	virtual KopeteContact* myself() const;
-
-	/** Sets the user's profile */
-	virtual void setUserProfile( QString profile );
 
 	/** Accessor method for our engine object */
 	virtual OscarSocket* getEngine();
 
 	/** Accessor method for the action menu */
-	KActionMenu* actionMenu();
+	virtual KActionMenu* actionMenu() = 0L;
 
 	/** Gets the next random new buddy num */
 	int randomNewBuddyNum();
@@ -77,16 +73,10 @@ public:
 	AIMBuddyList *internalBuddyList();
 
 	/** Sets the port we connect to */
-	void setPort( int port );
+	void setPort(int port);
 
 	/** Sets the server we connect to */
-	void setServer( QString server );
-
-	/** returns wether this account is used to connect to ICQ or AIM
-	 * true = ICQ
-	 * false = AIM
-	 */
-	bool isICQ();
+	void setServer(QString server);
 
 public slots:
 	/** Slot for telling this account to go online */
@@ -96,16 +86,6 @@ public slots:
 	/** Slot for telling this account to go away */
 	void slotGoAway();
 
-	void slotGoNA();
-	void slotGoOCC();
-	void slotGoDND();
-	void slotGoFFC();
-
-	/** Slot for editing our info */
-	void slotEditInfo();
-	/** Slot for showing the debug dialog */
-	void slotShowDebugDialog();
-
 protected slots:
 	/** Called when we get disconnected */
 	void slotDisconnected();
@@ -114,36 +94,30 @@ protected slots:
 	void slotGroupAdded(KopeteGroup* group);
 
 	/** Called when the contact list renames a group */
-	void slotKopeteGroupRenamed( KopeteGroup *group,
-								 const QString &oldName );
+	void slotKopeteGroupRenamed(KopeteGroup *group,
+		const QString &oldName);
 
 	/** Called when the contact list removes a group */
-	void slotKopeteGroupRemoved( KopeteGroup *group );
+	void slotKopeteGroupRemoved(KopeteGroup *group);
 
-	/**
-	 * Called when our status on the server has changed
-	 * This is called when disconnected too
-	 */
-	void slotOurStatusChanged( const KopeteOnlineStatus &newStatus );
+	/** Called when our status changes on the server */
+	void slotOurStatusChanged(const unsigned int newStatus);
 
 	/**
 	 * Called when we get a contact list from the server
 	 * The parameter is a qmap with the contact names as keys
 	 * the value is another map with keys "name", "group"
 	 */
-	void slotGotServerBuddyList( AIMBuddyList& buddyList );
+	void slotGotServerBuddyList(AIMBuddyList& buddyList);
 
 	/** Called when we've received an IM */
 	void slotGotIM( QString message, QString sender, bool isAuto );
-
-	/** Called when we have been warned */
-	void slotGotWarning(int newlevel, QString warner);
 
 	/** Called when we get a request for a direct IM session with @sn */
 	void slotGotDirectIMRequest(QString sn);
 
 	/** Called when the engine notifies us that it got our user info */
-	void slotGotMyUserInfo(UserInfo newInfo);
+//	void slotGotMyUserInfo(UserInfo newInfo);
 
 	/** Called when there is no activity for a certain amount of time  */
 	void slotIdleTimeout();
@@ -156,10 +130,29 @@ protected slots:
 
 	void slotFastAddContact();
 
+	/**
+	 * Having received a new server side group, try
+	 * to find queued buddies that are members of
+	 * this group.
+	 * @param group the newly added group.
+	 */
+	void slotReTryServerContacts();
+
 protected:
 	/** Adds a contact to a meta contact */
-	virtual bool addContactToMetaContact(const QString &contactId,
-										 const QString &displayName, KopeteMetaContact *parentContact);
+	bool addContactToMetaContact(const QString &contactId,
+		const QString &displayName, KopeteMetaContact *parentContact );
+
+	/**
+	 * Protocols using Oscar must implement this to perform the instantiation
+	 * of their contact for Kopete.  Called by @ref addContactToMetaContact().
+	 * @param contactId theprotocol unique id of the contact
+	 * @param displayName the display name of the contact
+	 * @param parentContact the parent metacontact
+	 * @return whether the creation succeeded or not
+	 */
+	 virtual OscarContact *createNewContact( const QString &contactId, const QString &displayName,
+		KopeteMetaContact *parentContact ) =0;
 
 	/**
 	 * Adds a contact to the internal list.
@@ -169,10 +162,16 @@ protected:
 	virtual void addServerContact(AIMBuddy *buddy);
 
 	/** Initializes the engine */
-	virtual void initEngine();
+	virtual void initEngine(bool);
 
 	/** Initializes the signals */
 	virtual void initSignals();
+
+	/**
+	* Adds a buddy that we queued to
+	* the contact list
+	*/
+	void addOldContact(AIMBuddy *bud, KopeteMetaContact *meta=0l);
 
 protected:
 	/** Flag for remembering the password */
@@ -181,24 +180,19 @@ protected:
 	/** Our Internal buddy list (from the server) */
 	AIMBuddyList *mInternalBuddyList;
 
-	/** Our contact */
-	OscarContact *mMyself;
+    /**
+	 * Server-side AIMBuddies that do not have KopeteContacts yet for the reason that
+	 * their group has not yet been sent from the server
+	 * See aimbuddylist.h under 'signals:' for an explanation of this.
+	 * This is 'the queue'
+	 */
+	QPtrList<AIMBuddy> mGroupQueue;
 
 	/** Our OSCAR socket object */
 	OscarSocket *mEngine;
 
-	/** Our UserInfo */
-	UserInfo mUserInfo;
-
-	/** Our away dialog */
-	OscarChangeStatus *mAwayDialog;
-
-	/** Our debug dialog */
-	OscarDebugDialog *mDebugDialog;
-
 	/** Random new group number for the engine */
 	int mRandomNewGroupNum;
-
 	int mRandomNewBuddyNum;
 
 	/**
@@ -207,12 +201,17 @@ protected:
 	 */
 	bool mAreIdle;
 
+	/** Our away dialog */
+	KopeteAwayDialog *mAwayDialog;
+
 	/**
 	 * This is our idle timer, it is used internally
 	 * to represent idle times and report them to
 	 * the server
 	 */
 	QTimer *mIdleTimer;
+
+	OscarContact* mMyself;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

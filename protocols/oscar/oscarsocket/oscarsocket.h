@@ -70,6 +70,16 @@ struct UserInfo
 	 unsigned long icqextstatus;
 };
 
+/** Internal status enum */
+const unsigned int OSCAR_OFFLINE = 0;
+const unsigned int OSCAR_ONLINE = 1;
+const unsigned int OSCAR_AWAY = 2;
+const unsigned int OSCAR_DND = 3;
+const unsigned int OSCAR_NA = 4;
+const unsigned int OSCAR_OCC = 5;
+const unsigned int OSCAR_FFC = 6;
+const unsigned int OSCAR_CONNECTING = 10;
+
 #define OSCAR_FAM_1				0x0001 // Services
 #define OSCAR_FAM_2				0x0002 // Location
 #define OSCAR_FAM_3				0x0003 // Contacts, adding, removal, statuschanges
@@ -88,11 +98,8 @@ struct UserInfo
 
 #define OSCAR_SERVER 			"login.oscar.aol.com"
 #define OSCAR_PORT 				5190
-/*
-#define OSCAR_OFFLINE		0
-#define OSCAR_ONLINE			1
-#define OSCAR_AWAY			2
-*/
+
+//** Internal status for the ICQ protocol **/
 const unsigned short ICQ_STATUS_ONLINE		= 0x0000;
 const unsigned short ICQ_STATUS_OFFLINE	= 0xFFFF;
 const unsigned short ICQ_STATUS_AWAY		= 0x0001;
@@ -129,87 +136,7 @@ const unsigned short ICQ_STATUS_FFC			= 0x0020;
 #define AIM_CAPS_TRILLIANCRYPT	0x00010000
 #define AIM_CAPS_LAST				0x00020000
 
-static const struct
-{
-    DWORD flag;
-    char data[16];
-} oscar_caps[] =
-{
-	// Chat is oddball.
-	{AIM_CAPS_CHAT,
-	{0x74, 0x8f, 0x24, 0x20, 0x62, 0x87, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	// These are mostly in order.
-	{AIM_CAPS_VOICE,
-	{0x09, 0x46, 0x13, 0x41, 0x4c, 0x7f, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_SENDFILE,
-	{0x09, 0x46, 0x13, 0x43, 0x4c, 0x7f, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	// Advertised by the EveryBuddy client.
-	{AIM_CAPS_ISICQ,
-	{0x09, 0x46, 0x13, 0x44, 0x4c, 0x7f, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_IMIMAGE,
-	{0x09, 0x46, 0x13, 0x45, 0x4c, 0x7f, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_BUDDYICON,
-	{0x09, 0x46, 0x13, 0x46, 0x4c, 0x7f, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_SAVESTOCKS,
-	{0x09, 0x46, 0x13, 0x47, 0x4c, 0x7f, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_GETFILE,
-	{0x09, 0x46, 0x13, 0x48, 0x4c, 0x7f, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_ICQSERVERRELAY,
-	{0x09, 0x46, 0x13, 0x49, 0x4c, 0x7f, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_GAMES,
-	{0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_GAMES2,
-	{0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
-		0x22, 0x82, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_SENDBUDDYLIST,
-	{0x09, 0x46, 0x13, 0x4b, 0x4c, 0x7f, 0x11, 0xd1,
-		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	{AIM_CAPS_ICQRTF,
-	{0x97, 0xb1, 0x27, 0x51, 0x24, 0x3c, 0x43, 0x34,
-		0xad, 0x22, 0xd6, 0xab, 0xf7, 0x3f, 0x14, 0x92}},
-
-	{AIM_CAPS_IS_2001,
-	{0x2e, 0x7a, 0x64, 0x75, 0xfa, 0xdf, 0x4d, 0xc8,
-		0x88, 0x6f, 0xea, 0x35, 0x95, 0xfd, 0xb6, 0xdf}},
-
-	{AIM_CAPS_EMPTY,
-	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
-
-	{AIM_CAPS_TRILLIANCRYPT,
-	{0xf2, 0xe7, 0xc7, 0xf4, 0xfe, 0xad, 0x4d, 0xfb,
-		0xb2, 0x35, 0x36, 0x79, 0x8b, 0xdf, 0x00, 0x00}},
-
-	{AIM_CAPS_APINFO,
-	{0xAA, 0x4A, 0x32, 0xB5, 0xF8, 0x84, 0x48, 0xc6,
-		0xA3, 0xD7, 0x8C, 0x50, 0x97, 0x19, 0xFD, 0x5B}},
-
-	{AIM_CAPS_LAST,
-	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}
-};
 
 #define KOPETE_AIM_CAPS				AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE
 // AIM_CAPS_ICQSERVERRELAY commented out until we support
@@ -224,9 +151,7 @@ class OscarSocket : public OscarConnection
 {
 	Q_OBJECT
 	public:
-	OscarSocket(const QString &connName,
-	const QByteArray &cookie, OscarAccount *account, QObject *parent=0,
-	const char *name=0);
+	OscarSocket(const QString &connName, const QByteArray &cookie, OscarAccount *account, QObject *parent=0, const char *name=0, bool=false);
 	~OscarSocket();
 
 	/** Sends an authorization request to the server */
@@ -509,9 +434,9 @@ class OscarSocket : public OscarConnection
 	void gotAck(QString, int);
 
 	/**
-	 * Emitted (with new status as parameter) when our status has changed
+	 * Emitted when our status has changed, internalStatus is one of OSCAR_*
 	 */
-	void statusChanged( const KopeteOnlineStatus &newStatus );
+	void statusChanged(const unsigned int internalStatus);
 
 	/** Emitted when the logged in user has been warned
 	 * The int is the new warning level.
@@ -526,57 +451,62 @@ class OscarSocket : public OscarConnection
 	void gotFileSendRequest(QString, QString, QString, unsigned long);
 
 	private:
-	/** The OscarAccount we're assocated with */
-	OscarAccount *mAccount;
-	/** The key used to encrypt the password */
-	char * key;
-	/** The user's password */
-	QString pass;
-	/** The authorization cookie */
-	char * mCookie;
-	/** ip address of the bos server */
-	QString bosServer;
-	/** The length of the cookie */
-	WORD cookielen;
-	/** The port of the bos server */
-	int bosPort;
-	/** Stores rate class information */
-	QPtrList<RateClass> rateClasses;
-	/** tells whether we are idle */
-	bool idle;
-	/** Socket for direct connections */
-	OncomingSocket *mDirectIMMgr;
-	/** Socket for file transfers */
-	OncomingSocket *mFileTransferMgr;
-	/** SSI server stored data */
-	SSIData ssiData;
-	/** Socket for direct connections */
-	QSocket * connsock;
-	/** The currently logged in user's profile */
-	QString myUserProfile;
-	/** Tells if we are connected to the server and ready to operate */
-	bool isConnected;
+		/** The OscarAccount we're assocated with */
+		OscarAccount *mAccount;
+		/** The key used to encrypt the password */
+		char * key;
+		/** The user's password */
+		QString pass;
+		/** The authorization cookie */
+		char * mCookie;
+		/** ip address of the bos server */
+		QString bosServer;
+		/** The length of the cookie */
+		WORD cookielen;
+		/** The port of the bos server */
+		int bosPort;
+		/** Stores rate class information */
+		QPtrList<RateClass> rateClasses;
+		/** tells whether we are idle */
+		bool idle;
+		/** Socket for direct connections */
+		OncomingSocket *mDirectIMMgr;
+		/** Socket for file transfers */
+		OncomingSocket *mFileTransferMgr;
+		/** SSI server stored data */
+		SSIData ssiData;
+		/** Socket for direct connections */
+		QSocket * connsock;
+		/** The currently logged in user's profile */
+		QString myUserProfile;
+		/** Tells if we are connected to the server and ready to operate */
+		bool isConnected;
 
-	/** counter to find out if we got all packets needed before sending
-	  * out more info and the final CLI_READY command which is the end of a login procedure
-	  */
-	int gotAllRights;
+		/** counter to find out if we got all packets needed before sending
+		* out more info and the final CLI_READY command which is the end of a login procedure
+		*/
+		int gotAllRights;
 
-	int keepaliveTime;
-	QTimer *keepaliveTimer;
+		int keepaliveTime;
+		QTimer *keepaliveTimer;
+
+		// TODO: save icq bit-fscking status in here
+//		unsigned long icqStatus;
+		bool mIsICQ;
+
 
 	signals:
-	/** Called when an SSI acknowledgement is recieved */
-	void SSIAck();
-	/** emitted when BOS rights are received */
-	// void gotBOSRights(WORD,WORD);
-	/** emitted when a buddy gets blocked */
-	void denyAdded(QString);
-	/** emitted when a block is removed on a buddy */
-	void denyRemoved(QString);
-	/** Tells when the connection ack has been recieved on channel 1 */
-	void connAckReceived();
-	/** emitted when a direct connection has been terminated */
-	void directIMConnectionClosed(QString name);
+		/** Called when an SSI acknowledgement is recieved */
+		void SSIAck();
+		/** emitted when BOS rights are received */
+		// void gotBOSRights(WORD,WORD);
+		/** emitted when a buddy gets blocked */
+		void denyAdded(QString);
+		/** emitted when a block is removed on a buddy */
+		void denyRemoved(QString);
+		/** Tells when the connection ack has been recieved on channel 1 */
+		void connAckReceived();
+		/** emitted when a direct connection has been terminated */
+		void directIMConnectionClosed(QString name);
 };
 #endif

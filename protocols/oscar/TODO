@@ -1,3 +1,17 @@
+  THINGS FOR THE SPLIT UP [written by mETz, these notes are to be removed!]
+- most important: find a sane replacement for OscarProtocol::protocol()
+  - fix calls of *Protocol::getOnlineStatus() all over the place
+    (used in conjunction with aboves ugly static ;))
+- finish OscarAccount and OscarContact split up (i.e. find out what can be generalized)
+- fix possible stupidity inside OscarProtocol
+- make aim and icq compile with new base classes (I'll help on icq)
+- fix and add GUI parts in aim/icq (I will help on that one)
+
+- handle incorrect account id/password, notify the user
+- correctly return to offline if bad password
+- fix the account edit widget so it is possible to edit existing accounts
+
+  OLDER STUFF
 - Prompt user to accept, deny, or warn incoming DirectIM and file transfer requests
 - Add ability to abort, pause, and resume transfers
 - Make Buffer inherit QByteArray, get rid of possibly error prone c-style array code
