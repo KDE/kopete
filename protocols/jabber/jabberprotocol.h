@@ -37,7 +37,6 @@
 #include "addcontactpage.h"
 #include "jabberdefprefs.h"
 #include "jabbermap.h"
-#include "jabberdefprefs.h"
 
 #define JABBER_DEBUG_GLOBAL		14130
 #define JABBER_DEBUG_PROTOCOL	14131

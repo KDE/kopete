@@ -15,11 +15,6 @@
     *************************************************************************
 */
 
-#include <kdebug.h>
-#include <klocale.h>
-
-#include <qapplication.h>
-#include <qlayout.h>
 #include <kdialogbase.h>
 
 #include "historydialog.h"

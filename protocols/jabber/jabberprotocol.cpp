@@ -62,7 +62,6 @@
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
 #include "kopeteaccountmanager.h"
-#include "kopetemetacontact.h"
 #include "jabbereditaccountwidget.h"
 #include "kopetecommandhandler.h"
 
