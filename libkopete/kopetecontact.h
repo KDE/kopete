@@ -54,7 +54,7 @@ class KopeteContact : public QObject
 		* return name of an KopeteContact
 		**/
 		virtual QString name() const;
-        /**
+		/**
 		* return status of an KopeteContact
 		**/
 		virtual ContactStatus status() const;
@@ -69,7 +69,7 @@ class KopeteContact : public QObject
 		* The name of the icon associated with the contact's status
 		**/
 		virtual QString statusIcon() const;
-        /**
+		/**
 		* The "importance" of this contact, used for sorting
 		* This is almost always related to the contact's status
 		* Here is how ICQ does it:
@@ -79,14 +79,14 @@ class KopeteContact : public QObject
 		* 10 = Not Available (extended away)
 		* 5 = Invisible
 		* 0 = Offline
-        *
+		*
 		* The default implementation returns 20 for Online,
 		* 10 for away, and 0 for offline
 		* Please make your importance values between 0 and 25,
 		* and try to follow ICQ's scheme somewhat
 		**/
 		virtual int importance() const;
-        /**
+		/**
 		* This should typically pop up a KopeteChatWindow
 		**/
 		virtual void execute() {}
