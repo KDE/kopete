@@ -7,6 +7,46 @@
   <!ENTITY % addindex "IGNORE">
   <!ENTITY % English "INCLUDE">
 ]>
+<!--
+Intro (WIP, Will)
+Getting Started (WIP, Will)
+        Add an account
+        Go online
+        Start chatting
+Using Kopete
+        Contact List window
+                Adding contacts
+			Metacontacts - What are they and why do I want them? should probably be the first item under adding contacts. People new to a unified client or coming from Gaim will have no clue why metacontacts are good.
+                Organising contacts
+			Within Metacontacts
+			Grouping Contacts
+                Shortcuts
+        Chat window
+		Chat window Layout
+			Chat members list
+			Status bar (typing notifications, etc )
+	 		Tabbing
+	
+                Starting group chats
+                Shortcuts
+        File transfers? 
+Configuring Kopete
+	Global Shortcuts
+        Adding/Editing Accounts
+        Behaviour/Notifications
+        Look and Feel
+        Loading Plugins
+Plugins
+        (Section on each plugin, use, and configuration)
+Menus
+        (Short description of each menu item)
+FAQ
+Specialised Tasks
+	Command line flags
+        (Any tricks involving _use_ of Kopete)
+Credits
+Appendix: Obtaining and installation
+-->
 
 <book lang="&language;">
 <bookinfo>
