@@ -77,15 +77,15 @@ void IRCChannelContact::slotUpdateInfo()
 
 	*/
 
-	if( manager(Kopete::Contact::CannotCreate) )
+	if (manager(Kopete::Contact::CannotCreate))
 	{
-		setProperty( m_protocol->propChannelMembers, manager()->members().count() );
-		MYACCOUNT->engine()->writeMessage( QString::fromLatin1("WHO %1").arg(m_nickName) );
+		setProperty(m_protocol->propChannelMembers, manager()->members().count());
+		MYACCOUNT->engine()->writeMessage(QString::fromLatin1("WHO %1").arg(m_nickName));
 	}
 	else
 	{
-		removeProperty( m_protocol->propChannelMembers );
-		removeProperty( m_protocol->propChannelTopic );
+		removeProperty(m_protocol->propChannelMembers);
+		removeProperty(m_protocol->propChannelTopic);
 	}
 
 	mInfoTimer->start( 45000, true );
@@ -93,19 +93,20 @@ void IRCChannelContact::slotUpdateInfo()
 
 void IRCChannelContact::slotChannelListed( const QString &channel, uint members, const QString &topic )
 {
-	if( !manager(Kopete::Contact::CannotCreate) && onlineStatus() == m_protocol->m_ChannelStatusOnline
-		&& channel.lower() == m_nickName.lower() )
+	if (!manager(Kopete::Contact::CannotCreate) &&
+		onlineStatus() == m_protocol->m_ChannelStatusOnline &&
+		channel.lower() == m_nickName.lower())
 	{
 		mTopic = topic;
-		setProperty( m_protocol->propChannelMembers, members );
-		setProperty( m_protocol->propChannelTopic, topic );
+		setProperty(m_protocol->propChannelMembers, members);
+		setProperty(m_protocol->propChannelTopic, topic);
 	}
 }
 
 void IRCChannelContact::updateStatus()
 {
 	KIRC::Engine::Status status = MYACCOUNT->engine()->status();
-	switch( status )
+	switch (status)
 	{
 		case KIRC::Engine::Idle:
 		case KIRC::Engine::Connecting:
@@ -123,15 +124,16 @@ void IRCChannelContact::updateStatus()
 
 void IRCChannelContact::chatSessionDestroyed()
 {
-	if(manager(Kopete::Contact::CannotCreate))
+	if (manager(Kopete::Contact::CannotCreate))
 	{
 		part();
 		Kopete::ContactPtrList contacts = manager()->members();
 
 		// remove all the users on the channel
-		for( Kopete::Contact *c = contacts.first(); c; c = contacts.next() )
+		for (Kopete::Contact *c = contacts.first(); c; c = contacts.next())
 		{
-			if( c->metaContact()->isTemporary() && !static_cast<IRCContact*>(c)->isChatting( manager() ) )
+			if (c->metaContact()->isTemporary() &&
+				!static_cast<IRCContact*>(c)->isChatting(manager()))
 				c->deleteLater();
 		}
 	}
@@ -146,8 +148,8 @@ void IRCChannelContact::initConversation()
 
 void IRCChannelContact::slotConnectedToServer()
 {
-	setOnlineStatus( m_protocol->m_ChannelStatusOnline );
-	if( manager(Kopete::Contact::CannotCreate) )
+	setOnlineStatus(m_protocol->m_ChannelStatusOnline);
+	if (manager(Kopete::Contact::CannotCreate))
 		MYACCOUNT->engine()->join(m_nickName, password());
 }
 
@@ -155,7 +157,7 @@ void IRCChannelContact::namesList(const QStringList &nicknames)
 {
 	mInfoTimer->stop();
 	mJoinedNicks += nicknames;
-	if( mJoinedNicks.count() == nicknames.count() )
+	if (mJoinedNicks.count() == nicknames.count())
 		slotAddNicknames();
 }
 
@@ -166,34 +168,34 @@ void IRCChannelContact::endOfNames()
 
 void IRCChannelContact::slotAddNicknames()
 {
-	if( !manager(Kopete::Contact::CannotCreate) || mJoinedNicks.isEmpty() )
+	if (!manager(Kopete::Contact::CannotCreate) || mJoinedNicks.isEmpty())
 	{
-		setMode( QString::null );
+		setMode(QString::null);
 		return;
 	}
 
-	while ( !mJoinedNicks.isEmpty() )
+	while (!mJoinedNicks.isEmpty())
 	{
 		QString nickToAdd = mJoinedNicks.front();
 		QChar firstChar = nickToAdd[0];
 		if( firstChar == '@' || firstChar == '%' || firstChar == '+' )
 			nickToAdd = nickToAdd.remove(0, 1);
-	
+
 		mJoinedNicks.pop_front();
 		IRCContact *user;
-	
+
 		if ( nickToAdd.lower() != MYACCOUNT->mySelf()->nickName().lower() )
 		{
 			//kdDebug(14120) << k_funcinfo << m_nickName << " NICK: " << nickToAdd << endl;
-			user = MYACCOUNT->contactManager()->findUser( nickToAdd );
-			user->setOnlineStatus( m_protocol->m_UserStatusOnline );
-			manager()->addContact( static_cast<Kopete::Contact*>(user) , true);
+			user = MYACCOUNT->contactManager()->findUser(nickToAdd);
+			user->setOnlineStatus(m_protocol->m_UserStatusOnline);
+			manager()->addContact(static_cast<Kopete::Contact*>(user) , true);
 		}
 		else
 		{
 			user = MYACCOUNT->mySelf();
 		}
-	
+
 		if ( firstChar == '@' || firstChar == '%' )
 			manager()->setContactOnlineStatus( static_cast<Kopete::Contact*>(user), m_protocol->m_UserStatusOp );
 		else if( firstChar == '+')
@@ -205,7 +207,7 @@ void IRCChannelContact::channelTopic(const QString &topic)
 {
 	mTopic = topic;
 	setProperty( m_protocol->propChannelTopic, mTopic );
-	manager()->setDisplayName( caption() );
+	manager()->setDisplayName(caption());
 	Kopete::Message msg((Kopete::Contact*)this, mMyself, i18n("Topic for %1 is %2").arg(m_nickName).arg(mTopic),
 	                    Kopete::Message::Internal, Kopete::Message::RichText, Kopete::Message::Chat);
 	appendMessage(msg);
@@ -219,7 +221,8 @@ void IRCChannelContact::channelHomePage(const QString &url)
 
 void IRCChannelContact::join()
 {
-	if ( !manager(Kopete::Contact::CannotCreate) && onlineStatus().status() == Kopete::OnlineStatus::Online )
+	if (!manager(Kopete::Contact::CannotCreate) &&
+		onlineStatus().status() == Kopete::OnlineStatus::Online)
 	{
 		kdDebug() << k_funcinfo << "My nickname:" << m_nickName << endl;
 		kdDebug() << k_funcinfo << "My manager:" << manager(Kopete::Contact::CannotCreate) << endl;
@@ -240,21 +243,21 @@ void IRCChannelContact::slotIncomingUserIsAway( const QString &nick, const QStri
 	if( nick.lower() == MYACCOUNT->mySelf()->nickName().lower() )
 	{
 		IRCUserContact *c = MYACCOUNT->mySelf();
-		if( manager(Kopete::Contact::CannotCreate) && manager()->members().contains( c ) )
+		if (manager(Kopete::Contact::CannotCreate) && manager()->members().contains(c))
 		{
-			Kopete::OnlineStatus status = manager()->contactOnlineStatus( c );
-			if( status == m_protocol->m_UserStatusOp )
-				manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusOpAway );
-			else if( status == m_protocol->m_UserStatusOpAway )
-				manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusOp );
-			else if( status == m_protocol->m_UserStatusVoice )
-				manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusVoiceAway );
-			else if( status == m_protocol->m_UserStatusVoiceAway )
-				manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusVoice );
-			else if( status == m_protocol->m_UserStatusAway )
-				manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusOnline );
+			Kopete::OnlineStatus status = manager()->contactOnlineStatus(c);
+			if (status == m_protocol->m_UserStatusOp)
+				manager()->setContactOnlineStatus(c, m_protocol->m_UserStatusOpAway );
+			else if (status == m_protocol->m_UserStatusOpAway)
+				manager()->setContactOnlineStatus(c, m_protocol->m_UserStatusOp);
+			else if (status == m_protocol->m_UserStatusVoice)
+				manager()->setContactOnlineStatus(c, m_protocol->m_UserStatusVoiceAway);
+			else if (status == m_protocol->m_UserStatusVoiceAway)
+				manager()->setContactOnlineStatus(c, m_protocol->m_UserStatusVoice);
+			else if (status == m_protocol->m_UserStatusAway)
+				manager()->setContactOnlineStatus(c, m_protocol->m_UserStatusOnline);
 			else
-				manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusAway );
+				manager()->setContactOnlineStatus(c, m_protocol->m_UserStatusAway);
 		}
 	}
 }
@@ -266,7 +269,7 @@ void IRCChannelContact::userJoinedChannel(const QString &nickname)
 		kdDebug() << k_funcinfo << "Me:" << this << endl;
 		kdDebug() << k_funcinfo << "My nickname:" << m_nickName << endl;
 		kdDebug() << k_funcinfo << "My manager:" << manager(Kopete::Contact::CannotCreate) << endl;
-		if( manager(Kopete::Contact::CannotCreate) )
+		if (manager(Kopete::Contact::CannotCreate))
 			kdDebug() << k_funcinfo << "My view:" << manager(Kopete::Contact::CannotCreate)->view(false) << endl;
 
 		Kopete::Message msg((Kopete::Contact *)this, mMyself,
@@ -305,8 +308,8 @@ void IRCChannelContact::userPartedChannel(const QString &nickname,const QString 
 
 void IRCChannelContact::userKicked(const QString &nick, const QString &nickKicked, const QString &reason)
 {
-	QString r = i18n("Kicked by %1.").arg( nick );
-	if( reason != nick )
+	QString r = i18n("Kicked by %1.").arg(nick);
+	if (reason != nick)
 		r.append( i18n(" Reason: %2").arg( reason ) );
 
 	if( nickKicked.lower() != MYACCOUNT->engine()->nickName().lower() )
@@ -332,7 +335,7 @@ void IRCChannelContact::userKicked(const QString &nick, const QString &nickKicke
 
 void IRCChannelContact::setTopic(const QString &topic)
 {
-	if ( manager(Kopete::Contact::CannotCreate) )
+	if (manager(Kopete::Contact::CannotCreate))
 	{
 		if( manager()->contactOnlineStatus( manager()->user() ) ==
 			m_protocol->m_UserStatusOp || !modeEnabled('t') )

@@ -543,11 +543,11 @@ void IRCAccount::slotConnectedToServer()
 		Kopete::CommandHandler::commandHandler()->processMessage( *it, manager );
 }
 */
-void IRCAccount::slotJoinedUnknownChannel( const QString &channel, const QString &nick )
+void IRCAccount::slotJoinedUnknownChannel(const QString &channel, const QString &nick)
 {
 	if ( nick.lower() == m_contactManager->mySelf()->nickName().lower() )
 	{
-		m_contactManager->findChannel( channel )->join();
+		m_contactManager->findChannel(channel)->join();
 	}
 }
 /*
@@ -660,12 +660,12 @@ bool IRCAccount::createContact( const QString &contactId, Kopete::MetaContact *m
 		Kopete::ContactList::self()->addMetaContact(m);
 	}
 
-	if ( contactId.startsWith( QString::fromLatin1("#") ) )
-		c = static_cast<IRCContact*>( contactManager()->findChannel(contactId, m) );
+	if (contactId.startsWith(QString::fromLatin1("#")))
+		c = static_cast<IRCContact*>(contactManager()->findChannel(contactId, m));
 	else
 	{
 		m_contactManager->addToNotifyList( contactId );
-		c = static_cast<IRCContact*>( contactManager()->findUser(contactId, m) );
+		c = static_cast<IRCContact*>(contactManager()->findUser(contactId, m));
 	}
 
 	if( c->metaContact() != m )
@@ -673,7 +673,7 @@ bool IRCAccount::createContact( const QString &contactId, Kopete::MetaContact *m
 		Kopete::MetaContact *old = c->metaContact();
 		c->setMetaContact( m );
 		Kopete::ContactPtrList children = old->contacts();
-		if( children.isEmpty() )
+		if (children.isEmpty())
 			Kopete::ContactList::self()->removeMetaContact( old );
 	}
 	else if( c->metaContact()->isTemporary() )
@@ -682,33 +682,33 @@ bool IRCAccount::createContact( const QString &contactId, Kopete::MetaContact *m
 	return true;
 }
 
-void IRCAccount::slotJoinNamedChannel( const QString &chan )
+void IRCAccount::slotJoinNamedChannel(const QString &chan)
 {
-	contactManager()->findChannel( chan )->startChat();
+	contactManager()->findChannel(chan)->startChat();
 }
 
 void IRCAccount::slotJoinChannel()
 {
-	if(!isConnected())
+	if (!isConnected())
 		return;
 
 	KConfig *config = kapp->config();
-	config->setGroup( QString::fromLatin1("Account_IRCProtocol_") + accountId() );
-	QStringList chans = config->readListEntry( "Recent Channel list" );
+	config->setGroup( QString::fromLatin1("Account_IRCProtocol_") + accountId());
+	QStringList chans = config->readListEntry("Recent Channel list");
 
 	KLineEditDlg dlg(
-		i18n( "Please enter name of the channel you want to join:" ),
+		i18n("Please enter name of the channel you want to join:"),
 		QString::null,
 		Kopete::UI::Global::mainWidget()
 	);
 
-	if( !chans.isEmpty() )
+	if (!chans.isEmpty())
 	{
 		dlg.lineEdit()->setCompletedItems( chans );
 		dlg.lineEdit()->setCompletionMode( KGlobalSettings::CompletionPopupAuto );
 	}
 
-	if( dlg.exec() == QDialog::Accepted )
+	if (dlg.exec() == QDialog::Accepted)
 	{
 		QString chan = dlg.text();
 		chans = dlg.lineEdit()->completionBox()->items();

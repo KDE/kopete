@@ -2,8 +2,9 @@
     irccontact.cpp - IRC Contact
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
+    Copyright (c) 2004      by Michel Hermier <michel.hermier@wanadoo.fr>
 
-    Kopete    (c) 2002      by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -37,7 +38,7 @@
 IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, Kopete::MetaContact *metac, const QString& icon)
 	: Kopete::Contact(contactManager->account(), nick, metac, icon),
 	  m_nickName(nick),
-	  m_msgManager(0L)
+	  m_chatSession(0)
 {
 	// Contact list display name
 	setProperty( Kopete::Global::Properties::self()->nickName(), m_nickName );
@@ -66,13 +67,14 @@ IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, K
 IRCContact::~IRCContact()
 {
 //	kdDebug(14120) << k_funcinfo << mNickName << endl;
-	if( metaContact() && metaContact()->isTemporary() && !isChatting(m_msgManager) )
+	if (metaContact() && metaContact()->isTemporary() && !isChatting(m_chatSession))
 		metaContact()->deleteLater();
 }
 
 bool IRCContact::isReachable()
 {
-	if ( onlineStatus().status() != Kopete::OnlineStatus::Offline && onlineStatus().status() != Kopete::OnlineStatus::Unknown )
+	if (onlineStatus().status() != Kopete::OnlineStatus::Offline &&
+		onlineStatus().status() != Kopete::OnlineStatus::Unknown)
 		return true;
 
 	return false;
@@ -111,43 +113,43 @@ const QTextCodec *IRCContact::codec()
 
 Kopete::ChatSession *IRCContact::manager(Kopete::Contact::CanCreateFlags canCreate)
 {
-	if( canCreate && !m_msgManager )
+	if (canCreate == Kopete::Contact::CanCreate && !m_chatSession)
 	{
 		if(MYACCOUNT->engine()->status() == KIRC::Engine::Disconnected)
 			MYACCOUNT->connect();
 
-		m_msgManager = Kopete::ChatSessionManager::self()->create(MYACCOUNT->myself(), mMyself, MYACCOUNT->protocol());
-		m_msgManager->setDisplayName(caption());
+		m_chatSession = Kopete::ChatSessionManager::self()->create(MYACCOUNT->myself(), mMyself, MYACCOUNT->protocol());
+		m_chatSession->setDisplayName(caption());
 
-		QObject::connect( m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession *)),
+		QObject::connect(m_chatSession, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession *)),
 			this, SLOT(slotSendMsg(Kopete::Message&, Kopete::ChatSession *)));
-		QObject::connect( m_msgManager, SIGNAL(closing(Kopete::ChatSession*)),
+		QObject::connect(m_chatSession, SIGNAL(closing(Kopete::ChatSession *)),
 			this, SLOT(chatSessionDestroyed()));
 
-		QTimer::singleShot( 0, this, SLOT( initConversation() ) );
+		initConversation();
 	}
 
-	return m_msgManager;
+	return m_chatSession;
 }
 
 void IRCContact::chatSessionDestroyed()
 {
-	m_msgManager = 0L;
+	m_chatSession = 0;
 
-	if( metaContact()->isTemporary() && !isChatting() )
+	if (metaContact()->isTemporary() && !isChatting())
 		deleteLater();
 }
 
 void IRCContact::slotUserDisconnected(const QString &user, const QString &reason)
 {
-	if( manager(Kopete::Contact::CannotCreate) )
+	if (m_chatSession)
 	{
 		QString nickname = user.section('!', 0, 0);
 		Kopete::Contact *c = locateUser( nickname );
 		if ( c )
 		{
-			manager()->removeContact(c, i18n("Quit: \"%1\" ").arg(reason), Kopete::Message::RichText);
-			c->setOnlineStatus( m_protocol->m_UserStatusOffline );
+			m_chatSession->removeContact(c, i18n("Quit: \"%1\" ").arg(reason), Kopete::Message::RichText);
+			c->setOnlineStatus(m_protocol->m_UserStatusOffline);
 		}
 	}
 }
@@ -250,16 +252,16 @@ void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::ChatSession *)
 	}
 }
 
-Kopete::Contact *IRCContact::locateUser( const QString &nick )
+Kopete::Contact *IRCContact::locateUser(const QString &nick)
 {
 	//kdDebug(14120) << k_funcinfo << "Find nick " << nick << endl;
-	if( manager(Kopete::Contact::CannotCreate) )
+	if (m_chatSession)
 	{
 		if( nick == MYACCOUNT->mySelf()->nickName() )
 			return MYACCOUNT->mySelf();
 		else
 		{
-			Kopete::ContactPtrList mMembers = manager()->members();
+			Kopete::ContactPtrList mMembers = m_chatSession->members();
 			for (Kopete::Contact *it = mMembers.first(); it; it = mMembers.next())
 			{
 				if (static_cast<IRCContact*>(it)->nickName() == nick)
@@ -291,7 +293,7 @@ void IRCContact::deleteContact()
 {
 	kdDebug(14120) << k_funcinfo << m_nickName << endl;
 
-	delete manager(Kopete::Contact::CannotCreate);
+	delete m_chatSession;
 
 	if (!isChatting())
 	{
@@ -314,11 +316,11 @@ void IRCContact::appendMessage(Kopete::Message &msg)
 
 KopeteView *IRCContact::view()
 {
-	if (m_msgManager)
-		return manager(Kopete::Contact::CanCreate)->view(false);
+	if (m_chatSession)
+		return m_chatSession->view(false);
 	return 0L;
 }
-void IRCContact::serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData )
+void IRCContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData)
 {
 	// write the
 	addressBookData[ protocol()->addressBookIndexField() ] = ( contactId() + QChar(0xE120) + account()->accountId() );

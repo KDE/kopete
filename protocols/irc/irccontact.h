@@ -122,7 +122,7 @@ protected slots:
 
 protected:
 	QString m_nickName;
-	Kopete::ChatSession *m_msgManager;
+	Kopete::ChatSession *m_chatSession;
 
 	QPtrList<Kopete::Contact> mMyself;
 	Kopete::Message::MessageDirection execDir;

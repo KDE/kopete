@@ -164,15 +164,15 @@ void IRCServerContact::appendMessage(Kopete::Message &msg)
 {
 	msg.setImportance( Kopete::Message::Low ); //to don't distrub the user
 
-	if( m_msgManager && m_msgManager->view(false) )
-		m_msgManager->appendMessage(msg);
+	if (m_chatSession && m_chatSession->view(false))
+		m_chatSession->appendMessage(msg);
 	else
 		mMsgBuffer.append( msg );
 }
 
 void IRCServerContact::slotDumpMessages()
 {
-	if( !mMsgBuffer.isEmpty() )
+	if (!mMsgBuffer.isEmpty())
 	{
 		manager()->appendMessage( mMsgBuffer.front() );
 		mMsgBuffer.pop_front();
@@ -182,9 +182,9 @@ void IRCServerContact::slotDumpMessages()
 
 void IRCServerContact::slotViewCreated( KopeteView *v )
 {
-	kdDebug(14121) << k_funcinfo << "Created: " << v << ", mgr: " << v->msgManager() << ", Mine: " << m_msgManager << endl;
-	if( m_msgManager && v->msgManager() == m_msgManager )
-		QTimer::singleShot( 500, this, SLOT( slotDumpMessages() ) );
+	kdDebug(14121) << k_funcinfo << "Created: " << v << ", mgr: " << v->msgManager() << ", Mine: " << m_chatSession << endl;
+	if (m_chatSession && v->msgManager() == m_chatSession)
+		QTimer::singleShot(500, this, SLOT(slotDumpMessages()));
 }
 
 #include "ircservercontact.moc"
