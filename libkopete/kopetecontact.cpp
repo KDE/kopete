@@ -76,9 +76,14 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	actionSendFile = KopeteStdAction::sendFile( this,
 		SLOT( sendFile() ), this, "actionSendFile");
 
-	//Need to check this because ourself has no parent
+	// Need to check this because myself() has no parent
 	if( parent )
+	{
+		connect( parent, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
+			protocol, SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
+
 		parent->addContact( this );
+	}
 }
 
 KopeteContact::~KopeteContact()
@@ -90,7 +95,6 @@ void KopeteContact::slotProtocolUnloading()
 {
 	delete this;
 }
-
 
 QString KopeteContact::identityId() const
 {
@@ -307,6 +311,12 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 	m_metaContact->removeChild( this );
 	m->insertChild( this );
 	m_metaContact = m;
+
+	// Reconnect signals to the new meta contact
+	disconnect( old, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
+		protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
+	connect( m_metaContact, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
+		protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
 
 	// Sync groups
 	for( KopeteGroup *group = newGroups.first(); group; group = newGroups.next() )

@@ -84,12 +84,6 @@ void KopeteProtocol::registerContact( KopeteContact *c )
 	m_contacts.insert( c->contactId(), c );
 	QObject::connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
 		SLOT( slotKopeteContactDestroyed( KopeteContact * ) ) );
-
-	if( c->metaContact() )
-	{
-		QObject::connect( c->metaContact(), SIGNAL( aboutToSave( KopeteMetaContact * ) ),
-			this, SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
-	}
 }
 
 void KopeteProtocol::slotKopeteContactDestroyed( KopeteContact *c )
