@@ -546,7 +546,7 @@ void KopeteMetaContact::slotProperyChanged( KopeteContact*, const QString &key,
 	}  // <<<<===  move that  one line before when ready :-)
 }
 
-void KopeteMetaContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
+void KopeteMetaContact::moveToGroup( KopeteGroup *from, KopeteGroup *to, GroupSyncMode syncMode )
 {
 	if ( !from || !d->groups.contains( from ) || ( !isTopLevel() && from->type() == KopeteGroup::TopLevel ) )
 	{
@@ -571,13 +571,16 @@ void KopeteMetaContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
 	d->groups.remove( from );
 	d->groups.append( to );
 
-	for( KopeteContact *c = d->contacts.first(); c ; c = d->contacts.next() )
-		c->syncGroups();
+	if ( syncMode == SyncGroups )
+	{
+		for( KopeteContact *c = d->contacts.first(); c ; c = d->contacts.next() )
+			c->syncGroups();
+	}
 
 	emit movedToGroup( this, from, to );
 }
 
-void KopeteMetaContact::removeFromGroup( KopeteGroup *group )
+void KopeteMetaContact::removeFromGroup( KopeteGroup *group, GroupSyncMode syncMode )
 {
 	if ( !group || !d->groups.contains( group ) || ( !isTopLevel() && group->type() == KopeteGroup::TopLevel ) ||
 		( isTemporary() && group->type() == KopeteGroup::Temporary ) )
@@ -594,13 +597,16 @@ void KopeteMetaContact::removeFromGroup( KopeteGroup *group )
 		emit addedToGroup( this, KopeteGroup::topLevel() );
 	}
 
-	for( KopeteContact *c = d->contacts.first(); c ; c = d->contacts.next() )
-		c->syncGroups();
+	if ( syncMode == SyncGroups )
+	{
+		for( KopeteContact *c = d->contacts.first(); c ; c = d->contacts.next() )
+			c->syncGroups();
+	}
 
 	emit removedFromGroup( this, group );
 }
 
-void KopeteMetaContact::addToGroup( KopeteGroup *to )
+void KopeteMetaContact::addToGroup( KopeteGroup *to, GroupSyncMode syncMode )
 {
 	if ( !to || d->groups.contains( to ) || ( to->type() == KopeteGroup::TopLevel && isTopLevel() ) )
 		return;
@@ -616,8 +622,11 @@ void KopeteMetaContact::addToGroup( KopeteGroup *to )
 
 	d->groups.append( to );
 
-	for( KopeteContact *c = d->contacts.first(); c ; c = d->contacts.next() )
-		c->syncGroups();
+	if ( syncMode == SyncGroups )
+	{
+		for( KopeteContact *c = d->contacts.first(); c ; c = d->contacts.next() )
+			c->syncGroups();
+	}
 
 	emit addedToGroup( this, to );
 }

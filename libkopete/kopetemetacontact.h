@@ -65,6 +65,8 @@ class KopeteMetaContact : public KopetePluginDataObject, public KopeteNotifyData
 	Q_PROPERTY( bool trackChildNameChanges READ trackChildNameChanges WRITE setTrackChildNameChanges )
 
 public:
+	enum GroupSyncMode { SyncGroups, DontSyncGroups };
+
 	KopeteMetaContact();
 	~KopeteMetaContact();
 
@@ -237,17 +239,17 @@ public slots:
 	/**
 	 * @brief Move a contact from one group to another.
 	 */
-	void moveToGroup( KopeteGroup *from, KopeteGroup *to );
+	void moveToGroup( KopeteGroup *from, KopeteGroup *to, GroupSyncMode syncMode = SyncGroups );
 
 	/**
 	 * @brief Remove a contact from one group
 	 */
-	void removeFromGroup( KopeteGroup *from );
+	void removeFromGroup( KopeteGroup *from, GroupSyncMode syncMode = SyncGroups );
 
 	/**
 	 * @brief Add a contact to another group.
 	 */
-	void addToGroup( KopeteGroup *to );
+	void addToGroup( KopeteGroup *to, GroupSyncMode syncMode = SyncGroups );
 
 	/**
 	 * @brief remove the contact from this metacontact
