@@ -829,8 +829,6 @@ void OscarSocket::sendRateAck()
 void OscarSocket::OnBosConnect()
 {
 	kdDebug(14150) << k_funcinfo << "Connected to " << socket()->host() << ", port " << socket()->port() << endl;
-	if (!socket()->setBufferSize(-1, 1024))
-		kdDebug(14150) << k_funcinfo << "Failed setting new buffersize!" << endl;
 }
 
 void OscarSocket::sendPrivacyFlags(void)
