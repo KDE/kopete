@@ -545,12 +545,11 @@ void OscarContact::slotParseUserInfo(const UserInfo &u)
 			emit idleStateChanged(this);
 	}
 
+	// FIXME: UserInfo was a bad idea, invent something clever instead!
+	DWORD oldCaps = mInfo.capabilities;
 	mInfo = u;
-	/*kdDebug(14150) << k_funcinfo << "Contact '" << displayName() <<
-		"', mInfo.sn=" << mInfo.sn << ", u.sn=" << u.sn << endl;
-
-	if(mInfo.capabilities & AIM_CAPS_UTF8)
-		kdDebug(14150) << k_funcinfo << "Contact '" << displayName() << "' announced UTF support!" << endl;*/
+	if(u.capabilities == 0)
+		mInfo.capabilities = oldCaps;
 }
 
 void OscarContact::slotRequestAuth()
@@ -717,7 +716,8 @@ void OscarContact::setAwayMessage(const QString &message)
 		"Called for '" << displayName() << "', away msg='" << message << "'" << endl;
 
 	mAwayMessage = message;
-	setOnlineStatus(onlineStatus(), message);
+	//setOnlineStatus(onlineStatus(), message);
+	setStatusDescription(message);
 
 	emit awayMessageChanged();
 }

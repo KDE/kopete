@@ -211,6 +211,7 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 	/*kdDebug(14190) << k_funcinfo << "Called for '"
 		<< displayName() << "', contactName()=" << contactName() << endl;*/
 
+	/*
 	QString uclass = "";
 	if(u.userclass & CLASS_AWAY)
 		uclass += " AWAY ";
@@ -231,11 +232,18 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 	if(u.userclass & CLASS_UNKNOWN400)
 		uclass += " Active contact ";
 
-	//kdDebug(14190) << k_funcinfo << "decoded userclass=[" << uclass << "]" << endl;
+	kdDebug(14190) << k_funcinfo << "decoded userclass=[" << uclass << "]" << endl;
+	*/
 
 	if(u.userclass & CLASS_AWAY)
 	{
-		//mAccount->engine()->sendLocationInfoRequest(contactName(), 0x0003); // request away message
+		if((this != account()->myself()) &&
+		(account()->myself()->onlineStatus().status() != KopeteOnlineStatus::Connecting))
+		{
+			// TODO: Add queues for away message requests
+			// request away message
+			mAccount->engine()->sendUserLocationInfoRequest(contactName(), AIM_LOCINFO_AWAYMESSAGE);
+		}
 		setStatus(OSCAR_AWAY);
 	}
 	else
@@ -249,9 +257,10 @@ void AIMContact::slotOffgoingBuddy(QString sn)
 	if(tocNormalize(sn) != contactName())
 		return;
 
-	//kdDebug(14190) << k_funcinfo << "Called for '" << displayName() << "'" << endl;
+	/*kdDebug(14190) << k_funcinfo << "Called for '"
+		<< displayName() << "', contactName()=" << contactName() << endl;*/
 
-	setOnlineStatus(mProtocol->statusOffline);
+	setStatus(OSCAR_OFFLINE);
 	slotUpdateBuddy();
 }
 

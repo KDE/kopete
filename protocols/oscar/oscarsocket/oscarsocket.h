@@ -390,7 +390,7 @@ class OscarSocket : public OscarConnection
 		 * @p name is the contact name
 		 * @p type is one of AIM_LOCINFO_* (see oscartypes.h)
 		 */
-		void sendLocationInfoRequest(const QString &name, WORD type);
+		void sendUserLocationInfoRequest(const QString &name, WORD type);
 
 		/** Sends someone a warning */
 		void sendWarning(const QString &target, bool isAnonymous);
@@ -766,9 +766,9 @@ class OscarSocket : public OscarConnection
 		void parseUserOffline(Buffer &);
 
 		/*
-		 * Parses someone's user info
+		 * Parses someone's user info (AIM)
 		 */
-		void parseUserProfile(Buffer &);
+		void parseUserLocationInfo(Buffer &);
 
 		/*
 		 * Handles a redirect

@@ -250,14 +250,12 @@ void OscarAccount::slotReceivedMessage(const QString &sender, OscarMessage &inco
 
 void OscarAccount::slotReceivedAwayMessage(const QString &sender, const QString &message)
 {
-	kdDebug(14150) << k_funcinfo << "account='" << accountId() <<
-		", sender='" << sender << "'" << endl;
+	/*kdDebug(14150) << k_funcinfo << "account='" << accountId() <<
+		", sender='" << sender << "'" << endl;*/
 
 	OscarContact *contact = static_cast<OscarContact*>(contacts()[tocNormalize(sender)]);
 	if(contact)
-	{
 		contact->setAwayMessage(message);
-	}
 }
 
 // Called when a group is added by adding a contact
@@ -747,7 +745,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			{
 				kdDebug(14150) << k_funcinfo <<
 					"Requesting user info for '" << contactId << "'" << endl;
-				engine()->sendLocationInfoRequest(tocNormalize(contactId), AIM_LOCINFO_SHORTINFO);
+				engine()->sendUserLocationInfoRequest(tocNormalize(contactId), AIM_LOCINFO_SHORTINFO);
 			}
 			return true;
 		}

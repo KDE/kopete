@@ -240,7 +240,7 @@ void OscarSocket::parseWarningNotify(Buffer &inbuf)
 		emit gotWarning(newevil,QString::null);
 }
 
-void OscarSocket::sendLocationInfoRequest(const QString &name, WORD type)
+void OscarSocket::sendUserLocationInfoRequest(const QString &name, WORD type)
 {
 	// docs: http://iserverd.khstu.ru/oscar/snac_02_05.html
 	kdDebug(14150) << k_funcinfo <<
@@ -249,12 +249,13 @@ void OscarSocket::sendLocationInfoRequest(const QString &name, WORD type)
 	Buffer outbuf;
 	outbuf.addSnac(0x0002, 0x0005, 0x0000, 0x00000000);
 	outbuf.addWord(type);
-	outbuf.addBUIN(name.latin1());
+	outbuf.addBUIN(name.latin1()); // TODO encoding of aim nicknames?
 	sendBuf(outbuf,0x02);
 }
 
-void OscarSocket::parseUserProfile(Buffer &inbuf)
+void OscarSocket::parseUserLocationInfo(Buffer &inbuf)
 {
+	// SNAC(2,6)
 	// docs: http://iserverd.khstu.ru/oscar/snac_02_06.html
 
 	UserInfo u;
@@ -290,6 +291,7 @@ void OscarSocket::parseUserProfile(Buffer &inbuf)
 			case 0x0004: //away message
 				//kdDebug(14150) << k_funcinfo << "Away message is: " << cur->data << endl;
 				away += QString::fromAscii(cur->data); // aim always seems to use us-ascii encoding
+				emit receivedAwayMessage(u.sn, away);
 				break;
 
 			case 0x0005: //capabilities

@@ -107,7 +107,7 @@ AIMUserInfoDialog::AIMUserInfoDialog(AIMContact *c, AIMAccount *acc, bool modal,
 			userInfoView->setText(i18n("Requesting User Profile, please wait..."));
 
 			// Ask the engine for the profile
-			mAccount->engine()->sendLocationInfoRequest(mContact->contactName(), 0x0005);
+			mAccount->engine()->sendUserLocationInfoRequest(mContact->contactName(), 0x0005);
 		}
 	}
 }

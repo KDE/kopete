@@ -929,7 +929,15 @@ void OscarSocket::requestAwayMessage(OscarContact *c)
 	else if (receiverStatus & ICQ_STATUS_IS_AWAY)	type |= MSG_GET_AWAY;
 	else if (receiverStatus & ICQ_STATUS_IS_FFC)	type |= MSG_GET_FFC;
 
-	sendType2IM(c, "", type);
+	if(!sendType2IM(c, "", type))
+	{
+		// TODO: Post KDE 3.2
+		#if 0
+			emit receivedAwayMessage(c->contactName(), i18n("Client does not support away messages"));
+		#else
+			emit receivedAwayMessage(c->contactName(), "");
+		#endif
+	}
 }
 
 bool OscarSocket::sendType2IM(OscarContact *c, const QString &text, WORD type)
@@ -941,7 +949,8 @@ bool OscarSocket::sendType2IM(OscarContact *c, const QString &text, WORD type)
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"Contact '" << c->displayName() <<
-			"' does not support type-2 messages" << endl;
+			"' does not support type-2 messages" << endl <<
+			"caps are: " << c->userInfo().capabilities << endl;
 		return false;
 	}
 

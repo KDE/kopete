@@ -25,4 +25,9 @@
  */
 //#define CHARSET_DEBUG 1
 
+/*
+ * just spits out parsed capabilities from userinfo blocks
+ * Even end users trying to debug things don't want this one :)
+ */
+// #define OSCAR_CAP_DEBUG 1
 #endif

@@ -333,8 +333,8 @@ void OscarSocket::slotRead()
 						case 0x0003: //locate rights
 							parseLocateRights(inbuf);
 							break;
-						case 0x0006: //user profile
-							parseUserProfile(inbuf);
+						case 0x0006: //user info (AIM)
+							parseUserLocationInfo(inbuf);
 							break;
 						default:
 							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" <<
@@ -2250,6 +2250,10 @@ const DWORD OscarSocket::parseCapabilities(Buffer &inbuf)
 //
 	DWORD capflags = 0;
 
+	#ifdef OSCAR_CAP_DEBUG
+	QString dbgCaps = "CAPS: ";
+	#endif
+
 	while(inbuf.length() >= 0x10)
 	{
 		char *cap;
@@ -2260,67 +2264,69 @@ const DWORD OscarSocket::parseCapabilities(Buffer &inbuf)
 			if (memcmp(&oscar_caps[i].data, cap, 0x10) == 0)
 			{
 				capflags |= oscar_caps[i].flag;
-				/*
+
+				#ifdef OSCAR_CAP_DEBUG
 				switch(oscar_caps[i].flag)
 				{
 					case AIM_CAPS_BUDDYICON:
-						kdDebug(14150) << "AIM_CAPS_BUDDYICON" << endl;
+						dbgCaps += "AIM_CAPS_BUDDYICON ";
 						break;
 					case AIM_CAPS_VOICE:
-						kdDebug(14150) << "AIM_CAPS_VOICE" << endl;
+						dbgCaps += "AIM_CAPS_VOICE ";
 						break;
 					case AIM_CAPS_IMIMAGE:
-						kdDebug(14150) << "AIM_CAPS_IMIMAGE" << endl;
+						dbgCaps += "AIM_CAPS_IMIMAGE ";
 						break;
 					case AIM_CAPS_CHAT:
-						kdDebug(14150) << "AIM_CAPS_CHAT" << endl;
+						dbgCaps += "AIM_CAPS_CHAT ";
 						break;
 					case AIM_CAPS_GETFILE:
-						kdDebug(14150) << "AIM_CAPS_GETFILE" << endl;
+						dbgCaps += "AIM_CAPS_GETFILE ";
 						break;
 					case AIM_CAPS_SENDFILE:
-						kdDebug(14150) << "AIM_CAPS_SENDFILE" << endl;
+						dbgCaps += "AIM_CAPS_SENDFILE ";
 						break;
 					case AIM_CAPS_GAMES2:
 					case AIM_CAPS_GAMES:
-						kdDebug(14150) << "AIM_CAPS_GAMES" << endl;
+						dbgCaps += "AIM_CAPS_GAMES ";
 						break;
 					case AIM_CAPS_SAVESTOCKS:
-						kdDebug(14150) << "AIM_CAPS_SAVESTOCKS" << endl;
+						dbgCaps += "AIM_CAPS_SAVESTOCKS ";
 						break;
 					case AIM_CAPS_SENDBUDDYLIST:
-						kdDebug(14150) << "AIM_CAPS_SENDBUDDYLIST" << endl;
+						dbgCaps += "AIM_CAPS_SENDBUDDYLIST ";
 						break;
 					case AIM_CAPS_ISICQ:
-						kdDebug(14150) << "AIM_CAPS_ISICQ" << endl;
+						dbgCaps += "AIM_CAPS_ISICQ ";
 						break;
 					case AIM_CAPS_APINFO:
-						kdDebug(14150) << "AIM_CAPS_APINFO" << endl;
+						dbgCaps += "AIM_CAPS_APINFO ";
 						break;
 					case AIM_CAPS_RTFMSGS:
-						kdDebug(14150) << "AIM_CAPS_RTFMSGS" << endl;
+						dbgCaps += "AIM_CAPS_RTFMSGS ";
 						break;
 					case AIM_CAPS_EMPTY:
-						kdDebug(14150) << "AIM_CAPS_EMPTY" << endl;
+						dbgCaps += "AIM_CAPS_EMPTY ";
 						break;
 					case AIM_CAPS_ICQSERVERRELAY:
-						kdDebug(14150) << "AIM_CAPS_ICQSERVERRELAY" << endl;
+						dbgCaps += "AIM_CAPS_ICQSERVERRELAY ";
 						break;
 					case AIM_CAPS_IS_2001:
-						kdDebug(14150) << "AIM_CAPS_IS_2001" << endl;
+						dbgCaps += "AIM_CAPS_IS_2001 ";
 						break;
 					case AIM_CAPS_TRILLIANCRYPT:
-						kdDebug(14150) << "AIM_CAPS_TRILLIANCRYPT" << endl;
+						dbgCaps += "AIM_CAPS_TRILLIANCRYPT ";
 						break;
 					case AIM_CAPS_UTF8:
-						kdDebug(14150) << "AIM_CAPS_UTF8" << endl;
+						dbgCaps += "AIM_CAPS_UTF8 ";
 						break;
 					case AIM_CAPS_IS_WEB:
-						kdDebug(14150) << "AIM_CAPS_IS_WEB" << endl;
+						dbgCaps += "AIM_CAPS_IS_WEB ";
 						break;
 					case AIM_CAPS_INTEROPERATE:
-						kdDebug(14150) << "AIM_CAPS_INTEROPERATE" << endl;
+						dbgCaps += "AIM_CAPS_INTEROPERATE ";
 						break;
+
 					default:
 						QString capstring;
 						capstring.sprintf("{%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}",
@@ -2330,12 +2336,16 @@ const DWORD OscarSocket::parseCapabilities(Buffer &inbuf)
 							cap[14], cap[15]);
 						kdDebug(14150) << k_funcinfo << "Unknown Capability: " << capstring << endl;
 				} // END switch
-				*/
+				#endif // OSCAR_CAP_DEBUG
+
 				break;
 			} // END if(memcmp...
 		} // END for...
 		delete [] cap;
 	}
+	#ifdef OSCAR_CAP_DEBUG
+	kdDebug(14150) << k_funcinfo << dbgCaps << endl;
+	#endif
 	return capflags;
 }
 
@@ -2727,7 +2737,7 @@ void OscarSocket::sendLocationInfo(const QString &profile, const unsigned long c
 		static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
 		outbuf.addTLV(0x0001, defencoding.length(), defencoding.latin1());
 		outbuf.addTLV(0x0002, profile.length(), profile.local8Bit());
-		kdDebug(14150) << k_funcinfo << "adding profile=" << profile << endl;
+		//kdDebug(14150) << k_funcinfo << "adding profile=" << profile << endl;
 	}
 
 	for (int i=0; oscar_caps[i].flag != AIM_CAPS_LAST; i++)
@@ -2735,7 +2745,7 @@ void OscarSocket::sendLocationInfo(const QString &profile, const unsigned long c
 		if (oscar_caps[i].flag & sendCaps)
 			capBuf.addString(oscar_caps[i].data, 16);
 	}
-	kdDebug(14150) << k_funcinfo << "adding capabilities, size=" << capBuf.length() << endl;
+	//kdDebug(14150) << k_funcinfo << "adding capabilities, size=" << capBuf.length() << endl;
 	outbuf.addTLV(0x0005, capBuf.length(), capBuf.buffer());
 
 	sendBuf(outbuf,0x02);
