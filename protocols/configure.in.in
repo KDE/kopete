@@ -24,7 +24,7 @@ ac_save_LIBS="$LIBS"
 ac_save_CXXFLAGS="$CXXFLAGS"
 LIBS="$LIBGG_LIBS -lgadu $LIBPTHREAD"
 CFLAGS="$CFLAGS $LIBGG_INCLUDES"
-AC_MSG_CHECKING([libgadu version 1.4rc2 to 1.4 with pthread support])
+AC_MSG_CHECKING([libgadu version 1.4rc2, 1.4, 1.5(rcX) with pthread support])
 	AC_TRY_RUN(
 	[
 	
@@ -44,11 +44,11 @@ AC_MSG_CHECKING([libgadu version 1.4rc2 to 1.4 with pthread support])
 			return 1;
 		}
 
-		if ( min > 4 ){
-			return 1;
+		if ( min == 4 || min == 5 ){
+			return 0;
 		}
 			     
-	    return 0;
+	    return 1;
 #else
 	    return 1;
 #endif
