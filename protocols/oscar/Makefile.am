@@ -1,4 +1,4 @@
-SUBDIRS = ui pixmaps icons oscarsocket data icq aim
+SUBDIRS = . ui pixmaps icons oscarsocket data icq aim
 METASOURCES = AUTO
 AM_CPPFLAGS = -I$(srcdir)/ui \
     -I./ui \
