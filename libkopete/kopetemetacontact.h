@@ -122,6 +122,15 @@ public:
 	void setDisplayName( const QString &name);
 
 	/**
+	 * Get/set the tracking of contact names
+	 * The MetaContact will adjust its displayName() everytime the contact inside changes its name
+	 * This should only work for MCs with exactly ONE contact inside in order to not confuse users
+	 * (think about 4 subcontacts and what happens if one changes nickname...)
+	 */
+	bool trackChildNameChanges() const;
+	void setTrackChildNameChanges(bool track);
+
+	/**
 	 * The groups the contact is stored in
 	 */
 	KopeteGroupList groups() const;

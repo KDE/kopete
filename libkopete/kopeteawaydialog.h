@@ -92,7 +92,7 @@ protected:
 		 * will need to compare it to an enum that you declare
 		 * in your subclass.
      */
-    virtual void setAway(QString awayType){}
+    virtual void setAway(QString /*awayType*/){}
 
     /**
      * This method is called when the user clicks
@@ -106,7 +106,7 @@ protected:
      * if show was called with a parameter, if show() was called
      * instead, this parameter will be the empty string.
      */
-    virtual void cancelAway(QString awayType){}
+    virtual void cancelAway(QString /*awayType*/){}
 
 private:
     /**

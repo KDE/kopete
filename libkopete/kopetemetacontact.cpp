@@ -86,6 +86,13 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 			m_trackChildNameChanges=true;
 		}
 
+		if (m_contacts.count() > 1)
+		{
+			kdDebug(14010) << "[KopeteMetaContact] addContact(); disabling trackChildNameChanges,"
+			" more than ONE Contact in MetaContact" << endl;
+			m_trackChildNameChanges=false;
+		}
+
 	/*	for( QStringList::ConstIterator it = groups.begin(); it != groups.end(); ++it )
 		{
 			addToGroup(*it);
@@ -190,7 +197,6 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 	}
 	updateOnlineStatus();
 }
-
 
 bool KopeteMetaContact::isTopLevel()
 {
@@ -439,7 +445,7 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
 		KopeteProtocol* p = dynamic_cast<KopeteProtocol*>(c->protocol());
 		if (!p)
 		{
-			kdDebug(14010) <<"KopeteMetaContact::slotContactStatusChanged: KopeteContact is not from a valid Protocol" <<endl;
+			kdDebug(14010) <<"[KopeteMetaContact] slotContactStatusChanged(); KopeteContact is not from a valid Protocol" <<endl;
 			return;
 		}
 		if ( !p->isAway() || KopetePrefs::prefs()->soundIfAway() )
@@ -449,8 +455,10 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
 
 void KopeteMetaContact::setDisplayName( const QString &name )
 {
+//	kdDebug(14010) << "[KopeteMetaContact] setDisplayName(); name=" << name <<
+//		", m_trackChildNameChanges=" << m_trackChildNameChanges << "." << endl;
 	m_displayName = name;
-	m_trackChildNameChanges = false;
+//	m_trackChildNameChanges = false;
 	emit displayNameChanged( this, name );
 }
 
@@ -459,13 +467,40 @@ QString KopeteMetaContact::displayName() const
 	return m_displayName;
 }
 
+bool KopeteMetaContact::trackChildNameChanges() const
+{
+	return m_trackChildNameChanges;
+}
+
+void KopeteMetaContact::setTrackChildNameChanges(bool track)
+{
+	if (track && (m_contacts.count() == 1))
+	{
+		kdDebug(14010) << "[KopeteMetaContact] setTrackChildNameChanges(); ENABLING TrackChildNameChanges" << endl;
+		setDisplayName( (m_contacts.first())->displayName() );
+		m_trackChildNameChanges = true;
+	}
+	else
+	{
+		kdDebug(14010) << "[KopeteMetaContact] setTrackChildNameChanges(); DISABLING TrackChildNameChanges" << endl;
+		m_trackChildNameChanges = false;
+	}
+}
+
 void KopeteMetaContact::slotContactNameChanged( const QString &name )
 {
+//	kdDebug(14010) << "[KopeteMetaContact] slotContactNameChanged(); name=" << name <<
+//		", m_trackChildNameChanges=" << m_trackChildNameChanges << "." << endl;
+
 	if( m_trackChildNameChanges )
 	{
 		setDisplayName( name );
-		//because m_trackChildNameChanges is set to flase in setDisplayName
-		m_trackChildNameChanges = true;
+		//because m_trackChildNameChanges is set to false in setDisplayName
+//		m_trackChildNameChanges = true;
+	}
+	else
+	{
+		kdDebug(14010) << "[KopeteMetaContact] slotContactNameChanged(); IGNORED contact namechange. "<< endl;
 	}
 }
 
@@ -554,10 +589,16 @@ QString KopeteMetaContact::toXML()
 {
 	emit aboutToSave(this);
 
+//	kdDebug(14010) << "[KopeteMetaContact] toXML(), m_trackChildNameChanges=" << m_trackChildNameChanges << "." << endl;
+
 	QString xml = "  <meta-contact>\n"
-		"    <display-name>" +
+		"    <display-name trackChildNameChanges=\"" +
+		QString::number(static_cast<int>(m_trackChildNameChanges)) +
+		"\">" +
 		QStyleSheet::escape( m_displayName ) +
 		"</display-name>\n";
+
+//	kdDebug(14010) << "[KopeteMetaContact] toXML(), xml=" << xml << "." << endl;
 
 	// Store groups
 	if ( !m_groups.isEmpty() )
@@ -590,7 +631,7 @@ QString KopeteMetaContact::toXML()
 		   Rare case to prevent bug, if contact has no groups
 		   and it is not at top level it should have been deleted.
 		   But we didn't, so we put it in toplevel to prevent a
-		   hided contact, also for toplevel contacts saved before
+		   hidden contact, also for toplevel contacts saved before
 		   we added the <top-level> tag.
 		*/
 		xml += "    <groups><top-level/></groups>\n";
@@ -646,7 +687,13 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 				if ( contactElement.text().isEmpty() )
 					return false;
 				m_displayName = contactElement.text();
-				m_trackChildNameChanges = false;
+
+				if( contactElement.attribute("trackChildNameChanges","1") == "1")
+					m_trackChildNameChanges = true;
+				else
+					m_trackChildNameChanges = false;
+
+//				m_trackChildNameChanges = false;
 			}
 			else if( contactElement.tagName() == "groups" )
 			{
@@ -699,6 +746,11 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 	connect( LibraryLoader::pluginLoader(), SIGNAL( pluginLoaded(KopetePlugin*) ),
 		this, SLOT( slotPluginLoaded(KopetePlugin*) ) );
 
+	// track changes only works if ONE Contact is inside the MetaContact
+	if (m_contacts.count() > 1)
+		m_trackChildNameChanges=false;
+
+//	kdDebug(14010) << "[KopeteMetaContact] END fromXML(), m_trackChildNameChanges=" << m_trackChildNameChanges << "." << endl;
 	return true;
 }
 
