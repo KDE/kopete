@@ -203,9 +203,6 @@ bool SpellCheckPlugin::eventFilter(QObject *o, QEvent *e)
 
 							t->setCursorPosition(parIdx, txtIdx);
 
-							if( !txtContents.contains( QRegExp(QString::fromLatin1("\\b(%1)\\b").arg(word)) ) )
-								mReplacements.remove( word );
-
 							slotUpdateTextEdit();
 						}
 
@@ -268,6 +265,9 @@ void SpellCheckPlugin::slotUpdateTextEdit()
 		QString plainTextContents = t->text();
 
 		int parIdx = 1, txtIdx = 1;
+		int selParFrom = 1, selTxtFrom = 1, selParTo = 1, selTxtTo = 1;
+
+		t->getSelection(&selParFrom, &selTxtFrom, &selParTo, &selTxtTo);
 		t->getCursorPosition(&parIdx, &txtIdx);
 
 		if( singleSpellCheckerReady )
@@ -297,7 +297,9 @@ void SpellCheckPlugin::slotUpdateTextEdit()
 		t->setText( plainTextContents );
 		t->setTextFormat( QTextEdit::PlainText );
 
-		t->setCursorPosition( parIdx, txtIdx );;
+		t->setCursorPosition( parIdx, txtIdx );
+		if( selParFrom > -1 )
+			t->setSelection( selParFrom, selTxtFrom, selParTo, selTxtTo );
 	}
 }
 
