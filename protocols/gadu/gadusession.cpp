@@ -148,12 +148,12 @@ void
 GaduSession::logoff()
 {
 	if ( session_ ) {
-		gg_logoff( session_ );
 		QObject::disconnect( this, SLOT(checkDescriptor()) );
 		delete read_;
 		delete write_;
 		read_ = 0;
 		write_ = 0;
+		gg_logoff( session_ );
 		gg_free_session( session_ );
 		session_ = 0;
 		emit disconnect();
@@ -199,9 +199,9 @@ GaduSession::sendMessage( uin_t recipient, const QString& msg,
 {
 	if ( isConnected() )
 		return gg_send_message( session_,
-														msgClass,
-														recipient,
-														reinterpret_cast<const unsigned char *>(msg.local8Bit().data()) );
+								msgClass,
+								recipient,
+								reinterpret_cast<const unsigned char *>(msg.local8Bit().data()) );
 	else
 		emit error( i18n("Not Connected..."),
 								i18n("You are not connected to the server!") );
@@ -210,14 +210,14 @@ GaduSession::sendMessage( uin_t recipient, const QString& msg,
 
 int
 GaduSession::sendMessageCtcp( uin_t recipient, const QString& msg,
-															int msgClass )
+								int msgClass )
 {
 	if ( isConnected() )
 		return gg_send_message_ctcp( session_,
-																 msgClass,
-																 recipient,
-																 reinterpret_cast<const unsigned char *>( msg.local8Bit().data() ),
-																 msg.length() );
+								 msgClass,
+								 recipient,
+								 reinterpret_cast<const unsigned char *>( msg.local8Bit().data() ),
+								 msg.length() );
 	else
 		emit error( i18n("Not Connected..."),
 								i18n("You are not connected to the server!") );

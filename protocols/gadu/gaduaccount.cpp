@@ -24,7 +24,7 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const
   : KopeteAccount( parent, accountID, name ), pingTimer_(0)
 {
 
-	
+
 	session_ = new GaduSession( this, "GaduSession" );
 
 	KGlobal::config()->setGroup("Gadu");
@@ -32,10 +32,10 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const
 // Instead of nick i will probably use e-mail
 
         kdDebug()<<"ID = "<< accountId() <<endl;
-	
+
 	myself_ = new GaduContact(  accountId().toInt(),  accountId(), this,
                               new KopeteMetaContact() );
-			      
+
 	initActions();
 	initConnections();
 }
@@ -52,7 +52,7 @@ GaduAccount::initActions()
 	KAction* invisibleAction = new KAction( i18n("Set &Invisible"), "gg_invi", 0, this,
                                           SLOT(slotGoInvisible()), this, "actionGaduConnect" );
 	KAction* descrAction     = new KAction( i18n("Set &Description"), "info", 0, this,
-																					SLOT(slotDescription()), this, "actionGaduDescription" );
+					 SLOT(slotDescription()), this, "actionGaduDescription" );
 
 	actionMenu_ = new KActionMenu( "Gadu-Gadu", this );
 
@@ -68,7 +68,7 @@ GaduAccount::initActions()
 
 //  actionMenu_->insert( new KAction( i18n("Change Password"), "", 0, this,
 //		SLOT(slotChangePassword()), this, "actionChangePassword" ) );
-    
+
 }
 
 void
@@ -98,7 +98,7 @@ GaduAccount::initConnections()
 void GaduAccount::setAway( bool isAway, const QString& awayMessage )
 {
     uint status;
-    
+
     if ( isAway ) {
 	status = (awayMessage.isEmpty()) ? GG_STATUS_BUSY : GG_STATUS_BUSY_DESCR;
 	changeStatus( GaduProtocol::protocol()->convertStatus( status ), awayMessage );
@@ -130,7 +130,7 @@ void GaduAccount::disconnect()
 }
 
 bool GaduAccount::addContactToMetaContact( const QString& contactId, const QString& displayName,
-																					 KopeteMetaContact* parentContact )
+					 KopeteMetaContact* parentContact )
 {
 	uin_t uinNumber = contactId.toUInt();
 
@@ -180,7 +180,7 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
     if (pingTimer_){
 	pingTimer_->stop();
     }
-    
+
   }
 }
 
@@ -296,7 +296,7 @@ void
 GaduAccount::messageReceived( struct gg_event* e )
 {
     GaduContact *c = 0;
-    
+
     kdDebug(14100)<<"####"<<" Great! Message Received :: "<<((const char*)e->event.msg.message)<<endl;
 
     if ( !e->event.msg.message )
@@ -419,7 +419,7 @@ GaduAccount::connectionSucceed( struct gg_event* /*e*/ )
     QObject::connect( cmd, SIGNAL(done(const QStringList&)),
     			SLOT(userlist(const QStringList&)) );
     cmd->execute();
-	
+
     if ( !pingTimer_ ) {
 	pingTimer_ = new QTimer( this );
 	QObject::connect( pingTimer_, SIGNAL(timeout()),
@@ -450,15 +450,15 @@ void
 GaduAccount::slotSessionDisconnect()
 {
     kdDebug(14100)<<"Disconnecting"<<endl;
-	
+
     if (pingTimer_){
 	pingTimer_->stop();
     }
-	
+
     for ( ContactsMap::iterator it = contactsMap_.begin(); it != contactsMap_.end(); ++it) {
 	it.data()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
     }
-    
+
     if ( myself_->onlineStatus().internalStatus() != GG_STATUS_NOT_AVAIL ||
 	 myself_->onlineStatus().internalStatus() != GG_STATUS_NOT_AVAIL_DESCR ){
 
