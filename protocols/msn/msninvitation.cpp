@@ -24,6 +24,7 @@ MSNInvitation::MSNInvitation(bool incoming, const QString &applicationID , const
 	m_applicationId=applicationID;
 	m_applicationName=applicationName;
 	m_cookie= (rand()%(999999))+1;
+	m_state=0;
 }
 
 
@@ -45,6 +46,7 @@ QCString MSNInvitation::unimplemented(long unsigned int cookie)
 
 QString MSNInvitation::invitationHead()
 {
+	setState(Invited);
 	return QString( "MIME-Version: 1.0\r\n"
 					"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
 					"\r\n"
@@ -84,6 +86,15 @@ void MSNInvitation::parseInvitation(const QString& msg)
 		//TODO: parse the code*/
 	}
 //	else if(command=="ACCEPT")
+}
 
+MSNInvitation::State MSNInvitation::state()
+{
+	return m_state;
+}
+
+void MSNInvitation::setState(MSNInvitation::State s)
+{
+	m_state=s;
 }
 

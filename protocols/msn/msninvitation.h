@@ -67,6 +67,7 @@ public:
 	/**
 	 * reimplement this. this is the invitation string used in @ref MSNMessageManager::initInvitation()
 	 * the default implementation return the common begin.
+	 * You can also set the state to Invited (the default implementation do that)
 	 */
 	virtual QString invitationHead();
 
@@ -93,12 +94,29 @@ public:
 	 */
 	virtual void done(MSNInvitation*)=0;
 
+	/**
+	 * This indiquate the state. it is going to be completed later
+	 * - Nothing means than nothing has been done in the invitaiton (nothing has been sent/received)
+	 * - Invited means than the invitaiton has been sent
+	 */
+	enum State { Nothing=0 , Invited=1 };
+	/**
+	 * retrun the current state
+	 */
+	State state();
+	/**
+	 * set the current State
+	 */
+	void setState(State);
+
+
 
 protected:
 	bool m_incoming;
 	long unsigned int m_cookie;
 	QString m_applicationId;
 	QString m_applicationName;
+	State m_state;
 
 
 };

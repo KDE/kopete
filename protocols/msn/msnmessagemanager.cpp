@@ -127,7 +127,7 @@ void MSNMessageManager::slotUserJoined( const QString &handle, const QString &pu
 		c->rename(publicName);
 
 	addContact(c , IRO); // don't show notificaions when we join wesalef
-	if(!m_messagesQueue.empty())
+	if(!m_messagesQueue.empty() || !m_invitations.isEmpty())
 		sendMessageQueue();
 }
 
@@ -297,6 +297,17 @@ void MSNMessageManager::sendMessageQueue()
 		slotMessageSent(*it , this);
 		m_messagesQueue.remove(it);
 	}
+
+
+	QMap<unsigned long int, MSNInvitation*>::Iterator it;
+	for( it = m_invitations.begin(); it != m_invitations.end() ; ++it)
+	{
+		if(! (*it)->incoming() && (*it)->state()<MSNInvitation::Invited)
+		{
+			m_chatService->sendCommand( "MSG" , "N", true, (*it)->invitationHead() );
+			(*it)->setState(MSNInvitation::Invited);
+		}
+	}
 }
 
 void MSNMessageManager::slotAcknowledgement(unsigned int id, bool ack)
@@ -387,8 +398,8 @@ void MSNMessageManager::invitationDone(MSNInvitation* MFTS)
 void MSNMessageManager::sendFile(const QString &fileLocation, const QString &/*fileName*/,
 	long unsigned int fileSize)
 {
-	if(m_chatService)
-	{
+//	if(m_chatService)
+//	{
 		//If the alternate filename is null, then get the filename from the location (FIXME)
 		/*QString theFileName;
 		if( fileName.isNull() ) {
@@ -405,23 +416,23 @@ void MSNMessageManager::sendFile(const QString &fileLocation, const QString &/*f
 		MFTS->setFile(fileLocation, fileSize);
 
 		initInvitation(MFTS);
-	}
+//	}
 }
 
 void MSNMessageManager::initInvitation(MSNInvitation* invitation)
 {
+	connect(invitation->object(), SIGNAL( done(MSNInvitation*) ) , this , SLOT( invitationDone(MSNInvitation*) ));
+	m_invitations.insert( invitation->cookie() , invitation);
+
 	if(m_chatService)
 	{
-		connect(invitation->object(), SIGNAL( done(MSNInvitation*) ) , this , SLOT( invitationDone(MSNInvitation*) ));
-		m_invitations.insert( invitation->cookie() , invitation);
-
 		m_chatService->sendCommand( "MSG" , "N", true, invitation->invitationHead() );
+		invitation->setState(MSNInvitation::Invited);
 	}
 	else
 	{
-		//TODO: connect the switchboard, and add the invitation to a quee
-		//FIXME: show a message box
-		delete invitation;
+		QPtrList<KopeteContact> mb=members();
+		static_cast<MSNAccount*>( account() )->slotStartChatSession( mb.first()->contactId() );
 	}
 }
 
