@@ -105,6 +105,7 @@ OscarSocket::~OscarSocket()
 
 DWORD OscarSocket::setIPv4Address(const QString &address)
 {
+	kdDebug(14150) << "Setting IP address to: " << address << endl;
 	QString a=address.simplifyWhiteSpace();
 
 	QStringList ipv4Addr=QStringList::split(".", a, FALSE);
@@ -130,7 +131,7 @@ DWORD OscarSocket::setIPv4Address(const QString &address)
 
 void OscarSocket::slotConnected()
 {
-	kdDebug(14150) << k_funcinfo <<
+	kdDebug(14150) << k_funcinfo << 
 		"Connected to '" << socket()->host() <<
 		"', port '" << socket()->port() << "'" << endl;
 		
@@ -329,6 +330,7 @@ void OscarSocket::slotRead()
 					switch(s.subtype)
 					{
 						case 0x0001:
+							kdDebug(14150) << k_funcinfo << "SNAC Family 2 error" << endl;
 							parseError(s.family, inbuf);
 							break;
 						case 0x0003: //locate rights
@@ -645,28 +647,28 @@ void OscarSocket::writeData(Buffer &outbuf)
 
 // Logs in the user!
 void OscarSocket::doLogin(
-	const QString &host,
-	int port,
-	const QString &name,
-	const QString &password,
-	const QString &userProfile,
-	const unsigned long initialStatus,
+	const QString &host, int port,
+	const QString &name, const QString &password,
+	const QString &userProfile, const unsigned long initialStatus,
 	const QString &/*awayMessage*/)
 {
+	QString realHost = host;	
+
 	if (isLoggedIn)
 	{
 		kdDebug(14150) << k_funcinfo << "We're already connected, aborting!" << endl;
 		return;
 	}
-	if(host.isEmpty())
+	if(realHost.isEmpty())
 	{
 		kdDebug(14150) << k_funcinfo << " Tried to connect without a hostname!" << endl;
-		return;
+		kdDebug(14150) << k_funcinfo << "Using login.oscar.aol.com" << endl;
+		realHost = QString::fromLatin1("login.oscar.aol.com");
 	}
 	if(port < 1)
 	{
-		kdDebug(14150) << k_funcinfo << " Tried to connect to port < 1!" << endl;
-		return;
+		kdDebug(14150) << k_funcinfo << " Tried to connect to port < 1! Using port 5190" << endl;
+		port = 5190;
 	}
 	if(password.isEmpty())
 	{
@@ -690,7 +692,7 @@ void OscarSocket::doLogin(
 	kdDebug(14150) << k_funcinfo << "emitting statusChanged(OSCAR_CONNECTING)" << endl;
 	emit statusChanged(OSCAR_CONNECTING);
 
-	socket()->setAddress(host, port);
+	socket()->setAddress(realHost, port);
 	socket()->connect();
 }
 
@@ -740,12 +742,6 @@ void OscarSocket::sendCookie()
 	outbuf.addTLV(0x0006, mCookieLength, mCookie);
 	sendBuf(outbuf, 0x01);
 }
-
-/*void OscarSocket::OnServerReady()
-{
-	kdDebug(14150) << k_funcinfo << "What is this? [mETz] ==================" << endl;
-	emit connectionChanged(6,"Authorization successful, getting info from server");
-}*/
 
 void OscarSocket::sendRateInfoRequest(void)
 {
@@ -842,16 +838,16 @@ void OscarSocket::sendRateAck()
 {
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_ACKRATES)" << endl;
 	Buffer outbuf;
-//	outbuf.addSnac(0x0001,0x0008,0x0000,0x00000008);
 	outbuf.addSnac(0x0001,0x0008,0x0000,0x00000000);
 	for (RateClass *rc=rateClasses.first();rc;rc=rateClasses.next())
 	{
-		//kdDebug(14150) << k_funcinfo << "adding classid " << rc->classid << " to RateAck" << endl;
-//		if (rc->classid != 0x0015) //0x0015 is ICQ
-			outbuf.addWord(rc->id());
+		kdDebug(14150) << k_funcinfo << "adding classid " << rc->id() <<
+			 " to the rate acknowledgement" << endl;
+		outbuf.addWord(rc->id());
 	}
 	sendBuf(outbuf,0x02);
-//	emit connectionChanged(7,"Completing login...");
+
+	//request our user info after sending the rate ack
 	requestInfo();
 }
 
@@ -866,6 +862,7 @@ void OscarSocket::sendPrivacyFlags(void)
 	outbuf.addSnac(0x0001,0x0014,0x0000,0x00000000);
 	//bit 1: let others see idle time
 	//bit 2: let other see member since
+	//TODO: Make this configurable
 	outbuf.addDWord(0x00000003);
 	sendBuf(outbuf,0x02);
 }
@@ -965,17 +962,10 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 		mCookie=cook->data;
 		mCookieLength=cook->length;
 		connectToBos();
-//		delete[] cook->data; // DON'T, we have mCookie as a pointer to it and can delete it that way
 	}
 
 	if (sn)
 		delete [] sn->data;
-
-	/*if (email)
-		delete [] email->data;*/
-
-	/*if (regstatus)
-		delete [] regstatus->data;*/
 
 	if (url)
 		delete [] url->data;
@@ -1001,7 +991,6 @@ void OscarSocket::sendClientReady(void)
 	kdDebug(14150) << "SEND (CLI_READY) sending client ready, end of login procedure." << endl;
 
 	Buffer outbuf;
-//	outbuf.addSnac(0x0001,0x0002,0x0000,0x00000002);
 	outbuf.addSnac(0x0001,0x0002,0x0000,0x00000000);
 
 	for (RateClass *rc=rateClasses.first();rc;rc=rateClasses.next())
@@ -1065,8 +1054,8 @@ void OscarSocket::sendVersions(const WORD *families, const int len)
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_FAMILIES)" << endl;
 	WORD val;
 	Buffer outbuf;
-//	outbuf.addSnac(0x0001,0x0017,0x0000,0x00000017);
 	outbuf.addSnac(0x0001,0x0017,0x0000,0x00000000);
+	
 	for(int i=0;i<len;i++)
 	{
 		outbuf.addWord(families[i]);
@@ -1088,7 +1077,7 @@ void OscarSocket::sendVersions(const WORD *families, const int len)
 		outbuf.addWord(val);
 	}
 	sendBuf(outbuf,0x02);
-	//sendRateInfoRequest();
+	
 }
 
 void OscarSocket::sendIdleTime(DWORD time)
@@ -1096,7 +1085,7 @@ void OscarSocket::sendIdleTime(DWORD time)
 	if (!isLoggedIn)
 		return;
 
-	//kdDebug(14150) << k_funcinfo "SEND (CLI_SNAC1_11), sending idle time, time=" << time << endl;
+	kdDebug(14150) << k_funcinfo "SEND (CLI_SNAC1_11), sending idle time, time=" << time << endl;
 	bool newidle = (time!=0);
 	if (newidle != idle) //only do stuff if idle status changed
 	{
@@ -1114,7 +1103,7 @@ void OscarSocket::sendRosterRequest()
 	Buffer outbuf;
 	outbuf.addSnac(0x0013,0x0005,0x0000,0x00000000);
 	outbuf.addDWord(0x00000000); // FIXME: contactlist timestamp
-	outbuf.addWord(0x0000); // FIXME: contactlist length, same as first Word I get in parseRosterData
+	outbuf.addWord(0x0000); // FIXME: contactlist length, same as first Word gotten in parseRosterData
 	sendBuf(outbuf,0x02);
 }
 
@@ -1146,11 +1135,11 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 			ssi->tlvlist = 0L;
 		ssiData.append(ssi);
 
-/*
+
 		kdDebug(14150) << k_funcinfo << "Read server-side list-entry. name='" <<
 			ssi->name << "', groupId=" << ssi->gid << ", id=" << ssi->bid <<
 			", type=" << ssi->type << ", TLV length=" << ssi->tlvlength << endl;
-*/
+
 
 		AIMBuddy *bud;
 		switch (ssi->type)
@@ -1454,17 +1443,17 @@ void OscarSocket::parseServerReady(Buffer &inbuf)
 }
 
 /** parses server version info */
-void OscarSocket::parseServerVersions(Buffer &/*inbuf*/)
+void OscarSocket::parseServerVersions(Buffer &inbuf)
 {
 	kdDebug(14150) << k_funcinfo << "RECV (SRV_FAMILIES2), got list of families this server understands" << endl;
-/*
+
 	int srvFamCount;
 	for (srvFamCount=0; inbuf.length(); srvFamCount++)
 	{
 		kdDebug(14150) << k_funcinfo << "server family=" << inbuf.getWord() <<
 			", server version=" << inbuf.getWord() << endl;
 	}
-*/
+
 	//The versions are not important to us at all
 	//now we can request rates
 	sendRateInfoRequest(); // CLI_RATESREQUEST
@@ -1523,7 +1512,6 @@ void OscarSocket::requestBuddyRights(void)
 {
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_REQBUDDY), Requesting rights for buddy service" << endl;
 	Buffer outbuf;
-//	outbuf.addSnac(0x0003,0x0002,0x0000,0x00000002);
 	outbuf.addSnac(0x0003,0x0002,0x0000,0x00000000);
 	sendBuf(outbuf,0x02);
 }
@@ -1533,7 +1521,6 @@ void OscarSocket::requestMsgRights(void)
 {
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_REQICBM), Requesting rights for ICBM (instant messages)" << endl;
 	Buffer outbuf;
-//	outbuf.addSnac(0x0004,0x0004,0x0000,0x00000004);
 	outbuf.addSnac(0x0004,0x0004,0x0000,0x00000000);
 	sendBuf(outbuf,0x02);
 }
@@ -2935,7 +2922,7 @@ void OscarSocket::sendAddBuddy(const QString &contactName, const QString &groupN
 {
 	SSI *newContact, *group;
 
-	kdDebug(14150) << k_funcinfo << "Sending add buddy" << endl;
+	kdDebug(14150) << k_funcinfo << "Sending SSI add buddy" << endl;
 
 	group = ssiData.findGroup(groupName);
 	if (!group)
@@ -2961,12 +2948,14 @@ void OscarSocket::sendAddBuddy(const QString &contactName, const QString &groupN
 // Gets this user status through BLM service
 void OscarSocket::sendAddBuddylist(const QString &contactName)
 {
+	kdDebug(14150) << k_funcinfo << "Sending BLM add buddy" << endl;
 	QStringList Buddy = contactName;
 	sendBuddylistAdd(Buddy);
 }
 
 void OscarSocket::sendDelBuddylist(const QString &contactName)
 {
+	kdDebug(14150) << k_funcinfo << "Sending BLM del buddy" << endl;
 	QStringList Buddy = contactName;
 	sendBuddylistDel(Buddy);
 }
@@ -3060,7 +3049,7 @@ void OscarSocket::sendChangeBuddyGroup(const QString &buddyName,
 
 void OscarSocket::sendChangeVisibility(BYTE value)
 {
-//	kdDebug(14150) << k_funcinfo << "Setting visibility to " << value << endl;
+	kdDebug(14150) << k_funcinfo << "Setting visibility to " << value << endl;
 
 	// Check to make sure that the group has actually changed
 	SSI *ssi = ssiData.findVisibilitySetting();
@@ -3085,8 +3074,8 @@ void OscarSocket::sendChangeVisibility(BYTE value)
 
 		if(visibility->data[0] == value)
 		{
-			kdDebug(14150) << k_funcinfo <<
-				"Visibility already set to value " << value << ", aborting!" << endl;
+/*			kdDebug(14150) << k_funcinfo <<
+				"Visibility already set to value " << value << ", aborting!" << endl; */
 			return;
 		}
 
@@ -3230,7 +3219,7 @@ void OscarSocket::sendRenameBuddy(const QString &budName,
 
 int OscarSocket::sendAddGroup(const QString &name)
 {
-	kdDebug(14150) << k_funcinfo << "Called." << endl;
+	kdDebug(14150) << k_funcinfo << "Called. Adding group to SSI" << endl;
 
 	SSI *newitem = ssiData.addGroup(name);
 	if(!newitem)
@@ -3257,8 +3246,8 @@ void OscarSocket::sendChangeGroupName(const QString &currentName,
 	if (currentName == newName)
 	{  // Name hasn't changed, don't do anything
 		kdDebug(14150) << k_funcinfo
-					   << "Name not actually changed, doing nothing"
-					   << endl;
+			<< "Name not actually changed, doing nothing"
+			<< endl;
 		return;
 	}
 
@@ -3273,7 +3262,7 @@ void OscarSocket::sendChangeGroupName(const QString &currentName,
 void OscarSocket::sendDelGroup(const QString &groupName)
 {
 	kdDebug(14150) << k_funcinfo
-		<< "Removing group " << groupName << endl;
+		<< "Removing group " << groupName << "from SSI" << endl;
 
 	// Get the SSIData for this operation
 	SSI *delGroup = ssiData.findGroup(groupName);
@@ -3282,7 +3271,7 @@ void OscarSocket::sendDelGroup(const QString &groupName)
 	ssiData.print();
 
 	if (!delGroup)
-	{ // There was an error finding the group
+	{	// There was an error finding the group
 		kdDebug(14150) << "Group with name " << groupName
 			<< " not found" << endl;
 		emit protocolError(
@@ -3292,9 +3281,7 @@ void OscarSocket::sendDelGroup(const QString &groupName)
 	}
 
 	// We found it, print out a debugging statement saying so
-	kdDebug(14150) << k_funcinfo
-				   << "Group found, removing"
-				   << endl;
+	kdDebug(14150) << k_funcinfo << "Group found, removing" << endl;
 	// Send the remove request, which is family 0x0013
 	// subtype 0x000a
 	sendSSIAddModDel(delGroup,0x000a);
@@ -3303,8 +3290,8 @@ void OscarSocket::sendDelGroup(const QString &groupName)
 	// list
 	if (!ssiData.remove(delGroup))
 	{
-		kdDebug(14150) << k_funcinfo
-			<< "delGroup was not found in the SSI list" << endl;
+		kdDebug(14150) << k_funcinfo << delGroup 
+			<< " was not found in the SSI list" << endl;
 	}
 }
 
@@ -3417,9 +3404,7 @@ void OscarSocket::parseSSIAck(Buffer &inbuf, const DWORD reqId)
 		default:
 			kdDebug(14150) << k_funcinfo << "Unknown result " << result << endl;
 	}
-	//there isn't much here...
-	//we just need to signal to send the next item in the ssi queue
-	//emit SSIAck();
+
 }
 
 // Deletes a buddy from the server side contact list
@@ -3486,6 +3471,7 @@ type == 2: accept
 */
 void OscarSocket::sendRendezvous(const QString &/*sn*/, WORD /*type*/, DWORD /*rendezvousType*/, const KFileItem */*finfo*/)
 {
+	kdDebug(14150) << "DISABLED!" << endl;
 #if 0
 	OncomingSocket *sockToUse = serverSocket(rendezvousType);
 	Buffer outbuf;
@@ -3716,7 +3702,6 @@ void OscarSocket::sendInfo()
 	// This is just here to state that we're online
 //	sendStatus(OSCAR_ONLINE); // CLI_SETSTATUS for ICQ, weird away SNAC for AIM
 
-	// FIXME: find a way to send a different status on connect, not only online
 	if(mIsICQ)
 		sendICQStatus(loginStatus);
 
