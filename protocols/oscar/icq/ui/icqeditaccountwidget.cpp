@@ -44,18 +44,17 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	mProtocol = protocol;
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
-	mTop = new KJanusWidget(this, "ICQEditAccountWidget::mTop", KJanusWidget::IconList);
+	mTop = new KJanusWidget(this, "ICQEditAccountWidget::mTop",
+		KJanusWidget::IconList);
 
-	// ----------------------------------------------------------------
+	// ==========================================================================
 
 	QFrame *acc = mTop->addPage(i18n("Account"),
 		i18n("ICQ Account Settings used for connecting to the ICQ Server"));
 	QVBoxLayout *accLay = new QVBoxLayout(acc);
-	mAccountSettings = new OscarEditAccountUI(acc,
+	mAccountSettings = new ICQEditAccountUI(acc,
 		"ICQEditAccountWidget::mAccountSettings");
 	accLay->addWidget(mAccountSettings);
-
-	// ----------------------------------------------------------------
 
 	QFrame *det = mTop->addPage(i18n("Contact Details"),
 		i18n("ICQ Contact Details shown to other users"));
@@ -64,7 +63,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		"ICQEditAccountWidget::mUserInfoSettings");
 	detLay->addWidget(mUserInfoSettings);
 
-	// ----------------------------------------------------------------
+	// ==========================================================================
 
 	mProtocol->initUserinfoWidget(mUserInfoSettings); // fill combos with values
 
@@ -95,7 +94,10 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	mUserInfoSettings->roWrkCountry->hide();
 	mUserInfoSettings->wrkHomepageLabel->hide();
 
-	// ----------------------------------------------------------------
+	connect(mAccountSettings->btnServerDefaults, SIGNAL(clicked()),
+	this, SLOT(slotSetDefaultServer()));
+
+	// ==========================================================================
 
 	// Read in the settings from the account if it exists
 	if(mAccount)
@@ -157,6 +159,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		send->setDisabled(!mAccount->isConnected());
 
 		connect(fetch, SIGNAL(clicked()), this, SLOT(slotFetchInfo()));
+		// TODO: support sending userinfo
 // 		connect(send, SIGNAL(clicked()), this, SLOT(slotSend()));
 		connect(
 			mAccount->myself(), SIGNAL(updatedUserInfo()),
@@ -165,15 +168,11 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	else
 	{
 		// Just set the default saved password to true
+		kdDebug(14200) << k_funcinfo <<
+			"Called with no account object, setting defaults for server and port" << endl;
 		mAccountSettings->chkSavePassword->setChecked(true);
-		mAccountSettings->edtServerAddress->setText(ICQ_SERVER);
-		mAccountSettings->edtServerPort->setValue(ICQ_PORT);
+		slotSetDefaultServer();
 	}
-}
-
-ICQEditAccountWidget::~ICQEditAccountWidget()
-{
-	kdDebug(14200) << k_funcinfo << "Called." << endl;
 }
 
 KopeteAccount *ICQEditAccountWidget::apply()
@@ -196,10 +195,13 @@ KopeteAccount *ICQEditAccountWidget::apply()
 		mAccount->setPassword(QString::null);
 
 	mAccount->setAutoLogin(mAccountSettings->chkAutoLogin->isChecked());
+
 	static_cast<OscarAccount *>(mAccount)->setServerAddress(
 		mAccountSettings->edtServerAddress->text());
+
 	static_cast<OscarAccount *>(mAccount)->setServerPort(
 		mAccountSettings->edtServerPort->value());
+
 	mAccount->setPluginData(mProtocol, "HideIP",
 		QString::number(mAccountSettings->chkHideIP->isChecked()));
 	mAccount->setPluginData(mProtocol, "WebAware",
@@ -241,13 +243,8 @@ bool ICQEditAccountWidget::validateData()
 	kdDebug(14200) << k_funcinfo << "Called." << endl;
 
 	QString userName = mAccountSettings->edtAccountId->text();
-	QString server = mAccountSettings->edtServerAddress->text();
-	int port = mAccountSettings->edtServerPort->value();
 
-	if (userName.contains(" "))
-		return false;
-
-	if (userName.length() < 4)
+	if (userName.contains(" ") || (userName.length() < 4))
 		return false;
 
 	for (unsigned int i=0; i<userName.length(); i++)
@@ -256,10 +253,9 @@ bool ICQEditAccountWidget::validateData()
 			return false;
 	}
 
-	if (port < 1)
-		return false;
+	// No need to check port, min and max values are properly defined in .ui
 
-	if (server.length() < 1)
+	if (mAccountSettings->edtServerAddress->text().isEmpty())
 		return false;
 
 	// Seems good to me
@@ -294,6 +290,13 @@ void ICQEditAccountWidget::slotReadInfo()
 	mProtocol->contactInfo2UserInfoWidget(
 		static_cast<ICQContact *>(mAccount->myself()), mUserInfoSettings, true);
 } // END slotReadInfo()
+
+
+void ICQEditAccountWidget::slotSetDefaultServer()
+{
+	mAccountSettings->edtServerAddress->setText(ICQ_SERVER);
+	mAccountSettings->edtServerPort->setValue(ICQ_PORT);
+}
 
 #include "icqeditaccountwidget.moc"
 // vim: set noet ts=4 sts=4 sw=4:

@@ -591,7 +591,7 @@ void ICQProtocol::contactInfo2UserInfoWidget(ICQContact *c, ICQUserInfoWidget *w
 	}
 
 	// Personal HOMEPAGE ========================================
-	homepage = QString::fromLocal8Bit(c->moreInfo.homepage);
+	homepage = c->moreInfo.homepage;
 	if(editMode)
 	{
 		widget->prsHomepageEdit->setText( homepage );

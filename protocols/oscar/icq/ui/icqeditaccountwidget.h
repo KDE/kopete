@@ -23,7 +23,7 @@
 class KopeteAccount;
 
 class ICQProtocol;
-class OscarEditAccountUI;
+class ICQEditAccountUI;
 class ICQUserInfoWidget;
 class KJanusWidget;
 
@@ -34,7 +34,7 @@ class ICQEditAccountWidget : public QWidget, public EditAccountWidget
 	public:
 		ICQEditAccountWidget(ICQProtocol *, KopeteAccount *,
 			QWidget *parent=0, const char *name=0);
-		virtual ~ICQEditAccountWidget();
+//		virtual ~ICQEditAccountWidget();
 
 		virtual bool validateData();
 		virtual KopeteAccount *apply();
@@ -42,6 +42,7 @@ class ICQEditAccountWidget : public QWidget, public EditAccountWidget
 	private slots:
 		void slotFetchInfo();
 		void slotReadInfo();
+		void slotSetDefaultServer();
 
 	protected:
 		/*
@@ -55,7 +56,7 @@ class ICQEditAccountWidget : public QWidget, public EditAccountWidget
 		/*
 		 * GUI parts
 		 */
-		OscarEditAccountUI *mAccountSettings;
+		ICQEditAccountUI *mAccountSettings;
 		ICQUserInfoWidget *mUserInfoSettings;
 		KJanusWidget *mTop;
 };

@@ -81,6 +81,8 @@ OscarAccount::~OscarAccount()
 
 KopeteContact* OscarAccount::myself() const
 {
+	if(!mMyself)
+		kdDebug(14150) << k_funcinfo << "returning NULL myself() contact!" << endl;
 	return mMyself;
 }
 

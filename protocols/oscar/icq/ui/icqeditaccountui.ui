@@ -1,19 +1,19 @@
 <!DOCTYPE UI><UI version="3.1" stdsetdef="1">
-<class>OscarEditAccountUI</class>
+<class>ICQEditAccountUI</class>
 <widget class="QWidget">
     <property name="name">
-        <cstring>OscarEditAccountUI</cstring>
+        <cstring>ICQEditAccountUI</cstring>
     </property>
     <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>371</width>
-            <height>337</height>
+            <width>347</width>
+            <height>299</height>
         </rect>
     </property>
     <property name="caption">
-        <string>OscarEditAccountUI</string>
+        <string>ICQEditAccountUI</string>
     </property>
     <vbox>
         <property name="name">
@@ -44,7 +44,10 @@
                         <cstring>lblAccountId</cstring>
                     </property>
                     <property name="text">
-                        <string>UIN:</string>
+                        <string>&amp;UIN:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>edtAccountId</cstring>
                     </property>
                 </widget>
                 <widget class="QLabel" row="1" column="0">
@@ -52,7 +55,10 @@
                         <cstring>lblPassword</cstring>
                     </property>
                     <property name="text">
-                        <string>Password:</string>
+                        <string>&amp;Password:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>edtPassword</cstring>
                     </property>
                 </widget>
                 <widget class="QLineEdit" row="1" column="1">
@@ -86,7 +92,7 @@
                         <cstring>chkSavePassword</cstring>
                     </property>
                     <property name="text">
-                        <string>Remember password</string>
+                        <string>&amp;Remember password</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
@@ -94,7 +100,7 @@
                         <cstring>chkAutoLogin</cstring>
                     </property>
                     <property name="text">
-                        <string>Login at startup</string>
+                        <string>&amp;Login at startup</string>
                     </property>
                 </widget>
             </vbox>
@@ -115,7 +121,10 @@
                         <cstring>lblServer</cstring>
                     </property>
                     <property name="text">
-                        <string>Server:</string>
+                        <string>&amp;Server:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>edtServerAddress</cstring>
                     </property>
                 </widget>
                 <widget class="QLineEdit">
@@ -130,6 +139,9 @@
                     <property name="text">
                         <string>Port:</string>
                     </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>edtServerPort</cstring>
+                    </property>
                 </widget>
                 <widget class="QSpinBox">
                     <property name="name">
@@ -142,7 +154,7 @@
                         <number>1</number>
                     </property>
                     <property name="value">
-                        <number>5190</number>
+                        <number>1</number>
                     </property>
                 </widget>
                 <widget class="QPushButton">
@@ -150,7 +162,7 @@
                         <cstring>btnServerDefaults</cstring>
                     </property>
                     <property name="text">
-                        <string>Defaults</string>
+                        <string>&amp;Defaults</string>
                     </property>
                 </widget>
             </hbox>
@@ -160,7 +172,7 @@
                 <cstring>chkHideIP</cstring>
             </property>
             <property name="text">
-                <string>Hide IP</string>
+                <string>&amp;Hide IP</string>
             </property>
         </widget>
         <widget class="QCheckBox">
@@ -168,7 +180,7 @@
                 <cstring>chkWebAware</cstring>
             </property>
             <property name="text">
-                <string>Web Aware</string>
+                <string>&amp;Web Aware</string>
             </property>
         </widget>
         <spacer>
@@ -183,8 +195,8 @@
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>21</width>
-                    <height>50</height>
+                    <width>20</width>
+                    <height>20</height>
                 </size>
             </property>
         </spacer>

@@ -2,8 +2,8 @@
 #ifndef OSCARSOCKET_ICQ_H
 #define OSCARSOCKET_ICQ_H
 
-#define ICQ_SERVER "login.icq.com"
-#define ICQ_PORT 5190
+const QString ICQ_SERVER = "login.icq.com";
+const unsigned int ICQ_PORT = 5190;
 
 // Internal status for the ICQ protocol
 // some are dupliated because setting and getting the status

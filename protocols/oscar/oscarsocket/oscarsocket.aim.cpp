@@ -212,7 +212,7 @@ void OscarSocket::sendAIMAway(bool away, const QString &message)
 	Buffer outbuf;
 	outbuf.addSnac(0x0002,0x0004,0x0000,0x00000000);
 
-	if (away && message)
+	if (away && !message.isEmpty())
 	{ // Check to see that we're sending away
 		static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
 		outbuf.addTLV(0x0003, defencoding.length(), defencoding.latin1());
