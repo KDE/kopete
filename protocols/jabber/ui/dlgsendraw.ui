@@ -83,7 +83,12 @@
                     </item>
                     <item>
                         <property name="text">
-                            <string>Roster Item</string>
+                            <string>Adding a Roster Item</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Deleting a Roster Item</string>
                         </property>
                     </item>
                     <item>

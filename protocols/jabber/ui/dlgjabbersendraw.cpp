@@ -67,6 +67,21 @@ void dlgJabberSendRaw::slotCreateMessage(int index)
 						.arg(mEngine->host())
 						.arg(mEngine->resource()));
 			break;
+		case 5:
+			tePacket->setText(QString("<message to='USER@DOMAIN' from='%1@%2/%3'>\n<subject>Subject</subject><body>Body text</body>\n</message>")
+						.arg(mEngine->user())
+						.arg(mEngine->host())
+						.arg(mEngine->resource()));
+			break;
+		case 6:
+			tePacket->setText("<iq type='set'>\n<query xmlns='jabber:iq:roster'>\n<item name='NAME' jid='USER@DOMAIN'>\n<group>GROUP</group>\n</item>\n</query>\n</iq>");
+			break;
+		case 7:
+			tePacket->setText("<iq type='set'>\n<query xmlns='jabber:iq:roster'>\n<item jid='USER@DOMAIN' subscription='remove'/>\n</query>\n</iq>");
+			break;
+		case 8:
+			tePacket->setText("<presence to='USER@DOMAIN' type='\?\?\?'/>");
+			break;
 		default:
 			tePacket->clear();
 			break;
