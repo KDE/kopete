@@ -180,6 +180,8 @@ QString Buffer::toString() const
 		if (static_cast<unsigned char>(buf[i]) < 0x10)
 			output += "0";
 		output += QString("%1 ").arg(static_cast<unsigned char>(buf[i]),0,16);
+		if ((i>0) && (i % 10 == 0))
+			output += '\n';
 	}
 	return output;
 }

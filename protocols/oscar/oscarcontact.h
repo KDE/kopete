@@ -2,8 +2,7 @@
   oscarcontact.h  -  Oscar Protocol Plugin
 
   Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
-
-  Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+  Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -19,6 +18,7 @@
 #define OSCARCONTACT_H
 
 #include <qwidget.h>
+#include <qdatetime.h>
 #include <kaction.h>
 #include "kopetetransfermanager.h"
 #include "kopetecontact.h"
@@ -39,6 +39,7 @@ class QTimer;
  * Contact for oscar protocol
  * @author Tom Linsky <twl6@po.cwru.edu>
  * @author Chris TenHarmsel <tenharmsel@staticmethod.net>
+ * @author Stefan Gehn <sgehn@gmx.net>
  */
 class OscarContact : public KopeteContact
 {
@@ -60,7 +61,7 @@ class OscarContact : public KopeteContact
 
 		virtual KopeteMessageManager *manager( bool canCreate = false );
 
-		QString contactname() { return mName; };
+		const QString contactname() { return mName; };
 		OscarAccount *account() { return mAccount; };
 
 		/**
@@ -72,12 +73,20 @@ class OscarContact : public KopeteContact
 		/*
 		 * Returns the idle time
 		 */
-		unsigned int idleTime() { return mIdle; }
+		const unsigned int idleTime() { return mIdle; }
+
+		const unsigned long realIP() { return mRealIP; }
+		const unsigned long localIP() { return mLocalIP; }
+		const unsigned int  port() { return mPort; }
+		const unsigned int  fwType() { return mFwType; }
+		const unsigned int  tcpVersion() { return mTcpVersion; }
+		const QDateTime signonTime() { return mSignonTime; }
 
 		/** Sets the idle time
 		 *
 		 */
-		void setIdleTime(unsigned int idleTime);
+//		void setIdleTime(unsigned int idleTime);
+
 
 	public slots:
 		/** Method to delete a contact from the contact list */
@@ -118,8 +127,17 @@ class OscarContact : public KopeteContact
 		void initActions();
 
 	private:
-		/** The contact's idle time */
-		uint mIdle;
+		/*
+		 * stuff filled from UserInfo
+		 */
+		unsigned int mIdle;
+		unsigned long mRealIP;
+		unsigned long mLocalIP;
+		unsigned int  mPort;
+		unsigned int  mFwType;
+		unsigned int  mTcpVersion;
+		QDateTime mSignonTime;
+
 		/** Tells whether or not we have a direct connection with the contact */
 		bool mDirectlyConnected;
 
@@ -171,6 +189,8 @@ class OscarContact : public KopeteContact
 		void slotContactDestroyed( KopeteContact *c );
 		/** Called when a contact from the Kopete contact list has been removed */
 		void slotGroupRemoved( KopeteGroup * );
+
+		void slotParseUserInfo(const UserInfo &);
 };
 
 #endif

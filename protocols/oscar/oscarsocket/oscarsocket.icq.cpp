@@ -169,7 +169,7 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 			BYTE result = fromicqsrv.getLEByte();
 
 			kdDebug(14150) << k_funcinfo << "RECV (SRV_META), subtype=" << type <<
-				 ", result=" << result << endl;
+				 ", result=" << (int)result << endl;
 
 			switch(type)
 			{
@@ -824,11 +824,12 @@ WORD OscarSocket::sendCLI_TOICQSRV(const WORD subcommand, Buffer &data)
 	// usage on the LEWord added some lines under this comment ;)
 	toicqsrv_seq++;
 
-	kdDebug(14150) << k_funcinfo << "snacid=" << snacid << endl;
-	kdDebug(14150) << k_funcinfo << "toicqsrv_seq=" << toicqsrv_seq << endl;
-
 	int tlvLen = 10 + data.getLength();
-	kdDebug(14150) << k_funcinfo << "tlvLen=" << tlvLen << endl;
+
+	kdDebug(14150) << k_funcinfo <<
+		"snacid=" << snacid <<
+		", toicqsrv_seq=" << toicqsrv_seq <<
+		", tlvLen=" << tlvLen << endl;
 
 	outbuf.addWord(0x0001); // TLV(1)
 	outbuf.addWord(tlvLen); // length of TLV, 10 if no data

@@ -21,6 +21,7 @@
 #include "oscarsocket.icq.h"
 
 #include <stdlib.h>
+#include <netinet/in.h> // for htonl()
 
 #include "oscaraccount.h"
 
@@ -1058,9 +1059,10 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 	AIMBuddyList blist;
 
 	inbuf.getByte(); //get fmt version
-	blist.revision = inbuf.getWord(); //gets the contactlist length
+	blist.length = inbuf.getWord(); //gets the contactlist length
 
-	kdDebug(14150) << k_funcinfo << "RECV (SRV_REPLYROSTER) received contactlist, length=" << blist.revision << endl;
+	kdDebug(14150) << k_funcinfo << "RECV (SRV_REPLYROSTER) received contactlist, " <<
+		"length=" << blist.length << endl;
 
 	while(inbuf.getLength() > 4) //the last 4 bytes are the timestamp
 	{
@@ -1076,9 +1078,11 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 				ssi->tlvlist = inbuf.getBlock(ssi->tlvlength);
 		ssiData.append(ssi);
 
-		kdDebug(14150) << k_funcinfo << "Read server-side list-entry. name: " <<
-			ssi->name << ", group: " << ssi->gid << ", id: " << ssi->bid <<
-			", type: " << ssi->type << ", TLV length: " << ssi->tlvlength << endl;
+/*
+		kdDebug(14150) << k_funcinfo << "Read server-side list-entry. name='" <<
+			ssi->name << "', groupId=" << ssi->gid << ", id=" << ssi->bid <<
+			", type=" << ssi->type << ", TLV length=" << ssi->tlvlength << endl;
+*/
 
 		AIMBuddy *bud;
 		switch (ssi->type)
@@ -1091,35 +1095,46 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 				if (group)
 					groupName = group->name();
 
-				kdDebug(14150) << k_funcinfo << "Adding Contact " << ssi->name <<
-					" to group " << ssi->gid << " (" <<  groupName << ")" << endl;
+				kdDebug(14150) << k_funcinfo << "Adding Contact '" << ssi->name <<
+					"' to group " << ssi->gid << " (" <<  groupName << ")" << endl;
 
 				Buffer tmpBuf(ssi->tlvlist, ssi->tlvlength);
 				QPtrList<TLV> lst = tmpBuf.getTLVList();
-				lst.setAutoDelete(TRUE);
+				lst.setAutoDelete(true);
 
-				kdDebug(14150) << k_funcinfo << "Contact entry contained TLVs:" << endl;
 				TLV *t;
 				for(t=lst.first(); t; t=lst.next())
 				{
-					kdDebug(14150) << k_funcinfo <<
-						"TLV(" << t->type << "), length=" << t->length << endl;
-				}
+					switch(t->type)
+					{
+						case 0x0131: // nickname
+							if(t->length > 0)
+								bud->setAlias(QString::fromLocal8Bit(t->data));
+							break;
 
-				TLV *nick = findTLV(lst,0x0131);
-				if(nick && nick->length > 0)
-					bud->setAlias(QString::fromLatin1(nick->data));
+						case 0x0066: // waitauth flag
+							kdDebug(14150) << k_funcinfo <<
+								"Contact has WAITAUTH set." << endl;
+							break;
 
-				TLV *auth = findTLV(lst,0x0066);
-				if(auth)
-				{
-					kdDebug(14150) << k_funcinfo <<
-						"Contact has WAITAUTH set." <<
-						"Might be possible he never appears as online!" << endl;
-				}
+						default:
+							kdDebug(14150) << k_funcinfo <<
+								"UNKNOWN TLV(" << t->type << "), length=" << t->length << endl;
+							QString tmpStr;
+							for (unsigned int dc=0; dc < t->length; dc++)
+							{
+								if (static_cast<unsigned char>(t->data[dc]) < 0x10)
+									tmpStr += "0";
+								tmpStr += QString("%1 ").arg(static_cast<unsigned char>(t->data[dc]),0,16);
+								if ((dc>0) && (dc % 10 == 0))
+									tmpStr += QString("\n");
+							}
+							kdDebug(14150) << k_funcinfo << tmpStr << endl;
+							break;
+					} // END switch()
+				} // END for()
 
 				lst.clear();
-
 				blist.addBuddy(bud);
 				break;
 			}
@@ -1138,8 +1153,13 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 						"TLV(" << t->type << "), length=" << t->length << endl;
 				}
 */
+
 				if (namelen) //if it's not the master group
+				{
+					kdDebug(14150) << k_funcinfo << "Adding Group " <<
+						ssi->gid << " (" <<  ssi->name << ")" << endl;
 					blist.addGroup(ssi->gid, ssi->name);
+				}
 				break;
 			}
 
@@ -1150,8 +1170,7 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 			{
 				bud = new AIMBuddy(ssi->bid, ssi->gid, ssi->name);
 				kdDebug(14150) << k_funcinfo << "Adding Contact '" << ssi->name <<
-					"' to deny list." << endl;
-
+					"' to DENY list." << endl;
 				blist.addBuddyDeny(bud);
 				emit denyAdded(ssi->name);
 				break;
@@ -1205,7 +1224,11 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 			} // END 0x0004
 
 			case 0x000e: // TODO contact on ignore list
+			{
+				kdDebug(14150) << k_funcinfo << "TODO: add Contact '" << ssi->name <<
+					"' to IGNORE list." << endl;
 				break;
+			}
 		} // END switch (ssi->type)
 
 		if (name)
@@ -1778,6 +1801,11 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 	u.onlinesince = 0;
 	u.idletime = 0;
 	u.sessionlen = 0;
+	u.localip = 0;
+	u.realip = 0;
+	u.port = 0;
+	u.fwType = 0;
+	u.version = 0;
 
 	//Do some sanity checking on the length of the buffer
 	if(inbuf.getLength() > 0)
@@ -1815,6 +1843,8 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 				{
 					u.membersince = (DWORD) (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
 							| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
+					kdDebug(14150) << k_funcinfo <<
+						"TLV(2) membersince=" << u.membersince << endl;
 					break;
 				}
 				case 0x0003: //online since
@@ -1829,7 +1859,14 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 					break;
 				}
 				case 0x0005: // unknown time
+				{
+					u.membersince = (DWORD) (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
+							| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
+
+					kdDebug(14150) << k_funcinfo <<
+						"TLV(5) membersince=" << u.membersince << endl;
 					break;
+				}
 				case 0x0006:
 				{
 					Buffer tmpBuf(t.data,t.length);
@@ -1853,12 +1890,19 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 				}
 				case 0x000a: // IP in a DWORD
 				{
-//					kdDebug(14150) << "TLV(10) [IP] data="<< t.data << endl;
+					Buffer tmpBuf(t.data,t.length);
+					u.realip = htonl(tmpBuf.getDWord());
 					break;
 				}
 				case 0x000c: // CLI2CLI
 				{
 //					kdDebug(14150) << "TLV(12) [CLI2CLI] data left unparsed (TODO)" << endl;
+					Buffer tmpBuf(t.data,t.length);
+					u.localip = htonl (tmpBuf.getDWord());
+					u.port = tmpBuf.getDWord();
+					u.fwType = (int)tmpBuf.getWord();
+					u.version = tmpBuf.getWord();
+					// ignore the rest of the packet for now
 					break;
 				}
 				case 0x000d: //capability info
@@ -1873,13 +1917,8 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 					kdDebug(14150) << k_funcinfo << "TLV(13) [CAPABILITIES], " << capstring << endl;*/
 					break;
 				}
-				case 0x000f: //session length (in seconds)
-				{
-					u.sessionlen = (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
-							| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
-					break;
-				}
-				case 0x0010: //session length (for AOL users)
+				case 0x0010: //session length (for AOL users, in seconds)
+				case 0x000f: //session length (for AIM users, in seconds)
 				{
 					u.sessionlen = (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
 							| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
@@ -1906,10 +1945,9 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 		u.userclass = -1;
 		u.membersince = 1;
 		u.onlinesince = 1;
-		u.idletime = -1;
+		u.idletime = 0;
 		u.sessionlen = -1;
 	}
-
 	return u;
 }
 
@@ -1927,12 +1965,15 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 		return;
 	}
 
-	kdDebug(14150) << k_funcinfo << "Sending '" << message << "' to '" << dest << "'" << endl;
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_SENDMSG), msg='" << message <<
+		"' to '" << dest << "'" << endl;
+
 //	static const char deffeatures[] = { 0x01, 0x01, 0x01, 0x02 };
 	static const char deffeatures[] = { 0x01 };
 
 	Buffer outbuf;
 	outbuf.addSnac(0x0004,0x0006,0x0000,0x00000000);
+
 
 	for (int i=0;i<8;i++) //generate random message cookie (MID, message ID)
 		outbuf.addByte( (BYTE) rand());

@@ -54,7 +54,7 @@ private slots:
 	void slotGotMiniType(QString screenName, int type);
 	void slotTyping(bool typing);
 	/** Called when a buddy has changed status */
-	void slotContactChanged(UserInfo u);
+	void slotContactChanged(const UserInfo &);
 	/** Called when a buddy is offgoing */
 	void slotOffgoingBuddy(QString sn);
 	/** Called when we want to send a message */

@@ -21,8 +21,11 @@
 
 #include "icquserinfo.h"
 
+#include <netinet/in.h> // for ntohl()
+
 #include <qcombobox.h>
 #include <qhostaddress.h>
+#include <qdatetime.h>
 #include <qspinbox.h>
 #include <qtextedit.h>
 
@@ -468,22 +471,22 @@ void ICQUserInfo::slotReadInfo()
 	enableButton(User2,true);
 
 	QString homepage;
-/*
-//	if ( !mEditable ) // no idea how to get ip for ourselves
-	{
-		QHostAddress mIP;
-		QHostAddress mRealIP;
 
-		mIP = ntohl ( static_cast<unsigned long>(mUser->IP) );
-		mRealIP = ntohl ( static_cast<unsigned long>(mUser->RealIP) );
-		unsigned short mPort = mUser->Port;
+	if(!mEditable) // no idea how to get ip for ourselves
+	{
+		QHostAddress mIP(ntohl(mContact->localIP()));
+		QHostAddress mRealIP(ntohl(mContact->realIP()));
+		unsigned short mPort = mContact->port();
 
 		if ( !(mIP == mRealIP) && !(mRealIP == QHostAddress()) )
 			mMainWidget->roIPAddress->setText( QString("%1 (%2:%3)").arg(mIP.toString()).arg(mRealIP.toString()).arg(mPort) );
 		else
 			mMainWidget->roIPAddress->setText( QString("%1:%2").arg(mIP.toString()).arg(mPort) );
 	}
-*/
+
+	if(mContact->signonTime().isValid())
+		mMainWidget->roSignonTime->setText(mContact->signonTime().toString(Qt::LocalDate));
+
 	mMainWidget->rwNickName->setText(mContact->generalInfo.nickName);
 	mMainWidget->rwAlias->setText(mContact->displayName());
 	mMainWidget->rwFirstName->setText(mContact->generalInfo.firstName);
@@ -754,6 +757,8 @@ void ICQUserInfo::setEditable(bool e)
 	mMainWidget->wrkStateEdit->setReadOnly ( !e );
 	mMainWidget->wrkZipcodeEdit->setReadOnly ( !e );
 	mMainWidget->wrkAddressEdit->setReadOnly ( !e );
+
+	mMainWidget->rwAboutUser->setReadOnly ( !e );
 
 	if(e)
 	{

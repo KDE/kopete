@@ -2,6 +2,7 @@
   oscaraccount.cpp  -  Oscar Account Class
 
   Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
+  Copyright (c) 2002 by Chris TenHarmsel <tenharmsel@staticmethod.net>
   Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
@@ -12,7 +13,7 @@
   * (at your option) any later version.                                   *
   *                                                                       *
   *************************************************************************
-  */
+*/
 
 #include "oscaraccount.h"
 #include <qapplication.h>
@@ -63,6 +64,11 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 	// Create the internal buddy list for this account
 	// TODO: make this an internal list of KopeteGroup and Kopete-/OscarContact
 	mInternalBuddyList = new AIMBuddyList(this, "mInternalBuddyList");
+	mInternalBuddyList->timestamp = pluginData(protocol(), "ServerSideList Timestamp").toInt();
+	mInternalBuddyList->length = pluginData(protocol(), "ServerSideList Length").toInt();
+
+	kdDebug(14150) << "UNUSED! Loading server-side contactlist info, timestamp =" <<
+		mInternalBuddyList->timestamp << ", length=" << mInternalBuddyList->length << endl;
 
 	initSignals();
 }
@@ -168,7 +174,7 @@ void OscarAccount::initSignals()
 		KopeteContactList::contactList(), SIGNAL(groupAdded(KopeteGroup *)),
 		this, SLOT(slotGroupAdded(KopeteGroup *)));
 
-	// Status changed (I think my own status)
+	// own status changed
 	QObject::connect(
 		getEngine(), SIGNAL(statusChanged(const unsigned int)),
 		this, SLOT(slotOurStatusChanged(const unsigned int)));
@@ -359,6 +365,13 @@ void OscarAccount::slotGotServerBuddyList(AIMBuddyList &buddyList)
 		if ((*it))
 			addServerContact((*it)); // Add the server contact to Kopete list
 	}
+
+	kdDebug(14150) << k_funcinfo << "setting plugindata, " <<
+		"list timestamp=" << buddyList.timestamp <<
+		", list length=" << buddyList.length << endl;
+
+	setPluginData(protocol(), "ServerSideList Timestamp", QString::number(buddyList.timestamp));
+	setPluginData(protocol(), "ServerSideList Length", QString::number(buddyList.length));
 }
 
 void OscarAccount::addServerContact(AIMBuddy *buddy)
@@ -385,8 +398,8 @@ void OscarAccount::addServerContact(AIMBuddy *buddy)
 		// Contact existed in the list already, sync information
 		// FIXME: is this needed? won't work anymore as AIMBuddy doesn't return a KOS on status()!
 //		contact->setOnlineStatus( buddy->status() );
-		kdDebug(14150) << k_funcinfo <<
-			"serverside contact already in kopete, his status=" << buddy->status() << endl;
+// 		kdDebug(14150) << k_funcinfo <<
+// 			"serverside contact already in kopete, his status=" << buddy->status() << endl;
 		if(contact->displayName()!=nick)
 			contact->rename(nick);
 		contact->syncGroups();
@@ -399,7 +412,9 @@ void OscarAccount::addServerContact(AIMBuddy *buddy)
 		AIMGroup *aimGroup = mInternalBuddyList->findGroup(buddy->groupID());
 		if (aimGroup)
 		{
-			kdDebug(14150) << k_funcinfo << "Found its group on server" << endl;
+			kdDebug(14150) << k_funcinfo << "Found its group on server, groupname=" <<
+				aimGroup->name() << endl;
+
 			// If the group exists in the internal list
 			// Add contact to the kopete contact list, with no metacontact
 			// which creates a new one. This will also call the
@@ -415,7 +430,6 @@ void OscarAccount::addServerContact(AIMBuddy *buddy)
 			// May have to do something here in the future
 		}
 	}
-	return;
 }
 
 void OscarAccount::slotGotDirectIMRequest(QString sn)
@@ -490,11 +504,13 @@ AIMBuddyList *OscarAccount::internalBuddyList()
 
 void OscarAccount::setServer( QString server )
 {
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
 	setPluginData(protocol(), "Server", server);
 }
 
 void OscarAccount::setPort( int port )
 {
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
 	if (port>0)// Do a little error checkin on it
 		setPluginData(protocol(), "Port", QString::number( port ));
 }
@@ -545,10 +561,9 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 		kdDebug(14150) << k_funcinfo << "Found buddy internally, just make"
 				<< " a new OscarContact subclass for it." << endl;
 		// Create an OscarContact for the metacontact
-		if ( OscarContact* newContact = createNewContact( contactId, displayName, parentContact ) )
+		if(OscarContact* newContact = createNewContact(contactId, displayName, parentContact))
 		{
 			// Set the oscar contact's status
-			// FIXME: need to resolve this odd internal status
 			newContact->setStatus(internalBuddy->status());
 			return true;
 		}
@@ -640,24 +655,18 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 		}
 		else
 		{
-			kdDebug(14150) << "Temporary new contact, only adding him to "
-						   << "local list" << endl;
+			kdDebug(14150) << "Temporary new contact, only adding him to local list" << endl;
 			// This is a temporary contact, so don't add it to the server list
 			// Create the contact, which adds it to the parent contact
-			if ( OscarContact* newContact = createNewContact( contactId, displayName, parentContact ) )
+			if(createNewContact(contactId, displayName, parentContact))
 			{
-				// Add it to the kopete contact list, I think this is done in
-				// KopeteAccount::addContact
-				//KopeteContactList::contactList()->addMetaContact(parentContact);
-
 				// Set it's initial status
 				// This requests the buddy's info from the server
 				// I'm not sure what it does if they're offline, but there
 				// is code in oscarcontact to handle the signal from
 				// the engine that this causes
-				kdDebug(14150) << "[OscarAccount: " << accountId()
-							<< "] Requesting user info for " << contactId
-							<< endl;
+				kdDebug(14150) << k_funcinfo <<
+					"Requesting user info for '" << contactId << "'" << endl;
 				getEngine()->sendUserProfileRequest(tocNormalize(contactId));
 				return true;
 			}
@@ -671,19 +680,20 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 void OscarAccount::slotOurStatusChanged(const unsigned int newStatus)
 {
 	kdDebug(14150) << k_funcinfo << "Called; newStatus=" << newStatus << endl;
-
 	mMyself->setStatus(newStatus);
 }
 
-
 void OscarAccount::slotReTryServerContacts()
 {
-	kdDebug(14150) << "[OscarProtocol] slotReTryServerContacts iteration... mGroupQueue.count() is " << mGroupQueue.count() << endl;
+	kdDebug(14150) << k_funcinfo << "Called, mGroupQueue.count()=" <<
+		mGroupQueue.count() << endl;
+
 	// Process the queue
 	int i = 0;
 	for (AIMBuddy *it = mGroupQueue.at(i); it != 0L; it = mGroupQueue.at( ++i ))
 	{
-		if (mInternalBuddyList->findGroup(it->groupID())) // Success, group now exists, add contact
+		// Success, group now exists, add contact
+		if (mInternalBuddyList->findGroup(it->groupID()))
 		{
 			mGroupQueue.remove(i);
 			addOldContact(it);
@@ -694,61 +704,66 @@ void OscarAccount::slotReTryServerContacts()
 // Adds a contact that we already know about to the list
 void OscarAccount::addOldContact(AIMBuddy *bud,KopeteMetaContact *meta)
 {
-		bool temporary = false;
-		AIMGroup *group = mInternalBuddyList->findGroup(bud->groupID());
-		if (!group && bud)
-		{
-			kdDebug(14150) << "[OscarProtocol] Adding AIMBuddy 'bug' to the groupQueue to check later once we know about the group." << endl;
-			mGroupQueue.append(bud);
-			return;
-		}
+	bool temporary = false;
 
-		mInternalBuddyList->addBuddy(bud);
-		if ( !mInternalBuddyList->findBuddy(bud->screenname()) ) return;
+	AIMGroup *group = mInternalBuddyList->findGroup(bud->groupID());
+	if (!group && bud)
+	{
+		kdDebug(14150) << k_funcinfo <<
+			"Adding AIMBuddy '" << bud->ID() << "' to groupQueue " <<
+			"to check later once we know about the group." << endl;
+		mGroupQueue.append(bud);
+		return;
+	}
 
-		if (group->name().isNull())
-			temporary = true;
+	mInternalBuddyList->addBuddy(bud);
+	if(!mInternalBuddyList->findBuddy(bud->screenname()) ) return;
 
-		kdDebug(14150) << "[OscarProtocol] addOldContact(); groupName is " << group->name() << endl;
+	if (group->name().isNull())
+		temporary = true;
 
-		KopeteMetaContact *m = KopeteContactList::contactList()->findContact( protocol()->pluginId(), accountId(), bud->screenname() );
+	kdDebug(14150) << k_funcinfo << "Called, groupName=" << group->name() << endl;
 
-		kdDebug(14150) << "[OscarProtocol] addOldContact(), KopeteMetaContact m=" << m << endl;
+	KopeteMetaContact *m = KopeteContactList::contactList()->findContact(
+		protocol()->pluginId(), accountId(), bud->screenname());
 
-		if( m )
-		{
-				// Existing contact, update data that is ALREADY in the LOCAL database for AIM
-				if (m->isTemporary())
-						m->setTemporary(false);
-		}
+	kdDebug(14150) << k_funcinfo << "KopeteMetaContact m=" << m << endl;
+
+	if(m)
+	{
+		// Existing contact, update data that is ALREADY in the LOCAL database for AIM
+		if (m->isTemporary())
+			m->setTemporary(false);
+	}
+	else
+	{
+		// New contact
+		kdDebug(14150) << k_funcinfo << "Adding old contact '" <<
+			bud->screenname() << "'" << endl;
+
+		if(meta)
+			m=meta;
 		else
 		{
-				// New contact
-				kdDebug(14150) << "[OscarProtocol] Adding old contact " << bud->screenname() << " ..." << endl;
-
-				if ( meta )
-						m=meta;
-				else
-				{
-					m=new KopeteMetaContact();
-					if( !temporary )
-						m->addToGroup( KopeteContactList::contactList()->getGroup(group->name()) );
-				}
-
-				if (temporary)
-					m->setTemporary(true);
-
-				QString nick;
-				if( !bud->alias().isEmpty() )
-					nick = bud->alias();
-				else
-					nick = bud->screenname();
-
-				createNewContact( bud->screenname(), nick, m );
-
-				if (!meta)
-					KopeteContactList::contactList()->addMetaContact(m);
+			m=new KopeteMetaContact();
+			if( !temporary )
+				m->addToGroup( KopeteContactList::contactList()->getGroup(group->name()) );
 		}
+
+		if (temporary)
+			m->setTemporary(true);
+
+		QString nick;
+		if( !bud->alias().isEmpty() )
+			nick = bud->alias();
+		else
+			nick = bud->screenname();
+
+		createNewContact( bud->screenname(), nick, m );
+
+		if (!meta)
+			KopeteContactList::contactList()->addMetaContact(m);
+	}
 }
 
 #include "oscaraccount.moc"

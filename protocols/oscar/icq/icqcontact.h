@@ -89,7 +89,7 @@ class ICQContact : public OscarContact
 		/** Called when the userinfo dialog is getting closed */
 		void slotCloseUserInfoDialog();
 		/** Called when a buddy has changed status */
-		void slotContactChanged(UserInfo u);
+		void slotContactChanged(const UserInfo &u);
 
 		/** Called when a buddy is offgoing */
 		void slotOffgoingBuddy(QString sn);

@@ -2,7 +2,6 @@
   oscarcontact.cpp  -  Oscar Protocol Plugin
 
   Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
-
   Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
@@ -60,6 +59,12 @@ OscarContact::OscarContact(const QString name, const QString displayName,
 	mName = tocNormalize(name); // We store normalized names (lowercase no spaces)
 	mMsgManager = 0L;
 	mIdle = 0;
+	mRealIP = 0;
+	mLocalIP = 0;
+	mPort = 0;
+	mFwType = 0;
+	mTcpVersion = 0;
+
 	mListContact = mAccount->internalBuddyList()->findBuddy(mName); // TODO: get rid of AIMBuddy
 
 	if (!mListContact) // this Contact is not yet in the internal contactlist!
@@ -92,6 +97,10 @@ void OscarContact::initSignals()
 	QObject::connect(
 		mAccount->getEngine(), SIGNAL(statusChanged(const unsigned int)),
 		this, SLOT(slotMainStatusChanged(const unsigned int)));
+
+	QObject::connect(
+		mAccount->getEngine(), SIGNAL(gotBuddyChange(const UserInfo &)),
+		this, SLOT(slotParseUserInfo(const UserInfo &)));
 	// Got IM
 /*
 	QObject::connect(
@@ -213,21 +222,22 @@ void OscarContact::slotUpdateBuddy()
 	}
 }
 
-void OscarContact::setIdleTime(unsigned int idleTime)
+/*void OscarContact::setIdleTime(unsigned int idleTime)
 {
 	if(idleTime == mIdle)
 		return;
 
-/*	kdDebug(14150) << k_funcinfo << "Contact '" << displayName() <<
-		"' idletime is now " << mIdle << " minutes." << endl;*/
+// 	kdDebug(14150) << k_funcinfo << "Contact '" << displayName() <<
+// 		"' idletime is now " << mIdle << " minutes." << endl;
 
-	if(mIdle > 0 /*mListContact->idleTime() > 0*/)
+	if(mIdle > 0)
 		setIdleState(Idle);
 	else // we are not idling anymore
 		setIdleState(Active);
 
 	mIdle = idleTime;
 }
+*/
 
 void OscarContact::slotMainStatusChanged(const unsigned int newStatus)
 {
@@ -523,6 +533,20 @@ void OscarContact::rename(const QString &newNick)
 
 	mListContact->setAlias(newNick);
 	setDisplayName(newNick);
+}
+
+void OscarContact::slotParseUserInfo(const UserInfo &u)
+{
+	if(tocNormalize(u.sn) != tocNormalize(mName))
+		return;
+
+	mRealIP = u.realip;
+	mLocalIP = u.localip;
+	mPort = u.port;
+	mFwType = u.fwType;
+	mTcpVersion = u.version;
+	mIdle = u.idletime;
+	mSignonTime.setTime_t(u.onlinesince);
 }
 
 #include "oscarcontact.moc"

@@ -38,8 +38,8 @@ AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount
 
 	// Buddy Changed
 	QObject::connect(
-		account->getEngine(), SIGNAL(gotBuddyChange(UserInfo)),
-		this, SLOT(slotContactChanged(UserInfo)));
+		account->getEngine(), SIGNAL(gotBuddyChange(const UserInfo &)),
+		this, SLOT(slotContactChanged(const UserInfo &)));
 	// Received IM
 	QObject::connect(
 		account->getEngine(), SIGNAL(gotIM(QString,QString,bool)),
@@ -108,7 +108,7 @@ void AIMContact::setStatus(const unsigned int newStatus)
 			setOnlineStatus(mProtocol->statusOnline);
 	}
 
-	kdDebug(14200) << k_funcinfo << "'" << displayName() << "' is now " <<
+	kdDebug(14190) << k_funcinfo << "'" << displayName() << "' is now " <<
 		onlineStatus().description() << endl;
 }
 
@@ -125,9 +125,7 @@ void AIMContact::slotGotMiniType(QString screenName, int type)
 	//TODO
 	// Check to see if it's us
 	if(tocNormalize(screenName) != tocNormalize(mName))
-	{ // It's not us, so just return
 		return;
-	}
 
 	kdDebug(14190) << k_funcinfo << "Got minitype notification for " << mName << endl;
 
@@ -153,29 +151,30 @@ void AIMContact::slotGotMiniType(QString screenName, int type)
 	}
 }
 
-void AIMContact::slotContactChanged(UserInfo u)
+void AIMContact::slotContactChanged(const UserInfo &u)
 {
-	if (u.sn != contactname())
+	if (tocNormalize(u.sn) != tocNormalize(contactname()))
 		return; //this is not this contact
 
-	setStatus( u.icqextstatus );
+// 	kdDebug(14190) << k_funcinfo << "Called for '"
+// 		<< displayName() << "', userclass=" << u.userclass << endl;
 
-	kdDebug(14190) << k_funcinfo << "[AIMContact] Setting status for " << u.sn <<
-		" to " << onlineStatus().description() << endl;
+	if(u.userclass & USERCLASS_AWAY)
+		setStatus(OSCAR_AWAY);
+	else
+		setStatus(OSCAR_ONLINE);
 
-	//FIXME: move these to OscarContact, goal is to get rid of AIMBuddy
-//	mListContact->setEvil( u.evil );
-	setIdleTime(u.idletime);
-//	mListContact->setSignOnTime( u.onlinesince );
 	slotUpdateBuddy();
 }
 
 void AIMContact::slotOffgoingBuddy(QString sn)
 {
-	if(sn != contactname())
+	if(tocNormalize(sn) != contactname())
 		return;
 
-	setOnlineStatus( mProtocol->statusOffline);
+	kdDebug(14190) << k_funcinfo << "Called for '" << displayName() << "'" << endl;
+
+	setOnlineStatus(mProtocol->statusOffline);
 	slotUpdateBuddy();
 }
 

@@ -59,7 +59,7 @@ class AIMAccount : public OscarAccount
 	protected slots:
 		/** Called when we have been warned */
 		void slotGotWarning(int newlevel, QString warner);
-		void slotGotMyUserInfo(UserInfo newInfo);
+		void slotGotMyUserInfo(UserInfo &);
 
 	protected:
 		void initSignals();

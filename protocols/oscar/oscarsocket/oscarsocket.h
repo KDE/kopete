@@ -56,18 +56,24 @@ struct RateClass
 	 QPtrList<SnacPair> members;
 };
 
-struct UserInfo
-{ //user info
-	 QString sn;
-	 int evil;
-	 int userclass;
-	 unsigned long membersince;
-	 unsigned long onlinesince;
-	 long capabilities;
-	 long sessionlen;
-	 int idletime;
+class UserInfo
+{
+	public:
+		QString sn;
+		int evil;
+		int userclass;
+		unsigned long membersince;
+		unsigned long onlinesince;
+		long capabilities;
+		long sessionlen;
+		unsigned int idletime;
+		unsigned long realip;
+		unsigned long localip;
+		unsigned int  port;
+		unsigned int  fwType;
+		unsigned int version;
 
-	 unsigned long icqextstatus;
+		unsigned long icqextstatus;
 };
 
 /** Internal status enum */
@@ -521,13 +527,13 @@ class OscarSocket : public OscarConnection
 	/** A buddy has left */
 	void gotOffgoingBuddy(QString);
 	/** A buddy has arrived! */
-	void gotBuddyChange(UserInfo);
+	void gotBuddyChange(const UserInfo &);
 	/** A user profile has arrived */
-	void gotUserProfile(UserInfo, QString);
+	void gotUserProfile(const UserInfo &, const QString);
 	/** Emitted when the status of the connection changes during login */
 //	void connectionChanged(int, QString);
 	/** Emitted when my user info is received */
-	void gotMyUserInfo(UserInfo);
+	void gotMyUserInfo(const UserInfo &);
 	/** A buddy list has been received */
 	void gotConfig(AIMBuddyList &);
 	/** emitted when we have recieved an ack from the server */

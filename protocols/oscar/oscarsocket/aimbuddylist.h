@@ -243,8 +243,8 @@ class AIMBuddyList : public QObject
 		// Returns a list of all the buddies in the permit list
 		const QPtrList<AIMBuddy> &permitBuddies() { return mBuddiesPermit; }
 
-		// Revision of this list
-		int revision;
+		// length of this list
+		int length;
 
 		// Timestamp of the list
 		int timestamp;

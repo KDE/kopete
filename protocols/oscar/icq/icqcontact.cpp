@@ -87,8 +87,8 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 
 	// Buddy Changed
 	QObject::connect(
-		acc->getEngine(), SIGNAL(gotBuddyChange(UserInfo)),
-		this, SLOT(slotContactChanged(UserInfo)));
+		acc->getEngine(), SIGNAL(gotBuddyChange(const UserInfo &)),
+		this, SLOT(slotContactChanged(const UserInfo &)));
 	QObject::connect(
 		acc->getEngine(), SIGNAL(gotIM(QString,QString,bool)),
 		this, SLOT(slotIMReceived(QString,QString,bool)));
@@ -110,12 +110,10 @@ ICQContact::~ICQContact()
 {
 }
 
-void ICQContact::slotContactChanged(UserInfo u)
+void ICQContact::slotContactChanged(const UserInfo &u)
 {
 	if (u.sn != contactname())
 		return;
-
-//	kdDebug(14200) << k_funcinfo << "Setting status for '" << displayName() << "'" << endl;
 
 	if (u.icqextstatus & ICQ_STATUS_FFC)
 		setStatus(OSCAR_FFC);
@@ -130,12 +128,6 @@ void ICQContact::slotContactChanged(UserInfo u)
 	else
 		setStatus(OSCAR_ONLINE);
 
-	//FIXME:
-	/*mListContact->setEvil(u.evil);
-	mListContact->setIdleTime(u.idletime);
-	mListContact->setSignOnTime(u.onlinesince);*/
-
-	setIdleTime(u.idletime); // update OscarContact idletime var
 	slotUpdateBuddy();
 }
 

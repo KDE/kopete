@@ -99,8 +99,8 @@ void AIMAccount::initSignals()
 {
 	// Got my user info
 	QObject::connect(
-		getEngine(), SIGNAL(gotMyUserInfo(UserInfo)),
-		this, SLOT(slotGotMyUserInfo(UserInfo)));
+		getEngine(), SIGNAL(gotMyUserInfo(UserInfo &)),
+		this, SLOT(slotGotMyUserInfo(UserInfo &)));
 
 	// Got warning
 	QObject::connect(
@@ -108,7 +108,7 @@ void AIMAccount::initSignals()
 		this, SLOT(slotGotWarning(int,QString)));
 }
 
-void AIMAccount::slotGotMyUserInfo(UserInfo newInfo)
+void AIMAccount::slotGotMyUserInfo(UserInfo &newInfo)
 {
 	mUserInfo = newInfo;
 }
@@ -132,13 +132,9 @@ void AIMAccount::slotGotWarning(int newlevel, QString warner)
 	{
 		QString warnMessage;
 		if(warner.isNull())
-		{
 			warnMessage = i18n("anonymously");
-		}
 		else
-		{
 			warnMessage = i18n("...warned by...", "by %1").arg(warner);
-		}
 
 		// Construct the message to be shown to the user
 		QString message =

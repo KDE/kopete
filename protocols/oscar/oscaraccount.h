@@ -1,9 +1,9 @@
 /*
-  OscarAccount - Oscar Protocol Account
+  oscaraccount.h  -  Oscar Account Class
 
+  Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
   Copyright (c) 2002 by Chris TenHarmsel <tenharmsel@staticmethod.net>
-
-  Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+  Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -13,7 +13,6 @@
   * (at your option) any later version.                                   *
   *                                                                       *
   *************************************************************************
-
 */
 
 #ifndef OSCARACCOUNT_H

@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>523</width>
-            <height>406</height>
+            <width>495</width>
+            <height>461</height>
         </rect>
     </property>
     <property name="caption">
@@ -398,53 +398,37 @@
                     </widget>
                     <widget class="QLayoutWidget">
                         <property name="name">
-                            <cstring>Layout14</cstring>
+                            <cstring>layout20</cstring>
                         </property>
                         <grid>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <property name="margin">
-                                <number>0</number>
-                            </property>
-                            <property name="spacing">
-                                <number>0</number>
-                            </property>
-                            <spacer row="0" column="1">
+                            <widget class="QLabel" row="0" column="1">
                                 <property name="name">
-                                    <cstring>Spacer6</cstring>
+                                    <cstring>textLabel1_2</cstring>
                                 </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
+                                <property name="text">
+                                    <string>Signon Time:</string>
                                 </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>16</width>
-                                        <height>0</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <spacer row="1" column="0">
+                            </widget>
+                            <widget class="QLineEdit" row="1" column="1">
                                 <property name="name">
-                                    <cstring>Spacer3_2</cstring>
+                                    <cstring>roSignonTime</cstring>
                                 </property>
-                                <property name="orientation">
-                                    <enum>Vertical</enum>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>7</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
                                 </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
+                                <property name="readOnly">
+                                    <bool>true</bool>
                                 </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>0</width>
-                                        <height>16</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <widget class="QGroupBox" row="0" column="0">
+                            </widget>
+                            <widget class="QGroupBox" row="0" column="0" rowspan="4" colspan="1">
                                 <property name="name">
                                     <cstring>grpLanguages</cstring>
                                 </property>
@@ -502,11 +486,45 @@
                                     </widget>
                                 </grid>
                             </widget>
+                            <spacer row="3" column="1">
+                                <property name="name">
+                                    <cstring>Spacer3</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Vertical</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>16</width>
+                                        <height>30</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <spacer row="2" column="1">
+                                <property name="name">
+                                    <cstring>Spacer6</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>210</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
                         </grid>
                     </widget>
                     <spacer>
                         <property name="name">
-                            <cstring>Spacer3</cstring>
+                            <cstring>Spacer3_2</cstring>
                         </property>
                         <property name="orientation">
                             <enum>Vertical</enum>
@@ -517,7 +535,7 @@
                         <property name="sizeHint">
                             <size>
                                 <width>16</width>
-                                <height>134</height>
+                                <height>40</height>
                             </size>
                         </property>
                     </spacer>
