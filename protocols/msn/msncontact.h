@@ -44,7 +44,7 @@ class MSNContact : public IMContact
 	
 	Q_OBJECT
 	public:
-		MSNContact(QListViewItem *parent, QString userid, const QString name, MSNProtocol *protocol);
+		MSNContact(QString userid, const QString name, MSNProtocol *protocol);
 		virtual void rightButtonPressed(const QPoint &);
 		virtual void leftButtonDoubleClicked();
 		SwitchBoard *mBoard;

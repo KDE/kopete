@@ -194,7 +194,7 @@ void MSNProtocol::slotInitContacts (QString status, QString userid, QString nick
 	kdDebug() << "MSN Plugin: User State change " << status << " " << userid << " " << nick <<"\n";
 	if ( status == "NLN" )
 	{
-		MSNContact *newContact = new MSNContact(kopeteapp->contactList()->onlineBranch, userid, nick, this);
+		MSNContact *newContact = new MSNContact(userid, nick, this);
 		newContact->setPixmap(0,onlineIcon);
 	}
 }
@@ -209,7 +209,7 @@ void MSNProtocol::slotUserSetOffline (QString str)
 void MSNProtocol::slotNewUserFound (QString userid, QString nick)
 {
 	kdDebug() << "MSN Plugin: User found " << userid << " " << nick <<"\n";
-	MSNContact *newContact = new MSNContact(kopeteapp->contactList()->offlineBranch, userid, nick, this);
+	MSNContact *newContact = new MSNContact(userid, nick, this);
 	newContact->setPixmap(0,offlineIcon);		
 
 }		

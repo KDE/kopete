@@ -21,8 +21,8 @@
 #include "msnuser.h"
 #include <switchboard.h>
 
-MSNContact::MSNContact(QListViewItem *parent, QString userid, const QString name, MSNProtocol *protocol)
-	: IMContact(parent)
+MSNContact::MSNContact(QString userid, const QString name, MSNProtocol *protocol)
+	: IMContact(kopeteapp->contactList())
 {
 	mProtocol = protocol;
 	mName = name;
@@ -100,14 +100,14 @@ void MSNContact::slotUserStateChange (QString state, QString handle, QString pub
 		isMessageIcon = false;
 		if (state == "NLN")
 		{
-			kopeteapp->contactList()->offlineBranch->takeItem(this);
-			kopeteapp->contactList()->onlineBranch->insertItem(this);
+			//kopeteapp->contactList()->offlineBranch->takeItem(this);
+			//kopeteapp->contactList()->onlineBranch->insertItem(this);
 			setPixmap(0, mProtocol->onlineIcon);
 		}
 		if ( state == "FLN")
 		{
-			kopeteapp->contactList()->onlineBranch->takeItem(this);
-			kopeteapp->contactList()->offlineBranch->insertItem(this);
+			//kopeteapp->contactList()->onlineBranch->takeItem(this);
+			//kopeteapp->contactList()->offlineBranch->insertItem(this);
 			setPixmap(0, mProtocol->offlineIcon);
 		}
 		
