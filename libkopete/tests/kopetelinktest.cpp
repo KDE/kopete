@@ -46,25 +46,26 @@ typedef const char * TestSet[][ 2 ];
 
 static TestSet knownGoodPlain =
 {
-	{ "http://www.kde.org", "<a href=\"http://www.kde.org\" title=\"http://www.kde.org\">http://www.kde.org</a>" },
+	{ "$URL", "<a href=\"$URL\" title=\"$URL\">$URL</a>" },
 	{ NULL, NULL }
 };
 
 static TestSet knownBrokenPlain =
 {
+	{ "$URL/", "<a href=\"$URL/\" title=\"$URL/\">$URL/</a>" },
 	{ NULL, NULL }
 };
 
 static TestSet knownGoodHTML =
 {
-	{ "http://www.kde.org", "<a href=\"http://www.kde.org\" title=\"http://www.kde.org\">http://www.kde.org</a>" },
-	{ "<a href=\"http://www.kde.org\">KDE</a>", "<a href=\"http://www.kde.org\">KDE</a>" },
+	{ "$URL", "<a href=\"$URL\" title=\"$URL\">$URL</a>" },
+	{ "<a href=\"$URL\">KDE</a>", "<a href=\"$URL\">KDE</a>" },
 	{ NULL, NULL }
 };
 
 static TestSet knownBrokenHTML =
 {
-	{ "<a href=\"http://www.kde.org\" title=\"http://www.kde.org\">http://www.kde.org</a>", "<a href=\"http://www.kde.org\" title=\"http://www.kde.org\">http://www.kde.org</a>" },
+	{ "<a href=\"$URL\" title=\"$URL\">$URL</a>", "<a href=\"$URL\" title=\"$URL\">$URL</a>" },
 	{ NULL, NULL }
 };
 
@@ -76,16 +77,19 @@ void runTests( QString description, TestSet tests, KopeteMessage::MessageFormat 
 	uint i = 0;
 	while ( tests[ i ][ 0 ] && tests[ i ][ 1 ] )
 	{
-		QString result = KopeteMessage::parseLinks( tests[ i ][ 0 ], format );
+		QString input = tests[ i ][ 0 ], expected = tests[ i ][ 1 ];
+		input.replace( "$URL","http://www.kde.org" );
+		expected.replace( "$URL","http://www.kde.org" );
+		QString result = KopeteMessage::parseLinks( input, format );
 
-		if ( result == tests[ i ][ 1 ] )
+		if ( result == expected )
 		{
-			_out << "  - Succeeded test for '" << tests[ i ][ 0 ] << "'" << endl;
+			_out << "  - Succeeded test for '" << input << "'" << endl;
 		}
 		else
 		{
-			_out << "  - FAILED test for '" << tests[ i ][ 0 ] << "'" << endl;
-			_out << "    Expected output: '" << tests[ i ][ 1 ] << "'" << endl;
+			_out << "  - FAILED test for '" << input << "'" << endl;
+			_out << "    Expected output: '" << expected << "'" << endl;
 			_out << "    Real output:     '" << result << "'" << endl;
 		}
 
