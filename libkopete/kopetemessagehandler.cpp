@@ -17,6 +17,8 @@
 #include "kopetemessagehandler.h"
 #include "kopetemessageevent.h"
 
+#include <kstaticdeleter.h>
+
 namespace Kopete
 {
 
@@ -61,26 +63,34 @@ void MessageHandler::handleMessage( MessageEvent *event )
 class MessageHandlerFactory::Private
 {
 public:
-	static FactoryList factories;
+	static FactoryList &factories();
 	FactoryList::Iterator iterator;
 };
-MessageHandlerFactory::FactoryList MessageHandlerFactory::Private::factories;
+
+MessageHandlerFactory::FactoryList &MessageHandlerFactory::Private::factories()
+{
+	static KStaticDeleter<FactoryList> deleter;
+	static FactoryList *list = 0;
+	if( !list )
+		deleter.setObject( list, new FactoryList );
+	return *list;
+}
 
 MessageHandlerFactory::MessageHandlerFactory()
 	: d( new Private )
 {
-	d->iterator = Private::factories.append(this);
+	d->iterator = Private::factories().append(this);
 }
 
 MessageHandlerFactory::~MessageHandlerFactory()
 {
-	Private::factories.remove( d->iterator );
+	Private::factories().remove( d->iterator );
 	delete d;
 }
 
 MessageHandlerFactory::FactoryList MessageHandlerFactory::messageHandlerFactories()
 {
-	return Private::factories;
+	return Private::factories();
 }
 
 }
