@@ -98,7 +98,9 @@ void HighlightPlugin::slotIncomingMessage( KopeteMessage& msg )
 				msg.setBg(f->BG);
 			if(f->setFG)
 				msg.setFg(f->FG);
-			
+			if(f->setImportance)
+				msg.setImportance((KopeteMessage::MessageImportance)f->importance);
+
 			break; //uh?
 		}
 	}
@@ -115,6 +117,7 @@ Filter* HighlightPlugin::newFilter()
 	filtre->caseSensitive=false;
 	filtre->isRegExp=false;
 	filtre->setImportance=false;
+	filtre->importance=1;
 	filtre->setBG=false;
 	filtre->setFG=false;
 	filtre->playSound=false;
