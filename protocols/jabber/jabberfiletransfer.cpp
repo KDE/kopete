@@ -20,6 +20,8 @@
 #include <xmpp.h>
 #include "jabberfiletransfer.h"
 #include <klocale.h>
+#include <kmessagebox.h>
+#include "kopeteuiglobal.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 #include "kopetetransfermanager.h"
@@ -132,18 +134,62 @@ void JabberFileTransfer::slotIncomingTransferAccepted ( KopeteTransfer *transfer
 	mKopeteTransfer = transfer;
 	mLocalFile.setName ( fileName );
 
-	if ( !mLocalFile.open ( IO_WriteOnly ) )
+	bool couldOpen = false;
+	Q_LLONG offset = 0;
+	Q_LLONG length = 0;
+
+	mBytesTransferred = 0;
+	mBytesToTransfer = mXMPPTransfer->fileSize ();
+
+	if ( mXMPPTransfer->rangeSupported () && mLocalFile.exists () )
 	{
-		transfer->slotError ( KopeteTransfer::Other, i18n("Could not write to the local file.") );
+		KGuiItem resumeButton ( i18n ( "&Resume" ) );
+		KGuiItem overwriteButton ( i18n ( "Over&write" ) );
+
+		switch ( KMessageBox::questionYesNoCancel ( Kopete::UI::Global::mainWidget (),
+													i18n ( "The file %1 already exists, do you want to resume or overwrite it?" ).arg ( fileName ),
+													i18n ( "File exists: %1" ).arg ( fileName ),
+													resumeButton, overwriteButton ) )
+		{
+			case KMessageBox::Yes:		// resume
+										couldOpen = mLocalFile.open ( IO_ReadWrite );
+										if ( couldOpen )
+										{
+											offset = mLocalFile.size ();
+											length = mXMPPTransfer->fileSize () - offset;
+											mBytesTransferred = offset;
+											mBytesToTransfer = length;
+											mLocalFile.at ( mLocalFile.size () );
+										}
+										break;
+
+			case KMessageBox::No:		// overwrite
+										couldOpen = mLocalFile.open ( IO_WriteOnly );
+										break;
+
+			default:					// cancel
+										deleteLater ();
+										return;
+		}
+	}
+	else
+	{
+		// overwrite by default
+		couldOpen = mLocalFile.open ( IO_WriteOnly );
+	}
+
+	if ( !couldOpen )
+	{
+		transfer->slotError ( KIO::ERR_COULD_NOT_WRITE, fileName );
 
 		deleteLater ();
 	}
 	else
 	{
-	 	connect ( mKopeteTransfer, SIGNAL ( result ( KIO::Job * ) ), this, SLOT ( slotTransferResult () ) );
+		connect ( mKopeteTransfer, SIGNAL ( result ( KIO::Job * ) ), this, SLOT ( slotTransferResult () ) );
 		connect ( mXMPPTransfer, SIGNAL ( readyRead ( const QByteArray& ) ), this, SLOT ( slotIncomingDataReady ( const QByteArray & ) ) );
 		connect ( mXMPPTransfer, SIGNAL ( error ( int ) ), this, SLOT ( slotTransferError ( int ) ) );
-		mXMPPTransfer->accept ();
+		mXMPPTransfer->accept ( offset, length );
 	}
 
 }
@@ -178,34 +224,33 @@ void JabberFileTransfer::slotTransferError ( int errorCode )
 	switch ( errorCode )
 	{
 		case XMPP::FileTransfer::ErrReject:
+			// user rejected the transfer request
 			mKopeteTransfer->slotError ( KIO::ERR_ACCESS_DENIED,
-										 // "Access denied to"...
-										 i18n("The user %1 rejected the transfer request.").
-										 arg(mXMPPTransfer->peer().full ()) );
+										 mXMPPTransfer->peer().full () );
 			break;
 
 		case XMPP::FileTransfer::ErrNeg:
+			// unable to negotiate a suitable connection for the file transfer with the user
 			mKopeteTransfer->slotError ( KIO::ERR_COULD_NOT_LOGIN,
-										 i18n("Unable to negotiate a suitable connection for the file transfer with %1.").
-										 arg(mXMPPTransfer->peer().full ()) );
+										 mXMPPTransfer->peer().full () );
 			break;
 
 		case XMPP::FileTransfer::ErrConnect:
+			// could not connect to the user
 			mKopeteTransfer->slotError ( KIO::ERR_COULD_NOT_CONNECT,
-										 i18n("Could not connect to %1.").
-										 arg(mXMPPTransfer->peer().full ()) );
+										 mXMPPTransfer->peer().full () );
 			break;
 
 		case XMPP::FileTransfer::ErrStream:
+			// data stream was disrupted, probably cancelled
 			mKopeteTransfer->slotError ( KIO::ERR_CONNECTION_BROKEN,
-										 i18n("The data stream with %1 was disrupted. (probably cancelled)").
-										 arg(mXMPPTransfer->peer().full ()) );
+										 mXMPPTransfer->peer().full () );
 			break;
 
 		default:
+			// unknown error
 			mKopeteTransfer->slotError ( KIO::ERR_UNKNOWN,
-										 i18n("Unknown error while transferring a file with %1.").
-										 arg(mXMPPTransfer->peer().full ()) );
+										 mXMPPTransfer->peer().full () );
 			break;
 	}
 
@@ -217,12 +262,13 @@ void JabberFileTransfer::slotIncomingDataReady ( const QByteArray &data )
 {
 
 	mBytesTransferred += data.size ();
+	mBytesToTransfer -= data.size ();
 
 	mKopeteTransfer->slotProcessed ( mBytesTransferred );
 
 	mLocalFile.writeBlock ( data );
 
-	if ( mBytesTransferred >= mXMPPTransfer->fileSize () )
+	if ( mBytesToTransfer <= 0 )
 	{
 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Transfer from " << mXMPPTransfer->peer().full () << " done." << endl;
 
