@@ -1,0 +1,77 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>TranslatorPrefsUI</class>
+<author>Duncan Mac-Vicar P.</author>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>TranslatorPrefsUI</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>430</width>
+            <height>114</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Form1</string>
+    </property>
+    <widget class="QLayoutWidget">
+        <property name="name">
+            <cstring>Layout1</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>100</width>
+                <height>30</height>
+            </rect>
+        </property>
+        <hbox>
+            <property name="name">
+                <cstring>unnamed</cstring>
+            </property>
+            <property name="margin">
+                <number>0</number>
+            </property>
+            <property name="spacing">
+                <number>6</number>
+            </property>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>TextLabel2</cstring>
+                </property>
+                <property name="text">
+                    <string>My native language is: </string>
+                </property>
+            </widget>
+            <widget class="QComboBox">
+                <property name="name">
+                    <cstring>m_LangBox</cstring>
+                </property>
+            </widget>
+        </hbox>
+    </widget>
+    <spacer>
+        <property name="name">
+            <cstring>Spacer41</cstring>
+        </property>
+        <property name="orientation">
+            <enum>Vertical</enum>
+        </property>
+        <property name="sizeType">
+            <enum>Expanding</enum>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>30</width>
+                <height>100</height>
+            </rect>
+        </property>
+    </spacer>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
