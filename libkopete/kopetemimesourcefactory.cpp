@@ -105,8 +105,11 @@ const QMimeSource *MimeSourceFactory::data( const QString &abs_name ) const
 		if ( parts.size() >= 2 )
 		{
 			KopeteMetaContact *mc = KopeteContactList::contactList()->metaContact( parts[1] );
-			img = SmallIcon( mc->statusIcon() );
-			completed = true;
+			if ( mc )
+			{	
+				img = SmallIcon( mc->statusIcon() );
+				completed = true;
+			}
 		}
 		else 
 			kdDebug( 14010 ) << k_funcinfo << "kopete-metacontact-icon: insufficient information in abs_name: " << parts << endl;
