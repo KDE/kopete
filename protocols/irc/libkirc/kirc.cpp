@@ -849,21 +849,7 @@ void KIRC::sendNotice(const QString &target, const QString &message)
 void KIRC::messageContact(const QString &contact, const QString &message)
 {
 	if (loggedIn)
-	{
-		//FIXME: this should go in irccontact::slotSendMsg instead, so it looks proper in the chatwindow as well.
-		if(message.contains("\n") || message.contains("\r"))
-		{
-			QStringList messages=QStringList::split(QRegExp("[\\r\\n]+"),message);
-			for(QStringList::Iterator it = messages.begin(); it != messages.end(); ++it)
-			{
-				writeString( QString::fromLatin1("PRIVMSG %1 :%2").arg( contact ).arg( *it ) );
-			}
-		}
-		else
-		{
-			writeString( QString::fromLatin1("PRIVMSG %1 :%2").arg( contact ).arg( message ) );
-		}
-	}
+		writeString( QString::fromLatin1("PRIVMSG %1 :%2").arg( contact ).arg( message ) );
 }
 
 void KIRC::slotConnectionClosed()
