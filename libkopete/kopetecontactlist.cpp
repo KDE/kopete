@@ -253,12 +253,12 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 						else if( id == QString::fromLatin1( "messaging/jabber" ) )
 							id = QString::fromLatin1( "messaging/xmpp" );
 
-						if( id == QString::fromLatin1("messaging/gadu") || id == QString::fromLatin1("messaging/icq") ||
-							id == QString::fromLatin1("messaging/winpopup") || id == QString::fromLatin1("messaging/xmpp") )
+						if( id == QString::fromLatin1( "messaging/gadu" ) || id == QString::fromLatin1( "messaging/icq" ) ||
+							id == QString::fromLatin1( "messaging/winpopup" ) || id == QString::fromLatin1( "messaging/xmpp" ) )
 						{
 							app = id;
-							key = QString::fromLatin1("All");
-							val = data.replace( QRegExp( separator ), QChar( 0xE000 ) );
+							key = QString::fromLatin1( "All" );
+							val = data.replace( separator, QChar( 0xE000 ) );
 						}
 
 						if( !app.isEmpty() )
@@ -373,16 +373,20 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 							}
 
 							// Do the actual conversion
-							if( id == QString::fromLatin1("MSNProtocol") || id == QString::fromLatin1("OscarProtocol") || id == QString::fromLatin1("AIMProtocol") || id == QString::fromLatin1("IRCProtocol") ||
-								id == QString::fromLatin1("ICQProtocol") || id == QString::fromLatin1("JabberProtocol") || id == QString::fromLatin1("SMSProtocol") || id == QString::fromLatin1("WPProtocol") ||
-								id == QString::fromLatin1("GaduProtocol") )
+							if( id == QString::fromLatin1( "MSNProtocol" ) || id == QString::fromLatin1( "OscarProtocol" ) ||
+								id == QString::fromLatin1( "AIMProtocol" ) || id == QString::fromLatin1( "IRCProtocol" ) ||
+								id == QString::fromLatin1( "ICQProtocol" ) || id == QString::fromLatin1( "JabberProtocol" ) ||
+								id == QString::fromLatin1( "SMSProtocol" ) || id == QString::fromLatin1( "WPProtocol" ) ||
+								id == QString::fromLatin1( "GaduProtocol" ) )
 							{
 								QStringList strList = QStringList::split( QString::fromLatin1( "||" ), data );
+
 								// Unescape '||'
 								for( QStringList::iterator it = strList.begin(); it != strList.end(); ++it )
-									( *it ).replace( QRegExp( QString::fromLatin1( "\\\\\\|;" ) ),
-									QString::fromLatin1( "|" ) ).replace( QRegExp( QString::fromLatin1( "\\\\\\\\" ) ),
-									QString::fromLatin1( "\\" ) );
+								{
+									( *it ).replace( QString::fromLatin1( "\\|;" ), QString::fromLatin1( "|" ) ).
+									replace( QString::fromLatin1( "\\\\" ), QString::fromLatin1( "\\" ) );
+								}
 
 								uint idx = 0;
 								while( idx < strList.size() )
