@@ -82,6 +82,8 @@ const char* const servers_ip[ NUM_SERVERS ] = {
 	currentServer = -1;
 	serverIP = 0;
 
+	pingTimer_ = new QTimer( this );
+
 	initActions();
 	initConnections();
 }
@@ -127,6 +129,8 @@ GaduAccount::initConnections()
 				SLOT( userListExportDone() ) );
 	QObject::connect( session_, SIGNAL( userListRecieved( const QString& ) ),
 				SLOT( userlist( const QString& ) ) );
+	QObject::connect( pingTimer_, SIGNAL( timeout() ),
+				SLOT( pingServer() ) );
 }
 
 void
@@ -606,12 +610,6 @@ GaduAccount::connectionSucceed( )
 	startNotify();
 
 	session_->requestContacts();
-
-	if ( !pingTimer_ ) {
-		pingTimer_ = new QTimer( this );
-		QObject::connect( pingTimer_, SIGNAL( timeout() ),
-		SLOT( pingServer() ) );
-	}
 	pingTimer_->start( 180000 );//3 minute timeout
 }
 
