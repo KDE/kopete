@@ -45,7 +45,7 @@ IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString 
 	QObject::connect(m_engine, SIGNAL(incomingUserIsAway( const QString &, const QString & )),
 		this, SLOT(slotIncomingUserIsAway(const QString &, const QString &)));	
 	
-
+	actionCtcpMenu = 0L;
 	updateStatus();
 }
 
@@ -194,49 +194,67 @@ void IRCUserContact::slotCtcpVersion()
 	m_engine->sendCtcpVersion(m_nickName);
 }
 
-KActionCollection *IRCUserContact::customContextMenuActions( KopeteMessageManager *manager )
+QPtrList<KAction> *IRCUserContact::customContextMenuActions( KopeteMessageManager *manager )
 {
 	if( manager )
 	{
-		mCustomActions = new KActionCollection(this);
+		QPtrList<KAction> *mCustomActions = new QPtrList<KAction> ();
 		mActiveManager = manager;
 		KopeteContactPtrList members = mActiveManager->members();
 		IRCChannelContact *isChannel = dynamic_cast<IRCChannelContact*>( members.first() );
 		
-		actionCtcpMenu = new KActionMenu(i18n("C&TCP"), 0, mCustomActions );
-		actionCtcpMenu->insert( new KAction(i18n("&Version"), 0, this, SLOT(slotCtcpVersion()), actionCtcpMenu) );
-		actionCtcpMenu->insert(  new KAction(i18n("&Ping"), 0, this, SLOT(slotCtcpPing()), actionCtcpMenu) );
-	
-		if( isChannel )
+		if( !actionCtcpMenu )
 		{
-			actionModeMenu = new KActionMenu(i18n("&Modes"), 0, mCustomActions, "actionModeMenu");
-			actionModeMenu->insert( new KAction(i18n("&Op"), 0, this, SLOT(slotOp()), actionModeMenu, "actionOp") );
-			actionModeMenu->insert( new KAction(i18n("&Deop"), 0, this, SLOT(slotDeop()), actionModeMenu, "actionDeop") );
-			actionModeMenu->insert( new KAction(i18n("&Voice"), 0, this, SLOT(slotVoice()), actionModeMenu, "actionVoice") );
-			actionModeMenu->insert( new KAction(i18n("Devoice"), 0, this, SLOT(slotDevoice()), actionModeMenu, "actionDevoice") );
+			actionCtcpMenu = new KActionMenu(i18n("C&TCP"), 0, this );
+			actionCtcpMenu->insert( new KAction(i18n("&Version"), 0, this, 
+				SLOT(slotCtcpVersion()), actionCtcpMenu) );
+			actionCtcpMenu->insert(  new KAction(i18n("&Ping"), 0, this, 
+				SLOT(slotCtcpPing()), actionCtcpMenu) );
+	
+			actionModeMenu = new KActionMenu(i18n("&Modes"), 0, this, "actionModeMenu");
+			actionModeMenu->insert( new KAction(i18n("&Op"), 0, this, 
+				SLOT(slotOp()), actionModeMenu, "actionOp") );
+			actionModeMenu->insert( new KAction(i18n("&Deop"), 0, this, 
+				SLOT(slotDeop()), actionModeMenu, "actionDeop") );
+			actionModeMenu->insert( new KAction(i18n("&Voice"), 0, this, 
+				SLOT(slotVoice()), actionModeMenu, "actionVoice") );
+			actionModeMenu->insert( new KAction(i18n("Devoice"), 0, this, 
+				SLOT(slotDevoice()), actionModeMenu, "actionDevoice") );
 			actionModeMenu->setEnabled( false );
 		
-			actionKick = new KAction(i18n("&Kick"), 0, this, SLOT(slotKick()), mCustomActions);
+			actionKick = new KAction(i18n("&Kick"), 0, this, SLOT(slotKick()), this);
 			actionKick->setEnabled( false );
 		
-			actionBanMenu = new KActionMenu(i18n("&Ban"), 0, mCustomActions, "actionBanMenu");
-			actionBanMenu->insert( new KAction(i18n("Ban *!*@*.host"), 0, this, SLOT(slotBanHost()), actionBanMenu ) );
-			actionBanMenu->insert( new KAction(i18n("Ban *!*@domain"), 0, this, SLOT(slotBanDomain()), actionBanMenu ) );
-			actionBanMenu->insert( new KAction(i18n("Ban *!*user@*.host"), 0, this, SLOT(slotBanUserHost()), actionBanMenu ) );
-			actionBanMenu->insert( new KAction(i18n("Ban *!*user@domain"), 0, this, SLOT(slotBanUserDomain()), actionBanMenu ) );
+			actionBanMenu = new KActionMenu(i18n("&Ban"), 0, this, "actionBanMenu");
+			actionBanMenu->insert( new KAction(i18n("Ban *!*@*.host"), 0, this, 
+				SLOT(slotBanHost()), actionBanMenu ) );
+			actionBanMenu->insert( new KAction(i18n("Ban *!*@domain"), 0, this, 
+				SLOT(slotBanDomain()), actionBanMenu ) );
+			actionBanMenu->insert( new KAction(i18n("Ban *!*user@*.host"), 0, this,
+				 SLOT(slotBanUserHost()), actionBanMenu ) );
+			actionBanMenu->insert( new KAction(i18n("Ban *!*user@domain"), 0, this,
+				 SLOT(slotBanUserDomain()), actionBanMenu ) );
 			actionBanMenu->setEnabled( false );
+			
+			codecAction = new KCodecAction( i18n("Select Charset"), 0, this, "selectcharset" );
+			connect( codecAction, SIGNAL( activated( const QTextCodec * ) ), 
+				this, SLOT( setCodec( const QTextCodec *) ) );
+			codecAction->setCodec( codec() );
+		}
 		
+		mCustomActions->append( actionCtcpMenu );
+		mCustomActions->append( actionModeMenu );
+		mCustomActions->append( actionBanMenu );
+		mCustomActions->append( codecAction );
+
+		if( isChannel )
+		{
 			bool isOperator = ( manager->contactOnlineStatus( account()->myself() ) == m_protocol->m_UserStatusOp );
 			actionModeMenu->setEnabled(isOperator);
 			actionBanMenu->setEnabled(isOperator);
 			actionKick->setEnabled(isOperator);
 		}
 	
-		KCodecAction *c = new KCodecAction( i18n("Select Charset"), 0, mCustomActions, "selectcharset" );
-		connect( c, SIGNAL( activated( const QTextCodec * ) ), 
-			this, SLOT( setCodec( const QTextCodec *) ) );
-		c->setCodec( codec() );
-		
 		return mCustomActions;
 	}
 	

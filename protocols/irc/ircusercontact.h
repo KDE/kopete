@@ -24,9 +24,9 @@
 
 class QTimer;
 
-class KActionCollection;
 class KAction;
 class KActionMenu;
+class KCodecAction;
 
 class IRCContactManager;
 class IRCChannelContact;
@@ -47,7 +47,7 @@ public:
 	IRCUserContact(IRCContactManager *, const QString &nickname, KopeteMetaContact *mc);
 
 	// KopeteContact stuff
-	virtual KActionCollection *customContextMenuActions( KopeteMessageManager *manager );
+	virtual QPtrList<KAction> *customContextMenuActions( KopeteMessageManager *manager );
 	virtual const QString caption() const;
 	
 	void setAway(bool isAway);
@@ -77,11 +77,11 @@ private slots:
 	virtual void slotUserInfo();
 	
 private:
-	KActionCollection *mCustomActions;
 	KActionMenu *actionModeMenu;
 	KActionMenu *actionCtcpMenu;
 	KAction *actionKick;
 	KActionMenu *actionBanMenu;
+	KCodecAction *codecAction;
 	KopeteMessageManager *mActiveManager;
 	QTimer *mOnlineTimer;
 

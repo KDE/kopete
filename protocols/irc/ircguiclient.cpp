@@ -36,34 +36,23 @@ IRCGUIClient::IRCGUIClient( KopeteMessageManager *parent ) : QObject(parent) , K
 		/***
 		FIXME: Why doesn't this work???? Have to use DOM hack below now...
 		
-		QPtrList<KAction> actionList;
-		KActionCollection *col = m_user->customContextMenuActions();
-	
-		for( int i = col->count() - 1; i >= 0; i-- )
-		{
-			KAction *a = col->take( col->action(i) );
-			actionCollection()->insert( a );
-			actionList.append( a );
-		}
-	
 		setXMLFile("ircchatui.rc");
-		
-		kdDebug(14120) << actionList.count() << " actions" <<endl;
+
 		unplugActionList( "irccontactactionlist" );
-		plugActionList( "irccontactactionlist",  actionList );
-		
+		QPtrList<KAction> *actions = m_user->customContextMenuActions( parent );
+		plugActionList( "irccontactactionlist",  *actions );
+		delete actions;
 		*/
 		
 		setXMLFile("ircchatui.rc");
 		
 		QDomDocument doc = domDocument();
 		QDomNode menu = doc.documentElement().firstChild().firstChild();
-		KActionCollection *col = m_user->customContextMenuActions( parent );
-		if( col )
+		QPtrList<KAction> *actions = m_user->customContextMenuActions( parent );
+		if( actions )
 		{
-			for( int i = col->count() - 1; i >= 0; i-- )
+			for( KAction *a = actions->first(); a; a = actions->next() )
 			{
-				KAction *a = col->take( col->action(i) );
 				actionCollection()->insert( a );
 				QDomElement newNode = doc.createElement( "Action" );
 				newNode.setAttribute( "name", a->name() );
@@ -74,6 +63,8 @@ IRCGUIClient::IRCGUIClient( KopeteMessageManager *parent ) : QObject(parent) , K
 		{
 			kdDebug(14120) << k_funcinfo << "Actions == 0" << endl;
 		}
+
+		delete actions;
 		
 		setDOMDocument( doc );
 	}
