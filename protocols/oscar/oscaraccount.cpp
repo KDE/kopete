@@ -68,7 +68,7 @@ OscarAccount::OscarAccount( KopeteProtocol *parent,
 
 OscarAccount::~OscarAccount()
 {
-    kdDebug( 14150 ) << k_funcinfo << "[OscarAccount: " << accountId()
+    kdDebug( 14150 ) << k_funcinfo << "[" << accountId()
 		     << "] deleted...Disconnecting..." << endl;
     // Disconnect us
     disconnect();
@@ -115,8 +115,8 @@ void OscarAccount::connect()
 			   << "] Logging in as " << screenName << endl;
 
 	    // Get the server and port from the preferences
-	    QString server = pluginData(protocol(), accountId() + "Server");
-	    QString port = pluginData(protocol(), accountId() + "Port");
+	    QString server = pluginData(protocol(),  "Server");
+	    QString port = pluginData(protocol(),  "Port");
 
 	    // Connect, need to normalize the name first
 	    m_engine->doLogin( server, port.toInt(), tocNormalize(screenName), password );
@@ -184,77 +184,6 @@ OscarSocket* OscarAccount::getEngine()
     return m_engine;
 }
 
-bool OscarAccount::addContactToMetaContact( const QString &contactId,
-					    const QString &displayName,
-					    KopeteMetaContact *parentContact )
-{
-    // First check to see if we're connected
-    if(myself()->isOnline())
-    {  // First task is to add it to the internal list and update the server
-	// Check to see if it's a temporary contact, ie. not on our list
-	// but IMed us anyway
-	if( !parentContact->isTemporary() )
-	{  // Get a list of the groups it's in
-	    KopeteGroupList kopeteGroups = parentContact->groups();
-
-	    // AFAIK OSCAR doesn't support a contact in multiple groups, so we
-	    // just take the first one
-	    KopeteGroup *group = kopeteGroups.first();
-	    // Get the name of the group
-	    QString groupName = group->displayName();
-	    // See if it exists in our internal group list already
-	    AIMGroup *internalGroup = m_internalBuddyList->findGroup(groupName);
-
-	    if (!internalGroup)
-	    {  // If the group didn't exist
-		internalGroup =
-		    m_internalBuddyList->addGroup(m_randomNewGroupNum, groupName);
-		// Add the group on the server list
-		getEngine()->sendAddGroup(internalGroup->name());
-	    }
-
-	    // Create a new internal buddy for this contact
-	    AIMBuddy *newBuddy =
-		new AIMBuddy(m_randomNewBuddyNum, internalGroup->ID(), contactId);
-
-	    // Check if it has an alias
-	    if( displayName != QString::null && displayName != contactId )
-	    {
-		newBuddy->setAlias(displayName);
-	    }
-
-	    // Add the buddy to the internal buddy list
-	    m_internalBuddyList->addBuddy( newBuddy );
-
-	    // Add the buddy to the server's list, with the group,
-	    // need to normalize the contact name
-	    getEngine()->sendAddBuddy( tocNormalize(contactId), internalGroup->name());
-
-	    // Increase these counters, I'm not sure what this does
-	    m_randomNewGroupNum++;
-	    m_randomNewBuddyNum++;
-
-	    // Create the actual OscarContact, which adds it to the metacontact
-	    OscarContact *newContact =
-		new OscarContact( contactId, displayName, this, parentContact );
-	    newContact->setOnlineStatus(
-		OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE));
-
-	    // Return true
-	    return true;
-	}
-	else
-	{ // This is a temporary contact, so don't add it to the server list
-	    OscarContact *newContact =
-		new OscarContact( contactId, displayName, this, parentContact );
-	    return (newContact != 0L);
-	}
-    }
-    else
-    { // We're not even online, so don't bother
-	return false;
-    }
-}
 
 
 void OscarAccount::initActions()
@@ -303,7 +232,7 @@ void OscarAccount::initEngine()
     QByteArray cook;
     cook.duplicate("01234567",8);
     m_engine =
-	new OscarSocket( pluginData(protocol(), accountId() + "server"),
+	new OscarSocket( pluginData(protocol(),  "server"),
 			 cook, this );
     kdDebug( 14150 ) << "[OscarAccount: "
 		     << "] initEngine() END" << endl;
@@ -375,7 +304,7 @@ void OscarAccount::setUserProfile( QString profile )
     // Tell the engine to set the profile
     getEngine()->setMyProfile( profile );
     // Save the user profile
-    setPluginData( protocol(), accountId() + "Profile", profile);
+    setPluginData( protocol(),  "Profile", profile);
 }
 
 KActionMenu* OscarAccount::actionMenu()
@@ -522,8 +451,11 @@ void OscarAccount::slotGotIM(QString message, QString sender, bool isAuto)
 		   << sender << endl;
 
     //basically, all this does is add the person to your buddy list
+    // TODO: Right now this has no support for "temporary" buddies
+    // because I could not think of a good way to do this with
+    // AIM.  Someone think of one - Chris
     if (!m_internalBuddyList->findBuddy(sender)) {
-	addContact(sender, sender, 0L, QString::null, true);
+	addContact(tocNormalize(sender), sender, 0L, QString::null, false);
     }
 }
 
@@ -566,31 +498,39 @@ void OscarAccount::addServerContact(AIMBuddy *buddy)
     else
     { // Contact is new on server and not in the Kopete list yet
 	// Create a new metacontact for it
-	KopeteMetaContact *metaContact = new KopeteMetaContact();
+	//KopeteMetaContact *metaContact = new KopeteMetaContact();
+
 	// Create a new OscarContact
-	contact = new OscarContact( tocNormalize( buddy->screenname()),
-				    buddy->alias(),
-				    this, metaContact);
+// 	contact = new OscarContact( tocNormalize( buddy->screenname()),
+// 				    buddy->alias(),
+// 				    this, metaContact);
 
 	// Set the contact's status
-	contact->setOnlineStatus( buddy->status() );
+//	contact->setOnlineStatus( buddy->status() );
 
 	// Get the group this buddy belongs to
 	AIMGroup *aimGroup =
 	    m_internalBuddyList->findGroup(buddy->groupID());
 
 	if (aimGroup)
-	{ // If the group exists in the internal list
-	    // Get the Kopete group
-	    KopeteGroup *group =
-		KopeteContactList::contactList()->getGroup(
-		    aimGroup->name());
+ 	{ // If the group exists in the internal list
+	    // Add it to the kopete contact list, with no metacontact
+	    // which creates a new one.  This will also call the
+	    // addContactToMetaContact method in this class
+	    addContact( tocNormalize(buddy->screenname()),
+			buddy->screenname(), 0L,
+			aimGroup->name(),  false);
+
+// 	    // Get the Kopete group
+// 	    KopeteGroup *group =
+// 		KopeteContactList::contactList()->getGroup(
+// 		    aimGroup->name());
 
 	    // tell the metacontact that it's in that group
-	    metaContact->addToGroup( group );
+// 	    metaContact->addToGroup( group );
 	    // Tell the KopeteContactList about the contact
-	    KopeteContactList::contactList()->addMetaContact(
-		metaContact);
+// 	    KopeteContactList::contactList()->addMetaContact(
+// 		metaContact);
 	}
 	else
 	{ // If the group doesn't exist on the server yet.
@@ -602,18 +542,137 @@ void OscarAccount::addServerContact(AIMBuddy *buddy)
     }
 }
 
+bool OscarAccount::addContactToMetaContact( const QString &contactId,
+					    const QString &displayName,
+					    KopeteMetaContact *parentContact )
+{
+    /* This method is called in two situations, AFAIK.
+     * The first one is when the user, through the GUI
+     * adds a buddy and it happens to be from this account.
+     * In this situation, we need to create an internal buddy
+     * entry for the new contact, perhaps create a new group,
+     * and notify the server of both of these things.
+     *
+     * The second situation is where we are loading a server-
+     * side contact list through the method addServerContact
+     * which calls addContact, which in turn calls this method.
+     * To cope with this situation we need to first check if
+     * the contact already exists in the internal list.
+     */
+
+    if(myself()->isOnline())
+    { // Check if we're online
+
+	// Next check our internal list to see if we have this buddy
+	// already, findBuddy tocNormalizes the buddy name for us
+	AIMBuddy *internalBuddy =
+	    m_internalBuddyList->findBuddy(contactId);
+
+	if (internalBuddy)
+	{ // We found the buddy internally
+	    // Create an OscarContact for the metacontact
+	    OscarContact *newContact =
+		new OscarContact( contactId, displayName, this, parentContact );
+	    // Set the oscar contact's status
+	    newContact->setOnlineStatus( internalBuddy->status() );
+	    return (newContact != 0L);
+	}
+	else
+	{ // It was not on our internal list yet
+	    kdDebug(14150) << k_funcinfo << " New Contact " << contactId
+			   << " was not in internal list.  Creating new internal "
+			   << "list entry" << endl;
+
+	    // Check to see if it's a temporary contact, ie. not on our list
+	    // but IMed us anyway
+	    if( !parentContact->isTemporary() )
+	    {  // Get a list of the groups it's in
+		KopeteGroupList kopeteGroups = parentContact->groups();
+
+		// AFAIK OSCAR doesn't support a contact in multiple groups, so we
+		// just take the first one
+		KopeteGroup *group = kopeteGroups.first();
+		// Get the name of the group
+		QString groupName = group->displayName();
+		// See if it exists in our internal group list already
+		AIMGroup *internalGroup = m_internalBuddyList->findGroup(groupName);
+
+		if (!internalGroup)
+		{  // If the group didn't exist
+		    internalGroup =
+			m_internalBuddyList->addGroup(m_randomNewGroupNum, groupName);
+		    // Add the group on the server list
+		    getEngine()->sendAddGroup(internalGroup->name());
+		}
+
+		// Create a new internal buddy for this contact
+		AIMBuddy *newBuddy =
+		    new AIMBuddy(m_randomNewBuddyNum, internalGroup->ID(), contactId);
+
+		// Check if it has an alias
+		if( displayName != QString::null && displayName != contactId )
+		{
+		    newBuddy->setAlias(displayName);
+		}
+
+		// Add the buddy to the internal buddy list
+		m_internalBuddyList->addBuddy( newBuddy );
+
+		// Add the buddy to the server's list, with the group,
+		// need to normalize the contact name
+		getEngine()->sendAddBuddy( tocNormalize(contactId), internalGroup->name());
+
+		// Increase these counters, I'm not sure what this does
+		m_randomNewGroupNum++;
+		m_randomNewBuddyNum++;
+
+		// Create the actual OscarContact, which adds it to the metacontact
+		OscarContact *newContact =
+		    new OscarContact( contactId, displayName, this, parentContact );
+		newContact->setOnlineStatus(
+		    OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE));
+
+		// Add the metacontact to the KopeteContactList
+		//KopeteContactList::contactList()->addMetaContact(parentContact);
+		// Return true
+		return true;
+	    }
+	    else
+	    { // This is a temporary contact, so don't add it to the server list
+		// Create the contact, which adds it to the parent contact
+		OscarContact *newContact =
+		    new OscarContact( contactId, displayName, this, parentContact );
+
+		// Add it to the kopete contact list, I think this is done in
+		// KopeteAccount::addContact
+		//KopeteContactList::contactList()->addMetaContact(parentContact);
+
+		// Set it's initial status
+		// This requests the buddy's info from the server
+		// I'm not sure what it does if they're offline, but there
+		// is code in oscarcontact to handle the signal from
+		// the engine that this causes
+		kdDebug(14150) << "[OscarAccount: " << accountId()
+			       << "] Requesting user info for " << contactId
+			       << endl;
+		getEngine()->sendUserProfileRequest( tocNormalize(contactId) );
+
+		return (newContact != 0L);
+	    }
+	}
+    }
+    else
+    { // We're not even online, so don't bother
+	return false;
+    }
+}
+
 void OscarAccount::slotOurStatusChanged( const KopeteOnlineStatus &newStatus )
 {
     kdDebug( 14150 ) << k_funcinfo << "status=" << newStatus.internalStatus()
 		     << endl;
     // update our own record of our status
     myself()->setOnlineStatus( newStatus );
-}
-
-// Called when we have received my own user info
-void OscarAccount::slotGotMyUserInfo(UserInfo newInfo)
-{
-    m_userInfo = newInfo;
 }
 
 // Called when we have been warned
@@ -663,6 +722,11 @@ void OscarAccount::slotGotDirectIMRequest(QString sn)
     }
 }
 
+void OscarAccount::slotGotMyUserInfo(UserInfo newInfo)
+{
+    m_userInfo = newInfo;
+}
+
 void OscarAccount::slotIdleActivity()
 {
     kdDebug(14150) << k_funcinfo << "got some activity, setting idle time with server to 0" << endl;
@@ -675,7 +739,7 @@ void OscarAccount::slotIdleTimeout()
     kdDebug(14150) << k_funcinfo << "got an idle timeout, setting idle time with server" << endl;
     //idleTimeout() gives a value in minutes, engine wants seconds
     int idleTimeout = 0;
-    QString idleString = pluginData(protocol(), accountId() + "IdleTimeOut");
+    QString idleString = pluginData(protocol(),  "IdleTimeOut");
     idleTimeout = idleString.toInt();
 
     getEngine()->sendIdleTime( idleTimeout * 60 );
@@ -698,13 +762,13 @@ AIMBuddyList *OscarAccount::internalBuddyList()
 
 void OscarAccount::setServer( QString server )
 {
-    setPluginData(protocol(), accountId() + "Server", server);
+    setPluginData(protocol(),  "Server", server);
 }
 
 void OscarAccount::setPort( int port )
 {
     if ( port > 0 )
     { // Do a little error checkin on it
-	setPluginData(protocol(),  accountId() + "Port", QString::number( port ));
+	setPluginData(protocol(), "Port", QString::number( port ));
     }
 }
