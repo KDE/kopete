@@ -36,6 +36,7 @@
 #include "kopetemetacontact.h"
 
 #include "msnaddcontactpage.h"
+#include "msneditidentitywidget.h"
 #include "msncontact.h"
 #include "msndebugrawcmddlg.h"
 #include "msnidentity.h"
@@ -61,8 +62,6 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	mIsConnected = false;
 	m_notifySocket = 0L;
 	m_myself = 0L;
-
-	m_identity = new MSNIdentity( this, "m_identity" );
 
 	kdDebug(14140) << "MSNProtocol::MSNProtocol: MSN Plugin Loading" << endl;
 
@@ -268,6 +267,11 @@ KopeteContact* MSNProtocol::myself() const
 AddContactPage *MSNProtocol::createAddContactWidget(QWidget *parent)
 {
 	return (new MSNAddContactPage(this,parent));
+}
+
+EditIdentityWidget *MSNProtocol::createEditIdentityWidget(KopeteIdentity *identity, QWidget *parent)
+{
+	return new MSNEditIdentityWidget(this,identity,parent);
 }
 
 void MSNProtocol::slotOpenInbox()

@@ -5,12 +5,14 @@ AM_CPPFLAGS = -I$(top_srcdir)/kopete/libkopete \
 	$(all_includes)
 
 noinst_LTLIBRARIES = libkopeteconf.la
-noinst_HEADERS = pluginconfig.h appearanceconfig.h
+noinst_HEADERS = pluginconfig.h appearanceconfig.h identityconfig.h addidentitywizard.h
 
 libkopeteconf_la_SOURCES = pluginconfig.cpp \
 	appearanceconfig_general.ui appearanceconfig_contactlist.ui \
 	appearanceconfig_chatwindow.ui appearanceconfig_chatappearance.ui \
-	appearanceconfig.cpp kopeteawayconfigbase.ui kopeteawayconfigui.cpp
+	appearanceconfig.cpp kopeteawayconfigbase.ui kopeteawayconfigui.cpp \
+	identityconfig.cpp identityconfigbase.ui addidentitywizard.cpp addidentitywizard_base.ui
+
 libkopeteconf_la_LDFLAGS = $(all_libraries)
 libkopeteconf_la_LIBADD = ../../libkopete/libkopete.la $(LIB_KDEUI)
 

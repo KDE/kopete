@@ -115,6 +115,8 @@ public:
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 
 	virtual AddContactPage *createAddContactWidget( QWidget *parent );
+	virtual EditIdentityWidget *createEditIdentityWidget(KopeteIdentity *identity, QWidget *parent);
+
 	virtual bool isConnected() const;
 	virtual void setAway();
 	virtual void setAvailable();

@@ -28,6 +28,8 @@ class KActionMenu;
 class AddContactPage;
 class KopeteContact;
 class KopeteMetaContact;
+class EditIdentityWidget;
+class KopeteIdentity;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -59,6 +61,14 @@ public:
 	virtual const QString protocolIcon() = 0;
 	
 	virtual AddContactPage *createAddContactWidget(QWidget *parent)=0;
+	
+	/**
+	 * return a new EditIdentity widget showed in the identity part of the configurations
+	 * identity is the KopeteIdentity to edit, if it is egal to 0l, then, we are creating a 
+	 * new identity
+	 */
+	virtual EditIdentityWidget *createEditIdentityWidget(KopeteIdentity *identity, QWidget *parent)
+		{ return 0L; }  //TODO: make this pure virtual
 
 	/**
 	 * The icon of the plugin as shown in the status bar. .mng animations
