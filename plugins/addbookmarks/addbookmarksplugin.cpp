@@ -102,6 +102,9 @@ void BookmarksPlugin::AddKopeteBookmark (KURL url, QString sender )
 	KBookmarkGroup group = GetKopeteFolder();
 	KIO::TransferJob *transfer;
 	
+	if( m_settings.isUseSubfolderForContact( sender ) ){
+		group = GetFolder( group, sender );
+	}
 	if( !isURLInGroup( url, group ) ){
 		// make asynchronous transfer to avoid GUI freezing due to overloaded web servers
 		transfer = KIO::get(url, false, false);
