@@ -41,6 +41,7 @@ class AIMUserInfoDialog : public KDialogBase
 		AIMContact *mContact;
 		AIMUserInfoWidget *mMainWidget;
 		KHTMLPart *userInfoView;
+		KHTMLPart *awayMessageView;
 		KTextEdit *userInfoEdit;
 
 	private slots:

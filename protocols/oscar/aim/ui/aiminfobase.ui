@@ -180,13 +180,17 @@
                 <set>AlignTop</set>
             </property>
         </widget>
-        <widget class="KTextBrowser">
+        <widget class="QFrame">
             <property name="name">
-                <cstring>txtAwayMessage</cstring>
+                <cstring>htmlAwayMessage</cstring>
             </property>
-            <property name="enabled">
-                <bool>false</bool>
+            <property name="minimumSize">
+                <size>
+                    <width>64</width>
+                    <height>8</height>
+                </size>
             </property>
+
             <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>7</hsizetype>
@@ -195,8 +199,14 @@
                     <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
-            <property name="textFormat">
-                <enum>PlainText</enum>
+            <property name="frameShape">
+                <enum>NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Plain</enum>
+            </property>
+            <property name="lineWidth">
+                <number>0</number>
             </property>
         </widget>
         <widget class="QLabel">
@@ -245,7 +255,7 @@
     <tabstop>txtWarnLevel</tabstop>
     <tabstop>txtIdleTime</tabstop>
     <tabstop>txtOnlineSince</tabstop>
-    <tabstop>txtAwayMessage</tabstop>
+    <tabstop>htmlAwayMessage</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

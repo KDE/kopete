@@ -67,7 +67,7 @@ AIMUserInfoDialog::AIMUserInfoDialog(AIMContact *c, AIMAccount *acc, bool modal,
 		mMainWidget->txtIdleTime->hide();
 		mMainWidget->lblOnlineSince->hide();
 		mMainWidget->txtOnlineSince->hide();
-		mMainWidget->txtAwayMessage->hide();
+		mMainWidget->htmlAwayMessage->hide();
 		mMainWidget->lblAwayMessage->hide();
 
 		userInfoView=0L;
@@ -97,6 +97,21 @@ AIMUserInfoDialog::AIMUserInfoDialog(AIMContact *c, AIMAccount *acc, bool modal,
 		htmlWidget->setSizePolicy(
 			QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 		l->addWidget(htmlWidget);
+
+		mMainWidget->htmlAwayMessage->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
+		QVBoxLayout *laway = new QVBoxLayout(mMainWidget->htmlAwayMessage);
+		awayMessageView = new KHTMLPart(mMainWidget->htmlAwayMessage, "preview");
+		awayMessageView->setJScriptEnabled(false);
+		awayMessageView->setJavaEnabled(false);
+		awayMessageView->setPluginsEnabled(false);
+		awayMessageView->setMetaRefreshEnabled(false);
+		KHTMLView *htmlAwayMessageWidget = awayMessageView->view();
+		htmlAwayMessageWidget->setMarginWidth(4);
+		htmlAwayMessageWidget->setMarginHeight(4);
+		htmlAwayMessageWidget->setFocusPolicy(NoFocus);
+		htmlAwayMessageWidget->setSizePolicy(
+			QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+		laway->addWidget(htmlAwayMessageWidget);
 
 		if(mAccount->isConnected())
 		{  // And our buddy is not offline
@@ -149,8 +164,21 @@ void AIMUserInfoDialog::slotUpdateProfile()
 	qdt.setTime_t(static_cast<uint>(mContact->userInfo().onlinesince));
 	mMainWidget->txtOnlineSince->setText(qdt.toString());
 	mMainWidget->txtIdleTime->setText(QString::number(mContact->userInfo().idletime));
-	mMainWidget->txtAwayMessage->setText(mContact->awayMessage());
 	mMainWidget->txtWarnLevel->setText(QString::number(mContact->userInfo().evil));
+
+	if(mContact->awayMessage().isNull()){
+		awayMessageView->hide();
+		mMainWidget->lblAwayMessage->hide();
+		mMainWidget->htmlAwayMessage->hide();
+	}
+	else{
+		awayMessageView->begin();
+		awayMessageView->write(mContact->awayMessage());
+		awayMessageView->end();
+		awayMessageView->show();
+		mMainWidget->lblAwayMessage->show();
+		mMainWidget->htmlAwayMessage->show();
+	}
 
 	QString contactProfile = mContact->userProfile();
 	if(contactProfile.isNull())
