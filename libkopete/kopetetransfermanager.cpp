@@ -30,6 +30,7 @@
 #include <qpixmap.h>
 #include <qfontmetrics.h>
 
+#include <kio/observer.h>
 
 /***************************
  *  KopeteFileTransferInfo *
@@ -51,118 +52,168 @@ KopeteFileTransferInfo::KopeteFileTransferInfo(  KopeteContact *contact, const Q
  ***************************/
 
 
-KopeteTransfer::KopeteTransfer( const KopeteFileTransferInfo &kfti, QObject *parent, const char *name)
-	: QObject(parent, name),
-	  QListViewItem( KopeteTransferManager::transferManager()->mListView),
-	  mInfo( kfti )
+KopeteTransfer::KopeteTransfer( const KopeteFileTransferInfo &kfti, const QString &localFile, bool showProgressInfo)
+	: KIO::Job(showProgressInfo), mInfo(kfti)
 {
-//	if (!kfti)
-//		kfti = new KopeteFileTransferInfo(0L, QString("Unknown"), 0, QString("Unknown"), 0); // icky
-	setText(0, kfti.file());
-	setText(1, kfti.recipient());
-	setText( 2, KGlobal::locale()->formatNumber( long( kfti.size() ) ) );
-	setText(3, i18n("Waiting"));
-	listView()->setColumnWidth(4, 150);
-	slotPercentCompleted(0);
+	KURL targ; targ.setPath( localFile );
+	init( targ, showProgressInfo );
+}
+
+KopeteTransfer::KopeteTransfer( const KopeteFileTransferInfo &kfti, const KopeteContact *contact, bool showProgressInfo)
+	: KIO::Job(showProgressInfo), mInfo(kfti)
+{
+	// TODO: use mInfo.url().fileName() after move to protocol-aware filetransfers
+	KURL targ; targ.setPath( mInfo.file() );
+	init( displayURL( contact, targ.fileName() ), showProgressInfo );
+}
+
+void KopeteTransfer::init( const KURL &target, bool showProgressInfo )
+{
+	mTarget = target;
+
+	if( showProgressInfo )
+		Observer::self()->slotCopying( this, sourceURL(), destinationURL() );
+
+	connect( this, SIGNAL( result( KIO::Job* ) ), SLOT( slotResultEmitted() ) );
+
+	setAutoErrorHandlingEnabled( true, 0 );
+}
+
+KopeteTransfer::~KopeteTransfer()
+{
+}
+
+KURL KopeteTransfer::displayURL( const KopeteContact *contact, const QString &file )
+{
+	KURL url;
+	url.setProtocol( QString::fromLatin1("kopete") );
+
+	QString host;
+	if( !contact )
+		host = QString::fromLatin1("unknown origin");
+	else if( contact->metaContact() )
+		host = contact->metaContact()->displayName();
+	else
+		host = contact->displayName();
+	url.setHost(host);
+
+	// url.setPath( contact->protocol()->displayName() );
+
+	url.setFileName( file );
+	return url;
+}
+
+// TODO: add possibility of network file transfers;
+//  call mInfo->url() not file()
+KURL KopeteTransfer::sourceURL()
+{
+	if( mInfo.direction() == KopeteFileTransferInfo::Incoming )
+		return displayURL( mInfo.contact(), mInfo.file() );
+	else
+	{
+		KURL url; url.setPath( mInfo.file() );
+		return url;
+	}
+}
+
+KURL KopeteTransfer::destinationURL()
+{
+	return mTarget;
 }
 
 void KopeteTransfer::slotPercentCompleted(unsigned int percent)
 {
-	if (percent == 100)
-		setText(3, i18n("Finished"));
-	else
-		setText(3, i18n("Transferring"));
-
-	KopeteTransferManager::transferManager()->paintProgressBar(this, percent);
+	// horribly inaccurate, but scheduled to be removed.
+	slotProcessed(percent * (mInfo.size() / 100));
+	if( percent >= 100 )
+		slotComplete();
 }
 
-void KopeteTransfer::setError(KopeteTransferError error)
+void KopeteTransfer::slotProcessed(unsigned int bytes)
 {
-	QString errorString;
-	switch (error)
+	emitPercent( bytes, mInfo.size() );
+}
+
+void KopeteTransfer::slotComplete()
+{
+	emitResult();
+}
+
+void KopeteTransfer::setError(KopeteTransferError kopeteError)
+{
+	QString errorText;
+	int error;
+
+	switch (kopeteError)
 	{
 		case CanceledLocal:
-			errorString = i18n("Aborted");
-			emit transferCanceled();
+			errorText = i18n("Aborted");
+			error = KIO::ERR_USER_CANCELED;
 			break;
 		case CanceledRemote:
-			errorString = i18n("Remote user aborted");
+			errorText = i18n("Remote user aborted");
+			error = KIO::ERR_ABORTED;
 			break;
 		case Timeout:
-			errorString = i18n("Connection timed out");
+			errorText = i18n("Connection timed out");
+			error = KIO::ERR_CONNECTION_BROKEN;
 			break;
-		case Other:
 		default:
-			errorString = i18n("Unknown error occurred");
+			errorText = i18n("Unknown error occurred");
+			error = KIO::ERR_UNKNOWN;
 			break;
 	}
-	setText(3, errorString);
+
+	slotError( error, errorText );
+}
+
+void KopeteTransfer::slotError( int error, const QString &errorText )
+{
+	m_error = error;
+	m_errorText = errorText;
+
+	emitResult();
+}
+
+void KopeteTransfer::slotResultEmitted()
+{
+	if( error() == KIO::ERR_USER_CANCELED )
+		emit transferCanceled();
 }
 
 /***************************
  *  KopeteTransferManager  *
  ***************************/
 
-KopeteTransferManager* KopeteTransferManager::s_transferManager = 0L;
-
 KopeteTransferManager* KopeteTransferManager::transferManager()
 {
-	if( !s_transferManager )
-		s_transferManager = new KopeteTransferManager( 0L );
+	static KopeteTransferManager transferManager(0);
 
-	//FIXME: the transfer manager is never deleted!
-	//	we can't add a parent because it is a widget
-	//	and it shouldn't appaers in it
-
-	return s_transferManager;
+	return &transferManager;
 }
 
-KopeteTransferManager::KopeteTransferManager( QWidget *parent )
-	: KopeteFileTransferUI( parent )
+KopeteTransferManager::KopeteTransferManager( QObject *parent ) : QObject( parent )
 {
 	nextID = 0;
-	hide();
-	connect(cmdAbort, SIGNAL(clicked()), this, SLOT(slotAbortClicked()));
-	connect(cmdRmComplete, SIGNAL(clicked()), this, SLOT(slotClearFinished()));
 }
-
-void KopeteTransferManager::paintProgressBar(QListViewItem *item, const int currentPercent)
-{
-	int width = (item->listView()->columnWidth(4) -4);
-	QPixmap pixmap(width, (item->height() - 4));
-	pixmap.fill(QColor(255,255,255));
-	QPainter p(&pixmap);
-	int fillWidth = static_cast<int>(width * ( (double)currentPercent/100 ) );
-
-	// This makes the percentage bar colored coded according to how far it is in the transfer
-	QColor blendColor;
-	blendColor.setHsv(currentPercent, 255, 204); // Oh, I know, I'm good :)
-	p.fillRect(0, 0, fillWidth, item->height(), blendColor);
-
-	// The following is to align and draw the percentage text in the center
-	QString percentText = QString::number( currentPercent ) + QString::fromLatin1( "%" );
-	int textWidth = (item->listView()->fontMetrics().width(percentText) / 2);
-	int newWidth = ( width / 2 );
-	int startPosY = static_cast<int>(((double)item->height() /2) + 2);
-	int startPosX = newWidth - textWidth;
-	p.drawText(startPosX, startPosY, percentText);
-
-	p.end();
-	item->setPixmap(4, pixmap);
-}
-
 
 KopeteTransfer* KopeteTransferManager::addTransfer(  KopeteContact *contact, const QString& file, const unsigned long size, const QString &recipient , KopeteFileTransferInfo::KopeteTransferDirection di)
 {
 //	if (nextID != 0)
 		nextID++;
 	KopeteFileTransferInfo info(contact, file, size, recipient,di,  nextID);
-	KopeteTransfer *trans = new KopeteTransfer(info, this, "KopeteTransfer");
-	connect(trans, SIGNAL(done(KopeteTransfer *)), this, SIGNAL(done(KopeteTransfer *))); // Just for handiness
+	KopeteTransfer *trans = new KopeteTransfer(info, contact);
+	connect(trans, SIGNAL(done(KopeteTransfer *)), this, SIGNAL(slotComplete(KopeteTransfer *)));
 	mTransfersMap.insert(nextID, trans);
-	mListView->insertItem(trans);
-	show();
 	return trans;
+}
+
+void KopeteTransferManager::slotAccepted(const KopeteFileTransferInfo& info, const QString& filename)
+{
+	KopeteTransfer *trans = new KopeteTransfer(info, filename);
+	connect(trans, SIGNAL(result(KIO::Job *)), this, SIGNAL(slotComplete(KopeteTransfer *)));
+	mTransfersMap.insert(info.transferId(), trans);
+	emit accepted(trans,filename);
 }
 
 int KopeteTransferManager::askIncomingTransfer(  KopeteContact *contact, const QString& file, const unsigned long size, const QString& description, void *internalId)
@@ -171,7 +222,8 @@ int KopeteTransferManager::askIncomingTransfer(  KopeteContact *contact, const Q
 		nextID++;
 	KopeteFileTransferInfo info(contact, file, size, contact->metaContact()->displayName(), KopeteFileTransferInfo::Incoming , nextID , internalId);
 
-	KopeteFileConfirmDialog *diag= new KopeteFileConfirmDialog(info, description , this )  ;
+	//FIXME!!! this will not be deleted if it's still open when kopete exits
+	KopeteFileConfirmDialog *diag= new KopeteFileConfirmDialog(info, description , 0 )  ;
 
 	connect( diag, SIGNAL( accepted(const KopeteFileTransferInfo&, const QString&)) , this, SLOT( slotAccepted(const KopeteFileTransferInfo&, const QString&) ) );
 	connect( diag, SIGNAL( refused(const KopeteFileTransferInfo&)) , this, SIGNAL( refused(const KopeteFileTransferInfo&) ) );
@@ -182,47 +234,24 @@ int KopeteTransferManager::askIncomingTransfer(  KopeteContact *contact, const Q
 void KopeteTransferManager::removeTransfer( unsigned int id )
 {
 	KopeteTransfer *trans = mTransfersMap[id];
-	mTransfersMap.remove(id);
-	mListView->takeItem(trans);
-	if (mListView->childCount() == 0)
-		hide();
+//	mTransfersMap.remove(id);
 	delete trans;
 }
 
-void KopeteTransferManager::slotAbortClicked()
+void KopeteTransferManager::slotComplete(KopeteTransfer *transfer)
 {
-	QListViewItem *curr = mListView->currentItem();
-	if (!curr) return;
-	KopeteTransfer *trans = dynamic_cast<KopeteTransfer *>(curr);
-	if (!trans) return;
-	trans->setError(KopeteTransfer::CanceledLocal);
-	emit canceled(trans);
-}
+	emit done(transfer);
 
-void KopeteTransferManager::slotClearFinished()
-{
-	for (QListViewItem *it = mListView->firstChild(); it != 0L; it = it->itemBelow())
+	for( QMap<unsigned, KopeteTransfer*>::Iterator it = mTransfersMap.begin();
+	     it != mTransfersMap.end(); ++it )
 	{
-		if (it->text(3) != i18n("Transferring"))
+		if( it.data() == transfer )
 		{
-			KopeteTransfer *trans = dynamic_cast<KopeteTransfer *>(it);
-			if (!trans) continue;
-			emit canceled(trans);
-			delete trans;
+			mTransfersMap.remove( it.key() );
+			break;
 		}
 	}
 }
-
-void KopeteTransferManager::slotAccepted(const KopeteFileTransferInfo& info, const QString& filename)
-{
-	KopeteTransfer *trans = new KopeteTransfer(info, this, "KopeteTransfer");
-	connect(trans, SIGNAL(done(KopeteTransfer *)), this, SIGNAL(done(KopeteTransfer *))); // Just for handiness
-	mTransfersMap.insert(info.transferId(), trans);
-	mListView->insertItem(trans);
-	show();
-	emit accepted(trans,filename);
-}
-
 
 #include "kopetetransfermanager.moc"
 
