@@ -60,6 +60,12 @@ YahooContact::~YahooContact()
 	kdDebug(14180) << "Yahoo::~YahooContact()" << endl;
 }
 
+int YahooContact::importance() const
+{
+	kdDebug(14180) << "[YahooContact::importance()]" << endl;
+	return m_status.importance();
+}
+
 // Return status text
 QString YahooContact::statusText() const
 {
@@ -177,12 +183,6 @@ QPixmap YahooContact::scaledStatusIcon(int size)
 
 }
 */
-
-int YahooContact::importance() const
-{
-	kdDebug(14180) << "[YahooContact::importance()]" << endl;
-	return 0;
-}
 
 KActionCollection *YahooContact::customContextMenuActions()
 {

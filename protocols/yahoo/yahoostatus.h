@@ -71,6 +71,8 @@ public:
 	QString text() const;
 	/* Returns status asscociated icon */
 	QString icon() const;
+	/* Returns current importance */
+	int importance() const;
 	/* Set current status */
 	void setStatus( Status, const QString & = QString::null );
 	static Status fromLibYahoo2( int );

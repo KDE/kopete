@@ -363,9 +363,9 @@ void YahooProtocol::slotGotBuddies( const YList */*theList*/ )
 	
 	// Serverside -> local
 	for(QMap<QString, QPair<QString, QString> >::iterator i = IDs.begin(); i != IDs.end(); i++)
-		if(!contacts()[i.key()] && 0/* && importYahooContacts */)		// TODO: make importYahooContacts a configuration option.
+		if(!contacts()[i.key()] && 1/* && importYahooContacts */)		// TODO: make importYahooContacts a configuration option.
 		{	kdDebug(14180) << "SS Contact " << i.key() << " is not in the contact list. Adding..." << endl;
-			QString groupName = /*importYahooGroups ? i.data().first :*/ "Imported Yahoo Contacts";	// TODO: make importYahooGroups a config option.
+			QString groupName = /*importYahooGroups*/ 1 ? i.data().first : "Imported Yahoo Contacts";	// TODO: make importYahooGroups a config option.
 			addContact(i.key(), i.data().second == "" || i.data().second.isNull() ? i.key() : i.data().second, 0, groupName);
 		}
 		

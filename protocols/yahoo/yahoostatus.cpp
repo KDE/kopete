@@ -140,6 +140,40 @@ QString YahooStatus::icon() const
 	}
 }
 
+int YahooStatus::importance() const
+{
+	kdDebug(14180) << "YahooStatus::improtance()" << endl;
+	if(m_status == Offline || m_status == Invisible)
+	{
+		return 0;
+	}
+	else if(m_status == Idle)
+	{
+		return 15;
+	}
+	else if(m_status == Mobile || m_status == CustomMobile)
+	{
+		return 5;
+	}
+	else if(m_status == Available || m_status == Custom)
+	{
+		return 20;
+	}
+	else if(m_status == BeRightBack || m_status == Busy || m_status == NotAtHome
+			|| m_status == NotAtMyDesk || m_status == NotInTheOffice
+			|| m_status == OnThePhone || m_status == OnVacation
+			|| m_status == OutToLunch || m_status == SteppedOut
+			|| m_status == CustomBusy)
+	{
+		return 10;
+	}
+	else
+	{
+		kdDebug(14180) << "Unknown status" << endl;
+		return "yahoo_unknown";
+	}
+}
+
 void YahooStatus::setStatus( Status status_, const QString &statusText_ )
 {
 	m_status = status_;
