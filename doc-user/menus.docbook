@@ -1,0 +1,884 @@
+<!-- Kopete Handbook, Menus Chapter copyright 2003 Will Stephenson.  Licensed under the GNU Free Documentation License -->
+<chapter id="menus">
+<title>Menu Entries</title>
+
+<para>Each menu item is discussed below. When there is a keyboard shortcut that
+performs a menu item function, the default shortcut is listed with the menu item.</para>
+<sect1 id="menus-contactlist">
+<title>The Contact List Window's Menus</title>
+<sect2 id="menus-contactlist-file">
+<title><guimenu>File</guimenu> Menu</title>
+
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>File</guimenu>
+<guisubmenu>Connection</guisubmenu>
+<guimenuitem>Connect All</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Go online with all your accounts.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>File</guimenu>
+<guisubmenu>Connection</guisubmenu>
+<guimenuitem>Disconnect All</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Take all your accounts offline.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>File</guimenu>
+<guisubmenu>Status</guisubmenu>
+<guimenuitem>Set Available Globally</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Make all your online accounts available.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>File</guimenu>
+<guisubmenu>Status</guisubmenu>
+<guisubmenu>Set Away Globally</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para>This sets all your accounts away.  Choose an away message from the sub-menu, which will be sent to anyone who tries to message you by &im; systems that support it.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>File</guimenu>
+<guimenuitem>Add Contact...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>This displays the Add Contact Wizard.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>File</guimenu>
+<guimenuitem>Create New Group...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Prompts you for the new group's name and adds it to the contact list.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>S</keycap></keycombo>
+</shortcut>
+<guimenu>File</guimenu>
+<guimenuitem>Save Contactlist</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>This saves &kopete;'s contactlist to disk immediately.  The list is also saved when &kopete; quits, so you don't need to save by hand. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>Q</keycap></keycombo>
+</shortcut>
+<guimenu>File</guimenu>
+<guimenuitem>Quit</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Disconnects you from all &im; systems, closes all the windows and exits the application.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-contactlist-edit">
+<title><guimenu>Edit</guimenu> Menu</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guimenuitem>Send Message...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Opens an email-style message window with the selected contact, to send a single message.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guimenuitem>Start Chat...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Opens a chat window with the selected contact, to have a conversation.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guimenuitem>Send File...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>If supported by the &im; system, this opens a file selector to choose a file to send to the selected contact.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guisubmenu>Move To</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para>(Enabled when a contact is selected) Choose another group from the sub-menu, and the contact will move to that group.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guisubmenu>Copy To</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para>(Enabled when a contact is selected) Choose a group from the sub-menu, and the contact will be copied to group.  &im; systems that allow contacts to be in more than one group on the server contact list will be updated accordingly.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guimenuitem>Remove From Group</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>(Enabled when a contact is selected) Removes the selected contact from the group.  If it is not in any other groups, it is moved to the top level of the contactlist.  To remove a contact entirely, see <guimenuitem>Remove Contact</guimenuitem>.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guimenuitem>Remove Contact</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>(Enabled when a contact is selected) Removes a contact from the contact list entirely.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guimenuitem>Rename Contact</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>(Enabled when a contact is selected) Renames the contact on the contact list.  If you do this, the contact list entry will no longer change if the contact changes their display name remotely.  You can re-enable this using the contact's Properties dialog.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guisubmenu>Add Contact...</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para>(Enabled when a contact is selected) Choose another account from the submenu, and you can add another way to message that person using that account.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guimenuitem>Add to Your Contact List...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>(Enabled when a contact is selected) Sometimes people will message you who aren't on your contact list already.  In this case, &kopete; creates a temporary entry for them, but to keep them on your contact list, use this function.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guimenuitem>Properties</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>The Properties dialog lets you choose custom icons for the selected item, and change its name.</para>
+<para>For contacts, you can change the &kde; Address Book entry that they are associated with.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guimenuitem>Remove Group</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>(Enabled when a group is selected) Removes a group from the contact list entirely.  Any contacts that are only in this group are moved to the top level.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Edit</guimenu>
+<guimenuitem>Rename Group</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>(Enabled when a group is selected) Renames the group.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect2>
+<sect2 id="menus-settings">
+<title><guimenu>Settings</guimenu> Menu</title>
+<variablelist>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>M</keycap></keycombo>
+</shortcut>
+<guimenu>Settings</guimenu>
+<guimenuitem>View Menubar</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Shows/hides the menu bar.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Settings</guimenu>
+<guimenuitem>View Toolbar</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Shows/hides the tool bar.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Settings</guimenu>
+<guimenuitem>View Statusbar</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Shows/hides the status bar.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>U</keycap></keycombo>
+</shortcut>
+<guimenu>Settings</guimenu>
+<guimenuitem>Show Offline Users</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>This shows/hides contacts who are currently offline.  They will become visible when they go online again.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>G</keycap></keycombo>
+</shortcut>
+<guimenu>Settings</guimenu>
+<guimenuitem>Show Empty Groups</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>This shows/hides groups which do not have any members, or where all the members are offline and hidden (see above).</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Settings</guimenu>
+<guimenuitem>Configure Shortcuts...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Shows the &kde; standard Configure Shortcuts dialog, where you can change keyboard shortcuts that work in the Contact List's windows.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Settings</guimenu>
+<guimenuitem>Configure Global Shortcuts...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Displays the &kde; standard Configure Global Shortcuts dialog, where you can change keyboard shortcuts that work all the time under &kde;.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Settings</guimenu>
+<guimenuitem>Configure Toolbars...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Displays the &kde; standard Configure Toolbars dialog, which lets you customise the Contact List's toolbars.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Settings</guimenu>
+<guimenuitem>Configure Kopete...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Displays the <link linkend="configure-dialog">Configure Kopete</link> dialog. </para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Settings</guimenu>
+<guimenuitem>Configure Plugins...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Displays the <link linkend="configuring-load-plugins-dialog">Configure Plugins</link> dialog.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-help">
+<title><guimenu>Help</guimenu> Menu</title>
+<para>These are the &kde; standard items for the <guimenu>Help</guimenu> menu:</para>
+
+&help.menu.documentation;
+
+</sect2>
+</sect1>  <!-- menus-contactlist -->
+
+<sect1 id="menus-chatwindow">
+<title>The Chat Window's Menus</title>
+<sect2 id="menus-chatwindow-chat">
+<title><guimenu>Chat</guimenu> Menu</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>&Enter;</keycap></keycombo>
+</shortcut>
+<guimenu>Chat</guimenu>
+<guimenuitem>Send Message</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Sends a message.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>S</keycap></keycombo>
+</shortcut>
+<guimenu>Chat</guimenu>
+<guimenuitem>Save</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Saves the content of the chat to a file.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>P</keycap></keycombo>
+</shortcut>
+<guimenu>Chat</guimenu>
+<guimenuitem>Print...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Prints off a hard copy of the chat.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Chat</guimenu>
+<guisubmenu>Contacts</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para>This menu lists all the people in the chat.  You have access to the same contact menu you get by <mousebutton>right</mousebutton>-clicking a contact's name in the Contact List, allowing you to perform contact specific actions such as sending them a file, viewing their user info or blocking them.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>W</keycap></keycombo>
+</shortcut>
+<guimenu>Chat</guimenu>
+<guimenuitem>Close</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Closes the current chat.  If there are chats taking place in other tabs in this window, the window will stay open.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>Q</keycap></keycombo>
+</shortcut>
+<guimenu>Chat</guimenu>
+<guimenuitem>Quit</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Closes all chats taking place in this window.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-edit">
+<title><guimenu>Edit</guimenu> Menu</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>X</keycap></keycombo></shortcut>
+<guimenu>Edit</guimenu>
+<guimenuitem>Cut</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Cutting text works as with most editors: the selected text is
+removed and put into the clipboard. Note that you can also select text and
+drag it to a new position.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>C</keycap></keycombo>
+</shortcut>
+<guimenu>Edit</guimenu>
+<guimenuitem>Copy</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Copying text works as with most editors: the selected text is copied to the clipboard.
+Note that you can also select text while holding the &Ctrl; key, and drag it to a new
+position to copy it.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>V</keycap></keycombo></shortcut>
+<guimenu>Edit</guimenu>
+<guimenuitem>Paste</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Pasting works the same as with most editors: the text from the
+clipboard is pasted at the current cursor position.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-format">
+<title><guimenu>Format</guimenu> Menu</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Format</guimenu>
+<guisubmenu>Add Smiley</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para>This menu contains all the smileys/emoticons that the current emoticon scheme includes.  You can change the scheme <link linkend="configuring-appearance-emoticons">in the Configure Kopete Dialog</link>.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Format</guimenu>
+<guimenuitem>Text Color...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Opens a color selector that modifies the text color.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Format</guimenu>
+<guimenuitem>Background Color...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Opens a color selector that modifies the background color.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Format</guimenu>
+<guisubmenu>Font</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para>This menu allows you to change the font used in the chat.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Format</guimenu>
+<guisubmenu>Font Size</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para>This menu allows you to change the font size used in the chat.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-tabs">
+<title><guimenu>Tabs</guimenu> Menu</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Tabs</guimenu>
+<guisubmenu>Tab Placement</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para>This menu allows you to change whether tabs appear at the top or the bottom of the chat view.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;&Shift;<keycap>B</keycap></keycombo>
+</shortcut>
+<guimenu>Tabs</guimenu>
+<guimenuitem>Detach Chat</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Separates the current chat into its own window.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Tabs</guimenu>
+<guisubmenu>Move Chat to Window</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para>You can move chats between windows using this menu.  Choose the chat window the tab should move to from the menu.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-tools">
+<title><guimenu>Tools</guimenu> Menu</title>
+<para>This menu contains items added by the plugins you have loaded.  See the <link linkend="plugins">plugins chapter</link> for details.</para>
+</sect2>
+<sect2 id="menus-chatwindow-settings">
+<title><guimenu>Settings</guimenu> Menu</title>
+<variablelist>
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>M</keycap></keycombo>
+</shortcut>
+<guimenu>Settings</guimenu>
+<guimenuitem>Show Menubar</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Separates the current chat into its own window.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Settings</guimenu>
+<guisubmenu>Toolbars</guisubmenu>
+<guimenuitem>Show Main Toolbar (Kopete)</guimenuitem></menuchoice>
+</term>
+<listitem>
+<para>Shows/hides the main toolbar.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Settings</guimenu>
+<guisubmenu>Toolbars</guisubmenu>
+<guimenuitem>Show Status (Kopete)</guimenuitem></menuchoice>
+</term>
+<listitem>
+<para>Shows/hides &kopete;'s status bar.  This is where buddy pictures appear.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Settings</guimenu>
+<guisubmenu>Toolbars</guisubmenu>
+<guimenuitem>Show Format Toolbar (Kopete)</guimenuitem></menuchoice>
+</term>
+<listitem>
+<para>Shows/hides the text formatting toolbar.</para>
+</listitem>
+</varlistentry>
+	
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Settings</guimenu>
+<guimenuitem>Show Statusbar</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Separates the current chat into its own window.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Settings</guimenu>
+<guisubmenu>Show Chat Members List</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para>This menu controls whether the Chat Members List appears on the left or right of the Chat View, and whether it is visible at all.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Settings</guimenu>
+<guimenuitem>Configure Shortcuts...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Shows the &kde; standard Configure Shortcuts dialog, where you can change keyboard shortcuts that work in the chat window.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Settings</guimenu>
+<guimenuitem>Configure Toolbars...</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Displays the &kde; standard Configure Toolbars dialog, which lets you customise the chat window's toolbars.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+<sect2 id="menus-chatwindow-help">
+<title><guimenu>Help</guimenu> Menu</title>
+<para>These are the &kde; standard items for the <guimenu>Help</guimenu> menu:</para>
+
+&help.menu.documentation;
+
+</sect2>
+<!--
+<varlistentry>
+<term>
+<menuchoice>
+<guimenu>Chat</guimenu>
+<guimenuitem></guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para></para>
+</listitem>
+</varlistentry>
+
+-->
+</sect1> <!-- menus-chatwindow -->
+</chapter> <!-- menus -->
+<!--
+CHAT
+Send Message
+Save
+Print...
+Contacts>
+Close
+Quit
+EDIT
+Cut
+Copy
+Paste
+FORMAT
+Add Smiley>
+Text Color...
+Background Color...
+Font>
+Font Size>
+TABS
+Tab Placement>
+Detach Chat
+Move Chat to Window>
+(TOOLS
+Send Media Info)
+SETTINGS
+Show Menubar
+Toolbars>
+	Show Main Toolbar (Kopete)
+	Show Status (Kopete)
+	Show Format Toolbar (Kopete)
+Show Statusbar
+Chat Members List>
+	Place to Left of Chat Area
+	Place to Right of Chat Area
+	Show
+Configure Shortcuts...
+Configure Toolbars...
+HELP
+-->
+<!--FILE
+Connection>
+	Connect All
+	Disconnect All
+Status>
+	Set Available Globally
+	Set Away Globally
+Add Contact...
+Create New Group...
+Save ContactList
+Quit
+EDIT 
+Send Message..
+Start Chat...
+Send File...
+Move To>
+	(Group List)
+Copy To>
+	(Group List)
+Remove From Group
+(on Group)
+Remove Group
+Rename Group
+(on Contact)
+Remove Contact
+Rename Contact
+Add Contact
+Add To Contact List
+View History
+Properties
+SETTINGS
+View Menubar
+View Toolbar
+View Statusbar
+Show Offline Users
+Show Empty Groups
+Configure Shortcuts...
+Configure Global Shortcuts...
+Configure Toolbars...
+Configure Plugins...
+Configure Kopete...
+HELP
+Kopete Handbook...
+What's This?
+Report Bug
+About Kopete
+About KDE
+-->
