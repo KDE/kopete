@@ -133,11 +133,15 @@ QString JabberContact::reason () const
 }
 
 /* Return if we are reachable (defaults to true because
-   we can send on- and offline */
+   we can send on- and offline, only return false if the
+   account itself is offline, too) */
 bool JabberContact::isReachable ()
 {
 	if (account()->isConnected())
 		return true;
+
+	return false;
+
 }
 
 QPtrList<KAction> *JabberContact::customContextMenuActions ()
