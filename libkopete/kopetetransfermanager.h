@@ -25,33 +25,64 @@
 
 #include "kopetefiletransferui.h"
 
-class KopeteFileTransferInfo;
-class KopeteMetaContact;
 class KopeteTransfer;
+class KopeteContact;
 
 /**
  * @author Nick Betcher. <nbetcher@kde.org>
- *
  */
+
+class KopeteFileTransferInfo
+{
+public:
+	enum KopeteTransferDirection { Incomming, Outgoing };
+
+	KopeteFileTransferInfo( KopeteContact *, const QString&, const unsigned long size, const QString &,KopeteFileTransferInfo::KopeteTransferDirection di, const unsigned int id, void *internalId=0L);
+	~KopeteFileTransferInfo(){};
+	KopeteFileTransferInfo(){};
+	unsigned int id() const { return mId; };
+	KopeteContact* contact() const { return mContact; };
+	QString file() const { return mFile; };
+	QString recipient() const { return mRecipient; };
+	unsigned long size() const { return mSize; };
+	void *internalId() const { return m_intId; };
+	KopeteTransferDirection direction() const { return mDirection; };
+private:
+	unsigned long mSize;
+	QString mRecipient;
+	unsigned int mId;
+	KopeteContact *mContact;
+	QString mFile;
+	void *m_intId;
+	KopeteTransferDirection mDirection;
+};
 
 class KopeteTransferManager : public KopeteFileTransferUI
 {
 Q_OBJECT
 public:
 	KopeteTransferManager();
-	
-	KopeteTransfer *addTransfer( const KopeteMetaContact *contact, const QString& file, const unsigned long size, const QString &recipient );
-	void removeTransfer( const KopeteFileTransferInfo * );
+	~KopeteTransferManager(){};
+	KopeteTransfer *addTransfer( KopeteContact *contact, const QString& file, const unsigned long size, const QString &recipient , KopeteFileTransferInfo::KopeteTransferDirection di);
+	int askIncommingTransfer( KopeteContact *contact, const QString& file, const unsigned long size, const QString& description=QString::null, void *internalId=0L);
+	void removeTransfer( unsigned int id );
 	void paintProgressBar(QListViewItem *item, const int currentPercent);
 private slots:
 	void slotAbortClicked();
 	void slotClearFinished();
+  /** No descriptions */
+  void slotAccepted(const KopeteFileTransferInfo&, const QString&);
 private:
 	int nextID;
 	QMap<unsigned int, KopeteTransfer *> mTransfersMap;
+
 signals:
 	void done( KopeteTransfer* );
 	void canceled( KopeteTransfer* );
+
+	void accepted(KopeteTransfer*, const QString &fileName);
+	void refused(const KopeteFileTransferInfo& );
+
 };
 
 class KopeteTransfer : public QObject, public QListViewItem
@@ -63,39 +94,24 @@ public:
 		CanceledLocal,
 		CanceledRemote,
 		Timeout,
+		Refused,
 		Other
 	};
-	KopeteTransfer( KopeteFileTransferInfo *, QObject *parent = 0, const char *name=0);
-	KopeteFileTransferInfo *info() { return mInfo; };
+	KopeteTransfer( const KopeteFileTransferInfo &, QObject *parent = 0, const char *name=0);
+	~KopeteTransfer(){};
+	KopeteFileTransferInfo info() { return mInfo; };
 	void setError(KopeteTransferError error);
 public slots:
 	void slotPercentCompleted(unsigned int);
 private:
-	KopeteFileTransferInfo *mInfo;
+	KopeteFileTransferInfo mInfo;
 	int mPercent;
 
 //protected slots:
 //	void percentCompleted( const KopeteFileTransferInfo *,int percentDone );
 signals:
-	void transferCanceled( const KopeteFileTransferInfo * );
+	void transferCanceled(  );
 	void done( KopeteTransfer* );
-};
-
-class KopeteFileTransferInfo
-{
-public:
-	KopeteFileTransferInfo( const KopeteMetaContact *, const QString&, const unsigned long, const QString &, const unsigned int );
-	unsigned int id() const { return mId; };
-	const KopeteMetaContact* contact() const { return mContact; };
-	QString file() const { return mFile; };
-	const QString recipient() { return mRecipient; };
-	const unsigned long size() { return mSize; };
-private:
-	unsigned long mSize;
-	QString mRecipient;
-	unsigned int mId;
-	const KopeteMetaContact *mContact;
-	QString mFile;
 };
 
 #endif

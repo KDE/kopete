@@ -22,8 +22,11 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kfiledialog.h>
 
 #include "kopete.h"
+#include "msnmessagemanager.h"
+#include "kopetemessagemanagerfactory.h"
 #include "kopetecontactlistview.h"
 #include "kopetestdaction.h"
 #include "kopetemetacontact.h"
@@ -77,6 +80,8 @@ MSNContact::MSNContact( const QString &msnId,
 		connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ),
 				this, SLOT (slotMoved(KopeteMetaContact*) ));
 	}
+
+	setFileCapable(true);
 
 }
 
@@ -663,6 +668,24 @@ void MSNContact::slotMoved(KopeteMetaContact* from)
 
 
 }
+
+void MSNContact::slotSendFile()
+{
+	QString fileName = KFileDialog::getOpenFileName( QString::null ,"*.*", 0l  , i18n( "Kopete File Transfer" ) );
+	if ( !fileName.isNull())
+	{
+		KopeteContactPtrList chatmembers;
+		chatmembers.append(this);
+		KopeteMessageManager *_manager = kopeteapp->sessionFactory()->findKopeteMessageManager( MSNProtocol::protocol()->myself(), chatmembers, MSNProtocol::protocol()  );
+		MSNMessageManager *manager= dynamic_cast<MSNMessageManager*>(_manager);
+		if(!manager)
+		{
+			manager=new MSNMessageManager(MSNProtocol::protocol()->myself(),chatmembers, QString( "msn_logs/" + id() + ".log" ));
+		}
+		manager->sendFile(fileName);
+	}
+}
+
 
 #include "msncontact.moc"
 

@@ -85,6 +85,12 @@ public:
 	int sendCommand( const QString &cmd, const QString &args = QString::null,
 		bool addId = true, const QString &body = QString::null );
 
+	/*
+	 * return the local ip.
+	 * Used for filetransfer
+	 */
+	QString getLocalIP();
+
 signals:
 	/**
 	 * A block read is ready.
@@ -162,7 +168,9 @@ protected:
 		const QString &data ) = 0;
 
   /** Used in MSNFileTransferSocket */
-  virtual void bytesReceived(const QByteArray &);
+	virtual void bytesReceived(const QByteArray &);
+	bool accept(KExtendedSocket *);
+	void sendBytes(const QByteArray &data);
 
     
 	const QString &server() { return m_server; }

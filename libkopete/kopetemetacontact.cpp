@@ -45,7 +45,7 @@ KopeteMetaContact::KopeteMetaContact()
 : QObject( KopeteContactList::contactList() )
 {
 	//TODO: implement m_trackChildNameChanges
-	m_trackChildNameChanges = false;
+	m_trackChildNameChanges = true;
 	m_temporary=false;
 //	m_isTopLevel=false;
 
@@ -362,6 +362,7 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
 void KopeteMetaContact::setDisplayName( const QString &name )
 {
 	m_displayName = name;
+	m_trackChildNameChanges = false;
 	emit displayNameChanged( this, name );
 }
 
@@ -373,7 +374,11 @@ QString KopeteMetaContact::displayName() const
 void KopeteMetaContact::slotContactNameChanged( const QString &name )
 {
 	if( m_trackChildNameChanges )
+	{
 		setDisplayName( name );
+		//because m_trackChildNameChanges is set to flase in setDisplayName
+		m_trackChildNameChanges = true;
+	}
 }
 
 void KopeteMetaContact::moveToGroup(  KopeteGroup *from,  KopeteGroup *to )
@@ -397,7 +402,7 @@ void KopeteMetaContact::moveToGroup(  KopeteGroup *from,  KopeteGroup *to )
 
 	m_groups.remove( from );
 
-	m_groups.append( to );	
+	m_groups.append( to );
 
 /*	for( 	KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
 	{
@@ -569,6 +574,7 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 				if ( contactElement.text().isEmpty() )
 					return false;
 				m_displayName = contactElement.text();
+				m_trackChildNameChanges = false;
 			}
 			else if( contactElement.tagName() == "groups" )
 			{

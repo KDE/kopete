@@ -27,15 +27,26 @@
 
 class QFile;
 class KopeteTransfer;
+class KExtendedSocket;
 
 
 class MSNFileTransferSocket : public MSNSocket  {
    Q_OBJECT
 public:
-	MSNFileTransferSocket(const QString msnid, const QString cook, const QString filename, QObject* parent=0L);
+	MSNFileTransferSocket( bool incomming,QObject* parent=0L);
 	~MSNFileTransferSocket();
-  /** No descriptions */
-  void setKopeteTransfer(KopeteTransfer *kt);
+
+	void setKopeteTransfer(KopeteTransfer *kt);
+	KopeteTransfer* kopeteTransfer() {return m_kopeteTransfer;}
+	void setFileName(const QString &fn);
+	void setAuthCookie(const QString& c)  {m_authcook=c;}
+	void setCookie(long unsigned int c)  {m_cookie=c;}
+	long unsigned int cookie()  {return m_cookie;}
+	bool incomming() { return m_incomming;}
+	QString fileName() { return m_fileName;}
+	long unsigned int size() { return m_size;}
+	void listen(int port);
+
 protected: // Protected methods
   /**
 	 * This reimplementation sets up the negotiating with the server and
@@ -46,35 +57,36 @@ protected: // Protected methods
   /**
 	 * Handle an MSN command response line.
 	 */
-  virtual void parseCommand(const QString & cmd, uint id, const QString & data);
-  /** No descriptions */
-  void bytesReceived(const QByteArray & data);
-  /**
-	 * Check if we're waiting for a block of raw data. Emits blockRead()
-	 * when the data is available.
-	 * Returns true when still waiting and false when there is no pending
-	 * read, or when the read is succesfully handled.
-	 */
-
-
+	virtual void parseCommand(const QString & cmd, uint id, const QString & data);
+	virtual void bytesReceived(const QByteArray & data);
 
 private:
-  QString m_msnId;
-  QString m_authcook;
-  long unsigned int m_size;
-  long unsigned int m_downsize;
-  QString m_fileName;
+	long unsigned int m_cookie;
+	long unsigned int m_size;
+	long unsigned int m_downsize;
+	QString m_authcook;
+	QString m_fileName;
+	bool m_incomming;
+	KopeteTransfer* m_kopeteTransfer;
+	QFile *m_file ;
+	KExtendedSocket *m_server;
 
-  KopeteTransfer* m_kopeteTransfer;
-
-  QFile *m_file ;
-
+	bool ready;
 
 private slots: // Private slots
+	void slotSocketClosed();
+	void slotReadBlock(const QByteArray &);
+	void slotAcceptConnection();
+	void slotTimer();
+	void slotSendFile();
+signals:
+	void done(MSNFileTransferSocket*);
+public slots: // Public slots
   /** No descriptions */
-  void slotSocketClosed();
+  void abort();
+protected slots: // Protected slots
   /** No descriptions */
-  void slotReadBlock(const QByteArray &);
+  virtual void slotReadyWrite();
 };
 
 #endif

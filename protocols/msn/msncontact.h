@@ -126,6 +126,8 @@ public slots:
 	virtual void slotDeleteContact();
 	virtual void execute();
 	virtual void slotViewHistory();
+  /** No descriptions */
+  virtual void slotSendFile();
 
 	void removedFromGroup(QString group);
 	void addedToGroup(QString group);

@@ -6,8 +6,8 @@ noinst_HEADERS = kopetecontactlistview.h pluginmodule.h configmodule.h \
 	kopetelistview.h preferencesdialog.h kopetewindow.h statusbaricon.h \
 	protocolboxitem.h addcontactpage.h systemtray.h \
 	appearanceconfig.h kopeteballoonbase.h kopeteballoon.h \
-	kopetehistorydialog.h kopetecontactviewitem.h kopetestdaction.h \
-	kopetehistorywidget.h chatview.h kopetegroupviewitem.h
+	kopetehistorydialog.h kopetecontactviewitem.h kopetestdaction.h  fileconfirmbase.h \
+	kopetehistorywidget.h chatview.h kopetegroupviewitem.h kopetefileconfirmdialog.h
 
 libkopeteui_la_SOURCES = configmodule.cpp kopetewindow.cpp \
 	preferencesdialog.cpp kopetecontactlistview.cpp pluginmodule.cpp \
@@ -18,7 +18,7 @@ libkopeteui_la_SOURCES = configmodule.cpp kopetewindow.cpp \
 	kopetecontactviewitem.cpp kopetestdaction.cpp \
 	kopetehistorywidget.cpp kopeteemailwindow.cpp emailwindow.ui \
 	kopetemetacontactlvi.cpp kopeteawaydialogbase.ui \
-	kopetefiletransferui.ui kopetegroupviewitem.cpp \
+	kopetefiletransferui.ui kopetegroupviewitem.cpp kopetefileconfirmdialog.cpp fileconfirmbase.ui \
 	kopeteawayconfigbase.ui kopeteawayconfigui.cpp kopetechatwindow.cpp chatview.cpp prfschatwindow_ui.ui
 
 libkopeteui_la_LDFLAGS = $(all_libraries)

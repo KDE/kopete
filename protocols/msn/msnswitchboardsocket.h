@@ -41,19 +41,19 @@ public:
 	MSNSwitchBoardSocket();
 	~MSNSwitchBoardSocket();
 
-protected:
+private:
 	QString m_myHandle; // our handle
-	QString m_msgHandle; // the other side's handle (the latest)
-	QString m_ID;
-	QString m_auth;
-
-  QString m_filetransferName;
 
 	// contains the handle of the last person that msg'ed us.
 	// since we receive the actual message by readBlock(), we need
 	// to remember what the handle was of the person sending us the message.
-	//QString m_handle;
+	QString m_msgHandle;
+	
+	QString m_ID;
+	QString m_auth;
+	QStringList m_chatMembers;
 
+protected:
 	/**
 	 * Handle an MSN command response line.
 	 */
@@ -90,19 +90,17 @@ private slots:
 
 signals:
 	void msgReceived( const KopeteMessage &msg );
-	//void startChat(MSNSwitchBoardSocket* switchoard);
-	void userTypingMsg(QString );
+	void userTypingMsg(const QString& );
 	void msgAcknowledgement(unsigned int, bool);
-	//void switchBoardIsActive(bool);
 	/**
 	 *  updateChatMember();
 	 *  	if add=true, the contact join the chat, else, the contact leave.
 	 */
-	void updateChatMember(QString handle,QString plublicName, bool add  );
+	void updateChatMember(const QString &handle,const QString &plublicName, bool add  );
+	
 	void switchBoardClosed(  );
+	void invitation(const QString& handle, const QString& msg);
 
-private:
-	QStringList m_chatMembers;
 };
 
 #endif

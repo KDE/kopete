@@ -208,7 +208,7 @@ void MSNSocket::slotDataReceived()
 				<< "Read " << ret << " bytes into 4kb block." << endl;
 		}
 
-		buf[ ret ] = '\0'; // Make it properly null-terminated
+//		buf[ ret ] = '\0'; // Make it properly null-terminated
 //		kdDebug() << "MSNSocket::slotDataReceived: Received '" <<			buf << "'" << endl;
     
 		m_buffer.add(buf,ret); // fill the buffer with the received data
@@ -216,7 +216,6 @@ void MSNSocket::slotDataReceived()
 
 		slotReadLine();
 	}
-
 	// Cleanup
 	delete[] buf;
 }
@@ -244,7 +243,7 @@ void MSNSocket::slotReadLine()
 	// parse the first line (which will recursively parse the other lines)
 	if( !pollReadBlock() )
 	{
-		if(m_buffer.size()>=3 && m_buffer.data()[0]=='\0')
+		if(m_buffer.size()>=3 && ( m_buffer.data()[0]=='\0' || m_buffer.data()[0]=='\1'))
 		{
 			bytesReceived(m_buffer.take(3));
 			return;
@@ -443,7 +442,6 @@ void MSNSocket::slotSocketClosed( int state )
 
 	doneDisconnect();
 
-//	kdDebug() << "MSNSocket::slotSocketClosed: delete socket " << m_socket << endl;
 	m_buffer = Buffer(0);
 	delete m_socket;
 	//m_socket->deleteLater();
@@ -453,12 +451,91 @@ void MSNSocket::slotSocketClosed( int state )
 }
 
 
-
 /** Used in MSNFileTransferSocket */
 void MSNSocket::bytesReceived(const QByteArray &)
 {
 	kdDebug() << "MSNSocket::bytesReceived : WARNING: unknow bytes were received" <<endl  ;
 }
+
+void MSNSocket::sendBytes(const QByteArray &data)
+{
+	if(!m_socket)
+	{
+		kdDebug() << "MSNSocket::sendBytes: WARNING: not yet connected" <<endl  ;
+		return;
+	}
+	m_socket->writeBlock( data, data.size() );
+}
+
+
+bool MSNSocket::accept(KExtendedSocket *server)
+{
+	if(m_socket)
+	{
+		kdDebug() << "MSNSocket::accept : WARNING: Socket already exists" <<endl  ;
+		return false;
+	}
+	int acceptResult = server->accept(m_socket);
+	kdDebug() << "MSNSocket::accept: result: "<< acceptResult << "  m_socket create : " <<m_socket <<endl  ;
+	if(acceptResult !=0)
+		return false;
+	if(!m_socket)
+		return false;
+
+	setOnlineStatus(Connecting);
+
+	m_id = 0;
+//	m_lastId = 0;
+	m_waitBlockSize = 0L;
+	m_lookupStatus = Processing;
+
+	m_socket->setBlockingMode(false);
+	m_socket->enableRead(true);
+	m_socket->enableWrite(true);
+	m_socket->setBufferSize(-1, -1);
+
+	QObject::connect( m_socket, SIGNAL( readyRead() ),
+		this, SLOT( slotDataReceived() ) );
+	QObject::connect( m_socket, SIGNAL( connectionFailed( int ) ),
+		this, SLOT( slotSocketError( int ) ) );
+	QObject::connect( m_socket, SIGNAL( closed ( int ) ),
+		this, SLOT( slotSocketClosed( int ) ) );
+
+
+	//Because currently only MSNFileTransferSocket use this method, i connect dirrectly to a MSNFileTRansferSocket slot
+	//this code should be changed when we will implement other invitations
+	QObject::connect( m_socket, SIGNAL( readyWrite () ),
+		this, SLOT( slotReadyWrite() ) );  
+
+	m_socket->setSocketFlags( KExtendedSocket::anySocket | KExtendedSocket::inputBufferedSocket | KExtendedSocket::outputBufferedSocket );
+
+	doneConnect();
+	return true;
+}
+
+QString MSNSocket::getLocalIP()
+{
+	if(!m_socket)
+		return QString::null;
+
+	const KSocketAddress *address= m_socket->localAddress(); 
+	if ( !address  )
+	{
+		kdDebug() << "MSNFileTransferSocket::getLocalIP: ip not found" <<endl;
+		return QString::null;
+	}
+	QString ip = address->pretty();
+	ip = ip.replace( QRegExp("-"), " " );
+	if ( ip.contains(" ") )
+	{
+		ip = ip.left( ip.find(" ") );
+	}
+	kdDebug() << "MSNFileTransferSocket::getLocalIP: ip: "<< ip  <<endl;
+//	delete address;
+	return ip;
+}
+
+
 
 
 
@@ -474,7 +551,8 @@ void MSNSocket::Buffer::add(char *str, unsigned int sz)
 	for(unsigned int f=0;f<sz; f++)
 		b[size()+f]=str[f];
 
-	assign(b,size()+sz);
+	duplicate(b,size()+sz);
+	delete[] b;
 }
 
 QByteArray MSNSocket::Buffer::take(unsigned int sz)
@@ -484,17 +562,15 @@ QByteArray MSNSocket::Buffer::take(unsigned int sz)
 		kdDebug() << "MSNSocket::Buffer::take : [WARNING] buffer size ("<< size()<<") < asked size (" << sz <<") " << endl;
 		return QByteArray();
 	}
-	char *str=new char[sz];
+	QByteArray rep(sz);
 	for (unsigned int f=0;f<sz;f++)
-		str[f] = data()[f];
+		rep[f] = data()[f];
 
-	QByteArray rep=QByteArray().assign(str,sz);
-
-	str=new char[size()-sz+1];
+	char *str=new char[size()-sz];
 	for(unsigned int f=0;f<size()-sz;f++)
 		str[f]=data()[sz+f];
-	str[size()-sz]='\0';
-	assign(str,size()-sz);
+	duplicate(str,size()-sz);
+	delete[] str;
 
 	return rep;
 }

@@ -19,9 +19,7 @@
 #include "msnswitchboardsocket.h"
 #include "msnprotocol.h"
 #include "msncontact.h"
-#include "msnfiletransfersocket.h"
 #include "kopete.h"
-#include "kopetetransfermanager.h"
 #include <time.h>
 // qt
 #include <qdatetime.h>
@@ -167,7 +165,8 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	// incoming message for File-transfer
 	if( msg.contains("Content-Type: text/x-msmsgsinvite; charset=UTF-8") )
 	{
-		// filetransfer  
+		emit invitation(m_msgHandle,msg);
+		/*
 		if( msg.contains("Invitation-Command: ACCEPT") )
 		{
 			QString ip_adress = msg.right( msg.length() - msg.find( "IP-Address:" ) - 12 );
@@ -246,6 +245,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			}
 //			m_lastId++;  
 		}
+		*/
 	}
 	else if(msg.contains("MIME-Version: 1.0\r\nContent-Type: text/x-msmsgscontrol\r\nTypingUser:"))
 	{
