@@ -49,7 +49,7 @@ public:
 
 	/**
 	 * Find the meta contact that belongs to a given contact. If contact
-	 * is not found, a new meta contact is created instead.
+	 * is not found, null is returned.
 	 * For now, just compare the ID field.
 	 *
 	 * NOTE: Even though the new contact list generally doesn't require this

@@ -123,24 +123,6 @@ WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProto
 WPProtocol::~WPProtocol()
 {
 	DEBUG(WPDMETHOD, "WPProtocol::~WPProtocol()");
-
-	//contacts are now deleted himself when the protocol unload. this code is obsolete
-	/*
-   	QPtrList<KopeteMetaContact> metaContacts = KopeteContactList::contactList()->metaContacts();
-	for(KopeteMetaContact *i = metaContacts.first(); i; i = metaContacts.next())
-	{	DEBUG(WPDINFO, "Checking metacontact: " << i->displayName());
-		QPtrList<KopeteContact> contacts = i->contacts();
-		for(KopeteContact *j = contacts.first(); j; j = contacts.next())
-		{	DEBUG(WPDINFO, "Checking contact " << j->displayName() << " of type: " << j->protocol());
-			if(j->protocol() == "WPProtocol")
-			{	contacts.remove(j);
-				delete j;
-			}
-		}
-	}
-	delete theMyself;
-
-	DEBUG(WPDINFO, "Deleted OK.");*/
 }
 
 void WPProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
@@ -158,7 +140,7 @@ WPContact *WPProtocol::getContact(const QString &Name, KopeteMetaContact* theMet
 	if(!theMetaContact)
 	{
 		// Should really ask to see if they want the contact adding to their list first...
-		theMetaContact = l->findContact(pluginId(), Name, "smb://" + Name);
+		theMetaContact = l->findContact(pluginId(), Name, Name);
 		if(!theMetaContact)
 		{	DEBUG(WPDINFO, "Adding " << Name << " to the contact list...");
 			theMetaContact = new KopeteMetaContact();
@@ -166,7 +148,7 @@ WPContact *WPProtocol::getContact(const QString &Name, KopeteMetaContact* theMet
 		}
 	}
 
-	KopeteContact *theContact = theMetaContact->findContact(pluginId(), Name, "smb://" + Name);
+	KopeteContact *theContact = theMetaContact->findContact(pluginId(), Name, Name);
 	if(!theContact)
 	{	theContact = new WPContact(this, Name, theMetaContact);
 		theMetaContact->addContact(theContact);

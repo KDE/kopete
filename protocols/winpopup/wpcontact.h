@@ -88,7 +88,6 @@ public:
 	// very basic actions
 	bool isOnline() const { return myIsOnline; }
 	bool isReachable() { return myIsOnline; }
-//	QStringList groups() { return QStringList(); }
 	KopeteContact::ContactStatus status() const { return myIsOnline ? Online : Offline; }
 	QString statusText() const { return myIsOnline ? "Online" : "Offline"; }
 	QString statusIcon() const { return myIsOnline ? "wp_available" : "wp_offline"; }
@@ -97,12 +96,6 @@ public:
 	KActionCollection *customContextMenuActions() { return myActionCollection; }
 
 	QString identityId() const { return myHost; }
-	QString contactId() const { return "smb://" + myHost; }
-
-	// null actions
-/*	void addToGroup(const QString &) {}
-	void removeFromGroup(const QString &) {}
-	void moveToGroup(const QString &, const QString &) {}*/
 
 public slots:
 	// not quite so basic actions
@@ -110,9 +103,6 @@ public slots:
 
 	void slotDeleteContact() { deleteLater(); }
 	void slotUserInfo() { /* show user info? */ }
-
-signals:
-	void statusChanged(KopeteContact *contact, KopeteContact::ContactStatus status);
 };
 
 #endif
