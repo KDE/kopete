@@ -104,6 +104,9 @@ class OscarContact : public KopeteContact
 		const QString &awayMessage();
 		void setAwayMessage(const QString &message);
 
+	signals:
+		void awayMessageChanged();
+
 	public slots:
 		/*
 		 * Method to delete a contact from the contact list

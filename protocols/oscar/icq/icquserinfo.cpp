@@ -38,12 +38,11 @@
 #include <kurllabel.h>
 
 
-ICQUserInfo::ICQUserInfo(ICQContact *c, ICQAccount *account,
-	QWidget *parent, const char* name)
+ICQUserInfo::ICQUserInfo(ICQContact *c, QWidget *parent, const char* name)
 	: KDialogBase(parent, name, false, QString::null, Close | User1 | User2,
 		Close, false, i18n("&Save Settings"), i18n("&Fetch Again"))
 {
-	mAccount = account;
+	mAccount = static_cast<ICQAccount*>(c->account());
 	mContact = c;
 	p = ICQProtocol::protocol(); // I am SO lazy ;)
 

@@ -8,13 +8,14 @@ AM_CPPFLAGS = -I$(srcdir)/../ \
 
 kde_module_LTLIBRARIES = kopete_icq.la
 
-kopete_icq_la_SOURCES =  icqprotocol.cpp icqaccount.cpp icqcontact.cpp icquserinfo.cpp
+kopete_icq_la_SOURCES =  icqprotocol.cpp icqaccount.cpp icqcontact.cpp icquserinfo.cpp icqreadaway.cpp
 
 kopete_icq_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
-kopete_icq_la_LIBADD  = ../libkopete_oscar.la ./ui/libkopeteicqui.la \
+kopete_icq_la_LIBADD  = ../libkopete_oscar.la ui/libkopeteicqui.la \
 	$(top_builddir)/kopete/libkopete/libkopete.la
-kopete_icq_la_DEPENDENCIES  = ../libkopete_oscar.la ./ui/libkopeteicqui.la \
-	$(top_builddir)/kopete/libkopete/libkopete.la
+
+#kopete_icq_la_DEPENDENCIES  = ../libkopete_oscar.la ./ui/libkopeteicqui.la \
+#	$(top_builddir)/kopete/libkopete/libkopete.la
 
 service_DATA = icq.desktop
 servicedir = $(kde_servicesdir)

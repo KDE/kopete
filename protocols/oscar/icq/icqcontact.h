@@ -34,11 +34,12 @@ class ICQProtocol;
 class ICQAccount;
 class OscarAccount;
 class ICQUserInfo; // user info dialog
+class ICQReadAway;
 
 class ICQGeneralUserInfo;
 class ICQWorkUserInfo;
 
-/**
+/*
  * Contact for ICQ over Oscar protocol
  * @author Stefan Gehn
  */
@@ -51,13 +52,14 @@ class ICQContact : public OscarContact
 
 	public:
 		ICQContact(const QString name, const QString displayName,
-					ICQAccount *account, KopeteMetaContact *parent);
+			ICQAccount *account, KopeteMetaContact *parent);
+
 		virtual ~ICQContact();
 
-		/**
-		* Returns a set of custom menu items for
-		* the context menu
-		*/
+		/*
+		 * Returns a set of custom menu items for
+		 * the context menu
+		 */
 		virtual KActionCollection *customContextMenuActions();
 
 		/* Return whether or not this contact is REACHABLE. */
@@ -74,10 +76,10 @@ class ICQContact : public OscarContact
 		 */
 		void setOwnDisplayName(const QString &);
 
-		/**
-		* Reimplemented because invisible contacts have a
-		* small auto-modifying status
-		*/
+		/*
+		 * Reimplemented because invisible contacts have a
+		 * small auto-modifying status
+		 */
 		void setOnlineStatus(const KopeteOnlineStatus&);
 
 		virtual void gotIM(OscarSocket::OscarMessageType type, const QString &message);
@@ -91,6 +93,7 @@ class ICQContact : public OscarContact
 	private:
 		ICQProtocol *mProtocol;
 		ICQUserInfo *infoDialog;
+		ICQReadAway *awayMessageDialog;
 
 		ICQGeneralUserInfo generalInfo;
 		ICQWorkUserInfo workInfo;
@@ -106,10 +109,8 @@ class ICQContact : public OscarContact
 		bool mInvisible;
 
 	private slots:
-		/*
-		 * Called when the userinfo dialog is getting closed
-		 */
 		void slotCloseUserInfoDialog();
+		void slotCloseAwayMessageDialog();
 
 		/*
 		 * Called when a buddy has changed status

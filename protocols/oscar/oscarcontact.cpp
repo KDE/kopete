@@ -649,6 +649,7 @@ const QString &OscarContact::awayMessage()
 void OscarContact::setAwayMessage(const QString &message)
 {
 	mAwayMessage = message;
+	emit awayMessageChanged();
 }
 
 void OscarContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &/*addressBookData*/)

@@ -1,8 +1,8 @@
- /*
-    icquserinfo.h  -  ICQ Protocol Plugin
+/*
+    icqreadaway.h  -  ICQ Protocol Plugin
 
-    Copyright (c) 2002 by Nick Betcher <nbetcher@kde.org>
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2003 by Stefan Gehn <metz AT gehn.net>
+    Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -14,45 +14,41 @@
     *************************************************************************
 */
 
-#ifndef ICQUSERINFO_H
-#define ICQUSERINFO_H
+#ifndef ICQREADAWAY_H
+#define ICQREADAWAY_H
 
 #include <kdebug.h>
-#include <qhbox.h>
 #include <kdialogbase.h>
 
 class ICQProtocol;
 class ICQAccount;
 class ICQContact;
-class ICQUserInfoWidget;
+class KTextBrowser;
+class QVBox;
 
-class ICQUserInfo : public KDialogBase
+class ICQReadAway : public KDialogBase
 {
 	Q_OBJECT
 
 	public:
-		ICQUserInfo(ICQContact *, QWidget *parent = 0, const char* name = "ICQUserInfo");
-
-	private:
-		void setReadonly();
+		ICQReadAway(ICQContact *, QWidget *parent = 0, const char* name = "ICQReadAway");
 
 	private slots:
-		void slotSaveClicked();
+		void slotFetchAwayMessage();
+		void slotAwayMessageChanged();
 		void slotCloseClicked();
-		void slotHomePageClicked(const QString &);
-		void slotEmailClicked(const QString &);
-		void slotFetchInfo(); // initiate fetching info from server
-		void slotReadInfo(); // read in results from fetch
+		void slotUrlClicked(const QString &url);
+		void slotMailClicked(const QString&, const QString &address);
 
 	signals:
-//		void updateNickname(const QString);
 		void closing();
 
 	private:
 		ICQProtocol *p;
 		ICQAccount *mAccount;
 		ICQContact *mContact;
-		ICQUserInfoWidget *mMainWidget;
+		QVBox *mMainWidget;
+		KTextBrowser *awayMessageBrowser;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

@@ -20,8 +20,6 @@
 #include "icqprotocol.h"
 #include "icqaccount.h"
 
-//#include <time.h>
-
 #include <qapplication.h>
 
 #include <kdebug.h>
@@ -31,7 +29,10 @@
 #include "kopetemessagemanagerfactory.h"
 
 #include "icquserinfo.h"
+#include "icqreadaway.h"
+
 static const unsigned int SUPPORTED_INFO_ITEMS = 7;
+
 
 ICQContact::ICQContact(const QString name, const QString displayName,
 	ICQAccount *acc, KopeteMetaContact *parent)
@@ -43,55 +44,23 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 	setOnlineStatus(mProtocol->statusOffline);
 
 	infoDialog = 0L;
+	awayMessageDialog = 0L;
+
 	userinfoRequestSequence=0;
 	userinfoReplyCount = 0;
+
 	generalInfo.uin=0;
-	generalInfo.nickName="";
-	generalInfo.firstName="";
-	generalInfo.lastName="";
-	generalInfo.eMail="";
-	generalInfo.city="";
-	generalInfo.state="";
-	generalInfo.phoneNumber="";
-	generalInfo.faxNumber="";
-	generalInfo.street="";
-	generalInfo.cellularNumber="";
-	generalInfo.zip="";
 	generalInfo.countryCode=0;
 	generalInfo.timezoneCode=0;
 	generalInfo.publishEmail=false;
 	generalInfo.showOnWeb=false;
-
-	workInfo.city="";
-	workInfo.state="";
-	workInfo.phone="";
-	workInfo.fax="";
-	workInfo.address="";
-	workInfo.zip="";
-	workInfo.countryCode=0;
-	workInfo.company="";
-	workInfo.department="";
-	workInfo.position="";
 	workInfo.occupation=0;
-	workInfo.homepage="";
 
-	/*if(name == account()->accountId())
-	{
-		QObject::connect(
-			acc->engine(), SIGNAL(gotMyUserInfo(const UserInfo &)),
-			this, SLOT(slotContactChanged(const UserInfo &)));
-	}
-	else*/
-	{
-		// Buddy Changed
-		QObject::connect(
-			acc->engine(), SIGNAL(gotContactChange(const UserInfo &)),
-			this, SLOT(slotContactChanged(const UserInfo &)));
-	}
+	// Buddy Changed
+	QObject::connect(
+		acc->engine(), SIGNAL(gotContactChange(const UserInfo &)),
+		this, SLOT(slotContactChanged(const UserInfo &)));
 
-/*	QObject::connect(
-		acc->engine(), SIGNAL(gotIM(QString &,QString &,bool)),
-		this, SLOT(slotGotIM(QString &,QString &,bool)));*/
 	QObject::connect(
 		acc->engine(), SIGNAL(gotICQGeneralUserInfo(const int, const ICQGeneralUserInfo &)),
 		this, SLOT(slotUpdGeneralInfo(const int, const ICQGeneralUserInfo &)));
@@ -317,10 +286,10 @@ void ICQContact::slotUserInfo()
 {
 	if (!infoDialog)
 	{
-		infoDialog = new ICQUserInfo(this, static_cast<ICQAccount*>(account()));
+		infoDialog = new ICQUserInfo(this, 0L, "infoDialog");
 		if(!infoDialog)
 			return;
-		connect(infoDialog, SIGNAL(closing()), this, SLOT(slotCloseUserInfoDialog()));
+		QObject::connect(infoDialog, SIGNAL(closing()), this, SLOT(slotCloseUserInfoDialog()));
 		infoDialog->show();
 	}
 	else
@@ -334,6 +303,33 @@ void ICQContact::slotCloseUserInfoDialog()
 	infoDialog->delayedDestruct();
 	infoDialog = 0L;
 }
+
+
+void ICQContact::slotReadAwayMessage()
+{
+	kdDebug(14200) << k_funcinfo << "account='" << account()->accountId() <<
+		"', contact='" << displayName() << "'" << endl;
+
+	if (!awayMessageDialog)
+	{
+		awayMessageDialog = new ICQReadAway(this, 0L, "awayMessageDialog");
+		if(!awayMessageDialog)
+			return;
+		QObject::connect(awayMessageDialog, SIGNAL(closing()), this, SLOT(slotCloseAwayMessageDialog()));
+		awayMessageDialog->show();
+	}
+	else
+	{
+		awayMessageDialog->raise();
+	}
+}
+
+void ICQContact::slotCloseAwayMessageDialog()
+{
+	awayMessageDialog->delayedDestruct();
+	awayMessageDialog = 0L;
+}
+
 
 void ICQContact::requestUserInfo()
 {
@@ -444,12 +440,6 @@ void ICQContact::slotUpdBackgroundUserInfo(const int seq, const ICQInfoItemList 
 	userinfoReplyCount++;
 	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
 		emit updatedUserInfo();
-}
-
-void ICQContact::slotReadAwayMessage()
-{
-	kdDebug(14200) << k_funcinfo << endl;
-	account()->engine()->requestAwayMessage(this);
 }
 
 #include "icqcontact.moc"
