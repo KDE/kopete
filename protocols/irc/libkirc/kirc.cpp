@@ -26,6 +26,7 @@
 #include <qregexp.h>
 #include <qtextcodec.h>
 #include <qtimer.h>
+#include <qstringlist.h>
 
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
@@ -849,7 +850,20 @@ void KIRC::sendNotice(const QString &target, const QString &message)
 void KIRC::messageContact(const QString &contact, const QString &message)
 {
 	if (loggedIn)
-		writeString( QString::fromLatin1("PRIVMSG %1 :%2").arg( contact ).arg( message ) );
+	{
+		if(message.contains("\n") || message.contains("\r"))
+		{
+			QStringList messages=QStringList::split(QRegExp("[\\r\\n]+"),message);
+			for(QStringList::Iterator it = messages.begin(); it != messages.end(); ++it)
+			{
+				writeString( QString::fromLatin1("PRIVMSG %1 :%2").arg( contact ).arg( *it ) );
+			}
+		}
+		else
+		{
+			writeString( QString::fromLatin1("PRIVMSG %1 :%2").arg( contact ).arg( message ) );
+		}
+	}
 }
 
 void KIRC::slotConnectionClosed()
