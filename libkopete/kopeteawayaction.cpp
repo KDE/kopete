@@ -60,6 +60,11 @@ void KopeteAwayAction::slotSelectAway( int index )
 	KopeteAway *mAway = KopeteAway::getInstance();
 	QString awayReason;
 
+	// Index == -1 means this is a result of Global Away all.
+	// Use the last entered message (0)
+	if( index == -1 )
+		index = 0;
+	
 	if( index < reasonCount )
 	{
 		awayReason = mAway->getMessage( index );
