@@ -4,9 +4,9 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002      by Ryan Cumming           <bodnar42@phalynx.dhs.org>
     Copyright (c) 2002      by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
 
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
 
     *************************************************************************
@@ -142,6 +142,7 @@ private slots:
 	void slotBlockUser();
 	void slotShowProfile();
 	void slotSendMail();
+	void slotEmitDisplayPictureChanged();
 
 	/**
 	 * Workaround to make this checkboxe readonly

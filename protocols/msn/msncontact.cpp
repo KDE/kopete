@@ -4,9 +4,9 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002      by Ryan Cumming           <bodnar42@phalynx.dhs.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -607,13 +607,20 @@ void MSNContact::setDisplayPicture(KTempFile *f)
 	// but the custom emoticon code is to deeply merged in the display picture code while it could be separated.
 	QString newlocation=locateLocal( "appdata", "msnpictures/"+ contactId().lower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
 
-	KIO::file_move( KURL::fromPathOrURL( f->name() ) , KURL::fromPathOrURL( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
+	KIO::Job *j=KIO::file_move( KURL::fromPathOrURL( f->name() ) , KURL::fromPathOrURL( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
+	
 	f->setAutoDelete(false);
 	delete f;
 
-	setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
+	//let the time to KIO to copy the file
+	connect(j, SIGNAL(result(KIO::Job *)) , this, SLOT(slotEmitDisplayPictureChanged() ));
+}
 
-	QTimer::singleShot( 100 , this, SIGNAL(displayPictureChanged()) ); //let the time to KIO to copy the file
+void MSNContact::slotEmitDisplayPictureChanged()
+{
+	QString newlocation=locateLocal( "appdata", "msnpictures/"+ contactId().lower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
+	setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
+	emit displayPictureChanged();
 }
 
 void MSNContact::setObject(const QString &obj)
