@@ -900,37 +900,23 @@ void KopeteContactListView::slotSettingsChanged( void )
 
 	if ( KopetePrefs::prefs()->sortByGroup() )
 	{
-		bool cont;
-		do
+		for ( QPtrListIterator<KopeteMetaContactLVI> it(m_metaContacts); it.current(); ++it )
 		{
-			/*
-			 * slotAddedToGroup changes m_metaContacts.current(), hence the
-			 * nested loop
-			 * FIXME: Instead of relying on current() and first/next we should use
-			 *        an Iterator instead - Martijn
-			 */
-
-			cont = false;
-			for ( KopeteMetaContactLVI *li = m_metaContacts.first(); li; li = m_metaContacts.next() )
+			KopeteMetaContactLVI* li = (*it);
+			if ( !li->isGrouped() )
 			{
-				if ( !li->isGrouped() )
-				{
-					KopeteMetaContact *mc = li->metaContact();
-					m_metaContacts.setAutoDelete( false );
-					m_metaContacts.remove( li );
-					delete li;
+				KopeteMetaContact *mc = li->metaContact();
+				m_metaContacts.setAutoDelete( false );
+				m_metaContacts.remove( li );
+				delete li;
 
-					if ( mc->isTopLevel() )
-						slotAddedToGroup( mc, KopeteGroup::topLevel() );
-					KopeteGroupList list = mc->groups();
-					for ( KopeteGroup *it = list.first(); it; it = list.next() )
-						slotAddedToGroup( mc, it );
-
-					cont = true;
-					break;
-				}
+				if ( mc && mc->isTopLevel() )
+					slotAddedToGroup( mc, KopeteGroup::topLevel() );
+				KopeteGroupList list = mc->groups();
+				for ( KopeteGroup *git = list.first(); git; git = list.next() )
+					slotAddedToGroup( mc, git );
 			}
-		} while ( cont );
+		}
 
 		delete m_onlineItem;
 		m_onlineItem = 0l;
@@ -945,6 +931,8 @@ void KopeteContactListView::slotSettingsChanged( void )
 		do
 		{
 			// slotContactStatusChanged changes m_metaContacts.current()
+			// FIXME: Use an iterator here too. Maybe I'll get around to
+			// it eventually - Matt
 			cont = false;
 			for ( KopeteMetaContactLVI *li = m_metaContacts.first(); li ; li = m_metaContacts.next() )
 			{
