@@ -33,10 +33,12 @@
 
 
 
-namespace Kopete {
+using namespace Kopete;
 
 class OnlineStatus::Private
-{ public:
+	: public KShared
+{
+public:
 	StatusType status;
 	unsigned weight;
 	Protocol *protocol;
@@ -44,19 +46,7 @@ class OnlineStatus::Private
 	QString overlayIcon;
 	QString description;
 	unsigned refCount;
-	
-	Private() : refCount(1) {}
-	Private *ref()
-	{
-		++refCount;
-		return this;
-	}
-	void unref()
-	{
-		if( --refCount == 0 )
-			delete this;
-	}
-	
+
 	QString protocolIcon() const
 	{
 		return protocol ?  protocol->pluginIcon() : QString::fromLatin1( "unknown" );
@@ -102,7 +92,7 @@ OnlineStatus::OnlineStatus( StatusType status, unsigned weight, Protocol *protoc
 	d->overlayIcon = overlayIcon;
 	d->protocol = protocol;
 	d->description = description;
-	
+
 	OnlineStatusManager::self()->registerOnlineStatus(*this, caption, categories, options );
 }
 
@@ -137,7 +127,7 @@ OnlineStatus::OnlineStatus( StatusType status )
 		d->description = i18n( "(Status not available)" );
 		d->overlayIcon = "status_unknown";
 		break;
-		
+
 	}
 }
 
@@ -152,7 +142,7 @@ OnlineStatus::OnlineStatus()
 }
 
 OnlineStatus::OnlineStatus( const OnlineStatus &other )
-	 : d( other.d->ref() )
+	 : d( other.d )
 {
 }
 
@@ -185,15 +175,12 @@ bool OnlineStatus::operator<( const OnlineStatus &other ) const
 
 OnlineStatus & OnlineStatus::operator=( const OnlineStatus &other )
 {
-	Private *oldD = d;
-	d = other.d->ref();
-	oldD->unref();
+	d = other.d;
 	return *this;
 }
 
 OnlineStatus::~OnlineStatus()
 {
-	d->unref();
 }
 
 OnlineStatus::StatusType OnlineStatus::status() const
@@ -293,8 +280,5 @@ OnlineStatus::StatusType OnlineStatus::statusStringToType(QString& string)
 	
 	return OnlineStatus::Unknown; 
 }
-
-
-} //END namespace Kopete 
 
 // vim: set noet ts=4 sts=4 sw=4:

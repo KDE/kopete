@@ -21,6 +21,8 @@
 
 #include "kopetecontact.h"
 
+#include <ksharedptr.h>
+
 #include <qptrlist.h>
 #include <qstring.h>
 #include <qdom.h>
@@ -397,7 +399,7 @@ private:
 	void detach();
 
 	class Private;
-	Private *d;
+	KSharedPtr<Private> d;
 
 	static QString parseLinks( const QString &message, MessageFormat format );
 };

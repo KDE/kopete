@@ -21,9 +21,12 @@
 #ifndef kopeteonlinestatus_h
 #define kopeteonlinestatus_h
 
-#include <qobject.h>
-#include <kdemacros.h>
 #include <kopete_export.h>
+
+#include <kdemacros.h>
+#include <ksharedptr.h>
+
+#include <qobject.h>
 
 class QString;
 class QPixmap;
@@ -94,7 +97,7 @@ public:
 		 */
 		Connecting=20,
 		/**
-		 * State where you are online but none of your contacts can 
+		 * State where you are online but none of your contacts can
 		 * see that you're online. Useful for all the protocols that support
 		 * being invisible.
 		 */
@@ -130,7 +133,7 @@ public:
 	 * for use in e.g. class members and local variables.
 	 */
 	OnlineStatus();
-	
+
 
 	/**
 	 * Constructor.
@@ -161,7 +164,7 @@ public:
 	/**
 	 * same as above, but automaticaly register to OnlineStatusManager.
 	 * see OnlineStatusManager::registerOnlineStatus to know what are params
-	 */		
+	 */
 	OnlineStatus( StatusType status, unsigned weight, Protocol *protocol, unsigned internalStatus, const QString &overlayIcon,
 		const QString &description, const QString& caption,  unsigned int categories=0x0 , unsigned int options=0x0 ) ;
 
@@ -345,16 +348,16 @@ public:
 	 
 	
 private:
-	
+
 	class Private;
-	Private *d;
-	
+	KSharedPtr<Private> d;
+
 	QString mimeSource( const QString& icon, int size, QColor color, bool idle) const;
-	
+
 
 };
 
-}  //END namespace Kopete 
+}  //END namespace Kopete
 
 #endif
 

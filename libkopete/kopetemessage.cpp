@@ -36,17 +36,18 @@
 #include "kopeteemoticons.h"
 
 
-namespace Kopete {
+using namespace Kopete;
 
 class Message::Private
-{ public:
-	Private( const QDateTime &timeStamp, const Contact *from, const QPtrList<Contact> &to,
-			 const QString &body, const QString &subject, MessageDirection direction, MessageFormat f,
-			 ViewType view, MessageType type );
-	
-	uint refCount;
+	: public KShared
+{
+public:
+	Private( const QDateTime &timeStamp, const Contact *from, const ContactPtrList &to,
+	         const QString &body, const QString &subject, MessageDirection direction, MessageFormat f,
+	         ViewType view, MessageType type );
+
 	const Contact *from;
-	QPtrList<Contact> to;
+	ContactPtrList to;
 	ChatSession *manager;
 
 	MessageDirection direction;
@@ -69,7 +70,7 @@ class Message::Private
 Message::Private::Private( const QDateTime &timeStamp, const Contact *from,
              const ContactPtrList &to, const QString &body, const QString &subject,
 				 MessageDirection direction, MessageFormat f, ViewType view, MessageType type )
-	: refCount(1), from(from), to(to), manager(0), direction(direction), format(f), type(type)
+	: from(from), to(to), manager(0), direction(direction), format(f), type(type)
 	, view(view), importance( (to.count() <= 1) ? Normal : Low ), bgOverride(false), fgOverride(false)
 	, rtfOverride(false), timeStamp(timeStamp), body(body), subject(subject)
 {
@@ -131,45 +132,33 @@ Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const QPtrL
 {
 }
 
-Message::Message( const Message &other )
+Kopete::Message::Message( const Message &other )
+	: d(other.d)
 {
-	d = other.d;
-	d->refCount++;
 }
 
 
 
 Message& Message::operator=( const Message &other )
 {
-	other.d->refCount++;
-	d->refCount--;
-	if( !d->refCount )
-		delete d;
-	d=other.d;
-	
+	d = other.d;
 	return *this;
 }
 
 Message::~Message()
 {
-	d->refCount--;
-	if( !d->refCount )
-		delete d;
 }
 
 
 void Message::detach()
 {
-	if( d->refCount == 1 )
+	// there is no detach in KSharedPtr :(
+	if( d.count() == 1 )
 		return;
 
 	// Warning: this only works as long as the private object doesn't contain pointers to allocated objects.
 	// The from contact for example is fine, but it's a shallow copy this way.
-	Private *newD = new Private(*d);
-	newD->refCount = 1;
-	d->refCount--;
-
-	d = newD;
+	d = new Private(*d);
 }
 
 void Message::setBgOverride( bool enabled )
@@ -484,7 +473,7 @@ static QDomElement contactNode( QDomDocument doc, const Contact *contact )
 	{
 		contactName = KStringHandler::csqueeze( contactName, p->maxConactNameLength() );
 	}
-	
+
 	if(contactName.isEmpty())
 		contactName = contact->metaContact() ? contact->metaContact()->displayName() : contact->contactId();
 
@@ -547,7 +536,7 @@ const QDomDocument Message::asXML() const
 			KGlobal::locale()->formatDateTime(d->timeStamp) );
 	}
 	messageNode.setAttribute( QString::fromLatin1("subject"), QStyleSheet::escape( d->subject ) );
-	
+
 	/**
 	 * @deprecated backwards-compatibility direction attribute for old XSLT
 	 * It used to be the case that Action was in the MessageDirection enum.
@@ -568,7 +557,7 @@ const QDomDocument Message::asXML() const
 			oldDirection = 2;
 		messageNode.setAttribute( QString::fromLatin1("direction"), oldDirection );
 	}
-	
+
 	const char *route;
 	switch( d->direction )
 	{
@@ -587,7 +576,7 @@ const QDomDocument Message::asXML() const
 			break;
 	}
 	messageNode.setAttribute( QString::fromLatin1("route"), QString::fromLatin1(route) );
-	
+
 	const char *type;
 	switch( d->type )
 	{
@@ -603,12 +592,12 @@ const QDomDocument Message::asXML() const
 			break;
 	}
 	messageNode.setAttribute( QString::fromLatin1("type"), QString::fromLatin1(type) );
-	
+
 	messageNode.setAttribute( QString::fromLatin1("importance"), d->importance );
-	
-	
+
+
 	//build the <from> and <to>  node
-	if( const Contact *mainContact = (d->direction == Inbound ? d->from : d->to.first()) )
+	if( const Contact *mainContact = (d->direction == Inbound ? d->from : d->to.getFirst()) )
 		messageNode.setAttribute( QString::fromLatin1("mainContactId"), mainContact->contactId() );
 
 	doc.appendChild( messageNode );
@@ -620,7 +609,7 @@ const QDomDocument Message::asXML() const
 		messageNode.appendChild( fromNode );
 	}
 
-	if( const Contact *c = d->to.first() )
+	if( const Contact *c = d->to.getFirst() )
 	{
 		QDomElement toNode = doc.createElement( QString::fromLatin1("to") );
 		toNode.appendChild( contactNode( doc, c ) );
@@ -739,4 +728,3 @@ QString Message::decodeString( const QCString &message, const QTextCodec *provid
 	return result;
 }
 
-}
