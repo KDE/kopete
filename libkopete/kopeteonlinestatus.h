@@ -178,7 +178,13 @@ public:
 	/**
 	 * Constructor.
 	 *
-	 * Creates a new OnlineStatus object. All fields are mandatory; there
+	 * @p Creates a new OnlineStatus object and registers it with the @ref Kopete::OnlineStatusManager. 
+	 * Registration allows you to generate a KActionMenu filled with KActions for changing to this OnlineStatus,
+	 * using Kopete::Account::accountMenu().
+	 *
+	 * @p Note that weight has an additional significance for registered protocols when used for menu generation.
+	 *
+	 * All fields are mandatory; there
 	 * are no default values. Also, you cannot change the object after creation.
 	 *
 	 * @param status is the global online status as used by libkopete
@@ -187,7 +193,7 @@ public:
 	 * 'promote' an Away item to a level above Online, since the status field
 	 * always takes precedence. Weight is used when the same status is used
 	 * more than once. Weight is also used for picking the most important
-	 * 'Away' status for a protocol when going Away.
+	 * 'Away' status for a protocol when going Away. Additionally, Weight determinesis also
 	 * @param protocol is a pointer to the protocol used. This is used when
 	 * comparing two states using @ref operator=().
 	 * @param internalStatus is the status as used internally by the protocol.
