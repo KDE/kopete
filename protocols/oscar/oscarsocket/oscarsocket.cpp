@@ -1988,7 +1988,7 @@ FLAP OscarSocket::getFLAP()
 		//kdDebug(14150) << k_funcinfo << "FLAP length=" << fl.length << endl;
 		//kdDebug(14150) << k_funcinfo << "bytes available=" << mSocket->bytesAvailable() << endl;
 
-		if(mSocket->bytesAvailable() < fl.length+6)
+		if(mSocket->bytesAvailable() <= fl.length+6)
 		{
 			/*kdDebug(14150) << k_funcinfo <<
 				"Not enough data in recv buffer to read the full FLAP, aborting" << endl;*/
