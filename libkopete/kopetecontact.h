@@ -58,7 +58,7 @@ public:
 	/**
 	 * Contact's status
 	 */
-	enum ContactStatus { Online, Away, Offline };
+	enum ContactStatus { Online, Away, Offline, Unknown };
 
 	/**
 	 * Return whether this contact is online or not.

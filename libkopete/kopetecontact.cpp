@@ -46,7 +46,7 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, KopeteMetaContact *paren
 	m_metaContact = parent;
 	m_protocol = protocol;
 	m_cachedSize = 0;
-	m_cachedOldStatus = Offline;
+	m_cachedOldStatus = Unknown;
 	contextMenu = 0L;
 	mFileCapable = false;
 
@@ -110,6 +110,8 @@ QString KopeteContact::statusText() const
 		return i18n("Online");
 	case Away:
 		return i18n("Away");
+	case Unknown:
+		return i18n("Status not avaliable");
 	case Offline:
 	default:
 		return i18n("Offline");
@@ -153,28 +155,6 @@ int KopeteContact::importance() const
 	return 0;
 }
 
-/*QStringList KopeteContact::groups()
-{
-	return QStringList();
-}
-
-void KopeteContact::addToGroup( const QString &  )
-{
-	kdDebug() << "KopeteContact::addToGroup: WARNING: "
-		<< "Default implementation called! Function not implemented?" << endl;
-}
-
-void KopeteContact::removeFromGroup( const QString &  )
-{
-	kdDebug() << "KopeteContact::removeFromGroup: WARNING: "
-		<< "Default implementation called! Function not implemented?" << endl;
-}
-
-void KopeteContact::moveToGroup( const QString & , const QString &  )
-{
-	kdDebug() << "KopeteContact::moveToGroup: WARNING: "
-		<< "Default implementation called! Function not implemented?" << endl;
-} */
 
 void KopeteContact::initActions()
 {

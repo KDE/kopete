@@ -82,7 +82,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteCon
 	else
 		d->mLogger = 0L;
 
-	connect(protocol, SIGNAL(destroyed()), this, SLOT(slotProtocolUnloading()));
+//	connect(protocol, SIGNAL(destroyed()), this, SLOT(slotProtocolUnloading()));
 }
 
 KopeteMessageManager::~KopeteMessageManager()
@@ -482,6 +482,9 @@ void KopeteMessageManager::addContact( const KopeteContact *c )
 
 void KopeteMessageManager::removeContact( const KopeteContact *c )
 {
+	if(!c || !d->mContactList.contains(c))
+		return;
+
 	if(d->mContactList.count()==1)
 	{
 		kdDebug() << "KopeteMessageManager::removeContact - Contact not removed. Keep always one contact" <<endl;

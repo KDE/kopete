@@ -52,67 +52,57 @@ public:
 	enum MessageFormat  { PlainText, RichText, ParsedHTML };
 
 	/**
-	 * Constructs a new message
-	 * Please note that body -must- be valid HTML, so all HTML control
-	 * characters must be escaped.
+	 * Constructs a new empty message
 	 */
 	KopeteMessage();
 
 	/**
 	 * Constructs a new message
-	 * Please note that body -must- be valid HTML, so all HTML control
-	 * characters must be escaped.
 	 * @param fromKC The KopeteContact that the message is coming from
 	 * @param toKC List of KopeteContacts the message is going to
 	 * @param body Message body
 	 * @param direction The direction of the message, KopeteMessage::Inbound, KopeteMessage::Outbound, KopeteMessage::Internal
-	 * @param f Format of the message
+	 * @param format Format of the message
 	 */
 	KopeteMessage(const KopeteContact *fromKC, KopeteContactPtrList toKC,
-									QString body, MessageDirection direction, MessageFormat f=PlainText );
+									QString body, MessageDirection direction, MessageFormat format=PlainText );
 
 	/**
 	 * Constructs a new message
-	 * Please note that body -must- be valid HTML, so all HTML control
-	 * characters must be escaped.
 	 * @param fromKC The KopeteContact that the message is coming from
 	 * @param toKC List of KopeteContacts the message is going to
 	 * @param body Message body
 	 * @param subject The subject of the message
 	 * @param direction The direction of the message, KopeteMessage::Inbound, KopeteMessage::Outbound, KopeteMessage::Internal
-	 * @param f Format of the message
+	 * @param format Format of the message
 	 */
 	KopeteMessage(const KopeteContact* fromKC, KopeteContactPtrList toKC, QString body,
-									QString subject, MessageDirection direction, MessageFormat f=PlainText );
+									QString subject, MessageDirection direction, MessageFormat format=PlainText );
 
 	/**
 	 * Constructs a new message
-	 * Please note that body -must- be valid HTML, so all HTML control
-	 * characters must be escaped.
 	 * @param timeStamp Timestamp for the message
 	 * @param fromKC The KopeteContact that the message is coming from
 	 * @param toKC List of KopeteContacts the message is going to
 	 * @param body Message body
 	 * @param direction The direction of the message, KopeteMessage::Inbound, KopeteMessage::Outbound, KopeteMessage::Internal
-	 * @param f Format of the message
+	 * @param format Format of the message
 	 */
 	KopeteMessage(QDateTime timeStamp, const KopeteContact *fromKC, KopeteContactPtrList toKC,
-									QString body, MessageDirection direction, MessageFormat f=PlainText);
+									QString body, MessageDirection direction, MessageFormat format=PlainText);
 
 	/**
 	 * Constructs a new message
-	 * Please note that body -must- be valid HTML, so all HTML control
-	 * characters must be escaped.
 	 * @param timeStamp Timestamp for the message
 	 * @param fromKC The KopeteContact that the message is coming from
 	 * @param toKC List of KopeteContacts the message is going to
 	 * @param body Message body
 	 * @param subject The subject of the message
 	 * @param direction The direction of the message, KopeteMessage::Inbound, KopeteMessage::Outbound, KopeteMessage::Internal
-	 * @param f Format of the message
+	 * @param format Format of the message
 	 */
 	KopeteMessage(QDateTime timeStamp, const KopeteContact *fromKC, KopeteContactPtrList toKC,
-									QString body, QString subject, MessageDirection direction, MessageFormat f=PlainText);
+									QString body, QString subject, MessageDirection direction, MessageFormat format=PlainText);
 	
 
 	// Accessors
@@ -154,7 +144,7 @@ public:
 	QFont font() const { return mFont; }
 
 	/**
-	 * Accessor method for the body of the message
+	 * Accessor method for the body of the message in the current format
 	 * @return The message body
 	 */
 	QString body() const { return mBody; }
@@ -198,9 +188,9 @@ public:
 	/**
 	 * Sets the body of the message
 	 * @param body The body
-	 * @param f The format of the message
+	 * @param format The format of the message
 	 */
-	void setBody( const QString& body , MessageFormat f=PlainText );
+	void setBody( const QString& body , MessageFormat format=PlainText );
 	
 	/**
 	 * Get the message body back as plain text
@@ -214,7 +204,6 @@ public:
 	 */
 	QString escapedBody() const ;
 	
-	//Parsed (HTML and Emoticon, ready to use in the chatwindow)
 	/**
 	 * Get the message body as parsed HTML with Emoticons,
 	 * this should be ready to show in the chatwindow

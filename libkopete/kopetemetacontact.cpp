@@ -36,6 +36,11 @@
 #include "kopeteprefs.h"
 #include "pluginloader.h"
 
+#if KDE_VERSION >= 305
+#include <kpassivepopup.h>
+#include "systemtray.h"
+#endif
+
 KopeteMetaContact::KopeteMetaContact()
 : QObject( KopeteContactList::contactList() )
 {
@@ -44,7 +49,7 @@ KopeteMetaContact::KopeteMetaContact()
 	m_temporary=false;
 //	m_isTopLevel=false;
 
-	m_onlineStatus = Offline;
+	m_onlineStatus = Unknown;
 }
 
 KopeteMetaContact::~KopeteMetaContact()
@@ -89,7 +94,7 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 
 void KopeteMetaContact::updateOnlineStatus()
 {
-	OnlineStatus newStatus = Offline;
+	OnlineStatus newStatus = Unknown;
 
 	QPtrListIterator<KopeteContact> it( m_contacts );
 	for( ; it.current(); ++it )
@@ -106,6 +111,10 @@ void KopeteMetaContact::updateOnlineStatus()
 			// Set status, but don't stop searching, since 'Online' overrules
 			// 'Away'
 			newStatus = Away;
+		}
+		else if (s == KopeteContact::Offline && newStatus!=Away)
+		{
+			newStatus = Offline;
 		}
 	}
 
@@ -273,6 +282,7 @@ QString KopeteMetaContact::statusIcon() const
 		case Away:
 			return "metacontact_away";
 		case Offline:
+		case Unknown:
 		default:
 			return "metacontact_offline";
 	}
@@ -287,8 +297,10 @@ QString KopeteMetaContact::statusString() const
 		case Away:
 			return "Away";
 		case Offline:
-		default:
 			return "Offline";
+		case Unknown:
+		default:
+			return "Status not avaliable";
 	}
 }
 
@@ -331,6 +343,11 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
 	updateOnlineStatus();
 	if ( (m_onlineStatus != m) && (m_onlineStatus==Online) && (KopetePrefs::prefs()->soundNotify()) )
 	{
+		#if KDE_VERSION >= 305
+		if ( KopetePrefs::prefs()->notifyOnline() )
+			KPassivePopup::message(i18n("%2 is now %1!").arg(statusString()).arg(displayName()), kopeteapp->systemTray());
+		#endif
+
 		KopeteProtocol* p = dynamic_cast<KopeteProtocol*>(c->protocol());
 		if (!p)
 		{
