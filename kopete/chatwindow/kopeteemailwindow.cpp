@@ -29,6 +29,7 @@
 #include <kapplication.h>
 #include <kcolordialog.h>
 #include <kconfig.h>
+#include <kcursor.h>
 #include <kdebug.h>
 #include <kdeversion.h>
 #include <kedittoolbar.h>
@@ -213,6 +214,8 @@ KopeteEmailWindow::KopeteEmailWindow( KopeteMessageManager *manager, bool foreig
 
 	m_type = KopeteMessage::Email;
 
+	d->txtEntry->installEventFilter( this );
+	KCursor::setAutoHideCursor( d->txtEntry, true, true );
 }
 
 KopeteEmailWindow::~KopeteEmailWindow()
@@ -293,6 +296,37 @@ void KopeteEmailWindow::initActions(void)
 	createGUI( d->editpart );
 	//createGUI( QString::fromLatin1( "kopeteemailwindow.rc" ) );
 	guiFactory()->addClient(m_manager);
+}
+
+bool KopeteEmailWindow::eventFilter( QObject *o, QEvent *e )
+{
+	if ( o->inherits( "KTextEdit" ) )
+		KCursor::autoHideEventFilter( o, e );
+
+	if( e->type() == QEvent::KeyPress )
+	{
+		QKeyEvent *event = static_cast<QKeyEvent*>( e );
+		KKey key( event );
+
+		// NOTE:
+		// shortcut.contains( key ) doesn't work. It was the old way we used to do it, but it is incorrect
+		// because if you have a multi-key shortcut then pressing any of the keys in
+		// that shortcut individually causes the shortcut to be activated.
+
+		if( d->chatSend->isEnabled() )
+		{
+			for( uint i = 0; i < d->chatSend->shortcut().count(); i++ )
+			{
+				if( key == d->chatSend->shortcut().seq(i).key(0) )
+				{
+					sendMessage();
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
 }
 
 void KopeteEmailWindow::slotViewToolBar()
