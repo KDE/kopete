@@ -291,14 +291,15 @@ public:
 	 * Known property keys, their QVariant types and i18n label
 	 * (and optional description if the key might be unclear):
 	 *
-	 * firstName		- QString - "First Name"
-	 * lastName			- QString - "Last Name"
-	 * emailAddress	- QString - "Email Address"
-	 * privPhoneNum	- QString - "Private Phone"
-	 * privFaxNum		- QString - "Private Fax"
-	 * privMobileNum	- QString - "Private Mobile"
-	 * awayMessage		- QString - "Away Message"
-	 * ircChannel		- QString - "Channel"
+	 * firstName		- QString	- "First Name"
+	 * lastName			- QString	- "Last Name"
+	 * emailAddress	- QString	- "Email Address"
+	 * privPhoneNum	- QString	- "Private Phone"
+	 * privFaxNum		- QString	- "Private Fax"
+	 * privMobileNum	- QString	- "Private Mobile"
+	 * awayMessage		- QString	- "Away Message"
+	 * ircChannel		- QString	- "Channel"
+	 * onlineSince		- QDateTime	- "Online Since"
 	 **/
 	void setProperty(const QString &key, const QVariant &value);
 	/**
