@@ -2883,13 +2883,9 @@ void OscarSocket::doLogoff()
 		/*if(mIsICQ) // Done in slotConnectionClosed()
 			stopKeepalive();
 		*/
-		/*
-		// TODO: maybe send the request and wait for myx 10 secs and then close
-		// the socket on our side if it wasn't closed by the other side already
 		kdDebug(14150) << k_funcinfo << "Sending sign off request" << endl;
 		Buffer outbuf;
 		sendBuf(outbuf,0x04);
-		*/
 		socket()->close();
 	}
 	else

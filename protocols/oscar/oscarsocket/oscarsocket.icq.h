@@ -33,12 +33,12 @@ const unsigned short ICQ_SEARCHSTATE_ONLINE = 1;
 const unsigned short ICQ_SEARCHSTATE_DISABLED = 2;
 
 const unsigned char ICQ_TCP_VERSION = 0x0008;
-const char ICQ_CLIENTSTRING[] = "ICQ Inc. - Product of ICQ (TM).2002a.5.37.1.3728.85";
+const char ICQ_CLIENTSTRING[] = "ICQ Inc. - Product of ICQ (TM).2003a.5.45.1.3777.85";
 const WORD ICQ_CLIENTID = 0x010A;
 const WORD ICQ_MAJOR = 0x0005;
-const WORD ICQ_MINOR = 0x0025;
+const WORD ICQ_MINOR = 0x002D;
 const WORD ICQ_POINT = 0x0001;
-const WORD ICQ_BUILD = 0x0e90;
+const WORD ICQ_BUILD = 0x0EC1;
 const char ICQ_OTHER[] = { 0x00, 0x00, 0x00, 0x55 };
 const char ICQ_COUNTRY[] = "us";
 const char ICQ_LANG[] = "en";
