@@ -30,7 +30,7 @@
  * KopeteEvent is used when a new messages arrives, it is
  * caught by the UI. It contains just informations about
  * the message, and a signal when it is terminated (i.e.
- * the message is readed)
+ * the message is read
  **/
 class KopeteEvent : public QObject
 {
@@ -47,8 +47,8 @@ public:
 
 	/**
 	 * The state of the event.
-	 * - Nothing means that the event has not been accepted, nor ignored
-	 * - Aplied if the event has been applied
+	 * - Nothing means that the event has not been accepted or ignored
+	 * - Applied if the event has been applied
 	 * - Ignored if the event has been ignored
 	 */
 	enum EventState { Nothing , Applied , Ignored };
@@ -65,11 +65,15 @@ signals:
 private:
 	KopeteMessage m_message;
 	EventState m_state;
+
 public slots:
 	/**
 	 * execute the event
 	 */
 	void apply();
+	/**
+	 * ignore the event
+	 */
 	void ignore();
 
 };
