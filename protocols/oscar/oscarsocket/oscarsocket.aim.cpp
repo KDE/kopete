@@ -24,16 +24,16 @@ extern "C"
 
 // ----------------------------------------------------------------------------------------
 
-const char AIM_MD5_STRING[]		= "AOL Instant Messenger (SM)";
+const char AIM_MD5_STRING[]	= "AOL Instant Messenger (SM)";
 const char AIM_CLIENTSTRING[]	= "AOL Instant Messenger (SM), version 5.1.3036/WIN32";
-const WORD AIM_CLIENTID			= 0x0109;
-const WORD AIM_MAJOR			= 0x0005;
-const WORD AIM_MINOR			= 0x0001;
-const WORD AIM_POINT			= 0x0000;
-const WORD AIM_BUILD			= 0x0bdc;
+const WORD AIM_CLIENTID		= 0x0109;
+const WORD AIM_MAJOR		= 0x0005;
+const WORD AIM_MINOR		= 0x0001;
+const WORD AIM_POINT		= 0x0000;
+const WORD AIM_BUILD		= 0x0bdc;
 const unsigned char AIM_OTHER[]	= { 0x00, 0x00, 0x00, 0xd2 };
-const char AIM_COUNTRY[]		= "us";
-const char AIM_LANG[] 			= "en";
+const char AIM_COUNTRY[]	= "us";
+const char AIM_LANG[] 		= "en";
 
 // ----------------------------------------------------------------------------------------
 
