@@ -912,9 +912,11 @@ void KopeteContactList::removeGroup( KopeteGroup *g )
 		setSelectedItems( d->selectedMetaContacts, d->selectedGroups );
 	}
 
-	d->groups.remove( g );
-	emit groupRemoved( g );
-	delete g;
+	if ( g->type() == KopeteGroup::Normal )
+		d->groups.remove( g );
+		emit groupRemoved( g );
+		delete g;
+	}
 }
 
 KopeteGroup * KopeteContactList::getGroup(const QString& displayName, int type)

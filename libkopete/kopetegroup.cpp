@@ -96,6 +96,11 @@ KopeteGroup::KopeteGroup( const QString &_displayName, const QString &_internalN
 
 KopeteGroup::~KopeteGroup()
 {
+	if ( d->type == TopLevel )
+		s_topLevel = 0L;
+	if ( d->type == Temporary )
+		s_temporary = 0L;
+
 	delete d;
 }
 
