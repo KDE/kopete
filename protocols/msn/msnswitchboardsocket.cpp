@@ -1,19 +1,22 @@
-/***************************************************************************
-                          imchatservice.cpp  -  description
-                             -------------------
-    begin                : Tue Nov 27 2001
-    copyright            : (C) 2001 by Olaf Lueg
-    email                : olueg@olsd.de
- ***************************************************************************/
+/*
+    msnswitchboardsocket.cpp - switch board connection socket
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Copyright (c) 2002      by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+
+    Portions of this code are taken from KMerlin,
+              (c) 2001 by Olaf Lueg              <olueg@olsd.de>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 
 #include "msnswitchboardsocket.h"

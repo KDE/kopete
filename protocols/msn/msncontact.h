@@ -1,9 +1,13 @@
 /*
     msncontact.h - MSN Contact
 
-    Copyright (c) 2002 Duncan Mac-Vicar Prett <duncan@kde.org>
-              (c) 2002 Ryan Cumming           <bodnar42@phalynx.dhs.org>
-              (c) 2002 Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002      by Ryan Cumming           <bodnar42@phalynx.dhs.org>
+    Copyright (c) 2002      by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+
 
     *************************************************************************
     *                                                                       *
