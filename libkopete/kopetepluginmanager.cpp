@@ -95,11 +95,12 @@ KopetePluginManager::~KopetePluginManager()
 
 	// Quick cleanup of the remaining plugins, hope it helps
 	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
-	for( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); /* EMPTY */ )
+	for ( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); /* EMPTY */ )
 	{
 		// Remove causes the iterator to become invalid, so pre-increment first
 		QMap<KPluginInfo *, KopetePlugin *>::ConstIterator nextIt( it );
 		++nextIt;
+		kdWarning( 14010 ) << k_funcinfo << "Deleting stale plugin '" << it.data()->name() << "'" << endl;
 		delete it.data();
 		it = nextIt;
 	}
@@ -148,7 +149,7 @@ void KopetePluginManager::shutdown()
 
 	// Ask all plugins to unload
 	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
-	for( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); /* EMPTY */ )
+	for ( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); /* EMPTY */ )
 	{
 		// Remove causes the iterator to become invalid, so pre-increment first
 		QMap<KPluginInfo *, KopetePlugin *>::ConstIterator nextIt( it );
@@ -234,7 +235,7 @@ KopetePlugin *KopetePluginManager::loadPlugin( const QString &spec_ )
 	// Try to find legacy code
 	if ( spec.endsWith( QString::fromLatin1( ".desktop" ) ) )
 	{
-		kdWarning() << "Trying to use old-style API!" << endl << kdBacktrace() << endl;
+		kdWarning( 14010 ) << "Trying to use old-style API!" << endl << kdBacktrace() << endl;
 		spec = spec.remove( QRegExp( QString::fromLatin1( ".desktop$" ) ) );
 	}
 
@@ -265,7 +266,7 @@ KopetePlugin *KopetePluginManager::loadPlugin( const QString &spec_ )
 		QString::fromLatin1( "Kopete/Plugin" ),
 		QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( spec ), this, 0, QStringList(), &error );
 
-	if( plugin )
+	if ( plugin )
 	{
 		d->loadedPlugins.insert( info, plugin );
 		info->setPluginEnabled( true );
@@ -297,18 +298,15 @@ KopetePlugin *KopetePluginManager::loadPlugin( const QString &spec_ )
 			break;
 
 		case KParts::ComponentFactory::ErrNoFactory:
-			kdDebug( 14010 ) << "the library does not export a factory for"
-				<< " creating components." << endl;
+			kdDebug( 14010 ) << "the library does not export a factory for creating components." << endl;
 			break;
 
 		case KParts::ComponentFactory::ErrNoComponent:
-			kdDebug( 14010 ) << "the factory does not support creating components of the"
-				<< " specified type." << endl;
+			kdDebug( 14010 ) << "the factory does not support creating components of the specified type." << endl;
 			break;
 		}
 
-		kdDebug( 14010 ) << k_funcinfo << "Loading plugin '" << spec <<
-			"' failed, KLibLoader reported error: '" << endl <<
+		kdDebug( 14010 ) << k_funcinfo << "Loading plugin '" << spec << "' failed, KLibLoader reported error: '" << endl <<
 			KLibLoader::self()->lastErrorMessage() << "'" << endl;
 	}
 
@@ -320,9 +318,9 @@ bool KopetePluginManager::unloadPlugin( const QString &spec )
 	kdDebug() << k_funcinfo << spec << endl;
 
 	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
-	for( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
+	for ( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
 	{
-		if( it.key()->pluginName() == spec )
+		if ( it.key()->pluginName() == spec )
 		{
 			it.data()->aboutToUnload();
 			return true;
@@ -337,7 +335,7 @@ void KopetePluginManager::slotPluginDestroyed( QObject *plugin )
 	d->addressBookFields.remove( static_cast<KopetePlugin *>( plugin ) );
 
 	QMap<KPluginInfo *, KopetePlugin *>::Iterator it;
-	for( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
+	for ( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
 	{
 		if ( it.data() == plugin )
 		{
@@ -356,7 +354,7 @@ void KopetePluginManager::slotPluginDestroyed( QObject *plugin )
 
 QStringList KopetePluginManager::addressBookFields( KopetePlugin *p ) const
 {
-	if( d->addressBookFields.contains( p ) )
+	if ( d->addressBookFields.contains( p ) )
 		return d->addressBookFields[ p ];
 	else
 		return QStringList();
@@ -399,9 +397,9 @@ KopetePlugin* KopetePluginManager::plugin( const QString &_pluginId ) const
 QString KopetePluginManager::pluginName( const KopetePlugin *plugin ) const
 {
 	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
-	for( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
+	for ( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
 	{
-		if( it.data() == plugin )
+		if ( it.data() == plugin )
 			return it.key()->name();
 	}
 
@@ -411,9 +409,9 @@ QString KopetePluginManager::pluginName( const KopetePlugin *plugin ) const
 QString KopetePluginManager::pluginId( const KopetePlugin *plugin ) const
 {
 	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
-	for( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
+	for ( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
 	{
-		if( it.data() == plugin )
+		if ( it.data() == plugin )
 			return it.key()->pluginName();
 	}
 
@@ -423,9 +421,9 @@ QString KopetePluginManager::pluginId( const KopetePlugin *plugin ) const
 QString KopetePluginManager::pluginIcon( const KopetePlugin *plugin ) const
 {
 	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
-	for( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
+	for ( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
 	{
-		if( it.data() == plugin )
+		if ( it.data() == plugin )
 			return it.key()->icon();
 	}
 
