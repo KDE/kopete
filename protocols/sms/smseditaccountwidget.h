@@ -13,6 +13,7 @@
 #include <qwidget.h>
 #include "editaccountwidget.h"
 
+class SMSProtocol;
 class SMSService;
 class smsPrefsUI;
 class KopeteAccount;
@@ -21,7 +22,7 @@ class SMSEditAccountWidget : public QWidget, public EditAccountWidget
 {
 	Q_OBJECT
 public:
-	SMSEditAccountWidget(KopeteAccount *account, QWidget *parent);
+	SMSEditAccountWidget(SMSProtocol *protocol, KopeteAccount *theAccount, QWidget *parent = 0, const char *name = 0);
 	~SMSEditAccountWidget();
 
 	bool validateData();
@@ -33,6 +34,7 @@ protected:
 	smsPrefsUI *preferencesDialog;
 	QWidget *configWidget;
 	SMSService *service;
+	SMSProtocol *m_protocol;
 
 signals:
 	void saved();

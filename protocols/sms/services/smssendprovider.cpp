@@ -7,11 +7,13 @@
 #include <qfile.h>
 #include <klineedit.h>
 #include <kmessagebox.h>
+#include <kdebug.h>
 #include <klocale.h>
 
 SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& prefixValue, KopeteAccount* account, QObject* parent, const char *name)
 	: QObject( parent, name ), m_account(account)
 {
+	kdWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be ok if zero!!)" << endl;
 
 	provider = providerName;
 	prefix = prefixValue;
@@ -36,7 +38,10 @@ SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& pre
 
 				names.append(options[0].replace(0,1,""));
 				descriptions.append(args[1]);
-				values.append(m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg(group).arg(names[names.count()-1])));
+				if (m_account)
+					values.append(m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg(group).arg(names[names.count()-1])));
+				else
+					values.append("");
 
 				if( args[0].contains("Message") || args[0].contains("message")
 					|| args[0].contains("message") || args[0].contains("nachricht")
@@ -80,6 +85,11 @@ SMSSendProvider::~SMSSendProvider()
 
 }
 
+void SMSSendProvider::setAccount(KopeteAccount *account)
+{
+	m_account = account;
+}
+
 const QString& SMSSendProvider::name(int i)
 {
 	if ( telPos == i || messagePos == i)
@@ -100,6 +110,9 @@ const QString& SMSSendProvider::description(int i)
 
 void SMSSendProvider::save(QPtrList<SMSSendArg>& args)
 {
+	kdWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
+	if (!m_account) return;		// prevent crash in worst case
+
 	QString group = QString("SMSSend-%1").arg(provider);
 
 	for (unsigned i=0; i < args.count(); i++)
@@ -149,7 +162,7 @@ void SMSSendProvider::send(const KopeteMessage& msg)
 	KProcess* p = new KProcess;
 
 	*p << QString("%1/bin/smssend").arg(prefix) << provider << values;
-    
+
 	output.clear();
 	connect( p, SIGNAL(processExited(KProcess *)), this, SLOT(slotSendFinished(KProcess*)));
 	connect( p, SIGNAL(receivedStdout(KProcess*, char*, int)),

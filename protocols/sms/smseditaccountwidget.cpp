@@ -21,7 +21,7 @@
 #include <kmessagebox.h>
 #include <qlineedit.h>
 
-SMSEditAccountWidget::SMSEditAccountWidget(KopeteAccount *account, QWidget *parent)
+SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, KopeteAccount *account, QWidget *parent, const char *name)
 	: QWidget(parent), EditAccountWidget(account)
 {
 	(new QVBoxLayout(this, QBoxLayout::Down))->setAutoAdd(true);
@@ -32,6 +32,7 @@ SMSEditAccountWidget::SMSEditAccountWidget(KopeteAccount *account, QWidget *pare
 	configWidget = 0L;
 
 	m_account = account;
+	m_protocol = protocol;
 
 	QString sName;
 	if (m_account)
@@ -40,8 +41,6 @@ SMSEditAccountWidget::SMSEditAccountWidget(KopeteAccount *account, QWidget *pare
 
 		sName = m_account->pluginData(SMSProtocol::protocol(), "ServiceName");
 	}
-	else
-		m_account=new SMSAccount(SMSProtocol::protocol(), QString::null);
 
 	preferencesDialog->serviceName->insertStringList(ServiceLoader::services());
 
@@ -75,7 +74,13 @@ bool SMSEditAccountWidget::validateData()
 
 KopeteAccount* SMSEditAccountWidget::apply()
 {
-	m_account->setAccountId(preferencesDialog->accountId->text());
+	if (m_account)
+		m_account->setAccountId(preferencesDialog->accountId->text());
+	else
+		m_account = new SMSAccount(m_protocol, preferencesDialog->accountId->text());
+
+	if (service)
+		service->setAccount(m_account);
 
 	m_account->setPluginData(SMSProtocol::protocol(), "ServiceName",
 		preferencesDialog->serviceName->currentText());
@@ -91,12 +96,12 @@ void SMSEditAccountWidget::setServicePreferences(const QString& serviceName)
 
 	if (configWidget != 0L)
 		delete configWidget;
-	
+
 	service = ServiceLoader::loadService(serviceName, m_account);
 
 	if ( service == 0L)
 		return;
-	
+
 	connect (this, SIGNAL(saved()), service, SLOT(savePreferences()));
 
 	configWidget = service->configureWidget(this);

@@ -25,6 +25,15 @@ void SMSAccount::connect()
 	// FIXME: Set all contacts to SMSUnknown here
 }
 
+KActionMenu* SMSAccount::actionMenu()
+{
+	SMSProtocol *theProtocol = dynamic_cast<SMSProtocol *>(protocol());
+	KActionMenu *theActionMenu = new KActionMenu(accountId(), this);
+	theActionMenu->popupMenu()->insertTitle(theMyself->icon(), "SMS (" + accountId() + ")");
+
+	return theActionMenu;
+}
+
 void SMSAccount::disconnect()
 {
 //	m_mySelf->setOnlineStatus( SMSOffline );

@@ -10,6 +10,14 @@ SMSService::~SMSService()
 
 }
 
+void SMSService::setAccount(KopeteAccount* account)
+{
+	if(!m_account)
+		m_account = account;
+	if(account)
+		savePreferences();
+}
+
 /*
  * Local variables:
  * c-indentation-style: k&r

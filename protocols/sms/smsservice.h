@@ -13,8 +13,10 @@ class KopeteAccount;
 class SMSService : public QObject
 {
 public:
-	SMSService(KopeteAccount* account);
+	SMSService(KopeteAccount* account = 0);
 	virtual ~SMSService();
+
+	virtual void setAccount(KopeteAccount* account);
 
 	virtual void send(const KopeteMessage& msg) = 0;
 	virtual QWidget* configureWidget(QWidget* parent) = 0;

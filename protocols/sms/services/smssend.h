@@ -6,6 +6,7 @@
 #include <qobject.h>
 #include <qmap.h>
 
+class SMSSendProvider;
 class SMSSendPrefsUI;
 class QListViewItem;
 
@@ -15,6 +16,8 @@ class SMSSend : public SMSService
 public:
 	SMSSend(KopeteAccount* account);
 	~SMSSend();
+
+	virtual void setAccount(KopeteAccount* account);
 
 	void send(const KopeteMessage& msg);
 	QWidget* configureWidget(QWidget* parent);
@@ -32,6 +35,7 @@ signals:
 	void messageSent(const KopeteMessage&);
 
 private:
+	SMSSendProvider* m_provider;
 	SMSSendPrefsUI* prefWidget;
 	QPtrList<SMSSendArg> args;
 	QString m_description;

@@ -3,6 +3,7 @@
 
 #include "kopetemessage.h"
 #include "smssendarg.h"
+#include "smsaccount.h"
 
 #include <qstring.h>
 #include <qstringlist.h>
@@ -18,6 +19,8 @@ class SMSSendProvider : public QObject
 public:
 	SMSSendProvider(const QString& providerName, const QString& prefixValue, KopeteAccount* account, QObject* parent = 0, const char* name = 0);
 	~SMSSendProvider();
+
+	void setAccount(KopeteAccount *account);
 
 	int count();
 	const QString& name(int i);
