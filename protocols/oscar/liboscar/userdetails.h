@@ -45,6 +45,7 @@ public:
 	int userClass() const; //! User class accessor
 	DWORD extendedStatus() const; //!User status accessor
 	QByteArray buddyIconHash() const; //! Buddy icon md5 hash accessor
+	QString clientName() const; //! Client name and version
 	
 	/** 
 	 * Fill the class with data from a buffer

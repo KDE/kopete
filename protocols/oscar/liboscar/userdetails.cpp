@@ -105,6 +105,11 @@ QByteArray UserDetails::buddyIconHash() const
 	return m_md5IconHash;
 }
 
+QString UserDetails::clientName() const
+{
+	return (m_clientName + m_clientVersion);
+}
+
 void UserDetails::fill( Buffer * buffer )
 {
 	BYTE snLen = buffer->getByte();
@@ -230,12 +235,14 @@ void UserDetails::fill( Buffer * buffer )
 
 void UserDetails::detectClient()
 {
+
 	/* My thanks to mETz for stealing^Wusing this code from SIM.
 	 * Client type detection ---
 	 * Most of this code is based on sim-icq code
 	 * Thanks a lot for all the tests you guys must have made
 	 * without sim-icq I would have only checked for the capabilities
 	 */
+	 /*
 	bool clientMatched = false;
 	if (m_capabilities != 0)
 	{
@@ -243,27 +250,27 @@ void UserDetails::detectClient()
 		if (hasCap(CAP_KOPETE))
 		{
 			m_clientName=i18n("Kopete");
-			clientMatched=true;
+			return;
 		}
 		else if (hasCap(CAP_MICQ))
 		{
 			m_clientName=i18n("MICQ");
-			clientMatched=true;
+			return;
 		}
 		else if (hasCap(CAP_SIMNEW) || hasCap(CAP_SIMOLD))
 		{
 			m_clientName=i18n("SIM");
-			clientMatched=true;
+			return;
 		}
 		else if (hasCap(CAP_TRILLIANCRYPT) || hasCap(CAP_TRILLIAN))
 		{
 			m_clientName=i18n("Trillian");
-			clientMatched=true;
+			return;
 		}
 		else if (hasCap(CAP_MACICQ))
 		{
 			m_clientName=i18n("MacICQ");
-			clientMatched=true;
+			return;
 		}
 		else if ((m_dcLastInfoUpdateTime & 0xFF7F0000L) == 0x7D000000L)
 		{
@@ -277,7 +284,7 @@ void UserDetails::detectClient()
 				m_clientVersion.sprintf("%d%d%u", ver/1000, (ver/10)%100, ver%10);
 			else
 				m_clientVersion.sprintf("%d%u", ver/1000, (ver/10)%100);
-			clientMatched=true;
+			return;
 		}
 		else // some client we could not detect using capabilities
 		{
@@ -390,11 +397,17 @@ void UserDetails::detectClient()
 			m_clientName = QString::fromLatin1("GnomeICU");
 		}
 	}
+	
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "detected client as: " << m_clientName 
+		<< " " << m_clientVersion << endl;
+	*/
 }
 
 bool UserDetails::hasCap( int capNumber )
 {
-	return ( m_capabilities & ( 1 << capNumber ) ) != 0;
+	bool capPresent = ( m_capabilities & ( 1 << capNumber ) ) == ( 1 << capNumber );
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "have cap " << Oscar::capName( capNumber ) << capPresent << endl;
+	return capPresent;
 }
 
 //kate: tab-width 4; indent-mode csands;
