@@ -33,7 +33,6 @@
 
 #include "kopeteuiglobal.h"
 
-
 MSNSocket::MSNSocket(QObject* parent)  : QObject (parent)
 {
 	m_onlineStatus = Disconnected;
@@ -80,10 +79,10 @@ void MSNSocket::connect( const QString &server, uint port )
 	m_port = port;
 	m_socket = new KExtendedSocket( server, port, KExtendedSocket::bufferedSocket );
 	 //can this prevent the kopete frezee? (http://lists.kde.org/?l=kopete-devel&m=107117795131722&w=2)
-	m_socket->setBlockingMode( false ); 
-	
+	m_socket->setBlockingMode( false );
+
 	m_socket->enableRead( true );
-	
+
 	// enableWrite eats the CPU, and we only need it when the queue is
 	// non-empty, so disable it until we have actual data in the queue
 	m_socket->enableWrite( false );
@@ -176,7 +175,7 @@ void MSNSocket::slotDataReceived()
 	if ( avail < 0 )
 	{
 		// error!
-		kdWarning( 14140 ) << k_funcinfo << "bytesAvailable() returned " << avail 
+		kdWarning( 14140 ) << k_funcinfo << "bytesAvailable() returned " << avail
 		 	<< ". This should not happen!" << endl
 			<< "Are we disconnected? Backtrace:" << endl << kdBacktrace() << endl;
 		return;
@@ -493,7 +492,42 @@ void MSNSocket::slotReadyWrite()
 
 QString MSNSocket::escape( const QString &str )
 {
-	return ( KURL::encode_string( str, 106 ) );
+	//return ( KURL::encode_string( str, 106 ) );
+	//It's not needed to encode everything. The official msn client only encode spaces and %
+	//If we encode more, the size can be longer than excepted.
+
+	int old_length= str.length();
+	QChar *new_segment = new QChar[ old_length * 3 + 1 ];
+	int new_length = 0;
+
+	for	( int i = 0; i < old_length; i++ )
+	{
+		unsigned char character = str[i];
+		
+		 /*character == ' '  || character == '%' || character == '\t' 
+			|| characters == '\n' || character == '\r'*/
+		/*	|| character == '<' || character == '>' ||  character == '\\'
+			|| character == '^' || character == '&' || character == '*'*/ 
+		
+		if( character <= 32 || character == '%' )
+		{
+			new_segment[ new_length++ ] = '%';
+
+			unsigned int c = character / 16;
+			c += (c > 9) ? ('A' - 10) : '0';
+			new_segment[ new_length++ ] = c;
+
+			c = character % 16;
+			c += (c > 9) ? ('A' - 10) : '0';
+			new_segment[ new_length++ ] = c;
+		}
+		else
+			new_segment[ new_length++ ] = str[i];
+	}
+
+	QString result = QString(new_segment, new_length);
+	delete [] new_segment;
+	return result;
 }
 
 QString MSNSocket::unescape( const QString &str )

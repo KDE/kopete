@@ -590,7 +590,7 @@ void MSNNotifySocket::slotAuthJobDone ( KIO::Job *job)
 
 		QString authURL = "https://" + m_sid + "/ppsecure/post.srf?lc=" + rx.cap( 1 ) + "&id=" +
 			rx.cap( 2 ) + "&tw=" + rx.cap( 3 ) + "&cbid=" + rx.cap( 2 ) + "&da=passport.com&login=" +
-			m_account->accountId() + "&domain=passport.com&passwd=";
+			KURL::encode_string( m_account->accountId()) + "&domain=passport.com&passwd=";
 
 		kdDebug( 14140 ) << "MSNNotifySocket::slotAuthJobDone: " << authURL << "(*******)" << endl;
 
@@ -598,7 +598,7 @@ void MSNNotifySocket::slotAuthJobDone ( KIO::Job *job)
 		m_kv=rx.cap(4);
 		if(m_kv.isNull()) m_kv="";
 
-		authURL += escape( m_password );
+		authURL += KURL::encode_string( m_password ) ;
 		job = KIO::get( KURL( authURL ), false, false );
 		job->addMetaData("cookies", "manual");
 		job->addMetaData("setcookies", cookies);
