@@ -75,7 +75,14 @@ KopeteAccount::KopeteAccount(KopeteProtocol *parent, const QString& _accountId ,
 
 KopeteAccount::~KopeteAccount()
 {
-	emit accountDestroyed(this);
+	// Delete all registered child contacts first
+	for( QDictIterator<KopeteContact> it( d->contacts ); it.current() ; ++it )
+		delete *it;
+
+	if( !d->contacts.isEmpty() )
+		kdDebug() << k_funcinfo << "?????????? Contact list not empty ???" << endl;
+
+	emit accountDestroyed( this );
 	delete d;
 }
 

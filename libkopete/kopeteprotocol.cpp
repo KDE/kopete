@@ -43,6 +43,20 @@ KopeteProtocol::~KopeteProtocol()
 
 bool KopeteProtocol::unload()
 {
+	// Remove all active accounts
+	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
+	for( QDictIterator<KopeteAccount> it( accounts ); it.current() ; ++it )
+		delete *it;
+
+	// Compatibility while not all plugins use accounts yet
+	// Delete all registered child contacts first
+	// FIXME: Remove this when all plugins are ported - Martijn
+	for( QDictIterator<KopeteContact> it( m_contacts ); it.current() ; ++it )
+		delete *it;
+
+	if( !m_contacts.isEmpty() )
+		kdDebug() << k_funcinfo << "?????????? Contact list not empty ???" << endl;
+
 	KopeteMessageManagerFactory::factory()->cleanSessions(this);
 	return KopetePlugin::unload();
 }
