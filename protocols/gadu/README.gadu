@@ -7,7 +7,8 @@ is the only one supported (and created) by the creators of gadu-gadu - sms-
 express company.
 
 To use gadu gadu you need the libgadu library installed on your system, which
-can be downloaded from http://dev.null.pl/ekg .
+can be downloaded from http://dev.null.pl/ekg . This should be version 1.4 or
+at least snap from 20031001 or later. It should support protocol version 6.0.
  
 You have to download the ekg communicator package 
 (which is a gadugadu client for the console). 
