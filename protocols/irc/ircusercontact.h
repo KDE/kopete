@@ -46,7 +46,7 @@ class IRCUserContact : public IRCContact
 		void setConversations( uint conversations ) { mConversations = conversations; };
 
 	private slots:
-		void slotWhois();
+		virtual void slotUserInfo();
 		void slotOp();
 		void slotDeop();
 		void slotVoice();
@@ -70,7 +70,6 @@ class IRCUserContact : public IRCContact
 		KAction *actionCtcpVersion;
 		KActionMenu *actionKick;
 		KActionMenu *actionBan;
-		KAction *actionWhois;
 		uint mConversations;
 
 		void contactMode( const QString &mode );

@@ -57,9 +57,6 @@ IRCUserContact::IRCUserContact(IRCIdentity *identity, const QString &nickname, K
 	actionModeMenu->setEnabled( false );
 	mCustomActions->insert( actionModeMenu );
 
-	actionWhois = new KAction(i18n("&Whois"), 0, this, SLOT(slotWhois()), this, "actionWhois");
-	mCustomActions->insert( actionWhois );
-
 	QObject::connect(identity->engine(), SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)), this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
 	QObject::connect(identity->engine(), SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)), this, SLOT(slotNewPrivMessage(const QString &, const QString &, const QString &)));
 }
@@ -86,7 +83,7 @@ void IRCUserContact::slotNewPrivMessage(const QString &originating, const QStrin
 	}
 }
 
-void IRCUserContact::slotWhois()
+void IRCUserContact::slotUserInfo()
 {
 	mEngine->whoisUser( mNickName );
 }
