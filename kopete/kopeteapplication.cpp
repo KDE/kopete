@@ -55,25 +55,7 @@ KopeteApplication::KopeteApplication()
 	m_isShuttingDown = false;
 	m_mainWindow = new KopeteWindow( 0, "mainWindow" );
 
-	/* KMainWindow is very broken from our point of view - it deref()'s the app
-	 * when the last visible KMainWindow is destroyed. This is broken for a number
-	 * of reasons, not least because it can happen more than once within a single
-	 * instance of Kopete. Also, our main window is hidden when it's in the tray,
-	 * and closing the last chatwindow when in that state can cause the app to quit.
-	 *
-	 * KopeteApplication's reference counting scheme is different to that of a normal
-	 * KDE application. It works as follows: the Kopete::PluginManager has a reference
-	 * to the application. No windows ever call KMainWindow::closeEvent, so KMainWindow
-	 * doesn't stupidly deref() our application. This ensures that the application
-	 * reference counting still works properly, and that the application terminates
-	 * neither too early (bug 75805) nor too late (bug 71657). - Richard
-	 */
-
-	// KApplication sets the reference count to 1 on startup. Kopete::PluginManager has a
-	// reference to us once created, so create it and drop our own reference.
 	Kopete::PluginManager::self();
-	deref();
-
 
 	Kopete::UI::Global::setMainWidget( m_mainWindow );
 
@@ -106,6 +88,8 @@ KopeteApplication::KopeteApplication()
 
 	//Create the emoticon installer
 	m_emoticonHandler = new Kopete::EmoticonMimeTypeHandler;
+
+	QObject::connect( this, SIGNAL( aboutToQuit() ), SLOT( slotCleanShutdown() ) );
 }
 
 KopeteApplication::~KopeteApplication()
@@ -223,7 +207,6 @@ void KopeteApplication::slotLoadPlugins()
 	}
 }
 
-
 void KopeteApplication::slotAllPluginsLoaded()
 {
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
@@ -320,41 +303,28 @@ void KopeteApplication::quitKopete()
 {
 	kdDebug( 14000 ) << k_funcinfo << endl;
 
-	if ( !m_isShuttingDown )
+	m_isShuttingDown = true;
+
+	// close all windows
+	QPtrListIterator<KMainWindow> it(*KMainWindow::memberList);
+	for (it.toFirst(); it.current(); ++it)
 	{
-		m_isShuttingDown = true;
-
-#if KDE_VERSION < KDE_MAKE_VERSION( 3, 1, 90 )
-		// When we close Kopete through KSystemTray, kdelibs will close all open
-		// windows first. However, despite the destructive close the main window
-		// is _NOT_ yet deleted at this point (it's a scheduled deleteLater()
-		// call).
-		// Due to a bug in KMainWindow prior to KDE 3.2 calling close() a second
-		// time also derefs KApplication a second time, which causes a premature
-		// call to KApplication::quit(), so we never go through the plugin
-		// manager's shutdown process.
-		// Unfortunately we can't assume close() ever being called though,
-		// because the code paths not using the system tray still need this.
-		// As a workaround we schedule a call to quitKopete() through a timer,
-		// so the event loop is processed and the window is already deleted.
-		// - Martijn
-		QTimer::singleShot( 0, this, SLOT( quitKopete() ) );
-		return;
-#endif
+		if ( !it.current()->close() )
+		{
+			m_isShuttingDown = false;
+			break;
+		}
 	}
+}
 
-	if ( !m_mainWindow.isNull() )
-		m_mainWindow->close();
-
+void KopeteApplication::slotCleanShutdown()
+{
 	// save the contact list now, just in case a change was made very recently
 	// and it hasn't autosaved yet
 	Kopete::ContactList::self()->save();
 	Kopete::AccountManager::self()->save();
 
-	//unload plugins and shutdown
-	Kopete::PluginManager::self()->shutdown();
 }
-
 void KopeteApplication::commitData( QSessionManager &sm )
 {
 	m_isShuttingDown = true;

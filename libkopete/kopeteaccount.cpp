@@ -97,6 +97,7 @@ Account::~Account()
 	while ( !d->contacts.isEmpty() )
 		delete *QDictIterator<Contact>( d->contacts );
 
+	kdDebug( 14010 ) << k_funcinfo << " account '" << d->id << "' about to emit accountDestroyed " << endl;
 	emit accountDestroyed(this);
 
 	delete d->myself;

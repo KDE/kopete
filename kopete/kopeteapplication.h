@@ -58,7 +58,8 @@ public:
 
 public slots:
 	/**
-	 * Quit Kopete. This method marks Kopete as 'shutting down' to avoid
+	 * Quit Kopete, closing all the windows, which causes application shutdown
+	 * This method marks Kopete as 'shutting down' to avoid
 	 * showing the message box that Kopete will be left running in the
 	 * system tray before calling qApp->quit().
 	 */
@@ -75,7 +76,7 @@ private slots:
 	 * auto-connect
 	 */
 	void slotAllPluginsLoaded();
-
+	void slotCleanShutdown();
 private:
 	// The main window might get deleted behind our back (W_DestructiveClose),
 	// so use a guarded pointer
