@@ -23,6 +23,7 @@
 
 // QT Includes
 #include <qfile.h>
+#include <qtimer.h>
 
 // KDE Includes
 #include <kdebug.h>
@@ -48,7 +49,7 @@ char webcam_description[MAX_PREF_LEN] = "Philips ToUcam Pro";
 char local_host[MAX_PREF_LEN] = "";
 int conn_type = 1;
 
-struct connect_callback_data 
+struct connect_callback_data
 {
 	yahoo_connect_callback callback;
 	void * callback_data;
@@ -138,7 +139,10 @@ YahooSession::YahooSession(int id, const QString username, const QString passwor
 	m_Username = username;
 	m_Password = password;
 	m_socket = 0L;
-	
+	m_waitingForKeepalive = false;
+	m_keepalive = new QTimer( this, "keepaliveTimer" );
+	connect( m_keepalive, SIGNAL( timeout() ), this, SLOT( refresh() ) );
+
 }
 
 int YahooSession::sessionId() const
@@ -175,7 +179,7 @@ void YahooSession::logOff()
 {
 	kdDebug(14181)<< k_funcinfo << " " << m_connId <<endl;
 	yahoo_logoff( m_connId );
-	if ( m_socket ) 
+	if ( m_socket )
 	{
 		if ( m_socket->isOpen() )
 		{
@@ -187,7 +191,13 @@ void YahooSession::logOff()
 void YahooSession::refresh()
 {
 	kdDebug(14181) << k_funcinfo << endl;
-	yahoo_refresh( m_connId );
+	if ( !m_waitingForKeepalive )
+	{
+		m_waitingForKeepalive = true;
+		yahoo_refresh( m_connId );
+	}
+	else
+		emit error( "Disconnected." , 1 );
 }
 
 void YahooSession::setIdentityStatus( const QString &identity, int active)
@@ -255,7 +265,7 @@ void YahooSession::changeBuddyGroup( const QString &who, const QString &old_grou
 	yahoo_change_buddy_group( m_connId, who.local8Bit(), old_group.local8Bit(), new_group.local8Bit() );
 }
 
-void YahooSession::conferenceInvite( const QString & from, const QStringList &who, 
+void YahooSession::conferenceInvite( const QString & from, const QStringList &who,
 		const QString &room, const QString &msg )
 {
 	YList *tmplist;
@@ -274,7 +284,7 @@ void YahooSession::conferenceInvite( const QString & from, const QStringList &wh
 	y_list_free( tmplist );
 }
 
-void YahooSession::conferenceAddinvite( const QString & from, const QString &who, const QString &room, 
+void YahooSession::conferenceAddinvite( const QString & from, const QString &who, const QString &room,
 		const QStringList &members, const QString &msg )
 {
 
@@ -295,7 +305,7 @@ void YahooSession::conferenceAddinvite( const QString & from, const QString &who
 	y_list_free( tmplist );
 }
 
-void YahooSession::conferenceDecline( const QString & from, const QStringList &who, 
+void YahooSession::conferenceDecline( const QString & from, const QStringList &who,
 		const QString &room, const QString &msg )
 {
 	YList *tmplist;
@@ -314,7 +324,7 @@ void YahooSession::conferenceDecline( const QString & from, const QStringList &w
 	y_list_free( tmplist );
 }
 
-void YahooSession::conferenceMessage( const QString & from, const QStringList &who, 
+void YahooSession::conferenceMessage( const QString & from, const QStringList &who,
 		const QString &room, const QString &msg )
 {
 	YList *tmplist;
@@ -327,7 +337,7 @@ void YahooSession::conferenceMessage( const QString & from, const QStringList &w
 		y_list_append( tmplist, member );
 	}
 
-	yahoo_conference_message( m_connId, from.local8Bit(), tmplist, 
+	yahoo_conference_message( m_connId, from.local8Bit(), tmplist,
 		room.local8Bit(), (const char *) msg.utf8(), 1 );
 
 	y_list_free_1( tmplist );
@@ -353,7 +363,7 @@ void YahooSession::YahooSession::conferenceLogon( const QString & from, const QS
 	y_list_free( tmplist );
 }
 
-void YahooSession::conferenceLogoff( const QString &from, const QStringList &who, 
+void YahooSession::conferenceLogoff( const QString &from, const QStringList &who,
 		const QString &room )
 {
 	YList *tmplist;
@@ -372,7 +382,7 @@ void YahooSession::conferenceLogoff( const QString &from, const QStringList &who
 	y_list_free( tmplist );
 }
 
-int YahooSession::sendFile( const QString& /*who*/, const QString& /*msg*/, 
+int YahooSession::sendFile( const QString& /*who*/, const QString& /*msg*/,
 		const QString& /*name*/, long /*size*/ )
 {
 	// FIXME 0,0 is the callback and void *data
@@ -384,7 +394,7 @@ int YahooSession::sendFile( const QString& /*who*/, const QString& /*msg*/,
 
 }
 
-int YahooSession::getUrlHandle( const QString& /*url*/, const QString& /*filename*/, 
+int YahooSession::getUrlHandle( const QString& /*url*/, const QString& /*filename*/,
 		unsigned long* /*filesize*/ )
 {
 	/*
@@ -457,7 +467,7 @@ void YahooSession::slotLoginResponseReceiver( int /* succ */, char * /* url */ )
     *************************************************************************
 */
 
-extern "C" 
+extern "C"
 {
 
 void YAHOO_CALLBACK_TYPE( ext_yahoo_login_response ) ( int id, int succ, char *url )
@@ -489,7 +499,7 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_got_cookies )( int /*id*/ )
 	/* Not implemented , No receiver yet */
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_status_changed )( int id, char *who, int stat, 
+void YAHOO_CALLBACK_TYPE( ext_yahoo_status_changed )( int id, char *who, int stat,
 		char *msg, int away )
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
@@ -497,7 +507,7 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_status_changed )( int id, char *who, int sta
 
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_got_im )( int id, char *who, char *msg, 
+void YAHOO_CALLBACK_TYPE( ext_yahoo_got_im )( int id, char *who, char *msg,
 		long tm, int stat, int utf8 )
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
@@ -505,7 +515,7 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_got_im )( int id, char *who, char *msg,
 
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_got_conf_invite )( int id, char *who, char *room, 
+void YAHOO_CALLBACK_TYPE( ext_yahoo_got_conf_invite )( int id, char *who, char *room,
 		char *msg, YList *members )
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
@@ -513,7 +523,7 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_got_conf_invite )( int id, char *who, char *
 
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_conf_userdecline )( int id, char *who, 
+void YAHOO_CALLBACK_TYPE( ext_yahoo_conf_userdecline )( int id, char *who,
 		char *room, char *msg )
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
@@ -548,7 +558,7 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_chat_cat_xml )( int /*id*/, char* /*xml*/ )
 	/* Not implemented , No receiver yet */
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_chat_join )( int /*id*/, char* /*room*/, 
+void YAHOO_CALLBACK_TYPE( ext_yahoo_chat_join )( int /*id*/, char* /*room*/,
 		char* /*topic*/, YList* /*members*/ )
 {
 	/* Not implemented , No receiver yet */
@@ -565,13 +575,13 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_chat_userleave )( int /*id*/, char* /*room*/
 	/* Not implemented , No receiver yet */
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_chat_message )( int /*id*/, char* /*who*/, char* /*room*/, 
+void YAHOO_CALLBACK_TYPE( ext_yahoo_chat_message )( int /*id*/, char* /*who*/, char* /*room*/,
 		char* /*msg*/, int /*msgtype*/, int /*utf8*/ )
 {
 	/* Not implemented , No receiver yet */
 }
 
-void YAHOO_CALLBACK_TYPE( ext_yahoo_got_file )( int id, char *who, char *url, long expires, 
+void YAHOO_CALLBACK_TYPE( ext_yahoo_got_file )( int id, char *who, char *url, long expires,
 		char *msg, char *fname, unsigned long fesize )
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
@@ -652,7 +662,7 @@ int YAHOO_CALLBACK_TYPE( ext_yahoo_connect )( char *host, int port )
 	return YahooSessionManager::manager()->_hostConnectReceiver( host, port );
 }
 
-int YAHOO_CALLBACK_TYPE( ext_yahoo_connect_async )( int id, char *host, int port, 
+int YAHOO_CALLBACK_TYPE( ext_yahoo_connect_async )( int id, char *host, int port,
 		yahoo_connect_callback callback, void *callback_data )
 {
 	YahooSession *session = YahooSessionManager::manager()->session( id );
@@ -866,7 +876,7 @@ void YahooSession::_gotFileReceiver( char *who, char *url, long expires, char *m
 		char *fname, unsigned long fesize )
 {
 
-	emit gotFile( QString::fromLocal8Bit( who ), QString::fromLocal8Bit( url ), 
+	emit gotFile( QString::fromLocal8Bit( who ), QString::fromLocal8Bit( url ),
 			expires, QString::fromLocal8Bit( msg ), QString::fromLocal8Bit( fname ), fesize );
 }
 
@@ -998,14 +1008,14 @@ int YahooSessionManager::_hostConnectReceiver( char* /*host*/, int /*port*/ )
 	return 0;
 }
 
-int YahooSession::_hostAsyncConnectReceiver( char *host, int port, 
+int YahooSession::_hostAsyncConnectReceiver( char *host, int port,
 		yahoo_connect_callback callback, void *callback_data )
 {
 	struct connect_callback_data *ccd;
 	int error;
 	kdDebug(14181) << k_funcinfo << endl;
 	m_socket = new KExtendedSocket( host, port );
-	
+
 	// TODO Do an async connect in the future
 	error = m_socket->connect();
 
@@ -1040,6 +1050,9 @@ void YahooSession::slotReadReady()
 	int ret = 1;
 	int fd = m_socket->fd();
 	kdDebug(14181) << k_funcinfo << "Socket FD: " << fd << endl;
+
+	if ( m_waitingForKeepalive )
+		m_waitingForKeepalive = false;
 
 	ret = yahoo_read_ready( m_connId , fd, m_data );
 

@@ -33,6 +33,7 @@
 class YahooSession;
 class KExtendedSocket;
 class QSocketNotifier;
+class QTimer;
 
 /* Yahoo Protocol Connection Manager */
 class YahooSessionManager : public QObject
@@ -75,10 +76,9 @@ public:
 	int setLogLevel(enum yahoo_log_level level);
 
 	/* YahooSession public API */
-	
+
 	void login(int initial);
 	void logOff();
-	void refresh();
 	void setIdentityStatus( const QString &identity, int active);
 	void getList();
 	void keepalive();
@@ -105,10 +105,10 @@ public:
 	QStringList getIdentities();
 	QString getCookie( const QString &which);
 	QString getProfile_url( void );
-	
-	/* Private Receivers for libyahoo callbacks, we capture them  and emit signals 
+
+	/* Private Receivers for libyahoo callbacks, we capture them  and emit signals
 	   called only by libyahoo callbacks, don't use them */
-	
+
 	void _loginResponseReceiver(int succ, char *url);
 	void _gotIgnoreReceiver(YList *igns);
 	void _gotBuddiesReceiver(YList *buds);
@@ -133,6 +133,9 @@ public:
 	void _addHandlerReceiver(int fd, yahoo_input_condition cond, void *data);
 	void _removeHandlerReceiver(int fd);
 	int _hostAsyncConnectReceiver(char *host, int port,  yahoo_connect_callback callback, void *callback_data);
+
+public slots:
+	void refresh();
 
 signals:
 	/**
@@ -214,6 +217,7 @@ signals:
 	 * emitted when someone invites us to join a game
 	 */
 	void gameNotify( const QString &who, int stat);
+
 	/**
 	 * Notify that we have mail
 	 */
@@ -230,11 +234,13 @@ signals:
 	void error( const QString &err, int fatal);
 	//void hostConnect(char *host, int port);
 
-	private slots:
+private slots:
+
 	void slotLoginResponseReceiver( int succ, char *url);
 	void slotReadReady();
 	void slotWriteReady();
-	private:
+
+private:
 	/* Private constructor */
 	YahooSession(int id, const QString username, const QString password);
 
@@ -243,16 +249,19 @@ signals:
 
 	KExtendedSocket *m_socket;
 	void *m_data;
-	
+
 	QString m_Username, m_Password, m_Server; // User data
-	
+
 	int m_Port;
 	int m_Status;
 	int m_connId;
 	int m_fd;
-	
+
 	QString m_BuddyListServer; // Buddy List server
 	int m_BuddyListPort;
+	QTimer* m_keepalive;
+
+	bool m_waitingForKeepalive;
 };
 
 #endif

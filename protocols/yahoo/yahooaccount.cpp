@@ -568,9 +568,12 @@ void YahooAccount::slotSystemMessage( const QString & /* msg */ )
 //	kdDebug(14180) << k_funcinfo << msg << endl;
 }
 
-void YahooAccount::slotError( const QString & /* err */, int /* fatal */ )
+void YahooAccount::slotError( const QString & err, int fatal )
 {
-//	kdDebug(14180) << k_funcinfo << endl;
+	Q_UNUSED( err );
+	kdDebug(14180) << k_funcinfo << endl;
+	if ( fatal == 1 )
+		disconnect();
 }
 
 void YahooAccount::slotRemoveHandler( int /* fd */ )
