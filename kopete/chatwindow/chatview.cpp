@@ -127,6 +127,7 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	m_edit->setMinimumSize( QSize( 75, 20 ) );
 	m_edit->setWordWrap( QTextEdit::WidgetWidth );
 	m_edit->setWrapPolicy( QTextEdit::AtWhiteSpace );
+	m_edit->setAutoFormatting( QTextEdit::AutoNone );
 
 	//Make the edit area dockable for now
 	editDock->setWidget( m_edit );
@@ -786,8 +787,9 @@ void ChatView::messageSentSuccessfully()
 
 void ChatView::slotTextChanged()
 {
-	bool canSend = !m_edit->text().isEmpty();
-	m_mainWindow->setSendEnabled( canSend );
+	QString txt = m_edit->text();
+	txt = txt.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null ).stripWhiteSpace();
+	m_mainWindow->setSendEnabled( txt.isEmpty() );
 
 	// And they were previously typing
 	if( !m_typingRepeatTimer->isActive() )
