@@ -17,15 +17,9 @@
 #include "kopeteuiglobal.h"
 #include "kopetepassword.h"
 #include "kopetepassworddialog.h"
-
-#include <kdeversion.h>
-
-#if KDE_IS_VERSION( 3, 2, 0 )
 #include "kopetewalletmanager.h"
+
 #include <kwallet.h>
-#else
-namespace KWallet { class Wallet; }
-#endif
 
 #include <qapplication.h>
 #include <qlabel.h>
@@ -110,11 +104,7 @@ public:
 	void begin()
 	{
 		kdDebug( 14010 ) << k_funcinfo << endl;
-#if KDE_IS_VERSION( 3, 2, 0 )
 		Kopete::WalletManager::self()->openWallet( this, SLOT( walletReceived( KWallet::Wallet* ) ) );
-#else
-		walletReceived( 0 );
-#endif
 	}
 
 	void walletReceived( KWallet::Wallet *wallet )
@@ -162,10 +152,8 @@ public:
 			return pwd;
 		}
 
-#if KDE_IS_VERSION( 3, 2, 0 )	
 		if ( mWallet && mWallet->readPassword( mPassword.d->configGroup, pwd ) == 0 && !pwd.isNull() )
 			return pwd;
-#endif
 
 		if ( mPassword.d->remembered && !mPassword.d->passwordFromKConfig.isNull() )
 			return mPassword.d->passwordFromKConfig;
@@ -303,16 +291,13 @@ public:
 			mPassword.d->remembered = false;
 			mPassword.d->passwordFromKConfig = QString::null;
 			mPassword.writeConfig();
-#if KDE_IS_VERSION( 3, 2, 0 )
 			if ( mWallet )
 				mWallet->removeEntry( mPassword.d->configGroup );
-#endif
 			return true;
 		}
 
 		kdDebug( 14010 ) << k_funcinfo << " setting password for " << mPassword.d->configGroup << endl;
 
-#if KDE_IS_VERSION( 3, 2, 0 )
 		if ( mWallet && mWallet->writePassword( mPassword.d->configGroup, mNewPass ) == 0 )
 		{
 			mPassword.d->remembered = true;
@@ -339,7 +324,6 @@ public:
 				return false;
 			}
 		}
-#endif
 		mPassword.d->remembered = true;
 		mPassword.d->passwordFromKConfig = mNewPass;
 		mPassword.writeConfig();
@@ -444,62 +428,6 @@ void Kopete::Password::request( QObject *returnObj, const char *slot, const QPix
 	KopetePasswordRequest *request = new KopetePasswordGetRequestPrompt( returnObj, *this, image, prompt, source );
 	returnObj->connect( request, SIGNAL( requestFinished( const QString & ) ), slot );
 	request->begin();
-}
-
-// ASYNC password grab. TODO: remove this when it's no longer used.
-QString Kopete::Password::retrieve( const QPixmap &image, const QString &prompt, Kopete::Password::PasswordSource source )
-{
-	uint maxLength = maximumLength();
-	if ( source == Kopete::Password::FromConfigOrUser )
-	{
-#if KDE_IS_VERSION( 3, 2, 0 )
-		if( KWallet::Wallet *wallet = Kopete::WalletManager::self()->wallet() )
-		{
-			// Before trying to read from the wallet, check if the config file holds a password.
-			// If so, remove it from the config and set it through KWallet instead.
-			QString pwd;
-			if ( d->remembered && !d->passwordFromKConfig.isNull() )
-			{
-				pwd = d->passwordFromKConfig;
-				set( pwd );
-				return pwd;
-			}
-
-			if ( wallet->readPassword( d->configGroup, pwd ) == 0 && !pwd.isNull() )
-				return pwd;
-		}
-#endif
-		if ( d->remembered && !d->passwordFromKConfig.isNull() )
-			return d->passwordFromKConfig;
-	}
-
-	KDialogBase *passwdDialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "passwdDialog", true, i18n( "Password Required" ),
-		KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
-
-	KopetePasswordDialog *view = new KopetePasswordDialog( passwdDialog );
-	passwdDialog->setMainWidget( view );
-
-	view->m_text->setText( prompt );
-	view->m_image->setPixmap( image );
-	if ( maxLength != 0 )
-		view->m_password->setMaxLength( maxLength );
-	view->m_password->setFocus();
-
-	// FIXME: either document what these are for or remove them - lilac
-	view->adjustSize();
-	passwdDialog->adjustSize();
-
-	QString pass;
-	if ( passwdDialog->exec() == QDialog::Accepted )
-	{
-		d->remembered = view->m_save_passwd->isChecked();
-		pass = QString::fromLocal8Bit( view->m_password->password() );
-		if ( d->remembered )
-			set( pass );
-	}
-
-	passwdDialog->deleteLater();
-	return pass;
 }
 
 QString Kopete::Password::cachedValue()

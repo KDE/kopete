@@ -35,7 +35,6 @@
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"
 #include "kopetegroup.h"
-#include "kopetepassword.h"
 #include "kopeteprefs.h"
 #include "kopeteblacklister.h"
 

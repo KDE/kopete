@@ -164,31 +164,6 @@ void Kopete::WalletManager::slotGiveExistingWallet()
 	}
 }
 
-KWallet::Wallet *Kopete::WalletManager::wallet()
-{
-	if ( !KWallet::Wallet::isEnabled() )
-		return 0;
-
-	if ( d->wallet && d->wallet->isOpen() )
-		return d->wallet;
-
-	// if we have a wallet here, we're really unfortunate: we've had a sync wallet open
-	// call while the wallet dialog was open async. we can't wait for it to close, since
-	// we're not allowed to processEvents(), so the best we can do is:
-	delete d->wallet;
-
-	d->wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(),
-	            mainWindowID(), KWallet::Wallet::Synchronous );
-
-	// if we got a wallet, prepare it, and tell everyone who cares either way
-	if ( d->wallet )
-		slotWalletChangedStatus();
-	else
-		emitWalletOpened( 0 );
-
-	return d->wallet;
-}
-
 void Kopete::WalletManager::closeWallet()
 {
 	if ( !d->wallet ) return;

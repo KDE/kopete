@@ -457,7 +457,7 @@ public:
 
 	/**
 	 * @todo remove
-	 * @deprecated  uses configGroup
+	 * @deprecated  use configGroup
 	 */
 	KDE_DEPRECATED void setPluginData( Plugin *plugin, const QString &key, const QString &value ) 
 		{  configGroup()->writeEntry(key,value);  }
@@ -465,25 +465,10 @@ public:
 
 	/**
 	 * @todo remove
-	 * @deprecated  uses configGroup
+	 * @deprecated  use configGroup
 	 */
 	KDE_DEPRECATED QString pluginData( Plugin *plugin, const QString &key ) const 
 		{ return configGroup()->readEntry(key); }
-	
-	/**
-	 * @todo remove
-	 * @deprecated  uses PasswordedAccount
-	 */
-	KDE_DEPRECATED bool rememberPassword() const 
-		{ return false; }
-
-	/**
-	 * @todo remove
-	 * @deprecated  uses PasswordedAccount
-	 */
-	KDE_DEPRECATED QString password(bool a= false ,  long int q=0 , int l=0   ) const 
-		{ return KInputDialog::getText( QString::fromLatin1("Enter Password - Kopete"), QString::fromLatin1("Enter password for account %1\nYou can't remember the password because the protocol hasn't been ported to PasswordedAccount yet").arg(accountId())    ); }
-
 //MOC_SKIP_END//
 };
 

@@ -58,20 +58,6 @@ public:
 	 */
 	void openWallet( QObject *object, const char *slot );
 	
-	/**
-	 * Get a KWallet instance, possibly prompting the user for his
-	 * passphrase if necessary. The returned wallet will already be set to
-	 * the appropriate folder, and should not have setFolder called on it.
-	 *
-	 * You may store the wallet object returned from this function, but note
-	 * that it will be deleted after the closeWallet signal is emitted.
-	 *
-	 * @return The network KWallet to use for storing Kopete data, or NULL if
-	 *         the wallet or Kopete folder was inaccessible.
-	 * @deprecated Use openWallet instead to avoid blocking the GUI.
-	 */
-	KWallet::Wallet *wallet() KDE_DEPRECATED;
-
 public slots:
 	/**
 	 * Close the connection to the wallet. Will cause walletLost() to be emitted.

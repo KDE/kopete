@@ -102,17 +102,6 @@ public:
 	enum PasswordSource { FromConfigOrUser, FromUser };
 
 	/**
-	 * Get the password. Has the ability to open an input dialog
-	 * if the password is not currently set.
-	 *
-	 * @see request for description of arguments
-	 * @return The password or QString::null if the user has canceled
-	 * @note will not update the cachedValue() property
-	 */
-	QString retrieve( const QPixmap &image, const QString &prompt,
-		PasswordSource source = FromConfigOrUser ) KDE_DEPRECATED;
-
-	/**
 	 * @brief Start an asynchronous call to get the password.
 	 * Causes a password entry dialog to appear if the password is not set. Triggers
 	 * a provided slot when done, but not until after this function has returned (you
