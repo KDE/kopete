@@ -309,7 +309,8 @@ GaduAccount::connectWithPassword(const QString& password)
 	if (password.isEmpty()) {
 		return;
 	}
-	changeStatus( initialStatus() );
+	// FIXME: add status description to this mechainsm, this is a hack now. libkopete design issue.
+	changeStatus( initialStatus(), p->lastDescription );
 }
 
 void
@@ -370,6 +371,7 @@ GaduAccount::changeStatus( const Kopete::OnlineStatus& status, const QString& de
 		if ( !p->session_->isConnected() ) {
 			if ( password().cachedValue().isEmpty() ) {
 				// FIXME: when status string added to connect(), use it here
+				p->lastDescription = descr;
 				connect( status/*, descr*/ );
 				return;
 			}
