@@ -39,6 +39,7 @@
 #include <kurlrequester.h>
 
 #include "kopeteaddrbookexport.h"
+#include "kopetecontact.h"
 #include "kopetegroup.h"
 #include "kopetegroupviewitem.h"
 #include "kopetemetacontact.h"
