@@ -45,7 +45,7 @@ KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 	QVBoxLayout *BalloonLayout = new QVBoxLayout(this, 22, KDialog::spacingHint(), "BalloonLayout");
 
 	// BEGIN Layout1
-	QHBoxLayout *Layout1 = new QHBoxLayout(this, 0, KDialog::spacingHint(), "Layout1");
+	QHBoxLayout *Layout1 = new QHBoxLayout(BalloonLayout, KDialog::spacingHint(), "Layout1");
 	QLabel *mCaption = new QLabel(text, this, "mCaption");
 
 	if (!pix.isEmpty())
@@ -61,7 +61,7 @@ KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 
 
 	// BEGIN Layout2
-	QHBoxLayout *Layout2 = new QHBoxLayout(this, 0, KDialog::spacingHint(), "Layout2");
+	QHBoxLayout *Layout2 = new QHBoxLayout(BalloonLayout, KDialog::spacingHint(), "Layout2");
 	QPushButton *mViewButton = new QPushButton(i18n("View"), this, "mViewButton");
 	QPushButton *mIgnoreButton = new QPushButton(i18n("Ignore" ), this, "mIgnoreButton");
 
@@ -70,10 +70,6 @@ KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 	Layout2->addWidget(mIgnoreButton);
 	Layout2->addStretch();
 	// END Layout2
-
-
-	BalloonLayout->addLayout(Layout1);
-	BalloonLayout->addLayout(Layout2);
 
 	setPalette(QToolTip::palette());
 	setAutoMask(TRUE);
