@@ -691,9 +691,9 @@ void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 			setNameSource( ns );
 		}
 	}
-#if 0 //the export of the image to the adressbook is actualy disabled.
 	else if ( key == Global::Properties::self()->photo().key() )
 	{
+#if 0 //the export of the image to the adressbook is actualy disabled.
 		// If the metacontact is linked to a kabc entry
 		if ( !d->metaContactId.isEmpty() && !newValue.isNull())
 		{
@@ -717,8 +717,13 @@ void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
 				setPhotoSource(subcontact);
 			}
 		}
-	}
 #endif
+		if(photo().isNull() && photoSource() == 0L)
+			setPhotoSource(subcontact);
+		else if(photoSource() == subcontact)
+			emit photoChanged();
+
+	}
 
 	//TODO:  check if the property was persistent, and emit, not only when it's the displayname
 	emit persistentDataChanged();
