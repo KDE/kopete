@@ -216,9 +216,9 @@ public slots:
 	 *
 	 * FIXME: Use a better way, without exposing the XML backend, though.
 	 */
-	void load() { loadXML(); }
+	void load();
 
-	void save() { saveXML(); }
+	void save();
 
 signals:
 	/**

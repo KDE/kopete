@@ -139,6 +139,11 @@ void KopeteContactList::slotRemovedFromGroup( KopeteMetaContact *mc, const QStri
 }
 */
 
+void KopeteContactList::load()
+{
+	loadXML();
+}
+
 void KopeteContactList::loadXML()
 {
 	// don't save when we're in the middle of this...
@@ -604,6 +609,11 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 
 	contactListFile.flush();
 	contactListFile.close();
+}
+
+void KopeteContactList::save()
+{
+	saveXML();
 }
 
 void KopeteContactList::saveXML()
