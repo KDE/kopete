@@ -36,6 +36,9 @@
 #include "jabbermap.h"
 #include "jabbermessagemanager.h"
 
+#define JABBER_DEBUG_GLOBAL		14130
+#define JABBER_DEBUG_PROTOCOL	14131
+
 class JabberContact;
 class dlgJabberStatus;
 class dlgJabberSendRaw;
