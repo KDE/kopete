@@ -317,7 +317,7 @@ void MSNProtocol::initActions()
 {
 	actionGoOnline = new KAction ( i18n("Go o&nline"), "msn_online", 0, this, SLOT(slotGoOnline()), this, "actionMSNConnect" );
 	actionGoOffline = new KAction ( i18n("Go &Offline"), "msn_offline", 0, this, SLOT(slotGoOffline()), this, "actionMSNConnect" );
-	actionGoAway = new KAction ( i18n("Go &Away"), "msn_away", 0, this, SLOT(slotGoAway()), this, "actionMSNConnect" );
+	actionGoAway = new KAction ( i18n("Set &Away"), "msn_away", 0, this, SLOT(slotGoAway()), this, "actionMSNConnect" );
 	m_renameAction = new KAction ( i18n( "&Change Nickname..." ),
 		QString::null, 0, this, SLOT( slotChangePublicName() ),
 		this, "m_renameAction" );
