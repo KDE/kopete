@@ -769,7 +769,7 @@ void JabberAccount::createAddContact (KopeteMetaContact * mc, const Jabber::Rost
 		 * If no metacontact has been given, try to locate an existing one
 		 * that contains a contact with the same ID that we are to create.
 		 */
-		mc = KopeteContactList::contactList ()->findContact (protocol ()->pluginId (), accountId (), item.jid ().userHost ());
+		mc = KopeteContactList::contactList ()->findContact (protocol ()->pluginId (), accountId (), item.jid ().userHost ().lower());
 
 		if (mc)
 		{
@@ -778,7 +778,7 @@ void JabberAccount::createAddContact (KopeteMetaContact * mc, const Jabber::Rost
 			 */
 			JabberContact *jc = (JabberContact *) mc->findContact (protocol ()->pluginId (),
 																   accountId (),
-																   item.jid ().userHost ());
+																   item.jid ().userHost ().lower());
 
 			if (jc)
 			{
@@ -959,13 +959,13 @@ void JabberAccount::slotContactDeleted (const Jabber::RosterItem & item)
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Deleting contact " << item.jid ().userHost () << endl;
 
-	if (!contacts ()[item.jid ().userHost ()])
+	if (!contacts ()[item.jid().userHost().lower()])
 	{
 		kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberProtocl] WARNING: slotContactDeleted() " << "was asked to delete a non-existing contact." << endl;
 		return;
 	}
 
-	JabberContact *jc = static_cast < JabberContact * >(contacts ()[item.jid ().userHost ()]);
+	JabberContact *jc = static_cast < JabberContact * >(contacts ()[item.jid().userHost().lower()]);
 
 	/* This will also cause the contact to disappear from the metacontact. */
 	delete jc;
@@ -976,13 +976,13 @@ void JabberAccount::slotContactUpdated (const Jabber::RosterItem & item)
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Status update for " << item.jid ().userHost () << endl;
 
 	/* Sanity check. */
-	if (!contacts ()[item.jid ().userHost ()])
+	if (!contacts ()[item.jid().userHost().lower()])
 	{
 		kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] WARNING: slotContactUpdated() " << "was requested to update a non-existing contact." << endl;
 		return;
 	}
 	// update the contact data
-	static_cast < JabberContact * >(contacts ()[item.jid ().userHost ()])->slotUpdateContact (item);
+	static_cast < JabberContact * >(contacts ()[item.jid().userHost().lower()])->slotUpdateContact (item);
 }
 
 void JabberAccount::slotReceivedMessage (const Jabber::Message & message)
@@ -991,7 +991,7 @@ void JabberAccount::slotReceivedMessage (const Jabber::Message & message)
 	JabberContact *contactFrom;
 
 	userHost = message.from ().userHost ();
-	contactFrom = static_cast < JabberContact * >(contacts ()[userHost]);
+	contactFrom = static_cast < JabberContact * >(contacts ()[userHost.lower()]);
 
 	if (userHost.isEmpty ())
 	{
@@ -1064,13 +1064,13 @@ void JabberAccount::slotGroupChatJoined (const Jabber::Jid & jid)
 void JabberAccount::slotGroupChatLeft (const Jabber::Jid & jid)
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Left groupchat " << jid.full () << endl;
-	delete static_cast < JabberGroupChat * >(contacts ()[jid.userHost ()]);
+	delete static_cast < JabberGroupChat * >(contacts ()[jid.userHost().lower()]);
 }
 
 void JabberAccount::slotGroupChatPresence (const Jabber::Jid & jid, const Jabber::Status & status)
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Received groupchat presence for room " << jid.full () << endl;
-	static_cast < JabberGroupChat * >(contacts ()[jid.userHost ()])->updatePresence (jid, status);
+	static_cast < JabberGroupChat * >(contacts ()[jid.userHost().lower()])->updatePresence (jid, status);
 }
 
 void JabberAccount::slotGroupChatError (const Jabber::Jid & jid, int error, const QString & reason)
@@ -1084,19 +1084,19 @@ void JabberAccount::slotResourceAvailable (const Jabber::Jid & jid, const Jabber
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New resource available for " << jid.userHost () << endl;
 
-	if (!contacts ()[jid.userHost ()])
+	if (!contacts ()[jid.userHost().lower()])
 	{
 		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Trying to add a resource, but " << "couldn't find an entry for " << jid.userHost () << endl;
 		return;
 	}
 
-	if(static_cast<JabberContact *>(contacts()[jid.userHost()]) == myContact)
+	if(static_cast<JabberContact *>(contacts ()[jid.userHost().lower()]) == myContact)
 	{
 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Ignoring resource by other client for ourselves." << endl;
 		return;
 	}
 
-	static_cast < JabberContact * >(contacts ()[jid.userHost ()])->slotResourceAvailable (jid, resource);
+	static_cast < JabberContact * >(contacts ()[jid.userHost().lower()])->slotResourceAvailable (jid, resource);
 }
 
 void JabberAccount::slotResourceUnavailable (const Jabber::Jid & jid, const Jabber::Resource & resource)
@@ -1104,19 +1104,19 @@ void JabberAccount::slotResourceUnavailable (const Jabber::Jid & jid, const Jabb
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Resource now unavailable for " << jid.userHost () << endl;
 
-	if (!contacts ()[jid.userHost ()])
+	if (!contacts ()[jid.userHost().lower()])
 	{
 		kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Trying to remove a resource, " << "but couldn't find an entry for " << jid.userHost () << endl;
 		return;
 	}
 
-	if(static_cast<JabberContact *>(contacts()[jid.userHost()]) == myContact)
+	if(static_cast<JabberContact *>(contacts ()[jid.userHost().lower()]) == myContact)
 	{
 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Ignoring resource by other client for ourselves." << endl;
 		return;
 	}
 
-	static_cast < JabberContact * >(contacts ()[jid.userHost ()])->slotResourceUnavailable (jid, resource);
+	static_cast < JabberContact * >(contacts ()[jid.userHost().lower()])->slotResourceUnavailable (jid, resource);
 
 }
 
