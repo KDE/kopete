@@ -69,7 +69,7 @@ public:
 	bool	stringToContacts( gaduContactsList& gaducontactslist , const QString& sList );
 
 public slots:
-	void login( struct gg_login_params& p );
+	void login( struct gg_login_params *p );
 	void login( uin_t uin, const QString& password, bool useTls,
 							int status=GG_STATUS_INVISIBLE , const QString& statusDescr="" );
 	void logoff();
@@ -129,6 +129,7 @@ private:
 
 	void sendResult( gg_pubdir50_t result );
 	void handleUserlist( gg_event *e );
+	void destroySession();
 
 	struct gg_session	*session_;
 	QSocketNotifier		*read_;

@@ -67,11 +67,11 @@ GaduSession::status() const
 }
 
 void
-GaduSession::login( struct gg_login_params& p )
+GaduSession::login( struct gg_login_params *p )
 {
 	if ( !isConnected() ) {
 	    kdDebug()<<"Login"<<endl;
-		if ( !(session_ = gg_login( &p ))) {
+		if ( !(session_ = gg_login( p ))) {
 			gg_free_session( session_ );
 			session_ = 0;
 			emit connectionFailed( 0L );
@@ -123,23 +123,33 @@ GaduSession::login( uin_t uin, const QString& password, bool useTls,
 	params_.status_descr = statusDescr.local8Bit().data();
 	params_.async = 1;
 	params_.tls = useTls;
-	login( params_ );
+	login( &params_ );
+}
+
+void
+GaduSession::destroySession()
+{
+	if ( session_ ) {
+		disableNotifiers();
+		QObject::disconnect( this, SLOT(checkDescriptor()) );
+		if (read_){
+		    delete read_;
+		    read_=NULL;
+		}
+		if (write_){
+		    delete write_;
+		    write_=NULL;
+		}
+		gg_free_session( session_ );
+		session_ = 0;
+	}
 }
 
 void
 GaduSession::logoff()
 {
-	if ( session_ ) {
-		QObject::disconnect( this, SLOT(checkDescriptor()) );
-		delete read_;
-		delete write_;
-		read_ = 0;
-		write_ = 0;
-		gg_logoff( session_ );
-		gg_free_session( session_ );
-		session_ = 0;
-		emit disconnect();
-	}
+    destroySession();
+    emit disconnect();
 }
 
 int
@@ -559,18 +569,8 @@ GaduSession::checkDescriptor()
 	struct gg_event *e;
 
 	if (!(e = gg_watch_fd(session_))) {
-		QObject::disconnect( this, SLOT(checkDescriptor()) );
 		kdDebug(14100)<<"Connection was broken for some reason"<<endl;
-		delete read_;
-		delete write_;
-		read_ = 0;
-		write_ = 0;
-		gg_logoff( session_ );
-		gg_free_session( session_ );
-		session_ = 0;
-		kdDebug(14100)<<"Emitting disconnect"<<endl;
-		emit disconnect();
-		kdDebug(14100)<<"done emitting disconnect"<<endl;
+		destroySession();
 		return;
 	}
 
@@ -599,28 +599,14 @@ GaduSession::checkDescriptor()
 		emit connectionSucceed( e );
 		break;
 	case GG_EVENT_CONN_FAILED:
-		if ( session_ ) {
-			gg_free_session( session_ );
-			session_ = 0L;
-		}
-		QObject::disconnect( this, SLOT(checkDescriptor()) );
-		delete read_;
-		delete write_;
-		read_ = 0;
-		write_ = 0;
-		emit connectionFailed( e );
+		kdDebug(14100)<<"event connectionFailed"<<endl;
+		destroySession();
+		kdDebug(14100)<<"emit connection failed signal"<<endl;
+		emit connectionFailed( NULL );
 		break;
 	case GG_EVENT_DISCONNECT:
-		if ( session_ ) {
-			gg_free_session( session_ );
-			session_ = 0L;
-		}
-		QObject::disconnect( this, SLOT(checkDescriptor()) );
-		delete read_;
-		delete write_;
-		read_ = 0;
-		write_ = 0;
-		emit disconnect();
+		kdDebug(14100)<<"event Disconnected"<<endl;
+		logoff();
 		break;
 	case GG_EVENT_PONG:
 		emit pong();
@@ -635,7 +621,7 @@ GaduSession::checkDescriptor()
 	case GG_EVENT_USERLIST:
 		handleUserlist(e);
 		break;
-  default:
+	default:
 		kdDebug(14100)<<"Unprocessed GaduGadu Event = "<<e->type<<endl;
 		break;
 	}
