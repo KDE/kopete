@@ -9,6 +9,7 @@ Comment[ja]=Kopete メッセンジャー
 Comment[pt]=Mensageiro Kopete
 Comment[pt_BR]=Mensageiro Kopete
 Comment[sv]=Kopete Instant Messenger
+Comment[uk]=Програма обміну повідомленнями Kopete
 
 [kopete_event]
 Name=Event
@@ -25,6 +26,7 @@ Name[nl]=Gebeurtenis
 Name[pt]=Evento
 Name[pt_BR]=Evento
 Name[sv]=Händelse
+Name[uk]=Подія
 Comment=Sound Notification for Kopete Events
 Comment[bs]=Zvučna obavještenja za Kopete događaje
 Comment[da]=Lydbesked for Kopete-begivenheder
@@ -39,6 +41,7 @@ Comment[nl]=geluidsnotificatie voor Kopete-gebeurtenissen
 Comment[pt]=Notificação de Som para os Eventos do Kopete
 Comment[pt_BR]=Notificação de Som para eventos Kopete
 Comment[sv]=Ljudunderrättelse för händelser i Kopete
+Comment[uk]=Звукрве сповіщення про події у Kopete
 default_sound=kopete_event.wav
 default_presentation=1
 
@@ -55,6 +58,7 @@ Name[nl]=Inkomend
 Name[pt]=Recebido
 Name[pt_BR]=Entrada
 Name[sv]=Inkommande
+Name[uk]=Вхідна
 Comment=Incoming message arrives
 Comment[af]=inkomende boodskap arriveer
 Comment[bs]=Dolazi poruka
@@ -68,6 +72,7 @@ Comment[nl]=Inkomend bericht arriveert
 Comment[pt]=Mensagem recebida
 Comment[pt_BR]=Mensagem de entrada chega
 Comment[sv]=Inkommande meddelande anländer
+Comment[uk]=Прийнято повідомлення
 default_sound=kopete_incoming.wav
 default_presentation=0
 
@@ -84,6 +89,7 @@ Name[nl]=Uitgaand
 Name[pt]=Enviado
 Name[pt_BR]=Saída
 Name[sv]=Utgående
+Name[uk]=Вихідна
 Comment=Outgoing message is sent
 Comment[af]=uitgaande boodskap is gestuur
 Comment[bs]=Poslana je poruka
@@ -97,6 +103,7 @@ Comment[nl]=Uitgaand bericht is verzonden
 Comment[pt]=A mensagem foi enviada
 Comment[pt_BR]=mensagem de saída é enviada
 Comment[sv]=Utgående meddelande har skickats
+Comment[uk]=Повідомлення відіслано
 default_sound=kopete_outgoing.wav
 default_presentation=0
 
