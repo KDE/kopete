@@ -9,3 +9,11 @@ TODO for Jabber:
   + last time I checked, yes -DS
 - implement support for transports/agents
   + Psi has support for this, should be reasonably easy -DS
+- update to the new away system
+  [11:11:28] <Ph0nk> you can get a list of titles via: KopeteAway::getInstance()->getTitles();
+  [11:11:32] <Ph0nk> returns a QStringList
+  [11:11:40] <Ph0nk> can use it to populate a drop down list
+  [11:11:57] <Ph0nk> and then KopeteAway::getInstance()->getMessage(QString title)
+- make sure that messages sent via a gateway from a non-subscribed contact
+  are actually displayed
+- check if vCards are actually deleted after having retrieved them
