@@ -300,7 +300,7 @@ GaduContact::messageSend( const KopeteMessage& msg, KopeteMessageManager* mgr )
     if ( msg.body().isEmpty() )
         return;
     //FIXME: handle colors
-    GaduProtocol::protocol()->sendMessage( uin_, msg.body().latin1() );
+    GaduProtocol::protocol()->sendMessage( uin_, msg.plainBody().latin1() );
     mgr->appendMessage( msg );
 }
 

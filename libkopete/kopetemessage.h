@@ -40,7 +40,16 @@ public:
 		Direction of a message. Inbound is from the chat partner, Outbound is
 		from the user.
 	*/
-	enum MessageDirection { Inbound, Outbound };
+	enum MessageDirection { Inbound, Outbound, Internal};
+
+	/**
+		Format of the body
+		-PlainText: Just a simple text
+		-RichText: Text already HTML escaped and which can contains some tags
+		-ParsedHTML: only used by the chatwindow, this text is parsed and ready to
+			show into the chatwindow
+	*/
+	enum MessageFormat  { PlainText, RichText, ParsedHTML };
 
 	/*
 		Constructs a new message
@@ -48,11 +57,11 @@ public:
 		characters must be escaped.
 	*/
 	KopeteMessage();
-	KopeteMessage(const KopeteContact *, KopeteContactPtrList, QString, MessageDirection );
-	KopeteMessage(const KopeteContact*, KopeteContactPtrList, QString, QString, MessageDirection );
+	KopeteMessage(const KopeteContact *, KopeteContactPtrList, QString, MessageDirection, MessageFormat f=PlainText );
+	KopeteMessage(const KopeteContact*, KopeteContactPtrList, QString, QString, MessageDirection, MessageFormat f=PlainText );
 
-	KopeteMessage(QDateTime, const KopeteContact *, KopeteContactPtrList, QString, MessageDirection);
-	KopeteMessage(QDateTime, const KopeteContact *, KopeteContactPtrList, QString, QString, MessageDirection);
+	KopeteMessage(QDateTime, const KopeteContact *, KopeteContactPtrList, QString, MessageDirection, MessageFormat f=PlainText);
+	KopeteMessage(QDateTime, const KopeteContact *, KopeteContactPtrList, QString, QString, MessageDirection, MessageFormat f=PlainText);
 
 	// Accessors
 	QDateTime timestamp() const { return mTimestamp; }
@@ -64,6 +73,7 @@ public:
 	QFont font() const { return mFont; }
 	QString body() const { return mBody; }
 	QString subject() const { return mSubject; }
+	MessageFormat format() const { return mFormat; }
 
 	MessageDirection direction() const { return mDirection; }
 
@@ -71,12 +81,22 @@ public:
 	void setFg(QColor color);
 	void setBg(QColor color);
 	void setFont(QFont font);
-	void setBody( const QString& body );
+	void setBody( const QString& body , MessageFormat f=PlainText );
 
+	/*
+		Access to body whith specifiedFormat
+	*/
+	//plain text
+	QString plainBody() const ;
+	//HTML escaped
+	QString escapedBody() const ;
+	//Parsed (HTML and Emoticon, ready to use in the chatwindow)
+	QString parsedBody() const ;
+	
 protected:
 	// Helper for constructors
 	void init(QDateTime timeStamp, const KopeteContact * from, KopeteContactPtrList to,
-			  QString body, QString subject, MessageDirection direction);
+			  QString body, QString subject, MessageDirection direction, MessageFormat f);
 
 	QDateTime mTimestamp;
 	const KopeteContact *mFrom;
@@ -86,6 +106,17 @@ protected:
 	QColor mFg, mBg;
 
 	MessageDirection mDirection;
+	MessageFormat mFormat;
+
+public:
+	/**
+	 * Use it to parse HTML in text.
+	 * You dont need to use this for chat windows,
+	 * There is a special class that abstract a chat view
+	 * and uses HTML parser.
+	 **/
+	static QString parseHTML( QString message, bool parseURLs = true );
+
 
 };
 

@@ -582,7 +582,7 @@ void JabberContact::slotNewMessage(const Jabber::Message &message)
 
 	contactList.append(protocol->myself());
 
-	KopeteMessage newMessage(this, contactList, message.body(), message.subject(), KopeteMessage::Inbound);
+	KopeteMessage newMessage(this, contactList, message.body(), message.subject(), KopeteMessage::Inbound, KopeteMessage::PlainText);
 
 	// depending on the incoming message type,
 	// append it to the correct widget
@@ -637,7 +637,7 @@ void JabberContact::km2jm(const KopeteMessage &km, Jabber::Message &jm)
 		jabMessage.setTo(Jabber::Jid(to->userId()));
 
 	//jabMessage.setFrom(from->userId();
-	jabMessage.setBody(km.body());
+	jabMessage.setBody(km.plainBody());
 	jabMessage.setType("chat");
 	jabMessage.setSubject(km.subject());
 

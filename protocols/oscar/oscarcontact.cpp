@@ -337,7 +337,7 @@ void OscarContact::slotSendMsg(const KopeteMessage& message, KopeteMessageManage
 		KMessageBox::sorry(kopeteapp->mainWindow(), i18n("<qt>This user is not online at the moment for you to message him/her. AIM users must be online for you to be able to message them.</qt>"), i18n("User not Online"));
 		return;
 	}
-	QString msg = message.body();
+	QString msg = message.plainBody();
 
 	if ( message.fg().isValid() ) // we want a custom foreground-color
 		msg.prepend ( QString("<FONT COLOR=\"%1\">").arg(message.fg().name()) );
@@ -353,11 +353,7 @@ void OscarContact::slotSendMsg(const KopeteMessage& message, KopeteMessageManage
 
 	msg.append ( "</BODY></HTML>" );
 	mProtocol->engine->sendIM( msg, mName, false );
-	KopeteMessage kopetemsg ( mProtocol->myself(), theContacts , QStyleSheet::escape(message.body()), KopeteMessage::Outbound);
-	kopetemsg.setFg(message.fg());
-	kopetemsg.setBg(message.bg());
-	kopetemsg.setFont(message.font());
-	msgManager()->appendMessage(kopetemsg);
+	msgManager()->appendMessage(message);
 }
 
 /** Called when nickname needs to be updated */
@@ -509,7 +505,7 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 	}
 
 	kdDebug() << "AIM Plugin: Parsed message: " << result << endl;
-	msg.setBody(result);
+	msg.setBody(result , KopeteMessage::PlainText);
 	return msg;
 }
 

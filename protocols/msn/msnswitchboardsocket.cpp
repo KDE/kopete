@@ -334,11 +334,9 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		for ( it = m_chatMembers.begin(); it != m_chatMembers.end(); ++it )
 			if(*it != m_msgHandle) others.append( MSNProtocol::protocol()->contact(*it) );
 
-		//FIXME: we should add a flag to KopeteMessage to specified that it's a plein text message
-		//      QStyleSheet::escape is a temporary code
 		KopeteMessage kmsg( MSNProtocol::protocol()->contact(m_msgHandle) , others,
-			QStyleSheet::escape(msg.right( msg.length() - msg.find("\r\n\r\n") - 4 )),
-			KopeteMessage::Inbound );
+			msg.right( msg.length() - msg.find("\r\n\r\n") - 4 ),
+			KopeteMessage::Inbound , KopeteMessage::PlainText );
 
 		kmsg.setFg( fontColor );
 		kmsg.setFont( font );
@@ -395,17 +393,13 @@ void MSNSwitchBoardSocket::slotSendMsg( const KopeteMessage &msg )
 	head += "; CS=0; PF=0\r\n"
 		"\r\n";
 
-	head += msg.body().replace( QRegExp( "\n" ), "\r\n" );
+	head += msg.plainBody().replace( QRegExp( "\n" ), "\r\n" );
 	QString args = "A";
 	sendCommand( "MSG", args, true, head );
 
 	// TODO: send our fonts as well
-	//FIXME: we should add a flag to KopeteMessage to specified that it's a plein text message
-	// msg2 is used to send the own msg to chat window in a HTML format but it's a temporary code
-	// Just emit msgReceived( msg ) should be enough;
-	KopeteMessage msg2(  msg.timestamp() , msg.from() , msg.to() , QStyleSheet::escape(msg.body()), msg.direction());
-	msg2.setFg(msg.fg());
-	msg2.setFont(msg.font());
+	KopeteMessage msg2=msg;
+	msg2.setBg(QColor()); // BGColor is not send, don't show it on chatwindow
 	emit msgReceived( msg2);    
 	// send the own msg to chat window
 }

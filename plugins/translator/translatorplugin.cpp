@@ -471,16 +471,16 @@ void TranslatorPlugin::sendTranslation(KopeteMessage &msg, const QString &transl
 	switch (mode)
 	{
 		case JustTranslate:
-			msg.setBody(translated);
+			msg.setBody(translated, msg.format());
 			break;
 		case ShowOriginal:
-			msg.setBody(msg.body() + "\n" + i18n("Auto Translated: ") + translated);
+			msg.setBody(msg.body() + "\n" + i18n("Auto Translated: ") + translated, msg.format());
 			break;
 		case ShowDialog:
 		{
 			TranslatorDialog *d=new TranslatorDialog(translated);
 			d->exec();
-			msg.setBody(d->translatedText());
+			msg.setBody(d->translatedText(),msg.format());
 			delete d;
 			break;
 		}
@@ -519,7 +519,8 @@ void TranslatorPlugin::slotTranslateChat()
 	if(!m_currentMessageManager)
 		return;
 
-	QString body=m_currentMessageManager->currentText();
+	KopeteMessage msg=m_currentMessageManager->currentMessage();
+	QString body=msg.plainBody();
 	if(body.isEmpty())
 		return;
 
@@ -558,7 +559,8 @@ void TranslatorPlugin::slotTranslateChat()
 				kdDebug() << "TranslatorPlugin::slotTranslateChat : empty string returned"  << endl;
 				return;
 			}
-			m_currentMessageManager->setCurrentText(translated);
+			msg.setBody(translated);
+			m_currentMessageManager->setCurrentMessage(msg);
 			return;
 		}
 	}

@@ -108,7 +108,7 @@ public:
 	 */
 	int id() const;
   /** No descriptions */
-  QString currentText();
+  KopeteMessage currentMessage();
 
 signals:
 	/**
@@ -169,7 +169,7 @@ public slots:
 	 */
 	void setCanBeDeleted ( bool ) ;
 	
-	void setCurrentText(const QString&);
+	void setCurrentMessage(const KopeteMessage&);
 
 
 protected slots:

@@ -123,23 +123,6 @@ public:
 	KopeteSystemTray *systemTray() const;
 
 	/**
-	 * Use it to parse emoticons in a text.
-	 * You dont need to use this for chat windows,
-	 * There is a special class that abstract a chat view
-	 * and uses emoticons parser.
-	 * This function will use the selected emoticon theme.
-	 */
-	QString parseEmoticons ( QString );
-
-	/**
-	 * Use it to parse HTML in text.
-	 * You dont need to use this for chat windows,
-	 * There is a special class that abstract a chat view
-	 * and uses HTML parser.
-	 **/
-	QString parseHTML( QString message, bool parseURLs = true );
-
-	/**
 	 * Like slotSetAwayAll, but don't pops up the dialog
 	 * (for the autowayplugin)
 	 */

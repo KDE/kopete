@@ -131,7 +131,7 @@ email=kopete-devel@kde.org
 kdevprj_version=1.3
 lfv_open_groups=
 make_options=\s-j1
-makefiles=./Makefile.am,contrib/Makefile.am,doc-api/Makefile.am,doc-api/html/Makefile.am,sounds/Makefile.am,protocols/Makefile.am,protocols/gadu/Makefile.am,protocols/gadu/pixmaps/Makefile.am,protocols/gadu/ui/Makefile.am,protocols/gadu/lib/Makefile.am,protocols/winpopup/Makefile.am,protocols/winpopup/ui/Makefile.am,protocols/winpopup/pixmaps/Makefile.am,protocols/winpopup/libwinpopup/Makefile.am,protocols/icq_new/Makefile.am,protocols/icq_new/ui/Makefile.am,protocols/icq_new/pixmaps/Makefile.am,protocols/icq_new/libicq/Makefile.am,protocols/yahoo/Makefile.am,protocols/yahoo/ui/Makefile.am,protocols/yahoo/pixmaps/Makefile.am,protocols/msn/Makefile.am,protocols/msn/ui/Makefile.am,protocols/msn/pixmaps/Makefile.am,protocols/msn/libkmerlin/Makefile.am,protocols/jabber/Makefile.am,protocols/jabber/ui/Makefile.am,protocols/jabber/psi/Makefile.am,protocols/jabber/pixmaps/Makefile.am,protocols/irc/Makefile.am,protocols/irc/ui/Makefile.am,protocols/irc/pixmaps/Makefile.am,protocols/irc/libkirc/Makefile.am,protocols/icq/Makefile.am,protocols/icq/ui/Makefile.am,protocols/icq/pixmaps/Makefile.am,protocols/icq/kxengine/Makefile.am,protocols/aim/Makefile.am,protocols/aim/ui/Makefile.am,protocols/aim/pixmaps/Makefile.am,protocols/aim/taim/Makefile.am,protocols/aim/data/Makefile.am,plugins/Makefile.am,plugins/autoaway/Makefile.am,pics/Makefile.am,pics/emoticons/Makefile.am,pics/emoticons/set1/Makefile.am,pics/emoticons/phpBB/Makefile.am,pics/emoticons/Default/Makefile.am,libkopete/Makefile.am,libkopete/ui/Makefile.am,kopete/Makefile.am,debian/Makefile.am,Makefile.am,plugins/translator/Makefile.am,plugins/contactnotes/Makefile.am,protocols/oscar/oscarsocket/Makefile.am,protocols/oscar/Makefile.am,plugins/importer/Makefile.am
+makefiles=./Makefile.am,contrib/Makefile.am,doc-api/Makefile.am,doc-api/html/Makefile.am,sounds/Makefile.am,protocols/Makefile.am,protocols/gadu/Makefile.am,protocols/gadu/pixmaps/Makefile.am,protocols/gadu/ui/Makefile.am,protocols/gadu/lib/Makefile.am,protocols/winpopup/Makefile.am,protocols/winpopup/ui/Makefile.am,protocols/winpopup/pixmaps/Makefile.am,protocols/winpopup/libwinpopup/Makefile.am,protocols/icq_new/Makefile.am,protocols/icq_new/ui/Makefile.am,protocols/icq_new/pixmaps/Makefile.am,protocols/icq_new/libicq/Makefile.am,protocols/yahoo/Makefile.am,protocols/yahoo/ui/Makefile.am,protocols/yahoo/pixmaps/Makefile.am,protocols/msn/Makefile.am,protocols/msn/ui/Makefile.am,protocols/msn/pixmaps/Makefile.am,protocols/msn/libkmerlin/Makefile.am,protocols/jabber/Makefile.am,protocols/jabber/ui/Makefile.am,protocols/jabber/psi/Makefile.am,protocols/jabber/pixmaps/Makefile.am,protocols/irc/Makefile.am,protocols/irc/ui/Makefile.am,protocols/irc/pixmaps/Makefile.am,protocols/irc/libkirc/Makefile.am,protocols/icq/Makefile.am,protocols/icq/ui/Makefile.am,protocols/icq/pixmaps/Makefile.am,protocols/icq/kxengine/Makefile.am,protocols/aim/Makefile.am,protocols/aim/ui/Makefile.am,protocols/aim/pixmaps/Makefile.am,protocols/aim/taim/Makefile.am,protocols/aim/data/Makefile.am,plugins/Makefile.am,plugins/autoaway/Makefile.am,pics/Makefile.am,pics/emoticons/Makefile.am,pics/emoticons/set1/Makefile.am,pics/emoticons/phpBB/Makefile.am,pics/emoticons/Default/Makefile.am,libkopete/Makefile.am,libkopete/ui/Makefile.am,kopete/Makefile.am,debian/Makefile.am,Makefile.am,plugins/translator/Makefile.am,plugins/contactnotes/Makefile.am,protocols/oscar/oscarsocket/Makefile.am,protocols/oscar/Makefile.am,plugins/importer/Makefile.am,plugins/connectionstatus/Makefile.am
 modifyMakefiles=false
 project_name=kopete
 project_type=normal_empty
@@ -1070,9 +1070,9 @@ install_location=
 type=HEADER
 
 [libkopete/ui/Makefile.am]
-files=libkopete/ui/addcontactpage.cpp,libkopete/ui/addcontactpage.h,libkopete/ui/addwizardimpl.cpp,libkopete/ui/addwizardimpl.h,libkopete/ui/kopeteballoonbase.h,libkopete/ui/appearanceconfig.h,libkopete/ui/addwizardui.ui~,libkopete/ui/chatview.cpp,libkopete/ui/chatview.h,libkopete/ui/configmodule.cpp,libkopete/ui/configmodule.h,libkopete/ui/kopeteballoonbase.cpp,libkopete/ui/kopetefiletransferui.ui,libkopete/ui/addwizardui.ui,libkopete/ui/kopeteballoon.cpp,libkopete/ui/kopeteballoon.h,libkopete/ui/kopetechatwindow.cpp,libkopete/ui/kopetechatwindow.h,libkopete/ui/kopetecontactviewitem.cpp,libkopete/ui/kopetecontactviewitem.h,libkopete/ui/kopetehistorydialog.cpp,libkopete/ui/kopetehistorydialog.h,libkopete/ui/kopetehistorywidget.cpp,libkopete/ui/kopetehistorywidget.h,libkopete/ui/kopetelistview.h,libkopete/ui/kopetestdaction.cpp,libkopete/ui/kopetestdaction.h,libkopete/ui/kopetewindow.cpp,libkopete/ui/kopetewindow.h,libkopete/ui/pluginmodule.cpp,libkopete/ui/pluginmodule.h,libkopete/ui/preferencesdialog.cpp,libkopete/ui/preferencesdialog.h,libkopete/ui/protocolboxitem.cpp,libkopete/ui/protocolboxitem.h,libkopete/ui/statusbaricon.cpp,libkopete/ui/statusbaricon.h,libkopete/ui/systemtray.cpp,libkopete/ui/systemtray.h,libkopete/ui/emoticonbutton.cpp,libkopete/ui/emoticonbutton.h,libkopete/ui/kopetecontactlistview.h,libkopete/ui/kopetecontactlistview.cpp,libkopete/ui/kopetestdaction.cpp.rej,libkopete/ui/kopeteawayconfigbase.ui,libkopete/ui/kopeteawayconfigui.cpp,libkopete/ui/kopeteawayconfigui.h,libkopete/ui/kopeteawaydialogbase.ui,libkopete/ui/appearanceconfig.cpp,libkopete/ui/emailwindow.ui,libkopete/ui/kopeteemailwindow.h,libkopete/ui/kopeteemailwindow.cpp,libkopete/ui/kopetemetacontactlvi.cpp,libkopete/ui/kopetemetacontactlvi.h,
+files=libkopete/ui/addcontactpage.cpp,libkopete/ui/addcontactpage.h,libkopete/ui/addwizardimpl.cpp,libkopete/ui/addwizardimpl.h,libkopete/ui/kopeteballoonbase.h,libkopete/ui/appearanceconfig.h,libkopete/ui/addwizardui.ui~,libkopete/ui/chatview.cpp,libkopete/ui/chatview.h,libkopete/ui/configmodule.cpp,libkopete/ui/configmodule.h,libkopete/ui/kopeteballoonbase.cpp,libkopete/ui/kopetefiletransferui.ui,libkopete/ui/addwizardui.ui,libkopete/ui/kopeteballoon.cpp,libkopete/ui/kopeteballoon.h,libkopete/ui/kopetechatwindow.cpp,libkopete/ui/kopetechatwindow.h,libkopete/ui/kopetecontactviewitem.cpp,libkopete/ui/kopetecontactviewitem.h,libkopete/ui/kopetehistorydialog.cpp,libkopete/ui/kopetehistorydialog.h,libkopete/ui/kopetehistorywidget.cpp,libkopete/ui/kopetehistorywidget.h,libkopete/ui/kopetelistview.h,libkopete/ui/kopetestdaction.cpp,libkopete/ui/kopetestdaction.h,libkopete/ui/kopetewindow.cpp,libkopete/ui/kopetewindow.h,libkopete/ui/pluginmodule.cpp,libkopete/ui/pluginmodule.h,libkopete/ui/preferencesdialog.cpp,libkopete/ui/preferencesdialog.h,libkopete/ui/protocolboxitem.cpp,libkopete/ui/protocolboxitem.h,libkopete/ui/statusbaricon.cpp,libkopete/ui/statusbaricon.h,libkopete/ui/systemtray.cpp,libkopete/ui/systemtray.h,libkopete/ui/emoticonbutton.cpp,libkopete/ui/emoticonbutton.h,libkopete/ui/kopetecontactlistview.h,libkopete/ui/kopetecontactlistview.cpp,libkopete/ui/kopetestdaction.cpp.rej,libkopete/ui/kopeteawayconfigbase.ui,libkopete/ui/kopeteawayconfigui.cpp,libkopete/ui/kopeteawayconfigui.h,libkopete/ui/kopeteawaydialogbase.ui,libkopete/ui/appearanceconfig.cpp,libkopete/ui/emailwindow.ui,libkopete/ui/kopeteemailwindow.h,libkopete/ui/kopeteemailwindow.cpp,libkopete/ui/kopetemetacontactlvi.cpp,libkopete/ui/kopetemetacontactlvi.h,libkopete/ui/kopetegroupviewitem.cpp,libkopete/ui/kopetegroupviewitem.h,libkopete/ui/kopeteuserlabel.cpp,libkopete/ui/kopeteuserlabel.h
 sub_dirs=
-type=normal
+type=static_library
 
 [libkopete/ui/addcontactpage.cpp]
 dist=true
@@ -1266,6 +1266,18 @@ install=false
 install_location=
 type=SOURCE
 
+[libkopete/ui/kopetegroupviewitem.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[libkopete/ui/kopetegroupviewitem.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
 [libkopete/ui/kopetehistorydialog.cpp]
 dist=true
 install=false
@@ -1321,6 +1333,18 @@ install_location=
 type=DATA
 
 [libkopete/ui/kopetestdaction.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[libkopete/ui/kopeteuserlabel.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[libkopete/ui/kopeteuserlabel.h]
 dist=true
 install=false
 install_location=
@@ -1621,7 +1645,7 @@ install_location=
 type=DATA
 
 [plugins/Makefile.am]
-sub_dirs=autoaway,translator,contactnotes,importer
+sub_dirs=autoaway,translator,contactnotes,importer,connectionstatus
 type=normal
 
 [plugins/autoaway/Makefile.am]
@@ -1672,6 +1696,25 @@ install_location=
 type=SOURCE
 
 [plugins/autoaway/xautolock.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[plugins/connectionstatus/Makefile.am]
+files=plugins/connectionstatus/connectionstatusplugin.cpp,plugins/connectionstatus/connectionstatusplugin.h
+sharedlib_LDFLAGS=-version-info 0:0:0
+sharedlib_rootname=connectionstatus
+sub_dirs=
+type=static_library
+
+[plugins/connectionstatus/connectionstatusplugin.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[plugins/connectionstatus/connectionstatusplugin.h]
 dist=true
 install=false
 install_location=
