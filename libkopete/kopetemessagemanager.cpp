@@ -158,6 +158,11 @@ void KopeteMessageManager::slotUpdateDisplayName()
 	QString nextDisplayName;
 
 	KopeteContact *c = d->mContactList.first();
+
+	//If there is no member yet, don't try to update the display name
+	if ( !c )
+		return;
+
 	if ( c->metaContact() )
 		d->displayName = c->metaContact()->displayName();
 	else
