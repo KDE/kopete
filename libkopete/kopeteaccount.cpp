@@ -28,6 +28,7 @@
 #include <kiconeffect.h>
 #include <kaction.h>
 #include <kpopupmenu.h>
+#include <kmessagebox.h>
 
 #include "kopetecontactlist.h"
 #include "kopeteaccount.h"
@@ -38,11 +39,12 @@
 #include "kopetepluginmanager.h"
 #include "kopetegroup.h"
 #include "kopeteprefs.h"
+#include "kopeteuiglobal.h"
 #include "kopeteblacklister.h"
 #include "kopeteonlinestatusmanager.h"
 #include "editaccountwidget.h"
 
-namespace Kopete 
+namespace Kopete
 {
 
 
@@ -55,8 +57,8 @@ public:
 	 , suppressStatusTimer( 0 ), suppressStatusNotification( false )
 	 , blackList( new Kopete::BlackLister( protocol->pluginId(), accountId ) )
 	{ }
-	
-	
+
+
 	~Private() { delete blackList; }
 
 	Protocol *protocol;
@@ -80,7 +82,7 @@ Account::Account( Protocol *parent, const QString &accountId, const char *name )
 	d->excludeconnect = d->configGroup->readBoolEntry( "ExcludeConnect", false );
 	d->color = d->configGroup->readColorEntry( "Color", &d->color );
 	d->priority = d->configGroup->readNumEntry( "Priority", 0 );
-	
+
 	QObject::connect( &d->suppressStatusTimer, SIGNAL( timeout() ),
 		this, SLOT( slotStopSuppression() ) );
 }
@@ -92,7 +94,7 @@ Account::~Account()
 		delete *QDictIterator<Contact>( d->contacts );
 
 	emit accountDestroyed(this);
-	
+
 	delete d->configGroup;
 	delete d;
 }
@@ -201,16 +203,17 @@ const QDict<Contact>& Account::contacts()
 }
 
 
-bool Account::addContact( const QString &contactId, const QString &displayName , Group *group, AddMode mode  ) 
+bool Account::addContact( const QString &contactId, const QString &displayName , Group *group, AddMode mode  )
 {
 	if ( contactId == d->myself->contactId() )
 	{
-		kdDebug( 14010 ) << k_funcinfo <<
-			"WARNING: the user try to add myself to his contactlist - abort" << endl;
+		KMessageBox::error( Kopete::UI::Global::mainWidget(),
+			i18n("You are not allowed to add yourself to the contact list. The addition of \"%1\" to account \"%2\" will not take place.").arg(contactId,accountId()), i18n("Error Creating Contact")
+		);
 		return false;
 	}
 	bool isTemporary = mode == Temporary;
-	
+
 	Contact *c = d->contacts[ contactId ];
 
 	if(!group)
@@ -221,7 +224,7 @@ bool Account::addContact( const QString &contactId, const QString &displayName ,
 		if ( c->metaContact()->isTemporary() && !isTemporary )
 		{
 			kdDebug( 14010 ) << k_funcinfo <<  " You are trying to add an existing temporary contact. Just add it on the list" << endl;
-			
+
 			c->metaContact()->setTemporary(false, group );
 			ContactList::self()->addMetaContact(c->metaContact());
 		}
@@ -259,7 +262,7 @@ bool Account::addContact( const QString &contactId, const QString &displayName ,
 			return false;
 		}
 	}
-		
+
 	ContactList::self()->addMetaContact( parentContact );
 	return true;
 }
@@ -268,8 +271,9 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 {
 	if ( contactId == myself()->contactId() )
 	{
-		kdDebug( 14010 ) << k_funcinfo <<
-			"WARNING: the user try to add myself to his contactlist - abort" << endl;
+	    	KMessageBox::error( Kopete::UI::Global::mainWidget(),
+			i18n("You are not allowed to add yourself to the contact list. The addition of \"%1\" to account \"%2\" will not take place.").arg(contactId,accountId()), i18n("Error Creating Contact")
+		);
 		return 0L;
 	}
 
@@ -301,7 +305,7 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 		kdDebug( 14010 ) << k_funcinfo << " changing KABC" << endl;
 		parent->updateKABC();
 	}
-	
+
 	return success;
 }
 
@@ -344,12 +348,12 @@ void Account::setMyself( Contact *myself )
 		QObject::disconnect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 			this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 	}
-	
+
 	d->myself = myself;
 
 	QObject::connect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 		this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
-	
+
 	if ( isConnected() != wasConnected )
 		emit isConnectedChanged();
 }
@@ -359,7 +363,7 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 {
 	bool wasOffline = !oldStatus.isDefinitelyOnline();
 	bool isOffline  = !newStatus.isDefinitelyOnline();
-	
+
 	if ( wasOffline || newStatus.status() == OnlineStatus::Offline )
 	{
 		// Wait for five seconds until we treat status notifications for contacts
@@ -371,7 +375,7 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 		d->suppressStatusNotification = true;
 		d->suppressStatusTimer.start( 5000, true );
 	}
-	
+
 	kdDebug(14010) << k_funcinfo << "account " << d->id << " changed status. was "
 	               << Kopete::OnlineStatus::statusTypeToString(oldStatus.status()) << ", is "
 	               << Kopete::OnlineStatus::statusTypeToString(newStatus.status()) << endl;
@@ -449,7 +453,7 @@ void Account::editAccount(QWidget *parent)
 		if( m_accountWidget->validateData() )
 			m_accountWidget->apply();
 	}
-	
+
 	editDialog->deleteLater();
 }
 
