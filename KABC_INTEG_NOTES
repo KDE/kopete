@@ -98,6 +98,7 @@ Bug 53062: Adding contacts more quickly
    (Check that the addressee is not already associated with an MC)
    (Mark the contact as 'In KABC' or can we just use valid vs invalid KABC UIDs to show relation?
    (Chances are next time the user adds a KABC addressee it will coincide with an existing Kopete UID).
+3.5) Select groups and ask for a displayname
 4) (Check to see if IM fields are already present in KABC)
 5a)"The addressbook already contained the following IM information..
 (goto C)
@@ -109,7 +110,7 @@ C) Use another protocol?
 
 D) Finish screen
 
-NB) Better to move to a serial selection of protocols (Select protocol -> fill in details -> Select protocol or done ...).
+NB) Better to move to a iterative selection of protocols (Select protocol -> fill in details -> Select protocol or done ...).
 This way power users can add +1 contact per protocol without complicating the ACW for simple users.
 
 
@@ -120,19 +121,27 @@ This way power users can add +1 contact per protocol without complicating the AC
 	(.) Add this contact to a new KAB entry 	 => goto A
 	(.) Use an existing KAb Entry           	 => goto B
 	(.) Do not add this contact to KAB      	 => goto 3
-
+( This would require the user to remember if an appropriate KAB entry exists.
+  It would be better to allow the user to select/search KAB entries OR create a new one 
+  from the same screen, if they can't find an entry - Will)
 A) use a KPart from KAB to show the widget showed when adding new KAB entried => goto 3
 B) use a KPart from KAB to search an user an select one
 
 3) select groups, and ask the displayName (let empty to use the serverside one)  (show the KAB displayname by default)
 4) select account to use  (select by default account where a KAB entry exist)
 5) fill the account data (if a KAB entry exist, show as default)
-6) (.) another account    => goto 5
+( What if, horrible case, you want to have 2 contacts for this guy on the same account, 
+  is that allowed? - Will)
+6) (.) another account    => goto 5 (or 4? - Will)
    (.) finish
 7) Finish screen  (is that possible to merge this screen with the previous one?
 
 This try to do all in as few step as possible.
+I can't count very well, but AFAICS your suggestion is equal or greater:
 
+Step Count		No IM in kabc	1 IM in kabc + n new
+Will			8		7 + 3 * n = 10
+Gof			8		8 + 3 * n = 11
 
 
  KAB Widget in Kopete
