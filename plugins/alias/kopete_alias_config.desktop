@@ -36,7 +36,6 @@ Name[ta]=மாற்றுப்பெயர்
 Name[tg]=Тахаллус
 Name[tr]=Takma İsim
 Name[uk]=Псевдонім
-Name[xx]=xxAliasxx
 Name[zh_CN]=别名
 Comment=Adds custom aliases for commands
 Comment[ar]=يضيف أسماء مستعارة للأوامر
@@ -79,6 +78,5 @@ Comment[ta]=கட்டளைகள் தன் விருப்பப் �
 Comment[tg]=Барои фармонҳо тахаллусҳои дигарро илова мекунад
 Comment[tr]=Komutlar için özel takma isimler ekler
 Comment[uk]=Додає псевдоніми для команд
-Comment[xx]=xxAdds custom aliases for commandsxx
 Comment[zh_CN]=添加命令的自定义别名
 

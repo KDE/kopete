@@ -41,7 +41,7 @@ Comment[se]=Kopete lassemoduvla
 Comment[sk]=Modul Kopete
 Comment[sl]=Vstavek za Kopete
 Comment[sr]=Прикључак за Kopete
-Comment[sr@Latn]=Dodatak za Kopete
+Comment[sr@Latn]=Priključak za Kopete
 Comment[sv]=Insticksprogram för Kopete
 Comment[ta]=Kopete செருகல்
 Comment[tg]=Модули Kopete 
@@ -49,7 +49,6 @@ Comment[tr]=Kopete Eklentisi
 Comment[uk]=Втулок Kopete
 Comment[uz]=Kopete плагини
 Comment[wa]=Tchôke-divins po Kopete
-Comment[xx]=xxKopete Pluginxx
 Comment[zh_CN]=Kopete 插件
 
 # The Kopete version for which the plugin is written

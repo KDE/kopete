@@ -41,14 +41,13 @@ Comment[se]=Kopete protokollalassemoduvla
 Comment[sk]=Modul protokolu Kopete
 Comment[sl]=Vstavek za protokol za Kopete
 Comment[sr]=Kopete-ов прикључак за протокол
-Comment[sr@Latn]=Kopete-ov dodatak za protokol
+Comment[sr@Latn]=Kopete-ov priključak za protokol
 Comment[sv]=Protokollinsticksprogram för Kopete
 Comment[ta]=Kopete விதிமுறை செருகல்
 Comment[tg]=Модули Қарордоди Kopete 
 Comment[tr]=Kopete İletişim Kuralı Eklentisi
 Comment[uk]=Втулок протоколу для Kopete
 Comment[wa]=Tchôke-divins di protocole po Kopete
-Comment[xx]=xxKopete Protocol Pluginxx
 Comment[zh_CN]=Kopete 协议插件
 
 [PropertyDef::X-Kopete-Messaging-Protocol]

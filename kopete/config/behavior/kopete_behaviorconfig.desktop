@@ -57,7 +57,6 @@ Name[tr]=Davranış
 Name[uk]=Поведінка
 Name[uz]=Хусусиятлар
 Name[wa]=Dujhance
-Name[xx]=xxBehaviorxx
 Name[zh_CN]=行为
 Comment=Here You Can Personalize Kopete
 Comment[ar]=هنا يمكنك تخصيص Kopete
@@ -101,7 +100,6 @@ Comment[tg]=Дар Ин Ҷо Шумо Kopete-и Худро Шахсӣ Карда
 Comment[tr]=Burada Kopete'yi Kişiselleştirebilirsiniz
 Comment[uk]=Тут можна наладнати Kopete під себе
 Comment[wa]=Chal vos ploz apontyî Kopete a vosse mode
-Comment[xx]=xxHere You Can Personalize Kopetexx
 Comment[zh_CN]=您可在此个性化 Kopete
 DocPath=kopete/configure-dialog.html#configuring-behavior
 
