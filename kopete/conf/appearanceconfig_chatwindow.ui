@@ -203,10 +203,10 @@
                         </property>
                         <widget class="QLabel">
                             <property name="name">
-                                <cstring>txt100percent</cstring>
+                                <cstring>txt0percent</cstring>
                             </property>
                             <property name="text">
-                                <string>100%</string>
+                                <string>0%</string>
                             </property>
                             <property name="alignment">
                                 <set>AlignVCenter|AlignLeft</set>
@@ -225,10 +225,10 @@
                         </widget>
                         <widget class="QLabel">
                             <property name="name">
-                                <cstring>txt0percent</cstring>
+                                <cstring>txt100percent</cstring>
                             </property>
                             <property name="text">
-                                <string>0%</string>
+                                <string>100%</string>
                             </property>
                             <property name="alignment">
                                 <set>AlignVCenter|AlignRight</set>
@@ -241,7 +241,7 @@
                         <cstring>textLabel2</cstring>
                     </property>
                     <property name="text">
-                        <string>Translucency:</string>
+                        <string>Opacity:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>mTransparencyValue</cstring>
