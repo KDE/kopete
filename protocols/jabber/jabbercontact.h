@@ -44,9 +44,11 @@ class Jabber::Message;
 
 class JabberContact:public KopeteContact
 {
-	Q_OBJECT friend class JabberAccount;	/* Friends can touch each other's private parts. */
+	Q_OBJECT
 
-  public:
+	 friend class JabberAccount;	/* Friends can touch each other's private parts. */
+
+public:
 	JabberContact (QString userid, QString name, QStringList groups,
 				   JabberAccount * protocol, KopeteMetaContact * mc, QString identity, const QString & icon = QString::null);
 
@@ -94,7 +96,7 @@ class JabberContact:public KopeteContact
 
 	virtual KopeteMessageManager *manager (bool canCreate = false);
 
-	public slots:
+public slots:
 
 	/**
 	 * Remove this contact from the roster
@@ -147,24 +149,19 @@ class JabberContact:public KopeteContact
 	 */
 	virtual void syncGroups ();
 
-	protected slots:
+protected slots:
 
 	/**
 	 * Catch a dying message manager
 	 */
 	virtual void slotMessageManagerDeleted ();
 
-	private slots:
-
-	/**
-	 * Display a rename dialog
-	 */
-	void slotRenameContact ();
+private slots:
 
 	/**
 	 * Catch the rename dialog's results
 	 */
-	void slotDoRenameContact (const QString &);
+	void slotRenameContact (const QString &oldName, const QString &newName);
 
 	/**
 	 * Edit a vCard for the contact.
@@ -201,7 +198,7 @@ class JabberContact:public KopeteContact
 	 */
 	void slotSendMessage (KopeteMessage & message);
 
-  private:
+private:
 
 	/**
 	 * Convert KopeteMessage to Jabber::Message

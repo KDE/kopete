@@ -79,6 +79,8 @@ JabberContact::JabberContact (QString userId, QString nickname, QStringList grou
 	// specifically cause this instance to update this contact as offline
 	slotUpdatePresence (static_cast<JabberProtocol *>(protocol())->JabberOffline, QString::null);
 
+	connect(this, SIGNAL(displayNameChanged(const QString &, const QString &)), this, SLOT(slotRenameContact(const QString &, const QString &)));
+
 }
 
 /* Return the user ID */
@@ -142,11 +144,10 @@ KActionCollection *JabberContact::customContextMenuActions ()
 {
 	KActionCollection *actionCollection = new KActionCollection (this);
 
-	new KAction (i18n ("Rename Contact"), "editrename", 0, this, SLOT (slotRenameContact ()), actionCollection, "actionRename");
-	new KAction (i18n ("(Re)send Authorization To"), "", 0, this, SLOT (slotSendAuth ()), actionCollection, "actionSendAuth");
-	new KAction (i18n ("(Re)request Authorization From"), "", 0, this, SLOT (slotRequestAuth ()), actionCollection, "actionRequestAuth");
+	new KAction (i18n ("(Re)send Authorization To"), "forward", 0, this, SLOT (slotSendAuth ()), actionCollection, "actionSendAuth");
+	new KAction (i18n ("(Re)request Authorization From"), "back", 0, this, SLOT (slotRequestAuth ()), actionCollection, "actionRequestAuth");
 
-	KActionMenu *actionSetAvailability = new KActionMenu (i18n ("Set Availability"), 0, actionCollection, "jabber_online");
+	KActionMenu *actionSetAvailability = new KActionMenu (i18n ("Set Availability"), "kopeteavailable", actionCollection, "jabber_online");
 
 	actionSetAvailability->insert(new KAction (i18n ("Online"),         static_cast<JabberProtocol *>(protocol())->JabberOnline.iconFor(this), 0, this, SLOT (slotStatusOnline ()), actionSetAvailability, "actionOnline"));
 	actionSetAvailability->insert(new KAction (i18n ("Free to Chat"),   static_cast<JabberProtocol *>(protocol())->JabberChatty.iconFor(this), 0, this, SLOT (slotStatusChatty ()), actionSetAvailability, "actionChatty"));
@@ -228,28 +229,15 @@ void JabberContact::slotUpdateContact (const Jabber::RosterItem & item)
 
 }
 
-void JabberContact::slotRenameContact ()
+void JabberContact::slotRenameContact (const QString &oldName, const QString &newName)
 {
-	dlgJabberRename *renameDialog = new dlgJabberRename;
+	QString name = newName;
 
-	renameDialog->setUserId (userId ());
-	renameDialog->setNickname (displayName ());
-
-	connect (renameDialog, SIGNAL (rename (const QString &)), this, SLOT (slotDoRenameContact (const QString &)));
-
-	renameDialog->show ();
-
-}
-
-void JabberContact::slotDoRenameContact (const QString & nickname)
-{
-	QString name = nickname;
-
-	kdDebug (14130) << k_funcinfo << "Renaming contact." << endl;
+	kdDebug (14130) << k_funcinfo << "Renaming contact " << oldName << " to " << newName << endl;
 
 	// if the name has been deleted, revert
 	// to using the user ID instead
-	if (name == QString (""))
+	if (name.isEmpty())
 		name = userId ();
 
 	rosterItem.setName (name);
@@ -265,12 +253,6 @@ void JabberContact::slotDoRenameContact (const QString & nickname)
 
 	rosterTask->set (rosterItem.jid (), rosterItem.name (), rosterItem.groups ());
 	rosterTask->go (true);
-
-	// update display (we cannot use setDisplayName()
-	// as parameter here as the above call is asynch
-	// and thus our changes did not make it to the server
-	// yet)
-	setDisplayName (name);
 
 }
 
@@ -635,8 +617,8 @@ void JabberContact::slotGotVCard ()
 		dlgVCard->setReadOnly (false);
 		mEditingVCard = false;
 	}
-	else
-		connect (dlgVCard, SIGNAL (updateNickname (const QString &)), this, SLOT (slotDoRenameContact (const QString &)));
+//	else
+//		connect (dlgVCard, SIGNAL (updateNickname (const QString &)), this, SLOT (slotDoRenameContact (const QString &)));
 
 	dlgVCard->show ();
 	dlgVCard->raise ();
