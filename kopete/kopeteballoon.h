@@ -3,9 +3,9 @@
 
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
 
-    Kopete    (c) 2002      by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
 
-    Portions of this code based on KSim Applet code
+    Portions of this code based on Kim Applet code
     Copyright (c) 2000-2002 by Malte Starostik        <malte@kde.org>
 
     *************************************************************************

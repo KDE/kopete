@@ -3,7 +3,7 @@
 
   Copyright (c) 2002 by Christopher TenHarmsel <tenharmsel@users.sourceforge.net>
 
-  Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+  Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -27,7 +27,8 @@
  * class.
  * @author Christopher TenHarmsel <tenharmsel@users.sourceforge.net>
  */
-class KopeteGlobalAwayDialog : public KopeteAwayDialog {
+class KopeteGlobalAwayDialog : public KopeteAwayDialog
+{
 	Q_OBJECT
 
 	public:
@@ -42,14 +43,4 @@ class KopeteGlobalAwayDialog : public KopeteAwayDialog {
 		virtual void setAway( int /*awayType*/ );
 };
 #endif
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 4
- * indent-tabs-mode: t
- * End:
- */
-
 // vim: set noet ts=4 sts=4 sw=4:
-

@@ -3,7 +3,7 @@
 
     Copyright (c) 2002 by Hendrik vom Lehn       <hennevl@hennevl.de>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
