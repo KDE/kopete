@@ -777,20 +777,10 @@ void KopeteContactListView::slotCollapsed( QListViewItem *item )
 
 void KopeteContactListView::slotDoubleClicked( QListViewItem *item )
 {
-	if ( !item )
-		return;
-
 	kdDebug( 14000 ) << k_funcinfo << endl;
 
-	// FIXME: what exactly is the intent of this code?
-	// should the || be an && here, or is the !mShowAsTree just redundant?
-	KopeteMetaContactLVI *metaItem = dynamic_cast<KopeteMetaContactLVI *>( item );
-	if ( !metaItem || !mShowAsTree )
-	{
-		/*kdDebug( 14000 ) << k_funcinfo << "setOpen( item, " <<
-			!isOpen( item ) << " )" << endl;*/
+	if ( item )
 		setOpen( item, !isOpen( item ) );
-	}
 }
 
 void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
