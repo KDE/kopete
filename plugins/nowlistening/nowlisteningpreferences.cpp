@@ -19,66 +19,46 @@
 #include <qspinbox.h>
 #include <qlineedit.h>
 #include <qlayout.h>
-#include <kglobal.h>
-#include <kconfig.h>
+
 #include <klocale.h>
+#include <kgenericfactory.h>
 
 #include "nowlisteningprefs.h"
+#include "nowlisteningconfig.h"
 #include "nowlisteningpreferences.h"
 #include "nowlisteningpreferences.moc"
 
-NowListeningPreferences::NowListeningPreferences( const QString &pixmap, QObject *parent )
-	: ConfigModule( i18n( "Now Listening" ), i18n( "Now Listening Plugin" ), pixmap, parent )
+typedef KGenericFactory<NowListeningPreferences> NowListeningPreferencesFactory;
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_nowlistening, NowListeningPreferencesFactory( "kcm_kopete_nowlistening" )  );
+
+
+NowListeningPreferences::NowListeningPreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
+	: KCModule( NowListeningPreferencesFactory::instance(), parent, args )
 {
 	(  new QVBoxLayout(  this ) )->setAutoAdd(  true );
 	preferencesDialog = new NowListeningPrefsUI( this );
+	config = new NowListeningConfig;
 
-	KGlobal::config()->setGroup( "Now Listening Plugin" );
-	preferencesDialog->m_header->setText(
-			KGlobal::config()->readEntry( "Header",
-				i18n( "Now Listening To: " ) )
-			 );
-	preferencesDialog->m_perTrack->setText(
-			KGlobal::config()->readEntry( "PerTrack",
-				i18n( "%track( by %artist)( on %album)" ) )
-			 );
-	preferencesDialog->m_conjunction->setText( 
-			KGlobal::config()->readEntry( "Conjunction", 
-				i18n( ", and " ) )
-			 );
+
 }
 
 NowListeningPreferences::~NowListeningPreferences( )
 {
-}
-
-QString NowListeningPreferences::header() const
-{
-	return preferencesDialog->m_header->text();
-}
-
-QString NowListeningPreferences::perTrack() const
-{
-	return preferencesDialog->m_perTrack->text();
-}
-
-QString NowListeningPreferences::conjunction() const
-{
-	return preferencesDialog->m_conjunction->text();
+	delete preferencesDialog;
+	delete config;
 }
 
 void NowListeningPreferences::save()
 {
-		KConfig *config=KGlobal::config();
-		config->setGroup( "Now Listening Plugin" );
-		config->writeEntry( "Header", 
-				preferencesDialog->m_header->text() );
-		config->writeEntry( "PerTrack",
-				preferencesDialog->m_perTrack->text() );
-		config->writeEntry( "Conjunction", 
-				preferencesDialog->m_conjunction->text() );
-		config->sync();
-		emit saved();
+	config->save();
+}
+
+void NowListeningPreferences::load()
+{
+	config->load();
+	preferencesDialog->m_header->setText(config->header());
+	preferencesDialog->m_perTrack->setText(config->perTrack());
+	preferencesDialog->m_conjunction->setText(config->conjunction());
 }
 
 /*

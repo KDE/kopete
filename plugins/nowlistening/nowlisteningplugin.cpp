@@ -28,7 +28,7 @@
 #include "config.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
-#include "nowlisteningpreferences.h"
+#include "nowlisteningconfig.h"
 #include "nowlisteningplugin.h"
 #include "nlmediaplayer.h"
 #include "nlkscd.h"
@@ -59,7 +59,7 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 	m_currentMessageManager = 0L;
 
 	// initialise preferences
-	m_prefs = new NowListeningPreferences( "kaboodle", this );
+	m_config = new NowListeningConfig;
 
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL(
 			messageManagerCreated( KopeteMessageManager * )) , SLOT( slotNewKMM(
@@ -96,6 +96,7 @@ NowListeningPlugin::~NowListeningPlugin()
 	kdDebug(14307) << k_funcinfo << endl;
 
 	delete m_mediaPlayer;
+	delete m_config;
 
 	pluginStatic_ = 0L;
 }
@@ -114,7 +115,7 @@ void NowListeningPlugin::slotOutgoingMessage( KopeteMessage& msg )
 {
 	QString originalBody = msg.plainBody();
 	// look for messages that we've generated and ignore them
-	if ( !originalBody.startsWith( m_prefs->header() ) )
+	if ( !originalBody.startsWith( m_config->header() ) )
 	{
 		// look for the string '/media'
 		if ( originalBody.startsWith( "/media" ) )
@@ -132,7 +133,7 @@ QString NowListeningPlugin::allPlayerAdvert() const
 {
 	// generate message for all players
 	QString message = "";
-	QString perTrack = m_prefs->perTrack();
+	QString perTrack = m_config->perTrack();
 
 	for ( NLMediaPlayer* i = m_mediaPlayer->first(); i; i = m_mediaPlayer->next() )
 	{
@@ -141,10 +142,10 @@ QString NowListeningPlugin::allPlayerAdvert() const
 		{
 			kdDebug(14307) << k_funcinfo << i->name() << " is playing" << endl;
 			if ( message.isEmpty() )
-				message = m_prefs->header();
+				message = m_config->header();
 
-			if (  message != m_prefs->header() ) // > 1 track playing!
-				message = message + m_prefs->conjunction();
+			if (  message != m_config->header() ) // > 1 track playing!
+				message = message + m_config->conjunction();
 			message = message + substDepthFirst( i, perTrack, false );
 		}
 	}

@@ -1,0 +1,15 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=kaboodle
+Type=Service
+ServiceTypes=KCModule
+
+X-KDE-ModuleType=Library
+X-KDE-Library=kopete_nowlistening
+X-KDE-FactoryName=NowListeningConfigFactory
+X-KDE-ParentApp=kopete
+X-KDE-ParentComponents=kopete_nowlistening_plugin
+
+Name=Now Listening
+Comment=Tell your buddies what you're listening to
+

@@ -29,7 +29,7 @@ class QTimer;
 class DCOPClient;
 class KActionCOllection;
 class KToggleAction;
-class NowListeningPreferences;
+class NowListeningConfig;
 class NLMediaPlayer;
 
 /**
@@ -53,12 +53,12 @@ friend class NowListeningGUIClient;
 		void slotOutgoingMessage( KopeteMessage& msg );
 
 	protected:
-		/** 
+		/**
 		 * Constructs a string containing the track information for all
 		 * players
 		 */
 		QString allPlayerAdvert() const;
-		/**  
+		/**
 		 * Creates the string for a single player
 		 * @p player - the media player we're using
 		 * @p in - the source format string
@@ -78,7 +78,7 @@ friend class NowListeningGUIClient;
 
 	private:
 		// used to access the GUI settings
-		NowListeningPreferences *m_prefs;
+		NowListeningConfig *m_config;
 		// abstracted media player interfaces
 		QPtrList<NLMediaPlayer> *m_mediaPlayer;
 		// Needed for DCOP interprocess communication

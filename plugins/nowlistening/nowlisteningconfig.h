@@ -1,10 +1,8 @@
 /*
-    nowlisteningpreferences.h
-
-    Kopete Now Listening To plugin
+    nowlisteningconfig.h
 
     Copyright (c) 2002,2003 by Will Stephenson <will@stevello.free-online.co.uk>
-
+    Copyright (c) 2003      by Matt Rogers <matt@matt.rogers.name>
     Kopete    (c) 2002,2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -17,40 +15,31 @@
     *************************************************************************
 */
 
-#ifndef NOWLISTENINGPREFERENCES_H
-#define NOWLISTENINGPREFERENCES_H
+#ifndef NOWLISTENINGCONFIG_H
+#define NOWLISTENINGCONFIG_H
 
-#include <kcmodule.h>
+#include <qstring.h>
 
-class NowListeningPrefsUI;
-class NowListeningConfig;
-
-/**
-  *@author Will Stephenson
-  */
-
-class NowListeningPreferences : public KCModule
+class NowListeningConfig
 {
-Q_OBJECT
 public:
-	NowListeningPreferences(QWidget *parent = 0, const char *name = 0, const QStringList &args = QStringList());
-	virtual ~NowListeningPreferences();
-	virtual void save();
-	virtual void load();
+	NowListeningConfig();
+
+	void load();
+	void save();
+
+	QString header() const;
+	QString perTrack() const;
+	QString conjunction() const;
+
+	void setHeader(const QString& newHeader);
+	void setPerTrack(const QString& newPerTrack);
+	void setConjunction(const QString &newConjunction);
 
 private:
-	NowListeningPrefsUI *preferencesDialog;
-	NowListeningConfig *config;
-
+	QString mHeader;
+	QString mPerTrack;
+	QString mConjunction;
 };
 
 #endif
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
-// vim: set noet ts=4 sts=4 sw=4:
-
