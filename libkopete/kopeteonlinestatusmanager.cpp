@@ -17,19 +17,21 @@
 */
 
 #include "kopeteonlinestatusmanager.h"
-#include "kopeteawayaction.h"
 
-#include <qpainter.h>
-#include <qbitmap.h>
+#include "kopeteawayaction.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopetecontact.h"
+
 #include <kiconloader.h>
 #include <kiconeffect.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kstaticdeleter.h>
 #include <kapplication.h>
+#include <kcpuinfo.h> // for WORDS_BIGENDIAN
+
+#include <algorithm> // for min
 
 namespace Kopete {
 
@@ -95,12 +97,12 @@ QString OnlineStatusManager::fingerprint( const OnlineStatus &statusFor, const Q
 	// create a 'fingerprint' to use as a hash key
 	// fingerprint consists of description/icon name/color/overlay name/size/idle state
 	return QString::fromLatin1("%1/%2/%3/%4/%5/%6")
-								.arg( statusFor.description() )
-								.arg( icon )
-								.arg( color.name() )
-								.arg( statusFor.overlayIcon())
-								.arg( size )
-								.arg( idle ? 'i' : 'a' );
+	                           .arg( statusFor.description() )
+	                           .arg( icon )
+	                           .arg( color.name() )
+	                           .arg( statusFor.overlayIcon())
+	                           .arg( size )
+	                           .arg( idle ? 'i' : 'a' );
 }
 
 QPixmap OnlineStatusManager::cacheLookupByObject( const OnlineStatus &statusFor, const QString& icon, int size, QColor color, bool idle)
@@ -131,6 +133,48 @@ QPixmap OnlineStatusManager::cacheLookupByMimeSource( const QString &mimeSource 
 	return *theIcon;
 }
 
+// This code was forked from the broken KImageEffect::blendOnLower, but it's
+// been so heavily fixed and rearranged it's hard to recognise that now.
+static void blendOnLower( const QImage &upper_, QImage &lower )
+{
+	if ( upper_.width() <= 0 || upper_.height() <= 0 )
+		return;
+	if ( lower.width() <= 0 || lower.height() <= 0 )
+		return;
+	
+	QImage upper = upper_;
+	if ( upper.depth() != 32 )
+		upper = upper.convertDepth( 32 );
+	if ( lower.depth() != 32 )
+		lower = lower.convertDepth( 32 );
+	
+	int cw = std::min( upper.width(), lower.width() ),
+	    ch = std::min( upper.height(), lower.height() );
+	const int m = 255;
+	
+	for ( int j = 0; j < ch; j++ )
+	{
+		QRgb *u = (QRgb*)upper.scanLine(j);
+		QRgb *l = (QRgb*)lower.scanLine(j);
+		
+		for( int k = cw; k; ++u, ++l, --k )
+		{
+			int ua = qAlpha(*u);
+			if ( !ua )
+				continue;
+			
+			int la = qAlpha(*l);
+			
+			int   d =                       ua * m +              la * (m - ua);
+			uchar r = uchar( (   qRed(*u) * ua * m +   qRed(*l) * la * (m - ua) ) / d );
+			uchar g = uchar( ( qGreen(*u) * ua * m + qGreen(*l) * la * (m - ua) ) / d );
+			uchar b = uchar( (  qBlue(*u) * ua * m +  qBlue(*l) * la * (m - ua) ) / d );
+			uchar a = uchar( (         ua * ua * m +         la * la * (m - ua) ) / d );
+			*l = qRgba( r, g, b, a );
+		}
+	}
+}
+
 QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const QString& baseIcon, int size, QColor color, bool idle) const
 {
 	// create an icon suiting the status from the base icon
@@ -143,42 +187,37 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 
 	// Colorize
 	if ( color.isValid() )
-	{
-		KIconEffect effect;
-		*basis = effect.apply( *basis, KIconEffect::Colorize, 1, color, 0);
-	}
+		*basis = KIconEffect().apply( *basis, KIconEffect::Colorize, 1, color, 0);
+
+	// Apply standard Disabled effect to generate account-offline icons
+	// Note that we do this before compositing the overlay, since we want
+	// that to be colored in this case.
+	if ( statusFor.internalStatus() == Kopete::OnlineStatus::AccountOffline )
+		*basis = KIconEffect().apply( *basis, KIcon::Small, KIcon::DisabledState );
 
 	//composite the iconOverlay for this status and the supplied baseIcon
 	if ( !( statusFor.overlayIcon().isNull() ) ) // otherwise leave the basis as-is
 	{
-	
 		KIconLoader *loader = KGlobal::instance()->iconLoader();
 		QPixmap overlay = loader->loadIcon(statusFor.overlayIcon(), KIcon::Small, 0 ,  KIcon::DefaultState, 0L, /*canReturnNull=*/ true );
+		
 		if ( !overlay.isNull() )
 		{
-			// first combine the masks of both pixmaps
-			if ( overlay.mask() )
-			{
-				QBitmap mask = *(basis->mask());
-				bitBlt( &mask, 0, 0, const_cast<QBitmap *>(overlay.mask()),
-					0, 0, overlay.width(), overlay.height(), Qt::OrROP );
-
-				basis->setMask(mask);
-			}
-			// draw the overlay on top of it
-			QPainter p( basis );
-			p.drawPixmap( 0, 0, overlay );
+			// we want to preserve the alpha channels of both basis and overlay.
+			// there's no way to do this in Qt. In fact, there's no way to do this
+			// in KDE since KImageEffect is so badly broken.
+			QImage basisImage = basis->convertToImage();
+			blendOnLower( overlay.convertToImage(), basisImage );
+			basis->convertFromImage( basisImage );
 		}
 	}
 
-	if ( statusFor.status() == OnlineStatus::Offline)
-	{
-		// Apply standard Disabled effect to generate Offline icons
-		// This will probably look crap on the Unknown icon
-		// FIXME This won't return icons that are not installed using Martijn's
-		// automake magic so we'd have to use UserIcon instead of SmallIcon
+	// Apply standard Disabled effect to generate Offline icons
+	// This will probably look crap on the Unknown icon
+	// FIXME This won't return icons that are not installed using Martijn's
+	// automake magic so we'd have to use UserIcon instead of SmallIcon
+	if ( statusFor.status() == OnlineStatus::Offline )
 		*basis = KIconEffect().apply( *basis, KIcon::Small, KIcon::DisabledState );
-	}
 
 	// no need to scale if the icon is already of the required size (assuming height == width!)
 	if ( basis->width() != size )
