@@ -70,14 +70,14 @@ public:
 	bool unload();
 
 	// KopeteProtocol reimplementation
-	virtual QPixmap getProtocolIcon();
-	virtual AddContactPage *getAddContactWidget( QWidget *parent );
+	virtual QString protocolIcon() const;
+	virtual AddContactPage *createAddContactWidget( QWidget *parent );
 	virtual void Connect();
 	virtual void Disconnect();
-	virtual bool isConnected();
+	virtual bool isConnected() const;
 	virtual void setAway();
 	virtual void setAvailable();
-	virtual bool isAway();
+	virtual bool isAway() const;
 
 	void removeContact( const QString &userID );
 	void removeFromGroup( const QString &userID, const QString &group );
@@ -151,7 +151,6 @@ private:
 
 	StatusBarIcon *statusBarIcon;
 
-	QPixmap protocolIcon;
 	QPixmap onlineIcon;
 	QPixmap offlineIcon;
 	QPixmap awayIcon;

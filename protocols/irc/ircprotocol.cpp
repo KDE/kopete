@@ -176,7 +176,7 @@ void IRCProtocol::Disconnect()
 }
 
 
-bool IRCProtocol::isConnected()
+bool IRCProtocol::isConnected() const
 {
 	return false;
 }
@@ -191,19 +191,19 @@ void IRCProtocol::setAvailable(void)
 // TODO
 }
 
-bool IRCProtocol::isAway(void)
+bool IRCProtocol::isAway(void) const
 {
 // TODO
 	return false;
 }
 
 /** This i used for al protocol selection dialogs */
-QPixmap IRCProtocol::getProtocolIcon()
+QString IRCProtocol::protocolIcon() const
 {
-	return protocolIcon;
+	return "irc_protocol";
 }
 
-AddContactPage *IRCProtocol::getAddContactWidget(QWidget *parent)
+AddContactPage *IRCProtocol::createAddContactWidget(QWidget *parent)
 {
 	return (new IRCAddContactPage(this,parent));
 }
@@ -217,7 +217,6 @@ void IRCProtocol::initIcons()
 {
 	KIconLoader *loader = KGlobal::iconLoader();
 
-	protocolIcon = QPixmap(loader->loadIcon("irc_protocol", KIcon::User));
 	protocolSmallIcon = QPixmap(loader->loadIcon("irc_protocol_small", KIcon::User));
 	onlineIcon = QPixmap(loader->loadIcon("irc_online", KIcon::User));
 	offlineIcon = QPixmap(loader->loadIcon("irc_offline", KIcon::User));

@@ -23,7 +23,7 @@
 #include <plugin.h>
 
 class AddContactPage;
-class QPixmap;
+class QString;
 
 /**
  * @author duncan
@@ -37,10 +37,10 @@ public:
 	/**
 	 * Protocol API. Must be reimplemented
 	 */
-	virtual QPixmap getProtocolIcon()=0;
+	virtual QString protocolIcon() const = 0;
 	virtual void Connect()=0;
 	virtual void Disconnect()=0;
-	virtual bool isConnected()=0;
+	virtual bool isConnected() const = 0;
 
 	// this will be called if main-kopete wants
 	// the plugin to set the user's mode to away or something similar
@@ -50,9 +50,9 @@ public:
 	virtual void setAvailable(void)=0;
 	// plugin has to return wether it is away or not
 	// plugins should also return TRUE for modes like occupied not-vailable etc.
-	virtual bool isAway(void)=0;
+	virtual bool isAway(void) const = 0;
 
-	virtual AddContactPage *getAddContactWidget(QWidget *parent)=0;
+	virtual AddContactPage *createAddContactWidget(QWidget *parent)=0;
 
 	/**
 	 * The icon of the plugin as shown in the status bar

@@ -110,7 +110,7 @@ void KopeteWindow::initActions ( void )
 void KopeteWindow::initSystray ( void )
 {
 	tray = new KopeteSystemTray(this, "KopeteSystemTray");
-	KPopupMenu *tm = tray->getContextMenu();
+	KPopupMenu *tm = tray->contextMenu();
 
 	tm->insertSeparator();
 	actionAddContact->plug( tm );

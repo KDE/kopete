@@ -164,7 +164,7 @@ void MSNProtocol::Disconnect()
 }
 
 
-bool MSNProtocol::isConnected()
+bool MSNProtocol::isConnected() const
 {
 	return mIsConnected;
 }
@@ -180,7 +180,7 @@ void MSNProtocol::setAvailable(void)
 	slotGoOnline();
 }
 
-bool MSNProtocol::isAway(void)
+bool MSNProtocol::isAway(void) const
 {
 	uint status;
 	status = m_msnService->status();
@@ -207,12 +207,12 @@ bool MSNProtocol::isAway(void)
 }
 
 /** This i used for al protocol selection dialogs */
-QPixmap MSNProtocol::getProtocolIcon()
+QString MSNProtocol::protocolIcon() const
 {
-	return protocolIcon;
+	return "msn_protocol";
 }
 
-AddContactPage *MSNProtocol::getAddContactWidget(QWidget *parent)
+AddContactPage *MSNProtocol::createAddContactWidget(QWidget *parent)
 {
 	return (new MSNAddContactPage(this,parent));
 }
@@ -225,7 +225,6 @@ void MSNProtocol::initIcons()
 	KIconLoader *loader = KGlobal::iconLoader();
     KStandardDirs dir;
 
-	protocolIcon = QPixmap(loader->loadIcon("msn_protocol", KIcon::User));
 	onlineIcon = QPixmap(loader->loadIcon("msn_online", KIcon::User));
 	offlineIcon = QPixmap(loader->loadIcon("msn_offline", KIcon::User));
 	awayIcon = QPixmap(loader->loadIcon("msn_away", KIcon::User));
@@ -244,7 +243,7 @@ void MSNProtocol::initActions()
 	actionStatusMenu->insert( actionGoOffline );
 	actionStatusMenu->insert( actionGoAway );
 
-	actionStatusMenu->plug( kopeteapp->systemTray()->getContextMenu(), 1 );
+	actionStatusMenu->plug( kopeteapp->systemTray()->contextMenu(), 1 );
 }
 
 void MSNProtocol::slotIconRightClicked( const QPoint /* point */ )

@@ -24,32 +24,32 @@ void KopeteGroupList::slotUpdateList()
 }
 
 /** KopeteStdAction **/
-KAction* KopeteStdAction::sendMessage(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0)
+KAction* KopeteStdAction::sendMessage(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
 	return new KAction("&Send Message", "mail_generic", 0, recvr, slot, parent, name);
 }
 
-KAction* KopeteStdAction::contactInfo(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0)
+KAction* KopeteStdAction::contactInfo(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
 	return new KAction("User &Info", "identity", 0, recvr, slot, parent, name);
 }
 
-KAction* KopeteStdAction::viewHistory(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0)
+KAction* KopeteStdAction::viewHistory(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
 	return new KAction("View &History", "history", 0, recvr, slot, parent, name);
 }
 
-KAction* KopeteStdAction::addGroup(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0)
+KAction* KopeteStdAction::addGroup(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
 	return new KAction("&Add Group...", "folder", 0, recvr, slot, parent, name);
 }
 
-KListAction *KopeteStdAction::moveContact(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0)
+KListAction *KopeteStdAction::moveContact(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
 	return new KopeteGroupList("&Move Contact", "editcut", 0, recvr, slot, parent, name);
 }
 
-KAction* KopeteStdAction::deleteContact(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0)
+KAction* KopeteStdAction::deleteContact(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
 	return new KAction("&Delete Contact",  "edittrash", 0, recvr, slot, parent, name);
 }

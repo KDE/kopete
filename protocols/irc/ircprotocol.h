@@ -46,18 +46,18 @@ public:
 	void init();
 	bool unload();
 	/** KopeteProtocol reimplementation */
-	virtual QPixmap getProtocolIcon();
-	virtual AddContactPage *getAddContactWidget(QWidget *parent);
+	virtual QString protocolIcon() const;
+	virtual AddContactPage *createAddContactWidget(QWidget *parent);
 	virtual void Connect();
 	virtual void Disconnect();
-	virtual bool isConnected();
+	virtual bool isConnected() const;
 	virtual void setAway(void);
 	virtual void setAvailable(void);
-	virtual bool isAway(void);
+	virtual bool isAway(void) const;
 	/** Internal */
 	StatusBarIcon *statusBarIcon;
+
 	/** The IRC Engine */
-	QPixmap protocolIcon;
 	QPixmap protocolSmallIcon;
 	QPixmap onlineIcon;
 	QPixmap offlineIcon;
