@@ -92,7 +92,6 @@ public:
 
 	void updateMembersActions();
 	void setStatus( const QString & );
-	void setSendEnabled( bool );
 
 	KTempFile *backgroundFile;
 	QPtrList<ChatView> chatViewList;
@@ -171,6 +170,7 @@ private slots:
 	void slotPrepareContactMenu();
 	void slotPrepareDetachMenu();
 	void slotPreparePlacementMenu();
+	void slotUpdateSendEnabled();
 
 	void slotCut();
 	void slotCopy();
@@ -201,7 +201,7 @@ private slots:
 	void slotViewMembersLeft();
 	void slotViewMembersRight();
 	void slotToggleViewMembers();
-	const void slotEnableUpdateBg() { updateBg = true; }
+	void slotEnableUpdateBg() { updateBg = true; }
 
 	void slotSetCaption( bool );
 	void slotUpdateCaptionIcons( const ChatView * );
