@@ -18,10 +18,13 @@ Comment[fi]=Kopeten protokolla-liitännäinen
 Comment[fr]=Module de protocole pour Kopete
 Comment[gl]=Plugin de protocolo para Kopete
 Comment[he]=תוסף פרוטוקול של Kopete
+Comment[hi]=के-ऑप्टी प्रोटोकॉल प्लगइन
 Comment[hu]=Kopete protokollkezelő bővítőmodul
 Comment[it]=Plugin del protocollo di Kopete
 Comment[nb]=Programtillegg for Kopete-protokoll
 Comment[nl]=Kopete protocol-plug-in
+Comment[nn]=Kopete-programtillegg for protokoll
+Comment[pl]=Wtyczka protokołu Kopete
 Comment[pt]='Plugin' de Protocolo do Kopete
 Comment[pt_BR]=Plugin do Protocolo do Kopete
 Comment[ru]=Модуль протокола Kopete
@@ -29,8 +32,10 @@ Comment[sk]=Modul protokolu Kopete
 Comment[sl]=Dodatek za protokol Kopete
 Comment[sr]=Kopete-ов додатак за протокол
 Comment[sv]=Protokollinsticksprogram för Kopete
+Comment[ta]=Kopete விதிமுறை செருகல்
 Comment[wa]=Tchôke-divins di protocole po Kopete
 Comment[xx]=xxKopete Protocol Pluginxx
+Comment[zh_CN]=Kopete 协议插件
 
 [PropertyDef::X-Kopete-Messaging-Protocol]
 Type=QString
