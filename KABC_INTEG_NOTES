@@ -402,6 +402,22 @@ Syncing contactlist info currently takes place when Kopete exits.  other kabc ap
 
 I don't think that syncing the KAB on an SSCL fetch is necessary. The only information we get when we fetch the SSCL is the contact name of that person who is on our SSCL, it's not until later, perhaps when we request the user info that we update the KAB. (Matt)
 
+
+
+
+|How to share data when multiple contact in a metacontact?|
++---------------------------------------------------------+
+
+The problem is that there are several sources of the information. example: if i have two msn contact ion the metacontact, i have maybe two pictures.
+
+Currently, two solution has been mentioned:
+1) use a per-contact value + a metacontact one. If there is only one contact, we automaticaly track the child contact one (exepted if the user selected himself the metacontact value). If not, we let the user choose what to use.
+     (like we already does for displayname)
+
+2) Use the account / contact priority to determine the value.
+
+
+
 KABC Association
 ----------------
 Association creates a 1:1 relationship between KMC and Addressee.  If we assume IM apps incl Kopete put IM addresses in the KABC (Messaging/msn etc) then whenever an association is made or changed, there will have to be a sync between Kopete's idea of IM addresses and those stored in KABC.  Changes to KABC data could happen while Kopete is offline so this sync check needs to take place when Kopete starts.  Potential problems if another IM client changes the data whilst Kopete is running or vice versa - addressees aren't locked while an apps is running, only while writing.
@@ -411,3 +427,4 @@ Association with existing contact: 1) No messaging information 2) Some messaging
 What if a related kabc entry is deleted while Kopete is running?
 
 Deserialising contact from contactlist.xml - do we try to check the kabc entries and create any accounts that we find there but not in the contactlist.xml?
+
