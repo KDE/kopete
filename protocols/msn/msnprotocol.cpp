@@ -30,7 +30,6 @@
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
 #include <kstandarddirs.h>
-#include <kstatusbar.h>
 
 #include "kopete.h"
 #include "kopetecontactlist.h"
