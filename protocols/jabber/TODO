@@ -20,7 +20,6 @@ TODO for Jabber:
 - add a button for server defaults
 - on a failed connection attempt, the animation does not stop
 - going offline does not stop the animation after a failed connection attempt
-x empty hostname makes Jabber crash (faulty NDNS)
 - port dialogs to KDialogBase
 - in slotGotVCard() there's a change nickname method, check that it does not
   collide with "rename contact" (change alias) -> disabled for now
