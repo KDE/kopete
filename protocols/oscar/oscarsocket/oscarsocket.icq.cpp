@@ -47,7 +47,7 @@ static const char ICQ_OTHER[] = { 0x00, 0x00, 0x00, 0x55 };
  */
 QCString OscarSocket::encodePasswordXOR()
 {
-	const char *password = pass.latin1();
+	const char *password = pass.latin1(); // TODO: check if latin1 is the right conversion
 	QCString encoded;
 
 	kdDebug(14150) << k_funcinfo << endl;

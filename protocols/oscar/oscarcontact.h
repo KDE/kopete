@@ -135,7 +135,7 @@ class OscarContact : public KopeteContact
 		/** Tells whether or not we have a direct connection with the contact */
 		bool mDirectlyConnected;
 
-//		int groupID; // TODO: move the server groupid to OscarContact!
+		int groupID; // TODO: move the server groupid to OscarContact!
 
 	private slots:
 		/** Called when a buddy has changed status */

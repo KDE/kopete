@@ -575,13 +575,13 @@ AIMBuddyList *OscarAccount::internalBuddyList()
 
 void OscarAccount::setServerAddress(const QString &server)
 {
-	kdDebug(14150) << k_funcinfo << "Called." << endl;
+	kdDebug(14150) << k_funcinfo << "Called, server=" << server << endl;
 	setPluginData(protocol(), "Server", server);
 }
 
 void OscarAccount::setServerPort(int port)
 {
-	kdDebug(14150) << k_funcinfo << "Called." << endl;
+	kdDebug(14150) << k_funcinfo << "Called, port=" << port << endl;
 	if (port > 0)// Do a little error checkin on it
 		setPluginData(protocol(), "Port", QString::number(port));
 }

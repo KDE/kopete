@@ -345,17 +345,26 @@ void OscarSocket::slotRead(void)
 				{
 					switch(s.subtype)
 					{
+						case 0x0001: // contact list error (SRV_CONTACTERR)
+							kdDebug(14150) << k_funcinfo <<
+								"RECV SRV_CONTACTERR, UNHANDLED!!!" << endl;
+							break;
 						case 0x0003: //buddy list rights
 							parseBuddyRights(inbuf);
 							break;
-						case 0x000b: //buddy changed status
-							parseBuddyChange(inbuf);
+						case 0x000a: // server refused adding contact to list (SRV_REFUSED)
+							kdDebug(14150) << k_funcinfo <<
+								"RECV SRV_REFUSED, UNHANDLED!!!" << endl;
 							break;
-						case 0x000c: //offgoing buddy
-							parseOffgoingBuddy(inbuf);
+						case 0x000b: //contact changed status, (SRV_USERONLINE)
+							parseUserOnline(inbuf);
+							break;
+						case 0x000c: //contact went offline
+							parseUserOffline(inbuf);
 							break;
 						default:
-							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" <<
+								s.family << ",|" << s.subtype << "|)" << endl;
 					};
 					break;
 				} // END 0x0003
@@ -1503,15 +1512,16 @@ void OscarSocket::parseMsgRights(Buffer &/*inbuf*/)
 	}
 }
 
-/** Parses an incoming IM */
 void OscarSocket::parseIM(Buffer &inbuf)
 {
-//	Buffer tmpbuf;
 	QByteArray cook(8);
 	WORD type = 0;
 	WORD length = 0;
 	//This is probably the hardest thing to do in oscar
 	//first comes an 8 byte ICBM cookie (random)
+	// from icq docs:
+	// this value is
+	// ((time(NULL) - (8*60*60)) + DayOfWeek*60*60*24)) * 1500
 	inbuf.getBlock(8);
 
 	// Channel ID.
@@ -1942,13 +1952,10 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 	u.fwType = 0;
 	u.version = 0;
 
-	//Do some sanity checking on the length of the buffer
 	if(inbuf.length() > 0)
 	{
 		BYTE len = inbuf.getByte();
-//		kdDebug(14150) << "Finished getting user info" << endl;
-
-		// First comes their screen name
+		// First comes their screen name/UIN
 		char *cb = inbuf.getBlock(len);
 		u.sn = cb;
 
@@ -2049,7 +2056,11 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 				case 0x001e: // unknown, empty
 					break;
 				default: //unknown info type
-					kdDebug(14150) << k_funcinfo << "Unknown TLV(" << t.type << ")" << endl;
+				{
+					kdDebug(14150) << k_funcinfo << "Unknown TLV(" << t.type <<
+						") length=" << t.length << " in userinfo for user '" <<
+						u.sn << "'" << endl;
+				}
 			}; // END switch()
 			delete [] t.data;
 		}
@@ -2074,7 +2085,6 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 }
 
 
-/** Sends message to dest */
 // FIXME: This func is just plain ugly, unreadable and incomplete! [mETz]
 void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAuto)
 {
@@ -2142,14 +2152,14 @@ void OscarSocket::sendSSIActivate(void)
 	sendBuf(outbuf,0x02);
 }
 
-void OscarSocket::parseBuddyChange(Buffer &inbuf)
+void OscarSocket::parseUserOnline(Buffer &inbuf)
 {
 	UserInfo u = parseUserInfo(inbuf);
 //	kdDebug(14150) << k_funcinfo << "got an oncoming contact, screenname/UIN=" << u.sn << endl;
 	emit gotBuddyChange(u);
 }
 
-void OscarSocket::parseOffgoingBuddy(Buffer &inbuf)
+void OscarSocket::parseUserOffline(Buffer &inbuf)
 {
 	UserInfo u = parseUserInfo(inbuf);
 //	kdDebug(14150) << k_funcifo << "contact left, screenname/UIN=" << u.sn << endl;
@@ -3203,7 +3213,7 @@ void OscarSocket::sendRemoveBlock(const QString &sname)
 }
 
 // Reads a FLAP header from the input
-FLAP OscarSocket::getFLAP(void)
+FLAP OscarSocket::getFLAP()
 {
 	FLAP fl;
 	int theword, theword2;
@@ -3214,6 +3224,15 @@ FLAP OscarSocket::getFLAP(void)
 	//the FLAP start byte
 	if ((start = getch()) == 0x2a)
 	{
+		if (bytesAvailable() < 5) // length of FLAP header part
+		{
+			while (waitForMore(500) < 5)
+			{
+				kdDebug(14150) << k_funcinfo <<
+					"Not enough data read yet, waiting for max 500msec., bytesAvailable()=" << bytesAvailable() << endl;
+			}
+		}
+
 		//get the channel ID
 		if ( (chan = getch()) == -1)
 		{

@@ -117,8 +117,8 @@ void AIMContact::setStatus(const unsigned int newStatus)
 			setOnlineStatus(mProtocol->statusOnline);
 	}
 
-	kdDebug(14190) << k_funcinfo << "'" << displayName() << "' is now " <<
-		onlineStatus().description() << endl;
+//	kdDebug(14190) << k_funcinfo << "'" << displayName() << "' is now " <<
+//		onlineStatus().description() << endl;
 }
 
 void AIMContact::slotTyping(bool typing)

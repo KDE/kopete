@@ -532,9 +532,9 @@ class OscarSocket : public OscarConnection
 	/** Activates the SSI list on the server */
 	void sendSSIActivate();
 	/** Parses the oncoming buddy server notification */
-	void parseBuddyChange(Buffer &);
+	void parseUserOnline(Buffer &);
 	/** Parses offgoing buddy message from server */
-	void parseOffgoingBuddy(Buffer &);
+	void parseUserOffline(Buffer &);
 	/** Parses someone's user info */
 	void parseUserProfile(Buffer &);
 	/** Handles a redirect */
