@@ -475,24 +475,46 @@ QString KopeteMessage::parsedBody() const
 		return d->body;
 #endif
 	}
-	/*
-	// FIXME: Should be uncommented as soon as ICQ and other plugins are free of stuff like:
-	// text=i18n("<b>[Email Message:]</b> %1").arg(text);
-	// where text is not yet parsed
-	else if( d->format & RichText )
-	{
-		// Richtext should already have <a href ...> around URLs, so no link parsing takes place
-		return KopeteEmoticons::parseEmoticons(escapedBody());
-	}
-	*/
 	else
 	{
-		return KopeteEmoticons::parseEmoticons(parseLinks(escapedBody()));
+		return KopeteEmoticons::parseEmoticons(parseLinks(escapedBody(), d->format));
 	}
 }
 
-QString KopeteMessage::parseLinks( const QString &message ) const
+QString KopeteMessage::parseLinks( const QString &message, MessageFormat format )
 {
+	if ( format == ParsedHTML )
+		return message;
+
+	if ( format & RichText )
+	{
+		// < in HTML *always* means start-of-tag
+		QStringList entries = QStringList::split( QChar('<'), message, true );
+
+		QStringList::Iterator it = entries.begin();
+		
+		// first one is different: it doesn't start with an HTML tag.
+		if ( it != entries.end() )
+		{
+			*it = parseLinks( *it, PlainText );
+			++it;
+		}
+
+		for ( ; it != entries.end(); ++it )
+		{
+			QString curr = *it;
+			// > in HTML means start-of-tag if and only if it's the first one after a <
+			int tagclose = curr.find( QChar('>') );
+			// no >: the HTML is broken, but we can cope
+			if ( tagclose == -1 )
+				continue;
+			QString tag = curr.left( tagclose + 1 );
+			QString body = curr.mid( tagclose + 1 );
+			*it = tag + parseLinks( body, PlainText );
+		}  
+		return entries.join(QString::fromLatin1("<"));
+	}
+
 	QString result = message;
 
 	//Replace http/https/ftp links

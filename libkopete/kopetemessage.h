@@ -341,7 +341,7 @@ private:
 
 	KopeteMessagePrivate *d;
 
-	QString parseLinks( const QString &message ) const;
+	static QString parseLinks( const QString &message, MessageFormat format );
 };
 
 #endif
