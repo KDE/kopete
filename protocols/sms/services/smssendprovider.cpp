@@ -3,11 +3,7 @@
 #include "smscontact.h"
 
 #include <kdeversion.h>
-#if KDE_VERSION > 305
-#include <kprocio.h>
-#else
 #include <kprocess.h>
-#endif
 #include <qregexp.h>
 #include <qlabel.h>
 #include <qfile.h>
@@ -48,7 +44,7 @@ SMSSendProvider::SMSSendProvider(QString providerName, QString prefixValue, SMSC
 					|| args[0].contains("message") || args[0].contains("nachricht")
 					|| args[0].contains("Msg") || args[0].contains("Mensagem") )
 				{
-					for( int i = 0; i < options.count(); i++)
+					for( unsigned i = 0; i < options.count(); i++)
 					{
 						if (options[i].contains("Size="))
 						{
@@ -145,11 +141,7 @@ void SMSSendProvider::send(const KopeteMessage& msg)
 	values[messagePos] = message;
 	values[telPos] = nr;
 
-#if KDE_VERSION > 305
-	KProcIO* p = new KProcIO;
-#else
 	KProcess* p = new KProcess;
-#endif
 
 	*p << QString("%1/bin/smssend").arg(prefix) << provider << values;
     

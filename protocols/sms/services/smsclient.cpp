@@ -10,11 +10,7 @@
 #include <kurlrequester.h>
 #include <kmessagebox.h>
 #include <kdeversion.h>
-#if KDE_VERSION > 305
-#include <kprocio.h>
-#else
 #include <kprocess.h>
-#endif
 
 SMSClient::SMSClient(SMSContact* m_contact)
 	: SMSService(m_contact)
@@ -42,11 +38,7 @@ void SMSClient::send(const KopeteMessage& msg)
 	if (programName == QString::null)
 		programName = "/usr/bin/sms_client";
 
-#if KDE_VERSION > 305
-	KProcIO* p = new KProcIO;
-#else
 	KProcess* p = new KProcess;
-#endif
 
 	QString message = msg.plainBody();
 	QString nr = msg.to().first()->id();
