@@ -8,6 +8,7 @@ Comment[sv]=Kopete Instant Messenger
 
 [kopete_event]
 Name=Event
+Name[da]=Begivenhed
 Name[de]=Ereignis
 Name[sv]=Händelse
 Comment=Sound Notification for Kopete Events
@@ -22,9 +23,11 @@ default_presentation=1
 
 [kopete_incoming]
 Name=Incoming
+Name[da]=Indkommende
 Name[de]=Eingang
 Name[sv]=Inkommande
 Comment=Incoming message arrives
+Comment[da]=Indkommende besked ankommer
 Comment[de]=Eingehende Nachrichten
 Comment[sv]=Inkommande meddelande anländer
 default_sound=kopete_incoming.wav
@@ -32,9 +35,11 @@ default_presentation=0
 
 [kopete_outgoing]
 Name=Outgoing
+Name[da]=Udgående
 Name[de]=Ausgang
 Name[sv]=Utgående
 Comment=Outgoing message is sent
+Comment[da]=Udgående besked er sendt
 Comment[de]=Nachricht wird versendet
 Comment[sv]=Utgående meddelande har skickats
 default_sound=kopete_outgoing.wav
