@@ -129,7 +129,7 @@ public slots:
 	void updateVisibility();
 
 private slots:
-	void slotUpdateIcons();
+	void slotUpdateMetaContact();
 	void slotContactStatusChanged( KopeteContact * );
 	void slotContactPropertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & );
 	void slotContactAdded( KopeteContact * );

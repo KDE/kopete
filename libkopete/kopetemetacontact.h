@@ -341,6 +341,7 @@ public slots:
 	void removeKABC();
 	bool syncWithKABC();
 
+	KopeteContact *preferredContact();
 signals:
 	/**
 	 *  @brief The MetaContact online status changed
@@ -388,7 +389,7 @@ signals:
 	void contactAdded( KopeteContact *c );
 
 	/**
-	 * @brief a contact has been removed from this metacontactµ
+	 * @brief a contact has been removed from this metacontact
 	 *
 	 * This signal is emitted when a contact is removed from this metacontact
 	 */
@@ -449,7 +450,6 @@ private slots:
 	 */
 	void emitPersistentDataChanged();
 private:
-	KopeteContact *preferredContact();
 
 	KopeteMetaContactPrivate *d;
 

@@ -474,10 +474,7 @@ void KopeteMetaContact::sendFile( const KURL &sourceURL, const QString &altFileN
 void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldstatus  )
 {
 	updateOnlineStatus();
-
-	//does not emit this signal on the initial status change. i.e. on the contact's construcor
-	if( oldstatus != KopeteOnlineStatus() )
-		emit contactStatusChanged( c, status );
+	emit contactStatusChanged( c, status );
 }
 
 void KopeteMetaContact::setDisplayName( const QString &name )
