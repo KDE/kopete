@@ -602,8 +602,8 @@ QString MSNNotifySocket::statusToString( const KopeteOnlineStatus &status ) cons
 
 void MSNNotifySocket::slotDispatchClosed()
 {
+	m_badPassword = m_dispatchSocket->badPassword();
 	delete m_dispatchSocket;
-	m_badPassword=m_dispatchSocket->badPassword();
 	m_dispatchSocket = 0L;
 	if(!dispatchOK)
 	{
