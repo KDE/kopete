@@ -308,7 +308,6 @@ void KopeteContact::slotMoveDialogOkClicked()
 		kdDebug( 14010 ) << "KopeteContact::slotMoveDialogOkClicked : metaContact not found, will create a new one" << endl;
 		return;
 	}
-	KopeteMetaContact *old = d->metaContact;
 	setMetaContact( mc );
 }
 
