@@ -1,5 +1,5 @@
 #!/usr/bin/make -f
-# Sample debian/rules that uses debhelper.
+# Based on the sample debian/rules that uses debhelper.
 # GNU copyright 1997 to 1999 by Joey Hess.
 
 # Uncomment this to turn on verbose mode.
@@ -8,8 +8,10 @@
 # This is the debhelper compatibility version to use.
 export DH_COMPAT=3
 
-# Build docs or not?
-export DOXYGEN_BLOWS_ME=0
+# These are used for cross-compiling and for saving the configure script
+# from having to guess our platform (since we know it already)
+DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
 	CFLAGS += -g
@@ -18,32 +20,40 @@ ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 	INSTALL_PROGRAM += -s
 endif
 
-debian/debiandirs: ../admin/debianrules
-	../admin/debianrules echodirs > debian/debiandirs
+# fetch Debian configuration
+debian/debiandirs: admin/debianrules
+	admin/debianrules echodirs > debian/debiandirs
+
+# include the updated configuration
 -include debian/debiandirs
 
-configure: configure-stamp
-configure-stamp:
+# configure Kopete, uses the same configuration as the global
+# KDE options
+config.status: configure
 	dh_testdir
-	-mkdir obj-kopete
-	cd .. && make -f Makefile.cvs
-	cd obj-kopete && ../../configure $(configkde)
-	touch configure-stamp
+	./configure $(configkde)
 
 build: build-stamp
-build-stamp: configure-stamp 
+
+build-stamp:  config.status
 	dh_testdir
-	cd obj-kopete/kopete && $(MAKE)
-	/usr/bin/docbook-to-man debian/kopete.sgml > debian/kopete.1
-	ifeq($(DOXYGEN_BLOWS_ME), 1)
-		cd obj-kopete/kopete && doxygen kopete.api
-	endif
+
+	$(MAKE)
+	/usr/bin/docbook-to-man debian/kopete.sgml > kopete.1
+
 	touch build-stamp
 
 clean:
 	dh_testdir
 	dh_testroot
-	rm -rf build-stamp configure-stamp obj-kopete debian/kopete.1
+	rm -f build-stamp kopete.1
+
+	-$(MAKE) distclean
+	-test -r /usr/share/misc/config.sub && \
+	  cp -f /usr/share/misc/config.sub config.sub
+	-test -r /usr/share/misc/config.guess && \
+	  cp -f /usr/share/misc/config.guess config.guess
+
 	dh_clean
 
 install: build
@@ -51,23 +61,29 @@ install: build
 	dh_testroot
 	dh_clean -k
 	dh_installdirs
-	
-	cd obj-kopete/kopete && $(MAKE) install DESTDIR=$(CURDIR)/debian/kopete
 
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/kopete
 
-# We would build architecture-independent files here, if we had any.
+	# temporary fix to remove development files, until
+	# upstream changes this in their Makefile
+#	rm `find $(CURDIR)/debian/kopete -name *.la`
+	rm $(CURDIR)/debian/kopete/usr/lib/libkopete.so
+
+# Build architecture-independent files here. (none for Kopete)
 binary-indep: build install
+
 
 # Build architecture-dependent files here.
 binary-arch: build install
 	dh_testdir
 	dh_testroot
 	dh_installdocs
+	dh_installexamples
 	dh_installmenu
 	dh_installcron
 	dh_installman
 	dh_installinfo
-	dh_installchangelogs
+	dh_installchangelogs 
 	dh_link
 	dh_strip
 	dh_compress
@@ -80,4 +96,4 @@ binary-arch: build install
 	dh_builddeb
 
 binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install configure
+.PHONY: build clean binary-indep binary-arch binary install 

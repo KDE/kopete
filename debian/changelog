@@ -1,6 +1,6 @@
-kopete (0.3+cvs.20020420) unstable; urgency=low
+kopete (0.4-1) unstable; urgency=low
 
-  * Initial release.
+  * Initial Release.
 
- -- Daniel Stone <dstone@kde.org>  Sat, 20 Apr 2002 11:35:28 +1000
+ -- Till Gerken <till@tantalo.net>  Thu, 30 May 2002 23:19:40 +0200
 
