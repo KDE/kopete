@@ -47,9 +47,9 @@ public:
 	/**
 	 * return a new AddContact widget showed in the addContactWizzard.
 	 * parent is the parent widget.
-	 * the account is given 
+	 * the account is given
 	 * TODO: make pure virtual
-	 */	
+	 */
 	virtual AddContactPage *createAddContactWidget(QWidget *parent, KopeteAccount* /*account*/)
 	{
 		return createAddContactWidget(parent);
@@ -62,12 +62,12 @@ public:
 
 	/**
 	 * return a new EditAccount widget showed in the account part of the configurations
-	 * account is the KopeteAccount to edit, if it is egal to 0l, then, we are creating a 
+	 * account is the KopeteAccount to edit, if it is egal to 0l, then, we are creating a
 	 * new account
 	 */
 	virtual EditAccountWidget *createEditAccountWidget( KopeteAccount * /*account*/, QWidget * /*parent*/ )
 		{ return 0L; }  //TODO: make this pure virtual
-		
+
 	/**
 	 * create a new empty KopeteAccount with the id accountId
 	 * this method is called durring the loading from the xml file
@@ -172,7 +172,7 @@ public:
 	void registerContact( KopeteContact *c );
 
 public slots:
-	/** OBSOLETE **/	
+	/** OBSOLETE **/
 	virtual void connect() {};
 	virtual void disconnect() {};
 	bool addContact( const QString &contactId, const QString &displayName = QString::null,
@@ -211,8 +211,6 @@ private:
 	 * The list of all contacts for this protocol
 	 */
 	QDict<KopeteContact> m_contacts;
-	
-	KActionMenu *m_menu;
 };
 
 #endif

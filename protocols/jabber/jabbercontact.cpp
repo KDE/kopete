@@ -1,11 +1,11 @@
  /*
   * jabbercontact.cpp  -  Base class for the Kopete Jabber protocol contact
-  * 
+  *
   * Copyright (c) 2002 by Daniel Stone <dstone@kde.org>
   * Copyright (c) 2002 by Till Gerken <till@tantalo.net>
-  * 
+  *
   * Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
-  * 
+  *
   * *************************************************************************
   * *                                                                       *
   * * This program is free software; you can redistribute it and/or modify  *
@@ -359,9 +359,9 @@ void JabberContact::km2jm(const KopeteMessage & km, Jabber::Message & jm) {
     else
 	jabMessage.setTo(Jabber::Jid(to->userId()));
 
-    //jabMessage.setFrom(from->userId();
-    jabMessage.setBody(km.plainBody());
-    jabMessage.setSubject(km.subject());
+	//jabMessage.setFrom(from->userId();
+	jabMessage.setBody(km.parsedBody(),true);
+	jabMessage.setSubject(km.subject());
 
     // determine type of the widget and set message type accordingly
     if (km.type() == KopeteMessage::Chat)

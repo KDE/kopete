@@ -54,58 +54,8 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 	QObject::connect( KopeteContactList::contactList(), SIGNAL( groupRemoved( KopeteGroup * ) ),
 		SLOT( slotKopeteGroupRemoved( KopeteGroup * ) ) );
 
-	//initActions
-	m_actionMenu = new KActionMenu( AccountID, this );
-	m_menuTitleId=m_actionMenu->popupMenu()->insertTitle( i18n( "%2 <%1>" ).arg(accountId()).arg(m_myself->displayName()) );
-
-	KAction* actionGoOnline = new KAction ( i18n("Go O&nline"), MSNProtocol::protocol()->NLN.iconFor( this ),
-		0, this, SLOT(slotGoOnline()), m_actionMenu, "actionMSNConnect" );
-	KAction* actionGoOffline = new KAction ( i18n("Go &Offline"), MSNProtocol::protocol()->FLN.iconFor( this ),
-		0, this, SLOT(slotGoOffline()), m_actionMenu, "actionMSNConnect" );
-	KAction* actionGoAway = new KAction ( i18n("Set &Away"), MSNProtocol::protocol()->AWY.iconFor( this ),
-		0, this, SLOT(slotGoAway()), m_actionMenu, "actionMSNConnect" );
-	KAction* actionGoBusy = new KAction ( i18n("Set &Busy"), MSNProtocol::protocol()->BSY.iconFor( this ),
-		0, this, SLOT(slotGoBusy()), m_actionMenu, "actionMSNConnect" );
-	KAction* actionGoBeRightBack = new KAction ( i18n("Set Be &Right Back"), MSNProtocol::protocol()->BRB.iconFor( this ),
-		0, this, SLOT(slotGoBeRightBack()), m_actionMenu, "actionMSNConnect" );
-	KAction* actionGoOnThePhone = new KAction ( i18n("Set on the &Phone"), MSNProtocol::protocol()->PHN.iconFor( this ),
-		0, this, SLOT(slotGoOnThePhone()), m_actionMenu, "actionMSNConnect" );
-	KAction* actionGoOutToLunch = new KAction ( i18n("Set Out to &Lunch"), MSNProtocol::protocol()->LUN.iconFor( this ),
-		0, this, SLOT(slotGoOutToLunch()), m_actionMenu, "actionMSNConnect" );
-	KAction* actionGoInvisible = new KAction ( i18n("Set &Invisible"), MSNProtocol::protocol()->HDN.iconFor( this )
-		, 0, this, SLOT(slotGoInvisible()), m_actionMenu, "actionMSNConnect" );
-
-	KAction* renameAction = new KAction ( i18n( "&Change Nickname..." ), QString::null, 0, this, SLOT( slotChangePublicName() ), m_actionMenu, "renameAction" );
-	KAction* startChatAction = new KAction ( i18n( "&Start Chat..." ), "mail_generic", 0, this, SLOT( slotStartChat() ), m_actionMenu, "startChatAction" );
-
-	m_openInboxAction = new KAction ( i18n( "Open Inbo&x" ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), m_actionMenu, "m_openInboxAction" );
+	m_openInboxAction = new KAction ( i18n( "Open Inbo&x" ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
 	m_openInboxAction->setEnabled(false);
-
-	m_actionMenu->insert( actionGoOnline );
-	m_actionMenu->insert( actionGoAway );
-	m_actionMenu->insert( actionGoBusy );
-	m_actionMenu->insert( actionGoBeRightBack );
-	m_actionMenu->insert( actionGoOnThePhone );
-	m_actionMenu->insert( actionGoOutToLunch );
-	m_actionMenu->insert( actionGoInvisible );
-	m_actionMenu->insert( actionGoOffline );
-
-	m_actionMenu->popupMenu()->insertSeparator();
-	m_actionMenu->insert( renameAction );
-	m_actionMenu->insert( startChatAction );
-	m_actionMenu->popupMenu()->insertSeparator();
-	m_actionMenu->insert( m_openInboxAction );
-
-
-#if !defined NDEBUG
-	KActionMenu *debugMenu = new KActionMenu( "Debug", m_actionMenu );
-	KAction *debugRawCommand = new KAction( i18n( "Send Raw C&ommand..." ), 0,
-		this, SLOT( slotDebugRawCommand() ), debugMenu, "m_debugRawCommand" );
-	debugMenu->insert( debugRawCommand );
-	m_actionMenu->popupMenu()->insertSeparator();
-	m_actionMenu->insert( debugMenu );
-#endif
-
 }
 
 MSNAccount::~MSNAccount()
@@ -204,14 +154,32 @@ void MSNAccount::disconnect()
 		m_notifySocket->disconnect();
 }
 
-
-
 KActionMenu* MSNAccount::actionMenu()
 {
-	m_actionMenu->setIconSet( QIconSet( m_myself->onlineStatus().iconFor( m_myself ) ) );
-	m_actionMenu->setText( i18n( "%2 <%1>" ).arg( accountId() ).arg( m_myself->displayName() ) );
-	m_actionMenu->popupMenu()->changeTitle( m_menuTitleId, m_myself->onlineStatus().iconFor( m_myself ),
-		i18n( "%2 <%1>" ).arg( accountId() ).arg( m_myself->displayName() ) );
+	KActionMenu *m_actionMenu = new KActionMenu( accountId(), this );
+	m_actionMenu->popupMenu()->insertTitle( m_myself->onlineStatus().iconFor( m_myself ), i18n( "%2 <%1>" ).arg(accountId()).arg(m_myself->displayName()) );
+
+	m_actionMenu->insert( new KAction ( i18n("Go O&nline"), MSNProtocol::protocol()->NLN.iconFor( this ), 0, this, SLOT(slotGoOnline()), m_actionMenu, "actionMSNConnect" ) );
+	m_actionMenu->insert( new KAction ( i18n("Go &Offline"), MSNProtocol::protocol()->FLN.iconFor( this ), 0, this, SLOT(slotGoOffline()), m_actionMenu, "actionMSNConnect" ) );
+	m_actionMenu->insert( new KAction ( i18n("Set &Away"), MSNProtocol::protocol()->AWY.iconFor( this ), 0, this, SLOT(slotGoAway()), m_actionMenu, "actionMSNConnect" ) );
+	m_actionMenu->insert( new KAction ( i18n("Set &Busy"), MSNProtocol::protocol()->BSY.iconFor( this ), 0, this, SLOT(slotGoBusy()), m_actionMenu, "actionMSNConnect")  );
+	m_actionMenu->insert( new KAction ( i18n("Set Be &Right Back"), MSNProtocol::protocol()->BRB.iconFor( this ), 0, this, SLOT(slotGoBeRightBack()), m_actionMenu, "actionMSNConnect" ) );
+	m_actionMenu->insert( new KAction ( i18n("Set on the &Phone"), MSNProtocol::protocol()->PHN.iconFor( this ), 0, this, SLOT(slotGoOnThePhone()), m_actionMenu, "actionMSNConnect" ) );
+	m_actionMenu->insert( new KAction ( i18n("Set Out to &Lunch"), MSNProtocol::protocol()->LUN.iconFor( this ), 0, this, SLOT(slotGoOutToLunch()), m_actionMenu, "actionMSNConnect" ) );
+	m_actionMenu->insert( new KAction ( i18n("Set &Invisible"), MSNProtocol::protocol()->HDN.iconFor( this ), 0, this, SLOT(slotGoInvisible()), m_actionMenu, "actionMSNConnect" ) );
+
+	m_actionMenu->popupMenu()->insertSeparator();
+	m_actionMenu->insert( new KAction ( i18n( "&Change Nickname..." ), QString::null, 0, this, SLOT( slotChangePublicName() ), m_actionMenu, "renameAction" ) );
+	m_actionMenu->insert( new KAction ( i18n( "&Start Chat..." ), "mail_generic", 0, this, SLOT( slotStartChat() ), m_actionMenu, "startChatAction" ) );
+	m_actionMenu->popupMenu()->insertSeparator();
+	m_actionMenu->insert( m_openInboxAction );
+
+#if !defined NDEBUG
+	KActionMenu *debugMenu = new KActionMenu( "Debug", m_actionMenu );
+	debugMenu->insert( new KAction( i18n( "Send Raw C&ommand..." ), 0, this, SLOT( slotDebugRawCommand() ), debugMenu, "m_debugRawCommand" ) );
+	m_actionMenu->popupMenu()->insertSeparator();
+	m_actionMenu->insert( debugMenu );
+#endif
 
 	return m_actionMenu;
 }
@@ -425,7 +393,6 @@ void MSNAccount::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status )
 		m_groupList.clear();
 
 //		setStatusIcon( "msn_offline" );
-		m_openInboxAction->setEnabled(false);
 
 		// Reset flags. They can't be set in the connect method, because
 		// offline changes might have been made before. Instead the c'tor
@@ -453,7 +420,6 @@ void MSNAccount::slotNotifySocketClosed( int /*state*/ )
 	m_notifySocket->deleteLater();
 	m_notifySocket=0l;
 	m_myself->setOnlineStatus( MSNProtocol::protocol()->FLN );
-	m_openInboxAction->setEnabled(false);
 	if(m_badpassword)
 		connect();
 //	kdDebug(14140) << "MSNAccount::slotNotifySocketClosed - done" << endl;

@@ -47,8 +47,6 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, QString accountID, const char
 {
 	mEngine = 0L;
 
-	initActions(); // Initialize our actions
-	initActionMenu(); // Create our action menu
 	initEngine(); // Initialize the backend
 
 	// Create the internal buddy list for this account
@@ -186,76 +184,6 @@ bool OscarAccount::isICQ()
 	return isicq;
 }
 
-void OscarAccount::initActions()
-{
-	if(isICQ())
-	{
-		kdDebug(14150) << k_funcinfo << "for ICQ account '" << accountId() << "'" << endl;
-
-		mActionGoOnline	= new KAction(i18n("Online"), ICON_ICQ_ON, 0, this, SLOT(slotGoOnline()), this, "mActionGoOnline");
-		mActionGoOffline	= new KAction(i18n("Offline"), ICON_ICQ_OFF, 0, this, SLOT(slotGoOffline()), this, "mActionGoOffline");
-		mActionGoAway		= new KAction(i18n("Away"), ICON_ICQ_AW, 0, this, SLOT(slotGoAway()), this, "mActionGoAway");
-		// Now following: Enhanced ICQ states
-		mActionGoNA			= new KAction(i18n("Not Available"), ICON_ICQ_NA, 0, this, SLOT(slotGoNA()), this, "mActionGoNA");
-		mActionGoDND		= new KAction(i18n("Do Not Disturb"), ICON_ICQ_DND, 0, this, SLOT(slotGoDND()), this, "mActionGoDND");
-		mActionGoOccupied	= new KAction(i18n("Occupied"), ICON_ICQ_OCC, 0, this, SLOT(slotGoOCC()), this, "mActionGoOccupied");
-		mActionGoFFC		= new KAction(i18n("Free For Chat"), ICON_ICQ_FFC, 0, this, SLOT(slotGoFFC()), this, "mActionGoOccupied");
-		mActionEditInfo = 0L; // TODO: can't send/retrieve info yet so no menuitem
-	}
-	else
-	{
-		kdDebug(14150) << k_funcinfo << "for AIM account '" << accountId() << "'" << endl;
-
-		mActionGoOnline	= new KAction(i18n("Online"), ICON_AIM_ON, 0, this, SLOT(slotGoOnline()), this, "mActionGoOnline");
-		mActionGoOffline	= new KAction(i18n("Offline"), ICON_AIM_OFF, 0, this, SLOT(slotGoOffline()), this, "mActionGoOffline");
- 		mActionGoAway		= new KAction(i18n("Away"), ICON_AIM_AW, 0, this, SLOT(slotGoAway()), this, "mActionGoAway");
-		mActionGoNA			= 0L;
-		mActionGoDND		= 0L;
-		mActionGoOccupied	= 0L;
-		mActionGoFFC		= 0L;
-		mActionEditInfo	= KopeteStdAction::contactInfo(this, SLOT(slotEditInfo()), this, "mActionEditInfo");
-	}
-
-	mActionShowDebug = new KAction( i18n("Show Debug"), "wizard", 0,
-		this, SLOT(slotShowDebugDialog()),
-		this, "actionShowDebug");
-
-	mActionFastAddContact = new KAction(i18n("Fast add a Contact"), "", 0, this, SLOT(slotFastAddContact()), this, "actionFastAddContact" );
-}
-
-void OscarAccount::initActionMenu()
-{
-	QString icon;
-
-	if(isICQ())
-		icon="icq_online";
-	else
-		icon="oscar_online";
-
-	mActionMenu=new KActionMenu(accountId(), icon, this, "OscarAccount::mActionMenu");
-	mActionMenu->insert(mActionGoOnline); // always first
-
-	if(isICQ())
-	{
-		mActionMenu->insert(mActionGoFFC);
-		mActionMenu->insert(mActionGoAway);
-		mActionMenu->insert(mActionGoNA);
-		mActionMenu->insert(mActionGoDND);
-		mActionMenu->insert(mActionGoOccupied);
-	}
-	else
-	{
-		mActionMenu->insert(mActionGoAway);
-		mActionMenu->popupMenu()->insertSeparator();
-		mActionMenu->insert(mActionEditInfo); // TODO: add feature to ICQ as well
-	}
-
-	mActionMenu->insert(mActionGoOffline); // always last
-	mActionMenu->popupMenu()->insertSeparator();
-	mActionMenu->insert(mActionFastAddContact);
-	mActionMenu->insert(mActionShowDebug);
-}
-
 void OscarAccount::initEngine()
 {
 	kdDebug(14150) << k_funcinfo << "START; accountId="<< accountId() << endl;
@@ -340,6 +268,42 @@ void OscarAccount::setUserProfile( QString profile )
 
 KActionMenu* OscarAccount::actionMenu()
 {
+	QString icon;
+
+	if(isICQ())
+		icon="icq_online";
+	else
+		icon="oscar_online";
+
+	KActionMenu *mActionMenu = new KActionMenu(accountId(), icon, this, "OscarAccount::mActionMenu");
+	if(isICQ())
+	{
+		kdDebug(14150) << k_funcinfo << "for ICQ account '" << accountId() << "'" << endl;
+
+		mActionMenu->insert( new KAction(i18n("Online"), ICON_ICQ_ON, 0, this, SLOT(slotGoOnline()), mActionMenu, "mActionGoOnline") );
+		mActionMenu->insert( new KAction(i18n("Away"), ICON_ICQ_AW, 0, this, SLOT(slotGoAway()), mActionMenu, "mActionGoAway") );
+		// Now following: Enhanced ICQ states
+		mActionMenu->insert( new KAction(i18n("Not Available"), ICON_ICQ_NA, 0, this, SLOT(slotGoNA()), mActionMenu, "mActionGoNA") );
+		mActionMenu->insert( new KAction(i18n("Do Not Disturb"), ICON_ICQ_DND, 0, this, SLOT(slotGoDND()), mActionMenu, "mActionGoDND") );
+		mActionMenu->insert( new KAction(i18n("Occupied"), ICON_ICQ_OCC, 0, this, SLOT(slotGoOCC()), mActionMenu, "mActionGoOccupied") );
+		mActionMenu->insert( new KAction(i18n("Free For Chat"), ICON_ICQ_FFC, 0, this, SLOT(slotGoFFC()), mActionMenu, "mActionGoOccupied") );
+		mActionMenu->insert( new KAction(i18n("Offline"), ICON_ICQ_OFF, 0, this, SLOT(slotGoOffline()), mActionMenu, "mActionGoOffline") );
+	}
+	else
+	{
+		kdDebug(14150) << k_funcinfo << "for AIM account '" << accountId() << "'" << endl;
+
+		mActionMenu->insert( new KAction(i18n("Online"), ICON_AIM_ON, 0, this, SLOT(slotGoOnline()), mActionMenu, "mActionGoOnline") );
+		mActionMenu->insert( new KAction(i18n("Away"), ICON_AIM_AW, 0, this, SLOT(slotGoAway()), mActionMenu, "mActionGoAway") );
+		mActionMenu->insert( new KAction(i18n("Offline"), ICON_AIM_OFF, 0, this, SLOT(slotGoOffline()), mActionMenu, "mActionGoOffline") );
+		mActionMenu->popupMenu()->insertSeparator();
+		mActionMenu->insert( KopeteStdAction::contactInfo(this, SLOT(slotEditInfo()), mActionMenu, "mActionEditInfo") );
+	}
+
+	mActionMenu->popupMenu()->insertSeparator();
+	mActionMenu->insert( new KAction( i18n("Show Debug"), "wizard", 0, this, SLOT(slotShowDebugDialog()), mActionMenu, "actionShowDebug") );
+	mActionMenu->insert( new KAction(i18n("Fast add a Contact"), "", 0, this, SLOT(slotFastAddContact()), mActionMenu, "actionFastAddContact" ) );
+
 	return mActionMenu;
 }
 

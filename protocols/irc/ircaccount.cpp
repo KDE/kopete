@@ -40,7 +40,6 @@
 IRCAccount::IRCAccount(const QString &accountId, const IRCProtocol *protocol) : KopeteAccount( (KopeteProtocol*)protocol, accountId )
 {
 	mManager = 0L;
-	mActionMenu = 0L;
 	mProtocol = protocol;
 
 	mNickName = accountId.section('@',0,0);
@@ -60,10 +59,6 @@ IRCAccount::IRCAccount(const QString &accountId, const IRCProtocol *protocol) : 
 	QObject::connect(mEngine, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
 
 	mMySelf = findUser( mNickName );
-
-	actionOnline = new KAction ( i18n("Online"), IRCProtocol::IRCUserOnline().iconFor( mMySelf ), 0, this, SLOT(connect()), this );
-	actionOffline =  new KAction ( i18n("Offline"), IRCProtocol::IRCUserOffline().iconFor( mMySelf ), 0, this, SLOT(disconnect()), this);
-	actionAway =  new KAction ( i18n("Away"), IRCProtocol::IRCUserAway().iconFor( mMySelf ), 0, this, SLOT(slotGoAway()), this);
 }
 
 IRCAccount::~IRCAccount()
@@ -79,16 +74,15 @@ KActionMenu *IRCAccount::actionMenu()
 {
 	QString menuTitle = QString::fromLatin1( " %1 <%2> " ).arg( accountId() ).arg( mMySelf->onlineStatus().description() );
 
-	delete mActionMenu;
-	mActionMenu = new KActionMenu( accountId(), this );
+	KActionMenu *mActionMenu = new KActionMenu( accountId(), this );
 	mActionMenu->popupMenu()->insertTitle( mMySelf->onlineStatus().iconFor( mMySelf ), menuTitle, 1 );
 	mActionMenu->setIconSet( QIconSet ( mMySelf->onlineStatus().iconFor( mMySelf ) ) );
 
-	mActionMenu->insert( actionOnline );
-	mActionMenu->insert( actionAway );
-	mActionMenu->insert( actionOffline );
+	mActionMenu->insert( new KAction ( i18n("Online"), IRCProtocol::IRCUserOnline().iconFor( mMySelf ), 0, this, SLOT(connect()), mActionMenu ) );
+	mActionMenu->insert( new KAction ( i18n("Offline"), IRCProtocol::IRCUserOffline().iconFor( mMySelf ), 0, this, SLOT(disconnect()), mActionMenu ) );
+	mActionMenu->insert( new KAction ( i18n("Away"), IRCProtocol::IRCUserAway().iconFor( mMySelf ), 0, this, SLOT(slotGoAway()), mActionMenu ) );
 	mActionMenu->popupMenu()->insertSeparator();
-	mActionMenu->insert( new KAction ( i18n("Join channel"), "", 0, this, SLOT(slotJoinChannel()), mActionMenu ));
+	mActionMenu->insert( new KAction ( i18n("Join channel"), "", 0, this, SLOT(slotJoinChannel()), mActionMenu ) );
 
 	return mActionMenu;
 }

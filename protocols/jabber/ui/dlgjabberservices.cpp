@@ -41,7 +41,7 @@ dlgJabberServices::dlgJabberServices(QWidget *parent, const char *name ) : dlgSe
 	if(JabberProtocol::protocol()->isConnected())
 	{
 		// pre-populate the server field
-		leServer->setText(Jid(JabberProtocol::protocol()->myContact->contactId()).host());
+	//	leServer->setText(Jid(JabberProtocol::protocol()->myContact->contactId()).host());
 	}
 
 	// disable the left margin
@@ -60,11 +60,11 @@ dlgJabberServices::dlgJabberServices(QWidget *parent, const char *name ) : dlgSe
 
 	// disable user selections
 	tblServices->setSelectionMode(QTable::NoSelection);
-	
+
 	// name table headers
 	tblServices->horizontalHeader()->setLabel(0, i18n("Name"));
 	tblServices->horizontalHeader()->setLabel(1, i18n("Address"));
-	
+
 	connect(btnQuery, SIGNAL(clicked()), this, SLOT(slotQuery()));
 	connect(tblServices, SIGNAL(clicked(int, int, int, const QPoint &)), this, SLOT(slotSetSelection(int, int, int, const QPoint &)));
 
@@ -72,7 +72,7 @@ dlgJabberServices::dlgJabberServices(QWidget *parent, const char *name ) : dlgSe
 	connect(btnBrowse, SIGNAL(clicked()), this, SLOT(slotBrowse()));
 
 	serviceTask = 0L;
-	
+
 	selectedRow = 0;
 
 }
@@ -95,7 +95,7 @@ void dlgJabberServices::slotSetSelection(int row, int, int, const QPoint &)
 	btnBrowse->setDisabled(!serviceTask->agents()[row].canSearch());
 
 	selectedRow = row;
-	
+
 }
 
 void dlgJabberServices::slotQuery()
@@ -113,8 +113,8 @@ void dlgJabberServices::slotQuery()
 	connect(serviceTask, SIGNAL(finished()), this, SLOT(slotQueryFinished()));
 
 	/* populate server field if it is empty */
-	if(leServer->text().isEmpty())
-		leServer->setText(Jid(JabberProtocol::protocol()->myContact->contactId()).host());
+	//if(leServer->text().isEmpty())
+	//	leServer->setText(Jid(JabberProtocol::protocol()->myContact->contactId()).host());
 
 	kdDebug(14130) << "[dlgJabberServices] Trying to fetch a list of services at " << leServer->text() << endl;
 
@@ -138,7 +138,7 @@ void dlgJabberServices::slotQueryFinished()
 	}
 
 	tblServices->setNumRows(task->agents().count());
-	
+
 	int row = 0;
 	for(Jabber::AgentList::const_iterator it = task->agents().begin(); it != task->agents().end(); it++)
 	{

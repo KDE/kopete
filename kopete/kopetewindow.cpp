@@ -437,7 +437,7 @@ void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& stat
 	KIconLoader *loader = KGlobal::instance()->iconLoader();
 
 	QMovie mv = loader->loadMovie( status.overlayIcon(), KIcon::User, 0 );
-	
+
 	if ( mv.isNull() )
 	{
 		// No movie found, fallback to pixmap
@@ -476,7 +476,10 @@ void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
 //	kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconRightClicked()" << endl;
 	KActionMenu *menu = proto->protocolActions();
 	if( menu )
-		menu->popup( p );
+	{
+		menu->popupMenu()->exec( p );
+		delete menu;
+	}
 }
 
 void KopeteWindow::slotShowPreferencesDialog()

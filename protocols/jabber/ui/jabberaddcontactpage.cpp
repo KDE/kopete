@@ -46,7 +46,7 @@ void JabberAddContactPage::slotFinish(KopeteMetaContact *mc)
 {
     if (canadd) {
 	QString userID = jabData->addID->text();
-	plugin->addContact(mc, userID);
+	//plugin->addContact(mc, userID);
     } else {
 	return;
     }

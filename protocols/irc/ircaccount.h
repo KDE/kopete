@@ -120,11 +120,6 @@ private:
 	KIRC *mEngine;
 	QMap<QString, IRCChannelContact * > mChannels;
 	QMap<QString, IRCUserContact * > mUsers;
-	KAction *actionOnline;
-	KAction *actionOffline;
-	KAction *actionAway;
-	KActionMenu *mActionMenu;
-
 };
 
 #endif

@@ -34,7 +34,6 @@
 KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)
     : KopetePlugin( parent, name )
 {
-	m_menu=0L;
 }
 
 KopeteProtocol::~KopeteProtocol()
@@ -60,21 +59,23 @@ QString KopeteProtocol::statusIcon() const
 
 KActionMenu* KopeteProtocol::protocolActions()
 {
-	delete m_menu;
-	m_menu=0L;
 	QDict<KopeteAccount> dict=KopeteAccountManager::manager()->accounts(this);
-	QDictIterator<KopeteAccount> it( dict ); 
+	QDictIterator<KopeteAccount> it( dict );
 	if(dict.count() == 1 )
 	{
 		return (it.current())->actionMenu();
 	}
 
-	KActionMenu *m_menu=new KActionMenu(displayName(),pluginIcon(),this);
+	KActionMenu *m_menu = new KActionMenu(displayName(),pluginIcon(),this);
 
 	for( ; KopeteAccount *account=it.current(); ++it )
 	{
-		m_menu->insert(account->actionMenu());
+		KActionMenu *accountMenu = account->actionMenu();
+		accountMenu->parent()->removeChild( accountMenu );
+		m_menu->insertChild( accountMenu );
+		m_menu->insert( accountMenu );
 	}
+
 	return m_menu;
 }
 
@@ -85,7 +86,7 @@ const QDict<KopeteContact>& KopeteProtocol::contacts()
 
 QDict<KopeteContact> KopeteProtocol::contacts( KopeteMetaContact *mc )
 {
-	
+
 	QDict<KopeteContact> result;
 
 	QDictIterator<KopeteContact> it( contacts() );
@@ -133,7 +134,7 @@ void KopeteProtocol::slotMetaContactAboutToSave( KopeteMetaContact *metaContact 
 		sd[ QString::fromLatin1( "displayName" ) ] = contactIt.current()->displayName();
 		if(contactIt.current()->account())
 			sd[ QString::fromLatin1( "accountId" ) ] =   contactIt.current()->account()->accountId();
-		
+
 
 		// If there's an index field preset it too
 		QString index = contactIt.current()->protocol()->addressBookIndexField();
@@ -310,7 +311,7 @@ bool KopeteProtocol::addContactToMetaContact( const QString &, const QString &, 
 void KopeteProtocol::slotAccountAdded()
 {
 	QDict<KopeteAccount> dict=KopeteAccountManager::manager()->accounts(this);
-	QDictIterator<KopeteAccount> it( dict ); 
+	QDictIterator<KopeteAccount> it( dict );
 	for( ; KopeteAccount *account=it.current(); ++it )
 	{
 		if(account->myself())
@@ -337,7 +338,7 @@ void KopeteProtocol::slotRefreshStatusIcon()
 			}
 		}
 	}
-	
+
 	if( newStatus != m_status )
 	{
 		m_status = newStatus;
@@ -349,7 +350,7 @@ void KopeteProtocol::slotRefreshStatusIcon()
 KopeteContact* KopeteProtocol::myself() const
 {
 	QDict<KopeteAccount> dict=KopeteAccountManager::manager()->accounts(this);
-	QDictIterator<KopeteAccount> it( dict ); 
+	QDictIterator<KopeteAccount> it( dict );
 	for( ; KopeteAccount *account=it.current(); ++it )
 	{
 		if(account->myself())

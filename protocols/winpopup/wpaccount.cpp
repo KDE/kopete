@@ -65,9 +65,6 @@ WPAccount::WPAccount(WPProtocol *parent, const QString &accountID, const char *n
 	// we need this before initActions
 	theMyself = new WPContact(this, theHostName, theHostName, 0);
 
-	// Load Status Actions
-	initActions();
-
 	if(autoLogin()) connect();
 
 	QObject::connect(theInterface, SIGNAL(newMessage(const QString &, const QDateTime &, const QString &)), this, SLOT(slotGotNewMessage(const QString &, const QDateTime &, const QString &)));
@@ -170,6 +167,18 @@ void WPAccount::setAway(bool status, const QString &awayMessage)
 
 KActionMenu* WPAccount::actionMenu()
 {
+	DEBUG(WPDMETHOD, "WPAccount::actionMenu()");
+
+	KGlobal::config()->setGroup("WinPopup");
+	QString handle = "WinPopup (" + accountId() + ")";
+
+	KActionMenu *theActionMenu = new KActionMenu("WinPopup", this);
+	theActionMenu->popupMenu()->insertTitle(theMyself->icon(), handle);
+
+	theActionMenu->insert( new KAction("Online", "wp_available", 0, this, SLOT(connect()), theActionMenu, "actionGoAvailable") );
+	theActionMenu->insert( new KAction("Away", "wp_away", 0, this, SLOT(goAway()), theActionMenu, "actionGoAway") );
+	theActionMenu->insert( new KAction("Offline", "wp_offline", 0, this, SLOT(disconnect()), theActionMenu, "actionGoOffline") );
+
 	return theActionMenu;
 }
 
@@ -178,17 +187,6 @@ void WPAccount::slotSendMessage(const QString &Body, const QString &Destination)
 	DEBUG(WPDMETHOD, "WPAccount::slotSendMessage(" << Body << ", " << Destination << ")");
 
 	theInterface->sendMessage(Body, Destination);
-}
-
-void WPAccount::initActions()
-{
-	DEBUG(WPDMETHOD, "WPAccount::initActions()");
-
-	theActionMenu = new KActionMenu("WinPopup", this);
-	theActionMenu->popupMenu()->insertTitle(theMyself->icon(), "WinPopup (" + accountId() + ")");
-	theActionMenu->insert(new KAction("Online", "wp_available", 0, this, SLOT(connect()), this, "actionGoAvailable"));
-	theActionMenu->insert(new KAction("Away", "wp_away", 0, this, SLOT(goAway()), this, "actionGoAway"));
-	theActionMenu->insert(new KAction("Offline", "wp_offline", 0, this, SLOT(disconnect()), this, "actionGoOffline"));
 }
 
 #include "wpaccount.moc"

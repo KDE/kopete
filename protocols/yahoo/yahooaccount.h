@@ -58,7 +58,7 @@ public:
 
 	virtual KopeteContact *myself() const;				// returns our yahoo contact
 	YahooContact *contact(const QString &id);			// returns a contact of name "id"
-	virtual KActionMenu* actionMenu() { return theActionMenu; }
+	virtual KActionMenu* actionMenu();
 
 	virtual void setAway(bool, const QString &);			// set away status
 
@@ -136,9 +136,6 @@ private:
 	YahooSession *m_session;	// Connection Object
 	YahooContact *m_myself;		// Ourself
 
-	// gui related stuff
-	KActionMenu *theActionMenu;	// Statusbar Popup
-	void initActions();		// Load Status Actions
 	YahooAwayDialog *theAwayDialog;	// Our away message dialog
 };
 

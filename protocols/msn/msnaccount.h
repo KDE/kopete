@@ -152,12 +152,9 @@ private slots:
 	void slotAddContact( const QString &userName , const QString& displayName);
 
 private:
-	KActionMenu *m_actionMenu;
-	KAction *m_openInboxAction;
-	int m_menuTitleId;
-
 	MSNNotifySocket *m_notifySocket;
 	MSNContact *m_myself;
+	KAction *m_openInboxAction;
 
 	// status which will be using for connecting
 	KopeteOnlineStatus m_connectstatus;

@@ -168,12 +168,6 @@ protected:
 	 */
 	virtual void addServerContact(AIMBuddy *buddy);
 
-	/** Initializes our actions */
-	virtual void initActions();
-
-	/** Initializes our action menu */
-	virtual void initActionMenu();
-
 	/** Initializes the engine */
 	virtual void initEngine();
 
@@ -195,21 +189,6 @@ protected:
 
 	/** Our UserInfo */
 	UserInfo mUserInfo;
-
-	/** Our action menu */
-	KActionMenu *mActionMenu;
-
-	/** actions from aboves action menu */
-	KAction *mActionGoOnline;
-	KAction *mActionGoOffline;
-	KAction *mActionGoAway;
-	KAction *mActionGoNA;
-	KAction *mActionGoDND;
-	KAction *mActionGoOccupied;
-	KAction *mActionGoFFC;
-	KAction *mActionEditInfo;
-	KAction *mActionShowDebug;
-	KAction *mActionFastAddContact;
 
 	/** Our away dialog */
 	OscarChangeStatus *mAwayDialog;
