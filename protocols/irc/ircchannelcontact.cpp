@@ -68,25 +68,30 @@ IRCChannelContact::~IRCChannelContact()
 
 void IRCChannelContact::slotUpdateInfo()
 {
-	if( !m_isConnected )
+	/** This woudl be nice, but it generates server errors too often
+
+	if( !m_isConnected && onlineStatus() == m_protocol->m_ChannelStatusOnline )
 		m_engine->writeMessage( QString::fromLatin1("LIST %1").arg(m_nickName) );
 	else
 		setProperty( QString::fromLatin1("channelMembers"), i18n("Members"), manager()->members().count() );
 
-	/*if( m_isConnected )
+	*/
+
+	if( m_isConnected )
 		setProperty( QString::fromLatin1("channelMembers"), i18n("Members"), manager()->members().count() );
 	else
 	{
 		removeProperty( QString::fromLatin1("channelMembers") );
 		removeProperty( QString::fromLatin1("channelTopic") );
-	} */
+	}
+
 	mInfoTimer->start( 45000, true );
 }
 
 void IRCChannelContact::slotChannelListed( const QString &channel, uint members, const QString &topic )
 {
-	if( onlineStatus() == m_protocol->m_ChannelStatusOnline &&
-		!m_isConnected && channel.lower() == m_nickName.lower() )
+	if( !m_isConnected && onlineStatus() == m_protocol->m_ChannelStatusOnline
+		&& channel.lower() == m_nickName.lower() )
 	{
 		mTopic = topic;
 		setProperty( QString::fromLatin1("channelTopic"), i18n("Topic"), topic );
