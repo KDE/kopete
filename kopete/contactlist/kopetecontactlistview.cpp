@@ -40,6 +40,7 @@
 #include <kaction.h>
 
 #include "addcontactwizard.h"
+#include "addcontactpage.h"
 #include "kopeteevent.h"
 #include "kopetegroupviewitem.h"
 #include "kopetemetacontactlvi.h"
@@ -49,6 +50,9 @@
 #include "kopetestatusgroupviewitem.h"
 #include "kopeteviewmanager.h"
 #include "kopetestdaction.h"
+#include "kopeteaccountmanager.h"
+#include "kopeteaccount.h"
+#include "kopeteprotocol.h"
 
 #if QT_VERSION < 0x030100
 #include <qtooltip.h>
@@ -164,7 +168,8 @@ KopeteContactListView::KopeteContactListView( QWidget *parent,
 
 void KopeteContactListView::initActions(KActionCollection* ac)
 {
-	KAction *actionNewGroup=new KAction( i18n("Create New Group") , 0,0,this, SLOT( addGroup() ) , ac , "AddGroup"  );
+//	KAction *actionNewGroup=
+	new KAction( i18n("Create New Group") , 0,0,this, SLOT( addGroup() ) , ac , "AddGroup"  );
 
 	KAction *actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( slotSendMessage() ), ac, "contactSendMessage" );
 	KAction *actionStartChat =  KopeteStdAction::chat( this, SLOT( slotStartChat() ), ac, "contactStartChat" );
@@ -178,95 +183,30 @@ void KopeteContactListView::initActions(KActionCollection* ac)
 	actionRename = new KAction( i18n( "Rename" ), "filesaveas", 0, this, SLOT( slotRename() ), ac, "contactRename" );
 	actionSendFile = KopeteStdAction::sendFile( this, SLOT( slotSendFile() ), ac, "contactSendFile" );
 
+	actionAddContact= new KActionMenu( i18n( "&Add Contact" ), QString::fromLatin1( "bookmark_add" ), ac , "contactAddContact" );
+	actionAddContact->popupMenu()->insertTitle(i18n("Select Account"));
+
 
 	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)) , actionSendMessage , SLOT(setEnabled(bool)));
 	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)) , actionStartChat   , SLOT(setEnabled(bool)));
 	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)) , actionMove        , SLOT(setEnabled(bool))); //TODO: make avaliable for several contacts
 	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)) , actionCopy        , SLOT(setEnabled(bool))); //TODO: make avaliable for several contacts
 	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)),actionRemoveFromGroup,SLOT(setEnabled(bool))); //TODO: make avaliable for several contacts, and unavaliable when the contact is only in one group
-//	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)) , actionRename        , SLOT(setEnabled(bool))); //(also  availvable for groups
+	connect(KopeteContactList::contactList() , SIGNAL(metaContactSelected(bool)) , actionAddContact  , SLOT(setEnabled(bool)));
 
 
-	actionAddContact= new KActionMenu( i18n( "&Add Contact" ), QString::fromLatin1( "bookmark_add" ), ac , "contactAddContact" );
-
-	actionAddContact->popupMenu()->insertTitle(i18n("Select Account"));
-/*	addContactActions.clear(); TODO
 
 	QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
 	for( KopeteAccount *a = accounts.first() ; a ; a = accounts.next() )
 	{
-		KAction *aa=new KAction( a->accountId() , a->protocol()->pluginIcon() , 0 , this, SLOT( slotAddContact() ) , m_actionAddContact);
-		m_actionAddContact->insert(aa);
-		m_addContactActions.insert(aa,a);
-	}*/
+		KAction *aa=new KAction( a->accountId() , a->protocol()->pluginIcon() , 0 , this, SLOT( slotAddContact() ) , a);
+		actionAddContact->insert(aa);
+		//m_addContactActions.insert(aa,a);
+	}
 
+
+	//TODO
 	actionAddTemporaryContact = new KAction( i18n( "Add to Your Contact List" ), "bookmark_add", 0, this, SLOT( slotAddTemoraryContact() ), ac, "actionAddTemporaryContact" );
-
-
-
-	// Plug all items in the menu
-/*	popup->insertSeparator();
-	if( m_actionRemoveGroup )
-	{
-		m_actionMove->plug( popup );
-		m_actionCopy->plug( popup );
-	}
-
-	if(m_metaContact->isTemporary())
-		m_actionAddTemporaryContact->plug(popup);
-	m_actionAddContact->plug(popup);
-
-	m_actionRename->plug( popup );
-
-	if( m_actionRemoveGroup )
-		m_actionRemoveGroup->plug( popup );
-
-	m_actionRemove->plug( popup );
-
-	//-- Specific plugins actions
-	bool sep=true;
-	QPtrList<KopetePlugin> ps = LibraryLoader::pluginLoader()->plugins();
-	for( KopetePlugin *p = ps.first() ; p ; p = ps.next() )
-	{
-		KActionCollection *customActions = p->customContextMenuActions(m_metaContact);
-		if(customActions)
-		{
-			if(sep)
-			{
-				popup->insertSeparator();
-				sep=false;
-			}
-			for(unsigned int i = 0; i < customActions->count(); i++)
-			{
-				customActions->action(i)->plug( popup );
-			}
-		}
-	}
-
-	//-- Submenus for separate contacts actions
-	sep=true;
-	QPtrList<KopeteContact> it = m_metaContact->contacts();
-	for( KopeteContact *c = it.first(); c; c = it.next() )
-	{
-		if( sep )
-		{
-			popup->insertSeparator();
-			sep = false;
-		}
-		KPopupMenu *contactMenu = it.current()->popupMenu();
-		popup->insertChild( contactMenu );
-		popup->insertItem( c->onlineStatus().iconFor( c, 16 ),
-			i18n( "Translators: format: '<displayName> (<id>)'", "%2 (%1)" ).
-#if QT_VERSION < 0x030200
-				arg( c->contactId() ).arg( c->displayName() ),
-#else
-				arg( c->contactId(), c->displayName() ),
-#endif
-			contactMenu );
-	}
-
-	popup->exec( point );
-	delete popup;*/
 
 	//update enabled/disabled actions
 	slotSelectionChanged();
@@ -1620,7 +1560,7 @@ void KopeteContactListView::slotRemove()
 		}
 		else
 		{
-			msg = i18n( "Are you sure you want to remove theses groups ar contacts from your cotactlist?" );
+			msg = i18n( "Are you sure you want to remove theses groups or contacts from your cotactlist?" );
 		}
 
 		if( KMessageBox::questionYesNoList(this, msg , items , i18n("Remove - Kopete") , KStdGuiItem::yes(), KStdGuiItem::no(), "askRemovingContactOrGroup" )
@@ -1662,7 +1602,7 @@ void KopeteContactListView::slotRemove()
 void KopeteContactListView::slotRename()
 {
 	KopeteMetaContactLVI *metaLVI=dynamic_cast<KopeteMetaContactLVI*>(currentItem());
-	
+
 	if(metaLVI)
 		metaLVI->slotRename();
 	else if( KopeteContactList::contactList()->selectedGroups().count()==1)
@@ -1680,6 +1620,36 @@ void KopeteContactListView::slotRename()
 		if( !ok )
 			return;
 		group->setDisplayName(newname);
+	}
+}
+
+void KopeteContactListView::slotAddContact()
+{
+	if(!sender()) return;
+
+	KopeteMetaContact *metacontact=KopeteContactList::contactList()->selectedMetaContacts().first();
+	KopeteAccount *account=dynamic_cast<KopeteAccount*>(sender()->parent());
+
+	if( account && metacontact && !metacontact->isTemporary())
+	{
+		KDialogBase *addDialog= new KDialogBase( this, "addDialog", true, i18n( "Add Contact" ), KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true );
+
+		//addDialog->resize( 543, 379 );
+
+		AddContactPage *addContactPage = account->protocol()->createAddContactWidget(addDialog, account);
+		if (!addContactPage)
+		{
+			kdDebug(14000) << "KopeteContactListView::slotAddContact : error while creating addcontactpage" <<endl;
+		}
+		else
+		{
+			addDialog->setMainWidget(addContactPage);
+			if(addDialog->exec() == QDialog::Accepted && addContactPage->validateData())
+			{
+				addContactPage->apply(account , metacontact);
+			}
+		}
+		addDialog->deleteLater();
 	}
 }
 

@@ -128,6 +128,7 @@ private slots:
 	void slotRemoveFromGroup();
 	void slotRemove();
 	void slotRename();
+	void slotAddContact();
 
 
 private:
@@ -161,8 +162,8 @@ private:
 	KAction *actionRename;
 	KAction *actionRemove;
 	KAction *actionRemoveFromGroup;
-	KActionMenu *actionAddContact;
 	KAction *actionAddTemporaryContact;
+public: KActionMenu *actionAddContact; //it is public so the chatwinodw can handle sub actions
 
 
 };

@@ -480,6 +480,9 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *a )
 	KActionMenu *menu = a->actionMenu();
 	if( menu )
 		menu->plug( tray->contextMenu(), 1 );
+
+	// this should be placed in the contactlistview insteads of, but i am lazy to redo a new slot
+	contactlist->actionAddContact->insert(new KAction( a->accountId() , a->protocol()->pluginIcon() , 0 , contactlist , SLOT( slotAddContact() ) , a));
 }
 
 void KopeteWindow::slotAccountUnregistered( KopeteAccount *a)
