@@ -20,6 +20,8 @@
 
 #include "kircentity.h"
 
+using namespace KNetwork;
+
 const QRegExp KIRCEntity::sm_userRegExp(QString::fromLatin1("^([^\\s,:!@]+)(?:(?:!([^\\s,:!@]+))?(?:@([^\\s,!@]+)))?$"));
 const QRegExp KIRCEntity::sm_channelRegExp( QString::fromLatin1("^[#!+&][^\\s,:]+$") );
 

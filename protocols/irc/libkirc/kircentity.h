@@ -25,8 +25,6 @@
 #include <kdeversion.h>
 #include <kresolver.h>
 
-using namespace KNetwork;
-
 class KIRCEntity
 	: public QObject
 {
@@ -74,20 +72,21 @@ public:
 	inline static bool isChannel( const QString &s )
 		{ return sm_channelRegExp.exactMatch(s); };
 
-	inline KResolver::StatusCodes resolverStatus()
-		{ return (KResolver::StatusCodes)getResolver()->status(); }
+	inline KNetwork::KResolver::StatusCodes resolverStatus()
+		{ return (KNetwork::KResolver::StatusCodes)getResolver()->status(); }
 
-	KResolverResults resolve(bool *success = 0);
+	KNetwork::KResolverResults resolve(bool *success = 0);
 	void resolveAsync();
-	KResolverResults resolverResults()
+	KNetwork::KResolverResults resolverResults()
 		{ return getResolver()->results(); }
 
 signals:
-	void resolverResults(KResolverResults);
+	void resolverResults(KNetwork::KResolverResults);
 
 protected:
 	static QString userInfo(const QString &s, int num_cap);
-	KResolver *getResolver();
+	KNetwork::KResolver *getResolver();
+
 private:
 	static const QRegExp sm_userRegExp;
 	static const QRegExp sm_channelRegExp;
@@ -96,7 +95,7 @@ private:
 
 	// peer ip address if the entity is a User.
 	QString m_address;
-	KResolver *m_resolver;
+	KNetwork::KResolver *m_resolver;
 };
 
 #endif
