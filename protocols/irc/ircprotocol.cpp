@@ -26,6 +26,7 @@
 #include <klocale.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
+#include <kstatusbar.h>
 
 #include "ircprotocol.h"
 #include "irccontact.h"
@@ -38,6 +39,7 @@
 #include "ircmessage.h"
 #include "ircservermanager.h"
 #include "kopetecontactlist.h"
+#include "kopetewindow.h"
 
 ///////////////////////////////////////////////////
 //           Constructor & Destructor

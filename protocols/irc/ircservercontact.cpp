@@ -31,6 +31,7 @@
 #include <kpopupmenu.h>
 #include <kfiledialog.h>
 #include <kstddirs.h>
+#include <kiconloader.h>
 
 #include "kirc.h"
 #include "dccconfirm.h"

@@ -33,6 +33,7 @@
 #include <kglobal.h>
 #include <ksimpleconfig.h>
 #include <ktextbrowser.h>
+#include <kiconloader.h>
 
 #include <ircchatwindow.h>
 
@@ -41,6 +42,7 @@
 #include "irccontact.h"
 #include "ircservercontact.h"
 #include "kopetecontactlist.h"
+#include "kopetewindow.h"
 
 
 IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, QString &protocolID)
