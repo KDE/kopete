@@ -499,7 +499,12 @@ class KPluginSelector::KPluginSelectorPrivate
     d->widgetstack->setFrameStyle( QFrame::Panel | QFrame::Sunken );
     d->widgetstack->setMinimumSize( 200, 200 );
 
+#if KDE_IS_VERSION( 3, 1, 92 )
+    splitter->setOpaqueResize( KGlobalSettings::opaqueResize() );
+#else
     splitter->setOpaqueResize( true );
+#endif
+
     splitter->setResizeMode( d->widgetstack, QSplitter::FollowSizeHint );
 
     QLabel * label = new QLabel( i18n( "this plugin is not configurable" ),
