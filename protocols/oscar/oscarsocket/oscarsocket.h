@@ -123,6 +123,10 @@ public:
   void setMyProfile(const QString &profile);
   /** Returns the user's profile */
   inline QString getMyProfile(void) { return myUserProfile; };
+  /** Blocks user sname */
+  void sendBlock(const QString &sname);
+  /** Removes the block on user sname */
+  void sendRemoveBlock(const QString &sname);
 public slots: // Public slots
   /** This is called when a connection is established */
   void OnConnect(void);

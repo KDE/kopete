@@ -128,6 +128,39 @@ void SSIData::print(void)
 		} 
 }
 
+/** Adds the given sn to the list of blocked sn's */
+SSI *SSIData::addBlock(const QString &name)
+{
+	SSI *newitem = new SSI;
+	newitem->name = name;
+	newitem->gid = 0;
+	//find the largest bid (=buddy id) in our group
+	unsigned short maxbid = 0;
+	for (SSI *i=first(); i; i = next())
+	{
+			if ((newitem->gid == i->gid) && (i->bid > maxbid))
+				maxbid = i->bid;
+	}
+	newitem->bid = maxbid + 1;
+	newitem->type = 0x0003; // the type here is deny
+	newitem->tlvlist = NULL;
+	newitem->tlvlength = 0;
+	append(newitem);
+	return newitem;
+}
+
+/** Finds the given buddy in the deny list... return NULL if not found */
+SSI *SSIData::findDeny(const QString &name)
+{
+	for (SSI *i=first(); i; i = next())
+	{
+		if ((current()->name == name) && (current()->type == 0x0003))
+			return current();
+	}
+	return 0L;
+}
+
+
 /*
  * Local variables:
  * c-indentation-style: gnu

@@ -939,30 +939,34 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 	    TBuddy *bud;
 	    switch (ssi->type) {
 	    case 0x0000: //buddy
-		bud = new TBuddy;
-		bud->name = ssi->name;
-		bud->group = curgroup;
-		bud->status = OSCAR_OFFLINE;
-		kdDebug() << "[OSCAR] Adding " << ssi->name <<  "to group " << curgroup
-			  << " (" << blist.buddyList.getNameGroup(curgroup) << ")" << endl;
-		blist.buddyList.add(bud);
-		break;
+				bud = new TBuddy;
+				bud->name = ssi->name;
+				bud->group = curgroup;
+				bud->status = OSCAR_OFFLINE;
+				kdDebug() << "[OSCAR] Adding " << ssi->name <<  "to group " << curgroup
+			  	<< " (" << blist.buddyList.getNameGroup(curgroup) << ")" << endl;
+				blist.buddyList.add(bud);
+				break;
 	    case 0x0001: //group
-		if (namelen) //if it's not the master group
+				if (namelen) //if it's not the master group
 		    {
-			blist.buddyList.addGroup(ssi->name);
-			curgroup++;
+					blist.buddyList.addGroup(ssi->name);
+					curgroup++;
 		    }
-		break;
+				break;
 	    case 0x0002: // TODO permit buddy
-		break;
+				break;
 	    case 0x0003: // TODO deny buddy
-		break;
+				bud = new TBuddy;
+				bud->name = ssi->name;
+				kdDebug() << "[OSCAR] Adding " << ssi->name <<  "to deny list." << endl;
+				blist.denyList.add(bud);
+				break;	    	
 	    case 0x0004: // TODO permit-deny setting
-		break;
-	    };
+				break;
+	   	};
 	    if (name)
-		delete name;
+				delete name;
 	}
     blist.timestamp = inbuf.getDWord();
     kdDebug() << "[OSCAR] Finished getting buddy list" << endl;
@@ -1083,21 +1087,21 @@ void OscarSocket::parseLocateRights(Buffer &/*inbuf*/)
 {
 	//we don't care what the locate rights are
 	//and we don't know what they mean
-    requestBuddyRights();
+  //  requestBuddyRights();
 }
 
 /** Parses buddy list rights from the server */
 void OscarSocket::parseBuddyRights(Buffer &/*inbuf*/)
 {
     //NOTE TO TOM: write code to parse buddy rights info
-    requestMsgRights();
+    //requestMsgRights();
 }
 
 /** Parses msg rights info from server */
 void OscarSocket::parseMsgRights(Buffer &/*inbuf*/)
 {
     //NOTE TO TOM: write code to parse this
-    requestBOSRights();
+    //requestBOSRights();
 }
 
 /** Parses an incoming IM */
@@ -2055,6 +2059,41 @@ void OscarSocket::setMyProfile(const QString &profile)
 	myUserProfile = profile;
 	if (isConnected)
 		sendMyProfile();
+}
+
+/** Blocks user sname */
+void OscarSocket::sendBlock(const QString &sname)
+{
+	kdDebug() << "[OSCAR] Sending block buddy" << endl;
+  SSI *newitem = ssiData.addBlock(sname);
+  if (!newitem)
+	{
+	   return;
+	}
+  kdDebug() << "[OSCAR] Adding DENY:" << newitem->name << ", gid " << newitem->gid
+	      << ", bid " << newitem->bid << ", type " << newitem->type
+	      << ", datalength " << newitem->tlvlength << endl;
+  sendSSIAddModDel(newitem,0x0008);
+}
+
+/** Removes the block on user sname */
+void OscarSocket::sendRemoveBlock(const QString &sname)
+{
+	kdDebug() << "[OSCAR] Removing block on " << sname << endl;
+  SSI *delitem = ssiData.findDeny(sname);
+  if (!delitem)
+	{
+		kdDebug() << "[OSCAR] Item with name " << sname << "not found" << endl;
+	 	emit protocolError(sname + " was not found on the server's deny list and cannot be deleted.",0);
+	  return;
+	}
+  kdDebug() << "[OSCAR] Deleting " << delitem->name << ", gid " << delitem->gid
+		<< ", bid " << delitem->bid << ", type " << delitem->type
+	  << ", datalength " << delitem->tlvlength << endl;
+	sendSSIAddModDel(delitem,0x000a);
+  if (!ssiData.remove(delitem))
+		kdDebug() << "[OSCAR][sendRemoveBlock] delitem was not found in the SSI list" << endl;
+	ssiData.print();
 }
 
 /*

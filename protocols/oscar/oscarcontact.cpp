@@ -212,6 +212,7 @@ void OscarContact::initActions(void)
 	actionCollection = 0L;
 
 	actionWarn = new KAction(i18n("&Warn"), 0, this, SLOT(slotWarn()), this, "actionWarn");
+	actionBlock = new KAction(i18n("&Block"), 0, this, SLOT(slotBlock()), this, "actionBlock");
 }
 
 /** Returns the status icon of the contact */
@@ -369,6 +370,7 @@ KActionCollection *OscarContact::customContextMenuActions(void)
 
 	actionCollection = new KActionCollection(this);
 	actionCollection->insert( actionWarn );
+	actionCollection->insert( actionBlock );
 	return actionCollection;
 }
 
@@ -394,9 +396,6 @@ void OscarContact::slotDeleteContact(void)
 
 void OscarContact::slotWarn()
 {
-	//this is here for testing purposes
-	//mProtocol->engine->sendDirectIMRequest(mName);
-
 	QString message = i18n( "<qt>Would you like to warn %1 anonymously?" \
 	" Select \"Yes\" to warn anonymously, \"No\" to warn" \
 	" the user showing them your name, or \"Cancel\" to abort" \
@@ -404,7 +403,7 @@ void OscarContact::slotWarn()
 	" increasing for the user you warn. Once this level has reached a" \
 	" certain point, they will not be able to sign on. Please do not abuse" \
 	" this function, it is meant for legitimate practices.)</qt>" ).arg(mName);
-	QString title = i18n("Warn User %1?").arg(mName);
+	QString title = i18n("Warn User %1 anonymously?").arg(mName);
 
 	int result = KMessageBox::questionYesNoCancel(qApp->mainWidget(), message, title);
 	if (result == KMessageBox::Yes)
@@ -503,6 +502,21 @@ void OscarContact::slotMoved(KopeteMetaContact * /*old */)
 {
 	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ),
 		protocol(), SLOT (serialize(KopeteMetaContact*) ));
+}
+
+/** Called when we want to block the contact */
+void OscarContact::slotBlock(void)
+{
+	QString message = i18n( "<qt>Are you sure you want to block %1? \
+	Once blocked, this user will no longer be visible to you. The block can be \
+	removed later in the preferences dialog.</qt>" ).arg(mName);
+	QString title = i18n("Block User %1?").arg(mName);
+
+	int result = KMessageBox::questionYesNo(qApp->mainWidget(), message, title);
+	if (result == KMessageBox::Yes)
+	{
+		mProtocol->engine->sendBlock(mName);
+	}
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

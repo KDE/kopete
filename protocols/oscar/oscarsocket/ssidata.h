@@ -47,9 +47,14 @@ public:
   /** Adds a group to the local ssi data */
   SSI *addGroup(const QString &name);
   /** Finds the buddy with given name and group... returns NULL if not found */
-  SSI * findBuddy(const QString &name, const QString &group);
+  SSI *findBuddy(const QString &name, const QString &group);
   /** Prints out the SSI data */
   void print(void);
+  /** Adds the given sn to the list of blocked sn's */
+  SSI *addBlock(const QString &name);
+  /** Finds the given buddy in the deny list... return NULL if not found */
+  SSI *findDeny(const QString &name);
 };
 
 #endif
+
