@@ -200,7 +200,6 @@ void
 GaduPublicDir::slotSearchResult( const SearchResult& result )
 {
 	QListView* list = mMainWidget->listFound;
-	int i;
 
 	kdDebug(14100) << "searchResults(" << result.count() <<")" << endl;
 
