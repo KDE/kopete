@@ -289,6 +289,23 @@ QString KopeteMessage::unescape( const QString &xml )
 	return data;
 }
 
+QString KopeteMessage::escape( const QString &text )
+{
+	QString html = QStyleSheet::escape( text );
+ 	//Replace carriage returns inside the text
+	html.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br />" ) );
+	//Replace a tab with 4 spaces
+	html.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
+
+	//Replace multiple spaces with &nbsp;
+	//do not replace every space so we break the linebreak
+	html.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
+
+	return html;
+}
+
+
+
 QString KopeteMessage::plainBody() const
 {
 	QString body=d->body;
@@ -305,16 +322,7 @@ QString KopeteMessage::escapedBody() const
 
 	if( d->format & PlainText )
 	{
-		escapedBody = QStyleSheet::escape( escapedBody );
- 		//Replace carriage returns inside the text
-		escapedBody.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br />" ) );
-
-		//Replace a tab with 4 spaces
-		escapedBody.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
-
-		//Replace multiple spaces with &nbsp;
-		//do not replace every space so we break the linebreak
-		escapedBody.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
+		escapedBody=escape( escapedBody );
 	}
 
 	return escapedBody;

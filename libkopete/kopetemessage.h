@@ -2,8 +2,9 @@
     kopetemessage.h  -  Base class for Kopete messages
 
     Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
+    Copyright (c) 2002-2004 by Olivier Goffart       <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -338,6 +339,13 @@ public:
 	*/
 	static QString unescape( const QString &xml );
 
+	/**
+	 * @brief Transform a pleintext message to an html.
+	 * it escape main entity like &gt; &lt; add some &lt;br /&gt; or &amp;nbsp
+	 */
+	static QString escape( const QString & );
+
+	
 	/**
 	 * Helper function to decode a string. Whatever returned here is *nearly guarenteed* to
 	 * be parseable by the XML engine.

@@ -20,7 +20,6 @@
 #include "kopetecontact.h"
 
 #include <qapplication.h>
-#include <qstylesheet.h>
 
 #include <kdebug.h>
 
@@ -45,7 +44,6 @@
 
 //For the moving to another metacontact dialog
 #include <qlabel.h>
-#include <qstylesheet.h>
 #include <qmime.h>
 #include <qvbox.h>
 #include <klistview.h>
@@ -683,16 +681,16 @@ QString KopeteContact::toolTip() const
 	{
 		tip = i18n( "<b>DISPLAY NAME</b><br><img src=\"%2\">&nbsp;CONTACT STATUS",
 			"<b><nobr>%3</nobr></b><br><img src=\"%2\">&nbsp;%1" ).
-			arg( QStyleSheet::escape( onlineStatus().description() ), iconName,
-				QStyleSheet::escape( d->contactId ) );
+			arg( KopeteMessage::escape( onlineStatus().description() ), iconName,
+				KopeteMessage::escape( d->contactId ) );
 	}
 	else
 	{
 		tip = i18n( "<b>DISPLAY NAME</b> (CONTACT ID)<br><img src=\"%2\">&nbsp;CONTACT STATUS",
 			"<nobr><b>%4</b> (%3)</nobr><br><img src=\"%2\">&nbsp;%1" ).
-				arg( QStyleSheet::escape( onlineStatus().description() ), iconName,
-					QStyleSheet::escape( contactId() ),
-					QStyleSheet::escape( nick ) );
+				arg( KopeteMessage::escape( onlineStatus().description() ), iconName,
+					KopeteMessage::escape( contactId() ),
+					KopeteMessage::escape( nick ) );
 	}
 
 	// --------------------------------------------------------------------------
@@ -725,7 +723,7 @@ QString KopeteContact::toolTip() const
 			{
 				tip += i18n("<br><b>Home Page:</b>&nbsp;FORMATTED URL",
 					"<br><b>Home Page:</b>&nbsp;<a href=\"%1\"><nobr>%2</nobr></a>").
-					arg( KURL::encode_string( url ), QStyleSheet::escape( url ) );
+					arg( KURL::encode_string( url ), KopeteMessage::escape( url ) );
 			}
 		}
 		else if ((*it) == QString::fromLatin1("awayMessage"))
@@ -760,7 +758,7 @@ QString KopeteContact::toolTip() const
 						if( p.isRichText() )
 							valueText = val.toString();
 						else
-							valueText = QStyleSheet::escape( val.toString() );
+							valueText = KopeteMessage::escape( val.toString() );
 				}
 
 				tip += i18n("<br><b>PROPERTY LABEL:</b>&nbsp;PROPERTY VALUE",
