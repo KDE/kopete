@@ -35,6 +35,7 @@ static KCmdLineOptions opts[] =
  { "error", I18N_NOOP("Claim password was erroneous"), "" },
  { "prompt <prompt>", I18N_NOOP("Password prompt"), "Enter a password" },
  { "image <filename>", I18N_NOOP("Image to display in password dialog"), "" },
+ KCmdLineLastOption
 };
 
 int main( int argc, char *argv[] )
