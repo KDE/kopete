@@ -206,6 +206,8 @@ private slots:
 	void slotGoOutToLunch();
 	void slotGoInvisible();
 
+	void slotStartChat();
+
 
 	void slotMessageSent( const KopeteMessage& msg, KopeteMessageManager *manager );
 
@@ -291,10 +293,10 @@ private slots:
 	 * An MSN contact got deleted. Clean up the necessary data
 	 */
 	void slotContactDestroyed( KopeteContact *c );
-  /** 
-   * eventually add a contact if the contact does not exist  (O.G.)
-   */
-  void slotUpdateChatMember(QString handle, bool add, QString publicName);
+	/** 
+	 * eventually add a contact if the contact does not exist 
+	 */
+	void slotUpdateChatMember(QString handle, QString publicName,bool, MSNSwitchBoardSocket* service);
 
 private:
 	/**
@@ -333,6 +335,7 @@ private:
 	KAction* actionGoOutToLunch;
 	KAction* actionGoInvisible;
 	KAction* m_renameAction;
+	KAction* m_startChatAction;
 
 	KActionMenu *m_debugMenu;
 	KAction *m_debugRawCommand;
@@ -373,6 +376,7 @@ private:
 
 	QStringList m_allowList;
 	QStringList m_blockList;
+
 };
 
 #endif

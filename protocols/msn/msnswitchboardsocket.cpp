@@ -35,8 +35,9 @@
 
 
 
-MSNSwitchBoardSocket::MSNSwitchBoardSocket()
+MSNSwitchBoardSocket::MSNSwitchBoardSocket(int _id)
 {
+	mId=_id;
 }
 
 MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
@@ -69,6 +70,13 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 {
 	switch( code )
 	{
+		case 208:
+		{
+			QString msg = i18n( "Invalid user! \n"
+				"This MSN user does not exist. Please check the MSN ID" );
+			KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+			break;
+		}
 		case 217:
 		{
 			// TODO: we need to know the nickname instead of the handle.
@@ -103,7 +111,7 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint /* id */,
 		emit switchBoardIsActive(true);   
 		QString handle = data.section( ' ', 0, 0 );
 		QString screenname = data.section( ' ', 1, 1 );
-    emit updateChatMember( handle, true, screenname );
+    emit updateChatMember( handle, screenname, true, this );
     
 		if( !m_chatMembers.contains( handle ) )
 			m_chatMembers.append( handle );
@@ -120,7 +128,7 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint /* id */,
 
       
     QString screenname = data.section( ' ', 3, 3);
-		emit updateChatMember( handle,  true, screenname);
+		emit updateChatMember( handle,  screenname, true, this);
 	}
 	else if( cmd == "USR" )
 	{
@@ -437,7 +445,7 @@ void MSNSwitchBoardSocket::sendMessageQueue() //O.G.
 
 void MSNSwitchBoardSocket::userLeftChat( QString handle ) //O.G.
 {
-		emit updateChatMember( handle, false, QString::null );
+		emit updateChatMember( handle, QString::null, false, this );
 		if( m_chatMembers.contains( handle ) )
 			m_chatMembers.remove( handle );
 

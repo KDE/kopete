@@ -35,7 +35,10 @@ class MSNSwitchBoardSocket : public MSNSocket
 	Q_OBJECT
 
 public:
-	MSNSwitchBoardSocket();
+	/**
+	 * Contructor: id is the KopeteMessageMangager's id
+	 */
+	MSNSwitchBoardSocket(int id);
 	~MSNSwitchBoardSocket();
 
 protected:
@@ -72,6 +75,7 @@ public:
 	void setMsgHandle( QString handle ) { m_msgHandle = handle; }
 
 	const QStringList &chatMembers() { return m_chatMembers; }
+	int id() {return mId; }
 
  	void userLeftChat( QString handle );
 
@@ -91,24 +95,21 @@ signals:
 	void startChat(MSNSwitchBoardSocket* switchoard);
 	void userTypingMsg(QString);
 	void msgAcknowledgement(bool);
-//	void userInChat(QString); //unused
-//	void chatWith(QString,bool);  //unused
 	void switchBoardIsActive(bool);  
-  /**
-   *  updateChatMember(handle, 'true' for add and 'false' for remove, public name );
-   */
-	void updateChatMember(QString,bool,QString);
+	/**
+	 *  updateChatMember();
+	 *  	if add=true, the contact join the chat, else, the contact leave.
+	 */
+	void updateChatMember(QString handle,QString plublicName, bool add ,MSNSwitchBoardSocket* switchboard );
 	void switchBoardClosed( MSNSwitchBoardSocket* switchboard );
 
 private:
 	QStringList m_chatMembers;
+	int mId;	//id of the KopeteMessageManager
 
-  //Messages sent before the ending of the connection are queued
-  QValueList<KopeteMessage> m_messagesQueue;
-
-private: // Private methods
-  /** No descriptions */
-  void sendMessageQueue();
+	//Messages sent before the ending of the connection are queued
+	QValueList<KopeteMessage> m_messagesQueue;
+	void sendMessageQueue();
 };
 
 #endif

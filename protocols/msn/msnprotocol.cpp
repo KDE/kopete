@@ -287,17 +287,24 @@ bool MSNProtocol::serialize( KopeteMetaContact *metaContact,
 {
 	//kdDebug() << "MSNProtocol::serialize " << metaContact->displayName()
 	//<< endl;
-	MSNContact *c = m_metaContacts.find( metaContact );
+	//MSNContact *c = m_metaContacts.find( metaContact );
+	bool r=false;
 
-	if( c )
+	QPtrList<KopeteContact> contacts = metaContact->contacts();
+	for( 	KopeteContact *c = contacts.first(); c ; c = contacts.next() )
 	{
-		stream << c->id() << c->displayName() << c->groups().join( "," );
-		return true;
+		if ( c->protocol() != this->id() ) // not our contact, next one please
+				continue;
+		
+		MSNContact *g = static_cast<MSNContact*>(c);
+		
+		if( g )
+		{
+			stream << g->id() << g->displayName() << g->groups().join( "," );
+			r=true;
+		}
 	}
-	else
-	{
-		return false;
-	}
+	return r;
 }
 
 void MSNProtocol::deserialize( KopeteMetaContact *metaContact,
@@ -393,6 +400,11 @@ void MSNProtocol::initActions()
 		this, "m_renameAction" );
 	actionStatusMenu = new KActionMenu( "MSN", this );
 
+	m_startChatAction = new KAction ( i18n( "&Start chat..." ), "mail_generic", 0, this, SLOT( slotStartChat() ),
+		this, "m_renameAction" );
+	actionStatusMenu = new KActionMenu( "MSN", this );
+
+
 	m_debugMenu = new KActionMenu( "Debug", this );
 	m_debugRawCommand = new KAction( i18n( "Send Raw C&ommand..." ), 0,
 		this, SLOT( slotDebugRawCommand() ), this, "m_debugRawCommand" );
@@ -412,6 +424,7 @@ void MSNProtocol::initActions()
 
 	actionStatusMenu->popupMenu()->insertSeparator();
 	actionStatusMenu->insert( m_renameAction );
+	actionStatusMenu->insert( m_startChatAction );
 
 	actionStatusMenu->popupMenu()->insertSeparator();
 	actionStatusMenu->insert( m_debugMenu );
@@ -503,8 +516,21 @@ void MSNProtocol::setStatus(Status s)
 		m_connectstatus=s;
 		Connect();
 	}
-}   
+}
 
+void MSNProtocol::slotStartChat()
+{
+	bool ok;
+	QString handle = KLineEditDlg::getText(
+		i18n( "Start chat - MSN Plugin" ),
+		i18n( "Please enter the mail address of the person with whom you want to chat" ),
+		QString::null, &ok );
+	if( ok )
+	{
+		m_msgHandle = handle;
+		m_notifySocket->createChatSession();
+	}
+}
 
 void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 {
@@ -1060,7 +1086,7 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 	{
 		// contact not found, create new one
 		if( list == "FL" )
-		{        
+		{
 			KopeteContactList *l = KopeteContactList::contactList();
 			KopeteMetaContact *m = l->findContact( this->id(), QString::null, handle );
 
@@ -1161,11 +1187,6 @@ void MSNProtocol::setPublicName( const QString &publicName )
 	m_notifySocket->changePublicName( publicName );
 }
 
-void MSNProtocol::slotCreateChat( QString address, QString auth)
-{
-	slotCreateChat( 0L, address, auth, m_msgHandle, publicName() );
-}
-
 void MSNProtocol::slotMessageSent( const KopeteMessage& msg, KopeteMessageManager *manager )
 {
 	kdDebug() << "MSNProtocol::slotMessageSent: Message sent to " <<
@@ -1187,21 +1208,54 @@ void MSNProtocol::slotMessageSent( const KopeteMessage& msg, KopeteMessageManage
 		kdDebug() << "MSNProtocol::slotMessageSent: Creating new "
 			<< "SwitchBoardSocket for " << contact->msnId() << "!" << endl;
 
-     
 		slotStartChatSession( contact->msnId() );
-    m_msgQueued=new KopeteMessage(msg);
+		m_msgQueued=new KopeteMessage(msg);
 	}
 }
 
+void MSNProtocol::slotCreateChat( QString address, QString auth)
+{
+	slotCreateChat( 0L, address, auth, m_msgHandle, m_msgHandle );
+}
+
 void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
-	QString handle, QString /* publicName */ )
+	QString handle, QString  publicName  )
 {
 	kdDebug() << "MSNProtocol::slotCreateChat: Creating chat for " <<
 		handle << endl;
 
+	if( !m_contacts.contains( handle ) )
+	{
+		KopeteMetaContact *m = KopeteContactList::contactList()->findContact( id(), QString::null, handle );
+		if(m)
+		{
+			KopeteContact *c=m->findContact( id(), QString::null, handle );
+			MSNContact *msnContact=static_cast<MSNContact*>(c);
+			m_contacts.insert( handle, msnContact );
+		}
+		else
+		{
+			m=new KopeteMetaContact();
+			m->setTemporary(true);
+			QString protocolid = this->id();
+
+			MSNContact *msnContact = new MSNContact( protocolid, handle, publicName, QString::null, m );
+			connect( msnContact, SIGNAL( contactDestroyed( KopeteContact * ) ),
+				SLOT( slotContactDestroyed( KopeteContact * ) ) );
+			m_metaContacts.insert( m, msnContact );
+
+			m->addContact( msnContact, QStringList() );
+			KopeteContactList::contactList()->addMetaContact(m);
+
+			m_contacts.insert( msnContact->msnId(), msnContact );
+		}
+	}
+
+
 	KopeteContact *c = m_contacts[ handle ];
 	if ( c && m_myself )
 	{
+		//FIXME: we need to add in kopete's api something to add non contact-list contact
 		KopeteContactPtrList chatmembers;
 		chatmembers.append(c);
 
@@ -1209,14 +1263,14 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 			m_myself, chatmembers, this, QString( "msn_logs/" + ID + ".log" ) );
 
 		// FIXME: Don't we leak this ?
-		MSNSwitchBoardSocket *chatService = new MSNSwitchBoardSocket();
+		MSNSwitchBoardSocket *chatService = new MSNSwitchBoardSocket(manager->id());
 		chatService->setHandle( m_msnId );
 		chatService->setMsgHandle( handle );
 		chatService->connectToSwitchBoard( ID, address, auth );
 		m_switchBoardSockets.insert( manager, chatService );
 
-		connect( chatService, SIGNAL( updateChatMember(QString,bool,QString)),
-			this, SLOT( slotUpdateChatMember(QString,bool,QString) ) );
+		connect( chatService, SIGNAL( updateChatMember(QString,QString,bool,MSNSwitchBoardSocket*)),
+			this, SLOT( slotUpdateChatMember(QString,QString,bool,MSNSwitchBoardSocket*) ) );
 
 
 		connect( chatService, SIGNAL( msgReceived( const KopeteMessage & ) ),
@@ -1364,10 +1418,57 @@ void MSNProtocol::slotContactDestroyed( KopeteContact *c )
 	m_metaContacts.remove( c->metaContact() );
 }
 
-void MSNProtocol::slotUpdateChatMember(QString handle, bool add, QString publicName)
+void MSNProtocol::slotUpdateChatMember(QString handle, QString publicName, bool add, MSNSwitchBoardSocket* service)
 {
 	if( add && !m_contacts.contains( handle ) )
-		slotContactList( handle, publicName, "" , "FL" );
+	{
+		KopeteMetaContact *m = KopeteContactList::contactList()->findContact( id(), QString::null, handle );
+		if(m)
+		{
+			KopeteContact *c=m->findContact( id(), QString::null, handle );
+			MSNContact *msnContact=static_cast<MSNContact*>(c);
+			m_contacts.insert( handle, msnContact );
+		}
+		else
+		{
+			m=new KopeteMetaContact();
+			m->setTemporary(true);
+			QString protocolid = this->id();
+
+			MSNContact *msnContact = new MSNContact( protocolid, handle, publicName, QString::null, m );
+			connect( msnContact, SIGNAL( contactDestroyed( KopeteContact * ) ),
+				SLOT( slotContactDestroyed( KopeteContact * ) ) );
+			m_metaContacts.insert( m, msnContact );
+
+			m->addContact( msnContact, QStringList() );
+			KopeteContactList::contactList()->addMetaContact(m);
+
+			m_contacts.insert( msnContact->msnId(), msnContact );
+		}
+
+	}
+
+	KopeteMessageManager *manager =  kopeteapp->sessionFactory()->findKopeteMessageManager(service->id());
+	if(!manager)
+	{
+		kdDebug() << "MSNProtocol::slotUpdateChatMember : WARNING - no KopeteMessageManager found with id " << service->id() << endl;
+		return;
+	}
+
+	MSNContact *c=m_contacts[handle];
+	if(!c)
+	{
+		kdDebug() << "MSNProtocol::slotUpdateChatMember : WARNING - KopeteContact not found"  << endl;
+		return;
+	}
+
+	kdDebug() << "MSNProtocol::slotUpdateChatMember : ok"  << endl;
+	
+	if(add)
+		manager->addContact(c);
+	else
+		manager->removeContact(c);
+	
 }
 
 

@@ -80,6 +80,14 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	// TODO: Add support for all of these!
 	switch( code )
 	{
+	case 201:
+	case 205:
+	{
+		QString msg = i18n( "Invalid user! \n"
+			"This MSN user does not exist. Please check the MSN ID" );
+		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+		break;
+	}
 	case 215:
 	{
 		QString msg = i18n( "This MSN user already exists in this group!\n"
@@ -100,14 +108,13 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 		break;
 	}
-	case 201:  
-	case 205:
+	case 913:
 	{
-		QString msg = i18n( "Invalid user! \n"
-			"This MSN user does not exist. Please check the MSN ID" );
+		QString msg = i18n( "You cannot send messages when you are offline or when you appear offline" );
 		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 		break;
 	}
+
 	default:
 		MSNAuthSocket::handleError( code, id );
 		break;
