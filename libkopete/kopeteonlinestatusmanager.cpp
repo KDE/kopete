@@ -246,16 +246,26 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 		OnlineStatus status=it.key();
 		QString caption=it.data().caption;
 		KAction *action;
-		if(options & OnlineStatusManager::HasAwayMessage)
+
+		// Any existing actions owned by the account are reused by recovering them 
+		// from the parent's child list. 
+		// The description of the onlinestatus is used as the qobject name
+		// This is safe as long as OnlineStatus are immutable
+		QCString actionName = status.description().ascii();
+		if ( !( action = static_cast<KAction*>( account->child( actionName ) ) ) )
 		{
-			action = new AwayAction( status, caption, status.iconFor(account), 0, account,
-					SLOT( setOnlineStatus( const Kopete::OnlineStatus&, const QString& ) ),
-					account );
-		}
-		else
-		{
-			action=new OnlineStatusAction( status, caption, status.iconFor(account) , parent  );
-			connect(action,SIGNAL(activated(const Kopete::OnlineStatus&)) , account, SLOT(setOnlineStatus(const Kopete::OnlineStatus&)));
+			if(options & OnlineStatusManager::HasAwayMessage)
+			{
+				action = new AwayAction( status, caption, status.iconFor(account), 0, account,
+						SLOT( setOnlineStatus( const Kopete::OnlineStatus&, const QString& ) ),
+						account, actionName );
+			}
+			else
+			{
+				action=new OnlineStatusAction( status, caption, status.iconFor(account) , account, actionName );
+				connect(action,SIGNAL(activated(const Kopete::OnlineStatus&)) , 
+						account, SLOT(setOnlineStatus(const Kopete::OnlineStatus&)));
+			}
 		}
 
 		if(options & OnlineStatusManager::DisabledIfOffline  && !account->isConnected())
