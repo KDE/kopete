@@ -21,6 +21,9 @@ o Main Application
 	o New Preference system (Martijn, Matt, Olivier)
 	o ChatWindow is a plugin internaly (Olivier)
 	o New chat window group policy: Group per metacontact and per groups (Jason)
+	o Use KWallet when compiled against KDE 3.2 for secure password storage (Martijn)
+	o Rewrite of the plugin loader to make full use of KTrader (Martijn)
+	o Show the online status icon in the tooltip (Martijn)
 o MSN
 	o New account edit page, that allow to set phone numbers, and set if we want to
 	   block spam from unknown people, and show the reverse contactlist (Olivier)
