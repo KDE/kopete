@@ -50,7 +50,10 @@ void IRCUserContact::updateStatus()
 		break;
 	case KIRC::Connecting:
 	case KIRC::Authentifying:
-		setOnlineStatus(m_protocol->m_UserStatusConnecting);
+		if(this == m_account->mySelf())
+			setOnlineStatus(m_protocol->m_UserStatusConnecting);
+		else
+			setOnlineStatus(m_protocol->m_UserStatusOffline);
 		break;
 	case KIRC::Connected:
 	case KIRC::Closing:

@@ -826,7 +826,7 @@ void KIRC::ping(const QString &server1, const QString &server2)
 */
 bool KIRC::ping(const KIRCMessage &msg)
 {
-	writeMessage("PONG", msg.args(), msg.suffix());
+	writeMessage("PONG", msg.args(), msg.suffix(), false);
 	// maybe should emit one signal.
 	return true;
 }
