@@ -192,7 +192,7 @@ void MSNProtocol::Connect()
 				"configuration dialog<br>"
 				"Do you want to configure MSN now?</qt>" ),
 			i18n( "MSN plugin not configured yet" ),
-			KGuiItem( i18n( "C&onfigure" ), "configure" ) );
+			KGuiItem( i18n( "C&onfigure..." ), "configure" ) );
 
 		if( r != KMessageBox::Cancel )
 		{
