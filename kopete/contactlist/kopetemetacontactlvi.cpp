@@ -701,6 +701,7 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 	d->metaContactPhoto = 0L;
 	d->extraText = 0L;
 	d->buddyIcon = 0L;
+	d->metaContactIcon = 0L;
 	d->iconSize = IconSize( KIcon::Small );
 	d->contactIconSize = 12;
 	d->photoSize = 48;
@@ -739,10 +740,10 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 		Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
 		d->contactIconBox = new BoxComponent( box, BoxComponent::Horizontal );
 
-		new HSpacerComponent( hbox );
+/*		new HSpacerComponent( hbox );
 		d->buddyIcon = new ImageComponent( hbox );
 		d->iconSize = IconSize( KIcon::Toolbar );
-		d->metaContactIcon = new ImageComponent( hbox );
+		d->metaContactIcon = new ImageComponent( hbox );*/
 	}
 	else if( mode == KopetePrefs::RightAligned )       // old right-aligned contact
 	{
@@ -952,6 +953,7 @@ void KopeteMetaContactLVI::slotIdleStateChanged( Kopete::Contact *c )
 			d->extraText->setDefaultColor();
 	}
 
+	if(d->metaContactIcon)
 	d->metaContactIcon->setPixmap( icon );
 	// we only need to update the contact icon if one was supplied;
 	// if none was supplied, we only need to update the MC appearance
@@ -984,7 +986,8 @@ void KopeteMetaContactLVI::slotBlink()
 	bool haveEvent = !d->events.isEmpty();
 	if ( mIsBlinkIcon )
 	{
-		d->metaContactIcon->setPixmap( SmallIcon( m_metaContact->statusIcon(), d->iconSize ) );
+		if(d->metaContactIcon)
+			d->metaContactIcon->setPixmap( SmallIcon( m_metaContact->statusIcon(), d->iconSize ) );
 		if ( !haveEvent && m_blinkLeft <= 0 )
 		{
 			mBlinkTimer->stop();
@@ -996,11 +999,13 @@ void KopeteMetaContactLVI::slotBlink()
 	{
 		if ( haveEvent )
 		{
-			d->metaContactIcon->setPixmap( SmallIcon( "newmsg", d->iconSize ) );
+			if(d->metaContactIcon)
+				d->metaContactIcon->setPixmap( SmallIcon( "newmsg", d->iconSize ) );
 		}
 		else
 		{
-			d->metaContactIcon->setPixmap( SmallIcon( m_oldStatusIcon, d->iconSize ) );
+			if(d->metaContactIcon)
+				d->metaContactIcon->setPixmap( SmallIcon( m_oldStatusIcon, d->iconSize ) );
 			m_blinkLeft--;
 		}
 	}
@@ -1021,8 +1026,9 @@ void KopeteMetaContactLVI::slotEventDone( Kopete::MessageEvent *event )
 			//the visibility has not been correctly updated. so do it now
 			updateVisibility();
 		}
-	
-		d->metaContactIcon->setPixmap( SmallIcon( m_metaContact->statusIcon(), d->iconSize ) );
+
+		if(d->metaContactIcon)
+			d->metaContactIcon->setPixmap( SmallIcon( m_metaContact->statusIcon(), d->iconSize ) );
 		mIsBlinkIcon = false;
 	}
 }
