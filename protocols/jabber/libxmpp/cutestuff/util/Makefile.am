@@ -1,4 +1,4 @@
-METASOURCES = base64.moc sha1.moc bytestream.moc
+METASOURCES = AUTO
 
 noinst_LTLIBRARIES = libcutestuff_util.la
 INCLUDES = $(all_includes)
