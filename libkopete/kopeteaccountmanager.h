@@ -147,7 +147,7 @@ private:
 	/**
 	 * @internal
 	 * Register the account.
-	 * To be called ONLY from KopeteContact, not from any other class!
+	 * To be called ONLY from KopeteAccount, not from any other class!
 	 */
 	void registerAccount( KopeteAccount *account );
 
@@ -161,7 +161,7 @@ private:
 	/**
 	 * @internal
 	 * Unregister the account.
-	 * To be called ONLY from KopeteContact, not from any other class!
+	 * To be called ONLY from KopeteAccount, not from any other class!
 	 */
 	void unregisterAccount( KopeteAccount *account );
 
