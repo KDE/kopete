@@ -248,10 +248,9 @@ public:
 	 *                    no alias is known, then by default, the nick will be taken as alias and tracked if changed.
 	 * @param group the group to add the created metacontact to, or 0 for the top-level group.
 	 * @param mode the mode used to add the contact. Use DontChangeKABC when deserializing.
-	 * @return @c true if creation of the contact succeeded or the contact was already in the list,
-	 *         @c false otherwise.
+	 * @return the new created metacontact or 0L if the operation failed
 	 */
-	bool addContact( const QString &contactId, const QString &displayName = QString::null, Group *group = 0, AddMode mode = DontChangeKABC ) ;
+	MetaContact* addContact( const QString &contactId, const QString &displayName = QString::null, Group *group = 0, AddMode mode = DontChangeKABC ) ;
 
 	/**
 	 * @brief Create a new contact, adding it to an existing metacontact

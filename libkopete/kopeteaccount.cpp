@@ -220,7 +220,7 @@ const QDict<Contact>& Account::contacts()
 }
 
 
-bool Account::addContact( const QString &contactId, const QString &displayName , Group *group, AddMode mode  )
+Kopete::MetaContact* Account::addContact( const QString &contactId, const QString &displayName , Group *group, AddMode mode  )
 {
 
 	if ( contactId == d->myself->contactId() )
@@ -279,12 +279,12 @@ bool Account::addContact( const QString &contactId, const QString &displayName ,
 		if ( !createContact( contactId, parentContact ) )
 		{
 			delete parentContact;
-			return false;
+			return 0L;
 		}
 	}
 
 	ContactList::self()->addMetaContact( parentContact );
-	return true;
+	return parentContact;
 }
 
 bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode mode )
