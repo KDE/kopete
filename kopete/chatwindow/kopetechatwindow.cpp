@@ -210,68 +210,34 @@ KopeteChatWindow::KopeteChatWindow(QWidget *parent, const char* name) : KParts::
 
 KopeteChatWindow::~KopeteChatWindow()
 {
-//	kdDebug( 14010 ) << k_funcinfo << endl;
+	//	kdDebug( 14010 ) << k_funcinfo << endl;
 
 	emit( closing( this ) );
 
-	bool repeat = true;
-	while( repeat )
+	for( AccountMap::Iterator it = accountMap.begin(); it != accountMap.end(); )
 	{
-		repeat = false;
-		for( AccountMap::Iterator it = accountMap.begin(); it != accountMap.end(); ++it )
-		{
-			if( it.data() == this )
-			{
-				accountMap.remove( it.key() );
-
-				// When deleting items from a QMap you can no longer use any outstanding
-				// iterators to the map, so reset the loop here.
-				// If we don't do this it could be possible that we're incrementing beyond
-				// map.end(), pointing into nowhere.
-				repeat = true;
-				break;
-			}
-		}
+		AccountMap::Iterator mayDeleteIt = it;
+		++it;
+		if( mayDeleteIt.data() == this )
+			accountMap.remove( mayDeleteIt.key() );
 	}
 
-	repeat = true;
-	while( repeat )
+	for( GroupMap::Iterator it = groupMap.begin(); it != groupMap.end(); )
 	{
-		repeat = false;
-		for( GroupMap::Iterator it = groupMap.begin(); it != groupMap.end(); ++it )
-		{
-			if( it.data() == this )
-			{
-				groupMap.remove( it.key() );
-
-				// When deleting items from a QMap you can no longer use any
-				// outstanding iterators to the map, so reset the loop here
-				// If we don't do this it could be possible that we're
-				// incrementing beyond map.end(), pointing into nowhere
-				repeat = true;
-				break;
-			}
-		}
+		GroupMap::Iterator mayDeleteIt = it;
+		++it;
+		if( mayDeleteIt.data() == this )
+			groupMap.remove( mayDeleteIt.key() );
 	}
-	repeat = true;
-	while( repeat )
+
+	for( MetaContactMap::Iterator it = mcMap.begin(); it != mcMap.end(); )
 	{
-		repeat = false;
-		for( MetaContactMap::Iterator it = mcMap.begin(); it != mcMap.end(); ++it )
-		{
-			if( it.data() == this )
-			{
-				mcMap.remove( it.key() );
-
-				// When deleting items from a QMap you can no longer use any
-				// outstanding iterators to the map, so reset the loop here
-				// If we don't do this it could be possible that we're
-				// incrementing beyond map.end(), pointing into nowhere
-				repeat = true;
-				break;
-			}
-		}
+		MetaContactMap::Iterator mayDeleteIt = it;
+		++it;
+		if( mayDeleteIt.data() == this )
+			mcMap.remove( mayDeleteIt.key() );
 	}
+
 	windows.remove( this );
 
 //	kdDebug( 14010 ) << "Open Windows: " << windows.count() << endl;
