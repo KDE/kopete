@@ -19,7 +19,7 @@
 
 #include "kopetemetacontact.h"
 
-#include <qapplication.h>
+#include <kapplication.h>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -48,15 +48,10 @@ struct KopeteMetaContactPrivate
 
 	bool temporary;
 //	bool dirty;
-	ulong contactId;
+	QString contactId;
 	KopeteOnlineStatus::OnlineStatus onlineStatus;
 	KopeteMetaContact::IdleState    idleState;
-
-	//Unique contact id per metacontact
-	static ulong uniqueContactId;
 };
-
-ulong KopeteMetaContactPrivate::uniqueContactId = 0;
 
 KopeteMetaContact::KopeteMetaContact()
 : KopetePluginDataObject( KopeteContactList::contactList() )
@@ -68,7 +63,7 @@ KopeteMetaContact::KopeteMetaContact()
 
 	d->onlineStatus = KopeteOnlineStatus::Offline;
 	d->idleState = Unspecified;
-	d->contactId = 0;
+	d->contactId = QString();
 }
 
 KopeteMetaContact::~KopeteMetaContact()
@@ -591,7 +586,7 @@ const QDomElement KopeteMetaContact::toXML()
 
 	QDomDocument metaContact;
 	metaContact.appendChild( metaContact.createElement( QString::fromLatin1("meta-contact") ) );
-	metaContact.documentElement().setAttribute( QString::fromLatin1("contactId"), QString::number(contactId()) );
+	metaContact.documentElement().setAttribute( QString::fromLatin1("contactId"), contactId() );
 
 	QDomElement displayName = metaContact.createElement( QString::fromLatin1("display-name") );
 	displayName.setAttribute( QString::fromLatin1("trackChildNameChanges"), QString::fromLatin1( d->trackChildNameChanges ? "1":"0" ) );
@@ -643,9 +638,7 @@ bool KopeteMetaContact::fromXML( const QDomElement& element )
 	QString strContactId = element.attribute( QString::fromLatin1("contactId") );
 	if( !strContactId.isEmpty() )
 	{
-		d->contactId = strContactId.toULong();
-		if( d->contactId > d->uniqueContactId )
-			d->uniqueContactId = d->contactId;
+		d->contactId = strContactId;
 	}
 
 	QDomElement contactElement = element.firstChild().toElement();
@@ -769,10 +762,10 @@ KopeteMetaContact::IdleState KopeteMetaContact::idleState() const
 	return d->idleState;
 }
 
-ulong KopeteMetaContact::contactId() const
+QString KopeteMetaContact::contactId() const
 {
-	if( d->contactId == 0 )
-		d->contactId = ++d->uniqueContactId;
+	if( (d->contactId).isEmpty() )
+		d->contactId = KApplication::randomString(10);
 
 	return d->contactId;
 }

@@ -248,7 +248,7 @@ public:
 	 *
 	 * Every metacontact has a unique id, set by kopete when creating the contact, or reading the contactlist
 	 */
-	ulong contactId() const;
+	QString contactId() const;
 
 	/**
 	 * Get or set a field for the KDE address book backend. Fields not
