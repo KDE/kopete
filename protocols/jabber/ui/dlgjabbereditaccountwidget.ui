@@ -136,7 +136,7 @@
                                     <cstring>mID</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>&lt;jabber_user@domain&gt;</string>
+                                    <string></string>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="1" column="0">
