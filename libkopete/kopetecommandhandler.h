@@ -161,6 +161,7 @@ class KopeteCommandHandler : public QObject
 		void slotPluginLoaded( KopetePlugin * );
 		void slotPluginDestroyed( QObject * );
 		void slotExecReturnedData(KProcess *proc, char *buff, int bufflen );
+		void slotExecFinished(KProcess *proc);
 
 	private:
 		/**

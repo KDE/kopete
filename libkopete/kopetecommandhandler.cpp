@@ -170,22 +170,28 @@ void KopeteCommandHandler::reservedCommand( const QString &command, const QStrin
 	}
 	else if( command == QString::fromLatin1("exec") )
 	{
+		kdDebug(14010) << k_funcinfo << "Execute Command:" << args << endl;
+
 		KProcess *proc = new KProcess(manager);
 
 		if( argsList.front() == QString::fromLatin1("-o") )
 		{
+			*proc << *argsList.at(1);
 			processMap.insert( proc, ManagerPair(manager, KopeteMessage::Outbound) );
-			*proc << KProcess::quote( args.section( QRegExp(QString::fromLatin1("\\s+")), 1 ) );
+			for( QStringList::Iterator it = argsList.at(2); it != argsList.end(); ++it )
+				*proc << KProcess::quote( *it );
 		}
 		else
 		{
+			*proc << argsList.front();
 			processMap.insert( proc, ManagerPair(manager, KopeteMessage::Internal) );
-			*proc << KProcess::quote( args );
+			for( QStringList::Iterator it = argsList.at(1); it != argsList.end(); ++it )
+				*proc << KProcess::quote( *it );
 		}
 
 		connect(proc, SIGNAL(receivedStdout(KProcess *, char *, int)), this, SLOT(slotExecReturnedData(KProcess *, char *, int)));
 		connect(proc, SIGNAL(receivedStderr(KProcess *, char *, int)), this, SLOT(slotExecReturnedData(KProcess *, char *, int)));
-		proc->start();
+		proc->start( KProcess::NotifyOnExit, KProcess::AllOutput );
 	}
 	else if( command == QString::fromLatin1("clear") )
 		manager->view()->clear();
@@ -201,6 +207,7 @@ void KopeteCommandHandler::reservedCommand( const QString &command, const QStrin
 
 void KopeteCommandHandler::slotExecReturnedData(KProcess *proc, char *buff, int bufflen )
 {
+	kdDebug(14010) << k_funcinfo << endl;
 	QString buffer = QString::fromLocal8Bit( buff, bufflen );
 	ManagerPair p = processMap[ proc ];
 	KopeteMessage msg(p.first->user(), p.first->members(), buffer, p.second, KopeteMessage::PlainText);
@@ -208,7 +215,10 @@ void KopeteCommandHandler::slotExecReturnedData(KProcess *proc, char *buff, int 
 		p.first->sendMessage( msg );
 	else
 		p.first->appendMessage( msg );
+}
 
+void KopeteCommandHandler::slotExecFinished(KProcess *proc)
+{
 	delete proc;
 	processMap.remove( proc );
 }
