@@ -251,7 +251,7 @@ void KopeteMetaContact::slotContactNameChanged( const QString &name )
 
 void KopeteMetaContact::moveToGroup( const QString &from, const QString &to )
 {
-	if( from == to )
+	if( m_groups.contains( to ) )
 		return;
 
 	m_groups.remove( from );
@@ -262,6 +262,20 @@ void KopeteMetaContact::moveToGroup( const QString &from, const QString &to )
 		it.current()->moveToGroup( from, to );
 
 	emit movedToGroup( from, to );
+}
+
+void KopeteMetaContact::addToGroup( const QString &to )
+{
+	if( m_groups.contains( to ) )
+		return;
+
+	m_groups.append( to );
+
+	QPtrListIterator<KopeteContact> it( m_contacts );
+	for( ; it.current(); ++it )
+		it.current()->addToGroup( to );
+
+	emit addedToGroup( to );
 }
 
 QStringList KopeteMetaContact::groups() const

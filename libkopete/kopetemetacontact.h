@@ -126,6 +126,11 @@ public slots:
 	 */
 	void moveToGroup( const QString &from, const QString &to );
 
+	/**
+	 * Add a contact to another group.
+	 */
+	void addToGroup( const QString &to );
+
 signals:
 	/**
 	 * The contact's online status changed
@@ -142,6 +147,11 @@ signals:
 	 * The contact was moved
 	 */
 	void movedToGroup( const QString &from, const QString &to );
+
+	/**
+	 * The contact was added to another group
+	 */
+	void addedToGroup( const QString &to );
 
 private slots:
 	/**
