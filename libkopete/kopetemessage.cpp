@@ -196,18 +196,17 @@ QString KopeteMessage::plainBody() const
 	if( d->format == PlainText )
 		return d->body;
 
-//	kdDebug(14010) << "KopeteMessage::plainBody: WARNING message non unescaped (TODO)" <<endl;
-
 	//FIXME: is there a better way to unescape HTML?
 	QString r = d->body;
 	r = r.replace( QRegExp( QString::fromLatin1( "<br/>" ) ), QString::fromLatin1( "\n" ) ).
+		replace( QRegExp( QString::fromLatin1( "<br>" ) ), QString::fromLatin1( "\n" ) ).
 		replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::fromLatin1( "" ) ).
 		replace( QRegExp( QString::fromLatin1( "&gt;" ) ), QString::fromLatin1( ">" ) ).
 		replace( QRegExp( QString::fromLatin1( "&lt;" ) ), QString::fromLatin1( "<" ) ).
 		replace( QRegExp( QString::fromLatin1( "&nbsp;" ) ), QString::fromLatin1( " " ) ).
 		replace( QRegExp( QString::fromLatin1( "&amp;" ) ), QString::fromLatin1( "&" ) );
 
-//	kdDebug(14010) << "KopeteMessage::plainBody: " << r <<endl;
+	kdDebug(14010) << "KopeteMessage::plainBody: " << r <<endl;
 	return r;
 }
 
