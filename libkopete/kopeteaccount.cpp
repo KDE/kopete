@@ -61,7 +61,7 @@ public:
 
 	KopeteProtocol *protocol;
 	QString id;
-	KopetePassword password;
+	Kopete::Password password;
 	bool autologin;
 	uint priority;
 	QDict<KopeteContact> contacts;
@@ -228,7 +228,7 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 	else
 		prompt = i18n( "Please enter your password for %1 account <b>%2</b>" ).arg( protocol()->displayName(), accountId() );
 
-	QString pass = d->password.retrieve( accountIcon( KopetePassword::preferredImageSize() ), prompt, error ? KopetePassword::FromUser : KopetePassword::FromConfigOrUser );
+	QString pass = d->password.retrieve( accountIcon( Kopete::Password::preferredImageSize() ), prompt, error ? Kopete::Password::FromUser : Kopete::Password::FromConfigOrUser );
 	if ( ok ) *ok = !pass.isNull();
 	return pass;
 }

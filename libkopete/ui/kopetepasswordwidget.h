@@ -1,5 +1,5 @@
 /*
-    kopetepasswordwidget.cpp - widget for editing a KopetePassword
+    kopetepasswordwidget.cpp - widget for editing a Kopete::Password
 
     Copyright (c) 2003 by Richard Smith          <kde@metafoo.co.uk>
 
@@ -20,34 +20,41 @@
 
 #include "kopetepasswordwidgetbase.h"
 
-class KopetePassword;
+namespace Kopete
+{
+
+class Password;
+
+namespace UI
+{
 
 /**
  * @author Richard Smith <kde@metafoo.co.uk>
  * This widget displays an editable password, including the Remember password checkbox.
+ * @todo This is NOT BC yet : it derives from a uic-generated class
  */
-class KopetePasswordWidget : public KopetePasswordWidgetBase
+class PasswordWidget : public KopetePasswordWidgetBase
 {
 	Q_OBJECT
 
 public:
 	/**
-	 * Creates a KopetePasswordWidget.
+	 * Creates a Kopete::PasswordWidget.
 	 * @param parent The widget to nest this one inside
 	 * @param from The password to load the data for this widget from, or 0 if none
 	 * @param name The name of this QObject
 	 */
-	KopetePasswordWidget( QWidget *parent, KopetePassword *from = 0, const char *name = 0 );
-	~KopetePasswordWidget();
+	PasswordWidget( QWidget *parent, Kopete::Password *from = 0, const char *name = 0 );
+	~PasswordWidget();
 
 	/**
 	 * Loads the information stored in source into the widget
 	 */
-	void load( KopetePassword *source );
+	void load( Kopete::Password *source );
 	/**
 	 * Saves the information in the widget into target
 	 */
-	void save( KopetePassword *target );
+	void save( Kopete::Password *target );
 
 	/**
 	 * Returns true if the information in the widget is valid, false if it is not.
@@ -70,9 +77,13 @@ private slots:
 	void slotRememberChanged();
 
 private:
-	struct KopetePasswordWidgetPrivate;
-	KopetePasswordWidgetPrivate *d;
+	class Private;
+	Private *d;
 };
+
+}
+
+}
 
 #endif
 

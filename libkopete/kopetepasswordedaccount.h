@@ -19,14 +19,17 @@
 
 #include "kopeteaccount.h"
 
-class KopetePassword;
+namespace Kopete
+{
+
+class Password;
 
 /**
  * @author Richard Smith
  * An account requiring a password to connect. Instead of reimplementing connect()
  * in your subclass, reimplement connectWithPassword.
  */
-class KopetePasswordedAccount : public KopeteAccount
+class PasswordedAccount : public KopeteAccount
 {
 	Q_OBJECT
 public:
@@ -37,13 +40,13 @@ public:
 	 * @param maxPasswordLength The maximum length for passwords for this account, or 0 for no limit
 	 * @param name The name for this QObject
 	 */
-	KopetePasswordedAccount( KopeteProtocol *parent, const QString &acctId, uint maxPasswordLength = 0, const char *name = 0 );
-	virtual ~KopetePasswordedAccount();
+	PasswordedAccount( KopeteProtocol *parent, const QString &acctId, uint maxPasswordLength = 0, const char *name = 0 );
+	virtual ~PasswordedAccount();
 
 	/**
 	 * Returns a reference to the password object stored in this account.
 	 */
-	KopetePassword &password();
+	Password &password();
 
 	void connect();
 
@@ -64,9 +67,11 @@ protected:
 	virtual QString passwordPrompt();
 
 private:
-	struct Private;
+	class Private;
 	Private *d;
 };
+
+}
 
 #endif
 

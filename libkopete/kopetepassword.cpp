@@ -57,9 +57,10 @@ QString cryptStr( const QString &aStr )
 
 }
 
-struct KopetePassword::KopetePasswordPrivate
+class Kopete::Password::Private
 {
-	KopetePasswordPrivate( const QString &group, uint maxLen )
+public:
+	Private( const QString &group, uint maxLen )
 	 : configGroup( group ), remembered( false ), maximumLength( maxLen ), isWrong( false )
 	{
 	}
@@ -78,14 +79,14 @@ struct KopetePassword::KopetePasswordPrivate
 };
 
 /**
- * Implementation detail of KopetePassword: manages a single password request
+ * Implementation detail of Kopete::Password: manages a single password request
  * @internal
  * @author Richard Smith <kde@metafoo.co.uk>
  */
 class KopetePasswordRequest : public KopetePasswordRequestBase
 {
 public:
-	KopetePasswordRequest( KopetePassword &pass )
+	KopetePasswordRequest( Kopete::Password &pass )
 	 : QObject( &pass ), mPassword( pass ), mWallet( 0 )
 	{
 	}
@@ -96,7 +97,7 @@ public:
 	void begin()
 	{
 		kdDebug( 14010 ) << k_funcinfo << endl;
-		KopeteWalletManager::self()->openWallet( this, SLOT( walletReceived( KWallet::Wallet* ) ) );
+		Kopete::WalletManager::self()->openWallet( this, SLOT( walletReceived( KWallet::Wallet* ) ) );
 	}
 
 	void walletReceived( KWallet::Wallet *wallet )
@@ -115,19 +116,19 @@ public:
 	void slotCancelPressed() {}
 
 protected:
-	KopetePassword &mPassword;
+	Kopete::Password &mPassword;
 	KWallet::Wallet *mWallet;
 };
 
 /**
- * Implementation detail of KopetePassword: manages a single password retrieval request
+ * Implementation detail of Kopete::Password: manages a single password retrieval request
  * @internal
  * @author Richard Smith <kde@metafoo.co.uk>
  */
 class KopetePasswordGetRequest : public KopetePasswordRequest
 {
 public:
-	KopetePasswordGetRequest( KopetePassword &pass )
+	KopetePasswordGetRequest( Kopete::Password &pass )
 	 : KopetePasswordRequest( pass )
 	{
 	}
@@ -164,7 +165,7 @@ public:
 class KopetePasswordGetRequestPrompt : public KopetePasswordGetRequest
 {
 public:
-	KopetePasswordGetRequestPrompt( KopetePassword &pass,  const QPixmap &image, const QString &prompt, KopetePassword::PasswordSource source )
+	KopetePasswordGetRequestPrompt( Kopete::Password &pass,  const QPixmap &image, const QString &prompt, Kopete::Password::PasswordSource source )
 	 : KopetePasswordGetRequest( pass ), mImage( image ), mPrompt( prompt ), mSource( source ), mView( 0 )
 	{
 	}
@@ -172,7 +173,7 @@ public:
 	void processRequest()
 	{
 		QString result = grabPassword();
-		if ( mSource == KopetePassword::FromUser || result.isNull() )
+		if ( mSource == Kopete::Password::FromUser || result.isNull() )
 			doPasswordDialog( result );
 		else
 			finished( result );
@@ -222,7 +223,7 @@ public:
 private:
 	QPixmap mImage;
 	QString mPrompt;
-	KopetePassword::PasswordSource mSource;
+	Kopete::Password::PasswordSource mSource;
 	unsigned int mMaxLength;
 	KopetePasswordDialog *mView;
 };
@@ -230,7 +231,7 @@ private:
 class KopetePasswordGetRequestNoPrompt : public KopetePasswordGetRequest
 {
 public:
-	KopetePasswordGetRequestNoPrompt( KopetePassword &pass )
+	KopetePasswordGetRequestNoPrompt( Kopete::Password &pass )
 	 : KopetePasswordGetRequest( pass )
 	{
 	}
@@ -242,14 +243,14 @@ public:
 };
 
 /**
- * Implementation detail of KopetePassword: manages a single password change request
+ * Implementation detail of Kopete::Password: manages a single password change request
  * @internal
  * @author Richard Smith <kde@metafoo.co.uk>
  */
 class KopetePasswordSetRequest : public KopetePasswordRequest
 {
 public:
-	KopetePasswordSetRequest( KopetePassword &pass, const QString &newPass )
+	KopetePasswordSetRequest( Kopete::Password &pass, const QString &newPass )
 	 : KopetePasswordRequest( pass ), mNewPass( newPass )
 	{
 		if ( KApplication *app = KApplication::kApplication() )
@@ -273,7 +274,7 @@ public:
 	bool setPassword()
 	{
 		//TODO: refactor this function to remove duplication
-		// and possibly to make it not need to be a friend of KopetePassword
+		// and possibly to make it not need to be a friend of Kopete::Password
 
 		if ( mNewPass.isNull() )
 		{
@@ -302,12 +303,12 @@ public:
 			// If we end up here, the wallet is enabled, but failed somehow.
 			// Ask the user what to do now.
 
-			// if the KopetePassword object is destroyed during this message box's
+			// if the Kopete::Password object is destroyed during this message box's
 			// nested event loop, and the user clicks 'Store Unsafe', we will crash!
 
 			// solution: reparent to none, and track the parent. if it's deleted, don't use it.
 			mPassword.removeChild( this );
-			QGuardedPtr<KopetePassword> watchParent = &mPassword;
+			QGuardedPtr<Kopete::Password> watchParent = &mPassword;
 
 			if ( KMessageBox::warningContinueCancel( Kopete::UI::Global::mainWidget(),
 			        i18n( "<qt>Kopete is unable to save your password securely in your wallet!<br>"
@@ -343,18 +344,18 @@ private:
 	QString mNewPass;
 };
 
-KopetePassword::KopetePassword( const QString &configGroup, uint maximumLength, const char *name )
- : QObject( 0, name ), d( new KopetePasswordPrivate( configGroup, maximumLength ) ) 
+Kopete::Password::Password( const QString &configGroup, uint maximumLength, const char *name )
+ : QObject( 0, name ), d( new Private( configGroup, maximumLength ) ) 
 {
 	readConfig();
 }
 
-KopetePassword::~KopetePassword()
+Kopete::Password::~Password()
 {
 	delete d;
 }
 
-void KopetePassword::readConfig()
+void Kopete::Password::readConfig()
 {
 	KConfig *config = KGlobal::config();
 	config->setGroup( d->configGroup );
@@ -369,7 +370,7 @@ void KopetePassword::readConfig()
 	d->isWrong = config->readBoolEntry( "PasswordIsWrong", false );
 }
 
-void KopetePassword::writeConfig()
+void Kopete::Password::writeConfig()
 {
 	KConfig *config = KGlobal::config();
 	config->setGroup( d->configGroup );
@@ -383,27 +384,27 @@ void KopetePassword::writeConfig()
 	config->writeEntry( "PasswordIsWrong", d->isWrong );
 }
 
-int KopetePassword::preferredImageSize()
+int Kopete::Password::preferredImageSize()
 {
 	return IconSize(KIcon::Toolbar);
 }
 
-uint KopetePassword::maximumLength()
+uint Kopete::Password::maximumLength()
 {
 	return d->maximumLength;
 }
 
-void KopetePassword::setMaximumLength( uint max )
+void Kopete::Password::setMaximumLength( uint max )
 {
 	d->maximumLength = max;
 }
 
-bool KopetePassword::isWrong()
+bool Kopete::Password::isWrong()
 {
 	return d->isWrong;
 }
 
-void KopetePassword::setWrong( bool bWrong )
+void Kopete::Password::setWrong( bool bWrong )
 {
 	d->isWrong = bWrong;
 	writeConfig();
@@ -411,7 +412,7 @@ void KopetePassword::setWrong( bool bWrong )
 	if ( bWrong ) d->cachedValue = QString::null;
 }
 
-void KopetePassword::requestWithoutPrompt( QObject *returnObj, const char *slot )
+void Kopete::Password::requestWithoutPrompt( QObject *returnObj, const char *slot )
 {
 	KopetePasswordRequest *request = new KopetePasswordGetRequestNoPrompt( *this );
 	// call connect on returnObj so we can still connect if 'slot' is protected/private
@@ -419,19 +420,19 @@ void KopetePassword::requestWithoutPrompt( QObject *returnObj, const char *slot 
 	request->begin();
 }
 
-void KopetePassword::request( QObject *returnObj, const char *slot, const QPixmap &image, const QString &prompt, KopetePassword::PasswordSource source )
+void Kopete::Password::request( QObject *returnObj, const char *slot, const QPixmap &image, const QString &prompt, Kopete::Password::PasswordSource source )
 {
 	KopetePasswordRequest *request = new KopetePasswordGetRequestPrompt( *this, image, prompt, source );
 	returnObj->connect( request, SIGNAL( requestFinished( const QString & ) ), slot );
 	request->begin();
 }
 
-QString KopetePassword::retrieve( const QPixmap &image, const QString &prompt, KopetePassword::PasswordSource source )
+QString Kopete::Password::retrieve( const QPixmap &image, const QString &prompt, Kopete::Password::PasswordSource source )
 {
 	uint maxLength = maximumLength();
-	if ( source == KopetePassword::FromConfigOrUser )
+	if ( source == Kopete::Password::FromConfigOrUser )
 	{
-		if( KWallet::Wallet *wallet = KopeteWalletManager::self()->wallet() )
+		if( KWallet::Wallet *wallet = Kopete::WalletManager::self()->wallet() )
 		{
 			// Before trying to read from the wallet, check if the config file holds a password.
 			// If so, remove it from the config and set it through KWallet instead.
@@ -479,12 +480,12 @@ QString KopetePassword::retrieve( const QPixmap &image, const QString &prompt, K
 	return pass;
 }
 
-QString KopetePassword::cachedValue()
+QString Kopete::Password::cachedValue()
 {
 	return d->cachedValue;
 }
 
-void KopetePassword::set( const QString &pass )
+void Kopete::Password::set( const QString &pass )
 {
 	// if we're being told to forget the password, and we aren't remembering one,
 	// don't try to open the wallet. fixes bug #71804.
@@ -495,7 +496,7 @@ void KopetePassword::set( const QString &pass )
 	request->begin();
 }
 
-bool KopetePassword::remembered()
+bool Kopete::Password::remembered()
 {
 	return d->remembered;
 }

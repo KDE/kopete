@@ -29,10 +29,11 @@
 #include <qwidget.h>
 #include <qapplication.h>
 
-struct KopeteWalletManager::KopeteWalletManagerPrivate
+class Kopete::WalletManager::Private
 {
-	KopeteWalletManagerPrivate() : wallet(0), signal(0) {}
-	~KopeteWalletManagerPrivate() { delete wallet; delete signal; }
+public:
+	Private() : wallet(0), signal(0) {}
+	~Private() { delete wallet; delete signal; }
 
 	KWallet::Wallet *wallet;
 
@@ -46,12 +47,12 @@ struct KopeteWalletManager::KopeteWalletManagerPrivate
 	KopeteWalletSignal *signal;
 };
 
-KopeteWalletManager::KopeteWalletManager()
- : d( new KopeteWalletManagerPrivate )
+Kopete::WalletManager::WalletManager()
+ : d( new Private )
 {
 }
 
-KopeteWalletManager::~KopeteWalletManager()
+Kopete::WalletManager::~WalletManager()
 {
 	closeWallet();
 	delete d;
@@ -59,8 +60,8 @@ KopeteWalletManager::~KopeteWalletManager()
 
 namespace
 {
-	KStaticDeleter<KopeteWalletManager> s_deleter;
-	KopeteWalletManager *s_self = 0;
+	KStaticDeleter<Kopete::WalletManager> s_deleter;
+	Kopete::WalletManager *s_self = 0;
 	
 	WId mainWindowID()
 	{
@@ -70,14 +71,14 @@ namespace
 	}
 }
 
-KopeteWalletManager *KopeteWalletManager::self()
+Kopete::WalletManager *Kopete::WalletManager::self()
 {
 	if ( !s_self )
-		s_deleter.setObject( s_self, new KopeteWalletManager() );
+		s_deleter.setObject( s_self, new Kopete::WalletManager() );
 	return s_self;
 }
 
-void KopeteWalletManager::openWallet( QObject *object, const char *slot )
+void Kopete::WalletManager::openWallet( QObject *object, const char *slot )
 {
 	if ( !d->signal )
 		d->signal = new KopeteWalletSignal;
@@ -87,7 +88,7 @@ void KopeteWalletManager::openWallet( QObject *object, const char *slot )
 	openWalletInner();
 }
 
-void KopeteWalletManager::openWalletInner()
+void Kopete::WalletManager::openWalletInner()
 {
 	// do we already have a wallet?
 	if ( d->wallet )
@@ -115,7 +116,7 @@ void KopeteWalletManager::openWalletInner()
 	connect( d->wallet, SIGNAL( walletOpened(bool) ), SLOT( slotWalletChangedStatus() ) );
 }
 
-void KopeteWalletManager::slotWalletChangedStatus()
+void Kopete::WalletManager::slotWalletChangedStatus()
 {
 	kdDebug(14010) << k_funcinfo << " isOpen: " << d->wallet->isOpen() << endl;
 
@@ -146,7 +147,7 @@ void KopeteWalletManager::slotWalletChangedStatus()
 	emitWalletOpened( d->wallet );
 }
 
-void KopeteWalletManager::slotGiveExistingWallet()
+void Kopete::WalletManager::slotGiveExistingWallet()
 {
 	kdDebug(14010) << k_funcinfo << " with d->wallet " << d->wallet << endl;
 
@@ -169,7 +170,7 @@ void KopeteWalletManager::slotGiveExistingWallet()
 	}
 }
 
-KWallet::Wallet *KopeteWalletManager::wallet()
+KWallet::Wallet *Kopete::WalletManager::wallet()
 {
 	if ( !KWallet::Wallet::isEnabled() )
 		return 0;
@@ -194,7 +195,7 @@ KWallet::Wallet *KopeteWalletManager::wallet()
 	return d->wallet;
 }
 
-void KopeteWalletManager::closeWallet()
+void Kopete::WalletManager::closeWallet()
 {
 	if ( !d->wallet ) return;
 
@@ -204,7 +205,7 @@ void KopeteWalletManager::closeWallet()
 	emit walletLost();
 }
 
-void KopeteWalletManager::emitWalletOpened( KWallet::Wallet *wallet )
+void Kopete::WalletManager::emitWalletOpened( KWallet::Wallet *wallet )
 {
 	KopeteWalletSignal *signal = d->signal;
 	d->signal = 0;

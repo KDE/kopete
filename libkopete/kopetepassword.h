@@ -24,28 +24,34 @@ namespace KWallet { class Wallet; }
 
 class QPixmap;
 
+class KopetePasswordGetRequest;
+class KopetePasswordSetRequest;
+
+namespace Kopete
+{
+
 /**
  * @author Richard Smith       <kde@metafoo.co.uk>
  *
- * The KopetePassword object is responsible for storing and retrieving a
+ * The Kopete::Password object is responsible for storing and retrieving a
  * password for a plugin or account object.
  *
  * If the KWallet is active, passwords will be stored in it, otherwise, they
  * will be stored in the KConfig, in a slightly mangled form.
  */
-class KopetePassword : public QObject
+class Password : public QObject
 {
 	Q_OBJECT
 
 public:
 	/**
-	 * Create a new KopetePassword object.
+	 * Create a new Kopete::Password object.
 	 *
 	 * @param configGroup The configuration group to save passwords in.
 	 * @param maxLength The maximum length of the password, or 0 if no maximum exists.
 	 */
-	KopetePassword(const QString &configGroup, uint maxLength = 0, const char *name = 0);
-	~KopetePassword();
+	Password(const QString &configGroup, uint maxLength = 0, const char *name = 0);
+	~Password();
 
 	/**
 	 * Returns the preferred size for images passed to the retrieve and request functions.
@@ -151,13 +157,15 @@ private:
 	void readConfig();
 	void writeConfig();
 
-	struct KopetePasswordPrivate;
-	KopetePasswordPrivate *d;
+	class Private;
+	Private *d;
 
 	//TODO: can we rearrange things so these aren't friends?
 	friend class KopetePasswordGetRequest;
 	friend class KopetePasswordSetRequest;
 };
+
+}
 
 /**
  * This class is an implementation detail of KopetePassword.

@@ -23,13 +23,16 @@
 
 namespace KWallet { class Wallet; }
 
+namespace Kopete
+{
+
 /**
  * @author Richard Smith <kde@metafoo.co.uk>
  *
- * The KopeteWalletManager class is a singleton, which looks after Kopete's
+ * The Kopete::WalletManager class is a singleton, which looks after Kopete's
  * KWallet connection.
  */
-class KopeteWalletManager : public QObject
+class WalletManager : public QObject
 {
 	Q_OBJECT
 
@@ -37,8 +40,8 @@ public:
 	/**
 	 * Retrieve the wallet manager instance
 	 */
-	static KopeteWalletManager *self();
-	~KopeteWalletManager();
+	static WalletManager *self();
+	~WalletManager();
 
 	/**
 	 * @brief Attempt to open the KWallet asyncronously, then signal an
@@ -100,16 +103,21 @@ private:
 	void openWalletInner();
 	void emitWalletOpened( KWallet::Wallet *wallet );
 
-	struct KopeteWalletManagerPrivate;
-	KopeteWalletManagerPrivate *d;
+	class Private;
+	Private *d;
 
-	KopeteWalletManager();
+	WalletManager();
 };
 
+}
+
+/**
+ * @internal
+ */
 class KopeteWalletSignal : public QObject
 {
 	Q_OBJECT
-	friend class KopeteWalletManager;
+	friend class Kopete::WalletManager;
 signals:
 	void walletOpened( KWallet::Wallet *wallet );
 };

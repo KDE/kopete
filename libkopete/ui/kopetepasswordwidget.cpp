@@ -1,5 +1,5 @@
 /*
-    kopetepasswordwidget.cpp - widget for modifying a KopetePassword
+    kopetepasswordwidget.cpp - widget for modifying a Kopete::Password
 
     Copyright (c) 2003 by Richard Smith          <kde@metafoo.co.uk>
 
@@ -22,23 +22,24 @@
 
 #include <qcheckbox.h>
 
-struct KopetePasswordWidget::KopetePasswordWidgetPrivate
+class Kopete::UI::PasswordWidget::Private
 {
+public:
 	uint maxLength;
 };
 
-KopetePasswordWidget::KopetePasswordWidget( QWidget *parent, KopetePassword *from, const char *name )
- : KopetePasswordWidgetBase( parent, name ), d( new KopetePasswordWidgetPrivate )
+Kopete::UI::PasswordWidget::PasswordWidget( QWidget *parent, Kopete::Password *from, const char *name )
+ : KopetePasswordWidgetBase( parent, name ), d( new Private )
 {
 	load( from );
 }
 
-KopetePasswordWidget::~KopetePasswordWidget()
+Kopete::UI::PasswordWidget::~PasswordWidget()
 {
 	delete d;
 }
 
-void KopetePasswordWidget::load( KopetePassword *source )
+void Kopete::UI::PasswordWidget::load( Kopete::Password *source )
 {
 	disconnect( mRemembered, SIGNAL( stateChanged( int ) ), this, SLOT( slotRememberChanged() ) );
 	disconnect( mPassword, SIGNAL( textChanged( const QString & ) ), this, SIGNAL( changed() ) );
@@ -70,13 +71,13 @@ void KopetePasswordWidget::load( KopetePassword *source )
 	emit changed();
 }
 
-void KopetePasswordWidget::slotRememberChanged()
+void Kopete::UI::PasswordWidget::slotRememberChanged()
 {
 	mRemembered->setTristate( false );
 	mPassword->setEnabled( mRemembered->isChecked() );
 }
 
-void KopetePasswordWidget::receivePassword( const QString &pwd )
+void Kopete::UI::PasswordWidget::receivePassword( const QString &pwd )
 {
 	// pwd == null could mean user declined to open wallet
 	// don't uncheck the remembered field in this case.
@@ -90,7 +91,7 @@ void KopetePasswordWidget::receivePassword( const QString &pwd )
 	}
 }
 
-void KopetePasswordWidget::save( KopetePassword *target )
+void Kopete::UI::PasswordWidget::save( Kopete::Password *target )
 {
 	if ( !target || mRemembered->state() == QButton::NoChange )
 		return;
@@ -101,7 +102,7 @@ void KopetePasswordWidget::save( KopetePassword *target )
 		target->set();
 }
 
-bool KopetePasswordWidget::validate()
+bool Kopete::UI::PasswordWidget::validate()
 {
 	if ( !mRemembered->isChecked() ) return true;
 	if ( d->maxLength == 0 ) return true;

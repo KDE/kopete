@@ -22,28 +22,28 @@
 
 #include <qpixmap.h>
 
-struct KopetePasswordedAccount::Private
+struct Kopete::PasswordedAccount::Private
 {
 	Private( const QString &group, uint maxLen ) : password( group, maxLen, "mPassword" ) {}
-	KopetePassword password;
+	Kopete::Password password;
 };
 
-KopetePasswordedAccount::KopetePasswordedAccount( KopeteProtocol *parent, const QString &acctId, uint maxLen, const char *name )
+Kopete::PasswordedAccount::PasswordedAccount( KopeteProtocol *parent, const QString &acctId, uint maxLen, const char *name )
  : KopeteAccount( parent, acctId, name ), d( new Private( configGroup(), maxLen ) )
 {
 }
 
-KopetePasswordedAccount::~KopetePasswordedAccount()
+Kopete::PasswordedAccount::~PasswordedAccount()
 {
 	delete d;
 }
 
-KopetePassword &KopetePasswordedAccount::password()
+Kopete::Password &Kopete::PasswordedAccount::password()
 {
 	return d->password;
 }
 
-void KopetePasswordedAccount::connect()
+void Kopete::PasswordedAccount::connect()
 {
 	QString cached = password().cachedValue();
 	if ( !cached.isNull() )
@@ -53,12 +53,12 @@ void KopetePasswordedAccount::connect()
 	}
 
 	QString prompt = passwordPrompt();
-	KopetePassword::PasswordSource src = password().isWrong() ? KopetePassword::FromUser : KopetePassword::FromConfigOrUser;
+	Kopete::Password::PasswordSource src = password().isWrong() ? Kopete::Password::FromUser : Kopete::Password::FromConfigOrUser;
 
-	password().request( this, SLOT( connectWithPassword( const QString & ) ), accountIcon( KopetePassword::preferredImageSize() ), prompt, src );
+	password().request( this, SLOT( connectWithPassword( const QString & ) ), accountIcon( Kopete::Password::preferredImageSize() ), prompt, src );
 }
 
-QString KopetePasswordedAccount::passwordPrompt()
+QString Kopete::PasswordedAccount::passwordPrompt()
 {
 	if ( password().isWrong() )
 		return i18n( "<b>The password was wrong!</b> Please re-enter your password for %1 account <b>%2</b>" ).arg( protocol()->displayName(), accountId() );
