@@ -37,9 +37,12 @@ MSNDispatchSocket::~MSNDispatchSocket()
 
 void MSNDispatchSocket::connect()
 {
-	QObject::connect( this, SIGNAL( onlineStatusChanged( OnlineStatus ) ),
-		this, SLOT( slotStatusChanged( OnlineStatus ) ) );
 	MSNSocket::connect( "messenger.hotmail.com", 1863 );
+}
+
+void MSNDispatchSocket::connect( const QString &server, uint port )
+{
+	MSNSocket::connect( server, port );
 }
 
 void MSNDispatchSocket::handleError( uint code, uint id )
@@ -86,6 +89,7 @@ void MSNDispatchSocket::parseCommand( const QString &cmd, uint id,
 		QString server = host.section( ':', 0, 0 );
 		uint port = host.section( ':', 1, 1 ).toUInt();
 		disconnect();
+		setOnlineStatus( Connected );
 		emit receivedNotificationServer( server, port );
 	}
 	else
@@ -95,14 +99,11 @@ void MSNDispatchSocket::parseCommand( const QString &cmd, uint id,
 	}
 }
 
-void MSNDispatchSocket::slotStatusChanged( OnlineStatus status )
+void MSNDispatchSocket::doneConnect()
 {
-	if( status == Connected )
-	{
-		kdDebug() << "MSNDispatchSocket: Negotiating server protocol version"
-			<< endl;
-		sendCommand( "VER", "MSNP7 MSNP6 MSNP5 MSNP4 CVR0" );
-	}
+	kdDebug() << "MSNDispatchSocket: Negotiating server protocol version"
+		<< endl;
+	sendCommand( "VER", "MSNP7 MSNP6 MSNP5 MSNP4 CVR0" );
 }
 
 #include "msndispatchsocket.moc"

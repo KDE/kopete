@@ -37,6 +37,14 @@ public:
 	MSNDispatchSocket( const QString &msnId );
 	~MSNDispatchSocket();
 
+	/**
+	 * Don't shadow the full method with our new slot below, because the
+	 * derived MSNNotifySocket still needs it.
+	 * In an ideal world a simple 'using MSNSocket::connect( ... )' would
+	 * be enough, but not all compilers support that :(
+	 */
+	void connect( const QString &server, uint port );
+
 public slots:
 	/**
 	 * The dispatch server always connects to the same host, this method is
@@ -53,6 +61,13 @@ signals:
 
 protected:
 	/**
+	 * This reimplementation sets up the negotiating with the server and
+	 * suppresses the change of the status to online until the handshake
+	 * is complete.
+	 */
+	virtual void doneConnect();
+
+	/**
 	 * Handle an MSN error condition.
 	 * This reimplementation handles the 'server busy' error by attempting a
 	 * reconnect in about 10 seconds, but calls the parent's implementation
@@ -65,9 +80,6 @@ protected:
 	 */
 	virtual void parseCommand( const QString &cmd, uint id,
 		const QString &data );
-
-private slots:
-	void slotStatusChanged( OnlineStatus status );
 
 private:
 	QString m_msnId;
