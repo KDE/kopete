@@ -84,6 +84,9 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, KopeteAccount *a
 		//remove me after we can change account ids (Matt)
 		d->ui->m_login->setDisabled( true );
 		d->ui->m_autologin->setChecked( ( account && account->autoLogin() ) );
+		if ( ( static_cast<MSNAccount*>(account)->serverName() != "messenger.hotmail.com" ) || ( static_cast<MSNAccount*>(account)->serverPort() != 1863) ) {
+			d->ui->optionOverrideServer->setChecked( true );
+		}
 
 		MSNContact *myself = static_cast<MSNContact *>( account->myself() );
 
@@ -156,8 +159,14 @@ KopeteAccount * MSNEditAccountWidget::apply()
 
 	account()->setAutoLogin( d->ui->m_autologin->isChecked() );
 	account()->setPluginData( d->protocol, "exportCustomPicture", d->ui->m_useDisplayPicture->isChecked() ? "1" : QString::null );
-	account()->setPluginData( d->protocol, "serverName", d->ui->m_serverName->text() );
-	account()->setPluginData( d->protocol, "serverPort", QString::number( d->ui->m_serverPort->value() ) );
+	if (d->ui->optionOverrideServer->isChecked() ) {
+		account()->setPluginData( d->protocol, "serverName", d->ui->m_serverName->text() );
+		account()->setPluginData( d->protocol, "serverPort", QString::number( d->ui->m_serverPort->value() ) );
+	}
+	else {
+		account()->setPluginData( d->protocol, "serverName", "messenger.hotmail.com" );
+		account()->setPluginData( d->protocol, "serverPort", "1863" );
+	}
 
 	static_cast<MSNAccount *>( account() )->resetPictureObject();
 

@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>MSNEditAccountUI</class>
 <author>Olivier Goffart</author>
 <widget class="QWidget">
@@ -9,9 +9,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>534</width>
-            <height>492</height>
+            <width>537</width>
+            <height>517</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>Form1</string>
     </property>
     <vbox>
         <property name="name">
@@ -48,141 +51,117 @@
                         <property name="title">
                             <string>Account Information</string>
                         </property>
-                        <vbox>
+                        <grid>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLayoutWidget">
+                            <widget class="QLabel" row="0" column="0">
                                 <property name="name">
-                                    <cstring>layout41</cstring>
+                                    <cstring>TextLabel1_3</cstring>
                                 </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QLabel">
-                                        <property name="name">
-                                            <cstring>TextLabel1_3</cstring>
-                                        </property>
-                                        <property name="sizePolicy">
-                                            <sizepolicy>
-                                                <hsizetype>1</hsizetype>
-                                                <vsizetype>5</vsizetype>
-                                                <horstretch>0</horstretch>
-                                                <verstretch>0</verstretch>
-                                            </sizepolicy>
-                                        </property>
-                                        <property name="text">
-                                            <string>&amp;MSN Passport ID:</string>
-                                        </property>
-                                        <property name="buddy" stdset="0">
-                                            <cstring>m_login</cstring>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>The user ID of the MSN contact you would like to use.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>The user ID of the MSN contact you would like to use.  This should be in the form of a valid E-mail address.</string>
-                                        </property>
-                                    </widget>
-                                    <widget class="QLineEdit">
-                                        <property name="name">
-                                            <cstring>m_login</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string></string>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>The user ID of the MSN contact you would like to use.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>The user ID of the MSN contact you would like to use.  This should be in the form of a valid E-mail address.</string>
-                                        </property>
-                                    </widget>
-                                </hbox>
-                            </widget>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>m_rememberpasswd</cstring>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>1</hsizetype>
+                                        <vsizetype>5</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
                                 </property>
                                 <property name="text">
-                                    <string>Remember &amp;password</string>
+                                    <string>&amp;MSN Passport ID:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>m_login</cstring>
                                 </property>
                                 <property name="toolTip" stdset="0">
-                                    <string>Check to save your password.</string>
+                                    <string>The user ID of the MSN contact you would like to use.</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>Check to save your password.  Otherwise, you will be prompted each time you try to connect to this account.</string>
+                                    <string>The user ID of the MSN contact you would like to use.  This should be in the form of a valid E-mail address.</string>
                                 </property>
                             </widget>
-                            <widget class="QLayoutWidget">
+                            <widget class="QLayoutWidget" row="0" column="1">
                                 <property name="name">
-                                    <cstring>layout40</cstring>
+                                    <cstring>layout52</cstring>
                                 </property>
                                 <hbox>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <spacer>
-                                        <property name="name">
-                                            <cstring>spacer69</cstring>
-                                        </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
-                                        </property>
-                                        <property name="sizeType">
-                                            <enum>Fixed</enum>
-                                        </property>
-                                        <property name="sizeHint">
-                                            <size>
-                                                <width>17</width>
-                                                <height>20</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
-                                    <widget class="QLabel">
-                                        <property name="name">
-                                            <cstring>TextLabel2_2</cstring>
-                                        </property>
-                                        <property name="enabled">
-                                            <bool>false</bool>
-                                        </property>
-                                        <property name="text">
-                                            <string>Pass&amp;word:</string>
-                                        </property>
-                                        <property name="buddy" stdset="0">
-                                            <cstring>m_password</cstring>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>The password for your account.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>The password for your account.  You may optionally leave this blank and enter it when you wish to connect.</string>
-                                        </property>
-                                    </widget>
                                     <widget class="QLineEdit">
                                         <property name="name">
-                                            <cstring>m_password</cstring>
-                                        </property>
-                                        <property name="enabled">
-                                            <bool>false</bool>
+                                            <cstring>m_login</cstring>
                                         </property>
                                         <property name="text">
                                             <string></string>
                                         </property>
-                                        <property name="echoMode">
-                                            <enum>Password</enum>
-                                        </property>
                                         <property name="toolTip" stdset="0">
-                                            <string>The password for your account.</string>
+                                            <string>The user ID of the MSN contact you would like to use.</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>The password for your account.  You may optionally leave this blank and enter it when you wish to connect.</string>
+                                            <string>The user ID of the MSN contact you would like to use.  This should be in the form of a valid E-mail address.</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QCheckBox">
+                                        <property name="name">
+                                            <cstring>m_rememberpasswd</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Remember &amp;password</string>
+                                        </property>
+                                        <property name="accel">
+                                            <string>Alt+P</string>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>Check to save your password.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>Check to save your password.  Otherwise, you will be prompted each time you try to connect to this account.</string>
                                         </property>
                                     </widget>
                                 </hbox>
                             </widget>
-                        </vbox>
+                            <widget class="QLabel" row="1" column="0">
+                                <property name="name">
+                                    <cstring>TextLabel2_2</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>false</bool>
+                                </property>
+                                <property name="text">
+                                    <string>Pass&amp;word:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>m_password</cstring>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>The password for your account.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>The password for your account.  You may optionally leave this blank and enter it when you wish to connect.</string>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit" row="1" column="1">
+                                <property name="name">
+                                    <cstring>m_password</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>false</bool>
+                                </property>
+                                <property name="text">
+                                    <string></string>
+                                </property>
+                                <property name="echoMode">
+                                    <enum>Password</enum>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>The password for your account.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>The password for your account.  You may optionally leave this blank and enter it when you wish to connect.</string>
+                                </property>
+                            </widget>
+                        </grid>
                     </widget>
                     <widget class="QLabel">
                         <property name="name">
@@ -209,6 +188,23 @@
                             <set>WordBreak|AlignTop</set>
                         </property>
                     </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer41</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>120</height>
+                            </size>
+                        </property>
+                    </spacer>
                     <widget class="KActiveLabel">
                         <property name="name">
                             <cstring>kActiveLabel4</cstring>
@@ -232,7 +228,7 @@
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Connection</string>
+                    <string>Co&amp;nnection</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -245,83 +241,19 @@
                         <property name="title">
                             <string>Connection Preferences</string>
                         </property>
-                        <grid>
+                        <vbox>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
-                                <property name="name">
-                                    <cstring>textLabel1_4</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Use the following server / port:</string>
-                                </property>
-                            </widget>
-                            <widget class="QSpinBox" row="2" column="1">
-                                <property name="name">
-                                    <cstring>m_serverPort</cstring>
-                                </property>
-                                <property name="maxValue">
-                                    <number>65535</number>
-                                </property>
-                                <property name="minValue">
-                                    <number>1</number>
-                                </property>
-                                <property name="value">
-                                    <number>1863</number>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit" row="2" column="0">
-                                <property name="name">
-                                    <cstring>m_serverName</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>3</hsizetype>
-                                        <vsizetype>0</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                                <property name="text">
-                                    <string>messenger.hotmail.com</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
-                                </property>
-                            </widget>
-                            <spacer row="2" column="2">
-                                <property name="name">
-                                    <cstring>spacer9</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>0</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="3">
+                            <widget class="QCheckBox">
                                 <property name="name">
                                     <cstring>m_autologin</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Connect automatically at &amp;startup</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+S</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check to connect automatically when Kopete is started.</string>
@@ -330,7 +262,117 @@
                                     <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
                                 </property>
                             </widget>
-                        </grid>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>optionOverrideServer</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>&amp;Override default server information</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+O</string>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>layout20</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLayoutWidget">
+                                        <property name="name">
+                                            <cstring>layout19</cstring>
+                                        </property>
+                                        <hbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <property name="spacing">
+                                                <number>3</number>
+                                            </property>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>labelServer</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Ser&amp;ver /</string>
+                                                </property>
+                                                <property name="buddy" stdset="0">
+                                                    <cstring>m_serverName</cstring>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>labelPort</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Po&amp;rt:</string>
+                                                </property>
+                                                <property name="buddy" stdset="0">
+                                                    <cstring>m_serverPort</cstring>
+                                                </property>
+                                            </widget>
+                                        </hbox>
+                                    </widget>
+                                    <widget class="QLineEdit">
+                                        <property name="name">
+                                            <cstring>m_serverName</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>3</hsizetype>
+                                                <vsizetype>0</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="text">
+                                            <string>messenger.hotmail.com</string>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QSpinBox">
+                                        <property name="name">
+                                            <cstring>m_serverPort</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>65535</number>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>1</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>1863</number>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                        </vbox>
                     </widget>
                     <widget class="QGroupBox">
                         <property name="name">
@@ -356,8 +398,11 @@
                                     </sizepolicy>
                                 </property>
                                 <property name="text">
-                                    <string>Automatically open a chat &amp;window when someone starts
+                                    <string>Automatically open a &amp;chat window when someone starts
 a conversation</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+C</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox">
@@ -378,6 +423,9 @@ a conversation</string>
                                 <property name="text">
                                     <string>Download and show c&amp;ustom emoticons (experimental)</string>
                                 </property>
+                                <property name="accel">
+                                    <string>Alt+U</string>
+                                </property>
                             </widget>
                             <widget class="QCheckBox">
                                 <property name="name">
@@ -392,7 +440,10 @@ a conversation</string>
                                     </sizepolicy>
                                 </property>
                                 <property name="text">
-                                    <string>&amp;Send away messages</string>
+                                    <string>Send a&amp;way messages</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+W</string>
                                 </property>
                                 <property name="checked">
                                     <bool>false</bool>
@@ -406,23 +457,6 @@ a conversation</string>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <spacer>
-                                        <property name="name">
-                                            <cstring>spacer69_2</cstring>
-                                        </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
-                                        </property>
-                                        <property name="sizeType">
-                                            <enum>Fixed</enum>
-                                        </property>
-                                        <property name="sizeHint">
-                                            <size>
-                                                <width>17</width>
-                                                <height>20</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
                                     <widget class="QLabel">
                                         <property name="name">
                                             <cstring>textLabel3</cstring>
@@ -431,7 +465,7 @@ a conversation</string>
                                             <bool>false</bool>
                                         </property>
                                         <property name="text">
-                                            <string>Do not send more than one away message e&amp;very:</string>
+                                            <string>Do not send more than one away message ever&amp;y:</string>
                                         </property>
                                         <property name="alignment">
                                             <set>WordBreak|AlignVCenter</set>
@@ -510,7 +544,7 @@ a conversation</string>
                         <property name="sizeHint">
                             <size>
                                 <width>21</width>
-                                <height>70</height>
+                                <height>20</height>
                             </size>
                         </property>
                     </spacer>
@@ -518,183 +552,10 @@ a conversation</string>
             </widget>
             <widget class="QWidget">
                 <property name="name">
-                    <cstring>tab_contacts</cstring>
-                </property>
-                <attribute name="title">
-                    <string>Con&amp;tacts</string>
-                </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>label_font</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&lt;i&gt;Italics&lt;/i&gt; contacts are not on your contact list.&lt;br&gt;
-&lt;br&gt;
-&lt;b&gt;Bold&lt;/b&gt; contacts are in your contact list but you are not in their contact list.</string>
-                        </property>
-                    </widget>
-                    <widget class="QLayoutWidget">
-                        <property name="name">
-                            <cstring>layout6</cstring>
-                        </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLabel" row="0" column="2">
-                                <property name="name">
-                                    <cstring>textLabel2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Bloc&amp;ked contacts:</string>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>m_BL</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QListBox" row="1" column="0">
-                                <property name="name">
-                                    <cstring>m_AL</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QLayoutWidget" row="1" column="1">
-                                <property name="name">
-                                    <cstring>layout4</cstring>
-                                </property>
-                                <vbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QPushButton">
-                                        <property name="name">
-                                            <cstring>m_blockButton</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>&amp;&gt;</string>
-                                        </property>
-                                    </widget>
-                                    <widget class="QPushButton">
-                                        <property name="name">
-                                            <cstring>m_allowButton</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>&amp;&lt;</string>
-                                        </property>
-                                    </widget>
-                                    <spacer>
-                                        <property name="name">
-                                            <cstring>spacer13</cstring>
-                                        </property>
-                                        <property name="orientation">
-                                            <enum>Vertical</enum>
-                                        </property>
-                                        <property name="sizeType">
-                                            <enum>Expanding</enum>
-                                        </property>
-                                        <property name="sizeHint">
-                                            <size>
-                                                <width>20</width>
-                                                <height>20</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
-                                </vbox>
-                            </widget>
-                            <widget class="QLabel" row="0" column="0">
-                                <property name="name">
-                                    <cstring>textLabel1</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Allo&amp;wed contacts:</string>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>m_AL</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QListBox" row="1" column="2">
-                                <property name="name">
-                                    <cstring>m_BL</cstring>
-                                </property>
-                            </widget>
-                        </grid>
-                    </widget>
-                    <widget class="QCheckBox">
-                        <property name="name">
-                            <cstring>m_blp</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Block all users not in 'Allowed' &amp;list</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>Checking this box will block all users not explicitly shown in the allowed list here, including any contacts not on your contact list.</string>
-                        </property>
-                    </widget>
-                    <widget class="QFrame">
-                        <property name="name">
-                            <cstring>Frame3_2</cstring>
-                        </property>
-                        <property name="frameShape">
-                            <enum>HLine</enum>
-                        </property>
-                        <property name="frameShadow">
-                            <enum>Sunken</enum>
-                        </property>
-                    </widget>
-                    <widget class="QPushButton">
-                        <property name="name">
-                            <cstring>m_RLButton</cstring>
-                        </property>
-                        <property name="maximumSize">
-                            <size>
-                                <width>200</width>
-                                <height>32767</height>
-                            </size>
-                        </property>
-                        <property name="text">
-                            <string>View &amp;Reverse List</string>
-                        </property>
-                        <property name="toolTip" stdset="0">
-                            <string>The reverse list is the list of contact who added you in their own contact list.</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>The reverse list is the list of contact who added you in their own contact list.</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>m_warning_2</cstring>
-                        </property>
-                        <property name="paletteForegroundColor">
-                            <color>
-                                <red>255</red>
-                                <green>0</green>
-                                <blue>0</blue>
-                            </color>
-                        </property>
-                        <property name="font">
-                            <font>
-                                <bold>1</bold>
-                            </font>
-                        </property>
-                        <property name="text">
-                            <string>WARNING: you need to be connected to modify this page</string>
-                        </property>
-                        <property name="alignment">
-                            <set>WordBreak|AlignVCenter</set>
-                        </property>
-                    </widget>
-                </vbox>
-            </widget>
-            <widget class="QWidget">
-                <property name="name">
                     <cstring>tab_info</cstring>
                 </property>
                 <attribute name="title">
-                    <string>In&amp;fo</string>
+                    <string>&amp;User Info</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -1013,16 +874,317 @@ a conversation</string>
                     </widget>
                 </vbox>
             </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab_contacts</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Con&amp;tacts</string>
+                </attribute>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QLabel">
+                        <property name="name">
+                            <cstring>label_font</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&lt;i&gt;Italics&lt;/i&gt; contacts are not on your contact list.&lt;br&gt;
+&lt;br&gt;
+&lt;b&gt;Bold&lt;/b&gt; contacts are in your contact list but you are not in their contact list.</string>
+                        </property>
+                    </widget>
+                    <widget class="QLayoutWidget">
+                        <property name="name">
+                            <cstring>layout6</cstring>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel" row="0" column="2">
+                                <property name="name">
+                                    <cstring>textLabel2</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Bloc&amp;ked contacts:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>m_BL</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QListBox" row="1" column="0">
+                                <property name="name">
+                                    <cstring>m_AL</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget" row="1" column="1">
+                                <property name="name">
+                                    <cstring>layout4</cstring>
+                                </property>
+                                <vbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QPushButton">
+                                        <property name="name">
+                                            <cstring>m_blockButton</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>&amp;&gt;</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QPushButton">
+                                        <property name="name">
+                                            <cstring>m_allowButton</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>&amp;&lt;</string>
+                                        </property>
+                                    </widget>
+                                    <spacer>
+                                        <property name="name">
+                                            <cstring>spacer13</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Vertical</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Expanding</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>20</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                </vbox>
+                            </widget>
+                            <widget class="QLabel" row="0" column="0">
+                                <property name="name">
+                                    <cstring>textLabel1</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Allo&amp;wed contacts:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>m_AL</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QListBox" row="1" column="2">
+                                <property name="name">
+                                    <cstring>m_BL</cstring>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                    <widget class="QLayoutWidget">
+                        <property name="name">
+                            <cstring>layout58</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <spacer>
+                                <property name="name">
+                                    <cstring>spacer47</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>41</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>m_blp</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Block all users not in 'Allowed' &amp;list</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+L</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Checking this box will block all users not explicitly shown in the allowed list here, including any contacts not on your contact list.</string>
+                                </property>
+                            </widget>
+                            <spacer>
+                                <property name="name">
+                                    <cstring>spacer50</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>41</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                        </hbox>
+                    </widget>
+                    <widget class="QLayoutWidget">
+                        <property name="name">
+                            <cstring>layout59</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <spacer>
+                                <property name="name">
+                                    <cstring>spacer48</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>81</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <widget class="QPushButton">
+                                <property name="name">
+                                    <cstring>m_RLButton</cstring>
+                                </property>
+                                <property name="maximumSize">
+                                    <size>
+                                        <width>200</width>
+                                        <height>32767</height>
+                                    </size>
+                                </property>
+                                <property name="text">
+                                    <string>View &amp;Reverse List</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+R</string>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>The reverse list is the list of contact who added you in their own contact list.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>The reverse list is the list of contact who added you in their own contact list.</string>
+                                </property>
+                            </widget>
+                            <spacer>
+                                <property name="name">
+                                    <cstring>spacer49</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>111</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                        </hbox>
+                    </widget>
+                    <widget class="QLabel">
+                        <property name="name">
+                            <cstring>m_warning_2</cstring>
+                        </property>
+                        <property name="paletteForegroundColor">
+                            <color>
+                                <red>255</red>
+                                <green>0</green>
+                                <blue>0</blue>
+                            </color>
+                        </property>
+                        <property name="font">
+                            <font>
+                                <bold>1</bold>
+                            </font>
+                        </property>
+                        <property name="text">
+                            <string>WARNING: you need to be connected to modify this page</string>
+                        </property>
+                        <property name="alignment">
+                            <set>WordBreak|AlignVCenter</set>
+                        </property>
+                    </widget>
+                </vbox>
+            </widget>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>labelStatusMessage</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
         </widget>
     </vbox>
 </widget>
-<customwidgets>
-</customwidgets>
 <connections>
     <connection>
         <sender>m_useDisplayPicture</sender>
         <signal>toggled(bool)</signal>
+        <receiver>m_displayPicture</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>m_useDisplayPicture</sender>
+        <signal>toggled(bool)</signal>
         <receiver>m_selectImage</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>m_useDisplayPicture</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_selectImage</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>m_useDisplayPicture</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel1_2</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>SendAwayMessages</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel4</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>SendAwayMessages</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>AwayMessageSeconds</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>SendAwayMessages</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel3</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
@@ -1038,39 +1200,27 @@ a conversation</string>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>SendAwayMessages</sender>
+        <sender>optionOverrideServer</sender>
         <signal>toggled(bool)</signal>
-        <receiver>textLabel3</receiver>
+        <receiver>labelServer</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>SendAwayMessages</sender>
+        <sender>optionOverrideServer</sender>
         <signal>toggled(bool)</signal>
-        <receiver>AwayMessageSeconds</receiver>
+        <receiver>m_serverName</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>SendAwayMessages</sender>
+        <sender>optionOverrideServer</sender>
         <signal>toggled(bool)</signal>
-        <receiver>textLabel4</receiver>
+        <receiver>labelPort</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>m_useDisplayPicture</sender>
+        <sender>optionOverrideServer</sender>
         <signal>toggled(bool)</signal>
-        <receiver>textLabel1_2</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>m_useDisplayPicture</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_selectImage</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>m_useDisplayPicture</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_displayPicture</receiver>
+        <receiver>m_serverPort</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
@@ -1078,21 +1228,29 @@ a conversation</string>
     <tabstop>m_login</tabstop>
     <tabstop>m_rememberpasswd</tabstop>
     <tabstop>m_password</tabstop>
-    <tabstop>m_autologin</tabstop>
     <tabstop>kActiveLabel4</tabstop>
     <tabstop>tabWidget3</tabstop>
-    <tabstop>m_AL</tabstop>
-    <tabstop>m_blockButton</tabstop>
-    <tabstop>m_allowButton</tabstop>
-    <tabstop>m_BL</tabstop>
-    <tabstop>m_blp</tabstop>
-    <tabstop>m_RLButton</tabstop>
+    <tabstop>m_autologin</tabstop>
+    <tabstop>optionOverrideServer</tabstop>
+    <tabstop>m_serverName</tabstop>
+    <tabstop>m_serverPort</tabstop>
+    <tabstop>NotifyNewChat</tabstop>
+    <tabstop>AutoDownloadPicture</tabstop>
+    <tabstop>useCustomEmoticons</tabstop>
+    <tabstop>SendAwayMessages</tabstop>
+    <tabstop>AwayMessageSeconds</tabstop>
     <tabstop>m_displayName</tabstop>
     <tabstop>m_phw</tabstop>
     <tabstop>m_phh</tabstop>
     <tabstop>m_phm</tabstop>
     <tabstop>m_useDisplayPicture</tabstop>
     <tabstop>m_selectImage</tabstop>
+    <tabstop>m_AL</tabstop>
+    <tabstop>m_blockButton</tabstop>
+    <tabstop>m_allowButton</tabstop>
+    <tabstop>m_BL</tabstop>
+    <tabstop>m_blp</tabstop>
+    <tabstop>m_RLButton</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
