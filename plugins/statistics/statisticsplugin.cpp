@@ -90,7 +90,7 @@ StatisticsPlugin::~StatisticsPlugin()
 
 void StatisticsPlugin::slotAboutToReceive(Kopete::Message& m)
 {
-	if (!m.from()->metaContact()->metaContactId().isEmpty())
+	if (!m.from()->metaContact()->metaContactId().isEmpty() && statisticsContactMap[m.from()->metaContact()->metaContactId()])
 		statisticsContactMap[m.from()->metaContact()->metaContactId()]->newMessageReceived(m);
 }
 
