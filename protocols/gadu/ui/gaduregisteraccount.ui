@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>315</width>
-            <height>275</height>
+            <height>277</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -156,10 +156,10 @@
                                 <bool>false</bool>
                             </property>
                             <property name="toolTip" stdset="0">
-                                <string>The possword you would like to use.</string>
+                                <string>The password you would like to use.</string>
                             </property>
                             <property name="whatsThis" stdset="0">
-                                <string>The possword you would like to use for this account.</string>
+                                <string>The password you would like to use for this account.</string>
                             </property>
                         </widget>
                         <widget class="KLineEdit">
@@ -170,10 +170,11 @@
                                 <enum>Password</enum>
                             </property>
                             <property name="toolTip" stdset="0">
-                                <string>A confirmation of the possword you would like to use.</string>
+                                <string>A confirmation of the password you would like to use.</string>
                             </property>
                             <property name="whatsThis" stdset="0">
-                                <string>A confirmation of the possword you would like to use for this account.</string>
+                                <string>A confirmation of the password you would like to use for this accou
+nt.</string>
                             </property>
                         </widget>
                     </vbox>
