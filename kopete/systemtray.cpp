@@ -271,7 +271,7 @@ void KopeteSystemTray::addBalloon()
 void KopeteSystemTray::slotConfigChanged()
 {
 //	kdDebug(14010) << k_funcinfo << "called." << endl;
-	if (KopetePrefs::prefs()->showTray())
+	if ( KopetePrefs::prefs()->showTray() )
 		show();
 	else
 		hide(); // for users without kicker or a similar docking app
