@@ -1,1 +1,1 @@
-SUBDIRS = jabber xmpp-core xmpp-im
+SUBDIRS = include jabber xmpp-core xmpp-im
