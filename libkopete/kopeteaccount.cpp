@@ -46,11 +46,11 @@ class KopeteAccountPrivate
 {
 public:
 	KopeteAccountPrivate( Kopete::Protocol *protocol, const QString &accountId )
-	 : blackList( new Kopete::BlackLister( protocol->pluginId(), accountId ) )
-	 , protocol( protocol ), id( accountId )
+	 : protocol( protocol ), id( accountId )
 	 , password( configGroup( protocol, accountId ) )
 	 , autologin( false ), priority( 0 ), myself( 0 )
 	 , suppressStatusTimer( 0 ), suppressStatusNotification( false )
+	 , blackList( new Kopete::BlackLister( protocol->pluginId(), accountId ) )
 	{
 	}
 	
