@@ -654,9 +654,9 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 
 	if ( metaLVI && nb == 1 )
 	{
-		int px = mapFromGlobal( point ).x() - ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
+		int px = mapFromGlobal( point ).x() -  ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
 			treeStepSize() * ( item->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
-		int py = mapFromGlobal( point ).y() - itemRect( item ).y() - header()->height();
+		int py = mapFromGlobal( point ).y() - itemRect( item ).y() - (header()->isVisible() ? header()->height() : 0) ;
 
 		//kdDebug( 14000 ) << k_funcinfo << "x: " << px << ", y: " << py << endl;
 		KopeteContact *c = metaLVI->contactForPoint( QPoint( px, py ) ) ;
