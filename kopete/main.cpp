@@ -24,7 +24,7 @@
 #include <dcopclient.h>
 #include "kopeteiface.h"
 
-#define KOPETE_VERSION "0.6.90cvs >= 20030426"
+#define KOPETE_VERSION "0.6.90cvs >= 20030511"
 
 static const char *description =
 	I18N_NOOP("Kopete, the KDE Instant Messenger");
@@ -43,10 +43,10 @@ int main(int argc, char *argv[])
 {
 	KAboutData aboutData( "kopete", I18N_NOOP("Kopete"),
 		KOPETE_VERSION, description, KAboutData::License_GPL,
-		I18N_NOOP("(c) 2001,2002, Duncan Mac-Vicar Prett\n(c) 2002,2003, The Kopete Development Team"), "kopete-devel@kde.org", "http://kopete.kde.org");
+		I18N_NOOP("(c) 2001,2003, Duncan Mac-Vicar Prett\n(c) 2002,2003, The Kopete Development Team"), "kopete-devel@kde.org", "http://kopete.kde.org");
 
-	aboutData.addAuthor ( "Duncan Mac-Vicar Prett", I18N_NOOP("Original author, core developer"), "duncan@kde.org", "http://www.mac-vicar.com" );
-	aboutData.addAuthor ( "Nick Betcher", I18N_NOOP("Core developer, fastest plugin developer on earth."), "nbetcher@kde.org", "http://www.kdedevelopers.net" );
+	aboutData.addAuthor ( "Duncan Mac-Vicar Prett", I18N_NOOP("Original author, core developer"), "duncan@kde.org", "http://www.mac-vicar.org/~duncan" );
+	aboutData.addAuthor ( "Nick Betcher", I18N_NOOP("Core developer, fastest plugin developer on earth."), "nbetcher@kde.org");
 	aboutData.addAuthor ( "Martijn Klingens", I18N_NOOP("Core developer"), "klingens@kde.org" );
 	aboutData.addAuthor ( "Daniel Stone", I18N_NOOP("Core developer, Jabber plugin"), "dstone@kde.org", "http://raging.dropbear.id.au/daniel/");
 	aboutData.addAuthor ( "Till Gerken", I18N_NOOP("Core developer, Jabber plugin"), "till@tantalo.net");
