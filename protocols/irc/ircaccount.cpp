@@ -466,10 +466,10 @@ void IRCAccount::slotConnectedToServer()
 
 void IRCAccount::slotJoinedUnknownChannel( const QString &channel, const QString &nick )
 {
-	/*if ( nick.lower() == m_contactManager->mySelf()->nickName().lower() )
+	if ( nick.lower() == m_contactManager->mySelf()->nickName().lower() )
 	{
-		QTimer::singleShot( 500, m_contactManager->findChannel( channel ), SLOT( join() ) );
-	} */
+		m_contactManager->findChannel( channel )->join();
+	}
 }
 
 void IRCAccount::slotDisconnected()
