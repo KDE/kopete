@@ -310,7 +310,7 @@ void ChatView::raise(bool activate)
 	// to a bug in QT or in KDE  (qt3.1.x or KDE 3.1.x) then, i have to call KWin's method
 	if(m_mainWindow->isMinimized())
 		KWin::deIconifyWindow(m_mainWindow->winId() );
-	m_mainWindow->raise();
+	KWin::raiseWindow( m_mainWindow->winId() );
 
 	/* Removed Nov 2003
 	According to Zack, the user double-clicking a contact is not valid reason for a non-pager
