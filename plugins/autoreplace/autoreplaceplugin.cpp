@@ -17,6 +17,8 @@
 
 #include <kgenericfactory.h>
 
+#include <kopetecontact.h>
+
 #include "kopetemessagemanagerfactory.h"
 
 #include "autoreplaceplugin.h"
@@ -66,10 +68,17 @@ void AutoReplacePlugin::slotAboutToSend( KopeteMessage &msg )
 		AutoReplaceConfig::WordsToReplace map = m_prefs->map();
 
 		// replaces all matched words --> try to find a more 'economic' way
-		QString match = "\\b(%1)\\b";
+		// "\\b(%1)\\b" doesn't work when substituting /me.
+		QString match = "(^| |\\.|\\;|\\,|\\:)(%1)($| |\\.|\\;|\\,|\\:)";
 		AutoReplaceConfig::WordsToReplace::Iterator it;
 		for ( it = map.begin(); it != map.end(); ++it )
-			replaced_message.replace( QRegExp( match.arg( QRegExp::escape( it.key() ) ) ), map.find( it.key() ).data() );
+		{
+			QRegExp re( match.arg( QRegExp::escape( it.key() ) ) );
+			re.search( replaced_message );
+			QString before = re.cap(1);
+			QString after = re.cap(3);
+			replaced_message.replace( re, before + map.find( it.key() ).data() + after );
+		}
 
 		// the message is now the one with replaced words
 		msg.setBody( replaced_message, KopeteMessage::PlainText );
