@@ -90,12 +90,15 @@ public:
 	EngineStatus status() const { return m_status; }
 	inline bool isDisconnected() const { return m_status == Disconnected; }
 	inline bool isConnected() const { return m_status == Connected; }
+	
+	QString &customCtcp( const QString &s ) { return customCtcpMap[s];  }
+	void addCustomCtcp( const QString &ctcp, const QString &reply ) { customCtcpMap[ ctcp ] = reply; }
+
 
 public slots:
 	void setVersionString(const QString &versionString);
 	void setUserString(const QString &userString);
 	void setSourceString(const QString &sourceString);
-	
 	void connectToServer(const QString &nickname=QString::null, const QString &host=QString::null, Q_UINT16 port=0);
 
 	void changeUser(const QString &newUsername, const QString &hostname, const QString &newRealname);
@@ -374,6 +377,7 @@ protected:
 
 	QDict<KIRCMethodFunctorCall> m_IrcCTCPQueryMethods;
 	QDict<KIRCMethodFunctorCall> m_IrcCTCPReplyMethods;
+	QMap<QString, QString> customCtcpMap;
 
 private slots:
 	void slotHostFound();

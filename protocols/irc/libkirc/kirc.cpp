@@ -350,9 +350,10 @@ void KIRC::slotConnectionClosed()
 	m_sock.reset();
 }
 
-void KIRC::error(int errCode)
+void KIRC::error(int)
 {
-	if (m_sock.socketStatus () != KExtendedSocket::connecting) {
+	if (m_sock.socketStatus () != KExtendedSocket::connecting)
+	{
 		// Connection in progress.. This is a signal fired wrong
 		setStatus(Disconnected);
 		m_sock.reset();
@@ -1145,7 +1146,7 @@ bool KIRC::numericReply_433(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::numericReply_464(const KIRCMessage &msg)
+bool KIRC::numericReply_464(const KIRCMessage &)
 {
 	/* Server need pass.. Call disconnect */
 	emit incomingFailedServerPassword();
@@ -1259,8 +1260,18 @@ void KIRC::sendCtcpVersion(const QString &target)
 
 bool KIRC::CtcpQuery_version(const KIRCMessage &msg)
 {
-	writeCtcpReplyMessage(msg.prefix(), QString::null,
-		msg.ctcpMessage().command(), QStringList(), m_VersionString);
+	QString response = customCtcpMap[ QString::fromLatin1("version") ];
+	if( !response.isEmpty() )
+	{
+		writeCtcpReplyMessage(msg.prefix(), QString::null,
+			msg.ctcpMessage().command(), QStringList(), response);
+	}
+	else
+	{
+		writeCtcpReplyMessage(msg.prefix(), QString::null,
+			msg.ctcpMessage().command(), QStringList(), m_VersionString);
+	}
+	
 	return true;
 }
 
@@ -1272,18 +1283,39 @@ bool KIRC::CtcpReply_version(const KIRCMessage &msg)
 
 bool KIRC::CtcpQuery_userInfo(const KIRCMessage &msg)
 {
-	writeCtcpReplyMessage( msg.prefix(), QString::null,
-				msg.ctcpMessage().command(), QStringList(), QString::null, !m_UserString.isEmpty() );
+	QString response = customCtcpMap[ QString::fromLatin1("userinfo") ];
+	if( !response.isEmpty() )
+	{
+		writeCtcpReplyMessage(msg.prefix(), QString::null,
+			msg.ctcpMessage().command(), QStringList(), response);
+	}
+	else
+	{
+		writeCtcpReplyMessage( msg.prefix(), QString::null,
+				msg.ctcpMessage().command(), QStringList(), m_UserString );
+	}
+	
 	return true;
 }
 
 //	FIXME: the API can now answer to help commands.
 bool KIRC::CtcpQuery_clientInfo(const KIRCMessage &msg)
 {
-	QString info = QString::fromLatin1(	"The following commands are supported, but without sub-command help: "
-						"VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING, ACTION.");
-	writeCtcpReplyMessage(	msg.prefix(), QString::null,
-				msg.ctcpMessage().command(), QStringList(), info);
+	QString response = customCtcpMap[ QString::fromLatin1("clientinfo") ];
+	if( !response.isEmpty() )
+	{
+		writeCtcpReplyMessage(	msg.prefix(), QString::null,
+					msg.ctcpMessage().command(), QStringList(), response);
+	}
+	else
+	{
+		QString info = QString::fromLatin1("The following commands are supported, but "
+			"without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING,"
+			"ACTION.");
+		
+		writeCtcpReplyMessage(	msg.prefix(), QString::null,
+					msg.ctcpMessage().command(), QStringList(), info);
+	}
 	return true;
 }
 

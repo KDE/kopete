@@ -40,6 +40,7 @@ class IRCEditAccountWidget : public IRCEditAccountBase, public EditAccountWidget
 	private slots:
 		void slotContextMenu( KListView*, QListViewItem*, const QPoint & );
 		void slotAddCommand();
+		void slotAddCtcp();
 	
 	private:
 		IRCProtocol *mProtocol;

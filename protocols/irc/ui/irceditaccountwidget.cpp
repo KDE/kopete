@@ -24,6 +24,7 @@
 #include <qspinbox.h>
 #include <qcheckbox.h>
 
+#include "kirc.h"
 #include "ircaccount.h"
 #include "irceditaccountwidget.h"
 
@@ -46,18 +47,29 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		mServer->setReadOnly(true);
 
 		mUserName->setText( m_IRCAccount->userName() );
+		partMessage->setText( m_IRCAccount->defaultPart() );
+		quitMessage->setText( m_IRCAccount->defaultQuit() );
 
 		if(m_account->rememberPassword()) mPassword->setText( m_IRCAccount->password() );
 		
 		QStringList cmds = m_IRCAccount->connectCommands();
 		for( QStringList::Iterator i = cmds.begin(); i != cmds.end(); ++i )
 			new QListViewItem( commandList, *i );
+			
+		const QMap< QString, QString > replies = m_IRCAccount->customCtcpReplies();
+		for( QMap< QString, QString >::ConstIterator it = replies.begin(); it != replies.end(); ++it )
+			new QListViewItem( ctcpList, it.key().lower(), it.data() );
 	}
 	
 	connect( commandList, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ),
 		this, SLOT( slotContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
 		
+	connect( ctcpList, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ),
+		this, SLOT( slotContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
+		
 	connect( addButton, SIGNAL( clicked() ), this, SLOT( slotAddCommand() ) );
+	
+	connect( addReply, SIGNAL( clicked() ), this, SLOT( slotAddCtcp() ) );
 }
 
 IRCEditAccountWidget::~IRCEditAccountWidget()
@@ -78,6 +90,13 @@ void IRCEditAccountWidget::slotAddCommand()
 	commandEdit->clear();
 }
 
+void IRCEditAccountWidget::slotAddCtcp()
+{
+	new QListViewItem( ctcpList, newCTCP->text(), newReply->text() );
+	newCTCP->clear();
+	newReply->clear();
+}
+
 KopeteAccount *IRCEditAccountWidget::apply()
 {
 	QString mAccountId = mNickName->text() + QString::fromLatin1("@") + mServer->text() + QString::fromLatin1(":") + QString::number( mPort->value() );
@@ -93,11 +112,20 @@ KopeteAccount *IRCEditAccountWidget::apply()
 	}
 	
 	m_IRCAccount->setUserName( mUserName->text() );
+	m_IRCAccount->setDefaultPart( partMessage->text() );
+	m_IRCAccount->setDefaultQuit( quitMessage->text() );
 	m_IRCAccount->setAutoLogin( mAutoConnect->isChecked() );
 	
 	QStringList cmds;
 	for( QListViewItem *i = commandList->firstChild(); i; i = i->nextSibling() )
 		cmds.append( i->text(0) );
+	
+	QMap< QString, QString > replies;
+	for( QListViewItem *i = ctcpList->firstChild(); i; i = i->nextSibling() )
+		replies[ i->text(0) ] = i->text(1);
+	
+	m_IRCAccount->setCustomCtcpReplies( replies );
+	
 	
 	m_IRCAccount->setConnectCommands( cmds );
 	

@@ -200,7 +200,7 @@ void IRCChannelContact::part()
 {
 	kdDebug(14120) << k_funcinfo << "Part channel:" << m_nickName << endl;
 	if( m_isConnected )
-		m_engine->partChannel(m_nickName, QString::fromLatin1("Kopete %1 : http://kopete.kde.org").arg(kapp->aboutData()->version()));
+		m_engine->partChannel( m_nickName, m_account->defaultPart() );
 }
 
 void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString &channel)

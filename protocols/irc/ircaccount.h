@@ -53,14 +53,27 @@ public:
 
 	QString userName();
 	
-	inline const QStringList connectCommands() const { return m_connectCommands; }
+	const QStringList connectCommands() const;
 	
-	void setConnectCommands( const QStringList & );
+	void setConnectCommands( const QStringList & ) const;
+	
+	void setDefaultPart( const QString & );
+	
+	void setDefaultQuit( const QString & );
+	
+	const QString defaultPart() const;
+	
+	const QString defaultQuit() const;
+	
+	QMap< QString, QString > customCtcp() const;
+	
+	void setCustomCtcpReplies( const QMap< QString, QString > &replys ) const;
+	
+	const QMap<QString, QString> customCtcpReplies() const;
 	
 public slots:
 	void setUserName(QString userName);
 
-public slots:
 	void unregister(KopeteContact *);
 
 	IRCServerContact *findServer(const QString &name, KopeteMetaContact *m = 0L);
@@ -149,7 +162,7 @@ private:
 	IRCProtocol *m_protocol;
 	KopeteMessageManager *m_manager;
 	QString mNickName;
-
+	
 	QString m_server;
 	uint m_port;
 
@@ -158,8 +171,7 @@ private:
 	IRCContactManager *m_contactManager;
 	IRCServerContact *m_myServer;
 	
-	// Commands to run on connect
-	QStringList m_connectCommands;
+	QMap< QString, QString > m_customCtcp;
 };
 
 #endif

@@ -121,14 +121,75 @@ void IRCAccount::setUserName(QString userName)
 	setPluginData(protocol(), QString::fromLatin1( "userName" ), userName);
 }
 
-void IRCAccount::setConnectCommands( const QStringList &commands )
+void IRCAccount::setDefaultPart( const QString &defaultPart )
 {
-	m_connectCommands = commands;
+	setPluginData( protocol(), QString::fromLatin1( "defaultPart" ), defaultPart );
+}
+
+void IRCAccount::setDefaultQuit( const QString &defaultQuit )
+{
+	setPluginData( protocol(), QString::fromLatin1( "defaultQuit" ), defaultQuit );
+}
+
+const QString IRCAccount::defaultPart() const
+{
+	QString partMsg = pluginData(protocol(), QString::fromLatin1("defaultPart"));
+	if( partMsg.isEmpty() )
+		return QString::fromLatin1("Kopete %1 : http://kopete.kde.org").arg( kapp->aboutData()->version() );
+	return partMsg;
+}
+
+const QString IRCAccount::defaultQuit() const
+{
+	QString quitMsg = pluginData(protocol(), QString::fromLatin1("defaultQuit"));
+	if( quitMsg.isEmpty() )
+		return QString::fromLatin1("Kopete %1 : http://kopete.kde.org").arg(kapp->aboutData()->version());
+	return quitMsg;
+}
+
+void IRCAccount::setCustomCtcpReplies( const QMap< QString, QString > &replies ) const
+{
+	QStringList val;
+	for( QMap< QString, QString >::ConstIterator it = replies.begin(); it != replies.end(); ++it )
+	{
+		m_engine->addCustomCtcp( it.key(), it.data() );
+		val.append( QString::fromLatin1("%1=%2").arg( it.key() ).arg( it.data() ) );
+	}
+		
+	KConfig *config = KGlobal::config();
+	config->setGroup( configGroup() );
+	config->writeEntry( "CustomCtcp", val );
+	config->sync();
+}
+
+const QMap< QString, QString > IRCAccount::customCtcpReplies() const
+{
+	QMap< QString, QString > replies;
+	QStringList replyList;
 	
 	KConfig *config = KGlobal::config();
 	config->setGroup( configGroup() );
-	config->writeEntry( "ConnectCommands", m_connectCommands );
+	replyList = config->readListEntry( "CustomCtcp" );
+	
+	for( QStringList::Iterator it = replyList.begin(); it != replyList.end(); ++it )
+		replies[ (*it).section('=', 0, 0 ) ] = (*it).section('=', 1 );
+
+	return replies;
+}
+
+void IRCAccount::setConnectCommands( const QStringList &commands ) const
+{
+	KConfig *config = KGlobal::config();
+	config->setGroup( configGroup() );
+	config->writeEntry( "ConnectCommands", commands );
 	config->sync();
+}
+
+const QStringList IRCAccount::connectCommands() const
+{
+	KConfig *config = KGlobal::config();
+	config->setGroup( configGroup() );
+	return config->readListEntry( "ConnectCommands" );
 }
 
 KActionMenu *IRCAccount::actionMenu()
@@ -163,6 +224,7 @@ void IRCAccount::connect()
 
 void IRCAccount::slotConnectedToServer()
 {
+	QStringList m_connectCommands = connectCommands();
 	for( QStringList::Iterator it = m_connectCommands.begin(); it != m_connectCommands.end(); ++it )
 	{
 		KopeteMessageManager *manager = myServer()->manager();
@@ -182,7 +244,7 @@ void IRCAccount::quit( const QString &quitMessage )
 	// TODO: Add a thing to save a custom quit message in the account wizard,
 	// and use that value here if set.
 	if( quitMessage.isNull() || quitMessage.isEmpty() )
-		m_engine->quitIRC(QString::fromLatin1("Kopete %1 : http://kopete.kde.org").arg(kapp->aboutData()->version()));
+		m_engine->quitIRC( defaultQuit() );
 	else
 		m_engine->quitIRC( quitMessage );
 }
