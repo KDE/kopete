@@ -500,16 +500,6 @@ void AppearanceConfig::slotStyleSaved()
 {
 	if( addStyle( styleEditor->styleName->text(), KTextEditor::editInterface( editDocument )->text() ) )
 	{
-		// Remove our tempfile
-		QString filePath = itemMap[ editedItem ];
-		if ( !filePath.isNull() )
-		{
-			if ( QFileInfo( filePath ).isWritable() )
-				QFile::remove( filePath );
-		}
-		delete editedItem;
-		editedItem=0L;
-
 		styleEditor->deleteLater();
 		emit changed( true );
 	}
@@ -519,7 +509,11 @@ void AppearanceConfig::slotStyleSaved()
 
 bool AppearanceConfig::addStyle( const QString &styleName, const QString &styleSheet )
 {
-	if( !mPrfsChatWindow->styleList->findItem( styleName )  ||  (mPrfsChatWindow->styleList->selectedItem() && mPrfsChatWindow->styleList->selectedItem()->text()==styleName)  )
+	bool newStyleName = !mPrfsChatWindow->styleList->findItem( styleName );
+	bool editExistingStyle = (mPrfsChatWindow->styleList->selectedItem() &&
+				 mPrfsChatWindow->styleList->selectedItem()->text()==styleName);
+	
+	if ( newStyleName || editExistingStyle )
 	{
 		QString filePath = locateLocal("appdata", QString::fromLatin1("styles/%1.xsl").arg( styleName ) );
 		QFile out( filePath );
@@ -529,10 +523,16 @@ bool AppearanceConfig::addStyle( const QString &styleName, const QString &styleS
 			stream << styleSheet;
 			out.close();
 
-			mPrfsChatWindow->styleList->insertItem( styleName, 0 );
-			itemMap.insert( mPrfsChatWindow->styleList->firstItem(), filePath );
-			mPrfsChatWindow->styleList->setSelected( mPrfsChatWindow->styleList->firstItem(), true );
-			mPrfsChatWindow->styleList->sort();
+			if ( newStyleName )
+			{
+				mPrfsChatWindow->styleList->insertItem( styleName, 0 );
+				itemMap.insert( mPrfsChatWindow->styleList->firstItem(), filePath );
+				mPrfsChatWindow->styleList->setSelected( mPrfsChatWindow->styleList->firstItem(), true );
+				mPrfsChatWindow->styleList->sort();
+			}
+			else
+				slotUpdatePreview();
+
 			styleChanged = true;
 			return true;
 		}
