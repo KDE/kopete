@@ -19,13 +19,9 @@
 //
 // File based on aim.cpp from Kit client.
 
-
-
 #include "aim.h"
 #include <qregexp.h>
-
-
 QString tocNormalize(const QString &oldstr)
 {
-	return oldstr.lower().replace(" ","");
+	return oldstr; //.lower().replace(" ","");
 }

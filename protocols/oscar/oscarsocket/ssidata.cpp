@@ -56,7 +56,7 @@ SSI * SSIData::addBuddy(const QString &name, const QString &group)
 	return newitem;
 }
 
-SSI * SSIData::findGroup(const QString &name)
+SSI *SSIData::findGroup(const QString &name)
 {
 	for (SSI *i=first(); i; i = next())
 	{
@@ -132,7 +132,8 @@ SSI *SSIData::findBuddy(const QString &name, const QString &group)
 		for (SSI *i=first(); i; i = next())
 		{
 			//if the ssi item has the right name, is a buddy, and has the right group
-			kdDebug(14150) << "i->gid is " << i->gid << ", gr->gid is " << gr->gid << endl;
+			/*kdDebug(14150) << k_funcinfo <<
+				"i->gid is " << i->gid << ", gr->gid is " << gr->gid << endl;*/
 			if ((i->name == name) && (i->type == 0x0000) && (i->gid == gr->gid))
 			{
 				//we have found our buddy
@@ -142,8 +143,9 @@ SSI *SSIData::findBuddy(const QString &name, const QString &group)
 		}
 	}
 	else
+	{
 		kdDebug(14150) << "Group " << group << " not found" << endl;
-
+	}
 	return 0L;
 }
 

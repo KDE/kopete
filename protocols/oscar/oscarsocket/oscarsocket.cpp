@@ -2828,68 +2828,64 @@ void OscarSocket::sendRenameBuddy(const QString &budName,
 		return;
 	}
 
-	// BEGIN DEBUG, remove if working
 	Buffer tmpBuf(ssi->tlvlist, ssi->tlvlength);
 	QPtrList<TLV> lst = tmpBuf.getTLVList();
 	lst.setAutoDelete(FALSE);
 
-	TLV *oldNick = findTLV(lst,0x0131);
-	// END DEBUG
+	/*TLV *oldNick = findTLV(lst,0x0131);
 
-//	if (oldNick)
+	if (oldNick)
 	{
-		if (oldNick)
-		{
-			kdDebug(14150) << k_funcinfo <<
-				"Renaming contact, current alias='" << oldNick->data << "'" << endl;
-			lst.remove(oldNick); // get rid of TLV copy
-		}
-		else
-		{
-			kdDebug(14150) << k_funcinfo <<
-				"Renaming contact, no alias had been given before." << endl;
-		}
-
-		// construct new SSI entry replacing the old one
-		SSI *newSSI = new SSI();
-		newSSI->name = ssi->name;
-		newSSI->gid = ssi->gid;
-		newSSI->bid = ssi->bid;
-		newSSI->type = ssi->type;
-		Buffer *newSSITLV = new Buffer();
-
-		for(TLV* t = lst.first(); t; t = lst.next())
-		{
-			if(t->type != 0x0131)
-			{
-				newSSITLV->addTLV(t->type, t->length, t->data);
-				lst.remove(t);
-			}
-		}
-
-		const char *newNickData = newAlias.local8Bit().copy();
-		newSSITLV->addTLV(0x0131, newAlias.local8Bit().length(), newNickData);
-
-		if (!ssiData.remove(ssi))
-		{
-			kdDebug(14150) << k_funcinfo <<
-				"Couldn't remove old ssi containing visibility value" << endl;
-			delete newSSITLV;
-			delete newSSI;
-			return;
-		}
-		newSSI->tlvlist = newSSITLV->buffer();
-		newSSI->tlvlength = newSSITLV->length();
-
-		ssiData.append(newSSI);
-
-		kdDebug(14150) << k_funcinfo << "Renaming, new SSI block: name=" << newSSI->name <<
-			", gid=" << newSSI->gid << ", bid=" << newSSI->bid <<
-			", type=" << newSSI->type << ", datalength=" <<
-			newSSI->tlvlength << endl;
-
-		sendSSIAddModDel(newSSI,0x0009);
+	kdDebug(14150) << k_funcinfo <<
+			"Renaming contact, current alias='" << oldNick->data << "'" << endl;
+		lst.remove(oldNick); // get rid of TLV copy
 	}
+	else
+	{
+		kdDebug(14150) << k_funcinfo <<
+			"Renaming contact, no alias had been given before." << endl;
+	}*/
+
+	// construct new SSI entry replacing the old one
+	SSI *newSSI = new SSI();
+	newSSI->name = ssi->name;
+	newSSI->gid = ssi->gid;
+	newSSI->bid = ssi->bid;
+	newSSI->type = ssi->type;
+	Buffer *newSSIdata = new Buffer();
+
+	for(TLV* t = lst.first(); t; t = lst.next())
+	{
+		if(t->type != 0x0131)
+		{
+			newSSIdata->addTLV(t->type, t->length, t->data);
+			lst.remove(t);
+		}
+	}
+
+	//const char *newNickData = newAlias.local8Bit().copy();
+	newSSIdata->addTLV(0x0131, newAlias.local8Bit().length(), newAlias.local8Bit());
+
+	if (!ssiData.remove(ssi))
+	{
+		kdDebug(14150) << k_funcinfo <<
+			"Couldn't remove old ssi containing contact" << endl;
+		delete newSSIdata;
+		delete newSSI;
+		return;
+	}
+	newSSI->tlvlist = newSSIdata->buffer();
+	newSSI->tlvlength = newSSIdata->length();
+
+	ssiData.append(newSSI);
+
+	kdDebug(14150) << k_funcinfo << "Renaming, new SSI block: name=" << newSSI->name <<
+		", gid=" << newSSI->gid << ", bid=" << newSSI->bid <<
+		", type=" << newSSI->type << ", datalength=" << newSSI->tlvlength << endl;
+
+	kdDebug(14150) << "new SSI:" << newSSIdata->toString();
+
+	sendSSIAddModDel(newSSI, 0x0009);
 }
 
 void OscarSocket::sendAddGroup(const QString &name)
@@ -3033,11 +3029,40 @@ void OscarSocket::sendSSIAddModDel(SSI *item, WORD requestType)
 }
 
 // Parses the SSI acknowledgement
-void OscarSocket::parseSSIAck(Buffer &/*inbuf*/)
+void OscarSocket::parseSSIAck(Buffer &inbuf)
 {
+	kdDebug(14150) << k_funcinfo << "RECV SRV_SSIACK" << endl;
+
+	WORD result = inbuf.getWord();
+	switch(result)
+	{
+		case 0x0000:
+			kdDebug(14150) << k_funcinfo << "SSI change succeeded" << endl;
+			break;
+		case 0x0002:
+			kdDebug(14150) << k_funcinfo << "Modified item not found on server." << endl;
+			break;
+		case 0x0003:
+			kdDebug(14150) << k_funcinfo << "Added item already on server." << endl;
+			break;
+		case 0x000A:
+			kdDebug(14150) << k_funcinfo << "Error adding item (invalid id, already in list, invalid data)" << endl;
+			break;
+		case 0x000C:
+			kdDebug(14150) << k_funcinfo << "Cannot add item, item limit exceeded." << endl;
+			break;
+		case 0x000D:
+			kdDebug(14150) << k_funcinfo << "Cannot add ICQ contact to AIM list." << endl;
+			break;
+		case 0x000E:
+			kdDebug(14150) << k_funcinfo << "Cannot add contact because he needs AUTH." << endl;
+			break;
+		default:
+			kdDebug(14150) << k_funcinfo << "Unknown result " << result << endl;
+	}
 	//there isn't much here...
 	//we just need to signal to send the next item in the ssi queue
-	emit SSIAck();
+	//emit SSIAck();
 }
 
 // Deletes a buddy from the server side contact list

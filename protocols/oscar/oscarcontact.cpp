@@ -230,12 +230,29 @@ void OscarContact::slotUpdateNickname(const QString newNickname)
 void OscarContact::slotDeleteContact()
 {
 	kdDebug(14150) << k_funcinfo << "contact '" << displayName() << "'" << endl;
+
 	AIMGroup *group = mAccount->internalBuddyList()->findGroup(mListContact->groupID());
+
+	if(!group && metaContact() && metaContact()->groups().count() > 0)
+	{
+		QString grpName=metaContact()->groups().first()->displayName();
+		kdDebug(14150) << k_funcinfo <<
+			"searching group by name '" << grpName << "'" << endl;
+		group=mAccount->internalBuddyList()->findGroup(grpName);
+	}
+
 	if (!group)
+	{
+		kdDebug(14150) << k_funcinfo <<
+			"Couldn't find serverside group for contact, cannot delete on server :(" << endl;
 		return;
+	}
+	else
+	{
+		mAccount->engine()->sendDelBuddy(contactName(), group->name());
+	}
 
 	mAccount->internalBuddyList()->removeBuddy(mListContact);
-	mAccount->engine()->sendDelBuddy(mListContact->screenname(),group->name());
 	deleteLater();
 }
 
@@ -486,11 +503,25 @@ void OscarContact::rename(const QString &newNick)
 	kdDebug(14150) << k_funcinfo << "Rename '" << displayName() << "' to '" <<
 		newNick << "'" << endl;
 
+	AIMGroup *currentOscarGroup = 0L;
+
 	if(mAccount->isConnected())
 	{
 		//FIXME: group handling!
-		AIMGroup *currentOscarGroup =
+		currentOscarGroup =
 			mAccount->internalBuddyList()->findGroup(mListContact->groupID());
+		if(!currentOscarGroup)
+		{
+			// FIXME: workaround for not knowing the groupid
+			if(metaContact() && metaContact()->groups().count() > 0)
+			{
+				QString grpName=metaContact()->groups().first()->displayName();
+				kdDebug(14150) << k_funcinfo <<
+					"searching group by name '" << grpName << "'" << endl;
+				currentOscarGroup=mAccount->internalBuddyList()->findGroup(grpName);
+			}
+		}
+
 		if(currentOscarGroup)
 		{
 			mAccount->engine()->sendRenameBuddy(mName,
@@ -503,7 +534,7 @@ void OscarContact::rename(const QString &newNick)
 		}
 	}
 
-	mListContact->setAlias(newNick);
+	mListContact->setAlias(newNick); // FIXME: remove AIMBuddy
 	setDisplayName(newNick);
 }
 

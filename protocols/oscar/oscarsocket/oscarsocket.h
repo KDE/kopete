@@ -1013,7 +1013,8 @@ class OscarSocket : public OscarConnection
 
 	signals:
 		// Called when an SSI acknowledgement is received
-		void SSIAck();
+		// FIXME: What was this for, nothing connected to this signal [mETz]
+		//void SSIAck();
 		// emitted when BOS rights are received
 //		void gotBOSRights(WORD,WORD);
 		// emitted when a buddy gets blocked
