@@ -1039,7 +1039,9 @@ void ChatView::addChatMessage( KopeteMessage &m )
 		);
 	}
 	
+	QString dir = ( QApplication::reverseLayout() ? QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
 	HTMLElement newNode = chatView->document().createElement( QString::fromLatin1("span") );
+	newNode.setAttribute( QString::fromLatin1("dir"), dir );
 	newNode.setInnerHTML( resultHTML );
 
 	chatView->htmlDocument().body().appendChild( newNode );

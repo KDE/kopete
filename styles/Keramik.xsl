@@ -68,6 +68,9 @@
 				</xsl:choose>
 			</div>
 			<div>
+				<xsl:attribute name="dir">
+					<xsl:value-of select="body/@dir"/>
+				</xsl:attribute>
 				<xsl:attribute name="id">
 					<xsl:value-of select="@id"/>
 				</xsl:attribute>

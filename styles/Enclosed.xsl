@@ -44,6 +44,9 @@
 					<xsl:value-of select="@time"/>
 				</div>
 				<div>
+					<xsl:attribute name="dir">
+						<xsl:value-of select="body/@dir"/>
+					</xsl:attribute>
 					<xsl:attribute name="style">
 						<xsl:text>padding-left:15px;padding-right:15px;</xsl:text>
 						<xsl:if test="body/@color">

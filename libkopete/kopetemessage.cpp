@@ -40,6 +40,14 @@
 // ONLY place where the XML is used, XSLT requiere string based XML,  so currently, i think it is
 // preferable to don't use QDom for storing
 //
+
+/*
+Someone needs to clean this mess up and either use the QDom or not, the
+two code sections are not even in sync anymore and there are so many #ifdefs that
+this is impossible to maintain.
+-- Jason K, Nov 2003
+*/
+
 #ifndef MESSAGE_QDOM
 #define MESSAGE_QDOM 0
 #endif
@@ -57,7 +65,6 @@ struct KopeteMessagePrivate
 	KopeteMessage::MessageType type;
 	KopeteMessage::MessageImportance importance;
 	bool bgOverride;
-
 	QDateTime timeStamp;
 	QFont font;
 
@@ -69,6 +76,7 @@ struct KopeteMessagePrivate
 	QString body;
 	QString subject;
 #endif
+	
 
 	static QMap<QString,QColor> colorMap;
 	static int lastColor;
@@ -240,7 +248,8 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 	QDomElement bodyNode = d->xmlDoc.createElement( QString::fromLatin1("body") );
 	QDomCDATASection bodyText = d->xmlDoc.createCDATASection( theBody );
 	bodyNode.appendChild( bodyText );
-
+	bodyNode.setAttribute( QString::fromLatin1("dir"),
+		plainBody().isRightToLeft() ? QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
 	messageNode.appendChild( bodyNode );
 #else
 	d->body=theBody;
@@ -666,6 +675,8 @@ const QDomDocument KopeteMessage::asXML() const
 		bodyNode.setAttribute( QString::fromLatin1("font"), fontstr );
 	}
 
+	bodyNode.setAttribute( QString::fromLatin1("dir"),
+		plainBody().isRightToLeft() ? QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
 	QDomCDATASection bodyText = doc.createCDATASection( parsedBody() );
 	bodyNode.appendChild( bodyText );
 

@@ -13,6 +13,9 @@
 				<xsl:text disable-output-escaping="yes">&#160;&#160;&#160;&#160;</xsl:text>
 			</xsl:if>
 			<span>
+				<xsl:attribute name="dir">
+					<xsl:value-of select="body/@dir"/>
+				</xsl:attribute>
 				<xsl:attribute name="style">
 					<xsl:if test="body/@color">
 						<xsl:text>color:</xsl:text>

@@ -68,12 +68,15 @@
 				</xsl:otherwise>
 			</xsl:choose>
 			<span>
-			<xsl:if test="@importance='2'">
-				<xsl:attribute name="class">
-					<xsl:text>KopeteMessage highlight</xsl:text>
+				<xsl:attribute name="dir">
+					<xsl:value-of select="body/@dir"/>
 				</xsl:attribute>
-			</xsl:if>
-			<xsl:value-of disable-output-escaping="yes" select="body"/>
+				<xsl:if test="@importance='2'">
+					<xsl:attribute name="class">
+						<xsl:text>KopeteMessage highlight</xsl:text>
+					</xsl:attribute>
+				</xsl:if>
+				<xsl:value-of disable-output-escaping="yes" select="body"/>
 			</span>
 		</div>
 	</xsl:template>
