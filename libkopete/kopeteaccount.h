@@ -60,10 +60,15 @@ class KopeteAccount : public KopetePluginDataObject
 	Q_OBJECT
 
 	Q_PROPERTY( QString accountId READ accountId )
+	Q_PROPERTY( QString password READ password WRITE setPassword )
+	Q_PROPERTY( bool remberPassword READ rememberPassword )
+	Q_PROPERTY( bool autoLogin READ autoLogin WRITE setAutoLogin )
+	Q_PROPERTY( QColor color READ color WRITE setColor )
 	Q_PROPERTY( QPixmap accountIcon READ accountIcon )
 	Q_PROPERTY( bool isConnected READ isConnected )
 	Q_PROPERTY( bool isAway READ isAway )
-	Q_PROPERTY( int priority READ priority )
+	Q_PROPERTY( bool suppressStatusNotification READ suppressStatusNotification )
+	Q_PROPERTY( int priority READ priority WRITE setPriority )
 
 public:
 	/**
@@ -364,7 +369,7 @@ private slots:
 	void slotStopSuppression();
 
 private:
-	
+
 	KopeteAccountPrivate *d;
 };
 
