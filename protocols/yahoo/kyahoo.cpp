@@ -72,7 +72,8 @@ YahooSession* YahooSessionManager::createSession(const QString username, const Q
 	session = new YahooSession();
 	id = session->login( username, password, initial );
 	kdDebug(14180) << "[YahooSessionManager::createSession] Session created, got id "<< id << " !"<< endl;
-	if (id)
+
+	if (id > 0)
 	{
 		m_sessionsMap[id] = session;
 		//YAHOO_CALLBACK(ext_yahoo_add_handler)( m_connId, yahoo_get_fd(m_connId), YAHOO_INPUT_READ);
@@ -91,7 +92,7 @@ int YahooSession::login(const QString username, const QString password, int init
 	/* We try to login */
 	m_connId = yahoo_login( username.local8Bit() , password.local8Bit(), initial);
 
-	if ( m_connId )
+	if ( m_connId > 0 )
 	{
 		//QObject::connect ( this,SIGNAL(loginResponse(int,char*)),YahooSessionManager::manager(),SLOT(slotLoginResponseReceiver(int,char*)));
 	}
