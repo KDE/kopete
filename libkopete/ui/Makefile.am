@@ -6,7 +6,7 @@ noinst_HEADERS = kopetecontactlistview.h pluginmodule.h configmodule.h \
 	kopetelistview.h preferencesdialog.h kopetewindow.h statusbaricon.h \
 	protocolboxitem.h addcontactpage.h systemtray.h \
 	appearanceconfig.h kopeteballoonbase.h kopeteballoon.h \
-	kopetehistorydialog.h kopetecontactviewitem.h kopetestdaction.h  fileconfirmbase.h \
+	kopetehistorydialog.h kopetestdaction.h  fileconfirmbase.h \
 	kopetehistorywidget.h chatview.h kopetegroupviewitem.h kopetefileconfirmdialog.h
 
 libkopeteui_la_SOURCES = configmodule.cpp kopetewindow.cpp \
@@ -15,7 +15,7 @@ libkopeteui_la_SOURCES = configmodule.cpp kopetewindow.cpp \
 	addcontactpage.cpp systemtray.cpp appearanceconfig.cpp \
 	kopeteballoonbase.cpp kopeteballoon.cpp \
 	kopetehistorydialog.cpp \
-	kopetecontactviewitem.cpp kopetestdaction.cpp \
+	kopetestdaction.cpp \
 	kopetehistorywidget.cpp kopeteemailwindow.cpp emailwindow.ui \
 	kopetemetacontactlvi.cpp kopeteawaydialogbase.ui \
 	kopetefiletransferui.ui kopetegroupviewitem.cpp kopetefileconfirmdialog.cpp fileconfirmbase.ui \

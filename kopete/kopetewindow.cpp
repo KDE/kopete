@@ -70,8 +70,6 @@ void KopeteWindow::initView ( void )
 {
 	contactlist = new KopeteContactListView(this);
 	setCentralWidget(contactlist);
-
-	connect( contactlist, SIGNAL(executed(QListViewItem *)), this, SLOT(slotExecuted(QListViewItem *)) );
 }
 
 void KopeteWindow::initActions ( void )
@@ -245,13 +243,6 @@ void KopeteWindow::showToolbar(void)
 		toolBar("mainToolBar")->show();
 	else
 		toolBar("mainToolBar")->hide();
-}
-
-void KopeteWindow::slotExecuted( QListViewItem *item )
-{
-	KopeteContactViewItem *contactvi = dynamic_cast<KopeteContactViewItem *>(item);
-	if ( contactvi )
-		contactvi->contact()->execute();
 }
 
 void KopeteWindow::slotToggleShowOffliners ( void )

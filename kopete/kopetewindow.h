@@ -1,7 +1,7 @@
 /*
     kopetewindow.h  -  Kopete Main Window
 
-	Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett   <duncan@kde.org>
+    Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett   <duncan@kde.org>
     Copyright (c) 2001-2002 by Stefan Gehn <sgehn@gmx.net>
 
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
@@ -50,7 +50,6 @@ protected:
 
 private slots:
 	void showToolbar();
-	void slotExecuted(QListViewItem *);
 	void slotToggleShowOffliners(void);
 	void slotConfigChanged(void);
 	void slotConfKeys(void);
