@@ -21,6 +21,7 @@
 #include <qapplication.h>
 #include <qfile.h>
 #include <qregexp.h>
+#include <qtimer.h>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -69,6 +70,13 @@ KopetePluginManager::KopetePluginManager()
 : QObject( qApp )
 {
 	d = new KopetePluginManagerPrivate;
+
+	// We want to add a reference to the application's event loop so we
+	// can remain in control when all windows are removed.
+	// This way we can unload plugins asynchronously, which is more
+	// robust if they are still doing processing.
+	kapp->ref();
+	connect( kapp, SIGNAL( lastWindowClosed() ), this, SLOT( unloadAllPlugins() ) );
 
 	KSettings::Dispatcher::self()->registerInstance( KGlobal::instance(), this, SLOT( loadAllPlugins() ) );
 
@@ -138,6 +146,20 @@ QMap<KPluginInfo *, KopetePlugin *> KopetePluginManager::loadedPlugins( const QS
 	}
 
 	return result;
+}
+
+void KopetePluginManager::unloadAllPlugins()
+{
+	kdDebug( 14010 ) << k_funcinfo << endl;
+
+	QTimer::singleShot( 0, this, SLOT( slotUnloadAllPluginsTimeout() ) );
+}
+
+void KopetePluginManager::slotUnloadAllPluginsTimeout()
+{
+	kdDebug( 14010 ) << k_funcinfo << endl;
+
+	kapp->deref();
 }
 
 void KopetePluginManager::loadAllPlugins()

@@ -46,7 +46,6 @@ Kopete::Kopete()
 {
 	m_isShuttingDown = false;
 	m_mainWindow = new KopeteWindow( 0, "mainWindow" );
-	setMainWidget( m_mainWindow );
 
 	// Since the main window has no parent we must delete it in the Kopete
 	// destructor (we can't leak it, some code depends on the destructor
@@ -86,7 +85,7 @@ Kopete::~Kopete()
 	KopeteContactList::contactList()->save();
 	KopeteAccountManager::manager()->save();
 	delete m_mainWindow;
-//	kdDebug(14000) << "Kopete::~Kopete: done" <<endl;
+	//kdDebug( 14000 ) << k_funcinfo << "Done" << endl;
 }
 
 void Kopete::slotLoadPlugins()
@@ -233,8 +232,15 @@ void Kopete::slotMainWindowDestroyed()
 
 void Kopete::quitKopete()
 {
+	kdDebug( 14000 ) << k_funcinfo << endl;
+
 	m_isShuttingDown = true;
-	quit();
+	if ( m_mainWindow )
+	{
+		m_mainWindow->close();
+		m_mainWindow = 0L;
+	}
+	//quit();
 }
 
 void Kopete::commitData( QSessionManager &sm )
