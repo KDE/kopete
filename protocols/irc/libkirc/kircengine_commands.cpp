@@ -27,19 +27,19 @@ using namespace KIRC;
 
 void Engine::bindCommands()
 {
-	bind("ERROR",	this, SLOT(error(const KIRC::Message &)),	0, 0);
-	bind("JOIN",	this, SLOT(join(const KIRC::Message &)),	0, 1);
-	bind("KICK",	this, SLOT(kick(const KIRC::Message &)),	2, 2);
-	bind("NICK",	this, SLOT(nick(const KIRC::Message &)),	0, 0);
-	bind("MODE",	this, SLOT(mode(const KIRC::Message &)),	1, 1);
-	bind("NOTICE",	this, SLOT(notice(const KIRC::Message &)),	1, 1);
-	bind("PART",	this, SLOT(part(const KIRC::Message &)),	1, 1);
-	bind("PING",	this, SLOT(ping(const KIRC::Message &)),	0, 0);
-	bind("PONG",	this, SLOT(pong(const KIRC::Message &)),	0, 0);
-	bind("PRIVMSG",	this, SLOT(privmsg(const KIRC::Message &)),	1, 1);
-	bind("QUIT",	this, SLOT(quit(const KIRC::Message &)),	0, 0);
-//	bind("SQUIT",	this, SLOT(squit(const KIRC::Message &)),	1, 1);
-	bind("TOPIC",	this, SLOT(topic(const KIRC::Message &)),	1, 1);
+	bind("ERROR",	this, SLOT(error(KIRC::Message &)),	0, 0);
+	bind("JOIN",	this, SLOT(join(KIRC::Message &)),	0, 1);
+	bind("KICK",	this, SLOT(kick(KIRC::Message &)),	2, 2);
+	bind("NICK",	this, SLOT(nick(KIRC::Message &)),	0, 0);
+	bind("MODE",	this, SLOT(mode(KIRC::Message &)),	1, 1);
+	bind("NOTICE",	this, SLOT(notice(KIRC::Message &)),	1, 1);
+	bind("PART",	this, SLOT(part(KIRC::Message &)),	1, 1);
+	bind("PING",	this, SLOT(ping(KIRC::Message &)),	0, 0);
+	bind("PONG",	this, SLOT(pong(KIRC::Message &)),	0, 0);
+	bind("PRIVMSG",	this, SLOT(privmsg(KIRC::Message &)),	1, 1);
+	bind("QUIT",	this, SLOT(quit(KIRC::Message &)),	0, 0);
+//	bind("SQUIT",	this, SLOT(squit(KIRC::Message &)),	1, 1);
+	bind("TOPIC",	this, SLOT(topic(KIRC::Message &)),	1, 1);
 }
 
 void Engine::away(bool isAway, const QString &awayMessage)
@@ -54,7 +54,7 @@ void Engine::away(bool isAway, const QString &awayMessage)
 }
 
 // FIXME: Really handle this message
-void Engine::error(const Message &msg)
+void Engine::error(Message &msg)
 {
 	setStatus(Closing);
 }
@@ -87,7 +87,7 @@ void Engine::join(const QString &name, const QString &key)
 	writeMessage("JOIN", args);
 }
 
-void Engine::join(const Message &msg)
+void Engine::join(Message &msg)
 {
 	/* RFC say: "( <channel> *( "," <channel> ) [ <key> *( "," <key> ) ] ) / "0""
 	* suspected: ":<channel> *(" "/"," <channel>)"
@@ -106,7 +106,7 @@ void Engine::kick(const QString &user, const QString &channel, const QString &re
 	writeMessage("KICK", QStringList(channel) << user << reason);
 }
 
-void Engine::kick(const Message &msg)
+void Engine::kick(Message &msg)
 {
 	/* The given user is kicked.
 	* "<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]"
@@ -119,7 +119,7 @@ void Engine::mode(const QString &target, const QString &mode)
 	writeMessage("MODE", QStringList(target) << mode);
 }
 
-void Engine::mode(const Message &msg)
+void Engine::mode(Message &msg)
 {
 	/* Change the mode of a user.
 	* "<nickname> *( ( "+" / "-" ) *( "i" / "w" / "o" / "O" / "r" ) )"
@@ -138,7 +138,7 @@ void Engine::nick(const QString &newNickname)
 	writeMessage("NICK", newNickname, QString::null, false);
 }
 
-void Engine::nick(const Message &msg)
+void Engine::nick(Message &msg)
 {
 	/* Nick name of a user changed
 	 * "<nickname>" */
@@ -168,7 +168,7 @@ void Engine::part(const QString &channel, const QString &reason)
 	writeMessage("PART", channel, reason);
 }
 
-void Engine::part(const Message &msg)
+void Engine::part(Message &msg)
 {
 	/* This signal emits when a user parts a channel
 	* "<channel> *( "," <channel> ) [ <Part Message> ]"
@@ -177,12 +177,12 @@ void Engine::part(const Message &msg)
 	emit incomingPartedChannel(msg.arg(0), msg.nickFromPrefix(), msg.suffix());
 }
 
-void Engine::ping(const Message &msg)
+void Engine::ping(Message &msg)
 {
 	writeMessage("PONG", msg.arg(0), msg.suffix(), false);
 }
 
-void Engine::pong(const Message &/*msg*/)
+void Engine::pong(Message &/*msg*/)
 {
 }
 
@@ -219,7 +219,7 @@ void Engine::quitTimeout()
 	}
 }
 
-void Engine::quit(const Message &msg)
+void Engine::quit(Message &msg)
 {
 	/* This signal emits when a user quits irc.
 	 */
@@ -257,7 +257,7 @@ void Engine::topic(const QString &channel, const QString &topic)
 	writeMessage("TOPIC", channel, topic);
 }
 
-void Engine::topic(const Message &msg)
+void Engine::topic(Message &msg)
 {
 	/* The topic of a channel changed. emit the channel, new topic, and the person who changed it.
 	 * "<channel> [ <topic> ]"
@@ -281,7 +281,7 @@ void Engine::privmsg(const QString &contact, const QString &message)
 	writeMessage("PRIVMSG", contact, message);
 }
 
-void Engine::privmsg(const Message &msg)
+void Engine::privmsg(Message &msg)
 {
 	/* This is a signal that indicates there is a new message.
 	 * This can be either from a channel or from a specific user. */
@@ -308,7 +308,7 @@ void Engine::notice(const QString &target, const QString &message)
 	writeMessage("NOTICE", target, message);
 }
 
-void Engine::notice(const Message &msg)
+void Engine::notice(Message &msg)
 {
 	if(!msg.suffix().isEmpty())
 		emit incomingNotice(msg.prefix(), msg.suffix());

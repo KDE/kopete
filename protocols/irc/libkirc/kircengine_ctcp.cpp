@@ -29,30 +29,30 @@ using namespace KIRC;
 
 void Engine::bindCtcp()
 {
-	bindCtcpQuery("ACTION",		this, SLOT(CtcpQuery_action(const KIRC::Message &)),
+	bindCtcpQuery("ACTION",		this, SLOT(CtcpQuery_action(KIRC::Message &)),
 		-1,	-1);
-	bindCtcpQuery("CLIENTINFO",	this, SLOT(CtcpQuery_clientinfo(const KIRC::Message &)),
+	bindCtcpQuery("CLIENTINFO",	this, SLOT(CtcpQuery_clientinfo(KIRC::Message &)),
 		-1,	1);
-	bindCtcpQuery("DCC",		this, SLOT(CtcpQuery_dcc(const KIRC::Message &)),
+	bindCtcpQuery("DCC",		this, SLOT(CtcpQuery_dcc(KIRC::Message &)),
 		4,	5);
-	bindCtcpQuery("FINGER",		this, SLOT(CtcpQuery_finger(const KIRC::Message &)),
+	bindCtcpQuery("FINGER",		this, SLOT(CtcpQuery_finger(KIRC::Message &)),
 		-1,	0);
-	bindCtcpQuery("PING",		this, SLOT(CtcpQuery_ping(const KIRC::Message &)),
+	bindCtcpQuery("PING",		this, SLOT(CtcpQuery_ping(KIRC::Message &)),
 		1,	1);
-	bindCtcpQuery("SOURCE",		this, SLOT(CtcpQuery_source(const KIRC::Message &)),
+	bindCtcpQuery("SOURCE",		this, SLOT(CtcpQuery_source(KIRC::Message &)),
 		-1,	0);
-	bindCtcpQuery("TIME",		this, SLOT(CtcpQuery_time(const KIRC::Message &)),
+	bindCtcpQuery("TIME",		this, SLOT(CtcpQuery_time(KIRC::Message &)),
 		-1,	0);
-	bindCtcpQuery("USERINFO",	this, SLOT(CtcpQuery_userinfo(const KIRC::Message &)),
+	bindCtcpQuery("USERINFO",	this, SLOT(CtcpQuery_userinfo(KIRC::Message &)),
 		-1,	0);
-	bindCtcpQuery("VERSION",	this, SLOT(CtcpQuery_version(const KIRC::Message &)),
+	bindCtcpQuery("VERSION",	this, SLOT(CtcpQuery_version(KIRC::Message &)),
 		-1,	0);
 
-	bindCtcpReply("ERRMSG",		this, SLOT(CtcpReply_errmsg(const KIRC::Message &)),
+	bindCtcpReply("ERRMSG",		this, SLOT(CtcpReply_errmsg(KIRC::Message &)),
 		1,	-1);
-	bindCtcpReply("PING",		this, SLOT(CtcpReply_ping(const KIRC::Message &)),
+	bindCtcpReply("PING",		this, SLOT(CtcpReply_ping(KIRC::Message &)),
 		1,	1,	"");
-	bindCtcpReply("VERSION",	this, SLOT(CtcpReply_version(const KIRC::Message &)),
+	bindCtcpReply("VERSION",	this, SLOT(CtcpReply_version(KIRC::Message &)),
 		-1,	-1,	"");
 }
 
@@ -84,7 +84,7 @@ void Engine::CtcpRequest_action(const QString &contact, const QString &message)
 	}
 }
 
-void Engine::CtcpQuery_action(const Message &msg)
+void Engine::CtcpQuery_action(Message &msg)
 {
 	QString target = msg.arg(0);
 	if (target[0] == '#' || target[0] == '!' || target[0] == '&')
@@ -95,13 +95,13 @@ void Engine::CtcpQuery_action(const Message &msg)
 
 /*
 NO REPLY EXIST FOR THE CTCP ACTION COMMAND !
-bool Engine::CtcpReply_action(const Message &msg)
+bool Engine::CtcpReply_action(Message &msg)
 {
 }
 */
 
 //	FIXME: the API can now answer to help commands.
-void Engine::CtcpQuery_clientinfo(const Message &msg)
+void Engine::CtcpQuery_clientinfo(Message &msg)
 {
 	QString clientinfo = customCtcpMap[ QString::fromLatin1("clientinfo") ];
 
@@ -172,9 +172,9 @@ void Engine::CtcpRequest_dcc(const QString &nickname, const QString &fileName, u
 	}
 }
 
-void Engine::CtcpQuery_dcc(const Message &msg)
+void Engine::CtcpQuery_dcc(Message &msg)
 {
-	const Message &ctcpMsg = msg.ctcpMessage();
+	Message &ctcpMsg = msg.ctcpMessage();
 	QString dccCommand = ctcpMsg.arg(0).upper();
 
 	if (dccCommand == QString::fromLatin1("CHAT"))
@@ -232,17 +232,17 @@ void Engine::CtcpQuery_dcc(const Message &msg)
 
 /*
 NO REPLY EXIST FOR THE CTCP DCC COMMAND !
-bool Engine::CtcpReply_dcc(const Message &msg)
+bool Engine::CtcpReply_dcc(Message &msg)
 {
 }
 */
 
-void Engine::CtcpReply_errmsg(const Message &)
+void Engine::CtcpReply_errmsg(Message &)
 {
 	// should emit one signal
 }
 
-void Engine::CtcpQuery_finger( const Message &)
+void Engine::CtcpQuery_finger( Message &)
 {
 	// To be implemented
 }
@@ -267,13 +267,13 @@ void Engine::CtcpRequest_ping(const QString &target)
 //		((MessageRedirector *)sender())->error("failed to get current time");
 }
 
-void Engine::CtcpQuery_ping(const Message &msg)
+void Engine::CtcpQuery_ping(Message &msg)
 {
 	writeCtcpReplyMessage(	msg.nickFromPrefix(), QString::null,
 				msg.ctcpMessage().command(), msg.ctcpMessage().arg(0));
 }
 
-void Engine::CtcpReply_ping(const Message &msg)
+void Engine::CtcpReply_ping(Message &msg)
 {
 	timeval time;
 	if (gettimeofday(&time, 0) == 0)
@@ -308,20 +308,20 @@ void Engine::CtcpReply_ping(const Message &msg)
 //		((MessageRedirector *)sender())->error("failed to get current time");
 }
 
-void Engine::CtcpQuery_source(const Message &msg)
+void Engine::CtcpQuery_source(Message &msg)
 {
 	writeCtcpReplyMessage(msg.nickFromPrefix(), QString::null,
 			      msg.ctcpMessage().command(), m_SourceString);
 }
 
-void Engine::CtcpQuery_time(const Message &msg)
+void Engine::CtcpQuery_time(Message &msg)
 {
 	writeCtcpReplyMessage(msg.nickFromPrefix(), QString::null,
 			      msg.ctcpMessage().command(), QDateTime::currentDateTime().toString(),
 			      QString::null, false);
 }
 
-void Engine::CtcpQuery_userinfo(const Message &msg)
+void Engine::CtcpQuery_userinfo(Message &msg)
 {
 	QString userinfo = customCtcpMap[ QString::fromLatin1("userinfo") ];
 
@@ -337,7 +337,7 @@ void Engine::CtcpRequest_version(const QString &target)
 	writeCtcpQueryMessage(target, QString::null, "VERSION");
 }
 
-void Engine::CtcpQuery_version(const Message &msg)
+void Engine::CtcpQuery_version(Message &msg)
 {
 	QString response = customCtcpMap[ QString::fromLatin1("version") ];
 	kdDebug(14120) << "Version check: " << response << endl;
@@ -349,7 +349,7 @@ void Engine::CtcpQuery_version(const Message &msg)
 		msg.ctcpMessage().command() + " " + response);
 }
 
-void Engine::CtcpReply_version(const Message &msg)
+void Engine::CtcpReply_version(Message &msg)
 {
 	emit incomingCtcpReply(msg.ctcpMessage().command(), msg.nickFromPrefix(), msg.ctcpMessage().ctcpRaw());
 }

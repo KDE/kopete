@@ -89,7 +89,7 @@ public:
 
 	inline bool hasCtcpMessage() const
 		{ return m_ctcpMessage!=0; }
-	inline const class KIRC::Message &ctcpMessage() const
+	inline class KIRC::Message &ctcpMessage() const
 		{ return *m_ctcpMessage; }
 
 	static KIRC::Message parse(KIRC::Engine *engine, const QTextCodec *codec, bool *parseSuccess=0);

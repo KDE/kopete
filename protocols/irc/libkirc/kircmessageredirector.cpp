@@ -30,10 +30,9 @@ MessageRedirector::MessageRedirector(KIRC::Engine *engine,
 {
 }
 
-//	FIXME: if first bind fails delete later
 bool MessageRedirector::connect(QObject *object, const char *member)
 {
-	bool success = QObject::connect(this, SIGNAL(redirect(const KIRC::Message &)),
+	bool success = QObject::connect(this, SIGNAL(redirect(KIRC::Message &)),
 					object, member);
 
 	if (m_connectedObjects == 0)
@@ -42,7 +41,7 @@ bool MessageRedirector::connect(QObject *object, const char *member)
 	return success;
 }
 
-QStringList MessageRedirector::operator () (const Message &msg)
+QStringList MessageRedirector::operator () (Message &msg)
 {
 	m_errors.clear();
 

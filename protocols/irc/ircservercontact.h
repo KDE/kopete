@@ -56,7 +56,7 @@ class IRCServerContact
                 void appendMessage( const QString &message );
 
 	protected slots:
-		void engineInternalError(KIRC::Engine::Error error, const KIRC::Message &ircmsg);
+		void engineInternalError(KIRC::Engine::Error error, KIRC::Message &ircmsg);
 		virtual void slotSendMsg(Kopete::Message &message, Kopete::ChatSession *);
 
 	private slots:

@@ -373,7 +373,7 @@ void Engine::slotReadyRead()
 
 			if (mr)
 			{
-				QStringList errors = mr->operator()(&msg);
+				QStringList errors = mr->operator()(msg);
 
 				if (!errors.isEmpty())
 				{
@@ -432,16 +432,16 @@ void Engine::showInfoDialog()
  * (Only missing the \n\r final characters)
  * So applying the same parsing rules to the messages.
  */
-bool Engine::invokeCtcpCommandOfMessage(const QDict<MessageRedirector> &map, const Message &msg)
+bool Engine::invokeCtcpCommandOfMessage(const QDict<MessageRedirector> &map, Message &msg)
 {
 	if(msg.hasCtcpMessage() && msg.ctcpMessage().isValid())
 	{
-		const Message &ctcpMsg = msg.ctcpMessage();
+		Message &ctcpMsg = msg.ctcpMessage();
 
 		MessageRedirector *mr = map[ctcpMsg.command()];
 		if (mr)
 		{
-			QStringList errors = mr->operator()(&msg);
+			QStringList errors = mr->operator()(msg);
 
 			if (errors.isEmpty())
 				return true;

@@ -47,9 +47,9 @@ public:
 	/**
 	 * Connects the given object member signal/slot to this message redirector.
 	 * The member signal slot should be looking like:
-	 * SIGNAL(mysignal(const Message *msg))
+	 * SIGNAL(mysignal(KIRC::Message &msg))
 	 * or
-	 * SIGNAL(myslot(const Message *msg))
+	 * SIGNAL(myslot(KIRC::Message &msg))
 	 */
 	bool connect(QObject *object, const char *member);
 
@@ -58,14 +58,14 @@ public:
 	 * @return a not empty QStringList on errors or no slots connected.
 	 * 	The returned string list contains all the errors.
 	 */
-	QStringList operator()(const KIRC::Message &msg);
+	QStringList operator()(KIRC::Message &msg);
 
 	void error(QString &errorMessage);
 
 	QString helpMessage();
 
 signals:
-	void redirect(const KIRC::Message &);
+	void redirect(KIRC::Message &);
 
 protected:
 	virtual void connectNotify(const char *signal);
