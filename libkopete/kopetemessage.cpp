@@ -140,6 +140,11 @@ void KopeteMessage::setFont( const QFont &font )
 
 void KopeteMessage::highlight()
 {
+	setBody( QString::fromLatin1("<span style=\"background-color:%1;color:%2\">%3</span>")
+		.arg( KopetePrefs::prefs()->highlightBackground().name() )
+		.arg( KopetePrefs::prefs()->highlightForeground().name() )
+		.arg( escapedBody() ), RichText );
+
 	setBg( KopetePrefs::prefs()->highlightBackground() );
 	setFg( KopetePrefs::prefs()->highlightForeground() );
 }
