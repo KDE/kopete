@@ -19,6 +19,7 @@
 #define USERDETAILS_H
 
 #include "oscartypes.h"
+#include <kopete_export.h>
 
 class Buffer;
 using namespace Oscar;
@@ -27,7 +28,7 @@ using namespace Oscar;
  * Holds information from the extended user info packet
  * @author Matt Rogers
  */
-class UserDetails
+class KOPETE_EXPORT UserDetails
 {
 public:
 	UserDetails();

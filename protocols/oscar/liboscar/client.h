@@ -25,7 +25,7 @@
 
 #include <qobject.h>
 #include <qstring.h>
-
+#include <kopete_export.h>
 #include "rtf2html.h"
 #include "transfer.h"
 #include "icquserinfo.h"
@@ -41,7 +41,7 @@ class Task;
 
 using namespace Oscar;
 
-class Client : public QObject
+class KOPETE_EXPORT Client : public QObject
 {
 Q_OBJECT
 

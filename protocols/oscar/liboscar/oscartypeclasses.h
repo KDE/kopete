@@ -25,10 +25,11 @@
 #include <qcstring.h>
 #include <qdatetime.h>
 #include <qvaluelist.h>
+#include <kopete_export.h>
 
 namespace Oscar
 {
-class TLV
+class KOPETE_EXPORT TLV
 {
 public:
 	
@@ -53,7 +54,7 @@ public:
  * \li encoding
  */
 
-class Message
+class KOPETE_EXPORT Message
 {
 public:
 	
@@ -116,7 +117,7 @@ private:
 	QDateTime m_timestamp;
 };
 
-class SSI
+class KOPETE_EXPORT SSI
 {
 public:
 	SSI();

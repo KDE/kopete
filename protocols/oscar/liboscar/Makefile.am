@@ -2,7 +2,7 @@
 METASOURCES = AUTO
 noinst_LTLIBRARIES = liboscar.la
 
-AM_CPPFLAGS = $(all_includes)
+AM_CPPFLAGS = -I$(top_srcdir)/kopete/libkopete $(all_includes)
 
 
 liboscar_la_SOURCES = oscarutils.cpp client.cpp task.cpp connector.cpp \

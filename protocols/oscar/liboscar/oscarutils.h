@@ -29,7 +29,7 @@ namespace Oscar
 {
 
 ///Normalize the contact name to all lowercase and no spaces
-QString normalize( const QString& );
+KOPETE_EXPORT QString normalize( const QString& );
 
 ///compare TLVs for equality
 bool operator==( TLV, TLV );

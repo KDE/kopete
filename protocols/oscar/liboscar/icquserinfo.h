@@ -22,6 +22,7 @@
 #include <qstring.h>
 #include <qvaluelist.h>
 #include <qdatetime.h>
+#include <kopete_export.h>
 
 class Buffer;
 
@@ -30,7 +31,7 @@ class Buffer;
  * Classes encapsulating user data retrieved from the server
  */
 
-class ICQInfoBase
+class KOPETE_EXPORT ICQInfoBase
 {
 public:
 	
@@ -46,7 +47,7 @@ private:
 };
 
 
-class ICQShortInfo : public ICQInfoBase
+class KOPETE_EXPORT ICQShortInfo : public ICQInfoBase
 {
 public:
 	ICQShortInfo();
@@ -63,7 +64,7 @@ public:
 	unsigned int gender; // 0=offline, 1=online, 2=not webaware
 };
 
-class ICQGeneralUserInfo : public ICQInfoBase
+class KOPETE_EXPORT ICQGeneralUserInfo : public ICQInfoBase
 {
 public:
 	ICQGeneralUserInfo();
@@ -90,7 +91,7 @@ public:
 	bool webaware;
 };
 
-class ICQWorkUserInfo : public ICQInfoBase
+class KOPETE_EXPORT ICQWorkUserInfo : public ICQInfoBase
 {
 public:
 	ICQWorkUserInfo();
@@ -112,7 +113,7 @@ public:
 	QString homepage;
 };
 
-class ICQMoreUserInfo : public ICQInfoBase
+class KOPETE_EXPORT ICQMoreUserInfo : public ICQInfoBase
 {
 public:
 	ICQMoreUserInfo();
@@ -129,7 +130,7 @@ public:
 	unsigned int lang3;
 };
 
-class ICQEmailInfo : public ICQInfoBase
+class KOPETE_EXPORT ICQEmailInfo : public ICQInfoBase
 {
 public:
 	ICQEmailInfo();
@@ -141,7 +142,7 @@ public:
 };
 
 
-class ICQSearchResult
+class KOPETE_EXPORT ICQSearchResult
 {
 public:
 	ICQSearchResult();
@@ -157,7 +158,7 @@ public:
 	Q_UINT16 age;
 };
 
-class ICQWPSearchInfo
+class KOPETE_EXPORT ICQWPSearchInfo
 {
 public:
 	ICQWPSearchInfo();
