@@ -82,7 +82,7 @@ public:
 	 * read @param lines message from the current position
 	 * from KopeteContact @param c in the given @param sens
 	 */
-	QValueList<KopeteMessage> HistoryLogger::readMessages(unsigned int lines,
+	QValueList<KopeteMessage> readMessages(unsigned int lines,
 		const KopeteContact *c=0, Sens sens=Default,
 		bool reverseOrder=false, bool colorize=true);
 
