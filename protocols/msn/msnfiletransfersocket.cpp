@@ -286,6 +286,7 @@ void MSNFileTransferSocket::slotSendFile()
 void MSNFileTransferSocket::slotReadyWrite()
 {
 	ready=true;
+	MSNSocket::slotReadyWrite();
 }
 
 

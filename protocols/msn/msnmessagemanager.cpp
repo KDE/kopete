@@ -119,7 +119,6 @@ void MSNMessageManager::slotUpdateChatMember(const QString &handle, const QStrin
 			c=static_cast<MSNContact*>(kc);
 			kdDebug() << "MSNMessageManager::slotUpdateChatMember : WARNING - KopeteContact was found, but not on the protocl"  << endl;
 			//MSNProtocol::protocol()->contacts().insert( handle, c );
-			
 		}
 		else
 		{
@@ -140,7 +139,8 @@ void MSNMessageManager::slotUpdateChatMember(const QString &handle, const QStrin
 	if(add)
 	{
 		addContact(c);
-		if(!m_messagesQueue.empty()) sendMessageQueue();
+		if(!m_messagesQueue.empty())
+			sendMessageQueue();
 	}
 	else if(c)
 		removeContact(c);

@@ -79,14 +79,14 @@ private slots: // Private slots
 	void slotAcceptConnection();
 	void slotTimer();
 	void slotSendFile();
+public slots: // Public slots
+	void abort();
+protected slots: // Protected slots
+	virtual void slotReadyWrite();
+
 signals:
 	void done(MSNFileTransferSocket*);
-public slots: // Public slots
-  /** No descriptions */
-  void abort();
-protected slots: // Protected slots
-  /** No descriptions */
-  virtual void slotReadyWrite();
+
 };
 
 #endif

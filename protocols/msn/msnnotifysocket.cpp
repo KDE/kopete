@@ -167,9 +167,10 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		if( c )
 		{
 			c->setMsnStatus( MSNProtocol::convertStatus(data.section( ' ', 0, 0 )));
-			c->setDisplayName(unescape( data.section( ' ', 2, 2 ) ) );
+			QString publicName=unescape( data.section( ' ', 2, 2 ) );
+			if (publicName!=c->displayName())
+				changePublicName(publicName,c->id());
 		}
-
 	}
 	else if( cmd == "LST" )
 	{
@@ -199,7 +200,6 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			c->setMsnStatus( MSNProtocol::convertStatus(data.section( ' ', 0, 0 )));
 			c->setDisplayName(unescape( data.section( ' ', 2, 2 ) ) );
 		}
-		//FIXME - is that command used?? (olivier)
 	}
 	else if( cmd == "XFR" )
 	{
@@ -256,6 +256,14 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		QString handle=data.section( ' ', 1, 1 );
 		if(handle==msnId())
 			emit publicNameChanged( unescape( data.section( ' ', 2, 2 ) ) );
+		else
+		{
+			MSNContact *c=MSNProtocol::protocol()->contact(handle);
+			if( c )
+			{
+				c->setDisplayName(unescape(data.section( ' ', 2, 2 )));
+			}
+		}
 	}
 	else if( cmd == "LSG" )
 	{
@@ -310,6 +318,10 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			c->setInfo(data.section( ' ', 1, 1 ),unescape(data.section( ' ', 2, 2 )));
 		}
 //		emit recievedInfo(data.section( ' ', 0, 0 ), data.section( ' ', 1, 1 ) , unescape(data.section( ' ', 2, 2 )));
+	}
+	else if( cmd == "QRY" )
+	{
+		//do nothing
 	}
 	else
 	{
@@ -504,9 +516,12 @@ void MSNNotifySocket::setStatus( int status )
 
 }
 
-void MSNNotifySocket::changePublicName( const QString &publicName )
+void MSNNotifySocket::changePublicName( const QString &publicName  , const QString &handle)
 {
-	sendCommand( "REA", msnId() + " " + escape (publicName) );
+	if(handle.isNull())
+		sendCommand( "REA", msnId() + " " + escape (publicName) );
+	else
+		sendCommand( "REA", handle + " " + escape (publicName) );
 }
 
 void MSNNotifySocket::createChatSession()

@@ -207,6 +207,10 @@ private slots:
 
 	void slotSocketClosed( int state );
 
+protected slots:
+	virtual void slotReadyWrite();
+
+
 private:
 	/**
 	 * Check if we're waiting for a block of raw data. Emits blockRead()
@@ -226,7 +230,7 @@ private:
 	 * Queue of pending commands (should be mostly empty, but is needed to
 	 * send more than one command to the server)
 	 */
-//	QMap<uint, QCString> m_sendQueue;
+	QValueList<QCString> m_sendQueue;
 
 	/**
 	 * Parse a single line of data.

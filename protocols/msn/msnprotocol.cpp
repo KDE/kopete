@@ -949,6 +949,7 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 			//Merging difference between server contact list and KopeteContact's contact list into MetaContact's contact-list
 			MSNContact *c = static_cast<MSNContact*>(m->findContact( id(), QString::null, handle ));
 			c->setMsnStatus(FLN);
+			c->setDisplayName(publicName);
 			QStringList contactGroups=c->groups();
 
 			QStringList serverGroups;

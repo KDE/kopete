@@ -75,11 +75,15 @@ void MSNSocket::connect( const QString &server, uint port )
 	m_port = port;
 	m_socket = new KExtendedSocket( server, port, 0x600000 );
 	m_socket->enableRead( true );
+	m_socket->enableWrite( true );
 
 	QObject::connect( m_socket, SIGNAL( readyRead() ),
 		this, SLOT( slotDataReceived() ) );
 	QObject::connect( m_socket, SIGNAL( connectionSuccess() ),
 		this, SLOT( slotConnectionSuccess() ) );
+	QObject::connect( m_socket, SIGNAL( readyWrite () ),
+		this, SLOT( slotReadyWrite() ) );
+
 
 	QObject::connect( m_socket, SIGNAL( connectionFailed( int ) ),
 		this, SLOT( slotSocketError( int ) ) );
@@ -219,23 +223,6 @@ void MSNSocket::slotDataReceived()
 
 void MSNSocket::slotReadLine()
 {
-/*	// See if we have pending changes in the queue...
-	if( !m_sendQueue.isEmpty() )
-	{
-		kdDebug() << "MSNSocket::slotReadLine: Send queue not empty,"
-			" attempting to flush first item. m_lastId: " << m_lastId << endl;
-		for(QMap<uint, QCString>::Iterator it = m_sendQueue.begin(); it!=m_sendQueue.end() ; ++it)
-		{
-			if( m_lastId >= it.key() - 1 )
-			{
-				kdDebug() << "MSNSocket::slotReadLine: Flushing entry from send queue: "
-					<< it.data() << endl;
-				m_socket->writeBlock( it.data(), it.data().length() );
-				m_sendQueue.remove( it );
-			}
-		}
-	}*/
-
 	// We have data, first check if it's meant for a block read, otherwise
 	// parse the first line (which will recursively parse the other lines)
 	if( !pollReadBlock() )
@@ -384,23 +371,31 @@ int MSNSocket::sendCommand( const QString &cmd, const QString &args,
 	if( !body.isEmpty() )
 		data += body.utf8();
 
-	kdDebug() << "MSNSocket::sendCommand: Sending command " << data << endl;
+//	kdDebug() << "MSNSocket::sendCommand: Sending command " << data << endl;
 
-	// If the last confirmed Id is the last we sent, sent directly.
-	// Otherwise, queue. Command without Id are always sent.
-	// In case of queuing it is reasonable to assume the server will send
-	// a response, so the queue handling can be done in the read handler.
-	//if( !m_lastId || !addId || ( m_lastId && m_lastId >= m_id - 1 ) )
-		m_socket->writeBlock( data, data.length() );
-	/*else
+
+	//the command will be sent in slotReadyWrite
+	m_sendQueue.append(data);
+
+	if(addId)
 	{
-		kdDebug() << "MSNSocket::sendCommand: Not sending directly. Entry "
-			<< "added to send queue with id " << m_id << endl;
-		m_sendQueue.insert( m_id, data );
-	} */
-	m_id++;
-	return addId ? (m_id-1) : 0;
+		m_id++;
+		return m_id-1;
+	}
+	return 0;
 }
+
+void MSNSocket::slotReadyWrite()
+{
+	if( !m_sendQueue.isEmpty() )
+	{
+		QValueList<QCString>::Iterator it = m_sendQueue.begin();
+		kdDebug() << "MSNSocket::slotReadyWrite: Sending command " << *it << endl;
+		m_socket->writeBlock( *it, (*it).length() );
+		m_sendQueue.remove( it );
+	}
+}
+
 
 QString MSNSocket::escape( const QString &str )
 {
@@ -497,10 +492,6 @@ bool MSNSocket::accept(KExtendedSocket *server)
 		this, SLOT( slotSocketError( int ) ) );
 	QObject::connect( m_socket, SIGNAL( closed ( int ) ),
 		this, SLOT( slotSocketClosed( int ) ) );
-
-
-	//Because currently only MSNFileTransferSocket use this method, i connect dirrectly to a MSNFileTRansferSocket slot
-	//this code should be changed when we will implement other invitations
 	QObject::connect( m_socket, SIGNAL( readyWrite () ),
 		this, SLOT( slotReadyWrite() ) );
 
