@@ -265,6 +265,10 @@ void JabberEditAccountWidget::configChanged ()
 
 void JabberEditAccountWidget::registerClicked ()
 {
+
+	if(!validateData())
+		return;
+
 	if (!m_account)
 	{
 		m_account = new JabberAccount (m_protocol, mID->text ());

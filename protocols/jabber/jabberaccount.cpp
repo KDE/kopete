@@ -1176,8 +1176,8 @@ void JabberAccount::slotRegisterUserDone ()
 	{
 		KMessageBox::information (qApp->mainWidget (), i18n ("Unable to create account on the server."), i18n ("Account Registration"));
 
-		disconnect ();
 	}
+	disconnect ();
 	registerFlag = 0;
 }
 
