@@ -11,8 +11,7 @@ kopete_history_la_LIBADD      = ../../libkopete/libkopete.la
 
 kcm_kopete_history_la_SOURCES = historyprefsui.ui historypreferences.cpp
 kcm_kopete_history_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
-# TODO: remove libkopete.la from this line if kcautoconfigmodule is in kdelibs!
-kcm_kopete_history_la_LIBADD  = $(LIB_KOPETECOMPAT) ../../libkopete/libkopete.la $(LIB_KUTILS)
+kcm_kopete_history_la_LIBADD  = $(LIB_KOPETECOMPAT) $(LIB_KUTILS)
 
 service_DATA = history.desktop
 servicedir = $(kde_servicesdir)

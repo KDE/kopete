@@ -10,9 +10,7 @@ kopete_translator_la_LIBADD      = ../../libkopete/libkopete.la -lkio
 
 kcm_kopete_translator_la_SOURCES = translatorprefsbase.ui translatorprefs.cpp translatorlanguages.cpp
 kcm_kopete_translator_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
-kcm_kopete_translator_la_LIBADD  = $(LIB_KOPETECOMPAT) $(LIB_KUTILS) \
-../../libkopete/libkopete.la
-#remove link to libkopete when kautoconfigmodule is in kdelibs
+kcm_kopete_translator_la_LIBADD  = $(LIB_KOPETECOMPAT) $(LIB_KUTILS) 
 
 service_DATA = translator.desktop
 servicedir = $(kde_servicesdir)
