@@ -41,3 +41,5 @@ TODO for Jabber:
   there to the server
 - when adding a new contact to an existing meta contact, save its display
   name to the server
+- clean up JabberAddContactPage (needs rewrite)
+- get rid of the createAddContact mess
