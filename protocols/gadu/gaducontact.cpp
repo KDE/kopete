@@ -24,6 +24,7 @@
 #include <kaction.h>
 #include <kdebug.h>
 
+#include "gaduaccount.h"
 #include "gaduprotocol.h"
 #include "gaducontact.h"
 #include "gadupubdir.h"

@@ -22,26 +22,17 @@
 #ifndef GADUPUBDIR_H
 #define GADUPUBDIR_H
 
-
-#include "gaduaccount.h"
-#include "gaduprotocol.h"
 #include "gadusearch.h"
 #include "gadusession.h"
 
 #include <kdebug.h>
-#include <qhbox.h>
 #include <kdialogbase.h>
-#include <krestrictedline.h>
-#include <kcombobox.h>
-#include <qcheckbox.h>
-#include <qspinbox.h>
-#include <qpixmap.h>
-
 
 class GaduProtocol;
 class GaduAccount;
 class GaduPublicDirectory;
 class QListViewItem;
+class GaduContact;
 
 class GaduPublicDir : public KDialogBase
 {

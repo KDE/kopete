@@ -24,6 +24,9 @@
 #include "gadueditcontact.h"
 #include "kopeteonlinestatus.h"
 
+#include "gaducontactlist.h"
+#include "gaduadd.h"
+
 #include <ktextedit.h>
 #include <klocale.h>
 #include <kdebug.h>
@@ -72,7 +75,7 @@ GaduEditContact::GaduEditContact( GaduAccount* account,  GaduContactsList::Conta
 void
 GaduEditContact::init()
 {
-	ui_ = new gaduAddUI( this );
+	ui_ = new GaduAddUI( this );
 	setMainWidget( ui_ );
 
 	// fill values from cl into proper fields on widget

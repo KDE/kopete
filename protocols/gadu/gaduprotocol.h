@@ -26,11 +26,6 @@
 #include <libgadu.h>
 
 #include <qmap.h>
-//#include <qptrlist.h>
-//#include <qpixmap.h>
-#include <qstring.h>
-#include <qstringlist.h>
-//#include <qpoint.h>
 
 #include "kopeteprotocol.h"
 #include "kopeteonlinestatus.h"
@@ -42,6 +37,7 @@ class KAction;
 class KActionMenu;
 
 class QWidget;
+class QString;
 
 class KopeteContact;
 class KopeteMetaContact;

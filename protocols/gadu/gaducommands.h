@@ -30,11 +30,10 @@
 #include <libgadu.h>
 
 #include <qobject.h>
-#include <qstringlist.h>
-#include <qpixmap.h>
 
 class QSocketNotifier;
 class QStringList;
+class QPixmap;
 
 class GaduCommand : public QObject
 {
@@ -96,12 +95,12 @@ protected slots:
 private:
 	enum RegisterState{ RegisterStateNoToken, RegisterStateWaitingForToken, RegisterStateGotToken, RegisterStateWaitingForNumber, RegisterStateDone };
 	RegisterState	state;
-	QString		email_;
-	QString		password_;
+	QString			email_;
+	QString			password_;
 	struct gg_http*	session_;
 	int 			uin;
-	QString		tokenId;
-	QString		tokenString;
+	QString			tokenId;
+	QString			tokenString;
 };
 
 class RemindPasswordCommand : public GaduCommand
@@ -141,9 +140,9 @@ protected slots:
 
 private:
 	struct gg_http*	session_;
-	QString		passwd_;
-	QString		newpasswd_;
-	QString		newemail_;
+	QString			passwd_;
+	QString			newpasswd_;
+	QString			newemail_;
 	uin_t			uin_;
 };
 
@@ -166,9 +165,9 @@ protected slots:
 
 private:
 	struct gg_change_info_request	info_;
-	struct gg_http*				session_;
-	uin_t						uin_;
-	QString					passwd_;
+	struct gg_http*					session_;
+	uin_t							uin_;
+	QString							passwd_;
 };
 
 #endif

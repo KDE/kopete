@@ -23,12 +23,8 @@
 #ifndef GADUCONTACT_H
 #define GADUCONTACT_H
 
-#include <qstringlist.h>
-#include <qstring.h>
 #include <qpoint.h>
 
-#include "gaduaccount.h"
-#include "gaducommands.h"
 #include "gaducontactlist.h"
 
 #include "kopeteaccount.h"
@@ -41,7 +37,9 @@ class KAction;
 class GaduAccount;
 class KopeteAccount;
 class KopeteMessageManager;
-
+class KGaduNotify;
+class QString;
+class QStringList;
 
 class GaduContact : public KopeteContact
 {
@@ -62,8 +60,8 @@ public:
 	// uin is const for GaduContact, and displayname needs to be changed through metaContact
 	bool setContactDetails( const GaduContactsList::ContactLine* );
 
-	void	setParentIdentity( const QString& );
-	void	setIgnored( bool );
+	void setParentIdentity( const QString& );
+	void setIgnored( bool );
 	bool ignored();
 
 	static QString findBestContactName( const GaduContactsList::ContactLine* );
@@ -86,12 +84,12 @@ protected:
 
 private:
 	const uin_t		uin_;
-	bool ignored_;
+	bool 			ignored_;
 
 	KopeteMessageManager*	msgManager_;
 	QString			description_;
 	QString			parentIdentity_;
-	GaduAccount*		account_;
+	GaduAccount*	account_;
 
 	KAction*		actionSendMessage_;
 	KAction*		actionInfo_;

@@ -24,21 +24,21 @@
 #include "gadupubdir.h"
 #include "gadueditcontact.h"
 #include "gaducontactlist.h"
+#include "gaduaccount.h"
+#include "gaduprotocol.h"
 
-#include <qpushbutton.h>
-#include <qtextedit.h>
 #include <qwidgetstack.h>
 #include <qlistview.h>
 #include <qptrlist.h>
 #include <qradiobutton.h>
+#include <qspinbox.h>
+#include <qcheckbox.h>
 
-#include <kapplication.h>
-#include <kdatewidget.h>
+#include <kcombobox.h>
+#include <krestrictedline.h>
 #include <klineedit.h>
-#include <klocale.h>
-#include <kurllabel.h>
 #include <klistview.h>
-
+#include <klocale.h>
 
 GaduPublicDir::GaduPublicDir( GaduAccount* account, QWidget* parent, const char* name )
 : KDialogBase( parent, name, false, QString::null, User1|User2|User3|Cancel, User2 )

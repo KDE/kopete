@@ -27,10 +27,12 @@
 #include "gaduaccount.h"
 #include "gaduaddcontactpage.h"
 #include "gaducontact.h"
+#include "gaducontactlist.h"
 
 #include <klocale.h>
 #include <kdebug.h>
 
+#include <qwidget.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
@@ -42,7 +44,7 @@ GaduAddContactPage::GaduAddContactPage( GaduAccount* owner, QWidget* parent, con
 {
 	account_	= owner;
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
-	addUI_	= new gaduAddUI( this );
+	addUI_	= new GaduAddUI( this );
 	connect( addUI_->addEdit_, SIGNAL( textChanged( const QString & ) ), SLOT( slotUinChanged( const QString & ) ) );
 	addUI_->addEdit_->setValidChars( "1234567890" );
 	addUI_->addEdit_->setText( "" );

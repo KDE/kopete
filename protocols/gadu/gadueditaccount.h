@@ -24,8 +24,6 @@
 
 #include "gadueditaccountui.h"
 #include "editaccountwidget.h"
-#include "gaduaccount.h"
-#include "gaduprotocol.h"
 #include "gaduregisteraccount.h"
 
 class GaduAccount;

@@ -22,21 +22,13 @@
 #ifndef GADUREGISTERACCOUNT_H
 #define GADUREGISTERACCOUNT_H
 
-#include <qbuttongroup.h>
-#include <qradiobutton.h>
-#include <qstring.h>
-#include <qlineedit.h>
-#include <qlabel.h>
-#include <qpixmap.h>
-#include <qregexp.h>
-
 #include <kdialogbase.h>
-#include <ktextedit.h>
-#include <klocale.h>
-#include <klineedit.h>
 
-#include "gaduregisteraccountui.h"
-#include "gaducommands.h"
+class QString;
+class QPixmap;
+class RegisterCommand;
+class QRegExp;
+class GaduRegisterAccountUI;
 
 class GaduRegisterAccount : public KDialogBase
 {

@@ -20,19 +20,18 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 
-#ifndef GADUAWAY_H
-#define GADUAWAY_H
+#ifndef GADUEDITCONTACT_H
+#define GADUEDITCONTACT_H
 
 #include <kdialogbase.h>
-
-#include "gaducontactlist.h"
-#include "gaduadd.h"
 
 class GaduAccount;
 class GaduAddUI;
 class QLabel;
 class QString;
 class QWidget;
+class GaduContact;
+class GaduContactsList::ContactLine;
 
 class GaduEditContact : public KDialogBase
 {
@@ -53,7 +52,7 @@ private:
 
 	GaduAccount*	account_;
 	GaduContact*	contact_;
-	gaduAddUI*	ui_;
+	GaduAddUI*	ui_;
 	GaduContactsList::ContactLine* cl_;
 };
 

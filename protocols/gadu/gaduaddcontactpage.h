@@ -24,12 +24,15 @@
 #define GADUADDCONTACTPAGE_H
 
 #include "addcontactpage.h"
-#include "gaducontactlist.h"
-#include <qwidget.h>
 
 class GaduAccount;
-class gaduAddUI;
+class GaduAddUI;
 class QLabel;
+class KopeteMetaContact;
+class QString;
+class QShowEvent;
+class GaduAddUI;
+
 
 class GaduAddContactPage : public AddContactPage
 {
@@ -49,7 +52,7 @@ public slots:
 
 private:
 	GaduAccount*	account_;
-	gaduAddUI*	addUI_;
+	GaduAddUI*	addUI_;
 	QLabel*		noaddMsg1_;
 	QLabel*		noaddMsg2_;
 };

@@ -19,20 +19,19 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 
-#include <qvariant.h>
+#include <qstring.h>
+#include <qregexp.h>
 #include <qpushbutton.h>
 #include <qlabel.h>
-#include <klineedit.h>
-#include <qlineedit.h>
-#include <qlayout.h>
-#include <qtooltip.h>
-#include <qwhatsthis.h>
-#include <qpixmap.h>
 
+#include <klineedit.h>
 #include <kmessagebox.h>
 #include <kdebug.h>
+#include <klocale.h>
 
+#include "gaduregisteraccountui.h"
 #include "gaduregisteraccount.h"
+#include "gaducommands.h"
 
 GaduRegisterAccount::GaduRegisterAccount( QWidget* parent, const char* name )
 : KDialogBase( parent, name, true, i18n( "Register New Account" ), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true )
@@ -69,7 +68,7 @@ GaduRegisterAccount::GaduRegisterAccount( QWidget* parent, const char* name )
 	show();
 }
 
-void 
+void
 GaduRegisterAccount::doRegister( )
 {
 	cRegister->setUserinfo( ui->emailArea->text(), ui->password1->text(), ui->textToken->text() );
@@ -78,12 +77,12 @@ GaduRegisterAccount::doRegister( )
 	enableButton( Ok, false );
 }
 
-void 
+void
 GaduRegisterAccount::validateInput()
 {
 	if ( emailRegexp->exactMatch( ui->emailArea->text() ) &&
 		ui->password1->text() == ui->password2->text()  && !ui->password1->text().isEmpty() && !ui->password2->text().isEmpty() &&
-		!ui->textToken->text().isEmpty() ) 
+		!ui->textToken->text().isEmpty() )
 	{
 		ui->submitData->setDisabled( false );
 	}
@@ -92,13 +91,13 @@ GaduRegisterAccount::validateInput()
 	}
 }
 
-void 
+void
 GaduRegisterAccount::tokenChanged( const QString & )
 {
 	validateInput();
 }
 
-void 
+void
 GaduRegisterAccount::emailChanged( const QString & )
 {
 	// validate
@@ -111,7 +110,7 @@ GaduRegisterAccount::emailChanged( const QString & )
 	validateInput();
 }
 
-void 
+void
 GaduRegisterAccount::passwordsChanged( const QString & )
 {
 	if ( ui->password1->text() != ui->password2->text()  && !ui->password1->text().isEmpty() && !ui->password2->text().isEmpty() ) {
@@ -125,7 +124,7 @@ GaduRegisterAccount::passwordsChanged( const QString & )
 	validateInput();
 }
 
-void 
+void
 GaduRegisterAccount::registrationDone(  const QString& /*title*/,  const QString& /*what */ )
 {
 	ui->textToken->setDisabled( true );
@@ -138,7 +137,7 @@ GaduRegisterAccount::registrationDone(  const QString& /*title*/,  const QString
 	enableButton( Ok, true );
 }
 
-void 
+void
 GaduRegisterAccount::registrationError(  const QString& title,  const QString& what )
 {
 	updateStatus( i18n( "Registration failed: %1" ).arg( what ) );
@@ -167,7 +166,7 @@ GaduRegisterAccount::registrationError(  const QString& title,  const QString& w
 	cRegister->requestToken();
 }
 
-void 
+void
 GaduRegisterAccount::displayToken( QPixmap image, QString /*tokenId */ )
 {
 	ui->textToken->setDisabled( false );
@@ -175,19 +174,19 @@ GaduRegisterAccount::displayToken( QPixmap image, QString /*tokenId */ )
 	updateStatus( i18n( "" ) );
 }
 
-void 
+void
 GaduRegisterAccount::updateStatus( const QString status )
 {
 	ui->statusLabel->setAlignment( AlignCenter );
 	ui->statusLabel->setText( status );
 }
 
-void 
+void
 GaduRegisterAccount::slotApply()
 {
 }
 
-void 
+void
 GaduRegisterAccount::slotCancel()
 {
 	deleteLater();

@@ -24,12 +24,12 @@
 #define GADUACCOUNT_H
 
 #include "kopeteaccount.h"
-#include "kopetecontact.h"
 #include "kopeteonlinestatus.h"
+#include "kopetecontact.h"
 
-#include "gaducommands.h"
-#include "gadusession.h"
 #include "gaducontactlist.h"
+#include "gadusession.h"
+
 #include <libgadu.h>
 
 #include <qhostaddress.h>
@@ -39,14 +39,12 @@
 #include <kaction.h>
 #include <kfiledialog.h>
 
-class KopeteAccount;
 class GaduContact;
 class GaduProtocol;
-class GaduSession;
+class KopeteProtocol;
 class GaduCommand;
 class QTimer;
 class KActionMenu;
-class KopeteMessage;
 
 class GaduAccount : public KopeteAccount
 {
@@ -146,20 +144,18 @@ private:
 	void initConnections();
 	void initActions();
 
-	QPtrList<GaduCommand> commandList_;
 
-	GaduSession*		session_;
+	GaduSession*	session_;
 
 	QTimer*			pingTimer_;
 
-	KopeteOnlineStatus	status_;
 	QString			nick_;
 
 	QTextCodec*		textcodec_;
-	KFileDialog*		saveListDialog;
-	KFileDialog*		loadListDialog;
+	KFileDialog*	saveListDialog;
+	KFileDialog*	loadListDialog;
 
-	KActionMenu*		actionMenu_;
+	KActionMenu*	actionMenu_;
 	KAction*		searchAction;
 	KAction*		listputAction;
 	KAction*		listToFileAction;
@@ -168,11 +164,14 @@ private:
 	bool			connectWithSSL;
 
 	int			currentServer;
-	QValueList<QHostAddress> servers_;
-	unsigned int		serverIP;
+	unsigned int	serverIP;
 
 	QString			lastDescription;
 	bool			forFriends;
+	
+	QPtrList<GaduCommand>		commandList_;
+	KopeteOnlineStatus			status_;
+	QValueList<QHostAddress>	servers_;
 };
 
 #endif
