@@ -67,8 +67,6 @@ public:
 	ListView::BoxComponent *contactIconBox;
 	ListView::ImageComponent *buddyIcon;
 	int iconSize;
-	QTimer opacityTimer;
-	float opacityTarget;
 };
 
 class ContactComponent : public ListView::ImageComponent
@@ -164,10 +162,6 @@ void KopeteMetaContactLVI::initLVI()
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ),
 		SLOT( slotConfigChanged() ) );
 
-	connect( &d->opacityTimer, SIGNAL( timeout() ), SLOT( slotOpacityTimer() ) );
-
-	setOpacity( 0.0 );
-
 	mBlinkTimer = new QTimer( this, "mBlinkTimer" );
 	connect( mBlinkTimer, SIGNAL( timeout() ), SLOT( slotBlink() ) );
 	mIsBlinkIcon = false;
@@ -236,42 +230,6 @@ KopeteMetaContactLVI::~KopeteMetaContactLVI()
 	delete d;
 	//if ( m_parentGroup )
 	//	m_parentGroup->refreshDisplayName();
-}
-
-void KopeteMetaContactLVI::setOpacityTarget( float target )
-{
-	d->opacityTarget = target;
-
-	if ( target != 0.0 )
-		setVisible( true );
-	// if we're aiming at invisible, and we're already there,
-	// hide now. this happens on startup, since showing our
-	// parent group shows us too. :(
-	else if ( opacity() == 0.0 )
-		setVisible( false );
-
-	if ( opacity() != target )
-		d->opacityTimer.start( 50 );
-}
-
-void KopeteMetaContactLVI::slotOpacityTimer()
-{
-	float dist = d->opacityTarget - opacity();
-	float absdist = dist;
-	if ( absdist < 0.0 )
-		absdist = -absdist;
-
-	if ( absdist > 0.1 )
-	{
-		setOpacity( opacity() + 0.1 * dist / absdist );
-	}
-	else
-	{
-		d->opacityTimer.stop();
-		setOpacity( d->opacityTarget );
-		if ( d->opacityTarget == 0.0 )
-			setVisible( false );
-	}
 }
 
 void KopeteMetaContactLVI::movedToGroup( KopeteGroup *to )
@@ -480,11 +438,11 @@ void KopeteMetaContactLVI::slotConfigChanged()
 void KopeteMetaContactLVI::updateVisibility()
 {
 	if ( KopetePrefs::prefs()->showOffline() /*|| mEventCount */ )
-		setOpacityTarget( 1.0 );
-	else if ( m_metaContact->status() == KopeteOnlineStatus::Offline && !mBlinkTimer->isActive() )
-		setOpacityTarget( 0.0 );
+		setTargetVisibility( true );
+	else if ( !m_metaContact->isOnline() && !mBlinkTimer->isActive() )
+		setTargetVisibility( false );
 	else
-		setOpacityTarget( 1.0 );
+		setTargetVisibility( true );
 }
 
 void KopeteMetaContactLVI::slotContactPropertyChanged( KopeteContact *, const QString &key, const QVariant &old, const QVariant &newVal )
@@ -537,7 +495,7 @@ void KopeteMetaContactLVI::updateContactIcon( KopeteContact *c )
 		bHideOffline = false;
 
 	ContactComponent *comp = contactComponent( c );
-	bool bShow = !bHideOffline || c->onlineStatus().status() != KopeteOnlineStatus::Offline;
+	bool bShow = !bHideOffline || c->isOnline();
 	if ( bShow && !comp )
 		(void)new ContactComponent( d->contactIconBox, c );
 	else if ( !bShow && comp )

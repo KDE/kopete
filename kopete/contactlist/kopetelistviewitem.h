@@ -264,6 +264,9 @@ public:
 	float opacity();
 	void setOpacity( float alpha );
 
+	bool targetVisibility();
+	void setTargetVisibility( bool vis );
+
 protected:
 	void componentAdded( Component *component );
 	void componentRemoved( Component *component );
@@ -279,6 +282,7 @@ private slots:
 	void slotScheduleLayout();
 	void slotLayoutItems();
 	void slotLayoutAnimateItems();
+	void slotUpdateVisibility();
 
 private:
 	class Private;

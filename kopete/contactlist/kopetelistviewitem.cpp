@@ -564,12 +564,19 @@ VSpacerComponent::VSpacerComponent( ComponentBase *parent )
 class Item::Private
 {
 public:
-	Private() : alpha( 1.0 ) {}
+	Private() : opacity( 1.0 ), visibilityLevel( 0 ), visibilityTarget( false ) {}
+
 	QTimer layoutTimer;
-	float alpha;
+
 	QTimer layoutAnimateTimer;
 	int layoutAnimateSteps;
 	static const int layoutAnimateStepsTotal = 10;
+
+	QTimer visibilityTimer;
+	float opacity;
+	int visibilityLevel;
+	static const int visibilityStepsTotal = 10;
+	bool visibilityTarget;
 };
 
 Item::Item( QListViewItem *parent, QObject *owner, const char *name )
@@ -594,13 +601,16 @@ void Item::initLVI()
 	connect( listView()->header(), SIGNAL( sizeChange( int, int, int ) ), SLOT( slotScheduleLayout() ) );
 	connect( &d->layoutTimer, SIGNAL( timeout() ), SLOT( slotLayoutItems() ) );
 	connect( &d->layoutAnimateTimer, SIGNAL( timeout() ), SLOT( slotLayoutAnimateItems() ) );
+	connect( &d->visibilityTimer, SIGNAL( timeout() ), SLOT( slotUpdateVisibility() ) );
+	setVisible( false );
+	setTargetVisibility( true );
 }
 
 void Item::slotScheduleLayout()
 {
 	// perform a delayed layout in order to speed it all up
 	if ( ! d->layoutTimer.isActive() )
-	d->layoutTimer.start( 10, true );
+	d->layoutTimer.start( 30, true );
 }
 
 void Item::slotLayoutItems()
@@ -618,7 +628,7 @@ void Item::slotLayoutItems()
 	
 		int height = component( n )->heightForWidth( width );
 		component( n )->layout( QRect( 0, 0, width, height ) );
-		kdDebug(14000) << k_funcinfo << "Component " << n << " is " << width << " x " << height << endl;
+		//kdDebug(14000) << k_funcinfo << "Component " << n << " is " << width << " x " << height << endl;
 	}
 
 	setHeight(0);
@@ -645,13 +655,57 @@ void Item::slotLayoutAnimateItems()
 
 float Item::opacity()
 {
-	return d->alpha;
+	return d->opacity;
 }
 
 void Item::setOpacity( float opacity )
 {
-	if ( d->alpha == opacity ) return;
-	d->alpha = opacity;
+	if ( d->opacity == opacity ) return;
+	d->opacity = opacity;
+	repaint();
+}
+
+bool Item::targetVisibility()
+{
+	return d->visibilityTarget;
+}
+
+void Item::setTargetVisibility( bool vis )
+{
+	if ( d->visibilityTarget == vis )
+	{
+		// in case we're getting called because our parent was shown and
+		// we need to be rehidden
+		if ( !d->visibilityTimer.isActive() )
+			setVisible( vis );
+		return;
+	}
+	d->visibilityTarget = vis;
+	d->visibilityTimer.start( 30 );
+	if ( targetVisibility() )
+		setVisible( true );
+	slotUpdateVisibility();
+}
+
+void Item::slotUpdateVisibility()
+{
+	if ( targetVisibility() )
+		++d->visibilityLevel;
+	else
+		--d->visibilityLevel;
+
+	if ( d->visibilityLevel >= Private::visibilityStepsTotal )
+	{
+		d->visibilityLevel = Private::visibilityStepsTotal;
+		d->visibilityTimer.stop();
+	}
+	else if ( d->visibilityLevel <= 0 )
+	{
+		d->visibilityLevel = 0;
+		d->visibilityTimer.stop();
+		setVisible( false );
+	}
+	setHeight( 0 );
 	repaint();
 }
 
@@ -680,6 +734,8 @@ void Item::setHeight( int )
 	for ( uint n = 0; n < components(); ++n )
 		minHeight = QMAX( minHeight, component( n )->rect().height() );
 	//kdDebug(14000) << k_funcinfo << "Height is " << minHeight << endl;
+	if ( d->visibilityTimer.isActive() )
+		minHeight = (minHeight * d->visibilityLevel) / Private::visibilityStepsTotal;
 	KListViewItem::setHeight( minHeight );
 }
 
@@ -696,7 +752,11 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
         
 #ifdef HAVE_XRENDER                
 	QColor rgb = backgroundColor();
-	const int alpha = 257 - int(opacity() * 257);
+	float opac = 1.0;
+	if ( d->visibilityTimer.isActive() )
+		opac = float(d->visibilityLevel) / Private::visibilityStepsTotal;
+	opac *= opacity();
+	const int alpha = 257 - int(opac * 257);
 	if ( alpha == 0 ) return;
 
 	QPoint zp(0,0); zp = p->xForm(zp);
@@ -731,4 +791,3 @@ void Item::componentResized( Component *component )
 #include "kopetelistviewitem.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-
