@@ -592,6 +592,7 @@ void KopeteChatWindow::attachChatView( ChatView* newView )
 	KCursor::setAutoHideCursor( newView->editWidget(), true, true );
 	connect( newView, SIGNAL(captionChanged( bool)), this, SLOT(slotSetCaption(bool)) );
 	connect( newView, SIGNAL(messageSuccess( ChatView* )), this, SLOT(slotStopAnimation( ChatView* )) );
+	connect( newView, SIGNAL(updateStatusIcon( const ChatView* )), this, SLOT(slotUpdateCaptionIcons( const ChatView* )) );
 
 	checkDetachEnable();
 }
@@ -614,6 +615,7 @@ void KopeteChatWindow::detachChatView( ChatView *view )
 		return;
 
 	disconnect( view, SIGNAL(captionChanged( bool)), this, SLOT(slotSetCaption(bool)) );
+	disconnect( view, SIGNAL(updateStatusIcon( const ChatView *)), this, SLOT(slotUpdateCaptionIcons( const ChatView * )) );
 	view->editWidget()->removeEventFilter( this );
 
 	if( m_tabBar )
@@ -736,10 +738,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	m_activeView->setActive( true );
 
 	//Update icons to match
-	QPixmap pluginIcon16 = SmallIcon( m_activeView->msgManager()->protocol()->pluginIcon() );
-	QPixmap pluginIcon32 = SmallIcon( m_activeView->msgManager()->protocol()->pluginIcon(), 32 );
-
-	KWin::setIcons( winId(), pluginIcon32, pluginIcon16 );
+	slotUpdateCaptionIcons( m_activeView );
 
 	//Update chat members actions
 	updateMembersActions();
@@ -760,6 +759,15 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	setCaption( m_activeView->caption() );
 	setStatus( m_activeView->status() );
 	m_activeView->setFocus();
+}
+
+void KopeteChatWindow::slotUpdateCaptionIcons( const ChatView *view )
+{
+	const KopeteContact *contact = view->msgManager()->members().getFirst();
+	QPixmap icon16 = contact->onlineStatus().iconFor( contact, 16 );
+	QPixmap icon32 = contact->onlineStatus().iconFor( contact, 32 );
+
+	KWin::setIcons( winId(), icon32, icon16 );
 }
 
 void KopeteChatWindow::slotChatClosed()

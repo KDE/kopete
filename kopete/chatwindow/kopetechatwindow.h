@@ -190,6 +190,7 @@ private slots:
 	const void slotEnableUpdateBg() { updateBg = true; }
 
 	void slotSetCaption( bool );
+	void slotUpdateCaptionIcons( const ChatView * );
 	void slotChatClosed();
 	void slotTabContextMenu( QWidget*, const QPoint & );
 	void slotStopAnimation( ChatView* );

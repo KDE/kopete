@@ -574,6 +574,8 @@ void ChatView::slotChatDisplayNameChanged()
 	QString chatName = m_manager->displayName();
 	if( chatName != m_captionText )
 		setCaption( chatName, true );
+
+	emit updateStatusIcon( this );
 }
 
 void ChatView::slotContactNameChanged( const QString &oldName, const QString &newName )

@@ -270,7 +270,7 @@ signals:
 	 * Emits when a message is sent
 	 * @param message The message sent
 	 */
-	virtual void messageSent( KopeteMessage & );
+	void messageSent( KopeteMessage & );
 
 	/**
 	 * Emits every 4 seconds while the user is typing
@@ -283,13 +283,15 @@ signals:
 	/**
 	 * Emits when the chat view is shown
 	 */
-	virtual void shown();
+	void shown();
 
-	virtual void closing( KopeteView* );
+	void closing( KopeteView* );
 
-	virtual void activated( KopeteView * );
+	void activated( KopeteView * );
 
 	void captionChanged( bool active );
+
+	void updateStatusIcon( const ChatView * );
 
 private slots:
 	void slotOpenURLRequest( const KURL &url, const KParts::URLArgs &args );
