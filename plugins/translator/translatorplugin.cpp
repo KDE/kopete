@@ -397,20 +397,20 @@ QString TranslatorPlugin::babelTranslateMessage( const QString &msg , const QStr
 	kdDebug() << "TranslatorPlugin::babelTranslateMessage : [" << from << "_" << to << "] " << endl ;
 	
 	QString body, lp;
-	KURL translatorURL;
-	QCString postData;
+	//KURL translatorURL;
+	//QCString postData;
 	KIO::TransferJob *job;
 
-	translatorURL = "http://babel.altavista.com/tr";
+	//translatorURL = "http://babelfish.altavista.com/babelfish/tr";
 
 	//body = KURL::encode_string("*-*-* " + msg.body() + " *-*-*");
 	body = KURL::encode_string( msg);
 
 	lp = from + "_" + to;
 
-	postData = "enc=utf8&doit=done&tt=urltext&urltext=" + body +"&lp=" + lp ;
+	//postData = "enc=utf8&doit=done&tt=urltext&urltext=" + body +"&lp=" + lp ;
 
-	QString gurl = "http://babel.altavista.com/tr?enc=utf8&doit=done&tt=urltext&urltext=" + body +"&lp=" + lp;
+	QString gurl = "http://babelfish.altavista.com/babelfish/tr?enc=utf8&doit=done&tt=urltext&urltext=" + body +"&lp=" + lp;
 	kdDebug() << "TranslatorPlugin::babelTranslateMessage : URL: " << gurl << endl;
 	KURL geturl = gurl;
 
