@@ -32,11 +32,6 @@ BlackLister::BlackLister(QString protocolId, QString accountId, QObject *parent,
 
 BlackLister::~BlackLister()
 {
-	KConfig *config = KGlobal::config();
-	
-	config->setGroup("BlackLister");
-	config->writeEntry( m_protocol + QString::fromLatin1("_") + m_owner, m_blacklist );
-	config->sync();
 }
 
 bool BlackLister::isBlocked(QString &contactId)
@@ -55,6 +50,7 @@ void BlackLister::slotAddContact(QString &contactId)
 {
 	if( !isBlocked(contactId) ){
 		m_blacklist += contactId;
+		saveToDisk();
 		emit contactAdded( contactId );
 	}
 }
@@ -73,10 +69,20 @@ void BlackLister::slotRemoveContact(Contact *contact)
 	slotRemoveContact( temp );
 }
 
+void BlackLister::saveToDisk()
+{
+	KConfig *config = KGlobal::config();
+	
+	config->setGroup("BlackLister");
+	config->writeEntry( m_protocol + QString::fromLatin1("_") + m_owner, m_blacklist );
+	config->sync();
+}
+
 void BlackLister::slotRemoveContact(QString &contactId)
 {
 	if( !isBlocked(contactId) ){
 		m_blacklist.remove( contactId );
+		saveToDisk();
 		emit contactRemoved( contactId );
 	}
 }

@@ -112,6 +112,8 @@ signals:
     void contactRemoved( QString &contactId );
 
 private:
+    void saveToDisk();
+
     QStringList m_blacklist;
     QString m_owner;
     QString m_protocol;
