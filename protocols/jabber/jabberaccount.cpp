@@ -863,10 +863,7 @@ void JabberAccount::slotSubscription (const Jabber::Jid & jid, const QString & t
 
 		case KMessageBox::No:
 			/* Reject subscription. */
-			task = new Jabber::JT_Presence (jabberClient->rootTask ());
-
-			task->sub (jid, "unsubscribed");
-			task->go (true);
+				unsubscribed (jid);
 
 			break;
 
