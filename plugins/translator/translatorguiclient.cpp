@@ -31,7 +31,7 @@
 
 #include "translatorplugin.h"
 #include "translatorguiclient.h"
-#include "translatorprefs.h"
+#include "translatorlanguages.h"
 
 TranslatorGUIClient::TranslatorGUIClient( KopeteMessageManager *parent, const char *name )
 : QObject( parent, name ) , KXMLGUIClient(parent)
@@ -67,7 +67,7 @@ void TranslatorGUIClient::slotTranslateChat()
 	if(body.isEmpty())
 		return;
 
-	QString src_lang = TranslatorPlugin::plugin()->m_prefs->myLang();
+	QString src_lang = TranslatorPlugin::plugin()->m_myLang;
 	QString dst_lang;
 
 	QPtrList<KopeteContact> list=m_manager->members();
@@ -86,7 +86,7 @@ void TranslatorGUIClient::slotTranslateChat()
 
 	/* We search for src_dst */
 
-	QStringList s = TranslatorPlugin::plugin()->m_supported[ TranslatorPlugin::plugin()->m_prefs->service() ];
+	QStringList s = TranslatorPlugin::plugin()->m_languages->supported( TranslatorPlugin::plugin()->m_service );
 	QStringList::ConstIterator i;
 
 	for ( i = s.begin(); i != s.end() ; ++i )
@@ -97,7 +97,7 @@ void TranslatorGUIClient::slotTranslateChat()
 			return;
 		}
 	}
-	kdDebug(14308) << "TranslatorPlugin::slotTranslateChat : "<< src_lang + "_" + dst_lang << " doesn't exists with service " << TranslatorPlugin::plugin()->m_prefs->service() << endl;
+	kdDebug(14308) << "TranslatorPlugin::slotTranslateChat : "<< src_lang + "_" + dst_lang << " doesn't exists with service " << TranslatorPlugin::plugin()->m_service << endl;
 }
 
 void TranslatorGUIClient::messageTranslated(const QVariant& result)

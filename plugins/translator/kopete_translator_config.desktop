@@ -1,0 +1,16 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=locale
+Type=Service
+ServiceTypes=KCModule
+
+X-KDE-ModuleType=Library
+X-KDE-Library=kopete_translator
+X-KDE-FactoryName=TranslatorConfigFactory
+X-KDE-ParentApp=kopete_translator
+X-KDE-ParentComponents=kopete_translator
+
+Name=Translator
+Comment=Translates messages from your native language to another language
+
+

@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>TranslatorPrefsUI</class>
 <author>Duncan Mac-Vicar P.</author>
 <widget class="QWidget">
@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>401</width>
-            <height>413</height>
+            <height>417</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -21,13 +21,16 @@
             <verstretch>0</verstretch>
         </sizepolicy>
     </property>
+    <property name="caption">
+        <string>TranslatorPrefsUI</string>
+    </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
         <widget class="QComboBox" row="1" column="1">
             <property name="name">
-                <cstring>m_ServiceBox</cstring>
+                <cstring>Service</cstring>
             </property>
         </widget>
         <widget class="QLabel" row="1" column="0">
@@ -48,7 +51,7 @@
         </widget>
         <widget class="QComboBox" row="0" column="1">
             <property name="name">
-                <cstring>m_LangBox</cstring>
+                <cstring>myLang</cstring>
             </property>
             <property name="sizePolicy">
                 <sizepolicy>
@@ -61,7 +64,7 @@
         </widget>
         <widget class="QButtonGroup" row="2" column="0" rowspan="1" colspan="2">
             <property name="name">
-                <cstring>m_incomming</cstring>
+                <cstring>IncomingMessages</cstring>
             </property>
             <property name="title">
                 <string>Incoming Messages</string>
@@ -72,7 +75,7 @@
                 </property>
                 <widget class="QRadioButton">
                     <property name="name">
-                        <cstring>m_in_dont</cstring>
+                        <cstring>IncomingDontTranslate</cstring>
                     </property>
                     <property name="text">
                         <string>Don't translate</string>
@@ -83,7 +86,7 @@
                 </widget>
                 <widget class="QRadioButton">
                     <property name="name">
-                        <cstring>m_in_original</cstring>
+                        <cstring>IncomingShowOriginal</cstring>
                     </property>
                     <property name="text">
                         <string>Show the original message</string>
@@ -94,7 +97,7 @@
                 </widget>
                 <widget class="QRadioButton">
                     <property name="name">
-                        <cstring>m_in_translate</cstring>
+                        <cstring>IncomingTranslate</cstring>
                     </property>
                     <property name="text">
                         <string>Translate directly</string>
@@ -107,7 +110,7 @@
         </widget>
         <widget class="QButtonGroup" row="3" column="0" rowspan="1" colspan="2">
             <property name="name">
-                <cstring>m_outgoing</cstring>
+                <cstring>OutgoingMessages</cstring>
             </property>
             <property name="title">
                 <string>Outgoing Messages</string>
@@ -118,7 +121,7 @@
                 </property>
                 <widget class="QRadioButton">
                     <property name="name">
-                        <cstring>m_out_dont</cstring>
+                        <cstring>OutgoingDontTranslate</cstring>
                     </property>
                     <property name="text">
                         <string>Don't translate</string>
@@ -129,7 +132,7 @@
                 </widget>
                 <widget class="QRadioButton">
                     <property name="name">
-                        <cstring>m_out_original</cstring>
+                        <cstring>OutgoingShowOriginal</cstring>
                     </property>
                     <property name="text">
                         <string>Show the original message</string>
@@ -140,7 +143,7 @@
                 </widget>
                 <widget class="QRadioButton">
                     <property name="name">
-                        <cstring>m_out_translate</cstring>
+                        <cstring>OutgoingTranslate</cstring>
                     </property>
                     <property name="text">
                         <string>Translate directly</string>
@@ -148,7 +151,7 @@
                 </widget>
                 <widget class="QRadioButton">
                     <property name="name">
-                        <cstring>m_out_dialog</cstring>
+                        <cstring>OutgoingAsk</cstring>
                     </property>
                     <property name="text">
                         <string>Show dialog before sending</string>

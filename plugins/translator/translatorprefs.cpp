@@ -21,89 +21,65 @@
 #include "translatorprefs.moc"
 #include "translatorprefsbase.h"
 #include "translatorplugin.h"
+#include "translatorlanguages.h"
 
 #include <qlayout.h>
-#include <kconfig.h>
+#include <kautoconfig.h>
+#include <kgenericfactory.h>
 #include <kglobal.h>
-#include <klocale.h>
 #include <kdebug.h>
 #include <qbuttongroup.h>
 
+typedef KGenericFactory<TranslatorPreferences> TranslatorPreferencesFactory;
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_translator, TranslatorPreferencesFactory( "kcm_kopete_translator" )  );
 
-TranslatorPreferences::TranslatorPreferences(const QString &pixmap,QObject *parent)
-							: ConfigModule(i18n("Translator"),i18n("Translator Plugin"),pixmap,parent)
+
+TranslatorPreferences::TranslatorPreferences(QWidget* parent, const char* /*name*/, const QStringList &args)
+							: KCModule( TranslatorPreferencesFactory::instance(), parent, args)
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 
 	preferencesDialog = new TranslatorPrefsUI(this);
+	languages = new TranslatorLanguages;
 
-    QMap<QString,QString>::ConstIterator i;
+	QMap<QString,QString>::ConstIterator i;
 	QMap<QString,QString> m;
 
-	m = TranslatorPlugin::plugin()->languagesMap();
-
+	m = languages->languagesMap();
 	for ( i = m.begin(); i != m.end() ; ++i )
-		preferencesDialog->m_LangBox->insertItem( i.data(), TranslatorPlugin::plugin()->languageIndex(i.key()) );
+		preferencesDialog->myLang->insertItem( i.data(), languages->languageIndex(i.key()) );
 
-	m = TranslatorPlugin::plugin()->servicesMap();
-
+	m = languages->servicesMap();
 	for ( i = m.begin(); i != m.end() ; ++i )
-		preferencesDialog->m_ServiceBox->insertItem( i.data(), TranslatorPlugin::plugin()->serviceIndex(i.key()) );
+		preferencesDialog->Service->insertItem( i.data(), languages->serviceIndex(i.key()) );
 
-	reopen();
+	//KAutoConfig Stuff
+	kautoconfig = new KAutoConfig(KGlobal::config(), this, "kautoconfig");
+	connect(kautoconfig, SIGNAL(widgetModified()), SLOT(widgetModified()));
+	connect(kautoconfig, SIGNAL(settingsChanged()), SLOT(widgetModified()));
+	kautoconfig->addWidget(preferencesDialog, "Cryptography Plugin");
+	kautoconfig->retrieveSettings(true);
 
 }
 
 TranslatorPreferences::~TranslatorPreferences()
 {
+	delete kautoconfig;
 }
 
-
-const QString& TranslatorPreferences::myLang()
+void TranslatorPreferences::widgetModified()
 {
-	return TranslatorPlugin::plugin()->languageKey(preferencesDialog->m_LangBox->currentItem());
+	setChanged(kautoconfig->hasChanged());
 }
 
-const QString& TranslatorPreferences::service()
+void TranslatorPreferences::defaults()
 {
-	return TranslatorPlugin::plugin()->serviceKey(preferencesDialog->m_ServiceBox->currentItem());
-}
-
-const unsigned int TranslatorPreferences::outgoingMode()
-{
-	return preferencesDialog->m_outgoing->id(preferencesDialog->m_outgoing->selected() ) ;
-}
-
-const unsigned int TranslatorPreferences::incommingMode()
-{
-	return preferencesDialog->m_incomming->id(preferencesDialog->m_incomming->selected() );
-}
-
-
-void TranslatorPreferences::reopen()
-{
-	KGlobal::config()->setGroup("Translator Plugin");
-
-	preferencesDialog->m_LangBox->setCurrentItem( TranslatorPlugin::plugin()->languageIndex(KGlobal::config()->readEntry("myLang", "null")));
-	preferencesDialog->m_ServiceBox->setCurrentItem( TranslatorPlugin::plugin()->serviceIndex(KGlobal::config()->readEntry("Service", "babelfish")));
-
-	preferencesDialog->m_incomming->setButton(KGlobal::config()->readNumEntry( "Incomming Mode", TranslatorPlugin::ShowOriginal) );
-	preferencesDialog->m_outgoing->setButton(KGlobal::config()->readNumEntry( "Outgoing Mode", TranslatorPlugin::ShowOriginal) );
+	kautoconfig->resetSettings();
 }
 
 void TranslatorPreferences::save()
 {
-	KConfig *config = KGlobal::config();
-	config->setGroup("Translator Plugin");
-	config->writeEntry("myLang", myLang() );
-	config->writeEntry("Service", service() );
-
-	config->writeEntry("Incomming Mode", preferencesDialog->m_incomming->id(preferencesDialog->m_incomming->selected() ) );
-	config->writeEntry("Outgoing Mode",  preferencesDialog->m_outgoing->id(preferencesDialog->m_outgoing->selected() ) );
-
-
-	config->sync();
-	emit saved();
+	kautoconfig->saveSettings();
 }
 
 /*

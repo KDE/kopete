@@ -25,14 +25,14 @@
 #include <qmap.h>
 #include <qcstring.h>
 #include <qintdict.h>
-#include <qstring.h>
+
 
 #include <kio/job.h>
 
 #include "kopetemessage.h"
 #include "kopeteplugin.h"
 
-class QStringList;
+
 class QString;
 class KListAction;
 
@@ -42,6 +42,7 @@ class KopeteMessageManager;
 
 class TranslatorPreferences;
 class TranslatorGUIClient;
+class TranslatorLanguages;
 
 /**
  * @author Duncan Mac-Vicar Prett   <duncan@kde.org>
@@ -68,34 +69,6 @@ public:
 		ShowDialog   	= 3
 	};
 
-	/***************************************************************************
-	 *   Plugin's API (used by preferences)                                    *
-	 ***************************************************************************/
-
-	const QString& languageName( const QString &key )
-	{ return m_langs[key]; };
-
-	const int languageIndex	( const QString &key )
-	{ return m_langKeyIntMap[key]; };
-
-	const QString& languageKey( const int index )
-	{ return  m_langIntKeyMap[index]; };
-
-	const QMap<QString,QString>& languagesMap()
-	{ return m_langs; };
-
-	const QMap<QString,QString>& servicesMap()
-	{ return m_services; };
-
-	const QStringList& supported( const QString &servicekey)
-	{ return m_supported[servicekey]; };
-
-	const int serviceIndex	( const QString &key )
-	{ return m_servicesKeyIntMap[key]; };
-
-	const QString& serviceKey( const int index )
-	{ return  m_servicesIntKeyMap[index]; };
-
 private slots:
 	void slotIncomingMessage( KopeteMessage& msg );
 	void slotOutgoingMessage( KopeteMessage& msg );
@@ -104,6 +77,7 @@ private slots:
 	void slotSetLanguage();
 	void slotSelectionChanged(bool);
 	void slotNewKMM(KopeteMessageManager *);
+	void loadSettings();
 
 public:
 	QString translateMessage( const QString &, const QString &, const QString & );
@@ -114,32 +88,6 @@ protected:
 	QString babelTranslateMessage(const QString &, const QString &, const QString & );
 
 private:
-	/* Known Languages key -> desc ie: en -> English */
-	QMap< QString, QString> m_langs;
-
-	/* Known Services key -> desc ie: en -> English */
-	QMap< QString, QString> m_services;
-	/* Supported translations per service, src_dst format ( ie: en_es )*/
-	QMap< QString, QStringList > m_supported;
-
-	/* My default language */
-	QString m_myLang;
-
-	/* int to lang key and viceversa*/
-	QMap<int, QString> m_langIntKeyMap;
-	QMap<QString, int> m_langKeyIntMap;
-
-	/* int to services key and viceversa*/
-	QMap<int, QString> m_servicesIntKeyMap;
-	QMap<QString, int> m_servicesKeyIntMap;
-
-	/* Lang counter */
-	int m_lc;
-	/* Service counter */
-	int m_sc;
-
-	/* Translator plugin Preferences */
-	TranslatorPreferences *m_prefs;
 
 	QMap< KIO::Job *, QCString> m_data;
 	QMap< KIO::Job *, bool> m_completed;
@@ -147,6 +95,13 @@ private:
 	KListAction* m_actionLanguage;
 
 	static TranslatorPlugin* pluginStatic_;
+	TranslatorLanguages *m_languages;
+
+	//Settings
+	QString m_myLang;
+	QString m_service;
+	unsigned int m_outgoingMode;
+	unsigned int m_incomingMode;
 
 private:
 	void sendTranslation(KopeteMessage &msg, const QString &translated);

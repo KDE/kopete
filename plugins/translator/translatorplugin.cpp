@@ -21,10 +21,13 @@
 #include <qapplication.h>
 #include <qregexp.h>
 #include <qsignal.h>
+#include <qstring.h>
 
 #include <kdebug.h>
 #include <kaction.h>
 #include <kgenericfactory.h>
+#include <kglobal.h>
+#include <kconfig.h>
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
@@ -35,6 +38,7 @@
 #include "translatorprefs.h"
 #include "translatordialog.h"
 #include "translatorguiclient.h"
+#include "translatorlanguages.h"
 
 typedef KGenericFactory<TranslatorPlugin> TranslatorPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_translator, TranslatorPluginFactory( "kopete_translator" )  );
@@ -42,84 +46,14 @@ K_EXPORT_COMPONENT_FACTORY( kopete_translator, TranslatorPluginFactory( "kopete_
 TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
 : KopetePlugin( TranslatorPluginFactory::instance(), parent, name )
 {
-	m_lc = 0; m_sc = 0;
+
 
 	if ( pluginStatic_ )
 		kdDebug(14308)<<"####"<<"Translator already initialized"<<endl;
 	else
 		pluginStatic_ = this;
 
-	m_services.insert("babelfish", "BabelFish");
-	m_services.insert("google", "Google");
-
-	m_langs.insert("null", i18n("Unknown"));
-	m_langs.insert("en", i18n("English"));
-	m_langs.insert("zh", i18n("Chinese"));
-	m_langs.insert("fr", i18n("French"));
-	m_langs.insert("de", i18n("German"));
-	m_langs.insert("it", i18n("Italian"));
-	m_langs.insert("ja", i18n("Japanese"));
-	m_langs.insert("ko", i18n("Korean"));
-	m_langs.insert("pt", i18n("Portuguese"));
-	m_langs.insert("ru", i18n("Russian"));
-	m_langs.insert("es", i18n("Spanish"));
-
-	/* English to .. */
-	m_supported["babelfish"].append("en_zh");
-	m_supported["babelfish"].append("en_fr");
-	m_supported["babelfish"].append("en_de");
-	m_supported["babelfish"].append("en_it");
-	m_supported["babelfish"].append("en_ja");
-	m_supported["babelfish"].append("en_ko");
-	m_supported["babelfish"].append("en_pt");
-	m_supported["babelfish"].append("en_es");
-	/* Chinese to .. */
-	m_supported["babelfish"].append("zh_en");
-	/* French to ... */
-	m_supported["babelfish"].append("fr_en");
-	m_supported["babelfish"].append("fr_de");
-	/* German to ... */
-	m_supported["babelfish"].append("de_en");
-	m_supported["babelfish"].append("de_fr");
-
-	m_supported["babelfish"].append("it_en");
-	m_supported["babelfish"].append("ja_en");
-	m_supported["babelfish"].append("ko_en");
-	m_supported["babelfish"].append("pt_en");
-	m_supported["babelfish"].append("ru_en");
-	m_supported["babelfish"].append("es_en");
-
-	/* Google Service */
-	m_supported["google"].append("en_de");
-	m_supported["google"].append("en_es");
-	m_supported["google"].append("en_fr");
-	m_supported["google"].append("en_it");
-	m_supported["google"].append("en_pt");
-	m_supported["google"].append("de_en");
-	m_supported["google"].append("de_fr");
-	m_supported["google"].append("es_en");
-	m_supported["google"].append("fr_en");
-	m_supported["google"].append("fr_de");
-	m_supported["google"].append("it_en");
-	m_supported["google"].append("pt_en");
-
-	QMap<QString,QString>::ConstIterator i;
-
-	for ( i = m_langs.begin(); i != m_langs.end() ; ++i )
-	{
-		m_langIntKeyMap[m_lc] = i.key();
-		m_langKeyIntMap[i.key()] = m_lc;
-		m_lc++;
-	}
-
-	for ( i = m_services.begin(); i != m_services.end() ; ++i )
-	{
-		m_servicesIntKeyMap[m_sc] = i.key();
-		m_servicesKeyIntMap[i.key()] = m_sc;
-		m_sc++;
-	}
-
-	m_prefs = new TranslatorPreferences ( "locale", this );
+	m_languages = new TranslatorLanguages;
 
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToDisplay( KopeteMessage & ) ), SLOT( slotIncomingMessage( KopeteMessage & ) ) );
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToSend( KopeteMessage & ) ),    SLOT( slotOutgoingMessage( KopeteMessage & ) ) );
@@ -128,9 +62,11 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QSt
 
 	QStringList keys;
 	int k;
-	for ( k=0; k <= m_lc; k++)
+	QMap<QString, QString> m = m_languages->languagesMap();
+	for ( k=0; k <= m_languages->numLanguages(); k++)
 	{
-		keys << m_langs[ languageKey(k) ];
+
+		keys << m[ m_languages->languageKey(k) ];
 	}
 	m_actionLanguage=new KListAction(i18n("Set &Language"),"",0,  actionCollection() ,"contactLanguage");
 	m_actionLanguage->setItems( keys );
@@ -146,6 +82,8 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QSt
 	{
 		slotNewKMM(it.current());
 	}
+	loadSettings();
+	connect(this, SIGNAL(settingsChanged()), this, SLOT( loadSettings() ) );
 }
 
 TranslatorPlugin::~TranslatorPlugin()
@@ -159,6 +97,38 @@ TranslatorPlugin* TranslatorPlugin::plugin()
 }
 
 TranslatorPlugin* TranslatorPlugin::pluginStatic_ = 0L;
+
+void TranslatorPlugin::loadSettings()
+{
+	KConfig *config = KGlobal::config();
+	int mode = 0;
+
+	config->setGroup("Translator Plugin");
+	m_myLang = config->readEntry("myLang", "null");
+	m_service = config->readEntry("Service", "babelfish");
+
+	if (config->readBoolEntry("IncomingDontTranslate", true))
+		mode = 0;
+	if (config->readBoolEntry("IncomingShowOriginal", false))
+		mode = 1;
+	if (config->readBoolEntry("IncomingTranslate", false))
+		mode = 2;
+
+	m_incomingMode = mode;
+
+	if (config->readBoolEntry("OutgoingDontTranslate", true))
+		mode = 0;
+	if (config->readBoolEntry("OutgoingShowOriginal", false))
+		mode = 1;
+	if (config->readBoolEntry("OutgoingTranslate", false))
+		mode = 2;
+	if (config->readBoolEntry("OutgoingAsk", false))
+		mode = 3;
+
+	m_outgoingMode = mode;
+
+}
+
 
 void TranslatorPlugin::slotSelectionChanged(bool b)
 {
@@ -183,9 +153,9 @@ void TranslatorPlugin::slotSelectionChanged(bool b)
 
 	QString languageKey = m->pluginData( this, "languageKey" );
 	if( !languageKey.isEmpty() && languageKey != "null" )
-		m_actionLanguage->setCurrentItem( languageIndex( languageKey ) );
+		m_actionLanguage->setCurrentItem( m_languages->languageIndex( languageKey ) );
 	else
-		m_actionLanguage->setCurrentItem( languageIndex( "null" ) );
+		m_actionLanguage->setCurrentItem( m_languages->languageIndex( "null" ) );
 }
 
 void TranslatorPlugin::slotNewKMM(KopeteMessageManager *KMM)
@@ -195,7 +165,7 @@ void TranslatorPlugin::slotNewKMM(KopeteMessageManager *KMM)
 
 void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 {
-	if(m_prefs->incommingMode()==DontTranslate)
+	if(m_incomingMode == DontTranslate)
 		return;
 
 //	kdDebug(14308) << "TranslatorPlugin::slotIncomingMessage " << m_prefs->incommingMode() << DontTranslate << endl;
@@ -218,7 +188,7 @@ void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 			return;
 		}
 
-		dst_lang = m_prefs->myLang();
+		dst_lang = m_myLang;
 
 		if ( src_lang == dst_lang )
 		{
@@ -228,7 +198,7 @@ void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 
 		/* We search for src_dst */
 
-		QStringList s = m_supported[ m_prefs->service() ];
+		QStringList s = m_languages->supported( m_service );
 		QStringList::ConstIterator i;
 
 		for ( i = s.begin(); i != s.end() ; ++i )
@@ -252,7 +222,7 @@ void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 	kdDebug(14308) << "[Translator] Outgoing info: " << endl
 		<< msg.body() << endl << "Direction: " << msg.direction();*/
 
-	if(m_prefs->outgoingMode()==DontTranslate)
+	if(m_outgoingMode == DontTranslate)
 		return;
 
 
@@ -261,7 +231,7 @@ void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 
 	if ( ( msg.direction() == KopeteMessage::Outbound ) && ( !msg.plainBody().isEmpty() ) )
 	{
-		src_lang = m_prefs->myLang();
+		src_lang = m_myLang;
 //		kdDebug(14308) << "[Translator] ( Outgoing ) My lang is: " << src_lang << endl;
 
 		// Sad, we have to consider only the first To: metacontact
@@ -286,7 +256,7 @@ void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 
 		/* We search for src_dst */
 
-		QStringList s = m_supported[ m_prefs->service() ];
+		QStringList s = m_languages->supported( m_service );
 		QStringList::ConstIterator i;
 
 		for ( i = s.begin(); i != s.end() ; ++i )
@@ -323,9 +293,9 @@ void TranslatorPlugin::translateMessage(const QString &msg , const QString &from
 
 QString TranslatorPlugin::translateMessage(const QString &msg , const QString &from, const QString &to)
 {
-	if ( m_prefs->service() == "babelfish" )
+	if ( m_service == "babelfish" )
 		return babelTranslateMessage( msg ,from, to);
-	if ( m_prefs->service() == "google" )
+	if ( m_service == "google" )
 		return googleTranslateMessage( msg ,from, to);
 	return QString::null;
 }
@@ -453,10 +423,10 @@ void TranslatorPlugin::sendTranslation(KopeteMessage &msg, const QString &transl
 	switch (msg.direction())
 	{
 		case KopeteMessage::Outbound:
-			mode=(TranslateMode)m_prefs->outgoingMode();
+			mode=(TranslateMode)m_outgoingMode;
 			break;
 		case KopeteMessage::Inbound:
-			mode=(TranslateMode)m_prefs->incommingMode();
+			mode=(TranslateMode)m_incomingMode;
 			break;
 		default:
 			kdDebug(14308) << "TranslatorPlugin::sendTranslation - WARNING: can't determine if it is an incoming or outgoing message" <<endl;
@@ -510,7 +480,7 @@ void TranslatorPlugin::slotSetLanguage()
 	KopeteMetaContact *m=KopeteContactList::contactList()->selectedMetaContacts().first();
 	if( m && m_actionLanguage )
 	{
-		m->setPluginData( this, "languageKey", languageKey( m_actionLanguage->currentItem() ) );
+		m->setPluginData( this, "languageKey", m_languages->languageKey( m_actionLanguage->currentItem() ) );
 	}
 }
 

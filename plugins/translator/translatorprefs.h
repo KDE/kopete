@@ -25,11 +25,13 @@
 
 #include <qwidget.h>
 #include <klineedit.h>
-#include "configmodule.h"
+#include <kcmodule.h>
 //#include "translatorplugin.h"
 
 class QString;
 class TranslatorPrefsUI;
+class TranslatorLanguages;
+class KAutoConfig;
 
 /**
   * @author Duncan Mac-Vicar Prett   <duncan@kde.org>
@@ -38,36 +40,23 @@ class TranslatorPrefsUI;
   *
   */
 
-class TranslatorPreferences : public ConfigModule
+class TranslatorPreferences : public KCModule
 {
 Q_OBJECT
 public:
-	TranslatorPreferences(const QString &pixmap,QObject *parent=0);
+	TranslatorPreferences(QWidget *parent = 0, const char *name = 0, const QStringList &args = QStringList());
 	~TranslatorPreferences();
+
 	virtual void save();
-	virtual void reopen();
-
-	/**
-	 * Default's user language
-	 */
-	const QString& myLang();
-	/**
-	 * Translation engine
-	 */
-	const QString& service();
-
-	/**
-	 * Translation modes
-	 */
-	/*TranslatorPlugin::TranslationMode*/
-	const unsigned int outgoingMode();
-	const unsigned int incommingMode();
-
-signals:
-	void saved();
+	virtual void defaults();
 
 private:
-	TranslatorPrefsUI *preferencesDialog;	
+	TranslatorPrefsUI *preferencesDialog;
+	KAutoConfig *kautoconfig;
+	TranslatorLanguages *languages;
+
+private slots:
+	void widgetModified();
 };
 
 #endif
