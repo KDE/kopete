@@ -498,6 +498,7 @@ QValueList<Kopete::Message> HistoryLogger::readMessages(unsigned int lines,
 							.arg( fgColor.name(), timestamp.toString(Qt::LocalDate), msg.escapedBody() ),
 							Kopete::Message::RichText
 						);
+						msg.setFg( fgColor );
 					}
 					else
 					{
