@@ -1570,8 +1570,8 @@ void KopeteContactListView::slotRemove()
 		         "contacts from your contact list?" );
 
 		if( KMessageBox::warningContinueCancelList( this, msg, items, i18n("Remove"),
-			KGuiItem(i18n("Remove"),"editdelete"), "askRemovingContactOrGroup" )
-			!= KMessageBox::Continue, KMessageBox::Notify | KMessageBox::Dangerous )
+			KGuiItem(i18n("Remove"),"editdelete"), "askRemovingContactOrGroup",
+			KMessageBox::Notify | KMessageBox::Dangerous ) != KMessageBox::Continue )
 		{
 			return;
 		}
