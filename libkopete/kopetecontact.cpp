@@ -227,8 +227,8 @@ void KopeteContact::setDisplayName( const QString &name )
 	if( name == d->displayName )
 		return;
 
+	emit displayNameChanged( d->displayName, name );
 	d->displayName = name;
-	emit displayNameChanged( name );
 }
 
 QString KopeteContact::displayName() const

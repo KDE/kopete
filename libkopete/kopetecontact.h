@@ -389,7 +389,7 @@ signals:
 	 * Connect to this signal to know when the contact
 	 * changed its name/nick
 	 */
-	void displayNameChanged( const QString &name );
+	void displayNameChanged( const QString &oldName, const QString &newName );
 
 	/**
 	 * The contact is about to be destroyed.

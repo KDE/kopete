@@ -113,7 +113,7 @@ const QString KopeteMessageManager::displayName()
 {
 	if( d->displayName.isNull() )
 	{
-		connect( this, SIGNAL( contactDisplayNameChanged(const QString &) ), this, SLOT( slotUpdateDisplayName() ) );
+		connect( this, SIGNAL( contactDisplayNameChanged(const QString &,  const QString &) ), this, SLOT( slotUpdateDisplayName() ) );
 		slotUpdateDisplayName();
 	}
 
@@ -122,7 +122,7 @@ const QString KopeteMessageManager::displayName()
 
 void KopeteMessageManager::setDisplayName( const QString &newName )
 {
-	disconnect( this, SIGNAL( contactDisplayNameChanged(const QString &) ), this, SLOT( slotUpdateDisplayName() ) );
+	disconnect( this, SIGNAL( contactDisplayNameChanged(const QString &, const QString &) ), this, SLOT( slotUpdateDisplayName() ) );
 
 	d->displayName = newName;
 
@@ -234,15 +234,15 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool surpress )
 			kdDebug(14010) << k_funcinfo << old->displayName() << " left and " << c->displayName() << " joined " <<endl;
 			d->mContactList.remove(old);
 			d->mContactList.append(c);
-			disconnect (old, SIGNAL(displayNameChanged(const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &)));
-			connect (c, SIGNAL(displayNameChanged(const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &)));
+			disconnect (old, SIGNAL(displayNameChanged(const QString &, const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &, const QString &)));
+			connect (c, SIGNAL(displayNameChanged(const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &, const QString &)));
 			emit contactAdded(c, surpress);
 			emit contactRemoved(old, surpress);
 		}
 		else
 		{
 			kdDebug(14010) << k_funcinfo << "Contact Joined session : " <<c->displayName() <<endl;
-			connect (c, SIGNAL(displayNameChanged(const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &)));
+			connect (c, SIGNAL(displayNameChanged(const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &, const QString &)));
 			d->mContactList.append(c);
 			emit contactAdded(c, surpress);
 		}
@@ -264,7 +264,7 @@ void KopeteMessageManager::removeContact( const KopeteContact *c, bool surpress 
 	else
 	{
 		d->mContactList.remove( c );
-		disconnect (c, SIGNAL(displayNameChanged(const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &)));
+		disconnect (c, SIGNAL(displayNameChanged(const QString &, const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &, const QString &)));
 		c->setConversations( c->conversations() - 1 );
 	}
 	emit contactRemoved(c, surpress);

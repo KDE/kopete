@@ -120,7 +120,7 @@ signals:
 	void contactAdded(const KopeteContact *, bool surpress);
 	void contactRemoved(const KopeteContact *, bool surpress);
 
-	void contactDisplayNameChanged(const QString &);
+	void contactDisplayNameChanged(const QString &, const QString &);
 
 	/**
 	 * The name of the chat is changed

@@ -310,7 +310,7 @@ signals:
 	/**
 	 * The meta contact's display name changed
 	 */
-	void displayNameChanged( KopeteMetaContact *c, const QString &name );
+	void displayNameChanged( const QString &oldName, const QString &newName );
 
 	/**
 	 * The contact was moved
@@ -376,7 +376,7 @@ private slots:
 	/**
 	 * One of the child contact's display names changed
 	 */
-	void slotContactNameChanged( const QString &name );
+	void slotContactNameChanged( const QString &oldName, const QString &newName );
 
 	/**
 	 * A child contact was deleted, remove it from the list, if it's still

@@ -89,8 +89,8 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 		connect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & ) ),
 			SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus & ) ) );
 
-		connect( c, SIGNAL( displayNameChanged( const QString & ) ),
-			this, SLOT( slotContactNameChanged( const QString & ) ) );
+		connect( c, SIGNAL( displayNameChanged( const QString &,const QString & ) ),
+			this, SLOT( slotContactNameChanged( const QString &,const QString & ) ) );
 
 		connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
 			this, SLOT( slotContactDestroyed( KopeteContact * ) ) );
@@ -197,8 +197,8 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 			disconnect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & ) ),
 				this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus & ) ) );
 
-			disconnect( c, SIGNAL( displayNameChanged( const QString & ) ),
-				this, SLOT( slotContactNameChanged( const QString & ) ) );
+			disconnect( c, SIGNAL( displayNameChanged( const QString &,const QString & ) ),
+				this, SLOT( slotContactNameChanged( const QString &,const QString & ) ) );
 
 			disconnect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
 				this, SLOT( slotContactDestroyed( KopeteContact * ) ) );
@@ -464,6 +464,8 @@ void KopeteMetaContact::setDisplayName( const QString &name )
 	if( name == d->displayName )
 		return;
 
+	emit displayNameChanged( d->displayName, name );
+
 	d->displayName = name;
 
 	//The name is setted by the user, disable tracking
@@ -478,8 +480,6 @@ void KopeteMetaContact::setDisplayName( const QString &name )
 	for( KopeteContact *c = d->contacts.first(); c ; c = d->contacts.next() )
 		c->rename( name );
 #endif
-
-	emit displayNameChanged( this, name );
 }
 
 QString KopeteMetaContact::displayName() const
@@ -509,14 +509,14 @@ void KopeteMetaContact::setTrackChildNameChanges( bool /* track */ )
 */
 }
 
-void KopeteMetaContact::slotContactNameChanged( const QString &name )
+void KopeteMetaContact::slotContactNameChanged( const QString &oldName, const QString &newName )
 {
 //	kdDebug(14010) << "[KopeteMetaContact] slotContactNameChanged(); name=" << name <<
 //		", d->trackChildNameChanges=" << d->trackChildNameChanges << "." << endl;
 
 	if( d->trackChildNameChanges || d->displayName.isEmpty() )
 	{
-		setDisplayName( name );
+		setDisplayName( newName );
 		//because d->trackChildNameChanges is set to false in setDisplayName
 		d->trackChildNameChanges = true;
 	}
