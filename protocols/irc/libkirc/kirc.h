@@ -50,6 +50,7 @@ public:
 	void setUserString(const QString &userString) { mUserString = userString; };
 	void setSourceString(const QString &sourceString) { mSourceString = sourceString; };
 	void sendCtcpPing(const QString &target);
+	void sendCtcpVersion(const QString &target);
 	void setTopic(const QString &channel, const QString &topic);
 	void kickUser(const QString &user, const QString &channel, const QString &reason);
 	void whoisUser(const QString &user);

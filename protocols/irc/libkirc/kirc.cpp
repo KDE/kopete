@@ -267,6 +267,10 @@ void KIRC::slotReadyRead()
 					}
 					continue;
 				}
+				if (special.lower() == "version")
+				{
+					emit incomingCtcpReply("VERSION", originating.section('!', 0, 0), message.remove(0, 7));
+				}
 			}
 			kdDebug() << "-" << command << "-" << endl;
 			continue;
@@ -702,6 +706,18 @@ void KIRC::sendCtcpPing(const QString &target)
 		statement.append("\r\n");
 		writeString(statement);
 	}
+}
+
+void KIRC::sendCtcpVersion(const QString &target)
+{
+	QString statement = "PRIVMSG ";
+	statement.append(target);
+	statement.append(" :");
+	statement.append(0x01);
+	statement.append("VERSION");
+	statement.append(0x01);
+	statement.append("\r\n");
+	writeString(statement);
 }
 
 void KIRC::partChannel(const QString &name, const QString &reason)
