@@ -60,7 +60,7 @@ public:
 	bool useGroupNames() { return m_useGroupNames; }
 	
 public slots:
-	virtual AddContactPage *createAddContactWidget(QWidget * parent);
+	virtual AddContactPage *createAddContactWidget(QWidget * parent, KopeteAccount* a);
 	virtual EditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
 	virtual KopeteAccount *createNewAccount(const QString &accountId);
 

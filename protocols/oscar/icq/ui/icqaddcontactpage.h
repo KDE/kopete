@@ -39,9 +39,10 @@ class ICQAddContactPage : public AddContactPage
 		~ICQAddContactPage();
 
 		virtual bool validateData();
+		virtual bool apply(KopeteAccount* , KopeteMetaContact *parentContact);
 
 	public slots:
-		void slotFinish(KopeteMetaContact *parentContact);
+
 		void slotSearchResult(ICQSearchResult &res, const int missed);
 
 	private slots:

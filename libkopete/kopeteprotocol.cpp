@@ -3,6 +3,7 @@
 
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -51,12 +52,6 @@ KopeteProtocol::~KopeteProtocol()
 	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
 	for( QDictIterator<KopeteAccount> it( accounts ); it.current() ; ++it )
 		delete *it;
-
-	// Compatibility while not all plugins use accounts yet
-	// Delete all registered child contacts first
-	// FIXME: Remove this when all plugins are ported - Martijn
-	while ( !m_contacts.isEmpty() )
-		delete *QDictIterator<KopeteContact>( m_contacts );
 }
 
 KopeteOnlineStatus KopeteProtocol::status() const
@@ -87,20 +82,19 @@ KActionMenu* KopeteProtocol::protocolActions()
 	return m_menu;
 }
 
-const QDict<KopeteContact>& KopeteProtocol::contacts()
+/*const QDict<KopeteContact>& KopeteProtocol::contacts()
 {
 	return m_contacts;
 }
 
 QDict<KopeteContact> KopeteProtocol::contacts( KopeteMetaContact *mc )
 {
-
 	QDict<KopeteContact> result;
 
-	QDictIterator<KopeteContact> it( contacts() );
-	for ( ; it.current() ; ++it )
+	QPtrList<KopeteContact> contacts=mc->c;
+	for (KopeteContact *c=contacts.first() ; c ; c=contacts.next() )
 	{
-		if( ( *it )->metaContact() == mc )
+		if( c->protocol= )
 			result.insert( ( *it )->contactId(), *it );
 	}
 	return result;
@@ -117,7 +111,7 @@ void KopeteProtocol::slotKopeteContactDestroyed( KopeteContact *c )
 {
 //	kdDebug(14010) << "KopeteProtocol::slotKopeteContactDestroyed: " << c->contactId() << endl;
 	m_contacts.remove( c->contactId() );
-}
+}*/
 
 void KopeteProtocol::slotMetaContactAboutToSave( KopeteMetaContact *metaContact )
 {
@@ -125,31 +119,31 @@ void KopeteProtocol::slotMetaContactAboutToSave( KopeteMetaContact *metaContact 
 	QMap<QString, QString> addressBookData, ad;
 	QMap<QString, QString>::Iterator it;
 
-	QDict<KopeteContact> mcContacts = contacts( metaContact );
-	if( mcContacts.isEmpty() )
-		return;
-
 //	kdDebug( 14010 ) << "KopeteProtocol::metaContactAboutToSave: protocol " << pluginId() << ": serializing " << metaContact->displayName() << endl;
-	QDictIterator<KopeteContact> contactIt( mcContacts );
-	for( ; contactIt.current() ; ++contactIt )
+
+	QPtrList<KopeteContact> contacts=metaContact->contacts();
+	for (KopeteContact *c=contacts.first() ; c ; c=contacts.next() )
 	{
+		if( c->protocol()->pluginId() != pluginId() )
+			continue;
+
 		sd.clear();
 		ad.clear();
 
 		// Preset the contactId and displayName, if the plugin doesn't want to save
 		// them, or use its own format, it can call clear() on the provided list
-		sd[ QString::fromLatin1( "contactId" ) ] =   contactIt.current()->contactId();
-		sd[ QString::fromLatin1( "displayName" ) ] = contactIt.current()->displayName();
-		if(contactIt.current()->account())
-			sd[ QString::fromLatin1( "accountId" ) ] =   contactIt.current()->account()->accountId();
+		sd[ QString::fromLatin1( "contactId" ) ] =   c->contactId();
+		sd[ QString::fromLatin1( "displayName" ) ] = c->displayName();
+		if(c->account())
+			sd[ QString::fromLatin1( "accountId" ) ] =   c->account()->accountId();
 
 
 		// If there's an index field preset it too
-		QString index = contactIt.current()->protocol()->addressBookIndexField();
+		QString index = c->protocol()->addressBookIndexField();
 		if( !index.isEmpty() )
-			ad[ index ] = contactIt.current()->contactId();
+			ad[ index ] = c->contactId();
 
-		contactIt.current()->serialize( sd, ad );
+		c->serialize( sd, ad );
 
 		// Merge the returned fields with what we already (may) have
 		for( it = sd.begin(); it != sd.end(); ++it )

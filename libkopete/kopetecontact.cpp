@@ -129,39 +129,6 @@ KopeteContact::KopeteContact( KopeteAccount *account,
 	}
 }
 
-KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId, KopeteMetaContact *parent )
-: QObject( parent )
-{
-	d = new KopeteContactPrivate;
-
-	//kdDebug( 14010 ) << k_funcinfo << "Creating contact with id " << contactId << endl;
-
-	d->contactId = contactId;
-	d->onlineStatus = KopeteOnlineStatus( KopeteOnlineStatus::Offline );
-
-	d->metaContact = parent;
-	d->protocol = protocol;
-	//d->cachedSize = 0;
-	d->fileCapable = false;
-	d->conversations = 0;
-	d->historyDialog = 0L;
-	d->idleState = Unspecified;
-	d->displayName = contactId;
-	d->account=0l;
-
-	if( protocol )
-		protocol->registerContact( this );
-
-	// Need to check this because myself() has no parent
-	if( parent )
-	{
-		connect( parent, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
-			protocol, SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
-
-		parent->addContact( this );
-	}
-}
-
 KopeteContact::~KopeteContact()
 {
 	d->metaContact = 0L;

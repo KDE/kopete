@@ -192,7 +192,7 @@ void KopeteMetaContactLVI::rename( const QString& newName )
 		m_metaContact->setDisplayName( newName );
 	}
 
-	kdDebug( 14000 ) << k_funcinfo << "newName=" << newName <<
+				kdDebug( 14000 ) << k_funcinfo << "newName=" << newName <<
 		", TrackChildNameChanges=" << m_metaContact->trackChildNameChanges() << endl;
 }
 
@@ -488,7 +488,8 @@ void KopeteMetaContactLVI::slotAddContact()
 				KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true );
 			addDialog->resize( 543, 379 );
 
-			m_addContactPage = prot->createAddContactWidget(addDialog);
+			//FIXME: select an account and not a protocol to choose a contact. this may crash if the m_c is empty
+			m_addContactPage = prot->createAddContactWidget(addDialog, m_metaContact->contacts().first()->account());
 			if (!m_addContactPage)
 				kdDebug(14000) << "KopeteMetaContactLVI::slotAddContact : error while creating addcontactpage" <<endl;
 			else
@@ -609,8 +610,10 @@ void KopeteMetaContactLVI::slotAddDialogOkClicked()
 {
 	if( m_addContactPage )
 	{
+		kdDebug(14000) << k_funcinfo << "FIXME!!! CRASH! " << endl;
+		//FIXME: what is the account?
 		if(m_addContactPage->validateData())
-			m_addContactPage->slotFinish(m_metaContact);
+			m_addContactPage->apply(0L , m_metaContact);
 
 		delete m_addContactPage;
 		m_addContactPage=0L;

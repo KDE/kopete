@@ -15,8 +15,7 @@ public:
     GaduAddContactPage( GaduAccount *owner, QWidget *parent=0, const char *name=0 );
     ~GaduAddContactPage();
      virtual bool  validateData();
-public slots:
-    virtual void slotFinish(KopeteMetaContact *);
+    virtual bool apply(KopeteAccount* , KopeteMetaContact *);
 private:
     GaduAccount  *account_;
     gaduAddUI    *addUI_;

@@ -37,17 +37,18 @@ GaduAddContactPage::validateData()
     return ok;
 }
 
-void
-GaduAddContactPage::slotFinish(KopeteMetaContact *)
-{	//FIXME: use the metacontat!!!
+bool
+GaduAddContactPage::apply(KopeteAccount *a , KopeteMetaContact *mc)
+{	//FIXME: use the metacontat and the account!!!
     if ( canAdd_ ) {
         if ( validateData() ) {
             QString userid = addUI_->addEdit_->text();
             account_->addContact( userid, userid );
         }
     } else {
-        return;
+        return false;
     }
+	return true;
 }
 
 #include "gaduaddcontactpage.moc"

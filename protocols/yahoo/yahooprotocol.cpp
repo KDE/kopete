@@ -132,7 +132,7 @@ void YahooProtocol::slotSettingsChanged()
 	// FIXME: take out the above line asap --- it's a nasty fix for people with a broken config from old versions.
 }
 
-AddContactPage *YahooProtocol::createAddContactWidget( QWidget * parent )
+AddContactPage *YahooProtocol::createAddContactWidget( QWidget * parent , KopeteAccount* )
 {
 	kdDebug(14180) << "YahooProtocol::createAddContactWidget(<parent>)" << endl;
 	return new YahooAddContact(this, parent);

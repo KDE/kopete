@@ -231,7 +231,6 @@ void KopeteAccount::registerContact( KopeteContact *c )
 	d->contacts.insert( c->contactId(), c );
 	QObject::connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
 		SLOT( slotKopeteContactDestroyed( KopeteContact * ) ) );
-	protocol()->registerContact(c);
 }
 
 void KopeteAccount::slotKopeteContactDestroyed( KopeteContact *c )
