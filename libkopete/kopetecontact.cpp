@@ -250,9 +250,15 @@ KPopupMenu* KopeteContact::createContextMenu()
 	return menu;
 }
 
+KPopupMenu *KopeteContact::popupMenu()
+{
+	contextMenu = createContextMenu();
+	return contextMenu;
+}
+
 void KopeteContact::showContextMenu(const QPoint& p)
 {
-	contextMenu=createContextMenu();
+	contextMenu = createContextMenu();
 	contextMenu->exec( p );
 	delete contextMenu;
 	contextMenu = 0L;

@@ -348,6 +348,7 @@ void KopeteMessageManager::readMessages()
 	// when no message at all arrived (happens when you click on a contact, creating the window)
 	if ( foreignMessage || queueEmpty )
 	{
+		mainWindow()->show();
 		if(KopetePrefs::prefs()->raiseMsgWindow())
 		{
 			KWin::setOnDesktop(mainWindow()->winId() , KWin::currentDesktop()); //set on the desktop

@@ -306,6 +306,8 @@ public:
 	 * If this function is not called by a plugin, the idle state is set to Unknown
 	 */
 	void setIdleState( KopeteContact::IdleState newState );
+	
+	KPopupMenu *popupMenu();
 
 public slots:
 	/**
