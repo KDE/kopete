@@ -37,6 +37,8 @@
 #include "statusbaricon.h"
 #include "dlgjabberstatus.h"
 
+const JabberProtocol * JabberProtocol::sProtocol = 0;
+
 K_EXPORT_COMPONENT_FACTORY(kopete_jabber, KGenericFactory<JabberProtocol>);
 
 JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList) : KopeteProtocol(parent, name)
