@@ -1,307 +1,174 @@
-Kopete, The KDE Instant Messenger - ChangeLog
-------------------------------------------
+2004-09-10 11:10  Will Stephenson <lists@stevello.free-online.org.uk>
 
- 0.8 Beta 2
-=======
+	* Make it possible to suppress "XXX has left the chat" messages in
+	  group chat.  Needed for groupwise.
 
-o Main Application
-	o Blink the metacontact status icon on the contact list whan changing the
-	  status (Olivier)
-	o Hide empty groups (David)
-	o Show the idle time in the tool-tip (Olivier)
-	o Add DCop interface to connect/disconnect an account, or load/unload a
-	  plugin. Make possible to select what account to connect with the command
-	  line. (Olivier)
-	o URLs in the new message balloon are now clickable links that don't open
-	  a chat window. (Will)
-	o Allow to use customs icon for groups and metacontacts (Stephan / Olivier)
-	o Allow the user to move a contact to a new metacontact (Olivier)
-	o Show a link in the passive popup (i whish this could be a kdelibs item) (Olivier)
-	o KAdressBook integration (Will)
-	o New Preference system (Martijn, Matt, Olivier)
-	o ChatWindow is a plugin internaly (Olivier)
-	o New chat window group policy: Group per metacontact and per groups (Jason)
-	o Use KWallet when compiled against KDE 3.2 for secure password storage (Martijn)
-	o Rewrite of the plugin loader to make full use of KTrader (Martijn)
-	o Show the online status icon in the tooltip (Martijn)
-o MSN
-	o New account edit page, that allow to set phone numbers, and set if we want to
-	   block spam from unknown people, and show the reverse contactlist (Olivier)
-	o Display Picture (Olivier)
-	o Download and show custom emoticons (Olivier)
+2004-09-10 11:09  Will Stephenson <lists@stevello.free-online.org.uk>
 
-Kopete 0.7.1
-================
+	* merge Novell GroupWise Messenger support into HEAD.
 
-o Main Application
-	o Actually _store_ the password after you type it in the dialog (the config
-	  was never synced!) (Martijn)
-	o fix Drag and Dorp (Olivier)
-o Translator
-	o Fix BabbleFish "protocol?" change (Olivier)
-o MSN
-	o Fix crash when filetransfer (Olivier)
-	o MSNP9 implementation to be able to live after 15 oct (Olivier)
+2004-09-10 02:42  Olivier Goffart <ogoffart@tiscalinet.be>
 
+	* Fix the popup menu over contacts
 
-Kopete 0.7 (released 2003/08/04)
-================================
+2004-09-09 22:50  Matt Rogers <matt.rogers@kdemail.net>
 
-o Main App
-	o Multiple accounts of the same protocol are possible using the New
-	  KopeteAccount architecture. (Oliver)
-	o Allow custom colors for each account's icon (Duncan, Olivier)
+	* Fix the reappearing format toolbar. (#59080)
 
-	o Drag and Drop contacts between metacontacts (Olivier)
-	o Show an icon while DNDing on the contactlist (Will, Olivier>
-	o Fix up fire and forget message window, make it work for all protocols
-	  (Jason)
-	o Make send message keyboard shortcuts into customisable KActions (Jason)
-	o Message in transit animation (Jason)
-	o Message Highlighting with Notifications (Jason)
-	o Add right click menu to tabs, add ability to move a tab to another window
-	  (Jason)
-	o Tab color highlighting on new messages, typing (Jason)
-	o When a message is received, flash contact's icon to indicate a new message
-	  (Oliver)
-	o XML/XSL config for chatwindow theme
-	o Nick completion (Jason)
-	o New icon effects architecture. with overlays (Will)
-	o KopeteCommandhandler for /commands. Kopete-wide support of /part, /close,
-	  /clear, /exec, /help, /me (Jason)
-	o New Account Password Handling, passwords are not stored in plain text
-	  any more (Olivier)
-	o Kopete OnlineStatus architecture (Martijn)
-	o remove KopeteTransferManager (lilachaze)
-	o Create KopeteViewManager, clean up KopeteMessageManager (Jason)
-	o Migrate file transfers to use KIO (new standardised file transfer API in
-	  KMM)
-	o General API cleanups (Everyone)
-	o License headers unification and correction (Duncan)
-	o Tons of bugfixes (Everyone)
-	o Drag and Drop child contact beween metacontacts
-o IRC Plugin
-	o Total re-write of IRC, with many improvements. IRC is now integrated into
-	  the Kopete chatwindow (Nick, Jason)
-	o Channel / Nickname search in AddContact Wizard (Jason)
-	o Add support for all /commands needed for a basic client
-	o Use kopete away system
-	o "Show server window" account context menu option (Michel)
-	o Use KExtendedSocket for proxy and firewall support (Michel)
-	o IPV6 support (Michel)
-	o WHOIS support (Michel>
-o OSCAR (AIM and ICQ) plugin
-	o Total rewrite, ICQ now uses the newer OSCAR Protocol (Stefan)
-	o More complete userinfo (Stefan, Will)
-o MSN Plugin
-	o Better group sync with server
-	o Show the user's web profile
-	o Use correct way to ping the server
-	o Don't reload the contactlist from server if it is not modified
-	o Correct handling of the hotmail inbox, and send mail to contact with
-	  hotmail
-	o Handle MSN Plus away reasons.
-	o Detect when the other party timed out and left the chat
-	o Interface to allow plugins to use MSN invitations
-      (all Olivier)
-o Yahoo Plugin
-	o First release (Matt)
-o Gadu-gadu Plugin
-	o Many bug fixes (Greg)
-o History plugin
-	o Initial Release
-	o Move history/logging into its own plugin. (Olivier)
-o Cryptography Plugin
-	o Bug and security fixes
-	o Limit the cache time for the passphrase (Olivier)
-o Spell Checking Plugin
-	o Initial Release
-	o Enable check-as-you-type (Jason)
-o Text Effect Plugin
-	o Give your messages a bit of sparkle, even if you have no wit. (Olivier)
-	o Initial Release (Olivier)
-o Auto replace plugin
-	o Initial Release
-	o Perform substitutions on messages. (Roberto Pariset)
+2004-09-07 12:21  Will Stephenson <lists@stevello.free-online.org.uk>
 
+	* Fix stale chat window member lists on join/leave
 
+2004-09-07 06:24  Olivier Goffart <ogoffart@tiscalinet.be>
 
-09-Febr-2003 Released Kopete 0.6
-=================================
+	* Don't request the picture on group chat.  this might have verry
+	  bad side effect
 
-o Main App
-	o Make Emoticon-mapping an external XML-file (Olivier)
-	o New tabbed chatwindow (Jason)
-	o Chatwindow transparency (Jason)
-	o Unify away dialogs
-	o Lots of bugfixing (All the team)
-	o Make tabs in chatwindow detachable (Jason)
-	o Make some parameters configurable (Duncan)
-	o Sort contact by online status (Olivier)
-	o Show number of onlines contacts in groups (Olivier)
-o MSN plugin
-	o Show when an user is typing a message (Olivier)
-	o Outgoing file transfer (Olivier)
-	o Hotmail mail notifications (Olivier, James)
-	o Phone number (Olivier)
-o ICQ Plugin
-	o Translate between message-encodings (needed for non-latin languages)
-	  (Stefan)
-	o Server contacts import
-	o Receiving Files (Nick, Stefan)
-o Translator Plugin
-	o Option to show original messages (Olivier)
-o GnuPG signing/encryption filter plugin (Oliver)
-o SMS Plugin (Richard)
-o Now Listening Plugin (Will)
-o Web Presence Plugin (Will)
+2004-09-07 06:06  Olivier Goffart <ogoffart@tiscalinet.be>
 
+	* Allow to drag and drop contact to the chatwindow to invite them
+	  to the chat
 
+2004-09-06 04:58  Will Stephenson <lists@stevello.free-online.org.uk>
 
-30-Sept-2002 Released Kopete 0.5
-=================================
+	* Emoticon scheme for GroupWise
 
-o Main App
-	o New metacontact serialize architecture ( Martijn, Zack )
-	o Contact list UI/Logic separation and cleanup ( Duncan )
-	o Lot of bugfixing ( Olivier and all the team )
-	o New away system ( Chris )
-	o Drag and Drop ( Olivier )
-	o File transfers API ( Nick )
-	o new icon ( Luci )
-	o New away system (Chris)
-    o New emoticon handling (code-wise) and popup to select emoticons in the chat dialog
-    o Update internationalization (i18n)
-o ICQ Plugin
-	o New written from scratch plugin ( Nick )
-	o new features ( Stefan )
-	o contact search ( Stefan )
-	o Read others' info and set your own
-	o Proxy settings
-o MSN Plugin
-	o Incoming File Transfer ( Olivier )
-	o Bugfixes ( Martijn, Olivier )
-o IRC Plugin
-	o Bugfixing ( André )
-o Jabber Plugin
-	o Port to new jabber engine ( Till )
-	o Bugfixing ( Till, Robert )
-o AIM Plugin
-o Gadu Plugin ( Zack )
-o Translator plugin ( Duncan )
-o Contact Notes (Olivier)
-o Video4Linux Motion Auto-Away Plugin (Duncan)
+2004-09-06 04:09  Olivier Goffart <ogoffart@tiscalinet.be>
 
+	* Remove unused file Add tooltip
 
-16-Jun-2002 Released Kopete 0.4.1
-=================================
+2004-09-05 16:16  Olivier Goffart <ogoffart@tiscalinet.be>
 
-o Main App
-	o Now it uses standard KDE method to load plugins (Faure, Simon, Martijn)
-	 
-o ICQ Plugin
-	o New ICQ-Userinfo Dialog, now tabbed and more infos (Stefan)
-	o Make 'Web Awareness' and 'Hide IP' configurable (Stefan)
+	* Allow configuring the application used for the netmeeting plugin.
+	  So you can now use Konference insteads of Gnomemeeting
 
-o MSN Plugin
-	o Updated protocol due to Microsoft server changes (Duncan)
+2004-09-04 15:52  Matt Rogers <matt.rogers@kdemail.net>
 
-01-Jun-2002 Released Kopete 0.4
-==============================
+	* default to enter to send messages
 
-o Main App
-	o Kopete API redesign/cleanup (Ryan)
-	o Added globally Away/Available (Duncan)
-	o Added Auto-Away Plugin (Duncan)
-	o KNotify beep support for KopeteEvent (Hendrik)
-	o KNotify sound support for KopeteEvent (Hendrik)	
-	o KopeteMessageManager support (Duncan, Daniel)
-          - All plugins inherits events (balloon, etc)
-          - All plugins use the same chat dialog
-          - API allows for multiuser chat
-	o Emoticons can be disabled now. (Duncan) 
+2004-09-03 17:58  Ingo Klöcker <kloecker@kde.org>
 
-o IRC Plugin
-	o Updated for globally Away/Vailable
-	o Added support for: (Nick)
-		o /server
-		o Loading a console at IRC plugin load
-		o Turning on/off left side icons in chat messages
-		o Turning on/off timestamping
-		o Colors, bold, and underlining in messages
-		o Ability to load more than one console
-	o Many bug fixes (Nick)
-	o Removed servers from the contact list. They were intrusive. (Nick)
-	o Channels and private conversation windows only appear 
-	  in the contact list when added using "Add Contact" (Nick)
+	* Fix bug 88759: (Multiple formulas in one paragraph
+	  confuse Kopete). Approved by Olivier.
 
-o ICQ Plugin
-	 o Updated for globally Away/Available (Duncan)
-	 o Added support for authorizing contacts (Duncan)
-	 o Added support for invisible status ( Duncan )
-o MSN Plugin
-	o Updated for globally Away/Available (Duncan)
-	o Big Protocol cleanup and plugin redesign (Martijn)
+2004-09-03 12:33  Olivier Goffart <ogoffart@tiscalinet.be>
 
-o AIM Plugin
-	 o Updated for globally Away/Available (Duncan)
+	* Fix Bug 88751: (right click move contact context menu not
+	  updated)
 
-o Jabber Plugin
-	 o First release of Kopete with Jabber
-           , numerous updates. (Daniel)
+2004-09-03 12:31  Olivier Goffart <ogoffart@tiscalinet.be>
 
-o Yahoo Plugin
-	o Introduced Yahoo plugin
+	* Import the popup to ask the public key from KGPG (it has a quick
+	  search line, and show more info) (#88757, #88756)
 
-05-04-2002 Released Kopete 0.3
-==============================
+2004-09-02 08:02  Olivier Goffart <ogoffart@tiscalinet.be>
 
-o Main App
+	* Use the highlight color for highlight cells. (#88495)
 
-	o Event Notifier
-		o Balloon Style (Duncan)
-		o Flashing Tray Style (Duncan)
-	o History Widget (Richard)
-	o XML History Logger (Ryan)
-	o Emoticons, Emoticons Themes (Duncan)
+2004-09-02 04:53  Olivier Goffart <ogoffart@tiscalinet.be>
 
-o IRC Plugin
+	* Do not crash if the sending movie can't be found. (88594
 
-	o Misc Enhancements (Nick)
-	o Tabbed UI (Nick)
-	o /msg, /nick, and proper /part support.
-	o Query window support
-	o More error checking
-	o The IRC plugin will not be included in this release
-	  as it lacks functionality and stability still. It
-	  may be included in the near future.
+2004-09-02 04:26  Olivier Goffart <ogoffart@tiscalinet.be>
 
-o ICQ Plugin
+	* Let drag URL in the chatwindow to send files. (#82733)
 
-	o ICQ Engine
-		o Uses KExtendedSocket now (Herwin Steehouwer)
+2004-09-02 02:26  Olivier Goffart <ogoffart@tiscalinet.be>
 
-	o Contact move (Duncan)
-	o Notifier support (Duncan)
-	o History support (Richard)
-	o Hide offline contacts (Stefan)
+	* Ask for confirmation before deleting a contact. (#76224)
 
-o MSN Plugin
+2004-09-02 01:55  Olivier Goffart <ogoffart@tiscalinet.be>
 
-	o Hiding offline contacts (Stefan)
+	* Add Undo/Redo functions in the contactlist
+	  -Group or metacontacts renames
+	  -Move of metacontacts between groups 
+	  -Move of contact between metacontact
+	  -Addition of contacts on the list.
 
+2004-08-30 12:53  Michel Hermier <michel.hermier@wanadoo.fr>
 
-03-03-2002 - Kopete 0.2
-=======================
+	* Avoid to remove/destroy protocol managed temporary metacontact
+	  while attempting to remove them of the contactlist. (#81823, #86358)
 
-o ICQ, AIM, MSN Support
-o Released as 0.2
+2004-08-29 03:09  Olivier Goffart <ogoffart@tiscalinet.be>
 
-30-12-2001 - Start
-=======================
+	* Ask confirmation before overwrite a file for incomming file
+	  transfers.
 
-Duncan Mac-Vicar Prett
-<duncan@kdedevelopers.net>
+2004-08-28 16:47  Olivier Goffart <ogoffart@tiscalinet.be>
 
-o First Line of code
+	* Remove the edit style dialog, and run the default editor instead.
+	  I used text/plain as mimetype because text/xml or text/x-xslt
+	  don't have default editor by default.  I added a tracker to
+	  update the preview when the style is saved (#77649, #63825, #77650)
+
+2004-08-28 01:58  Olivier Goffart <ogoffart@tiscalinet.be>
+
+	* Hide the header of the contactlist view (which only contains
+	  "Contacts") (#87974)
+
+2004-08-27 14:20  Olivier Goffart <ogoffart@tiscalinet.be>
+
+	* fix bug 73901
+
+2004-08-27 13:41  Olivier Goffart <ogoffart@tiscalinet.be>
+
+	* Add tooltips and whatsthis help
+
+2004-08-26 14:03  Michel Hermier <michel.hermier@wanadoo.fr>
+
+	* Removed KStringHandler::isUtf8 workaround bug, as now
+	  KopeteMessage::decodeString should not trigger the bug anymore.
+
+2004-08-26 13:59  Michel Hermier <michel.hermier@wanadoo.fr>
+
+	* Make the decodeMessage function more fast for empty CString.	As
+	  a side effect it fix possible attempt to decode null string using
+	  KStringHandler::isUtf8 wich make kopete crash with kdelibs prior
+	  to 3.2.92.
+
+2004-08-23 12:54  Gustavo P. Boiko <boiko@conectiva.com.br>
+
+	* Fix encoding of sent OSCAR messages
+
+2004-08-22 22:27  Matt Rogers <matt.rogers@kdemail.net>
+
+	* Fix bug 87727.
+
+	  saveOptions() was in the destructor, which meant the window state
+	  was always hidden.
+
+2004-08-19 23:27  Matt Rogers <matt.rogers@kdemail.net>
+
+	* Rearrange the yahoo message parsing a bit so we do it all before we
+	  create the KopeteMessage object for it.
+
+	  Workaround gaim's bugginess when sending URLs so that there
+	  aren't parse errors. (#87190)
+
+2004-08-14 14:22  Matt Rogers <matt.rogers@kdemail.net>
+
+	* derive a new class from KActiveLabel so we can control how the
+	  links are opened
+
+2004-08-14 14:11  Will Stephenson <lists@stevello.free-online.org.uk>
+
+	* Stupid crash bug, now fixed.	Always keep a good MC pointer
+	  around to call execute() on. (#87065)
+
+2004-08-13 16:01  Michel Hermier <michel.hermier@wanadoo.fr>
+
+	* Let's forget about deleting objects, QOject will make it for us.
+	  Don't remove automagically added temporary irc account while
+	  connection disconnected (was causing a crash).  The previous
+	  changes remove crashs and invalid reads while quitting.
+
+2004-08-13 13:55  Michel Hermier <michel.hermier@wanadoo.fr>
+
+	* Removed a possibly usage of a destroyed object, while clossing
+	  kopete and attempting to loggin to IRC.
+
+2004-08-13 13:22  Michel Hermier <michel.hermier@wanadoo.fr>
+
+	* Avoided usage of a possible null pointer. (#87083, #86928)
 
