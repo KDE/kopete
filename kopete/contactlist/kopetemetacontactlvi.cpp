@@ -181,8 +181,13 @@ void KopeteMetaContactLVI::showContextMenu( const QPoint &point )
 {
 	KPopupMenu *popup = new KPopupMenu();
 
-	popup->insertTitle( i18n( "Format: 'nickname (online status)'",
-		"%1 (%2)" ).arg( text( 0 ) ).arg( m_metaContact->statusString() ) );
+	popup->insertTitle( i18n( "Translators: format: '<nickname> (<online status>)'", "%1 (%2)" ).
+#if QT_VERSION < 0x030200
+		arg( text( 0 ) ).arg( m_metaContact->statusString() )
+#else
+		arg( text( 0 ), m_metaContact->statusString() )
+#endif
+	);
 
 	KAction *actionSendMessage = KopeteStdAction::sendMessage( m_metaContact,
 		SLOT( sendMessage() ), popup, "actionMessage" );
@@ -305,8 +310,12 @@ void KopeteMetaContactLVI::showContextMenu( const QPoint &point )
 		KPopupMenu *contactMenu = it.current()->popupMenu();
 		popup->insertChild( contactMenu );
 		popup->insertItem( c->onlineStatus().iconFor( c, 16 ),
-			i18n( "Format: 'displayName (id)'", "%2 (%1)" ).arg(
-			c->contactId() ).arg( c->displayName() ),
+			i18n( "Translators: format: '<displayName> (<id>)'", "%2 (%1)" ).
+#if QT_VERSION < 0x030200
+				arg( c->contactId() ).arg( c->displayName() ),
+#else
+				arg( c->contactId(), c->displayName() ),
+#endif
 			contactMenu );
 	}
 

@@ -213,10 +213,18 @@ KPopupMenu* KopeteContact::popupMenu()
 	d->actionAddContact = new KAction( i18n("&Add Contact"), QString::fromLatin1( "bookmark_add" ),0, this, SLOT( slotAddContact() ), menu, "actionAddContact" );
 
 	QString titleText;
+#if QT_VERSION < 0x030200
 	if( displayName() == contactId() )
 		titleText = QString::fromLatin1( "%1 (%2)" ).arg( displayName() ).arg( d->onlineStatus.description() );
 	else
 		titleText = QString::fromLatin1( "%1 <%2> (%3)" ).arg( displayName() ).arg( contactId() ).arg( d->onlineStatus.description() );
+#else
+	if( displayName() == contactId() )
+		titleText = QString::fromLatin1( "%1 (%2)" ).arg( displayName(), d->onlineStatus.description() );
+	else
+		titleText = QString::fromLatin1( "%1 <%2> (%3)" ).arg( displayName(), contactId(), d->onlineStatus.description() );
+#endif
+
 	menu->insertTitle( titleText );
 
 	if( metaContact() && metaContact()->isTemporary() )

@@ -628,9 +628,13 @@ QStringList KopeteContactList::contactStatuses() const
 	QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
-		meta_contacts.append( QString::fromLatin1( "%1 (%2)" ).arg(
-			it.current()->displayName() ).arg(
-			it.current()->statusString() ) );
+		meta_contacts.append( QString::fromLatin1( "%1 (%2)" ).
+#if QT_VERSION < 0x030200
+			arg( it.current()->displayName() ).arg( it.current()->statusString() )
+#else
+			arg( it.current()->displayName(), it.current()->statusString() )
+#endif
+		);
 	}
 	return meta_contacts;
 }

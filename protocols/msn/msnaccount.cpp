@@ -163,7 +163,13 @@ void MSNAccount::disconnect()
 KActionMenu* MSNAccount::actionMenu()
 {
 	KActionMenu *m_actionMenu = new KActionMenu( accountId(), this );
-	m_actionMenu->popupMenu()->insertTitle( m_myself->onlineStatus().iconFor( m_myself ), i18n( "%2 <%1>" ).arg(accountId()).arg(m_myself->displayName()) );
+	m_actionMenu->popupMenu()->insertTitle( m_myself->onlineStatus().iconFor( m_myself ), i18n( "%2 <%1>" ).
+#if QT_VERSION < 0x030200
+		arg( accountId() ).arg( m_myself->displayName() )
+#else
+		arg( accountId(), m_myself->displayName() )
+#endif
+	);
 
 	m_actionMenu->insert( new KAction ( i18n("Go O&nline"), MSNProtocol::protocol()->NLN.iconFor( this ), 0, this, SLOT(slotGoOnline()), m_actionMenu, "actionMSNConnect" ) );
 	m_actionMenu->insert( new KAction ( i18n("Go &Offline"), MSNProtocol::protocol()->FLN.iconFor( this ), 0, this, SLOT(slotGoOffline()), m_actionMenu, "actionMSNConnect" ) );

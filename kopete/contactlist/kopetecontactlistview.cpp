@@ -1156,15 +1156,22 @@ void KopeteContactListView::contentsMouseMoveEvent( QMouseEvent *e )
 			c = metaLVI->getContactFromIcon( relativePos );
 			if( c )
 			{
-				tip = i18n( "<b>%3</b><br>%2<br>Status: %1" ).arg(
-					c->onlineStatus().description() ).arg( QStyleSheet::escape( c->contactId() ) ).arg( QStyleSheet::escape( c->displayName() ) );
+				tip = i18n( "<b>%3</b><br>%2<br>Status: %1" ).
+#if QT_VERSION < 0x030200
+					arg( c->onlineStatus().description() ).arg( QStyleSheet::escape( c->contactId() ) ).arg( QStyleSheet::escape( c->displayName() ) );
+#else
+					arg( c->onlineStatus().description(), QStyleSheet::escape( c->contactId() ), QStyleSheet::escape( c->displayName() ) );
+#endif
 			}
 			else
 			{
 				KopeteMetaContact *mc = metaLVI->metaContact();
-				tip = i18n( "<b>%2</b><br>Status: %1" ).arg(
-					mc->statusString() ).arg(
-					QStyleSheet::escape( mc->displayName() ) );
+				tip = i18n( "<b>%2</b><br>Status: %1" ).
+#if QT_VERSION < 0x030200
+					arg( mc->statusString() ).arg( QStyleSheet::escape( mc->displayName() ) );
+#else
+					arg( mc->statusString(), QStyleSheet::escape( mc->displayName() ) );
+#endif
 			}
 		}
 		else if( groupLVI )

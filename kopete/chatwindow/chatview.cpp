@@ -580,8 +580,14 @@ void ChatView::slotChatDisplayNameChanged()
 
 void ChatView::slotContactNameChanged( const QString &oldName, const QString &newName )
 {
-	if(KopetePrefs::prefs()->showEvents())
-		sendInternalMessage(i18n("%1 changed their nickname to %2").arg( oldName ).arg( newName ) );
+	if( KopetePrefs::prefs()->showEvents() )
+		sendInternalMessage( i18n( "%1 changed his or her nickname to %2" ).
+#if QT_VERSION < 0x030200
+			arg( oldName ).arg( newName )
+#else
+			arg( oldName, newName )
+#endif
+		);
 	mComplete->removeItem( oldName );
 	mComplete->addItem( newName );
 }
@@ -612,7 +618,7 @@ void ChatView::slotContactAdded(const KopeteContact *c, bool surpress)
 	setTabState();
 }
 
-void ChatView::slotContactRemoved(const KopeteContact *c, const QString& raison)
+void ChatView::slotContactRemoved( const KopeteContact *c, const QString& reason )
 {
 	if( memberContactMap.contains(c) && (c != m_manager->user()) )
 	{
@@ -631,7 +637,13 @@ void ChatView::slotContactRemoved(const KopeteContact *c, const QString& raison)
 			this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
 		//FIXME: bugs if the nickname contains %1 again
-		sendInternalMessage(  (raison.isNull() ? i18n("%1 has left the chat.") : i18n("%1 has left the chat. ( %2 )")  ).arg(contactName).arg(raison)  );
+		sendInternalMessage( ( reason.isNull() ? i18n( "%1 has left the chat." ) : i18n( "%1 has left the chat (%2).") ).
+#if QT_VERSION < 0x030200
+			arg( contactName ).arg( reason )
+#else
+			arg( contactName, reason )
+#endif
+		);
 
 		delete memberContactMap[c];
 		memberContactMap.remove(c);
@@ -713,14 +725,22 @@ void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnl
 		if( contact->metaContact() )
 		{
 			sendInternalMessage( i18n( "%2 changed status to %1." )
-				.arg(contact->onlineStatus().description() )
-				.arg( contact->metaContact()->displayName() ) );
+#if QT_VERSION < 0x030200
+				.arg(contact->onlineStatus().description() ).arg( contact->metaContact()->displayName() )
+#else
+				.arg(contact->onlineStatus().description(), contact->metaContact()->displayName() )
+#endif
+			);
 		}
 		else
 		{
 			sendInternalMessage( i18n( "%2 changed status to %1." )
-				.arg( contact->onlineStatus().description() )
-				.arg( contact->displayName() ) );
+#if QT_VERSION < 0x030200
+				.arg( contact->onlineStatus().description() ).arg( contact->displayName() )
+#else
+				.arg( contact->onlineStatus().description(), contact->displayName() )
+#endif
+			);
 		}
 	}
 }

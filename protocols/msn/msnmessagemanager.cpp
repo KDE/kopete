@@ -339,9 +339,16 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 			{
 				rx=QRegExp("Application-Name: ([^\\r\\n]*)");
 				rx.search(msg);
-				QString invitname = rx.cap(1);
+				QString inviteName = rx.cap( 1 );
 
-				QString body=i18n("%1 has sent an unimplemented invitation, the invitation was rejected.\nThe invitation was: %2").arg(c->displayName()).arg(invitname);
+				QString body = i18n(
+					"%1 has sent an unimplemented invitation, the invitation was rejected.\n"
+					"The invitation was: %2" ).
+#if QT_VERSION < 0x030200
+					arg( c->displayName() ).arg( inviteName );
+#else
+					arg( c->displayName(), inviteName );
+#endif
 				KopeteMessage tmpMsg = KopeteMessage( c , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText);
 				appendMessage(tmpMsg);
 
