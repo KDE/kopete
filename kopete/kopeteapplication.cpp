@@ -132,6 +132,11 @@ void KopeteApplication::slotLoadPlugins()
 
 	config->setGroup( "Plugins" );
 
+	/* FIXME: This is crap, if something purged that groups but your accounts
+	 * are still working kopete will load the necessary plugins but still show the
+	 * stupid accounts dialog (of course empty at that time because account data
+	 * gets loaded later on). [mETz - 29.05.2004]
+	 */
 	if ( !config->hasGroup( "Plugins" ) )
 		showConfigDialog = true;
 
@@ -165,23 +170,30 @@ void KopeteApplication::slotLoadPlugins()
 			KopetePluginManager::self()->setPluginEnabled( *it, true );
 	}
 
+	config->sync();
+
 	// Disable plugins altogether? (--noplugins)
 	if ( !args->isSet( "plugins" ) )
 	{
-		config->deleteGroup( "Plugins", true );
+		// If anybody reenables this I'll get a sword and make a nice chop-suy out
+		// of your body :P [mETz - 29.05.2004]
+		// This screws up kopeterc because there is no way to get the Plugins group back!
+		//config->deleteGroup( "Plugins", true );
+
 		showConfigDialog = false;
+		// pretend all plugins were loaded :)
+		QTimer::singleShot(0, this, SLOT( slotAllPluginsLoaded() ));
 	}
-
-	config->sync();
-
-	KopetePluginManager::self()->loadAllPlugins();
+	else
+	{
+		KopetePluginManager::self()->loadAllPlugins();
+	}
 
 	connect( KopetePluginManager::self(), SIGNAL( allPluginsLoaded() ),
 		this, SLOT( slotAllPluginsLoaded() ));
 
 	//load the default chatwindow
 	KopetePluginManager::self()->loadPlugin( "kopete_chatwindow" );
-
 
 	if( showConfigDialog )
 	{
@@ -201,7 +213,6 @@ void KopeteApplication::slotLoadPlugins()
 		action->activate();
 		delete action;
 	}
-
 }
 
 
