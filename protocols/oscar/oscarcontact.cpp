@@ -547,6 +547,18 @@ void OscarContact::slotParseUserInfo(const UserInfo &u)
 			emit idleStateChanged(this);
 	}
 
+	// Overwrites the onlineSince property set by KopeteContact, but that's ok :)
+	if(u.onlinesince.isValid())
+	{
+		//kdDebug(14150) << k_funcinfo << "onlinesince = " << u.onlinesince.toString() << endl;
+		setProperty("onlineSince", u.onlinesince);
+	}
+	else
+	{
+		kdDebug(14150) << k_funcinfo << "invalid onlinesince, removing property!" << endl;
+		removeProperty("onlinesince");
+	}
+
 	// FIXME: UserInfo was a bad idea, invent something clever instead!
 	DWORD oldCaps = mInfo.capabilities;
 	mInfo = u;
