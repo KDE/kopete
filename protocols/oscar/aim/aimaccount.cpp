@@ -91,9 +91,9 @@ KActionMenu* AIMAccount::actionMenu()
 
 	mActionMenu->insert(
 		new KopeteAwayAction(p->statusAway.caption(),
-		p->statusAway.iconFor(this), 0, 
+		p->statusAway.iconFor(this), 0,
 		this, SLOT(slotGoAway( const QString & )), this, "AIMAccount::mActionNA" ) );
-		
+
 	KAction* mActionOffline = new KAction(p->statusOffline.caption(),
 		p->statusOffline.iconFor(this),
 		0, this, SLOT(slotGoOffline()), mActionMenu,
@@ -192,8 +192,7 @@ void AIMAccount::setStatus(const unsigned long status,
 		", old status=" << mStatus << endl;
 	mStatus = status;
 
-	if(!awayMessage.isNull())
-		setAwayMessage(awayMessage);
+	setAwayMessage(awayMessage);
 
 	if (isConnected())
 		engine()->sendAIMAway((status==OSCAR_AWAY), awayMessage);

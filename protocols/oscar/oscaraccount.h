@@ -99,7 +99,7 @@ public:
 	void setIgnoreUnknownContacts( bool b );
 
 	void setAwayMessage(const QString&);
-	const QString &awayMessage();
+	const QString awayMessage();
 
 	/* Pure virtual to be implemented by ICQAccount and AIMAccount
 	 * sets the users status and if connected should send a status update to the server
@@ -246,7 +246,7 @@ protected:
 
 private:
 	OscarAccountPrivate *d;
-	
+
 };
 
 #endif

@@ -84,7 +84,7 @@ public:
 	 */
 	QTimer *idleTimer;
 
-	QString awayMessage;
+	//QString awayMessage;
 
 	// -- MERGED DATA FROM AIMBUDDYLIST ----------------------------------
 	QMap<int, AIMGroup *> groupMap;
@@ -110,7 +110,7 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 	d->ignoreUnknownContacts = false;
 	d->isIdle = false;
 	d->lastIdleValue = 0;
-	d->awayMessage = "";
+	//d->awayMessage = "";
 	d->passwordWrong = false;
 
 	initEngine(isICQ); // Initialize the backend
@@ -322,20 +322,19 @@ void OscarAccount::slotReceivedAwayMessage(const QString &sender, const QString 
 		", sender='" << sender << "'" << endl;*/
 
 	OscarContact *contact = static_cast<OscarContact*>(contacts()[tocNormalize(sender)]);
-	kdDebug(14150) << k_funcinfo << "Away message is: " << message << endl;
+	//kdDebug(14150) << k_funcinfo << "Incoming away-message is: " << message << endl;
 	QString filteredMessage = message;
 	if(contact)
 	{
 		filteredMessage.replace( QRegExp( QString::fromLatin1("<[hH][tT][mM][lL].*>(.*)</[hH][tT][mM][lL]>") ),
-				QString::fromLatin1("\\1"));
+			QString::fromLatin1("\\1"));
 		filteredMessage.replace( QRegExp( QString::fromLatin1("<[bB][oO][dD][yY].*>(.*)</[bB][oO][dD][yY]>") ),
-				QString::fromLatin1("\\1") );
+			QString::fromLatin1("\\1") );
 		filteredMessage.replace( QRegExp( QString::fromLatin1("<[fF][oO][nN][tT].*>(.*)</[fF][oO][nN][tT]>") ),
-				QString::fromLatin1("\\1") );
-		//test.insert(0,"<qt>");
-		//test.append("</qt>");
-		kdDebug(14150) << k_funcinfo << "Away message is now: " << filteredMessage << endl;
-		contact->setAwayMessage( filteredMessage );
+			QString::fromLatin1("\\1") );
+		/*kdDebug(14150) << k_funcinfo <<
+			"Filtered Away-message is: " << filteredMessage << endl;*/
+		contact->setAwayMessage(filteredMessage);
 	}
 }
 
@@ -915,12 +914,12 @@ void OscarAccount::addOldContact(AIMBuddy *bud, KopeteMetaContact *meta)
 
 void OscarAccount::setAwayMessage(const QString &msg)
 {
-	d->awayMessage = msg;
+	static_cast<OscarContact *>(myself())->setAwayMessage(msg);
 }
 
-const QString &OscarAccount::awayMessage()
+const QString OscarAccount::awayMessage()
 {
-	return d->awayMessage;
+	return (static_cast<OscarContact *>(myself())->awayMessage());
 }
 
 bool OscarAccount::ignoreUnknownContacts() const

@@ -95,7 +95,6 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 		requestShortInfo();
 	}
 
-
 	actionReadAwayMessage = 0L;
 }
 
@@ -134,18 +133,20 @@ void ICQContact::slotContactChanged(const UserInfo &u)
 	else
 		newStatus = OSCAR_ONLINE;
 
-	if((this != account()->myself()) &&
-	   (newStatus != onlineStatus().internalStatus()) &&
-	   (newStatus != OSCAR_ONLINE) /*&&
-	   (account()->myself()->onlineStatus().status() != KopeteOnlineStatus::Connecting)*/)
+	if (this != account()->myself())
 	{
-		// TODO: Add queues for away message requests
-		mAccount->engine()->requestAwayMessage(this);
-	}
-	else
-	{
-		//removeProperty("awayMessage"); // unset awayMessage
-		removeProperty(mProtocol->awayMessage);
+		if(newStatus != onlineStatus().internalStatus())
+		{
+			if(newStatus != OSCAR_ONLINE) // if user changed to some state other than online
+			{
+				// TODO: Add queues for away message requests
+				mAccount->engine()->requestAwayMessage(this);
+			}
+			else // user changed to "Online" status and has no away message anymore
+			{
+				removeProperty(mProtocol->awayMessage);
+			}
+		}
 	}
 
 	setStatus(newStatus);
@@ -370,21 +371,17 @@ void ICQContact::slotCloseAwayMessageDialog()
 
 const QString ICQContact::awayMessage()
 {
-	QVariant v = property(mProtocol->awayMessage).value();
-	if(v.isNull())
-		return QString::null;
-	else
-		return v.toString();
+	kdDebug(14150) << k_funcinfo <<  property(mProtocol->awayMessage).value().toString() << endl;
+	return property(mProtocol->awayMessage).value().toString();
 }
 
 void ICQContact::setAwayMessage(const QString &message)
 {
-	kdDebug(14150) << k_funcinfo <<
-		"Called for '" << displayName() << "', away msg='" << message << "'" << endl;
+	/*kdDebug(14150) << k_funcinfo <<
+		"Called for '" << displayName() << "', away msg='" << message << "'" << endl;*/
 	setProperty(mProtocol->awayMessage, message);
 	emit awayMessageChanged();
 }
-
 
 void ICQContact::requestUserInfo()
 {

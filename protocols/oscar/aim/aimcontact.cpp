@@ -479,17 +479,13 @@ void AIMContact::slotWarn()
 
 const QString AIMContact::awayMessage()
 {
-	QVariant v = property("awayMessage").value();
-	if(v.isNull())
-		return QString::null;
-	else
-		return v.toString();
+	return property(mProtocol->awayMessage).value().toString();
 }
 
 void AIMContact::setAwayMessage(const QString &message)
 {
-	kdDebug(14150) << k_funcinfo <<
-		"Called for '" << displayName() << "', away msg='" << message << "'" << endl;
+	/*kdDebug(14150) << k_funcinfo <<
+		"Called for '" << displayName() << "', away msg='" << message << "'" << endl;*/
 	setProperty(mProtocol->awayMessage, message);
 	emit awayMessageChanged();
 }

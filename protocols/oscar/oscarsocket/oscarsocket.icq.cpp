@@ -562,7 +562,7 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					emit gotICQInfoItemList(sequence, current, past);
 					break;
 				}
-				
+
 				case 260:
 				{
 					kdDebug(14150) << k_funcinfo << "RECV (SRV_META_SHORT_USERINFO)"
@@ -576,23 +576,23 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 						kdDebug(14150) << k_funcinfo << "converting nickname string" << endl;
 						res.nickName = QString::fromLocal8Bit(tmptxt);
 						delete [] tmptxt;
-		
+
 						tmptxt = fromicqsrv.getLELNTS();
 						kdDebug(14150) << k_funcinfo << "converting firstname string" << endl;
 						res.firstName = QString::fromLocal8Bit(tmptxt);
 						delete [] tmptxt;
-		
+
 						tmptxt = fromicqsrv.getLELNTS();
 						kdDebug(14150) << k_funcinfo << "converting lastname string" << endl;
 						res.lastName = QString::fromLocal8Bit(tmptxt);
 						delete [] tmptxt;
-		
+
 						tmptxt = fromicqsrv.getLELNTS();
 						kdDebug(14150) << k_funcinfo << "converting email string" << endl;
 						res.eMail = QString::fromLocal8Bit(tmptxt);
 						delete [] tmptxt;
 					}
-				
+
 					emit gotICQShortInfo(sequence, res);
 					break;
 				}
@@ -853,6 +853,8 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 		{
 			kdDebug(14150) << k_funcinfo << "RECV TYPE-2 IM, away message request" << endl;
 			ackMessage = mAccount->awayMessage();
+			if (ackMessage.isNull())
+				ackMessage="";
 			break;
 		}
 
