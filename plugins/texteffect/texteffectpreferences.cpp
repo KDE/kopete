@@ -24,6 +24,8 @@
 #include <kcolordialog.h>
 #include <kgenericfactory.h>
 
+#include <kdeversion.h>
+
 #include "texteffectprefs.h"
 #include "texteffectpreferences.h"
 #include "texteffectconfig.h"
@@ -79,7 +81,9 @@ void TextEffectPreferences::save()
 	config->setWaves(preferencesDialog->m_casewaves->isChecked());
 
 	config->save();
+#if KDE_VERSION >= KDE_MAKE_VERSION( 3, 1, 90 )
 	emit setChanged(false);
+#endif
 }
 
 QStringList TextEffectPreferences::colors()
