@@ -42,6 +42,14 @@ WebPresencePreferences::WebPresencePreferences( const QString &pixmap, QObject *
 	m_prefsDialog->m_url->setText( theConfig->readEntry( "DestinationURL", QString::null ) );
 	m_prefsDialog->m_addresses->setChecked( theConfig->readBoolEntry( "ShowAddresses", false ) );
 	m_prefsDialog->m_userName->setText( theConfig->readEntry( "UserName" , QString::null ) );
+	QString format = theConfig->readEntry( "Formatting", QString::null );
+	if ( format == "NoFormat" )
+		m_prefsDialog->m_rbNoFormat->setChecked( true );
+	else if ( format == "DefaultStyleSheet" )
+			m_prefsDialog->m_rbDefaultStyleSheet->setChecked( true );
+		else if ( format == "UserStyleSheet" )
+				m_prefsDialog->m_rbUserStyleSheet->setChecked( true );
+
 	if ( theConfig->readBoolEntry( "UseIMName" ) )
 	{
 		m_prefsDialog->m_rbUseImName->setChecked( true );
@@ -52,7 +60,8 @@ WebPresencePreferences::WebPresencePreferences( const QString &pixmap, QObject *
 		m_prefsDialog->m_rbUseImName->setChecked( false );
 		m_prefsDialog->m_rbUseUserName->setChecked( true );
 	}
-	
+	m_prefsDialog->m_userStyleSheet->setText( 
+		theConfig->readEntry( "UserStyleSheetName" , QString::null ));
 }
 
 WebPresencePreferences::~WebPresencePreferences()
@@ -67,6 +76,16 @@ void WebPresencePreferences::save()
 	theConfig->writeEntry( "ShowAddresses", m_prefsDialog->m_addresses->isChecked() );
 	theConfig->writeEntry( "UseIMName", m_prefsDialog->m_rbUseImName->isChecked() );
 	theConfig->writeEntry( "UserName", m_prefsDialog->m_userName->text() );
+	
+	if ( m_prefsDialog->m_rbNoFormat->isChecked() )
+		theConfig->writeEntry( "Formatting", "NoFormat" );
+	if ( m_prefsDialog->m_rbDefaultStyleSheet->isChecked() )
+		theConfig->writeEntry( "Formatting", "DefaultStyleSheet" );
+	if ( m_prefsDialog->m_rbUserStyleSheet->isChecked() )
+		theConfig->writeEntry( "Formatting", "UserStyleSheet" );
+	theConfig->writeEntry( "UserStyleSheetName", 
+		m_prefsDialog->m_userStyleSheet->text() );	
+	
 	theConfig->sync();
 	emit saved();
 }
@@ -94,6 +113,21 @@ bool WebPresencePreferences::useImName() const
 QString WebPresencePreferences::userName() const
 {
 	return m_prefsDialog->m_userName->text();
+}
+
+bool WebPresencePreferences::useDefaultStyleSheet() const
+{
+	return m_prefsDialog->m_rbDefaultStyleSheet->isChecked();
+}
+
+bool WebPresencePreferences::justXml() const
+{
+	return m_prefsDialog->m_rbNoFormat->isChecked();
+}
+
+QString WebPresencePreferences::userStyleSheet() const
+{
+	return m_prefsDialog->m_userStyleSheet->text();
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

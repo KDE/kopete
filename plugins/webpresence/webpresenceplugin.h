@@ -63,6 +63,10 @@ class WebPresencePlugin : public KopetePlugin
 		 * Generate the file (HTML, text) to be uploaded
 		 */	
 		KTempFile* generateFile();
+		/**
+		* Apply named stylesheet to get content and presentation
+		*/
+		bool transform( KTempFile* src, KTempFile* dest );
 		/** 
 		 * Helper method, generates list of all IM protocols
 		 */
@@ -74,7 +78,9 @@ class WebPresencePlugin : public KopetePlugin
 		// Triggers a write of the current contactlist
 		QTimer *m_timer;
 		// Interface to the preferences GUI
-		WebPresencePreferences* m_prefsDialog;
+		WebPresencePreferences* m_prefs;
+		// The file to be uploaded to the WWW
+		KTempFile *m_output;
 
 };
 

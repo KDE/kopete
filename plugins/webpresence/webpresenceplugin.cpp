@@ -19,6 +19,7 @@
 
 #include <qtimer.h>
 #include <qptrlist.h>
+#include <qfile.h>
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
@@ -27,6 +28,19 @@
 #include <knotifyclient.h>
 #include <kaction.h>
 #include <kstdguiitem.h>
+#include <kstandarddirs.h>
+
+#include <libxml/xmlmemory.h>
+#include <libxml/debugXML.h>
+#include <libxml/HTMLtree.h>
+#include <libxml/xmlIO.h>
+#include <libxml/DOCBparser.h>
+#include <libxml/xinclude.h>
+#include <libxml/catalog.h>
+#include <libxslt/xslt.h>
+#include <libxslt/xsltInternals.h>
+#include <libxslt/transform.h>
+#include <libxslt/xsltutils.h>
 
 #include "kopetecontactlist.h"
 #include "pluginloader.h"
@@ -41,11 +55,11 @@ K_EXPORT_COMPONENT_FACTORY( kopete_webpresence, KGenericFactory<WebPresencePlugi
 	WebPresencePlugin::WebPresencePlugin( QObject *parent, const char *name, const QStringList& /*args*/ )
 : KopetePlugin( parent, name )
 {
-	m_prefsDialog = new WebPresencePreferences( "", this );
-	connect ( m_prefsDialog, SIGNAL( saved() ), this, SLOT( slotSettingsChanged() ) );
+	m_prefs = new WebPresencePreferences( "", this );
+	connect ( m_prefs, SIGNAL( saved() ), this, SLOT( slotSettingsChanged() ) );
 	m_timer = new QTimer();
 	connect ( m_timer, SIGNAL( timeout() ), this, SLOT( slotWriteFile() ) );
-	m_timer->start( m_prefsDialog->frequency() * 1000 * 60);
+	m_timer->start( m_prefs->frequency() * 1000 * 60);
 }
 
 WebPresencePlugin::~WebPresencePlugin()
@@ -53,18 +67,40 @@ WebPresencePlugin::~WebPresencePlugin()
 
 void WebPresencePlugin::slotWriteFile()
 {
-	// generate the (temporary) file representing the current contactlist
-	KTempFile* theFile = generateFile();
-	theFile->setAutoDelete( false );
-	kdDebug() << "WebPresencePlugin::slotWriteFile() : " << theFile->name() << endl;
-	// upload it to the specified URL
-	KURL src( theFile->name() );
-	KURL dest( m_prefsDialog->url() );
-	KIO::FileCopyJob *job = KIO::file_copy( src, dest, -1, true, false, false );
-	connect(  job, SIGNAL(  result(  KIO::Job * ) ),
-			SLOT(  slotUploadJobResult(  KIO::Job * ) ) );
-	// get rid of the local file
-	delete theFile;
+	bool error = false;
+	// generate the (temporary) XML file representing the current contactlist
+	KTempFile* xml = generateFile();
+	xml->setAutoDelete( true );
+	
+	kdDebug() << "WebPresencePlugin::slotWriteFile() : " << xml->name() 
+		<< endl;
+	
+	if ( m_prefs->justXml() )
+	{
+	    m_output = xml;
+		xml = 0L;
+	}
+	else
+	{
+		// transform XML to the final format
+		m_output = new KTempFile();
+		m_output->setAutoDelete( true );
+		if ( !transform( xml, m_output ) )
+		{
+			error = true;
+			delete m_output;
+		}
+		delete xml; // might make debugging harder!
+	}
+	if ( !error )
+	{
+		// upload it to the specified URL
+		KURL src( m_output->name() );
+		KURL dest( m_prefs->url() );
+		KIO::FileCopyJob *job = KIO::file_copy( src, dest, -1, true, false, false );
+		connect( job, SIGNAL( result( KIO::Job * ) ),
+				SLOT(  slotUploadJobResult( KIO::Job * ) ) );
+	}
 }
 
 void WebPresencePlugin::slotUploadJobResult( KIO::Job *job )
@@ -72,8 +108,9 @@ void WebPresencePlugin::slotUploadJobResult( KIO::Job *job )
 	if (  job->error() ) {
 		kdDebug() << "Error uploading presence info." << endl;
 		job->showErrorDialog( 0 );
-		return;
 	}
+	delete m_output;
+	return;
 }
 
 KTempFile* WebPresencePlugin::generateFile()
@@ -92,8 +129,8 @@ KTempFile* WebPresencePlugin::generateFile()
 	*qout << shift.fill( '\t', ++depth ) << "<contact type=\"self\">\n";
 	
 	*qout << shift.fill( '\t', ++depth ) << "<name>";
-	if ( !m_prefsDialog->useImName() && !m_prefsDialog->userName().isEmpty() )
-		*qout << m_prefsDialog->userName();
+	if ( !m_prefs->useImName() && !m_prefs->userName().isEmpty() )
+		*qout << m_prefs->userName();
 	else
 		*qout << protocols.first()->myself()->displayName();
 	*qout << "</name>\n";
@@ -102,13 +139,18 @@ KTempFile* WebPresencePlugin::generateFile()
 	for ( KopeteProtocol *p = protocols.first();
 			p; p = protocols.next() )
 	{
+		Q_ASSERT( p );
+		kdDebug() << p->pluginId() << endl;
+		kdDebug() << statusAsString(  p->myself()->status() ) << endl;
+		kdDebug() << p->myself()->contactId().latin1() << endl;
+
 		*qout << shift.fill( '\t', depth++ ) << "<protocol>\n";
 		*qout << shift.fill( '\t', depth ) << "<protoname>"
 			<< p->pluginId() << "</protoname>\n";
 		*qout << shift.fill( '\t', depth ) << "<protostatus>"
 			<< statusAsString( p->myself()->status() )
 			<< "</protostatus>\n";
-		if ( m_prefsDialog->showAddresses() )
+		if ( m_prefs->showAddresses() )
 		{
 			*qout << shift.fill( '\t', depth ) << "<protoaddress>"
 				<< p->myself()->contactId().latin1()
@@ -123,6 +165,74 @@ KTempFile* WebPresencePlugin::generateFile()
 
 	theFile->close();
 	return theFile;
+}
+
+bool WebPresencePlugin::transform( KTempFile* src, KTempFile* dest )
+{
+	xmlSubstituteEntitiesDefault( 1 );
+	xmlLoadExtDtdDefaultValue = 1;
+	// test if the stylesheet exists
+	QFile sheet;
+	if ( m_prefs->useDefaultStyleSheet() )
+		sheet.setName( locateLocal( "appdata", "webpresencedefault.xsl" ) );
+	else
+		sheet.setName( m_prefs->userStyleSheet() );
+	
+	QString error = "";
+	if ( sheet.exists() )
+	{
+		// and if it is a valid stylesheet
+		xsltStylesheetPtr cur = NULL;
+		if ( ( cur = xsltParseStylesheetFile( 
+					( const xmlChar *) sheet.name().latin1() ) ) )
+		{
+			// and if we can parse the input XML
+			xmlDocPtr doc = NULL;
+			if ( ( doc = xmlParseFile( src->name() ) ) )
+			{
+				// and if we can apply the stylesheet
+				xmlDocPtr res = NULL;
+				if ( ( res = xsltApplyStylesheet( cur, doc, 0 ) ) )
+				{
+					// and if we can save the result
+					if ( xsltSaveResultToFile(dest->fstream() , res, cur)
+							!= -1 )
+					{
+						// then it all worked!
+						dest->close();
+					}
+					else
+						error = "write result!";
+				}
+				else
+				{
+					error = "apply stylesheet!";
+					error += " Check the stylesheet works using xsltproc";
+				}
+				xmlFreeDoc(res);
+			}
+			else
+				error = "parse input XML!";
+			xmlFreeDoc(doc);
+		}
+		else
+			error = "parse stylesheet!";
+		xsltFreeStylesheet(cur);
+	}
+	else
+		error = "find stylesheet!";
+
+	xsltCleanupGlobals();
+	xmlCleanupParser();
+	
+	if ( error.isEmpty() )
+		return true;
+	else
+	{
+		kdDebug() << "WebPresencePlugin::transform() - couldn't "
+			<< error << endl;
+		return false;
+	}
 }
 
 QPtrList<KopeteProtocol> WebPresencePlugin::allProtocols()
@@ -163,10 +273,9 @@ QString WebPresencePlugin::statusAsString( KopeteContact::ContactStatus c )
 
 void WebPresencePlugin::slotSettingsChanged()
 {
-	m_timer->start( m_prefsDialog->frequency() * 1000 * 60);
+	m_timer->start( m_prefs->frequency() * 1000 * 60);
 }
 
-//#include "webpresenceplugin.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 #include "webpresenceplugin.moc"

@@ -17,14 +17,14 @@
     </property>
     <widget class="QLayoutWidget">
         <property name="name">
-            <cstring>layout11</cstring>
+            <cstring>layout8</cstring>
         </property>
         <property name="geometry">
             <rect>
                 <x>10</x>
                 <y>10</y>
                 <width>404</width>
-                <height>338</height>
+                <height>456</height>
             </rect>
         </property>
         <vbox>
@@ -52,7 +52,7 @@
                             <cstring>textLabel2</cstring>
                         </property>
                         <property name="text">
-                            <string>&amp;Upload every: </string>
+                            <string>&amp;Every: </string>
                         </property>
                         <property name="buddy" stdset="0">
                             <cstring>m_freq</cstring>
@@ -70,6 +70,9 @@
                         </property>
                         <property name="lineStep">
                             <number>1</number>
+                        </property>
+                        <property name="value">
+                            <number>15</number>
                         </property>
                     </widget>
                     <widget class="QLabel">
@@ -131,7 +134,7 @@
                             <cstring>textLabel1</cstring>
                         </property>
                         <property name="text">
-                            <string>Upl&amp;oad web presence data here:</string>
+                            <string>Upload &amp;web presence data here:</string>
                         </property>
                         <property name="buddy" stdset="0">
                             <cstring>m_url</cstring>
@@ -201,6 +204,61 @@
                     <string>&lt;b&gt;What&lt;/b&gt;</string>
                 </property>
             </widget>
+            <widget class="QButtonGroup">
+                <property name="name">
+                    <cstring>buttonGroup2_2</cstring>
+                </property>
+                <property name="title">
+                    <string>Formatting:</string>
+                </property>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QRadioButton">
+                        <property name="name">
+                            <cstring>m_rbNoFormat</cstring>
+                        </property>
+                        <property name="text">
+                            <string>just &amp;XML</string>
+                        </property>
+                    </widget>
+                    <widget class="QRadioButton">
+                        <property name="name">
+                            <cstring>m_rbDefaultStyleSheet</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;HTML using default (boring) stylesheet</string>
+                        </property>
+                        <property name="checked">
+                            <bool>true</bool>
+                        </property>
+                    </widget>
+                    <widget class="QLayoutWidget">
+                        <property name="name">
+                            <cstring>layout7</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QRadioButton">
+                                <property name="name">
+                                    <cstring>m_rbUserStyleSheet</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Format &amp;using this stylesheet:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit">
+                                <property name="name">
+                                    <cstring>m_userStyleSheet</cstring>
+                                </property>
+                            </widget>
+                        </hbox>
+                    </widget>
+                </vbox>
+            </widget>
             <widget class="QCheckBox">
                 <property name="name">
                     <cstring>m_addresses</cstring>
@@ -263,7 +321,7 @@
                                     <cstring>m_rbUseUserName</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Use &amp;this:</string>
+                                    <string>&amp;This name:</string>
                                 </property>
                             </widget>
                             <widget class="QLineEdit">

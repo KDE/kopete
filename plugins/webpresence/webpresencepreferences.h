@@ -37,6 +37,10 @@ class WebPresencePreferences : public ConfigModule
 		bool showAddresses() const;
 		bool useImName() const;
 		QString userName() const;
+		bool useDefaultStyleSheet() const;
+		bool justXml() const;
+		QString userStyleSheet() const;
+		
 	signals:
 		void saved();
 	private:
