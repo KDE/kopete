@@ -125,11 +125,11 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint /* id */,
 		QString handle = data.section( ' ', 0, 0 );
 		QString screenname = unescape(data.section( ' ', 1, 1 ));
 		emit updateChatMember( handle, screenname, true );
-    
+
 		if( !m_chatMembers.contains( handle ) )
 			m_chatMembers.append( handle );
 
-    if(!m_messagesQueue.empty()) sendMessageQueue();
+		if(!m_messagesQueue.empty()) sendMessageQueue();
 	}
 	else if( cmd == "IRO" )
 	{
@@ -152,7 +152,6 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint /* id */,
 		QString handle = data.section( ' ', 0, 0 ).replace( QRegExp( "\r\n" ), "" );
 
 		userLeftChat(handle);
-
 	}
 	else if( cmd == "MSG" )
 	{
@@ -164,6 +163,7 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint /* id */,
 		readBlock(len.toUInt());
 	}
 }
+
 void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 {
 	// incoming message for File-transfer
@@ -187,11 +187,11 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			//         	-a flag to precies if it is an outgoing or an incomming transfer
 			// I would like set the size later in the MSNFileTransferSocket.  (current size is set to 0)
 			MFTS->setKopeteTransfer(kopeteapp->transferManager()->addTransfer(MSNProtocol::protocol()->contact(m_msgHandle)->metaContact(),
-						m_filetransferName, 0,  MSNProtocol::protocol()->contact(m_msgHandle)->displayName()));
+				m_filetransferName, 0,  MSNProtocol::protocol()->contact(m_msgHandle)->displayName()));
 			MFTS->connect(ip_adress, port.toUInt());
 		}
 		else  if( msg.contains("Application-File:") )  //not "Application-Name: File Transfer" because the File Transfer label is sometimes translate 
-		{ 
+		{
 			QString cookie = msg.right( msg.length() - msg.find( "Invitation-Cookie:" ) - 19 );
 			cookie.truncate( cookie.find("\r\n") );
 			QString filename = msg.right( msg.length() - msg.find( "Application-File:" ) - 18 );
@@ -216,7 +216,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 					r=KMessageBox::Cancel;
 				else filename=saveFileName;
 			}
-       
+
 			if(r== KMessageBox::Yes)
 			{
 				QCString message=QString(
@@ -226,8 +226,8 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 					"Invitation-Command: ACCEPT\r\n"
 					"Invitation-Cookie: " + cookie + "\r\n"
 					"Launch-Application: FALSE\r\n"
-					"Request-Data: IP-Address:\r\n"//192.168.0.2\r\n" // hardcoded IP?!
-					"Port: 6891").utf8();
+					"Request-Data: IP-Address:\r\n"
+					).utf8();
 				QCString command=QString("MSG").utf8();
 				QCString args = QString( "N" ).utf8();
 				sendCommand( command , args, true, message );
@@ -372,8 +372,7 @@ void MSNSwitchBoardSocket::slotSendMsg( const KopeteMessage &msg )
 	{
 		m_messagesQueue.append(msg);
 		return;
-  }
-
+	}
 
 	kdDebug() << "MSNSwitchBoardSocket::slotSendMsg" << endl;
 
@@ -413,8 +412,7 @@ void MSNSwitchBoardSocket::slotSocketClosed( int /*state */)
 
 	// we have lost the connection, send a message to chatwindow (this will not displayed)
 	emit switchBoardIsActive(false);
- emit switchBoardClosed( );
-
+	emit switchBoardClosed( );
 }
 
 void MSNSwitchBoardSocket::slotCloseSession()
