@@ -10,6 +10,7 @@
 
 #include "smspreferences.h"
 #include "smsservice.h"
+#include "serviceloader.h"
 
 #include <qlayout.h>
 #include <qcombobox.h>
@@ -31,7 +32,7 @@ SMSPreferences::SMSPreferences( const QString &pixmap, QObject *parent )
 	service = 0L;
 	configWidget = 0L;
 
-	preferencesDialog->serviceName->insertItem("Testservice");
+	preferencesDialog->serviceName->insertItem("Spray");
 
 	configVBox = new QGroupBox(this, "configVBox");
 	configLayout = new QHBoxLayout(configVBox);
@@ -44,13 +45,24 @@ SMSPreferences::SMSPreferences( const QString &pixmap, QObject *parent )
 
 SMSPreferences::~SMSPreferences()
 {
+	if (service != 0L)
+		delete service;
 }
 
 void SMSPreferences::reopen()
 {
 	KGlobal::config()->setGroup("SMS");
-	preferencesDialog->serviceName->setCurrentText(
-		KGlobal::config()->readEntry( "ServiceName", QString::null ) );
+	QString sName = KGlobal::config()->readEntry( "ServiceName", QString::null );
+	
+	for (int i=0; i < preferencesDialog->serviceName->count(); i++)
+	{
+		if (preferencesDialog->serviceName->text(i) == sName)
+		{
+			preferencesDialog->serviceName->setCurrentItem(i);
+			break;
+		}
+	}
+	setServicePreferences(preferencesDialog->serviceName->currentText());
 }
 
 
@@ -60,6 +72,10 @@ void SMSPreferences::save()
 	config->setGroup("SMS");
 	config->writeEntry("ServiceName", preferencesDialog->serviceName->currentText());
 	config->sync();
+
+	if ( service != 0L )
+		service->savePreferences();
+	
 	emit saved();
 
 }
@@ -67,20 +83,20 @@ void SMSPreferences::save()
 void SMSPreferences::setServicePreferences(const QString& name)
 {
 	if (service != 0L)
+	{
+		service->savePreferences();
 		delete service;
-
-	// Should be changed when we have a working service
-	if (name == "SomeServiceName")
-		service = new SMSService;
-	// else if otherservice...
-	else
-		service = new SMSService; 
+	}
 
 	if (configWidget != 0L)
 		delete configWidget;
 	
-	configWidget = service->configureWidget();
-	configWidget->reparent(configVBox, QPoint(0,0));
+	service = ServiceLoader::loadService(name);
+
+	if ( service == 0L)
+		return;
+
+	configWidget = service->configureWidget(configVBox);
 	configWidget->show();
 }
 

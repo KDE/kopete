@@ -1,8 +1,4 @@
 /*
-    Copyright (c) 2002 Duncan Mac-Vicar Prett <duncan@kde.org>
-              (c) 2002 Ryan Cumming           <bodnar42@phalynx.dhs.org>
-              (c) 2002 Martijn Klingens       <klingens@kde.org>
-
     *************************************************************************
     *                                                                       *
     * This program is free software; you can redistribute it and/or modify  *
@@ -20,6 +16,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kconfig.h>
 
 #include "kopete.h"
 #include "kopetecontactlistview.h"
@@ -33,6 +30,7 @@
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "smsservice.h"
+#include "serviceloader.h"
 
 SMSContact::SMSContact( SMSProtocol *protocol, const QString &smsId,
 	const QString &displayName, KopeteMetaContact *parent )
@@ -86,15 +84,21 @@ void SMSContact::slotSendMessage(const KopeteMessage &msg)
 	QString text = msg.plainBody();
 	QString nr = id();
 	SMSService* s;
-	/*
-		if (config?protocol? == someservicename)
-		s = new someservice
-		else if ...
-	*/
-	s = new SMSService;
+
+	KConfig *config=KGlobal::config();
+	config->setGroup("SMS");
+	QString sName = config->readEntry("ServiceName", QString::null);
+
+	s = ServiceLoader::loadService(sName);
+
+	if ( s == 0L)
+		return;
+
 	s->send(nr, text);
 
 	msgManager()->appendMessage(msg);
+
+	delete s;
 }
 
 void SMSContact::slotViewHistory()

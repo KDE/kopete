@@ -7,8 +7,9 @@
 class SMSService
 {
 public:
-	virtual bool send(QString nr, QString message);
-	virtual QWidget* configureWidget();
+	virtual bool send(QString nr, QString message) = 0;
+	virtual QWidget* configureWidget(QWidget* parent) = 0;
+	virtual void savePreferences() = 0;
 } ;
 
 #endif //SMSSERVICE_H
