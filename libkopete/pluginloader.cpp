@@ -201,14 +201,20 @@ QValueList<KopeteLibraryInfo> LibraryLoader::available() const
 	return items;
 }
 
-KopetePlugin *LibraryLoader::loadPlugin( const QString &spec )
+KopetePlugin *LibraryLoader::loadPlugin( const QString &spec_ )
 {
+	QString spec=spec_;
 //	kdDebug(14010) << k_funcinfo << spec << endl;
 
 	QString pluginId = spec;
 	pluginId.remove( QRegExp( QString::fromLatin1( ".desktop$" ) ) );
 
-	KopetePlugin *plugin;
+	if(!spec.endsWith(QString::fromLatin1(".desktop")))
+		spec += QString::fromLatin1(".desktop") ;
+
+	KopetePlugin *plugin = m_loadedPlugins[ spec ];
+	if(plugin)
+		return plugin;
 
 	int error=0;
 	plugin = KParts::ComponentFactory::createInstanceFromQuery<KopetePlugin>(
@@ -264,8 +270,13 @@ KopetePlugin *LibraryLoader::loadPlugin( const QString &spec )
 	return plugin;
 }
 
-bool LibraryLoader::remove( const QString &spec )
+bool LibraryLoader::remove( const QString &spec_ )
 {
+	QString spec=spec_;
+	if(!spec.endsWith(QString::fromLatin1(".desktop")))
+		spec += QString::fromLatin1(".desktop") ;
+
+
 	KopetePlugin *plugin = m_loadedPlugins[ spec ];
 	if( !plugin )
 		return false;
