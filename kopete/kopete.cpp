@@ -166,7 +166,7 @@ void Kopete::slotLoadPlugins()
 }
 
 
-void  Kopete::slotAllPluginsLoaded()
+void Kopete::slotAllPluginsLoaded()
 {
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 

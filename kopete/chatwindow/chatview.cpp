@@ -302,7 +302,12 @@ void ChatView::raise(bool activate)
 	if(!m_mainWindow || !m_mainWindow->isActiveWindow() || activate)
 		makeVisible();
 
+
+#if KDE_IS_VERSION(3, 1, 90)
+	if( !KWin::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).onAllDesktops() )
+#else
 	if( !KWin::info( m_mainWindow->winId() ).onAllDesktops )
+#endif
 		KWin::setOnDesktop( m_mainWindow->winId(), KWin::currentDesktop() );
 
 	m_mainWindow->show();
