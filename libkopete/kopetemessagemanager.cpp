@@ -74,13 +74,14 @@ void KopeteMessageManager::readMessages()
 		kdDebug() << "[KopeteMessageManager] Connecting message box shown() to event killer" << endl;
 		connect ( mChatWindow, SIGNAL(shown()), this, SLOT(cancelUnreadMessageEvent()) );
 		connect ( mChatWindow, SIGNAL(sendMessage(const QString &)), this, SLOT(messageSentFromWindow(const QString &)) );
-		connect ( mChatWindow, SIGNAL(destroyed()), this, SLOT(chatWindowClosing()) );
+		connect ( mChatWindow, SIGNAL(closeClicked()), this, SLOT(chatWindowClosing()) );
 	}
 	
 	for (KopeteMessageList::Iterator it = mMessageQueue.begin(); it != mMessageQueue.end(); ++it)
 	{
-		KopeteMessage tmp = (*it);
-		mChatWindow->messageReceived( tmp );
+		//KopeteMessage tmp = (*it);
+		kdDebug() << "[KopeteMessageManager] Inserting message from " << (*it).from()  << endl;
+		mChatWindow->messageReceived( (*it) );
 		mMessageQueue.remove(it);
 	}
 	mChatWindow->show();	// show message window again
@@ -100,6 +101,7 @@ void KopeteMessageManager::messageSentFromWindow(const QString &message)
 
 void KopeteMessageManager::chatWindowClosing()
 {
+	kdDebug() << "[KopeteMessageManager] Chat Window closed, now 0L" << endl;	
 	mChatWindow = 0L;
 }
 
