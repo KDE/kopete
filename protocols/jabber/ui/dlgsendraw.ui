@@ -31,32 +31,6 @@
             <string>&amp;Cancel</string>
         </property>
     </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>lblInfo</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>11</x>
-                <y>11</y>
-                <width>295</width>
-                <height>16</height>
-            </rect>
-        </property>
-        <property name="paletteForegroundColor">
-            <color>
-                <red>255</red>
-                <green>255</green>
-                <blue>255</blue>
-            </color>
-        </property>
-        <property name="text">
-            <string>Type in the packet that should be sent to the server:</string>
-        </property>
-        <property name="buddy" stdset="0">
-            <cstring>lblRealStatus</cstring>
-        </property>
-    </widget>
     <widget class="KTextEdit">
         <property name="name">
             <cstring>tePacket</cstring>
@@ -87,6 +61,32 @@
         </property>
         <property name="default">
             <bool>true</bool>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>lblInfo</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>11</x>
+                <y>11</y>
+                <width>295</width>
+                <height>16</height>
+            </rect>
+        </property>
+        <property name="paletteForegroundColor">
+            <color>
+                <red>0</red>
+                <green>0</green>
+                <blue>0</blue>
+            </color>
+        </property>
+        <property name="text">
+            <string>Type in the packet that should be sent to the server:</string>
+        </property>
+        <property name="buddy" stdset="0">
+            <cstring>lblRealStatus</cstring>
         </property>
     </widget>
 </widget>
