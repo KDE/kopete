@@ -114,7 +114,7 @@ void LatexPlugin::slotHandleLatex( KopeteMessage& msg )
 			fileName = tempFile.name();
 			
 			kdDebug() << k_funcinfo  << " Rendering " << latexFormula << " to: " << fileName<< endl;
-			p << m_convScript << "-o " + fileName << "\""+latexFormula+"\"";
+			p << m_convScript << "-o " + fileName << +KShellProcess::quote(latexFormula).utf8();
 			
 			// FIXME our sucky sync filter API limitations :-)
 			p.start(KProcess::Block);
