@@ -358,10 +358,11 @@ QString KopeteMetaContact::toXML()
 	       "</display-name>\n";
 
 		/* We include all groups in the XML */
-	if ( !m_groups.isEmpty() ) {
+	if ( !m_groups.isEmpty() )
+	{
 		xml += "    <groups>\n";
 		for( QStringList::ConstIterator it = m_groups.begin(); it != m_groups.end(); ++it )
-	{
+		{
 			if ( !(*it).isEmpty() )
 				xml += "      <group>" + QStyleSheet::escape( *it ) +
 				       "</group>\n";
@@ -372,7 +373,10 @@ QString KopeteMetaContact::toXML()
 		xml += "    </groups>\n";
 	}
 
-	for( AddressBookFields::Iterator adrIt = m_addressBook.begin(); adrIt != m_addressBook.end(); ++adrIt ) {
+	kdDebug() << "[KopeteMetacontact::toXML] XMLing meta-contact global adressbook fields" << endl;
+	for( AddressBookFields::Iterator adrIt = m_addressBook.begin(); adrIt != m_addressBook.end(); ++adrIt )
+	{
+            kdDebug() << "                           XMLing " << adrIt.key() << " field" << endl;
 			xml += "    <address-book-field id=\"" + adrIt.key() + "\">";
 			xml += adrIt.data();
 			xml += "</address-book-field>\n";
@@ -383,13 +387,14 @@ QString KopeteMetaContact::toXML()
 	{
 		//++pluginIt;
 		QStringList strList;
-		if ( p->serialize( this, strList ) && !strList.empty() ) {
+		if ( p->serialize( this, strList ) && !strList.empty() )
+		{
 			QString data = strList.join( "||" );
 			kdDebug()<<"### Data = "<< data <<endl;
 			xml += "    <plugin-data plugin-id=\"" +
 			       QString( p->id() ) + "\">" +
 			       data  + "</plugin-data>\n";
-	}
+		}
 	}
 
 	xml += "  </meta-contact>\n";
@@ -459,6 +464,10 @@ void KopeteMetaContact::setAddressBookField( Plugin * p ,
 {
 	if ( p->addressBookFields().contains( key ) )
 		m_addressBook.insert( key, value );
+	else
+		kdDebug() << "[KopeteMetaContact::setAddressBookField] Sorry, plugin "
+					<< p->id() << " doesn't have field "
+					<< key << " registered" << endl;
 }
 
 KopeteMetaContact::AddressBookFields KopeteMetaContact::addressBookFields() const

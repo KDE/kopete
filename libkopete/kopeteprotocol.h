@@ -51,11 +51,6 @@ public:
 	virtual void Disconnect()=0;
 	virtual bool isConnected() const = 0;
 
-	/**
-	 * This will be called when Kopete read the contact list, implement it
-	 */
-	virtual KopeteContact* createContact( KopeteMetaContact *parent, const QString &serializedData ) = 0;
-
 	// this will be called if main-kopete wants
 	// the plugin to set the user's mode to away or something similar
 	virtual void setAway(void)=0;

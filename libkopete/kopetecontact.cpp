@@ -80,35 +80,6 @@ QString KopeteContact::statusText() const
 	}
 }
 
-QString KopeteContact::toXML()
-{
-	QString xml;
-	QString displayname = displayName();
-	QString data = this->data();
-
-	xml = "<contact";
-
-	kdDebug() << "KC: " << protocol() << endl;
-
-	if ( m_protocolId.isNull() )
-	{
-		xml = xml + " protocol=\"" + protocol() + "\"";
-
-		if ( ! displayname.isNull() )
-			xml = xml + " name=\"" + displayName() + "\"";
-		if ( ! data.isNull() )
-			xml = xml + " data=\"" + this->data() + "\"";
-	}
-	else
-	{
-		return QString::null;
-	}
-
-	xml = xml + "/>";
-	return xml;
-}
-
-
 QString KopeteContact::statusIcon() const
 {
 	return "unknown";

@@ -182,18 +182,6 @@ public:
 	 */
 	QString protocol() const { return m_protocolId; }
 
-	/**
-	 * Return the protocol specific serialized data
-	 * that a plugin may want to store contact list.
-	 * Include all necesary data to rebuild it later.
-	 */
-	virtual QString data() const = 0;
-
-	/**
-	 * Return a XML representation of the contact
-	 */
-	QString toXML();
-
 signals:
 	/**
 	 * The contact's online status changed

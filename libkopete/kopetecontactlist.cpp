@@ -154,6 +154,8 @@ void KopeteContactList::loadXML()
 void KopeteContactList::saveXML()
 {
 	QString contactListFileName = locateLocal( "appdata", "contactlist.xml" );
+
+	kdDebug() << "[KopeteContactList] saveXML() Contact List File: " << contactListFileName << endl;
 	QFile contactListFile( contactListFileName );
 	if( contactListFile.open( IO_WriteOnly ) )
 	{
