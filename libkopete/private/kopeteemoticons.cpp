@@ -58,14 +58,21 @@ void KopeteEmoticons::addIfPossible( const QString& filenameNoExt, QStringList e
 	KStandardDirs *dir = KGlobal::dirs();
 	QString pic;
 
-//	kdDebug(14010) << "KopeteEmoticons::addIfPossible searching for " << filenameNoExt << " in theme " << m_theme << endl;
+	//maybe an extention was given, so try to find the exact file
 	pic = dir->findResource( "data", QString::fromLatin1( "kopete/pics/emoticons/" ) + m_theme +
-		QString::fromLatin1( "/" ) + filenameNoExt + QString::fromLatin1( ".mng" ) );
+		QString::fromLatin1( "/" ) + filenameNoExt );
+
+	if( pic.isNull() )
+		pic = dir->findResource( "data", QString::fromLatin1( "kopete/pics/emoticons/" ) + m_theme +
+			QString::fromLatin1( "/" ) + filenameNoExt + QString::fromLatin1( ".mng" ) );
 	if ( pic.isNull() )
 		pic = dir->findResource( "data", QString::fromLatin1( "kopete/pics/emoticons/" ) +
 			m_theme + QString::fromLatin1( "/" ) + filenameNoExt + QString::fromLatin1( ".png" ) );
+	if ( pic.isNull() )
+		pic = dir->findResource( "data", QString::fromLatin1( "kopete/pics/emoticons/" ) +
+			m_theme + QString::fromLatin1( "/" ) + filenameNoExt + QString::fromLatin1( ".gif" ) );
 
-	if( !pic.isNull() ) // only add if we found one of the two files
+	if( !pic.isNull() ) // only add if we found one file
 	{
 //		kdDebug(14010) << "KopeteEmoticons::addIfPossible : found pixmap for emoticons" <<endl;
 		map[pic] = emoticons;
