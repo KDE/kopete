@@ -42,6 +42,7 @@ int SpellingHighlighter::highlightParagraph( const QString & text, int )
 		highlightColor = Qt::blue;
 
 	int stringPos = 0;
+	setFormat(0, text.length(), textEdit()->paletteForegroundColor());
 	for( ReplacementMap::Iterator it = mReplacements->begin(); it != mReplacements->end(); ++it )
 	{
 		while( ( stringPos = text.find( QRegExp( QString::fromLatin1("\\b(%1)\\b").arg(it.key()) ), stringPos + 1 ) ) > -1 )
@@ -88,10 +89,9 @@ void SingleSpellInstance::misspelling( const QString &originalword, const QStrin
 	//kdDebug() << k_funcinfo << originalword << "IS MISSPELLED!" << endl;
 
 	if( !mReplacements.contains( originalword ) )
-	{
 		mReplacements[originalword] = suggestions;
-		mHighlightEngine->rehighlight();
-	}
+
+	mHighlightEngine->rehighlight();
 }
 
 bool SingleSpellInstance::eventFilter(QObject *o, QEvent *e)
@@ -103,7 +103,11 @@ bool SingleSpellInstance::eventFilter(QObject *o, QEvent *e)
 		//Keypress event, to do the actual checking
 		case QEvent::KeyPress:
 		{
-			mPlugin->speller()->check( t->text(), false );
+			QKeyEvent *event = (QKeyEvent*) e;
+
+                        //Only spellcheck when we hit a word delimiter
+                        if( !QChar( event->ascii() ).isLetterOrNumber() )
+                                mPlugin->speller()->check( t->text(), false );
 			break;
 		}
 

@@ -124,7 +124,9 @@ void SpellCheckPlugin::slotBindToView( KopeteView *view )
 	if( mPrefs->autoCheckEnabled() && view->editWidget()->inherits("QTextEdit") )
 	{
 		kdDebug() << k_funcinfo << "New View, creating a single speller instance" << endl;
-		singleSpellers.append( new SingleSpellInstance( this, view ) );
+		SingleSpellInstance *spell = new SingleSpellInstance( this, view );
+		singleSpellers.append( spell );
+		connect( speller(), SIGNAL( misspelling( const QString&, const QStringList&, unsigned int ) ), spell, SLOT( misspelling( const QString&, const QStringList&, unsigned int ) ) );
 	}
 }
 
