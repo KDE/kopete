@@ -33,6 +33,7 @@
 
 #include "coreprotocol.h"
 #include "ymsgprotocol.h"
+#include "ymsgtransfer.h"
 
 CoreProtocol::CoreProtocol() : QObject()
 {
@@ -120,62 +121,23 @@ void cp_dump( const QByteArray &bytes )
 
 void CoreProtocol::outgoingTransfer( Transfer* outgoing )
 {
-	qDebug( "CoreProtocol::outgoingTransfer()" );
-	// Convert the outgoing data into wire format
-#if 0
-	Request * request = dynamic_cast<Request *>( outgoing );
-	Field::FieldList fields = request->fields();
-	if ( fields.isEmpty() )
+	kdDebug(14180) << k_funcinfo << endl;
+	if ( outgoing->type() == Transfer::YMSGTransfer )
 	{
-		qDebug( " CoreProtocol::outgoingTransfer: Transfer contained no fields, it must be a ping.");
-/*		m_error = NMERR_BAD_PARM;
-		return;*/
-	}
-	// Append field containing transaction id
-	fields.append( new Field::SingleField( NM_A_SZ_TRANSACTION_ID, NMFIELD_METHOD_VALID, 
-					0, NMFIELD_TYPE_UTF8, request->transactionId() ) );
-	
-	// convert to QByteArray
-	QByteArray bytesOut;
-	QTextStream dout( bytesOut, IO_WriteOnly );
-	dout.setEncoding( QTextStream::Latin1 );
-	//dout.setByteOrder( QDataStream::LittleEndian );
-
-	// strip out any embedded host and port in the command string 
-	QCString command, host, port;
-	if ( request->command().section( ':', 0, 0 ) == "login" )
-	{
-		command = "login";
-		host = request->command().section( ':', 1, 1 ).ascii();
-		port = request->command().section( ':', 2, 2 ).ascii();
-		qDebug( "Host: %s Port: %s", host.data(), port.data() );
-	}
-	else
-		command = request->command().ascii();
-	
-	// add the POST
-	dout << "POST /";
-	dout << command;
-	dout << " HTTP/1.0\r\n";
-	
-	// if a login, add Host arg
-	if ( command == "login" )
-	{
-		dout << "Host: ";
-		dout << host; //FIXME: Get this from somewhere else!!
-		dout << ":" << port << "\r\n\r\n";
-	}
-	else
-		dout <<  "\r\n";
-	
+		kdDebug(14180) << k_funcinfo << " got YMSGTransfer" << endl;
+		YMSGTransfer *yt = (YMSGTransfer *) outgoing;
+		QByteArray bytesOut = yt->serialize();
 		
-	printf( "data out: %s", bytesOut.data() );
-	
-	emit outgoingData( bytesOut );
-	// now convert 
-	fieldsToWire( fields );
-#endif
-	return;
+		//QTextStream dout( bytesOut, IO_WriteOnly );
+		//dout.setEncoding( QTextStream::Latin1 );
+		//dout.setByteOrder( QDataStream::LittleEndian );
+		//dout << bytesOut;
+		kdDebug(14181) << k_funcinfo << " " << bytesOut << endl;
+		emit outgoingData( bytesOut );
+		// now convert 
+		//fieldsToWire( fields );
+		return;
+	}
 }
 
 
@@ -196,14 +158,15 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 	m_din = new QDataStream( wire, IO_ReadOnly );
 	
 	// look at first four bytes and decide what to do with the chunk
-	Q_UINT8 flapStart;
+	QByteArray ymsgStart = QByteArray(4);
 	if ( okToProceed() )
 	{
-		*m_din >> flapStart;
-		/*
-		if ( flapStart == 0x2A )
+		*m_din >> ymsgStart;
+		
+		if ( (char * ) ymsgStart.data() == "YMSG" )
 		{
-			qDebug( "CoreProtocol::wireToTransfer() - looks like a valid snac packet " );
+			qDebug( "CoreProtocol::wireToTransfer() - looks like a valid YMSG packet " );
+			/*
 			QByteArray packet = wire.duplicate( wire.data(), flapLength + 6 )
 			Transfer * t = m_YMSGProtocol->parse( packet, bytesParsed );
 			
@@ -217,13 +180,11 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 			}
 			else
 				bytesParsed = 0;
-			
+			*/	
 		}
 		else 
 		{ //unknown wire format
 		}
-		*/
-		
 	}
 	delete m_din;
 	return bytesParsed;

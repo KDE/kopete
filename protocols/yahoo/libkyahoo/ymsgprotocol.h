@@ -21,12 +21,13 @@
 
 #include "inputprotocolbase.h"
 
-class YMSGPacketTransfer;
 
 class YMSGProtocol : public InputProtocolBase
 {
 Q_OBJECT
 public:
+	
+
 	YMSGProtocol( QObject *parent = 0, const char *name = 0 );
 	~YMSGProtocol();
 	
