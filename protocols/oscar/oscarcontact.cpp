@@ -154,10 +154,15 @@ KopeteMessageManager* OscarContact::msgManager()
 								mProtocol->myself(), theContacts,
 								mProtocol, KopeteMessageManager::ChatWindow);
 		QObject::connect(
-						mMsgManager,
+						mMsgMaill have  acomnager,
 						SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager *)),
 						this,
 						SLOT(slotSendMsg(const KopeteMessage&, KopeteMessageManager *)));
+		QObject::connect(
+						mMsgManager,
+						SIGNAL(destroyed()),
+						this,
+						SLOT(slotMessageManagerDestroyed()));
 		// TODO
 		QObject::connect(
 						mMsgManager,
@@ -167,6 +172,11 @@ KopeteMessageManager* OscarContact::msgManager()
 
 		return mMsgManager;
 	}
+}
+
+void OscarContact::slotMessageManagerDestroyed()
+{
+	mMsgManager = 0L;
 }
 
 void OscarContact::slotMainStatusChanged(int newStatus)
