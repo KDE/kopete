@@ -502,13 +502,16 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 		if ( (photoImg.width() > 0) &&  (photoImg.height() > 0) )
 		{
 			int photoSize = d->photoSize;
+			float ratio = float(photoImg.width())/float(photoImg.height());
+			int newsize =int(float(photoSize*ratio));
+			
 			if ( photoImg.width() > photoImg.height() )
 			{
-				photoPixmap = photoImg.scaleWidth( photoSize );
+				photoPixmap = photoImg.smoothScale( photoSize, newsize );
 			}
 			else
 			{
-				photoPixmap = photoImg.scaleHeight( photoSize );
+				photoPixmap = photoImg.smoothScale( newsize, photoSize );
 			}
 			QPainter p(&photoPixmap);
 			p.setPen(Qt::black);
