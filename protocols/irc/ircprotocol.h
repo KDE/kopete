@@ -72,16 +72,16 @@ public:
 
 	void addContact(const QString &, const QString &, const QString &, bool, bool);
 
-	IRCServerManager *serverManager();
-    KSimpleConfig *config() { return m_config; };
+	IRCServerManager *serverManager() { return m_serverManager; }
+	KSimpleConfig *config() { return m_config; };
 	KIRC *engine() { return m_engine; };
 
 private:
 	void initIcons();
 	KPopupMenu *popup;
 	IRCServerManager *m_serverManager;
-    KSimpleConfig *m_config;
-    KIRC *m_engine;
+	KSimpleConfig *m_config;
+	KIRC *m_engine;
 	bool m_isConnected;
 
 public slots: // Public slots

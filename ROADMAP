@@ -27,18 +27,6 @@ free to assign the issue to yourself, or contact kopete-devel@kde.org.
   No planned release
   Assigned to Martijn Klingens <klingens@kde.org>, help welcome
 
-- Protocol plugin for Gadu-Gadu
-  Planned for Kopete 0.6
-  Assigned to Zack Rusin <zack@kde.org>
-
-- GUI related message handling API rewrite
-  Planned for Kopete 0.6 (partially into 0.5)
-  Assigned to Zack Rusin <zack@kde.org>
-
-- Cleaning up protocol plugins
-  Applicable to all versions
-  Assigned to Zack Rusin <zack@kde.org>, help welcome
-
 - Protocol plugin for Yahoo
   No planned release
   Currently without maintainer
@@ -46,4 +34,8 @@ free to assign the issue to yourself, or contact kopete-devel@kde.org.
 - Protocol plugin for WinPopup
   Planned for Kopete 0.6
   Assigned to Gav Wood <gjw102@york.ac.uk>
+
+- Cleaning up the code
+  Applicable to all versions
+  Assigned to Zack Rusin <zack@kde.org>, help welcome
 

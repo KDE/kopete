@@ -103,7 +103,9 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 
 }
 
-IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, const QStringList pendingMessage, KopeteMetaContact *parent, QString &protocolID)
+IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect,
+		       IRCServerContact *contact, const QStringList /*pendingMessage*/,
+		       KopeteMetaContact *parent, QString &protocolID)
 	: KopeteContact(protocolID, parent)
 {
 	m_engine = contact->engine();
@@ -271,7 +273,8 @@ QString IRCContact::statusIcon() const
 	}
 }
 
-void IRCContact::incomingPrivMessage(const QString &originating, const QString &target, const QString &message)
+void IRCContact::incomingPrivMessage(const QString &/*originating*/, const QString &target,
+				     const QString &/*message*/)
 {
 	if (m_targetName.lower() == target.lower())
 	{
@@ -282,7 +285,8 @@ void IRCContact::incomingPrivMessage(const QString &originating, const QString &
 	}
 }
 
-void IRCContact::incomingPrivAction(const QString &originating, const QString &target, const QString &message)
+void IRCContact::incomingPrivAction(const QString &/*originating*/, const QString &target,
+				    const QString &/*message*/)
 {
 	if (m_targetName.lower() == target.lower())
 	{
@@ -439,7 +443,8 @@ void IRCContact::slotPartedChannel(const QString &originating, const QString &ch
 	}
 }
 
-void IRCContact::slotUserKicked(const QString &user, const QString &channel, const QString &by, const QString &reason)
+void IRCContact::slotUserKicked(const QString &user, const QString &channel,
+				const QString &/*by*/, const QString &/*reason*/)
 {
 	if (m_targetName.lower() == channel.lower() && user.lower() == m_engine->nickName().lower())
 	{

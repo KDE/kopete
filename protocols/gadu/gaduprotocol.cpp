@@ -79,8 +79,8 @@ GaduProtocol::initIcons()
     onlineIcon_ = QPixmap( loader->loadIcon("gg_online", KIcon::User) );
     offlineIcon_ = QPixmap( loader->loadIcon("gg_offline", KIcon::User) );
     awayIcon_ = QPixmap( loader->loadIcon("gg_away", KIcon::User) );
-    busyIcon_ = QPixmap( loader->loadIcon("gg_away", KIcon::User) );
-    invisibleIcon_ = QPixmap( loader->loadIcon("gg_ignored", KIcon::User) );
+    busyIcon_ = QPixmap( loader->loadIcon("gg_busy", KIcon::User) );
+    invisibleIcon_ = QPixmap( loader->loadIcon("gg_invi", KIcon::User) );
     connectingIcon_= QPixmap( loader->loadIcon("gg_connecting", KIcon::User) );
 }
 
@@ -93,9 +93,9 @@ GaduProtocol::initActions()
                                     SLOT(slotGoOffline()), this, "actionGaduConnect" );
     awayAction_      = new KAction( i18n("Set &Away"), "gg_away", 0, this,
                                     SLOT(slotGoAway()), this, "actionGaduConnect" );
-    busyAction_      = new KAction( i18n("Set &Busy"), "gg_away", 0, this,
+    busyAction_      = new KAction( i18n("Set &Busy"), "gg_busy", 0, this,
                                     SLOT(slotGoBusy()), this, "actionGaduConnect" );
-    invisibleAction_ = new KAction( i18n("Set &Invisible"), "gg_ignored", 0, this,
+    invisibleAction_ = new KAction( i18n("Set &Invisible"), "gg_invi", 0, this,
                                     SLOT(slotGoInvisible()), this, "actionGaduConnect" );
 
     actionMenu_ = new KActionMenu( "Gadu", this );
