@@ -60,7 +60,7 @@ YahooContact::~YahooContact()
 
 void YahooContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData)
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	//kdDebug(14180) << k_funcinfo << endl;
 
 	KopeteContact::serialize(serializedData, addressBookData);
 }
