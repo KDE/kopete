@@ -143,6 +143,8 @@ public:
 
 	void slotRename();
 
+	void updateVisibility();
+
 private slots:
 	void slotUpdateIcons();
 	void slotContactStatusChanged();
@@ -169,7 +171,6 @@ private:
 	void initLVI();
 	QString key( int column, bool ascending ) const;
 
-	void updateVisibility();
 
 	KopeteMetaContact *m_metaContact;
 

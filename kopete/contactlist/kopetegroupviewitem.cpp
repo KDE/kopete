@@ -129,24 +129,21 @@ void KopeteGroupViewItem::updateVisibility()
 	if( KopetePrefs::prefs()->showOffline() )
 		visibleUsers = totalMemberCount;
 
-	if( KopetePrefs::prefs()->showEmptyGroups() )
-		setVisible(true);
-	else if( visibleUsers > 0 )
-		setVisible(true);
-	else
-		setVisible(false);
+	bool visible= KopetePrefs::prefs()->showEmptyGroups() || visibleUsers > 0 ;
 
-	for(QListViewItem *lvi = firstChild() ; lvi; lvi = lvi->nextSibling() )
+	if(isVisible() != visible)
 	{
-		KopeteMetaContactLVI *kc = dynamic_cast<KopeteMetaContactLVI*>( lvi );
-		if ( kc )
+		setVisible(visible);
+		if(visible)
 		{
-			if ( kc->metaContact()->isOnline() )
-				kc->setVisible(true);
-			else if ( KopetePrefs::prefs()->showOffline() )
-				kc->setVisible(true);
-			else
-				kc->setVisible(false);
+			//when calling setVisible(true)  EVERY child item will be shown, even if they should be hiden
+			// so we re-update the fisibility of all child items
+			for(QListViewItem *lvi = firstChild() ; lvi; lvi = lvi->nextSibling() )
+			{
+				KopeteMetaContactLVI *kc = dynamic_cast<KopeteMetaContactLVI*>( lvi );
+				if ( kc )
+					kc->updateVisibility();
+			}
 		}
 	}
 
