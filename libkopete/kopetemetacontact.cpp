@@ -2,7 +2,7 @@
     kopetemetacontact.cpp - Kopete Meta Contact
 
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart@ kde.org>
     Copyright (c) 2002-2004 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
@@ -999,6 +999,13 @@ void MetaContact::setTemporary( bool isTemporary, Group *group )
 
 QString MetaContact::metaContactId() const
 {
+	if(d->metaContactId.isEmpty())
+	{
+		Contact *c=d->contacts.first();
+		if(!c)
+			return QString::null;
+		return c->protocol()->pluginId()+QString::fromLatin1(":")+c->account()->accountId()+QString::fromLatin1(":") + c->contactId() ;
+	}
 	return d->metaContactId;
 }
 
