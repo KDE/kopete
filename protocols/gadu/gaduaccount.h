@@ -78,6 +78,7 @@ public slots:
 
 	void slotExportContactsList();
 	void slotExportContactsListToFile();
+	void slotImportContactsFromFile();
 
 	void addNotify( uin_t uin );
 	void notify( uin_t* userlist, int count );
@@ -154,11 +155,13 @@ private:
 
 	QTextCodec*		textcodec_;
 	KFileDialog*		saveListDialog;
+	KFileDialog*		loadListDialog;
 
 	KActionMenu*		actionMenu_;
 	KAction*		searchAction;
 	KAction*		listputAction;
 	KAction*		listToFileAction;
+	KAction*		listFromFileAction;
 	bool			connectWithSSL;
 
 	int			currentServer;

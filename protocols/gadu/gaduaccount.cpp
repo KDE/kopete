@@ -64,7 +64,7 @@ const char* const servers_ip[ NUM_SERVERS ] = {
 };
 
  GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const char* name )
-: KopeteAccount( parent, accountID, name ), pingTimer_( 0 ), saveListDialog( NULL )
+: KopeteAccount( parent, accountID, name ), pingTimer_( 0 ), saveListDialog( NULL ), loadListDialog( NULL )
 {
 	QHostAddress ip;
 
@@ -97,6 +97,8 @@ GaduAccount::initActions()
 							this, SLOT( slotExportContactsList() ), this, "actionListput" );
 	listToFileAction	= new KAction( i18n( "Export Contacts to file" ), "", 0,
 							this, SLOT( slotExportContactsListToFile() ), this, "actionListputFile" );
+	listFromFileAction	= new KAction( i18n( "Import Contacts from file" ), "", 0,
+							this, SLOT( slotImportContactsFromFile() ), this, "actionListgetFile" );
 }
 
 void
@@ -201,6 +203,7 @@ GaduAccount::actionMenu()
 	actionMenu_->insert( listputAction );
 	actionMenu_->insert( searchAction );
 	actionMenu_->insert( listToFileAction );
+	actionMenu_->insert( listFromFileAction );
 	
 	return actionMenu_;
 }
@@ -647,6 +650,7 @@ GaduAccount::userlist( const QString& contactsListString )
 
 	// FIXME: give feedback about error
 	if ( session_->stringToContacts( contactsList, contactsListString ) == false ) {
+		kdDebug(14100) << "couldn't convert it, something is wrong" << endl;
 		return;
 	}
 
@@ -753,6 +757,9 @@ GaduAccount::userListExportDone()
 	slotCommandDone( QString::null, i18n( "Contacts exported to the server.") );
 }
 
+
+// FIXME: make loading and saving nonblocking (at the moment KFileDialog stops plugin/kopete)
+
 void
 GaduAccount::slotExportContactsListToFile()
 {
@@ -766,12 +773,7 @@ GaduAccount::slotExportContactsListToFile()
 		
 		QTextCodec* textcodec = QTextCodec::codecForName( "CP1250" );
 		QCString list = textcodec->fromUnicode( session_->contactsToString( userlist() ) );
-		//for( int i=0; i< strlen( dupa ) ; i++ ){
-		//	kdDebug(14100) << 
-		//}
 		
-		kdDebug( 14100 ) << "user list :-): -----------------\n" 
-				 << list << "\n-----------------------" << endl;
 		if ( tempFile.status() ) {
 			// say cheese, can't create file.....			
 			error( i18n( "Unable to create temporary file" ), i18n( "Save Contacts list failed" ) );
@@ -795,6 +797,53 @@ GaduAccount::slotExportContactsListToFile()
 	}
 	delete saveListDialog;
 	saveListDialog = NULL;
+}
+
+void
+GaduAccount::slotImportContactsFromFile()
+{
+	loadListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null, 
+					Kopete::UI::Global::mainWidget(), "gadu-list-load", true ); 
+	loadListDialog->setCaption( i18n(" Load Contacts list for account %1 as ...").arg( myself()->displayName() ) );
+	
+	if ( loadListDialog->exec() == QDialog::Accepted ) {
+		
+		QTextCodec* textcodec = QTextCodec::codecForName( "CP1250" );
+		QCString list;
+
+		KURL url = loadListDialog->selectedURL();
+		QString oname;
+		kdDebug(14100) << "a:"<<url<<"\nb:" << oname << endl;
+		if ( KIO::NetAccess::download(	url, 
+						oname,
+						Kopete::UI::Global::mainWidget() 
+						) ) {
+						
+			QFile tempFile( oname );
+			if ( tempFile.open( IO_ReadOnly ) ) {
+				QTextStream tempStream( &tempFile );
+				tempStream >> list;
+				tempFile.close();
+				// and store it
+				kdDebug( 14100 ) << "loaded list:" << endl;
+				kdDebug( 14100 ) << list << endl;
+				kdDebug( 14100 ) << " --------------- " << endl;
+				userlist( textcodec->toUnicode( list ) );
+			}
+			else {
+				error( tempFile.errorString(),
+					i18n( "Contacts list Load has failed" ) );
+			}
+		}
+		else {
+			// say, it failed misourably
+			error( KIO::NetAccess::lastErrorString(), 
+				i18n( "Contacts list Load has failed" ) );
+		}
+
+	}
+	delete loadListDialog;
+	loadListDialog = NULL;
 }
 
 void
