@@ -211,14 +211,17 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 						QString content="SessionID: " + QString::number( m_sessionId ) + "\r\n\r\n" ;
 						makeMSNSLPMessage( OK, content );
 	
-						//send the data preparation message
-						QByteArray initM(4);
-						initM.fill('\0');
-						sendP2PMessage(initM);
-	
 						//prepare to send the file
 						m_Sfile = new QFile( locateLocal( "appdata", "msnpicture-"+ m_myHandle.lower().replace(QRegExp("[./~]"),"-")  +".png" ) );
 						if(!m_Sfile->open(IO_ReadOnly))  {/* TODO: error?*/}
+						
+						
+						//send the data preparation message
+						QByteArray initM(4);
+						initM.fill('\0');
+						sendP2PMessage(initM); 
+						
+						
 						m_totalDataSize=  m_Sfile->size();
 	
 						QTimer::singleShot( 10, this, SLOT(slotSendData()) ); //Go for upload
