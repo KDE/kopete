@@ -64,7 +64,7 @@ bool MeanwhileAddContactPage::apply(
 {
     QString displayName = theDialog->contactID->text();
     MeanwhileAccount* myAccount = static_cast<MeanwhileAccount*>(a);
-    return myAccount->addContact(displayName, displayName, m, Kopete::Account::ChangeKABC );
+    return myAccount->addContact(displayName, m, Kopete::Account::ChangeKABC );
 }
 
 bool MeanwhileAddContactPage::validateData()

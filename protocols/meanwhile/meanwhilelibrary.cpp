@@ -42,12 +42,6 @@ extern "C"
 
 }
 
-void crash()
-{
-int *i=0;
-*i=5;
-}
-
 #define ADVERTISE_KOPETE(s) (s+" *using kopete")
 void prettyprint(const char *buffer,int c)
 {

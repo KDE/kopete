@@ -21,6 +21,7 @@
 #include <qspinbox.h>
 #include <kdebug.h>
 #include <kopeteaccount.h>
+#include <kopetepasswordwidget.h>
 #include <kmessagebox.h>
 #include <klocale.h>
 #include "meanwhileprotocol.h"
@@ -47,11 +48,7 @@ MeanwhileEditAccountWidget::MeanwhileEditAccountWidget(
         mScreenName->setText(account()->accountId());
         mScreenName->setReadOnly(true); 
         mScreenName->setDisabled(true);
-        if (account()->rememberPassword())
-        {
-            mRememberPassword->setChecked(true);
-            mPassword->setText(account()->password());
-        }
+        mPasswordWidget->load(&static_cast<MeanwhileAccount*>(account())->password());
         mAutoConnect->setChecked(account()->autoConnect());
         MeanwhileAccount *myAccount = static_cast<MeanwhileAccount *>(account());
         mServerName->setText(myAccount->serverName());
@@ -84,10 +81,7 @@ Kopete::Account* MeanwhileEditAccountWidget::apply()
 
     myAccount->setAutoConnect(mAutoConnect->isChecked());
 
-    if(mRememberPassword->isChecked())
-        myAccount->setPassword(mPassword->text());
-    else
-        myAccount->setPassword(QString::null);
+    mPasswordWidget->save(&static_cast<MeanwhileAccount*>(account())->password());
 
     myAccount->setServerName(mServerName->text());
     myAccount->setServerPort(mServerPort->value());
@@ -98,14 +92,14 @@ Kopete::Account* MeanwhileEditAccountWidget::apply()
 bool MeanwhileEditAccountWidget::validateData()
 {
     if(mScreenName->text().isEmpty())
-    {   
+    {
         KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
             i18n("<qt>You must enter a valid screen name.</qt>"), 
             i18n("Meanwhile plugin"));
         return false;
     }
-    if( (mRememberPassword->isChecked()) && (mPassword->text().isEmpty()))
-    {   
+    if( !mPasswordWidget->validate() )
+    {
         KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
             i18n("<qt>You must deselect password remembering or enter a valid password.</qt>"), 
             i18n("Meanwhile plugin"));

@@ -11,7 +11,7 @@ ac_libgadu_includes=""
 ac_libgadu_libs=""
 
 AC_ARG_WITH(libgadu-includes,
-	[  --with-libgadu-includes=DIR  where the libgadu includes are. ],
+	AC_HELP_STRING([--with-libgadu-includes=DIR], [where the libgadu includes are.]),
 	[  ac_libgadu_includes="$withval" ])
 
 if test "$ac_libgadu_includes" != "" ; then
@@ -19,7 +19,7 @@ LIBGG_INCLUDES="-I$ac_libgadu_includes"
 fi
 
 AC_ARG_WITH(libgadu-libs,
-	[  --with-libgadu-libs=DIR  where the libgadu libraries are. ],
+	AC_HELP_STRING([--with-libgadu-libs=DIR], [where the libgadu libraries are.]),
 	[  ac_libgadu_libs="$withval" ])
 
 if test "$ac_libgadu_libs" != "" ; then
@@ -28,7 +28,7 @@ fi
 
 
 ac_save_LIBS="$LIBS"
-ac_save_CXXFLAGS="$CXXFLAGS"
+ac_save_CFLAGS="$CFLAGS"
 LIBS="$LIBGG_LIBS -lgadu $LIBPTHREAD"
 CFLAGS="$CFLAGS $LIBGG_INCLUDES"
 AC_MSG_CHECKING([libgadu version 1.5(rcX) with pthread support])
@@ -81,7 +81,7 @@ AC_MSG_CHECKING([libgadu version 1.5(rcX) with pthread support])
 AM_CONDITIONAL(include_gadu, test -n "$COMPILE_GADU")
 AM_CONDITIONAL(include_libggcopy, test -n "$use_libgadu_copy")
 LIBS="$ac_save_LIBS"
-CXXFLAGS="$ac_save_CXXFLAGS"
+CFLAGS="$ac_save_CFLAGS"
 
 
 if test "$use_libgadu_copy" = "yes"; then
@@ -120,7 +120,7 @@ if test "$use_libgadu_copy" = "yes"; then
 fi
 
 
-AC_ARG_WITH(libidn, AC_HELP_STRING([--with-libidn=[DIR]],
+AC_ARG_WITH(libidn, AC_HELP_STRING([--with-libidn=DIR],
             [Support IDN (needs GNU Libidn)]),
             libidn=$withval, libidn=yes)
 
@@ -157,21 +157,53 @@ AC_SUBST(IDN_LIBS)
 # default is not to compile
 # if enabled, check that meanwhile and glib headers/libs are present
 
-AC_ARG_WITH(meanwhile, [  --with-meanwhile    Compile meanwhile support for kopete], meanwhile=yes, meanwhile=no)
+MEANWHILE_INCLUDES=""
+MEANWHILE_LIBS=""
 
-if test "x$meanwhile" = "xyes" ; then
-    #TODO: check for libs/headers
+AC_ARG_WITH(libmeanwhile-includes,
+	AC_HELP_STRING([--with-libmeanwhile-includes=DIR], [where the libmeanwhile includes are.]),
+	[ if test "x$withval" != "x" ; then MEANWHILE_INCLUDES="-I$withval"; fi ]
+)
 
-    MEANWHILE_INCLUDES="-I/usr/include/meanwhile"
-    MEANWHILE_LIBS="-lmeanwhile"
-    GLIB_INCLUDES="-I/usr/lib/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/glib-2.0/glib"
-    GLIB_LIBS="-lglib-2.0"
-    
-    COMPILE_MEANWHILE=true
-    AC_SUBST(MEANWHILE_INCLUDES)
-    AC_SUBST(MEANWHILE_LIBS)
-    AC_SUBST(GLIB_INCLUDES)
-    AC_SUBST(GLIB_LIBS)
-fi
+AC_ARG_WITH(libmeanwhile-libs,
+	AC_HELP_STRING([--with-libmeanwhile-libs=DIR], [where the libmeanwhile libraries are.]),
+	[ if test "x$withval" != "x" ; then MEANWHILE_LIBS="-L$withval"; fi ]
+)
+
+#FIXME: search for glib, or maybe use pkg-config
+MEANWHILE_INCLUDES="$MEANWHILE_INCLUDES -I/usr/lib/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/include/glib-2.0/glib"
+MEANWHILE_LIBS="$MEANWHILE_LIBS -lmeanwhile -lglib-2.0"
+
+ac_save_LIBS="$LIBS"
+ac_save_CFLAGS="$CFLAGS"
+LIBS="$MEANWHILE_LIBS"
+CFLAGS="$CFLAGS $MEANWHILE_INCLUDES"
+AC_MSG_CHECKING([for libmeanwhile])
+AC_TRY_RUN(
+[
+	#include <meanwhile/meanwhile.h>
+	#include <meanwhile/st_list.h>
+	
+	int main()
+	{
+#if defined LIST_VERSION_MAJOR
+		if ( LIST_VERSION_MAJOR >= 3 )
+			return 0;
+#endif
+		return 1;
+	}
+], [
+	AC_MSG_RESULT([yes])
+	AC_SUBST(MEANWHILE_INCLUDES)
+	AC_SUBST(MEANWHILE_LIBS)
+	COMPILE_MEANWHILE=true
+	AC_SUBST(COMPILE_MEANWHILE)
+], [
+	AC_MSG_RESULT([no])
+	COMPILE_MEANWHILE=
+	AC_SUBST(COMPILE_MEANWHILE)	
+])
+LIBS="$ac_save_LIBS"
+CFLAGS="$ac_save_CFLAGS"
 
 AM_CONDITIONAL(include_meanwhile, test -n "$COMPILE_MEANWHILE")

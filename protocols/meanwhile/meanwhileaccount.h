@@ -17,13 +17,13 @@
 #ifndef MEANWHILEACCOUNT_H
 #define MEANWHILEACCOUNT_H
 
-#include <kopeteaccount.h>
+#include <kopetepasswordedaccount.h>
 
 class MeanwhileServer;
 class MeanwhileProtocol;
 class MeanwhilePlugin;
 
-class MeanwhileAccount : public Kopete::Account
+class MeanwhileAccount : public Kopete::PasswordedAccount
 {
     Q_OBJECT
 public:
@@ -37,7 +37,7 @@ public:
                         const QString &contactId,
                         Kopete::MetaContact *parentContact);
 
-    virtual void connect();
+    virtual void connectWithPassword(const QString &password);
 
     virtual void disconnect();
 

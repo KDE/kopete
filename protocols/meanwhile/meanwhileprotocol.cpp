@@ -115,7 +115,7 @@ Kopete::Contact *MeanwhileProtocol::deserializeContact(
         return 0;
     }
 
-    theAccount->addContact(contactId, serializedData["displayName"], metaContact, Kopete::Account::DontChangeKABC, serializedData["group"]);
+    theAccount->addContact(contactId, metaContact, Kopete::Account::DontChangeKABC);
     return theAccount->contacts()[contactId];
 }
 

@@ -5,5 +5,4 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 		-I$(srcdir)/.. \
 		$(all_includes)
 
-
-libkopetemeanwhileui_la_SOURCES = meanwhileeditaccountbase.ui empty.cpp meanwhileeditaccountbase.cpp meanwhileaddcontactbase.ui meanwhileaddcontactbase.cpp
+libkopetemeanwhileui_la_SOURCES = empty.cpp meanwhileeditaccountbase.ui meanwhileaddcontactbase.ui

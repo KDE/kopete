@@ -21,6 +21,7 @@
 #include "meanwhileaccount.h"
 #include "meanwhilecontact.h"
 #include "kopetemessagemanager.h"
+#include "kopetepassword.h"
 
 #include <kaction.h>
 #include <kpopupmenu.h>
@@ -41,7 +42,7 @@ MeanwhileAccount::MeanwhileAccount(
                         MeanwhileProtocol *parent,
                         const QString &accountID,
                         const char *name)
-    : Kopete::Account ( parent, accountID , name )
+    : Kopete::PasswordedAccount ( parent, accountID, 0, name )
 {
     //signal(SIGSEGV,SIG_DFL);
     //LOG("MeanwhileAccount");
@@ -116,8 +117,10 @@ bool MeanwhileAccount::createContact(
 	return newContact != NULL;
 }
 
-void MeanwhileAccount::connect()
+void MeanwhileAccount::connectWithPassword(const QString &password)
 {
+    if (password.isEmpty())
+        return;
 
     if (server==NULL)
         meanwhileGoOnline();
@@ -211,13 +214,17 @@ void MeanwhileAccount::meanwhileGoOnline()
         return;
     }
 
-    QString passwd = password();
+    QString passwd = password().cachedValue();
     if (passwd != QString::null)
     {
         INIT_SERVER()
         {
             server->login(accountId(),passwd);
         }
+    }
+    else
+    {
+        connect();
     }
 }
 
@@ -299,7 +306,7 @@ void MeanwhileAccount::slotMesgReceived(
 {
     MeanwhileContact *contact = static_cast<MeanwhileContact *>(contacts()[fromUser]);
     if(!contact)
-        addContact( fromUser, fromUser, 0L, Kopete::Account::DontChangeKABC, QString::null, true );
+        addContact( fromUser, 0L, Kopete::Account::DontChangeKABC );
 
     contact = static_cast<MeanwhileContact *>(contacts()[fromUser]);
     // Create a Kopete::Message
@@ -318,7 +325,7 @@ void MeanwhileAccount::slotUserTyping(
 {
     MeanwhileContact *contact = static_cast<MeanwhileContact *>(contacts()[user]);
     if(!contact)
-        addContact( user, user, 0L, Kopete::Account::DontChangeKABC, QString::null, true );
+        addContact( user, 0L, Kopete::Account::DontChangeKABC );
 
     contact = static_cast<MeanwhileContact *>(contacts()[user]);
     // Create a Kopete::Message
