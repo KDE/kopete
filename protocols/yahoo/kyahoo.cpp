@@ -690,7 +690,6 @@ void YahooSession::_gotBuddiesReceiver(YList * buds)
 {
 	kdDebug(14180) << k_funcinfo << endl;
 
-
 	YList *l;
 
 	for (l = buds; l; l = l->next)
@@ -870,7 +869,6 @@ void YahooSession::_errorReceiver(char *err, int fatal)
 int YahooSession::_logReceiver(char */*fmt*/, ...)
 {
 	kdDebug(14180) << k_funcinfo << endl;
-	//emit
 	return 0;
 }
 
@@ -958,7 +956,7 @@ int YahooSession::_hostAsyncConnectReceiver(char *host, int port,  yahoo_connect
 	m_socket = new KExtendedSocket( host, port );
 
 	// TODO Do an async connect in the future
-	error = m_socket->startAsyncConnect();
+	error = m_socket->connect();
 
 	if (!error)
 	{
@@ -988,7 +986,7 @@ void YahooSession::slotReadReady()
 {
 	int ret = 1;
 	int fd = m_socket->fd();
-	kdDebug(14180) << k_funcinfo << fd << endl;
+	kdDebug(14180) << k_funcinfo << "Socket FD: " << fd << endl;
 
 	ret = yahoo_read_ready( m_connId , fd, m_data);
 
@@ -1003,7 +1001,7 @@ void YahooSession::slotWriteReady()
 {
 	int ret = 1;
 	int fd = m_socket->fd();
-	kdDebug(14180) << k_funcinfo << fd << endl;
+	kdDebug(14180) << k_funcinfo << "Socket FD: " << fd << endl;
 
 	ret = yahoo_write_ready( m_connId , fd, m_data);
 
