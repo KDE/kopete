@@ -95,23 +95,26 @@ private slots:
 	 */
 	void slotIncomingToggled( bool toggled );
 
-	void addMessage( KopeteMessage::MessageDirection dir, QString nick, QString date, QString body );
+//	void addMessage( KopeteMessage::MessageDirection dir, QString nick, QString date, QString body );
 
 
 
 private:
 	void buildWidget( int count );
 
-	void refreshEnabled( );
+
+
+	enum Disabled { Prev=1 , Next=2 };
+	void refreshEnabled( /*Disabled*/ uint disabled );
+
+	void setMessages(QValueList<KopeteMessage> m);
 
 
 	// the actual log view
 	KTextBrowser *mHistoryView;
 
-	// where to start reading
-	int msgStart;
 	// amount of entries to read at once
-	int msgCount;
+	unsigned int msgCount;
 
 	// main layout
 	QGridLayout *layout;
@@ -158,6 +161,9 @@ private:
 
 	HistoryLogger *m_logger;
 
+
+	KopeteContact *m_contact;
+	KopeteMetaContact *m_metaContact;
 
 };
 

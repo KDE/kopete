@@ -61,6 +61,8 @@ void HistoryPreferences::save()
 	config->writeEntry("Number ChatWindow",  m_widget->nbChatWindow->value() );
 	config->writeEntry("History Color",  m_widget->m_color->color() );
 
+	config->writeEntry("Version",  "0.7" );
+
 	config->sync();
 }
 

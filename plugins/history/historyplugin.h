@@ -45,6 +45,15 @@ public:
 	virtual KActionCollection *customContextMenuActions(KopeteMetaContact *m);
 	virtual KActionCollection *customChatActions(KopeteMessageManager *KMM);
 
+	/*
+	 * convert the Kopete 0.6 / 0.5 history to the new format
+	 */
+	static void convertOldHistory();
+	/**
+	 * return true if an old history has been detected, and no new ones
+	 */
+	static bool detectOldHistory();
+
 
 private slots:
 	void slotMessageDisplayed(KopeteMessage &msg);
@@ -54,8 +63,6 @@ private slots:
 	void slotLast();
 	void slotNext();
 	void slotKMMClosed( KopeteMessageManager* );
-
-	void addMessage(KopeteMessage::MessageDirection dir, QString nick, QString date, QString body);
 
 private:
 	KopeteMetaContact *m_currentMetaContact;

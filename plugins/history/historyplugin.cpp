@@ -14,24 +14,20 @@
     *************************************************************************
 */
 
-#include <qregexp.h>
-#include <qstylesheet.h>
-#include <qdir.h>
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
-#include <kstandarddirs.h>
 #include <kaction.h>
+#include <kmessagebox.h>
 
 #include "kopetemessagemanagerfactory.h"
-#include "kopeteprotocol.h"
 #include "kopetemetacontact.h"
-#include "historylogger.h"
 #include "kopeteview.h"
-#include "historypreferences.h"
 
 #include "historydialog.h"
 #include "historyplugin.h"
+#include "historylogger.h"
+#include "historypreferences.h"
 
 
 
@@ -45,6 +41,15 @@ HistoryPlugin::HistoryPlugin( QObject *parent, const char *name, const QStringLi
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL( viewCreated( KopeteView* ) ), this, SLOT( slotViewCreated( KopeteView* ) ) );
 
 	m_prefs=new HistoryPreferences(this);
+
+	if(detectOldHistory())
+	{
+		if( KMessageBox::questionYesNo( 0L , i18n( "Old History files from Kopete 0.6.x or older has been detected\n"
+				"Do you want to import and convert it to the new history format?" ) , i18n( "History Plugin" ) ) == KMessageBox::Yes )
+		{
+			convertOldHistory();
+		}
+	}
 }
 
 HistoryPlugin::~HistoryPlugin()
@@ -53,6 +58,24 @@ HistoryPlugin::~HistoryPlugin()
 
 void HistoryPlugin::slotMessageDisplayed(KopeteMessage &m)
 {
+	if(m.direction()==KopeteMessage::Internal)
+		return;
+
+
+	if(!m_loggers.contains(m.manager()))
+	{
+		QPtrList<KopeteContact> mb=m.manager()->members();
+		m_loggers.insert(m.manager() , new HistoryLogger(mb.first() , m_prefs->historyColor() ,  this));
+		connect( m.manager() , SIGNAL(closing(KopeteMessageManager*)) , this , SLOT(slotKMMClosed(KopeteMessageManager*)));
+	}
+
+	HistoryLogger *l=m_loggers[m.manager()];
+	l->appendMessage(m);
+
+
+
+///////////////////////////  SAVE TO KOPETE 0.6 LOGS ////REMOVE!!!!!!!
+/*
 	if(m.direction()==KopeteMessage::Internal)
 		return;
 
@@ -139,9 +162,9 @@ void HistoryPlugin::slotMessageDisplayed(KopeteMessage &m)
 	stream << "</message>" << endl;
 	stream << endl;
 
-	/* Sync to disk */
+	// Sync to disk
 	stream.device()->flush();
-
+*/
 }
 
 KActionCollection *HistoryPlugin::customContextMenuActions(KopeteMetaContact *m)
@@ -177,68 +200,66 @@ void HistoryPlugin::slotViewHistory()
 
 void HistoryPlugin::slotPrevious()
 {
+	QPtrList<KopeteContact> mb=m_currentMessageManager->members();
 	if(!m_loggers.contains(m_currentMessageManager))
 	{
-		QPtrList<KopeteContact> mb=m_currentMessageManager->members();
-		m_loggers.insert(m_currentMessageManager , new HistoryLogger(mb.first() , this));
+		m_loggers.insert(m_currentMessageManager , new HistoryLogger(mb.first() , m_prefs->historyColor(), this));
 		connect( m_currentMessageManager , SIGNAL(closing(KopeteMessageManager*)) , this , SLOT(slotKMMClosed(KopeteMessageManager*)));
 	}
 
 	m_currentView=m_currentMessageManager->view();
 	m_currentView->clear();
 	HistoryLogger *l=m_loggers[m_currentMessageManager];
-	int pos=l->currentPos();
-	if(pos==-1)
-		pos=l->totalMessages();
-	connect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));
-	l->readLog(pos-m_prefs->nbChatwindow() , m_prefs->nbChatwindow());
-	disconnect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));
+	m_currentView->appendMessages( l->readMessages(m_prefs->nbChatwindow() , mb.first() /*FIXME*/ , HistoryLogger::AntiChronological , true));
+//	int pos=l->currentPos();
+//	if(pos==-1)
+//		pos=l->totalMessages();
+//	connect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));
+	//l->readLog(pos-m_prefs->nbChatwindow() , m_prefs->nbChatwindow());
+//	disconnect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));
+
+
 }
 
 void HistoryPlugin::slotLast()
 {
+	QPtrList<KopeteContact> mb=m_currentMessageManager->members();
 	if(!m_loggers.contains(m_currentMessageManager))
 	{
-		QPtrList<KopeteContact> mb=m_currentMessageManager->members();
-		m_loggers.insert(m_currentMessageManager , new HistoryLogger(mb.first() , this));
+		m_loggers.insert(m_currentMessageManager , new HistoryLogger(mb.first() , m_prefs->historyColor(), this));
 		connect( m_currentMessageManager , SIGNAL(closing(KopeteMessageManager*)) , this , SLOT(slotKMMClosed(KopeteMessageManager*)));
 	}
 
 	m_currentView=m_currentMessageManager->view();
 	m_currentView->clear();
 	HistoryLogger *l=m_loggers[m_currentMessageManager];
+	l->setPositionToLast();
+	m_currentView->appendMessages( l->readMessages(m_prefs->nbChatwindow() , mb.first() /*FIXME*/ , HistoryLogger::AntiChronological , true ));
+/*
 	int pos=l->totalMessages();
 	connect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));
 	l->readLog(pos-m_prefs->nbChatwindow() , m_prefs->nbChatwindow());
-	disconnect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));
+	disconnect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));*/
 }
 void HistoryPlugin::slotNext()
 {
+	QPtrList<KopeteContact> mb=m_currentMessageManager->members();
 	if(!m_loggers.contains(m_currentMessageManager))
 	{
-		QPtrList<KopeteContact> mb=m_currentMessageManager->members();
-		m_loggers.insert(m_currentMessageManager , new HistoryLogger(mb.first() , this));
+		m_loggers.insert(m_currentMessageManager , new HistoryLogger(mb.first() , m_prefs->historyColor(), this));
 		connect( m_currentMessageManager , SIGNAL(closing(KopeteMessageManager*)) , this , SLOT(slotKMMClosed(KopeteMessageManager*)));
 	}
-
 	m_currentView=m_currentMessageManager->view();
 	m_currentView->clear();
 	HistoryLogger *l=m_loggers[m_currentMessageManager];
+	m_currentView->appendMessages( l->readMessages(m_prefs->nbChatwindow() , mb.first() /*FIXME*/ , HistoryLogger::Chronological , false));
+	/*
 	int pos=l->currentPos();
 	if(pos==-1)
 		pos=l->totalMessages();
 	connect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));
 	l->readLog(pos+m_prefs->nbChatwindow() , m_prefs->nbChatwindow());
-	disconnect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));
-}
-
-void HistoryPlugin::addMessage( KopeteMessage::MessageDirection dir, QString /* nick */, QString /* date */, QString body )
-{
-	//TODO: use nick and date
-	QPtrList<KopeteContact> mb=m_currentMessageManager->members();
-	KopeteMessage msg( (dir==KopeteMessage::Inbound) ? mb.first() : m_currentMessageManager->user() , m_currentMessageManager->members() , body , dir );
-	msg.setFg(m_prefs->historyColor());
-	m_currentView->appendMessage(msg);
+	disconnect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));*/
 }
 
 void HistoryPlugin::slotViewCreated( KopeteView* v )
@@ -247,20 +268,24 @@ void HistoryPlugin::slotViewCreated( KopeteView* v )
 		return;
 
 	m_currentMessageManager=v->msgManager();
+	QPtrList<KopeteContact> mb=m_currentMessageManager->members();
 	m_currentView=v;
 
 	if(!m_loggers.contains(v->msgManager()))
 	{
-		QPtrList<KopeteContact> mb=m_currentMessageManager->members();
-		m_loggers.insert(v->msgManager() , new HistoryLogger(mb.first() , this));
+		m_loggers.insert(v->msgManager() , new HistoryLogger(mb.first(), m_prefs->historyColor() , this));
 		connect( v->msgManager() , SIGNAL(closing(KopeteMessageManager*)) , this , SLOT(slotKMMClosed(KopeteMessageManager*)));
 	}
 
 	HistoryLogger *l=m_loggers[m_currentMessageManager];
+	l->setPositionToLast();
+	m_currentView->appendMessages( l->readMessages(m_prefs->nbAutoChatwindow() , mb.first() /*FIXME*/ , HistoryLogger::AntiChronological , true ));
+
+	/*
 	connect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));
 	l->readLog(l->totalMessages()-m_prefs->nbAutoChatwindow() , m_prefs->nbAutoChatwindow());
 	disconnect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));
-
+*/
 }
 
 void HistoryPlugin::slotKMMClosed( KopeteMessageManager* kmm)
@@ -269,10 +294,5 @@ void HistoryPlugin::slotKMMClosed( KopeteMessageManager* kmm)
 	m_loggers.remove(kmm);
 }
 
-
-
-
 #include "historyplugin.moc"
-
-
 

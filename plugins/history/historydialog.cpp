@@ -47,13 +47,13 @@ HistoryDialog::HistoryDialog( KopeteContact *mContact, bool showclose, int count
 
 	showButton(KDialogBase::Close, showclose); // hide Close button if showClose is false
 
-	m_logger= new HistoryLogger(mContact,this);
-	m_logger->setReversed(true);
-	connect(m_logger, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));
+	m_logger= new HistoryLogger(mContact,QColor(),this);
+
+	m_metaContact=mContact->metaContact();
+	m_contact=mContact;
 
 
 	buildWidget(count);
-
 
 	// show the dialog before people get impatient
 	show();
@@ -69,18 +69,19 @@ HistoryDialog::HistoryDialog( KopeteMetaContact *mContact, bool showClose, int c
 
 	showButton(KDialogBase::Close, showClose); // hide Close button if showClose is false
 
-	m_logger= new HistoryLogger(mContact->contacts().first(),this);
-	m_logger->setReversed(true);
-	connect(m_logger, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));
+	m_logger= new HistoryLogger(mContact,QColor(),this);
+
+	m_metaContact=mContact;
+	m_contact=0L;
 
 
 	buildWidget(count);
-
 
 	// show the dialog before people get impatient
 	show();
 
 	init();
+
 }
 
 
@@ -88,7 +89,7 @@ HistoryDialog::HistoryDialog( KopeteMetaContact *mContact, bool showClose, int c
 
 void HistoryDialog::buildWidget(int count)
 {
-	msgStart = 0; // always display newest message first
+//	msgStart = 0; // always display newest message first
 	msgCount = count; // 50 by default
 	mUser = "";
 	mSuperBuffer = "";
@@ -184,87 +185,101 @@ void HistoryDialog::buildWidget(int count)
 	connect( mIncoming, SIGNAL(toggled(bool)), this, SLOT(slotIncomingToggled(bool)));
 	connect( mSearchButton, SIGNAL(clicked()), this, SLOT(slotSearchClicked()));
 
-	refreshEnabled();
+	refreshEnabled(Prev|Next);
 }
 
 void HistoryDialog::init()
 {
-	mSuperBuffer=QString::null;
-	optionsBox->setEnabled( false );
-	m_logger->readLog(0 , msgCount);
-	mHistoryView->setText(mSuperBuffer);
-	refreshEnabled();
+	slotBackClicked();
 }
 
-void HistoryDialog::addMessage(KopeteMessage::MessageDirection dir, QString nick, QString date, QString body)
+void HistoryDialog::setMessages(QValueList<KopeteMessage> msgs)
 {
-	kdDebug(14010) << k_funcinfo << "received message: " << body << endl;
-	QString message = QString::fromLatin1( "<table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">" );
+	QString mSuperBuffer;
+	QValueList<KopeteMessage>::iterator it;
+    for ( it = msgs.begin(); it != msgs.end(); ++it )
+	{
+		KopeteMessage msg=*it;
 
-	if( dir == KopeteMessage::Inbound )
-	{
-		message += QString::fromLatin1( "<tr><td><font color=\"#0360B1\"><b>" ) +
-			i18n( "Message from %1 at %2:" ).arg( nick ).arg( date );
-	}
-	else
-	{
-		message += QString::fromLatin1( "<tr><td><font color=\"#E11919\"><b>" ) +
-			i18n( "Message to %1 at %2:" ).arg( nick ).arg( date );
-	}
+		QString message = QString::fromLatin1( "<table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">" );
 
-	message += QString::fromLatin1(
-		"</b></font></td></tr></table>\n"
-		"<table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\"><tr><td>" ) +
-		body.stripWhiteSpace() + QString::fromLatin1( "</tr></td></table><br><br>" );
-
-	if( mSuperBuffer.isEmpty() )
-	{
-		mSuperBuffer = message + QString::fromLatin1( "\n" );
-	}
-	else
-	{
-		if( mReverse->isOn() )
-			mSuperBuffer += message + '\n';
+		if( msg.direction() == KopeteMessage::Inbound )
+		{
+			message += QString::fromLatin1( "<tr><td><font color=\"#0360B1\"><b>" ) +
+				i18n( "Message from %1 at %2:" ).arg( msg.from()->displayName() ).arg( msg.timestamp().toString() );
+		}
 		else
-			mSuperBuffer.prepend( message + '\n' );
+		{
+			message += QString::fromLatin1( "<tr><td><font color=\"#E11919\"><b>" ) +
+				i18n( "Message to %1 at %2:" ).arg( msg.to().first()->displayName() ).arg( msg.timestamp().toString() );
+		}
+
+		message += QString::fromLatin1(
+			"</b></font></td></tr></table>\n"
+			"<table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\"><tr><td>" ) + msg.parsedBody().stripWhiteSpace()
+			 + QString::fromLatin1( "</tr></td></table>" );
+
+		if( mSuperBuffer.isEmpty() )
+			mSuperBuffer = message + QString::fromLatin1( "\n" );
+		else
+			mSuperBuffer += message + '\n';
 	}
+	mHistoryView->setText(mSuperBuffer);
 }
+
 
 void HistoryDialog::slotPrevClicked()
 {
-	msgStart -= msgCount;
-	mSuperBuffer = "";
-	refreshEnabled();
-	m_logger->readLog(msgStart , msgCount);
-	mHistoryView->setText(mSuperBuffer);
+	QValueList<KopeteMessage> msgs=m_logger->readMessages(msgCount, m_contact, !mReverse->isChecked() ? HistoryLogger::Chronological : HistoryLogger::AntiChronological , true );
+	if(msgs.count() < msgCount)
+		refreshEnabled(Prev);
+	else
+		refreshEnabled(0);
+
+	setMessages(msgs);
 }
 
 void HistoryDialog::slotNextClicked()
 {
-	msgStart += msgCount;
-	mSuperBuffer = "";
-	refreshEnabled();
-	m_logger->readLog(msgStart, msgCount);
-	mHistoryView->setText(mSuperBuffer);
+	QTime t;
+	t.start();
+	QValueList<KopeteMessage> msgs=m_logger->readMessages(msgCount, m_contact, mReverse->isChecked() ? HistoryLogger::Chronological : HistoryLogger::AntiChronological , false );
+	if(msgs.count() < msgCount)
+		refreshEnabled(Next);
+	else
+		refreshEnabled(0);
+
+	setMessages(msgs);
 }
 
 void HistoryDialog::slotBackClicked()
 {
-	msgStart = 0;
-	mSuperBuffer = "";
-	refreshEnabled();
-	m_logger->readLog(msgStart, msgCount);
-	mHistoryView->setText(mSuperBuffer);
+	if(mReverse->isChecked())
+		m_logger->setPositionToFirst();
+	else
+		m_logger->setPositionToLast();
+	QValueList<KopeteMessage> msgs=m_logger->readMessages(msgCount, m_contact, mReverse->isChecked() ? HistoryLogger::Chronological : HistoryLogger::AntiChronological  , false );
+	if(msgs.count() < msgCount)
+		refreshEnabled(Next | Prev);
+	else
+		refreshEnabled(Prev);
+
+	setMessages(msgs);
 }
 
 void HistoryDialog::slotForwardClicked()
 {
-	msgStart = m_logger->totalMessages()-msgCount;
-	mSuperBuffer = "";
+	if(!mReverse->isChecked())
+		m_logger->setPositionToFirst();
+	else
+		m_logger->setPositionToLast();
+	QValueList<KopeteMessage> msgs=m_logger->readMessages(msgCount, m_contact, !mReverse->isChecked() ? HistoryLogger::Chronological : HistoryLogger::AntiChronological  , true );
+	if(msgs.count() < msgCount)
+		refreshEnabled(Next | Prev);
+	else
+		refreshEnabled(Next);
 
-	refreshEnabled();
-	m_logger->readLog(msgStart, msgCount);
-	mHistoryView->setText(mSuperBuffer);
+	setMessages(msgs);
 }
 
 void HistoryDialog::slotSearchClicked()
@@ -407,37 +422,26 @@ void HistoryDialog::slotSearchClicked()
 */
 }
 
-void HistoryDialog::slotReversedToggled( bool  b  )
+void HistoryDialog::slotReversedToggled( bool    )
 {
-	// FIXME: Honour the bool!
-	mSuperBuffer = "";
+/*	mSuperBuffer = "";
 	msgStart = 0;
-	m_logger->setReversed( !b );
 	m_logger->readLog(msgStart,msgCount);
 	mHistoryView->setText(mSuperBuffer);
-	refreshEnabled();
+	refreshEnabled();*/
+	slotBackClicked();
 }
 
 void HistoryDialog::slotIncomingToggled( bool  b  )
 {
-	mSuperBuffer = "";
-	msgStart = 0;
 	m_logger->setHideOutgoing( b );
-	m_logger->readLog(msgStart,msgCount);
-	mHistoryView->setText(mSuperBuffer);
-	refreshEnabled();
+	slotBackClicked();
 }
 
 
-void HistoryDialog::refreshEnabled( )
+void HistoryDialog::refreshEnabled( /*Disabled */ uint disabled)
 {
-	if(msgStart < 0)
-		msgStart=0;
-
-	if(msgStart+msgCount > m_logger->totalMessages())
-		msgStart=m_logger->totalMessages()-msgCount;
-
-	if (msgStart <= 0)
+	if ( disabled & Prev)
 	{
 		mPrevious->setEnabled(false);
 		mBack->setEnabled(false);
@@ -447,7 +451,8 @@ void HistoryDialog::refreshEnabled( )
 		mPrevious->setEnabled(true);
 		mBack->setEnabled(true);
 	}
-	if (msgStart+msgCount >= m_logger->totalMessages())
+
+	if ( disabled & Next)
 	{
 		mNext->setEnabled( false );
 		mForward->setEnabled( false );
@@ -457,7 +462,7 @@ void HistoryDialog::refreshEnabled( )
 		mForward->setEnabled( true );
 		mNext->setEnabled(true);
 	}
-
+/*
 	if ( m_logger->totalMessages() == 0 )
 	{
 		//There are no messages for this contact
@@ -465,10 +470,10 @@ void HistoryDialog::refreshEnabled( )
 		optionsBox->setEnabled( false );
 	}
 	else
-	{
+	{*/
 		// enable the options GroupBox
 		optionsBox->setEnabled( true );
-	}
+	//}
 
 }
 
