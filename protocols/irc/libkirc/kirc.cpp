@@ -1212,8 +1212,8 @@ bool KIRC::CtcpReply_version(const KIRCMessage &msg)
 
 bool KIRC::CtcpQuery_userInfo(const KIRCMessage &msg)
 {
-	writeCtcpReplyMessage(	msg.prefix(), QString::null,
-				msg.ctcpMessage().command(), QStringList(), QString::null, m_UserString);
+	writeCtcpReplyMessage( msg.prefix(), QString::null,
+				msg.ctcpMessage().command(), QStringList(), QString::null, !m_UserString.isEmpty() );
 	return true;
 }
 
@@ -1271,8 +1271,8 @@ void KIRC::requestDccConnect(const QString &nickname, const QString &filename, u
 
 		writeCtcpQueryMessage(nickname, QString::null,
 			QString("DCC"),
-			QStringList(QString::fromLatin1("SEND")) << QString::fromLatin1(noWhiteSpace) <<
-			m_sock.localAddress()->nodeName() << QString::number(port) << QString::number(file.size()));
+			QStringList( QString::fromLatin1( "SEND" ) ) << noWhiteSpace <<
+			    m_sock.localAddress()->nodeName() << QString::number( port ) << QString::number( file.size() ) );
 	}
 }
 

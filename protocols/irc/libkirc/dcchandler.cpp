@@ -130,7 +130,11 @@ void DCCClient::slotReadyRead()
 {
 	while(canReadLine())
 	{
-		QString message = codec->toUnicode(readLine());
+		// FIXME: readLine already returns a QString (i.e.
+		// unicode, it makes no sense to call QTextCodec
+		// methods on it at all! Use readBlock() instead.
+		// - Martijn
+		QString message = codec->toUnicode( readLine().utf8() );
 		message.replace(QRegExp("[\\r\\n]*$"), "");
 		emit incomingDccMessage(message, false);
 	}

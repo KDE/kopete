@@ -82,7 +82,13 @@ KIRCMessage KIRCMessage::writeString(QIODevice *dev, const QString &str, QTextCo
 	QCString s;
 	QString txt = str + QString::fromLatin1("\r\n");
 
-	QTextCodec *_codec = codec?codec:QTextCodec::codecForContent(txt, txt.length());
+	// FIXME: codecForContent() is useless on QStrings, they are already unicode!
+	// Pass a REAL char* like QSocket::readBlock() provides before doing any
+	// charset conversion.
+	// Also, codecForContent is quite crappy. See the Qt docs, but I would suggest
+	// defaulting to utf8 encoding in IRC and having OPTIONAL support for other
+	// codecs (manually selectable, not auto-detected). - Martijn
+	QTextCodec *_codec = codec ? codec : QTextCodec::codecForContent( txt.latin1(), txt.length() );
 	if (codec)
 		s = _codec->fromUnicode(txt);
 	else
@@ -184,7 +190,7 @@ KIRCMessage KIRCMessage::parse(const QString &line, bool *parseSuccess)
 	KIRCMessage msg;
 
 	if(parseSuccess) *parseSuccess=false;
-	msg.m_raw = unquote(line);
+	msg.m_raw = unquote( line ).utf8();
 	if(matchForIRCRegExp(msg.m_raw, msg))
 	{
 		msg.m_prefix = ctcpUnquote(msg.m_prefix);
@@ -197,7 +203,7 @@ KIRCMessage KIRCMessage::parse(const QString &line, bool *parseSuccess)
 			msg.m_ctcpRaw = ctcpUnquote(msg.m_ctcpRaw);
 			kdDebug(14121) << "Found CTCP command:\"" << msg.m_ctcpRaw << "\"" << endl;
 			msg.m_ctcpMessage = new KIRCMessage();
-			msg.m_ctcpMessage->m_raw = msg.m_ctcpRaw;
+			msg.m_ctcpMessage->m_raw = msg.m_ctcpRaw.utf8();
 			if(!matchForIRCRegExp(msg.m_ctcpRaw, *msg.m_ctcpMessage))
 			{
 				msg.m_ctcpMessage->m_command = msg.m_ctcpRaw.section(' ', 0, 0).upper();
