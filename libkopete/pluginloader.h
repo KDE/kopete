@@ -97,7 +97,7 @@ public:
 	 * This is needed for the Plugin-List-View
 	 * to see what plugins are required to show
 	 * (when required by another noatun-plugin)
-	**/
+	 */
 	KopeteLibraryInfo getInfo(const QString &spec) const;
 	QPtrList<KopetePlugin> plugins() const;
 
@@ -107,6 +107,9 @@ public:
 	 * Returns an empty QStringList if the plugin is invalid.
 	 */
 	QStringList addressBookFields( KopetePlugin *p ) const;
+
+signals:
+	void pluginLoaded(KopetePlugin *);
 
 private slots:
 	/**
@@ -124,14 +127,11 @@ private:
 	 * The list of all address book keys used by each plugin
 	 */
 	QMap<KopetePlugin *, QStringList> m_addressBookFields;
-    
+
 	/**
 	 * A cache for plugin info, to avoid reparsing (and hence mutable)
 	 */
 	mutable QMap<QString, KopeteLibraryInfo> m_cachedInfo;
-
-signals: // Signals
-	void pluginLoaded(KopetePlugin *);
 };
 
 #endif

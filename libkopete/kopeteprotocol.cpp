@@ -36,15 +36,26 @@ bool KopeteProtocol::unload()
 }
 
 
-QString KopeteProtocol::icon() const
+QString KopeteProtocol::statusIcon() const
 {
-	return m_icon;
+	return m_statusIcon;
 }
 
-void KopeteProtocol::setIcon( const QString &icon )
+void KopeteProtocol::setStatusIcon( const QString &icon )
 {
-	m_icon = icon;
+	if( icon != m_statusIcon )
+	{
+		m_statusIcon = icon;
+		emit( statusIconChanged( this, icon ) );
+	}
 }
 
+KActionMenu* KopeteProtocol::protocolActions()
+{
+	return 0L;
+}
+
+#include "kopeteprotocol.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
+

@@ -25,6 +25,8 @@
 
 #include "kopeteplugin.h"
 
+class KActionMenu;
+
 class AddContactPage;
 class KopeteContact;
 class KopeteFileTransferInfo;
@@ -36,6 +38,8 @@ class KopeteTransfer;
  */
 class KopeteProtocol : public KopetePlugin
 {
+	Q_OBJECT
+
 public:
 	KopeteProtocol(QObject *parent = 0L, const char *name = 0L);
 	virtual ~KopeteProtocol();
@@ -43,7 +47,7 @@ public:
 	/**
 	 * Protocol API. Must be reimplemented
 	 */
- 	virtual bool unload();
+	virtual bool unload();
 	virtual QString protocolIcon() const = 0;
 	virtual void Connect()=0;
 	virtual void Disconnect()=0;
@@ -62,12 +66,11 @@ public:
 	virtual AddContactPage *createAddContactWidget(QWidget *parent)=0;
 
 	/**
-	 * The icon of the plugin as shown in the status bar
-	 *
-	 * WARNING: For future use, not implemented yet! - Martijn
+	 * The icon of the plugin as shown in the status bar. .mng animations
+	 * are supported too, but tried last for performance reasons
 	 */
-	QString icon() const;
-	void setIcon( const QString &icon );
+	QString statusIcon() const;
+	void setStatusIcon( const QString &icon );
 
 	/**
 	 * Return whether the protocol supports offline messages.
@@ -78,6 +81,17 @@ public:
 	bool canSendOffline() const { return false; }
 
 	/**
+	 * Return a KActionMenu using a custom menu to plug into e.g. the system
+	 * tray icon and the protocol icon in the status bar, but maybe elsewhere
+	 * too.
+	 * The default implementation returns a null pointer, to disable any menu.
+	 *
+	 * Note that you are responsible for allocating and deleting the
+	 * KActionMenu yourself (as far as Qt's API doesn't do it for you ).
+	 */
+	virtual KActionMenu* protocolActions();
+
+	/**
 	 * Function has to be reimplemented in every single protocol
 	 * and return the KopeteContact associated with the 'home' user.
 	 *
@@ -85,9 +99,16 @@ public:
 	 */
 	virtual KopeteContact* myself() const=0;
 
-private:
-	QString m_icon;
+signals:
+	/**
+	 * The status icon changed. See also @ref setStatusIcon().
+	 * This signal is only emitted if the new icon is different from
+	 * the previous icon.
+	 */
+	void statusIconChanged( KopeteProtocol *protocol, const QString &icon );
 
+private:
+	QString m_statusIcon;
 };
 
 #endif

@@ -24,6 +24,7 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include <kiconloader.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
 #include <kstdaction.h>
@@ -39,9 +40,11 @@
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
-#include "systemtray.h"
-
 #include "kopeteprefs.h"
+#include "kopeteprotocol.h"
+#include "pluginloader.h"
+#include "systemtray.h"
+#include "statusbaricon.h"
 
 KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 : KMainWindow( parent, name )
@@ -68,6 +71,11 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	// TODO: make the configurable
 	isClosing=false;
 	tray->show();
+
+	// Trap all loaded plugins, so we can add their status bar icons accordingly
+	connect( kopeteapp->libraryLoader(),
+		SIGNAL( pluginLoaded( KopetePlugin * ) ),
+		this, SLOT( slotPluginLoaded( KopetePlugin * ) ) );
 }
 
 void KopeteWindow::initView ( void )
@@ -340,6 +348,63 @@ void KopeteWindow::slotQuit()
 	isClosing=true;
 	
 	kopeteapp->quit();
+}
+
+void KopeteWindow::slotPluginLoaded( KopetePlugin *p )
+{
+	kdDebug() << "KopeteWindow::slotPluginLoaded()" << endl;
+
+	KopeteProtocol *proto = dynamic_cast<KopeteProtocol *>( p );
+	if( !proto )
+		return;
+
+	connect( proto,
+		SIGNAL( statusIconChanged( KopeteProtocol *, const QString & ) ),
+		SLOT( slotProtocolStatusIconChanged( KopeteProtocol *,
+		const QString & ) ) );
+	connect( proto, SIGNAL( destroyed( QObject * ) ),
+		SLOT( slotProtocolDestroyed( QObject * ) ) );
+
+	StatusBarIcon *i = new StatusBarIcon( proto, statusBar() );
+	connect( i, SIGNAL( rightClicked( KopeteProtocol *, const QPoint & ) ),
+		SLOT( slotProtocolStatusIconRightClicked( KopeteProtocol *,
+		const QPoint & ) ) );
+
+	i->setPixmap( SmallIcon( proto->statusIcon() ) );
+	m_statusBarIcons.insert( proto, i );
+}
+
+void KopeteWindow::slotProtocolDestroyed( QObject *o )
+{
+	kdDebug() << "KopeteWindow::slotProtocolDestroyed()" << endl;
+
+	StatusBarIcon *i = static_cast<StatusBarIcon *>( m_statusBarIcons[ o ] );
+	if( !i )
+		return;
+
+	delete i;
+	m_statusBarIcons.remove( o );
+}
+
+void KopeteWindow::slotProtocolStatusIconChanged( KopeteProtocol * p,
+	const QString &icon )
+{
+	kdDebug() << "KopeteWindow::slotProtocolStatusIconChanged()" << endl;
+
+	StatusBarIcon *i = static_cast<StatusBarIcon *>( m_statusBarIcons[ p ] );
+	if( !i )
+		return;
+
+	i->setPixmap( SmallIcon( icon ) );
+}
+
+void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
+	const QPoint &p )
+{
+	kdDebug() << "KopeteWindow::slotProtocolStatusIconRightClicked()" << endl;
+	KActionMenu *menu = proto->protocolActions();
+	if( menu )
+		menu->popup( p );
 }
 
 #include "kopetewindow.moc"

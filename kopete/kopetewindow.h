@@ -19,59 +19,88 @@
 #ifndef KOPETEWINDOW_H
 #define KOPETEWINDOW_H
 
+#include <qptrdict.h>
+
 #include <kmainwindow.h>
 
-
 class QLabel;
+class QListViewItem;
+
 class KAction;
 class KActionMenu;
-class KToggleAction;
 class KSelectAction;
-class KopeteSystemTray;
-class QListViewItem;
+class KToggleAction;
+
 class KopeteContactListView;
+class KopetePlugin;
+class KopeteProtocol;
+class KopeteSystemTray;
+class StatusBarIcon;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
- *
  */
-
 class KopeteWindow : public KMainWindow
 {
-Q_OBJECT
+	Q_OBJECT
 
 public:
-	KopeteWindow ( QWidget *parent=0, const char *name=0 );
+	KopeteWindow ( QWidget *parent = 0, const char *name = 0 );
 	~KopeteWindow();
 
 protected:
-	virtual void closeEvent(QCloseEvent*);
+	virtual void closeEvent( QCloseEvent *ev );
 	virtual bool queryExit();
 
 private slots:
 	void showToolbar();
 	void showMenubar();
 	void showStatusbar();
-	void slotToggleShowOffliners(void);
-	void slotConfigChanged(void);
-	void slotConfKeys(void);
-	void slotConfToolbar(void);
+	void slotToggleShowOffliners();
+	void slotConfigChanged();
+	void slotConfKeys();
+	void slotConfToolbar();
 
 	void slotQuit();
+
+	/**
+	 * Get a notification when a plugin is loaded, so we can add a status bar
+	 * icon if it's a protocol
+	 */
+	void slotPluginLoaded( KopetePlugin *p );
+
+	/**
+	 * Cleanup the status bar icon when the plugin is destroyed
+	 */
+	void slotProtocolDestroyed( QObject *o );
+
+	/**
+	 * The status icon got changed, update it.
+	 * Note that iconName can also be a .mng movie instead of an icon.
+	 */
+	void slotProtocolStatusIconChanged( KopeteProtocol *proto,
+		const QString &iconName );
+
+	/**
+	 * Show a context icon for a protocol
+	 */
+	void slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
+		const QPoint &p );
+
 public:
 	KopeteContactListView *contactlist;
 
 	// Some Actions
 	KAction* actionAddContact;
-	
+
 	KActionMenu* actionConnectionMenu;
 	KAction* actionConnect;
 	KAction* actionDisconnect;
-	
+
 	KActionMenu* actionAwayMenu;
 	KAction* actionSetAway;
 	KAction* actionSetAvailable;
-	
+
 	KAction* actionPrefs;
 	KAction* actionQuit;
 	KAction* actionSave;
@@ -91,15 +120,17 @@ private:
 	void saveOptions(void);
 
 	bool isClosing;
+
+	/**
+	 * This is really a dictionary of StatusBarIcon objects, but
+	 * QPtrDict requires a full class definition to be known to make
+	 * that work. And since I don't want to include that whole file here,
+	 * use QObject instead.
+	 */
+	QPtrDict<QObject> m_statusBarIcons;
 };
 
 #endif
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
+
 // vim: set noet ts=4 sts=4 sw=4:
 
