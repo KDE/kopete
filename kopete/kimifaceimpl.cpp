@@ -59,7 +59,6 @@ QStringList KIMIfaceImpl::allContacts()
 
 QStringList KIMIfaceImpl::reachableContacts()
 {
-	KopeteAccountManager::manager()->connectAll();
 	QStringList result;
 	QPtrList<KopeteMetaContact> list = KopeteContactList::contactList()->metaContacts();
 	QPtrListIterator<KopeteMetaContact> it( list );
@@ -74,7 +73,6 @@ QStringList KIMIfaceImpl::reachableContacts()
 
 QStringList KIMIfaceImpl::onlineContacts()
 {
-	KopeteAccountManager::manager()->connectAll();
 	QStringList result;
 	QPtrList<KopeteMetaContact> list = KopeteContactList::contactList()->metaContacts();
 	QPtrListIterator<KopeteMetaContact> it( list );
@@ -89,7 +87,6 @@ QStringList KIMIfaceImpl::onlineContacts()
 
 QStringList KIMIfaceImpl::fileTransferContacts()
 {
-	KopeteAccountManager::manager()->connectAll();
 	QStringList result;
 	QPtrList<KopeteMetaContact> list = KopeteContactList::contactList()->metaContacts();
 	QPtrListIterator<KopeteMetaContact> it( list );
@@ -112,7 +109,6 @@ bool KIMIfaceImpl::isPresent( const QString & uid )
 
 int KIMIfaceImpl::presenceStatus( const QString & uid )
 {
-	KopeteAccountManager::manager()->connectAll();
 	int p;
 	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( uid );
 	if ( m )
@@ -146,7 +142,6 @@ int KIMIfaceImpl::presenceStatus( const QString & uid )
 
 QString KIMIfaceImpl::presenceString( const QString & uid )
 {
-	KopeteAccountManager::manager()->connectAll();
 	QString p;
 	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( uid );
 	if ( m )
@@ -174,7 +169,6 @@ bool KIMIfaceImpl::canReceiveFiles( const QString & uid )
 
 bool KIMIfaceImpl::canRespond( const QString & uid )
 {
-	// FIXME: rework this when there is proper api support for detecting bidirectional protocols
 	KopeteMetaContact *mc;
 	mc = KopeteContactList::contactList()->metaContact( uid );
 	
@@ -221,7 +215,6 @@ KopeteMetaContact * KIMIfaceImpl::locateProtocolContact( const QString & contact
 
 QPixmap KIMIfaceImpl::icon( const QString & uid )
 {
-	KopeteAccountManager::manager()->connectAll();
 	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( uid );
 	QPixmap p;
 	if ( m )
@@ -250,7 +243,6 @@ QStringList KIMIfaceImpl::protocols()
 
 void KIMIfaceImpl::messageContact( const QString &uid, const QString& messageText )
 {
-	KopeteAccountManager::manager()->connectAll();
 	// TODO: make it possible to specify the message here
 	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( uid );
 	if ( m )
@@ -259,7 +251,6 @@ void KIMIfaceImpl::messageContact( const QString &uid, const QString& messageTex
 
 void KIMIfaceImpl::messageNewContact( const QString &protocol, const QString &contactId )
 {
-	KopeteAccountManager::manager()->connectAll();
 	KopeteMetaContact *mc = locateProtocolContact( contactId, protocol );
 	if ( mc )
 		mc->sendMessage();
@@ -267,7 +258,6 @@ void KIMIfaceImpl::messageNewContact( const QString &protocol, const QString &co
 
 void KIMIfaceImpl::chatWithContact( const QString &uid )
 {
-	KopeteAccountManager::manager()->connectAll();
 	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( uid );
 	if ( m )
 		m->execute();
@@ -276,7 +266,6 @@ void KIMIfaceImpl::chatWithContact( const QString &uid )
 void KIMIfaceImpl::sendFile(const QString &uid, const KURL &sourceURL,
 		const QString &altFileName, uint fileSize)
 {
-	KopeteAccountManager::manager()->connectAll();
 	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( uid );
 	if ( m )
 		m->sendFile( sourceURL, altFileName, fileSize );
@@ -284,7 +273,6 @@ void KIMIfaceImpl::sendFile(const QString &uid, const KURL &sourceURL,
 
 bool KIMIfaceImpl::addContact( const QString &protocolId, const QString &contactId )
 {
-	KopeteAccountManager::manager()->connectAll();
 	// find a matching protocol
 	KopeteProtocol *protocol = dynamic_cast<KopeteProtocol*>( KopetePluginManager::self()->plugin( protocolId ) );
 	
