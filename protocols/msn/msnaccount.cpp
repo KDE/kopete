@@ -1230,7 +1230,7 @@ void MSNAccount::resetPictureObject(bool silent)
 {
 	QString old=m_pictureObj;
 
-	if(configGroup()->readBoolEntry("exportCustomPicture"))
+	if(!configGroup()->readBoolEntry("exportCustomPicture"))
 		m_pictureObj="";
 	else
 	{
