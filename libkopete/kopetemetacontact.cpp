@@ -43,7 +43,7 @@
 KopeteMetaContact::KopeteMetaContact()
 : QObject( KopeteContactList::contactList() )
 {
-	m_trackChildNameChanges = false;
+	m_trackChildNameChanges = true;
 	m_temporary=false;
 //	m_isTopLevel=false;
 
@@ -82,13 +82,13 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 		if( m_displayName.isNull() )
 		{
 			setDisplayName( c->displayName() );
-			m_trackChildNameChanges = false;
+			m_trackChildNameChanges = true;
 		}
 
 		if (m_contacts.count() > 1)
 		{
-			kdDebug(14010) << "[KopeteMetaContact] addContact(); disabling trackChildNameChanges,"
-			" more than ONE Contact in MetaContact" << endl;
+//			kdDebug(14010) << "[KopeteMetaContact] addContact(); disabling trackChildNameChanges,"
+//			" more than ONE Contact in MetaContact" << endl;
 			m_trackChildNameChanges=false;
 		}
 
@@ -458,13 +458,15 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
 
 void KopeteMetaContact::setDisplayName( const QString &name )
 {
-	kdDebug( 14000 ) << k_funcinfo << "Change displayName from " << m_displayName <<
-		" to " << name  << ", m_trackChildNameChanges=" << m_trackChildNameChanges << endl;
+//	kdDebug( 14000 ) << k_funcinfo << "Change displayName from " << m_displayName <<
+//		" to " << name  << ", m_trackChildNameChanges=" << m_trackChildNameChanges << endl;
 
 	if( name == m_displayName )
 		return;
 
 	m_displayName = name;
+
+	//The name is setted by the user, disable tracking
 	m_trackChildNameChanges = false;
 
 	// Don't rename contacts on the server automagically as not everyone seems
@@ -516,11 +518,11 @@ void KopeteMetaContact::slotContactNameChanged( const QString &name )
 	{
 		setDisplayName( name );
 		//because m_trackChildNameChanges is set to false in setDisplayName
-//		m_trackChildNameChanges = true;
+		m_trackChildNameChanges = true;
 	}
 	else
 	{
-		kdDebug( 14010 ) << k_funcinfo << "Tracking is off and we already have a display name, ignored KopeteContact name change" << endl;
+//		kdDebug( 14010 ) << k_funcinfo << "Tracking is off and we already have a display name, ignored KopeteContact name change" << endl;
 	}
 }
 
@@ -705,12 +707,14 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 				if ( contactElement.text().isEmpty() )
 					return false;
 				m_displayName = contactElement.text();
+				
+				//TODO: m_trackChildNameChanges is currently used only when contact creation
+				//later, we will add a GUI to make it configurable 
 
-				m_trackChildNameChanges =
+				/*m_trackChildNameChanges =
 					( contactElement.attribute( QString::fromLatin1( "trackChildNameChanges" ),
-					QString::fromLatin1( "1" ) ) == QString::fromLatin1( "1" ) );
-
-//				m_trackChildNameChanges = false;
+					QString::fromLatin1( "1" ) ) == QString::fromLatin1( "1" ) );*/
+				m_trackChildNameChanges = false;
 			}
 			else if( contactElement.tagName() == QString::fromLatin1( "groups" ) )
 			{
