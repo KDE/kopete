@@ -44,8 +44,6 @@ void KopetePrefs::load()
 //	kdDebug(14010) << "KopetePrefs::load()" << endl;
 	config->setGroup("Appearance");
 
-	mWindowAppearanceChanged = false;
-
 	mIconTheme = config->readEntry("EmoticonTheme", defaultTheme());
 	mUseEmoticons = config->readBoolEntry("Use Emoticons", true);
 	mShowOffline = config->readBoolEntry("ShowOfflineUsers", true);
@@ -87,11 +85,19 @@ void KopetePrefs::load()
 	tmpColor = darkGray;
 	mIdleContactColor = config->readColorEntry("Idle Contact Color", &tmpColor);
 
-	mShowTray = config->readBoolEntry( "Show Systemtray", true);
-	mStyleSheet = config->readEntry("Stylesheet", locate("appdata",QString::fromLatin1("styles/Kopete.xsl") ) );
-	mStyleContents = fileContents( mStyleSheet );
+	mShowTray = config->readBoolEntry("Show Systemtray", true);
+	mStyleSheet = config->readEntry("Stylesheet", locate("appdata", QString::fromLatin1("styles/Kopete.xsl")));
+	mStyleContents = fileContents(mStyleSheet);
 
-	//config->setGroup("Appearance"); // Why setgroup again? [mETz]
+	mToolTipContents = config->readListEntry("ToolTipContents");
+	if(mToolTipContents.empty())
+	{
+		mToolTipContents
+			<< QString::fromLatin1("FormattedName")
+			<< QString::fromLatin1("emailAddress")
+			<< QString::fromLatin1("awayMessage");
+	}
+
 	mWindowAppearanceChanged = false;
 	mTransparencyChanged = false;
 }
@@ -137,6 +143,8 @@ void KopetePrefs::save()
 
 	config->writeEntry("Show Systemtray", mShowTray);
 	config->writeEntry("Stylesheet", mStyleSheet);
+
+	config->writeEntry("ToolTipContents", mToolTipContents);
 
 	config->sync();
 	emit saved();
@@ -319,7 +327,7 @@ void KopetePrefs::setNotifyAway(bool value)
 	mNotifyAway=value;
 }
 
-QString KopetePrefs::fileContents( const QString &path )
+QString KopetePrefs::fileContents(const QString &path)
 {
  	QString contents;
 	QFile file( path );

@@ -22,8 +22,11 @@
 
 #include <qobject.h>
 #include <qstringlist.h>
-
+#include <qvariant.h>
 #include <kurl.h>
+#include <qvaluelist.h>
+
+#include "kopetecontactproperty.h"
 
 struct KopeteContactPrivate;
 
@@ -268,17 +271,77 @@ public:
 	 * Return the time (in seconds) this contact has been idle
 	 * It will return the time set in @ref setIdleTime() with an addition of the time
 	 * since you set this last time
+	 * @return time this contact has been idle for, measuring unit is seconds
 	 */
 	virtual unsigned long int idleTime() const;
 
 	/**
 	 * Set the current idle time in seconds.
 	 * Kopete will automatically calculate the time in @ref idleTime
-	 * exepted if you set 0.
+	 * except if you set 0.
 	 */
 	void setIdleTime(unsigned long int);
 
+	/**
+	 * Return the value of a property with key "key".
+	 * You should either know the type of the returned QVariant
+	 * or check for it.
+	 **/
+	const KopeteContactProperty &property(const QString &key) const;
 
+	/**
+	 * Return the i18ned name for a property with "key"
+	 * Useful to present properties in a GUI
+	 *
+	 * @return Label for property defined by "key"
+	 **/
+	const QString &propertyLabel(const QString &key) const;
+
+	/**
+	 * Add or Set a property for this contact.
+	 *
+	 * @param key Key this property will be accessible through
+	 * @param label An i18ned description, mainly useful for UI display
+	 * @param value The value to store
+	 **/
+	void setProperty(const QString &key, const QString &label, const QVariant &value);
+
+	/**
+	 * Remove a property if it exists
+	 *
+	 * @param key Key of the to-be-deleted property
+	 **/
+	void removeProperty(const QString &key);
+
+	/**
+	 * @return A QStringList containing all property keys
+	 **/
+	QStringList properties() const;
+
+	/**
+	 * Check for existance of a certain property stored
+	 * using "key".
+	 **/
+	bool hasProperty(const QString &key) const;
+
+	/**
+	 * Returns an RTF tooltip depending on KopetePrefs settings
+	 * Makes use of formattedName() and formattedIdleTime().
+	 **/
+	QString toolTip() const;
+
+	/**
+	 * Returns a formatted string of "firstName" and/or "lastName" properties
+	 * if present.
+	 * Suitable for GUI display
+	 **/
+	QString formattedName() const;
+
+	/**
+	 * Returns a formatted string of idleTime().
+	 * Suitable for GUI display
+	 **/
+	QString formattedIdleTime() const;
 
 public slots:
 	/**

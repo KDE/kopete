@@ -83,25 +83,28 @@ public:
 	int chatWindowPolicy() const { return mChatWindowPolicy; }
 	QString styleSheet() const { return mStyleSheet; }
 	QString styleContents() const { return mStyleContents; }
-	QString defaultTheme() const { return QString::fromLatin1( "Default" ); }
+	QString defaultTheme() const { return QString::fromLatin1("Default"); }
 
-	void setIconTheme( const QString &value );
-	void setUseEmoticons( bool value );
-	void setShowOffline( bool value );
-	void setShowEmptyGroups( bool value );
-	void setTreeView( bool );
-	void setSortByGroup( bool );
-	void setGreyIdleMetaContacts( bool );
-	void setStartDocked( bool );
-	void setUseQueue( bool );
-	void setRaiseMsgWindow( bool );
-	void setShowEvents( bool );
-	void setTrayflashNotify( bool );
-	void setBalloonNotify( bool );
-	void setSoundIfAway( bool );
-	void setBeepNotify( bool );
-	void setChatWindowPolicy( int );
-	void setStyleSheet ( const QString &);
+	QStringList toolTipContents() const { return mToolTipContents; }
+
+
+	void setIconTheme(const QString &value);
+	void setUseEmoticons(bool value);
+	void setShowOffline(bool value);
+	void setShowEmptyGroups(bool value);
+	void setTreeView(bool);
+	void setSortByGroup(bool);
+	void setGreyIdleMetaContacts(bool);
+	void setStartDocked(bool);
+	void setUseQueue(bool);
+	void setRaiseMsgWindow(bool);
+	void setShowEvents(bool);
+	void setTrayflashNotify(bool);
+	void setBalloonNotify(bool);
+	void setSoundIfAway(bool);
+	void setBeepNotify(bool);
+	void setChatWindowPolicy(int);
+	void setStyleSheet (const QString &);
 	void setTransparencyEnabled(bool);
 	void setTransparencyColor(const QColor &);
 	void setChatViewBufferSize(int);
@@ -111,10 +114,10 @@ public:
 	void setTransparencyValue(int);
 	void setBgOverride(bool);
 	void setInterfacePreference(int);
-	void setTextColor( const QColor &);
-	void setBgColor( const QColor &);
-	void setLinkColor( const QColor & );
-	void setFontFace( const QFont & );
+	void setTextColor(const QColor &);
+	void setBgColor(const QColor &);
+	void setLinkColor(const QColor &);
+	void setFontFace(const QFont &);
 	void setIdleContactColor(const QColor &);
 	void setShowTray(bool);
 	void setNotifyAway(bool);
@@ -187,7 +190,9 @@ private:
 	QString mStyleSheet;
 	QString mStyleContents;
 
-	QString fileContents( const QString &path );
+	QStringList mToolTipContents;
+
+	QString fileContents(const QString &path);
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

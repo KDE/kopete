@@ -20,6 +20,7 @@
 #include "kopetecontact.h"
 
 #include <qapplication.h>
+#include <qstylesheet.h>
 
 #include <kdebug.h>
 
@@ -83,11 +84,12 @@ public:
 
 	QTime idleTimer;
 	unsigned long int idleTime;
+
+	QMap< QString, KopeteContactProperty> properties;
 };
 
-
 KopeteContact::KopeteContact( KopeteAccount *account, const QString &contactId, KopeteMetaContact *parent, const QString &icon )
-: QObject( parent )
+	: QObject( parent )
 {
 	d = new KopeteContactPrivate;
 
@@ -573,7 +575,177 @@ void KopeteContact::setIcon( const QString& icon )
 	return;
 }
 
+const KopeteContactProperty &KopeteContact::property(const QString &key) const
+{
+	if(hasProperty(key))
+		return d->properties[key];
+	else
+	{
+		//kdDebug(14000) << k_funcinfo << "Property not found, returning null-property" << endl;
+		return KopeteContactProperty::null;
+	}
+}
+
+const QString &KopeteContact::propertyLabel(const QString &key) const
+{
+	if(hasProperty(key))
+		return d->properties[key].label();
+	else
+		return QString::null;
+}
+
+void KopeteContact::setProperty(const QString &key, const QString &label, const QVariant &value)
+{
+	if(value.isNull())
+	{
+		kdDebug(14000) << k_funcinfo <<
+			"Tried setting null value for property '" << key << "'" << endl;
+		removeProperty(key);
+	}
+
+	KopeteContactProperty prop( label, value );
+	d->properties.insert(key, prop);
+}
+
+void KopeteContact::removeProperty(const QString &key)
+{
+	//kdDebug(14000) << k_funcinfo << "removing property " << key << endl;
+	d->properties.remove(key);
+}
+
+QStringList KopeteContact::properties() const
+{
+	return d->properties.keys();
+}
+
+bool KopeteContact::hasProperty(const QString &key) const
+{
+	//kdDebug(14000) << k_funcinfo << "For key " << key << endl;
+	return d->properties.contains(key);
+}
+
+QString KopeteContact::toolTip() const
+{
+	KopeteContactProperty p;
+	QString tip;
+	QStringList shownProps = KopetePrefs::prefs()->toolTipContents();
+
+	// --------------------------------------------------------------------------
+	// Fixed part of tooltip
+
+	tip = i18n( "<b>%3</b>&nbsp;(%2)<br><img src=\"kopete:icon\">&nbsp;%1" ).
+#if QT_VERSION < 0x030200
+		arg( onlineStatus().description() ).arg( QStyleSheet::escape( contactId() ) ).
+		arg( QStyleSheet::escape( displayName() ) );
+#else
+		arg( onlineStatus().description(), QStyleSheet::escape( contactId() ),
+			QStyleSheet::escape( displayName() ) );
+#endif
+
+	QMimeSourceFactory::defaultFactory()->setImage( QString::fromLatin1("kopete:icon"),
+		onlineStatus().iconFor( this ).convertToImage() );
+
+	// --------------------------------------------------------------------------
+	// Configurable part of tooltip
+
+	for(QStringList::Iterator it=shownProps.begin(); it!=shownProps.end(); ++it)
+	{
+		if((*it) == QString::fromLatin1("FormattedName"))
+		{
+			QString name = formattedName();
+			if(!name.isNull())
+				tip += i18n("<br>Name: formattedName", "<br>Name: %1").arg(name);
+		}
+		else if ((*it) == QString::fromLatin1("FormattedIdleTime"))
+		{
+			QString time = formattedIdleTime();
+			if(!time.isNull())
+				tip += i18n("<br>Idle: formattedIdleTime", "<br>Idle: %1").arg(time);
+		}
+		else
+		{
+			p = property(*it);
+			if(!p.isNull())
+			{
+				tip += i18n("<br>%2: %1")
+					.arg(p.value().toString())
+					.arg(p.label());
+			}
+		}
+	}
+
+	return tip;
+}
+
+QString KopeteContact::formattedName() const
+{
+	QString ret;
+	KopeteContactProperty first, last;
+
+	first = property(QString::fromLatin1("firstName"));
+	last = property(QString::fromLatin1("lastName"));
+	if(!first.isNull())
+	{
+		if(!last.isNull()) // contact has both first and last name
+		{
+			ret = i18n("firstName lastName", "%2 %1")
+				.arg(last.value().toString())
+				.arg(first.value().toString());
+		}
+		else // only first name set
+		{
+			ret = first.value().toString();
+		}
+	}
+	else if(!last.isNull()) // only last name set
+	{
+		ret = last.value().toString();
+	}
+	return ret;
+}
+
+
+QString KopeteContact::formattedIdleTime() const
+{
+	QString ret;
+	unsigned long int leftTime = idleTime();
+
+	if ( leftTime > 0 )
+	{	// FIXME: duplicated from code in kopetecontactlistview.cpp
+		unsigned long int days, hours, mins, secs;
+
+		days = leftTime / ( 60*60*24 );
+		leftTime = leftTime % ( 60*60*24 );
+		hours = leftTime / ( 60*60 );
+		leftTime = leftTime % ( 60*60 );
+		mins = leftTime / 60;
+		secs = leftTime % 60;
+
+		if ( days != 0 )
+		{
+			ret = i18n( "<days>d <hours>h <minutes>m <seconds>s",
+				"%4d %3h %2m %1s" )
+				.arg( secs )
+				.arg( mins )
+				.arg( hours )
+				.arg( days );
+		}
+		else if ( hours != 0 )
+		{
+			ret = i18n( "<hours>h <minutes>m <seconds>s", "%3h %2m %1s" )
+				.arg( secs )
+				.arg( mins )
+				.arg( hours );
+		}
+		else
+		{
+			ret = i18n( "<minutes>m <seconds>s", "%2m %1s" )
+				.arg( secs )
+				.arg( mins );
+		}
+	}
+	return ret;
+}
+
 #include "kopetecontact.moc"
-
 // vim: set noet ts=4 sts=4 sw=4:
-
