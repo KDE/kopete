@@ -155,6 +155,7 @@ namespace XMPP
 		friend class S5BServer;
 		bool srv_ownsHash(const QString &key) const;
 		void srv_incomingReady(SocksClient *sc, const QString &key);
+		void srv_unlink();
 
 		friend class Item;
 		void doSuccess(const Jid &peer, const QString &id, const Jid &streamHost);
@@ -215,6 +216,7 @@ namespace XMPP
 		friend class S5BManager;
 		void link(S5BManager *);
 		void unlink(S5BManager *);
+		void unlinkAll();
 		const QPtrList<S5BManager> & managerList() const;
 	};
 

@@ -672,6 +672,11 @@ void S5BManager::srv_incomingReady(SocksClient *sc, const QString &key)
 	e->i->setIncomingClient(sc);
 }
 
+void S5BManager::srv_unlink()
+{
+	d->serv = 0;
+}
+
 void S5BManager::con_connect(S5BConnection *c)
 {
 	if(findEntry(c))
@@ -1694,6 +1699,7 @@ S5BServer::S5BServer(QObject *parent)
 
 S5BServer::~S5BServer()
 {
+	unlinkAll();
 	delete d;
 }
 
@@ -1770,6 +1776,14 @@ void S5BServer::link(S5BManager *m)
 void S5BServer::unlink(S5BManager *m)
 {
 	d->manList.removeRef(m);
+}
+
+void S5BServer::unlinkAll()
+{
+	QPtrListIterator<S5BManager> it(d->manList);
+	for(S5BManager *m; (m = it.current()); ++it)
+		m->srv_unlink();
+	d->manList.clear();
 }
 
 const QPtrList<S5BManager> & S5BServer::managerList() const
