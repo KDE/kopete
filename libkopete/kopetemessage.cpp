@@ -79,14 +79,16 @@ struct KopeteMessagePrivate
 
 };
 
-
-//Theses color are used for coloring nicknames. I tried to use colors both visible on white and dark background.
-static const char* nameColors[] = { "red" , "blue" , "gray" , "magenta" , "violet" , "olive" ,
-		"yellowgreen" , "darkred" , "darkgreen" , "darksalmon" , "darkcyan" , "darkyellow" , "mediumpurple" , "peru"
-		"olivedrab" , "royalred" , "darkorange"  , "stateblue" , "stategray" , "goldenrod" , "orangered" ,
-		"tomato" , "dogderblue" , "steelblue" , "deeppink" , "saddlebrown" , "coral" , "royalblue"} ;
-
-
+// These colors are used for coloring nicknames. I tried to use
+// colors both visible on light and dark background.
+static const char* nameColors[] =
+{
+	"red", "blue" , "gray", "magenta", "violet", "olive", "yellowgreen",
+	"darkred", "darkgreen", "darksalmon", "darkcyan", "darkyellow",
+	"mediumpurple", "peru", "olivedrab", "royalred", "darkorange", "stateblue",
+	"stategray", "goldenrod", "orangered", "tomato", "dogderblue", "steelblue",
+	"deeppink", "saddlebrown", "coral", "royalblue"
+};
 
 KopeteMessage::KopeteMessage()
 {
@@ -622,7 +624,11 @@ const QDomDocument KopeteMessage::asXML() const
 	QDomDocument doc;
 	QDomElement messageNode = doc.createElement( QString::fromLatin1("message") );
 	messageNode.setAttribute( QString::fromLatin1("time"), KGlobal::locale()->formatTime(d->timeStamp.time(), true) );
-	messageNode.setAttribute( QString::fromLatin1("timestamp"), d->timeStamp.toString() );
+	messageNode.setAttribute( QString::fromLatin1("timestamp"), KGlobal::locale()->formatDateTime(d->timeStamp) );
+	if( d->timeStamp.date() == QDate::currentDate() )
+		messageNode.setAttribute( QString::fromLatin1("formattedTimestamp"), KGlobal::locale()->formatTime(d->timeStamp.time(), true) );
+	else
+		messageNode.setAttribute( QString::fromLatin1("formattedTimestamp"), KGlobal::locale()->formatDateTime(d->timeStamp) );
 	messageNode.setAttribute( QString::fromLatin1("subject"), QStyleSheet::escape( d->subject ) );
 	messageNode.setAttribute( QString::fromLatin1("direction"), d->direction );
 	messageNode.setAttribute( QString::fromLatin1("importance"), d->importance );
