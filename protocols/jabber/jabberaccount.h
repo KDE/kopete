@@ -54,9 +54,9 @@ public:
 	virtual void setAway (bool away, const QString & reason = QString::null);
 
 	/* Return the resource of the client */
-	QString resource ();
-	QString server ();
-	int port ();
+	QString resource () const;
+	QString server () const;
+	int port () const;
 
 	Jabber::Client *client();
 
@@ -126,7 +126,7 @@ private:
 	void initActions ();
 
 	/* to get the protocol from the account */
-	JabberProtocol *protocol ()
+	JabberProtocol *protocol () const
 	{
 		return mProtocol;
 	}
