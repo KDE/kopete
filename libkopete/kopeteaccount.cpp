@@ -605,7 +605,8 @@ void KopeteAccount::setMyself( KopeteContact *myself )
 
 void KopeteAccount::slotOnlineStatusChanged( KopeteContact * /* contact */, const KopeteOnlineStatus &newStatus, const KopeteOnlineStatus &oldStatus )
 {
-	if ( oldStatus.status() == KopeteOnlineStatus::Offline || oldStatus.status() == KopeteOnlineStatus::Connecting )
+	if ( oldStatus.status() == KopeteOnlineStatus::Offline || oldStatus.status() == KopeteOnlineStatus::Connecting ||
+		newStatus.status() == KopeteOnlineStatus::Offline )
 	{
 		// Wait for five seconds until we treat status notifications for contacts as
 		// unrelated to our own status change.

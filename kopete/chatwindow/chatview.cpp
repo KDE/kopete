@@ -885,29 +885,39 @@ void ChatView::slotMarkMessageRead()
 	unreadMessageFrom = QString::null;
 }
 
-void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnlineStatus & /* newStatus */ , const KopeteOnlineStatus & /* oldstatus */)
+void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnlineStatus &newStatus, const KopeteOnlineStatus & /* oldstatus */)
 {
-	if(KopetePrefs::prefs()->showEvents() && contact)
+	if ( contact && KopetePrefs::prefs()->showEvents() )
 	{
-		if( contact->metaContact() )
+		if ( contact->account() && contact == contact->account()->myself() )
 		{
-			sendInternalMessage( i18n( "%2 has changed their status to %1." )
-#if QT_VERSION < 0x030200
-				.arg(contact->onlineStatus().description() ).arg( contact->metaContact()->displayName() )
-#else
-				.arg(contact->onlineStatus().description(), contact->metaContact()->displayName() )
-#endif
-			);
+			// Separate notification for the 'self' contact
+			if ( newStatus.status() != KopeteOnlineStatus::Connecting )
+				sendInternalMessage( i18n( "You have changed your status to %1." ).arg( newStatus.description() ) );
 		}
-		else
+		else if ( !contact->account() || !contact->account()->suppressStatusNotification() )
 		{
-			sendInternalMessage( i18n( "%2 has changed their status to %1." )
+			// Don't send notifications when we just connected ourselves, i.e. when suppressions are still active
+			if( contact->metaContact() )
+			{
+				sendInternalMessage( i18n( "%2 has changed their status to %1." )
 #if QT_VERSION < 0x030200
-				.arg( contact->onlineStatus().description() ).arg( contact->displayName() )
+					.arg( newStatus.description() ).arg( contact->metaContact()->displayName() )
 #else
-				.arg( contact->onlineStatus().description(), contact->displayName() )
+					.arg( newStatus.description(), contact->metaContact()->displayName() )
 #endif
-			);
+				);
+			}
+			else
+			{
+				sendInternalMessage( i18n( "%2 has changed their status to %1." )
+#if QT_VERSION < 0x030200
+					.arg( newStatus.description() ).arg( contact->displayName() )
+#else
+					.arg( newStatus.description(), contact->displayName() )
+#endif
+				);
+			}
 		}
 	}
 
