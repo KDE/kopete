@@ -338,6 +338,7 @@ void KIMIfaceImpl::slotContactStatusChanged( KopeteMetaContact *mc )
 				p = 0;
 			break;
 			case KopeteOnlineStatus::Offline:
+			case KopeteOnlineStatus::Invisible:
 				p = 1;
 			break;
 			case KopeteOnlineStatus::Connecting:
