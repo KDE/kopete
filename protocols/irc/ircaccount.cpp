@@ -239,8 +239,6 @@ void IRCAccount::slotConnectionClosed()
 void IRCAccount::successfullyChangedNick(const QString &/*oldnick*/, const QString &newnick)
 {
 	kdDebug(14120) << k_funcinfo << "Changing nick to " << newnick << endl;
-
-	mMySelf->setNickName(newnick);
 	mMySelf->manager()->setDisplayName( mMySelf->caption() );
 
 	if( isConnected() )

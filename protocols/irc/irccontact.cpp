@@ -317,6 +317,12 @@ void IRCContact::slotNewNickChange( const QString &oldnickname, const QString &n
 	IRCContact *user = static_cast<IRCContact*>( locateUser( oldnickname) );
 	if( user )
 	{
+		QString oldName;
+		if( oldnickname == mAccount->mySelf()->nickName() )
+			oldName = i18n("You are");
+		else
+			oldName = i18n("%1 is").arg(oldnickname);
+
 		user->setNickName( newnickname );
 		//If tracking name changes....
 		user->setDisplayName( newnickname );
@@ -328,7 +334,7 @@ void IRCContact::slotNewNickChange( const QString &oldnickname, const QString &n
 			mEngine->addToNotifyList( newnickname );
 		}
 
-		KopeteMessage msg((KopeteContact *)this, mContact, i18n("%1 is now known as %2").arg(oldnickname).arg(newnickname), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+		KopeteMessage msg((KopeteContact *)this, mContact, i18n("%1 now known as %2").arg(oldName).arg(newnickname), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 		manager()->appendMessage(msg);
 	}
 }
@@ -365,11 +371,16 @@ KopeteContact *IRCContact::locateUser( const QString &nick )
 	//kdDebug(14120) << k_funcinfo << "Find nick " << nick << endl;
 	if( isConnected )
 	{
-		KopeteContactPtrList mMembers = manager()->members();
-		for( KopeteContact *it = mMembers.first(); it; it = mMembers.next() )
+		if( nick == mAccount->mySelf()->nickName() )
+			return mAccount->mySelf();
+		else
 		{
-			if( static_cast<IRCContact*>(it)->nickName() == nick )
-				return it;
+			KopeteContactPtrList mMembers = manager()->members();
+			for( KopeteContact *it = mMembers.first(); it; it = mMembers.next() )
+			{
+				if( static_cast<IRCContact*>(it)->nickName() == nick )
+					return it;
+			}
 		}
 	}
 
