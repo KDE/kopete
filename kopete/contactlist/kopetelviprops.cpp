@@ -52,6 +52,7 @@
 #include "kopetemetacontactlvi.h"
 #include "kopeteaccount.h"
 #include "kopeteprotocol.h"
+#include "linkaddressbookui.h"
 
 #include "customnotificationprops.h"
 #include "customnotifications.h"
@@ -386,7 +387,7 @@ void KopeteMetaLVIProps::slotHasAddressbookEntryToggled( bool on )
 
 void KopeteMetaLVIProps::slotSelectAddresseeClicked()
 {
-	KABC::AddresseeDialog dialog(this);
+	LinkAddressbookUI dialog( item->metaContact(), this, "link_addr_book_dialog" );
 	if ( dialog.exec() == QDialog::Rejected )
 		return;
 	
