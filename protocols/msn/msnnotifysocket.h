@@ -151,6 +151,8 @@ private:
 
 	QTimer *m_keepaliveTimer;
 
+	bool m_ping;
+
 };
 
 #endif

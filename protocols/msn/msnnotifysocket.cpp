@@ -73,6 +73,7 @@ void MSNNotifySocket::connect( const QString &pwd )
 	m_password = pwd;
 	dispatchOK=false;
 	m_isHotmailAccount=false;
+	m_ping=false;
 
 	m_dispatchSocket = new MSNDispatchSocket( msnId() ,this);
 	QObject::connect( m_dispatchSocket,
@@ -386,6 +387,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	else if( cmd == "QNG" )
 	{
 		//this is a reply from a ping
+		m_ping=false;
 	}
 	else if( cmd == "URL" )
 	{
@@ -662,9 +664,20 @@ void MSNNotifySocket::slotDispatchClosed()
 
 void MSNNotifySocket::slotSendKeepAlive()
 {
-	// Send a dummy command to fake activity. This makes sure MSN doesn't
-	// disconnect you when the notify socket is idle.
-	sendCommand( "PNG" , QString::null , false );
+	//we did not received the previous QNG
+	if(m_ping)
+	{
+		disconnect();
+		KMessageBox::information( 0, i18n( "Conneciton with the MSN network has been lost" ) , i18n ("MSN Plugin") );
+		return;
+	}
+	else
+	{
+		// Send a dummy command to fake activity. This makes sure MSN doesn't
+		// disconnect you when the notify socket is idle.
+		sendCommand( "PNG" , QString::null , false );
+		m_ping=true;
+	}
 }
 
 void MSNNotifySocket::slotResetKeepAlive()
