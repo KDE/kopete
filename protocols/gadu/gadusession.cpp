@@ -27,11 +27,6 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// * 2003-06-29
-//	(GJ) checkdescriptor race was corrected, slot should be unregistered
-//	     first, than any signal should be send - error was cousing unfinity	
-//	     number of message boxes on screen sometimes.
-//	
 
 #include "gadusession.h"
 
@@ -46,9 +41,9 @@
 
 const int NUM_SERVERS = 7;
 const char* const gg_servers_ip[NUM_SERVERS] = {"217.17.41.82", "217.17.41.83",
-																								"217.17.41.84", "217.17.41.85",
-																								"217.17.41.86", "217.17.41.87",
-																								"217.17.41.88"};
+						"217.17.41.84", "217.17.41.85",
+						"217.17.41.86", "217.17.41.87",
+						"217.17.41.88"};
 
 GaduSession::GaduSession( QObject *parent, const char* name )
 	: QObject( parent, name ), session_(0), currentServer_(-1)

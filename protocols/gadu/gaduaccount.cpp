@@ -24,12 +24,15 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const
   : KopeteAccount( parent, accountID, name ), pingTimer_(0)
 {
 
+	
 	session_ = new GaduSession( this, "GaduSession" );
 
 	KGlobal::config()->setGroup("Gadu");
 
 // Instead of nick i will probably use e-mail
 
+        kdDebug()<<"ID = "<< accountId() <<endl;
+	
 	myself_ = new GaduContact(  accountId().toInt(),  accountId(), this,
                               new KopeteMetaContact() );
 			      
@@ -145,8 +148,9 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
   kdDebug()<<"### Status = "<<session_->isConnected()<<endl;
 
 	if ( GG_S_NA( status.internalStatus() ) ) {
-		if ( !session_->isConnected() )
+		if ( !session_->isConnected() ){
 			return;//already logged off
+		}
 		else if ( status.internalStatus() == GG_STATUS_NOT_AVAIL_DESCR ) {
 			if ( session_->changeStatusDescription( status.internalStatus(), descr ) != 0 )
 				return;
@@ -205,7 +209,7 @@ GaduAccount::slotLogoff()
 	if ( session_->isConnected() ) {
 		status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
 		changeStatus( status_ );
-    session_->logoff();
+		session_->logoff();
 	}
 }
 
@@ -244,10 +248,15 @@ GaduAccount::removeContact( const GaduContact* c )
 		const uin_t u = c->uin();
 		session_->removeNotify( u );
 		contactsMap_.remove( u );
-	} else {
-		KMessageBox::error( 0l,	i18n( "Please go online to remove contact" ),
-			    i18n( "Gadu Plugin" ));
 	}
+
+// no reason for me to be online to delete
+
+//	} else {
+//		KMessageBox::error( 0l,	i18n( "Please go online to remove contact" ),
+//			    i18n( "Gadu Plugin" ));
+//	}
+
 }
 
 void
@@ -267,11 +276,12 @@ GaduAccount::notify( uin_t* userlist, int count )
 void
 GaduAccount::sendMessage( uin_t recipient, const QString& msg, int msgClass )
 {
-	kdDebug(14100)<<"Sending \"" << msg <<"\""<<endl;
-	QString sendMsg = msg;
-	sendMsg.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "\r\n" ) );
-	if ( session_->isConnected() )
-		session_->sendMessage( recipient, sendMsg, msgClass );
+	if ( session_->isConnected() ){
+	    kdDebug(14100)<<"Sending \"" << msg <<"\""<<endl;
+	    QString sendMsg = msg;
+	    sendMsg.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "\r\n" ) );
+	    session_->sendMessage( recipient, sendMsg, msgClass );
+	}
 }
 
 void
@@ -283,172 +293,175 @@ GaduAccount::error( const QString& title, const QString& message )
 void
 GaduAccount::messageReceived( struct gg_event* e )
 {
-	kdDebug(14100)<<"####"<<" Great! Message Received :: "<<((const char*)e->event.msg.message)<<endl;
+    GaduContact *c = 0;
+    
+    kdDebug(14100)<<"####"<<" Great! Message Received :: "<<((const char*)e->event.msg.message)<<endl;
 
-	if ( !e->event.msg.message )
-		return;
+    if ( !e->event.msg.message )
+	return;
 
-	if ( e->event.msg.sender == 0 ) {
-		//system message, display them or not?
-		kdDebug(14100)<<"####"<<" System Message "<< (const char*)e->event.msg.message << endl;
-		return;
-	}
+    if ( e->event.msg.sender == 0 ) {
+	//system message, display them or not?
+	kdDebug(14100)<<"####"<<" System Message "<< (const char*)e->event.msg.message << endl;
+	return;
+    }
 
-  kdDebug(14100)<<"Message from " << e->event.msg.sender <<" = "<< (const char*)e->event.msg.message << endl;
-	GaduContact *c = 0;
-  if ( contactsMap_.contains( e->event.msg.sender ) )
-    c = contactsMap_[ e->event.msg.sender ];
-	if ( c ) {
-		KopeteContactPtrList tmp;
-		tmp.append( myself_ );
-		KopeteMessage msg( c, tmp, (const char*)e->event.msg.message, KopeteMessage::Inbound );
-		c->messageReceived( msg );
-	} else {
-		addContact( QString::number(e->event.msg.sender), QString::number(e->event.msg.sender) );
-		c = contactsMap_.find( e->event.msg.sender ).data();
-		KopeteContactPtrList tmp;
-		tmp.append( myself_ );
-		KopeteMessage msg( c, tmp, (const char*)e->event.msg.message, KopeteMessage::Inbound );
-		c->messageReceived( msg );
-	}
+    kdDebug(14100)<<"Message from " << e->event.msg.sender <<" = "<< (const char*)e->event.msg.message << endl;
+    if ( contactsMap_.contains( e->event.msg.sender ) )
+	c = contactsMap_[ e->event.msg.sender ];
+    if ( c ) {
+	KopeteContactPtrList tmp;
+	tmp.append( myself_ );
+	KopeteMessage msg( c, tmp, (const char*)e->event.msg.message, KopeteMessage::Inbound );
+	c->messageReceived( msg );
+    } else {
+	addContact( QString::number(e->event.msg.sender), QString::number(e->event.msg.sender) );
+	c = contactsMap_.find( e->event.msg.sender ).data();
+	KopeteContactPtrList tmp;
+	tmp.append( myself_ );
+	KopeteMessage msg( c, tmp, (const char*)e->event.msg.message, KopeteMessage::Inbound );
+	c->messageReceived( msg );
+    }
 }
 
 void
 GaduAccount::ackReceived( struct gg_event* e  )
 {
-  if ( contactsMap_.contains( e->event.ack.recipient ) ) {
-    GaduContact *contact = contactsMap_[ e->event.ack.recipient ];
-    kdDebug(14100)<<"####"<<"Received an ACK from "<<contact->uin()<<endl;
-    contact->messageAck();
-  } else {
-    kdDebug(14100)<<"####"<<"Received an ACK from an unknown user : "<< e->event.ack.recipient <<endl;
-  }
+    if ( contactsMap_.contains( e->event.ack.recipient ) ) {
+	GaduContact *contact = contactsMap_[ e->event.ack.recipient ];
+	kdDebug(14100)<<"####"<<"Received an ACK from "<<contact->uin()<<endl;
+	contact->messageAck();
+    } else {
+	kdDebug(14100)<<"####"<<"Received an ACK from an unknown user : "<< e->event.ack.recipient <<endl;
+    }
 }
 
 void
 GaduAccount::notify( struct gg_event* e )
 {
-	GaduContact *c;
+    GaduContact *c;
 
-	struct gg_notify_reply *n = e->event.notify;
+    struct gg_notify_reply *n = e->event.notify;
 
-	while( n && n->uin ) {
-		kdDebug(14100)<<"### NOTIFY "<<n->uin<< " " << n->status << endl;
-		if ( !(c=contactsMap_.find(n->uin).data()) ) {
-			kdDebug(14100)<<"Notify not in the list "<< n->uin << endl;
-			session_->removeNotify( n->uin );
-			++n;
-			continue;
-		}
-		if ( c->onlineStatus() == GaduProtocol::protocol()->convertStatus( n->status ) ) {
-			kdDebug(14100)<<"### " << c->displayName()<<" is INVISIBLE"<<endl;
-			++n;
-			continue;
-		}
-		c->setOnlineStatus(  GaduProtocol::protocol()->convertStatus( n->status ) );
-		++n;
+    while( n && n->uin ) {
+	kdDebug(14100)<<"### NOTIFY "<<n->uin<< " " << n->status << endl;
+	if ( !(c=contactsMap_.find(n->uin).data()) ) {
+	    kdDebug(14100)<<"Notify not in the list "<< n->uin << endl;
+	    session_->removeNotify( n->uin );
+	    ++n;
+	    continue;
 	}
+	if ( c->onlineStatus() == GaduProtocol::protocol()->convertStatus( n->status ) ) {
+	    kdDebug(14100)<<"### " << c->displayName()<<" is INVISIBLE"<<endl;
+	    ++n;
+	    continue;
+	}
+	c->setOnlineStatus(  GaduProtocol::protocol()->convertStatus( n->status ) );
+	++n;
+    }
 }
 
 void
 GaduAccount::notifyDescription( struct gg_event* e )
 {
-	GaduContact *c;
-	struct gg_notify_reply *n;
+    GaduContact *c;
+    struct gg_notify_reply *n;
 
-	n =  e->event.notify_descr.notify;
+    n =  e->event.notify_descr.notify;
 
-	for( ; n->uin ; n++ ) {
-		char *descr = (e->type == GG_EVENT_NOTIFY_DESCR) ? e->event.notify_descr.descr : NULL;
-		if ( !(c=contactsMap_.find( n->uin ).data()) )
-			continue;
-		if ( c->onlineStatus() ==  GaduProtocol::protocol()->convertStatus( n->status ) )
-			continue;
-		c->setDescription( descr );
-		c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( n->status ) );
-	}
+    for( ; n->uin ; n++ ) {
+	char *descr = (e->type == GG_EVENT_NOTIFY_DESCR) ? e->event.notify_descr.descr : NULL;
+	if ( !(c=contactsMap_.find( n->uin ).data()) )
+	    continue;
+	if ( c->onlineStatus() ==  GaduProtocol::protocol()->convertStatus( n->status ) )
+	    continue;
+	c->setDescription( descr );
+	c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( n->status ) );
+    }
 }
 
 void
 GaduAccount::statusChanged( struct gg_event* e )
 {
-	GaduContact *c = contactsMap_.find( e->event.status.uin ).data();
-	if( !c )
-		return;
-	c->setDescription( e->event.status.descr );
-	c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( e->event.status.status ) );
+    GaduContact *c = contactsMap_.find( e->event.status.uin ).data();
+    if( !c )
+	return;
+    c->setDescription( e->event.status.descr );
+    c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( e->event.status.status ) );
 }
 
 void
 GaduAccount::pong()
 {
-	kdDebug(14100)<<"####"<<" Pong..."<<endl;
+    kdDebug(14100)<<"####"<<" Pong..."<<endl;
 }
 
 void
 GaduAccount::connectionFailed( struct gg_event* /*e*/ )
 {
-  status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
-  myself_->setOnlineStatus( status_ );
+    status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
+    myself_->setOnlineStatus( status_ );
 	KMessageBox::error( qApp->mainWidget(), i18n("Plugin unable to connect to the Gadu-Gadu server."),
-											i18n("Connection Error") );
+					i18n("Connection Error") );
 }
 
 void
 GaduAccount::connectionSucceed( struct gg_event* /*e*/ )
 {
-	kdDebug(14100)<<"#### Gadu-Gadu connected! "<<endl;
-	status_ =  GaduProtocol::protocol()->convertStatus( session_->status() );
-	myself_->setOnlineStatus( status_ );
-	startNotify();
-	UserlistGetCommand *cmd = new UserlistGetCommand( this );
-	cmd->setInfo( accountId().toInt(), getPassword() );
-	QObject::connect( cmd, SIGNAL(done(const QStringList&)),
-				SLOT(userlist(const QStringList&)) );
-	cmd->execute();
+    kdDebug(14100)<<"#### Gadu-Gadu connected! "<<endl;
+    status_ =  GaduProtocol::protocol()->convertStatus( session_->status() );
+    myself_->setOnlineStatus( status_ );
+    startNotify();
+    UserlistGetCommand *cmd = new UserlistGetCommand( this );
+    cmd->setInfo( accountId().toInt(), getPassword() );
+    QObject::connect( cmd, SIGNAL(done(const QStringList&)),
+    			SLOT(userlist(const QStringList&)) );
+    cmd->execute();
 	
-	if ( !pingTimer_ ) {
-		pingTimer_ = new QTimer( this );
-		QObject::connect( pingTimer_, SIGNAL(timeout()),
-				SLOT(pingServer()) );
-	}
-	pingTimer_->start( 180000 );//3 minute timeout
+    if ( !pingTimer_ ) {
+	pingTimer_ = new QTimer( this );
+	QObject::connect( pingTimer_, SIGNAL(timeout()),
+	SLOT(pingServer()) );
+    }
+    pingTimer_->start( 180000 );//3 minute timeout
 }
 
 void
 GaduAccount::startNotify()
 {
-	int i = 0;
-	QValueList<uin_t> l = contactsMap_.keys();
+    int i = 0;
+    QValueList<uin_t> l = contactsMap_.keys();
 
-	QValueList<uin_t>::iterator it;
-	uin_t *userlist = 0;
-	if ( !contactsMap_.empty() ) {
-		userlist = new uin_t[contactsMap_.count()];
+    QValueList<uin_t>::iterator it;
+    uin_t *userlist = 0;
+    if ( !contactsMap_.empty() ) {
+	userlist = new uin_t[contactsMap_.count()];
 
-		for( it = l.begin(); it != l.end(); ++it, ++i ) {
-			userlist[i] = (*it);
-		}
+	for( it = l.begin(); it != l.end(); ++it, ++i ) {
+	    userlist[i] = (*it);
 	}
-	session_->notify( userlist, contactsMap_.count() );
+    }
+    session_->notify( userlist, contactsMap_.count() );
 }
 
 void
 GaduAccount::slotSessionDisconnect()
 {
-	kdDebug(14100)<<"Disconnecting"<<endl;
+    kdDebug(14100)<<"Disconnecting"<<endl;
 	
-	if (pingTimer_){
-	    pingTimer_->stop();
-	}
+    if (pingTimer_){
+	pingTimer_->stop();
+    }
 	
-	for ( ContactsMap::iterator it = contactsMap_.begin(); it != contactsMap_.end(); ++it) {
-		it.data()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
-	}
-	if ( myself_->onlineStatus().internalStatus() != GG_STATUS_NOT_AVAIL ||
-			 myself_->onlineStatus().internalStatus() != GG_STATUS_NOT_AVAIL_DESCR )
-		myself_->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
+    for ( ContactsMap::iterator it = contactsMap_.begin(); it != contactsMap_.end(); ++it) {
+	it.data()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
+    }
+    
+    if ( myself_->onlineStatus().internalStatus() != GG_STATUS_NOT_AVAIL ||
+	 myself_->onlineStatus().internalStatus() != GG_STATUS_NOT_AVAIL_DESCR ){
 
+	myself_->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
+    }
 }
 
 void
