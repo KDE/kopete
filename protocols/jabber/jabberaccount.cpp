@@ -1453,9 +1453,7 @@ void JabberAccount::slotNewContact (const XMPP::RosterItem & item)
 	 * None:   No subscription.
 	 *
 	 * Regardless of the subscription type, we have to add
-	 * a roster item here. FIXME: To be done is uniform
-	 * check of the ask() value to see if we are waiting
-	 * for authorization ("subscribe")
+	 * a roster item here.
 	 */
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New roster item " << item.jid().full () << " (Subscription: " << item.subscription().toString () << ")" << endl;
@@ -1489,7 +1487,42 @@ void JabberAccount::slotNewContact (const XMPP::RosterItem & item)
 	 * The "dirty" flag is false here, because we just received the contact from
 	 * the server's roster. As such, it is now a synchronized entry.
 	 */
-	contactPool()->addContact ( item, metaContact, false );
+	JabberContact *contact = contactPool()->addContact ( item, metaContact, false );
+
+	/*
+	 * Set authorization property
+	 */
+	if ( !item.ask().isEmpty () )
+	{
+		contact->setProperty ( protocol()->propAuthorizationStatus, i18n ( "Waiting for authorization" ) );
+	}
+	else
+	{
+		contact->removeProperty ( protocol()->propAuthorizationStatus );
+	}
+
+	/*
+	 * Set the contact's subscription status
+	 */
+	switch ( item.subscription().type () )
+	{
+		case XMPP::Subscription::None:
+			contact->setProperty ( protocol()->propSubscriptionStatus,
+								   i18n ( "You cannot see each others' status." ) );
+			break;
+		case XMPP::Subscription::To:
+			contact->setProperty ( protocol()->propSubscriptionStatus,
+								   i18n ( "You can see this contact's status but it cannot see your status." ) );
+			break;
+		case XMPP::Subscription::From:
+			contact->setProperty ( protocol()->propSubscriptionStatus,
+								   i18n ( "This contact can see your status but you cannot see its status." ) );
+			break;
+		case XMPP::Subscription::Both:
+			contact->setProperty ( protocol()->propSubscriptionStatus,
+								   i18n ( "You can see each others' status." ) );
+			break;
+	}
 
 }
 

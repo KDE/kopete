@@ -92,6 +92,8 @@ public:
 	const Kopete::ContactPropertyTmpl propWorkPhone;
 	const Kopete::ContactPropertyTmpl propWorkMobilePhone;
 	const Kopete::ContactPropertyTmpl propNickName;
+	const Kopete::ContactPropertyTmpl propSubscriptionStatus;
+	const Kopete::ContactPropertyTmpl propAuthorizationStatus;
 	const Kopete::ContactPropertyTmpl propAvailableResources;
 	const Kopete::ContactPropertyTmpl propVCardCacheTimeStamp;
 

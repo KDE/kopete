@@ -83,6 +83,8 @@ JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStrin
 	propWorkPhone(Kopete::Global::Properties::self()->workPhone()),
 	propWorkMobilePhone(Kopete::Global::Properties::self()->workMobilePhone()),
 	propNickName(Kopete::Global::Properties::self()->nickName()),
+	propSubscriptionStatus("jabberSubscriptionStatus", i18n ("Subscription"), QString::null, true, false),
+	propAuthorizationStatus("jabberAuthorizationStatus", i18n ("Authorization Status"), QString::null, true, false),
 	propAvailableResources("jabberAvailableResources", i18n ("Available Resources"), "jabber_chatty", false, true),
 	propVCardCacheTimeStamp("jabberVCardCacheTimeStamp", i18n ("vCard Cache Timestamp"), QString::null, true, false, true)
 
