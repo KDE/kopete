@@ -243,17 +243,6 @@ The user has two ways to initiate such as thing:
  Blacklist support:
 ====================
 
-<brunes> What should be done is, there is a "blacklisting interface", with a
-         default implementation in libkopete that just uses a list of some
-         sort. Then the protocols can re-implement it if they desire for their
-         own server-side methods.
-
-<lilachaze> Implementation: I'm thinking of a class Blacklister, and a function
-            Blacklister &KopeteAccount::blacklister(). Seems cleaner than having
-            the default implementation in KopeteAccount, which would smell of
-            Refused Bequest.
-<roie>	Why is there need in a blacklister instance for each KopeteAccount? 
-	I thought of a global object of the form BlackLister::self()
-	I will also add a base class for protocol-specific blacklist processing.
-	To use it, the protocol will derieve a class from it, and reimplement 
-	few virtual functions.
+<roie> BlackList API is added. Protocols maintainers, please check if a contact 
+       is blocked before passing messages to MessageManager. 
+       I will also attach the GUI to block() and unblock() in the near future.

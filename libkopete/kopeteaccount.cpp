@@ -35,6 +35,7 @@
 #include "kopetegroup.h"
 #include "kopetepassword.h"
 #include "kopeteprefs.h"
+#include "kopeteblacklister.h"
 
 static QString configGroup( Kopete::Protocol *protocol, const QString &accountId )
 {
@@ -45,12 +46,15 @@ class KopeteAccountPrivate
 {
 public:
 	KopeteAccountPrivate( Kopete::Protocol *protocol, const QString &accountId )
-	 : protocol( protocol ), id( accountId )
+	 : blackList( new Kopete::BlackLister( protocol->pluginId(), accountId ) )
+	 , protocol( protocol ), id( accountId )
 	 , password( configGroup( protocol, accountId ) )
 	 , autologin( false ), priority( 0 ), myself( 0 )
 	 , suppressStatusTimer( 0 ), suppressStatusNotification( false )
 	{
 	}
+	
+	~KopeteAccountPrivate() { delete blackList; }
 
 	Kopete::Protocol *protocol;
 	QString id;
@@ -62,6 +66,7 @@ public:
 	Kopete::Contact *myself;
 	QTimer *suppressStatusTimer;
 	bool suppressStatusNotification;
+	Kopete::BlackLister *blackList;
 };
 
 Kopete::Account::Account( Kopete::Protocol *parent, const QString &accountId, const char *name )
@@ -454,6 +459,26 @@ void Kopete::Account::slotStopSuppression()
 bool Kopete::Account::suppressStatusNotification() const
 {
 	return d->suppressStatusNotification;
+}
+
+Kopete::BlackLister* Kopete::Account::blackLister()
+{
+	return d->blackList;
+}
+
+void Kopete::Account::block( QString &contactId )
+{
+	d->blackList->slotAddContact( contactId );
+}
+
+void Kopete::Account::unblock( QString &contactId )
+{
+	d->blackList->slotRemoveContact( contactId );
+}
+
+bool Kopete::Account::isBlocked( QString &contactId )
+{
+	return d->blackList->isBlocked( contactId );
 }
 
 #include "kopeteaccount.moc"

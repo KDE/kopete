@@ -36,6 +36,7 @@ class Plugin;
 class Protocol;
 class MetaContact;
 class OnlineStatus;
+class BlackLister;
 
 /**
  * @author Olivier Goffart  <ogoffart@tiscalinet.be>
@@ -297,7 +298,17 @@ public:
 	 * notifications should be used
 	 */
 	bool suppressStatusNotification() const;
-
+	
+	/**
+	 * \return a pointer to the blacklist of the account
+	 */
+	BlackLister* blackLister();
+	
+	/**
+	 * \return true if the contact is in the blacklist, false otherwise
+	 */
+	virtual bool isBlocked( QString &contactId );
+	
 protected:
 	/**
 	 * \brief Set the 'myself' contact.
@@ -377,6 +388,20 @@ public slots:
 	 * the plugin to set the user's mode to away
 	 */
 	virtual void setAway( bool away, const QString &reason = QString::null ) = 0;
+
+	/**
+	 * Add a user to the blacklist. 
+	 * Default implementation emits @ref Kopete::BlackLister::contactAdded()
+	 * @param contactId the contact to be added to the blacklist
+	 */
+	virtual void block( QString &contactId );
+	
+	/**
+	 * Remove a user from the blacklist
+	 * Default implementation emits @ref Kopete::BlackLister::contactRemoved()
+	 * @param contactId the contact to be removed from the blacklist
+	 */
+	virtual void unblock( QString &contactId );
 
 signals:
 	/**
