@@ -443,6 +443,7 @@ private:
 	QMap<QString, QString> customCtcpMap;
 	QDict<QTextCodec> codecs;
 	QTextCodec *defaultCodec;
+	QTimer *m_connectTimer;
 
 	KExtendedSocket *m_sock;
 };

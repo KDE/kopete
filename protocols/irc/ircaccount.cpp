@@ -80,8 +80,8 @@ void ChannelListDialog::slotChannelDoubleClicked( const QString & )
 	close();
 }
 
-IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
-	: KopeteAccount(protocol, accountId)
+IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QString &autoChan )
+	: KopeteAccount(protocol, accountId), autoConnect( autoChan )
 {
 	m_manager = 0L;
 	m_protocol = protocol;
@@ -451,14 +451,17 @@ void IRCAccount::connect()
 
 void IRCAccount::slotConnectedToServer()
 {
+	kdDebug(14120) << k_funcinfo << autoConnect << endl;
+
 	m_contactManager->addToNotifyList( m_engine->nickName() );
+
+	KopeteMessageManager *manager = myServer()->manager();
+	if( !autoConnect.isEmpty() )
+		KopeteCommandHandler::commandHandler()->processMessage( QString::fromLatin1("/join %1").arg(autoConnect), manager );
 
 	QStringList m_connectCommands = connectCommands();
 	for( QStringList::Iterator it = m_connectCommands.begin(); it != m_connectCommands.end(); ++it )
-	{
-		KopeteMessageManager *manager = myServer()->manager();
 		KopeteCommandHandler::commandHandler()->processMessage( *it, manager );
-	}
 }
 
 void IRCAccount::slotJoinedUnknownChannel( const QString &channel, const QString &nick )

@@ -79,7 +79,7 @@ void IRCProtocolHandler::handleURL( const KURL &url ) const
 	if( port == 0 )
 		port = 6667;
 
-	QString chan = url.path(-1);
+	QString chan = url.url().section('/',3);
 	if( chan.isEmpty() )
 		return;
 
@@ -92,11 +92,9 @@ void IRCProtocolHandler::handleURL( const KURL &url ) const
 
 	kdDebug(14120) << accountId << endl;
 
-	IRCAccount *newAccount = new IRCAccount( IRCProtocol::protocol(), accountId );
+	IRCAccount *newAccount = new IRCAccount( IRCProtocol::protocol(), accountId, chan );
 	newAccount->setNickName( user.loginName() );
 	newAccount->setUserName( user.loginName() );
-	newAccount->setConnectCommands( QStringList( QString::fromLatin1("/join %1").arg(chan) ) );
-
 	newAccount->loaded();
 	newAccount->connect();
 }

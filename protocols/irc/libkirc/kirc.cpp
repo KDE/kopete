@@ -81,6 +81,9 @@ KIRC::KIRC( QObject *parent, const char *name) : QObject( parent, name ),
 		KConfig config( timeoutPath );
 		connectTimeout = config.readNumEntry( "ConnectTimeout", 20 ) * 1000;
 	}
+
+	m_connectTimer = new QTimer( this );
+	connect( m_connectTimer, SIGNAL( timeout() ), this, SLOT( slotAuthFailed() ) );
 }
 
 KIRC::~KIRC()
@@ -155,7 +158,7 @@ void KIRC::connectToServer(const QString &host, Q_UINT16 port, const QString &ni
 		setStatus(Connecting);
 
 		//If we don't get a reply within 15 seconds, give up
-		QTimer::singleShot(connectTimeout, this, SLOT(slotAuthFailed()));
+		m_connectTimer->start( connectTimeout );
 	}
 	else
 	{
@@ -190,7 +193,7 @@ void KIRC::slotConnected()
 	changeNickname(m_Nickname);
 
 	//If we don't get a reply within 15 seconds, give up
-	QTimer::singleShot(connectTimeout, this, SLOT(slotAuthFailed()));
+	m_connectTimer->start( connectTimeout );
 }
 
 void KIRC::slotConnectionClosed()
@@ -326,9 +329,17 @@ void KIRC::slotReadyRead()
 
 			if(method && method->isValid())
 			{
-				if (method->checkMsgValidity(msg) &&
-					(!msg.isNumeric() ||
-					 (/*msg.isNumeric()&&*/msg.argsSize() > 0 && msg.arg(0) == m_Nickname || msg.arg(0) == "*")))
+				if( method->checkMsgValidity(msg) &&
+					!msg.isNumeric() ||
+					(
+						msg.argsSize() > 0 &&
+						(
+							msg.arg(0) == m_Nickname ||
+							msg.arg(0) == m_PendingNick ||
+							msg.arg(0) == QString::fromLatin1("*")
+						)
+					)
+				)
 				{
 					emit receivedMessage(msg);
 					if (!method->operator()(msg))

@@ -28,7 +28,7 @@ kopete_irc_la_LIBADD      = ../../libkopete/libkopete.la \
 		./libkirc/libkirc.la \
 		$(LIB_KIO)
 
-service_DATA = kopete_irc.desktop
+service_DATA = kopete_irc.desktop irc.protocol
 servicedir = $(kde_servicesdir)
 
 xmldata_DATA = ircnetworks.xml

@@ -18,6 +18,8 @@
     *************************************************************************
 */
 
+#include <qtimer.h>
+
 #include "kircfunctors.h"
 
 #include "kirc.h"
@@ -218,10 +220,12 @@ void KIRC::registerNumericReplies()
 
 bool KIRC::numericReply_001(const KIRCMessage &msg)
 {
+	kdDebug(14121) << k_funcinfo << endl;
+
 	/* Gives a welcome message in the form of:
 	 * "Welcome to the Internet Relay Network <nick>!<user>@<host>"
 	 */
-	if (m_FailedNickOnLogin == true)
+	if (m_FailedNickOnLogin)
 	{
 		// this is if we had a "Nickname in use" message when connecting and we set another nick.
 		// This signal emits that the nick was accepted and we are now logged in
@@ -234,8 +238,10 @@ bool KIRC::numericReply_001(const KIRCMessage &msg)
 	 * although the MOTD comes *after* this.
 	 */
 	emit incomingConnectString(msg.suffix());
-	setStatus(Connected);
+	m_connectTimer->stop();
 	emit connectedToServer();
+
+	setStatus(Connected);
 
 	return true;
 }
@@ -443,6 +449,7 @@ bool KIRC::numericReply_433(const KIRCMessage &msg)
 		// This differs because the server won't send us a response back telling us our nick changed
 		// (since we aren't logged in).
 		m_FailedNickOnLogin = true;
+		m_connectTimer->stop();
 		emit incomingFailedNickOnLogin(msg.arg(1));
 	}
 	else

@@ -103,7 +103,7 @@ public:
 		Ignore = 16
 	};
 
-	IRCAccount(IRCProtocol *p, const QString &accountid);
+	IRCAccount(IRCProtocol *p, const QString &accountid, const QString &autoConnect = QString::null);
 	~IRCAccount();
 
 	const QString userName() const;
@@ -202,6 +202,7 @@ private:
 	QString mNickName;
 	KopeteAwayAction *mAwayAction;
 	bool triedAltNick;
+	QString autoConnect;
 
 	KIRC *m_engine;
 	IRCNetwork *m_network;
