@@ -42,6 +42,7 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 
 	connect (cbAutoConnect, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
 	connect (cbUseSSL, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
+	connect (cbCustomServer, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
 	connect (cbAllowPlainTextPassword, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
 	connect (cbRemPass, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
 
@@ -54,8 +55,8 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	connect (leProxyUser, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
 	connect (leProxyPass, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
 
-	connect (mID, SIGNAL (textChanged (const QString &)), this, SLOT (setJIDValidation ()));
-	connect (mServer, SIGNAL (textChanged (const QString &)), this, SLOT (setJIDValidation ()));
+	connect (mID, SIGNAL (textChanged (const QString &)), this, SLOT (updateServerField ()));
+	connect (cbCustomServer, SIGNAL (toggled (bool)), this, SLOT (updateServerField ()));
 
 	connect (btnRegister, SIGNAL (clicked ()), this, SLOT (registerClicked ()));
 	connect (cbUseSSL, SIGNAL (toggled (bool)), this, SLOT (sslToggled (bool)));
@@ -90,6 +91,18 @@ void JabberEditAccountWidget::reopen ()
 
 	QString auth = account()->pluginData (m_protocol, "AuthType");
 
+	cbCustomServer->setChecked (account()->pluginData(m_protocol, "CustomServer") == QString::fromLatin1 ("true"));
+
+	if(cbCustomServer->isChecked ())
+	{
+		mServer->setEnabled(true);
+	}
+	else
+	{
+		mServer->setEnabled (false);
+		mServer->setText(mID->text().section("@", 1));
+	}
+
 	cbAllowPlainTextPassword->setChecked (account()->pluginData (m_protocol, "AllowPlainTextPassword") == QString::fromLatin1 ("true"));
 
 	QString proxyType = account()->pluginData (m_protocol, "ProxyType");
@@ -110,16 +123,11 @@ void JabberEditAccountWidget::reopen ()
 	leProxyPass->setText (account()->pluginData (m_protocol, "ProxyPass"));
 	cbAutoConnect->setChecked (account()->autoLogin());
 
-	revalidateJID = false;
-
 }
 
 KopeteAccount *JabberEditAccountWidget::apply ()
 {
 	kdDebug (14180) << "JabberEditAccount::apply()" << endl;
-
-	if(revalidateJID)
-		validateJID();
 
 	if (!account())
 	{
@@ -142,14 +150,6 @@ KopeteAccount *JabberEditAccountWidget::apply ()
 void JabberEditAccountWidget::writeConfig ()
 {
 
-	// FIXME: The call below represents a flaw in the current Kopete API.
-	// Once the API is cleaned up, this will most likely require a change.
-	//account()->setAccountId(mID->text());
-
-	account()->setPluginData (m_protocol, "Server", mServer->text ());
-	account()->setPluginData (m_protocol, "Resource", mResource->text ());
-	account()->setPluginData (m_protocol, "Port", QString::number (mPort->value ()));
-
 	if (cbUseSSL->isChecked ())
 		account()->setPluginData (m_protocol, "UseSSL", "true");
 	else
@@ -166,10 +166,28 @@ void JabberEditAccountWidget::writeConfig ()
 		account()->setPassword (NULL);
 	}
 
+	if (cbCustomServer->isChecked ())
+	{
+		account()->setPluginData (m_protocol, "CustomServer", "true");
+	}
+	else
+	{
+		account()->setPluginData (m_protocol, "CustomServer", "false");
+	}
+
+	// FIXME: The call below represents a flaw in the current Kopete API.
+	// Once the API is cleaned up, this will most likely require a change.
+	//account()->setAccountId(mID->text());
+
 	if (cbAllowPlainTextPassword->isChecked ())
 		account()->setPluginData (m_protocol, "AllowPlainTextPassword", "true");
 	else
 		account()->setPluginData (m_protocol, "AllowPlainTextPassword", "false");
+
+
+	account()->setPluginData (m_protocol, "Server", mServer->text ());
+	account()->setPluginData (m_protocol, "Resource", mResource->text ());
+	account()->setPluginData (m_protocol, "Port", QString::number (mPort->value ()));
 
 	account()->setAutoLogin(cbAutoConnect->isChecked());
 
@@ -223,46 +241,23 @@ bool JabberEditAccountWidget::validateData ()
 	return true;
 }
 
-void JabberEditAccountWidget::validateJID ()
-{
-	QString server = mID->text().section('@', 1);
-
-	if(mServer->text().isEmpty())
-	{
-		// the user didn't specify a server, automatically choose one
-		mServer->setText(server);
-	}
-	else
-	{
-		if(mServer->text() != server)
-		{
-			// the user has chosen a different server than his JID
-			// suggests, display a warning
-			int result = KMessageBox::warningYesNo (this, i18n("You have chosen a different Jabber server than your Jabber "
-													"ID suggests. Do you want Kopete to change your server setting? Selecting \"Yes\" "
-													"will change your Jabber server to \"%1\" as indicated by your Jabber ID. "
-													"Selecting \"No\" will keep your current settings.").arg(server),
-													i18n("Are you sure about your server name?"));
-
-			if(result == KMessageBox::Yes)
-				mServer->setText(server);
-		}
-	}
-
-}
-
 void JabberEditAccountWidget::configChanged ()
 {
 	settings_changed = true;
 }
 
-void JabberEditAccountWidget::setJIDValidation ()
+void JabberEditAccountWidget::updateServerField ()
 {
 
-	revalidateJID = true;
-
-	if((account() != 0L) && (account ()->pluginData(m_protocol, "Server") == mServer->text ()))
-		revalidateJID = false;
+	if(!cbCustomServer->isChecked())
+	{
+		mServer->setText(mID->text().section("@", 1));
+		mServer->setEnabled(false);
+	}
+	else
+	{
+		mServer->setEnabled(true);
+	}
 
 }
 
