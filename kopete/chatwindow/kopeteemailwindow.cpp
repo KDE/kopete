@@ -670,7 +670,10 @@ void KopeteEmailWindow::slotReplySendClicked()
 void KopeteEmailWindow::raise(bool activate)
 {
 	makeVisible();
+	
+	if ( !KWin::windowInfo( winId(), NET::WMDesktop ).onAllDesktops() )
 	KWin::setOnDesktop( winId(), KWin::currentDesktop() );
+	
 	KMainWindow::raise();
 
 	/* Removed Nov 2003
