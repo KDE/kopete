@@ -19,6 +19,7 @@
 #include <qimage.h>
 #include <qbuffer.h>
 #include <qcstring.h>
+#include <qstylesheet.h>
 #include <kgenericfactory.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
@@ -68,9 +69,16 @@ LatexPlugin* LatexPlugin::s_pluginStatic = 0L;
 
 void LatexPlugin::slotHandleLatex( KopeteMessage& msg )
 {
-	kdDebug() << k_funcinfo << endl;
+	
 	kdDebug() << k_funcinfo << " Using converter: " << m_convScript << endl;
 	QString messageText = msg.plainBody();
+
+	if( !messageText.contains("$$"))
+	{
+		return;
+	}
+
+	
 	// /\[([^]]).*?\[/$1\]/
 	// \$\$.+?\$\$
 	
@@ -85,7 +93,7 @@ void LatexPlugin::slotHandleLatex( KopeteMessage& msg )
 	
 	QMap<QString, QString> replaceMap;
     // FIXME:  this loop never end for me, that's why i limited count to 30  - Olivier
-	while (pos >= 0 && pos < messageText.length()  && count < 30)
+	while (pos >= 0 && (unsigned int)pos < messageText.length()  && count < 30)
 	{
 		kdDebug() << k_funcinfo  << " searching pos: " << pos << " count: " << count << endl;
 		rg.search(messageText, pos);
@@ -133,11 +141,11 @@ void LatexPlugin::slotHandleLatex( KopeteMessage& msg )
 				buffer.open( IO_WriteOnly );
 				renderedImage.save( &buffer, "PNG" );
 				QString imageURL = QString::fromLatin1("data:image/png;base64,%1").arg( KCodecs::base64Encode( ba ) );
-				replaceMap[match] = imageURL;
+				replaceMap[QStyleSheet::escape(match)] = imageURL;
 			}
 			#else
 			QString imageURL = fileName;
-			replaceMap[match] = imageURL;
+			replaceMap[QStyleSheet::escape(match)] = imageURL;
 			#endif
 			// ok, go for the next one
 			pos += rg.matchedLength();
@@ -145,10 +153,16 @@ void LatexPlugin::slotHandleLatex( KopeteMessage& msg )
 
 		}
 	}
-	
+
+	if(replaceMap.isEmpty()) //we haven't found any latex strings
+		return;
+
+	messageText=QStyleSheet::escape(messageText); 
 	for (QMap<QString,QString>::ConstIterator it = replaceMap.begin(); it != replaceMap.end(); ++it)
 	{
-		messageText.replace(it.key(), " <img src=\"" + (*it) + "\"  alt=\"" + it.key() +"\" title=\"" + it.key() +"\"  /> ");
+		QString escapedLATEX=it.key();
+		escapedLATEX.replace("\"","&quot;");  //we need  the escape quotes because that string will be in a title="" argument
+		messageText.replace(it.key(), " <img src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
 	}
 	msg.setBody( messageText, KopeteMessage::RichText );
 	
