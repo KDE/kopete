@@ -334,7 +334,6 @@ void AppearanceConfig::slotUpdatePreview()
 	preview->begin();
 	preview->write( QString::fromLatin1( "<html><body>" ) );
 	preview->write( msgIn->transformMessage( model ) );
-	preview->write( QString::fromLatin1( "<br/><br/>" ) );
 	preview->write( msgOut->transformMessage( model ) );
 	preview->write( QString::fromLatin1( "</body></html>" ) );
 	preview->end();
