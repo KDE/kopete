@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>332</width>
-            <height>302</height>
+            <height>304</height>
         </rect>
     </property>
     <property name="caption">
@@ -223,7 +223,7 @@ This is required to register new account.&lt;/i&gt;&lt;/p&gt;</string>
                                 </color>
                             </property>
                             <property name="scaledContents">
-                                <bool>false</bool>
+                                <bool>true</bool>
                             </property>
                             <property name="toolTip" stdset="0">
                                 <string>Registration token</string>
