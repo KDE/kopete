@@ -80,6 +80,8 @@ public:
 	 */
 	QStringList fileTransferContacts() const;
 	
+	QStringList contactFileProtocols(QString displayName);
+	
 	void sendFile(QString displayName, QString fileName);
 	
 	/**

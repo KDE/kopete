@@ -20,8 +20,6 @@
 
 #include <qdom.h>
 #include <qfile.h>
-//#include <qptrlist.h>
-//#include <qstringlist.h>
 #include <qstylesheet.h>
 
 #include <kapplication.h>
@@ -308,6 +306,35 @@ void KopeteContactList::sendFile( QString displayName, QString fileName)
 	}
 	return;
 }
+
+QStringList KopeteContactList::contactFileProtocols(QString displayName)
+{
+	kdDebug() << "Get contacts for: " << displayName << "\n";
+	QStringList protocols;
+	
+	QPtrListIterator<KopeteMetaContact> it( m_contacts );
+	for( ; it.current(); ++it )
+	{		
+		if( it.current()->displayName() == displayName ) {
+			kdDebug() << "Found them!" << endl;
+			QPtrList<KopeteContact> mContacts = it.current()->contacts();
+			kdDebug() << mContacts.count() << endl;
+			QPtrListIterator<KopeteContact> jt( mContacts );
+			for ( ; jt.current(); ++jt )
+			{
+				kdDebug() << "1" << jt.current()->protocol()->id() << "\n";
+				if( jt.current()->canAcceptFiles() ) {
+					kdDebug() << jt.current()->protocol()->id() << "\n";
+					protocols.append ( jt.current()->protocol()->id() );
+					
+				}
+			}
+			return protocols;
+		}
+	}
+	return;
+}
+
 
 KopeteGroupList KopeteContactList::groups() const
 {
