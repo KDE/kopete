@@ -135,7 +135,7 @@ void KopeteWindow::initActions ( void )
 		actionCollection() );
 
 	actionSave = new KAction( i18n("Save &Contact List"), "filesave", KStdAccel::shortcut(KStdAccel::Save),
-							KopeteContactList::contactList(), SLOT(save()),
+							this, SLOT(slotSaveContactList()),
 							actionCollection(), "save_contactlist" );
 
 	KStdAction::quit(this, SLOT(slotQuit()), actionCollection());
@@ -476,6 +476,12 @@ void KopeteWindow::slotShowPreferencesDialog()
 	// exit, but the KJanusWidget can't handle it properly and will cause
 	// crashes.
 	PreferencesDialog::preferencesDialog()->show();
+}
+
+void KopeteWindow::slotSaveContactList()
+{
+	KopeteContactList::contactList()->save();
+	KMessageBox::information(this, i18n("Contact List Saved."), i18n("Contact List Saved"));
 }
 
 void KopeteWindow::showAddContactDialog()
