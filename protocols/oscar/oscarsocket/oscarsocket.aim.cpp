@@ -45,9 +45,9 @@ void OscarSocket::sendLoginAIM(void)
 	outbuf.addSnac(0x0017,0x0002,0x0000,0x00000000);
 	outbuf.addTLV(0x0001,getSN().length(),getSN().latin1());
 
-	char digest[16];
+	char digest[17];
 	encodePassword(&digest[0]);
-	digest[16] = '\0';  //do this so that addTLV sees a NULL-terminator
+	digest[17] = '\0';  //do this so that addTLV sees a NULL-terminator
 
 	outbuf.addTLV(0x0025, 16, &digest[0]);
 	outbuf.addTLV(0x0003, 0x32, AIM_CLIENTSTRING);
