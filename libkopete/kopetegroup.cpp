@@ -21,7 +21,7 @@
 
 #include <klocale.h>
 
-KopeteGroup* KopeteGroup::toplevel = new KopeteGroup(QString::fromLatin1("Default"), KopeteGroup::TopLevel);
+KopeteGroup* KopeteGroup::toplevel = new KopeteGroup(i18n( "Contacts are put in groups. Top Level holds all groups (but can contain contacts too) Similar to KMail's folders", "Top Level" ) , KopeteGroup::TopLevel);
 KopeteGroup* KopeteGroup::temporary = new KopeteGroup(i18n("Not in your contact list"),KopeteGroup::Temporary);
 
 struct KopeteGroupPrivate
