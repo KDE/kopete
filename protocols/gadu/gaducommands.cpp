@@ -267,7 +267,7 @@ void RegisterCommand::watcher()
 				break;
 	
 			case GG_STATE_DONE:
-				if ( gg_pub->success ) {
+				if ( gg_pub->success && gg_pub->uin ) {
 					uin= gg_pub->uin;
 					state = RegisterStateDone;
 					emit done( i18n( "Registration Finished" ), i18n( "Registration has completed successfully." ) );
