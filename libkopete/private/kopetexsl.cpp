@@ -13,9 +13,7 @@
     *************************************************************************
 */
 
-#include <libxslt/xsltInternals.h>
 #include <libxslt/transform.h>
-#include <libxslt/xsltutils.h>
 #include <libxml/parser.h>
 
 #include <kdebug.h>
@@ -61,11 +59,11 @@ bool KopeteXSL::isValid( const QString &xslString )
 			retVal = true;
 			xsltFreeStylesheet(style_sheet);
 		}
+		else
+		{
+			xmlFreeDoc(xslDoc);
+		}
 	}
-
-	//Cleanup
-	xsltCleanupGlobals();
-	xmlCleanupParser();
 
 	return retVal;
 }
@@ -123,6 +121,7 @@ void KopeteXSLThread::run()
 			else
 			{
 				kdDebug() << "Document is not valid XSL!!!" << endl;
+				xmlFreeDoc(xslDoc);
 			}
 		}
 		else
@@ -135,10 +134,6 @@ void KopeteXSLThread::run()
 	{
 		kdDebug() << "XML Document could not be parsed!!!" << endl;
 	}
-
-	//Cleanup
-	xsltCleanupGlobals();
-	xmlCleanupParser();
 
 	//Signal completion
 	if( m_target && m_slotCompleted )
