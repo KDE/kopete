@@ -57,7 +57,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& AccountID, cons
 	m_importContacts = false;
 	m_useServerGroups = false;
 
-	m_session = YahooSessionManager::manager()->createSession(accountId(), password());
+
 
 	// we need this quite early (before initActions at least)
 	kdDebug(14180) << "Yahoo: Creating myself with name = " << accountId() << endl;
@@ -105,6 +105,8 @@ void YahooAccount::loaded()
 	newPluginData = pluginData(protocol(), QString::fromLatin1("ImportContacts"));
 	if (newPluginData == "True")
 		m_importContacts = true;
+
+	m_session = YahooSessionManager::manager()->createSession(accountId(), password());
 
 }
 
@@ -286,7 +288,7 @@ bool YahooAccount::addContactToMetaContact(const QString &contactId, const QStri
 //	kdDebug(14180) << k_funcinfo << " contactId: " << contactId << endl;
 
 	if(!contact(contactId))
-	{	
+	{
 		// FIXME: New Contacts are NOT added to KABC, because:
 		// How on earth do you tell if a contact is being deserialised or added brand new here?
 		YahooContact *newContact = new YahooContact( this, contactId, displayName, parentContact, KopeteContact::OmitFromKABC);
