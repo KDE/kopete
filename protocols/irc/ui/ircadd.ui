@@ -8,189 +8,130 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>346</width>
-            <height>245</height>
+            <width>390</width>
+            <height>284</height>
         </rect>
     </property>
     <property name="caption">
         <string>Form2</string>
     </property>
-    <widget class="QGroupBox">
+    <hbox>
         <property name="name">
-            <cstring>GroupBox2</cstring>
+            <cstring>unnamed</cstring>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>5</x>
-                <y>10</y>
-                <width>335</width>
-                <height>230</height>
-            </rect>
+        <property name="margin">
+            <number>11</number>
         </property>
-        <property name="title">
-            <string>Contact Information</string>
+        <property name="spacing">
+            <number>6</number>
         </property>
-        <widget class="QLabel">
+        <widget class="QGroupBox">
             <property name="name">
-                <cstring>TextLabel1</cstring>
+                <cstring>GroupBox2</cstring>
             </property>
-            <property name="geometry">
-                <rect>
-                    <x>11</x>
-                    <y>19</y>
-                    <width>130</width>
-                    <height>20</height>
-                </rect>
+            <property name="title">
+                <string>Contact Information</string>
             </property>
-            <property name="text">
-                <string>Channel or nickname:</string>
-            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QComboBox" row="3" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>cmbGroup</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>TextLabel1_3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>List in group:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>ircServer</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>TextLabel2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>( for example: #kde or SomeNickName )</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Channel or nickname:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>TextLabel3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>On server:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="0" column="2">
+                    <property name="name">
+                        <cstring>addID</cstring>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>chkConnectNow</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Connect to the IRC server now (If not already connected)</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>chkJoinNow</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Join channel or show query window on connect</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="6" column="0" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>TextLabel1_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Note: If you're already connected to this server, don't worry. Kopete will automaticly use the existing IRC server session.</string>
+                    </property>
+                    <property name="alignment">
+                        <set>WordBreak|AlignVCenter</set>
+                    </property>
+                </widget>
+            </grid>
         </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>TextLabel3</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>11</x>
-                    <y>71</y>
-                    <width>65</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>On server:</string>
-            </property>
-        </widget>
-        <widget class="QLineEdit">
-            <property name="name">
-                <cstring>ircServer</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>82</x>
-                    <y>71</y>
-                    <width>240</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="QLineEdit">
-            <property name="name">
-                <cstring>addID</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>147</x>
-                    <y>19</y>
-                    <width>175</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>TextLabel2</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>45</y>
-                    <width>310</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>( for example: #kde or SomeNickName )</string>
-            </property>
-        </widget>
-        <widget class="QComboBox">
-            <property name="name">
-                <cstring>cmbGroup</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>90</x>
-                    <y>105</y>
-                    <width>230</width>
-                    <height>21</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>TextLabel1_3</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>15</x>
-                    <y>105</y>
-                    <width>70</width>
-                    <height>21</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>List in group:</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox">
-            <property name="name">
-                <cstring>chkConnectNow</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>15</x>
-                    <y>140</y>
-                    <width>310</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Connect to the IRC server now (If not already connected)</string>
-            </property>
-            <property name="checked">
-                <bool>true</bool>
-            </property>
-        </widget>
-        <widget class="QCheckBox">
-            <property name="name">
-                <cstring>chkJoinNow</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>30</x>
-                    <y>165</y>
-                    <width>295</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Join channel or show query window on connect</string>
-            </property>
-            <property name="checked">
-                <bool>true</bool>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>TextLabel1_2</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>5</x>
-                    <y>190</y>
-                    <width>320</width>
-                    <height>30</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Note: If you're already connected to this server, don't worry. Kopete will automaticly use the existing IRC server session.</string>
-            </property>
-            <property name="alignment">
-                <set>WordBreak|AlignVCenter</set>
-            </property>
-        </widget>
-    </widget>
+    </hbox>
 </widget>
+<tabstops>
+    <tabstop>addID</tabstop>
+    <tabstop>ircServer</tabstop>
+    <tabstop>cmbGroup</tabstop>
+    <tabstop>chkConnectNow</tabstop>
+    <tabstop>chkJoinNow</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
