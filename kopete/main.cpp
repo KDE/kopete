@@ -23,7 +23,7 @@
 static const char *description =
 	I18N_NOOP("Kopete, the KDE Messenger");
 // INSERT A DESCRIPTION FOR YOUR APPLICATION HERE
-static const char *version="0.2";	
+static const char *version="0.23";	
 	
 static KCmdLineOptions options[] =
 {
@@ -36,9 +36,9 @@ int main(int argc, char *argv[])
 
   KAboutData aboutData( "kopete", I18N_NOOP("Kopete"),
     version, description, KAboutData::License_GPL,
-    "(c) 2002, Duncan Mac-Vicar Prett", 0, 0, "duncan@puc.cl");
+    "(c) 2002, Duncan Mac-Vicar Prett", 0, 0, "duncan@kde.org");
  	
-	aboutData.addAuthor("Duncan Mac-Vicar Prett","Author, core developer", "duncan@puc.cl","http://www.mac-vicar.com");
+	aboutData.addAuthor("Duncan Mac-Vicar Prett","Author, core developer", "duncan@kde.org","http://www.mac-vicar.com");
 	aboutData.addAuthor ("Nick Betcher", "core developer, faster plugin developer in the earth.","nbetcher@usinternet.com", "http://www.kdedevelopers.net" );
 
 	aboutData.addCredit("Herwin Jan Steehouwer", I18N_NOOP("KxEngine ICQ code"));
