@@ -19,7 +19,6 @@
 
 #include "kopeteprotocol.h"
 
-
 #include <kdebug.h>
 #include <kaction.h>
 
@@ -264,29 +263,26 @@ void KopeteProtocol::refreshAccounts()
 
 void KopeteProtocol::slotRefreshStatus()
 {
-	KopeteOnlineStatus newStatus;
-	QDict<KopeteAccount> dict=KopeteAccountManager::manager()->accounts(this);
-	QDictIterator<KopeteAccount> it( dict );
+	bool accountFound = false;
 
-	bool accountsFound = false;
-	for( ; KopeteAccount *account = it.current(); ++it )
+	KopeteOnlineStatus newStatus;
+	QDict<KopeteAccount> dict = KopeteAccountManager::manager()->accounts( this );
+	for ( QDictIterator<KopeteAccount> it( dict ); KopeteAccount *account = it.current(); ++it )
 	{
-		accountsFound = true;
-		if(account->myself())
+		if ( account->myself() && account->myself()->onlineStatus() > newStatus )
 		{
-			if(account->myself()->onlineStatus() > newStatus)
-			{
-				newStatus = account->myself()->onlineStatus();
-			}
+			newStatus = account->myself()->onlineStatus();
+			accountFound = true;
 		}
 	}
 
-	if ( !accountsFound )
-		newStatus = KopeteOnlineStatus( KopeteOnlineStatus::Unknown, 0,
-			this, 765, QString::fromLatin1( "status_unknown" ),
-			QString::null, QString::null );
+	if ( !accountFound )
+	{
+		newStatus = KopeteOnlineStatus( KopeteOnlineStatus::Unknown, 0, this, 765,
+			QString::fromLatin1( "status_unknown" ), QString::null, QString::null );
+	}
 
-	if( newStatus != m_status )
+	if ( newStatus != m_status )
 	{
 		m_status = newStatus;
 		emit( statusIconChanged( m_status ) );
