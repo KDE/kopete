@@ -193,6 +193,8 @@ void ICQContact::slotOffgoingBuddy(QString sender)
 	if(sender != contactName())
 		return;
 
+	removeProperty(mProtocol->clientFeatures);
+	removeProperty(mProtocol->awayMessage);
 	setOnlineStatus(mProtocol->statusOffline);
 }
 

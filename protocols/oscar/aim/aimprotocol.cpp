@@ -157,7 +157,8 @@ AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
 	statusOffline(KopeteOnlineStatus::Offline, 1, this, OSCAR_OFFLINE, QString::null, i18n("Offline"), i18n("Offline")),
 	statusAway(KopeteOnlineStatus::Away, 1, this, OSCAR_AWAY, "aim_away", i18n("Away"), i18n("Away")),
 	statusConnecting(KopeteOnlineStatus::Connecting, 99, this, OSCAR_CONNECTING, "aim_connecting", i18n("Connecting..."), i18n("Connecting...")),
-	awayMessage(Kopete::Global::Properties::self()->awayMessage())
+	awayMessage(Kopete::Global::Properties::self()->awayMessage()),
+	clientFeatures("clientFeatures", i18n("Client Features"), 0, false)
 {
 	if (protocolStatic_)
 		kdDebug(14190) << k_funcinfo << "AIM plugin already initialized" << endl;

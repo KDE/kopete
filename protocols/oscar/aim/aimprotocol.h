@@ -70,6 +70,7 @@ class AIMProtocol : public KopeteProtocol
 		const KopeteOnlineStatus statusConnecting;
 
 		const Kopete::ContactPropertyTmpl awayMessage;
+		const Kopete::ContactPropertyTmpl clientFeatures;
 
 	private:
 		/** The active instance of oscarprotocol */

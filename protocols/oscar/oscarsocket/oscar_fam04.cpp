@@ -829,44 +829,44 @@ void OscarSocket::parseMessage(const UserInfo &u, OscarMessage &message, const B
 	{
 		case MSG_AUTO:
 			kdDebug(14150) << k_funcinfo <<
-				"Got an automatic message: " << message.text() << endl;
-			emit receivedAwayMessage(u.sn, message.text()); // only sets contacts away message var
+				"Got an automatic message: '" << message.text() << "'" << endl;
 			message.setType(OscarMessage::Away);
+			emit receivedAwayMessage(u.sn, message.text()); // only sets contacts away message var
 			emit receivedMessage(u.sn, message); // also displays message in chatwin
 			break;
 		case MSG_NORM:
 			kdDebug(14150) << k_funcinfo <<
-				"Got a normal message: " << message.text() << endl;
+				"Got a normal message: '" << message.text() << "'" << endl;
 			message.setType(OscarMessage::Normal);
 			emit receivedMessage(u.sn, message);
 			break;
 		case MSG_URL:
 			kdDebug(14150) << k_funcinfo <<
-				"Got an URL message: " << message.text() << endl;
+				"Got an URL message: '" << message.text() << "'" << endl;
 			message.setType(OscarMessage::URL);
 			emit receivedMessage(u.sn, message);
 			break;
 		case MSG_AUTHREJ:
 			kdDebug(14150) << k_funcinfo <<
-				"Got an 'auth rejected' message: " << message.text() << endl;
+				"Got an 'auth rejected' message: '" << message.text() << "'" << endl;
 			message.setType(OscarMessage::DeclinedAuth);
 			emit receivedMessage(u.sn, message);
 			break;
 		case MSG_AUTHACC:
 			kdDebug(14150) << k_funcinfo <<
-				"Got an 'auth granted' message: " << message.text() << endl;
+				"Got an 'auth granted' message: '" << message.text() << "'" << endl;
 			message.setType(OscarMessage::GrantedAuth);
 			emit receivedMessage(u.sn, message);
 			break;
 		case MSG_WEB:
 			kdDebug(14150) << k_funcinfo <<
-				"Got a web panel message: " << message.text() << endl;
+				"Got a web panel message: '" << message.text() << "'" << endl;
 			message.setType(OscarMessage::WebPanel);
 			emit receivedMessage(u.sn, message);
 			break;
 		case MSG_EMAIL:
 			kdDebug(14150) << k_funcinfo <<
-				"Got an email message: " << message.text() << endl;
+				"Got an email message: '" << message.text() << "'" << endl;
 			message.setType(OscarMessage::EMail);
 			emit receivedMessage(u.sn, message);
 			break;
@@ -875,11 +875,11 @@ void OscarSocket::parseMessage(const UserInfo &u, OscarMessage &message, const B
 		case MSG_CONTACT:
 		case MSG_EXTENDED:
 			kdDebug(14150) << k_funcinfo <<
-				"Got an unsupported message, dropping: " << message.text() << endl;
+				"Got an unsupported message, dropping: '" << message.text() << "'" << endl;
 			break; // TODO: unsupported and for now dropped messages
 		default:
 			kdDebug(14150) << k_funcinfo <<
-				"Got unknown message type, treating as normal: " << message.text() << endl;
+				"Got unknown message type, treating as normal: '" << message.text() << "'" << endl;
 			message.setType(OscarMessage::Normal);
 			emit receivedMessage(u.sn, message);
 			break;

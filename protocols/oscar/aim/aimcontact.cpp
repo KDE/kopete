@@ -213,13 +213,9 @@ void AIMContact::slotGotMiniType(const QString &screenName, OscarConnection::Typ
 void AIMContact::slotContactChanged(const UserInfo &u)
 {
 	if (tocNormalize(u.sn) != contactName())
-		return; //this is not this contact
+		return;
 
-	/*kdDebug(14190) << k_funcinfo << "Called for '"
-		<< displayName() << "', contactName()=" << contactName() << endl;*/
-
-	/*
-	QString uclass = "";
+	/*QString uclass = "";
 	if(u.userclass & CLASS_AWAY)
 		uclass += " AWAY ";
 	else
@@ -239,22 +235,62 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 	if(u.userclass & CLASS_UNKNOWN400)
 		uclass += " Active contact ";
 
-	kdDebug(14190) << k_funcinfo << "decoded userclass=[" << uclass << "]" << endl;
-	*/
+	kdDebug(14190) << k_funcinfo << displayName() <<
+		"; decoded userclass=[" << uclass << "]" << endl;*/
+
+	QStringList capList;
+	if (u.capabilities & AIM_CAPS_KOPETE)
+		capList << i18n("Kopete %1").arg(u.clientVersion);
+	if (u.capabilities & AIM_CAPS_MICQ)
+		capList << i18n("MICQ");
+		//capList << i18n("MICQ %1").arg(u.clientVersion);
+	if (u.capabilities & AIM_CAPS_SIMNEW)
+		capList << i18n("SIM %1").arg(u.clientVersion);
+	if (u.capabilities & AIM_CAPS_MACICQ)
+		capList << i18n("MacICQ");
+	if (u.capabilities & AIM_CAPS_BUDDYICON)
+		capList << i18n("Buddyicons");
+	if (u.capabilities & AIM_CAPS_TRILLIANCRYPT)
+		capList << i18n("Trillian Encryption");
+	if (u.capabilities & AIM_CAPS_UTF8)
+		capList << i18n("UTF-8");
+	if (u.capabilities & AIM_CAPS_IS_WEB)
+		capList << i18n("Lite/Web-Client");
+	if (u.capabilities & AIM_CAPS_RTFMSGS)
+		capList << i18n("RTF-Messages");
+	if (u.capabilities & AIM_CAPS_CHAT)
+		capList << i18n("Groupchat");
+	if (u.capabilities & AIM_CAPS_VOICE)
+		capList << i18n("Voicechat");
+	if (u.capabilities & AIM_CAPS_IMIMAGE)
+		capList << i18n("DirectIM/IMImage");
+	if (u.capabilities & AIM_CAPS_SENDBUDDYLIST)
+		capList << i18n("Send Buddylist");
+	if (u.capabilities & AIM_CAPS_SENDFILE)
+		capList << i18n("Send Files");
+	if (u.capabilities & AIM_CAPS_GETFILE)
+		capList << i18n("Receive Files");
+
+	if (capList.count() > 0)
+		setProperty(mProtocol->clientFeatures, capList.join(", "));
+
+
 
 	if(u.userclass & CLASS_AWAY)
 	{
 		if((this != account()->myself()) &&
 		(account()->myself()->onlineStatus().status() != KopeteOnlineStatus::Connecting))
 		{
-			// TODO: Add queues for away message requests
 			// request away message
-			mAccount->engine()->sendUserLocationInfoRequest(contactName(), AIM_LOCINFO_AWAYMESSAGE);
+			mAccount->engine()->sendUserLocationInfoRequest(contactName(),
+				AIM_LOCINFO_AWAYMESSAGE);
 		}
 		setStatus(OSCAR_AWAY);
 	}
 	else
+	{
 		setStatus(OSCAR_ONLINE);
+	}
 }
 
 void AIMContact::slotOffgoingBuddy(QString sn)
@@ -262,8 +298,8 @@ void AIMContact::slotOffgoingBuddy(QString sn)
 	if(tocNormalize(sn) != contactName())
 		return;
 
-	/*kdDebug(14190) << k_funcinfo << "Called for '"
-		<< displayName() << "', contactName()=" << contactName() << endl;*/
+	removeProperty(mProtocol->clientFeatures);
+	removeProperty(mProtocol->awayMessage);
 
 	setStatus(OSCAR_OFFLINE);
 }
