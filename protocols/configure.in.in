@@ -28,7 +28,42 @@ AC_DEFUN(AC_CHECK_GLIB,
   fi
 ])
 
+
+AC_DEFUN(AC_CHECK_LIBPSI,
+[
+  AC_MSG_CHECKING([for libpsi])
+  AC_CACHE_VAL(ac_cv_have_libpsi,
+  [
+    AC_LANG_SAVE
+    AC_LANG_CPLUSPLUS
+    ac_save_libs="$LIBS"
+    LIBS="-lpsi $LIBQT"
+    ac_CPPFLAGS_save="$CPPFLAGS"
+    CPPFLAGS="$CPPFLAGS $all_includes"
+    ac_LDFLAGS_save="$LDFLAGS"
+    LDFLAGS="$LDFLAGS $all_libraries"
+    AC_TRY_LINK(
+      [#include <psi/client.h>],
+      [Jabber::Client *client = new Jabber::Client; delete client;],
+      [ac_cv_have_libpsi="yes"],
+      [ac_cv_have_libpsi="no"]
+    )
+    LIBS="$ac_save_libs"
+    LDFLAGS="$ac_LDFLAGS_save"
+    CPPFLAGS="$ac_CPPFLAGS_save"
+    AC_LANG_RESTORE
+  ])
+  AC_MSG_RESULT($ac_cv_have_libpsi)
+  if test "$ac_cv_have_libpsi" = "yes"; then
+    JABBER_PROTOCOL="jabber"
+    AC_DEFINE(HAVE_LIBPSI, 1, [Define if you have libpsi and its header files.])
+  fi
+])
+
 AC_CHECK_GLIB
 AC_SUBST(GLIB_LIBADD)
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(YAHOO_PROTOCOL)
+
+AC_CHECK_LIBPSI
+AC_SUBST(JABBER_PROTOCOL)
