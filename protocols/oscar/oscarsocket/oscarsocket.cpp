@@ -1136,6 +1136,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 			ssi->tlvlist = 0L;
 		ssi->waitingAuth = false;
 		mSSIData.append(ssi);
+		mSSIData.print();
 
 
 		kdDebug(14150) << k_funcinfo << "Read server-side list-entry. name='" <<
@@ -1151,7 +1152,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 				QString groupName = "\"Group not found\"";
 
 				if ( group )
-					groupName = ssi->name;
+					groupName = group->name;
 
 				kdDebug(14150) << k_funcinfo << "Adding Contact '" << ssi->name <<
 					"' to group " << ssi->gid << " (" <<  groupName << ")" << endl;

@@ -382,7 +382,18 @@ void OscarAccount::slotGotServerBuddyList()
 {
 	kdDebug( 14150 ) << k_funcinfo << "account='" << accountId() << "'" << endl;
 
-	//TODO Keep track of serverside and non-serverside contacts
+	//groups are added. Add the contacts
+	QPtrListIterator<SSI> it( engine()->ssiData() );
+	for ( ; it.current(); ++it )
+	{
+		if ( it.current()->type == 0 )
+		{ //active contact on SSI
+			SSI* ssiGroup = engine()->ssiData().findGroup( it.current()->gid );
+			kdDebug(14150) << "Adding contact '" << it.current()->name << "' to contact list" << endl;
+			addContact( tocNormalize(it.current()->name), it.current()->name, 0L,
+				 DontChangeKABC, ssiGroup ? ssiGroup->name : i18n("Buddies") , false );
+		}
+	}
 	
 }
 
@@ -544,9 +555,14 @@ void OscarAccount::addGroup( const QString& groupName )
 	if ( !group ) //group was not found and group creation failed
 		return;
 
-	QPtrListIterator<SSI> it ( d->groupQueue );
+	QPtrListIterator<SSI> it( d->groupQueue );
 	int i = 0;
-	int gid = engine()->ssiData().findGroup( groupName )->gid;
+	int gid;
+	SSI* ssiGroup = engine()->ssiData().findGroup( groupName );
+
+	if ( ssiGroup )
+		gid = ssiGroup->gid;
+
 	for ( ; it.current(); ++it )
 	{
 		if ( it.current()->gid == gid )
@@ -639,7 +655,8 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 	// Next check our internal list to see if we have this buddy
 	SSI* ssiItem = engine()->ssiData().findContact( contactId );
 	if ( ssiItem )
-	{
+	{	
+		kdDebug(14150) << k_funcinfo << "Found contact on internal list. Making new OscarContact" << endl;
 		OscarContact* newContact = createNewContact(contactId, displayName, parentContact);
 		if ( newContact )
 		{
