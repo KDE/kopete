@@ -50,7 +50,7 @@ private:
 
 GroupWisePrivacyDialog::GroupWisePrivacyDialog( GroupWiseAccount * account, QWidget *parent, const char *name )
  : KDialogBase(  parent, name, false, i18n( "Account specific privacy settings", "Manage Privacy for %1" ).arg( account->accountId() ),
- KDialogBase::Ok|KDialogBase::Apply|KDialogBase::Cancel, Ok, true ), m_account( account ), m_dirty( false )
+ KDialogBase::Ok|KDialogBase::Apply|KDialogBase::Cancel, Ok, true ), m_account( account ), m_dirty( false ), m_searchDlg(0)
 {
 	m_privacy = new GroupWisePrivacyWidget( this );
 	setMainWidget( m_privacy );
