@@ -323,17 +323,19 @@ void OscarAccount::slotReceivedAwayMessage(const QString &sender, const QString 
 
 	OscarContact *contact = static_cast<OscarContact*>(contacts()[tocNormalize(sender)]);
 	kdDebug(14150) << k_funcinfo << "Away message is: " << message << endl;
-	QString test = message;
+	QString filteredMessage = message;
 	if(contact)
 	{
-		test.replace( QRegExp( QString::fromLatin1("<[hH][tT][mM][lL].*>(.*)</[hH][tT][mM][lL]>") ),
+		filteredMessage.replace( QRegExp( QString::fromLatin1("<[hH][tT][mM][lL].*>(.*)</[hH][tT][mM][lL]>") ),
 				QString::fromLatin1("\\1"));
-		test.replace( QRegExp( QString::fromLatin1("<[bB][oO][dD][yY].*>(.*)</[bB][oO][dD][yY]>") ),
+		filteredMessage.replace( QRegExp( QString::fromLatin1("<[bB][oO][dD][yY].*>(.*)</[bB][oO][dD][yY]>") ),
+				QString::fromLatin1("\\1") );
+		filteredMessage.replace( QRegExp( QString::fromLatin1("<[fF][oO][nN][tT].*>(.*)</[fF][oO][nN][tT]>") ),
 				QString::fromLatin1("\\1") );
 		//test.insert(0,"<qt>");
 		//test.append("</qt>");
-		kdDebug(14150) << k_funcinfo << "Away message is now: " << test << endl;
-		contact->setAwayMessage(test);
+		kdDebug(14150) << k_funcinfo << "Away message is now: " << filteredMessage << endl;
+		contact->setAwayMessage( filteredMessage );
 	}
 }
 
