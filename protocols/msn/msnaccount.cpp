@@ -249,12 +249,8 @@ MSNNotifySocket *MSNAccount::notifySocket()
 
 void MSNAccount::slotGoOnline()
 {
-	// m_connectstatus = NLN;
 	m_awayReason = QString::null;
-	if ( !isConnected() )
-		connect();
-	else
-		setOnlineStatus( MSNProtocol::protocol()->NLN );
+	setOnlineStatus( MSNProtocol::protocol()->NLN );
 }
 
 void MSNAccount::slotGoOffline()
