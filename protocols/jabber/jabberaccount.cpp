@@ -72,7 +72,7 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 
 	/* Create a new JabberContact for this account, to be returned from
 	 * myself(). */
-	myContact = new JabberContact (accountId, accountId, QStringList (), this, 0L, accountId, "jabber_offline");
+	myContact = new JabberContact (accountId, accountId.section('@', 0, 0), QStringList (), this, 0L, accountId, "jabber_offline");
 
 	jabberClient = 0L;
 	registerFlag = 0;
