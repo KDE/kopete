@@ -32,7 +32,8 @@ class OscarProtocol;
 class KopeteMessageManager;
 class OscarProtocol;
 
-class OscarContact : public KopeteContact  {
+class OscarContact : public KopeteContact
+{
    Q_OBJECT
 public:
 	OscarContact(const QString name,
@@ -80,8 +81,8 @@ private: // Private members
 	 * strips off most of it
 	 */
 	KopeteMessage parseAIMHTML ( QString m );
-	/* used by above to stripp off a tag*/
-	QStringList removeTag ( QString &message, QString tag );
+	/* used by above to strip off a tag*/
+//	QStringList removeTag ( QString &message, QString tag );
 
 private: // Private attributes
 	KopeteMessageManager *mMsgManager;

@@ -289,108 +289,119 @@ void OscarContact::slotOffgoingBuddy(QString sn)
 /** Called when user info is requested */
 void OscarContact::slotUserInfo(void)
 {
-		TBuddy tmpBuddy;
-		int num = mProtocol->buddyList()->getNum(mName);
+	TBuddy tmpBuddy;
+	int num = mProtocol->buddyList()->getNum(mName);
 
-		if (mProtocol->buddyList()->get(&tmpBuddy, num) != -1){
-				if (!mProtocol->isConnected()){
-						KMessageBox::sorry(qApp->mainWidget(),
-										i18n("<qt>Sorry, you must be connected to the AIM server to retrieve user information, but you will be allowed to continue if you	would like to change the user's nickname.</qt>"),
-										i18n("You Must be Connected") );
-				} else {
-						if (tmpBuddy.status == TAIM_OFFLINE){
-								KMessageBox::sorry(qApp->mainWidget(),
-												i18n("<qt>Sorry, this user isn't online for you to view his/her information, but you will be allowed to only change his/her nickname. Please wait until this user becomes available and try again</qt>" ),
-												i18n("User not Online"));
-						}
-				}
-				OscarUserInfo *Oscaruserinfo =
-						new OscarUserInfo(mName, tmpBuddy.alias, mProtocol, tmpBuddy);
-				connect(Oscaruserinfo, SIGNAL(updateNickname(const QString)),
-								this, SLOT(slotUpdateNickname(const QString)));
-				Oscaruserinfo->show();
+	if (mProtocol->buddyList()->get(&tmpBuddy, num) == -1)
+		return;
+
+	if (!mProtocol->isConnected())
+	{
+		KMessageBox::sorry(qApp->mainWidget(),
+			i18n("<qt>Sorry, you must be connected to the AIM server to retrieve user information, but you will be allowed to continue if you	would like to change the user's nickname.</qt>"),
+			i18n("You Must be Connected") );
+	}
+	else
+	{
+		if (tmpBuddy.status == TAIM_OFFLINE)
+		{
+			KMessageBox::sorry(qApp->mainWidget(),
+				i18n("<qt>Sorry, this user isn't online for you to view his/her information, but you will be allowed to only change his/her nickname. Please wait until this user becomes available and try again</qt>" ),
+				i18n("User not Online"));
 		}
+	}
+	OscarUserInfo *Oscaruserinfo =
+		new OscarUserInfo(mName, tmpBuddy.alias, mProtocol, tmpBuddy);
+
+	connect(Oscaruserinfo, SIGNAL(updateNickname(const QString)),
+		this, SLOT(slotUpdateNickname(const QString)));
+
+	Oscaruserinfo->show();
 }
 
-/** Called when an IM is received */
+// Called when an IM is received
 void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto*/)
 {
-		// Check if we're the one who sent the message
-		if ( tocNormalize(sender) != tocNormalize(mName) )
-				return;
+	// Check if we're the one who sent the message
+	if ( tocNormalize(sender) != tocNormalize(mName) )
+		return;
 
-		TBuddy tmpBuddy;
-		mProtocol->buddyList()->get(&tmpBuddy, mProtocol->buddyList()->getNum(mName));
-				
-		// Build a KopeteMessage and set the body as Rich Text
-		KopeteContactPtrList tmpList;
-		tmpList.append(mProtocol->myself());
-		KopeteMessage msg = parseAIMHTML( message );
-		msgManager()->appendMessage(msg);
+	TBuddy tmpBuddy;
+	mProtocol->buddyList()->get(&tmpBuddy, mProtocol->buddyList()->getNum(mName));
 
-		// send our away message in fire-and-forget-mode :)
-		if ( mProtocol->isAway() ){
-			// Get the current time
-			long currentTime = time(0L);
-			// Compare to the last time we sent a message
-			// We'll wait 2 minutes between responses
-			if( (currentTime - mLastAutoResponseTime) > 120 ){
-				kdDebug() << "[OscarContact] slotIMReceived() while we are away, sending away-message to annoy buddy :)" << endl;
-				// Send the autoresponse
-				mProtocol->engine->sendIM(
-						KopeteAway::getInstance()->message(),
-						mName, true);
-				// Build a pointerlist to insert this contact into
-				KopeteContactPtrList toContact;
-				toContact.append(this);
-				// Display the autoresponse
-				// Make it look different
-				QString responseDisplay = KopeteAway::getInstance()->message();
-				responseDisplay.prepend("<font color='#666699'>Autoresponse: </font>");
-								
-				KopeteMessage message( mProtocol->myself(), toContact,
-						responseDisplay,
-						KopeteMessage::Outbound,
-						KopeteMessage::RichText);
-				
-				msgManager()->appendMessage(message);
-								
-				// Set the time we last sent an autoresponse
-				// which is right now
-				mLastAutoResponseTime = time(0L);
-			}
-			
+	// Build a KopeteMessage and set the body as Rich Text
+	KopeteContactPtrList tmpList;
+	tmpList.append(mProtocol->myself());
+	KopeteMessage msg = parseAIMHTML( message );
+	msgManager()->appendMessage(msg);
+
+	// send our away message in fire-and-forget-mode :)
+	if ( mProtocol->isAway() )
+	{
+		// Get the current time
+		long currentTime = time(0L);
+
+		// Compare to the last time we sent a message
+		// We'll wait 2 minutes between responses
+		if( (currentTime - mLastAutoResponseTime) > 120 )
+		{
+			kdDebug() << "[OscarContact] slotIMReceived() while we are away, sending away-message to annoy buddy :)" << endl;
+			// Send the autoresponse
+			mProtocol->engine->sendIM(
+					KopeteAway::getInstance()->message(),
+					mName, true);
+			// Build a pointerlist to insert this contact into
+			KopeteContactPtrList toContact;
+			toContact.append(this);
+			// Display the autoresponse
+			// Make it look different
+			QString responseDisplay = KopeteAway::getInstance()->message();
+			responseDisplay.prepend("<font color='#666699'>Autoresponse: </font>");
+
+			KopeteMessage message( mProtocol->myself(), toContact,
+					responseDisplay,
+					KopeteMessage::Outbound,
+					KopeteMessage::RichText);
+
+			msgManager()->appendMessage(message);
+
+			// Set the time we last sent an autoresponse
+			// which is right now
+			mLastAutoResponseTime = time(0L);
 		}
+	}
 }
 
 /** Called when we want to send a message */
 void OscarContact::slotSendMsg(const KopeteMessage& message, KopeteMessageManager *)
 {
-		if ( message.body().isEmpty() ) // no text, do nothing
-				return;
+	if ( message.body().isEmpty() ) // no text, do nothing
+		return;
 
-		TBuddy *tmpBuddy = mProtocol->buddyList()->getByNum(mProtocol->buddyList()->getNum(mName));
+	TBuddy *tmpBuddy = mProtocol->buddyList()->getByNum(mProtocol->buddyList()->getNum(mName));
 
-		// Check to see if we're even online
-		if (!mProtocol->isConnected()){
-				KMessageBox::sorry(qApp->mainWidget(),
-								i18n("<qt>You must be logged on to AIM before you can send a message to a user.</qt>"),
-								i18n("Not Signed On"));
-				return;
-		}
+	// Check to see if we're even online
+	if (!mProtocol->isConnected())
+	{
+		KMessageBox::sorry(qApp->mainWidget(),
+			i18n("<qt>You must be logged on to AIM before you can send a message to a user.</qt>"),
+			i18n("Not Signed On"));
+		return;
+	}
 
-		// Check to see if the person we're sending the message to is online
-		if (tmpBuddy->status == TAIM_OFFLINE || mStatus == TAIM_OFFLINE){
-				KMessageBox::sorry(qApp->mainWidget(),
-								i18n("<qt>This user is not online at the moment for you to message him/her. AIM users must be online for you to be able to message them.</qt>"),
-								i18n("User not Online"));
-				return;
-		}
+	// Check to see if the person we're sending the message to is online
+	if (tmpBuddy->status == TAIM_OFFLINE || mStatus == TAIM_OFFLINE)
+	{
+			KMessageBox::sorry(qApp->mainWidget(),
+							i18n("<qt>This user is not online at the moment for you to message him/her. AIM users must be online for you to be able to message them.</qt>"),
+							i18n("User not Online"));
+			return;
+	}
 
-		mProtocol->engine->sendIM( message.asHTML(), mName, false );
+	mProtocol->engine->sendIM(message.escapedBody(), mName, false);
 
-		// Show the message we just sent in the chat window
-		msgManager()->appendMessage(message);
+	// Show the message we just sent in the chat window
+	msgManager()->appendMessage(message);
 }
 
 /** Called when nickname needs to be updated */
@@ -512,6 +523,7 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 }
 
 // removes a weird html-tag (and returns the attributes it contained)
+/*
 QStringList OscarContact::removeTag ( QString &message, QString tag )
 {
 	QStringList attr;
@@ -548,7 +560,7 @@ QStringList OscarContact::removeTag ( QString &message, QString tag )
 	}
 	return attr;
 }
-
+*/
 void OscarContact::slotMoved(KopeteMetaContact * /*old */)
 {
 	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ),
