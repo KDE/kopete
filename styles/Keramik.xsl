@@ -76,7 +76,7 @@
 						<xsl:value-of select="body/@font"/>
 						<xsl:text>; </xsl:text>
 					</xsl:if>
-					<xsl:text>margin-top:8px;padding:8px;padding-top:1em;padding-left: 1em;</xsl:text>
+					<xsl:text>margin-top:8px;padding:6px;</xsl:text>
 				</xsl:attribute>
 
 				<xsl:value-of disable-output-escaping="yes" select="body"/>
