@@ -217,7 +217,6 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool surpress )
 		if(d->mContactList.count()==1 && d->isEmpty)
 		{
 			KopeteContact *old=d->mContactList.first();
-			kdDebug(14010) << k_funcinfo << old->displayName() << " left and " << c->displayName() << " joined " <<endl;
 			d->mContactList.remove(old);
 			d->mContactList.append(c);
 			disconnect (old, SIGNAL(displayNameChanged(const QString &, const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &, const QString &)));
@@ -227,14 +226,12 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool surpress )
 		}
 		else
 		{
-			kdDebug(14010) << k_funcinfo << "Contact Joined session : " <<c->displayName() <<endl;
 			connect (c, SIGNAL(displayNameChanged(const QString &,const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &, const QString &)));
 			d->mContactList.append(c);
 			emit contactAdded(c, surpress);
 		}
 		c->setConversations( c->conversations() + 1 );
 	}
-	qApp->processEvents();
 	d->isEmpty=false;
 }
 

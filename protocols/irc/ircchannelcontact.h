@@ -92,6 +92,7 @@ class IRCChannelContact : public IRCContact
 		void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 		void slotIncomingChannelMode( const QString &channel, const QString &mode, const QString &params );
 		void slotModeChanged();
+		void slotAddNicknames();
 
 	private:
 		// KAction stuff:
@@ -110,6 +111,7 @@ class IRCChannelContact : public IRCContact
 		KToggleAction *actionModeB;
 
 		QString mTopic;
+		QStringList mJoinedNicks;
 		QMap<QString,bool> modeMap;
 		void toggleMode( QChar mode, bool enabled, bool update );
 };
