@@ -27,38 +27,6 @@ AIMBuddyList::AIMBuddyList(QObject *parent, const char *name) : QObject(parent, 
 {
 }
 
-AIMBuddyList *AIMBuddyList::operator+= (AIMBuddyList &original)
-{
-	for (unsigned int i=0; i!=original.mBuddiesDeny.count(); ++i)
-		mBuddiesDeny.append(original.mBuddiesDeny.at(i));
-
-	for (unsigned int i=0; i!=original.mBuddiesPermit.count(); ++i)
-		mBuddiesPermit.append(original.mBuddiesPermit.at(i));
-
-	for (QMap<QString, AIMBuddy * >::Iterator it = original.mBuddyNameMap.begin(); it != original.mBuddyNameMap.end(); ++it)
-	{
-		if ((*it))
-		{
-			if (mBuddyNameMap.find((*it)->screenname()) != mBuddyNameMap.end())
-				continue; //already have this in our list
-			mBuddyNameMap.insert((*it)->screenname(), (*it));
-		}
-	}
-
-	for (QMap<int, AIMGroup * >::Iterator it = original.mGroupMap.begin(); it != original.mGroupMap.end(); ++it)
-	{
-		if ((*it))
-		{
-			if (mGroupMap.find((*it)->ID()) != mGroupMap.end())
-				continue; //already have this in our list
-		}
-		mGroupMap.insert((*it)->ID(), (*it));
-		if (!(*it)->name().isNull())
-			mGroupNameMap.insert((*it)->name(), (*it));
-	}
-	return this;
-}
-
 void AIMBuddyList::addBuddy(AIMBuddy *buddy)
 {
 	mBuddyNameMap.insert(tocNormalize(buddy->screenname()), buddy);
@@ -88,9 +56,12 @@ AIMBuddy *AIMBuddyList::findBuddy(const QString &name)
 	return 0L;
 }
 
-AIMGroup *AIMBuddyList::addGroup(const int id, const QString &name)
+AIMGroup *AIMBuddyList::addGroup( int id, const QString &name, OscarContactType type )
 {
-	AIMGroup *group = new AIMGroup(id);
+	AIMGroup *group = new AIMGroup( id );
+	if ( type == ServerSideContacts )
+		group->setServerSide( true );
+
 	if (!name.isNull())
 	{
 		group->setName(name);
@@ -110,10 +81,10 @@ void AIMBuddyList::removeGroup(const int id)
 	delete group; // also deletes the buddies in that group too
 }
 
-AIMGroup *AIMBuddyList::findGroup(const int id)
+AIMGroup *AIMBuddyList::findGroup( int id, OscarContactType type )
 {
 	QMap<int, AIMGroup * >::Iterator it = mGroupMap.find(id);
-	if (it != mGroupMap.end() && (*it))
+	if ( it != mGroupMap.end() && ( *it ) && ( type == AllContacts || it.data()->isServerSide() ) )
 		return (*it);
 	return 0L;
 }
@@ -157,7 +128,20 @@ void AIMBuddyList::removeBuddyDeny(AIMBuddy *buddy)
 	mBuddiesDeny.remove(buddy->ID());
 }
 
+QMap<QString, AIMBuddy *> AIMBuddyList::buddies( OscarContactType type ) const
+{
+	if ( type == AllContacts )
+		return mBuddyNameMap;
 
+	QMap<QString, AIMBuddy *> result;
+	for ( QMap<QString, AIMBuddy *>::ConstIterator it = mBuddyNameMap.begin(); it != mBuddyNameMap.end(); ++it )
+	{
+		if ( it.data()->isServerSide() )
+			result.insert( it.key(), it.data() );
+	}
+
+	return result;
+}
 
 AIMGroup::AIMGroup(const int id)
 {
@@ -179,8 +163,6 @@ bool AIMGroup::addBuddy(AIMBuddy *buddy)
 	return false;
 }
 
-
-
 AIMBuddy::AIMBuddy(const int buddyID, const int groupID, const QString &screenName)
 {
 	mBuddyID = buddyID;
@@ -189,6 +171,7 @@ AIMBuddy::AIMBuddy(const int buddyID, const int groupID, const QString &screenNa
 	// By default set it's status to offline
 	mStatus = OSCAR_OFFLINE;
 	mWaitAuth = false;
+	mIsServerSide = false;
 }
 
 #include "aimbuddylist.moc"

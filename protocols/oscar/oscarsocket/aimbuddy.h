@@ -51,6 +51,9 @@ public:
 	void setWaitAuth( bool b ) { mWaitAuth = b; }
 	bool waitAuth() { return mWaitAuth; }
 
+	bool isServerSide() { return mIsServerSide; }
+	void setServerSide( bool b ) { mIsServerSide = b; }
+
 private:
 	friend class AIMBuddyList;
 
@@ -62,6 +65,11 @@ private:
 	int mGroupID;
 	uint mStatus;
 	bool mWaitAuth;
+
+	// When true the buddy was created upon login. This is used to merge
+	// OscarAccount's two contact lists (loginContactList and internalBuddyList),
+	// but should probably be removed later in favour of something better
+	bool mIsServerSide;
 };
 
 #endif

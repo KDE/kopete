@@ -1219,7 +1219,8 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 				} // END for()
 
 				lst.clear();
-				mAccount->addBuddy( bud, OscarAccount::LoginContactList );
+				bud->setServerSide( true );
+				mAccount->addBuddy( bud );
 				break;
 			}
 
@@ -1259,7 +1260,8 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 				bud = new AIMBuddy(ssi->bid, ssi->gid, ssi->name);
 				kdDebug(14150) << k_funcinfo << "Adding Contact '" << ssi->name <<
 					"' to INVISIBLE/DENY list." << endl;
-				mAccount->addBuddyDeny( bud,OscarAccount::LoginContactList );
+				bud->setServerSide( true );
+				mAccount->addBuddyDeny( bud );
 				emit denyAdded(ssi->name);
 				break;
 			}

@@ -123,7 +123,7 @@ public:
 	/**
 	 * Adds a buddy to the buddy list
 	 */
-	void addBuddy( AIMBuddy *buddy, OscarContactList list = InternalContactList );
+	void addBuddy( AIMBuddy *buddy );
 
 	/**
 	 * Removes a buddy from the buddy list
@@ -148,7 +148,7 @@ public:
 	/**
 	 * Adds a buddy to the deny list
 	 */
-	void addBuddyDeny( AIMBuddy *buddy, OscarContactList list = InternalContactList );
+	void addBuddyDeny( AIMBuddy *buddy );
 
 	/**
 	 * Adds a group to the contact list and returns the new group

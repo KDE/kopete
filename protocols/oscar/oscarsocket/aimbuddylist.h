@@ -39,9 +39,6 @@ class AIMBuddyList : public QObject
 	public:
 		AIMBuddyList(QObject *parent=0, const char *name=0);
 
-		// Merges two lists together
-		AIMBuddyList *operator+= (AIMBuddyList &);
-
 		// Adds a buddy to the buddy list
 		void addBuddy(AIMBuddy *);
 
@@ -59,13 +56,14 @@ class AIMBuddyList : public QObject
 		AIMBuddy *findBuddy(const QString &);
 
 		// Adds a group to the contact list and returns the new group
-		AIMGroup *addGroup(const int id, const QString &name = QString::null);
+		enum OscarContactType { AllContacts, ServerSideContacts };
+		AIMGroup *addGroup( int id, const QString &name = QString::null, OscarContactType type = AllContacts );
 
 		// Removes an entire group (including its children buddies!)
 		void removeGroup(const int id);
 
 		// Finds a group and returns it. Uses GID
-		AIMGroup *findGroup(const int);
+		AIMGroup *findGroup( int id, OscarContactType type = AllContacts );
 
 		// Finds a group by name
 		AIMGroup *findGroup(const QString &name);
@@ -86,7 +84,7 @@ class AIMBuddyList : public QObject
 		void removeBuddyDeny(AIMBuddy *);
 
 		// Returns a list of all of the buddies
-		QMap<QString, AIMBuddy * > buddies() const { return mBuddyNameMap; }
+		QMap<QString, AIMBuddy * > buddies( OscarContactType type = AllContacts ) const;
 
 		// Returns a list of all the buddies in the deny list
 		QPtrList<AIMBuddy> denyBuddies() const { return mBuddiesDeny; }

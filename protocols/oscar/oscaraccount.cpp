@@ -391,13 +391,8 @@ void OscarAccount::slotGotServerBuddyList()
 		qDebug("-- Server: %s, id: %i, groupId: %i", (*it)->screenname().latin1(), (*it)->ID(), (*it)->groupID());
 */
 
-	if ( !d->loginContactlist )
-		return;
-
-	*d->internalBuddyList += *d->loginContactlist;
-	QValueList<AIMBuddy *> localList = d->loginContactlist->buddies().values();
-
-	for (QValueList<AIMBuddy *>::Iterator it=localList.begin(); it!=localList.end(); ++it)
+	QValueList<AIMBuddy *> localList = d->internalBuddyList->buddies( AIMBuddyList::ServerSideContacts ).values();
+	for ( QValueList<AIMBuddy *>::Iterator it = localList.begin(); it != localList.end(); ++it )
 	{
 		if ((*it))
 			addServerContact((*it)); // Add the server contact to Kopete list
@@ -411,8 +406,11 @@ void OscarAccount::slotLoggedIn()
 	kdDebug(14150) << k_funcinfo << "Called" << endl;
 
 	// Only call sync if we received a list on connect, does not happen on @mac AIM-accounts
-	if (d->loginContactlist)
-		QTimer::singleShot(2000, this, SLOT(slotDelayedListSync()));
+	if ( !d->internalBuddyList->buddies( AIMBuddyList::ServerSideContacts ).isEmpty() );
+	{
+		// FIXME: Why a 2 second delay? Is this to avoid a race condition or for the rate limiting? - Martijn
+		QTimer::singleShot( 2000, this, SLOT( slotDelayedListSync() ) );
+	}
 
 	d->idleTimer->start(10 * 1000);
 }
@@ -422,8 +420,6 @@ void OscarAccount::slotDelayedListSync()
 	kdDebug(14150) << k_funcinfo << "Called" << endl;
 
 	syncLocalWithServerBuddyList ();
-	delete d->loginContactlist;
-	d->loginContactlist = 0L;
 }
 
 //
@@ -908,18 +904,9 @@ const QString &OscarAccount::awayMessage()
 	return d->awayMessage;
 }
 
-void OscarAccount::addBuddy( AIMBuddy *buddy, OscarAccount::OscarContactList list )
+void OscarAccount::addBuddy( AIMBuddy *buddy )
 {
-	if ( list == InternalContactList )
-	{
-		if ( !d->loginContactlist )
-			d->loginContactlist = new AIMBuddyList( this, "d->loginContactlist" );
-		d->loginContactlist->addBuddy( buddy );
-	}
-	else
-	{
-		d->internalBuddyList->addBuddy( buddy );
-	}
+	d->internalBuddyList->addBuddy( buddy );
 }
 
 void OscarAccount::removeBuddy( AIMBuddy *buddy )
@@ -934,16 +921,7 @@ AIMBuddy * OscarAccount::findBuddy( const QString &screenName )
 
 AIMGroup * OscarAccount::findGroup( int groupId, OscarAccount::OscarContactList list )
 {
-	if ( list == InternalContactList )
-	{
-		if ( !d->loginContactlist )
-			d->loginContactlist = new AIMBuddyList( this, "d->loginContactlist" );
-		return d->loginContactlist->findGroup( groupId );
-	}
-	else
-	{
-		return d->internalBuddyList->findGroup( groupId );
-	}
+	return d->internalBuddyList->findGroup( groupId, list == InternalContactList ? AIMBuddyList::ServerSideContacts : AIMBuddyList::AllContacts );
 }
 
 AIMGroup * OscarAccount::findGroup( const QString &name )
@@ -953,30 +931,12 @@ AIMGroup * OscarAccount::findGroup( const QString &name )
 
 AIMGroup * OscarAccount::addGroup( int id, const QString &name, OscarContactList list )
 {
-	if ( list == InternalContactList )
-	{
-		if ( !d->loginContactlist )
-			d->loginContactlist = new AIMBuddyList( this, "d->loginContactlist" );
-		return d->loginContactlist->addGroup( id, name );
-	}
-	else
-	{
-		return d->internalBuddyList->addGroup( id, name );
-	}
+	return d->internalBuddyList->addGroup( id, name, list == InternalContactList ? AIMBuddyList::ServerSideContacts : AIMBuddyList::AllContacts );
 }
 
-void OscarAccount::addBuddyDeny( AIMBuddy *buddy, OscarContactList list )
+void OscarAccount::addBuddyDeny( AIMBuddy *buddy )
 {
-	if ( list == InternalContactList )
-	{
-		if ( !d->loginContactlist )
-			d->loginContactlist = new AIMBuddyList( this, "d->loginContactlist" );
-		d->loginContactlist->addBuddyDeny( buddy );
-	}
-	else
-	{
-		d->internalBuddyList->addBuddyDeny( buddy );
-	}
+	d->internalBuddyList->addBuddyDeny( buddy );
 }
 
 bool OscarAccount::ignoreUnknownContacts() const

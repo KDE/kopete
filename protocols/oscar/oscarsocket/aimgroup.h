@@ -43,6 +43,9 @@ public:
 	// Returns a list of buddies belonging to this group
 	QPtrList<AIMBuddy> buddies() const { return mBuddies; }
 
+	bool isServerSide() { return mIsServerSide; }
+	void setServerSide( bool b ) { mIsServerSide = b; }
+
 protected:
 	friend class AIMBuddyList;
 	void removeBuddy( AIMBuddy *buddy );
@@ -53,6 +56,11 @@ private:
 	int mGroupID;
 	QString mName;
 	QPtrList<AIMBuddy> mBuddies;
+
+	// When true the group was created upon login. This is used to merge
+	// OscarAccount's two contact lists (loginContactList and internalBuddyList),
+	// but should probably be removed later in favour of something better
+	bool mIsServerSide;
 };
 
 #endif
