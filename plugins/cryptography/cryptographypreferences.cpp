@@ -24,99 +24,76 @@
 #include <klocale.h>
 #include <klineedit.h>
 #include <kconfig.h>
+#include <kgenericfactory.h>
 
 #include "cryptographyprefsbase.h"
 #include "cryptographypreferences.h"
-
-
+#include "cryptographyconfig.h"
 #include "kgpgselkey.h"
 
-CryptographyPreferences::CryptographyPreferences(const QString &pixmap,QObject *parent)
-							: ConfigModule(i18n("Cryptography"),i18n("Cryptography Plugin"),pixmap,parent)
+typedef KGenericFactory<CryptographyPreferences> CryptographyPreferencesFactory;
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_cryptography, CryptographyPreferencesFactory("kcm_kopete_cryptography"));
+
+CryptographyPreferences::CryptographyPreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
+							: KCModule(CryptographyPreferencesFactory::instance(), parent, args)
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 
 	preferencesDialog = new CryptographyPrefsUI(this);
+	m_config = new CryptographyConfig();
 
 	connect (preferencesDialog->m_selectOwnKey , SIGNAL(pressed()) , this , SLOT(slotSelectPressed()));
 
-	reopen();
+	load();
 
 }
 
 CryptographyPreferences::~CryptographyPreferences()
 {
+	save();
+	delete preferencesDialog;
+	delete m_config;
 }
 
 
-const QString& CryptographyPreferences::privateKey()
+void CryptographyPreferences::load()
 {
-	return m_signKeyID;
-}
-
-
-void CryptographyPreferences::reopen()
-{
-	KGlobal::config()->setGroup("Cryptography Plugin");
-
-	m_signKeyID=KGlobal::config()->readEntry("PGP private key", QString::null);
-	preferencesDialog->m_editOwnKey->setText(m_signKeyID);
-
-	preferencesDialog->m_cache->setButton(KGlobal::config()->readNumEntry( "Cache Passphrase", Keep) );
-	preferencesDialog->m_time->setValue(KGlobal::config()->readNumEntry( "Cache Time", 15) );
-	preferencesDialog->m_alsoMyKey->setChecked( KGlobal::config()->readBoolEntry( "Also My Key", false ) );
-	preferencesDialog->m_noPassphrase->setChecked( KGlobal::config()->readBoolEntry( "No Passphrase Handling", false ) );
-
+	m_config->load();
+	preferencesDialog->m_editOwnKey->setText(m_config->privateKey());
+	preferencesDialog->m_noPassphrase->setChecked(m_config->askPassPhrase());
+	preferencesDialog->m_cache->setButton(m_config->cacheMode());
+	preferencesDialog->m_alsoMyKey->setChecked(m_config->encrypt());
+	preferencesDialog->m_time->setValue(m_config->cacheTime());
+	setChanged(false);
 }
 
 void CryptographyPreferences::save()
 {
-	KConfig *config = KGlobal::config();
-	config->setGroup("Cryptography Plugin");
-	config->writeEntry("PGP private key", m_signKeyID );
-
-	config->writeEntry("Cache Passphrase",  preferencesDialog->m_cache->id(preferencesDialog->m_cache->selected() ) );
-	config->writeEntry("Cache Time", preferencesDialog->m_time->value() );
-	config->writeEntry("Also My Key", preferencesDialog->m_alsoMyKey->isChecked());
-	config->writeEntry("No Passphrase Handling", preferencesDialog->m_noPassphrase->isChecked());
-
-	config->sync();
-
+	m_config->setCacheMode(preferencesDialog->m_cache->selectedId());
+	m_config->setCacheTime(preferencesDialog->m_time->value());
+	m_config->setEncrypt(preferencesDialog->m_alsoMyKey->isChecked());
+	m_config->setAskPassPhrase(preferencesDialog->m_noPassphrase->isChecked());
+	m_config->setPrivateKey(preferencesDialog->m_editOwnKey->text());
+	m_config->save();
+	setChanged(false);
 }
 
 
 void CryptographyPreferences::slotSelectPressed()
 {
+
 	KgpgSelKey *opts=new KgpgSelKey(this,0,false);
 	opts->exec();
 	if (opts->result()==true)
 	{
-		m_signKeyID=opts->getkeyID();
+		m_config->setPrivateKey(opts->getkeyID());
 		m_signKeyMail=opts->getkeyMail();
-		preferencesDialog->m_editOwnKey->setText(m_signKeyID);
+		preferencesDialog->m_editOwnKey->setText(m_config->privateKey());
+
 	}
 	delete opts;
 }
 
-CryptographyPreferences::CacheMode CryptographyPreferences::cacheMode()
-{
-	return (CryptographyPreferences::CacheMode) preferencesDialog->m_cache->id(preferencesDialog->m_cache->selected() );
-}
-
-unsigned int CryptographyPreferences::cacheTime() const
-{
-	return preferencesDialog->m_time->value();
-}
-
-bool CryptographyPreferences::alsoMyKey() const
-{
-	return preferencesDialog->m_alsoMyKey->isChecked();
-}
-
-
-bool CryptographyPreferences::noPassphrase() const
-{
-	return preferencesDialog->m_noPassphrase->isChecked();
-}
-
 #include "cryptographypreferences.moc"
+
+// vim: set noet ts=4 sts=4 sw=4:

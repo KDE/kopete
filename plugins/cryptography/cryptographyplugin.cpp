@@ -28,7 +28,7 @@
 #include "kopetemessagemanagerfactory.h"
 
 #include "cryptographyplugin.h"
-#include "cryptographypreferences.h"
+#include "cryptographyconfig.h"
 #include "cryptographyselectuserkey.h"
 
 #include "kgpginterface.h"
@@ -43,8 +43,7 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const
 	if( !pluginStatic_ )
 		pluginStatic_=this;
 
-	//TODO: found a pixmap
-	m_prefs = new CryptographyPreferences ( "kgpg", this );
+	m_config = new CryptographyConfig;
 
 	connect( KopeteMessageManagerFactory::factory(),
 		SIGNAL( aboutToDisplay( KopeteMessage & ) ),
@@ -70,6 +69,7 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const
 CryptographyPlugin::~CryptographyPlugin()
 {
 	pluginStatic_ = 0L;
+	delete m_config;
 }
 
 CryptographyPlugin* CryptographyPlugin::plugin()
@@ -86,17 +86,17 @@ QCString CryptographyPlugin::cachedPass()
 
 void CryptographyPlugin::setCachedPass(const QCString& p)
 {
-	if(pluginStatic_->m_prefs->cacheMode()==CryptographyPreferences::Never)
+	if(pluginStatic_->m_config->cacheMode()==CryptographyConfig::Never)
 		return;
-	if(pluginStatic_->m_prefs->cacheMode()==CryptographyPreferences::Time)
-		pluginStatic_->m_cachedPass_timer->start(pluginStatic_->m_prefs->cacheTime() * 60000, false);
+	if(pluginStatic_->m_config->cacheMode()==CryptographyConfig::Time)
+		pluginStatic_->m_cachedPass_timer->start(pluginStatic_->m_config->cacheTime() * 60000, false);
 
 	pluginStatic_->m_cachedPass=p;
 }
 
 bool CryptographyPlugin::passphraseHandling()
 {
-	return !pluginStatic_->m_prefs->noPassphrase();
+	return !pluginStatic_->m_config->askPassPhrase();
 }
 
 
@@ -129,7 +129,7 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 		}
 		else
 		{
-			plainBody = KgpgInterface::KgpgDecryptText( body, m_prefs->privateKey() );
+			plainBody = KgpgInterface::KgpgDecryptText( body, m_config->privateKey() );
 		}
 
 		if(!plainBody.isEmpty())
@@ -150,7 +150,7 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 		return;
 	}
 
-	body=KgpgInterface::KgpgDecryptText(body, m_prefs->privateKey());
+	body=KgpgInterface::KgpgDecryptText(body, m_config->privateKey());
 
 	if(!body.isEmpty())
 	{
@@ -186,8 +186,8 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 		keys.append( tmpKey );
 	}
 	// always encrypt to self, too
-	if(m_prefs->alsoMyKey())
-		keys.append( m_prefs->privateKey() );
+	if(m_config->encrypt())
+		keys.append( m_config->privateKey() );
 
 	QString key = keys.join( " " );
 

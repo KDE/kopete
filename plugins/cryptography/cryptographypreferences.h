@@ -18,45 +18,33 @@
 #ifndef CryptographyPREFERENCES_H
 #define CryptographyPREFERENCES_H
 
-#include "configmodule.h"
+#include "kcmodule.h"
 
 class CryptographyPrefsUI;
+class CryptographyConfig;
 
 /**
   *@author Olivier Goffart
   */
 
-class CryptographyPreferences : public ConfigModule  {
+class CryptographyPreferences : public KCModule  {
    Q_OBJECT
 public:
-	enum CacheMode
-	{
-		Keep	= 0,
-		Time	= 1,
-		Never	= 2
-	};
 
-
-
-	CryptographyPreferences(const QString &pixmap, QObject *parent=0);
+	CryptographyPreferences(QWidget *parent = 0, const char *name = 0, const QStringList &args = QStringList());
 	~CryptographyPreferences();
 
 	virtual void save();
-	virtual void reopen();
-
-	const QString &privateKey();
-
-	CacheMode cacheMode();
-	unsigned int cacheTime() const;
-	bool alsoMyKey() const;
-	bool noPassphrase() const;
+	virtual void load();
 
 private:
 	CryptographyPrefsUI *preferencesDialog;
-	QString m_signKeyID;
+	CryptographyConfig *m_config;
 	QString m_signKeyMail;
 public slots: // Public slots
 	void slotSelectPressed();
 };
 
 #endif
+
+// vim: set noet ts=4 sts=4 sw=4:

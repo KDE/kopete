@@ -34,7 +34,7 @@ class KopeteMessage;
 class KopeteMetaContact;
 class KopeteMessageManager;
 
-class CryptographyPreferences;
+class CryptographyConfig;
 
 /**
   * @author Olivier Goffart
@@ -67,7 +67,7 @@ private:
 	static CryptographyPlugin* pluginStatic_;
 	QCString m_cachedPass;
 	QTimer *m_cachedPass_timer;
-	CryptographyPreferences *m_prefs;
+	CryptographyConfig *m_config;
 
 	//cache messages for showing
 	QMap<QString, QString> m_cachedMessages;
