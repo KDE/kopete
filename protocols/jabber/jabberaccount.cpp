@@ -117,8 +117,14 @@ KActionMenu *JabberAccount::actionMenu ()
 {
 	KActionMenu *m_actionMenu = new KActionMenu( accountId(), this );
 
-	m_actionMenu->popupMenu()->insertTitle(myContact->onlineStatus().iconFor(myContact), i18n( "%2 <%1>" ).
-		arg(accountId()).arg(myContact->displayName()));
+	m_actionMenu->popupMenu()->insertTitle(
+		myContact->onlineStatus().iconFor(myContact),
+		i18n("%2 <%1>")
+#if QT_VERSION < 0x030200
+			.arg(accountId()).arg(myContact->displayName()));
+#else
+			.arg(accountId(), myContact->displayName()));
+#endif
 
 	m_actionMenu->insert(new KAction (mProtocol->JabberOnline.caption(),
 		mProtocol->JabberOnline.iconFor(this), 0, this, SLOT (slotGoOnline ()), this,
