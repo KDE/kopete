@@ -45,32 +45,24 @@
 
 K_EXPORT_COMPONENT_FACTORY( kopete_msn, KGenericFactory<MSNProtocol> );
 
-KopeteOnlineStatus MSNProtocol::s_statusNLN;
-KopeteOnlineStatus MSNProtocol::s_statusBSY;
-KopeteOnlineStatus MSNProtocol::s_statusBRB;
-KopeteOnlineStatus MSNProtocol::s_statusAWY;
-KopeteOnlineStatus MSNProtocol::s_statusPHN;
-KopeteOnlineStatus MSNProtocol::s_statusLUN;
-KopeteOnlineStatus MSNProtocol::s_statusFLN;
-KopeteOnlineStatus MSNProtocol::s_statusHDN;
-KopeteOnlineStatus MSNProtocol::s_statusIDL;
-KopeteOnlineStatus MSNProtocol::s_statusUNK;
+MSNProtocol *MSNProtocol::s_protocol = 0L;
 
 MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
-: KopeteProtocol( parent, name )
+: KopeteProtocol( parent, name ),
+	NLN( KopeteOnlineStatus::Online,  25, this, 1, "msn_online",  i18n( "Go O&nline" ),         i18n( "Online" ) ),
+	BSY( KopeteOnlineStatus::Away,    20, this, 2, "msn_na",      i18n( "Set &Busy" ),          i18n( "Busy" ) ),
+	BRB( KopeteOnlineStatus::Away,     5, this, 3, "msn_away",    i18n( "Set Be &Right Back" ), i18n( "Be Right Back" ) ),
+	AWY( KopeteOnlineStatus::Away,    25, this, 4, "msn_away",    i18n( "Set &Away" ),          i18n( "Away From Computer" ) ),
+	PHN( KopeteOnlineStatus::Away,    10, this, 5, "msn_na",      i18n( "Set on the &Phone" ),  i18n( "On the Phone" ) ),
+	LUN( KopeteOnlineStatus::Away,    15, this, 6, "msn_away",    i18n( "Set Out to &Lunch" ),  i18n( "Out to Lunch" ) ),
+	FLN( KopeteOnlineStatus::Offline, 25, this, 7, "msn_offline", i18n( "Go &Offline" ),        i18n( "Offline" ) ),
+	HDN( KopeteOnlineStatus::Online,  10, this, 8, "msn_offline", i18n( "Set &Invisible" ),     i18n( "Invisible" ) ),
+	IDL( KopeteOnlineStatus::Away,     5, this, 9, "msn_online",  "FIXME: Make this unselectable", i18n( "Idle" ) ),
+	UNK( KopeteOnlineStatus::Unknown, 25, this, 0, "msn_offline", "FIXME: Make this unselectable", i18n( "Status not available" ) )
 {
-	s_statusNLN = KopeteOnlineStatus( KopeteOnlineStatus::Online,  25, this, 1, "msn_online",  i18n( "Go O&nline" ),         i18n( "Online" ) );
-	s_statusBSY = KopeteOnlineStatus( KopeteOnlineStatus::Away,    20, this, 2, "msn_na",      i18n( "Set &Busy" ),          i18n( "Busy" ) );
-	s_statusBRB = KopeteOnlineStatus( KopeteOnlineStatus::Away,     5, this, 3, "msn_away",    i18n( "Set Be &Right Back" ), i18n( "Be Right Back" ) );
-	s_statusAWY = KopeteOnlineStatus( KopeteOnlineStatus::Away,    25, this, 4, "msn_away",    i18n( "Set &Away" ),          i18n( "Away From Computer" ) );
-	s_statusPHN = KopeteOnlineStatus( KopeteOnlineStatus::Away,    10, this, 5, "msn_na",      i18n( "Set on the &Phone" ),  i18n( "On the Phone" ) );
-	s_statusLUN = KopeteOnlineStatus( KopeteOnlineStatus::Away,    15, this, 6, "msn_away",    i18n( "Set Out to &Lunch" ),  i18n( "Out to Lunch" ) );
-	s_statusFLN = KopeteOnlineStatus( KopeteOnlineStatus::Offline, 25, this, 7, "msn_offline", i18n( "Go &Offline" ),        i18n( "Offline" ) );
-	s_statusHDN = KopeteOnlineStatus( KopeteOnlineStatus::Online,  10, this, 8, "msn_offline", i18n( "Set &Invisible" ),     i18n( "Invisible" ) );
-	s_statusIDL = KopeteOnlineStatus( KopeteOnlineStatus::Away,     5, this, 9, "msn_online",  "FIXME: Make this unselectable", i18n( "Idle" ) );
-	s_statusUNK = KopeteOnlineStatus( KopeteOnlineStatus::Unknown, 25, this, 0, "msn_offline", "FIXME: Make this unselectable", i18n( "Status not available" ) );
-
 	kdDebug( 14140 ) << k_funcinfo << endl;
+
+	s_protocol = this;
 
 	mPrefs = new MSNPreferences( "msn_protocol", this );
 
@@ -104,7 +96,7 @@ void MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 
 	// Create MSN contact
 	MSNContact *c = new MSNContact( identity, contactId, displayName, metaContact );
-	c->setOnlineStatus( statusFLN() );
+	c->setOnlineStatus( FLN );
 	for( QStringList::Iterator it = groups.begin() ; it != groups.end(); ++it )
 		c->contactAddedToGroup( ( *it ).toUInt(), 0L  /* FIXME - m_groupList[ ( *it ).toUInt() ]*/ );
 }
@@ -230,6 +222,10 @@ KActionCollection * MSNProtocol::customChatActions(KopeteMessageManager * manage
 	return msnMM->chatActions();
 }
 
+MSNProtocol* MSNProtocol::protocol()
+{
+	return s_protocol;
+}
 
 #include "msnprotocol.moc"
 

@@ -87,16 +87,16 @@ public:
 	/**
 	 * The possible MSN online statuses
 	 */
-	static KopeteOnlineStatus statusNLN() { return s_statusNLN; }
-	static KopeteOnlineStatus statusBSY() { return s_statusBSY; }
-	static KopeteOnlineStatus statusBRB() { return s_statusBRB; }
-	static KopeteOnlineStatus statusAWY() { return s_statusAWY; }
-	static KopeteOnlineStatus statusPHN() { return s_statusPHN; }
-	static KopeteOnlineStatus statusLUN() { return s_statusLUN; }
-	static KopeteOnlineStatus statusFLN() { return s_statusFLN; }
-	static KopeteOnlineStatus statusHDN() { return s_statusHDN; }
-	static KopeteOnlineStatus statusIDL() { return s_statusIDL; }
-	static KopeteOnlineStatus statusUNK() { return s_statusUNK; }
+	const KopeteOnlineStatus NLN;
+	const KopeteOnlineStatus BSY;
+	const KopeteOnlineStatus BRB;
+	const KopeteOnlineStatus AWY;
+	const KopeteOnlineStatus PHN;
+	const KopeteOnlineStatus LUN;
+	const KopeteOnlineStatus FLN;
+	const KopeteOnlineStatus HDN;
+	const KopeteOnlineStatus IDL;
+	const KopeteOnlineStatus UNK;
 
 	enum List
 	{
@@ -121,6 +121,8 @@ public:
 	virtual KActionMenu* protocolActions();
 	virtual const QString protocolIcon();
 
+	static MSNProtocol* protocol();
+
 private slots:
 	void slotSyncContactList();
 
@@ -129,17 +131,6 @@ private:
 
 	static MSNProtocol *s_protocol;
 	MSNPreferences *mPrefs;
-
-	static KopeteOnlineStatus s_statusNLN;
-	static KopeteOnlineStatus s_statusBSY;
-	static KopeteOnlineStatus s_statusBRB;
-	static KopeteOnlineStatus s_statusAWY;
-	static KopeteOnlineStatus s_statusPHN;
-	static KopeteOnlineStatus s_statusLUN;
-	static KopeteOnlineStatus s_statusFLN;
-	static KopeteOnlineStatus s_statusHDN;
-	static KopeteOnlineStatus s_statusIDL;
-	static KopeteOnlineStatus s_statusUNK;
 };
 
 #endif

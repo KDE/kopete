@@ -54,7 +54,7 @@ MSNContact::MSNContact( KopeteIdentity *identity, const QString &id, const QStri
 
 	setFileCapable( true );
 
-	setOnlineStatus( MSNProtocol::statusUNK() );
+	setOnlineStatus( MSNProtocol::protocol()->UNK );
 }
 
 KopeteMessageManager *MSNContact::manager( bool canCreate )
@@ -139,7 +139,7 @@ void MSNContact::slotDeleteContact()
 	MSNNotifySocket *notify = static_cast<MSNIdentity*>( identity() )->notifySocket();
 	if( notify )
 	{
-		if( m_serverGroups.isEmpty() || onlineStatus() == MSNProtocol::statusUNK() )
+		if( m_serverGroups.isEmpty() || onlineStatus() == MSNProtocol::protocol()->UNK )
 		{
 			kdDebug( 14140 ) << k_funcinfo << "Ohoh, contact already removed from server, just delete it" << endl;
 			// FIXME: 1. Shouldn't this be a deleteLater, as this is a slot???

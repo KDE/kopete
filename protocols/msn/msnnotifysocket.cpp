@@ -49,7 +49,7 @@
 MSNNotifySocket::MSNNotifySocket( MSNIdentity *identity, const QString &msnId )
 : MSNAuthSocket( msnId, identity )
 {
-	m_newstatus = MSNProtocol::statusNLN();
+	m_newstatus = MSNProtocol::protocol()->NLN;
 
 	m_identity = identity;
 	QObject::connect( this, SIGNAL( blockRead( const QString & ) ),
@@ -209,7 +209,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		MSNContact *c = static_cast<MSNContact*>( m_identity->contacts()[ data.section( ' ', 0, 0 ) ] );
 		if( c )
-			c->setOnlineStatus( MSNProtocol::statusFLN() );
+			c->setOnlineStatus( MSNProtocol::protocol()->FLN );
 	}
 	else if( cmd == "ILN" )
 	{
@@ -564,23 +564,23 @@ void MSNNotifySocket::createChatSession()
 
 QString MSNNotifySocket::statusToString( const KopeteOnlineStatus &status ) const
 {
-	if( status == MSNProtocol::statusNLN() )
+	if( status == MSNProtocol::protocol()->NLN )
 		return "NLN";
-	else if( status == MSNProtocol::statusBSY() )
+	else if( status == MSNProtocol::protocol()->BSY )
 		return "BSY";
-	else if( status == MSNProtocol::statusBRB() )
+	else if( status == MSNProtocol::protocol()->BRB )
 		return "BRB";
-	else if( status == MSNProtocol::statusAWY() )
+	else if( status == MSNProtocol::protocol()->AWY )
 		return "AWY";
-	else if( status == MSNProtocol::statusPHN() )
+	else if( status == MSNProtocol::protocol()->PHN )
 		return "PHN";
-	else if( status == MSNProtocol::statusLUN() )
+	else if( status == MSNProtocol::protocol()->LUN )
 		return "LUN";
-	else if( status == MSNProtocol::statusFLN() )
+	else if( status == MSNProtocol::protocol()->FLN )
 		return "FLN";
-	else if( status == MSNProtocol::statusHDN() )
+	else if( status == MSNProtocol::protocol()->HDN )
 		return "HDN";
-	else if( status == MSNProtocol::statusIDL() )
+	else if( status == MSNProtocol::protocol()->IDL )
 		return "IDL";
 	else
 	{
@@ -619,25 +619,25 @@ void MSNNotifySocket::slotResetKeepAlive()
 KopeteOnlineStatus MSNNotifySocket::convertOnlineStatus( const QString &status )
 {
 	if( status == "NLN" )
-		return MSNProtocol::statusNLN();
+		return MSNProtocol::protocol()->NLN;
 	else if( status == "FLN" )
-		return MSNProtocol::statusFLN();
+		return MSNProtocol::protocol()->FLN;
 	else if( status == "HDN" )
-		return MSNProtocol::statusHDN();
+		return MSNProtocol::protocol()->HDN;
 	else if( status == "PHN" )
-		return MSNProtocol::statusPHN();
+		return MSNProtocol::protocol()->PHN;
 	else if( status == "LUN" )
-		return MSNProtocol::statusLUN();
+		return MSNProtocol::protocol()->LUN;
 	else if( status == "BRB" )
-		return MSNProtocol::statusBRB();
+		return MSNProtocol::protocol()->BRB;
 	else if( status == "AWY" )
-		return MSNProtocol::statusAWY();
+		return MSNProtocol::protocol()->AWY;
 	else if( status == "BSY" )
-		return MSNProtocol::statusBSY();
+		return MSNProtocol::protocol()->BSY;
 	else if( status == "IDL" )
-		return MSNProtocol::statusIDL();
+		return MSNProtocol::protocol()->IDL;
 	else
-		return MSNProtocol::statusUNK();
+		return MSNProtocol::protocol()->UNK;
 }
 
 #include "msnnotifysocket.moc"
