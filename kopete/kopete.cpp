@@ -152,7 +152,11 @@ void Kopete::slotLoadPlugins()
 
 	LibraryLoader::pluginLoader()->loadAll();
 
-	KopeteAccountManager::manager()->autoConnect();
+	// --noconnect not specified?
+	if (args->isSet("connect"))
+	{
+		KopeteAccountManager::manager()->autoConnect();
+	}
 
 }
 

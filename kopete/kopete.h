@@ -5,7 +5,7 @@
 
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett   <duncan@kde.org>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -26,9 +26,7 @@
 
 #include <kuniqueapplication.h>
 
-#include "kopetemessage.h"
-
-#define KOPETE_VERSION "0.6.90cvs >= 20030218"
+#define KOPETE_VERSION "0.6.90cvs >= 20030312"
 
 class KopeteWindow;
 class QSessionManager;
