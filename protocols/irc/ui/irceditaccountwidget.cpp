@@ -55,10 +55,10 @@ KopeteAccount *IRCEditAccountWidget::apply()
 {
 	QString mAccountId = mNickName->text() + QString::fromLatin1("@") + mServer->text() + QString::fromLatin1(":") + QString::number( mPort->value() );
 
-	if( !m_account )
-		m_account = new IRCAccount( mProtocol, mAccountId );
+	if( !m_IRCAccount )
+		m_IRCAccount = new IRCAccount( mProtocol, mAccountId );
 //	else
-//		m_account->setAccountId( mAccountId );
+//		m_IRCAccount->setAccountId( mAccountId );
 
 	m_IRCAccount->setPassword( mPassword->text() );
 	m_IRCAccount->setUserName( mUserName->text() );
