@@ -60,7 +60,7 @@ QString KgpgInterface::KgpgEncryptText(QString text,QString userIDs, QString Opt
 	dests+=" --recipient "+userIDs;
 	
 	QCString gpgcmd = "echo ";
-	gpgcmd += KShellProcess::quote( text + QString::fromLatin1("\n") ).utf8();
+	gpgcmd += KShellProcess::quote( text ).utf8();
 	gpgcmd += " | gpg --no-secmem-warning --no-tty ";
 	gpgcmd += Options.local8Bit();
 	gpgcmd += " -e ";
@@ -130,7 +130,6 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
 		
 		pclose(fp);
 		password = QCString();
-		encResult = encResult.left( encResult.length() - 1 );
 	}
 	
 	if( !encResult.isEmpty() )
