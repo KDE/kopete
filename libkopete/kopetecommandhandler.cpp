@@ -72,6 +72,9 @@ KopeteCommandHandler::KopeteCommandHandler() : QObject( qApp )
 
 	registerCommand( this, QString::fromLatin1("awayall"), SLOT( slotAwayAllCommand( const QString &, KopeteMessageManager * ) ),
 		i18n("USAGE: /awayall [<reason>] - Sets you away/back in all accounts.") );
+		
+	registerCommand( this, QString::fromLatin1("say"), SLOT( slotSayCommand( const QString &, KopeteMessageManager * ) ),
+		i18n("USAGE: /say <text> - Say text in this chat.") );
 
 	registerCommand( this, QString::fromLatin1("exec"), SLOT( slotExecCommand( const QString &, KopeteMessageManager * ) ),
 		i18n("USAGE: /exec [-o] <command> - Executes the specified command and displays output in the chat buffer. If"
@@ -188,6 +191,13 @@ void KopeteCommandHandler::slotHelpCommand( const QString &args, KopeteMessageMa
 
 	KopeteMessage msg(manager->user(), manager->members(), output, KopeteMessage::Internal, KopeteMessage::PlainText);
 	manager->appendMessage(msg);
+}
+
+void KopeteCommandHandler::slotSayCommand( const QString &args, KopeteMessageManager *manager )
+{
+	//Just say whatever is passed
+	KopeteMessage msg(manager->user(), manager->members(), args, KopeteMessage::Internal, KopeteMessage::PlainText);
+	manager->sendMessage(msg);
 }
 
 void KopeteCommandHandler::slotExecCommand( const QString &args, KopeteMessageManager *manager )
