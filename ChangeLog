@@ -7,20 +7,20 @@ o Main App
 	o Added globally Away/Available (Duncan)
 	o Added Auto-Away Plugin (Duncan)
 	o KNotify beep support for KopeteEvent (Hendrik)
-	
+	o KNotify sound support for KopeteEvent (Hendrik)	
 o IRC Plugin
 
 	o Updated for globally Away/Vailable
-	o Added support for:
+	o Added support for: (Nick)
 		o /server
 		o Loading a console at IRC plugin load
 		o Turning on/off left side icons in chat messages
 		o Turning on/off timestamping
 		o Colors, bold, and underlining in messages
 		o Ability to load more than one console
-	o Many bug fixes
-	o Removed servers from the contact list. They were intrusive.
-	o Channels and private conversation windows only appear in the contact list when added using "Add Contact"
+	o Many bug fixes (Nick)
+	o Removed servers from the contact list. They were intrusive. (Nick)
+	o Channels and private conversation windows only appear in the contact list when added using "Add Contact" (Nick)
 
 
 o ICQ Plugin
