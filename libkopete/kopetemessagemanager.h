@@ -18,10 +18,14 @@
 #define __KOPETEMESSAGEMANAGER_H__
 
 #include <qptrlist.h>
+#include <qobject.h>
+
 
 class KopeteContact;
 class KopeteMessage;
 class KopeteMessageManager;
+class QObject;
+
 
 typedef QPtrList<KopeteContact>        KopeteContactList;
 typedef QPtrList<KopeteMessage>        KopeteMessageList;
@@ -29,6 +33,7 @@ typedef QPtrList<KopeteMessageManager> KopeteMessageManagerList;
 
 class KopeteMessageManager : public QObject
 {
+Q_OBJECT
 public:
 	/**
 	 * Create a new chat session. Provided is the initial list of contacts in
@@ -45,7 +50,7 @@ public:
 	/**
 	 * Delete a chat manager instance
 	 */
-	~KopeteChatManager();
+	~KopeteMessageManager();
 
 	/**
 	 * Append a message to the queue
@@ -81,7 +86,7 @@ private:
 	 * not create instances yourself directly!
 	 */
 	KopeteMessageManager( const KopeteContactList &contacts,
-		QWidget *parent = 0, const char *name = 0 );
+		QObject *parent = 0, const char *name = 0 );
 
 };
 
