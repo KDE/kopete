@@ -53,7 +53,7 @@ KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
 	KActiveLabel *mCaption = new KActiveLabel(text, this, "mCaption");
 	mCaption->setPalette(QToolTip::palette());
 	mCaption->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum );
-	
+
 	if (!pix.isEmpty())
 	{
 		QLabel *mImage = new QLabel(this, "mImage");
@@ -137,8 +137,8 @@ void KopeteBalloon::updateMask()
 		QRect deskRect = tmp->screenGeometry(tmp->screenNumber(mAnchor));
 	#endif
 
-	bool bottom = (mAnchor.y() + height()) > (deskRect.height() - 48);
-	bool right = (mAnchor.x() + width()) > (deskRect.width() - 48);
+	bool bottom = (mAnchor.y() + height()) > ((deskRect.y() + deskRect.height()) - 48);
+	bool right = (mAnchor.x() + width()) > ((deskRect.x() + deskRect.width()) - 48);
 
 	QPointArray arrow(4);
 	arrow.setPoint(0, QPoint(right ? width() : 0, bottom ? height() : 0));
