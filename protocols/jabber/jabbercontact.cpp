@@ -634,6 +634,8 @@ void JabberContact::slotSendMessage(KopeteMessage &message)
 		// tell the manager that we sent successfully
 		manager()->messageSucceeded();
 	}
+	else
+		protocol->errorConnectFirst();
 
 }
 
