@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>AddContactWizard_Base</class>
 <widget class="QWizard">
     <property name="name">
@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>786</width>
+            <width>604</width>
             <height>484</height>
         </rect>
     </property>
@@ -70,28 +70,121 @@
                     </spacer>
                 </vbox>
             </widget>
-            <widget class="QLabel">
+            <widget class="QLayoutWidget">
                 <property name="name">
-                    <cstring>TextLabel1</cstring>
+                    <cstring>layout16</cstring>
                 </property>
-                <property name="sizePolicy">
-                    <sizepolicy>
-                        <hsizetype>5</hsizetype>
-                        <vsizetype>5</vsizetype>
-                        <horstretch>1</horstretch>
-                        <verstretch>0</verstretch>
-                    </sizepolicy>
-                </property>
-                <property name="text">
-                    <string>&lt;h2&gt;Welcome to the Add Contact Wizard!&lt;/h2&gt;
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QLabel">
+                        <property name="name">
+                            <cstring>TextLabel1</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>5</hsizetype>
+                                <vsizetype>5</vsizetype>
+                                <horstretch>1</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>&lt;h2&gt;Welcome to the Add Contact Wizard!&lt;/h2&gt;
 
-&lt;p&gt;This wizard will guide you through the process of adding a new contact to Kopete.&lt;/p&gt;
-
-&lt;p&gt;Press the "Next" button to begin...&lt;/p&gt;</string>
-                </property>
-                <property name="alignment">
-                    <set>WordBreak|AlignTop|AlignLeft</set>
-                </property>
+&lt;p&gt;This wizard will guide you through the process of adding a new contact to Kopete.&lt;/p&gt;</string>
+                        </property>
+                        <property name="alignment">
+                            <set>WordBreak|AlignTop|AlignLeft</set>
+                        </property>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer12_2</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>70</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QLabel">
+                        <property name="name">
+                            <cstring>textLabel2_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&lt;p&gt;Kopete shares contact information with the KDE Addressbook.  This gives you seamless integration between instant messaging, e-mail and other personal information management applications.&lt;/p&gt;
+&lt;p&gt;If you prefer not to store instant messaging information in the KDE Addressbook, uncheck the box below.&lt;/p&gt;</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox">
+                        <property name="name">
+                            <cstring>chkAddressee</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Use the KDE address book for this contact</string>
+                        </property>
+                        <property name="accel">
+                            <string>Alt+U</string>
+                        </property>
+                        <property name="checked">
+                            <bool>true</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Check box this if you don't want to integrate other KDE applications with Kopete</string>
+                        </property>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer14_3</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>61</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QLabel">
+                        <property name="name">
+                            <cstring>textLabel1_3</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&lt;p&gt;Press the "Next" button to begin...&lt;/p&gt;</string>
+                        </property>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer13</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>420</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </vbox>
             </widget>
         </hbox>
     </widget>
@@ -152,7 +245,7 @@
             </widget>
             <widget class="QLayoutWidget">
                 <property name="name">
-                    <cstring>layout12</cstring>
+                    <cstring>layout17</cstring>
                 </property>
                 <vbox>
                     <property name="name">
@@ -164,7 +257,6 @@
                         </property>
                         <property name="text">
                             <string>&lt;h2&gt;Select Address Book Entry&lt;/h2&gt;
-&lt;p&gt;Kopete shares contact information with the KDE Addressbook.  This gives you seamless integration between instant messaging, e-mail and other personal information management applications.&lt;/p&gt;
 &lt;p&gt;Choose a contact to continue:&lt;/p&gt;</string>
                         </property>
                     </widget>
@@ -238,23 +330,6 @@
                                 </property>
                             </spacer>
                         </hbox>
-                    </widget>
-                    <widget class="QCheckBox">
-                        <property name="name">
-                            <cstring>chkAddressee</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&amp;Use the KDE address book for this contact</string>
-                        </property>
-                        <property name="accel">
-                            <string>Alt+U</string>
-                        </property>
-                        <property name="checked">
-                            <bool>true</bool>
-                        </property>
-                        <property name="toolTip" stdset="0">
-                            <string>Check box this if you don't want to integrate other KDE applications with Kopete</string>
-                        </property>
                     </widget>
                 </vbox>
             </widget>
@@ -439,23 +514,6 @@
                             </spacer>
                         </hbox>
                     </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer15_2</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>16</height>
-                            </size>
-                        </property>
-                    </spacer>
                 </vbox>
             </widget>
         </hbox>

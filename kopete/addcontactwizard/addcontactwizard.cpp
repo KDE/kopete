@@ -46,7 +46,7 @@
 
 #include <kdeversion.h>
 #include <kinputdialog.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 
 #include <kpushbutton.h>
 #include <kdebug.h>
@@ -66,6 +66,8 @@
 AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 : AddContactWizard_Base( parent, name )
 {
+	m_addressBook = 0L;  // so we can tell if it's already loaded
+
 	// Populate the groups list
 	KopeteGroupList groups=KopeteContactList::contactList()->groups();
 	for( KopeteGroup *it = groups.first(); it; it = groups.next() )
@@ -89,28 +91,16 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 		m_accountItems.insert(accountLVI,i);
 	}
 
-	// Get a reference to the address book
-	m_addressBook = KABC::StdAddressBook::self();
-	KABC::StdAddressBook::setAutomaticSave( false );
-	
-	// Populate the addressee list
-	// This could be slow - is there a better way of doing it (progressive loading?)
-	slotLoadAddressees();
-	
-	connect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), this, SLOT( slotLoadAddressees() ) );
-
 	if ( accounts.count() == 1 )
 	{
 		accountLVI->setOn( true );
 		setAppropriate( selectService, false );
 	}
 
+	setNextEnabled( selectService, ( accounts.count() == 1 ) );
 	setNextEnabled( selectAddressee, false );
-//	setNextEnabled(selectService, (accounts.count() == 1));
-	setFinishEnabled(finis, true);
-
-	// FIXME: steal/add a create addressee widget
-	//addAddresseeButton->setEnabled( false );
+	setFinishEnabled( finis, true );
+	
 	// Addressee validation connections
 	connect( addAddresseeButton, SIGNAL( clicked() ), SLOT( slotAddAddresseeClicked() ) );
 	connect( chkAddressee, SIGNAL( toggled( bool ) ),
@@ -149,8 +139,9 @@ void AddContactWizard::slotAddAddresseeClicked()
 	bool* ok;
 	*ok = false;
 	// Pop up add addressee dialog
-	QString addresseeName = KLineEditDlg::getText( i18n( "Name for new Address Book entry:" ),
-													 QString::null, ok, this ); 
+	QString addresseeName = KInputDialog::getText( i18n( "New Address Book Entry" ),
+												   i18n( "Name the new entry:" ),
+												   QString::null, ok, this ); 
 	if ( *ok && !addresseeName.isEmpty() )
 	{
 		KABC::Addressee addr;
@@ -163,30 +154,37 @@ void AddContactWizard::slotAddAddresseeClicked()
 			if ( !m_addressBook->save( ticket ) ) {
 				kdError() << "Saving failed!" << endl;
 			}
+#if KDE_IS_VERSION (3,1,90)
 			m_addressBook->releaseSaveTicket( ticket );
+#endif
 		}
 	}
 }
 
 void AddContactWizard::slotCheckAddresseeChoice( bool on )
 {
-	// Disable addressee selection widgets
-	addresseeListView->setEnabled( on );
-	addAddresseeButton->setEnabled( on );
-	if ( !on )
-		setNextEnabled( selectAddressee, true );
-	else
+	setAppropriate( selectAddressee, on );
+	if ( on )
 	{
-		if ( addresseeListView->selectedItem() )
-			setNextEnabled( selectAddressee, true );
-		else
-			setNextEnabled( selectAddressee, false );
+		// Get a reference to the address book
+		if ( m_addressBook == 0L )
+		{	
+			m_addressBook = KABC::StdAddressBook::self( true );
+			KABC::StdAddressBook::setAutomaticSave( false );
+		}
+		disconnect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), 
+										   this, SLOT( slotLoadAddressees() ) );
+		connect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ),
+										this, SLOT( slotLoadAddressees() ) );
 	}
+	else
+		disconnect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), 
+										   this, SLOT( slotLoadAddressees() ) );
 }
 
 void AddContactWizard::slotAddresseeListClicked( QListViewItem *addressee )
 {
-	// check a valid addressee is selected
+	// enable next if a valid addressee is selected
 	setNextEnabled( selectAddressee, addressee ? addressee->isSelected() : false );
 }
 
@@ -203,7 +201,7 @@ void AddContactWizard::slotAddGroupClicked()
 void AddContactWizard::slotProtocolListClicked( QListViewItem *)
 {
 	// Just makes sure a protocol is selected before allowing the user to continue
-/*	bool oneIsChecked = false;
+	bool oneIsChecked = false;
 
 	for (QListViewItemIterator it(protocolListView); it.current(); ++it)
 	{
@@ -215,7 +213,7 @@ void AddContactWizard::slotProtocolListClicked( QListViewItem *)
 		}
 	}
 
-	setNextEnabled(selectService, oneIsChecked);*/
+	setNextEnabled(selectService, oneIsChecked);
 }
 
 void AddContactWizard::accept()
@@ -276,6 +274,12 @@ void AddContactWizard::accept()
 	deleteLater();
 }
 
+void AddContactWizard::reject()
+{
+	disconnect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), this, SLOT( slotLoadAddressees() ) );	
+	QWizard::reject();
+}
+
 void AddContactWizard::next()
 {
 	// If the we're on the select account page
@@ -333,6 +337,21 @@ void AddContactWizard::next()
 
 void AddContactWizard::showPage( QWidget *page )
 {
+	if ( page == intro )
+	{
+		if ( chkAddressee->isChecked() ) // We must check this as we might be showing this page because the back button was pressed
+		{
+			// Get a reference to the address book
+			if ( m_addressBook == 0L )
+			{	
+				m_addressBook = KABC::StdAddressBook::self( true );
+				KABC::StdAddressBook::setAutomaticSave( false );
+			}
+			disconnect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), this, SLOT( slotLoadAddressees() ) );
+			connect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), this, SLOT( slotLoadAddressees() ) );
+			slotLoadAddressees();
+		}
+	}
 	if ( page == selectGroup )
 	{
 		if ( addresseeListView->isEnabled() )
