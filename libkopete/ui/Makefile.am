@@ -1,40 +1,22 @@
+METASOURCES = AUTO
 INCLUDES = -I$(top_srcdir)/kopete/libkopete $(all_includes)
+
 noinst_LTLIBRARIES = libkopeteui.la
+noinst_HEADERS = contactlist.h pluginmodule.h configmodule.h \
+    kopetelistview.h preferencesdialog.h kopetewindow.h statusbaricon.h \
+    protocolboxitem.h addcontactpage.h systemtray.h chatview.h \
+    appearanceconfig.h groupseparator.h balloonbase.h kopeteballoon.h \
+    kopetehistorydialog.h kopetecontactviewitem.h kopetestdaction.h \
+    kopetehistorywidget.h
 
-noinst_HEADERS = contactlist.h\
-		pluginmodule.h\
-		configmodule.h\
-		kopetelistview.h\
-		preferencesdialog.h\
-		kopetewindow.h\
-		statusbaricon.h\
-		protocolboxitem.h\
-		addcontactpage.h\
-		systemtray.h \
-		chatview.h \
-		appearanceconfig.h\
-		groupseparator.h\
-		balloonbase.h\
-		kopeteballoon.h \
-		kopetehistorydialog.h \
-		kopetecontactviewitem.h \
-		kopetestdaction.h \
-		kopetehistorywidget.h
+libkopeteui_la_SOURCES = configmodule.cpp kopetewindow.cpp \
+    preferencesdialog.cpp contactlist.cpp pluginmodule.cpp \
+    statusbaricon.cpp addwizard.ui addwizardimpl.cpp protocolboxitem.cpp \
+    addcontactpage.cpp systemtray.cpp chatview.cpp appearanceconfig.cpp \
+    groupseparator.cpp balloonbase.cpp kopeteballoon.cpp \
+    kopetehistorydialog.cpp kopetechatwindow.cpp \
+    kopetecontactviewitem.cpp kopetestdaction.cpp \
+    kopetehistorywidget.cpp kopeteemailwindow.cpp emailwindow.ui
+libkopeteui_la_LDFLAGS = $(all_libraries)
+libkopeteui_la_LIBADD = $(LIB_KDEUI)
 
-#CXXFLAGS = -g -O2 -Wall
-#DEFS = -I. -I$(srcdir) -I$(top_srcdir)
-
-libkopeteui_la_SOURCES = configmodule.cpp\
-			kopetewindow.cpp preferencesdialog.cpp\
-			contactlist.cpp \
-			pluginmodule.cpp statusbaricon.cpp\
-			addwizard.ui addwizardimpl.cpp\
-			protocolboxitem.cpp addcontactpage.cpp\
-			systemtray.cpp chatview.cpp appearanceconfig.cpp\
-			groupseparator.cpp balloonbase.cpp kopeteballoon.cpp \
-			kopetehistorydialog.cpp kopetechatwindow.cpp \
-			kopetecontactviewitem.cpp kopetestdaction.cpp \
-			kopetehistorywidget.cpp kopeteemailwindow.cpp \
-			emailwindow.ui
-
-libkopeteui_la_METASOURCES = AUTO
