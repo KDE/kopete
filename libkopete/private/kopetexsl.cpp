@@ -18,6 +18,8 @@
 #include <libxslt/transform.h>
 #include <libxml/parser.h>
 
+//Solaris Fix
+#include <stdlib.h>
 #include <kdebug.h>
 #include "kopetexsl.h"
 #include <qsignal.h>
