@@ -48,6 +48,8 @@ int main(int argc, char *argv[])
     aboutData.addAuthor ( "Hendrik vom Lehn", I18N_NOOP("Developer"), "hennevl@hennevl.de", "http://www.hennevl.de");
     aboutData.addAuthor ( "Stefan Gehn", I18N_NOOP("Developer"), "sgehn@gmx.net", "http://metz81.mine.nu" );
 	aboutData.addAuthor ( "Andres Krapf", I18N_NOOP("Random hacks and bugfixes"), "dae@chez.com" );
+	aboutData.addAuthor ( "Gav Wood", I18N_NOOP("Winpopup plugin"), "gjw102@york.ac.uk" );
+
 
 	aboutData.addCredit ( "Herwin Jan Steehouwer", I18N_NOOP("KxEngine ICQ code") );
 	aboutData.addCredit ( "Olaf Lueg", I18N_NOOP("Kmerlin MSN code") );
