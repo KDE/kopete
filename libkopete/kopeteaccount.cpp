@@ -439,27 +439,36 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 		return false;
 	}
 
+	KopeteGroup *parentGroup = 0L;
+	//If this is a temporary contact, use the temporary group
+	if ( !groupName.isNull() )
+		parentGroup = isTemporary ? KopeteGroup::temporary : KopeteContactList::contactList()->getGroup( groupName );
+
+	if(!parentGroup && parentContact)
+		parentGroup=parentContact->groups().first();
+
+
 	KopeteContact *c = d->contacts[ contactId ];
 	if ( c && c->metaContact() )
 	{
 		if ( c->metaContact()->isTemporary() && !isTemporary )
 		{
 			kdDebug( 14010 ) << "KopeteAccount::addContact: You are triying to add an existing temporary contact. Just add it on the list" << endl;
-			parentContact->addToGroup( KopeteContactList::contactList()->getGroup( groupName ) );
+			/* //FIXME: calling this can produce a message to delete the old contazct which should be deleted in many case.
+			if(c->metaContact() != parentContact)
+				c->setMetaContact(parentContact);*/
+
+			c->metaContact()->setTemporary(false, parentGroup );
+			if(!KopeteContactList::contactList()->metaContacts().contains(c->metaContact()))
+				KopeteContactList::contactList()->addMetaContact(c->metaContact());
 		}
 		else
 		{
 			// should we here add the contact to the parentContact if any?
 			kdDebug( 14010 ) << "KopeteAccount::addContact: Contact already exist" << endl;
 		}
-
-		return false;
+		return false; //(the contact is not in the correct metacontact, so false)
 	}
-
-	KopeteGroup *parentGroup = 0L;
-	//If this is a temporary contact, use the temporary group
-	if ( !groupName.isNull() )
-		parentGroup = isTemporary ? KopeteGroup::temporary : KopeteContactList::contactList()->getGroup( groupName );
 
 	if ( parentContact )
 	{
