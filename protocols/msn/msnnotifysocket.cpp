@@ -332,8 +332,13 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 
 void MSNNotifySocket::slotOpenInbox()
 {
-	if(m_isHotmailAccount)
-		kapp->invokeBrowser(m_HotmailTmpFile);
+	if( m_isHotmailAccount )
+	{
+		KTempFile tmpFile( locateLocal( "tmp", "kopetehotmail-" ), ".html" );
+		*tmpFile.textStream() << m_hotmailRequest;
+
+		kapp->invokeBrowser( tmpFile.name() );
+	}
 }
 
 void MSNNotifySocket::slotReadMessage( const QString &msg )
@@ -411,33 +416,31 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 
 		KTempFile tmpFile(locateLocal("tmp", "kopetehotmail"), ".html");
 
-		m_HotmailTmpFile=tmpFile.name();
-		*tmpFile.textStream() <<
-			"<html>"
-			<< endl << "<head>"
-			<< endl << "<noscript>"
-			<< endl << "<meta http-equiv=Refresh content=\"0; url=http://www.hotmail.com\">"
-			<< endl << "</noscript>"
-			<< endl << "</head>"
-			<< endl << "<body onload=\"document.pform.submit(); \">"
-			<< endl << "<form name=\"pform\" action=\"https://loginnet.passport.com/ppsecure/md5auth.srf?lc=1033\" method=\"POST\">"
-			<< endl << "<input type=\"hidden\" name=\"mode\" value=\"ttl\">"
-			<< endl << "<input type=\"hidden\" name=\"login\" value=\"" << UserID << "\">"
-			<< endl << "<input type=\"hidden\" name=\"username\" value=\"" << UserID << "\">"
-			<< endl << "<input type=\"hidden\" name=\"sid\" value=\"" << m_sid << "\">"
-			<< endl << "<input type=\"hidden\" name=\"kv\" value=\"" << m_kv << "\">"
-			<< endl << "<input type=\"hidden\" name=\"id\" value=\"2\">"
-			<< endl << "<input type=\"hidden\" name=\"sl\" value=\"1\">"
-			<< endl << "<input type=\"hidden\" name=\"rru\" value=\"/cgi-bin/HoTMaiL\">"
-			<< endl << "<input type=\"hidden\" name=\"auth\" value=\"" << m_MSPAuth << "\">"
-			<< endl << "<input type=\"hidden\" name=\"creds\" value=\"" << md5.hexDigest() << "\">"
-			<< endl << "<input type=\"hidden\" name=\"svc\" value=\"mail\">"
-			<< endl << "<input type=\"hidden\" name=\"js\" value=\"yes\">"
-			<< endl << "</form></body>"
-			<< endl << "</html>"
-			<< endl;
+		m_hotmailRequest =
+			"<html>\n"
+			"<head>\n"
+			"<noscript>\n"
+			"<meta http-equiv=Refresh content=\"0; url=http://www.hotmail.com\">\n"
+			"</noscript>\n"
+			"</head>\n"
+			"<body onload=\"document.pform.submit(); \">\n"
+			"<form name=\"pform\" action=\"https://loginnet.passport.com/ppsecure/md5auth.srf?lc=1033\" method=\"POST\">\n"
+			"<input type=\"hidden\" name=\"mode\" value=\"ttl\">\n"
+			"<input type=\"hidden\" name=\"login\" value=\"" + UserID + "\">\n"
+			"<input type=\"hidden\" name=\"username\" value=\"\n" + UserID + "\">\n"
+			"<input type=\"hidden\" name=\"sid\" value=\"" + m_sid + "\">\n"
+			"<input type=\"hidden\" name=\"kv\" value=\"" + m_kv + "\">\n"
+			"<input type=\"hidden\" name=\"id\" value=\"2\">\n"
+			"<input type=\"hidden\" name=\"sl\" value=\"1\">\n"
+			"<input type=\"hidden\" name=\"rru\" value=\"/cgi-bin/HoTMaiL\">\n"
+			"<input type=\"hidden\" name=\"auth\" value=\"" + m_MSPAuth + "\">\n"
+			"<input type=\"hidden\" name=\"creds\" value=\"" + QString::fromLatin1( md5.hexDigest() ) + "\">\n"
+			"<input type=\"hidden\" name=\"svc\" value=\"mail\">\n"
+			"<input type=\"hidden\" name=\"js\" value=\"yes\">\n"
+			"</form></body>\n"
+			"</html>\n";
 
-		m_isHotmailAccount=true;
+		m_isHotmailAccount = true;
 		emit hotmailSeted(true);
 	}
 }
@@ -573,14 +576,5 @@ void MSNNotifySocket::slotDispatchClosed()
 
 #include "msnnotifysocket.moc"
 
-
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 
