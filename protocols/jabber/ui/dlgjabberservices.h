@@ -3,7 +3,7 @@
                           dlgjabberservices.h  -  description
                              -------------------
     begin                : Mon Dec 9 2002
-    copyright            : (C) 2002 by Kopete developers
+    copyright            : (C) 2002-2003 by Till Gerken <till@tantalo.net>
     email                : kopete-devel@kde.org
  ***************************************************************************/
 
@@ -28,7 +28,7 @@
 #include "dlgservices.h"
 
 /**
-  *@author Kopete developers
+  *@author Till Gerken <till@tantalo.net>
   */
 
 class dlgJabberServices:public dlgServices

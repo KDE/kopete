@@ -3,7 +3,7 @@
                           jabbergroupchat.h  -  description
                              -------------------
     begin                : Fre Feb 28 2003
-    copyright            : (C) 2003 by Till Gerken (till@tantalo.net)
+    copyright            : (C) 2003 by Till Gerken <till@tantalo.net>
     email                : kopete-devel@kde.org
  ***************************************************************************/
 
@@ -23,7 +23,7 @@
 #include "jabbercontact.h"
 
 /**
-  *@author Kopete developers
+  *@author Till Gerken <till@tantalo.net>
   */
 
 class JabberGroupChat:public JabberContact

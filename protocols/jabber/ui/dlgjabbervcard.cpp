@@ -1,10 +1,10 @@
 
 /***************************************************************************
-                          dlgjabbervcard.cpp  -  description
+                          dlgjabbervcard.cpp  -  vCard dialog
                              -------------------
     begin                : Thu Aug 08 2002
-    copyright            : (C) 2002 by Till Gerken
-    email                : till@tantalo.net
+    copyright            : (C) 2002-2003 by Till Gerken <till@tantalo.net>
+    email                : kopete-devel@kde.org
 
     Rewritten version of the original dialog
 

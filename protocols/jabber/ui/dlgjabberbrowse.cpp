@@ -3,7 +3,7 @@
                           dlgjabberbrowse.cpp  -  description
                              -------------------
     begin                : Wed Dec 11 2002
-    copyright            : (C) 2002 by Till Gerken
+    copyright            : (C) 2002-2003 by Till Gerken <till@tantalo.net>
     email                : kopete-devel@kde.org
  ***************************************************************************/
 

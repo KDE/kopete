@@ -1,4 +1,22 @@
 
+/***************************************************************************
+                          jabberaddcontactpage.h  -  Add contact widget
+                             -------------------
+    begin                : Thu Aug 08 2002
+    copyright            : (C) 2003 by Till Gerken <till@tantalo.net>
+                           (C) 2003 by Daniel Stone <dstone@kde.org>
+    email                : kopete-devel@kde.org
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+
 #ifndef JABBERADDCONTACTPAGE_H
 #define JABBERADDCONTACTPAGE_H
 

@@ -3,9 +3,8 @@
                       dlgjabbersendraw.h  -  Raw XML dialog
                              -------------------
     begin                : Sun Aug 25 2002
-    copyright            : (C) 2002 by Till Gerken,
-                           Kopete Development team
-    email                : till@tantalo.net
+    copyright            : (C) 2002-2003 by Till Gerken <till@tantalo.net>
+    email                : kopete-devel@kde.org
  ***************************************************************************
 
  ***************************************************************************
@@ -33,7 +32,7 @@
  * It comes with a QComboBox to choose some "template" strings
  * like "Availability Status", "Subscription",...
  *
- * @author Till <till@tantalo.net>
+ * @author Till Gerken <till@tantalo.net>
  * @author Chris TenHarmsel <tenharmsel@users.sf.net>
  */
 class dlgJabberSendRaw:public DlgSendRaw

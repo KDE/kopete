@@ -1,9 +1,9 @@
  /*
   * jabberformlineedit.cpp
   * 
-  * Copyright (c) 2002 by the Kopete Developers <kopete-devel@kde.org>
+  * Copyright (c) 2002-2003 by Till Gerken <till@tantalo.net>
   * 
-  * Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+  * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
   * 
   * *************************************************************************
   * *                                                                       *

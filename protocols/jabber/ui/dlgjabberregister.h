@@ -3,7 +3,7 @@
                           dlgjabberregister.h  -  description
                              -------------------
     begin                : Mon Dec 9 2002
-    copyright            : (C) 2002 by Till Gerken
+    copyright            : (C) 2002-2003 by Till Gerken <till@tantalo.net>
     email                : kopete-devel@kde.org
  ***************************************************************************/
 
@@ -32,7 +32,7 @@
 #include "jabberformtranslator.h"
 
 /**
-  *@author Kopete developers
+  *@author Till Gerken <till@tantalo.net>
   */
 
 class dlgJabberRegister:public dlgRegister

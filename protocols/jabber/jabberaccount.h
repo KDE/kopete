@@ -3,8 +3,12 @@
                 jabberaccount.h  -  core Jabber account class
                              -------------------
     begin                : Sat Mar 8 2003
-    copyright           : (C) 2003 by Daniel Stone and Till Gerken
-    email                 : dstone@kde.org, till@tantalo.net
+    copyright            : (C) 2003 by Till Gerken <till@tantalo.net>
+							Based on JabberProtocol by Daniel Stone <dstone@kde.org>
+							and Till Gerken <till@tantalo.net>.
+
+			   Kopete (C) 2001-2003 Kopete developers
+			   <kopete-devel@kde.org>.
  ***************************************************************************/
 
 /***************************************************************************

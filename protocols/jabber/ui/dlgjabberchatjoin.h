@@ -3,7 +3,7 @@
                           dlgjabberchatjoin.h  -  description
                              -------------------
     begin                : Fri Dec 13 2002
-    copyright            : (C) 2002 by Kopete developers
+    copyright            : (C) 2002-2003 by Till Gerken <till@tantalo.net>
     email                : kopete-devel@kde.org
  ***************************************************************************/
 
@@ -24,7 +24,7 @@
 #include "dlgchatjoin.h"
 
 /**
-  *@author Kopete developers
+  *@author Till Gerken <till@tantalo.net>
   */
 
 class dlgJabberChatJoin:public dlgChatJoin

@@ -3,7 +3,7 @@
                           jabbergroupchat.cpp  -  description
                              -------------------
     begin                : Fre Feb 28 2003
-    copyright            : (C) 2003 by Till Gerken (till@tantalo.net)
+    copyright            : (C) 2003 by Till Gerken <till@tantalo.net>
     email                : kopete-devel@kde.org
  ***************************************************************************/
 
