@@ -769,7 +769,9 @@ void KopeteContactListView::slotContextMenu( KListView*, QListViewItem *item,
 	int nb = KopeteContactList::contactList()->selectedMetaContacts().count() +
 		KopeteContactList::contactList()->selectedGroups().count();
 
-	KMainWindow *window = dynamic_cast<KMainWindow *>(kapp->mainWidget());
+	// FIXME: temporarily reverting to even uglier parent casting to make context-menus work again
+	//KMainWindow *window = dynamic_cast<KMainWindow *>(kapp->mainWidget());
+	KMainWindow *window = dynamic_cast<KMainWindow *>(parent());
 	if( !window )
 	{
 		kdError(14000) << k_funcinfo <<
