@@ -33,7 +33,7 @@ class KopeteMetaContact;
 class KListBox;
 class KComboBox;
 
-class KopeteAddressBookExport : public QWidget
+class KopeteAddressBookExport : public QObject
 {
 public:
 	KopeteAddressBookExport( QWidget *parent, KopeteMetaContact *mc );
@@ -82,6 +82,7 @@ protected:
 	QStringList newValues( KListBox *listBox, uint counter );
 	
 	// the GUI
+	QWidget *mParent;
 	KDialogBase * mDialog;
 	QPixmap mAddrBookIcon;
 	AddressBookExportUI *mUI;
