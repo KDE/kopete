@@ -24,33 +24,55 @@ void KopeteGroupList::slotUpdateList()
 	setItems(kopeteapp->contactList()->groups());
 }
 
-/** KopeteStdAction **/
+KAction* KopeteStdAction::chat( const QObject *recvr, const char *slot,
+	QObject* parent, const char *name )
+{
+	return new KAction( "&Chat...", "mail_generic", 0, recvr, slot, parent,
+		name );
+}
+
 KAction* KopeteStdAction::sendMessage(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KAction("&Send Message", "mail_generic", 0, recvr, slot, parent, name);
+	return new KAction( "&Send Message...", "mail_generic", 0, recvr, slot,
+		parent, name );
 }
 
 KAction* KopeteStdAction::contactInfo(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KAction("User &Info", "identity", 0, recvr, slot, parent, name);
+	return new KAction( "User &Info...", "identity", 0, recvr, slot, parent,
+		name );
 }
 
 KAction* KopeteStdAction::viewHistory(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KAction("View &History", "history", 0, recvr, slot, parent, name);
+	return new KAction( "View &History...", "history", 0, recvr, slot, parent,
+		name );
 }
 
 KAction* KopeteStdAction::addGroup(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KAction("&Add Group...", "folder", 0, recvr, slot, parent, name);
+	return new KAction( "&Add Group...", "folder", 0, recvr, slot, parent,
+		name );
 }
 
 KListAction *KopeteStdAction::moveContact(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KopeteGroupList("&Move Contact", "editcut", 0, recvr, slot, parent, name);
+	return new KopeteGroupList( "&Move Contact", "editcut", 0, recvr, slot,
+		parent, name );
+}
+
+KListAction *KopeteStdAction::copyContact( const QObject *recvr,
+	const char *slot, QObject* parent, const char *name )
+{
+	return new KopeteGroupList( "&Move Contact", "editcopy", 0, recvr, slot,
+		parent, name );
 }
 
 KAction* KopeteStdAction::deleteContact(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KAction("&Delete Contact",  "edittrash", 0, recvr, slot, parent, name);
+	return new KAction( "&Delete Contact...", "edittrash", 0, recvr, slot,
+		parent, name );
 }
+
+// vim: set noet ts=4 sts=4 sw=4:
+

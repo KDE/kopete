@@ -8,6 +8,8 @@ class KopeteStdAction
 {
 	public:
 		// Contact context menu actions
+		static KAction *chat( const QObject *recvr, const char *slot,
+			QObject* parent, const char *name = 0 );
 		static KAction *sendMessage(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
 
 		static KAction *contactInfo(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
@@ -15,6 +17,8 @@ class KopeteStdAction
 
 		static KAction *addGroup(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
 		static KListAction *moveContact(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
+		static KListAction *copyContact( const QObject *recvr,
+			const char *slot, QObject* parent, const char *name = 0 );
 		static KAction *deleteContact(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
 };
 
