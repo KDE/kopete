@@ -24,7 +24,7 @@
 #include "testbededitaccountwidget.h"
 
 typedef KGenericFactory<TestbedProtocol> TestbedProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_testbed, TestbedProtocolFactory( "kopete_testbed" )  );
+K_EXPORT_COMPONENT_FACTORY( kopete_testbed, TestbedProtocolFactory( "kopete_testbed" )  )
 
 TestbedProtocol *TestbedProtocol::s_protocol = 0L;
 
