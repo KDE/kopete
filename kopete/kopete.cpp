@@ -346,6 +346,64 @@ QString Kopete::parseEmoticons( QString message )
 
 QString Kopete::parseHTML( QString message )
 {
+	QString text, result, enc;
+	QRegExp regExp;
+	uint len = message.length();
+	int matchLen;
+	text = message;
+
+	uint lastReplacement = 0;
+	for ( uint idx=0; idx<len; idx++)
+	{
+		switch( text[idx].latin1() )
+		{
+			case '\r':
+				lastReplacement=idx;
+				break;
+			case '\n':
+				lastReplacement=idx;
+				result += "<br>";
+				break;
+			case '\t':	// tab == 4 spaces
+				lastReplacement=idx;
+				result += "&nbsp;&nbsp;&nbsp;&nbsp;";
+				break;
+			case '_' :
+			case '/' :
+			case '*' :
+				regExp = QString("\\%1[^\\s%2]+\\%3").arg(text[idx]).arg(text[idx]).arg(text[idx]);
+				if ( regExp.search(text,idx) == (int)idx )
+				{
+					matchLen = regExp.matchedLength();
+					if (( matchLen > 2 ) &&
+					((idx==0)||text[idx-1].isSpace()||(text[idx-1] == '(')) &&
+					((idx+matchLen==len)||text[idx+matchLen].isSpace()||(text[idx+matchLen]==',')||
+					(text[idx+matchLen]=='.')||(text[idx+matchLen]==')')))
+					{
+						switch (text[idx].latin1())
+						{
+							case '_' :
+								result += QString("<u>%1</u>").arg(parseHTML(text.mid(idx+1,matchLen-2)));
+								break;
+							case '/' :
+								result += QString("<i>%1</i>").arg(parseHTML(text.mid(idx+1,matchLen-2)));
+								break;
+							case '*' :
+								result += QString("<b>%1</b>").arg(parseHTML(text.mid(idx+1,matchLen-2)));
+								break;
+						}
+						idx += matchLen-1;
+						lastReplacement=idx;
+						break;
+					}
+				}
+				result += text[idx];
+				break;
+			default:
+				result += text[idx];
+		}
+	}
+	return result;
 }
 
 QString Kopete::parseURL( QString message )
