@@ -1,8 +1,27 @@
+/*
+	kopetemessagemanagerfactory.cpp - Creates chat sessions
+
+	Copyright   : (c) 2002 by Duncan Mac-Vicar Prett
+	Email       : duncan@kde.org
+
+	*************************************************************************
+	*                                                                       *
+	* This program is free software; you can redistribute it and/or modify  *
+	* it under the terms of the GNU General Public License as published by  *
+	* the Free Software Foundation; either version 2 of the License, or     *
+	* (at your option) any later version.                                   *
+	*                                                                       *
+	*************************************************************************
+*/
 
 #include "kopetemessagemanagerfactory.h"
+#include "kopetemessagemanager.h"
+
 #include <kdebug.h>
 
-KopeteMessageManagerFactory::KopeteMessageManagerFactory( QObject* parent = 0, const char* name = 0 ) : QObject(parent, name)
+KopeteMessageManagerFactory::KopeteMessageManagerFactory( QObject* parent,
+	const char* name )
+	: QObject( parent, name )
 {
 }
 
@@ -10,7 +29,9 @@ KopeteMessageManagerFactory::~KopeteMessageManagerFactory()
 {
 }
 
-KopeteMessageManager *KopeteMessageManagerFactory::create( const KopeteContact *user,KopeteContactList &contacts ,QString logFile = QString::null )
+KopeteMessageManager *KopeteMessageManagerFactory::create(
+	const KopeteContact *user, KopeteContactList &contacts,
+	QString logFile )
 {
 
 	bool createNewSession = false;
@@ -53,3 +74,6 @@ void KopeteMessageManagerFactory::slotRemoveSession( KopeteMessageManager *sessi
 	mSessionList.setAutoDelete(false);
 	(mSessionList).remove(session);
 }
+
+// vim: set noet ts=4 sts=4 sw=4:
+

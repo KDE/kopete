@@ -1,5 +1,5 @@
 /*
-	kopetemessagemanager.h - Creates chat sessions
+	kopetemessagemanagerfactory.h - Creates chat sessions
 
 	Copyright   : (c) 2002 by Duncan Mac-Vicar Prett
 	Email       : duncan@kde.org
@@ -18,11 +18,11 @@
 #define KOPETEMESSAGEMANAGERFACTORY_H
 
 #include <qobject.h>
-#include "kopetemessagemanager.h"
+#include <qptrlist.h>
 
 /**
-  *@author Duncan Mac-Vicar Prett
-  */
+ * @author Duncan Mac-Vicar Prett
+ */
 class KopeteMessageManager;
 class KopeteMessage;
 class KopeteContact;
@@ -33,9 +33,9 @@ typedef QPtrList<KopeteMessageManager> KopeteMessageManagerList;
 
 class KopeteMessageManagerFactory : public QObject
 {
-Q_OBJECT
+	Q_OBJECT
+
 public:
-	
 	KopeteMessageManagerFactory( QObject* parent = 0, const char* name = 0 );
 	~KopeteMessageManagerFactory();
 	
@@ -44,20 +44,22 @@ public:
 	 * the session. If a session with exactly these contacts already exists,
 	 * it will be reused. Otherwise a new session is created.
 	 */
-	KopeteMessageManager* create( const KopeteContact *user, KopeteContactList &contacts , QString logFile = QString::null);
+	KopeteMessageManager* create( const KopeteContact *user,
+		KopeteContactList &contacts , QString logFile = QString::null );
 	
 	/**
 	 * Get a list of all open sessions
 	 */
 	static const KopeteMessageManagerList& sessions();
+
 protected slots:
-	void slotRemoveSession( KopeteMessageManager *);
+	void slotRemoveSession( KopeteMessageManager *session );
 
 private:
-
 	KopeteMessageManagerList mSessionList;
-	
-	
 };
 
 #endif
+
+// vim: set noet ts=4 sts=4 sw=4:
+

@@ -40,7 +40,8 @@
 
 class Plugins;
 
-Kopete::Kopete(): KUniqueApplication(true, true, true)
+Kopete::Kopete()
+	: KUniqueApplication( true, true, true )
 {
 	/*
 	 * This is a workaround for a quite odd problem:

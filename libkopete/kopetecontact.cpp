@@ -53,14 +53,16 @@ QString KopeteContact::statusText() const
 {
 	ContactStatus stat = status();
 
-	if (stat == Online)
+	switch( stat )
+	{
+	case Online:
 		return i18n("Online");
-
-	if (stat == Away)
+	case Away:
 		return i18n("Away");
-
-	if (stat == Offline)
+	case Offline:
+	default:
 		return i18n("Offline");
+	}
 }
 
 QString KopeteContact::statusIcon() const
