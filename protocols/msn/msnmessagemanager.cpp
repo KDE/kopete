@@ -174,7 +174,6 @@ void MSNMessageManager::slotMessageSent(KopeteMessage &message,KopeteMessageMana
 			msg2.setBg(QColor()); // BGColor is not send, don't show it on chatwindow
 			msg2.setBody(message.plainBody() , KopeteMessage::PlainText);
 			appendMessage(msg2);
-			emit( messageSuccess() );
 			// send the own msg to chat window
 		}
 	}
@@ -276,7 +275,10 @@ void MSNMessageManager::slotAcknowledgement(unsigned int id, bool ack)
 		KopeteMessage msg = KopeteMessage(m.to().first() , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText);
 		appendMessage(msg);
 	}
-
+	else
+	{
+		emit( messageSuccess() );
+	}
 	m_messagesSent.remove(id);
 }
 
