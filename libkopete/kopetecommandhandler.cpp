@@ -160,13 +160,14 @@ void KopeteCommandHandler::reservedCommand( const QString &command, const QStrin
 		}
 		else
 		{
-			KopeteCommand *c = commands( manager->user()->protocol() )[ argsList.front() ];
+			QString command = argsList.front().lower();
+			KopeteCommand *c = commands( manager->user()->protocol() )[ command ];
 			if( c && !c->help().isNull() )
 				output = c->help();
-			else if( p->reservedCommands.contains( argsList.front() ) )
-				output = p->reservedCommands[ argsList.front() ];
+			else if( p->reservedCommands.contains( command ) )
+				output = p->reservedCommands[ command ];
 			else
-				output = i18n("%1 has no help available.").arg( argsList.front() );
+				output = i18n("%1 has no help available.").arg( command );
 		}
 
 		KopeteMessage msg(manager->user(), manager->members(), output, KopeteMessage::Internal, KopeteMessage::PlainText);
