@@ -118,7 +118,7 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 		/* for( QStringList::ConstIterator it = groups.begin(); it != groups.end(); ++it )
 			addToGroup(*it); */
 		emit contactAdded(c);
-		
+
 		// Save the changed contact to KABC, if using KABC
 /*		if ( !isTemporary() )
 			updateKABC();
@@ -625,7 +625,7 @@ const QDomElement KopeteMetaContact::toXML()
 		}
 		metaContact.documentElement().appendChild( groups );
 	}
-	
+
 	// Store other plugin data
 	QValueList<QDomElement> pluginData = KopetePluginDataObject::toXML();
 	for( QValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
@@ -755,13 +755,16 @@ QString KopeteMetaContact::metaContactId() const
 
 void KopeteMetaContact::setMetaContactId( const QString& newMetaContactId )
 {
+	if(newMetaContactId == d->metaContactId)
+		return;
+
 	// 1) Check the Id is not already used by another contact
-	// 2) cause a kabc write ( only in response to kopetemetacontactLVIProps calling this, or will 
+	// 2) cause a kabc write ( only in response to kopetemetacontactLVIProps calling this, or will
 	//      write be called twice when creating a brand new MC? )
 	// 3) What about changing from one valid kabc to another, are kabc fields removed?
 	// 4) May be called with Null to remove an invalid kabc uid by KMC::toKABC()
 	// 5) Is called when reading the saved contact list
-	
+
 	removeKABC();
 	d->metaContactId = newMetaContactId;
 	updateKABC();
@@ -771,12 +774,12 @@ void KopeteMetaContact::updateKABC()
 {
 	// Save any changes in each contact's addressBookFields to KABC
 	KABC::AddressBook* ab = addressBook();
-	
+
 	// Wipe out the existing addressBook entries
 	d->addressBook.clear();
 	// This causes each KopeteProtocol subclass to serialise its contacts' data into the metacontact's plugin data and address book data
 	emit aboutToSave(this);
-	
+
 	// If the metacontact is linked to a kabc entry
 	if ( !d->metaContactId.isEmpty() )
 	{
@@ -785,13 +788,13 @@ void KopeteMetaContact::updateKABC()
 		KABC::Addressee theAddressee = ab->findByUid( metaContactId() );
 		// Check that if addressee is not deleted or if the link is spurious
 		// (inherited from Kopete < 0.8, where all metacontacts had random ids)
-		
+
 		// FIXME: this no longer gets called when reading all contacts but we need something similar to update from 0.7
 		if ( theAddressee.isEmpty() )
 		{
 			// remove the link
 			kdDebug( 14010 ) << k_funcinfo << "...not found." << endl;
-			setMetaContactId( QString::null );
+			d->metaContactId=QString::null;
 		}
 		else
 		{
@@ -810,7 +813,7 @@ void KopeteMetaContact::updateKABC()
 				}
 			}
 			ab->insertAddressee( theAddressee );
-			
+
 			writeAddressBook();
 		}
 	}
@@ -821,24 +824,24 @@ void KopeteMetaContact::removeKABC()
 	// remove any data this KMC has written to the KDE address book
 	// Save any changes in each contact's addressBookFields to KABC
 	KABC::AddressBook* ab = addressBook();
-	
+
 	// Wipe out the existing addressBook entries
 	d->addressBook.clear();
 	// This causes each KopeteProtocol subclass to serialise its contacts' data into the metacontact's plugin data and address book data
 	emit aboutToSave(this);
-	
+
 	// If the metacontact is linked to a kabc entry
 	if ( !d->metaContactId.isEmpty() )
 	{
 		kdDebug( 14010 ) << k_funcinfo << "looking up Addressee for " << displayName() << "..." << endl;
 		// Look up the address book entry
 		KABC::Addressee theAddressee = ab->findByUid( metaContactId() );
-		
+
 		if ( theAddressee.isEmpty() )
 		{
 			// remove the link
 			kdDebug( 14010 ) << k_funcinfo << "...not found." << endl;
-			setMetaContactId( QString::null );
+			d->metaContactId=QString::null;
 		}
 		else
 		{
@@ -856,10 +859,11 @@ void KopeteMetaContact::removeKABC()
 				}
 			}
 			ab->insertAddressee( theAddressee );
-			
+
 			writeAddressBook();
 		}
 	}
+//	kdDebug(14010) << k_funcinfo << kdBacktrace() <<endl;
 }
 
 QPtrList<KopeteContact> KopeteMetaContact::contacts() const
@@ -889,11 +893,11 @@ void KopeteMetaContact::writeAddressBook()
 void KopeteMetaContact::slotWriteAddressBook()
 {
 	KABC::AddressBook* ab = addressBook();
-	
+
 	KABC::Ticket *ticket = ab->requestSaveTicket();
 	if ( !ticket )
 		kdWarning( 14010 ) << k_funcinfo << "WARNING: Resource is locked by other application!" << endl;
-	else 
+	else
 	{
 		if ( !ab->save( ticket ) )
 			kdWarning( 14010 ) << k_funcinfo << "ERROR: Saving failed!" << endl;
