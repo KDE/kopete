@@ -11,7 +11,6 @@ TODO for Jabber:
 - verify sane state of a) metacontact handling (adding to list) b) contact handling (tracking changes)
 - in JabberAccount::disconnect(), the iteration about the contacts to set the offline should be obsolete and incorrect
 - JabberAccount::slotGoAway() etc. don't use the global away dialog
-- when going online, setPresence() is called twice, once too early -> investigate
 - using "online" presence emits "Going online"?
 - should the away dialog pop up when going away using the account context menu?
 - verify FIXMEs in JabberContact

@@ -296,12 +296,12 @@ void JabberAccount::connect ()
 
 void JabberAccount::slotPsiDebug (const QString & msg)
 {
-	kdDebug (JABBER_DEBUG_PROTOCOL) << "[JabberAccount] Psi: " << msg << endl;
+	kdDebug (JABBER_DEBUG_PROTOCOL) << k_funcinfo << "Psi: " << msg << endl;
 }
 
 void JabberAccount::slotHandshaken ()
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Performing login..." << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Performing login..." << endl;
 
 	if (registerFlag)
 	{
@@ -487,46 +487,61 @@ void JabberAccount::slotError (const Jabber::StreamError & error)
 /* Set presence (usually called by dialog widget). */
 void JabberAccount::setPresence (const KopeteOnlineStatus & status, const QString & reason, int priority)
 {
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting new presence." << endl;
 
-	if (isConnected () || (status == protocol()->JabberConnecting) ||
-	   (myContact->onlineStatus() == protocol()->JabberConnecting))
+	// if we are in the process of connecting, only update our local presence
+	// and don't send anything across the wire
+	if(status == protocol()->JabberConnecting)
 	{
-		Jabber::Status presence;
-
-		presence.setPriority (priority);
-		presence.setStatus (reason);
-		presence.setIsAvailable (true);
-
-		if ((status == protocol()->JabberOnline) || (status == protocol()->JabberConnecting))
-			presence.setShow ("");
-		else if (status == protocol()->JabberChatty)
-			presence.setShow ("chat");
-		else if (status == protocol()->JabberAway)
-			presence.setShow ("away");
-		else if (status == protocol()->JabberXA)
-			presence.setShow ("xa");
-		else if (status == protocol()->JabberDND)
-			presence.setShow ("dnd");
-		else if (status == protocol()->JabberInvisible)
-			presence.setIsInvisible (true);
-		else
-		{
-			kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Unknown presence status, " << "ignoring (status == " << status.description () << ")" << endl;
-			return;
-		}
-
-		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating presence to \"" << presence.status () << "\" with reason \"" << reason << endl;
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting new presence locally (-> connecting)." << endl;
 
 		myContact->slotUpdatePresence (status, reason);
-
-		Jabber::JT_Presence * task = new Jabber::JT_Presence (jabberClient->rootTask ());
-
-		task->pres (presence);
-		task->go (true);
 	}
 	else
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "We were not connected, presence update aborted." << endl;
+	{
+		// if we are already connected and changing our presence or if we are connecting
+		// and set our initial presence, send new presence packet to the server
+		if (isConnected () || (myContact->onlineStatus() == protocol()->JabberConnecting))
+		{
+			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Sending new presence to the server." << endl;
+
+			Jabber::Status presence;
+
+			presence.setPriority (priority);
+			presence.setStatus (reason);
+			presence.setIsAvailable (true);
+
+			if ((status == protocol()->JabberOnline) || (status == protocol()->JabberConnecting))
+				presence.setShow ("");
+			else if (status == protocol()->JabberChatty)
+				presence.setShow ("chat");
+			else if (status == protocol()->JabberAway)
+				presence.setShow ("away");
+			else if (status == protocol()->JabberXA)
+				presence.setShow ("xa");
+			else if (status == protocol()->JabberDND)
+				presence.setShow ("dnd");
+			else if (status == protocol()->JabberInvisible)
+				presence.setIsInvisible (true);
+			else
+			{
+				kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Unknown presence status, " << "ignoring (status == " << status.description () << ")" << endl;
+				return;
+			}
+
+			kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating presence to \"" << presence.status () << "\" with reason \"" << reason << endl;
+
+			myContact->slotUpdatePresence (status, reason);
+
+			Jabber::JT_Presence * task = new Jabber::JT_Presence (jabberClient->rootTask ());
+
+			task->pres (presence);
+			task->go (true);
+		}
+		else
+		{
+			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "We were not connected, presence update aborted." << endl;
+		}
+	}
 
 }
 
