@@ -18,31 +18,24 @@
 #ifndef IRCPROTOCOL_H
 #define IRCPROTOCOL_H
 
-
-
 #include "kopeteprotocol.h"
 
 #include <qpixmap.h>
-
 
 class KopeteMetaContact;
 class AddContactPage;
 class IRCServerManager;
 class KIRC;
-class StatusBarIcon;
 
-class KPopupMenu;
+class KActionMenu;
 class KSimpleConfig;
 
 class QStringList;
 class QWidget;
 
-
-
 /**
-  *@author duncan
-  */
-
+ * @author duncan
+ */
 class IRCProtocol : public KopeteProtocol
 {
 	Q_OBJECT
@@ -52,7 +45,6 @@ public:
 	~IRCProtocol();
 	/* Plugin reimplementation */
 	void init();
-	bool unload();
 	void deserialize( KopeteMetaContact *metaContact, const QStringList &strList );
 
 	/** KopeteProtocol reimplementation */
@@ -64,48 +56,32 @@ public:
 	virtual void setAway(void);
 	virtual void setAvailable(void);
 	virtual bool isAway(void) const;
+	virtual KActionMenu* protocolActions();
 
 	//following implementation is incorrect
 	KopeteContact* myself() const { return 0L; }
-	/** Internal */
-	StatusBarIcon *statusBarIcon;
-	/** The IRC Engine */
-	QPixmap protocolSmallIcon;
-	QPixmap onlineIcon;
-	QPixmap offlineIcon;
-	QPixmap awayIcon;
-	QPixmap joinIcon;
-	QPixmap privmsgIcon;
 
 	void addContact(const QString &, const QString &, bool, bool,KopeteMetaContact *m=0l);
 
 	IRCServerManager *serverManager() { return m_serverManager; }
 	KIRC *engine() { return m_engine; };
 
+public slots:
+	void serialize(KopeteMetaContact * metaContact);
+
+private slots:
+	void slotNewConsole();
 
 private:
-	void initIcons();
 	/** import contact-list from kopete 0.4.x */
 	void importOldContactList();
-	KPopupMenu *popup;
+	KActionMenu *m_actionMenu;
 	IRCServerManager *m_serverManager;
 	KIRC *m_engine;
 	bool m_isConnected;
-
-public slots: // Public slots
-	void serialize(KopeteMetaContact * metaContact);
-private slots:
-	void slotIconRightClicked(const QPoint&);
-	void slotNewConsole();
 };
 
 #endif
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
+
 // vim: set noet ts=4 sts=4 sw=4:
 

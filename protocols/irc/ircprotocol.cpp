@@ -15,8 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-
-
+#include <kaction.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kgenericfactory.h>
@@ -27,7 +26,6 @@
 #include <kpopupmenu.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
-#include <kstatusbar.h>
 
 #include <qcursor.h>
 #include <qregexp.h>
@@ -47,12 +45,6 @@
 #include "kopete.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
-#include "statusbaricon.h"
-
-
-///////////////////////////////////////////////////
-//           Constructor & Destructor
-///////////////////////////////////////////////////
 
 K_EXPORT_COMPONENT_FACTORY( kopete_irc, KGenericFactory<IRCProtocol> );
 
@@ -64,12 +56,15 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name,
 	// Load all ICQ icons from KDE standard dirs
 	setStatusIcon( "irc_protocol_small" );
 
-	initIcons();
-	m_serverManager = new IRCServerManager();
-	statusBarIcon = new StatusBarIcon();
+	m_actionMenu = new KActionMenu( "IRC", this );
+	m_actionMenu->popupMenu()->insertTitle(
+		SmallIcon( "irc_protocol_small" ), i18n( "IRC" ) );
+	m_actionMenu->insert( new KAction( i18n( "Open New IRC Console" ), 0,
+		this, SLOT( slotNewConsole() ), this, "m_newConsoleAction" ) );
 
-	statusBarIcon->setPixmap(protocolSmallIcon);
-	connect(statusBarIcon, SIGNAL(rightClicked(const QPoint&)), this, SLOT(slotIconRightClicked(const QPoint&)));
+	m_serverManager = new IRCServerManager();
+
+	setStatusIcon( "irc_protocol_small" );
 
 	new IRCPreferences("irc_protocol", this);
 
@@ -110,12 +105,9 @@ IRCProtocol::~IRCProtocol()
 
 }
 
-void IRCProtocol::slotIconRightClicked(const QPoint &)
+KActionMenu* IRCProtocol::protocolActions()
 {
-	popup = new KPopupMenu(statusBarIcon);
-	popup->insertTitle("IRC");
-	popup->insertItem(i18n("Open New IRC Console"), this, SLOT(slotNewConsole()));
-	popup->popup(QCursor::pos());
+	return m_actionMenu;
 }
 
 void IRCProtocol::slotNewConsole()
@@ -200,19 +192,6 @@ void IRCProtocol::addContact(  const QString &server, const QString &contact, bo
 void IRCProtocol::init()
 {
 
-}
-
-bool IRCProtocol::unload()
-{
-	kdDebug() << "IRC Protocol: Unloading...\n";
-
-	if( kopeteapp->statusBar() )
-	{
-		kopeteapp->statusBar()->removeWidget(statusBarIcon);
-		delete statusBarIcon;
-	}
-
-	return KopeteProtocol::unload();
 }
 
 ///////////////////////////////////////////////////
@@ -308,19 +287,6 @@ void IRCProtocol::deserialize( KopeteMetaContact *metaContact, const QStringList
 //           Internal functions implementation
 ///////////////////////////////////////////////////
 
-/** No descriptions */
-void IRCProtocol::initIcons()
-{
-	KIconLoader *loader = KGlobal::iconLoader();
-
-	protocolSmallIcon = QPixmap(loader->loadIcon("irc_protocol_small", KIcon::User));
-	onlineIcon = QPixmap(loader->loadIcon("irc_online", KIcon::User));
-	offlineIcon = QPixmap(loader->loadIcon("irc_offline", KIcon::User));
-	awayIcon = QPixmap(loader->loadIcon("irc_away", KIcon::User));
-	joinIcon = QPixmap(loader->loadIcon("irc_join", KIcon::User));
-	privmsgIcon = QPixmap(loader->loadIcon("irc_privmsg", KIcon::User));
-}
-
 void IRCProtocol::importOldContactList()
 {
 	//this code import contact list from old irc plugin (Kopete 0.4.x)
@@ -349,19 +315,8 @@ void IRCProtocol::importOldContactList()
 	}
 }
 
-
-
 #include "ircprotocol.moc"
 
-
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 
 
