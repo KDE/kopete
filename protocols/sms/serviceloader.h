@@ -2,12 +2,14 @@
 #define SERVICELOADER_H
 
 #include <qstring.h>
+#include <qstringlist.h>
 #include "smsservice.h"
 
 class ServiceLoader
 {
 public:
 	static SMSService* loadService(QString name, QString uName);
+	static QStringList services();
 } ;
 
 #endif //SERVICELOADER_H
