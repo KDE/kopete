@@ -2020,7 +2020,7 @@ void OscarSocket::parseMissedMessage(Buffer &inbuf)
 		QString errstring = i18n(
 			"You missed one message from %1. Reason given:\n",
 			"You missed %n messages from %1. Reason given:\n",
-			nummissed);
+			nummissed).arg(u.sn);
 		switch (reason)
 		{
 			case 0: //invalid message
