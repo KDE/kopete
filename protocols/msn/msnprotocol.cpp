@@ -66,6 +66,8 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList &
 
 	addAddressBookField( "messaging/msn", KopetePlugin::MakeIndexField );
 
+	setRichTextCapabilities( KopeteProtocol::BaseRTF );
+
 	// m_status = m_unknownStatus = UNK;
 }
 
@@ -143,11 +145,6 @@ MSNProtocol* MSNProtocol::protocol()
 bool MSNProtocol::validContactId(const QString& userid)
 {
 	return ( userid.contains('@') ==1 && userid.contains('.') >=1 && userid.contains(' ') == 0);
-}
-
-int MSNProtocol::richTextCapabilities() const
-{
-	return KopeteProtocol::BaseRTF;
 }
 
 #include "msnprotocol.moc"

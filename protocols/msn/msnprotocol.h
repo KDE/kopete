@@ -123,7 +123,6 @@ public:
 
 	static MSNProtocol* protocol();
 	static bool validContactId(const QString&);
-	int richTextCapabilities() const;
 
 private slots:
 	void slotSyncContactList();

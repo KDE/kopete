@@ -67,8 +67,6 @@ public:
 
 	virtual QPtrList<KAction> *customChatWindowPopupActions( const KopeteMessage &, DOM::Node & );
 
-	int richTextCapabilities() const;
-
 	static IRCProtocol *protocol();
 
 	const KopeteOnlineStatus m_ServerStatusOnline;

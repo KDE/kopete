@@ -31,6 +31,7 @@ class KopeteProtocolPrivate
 {
 public:
 	bool unloading;
+	int capabilities;
 };
 
 KopeteProtocol::KopeteProtocol( KInstance *instance, QObject *parent, const char *name )
@@ -38,6 +39,7 @@ KopeteProtocol::KopeteProtocol( KInstance *instance, QObject *parent, const char
 {
 	d = new KopeteProtocolPrivate;
 	d->unloading = false;
+	d->capabilities = 0;
 }
 
 KopeteProtocol::~KopeteProtocol()
@@ -57,8 +59,12 @@ KopeteProtocol::~KopeteProtocol()
 
 int KopeteProtocol::richTextCapabilities() const
 {
-	//Return false by default
-	return 0;
+	return d->capabilities;
+}
+
+void KopeteProtocol::setRichTextCapabilities( int capabilities )
+{
+	d->capabilities = capabilities;
 }
 
 KActionMenu* KopeteProtocol::protocolActions()

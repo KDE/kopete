@@ -151,11 +151,9 @@ public:
 		const QMap<QString, QString> &addressBookData );
 
 	/**
-	 * Return if this protocol supports advanced rich text (HTML returned from chat widget)
-	 *
-	 * @see Kopete::UI::Global::RichTextCapabilities
+	 * @brief Return if this protocol supports advanced rich text (HTML returned from chat widget)
 	 */
-	 virtual int richTextCapabilities() const;
+	int richTextCapabilities() const;
 
 	/**
 	 * Reimplemented from KopetePlugin.
@@ -184,6 +182,14 @@ public slots:
 	 * Call serialize() for all contained contacts for this protocol.
 	 */
 	void slotMetaContactAboutToSave( KopeteMetaContact *metaContact );
+
+protected:
+	/**
+	 * @brief Sets the RTF capabilities of this protcol.
+	 *
+	 * Should be called from subclass constructor.
+	 */
+	void setRichTextCapabilities( int );
 
 private slots:
 	/**

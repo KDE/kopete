@@ -217,6 +217,8 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	QObject::connect( KopeteMessageManagerFactory::factory(), SIGNAL( viewCreated( KopeteView* ) ),
 		this, SLOT( slotViewCreated( KopeteView* ) ) );
 
+	setRichTextCapabilities( KopeteProtocol::RichFormatting | KopeteProtocol::RichColor );
+
 	m_commandInProgress = false;
 
 	m_networks.setAutoDelete(true);
@@ -241,12 +243,6 @@ void IRCProtocol::slotViewCreated( KopeteView *view )
 {
 	if( view->msgManager()->protocol() == this )
 		new IRCGUIClient( view->msgManager() );
-}
-
-int IRCProtocol::richTextCapabilities() const
-{
-	//We support rich text
-	return KopeteProtocol::RichFormatting | KopeteProtocol::RichColor;
 }
 
 void IRCProtocol::slotMessageFilter( KopeteMessage &msg )
