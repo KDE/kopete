@@ -122,9 +122,7 @@ YahooImMessageManager* YahooProtocol::chatMsgManager( const QString &who )
 		KopeteContactPtrList contacts;
 		contacts.append(contact(who));
 		
-		newMM = new YahooImMessageManager(
-			yahooSession(),
-			myself(), contacts, KopeteMessageManager::ChatWindow);
+		newMM = new YahooImMessageManager(yahooSession(),myself(), contacts);
 
 		m_chatMap[who] = newMM;
 		return newMM;

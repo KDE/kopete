@@ -37,8 +37,7 @@
 
 MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteContact *user,
 	KopeteContactPtrList others, const char *name )
-: KopeteMessageManager( user, others, protocol, 0,
-	ChatWindow, protocol, name )
+: KopeteMessageManager( user, others, protocol, 0, protocol, name )
 {
 	m_protocol = protocol;
 	KopeteMessageManagerFactory::factory()->addKopeteMessageManager( this );

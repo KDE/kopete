@@ -151,8 +151,7 @@ KopeteMessageManager* OscarContact::msgManager()
 		//printf("Creating a mmsgmanager: %d\n",mProtocol->myself());fflush(stdout);
 		mMsgManager =
 				KopeteMessageManagerFactory::factory()->create(
-								mProtocol->myself(), theContacts,
-								mProtocol, KopeteMessageManager::ChatWindow);
+								mProtocol->myself(), theContacts, mProtocol);
 		QObject::connect(
 						mMsgManager,
 						SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager *)),

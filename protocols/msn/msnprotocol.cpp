@@ -517,7 +517,6 @@ void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status 
 		{
 			// Disconnect all active chats (but don't actually remove the
 			// chat windows, the user might still want to view them!)
-			kmmIt.current()->slotSendEnabled( false );
 			MSNMessageManager *msnMM =
 				dynamic_cast<MSNMessageManager *>( kmmIt.current() );
 			if( msnMM )

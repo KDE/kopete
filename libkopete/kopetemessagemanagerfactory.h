@@ -51,12 +51,10 @@ public:
 	 * it will be reused. Otherwise a new session is created.
 	 */
 	KopeteMessageManager* create( const KopeteContact *user,
-		KopeteContactPtrList chatContacts, KopeteProtocol *protocol,
-		KopeteMessageManager::WidgetType widget = KopeteMessageManager::ChatWindow);
+		KopeteContactPtrList chatContacts, KopeteProtocol *protocol);
 
 	KopeteMessageManager* findKopeteMessageManager( const KopeteContact *user,
-		KopeteContactPtrList chatContacts, KopeteProtocol *protocol,
-		KopeteMessageManager::WidgetType widget = KopeteMessageManager::ChatWindow);
+		KopeteContactPtrList chatContacts, KopeteProtocol *protocol);
 
 	void addKopeteMessageManager(KopeteMessageManager *);
 

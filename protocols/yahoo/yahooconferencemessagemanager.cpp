@@ -27,10 +27,9 @@
 
 YahooConferenceMessageManager::YahooConferenceMessageManager(const KopeteContact *user,
 										   KopeteContactPtrList others,
-										   const KopeteMessageManager::WidgetType type,
 										   const char *name)
 					: KopeteMessageManager(user, others, YahooProtocol::protocol(), 0,
-										   type, YahooProtocol::protocol(), name )
+										   YahooProtocol::protocol(), name )
 {
 
 	// let Kopete's factory know about us
@@ -41,12 +40,6 @@ YahooConferenceMessageManager::YahooConferenceMessageManager(const KopeteContact
 		KopeteMessageManager* ) ),
 		this, SLOT( slotMessageSent( const KopeteMessage&,
 		KopeteMessageManager* ) ) );
-
-	// in order to use auto-deletion, we have to create a chat window
-	// first or we will self-destruct ourselves right away
-	newChatView();
-	setCanBeDeleted(true);
-
 }
 
 void YahooConferenceMessageManager::slotMessageSent(const KopeteMessage &message, KopeteMessageManager *)

@@ -363,7 +363,7 @@ private slots:
 	/*
 	 * Slot for displaying a new message
 	 */
-	void slotNewMessage(const Message &);
+	void slotRecievedMessage(const Message &);
 
 	/*
 	 * Evaluate results of account registration
@@ -460,7 +460,7 @@ private:
 	/*
 	 * Creates a new message manager
 	 */
-	JabberMessageManager *createMessageManager(JabberContact *to, KopeteMessageManager::WidgetType type);
+	JabberMessageManager *createMessageManager(JabberContact *to);
 
 	/*
 	 * Sends a presence element with

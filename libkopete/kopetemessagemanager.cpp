@@ -61,7 +61,7 @@ struct KMMPrivate
 
 KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	KopeteContactPtrList others, KopeteProtocol *protocol, int id,
-	enum WidgetType widget, QObject *parent, const char *name )
+	QObject *parent, const char *name )
 : QObject( parent, name )
 {
 	d = new KMMPrivate;
@@ -177,7 +177,7 @@ bool KopeteMessageManager::emptyMessageBuffer()
 	return foreignMessage;
 }
 
-void KopeteMessageManager::readMessages()
+void KopeteMessageManager::readMessages( KopeteView::ViewType type )
 {
 	if(d->isBusy)
 	{
@@ -193,7 +193,7 @@ void KopeteMessageManager::readMessages()
 	// when no message at all arrived (happens when you click on a contact, creating the window)
 	if ( foreignMessage || queueEmpty )
 	{
-		KopeteView *thisView = KopeteViewManager::viewManager()->view(this);
+		KopeteView *thisView = KopeteViewManager::viewManager()->view(this,type);
 
 		if( !thisView->isVisible() )
 			thisView->makeVisible();

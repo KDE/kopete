@@ -72,7 +72,7 @@ KopeteMessageManager* SMSContact::msgManager()
 	{
 		QPtrList<KopeteContact> contacts;
 		contacts.append(this);
-		m_msgManager = KopeteMessageManagerFactory::factory()->create(protocol()->myself(), contacts, protocol(), KopeteMessageManager::Email);
+		m_msgManager = KopeteMessageManagerFactory::factory()->create(protocol()->myself(), contacts, protocol());
 		connect(m_msgManager, SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager*)),
 		this, SLOT(slotSendMessage(const KopeteMessage&)));
 		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));

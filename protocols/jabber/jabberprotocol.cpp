@@ -40,6 +40,7 @@
 
 #include <sys/utsname.h>
 
+#include "kopeteviewmanager.h"
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
@@ -309,7 +310,7 @@ void JabberProtocol::connect()
 
 			QObject::connect(jabberClient,
 							SIGNAL(messageReceived(const Message &)),
-							this, SLOT(slotNewMessage(const Message &)));
+							this, SLOT(slotRecievedMessage(const Message &)));
 
 			QObject::connect(jabberClient, SIGNAL(groupChatJoined(const Jid &)),
 							this, SLOT(slotGroupChatJoined(const Jid &)));
@@ -1230,14 +1231,12 @@ void JabberProtocol::slotSendMessage(Jabber::Message message)
 
 }
 
-JabberMessageManager *JabberProtocol::createMessageManager(
-				JabberContact *to, KopeteMessageManager::WidgetType type)
+JabberMessageManager *JabberProtocol::createMessageManager(JabberContact *to)
 {
 
 	KopeteContactPtrList chatMembers;
 	chatMembers.append(to);
-	JabberMessageManager *manager =
-		new JabberMessageManager(myself(), chatMembers, type);
+	JabberMessageManager *manager = new JabberMessageManager(myself(), chatMembers);
 	QObject::connect(manager, SIGNAL(dying(KopeteMessageManager *)),
 		this, SLOT(slotMessageManagerDeleted(KopeteMessageManager *)));
 
@@ -1256,7 +1255,7 @@ void JabberProtocol::slotMessageManagerDeleted(KopeteMessageManager *manager)
 
 }
 
-void JabberProtocol::slotNewMessage(const Jabber::Message &message)
+void JabberProtocol::slotRecievedMessage(const Jabber::Message &message)
 {
 	QString userHost_;
 	JabberContact *contactFrom_;
@@ -1299,78 +1298,26 @@ void JabberProtocol::slotNewMessage(const Jabber::Message &message)
 		// if we already have a message manager for this contact
 		JabberMessageManager *manager = 0L;
 
-		KGlobal::config()->setGroup("Jabber");
-		bool emailType =
-		KGlobal::config()->readBoolEntry("EmailDefault", false);
+		//KGlobal::config()->setGroup("Jabber");
+		//bool emailType = KGlobal::config()->readBoolEntry("EmailDefault", false);
+
+		KopeteView::ViewType type;
+		if( message.type() == "chat" )
+			type = KopeteView::Chat;
+		else
+			type = KopeteView::Email;
 
 		if( ! messageManagerMap.contains(userHost_) )
 		{
 			// we don't have a widget yet, create one
-			if( ( message.type() == "chat" ) && !emailType )
-			{
-				manager = createMessageManager(
-					contactFrom_,
-					KopeteMessageManager::ChatWindow);
-			}
-			else
-			{
-				manager = createMessageManager(
-					contactFrom_,
-					KopeteMessageManager::Email);
-			}
+			manager = createMessageManager(contactFrom_);
+
 			// add this manager to the map
 			messageManagerMap[userHost_] = manager;
 		}
 		else
 		{
 			manager = messageManagerMap[userHost_];
-
-			// we have a message manager, determine its type
-			if(((message.type() == "chat")
-				 && !emailType
-				 && (manager->widgetType()
-				 != KopeteMessageManager::ChatWindow))
-				|| ((message.type() == "normal")
-				&& (manager->widgetType()
-				!= KopeteMessageManager::Email)))
-			{
-				// we have a message manager with an incorrect type,
-				// so reinstantiate it
-				delete manager;
-				if((message.type() == "chat") && !emailType)
-				{
-					manager = createMessageManager(
-						contactFrom_,
-						KopeteMessageManager::ChatWindow );
-				}
-				else
-				{
-					manager = createMessageManager(
-						contactFrom_,
-						KopeteMessageManager::Email );
-				}
-				messageManagerMap[userHost_] = manager;
-			}
-			else
-			{
-				manager = messageManagerMap[message.from().userHost()];
-
-				// we have a message manager, determine its type
-				if(((message.type() == "chat") && !emailType && (manager->widgetType() != KopeteMessageManager::ChatWindow))
-				  || ((message.type() == "normal") && (manager->widgetType() != KopeteMessageManager::Email)))
-				{
-					// we have a message manager with an incorrect type, so reinstantiate it
-					delete manager;
-
-					if((message.type() == "chat") && !emailType)
-						manager = createMessageManager(dynamic_cast<JabberContact*>(contacts()[message.from().userHost()]), KopeteMessageManager::ChatWindow);
-					else
-						manager = createMessageManager(dynamic_cast<JabberContact*>(contacts()[message.from().userHost()]), KopeteMessageManager::Email);
-
-					messageManagerMap[message.from().userHost()] = manager;
-				}
-			}
-
 		}
 
 		KopeteContactPtrList contactList;
@@ -1382,10 +1329,10 @@ void JabberProtocol::slotNewMessage(const Jabber::Message &message)
 				message.body(),
 				message.subject(),
 				KopeteMessage::Inbound,
-				KopeteMessage::PlainText );
+				KopeteMessage::PlainText, type );
+
 		// pass the message on to the manager
 		manager->appendMessage(newMessage);
-
 	}
 }
 
@@ -1420,10 +1367,9 @@ void JabberProtocol::slotOpenEmptyMail()
 
 		KopeteContactList::contactList()->addMetaContact(metaContact);
 
-		messageManagerMap[contact->contactId()] =
-				createMessageManager(contact, KopeteMessageManager::Email);
+		messageManagerMap[contact->contactId()] = createMessageManager(contact);
 
-		messageManagerMap[contact->contactId()]->readMessages();
+		messageManagerMap[contact->contactId()]->readMessages( KopeteView::Email );
 
 }
 
@@ -1465,8 +1411,7 @@ void JabberProtocol::slotGroupChatJoined(const Jabber::Jid &jid)
 		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Joined group chat " << jid.full()
 									 << endl;
 
-		messageManagerMap[jid.userHost()] =
-				createMessageManager(myContact, KopeteMessageManager::ChatWindow);
+		messageManagerMap[jid.userHost()] = createMessageManager(myContact);
 		
 		messageManagerMap[jid.userHost()]->readMessages();
 
@@ -1546,8 +1491,7 @@ void JabberProtocol::slotChatUser(JabberContact *contact)
 		{
 				kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] slotChatUser() no old window, "
 											 << "creating new one" << endl;
-				messageManagerMap[contact->contactId()] =
-						createMessageManager(contact, KopeteMessageManager::ChatWindow);
+				messageManagerMap[contact->contactId()] = createMessageManager(contact);
 		}
 
 		messageManagerMap[contact->contactId()]->readMessages();
@@ -1564,13 +1508,11 @@ void JabberProtocol::slotEmailUser(JabberContact *contact)
 		{
 				kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] slotEmailUser() no old window, "
 											 << "creating new one" << endl;
-				
-				messageManagerMap[contact->contactId()] =
-						createMessageManager(contact, KopeteMessageManager::Email);
+
+				messageManagerMap[contact->contactId()] = createMessageManager(contact);
 		}
 
-		messageManagerMap[contact->contactId()]->readMessages();
-
+		messageManagerMap[contact->contactId()]->readMessages( KopeteView::Email );
 }
 
 void JabberProtocol::slotResourceAvailable(const Jabber::Jid &jid,

@@ -24,6 +24,7 @@
 #include <qcolor.h>
 #include <qobject.h>
 
+#include "kopeteviewmanager.h"
 #include "kopetecontact.h"
 #include "qptrlist.h"
 
@@ -67,7 +68,7 @@ public:
 	 * @param format Format of the message
 	 */
 	KopeteMessage(const KopeteContact *fromKC, KopeteContactPtrList toKC,
-									QString body, MessageDirection direction, MessageFormat format=PlainText );
+				QString body, MessageDirection direction, MessageFormat format=PlainText, KopeteView::ViewType type = KopeteView::Chat );
 
 	/**
 	 * Constructs a new message
@@ -79,7 +80,7 @@ public:
 	 * @param format Format of the message
 	 */
 	KopeteMessage(const KopeteContact* fromKC, KopeteContactPtrList toKC, QString body,
-									QString subject, MessageDirection direction, MessageFormat format=PlainText );
+				QString subject, MessageDirection direction, MessageFormat format=PlainText, KopeteView::ViewType type = KopeteView::Chat  );
 
 	/**
 	 * Constructs a new message
@@ -91,7 +92,7 @@ public:
 	 * @param format Format of the message
 	 */
 	KopeteMessage(QDateTime timeStamp, const KopeteContact *fromKC, KopeteContactPtrList toKC,
-									QString body, MessageDirection direction, MessageFormat format=PlainText);
+				QString body, MessageDirection direction, MessageFormat format=PlainText, KopeteView::ViewType type = KopeteView::Chat );
 
 	/**
 	 * Constructs a new message
@@ -104,7 +105,7 @@ public:
 	 * @param format Format of the message
 	 */
 	KopeteMessage(QDateTime timeStamp, const KopeteContact *fromKC, KopeteContactPtrList toKC,
-									QString body, QString subject, MessageDirection direction, MessageFormat format=PlainText);
+				QString body, QString subject, MessageDirection direction, MessageFormat format=PlainText, KopeteView::ViewType type = KopeteView::Chat );
 
 
 	// Accessors
@@ -126,6 +127,8 @@ public:
 	 * @return Pointer list of the KopeteContacts this message was sent to
 	 */
 	KopeteContactPtrList to() const { return mTo; }
+
+	KopeteView::ViewType type() const { return m_type; }
 
 	/**
 	 * Acessor method for the foreground color
@@ -226,7 +229,7 @@ public:
 protected:
 	// Helper for constructors
 	void init(QDateTime timeStamp, const KopeteContact * from, KopeteContactPtrList to,
-			  QString body, QString subject, MessageDirection direction, MessageFormat f);
+			  QString body, QString subject, MessageDirection direction, MessageFormat f, KopeteView::ViewType);
 
 	/** Timestamp */
 	QDateTime mTimestamp;
@@ -248,6 +251,8 @@ protected:
 	MessageDirection mDirection;
 	/** The message format */
 	MessageFormat mFormat;
+
+	KopeteView::ViewType m_type;
 	
 	bool mBgOverride;
 

@@ -256,8 +256,7 @@ GaduContact::msgManager()
         return msgManager_;
     } else {
         msgManager_ = KopeteMessageManagerFactory::factory()->create( GaduProtocol::protocol()->myself(),
-                                                           thisContact_, GaduProtocol::protocol(),
-                                                           KopeteMessageManager::ChatWindow );
+                                                           thisContact_, GaduProtocol::protocol());
         connect( msgManager_, SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager*)),
                  this, SLOT(messageSend(const KopeteMessage&, KopeteMessageManager*)) );
 	connect( msgManager_, SIGNAL(destroyed()),

@@ -47,8 +47,7 @@ KopeteMessageManagerFactory::~KopeteMessageManagerFactory()
 }
 
 KopeteMessageManager* KopeteMessageManagerFactory::findKopeteMessageManager(const KopeteContact *user,
-		KopeteContactPtrList chatContacts, KopeteProtocol *protocol,
-		KopeteMessageManager::WidgetType widget)
+		KopeteContactPtrList chatContacts, KopeteProtocol *protocol)
 {
 
 	/* We build the sessions list for this protocol */
@@ -100,14 +99,12 @@ KopeteMessageManager* KopeteMessageManagerFactory::findKopeteMessageManager(cons
 }
 
 KopeteMessageManager *KopeteMessageManagerFactory::create(
-	const KopeteContact *user, KopeteContactPtrList chatContacts,
-	KopeteProtocol *protocol, enum KopeteMessageManager::WidgetType widget )
+	const KopeteContact *user, KopeteContactPtrList chatContacts, KopeteProtocol *protocol)
 {
-	KopeteMessageManager *result=findKopeteMessageManager( user,  chatContacts, protocol,  widget);
+	KopeteMessageManager *result=findKopeteMessageManager( user,  chatContacts, protocol);
 	if (!result)
 	{
-		result = new KopeteMessageManager(user,  chatContacts, protocol, ++mId,
-			widget );
+		result = new KopeteMessageManager(user,  chatContacts, protocol, ++mId);
 		addKopeteMessageManager(result);
 	}
 	return (result);

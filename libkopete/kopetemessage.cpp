@@ -34,32 +34,33 @@ KopeteMessage::KopeteMessage()
 	mFg = QColor();
 	mFont = QFont();
 	mFormat = PlainText;
+	m_type = KopeteView::Chat;
 }
 
 KopeteMessage::KopeteMessage(const KopeteContact *fromKC,
-		KopeteContactPtrList toKC, QString body, MessageDirection direction, MessageFormat f)
+		KopeteContactPtrList toKC, QString body, MessageDirection direction, MessageFormat f, KopeteView::ViewType type )
 {
-	init(QDateTime::currentDateTime(), fromKC, toKC, body, QString::null, direction, f);
+	init(QDateTime::currentDateTime(), fromKC, toKC, body, QString::null, direction, f, type);
 }
 
 KopeteMessage::KopeteMessage(const KopeteContact *fromKC,
-		KopeteContactPtrList toKC, QString body, QString subject, MessageDirection direction, MessageFormat f)
+		KopeteContactPtrList toKC, QString body, QString subject, MessageDirection direction, MessageFormat f, KopeteView::ViewType type )
 {
-	init(QDateTime::currentDateTime(), fromKC, toKC, body, subject, direction, f);
+	init(QDateTime::currentDateTime(), fromKC, toKC, body, subject, direction, f, type);
 }
 
 KopeteMessage::KopeteMessage(QDateTime timeStamp,
 		const KopeteContact *fromKC, KopeteContactPtrList toKC, QString body,
-		MessageDirection direction, MessageFormat f)
+		MessageDirection direction, MessageFormat f, KopeteView::ViewType type)
 {
-	init(timeStamp, fromKC, toKC, body, QString::null, direction, f);
+	init(timeStamp, fromKC, toKC, body, QString::null, direction, f, type);
 }
 
 KopeteMessage::KopeteMessage(QDateTime timeStamp,
 		const KopeteContact *fromKC, KopeteContactPtrList toKC, QString body,
-		QString subject, MessageDirection direction, MessageFormat f)
+		QString subject, MessageDirection direction, MessageFormat f, KopeteView::ViewType type)
 {
-	init(timeStamp, fromKC, toKC, body, subject, direction, f);
+	init(timeStamp, fromKC, toKC, body, subject, direction, f, type);
 }
 
 void KopeteMessage::setBgOverride( bool enabled )
@@ -98,7 +99,7 @@ void KopeteMessage::setBody( const QString& body, MessageFormat f )
 }
 
 void KopeteMessage::init(QDateTime timeStamp, const KopeteContact * from,
-		KopeteContactPtrList to, QString body, QString subject, MessageDirection direction, MessageFormat f)
+		KopeteContactPtrList to, QString body, QString subject, MessageDirection direction, MessageFormat f, KopeteView::ViewType type)
 {
 	mTimestamp = timeStamp;
 	mFrom = from;
@@ -110,6 +111,7 @@ void KopeteMessage::init(QDateTime timeStamp, const KopeteContact * from,
 	mFont = QFont();
 	setBody( body, f );
 	mBgOverride = false;
+	m_type = type;
 }
 
 

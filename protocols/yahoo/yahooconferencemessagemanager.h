@@ -34,8 +34,7 @@ class YahooConferenceMessageManager : public KopeteMessageManager
 	Q_OBJECT
 public:
 
-	YahooConferenceMessageManager(const KopeteContact *user, KopeteContactPtrList others,
-						 const KopeteMessageManager::WidgetType type, const char *name = 0 );
+	YahooConferenceMessageManager(const KopeteContact *user, KopeteContactPtrList others, const char *name = 0 );
 	~YahooConferenceMessageManager();
 
 private slots:

@@ -50,11 +50,6 @@ public:
 	enum ReadingMode { Queued, Popup };
 
 	/**
-	 * Widget type to display.
-	 */
-	enum WidgetType { ChatWindow, Email, MDI, FileSend };
-
-	/**
 	 * Delete a chat manager instance
 	 */
 	~KopeteMessageManager();
@@ -77,7 +72,7 @@ public:
 	/**
 	 * Read Messages
 	 */
-	void readMessages();
+	void readMessages( KopeteView::ViewType type = KopeteView::Chat );
 
 	/**
 	 * Get a list of all contacts in the session
@@ -202,12 +197,11 @@ protected:
 	 */
 	KopeteMessageManager( const KopeteContact *user,
 		KopeteContactPtrList others, KopeteProtocol *protocol, int id = 0,
-		enum WidgetType widget = ChatWindow, QObject *parent = 0,
-		const char *name = 0 );
+		QObject *parent = 0, const char *name = 0 );
 	
 	void setMMId( int );
-	
-		
+
+
 private:
 	/**
 	 * Empties Message buffer, filling the window and returning true

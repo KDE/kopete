@@ -84,7 +84,7 @@
   </kdevautoproject>
   <cppsupportpart>
     <codecompletion>
-      <codehinting outputview="1" enablech="0" selectview="0" />
+      <codehinting outputview="1" enablech="1" selectview="0" />
     </codecompletion>
     <classstore>
       <enablepcs>false</enablepcs>
