@@ -63,6 +63,6 @@ default_presentation=0
 Name=Online
 Comment=User goes online
 default_sound=kopete_online.wav
-default_presentation=1
+default_presentation=0
 
 
