@@ -126,6 +126,9 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	mAppearanceTabCtl->addTab( mPrfsChatAppearance, i18n("Chat &Appearance") );
 	connect(mPrfsChatAppearance->cb_Kind, SIGNAL(activated(int)), this, SLOT(slotSelectKind(int)));
 	connect(mPrfsChatAppearance->previewButton, SIGNAL(pressed()), this, SLOT(slotUpdatePreview()));
+	connect(mPrfsChatAppearance->highlightEnabled, SIGNAL(toggled(bool)), this, SLOT(slotHighlightChanged()));
+	connect(mPrfsChatAppearance->foregroundColor, SIGNAL(changed(const QColor &)), this, SLOT(slotHighlightChanged()));
+	connect(mPrfsChatAppearance->backgroundColor, SIGNAL(changed(const QColor &)), this, SLOT(slotHighlightChanged()));
 
 	// ===========================================================================
 
@@ -307,6 +310,14 @@ void AppearanceConfig::slotTransparencyChanged ( bool checked )
 	mPrfsChatWindow->mTransparencyBgOverride->setEnabled( checked );
 }
 
+void AppearanceConfig::slotHighlightChanged()
+{
+	bool value = mPrfsChatAppearance->highlightEnabled->isChecked();
+	mPrfsChatAppearance->foregroundColor->setEnabled ( value );
+	mPrfsChatAppearance->backgroundColor->setEnabled ( value );
+	slotUpdatePreview();
+}
+
 void AppearanceConfig::slotShowTrayChanged()
 {
 	bool check = mPrfsGeneral->mShowTrayChk->isChecked();
@@ -349,7 +360,7 @@ void AppearanceConfig::slotUpdatePreview()
 	preview->write( msgIn->transformMessage( model ) );
 	msgIn->setFg(Qt::white);
 	msgIn->setBg(Qt::blue);
-	msgIn->setBody( QString::fromLatin1("This is a colored incoming message") );
+	msgIn->setBody( QString::fromLatin1("This is a colored incoming message (random color)") );
 	preview->write( msgIn->transformMessage( model ) );
 	// -------------------
 
@@ -357,8 +368,11 @@ void AppearanceConfig::slotUpdatePreview()
 	preview->write( msgInt->transformMessage( model ) );
 
 	//highlighted message
-	msgHigh->setFg( mPrfsChatAppearance->foregroundColor->color() );
-	msgHigh->setBg( mPrfsChatAppearance->backgroundColor->color() );
+	if( mPrfsChatAppearance->highlightEnabled->isChecked() )
+	{
+		msgHigh->setFg( mPrfsChatAppearance->foregroundColor->color() );
+		msgHigh->setBg( mPrfsChatAppearance->backgroundColor->color() );
+	}
 	preview->write( msgHigh->transformMessage( model ) );
 
 	preview->write( msgAct->transformMessage( model ) );

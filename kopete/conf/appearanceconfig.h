@@ -59,6 +59,7 @@ private slots:
 	void slotTransparencyChanged(bool);
 	void slotUpdatePreview();
 	void slotShowTrayChanged();
+	void slotHighlightChanged();
 
 private:
 	KTabCtl* mAppearanceTabCtl; // The TabWidget
