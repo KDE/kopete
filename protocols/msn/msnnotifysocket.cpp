@@ -285,7 +285,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			if( c )
 				c->setDisplayName( unescape( data.section( ' ', 2, 2 ) ) );
 		}
-		m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 1,1) );
+		m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 0,0) );
 	}
 	else if( cmd == "LSG" )
 	{
