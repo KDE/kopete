@@ -18,6 +18,7 @@
 
 #include <stdlib.h>
 
+#include <qcolor.h>
 #include <qstylesheet.h>
 #include <qregexp.h>
 #include <qtextcodec.h>
@@ -520,7 +521,7 @@ static QDomElement contactNode( QDomDocument doc, const Contact *contact )
 		hash += contactId[f].latin1() * f;
 	int nameColorsLen = sizeof(nameColors) / sizeof(nameColors[0]);
 
-	QString color = QString::fromLatin1( nameColors[ hash % nameColorsLen ] );
+	QString color = QColor( nameColors[ hash % nameColorsLen ] ).name();
 	contactNode.setAttribute( QString::fromLatin1("color"), color );
 
 	return contactNode;
