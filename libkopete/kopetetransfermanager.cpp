@@ -57,7 +57,7 @@ void KopeteTransfer::slotPercentCompleted(unsigned int percent)
 	if (percent == 100)
 		setText(3, i18n("Finished"));
 	else
-		setText(3, i18n("Transfering"));
+		setText(3, i18n("Transferring"));
 		
 	kopeteapp->transferManager()->paintProgressBar(this, percent);
 }
@@ -112,7 +112,7 @@ void KopeteTransfer::setError(KopeteTransferError error)
 			break;
 		case Other:
 		default:
-			errorString = i18n("Unknown error occured");
+			errorString = i18n("Unknown error occurred");
 			break;
 	}
 	setText(3, errorString);
@@ -158,7 +158,7 @@ void KopeteTransferManager::slotClearFinished()
 {
 	for (QListViewItem *it = mListView->firstChild(); it != 0L; it = it->itemBelow())
 	{
-		if (it->text(3) != i18n("Transfering"))
+		if (it->text(3) != i18n("Transferring"))
 		{
 			KopeteTransfer *trans = dynamic_cast<KopeteTransfer *>(it);
 			if (!trans) continue;
