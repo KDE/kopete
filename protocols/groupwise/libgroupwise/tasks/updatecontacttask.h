@@ -12,20 +12,21 @@
 #ifndef UPDATECONTACTTASK_H
 #define UPDATECONTACTTASK_H
 
-#include <updateitemtask.h>
+#include "gwerror.h"
+
+#include "updateitemtask.h"
 
 /**
-Renames a contact on the server
-
-@author Kopete Developers
-*/
+ * Renames a contact on the server
+ * @author Kopete Developers
+ */
 class UpdateContactTask : public UpdateItemTask
 {
+Q_OBJECT
 public:
-    UpdateContactTask(Task* parent);
-
-    ~UpdateContactTask();
-
+	UpdateContactTask(Task* parent);
+	~UpdateContactTask();
+	void renameContact( const QString& newName, const QValueList<GroupWise::ContactItem> & contactInstances );
 };
 
 #endif

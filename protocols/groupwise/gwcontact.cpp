@@ -29,6 +29,7 @@
 #include "kopetemetacontact.h"
 
 #include "tasks/deleteitemtask.h"
+#include "tasks/updatecontacttask.h"
 
 #include "client.h"
 #include "gwaccount.h"
@@ -375,6 +376,61 @@ void GroupWiseContact::receiveContactDeleted( const ContactItem & instance )
 	if ( m_instances.count() == 0 )
 		deleteLater();
 }
+
+void GroupWiseContact::syncGroups()
+{
+	if ( account()->myself() != this )
+	{
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+		if ( !account()->isConnected() )
+		{
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "not connected, can't sync display name or group membership" << endl;
+			return;
+		}
+	
+		// if this is a temporary contact, don't bother
+		if ( metaContact()->isTemporary() )
+			return;
+			
+		// determine which groups we have joined
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " assuming we haven't JOINED any groups" << endl;
+		// get the difference between the current set of contact list instances and the metacontact's current group membership
+		// assume all MC groups are new wrt server side list
+			// initialise a duplicate newGroupMemberships MC group list initially containing all the MC's groups
+		// assume we haven't left any groups.
+		// cycle through each group in the contact's CLInstances
+			// if there is a corresponding MC group
+				// this group exists on the server and we have not left it, definitely don't add it
+				// remove that MC group from newGroupMemberships
+				// add it to unchangedMemberships 
+			// if it is not
+				// we have left this group
+				// create a contactlistitem and add to groupsLeft
+	
+		// determine which groups we have left
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " assuming we haven't LEFT any groups" << endl;
+		// start an UpdateItem 
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " resetting the contact's display name to " << metaContact()->displayName() << endl;
+		// form a list of the contact's groups
+		QValueList< ContactItem > instancesToChange;
+		QValueList< ContactListInstance >::Iterator it = m_instances.begin();
+		const QValueList< ContactListInstance >::Iterator end = m_instances.end();
+		for ( ; it != end; ++it )
+		{
+			ContactItem instance;
+			instance.id = (*it).objectId;
+			instance.parentId = (*it).parentId;
+			instance.sequence = (*it).sequence;
+			instance.dn = m_dn;
+			instance.displayName = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+			instancesToChange.append( instance );
+		}
+		UpdateContactTask * uct = new UpdateContactTask( account()->client()->rootTask() );
+		uct->renameContact( metaContact()->displayName(), instancesToChange );
+		uct->go( true );
+	}
+}
+
 
 #include "gwcontact.moc"
 

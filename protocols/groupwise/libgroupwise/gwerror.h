@@ -113,12 +113,31 @@ namespace GroupWise
 		int status;
 		QMap< QString, QString > properties;
 	};
-	
+
 	struct OutgoingMessage
 	{
 		QString guid;
 		QString message;
 		QString rtfMessage;
+	};
+
+	/**
+	* Represents an instance of a contact in the server side contact list
+	*/
+	struct ContactListInstance
+	{
+		int objectId;
+		int parentId;
+		int sequence;
+	};
+
+	typedef QValueList< ContactListInstance > CLInstanceList;
+	
+	struct UserSearchQueryTerm
+	{
+		QString field;
+		QString argument;
+		int operation;
 	};
 };
 

@@ -39,17 +39,7 @@ class GroupWiseProtocol;
 class KopeteMetaContact;
 
 using namespace GroupWise;
-/**
- * Represents an instance of a contact in the server side contact list
- */
-struct ContactListInstance
-{
-	int objectId;
-	int parentId;
-	int sequence;
-};
 
-typedef QValueList< ContactListInstance > CLInstanceList;
 /**
 @author Will Stephenson
 */
@@ -148,6 +138,10 @@ public:
 	bool hasCLObjectId( const int objectId ) const;
 	CLInstanceList instances() const;
 	
+	/** 
+	 * Updates this contact's group membership and display name on the server
+	 */
+	void syncGroups();
 public slots:
 	/**
 	 * Transmits an outgoing message to the server 
