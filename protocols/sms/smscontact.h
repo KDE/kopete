@@ -38,7 +38,7 @@ public:
 
 	QPtrList<KAction>* customContextMenuActions();
 
-	virtual bool isReachable() { return true; };
+	virtual bool isReachable();
 
 	const QString &phoneNumber();
 	void setPhoneNumber( const QString phoneNumber );
