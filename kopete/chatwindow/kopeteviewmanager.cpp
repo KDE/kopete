@@ -218,30 +218,26 @@ void KopeteViewManager::readMessages( KopeteMessageManager *manager, bool outgoi
 
 void KopeteViewManager::slotEventApplied( KopeteEvent *event )
 {
-	for ( EventMap::Iterator it = d->eventMap.begin(); it != d->eventMap.end(); ++it )
-	{
-		if( it.data() == event )
-		{
-			KopeteMessageManager *kmm=it.key();
-			d->eventMap.remove( kmm );
-			readMessages( kmm, false );
-			break;
-		}
-	}
+	KopeteMessageManager *kmm=event->message().manager();
+	if(!kmm)
+		return;
+	d->eventMap.remove( kmm );
+	readMessages( kmm, false );
 }
 
 void KopeteViewManager::slotEventDeleted( KopeteEvent *event )
 {
-	for ( EventMap::Iterator it = d->eventMap.begin(); it != d->eventMap.end(); ++it )
+	KopeteMessageManager *kmm=event->message().manager();
+	if(!kmm)
+		return;
+	if(d->eventMap.contains(kmm) && d->eventMap[kmm]==event)
 	{
-		if( it.data() == event )
-		{
-			//If this event is still in the map, then it has not been applied.
-			//Close the view associated with it.
-			view( it.key(), false )->closeView();
-		}
+		//If this event is still in the map, then it has not been applied.
+		//Close the view associated with it.
+		view( kmm , false )->closeView();
+		d->eventQueue.remove( event );
+		d->eventMap.remove(kmm);
 	}
-	d->eventQueue.remove( event );
 }
 
 void KopeteViewManager::nextEvent()
