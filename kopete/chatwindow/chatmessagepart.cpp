@@ -169,7 +169,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	scrollPressed = false;
 
 	//Security settings, we don't need this stuff
-	setJScriptEnabled( false ) ;
+	setJScriptEnabled( true ) ;
 	setJavaEnabled( false );
 	setPluginsEnabled( false );
 	setMetaRefreshEnabled( false );
@@ -368,6 +368,16 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 		newNode.setAttribute( QString::fromLatin1("dir"), direction );
 		newNode.setInnerHTML( resultHTML );
 
+		QRegExp findScripts( QString::fromLatin1("<script[^>]*>(.+)</script>") );
+		findScripts.setMinimal(true);
+
+                int offset = findScripts.search( resultHTML );
+                while( offset > -1 )
+                {
+	        	executeScript( findScripts.cap(1) );
+			offset = findScripts.search( resultHTML, offset + 1 );
+                }
+
 		htmlDocument().body().appendChild( newNode );
 
 		while ( bufferLen>0 && messageMap.count() >= bufferLen )
@@ -440,7 +450,19 @@ void ChatMessagePart::slotRefreshView()
 
 void ChatMessagePart::slotTransformComplete( const QVariant &result )
 {
-	htmlDocument().body().setInnerHTML( addNickLinks( result.toString() ) );
+	QString resultHTML = result.toString();
+
+	htmlDocument().body().setInnerHTML( addNickLinks( resultHTML ) );
+
+	QRegExp findScripts( QString::fromLatin1("<script[^>]*>(.+)</script>") );
+	findScripts.setMinimal(true);
+
+	int offset = findScripts.search( resultHTML );
+	while( offset > -1 )
+	{
+		executeScript( findScripts.cap(1) );
+		offset = findScripts.search( resultHTML, offset + 1 );
+	}
 
 	if ( !scrollPressed )
 		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
@@ -859,9 +881,7 @@ void ChatMessagePart::slotUpdateBackground( const QPixmap &pixmap )
 	//This doesn't work well using the DOM, so just use some JS
 	if ( bgChanged && backgroundFile && !backgroundFile->name().isNull() )
 	{
-		setJScriptEnabled( true ) ;
 		executeScript( QString::fromLatin1( "document.body.background = \"%1\";" ).arg( backgroundFile->name() ) );
-		setJScriptEnabled( false ) ;
 	}
 
 	bgChanged = false;

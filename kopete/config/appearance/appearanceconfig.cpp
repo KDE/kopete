@@ -133,7 +133,7 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	mPrfsChatWindow->htmlFrame->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
 	QVBoxLayout *l = new QVBoxLayout(mPrfsChatWindow->htmlFrame);
 	preview = new KHTMLPart(mPrfsChatWindow->htmlFrame, "preview");
-	preview->setJScriptEnabled(false);
+	preview->setJScriptEnabled(true);
 	preview->setJavaEnabled(false);
 	preview->setPluginsEnabled(false);
 	preview->setMetaRefreshEnabled(false);
