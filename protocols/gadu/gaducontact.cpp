@@ -261,7 +261,7 @@ GaduContact::msgManager()
     if ( msgManager_ ) {
         return msgManager_;
     } else {
-        msgManager_ = kopeteapp->sessionFactory()->create( GaduProtocol::protocol()->myself(),
+        msgManager_ = KopeteMessageManagerFactory::factory()->create( GaduProtocol::protocol()->myself(),
                                                            thisContact_, GaduProtocol::protocol(),
                                                            KopeteMessageManager::ChatWindow );
         connect( msgManager_, SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager*)),

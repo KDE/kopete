@@ -31,7 +31,7 @@ KopeteProtocol::~KopeteProtocol()
 
 bool KopeteProtocol::unload()
 {
-	kopeteapp->sessionFactory()->cleanSessions(this);
+	KopeteMessageManagerFactory::factory()->cleanSessions(this);
 	return KopetePlugin::unload();
 }
 

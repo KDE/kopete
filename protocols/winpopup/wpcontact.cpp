@@ -64,10 +64,10 @@ WPContact::WPContact(const QString &host, WPProtocol *protocol, KopeteMetaContac
 	// Set up the message managers
 	QPtrList<KopeteContact> singleContact;
 	singleContact.append(this);
-	myEmailManager = kopeteapp->sessionFactory()->create(myProtocol->myself(), singleContact, myProtocol, KopeteMessageManager::Email);
+	myEmailManager = KopeteMessageManagerFactory::factory()->create(myProtocol->myself(), singleContact, myProtocol, KopeteMessageManager::Email);
 	connect(myEmailManager, SIGNAL(messageSent(const KopeteMessage &, KopeteMessageManager *)), this, SLOT(slotSendMessage(const KopeteMessage &)));
 	connect(myEmailManager, SIGNAL(messageSent(const KopeteMessage &, KopeteMessageManager *)), myEmailManager, SLOT(appendMessage(const KopeteMessage &)));
-	myChatManager = kopeteapp->sessionFactory()->create(myProtocol->myself(), singleContact, myProtocol, KopeteMessageManager::ChatWindow);
+	myChatManager = KopeteMessageManagerFactory::factory()->create(myProtocol->myself(), singleContact, myProtocol, KopeteMessageManager::ChatWindow);
 	connect(myChatManager, SIGNAL(messageSent(const KopeteMessage &, KopeteMessageManager *)), this, SLOT(slotSendMessage(const KopeteMessage &)));
 	connect(myChatManager, SIGNAL(messageSent(const KopeteMessage &, KopeteMessageManager *)), myChatManager, SLOT(appendMessage(const KopeteMessage &)));
 

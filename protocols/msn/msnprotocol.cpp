@@ -561,7 +561,7 @@ void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status 
 	mIsConnected = (status == MSNSocket::Connected);
 	if ( mIsConnected )
 	{
-		//kopeteapp->sessionFactory()->cleanSessions(this);
+		//KopeteMessageManagerFactory::factory()->cleanSessions(this);
 		// Sync public name when needed
 		if( m_publicNameSyncNeeded )
 		{
@@ -628,7 +628,7 @@ void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status 
 	else if( status == MSNSocket::Disconnected )
 	{
 		KopeteMessageManagerDict sessions =
-			kopeteapp->sessionFactory()->protocolSessions( this );
+			KopeteMessageManagerFactory::factory()->protocolSessions( this );
 		QIntDictIterator<KopeteMessageManager> kmmIt( sessions );
 		for( ; kmmIt.current() ; ++kmmIt )
 		{
@@ -1285,7 +1285,7 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 		chatmembers.append(c);
 
 		KopeteMessageManager *_manager =
-			kopeteapp->sessionFactory()->findKopeteMessageManager( m_myself,
+			KopeteMessageManagerFactory::factory()->findKopeteMessageManager( m_myself,
 				chatmembers, this  );
 		MSNMessageManager *manager =
 			dynamic_cast<MSNMessageManager*>( _manager );
@@ -1317,7 +1317,7 @@ void MSNProtocol::slotStartChatSession( QString handle )
 		KopeteContactPtrList chatmembers;
 		chatmembers.append(c);
 
-		KopeteMessageManager *_manager = kopeteapp->sessionFactory()->findKopeteMessageManager( m_myself, chatmembers, this  );
+		KopeteMessageManager *_manager = KopeteMessageManagerFactory::factory()->findKopeteMessageManager( m_myself, chatmembers, this  );
 		MSNMessageManager *manager= dynamic_cast<MSNMessageManager*>(_manager);
 		if(!manager)
 		{

@@ -25,6 +25,7 @@
 #endif
 
 #include <kuniqueapplication.h>
+
 #include "kopetemessage.h"
 
 class KIconLoader;
@@ -33,7 +34,6 @@ class KStatusBar;
 class AppearanceConfig;
 class KopeteContactListView;
 class KopeteEvent;
-class KopeteMessageManagerFactory;
 class KopeteNotifier;
 class KopeteSystemTray;
 class KopeteTransferManager;
@@ -42,15 +42,6 @@ class KopeteWindow;
 class LibraryLoader;
 class Plugins;
 class PreferencesDialog;
-
-/*
-class AppearanceConfig;
-class KopeteLibraryInfo;
-class KopeteMessageManagerFactory;
-class KopeteMetaContact;
-class KopeteTransferManager;
-class KopeteUserPreferencesConfig;
-*/
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -77,12 +68,6 @@ public:
 	 */
 	PreferencesDialog *preferencesBox() const
 	{ return mPref; }
-
-	/**
-	 * Use it to access Kopete's plugin loader.
-	 * You shouldn't need to use it from a plugin.
-	 */
-	KopeteMessageManagerFactory *sessionFactory();
 
 	/**
 	 * Use it to access Kopete's plugin loader.

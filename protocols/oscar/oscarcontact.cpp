@@ -115,7 +115,7 @@ KopeteMessageManager* OscarContact::msgManager()
 	else
 	{
 		//printf("Creating a mmsgmanager: %d\n",mProtocol->myself());fflush(stdout);
-		mMsgManager = kopeteapp->sessionFactory()->create(mProtocol->myself(), theContacts, mProtocol, KopeteMessageManager::ChatWindow);
+		mMsgManager = KopeteMessageManagerFactory::factory()->create(mProtocol->myself(), theContacts, mProtocol, KopeteMessageManager::ChatWindow);
 		connect(mMsgManager, SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(const KopeteMessage&, KopeteMessageManager *)));
 		return mMsgManager;
 	}
