@@ -432,7 +432,8 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 	connect( this, SIGNAL( dropped( QDropEvent *, QListViewItem *, QListViewItem * ) ),
 	         this, SLOT( slotDropped( QDropEvent *, QListViewItem *, QListViewItem * ) ) );
 
-	addColumn( i18n( "Contacts" ), 0 );
+	addColumn( i18n( "Contacts" ), 0 );  //add an unique colums to add every contact
+	header()->hide(); // and hide the ugly header which show the single word  "Contacts"
 
 	setAutoOpen( true );
 	setDragEnabled( true );
