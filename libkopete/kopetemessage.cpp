@@ -177,7 +177,7 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 
 	do
 	{
-		char c = ((const char*)model)[f];
+		QChar c = model[ f ];
 		if( c != '%' )
 		{
 			message += c;
@@ -185,8 +185,9 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 		else
 		{
 			f++;
-			c = ((const char*)model)[f];
-			switch(c)
+			c = model[ f ];
+			// Using latin1 is safe, we don't check for other chars, and latin1() returns non-latin as '\0'
+			switch( c.latin1() )
 			{
 				case 'M':  //insert Message
 					message.append( parsedBody() );
@@ -237,12 +238,12 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 						{
 							fin=false;
 							f++;
-							char c2=((const char*)model)[f];
+							QChar c2 = model[ f ];
 							if(c2=='i' && b)
 								fin=true;
 							b = (c2=='%');
 						}
-						while (f<model.length() && !fin);
+						while( f < model.length() && !fin );
 					}
 					break;
 
@@ -255,12 +256,12 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 						{
 							fin=false;
 							f++;
-							char c2=((const char*)model)[f];
+							QChar c2 = model[ f ];
 							if(c2=='o' && b)
 								fin=true;
 							b=(c2=='%');
 						}
-						while (f<model.length() && !fin);
+						while( f < model.length() && !fin );
 					}
 					break;
 				case 's': //only internal
@@ -272,12 +273,12 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 						{
 							fin=false;
 							f++;
-							char c2=((const char*)model)[f];
+							QChar c2 = model[ f ];
 							if(c2=='s' && b)
 								fin=true;
 							b=(c2=='%');
 						}
-						while (f<model.length() && !fin);
+						while( f < model.length() && !fin );
 					}
 					break;
 				case 'e': //not internal (external)
@@ -289,24 +290,24 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 						{
 							fin=false;
 							f++;
-							char c2=((const char*)model)[f];
+							QChar c2 = model[ f ];
 							if(c2=='e' && b)
 								fin=true;
 							b=(c2=='%');
 						}
-						while (f<model.length() && !fin);
+						while( f < model.length() && !fin );
 					}
 					break;
 
 				case 'f': //insert the 'from' displayName
-					if (mFrom->metaContact()) 
+					if (mFrom->metaContact())
 						message.append( QStyleSheet::escape(mFrom->metaContact()->displayName()) );
 					else
 						message.append( QStyleSheet::escape(mFrom->displayName()) );
 					break;
 
 				case 't': //insert the 'to' displayName
-					if (to().first()->metaContact()) 
+					if (to().first()->metaContact())
 						message.append( QStyleSheet::escape(to().first()->metaContact()->displayName()) );
 					else
 						message.append( QStyleSheet::escape(to().first()->displayName()) );
@@ -320,7 +321,7 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 		f++;
 	}
 	while( f < model.length() );
-	
+
 	return message;
 }
 

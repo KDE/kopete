@@ -93,9 +93,9 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	// directory traversal, although appending '.log' and the rest of the
 	// code should really make overwriting files possible anyway.
 	KopeteContact *c = others.first();
-	QString logFileName = QString::fromLatin1("kopete/") + QString( c->protocol()->pluginId() ) +
-		QString::fromLatin1("/") + c->contactId().replace( QRegExp( QString::fromLatin1("[./~]") ),
-		QString::fromLatin1("-") ) + QString::fromLatin1(".log");
+	QString logFileName = QString::fromLatin1( "kopete/" ) + QString::fromLatin1( c->protocol()->pluginId() ) +
+		QString::fromLatin1( "/" ) + c->contactId().replace( QRegExp( QString::fromLatin1( "[./~]" ) ),
+		QString::fromLatin1( "-" ) ) + QString::fromLatin1( ".log" );
 	d->mLogger = new KopeteMessageLog( logFileName, this );
 
 //	connect(protocol, SIGNAL(destroyed()), this, SLOT(slotProtocolUnloading()));
@@ -153,7 +153,7 @@ const QString KopeteMessageManager::chatName()
 			nextDisplayName = c->metaContact()->displayName();
 		else
 			nextDisplayName = c->displayName();
-		chatName.append(", ").append( nextDisplayName );
+		chatName.append( QString::fromLatin1( ", " ) ).append( nextDisplayName );
 	}
 
 	return chatName;
@@ -174,23 +174,23 @@ ChatWindowMap *KopeteMessageManager::chatWindowMap()
 KopeteChatWindow *KopeteMessageManager::newWindow()
 {
 	bool windowCreated = false;
-	
+
 	//Determine tabbed window settings
 	switch( KopetePrefs::prefs()->chatWindowPolicy() )
 	{
 		case NEW_WINDOW: //Open every chat in a new window
 			kdDebug(14010) << k_funcinfo << "Always open new window" << endl;
-			
+
 			//Always create new window
 			myWindow = new KopeteChatWindow();
 			connect (myWindow, SIGNAL(Closing()), this, SLOT(slotChatWindowClosing()));
 			windowCreated = true;
-			
+
 			break;
 
 		case GROUP_BY_PROTOCOL: //Open chats in the same protocol in the same window
 			kdDebug(14010) << k_funcinfo << "Group by protocol" << endl;
-			
+
 			//Check if we have a window for this protocol
 			if( chatWindowMap()->contains( d->mProtocol ) )
 			{
@@ -209,7 +209,7 @@ KopeteChatWindow *KopeteMessageManager::newWindow()
 		case GROUP_ALL: //Open all chats in the same window
 			kdDebug(14010) << k_funcinfo << "Group all" << endl;
 			kdDebug(14010) << k_funcinfo << "chatWindowMap contains " << chatWindowMap()->count() << endl;
-			
+
 			//Check if a window exists
 			if( chatWindowMap()->isEmpty() )
 			{
@@ -226,12 +226,12 @@ KopeteChatWindow *KopeteMessageManager::newWindow()
 			}
 			break;
 	}
-	
+
 	//Add this protocol to the map no matter what the preference, in case it is switched while windows are open
 	if( windowCreated && !chatWindowMap()->contains( d->mProtocol ) )
 		chatWindowMap()->insert(d->mProtocol, myWindow);
-	
-	return static_cast<KopeteChatWindow*>(myWindow);
+
+	return static_cast<KopeteChatWindow *>( myWindow );
 }
 
 void KopeteMessageManager::newChatView()
@@ -448,7 +448,7 @@ void KopeteMessageManager::slotMessageSent(const KopeteMessage &message)
 	if ( KopetePrefs::prefs()->soundNotify() )
 	{
 		if ( !protocol()->isAway() || KopetePrefs::prefs()->soundIfAway() )
-		    KNotifyClient::event("kopete_outgoing");
+			KNotifyClient::event( QString::fromLatin1( "kopete_outgoing" ) );
 	}
 }
 
@@ -471,10 +471,10 @@ void KopeteMessageManager::slotChatWindowClosing()
 		ChatWindowMap windowMap = *(chatWindowMap());
 		if( windowMap.contains( d->mProtocol ) && (windowMap[ d->mProtocol ] == myWindow) )
 			chatWindowMap()->remove( d->mProtocol );
-		
+
 		//Close *our* window
 		myWindow->deleteLater();
-		
+
 		d->mView = 0L;
 	}
 	else if (d->mWidget == Email)
@@ -558,12 +558,12 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 				if (msg.from()->metaContact())
 				{
 					d->mUnreadMessageEvent = new KopeteEvent( i18n("Message from %1").arg(msg.from()->metaContact()->displayName()),
-						"kopete/pics/newmsg.png", this, SLOT(slotReadMessages()));
+						QString::fromLatin1( "kopete/pics/newmsg.png" ), this, SLOT(slotReadMessages()));
 				}
 				else
 				{
 					d->mUnreadMessageEvent = new KopeteEvent( i18n("Message from %1").arg(msg.from()->displayName()),
-						"kopete/pics/newmsg.png", this, SLOT(slotReadMessages()));
+						QString::fromLatin1( "kopete/pics/newmsg.png" ), this, SLOT(slotReadMessages()));
 				}
 				connect(d->mUnreadMessageEvent, SIGNAL(done(KopeteEvent *)),
 					this, SLOT(slotEventDeleted(KopeteEvent *)));
@@ -575,7 +575,7 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 	if ( KopetePrefs::prefs()->soundNotify() && (isvisible || d->mReadMode == Popup) && (msg.direction() != KopeteMessage::Outbound) )
 	{
 		if ( !protocol()->isAway() || KopetePrefs::prefs()->soundIfAway() )
-		    KNotifyClient::event("kopete_incoming");
+			KNotifyClient::event( QString::fromLatin1( "kopete_incoming" ) );
 	}
 }
 

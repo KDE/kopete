@@ -82,9 +82,9 @@ QString KopeteAway::message()
 
 void KopeteAway::setGlobalAwayMessage(QString message)
 {
-    if(message){
-        kdDebug(14013) << "[KOPETE AWAY] Setting global away message: "
-                       << message << endl;
+    if( !message.isEmpty() )
+    {
+        kdDebug( 14013 ) << "[KOPETE AWAY] Setting global away message: " << message << endl;
         mAwayMessage = message;
     }
 }

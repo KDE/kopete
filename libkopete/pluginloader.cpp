@@ -73,7 +73,7 @@ LibraryLoader::~LibraryLoader()
 	{
 		// Remove causes the iterator to auto-increment, so
 		// only increment explicitly when not removing
-		if( getInfo( i.currentKey() ).type != "protocol" )
+		if( getInfo( i.currentKey() ).type != QString::fromLatin1( "protocol" ) )
 			remove( i.current() );
 		else
 			++i;
@@ -198,9 +198,8 @@ void LibraryLoader::setModules(const QStringList &mods)
 QValueList<KopeteLibraryInfo> LibraryLoader::available() const
 {
 	QValueList<KopeteLibraryInfo> items;
-	QStringList files = KGlobal::dirs()->findAllResources( QString::fromLatin1( "appdata" ),
-		QString::fromLatin1( "*.plugin" ), false, true );
-	for (QStringList::Iterator i=files.begin(); i!=files.end(); ++i)
+	QStringList files = KGlobal::dirs()->findAllResources( "appdata", QString::fromLatin1( "*.plugin" ), false, true );
+	for( QStringList::Iterator i=files.begin(); i!=files.end(); ++i )
 		items.append(getInfo(*i));
 
 	return items;
@@ -309,17 +308,15 @@ KopetePlugin * LibraryLoader::searchByName(const QString &name)
 	return 0L;
 }
 
-KopetePlugin* LibraryLoader::searchByID(  const QString &Id )
+KopetePlugin* LibraryLoader::searchByID( const QString &Id )
 {
 	QValueList<KopeteLibraryInfo> l = loaded();
 
 	for ( QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i )
 	{
 		KopetePlugin *tmp_plug = mLibHash[ ( *i ).specfile ];
-		if (  tmp_plug->pluginId() == Id )
-		{
+		if( QString::fromLatin1( tmp_plug->pluginId() ) == Id )
 			return tmp_plug;
-		}
 	}
 	return NULL;
 }

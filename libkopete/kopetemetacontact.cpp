@@ -225,8 +225,12 @@ KopeteContact *KopeteMetaContact::findContact( const QString &protocolId,
 	for( ; it.current(); ++it )
 	{
 		//kdDebug(14010) << "*** Trying " << it.current()->contactId() << ", proto " << it.current()->protocol()->pluginId() << ", identity " << it.current()->identityId() << endl;
-		if( (it.current()->contactId() == contactId ) && (it.current()->protocol()->pluginId() == protocolId ) && (it.current()->identityId() == identityId))
+		if( ( it.current()->contactId() == contactId ) &&
+			( QString::fromLatin1( it.current()->protocol()->pluginId() ) == protocolId ) &&
+			( it.current()->identityId() == identityId ) )
+		{
 			return it.current();
+		}
 	}
 
 	// Contact not found
@@ -663,7 +667,7 @@ QString KopeteMetaContact::toXML()
 		QMap<QString, QMap<QString, QString> >::ConstIterator pluginIt;
 		for( pluginIt = m_pluginData.begin(); pluginIt != m_pluginData.end(); ++pluginIt )
 		{
-			xml += QString::fromLatin1( "    <plugin-data plugin-id=\"" + QStyleSheet::escape( pluginIt.key() ) + "\">\n" );
+			xml += QString::fromLatin1( "    <plugin-data plugin-id=\"" ) + QStyleSheet::escape( pluginIt.key() ) + QString::fromLatin1( "\">\n" );
 
 			QMap<QString, QString>::ConstIterator it;
 			for( it = pluginIt.data().begin(); it != pluginIt.data().end(); ++it )
@@ -695,10 +699,9 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 					return false;
 				m_displayName = contactElement.text();
 
-				if( contactElement.attribute( QString::fromLatin1( "trackChildNameChanges" ), QString::fromLatin1( "1" ) ) == "1" )
-					m_trackChildNameChanges = true;
-				else
-					m_trackChildNameChanges = false;
+				m_trackChildNameChanges =
+					( contactElement.attribute( QString::fromLatin1( "trackChildNameChanges" ),
+					QString::fromLatin1( "1" ) ) == QString::fromLatin1( "1" ) );
 
 //				m_trackChildNameChanges = false;
 			}
@@ -708,11 +711,11 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 				while( !group.isNull() )
 				{
 					QDomElement groupElement = group.toElement();
-					if ( groupElement.tagName() == "group" )
+					if( groupElement.tagName() == QString::fromLatin1( "group" ) )
 					{
 						m_groups.append(KopeteContactList::contactList()->getGroup(groupElement.text()));
 					}
-					else if ( groupElement.tagName() == "top-level" )
+					else if( groupElement.tagName() == QString::fromLatin1( "top-level" ) )
 					{
 						m_groups.append(KopeteGroup::toplevel);
 					}
@@ -816,7 +819,7 @@ void KopeteMetaContact::slotPluginLoaded( KopetePlugin *p )
 	for( it = m_pluginData.begin(); it != m_pluginData.end(); ++it )
 	{
 		//kdDebug( 14010 ) << "key: " << it.key() << ", plugin id: " << p->pluginId() << endl;
-		if( p->pluginId() == it.key() )
+		if( QString::fromLatin1( p->pluginId() ) == it.key() )
 			p->deserialize( this, it.data() );
 	}
 }

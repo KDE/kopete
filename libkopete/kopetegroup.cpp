@@ -92,27 +92,27 @@ QString KopeteGroup::toXML()
 bool KopeteGroup::fromXML( const QDomElement& data )
 {
 	QString type = data.attribute( QString::fromLatin1( "type" ), QString::fromLatin1( "standard" ) );
-	if( type == "temporary" )
+	if( type == QString::fromLatin1( "temporary" ) )
 		m_type = Temporary;
-	else if( type == "top-level" )
+	else if( type == QString::fromLatin1( "top-level" ) )
 		m_type = TopLevel;
 	else
 		m_type = Classic;
 
 	QString view = data.attribute( QString::fromLatin1( "view" ), QString::fromLatin1( "expanded" ) );
-	m_expanded = ( view != "collapsed" );
+	m_expanded = ( view != QString::fromLatin1( "collapsed" ) );
 
 	QDomNode groupData = data.firstChild();
 	while( !groupData.isNull() )
 	{
 		QDomElement groupElement = groupData.toElement();
-		if( groupElement.tagName() == "display-name" )
+		if( groupElement.tagName() == QString::fromLatin1( "display-name" ) )
 		{
 //			if( groupElement.text().isEmpty() )
 //				return false;
 			m_displayName = groupElement.text();
 		}
-		else if( groupElement.tagName() == "plugin-data" )
+		else if( groupElement.tagName() == QString::fromLatin1( "plugin-data" ) )
 		{
 			QString pluginId = groupElement.attribute( QString::fromLatin1( "plugin-id" ), QString::null );
 			m_pluginData.insert( pluginId, groupElement.text() );

@@ -97,7 +97,7 @@ void KopeteContactList::loadXML()
 {
 	addGroup( KopeteGroup::toplevel );
 
-	QString filename = locateLocal( QString::fromLatin1( "appdata" ), QString::fromLatin1( "contactlist.xml" ) );
+	QString filename = locateLocal( "appdata", QString::fromLatin1( "contactlist.xml" ) );
 	if( filename.isEmpty() )
 		return ;
 
@@ -432,7 +432,8 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 										dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "groups" ) );
 										dataField.appendChild( newList.createTextNode( strList[ idx + 3 ] ) );
 									}
-									else if( id == QString::fromLatin1("SMSProtocol") && ( idx + 2 < strList.size() ) && strList[ idx + 2 ] != '.' )
+									else if( id == QString::fromLatin1( "SMSProtocol" ) &&
+										( idx + 2 < strList.size() ) && strList[ idx + 2 ] != QString::fromLatin1( "." ) )
 									{
 										dataField = newList.createElement( QString::fromLatin1( "plugin-data-field" ) );
 										pluginData[ id ].appendChild( dataField );
@@ -560,7 +561,7 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 
 void KopeteContactList::saveXML()
 {
-	QString contactListFileName = locateLocal( QString::fromLatin1( "appdata" ), QString::fromLatin1( "contactlist.xml" ) );
+	QString contactListFileName = locateLocal( "appdata", QString::fromLatin1( "contactlist.xml" ) );
 
 	//kdDebug(14010) << "KopeteContactList::saveXML: Contact List File: "
 	//	<< contactListFileName << endl;
@@ -713,7 +714,7 @@ QPtrList<KopeteMetaContact> KopeteContactList::onlineMetaContacts( const QString
 			QPtrListIterator<KopeteContact> cit( contacts );
 			for( ; cit.current(); ++cit )
 			{
-				if ( cit.current()->isOnline() && cit.current()->protocol()->pluginId() == protocolId )
+				if( cit.current()->isOnline() && QString::fromLatin1( cit.current()->protocol()->pluginId() ) == protocolId )
 					result.append( it.current() );
 			}
 		}
@@ -734,7 +735,7 @@ QPtrList<KopeteContact> KopeteContactList::onlineContacts( const QString &protoc
 			QPtrListIterator<KopeteContact> cit( contacts );
 			for( ; cit.current(); ++cit )
 			{
-				if ( cit.current()->isOnline() && cit.current()->protocol()->pluginId() == protocolId )
+				if( cit.current()->isOnline() && QString::fromLatin1( cit.current()->protocol()->pluginId() ) == protocolId )
 					result.append( cit.current() );
 			}
 		}

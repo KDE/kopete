@@ -140,7 +140,7 @@ void KopeteTransferManager::paintProgressBar(QListViewItem *item, const int curr
 	p.fillRect(0, 0, fillWidth, item->height(), blendColor);
 
 	// The following is to align and draw the percentage text in the center
-	QString percentText = QString(QString::number(currentPercent) + "%");
+	QString percentText = QString::number( currentPercent ) + QString::fromLatin1( "%" );
 	int textWidth = (item->listView()->fontMetrics().width(percentText) / 2);
 	int newWidth = ( width / 2 );
 	int startPosY = static_cast<int>(((double)item->height() /2) + 2);
