@@ -314,8 +314,14 @@ bool ICQAddContactPage::validateData()
 
 void ICQAddContactPage::slotSelectionChanged()
 {
+	bool valid;
 	kdDebug(14200) << k_funcinfo << endl;
-	emit dataValid(icqdata->resultView->selectedItem() != 0L);
+	valid = icqdata->resultView->selectedItem() != 0L;
+	if (!mAccount->isConnected())
+	{
+		valid = false;
+	}
+	emit dataValid(valid);
 }
 
 #include "icqaddcontactpage.moc"
