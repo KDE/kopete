@@ -203,6 +203,20 @@ QString KopeteMetaContact::statusIcon() const
 	}
 }
 
+QString KopeteMetaContact::statusString() const
+{
+	switch( status() )
+	{
+		case Online:
+			return "Online";
+		case Away:
+			return "Away";
+		case Offline:
+		default:
+			return "Offline";
+	}
+}
+
 KopeteMetaContact::OnlineStatus KopeteMetaContact::status() const
 {
 	bool awayFound = false;

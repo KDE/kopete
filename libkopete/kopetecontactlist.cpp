@@ -77,6 +77,53 @@ void KopeteContactList::loadXML()
 
 }
 
+QStringList KopeteContactList::meta_all()
+{
+	QStringList meta_contacts;
+	QPtrListIterator<KopeteMetaContact> it( KopeteContactList::contactList()->m_contacts );
+	for( ; it.current(); ++it )
+	{
+		meta_contacts.append( it.current()->displayName() );
+	}
+	return meta_contacts;
+}
+
+QStringList KopeteContactList::meta_status()
+{
+	QStringList meta_contacts;
+	QPtrListIterator<KopeteMetaContact> it( KopeteContactList::contactList()->m_contacts );
+	for( ; it.current(); ++it )
+	{
+		meta_contacts.append( QString ("%1 (%2)").arg( it.current()->displayName() ).arg( it.current()->statusString() ) );
+	}
+	return meta_contacts;
+}
+
+QStringList KopeteContactList::meta_reachable()
+{
+	QStringList meta_contacts;
+	QPtrListIterator<KopeteMetaContact> it( KopeteContactList::contactList()->m_contacts );
+	for( ; it.current(); ++it )
+	{
+		if ( it.current()->isReachable() )
+			meta_contacts.append( it.current()->displayName() );
+	}
+	return meta_contacts;
+}
+
+QStringList KopeteContactList::meta_online()
+{
+	QStringList meta_contacts;
+	QPtrListIterator<KopeteMetaContact> it( KopeteContactList::contactList()->m_contacts );
+	for( ; it.current(); ++it )
+	{
+		if ( it.current()->isOnline() )
+			meta_contacts.append( it.current()->displayName() );
+	}
+	return meta_contacts;
+}
+
+
 #include "kopetecontactlist.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

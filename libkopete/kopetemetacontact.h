@@ -71,6 +71,11 @@ public:
 	virtual QString statusIcon() const;
 
 	/**
+	 * The status-string of the contact
+	 */
+	QString statusString() const;
+
+	/**
 	 * Returns whether this contact can be reached online for at least one
 	 * protocol. Protocols are processed in loading order.
 	 * FIXME: Make that user preference order!

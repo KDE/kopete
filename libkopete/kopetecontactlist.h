@@ -21,6 +21,7 @@
 #include <qobject.h>
 #include <qptrlist.h>
 #include <qdom.h>
+#include <qstringlist.h>
 
 class KopeteMetaContact;
 
@@ -48,6 +49,27 @@ public:
 	 * FIXME: Also take protocol and identity into account!
 	 */
 	KopeteMetaContact *findContact( const QString &contactId );
+	
+	/**
+	 * Return all meta contacts
+	 */
+	static QStringList meta_all();
+
+	/**
+	 * Return all meta contacts that are reachable
+	 */
+	static QStringList meta_reachable();
+
+	/**
+	 * Return all meta contacts that are online
+	 */
+	static QStringList meta_online();
+
+	/**
+	 * Return all meta contacts with their current status
+	 */
+	static QStringList meta_status();
+
 
 private:
 	/**

@@ -20,6 +20,9 @@
 #include <klocale.h>
 #include "kopete.h"
 
+#include <dcopclient.h>
+#include "kopeteiface.h"
+
 static const char *description =
 	I18N_NOOP("Kopete, the KDE Instant Messenger");
 
@@ -56,5 +59,6 @@ int main(int argc, char *argv[])
 	KUniqueApplication::addCmdLineOptions();
 
 	Kopete kopete;
+	kapp->dcopClient()->setDefaultObject( (new KopeteIface())->objId() ); // Has to be called before exec
 	kopete.exec();
 }

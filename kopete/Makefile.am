@@ -4,7 +4,8 @@ INCLUDES = -I$(srcdir)/../libkopete -I$(srcdir)/../libkopete/ui \
 KDE_ICON = AUTO
 
 lib_LTLIBRARIES = libkopetemain.la
-libkopetemain_la_SOURCES = main.cpp
+libkopetemain_la_SOURCES = 	main.cpp \
+				kopeteiface.cpp kopeteiface.skel
 libkopetemain_la_LDFLAGS = -module -avoid-version $(all_libraries)
 libkopetemain_la_LIBADD = ./../libkopete/libkopete.la
 
