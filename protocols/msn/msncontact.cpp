@@ -377,18 +377,39 @@ QStringList MSNContact::groups()
 
 void MSNContact::moveToGroup( const QString &from, const QString &to )
 {
+	if(to.isNull())
+	{
+		removeFromGroup(from);
+		return;
+	}
+	if(from.isNull())
+	{
+		addToGroup(to);
+		return;
+	}
+
 	m_moving=true;
 	MSNProtocol::protocol()->moveContact( this, from, to );
 }
 
 void MSNContact::addToGroup( const QString &group )
 {
+	if(group.isNull())
+	{
+		kdDebug() << "MSNContact::addToGroup: ignoring top-level group" << endl;
+		return;
+	}
 	if(!m_groups.contains(group))
 		MSNProtocol::protocol()->addContactToGroup( this, group );
 }
 
 void MSNContact::removeFromGroup( const QString &group )
 {
+	if(group.isNull())
+	{
+		kdDebug() << "MSNContact::removeFromGroup: ignoring top-level group" << endl;
+		return;
+	}
 	m_moving=false;
 	if(m_groups.contains(group))
 		MSNProtocol::protocol()->removeContactFromGroup( this, group );
