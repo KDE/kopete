@@ -109,7 +109,7 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 	while ( m_in.size() && ( parsedBytes = wireToTransfer( m_in ) ) )
 	{
 		transferCount++;
-		qDebug( "CoreProtocol::addIncomingData() - transfer #%i in chunk converted", transferCount);
+		qDebug( "CoreProtocol::addIncomingData() - parsed transfer #%i in chunk", transferCount);
 		int size =  m_in.size();
 		if ( parsedBytes < size )
 		{
@@ -124,6 +124,11 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 	}
 	if ( m_state == NeedMore )
 		qDebug( " - message was incomplete, waiting for more..." );
+	if ( m_eventProtocol->state() == EventProtocol::OutOfSync )
+	{	
+		qDebug( " - protocol thinks it's out of sync, discarding the rest of the buffer and hoping the server regains sync soon..." );
+		m_in.truncate( 0 );
+	}
 	qDebug( " - done processing chunk" );
 }
 
