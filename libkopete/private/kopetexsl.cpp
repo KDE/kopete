@@ -164,6 +164,9 @@ QString KopeteXSLThread::xsltTransform( const QString &xmlString, const QCString
 	if ( resultString.isEmpty() )
 		resultString = i18n( "<div><b>An internal Kopete error occurred while parsing a message:</b><br />%1</div>" ).arg( errorMsg );
 
+	#ifdef RAWXSL
+		kdDebug(14000) << k_funcinfo << resultString << endl;
+	#endif
 	return resultString;
 }
 
@@ -265,7 +268,7 @@ void KopeteXSLT::setXSLT( const QString &_document )
 			}
 			else if ( *it == QString::fromLatin1( "FROM_METACONTACT_DISPLAYNAME" ) )
 			{
-				trans += QString::fromLatin1( "<spam>"
+				trans += QString::fromLatin1( "<span>"
 				"<xsl:attribute name=\"dir\">"
 				"<xsl:value-of select=\"from/contact/metaContactDisplayName/@dir\"/>"
 				"</xsl:attribute>"
@@ -307,7 +310,12 @@ void KopeteXSLT::setXSLT( const QString &_document )
 		// Add "<kopete-i18n>" and "</kopete-i18n>" to length, hence the '+ 27'
 		document.replace( uint( pos ), orig.length() + 27, trans );
 	}
+	
 	d->document = document.utf8();
+	
+	#ifdef RAWXSL
+		kdDebug(14000) << k_funcinfo << d->document << endl;
+	#endif
 }
 
 QString KopeteXSLT::transform( const QString &xmlString )
