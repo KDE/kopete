@@ -55,38 +55,48 @@ KIRCTransferServer::KIRCTransferServer(KIRC *engine, QString nick,// QString nic
 	initServer();
 }
 
+KIRCTransferServer::~KIRCTransferServer()
+{
+	if (m_socket)
+		delete m_socket;
+}
+
 bool KIRCTransferServer::initServer()
 {
 	if (!m_socket)
 	{
+		QObject::connect(this, SIGNAL(incomingNewTransfer(KIRCTransfer *)),
+				KIRCTransferHandler::self(), SIGNAL(transferCreated(KIRCTransfer *)));
+
 		m_socket = new KExtendedSocket();
+
+//		m_socket->setHost(m_socket->localAddress()->nodeName());
+		if (!m_socket->setPort(m_port))
+			kdDebug(14120) << k_funcinfo << "Failed to set port to" << m_port << endl;
+		m_socket->setSocketFlags(KExtendedSocket::noResolve
+					|KExtendedSocket::passiveSocket
+					|KExtendedSocket::inetSocket );
+
+		if (!m_socket->setTimeout(2*60)) // FIXME: allow configuration of this.
+			kdDebug(14120) << k_funcinfo << "Failed to set timeout." << endl;
 
 		QObject::connect(m_socket, SIGNAL(readyAccept()),
 				this, SLOT(readyAccept()));
 		QObject::connect(m_socket, SIGNAL(connectionFailed(int)),
 				this, SLOT(connectionFailed(int)));
 
-		QObject::connect(this, SIGNAL(incomingNewTransfer(KIRCTransfer *)),
-				KIRCTransferHandler::self(), SIGNAL(transferCreated(KIRCTransfer *)));
-
-		if (!m_socket->setTimeout(2*60)) // FIXME: allow configuration of this.
-			kdDebug(14120) << k_funcinfo << "Failed to set timeout." << endl;
-//		if (!m_socket->setPort(m_port))
-//		if (!m_socket->setPort(m_port))
-		if (!m_socket->setPort(666))
-			kdDebug(14120) << k_funcinfo << "Failed to set port." << endl;
-		m_socket->setSocketFlags(KExtendedSocket::noResolve
-					|KExtendedSocket::passiveSocket
-					|KExtendedSocket::anySocket );
-//		m_socket->listen(m_backlog);
-		m_socket->listen(1);
+		m_socket->listen(m_backlog);
 		m_socket->setBlockingMode(true);
 
-//		bool success;
-//		m_port = m_socket->bindPort().toInt(&success);
-//		if(!success)
-//			kdDebug(14120) << k_funcinfo << "Failed to set port number:" << m_socket->bindPort() << endl;
-		m_port = 666;
+		const KInetSocketAddress *localAddress = static_cast<const KInetSocketAddress *>(m_socket->localAddress());
+		if (!localAddress)
+		{
+			kdDebug(14120) << k_funcinfo << "Not a KInetSocketAddress." << endl;
+			deleteLater();
+			return false;
+		}
+
+		m_port = localAddress->port();
 	}
 	return (m_socket->socketStatus() != KExtendedSocket::error);
 }

@@ -40,6 +40,8 @@ public:
 			QString fileName, Q_UINT32 fileSize,
 			QObject *parent = 0, const char *name = 0);
 
+	~KIRCTransferServer();
+
 	int port()
 	{ return m_port; }
 
