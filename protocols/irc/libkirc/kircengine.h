@@ -176,8 +176,9 @@ public slots:
 	//Message output
 	void writeRawMessage(const QString &message);
 
-	void writeMessage(const QString &message);
-	void writeMessage(const QString &command, const QStringList &args, const QString &suffix = QString::null);
+	void writeMessage(const QString &message, const QTextCodec *codec = 0 );
+	void writeMessage(const QString &command, const QStringList &args,
+		const QString &suffix = QString::null, const QTextCodec *codec = 0);
 
 	void writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage);
 

@@ -69,8 +69,9 @@ public:
 	bool isNumeric() const;
 	bool isValid() const;
 	void dump() const;
+	void decodeAgain( const QTextCodec *codec );
 
-	inline const QString &raw() const
+	inline const QCString &raw() const
 		{ return m_raw; }
 	inline const QString &prefix() const
 		{ return m_prefix; }
@@ -98,7 +99,7 @@ private:
 	/**
 	 * Contains the low level dequoted message.
 	 */
-	QString m_raw;
+	QCString m_raw;
 
 	/**
 	 * Contains the completely dequoted prefix.
@@ -131,10 +132,10 @@ private:
 	static QString ctcpQuote(const QString &str);
 	static QString ctcpUnquote(const QString &str);
 
-	static bool extractCtcpCommand(QString &str, QString &ctcpline);
+	static bool extractCtcpCommand(QCString &str, QString &ctcpline, const QTextCodec *codec);
 
-	static bool matchForIRCRegExp(const QString &line, const QTextCodec *codec, KIRC::Message &message);
-	static bool matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const QString &line, KIRC::Message &message);
+	static bool matchForIRCRegExp(const QCString &line, const QTextCodec *codec, KIRC::Message &message);
+	static bool matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const QCString &line, KIRC::Message &message);
 
 	class KIRC::Message *m_ctcpMessage;
 

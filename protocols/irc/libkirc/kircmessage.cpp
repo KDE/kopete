@@ -235,7 +235,7 @@ QString Message::ctcpUnquote(const QString &str)
 	return tmp;
 }
 
-bool Message::matchForIRCRegExp(const QString &line, const QTextCodec *codec, Message &message)
+bool Message::matchForIRCRegExp(const QCString &line, const QTextCodec *codec, Message &message)
 {
 	if(matchForIRCRegExp(m_IRCCommandType1, codec, line, message))
 		return true;
@@ -248,22 +248,22 @@ bool Message::matchForIRCRegExp(const QString &line, const QTextCodec *codec, Me
 
 // FIXME: remove the decodeStrings calls or update them.
 // FIXME: avoid the recursive call, it make the ctcp command unquoted twice (wich is wrong, but valid in most of the cases)
-bool Message::matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const QString &line, Message &msg )
+bool Message::matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const QCString &line, Message &msg )
 {
-	if (regexp.exactMatch(line))
+	if( regexp.exactMatch( codec->toUnicode(line) ) )
 	{
 		msg.m_raw = line;
 		msg.m_prefix  = unquote(regexp.cap(1));
 		msg.m_command = unquote(regexp.cap(2));
 		msg.m_args = QStringList::split(' ', regexp.cap(3));
 
-		QString suffix = regexp.cap(4);
+		QCString suffix = regexp.cap(4).latin1();
 		if (!suffix.isNull() && suffix.length() > 0)
 		{
-			if (extractCtcpCommand(suffix, msg.m_ctcpRaw))
+			if (extractCtcpCommand(suffix, msg.m_ctcpRaw, codec))
 			{
 				msg.m_ctcpMessage = new Message();
-				msg.m_ctcpMessage->m_raw = msg.m_ctcpRaw;
+				msg.m_ctcpMessage->m_raw = msg.m_ctcpRaw.latin1();
 
 				int space = msg.m_ctcpRaw.find(' ');
 				if (!matchForIRCRegExp(msg.m_ctcpMessage->m_raw, codec, *msg.m_ctcpMessage))
@@ -275,10 +275,10 @@ bool Message::matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const 
 				}
 
 				if (space > 0)
-					msg.m_ctcpMessage->m_ctcpRaw = Kopete::Message::decodeString(KSParser::parse(msg.m_ctcpRaw.mid(space)).latin1(), codec);
+					msg.m_ctcpMessage->m_ctcpRaw = KSParser::parse(msg.m_ctcpRaw.mid(space).latin1());
 			}
 
-			msg.m_suffix = Kopete::Message::decodeString(KSParser::parse(suffix).latin1(), codec);
+			msg.m_suffix = Kopete::Message::decodeString( KSParser::parse(suffix), codec );
 		}
 		else
 			msg.m_suffix = QString::null;
@@ -287,6 +287,10 @@ bool Message::matchForIRCRegExp(QRegExp &regexp, const QTextCodec *codec, const 
 	return false;
 }
 
+void Message::decodeAgain( const QTextCodec *codec )
+{
+	matchForIRCRegExp(m_raw, codec, *this);
+}
 
 // FIXME: there are missing parts
 QString Message::toString() const
@@ -320,17 +324,19 @@ bool Message::isValid() const
  * string is splited to get the first part of the message and fill the ctcp command.
  * FIXME: The code currently only match for a textual message or a ctcp message not both mixed as it can be (even if very rare).
  */
-bool Message::extractCtcpCommand(QString &message, QString &ctcpline)
+bool Message::extractCtcpCommand(QCString &message, QString &ctcpline, const QTextCodec *codec)
 {
-	message = unquote(message);
-	uint len = message.length();
-	if (message[0] == 1 && message[len-1] == 1)
+	QString msg = Kopete::Message::decodeString(message, codec);
+	uint len = msg.length();
+
+	if( msg[0] == 1 && msg[len-1] == 1 )
 	{
-		ctcpline = ctcpUnquote(message.mid(1, len-2));
-		message = QString::null;
-		kdDebug(14121) << k_funcinfo << ctcpline << endl;
+		ctcpline = ctcpUnquote( unquote( msg.mid(1, len-2) ) );
+		message.truncate(0);
+
 		return true;
 	}
+
 	return false;
 }
 

@@ -303,14 +303,14 @@ void Engine::writeRawMessage(const QString &rawMsg)
 
 /* Message will be quoted before beeing send.
  */
-void Engine::writeMessage(const QString &msg)
+void Engine::writeMessage(const QString &msg, const QTextCodec *codec)
 {
-	Message::writeMessage(this, defaultCodec, msg);
+	Message::writeMessage(this, codec ? codec : defaultCodec, msg);
 }
 
-void Engine::writeMessage(const QString &command, const QStringList &args, const QString &suffix)
+void Engine::writeMessage(const QString &command, const QStringList &args, const QString &suffix, const QTextCodec *codec)
 {
-	Message::writeMessage(this, defaultCodec, command, args, suffix );
+Message::writeMessage(this, codec ? codec : defaultCodec, command, args, suffix );
 }
 
 void Engine::writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage)

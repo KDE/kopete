@@ -261,7 +261,7 @@ void Engine::motd(const QString &server)
 //void Engine::sendPrivateMessage(const QString &contact, const QString &message)
 void Engine::privmsg(const QString &contact, const QString &message)
 {
-	writeMessage("PRIVMSG", contact, message);
+	writeMessage("PRIVMSG", contact, message, codecForNick( contact ) );
 }
 
 void Engine::privmsg(Message &msg)
@@ -273,6 +273,9 @@ void Engine::privmsg(Message &msg)
 	{
 		QString user = m.arg(0);
 		QString message = m.suffix();
+		const QTextCodec *codec = codecForNick( user );
+		if( codec != defaultCodec )
+			msg.decodeAgain( codec );
 
 		if( Entity::isChannel(user) )
 			emit incomingMessage(msg.nickFromPrefix(), msg.arg(0), message );

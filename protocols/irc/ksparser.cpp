@@ -25,8 +25,11 @@ Modified by Jason Keirstead <jason@keirstead.org>
 
 #include <kopetenotifyclient.h>
 #include <kdebug.h>
+#include <qbuffer.h>
+#include <qdatastream.h>
 #include <qstylesheet.h>
 #include "ksparser.h"
+#include <stdlib.h>
 
 KSParser KSParser::m_parser;
 
@@ -72,14 +75,17 @@ KSParser::~KSParser()
 }
 
 /* NOTE: If thread corruption are seen simply ad a qlock here */
-QString KSParser::parse(const QString &message)
+QCString KSParser::parse(const QCString &message)
 {
 	return m_parser._parse(message);
 }
 
-QString KSParser::_parse(const QString &message)
+QCString KSParser::_parse(const QCString &message)
 {
-	QString res;
+	QCString data( message.size() * 2 );
+	QBuffer buff( data );
+	buff.open( IO_WriteOnly );
+
 	m_tags.clear();
 	m_attributes.clear();
 
@@ -89,17 +95,19 @@ QString KSParser::_parse(const QString &message)
 	QColor fgColor; /*KopeteMesage::fg().name()*/
 	QColor bgColor; /*KopeteMesage::bg().name()*/
 
+	uint chars = 0;
 	for(uint i = 0; i < message.length(); ++i)
 	{
 		const QChar &cur = message[i];
+		QString toAppend;
 
 		switch (cur)
 		{
 			case 0x02:	//Bold: ^B
-				res += toggleTag("b");
+				toAppend= toggleTag("b");
 				break;
 			case 0x03:	//Color code: ^C
-				if (colorsModeRegexp.search(message, i+1) == i+1)
+				if (colorsModeRegexp.search(message, i+1) == (int)i+1)
 				{
 					i += colorsModeRegexp.matchedLength(); // + 1 will be added by ++
 					QString tagStyle;
@@ -115,54 +123,64 @@ QString KSParser::_parse(const QString &message)
 						<< "fg:" << fgColor.name()
 						<< "\tbg:" << bgColor.name() << endl;
 
-					res += pushColorTag(fgColor, bgColor);
+					toAppend = pushColorTag(fgColor, bgColor);
 				}
 				else
 				{
 					kdDebug(14120)	<< k_funcinfo << "reverting colors" << endl;
-					res += popTag(QString::fromLatin1("span"));
+					toAppend = popTag(QString::fromLatin1("span"));
 				}
 				break;
 			case 0x07:	//System bell: ^G
 				KNotifyClient::beep( QString::fromLatin1("IRC beep event received in a message") );
 				break;
 			case '\t':	// 0x09
-				res += QString::fromLatin1("&nbsp;&nbsp;&nbsp;&nbsp;");
+				toAppend = QString::fromLatin1("&nbsp;&nbsp;&nbsp;&nbsp;");
 				break;
 			case '\n':	// 0x0D
-				res += QString::fromLatin1("<br/>");
+				toAppend= QString::fromLatin1("<br/>");
 				break;
 			case 0x0D:	// Italics: ^N
-				res += toggleTag("i");
+				toAppend = toggleTag("i");
 				break;
 			case 0x0F:	//Plain Text, close all tags: ^O
-				res.append( popAll() );
+				toAppend = popAll();
 				break;
 	//		case 0x12:	// Reverse original text colors: ^R
 	//			break;
 			case 0x16:	//Invert Colors: ^V
 				swap(fgColor, bgColor);
-				res += pushColorTag(fgColor, bgColor);
+				toAppend = pushColorTag(fgColor, bgColor);
 				break;
 			case 0x1F:	//Underline
-				res += toggleTag("u");
+				toAppend = toggleTag("u");
 				break;
 			case '<':
-				res += QString::fromLatin1("&lt;");
+				toAppend = QString::fromLatin1("&lt;");
 				break;
 			case '>':
-				res += QString::fromLatin1("&gt;");
+				toAppend = QString::fromLatin1("&gt;");
 				break;
 			default:
 				if (cur < QChar(' ')) // search for control characters
-	//				res += QString::fromLatin1("&#%1;").arg(cur, 2, 16).upper();
-					res += QString::fromLatin1("&lt;%1&gt;").arg(cur, 2, 16).upper();
+					toAppend = QString::fromLatin1("&lt;%1&gt;").arg(cur, 2, 16).upper();
 				else
-					res += QStyleSheet::escape(cur);
+					toAppend = QStyleSheet::escape(cur);
 		}
+
+		chars += toAppend.length();
+		buff.writeBlock( toAppend.latin1(), toAppend.length() );
 	}
-	res.append(popAll());
-	return res;
+
+	QString toAppend = popAll();
+	chars += toAppend.length();
+	buff.writeBlock( toAppend.latin1(), toAppend.length() );
+
+	char* result = (char*)malloc(chars+1);
+	memcpy( result, buff.buffer(), chars );
+	result[chars] = '\0';
+
+	return result;
 }
 
 QString KSParser::pushTag(const QString &tag, const QString &attributes)

@@ -225,7 +225,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 
 	m_contactManager = new IRCContactManager(mNickName, this);
 	setMyself( m_contactManager->mySelf() );
-	setAccountLabel(networkName);
+	setAccountLabel( QString::fromLatin1("%1@%2").arg(mNickName,networkName) );
 	m_myServer = m_contactManager->myServer();
 }
 
