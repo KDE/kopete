@@ -31,7 +31,10 @@ JabberContact::JabberContact(QString userid, QString name, QString group, Jabber
 	mGroup =  group;
 	mUserID = userid;
 	hasLocalGroup = false;
+  msgDialog = new JabberMessageDialog(this, mProtocol);
 
+  connect(this, SIGNAL(msgRecieved(QString, QString, QString, QString, QFont, QColor)), msgDialog, SLOT(slotMessageRecieved(QString, QString, QString, QString, QFont, QColor)));
+  connect(msgDialog, SIGNAL(closing()), this, SLOT(slotMWClosing()));
 	connect(protocol, SIGNAL(contactUpdated(QString, QString, QString, QString)), this, SLOT(slotUpdateContact(QString, QString, QString, QString)));
 	connect(protocol, SIGNAL(nukeContacts(bool)), this, SLOT(slotDeleteMySelf(bool)));
   connect(protocol, SIGNAL(newMessage(QString, QString)), this, SLOT(slotNewMessage(QString, QString)));
@@ -142,8 +145,6 @@ int JabberContact::importance() const {
 
 void JabberContact::slotChatThisUser() {
   kdDebug() << "Jabber plugin: Opening chat with user " << mUserID << endl;
-  msgDialog = new JabberMessageDialog(this, mProtocol);
-  connect(this, SIGNAL(msgRecieved(QString, QString, QString, QString, QFont, QColor)), msgDialog, SLOT(slotMessageRecieved(QString, QString, QString, QString, QFont, QColor)));
   msgDialog->show();
 }
 
@@ -156,8 +157,16 @@ void JabberContact::slotNewMessage (QString userID, QString message) {
   kdDebug() << "Jabber contact: Message recieved for " << userID << endl;
   if (userID != mUserID) { return; }
   kdDebug() << "Jabber contact: It's for us! *swoon*" << endl;
+  msgDialog->show();
   emit msgRecieved(userID, mName, mName, message, QFont(), QColor());
   kdDebug() << "Jabber contact: end slotNewMessage" << endl;
+}
+
+void JabberContact::slotMWClosing() {
+  delete msgDialog;
+  msgDialog = new JabberMessageDialog(this, mProtocol);
+  connect(this, SIGNAL(msgRecieved(QString, QString, QString, QString, QFont, QColor)), msgDialog, SLOT(slotMessageRecieved(QString, QString, QString, QString, QFont, QColor)));
+  connect(msgDialog, SIGNAL(closing(void)), this, SLOT(slotMWClosing(void)));
 }
 
 #include "jabbercontact.moc"

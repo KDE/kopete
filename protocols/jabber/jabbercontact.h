@@ -67,6 +67,9 @@ class JabberContact : public KopeteContact
     QString nickname();
 
 	public slots:
+    void slotMWClosing(void);
+    void slotNewMessage(QString, QString);
+
 	private slots:
 		void slotUpdateContact (QString, QString, QString, QString);
 		void slotDeleteMySelf (bool);
@@ -75,7 +78,6 @@ class JabberContact : public KopeteContact
 		void slotDoRenameContact();
 		void slotMoveThisUser();
     void slotChatThisUser();
-    void slotNewMessage(QString, QString);
 
 	private:
 		void initActions();
