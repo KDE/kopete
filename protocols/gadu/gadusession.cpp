@@ -110,7 +110,7 @@ GaduSession::login( uin_t uin, const QString& password,
 	params_.password = const_cast<char*>( password.latin1() );
 	params_.status = status;
 	params_.status_descr = statusDescr.local8Bit().data();
-	params_.client_version = GG_DEFAULT_CLIENT_VERSION;
+	params_.client_version = strdup( GG_DEFAULT_CLIENT_VERSION );
 	params_.async = 1;
 	login( params_ );
 }
