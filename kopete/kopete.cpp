@@ -121,7 +121,7 @@ void Kopete::slotLoadPlugins()
 	for ( QStringList::ConstIterator it = disableArgs.begin(); it != disableArgs.end(); ++it )
 	{
 		showConfigDialog = false;
-		KopetePluginManager::self()->setPluginEnabled( *it, true );
+		KopetePluginManager::self()->setPluginEnabled( *it, false );
 	}
 
 	// Load some plugins exclusively? (--load-plugins=foo,bar)
