@@ -14,9 +14,6 @@
     *************************************************************************
 */
 
-//define this if you want to get tons of packets printed out
-//#define OSCAR_PACKETLOG 1
-
 #include "oscarsocket.h"
 #include "oscarsocket.icq.h"
 

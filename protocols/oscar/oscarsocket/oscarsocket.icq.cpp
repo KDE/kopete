@@ -76,8 +76,10 @@ void OscarSocket::encodePasswordXOR(const QString &originalPassword, QCString &e
         }
 		encodedPassword += enc;
 	}
-
+#ifdef OSCAR_PWDEBUG
+	kdDebug(14150) << " plaintext pw='" << originalPassword << "', length=" << originalPassword.length() << endl;
 	kdDebug(14150) << " encoded pw='" << encodedPassword << "', length=" << encodedPassword.length() << endl;
+#endif
 }
 
 void OscarSocket::sendLoginICQ()
@@ -104,7 +106,9 @@ void OscarSocket::sendLoginICQ()
 	outbuf.addTLV(0x000e, 0x0002, ICQ_COUNTRY);
 	outbuf.addTLV(0x000f, 0x0002, ICQ_LANG);
 
+#ifdef OSCAR_PWDEBUG
 	kdDebug(14150) << "CLI_COOKIE packet:" << endl << outbuf.toString() << endl;
+#endif
 
 	sendBuf(outbuf,0x01);
 

@@ -65,6 +65,10 @@ void OscarSocket::sendLoginAIM(void)
 	//if set, old-style buddy lists will not work... you will need to use SSI
 	outbuf.addTLV8(0x004a,0x01);
 
+#ifdef OSCAR_PWDEBUG
+	kdDebug(14150) << "CLI_MD5LOGIN packet:" << endl << outbuf.toString() << endl;
+#endif
+
 	sendBuf(outbuf,0x02);
 	kdDebug(14150) << k_funcinfo <<  "emitting connectionChanged" << endl;
 //	emit connectionChanged(3,"Sending username and password...");
