@@ -62,7 +62,7 @@ KopeteOnlineStatus YahooStatus::translate() const
 	else if(m_status == OnVacation)
 		return KopeteOnlineStatus(KopeteOnlineStatus::Away,    10, YahooProtocol::protocol(), m_status, "yahoo_away",    i18n(YSTOnVacation), i18n(YSTOnVacation));
 	else if(m_status == OutToLunch)
-		return KopeteOnlineStatus(KopeteOnlineStatus::Away,    10, YahooProtocol::protocol(), m_status, "yahoo_away",    i18n(YSTOutToLunch), i18n(YSTOutToLunch));
+		return KopeteOnlineStatus(KopeteOnlineStatus::Away,    10, YahooProtocol::protocol(), m_status, "yahoo_tea",    i18n(YSTOutToLunch), i18n(YSTOutToLunch));
 	else if(m_status == SteppedOut)
 		return KopeteOnlineStatus(KopeteOnlineStatus::Away,    10, YahooProtocol::protocol(), m_status, "yahoo_away",    i18n(YSTSteppedOut), i18n(YSTSteppedOut));
 	else	// must be offline
