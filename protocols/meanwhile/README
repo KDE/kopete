@@ -1,0 +1,53 @@
+This is a kopete plugin for meanwhile using the libmeanwhile library.
+
+To INSTALL
+==========
+
+1. install libmeanwhile
+2. install kopete with the meanwhile plugin.
+
+installing libmeanwhile
+=======================
+from http://meanwhile.sf.net - use version 0.3
+Refer to INSTALL in the meanwhile code. Run configure without specifying the --with_gaim_src
+ # autogen.sh
+ # ./configure --prefix=/usr
+ # make
+ # su -c make install
+
+installing kopete with meanwhile plugin
+=======================================
+1. Get kopete src from kopete.kde.org (latest cvs)
+2. move this directory to $KOPETE_SRC/kopete/protocols/meanwhile,
+3. patch the configure script in $KOPETE_SRC to pickup meanwhile
+        in $KOPETE_SRC
+        # patch -P0 < kopete/protocols/meanwhile/configure.patch
+4. patch Makefile.am in protocols with protocols-makefile.patch
+        in $KOPETE_SRC
+        # patch -P0 < kopete/protocols/meanwhile/protocols-makefile.patch
+5. run automake to process this Makefile.am
+        in $KOPETE_SRC
+        # automake kopete/protocols/Makefile
+6. libmeanwhile uses glib and kopete's makefile have no references to glib, so
+   edit $KOPETE_SRC/kopete/protocols/meanwhile/Makefile.am and verify that
+   GLIB_INCLUDES points to the right places. These variables are currently
+   set for Fedora-core-1. If you have to modify the variable, rebuild the
+   makefile.
+        in $KOPETE_SRC
+        # automake kopete/protocols/meanwhile/Makefile
+7. follow the steps defined in kopete INSTALL:
+        on fedora/redhat this could be (from $KOPETE_SRC)
+        # ./configure --prefix=/usr/
+        # make
+        # make install
+7.1 if you want to install only meanwhile on an existing copy of kopete, 
+        after the make, try make install in 
+                $KOPETE_SRC/kopete/protocols/meanwhile
+      
+8. enjoy*.
+
+* Hopefully i have fixed this, but when you try to add accounts and you 
+donot find meanwhile listed, copy kopete/protocols/meanwhile/kopete_meanwhile.desktop 
+to $KDE_DIR/share/services (/usr/share/services on fedora).
+* If you find the icons for meanwhile missing, overwrite Makefile in 
+    kopete/protocols/meanwhile/icons with Makefile.siva
