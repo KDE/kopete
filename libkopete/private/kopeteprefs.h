@@ -88,7 +88,6 @@ public:
 	bool showTray() const { return mShowTray; }
 	bool richText() const { return mRichText; }
 	bool chatWShowSend() const { return mChatWShowSend; }
-	bool autoConnect() const { return mAutoConnect; }
 
 	int chatWindowPolicy() const { return mChatWindowPolicy; }
 	QString styleSheet() const { return mStyleSheet; }
@@ -164,7 +163,6 @@ public:
 	void setReconnectOnDisconnect( bool newSetting );
 	void setTruncateContactNames( bool );
 	void setMaxContactNameLength( int );
-	void setAutoConnect( bool );
 
 signals:
 	/**
@@ -231,7 +229,6 @@ private:
 	bool mMessageAppearanceChanged;
 	bool mContactListAppearanceChanged;
 	bool mChatWShowSend;
-	bool mAutoConnect;
 
 	int mChatWindowPolicy;
 	
