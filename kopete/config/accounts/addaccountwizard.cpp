@@ -127,7 +127,7 @@ void AddAccountWizard::accept()
 
 void AddAccountWizard::reject()
 {
-	if(m_proto && Kopete::AccountManager::manager()->accounts(m_proto).isEmpty())
+	if(m_proto && Kopete::AccountManager::self()->accounts(m_proto).isEmpty())
 	{
 		//FIXME: we should use a decent way to do that
 		QString protocol_name=m_proto->pluginId().remove( "Protocol" ).lower();
@@ -226,7 +226,7 @@ void AddAccountWizard::next()
 		if ( !m_accountPage->validateData() )
 			return;
 
-		QColor col = Kopete::AccountManager::manager()->guessColor( m_proto );
+		QColor col = Kopete::AccountManager::self()->guessColor( m_proto );
 
 		m_finish->mColorButton->setColor( col );
 		m_finish->mUseColor->setChecked( col.isValid() );

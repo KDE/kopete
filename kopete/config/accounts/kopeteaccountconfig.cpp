@@ -93,7 +93,7 @@ void KopeteAccountConfig::save()
 		it.key()->setColor(it.data());
 	m_newColors.clear();
 
-	Kopete::AccountManager::manager()->save();
+	Kopete::AccountManager::self()->save();
 	
 	load(); //refresh the colred accounts (in case of apply)
 }
@@ -104,7 +104,7 @@ void KopeteAccountConfig::load()
 
 	m_view->mAccountList->clear();
 
-	QPtrList<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts();
+	QPtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
 	for ( Kopete::Account *i = accounts.first() ; i; i = accounts.next() )
 	{
 		// Insert the item after the previous one
@@ -217,7 +217,7 @@ void KopeteAccountConfig::slotEditAccount()
 	// FIXME: Why deleteLater? It shouldn't be in use anymore at this point - Martijn
 	editDialog->deleteLater();
 	load();
-	Kopete::AccountManager::manager()->save();
+	Kopete::AccountManager::self()->save();
 }
 
 void KopeteAccountConfig::slotRemoveAccount()
@@ -230,7 +230,7 @@ void KopeteAccountConfig::slotRemoveAccount()
 	if ( KMessageBox::warningContinueCancel( this, i18n( "Are you sure you want to remove the account \"%1\"?" ).arg( i->accountId() ),
 		i18n( "Remove Account" ), KGuiItem(i18n( "Remove Account" ),"editdelete") ) == KMessageBox::Continue )
 	{
-		Kopete::AccountManager::manager()->removeAccount( i );
+		Kopete::AccountManager::self()->removeAccount( i );
 		delete lvi;
 	}
 }

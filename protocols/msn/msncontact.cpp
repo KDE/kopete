@@ -109,7 +109,7 @@ Kopete::MessageManager *MSNContact::manager( bool canCreate )
 	Kopete::ContactPtrList chatmembers;
 	chatmembers.append(this);
 
-	Kopete::MessageManager *_manager = Kopete::MessageManagerFactory::factory()->findMessageManager(  account()->myself(), chatmembers, protocol() );
+	Kopete::MessageManager *_manager = Kopete::MessageManagerFactory::self()->findMessageManager(  account()->myself(), chatmembers, protocol() );
 	MSNMessageManager *manager = dynamic_cast<MSNMessageManager*>( _manager );
 	if(!manager &&  canCreate)
 	{

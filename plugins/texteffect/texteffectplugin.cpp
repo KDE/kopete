@@ -38,7 +38,7 @@ TextEffectPlugin::TextEffectPlugin( QObject *parent, const char *name, const QSt
 
 	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
 
-	connect( Kopete::MessageManagerFactory::factory(),
+	connect( Kopete::MessageManagerFactory::self(),
 		SIGNAL( aboutToSend( Kopete::Message & ) ),
 		SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
 

@@ -101,7 +101,7 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KURL & url) co
 	QString email = file.readEntry("Email");
 
 	Kopete::Account *account = 0;
-	QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts(proto);
+	QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts(proto);
 	// do not show chooser if we only have one account to "choose" from
 	if (accounts.count() == 1)
 	{
@@ -990,7 +990,7 @@ Kopete::Contact *ICQProtocol::deserializeContact(Kopete::MetaContact *metaContac
 	const QMap<QString, QString> &/*addressBookData*/)
 {
 	QString accountId = serializedData["accountId"];
-	QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts(this);
+	QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts(this);
 	ICQAccount *account = static_cast<ICQAccount*>(accounts[accountId]);
 
 	if(!account)

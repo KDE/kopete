@@ -82,7 +82,7 @@ QString unionContents( QString arg1, QString arg2 )
 }
 
 Kopete::MetaContact::MetaContact()
-: Kopete::PluginDataObject( Kopete::ContactList::contactList() ), Kopete::NotifyDataObject()
+: Kopete::PluginDataObject( Kopete::ContactList::self() ), Kopete::NotifyDataObject()
 {
 	d = new KopeteMetaContactPrivate;
 
@@ -739,9 +739,9 @@ bool Kopete::MetaContact::fromXML( const QDomElement& element )
 				{
 					QString strGroupId = groupElement.attribute( QString::fromLatin1("id") );
 					if( !strGroupId.isEmpty() )
-						addToGroup( Kopete::ContactList::contactList()->getGroup( strGroupId.toUInt() ) );
+						addToGroup( Kopete::ContactList::self()->getGroup( strGroupId.toUInt() ) );
 					else //kopete 0.6 contactlist
-						addToGroup( Kopete::ContactList::contactList()->getGroup( groupElement.text() ) );
+						addToGroup( Kopete::ContactList::self()->getGroup( groupElement.text() ) );
 				}
 				else if( groupElement.tagName() == QString::fromLatin1( "top-level" ) ) //kopete 0.6 contactlist
 					addToGroup( Kopete::Group::topLevel() );
@@ -1046,11 +1046,11 @@ bool Kopete::MetaContact::syncWithKABC()
 						if ( separatorPos != -1 )
 							*it = (*it).left( separatorPos );
 
-						QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts( proto );
+						QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( proto );
 						QDictIterator<Kopete::Account> acs(accounts);
 						Kopete::MetaContact *mc = 0;
 						for ( acs.toFirst(); acs.current(); ++acs )
-							if ( ( mc = Kopete::ContactList::contactList()->findContact(
+							if ( ( mc = Kopete::ContactList::self()->findContact(
 									proto->pluginId(), acs.current()->accountId(), *it ) ) )
 								break;
 

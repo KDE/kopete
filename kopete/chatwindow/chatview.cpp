@@ -1957,7 +1957,7 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 	else if( event->provides( "kopete/x-metacontact" ) )
 	{
 		QString metacontactID=QString::fromUtf8(event->encodedData ( "kopete/x-metacontact" ));
-		Kopete::MetaContact *m=Kopete::ContactList::contactList()->metaContact(metacontactID);
+		Kopete::MetaContact *m=Kopete::ContactList::self()->metaContact(metacontactID);
 
 		if( m && m_manager->mayInvite())
 		{
@@ -2010,7 +2010,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 	else if( event->provides( "kopete/x-metacontact" ) )
 	{
 		QString metacontactID=QString::fromUtf8(event->encodedData ( "kopete/x-metacontact" ));
-		Kopete::MetaContact *m=Kopete::ContactList::contactList()->metaContact(metacontactID);
+		Kopete::MetaContact *m=Kopete::ContactList::self()->metaContact(metacontactID);
 		if(m && m_manager->mayInvite())
 		{
 			QPtrList<Kopete::Contact> cts=m->contacts();

@@ -38,8 +38,8 @@ ContactNotesPlugin::ContactNotesPlugin( QObject *parent, const char *name, const
 		pluginStatic_ = this;
 
 	KAction *m_actionEdit=new KAction( i18n("&Notes"), "identity", 0, this, SLOT (slotEditInfo()), actionCollection() , "editContactNotes");
-	connect ( Kopete::ContactList::contactList() , SIGNAL( metaContactSelected(bool)) , m_actionEdit , SLOT(setEnabled(bool)));
-	m_actionEdit->setEnabled(Kopete::ContactList::contactList()->selectedMetaContacts().count()==1 );
+	connect ( Kopete::ContactList::self() , SIGNAL( metaContactSelected(bool)) , m_actionEdit , SLOT(setEnabled(bool)));
+	m_actionEdit->setEnabled(Kopete::ContactList::self()->selectedMetaContacts().count()==1 );
 
 	setXMLFile("contactnotesui.rc");
 }
@@ -59,7 +59,7 @@ ContactNotesPlugin* ContactNotesPlugin::pluginStatic_ = 0L;
 
 void ContactNotesPlugin::slotEditInfo()
 {
-	Kopete::MetaContact *m=Kopete::ContactList::contactList()->selectedMetaContacts().first();
+	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
 	if(!m)
 		return;
 	ContactNotesEdit *e=new ContactNotesEdit(m,this);

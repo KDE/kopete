@@ -76,7 +76,7 @@ Kopete::Account::Account( Kopete::Protocol *parent, const QString &accountId, co
 	QObject::connect( d->suppressStatusTimer, SIGNAL( timeout() ),
 		this, SLOT( slotStopSuppression() ) );
 
-	if ( Kopete::AccountManager::manager()->registerAccount( this ) )
+	if ( Kopete::AccountManager::self()->registerAccount( this ) )
 		QTimer::singleShot( 0, this, SLOT( slotAccountReady() ) );
 	else
 		deleteLater();
@@ -87,14 +87,14 @@ Kopete::Account::~Account()
 	// Delete all registered child contacts first
 	while ( !d->contacts.isEmpty() )
 		delete *QDictIterator<Kopete::Contact>( d->contacts );
-	Kopete::AccountManager::manager()->unregisterAccount( this );
+	Kopete::AccountManager::self()->unregisterAccount( this );
 
 	delete d;
 }
 
 void Kopete::Account::slotAccountReady()
 {
-	Kopete::AccountManager::manager()->notifyAccountReady( this );
+	Kopete::AccountManager::self()->notifyAccountReady( this );
 }
 
 void Kopete::Account::connect( const Kopete::OnlineStatus& )
@@ -320,7 +320,7 @@ bool Kopete::Account::addContact( const QString &contactId, const QString &displ
 	Kopete::Group *parentGroup = 0L;
 	//If this is a temporary contact, use the temporary group
 	if ( !groupName.isNull() )
-		parentGroup = isTemporary ? Kopete::Group::temporary() : Kopete::ContactList::contactList()->getGroup( groupName );
+		parentGroup = isTemporary ? Kopete::Group::temporary() : Kopete::ContactList::self()->getGroup( groupName );
 
 	if(!parentGroup && parentContact)
 		parentGroup=parentContact->groups().first();
@@ -338,8 +338,8 @@ bool Kopete::Account::addContact( const QString &contactId, const QString &displ
 				c->setMetaContact(parentContact);*/
 
 			c->metaContact()->setTemporary(false, parentGroup );
-			if(!Kopete::ContactList::contactList()->metaContacts().contains(c->metaContact()))
-				Kopete::ContactList::contactList()->addMetaContact(c->metaContact());
+			if(!Kopete::ContactList::self()->metaContacts().contains(c->metaContact()))
+				Kopete::ContactList::self()->addMetaContact(c->metaContact());
 		}
 		else
 		{
@@ -370,7 +370,7 @@ bool Kopete::Account::addContact( const QString &contactId, const QString &displ
 		else
 			parentContact->addToGroup( parentGroup );
 
-		Kopete::ContactList::contactList()->addMetaContact( parentContact );
+		Kopete::ContactList::self()->addMetaContact( parentContact );
 	}
 
 	//Fix for 77835 (forward the metacontact name is displayName is empty)

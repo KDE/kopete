@@ -1375,7 +1375,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 				task->go ( true );
 
 				// Is the user already in our contact list?
-				metaContact = Kopete::ContactList::contactList ()->findContact (protocol ()->pluginId (), accountId (), jid.full().lower () );
+				metaContact = Kopete::ContactList::self ()->findContact (protocol ()->pluginId (), accountId (), jid.full().lower () );
 
 				// If it is not, ask the user if he wants to subscribe in return.
 				if ( ( !metaContact || metaContact->isTemporary() ) &&
@@ -1486,7 +1486,7 @@ void JabberAccount::slotNewContact (const XMPP::RosterItem & item)
 	/*
 	 * See if the contact is already on our contact list
 	 */
-	Kopete::MetaContact *metaContact = Kopete::ContactList::contactList()->findContact ( protocol()->pluginId (), accountId (), item.jid().full().lower () );
+	Kopete::MetaContact *metaContact = Kopete::ContactList::self()->findContact ( protocol()->pluginId (), accountId (), item.jid().full().lower () );
 
 	if ( !metaContact )
 	{
@@ -1499,10 +1499,10 @@ void JabberAccount::slotNewContact (const XMPP::RosterItem & item)
 
 		// add this metacontact to all groups the contact is a member of
 		for (QStringList::Iterator it = groups.begin (); it != groups.end (); ++it)
-			metaContact->addToGroup (Kopete::ContactList::contactList ()->getGroup (*it));
+			metaContact->addToGroup (Kopete::ContactList::self ()->getGroup (*it));
 
 		// put it onto contact list
-		Kopete::ContactList::contactList ()->addMetaContact ( metaContact );
+		Kopete::ContactList::self ()->addMetaContact ( metaContact );
 	}
 
 	/*
@@ -1643,7 +1643,7 @@ void JabberAccount::slotReceivedMessage (const XMPP::Message & message)
 
 			contactFrom = contactPool()->addContact ( XMPP::RosterItem ( jid ), metaContact, false );
 
-			Kopete::ContactList::contactList ()->addMetaContact (metaContact);
+			Kopete::ContactList::self ()->addMetaContact (metaContact);
 		}
 	}
 
@@ -1681,7 +1681,7 @@ void JabberAccount::slotGroupChatJoined (const XMPP::Jid & jid)
 	// Add the groupchat contact to the meta contact.
 	metaContact->addContact ( groupContact );
 
-	Kopete::ContactList::contactList ()->addMetaContact ( metaContact );
+	Kopete::ContactList::self ()->addMetaContact ( metaContact );
 
 	/**
 	 * Add an initial resource for this contact to the pool. We need
@@ -1702,10 +1702,10 @@ void JabberAccount::slotGroupChatLeft (const XMPP::Jid & jid)
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo "Left groupchat " << jid.full () << endl;
 
 	// remove group contact from list
-	Kopete::MetaContact *metaContact = Kopete::ContactList::contactList()->findMetaContactByContactId ( jid.userHost () );
+	Kopete::MetaContact *metaContact = Kopete::ContactList::self()->findMetaContactByContactId ( jid.userHost () );
 
 	if ( metaContact )
-		Kopete::ContactList::contactList()->removeMetaContact ( metaContact );
+		Kopete::ContactList::self()->removeMetaContact ( metaContact );
 
 	// now remove it from our pool, which should clean up all subcontacts as well
 	contactPool()->removeContact ( XMPP::Jid ( jid.userHost () ) );

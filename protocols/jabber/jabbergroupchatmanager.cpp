@@ -34,7 +34,7 @@ JabberGroupChatManager::JabberGroupChatManager ( JabberProtocol *protocol, const
 	mRoomJid = roomJid;
 
 	// make sure Kopete knows about this instance
-	Kopete::MessageManagerFactory::factory()->addMessageManager ( this );
+	Kopete::MessageManagerFactory::self()->addMessageManager ( this );
 
 	connect ( this, SIGNAL ( messageSent ( Kopete::Message &, Kopete::MessageManager * ) ),
 			  this, SLOT ( slotMessageSent ( Kopete::Message &, Kopete::MessageManager * ) ) );

@@ -587,7 +587,7 @@ JabberMessageManager *JabberContact::manager ( Kopete::ContactPtrList chatMember
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "called, canCreate: " << canCreate << endl;
 
-	Kopete::MessageManager *_manager = Kopete::MessageManagerFactory::factory()->findMessageManager ( account()->myself(), chatMembers, protocol() );
+	Kopete::MessageManager *_manager = Kopete::MessageManagerFactory::self()->findMessageManager ( account()->myself(), chatMembers, protocol() );
 	JabberMessageManager *manager = dynamic_cast<JabberMessageManager*>( _manager );
 
 	/*

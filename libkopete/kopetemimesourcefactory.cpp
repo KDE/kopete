@@ -64,7 +64,7 @@ const QMimeSource *MimeSourceFactory::data( const QString &abs_name ) const
 	{
 		if ( parts.size() >= 4 )
 		{
-			Account *account = AccountManager::manager()->findAccount( parts[1], parts[2] );
+			Account *account = AccountManager::self()->findAccount( parts[1], parts[2] );
 			if ( account ) 
 			{
 				Contact *contact = account->contacts()[ parts[3] ];
@@ -87,7 +87,7 @@ const QMimeSource *MimeSourceFactory::data( const QString &abs_name ) const
 	{
 		if ( parts.size() >= 3 )
 		{
-			Account *account = AccountManager::manager()->findAccount( parts[1], parts[2] );
+			Account *account = AccountManager::self()->findAccount( parts[1], parts[2] );
 			if ( account )
 			{
 				img = account->myself()->onlineStatus().iconFor( account->myself() );
@@ -104,7 +104,7 @@ const QMimeSource *MimeSourceFactory::data( const QString &abs_name ) const
 	{
 		if ( parts.size() >= 2 )
 		{
-			MetaContact *mc = ContactList::contactList()->metaContact( parts[1] );
+			MetaContact *mc = ContactList::self()->metaContact( parts[1] );
 			if ( mc )
 			{	
 				img = SmallIcon( mc->statusIcon() );
@@ -131,7 +131,7 @@ const QMimeSource *MimeSourceFactory::data( const QString &abs_name ) const
 			 * Note that if the cache has been invalidated in the meantime, we'll just
 			 * get an empty pixmap back.
 			 */
-			Account *account = AccountManager::manager()->accounts().getFirst();
+			Account *account = AccountManager::self()->accounts().getFirst();
 			if ( account )
 			{
 				img = account->myself()->onlineStatus().iconFor( parts[1] );

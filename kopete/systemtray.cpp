@@ -60,11 +60,11 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent, const char* name)
 	mKopeteIcon = loadIcon("kopete");
 
 	connect(mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()));
-	connect(Kopete::MessageManagerFactory::factory() , SIGNAL(newEvent(Kopete::MessageEvent*)),
+	connect(Kopete::MessageManagerFactory::self() , SIGNAL(newEvent(Kopete::MessageEvent*)),
 		this, SLOT(slotNewEvent(Kopete::MessageEvent*)));
 	connect(KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()));
 
-	connect(Kopete::AccountManager::manager(),
+	connect(Kopete::AccountManager::self(),
 		SIGNAL(accountOnlineStatusChanged(Kopete::Account *,
 		const Kopete::OnlineStatus &, const Kopete::OnlineStatus &)),
 	this, SLOT(slotReevaluateAccountStates()));
@@ -275,7 +275,7 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 	bool bOffline = false;
 	Kopete::Contact *c = 0;
 
-	for (QPtrListIterator<Kopete::Account> it(Kopete::AccountManager::manager()->accounts()); it.current(); ++it)
+	for (QPtrListIterator<Kopete::Account> it(Kopete::AccountManager::self()->accounts()); it.current(); ++it)
 	{
 		c = it.current()->myself();
 		if (!c)

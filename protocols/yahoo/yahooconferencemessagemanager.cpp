@@ -34,7 +34,7 @@ YahooConferenceMessageManager::YahooConferenceMessageManager( const QString & /*
 	Kopete::ContactPtrList others, const char *name )
 : Kopete::MessageManager( user, others, protocol, 0, name )
 {
-	Kopete::MessageManagerFactory::factory()->addMessageManager( this );
+	Kopete::MessageManagerFactory::self()->addMessageManager( this );
 }
 
 YahooConferenceMessageManager::~YahooConferenceMessageManager()

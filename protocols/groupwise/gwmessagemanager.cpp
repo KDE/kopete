@@ -62,7 +62,7 @@ GroupWiseMessageManager::GroupWiseMessageManager(const Kopete::Contact* user, Ko
 	setInstance( protocol->instance() );
 	
 	// make sure Kopete knows about this instance
-	Kopete::MessageManagerFactory::factory()->addMessageManager ( this );
+	Kopete::MessageManagerFactory::self()->addMessageManager ( this );
 
 	connect ( this, SIGNAL( messageSent ( Kopete::Message &, Kopete::MessageManager * ) ),
 			  SLOT( slotMessageSent ( Kopete::Message &, Kopete::MessageManager * ) ) );

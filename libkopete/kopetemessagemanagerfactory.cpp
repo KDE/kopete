@@ -27,7 +27,7 @@
 
 Kopete::MessageManagerFactory* Kopete::MessageManagerFactory::s_factory = 0L;
 
-Kopete::MessageManagerFactory* Kopete::MessageManagerFactory::factory()
+Kopete::MessageManagerFactory* Kopete::MessageManagerFactory::self()
 {
 	if( !s_factory )
 		s_factory = new Kopete::MessageManagerFactory( kapp );

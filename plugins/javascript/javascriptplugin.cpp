@@ -207,23 +207,23 @@ JavaScriptPlugin::JavaScriptPlugin( QObject *parent, const char *name, const QSt
 		pluginStatic_ = this;
 
 	//Kopete::Message events
-	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( aboutToDisplay( Kopete::Message & ) ),
+	connect( Kopete::MessageManagerFactory::self(), SIGNAL( aboutToDisplay( Kopete::Message & ) ),
 		this, SLOT( slotDisplayMessage( Kopete::Message & ) ) );
 
-	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( aboutToReceive( Kopete::Message & ) ),
+	connect( Kopete::MessageManagerFactory::self(), SIGNAL( aboutToReceive( Kopete::Message & ) ),
 		this, SLOT( slotIncomingMessage( Kopete::Message & ) ) );
 
-	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( aboutToSend( Kopete::Message & ) ),
+	connect( Kopete::MessageManagerFactory::self(), SIGNAL( aboutToSend( Kopete::Message & ) ),
 		this, SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
 
-	connect( Kopete::AccountManager::manager(), SIGNAL( accountReady( Kopete::Account * ) ),
+	connect( Kopete::AccountManager::self(), SIGNAL( accountReady( Kopete::Account * ) ),
 		this, SLOT( slotAccountCreated( Kopete::Account * ) ) );
 
 	KJSEmbed::JSSecurityPolicy::setDefaultPolicy( KJSEmbed::JSSecurityPolicy::CapabilityAll );
 
 	d = new JavaScriptPluginPrivate();
 	connect( d->config, SIGNAL( changed() ), this, SLOT( slotReloadScripts() ) );
-	for( QPtrListIterator<Kopete::Account> it( Kopete::AccountManager::manager()->accounts() ); it.current(); ++it )
+	for( QPtrListIterator<Kopete::Account> it( Kopete::AccountManager::self()->accounts() ); it.current(); ++it )
 	{
 		slotAccountCreated( it.current() );
 	}
@@ -239,7 +239,7 @@ JavaScriptPlugin::JavaScriptPlugin( QObject *parent, const char *name, const QSt
 
 void JavaScriptPlugin::slotReloadScripts()
 {
-	for( QPtrListIterator<Kopete::Account> it( Kopete::AccountManager::manager()->accounts() ); it.current(); ++it )
+	for( QPtrListIterator<Kopete::Account> it( Kopete::AccountManager::self()->accounts() ); it.current(); ++it )
 	{
 		execScripts( it.current() );
 	}
@@ -285,8 +285,8 @@ void JavaScriptPlugin::slotAccountCreated( Kopete::Account *a )
 		ep->jsEngine->factory()->addType( "Kopete::MessageManagerFactory" );
 		ep->jsEngine->factory()->addType( "KopeteView" );
 
-		ep->jsEngine->addObject( Kopete::MessageManagerFactory::factory(), "MessageManagerFactory" );
-		ep->jsEngine->addObject( Kopete::AccountManager::manager(), "AccountManager" );
+		ep->jsEngine->addObject( Kopete::MessageManagerFactory::self(), "MessageManagerFactory" );
+		ep->jsEngine->addObject( Kopete::AccountManager::self(), "AccountManager" );
 
 		KJS::Object account = ep->jsEngine->addObject( a, "Account" );
 		ObjectList<Kopete::Contact> accountContacts( ep->jsEngine, a->contacts() );
@@ -296,9 +296,9 @@ void JavaScriptPlugin::slotAccountCreated( Kopete::Account *a )
                 ep->jsEngine->interpreter()->globalObject().put( ep->jsEngine->globalExec(),
                     "Myself", KJS::Object( myself ) );
 
-		KJS::Object contactList = ep->jsEngine->addObject( Kopete::ContactList::contactList(), "ContactList" );
-		ep->contactList = ObjectList<Kopete::MetaContact>( ep->jsEngine, Kopete::ContactList::contactList()->metaContacts() );
-		ep->groupList = ObjectList<Kopete::Group>( ep->jsEngine, Kopete::ContactList::contactList()->groups() );
+		KJS::Object contactList = ep->jsEngine->addObject( Kopete::ContactList::self(), "ContactList" );
+		ep->contactList = ObjectList<Kopete::MetaContact>( ep->jsEngine, Kopete::ContactList::self()->metaContacts() );
+		ep->groupList = ObjectList<Kopete::Group>( ep->jsEngine, Kopete::ContactList::self()->groups() );
 		contactList.put( ep->jsEngine->globalExec(), "metaContacts", ep->contactList.array() );
 		contactList.put( ep->jsEngine->globalExec(), "groups", ep->groupList.array() );
 

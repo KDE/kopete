@@ -32,7 +32,7 @@ JabberMessageManager::JabberMessageManager ( JabberProtocol *protocol, const Jab
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId () << endl;
 
 	// make sure Kopete knows about this instance
-	Kopete::MessageManagerFactory::factory()->addMessageManager ( this );
+	Kopete::MessageManagerFactory::self()->addMessageManager ( this );
 
 	connect ( this, SIGNAL ( messageSent ( Kopete::Message &, Kopete::MessageManager * ) ),
 			  this, SLOT ( slotMessageSent ( Kopete::Message &, Kopete::MessageManager * ) ) );

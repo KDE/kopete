@@ -61,7 +61,7 @@ public:
 	 *
 	 * \return the instance of the Kopete::AccountManager
 	 */
-	static AccountManager* manager();
+	static AccountManager* self();
 
 	~AccountManager();
 

@@ -102,11 +102,11 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, c
 
 	// Contact list signals for group management events
 	QObject::connect(
-		Kopete::ContactList::contactList(), SIGNAL(groupRenamed(Kopete::Group *, const QString &)),
+		Kopete::ContactList::self(), SIGNAL(groupRenamed(Kopete::Group *, const QString &)),
 		this, SLOT(slotKopeteGroupRenamed(Kopete::Group *, const QString &)));
 
 	QObject::connect(
-		Kopete::ContactList::contactList(), SIGNAL(groupRemoved(Kopete::Group *)),
+		Kopete::ContactList::self(), SIGNAL(groupRemoved(Kopete::Group *)),
 		this, SLOT(slotKopeteGroupRemoved(Kopete::Group *)));
 
 	// own status changed
@@ -399,7 +399,7 @@ void OscarAccount::slotKopeteGroupRemoved(Kopete::Group *group)
 void OscarAccount::slotGotServerBuddyList()
 {
 	kdDebug(14150) << k_funcinfo << "account='" << accountId() << "'" << endl;
-	Kopete::ContactList* kcl = Kopete::ContactList::contactList();
+	Kopete::ContactList* kcl = Kopete::ContactList::self();
 
 	//disconnect, otherwise groups attempted to get added again after
 	//disconnecting and reconnecting. I could use blockSignals() here,
@@ -421,7 +421,7 @@ void OscarAccount::slotGotServerBuddyList()
 		{ //active contact on SSI
 			kdDebug(14150) << k_funcinfo << "Adding SSI group '" <<
 				git.current()->name << "' to kopete contact list" << endl;
-			Kopete::ContactList::contactList()->getGroup( git.current()->name );
+			Kopete::ContactList::self()->getGroup( git.current()->name );
 		}
 	}
 

@@ -90,7 +90,7 @@ Kopete::MessageManager::~MessageManager()
 	if ( !d )
 		return;
 	d->mCanBeDeleted = false; //prevent double deletion
-	Kopete::MessageManagerFactory::factory()->removeSession( this );
+	Kopete::MessageManagerFactory::self()->removeSession( this );
 	emit closing( this );
 	delete d;
 }
@@ -408,7 +408,7 @@ KopeteView* Kopete::MessageManager::view( bool canCreate, Kopete::Message::ViewT
 {
 	if ( !d->view && canCreate )
 	{
-		d->view = Kopete::MessageManagerFactory::factory()->createView( this, type );
+		d->view = Kopete::MessageManagerFactory::self()->createView( this, type );
 		if ( d->view )
 		{
 			connect( d->view->mainWidget(), SIGNAL( closing( KopeteView * ) ), this, SLOT( slotViewDestroyed( ) ) );

@@ -157,7 +157,7 @@ Kopete::MessageManager* OscarContact::manager(bool canCreate)
 		QPtrList<Kopete::Contact> theContact;
 		theContact.append(this);
 
-		mMsgManager = Kopete::MessageManagerFactory::factory()->create(account()->myself(), theContact, protocol());
+		mMsgManager = Kopete::MessageManagerFactory::self()->create(account()->myself(), theContact, protocol());
 
 		// This is for when the user types a message and presses send
 		connect(mMsgManager,

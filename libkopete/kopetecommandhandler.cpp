@@ -136,7 +136,7 @@ Kopete::CommandHandler::CommandHandler() : QObject( qApp )
 	connect( Kopete::PluginManager::self(), SIGNAL( pluginLoaded( Kopete::Plugin*) ),
 		this, SLOT(slotPluginLoaded(Kopete::Plugin*) ) );
 
-	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( viewCreated( KopeteView * ) ),
+	connect( Kopete::MessageManagerFactory::self(), SIGNAL( viewCreated( KopeteView * ) ),
 		this, SLOT( slotViewCreated( KopeteView* ) ) );
 }
 
@@ -329,14 +329,14 @@ void Kopete::CommandHandler::slotAwayCommand( const QString &args, Kopete::Messa
 void Kopete::CommandHandler::slotAwayAllCommand( const QString &args, Kopete::MessageManager *manager )
 {
 	if( manager->account()->isAway() )
-		Kopete::AccountManager::manager()->setAvailableAll();
+		Kopete::AccountManager::self()->setAvailableAll();
 
 	else
 	{
 		if( args.isEmpty() )
-			Kopete::AccountManager::manager()->setAwayAll();
+			Kopete::AccountManager::self()->setAwayAll();
 		else
-			Kopete::AccountManager::manager()->setAwayAll( args );
+			Kopete::AccountManager::self()->setAwayAll( args );
 	}
 }
 

@@ -124,7 +124,7 @@ Kopete::MessageManager *YahooContact::manager( bool )
 	{
 		Kopete::ContactPtrList m_them;
 		m_them.append( this );
-		m_manager = Kopete::MessageManagerFactory::factory()->create( m_account->myself(), m_them, protocol() );
+		m_manager = Kopete::MessageManagerFactory::self()->create( m_account->myself(), m_them, protocol() );
 		connect( m_manager, SIGNAL( destroyed() ), this, SLOT( slotMessageManagerDestroyed() ) );
 		connect( m_manager, SIGNAL( messageSent ( Kopete::Message&, Kopete::MessageManager* ) ), this, SLOT( slotSendMessage( Kopete::Message& ) ) );
 		connect( m_manager, SIGNAL( typingMsg( bool) ), this, SLOT( slotTyping( bool ) ) );

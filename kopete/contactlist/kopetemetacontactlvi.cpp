@@ -462,7 +462,7 @@ void KopeteMetaContactLVI::slotRemoveThisUser()
 		arg( m_metaContact->displayName() ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"),"editdelete") )
 		== KMessageBox::Continue )
 	{
-		Kopete::ContactList::contactList()->removeMetaContact( m_metaContact );
+		Kopete::ContactList::self()->removeMetaContact( m_metaContact );
 	}
 }
 
@@ -505,7 +505,7 @@ void KopeteMetaContactLVI::slotMoveToGroup()
 		}
 		else
 		{
-			Kopete::Group *to = Kopete::ContactList::contactList()->getGroup( m_actionMove->currentText() );
+			Kopete::Group *to = Kopete::ContactList::self()->getGroup( m_actionMove->currentText() );
 			if ( !m_metaContact->groups().contains( to ) )
 				m_metaContact->moveToGroup( group(), to );
 		}
@@ -524,7 +524,7 @@ void KopeteMetaContactLVI::slotAddToGroup()
 		}
 		else
 		{
-			m_metaContact->addToGroup( Kopete::ContactList::contactList()->getGroup( m_actionCopy->currentText() ) );
+			m_metaContact->addToGroup( Kopete::ContactList::self()->getGroup( m_actionCopy->currentText() ) );
 		}
 	}
 }
@@ -540,7 +540,7 @@ void KopeteMetaContactLVI::slotAddToNewGroup()
 		i18n( "New Group" ), i18n( "Please enter the name for the new group:" ) );
 
 	if ( !groupName.isEmpty() )
-		m_metaContact->addToGroup( Kopete::ContactList::contactList()->getGroup( groupName ) );
+		m_metaContact->addToGroup( Kopete::ContactList::self()->getGroup( groupName ) );
 }
 
 void KopeteMetaContactLVI::slotConfigChanged()

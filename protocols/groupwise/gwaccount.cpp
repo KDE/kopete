@@ -77,9 +77,9 @@ GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& ac
 	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOffline );
 
 	// Contact list management
-	QObject::connect( Kopete::ContactList::contactList(), SIGNAL( groupRenamed( Kopete::Group *, const QString & ) ),
+	QObject::connect( Kopete::ContactList::self(), SIGNAL( groupRenamed( Kopete::Group *, const QString & ) ),
 			SLOT( slotKopeteGroupRenamed( Kopete::Group * ) ) );
-	QObject::connect( Kopete::ContactList::contactList(), SIGNAL( groupRemoved( Kopete::Group * ) ),
+	QObject::connect( Kopete::ContactList::self(), SIGNAL( groupRemoved( Kopete::Group * ) ),
 			SLOT( slotKopeteGroupRemoved( Kopete::Group * ) ) );
 	
 	m_connector = 0;
@@ -615,7 +615,7 @@ void GroupWiseAccount::receiveFolder( const FolderItem & folder )
 	}
 	// either find a local group and record these details there, or create a new group to suit
 	Kopete::Group * found = 0;
-	QPtrList<Kopete::Group> groupList = Kopete::ContactList::contactList()->groups();
+	QPtrList<Kopete::Group> groupList = Kopete::ContactList::self()->groups();
 	for ( Kopete::Group *grp = groupList.first(); grp; grp = groupList.next() )
 	{
 		// see if there is already a local group that matches this group
@@ -650,7 +650,7 @@ void GroupWiseAccount::receiveFolder( const FolderItem & folder )
 		grp->setPluginData( protocol(), accountId() + " objectId", QString::number( folder.id ) );
 		grp->setPluginData( protocol(), accountId() + " serverDisplayName", folder.name );
 		grp->setPluginData( protocol(), accountId() + " sequence", QString::number( folder.sequence ) );
-		Kopete::ContactList::contactList()->addGroup( grp );
+		Kopete::ContactList::self()->addGroup( grp );
 	}
 }
 
@@ -670,7 +670,7 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - found contact in list, checking to see it's in this group " << endl;
 		// check the metacontact is in the group this listing-of-the-contact is in...
 		Kopete::MetaContact *metaContact = c->metaContact();
-		Kopete::GroupList groupList = Kopete::ContactList::contactList()->groups();
+		Kopete::GroupList groupList = Kopete::ContactList::self()->groups();
 		for ( Kopete::Group *grp = groupList.first(); grp; grp = groupList.next() )
 		{
 			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - seeking in group named: " << grp->displayName() << ", id: " << grp->pluginData( protocol(), accountId() + " objectId" ).toInt() << " our parentId is: " << contact.parentId << endl;
@@ -687,7 +687,7 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 		Kopete::MetaContact *metaContact = new Kopete::MetaContact();
 		metaContact->setDisplayName( contact.displayName );
 		c = new GroupWiseContact( this, contact.dn, metaContact, contact.id, contact.parentId, contact.sequence );
-		Kopete::GroupList groupList = Kopete::ContactList::contactList()->groups();
+		Kopete::GroupList groupList = Kopete::ContactList::self()->groups();
 
 		for ( Kopete::Group *grp = groupList.first(); grp; grp = groupList.next() )
 		{
@@ -697,7 +697,7 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 				break;
 			}
 		}
-		Kopete::ContactList::contactList()->addMetaContact( metaContact );
+		Kopete::ContactList::self()->addMetaContact( metaContact );
 	}
 	// finally, record this contact list instance in the contact
 	ContactListInstance inst;
@@ -787,7 +787,7 @@ GroupWiseContact * GroupWiseAccount::createTemporaryContact( const QString & dn 
 		metaContact->setDisplayName( displayName );
 		c = new GroupWiseContact( this, details.dn, metaContact, 0, 0, 0 );
 		c->updateDetails( details );
-		Kopete::ContactList::contactList()->addMetaContact( metaContact );
+		Kopete::ContactList::self()->addMetaContact( metaContact );
 		// the contact details probably don't contain status - but we can ask for it
 		if ( details.status == GroupWise::Invalid )
 			m_client->requestStatus( details.dn );
@@ -869,7 +869,7 @@ bool GroupWiseAccount::addContactToMetaContact( const QString& contactId, const 
 	
 	// find out the highest folder sequence number
 	int highestFreeSequence = 0;
-	groupList = Kopete::ContactList::contactList()->groups();
+	groupList = Kopete::ContactList::self()->groups();
 	for ( Kopete::Group *group = groupList.first(); group; group = groupList.next() )
 	{
 		bool ok = true;

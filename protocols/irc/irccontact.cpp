@@ -116,7 +116,7 @@ Kopete::MessageManager *IRCContact::manager(bool canCreate)
 		if(MYACCOUNT->engine()->status() == KIRC::Engine::Disconnected)
 			MYACCOUNT->connect();
 
-		m_msgManager = Kopete::MessageManagerFactory::factory()->create(MYACCOUNT->myself(), mMyself, MYACCOUNT->protocol());
+		m_msgManager = Kopete::MessageManagerFactory::self()->create(MYACCOUNT->myself(), mMyself, MYACCOUNT->protocol());
 		m_msgManager->setDisplayName(caption());
 
 		QObject::connect( m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::MessageManager *)),
@@ -277,7 +277,7 @@ bool IRCContact::isChatting(Kopete::MessageManager *avoid) const
 	if (!MYACCOUNT)
 		return false;
 
-	QIntDict<Kopete::MessageManager> sessions = Kopete::MessageManagerFactory::factory()->sessions();
+	QIntDict<Kopete::MessageManager> sessions = Kopete::MessageManagerFactory::self()->sessions();
 	for (QIntDictIterator<Kopete::MessageManager> it( sessions ); it.current() ; ++it)
 	{
 		if( it.current() != avoid && it.current()->account() == MYACCOUNT &&

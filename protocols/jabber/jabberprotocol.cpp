@@ -200,7 +200,7 @@ Kopete::Contact *JabberProtocol::deserializeContact (Kopete::MetaContact * metaC
 	QString displayName = serializedData["displayName"];
 	QString accountId = serializedData["accountId"];
 
-	QDict < Kopete::Account > accounts = Kopete::AccountManager::manager ()->accounts (this);
+	QDict < Kopete::Account > accounts = Kopete::AccountManager::self ()->accounts (this);
 	Kopete::Account *account = accounts[accountId];
 
 	if (!account)

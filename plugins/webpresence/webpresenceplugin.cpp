@@ -55,9 +55,9 @@ WebPresencePlugin::WebPresencePlugin( QObject *parent, const char *name, const Q
 {
 	m_writeScheduler = new QTimer( this );
 	connect ( m_writeScheduler, SIGNAL( timeout() ), this, SLOT( slotWriteFile() ) );
-	connect( Kopete::AccountManager::manager(), SIGNAL(accountReady(Kopete::Account*)),
+	connect( Kopete::AccountManager::self(), SIGNAL(accountReady(Kopete::Account*)),
 				this, SLOT( listenToAllAccounts() ) );
-	connect( Kopete::AccountManager::manager(), SIGNAL(accountUnregistered(Kopete::Account*)),
+	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(Kopete::Account*)),
 				this, SLOT( listenToAllAccounts() ) );
 	
 
@@ -95,7 +95,7 @@ void WebPresencePlugin::listenToAllAccounts()
 	for ( Kopete::Protocol *p = protocols.first();
 			p; p = protocols.next() )
 	{
-		QDict<Kopete::Account> dict=Kopete::AccountManager::manager()->accounts( p );
+		QDict<Kopete::Account> dict=Kopete::AccountManager::self()->accounts( p );
 		QDictIterator<Kopete::Account> it( dict );
 		for( ; Kopete::Account *account=it.current(); ++it )
 		{
@@ -219,7 +219,7 @@ KTempFile* WebPresencePlugin::generateFile()
 	QDomElement accounts = doc.createElement( "accounts" );
 	root.appendChild( accounts );
 
-	QPtrList<Kopete::Account> list = Kopete::AccountManager::manager()->accounts();
+	QPtrList<Kopete::Account> list = Kopete::AccountManager::self()->accounts();
 	// If no accounts, stop here
 	if ( !list.isEmpty() )
 	{

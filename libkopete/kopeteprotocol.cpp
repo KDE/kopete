@@ -55,7 +55,7 @@ Kopete::Protocol::Protocol( KInstance *instance, QObject *parent, const char *na
 Kopete::Protocol::~Protocol()
 {
 	// Remove all active accounts
-	QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts( this );
+	QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
 	if ( !accounts.isEmpty() )
 	{
 		kdWarning( 14010 ) << k_funcinfo << "Deleting protocol with existing accounts! Did the account unloading go wrong?" << endl;
@@ -79,7 +79,7 @@ void Kopete::Protocol::setRichTextCapabilities( int capabilities )
 
 KActionMenu* Kopete::Protocol::protocolActions()
 {
-	QDict<Kopete::Account> dict=Kopete::AccountManager::manager()->accounts(this);
+	QDict<Kopete::Account> dict=Kopete::AccountManager::self()->accounts(this);
 	QDictIterator<Kopete::Account> it( dict );
 	if(dict.count() == 1 )
 	{
@@ -238,7 +238,7 @@ void Kopete::Protocol::deserialize( Kopete::MetaContact *metaContact, const QMap
 		// who migrate from 0.6, as there's only one account in that case
 		if( sd[ QString::fromLatin1( "accountId" ) ].isNull() )
 		{
-			QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts( this );
+			QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
 			if ( accounts.count() > 0 )
 			{
 				sd[ QString::fromLatin1( "accountId" ) ] = QDictIterator<Kopete::Account>( accounts ).currentKey();
@@ -282,7 +282,7 @@ void Kopete::Protocol::slotAccountOnlineStatusChanged( Kopete::Contact *self, co
 
 void Kopete::Protocol::slotAccountDestroyed( QObject * /* account */ )
 {
-	QDict<Kopete::Account> dict = Kopete::AccountManager::manager()->accounts( this );
+	QDict<Kopete::Account> dict = Kopete::AccountManager::self()->accounts( this );
 	if ( dict.isEmpty() )
 	{
 		// While at this point we are still in a stack trace from the destroyed
@@ -300,7 +300,7 @@ void Kopete::Protocol::aboutToUnload()
 	d->unloading = true;
 
 	// Disconnect all accounts
-	QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts( this );
+	QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
 	for ( QDictIterator<Kopete::Account> it( accounts ); it.current() ; ++it )
 	{
 		if ( it.current()->myself() && it.current()->myself()->isOnline() )

@@ -44,7 +44,7 @@ LatexPlugin::LatexPlugin( QObject *parent, const char *name, const QStringList &
 	if( !s_pluginStatic )
 		s_pluginStatic = this;
 
-	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( aboutToDisplay( Kopete::Message & ) ), SLOT( slotHandleLatex( Kopete::Message & ) ) );
+	connect( Kopete::MessageManagerFactory::self(), SIGNAL( aboutToDisplay( Kopete::Message & ) ), SLOT( slotHandleLatex( Kopete::Message & ) ) );
 	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
 
 	m_config = new LatexConfig;

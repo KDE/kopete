@@ -113,7 +113,7 @@ void ConnectionStatusPlugin::setConnectedStatus( bool connected )
 		// The machine is connected and plugin thinks we're disconnected
 		kdDebug( 14301 ) << k_funcinfo << "Setting m_pluginConnected to true" << endl;
 		m_pluginConnected = true;
-		Kopete::AccountManager::manager()->connectAll();
+		Kopete::AccountManager::self()->connectAll();
 		kdDebug( 14301 ) << k_funcinfo << "We're connected" << endl;
 	}
 	else if ( !connected && m_pluginConnected )
@@ -121,7 +121,7 @@ void ConnectionStatusPlugin::setConnectedStatus( bool connected )
 		// The machine isn't connected and plugin thinks we're connected
 		kdDebug( 14301 ) << k_funcinfo << "Setting m_pluginConnected to false" << endl;
 		m_pluginConnected = false;
-		Kopete::AccountManager::manager()->disconnectAll();
+		Kopete::AccountManager::self()->disconnectAll();
 		kdDebug( 14301 ) << k_funcinfo << "We're offline" << endl;
 	}
 }

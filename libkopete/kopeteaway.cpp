@@ -388,7 +388,7 @@ void Kopete::Away::setAutoAway()
 	// Set all accounts that are not away already to away.
 	// We remember them so later we only set the accounts to
 	// available that we set to away (and not the user).
-	QPtrList<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts();
+	QPtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
 	for(Kopete::Account *i=accounts.first() ; i; i=accounts.next() )
 	{
 		if(i->myself()->onlineStatus().status() == Kopete::OnlineStatus::Online)

@@ -95,12 +95,12 @@ public:
 	void addCurrentItems()
 	{
 		// Add the already existing groups now
-		QPtrList<Kopete::Group> grps = Kopete::ContactList::contactList()->groups();
+		QPtrList<Kopete::Group> grps = Kopete::ContactList::self()->groups();
 		for ( QPtrListIterator<Kopete::Group> groupIt( grps ); groupIt.current(); ++groupIt )
 			addGroup( groupIt.current() );
 
 		// Add the already existing meta contacts now
-		QPtrList<Kopete::MetaContact> metaContacts = Kopete::ContactList::contactList()->metaContacts();
+		QPtrList<Kopete::MetaContact> metaContacts = Kopete::ContactList::self()->metaContacts();
 		for ( QPtrListIterator<Kopete::MetaContact> it( metaContacts ); it.current(); ++it )
 			addMetaContact( it.current() );
 	}
@@ -420,18 +420,18 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ), SLOT( slotSettingsChanged() ) );
 
-	connect( Kopete::ContactList::contactList(), SIGNAL( selectionChanged() ),
+	connect( Kopete::ContactList::self(), SIGNAL( selectionChanged() ),
 	         SLOT( slotListSelectionChanged() ) );
-	connect( Kopete::ContactList::contactList(),
+	connect( Kopete::ContactList::self(),
 	         SIGNAL( metaContactAdded( Kopete::MetaContact * ) ),
 	         SLOT( slotMetaContactAdded( Kopete::MetaContact * ) ) );
-	connect( Kopete::ContactList::contactList(),
+	connect( Kopete::ContactList::self(),
 	         SIGNAL( metaContactDeleted( Kopete::MetaContact * ) ),
 	         SLOT( slotMetaContactDeleted( Kopete::MetaContact * ) ) );
-	connect( Kopete::ContactList::contactList(), SIGNAL( groupAdded( Kopete::Group * ) ),
+	connect( Kopete::ContactList::self(), SIGNAL( groupAdded( Kopete::Group * ) ),
 	         SLOT( slotGroupAdded( Kopete::Group * ) ) );
 
-	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( newEvent( Kopete::MessageEvent * ) ),
+	connect( Kopete::MessageManagerFactory::self(), SIGNAL( newEvent( Kopete::MessageEvent * ) ),
 	         this, SLOT( slotNewMessageEvent( Kopete::MessageEvent * ) ) );
 
 	connect( this, SIGNAL( dropped( QDropEvent *, QListViewItem *, QListViewItem * ) ),
@@ -498,9 +498,9 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	actionSyncKABC = new KAction( i18n( "Sync KABC..." ), QString::fromLatin1( "kaddressbook" ),
 		0, this, SLOT(  slotSyncKABC() ), ac, "contactSyncKABC" );
 
-	connect( Kopete::ContactList::contactList(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotMetaContactSelected( bool ) ) );
+	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotMetaContactSelected( bool ) ) );
 
-	QPtrList<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts();
+	QPtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
 	for( Kopete::Account *acc = accounts.first() ; acc ; acc = accounts.next() )
 	{
 		KAction *action = new KAction( acc->accountId(), acc->accountIcon(), 0, this, SLOT( slotAddContact() ), acc );
@@ -544,7 +544,7 @@ void KopeteContactListView::slotMetaContactSelected( bool sel )
 
 	if( sel )
 	{
-		Kopete::MetaContact *kmc = Kopete::ContactList::contactList()->selectedMetaContacts().first();
+		Kopete::MetaContact *kmc = Kopete::ContactList::self()->selectedMetaContacts().first();
 		set = sel && kmc->isReachable();
 		actionAddTemporaryContact->setEnabled( sel && kmc->isTemporary() );
 
@@ -597,7 +597,7 @@ void KopeteContactListView::addGroup()
 
 void KopeteContactListView::addGroup( const QString &groupName )
 {
-	d->viewStrategy->addGroup( Kopete::ContactList::contactList()->getGroup(groupName) );
+	d->viewStrategy->addGroup( Kopete::ContactList::self()->getGroup(groupName) );
 }
 
 void KopeteContactListView::slotGroupAdded( Kopete::Group *group )
@@ -641,8 +641,8 @@ void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
 	if ( !item )
 		clearSelection();
 
-	int nb = Kopete::ContactList::contactList()->selectedMetaContacts().count() +
-		Kopete::ContactList::contactList()->selectedGroups().count();
+	int nb = Kopete::ContactList::self()->selectedMetaContacts().count() +
+		Kopete::ContactList::self()->selectedGroups().count();
 
 	KMainWindow *window = dynamic_cast<KMainWindow *>(topLevelWidget());
 	if ( !window )
@@ -1264,13 +1264,13 @@ void KopeteContactListView::slotViewSelectionChanged()
 	}
 
 	// will cause slotListSelectionChanged to be called to update our actions.
-	Kopete::ContactList::contactList()->setSelectedItems(contacts , groups);
+	Kopete::ContactList::self()->setSelectedItems(contacts , groups);
 }
 
 void KopeteContactListView::slotListSelectionChanged()
 {
-	QPtrList<Kopete::MetaContact> contacts = Kopete::ContactList::contactList()->selectedMetaContacts();
-	QPtrList<Kopete::Group> groups = Kopete::ContactList::contactList()->selectedGroups();
+	QPtrList<Kopete::MetaContact> contacts = Kopete::ContactList::self()->selectedMetaContacts();
+	QPtrList<Kopete::Group> groups = Kopete::ContactList::self()->selectedGroups();
 
 	//TODO: update the list to select the items that should be selected.
 	// make sure slotViewSelectionChanged is *not* called.
@@ -1316,21 +1316,21 @@ void KopeteContactListView::updateActionsForSelection(
 
 void KopeteContactListView::slotSendMessage()
 {
-	Kopete::MetaContact *m=Kopete::ContactList::contactList()->selectedMetaContacts().first();
+	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
 	if(m)
 		m->sendMessage();
 }
 
 void KopeteContactListView::slotStartChat()
 {
-	Kopete::MetaContact *m=Kopete::ContactList::contactList()->selectedMetaContacts().first();
+	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
 	if(m)
 		m->startChat();
 }
 
 void KopeteContactListView::slotSendFile()
 {
-	Kopete::MetaContact *m=Kopete::ContactList::contactList()->selectedMetaContacts().first();
+	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
 	if(m)
 		m->sendFile(KURL());
 }
@@ -1338,7 +1338,7 @@ void KopeteContactListView::slotSendFile()
  void KopeteContactListView::slotSendEmail()
 {
 	//I borrowed this from slotSendMessage
-	Kopete::MetaContact *m=Kopete::ContactList::contactList()->selectedMetaContacts().first();
+	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
 	if ( !m->metaContactId().isEmpty( ) ) // check if in kabc
 	{
 		KABC::Addressee addressee = KABC::StdAddressBook::self()->findByUid( m->metaContactId() );
@@ -1361,7 +1361,7 @@ void KopeteContactListView::slotSendFile()
 
 void KopeteContactListView::slotSyncKABC()
 {
-	Kopete::MetaContact *m = Kopete::ContactList::contactList()->selectedMetaContacts().first();
+	Kopete::MetaContact *m = Kopete::ContactList::self()->selectedMetaContacts().first();
 	if( m )
 		if ( !m->syncWithKABC() )
 			KMessageBox::queuedMessageBox( this, KMessageBox::Information, i18n( "No contacts were added to Kopete from the address book" ), i18n( "No Change" ) );
@@ -1378,7 +1378,7 @@ void KopeteContactListView::slotMoveToGroup()
 
 	//FIXME What if two groups have the same name?
 	Kopete::Group *to = actionMove->currentItem() ?
-		Kopete::ContactList::contactList()->getGroup( actionMove->currentText() ) :
+		Kopete::ContactList::self()->getGroup( actionMove->currentText() ) :
 		Kopete::Group::topLevel();
 
 	if( !to || to->type() == Kopete::Group::Temporary )
@@ -1413,14 +1413,14 @@ void KopeteContactListView::slotMoveToGroup()
 void KopeteContactListView::slotCopyToGroup()
 {
 	Kopete::MetaContact *m =
-		Kopete::ContactList::contactList()->selectedMetaContacts().first();
+		Kopete::ContactList::self()->selectedMetaContacts().first();
 
 	if(!m)
 		return;
 
 	//FIXME! what if two groups have the same name?
 	Kopete::Group *to = actionCopy->currentItem() ?
-		Kopete::ContactList::contactList()->getGroup( actionCopy->currentText() ) :
+		Kopete::ContactList::self()->getGroup( actionCopy->currentText() ) :
 		Kopete::Group::topLevel();
 
 	if( !to || to->type() == Kopete::Group::Temporary )
@@ -1456,8 +1456,8 @@ void KopeteContactListView::slotRemoveFromGroup()
 
 void KopeteContactListView::slotRemove()
 {
-	QPtrList<Kopete::MetaContact> contacts = Kopete::ContactList::contactList()->selectedMetaContacts();
-	QPtrList<Kopete::Group> groups = Kopete::ContactList::contactList()->selectedGroups();
+	QPtrList<Kopete::MetaContact> contacts = Kopete::ContactList::self()->selectedMetaContacts();
+	QPtrList<Kopete::Group> groups = Kopete::ContactList::self()->selectedGroups();
 
 	if(groups.count() + contacts.count() == 0)
 		return;
@@ -1517,7 +1517,7 @@ void KopeteContactListView::slotRemove()
 
 	for( Kopete::MetaContact *it = contacts.first(); it; it = contacts.next() )
 	{
-		Kopete::ContactList::contactList()->removeMetaContact( it );
+		Kopete::ContactList::self()->removeMetaContact( it );
 	}
 
 	for( Kopete::Group *it = groups.first(); it; it = groups.next() )
@@ -1527,7 +1527,7 @@ void KopeteContactListView::slotRemove()
 		{
 			Kopete::MetaContact *mc = list.current();
 			if(mc->groups().count()==1)
-				Kopete::ContactList::contactList()->removeMetaContact(mc);
+				Kopete::ContactList::self()->removeMetaContact(mc);
 			else
 				mc->removeFromGroup(it);
 		}
@@ -1539,7 +1539,7 @@ void KopeteContactListView::slotRemove()
 			continue;
 		}
 
-		Kopete::ContactList::contactList()->removeGroup( it );
+		Kopete::ContactList::self()->removeGroup( it );
 	}
 }
 
@@ -1565,7 +1565,7 @@ void KopeteContactListView::slotAddContact()
 		return;
 
 	Kopete::MetaContact *metacontact =
-		Kopete::ContactList::contactList()->selectedMetaContacts().first();
+		Kopete::ContactList::self()->selectedMetaContacts().first();
 	Kopete::Account *account = dynamic_cast<Kopete::Account*>( sender()->parent() );
 
 	if( account && metacontact )
@@ -1601,7 +1601,7 @@ void KopeteContactListView::slotAddContact()
 void KopeteContactListView::slotAddTemporaryContact()
 {
 	Kopete::MetaContact *metacontact =
-		Kopete::ContactList::contactList()->selectedMetaContacts().first();
+		Kopete::ContactList::self()->selectedMetaContacts().first();
 	if( metacontact )
 	{
 /*		int r=KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
@@ -1760,7 +1760,7 @@ void KopeteContactListView::slotUndo()
 		 case UndoItem::MetaContactChange:
 		 {
 		 	Kopete::Contact *c=0;
-			Kopete::MetaContact *m0=Kopete::ContactList::contactList()->findContact(m_undo->args[0] , m_undo->args[1], m_undo->args[2] ) ;
+			Kopete::MetaContact *m0=Kopete::ContactList::self()->findContact(m_undo->args[0] , m_undo->args[1], m_undo->args[2] ) ;
 			if(m0)
 				c=m0->findContact(m_undo->args[0] , m_undo->args[1], m_undo->args[2] );
 			if(c)
@@ -1774,7 +1774,7 @@ void KopeteContactListView::slotUndo()
 					m->addToGroup(m_undo->group);
 					m->setDisplayName(m_undo->args[3]);
 					c->setMetaContact(m);
-					Kopete::ContactList::contactList()->addMetaContact(m);
+					Kopete::ContactList::self()->addMetaContact(m);
 				}
 				m_undo->metacontact=m0; //for the redo
 			}
@@ -1783,7 +1783,7 @@ void KopeteContactListView::slotUndo()
 		 case UndoItem::ContactAdd:
 		 {
 			Kopete::Contact *c=0;
-			Kopete::MetaContact *m0=Kopete::ContactList::contactList()->findContact(m_undo->args[0] , m_undo->args[1], m_undo->args[2] ) ;
+			Kopete::MetaContact *m0=Kopete::ContactList::self()->findContact(m_undo->args[0] , m_undo->args[1], m_undo->args[2] ) ;
 			if(m0)
 				c=m0->findContact(m_undo->args[0] , m_undo->args[1], m_undo->args[2] );
 			if(c)
@@ -1792,7 +1792,7 @@ void KopeteContactListView::slotUndo()
 				Kopete::MetaContact *m=new Kopete::MetaContact;
 				m->setTemporary(true);
 				c->setMetaContact(m);
-				Kopete::ContactList::contactList()->addMetaContact(m);
+				Kopete::ContactList::self()->addMetaContact(m);
 				m_undo->metacontact=m0;
 			}
 			break;
@@ -1892,7 +1892,7 @@ void KopeteContactListView::slotRedo()
 		 case UndoItem::ContactAdd:
 		 {
 		 	Kopete::Contact *c=0;
-			Kopete::MetaContact *m0=Kopete::ContactList::contactList()->findContact(m_redo->args[0] , m_redo->args[1], m_redo->args[2] ) ;
+			Kopete::MetaContact *m0=Kopete::ContactList::self()->findContact(m_redo->args[0] , m_redo->args[1], m_redo->args[2] ) ;
 			if(m0)
 				c=m0->findContact(m_redo->args[0] , m_redo->args[1], m_redo->args[2] );
 			if(c && m_redo->metacontact)

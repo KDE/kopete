@@ -58,7 +58,7 @@ class Kopete::ContactList::KopeteContactListPrivate
 
 Kopete::ContactList *Kopete::ContactList::s_contactList = 0L;
 
-Kopete::ContactList *Kopete::ContactList::contactList()
+Kopete::ContactList *Kopete::ContactList::self()
 {
 	if( !s_contactList )
 		s_contactList = new Kopete::ContactList;
@@ -105,7 +105,7 @@ Kopete::MetaContact *Kopete::ContactList::metaContact( const QString &metaContac
 Kopete::MetaContact *Kopete::ContactList::findContact( const QString &protocolId,
 	const QString &accountId, const QString &contactId )
 {
-	Kopete::Account *i=Kopete::AccountManager::manager()->findAccount(protocolId,accountId);
+	Kopete::Account *i=Kopete::AccountManager::self()->findAccount(protocolId,accountId);
 	if(!i)
 	{
 		kdDebug( 14010 ) << k_funcinfo << "Account not found" << endl;
@@ -198,7 +198,7 @@ void Kopete::ContactList::loadXML()
 			}
 			else
 			{
-				Kopete::ContactList::contactList()->addMetaContact(
+				Kopete::ContactList::self()->addMetaContact(
 					metaContact );
 			}
 		}
@@ -212,7 +212,7 @@ void Kopete::ContactList::loadXML()
 			}
 			else
 			{
-				Kopete::ContactList::contactList()->addGroup( group );
+				Kopete::ContactList::self()->addGroup( group );
 			}
 		}
 		else

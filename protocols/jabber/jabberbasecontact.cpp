@@ -129,7 +129,7 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 		
 		if ( !found )
 		{
-			groupsToAddTo.append ( Kopete::ContactList::contactList()->getGroup ( *item.groups().at(i) ) );
+			groupsToAddTo.append ( Kopete::ContactList::self()->getGroup ( *item.groups().at(i) ) );
 		}
 	}
 

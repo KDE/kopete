@@ -253,10 +253,10 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		QString::fromLatin1("query %s"),
 		i18n("USAGE: /msg <nickname> [<message>] - Alias for QUERY <nickname> <message>."), Kopete::CommandHandler::SystemAlias, 1 );
 
-	QObject::connect( Kopete::MessageManagerFactory::factory(), SIGNAL(aboutToDisplay(Kopete::Message &)),
+	QObject::connect( Kopete::MessageManagerFactory::self(), SIGNAL(aboutToDisplay(Kopete::Message &)),
 		this, SLOT(slotMessageFilter(Kopete::Message &)) );
 
-	QObject::connect( Kopete::MessageManagerFactory::factory(), SIGNAL( viewCreated( KopeteView* ) ),
+	QObject::connect( Kopete::MessageManagerFactory::self(), SIGNAL( viewCreated( KopeteView* ) ),
 		this, SLOT( slotViewCreated( KopeteView* ) ) );
 
 	setRichTextCapabilities( Kopete::Protocol::RichBFormatting | Kopete::Protocol::RichUFormatting | Kopete::Protocol::RichColor );
@@ -344,7 +344,7 @@ Kopete::Contact *IRCProtocol::deserializeContact( Kopete::MetaContact *metaConta
 	if( displayName.isEmpty() )
 		displayName = contactId;
 
-	QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts( this );
+	QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
 	if( !accounts.isEmpty() )
 	{
 		Kopete::Account *a = accounts[ serializedData[ "accountId" ] ];

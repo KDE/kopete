@@ -100,7 +100,7 @@ void AccountSelector::initUI()
 	if(d->proto != 0)
 	{
 		kdDebug(14010) << k_funcinfo << "creating list for a certain protocol" << endl;
-		QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts(d->proto);
+		QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts(d->proto);
 		QDictIterator<Kopete::Account> it(accounts);
 		for(; Kopete::Account *account = it.current(); ++it)
 		{
@@ -110,7 +110,7 @@ void AccountSelector::initUI()
 	else
 	{
 		kdDebug(14010) << k_funcinfo << "creating list of all accounts" << endl;
-		QPtrList<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts();
+		QPtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
 		Kopete::Account *account = 0;
 		for(account = accounts.first(); account; account = accounts.next())
 		{

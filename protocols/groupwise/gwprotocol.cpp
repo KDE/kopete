@@ -89,7 +89,7 @@ Kopete::Contact *GroupWiseProtocol::deserializeContact(
 	int parentId = serializedData[ "parentId" ].toInt();
 	int sequence = serializedData[ "sequenceNumber" ].toInt();
 	
-	QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts( this );
+	QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
 
 	Kopete::Account *account = accounts[ accountId ];
 	if ( !account )

@@ -74,7 +74,7 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	m_addressBook = 0L;  // so we can tell if it's already loaded
 
 	// Populate the groups list
-	Kopete::GroupList groups=Kopete::ContactList::contactList()->groups();
+	Kopete::GroupList groups=Kopete::ContactList::self()->groups();
 	for( Kopete::Group *it = groups.first(); it; it = groups.next() )
 	{
 		QString groupname = it->displayName();
@@ -87,7 +87,7 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 
 	// Populate the accounts list
 	QCheckListItem* accountLVI = 0;
-	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::manager()->accounts();
+	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
 	for(Kopete::Account *i=accounts.first() ; i; i=accounts.next() )
 	{
 		accountLVI= new QCheckListItem( protocolListView, i->accountId(), QCheckListItem::CheckBox);
@@ -268,7 +268,7 @@ void AddContactWizard::accept()
 			if(m_groupItems.contains(check))
 				metaContact->addToGroup(m_groupItems[check]);
 			else //it's a new group
-				metaContact->addToGroup( Kopete::ContactList::contactList()->getGroup( check->text() ) );
+				metaContact->addToGroup( Kopete::ContactList::self()->getGroup( check->text() ) );
 			topLevel = false;
 		}
 	}
@@ -290,7 +290,7 @@ void AddContactWizard::accept()
 		if ( addresseeListView->isEnabled() && i )
 			metaContact->setMetaContactId( i->addressee().uid() );
 		// add it to the contact list
-		Kopete::ContactList::contactList()->addMetaContact( metaContact );
+		Kopete::ContactList::self()->addMetaContact( metaContact );
 	}
 	else
 		delete metaContact;

@@ -523,7 +523,7 @@ GaduAccount::messageReceived( KGaduMessage* gaduMessage )
 		metaContact->setTemporary ( true );
 		contact = new GaduContact( gaduMessage->sender_id,
 				QString::number( gaduMessage->sender_id ), this, metaContact );
-		Kopete::ContactList::contactList ()->addMetaContact( metaContact );
+		Kopete::ContactList::self ()->addMetaContact( metaContact );
 		addNotify( gaduMessage->sender_id );
 	}
 
@@ -812,7 +812,7 @@ GaduAccount::userlist( const QString& contactsListString )
 			// put him in all desired groups:
 			groups = QStringList::split( ",", contactsList[i].group );
 			for ( QStringList::Iterator groupsIterator = groups.begin(); groupsIterator != groups.end(); ++groupsIterator ) {
-				metaContact->addToGroup( Kopete::ContactList::contactList ()->getGroup ( *groupsIterator) );
+				metaContact->addToGroup( Kopete::ContactList::self ()->getGroup ( *groupsIterator) );
 			}
 		}
 	}

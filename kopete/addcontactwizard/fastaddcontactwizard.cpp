@@ -37,7 +37,7 @@ FastAddContactWizard::FastAddContactWizard( QWidget *parent, const char *name )
 
 	// Populate the accounts list
 	QListViewItem* accountLVI = 0L;
-	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::manager()->accounts();
+	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
 	for(Kopete::Account *i=accounts.first() ; i; i=accounts.next() )
 	{
 		accountLVI= new QListViewItem( protocolListView, i->accountId() );
@@ -124,7 +124,7 @@ void FastAddContactWizard::accept()
 	if ( ok )
 	{
 		// add it to the contact list
-		Kopete::ContactList::contactList()->addMetaContact( metaContact );
+		Kopete::ContactList::self()->addMetaContact( metaContact );
 	}
 	else
 		delete metaContact;

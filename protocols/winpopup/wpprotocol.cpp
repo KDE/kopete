@@ -119,7 +119,7 @@ Kopete::Contact *WPProtocol::deserializeContact( Kopete::MetaContact *metaContac
 	QString contactId = serializedData[ "contactId" ];
 	QString accountId = serializedData[ "accountId" ];
 
-	WPAccount *theAccount = static_cast<WPAccount *>(Kopete::AccountManager::manager()->findAccount(protocol()->pluginId(), accountId));
+	WPAccount *theAccount = static_cast<WPAccount *>(Kopete::AccountManager::self()->findAccount(protocol()->pluginId(), accountId));
 	if(!theAccount)
 	{	DEBUG(WPDINFO, "Account " << accountId << " not found");
 		return 0;

@@ -96,7 +96,7 @@ void AIMProtocolHandler::handleURL(const KURL &url) const
 		QString screenname = tocNormalize(command);
 
 		Kopete::Account *account = 0;
-		QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts(proto);
+		QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts(proto);
 		// do not show chooser if we only have one account to "choose" from
 		if (accounts.count() == 1)
 		{
@@ -190,7 +190,7 @@ Kopete::Contact *AIMProtocol::deserializeContact(Kopete::MetaContact *metaContac
 	QString displayName=serializedData["displayName"];
 
 	// Get the account it belongs to
-	QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts(this);
+	QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts(this);
 	Kopete::Account *account = accounts[accountId];
 
 	if(!account)

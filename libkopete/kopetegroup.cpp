@@ -63,7 +63,7 @@ Kopete::Group * Kopete::Group::temporary()
 uint KopeteGroupPrivate::uniqueGroupId = 0;
 
 Kopete::Group::Group( const QString &_name, GroupType _type )
-: Kopete::PluginDataObject( Kopete::ContactList::contactList() )
+: Kopete::PluginDataObject( Kopete::ContactList::self() )
 {
 	d = new KopeteGroupPrivate;
 	d->displayName = _name;
@@ -74,7 +74,7 @@ Kopete::Group::Group( const QString &_name, GroupType _type )
 }
 
 Kopete::Group::Group()
-: Kopete::PluginDataObject( Kopete::ContactList::contactList() )
+: Kopete::PluginDataObject( Kopete::ContactList::self() )
 {
 	d = new KopeteGroupPrivate;
 	d->expanded = true;
@@ -105,7 +105,7 @@ Kopete::Group::~Group()
 
 QPtrList<Kopete::MetaContact> Kopete::Group::members() const
 {
-	QPtrList<Kopete::MetaContact> members = Kopete::ContactList::contactList()->metaContacts();
+	QPtrList<Kopete::MetaContact> members = Kopete::ContactList::self()->metaContacts();
 	// members is a *copy* of the meta contacts, so using first(), next() and remove() is fine.
 	for( members.first(); members.current(); )
 	{

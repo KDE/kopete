@@ -129,7 +129,7 @@ JavaScriptPreferences::JavaScriptPreferences( QWidget *parent, const char *, con
 	connect(preferencesDialog->accountList, SIGNAL(selectionChanged()), this, SLOT(slotUpdateScriptList()) );
 	connect(KDirWatch::self(), SIGNAL( dirty( const QString & ) ), this, SLOT( slotFileDirty( const QString & ) ) );
 
-	QPtrList<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts();
+	QPtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
 	for( Kopete::Account *a = accounts.first(); a; a = accounts.next() )
 	{
 		new AccountItem( preferencesDialog->accountList, a );

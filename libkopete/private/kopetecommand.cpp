@@ -55,7 +55,7 @@ void Kopete::Command::init( const QString &command, const char* slot, const QStr
 
 void Kopete::Command::slotAction()
 {
-	Kopete::MessageManager *manager = Kopete::MessageManagerFactory::factory()->activeView()->msgManager();
+	Kopete::MessageManager *manager = Kopete::MessageManagerFactory::self()->activeView()->msgManager();
 
 	QString args;
 	if( m_minArgs > 0 )

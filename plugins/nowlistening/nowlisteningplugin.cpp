@@ -63,12 +63,12 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 	// initialise preferences
 	m_config = new NowListeningConfig;
 
-	connect( Kopete::MessageManagerFactory::factory(), SIGNAL(
+	connect( Kopete::MessageManagerFactory::self(), SIGNAL(
 			messageManagerCreated( Kopete::MessageManager * )) , SLOT( slotNewKMM(
 			Kopete::MessageManager * ) ) );
 
 	QIntDict<Kopete::MessageManager> sessions =
-			Kopete::MessageManagerFactory::factory()->sessions();
+			Kopete::MessageManagerFactory::self()->sessions();
 	QIntDictIterator<Kopete::MessageManager> it( sessions );
 	for ( ; it.current() ; ++it )
 		slotNewKMM( it.current() );
@@ -90,7 +90,7 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 #endif
 
 	// watch for '/media' getting typed
-	connect(  Kopete::MessageManagerFactory::factory(),
+	connect(  Kopete::MessageManagerFactory::self(),
 			SIGNAL( aboutToSend( Kopete::Message & ) ),
 			SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
 			

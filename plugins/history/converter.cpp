@@ -60,7 +60,7 @@ void HistoryPlugin::convertOldHistory()
 		if( Kopete::Protocol *p = dynamic_cast<Kopete::Protocol *>( Kopete::PluginManager::self()->plugin( fi->fileName() ) ) )
 		{
 			protocolId=p->pluginId();
-			QDictIterator<Kopete::Account> it(Kopete::AccountManager::manager()->accounts(p));
+			QDictIterator<Kopete::Account> it(Kopete::AccountManager::self()->accounts(p));
 			Kopete::Account *a = it.current();
 			if(a)
 				accountId=a->accountId();

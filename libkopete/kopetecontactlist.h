@@ -46,7 +46,7 @@ public:
 	 * The contact list is a singleton object. Use this method to retrieve
 	 * the instance.
 	 */
-	static ContactList *contactList();
+	static ContactList *self();
 
 	~ContactList();
 

@@ -57,7 +57,7 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, XMPP::FileTrans
 
 		contact = mAccount->contactPool()->addContact ( mXMPPTransfer->peer (), metaContact, false );
 
-		Kopete::ContactList::contactList ()->addMetaContact ( metaContact );
+		Kopete::ContactList::self ()->addMetaContact ( metaContact );
 	}
 
 	connect ( Kopete::TransferManager::transferManager (), SIGNAL ( accepted ( Kopete::Transfer *, const QString & ) ),

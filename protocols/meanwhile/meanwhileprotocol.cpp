@@ -107,7 +107,7 @@ Kopete::Contact *MeanwhileProtocol::deserializeContact(
 
     MeanwhileAccount *theAccount = 
             static_cast<MeanwhileAccount*>(
-                            Kopete::AccountManager::manager()->
+                            Kopete::AccountManager::self()->
                                     findAccount(protocol()->pluginId(), accountId));
 
     if(!theAccount)

@@ -54,10 +54,10 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const
 	if( !pluginStatic_ )
 		pluginStatic_=this;
 
-	connect( Kopete::MessageManagerFactory::factory(),
+	connect( Kopete::MessageManagerFactory::self(),
 		SIGNAL( aboutToDisplay( Kopete::Message & ) ),
 		SLOT( slotIncomingMessage( Kopete::Message & ) ) );
-	connect( Kopete::MessageManagerFactory::factory(),
+	connect( Kopete::MessageManagerFactory::self(),
 		SIGNAL( aboutToSend( Kopete::Message & ) ),
 		SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
 
@@ -66,16 +66,16 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const
 
 
 	KAction *action=new KAction( i18n("&Select Cryptography Public Key..."), "kgpg", 0, this, SLOT (slotSelectContactKey()), actionCollection() , "contactSelectKey");
-	connect ( Kopete::ContactList::contactList() , SIGNAL( metaContactSelected(bool)) , action , SLOT(setEnabled(bool)));
-	action->setEnabled(Kopete::ContactList::contactList()->selectedMetaContacts().count()==1 );
+	connect ( Kopete::ContactList::self() , SIGNAL( metaContactSelected(bool)) , action , SLOT(setEnabled(bool)));
+	action->setEnabled(Kopete::ContactList::self()->selectedMetaContacts().count()==1 );
 
 	setXMLFile("cryptographyui.rc");
 	loadSettings();
 	connect(this, SIGNAL(settingsChanged()), this, SLOT( loadSettings() ) );
 	
-	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( messageManagerCreated( Kopete::MessageManager * )) , SLOT( slotNewKMM( Kopete::MessageManager * ) ) );
+	connect( Kopete::MessageManagerFactory::self(), SIGNAL( messageManagerCreated( Kopete::MessageManager * )) , SLOT( slotNewKMM( Kopete::MessageManager * ) ) );
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
-	QIntDict<Kopete::MessageManager> sessions = Kopete::MessageManagerFactory::factory()->sessions();
+	QIntDict<Kopete::MessageManager> sessions = Kopete::MessageManagerFactory::self()->sessions();
 	QIntDictIterator<Kopete::MessageManager> it( sessions );
 	for ( ; it.current() ; ++it )
 	{
@@ -287,7 +287,7 @@ void CryptographyPlugin::slotOutgoingMessage( Kopete::Message& msg )
 
 void CryptographyPlugin::slotSelectContactKey()
 {
-	Kopete::MetaContact *m=Kopete::ContactList::contactList()->selectedMetaContacts().first();
+	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
 	if(!m)
 		return;
 	QString key = m->pluginData( this, "gpgKey" );

@@ -60,7 +60,7 @@ public:
 
 Kopete::AccountManager * KopeteAccountManagerPrivate::s_manager = 0L;
 
-Kopete::AccountManager * Kopete::AccountManager::manager()
+Kopete::AccountManager * Kopete::AccountManager::self()
 {
 	if ( !KopeteAccountManagerPrivate::s_manager )
 		KopeteAccountManagerPrivate::s_manager = new Kopete::AccountManager;
@@ -222,7 +222,7 @@ void Kopete::AccountManager::removeAccount( Kopete::Account *account )
 	config->deleteGroup( groupName );
 	config->sync();
 
-	if ( Kopete::AccountManager::manager()->accounts( protocol ).isEmpty() )
+	if ( Kopete::AccountManager::self()->accounts( protocol ).isEmpty() )
 	{
 		// FIXME: pluginId() should return the internal name and not the class name, so
 		//        we can get rid of this hack - Olivier/Martijn

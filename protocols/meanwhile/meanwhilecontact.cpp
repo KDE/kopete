@@ -73,7 +73,7 @@ Kopete::MessageManager* MeanwhileContact::manager( bool )
 		contacts.append(this);
 
 		m_msgManager = 
-				Kopete::MessageManagerFactory::factory()->create(
+				Kopete::MessageManagerFactory::self()->create(
 									account()->myself(), 
 									contacts, protocol());
 

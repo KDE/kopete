@@ -73,7 +73,7 @@ Kopete::MessageManager* TestbedContact::manager( bool )
 	{
 		QPtrList<Kopete::Contact> contacts;
 		contacts.append(this);
-		m_msgManager = Kopete::MessageManagerFactory::factory()->create(account()->myself(), contacts, protocol());
+		m_msgManager = Kopete::MessageManagerFactory::self()->create(account()->myself(), contacts, protocol());
 		connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::MessageManager*)),
 				this, SLOT( sendMessage( Kopete::Message& ) ) );
 		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));

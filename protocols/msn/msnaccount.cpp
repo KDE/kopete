@@ -61,9 +61,9 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 	setMyself( new MSNContact( this, accountId(), 0L ) );
 	//myself()->setOnlineStatus( MSNProtocol::protocol()->FLN );
 
-	QObject::connect( Kopete::ContactList::contactList(), SIGNAL( groupRenamed( Kopete::Group *, const QString & ) ),
+	QObject::connect( Kopete::ContactList::self(), SIGNAL( groupRenamed( Kopete::Group *, const QString & ) ),
 		SLOT( slotKopeteGroupRenamed( Kopete::Group * ) ) );
-	QObject::connect( Kopete::ContactList::contactList(), SIGNAL( groupRemoved( Kopete::Group * ) ),
+	QObject::connect( Kopete::ContactList::self(), SIGNAL( groupRemoved( Kopete::Group * ) ),
 		SLOT( slotKopeteGroupRemoved( Kopete::Group * ) ) );
 
 	m_openInboxAction = new KAction( i18n( "Open Inbo&x..." ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
@@ -87,7 +87,7 @@ void MSNAccount::loaded()
 
 	//construct the group list
 	//Before 2003-11-14 the MSN server allowed us to download the group list without downloading the whole contactlist, but it's not possible anymore
-	QPtrList<Kopete::Group> groupList = Kopete::ContactList::contactList()->groups();
+	QPtrList<Kopete::Group> groupList = Kopete::ContactList::self()->groups();
 	for ( Kopete::Group *g = groupList.first(); g; g = groupList.next() )
 	{
 		QString groupNumber=g->pluginData( protocol(), accountId() + " id" );
@@ -448,7 +448,7 @@ void MSNAccount::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status )
 	{
 /*
 		Kopete::MessageManagerDict sessions =
-			Kopete::MessageManagerFactory::factory()->protocolSessions( this );
+			Kopete::MessageManagerFactory::self()->protocolSessions( this );
 		QIntDictIterator<Kopete::MessageManager> kmmIt( sessions );
 		for ( ; kmmIt.current(); ++kmmIt )
 		{
@@ -551,7 +551,7 @@ void MSNAccount::slotGroupAdded( const QString& groupName, uint groupNumber )
 	}
 	
 	//--------- Find the appropriate Kopete::Group, or create one ---------//
-	QPtrList<Kopete::Group> groupList = Kopete::ContactList::contactList()->groups();
+	QPtrList<Kopete::Group> groupList = Kopete::ContactList::self()->groups();
 	Kopete::Group *fallBack = 0L;
 	
 	//check if we have one in the old group list. if yes, update the id translate map.
@@ -615,7 +615,7 @@ void MSNAccount::slotGroupAdded( const QString& groupName, uint groupNumber )
 		else
 		{
 			fallBack = new Kopete::Group( groupName );
-			Kopete::ContactList::contactList()->addGroup( fallBack );
+			Kopete::ContactList::self()->addGroup( fallBack );
 			kdDebug( 14140 ) << k_funcinfo << "We didn't found the group " << groupName <<" So we're creating a new one." <<  endl;
 
 		}
@@ -808,7 +808,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 				Kopete::MetaContact *metaContact = new Kopete::MetaContact();
 
 				c->setMetaContact(metaContact);
-				Kopete::ContactList::contactList()->addMetaContact( metaContact );
+				Kopete::ContactList::self()->addMetaContact( metaContact );
 			}
 
 			// Contact exists, update data.
@@ -861,7 +861,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 				c->contactAddedToGroup( groupNumber, m_groupList[ groupNumber ] );
 				metaContact->addToGroup( m_groupList[ groupNumber ] );
 			}
-			Kopete::ContactList::contactList()->addMetaContact( metaContact );
+			Kopete::ContactList::self()->addMetaContact( metaContact );
 		}
 	}
 	else //the contact is _not_ in the FL, it has been removed
@@ -898,7 +898,7 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 		if ( !contacts()[ handle ] )
 		{
 			// FIXME: findContact() only works if the account id is an existing account - see Kopete::AccountManager::findAccount() for the reason
-			Kopete::MetaContact *m = Kopete::ContactList::contactList()->findContact( protocol()->pluginId(), QString::null, handle );
+			Kopete::MetaContact *m = Kopete::ContactList::self()->findContact( protocol()->pluginId(), QString::null, handle );
 			if ( m )
 			{
 				kdDebug( 14140 ) << k_funcinfo
@@ -922,7 +922,7 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 				if ( !m_addWizard_metaContact )
 				{
 					m->addToGroup( m_groupList[ group ] );
-					Kopete::ContactList::contactList()->addMetaContact( m );
+					Kopete::ContactList::self()->addMetaContact( m );
 				}
 				c->setOnlineStatus( MSNProtocol::protocol()->FLN );
 

@@ -50,7 +50,7 @@ class MessageManagerFactory : public QObject
 	Q_OBJECT
 
 public:
-	static MessageManagerFactory* factory();
+	static MessageManagerFactory* self();
 
 	~MessageManagerFactory();
 

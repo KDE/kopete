@@ -40,7 +40,7 @@
 
 KIMIfaceImpl::KIMIfaceImpl() : DCOPObject( "KIMIface" ), QObject()
 {
-	connect( Kopete::ContactList::contactList(),
+	connect( Kopete::ContactList::self(),
 		SIGNAL( metaContactAdded( Kopete::MetaContact * ) ),
 		SLOT( slotMetaContactAdded( Kopete::MetaContact * ) ) );
 }
@@ -52,7 +52,7 @@ KIMIfaceImpl::~KIMIfaceImpl()
 QStringList KIMIfaceImpl::allContacts()
 {
 	QStringList result;
-	QPtrList<Kopete::MetaContact> list = Kopete::ContactList::contactList()->metaContacts();
+	QPtrList<Kopete::MetaContact> list = Kopete::ContactList::self()->metaContacts();
 	QPtrListIterator<Kopete::MetaContact> it( list );
 	for( ; it.current(); ++it )
 	{
@@ -66,7 +66,7 @@ QStringList KIMIfaceImpl::allContacts()
 QStringList KIMIfaceImpl::reachableContacts()
 {
 	QStringList result;
-	QPtrList<Kopete::MetaContact> list = Kopete::ContactList::contactList()->metaContacts();
+	QPtrList<Kopete::MetaContact> list = Kopete::ContactList::self()->metaContacts();
 	QPtrListIterator<Kopete::MetaContact> it( list );
 	for( ; it.current(); ++it )
 	{
@@ -80,7 +80,7 @@ QStringList KIMIfaceImpl::reachableContacts()
 QStringList KIMIfaceImpl::onlineContacts()
 {
 	QStringList result;
-	QPtrList<Kopete::MetaContact> list = Kopete::ContactList::contactList()->metaContacts();
+	QPtrList<Kopete::MetaContact> list = Kopete::ContactList::self()->metaContacts();
 	QPtrListIterator<Kopete::MetaContact> it( list );
 	for( ; it.current(); ++it )
 	{
@@ -94,7 +94,7 @@ QStringList KIMIfaceImpl::onlineContacts()
 QStringList KIMIfaceImpl::fileTransferContacts()
 {
 	QStringList result;
-	QPtrList<Kopete::MetaContact> list = Kopete::ContactList::contactList()->metaContacts();
+	QPtrList<Kopete::MetaContact> list = Kopete::ContactList::self()->metaContacts();
 	QPtrListIterator<Kopete::MetaContact> it( list );
 	for( ; it.current(); ++it )
 	{
@@ -108,7 +108,7 @@ QStringList KIMIfaceImpl::fileTransferContacts()
 bool KIMIfaceImpl::isPresent( const QString & uid )
 {
 	Kopete::MetaContact *mc;
-	mc = Kopete::ContactList::contactList()->metaContact( uid );
+	mc = Kopete::ContactList::self()->metaContact( uid );
 
 	return ( mc != 0 );
 }
@@ -117,7 +117,7 @@ bool KIMIfaceImpl::isPresent( const QString & uid )
 QString KIMIfaceImpl::displayName( const QString & uid )
 {
 	Kopete::MetaContact *mc;
-	mc = Kopete::ContactList::contactList()->metaContact( uid );
+	mc = Kopete::ContactList::self()->metaContact( uid );
 	QString name;
 	if ( mc )
 		name = mc->displayName();
@@ -129,7 +129,7 @@ int KIMIfaceImpl::presenceStatus( const QString & uid )
 {
 	kdDebug( 14000 ) << k_funcinfo << endl;
 	int p = -1;
-	Kopete::MetaContact *m = Kopete::ContactList::contactList()->metaContact( uid );
+	Kopete::MetaContact *m = Kopete::ContactList::self()->metaContact( uid );
 	if ( m )
 	{
 		Kopete::OnlineStatus status = m->status();
@@ -160,7 +160,7 @@ QString KIMIfaceImpl::presenceString( const QString & uid )
 {
 	kdDebug( 14000 ) <<  "KIMIfaceImpl::presenceString" << endl;
 	QString p;
-	Kopete::MetaContact *m = Kopete::ContactList::contactList()->metaContact( uid );
+	Kopete::MetaContact *m = Kopete::ContactList::self()->metaContact( uid );
 	if ( m )
 	{
 		Kopete::OnlineStatus status = m->status();
@@ -178,7 +178,7 @@ QString KIMIfaceImpl::presenceString( const QString & uid )
 bool KIMIfaceImpl::canReceiveFiles( const QString & uid )
 {
 	Kopete::MetaContact *mc;
-	mc = Kopete::ContactList::contactList()->metaContact( uid );
+	mc = Kopete::ContactList::self()->metaContact( uid );
 
 	if ( mc )
 		return mc->canAcceptFiles();
@@ -189,7 +189,7 @@ bool KIMIfaceImpl::canReceiveFiles( const QString & uid )
 bool KIMIfaceImpl::canRespond( const QString & uid )
 {
 	Kopete::MetaContact *mc;
-	mc = Kopete::ContactList::contactList()->metaContact( uid );
+	mc = Kopete::ContactList::self()->metaContact( uid );
 
 	if ( mc )
 	{
@@ -224,11 +224,11 @@ Kopete::MetaContact * KIMIfaceImpl::locateProtocolContact( const QString & conta
 	if ( protocol )
 	{
 		// find its accounts
-		QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts( protocol );
+		QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( protocol );
 		QDictIterator<Kopete::Account> it( accounts );
 		for( ; it.current(); ++it )
 		{
-			mc = Kopete::ContactList::contactList()->findContact( protocolId, it.currentKey(), contactId  );
+			mc = Kopete::ContactList::self()->findContact( protocolId, it.currentKey(), contactId  );
 			if (mc)
 				break;
 		}
@@ -238,7 +238,7 @@ Kopete::MetaContact * KIMIfaceImpl::locateProtocolContact( const QString & conta
 
 QPixmap KIMIfaceImpl::icon( const QString & uid )
 {
-	Kopete::MetaContact *m = Kopete::ContactList::contactList()->metaContact( uid );
+	Kopete::MetaContact *m = Kopete::ContactList::self()->metaContact( uid );
 	QPixmap p;
 	if ( m )
 		p = SmallIcon( m->statusIcon() );
@@ -268,7 +268,7 @@ void KIMIfaceImpl::messageContact( const QString &uid, const QString& messageTex
 {
 	// TODO: make it possible to specify the message here
 	Q_UNUSED( messageText );
-	Kopete::MetaContact *m = Kopete::ContactList::contactList()->metaContact( uid );
+	Kopete::MetaContact *m = Kopete::ContactList::self()->metaContact( uid );
 	if ( m )
 		m->sendMessage();
 	else
@@ -284,7 +284,7 @@ void KIMIfaceImpl::messageNewContact( const QString &contactId, const QString &p
 
 void KIMIfaceImpl::chatWithContact( const QString &uid )
 {
-	Kopete::MetaContact *m = Kopete::ContactList::contactList()->metaContact( uid );
+	Kopete::MetaContact *m = Kopete::ContactList::self()->metaContact( uid );
 	if ( m )
 		m->execute();
 	else
@@ -294,7 +294,7 @@ void KIMIfaceImpl::chatWithContact( const QString &uid )
 void KIMIfaceImpl::sendFile(const QString &uid, const KURL &sourceURL,
 		const QString &altFileName, uint fileSize)
 {
-	Kopete::MetaContact *m = Kopete::ContactList::contactList()->metaContact( uid );
+	Kopete::MetaContact *m = Kopete::ContactList::self()->metaContact( uid );
 	if ( m )
 		m->sendFile( sourceURL, altFileName, fileSize );
     // else, prompt to create a new MC associated with UID
@@ -308,7 +308,7 @@ bool KIMIfaceImpl::addContact( const QString &contactId, const QString &protocol
 	if ( protocol )
 	{
 		// find its accounts
-		QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts( protocol );
+		QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( protocol );
 		QDictIterator<Kopete::Account> it( accounts );
 		Kopete::Account *ac = it.toFirst();
 		if ( ac )

@@ -31,7 +31,7 @@ void KopeteGlobalAwayDialog::setAway( int /*awayType*/ )
 	// Set the global away message
 	awayInstance->setGlobalAwayMessage( getSelectedAwayMessage() );
 	// Tell all the protocols to set themselves away.
-	Kopete::AccountManager::manager()->setAwayAll( getSelectedAwayMessage() );
+	Kopete::AccountManager::self()->setAwayAll( getSelectedAwayMessage() );
 }
 
 #include "kopeteglobalawaydialog.moc"

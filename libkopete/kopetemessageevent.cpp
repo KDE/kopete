@@ -60,7 +60,7 @@ void MessageEvent::apply()
 void MessageEvent::ignore()
 {
 	if( m_message.from()->metaContact() && m_message.from()->metaContact()->isTemporary() )
-		ContactList::contactList()->removeMetaContact( m_message.from()->metaContact() );
+		ContactList::self()->removeMetaContact( m_message.from()->metaContact() );
 	m_state= Ignored;
 	deleteLater();
 }

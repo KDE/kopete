@@ -193,7 +193,7 @@ void Kopete::Contact::slotAddContact()
 	if( metaContact() )
 	{
 		metaContact()->setTemporary( false );
-		Kopete::ContactList::contactList()->addMetaContact( metaContact() );
+		Kopete::ContactList::self()->addMetaContact( metaContact() );
 	}
 }
 
@@ -296,7 +296,7 @@ void Kopete::Contact::slotChangeMetaContact()
 	selectMetaContactListBox->addColumn( i18n( "Contact IDs" ) );
 
 	QMap<QListViewItem*,Kopete::MetaContact*> map;
-	QPtrList<Kopete::MetaContact> metaContacts = Kopete::ContactList::contactList()->metaContacts();
+	QPtrList<Kopete::MetaContact> metaContacts = Kopete::ContactList::self()->metaContacts();
 	for( Kopete::MetaContact *mc = metaContacts.first(); mc ; mc = metaContacts.next() )
 	{
 		if( !mc->isTemporary() && mc != metaContact() )
@@ -330,7 +330,7 @@ void Kopete::Contact::slotChangeMetaContact()
 		if(chkCreateNew->isChecked())
 		{
 			mc=new Kopete::MetaContact();
-			Kopete::ContactList::contactList()->addMetaContact(mc);
+			Kopete::ContactList::self()->addMetaContact(mc);
 		}
 		if( mc )
 		{
@@ -372,7 +372,7 @@ void Kopete::Contact::setMetaContact( Kopete::MetaContact *m )
 		if(result==KMessageBox::Yes)
 		{
 			//remove the old metacontact.  (this delete the MC)
-			Kopete::ContactList::contactList()->removeMetaContact(old);
+			Kopete::ContactList::self()->removeMetaContact(old);
 		}
 		else
 		{

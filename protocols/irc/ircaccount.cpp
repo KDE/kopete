@@ -498,7 +498,7 @@ void IRCAccount::slotDisconnected()
 	m_contactManager->removeFromNotifyList( m_engine->nickName() );
 
 //	if (m_contactManager && !autoConnect.isNull())
-//		Kopete::AccountManager::manager()->removeAccount( this );
+//		Kopete::AccountManager::self()->removeAccount( this );
 }
 
 void IRCAccount::disconnect()
@@ -599,7 +599,7 @@ bool IRCAccount::addContactToMetaContact( const QString &contactId, const QStrin
 	if( !m )
 	{//This should NEVER happen
 		m = new Kopete::MetaContact();
-		Kopete::ContactList::contactList()->addMetaContact(m);
+		Kopete::ContactList::self()->addMetaContact(m);
 		m->setDisplayName( displayName );
 	}
 
@@ -617,7 +617,7 @@ bool IRCAccount::addContactToMetaContact( const QString &contactId, const QStrin
 		c->setMetaContact( m );
 		Kopete::ContactPtrList children = old->contacts();
 		if( children.isEmpty() )
-			Kopete::ContactList::contactList()->removeMetaContact( old );
+			Kopete::ContactList::self()->removeMetaContact( old );
 	}
 	else if( c->metaContact()->isTemporary() )
 		m->setTemporary(false);
@@ -697,7 +697,7 @@ void IRCAccount::appendMessage( const QString &message, MessageType type )
 
 	if( destination & ActiveWindow )
 	{
-		KopeteView *activeView = Kopete::MessageManagerFactory::factory()->activeView();
+		KopeteView *activeView = Kopete::MessageManagerFactory::self()->activeView();
 		if( activeView && activeView->msgManager()->account() == this )
 		{
 			Kopete::MessageManager *manager = activeView->msgManager();

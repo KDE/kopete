@@ -130,7 +130,7 @@ Kopete::MessageManager*
 GaduContact::manager( bool /* canCreate */ )
 {
 	if ( !msgManager_ ) {
-		msgManager_ = Kopete::MessageManagerFactory::factory()->create( account_->myself(), thisContact_, GaduProtocol::protocol() );
+		msgManager_ = Kopete::MessageManagerFactory::self()->create( account_->myself(), thisContact_, GaduProtocol::protocol() );
 		connect( msgManager_, SIGNAL( messageSent( Kopete::Message&, Kopete::MessageManager*) ),
 			 this, SLOT( messageSend( Kopete::Message&, Kopete::MessageManager*) ) );
 		connect( msgManager_, SIGNAL( destroyed() ),  this, SLOT( slotMessageManagerDestroyed() ) );

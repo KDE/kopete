@@ -76,7 +76,7 @@ void BookmarksPreferences::load()
 	m_settings.load();
 	p_dialog->buttonGroup1->setButton(m_settings.isFolderForEachContact());
 	if( p_dialog->listBox1->count() == 0 ){
-		p_dialog->listBox1->insertStringList( Kopete::ContactList::contactList()->contacts() );
+		p_dialog->listBox1->insertStringList( Kopete::ContactList::self()->contacts() );
 	}
 	p_dialog->listBox1->clearSelection();
 	p_dialog->listBox1->setEnabled(m_settings.isFolderForEachContact()==BookmarksPrefsSettings::OnlyContactsInList || m_settings.isFolderForEachContact()==BookmarksPrefsSettings::OnlyContactsNotInList );

@@ -62,7 +62,7 @@ Kopete::Contact *TestbedProtocol::deserializeContact(
 	else
 		tbcType = TestbedContact::Null;
 
-	QDict<Kopete::Account> accounts = Kopete::AccountManager::manager()->accounts( this );
+	QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
 
 	Kopete::Account *account = accounts[ accountId ];
 	if ( !account )

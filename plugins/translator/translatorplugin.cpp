@@ -61,11 +61,11 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QSt
 
 	m_languages = new TranslatorLanguages;
 
-	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( aboutToDisplay( Kopete::Message & ) ),
+	connect( Kopete::MessageManagerFactory::self(), SIGNAL( aboutToDisplay( Kopete::Message & ) ),
 		this, SLOT( slotIncomingMessage( Kopete::Message & ) ) );
-	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( aboutToSend( Kopete::Message & ) ),
+	connect( Kopete::MessageManagerFactory::self(), SIGNAL( aboutToSend( Kopete::Message & ) ),
 		this, SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
-	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( messageManagerCreated( Kopete::MessageManager * ) ),
+	connect( Kopete::MessageManagerFactory::self(), SIGNAL( messageManagerCreated( Kopete::MessageManager * ) ),
 		this, SLOT( slotNewKMM( Kopete::MessageManager * ) ) );
 
 	QStringList keys;
@@ -76,12 +76,12 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QSt
 	m_actionLanguage = new KSelectAction( i18n( "Set &Language" ), "locale", 0, actionCollection(), "contactLanguage" );
 	m_actionLanguage->setItems( keys );
 	connect( m_actionLanguage, SIGNAL( activated() ), this, SLOT(slotSetLanguage() ) );
-	connect( Kopete::ContactList::contactList(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotSelectionChanged( bool ) ) );
+	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotSelectionChanged( bool ) ) );
 
 	setXMLFile( "translatorui.rc" );
 
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
-	QIntDict<Kopete::MessageManager> sessions = Kopete::MessageManagerFactory::factory()->sessions();
+	QIntDict<Kopete::MessageManager> sessions = Kopete::MessageManagerFactory::self()->sessions();
 	QIntDictIterator<Kopete::MessageManager> it( sessions );
 	for ( ; it.current() ; ++it )
 		slotNewKMM( it.current() );
@@ -140,7 +140,7 @@ void TranslatorPlugin::slotSelectionChanged( bool b )
 	if ( !b )
 		return;
 
-	Kopete::MetaContact *m = Kopete::ContactList::contactList()->selectedMetaContacts().first();
+	Kopete::MetaContact *m = Kopete::ContactList::self()->selectedMetaContacts().first();
 
 	if( !m )
 		return;
@@ -391,7 +391,7 @@ void TranslatorPlugin::slotJobDone ( KIO::Job *job )
 
 void TranslatorPlugin::slotSetLanguage()
 {
-	Kopete::MetaContact *m = Kopete::ContactList::contactList()->selectedMetaContacts().first();
+	Kopete::MetaContact *m = Kopete::ContactList::self()->selectedMetaContacts().first();
 	if( m && m_actionLanguage )
 		m->setPluginData( this, "languageKey", m_languages->languageKey( m_actionLanguage->currentItem() ) );
 }

@@ -120,8 +120,8 @@ void KopeteApplication::slotLoadPlugins()
 	//Create the command handler (looks silly)
 	Kopete::CommandHandler::commandHandler();
 
-	Kopete::AccountManager::manager()->load();
-	Kopete::ContactList::contactList()->load();
+	Kopete::AccountManager::self()->load();
+	Kopete::ContactList::self()->load();
 
 	KConfig *config = KGlobal::config();
 
@@ -222,7 +222,7 @@ void KopeteApplication::slotAllPluginsLoaded()
 
 	// --noconnect not specified?
 	if ( args->isSet( "connect" ) )
-		Kopete::AccountManager::manager()->autoConnect();
+		Kopete::AccountManager::self()->autoConnect();
 
 	QCStringList connectArgs = args->getOptionList( "autoconnect" );
 	for ( QCStringList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
@@ -242,7 +242,7 @@ void KopeteApplication::slotAllPluginsLoaded()
 				continue;
 		}
 
-		QPtrListIterator<Kopete::Account> it( Kopete::AccountManager::manager()->accounts() );
+		QPtrListIterator<Kopete::Account> it( Kopete::AccountManager::self()->accounts() );
 		Kopete::Account *account;
 		while ( ( account = it.current() ) != 0 )
 		{
@@ -340,8 +340,8 @@ void KopeteApplication::quitKopete()
 
 	// save the contact list now, just in case a change was made very recently
 	// and it hasn't autosaved yet
-	Kopete::ContactList::contactList()->save();
-	Kopete::AccountManager::manager()->save();
+	Kopete::ContactList::self()->save();
+	Kopete::AccountManager::self()->save();
 
 	//unload plugins and shutdown
 	Kopete::PluginManager::self()->shutdown();

@@ -170,7 +170,7 @@ Kopete::MessageManager * GroupWiseContact::manager( bool canCreate )
 	{
 		QPtrList<Kopete::Contact> contacts;
 		contacts.append(this);
-		m_msgManager = Kopete::MessageManagerFactory::factory()->create(account()->myself(), contacts, protocol());
+		m_msgManager = Kopete::MessageManagerFactory::self()->create(account()->myself(), contacts, protocol());
 		connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::MessageManager*)),
 				this, SLOT( sendMessage( Kopete::Message& ) ) );
 		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
@@ -182,7 +182,7 @@ GroupWiseMessageManager * GroupWiseContact::manager( Kopete::ContactPtrList chat
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	
-	Kopete::MessageManager *_manager = Kopete::MessageManagerFactory::factory()->findMessageManager ( account()->myself(), chatMembers, protocol() );
+	Kopete::MessageManager *_manager = Kopete::MessageManagerFactory::self()->findMessageManager ( account()->myself(), chatMembers, protocol() );
 	GroupWiseMessageManager *mgr = dynamic_cast<GroupWiseMessageManager*>( _manager );
 
 	/*
@@ -429,7 +429,7 @@ void GroupWiseContact::syncGroups()
 
 		// start by discoverint the next free group sequence number in case we have to add any groups
 		int nextFreeSequence = 0;
-		QPtrList< Kopete::Group > groupList = Kopete::ContactList::contactList()->groups();
+		QPtrList< Kopete::Group > groupList = Kopete::ContactList::self()->groups();
 		QPtrListIterator< Kopete::Group > it( groupList );
 		while( *it )
 		{
