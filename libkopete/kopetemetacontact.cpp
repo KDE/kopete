@@ -517,7 +517,7 @@ QImage MetaContact::photo() const
 		KABC::AddressBook* ab = KABCPersistence::self()->addressBook();
 
 		// If the metacontact is linked to a kabc entry
-		if ( !d->metaContactId.isEmpty() )
+		if ( !d->metaContactId.isEmpty() && !d->metaContactId.contains(':') )
 		{
 			KABC::Addressee theAddressee = ab->findByUid( metaContactId() );
 			if ( theAddressee.isEmpty() )
