@@ -460,6 +460,7 @@ Name[pt]=Mensagens de baixa prioridade
 Name[pt_BR]=Mensagens com baixa prioridade
 Name[sv]=Lågprioriterat meddelande
 Name[ta]=குறைந்த முண்ணுரிமை உள்ள செய்திகள்
+Name[xx]=xxLow priority messagesxx
 Name[zh_CN]=低优先级消息
 Comment=A message marked with a low priority has been received
 Comment[bg]=Пристигна съобщение с нисък приоритет
@@ -471,6 +472,7 @@ Comment[pt]=Foi recebida uma mensagem marcada como de baixo prioridade
 Comment[pt_BR]=Chegou uma mensagem marcada com baixa prioridade
 Comment[sv]=Ett inkommande meddelande har anlänt
 Comment[ta]=எளிய முண்ணுரிமை ஏற்க்கப்பட்ட செய்தி சுழற்ச்சி
+Comment[xx]=xxA message marked with a low priority has been receivedxx
 Comment[zh_CN]=收到了标为低优先级的消息
 default_presentation=0
 
