@@ -60,8 +60,6 @@ OscarContact::OscarContact(const QString name, const QString displayName,
 	{
 		mListContact = new AIMBuddy(mAccount->randomNewBuddyNum(), 0, mName);
 		mAccount->internalBuddyList()->addBuddy(mListContact);
-		if (!mListContact) // Do a double check
-			kdDebug(14150) << "[OSCAR] ERROR, mListContact is *STILL* NULL! Prepare to crash!!!" << endl;
 	}
 
 	setFileCapable(true); // FIXME: depends on status!
@@ -418,7 +416,7 @@ void OscarContact::syncGroups()
 		return;
 	}
 
-//	kdDebug(14150) << k_funcinfo << ": Getting current oscar group" << endl;
+	kdDebug(14150) << k_funcinfo << ": Getting current oscar group for: " << mListContact->groupID() << endl;
 	// Get the current (oscar) group that this contact belongs to on the server
 	AIMGroup *currentOscarGroup =
 		mAccount->internalBuddyList()->findGroup(mListContact->groupID());

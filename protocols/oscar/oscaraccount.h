@@ -171,6 +171,9 @@ protected:
 	void addOldContact(AIMBuddy *bud, KopeteMetaContact *meta=0l);
 
 protected:
+	void syncLocalWithServerBuddyList( AIMBuddyList& serverList );
+	AIMGroup * findOrCreateGroup( const QString& localGroup, AIMBuddyList& serverList );
+
 	/** Flag for remembering the password */
 	bool mRememberPassword;
 
@@ -200,7 +203,6 @@ protected:
 
 	/** Our away dialog */
 	KopeteAwayDialog *mAwayDialog;
-
 	/**
 	 * This is our idle timer, it is used internally
 	 * to represent idle times and report them to

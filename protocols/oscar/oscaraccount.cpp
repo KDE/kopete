@@ -358,6 +358,14 @@ void OscarAccount::slotGotServerBuddyList(AIMBuddyList &buddyList)
 {
 	kdDebug(14150) << k_funcinfo << "account='" << accountId() << "'" << endl;
 
+//	QValueList<AIMBuddy *> ll = mInternalBuddyList->buddies().values();
+//	QValueList<AIMBuddy *> sl = buddyList.buddies().values();
+//	for (QValueList<AIMBuddy *>::Iterator it=ll.begin(); it!=ll.end(); ++it)
+//		qDebug("-- Local: %s, id: %i, groupId: %i", (*it)->screenname().latin1(), (*it)->ID(), (*it)->groupID());
+//	for (QValueList<AIMBuddy *>::Iterator it=sl.begin(); it!=sl.end(); ++it)
+//		qDebug("-- Server: %s, id: %i, groupId: %i", (*it)->screenname().latin1(), (*it)->ID(), (*it)->groupID());
+
+
 	//save server side contact list
 	*mInternalBuddyList += buddyList;
 	QValueList<AIMBuddy *> localList = buddyList.buddies().values();
@@ -367,6 +375,62 @@ void OscarAccount::slotGotServerBuddyList(AIMBuddyList &buddyList)
 		if ((*it))
 			addServerContact((*it)); // Add the server contact to Kopete list
 	}
+
+	syncLocalWithServerBuddyList( buddyList );
+}
+
+//
+// Since the icq_new transition, I have lots of contacts, that are not in the serverside
+// contact list. So we compare the two lists and add all local contacts that are not
+// in the server side list.
+//
+void OscarAccount::syncLocalWithServerBuddyList( AIMBuddyList& serverList )
+{
+	const QDict<KopeteContact>& contactList = contacts();
+	QDictIterator<KopeteContact> it( contactList );
+	for ( ; it.current(); ++it )
+	{
+		QString contactId = static_cast<OscarContact*>( it.current() )->contactname();
+		AIMBuddy *buddy = serverList.findBuddy( contactId );
+		if ( !buddy && it.current() != mMyself )
+		{
+			kdDebug(14150) << "###### Serverside list doesn't contain local buddy: " << contactId << endl;
+			kdDebug(14150) << "-> creating server side contact for it." << endl;
+			// Add the buddy to the server's list
+			const KopeteGroupList& groups = it.current()->metaContact()->groups();
+			AIMGroup *group = findOrCreateGroup( groups.isEmpty() ? QString::null : groups.getFirst()->displayName(), serverList);
+			if ( group )
+				getEngine()->sendAddBuddy(tocNormalize(contactId), group->name());
+		}
+	}
+}
+
+// 
+// Looks for the group localGroup in the server-side list.
+// If it doesn't find it there, creates and returns it.
+//
+AIMGroup * OscarAccount::findOrCreateGroup( const QString& localGroup, AIMBuddyList& serverList )
+{
+	QString groupName = localGroup.isEmpty() ? QString::fromLatin1( "Buddies"  ) : localGroup;
+
+	// See if it exists in our internal group list already
+	AIMGroup *internalGroup = serverList.findGroup( groupName );
+	
+	// If the group didn't exist, take it from the local list
+	if (!internalGroup)
+	{
+		kdDebug(14150) << k_funcinfo << "Group doesn't exist on server list, create it:" << groupName << endl;
+		internalGroup = mInternalBuddyList->findGroup( groupName );
+		if ( !internalGroup ) { // or create it
+			internalGroup = mInternalBuddyList->addGroup(mRandomNewGroupNum++, groupName);
+		}
+
+		// Add the group on the server list
+		if ( internalGroup )
+			getEngine()->sendAddGroup(internalGroup->name());
+	}
+
+	return internalGroup;
 }
 
 void OscarAccount::addServerContact(AIMBuddy *buddy)
@@ -643,9 +707,9 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			getEngine()->sendAddBuddy(tocNormalize(contactId),
 									  internalGroup->name());
 
-			// Increase these counters, I'm not sure what this does
-			mRandomNewGroupNum++;
-			mRandomNewBuddyNum++;
+            // Increase these counters, I'm not sure what this does
+            mRandomNewGroupNum++;
+            mRandomNewBuddyNum++;
 
 			// Create the actual contact, which adds it to the metacontact
 			return ( createNewContact( contactId, displayName, parentContact ) == 0L);
