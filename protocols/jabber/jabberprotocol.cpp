@@ -43,6 +43,7 @@
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
+#include "kopeteaway.h"
 #include "addcontactpage.h"
 #include "statusbaricon.h"
 #include "jabbercontact.h"
@@ -479,7 +480,7 @@ void JabberProtocol::setPresence(Presence status, const QString &reason, int pri
 void JabberProtocol::setAway(void)
 {
     
-	setPresence(STATUS_AWAY, "Automatically set away due to being idle.");
+	setPresence(STATUS_AWAY, KopeteAway::getInstance()->message());
 
 }
 
