@@ -35,23 +35,42 @@ unless ($CONFIG) {
     }
 }
 
-# Parse the file
+# Parce licq's main config file and get the groups contacts may be members of
+my $licqconf = parseRC("$ENV{HOME}/.licq/licq.conf");
+my @new_groups;
+for ( my $i = 1 ; $i <= $licqconf->{groups}{groups}{NumOfGroups} ; $i++ ) {
+    push @new_groups, $licqconf->{groups}{groups}{"Group$i.name"};
+}
+
+# Now a licq contact member of group x is in fact member of $new_groups[x-1]
+
+# Parse Kopete's main config file
 my $kopeterc = parseRC("$CONFIG/share/config/kopeterc");
 
-# Add the "Imported Contacts" contact group (or make sure it's already there)
 my @groups = split /,/, $kopeterc->{groups}{ContactList}{Groups};
-my $groupno;
-for ( my $i ; $i < @groups ; $i++ ) {
-    if ( $groups[$i] eq 'Imported Contacts' ) {
-        $groupno = $i + 1;
-        last;
-    }
+
+# We also create a hash of the groups so that we can be very fast (in case
+# someone has a zillion groups) instead of doing a linear search
+my %groups = map { $_ => 1 } @groups;
+
+# Add the "Unknown" contact group (or make sure it's already there)
+push @groups, 'Unknown' unless $groups{Unknown};
+$groups{Unknown} = 1;
+
+# Also add the groups defined in licq.conf, they are now in @new_groups 
+foreach (@new_groups) {
+    push @groups, $_ unless $groups{$_};
+    $groups{$_} = 1;
 }
-unless ($groupno) {
-    push @groups, 'Imported Contacts';
-    $groupno = @groups;
-}
+
+# Put the groups back into the data structure
 $kopeterc->{groups}{ContactList}{Groups} = join ",", @groups;
+
+# Build a hash so that we can map groupname to groupindex
+my %group2index;
+for ( my $i = 0 ; $i < @groups ; $i++ ) {
+    $group2index{ $groups[$i] } = $i + 1;
+}
 
 # Get the contacts from Licq
 my $licqContacts = parseRC("$ENV{HOME}/.licq/users.conf");
@@ -63,17 +82,31 @@ for ( my $i = 1 ; $i <= $licqContacts->{groups}{users}{NumOfUsers} ; $i++ ) {
     my $contactInfo = parseRC("$ENV{HOME}/.licq/users/$contact->{uin}.uin");
     $contact->{nick}     = $contactInfo->{groups}{user}{Alias};
     $contact->{cellular} = $contactInfo->{groups}{user}{CellularNumber};
+
+    # Now determine the group index of the contact
+    if ( $contactInfo->{groups}{user}{'Groups.User'} != 0 ) {
+        # This user is not a member of the default group, and will not go into
+        # 'Unknown'
+        $contact->{group} =
+          $group2index{ $new_groups[ $contactInfo->{groups}{user}
+              {'Groups.User'} - 1 ] };
+    }
+    else {
+        # Not a member of any group, store into 'Unknown'
+        $contact->{group} = $group2index{Unknown};
+    }
+
     push @oldcontacts, $contact;
 }
 
 # Parse the icq.contacts file
-my $icqContacts = parseRC("$CONFIG/share/apps/kopete/icq.contacts");
+my $icqContacts = parseRC( "$CONFIG/share/apps/kopete/icq.contacts", 'nowarn' );
 
 # Put the old contacts into kopete's config
 foreach (@oldcontacts) {
     $icqContacts->{groups}{"Contact $_->{uin}"} = {
         Authorized => 'true',
-        Group      => $groupno,
+        Group      => $_->{group},
         Nick       => $_->{nick},
         UIN        => $_->{uin},
     };
@@ -95,9 +128,11 @@ $icqContacts->{groups}{Default}{"Group Names"} =
   $kopeterc->{groups}{ContactList}{Groups};
 
 system 'cp', "$CONFIG/share/config/kopeterc",
-  "$CONFIG/share/config/kopeterc.bak";
+  "$CONFIG/share/config/kopeterc.bak"
+  if -f "$CONFIG/share/config/kopeterc";
 system 'cp', "$CONFIG/share/apps/kopete/icq.contacts",
-  "$CONFIG/share/apps/kopete/icq.contacts.bak";
+  "$CONFIG/share/apps/kopete/icq.contacts.bak"
+  if -f "CONFIG/share/config/kopeterc";
 storeRC( $kopeterc,    "$CONFIG/share/config/kopeterc" );
 storeRC( $icqContacts, "$CONFIG/share/apps/kopete/icq.contacts" );
 
@@ -110,11 +145,13 @@ print "\n"
 ################################################################
 
 # Input: The name of a file which is in the form of a KConfig file
+#        (optional) a flag to not print a warning if the file can't be opened
 # Output: A reference to a hash containing the parsed info.
 sub parseRC {
-    my $file = shift;
+    my $file   = shift;
+    my $nowarn = shift;
 
-    open RC, $file or warn "Can't open $file for reading: $!\n";
+    open RC, $file;
     local $/;
     my $rc = <RC>;
     close RC;
