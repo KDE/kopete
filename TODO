@@ -7,9 +7,6 @@ Beware: It's totally unsorted ;)
 
 - fix account pluginData() handling, it obviously gets lost somehow sometimes
 
-- Fix the segfault-on-exit that's been around for years. Unfortunately nobody
-  knows if this is still valid and what segfaults where or why ;)
-
 ================================================================================
 
 OSCAR ICQ/AIM TODO ITEMS (generously added by mETz *g*)

@@ -411,11 +411,11 @@ void KopeteContact::execute()
 	}
 }
 
-KopeteMessageManager *KopeteContact::manager( bool )
+/*KopeteMessageManager *KopeteContact::manager( bool )
 {
 	kdDebug( 14010 ) << "Manager() not implimented for " << protocol()->displayName() << ", crash!" << endl;
 	return 0L;
-}
+}*/
 
 void KopeteContact::slotDeleteContact()
 {

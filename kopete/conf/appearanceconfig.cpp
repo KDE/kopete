@@ -539,6 +539,16 @@ void AppearanceConfig::addStyle( const QString &styleName, const QString &xslStr
 
 void AppearanceConfig::slotUpdatePreview()
 {
+	//reimplement KopeteContact and his abstract method
+	class TestContact : public KopeteContact
+	{
+		public:
+			TestContact (  const QString &id  ) : KopeteContact ( 0L, id, 0L ) {}
+			virtual KopeteMessageManager* manager(bool) { return 0L; }
+	};
+
+
+
 	QString model;
 	QListBoxItem *style = mPrfsChatWindow->styleList->selectedItem();
 	if( style && itemMap[style] != currentStyle )
@@ -548,17 +558,14 @@ void AppearanceConfig::slotUpdatePreview()
 
 		if(!model.isEmpty())
 		{
-			KopeteContact *cFrom = new KopeteContact((KopeteAccount*)0L, QString::fromLatin1("UserFrom"), 0L);
-			KopeteContact *cTo = new KopeteContact((KopeteAccount*)0L, QString::fromLatin1("UserTo"), 0L);
+			KopeteContact *myself = new TestContact(i18n("Myself"));
+			KopeteContact *jack = new TestContact(i18n("Jack") );
 
-			KopeteContactPtrList toList = KopeteContactPtrList();
-			toList.append( cTo );
-
-			KopeteMessage msgIn( cFrom, toList, QString::fromLatin1("This is an incoming message"),KopeteMessage::Inbound );
-			KopeteMessage msgOut( cFrom, toList, QString::fromLatin1("This is an outgoing message"),KopeteMessage::Outbound );
-			KopeteMessage msgInt( cFrom, toList, QString::fromLatin1("This is an internal message"),KopeteMessage::Internal );
-			//KopeteMessage msgHigh( cFrom, toList, QString::fromLatin1("This is a highlighted message"),KopeteMessage::Inbound );
-			KopeteMessage msgAct( cFrom, toList, QString::fromLatin1("This is an action message"),KopeteMessage::Action );
+			KopeteMessage msgIn( jack, myself, i18n("Hello, This is an incoming message :-) "),KopeteMessage::Inbound );
+			KopeteMessage msgOut( myself, jack, i18n("Ok, there is an outgoing message"),KopeteMessage::Outbound );
+			KopeteMessage msgInt( jack, myself, i18n("This is an internal message"),KopeteMessage::Internal );
+			//KopeteMessage msgHigh( jack, myself, i18n("This is a highlighted message"),KopeteMessage::Inbound );
+			KopeteMessage msgAct( jack, myself, i18n("did an action"),KopeteMessage::Action );
 
 			preview->begin();
 			preview->write( QString::fromLatin1( "<html><head><style>body{font-family:%1;color:%2;}td{font-family:%3;color:%4;}.highlight{color:%5;background-color:%6}</style></head><body bgcolor=\"%7\" vlink=\"%8\" link=\"%9\">" )
@@ -573,22 +580,24 @@ void AppearanceConfig::slotUpdatePreview()
 				.arg( mPrfsColors->linkColor->color().name() ) );
 
 			//parsing a XSLT message is incredibly slow! that's why i commented out some preview messages
-			//preview->write( KopeteXSL::xsltTransform( msgIn.asXML().toString(), model )) ;
+			preview->write( KopeteXSL::xsltTransform( msgIn.asXML().toString(), model )) ;
+			preview->write( KopeteXSL::xsltTransform( msgOut.asXML().toString(), model)  );
 			msgIn.setFg(QColor("DodgerBlue"));
 			msgIn.setBg(QColor("LightSteelBlue"));
-			msgIn.setBody( QString::fromLatin1("This is a colored incoming message (random color)") );
+			msgIn.setBody( i18n("Here is another incomming, but colored message"));
 			preview->write( KopeteXSL::xsltTransform( msgIn.asXML().toString(), model ) );
-			preview->write( KopeteXSL::xsltTransform( msgOut.asXML().toString(), model)  );
 			preview->write( KopeteXSL::xsltTransform( msgInt.asXML().toString(), model ) );
 			preview->write( KopeteXSL::xsltTransform( msgAct.asXML().toString(), model ) );
 			//msgHigh.setImportance( KopeteMessage::Highlight );
 			//preview->write( KopeteXSL::xsltTransform( msgHigh.asXML().toString(), model )) ;
+			msgOut.setBody( i18n("Bye"));
+			preview->write( KopeteXSL::xsltTransform( msgOut.asXML().toString(), model)  );
 
 			preview->write( QString::fromLatin1( "</body></html>" ) );
 			preview->end();
 
-			delete cFrom;
-			delete cTo;
+			delete myself;
+			delete jack;
 		} // END if(!model.isEmpty())
 	}
 }

@@ -240,7 +240,7 @@ public:
 	 * to any existing managers. Current;y, this is only set to true when
 	 * a chat is initiated by the user by clicking the contact list.
 	 */
-	virtual KopeteMessageManager * manager( bool canCreate = false );
+	virtual KopeteMessageManager * manager( bool canCreate = false ) =0;
 
 /*  //this is useless, that caused crash when closing the kmm when the contact was deleted (ex: on exit)
 	const int conversations() const;
@@ -263,6 +263,9 @@ public slots:
 	 */
 	void sendMessage();
 
+	/**
+	 * The user clicked on the contact, do the default action
+	 */
 	void execute();
 
 	/**
@@ -310,7 +313,7 @@ public slots:
 	virtual void syncGroups();
 
 	/**
-	 * Changet the icon to use for this account
+	 * Changet the icon to use for this contact
 	 */
 	void setIcon( const QString& icon );
 
@@ -330,7 +333,9 @@ private slots:
 	 */
 	void slotChangeDisplayName();
 
-
+	/**
+	 * This add the contact totaly in the list if it was a temporary contact
+	 */
 	void slotAddContact();
 
 signals:
