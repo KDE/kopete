@@ -37,6 +37,10 @@ extern "C" {
 #include <stdio.h>
 #include <stdarg.h>
 
+#ifdef HAVE_STDINT_H
+#include <stdint.h>
+#endif
+
 #ifdef __GG_LIBGADU_HAVE_OPENSSL
 #include <openssl/ssl.h>
 #endif
