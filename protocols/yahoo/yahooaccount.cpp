@@ -64,6 +64,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	stateOnConnection = 0;
 	theAwayDialog = new YahooAwayDialog( this );
 	m_protocol = parent;
+	m_lastDisconnectCode = 0;
 
 	setMyself( new YahooContact( this, accountId, accountId, 0 ) );
 	static_cast<YahooContact *>( myself() )->setOnlineStatus( parent->Offline );
@@ -447,14 +448,15 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 {
 	kdDebug(14180) << k_funcinfo << succ << ", " << url << ")]" << endl;
 	QString errorMsg;
-	if (succ == YAHOO_LOGIN_OK)
+	if ( succ == YAHOO_LOGIN_OK || (succ == YAHOO_LOGIN_DUPL && m_lastDisconnectCode == 2) )
 	{
 		slotGotBuddies(yahooSession()->getLegacyBuddyList());
-		/**
+		/*
 		 * FIXME: Right now, we only support connecting as online
 		 * Support needs to be added for invisible
 		 */
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Online );
+		m_lastDisconnectCode = 0;
 		return;
 	}
 	else if(succ == YAHOO_LOGIN_PASSWD)
@@ -470,7 +472,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 		return;
 	}
-	else if(succ == YAHOO_LOGIN_DUPL)
+	else if ( succ == YAHOO_LOGIN_DUPL && m_lastDisconnectCode != 2 )
 	{
 		errorMsg = i18n("You have been logged out of the yahoo service, possibly due to a duplicate login.");
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
@@ -634,9 +636,9 @@ void YahooAccount::slotSystemMessage( const QString & /* msg */ )
 
 void YahooAccount::slotError( const QString & err, int fatal )
 {
-	Q_UNUSED( err );
-	kdDebug(14180) << k_funcinfo << endl;
-	if ( fatal == 1 )
+	kdDebug(14180) << k_funcinfo << err << endl;
+	m_lastDisconnectCode = fatal;
+	if ( fatal == 1 || fatal == 2 )
 		disconnect();
 }
 

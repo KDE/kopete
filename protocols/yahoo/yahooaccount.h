@@ -199,8 +199,10 @@ private:
 	bool m_useServerGroups;		// Use the groups on the server for import
 	bool m_importContacts;		// Import the contacts from the server
 	int m_sessionId;		// The Yahoo session descriptor
+	int m_lastDisconnectCode;	// The last disconnect code.
 	YahooSession *m_session;	// Connection Object
 	YahooProtocol *m_protocol;	// The Protocol Object
+	
 
 	YahooAwayDialog *theAwayDialog;	// Our away message dialog
 };

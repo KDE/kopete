@@ -199,7 +199,9 @@ void YahooSession::refresh()
 		yahoo_refresh( m_connId );
 	}
 	else
-		emit error( "Disconnected." , 1 );
+	{	// use 2 for the value of fatal here because it's a keepalive disconnect
+		emit error( "Disconnected by keepalive." , 2 );
+	}
 }
 
 void YahooSession::setIdentityStatus( const QString &identity, int active)
