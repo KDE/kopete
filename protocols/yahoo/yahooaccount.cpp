@@ -120,10 +120,10 @@ QString YahooAccount::stripMsgColorCodes(const QString& msg)
 	//Handle bold, underline and italic messages
 	filteredMsg.replace( QRegExp("\033\\[1m"), "<b>" );
 	filteredMsg.replace( QRegExp("\033\\[x1m"), "</b>" );
-    //work around gaim's broken sending
-    filteredMsg.remove( QRegExp( "\033\\[xlm" ) );
-    filteredMsg.remove( QRegExp( "\033\\[lm" ) );
-    //end work around
+	//work around gaim's broken sending
+	filteredMsg.remove( QRegExp( "\033\\[xlm" ) );
+	filteredMsg.remove( QRegExp( "\033\\[lm" ) );
+	//end work around
 	filteredMsg.replace( QRegExp("\033\\[3m"), "<i>" );
 	filteredMsg.replace( QRegExp("\033\\[x3m"), "</i>" );
 	filteredMsg.replace( QRegExp("\033\\[4m"), "<u>" );
