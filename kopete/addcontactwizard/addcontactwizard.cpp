@@ -195,49 +195,48 @@ void AddContactWizard::slotProtocolListClicked( QListViewItem *)
 
 void AddContactWizard::accept()
 {
-	KopeteMetaContact *m = new KopeteMetaContact();
+	KopeteMetaContact *metaContact = new KopeteMetaContact();
 
 	// set the display name if required
 	if ( !mDisplayName->text().isEmpty() )
 	{
-		m->setTrackChildNameChanges( false );
-		m->setDisplayName( mDisplayName->text() );
+		metaContact->setTrackChildNameChanges( false );
+		metaContact->setDisplayName( mDisplayName->text() );
 	}
 
 	// set the KABC uid in the metacontact
-	KABC::AddresseeItem* i = 0L;
-	i = static_cast<KABC::AddresseeItem *>( addresseeListView->selectedItem() );
-	if ( addresseeListView->isEnabled() && i )
-		m->setMetaContactId( i->addressee().uid() );
+	KABC::AddresseeItem *item = 0L;
+	item = static_cast<KABC::AddresseeItem *>( addresseeListView->selectedItem() );
+	if ( addresseeListView->isEnabled() && item )
+		metaContact->setMetaContactId( item->addressee().uid() );
 
 	// set the metacontact's groups
 	bool topLevel = true;
-	for (QListViewItemIterator it(groupList); it.current(); ++it)
+	for ( QListViewItemIterator it( groupList ); it.current(); ++it )
 	{
-		QCheckListItem *check = dynamic_cast<QCheckListItem *>(it.current());
-		if (check && check->isOn())
+		QCheckListItem *check = dynamic_cast<QCheckListItem *>( it.current() );
+		if ( check && check->isOn() )
 		{
-			m->addToGroup(KopeteContactList::contactList()->getGroup(check->text()));
+			metaContact->addToGroup( KopeteContactList::contactList()->getGroup( check->text() ) );
 			topLevel = false;
 		}
 	}
-	m->setTopLevel(topLevel);
+	m->setTopLevel( topLevel );
 
-	bool ok=false;
+	bool ok = false;
 
 	// get each protocol's contact
 	QMap <KopeteAccount*,AddContactPage*>::Iterator it;
 	for ( it = protocolPages.begin(); it != protocolPages.end(); ++it )
-	{
-		ok |= it.data()->apply(it.key(),m);
-	}
+		ok |= it.data()->apply( it.key(), metaContact );
 
 	// add it to the contact list
-	if(ok)
-		KopeteContactList::contactList()->addMetaContact(m);
+	if ( ok )
+		KopeteContactList::contactList()->addMetaContact( metaContact );
 	else
-		delete m;
-	delete this;
+		delete metaContact;
+
+	deleteLater();
 }
 
 void AddContactWizard::next()
