@@ -257,6 +257,9 @@ void IRCAccount::connect()
 
 void IRCAccount::slotConnectedToServer()
 {
+	//Check who is online
+	m_contactManager->checkOnlineNotifyList();
+	
 	QStringList m_connectCommands = connectCommands();
 	for( QStringList::Iterator it = m_connectCommands.begin(); it != m_connectCommands.end(); ++it )
 	{

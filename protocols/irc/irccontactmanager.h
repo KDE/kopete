@@ -77,6 +77,8 @@ class IRCContactManager
 		
 		void unregisterServer(const QString &server);
 		void unregisterServer(KopeteContact *contact);
+		
+		void checkOnlineNotifyList();
 	
 	signals:
 		void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
@@ -104,7 +106,6 @@ class IRCContactManager
 		QTimer *m_NotifyTimer;
 	
 	private slots:
-		void checkOnlineNotifyList();
 		void slotNewNickChange(const QString &oldnick, const QString &newnick);
 
 };
