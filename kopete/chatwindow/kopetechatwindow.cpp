@@ -79,14 +79,14 @@ KopeteChatWindow *KopeteChatWindow::window( KopeteMessageManager *manager )
 	KopeteChatWindow *myWindow;
 
 	//Take the first and the first? What else?
-	KopeteGroup *g = 0L;
+	KopeteGroup *group = 0L;
 	KopeteContactPtrList members = manager->members();
-	KopeteMetaContact *m = members.first()->metaContact();
+	KopeteMetaContact *metaContact = members.first()->metaContact();
 
-	if(m)
+	if ( metaContact )
 	{
-		KopeteGroupList gList = m->groups();
-		g = gList.first();
+		KopeteGroupList gList = metaContact->groups();
+		group = gList.first();
 	}
 
 	switch( KopetePrefs::prefs()->chatWindowPolicy() )
@@ -99,15 +99,15 @@ KopeteChatWindow *KopeteChatWindow::window( KopeteMessageManager *manager )
 			break;
 
 		case GROUP_BY_GROUP: //Open chats in the same group in the same window
-			if( g && groupMap.contains( g ) )
-				myWindow = groupMap[ g ];
+			if( group && groupMap.contains( group ) )
+				myWindow = groupMap[ group ];
 			else
 				windowCreated = true;
 			break;
 
 		case GROUP_BY_METACONTACT: //Open chats in the same metacontact in the same window
-			if( mcMap.contains( m ) )
-				myWindow = mcMap[ m ];
+			if( mcMap.contains( metaContact ) )
+				myWindow = mcMap[ metaContact ];
 			else
 				windowCreated = true;
 			break;
@@ -139,18 +139,18 @@ KopeteChatWindow *KopeteChatWindow::window( KopeteMessageManager *manager )
 			break;
 	}
 
-	if( windowCreated )
+	if ( windowCreated )
 	{
 		myWindow = new KopeteChatWindow();
 
-		if( !accountMap.contains( manager->account() ) )
+		if ( !accountMap.contains( manager->account() ) )
 			accountMap.insert( manager->account(), myWindow );
 
-		if( !mcMap.contains( m ) )
-			mcMap.insert( m, myWindow );
+		if ( !mcMap.contains( metaContact ) )
+			mcMap.insert( metaContact, myWindow );
 
-		if( g && !groupMap.contains( g ) )
-			groupMap.insert( g, myWindow );
+		if ( group && !groupMap.contains( group ) )
+			groupMap.insert( group, myWindow );
 	}
 
 //	kdDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
@@ -158,14 +158,16 @@ KopeteChatWindow *KopeteChatWindow::window( KopeteMessageManager *manager )
 	return myWindow;
 }
 
-KopeteChatWindow::KopeteChatWindow(QWidget *parent, const char* name) : KParts::MainWindow(parent, name)
+KopeteChatWindow::KopeteChatWindow( QWidget *parent, const char* name ) 
+	: KParts::MainWindow( parent, name )
 {
 	m_activeView = 0L;
 	m_popupView = 0L;
 	backgroundFile = 0L;
 	updateBg = true;
-	initActions();
 	m_tabBar = 0L;
+	
+	initActions();
 
 	QVBox *vBox = new QVBox( this );
 	vBox->setLineWidth( 0 );
@@ -178,7 +180,7 @@ KopeteChatWindow::KopeteChatWindow(QWidget *parent, const char* name) : KParts::
 	mainArea->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	mainLayout = new QVBoxLayout( mainArea );
 
-	if( KopetePrefs::prefs()->chatWShowSend() )
+	if ( KopetePrefs::prefs()->chatWShowSend() )
 	{
 		//Send Button
 		m_button_send = new KPushButton( i18n("Send"), statusBar() );
@@ -263,15 +265,15 @@ void KopeteChatWindow::windowListChanged()
 		(*it)->checkDetachEnable();
 }
 
-bool KopeteChatWindow::eventFilter( QObject *o, QEvent *e )
+bool KopeteChatWindow::eventFilter( QObject *object, QEvent *event )
 {
-	if ( o->inherits( "KTextEdit" ) )
-		KCursor::autoHideEventFilter( o, e );
+	if ( object->inherits( "KTextEdit" ) )
+		KCursor::autoHideEventFilter( object, event );
 
-	if( e->type() == QEvent::KeyPress )
+	if( event->type() == QEvent::KeyPress )
 	{
-		QKeyEvent *event = static_cast<QKeyEvent*>( e );
-		KKey key( event );
+		QKeyEvent *keyEvent = static_cast<QKeyEvent*>( event );
+		KKey key( keyEvent );
 
 		// NOTE:
 		// shortcut.contains( key ) doesn't work. It was the old way we used to do it, but it is incorrect
@@ -325,12 +327,12 @@ bool KopeteChatWindow::eventFilter( QObject *o, QEvent *e )
 
 		if( m_activeView )
 		{
-			if( event->key() == Qt::Key_Prior )
+			if( keyEvent->key() == Qt::Key_Prior )
 			{
 				m_activeView->pageUp();
 				return true;
 			}
-			else if( event->key() == Qt::Key_Next )
+			else if( keyEvent->key() == Qt::Key_Next )
 			{
 				m_activeView->pageDown();
 				return true;
