@@ -1,4 +1,31 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
+//
+// Current author and maintainer: Grzegorz Jaskiewicz
+//				gj at pointblue.com.pl
+//
+// Copyright (C) 	2002-2003	 Zack Rusin <zack@kde.org>
+//
+// gaducommands.h - all basic, and not-session dependent commands
+// (meaning you don't have to be logged in for any
+//  of these). These delete themselves, meaning you don't
+//  have to/can't delete them explicitely and have to create
+//  them dynamically (via the 'new' call).
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+// 02111-1307, USA.
+
 #include "gaducommands.h"
 #include <qsocketnotifier.h>
 #include <klocale.h>
@@ -37,12 +64,12 @@ GaduCommand::checkSocket( int fd, int checkWhat )
 	read_ = new QSocketNotifier( fd, QSocketNotifier::Read, this );
 	read_->setEnabled( false );
 	QObject::connect( read_, SIGNAL(activated(int)),
-										SLOT(forwarder()) );
+			    SLOT(forwarder()) );
 
 	write_ = new QSocketNotifier( fd, QSocketNotifier::Write, this );
 	write_->setEnabled( false );
 	QObject::connect( write_, SIGNAL(activated(int)),
-										SLOT(forwarder()) );
+			    SLOT(forwarder()) );
 
 	if( checkWhat & GG_CHECK_READ ) {
 		read_->setEnabled( true );
@@ -73,7 +100,7 @@ GaduCommand::disableNotifiers()
 void
 GaduCommand::forwarder()
 {
-	emit socketReady();
+    emit socketReady();
 }
 
 
@@ -88,26 +115,29 @@ SearchCommand::~SearchCommand()
 
 void
 SearchCommand::searchMode0( const QString& nickname, const QString& firstName,
-														const QString& lastName, const QString& city,
-														int gender, int min_birth, int max_birth, int active, int start )
+			    const QString& lastName, const QString& city,
+			    int gender, int min_birth, int max_birth, int active, 
+			    int start )
 {
-	request_ = gg_search_request_mode_0( qstrToChar(nickname),
-																			 qstrToChar(firstName),
-																			 qstrToChar(lastName),
-																			 qstrToChar(city),
-																			 gender, min_birth, max_birth, active, start );
+
+    request_ = gg_search_request_mode_0( qstrToChar(nickname),
+				          qstrToChar(firstName),
+				         qstrToChar(lastName),
+				          qstrToChar(city),
+				           gender, min_birth, 
+					   max_birth, active, start );
 }
 
 void
 SearchCommand::searchMode1( const QString& email, int active, int start )
 {
-	request_ = gg_search_request_mode_1( qstrToChar(email), active, start );
+    request_ = gg_search_request_mode_1( qstrToChar(email), active, start );
 }
 
 void
 SearchCommand::searchMode2( const QString& phone, int active, int start )
 {
-	request_ = gg_search_request_mode_2( qstrToChar(phone), active, start );
+    request_ = gg_search_request_mode_2( qstrToChar(phone), active, start );
 }
 
 void
@@ -178,13 +208,20 @@ SearchCommand::watcher()
 RegisterCommand::RegisterCommand( QObject* parent, const char* name )
 	:GaduCommand( parent, name ), session_(0)
 {
+    uin=0;
 }
 
 RegisterCommand::RegisterCommand( const QString& email, const QString& password, QObject* parent, const char* name )
 	:GaduCommand(parent, name), email_(email), password_(password), session_(0)
 {
+    uin=0;
 }
 
+
+unsigned int RegisterCommand::newUin()
+{
+	return uin;
+}
 RegisterCommand::~RegisterCommand()
 {
 }
@@ -204,15 +241,16 @@ RegisterCommand::execute()
 	checkSocket( session_->fd, session_->check );
 }
 
-void
-RegisterCommand::watcher()
+void RegisterCommand::watcher()
 {
 	disableNotifiers();
+	gg_pubdir *gg_pub;
+	
 
 	if ( gg_register_watch_fd( session_ ) == -1 ) {
 		gg_free_register( session_ );
 		emit error( i18n("Connection error"),
-								i18n("Unknown connection error while registering") );
+				i18n("Unknown connection error while registering") );
 		done_ = true;
 		deleteLater();
 		return;
@@ -220,7 +258,7 @@ RegisterCommand::watcher()
 	if ( session_->state == GG_STATE_ERROR ) {
 		gg_free_register( session_ );
 		emit error( i18n("Registration error"),
-								i18n("There was an unknown registration error") );
+				i18n("There was an unknown registration error") );
 		switch( session_->error )
 		{
 		case GG_ERROR_RESOLVING:
@@ -244,7 +282,18 @@ RegisterCommand::watcher()
 		return;
 	}
 	if ( session_->state == GG_STATE_DONE ) {
-		emit done( i18n("Registration complete"), i18n("Registration has completed successfully. You will receive an email with a confirmation shortly.") );
+
+		gg_pub=(gg_pubdir *)session_->data;
+		if (gg_pub){
+		    uin= gg_pub->uin;
+		    kdDebug(14100713)<<"wylosowany numerek to:"<< uin << endl;
+		    emit done( QString::number(uin), i18n("Registration has completed successfully..") );
+		}
+		else{
+		    emit error( i18n("Registration error"),
+				i18n("Data send to server were invalid") );
+		}	
+
 		gg_free_register( session_ );
 		done_ = true;
 		deleteLater();
@@ -252,6 +301,7 @@ RegisterCommand::watcher()
 	}
 
 	enableNotifiers( session_->check );
+	return;
 }
 
 RemindPasswordCommand::RemindPasswordCommand( QObject* parent, const char* name )

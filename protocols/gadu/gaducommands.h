@@ -1,11 +1,15 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
-// gaducommands.h - all basic, and not-session dependent commands
-//									(meaning you don't have to be logged in for any
-//									 of these). These delete themselves, meaning you don't
-//									 have to/can't delete them explicitely and have to create
-//									 them dynamically (via the 'new' call).
 //
-// Copyright (C)	2002-2003	 Zack Rusin <zack@kde.org>
+// Current author and maintainer: Grzegorz Jaskiewicz
+//				gj at pointblue.com.pl
+//
+// Copyright (C) 	2002-2003	 Zack Rusin <zack@kde.org>
+//
+// gaducommands.h - all basic, and not-session dependent commands
+// (meaning you don't have to be logged in for any
+//  of these). These delete themselves, meaning you don't
+//  have to/can't delete them explicitely and have to create
+//  them dynamically (via the 'new' call).
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -101,12 +105,14 @@ public:
 
 	void setUserinfo( const QString& email, const QString& password );
 	void execute();
+	unsigned int newUin();
 protected slots:
 	void watcher();
 private:
 	QString email_;
 	QString password_;
 	struct gg_http	*session_;
+	int uin;
 };
 
 class RemindPasswordCommand : public GaduCommand
