@@ -40,20 +40,20 @@ FastAddContactWizard::FastAddContactWizard( QWidget *parent, const char *name )
 	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
 	for(Kopete::Account *i=accounts.first() ; i; i=accounts.next() )
 	{
-		accountLVI= new QListViewItem( protocolListView, i->accountId() );
+		accountLVI= new QListViewItem( protocolListView, i->accountLabel() );
 		accountLVI->setText(1,i->protocol()->displayName() + QString::fromLatin1(" ") );
 		accountLVI->setPixmap( 1, SmallIcon( i->protocol()->pluginIcon() ) );
 		m_accountItems.insert(accountLVI,i);
 	}
-	
+
 	if ( accounts.count() == 1 )
 		protocolListView->setCurrentItem( accountLVI );
-	
+
 	// Account choice validation connections
 	connect( protocolListView, SIGNAL(clicked(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
 	connect( protocolListView, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
 	connect( protocolListView, SIGNAL(spacePressed(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
-	
+
 	setNextEnabled( selectService, false );
 	setFinishEnabled(finis, true);
 }
@@ -111,9 +111,9 @@ void FastAddContactWizard::next()
 void FastAddContactWizard::accept()
 {
 	Kopete::MetaContact *metaContact = new Kopete::MetaContact();
-	
+
 	metaContact->addToGroup( Kopete::Group::topLevel() );
-	
+
 	bool ok = protocolPages.isEmpty();
 
 	// get each protocol's contact
@@ -128,7 +128,7 @@ void FastAddContactWizard::accept()
 	}
 	else
 		delete metaContact;
-	
+
 	deleteLater();
 }
 

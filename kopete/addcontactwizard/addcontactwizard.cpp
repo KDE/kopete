@@ -90,7 +90,7 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
 	for(Kopete::Account *i=accounts.first() ; i; i=accounts.next() )
 	{
-		accountLVI= new QCheckListItem( protocolListView, i->accountId(), QCheckListItem::CheckBox);
+		accountLVI= new QCheckListItem( protocolListView, i->accountLabel(), QCheckListItem::CheckBox);
 		accountLVI->setText(1,i->protocol()->displayName() + QString::fromLatin1(" ") );
 		//FIXME - I'm not sure the column 1 is a right place for the colored icon -Olivier
 		accountLVI->setPixmap( 1, i->accountIcon() );
@@ -184,7 +184,7 @@ void AddContactWizard::slotCheckAddresseeChoice( bool on )
 		{
 			m_addressBook = KABC::StdAddressBook::self();
 			KABC::StdAddressBook::setAutomaticSave( true );
-			
+
 /*			connect( m_addressBook, SIGNAL( loadingFinished( Resource * ) ),
 				this, SLOT(slotLoadAddressees() ) );*/
 			connect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ),
@@ -330,9 +330,9 @@ void AddContactWizard::next()
 				// this shouldn't happen either, but I hate crashes
 				if (!i)
 					continue;
-					
+
 				usedAccounts.append( i->protocol()->pluginId() + i->accountId() );
-				
+
 				if(protocolPages.contains(i))
 					continue;
 

@@ -180,9 +180,9 @@ void Account::setAccountLabel( const QString &label )
 
 QString Account::accountLabel() const
 {
-	if( !d->accountLabel.isEmpty() );
-		return d->accountLabel;
-	return accountId();
+	if( d->accountLabel.isNull() )
+		return d->id;
+	return d->accountLabel;
 }
 
 void Account::setExcludeConnect( bool b )

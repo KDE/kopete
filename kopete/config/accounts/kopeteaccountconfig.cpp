@@ -70,7 +70,7 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const char * /* name 
 	connect( m_view->mAccountList,  SIGNAL( doubleClicked( QListViewItem * ) ), this, SLOT( slotEditAccount() ) );
 	connect( m_view->mUseColor,     SIGNAL( toggled( bool ) ), this, SLOT( slotColorChanged() ) );
 	connect( m_view->mColorButton,  SIGNAL( changed( const QColor & ) ), this, SLOT( slotColorChanged() ) );
-	
+
 	m_view->mAccountList->setSorting(-1);
 
 	setButtons( Help );
@@ -94,7 +94,7 @@ void KopeteAccountConfig::save()
 	m_newColors.clear();
 
 	Kopete::AccountManager::self()->save();
-	
+
 	load(); //refresh the colred accounts (in case of apply)
 }
 
@@ -111,7 +111,7 @@ void KopeteAccountConfig::load()
 		lvi = new KopeteAccountLVI( i, m_view->mAccountList );
 		lvi->setText( 0, i->protocol()->displayName() );
 		lvi->setPixmap( 0, i->accountIcon() );
-		lvi->setText( 1, i->accountId() );
+		lvi->setText( 1, i->accountLabel() );
 	}
 
 	m_newColors.clear();
@@ -130,7 +130,7 @@ void KopeteAccountConfig::slotItemSelected()
 	{
 		m_view->mButtonUp->setEnabled( itemSelected->itemAbove() );
 		m_view->mButtonDown->setEnabled( itemSelected->itemBelow() );
-		
+
 		Kopete::Account *account = itemSelected->account();
 		QColor color= m_newColors.contains(account) ? m_newColors[account] :  account->color();
 		m_view->mUseColor->setEnabled( true );
@@ -227,7 +227,7 @@ void KopeteAccountConfig::slotRemoveAccount()
 		return;
 
 	Kopete::Account *i = lvi->account();
-	if ( KMessageBox::warningContinueCancel( this, i18n( "Are you sure you want to remove the account \"%1\"?" ).arg( i->accountId() ),
+	if ( KMessageBox::warningContinueCancel( this, i18n( "Are you sure you want to remove the account \"%1\"?" ).arg( i->accountLabel() ),
 		i18n( "Remove Account" ), KGuiItem(i18n( "Remove Account" ),"editdelete") ) == KMessageBox::Continue )
 	{
 		Kopete::AccountManager::self()->removeAccount( i );
@@ -250,7 +250,7 @@ void KopeteAccountConfig::slotColorChanged()
 	if ( !lvi )
 		return;
 	Kopete::Account *account = lvi->account();
-	
+
 	if(!account->color().isValid() && !m_view->mUseColor->isChecked() )
 	{  //we don't use color for that account and nothing changed.
 		m_newColors.remove(account);
