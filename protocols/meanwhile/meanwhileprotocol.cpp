@@ -64,6 +64,8 @@ MeanwhileProtocol::MeanwhileProtocol( QObject* parent,
 {
 //    LOG("MeanwhileProtocol()");
     s_protocol = this;
+
+    addAddressBookField( "messaging/meanwhile", Kopete::Plugin::MakeIndexField );
 }
 
 MeanwhileProtocol::~MeanwhileProtocol()
