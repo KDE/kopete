@@ -55,6 +55,8 @@ public:
 	 *       method, it's not completely obsolete either, because protocols
 	 *       with server-side contact lists ( MSN, Jabber, etc. ) may detect
 	 *       new contacts having been added upon reconnect.
+	 *
+	 * @todo return a KopeteContact.  the metacontact can be obtained with contact->metaContact
 	 */
 	KopeteMetaContact *findContact( const QString &protocolId,
 		const QString &accountId, const QString &contactId );

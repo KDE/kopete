@@ -3,7 +3,7 @@
 
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @ tiscalinet.be>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -401,6 +401,8 @@ public slots:
 	 * protocol-specific actions required to delete a contact
 	 * (ie. messages to the server, etc)
 	 * the default implementation simply call deleteLater()
+	 *
+	 * @todo rename that function to "deleteContact"
 	 */
 	virtual void slotDeleteContact();
 
@@ -459,6 +461,11 @@ private slots:
 	 * This add the contact totally in the list if it was a temporary contact
 	 */
 	void slotAddContact();
+	
+	/**
+	 * slot called when the action "delete" is called.
+	 */
+	void slotDelete();
 
 signals:
 	/**

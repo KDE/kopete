@@ -217,7 +217,7 @@ KPopupMenu* KopeteContact::popupMenu( KopeteMessageManager *manager )
 	d->actionSendFile    = KopeteStdAction::sendFile( this,    SLOT( sendFile() ),              menu, "actionSendFile" );
 	d->actionUserInfo    = KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ),          menu, "actionUserInfo" );
 	d->actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ),           menu, "actionSendMessage" );
-	d->actionDeleteContact = KopeteStdAction::deleteContact( this, SLOT( slotDeleteContact() ), menu, "actionDeleteContact" );
+	d->actionDeleteContact = KopeteStdAction::deleteContact( this, SLOT( slotDelete() ),        menu, "actionDeleteContact" );
 	d->actionChangeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( slotChangeMetaContact() ), menu, "actionChangeMetaContact" );
 	d->actionAddContact = new KAction( i18n( "&Add to Your Contact List" ), QString::fromLatin1( "bookmark_add" ), 0,
 		this, SLOT( slotAddContact() ), menu, "actionAddContact" );
@@ -500,6 +500,21 @@ void KopeteContact::execute()
 			"until this user comes online." ), i18n( "User is Not Reachable" ) );
 	}
 }
+
+void KopeteContact::slotDelete()
+{
+	// Default implementation simply deletes the contact
+	
+	if ( KMessageBox::warningContinueCancel( Kopete::UI::Global::mainWidget(),
+		i18n( "Are you sure you want to remove the contact  '%1' from your contact list?" ).
+		arg( d->contactId ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"), QString::fromLatin1("editdelete") ) )
+		== KMessageBox::Continue )
+	{
+		slotDeleteContact();
+	}
+}
+
+
 
 void KopeteContact::slotDeleteContact()
 {
