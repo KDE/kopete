@@ -18,9 +18,6 @@
             <height>400</height>
         </size>
     </property>
-    <property name="caption">
-        <string>AIMUserInfoWidget</string>
-    </property>
     <property name="layoutMargin" stdset="0">
     </property>
     <vbox>

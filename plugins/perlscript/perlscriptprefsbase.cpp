@@ -130,7 +130,6 @@ void PerlScriptPrefsUI::slotPaste()
  */
 void PerlScriptPrefsUI::languageChange()
 {
-    setCaption( tr2i18n( "Form1" ) );
     saveButton->setText( tr2i18n( "Save Changes" ) );
     addButton->setText( tr2i18n( "Add Script" ) );
     removeButton->setText( tr2i18n( "Remove Script" ) );
