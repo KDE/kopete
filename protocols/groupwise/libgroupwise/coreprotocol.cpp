@@ -349,7 +349,8 @@ void CoreProtocol::readEvent( const QByteArray& wire, int bytesRead )
 	// now create an event object, passing it the wire data minus the source we just read
 	QByteArray remainder( wire.size() - bytesRead );
 	memcpy( remainder.data(), wire.data() + bytesRead, wire.size() - bytesRead );
-	m_inTransfer = new EventTransfer( m_collatingEvent, source, QTime::currentTime(), remainder );
+	//HACK: lowercased DN
+	m_inTransfer = new EventTransfer( m_collatingEvent, source.lower(), QTime::currentTime(), remainder );
 	m_collatingEvent = 0;
 }
 

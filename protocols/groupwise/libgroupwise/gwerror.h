@@ -56,6 +56,7 @@ namespace GroupWise
 		QString user;
 		QTime timeStamp;
 		Q_UINT32 flags;
+		QString message;
 	};
 	
 	struct FolderItem

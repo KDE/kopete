@@ -28,6 +28,7 @@ public:
 	/**
 	 * Obtain a new @ref Request instance
 	 * The consumer is responsible for deleting this
+	 * TODO: Allow the user to provide the fields for the request in this call
 	 */
 	Request * request( QCString &request);
 private:
