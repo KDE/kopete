@@ -94,6 +94,12 @@ signals:
 	 * The connection failed
 	 */
 	void connectionFailed();
+	
+	
+	/**
+	 * The connection was closed
+	 */
+	void socketClosed( int );
 
 protected:
 	/**

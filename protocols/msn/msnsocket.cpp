@@ -396,10 +396,10 @@ void MSNSocket::slotSocketClosed( int state )
 {
 	kdDebug() << "MSNSocket::slotSocketClosed: socket closed. State: 0x" <<
 		QString::number( state, 16 ) << endl;
-		
-	if ( state == 0x40 )
-		setOnlineStatus( Disconnected );
-		
+
+	setOnlineStatus( Disconnected );
+	
+	emit( socketClosed( state ) );
 }
 #include "msnsocket.moc"
 

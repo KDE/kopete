@@ -201,6 +201,9 @@ void MSNProtocol::Connect()
 	connect( m_serviceSocket, SIGNAL( startChat( QString, QString ) ),
 		this, SLOT( slotCreateChat( QString, QString ) ) );
 
+	connect( m_serviceSocket, SIGNAL( socketClosed( int ) ),
+		this, SLOT( slotNotifySocketClosed( int ) ) );
+
 	m_serviceSocket->connect( m_password );
 	statusBarIcon->setMovie( connectingIcon );
 }
@@ -210,7 +213,8 @@ void MSNProtocol::Disconnect()
 	if (m_serviceSocket)
 		m_serviceSocket->disconnect();
 
-	delete m_serviceSocket;
+	//delete m_serviceSocket;
+	m_serviceSocket->deleteLater();
 	m_serviceSocket = 0L;
 
 	m_chatServices.setAutoDelete( true );
@@ -1024,10 +1028,29 @@ void MSNProtocol::slotMessageSent( const KopeteMessage msg )
 	MSNSwitchBoardSocket *service = m_chatServices[ manager ];
 	if( service )
 		service->slotSendMsg( msg );
-	else
+	else // There's no switchboard available, so we must create a new one!
 	{
-		kdDebug() << "WARNING: No chat service active for these recipients!"
-			<< endl;
+		MSNContact *contact = dynamic_cast<MSNContact*>( msg.to().first() );
+
+		if ( !contact )
+		{
+			kdDebug() <<
+				"MSNProtocol::slotMessageSent:Unable to create a " <<
+				"new switchboard!" << endl;
+			return;
+		}
+		
+		kdDebug() << "MSNProtocol::slotMessageSent: Creating new "
+			<< "SwitchBoardSocket for " << contact->msnId() << "!" << endl;
+
+		slotStartChatSession( contact->msnId() );
+
+		// *********** NOW WHAT DO WE DO?! ************** //
+		//MSNSwitchBoardSocket *service = m_chatServices[ manager ];
+
+		//if( service )
+		//	service->slotSendMsg( msg );
+
 	}
 }
 
@@ -1055,6 +1078,9 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 
 		connect( chatService, SIGNAL( msgReceived( const KopeteMessage & ) ),
 			this, SLOT( slotMessageReceived( const KopeteMessage & ) ) );
+		connect( chatService,
+			SIGNAL( switchBoardClosed(MSNSwitchBoardSocket *) ),
+			this, SLOT( slotSwitchBoardClosed(MSNSwitchBoardSocket * ) ) );
 
 		// We may have a new KMM here, but it could just as well be an
 		// existing instance. To avoid connecting multiple times, try to
@@ -1151,6 +1177,33 @@ void MSNProtocol::slotDebugRawCommand()
 	}
 	delete dlg;
 }
+
+void MSNProtocol::slotNotifySocketClosed( int state )
+{
+	if ( state == 0x10 ) // connection died unexpectedly
+	{
+		//KMessageBox::error( 0, i18n( "Connection with the MSN server was lost unexpectedly.\nIf you are unable to reconnect, please try again later." ), i18n( "Connection lost - MSN Plugin - Kopete" ) );
+		Disconnect();
+		kdDebug() << "MSNProtocol::slotNotifySocketClosed: Done." << endl;
+	}
+}
+
+void MSNProtocol::slotSwitchBoardClosed( MSNSwitchBoardSocket *switchboard)
+{
+	QPtrDictIterator<MSNSwitchBoardSocket> it( m_chatServices );
+	for( ; m_chatServices.count() && it.current(); ++it )
+	{
+		if( it == switchboard )
+		{
+			kdDebug() << "MSNProtocol::slotSwitchBoardClosed" << endl;
+
+			// remove from the list, then make it kill itself
+			m_chatServices.take( it.currentKey() )->deleteLater();
+			break;
+		}
+	}
+}
+
 
 #include "msnprotocol.moc"
 

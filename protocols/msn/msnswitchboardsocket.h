@@ -38,7 +38,6 @@ public:
 	MSNSwitchBoardSocket();
 	~MSNSwitchBoardSocket();
 
-
 protected:
 	QString m_myHandle; // our handle
 	QString m_msgHandle; // the other side's handle
@@ -56,6 +55,12 @@ protected:
 	virtual void parseCommand( const QString &cmd, uint id,
 		const QString &data );
 
+	/**
+	 * Handle exceptions that might occur during a chat.
+	 */
+	virtual void handleError( uint code, uint id );
+
+
 	QString parseFontAttr( QString str, QString attr );
 
 public:
@@ -69,13 +74,13 @@ public:
 public slots:
 	void slotReadMessage( const QString &msg );
 	void slotSendMsg( const KopeteMessage &msg );
-	void slotSocketClosed();
 	void slotCloseSession();
 	void slotInviteContact(QString handle);
 	void slotTypingMsg();
 
 private slots:
 	void slotOnlineStatusChanged( MSNSocket::OnlineStatus status );
+	void slotSocketClosed( int state );
 
 signals:
 	void msgReceived( const KopeteMessage &msg );
@@ -87,6 +92,7 @@ signals:
 	void switchBoardIsActive(bool);
 	void updateChatMember(QString,QString,bool);
 	void userLeftChat( QString );
+	void switchBoardClosed( MSNSwitchBoardSocket* switchboard );
 
 private:
 	QStringList m_chatMembers;

@@ -49,13 +49,31 @@ void MSNSwitchBoardSocket::connectToSwitchBoard(QString ID, QString address, QSt
 	QObject::connect( this, SIGNAL( onlineStatusChanged( MSNSocket::OnlineStatus ) ),
 		this, SLOT( slotOnlineStatusChanged( MSNSocket::OnlineStatus ) ) );
 
+	QObject::connect( this, SIGNAL( socketClosed( int ) ),
+		this, SLOT( slotSocketClosed( int ) ) );
+
 	connect( server, port );
 
 	// we need these for the handshake later on (when we're connected)
 	m_ID = ID;
 	m_auth = auth;
 
-	// FIXME : we have no socketClosed signal
+}
+
+void MSNSwitchBoardSocket::handleError( uint code, uint id )
+{
+	QString msg;
+	switch( code )
+	{
+		case 217:
+			// TODO: we need to know the nickname instead of the handle.
+			msg = i18n( "The user %1 is no longer online.\nThe message you sent could not be delivered.", m_msgHandle );
+			KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+			break;
+		default:
+			MSNSocket::handleError( code, id );
+			break;
+	}
 }
 
 void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint id,
@@ -107,7 +125,7 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint id,
 		emit updateChatMember( handle, "BYE", false );
 		if( m_chatMembers.contains( handle ) )
 			m_chatMembers.remove( handle );
-			
+
 		kdDebug() << "MSNSwitchBoardSocket::parseCommand: " <<
 			handle << " left the chat." << endl;
 
@@ -128,78 +146,17 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint id,
 		QString len = data.section( ' ', 2, 2 );
 
 		// we need to know who's sending is the block...
-		m_msgHandle = data.section( ' ', 0, 0 ); // MUAHAHAHAH
+		m_msgHandle = data.section( ' ', 0, 0 );
 
 		readBlock(len.toUInt());
 	}
 }
 void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 {
+	kdDebug() << "MSNSwitchBoardSocket::slotReadMessage" << endl;
 
-	if(msg.contains("Content-Type: text/plain;"))
-	{
-		QString fontinfo = msg.left(msg.find("\r\n\r\n"));
-		QString color = parseFontAttr(fontinfo, "CO");
-		QFont font;
-
-		// FIXME: we need to set default colors, but what are they?
-		QColor fg;
-
-		// FIXME: this is BAAAAAAAAAAAAD
-		if (!color.isEmpty())
-		{
-			if (color.length() == 2) // only #RR (red color) given
-				fg.setRgb(color.mid(0,2).toInt(0,16), 0, 0);
-			else if (color.length() == 4) // #GGRR (green, red) given.
-				fg.setRgb(color.mid(2,2).toInt(0,16), color.mid(0,2).toInt(0,16), 0);
-			else if (color.length() == 6) // full #BBGGRR given
-				fg.setRgb(color.mid(4,2).toInt(0, 16), color.mid(2,2).toInt(0,16),
-					color.mid(0,2).toInt(0,16));
-		}
-
-		// FIXME: The below regexps do work, but are quite ugly.
-		// Reason is that a \1 inside the replacement string is
-		// not possible.
-		// When importing kopete into kdenetwork, convert this to
-		// KRegExp3 from libkdenetwork, which does exactly this.
-		QString fontName = fontinfo.replace(
-		QRegExp( ".*(FN=" ), "" ).replace(
-		QRegExp( ";.*" ), "" ).replace( QRegExp( "%20" ), " " );
-		if( !fontName.isEmpty() )
-		{
-			kdDebug() << "MSNSwitchBoardService::slotReadMessage: Font: '" <<
-				fontName << "'" << endl;
-
-			font = QFont( fontName,
-				parseFontAttr(fontinfo, "PF").toInt(), // font size
-				parseFontAttr(
-					fontinfo, "EF").contains('B') ? QFont::Bold : QFont::Normal,
-				parseFontAttr(fontinfo, "EF").contains('I') ? true : false );
-		}
-
-		kdDebug() << "MSNSwitchBoardService::slotReadMessage: Message: " <<
-			endl << msg.right( msg.length() - msg.findRev("\r\n\r\n") - 4) <<
-			endl;
-
-		kdDebug() << "MSNSwitchBoardService::slotReadMessage: User handle: "
-			<< m_msgHandle << endl; // MUAH
-
-		// FIXME: THIS IS UGLY!!!!!!!!!!!!!!!!!!!!!!
-		KopeteContactList others;
-		others.append( MSNProtocol::protocol()->myself() );
-
-		KopeteMessage kmsg(
-			MSNProtocol::protocol()->contacts()[ m_msgHandle ] , others, // MUAH
-			msg.right( msg.length() - msg.findRev("\r\n\r\n") - 4 ),
-			KopeteMessage::Inbound );
-
-		kmsg.setFg( fg );
-		kmsg.setFont( font );
-
-		emit msgReceived( kmsg );
-	}
 	// incoming message for File-transfer
-	else if( msg.contains("Content-Type: text/x-msmsgsinvite; charset=UTF-8") )
+	if( msg.contains("Content-Type: text/x-msmsgsinvite; charset=UTF-8") )
 	{
 		// filetransfer ,this comes in a later release
 		// needs some debugging time
@@ -233,7 +190,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			sendCommand( command + message, args + message, false );
 		}*/
 
-		QString contact = MSNProtocol::protocol()->contacts()[ m_msgHandle ]->nickname(); // MUAH
+		QString contact = MSNProtocol::protocol()->contacts()[ m_msgHandle ]->nickname();
 		QString message = i18n("%1 tried to send you a file.\nUnfortunately,"
 			" file tranfer is currently not supported.\n").arg( contact );
 
@@ -246,6 +203,92 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		message = msg.right(msg.length() - msg.findRev(" ")-1);
 		message = message.replace(QRegExp("\r\n"),"");
 		emit userTypingMsg(message);    // changed 20.10.2001
+	}
+	else// if(msg.contains("Content-Type: text/plain;"))
+	{
+		// Some MSN Clients (like CCMSN) don't like to stick to the rules.
+		// In case of CCMSN, it doesn't send what the content type is when
+		// sending a text message. So if it's not supplied, we'll just
+		// assume its that.
+
+		QColor fontColor;
+		QFont font;
+
+		if ( msg.contains( "X-MMS-IM-Format" ) )
+		{
+			QString fontName;
+			QString fontInfo;
+			QString color;
+			int pos1 = msg.find( "X-MMS-IM-Format" ) + 15;
+
+			fontInfo = msg.mid(pos1, msg.find("\r\n\r\n") - pos1 );
+			color = parseFontAttr(fontInfo, "CO");
+
+			// FIXME: this is so BAAAAAAAAAAAAD :(
+			if (!color.isEmpty())
+			{
+				if ( color.length() == 2) // only #RR (red color) given
+					fontColor.setRgb(
+						color.mid(0,2).toInt(0,16),
+						0,
+						0);
+				else if ( color.length() == 4) // #GGRR (green, red) given.
+				{
+					fontColor.setRgb(
+						color.mid(2,2).toInt(0,16),
+						color.mid(0,2).toInt(0,16),
+						0);
+				}
+				else if ( color.length() == 6) // full #BBGGRR given
+				{
+					fontColor.setRgb(
+						color.mid(4,2).toInt(0, 16),
+						color.mid(2,2).toInt(0,16),
+						color.mid(0,2).toInt(0,16));
+				}
+			}
+
+			// FIXME: The below regexps do work, but are quite ugly.
+			// Reason is that a \1 inside the replacement string is
+			// not possible.
+			// When importing kopete into kdenetwork, convert this to
+			// KRegExp3 from libkdenetwork, which does exactly this.
+			fontName = fontInfo.replace(
+				QRegExp( ".*FN=" ), "" ).replace(
+				QRegExp( ";.*" ), "" ).replace( QRegExp( "%20" ), " " );
+
+			if( !fontName.isEmpty() )
+			{
+				kdDebug() << "MSNSwitchBoardService::slotReadMessage: Font: '" <<
+					fontName << "'" << endl;
+
+				font = QFont( fontName,
+					parseFontAttr( fontInfo, "PF" ).toInt(), // font size
+					parseFontAttr( fontInfo, "EF" ).contains( 'B' ) ? QFont::Bold : QFont::Normal,
+					parseFontAttr( fontInfo, "EF" ).contains( 'I' ) ? true : false );
+			}
+		}
+
+		kdDebug() << "MSNSwitchBoardService::slotReadMessage: Message: " <<
+			endl << msg.right( msg.length() - msg.findRev("\r\n\r\n") - 4) <<
+			endl;
+
+		kdDebug() << "MSNSwitchBoardService::slotReadMessage: User handle: "
+			<< m_msgHandle << endl;
+
+		// FIXME: THIS IS UGLY!!!!!!!!!!!!!!!!!!!!!!
+		KopeteContactList others;
+		others.append( MSNProtocol::protocol()->myself() );
+
+		KopeteMessage kmsg(
+			MSNProtocol::protocol()->contacts()[ m_msgHandle ] , others,
+			msg.right( msg.length() - msg.findRev("\r\n\r\n") - 4 ),
+			KopeteMessage::Inbound );
+
+		kmsg.setFg( fontColor );
+		kmsg.setFont( font );
+
+		emit msgReceived( kmsg );
 	}
 }
 
@@ -301,11 +344,12 @@ void MSNSwitchBoardSocket::slotSendMsg( const KopeteMessage &msg )
 	emit msgReceived( msg );    // send the own msg to chat window
 }
 
-void MSNSwitchBoardSocket::slotSocketClosed()
+void MSNSwitchBoardSocket::slotSocketClosed( int /*state */)
 {
 	// we have lost the connection, send a message to chatwindow (this will not displayed)
 	emit switchBoardIsActive(false);
-	delete this;
+	emit switchBoardClosed( this );
+
 }
 
 void MSNSwitchBoardSocket::slotCloseSession()

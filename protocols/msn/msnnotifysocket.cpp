@@ -36,6 +36,7 @@ KMSNServiceSocket::KMSNServiceSocket( const QString &msnId )
 
 KMSNServiceSocket::~KMSNServiceSocket()
 {
+	kdDebug() << "KMSNServiceSocket::~KMSNServiceSocket" << endl;
 }
 
 void KMSNServiceSocket::connect( const QString &pwd )
@@ -106,6 +107,8 @@ void KMSNServiceSocket::handleError( uint code, uint id )
 void KMSNServiceSocket::parseCommand( const QString &cmd, uint id,
 	const QString &data )
 {
+	kdDebug() << "KMSNServiceSocket::parseCommand: Command: " << cmd << endl;
+
 	if( cmd == "USR" )
 	{
 		if( data.section( ' ', 1, 1 ) == "S" )

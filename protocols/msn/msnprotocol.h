@@ -272,6 +272,16 @@ private slots:
 	 * Show simple debugging aid
 	 */
 	void slotDebugRawCommand();
+	
+	/**
+	 * The Notify socket might have closed unexpectedly...
+	 */
+	 void slotNotifySocketClosed( int state );
+
+	/**
+	 * The SwitchBoard socket was closed, so we remove it from the list.
+	 */
+	 void slotSwitchBoardClosed( MSNSwitchBoardSocket *switchboard );
 
 private:
 	/**
