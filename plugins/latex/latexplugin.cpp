@@ -157,16 +157,21 @@ void LatexPlugin::slotHandleLatex( KopeteMessage& msg )
 	if(replaceMap.isEmpty()) //we haven't found any latex strings
 		return;
 
-	messageText=QStyleSheet::escape(messageText); 
+	messageText=QStyleSheet::escape(messageText);
+
 	for (QMap<QString,QString>::ConstIterator it = replaceMap.begin(); it != replaceMap.end(); ++it)
 	{
 		QString escapedLATEX=it.key();
 		escapedLATEX.replace("\"","&quot;");  //we need  the escape quotes because that string will be in a title="" argument
 		messageText.replace(it.key(), " <img src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
 	}
+
+	//Finish the "HTMLisation" of the message.  TODO: do it in a KopeteMessage::escape
+	messageText.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br />" ) )
+				.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) )
+				.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
+				
 	msg.setBody( messageText, KopeteMessage::RichText );
-	
-	//replaced_message.replace( QRegExp( match.arg( QRegExp::escape( it.key() ) ) ), map.find( 
 }
 
 void LatexPlugin::slotSettingsChanged()
