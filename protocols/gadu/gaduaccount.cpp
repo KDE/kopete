@@ -525,7 +525,7 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 				}
 			}
 			else {
-				if ( currentServer == NUM_SERVERS ) {
+				if ( currentServer == NUM_SERVERS-1 ) {
 					serverIP = 0;
 					currentServer = -1;
 				}
