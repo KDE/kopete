@@ -1003,7 +1003,9 @@ void ChatView::slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/*args
 	}
 	else
 	{
-		new KRun(url, 0, false); // false = non-local files
+		KRun *r=new KRun(url, 0, false); // false = non-local files
+		r->setRunExecutables( false ); //security
+		//KRun autodeletes itself by default when finished.
 	}
 }
 
