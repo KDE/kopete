@@ -4,7 +4,7 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002      by Daniel Stone           <dstone@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
     Copyright (c) 2003      by Jason Keirstead        <jason@keirstead.org>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
@@ -143,6 +143,25 @@ public:
 	 */
 	// FIXME: canCreate should definitely be an enum and not a bool - Martijn
 	KopeteView* view( bool canCreate = false, KopeteMessage::MessageType type = KopeteMessage::Undefined );
+	
+	/**
+	 * says if you may invite contact from the same account to this chat with @ref inviteContact
+	 * @see setMayInvite
+	 * @return true if it is possible to invite contact to this chat.
+	 */
+	bool mayInvite() const ;
+	
+	/**
+	 * this method is called when a contact is dragged to the contactlist.
+	 * @p contactId is the id of the contact. the contact is supposed to be of the same account as
+	 * the @ref account() but we can't be sure the KopeteContact is realy on the contactlist 
+	 *
+	 * It is possible to drag contact only if @ref mayInvite return true
+	 *
+	 * the default implementaiton do nothing
+	 */
+	virtual void inviteContact(const QString &contactId);
+	
 
 signals:
 	/**
@@ -296,6 +315,15 @@ protected:
 		KopeteProtocol *protocol, int id = 0, const char *name = 0 );
 
 	void setMMId( int );
+	
+	/**
+	 * Set wether or not contact from this account may be invited in this chat.
+	 * By default, it is set to false
+	 * @see inviteContact()
+	 * @see mayInvite()
+	 */
+	void setMayInvite(bool);
+	
 
 private:
 	KMMPrivate *d;

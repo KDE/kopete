@@ -54,6 +54,7 @@ public:
 	QDateTime awayTime;
 	QString displayName;
 	KopeteView *view;
+	bool mayInvite;
 };
 
 KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
@@ -68,6 +69,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	d->mCanBeDeleted = true;
 	d->view = 0L;
 	d->customDisplayName = false;
+	d->mayInvite = false;
 
 	for ( KopeteContact *c = others.first(); c; c = others.next() )
 		addContact( c, true );
@@ -386,6 +388,21 @@ void KopeteMessageManager::slotContactDestroyed( KopeteContact *contact )
 
 	if ( d->mContactList.isEmpty() )
 		deleteLater();
+}
+
+bool KopeteMessageManager::mayInvite() const
+{
+	return d->mayInvite;
+}
+
+void KopeteMessageManager::inviteContact(const QString& )
+{
+	//default implementation do nothing
+}
+
+void KopeteMessageManager::setMayInvite( bool b )
+{
+	d->mayInvite=b;
 }
 
 #include "kopetemessagemanager.moc"
