@@ -65,7 +65,7 @@ public:
 	 * KopeteProtocol reimplementation start
 	 *
 	 ********************************************************************/
-	 
+
 	/**
 	 * Object constructor and destructor
 	 */
@@ -116,7 +116,7 @@ public:
 	 * Are we able to relay messages to offline users?
 	 */
 	bool canSendOffline() const;
-	
+
 	/**
 	 * Deserialize contact data
 	 */
@@ -174,8 +174,6 @@ public:
 	 * Removes a contact from the roster
 	 */
 	void removeContact(const Jabber::RosterItem &item);
-
-	virtual const QString protocolIcon();
 
 public slots:
 	/**

@@ -64,7 +64,7 @@ KActionMenu* KopeteProtocol::protocolActions()
 		return (it.current())->actionMenu();
 	}
 
-	KActionMenu *m_menu=new KActionMenu(displayName(),protocolIcon(),this);
+	KActionMenu *m_menu=new KActionMenu(displayName(),pluginIcon(),this);
 
 	for( ; KopeteIdentity *identity=it.current(); ++it )
 	{
@@ -362,7 +362,6 @@ void KopeteProtocol::setStatusIcon( const QString &icon )
 		emit( statusIconChanged( this, icon ) );
 	}
 }
-
 
 #include "kopeteprotocol.moc"
 

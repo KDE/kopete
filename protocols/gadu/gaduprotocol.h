@@ -77,7 +77,6 @@ public:
                                   KopeteMetaContact *parentContact );
 
     void removeContact( const GaduContact *c );
-    virtual const QString protocolIcon();
 
     const KopeteOnlineStatus GaduStatusOffline;
     const KopeteOnlineStatus GaduStatusNotAvail;

@@ -64,11 +64,10 @@ public:
 	virtual KActionMenu* protocolActions();
 	YahooContact *contact( const QString &id );
 	YahooSession *yahooSession();
-	virtual const QString protocolIcon();
-	
+
 	bool isOnServer(const QString &id) { return IDs.contains(id); }	// returns true is contact id is on SS contact list
 	bool haveContactList() { return theHaveContactList; }
-	
+
 public slots:
 	void connect();			// Connect to server
 	void disconnect();		// Disconnect from server
@@ -84,7 +83,7 @@ public slots:
 						// Callback when settings changed
 	//void slotConnect();
 	void slotGoOffline();
-	
+
 	void slotLoginResponse( int succ, const QString &url);
 	void slotGotBuddies(const YList * buds);
 	void slotGotBuddy(const QString &userid, const QString &alias, const QString &group);
@@ -123,8 +122,8 @@ private:
 	QMap<QString, QPair<QString, QString> > IDs;	// this should be kept in sync with server - if a buddy is removed, this should be changed accordingly.
 	bool theHaveContactList;
 
-	int m_sessionId;	
-	
+	int m_sessionId;
+
 	bool m_isConnected;				// Am I connected ?
 	QString m_userId, m_password, m_server; int m_port;
 									// Configuration data
@@ -151,7 +150,7 @@ private:
 	KAction *actionGoStatus999; // Idle
 
 	static YahooProtocol* s_protocolStatic_;
-	
+
 	/** The contact's idle time */
 	int m_idle;
 	/** Timer for sending typing notifications */

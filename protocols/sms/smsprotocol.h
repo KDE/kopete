@@ -54,8 +54,6 @@ public:
 
 	KopeteContact *myself() const;
 
-	virtual const QString protocolIcon();
-
 	const KopeteOnlineStatus SMSOnline;
 	const KopeteOnlineStatus SMSOffline;
 	const KopeteOnlineStatus SMSUnknown;

@@ -132,11 +132,6 @@ KActionMenu *JabberProtocol::protocolActions()
 	return actionStatusMenu;
 }
 
-const QString JabberProtocol::protocolIcon()
-{
-	return "jabber_online";
-}
-
 void JabberProtocol::initActions()
 {
 
@@ -239,7 +234,7 @@ bool JabberProtocol::unload()
 		delete jabberClient;
 		jabberClient = 0L;
 	}
-	
+
 	// kick the SSL library
 	Jabber::Stream::unloadSSL();
 
@@ -561,7 +556,7 @@ void JabberProtocol::disconnect()
 	 * Instead, the instance will lurk until the next
 	 * connection attempt.
 	 */
-	
+
 	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Disconnected." << endl;
 
 	setStatusIcon("jabber_offline");
@@ -1294,7 +1289,7 @@ void JabberProtocol::slotEmptyMail()
 
 	KLineEditDlg *dlg = new KLineEditDlg(i18n("Please enter a recipient:"),
 				QString::null, qApp->mainWidget());
-		
+
 	QObject::connect(dlg, SIGNAL(okClicked()),
 					this, SLOT(slotOpenEmptyMail()));
 

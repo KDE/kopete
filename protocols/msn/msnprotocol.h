@@ -120,8 +120,6 @@ public:
 	 */
 	KActionCollection * customChatActions(KopeteMessageManager * );
 
-	virtual const QString protocolIcon();
-
 	static MSNProtocol* protocol();
 
 private slots:

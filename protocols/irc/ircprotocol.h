@@ -35,7 +35,6 @@ class QWidget;
 /**
  * @author Nick Betcher <nbetcher@kde.org>
  */
-
 class IRCProtocol : public KopeteProtocol
 {
 	Q_OBJECT
@@ -43,8 +42,6 @@ class IRCProtocol : public KopeteProtocol
 public:
 	IRCProtocol( QObject *parent, const char *name, const QStringList &args );
 	~IRCProtocol();
-	/* Plugin reimplementation */
-	virtual void init();
 
 	/** KopeteProtocol reimplementation */
 	virtual AddContactPage *createAddContactWidget(QWidget *parent);
@@ -55,7 +52,6 @@ public:
 	 */
 	virtual void deserializeContact( KopeteMetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
-	virtual const QString protocolIcon();
 
 	virtual EditIdentityWidget* createEditIdentityWidget(KopeteIdentity *identity, QWidget *parent);
 

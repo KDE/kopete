@@ -325,26 +325,24 @@ KopetePlugin* LibraryLoader::searchByID( const QString &Id )
 	return NULL;
 }
 
-QString LibraryLoader::pluginName(KopetePlugin *plugin)
+QString LibraryLoader::pluginName( const KopetePlugin *plugin ) const
 {
 	for( QDictIterator<KopetePlugin> i( mLibHash ); i.current(); ++i )
 	{
-		if (i.current() == plugin)
-			return getInfo(i.currentKey()).name;
+		if( i.current() == plugin )
+			return getInfo( i.currentKey() ).name;
 	}
-	return QString::fromLatin1( "ERROR plugin unknown" );
+	return QString::fromLatin1( "ERROR: plugin unknown" );
 }
 
-QString LibraryLoader::pluginIcon( const QString &pluginId ) const
+QString LibraryLoader::pluginIcon( const KopetePlugin *plugin ) const
 {
-	QDictIterator<KopetePlugin> i( mLibHash );
-	for( ; i.current(); ++i )
+	for( QDictIterator<KopetePlugin> i( mLibHash ); i.current(); ++i )
 	{
-		if( i.currentKey() == pluginId );
+		if( i.current() == plugin )
 			return getInfo( i.currentKey() ).icon;
 	}
-
-	return QString::null;
+	return QString::fromLatin1( "ERROR: plugin unknown" );
 }
 
 #include <pluginloader.moc>

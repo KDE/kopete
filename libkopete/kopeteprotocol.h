@@ -48,10 +48,8 @@ public:
 	 */
 	virtual bool unload();
 
-	virtual const QString protocolIcon() = 0;
-	
 	virtual AddContactPage *createAddContactWidget(QWidget *parent)=0;
-	
+
 	/**
 	 * return a new EditIdentity widget showed in the identity part of the configurations
 	 * identity is the KopeteIdentity to edit, if it is egal to 0l, then, we are creating a 

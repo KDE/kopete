@@ -117,16 +117,6 @@ KActionMenu* IRCProtocol::protocolActions()
 	return mActionMenu;
 }
 
-const QString IRCProtocol::protocolIcon()
-{
-	return "irc_protocol";
-}
-
-void IRCProtocol::init()
-{
-
-}
-
 AddContactPage *IRCProtocol::createAddContactWidget(QWidget *parent)
 {
 	return new IRCAddContactPage(this,parent);

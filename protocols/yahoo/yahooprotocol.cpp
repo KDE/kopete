@@ -57,7 +57,7 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 	kdDebug(14180) << "Loading Yahoo Plugin..." << endl;
 
 	theHaveContactList = false;
-	
+
 	if ( !s_protocolStatic_ )
 	{
 		s_protocolStatic_ = this;
@@ -74,14 +74,14 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 
 	/* Create preferences menu */
 	m_prefs = new YahooPreferences("yahoo_protocol", this);
-	
+
 	/* Call slotSettingsChanged() to get it all registered. */
 	slotSettingsChanged();
 
 	kdDebug(14180) << "Yahoo: Creating myself with name = " << m_userId << " (" << m_prefs->username() << ")" << endl;
 //	m_userId = m_prefs->username();
 	m_myself = new YahooContact( m_userId, QString::null, this, 0L);
-	
+
 	QObject::connect( m_prefs, SIGNAL(saved(void)), this, SLOT(slotSettingsChanged(void)));
 
 	m_isConnected = false;
@@ -92,7 +92,7 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 	}
 
 	kdDebug(14180) << "Yahoo: this = " << this << " ( YahooSession = " << yahooSession() << ")" << endl;
-	
+
 	addAddressBookField( "messaging/yahoo", KopetePlugin::MakeIndexField );
 }
 
@@ -101,11 +101,6 @@ YahooProtocol::~YahooProtocol()
 	kdDebug(14180) << "YahooProtocol::~YahooProtocol()" << endl;
 	delete m_prefs;
 	s_protocolStatic_ = 0L;
-}
-
-const QString YahooProtocol::protocolIcon()
-{
-	return "yahoo_online";
 }
 
 YahooProtocol* YahooProtocol::s_protocolStatic_ = 0L;
@@ -206,7 +201,7 @@ void YahooProtocol::connect()
 		QObject::connect( session_ , SIGNAL(mailNotify( const QString &, const QString &, int )), this , SLOT(slotMailNotify( const QString &, const QString &, int )) );
 		QObject::connect( session_ , SIGNAL(systemMessage( const QString &)), this , SLOT(slotSystemMessage( const QString &)) );
 		QObject::connect( session_ , SIGNAL(error( const QString &, int )), this , SLOT(slotError( const QString &, int )) );
-		
+
 	}
 
 }
@@ -359,7 +354,7 @@ void YahooProtocol::slotGotBuddies( const YList */*theList*/ )
 {
 	kdDebug(14180) << "[YahooProtocol::slotGotBuddies()]" << endl;
 	theHaveContactList = true;
-	
+
 	// Serverside -> local
 	for(QMap<QString, QPair<QString, QString> >::iterator i = IDs.begin(); i != IDs.end(); i++)
 		if(!contacts()[i.key()] && 1/* && importYahooContacts */)		// TODO: make importYahooContacts a configuration option.
@@ -367,7 +362,7 @@ void YahooProtocol::slotGotBuddies( const YList */*theList*/ )
 			QString groupName = /*importYahooGroups*/ 1 ? i.data().first : QString("Imported Yahoo Contacts");	// TODO: make importYahooGroups a config option.
 			addContact(i.key(), i.data().second == "" || i.data().second.isNull() ? i.key() : i.data().second, 0, groupName);
 		}
-		
+
 	// Local -> serverside
 	for(QDictIterator<KopeteContact> i(contacts()); i.current(); ++i)
 		if(i.currentKey() != m_userId)
@@ -394,7 +389,7 @@ bool YahooProtocol::addContactToMetaContact(const QString &contactId, const QStr
 	{
 		//No server side stuff for this protocol yet, just create the guy and go
 		YahooContact *newContact = new YahooContact( contactId, displayName, this, parentContact);
-	
+
 		return (newContact != 0L);
 	}
 	else
@@ -420,7 +415,7 @@ void YahooProtocol::slotGotIdentities( const QStringList & /* ids */ )
 void YahooProtocol::slotStatusChanged( const QString &who, int stat, const QString &msg, int away)
 {
 	kdDebug(14180) << "[YahooProtocol::slotStatusChanged]" << endl;
-	
+
 	if ( contact(who) )
 	{
 		contact(who)->setYahooStatus( YahooStatus::fromLibYahoo2(stat), msg, away);
@@ -439,7 +434,7 @@ void YahooProtocol::slotGotIm( const QString &who, const QString &msg, long tm, 
 	{
 		addContact( who, who, 0L, QString::null, true );
 	}
-	
+
 	KopeteMessageManager *mm = contact(who)->manager();
 
 	// Tell the message manager that the buddy is done typing

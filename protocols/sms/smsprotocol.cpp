@@ -28,7 +28,7 @@ SMSProtocol::SMSProtocol( QObject *parent, const char *name, const QStringList& 
 		kdWarning( 14160 ) << k_funcinfo << "s_protocol already defined!" << endl;
 	else
 		s_protocol = this;
-	
+
 	new SMSPreferences("sms_protocol", this);
 
 	QString protocolId = pluginId();
@@ -41,11 +41,6 @@ SMSProtocol::SMSProtocol( QObject *parent, const char *name, const QStringList& 
 SMSProtocol::~SMSProtocol()
 {
 	s_protocol = 0L;
-}
-
-const QString SMSProtocol::protocolIcon()
-{
-	return QString::null;
 }
 
 void SMSProtocol::connect()

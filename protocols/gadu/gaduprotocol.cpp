@@ -100,12 +100,6 @@ GaduProtocol::~GaduProtocol()
 
 GaduProtocol* GaduProtocol::protocolStatic_ = 0L;
 
-const
-QString GaduProtocol::protocolIcon( )
-{
-	return "gadu_protocol";
-}
-
 void
 GaduProtocol::initActions()
 {

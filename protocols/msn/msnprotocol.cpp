@@ -76,10 +76,10 @@ void MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 	QString contactId   = serializedData[ "contactId" ];
 	QString identityId = serializedData[ "identityId" ];
 	QString displayName = serializedData[ "displayName" ];
-	QStringList groups  = QStringList::split( ",", serializedData[ "groups" ] );	
-	
+	QStringList groups  = QStringList::split( ",", serializedData[ "groups" ] );
+
 	QDict<KopeteIdentity> identities=KopeteIdentityManager::manager()->identities(this);
-	
+
 	if(identityId.isNull())
 	{
 		//Kopete 0.6.x contactlist
@@ -184,12 +184,6 @@ void MSNProtocol::slotSyncContactList()
 			static_cast<MSNContact *>( *it )->setOnlineStatus( statusFLN() );
 	}
 }*/
-
-
-const QString MSNProtocol::protocolIcon()
-{
-	return "msn_protocol";
-}
 
 KActionCollection * MSNProtocol::customChatActions(KopeteMessageManager * manager)
 {

@@ -95,7 +95,7 @@ public:
 	/**
 	 * The opposite of searchByName. Returns the name of the protocol.
 	 */
-	QString pluginName(KopetePlugin *plugin);
+	QString pluginName( const KopetePlugin *plugin ) const;
 
 	/**
 	 * loads all the enabled plugins
@@ -127,7 +127,7 @@ public:
 	 * May return an empty string if the given plugin is not loaded, or
 	 * the .plugin file for this plugin specifies no icon name to use.
 	 */
-	QString pluginIcon( const QString &pluginId ) const;
+	QString pluginIcon( const KopetePlugin *plugin ) const;
 
 signals:
 	void pluginLoaded(KopetePlugin *);

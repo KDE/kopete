@@ -95,18 +95,22 @@ public:
 	virtual KActionCollection *customToolbarActions() { return 0L; };
 
 	/**
-	 * Get the name of the icon for this plugin. The icon name is taken
-	 * from the .plugin file.
+	 * Get the name of the icon for this plugin. The icon name is taken from the
+	 * .desktop file.
 	 *
-	 * May return an empty string if the .plugin file for this plugin
-	 * specifies no icon name to use.
+	 * May return an empty string if the .desktop file for this plugin specifies
+	 * no icon name to use.
+	 *
+	 * This is a convenience method that simply calls @ref PluginLoader::pluginIcon().
 	 */
 	QString pluginIcon() const;
 	
 	/**
 	 * Returns the display name of this plugin.
+	 *
+	 * This is a convenience method that simply calls @ref PluginLoader::pluginName().
 	 */
-	QString displayName();
+	QString displayName() const;
 
 public slots:
 	/**
