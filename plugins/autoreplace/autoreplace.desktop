@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Icon=color
+Name=Auto Replace
+ServiceTypes=Kopete/Plugin
+X-KDE-Library=kopete_autoreplace
+X-Kopete-Plugin-Id=autoreplace
+X-Kopete-Author=Roberto Pariset
+X-Kopete-Site=http://kopete.kde.org
+X-Kopete-Email=victorheremita@fastwebnet.it
+X-Kopete-License=GPL
+Comment=Autoreplaces some text you can choose
