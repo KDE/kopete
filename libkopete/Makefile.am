@@ -1,13 +1,8 @@
-if compile_LIBKOPETE_COMPAT
-COMPAT_DIR = compat
-COMPAT_LIBS = compat/libkopetecompat.la
-endif
-
 include ../../admin/Doxyfile.am
 DOXYGEN_REFERENCES = kio kdecore kdeui
 DOXYGEN_EXCLUDE = compat
 
-SUBDIRS = private ui $(COMPAT_DIR) . tests
+SUBDIRS = private ui  . tests
 
 METASOURCES = AUTO
 
@@ -32,7 +27,7 @@ libkopete_la_SOURCES = kopeteonlinestatus.cpp kopeteonlinestatusmanager.cpp kope
 	kopetesimplemessagehandler.cpp kopeteproperties.cpp
 
 libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)
-libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(COMPAT_LIBS) $(LIB_KIO) $(LIB_XSS) $(LIBXML_LIBS) $(LIBXSLT_LIBS)
+libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(LIB_KIO) $(LIB_XSS) $(LIBXML_LIBS) $(LIBXSLT_LIBS)
 
 rcdir = $(kde_datadir)/kopete
 rc_DATA = kopetecommandui.rc
