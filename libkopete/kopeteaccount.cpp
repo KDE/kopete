@@ -119,11 +119,6 @@ void KopeteAccount::setColor( const QColor &color )
 	d->color = color;
 }
 
-QString KopeteAccount::fullAccountName() const
-{
-    return accountId();
-}
-
 void KopeteAccount::setAccountId( const QString &accountId )
 {
 	if(d->id!=accountId)
