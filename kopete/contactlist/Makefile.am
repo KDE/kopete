@@ -20,3 +20,5 @@ libkopetecontactlist_la_LIBADD = -lkabc ../../libkopete/libkopete.la ../addconta
 # vim: set noet:
 
 noinst_HEADERS =  kopeteaddrbookexport.h
+KDE_OPTIONS = nofinal
+
