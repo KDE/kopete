@@ -379,15 +379,15 @@ void JabberAccount::slotHandshaken ()
 	{
 		Jabber::JT_Register * task = new Jabber::JT_Register (jabberClient->rootTask ());
 		QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotRegisterUserDone ()));
-		task->reg (accountId(), password);
+		task->reg (accountId().section("@", 0, 0), password);
 		task->go (true);
 	}
 	else
 	{
 		if (pluginData (protocol (), "AuthType") == QString ("digest"))
-			jabberClient->authDigest (accountId(), password, resource);
+			jabberClient->authDigest (accountId().section("@", 0, 0), password, resource);
 		else
-			jabberClient->authPlain (accountId(), password, resource);
+			jabberClient->authPlain (accountId().section("@", 0, 0), password, resource);
 
 	}
 
