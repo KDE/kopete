@@ -19,7 +19,7 @@
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include "jabberaccount.h"
-#include "client.h"
+#include "xmpp_client.h"
 #include "dlgjabberchatjoin.h"
 
 dlgJabberChatJoin::dlgJabberChatJoin (JabberAccount *account, QWidget * parent, const char *name)

@@ -27,9 +27,9 @@
 #include <kaction.h>
 #include <kpopupmenu.h>
 
-#include "client.h"
-#include "types.h"
-#include "jid.h"
+#include "xmpp_client.h"
+#include "xmpp_types.h"
+#include "xmpp_jid.h"
 
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"

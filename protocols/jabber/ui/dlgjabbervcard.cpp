@@ -26,7 +26,7 @@
 #include <klocale.h>
 #include <kurllabel.h>
 
-#include "tasks.h"
+#include "xmpp_tasks.h"
 
 #include "dlgjabbervcard.h"
 
@@ -64,7 +64,7 @@ dlgJabberVCard::~dlgJabberVCard ()
  */
 void dlgJabberVCard::assignVCard (Jabber::JT_VCard * vCard)
 {
-
+/*
 	leJID->setText (vCard->jid ().userHost ());
 	leNickname->setText (vCard->vcard ().field[Jabber::vNickname]);
 	leName->setText (vCard->vcard ().field[Jabber::vFullname]);
@@ -81,7 +81,7 @@ void dlgJabberVCard::assignVCard (Jabber::JT_VCard * vCard)
 	leZIP->setText (vCard->vcard ().field[Jabber::vPcode]);
 	leCountry->setText (vCard->vcard ().field[Jabber::vCountry]);
 	lePhone->setText (vCard->vcard ().field[Jabber::vPhone]);
-
+*/
 }
 
 /*

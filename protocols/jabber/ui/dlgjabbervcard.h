@@ -20,8 +20,8 @@
 #define DLGJABBERVCARD_H
 
 #include <qdom.h>
-#include "types.h"
-#include "vcard.h"
+#include "xmpp_types.h"
+#include "xmpp_vcard.h"
 #include "dlgvcard.h"
 
 class QDomElement;

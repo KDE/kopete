@@ -1,10 +1,10 @@
  /*
   * jabberformlineedit.h
-  * 
+  *
   * Copyright (c) 2002-2003 by Till Gerken <till@tantalo.net>
-  * 
+  *
   * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
-  * 
+  *
   * *************************************************************************
   * *                                                                       *
   * * This program is free software; you can redistribute it and/or modify  *
@@ -21,8 +21,8 @@
 #include <qwidget.h>
 #include <qlineedit.h>
 
-#include "types.h"
-#include "tasks.h"
+#include "xmpp_types.h"
+#include "xmpp_tasks.h"
 
 /**
   *@author Till Gerken <till@tantalo.net>

@@ -1,7 +1,6 @@
 METASOURCES = AUTO
 AM_CPPFLAGS = $(KOPETE_INCLUDES) \
-	-I../psi/libpsi/src \
-	-I$(srcdir)/../psi/libpsi/src \
+	-I../libxmpp/xmpp/src \
 	-I$(srcdir)/.. \
 	$(all_includes)
 

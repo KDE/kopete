@@ -84,8 +84,8 @@ void dlgJabberServices::slotSetSelection (int row, int, int, const QPoint &)
 		tblServices->addSelection (QTableSelection (row, 0, row, 1));
 
 		// query the agent list about the selected item
-		btnRegister->setDisabled (!serviceTask->agents ()[row].canRegister ());
-		btnBrowse->setDisabled (!serviceTask->agents ()[row].canSearch ());
+		btnRegister->setDisabled (!serviceTask->agents()[row].features().canRegister ());
+		btnBrowse->setDisabled (!serviceTask->agents()[row].features().canSearch ());
 
 		selectedRow = row;
 	}

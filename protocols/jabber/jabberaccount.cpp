@@ -53,12 +53,12 @@
 #include "jabberaddcontactpage.h"
 #include "jabbergroupchat.h"
 
-#include "jid.h"
-#include "client.h"
-#include "stream.h"
-#include "tasks.h"
-#include "types.h"
-#include "vcard.h"
+#include "xmpp_jid.h"
+#include "xmpp_client.h"
+#include "xmpp_stream.h"
+#include "xmpp_tasks.h"
+#include "xmpp_types.h"
+#include "xmpp_vcard.h"
 
 #include "jabberaccount.h"
 
@@ -241,6 +241,7 @@ void JabberAccount::connect ()
 		QObject::connect (jabberClient, SIGNAL (groupChatPresence (const Jid &, const Status &)), this, SLOT (slotGroupChatPresence (const Jid &, const Status &)));
 		QObject::connect (jabberClient, SIGNAL (groupChatError (const Jid &, int, const QString &)), this,
 						  SLOT (slotGroupChatError (const Jid &, int, const QString &)));
+		QObject::connect (jabberClient, SIGNAL (sslCertReady (const QSSLCert &)), jabberClient, SLOT (continueAfterCert ()));
 		QObject::connect (jabberClient, SIGNAL (error (const StreamError &)), this, SLOT (slotError (const StreamError &)));
 		QObject::connect (jabberClient, SIGNAL (debugText (const QString &)), this, SLOT (slotPsiDebug (const QString &)));
 	}

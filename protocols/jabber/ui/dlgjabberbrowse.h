@@ -21,8 +21,8 @@
 
 #include <qwidget.h>
 
-#include "types.h"
-#include "tasks.h"
+#include "xmpp_types.h"
+#include "xmpp_tasks.h"
 
 #include "jabberaccount.h"
 #include "jabberformtranslator.h"

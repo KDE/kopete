@@ -19,7 +19,7 @@
 #ifndef JABBERGROUPCHAT_H
 #define JABBERGROUPCHAT_H
 
-#include "types.h"
+#include "xmpp_types.h"
 #include "jabbercontact.h"
 
 /**

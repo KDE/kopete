@@ -20,7 +20,7 @@
 #define DLGJABBERSENDRAW_H
 
 #include <qwidget.h>
-#include "client.h"
+#include "xmpp_client.h"
 #include "dlgsendraw.h"
 
 
@@ -37,8 +37,8 @@
  */
 class dlgJabberSendRaw:public DlgSendRaw
 {
-  Q_OBJECT 
-	
+  Q_OBJECT
+
 	public:
 	  dlgJabberSendRaw (Jabber::Client * engine, QWidget * parent = 0, const char *name = 0);
 	  virtual ~ dlgJabberSendRaw ();
@@ -56,11 +56,11 @@ class dlgJabberSendRaw:public DlgSendRaw
 		void slotClear ();
 
 		/**
-		 * Sets a xml message in tePacket(QTextWidget) 
+		 * Sets a xml message in tePacket(QTextWidget)
 		 * according to the state of inputWidget.
 		 */
 		void slotCreateMessage (int);
-		
+
 		/**
 		 * Sends a xml message to the server,
 		 * clears tePacket afterwards.
@@ -69,8 +69,8 @@ class dlgJabberSendRaw:public DlgSendRaw
 
 	private:
 
-		/** 
-		 * This is what we talk through 
+		/**
+		 * This is what we talk through
 		 */
 		Jabber::Client * mEngine;
 };

@@ -31,9 +31,9 @@
 #include "jabberprotocol.h"
 #include "kopeteonlinestatus.h"
 #include "ui/dlgjabbersendraw.h"
-#include "jid.h"
-#include "client.h"
-#include "types.h"
+#include "xmpp_jid.h"
+#include "xmpp_client.h"
+#include "xmpp_types.h"
 
 // forward declaration required due to cyclic includes
 class JabberAwayDialog;

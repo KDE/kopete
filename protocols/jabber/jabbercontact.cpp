@@ -29,8 +29,8 @@
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
 
-#include "tasks.h"
-#include "types.h"
+#include "xmpp_tasks.h"
+#include "xmpp_types.h"
 
 #include "dlgjabbervcard.h"
 #include "jabbercontact.h"
@@ -666,7 +666,7 @@ void JabberContact::slotGotVCard ()
 {
 	Jabber::JT_VCard * vCard = (Jabber::JT_VCard *) sender ();
 
-	if (!vCard->success () && !vCard->vcard ().isIncomplete ())
+	if (!vCard->success() && !vCard->vcard().isEmpty())
 	{
 		// unsuccessful, or incomplete
 		KMessageBox::error (qApp->mainWidget (), i18n ("Unable to retrieve vCard for %1").arg (vCard->jid ().userHost ()));
