@@ -71,6 +71,8 @@ IRCContact::IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaCon
 	QObject::connect(mEngine, SIGNAL(incomingNickChange(const QString &, const QString &)), this, SLOT( slotNewNickChange(const QString&, const QString&)));
 	QObject::connect(mEngine, SIGNAL(incomingQuitIRC(const QString &, const QString &)), this, SLOT( slotUserDisconnected(const QString&, const QString&)));
 	QObject::connect(mEngine, SIGNAL(incomingCtcpReply(const QString &, const QString &, const QString &)), this, SLOT( slotNewCtcpReply(const QString&, const QString &, const QString &)));
+
+	isConnected = false;
 }
 
 IRCContact::~IRCContact()
@@ -84,14 +86,14 @@ KopeteMessageManager* IRCContact::manager(bool)
 	{
 		kdDebug(14120) << k_funcinfo << "Creating new KMM for " << mNickName << endl;
 
-		KopeteContactPtrList initialContact;
-		initialContact.append((KopeteContact *)mIdentity->mySelf());
-		mMsgManager = KopeteMessageManagerFactory::factory()->create( (KopeteContact *)mIdentity->mySelf(), initialContact, (KopeteProtocol *)mIdentity->protocol());
+		mMsgManager = KopeteMessageManagerFactory::factory()->create( (KopeteContact *)mIdentity->mySelf(), mContact, (KopeteProtocol *)mIdentity->protocol());
 		mMsgManager->setDisplayName( caption() );
 		QObject::connect( mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
 		QObject::connect( mMsgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
 		if( inherits("IRCChannelContact") && mEngine->isLoggedIn() )
 			mEngine->joinChannel(mNickName);
+		else
+			isConnected = true;
 	}
 	return mMsgManager;
 }
@@ -174,7 +176,7 @@ void IRCContact::slotUserDisconnected( const QString &user, const QString &reaso
 void IRCContact::slotNewMessage(const QString &originating, const QString &target, const QString &message)
 {
 	//kdDebug(14120) << k_funcinfo << "originating is " << originating << " target is " << target << endl;
-	if (target.lower() == mNickName.lower())
+	if ( isConnected && target.lower() == mNickName.lower() )
 	{
 		QString nickname = originating.section('!', 0, 0);
 		KopeteContact *user = locateUser( nickname );
@@ -190,7 +192,7 @@ void IRCContact::slotNewMessage(const QString &originating, const QString &targe
 void IRCContact::slotNewAction(const QString &originating, const QString &target, const QString &message)
 {
 	//kdDebug(14120) << k_funcinfo << "originating is " << originating << " target is " << target << endl;
-	if (target.lower() == mNickName.lower())
+	if ( isConnected && target.lower() == mNickName.lower())
 	{
 		QString nickname = originating.section('!', 0, 0);
 		KopeteContact *user = locateUser( nickname );
@@ -313,28 +315,35 @@ void IRCContact::slotNewCtcpReply(const QString &type, const QString &target, co
 
 void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 {
-	if( onlineStatus() != KopeteContact::Online )
-		mEngine->joinChannel(mNickName);
-
-	if( processMessage( message ) )
+	if( !isConnected )
 	{
-		// If the above was false, there was a server command
-		mEngine->messageContact(mNickName, message.plainBody());
-		manager()->appendMessage(message);
+		messageQueue.append( message );
+		mEngine->joinChannel(mNickName);
 	}
+	else
+	{
+		if( processMessage( message ) )
+		{
+			// If the above was false, there was a server command
+			mEngine->messageContact(mNickName, message.plainBody());
+			manager()->appendMessage(message);
+		}
 
-	manager()->messageSucceeded();
+		manager()->messageSucceeded();
+	}
 }
 
 KopeteContact *IRCContact::locateUser( const QString &nick )
 {
 	kdDebug(14120) << k_funcinfo << "Find nick " << nick << endl;
-	KopeteContactPtrList mMembers = manager()->members();
-
-	for( KopeteContact *it = mMembers.first(); it; it = mMembers.next() )
+	if( isConnected )
 	{
-		if( static_cast<IRCContact*>(it)->nickName() == nick )
-			return it;
+		KopeteContactPtrList mMembers = manager()->members();
+		for( KopeteContact *it = mMembers.first(); it; it = mMembers.next() )
+		{
+			if( static_cast<IRCContact*>(it)->nickName() == nick )
+				return it;
+		}
 	}
 
 	return 0L;

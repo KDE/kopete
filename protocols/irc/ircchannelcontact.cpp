@@ -98,7 +98,7 @@ void IRCChannelContact::slotConnectedToServer()
 void IRCChannelContact::slotNamesList(const QString &channel, const QString &nickname, const int mode)
 {
 	QString newNick = nickname;
-	if (channel.lower() == mNickName.lower())
+	if ( isConnected && channel.lower() == mNickName.lower())
 	{
 		if (newNick.startsWith("@") || newNick.startsWith("+"))
 			newNick.remove(0, 1);
@@ -111,7 +111,7 @@ void IRCChannelContact::slotNamesList(const QString &channel, const QString &nic
 
 void IRCChannelContact::slotChannelTopic(const QString &channel, const QString &topic)
 {
-	if( mNickName.lower() == channel.lower() )
+	if( isConnected && mNickName.lower() == channel.lower() )
 	{
 		mTopic = topic;
 		manager()->setDisplayName( caption() );
@@ -138,9 +138,15 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 		QString nickname = user.section('!', 0, 0);
 		if ( nickname.lower() == mEngine->nickName().lower() )
 		{
+			isConnected = true;
 			KopeteMessage msg((KopeteContact *)this, mContact,
 			i18n("You have joined channel %1").arg(mNickName), KopeteMessage::Internal);
 			manager()->appendMessage(msg);
+			while( !messageQueue.isEmpty() )
+			{
+				slotSendMsg( messageQueue.front(), manager() );
+				messageQueue.pop_front();
+			}
 		}
 		else
 		{
@@ -159,7 +165,7 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString &channel, const QString &reason)
 {
 	QString nickname = user.section('!', 0, 0);
-	if ( channel.lower() == mNickName.lower() && nickname.lower() != mEngine->nickName().lower() )
+	if ( isConnected && channel.lower() == mNickName.lower() && nickname.lower() != mEngine->nickName().lower() )
 	{
 		KopeteContact *user = locateUser( nickname );
 		if ( user )
@@ -190,7 +196,7 @@ void IRCChannelContact::setTopic( const QString &topic )
 
 void IRCChannelContact::slotTopicChanged( const QString &channel, const QString &nick, const QString &newtopic )
 {
-	if( mNickName.lower() == channel.lower() )
+	if( isConnected && mNickName.lower() == channel.lower() )
 	{
 		mTopic = newtopic;
 		mMsgManager->setDisplayName( caption() );
@@ -201,7 +207,7 @@ void IRCChannelContact::slotTopicChanged( const QString &channel, const QString 
 
 void IRCChannelContact::slotIncomingModeChange( const QString &nick, const QString &channel, const QString &mode )
 {
-	if( mNickName.lower() == channel.lower() )
+	if( isConnected && mNickName.lower() == channel.lower() )
 	{
 		KopeteMessage msg((KopeteContact *)this, mContact, i18n("%1 sets mode %2 %3").arg(nick).arg(mode).arg(mNickName), KopeteMessage::Internal);
 		manager()->appendMessage(msg);

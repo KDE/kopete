@@ -57,7 +57,6 @@ class IRCContact : public KopeteContact
 
 	private slots:
 		void slotMessageManagerDestroyed();
-		void slotSendMsg(KopeteMessage &message, KopeteMessageManager *);
 		void slotNewMessage(const QString &originating, const QString &target, const QString &message);
 		void slotNewAction(const QString &originating, const QString &target, const QString &message);
 		void slotNewWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
@@ -70,6 +69,9 @@ class IRCContact : public KopeteContact
 		void slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
 		void slotUserDisconnected( const QString &nickname, const QString &reason);
 
+	protected slots:
+		void slotSendMsg(KopeteMessage &message, KopeteMessageManager *);
+		
 	protected:
 		QPtrList<KopeteContact> mContact;
 		QPtrList<KopeteContact> mMyself;
@@ -81,8 +83,8 @@ class IRCContact : public KopeteContact
 		IRCIdentity *mIdentity;
 		QString mNickName;
 		KSParser *mParser;
-
-
+		QValueList<KopeteMessage> messageQueue;
+		bool isConnected;
 };
 
 #endif

@@ -34,6 +34,7 @@
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
+#include "kopeteviewmanager.h"
 
 #include "msnaddcontactpage.h"
 #include "msneditidentitywidget.h"
@@ -1143,6 +1144,7 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 		{
 			QString body=i18n("%1 has opened a new chat").arg(c->displayName());
 			KopeteMessage tmpMsg = KopeteMessage( c , c->manager()->members() , body , KopeteMessage::Internal, KopeteMessage::PlainText);
+			KopeteViewManager::viewManager()->readMessages( c->manager(), true );
 			c->manager()->appendMessage(tmpMsg);
 		}
 	}
