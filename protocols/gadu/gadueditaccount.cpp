@@ -66,8 +66,9 @@ GaduEditAccount::GaduEditAccount( GaduProtocol *proto, KopeteAccount *ident,
 	kdDebug(14100)<<"GJ"<<"ACCOUNT EDIT"<<endl;
 	radio1->setDisabled(true);
 	radio2->setDisabled(true);
+	radio2->setDisabled(true);
 	textLabel2_2->setDisabled(true);
-	textLabel1_2->setDisabled(true);
+	loginEdit_->setDisabled(true);
 	emailedit_->setDisabled(true);
 	passwordEdit2__->setDisabled(true);
 	loginEdit_->setText(m_account->accountId());
@@ -77,7 +78,9 @@ GaduEditAccount::GaduEditAccount( GaduProtocol *proto, KopeteAccount *ident,
 	else{
 	    passwordEdit_->setText("");
 	}
-
+	
+	NickName->setText(m_account->myself()->displayName());
+	
         rememberCheck_->setChecked(m_account->rememberPassword());
 	autoLoginCheck_->setChecked(m_account->autoLogin());
     }    
@@ -175,6 +178,7 @@ KopeteAccount* GaduEditAccount::apply()
 		kdDebug(14100)<<"Couldn't create GaduAccount object, fatal!"<<endl;
 		return NULL;
 	    }
+	    m_account->setAccountId(loginEdit_->text());
 	}
 	else{
 	    // should never happend
@@ -182,7 +186,6 @@ KopeteAccount* GaduEditAccount::apply()
 	}
     }
     
-    m_account->setAccountId(loginEdit_->text());
     m_account->setAutoLogin(autoLoginCheck_->isChecked());
     
     if(rememberCheck_->isChecked()){
@@ -191,6 +194,11 @@ KopeteAccount* GaduEditAccount::apply()
     else{
         m_account->setPassword(QString::null);
     }
+    m_account->myself()->rename(NickName->text());
+    
+    // this is changed only here, so i won't add any proper handling now
+    m_account->setPluginData(m_account->protocol(), 
+	    QString::fromLatin1("nickName"), NickName->text());
     
     m_account->setAutoLogin(autoLoginCheck_->isChecked());
     

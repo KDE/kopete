@@ -31,6 +31,7 @@
 #include <qmap.h>
 #include <qstring.h>
 #include <qptrlist.h>
+#include <kaction.h>
 
 class GaduContact;
 class GaduProtocol;
@@ -49,7 +50,7 @@ public:
 	//{
 	void setAway( bool isAway, const QString& awayMessage = QString::null );
 	KopeteContact* myself() const;
-	KActionMenu* actionMenu();
+	KActionMenu* actionMenu();	
 	//}
 public slots:
 	//{
@@ -75,6 +76,9 @@ public slots:
 	void pong();
 	void pingServer();
 
+protected slots:
+	virtual void loaded();
+
 protected:
 	//{
 	bool addContactToMetaContact( const QString &contactId, const QString &displayName,
@@ -96,6 +100,7 @@ private slots:
 
 	void slotCommandDone( const QString&, const QString& );
 	void slotCommandError( const QString&, const QString& );
+	
 private:
 	void initConnections();
 	void initActions();
@@ -113,6 +118,12 @@ private:
 	QString	nick_;
 	
 	QTextCodec *textcodec_;
+
+	KAction* onlineAction;
+	KAction* offlineAction;
+	KAction* busyAction;
+	KAction* invisibleAction;
+	KAction* descrAction;
 };
 
 #endif

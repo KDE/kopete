@@ -7,7 +7,6 @@
 
 #include "kopetemetacontact.h"
 
-#include <kaction.h>
 #include <kpassdlg.h>
 #include <kconfig.h>
 #include <kdebug.h>
@@ -33,12 +32,8 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const
 
 	KGlobal::config()->setGroup("Gadu");
 
-// Instead of nick i will probably use e-mail
-
-        kdDebug()<<"ID = "<< accountId() <<endl;
-
-	myself_ = new GaduContact(  accountId().toInt(),  accountId(), this,
-                              new KopeteMetaContact() );
+	myself_ = new GaduContact(  accountId().toInt(), accountId(),
+				    this, new KopeteMetaContact() );
 
 	initActions();
 	initConnections();
@@ -47,31 +42,16 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const
 void
 GaduAccount::initActions()
 {
-	KAction* onlineAction    = new KAction( i18n("Go O&nline"), "gg_online", 0, this,
+	onlineAction    = new KAction( i18n("Go O&nline"), "gg_online", 0, this,
                                           SLOT(slotGoOnline()), this, "actionGaduConnect" );
-	KAction* offlineAction   = new KAction( i18n("Go &Offline"), "gg_offline", 0, this,
-                                          SLOT(slotGoOffline()), this, "actionGaduConnect" );
-	KAction* busyAction      = new KAction( i18n("Set &Busy"), "gg_busy", 0, this,
+	offlineAction   = new KAction( i18n("Go &Offline"), "gg_offline", 0, this,
+                                      SLOT(slotGoOffline()), this, "actionGaduConnect" );
+	busyAction      = new KAction( i18n("Set &Busy"), "gg_busy", 0, this,
                                           SLOT(slotGoBusy()), this, "actionGaduConnect" );
-	KAction* invisibleAction = new KAction( i18n("Set &Invisible"), "gg_invi", 0, this,
+	invisibleAction = new KAction( i18n("Set &Invisible"), "gg_invi", 0, this,
                                           SLOT(slotGoInvisible()), this, "actionGaduConnect" );
-	KAction* descrAction     = new KAction( i18n("Set &Description"), "info", 0, this,
+	descrAction     = new KAction( i18n("Set &Description"), "info", 0, this,
 					 SLOT(slotDescription()), this, "actionGaduDescription" );
-
-	actionMenu_ = new KActionMenu( "Gadu-Gadu", this );
-
-	actionMenu_->popupMenu()->insertTitle( protocol()->pluginId() + "(" + myself_->identityId() + ")" );
-
-	actionMenu_->insert( onlineAction );
-	actionMenu_->insert( busyAction );
-	actionMenu_->insert( invisibleAction );
-	actionMenu_->insert( offlineAction );
-	actionMenu_->insert( descrAction );
-
-  actionMenu_->popupMenu()->insertSeparator();
-
-//  actionMenu_->insert( new KAction( i18n("Change Password"), "", 0, this,
-//		SLOT(slotChangePassword()), this, "actionChangePassword" ) );
 
 }
 
@@ -97,6 +77,17 @@ GaduAccount::initConnections()
 				SLOT(slotSessionDisconnect()) );
 	QObject::connect( session_, SIGNAL(ackReceived(struct gg_event*)),
 				SLOT(ackReceived(struct gg_event*)) );
+
+}
+
+void GaduAccount::loaded()
+{
+    QString nick;
+    nick = pluginData(protocol(), QString::fromLatin1("nickName"));
+    if (!nick.isNull())
+    {
+	myself_->rename(nick);
+    }   
 }
 
 void GaduAccount::setAway( bool isAway, const QString& awayMessage )
@@ -114,11 +105,35 @@ void GaduAccount::setAway( bool isAway, const QString& awayMessage )
 
 KopeteContact* GaduAccount::myself() const
 {
+
 	return myself_;
 }
 
 KActionMenu* GaduAccount::actionMenu()
 {
+	kdDebug(14100) << "actionMenu() " << endl;
+	
+	actionMenu_ = new KActionMenu( "Gadu-Gadu", this );
+	
+	actionMenu_->popupMenu()->insertTitle( myself_->onlineStatus().iconFor( myself_ ), i18n( "%1 <%2> " ).
+
+#if QT_VERSION < 0x030200
+	arg( myself_->displayName() ).arg( accountId() ) );
+#else
+	arg( myself_->displayName(), accountId() ) );
+#endif
+	
+	actionMenu_->insert( onlineAction );
+	actionMenu_->insert( busyAction );
+	actionMenu_->insert( invisibleAction );
+	actionMenu_->insert( offlineAction );
+	actionMenu_->insert( descrAction );
+
+	actionMenu_->popupMenu()->insertSeparator();
+
+//  actionMenu_->insert( new KAction( i18n("Change Password"), "", 0, this,
+//		SLOT(slotChangePassword()), this, "actionChangePassword" ) );
+
 	return actionMenu_;
 }
 
