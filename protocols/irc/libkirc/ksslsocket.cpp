@@ -42,7 +42,7 @@ struct KSSLSocketPrivate
 KSSLSocket::KSSLSocket() : KExtendedSocket()
 {
 	d = new KSSLSocketPrivate;
-	d->kssl = 0L;
+	d->kssl = 0;
 	d->dcc = KApplication::kApplication()->dcopClient();
 	d->cc = new KSSLCertificateCache;
 	d->cc->reload();
@@ -107,6 +107,9 @@ Q_LONG KSSLSocket::writeBlock( const char* data, Q_ULONG len )
 
 int KSSLSocket::bytesAvailable() const
 {
+	if( socketStatus() < connected )
+		return -2;
+
 	//Re-implemented because KExtSocket doesn't use this when not in buffered mode
 	return KBufferedIO::bytesAvailable();
 }
@@ -126,24 +129,35 @@ void KSSLSocket::slotConnected()
 {
 	if( KSSL::doesSSLWork() )
 	{
-		kdDebug(14120) << k_funcinfo << "Trying SSL connection..." << endl;
-		if( !d->kssl )
+		if( d->kssl )
 		{
-			d->kssl = new KSSL();
-			d->kssl->connect( sockfd );
-
-			//Disconnect the KExtSocket notifier slot, we use our own
-			QObject::disconnect( readNotifier(), SIGNAL(activated( int )),
-				this, SLOT( socketActivityRead() ) );
-
-			QObject::connect( readNotifier(), SIGNAL(activated( int )),
-				this, SLOT( slotReadData() ) );
+			kdDebug(14120) << k_funcinfo << "ReInitialize SSL connection..." << endl;
+			d->kssl->reInitialize();
 		}
 		else
 		{
-			d->kssl->reInitialize();
-		}
+			kdDebug(14120) << k_funcinfo << "Trying SSL connection..." << endl;
 
+			d->kssl = new KSSL();
+			if( d->kssl->connect( sockfd ) == 1)
+			{
+				//Disconnect the KExtSocket notifier slot, we use our own
+				QObject::disconnect( readNotifier(), SIGNAL(activated( int )),
+					this, SLOT( socketActivityRead() ) );
+
+				QObject::connect( readNotifier(), SIGNAL(activated( int )),
+					this, SLOT( slotReadData() ) );
+			}
+			else
+			{
+				delete d->kssl;
+				d->kssl = 0;
+			}
+		}
+	}
+
+	if( d->kssl )
+	{
 		readNotifier()->setEnabled(true);
 
 		if( verifyCertificate() != 1 )
@@ -155,7 +169,6 @@ void KSSLSocket::slotConnected()
 	{
 		kdError(14120) << k_funcinfo << "SSL not functional!" << endl;
 
-		d->kssl = 0L;
 		emit sslFailure();
 		closeNow();
 	}
