@@ -650,7 +650,8 @@ void JabberContact::syncGroups ()
 
 	for ( KopeteGroup * g = groupList.first (); g; g = groupList.next () )
 	{
-		groups += g->displayName ();
+		if ( g->type () != KopeteGroup::TopLevel )
+			groups += g->displayName ();
 	}
 
 	mRosterItem.setGroups ( groups );
