@@ -128,7 +128,7 @@ void MSNProtocol::Connect()
 		KGlobal::config()->setGroup("MSN");
 		kdDebug() << "Attempting to connect to MSN" << endl;
 		kdDebug() << "Setting Monopoly mode..." << endl;
-		kdDebug() << "Using Micro$oft UserID " << KGlobal::config()->readEntry("UserID", "0") << " with password " << KGlobal::config()->readEntry("Password", "") << endl;
+		kdDebug() << "Using Microsoft UserID " << KGlobal::config()->readEntry("UserID", "0") << " with password (hidden)" << endl;
 		KGlobal::config()->setGroup("MSN");
 
 		engine->setMyContactInfo( KGlobal::config()->readEntry("UserID", "")
@@ -603,4 +603,5 @@ void MSNProtocol::slotDeletingGroup( QString handle)
 void MSNProtocol::slotGoURL( QString url)
 {
 	kapp->invokeBrowser( url );
-}				
+}
+
