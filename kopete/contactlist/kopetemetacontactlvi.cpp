@@ -37,6 +37,9 @@
 #include <kglobal.h>
 #include <kconfig.h>
 
+#include <kabc/addressbook.h>
+#include <kabc/addressee.h>
+
 #include <kdeversion.h>
 #include <kinputdialog.h>
 
@@ -57,6 +60,7 @@
 #include "systemtray.h"
 #include "kopeteglobal.h"
 #include "kopetecontact.h"
+#include "kabcpersistence.h"
 
 #include <memory>
 
@@ -704,6 +708,8 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 	d->contactIconSize = 12;
 	d->photoSize = 48;
 
+	disconnect( Kopete::KABCPersistence::self()->addressBook() , 0 , this , 0);
+
 	// generate our contents
 	using namespace ListView;
 	Component *hbox = new BoxComponent( this, BoxComponent::Horizontal );
@@ -735,6 +741,12 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 
 		Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
 		d->contactIconBox = new BoxComponent( box, BoxComponent::Horizontal );
+
+		if(!metaContact()->photoSource() && !Kopete::KABCPersistence::self()->addressBook()->findByUid( metaContact()->metaContactId() ).isEmpty()   )
+		{	//if the photo is the one of the kaddressbook,  track every change in the adressbook, it might be the photo of our contact.
+			connect( Kopete::KABCPersistence::self()->addressBook() , SIGNAL(addressBookChanged (AddressBook *) ) ,
+					 this , SLOT(slotPhotoChanged()));
+		}
 	}
 	else if( mode == KopetePrefs::RightAligned )       // old right-aligned contact
 	{
