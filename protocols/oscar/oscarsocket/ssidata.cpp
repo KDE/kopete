@@ -29,7 +29,9 @@ SSIData::~SSIData()
 	clear();
 }
 
-SSI * SSIData::addBuddy(const QString &name, const QString &group)
+// ========================================================================================
+
+SSI *SSIData::addContact(const QString &name, const QString &group)
 {
 	SSI *tmp = findGroup(group);
 	if(!tmp) //the group does not exist
@@ -39,7 +41,7 @@ SSI * SSIData::addBuddy(const QString &name, const QString &group)
 	newitem->name = name;
 	newitem->gid = tmp->gid;
 
-	//find the largest bid (=buddy id) in our group
+	//find the largest bid (=contact id) in our group
 	unsigned short maxbid = 0;
 	for (SSI *i=first(); i; i = next())
 	{
@@ -48,7 +50,7 @@ SSI * SSIData::addBuddy(const QString &name, const QString &group)
 	}
 
 	newitem->bid = maxbid + 1;
-	newitem->type = 0x0000; // the type here is buddy
+	newitem->type = ROSTER_CONTACT;
 	newitem->tlvlist = 0L;
 	newitem->tlvlength = 0;
 
@@ -56,11 +58,43 @@ SSI * SSIData::addBuddy(const QString &name, const QString &group)
 	return newitem;
 }
 
+// Finds the contact with given name and group... returns NULL if not found
+SSI *SSIData::findContact(const QString &name, const QString &group)
+{
+	SSI *gr = findGroup(group); //find the parent group
+	if (gr)
+	{
+		kdDebug(14150) << k_funcinfo << "gr->name= " << gr->name <<
+			", gr->gid= " << gr->gid <<
+			", gr->bid= " << gr->bid <<
+			", gr->type= " << gr->type << endl;
+		for (SSI *i=first(); i; i = next())
+		{
+			//if the ssi item has the right name, is a contact, and has the right group
+			/*kdDebug(14150) << k_funcinfo <<
+				"i->gid is " << i->gid << ", gr->gid is " << gr->gid << endl;*/
+			if ((i->name == name) && (i->type == ROSTER_CONTACT) && (i->gid == gr->gid))
+			{
+				//we have found our contact
+				kdDebug(14150) << "Found contact " << name << " in SSI data" << endl;
+				return i;
+			}
+		}
+	}
+	else
+	{
+		kdDebug(14150) << "Group " << group << " not found" << endl;
+	}
+	return 0L;
+}
+
+// ========================================================================================
+
 SSI *SSIData::findGroup(const QString &name)
 {
 	for (SSI *i=first(); i; i = next())
 	{
-		if ((current()->name == name) && (current()->type == 0x0001))
+		if ((current()->name == name) && (current()->type == ROSTER_GROUP))
 			return current();
 	}
 	return 0L;
@@ -70,39 +104,28 @@ SSI *SSIData::findGroup(const int groupId)
 {
 	for (SSI *i=first(); i; i = next())
 	{
-		if ((current()->bid == groupId) && (current()->type == 0x0001))
+		if ((current()->bid == groupId) && (current()->type == ROSTER_GROUP))
 			return current();
 	}
 	return 0L;
 }
 
-SSI * SSIData::addGroup(const QString &name)
+SSI *SSIData::addGroup(const QString &name)
 {
+	if(findGroup(name) != 0L)
+		return 0L; // the group already exists
+
 	SSI *newitem = new SSI;
 	newitem->name = name;
-	if(!name.isEmpty())
-	{
-		unsigned short maxgid = 0;
-		//find the highest gid, add 1 to it, and assign it to this group
-		for (SSI *i=first(); i; i = next())
-		{
-			if (i->name == name) {//the group already exists
-				delete newitem;
-				return 0;
-			}
-			if (i->gid > maxgid)
-				maxgid = i->gid;
-		}
-		newitem->gid = maxgid + 1;
-	}
-	else  //this is the master group
-	{
-		newitem->gid = 0;
-	}
-	newitem->type = 0x0001;  //group
 	newitem->bid = 0;
+	if(name.isEmpty()) // this is the master group
+		newitem->gid = 0;
+	else
+		newitem->gid = maxGroupId() + 1;
+	newitem->type = ROSTER_GROUP;
 	newitem->tlvlength = 0;
-	newitem->tlvlist = 0;
+	newitem->tlvlist = 0L;
+
 	append(newitem);
 	return newitem;
 }
@@ -117,7 +140,7 @@ SSI *SSIData::renameGroup(const QString &currentName, const QString &newName)
 	{
 		kdDebug(14150) << k_funcinfo << "Building group name change request" << endl;
 		// Change the info in the SSI for the group name
-		// Sending the OSCAR serverthis SNAC, where the
+		// Sending the OSCAR server this SNAC, where the
 		// group ID is the same, but the name in the
 		// SNAC has changed _should_ change the name of
 		// the group on the server -Chris
@@ -129,34 +152,78 @@ SSI *SSIData::renameGroup(const QString &currentName, const QString &newName)
 	return group;
 }
 
-// Finds the buddy with given name and group... returns NULL if not found
-SSI *SSIData::findBuddy(const QString &name, const QString &group)
+// ========================================================================================
+
+SSI *SSIData::addInvis(const QString &name)
 {
-	SSI *gr = findGroup(group); //find the parent group
-	if (gr)
+	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
+
+	SSI *newitem = new SSI;
+
+	newitem->name = name;
+	newitem->gid = 0;
+	newitem->bid = maxContactId(newitem->gid) + 1;
+	newitem->type = ROSTER_INVISIBLE; // the type here is deny
+	newitem->tlvlist = 0L;
+	newitem->tlvlength = 0;
+
+	append(newitem);
+
+	return newitem;
+}
+
+bool SSIData::removeInvis(const QString &name)
+{
+	SSI *denyItem = findInvis(name);
+	if(denyItem != 0L)
+		remove(denyItem);
+
+	return (denyItem!=0L);
+}
+
+SSI *SSIData::findInvis(const QString &name)
+{
+	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
+	for (SSI *i=first(); i; i = next())
 	{
-		kdDebug(14150) << k_funcinfo << "gr->name= " << gr->name <<
-			", gr->gid= " << gr->gid <<
-			", gr->bid= " << gr->bid <<
-			", gr->type= " << gr->type << endl;
-		for (SSI *i=first(); i; i = next())
-		{
-			//if the ssi item has the right name, is a buddy, and has the right group
-			/*kdDebug(14150) << k_funcinfo <<
-				"i->gid is " << i->gid << ", gr->gid is " << gr->gid << endl;*/
-			if ((i->name == name) && (i->type == 0x0000) && (i->gid == gr->gid))
-			{
-				//we have found our buddy
-				kdDebug(14150) << "Found buddy " << name << " in SSI data" << endl;
-				return i;
-			}
-		}
-	}
-	else
-	{
-		kdDebug(14150) << "Group " << group << " not found" << endl;
+		if ((current()->name == name) && (current()->type == ROSTER_INVISIBLE))
+			return current();
 	}
 	return 0L;
+}
+
+// ========================================================================================
+
+SSI *SSIData::findVisibilitySetting()
+{
+	for (SSI *i=first(); i; i = next())
+	{
+		if ((current()->name.isEmpty()) && (current()->type == ROSTER_VISIBILITY))
+			return current();
+	}
+	return 0L;
+}
+
+unsigned short SSIData::maxContactId(const int groupId)
+{
+	unsigned short maxId = 0;
+	for (SSI *i=first(); i; i = next())
+	{
+		if ((groupId == i->gid) && (i->bid > maxId))
+			maxId = i->bid;
+	}
+	return maxId;
+}
+
+unsigned short SSIData::maxGroupId()
+{
+	unsigned short maxId = 0;
+	for (SSI *i=first(); i; i = next())
+	{
+		if (i->gid > maxId)
+			maxId = i->gid;
+	}
+	return maxId;
 }
 
 void SSIData::print()
@@ -169,45 +236,4 @@ void SSIData::print()
 	}
 }
 
-SSI *SSIData::addDeny(const QString &name)
-{
-	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
-	SSI *newitem = new SSI;
-	newitem->name = name;
-	newitem->gid = 0;
-	//find the largest bid (=buddy id) in our group
-	unsigned short maxbid = 0;
-	for (SSI *i=first(); i; i = next())
-	{
-		if ((newitem->gid == i->gid) && (i->bid > maxbid))
-			maxbid = i->bid;
-	}
-	newitem->bid = maxbid + 1;
-	newitem->type = 0x0003; // the type here is deny
-	newitem->tlvlist = NULL;
-	newitem->tlvlength = 0;
-	append(newitem);
-	return newitem;
-}
-
-SSI *SSIData::findDeny(const QString &name)
-{
-	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
-	for (SSI *i=first(); i; i = next())
-	{
-		if ((current()->name == name) && (current()->type == 0x0003))
-			return current();
-	}
-	return 0L;
-}
-
-SSI *SSIData::findVisibilitySetting()
-{
-	for (SSI *i=first(); i; i = next())
-	{
-		if ((current()->name.isEmpty()) && (current()->type == 0x0004))
-			return current();
-	}
-	return 0L;
-}
 // vim: set noet ts=4 sts=4 sw=4:

@@ -370,7 +370,7 @@ class OscarSocket : public OscarConnection
 		/*
 		 * requests ssi data from the server  [OSCAR]
 		 */
-		void sendBuddyListRequest();
+		void sendRosterRequest();
 		/*
 		 * Sends message to dest
 		 */
@@ -649,7 +649,7 @@ class OscarSocket : public OscarConnection
 
 	/*
 	 * parses incoming ack for current contactlist timestamp/length
-	 * @see sendBuddyListRequest() for data sent on CLI_CHECKROSTER
+	 * @see sendRosterRequest() for data sent on CLI_CHECKROSTER
 	 */
 	void parseRosterOk(Buffer &inbuf);
 
@@ -811,6 +811,11 @@ class OscarSocket : public OscarConnection
 
 	void parseAuthReply(Buffer &inbuf);
 
+	/*
+	 * Probably important TODO:
+	 * this adds contacts to the "client-side" contactlist, we probably have to call this after
+	 * login with ALL our contactnames and when adding a new contact
+	 */
 	void sendBuddylistAdd(QStringList &contacts);
 
 	private slots:

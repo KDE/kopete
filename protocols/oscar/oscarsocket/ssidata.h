@@ -22,7 +22,29 @@
 #include <qstring.h>
 #include <qptrlist.h>
 
-/**
+#include "oscartypes.h"
+
+const WORD ROSTER_CONTACT = 0x0000;		// a normal contact
+const WORD ROSTER_GROUP = 0x0001;		// a group of contacts
+const WORD ROSTER_VISIBLE = 0x0002;		// a contact on the visible list
+const WORD ROSTER_INVISIBLE = 0x0003;	// a contact on the invisible list
+const WORD ROSTER_VISIBILITY = 0x0004;	// this entry contains visibility setting TLV(0xca)=TLV(202)
+const WORD ROSTER_IGNORE = 0x000e;		// a contact on the ignore list
+
+struct SSI
+{
+	QString name;
+	int gid;
+	int bid;
+	int type;
+	char *tlvlist;
+	int tlvlength;
+};
+
+/*
+ * @author Tom Linsky (Main)
+ * @author Chris TenHarmsel (Secondary)
+ *
  * Manages SSI data from the server
  * You can use the SSI pointers returned
  * from many of these methods to send
@@ -37,78 +59,85 @@
  * append this data to the "series of items" list
  * See: http://kingant.net/oscar/?family=0x0013&subtype=0x0008
  * for more info
- * @author Tom Linsky (Main)
- * @author Chris TenHarmsel (Secondary)
  */
-
-struct SSI
-{
-	QString name;
-	int gid;
-	int bid;
-	int type;
-	char *tlvlist;
-	int tlvlength;
-};
 
 class SSIData : public QPtrList<SSI>
 {
-public:
-	SSIData();
-	~SSIData();
+	public:
+		SSIData();
+		~SSIData();
 
-	/*
-	 * Find the group named name, and returns a pointer to it
-	 */
-	SSI *findGroup(const QString &name);
-	/*
-	 * Same asa above but searches for group by using its groupID
-	 */
-	SSI *findGroup(const int groupId);
+		/*
+		 * Adds a contact to the SSI data list
+		 * you will need to actually send the info in the
+		 * SSI returned by this method to change the Server
+		 * Side data
+		 */
+		SSI *addContact(const QString &name, const QString &group);
+		SSI *addContact(const int groupId, const int contactId);
 
-	/**
-	 * Adds a buddy to the SSI data list
-	 * you will need to actually send the info in the
-	 * SSI returned by this method to change the Server
-	 * Side data
-	 */
-	SSI *addBuddy(const QString &name, const QString &group);
+		/*
+		 * Finds the contact with given name and group...
+		 * returns NULL if not found
+		 */
+		SSI *findContact(const QString &name, const QString &group);
 
-	/**
-	 * Adds a group to the local ssi data
-	 * you will need to actually send the info in the
-	 * SSI returned by this method to change the Server
-	 * Side data
-	 */
-	SSI *addGroup(const QString &name);
+		// ===============================================================================
 
-	/**
-	 * Changes the name of a group in the local SSI data
-	 * You can use the SSI pointer returned by this
-	 * method to pass to the server to actually change
-	 * the name on the SSI data
-	 */
-	SSI *renameGroup(const QString &currentName, const QString &newName);
+		/*
+		 * Adds a group to the local ssi data
+		 * you will need to actually send the info in the
+		 * SSI returned by this method to change the Server
+		 * Side data
+		 */
+		SSI *addGroup(const QString &name);
 
-	/** Finds the buddy with given name and group... returns NULL if not found */
-	SSI *findBuddy(const QString &name, const QString &group);
+		/*
+		 * Find the group named name, and returns a pointer to it
+		 */
+		SSI *findGroup(const QString &name);
+		/*
+		 * Same asa above but searches for group by using its groupID
+		 */
+		SSI *findGroup(const int groupId);
 
-	/**
-	 * Prints out the SSI data
-	 */
-	void print(void);
+		/*
+		 * Changes the name of a group in the local SSI data
+		 * You can use the SSI pointer returned by this
+		 * method to pass to the server to actually change
+		 * the name on the SSI data
+		 */
+		SSI *renameGroup(const QString &currentName, const QString &newName);
 
-	/** Adds the given sn to the list of blocked sn's
-	 * You can use the SSI pointer returned by this
-	 * method to pass to the server to actually change
-	 * the name on the SSI data
-	 */
-	SSI *addDeny(const QString &name);
+		// ===============================================================================
 
-	/** Finds the given buddy in the deny list... return NULL if not found */
-	SSI *findDeny(const QString &name);
+		/* Adds the given sn to the list of blocked sn's
+		 * You can use the SSI pointer returned by this
+		 * method to pass to the server to actually change
+		 * the name on the SSI data
+		 */
+		SSI *addInvis(const QString &name);
 
-	SSI *findVisibilitySetting();
+		bool removeInvis(const QString &name);
+
+		/*
+		 * Finds the given contact in the deny list...
+		 * returns NULL if not found
+		 */
+		SSI *findInvis(const QString &name);
+
+		// ===============================================================================
+
+		/*
+		 * Prints out the SSI data
+		 */
+		void print();
+
+		SSI *findVisibilitySetting();
+
+	private:
+		unsigned short maxContactId(const int);
+		unsigned short maxGroupId();
 };
 
 #endif

@@ -20,14 +20,11 @@
 #define BUFFER_H
 
 #include "oscardebug.h"
+#include "oscartypes.h"
 
 #include <qobject.h>
 #include <qptrlist.h>
 #include <qcstring.h>
-
-typedef unsigned char BYTE;
-typedef unsigned short WORD;
-typedef unsigned long DWORD;
 
 struct SNAC
 {

@@ -1050,7 +1050,7 @@ void OscarSocket::sendIdleTime(DWORD time)
 	}
 }
 
-void OscarSocket::sendBuddyListRequest(void)
+void OscarSocket::sendRosterRequest()
 {
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_CHECKROSTER) Requesting SSI data" << endl;
 	Buffer outbuf;
@@ -1067,7 +1067,8 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 	inbuf.getByte(); //get fmt version
 	blist.length = inbuf.getWord(); //gets the contactlist length
 
-	kdDebug(14150) << k_funcinfo << "RECV (SRV_REPLYROSTER) received contactlist, " <<
+	kdDebug(14150) << k_funcinfo <<
+		"RECV (SRV_REPLYROSTER) received contactlist, " <<
 		"length=" << blist.length << endl;
 
 	while(inbuf.length() > 4) //the last 4 bytes are the timestamp
@@ -1081,8 +1082,10 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 		ssi->bid = inbuf.getWord();
 		ssi->type = inbuf.getWord(); //type of the entry
 		ssi->tlvlength = inbuf.getWord(); //length of data
-		if (ssi->tlvlength) //sometimes there is additional info
-				ssi->tlvlist = inbuf.getBlock(ssi->tlvlength);
+		if (ssi->tlvlength > 0) //sometimes there is additional info
+			ssi->tlvlist = inbuf.getBlock(ssi->tlvlength);
+		else
+			ssi->tlvlist = 0L;
 		ssiData.append(ssi);
 
 /*
@@ -1123,15 +1126,15 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 
 						case 0x0066: // waitauth flag
 						{
-						/* Signifies that you are awaiting authorization for this buddy.
-						   The client is in charge of putting this TLV, but you will not
-						   receiving status updates for the contact until they authorize
-						   you, regardless if this is here or not. Meaning, this is only
-						   here to tell your client that you are waiting for authorization
-						   for the person. This TLV is always empty.
-						*/
-							kdDebug(14150) << k_funcinfo <<
-								"Contact has WAITAUTH set." << endl;
+							/* Signifies that you are awaiting authorization for this buddy.
+							The client is in charge of putting this TLV, but you will not
+							receiving status updates for the contact until they authorize
+							you, regardless if this is here or not. Meaning, this is only
+							here to tell your client that you are waiting for authorization
+							for the person. This TLV is always empty.
+							*/
+							/*kdDebug(14150) << k_funcinfo <<
+								"Contact has WAITAUTH set." << endl;*/
 							bud->setWaitAuth(true);
 							break;
 						}
@@ -1199,7 +1202,8 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 
 			case 0x0002: // TODO permit buddy list AKA visible list
 			{
-				kdDebug(14150) << k_funcinfo << "[TODO] Add Contact '" << ssi->name <<
+				kdDebug(14150) << k_funcinfo <<
+					"[TODO] Add Contact '" << ssi->name <<
 					"' to VISIBLE/ALLOW list." << endl;
 				break;
 			}
@@ -1408,7 +1412,7 @@ void OscarSocket::requestInfo()
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
 	requestMyUserInfo(); // CLI_REQINFO
 	sendSSIRightsRequest();  // CLI_REQLISTS
-	sendBuddyListRequest(); // CLI_CHECKROSTER
+	sendRosterRequest(); // CLI_CHECKROSTER
 	requestLocateRights(); // CLI_REQLOCATION
 	requestBuddyRights(); // CLI_REQBUDDY
 	requestMsgRights(); // CLI_REQICBML
@@ -1814,7 +1818,7 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 					if (messageLength < 1)
 						break;
 
-					QTextCodec *codec;
+					QTextCodec *codec = 0L;
 					QString message;
 					if (charsetNumber == 0x0002) // UCS-2BE (or UTF-16)
 					{
@@ -1859,25 +1863,31 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 							{
 								cresult=codec->heuristicContentMatch(messagetext, messageLength);
 								kdDebug(14150) << k_funcinfo <<
-									"result for US-ASCII = " << cresult << endl;
+									"result for US-ASCII=" << cresult <<
+									", message length=" << messageLength << endl;
+								if(cresult < messageLength)
+									codec=0L; // codec not appropriate
 							}
 
-							if(cresult < messageLength)
+							if(!codec)
 							{
 								codec=QTextCodec::codecForMib(106); //UTF-8
 								if(codec)
 								{
 									cresult=codec->heuristicContentMatch(messagetext, messageLength);
 									kdDebug(14150) << k_funcinfo <<
-										"result for UTF-8 = " << cresult << endl;
+										"result for UTF-8=" << cresult <<
+										", message length=" << messageLength << endl;
+									if(cresult < messageLength/2)
+										codec=0L;
 								}
 							}
 
-							if(cresult < messageLength/2)
+							if(!codec)
 							{
 								kdDebug(14150) << k_funcinfo <<
 									"Couldn't find suitable encoding for incoming message, " <<
-									"encoding using local system-encoding" << endl;
+									"encoding using local system-encoding, TODO: sane fallback?" << endl;
 								codec=QTextCodec::codecForLocale();
 								// TODO: optionally have a per-account encoding as fallback!
 							}
@@ -2239,10 +2249,7 @@ const DWORD OscarSocket::parseCapabilities(Buffer &inbuf)
 
 // FIXME: Split up into type-1, type-2 and type-4 messaging
 // currently we only do simple type-1
-void OscarSocket::sendIM(
-	const QString &message,
-	OscarContact *contact,
-	bool isAuto)
+void OscarSocket::sendIM(const QString &message, OscarContact *contact, bool isAuto)
 {
 	//check to see if we have a direct connection to the contact
 	#if 0
@@ -2260,11 +2267,6 @@ void OscarSocket::sendIM(
 
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_SENDMSG), msg='" << message <<
 		"' to '" << contact->contactName() << "'" << endl;
-
-	// Old features data
-	//static const char deffeatures[] = { 0x01, 0x01, 0x01, 0x02 };
-	//static const char deffeatures[] = { 0x01 };
-	static const char deffeatures[] =  { 0x01, 0x06 }; // 0x06 == UTF support
 
 	Buffer outbuf;
 	outbuf.addSnac(0x0004,0x0006,0x0000, toicqsrv_seq);
@@ -2284,8 +2286,18 @@ void OscarSocket::sendIM(
 	// ====================================================================================
 	Buffer tlv2;
 	tlv2.addWord(0x0501); // add TLV(0x0501) also known as TLV(1281)
-	tlv2.addWord(sizeof(deffeatures)); // add TLV length
-	tlv2.addString(deffeatures, sizeof(deffeatures)); //add deffeatures
+	if(mIsICQ)
+	{
+		static const char icqfeatures[] = {0x01, 0x06}; // 0x06 == UTF support
+		tlv2.addWord(sizeof(icqfeatures)); // add TLV length
+		tlv2.addString(icqfeatures, sizeof(icqfeatures));
+	}
+	else
+	{
+		static const char aimfeatures[] = {0x01, 0x01, 0x01, 0x02};
+		tlv2.addWord(sizeof(aimfeatures)); // add TLV length
+		tlv2.addString(aimfeatures, sizeof(aimfeatures));
+	}
 
 	QTextCodec *codec = 0L;
 	WORD charset = 0x0000; // default to ascii
@@ -2715,7 +2727,7 @@ void OscarSocket::sendAddBuddy(const QString &contactName, const QString &groupN
 		sendAddGroup(groupName);
 	}
 
-	newContact = ssiData.addBuddy(contactName, groupName);
+	newContact = ssiData.addContact(contactName, groupName);
 
 	kdDebug(14150) << k_funcinfo << "Adding " << newContact->name << ", gid " <<
 		newContact->gid << ", bid " << newContact->bid << ", type " << newContact->type
@@ -2735,7 +2747,7 @@ void OscarSocket::sendChangeBuddyGroup(const QString &buddyName,
 			"Moving " << buddyName << " into group " << newGroup << endl;
 
 	// Check to make sure that the group has actually changed
-	SSI *buddyItem = ssiData.findBuddy(buddyName, oldGroup);
+	SSI *buddyItem = ssiData.findContact(buddyName, oldGroup);
 	SSI *groupItem = ssiData.findGroup(newGroup);
 	if (buddyItem == 0L || groupItem == 0L)
 	{
@@ -2860,7 +2872,7 @@ void OscarSocket::sendRenameBuddy(const QString &budName,
 {
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
 
-	SSI *ssi = ssiData.findBuddy(budName, budGroup);
+	SSI *ssi = ssiData.findContact(budName, budGroup);
 
 	if (!ssi)
 	{
@@ -3119,9 +3131,9 @@ void OscarSocket::parseSSIAck(Buffer &inbuf)
 // Deletes a buddy from the server side contact list
 void OscarSocket::sendDelBuddy(const QString &budName, const QString &budGroup)
 {
-	kdDebug(14150) << k_funcinfo << "Sending del buddy" << endl;
+	kdDebug(14150) << k_funcinfo << "Sending del contact" << endl;
 
-	SSI *delitem = ssiData.findBuddy(budName,budGroup);
+	SSI *delitem = ssiData.findContact(budName,budGroup);
 	ssiData.print();
 	if (!delitem)
 	{
@@ -3173,12 +3185,12 @@ void OscarSocket::parseError(WORD family, Buffer &inbuf)
 	emit protocolError(msg,reason);
 }
 
-/** Request, deny, or accept a rendezvous session with someone
+/* Request, deny, or accept a rendezvous session with someone
 type == 0: request
 type == 1: deny
-type == 2: accept  */
-void OscarSocket::sendRendezvous(const QString &sn, WORD type,
-	DWORD rendezvousType, const KFileItem *finfo)
+type == 2: accept
+*/
+void OscarSocket::sendRendezvous(const QString &/*sn*/, WORD /*type*/, DWORD /*rendezvousType*/, const KFileItem */*finfo*/)
 {
 #if 0
 	OncomingSocket *sockToUse = serverSocket(rendezvousType);
@@ -3482,16 +3494,15 @@ void OscarSocket::sendMsgParams()
 
 void OscarSocket::sendBlock(const QString &sname)
 {
-	kdDebug(14150) << k_funcinfo << "Sending deny buddy" << endl;
-	SSI *newitem = ssiData.addDeny(sname);
+	SSI *newitem = ssiData.addInvis(sname);
 	if (!newitem)
 		return;
 
-	kdDebug(14150) << k_funcinfo << "Adding DENY:" << newitem->name << ", gid " <<
-		newitem->gid << ", bid " << newitem->bid << ", type " <<
-		newitem->type << ", datalength " << newitem->tlvlength << endl;
+	kdDebug(14150) << k_funcinfo << "Adding contact to INVISIBLE list:" << newitem->name << ", gid=" <<
+		newitem->gid << ", bid=" << newitem->bid << ", type=" <<
+		newitem->type << ", datalength=" << newitem->tlvlength << endl;
 
-	sendSSIAddModDel(newitem,0x0008);
+	sendSSIAddModDel(newitem, 0x0008);
 
 	// FIXME: Use SNAC headers and SSI acks to do this more correctly
 	emit denyAdded(sname);
@@ -3502,7 +3513,7 @@ void OscarSocket::sendRemoveBlock(const QString &sname)
 	kdDebug(14150) << k_funcinfo << "Removing DENY for contact '" <<
 		sname << "'" << endl;
 
-	SSI *delitem = ssiData.findDeny(sname);
+	SSI *delitem = ssiData.findInvis(sname);
 	if (!delitem)
 	{
 		kdDebug(14150) << k_funcinfo << "Item with name " << sname <<
@@ -3846,15 +3857,10 @@ void OscarSocket::parseAuthReply(Buffer &inbuf)
 }
 
 
-/*
-Probably important TODO:
-this adds contacts to the "client-side" contactlist, we probably have to call this after
- login with ALL our contactnames and when adding a new contact
-*/
-
 void OscarSocket::sendBuddylistAdd(QStringList &contacts)
 {
 	kdDebug(14150) << k_funcinfo << "SEND CLI_ADDCONTACT (add to local userlist?)" << endl;
+
 	Buffer outbuf;
 	outbuf.addSnac(0x0003,0x0004,0x0000,0x00000000);
 	for(QStringList::Iterator it = contacts.begin(); it != contacts.end(); ++it)
