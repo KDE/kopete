@@ -244,7 +244,7 @@ void MSNMessageManager::slotActionInviteAboutToShow()
 
 		}
 	}
-	KAction *b=new KAction( i18n ("Other ..."), 0, this, SLOT( slotInviteOtherContact() ), m_actionInvite, "actionOther" );
+	KAction *b=new KAction( i18n ("Other..."), 0, this, SLOT( slotInviteOtherContact() ), m_actionInvite, "actionOther" );
 	m_actionInvite->insert( b );
 	m_inviteactions.append( b ) ;
 }

@@ -59,7 +59,7 @@
                                     <cstring>mColorsAdd</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>&amp;Add ...</string>
+                                    <string>&amp;Add...</string>
                                 </property>
                             </widget>
                             <widget class="QPushButton" row="1" column="1">

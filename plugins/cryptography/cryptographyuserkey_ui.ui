@@ -37,7 +37,7 @@
                 <cstring>m_selectKey</cstring>
             </property>
             <property name="text">
-                <string>Select ...</string>
+                <string>Select...</string>
             </property>
         </widget>
         <spacer row="2" column="1">
