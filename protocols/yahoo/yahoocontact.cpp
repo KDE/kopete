@@ -30,6 +30,7 @@
 // KDE Includes
 #include <kdebug.h>
 #include <kapplication.h>
+#include <kmessagebox.h>
 
 YahooContact::YahooContact(KopeteAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact)
 	: KopeteContact(account, userId, metaContact)
@@ -51,7 +52,7 @@ YahooContact::YahooContact(KopeteAccount *account, const QString &userId, const 
 //	QObject::connect (metaContact , SIGNAL( aboutToSave(KopeteMetaContact*) ), pluginInstance, SLOT (serialize(KopeteMetaContact*) ));
 	//TODO: Probably doesn't save contacts now!
 
-	if(m_account->haveContactList())
+	if ( m_account->haveContactList() )
 		syncToServer();
 }
 
@@ -113,7 +114,7 @@ bool YahooContact::isOnline() const
 bool YahooContact::isReachable()
 {
 	//kdDebug(14180) << k_funcinfo << endl;
-	if (m_account->isConnected())
+	if ( m_account->isConnected() )
 		return true;
 	else
 		return false;
@@ -143,11 +144,11 @@ void YahooContact::slotSendMessage(KopeteMessage &message)
 	// instead.  (Yahoo has its own format for "rich text".)
 	QString messageText = message.plainBody();
 	kdDebug(14180) << "Sending message: " << messageText << endl;
-  
+
 	KopeteContactPtrList m_them = manager()->members();
 	KopeteContact *target = m_them.first();
 
-	m_account->yahooSession()->sendIm( static_cast<YahooContact*>(m_account->myself())->m_userId, 
+	m_account->yahooSession()->sendIm( static_cast<YahooContact*>(m_account->myself())->m_userId,
 		static_cast<YahooContact *>(target)->m_userId, messageText );
 
 	// append message to window
@@ -159,7 +160,7 @@ void YahooContact::slotTyping(bool isTyping_ )
 {
 	KopeteContactPtrList m_them = manager()->members();
 	KopeteContact *target = m_them.first();
-	
+
 
 	m_account->yahooSession()->sendTyping( static_cast<YahooContact*>(m_account->myself())->m_userId,
 		static_cast<YahooContact*>(target)->m_userId, isTyping_ );
@@ -194,7 +195,8 @@ void YahooContact::slotDeleteContact()
 {
 	kdDebug(14180) << k_funcinfo << endl;
 	//my ugliest hack yet. how many levels of indirection do I want? ;)
-	m_account->yahooSession()->removeBuddy(m_userId, metaContact()->groups().getFirst()->displayName());
+	if ( m_account->isConnected() )
+		m_account->yahooSession()->removeBuddy(m_userId, metaContact()->groups().getFirst()->displayName());
 }
 #include "yahoocontact.moc"
 
