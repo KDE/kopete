@@ -326,15 +326,6 @@ public:
 
 protected:
   /**
-   * Special constructor. This constructor will cause the internal
-   * socket device NOT to be set. Use this if your socket device class
-   * takes another underlying socket device.
-   *
-   * @param parent	the parent, if any
-   */
-  KSocketDevice(bool, const KSocketBase* = 0L);
-
-  /**
    * Creates a socket notifier of the given type.
    *
    * This function is called by @ref readNotifier, @ref writeNotifier and

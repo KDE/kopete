@@ -173,7 +173,7 @@ namespace
     delete [] buf;
 
     finished();
-    return results.error() == KResolver::NoError;
+    return results.errorCode() == KResolver::NoError;
   }
 
   void GetHostByNameThread::processResults(hostent *he, int herrno)
@@ -192,7 +192,7 @@ namespace
 	    return;
 
 	  case NO_RECOVERY:
-	    results.setError(KResolver::NonRecoverable);
+	    results.results.setError(KResolver::NonRecoverable);
 	    return;
 
 	  case NO_ADDRESS:
@@ -378,7 +378,7 @@ namespace
     freeaddrinfo(result);
     results.setError(KResolver::NoError);
     finished();
-    return results.error() == KResolver::NoError;
+    return results.errorCode() == KResolver::NoError;
   }
 
 #endif // HAVE_GETADDRINFO
@@ -772,7 +772,7 @@ bool KStandardWorker::postprocess()
       else if (results.isEmpty())
 	// this generated an error
 	// copy the error code over
-	setError(rr->error(), rr->systemError());
+	setError(rr->errorCode(), rr->systemError());
 
       rr = resultList.prev();
     }
@@ -813,7 +813,7 @@ bool KGetAddrinfoWorker::run()
 	    setError(KResolver::NoError);
 	}
       else
-	setError(worker.results.error(), worker.results.systemError());
+	setError(worker.results.errorCode(), worker.results.systemError());
 
       return false;
     }

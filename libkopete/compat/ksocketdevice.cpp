@@ -43,8 +43,52 @@
 # endif
 #endif
 
-// Include syssocket before our local includes
-#include "syssocket.h"
+// change when merging with Qt or something
+#define QT_SOCKLEN_T		socklen_t
+
+//////////////////
+// Copied from qsocketdevice_unix.cpp:
+
+// Almost always the same. If not, specify in qplatformdefs.h.
+#if !defined(QT_SOCKOPTLEN_T)
+# define QT_SOCKOPTLEN_T QT_SOCKLEN_T
+#endif
+
+// Tru64 redefines accept -> _accept with _XOPEN_SOURCE_EXTENDED
+static inline int qt_socket_accept(int s, struct sockaddr *addr, QT_SOCKLEN_T *addrlen)
+{ return ::accept(s, addr, addrlen); }
+#if defined(accept)
+# undef accept
+#endif
+
+// Solaris redefines bind -> __xnet_bind with _XOPEN_SOURCE_EXTENDED
+static inline int qt_socket_bind(int s, const struct sockaddr *addr, QT_SOCKLEN_T addrlen)
+{ return ::bind(s, addr, addrlen); }
+#if defined(bind)
+# undef bind
+#endif
+
+// Solaris redefines connect -> __xnet_connect with _XOPEN_SOURCE_EXTENDED
+static inline int qt_socket_connect(int s, const struct sockaddr *addr, QT_SOCKLEN_T addrlen)
+{ return ::connect(s, addr, addrlen); }
+#if defined(connect)
+# undef connect
+#endif
+
+// UnixWare 7 redefines listen -> _listen
+static inline int qt_socket_listen(int s, int backlog)
+{ return ::listen(s, backlog); }
+#if defined(listen)
+# undef listen
+#endif
+
+// UnixWare 7 redefines socket -> _socket
+static inline int qt_socket_socket(int domain, int type, int protocol)
+{ return ::socket(domain, type, protocol); }
+#if defined(socket)
+# undef socket
+#endif
+//////////////////
 
 #include <qmutex.h>
 #include <qsocketnotifier.h>
@@ -82,14 +126,6 @@ KSocketDevice::KSocketDevice(int fd)
   setState(IO_Open);
   setFlags(IO_Sequential | IO_Raw | IO_ReadWrite);
   setSocketDevice(this);
-}
-
-KSocketDevice::KSocketDevice(bool, const KSocketBase* parent)
-  : m_sockfd(-1), d(new KSocketDevicePrivate)
-{
-  // do not set parent
-  if (parent)
-    setSocketOptions(parent->socketOptions());
 }
 
 KSocketDevice::~KSocketDevice()
@@ -187,7 +223,7 @@ bool KSocketDevice::create(int family, int type, int protocol)
     }
 
   // no socket yet; we have to create it
-  m_sockfd = kde_socket(family, type, protocol);
+  m_sockfd = ::qt_socket_socket(family, type, protocol);
 
   if (m_sockfd == -1)
     {
@@ -212,7 +248,7 @@ bool KSocketDevice::bind(const KResolverEntry& address)
     return false;		// failed creating
 
   // we have a socket, so try and bind
-  if (kde_bind(m_sockfd, address.address(), address.length()) == -1)
+  if (::qt_socket_bind(m_sockfd, address.address(), address.length()) == -1)
     {
       if (errno == EADDRINUSE)
 	setError(IO_BindError, AddressInUse);
@@ -231,7 +267,7 @@ bool KSocketDevice::listen(int backlog)
 {
   if (m_sockfd != -1)
     {
-      if (kde_listen(m_sockfd, backlog) == -1)
+      if (::qt_socket_listen(m_sockfd, backlog) == -1)
 	{
 	  setError(IO_ListenError, NotSupported);
 	  return false;
@@ -256,7 +292,7 @@ bool KSocketDevice::connect(const KResolverEntry& address)
   if (m_sockfd == -1 && !create(address))
     return false;		// failed creating!
 
-  if (kde_connect(m_sockfd, address.address(), address.length()) == -1)
+  if (::qt_socket_connect(m_sockfd, address.address(), address.length()) == -1)
     {
       if (errno == EISCONN)
 	return true;		// we're already connected
@@ -294,7 +330,7 @@ KSocketDevice* KSocketDevice::accept()
 
   struct sockaddr sa;
   socklen_t len = sizeof(sa);
-  int newfd = kde_accept(m_sockfd, &sa, &len);
+  int newfd = ::qt_socket_accept(m_sockfd, &sa, &len);
   if (newfd == -1)
     {
       if (errno == EAGAIN || errno == EWOULDBLOCK)
@@ -316,7 +352,7 @@ bool KSocketDevice::disconnect()
 
   KSocketAddress address;
   address.setFamily(AF_UNSPEC);
-  if (kde_connect(m_sockfd, address.address(), address.length()) == -1)
+  if (::qt_socket_connect(m_sockfd, address.address(), address.length()) == -1)
     {
       if (errno == EALREADY || errno == EINPROGRESS)
 	{
@@ -508,7 +544,7 @@ KSocketAddress KSocketDevice::localAddress() const
   socklen_t len;
   KSocketAddress localAddress;
   localAddress.setLength(len = 32);	// arbitrary value
-  if (kde_getsockname(m_sockfd, localAddress.address(), &len) == -1)
+  if (::getsockname(m_sockfd, localAddress.address(), &len) == -1)
     // error!
     return KSocketAddress();
 
@@ -522,7 +558,7 @@ KSocketAddress KSocketDevice::localAddress() const
   // no, the socket address is actually larger than we had anticipated
   // call again
   localAddress.setLength(len);
-  if (kde_getsockname(m_sockfd, localAddress.address(), &len) == -1)
+  if (::getsockname(m_sockfd, localAddress.address(), &len) == -1)
     // error!
     return KSocketAddress();
 
@@ -537,7 +573,7 @@ KSocketAddress KSocketDevice::peerAddress() const
   socklen_t len;
   KSocketAddress peerAddress;
   peerAddress.setLength(len = 32);	// arbitrary value
-  if (kde_getpeername(m_sockfd, peerAddress.address(), &len) == -1)
+  if (::getpeername(m_sockfd, peerAddress.address(), &len) == -1)
     // error!
     return KSocketAddress();
 
@@ -551,7 +587,7 @@ KSocketAddress KSocketDevice::peerAddress() const
   // no, the socket address is actually larger than we had anticipated
   // call again
   peerAddress.setLength(len);
-  if (kde_getpeername(m_sockfd, peerAddress.address(), &len) == -1)
+  if (::getpeername(m_sockfd, peerAddress.address(), &len) == -1)
     // error!
     return KSocketAddress();
 

@@ -478,7 +478,7 @@ KResolverWorkerBase* KResolverManager::findWorker(KResolverPrivate* p)
 	{
 	  // good, this one says it can process
 	  if (worker->m_finished)	   
-	    p->status = !worker->results.isEmpty() ?
+	    p->status = worker->results.count() > 0 ?
 	      KResolver::Success : KResolver::Failed;
 	  else
 	    p->status = KResolver::Queued;
@@ -546,14 +546,11 @@ void KResolverManager::doNotifying(RequestData *p)
 
 	  if (p->obj->status != KResolver::Canceled)
 	    {
-	      p->obj->errorcode = r.error();
+	      p->obj->errorcode = r.errorCode();
 	      p->obj->syserror = r.systemError();
-	      p->obj->status = !r.isEmpty() ? 
-		KResolver::Success : KResolver::Failed;
 	    }
 	  else
 	    {
-	      p->obj->status = KResolver::Canceled;
 	      p->obj->errorcode = KResolver::Canceled;
 	      p->obj->syserror = 0;
 	    }
