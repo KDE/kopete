@@ -47,7 +47,7 @@ GroupWiseContact::GroupWiseContact( KopeteAccount* account, const QString &dn,
 			KopeteMetaContact *parent, 
 			const int objectId, const int parentId, const int sequence )
 : KopeteContact( account, dn, parent ), m_objectId( objectId ), m_parentId( parentId ),
-  m_sequence( sequence )
+  m_sequence( sequence ), m_actionBlock( 0 )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " dn: " << dn << endl;
 	setOnlineStatus( ( parent && parent->isTemporary() ) ? protocol()->groupwiseUnknown : protocol()->groupwiseOffline );
@@ -201,15 +201,23 @@ GroupWiseMessageManager * GroupWiseContact::manager( const QString & guid, bool 
 	return dynamic_cast<GroupWiseMessageManager *>( manager( canCreate ) );
 }
 
-QPtrList<KAction> *GroupWiseContact::customContextMenuActions() //OBSOLETE
+QPtrList<KAction> *GroupWiseContact::customContextMenuActions() 
 {
-	//FIXME!!!  this function is obsolete, we should use XMLGUI instead
-	/*m_actionCollection = new KActionCollection( this, "userColl" );
-	m_actionPrefs = new KAction(i18n( "&Contact Settings" ), 0, this,
-			SLOT( showContactSettings( )), m_actionCollection, "contactSettings" );
+	QPtrList<KAction> *m_actionCollection = new QPtrList<KAction>;
 
-	return m_actionCollection;*/
-	return 0L;
+	// Block/unblock Contact
+	QString label = /*isBlocked()*/false ? i18n( "Unblock User" ) : i18n( "Block User" );
+	if( !m_actionBlock )
+	{
+		m_actionBlock = new KAction( label, "msn_blocked",0, this, SLOT( slotBlockUser() ),
+			this, "actionBlock" );
+	}
+	else
+		m_actionBlock->setText( label );
+
+	m_actionCollection->append( m_actionBlock );
+
+	return m_actionCollection;
 }
 
 void GroupWiseContact::slotUserInfo()

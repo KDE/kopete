@@ -190,6 +190,7 @@ protected:
 	int m_sequence;
 	
 	KAction* m_actionPrefs;
+	KAction *m_actionBlock;
 	// all the message managers that this contact is currently chatting via
 	QDict< GroupWiseMessageManager > m_msgManagers;
 	// a list of all the instances that this contact appears in the server side contact list
