@@ -113,8 +113,10 @@ QString IRCUserContact::statusIcon() const
 
 	if (mUserclass == KIRC::Voiced)
 		return "irc_voice";*/
-
-	return "irc_normal";
+	if( onlineStatus() != KopeteContact::Offline )
+		return "irc_normal";
+	else
+		return "irc_offline";
 }
 
 void IRCUserContact::slotNewPrivMessage(const QString &originating, const QString &, const QString &message)
