@@ -43,7 +43,8 @@ public:
 	unsigned int listeingPort();
 	void unset();
 	void execute();
-
+	GaduAccount* account( unsigned int );
+	
 signals:
 	void dccConnect( GaduDCCTransaction* dccTransaction );
 

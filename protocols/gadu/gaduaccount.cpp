@@ -50,6 +50,7 @@
 #include <qtextcodec.h>
 #include <qptrlist.h>
 #include <qtextstream.h>
+#include <qhostaddress.h>
 
 #include <netinet/in.h>
 
@@ -84,7 +85,7 @@ public:
 	QPtrList<GaduCommand>		commandList_;
 	KopeteOnlineStatus		status_;
 	QValueList<QHostAddress>	servers_;
-	KGaduLoginParams	loginInfo;
+	KGaduLoginParams		loginInfo;
 };
 
 // FIXME: use dynamic cache please, i consider this as broken resolution of this problem
@@ -134,7 +135,7 @@ static const char* const servers_ip[ NUM_SERVERS ] = {
 	p->loginInfo.forFriends		= false;
 	p->loginInfo.client_port	= 0;
 	p->loginInfo.client_addr	= 0;
-
+	
 	p->pingTimer_ = new QTimer( this );
 
 	p->gaduDcc_ = NULL;
@@ -189,6 +190,9 @@ GaduAccount::initConnections()
 				SLOT( userListExportDone() ) );
 	QObject::connect( p->session_, SIGNAL( userListRecieved( const QString& ) ),
 				SLOT( userlist( const QString& ) ) );
+	QObject::connect( p->session_, SIGNAL( incomingCtcp( unsigned int ) ),
+				SLOT( slotIncomingDcc( unsigned int ) ) );
+	
 	QObject::connect( p->pingTimer_, SIGNAL( timeout() ),
 				SLOT( pingServer() ) );
 }
@@ -406,6 +410,14 @@ GaduAccount::slotLogin( int status, const QString& dscr )
 			p->loginInfo.status		= status;
 			p->loginInfo.statusDescr	= dscr;
 			p->loginInfo.forFriends		= p->forFriends;
+			if ( dccEnabled() ) {
+				p->loginInfo.client_addr	= gg_dcc_ip;
+				p->loginInfo.client_port	= gg_dcc_port;
+			}
+			else {
+				p->loginInfo.client_addr	= 0;
+				p->loginInfo.client_port	= 0;
+			}
 			p->session_->login( &p->loginInfo );
 		}
 	}
@@ -666,21 +678,33 @@ GaduAccount::dccOff()
 }
 
 void
-GaduAccount::slotIncomingDcc( GaduDCCTransaction* dcctransaction )
+GaduAccount::slotIncomingDcc( unsigned int UIN )
 {
-	if ( !dcctransaction ) {
+	GaduContact* contact;
+	GaduDCCTransaction* trans;
+	gg_dcc* dcc;
+
+	if ( !UIN ) {
 		return;
 	}
 
-	GaduContact* contact;
+	contact = static_cast<GaduContact*>( contacts()[ QString::number( UIN ) ] );
 
-	contact = static_cast<GaduContact*>( contacts()[ QString::number( dcctransaction->peerUIN() ) ] );
-	if( !contact ) {
-		delete dcctransaction;
+	if ( !contact ) {
+		return;
 	}
 
-	KMessageBox::error( Kopete::UI::Global::mainWidget(), "incomming dcc", contact->metaContact()->displayName() );
-
+	dcc = gg_dcc_get_file( htonl( contact->contactIp().ip4Addr() ), contact->contactPort(), p->loginInfo.uin ,UIN );
+	
+	if ( !dcc) {
+		kdDebug(14100) << "gg_dcc_get_file failed" << endl;
+		return;
+	}
+	
+	trans = new GaduDCCTransaction( dcc, contact, p->gaduDcc_ );
+	if ( trans->setupIncoming( UIN ) == false ) {
+		delete trans;
+	}
 }
 
 void

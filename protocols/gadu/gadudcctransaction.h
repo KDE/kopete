@@ -24,16 +24,24 @@
 #define GADUDCCTRANS_H
 
 #include <qobject.h>
+#include <qfile.h>
 
 class QSocketNotifier;
 class gg_dcc;
+class GaduAccount;
+class GaduContact;
+class KopeteTransfer;
+class KopeteFileTransferInfo;
+class GaduDCC;
 
 class GaduDCCTransaction: QObject {
 	Q_OBJECT
 public:
-	GaduDCCTransaction( gg_dcc*, QObject* parent, const char* name = NULL );
+	GaduDCCTransaction( gg_dcc*, GaduDCC*, const char* name = NULL );
+	GaduDCCTransaction( gg_dcc*, GaduContact*, GaduDCC*, const char* name = NULL );
 	~GaduDCCTransaction();
-	bool setup();
+	
+	bool setupIncoming( unsigned int p = 0 );
 	unsigned int recvUIN();
 	unsigned int peerUIN();
 
@@ -47,6 +55,9 @@ protected slots:
 
 private slots:
 	void watcher();
+	void slotIncomingTransferAccepted ( KopeteTransfer*, const QString& );
+	void slotTransferRefused ( const KopeteFileTransferInfo& );
+	void slotTransferResult();
 
 private:
 	void enableNotifiers( int );
@@ -55,11 +66,22 @@ private:
 	void closeDCC();;
 	void destroyNotifiers();
 	void createNotifiers( bool );
+	void askIncommingTransfer();
 
-	gg_dcc* dccSock;
+	gg_dcc* dccSock_;
 
 	QSocketNotifier* read_;
 	QSocketNotifier* write_;
+
+	GaduAccount* account;
+	GaduContact* contact;
+	
+	KopeteTransfer* transfer_;
+	long transferId_;
+	QFile localFile_;
+	bool peer;
+	unsigned int incoming;
+	GaduDCC* gaduDCC_;
 };
 
 #endif

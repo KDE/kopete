@@ -151,7 +151,7 @@ private slots:
 	void slotSearchResult( const SearchResult& result );
 	void userListExportDone();
 
-	void slotIncomingDcc( GaduDCCTransaction* );
+	void slotIncomingDcc( unsigned int );
 
 private:
 	void initConnections();

@@ -2,7 +2,7 @@
 //
 // Copyright (C) 2004 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
 //
-// gadurichtextformat.cpp
+// gadudcc.cpp
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -59,6 +59,12 @@ bool
 GaduDCC::unregisterAccount()
 {
 	return unregisterAccount( accountId );
+}
+
+GaduAccount*
+GaduDCC::account( unsigned int uin ) 
+{
+	return accounts[ uin ];
 }
 
 bool
@@ -138,23 +144,20 @@ GaduDCC::registerAccount( GaduAccount* account )
 void
 GaduDCC::slotIncoming( gg_dcc* incoming, bool& handled )
 {
-//	gg_dcc* newdcc;
-kdDebug( 14100 ) << "slotIncomming " << endl;
+	gg_dcc* newdcc;
+	GaduDCCTransaction* dt;
 
-	if ( handled && !accountId ) {
-		// don't bother if someone already handled it
-		return;
-	}
-
-	if ( incoming->uin == accountId ) {
-		handled = true;
+	kdDebug( 14100 ) << "slotIncomming for UIN: " << incoming->uin  << endl;
+		
+	handled = true;
 	// TODO: limit number of connections per contact, or maybe even use parametr for that
-	// dcc_e->event.dcc_new;
-//		newdcc = new gg_dcc;
-//		memcpy( newdcc, incoming, sizeof( gg_dcc ) );
-		emit dccConnect( new GaduDCCTransaction( incoming, parent() ) );
+	newdcc = new gg_dcc;
+	memcpy( newdcc, incoming, sizeof( gg_dcc ) );
+	dt = new GaduDCCTransaction( incoming, this );
+	if ( dt->setupIncoming() == false ) {
+		// FIXME: write something to user, maybe, or not...
+		delete dt;
 	}
-
 }
 
 GaduDCC::~GaduDCC()
