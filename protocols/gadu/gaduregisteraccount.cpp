@@ -190,9 +190,9 @@ GaduRegisterAccount::slotCancel()
 GaduRegisterAccount::~GaduRegisterAccount( )
 {
 	kdDebug( 14100 ) << " register Cancel " << endl;
-	if ( cRegister ) {
-		cRegister->cancel();
-	}
+//	if ( cRegister ) {
+//		cRegister->cancel();
+//	}
 }
 
 #include "gaduregisteraccount.moc"

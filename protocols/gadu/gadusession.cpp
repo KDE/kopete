@@ -685,9 +685,11 @@ GaduSession::checkDescriptor()
 			notify60( event );
 		break;
 		case GG_EVENT_CONN_SUCCESS:
+			kdDebug(14100) << "success server: " << session_->server_addr << endl;
 			emit connectionSucceed();
 		break;
 		case GG_EVENT_CONN_FAILED:
+			kdDebug(14100) << "failed server: " << session_->server_addr << endl;
 			destroySession();
 			kdDebug(14100) << "emit connection failed(" << event->event.failure << ") signal" << endl;
 			emit connectionFailed( (gg_failure_t)event->event.failure );

@@ -223,6 +223,7 @@ void RegisterCommand::watcher()
 				struct gg_token* sp	= ( struct gg_token* )session_->data;
 				tokenId = (char *)sp->tokenid;
 				kdDebug( 14100 ) << "got Token!, ID: " << tokenId << endl;
+				deleteNotifiers();
 				if ( pubDir->success ) {
 					QPixmap tokenImg;
 					tokenImg.loadFromData( (const unsigned char *)session_->body, session_->body_size );
@@ -234,7 +235,6 @@ void RegisterCommand::watcher()
 					state = RegisterStateNoToken;
 					deleteLater();
 				}
-				deleteNotifiers();
 				gg_token_free( session_ );
 				session_ = NULL;
 				disconnect( this, SLOT( watcher() ) );
@@ -271,6 +271,7 @@ void RegisterCommand::watcher()
 				break;
 
 			case GG_STATE_DONE:
+				deleteNotifiers();
 				if ( pubDir->success && pubDir->uin ) {
 					uin= pubDir->uin;
 					state = RegisterStateDone;
@@ -280,7 +281,6 @@ void RegisterCommand::watcher()
 					emit error( i18n( "Registration Error" ), i18n( "Data send to server were invalid." ) );
 					state = RegisterStateGotToken;
 				}
-				deleteNotifiers();
 				gg_free_register( session_ );
 				session_ = NULL;
 				disconnect( this, SLOT( watcher() ) );
