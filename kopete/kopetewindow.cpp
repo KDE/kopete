@@ -348,7 +348,7 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 		KMainWindow::closeEvent( e );
 		return;
 	}
-	
+
 #if KDE_VERSION >= 306
 	KMessageBox::information( this,
 		i18n( "<qt>Closing the main window will keep Kopete running in the "
@@ -356,7 +356,7 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 		"application.</qt>" ), i18n( "Docking in System Tray" ),
 		"hideOnCloseInfo" );
 	hide();
-	e->accept(); // necessary to not interrupt session management!
+	e->ignore(); // necessary to not interrupt session management!
 #else
 	KMainWindow::closeEvent( e );
 #endif
