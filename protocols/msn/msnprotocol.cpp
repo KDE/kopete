@@ -789,21 +789,20 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 	}
 	else if( list == "AL" )
 	{
-		// deleted Contacts might still be in allow list
+		// deleted Contacts might still be in allow list.
+		// Don't show them in the GUI, though.
 		if( !m_contacts.contains( handle ) )
 		{
 			// FIXME: Proper MSNContact ctor required!
 			c = new MSNContact( handle, publicName, QString::null, 0L );
 			c->setDeleted( true );
-			addToContactList( c, "Unknown" );
+			m_contacts.insert( c->msnId(), c );
 		}
 	}
 	else if( list == "RL" )
 	{
 		// search for new Contacts
-		if( m_contacts.contains( handle ) )
-			m_contacts[ handle ]->setNickname( publicName );
-		else
+		if( !m_contacts.contains( handle ) )
 		{
 			kdDebug() << "MSNProtocol: Contact not found in list!" << endl;
 
