@@ -622,9 +622,9 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 	kdDebug(14150) << k_funcinfo << "Original MSG: " << m << endl;
 
 	QString result = m;
-	result.replace( QRegExp( QString::fromLatin1("<html.*>(.*)</html>") ), QString::fromLatin1("\\1") );
-	result.replace( QRegExp( QString::fromLatin1("<body.*>(.*)</body>") ), QString::fromLatin1("\\1") );
-	result.replace( QRegExp( QString::fromLatin1("<br>") ), QString::fromLatin1("<br/>") );
+	result.replace( QRegExp( QString::fromLatin1("<[hH][tT][mM][lL].*>(.*)</[hH][tT][mM][lL]>") ), QString::fromLatin1("\\1") );
+	result.replace( QRegExp( QString::fromLatin1("<[bB][oO][dD][yY].*>(.*)</[bB][oO][dD][yY]>") ), QString::fromLatin1("\\1") );
+	result.replace( QRegExp( QString::fromLatin1("<[bB][rR]>") ), QString::fromLatin1("<br/>") );
 
 	KopeteContactPtrList tmpList;
 	tmpList.append(mAccount->myself());
