@@ -125,6 +125,9 @@ void OscarAccount::updateContact( Oscar::SSI item )
 
 void OscarAccount::slotGotSSIList()
 {
+	//login was successful
+	password().setWrong( false );
+	
 	//disconnect signals so we don't attempt to add things to SSI!
 	Kopete::ContactList* kcl = Kopete::ContactList::self();
 	QObject::disconnect( kcl, SIGNAL( groupRenamed( Kopete::Group*,  const QString& ) ),
@@ -262,7 +265,7 @@ void OscarAccount::kopeteGroupRenamed( Kopete::Group* group, const QString& oldN
 void OscarAccount::messageReceived( const Oscar::Message& message )
 {
 	//the message isn't for us somehow
-	if ( message.receiver() != accountId() )
+	if ( Oscar::normalize( message.receiver() ) != Oscar::normalize( accountId() ) )
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got a message but we're not the receiver: "
 			<< message.text() << endl;
@@ -275,30 +278,30 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 	 * Get the sanitized message back
 	 * Append to the chat window
 	 */
-	
-	if ( !contacts()[ message.sender() ] )
+	QString sender = Oscar::normalize( message.sender() );
+	if ( !contacts()[ sender ] )
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << "Adding '" << message.sender() << "' as temporary contact" << endl;
 		addContact( message.sender(), QString::null, 0,  Kopete::Account::Temporary );
 	}
 	
-	OscarContact* sender = static_cast<OscarContact *> ( contacts()[message.sender()] ); //should exist now
+	OscarContact* ocSender = static_cast<OscarContact *> ( contacts()[sender] ); //should exist now
 	
-	if ( !sender )
+	if ( !ocSender )
 	{
 		kdWarning(OSCAR_RAW_DEBUG) << "Temporary contact creation failed for '" 
 			<< message.sender() << "'! Discarding message: " << message.text() << endl;
 		return;
 	}
 	
-	Kopete::ChatSession* chatSession = sender->manager( Kopete::Contact::CanCreate );
-	chatSession->receivedTypingMsg( sender, false ); //person is done typing
+	Kopete::ChatSession* chatSession = ocSender->manager( Kopete::Contact::CanCreate );
+	chatSession->receivedTypingMsg( ocSender, false ); //person is done typing
 	
 	QString sanitizedMsg = sanitizedMessage( message );
 	
 	Kopete::ContactPtrList me;
 	me.append( myself() );
-	Kopete::Message chatMessage( message.timestamp(), sender, me, sanitizedMsg,
+	Kopete::Message chatMessage( message.timestamp(), ocSender, me, sanitizedMsg,
 	                             Kopete::Message::Inbound, Kopete::Message::RichText );
 	
 	chatSession->appendMessage( chatMessage );
