@@ -479,8 +479,9 @@ QString KopeteMessage::parseLinks( const QString &message ) const
 	QString result = message;
 
 	//Replace http/https/ftp links
-	result.replace( QRegExp( QString::fromLatin1("\\b((http://\\w|ftp://\\w|https://\\w)[-\\w\\._]+[-\\w\\./#&;:=\\?~%_,]*)\\b") ), QString::fromLatin1("<a href=\"\\1\">\\1</a>" ) );
-	result.replace( QRegExp( QString::fromLatin1("\\b((www\\.)[-\\w\\._]+[-\\w\\./#&;:=\\?~%_,]*)\\b") ), QString::fromLatin1("<a href=\"http://\\1\">\\1</a>" ) );
+	result.replace( QRegExp( QString::fromLatin1("\\b((http(s?)://\\w|ftp://\\w)[-\\w\\._]+[-\\w\\./#&;:=\\?~%_,]*)\\b") ), QString::fromLatin1("<a href=\"\\1\">\\1</a>" ) );
+	result.replace( QRegExp( QString::fromLatin1("^(www\\.[-\\w\\._]+[-\\w\\./#&;:=\\?~%_,]*)\\b") ), QString::fromLatin1("<a href=\"http://\\1\">\\1</a>" ) );
+	result.replace( QRegExp( QString::fromLatin1("([^/])\\b(www\\.[-\\w\\._]+[-\\w\\./#&;:=\\?~%_,]*)\\b") ), QString::fromLatin1("\\1<a href=\"http://\\2\">\\2</a>" ) );
 
 
 	//Replace Email Links
