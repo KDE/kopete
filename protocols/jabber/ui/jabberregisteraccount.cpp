@@ -442,7 +442,7 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 		// save settings to parent
 		mParentWidget->mServer->setText ( mMainWidget->leServer->text () );
 		mParentWidget->mID->setText ( mMainWidget->leJID->text () );
-		mParentWidget->mPass->setText ( mMainWidget->lePassword->text () );
+		mParentWidget->mPass->setText ( mMainWidget->lePassword->password () );
 		mParentWidget->mPort->setValue ( mMainWidget->sbPort->value () );
 		mParentWidget->cbUseSSL->setChecked ( mMainWidget->cbUseSSL->isChecked () );
 
