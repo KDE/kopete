@@ -249,7 +249,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Connection</string>
+                    <string>A&amp;ccount Preferences</string>
                 </attribute>
                 <vbox>
                     <property name="name">
