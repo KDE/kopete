@@ -43,7 +43,7 @@ struct KopeteMessagePrivate
 	QDateTime timeStamp;
 	QFont font;
 
-	bool bgOverride; //C'est quoi ça bgOverride????????
+	bool bgOverride;
 };
 
 KopeteMessage::KopeteMessage()
@@ -60,6 +60,16 @@ KopeteMessage::KopeteMessage( const KopeteContact *fromKC, const KopeteContactPt
 
 	init( QDateTime::currentDateTime(), fromKC, toKC, body, QString::null, direction, f, type );
 }
+
+KopeteMessage::KopeteMessage( const KopeteContact *fromKC, const KopeteContact *toKC, const QString &body,
+	MessageDirection direction, MessageFormat f, MessageType type )
+{
+	d = new KopeteMessagePrivate;
+	KopeteContactPtrList to;
+	to.append(toKC);
+	init( QDateTime::currentDateTime(), fromKC, to, body, QString::null, direction, f, type );
+}
+
 
 KopeteMessage::KopeteMessage( const KopeteContact *fromKC, const KopeteContactPtrList &toKC, const QString &body,
 	const QString &subject, MessageDirection direction, MessageFormat f, MessageType type )
@@ -376,11 +386,12 @@ QString KopeteMessage::parseLinks( const QString &message ) const
 {
 	QString result = message;
 
+	//Replace http/https/ftp links
+	result.replace( QRegExp( QString::fromLatin1("\\b((http://\\w|ftp://\\w|https://\\w|www\\.)[-\\w\\._]+[-\\w\\./#&;:=\\?~%_,]*)\\b") ), QString::fromLatin1("<a href=\"\\1\">\\1</a>" ) );
+
+
 	//Replace Email Links
 	result.replace( QRegExp( QString::fromLatin1("\\b([\\w-_\\.]+@([-_\\w\\.]+\\.\\w+)+)\\b") ), QString::fromLatin1("<a href=\"mailto:\\1\">\\1</a>") );
-
-	//Replace http/https/ftp links
-	result.replace( QRegExp( QString::fromLatin1("\\b((http://\\w|ftp://\\w|https://\\w|www\\.)[\\w\\.-_]+[\\w\\./#&;:=\\?~%-_,]*)\\b") ), QString::fromLatin1("<a href=\"\\1\">\\1</a>" ) );
 
 	return result;
 }

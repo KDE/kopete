@@ -96,6 +96,18 @@ public:
 	 * @param fromKC The KopeteContact that the message is coming from
 	 * @param toKC List of KopeteContacts the message is going to
 	 * @param body Message body
+	 * @param direction The direction of the message, KopeteMessage::Inbound, KopeteMessage::Outbound, KopeteMessage::Internal
+	 * @param format Format of the message
+	 */
+	KopeteMessage( const KopeteContact *fromKC, const KopeteContact *toKC, const QString &body,
+		MessageDirection direction, MessageFormat format = PlainText, MessageType type = Undefined );
+
+
+	/**
+	 * Constructs a new message
+	 * @param fromKC The KopeteContact that the message is coming from
+	 * @param toKC List of KopeteContacts the message is going to
+	 * @param body Message body
 	 * @param subject The subject of the message
 	 * @param direction The direction of the message, KopeteMessage::Inbound, KopeteMessage::Outbound, KopeteMessage::Internal
 	 * @param format Format of the message
