@@ -101,7 +101,7 @@ void IRCAccount::connect()
 
 void IRCAccount::disconnect()
 {
- 	engine()->quitIRC("Kopete IRC 2.0. http://kopete.kde.org");
+ 	engine()->quitIRC("Kopete IRC [http://kopete.kde.org]");
 }
 
 void IRCAccount::setAway(bool)
