@@ -38,11 +38,6 @@ signals:
 
 private:
 	ircPrefsUI *preferencesDialog;	
-private slots:
-	void slotHighlightNick();
-	void slotHighlightOthers();
-	void slotUseMDI();
-
 };
 
 #endif

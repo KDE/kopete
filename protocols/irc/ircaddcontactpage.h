@@ -3,7 +3,7 @@
                              -------------------
     begin                : Unknown
     copyright            : (C) 2002 by nbetcher
-    email                : nbetcher@usinternet.com
+    email                : nbetcher@kde.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -14,7 +14,7 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
- 
+
 #ifndef IRCADDCONTACTPAGE_H
 #define IRCADDCONTACTPAGE_H
 
@@ -35,13 +35,11 @@ public:
 	~IRCAddContactPage();
 	ircAddUI *ircdata;
 	IRCProtocol *plugin;
-public slots: // Public slots
-  /** No descriptions */
-  virtual void slotFinish(KopeteMetaContact *m);
+public slots:
+	virtual void slotFinish(KopeteMetaContact *m);
+
 private slots:
-  /** No descriptions */
-  virtual bool validateData();
-	void connectNowClicked();
+	virtual bool validateData();
 };
 
 #endif

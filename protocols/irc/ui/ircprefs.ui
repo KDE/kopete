@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>ircPrefsUI</class>
 <author>Duncan Mac-Vicar P.</author>
 <widget class="QWidget">
@@ -9,7 +9,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>645</width>
+            <width>411</width>
             <height>360</height>
         </rect>
     </property>
@@ -101,6 +101,12 @@
                                 <property name="sizeType">
                                     <enum>Expanding</enum>
                                 </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
                             </spacer>
                             <spacer row="1" column="2" rowspan="1" colspan="4">
                                 <property name="name">
@@ -111,6 +117,12 @@
                                 </property>
                                 <property name="sizeType">
                                     <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
                                 </property>
                             </spacer>
                             <widget class="QCheckBox" row="0" column="4">
@@ -130,6 +142,12 @@
                                 </property>
                                 <property name="sizeType">
                                     <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
                                 </property>
                             </spacer>
                         </grid>
@@ -204,6 +222,12 @@
                                 <property name="sizeType">
                                     <enum>Expanding</enum>
                                 </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
                             </spacer>
                             <spacer row="2" column="2">
                                 <property name="name">
@@ -214,6 +238,12 @@
                                 </property>
                                 <property name="sizeType">
                                     <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
                                 </property>
                             </spacer>
                         </grid>
@@ -228,392 +258,11 @@
                         <property name="sizeType">
                             <enum>Expanding</enum>
                         </property>
-                    </spacer>
-                </vbox>
-            </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
-                    <string>Highlighting</string>
-                </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <property name="margin">
-                        <number>11</number>
-                    </property>
-                    <property name="spacing">
-                        <number>6</number>
-                    </property>
-                    <widget class="QGroupBox">
-                        <property name="name">
-                            <cstring>GroupBox5</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Highlighting</string>
-                        </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <property name="margin">
-                                <number>11</number>
-                            </property>
-                            <property name="spacing">
-                                <number>6</number>
-                            </property>
-                            <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="6">
-                                <property name="name">
-                                    <cstring>chkHighlightNick</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Highlight my nickname when users use it in their messages</string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox" row="1" column="0">
-                                <property name="name">
-                                    <cstring>chkHighlightOthers</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Highlight this phrase:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit" row="1" column="1" rowspan="1" colspan="5">
-                                <property name="name">
-                                    <cstring>phraseHighlight</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>7</hsizetype>
-                                        <vsizetype>5</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="2" column="0" rowspan="1" colspan="2">
-                                <property name="name">
-                                    <cstring>lblUseToHighlight</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>true</bool>
-                                </property>
-                                <property name="text">
-                                    <string>Color to use for highlighting:</string>
-                                </property>
-                            </widget>
-                            <spacer row="3" column="0" rowspan="1" colspan="2">
-                                <property name="name">
-                                    <cstring>Spacer13</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                            </spacer>
-                            <widget class="QLabel" row="3" column="2" rowspan="1" colspan="3">
-                                <property name="name">
-                                    <cstring>lblClick</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>(Click to change)</string>
-                                </property>
-                                <property name="alignment">
-                                    <set>AlignCenter</set>
-                                </property>
-                            </widget>
-                            <spacer row="3" column="5">
-                                <property name="name">
-                                    <cstring>Spacer15</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                            </spacer>
-                            <spacer row="2" column="4" rowspan="1" colspan="2">
-                                <property name="name">
-                                    <cstring>Spacer14</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                            </spacer>
-                            <widget class="KColorButton" row="2" column="3">
-                                <property name="name">
-                                    <cstring>highlightColor</cstring>
-                                </property>
-                                <property name="text">
-                                    <string></string>
-                                </property>
-                                <property name="color">
-                                    <color>
-                                        <red>175</red>
-                                        <green>8</green>
-                                        <blue>8</blue>
-                                    </color>
-                                </property>
-                            </widget>
-                            <spacer row="2" column="2">
-                                <property name="name">
-                                    <cstring>Spacer16</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Maximum</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>16</width>
-                                        <height>16</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                        </grid>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>Spacer37</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                    </spacer>
-                </vbox>
-            </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
-                    <string>Output Control</string>
-                </attribute>
-                <grid>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <property name="margin">
-                        <number>11</number>
-                    </property>
-                    <property name="spacing">
-                        <number>6</number>
-                    </property>
-                    <widget class="QButtonGroup" row="0" column="0">
-                        <property name="name">
-                            <cstring>ButtonGroup1</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Window Behavior</string>
-                        </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <property name="margin">
-                                <number>11</number>
-                            </property>
-                            <property name="spacing">
-                                <number>6</number>
-                            </property>
-                            <widget class="QRadioButton" row="0" column="0">
-                                <property name="name">
-                                    <cstring>useMDI</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Group and add each contact to a tabbed window, per server (tabbed MDI)</string>
-                                </property>
-                                <property name="checked">
-                                    <bool>true</bool>
-                                </property>
-                            </widget>
-                            <widget class="QRadioButton" row="2" column="0">
-                                <property name="name">
-                                    <cstring>useSDI</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
-                                <property name="text">
-                                    <string>Open a new window for each new contact. e.g. channel, query, server (SDI)</string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox" row="1" column="0">
-                                <property name="name">
-                                    <cstring>chkMinimizeQueries</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Minimize private conversation (query) tabs when first messaged</string>
-                                </property>
-                            </widget>
-                        </grid>
-                    </widget>
-                    <widget class="QGroupBox" row="1" column="0">
-                        <property name="name">
-                            <cstring>GroupBox4</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Extras</string>
-                        </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <property name="margin">
-                                <number>11</number>
-                            </property>
-                            <property name="spacing">
-                                <number>6</number>
-                            </property>
-                            <widget class="QCheckBox" row="0" column="0">
-                                <property name="name">
-                                    <cstring>chkSideIcons</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Show task specific icons next to each event in the windows</string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox" row="1" column="0">
-                                <property name="name">
-                                    <cstring>chkShowTimes</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Show a timestamp to the left of all messages</string>
-                                </property>
-                            </widget>
-                        </grid>
-                    </widget>
-                    <widget class="QGroupBox" row="2" column="0">
-                        <property name="name">
-                            <cstring>GroupBox6</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Logging</string>
-                        </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <property name="margin">
-                                <number>11</number>
-                            </property>
-                            <property name="spacing">
-                                <number>6</number>
-                            </property>
-                            <widget class="QCheckBox" row="1" column="0">
-                                <property name="name">
-                                    <cstring>chkLogQuery</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Query sessions</string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox" row="0" column="1">
-                                <property name="name">
-                                    <cstring>chkLogDcc</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>DCC CHAT sessions</string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox" row="1" column="1">
-                                <property name="name">
-                                    <cstring>chkLogServers</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Server console windows</string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox" row="0" column="0">
-                                <property name="name">
-                                    <cstring>chkLogChans</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Channel sessions</string>
-                                </property>
-                            </widget>
-                        </grid>
-                    </widget>
-                    <spacer row="3" column="0">
-                        <property name="name">
-                            <cstring>Spacer38</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                    </spacer>
-                </grid>
-            </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
-                    <string>General</string>
-                </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <property name="margin">
-                        <number>11</number>
-                    </property>
-                    <property name="spacing">
-                        <number>6</number>
-                    </property>
-                    <widget class="QGroupBox">
-                        <property name="name">
-                            <cstring>GroupBox7</cstring>
-                        </property>
-                        <property name="title">
-                            <string></string>
-                        </property>
-                        <hbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <property name="margin">
-                                <number>11</number>
-                            </property>
-                            <property name="spacing">
-                                <number>6</number>
-                            </property>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>chkHideConsole</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Close the server console window when the IRC plugin loads</string>
-                                </property>
-                            </widget>
-                        </hbox>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>Spacer40</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>20</height>
+                            </size>
                         </property>
                     </spacer>
                 </vbox>
@@ -627,23 +276,6 @@
     <tabstop>mAutoConnect</tabstop>
     <tabstop>mServer</tabstop>
     <tabstop>mPort</tabstop>
-    <tabstop>chkHighlightNick</tabstop>
-    <tabstop>chkHighlightOthers</tabstop>
-    <tabstop>phraseHighlight</tabstop>
-    <tabstop>highlightColor</tabstop>
-    <tabstop>useMDI</tabstop>
-    <tabstop>chkMinimizeQueries</tabstop>
-    <tabstop>useSDI</tabstop>
-    <tabstop>chkSideIcons</tabstop>
-    <tabstop>chkShowTimes</tabstop>
-    <tabstop>chkLogChans</tabstop>
-    <tabstop>chkLogQuery</tabstop>
-    <tabstop>chkLogDcc</tabstop>
-    <tabstop>chkLogServers</tabstop>
-    <tabstop>chkHideConsole</tabstop>
 </tabstops>
-<includes>
-    <include location="local" impldecl="in implementation">ircprefs.ui.h</include>
-</includes>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

@@ -19,6 +19,7 @@
 #define IRCPROTOCOL_H
 
 #include "kopeteprotocol.h"
+#include "ircidentity.h"
 
 #include <qpixmap.h>
 
@@ -27,6 +28,7 @@ class AddContactPage;
 class IRCServerManager;
 class KIRC;
 
+class KAction;
 class KActionMenu;
 class KSimpleConfig;
 
@@ -54,13 +56,10 @@ public:
 	virtual bool isAway(void) const;
 	virtual KActionMenu* protocolActions();
 
-	//following implementation is incorrect
-	KopeteContact* myself() const { return 0L; }
+	// FIXME WHEN IDENTITY SUPPORT IS ADDED:
+	virtual KopeteContact *myself() const { return identity->mySelf(); }
 
-	void addContact(const QString &, const QString &, bool, bool,KopeteMetaContact *m=0l);
-
-	IRCServerManager *serverManager() { return m_serverManager; }
-	KIRC *engine() { return m_engine; };
+	void addContact(const QString &, const QString &, bool isChannel, KopeteMetaContact *m=0l);
 
 	/**
 	 * Deserialize contact data
@@ -68,21 +67,20 @@ public:
 	virtual void deserializeContact( KopeteMetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 	virtual const QString protocolIcon();
-	
+
 public slots:
 	virtual void connect();
 	virtual void disconnect();
-
 private slots:
-	void slotNewConsole();
-
+	void slotConnectedToServer();
+	void slotConnectionClosed();
 private:
-	/** import contact-list from kopete 0.4.x */
-	void importOldContactList();
 	KActionMenu *m_actionMenu;
-	IRCServerManager *m_serverManager;
-	KIRC *m_engine;
 	bool m_isConnected;
+	/** FIXME: Do something with this when Identity support is added!!!!!!!! */
+	IRCIdentity *identity;
+	KAction *actionDisconnect;
+	KAction *actionConnect;
 };
 
 #endif

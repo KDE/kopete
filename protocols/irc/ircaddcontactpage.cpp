@@ -3,7 +3,7 @@
                              -------------------
     begin                : Unknown
     copyright            : (C) 2002 by nbetcher
-    email                : nbetcher@usinternet.com
+    email                : nbetcher@kde.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -15,7 +15,6 @@
  *                                                                         *
  ***************************************************************************/
  
-#include <qcheckbox.h>
 #include <qlayout.h>
 #include <qlineedit.h>
 
@@ -25,12 +24,12 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <qcombobox.h>
+#include <qradiobutton.h>
 
 #include "ircaddcontactpage.h"
 #include "ircadd.h"
 #include "ircprotocol.h"
 #include "kopetecontactlist.h"
-#include "ircservermanager.h"
 
 IRCAddContactPage::IRCAddContactPage(IRCProtocol *owner, QWidget *parent, const char *name )
 				  : AddContactPage(parent,name)
@@ -38,11 +37,9 @@ IRCAddContactPage::IRCAddContactPage(IRCProtocol *owner, QWidget *parent, const 
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	ircdata = new ircAddUI(this);
 	plugin = owner;
-	QObject::connect(ircdata->chkConnectNow, SIGNAL(clicked()), this, SLOT(connectNowClicked()));
 
-	ircdata->ircServer->insertStringList(owner->serverManager()->serverList());
 	KGlobal::config()->setGroup("IRC");
-	QString server = KGlobal::config()->readEntry("Server", "");
+	QString server = KGlobal::config()->readEntry("Server", "irc.freenode.net");
 	ircdata->ircServer->lineEdit()->setText(server);
 }
 IRCAddContactPage::~IRCAddContactPage()
@@ -53,7 +50,7 @@ void IRCAddContactPage::slotFinish(KopeteMetaContact *m)
 {
 	QString server = ircdata->ircServer->lineEdit()->text();
 	QString name = ircdata->addID->text();
-	plugin->addContact(server, name, ircdata->chkConnectNow->isChecked(), ircdata->chkJoinNow->isChecked(),m);
+	plugin->addContact(server, name, ircdata->rdoChannel->isChecked() ? true : false, m);
 }
 
 bool IRCAddContactPage::validateData()
@@ -70,24 +67,9 @@ bool IRCAddContactPage::validateData()
 		KMessageBox::sorry(this, i18n("<qt>You need to specify a channel to join, or query to open.</qt>"), i18n("You Must Specify a Channel"));
 		return false;
 	}
-	/*if(name.contains('@'))
-	{
-		KMessageBox::sorry(this, i18n("<qt>Bad charactere (@) in channel name</qt>"), i18n("You Must Specify a Channel"));
-		return false;
-	} */
-  return true;
+	return true;
 }
 
-void IRCAddContactPage::connectNowClicked()
-{
-	if (ircdata->chkConnectNow->isChecked() == true)
-	{
-		ircdata->chkJoinNow->setEnabled(true);
-	} else {
-		ircdata->chkJoinNow->setEnabled(false);
-		ircdata->chkJoinNow->setChecked(false);
-	}
-}
 #include "ircaddcontactpage.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>ircAddUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>484</width>
+            <width>482</width>
             <height>291</height>
         </rect>
     </property>
@@ -105,6 +105,9 @@
                             <property name="name">
                                 <cstring>ircServer</cstring>
                             </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
                             <property name="editable">
                                 <bool>true</bool>
                             </property>
@@ -117,38 +120,37 @@
                         </widget>
                     </hbox>
                 </widget>
-                <widget class="QCheckBox">
+                <widget class="QButtonGroup">
                     <property name="name">
-                        <cstring>chkConnectNow</cstring>
+                        <cstring>buttonGroup1</cstring>
                     </property>
-                    <property name="text">
-                        <string>&amp;Connect to the IRC server now (If not already connected)</string>
+                    <property name="title">
+                        <string>Type of Contact:</string>
                     </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>chkJoinNow</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Join channel or show query window on connect</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>TextLabel1_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Note: If you're already connected to this server, don't worry. Kopete will automatically use the existing IRC server session.</string>
-                    </property>
-                    <property name="alignment">
-                        <set>WordBreak|AlignVCenter</set>
-                    </property>
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QRadioButton">
+                            <property name="name">
+                                <cstring>rdoChannel</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Channel (e.g. begins with "#" or "-")</string>
+                            </property>
+                            <property name="checked">
+                                <bool>true</bool>
+                            </property>
+                        </widget>
+                        <widget class="QRadioButton">
+                            <property name="name">
+                                <cstring>rdoQuery</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Query (e.g. a normal user)</string>
+                            </property>
+                        </widget>
+                    </vbox>
                 </widget>
             </vbox>
         </widget>
@@ -156,8 +158,6 @@
 </widget>
 <tabstops>
     <tabstop>addID</tabstop>
-    <tabstop>chkConnectNow</tabstop>
-    <tabstop>chkJoinNow</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

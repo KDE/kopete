@@ -3,7 +3,7 @@
                              -------------------
     begin                : Wed Jan 2 2002
     copyright            : (C) 2002 by nbetcher
-    email                : nbetcher@usinternet.com
+    email                : nbetcher@kde.org
  ***************************************************************************
 
  ***************************************************************************
@@ -35,17 +35,11 @@
 
 #include "ircadd.h"
 #include "ircaddcontactpage.h"
-#include "ircchatview.h"
-#include "irccontact.h"
-#include "ircmessage.h"
 #include "ircpreferences.h"
-#include "ircservercontact.h"
-#include "ircservermanager.h"
-#include "ircchatwindow.h"
-#include "ircconsoleview.h"
-#include "tabcompleter.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
+#include "ircchannelcontact.h"
+#include "kirc.h"
 
 K_EXPORT_COMPONENT_FACTORY( kopete_irc, KGenericFactory<IRCProtocol> );
 
@@ -53,48 +47,25 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name,
 	const QStringList & /* args */ )
 : KopeteProtocol( parent, name )
 {
+	m_actionMenu = 0L;
+	actionConnect = new KAction ( i18n("Online"), "", 0, this, SLOT(connect()), this, "actionIRCConnect" );
+	actionDisconnect = new KAction ( i18n("Offline"), "", 0, this, SLOT(disconnect()), this, "actionIRCDisconnect" );
+
 	kdDebug(14120) << k_funcinfo << endl;
 	// Load all ICQ icons from KDE standard dirs
-	setStatusIcon( "irc_protocol_small" );
 
-	m_actionMenu = new KActionMenu( "IRC", this );
-	m_actionMenu->popupMenu()->insertTitle(
-		SmallIcon( "irc_protocol_small" ), i18n( "IRC" ) );
-	m_actionMenu->insert( new KAction( i18n( "Open New IRC Console" ), 0,
-		this, SLOT( slotNewConsole() ), this, "m_newConsoleAction" ) );
-
-	m_serverManager = new IRCServerManager();
-
-	setStatusIcon( "irc_protocol_small" );
+	setStatusIcon( "irc_protocol_offline" );
 
 	new IRCPreferences("irc_protocol", this);
 
-	KGlobal::config()->setGroup("IRC");
-	if (KGlobal::config()->hasKey("Nickname") == false)
-	{
-//		KMessageBox::sorry( qapp->mainWidget(), i18n("<qt>You haven't setup your IRC settings for the first time. Please do so by going to File->Configure Kopete->IRC Plugin. Once you have done that, try connecting again.</qt>"), i18n("Preferences Nonexistent"));
-		return;
-	}
-
 	KConfig *cfg = KGlobal::config();
 	cfg->setGroup("IRC");
-	QString listVersion=cfg->readEntry( "ContactList Version", "0.4.x" ) ;
-	if ( listVersion=="0.4.x" )
-	{
-		kdDebug(14120) << "IRCProtocol::IRCProtocol: import contact from kopete 0.4.x" << endl;
-		importOldContactList();
-		cfg->setGroup("IRC");
-		cfg->writeEntry ( "ContactList Version", "0.5" );
-	}
-
-	addAddressBookField( "messaging/irc", KopetePlugin::MakeIndexField );
-
-	KGlobal::config()->setGroup("IRC");
-	if (KGlobal::config()->readBoolEntry("HideConsole", false) == false)
-		slotNewConsole();
+	identity = new IRCIdentity(cfg->readEntry("Server", "irc.freenode.net"), cfg->readEntry("Port", "6667").toUInt(), cfg->readEntry("Nickname", "KopeteUser"), cfg->readEntry("Password", ""), this);
+	QObject::connect(identity->engine(), SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()));
+	QObject::connect(identity->engine(), SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
 
 	/** Autoconnect if is selected in config */
-	if ( KGlobal::config()->readBoolEntry( "AutoConnect", false ) )
+	if ( cfg->readBoolEntry( "AutoConnect", false ) )
 		connect();
 }
 
@@ -105,6 +76,13 @@ IRCProtocol::~IRCProtocol()
 
 KActionMenu* IRCProtocol::protocolActions()
 {
+	if (!m_actionMenu)
+	{
+		m_actionMenu = new KActionMenu( "IRC", this );
+		m_actionMenu->popupMenu()->insertTitle(SmallIcon( "irc_protocol_small" ), i18n( "IRC" ) );
+		m_actionMenu->insert(actionConnect);
+		m_actionMenu->insert(actionDisconnect);
+	}
 	return m_actionMenu;
 }
 
@@ -113,44 +91,38 @@ const QString IRCProtocol::protocolIcon()
 	return "irc_protocol_small";
 }
 
-void IRCProtocol::slotNewConsole()
+void IRCProtocol::addContact(  const QString &server, const QString &contact, bool isChannel, KopeteMetaContact *meta)
 {
-	kdDebug(14120) << k_funcinfo << endl;
-	
-	KGlobal::config()->setGroup("IRC");
-	QString nick = KGlobal::config()->readEntry("Nickname", "KopeteUser");
-	QString server = KGlobal::config()->readEntry("Server", "(Console)");
-	QString serverAndNick = nick+"@"+server;
-
-	IRCServerContact *serverContact = m_serverManager->findServer(serverAndNick);
-
-	if(serverContact)
-	{
-		serverContact->chatWindow()->show();
-		serverContact->consoleView()->messageEdit()->setFocus();
-	}
-	else
-		m_serverManager->addServer(serverAndNick, true, this);
-}
-
-void IRCProtocol::addContact(  const QString &server, const QString &contact, bool connectNow, bool joinNow, KopeteMetaContact *meta)
-{
-	QString protocolID = pluginId();
-	QString contactID=contact+"@"+server;
-
-	KopeteContact *c = contacts()[contactID];
+	kdDebug(14120) << "[IRCProtocol] addContact called" << endl;
 	KopeteMetaContact *m = 0L;
-	
-	if (c) m = c->metaContact();
-	
-	if(m)
+
+	IRCContact *query;
+	IRCChannelContact *channel;
+	if (isChannel)
 	{
-		kdWarning(14120) << k_funcinfo << "Contact already exists " << contactID << endl;
-		if(m->isTemporary())
-			m->setTemporary(false);
-		return;
+		channel = identity->findChannel(contact);
+		if (channel)
+		{
+			kdWarning(14120) << k_funcinfo << "Contact already exists " << endl;
+			if(m->isTemporary())
+				m->setTemporary(false);
+			return;
+		}
+	} else {
+		query = identity->findQuery(contact);
+		if (query)
+		{
+		// TODO: Uncomment when IRCContact is implemented
+/*			kdWarning(14120) << k_funcinfo << "Contact already exists " << endl;
+			if(query->metaContact()->isTemporary())
+				query->metaContact()->setTemporary(false);
+			return;
+*/
+		}
 	}
-	
+
+	kdDebug(14120) << "[IRCProtocol] addContact: contact established" << endl;
+
 	if (meta)
 		m=meta;
 	else
@@ -158,32 +130,20 @@ void IRCProtocol::addContact(  const QString &server, const QString &contact, bo
 		m = new KopeteMetaContact();
 		KopeteContactList::contactList()->addMetaContact(m);
 	}
-
-	if(contact[0]=='#')
-	{ //if it is a channel, add to the server metaContact (this is an idea of Nick)
-		if(m->displayName().isEmpty())
-			m->setDisplayName(contact);
-	}
-
-	KGlobal::config()->setGroup("IRC");
-	QString nick = KGlobal::config()->readEntry("Nickname", "KopeteUser");
-	QString serverAndNick = nick;
-	serverAndNick.append("@");
-	serverAndNick.append(server);
-
-	IRCServerContact *serverContact = m_serverManager->findServer(serverAndNick);
-	if (serverContact != 0)
-		m->addContact( new IRCContact(server, contact, 0, joinNow, serverContact, m, this));
-	else
-	{
-		IRCServerContact *serverItem = m_serverManager->addServer(serverAndNick, connectNow, this);
-		if (serverItem != 0)
-		{
-			m->addContact(new IRCContact(server, contact, 0, joinNow, serverItem, m, this));
-		}
-	}
+	kdDebug(14120) << "[IRCProtocol] addContact: channel is " << channel << " trying to add to metacontact" << endl;
+	if (isChannel)
+		m->addContact(new IRCChannelContact(identity, contact, m));
 }
 
+void IRCProtocol::slotConnectedToServer()
+{
+	setStatusIcon( "irc_protocol_small" );
+}
+
+void IRCProtocol::slotConnectionClosed()
+{
+	setStatusIcon( "irc_protocol_offline" );
+}
 
 ///////////////////////////////////////////////////
 //           Plugin Class reimplementation
@@ -200,18 +160,20 @@ void IRCProtocol::init()
 
 void IRCProtocol::connect()
 {
-
+	KConfig *cfg = KGlobal::config();
+	cfg->setGroup("IRC");
+	identity->engine()->connectToServer(cfg->readEntry("Nickname", "KopeteUser"));
 }
 
 void IRCProtocol::disconnect()
 {
-
+ 	identity->engine()->quitIRC("Kopete IRC 2.0. http://kopete.kde.org");
 }
 
 
 bool IRCProtocol::isConnected() const
 {
-	return false;
+	return identity->engine()->isLoggedIn();
 }
 
 void IRCProtocol::setAway(void)
@@ -238,9 +200,7 @@ AddContactPage *IRCProtocol::createAddContactWidget(QWidget *parent)
 void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> & /* addressBookData */ )
 {
-	// This seems to not be required? Results in a duplicate contact adding warning
-	// (Martijn:) yes, it is. If you get dups you are apparently storing your contact
-	//            list somewhere else too and not only in Kopete's contactlist.xml
+/* TODO: FIXME:
 
 	QString contactId = serializedData[ "contactId" ];
 	if( !contacts()[ contactId ] )
@@ -249,39 +209,9 @@ void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 		if( displayName.isEmpty() )
 			displayName = contactId;
 
-		addContact( serializedData[ "serverName" ], displayName, false, false, metaContact );
+		addContact( serializedData[ "serverName" ], displayName, true, metaContact );
 	}
-}
-
-///////////////////////////////////////////////////
-//           Internal functions implementation
-///////////////////////////////////////////////////
-
-void IRCProtocol::importOldContactList()
-{
-	//this code import contact list from old irc plugin (Kopete 0.4.x)
-	QString filename = locateLocal("data", "kopete/irc.buddylist");
-	KSimpleConfig *m_config = new KSimpleConfig(filename);
-
-	QStringList contacts = m_config->groupList();
-	for(QStringList::Iterator it = contacts.begin(); it != contacts.end(); it++)
-	{
-		m_config->setGroup((*it));
-		QString groupName = m_config->readEntry("Group", "");
-		if (groupName.isEmpty())
-			continue;
-
-		QString server = m_config->readEntry("Server", "");
-		if (server.isEmpty())
-		{
-			KGlobal::config()->setGroup("IRC");
-			server = KGlobal::config()->readEntry("Server", "irc.unknown.com");
-		}
-		KopeteMetaContact *m = new KopeteMetaContact();
-//		m->addToGroup(groupName);
-		addContact( server, (*it), false, false,m);
-		KopeteContactList::contactList()->addMetaContact(m);
-	}
+*/
 }
 
 #include "ircprotocol.moc"
