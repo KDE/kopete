@@ -3,7 +3,7 @@ Kopete Messenger ChangeLog
 
 Kopete 0.7 (not yet released)
 ==============================
- 
+
 o Main App
 	o KopeteViewManager, clean up KopeteMessageManager (Jason)
 	o Fix up fire and forget message window, make it work for all protocols (Jason)
@@ -17,19 +17,32 @@ o Main App
 	o New KopeteAccount arch. allows multiple accounts of the same protocol (Oliver)
 	o Online Status Reworked (Will)
 	o New Account Password Handling, there are not anymore stored human readable on the HD (Olivier)
+	o Drag and Drop child contact beween metacontacts
 o IRC Plugin
+	o Total re-write
 	o Integrate IRC into new chatwindow (Nick, Jason)
 	o Support for peliminary /commands
-o MSN Plugin
-	o Better group sync with Server (Olivier)
-	o Show the user's web profile (Olivier)
-	o Use correct way to ping the server (Olivier)
-	o Don't reload the contactlist from server if it is not modified (Olivier)
+o OSCAR plugin
+	o Support for ICQ over OSCAR (Stefan)
+o MSN Plugin (Olivier)
+	o Better group sync with Server
+	o Show the user's web profile
+	o Use correct way to ping the server
+	o Don't reload the contactlist from server if it is not modified
+	o Correct handling of the hotmail inbox, and send mail to contact with hotmail
+	o Handle MSN Plus away reasons.
+	o Detect when the other party timed out and left the chat
+	o Interface to allow plugins to use MSN invitations
 o Cryptography Plugin
 	o BugFixes
 	o Limte the cache time for the passphrase (Olivier)
 o Perl plugin (Jason)
-o Text Effect Plugin (Olivier)
+o Text Effect Plugin
+	Initial Release (Olivier)
+o History plugin
+	Initial Release (Olivier)
+o Auto replace plugin
+	Initial Release (Roberto Pariset)
 
 
 
