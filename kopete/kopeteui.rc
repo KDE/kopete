@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kkopete" version="8">
+<kpartgui name="kkopete" version="9">
 	<MenuBar>
 		<Menu name="file" noMerge="1">
 			<text>&amp;File</text>
@@ -25,6 +25,10 @@
 			<Action name="contactRename" />
 			<Action name="contactAddContact" />
 			<Separator lineSeparator="true" />
+			<Merge />
+			<Separator lineSeparator="true" />
+			<Action name="contactProperties" />
+
 		</Menu>
 		<Menu name="settings">
 			<text>&amp;Settings</text>
@@ -66,6 +70,7 @@
 		<Merge />
 		<Separator lineSeparator="true" />
 		<Action name="contactProperties" />
+		<Separator lineSeparator="true" />
 	</Menu>
 	<Menu name="group_popup">
 		<Action name="contactRemove" />

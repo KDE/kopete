@@ -1467,6 +1467,8 @@ void KopeteContactListView::slotSelectionChanged()
 
 	actionMove->setCurrentItem( -1 );
 	actionCopy->setCurrentItem( -1 );
+
+	actionProperties->setEnabled( ( groups.count() + contacts.count() ) == 1 );
 }
 
 void KopeteContactListView::slotSendMessage()
@@ -1716,7 +1718,7 @@ void KopeteContactListView::slotAddContact()
 
 void KopeteContactListView::slotProperties()
 {
-	kdDebug(14000) << k_funcinfo << "Called" << endl;
+//	kdDebug(14000) << k_funcinfo << "Called" << endl;
 
 	KopeteMetaContactLVI *metaLVI =
 		dynamic_cast<KopeteMetaContactLVI *>( currentItem() );
