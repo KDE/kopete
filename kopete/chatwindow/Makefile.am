@@ -7,7 +7,7 @@ noinst_LTLIBRARIES = libkopetechatwindow.la
 
 libkopetechatwindow_la_SOURCES = kopeteviewmanager.cpp kopeteemailwindow.cpp \
 	kopetechatwindow.cpp chatview.cpp \
-	ktabwidget.cpp \
+	kopetetabwidget.cpp \
 	emoticonselector.cpp \
 	kopeteemoticonaction.cpp
 

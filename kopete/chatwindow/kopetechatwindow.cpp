@@ -45,7 +45,7 @@
 
 #include "kopetechatwindow.h"
 #include "kopetemessagemanager.h"
-#include "ktabwidget.h"
+#include "kopetetabwidget.h"
 #include "kopeteviewmanager.h"
 #include "chatview.h"
 
@@ -520,7 +520,7 @@ void KopeteChatWindow::createTabBar()
 {
 	if( !m_tabBar )
 	{
-		m_tabBar = new KTabWidget( mainArea );
+		m_tabBar = new KopeteTabWidget( mainArea );
 		m_tabBar->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 		mainLayout->addWidget( m_tabBar );
 		m_tabBar->show();

@@ -37,7 +37,7 @@ class KPushButton;
 class QVBox;
 class QVBoxLayout;
 class QFrame;
-class KTabWidget;
+class KopeteTabWidget;
 class QLabel;
 class KopeteEmoticonAction;
 class KopeteView;
@@ -113,7 +113,7 @@ private:
 	bool tabsEnabled;
 	const KopeteContact *m_us;
 	bool updateBg;
-	KTabWidget *m_tabBar;
+	KopeteTabWidget *m_tabBar;
 	KSqueezedTextLabel *m_status;
 	KPushButton* m_button_send;
 	QVBox *vBox;

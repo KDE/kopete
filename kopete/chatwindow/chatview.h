@@ -39,7 +39,7 @@ class KHTMLView;
 class KRootPixmap;
 
 class KopeteChatWindow;
-class KTabWidget;
+class KopeteTabWidget;
 class KopeteMessageManager;
 class KCompletion;
 class KURL;
@@ -123,7 +123,7 @@ public:
 	 */
 	virtual void setCurrentMessage( const KopeteMessage &newMessage );
 
-	void setTabBar( KTabWidget *tabBar );
+	void setTabBar( KopeteTabWidget *tabBar );
 
 	/**
 	 * Sets the placement of the chat members list.
@@ -414,7 +414,7 @@ private:
 	KDockWidget *viewDock;
 	KDockWidget *membersDock;
 	KDockWidget *editDock;
-	KTabWidget *m_tabBar;
+	KopeteTabWidget *m_tabBar;
 	KParts::Part *editpart;
 
 	KAction *copyAction;

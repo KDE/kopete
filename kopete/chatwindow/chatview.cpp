@@ -51,7 +51,7 @@
 #include "kopeteprefs.h"
 #include "kopetexsl.h"
 #include "pluginloader.h"
-#include "ktabwidget.h"
+#include "kopetetabwidget.h"
 
 
 
@@ -1186,7 +1186,7 @@ void ChatView::setActive( bool value )
 	}
 }
 
-void ChatView::setTabBar( KTabWidget *tabBar )
+void ChatView::setTabBar( KopeteTabWidget *tabBar )
 {
 	m_tabBar = tabBar;
 }
