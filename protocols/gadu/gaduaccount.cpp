@@ -42,7 +42,7 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const
 
 QString GaduAccount::fullAccountName() const
 {
-    return "Gadu-Gadu("+accountId()+")";	
+    return "Gadu-Gadu("+accountId()+")";
 }
 
 void
@@ -102,16 +102,15 @@ GaduAccount::initConnections()
 
 void GaduAccount::setAway( bool isAway, const QString& awayMessage )
 {
-    uint status;
+	uint status;
 
-    if ( isAway ) {
-	status = (awayMessage.isEmpty()) ? GG_STATUS_BUSY : GG_STATUS_BUSY_DESCR;
+	if ( isAway ) {
+		status = (awayMessage.isEmpty()) ? GG_STATUS_BUSY : GG_STATUS_BUSY_DESCR;
+	}
+	else{
+		status = (awayMessage.isEmpty()) ? GG_STATUS_AVAIL : GG_STATUS_AVAIL_DESCR;
+	}
 	changeStatus( GaduProtocol::protocol()->convertStatus( status ), awayMessage );
-    }
-    else{
-	status = (awayMessage.isEmpty()) ? GG_STATUS_AVAIL : GG_STATUS_AVAIL_DESCR;
-	changeStatus( GaduProtocol::protocol()->convertStatus( status ), awayMessage );
-    }
 }
 
 KopeteContact* GaduAccount::myself() const
@@ -525,11 +524,11 @@ GaduAccount::userlist( const QString& u)
 		if (uin.isNull()){
 		    kdDebug(14100) << "no Uin, strange "<<endl;
 		    kdDebug(14100) << "LINE:" << cline <<endl;
-		    continue;    		    
+		    continue;
 		}
 
 		// if exists, don't add it
-		// FIXME: this does not work, i don't know reason why :/		
+		// FIXME: this does not work, i don't know reason why :/
 		// 	  contacts map didn't work either
 		if (contacts()[uin]){
 		    continue;
