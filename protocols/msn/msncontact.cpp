@@ -4,6 +4,7 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002      by Ryan Cumming           <bodnar42@phalynx.dhs.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+	Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -50,6 +51,7 @@ MSNContact::MSNContact( KopeteAccount *account, const QString &id, const QString
 	m_allowed = false;
 	m_blocked = false;
 	m_reversed = false;
+	m_moving = false;
 
 	setDisplayName( displayName );
 
@@ -105,8 +107,6 @@ void MSNContact::slotBlockUser()
 	if( m_blocked )
 	{
 		notify->removeContact( contactId(), 0, MSNProtocol::BL );
-//		if( !m_allowed )
-//			notify->addContact( contactId(), contactId(), 0, MSNProtocol::AL );
 	}
 	else
 	{
@@ -142,10 +142,8 @@ void MSNContact::slotDeleteContact()
 	{
 		if( m_serverGroups.isEmpty() || onlineStatus() == MSNProtocol::protocol()->UNK )
 		{
-			kdDebug( 14140 ) << k_funcinfo << "Ohoh, contact already removed from server, just delete it" << endl;
-			// FIXME: 1. Shouldn't this be a deleteLater, as this is a slot???
-			//        2. Why is this needed at all? Why not simply return?     - Martijn
-			delete this;
+			kdDebug( 14140 ) << k_funcinfo << "The contact is already removed from server, just delete it" << endl;
+			deleteLater();
 			return;
 		}
 
@@ -258,59 +256,100 @@ const QMap<uint, KopeteGroup*> & MSNContact::serverGroups() const
 	return m_serverGroups;
 }
 
-KopeteGroupList MSNContact::groups() const
+void MSNContact::syncGroups( )
 {
-	KopeteGroupList result;
-	for( QMap<uint, KopeteGroup *>::ConstIterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
-		result.append( it.data() );
-
-	return result;
-}
-
-void MSNContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
-{
-	kdDebug() << k_funcinfo << from->displayName() << " -> " << to->displayName() << endl;
-
-	if( !to )
+	if(m_moving)
 	{
-		removeFromGroup( from );
-		return;
-	}
-
-	if( !from )
-	{
-		addToGroup( to );
-		return;
-	}
-
-	if( ( to->displayName().isNull() || to->type() != KopeteGroup::Classic ) &&
-		to->pluginData(protocol(), account()->accountId() + " id").isEmpty() && m_serverGroups.count() == 1 )
-	{
-		// If this contact is in the last group and the contact moved to top level, do nothing
-		// (except when group 0 is the top-level group)
-		kdDebug( 14140 ) << k_funcinfo << "Ignoring top-level group" << endl;
+		//We need to make sure that syncGroups is not called twice succesively
+		// because m_serverGroups will be only updated with the reply of the server
+		// and then, the same command can be sent twice.
+		// FIXME: if this method is called a seconds times, that mean change can be 
+		//        done in the contactlist. we should found a way to recall this 
+		//        method later. (a QTimer?)
+		kdDebug() << k_funcinfo << " This contact is already moving. Abort sync " << endl;
 		return;
 	}
 
 	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
-	if( notify )
+	if( !notify )
 	{
-		addToGroup( to );
+		//We are not connected, we will doing it next connection. 
+		//Force to reload the whole contactlist from server to suync groups when connecting
+		account()->setPluginData(protocol(),"serial", QString::null );
+		return;
+	}
 
-		if( !from->pluginData(protocol(),account()->accountId() + " id").isEmpty() )
+	unsigned int count=m_serverGroups.count();
+
+	//STEP ONE : add the contact to ever kopetegroups where the MC is
+	QPtrList<KopeteGroup> groupList = metaContact()->groups();
+	for ( KopeteGroup *group = groupList.first(); group; group = groupList.next() )
+	{
+		//For each group, ensure it is on the MSN server
+		if( !group->pluginData( protocol() , account()->accountId() + " id" ).isEmpty() )
 		{
-			if( m_serverGroups.contains( from->pluginData(protocol(),account()->accountId() + " id").toUInt() ) )
-				notify->removeContact( contactId(), from->pluginData(protocol(),account()->accountId() + " id").toUInt(), MSNProtocol::FL );
+			if( !m_serverGroups.contains(group->pluginData(protocol(), account()->accountId() + " id").toUInt()) )
+			{
+				//Add the contact to the group on the server
+				notify->addContact( contactId(), displayName(), group->pluginData(protocol(),account()->accountId() + " id").toUInt(), MSNProtocol::FL );
+				count++;
+				m_moving=true;
+			}
+		}
+		else
+		{
+			if(!group->displayName().isEmpty()) //not the top-level
+			{
+				//Create the group and add the contact
+				static_cast<MSNAccount*>( account() )->addGroup( group->displayName(),contactId() );
+
+				//WARNING: if contact is not correctly added (because the group was not aded corrdctly for hinstance),
+				// if we increment the count, the contact can be deleted from the old group, and be lost :-(
+				count++;
+				m_moving=true;
+			}
 		}
 	}
-	else
+	
+	//STEP TWO : remove the contact from groups where the MC is not, but let it at least in one group
+	for( QMap<uint, KopeteGroup*>::Iterator it = m_serverGroups.begin();(count > 1 && it != m_serverGroups.end()); ++it )
 	{
-		// FIXME: This should be handled by Kopete, not the plugin :( - Martijn
-		KMessageBox::information( 0l,
-			i18n( "<qt>Changes in the contact list when you are offline don't update the contact list server-side. Your changes may be lost</qt>" ),
-				i18n( "MSN Plugin" ), "msn_OfflineContactList" );
+		if( !metaContact()->groups().contains(it.data()) )
+		{
+			notify->removeContact( contactId(), it.key(), MSNProtocol::FL );
+			count--;
+			m_moving=true;
+		}
 	}
+
 }
+
+void MSNContact::moveToGroup( KopeteGroup *, KopeteGroup * )
+{
+	syncGroups();
+}
+void MSNContact::addToGroup( KopeteGroup * )
+{
+	syncGroups();
+}
+void MSNContact::removeFromGroup( KopeteGroup * )
+{
+	syncGroups();
+}
+
+void MSNContact::contactAddedToGroup( uint groupNumber, KopeteGroup *group )
+{
+	m_serverGroups.insert( groupNumber, group );
+	m_moving=false;
+}
+
+void MSNContact::removeFromGroup( unsigned int group )
+{
+	m_serverGroups.remove( group );
+	m_moving=false;
+}
+
+
 
 void MSNContact::rename( const QString &newName )
 {
@@ -334,85 +373,6 @@ void MSNContact::rename( const QString &newName )
 	}
 }
 
-void MSNContact::addToGroup( KopeteGroup *group )
-{
-	//kdDebug( 14140 ) << k_funcinfo << group->displayName() << endl;
-
-	if( !group )
-		return;
-
-	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
-	if( notify )
-	{
-		if( !group->pluginData( protocol() , account()->accountId() + " id" ).isEmpty() )
-		{
-			if( !m_serverGroups.contains( group->pluginData(protocol(),account()->accountId() + " id").toUInt() ) )
-				notify->addContact( contactId(), displayName(), group->pluginData(protocol(),account()->accountId() + " id").toUInt(), MSNProtocol::FL );
-		}
-		else if( group->displayName().isNull() || group->type() != KopeteGroup::Classic )
-		{	//top-level group
-			if( m_serverGroups.isEmpty() )
-			{	//if the contact was not in the contact list, we add it on the default group. that's happends when adding temporary
-				notify->addContact( contactId(), displayName(), 0, MSNProtocol::FL );
-			}
-			else
-				kdDebug( 14140 ) << k_funcinfo << "Ignoring top-level group" << endl;
-		}
-		else
-		{
-			static_cast<MSNAccount*>( account() )->addGroup( group->displayName(), contactId() );
-		}
-	}
-	else
-	{
-		// FIXME: Move this to libkopete instead - Martijn
-		KMessageBox::information( 0l,
-			i18n( "<qt>Changes in the contact list when you are offline don't update the contact list server-side. Your changes may be lost</qt>" ),
-				i18n( "MSN Plugin" ), "msn_OfflineContactList" );
-	}
-}
-
-void MSNContact::removeFromGroup( KopeteGroup *group )
-{
-	//kdDebug( 14140 ) << k_funcinfo << group->displayName() << endl;
-
-	if( !group )
-		return;
-
-	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
-	if( notify )
-	{
-		if( m_serverGroups.count() == 1 )
-		{
-			// Do not remove the contact if this is the last group,
-			// Kopete allows top-level ('groupless' contacts, but MSN doesn't
-			kdDebug( 14140 ) << k_funcinfo << "Contact not removed. MSN requires all contacts to be in at least one group" << endl;
-			return;
-		}
-
-		if( !group->pluginData( protocol() , account()->accountId() + " id" ).isEmpty() )
-		{
-			if( m_serverGroups.contains( group->pluginData(protocol(),account()->accountId() + " id").toUInt() ) )
-				notify->removeContact( contactId(), group->pluginData(protocol(),account()->accountId() + " id").toUInt(), MSNProtocol::FL );
-		}
-	}
-	else
-	{
-		KMessageBox::information( 0l,
-			i18n( "<qt>Changes in the contact list when you are offline don't update the contact list server-side. Your changes may be lost</qt>" ),
-				i18n( "MSN Plugin" ), "msn_OfflineContactList" );
-	}
-}
-
-void MSNContact::contactAddedToGroup( uint groupNumber, KopeteGroup *group )
-{
-	m_serverGroups.insert( groupNumber, group );
-}
-
-void MSNContact::removeFromGroup( unsigned int group )
-{
-	m_serverGroups.remove( group );
-}
 
 /**
  * FIXME: Make this a standard KMM API call

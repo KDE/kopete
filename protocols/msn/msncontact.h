@@ -76,15 +76,6 @@ public:
 	 */
 	const QMap<uint, KopeteGroup *> & serverGroups() const;
 
-	/**
-	 * The same list that @ref serverGroups() returns, but now in a format
-	 * that libkopete understands. It is in theory possible to make
-	 * MSNProtocol use this method too, but @ref serverGroups() is a lot
-	 * closer to our internal data structures and hence a lot more
-	 * efficient.
-	 */
-	virtual KopeteGroupList groups() const;
-
 	virtual bool isReachable() { return true; };
 
 	virtual KActionCollection *customContextMenuActions();
@@ -128,6 +119,11 @@ public slots:
 	virtual void slotUserInfo();
 	virtual void slotDeleteContact();
 	virtual void sendFile(const KURL &sourceURL, const QString &altFileName, const long unsigned int fileSize);
+	
+	/**
+	 * Everytime the kopete's contactlist is modified, we sync the serverlist with it
+	 */
+	void syncGroups();
 
 private slots:
 	void slotBlockUser();

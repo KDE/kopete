@@ -497,8 +497,9 @@ void MSNAccount::slotGroupAdded( const QString& groupName, uint groupNumber )
 		{
 			if( ( *it ).second == groupName )
 			{
-				kdDebug( 14140 ) << k_funcinfo << "Adding to new group: " << ( *it ).first <<  endl;
-				notifySocket()->addContact( ( *it ).first, ( *it ).first, groupNumber, MSNProtocol::FL );
+				QString contactId=(*it).first;
+				kdDebug( 14140 ) << k_funcinfo << "Adding to new group: " << contactId <<  endl;
+				notifySocket()->addContact( contactId,  contacts()[contactId] ? contacts()[contactId]->displayName() : contactId    , groupNumber, MSNProtocol::FL );
 			}
 		}
 
@@ -687,7 +688,8 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 		{
 			// Contact exists, update data.
 			// Merging difference between server contact list and KopeteContact's contact list into MetaContact's contact-list
-			//kdDebug( 14140 ) << k_funcinfo << "******* updating existing contact: " << handle << "!" << endl;
+			// FIXME: everytime we move a metaContact, syncGroups is called.here, the contact can change in the server, when 
+			//        the new serverGroups are not yet set in the metacontact (Olivier)
 			MSNContact *c = static_cast<MSNContact*>( metaContact->findContact( protocol()->pluginId(), accountId(), handle ) );
 			c->setOnlineStatus( MSNProtocol::protocol()->FLN );
 			c->setDisplayName( publicName ); 
@@ -714,7 +716,8 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 				}
 			}
 
-			// FIXME: Update server if the contact has been moved to another group while MSN was offline
+			//Update server if the contact has been moved to another group while MSN was offline
+			c->syncGroups();
 		}
 		else
 		{
@@ -880,6 +883,7 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 		{
 			// Contact is removed from the FL list, remove it from the group
 			c->removeFromGroup( group );
+			//FIXME: I think we have to delete this contact is it is in no groups
 		}
 		else if( list == "BL" )
 		{
@@ -967,37 +971,37 @@ void MSNAccount::slotAddContact( const QString &userName , const QString &displa
 
 bool MSNAccount::addContactToMetaContact( const QString &contactId, const QString &displayName, KopeteMetaContact *metaContact )
 {
-	if( isConnected() ) 
+	if( m_notifySocket ) 
 	{
 		if( !metaContact->isTemporary() )
 		{
 			m_addWizard_metaContact=metaContact;
 			//This is a normal contact. Get all the groups this MetaContact is in
+			bool added=false;
 			QPtrList<KopeteGroup> groupList = metaContact->groups();
-			if( !groupList.isEmpty() )
+			for ( KopeteGroup *group = groupList.first(); group; group = groupList.next() )
 			{
-				for ( KopeteGroup *group = groupList.first(); group; group = groupList.next() )
+				//For each group, ensure it is on the MSN server
+				if( !group->pluginData( protocol() , accountId() + " id" ).isEmpty() )
 				{
-					//For each group, ensure it is on the MSN server
-					if( !group->pluginData( protocol() , accountId() + " id" ).isEmpty() )
-					{
-						//Add the contact to the group on the server
-						m_notifySocket->addContact( contactId, displayName, group->pluginData(protocol(),accountId() + " id").toUInt(), MSNProtocol::FL );
-					}
-					else
-					{
-						if(group->displayName().isEmpty())
-						{	//the toplevel group
-							m_notifySocket->addContact( contactId, displayName, 0, MSNProtocol::FL );
-						}
-						else //Create the group and add the contact
-						{
-							tmp_addToNewGroup << QPair<QString,QString>( contactId, group->displayName() );
-							addGroup( group->displayName() );
-						}
+					//Add the contact to the group on the server
+					m_notifySocket->addContact( contactId, displayName, group->pluginData(protocol(),accountId() + " id").toUInt(), MSNProtocol::FL );
+					added=true;
+				}
+				else
+				{
+					if(!group->displayName().isEmpty()) //not the top-level
+					{	//Create the group and add the contact
+						addGroup( group->displayName(), contactId );
+						added=true;
 					}
 				}
 			}
+			if(!added)
+			{	//only on top-level, or in no groups (add it to the default group)
+				m_notifySocket->addContact( contactId, displayName, 0, MSNProtocol::FL );
+			}
+			
 			//TODO: Find out if this contact was reallt added or not!
 			return true;
 		}
