@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
 	aboutData.addAuthor ( "Jason Keirstead", I18N_NOOP("Core developer"), "jason@keirstead.org", "http://www.keirstead.org");
 	aboutData.addAuthor ( "Andy Goossens", I18N_NOOP("Developer"), "andygoossens@pandora.be" );
 	aboutData.addAuthor ( "Will Stephenson", I18N_NOOP("Developer, Icons, Plugins"), "lists@stevello.free-online.co.uk" );
+	aboutData.addAuthor ( "Matt Rogers", I18N_NOOP("Yahoo Plugin Maintainer"), "mattrogers@sbcglobal.net" );
 
 	aboutData.addCredit ( "Luciash d' Being", I18N_NOOP("Icon Author") );
 	aboutData.addCredit ( "Vladimir Shutoff", I18N_NOOP("SIM icq library") );
