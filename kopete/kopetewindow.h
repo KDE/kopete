@@ -44,11 +44,14 @@ public:
 	KopeteWindow ( QWidget *parent=0, const char *name=0 );
 	~KopeteWindow();
 
+protected:
+	virtual void closeEvent(QCloseEvent*);
+	virtual bool queryExit();
+
 private slots:
-	void showToolbar(void);
+	void showToolbar();
 	void slotExecuted( QListViewItem * );
 
-	void closeEvent(QCloseEvent*);
 	void slotQuit();
 public:
 	KopeteContactListView *contactlist;
@@ -78,7 +81,6 @@ private:
 	void initView ( void );
 	void initActions ( void );
 	void initSystray ( void );
-	bool queryExit(void);
 	void loadOptions(void);
 	void saveOptions(void);
 
