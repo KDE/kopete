@@ -115,6 +115,8 @@ void KopeteMessageManagerFactory::addKopeteMessageManager(KopeteMessageManager *
 		SIGNAL( aboutToDisplay( KopeteMessage & ) ) );
 	connect( result, SIGNAL( messageSent( KopeteMessage &, KopeteMessageManager * ) ),
 		SIGNAL( aboutToSend(KopeteMessage & ) ) );
+	connect( result, SIGNAL( messageReceived( KopeteMessage &, KopeteMessageManager * ) ),
+		SIGNAL( aboutToReceive(KopeteMessage & ) ) );
 }
 
 KopeteMessageManager* KopeteMessageManagerFactory::findKopeteMessageManager( int id )

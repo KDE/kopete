@@ -94,6 +94,13 @@ signals:
 	 */
 	void aboutToSend( KopeteMessage& message );
 
+	/**
+	 * Plugins may connect to this signal
+	 * to manipulate the contents of the
+	 * message that is being received.
+	 */
+	void aboutToReceive( KopeteMessage& message );
+
 private:
 	KopeteMessageManagerFactory( QObject* parent = 0, const char* name = 0 );
 
