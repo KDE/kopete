@@ -30,10 +30,12 @@ public:
 MessageHandler::MessageHandler( MessageHandler *next, QObject *parent, const char *name )
  : QObject( parent, name ), d( new Private(next) )
 {
-	delete d;
 }
 
-MessageHandler::~MessageHandler() {}
+MessageHandler::~MessageHandler()
+{
+	delete d;
+}
 
 MessageHandler *MessageHandler::next()
 {
@@ -45,7 +47,7 @@ void MessageHandler::setNext( MessageHandler *next )
 	d->next = next;
 }
 
-Protocol::RichTextCapabilities MessageHandler::capabilities()
+int MessageHandler::capabilities()
 {
 	return d->next->capabilities();
 }

@@ -18,6 +18,8 @@
 #include "kopetemessagehandler.h"
 #include "kopetemessageevent.h"
 
+#include <kdebug.h>
+
 namespace Kopete
 {
 
@@ -28,22 +30,44 @@ public:
 	MessageHandler *last;
 };
 
+class MessageHandlerChainTerminator : public MessageHandler
+{
+public:
+	MessageHandlerChainTerminator() : MessageHandler(0) {}
+	void handleMessage( MessageEvent *event )
+	{
+		kdError( 14000 ) << k_funcinfo << "message got to end of chain!" << endl;
+	}
+	int capabilities()
+	{
+		kdError( 14000 ) << k_funcinfo << "request got to end of chain!" << endl;
+		return 0;
+	}
+};
+
 MessageHandlerChain::MessageHandlerChain( QObject *parent, const char *name )
  : QObject( parent, name ), d( new Private )
 {
+	d->first = d->last = new MessageHandlerChainTerminator;
 }
 
 MessageHandlerChain::~MessageHandlerChain()
 {
+	MessageHandler *handler = d->first;
+	while( handler )
+	{
+		MessageHandler *next = handler->next();
+		delete handler;
+		handler = next;
+	}
 	delete d;
 }
 
 
 void MessageHandlerChain::addHandler( MessageHandler *handler )
 {
-	handler->setNext( d->last->next() );
-	d->last->setNext( handler );
-	d->last = handler;
+	handler->setNext( d->first );
+	d->first = handler;
 }
 
 void MessageHandlerChain::processMessage( const Message &message )
@@ -52,7 +76,7 @@ void MessageHandlerChain::processMessage( const Message &message )
 	d->first->handleMessage( event );
 }
 
-Protocol::RichTextCapabilities MessageHandlerChain::capabilities()
+int MessageHandlerChain::capabilities()
 {
 	return d->first->capabilities();
 }

@@ -44,6 +44,8 @@
 class KMMPrivate
 {
 public:
+	KMMPrivate() { chains[0] = chains[1] = chains[2] = 0; }
+	~KMMPrivate() { delete chains[0]; delete chains[1]; delete chains[2]; }
 	Kopete::ContactPtrList mContactList;
 	const Kopete::Contact *mUser;
 	QMap<const Kopete::Contact *, Kopete::OnlineStatus> contactStatus;
@@ -56,6 +58,7 @@ public:
 	QString displayName;
 	KopeteView *view;
 	bool mayInvite;
+	Kopete::MessageHandlerChain *chains[3];
 };
 
 Kopete::MessageManager::MessageManager( const Kopete::Contact *user,
@@ -195,6 +198,39 @@ void Kopete::MessageManager::setMMId( int id )
 	d->mId = id;
 }
 
+#include "kopetemessagehandler.h"
+#include "kopetemessageevent.h"
+
+// FIXME: remove this and the friend decl in KMM
+class Kopete::TemporaryKMMCallbackAppendMessageHandler : public Kopete::MessageHandler
+{
+	Kopete::MessageManager *manager;
+public:
+	TemporaryKMMCallbackAppendMessageHandler( Kopete::MessageManager *manager )
+	: Kopete::MessageHandler(0, manager, "temporary kmm callback"), manager(manager)
+	{
+	}
+	void handleMessage( Kopete::MessageEvent *event )
+	{
+		Kopete::Message message = event->message();
+		emit manager->messageAppended( message, manager );
+		delete event;
+	}
+};
+
+Kopete::MessageHandlerChain *Kopete::MessageManager::chainForDirection( Kopete::Message::MessageDirection dir )
+{
+	if( dir < 0 || dir > 2)
+		kdFatal(14000) << k_funcinfo << "invalid message direction " << dir << endl;
+	const char * const names[] = { "incoming", "outgoing", "internal" };
+	if( !d->chains[dir] )
+	{
+		d->chains[dir] = new Kopete::MessageHandlerChain( this, names[dir] );
+		d->chains[dir]->addHandler( new TemporaryKMMCallbackAppendMessageHandler(this) );
+	}
+	return d->chains[dir];
+}
+
 void Kopete::MessageManager::sendMessage( Kopete::Message &message )
 {
 	message.setManager( this );
@@ -236,7 +272,8 @@ void Kopete::MessageManager::appendMessage( Kopete::Message &msg )
 		emit messageReceived( msg, this );
 	}
 
-	emit messageAppended( msg, this );
+	chainForDirection( msg.direction() )->processMessage( msg );
+//	emit messageAppended( msg, this );
 }
 
 void Kopete::MessageManager::addContact( const Kopete::Contact *c, bool suppress )
@@ -282,7 +319,7 @@ void Kopete::MessageManager::addContact( const Kopete::Contact *c, bool suppress
 		else
 			connect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
 		connect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ), this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
-		
+
 		slotUpdateDisplayName();
 	}
 	d->isEmpty = false;
@@ -311,7 +348,7 @@ void Kopete::MessageManager::removeContact( const Kopete::Contact *c, const QStr
 		else
 			disconnect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
 		disconnect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ), this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
-		
+
 		slotUpdateDisplayName();
 	}
 

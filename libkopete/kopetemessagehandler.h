@@ -20,8 +20,6 @@
 #include <qobject.h>
 //#include <kdemacros.h>
 
-#include "kopeteprotocol.h"
-
 namespace Kopete
 {
 
@@ -55,7 +53,7 @@ public:
 	 *
 	 * The default implementation returns next()->capabilities().
 	 */
-	virtual Kopete::Protocol::RichTextCapabilities capabilities();
+	virtual int capabilities();
 
 	/**
 	 * @brief Performs any processing necessary on the message

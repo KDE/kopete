@@ -44,6 +44,7 @@ class Protocol;
 class OnlineStatus;
 class Account;
 class MessageManagerFactory;
+class MessageHandlerChain;
 
 typedef QPtrList<Contact>   ContactPtrList;
 typedef QValueList<Message> MessageList;
@@ -167,7 +168,11 @@ public:
 	 * the default implementaiton do nothing
 	 */
 	virtual void inviteContact(const QString &contactId);
-	
+
+	/**
+	 * Returns the message handler chain for the message direction @p dir.
+	 */
+	MessageHandlerChain *chainForDirection( Message::MessageDirection dir );
 
 signals:
 	/**
@@ -331,9 +336,11 @@ protected:
 	 */
 	void setMayInvite(bool);
 	
-
 private:
 	KMMPrivate *d;
+	
+	// FIXME: remove
+	friend class TemporaryKMMCallbackAppendMessageHandler;
 };
 
 }

@@ -20,8 +20,6 @@
 #include <qobject.h>
 #include <kdemacros.h>
 
-#include "kopeteprotocol.h"
-
 namespace Kopete
 {
 
@@ -53,7 +51,7 @@ public:
 	void addHandler( MessageHandler *handler );
 
 	void processMessage( const Message &message );
-	Protocol::RichTextCapabilities capabilities();
+	int capabilities();
 
 private:
 	class Private;
