@@ -131,6 +131,10 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 
 			if ( contact->idleTime() != 0 )
 				toolTip += i18n( "<br>Idle: %1'%2" ).arg( contact->idleTime() / 60 ).arg( contact->idleTime() % 60 );
+				
+			if ( !contact->statusDescription().isNull() )
+				toolTip += i18n( "<br><blockquote>%1</blockquote>" ).arg( contact->statusDescription() );
+				
 		}
 		else
 		{
