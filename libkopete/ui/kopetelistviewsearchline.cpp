@@ -29,6 +29,11 @@ SearchLine::SearchLine( QWidget *parent, ListView *listView, const char *name )
 {
 }
 
+SearchLine::SearchLine(QWidget *parent, const char *name)
+	: KListViewSearchLine( parent, 0, name )
+{
+}
+
 SearchLine::~SearchLine()
 {
 }

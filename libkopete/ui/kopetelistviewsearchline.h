@@ -30,7 +30,22 @@ class SearchLine : public KListViewSearchLine
 {
 	Q_OBJECT
 public:
-	SearchLine( QWidget *parent, ListView *listView, const char *name = 0 );
+	/**
+	 * Constructs a SearchLine with \a listView being the
+	 * ListView to be filtered.
+	 *
+	 * If \a listView is null then the widget will be disabled until a listview
+	 * is set with setListView().
+	 */
+	SearchLine( QWidget *parent, ListView *listView = 0, const char *name = 0 );
+	/**
+	 * Constructs a SearchLine without any ListView to filter. The
+	 * KListView object has to be set later with setListView().
+	 */
+	SearchLine(QWidget *parent, const char *name);
+	/**
+	 * Destroys the SearchLine.
+	 */
 	~SearchLine();
 	
 	void updateSearch( const QString &s );
