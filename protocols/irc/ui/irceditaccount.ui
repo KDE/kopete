@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>434</width>
-            <height>548</height>
+            <height>550</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -207,7 +207,7 @@
                             </property>
                             <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>layout16</cstring>
+                                    <cstring>layout56</cstring>
                                 </property>
                                 <hbox>
                                     <property name="name">
@@ -215,9 +215,9 @@
                                     </property>
                                     <widget class="QLayoutWidget">
                                         <property name="name">
-                                            <cstring>layout15</cstring>
+                                            <cstring>layout55</cstring>
                                         </property>
-                                        <vbox>
+                                        <hbox>
                                             <property name="name">
                                                 <cstring>unnamed</cstring>
                                             </property>
@@ -232,125 +232,12 @@
                                                     <cstring>mServer</cstring>
                                                 </property>
                                             </widget>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>passwordLabel</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Pass&amp;word:</string>
-                                                </property>
-                                                <property name="buddy" stdset="0">
-                                                    <cstring>mPassword</cstring>
-                                                </property>
-                                            </widget>
-                                        </vbox>
-                                    </widget>
-                                    <widget class="QLayoutWidget">
-                                        <property name="name">
-                                            <cstring>layout12</cstring>
-                                        </property>
-                                        <vbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="QLayoutWidget">
-                                                <property name="name">
-                                                    <cstring>layout5</cstring>
-                                                </property>
-                                                <hbox>
-                                                    <property name="name">
-                                                        <cstring>unnamed</cstring>
-                                                    </property>
-                                                    <widget class="QLineEdit">
-                                                        <property name="name">
-                                                            <cstring>mServer</cstring>
-                                                        </property>
-                                                        <property name="enabled">
-                                                            <bool>true</bool>
-                                                        </property>
-                                                        <property name="sizePolicy">
-                                                            <sizepolicy>
-                                                                <hsizetype>7</hsizetype>
-                                                                <vsizetype>0</vsizetype>
-                                                                <horstretch>0</horstretch>
-                                                                <verstretch>0</verstretch>
-                                                            </sizepolicy>
-                                                        </property>
-                                                        <property name="toolTip" stdset="0">
-                                                            <string>The IP address or hostname of the IRC server you would like to connect to.</string>
-                                                        </property>
-                                                        <property name="whatsThis" stdset="0">
-                                                            <string>The IP address or hostname of the IRC server you would like to connect to (for example, irc.kde.org).</string>
-                                                        </property>
-                                                    </widget>
-                                                    <widget class="QLayoutWidget">
-                                                        <property name="name">
-                                                            <cstring>layout12</cstring>
-                                                        </property>
-                                                        <hbox>
-                                                            <property name="name">
-                                                                <cstring>unnamed</cstring>
-                                                            </property>
-                                                            <widget class="QLabel">
-                                                                <property name="name">
-                                                                    <cstring>TextLabel7</cstring>
-                                                                </property>
-                                                                <property name="sizePolicy">
-                                                                    <sizepolicy>
-                                                                        <hsizetype>5</hsizetype>
-                                                                        <vsizetype>0</vsizetype>
-                                                                        <horstretch>0</horstretch>
-                                                                        <verstretch>0</verstretch>
-                                                                    </sizepolicy>
-                                                                </property>
-                                                                <property name="text">
-                                                                    <string>Po&amp;rt:</string>
-                                                                </property>
-                                                                <property name="buddy" stdset="0">
-                                                                    <cstring>mPort</cstring>
-                                                                </property>
-                                                                <property name="toolTip" stdset="0">
-                                                                    <string>The port on the IRC server that you would like to connect to.</string>
-                                                                </property>
-                                                                <property name="whatsThis" stdset="0">
-                                                                    <string>The port on the IRC server that you would like to connect to.  Normally this is a value between 6667 and 6669, inclusive.</string>
-                                                                </property>
-                                                            </widget>
-                                                            <widget class="QSpinBox">
-                                                                <property name="name">
-                                                                    <cstring>mPort</cstring>
-                                                                </property>
-                                                                <property name="sizePolicy">
-                                                                    <sizepolicy>
-                                                                        <hsizetype>0</hsizetype>
-                                                                        <vsizetype>0</vsizetype>
-                                                                        <horstretch>0</horstretch>
-                                                                        <verstretch>0</verstretch>
-                                                                    </sizepolicy>
-                                                                </property>
-                                                                <property name="maxValue">
-                                                                    <number>65535</number>
-                                                                </property>
-                                                                <property name="minValue">
-                                                                    <number>1024</number>
-                                                                </property>
-                                                                <property name="value">
-                                                                    <number>6667</number>
-                                                                </property>
-                                                                <property name="toolTip" stdset="0">
-                                                                    <string>The port on the IRC server that you would like to connect to.</string>
-                                                                </property>
-                                                                <property name="whatsThis" stdset="0">
-                                                                    <string>The port on the IRC server that you would like to connect to.  Normally this is a value between 6667 and 6669, inclusive.</string>
-                                                                </property>
-                                                            </widget>
-                                                        </hbox>
-                                                    </widget>
-                                                </hbox>
-                                            </widget>
                                             <widget class="QLineEdit">
                                                 <property name="name">
-                                                    <cstring>mPassword</cstring>
+                                                    <cstring>mServer</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>true</bool>
                                                 </property>
                                                 <property name="sizePolicy">
                                                     <sizepolicy>
@@ -360,23 +247,86 @@
                                                         <verstretch>0</verstretch>
                                                     </sizepolicy>
                                                 </property>
-                                                <property name="echoMode">
-                                                    <enum>Password</enum>
-                                                </property>
                                                 <property name="toolTip" stdset="0">
-                                                    <string>If the IRC server requires a password, you may enter it here.</string>
+                                                    <string>The IP address or hostname of the IRC server you would like to connect to.</string>
                                                 </property>
                                                 <property name="whatsThis" stdset="0">
-                                                    <string>If the IRC server requires a password, you may enter it here.  Normally, you may leave this field blank.</string>
+                                                    <string>The IP address or hostname of the IRC server you would like to connect to (for example, irc.kde.org).</string>
                                                 </property>
                                             </widget>
-                                        </vbox>
+                                        </hbox>
+                                    </widget>
+                                    <widget class="QLayoutWidget">
+                                        <property name="name">
+                                            <cstring>layout12</cstring>
+                                        </property>
+                                        <hbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>TextLabel7</cstring>
+                                                </property>
+                                                <property name="sizePolicy">
+                                                    <sizepolicy>
+                                                        <hsizetype>5</hsizetype>
+                                                        <vsizetype>0</vsizetype>
+                                                        <horstretch>0</horstretch>
+                                                        <verstretch>0</verstretch>
+                                                    </sizepolicy>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Po&amp;rt:</string>
+                                                </property>
+                                                <property name="buddy" stdset="0">
+                                                    <cstring>mPort</cstring>
+                                                </property>
+                                                <property name="toolTip" stdset="0">
+                                                    <string>The port on the IRC server that you would like to connect to.</string>
+                                                </property>
+                                                <property name="whatsThis" stdset="0">
+                                                    <string>The port on the IRC server that you would like to connect to.  Normally this is a value between 6667 and 6669, inclusive.</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QSpinBox">
+                                                <property name="name">
+                                                    <cstring>mPort</cstring>
+                                                </property>
+                                                <property name="sizePolicy">
+                                                    <sizepolicy>
+                                                        <hsizetype>0</hsizetype>
+                                                        <vsizetype>0</vsizetype>
+                                                        <horstretch>0</horstretch>
+                                                        <verstretch>0</verstretch>
+                                                    </sizepolicy>
+                                                </property>
+                                                <property name="maxValue">
+                                                    <number>65535</number>
+                                                </property>
+                                                <property name="minValue">
+                                                    <number>1024</number>
+                                                </property>
+                                                <property name="value">
+                                                    <number>6667</number>
+                                                </property>
+                                                <property name="toolTip" stdset="0">
+                                                    <string>The port on the IRC server that you would like to connect to.</string>
+                                                </property>
+                                                <property name="whatsThis" stdset="0">
+                                                    <string>The port on the IRC server that you would like to connect to.  Normally this is a value between 6667 and 6669, inclusive.</string>
+                                                </property>
+                                            </widget>
+                                        </hbox>
                                     </widget>
                                 </hbox>
                             </widget>
                             <widget class="QCheckBox">
                                 <property name="name">
                                     <cstring>mRememberPassword</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>true</bool>
                                 </property>
                                 <property name="sizePolicy">
                                     <sizepolicy>
@@ -393,7 +343,7 @@
                                     <string>Alt+P</string>
                                 </property>
                                 <property name="checked">
-                                    <bool>true</bool>
+                                    <bool>false</bool>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check to save your password.</string>
@@ -401,6 +351,72 @@
                                 <property name="whatsThis" stdset="0">
                                     <string>Check to save your password.  Otherwise, you will be prompted each time you try to connect to this account.</string>
                                 </property>
+                            </widget>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>layout57</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <spacer>
+                                        <property name="name">
+                                            <cstring>spacer19</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Fixed</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>17</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                    <widget class="QLabel">
+                                        <property name="name">
+                                            <cstring>passwordLabel</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="text">
+                                            <string>Pass&amp;word:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>mPassword</cstring>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLineEdit">
+                                        <property name="name">
+                                            <cstring>mPassword</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>7</hsizetype>
+                                                <vsizetype>0</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="echoMode">
+                                            <enum>Password</enum>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>If the IRC server requires a password, you may enter it here.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>If the IRC server requires a password, you may enter it here.  Normally, you may leave this field blank.</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
                             </widget>
                         </vbox>
                     </widget>
@@ -767,6 +783,20 @@
         </widget>
     </vbox>
 </widget>
+<connections>
+    <connection>
+        <sender>mRememberPassword</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>mPassword</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>mRememberPassword</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>passwordLabel</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
 <tabstops>
     <tabstop>mNickName</tabstop>
     <tabstop>mAltNickname</tabstop>

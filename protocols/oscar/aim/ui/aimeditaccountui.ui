@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>463</width>
-            <height>516</height>
+            <height>518</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -128,6 +128,9 @@
                             <property name="name">
                                 <cstring>lblPassword</cstring>
                             </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
                             <property name="text">
                                 <string>Pass&amp;word:</string>
                             </property>
@@ -144,6 +147,9 @@
                         <widget class="QLineEdit">
                             <property name="name">
                                 <cstring>edtPassword</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
                             </property>
                             <property name="echoMode">
                                 <enum>Password</enum>
@@ -338,6 +344,20 @@
         </widget>
     </vbox>
 </widget>
+<connections>
+    <connection>
+        <sender>mSavePassword</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>edtPassword</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>mSavePassword</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>lblPassword</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
 <tabstops>
     <tabstop>edtAccountId</tabstop>
     <tabstop>mSavePassword</tabstop>

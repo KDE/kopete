@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>462</width>
-            <height>514</height>
+            <height>516</height>
         </rect>
     </property>
     <property name="caption">
@@ -118,7 +118,10 @@
                         </spacer>
                         <widget class="QLabel">
                             <property name="name">
-                                <cstring>label2</cstring>
+                                <cstring>passwordLabel</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
                             </property>
                             <property name="sizePolicy">
                                 <sizepolicy>
@@ -144,6 +147,9 @@
                         <widget class="QLineEdit">
                             <property name="name">
                                 <cstring>mPassword</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
                             </property>
                             <property name="echoMode">
                                 <enum>Password</enum>
@@ -295,6 +301,18 @@
         <sender>ImportContacts</sender>
         <signal>toggled(bool)</signal>
         <receiver>UseServerGroupNames</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>mRememberPassword</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>mPassword</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>mRememberPassword</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>passwordLabel</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
