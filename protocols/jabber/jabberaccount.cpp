@@ -512,6 +512,11 @@ void JabberAccount::connect ()
 
 	setPresence( XMPP::Status ("connecting", "", 0, true) );
 
+	/**
+	 * Try to cache password before attempting to connect
+	 */
+	cachedPassword = password();
+
 	jabberClient->connectToServer (jabberClientStream,
 				       XMPP::Jid(accountId() + QString("/") + pluginData( protocol (), "Resource")),
 				       true);
@@ -642,7 +647,12 @@ void JabberAccount::slotCSNeedAuthParams (bool user, bool pass, bool realm)
 
 	if(pass)
 	{
-		jabberClientStream->setPassword(password());
+		if(cachedPassword.isEmpty())
+			cachedPassword = password();
+
+		jabberClientStream->setPassword(cachedPassword);
+
+		cachedPassword = QString::null;
 	}
 
 	if(realm)

@@ -150,6 +150,7 @@ private:
 	JabberContactPool *mContactPool;
 
 	QString localAddress;
+	QString cachedPassword;
 
 	void setAvailable ();
 
