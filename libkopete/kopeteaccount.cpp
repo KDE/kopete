@@ -71,9 +71,16 @@ public:
 	KopeteContact *myself;
 
 #if KDE_IS_VERSION( 3, 1, 90 )
-	KWallet::Wallet *wallet;
+	static KWallet::Wallet *s_wallet;
+	static uint s_walletRefCount;
+	bool usingWallet;
 #endif
 };
+
+#if KDE_IS_VERSION( 3, 1, 90 )
+KWallet::Wallet *KopeteAccountPrivate::s_wallet = 0L;
+uint KopeteAccountPrivate::s_walletRefCount = 0;
+#endif
 
 KopeteAccount::KopeteAccount( KopeteProtocol *parent, const QString &accountId, const char *name )
 : KopetePluginDataObject( parent, name )
@@ -84,9 +91,8 @@ KopeteAccount::KopeteAccount( KopeteProtocol *parent, const QString &accountId, 
 	d->autologin = false;
 	d->rememberPassword = false;
 	d->myself = 0L;
-
 #if KDE_IS_VERSION( 3, 1, 90 )
-	d->wallet = 0L;
+	d->usingWallet = false;
 #endif
 
 	KopeteAccountManager::manager()->registerAccount( this );
@@ -100,10 +106,7 @@ KopeteAccount::~KopeteAccount()
 		delete *QDictIterator<KopeteContact>( d->contacts );
 	KopeteAccountManager::manager()->unregisterAccount( this );
 
-#if KDE_IS_VERSION( 3, 1, 90 )
-	delete d->wallet;
-	d->wallet = 0L;
-#endif
+	walletClosed();
 
 	delete d;
 }
@@ -187,14 +190,10 @@ void KopeteAccount::writeConfig( const QString &configGroupName )
 	config->writeEntry( "AccountId", d->id );
 	config->writeEntry( "Priority", d->priority );
 
-#if KDE_IS_VERSION( 3, 1, 90 )
-	config->deleteEntry( "Password" ); // now in KWallet
-#else
 	if ( d->rememberPassword )
 		config->writeEntry( "Password", cryptStr( d->password ) );
 	else
 		config->deleteEntry( "Password" );
-#endif
 
 	config->writeEntry( "RememberPassword", d->rememberPassword );
 	config->writeEntry( "AutoConnect", d->autologin );
@@ -267,24 +266,36 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 		if ( !KWallet::Wallet::folderDoesNotExist( KWallet::Wallet::NetworkWallet(), QString::fromLatin1( "Kopete" ) ) )
 		{
 			// The folder might exist, try to open the wallet
-			if ( !d->wallet ) {
-				d->wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), /*FIXME: put a real wId here */0, KWallet::Wallet::Synchronous );
-				if (d->wallet) {
-					QObject::connect(d->wallet, SIGNAL(walletClosed()), this, SLOT(walletClosed()));
+			if ( !KopeteAccountPrivate::s_wallet )
+			{
+				KopeteAccountPrivate::s_wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(),
+					/*FIXME: put a real wId here */0, KWallet::Wallet::Synchronous );
+
+				if ( KopeteAccountPrivate::s_wallet )
+				{
+					KopeteAccountPrivate::s_walletRefCount++;
+					d->usingWallet = true;
+					QObject::connect( KopeteAccountPrivate::s_wallet, SIGNAL( walletClosed() ), this, SLOT( walletClosed() ) );
 				}
+			}
+			else if ( !d->usingWallet )
+			{
+				d->usingWallet = true;
+				KopeteAccountPrivate::s_walletRefCount++;
 			}
 
 			// Before trying to read from the wallet, check if the config file holds a password.
 			// If so, remove it from the config and set it through KWallet instead.
+			QString pwd;
 			if ( !d->password.isNull() )
 			{
-				setPassword( d->password );
-				return d->password;
+				pwd = d->password;
+				setPassword( pwd );
+				return pwd;
 			}
 
-			QString pwd;
-			if ( d->wallet && d->wallet->setFolder( QString::fromLatin1( "Kopete" ) ) &&
-				d->wallet->readPassword( configGroup(), pwd ) == 0 && !pwd.isNull() )
+			if ( KopeteAccountPrivate::s_wallet && KopeteAccountPrivate::s_wallet->setFolder( QString::fromLatin1( "Kopete" ) ) &&
+				KopeteAccountPrivate::s_wallet->readPassword( configGroup(), pwd ) == 0 && !pwd.isNull() )
 			{
 				return pwd;
 			}
@@ -351,16 +362,30 @@ void KopeteAccount::setPassword( const QString &pass )
 
 	if ( KWallet::Wallet::isEnabled() )
 	{
-		if ( !d->wallet )
-			d->wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), /*FIXME: put a real wId here */0, KWallet::Wallet::Synchronous );
-
-		if ( d->wallet )
+		if ( !KopeteAccountPrivate::s_wallet )
 		{
-			if ( !d->wallet->hasFolder( QString::fromLatin1( "Kopete" ) ) )
-				d->wallet->createFolder( QString::fromLatin1( "Kopete" ) );
+			KopeteAccountPrivate::s_wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(),
+				/* FIXME: put a real wId here */ 0, KWallet::Wallet::Synchronous );
 
-			if ( d->wallet->setFolder( QString::fromLatin1( "Kopete" ) ) &&
-				d->wallet->writePassword( configGroup(), pass ) == 0 )
+			if ( KopeteAccountPrivate::s_wallet )
+			{
+				KopeteAccountPrivate::s_walletRefCount++;
+				d->usingWallet = true;
+			}
+		}
+		else if ( !d->usingWallet )
+		{
+			d->usingWallet = true;
+			KopeteAccountPrivate::s_walletRefCount++;
+		}
+
+		if ( KopeteAccountPrivate::s_wallet )
+		{
+			if ( !KopeteAccountPrivate::s_wallet->hasFolder( QString::fromLatin1( "Kopete" ) ) )
+				KopeteAccountPrivate::s_wallet->createFolder( QString::fromLatin1( "Kopete" ) );
+
+			if ( KopeteAccountPrivate::s_wallet->setFolder( QString::fromLatin1( "Kopete" ) ) &&
+				KopeteAccountPrivate::s_wallet->writePassword( configGroup(), pass ) == 0 )
 			{
 				// Remove any pass from KConfig if it is still there
 				if ( !d->password.isNull() )
@@ -567,8 +592,13 @@ void KopeteAccount::setMyself( KopeteContact *myself )
 void KopeteAccount::walletClosed()
 {
 #if KDE_IS_VERSION( 3, 1, 90 )
-	delete d->wallet;
-	d->wallet = 0L;
+	KopeteAccountPrivate::s_walletRefCount--;
+	d->usingWallet = false;
+	if ( !KopeteAccountPrivate::s_walletRefCount )
+	{
+		delete KopeteAccountPrivate::s_wallet;
+		KopeteAccountPrivate::s_wallet = 0L;
+	}
 #endif
 }
 
