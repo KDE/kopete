@@ -375,7 +375,7 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	 */
 	if ( !vCard.nickName().isEmpty () )
 	{
-		if ( metaContact() && metaContact()->displayName () == contactId () )
+		if ( metaContact() && ( metaContact()->displayName () == contactId () ) )
 		{
 			/*
 			 * Set the alias to the nick, as no alias
