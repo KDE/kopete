@@ -92,7 +92,7 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 		this, SLOT(slotSnacFailed(WORD)));
 
 
-	if(name == displayName && account()->isConnected())
+	if((name == displayName || displayName.isEmpty()) && account()->isConnected())
 	{
 		kdDebug(14200) << k_funcinfo << "ICQ Contact with no nickname, grabbing userinfo" << endl;
 		requestShortInfo();
