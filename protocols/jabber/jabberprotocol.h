@@ -140,7 +140,7 @@ class JabberProtocol:public QObject, public KopeteProtocol {
 				  * off and have them on toast in the morning. */
 
     JabberPreferences *mPrefs;
-    Jabber *protocol;
+    Jabber *mProtocol;
 	JabberContact *myContact;
 	KMessageBox *authContact;
 	dlgJabberStatus *reasonDialog;
