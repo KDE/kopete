@@ -100,6 +100,8 @@ It would be usefull if KABC could remember what application writes an entry. so 
 Or like the language or the PGP public key
 
 It is too complex to store the phone number according to icq as well as the kabc phone number and every other protocol's idea of phone.  The fields would be of no use to any app other than the inserting program or else we would have to update the world.  We *should* have a facility to insert information obtained from protocols into the common kabc fields but this is a hard problem to solve neatly.
+ - - I think it is not, ICQ phone number ~should~ be the same as all others one.  storing it here is just a way to *centralise* all information about someone.  Then, when you want to know his phone number, you look only there, and not at every place
+ 		*problem: how to trust the information? that's why kabc could handle a source of the information
 
 
 KABC Participation modes
