@@ -188,7 +188,6 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 
 	mExport = 0L;
 
-	
 	if ( !kabcUid.isEmpty() )
 	{
 		KABC::AddressBook *ab = KABC::StdAddressBook::self();
