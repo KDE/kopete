@@ -91,10 +91,8 @@ void YahooAccount::slotGoStatus( int status, const QString &awayMessage)
 		connect();
 		stateOnConnection = status;
 	}
-	else 
+	else
 	{
-		if ( status == 99 )
-			theAwayDialog->show(99);
 		m_session->setAway( yahoo_status( status ), awayMessage, status ? 1 : 0 );
 	}
 }
@@ -341,7 +339,8 @@ void YahooAccount::slotBuddyListFetched( int numBuddies )
 KActionMenu *YahooAccount::actionMenu()
 {
 //	kdDebug(14180) << k_funcinfo << endl;
-
+	//TODO: Use a QSignalMapper so all the slots can be consolidated into one function
+	
 	KActionMenu *theActionMenu = new KActionMenu( myself()->displayName(), myself()->onlineStatus().iconFor(this), this );
 	theActionMenu->popupMenu()->insertTitle( myself()->icon(), "Yahoo (" + myself()->displayName() + ")");
 
@@ -350,47 +349,47 @@ KActionMenu *YahooAccount::actionMenu()
 		this, "actionYahooGoOnline"));
 
 	theActionMenu->insert(new KAction(m_protocol->BeRightBack.caption(),
-		m_protocol->BeRightBack.iconFor(this), 0, this, SLOT(slotGoStatus(1)),
+		m_protocol->BeRightBack.iconFor(this), 0, this, SLOT(slotGoStatus001()),
 		this, "actionYahooGoStatus001"));
 
 	theActionMenu->insert(new KAction(m_protocol->Busy.caption(),
-		m_protocol->Busy.iconFor(this), 0, this, SLOT(slotGoStatus(2)),
+		m_protocol->Busy.iconFor(this), 0, this, SLOT(slotGoStatus002()),
 		this, "actionYahooGoStatus002"));
 
 	theActionMenu->insert(new KAction(m_protocol->NotAtHome.caption(),
-		m_protocol->NotAtHome.iconFor(this), 0, this, SLOT(slotGoStatus(3)),
+		m_protocol->NotAtHome.iconFor(this), 0, this, SLOT(slotGoStatus003()),
 		this, "actionYahooGoStatus003"));
 
 	theActionMenu->insert(new KAction(m_protocol->NotAtMyDesk.caption(),
-		m_protocol->NotAtMyDesk.iconFor(this), 0, this, SLOT(slotGoStatus(4)),
+		m_protocol->NotAtMyDesk.iconFor(this), 0, this, SLOT(slotGoStatus004()),
 		this, "actionYahooGoStatus004"));
 
 	theActionMenu->insert(new KAction(m_protocol->NotInTheOffice.caption(),
-		m_protocol->NotInTheOffice.iconFor(this), 0, this, SLOT(slotGoStatus(5)),
+		m_protocol->NotInTheOffice.iconFor(this), 0, this, SLOT(slotGoStatus005()),
 		this, "actionYahooGoStatus005"));
 
 	theActionMenu->insert(new KAction(m_protocol->OnThePhone.caption(),
-		m_protocol->OnThePhone.iconFor(this), 0, this, SLOT(slotGoStatus(6)),
+		m_protocol->OnThePhone.iconFor(this), 0, this, SLOT(slotGoStatus006()),
 		this, "actionYahooGoStatus006"));
 
 	theActionMenu->insert(new KAction(m_protocol->OnVacation.caption(),
-		m_protocol->OnVacation.iconFor(this), 0, this, SLOT(slotGoStatus(7)),
+		m_protocol->OnVacation.iconFor(this), 0, this, SLOT(slotGoStatus007()),
 		this, "actionYahooGoStatus007"));
 
 	theActionMenu->insert(new KAction(m_protocol->OutToLunch.caption(),
-		m_protocol->OutToLunch.iconFor(this), 0, this, SLOT(slotGoStatus(8)),
+		m_protocol->OutToLunch.iconFor(this), 0, this, SLOT(slotGoStatus008()),
 		this, "actionYahooGoStatus008"));
 
 	theActionMenu->insert(new KAction(m_protocol->SteppedOut.caption() ,
-		m_protocol->SteppedOut.iconFor(this), 0, this, SLOT(slotGoStatus(9)),
+		m_protocol->SteppedOut.iconFor(this), 0, this, SLOT(slotGoStatus009()),
 		this, "actionYahooGoStatus009"));
 
 	theActionMenu->insert(new KAction(m_protocol->Invisible.caption(),
-		 m_protocol->Invisible.iconFor(this), 0, this, SLOT(slotGoStatus(12)),
+		 m_protocol->Invisible.iconFor(this), 0, this, SLOT(slotGoStatus012()),
 		 this, "actionYahooGoStatus012"));
 
 	theActionMenu->insert(new KAction(m_protocol->Custom.caption(),
-		m_protocol->Custom.iconFor(this), 0, this, SLOT(slotGoStatus(99)),
+		m_protocol->Custom.iconFor(this), 0, this, SLOT(slotGoStatus099()),
 		this, "actionYahooGoStatus099"));
 
 	theActionMenu->insert(new KAction(m_protocol->Offline.caption(),
