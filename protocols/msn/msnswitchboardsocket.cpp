@@ -358,6 +358,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 // this sends the user is typing msg
 void MSNSwitchBoardSocket::slotTypingMsg()
 {
+	return; // FIXME: fix typing notification in libkopete!
 	QCString message = QString("MIME-Version: 1.0\r\n"
 		"Content-Type: text/x-msmsgscontrol\r\n"
 		"TypingUser: " + m_myHandle + "\r\n"
