@@ -24,6 +24,7 @@
 #include "kopeteplugin.h"
 #include <qptrlist.h>
 
+namespace Kopete { class ChatSession; };
 
 class QTimer;
 class DCOPClient;
@@ -47,10 +48,7 @@ friend class NowListeningGUIClient;
 		static NowListeningPlugin* plugin();
 
 	public slots:
-		/**
-		 * Perform any string substitution needed on outgoing messages
-		 */
-		void slotOutgoingMessage( Kopete::Message& msg );
+	  	void slotMediaCommand( const QString &, Kopete::ChatSession *theChat );
 
 	protected:
 		/**

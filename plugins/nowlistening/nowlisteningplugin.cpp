@@ -29,6 +29,7 @@
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
+#include "kopetecommandhandler.h"
 #include "nowlisteningconfig.h"
 #include "nowlisteningplugin.h"
 #include "nlmediaplayer.h"
@@ -89,10 +90,14 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 #endif
 
 	// watch for '/media' getting typed
-	connect(  Kopete::ChatSessionManager::self(),
-			SIGNAL( aboutToSend( Kopete::Message & ) ),
-			SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
-			
+	Kopete::CommandHandler::commandHandler()->registerCommand(
+		this,
+		"media",
+		SLOT( slotMediaCommand( const QString &, Kopete::ChatSession * ) ),
+		i18n("USAGE: /media - Displays information on current song"),
+		0
+	);
+
 	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
 }
 
@@ -116,30 +121,25 @@ NowListeningPlugin* NowListeningPlugin::plugin()
 	return pluginStatic_ ;
 }
 
-void NowListeningPlugin::slotOutgoingMessage( Kopete::Message& msg )
+void NowListeningPlugin::slotMediaCommand( const QString &args, Kopete::ChatSession *theChat )
 {
-	QString originalBody = msg.plainBody();
-	// look for messages that we've generated and ignore them
-	if ( !originalBody.startsWith( m_config->header() ) )
+	QString advert = allPlayerAdvert();
+	if ( advert.isEmpty() )
 	{
-		// look for the string '/media'
-		if ( originalBody.startsWith( "/media" ) )
-		{
-			QString advert = allPlayerAdvert();
-			if ( advert.isEmpty() )
-			{
-				// Catch no players/no track playing message case:
-				// Since we can't stop a message send in a plugin, add some message text to
-				// prevent us sending an empty message
-				advert = i18n("Message from Kopete user to another user; used when sending media information even though there are no songs playing or no media players running", "Now Listening for Kopete - it would tell you what I am listening to, if I was listening to something on a supported media player.");
-			}
-			// replace it with media advert
-			QString newBody = advert + originalBody.right(
-					originalBody.length() - 6 );
-			msg.setBody( newBody, Kopete::Message::RichText );
-		}
-		return;
+		// Catch no players/no track playing message case:
+		// Since we can't stop a message send in a plugin, add some message text to
+		// prevent us sending an empty message
+		advert = i18n("Message from Kopete user to another user; used when sending media information even though there are no songs playing or no media players running", "Now Listening for Kopete - it would tell you what I am listening to, if I was listening to something on a supported media player.");
 	}
+	
+	Kopete::Message msg( theChat->myself(),
+			theChat->members(),
+			advert + " " + args,
+			Kopete::Message::Outbound,
+			Kopete::Message::RichText
+	);
+	
+	theChat->sendMessage( msg );
 }
 
 QString NowListeningPlugin::allPlayerAdvert() const
