@@ -24,13 +24,17 @@
 
 class dlgJabberVCard : public dlgVCard
 { 
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    dlgJabberVCard( QWidget* parent = 0, const char* name = 0, JT_VCard *vCard = 0 );
-    ~dlgJabberVCard();
+	public:
+		dlgJabberVCard( QWidget* parent = 0, const char* name = 0, JT_VCard *vCard = 0 );
+		~dlgJabberVCard();
     
-    void assignVCard(JT_VCard *vCard);
+		void assignVCard(JT_VCard *vCard);
+    
+	public slots:
+		void slotClose();
+		void slotSaveNickname();
 };
 
 #endif // DLGJABBERVCARD_H

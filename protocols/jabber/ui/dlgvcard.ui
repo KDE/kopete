@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>501</width>
+            <width>540</width>
             <height>419</height>
         </rect>
     </property>
@@ -23,9 +23,15 @@
             <rect>
                 <x>10</x>
                 <y>10</y>
-                <width>480</width>
+                <width>520</width>
                 <height>150</height>
             </rect>
+        </property>
+        <property name="frameShape">
+            <enum>Box</enum>
+        </property>
+        <property name="frameShadow">
+            <enum>Sunken</enum>
         </property>
         <property name="title">
             <string>User Info</string>
@@ -96,22 +102,6 @@
         </widget>
         <widget class="QLabel">
             <property name="name">
-                <cstring>lblHomepage</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>110</y>
-                    <width>65</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Homepage:</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
                 <cstring>lblBirthday</cstring>
             </property>
             <property name="geometry">
@@ -126,16 +116,51 @@
                 <string>Birthday:</string>
             </property>
         </widget>
-        <widget class="KLineEdit">
+        <widget class="QLabel">
             <property name="name">
-                <cstring>leJID</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
+                <cstring>lblHomepage</cstring>
             </property>
             <property name="geometry">
                 <rect>
-                    <x>320</x>
+                    <x>10</x>
+                    <y>110</y>
+                    <width>65</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Homepage:</string>
+            </property>
+        </widget>
+        <widget class="KURLLabel">
+            <property name="name">
+                <cstring>urlHomepage</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>80</x>
+                    <y>110</y>
+                    <width>380</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="url" stdset="0">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="KLineEdit">
+            <property name="name">
+                <cstring>leNickname</cstring>
+            </property>
+            <property name="enabled">
+                <bool>true</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>80</x>
                     <y>20</y>
                     <width>140</width>
                     <height>20</height>
@@ -147,7 +172,7 @@
                 <cstring>leName</cstring>
             </property>
             <property name="enabled">
-                <bool>false</bool>
+                <bool>true</bool>
             </property>
             <property name="geometry">
                 <rect>
@@ -163,7 +188,7 @@
                 <cstring>leBirthday</cstring>
             </property>
             <property name="enabled">
-                <bool>false</bool>
+                <bool>true</bool>
             </property>
             <property name="geometry">
                 <rect>
@@ -176,84 +201,36 @@
         </widget>
         <widget class="KLineEdit">
             <property name="name">
+                <cstring>leJID</cstring>
+            </property>
+            <property name="enabled">
+                <bool>true</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>320</x>
+                    <y>20</y>
+                    <width>180</width>
+                    <height>20</height>
+                </rect>
+            </property>
+        </widget>
+        <widget class="KLineEdit">
+            <property name="name">
                 <cstring>leGender</cstring>
             </property>
             <property name="enabled">
-                <bool>false</bool>
+                <bool>true</bool>
             </property>
             <property name="geometry">
                 <rect>
                     <x>320</x>
                     <y>50</y>
-                    <width>140</width>
+                    <width>180</width>
                     <height>20</height>
                 </rect>
             </property>
         </widget>
-        <widget class="KLineEdit">
-            <property name="name">
-                <cstring>leHomepage</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>80</x>
-                    <y>110</y>
-                    <width>380</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="KLineEdit">
-            <property name="name">
-                <cstring>leNickname</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>80</x>
-                    <y>20</y>
-                    <width>140</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
-    </widget>
-    <widget class="QPushButton">
-        <property name="name">
-            <cstring>btnClose</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>380</x>
-                <y>380</y>
-                <width>108</width>
-                <height>27</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Close</string>
-        </property>
-    </widget>
-    <widget class="QPushButton">
-        <property name="name">
-            <cstring>btnSaveNickname</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>230</x>
-                <y>380</y>
-                <width>120</width>
-                <height>27</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Save Nickname</string>
-        </property>
     </widget>
     <widget class="QGroupBox">
         <property name="name">
@@ -263,7 +240,7 @@
             <rect>
                 <x>10</x>
                 <y>170</y>
-                <width>480</width>
+                <width>520</width>
                 <height>200</height>
             </rect>
         </property>
@@ -334,22 +311,6 @@
                 <string>State:</string>
             </property>
         </widget>
-        <widget class="KLineEdit">
-            <property name="name">
-                <cstring>leState</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>330</x>
-                    <y>100</y>
-                    <width>130</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
         <widget class="QLabel">
             <property name="name">
                 <cstring>lblCity</cstring>
@@ -364,22 +325,6 @@
             </property>
             <property name="text">
                 <string>City:</string>
-            </property>
-        </widget>
-        <widget class="KLineEdit">
-            <property name="name">
-                <cstring>leCity</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>330</x>
-                    <y>70</y>
-                    <width>130</width>
-                    <height>20</height>
-                </rect>
             </property>
         </widget>
         <widget class="QLabel">
@@ -398,22 +343,6 @@
                 <string>ZIP:</string>
             </property>
         </widget>
-        <widget class="KLineEdit">
-            <property name="name">
-                <cstring>leZIP</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>330</x>
-                    <y>40</y>
-                    <width>130</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
         <widget class="QLabel">
             <property name="name">
                 <cstring>lblCountry</cstring>
@@ -428,54 +357,6 @@
             </property>
             <property name="text">
                 <string>Country:</string>
-            </property>
-        </widget>
-        <widget class="KLineEdit">
-            <property name="name">
-                <cstring>leCountry</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>330</x>
-                    <y>130</y>
-                    <width>130</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="KLineEdit">
-            <property name="name">
-                <cstring>lePhone</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>330</x>
-                    <y>160</y>
-                    <width>130</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="KLineEdit">
-            <property name="name">
-                <cstring>leEmail</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>60</x>
-                    <y>160</y>
-                    <width>190</width>
-                    <height>20</height>
-                </rect>
             </property>
         </widget>
         <widget class="KTextEdit">
@@ -494,7 +375,146 @@
                 </rect>
             </property>
         </widget>
+        <widget class="KURLLabel">
+            <property name="name">
+                <cstring>urlEmail</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>50</x>
+                    <y>160</y>
+                    <width>200</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="url" stdset="0">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="KLineEdit">
+            <property name="name">
+                <cstring>leZIP</cstring>
+            </property>
+            <property name="enabled">
+                <bool>true</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>330</x>
+                    <y>40</y>
+                    <width>170</width>
+                    <height>20</height>
+                </rect>
+            </property>
+        </widget>
+        <widget class="KLineEdit">
+            <property name="name">
+                <cstring>leCity</cstring>
+            </property>
+            <property name="enabled">
+                <bool>true</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>330</x>
+                    <y>70</y>
+                    <width>170</width>
+                    <height>20</height>
+                </rect>
+            </property>
+        </widget>
+        <widget class="KLineEdit">
+            <property name="name">
+                <cstring>leState</cstring>
+            </property>
+            <property name="enabled">
+                <bool>true</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>330</x>
+                    <y>100</y>
+                    <width>170</width>
+                    <height>20</height>
+                </rect>
+            </property>
+        </widget>
+        <widget class="KLineEdit">
+            <property name="name">
+                <cstring>leCountry</cstring>
+            </property>
+            <property name="enabled">
+                <bool>true</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>330</x>
+                    <y>130</y>
+                    <width>170</width>
+                    <height>20</height>
+                </rect>
+            </property>
+        </widget>
+        <widget class="KLineEdit">
+            <property name="name">
+                <cstring>lePhone</cstring>
+            </property>
+            <property name="enabled">
+                <bool>true</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>330</x>
+                    <y>160</y>
+                    <width>170</width>
+                    <height>20</height>
+                </rect>
+            </property>
+        </widget>
+    </widget>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>btnSaveNickname</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>260</x>
+                <y>380</y>
+                <width>120</width>
+                <height>27</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Save Nickname</string>
+        </property>
+    </widget>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>btnClose</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>410</x>
+                <y>380</y>
+                <width>108</width>
+                <height>27</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Close</string>
+        </property>
     </widget>
 </widget>
+<connections>
+</connections>
+<includes>
+    <include location="local" impldecl="in implementation">dlgvcard.ui.h</include>
+</includes>
+<slots>
+    <slot>btnClose_clicked()</slot>
+</slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

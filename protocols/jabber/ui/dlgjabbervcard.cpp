@@ -22,6 +22,8 @@
 #include <klocale.h>
 #include <klineedit.h>
 #include <ktextedit.h>
+#include <kurllabel.h>
+#include <qpushbutton.h>
 #include "dlgjabbervcard.h"
 #include "dlgvcard.h"
 #include "jabcommon.h"
@@ -42,6 +44,9 @@ dlgJabberVCard::dlgJabberVCard( QWidget* parent,  const char* name, JT_VCard *vC
 		// populate all fields from the vCard
 		assignVCard(vCard);
 	}
+	
+	connect(btnClose, SIGNAL(clicked()), this, SLOT(slotClose()));
+	connect(btnSaveNickname, SIGNAL(clicked()), this, SLOT(slotSaveNickname()));
 
 }
 
@@ -63,14 +68,34 @@ void dlgJabberVCard::assignVCard(JT_VCard *vCard)
 	leNickname->setText(vCard->vcard.field[vNickname]);
 	leName->setText(vCard->vcard.field[vFullname]);
 	leBirthday->setText(vCard->vcard.field[vBday]);
-	leEmail->setText(vCard->vcard.field[vEmail]);
-	leHomepage->setText(vCard->vcard.field[vHomepage]);
+	urlEmail->setText(vCard->vcard.field[vEmail]);
+	urlEmail->setURL(vCard->vcard.field[vEmail]);
+	urlHomepage->setText(vCard->vcard.field[vHomepage]);
+	urlHomepage->setURL(vCard->vcard.field[vHomepage]);
 	teAddress->setText(vCard->vcard.field[vStreet]);
 	leCity->setText(vCard->vcard.field[vCity]);
 	leState->setText(vCard->vcard.field[vState]);
 	leZIP->setText(vCard->vcard.field[vPcode]);
 	leCountry->setText(vCard->vcard.field[vCountry]);
 	lePhone->setText(vCard->vcard.field[vPhone]);
+
+}
+
+/*
+ * Close the dialog window
+ */
+void dlgJabberVCard::slotClose()
+{
+
+	delete this;
+
+}
+
+/*
+ * Save the nickname
+ */
+void dlgJabberVCard::slotSaveNickname()
+{
 
 }
 
