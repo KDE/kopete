@@ -144,9 +144,6 @@ bool IRCAccount::addContact( const QString &contact, const QString &displayName,
 	else if( c->metaContact()->isTemporary() )
 		m->setTemporary(false);
 
-	QObject::connect(c, SIGNAL(destroyed(QObject *)), this,
-		SLOT(slotContactDestroyed(QObject *)));
-
 	return true;
 }
 
@@ -166,6 +163,8 @@ IRCChannelContact *IRCAccount::findChannel(const QString &name, KopeteMetaContac
 		mChannels.insert( lowerName, channel );
 		if( engine()->state() == QSocket::Connected)
 			channel->setOnlineStatus( IRCProtocol::IRCChannelOnline() );
+		QObject::connect(channel, SIGNAL(contactDestroyed(KopeteContact *)), this,
+			SLOT(slotContactDestroyed(KopeteContact *)));
 	}
 	else
 	{
@@ -182,10 +181,10 @@ void IRCAccount::unregisterChannel( const QString &name )
 	if( mChannels.contains( lowerName ) )
 	{
 		IRCChannelContact *channel = mChannels[lowerName];
-		if( channel->conversations() == 0 && (!channel->metaContact() || channel->metaContact()->isTemporary()) )
+		if( channel->conversations() == 0 && channel->metaContact()->isTemporary() )
 		{
+			kdDebug(14120) << k_funcinfo << name << endl;
 			delete channel->metaContact();
-			mChannels.remove(lowerName);
 		}
 	}
 }
@@ -204,6 +203,9 @@ IRCUserContact *IRCAccount::findUser(const QString &name, KopeteMetaContact *m)
 	{
 		user = new IRCUserContact(this, name, m);
 		mUsers.insert( lowerName, user );
+		QObject::connect(user, SIGNAL(contactDestroyed(KopeteContact *)), this,
+			SLOT(slotContactDestroyed(KopeteContact *)));
+		engine()->addToNotifyList( lowerName );
 	}
 	else
 	{
@@ -217,27 +219,29 @@ IRCUserContact *IRCAccount::findUser(const QString &name, KopeteMetaContact *m)
 void IRCAccount::unregisterUser( const QString &name )
 {
 	QString lowerName = name.lower();
-	if( mUsers.contains( lowerName ) )
+	if( lowerName != mNickName.lower() && mUsers.contains( lowerName ) )
 	{
 		IRCUserContact *user = mUsers[lowerName];
-		if( user->conversations() == 0 && (!user->metaContact() || user->metaContact()->isTemporary()) )
+		if( user->conversations() == 0 && user->metaContact()->isTemporary() )
 		{
+			kdDebug(14120) << k_funcinfo << name << endl;
 			delete user->metaContact();
-			mUsers.remove(lowerName);
-			engine()->removeFromNotifyList( lowerName );
 		}
 	}
 }
 
-void IRCAccount::slotContactDestroyed(QObject *contact)
+void IRCAccount::slotContactDestroyed(KopeteContact *contact)
 {
 	kdDebug(14120) << k_funcinfo << endl;
-	const QString id = static_cast<KopeteContact*>( contact )->contactId();
+	const QString nickname = static_cast<IRCContact*>( contact )->nickName().lower();
 
-	if ( id.startsWith( QString::fromLatin1("#") ) )
-		unregisterChannel(id);
+	if ( nickname.startsWith( QString::fromLatin1("#") ) )
+		mChannels.remove( nickname );
 	else
-		unregisterUser(id);
+	{
+		mUsers.remove(nickname);
+		engine()->removeFromNotifyList( nickname );
+	}
 }
 
 void IRCAccount::slotConnectedToServer()

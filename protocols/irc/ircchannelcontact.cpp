@@ -86,7 +86,7 @@ KopeteMessageManager* IRCChannelContact::manager(bool)
 		mMsgManager = KopeteMessageManagerFactory::factory()->create( (KopeteContact *)mAccount->mySelf(), mContact, (KopeteProtocol *)mAccount->protocol());
 		mMsgManager->setDisplayName( caption() );
 		QObject::connect( mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
-		QObject::connect( mMsgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
+		QObject::connect( mMsgManager, SIGNAL(closing(KopeteMessageManager*)), this, SLOT(slotMessageManagerDestroyed()));
 		isConnected = true;
 		QObject::connect( KopeteViewManager::viewManager(), SIGNAL(viewCreated(KopeteView*)),this, SLOT( slotJoinChannel(KopeteView*) ) );
 	}
@@ -97,10 +97,9 @@ void IRCChannelContact::slotMessageManagerDestroyed()
 {
 	KopeteContactPtrList contacts = mMsgManager->members();
 	for( KopeteContact *c = contacts.first(); c; c = contacts.next() )
-	{
 		mAccount->unregisterUser( static_cast<IRCContact*>(c)->nickName() );
-	}
 
+	mAccount->unregisterChannel( mNickName );
 	slotPart();
 	isConnected = false;
 	mMsgManager = 0L;
