@@ -1,6 +1,7 @@
  /*
     kyahoo.cpp - QT libyahoo2 wrapper
 
+    Copyright (c) 2003 by Matt Rogers <mattrogers@sbcglobal.net>
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
     Copyright (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
@@ -67,8 +68,8 @@ void YahooSessionManager::setFileTransfer(QString host, int port)
 }
 
 int YahooSessionManager::socketDescriptor( int session_id )
-{ 
-	return m_fdMap[session_id] ? m_fdMap[session_id] : 0L; 
+{
+	return m_fdMap[session_id] ? m_fdMap[session_id] : 0L;
 }
 
 YahooSession* YahooSessionManager::createSession(const QString username, const QString password, int initial)

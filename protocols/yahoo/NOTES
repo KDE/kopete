@@ -4,6 +4,8 @@
     we won't be able to see them
 - XSL parsing works now.
 - The yahoo plugin crashes kopete while using a custom away mode
+- Displaying a custom away mode doesn't work, although the plugin knows that
+  the person is away.
 - Pretty much all basic functionality is there now.
 - Main thing to note is invisible mode, which won't work if you go straight from
     offline->invisible, since it will go offline->online->invisible and the

@@ -1,26 +1,25 @@
-/***************************************************************************
-                          yahooprefs.cpp  -  description
-                             -------------------
-    begin                : Fri Apr 26 2002
-    copyright            : (C) 2002 by Bruno Rodrigues
-    email                : bruno.rodrigues@litux.org
+/*
+    yahooeditaccount.cpp - UI Page to edit a Yahoo account
 
-    Based on code from   : (C) 2002 by Duncan Mac-Vicar Prett
-    email                : duncan@kde.org
- ***************************************************************************/
+    Copyright (c) 2003 by Matt Rogers <mattrogers@sbcglobal.net>
+    Copyright (c) 2002 by Bruno Rodrigues <bruno.rodrigues@litux.org>
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Portions based on code by Duncan Mac-Vicar Prett <duncan@kde.org>
+
+    Copyright (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 
 // Local Includes
-#include "yahoodebug.h"
 #include "yahooprefs.h"
 
 // Kopete Includes
@@ -41,7 +40,7 @@
 YahooPreferences::YahooPreferences(const QString &pixmap, QObject *parent)
 	: ConfigModule(i18n("Yahoo Plugin"), i18n("Yahoo Protocol"), pixmap, parent)
 {
-	DEBUG(YDMETHOD, "YahooPreferences::YahooPreferences(" << pixmap << ", <parent>)");
+	kdDebug(14180) << k_funcinfo << endl;
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	m_yahooPrefsDialog = new dlgPreferences(this);
@@ -61,14 +60,14 @@ YahooPreferences::YahooPreferences(const QString &pixmap, QObject *parent)
 // Destructor
 YahooPreferences::~YahooPreferences()
 {
-	DEBUG(YDMETHOD, "YahooPreferences::~YahooPreferences()");
+	kdDebug(14180) << k_funcinfo << endl;
 }
 
 
 // Save preferences
 void YahooPreferences::save()
 {
-	DEBUG(YDMETHOD, "YahooPreferences::save()");
+	kdDebug(14180) << k_funcinfo << endl;
 
 	m_config->setGroup("Yahoo");
 	m_config->writeEntry("Server", m_yahooPrefsDialog->mServer->text());

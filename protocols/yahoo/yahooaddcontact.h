@@ -1,19 +1,19 @@
-/***************************************************************************
-                          yahooaddcontact.h  -  description
-                             -------------------
-    begin                : Wed Jan 23 2002
-    copyright            : (C) 2002 by Gav Wood
-    email                : gav@kde.org
- ***************************************************************************/
+/*
+    yahooaddcontact.h - UI Page for Adding a Yahoo Contact
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Copyright (c) 2003 by Gav Wood               <gav@kde.org>
+    Copyright (c) 2003 by Matt Rogers            <mattrogers@sbcglobal.net>
+    Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #ifndef __YAHOOADDCONTACT_H
 #define __YAHOOADDCONTACT_H
@@ -44,7 +44,7 @@ public:
 	~YahooAddContact();
 
 	virtual bool validateData();
-	
+
 public slots:
 	virtual bool apply(KopeteAccount *theAccount, KopeteMetaContact *theMetaContact);
 };
