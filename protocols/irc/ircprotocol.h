@@ -28,6 +28,7 @@ class KIRC;
 class EditAccountWidget;
 class KopeteAccount;
 class IRCAccount;
+class KActionCollection;
 
 class QStringList;
 class QWidget;
@@ -57,6 +58,8 @@ public:
 
 	virtual KopeteAccount* createNewAccount(const QString &accountId);
 
+	virtual KActionCollection *customChatWindowPopupActions( const KopeteMessage &, DOM::Node & );
+
 	/**
 	 * Returns a pointer to the KSParser. The KSParser changes IRC color codes into HTML
 	 * for use in KopeteMessage.
@@ -70,6 +73,10 @@ public:
 	static KopeteOnlineStatus IRCChannelOffline() { return m_ChannelOffline; };
 	static KopeteOnlineStatus IRCUserOffline() { return m_UserOffline; };
 
+private slots:
+	void slotJoinChannel();
+	void slotMessageFilter( KopeteMessage &msg );
+
 
 private:
 	/** FIXME: Do something with this when Account support is added!!!!!!!! */
@@ -82,7 +89,11 @@ private:
 	static KopeteOnlineStatus m_UserOnline;
 	static KopeteOnlineStatus m_UserOffline;
 
+	KActionCollection *mActions;
+
 	KSParser *mParser;
+	DOM::Node activeNode;
+	IRCAccount *activeAccount;
 };
 
 #endif

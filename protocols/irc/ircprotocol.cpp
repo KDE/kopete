@@ -21,7 +21,7 @@
 #include <qcursor.h>
 #include <qregexp.h>
 #include <qdict.h>
-
+#include <dom/html_element.h>
 #include <kaction.h>
 #include <kconfig.h>
 #include <kdebug.h>
@@ -42,6 +42,8 @@
 #include "ircchannelcontact.h"
 #include "kopeteaccountmanager.h"
 #include "irceditaccountwidget.h"
+#include "kopetemessagemanagerfactory.h"
+#include "kactioncollection.h"
 #include "kirc.h"
 #include "ksparser.h"
 
@@ -58,6 +60,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 : KopeteProtocol( parent, name )
 {
 	s_protocol = this;
+	mActions = 0L;
 
 	kdDebug(14120) << k_funcinfo << endl;
 	// Load all ICQ icons from KDE standard dirs
@@ -88,6 +91,8 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		cfg->deleteEntry("AutoConnect");
 		cfg->sync();
 	}
+
+	QObject::connect( KopeteMessageManagerFactory::factory(), SIGNAL(aboutToDisplay(KopeteMessage &)), this, SLOT(slotMessageFilter(KopeteMessage &)) );
 }
 
 IRCProtocol * IRCProtocol::protocol()
@@ -98,6 +103,48 @@ IRCProtocol * IRCProtocol::protocol()
 IRCProtocol::~IRCProtocol()
 {
 	delete mParser;
+}
+
+void IRCProtocol::slotMessageFilter( KopeteMessage &msg )
+{
+	if( msg.from()->protocol()->inherits("IRCProtocol") )
+	{
+		kdDebug(14120) << k_funcinfo << endl;
+		QString messageText = msg.escapedBody();
+		kdDebug(14120) << k_funcinfo << messageText << endl;
+		//Add right click for channels
+		messageText.replace( QRegExp( QString::fromLatin1("(^|[\\W\\s])(#\\w+)") ), QString::fromLatin1("\\1<span class=\"KopeteIRCChannel\" style=\"cursor:pointer;\">\\2</span>") );
+
+		msg.setBody( messageText, KopeteMessage::RichText );
+	}
+}
+
+KActionCollection *IRCProtocol::customChatWindowPopupActions( const KopeteMessage &m, DOM::Node &n )
+{
+	delete mActions;
+	mActions = 0L;
+	DOM::HTMLElement e = n;
+
+	//isNull checks that the cast was successful
+	if( !e.isNull() && !m.to().isEmpty() )
+	{
+		activeNode = n;
+		activeAccount = static_cast<IRCAccount*>( m.from()->account() );
+		mActions = new KActionCollection(this);
+		if( e.className() == QString::fromLatin1("KopeteIRCChannel") )
+		{
+			new KAction(i18n("Join %1").arg(e.innerText().string()),0,this,SLOT(slotJoinChannel()),mActions);
+		}
+	}
+
+	return mActions;
+}
+
+void IRCProtocol::slotJoinChannel()
+{
+	DOM::HTMLElement e = activeNode;
+	if( !e.isNull() )
+		activeAccount->findChannel( e.innerText().string() )->startChat();
 }
 
 AddContactPage *IRCProtocol::createAddContactWidget(QWidget *parent, KopeteAccount *account)

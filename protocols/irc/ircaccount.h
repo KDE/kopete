@@ -95,7 +95,7 @@ public:
 	virtual void setAway(bool);
 
 	virtual bool isConnected();
-	
+
 protected:
 	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact ) ;
 
@@ -108,7 +108,7 @@ private slots:
 	void slotConnectedToServer();
 	void slotConnectionClosed();
 	void slotNewPrivMessage(const QString &originating, const QString &target, const QString &message);
-	void slotContactDestroy(KopeteContact *);
+	void slotContactDestroyed(QObject *);
 
 private:
 	const IRCProtocol *mProtocol;

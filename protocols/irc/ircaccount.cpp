@@ -144,8 +144,8 @@ bool IRCAccount::addContact( const QString &contact, const QString &displayName,
 	else if( c->metaContact()->isTemporary() )
 		m->setTemporary(false);
 
-	QObject::connect(c, SIGNAL(contactDestroyed(KopeteContact *)), this, 
-		SLOT(slotContactDestroy(KopeteContact *)));
+	QObject::connect(c, SIGNAL(destroyed(QObject *)), this,
+		SLOT(slotContactDestroyed(QObject *)));
 
 	return true;
 }
@@ -182,7 +182,7 @@ void IRCAccount::unregisterChannel( const QString &name )
 	if( mChannels.contains( lowerName ) )
 	{
 		IRCChannelContact *channel = mChannels[lowerName];
-		if( channel->conversations() == 0 && !channel->metaContact() )
+		if( channel->conversations() == 0 && (!channel->metaContact() || channel->metaContact()->isTemporary()) )
 		{
 			delete channel->metaContact();
 			mChannels.remove(lowerName);
@@ -220,7 +220,7 @@ void IRCAccount::unregisterUser( const QString &name )
 	if( mUsers.contains( lowerName ) )
 	{
 		IRCUserContact *user = mUsers[lowerName];
-		if( user->conversations() == 0 && !user->metaContact() )
+		if( user->conversations() == 0 && (!user->metaContact() || user->metaContact()->isTemporary()) )
 		{
 			delete user->metaContact();
 			mUsers.remove(lowerName);
@@ -229,10 +229,11 @@ void IRCAccount::unregisterUser( const QString &name )
 	}
 }
 
-void IRCAccount::slotContactDestroy(KopeteContact *contact)
+void IRCAccount::slotContactDestroyed(QObject *contact)
 {
-	const QString id = contact->contactId();
-	
+	kdDebug(14120) << k_funcinfo << endl;
+	const QString id = static_cast<KopeteContact*>( contact )->contactId();
+
 	if ( id.startsWith( QString::fromLatin1("#") ) )
 		unregisterChannel(id);
 	else
@@ -261,7 +262,7 @@ void IRCAccount::successfullyChangedNick(const QString &/*oldnick*/, const QStri
 }
 
 bool IRCAccount::addContactToMetaContact( const QString &contactId, const QString &displayName,
-	 KopeteMetaContact *parentContact ) 
+	 KopeteMetaContact *parentContact )
 {
 	//TODO:
 	kdDebug(14120) << k_funcinfo << "TODO" << endl;
