@@ -188,6 +188,7 @@ void YahooAccount::connectWithPassword( const QString &passwd )
 	{
 		kdDebug(14180) << "Attempting to connect to Yahoo on <" << server << ":" << port << ">. user <" << accountId() << ">" << endl;
 
+		static_cast<YahooContact*>( myself() )->setOnlineStatus( m_protocol->Connecting );
 		if(m_session)
 		{
 			if( m_session->sessionId() > 0)

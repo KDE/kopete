@@ -66,6 +66,7 @@ public:
 	const KopeteOnlineStatus Invisible;
 	const KopeteOnlineStatus Custom;
 	const KopeteOnlineStatus Idle;
+	const KopeteOnlineStatus Connecting;
 
 	const Kopete::ContactPropertyTmpl awayMessage;
 

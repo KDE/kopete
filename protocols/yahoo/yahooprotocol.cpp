@@ -52,6 +52,7 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 	Invisible( KopeteOnlineStatus::Away, 0, this, 12, "yahoo_invisible", i18n( "Invisible" ), i18n( "Invisible" ) ),
 	Custom( KopeteOnlineStatus::Away, 20, this, 99, "yahoo_away", i18n( "Custom" ), i18n( "Custom" ) ),
 	Idle( KopeteOnlineStatus::Away, 15, this, 999, "yahoo_idle", i18n( "Idle" ), i18n( "Idle" ) ),
+	Connecting( KopeteOnlineStatus::Connecting, 2, this, 555, "yahoo_connecting", QString::fromLatin1( "FIXME: Make connecting unselectable" ), i18n( "Connecting" ) ),
 	awayMessage(Kopete::Global::Properties::self()->awayMessage())
 
 {
