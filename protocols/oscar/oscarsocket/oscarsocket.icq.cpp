@@ -802,18 +802,25 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 						WORD seq1 = messageBuf.getWord(); // some stupid sequence
 						WORD unk = messageBuf.getWord(); // unknown
 						if(unk != 0x0e00 && unk != 0x1200)
-							kdDebug(14150) << k_funcinfo << "unknown word is neither 0x0e00 nor 0x1200, it's " << unk << endl;
+						{
+							kdDebug(14150) << k_funcinfo <<
+								"unknown word is neither 0x0e00 nor 0x1200, it's " << unk << endl;
+						}
 
 						WORD seq2 = messageBuf.getWord(); // some stupid sequence
 						if (seq1 != seq2)
-							kdDebug(14150) << k_funcinfo << "seq1 != seq2, what shall we do now?" << endl;
+						{
+							kdDebug(14150) << k_funcinfo <<
+								"seq1 != seq2, what shall we do now?" << endl;
+						}
 
 						(void) messageBuf.getBlock(12); // unknown, always zero
 
-						kdDebug(14150) << k_funcinfo << "rest after 12 empty bytes:" << endl <<
-						"------------------------------------------------------" << endl <<
-						messageBuf.toString() << endl <<
-						"------------------------------------------------------" << endl;
+						kdDebug(14150) << k_funcinfo <<
+							"rest after 12 empty bytes:" << endl <<
+							"------------------------------------------------------" << endl <<
+							messageBuf.toString() << endl <<
+							"------------------------------------------------------" << endl;
 
 						BYTE msgType = messageBuf.getByte(); // message type
 						BYTE msgFlags = messageBuf.getByte(); // message flags
@@ -824,11 +831,18 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 						WORD status = messageBuf.getWord(); // Usually 0, seen 0x2000.
 						kdDebug(14150) << k_funcinfo << "status=" << status << endl;
 
-						WORD priority = messageBuf.getWord(); // Usually 0, seen 0x0002 in information request messages
+						// Usually 0, seen 0x0002 in information request messages
+						WORD priority = messageBuf.getWord();
 						if(priority == 0x02)
-							kdDebug(14150) << k_funcinfo << "priority flag says this is an 'information request'" << endl;
+						{
+							kdDebug(14150) << k_funcinfo <<
+								"priority flag says this is an 'information request'" << endl;
+						}
 						else
-							kdDebug(14150) << k_funcinfo << "priority flag = " << priority << endl;
+						{
+							kdDebug(14150) << k_funcinfo <<
+								"priority flag=" << priority << endl;
+						}
 
 						switch(msgType)
 						{
@@ -885,9 +899,9 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 										messageBuf.length() << endl;
 
 									kdDebug(14150) << k_funcinfo << "rest after this is:" << endl <<
-									"------------------------------------------------------" << endl <<
+									"======================================================" << endl <<
 									messageBuf.toString() << endl <<
-									"------------------------------------------------------" << endl;
+									"======================================================" << endl;
 
 									char *b = messageBuf.getBlock(16);
 									if (memcmp(b, PLUGINS_SIGN, sizeof(*b)) == 0)
@@ -906,12 +920,16 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 					} // END found TLV(10001)
 					else
 					{
-						kdDebug(14150) << k_funcinfo << "Could not find TLV(10001) in advanced message!" << endl;
-						kdDebug(14150) << k_funcinfo << "contained TLVs:" << endl;
+						kdDebug(14150) << k_funcinfo <<
+							"Could not find TLV(10001) in advanced message!" << endl;
+						kdDebug(14150) << k_funcinfo <<
+							"contained TLVs:" << endl;
+
 						TLV *t;
 						for(t=lst.first(); t; t=lst.next())
 						{
-							kdDebug(14150) << k_funcinfo << "TLV(" << t->type << ") length=" << t->length << endl;
+							kdDebug(14150) << k_funcinfo << "TLV(" << t->type <<
+								") length=" << t->length << endl;
 						}
 					}
 
@@ -927,7 +945,8 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 
 			default:
 			{
-				kdDebug(14150) << k_funcinfo << "Unhandled TLV(" << tlv.type << ") length=" << tlv.length << endl;
+				kdDebug(14150) << k_funcinfo << "Unhandled TLV(" << tlv.type <<
+					") length=" << tlv.length << endl;
 				delete [] tlv.data;
 				break;
 			}
@@ -1031,11 +1050,6 @@ WORD OscarSocket::sendCLI_TOICQSRV(const WORD subcommand, Buffer &data)
 	DWORD word2 = (toicqsrv_seq);
 	DWORD snacid = (word1 << 16) | word2;
 
-	// 2nd try
-/*	toicqsrv_seq++;
-	DWORD snacid = toicqsrv_seq;*/
-	// ---
-
 	outbuf.addSnac(OSCAR_FAM_21,0x0002,0x0000,snacid);
 	// yum yum, one up sequence, starts at 1 and has to be 2 for the first
 	// usage on the LEWord added some lines under this comment ;)
@@ -1054,14 +1068,12 @@ WORD OscarSocket::sendCLI_TOICQSRV(const WORD subcommand, Buffer &data)
 	outbuf.addLEWord(tlvLen-2); // length of data inside TLV, 8 if no data
 	outbuf.addLEDWord(getSN().toULong()); // own uin
 	outbuf.addLEWord(subcommand); // subcommand
-	outbuf.addLEWord(toicqsrv_seq); // TODO: make this the snac sequence's upper Word minus 1!
+
+	// TODO: make this the snac sequence's upper Word minus 1!
+	outbuf.addLEWord(toicqsrv_seq);
 
 	if (data.length() > 0)
 		outbuf.addString(data.buffer(), data.length());
-
-// 	kdDebug(14150) << "==========================================" << endl;
-// 	outbuf.print();
-// 	kdDebug(14150) << "==========================================" << endl;
 
 	sendBuf(outbuf, 0x2);
 	return (toicqsrv_seq);
@@ -1069,7 +1081,8 @@ WORD OscarSocket::sendCLI_TOICQSRV(const WORD subcommand, Buffer &data)
 
 void OscarSocket::sendCLI_SEARCHBYUIN(const unsigned long uin)
 {
-	kdDebug(14150) << k_funcinfo << "SEND CLI_SEARCHBYUIN (CLI_META), uin=" << uin << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"SEND CLI_SEARCHBYUIN (CLI_META), uin=" << uin << endl;
 	Buffer search;
 	// NOTE: EVERYTHING IN THIS BUFFER IS LITTLE-ENDIAN
 	search.addLEWord(0x0569); // subtype: 1385
@@ -1107,22 +1120,22 @@ void OscarSocket::sendCLI_SEARCHWP(
 	//LNTS FIRST
 	search.addLEWord(first.length());
 	if(first.length()>0)
-		search.addLEString(first.local8Bit(), first.length());
+		search.addLEString(first.latin1(), first.length());
 
 	// LNTS LAST
 	search.addLEWord(last.length());
 	if(last.length()>0)
-		search.addLEString(last.local8Bit(), last.length());
+		search.addLEString(last.latin1(), last.length());
 
 	// LNTS NICK
 	search.addLEWord(nick.length());
 	if(nick.length()>0)
-		search.addLEString(nick.local8Bit(), nick.length());
+		search.addLEString(nick.latin1(), nick.length());
 
 	// LNTS EMAIL
 	search.addLEWord(mail.length());
 	if(mail.length()>0)
-		search.addLEString(mail.local8Bit(), mail.length());
+		search.addLEString(mail.latin1(), mail.length());
 
 	// WORD.L MINAGE
 	search.addLEWord(minage);
@@ -1144,12 +1157,12 @@ void OscarSocket::sendCLI_SEARCHWP(
 	// LNTS CITY
 	search.addLEWord(city.length());
 	if(city.length()>0)
-		search.addLEString(city.local8Bit(), city.length());
+		search.addLEString(city.latin1(), city.length());
 
 	// LNTS STATE
 	search.addLEWord(state.length());
 	if(state.length()>0)
-		search.addLEString(state.local8Bit(), state.length());
+		search.addLEString(state.latin1(), state.length());
 
 	// WORD.L xx xx COUNTRY
 	search.addLEWord(country);
@@ -1157,17 +1170,17 @@ void OscarSocket::sendCLI_SEARCHWP(
 	// LNTS COMPANY
 	search.addLEWord(company.length());
 	if(company.length()>0)
-		search.addLEString(company.local8Bit(), company.length());
+		search.addLEString(company.latin1(), company.length());
 
 	// LNTS DEPARTMENT
 	search.addLEWord(department.length());
 	if(department.length()>0)
-		search.addLEString(department.local8Bit(), department.length());
+		search.addLEString(department.latin1(), department.length());
 
 	// LNTS POSITION
 	search.addLEWord(position.length());
 	if(position.length()>0)
-		search.addLEString(position.local8Bit(), position.length());
+		search.addLEString(position.latin1(), position.length());
 
 	// BYTE xx OCCUPATION
 	search.addLEByte(occupation);
@@ -1235,7 +1248,7 @@ WORD OscarSocket::sendReqInfo(const unsigned long uin)
 	return ret;
 }
 
-void OscarSocket::sendCLI_METASETGENERAL(ICQGeneralUserInfo &i)
+void OscarSocket::sendCLI_METASETGENERAL(const ICQGeneralUserInfo &i)
 {
 	kdDebug(14150) << k_funcinfo <<
 		"SEND (CLI_METASETGENERAL), sending general user information" << endl;
@@ -1243,9 +1256,17 @@ void OscarSocket::sendCLI_METASETGENERAL(ICQGeneralUserInfo &i)
 	Buffer req; // ! LITTLE-ENDIAN
 	req.addLEWord(0x03ea); // subtype: 1002
 	req.addLELNTS(i.nickName.latin1()); // TODO: check encoding
+	kdDebug(14150) << "nickName=" << i.nickName.latin1() << endl;
+
 	req.addLELNTS(i.firstName.latin1());
+	kdDebug(14150) << "firstName=" << i.firstName.latin1() << endl;
+
 	req.addLELNTS(i.lastName.latin1());
+	kdDebug(14150) << "lastName=" << i.lastName.latin1() << endl;
+
 	req.addLELNTS(i.eMail.latin1());
+	kdDebug(14150) << "eMail=" << i.eMail.latin1() << endl;
+
 	req.addLELNTS(i.city.latin1());
 	req.addLELNTS(i.state.latin1());
 	req.addLELNTS(i.phoneNumber.latin1());
@@ -1264,7 +1285,33 @@ void OscarSocket::sendCLI_METASETGENERAL(ICQGeneralUserInfo &i)
 }
 
 
-void OscarSocket::sendCLI_METASETSECURITY(bool requireauth, bool webaware, BYTE direct)
+void OscarSocket::sendCLI_METASETWORK(const ICQWorkUserInfo &i)
+{
+	kdDebug(14150) << k_funcinfo <<
+		"SEND (CLI_METASETWORK), sending work user information" << endl;
+
+	Buffer req; // Little Endian
+	req.addLEWord(0x03f3); //1011
+	req.addLELNTS(i.city.latin1());
+	req.addLELNTS(i.state.latin1());
+	req.addLELNTS(i.phone.latin1());
+	req.addLELNTS(i.fax.latin1());
+	req.addLELNTS(i.address.latin1());
+	req.addLELNTS(i.zip.latin1());
+	req.addLEWord(i.countryCode);
+	req.addLELNTS(i.company.latin1());
+	req.addLELNTS(i.department.latin1());
+	req.addLELNTS(i.position.latin1());
+	// The work ZIP code (for some reason duplicated)
+	req.addLELNTS(i.zip.latin1());
+	req.addLEWord(i.occupation);
+	req.addLELNTS(i.homepage.latin1());
+
+	sendCLI_TOICQSRV(0x07d0, req);
+}
+
+void OscarSocket::sendCLI_METASETSECURITY(bool requireauth, bool webaware,
+	BYTE direct)
 {
 	kdDebug(14150) << k_funcinfo <<
 		"SEND (CLI_METASETSECURITY), sending security user information" << endl;
@@ -1286,5 +1333,4 @@ void OscarSocket::sendCLI_METASETSECURITY(bool requireauth, bool webaware, BYTE 
 
 	sendCLI_TOICQSRV(0x07d0, req);
 }
-
 // vim: set noet ts=4 sts=4 sw=4:

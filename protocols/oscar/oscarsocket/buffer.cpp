@@ -134,14 +134,10 @@ int Buffer::addString(const char *s, const DWORD len)
 {
 	unsigned int pos = mBuffer.size();
 	expandBuffer(len);
-//	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
-
 	//concatenate the new string onto the buffer
-	for (unsigned int i=0; i<len; i++)
+	for(unsigned int i=0; i<len; i++)
 	{
-/*		kdDebug(14150) << k_funcinfo << "mBuffer[" << pos+i << "]  =  " <<
-			"'" << s[i] << "'" << endl;*/
-		mBuffer[pos+i] = s[i];
+		mBuffer[pos+i]=s[i];
 	}
 	return mBuffer.size();
 }
@@ -153,19 +149,13 @@ int Buffer::addString(const unsigned char *s, const DWORD len)
 
 int Buffer::addLEString(const char *s, const DWORD len)
 {
-	unsigned int pos = mBuffer.size()-1;
+	unsigned int pos = mBuffer.size();
 	expandBuffer(len);
-//	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
-
 	//concatenate the new string onto the buffer
-	for (unsigned int i=0; i<len; i++)
+	for(unsigned int i=0; i<len; i++)
 	{
-/*		kdDebug(14150) << k_funcinfo << "mBuffer[" << pos << "]  =  " <<
-			"'" << s[i] << "'" << endl;*/
-		mBuffer[pos] = ( (s[i]) & 0xff);
-		pos++;
+		mBuffer[pos+i]=((s[i]) & 0xff);
 	}
-
 	return mBuffer.size();
 }
 

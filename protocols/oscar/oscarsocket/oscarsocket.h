@@ -527,7 +527,9 @@ class OscarSocket : public OscarConnection
 		/*
 		 * sends the general info for the uin owner to icq
 		 */
-		void sendCLI_METASETGENERAL(ICQGeneralUserInfo &i);
+		void sendCLI_METASETGENERAL(const ICQGeneralUserInfo &i);
+
+		void sendCLI_METASETWORK(const ICQWorkUserInfo &i);
 
 		void sendCLI_METASETSECURITY(bool requireauth, bool webaware, BYTE direct);
 

@@ -1699,7 +1699,7 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 					Buffer msgBuf(tlvMessage.data, tlvMessage.length);
 
 					WORD charsetNumber = msgBuf.getWord();
-					WORD charsetSubset = msgBuf.getWord();
+					/*WORD charsetSubset =*/ msgBuf.getWord();
 					int messageLength = msgBuf.length();
 					if (messageLength < 1)
 						break;

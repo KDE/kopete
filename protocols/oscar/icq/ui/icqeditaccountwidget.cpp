@@ -172,6 +172,21 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		mUserInfoSettings->prsEmailEdit->setText(mAccount->pluginData(mProtocol, "PrivateEmail"));
 		// ==========================================================================
 
+		// Work TAB =================================================================
+		mUserInfoSettings->wrkNameEdit->setText(mAccount->pluginData(mProtocol, "WorkName"));
+		mUserInfoSettings->wrkDepartmentEdit->setText(mAccount->pluginData(mProtocol, "WorkDepartment"));
+		mUserInfoSettings->wrkPhoneEdit->setText(mAccount->pluginData(mProtocol, "WorkPhone"));
+		mUserInfoSettings->wrkCityEdit->setText(mAccount->pluginData(mProtocol, "WorkCity"));
+		mUserInfoSettings->wrkZipcodeEdit->setText(mAccount->pluginData(mProtocol, "WorkZip"));
+		mUserInfoSettings->wrkPositionEdit->setText(mAccount->pluginData(mProtocol, "WorkPosition"));
+		mUserInfoSettings->wrkFaxEdit->setText(mAccount->pluginData(mProtocol, "WorkFax"));
+		mUserInfoSettings->wrkStateEdit->setText(mAccount->pluginData(mProtocol, "WorkState"));
+		mProtocol->setComboFromTable(mUserInfoSettings->rwWrkCountry, mProtocol->countries(),
+			mAccount->pluginData(mProtocol, "WorkCountry").toInt());
+		mUserInfoSettings->wrkAddressEdit->setText(mAccount->pluginData(mProtocol, "WorkAddress"));
+		mUserInfoSettings->wrkHomepageEdit->setText(mAccount->pluginData(mProtocol, "WorkHomePage"));
+		// =========================================================================
+
 		QHBoxLayout *buttons = new QHBoxLayout(detLay);
 		buttons->addStretch(1);
 		QPushButton *fetch = new QPushButton(i18n("Fetch From Server"), det, "fetch");
@@ -291,6 +306,21 @@ KopeteAccount *ICQEditAccountWidget::apply()
 		mUserInfoSettings->prsEmailEdit->text());
 	// =======================================================
 
+	// Work Tab
+	mAccount->setPluginData(mProtocol, "WorkName", mUserInfoSettings->wrkNameEdit->text());
+	mAccount->setPluginData(mProtocol, "WorkDepartment", mUserInfoSettings->wrkDepartmentEdit->text());
+	mAccount->setPluginData(mProtocol, "WorkPhone", mUserInfoSettings->wrkPhoneEdit->text());
+	mAccount->setPluginData(mProtocol, "WorkCity", mUserInfoSettings->wrkCityEdit->text());
+	mAccount->setPluginData(mProtocol, "WorkZip", mUserInfoSettings->wrkZipcodeEdit->text());
+	mAccount->setPluginData(mProtocol, "WorkPosition", mUserInfoSettings->wrkPositionEdit->text());
+	mAccount->setPluginData(mProtocol, "WorkFax", mUserInfoSettings->wrkFaxEdit->text());
+	mAccount->setPluginData(mProtocol, "WorkState", mUserInfoSettings->wrkStateEdit->text());
+	mAccount->setPluginData(mProtocol, "WorkCountry", QString::number(
+		mProtocol->getCodeForCombo(mUserInfoSettings->rwWrkCountry, mProtocol->countries())));
+	mAccount->setPluginData(mProtocol, "WorkAddress", mUserInfoSettings->wrkAddressEdit->text());
+	mAccount->setPluginData(mProtocol, "WorkHomePage", mUserInfoSettings->wrkHomepageEdit->text());
+	// =======================================================
+
 	static_cast<ICQContact *>(mAccount->myself())->setOwnDisplayName(
 		mUserInfoSettings->rwNickName->text());
 
@@ -370,6 +400,8 @@ void ICQEditAccountWidget::slotSend()
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
 
 	ICQGeneralUserInfo generalInfo;
+	ICQWorkUserInfo workInfo;
+
 	generalInfo.uin=static_cast<ICQContact *>(mAccount->myself())->contactName().toULong();
 	generalInfo.nickName=mUserInfoSettings->rwNickName->text();
 	generalInfo.firstName=mUserInfoSettings->rwFirstName->text();
@@ -387,10 +419,25 @@ void ICQEditAccountWidget::slotSend()
 	generalInfo.publishEmail=false; // TODO
 	generalInfo.showOnWeb=false; // TODO
 
+	//Work Info
+	workInfo.company = mUserInfoSettings->wrkNameEdit->text();
+	workInfo.department = mUserInfoSettings->wrkDepartmentEdit->text();
+	workInfo.phone = mUserInfoSettings->wrkPhoneEdit->text();
+	workInfo.city = mUserInfoSettings->wrkCityEdit->text();
+	workInfo.zip = mUserInfoSettings->wrkZipcodeEdit->text();
+	workInfo.position = mUserInfoSettings->wrkPositionEdit->text();
+	workInfo.fax = mUserInfoSettings->wrkFaxEdit->text();
+	workInfo.state = mUserInfoSettings->wrkStateEdit->text();
+	workInfo.countryCode = mProtocol->getCodeForCombo(mUserInfoSettings->rwWrkCountry, mProtocol->countries());
+	workInfo.address = mUserInfoSettings->wrkAddressEdit->text();
+	workInfo.homepage = mUserInfoSettings->wrkHomepageEdit->text();
+	workInfo.occupation = 0; // TODO: work occupation missing in UI
+
 	OscarSocket *osocket = static_cast<ICQAccount *>(mAccount)->engine();
 	if(osocket)
 	{
 		osocket->sendCLI_METASETGENERAL(generalInfo);
+		osocket->sendCLI_METASETWORK(workInfo);
 		osocket->sendCLI_METASETSECURITY(
 			mAccountSettings->chkRequireAuth->isChecked(),
 			mAccountSettings->chkWebAware->isChecked(),
@@ -398,8 +445,10 @@ void ICQEditAccountWidget::slotSend()
 	}
 	else
 	{
-		kdDebug(14150) << k_funcinfo << "Failed to fetch engine counter, cannot send userinfo" << endl;
+		kdDebug(14150) << k_funcinfo <<
+			"Failed to fetch engine pointer, cannot send userinfo" << endl;
 	}
+
 	mModified=false;
 }
 

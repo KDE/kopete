@@ -549,7 +549,7 @@ void ICQProtocol::contactInfo2UserInfoWidget(ICQContact *c, ICQUserInfoWidget *w
 	fillTZCombo(widget->rwTimezone);
 	setTZComboValue(widget->rwTimezone, c->generalInfo.timezoneCode);
 	kdDebug(14200) << k_funcinfo << "timezonecode=" << c->generalInfo.timezoneCode << endl;
-/*
+	/*
 	widget->rwTimezone->setCurrentText(c->generalInfo.timezoneCode)
 		QString("GMT%1%2:%3")
 			.arg(c->generalInfo.timezoneCode > 0 ? "-" : "+")
@@ -644,7 +644,7 @@ void ICQProtocol::contactInfo2UserInfoWidget(ICQContact *c, ICQUserInfoWidget *w
 	widget->wrkPhoneEdit->setText (c->workInfo.phone);
 	widget->wrkFaxEdit->setText (c->workInfo.fax);
 	widget->wrkAddressEdit->setText(c->workInfo.address);
-	// TODO: c->workInfo.zip
+	widget->wrkZipcodeEdit->setText(c->workInfo.zip);
 	widget->wrkNameEdit->setText(c->workInfo.company);
 	widget->wrkDepartmentEdit->setText(c->workInfo.department);
 	widget->wrkPositionEdit->setText(c->workInfo.position);
@@ -671,7 +671,7 @@ void ICQProtocol::contactInfo2UserInfoWidget(ICQContact *c, ICQUserInfoWidget *w
 			QString tmpHP = homepage; // copy it, do not work on the original
 			widget->wrkHomepageLabel->setText(tmpHP);
 
-			if ( !tmpHP.contains("://") ) // assume http-protocol if not protocol given
+			if(!tmpHP.contains("://")) // assume http-protocol if not protocol given
 				tmpHP.prepend("http://");
 			widget->wrkHomepageLabel->setURL(tmpHP);
 
