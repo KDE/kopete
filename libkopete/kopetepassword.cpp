@@ -33,6 +33,7 @@
 #include <kmessagebox.h>
 #include <kwallet.h>
 #include <kiconloader.h>
+#include <kpassdlg.h>
 
 namespace
 {
@@ -180,7 +181,7 @@ public:
 	
 		mView->m_text->setText( mPrompt );
 		mView->m_image->setPixmap( mImage );
-		mView->m_password->setText( password );
+		mView->m_password->insert( password );
 		if ( mMaxLength != 0 )
 			mView->m_password->setMaxLength( mMaxLength );
 	
@@ -196,7 +197,7 @@ public:
 
 	void slotOkPressed()
 	{
-		QString result = mView->m_password->text();
+		QString result = QString::fromLocal8Bit( mView->m_password->password() );
 		if ( mView->m_save_passwd->isChecked() )
 			mPassword.set( result );
 	
@@ -429,7 +430,7 @@ QString KopetePassword::retrieve( const QPixmap &image, const QString &prompt, b
 	if ( passwdDialog->exec() == QDialog::Accepted )
 	{
 		d->remembered = view->m_save_passwd->isChecked();
-		pass = view->m_password->text();
+		pass = QString::fromLocal8Bit( view->m_password->password() );
 		if ( d->remembered )
 			set( pass );
 	}
