@@ -165,7 +165,7 @@ KopeteTransfer* KopeteTransferManager::addTransfer(  KopeteContact *contact, con
 	return trans;
 }
 
-int KopeteTransferManager::askIncommingTransfer(  KopeteContact *contact, const QString& file, const unsigned long size, const QString& description, void *internalId)
+int KopeteTransferManager::askIncomingTransfer(  KopeteContact *contact, const QString& file, const unsigned long size, const QString& description, void *internalId)
 {
 //	if (nextID != 0)
 		nextID++;

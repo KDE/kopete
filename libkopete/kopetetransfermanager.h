@@ -69,7 +69,7 @@ public:
 
 	~KopeteTransferManager(){};
 	KopeteTransfer *addTransfer( KopeteContact *contact, const QString& file, const unsigned long size, const QString &recipient , KopeteFileTransferInfo::KopeteTransferDirection di);
-	int askIncommingTransfer( KopeteContact *contact, const QString& file, const unsigned long size, const QString& description=QString::null, void *internalId=0L);
+	int askIncomingTransfer( KopeteContact *contact, const QString& file, const unsigned long size, const QString& description=QString::null, void *internalId=0L);
 	void removeTransfer( unsigned int id );
 	void paintProgressBar(QListViewItem *item, const int currentPercent);
 
