@@ -376,7 +376,7 @@ GaduAccount::sendMessage( uin_t recipient, const QString& msg, int msgClass )
 void
 GaduAccount::error( const QString& title, const QString& message )
 {
-	KMessageBox::error( 0, message, title );
+	KMessageBox::error( 0, title, message );
 }
 
 void
