@@ -190,13 +190,13 @@ void KopeteWindow::initActions()
 	actionShowEmptyGroups->setCheckedState(i18n("Hide Empty &Groups"));
 
 	// quick search bar
-	QHBox *quickSearchContainer = new QHBox( 0, "kde toolbar widget" );
-	QLabel *searchLabel = new QLabel( i18n("Se&arch:"), quickSearchContainer, "kde toolbar widget" );
-	QWidget *searchBar = new Kopete::UI::ListView::SearchLine( quickSearchContainer, contactlist, "quicksearch_bar" );
+	QLabel *searchLabel = new QLabel( i18n("Se&arch:"), 0, "kde toolbar widget" );
+	QWidget *searchBar = new Kopete::UI::ListView::SearchLine( 0, contactlist, "quicksearch_bar" );
 	searchLabel->setBuddy( searchBar );
-	KWidgetAction *quickSearch = new KWidgetAction( quickSearchContainer, i18n( "Quick Search Bar" ), 0, 0, 0, actionCollection(), "quicksearch_bar" );
+	KWidgetAction *quickSearch = new KWidgetAction( searchBar, i18n( "Quick Search Bar" ), 0, 0, 0, actionCollection(), "quicksearch_bar" );
+	new KWidgetAction( searchLabel, i18n( "Search:" ), 0, 0, 0, actionCollection(), "quicksearch_label" );
 	quickSearch->setAutoSized( true );
-	connect( quickSearch, SIGNAL( activated() ), searchBar, SLOT( setFocus() ) );
+	connect( searchLabel, SIGNAL( activated() ), searchBar, SLOT( setFocus() ) );
 	// quick search bar - clear button
 	KAction *resetQuickSearch = new KAction( i18n( "Reset Quick Search" ),
 		QApplication::reverseLayout() ? "clear_left" : "locationbar_erase",
