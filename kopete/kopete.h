@@ -106,7 +106,8 @@ private:
 	AppearanceConfig *mAppearance;
 	QString mEmoticonTheme;
 
-	static void cleverKCrashHack(int);
+	#warning "Remember to remove cleverCrashHack completely"
+	//static void cleverKCrashHack(int);
 	void loadPlugins();
 
 public slots:

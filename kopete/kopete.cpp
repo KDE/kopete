@@ -230,6 +230,7 @@ void Kopete::loadPlugins()
 	mLibraryLoader->loadAll();
 }
 
+/*
 void Kopete::cleverKCrashHack(int)
 {
 	// do nothing
@@ -244,6 +245,7 @@ void Kopete::cleverKCrashHack(int)
 	kdDebug() << "Crashed.\n" << endl;
 	_exit(255);
 }
+*/
 
 void Kopete::initEmoticons()
 {
