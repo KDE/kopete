@@ -470,7 +470,7 @@ void IRCUserContact::slotIncomingModeChange( const QString &channel, const QStri
 
 void IRCUserContact::privateMessage(IRCContact *from, IRCContact *to, const QString &message)
 {
-	if(to == this)
+	if (to == this)
 	{
 		if(to==account()->myself())
 		{
@@ -491,7 +491,7 @@ void IRCUserContact::newAction(const QString &from, const QString &action)
 	kdDebug(14120) << k_funcinfo << m_nickName << endl;
 
 	//Either this is from me to a guy, or from a guy to me. Either way its a PM
-	if( this == MYACCOUNT->mySelf() )
+	if (this != MYACCOUNT->mySelf())
 	{
 		IRCContact *f = MYACCOUNT->contactManager()->findUser( from );
 		KopeteMessage msg(f, f->manager()->members(), action,
