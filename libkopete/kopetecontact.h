@@ -130,16 +130,14 @@ public:
 
 	/**
 	 * Set the contact's online status and status descryption
-	 * By default description is set to QString::null, this mean
-	 * that it is not used 
+	 * When unused description is set to QString::null
 	*/
 	void setOnlineStatus(const KopeteOnlineStatus &status, 
 			const QString &statusDescription=QString::null);
 
 	/**
 	 * Returns QString::null if protocol do not use it,
-	 * or status description otherwise, empty string (not null), 
-	 * if current status does not require description.
+	 * or current status does not require description.
 	 */
 	   
 	QString statusDescription() const;
