@@ -166,6 +166,7 @@ void Level::resetTag(TagEnum tag)
            Thus, for each tag we remove from the actual tag stack, we also
            try to remove a yet-to-be-printed tag, and only if there are no
            yet-to-be-printed tags left, we start closing the tags we pop.
+           The tags have one space - needed for umlaute (צהü) and .utf8()
         */
         if (p->oTags.empty()){
             switch (nTag){
@@ -173,16 +174,16 @@ void Level::resetTag(TagEnum tag)
             case TAG_FONT_SIZE:
             case TAG_BG_COLOR:
             case TAG_FONT_FAMILY:
-                p->PrintUnquoted("</span>");
+                p->PrintUnquoted(" </span>");
                 break;
             case TAG_BOLD:
-                p->PrintUnquoted("</b>");
+                p->PrintUnquoted(" </b>");
                 break;
             case TAG_ITALIC:
-                p->PrintUnquoted("</i>");
+                p->PrintUnquoted(" </i>");
                 break;
             case TAG_UNDERLINE:
-                p->PrintUnquoted("</u>");
+                p->PrintUnquoted(" </u>");
                 break;
             default:
                 break;
