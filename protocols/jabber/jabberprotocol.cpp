@@ -627,11 +627,6 @@ bool JabberProtocol::isAway(void) const
 	return (myContact->status() != JabberContact::Online);
 }
 
-QString JabberProtocol::protocolIcon() const
-{
-	return "jabber_protocol_32";
-}
-
 void JabberProtocol::serialize(KopeteMetaContact *mc )
 {
 	QStringList addressList;

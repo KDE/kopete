@@ -75,11 +75,6 @@ KopeteContact* SMSProtocol::myself() const
 	return m_mySelf;
 }
 
-QString SMSProtocol::protocolIcon() const
-{
-	return "metacontact_online";
-}
-
 AddContactPage *SMSProtocol::createAddContactWidget(QWidget *parent)
 {
 	return (new SMSAddContactPage(this,parent));

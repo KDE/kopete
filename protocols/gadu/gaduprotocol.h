@@ -56,7 +56,6 @@ public:
     // {
     void init();
 
-    QString protocolIcon() const ;
     void Connect();
     void Disconnect();
     bool isConnected() const;

@@ -151,24 +151,29 @@ KopeteLibraryInfo LibraryLoader::getInfo(const QString &spec) const
 	QMap<QString, KopeteLibraryInfo>::iterator cached = m_cachedInfo.find(spec);
 	if (cached != m_cachedInfo.end() )
 		return *cached;
+
 	KopeteLibraryInfo info;
-	QString specPath = (spec[0]=='/') ? spec : KGlobal::dirs()->findResource("appdata", spec);
-	if (!QFile::exists(specPath))
+	QString specPath = ( spec[ 0 ] == '/' ) ? spec : KGlobal::dirs()->findResource( "appdata", spec );
+	if( !QFile::exists( specPath ) )
 		return info;
-	KSimpleConfig file(specPath);
-	if (spec.find('/')>=0)
-		info.specfile=KURL(spec).fileName();
+
+	KSimpleConfig file( specPath );
+	if( spec.find( '/' ) >= 0 )
+		info.specfile = KURL( spec ).fileName();
 	else
-		info.specfile=spec;
-	info.filename=file.readEntry("Filename");
-	info.author=file.readEntry("Author");
-	info.site=file.readEntry("Site");
-	info.email=file.readEntry("Email");
-	info.type=file.readEntry("Type");
-	info.name=file.readEntry("Name");
-	info.comment=file.readEntry("Comment");
-	info.license=file.readEntry("License");
-	m_cachedInfo[spec]=info;
+		info.specfile = spec;
+
+	info.filename = file.readEntry( "Filename" );
+	info.author   = file.readEntry( "Author" );
+	info.site     = file.readEntry( "Site" );
+	info.email    = file.readEntry( "Email" );
+	info.type     = file.readEntry( "Type" );
+	info.name     = file.readEntry( "Name" );
+	info.comment  = file.readEntry( "Comment" );
+	info.license  = file.readEntry( "License" );
+	info.icon     = file.readEntry( "Icon" );
+
+	m_cachedInfo[ spec ] = info;
 	return info;
 }
 
@@ -292,6 +297,18 @@ KopetePlugin * LibraryLoader::searchByName(const QString &name)
 			return (*i);
 	}
 	return 0L;
+}
+
+QString LibraryLoader::pluginIcon( const QString &pluginId ) const
+{
+	QDictIterator<KopetePlugin> i( mLibHash );
+	for( ; i.current(); ++i )
+	{
+		if( i.currentKey() == pluginId );
+			return getInfo( i.currentKey() ).icon;
+	}
+
+	return QString::null;
 }
 
 #include <pluginloader.moc>

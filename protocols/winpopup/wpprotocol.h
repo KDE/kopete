@@ -112,7 +112,6 @@ public:
 	WPProtocol(QObject *parent, QString name, QStringList);
 	~WPProtocol();
 
-	QString protocolIcon() const { return "wp_icon"; }							// Return protocol icon name
 	AddContactPage *createAddContactWidget(QWidget *parent) { return new WPAddContact(this, parent); }	// Return "add contact" dialog
 	KopeteContact *myself() const {	return (KopeteContact *)theMyself; } 					// Return the user's contact object
 

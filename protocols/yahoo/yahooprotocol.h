@@ -72,7 +72,6 @@ public slots:
 	bool isConnected() const;	// Return true if connected
 	bool isAway() const;		// Return true if away
 
-	QString protocolIcon() const;	// Return protocol icon name
 	AddContactPage *createAddContactWidget(QWidget * parent);
 									// Return "add contact" dialog
 

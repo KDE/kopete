@@ -71,11 +71,6 @@ public:
 	 */
 	KopeteContact *myself() const;
 
-	/**
-	 * Return the protocol icon
-	 */
-	QString protocolIcon() const;
-
 	KActionMenu *protocolActions();
 	
 	/**

@@ -231,12 +231,6 @@ bool IRCProtocol::isAway(void) const
 	return false;
 }
 
-/** This i used for al protocol selection dialogs */
-QString IRCProtocol::protocolIcon() const
-{
-	return "irc_protocol";
-}
-
 AddContactPage *IRCProtocol::createAddContactWidget(QWidget *parent)
 {
 	return (new IRCAddContactPage(this,parent));

@@ -4,6 +4,7 @@ Site=http://www.mac-vicar.com
 Email=duncan@kde.org
 Type=other
 License=GPL
+Icon=autoaway_plugin
 Name=Motion Auto-Away
 Name[es]=Autoalejado por movimiento
 Name[fr]=Auto-absence

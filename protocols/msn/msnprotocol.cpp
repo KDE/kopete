@@ -303,12 +303,6 @@ KopeteContact* MSNProtocol::myself() const
 	return m_myself;
 }
 
-/** This i used for al protocol selection dialogs */
-QString MSNProtocol::protocolIcon() const
-{
-	return "msn_protocol";
-}
-
 AddContactPage *MSNProtocol::createAddContactWidget(QWidget *parent)
 {
 	return (new MSNAddContactPage(this,parent));

@@ -147,12 +147,6 @@ GaduProtocol::init()
 {
 }
 
-QString
-GaduProtocol::protocolIcon() const
-{
-    return "gadu_protocol";
-}
-
 void
 GaduProtocol::Connect()
 {

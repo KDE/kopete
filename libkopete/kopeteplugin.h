@@ -64,6 +64,14 @@ public:
 	 */
 	virtual KActionCollection *customChatActions(KopeteMessageManager*) { return 0l; };
 
+	/**
+	 * Get the name of the icon for this plugin. The icon name is taken
+	 * from the .plugin file.
+	 *
+	 * May return an empty string if the .plugin file for this plugin
+	 * specifies no icon name to use.
+	 */
+	QString pluginIcon() const;
 
 public slots:
 	/**

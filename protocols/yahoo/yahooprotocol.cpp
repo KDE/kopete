@@ -280,13 +280,6 @@ bool YahooProtocol::isAway() const
 	return false; // XXX
 }
 
-QString YahooProtocol::protocolIcon() const
-{
-	kdDebug() <<  "YahooProtocol::protocolIcon" << endl;
-
-	return ""; // XXX
-}
-
 AddContactPage *YahooProtocol::createAddContactWidget(QWidget * parent)
  {
 	kdDebug() << "YahooProtocol::createAddContactWidget(<parent>)" << endl;

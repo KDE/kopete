@@ -43,6 +43,7 @@ struct KopeteLibraryInfo
 	QString email;
 	QString name;
 	QString comment;
+	QString icon;
 };
 
 bool operator ==(const KopeteLibraryInfo &, const KopeteLibraryInfo &);
@@ -108,6 +109,14 @@ public:
 	 * Returns an empty QStringList if the plugin is invalid.
 	 */
 	QStringList addressBookFields( KopetePlugin *p ) const;
+
+	/**
+	 * Retrieve the name of the icon for a KopetePlugin
+	 *
+	 * May return an empty string if the given plugin is not loaded, or
+	 * the .plugin file for this plugin specifies no icon name to use.
+	 */
+	QString pluginIcon( const QString &pluginId ) const;
 
 signals:
 	void pluginLoaded(KopetePlugin *);

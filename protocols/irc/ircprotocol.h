@@ -48,7 +48,6 @@ public:
 	void deserialize( KopeteMetaContact *metaContact, const QStringList &strList );
 
 	/** KopeteProtocol reimplementation */
-	virtual QString protocolIcon() const;
 	virtual AddContactPage *createAddContactWidget(QWidget *parent);
 	virtual void Connect();
 	virtual void Disconnect();
