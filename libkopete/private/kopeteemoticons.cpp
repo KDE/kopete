@@ -235,9 +235,9 @@ QString KopeteEmoticons::parseEmoticons( QString message )
 				QString::number(iconImage.width()) +
 				QString::fromLatin1("\" height=\"") +
 				QString::number(iconImage.height()) +
-				QString::fromLatin1("\" src=\"") +
-				imgPath + QString::fromLatin1( "\">" )
-				);
+				QString::fromLatin1("\" src=\"") + imgPath +
+				QString::fromLatin1("\" title=\"") + QStyleSheet::escape(*it) +
+				QString::fromLatin1( "\">" ) );
 		}
 	}
 
