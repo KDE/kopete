@@ -718,11 +718,11 @@ void KIRC::sendNotice(const QString &target, const QString &message)
 
 bool KIRC::notice(const KIRCMessage &msg)
 {
-	if(msg.hasCtcpMessage())
-		invokeCtcpCommandOfMessage(msg, m_IrcCTCPQueryMethods);
-
 	if(!msg.suffix().isEmpty())
 		emit incomingNotice(msg.prefix(), msg.suffix());
+
+	if(msg.hasCtcpMessage())
+		invokeCtcpCommandOfMessage(msg, m_IrcCTCPReplyMethods);
 
 	return true;
 }
