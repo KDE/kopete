@@ -20,25 +20,30 @@
 #include <kconfig.h>
 #include "ui/preferencesdialog.h"
 
-Kopete::Kopete(QWidget *parent, const char *name) : QWidget(parent, name)
+Kopete::Kopete(): KUniqueApplication(true, true, true)
 {
-	plugins = new PluginManager();
-	QBoxLayout *layout = new QBoxLayout(this,QBoxLayout::TopToBottom);
-  QBoxLayout *layout2 = new QBoxLayout(this,QBoxLayout::LeftToRight);
-  QBoxLayout *layout3 = new QBoxLayout(this,QBoxLayout::LeftToRight);
-
-	contactlist = new ContactList(this);
-	mainbutton = new QPushButton(this);
+	mainwidget = new QWidget(0);
+	setMainWidget(mainwidget);
+	mPref=new PreferencesDialog(0);
+  mPref->hide();
 	
-	addbutton = new QPushButton(this);
-	globalbutton = new QPushButton(this);
-	awaybutton = new QPushButton(this);
-	otherbutton = new QPushButton(this);
+	plugins = new PluginManager();
+	QBoxLayout *layout = new QBoxLayout(mainwidget,QBoxLayout::TopToBottom);
+  QBoxLayout *layout2 = new QBoxLayout(mainwidget,QBoxLayout::LeftToRight);
+  QBoxLayout *layout3 = new QBoxLayout(mainwidget,QBoxLayout::LeftToRight);
 
-	statuslabel = new QLabel(this);
-  popupmenu = new KPopupMenu(this);
-  icqpopupmenu = new KPopupMenu(this);
-  msnpopupmenu = new KPopupMenu(this);
+	contactlist = new ContactList(mainwidget);
+	mainbutton = new QPushButton(mainwidget);
+	
+	addbutton = new QPushButton(mainwidget);
+	globalbutton = new QPushButton(mainwidget);
+	awaybutton = new QPushButton(mainwidget);
+	otherbutton = new QPushButton(mainwidget);
+
+	statuslabel = new QLabel(mainwidget);
+  popupmenu = new KPopupMenu(mainwidget);
+  icqpopupmenu = new KPopupMenu(mainwidget);
+  msnpopupmenu = new KPopupMenu(mainwidget);
 
 	mainbutton->setText("Kopete");
 
@@ -61,10 +66,10 @@ Kopete::Kopete(QWidget *parent, const char *name) : QWidget(parent, name)
 	layout2->insertWidget(-1,statuslabel);
 	
 	icqpopupmenu->insertTitle("ICQ");
-	icqpopupmenu->insertItem("Go Online", this, SLOT(slotICQConnectByMenu()),0);
+	//icqpopupmenu->insertItem("Go Online", this, SLOT(slotICQConnectByMenu()),0);
 
 	msnpopupmenu->insertTitle("MSN Messenger");
-	msnpopupmenu->insertItem("Go Online", this, SLOT(slotMSNConnectByMenu()),0);
+	//msnpopupmenu->insertItem("Go Online", this, SLOT(slotMSNConnectByMenu()),0);
 
 	popupmenu->insertTitle("Connection");
 	popupmenu->insertItem("&ICQ",icqpopupmenu,0,32423);
@@ -73,26 +78,18 @@ Kopete::Kopete(QWidget *parent, const char *name) : QWidget(parent, name)
 	popupmenu->insertItem("&Preferences", this, SLOT(slotPreferences()),0);
 	popupmenu->insertItem("&Exit", this, SLOT(slotExit()),0);
 	mainbutton->setPopup(popupmenu);
+	mainwidget->show();
 	
 }
 
 Kopete::~Kopete()
 {
 }
-/** No descriptions */
-void Kopete::slotMSNConnectByMenu(){
-}
-/** No descriptions */
-void Kopete::slotICQConnectByMenu(){
-}
-/** No descriptions */
+
 void Kopete::slotPreferences()
 {
-
-	PreferencesDialog *dialog=new PreferencesDialog(0L,"settings");
-  	dialog->show();
-	connect(dialog,SIGNAL(closed()),this,SLOT(slotPrefDialogClosed()));
-  
+  mPref->show();
+  mPref->raise();
 }
 /** No descriptions */
 void Kopete::slotExit()

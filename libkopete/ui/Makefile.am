@@ -7,8 +7,10 @@ libui_a_METASOURCES = AUTO
 INCLUDES = $(all_includes)
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libui_a_SOURCES = \
-		DlgPrefs.ui \
+		configmodule.cpp \
 		preferencesdialog.cpp
 EXTRA_DIST = \
 		preferencesdialog.cpp \
-		preferencesdialog.h
+		preferencesdialog.h \
+		configmodule.cpp
+

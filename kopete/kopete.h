@@ -22,7 +22,8 @@
 #include <config.h>
 #endif
 
-#include <kapp.h>
+#include <kuniqueapplication.h>
+#include <kmainwindow.h>
 #include <qwidget.h>
 #include <qpushbutton.h>
 #include <qlabel.h>
@@ -31,22 +32,27 @@
 
 #include "contactlist.h"
 #include "pluginmanager.h"
+#include "ui/preferencesdialog.h"
 /** Kopete is the base class of the project */
-class Kopete : public QWidget
+class Kopete : public KUniqueApplication
 {
   Q_OBJECT 
   public:
-    /** construtor */
-    Kopete(QWidget* parent=0, const char *name=0);
-    /** destructor */
+    Kopete();
     ~Kopete();
-  /** No descriptions */
+	
+	PreferencesDialog *preferencesBox() const { return mPref; }
+  KPopupMenu *popupMenu() const { return popupmenu; };
+	
+	/** No descriptions */
   void saveOptions();
   /** No descriptions */
   void readOptions();
 
 	PluginManager *plugins;
+	PreferencesDialog *mPref;
 	private:
+	QWidget *mainwidget;
 	ContactList *contactlist;
 	QPushButton *mainbutton;
 	
@@ -61,11 +67,7 @@ class Kopete : public QWidget
 	QLabel *statuslabel;
 	
 	
-public slots: // Public slots
-  /** No descriptions */
-  void slotICQConnectByMenu();
-  /** No descriptions */
-  void slotMSNConnectByMenu();
+public slots:
   /** No descriptions */
   void slotPreferences();
   /** No descriptions */
@@ -73,5 +75,7 @@ public slots: // Public slots
   /** No descriptions */
   void slotPrefDialogClosed();
 };
+
+#define kopeteapp (static_cast<Kopete*>(kapp))
 
 #endif

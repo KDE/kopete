@@ -17,31 +17,34 @@
 
 #ifndef PREFERENCESDIALOG_H
 #define PREFERENCESDIALOG_H
+#include <klocale.h>
+#include <kdialogbase.h>
+#include <qlist.h>
 
-#include <qwidget.h>
-#include <qbuttongroup.h>
-#include <qcheckbox.h>
-#include <qgroupbox.h>
-#include <qheader.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qlistview.h>
-#include <qpushbutton.h>
-#include <qlayout.h>
-#include <qvariant.h>
-#include <qtooltip.h>
-#include <qwhatsthis.h>
-
-#include "DlgPrefs.h"
 /**
   *@author Duncan Mac-Vicar Prett
   */
+class ConfigModule;
 
-class PreferencesDialog : public DlgPrefs  {
+class PreferencesDialog : public KDialogBase
+{
+	friend class ConfigModule;
    Q_OBJECT
 public:
-	PreferencesDialog(QWidget *parent=0, const char *name=0);
+	PreferencesDialog(QWidget *parent=0);
 	~PreferencesDialog();
+public:
+  virtual void show();
+public slots:
+  virtual void slotApply();
+  virtual void slotOk();
+private:
+	void add(ConfigModule *page);
+	void remove(ConfigModule *page);
+
+private:
+	QList<ConfigModule> mModules;
+
 };
 
 #endif
