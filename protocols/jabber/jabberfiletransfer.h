@@ -48,7 +48,7 @@ public:
 private slots:
 	void slotIncomingTransferAccepted ( KopeteTransfer *transfer, const QString &fileName );
 	void slotTransferRefused ( const KopeteFileTransferInfo &transfer );
-	void slotTransferCanceled ();
+	void slotTransferResult ();
 	void slotTransferError ( int errorCode );
 
 	void slotOutgoingConnected ();
@@ -57,12 +57,15 @@ private slots:
 	void slotIncomingDataReady ( const QByteArray &data );
 
 private:
+	void initializeVariables ();
+
 	JabberAccount *mAccount;
 	XMPP::FileTransfer *mXMPPTransfer;
 	KopeteTransfer *mKopeteTransfer;
 	QFile mLocalFile;
 	int mTransferId;
-	int mBytesTransferred;
+	Q_LLONG mBytesTransferred;
+	Q_LLONG mBytesToTransfer;
 
 };
 

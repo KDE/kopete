@@ -112,6 +112,7 @@ public:
 	XMPP::S5BServer *s5bServer ();
 	void addS5bAddress ( const QString &address );
 	void removeS5bAddress ( const QString &address );
+	void setS5bPort ( int port );
 
 	/**
 	 * As the Jabber servers shouldn't be bombarded with
@@ -295,7 +296,7 @@ private slots:
 	void slotGetServices ();
 
 	void slotS5bServerGone ();
-	
+
 	/*
 	 * Update penalty timer
 	 */

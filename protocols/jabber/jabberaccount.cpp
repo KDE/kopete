@@ -123,7 +123,7 @@ XMPP::S5BServer *JabberAccount::s5bServer ()
 		KGlobal::config()->setGroup("Jabber");
 		m_s5bServer = new XMPP::S5BServer ();
 		QObject::connect ( m_s5bServer, SIGNAL ( destroyed () ), this, SLOT ( slotS5bServerGone () ) );
-		m_s5bServer->start ( KGlobal::config()->readNumEntry ( "LocalPort", 8010 ) );
+		setS5bPort ( KGlobal::config()->readNumEntry ( "LocalPort", 8010 ) );
 	}
 
 	return m_s5bServer;
@@ -178,6 +178,18 @@ void JabberAccount::removeS5bAddress ( const QString &address )
 		}
 
 		s5bServer()->setHostList ( newList );
+	}
+
+}
+
+void JabberAccount::setS5bPort ( int port )
+{
+
+	if ( !s5bServer()->start ( port ) )
+	{
+		KMessageBox::sorry ( Kopete::UI::Global::mainWidget (),
+							 i18n ( "Could not bind Jabber file transfer manager to local port, please check your settings." ),
+							 i18n ( "Failed to start Jabber File Transfer Manager" ) );
 	}
 
 }
@@ -1048,7 +1060,7 @@ void JabberAccount::slotCSError (int error)
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Error in stream signalled." << endl;
 
-	if ( ( error == XMPP::ClientStream::ErrAuth ) 
+	if ( ( error == XMPP::ClientStream::ErrAuth )
 		&& ( jabberClientStream->errorCondition () == XMPP::ClientStream::NotAuthorized ) )
 	{
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Incorrect password, retrying." << endl;

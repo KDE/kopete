@@ -141,6 +141,8 @@ KopeteAccount *JabberEditAccountWidget::apply ()
 
 	this->writeConfig ();
 
+	static_cast<JabberAccount*>(account())->setS5bPort ( sbLocalPort->value () );
+
 	return account();
 }
 

@@ -24,3 +24,6 @@ TODO for Jabber:
 - support account deletion
 - factor out client backend to single class JabberClient
 - make vCard dialog better, maybe use KIMProxy somehow
+- allow fetching vCard from "auth user?" dialog
+- allow adding file transfer reasons
+- support resuming
