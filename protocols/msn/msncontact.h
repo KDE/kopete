@@ -79,8 +79,6 @@ class MSNContact : public KopeteContact
 		// We have to delete the contact if MSN disconenct
 		// We will use the engine signal
 		void slotDeleteMySelf ( bool );
-//		void slotNewMessage(QString, QString, QString);
-//		void slotFlashIcon ( void );
 
 		void slotHistoryDialogClosing();
 		void slotCloseHistoryDialog();

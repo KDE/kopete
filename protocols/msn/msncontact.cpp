@@ -310,13 +310,9 @@ QString MSNContact::statusIcon() const
 			return "msn_away";
 			break;
 		}
-
-		default:
-		{
-			return "msn_offline";
-		}
 	}
-
+	
+	return "msn_offline";
 }
 
 int MSNContact::importance() const
