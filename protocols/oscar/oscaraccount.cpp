@@ -220,15 +220,14 @@ void OscarAccount::slotError(QString errmsg, int errorCode)
 		", errorCode=" << errorCode << "." << endl;
 
 	// 1 = username unknown to server
-	// 5 = wrong password for AIM
-	// 0 = wrong password for ICQ
-	if (errorCode == 1 || errorCode == 0 || errorCode == 5 || errorCode == 24)
+	// 5 = wrong password
+	if (errorCode == 1 || errorCode == 5 || errorCode == 24)
 		OscarAccount::disconnect();
 
 	KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errmsg,
 		i18n("Connection Lost - ICQ Plugin"), KMessageBox::Notify);
 
-	if (errorCode == 0 || errorCode == 5)
+	if (errorCode == 5)
 	{
 		d->passwordWrong = true;
 		connect();

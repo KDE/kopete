@@ -4003,7 +4003,7 @@ void OscarSocket::parseConnectionClosed(Buffer &inbuf)
 // 				kdDebug(14150) << k_funcinfo << "bad password!!!" << endl;
 				emit protocolError(
 					i18n("Could not log on to %1 with account %2 as the password was" \
-						" incorrect.").arg((mIsICQ ? "ICQ" : "AIM")).arg(getSN()), 0);
+						" incorrect.").arg((mIsICQ ? "ICQ" : "AIM")).arg(getSN()), 5);
 				break;
 			}
 
