@@ -12,6 +12,10 @@ associated with its name. Take implementation from KopeteMetaContactLVI.
 Use this function in the Kopete::MimeSourceFactory so we get MCs being
 grayed if they're idle in tooltips too.
 
+KopeteContactList::removeGroup should remove the group from all
+metacontacts. Move code from KopeteContactListView to KopeteContactList for
+this.
+
 Some sort of async message processing API needs to be designed and implemented
 Richard's proposal: (email questions to the list or to kde@metafoo.co.uk)
 - how do we order the various message filters available properly?
