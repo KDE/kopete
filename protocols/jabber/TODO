@@ -17,3 +17,10 @@ TODO for Jabber:
 - make sure that messages sent via a gateway from a non-subscribed contact
   are actually displayed
 - check if vCards are actually deleted after having retrieved them
+- serious flaw: when a new contact tries to subscribe, Kopete sends the acknowledgement
+  but does not subscribe to the new contact in return - however, Kopete creates a meta-
+  contact for this contact. This leads to the effect that Kopete displays an
+  "always offline" contact that can receive messages but not display its
+  online status. Fix: add a "ack, subscribe" and "ack, don't subscribe" to the
+  subscription dialog
+
