@@ -148,6 +148,7 @@ QDomDocument HistoryLogger::getDocument(const KopeteContact *c, unsigned int mon
 		*contain=true;
 
 	documents.insert(month, doc);
+	m_documents[c]=documents;
 
 	return doc;
 }
