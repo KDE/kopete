@@ -103,14 +103,11 @@ KopeteChatWindow *KopeteChatWindow::window( KopeteMessageManager *manager )
 			break;
 
 		case GROUP_BY_GROUP: //Open chats in the same group in the same window
-			if( g )
-			{
-				if( groupMap.contains( g ) )
-					myWindow = groupMap[ g ];
-				else
-					windowCreated = true;
-				break;
-			}
+			if( g && groupMap.contains( g ) )
+				myWindow = groupMap[ g ];
+			else
+				windowCreated = true;
+			break;
 			
 		case GROUP_BY_METACONTACT: //Open chats in the same metacontact in the same window
 			if( mcMap.contains( m ) )

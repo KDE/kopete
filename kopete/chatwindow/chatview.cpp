@@ -53,6 +53,7 @@
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopetexsl.h"
+#include "kopeteaccount.h"
 
 #if KDE_IS_VERSION(3,1,90)
 	#include <ktabwidget.h>
@@ -141,6 +142,8 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	connect( KopetePrefs::prefs(), SIGNAL(transparencyChanged()),
 		this, SLOT( slotTransparencyChanged() ) );
 	connect( KopetePrefs::prefs(), SIGNAL(messageAppearanceChanged()),
+		this, SLOT( slotRefreshNodes() ) );
+	connect( mgr->account(), SIGNAL(accountStyleChanged()),
 		this, SLOT( slotRefreshNodes() ) );
 	connect( KopetePrefs::prefs(), SIGNAL(windowAppearanceChanged()),
 		this, SLOT( slotRefreshView() ) );
@@ -987,7 +990,7 @@ void ChatView::addChatMessage( KopeteMessage &m )
 	messageMap.insert( ++messageId, m );
 	QDomDocument message = m.asXML();
 	message.documentElement().setAttribute( QString::fromLatin1("id"), QString::number(messageId) );
-	QString resultHTML = KopeteXSL::xsltTransform( message.toString(), KopetePrefs::prefs()->styleContents() );
+	QString resultHTML = KopeteXSL::xsltTransform( message.toString(), xslStyleString() );
 	HTMLElement newNode = chatView->document().createElement( QString::fromLatin1("span") );
 	newNode.setInnerHTML( resultHTML );
 
@@ -1005,6 +1008,15 @@ void ChatView::addChatMessage( KopeteMessage &m )
 		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
 }
 
+const QString ChatView::xslStyleString() const
+{
+	QString accountStyle = m_manager->account()->styleContents();
+	if( accountStyle.isNull() || accountStyle.isEmpty() )
+		return KopetePrefs::prefs()->styleContents();
+	else
+		return accountStyle;
+}
+
 void ChatView::slotRefreshNodes()
 {
 	HTMLBodyElement bodyElement = chatView->htmlDocument().body();
@@ -1012,7 +1024,7 @@ void ChatView::slotRefreshNodes()
 	QString xmlString;
 	for( QValueList<KopeteMessage>::Iterator it = messageList.begin(); it != messageList.end(); ++it)
 		xmlString += (*it).asXML().toString();
-	KopeteXSL::xsltTransformAsync( QString::fromLatin1("<document>") + xmlString + QString::fromLatin1("</document>"), KopetePrefs::prefs()->styleContents(), this, SLOT(slotTransformComplete( const QVariant &)) );
+	KopeteXSL::xsltTransformAsync( QString::fromLatin1("<document>") + xmlString + QString::fromLatin1("</document>"), xslStyleString(), this, SLOT(slotTransformComplete( const QVariant &)) );
 }
 
 void ChatView::slotRefreshView()

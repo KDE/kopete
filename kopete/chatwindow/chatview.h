@@ -469,6 +469,8 @@ private:
 	void sendInternalMessage(const QString &msg);
 
 	const QString styleHTML() const;
+	
+	const QString xslStyleString() const;
 
 	QMap<unsigned long,KopeteMessage> messageMap;
 };
