@@ -319,12 +319,7 @@ void TranslatorPlugin::translateMessage(const QString &msg , const QString &from
 
 	completeSignal.setValue( result );
 	completeSignal.activate();
-
-
-
-
 }
-
 
 QString TranslatorPlugin::translateMessage(const QString &msg , const QString &from, const QString &to)
 {
@@ -352,7 +347,7 @@ QString TranslatorPlugin::googleTranslateMessage( const QString &msg , const QSt
 
 	lp = from + "|" + to;
 
-	postData = "text=" + body +"&langpair=" + lp ;
+	postData = QString( "text=" + body + "&langpair=" + lp ).utf8();
 
 	QString gurl = "http://translate.google.com/translate_t?text=" + body +"&langpair=" + lp;
 	kdDebug(14308) << "[Translator] URL: " << gurl << endl;
@@ -382,7 +377,7 @@ QString TranslatorPlugin::googleTranslateMessage( const QString &msg , const QSt
 	//QRegExp re("*-*-* (.*) *-*-*");
 	QRegExp re("<textarea name=q rows=5 cols=45 wrap=PHYSICAL>(.*)</textarea>");
 	re.setMinimal(true);
-	re.match( data );
+	re.search( data );
 
 	QString translated = re.cap(1);
 
@@ -437,7 +432,7 @@ QString TranslatorPlugin::babelTranslateMessage( const QString &msg , const QStr
 	//QRegExp re("*-*-* (.*) *-*-*");
 	QRegExp re("<Div style=padding:10px; lang=..>(.*)</div");
 	re.setMinimal(true);
-	re.match( data );
+	re.search( data );
 
 	QString translated = re.cap(1);
 	return translated;

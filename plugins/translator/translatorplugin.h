@@ -44,12 +44,10 @@ class TranslatorPreferences;
 class TranslatorGUIClient;
 
 /**
-  * @author Duncan Mac-Vicar Prett   <duncan@kde.org>
-  *
-  * Kopete Translator Plugin
-  *
-  */
-
+ * @author Duncan Mac-Vicar Prett   <duncan@kde.org>
+ *
+ * Kopete Translator Plugin
+ */
 class TranslatorPlugin : public KopetePlugin
 {
 	Q_OBJECT
@@ -99,7 +97,6 @@ public:
 	{ return  m_servicesIntKeyMap[index]; };
 
 private slots:
-
 	void slotIncomingMessage( KopeteMessage& msg );
 	void slotOutgoingMessage( KopeteMessage& msg );
 	void slotDataReceived ( KIO::Job *, const QByteArray &data);
@@ -109,15 +106,12 @@ private slots:
 	void slotNewKMM(KopeteMessageManager *);
 
 public:
-
 	QString translateMessage( const QString &, const QString &, const QString & );
 	void translateMessage( const QString &, const QString &, const QString & , QObject * , const char*);
 
 protected:
-
 	QString googleTranslateMessage( const QString &, const QString &, const QString & );
 	QString babelTranslateMessage(const QString &, const QString &, const QString & );
-
 
 private:
 	/* Known Languages key -> desc ie: en -> English */
@@ -154,19 +148,11 @@ private:
 
 	static TranslatorPlugin* pluginStatic_;
 
-private: // Private methods
-  /** No descriptions */
-  void sendTranslation(KopeteMessage &msg, const QString &translated);
+private:
+	void sendTranslation(KopeteMessage &msg, const QString &translated);
 };
 
 #endif
 
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 
