@@ -165,6 +165,7 @@ GaduProtocol::statusWithDesciption( uint status )
 		case GG_STATUS_INVISIBLE:
 		case GG_STATUS_AVAIL:
 		case GG_STATUS_CONNECTING:
+		case GG_STATUS_BLOCKED:
 			return false;
 		case GG_STATUS_INVISIBLE_DESCR:
 		case GG_STATUS_NOT_AVAIL_DESCR:
@@ -197,6 +198,8 @@ GaduProtocol::convertStatus( uint status ) const
 			return gaduStatusAvailDescr_;
 		case GG_STATUS_CONNECTING:
 			return gaduConnecting_;
+		case GG_STATUS_BLOCKED:
+			return gaduStatusBlocked_;
 		default:
 			return gaduStatusOffline_;
 	}
