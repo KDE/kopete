@@ -246,6 +246,7 @@ QPtrList<KAction> *IRCUserContact::customContextMenuActions( KopeteMessageManage
 		mCustomActions->append( actionCtcpMenu );
 		mCustomActions->append( actionModeMenu );
 		mCustomActions->append( actionBanMenu );
+		mCustomActions->append( codecAction );
 
 		if( isChannel )
 		{
