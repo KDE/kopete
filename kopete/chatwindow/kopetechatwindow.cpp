@@ -908,7 +908,6 @@ void KopeteChatWindow::windowActivationChange( bool )
 		m_activeView->setActive( true );
 }
 
-// KDE < 3.1 SPECIFIC
 void KopeteChatWindow::slotChatPrint()
 {
 	m_activeView->print();
@@ -929,8 +928,6 @@ void KopeteChatWindow::slotViewMenuBar()
 	else
 		menuBar()->show();
 }
-
-// END KDE < 3.1 SPECIFIC
 
 void KopeteChatWindow::slotSmileyActivated(const QString &sm)
 {
