@@ -30,6 +30,7 @@
 #include <kfiledialog.h>
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
+#include <kautoconfig.h>
 
 #include "msneditaccountwidget.h"
 #include "msnaccount.h"
@@ -40,6 +41,11 @@ MSNEditAccountWidget::MSNEditAccountWidget(MSNProtocol *proto, KopeteAccount *id
 				  : MSNEditAccountUI(parent), EditAccountWidget(ident)
 {
 	m_protocol=proto;
+
+
+	kautoconfig = new KAutoConfig( this );
+	kautoconfig->addWidget(global_settings_page,"MSN");
+	kautoconfig->retrieveSettings(true);
 
 	//TODO: actually, i don't know how to set fonts for qlistboxitem
 	 label_font->hide();
@@ -115,6 +121,8 @@ MSNEditAccountWidget::~MSNEditAccountWidget()
 
 KopeteAccount *MSNEditAccountWidget::apply()
 {
+	kautoconfig->saveSettings();
+
 	if(!m_account)
 		m_account=new MSNAccount(m_protocol, m_login->text() );
 	if(m_rememberpasswd->isChecked())

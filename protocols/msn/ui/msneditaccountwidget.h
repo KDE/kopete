@@ -30,8 +30,7 @@
   */
 
 class MSNProtocol;
-class QCheckBox;
-class QLineEdit;
+class KAutoConfig;
 
 class MSNEditAccountWidget : public MSNEditAccountUI, public EditAccountWidget
 {
@@ -45,6 +44,7 @@ class MSNEditAccountWidget : public MSNEditAccountUI, public EditAccountWidget
 
 	private:
 		MSNProtocol *m_protocol;
+		KAutoConfig *kautoconfig;
 
 	private slots:
 		void slotAllow();
