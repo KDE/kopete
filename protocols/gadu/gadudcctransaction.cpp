@@ -51,6 +51,7 @@ GaduDCCTransaction::GaduDCCTransaction( GaduDCC* parent, const char* name )
 	contact		= NULL;
 	transfer_	= NULL;
 	dccSock_	= NULL;
+	peer		= 0;
 }
 
 GaduDCCTransaction::~GaduDCCTransaction()
@@ -113,7 +114,7 @@ GaduDCCTransaction::setupIncoming( const unsigned int uin, GaduContact* peerCont
 	QString aaa =  peerContact->contactIp().toString();
 	kdDebug( 14100 ) << "setupIncoming for UIN: " << uin << " port " << peerContact->contactPort() << " ip " <<aaa<<  endl;
 
-	int peer = peerContact->uin();
+	peer = peerContact->uin();
 	dccSock_ = gg_dcc_get_file( htonl( peerContact->contactIp().ip4Addr() ), peerContact->contactPort(), uin, peer );
 
 	contact = peerContact;
