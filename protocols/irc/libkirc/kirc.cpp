@@ -287,7 +287,7 @@ KIRCMessage KIRC::writeRawMessage(const QString &rawMsg, bool mustBeConnected)
 	return KIRCMessage();
 }
 
-/* Message will be quoted before behing send.
+/* Message will be quoted before beeing send.
  */
 KIRCMessage KIRC::writeMessage(const QString &msg, bool mustBeConnected)
 {
@@ -323,7 +323,7 @@ KIRCMessage KIRC::writeMessage(const QString &command, const QStringList &args, 
 KIRCMessage KIRC::writeCtcpMessage(const QString &command, const QString &to, const QString &suffix,
 		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix, bool emitRepliedCtcp)
 {
-	QString nick =  KIRCMessage::nickFromPrefix(to);
+	QString nick =  KIRCEntity::userNick(to);
 
 	KIRCMessage msg = KIRCMessage::writeCtcpMessage(this, codecForNick( nick ),
 		command, nick, suffix,

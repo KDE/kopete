@@ -53,12 +53,8 @@ public:
 		const QString &command, const QString &to, const QString &suffix,
 		const QString &ctcpMessage, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null );
 
-	// FIXME: short term solution move me to the the KIRCEntity class
-	inline static const QString nickFromPrefix(const QString &prefix)
-		{ return prefix.section('!', 0, 0); }
-
 	inline const QString nickFromPrefix() const
-		{ return nickFromPrefix(m_prefix); }
+		{ return KIRCEntity::userNick(m_prefix); }
 
 	QString toString() const;
 

@@ -96,7 +96,7 @@ void KIRC::registerNumericReplies()
 	 */
 	addNumericIrcMethod( 306, KIRC::IgnoreMethod );
 
-	/* Indicates that this user is identified with NICSERV on DALNET */
+	/* DALNET: Indicates that this user is identified with NICSERV. */
 	addNumericIrcMethod( 307, new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingWhoIsIdentified, 2, 2));
 
 	/* Show info about a user (part of a /whois) in the form of:
@@ -193,7 +193,9 @@ void KIRC::registerNumericReplies()
 
 	addNumericIrcMethod( 442, new KIRCMethodFunctor_SS_Suffix<KIRC, 1>(this, &KIRC::incomingCannotSendToChannel, 2, 2));
 
-	/* Bad server password */
+	/* Bad server password
+	 * ":Password Incorrect"
+	 */
 	addNumericIrcMethod( 464, &KIRC::numericReply_464,	1,	1);
 
 	/* Channel is Full */
@@ -207,6 +209,11 @@ void KIRC::registerNumericReplies()
 
 	/* Wrong Chan-key */
 	addNumericIrcMethod( 475, &KIRC::numericReply_475,	2,	2);
+
+	/* DALNET:
+	 * "<channel> :You need a registered nick to join that channel."
+	 */
+//	addNumericIrcMethod( 477, &KIRC::numericReply_477,	2,	2);
 }
 
 bool KIRC::numericReply_001(const KIRCMessage &msg)
@@ -479,3 +486,10 @@ bool KIRC::numericReply_475(const KIRCMessage &msg)
 	emit incomingFailedChankey(msg.arg(1));
 	return true;
 }
+/*
+bool KIRC::numericReply_477(const KIRCMessage &msg)
+{
+	emit incomingChannelNeedRegistration(msg.arg(2), msg.suffix());
+	return true;
+}
+*/
