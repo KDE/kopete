@@ -391,7 +391,7 @@ void MSNProtocol::slotIncomingChat(KMSNChatService *newboard, QString reqUserID)
 	{
 		kdDebug() << "MSN Plugin: Incoming chat but Window opened for " << reqUserID <<"\n";
 		messageDialog->setBoard( newboard );
-		connect(newboard,SIGNAL(msgReceived(QString,QString,QString)),messageDialog,SLOT(slotMsgReceived(QString,QString,QString)));
+		connect(newboard,SIGNAL(msgReceived(QString,QString,QString)),messageDialog,SLOT(slotMessageReceived(QString,QString,QString)));
 		messageDialog->raise();
 	}
 	else
