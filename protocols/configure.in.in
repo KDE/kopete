@@ -73,7 +73,7 @@ AC_MSG_CHECKING([libgadu version 1.5(rcX) with pthread support])
 	COMPILE_GADU=true
 	else
 	use_libgadu_copy=no
-	AC_MSG_RESULT([no, cannot fall back on libgadu-copy (no pthread)])
+	AC_MSG_RESULT([no, cannot fall back on libgadu-copy (no threads)])
 	COMPILE_GADU=	
 	use_libgadu_copy=no
 	fi
