@@ -22,7 +22,7 @@
 #include <klocale.h>
 
 PreferencesDialog::PreferencesDialog(QWidget *parent)
-	: KDialogBase(IconList, i18n("Preferences"), Ok|Apply|Close, Ok, parent, 0, false)
+	: KDialogBase(IconList, i18n("Preferences"), Ok|Apply|Cancel, Ok, parent, 0, false)
 {
 //	resize(640, 480); // KDE is required to support 800x600 min.
 }
