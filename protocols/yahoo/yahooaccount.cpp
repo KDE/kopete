@@ -34,6 +34,7 @@
 // Kopete
 #include <kopetemessagemanager.h>
 #include <kopetemessage.h>
+#include <kopetepassword.h>
 #include <kopeteuiglobal.h>
 
 // Yahoo
@@ -53,7 +54,7 @@ void YahooAwayDialog::setAway(int awayType)
 
 
 YahooAccount::YahooAccount(YahooProtocol *parent, const QString& AccountID, const char *name)
-: KopeteAccount(parent, AccountID, name)
+ : Kopete::PasswordedAccount(parent, AccountID, 0, name)
 {
 //	kdDebug(14180) << k_funcinfo << AccountID << ", " << QString(name) << ")" << endl;
 
@@ -61,8 +62,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& AccountID, cons
 	theHaveContactList = false;
 	stateOnConnection = 0;
 	theAwayDialog = new YahooAwayDialog(this);
-	m_needNewPassword = false;
-	
+
 	// we need this quite early (before initActions at least)
 	kdDebug(14180) << "Yahoo: Creating myself with name = " << accountId() << endl;
 	setMyself( new YahooContact(this, accountId(), accountId(), 0) );
@@ -159,8 +159,14 @@ QColor YahooAccount::getMsgColor(const QString& msg)
 	return Qt::black;
 }
 
-void YahooAccount::connect()
+void YahooAccount::connectWithPassword( const QString &passwd )
 {
+	if ( passwd.isNull() )
+	{ //cancel the connection attempt
+		static_cast<YahooContact*>(myself())->setYahooStatus(YahooStatus::Offline);
+		return;
+	}
+
 	QString server = "scs.msg.yahoo.com";
 	int port = 5050;
 
@@ -170,19 +176,8 @@ void YahooAccount::connect()
 	loaded();
 	
 	YahooSessionManager::manager()->setPager(server, port);
-	
-	
-	if (m_needNewPassword)
-	{
-		if ((password(m_needNewPassword)).isEmpty())
-		{ //cancel the connection attempt
-			static_cast<YahooContact*>(myself())->setYahooStatus(YahooStatus::Offline);
-			return;
-		}
-	}
-	
-	m_session = YahooSessionManager::manager()->createSession(accountId(), password());
-	m_needNewPassword = false;
+
+	m_session = YahooSessionManager::manager()->createSession( accountId(), passwd );
 	if(!isConnected())
 	{
 		kdDebug(14180) << "Attempting to connect to Yahoo on <" << server << ":" << port << ">. user <" << accountId() << ">" << endl;
@@ -376,7 +371,7 @@ bool YahooAccount::addContactToMetaContact(const QString &contactId, const QStri
 
 void YahooAccount::slotNeedReconnect()
 {
-	m_needNewPassword = true;
+	password().setWrong();
 	connect();
 }
 
@@ -399,7 +394,6 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		 * Support needs to be added for invisible
 		 */
 		static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::Available);
-		m_needNewPassword = false;
 		theHaveContactList = true;	
 		return;
 	}

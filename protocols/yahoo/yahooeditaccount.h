@@ -25,6 +25,7 @@
 
 // Kopete Includes
 #include "editaccountwidget.h"
+#include "kopetepasswordwidget.h"
 
 // Local Includes
 #include "yahooeditaccountbase.h"
@@ -37,6 +38,7 @@ class YahooEditAccount: public YahooEditAccountBase, public KopeteEditAccountWid
 
 private:
 	YahooProtocol *theProtocol;
+	Kopete::UI::PasswordWidget *mPasswordWidget;
 
 public:
 	YahooEditAccount(YahooProtocol *protocol, KopeteAccount *theAccount, QWidget *parent = 0, const char *name = 0);

@@ -25,11 +25,11 @@
 #include <qmap.h>
 
 // Kopete
-#include "kopeteaccount.h"
+#include "kopetepasswordedaccount.h"
 #include "kopeteawaydialog.h"
-#include "yahooconferencemessagemanager.h"
 
 // Local
+#include "yahooconferencemessagemanager.h"
 #include "yahooprotocol.h"
 
 class QColor;
@@ -48,7 +48,7 @@ private:
 	YahooAccount *theAccount;
 };
 
-class YahooAccount : public KopeteAccount
+class YahooAccount : public Kopete::PasswordedAccount
 {
 	Q_OBJECT
 
@@ -95,12 +95,12 @@ public slots:
 	/**
 	 * Connect to the Yahoo service
 	 */
-	virtual void connect();
+	virtual void connectWithPassword( const QString & );
 	/**
 	 * Disconnect from the Yahoo service
 	 */
 	virtual void disconnect();
-	
+
 signals:
 	/**
 	 * Emitted when we receive notification that the person we're talking to is typing
@@ -195,7 +195,6 @@ private:
 	 */
 	bool m_useServerGroups;		// Use the groups on the server for import
 	bool m_importContacts;		// Import the contacts from the server
-	bool m_needNewPassword;		// New password needed. Old one was bad.
 	int m_sessionId;		// The Yahoo session descriptor
 	YahooSession *m_session;	// Connection Object
 

@@ -19,6 +19,8 @@
 // QT Includes
 #include <qcheckbox.h>
 #include <qlineedit.h>
+#include <qgroupbox.h>
+#include <qlayout.h>
 
 // KDE Includes
 #include <kdebug.h>
@@ -36,17 +38,20 @@
 YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, KopeteAccount *theAccount, QWidget *parent, const char* /*name*/): YahooEditAccountBase(parent), KopeteEditAccountWidget(theAccount)
 {
 	kdDebug(14180) << k_funcinfo << endl;
-
+  
 	theProtocol = protocol;
-	if(account())
-	{	mScreenName->setText(account()->accountId());
+
+	mPasswordWidget = new Kopete::UI::PasswordWidget( mAccountInfo );
+	mAccountInfoLayout->add( mPasswordWidget );
+
+	if(YahooAccount *acct = dynamic_cast<YahooAccount*>(account()))
+	{	mScreenName->setText(acct->accountId());
 		mScreenName->setReadOnly(true); //the accountId is Constant FIXME: remove soon!
 		mScreenName->setDisabled(true);
-		if (account()->rememberPassword())
-			mPassword->setText(account()->password());
-		mAutoConnect->setChecked(account()->autoLogin());
-		mRememberPassword->setChecked(true);
+		mAutoConnect->setChecked(acct->autoLogin());
+		mPasswordWidget->load( &acct->password() );
 	}
+
 	show();
 }
 
@@ -54,12 +59,12 @@ bool YahooEditAccount::validateData()
 {
 	kdDebug(14180) << k_funcinfo << endl;
 
-	if(mScreenName->text() == "")
+	if(mScreenName->text().isEmpty())
 	{	KMessageBox::queuedMessageBox(this, KMessageBox::Sorry, 
 			i18n("<qt>You must enter a valid screen name.</qt>"), i18n("Yahoo"));
 		return false;
 	}
-	if(mPassword->text() == "")
+	if(!mPasswordWidget->validate())
 	{	KMessageBox::queuedMessageBox(this, KMessageBox::Sorry, 
 			i18n("<qt>You must enter a valid password.</qt>"), i18n("Yahoo"));
 		return false;
@@ -77,9 +82,8 @@ KopeteAccount *YahooEditAccount::apply()
 	YahooAccount *yahooAccount = static_cast<YahooAccount *>(account());
 
 	yahooAccount->setAutoLogin(mAutoConnect->isChecked());
-
-	if(mRememberPassword->isChecked())
-		yahooAccount->setPassword(mPassword->text());
+	
+	mPasswordWidget->save(&yahooAccount->password());
 
 	return yahooAccount;
 }
