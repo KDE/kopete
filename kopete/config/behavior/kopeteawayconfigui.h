@@ -48,19 +48,19 @@ public:
 
 protected slots:
 	/**
-	 * @brief Slot that is called when the New button is clicked
+	 * @brief Slot that is called when the "Add..." button is clicked
 	 */
-	void newButtonClicked();
+	void btnAddAwayMsgClicked();
 
 	/**
-	 * @brief Slot that is called when the Delete button is clicked
+	 * @brief Slot that is called when the "Delete" button is clicked
 	 */
-	void deleteButtonClicked();
+	void btnDeleteAwayMsgClicked();
 
 	/**
-	 * @brief Slot that is called when the Save Text button is clicked
+	 * @brief Slot that is called when the "Edit.." button is clicked
 	 */
-	void saveTextButtonClicked();
+	void btnEditAwayMsgClicked();
 
 	/**
 	 * @brief Slot that is called when a new title is selected in the title list

@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>KopeteAwayConfigBaseUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,18 +8,18 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>555</width>
-            <height>406</height>
+            <width>444</width>
+            <height>363</height>
         </rect>
     </property>
     <property name="caption">
         <string>Away Configuration</string>
     </property>
-    <vbox>
+    <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QCheckBox">
+        <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>mNotifyAway</cstring>
             </property>
@@ -27,109 +27,7 @@
                 <string>Notify all open chats when I go away</string>
             </property>
         </widget>
-        <widget class="QCheckBox">
-            <property name="name">
-                <cstring>mUseAutoAway</cstring>
-            </property>
-            <property name="text">
-                <string>Use auto away</string>
-            </property>
-        </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layout13</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacer69</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Fixed</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>17</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QLayoutWidget">
-                    <property name="name">
-                        <cstring>layout11</cstring>
-                    </property>
-                    <vbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QLayoutWidget">
-                            <property name="name">
-                                <cstring>layout10</cstring>
-                            </property>
-                            <hbox>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
-                                </property>
-                                <widget class="QLabel">
-                                    <property name="name">
-                                        <cstring>TextLabel2</cstring>
-                                    </property>
-                                    <property name="enabled">
-                                        <bool>false</bool>
-                                    </property>
-                                    <property name="text">
-                                        <string>Become away after</string>
-                                    </property>
-                                </widget>
-                                <widget class="QSpinBox">
-                                    <property name="name">
-                                        <cstring>mAutoAwayTimeout</cstring>
-                                    </property>
-                                    <property name="enabled">
-                                        <bool>false</bool>
-                                    </property>
-                                    <property name="maxValue">
-                                        <number>999</number>
-                                    </property>
-                                    <property name="minValue">
-                                        <number>1</number>
-                                    </property>
-                                </widget>
-                                <widget class="QLabel">
-                                    <property name="name">
-                                        <cstring>TextLabel3</cstring>
-                                    </property>
-                                    <property name="enabled">
-                                        <bool>false</bool>
-                                    </property>
-                                    <property name="text">
-                                        <string>minutes of user inactivity</string>
-                                    </property>
-                                </widget>
-                            </hbox>
-                        </widget>
-                        <widget class="QCheckBox">
-                            <property name="name">
-                                <cstring>mGoAvailable</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="text">
-                                <string>Become available when detecting activity again</string>
-                            </property>
-                        </widget>
-                    </vbox>
-                </widget>
-            </hbox>
-        </widget>
-        <widget class="QGroupBox">
+        <widget class="QGroupBox" row="3" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>predefinedGroupBox</cstring>
             </property>
@@ -154,37 +52,6 @@
                     </property>
                     <property name="text">
                         <string>Away messages:</string>
-                    </property>
-                </widget>
-                <widget class="QTextEdit" row="1" column="1" rowspan="4" colspan="1">
-                    <property name="name">
-                        <cstring>txtMessage</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>7</hsizetype>
-                            <vsizetype>7</vsizetype>
-                            <horstretch>1</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="cursor">
-                        <cursor>0</cursor>
-                    </property>
-                    <property name="resizePolicy">
-                        <enum>AutoOneFit</enum>
-                    </property>
-                    <property name="hScrollBarMode">
-                        <enum>AlwaysOff</enum>
-                    </property>
-                    <property name="textFormat">
-                        <enum>PlainText</enum>
-                    </property>
-                    <property name="linkUnderline">
-                        <bool>false</bool>
-                    </property>
-                    <property name="wordWrap">
-                        <enum>WidgetWidth</enum>
                     </property>
                 </widget>
                 <widget class="KListBox" row="1" column="0" rowspan="4" colspan="1">
@@ -216,16 +83,16 @@
                     <property name="sizeHint">
                         <size>
                             <width>20</width>
-                            <height>80</height>
+                            <height>20</height>
                         </size>
                     </property>
                 </spacer>
                 <widget class="KPushButton" row="3" column="2">
                     <property name="name">
-                        <cstring>btnSave</cstring>
+                        <cstring>btnEditAwayMsg</cstring>
                     </property>
                     <property name="text">
-                        <string>Save Text</string>
+                        <string>Edit...</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Save message text</string>
@@ -233,13 +100,24 @@
                 </widget>
                 <widget class="KPushButton" row="2" column="2">
                     <property name="name">
-                        <cstring>btnDelete</cstring>
+                        <cstring>btnDeleteAwayMsg</cstring>
                     </property>
                     <property name="text">
                         <string>Remove</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Delete selected message</string>
+                    </property>
+                </widget>
+                <widget class="KPushButton" row="1" column="2">
+                    <property name="name">
+                        <cstring>btnAddAwayMsg</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Add...</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Create new away message</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="0" column="1">
@@ -250,37 +128,87 @@
                         <string>Message text:</string>
                     </property>
                 </widget>
-                <widget class="KPushButton" row="1" column="2">
+                <widget class="QTextEdit" row="1" column="1" rowspan="4" colspan="1">
                     <property name="name">
-                        <cstring>btnNew</cstring>
+                        <cstring>txtMessage</cstring>
                     </property>
-                    <property name="text">
-                        <string>New...</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Create new away message</string>
+                    <property name="readOnly">
+                        <bool>true</bool>
                     </property>
                 </widget>
             </grid>
         </widget>
-        <spacer>
+        <spacer row="2" column="0">
             <property name="name">
-                <cstring>spacer3</cstring>
+                <cstring>spacer69</cstring>
             </property>
             <property name="orientation">
-                <enum>Vertical</enum>
+                <enum>Horizontal</enum>
             </property>
             <property name="sizeType">
-                <enum>Expanding</enum>
+                <enum>Fixed</enum>
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>20</width>
-                    <height>30</height>
+                    <width>17</width>
+                    <height>20</height>
                 </size>
             </property>
         </spacer>
-    </vbox>
+        <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>mUseAutoAway</cstring>
+            </property>
+            <property name="text">
+                <string>Use auto away</string>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget" row="2" column="1">
+            <property name="name">
+                <cstring>layout4</cstring>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel" row="0" column="2">
+                    <property name="name">
+                        <cstring>TextLabel3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>minutes of user inactivity</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>TextLabel2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Become away after</string>
+                    </property>
+                </widget>
+                <widget class="QSpinBox" row="0" column="1">
+                    <property name="name">
+                        <cstring>mAutoAwayTimeout</cstring>
+                    </property>
+                    <property name="maxValue">
+                        <number>999</number>
+                    </property>
+                    <property name="minValue">
+                        <number>1</number>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>mGoAvailable</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Become available when detecting activity again</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+    </grid>
 </widget>
 <connections>
     <connection>
@@ -314,16 +242,9 @@
     <tabstop>mAutoAwayTimeout</tabstop>
     <tabstop>mGoAvailable</tabstop>
     <tabstop>lstTitles</tabstop>
-    <tabstop>txtMessage</tabstop>
-    <tabstop>btnNew</tabstop>
-    <tabstop>btnDelete</tabstop>
-    <tabstop>btnSave</tabstop>
+    <tabstop>btnAddAwayMsg</tabstop>
+    <tabstop>btnDeleteAwayMsg</tabstop>
+    <tabstop>btnEditAwayMsg</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>klistbox.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-</includehints>
 </UI>

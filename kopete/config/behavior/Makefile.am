@@ -4,7 +4,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private $(KOPE
 kde_module_LTLIBRARIES = kcm_kopete_behaviorconfig.la
 
 kcm_kopete_behaviorconfig_la_SOURCES = \
-	kopeteawayconfigbase.ui kopeteawayconfigui.cpp \
+	awaymessageeditor.ui kopeteawayconfigbase.ui kopeteawayconfigui.cpp \
 	behaviorconfig_chat.ui behaviorconfig_general.ui behaviorconfig.cpp
 
 kcm_kopete_behaviorconfig_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)

@@ -3,7 +3,7 @@
 
     Copyright (c) 2002      by Chris TenHarmsel       <ctenha56@calvin.edu>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -16,18 +16,14 @@
 */
 
 #include "kopeteawayconfigui.h"
-#include "kopeteawayconfigui.moc"
+#include "awaymessageeditor.h"
 
 #include <qtextedit.h>
+#include <qlineedit.h>
 #include <qspinbox.h>
 #include <qcheckbox.h>
 
-#include <kdeversion.h>
-#if KDE_IS_VERSION( 3, 1, 90 )
-#include <kinputdialog.h>
-#else
-#include <klineeditdlg.h>
-#endif
+#include <kdialogbase.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpushbutton.h>
@@ -37,47 +33,46 @@
 KopeteAwayConfigUI::KopeteAwayConfigUI(QWidget *parent) :
 	KopeteAwayConfigBaseUI(parent)
 {
-	connect(btnNew, SIGNAL(clicked()), this, SLOT(newButtonClicked()));
-	connect(btnDelete, SIGNAL(clicked()), this, SLOT(deleteButtonClicked()));
-	connect(btnSave, SIGNAL(clicked()), this, SLOT(saveTextButtonClicked()));
+	connect(btnAddAwayMsg, SIGNAL(clicked()),
+		this, SLOT(btnAddAwayMsgClicked()));
+	connect(btnDeleteAwayMsg, SIGNAL(clicked()),
+		this, SLOT(btnDeleteAwayMsgClicked()));
+	connect(btnEditAwayMsg, SIGNAL(clicked()),
+		 this, SLOT(btnEditAwayMsgClicked()));
 	connect(lstTitles, SIGNAL(selectionChanged()), this, SLOT(titleSelected()));
-
 }
 
-void KopeteAwayConfigUI::newButtonClicked()
+void KopeteAwayConfigUI::btnAddAwayMsgClicked()
 {
-	bool createNewTitle = false;
-#if KDE_IS_VERSION( 3, 1, 90 )
-	QString newTitle = KInputDialog::getText(
-		i18n("New Away Message"),
-		i18n("Enter away message title:"),
-		i18n("Title"), &createNewTitle, this);
-#else
-	QString newTitle = KLineEditDlg::getText(
-		i18n("New Away Message"),
-		i18n("Enter away message title:"),
-		i18n("Title"), &createNewTitle, this);
-#endif
+	KDialogBase* editor = new KDialogBase(this, "AwayMessageEditor", true,
+		i18n("Add Away Message"),
+		KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok );
 
-	if(createNewTitle)
+	AwayMessageEditor *editorWidget = new AwayMessageEditor(editor,
+		"AwayMessageEditorWidget");
+	editor->setMainWidget(editorWidget);
+
+	if (editor->exec() == QDialog::Accepted)
 	{
-		KopeteAway::getInstance()->addMessage( newTitle,
-			QString::null ); // Add a new empty away message
+		KopeteAway::getInstance()->addMessage(editorWidget->txtMessage->text(),
+			editorWidget->txtMessageText->text());
 		updateView();
 		emit awayMessagesChanged(true);
 	}
+
+	delete editor;
 }
 
-void KopeteAwayConfigUI::deleteButtonClicked()
+void KopeteAwayConfigUI::btnDeleteAwayMsgClicked()
 {
 	if (lstTitles->currentItem() == -1) return;
 
-	QListBoxItem *selectedItem = lstTitles->item( lstTitles->currentItem() );
-	int retval = KMessageBox::warningYesNo( this,
-		i18n( "Delete message '%1'?").arg( selectedItem->text() ),
-		i18n( "Delete Message" ) );
+	QListBoxItem *selectedItem = lstTitles->item(lstTitles->currentItem());
+	int retval = KMessageBox::warningYesNo(this,
+		i18n("Delete message '%1'?").arg(selectedItem->text()),
+		i18n("Delete Message"));
 
-	if( retval == KMessageBox::Yes )
+	if (retval == KMessageBox::Yes)
 	{
 		KopeteAway::getInstance()->deleteMessage(selectedItem->text());
 		updateView();
@@ -85,30 +80,50 @@ void KopeteAwayConfigUI::deleteButtonClicked()
 	}
 }
 
-void KopeteAwayConfigUI::saveTextButtonClicked()
+void KopeteAwayConfigUI::btnEditAwayMsgClicked()
 {
-	if (lstTitles->currentItem() == -1) return;
+	if (lstTitles->currentItem() == -1)
+		return;
 
-	QListBoxItem *selectedItem = lstTitles->item( lstTitles->currentItem() );
-	KopeteAway::getInstance()->updateMessage(selectedItem->text(), txtMessage->text());
-	emit awayMessagesChanged(true);
+	QListBoxItem *selectedItem = lstTitles->item(lstTitles->currentItem());
+
+	KDialogBase* editor = new KDialogBase(0, "AwayMessageEditor", true,
+		i18n("Edit Away Message"),
+		KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok );
+
+	AwayMessageEditor *editorWidget = new AwayMessageEditor(editor,
+		"AwayMessageEditorWidget");
+	editor->setMainWidget(editorWidget);
+	editorWidget->txtMessage->setText(selectedItem->text());
+	editorWidget->txtMessageText->setText(txtMessage->text());
+
+	if (editor->exec() == QDialog::Accepted)
+	{
+		KopeteAway::getInstance()->updateMessage(editorWidget->txtMessage->text(),
+			editorWidget->txtMessageText->text());
+		updateView();
+		emit awayMessagesChanged(true);
+	}
+
+	delete editor;
 }
 
 void KopeteAwayConfigUI::titleSelected()
 {
-	QListBoxItem *selectedItem = lstTitles->item( lstTitles->currentItem() );
-	txtMessage->setText(KopeteAway::getInstance()->getMessage( selectedItem->text() ));
+	QListBoxItem *selectedItem = lstTitles->item(lstTitles->currentItem());
+	txtMessage->setText(
+		KopeteAway::getInstance()->getMessage(selectedItem->text()));
 }
 
 void KopeteAwayConfigUI::updateView()
 {
-	KopeteAway *ka = KopeteAway::getInstance();
-
 	lstTitles->clear();
-	QStringList titles = ka->getTitles();
-	for( QStringList::iterator i = titles.begin(); i != titles.end(); i++ )
-		lstTitles->insertItem( ( *i ) ); // Insert the Title into the list
+	QStringList titles = KopeteAway::getInstance()->getTitles();
 
-	txtMessage->setText( QString::null );
+	for (QStringList::iterator i = titles.begin(); i != titles.end(); i++)
+		lstTitles->insertItem(*i); // Insert the Title into the list
 
+	txtMessage->setText(QString::null);
 }
+
+#include "kopeteawayconfigui.moc"

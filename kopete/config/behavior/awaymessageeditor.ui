@@ -1,0 +1,60 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>AwayMessageEditor</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>AwayMessageEditor</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>230</width>
+            <height>223</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>AwayMessageEditor</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel2</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Message:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>txtMessage</cstring>
+            </property>
+        </widget>
+        <widget class="QLineEdit">
+            <property name="name">
+                <cstring>txtMessage</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Message &amp;text:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>txtMessageText</cstring>
+            </property>
+        </widget>
+        <widget class="QTextEdit">
+            <property name="name">
+                <cstring>txtMessageText</cstring>
+            </property>
+        </widget>
+    </vbox>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
