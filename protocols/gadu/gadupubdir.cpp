@@ -55,7 +55,7 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* pare
 	createWidget();
 	initConnections();
 
-	kdDebug( 14100 ) << "search for Uin: " << fUin << endl;
+	kdDebug( 14100 ) << "search for Uin: " << searchFor << endl;
 	
 	mMainWidget->listFound->clear();
 	show();
