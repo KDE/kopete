@@ -445,7 +445,7 @@ void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& stat
 	// we can't use the SmallIcon() method directly
 	KIconLoader *loader = KGlobal::instance()->iconLoader();
 
-	QMovie mv = loader->loadMovie(status.overlayIcon(), KIcon::Small);
+	QMovie mv = loader->loadMovie(status.overlayIcon(), KIcon::User);
 
 	if ( mv.isNull() )
 	{
