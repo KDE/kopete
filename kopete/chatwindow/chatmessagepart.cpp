@@ -658,7 +658,9 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 
 #if KDE_IS_VERSION(3,3,90)
 	htmltext = selectedTextAsHTML();
-	text=Kopete::Message::unescape( htmltext ).stripWhiteSpace();
+	text = selectedText();
+	//selectedText is now sufficent
+//	text=Kopete::Message::unescape( htmltext ).stripWhiteSpace();
 	// Message::unsescape will replace image by his title attribute
 	// stripWhiteSpace is for removing the newline added by the <!DOCTYPE> and other xml things of RangeImpl::toHTML
 #else
@@ -776,7 +778,7 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 	disconnect( kapp->clipboard(), SIGNAL( selectionChanged()), this, SLOT( slotClearSelection()));
 		
 #ifndef QT_NO_MIMECLIPBOARD
-	if(justselection)
+	if(!justselection)
 	{
       	QTextDrag *textdrag = new QTextDrag(text, 0L);
 	    KMultipleDrag *drag = new KMultipleDrag( );
@@ -788,12 +790,8 @@ void ChatMessagePart::copy(bool justselection /* default false */)
             drag->addDragObject( htmltextdrag );
     	}
     	QApplication::clipboard()->setData( drag, QClipboard::Clipboard );
-    	QApplication::clipboard()->setText( text, QClipboard::Selection );		
-    } else
-	{
-    	QApplication::clipboard()->setText( text, QClipboard::Selection );		
 	}
-
+    QApplication::clipboard()->setText( text, QClipboard::Selection );		
 #else
 	if(!justselection)
     	QApplication::clipboard()->setText( text, QClipboard::Clipboard );
@@ -881,7 +879,7 @@ void ChatMessagePart::slotUpdateBackground( const QPixmap &pixmap )
 void ChatMessagePart::khtmlDrawContentsEvent( khtml::DrawContentsEvent * event) //virtual
 {
 	KHTMLPart::khtmlDrawContentsEvent(event);
-	copy(true /*selection only*/);
+	//copy(true /*selection only*/); not needed anymore.
 }
 void ChatMessagePart::slotCloseView( bool force )
 {
