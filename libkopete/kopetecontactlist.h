@@ -108,11 +108,20 @@ public:
 	 */
 	QPtrList<KopeteMetaContact> metaContacts() const;
 
-
+	/** 
+	 * Add a group
+	 */
 	void addGroup(KopeteGroup *);
+	
+	/** 
+	 * Remove a group
+	 */
 	void removeGroup(KopeteGroup *);
-  /** No descriptions */
-  KopeteGroup * getGroup(const QString& displayName, KopeteGroup::GroupType type=KopeteGroup::Classic);
+	
+	/** 
+	 * Get a group
+	 */
+	KopeteGroup * getGroup(const QString& displayName, KopeteGroup::GroupType type=KopeteGroup::Classic);
 
 public slots:
 //	void slotRemovedFromGroup( KopeteMetaContact *mc, const QString &from );
