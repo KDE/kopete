@@ -7,7 +7,7 @@
     Copyright (c) 2004 by Will Stephenson <lists@stevello.free-online.co.uk>
     Copyright (c) 2004 by Duncan Mac-Vicar P. <duncan@kde.org>
     
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -194,6 +194,7 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 		}
 	}
 
+	m_withPhotoContacts.clear();
 	Kopete::Contact* trackingPhoto = item->metaContact()->photoSource();
 	QPtrListIterator<Kopete::Contact> itp( cList );
 	for( ; itp.current(); ++itp )
@@ -211,6 +212,7 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 			{
 				mainWidget->cmbAccountPhoto->setCurrentItem( mainWidget->cmbAccountPhoto->count() - 1 );
 			}
+			m_withPhotoContacts.insert(mainWidget->cmbAccountPhoto->count() - 1  , citem );
 		}
 	}
 
@@ -323,7 +325,7 @@ void KopeteMetaLVIProps::slotOkClicked()
 	// set photo source
 	if ( mainWidget->chkTrackChildPhoto->isChecked() )
 	{
-		item->metaContact()->setPhotoSource( item->metaContact()->contacts().at( mainWidget->cmbAccountPhoto->currentItem() ) );
+		item->metaContact()->setPhotoSource( m_withPhotoContacts[ mainWidget->cmbAccountPhoto->currentItem() ] );
 		item->metaContact()->setPhotoSyncedWithKABC( mainWidget->chkSyncPhoto->isChecked() );
 	}
 	else

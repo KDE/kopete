@@ -32,6 +32,8 @@ class KopeteMetaContactLVI;
 class KopeteAddressBookExport;
 class KURLRequester;
 
+namespace Kopete { class Contact; }
+
 class KopeteGVIProps: public KDialogBase
 {
 	Q_OBJECT
@@ -69,6 +71,7 @@ class KopeteMetaLVIProps: public KDialogBase
 		KopeteAddressBookExport *mExport;
 		KABC::Sound mSound;
 		int m_countPhotoCapable;
+		QMap<int, Kopete::Contact *> m_withPhotoContacts;
 
 	private slots:
 		void slotOkClicked();
