@@ -661,32 +661,34 @@ QString KopeteContact::toolTip() const
 	// --------------------------------------------------------------------------
 	// Fixed part of tooltip
 
-	QMimeSourceFactory::defaultFactory()->setImage( QString::fromLatin1("kopete:%1icon").arg(contactId()),
-		onlineStatus().iconFor( this ).convertToImage() );
+	QString iconName = QString::fromLatin1("kopete-contact-icon:%1:%2:%3")
+	                               .arg( KURL::encode_string( protocol()->pluginId() ),
+	                                     KURL::encode_string( account()->accountId() ),
+	                                     KURL::encode_string( contactId() ) );
 
 	if ( displayName() == contactId() )
 	{
-		tip = i18n( "<b>DISPLAY NAME</b><br><img src=\"kopete:%4icon\">&nbsp;CONTACT STATUS",
-			"<b>%3</b><br><img src=\"kopete:%2icon\">&nbsp;%1" ).
+		tip = i18n( "<b>DISPLAY NAME</b><br><img src=\"%2\">&nbsp;CONTACT STATUS",
+			"<b>%3</b><br><img src=\"%2\">&nbsp;%1" ).
 #if QT_VERSION < 0x030200
 			arg( onlineStatus().description() ).
-			arg( contactId() ).
+			arg( iconName ).
 			arg( QStyleSheet::escape( displayName() ) );
 #else
-			arg( onlineStatus().description(), contactId(), QStyleSheet::escape( displayName() ) );
+			arg( onlineStatus().description(), iconName, QStyleSheet::escape( displayName() ) );
 #endif
 	}
 	else
 	{
-		tip = i18n( "<b>DISPLAY NAME</b>&nbsp;(CONTACT ID)<br><img src=\"kopete:%4icon\">&nbsp;CONTACT STATUS",
-			"<b>%4</b>&nbsp;(%3)<br><img src=\"kopete:%2icon\">&nbsp;%1" ).
+		tip = i18n( "<b>DISPLAY NAME</b> (CONTACT ID)<br><img src=\"%2\">&nbsp;CONTACT STATUS",
+			"<b>%4</b> (%3)<br><img src=\"%2\">&nbsp;%1" ).
 #if QT_VERSION < 0x030200
 			arg( onlineStatus().description() ).
-			arg( contactId() ).
+			arg( iconName ).
 			arg( QStyleSheet::escape( contactId() ) ).
 			arg( QStyleSheet::escape( displayName() ) );
 #else
-			arg( onlineStatus().description(), contactId(), QStyleSheet::escape( contactId() ),
+			arg( onlineStatus().description(), iconName, QStyleSheet::escape( contactId() ),
 				QStyleSheet::escape( displayName() ) );
 #endif
 	}
