@@ -54,7 +54,7 @@ class AIMAccount : public OscarAccount
 		virtual void setStatus(const unsigned long status,
 			const QString &awayMessage = QString::null);
 
-		virtual void connect( ConnectionStatus initalStatus = Online );
+		virtual void connect();
 
 	public slots:
 		void slotEditInfo();

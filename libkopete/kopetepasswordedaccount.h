@@ -19,6 +19,8 @@
 
 #include "kopeteaccount.h"
 
+class KopeteOnlineStatus;
+
 namespace Kopete
 {
 
@@ -50,7 +52,13 @@ public:
 	 */
 	Password &password();
 
-	void connect( ConnectionStatus initalStatus = Online );
+	void connect();
+	void connect( const KopeteOnlineStatus& );
+	
+	/**
+	 * \brief Get the initial status
+	 */
+	KopeteOnlineStatus initialStatus();
 
 public slots:
 	/**
@@ -58,7 +66,7 @@ public slots:
 	 * @param password The password to connect with, or QString::null
 	 *        if the user wished to cancel the connection attempt.
 	 */
-	virtual void connectWithPassword( const QString &password, ConnectionStatus initalStatus = Online ) = 0;
+	virtual void connectWithPassword( const QString &password ) = 0;
 
 protected:
 	/**

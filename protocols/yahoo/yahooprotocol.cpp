@@ -37,6 +37,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_yahoo, YahooProtocolFactory( "kopete_yahoo" )
 
 YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringList & )
 	: KopeteProtocol( YahooProtocolFactory::instance(), parent, name ),
+	Offline( KopeteOnlineStatus::Offline, 0, this, 0x5a55aa56, QString::null, i18n( "Offline" ), i18n( "Offline" ) ),
 	Online( KopeteOnlineStatus::Online, 25, this, 0, QString::null, i18n( "Online" ), i18n( "Online" ) ),
 	BeRightBack( KopeteOnlineStatus::Away, 10, this, 1, "yahoo_away", i18n( "Be right back" ), i18n( "Be right back" ) ),
 	Busy( KopeteOnlineStatus::Away, 10, this, 2, "yahoo_busy", i18n( "Busy" ), i18n( "Busy" ) ),
@@ -47,7 +48,6 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 	OnVacation( KopeteOnlineStatus::Away, 10, this, 7, "yahoo_away", i18n( "On vacation" ), i18n( "On vacation" ) ),
 	OutToLunch( KopeteOnlineStatus::Away, 10, this, 8, "yahoo_away", i18n( "Out to lunch" ), i18n( "Out to lunch" ) ),
 	SteppedOut( KopeteOnlineStatus::Away, 10, this, 9, "yahoo_away", i18n( "Stepped out" ), i18n( "Stepped out" ) ),
-	Offline( KopeteOnlineStatus::Offline, 0, this, 0x5a55aa56, QString::null, i18n( "Offline" ), i18n( "Offline" ) ),
 	Invisible( KopeteOnlineStatus::Away, 0, this, 12, "yahoo_invisible", i18n( "Invisible" ), i18n( "Invisible" ) ),
 	Custom( KopeteOnlineStatus::Away, 20, this, 99, "yahoo_away", i18n( "Custom" ), i18n( "Custom" ) ),
 	Idle( KopeteOnlineStatus::Away, 15, this, 999, "yahoo_idle", i18n( "Idle" ), i18n( "Idle" ) )

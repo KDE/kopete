@@ -72,15 +72,10 @@ class KopeteAccount : public KopetePluginDataObject
 
 public:
 	/**
-	 * Describes what should be done when the contact is added to a metacontact
+	 * \brief Describes what should be done when the contact is added to a metacontact
 	 */
 	enum AddMode { ChangeKABC=0, DontChangeKABC=1 };
 	
-	/**
-	 * Describes what initial status the account is going to use to connect
-	 */
-	enum ConnectionStatus { Online = 0, Away, Invisible };
-
 	/**
 	 * constructor:
 	 * The constructor register automatically the account to the @ref KopeteAccountManager
@@ -303,14 +298,17 @@ public slots:
 	/**
 	 * @brief Go online for this service.
 	 *
-	 * This is a slot, so it can be called directly from a KAction, for example.
 	 */
-	virtual void connect( ConnectionStatus initialStatus = Online ) = 0;
+	virtual void connect() = 0;
+	
+	/**
+	 * @brief Go online for this service using a different status
+	 */
+	virtual void connect( const KopeteOnlineStatus& initialStatus );
 
 	/**
 	 * @brief Disconnect from this service.
 	 *
-	 * This is a slot, so it can be called directly from a KAction, for example.
 	 */
 	virtual void disconnect() = 0;
 

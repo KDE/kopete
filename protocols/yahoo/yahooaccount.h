@@ -92,7 +92,7 @@ public slots:
 	/**
 	 * Connect to the Yahoo service
 	 */
-	virtual void connectWithPassword( const QString &, ConnectionStatus initalStatus = Online );
+	virtual void connectWithPassword( const QString & );
 	/**
 	 * Disconnect from the Yahoo service
 	 */

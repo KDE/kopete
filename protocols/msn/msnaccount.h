@@ -83,7 +83,7 @@ public:
 	void resetPictureObject(bool silent=false);
 
 public slots:
-	virtual void connect( ConnectionStatus initalStatus = Online ) ;
+	virtual void connect() ;
 	virtual void disconnect() ;
 
 	/**

@@ -105,7 +105,7 @@ void MSNAccount::setAway( bool away, const QString & awayReason )
 		setOnlineStatus( MSNProtocol::protocol()->NLN );
 }
 
-void MSNAccount::connect( ConnectionStatus initalStatus )
+void MSNAccount::connect()
 {
 	if ( isConnected() )
 	{

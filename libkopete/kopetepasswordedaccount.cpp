@@ -17,6 +17,7 @@
 #include "kopetepasswordedaccount.h"
 #include "kopetepassword.h"
 #include "kopeteprotocol.h"
+#include "kopeteonlinestatus.h"
 
 #include <klocale.h>
 
@@ -26,6 +27,7 @@ struct Kopete::PasswordedAccount::Private
 {
 	Private( const QString &group, uint maxLen ) : password( group, maxLen, "mPassword" ) {}
 	Kopete::Password password;
+	KopeteOnlineStatus initialStatus;
 };
 
 Kopete::PasswordedAccount::PasswordedAccount( KopeteProtocol *parent, const QString &acctId, uint maxLen, const char *name )
@@ -43,8 +45,15 @@ Kopete::Password &Kopete::PasswordedAccount::password()
 	return d->password;
 }
 
-void Kopete::PasswordedAccount::connect( ConnectionStatus initalStatus )
+void Kopete::PasswordedAccount::connect( )
 {
+	KopeteOnlineStatus s(KopeteOnlineStatus::Online);
+	connect( s );
+}
+
+void Kopete::PasswordedAccount::connect( const KopeteOnlineStatus& initialStatus )
+{
+	d->initialStatus = initialStatus;
 	QString cached = password().cachedValue();
 	if ( !cached.isNull() )
 	{
@@ -64,6 +73,11 @@ QString Kopete::PasswordedAccount::passwordPrompt()
 		return i18n( "<b>The password was wrong!</b> Please re-enter your password for %1 account <b>%2</b>" ).arg( protocol()->displayName(), accountId() );
 	else
 		return i18n( "Please enter your password for %1 account <b>%2</b>" ).arg( protocol()->displayName(), accountId() );
+}
+
+KopeteOnlineStatus Kopete::PasswordedAccount::initialStatus()
+{
+	return d->initialStatus;
 }
 
 #include "kopetepasswordedaccount.moc"

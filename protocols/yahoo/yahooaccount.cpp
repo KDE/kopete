@@ -152,7 +152,7 @@ QColor YahooAccount::getMsgColor(const QString& msg)
 	return Qt::black;
 }
 
-void YahooAccount::connectWithPassword( const QString &passwd, ConnectionStatus initialStatus )
+void YahooAccount::connectWithPassword( const QString &passwd )
 {
 	if ( passwd.isNull() )
 	{ //cancel the connection attempt
@@ -626,7 +626,7 @@ void YahooAccount::slotGameNotify( const QString & /* who */, int /* stat */ )
 //	kdDebug(14180) << k_funcinfo << endl;
 }
 
-void YahooAccount::slotMailNotify( const QString & from, const QString & subject, int cnt )
+void YahooAccount::slotMailNotify( const QString& from, const QString& /* subject */, int cnt )
 {
 	kdDebug(14180) << k_funcinfo << endl;
 	//kdDebug(14180) << "From: " << from << endl;

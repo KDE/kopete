@@ -71,7 +71,7 @@ void SMSAccount::setAway( bool /*away*/, const QString &)
 {
 }
 
-void SMSAccount::connect( ConnectionStatus initalStatus )
+void SMSAccount::connect()
 {
 //	myself()->setOnlineStatus( SMSOnline );
 

@@ -61,7 +61,7 @@ public:
 
 public slots:
 	//{
-	void connect( ConnectionStatus initalStatus = Online );
+	void connect();
 	void disconnect();
 	//}
 

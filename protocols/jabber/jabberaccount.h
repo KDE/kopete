@@ -112,7 +112,7 @@ public:
 
 public slots:
 	/* Connects to the server. */
-	void connect ( KopeteAccount::ConnectionStatus initalStatus = Online );
+	void connect ();
 
 	/* Disconnects from the server. */
 	void disconnect ();

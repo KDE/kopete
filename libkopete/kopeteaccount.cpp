@@ -98,6 +98,11 @@ void KopeteAccount::slotAccountReady()
 	KopeteAccountManager::manager()->notifyAccountReady( this );
 }
 
+void KopeteAccount::connect( const KopeteOnlineStatus& )
+{
+	//do nothing
+}
+
 KopeteProtocol *KopeteAccount::protocol() const
 {
 	return d->protocol;
