@@ -191,7 +191,7 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 }
 
 KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name )
-	: KListView( parent, name )
+: KListView( parent, name )
 {
 	d = new KopeteContactListViewPrivate;
 	d->sortTimer = new QTimer( this, "sortTimer" );
@@ -208,20 +208,21 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 		setTreeStepSize( 0 );
 	}
 
-	if(KopetePrefs::prefs()->sortByGroup())
+	if ( KopetePrefs::prefs()->sortByGroup() )
 	{
-		m_offlineItem=0L;
-		m_onlineItem=0L;
+		m_offlineItem = 0L;
+		m_onlineItem = 0L;
 	}
 	else
 	{
 		m_offlineItem = new KopeteStatusGroupViewItem( KopeteOnlineStatus::Offline, this );
 		m_onlineItem = new KopeteStatusGroupViewItem( KopeteOnlineStatus::Online, this );
-		m_onlineItem->setOpen(true);
-		m_offlineItem->setOpen(true);
+		m_onlineItem->setOpen( true );
+		m_offlineItem->setOpen( true );
 	}
 
-	setAlternateBackground( QColor() ); // no alternate color, looks ugly
+	// No alternate color, looks ugly
+	setAlternateBackground( QColor() );
 	setFullWidth( true );
 
 	// We have our own tooltips, don't use the default QListView ones
@@ -229,129 +230,92 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 
 	m_tooltip = new KopeteContactListViewToolTip( viewport(), this );
 
-	connect( this,
-		SIGNAL( contextMenu( KListView*, QListViewItem *, const QPoint &) ),
-		SLOT( slotContextMenu(KListView*, QListViewItem *, const QPoint & ) ) );
-	connect( this, SIGNAL( expanded( QListViewItem * ) ),
-		SLOT( slotExpanded( QListViewItem * ) ) );
-	connect( this, SIGNAL( collapsed( QListViewItem * ) ),
-		SLOT( slotCollapsed( QListViewItem * ) ) );
-	connect( KopetePrefs::prefs(), SIGNAL( saved() ),
-		SLOT( slotSettingsChanged() ) );
-	connect( this, SIGNAL( executed( QListViewItem *, const QPoint &, int ) ),
-		SLOT( slotExecuted( QListViewItem *, const QPoint &, int ) ) );
-	connect( this, SIGNAL( doubleClicked( QListViewItem * ) ),
-		SLOT( slotDoubleClicked( QListViewItem * ) ) );
-	connect( this, SIGNAL( selectionChanged() ),
-		SLOT( slotSelectionChanged() ) );
+	connect( this, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ),
+		SLOT( slotContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
+	connect( this, SIGNAL( expanded( QListViewItem * ) ), SLOT( slotExpanded( QListViewItem * ) ) );
+	connect( this, SIGNAL( collapsed( QListViewItem * ) ), SLOT( slotCollapsed( QListViewItem * ) ) );
+	connect( this, SIGNAL( executed( QListViewItem *, const QPoint &, int ) ), SLOT( slotExecuted( QListViewItem *, const QPoint &, int ) ) );
+	connect( this, SIGNAL( doubleClicked( QListViewItem * ) ), SLOT( slotDoubleClicked( QListViewItem * ) ) );
+	connect( this, SIGNAL( selectionChanged() ), SLOT( slotSelectionChanged() ) );
+	connect( this, SIGNAL( itemRenamed( QListViewItem * ) ), this, SLOT( slotItemRenamed( QListViewItem * ) ) );
 
-	connect( KopeteContactList::contactList(),
-		SIGNAL( metaContactAdded( KopeteMetaContact * ) ),
+	connect( KopetePrefs::prefs(), SIGNAL( saved() ), SLOT( slotSettingsChanged() ) );
+
+	connect( KopeteContactList::contactList(), SIGNAL( metaContactAdded( KopeteMetaContact * ) ),
 		SLOT( slotMetaContactAdded( KopeteMetaContact * ) ) );
-
-	connect( KopeteContactList::contactList(),
-		SIGNAL( metaContactDeleted( KopeteMetaContact * ) ),
+	connect( KopeteContactList::contactList(), SIGNAL( metaContactDeleted( KopeteMetaContact * ) ),
 		SLOT( slotMetaContactDeleted( KopeteMetaContact * ) ) );
-
-	connect( KopeteContactList::contactList(),
-		SIGNAL( groupAdded( KopeteGroup * ) ),
+	connect( KopeteContactList::contactList(), SIGNAL( groupAdded( KopeteGroup * ) ),
 		SLOT( slotGroupAdded( KopeteGroup * ) ) );
 
-	connect( KopeteMessageManagerFactory::factory() , SIGNAL( newEvent(KopeteEvent *) ),
-		this, SLOT( slotNewMessageEvent(KopeteEvent *) ) );
+	connect( KopeteMessageManagerFactory::factory(), SIGNAL( newEvent( KopeteEvent * ) ),
+		this, SLOT( slotNewMessageEvent( KopeteEvent * ) ) );
 
-	connect( this , SIGNAL( dropped(QDropEvent *, QListViewItem *, QListViewItem*) ) ,
-		this, SLOT( slotDropped(QDropEvent *, QListViewItem *, QListViewItem*) ));
+	connect( this, SIGNAL( dropped( QDropEvent *, QListViewItem *, QListViewItem * ) ),
+		this, SLOT( slotDropped( QDropEvent *, QListViewItem *, QListViewItem * ) ) );
 
-//	connect( this , SIGNAL ( onItem(QListViewItem *) ) ,
-//		this, SLOT (slotOnItem(QListViewItem *) ));
+	//connect( this , SIGNAL( onItem( QListViewItem * ) ),
+	//	this, SLOT ( slotOnItem( QListViewItem * ) ) );
 
-	addColumn( i18n("Contacts") , 0 );
+	addColumn( i18n( "Contacts" ), 0 );
 
 	closed  = SmallIcon( "folder_green" );
 	open    = SmallIcon( "folder_green_open" );
 	classic = SmallIcon( "folder_blue" );
 
 	// Add the already existing groups now
-	QPtrListIterator<KopeteGroup> groupIt( KopeteContactList::contactList()->groups() );
-	KopeteGroup *group;
-	while( ( group = groupIt.current() ) != 0 )
-	{
-		getGroup( group, true );
-		++groupIt;
-	}
+	for ( QPtrListIterator<KopeteGroup> groupIt( KopeteContactList::contactList()->groups() ); groupIt.current(); ++groupIt )
+		getGroup( groupIt.current(), true );
 
 	// Add the already existing meta contacts now
-	QPtrList<KopeteMetaContact> metaContacts =
-		KopeteContactList::contactList()->metaContacts();
-	QPtrListIterator<KopeteMetaContact> it( metaContacts );
-	KopeteMetaContact *mc;
-	while( ( mc = it.current() ) != 0 )
-	{
-		slotMetaContactAdded( mc );
-		++it;
-	}
+	QPtrList<KopeteMetaContact> metaContacts = KopeteContactList::contactList()->metaContacts();
+	for ( QPtrListIterator<KopeteMetaContact> it( metaContacts ); it.current(); ++it )
+		slotMetaContactAdded( it.current() );
 
-	setDragEnabled(true);
-	setItemsMovable(false);
-	setAcceptDrops(true);
-	setDropVisualizer(false);
-	setDropHighlighter(true);
-	setAutoOpen(true);
-	setSelectionMode(QListView::Extended);
+	setAutoOpen( true );
+	setDragEnabled( true );
+	setAcceptDrops( true );
+	setItemsMovable( false );
+	setDropVisualizer( false );
+	setDropHighlighter( true );
+	setSelectionMode( QListView::Extended );
 }
 
-void KopeteContactListView::initActions(KActionCollection* ac)
+void KopeteContactListView::initActions( KActionCollection *ac )
 {
-	new KAction( i18n("Create New Group..."), 0, 0,
-		this, SLOT( addGroup() ), ac, "AddGroup" );
+	new KAction( i18n( "Create New Group..." ), 0, 0, this, SLOT( addGroup() ), ac, "AddGroup" );
 
-	actionSendMessage = KopeteStdAction::sendMessage( this,
-		SLOT( slotSendMessage() ), ac, "contactSendMessage" );
-	actionStartChat = KopeteStdAction::chat( this,
-		SLOT( slotStartChat() ), ac, "contactStartChat" );
+	actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( slotSendMessage() ), ac, "contactSendMessage" );
+	actionStartChat = KopeteStdAction::chat( this, SLOT( slotStartChat() ), ac, "contactStartChat" );
 
-	actionRemoveFromGroup = KopeteStdAction::deleteContact( this,
-		SLOT( slotRemoveFromGroup() ), ac, "contactRemoveFromGroup" );
+	actionRemoveFromGroup = KopeteStdAction::deleteContact( this, SLOT( slotRemoveFromGroup() ), ac, "contactRemoveFromGroup" );
 	actionRemoveFromGroup->setText( i18n("Remove From Group") );
 
-	actionMove = KopeteStdAction::moveContact( this,
-		SLOT( slotMoveToGroup() ), ac, "contactMove" );
-	actionCopy = KopeteStdAction::copyContact( this,
-		SLOT( slotCopyToGroup() ), ac, "contactCopy" );
-	actionRemove = KopeteStdAction::deleteContact( this,
-		SLOT( slotRemove() ), ac, "contactRemove" );
-	actionRename = new KAction( i18n( "Rename" ), "filesaveas", 0, this,
-		SLOT( slotRename() ), ac, "contactRename" );
-	actionSendFile = KopeteStdAction::sendFile( this,
-		SLOT( slotSendFile() ), ac, "contactSendFile" );
+	actionMove = KopeteStdAction::moveContact( this, SLOT( slotMoveToGroup() ), ac, "contactMove" );
+	actionCopy = KopeteStdAction::copyContact( this, SLOT( slotCopyToGroup() ), ac, "contactCopy" );
+	actionRemove = KopeteStdAction::deleteContact( this, SLOT( slotRemove() ), ac, "contactRemove" );
+	actionRename = new KAction( i18n( "Rename" ), "filesaveas", 0, this, SLOT( slotRename() ), ac, "contactRename" );
+	actionSendFile = KopeteStdAction::sendFile( this, SLOT( slotSendFile() ), ac, "contactSendFile" );
 
-	actionAddContact = new KActionMenu( i18n( "&Add Contact" ),
-		QString::fromLatin1( "bookmark_add" ), ac , "contactAddContact" );
+	actionAddContact = new KActionMenu( i18n( "&Add Contact" ), QString::fromLatin1( "bookmark_add" ), ac , "contactAddContact" );
 	actionAddContact->popupMenu()->insertTitle( i18n("Select Account") );
 
-	actionAddTemporaryContact = new KAction(
-		i18n( "Add to Your Contact List" ), "bookmark_add", 0,
-		this, SLOT( slotAddTemporaryContact() ),
-		ac, "contactAddTemporaryContact" );
+	actionAddTemporaryContact = new KAction( i18n( "Add to Your Contact List" ), "bookmark_add", 0,
+		this, SLOT( slotAddTemporaryContact() ), ac, "contactAddTemporaryContact" );
 
-	connect(KopeteContactList::contactList(), SIGNAL(metaContactSelected(bool)),
-		this, SLOT(slotMetaContactSelected(bool)));
+	connect( KopeteContactList::contactList(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotMetaContactSelected( bool ) ) );
 
 	QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
-	KAction *action;
-	KopeteAccount *acc;
-	for( acc = accounts.first() ; acc ; acc = accounts.next() )
+	for( KopeteAccount *acc = accounts.first() ; acc ; acc = accounts.next() )
 	{
-		action = new KAction( acc->accountId(), acc->protocol()->pluginIcon(),
-			0, this, SLOT( slotAddContact() ), acc);
-		actionAddContact->insert(action);
+		KAction *action = new KAction( acc->accountId(), acc->protocol()->pluginIcon(), 0, this, SLOT( slotAddContact() ), acc );
+		actionAddContact->insert( action );
 	}
 
-	actionProperties = new KAction( i18n( "&Properties" ), "", Qt::Key_Alt+Qt::Key_Return,
+	actionProperties = new KAction( i18n( "&Properties" ), "", Qt::Key_Alt + Qt::Key_Return,
 		this, SLOT( slotProperties() ), ac, "contactProperties" );
 
-	//update enabled/disabled actions
+	// Update enabled/disabled actions
 	slotSelectionChanged();
 }
 
@@ -365,44 +329,37 @@ KopeteContactListView::~KopeteContactListView()
 
 void KopeteContactListView::slotMetaContactAdded( KopeteMetaContact *mc )
 {
-	if(KopetePrefs::prefs()->sortByGroup() || mc->isTemporary())
+	if ( KopetePrefs::prefs()->sortByGroup() || mc->isTemporary() )
 	{
-		if( mc->isTopLevel() )
-		{
+		if ( mc->isTopLevel() )
 			m_metaContacts.append( new KopeteMetaContactLVI( mc, this ) );
-		}
-		// now we create group items
-		KopeteGroupList list=mc->groups();
-		for(KopeteGroup *it=list.first() ; it; it=list.next() )
+
+		// Now we create group items
+		KopeteGroupList list = mc->groups();
+		for ( KopeteGroup *it = list.first(); it; it = list.next() )
 		{
 			KopeteGroupViewItem *groupLVI = getGroup( it );
-			if( groupLVI )
-			{
+			if ( groupLVI )
 				m_metaContacts.append( new KopeteMetaContactLVI( mc, groupLVI ) );
-			}
 		}
 	}
 	else
 	{
-		if(mc->status() == KopeteOnlineStatus::Offline )
+		if ( mc->status() == KopeteOnlineStatus::Offline )
 			m_metaContacts.append( new KopeteMetaContactLVI( mc, m_offlineItem ) );
 		else
 			m_metaContacts.append( new KopeteMetaContactLVI( mc, m_onlineItem ) );
-		slotContactStatusChanged(0L);
+
+		slotContactStatusChanged( 0L );
 	}
 
-	connect( mc,
-		SIGNAL( addedToGroup( KopeteMetaContact *, KopeteGroup * ) ),
+	connect( mc, SIGNAL( addedToGroup( KopeteMetaContact *, KopeteGroup * ) ),
 		SLOT( slotAddedToGroup( KopeteMetaContact *, KopeteGroup * ) ) );
-	connect( mc,
-		SIGNAL( removedFromGroup( KopeteMetaContact *, KopeteGroup * ) ),
+	connect( mc, SIGNAL( removedFromGroup( KopeteMetaContact *, KopeteGroup * ) ),
 		SLOT( slotRemovedFromGroup( KopeteMetaContact *, KopeteGroup * ) ) );
-	connect( mc,
-		SIGNAL( movedToGroup( KopeteMetaContact *, KopeteGroup *, KopeteGroup * ) ),
+	connect( mc, SIGNAL( movedToGroup( KopeteMetaContact *, KopeteGroup *, KopeteGroup * ) ),
 		SLOT( slotMovedToGroup( KopeteMetaContact *, KopeteGroup *, KopeteGroup * ) ) );
-
-	connect( mc,
-		SIGNAL( onlineStatusChanged( KopeteMetaContact *, KopeteOnlineStatus::OnlineStatus ) ),
+	connect( mc, SIGNAL( onlineStatusChanged( KopeteMetaContact *, KopeteOnlineStatus::OnlineStatus ) ),
 		SLOT( slotContactStatusChanged( KopeteMetaContact * ) ) );
 }
 
@@ -674,19 +631,14 @@ KopeteGroupViewItem *KopeteContactListView::getGroup( KopeteGroup *Kgroup , bool
 
 void KopeteContactListView::addGroup()
 {
-#include <kdeversion.h>
+	QString groupName =
 #if KDE_IS_VERSION( 3, 1, 90 )
-	QString groupName = KInputDialog::getText(
-		i18n( "New Group" ),
-		i18n( "Please enter the name for the new group:" )
-		);
+		KInputDialog::getText( i18n( "New Group" ), i18n( "Please enter the name for the new group:" ) );
 #else
-	QString groupName = KLineEditDlg::getText(
-		i18n( "New Group" ),
-		i18n( "Please enter the name for the new group:" )
-		);
+		KLineEditDlg::getText( i18n( "New Group" ), i18n( "Please enter the name for the new group:" ) );
 #endif
-	if( !groupName.isEmpty() )
+
+	if ( !groupName.isEmpty() )
 		addGroup( groupName );
 }
 
@@ -695,140 +647,113 @@ void KopeteContactListView::addGroup( const QString groupName )
 	getGroup(KopeteContactList::contactList()->getGroup(groupName));
 }
 
-void KopeteContactListView::slotGroupAdded(KopeteGroup *g)
+void KopeteContactListView::slotGroupAdded( KopeteGroup *group )
 {
-	if(KopetePrefs::prefs()->sortByGroup())
-		getGroup(g);
+	if ( KopetePrefs::prefs()->sortByGroup() )
+		getGroup( group );
 }
 
 void KopeteContactListView::slotExpanded( QListViewItem *item )
 {
-	if( dynamic_cast<KopeteMetaContactLVI*>( item ) )
-		return;
-
-	KopeteGroupViewItem *groupLVI = dynamic_cast<KopeteGroupViewItem*>( item );
-	if( groupLVI )
+	KopeteGroupViewItem *groupLVI = dynamic_cast<KopeteGroupViewItem *>( item );
+	if ( groupLVI )
 	{
 		groupLVI->group()->setExpanded( true );
-		if( groupLVI->group()->useCustomIcon() )
-		{
+		if ( groupLVI->group()->useCustomIcon() )
 			groupLVI->updateCustomIcons( mShowAsTree );
-			return;
-		}
+		else
+			item->setPixmap( 0, mShowAsTree ? open : classic );
 	}
-
-	// FIXME: Is this used for anything else than KopeteGroupViewItems? [mETz]
-	if ( mShowAsTree )
-		item->setPixmap( 0, open );
-	else
-		item->setPixmap( 0, classic );
 }
 
-void KopeteContactListView::slotCollapsed(QListViewItem *item)
+void KopeteContactListView::slotCollapsed( QListViewItem *item )
 {
-	if( dynamic_cast<KopeteMetaContactLVI*>( item ) )
-		return;
-
 	KopeteGroupViewItem *groupLVI = dynamic_cast<KopeteGroupViewItem*>( item );
-	if( groupLVI )
+	if ( groupLVI )
 	{
 		groupLVI->group()->setExpanded( false );
-		if( groupLVI->group()->useCustomIcon() )
-		{
+		if ( groupLVI->group()->useCustomIcon() )
 			groupLVI->updateCustomIcons( mShowAsTree );
-			return;
-		}
+		else
+			item->setPixmap( 0, mShowAsTree ? closed : classic );
 	}
-
-	// FIXME: Is this used for anything else than KopeteGroupViewItems? [mETz]
-	if ( mShowAsTree )
-		item->setPixmap( 0, closed );
-	else
-		item->setPixmap( 0, classic );
 }
 
 void KopeteContactListView::slotDoubleClicked( QListViewItem *item )
 {
-	if( !item )
+	if ( !item )
 		return;
 
-	kdDebug(14000) << k_funcinfo << endl;
+	kdDebug( 14000 ) << k_funcinfo << endl;
 
-	KopeteMetaContactLVI *metaItem = dynamic_cast<KopeteMetaContactLVI*>(item);
+	KopeteMetaContactLVI *metaItem = dynamic_cast<KopeteMetaContactLVI *>( item );
 	if ( !metaItem || !mShowAsTree )
 	{
+		kdDebug( 14000 ) << k_funcinfo << "setOpen( item, " << !isOpen( item ) << " )" << endl;
 		setOpen( item, !isOpen( item ) );
-		kdDebug(14000) << k_funcinfo << "setOpen(item, " << !isOpen(item) << ")" << endl;
 	}
 }
 
-void KopeteContactListView::slotContextMenu( KListView*, QListViewItem *item,
-	const QPoint &point )
+void KopeteContactListView::slotContextMenu( KListView * /* listview */, QListViewItem *item, const QPoint &point )
 {
-	KopeteMetaContactLVI *metaLVI =
-		dynamic_cast<KopeteMetaContactLVI*>( item );
-	KopeteGroupViewItem *groupvi =
-		dynamic_cast<KopeteGroupViewItem*>( item );
+	KopeteMetaContactLVI *metaLVI = dynamic_cast<KopeteMetaContactLVI *>( item );
+	KopeteGroupViewItem  *groupvi = dynamic_cast<KopeteGroupViewItem *>( item );
 
-	if( item && !item->isSelected() )
+	if ( item && !item->isSelected() )
 	{
 		clearSelection();
-		item->setSelected(true);
+		item->setSelected( true );
 	}
-	if( !item )
-	{
+
+	if ( !item )
 		clearSelection();
-	}
 
 	int nb = KopeteContactList::contactList()->selectedMetaContacts().count() +
 		KopeteContactList::contactList()->selectedGroups().count();
 
 	KMainWindow *window = dynamic_cast<KMainWindow *>(topLevelWidget());
-	if( !window )
+	if ( !window )
 	{
-		kdError(14000) << k_funcinfo <<
-			"ERROR: main window not found, cannot display context-menu; kapp->mainWidget()=" << (void *)kapp->mainWidget() << endl;
+		kdError( 14000 ) << k_funcinfo << "Main window not found, unable to display context-menu; "
+			<< "kapp->mainWidget() = " << kapp->mainWidget() << endl;
 		return;
 	}
 
-	if( metaLVI && nb == 1 )
+	if ( metaLVI && nb == 1 )
 	{
-		int px = mapFromGlobal( point ).x() -
-			( header()->sectionPos( header()->mapToIndex( 0 ) ) +
-			treeStepSize() * ( item->depth() +
-			( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
-		int py = mapFromGlobal( point ).y() - itemRect( item ).y() -
-			header()->height();
+		int px = mapFromGlobal( point ).x() - ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
+			treeStepSize() * ( item->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
+		int py = mapFromGlobal( point ).y() - itemRect( item ).y() - header()->height();
 
-//		kdDebug(14000) << "KopeteContactListView::showContextMenu: x: " << px << ", y: " << py << endl;
+		//kdDebug( 14000 ) << k_funcinfo << "x: " << px << ", y: " << py << endl;
 		KopeteContact *c = metaLVI->contactForPoint( QPoint( px, py ) ) ;
-		if( c )
+		if ( c )
 		{
 			KPopupMenu *p = c->popupMenu();
-			connect(p,SIGNAL(aboutToHide()),p,SLOT(deleteLater()));
+			connect( p, SIGNAL( aboutToHide() ), p, SLOT( deleteLater() ) );
 			p->popup( point );
 		}
 		else
 		{
-			KPopupMenu *popup = dynamic_cast<KPopupMenu*>(window->factory()->container("contact_popup",window));
-			if(popup)
+			KPopupMenu *popup = dynamic_cast<KPopupMenu *>( window->factory()->container( "contact_popup", window ) );
+			if ( popup )
 			{
-				QString title=i18n( "Translators: format: '<nickname> (<online status>)'", "%1 (%2)" ).
+				QString title = i18n( "Translators: format: '<nickname> (<online status>)'", "%1 (%2)" ).
 #if QT_VERSION < 0x030200
 					arg( metaLVI->metaContact()->displayName() ).arg( metaLVI->metaContact()->statusString() );
 #else
 					arg( metaLVI->metaContact()->displayName() , metaLVI->metaContact()->statusString() );
 #endif
-				if(title.length() > 43 )
+				if ( title.length() > 43 )
 					title = title.left( 40 ) + QString::fromLatin1( "..." );
 
-				if(popup->title(0).isNull())
+				if ( popup->title( 0 ).isNull() )
 					popup->insertTitle ( title, 0, 0 );
 				else
 					popup->changeTitle ( 0, title );
 
-				//-- Submenus for separate contacts actions
-				bool sep=false;  //FIXME: find if there is already a separator in the end
+				// Submenus for separate contact actions
+				bool sep = false;  //FIXME: find if there is already a separator in the end - Olivier
 				QPtrList<KopeteContact> it = metaLVI->metaContact()->contacts();
 				for( KopeteContact *c = it.first(); c; c = it.next() )
 				{
@@ -839,53 +764,53 @@ void KopeteContactListView::slotContextMenu( KListView*, QListViewItem *item,
 					}
 
 					KPopupMenu *contactMenu = it.current()->popupMenu();
-					connect( popup, SIGNAL(aboutToHide()) , contactMenu , SLOT(deleteLater()));
+					connect( popup, SIGNAL( aboutToHide() ), contactMenu, SLOT( deleteLater() ) );
 					QString text= i18n( "Translators: format: '<displayName> (<id>)'", "%2 <%1>" ).
 #if QT_VERSION < 0x030200
 						arg( c->contactId() ).arg( c->displayName() );
 #else
 						arg( c->contactId(), c->displayName() );
 #endif
-					if(text.length() > 41 )
-						text = text.left(38) + QString::fromLatin1("...");
+					if ( text.length() > 41 )
+						text = text.left( 38 ) + QString::fromLatin1( "..." );
 
 					popup->insertItem( c->onlineStatus().iconFor( c, 16 ), text , contactMenu );
 				}
 
-				popup->popup(point);
-			} // END if(popup)
+				popup->popup( point );
+			}
 		}
 	}
-	else if( groupvi && nb==1 )
+	else if ( groupvi && nb == 1 )
 	{
-		KPopupMenu *popup = dynamic_cast<KPopupMenu*>(window->factory()->container("group_popup",window));
-		if(popup)
+		KPopupMenu *popup = dynamic_cast<KPopupMenu *>( window->factory()->container( "group_popup", window ) );
+		if ( popup )
 		{
-			QString title=groupvi->group()->displayName();
-			if(title.length() > 32 )
-				title = title.left(30) + QString::fromLatin1("...");
+			QString title = groupvi->group()->displayName();
+			if ( title.length() > 32 )
+				title = title.left( 30 ) + QString::fromLatin1( "..." );
 
-			if(popup->title(0).isNull())
-				popup->insertTitle ( title, 0, 0 );
+			if( popup->title( 0 ).isNull() )
+				popup->insertTitle( title, 0, 0 );
 			else
-				popup->changeTitle ( 0, title );
+				popup->changeTitle( 0, title );
 
-			popup->popup(point);
+			popup->popup( point );
 		}
 	}
-	else if( nb >= 1 )
+	else if ( nb >= 1 )
 	{
-		KPopupMenu *popup = dynamic_cast<KPopupMenu*>(window->factory()->container("contactlistitems_popup",window));
-		if(popup)
-			popup->popup(point);
+		KPopupMenu *popup = dynamic_cast<KPopupMenu *>( window->factory()->container( "contactlistitems_popup", window ) );
+		if ( popup )
+			popup->popup( point );
 	}
 	else
 	{
-		KPopupMenu *popup = dynamic_cast<KPopupMenu*>(window->factory()->container("contactlist_popup",window));
-		if( popup )
+		KPopupMenu *popup = dynamic_cast<KPopupMenu *>( window->factory()->container( "contactlist_popup", window ) );
+		if ( popup )
 		{
-			if( popup->title(0).isNull() )
-				popup->insertTitle( i18n("Kopete") , 0, 0 );
+			if ( popup->title( 0 ).isNull() )
+				popup->insertTitle( i18n( "Kopete" ), 0, 0 );
 
 			popup->popup( point );
 		}
@@ -899,7 +824,7 @@ void KopeteContactListView::slotShowAddContactDialog()
 
 void KopeteContactListView::removeGroup()
 {
-	if(!KopetePrefs::prefs()->sortByGroup())
+	if ( !KopetePrefs::prefs()->sortByGroup() )
 		return;
 
 	if ( !removeGroupItem )
@@ -913,34 +838,30 @@ void KopeteContactListView::removeGroup()
 	}
 	else
 	{
-		msg = i18n( "<qt>Are you sure you want to remove the group <b>%1</b> from your contact list?</qt>" ).arg( removeGroupItem->group()->displayName() );
+		msg = i18n( "<qt>Are you sure you want to remove the group <b>%1</b> from your contact list?</qt>" ).
+			arg( removeGroupItem->group()->displayName() );
 	}
 
-	if( KMessageBox::warningYesNo( this, msg,
-		i18n( "Remove Group" ) ) == KMessageBox::Yes )
+	if ( KMessageBox::warningYesNo( this, msg, i18n( "Remove Group" ) ) == KMessageBox::Yes )
 	{
 		QListViewItem *lvi, *lvi2;
-		for( lvi = removeGroupItem->firstChild(); lvi; lvi = lvi2 )
+		for ( lvi = removeGroupItem->firstChild(); lvi; lvi = lvi2 )
 		{
 			lvi2 = lvi->nextSibling();
-			KopeteMetaContactLVI *kc =
-				dynamic_cast<KopeteMetaContactLVI*>( lvi );
-			if( kc )
-			{
-				kc->metaContact()->removeFromGroup(removeGroupItem->group());
-			}
+			KopeteMetaContactLVI *kc = dynamic_cast<KopeteMetaContactLVI *>( lvi );
+			if ( kc )
+				kc->metaContact()->removeFromGroup( removeGroupItem->group() );
 		}
 
 		if( removeGroupItem->childCount() >= 1 )
 		{
-			kdDebug(14000) << "KopeteContactListView::removeGroup(): "
-				<< "all subMetaContacts are not removed... Aborting" << endl;
+			kdDebug( 14000 ) << k_funcinfo << "Not all underlying MetaContacts are removed... Aborting" << endl;
 			return;
 		}
 
 		mGroups.remove( removeGroupItem );
-		KopeteContactList::contactList()->removeGroup(removeGroupItem->group());
-//		delete removeGroupItem;
+		KopeteContactList::contactList()->removeGroup( removeGroupItem->group() );
+		//delete removeGroupItem;
 	}
 }
 
@@ -948,7 +869,7 @@ void KopeteContactListView::slotSettingsChanged( void )
 {
 	KopeteGroupViewItem *gi;
 	mShowAsTree = KopetePrefs::prefs()->treeView();
-	if( mShowAsTree )
+	if ( mShowAsTree )
 	{
 		setRootIsDecorated( true );
 		setTreeStepSize( 20 );
@@ -958,60 +879,64 @@ void KopeteContactListView::slotSettingsChanged( void )
 		setRootIsDecorated( false );
 		setTreeStepSize( 0 );
 	}
-	if(KopetePrefs::prefs()->sortByGroup())
+
+	if ( KopetePrefs::prefs()->sortByGroup() )
 	{
 		bool cont;
-		do          //slotAddedToGroup change the m_metaContacts.current()
+		do
 		{
-			cont=false;
-			KopeteMetaContactLVI *li = m_metaContacts.first();
-			for( ; li; li = m_metaContacts.next() )
+			// slotAddedToGroup changes m_metaContacts.current(), hence the nested loop
+			// FIXME: Instead of relying on current() and first/next we should use an Iterator instead - Martijn
+			cont = false;
+			for ( KopeteMetaContactLVI *li = m_metaContacts.first(); li; li = m_metaContacts.next() )
 			{
 				if ( !li->isGrouped() )
 				{
-					KopeteMetaContact *mc= li->metaContact();
-					m_metaContacts.setAutoDelete(false);
+					KopeteMetaContact *mc = li->metaContact();
+					m_metaContacts.setAutoDelete( false );
 					m_metaContacts.remove( li );
 					delete li;
 
 					if ( mc->isTopLevel() )
 						slotAddedToGroup( mc, KopeteGroup::topLevel() );
-					KopeteGroupList list=mc->groups();
-					for(KopeteGroup *it=list.first() ; it; it=list.next() )
+					KopeteGroupList list = mc->groups();
+					for ( KopeteGroup *it = list.first(); it; it = list.next() )
 						slotAddedToGroup( mc, it );
 
 					cont = true;
 					break;
 				}
 			}
-		} while (cont);
+		} while ( cont );
 
 		delete m_onlineItem;
-		m_onlineItem=0l;
+		m_onlineItem = 0l;
 		delete m_offlineItem;
-		m_offlineItem=0l;
+		m_offlineItem = 0l;
 	}
 	else
 	{
-		m_metaContacts.setAutoDelete(false);
-		mGroups.setAutoDelete(false);
+		m_metaContacts.setAutoDelete( false );
+		mGroups.setAutoDelete( false );
 		bool cont;
-		do  //slotContactStatusChanged change the m_metaContacts.current()
+		do
 		{
-			cont=false;
-			for(KopeteMetaContactLVI *li = m_metaContacts.first(); li ; li=m_metaContacts.next() )
+			// slotContactStatusChanged changes m_metaContacts.current()
+			cont = false;
+			for ( KopeteMetaContactLVI *li = m_metaContacts.first(); li ; li = m_metaContacts.next() )
 			{
 				if ( li->isGrouped() && !li->metaContact()->isTemporary())
 				{
-					KopeteMetaContact *mc=li->metaContact();
+					KopeteMetaContact *mc = li->metaContact();
 					m_metaContacts.remove( li );
 					delete li;
 					slotContactStatusChanged( mc );
-					cont=true;
+					cont = true;
 					break;
 				}
 			}
-		}  while (cont);
+		} while ( cont );
+
 		gi = mGroups.first();
 		while ( ( gi = mGroups.current() ) != 0L )
 		{
@@ -1021,68 +946,37 @@ void KopeteContactListView::slotSettingsChanged( void )
 				delete gi;
 			}
 			else
+			{
 				mGroups.next();
+			}
 		}
 	}
-	for( gi = mGroups.first(); gi; gi = mGroups.next() )
+
+	for ( gi = mGroups.first(); gi; gi = mGroups.next() )
 	{
-		if( gi->group()->useCustomIcon() )
+		if ( gi->group()->useCustomIcon() )
 		{
 			gi->updateCustomIcons( mShowAsTree );
 		}
 		else
 		{
-			if (mShowAsTree)
-				gi->setPixmap( 0, isOpen(gi) ? open : closed );
+			if ( mShowAsTree )
+				gi->setPixmap( 0, isOpen( gi ) ? open : closed );
 			else
 				gi->setPixmap( 0, classic );
 		}
 	}
 	delete gi;
 	update();
-/*
-	if( KopetePrefs::prefs()->ctransparencyEnabled() )
-	{
-		kdDebug(14000) << k_funcinfo << "Requested Transparent ContactList." << endl;
-		if( root == 0L )
-		{
-			kdDebug(14000) << k_funcinfo << "Enabling Transparency." << endl;
-			root = new KRootPixmap( this );
-			root->setFadeEffect(KopetePrefs::prefs()->transparencyValue() * 0.01, KopetePrefs::prefs()->transparencyColor() );
-			root->start();
-		}
-		else
-		{
-			kdDebug(14000) << k_funcinfo << "Updating Transparency." << endl;
-			root->stop();
-			root->setFadeEffect(KopetePrefs::prefs()->transparencyValue() * 0.01, KopetePrefs::prefs()->transparencyColor() );
-			root->start();
-		}
-		root->repaint( true );
-	}
-	else
-	{
-		kdDebug(14000) << k_funcinfo << "No Transparent ContactList wanted." << endl;
-		if ( root != 0L )
-		{
-			kdDebug(14000) << k_funcinfo << "Disabling Transparency." << endl;
-			root->stop();
-			delete root;
-			root = 0L;
-		}
-	}
-*/
 }
 
-void KopeteContactListView::slotExecuted( QListViewItem *item,
-	const QPoint &p, int /* col */ )
+void KopeteContactListView::slotExecuted( QListViewItem *item, const QPoint &p, int /* col */ )
 {
-	KopeteMetaContactLVI *metaContactLVI =
-		dynamic_cast<KopeteMetaContactLVI*>( item );
+	KopeteMetaContactLVI *metaContactLVI = dynamic_cast<KopeteMetaContactLVI *>( item );
 
 	QPoint pos = viewport()->mapFromGlobal( p );
 	KopeteContact *c = 0L;
-	if( metaContactLVI )
+	if ( metaContactLVI )
 	{
 		// Try if we are clicking a protocol icon. If so, open a direct
 		// connection for that protocol
