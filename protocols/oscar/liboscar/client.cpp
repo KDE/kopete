@@ -148,6 +148,7 @@ void Client::connectToServer( Connection *c, const QString& server, bool auth )
 	m_loginTask = new StageOneLoginTask( c->rootTask() );
 	connect( m_loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
 	connect( c, SIGNAL( error( int ) ), SLOT( streamError( int ) ) );
+	connect( c, SIGNAL( error( const QString& ) ), SLOT( taskError( const QString& ) ) );
 
 	c->connectToServer(server, auth);
 }
@@ -270,9 +271,14 @@ SSIManager* Client::ssiManager() const
 // SLOTS //
 void Client::streamError( int error )
 {
-	qDebug( "CLIENT ERROR (Error %i)", error );
+	//qDebug( "CLIENT ERROR (Error %i)", error );
 	disconnectionError( 0, i18n( "An unknown error has occurred and the connection "
 	                             "has been closed." ) );
+}
+
+void Client::taskError( const QString& message )
+{
+	emit error( NonFatalProtocolError, 0, message );
 }
 
 void Client::streamConnected()

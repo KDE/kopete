@@ -21,6 +21,7 @@
 #include "ssimodifytask.h"
 
 #include <kdebug.h>
+#include <klocale.h>
 #include <qstring.h>
 #include "connection.h"
 #include "oscarutils.h"
@@ -187,22 +188,33 @@ void SSIModifyTask::handleSSIAck()
 			break;
 		case 0x0002:
 			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Item to modify not found in list" << endl;
+			client()->taskError( i18n( "The item to modify was not found on the server. No modification took place" ) );
 			setSuccess( 0, QString::null );
 			break;
 		case 0x0003:
 			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Item already exists in SSI" << endl;
+			client()->taskError( i18n( "The item to modify already exists on the server. No modification took place" ) );
 			setSuccess( 0, QString::null );
 			break;
 		case 0x000A:
 			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Error adding item ( invalid id, already in list, invalid data )" << endl;
+			client()->taskError( i18n( "There was an error adding the item to the server." ) );
 			setSuccess( 0, QString::null );
 			break;
 		case 0x000C:
 			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Can't add item. Limit exceeded." << endl;
+			client()->taskError( i18n( "Could not add this item to the server because it would have exceeded the limit for" 
+			                           " this type of item" ) );
 			setSuccess( 0, QString::null );
 			break;
 		case 0x000D:
 			kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Can't add ICQ item to AIM list ( and vice versa )" << endl;
+			
+			if ( client()->isIcq() )
+				client()->taskError( i18n( "Could not add an AIM item to an ICQ list" ) );
+			else
+				client()->taskError( i18n( "Could not add an ICQ item to an AIM list" ) );
+			
 			setSuccess( 0, QString::null );
 			break;
 		case 0x000E:

@@ -330,6 +330,11 @@ protected slots:
 	 */
 	void streamError( int error );
 	
+	/**
+	 * Used by the connection to notify about errors in tasks
+	 */
+	void taskError( const QString& message );
+	
 	/** We have our own user info */
 	void haveOwnUserInfo();
 	

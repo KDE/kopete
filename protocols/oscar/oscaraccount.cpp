@@ -235,16 +235,17 @@ void OscarAccount:: protocolError( int error, int psError, const QString& messag
 		if ( psError == 0 ) //zero is a generic error when i don't know what's wrong. :/
 		{
 			disconnected( Kopete::Account::ConnectionReset );
-			return;
 		}
 		
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
 		                               message, i18n( "%1 Disconnected" ).arg( d->engine->userId() ) );
+		return;
 	}
 	
 	if ( error == Client::NonFatalProtocolError )
 	{
-		kdDebug(OSCAR_GEN_DEBUG) << "got error:" << message << endl;
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
+		                               message, i18n( "account id", "%1" ).arg( d->engine->userId() ) );
 	}
 }
 
