@@ -31,7 +31,9 @@
 #ifdef NEED_TYPES_H
 #include <sys/types.h>
 #endif
+#ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
+#endif
 #ifndef __FreeBSD__
 #  include <netinet/in.h>
 #else
