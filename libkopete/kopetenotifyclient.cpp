@@ -376,11 +376,8 @@ int KNotifyClient::userEvent(int winId, const QString &message, const QString &t
     if ( present & KNotifyClient::Sound ) // && QFile(sound).isReadable()
 		notifyBySound( sound , appname , uniqueId ) ;
 
-    if ( present & KNotifyClient::PassivePopup )
-		notifyByPassivePopup( text, appname, winId, action, receiver, slot );
-
-    else if ( present & KNotifyClient::Messagebox )
-	notifyByMessagebox( text, level, winId, action, receiver, slot );
+    if ( present & KNotifyClient::Execute )
+	notifyByExecute( commandline, message, appname, text, winId, uniqueId );
 
     if ( present & KNotifyClient::Logfile ) // && QFile(file).isWritable()
 	notifyByLogfile( text, file );
@@ -388,11 +385,13 @@ int KNotifyClient::userEvent(int winId, const QString &message, const QString &t
     if ( present & KNotifyClient::Stderr )
 	notifyByStderr( text );
 
-    if ( present & KNotifyClient::Execute )
-	notifyByExecute( commandline, message, appname, text, winId, uniqueId );
-
     if ( present & KNotifyClient::Taskbar )
 	notifyByTaskbar( winId );
+
+    if ( present & KNotifyClient::PassivePopup )
+		notifyByPassivePopup( text, appname, winId, action, receiver, slot );
+    else if ( present & KNotifyClient::Messagebox )
+	notifyByMessagebox( text, level, winId, action, receiver, slot );
 
     return uniqueId;
 }
