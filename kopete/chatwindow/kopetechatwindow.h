@@ -41,9 +41,11 @@ class KTabWidget;
 class QLabel;
 class KopeteEmoticonAction;
 class KopeteView;
+class KSelectAction;
 class ChatView;
 
-typedef  QPtrList<KopeteContact>  KopeteContactPtrList;
+typedef QPtrList<KopeteContact>  KopeteContactPtrList;
+typedef QMap<int, QString> StyleMap;
 
 class KopeteChatWindow : public KParts::MainWindow
 {
@@ -106,6 +108,7 @@ private:
 	void deleteTabBar();
 	void addTab( ChatView* );
 	void setPrimaryChatView( ChatView* );
+	const QString fileContents( const QString &file ) const;
 
 	ChatView *m_activeView;
 	ChatView *m_popupView;
@@ -123,6 +126,8 @@ private:
 	QMovie animIcon;
 	QPixmap normalIcon;
 	QWidget *statusArea;
+	StyleMap styleMap;
+	KSelectAction *selectStyle;
 
 	KAction *chatSend;
 	KAction *historyUp;
@@ -186,6 +191,8 @@ private slots:
 
 	void slotConfKeys();
 	void slotConfToolbar();
+	
+	void slotChangeStyle( int style );
 
 	void slotViewMembersLeft();
 	void slotViewMembersRight();

@@ -196,6 +196,10 @@ public:
 	 * @return The contents of the view
 	 */
 	void nickComplete();
+		
+	void setStylesheet( const QString &style  ) { xslStyleSheet = style; slotRefreshNodes(); }
+	
+	const QString xslStyleString() const;
 
 public slots:
 	/**
@@ -391,6 +395,7 @@ private:
 	int historyPos;
 	bool bgChanged;
 	QString unreadMessageFrom;
+	QString xslStyleSheet;
 	QMap<const KopeteContact *, KopeteContactLVI *> memberContactMap;
 	KTextEdit* m_edit;
 	KListView *membersList;

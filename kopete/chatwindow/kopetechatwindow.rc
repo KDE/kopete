@@ -35,6 +35,7 @@
 				<Action name="options_membersright" />
 				<Action name="options_togglemembers" />
 			</Menu>
+			<Action append="show_merge" name="options_styles"/>
 		</Menu>
 		<Merge/>
 	</MenuBar>

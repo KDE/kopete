@@ -37,6 +37,9 @@
 #include <ksqueezedtextlabel.h>
 #include <kpushbutton.h>
 #include <ktabwidget.h>
+#include <kactionclasses.h>
+#include <kstandarddirs.h>
+#include <qfileinfo.h>
 
 #include "chatview.h"
 #include "kopetechatwindow.h"
@@ -78,7 +81,7 @@ KopeteChatWindow *KopeteChatWindow::window( KopeteMessageManager *manager )
 	KopeteMetaContact *m = members.first()->metaContact();
 
 	//Don't do group by group for temporary contacts
-	if(m && !m->isTemporary() )
+	if( !m->isTemporary() )
 	{
 		KopeteGroupList gList = m->groups();
 		g = gList.first();
@@ -434,6 +437,22 @@ void KopeteChatWindow::initActions(void)
 	normalIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
 	animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::User);
 
+	selectStyle = new KSelectAction( i18n("Chat Style"), 0, coll, "options_styles" );
+	connect( selectStyle, SIGNAL(activated(int)), this, SLOT(slotChangeStyle(int)) );
+	
+	QStringList mChatStyles = KGlobal::dirs()->findAllResources(
+		"appdata",QString::fromLatin1("styles/*.xsl") );
+	
+	for( uint i = 0; i < mChatStyles.size(); i++ )
+	{
+		QString fileName = mChatStyles[i];
+		QFileInfo fi( fileName );
+		styleMap.insert(i, fileContents( fileName ) );
+		mChatStyles[i] = fi.fileName().section('.',0,0);;
+	}
+	
+	selectStyle->setItems( mChatStyles );
+	
 	// we can't set the tool bar as parent, if we do, it will be deleted when we configure toolbars
 	anim = new QLabel( QString::null, 0L ,"kde toolbar widget" );
 	anim->setMargin(5);
@@ -445,9 +464,28 @@ void KopeteChatWindow::initActions(void)
 	//toolBar()->alignItemRight( 99 );
 	setStandardToolBarMenuEnabled( true );
 
-
 	setXMLFile( QString::fromLatin1( "kopetechatwindow.rc" ) );
 	createGUI( 0L );
+}
+
+void KopeteChatWindow::slotChangeStyle( int style )
+{
+	if( m_activeView )
+		m_activeView->setStylesheet( styleMap[ style ] );
+}
+
+const QString KopeteChatWindow::fileContents( const QString &path ) const
+{
+ 	QString contents;
+	QFile file( path );
+	if ( file.open( IO_ReadOnly ) )
+	{
+		QTextStream stream( &file );
+		contents = stream.read();
+		file.close();
+	}
+
+	return contents;
 }
 
 void KopeteChatWindow::slotStopAnimation( ChatView* view )
@@ -840,7 +878,15 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 
 		m_tabBar->showPage( m_activeView );
 	}
-
+	
+	for( StyleMap::Iterator it = styleMap.begin(); it != styleMap.end(); ++it )
+	{
+		if( it.data() == m_activeView->xslStyleString() )
+		{
+			selectStyle->setCurrentItem(it.key());
+		}
+	}
+	
 	setCaption( m_activeView->caption() );
 	setStatus( m_activeView->status() );
 	m_activeView->setFocus();
