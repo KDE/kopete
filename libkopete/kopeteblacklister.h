@@ -44,68 +44,72 @@ class BlackLister : public QObject
 {
 Q_OBJECT
 public:
-    
+
     /**
      * Constructor:
      * Create an instance, and read from disk the blacklist, if it exists.
      * @param protocolId is the ID of the protocol owning accountId
      * @param accountId is the ID of the owning Account.
      */
-    BlackLister(QString protocolId, QString accountId, QObject *parent = 0, const char *name = 0);
+    BlackLister( QString protocolId, QString accountId, QObject *parent = 0, const char *name = 0 );
 
     ~BlackLister();
 
     /**
      * \return whether contact is blocked.
      */
-    bool isBlocked(Contact *contact);
+    bool isBlocked( Contact *contact );
 
     /**
      * \return whether contactId is blocked.
      */
-    bool isBlocked(QString &contactId);
+    bool isBlocked( QString &contactId );
 
 public slots:
 
     /**
-     * Add a contact to the blacklist. 
+     * Add a contact to the blacklist.
+     *
      * This function emits the @ref contactAdded() signal.
      * @param contactId is the ID of the contact to be added to the list.
      */
-    void slotAddContact(QString &contactId);
+    void slotAddContact( QString &contactId );
 
     /**
      * Overloaded function provided for convinience. Behaves exactly like the above.
      */
-    void slotAddContact(Contact *contact);
+    void slotAddContact( Contact *contact );
 
     /**
-     * Remove a contact from the blacklist.
+     * \brief Remove a contact from the blacklist.
+     *
      * This function emits the @ref contactRemoved() signal.
      * @param contact is the contact to be removed from the list.
      */
-    void slotRemoveContact(Contact *contact);
+    void slotRemoveContact( Contact *contact );
 
     /**
      * Overloaded function provided for convinience. Behaves exactly like the above.
      */
-    void slotRemoveContact(QString &contactId);
+    void slotRemoveContact( QString &contactId );
 
 signals:
 
     /**
      * \brief A new contact has been added to the list
+     *
      * Connect to this signal if you want to perform additional actions,
      * and you prefer not to derieve from this class.
      */
-    void contactAdded(QString &contactId);
+    void contactAdded( QString &contactId );
 
     /**
      * \brief A contact has been removed from the list
+     *
      * Connect to this signal if you want to perform additional actions,
      * and you prefer not to derieve from this class.
      */
-    void contactRemoved(QString &contactId);
+    void contactRemoved( QString &contactId );
 
 private:
     QStringList m_blacklist;
