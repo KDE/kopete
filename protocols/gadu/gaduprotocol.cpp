@@ -42,6 +42,7 @@
 
 #include "gaduprotocol.h"
 #include "gaducontact.h"
+#include "gaduaccount.h"
 #include "gaduaddcontactpage.h"
 #include "gadupreferences.h"
 #include "gadusession.h"
@@ -89,29 +90,16 @@ GaduProtocol::protocol()
     return protocolStatic_;
 }
 
-void
-GaduProtocol::setAway()
-{
-    slotGoAway();
-}
-
-void
-GaduProtocol::setAvailable()
-{
-    slotGoOnline();
-}
-
 AddContactPage*
-GaduProtocol::createAddContactWidget( QWidget* parent )
+GaduProtocol::createAddContactWidget( QWidget* parent, KopeteAccount* account )
 {
-    return new GaduAddContactPage( this, parent );
+    return new GaduAddContactPage( static_cast<GaduAccount*>( account ), parent );
 }
 
 void
 GaduProtocol::settingsChanged()
 {
-    userUin_ = prefs_->uin();
-    password_ = prefs_->password();
+
 }
 
 void
@@ -120,11 +108,11 @@ GaduProtocol::deserializeContact( KopeteMetaContact *metaContact,
                                   const QMap<QString, QString> & /* addressBookData */ )
 {
     //kdDebug()<<"Adding "<<serializedData[ "contactId" ]<<" || "<< serializedData[ "displayName" ] <<endl;
-    addContact( serializedData[ "contactId" ], serializedData[ "displayName" ], metaContact );
+    //addContact( serializedData[ "contactId" ], serializedData[ "displayName" ], metaContact );
 }
 
 KopeteOnlineStatus
-GaduProtocol::convertStatus( uint status )
+GaduProtocol::convertStatus( uint status ) const
 {
     switch( status )
     {
@@ -151,12 +139,3 @@ GaduProtocol::convertStatus( uint status )
 
 #include "gaduprotocol.moc"
 
-/*
- * Local variables:
- * c-indentation-style: bsd
- * c-basic-offset: 4
- * indent-tabs-mode: nil
- * End:
- *
- * vim: set et ts=4 sts=4 sw=4:
- */

@@ -30,57 +30,48 @@
 #include "libgadu.h"
 
 class KAction;
-class GaduProtocol;
+class GaduAccount;
+class KopeteAccount;
 class KopeteMessageManager;
 
 class GaduContact : public KopeteContact
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    GaduContact( const QString &protocolId, uin_t uin, const QString& name,
-                 KopeteMetaContact *parent );
+	GaduContact( uin_t uin, const QString& name,
+							 GaduAccount *account, KopeteMetaContact *parent );
 
-    virtual bool    isReachable();
-    virtual KActionCollection *customContextMenuActions();
-    virtual QString identityId() const;
+	virtual bool    isReachable();
+	virtual KActionCollection *customContextMenuActions();
+	virtual QString identityId() const;
 
-    void  setParentIdentity( const QString& );
-    void  setDescription( const QString& descr );
-    QString   description() const;
-    uin_t uin() const;
+	void  setParentIdentity( const QString& );
+	void  setDescription( const QString& descr );
+	QString   description() const;
+	uin_t uin() const;
 public slots:
-    void slotUserInfo();
-    void slotDeleteContact();
-    void messageReceived( KopeteMessage& );
-    void messageSend( KopeteMessage&, KopeteMessageManager* );
+	void slotUserInfo();
+	void slotDeleteContact();
+	void messageReceived( KopeteMessage& );
+	void messageSend( KopeteMessage&, KopeteMessageManager* );
 
 protected:
-    virtual KopeteMessageManager* manager( bool canCreate = false );
-    void initActions();
+	virtual KopeteMessageManager* manager( bool canCreate = false );
+	void initActions();
 
 private:
-    KopeteMessageManager *msgManager_;
-    uin_t                 uin_;
-    QString               description_;
-    QString               parentIdentity_;
-    GaduProtocol         *protocol_;
-    KopeteContactPtrList  thisContact_;
+	KopeteMessageManager *msgManager_;
+	uin_t                 uin_;
+	QString               description_;
+	QString               parentIdentity_;
+	GaduAccount          *account_;
+	KopeteContactPtrList  thisContact_;
 
-    KAction     *actionSendMessage_;
-    KAction     *actionInfo_;
-    KAction     *actionRemove_;
+	KAction     *actionSendMessage_;
+	KAction     *actionInfo_;
+	KAction     *actionRemove_;
 private slots:
-    void slotMessageManagerDestroyed();
+	void slotMessageManagerDestroyed();
 };
 
 #endif
-
-/*
- * Local variables:
- * c-indentation-style: bsd
- * c-basic-offset: 4
- * indent-tabs-mode: nil
- * End:
- *
- * vim: set et ts=4 sts=4 sw=4:
- */

@@ -10,7 +10,7 @@ kde_module_LTLIBRARIES = kopete_gadu.la
 
 kopete_gadu_la_SOURCES = gaducommands.cpp gadusession.cpp     \
 		       gaducontact.cpp gaduaddcontactpage.cpp  \
-		       gadupreferences.cpp gaduprotocol.cpp
+		       gadupreferences.cpp gaduprotocol.cpp gaduaccount.cpp
 
 kopete_gadu_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kopete_gadu_la_LIBADD  = ./ui/libgaduui.la \

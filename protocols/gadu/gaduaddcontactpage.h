@@ -4,7 +4,7 @@
 #include <qwidget.h>
 #include <addcontactpage.h>
 
-class GaduProtocol;
+class GaduAccount;
 class gaduAddUI;
 class QLabel;
 
@@ -12,13 +12,13 @@ class GaduAddContactPage : public AddContactPage
 {
     Q_OBJECT
 public:
-    GaduAddContactPage( GaduProtocol *owner, QWidget *parent=0, const char *name=0 );
+    GaduAddContactPage( GaduAccount *owner, QWidget *parent=0, const char *name=0 );
     ~GaduAddContactPage();
      virtual bool  validateData();
 public slots:
     virtual void slotFinish(KopeteMetaContact *);
 private:
-    GaduProtocol *protocol_;
+    GaduAccount  *account_;
     gaduAddUI    *addUI_;
     bool          canAdd_;
     QLabel       *noaddMsg1_;

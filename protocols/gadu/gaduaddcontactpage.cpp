@@ -6,17 +6,17 @@
 #include <qlineedit.h>
 
 #include "gaduadd.h"
-#include "gaduprotocol.h"
+#include "gaduaccount.h"
 #include "gaduaddcontactpage.h"
 
-GaduAddContactPage::GaduAddContactPage( GaduProtocol* owner,
+GaduAddContactPage::GaduAddContactPage( GaduAccount* owner,
                                         QWidget* parent, const char* name )
     :AddContactPage( parent, name )
 {
     (new QVBoxLayout(this))->setAutoAdd(true);
     if( owner->isConnected() ) {
         addUI_ = new gaduAddUI( this );
-        protocol_ = owner;
+        account_ = owner;
         canAdd_ = true;
     } else {
         noaddMsg1_ = new QLabel(i18n("You need to be connected to be able to add contacts."), this);
@@ -43,7 +43,7 @@ GaduAddContactPage::slotFinish(KopeteMetaContact *)
     if ( canAdd_ ) {
         if ( validateData() ) {
             QString userid = addUI_->addEdit_->text();
-            protocol_->addContact( userid, userid );
+            account_->addContact( userid, userid );
         }
     } else {
         return;

@@ -54,7 +54,7 @@ public:
 	/**
 	 * Create new contact. Supply the parent meta contact!
 	 */
-	KopeteContact( KopeteAccount *protocol, const QString &id, KopeteMetaContact *parent, const QString &icon = QString::null );
+	KopeteContact( KopeteAccount *account, const QString &id, KopeteMetaContact *parent, const QString &icon = QString::null );
 	//obsolete one
 	KopeteContact( KopeteProtocol *protocol, const QString &id, KopeteMetaContact *parent );
 	~KopeteContact();

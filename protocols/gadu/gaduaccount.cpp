@@ -71,7 +71,8 @@ GaduAccount::initConnections()
 
 void GaduAccount::setAway( bool isAway, const QString& awayMessage )
 {
-
+  uint status = (awayMessage.isEmpty()) ? GG_STATUS_AVAIL : GG_STATUS_AVAIL_DESCR;
+  changeStatus( GaduProtocol::protocol()->convertStatus( status, awayMessage  ) );
 }
 
 KopeteContact* GaduAccount::myself() const
@@ -135,14 +136,10 @@ GaduAccount::slotLogin()
 	}
 	if ( !session_->isConnected() ) {
 		session_->login( userUin_, password_, GG_STATUS_AVAIL );
-		status_ = GaduStatusAvail;
-		myself_->setOnlineStatus( status_ );
-		changeStatus( status_ );
+		changeStatus( gaduStatusAvail_ );
 	} else {
 		session_->changeStatus( GG_STATUS_AVAIL );
-		status_ = GaduStatusAvail;
-		myself_->setOnlineStatus( status_);
-		changeStatus( status_ );
+		changeStatus( gaduStatusAvail_ );
 	}
 }
 
@@ -150,7 +147,7 @@ void
 GaduAccount::slotLogoff()
 {
 	if ( session_->isConnected() ) {
-		status_ = GaduStatusOffline;
+		status_ = gaduStatusOffline_;
 		changeStatus( status_ );
 	} else
 		setStatusIcon( "gg_offline" );
@@ -175,19 +172,19 @@ GaduAccount::slotGoOffline()
 void
 GaduAccount::slotGoInvisible()
 {
-	changeStatus( GaduStatusInvisible );
+	changeStatus( gaduStatusInvisible_ );
 }
 
 void
 GaduAccount::slotGoAway()
 {
-	changeStatus( GaduStatusNotAvail );
+	changeStatus( gaduStatusNotAvail_ );
 }
 
 void
 GaduAccount::slotGoBusy()
 {
-	changeStatus( GaduStatusBusy );
+	changeStatus( gaduStatusBusy_ );
 }
 
 void
@@ -197,7 +194,6 @@ GaduAccount::removeContact( const GaduContact* c )
 		const uin_t u = c->uin();
 		session_->removeNotify( u );
 		contactsMap_.remove( u );
-		delete c;
 	} else {
 		KMessageBox::error( 0l,
 												i18n( "Please go online to remove contact" ),

@@ -47,14 +47,14 @@ class GaduProtocol : public KopeteProtocol
 {
 	Q_OBJECT
 public:
-	GaduProtocol( QObject *parent, const char *name , const QStringList &);
+	GaduProtocol( QObject *parent, const char *name, const QStringList &str);
 	~GaduProtocol();
 
 	static GaduProtocol *protocol();
 
 	// Plugin reimplementation
 	// {
-	AddContactPage *createAddContactWidget( QWidget *parent );
+	AddContactPage *createAddContactWidget( QWidget *parent, KopeteAccount* account );
 	bool canSendOffline() const { return true; }
 
 	virtual void deserializeContact( KopeteMetaContact *metaContact,
@@ -63,13 +63,12 @@ public:
 	// }
 	//!Plugin reimplementation
 
+  KopeteOnlineStatus convertStatus( uint ) const;
+
 private slots:
   void settingsChanged();
 
 private:
-	void initConnections();
-	void initActions();
-
 	static GaduProtocol* protocolStatic_;
 
 	GaduPreferences     *prefs_;

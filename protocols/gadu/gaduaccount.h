@@ -40,17 +40,41 @@ public slots:
 	void disconnect();
   //}
 
+  void changeStatus( const KopeteOnlineStatus& status, const QString& descr );
+  void slotLogin();
+  void slotLogoff();
 	void slotGoOnline();
 	void slotGoOffline();
 	void slotGoInvisible();
 	void slotGoAway();
 	void slotGoBusy();
 
+  void removeContact( const GaduContact* c );
+
+  void addNotify( uin_t uin );
+  void notify( uin_t* userlist, int count );
+  void sendMessage( uin_t recipient, const QString& msg, int msgClass=GG_CLASS_CHAT );
+  void error( const QString& title, const QString& message );
+  void pong();
+  void pingServer();
+
 protected:
 	//{
 	bool addContactToMetaContact( const QString &contactId, const QString &displayName,
 																KopeteMetaContact *parentContact );
 	//}
+
+private slots:
+  void messageReceived( struct gg_event* e );
+  void ackReceived( struct gg_event* /* e */ );
+  void notify( struct gg_event* e );
+  void notifyDescription( struct gg_event* e );
+  void statusChanged( struct gg_event* e );
+  void slotSessionDisconnect();
+  void userlist( const QStringList& u );
+  void connectionFailed( struct gg_event* /*e*/ );
+  void connectionSucceed( struct gg_event* /*e*/ );
+
 private:
 	void initConnections();
 	void initActions();
