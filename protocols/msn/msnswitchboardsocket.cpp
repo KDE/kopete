@@ -18,6 +18,7 @@
 
 #include "kmsnchatservice.h"
 #include "msnprotocol.h"
+#include "msncontact.h"
 #include <time.h>
 // qt
 #include <qdatetime.h>
@@ -210,7 +211,8 @@ redo:
 				QString handle = kstr.word(str,1);
 				kdDebug() << "MSG Plugin: ChatBoard: handle seria " << handle << endl;
 
-				emit msgReceived(handle,MSNProtocol::protocol()->publicName(handle), miss, font, fg);//.replace(QRegExp("\r\n"),""));
+				// FIXME: THIS IS UGLY!!!!!!!!!!!!!!!!!!!!!!
+				emit msgReceived(handle, MSNProtocol::protocol()->contacts()[ handle ]->nickname(), miss, font, fg);//.replace(QRegExp("\r\n"),""));
 				//emit msgReceived(handle,"Nick", miss);//.replace(QRegExp("\r\n"),""));
 			}
 			// incoming message for File-transfer
@@ -283,7 +285,8 @@ void KMSNChatService::slotSendMsg(QString message)
 	command.sprintf("MSG %lu A %d\r\n",Tr_ID,head.length());
 	command += head;
 	msgSocket->writeBlock(command,command.length());
-#warning TODO: send our colors as well
+
+	// TODO: send our colors as well
 	emit msgReceived(myHandle, MSNProtocol::protocol()->publicName(), message, QFont(), QColor() );    // send the own msg to chat window
 }
 

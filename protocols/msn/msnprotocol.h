@@ -25,14 +25,8 @@
 
 #include "kopeteprotocol.h"
 
-class QLabel;
-
 class KAction;
 class KActionMenu;
-class KDialogBase;
-class KPopupMenu;
-class KSimpleConfig;
-class KURLLabel;
 
 class KMSNChatService;
 class KMSNServiceSocket;
@@ -54,6 +48,7 @@ public:
 
 	static const MSNProtocol *protocol();
 
+	typedef QMap<QString, MSNContact*> ContactList;
 
 	/**
 	 * Get group by number and vice versa.
@@ -118,10 +113,7 @@ public:
 	Status convertStatus( QString status ) const;
 	Status status() const;
 
-	QString publicName( const QString &handle ) const;
-
 	QStringList groups() const;
-	QStringList groupContacts( const QString &group ) const;
 
 	void setSilent( bool s ) { m_silent = s; }
 	bool isSilent() { return m_silent; }
@@ -139,6 +131,8 @@ public:
 	 */
 	void contactUnBlock( QString handle );
 
+	const ContactList& contacts() const { return m_contacts; }
+
 public slots:
 	void slotMessageDialogClosing( QString );
 
@@ -150,11 +144,9 @@ public slots:
 	void slotGoAway();
 	void slotIconRightClicked( const QPoint );
 
-	void slotConnectedToMSN( bool c );
+	void slotConnected( bool c );
 
-	void slotUserStateChange( QString, QString, int ) const;
 	void slotStateChanged( QString status );
-	void slotUserSetOffline( QString ) const;
 
 	/**
 	 * The publicName has successful changed
@@ -167,11 +159,7 @@ public slots:
 	// Block a Contact
 	void slotBlockContact(QString) const;
 
-	// Group slots
-	void slotGoURL( const QString ) const;
-
 signals:
-	void userStateChange( QString, QString, int );
 	void protocolUnloading();
 	void settingsChanged( void );
 
@@ -244,13 +232,6 @@ private:
 
 	bool mIsConnected;
 
-	/**
-	 * Return the service socket. Use this and be safe. Use the static
-	 * KMSNServiceSocket::kmsnServiceSocket() directly and prepare to be
-	 * shot - Martijn
-	 */
-	KMSNServiceSocket *serviceSocket() const;
-
 	StatusBarIcon *statusBarIcon;
 
 	QPixmap onlineIcon;
@@ -259,14 +240,10 @@ private:
 	QPixmap naIcon;
 	QMovie connectingIcon;
 
-	// The main msn popup
-	KPopupMenu *popup;
-
 	// Actions we use
 	KAction* actionGoOnline;
 	KAction* actionGoOffline;
 	KAction* actionGoAway;
-	//KSelectAction* actionStatus;
 
 	KActionMenu *actionStatusMenu;
 	KAction* actionConnect;
@@ -276,19 +253,10 @@ private:
 
 	QPtrList<MSNMessageDialog> mChatWindows;
 
-	// Files to store contacts locally
-	KSimpleConfig *mContactsFile;
-	KSimpleConfig *mGroupsFile;
-
 	MSNPreferences *mPrefs;
-	KDialogBase *mEmptyConfig;
-	KURLLabel *mPassportURL;
-	QLabel *mEmptyMsg;
-//	QList<MSNContactStruct> contactList;
-//	QList<MSNGroupStruct> groupList;
 
-	QMap<QString, MSNContact*> m_contacts;
-	
+	ContactList m_contacts;
+
 	QMap<uint, QString> m_groupList;
 
 	static const MSNProtocol *s_protocol;
