@@ -32,7 +32,7 @@
                         <cstring>textLabel3</cstring>
                     </property>
                     <property name="text">
-                        <string>Operating System:</string>
+                        <string>Operating system:</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="1" column="0">
@@ -40,7 +40,7 @@
                         <cstring>textLabel2</cstring>
                     </property>
                     <property name="text">
-                        <string>Workgroup/Domain:</string>
+                        <string>Workgroup/domain:</string>
                     </property>
                 </widget>
                 <widget class="KLineEdit" row="2" column="1">
@@ -56,7 +56,7 @@
                         <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>Server Software:</string>
+                        <string>Server software:</string>
                     </property>
                 </widget>
                 <widget class="KLineEdit" row="3" column="1">
@@ -88,7 +88,7 @@
                         <cstring>lblComputerName</cstring>
                     </property>
                     <property name="text">
-                        <string>Computer Name:</string>
+                        <string>Computer name:</string>
                     </property>
                 </widget>
             </grid>
