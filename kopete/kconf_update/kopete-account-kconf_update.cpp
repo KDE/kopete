@@ -163,6 +163,12 @@ void parseKey( const QString &group, const QString &key, const QString &value, c
 	/*
 		fixme: insert all other plugins here - martijn
 	*/
+	else if ( key == "Modules" )
+	{
+		QString newValue = value;
+		newValue.replace ( ".plugin", ".desktop" );
+		qcout << "Plugins=" << newValue;
+	}
 	else
 	{
 		// groups we don't convert. output the raw line instead.
