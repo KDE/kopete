@@ -19,7 +19,6 @@
 #include <klocale.h>
 #include <qstringlist.h>
 #include <qregexp.h>
-#include <qprocess.h>
 #include <qapplication.h>
 
 #include "ircchannelcontact.h"
@@ -56,7 +55,6 @@ IRCContact::IRCContact(IRCAccount *account, const QString &nick, KopeteMetaConta
 	mMetaContact = metac;
 	mMsgManager = 0L;
 	mNickName = nick;
-	proc = 0L;
 
 	// Contact list display name
 	setDisplayName(mNickName);
@@ -87,140 +85,6 @@ bool IRCContact::isReachable()
 		return true;
 
 	return false;
-}
-
-bool IRCContact::processMessage( const KopeteMessage &msg )
-{
-	QRegExp whiteSpace(QString::fromLatin1("\\s"));
-	QStringList commandLine = QStringList::split( whiteSpace, msg.plainBody() );
-	QString commandArgs = msg.plainBody().section( whiteSpace, 1 );
-	uint commandCount = commandLine.count();
-
-	if( commandLine.first().startsWith( QString::fromLatin1("/") ) )
-	{
-		QString command = commandLine.first().right( commandLine.first().length() - 1 ).lower();
-
-		if( mEngine->isLoggedIn() )
-		{
-			// These commands only work when we are connected
-			if( command == QString::fromLatin1("nick") && commandCount > 1 )
-				mAccount->successfullyChangedNick( QString::null, *commandLine.at(1) );
-
-			else if( command == QString::fromLatin1("me") && commandCount > 1 )
-				mEngine->actionContact( displayName(), commandArgs );
-
-			else if( command == QString::fromLatin1("topic") )
-			{
-				IRCChannelContact *chan = static_cast<IRCChannelContact*>( this );
-				if(chan)
-				{
-					if( commandCount > 1 )
-						chan->setTopic( commandArgs );
-					else
-					{
-						KopeteMessage msg(this, mMyself, i18n("Topic for %1 is %2").arg(mNickName).arg(chan->topic()), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-						manager()->appendMessage(msg);
-					}
-				}
-			}
-			else if( command == QString::fromLatin1("mode") && commandCount > 2 )
-				mEngine->changeMode( *commandLine.at(1), commandArgs.section( whiteSpace, 1 ) );
-
-			else if( command == QString::fromLatin1("whois") && commandCount > 1 )
-				mEngine->whoisUser( *commandLine.at(1) );
-
-			else if( command == QString::fromLatin1("query") && commandCount > 1 )
-			{
-				if( !(*commandLine.at(1)).startsWith( QString::fromLatin1("#") ) )
-					mAccount->findUser( *commandLine.at(1) )->startChat();
-				else
-				{
-					KopeteMessage msg((KopeteContact*)this, mMyself, i18n("\"%1\" is an invaid nickname. Nicknames must not start with '#'.").arg(*commandLine.at(1)), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-					manager()->appendMessage(msg);
-				}
-			}
-			else if( command == QString::fromLatin1("join") && commandCount > 1 )
-			{
-				if( (*commandLine.at(1)).startsWith( QString::fromLatin1("#") ) )
-					mAccount->findChannel( *commandLine.at(1) )->startChat();
-				else
-				{
-					KopeteMessage msg((KopeteContact*)this, mMyself, i18n("\"%1\" is an invaid channel. Channels must start with '#'.").arg(*commandLine.at(1)), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-					manager()->appendMessage(msg);
-				}
-			}
-			else if( command == QString::fromLatin1("part") )
-			{ //FIXME: this should be a libkopete fuction
-				if(manager() && manager()->view())
-					manager()->view()->closeView();
-			}
-			else if( command == QString::fromLatin1("exec") && commandCount > 1)
-			{//FIXME: this should be a libkopete fuction
-				if( !proc )
-				{
-					proc = new QProcess( QString::fromLatin1("sh"), this);
-					proc->addArgument( QString::fromLatin1("-c") );
-					if( *commandLine.at(1) == QString::fromLatin1("-o") )
-					{
-						execDir = KopeteMessage::Outbound;
-						proc->addArgument( commandArgs.section( whiteSpace, 1 ) );
-					}
-					else
-					{
-						execDir = KopeteMessage::Internal;
-						proc->addArgument( commandArgs );
-					}
-					connect(proc, SIGNAL(readyReadStdout()), this, SLOT(slotExecReturnedData()));
-					connect(proc, SIGNAL(readyReadStderr()), this, SLOT(slotExecReturnedData()));
-					connect(proc, SIGNAL(processExited()), this, SLOT(slotExecFinished()));
-					proc->start();
-				}
-				else
-				{
-					KopeteMessage msg((KopeteContact*)this, mMyself, i18n("Please wait for previous processes to complete, or type /kill to cancel them."), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-					manager()->appendMessage(msg);
-				}
-			}
-			else if( command == QString::fromLatin1("kill") && proc )
-				slotExecFinished();
-
-			else
-			{
-				KopeteMessage msg((KopeteContact*)this, mMyself, i18n("\"%1\" is an unrecognized command.").arg(command), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-				manager()->appendMessage(msg);
-			}
-		}
-
-		// A /command returns false to stop further processing
-		return false;
-	}
-
-	//No command, so return true to continue processing
-	return true;
-}
-
-void IRCContact::slotExecReturnedData()
-{
-	QString buff;
-	while( proc->canReadLineStdout() || proc->canReadLineStderr() )
-	{
-		if( proc->canReadLineStdout() )
-			buff = proc->readLineStdout();
-		else if( proc->canReadLineStderr() )
-			buff = proc->readLineStderr();
-		KopeteMessage msg(mAccount->myself(), manager()->members(), buff, execDir, KopeteMessage::PlainText, KopeteMessage::Chat);
-		manager()->appendMessage(msg);
-		mEngine->messageContact(mNickName, msg.plainBody());
-	}
-}
-
-void IRCContact::slotExecFinished()
-{
-	if( proc->isRunning() )
-		proc->kill();
-
-	delete proc;
-	proc = 0L;
 }
 
 void IRCContact::slotConnectionClosed()
@@ -412,18 +276,15 @@ void IRCContact::slotNewCtcpReply(const QString &type, const QString &target, co
 
 void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 {
-	if( processMessage( message ) )
+	// If the above was false, there was a server command so we don't need to do any of this
+	QStringList messages = QStringList::split( QRegExp( QString::fromLatin1("[\\r\\n]+") ), message.plainBody() );
+	for(QStringList::Iterator it = messages.begin(); it != messages.end(); ++it)
 	{
-		// If the above was false, there was a server command so we don't need to do any of this
-		QStringList messages = QStringList::split( QRegExp( QString::fromLatin1("[\\r\\n]+") ), message.plainBody() );
-		for(QStringList::Iterator it = messages.begin(); it != messages.end(); ++it)
-		{
-			KopeteMessage msg( message.from(), message.to(), *it, KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat );
-			msg.setBg( QColor() );
-			msg.setFg( QColor() );
-			mEngine->messageContact(mNickName, msg.plainBody() );
-			manager()->appendMessage(msg);
-		}
+		KopeteMessage msg( message.from(), message.to(), *it, KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat );
+		msg.setBg( QColor() );
+		msg.setFg( QColor() );
+		mEngine->messageContact(mNickName, msg.plainBody() );
+		manager()->appendMessage(msg);
 	}
 
 	manager()->messageSucceeded();

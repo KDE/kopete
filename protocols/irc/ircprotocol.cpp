@@ -40,9 +40,11 @@
 #include "ircpreferences.h"
 #include "kopetemetacontact.h"
 #include "ircchannelcontact.h"
+#include "ircusercontact.h"
 #include "kopeteaccountmanager.h"
 #include "irceditaccountwidget.h"
 #include "kopetemessagemanagerfactory.h"
+#include "kopetecommandhandler.h"
 #include "kirc.h"
 #include "ksparser.h"
 
@@ -94,6 +96,31 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		cfg->deleteEntry("AutoConnect");
 		cfg->sync();
 	}
+
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("topic"),
+		SLOT( slotTopicCommand( const QString &, KopeteMessageManager*) ),
+		i18n("USAGE: /topic [<topic>] - Sets and/or displays the topic for the active channel.") );
+
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("whois"),
+		SLOT( slotWhoisCommand( const QString &, KopeteMessageManager*) ),
+		i18n("USAGE: /whois <nickname> - Display whois info on this user.") );
+
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("query"),
+		SLOT( slotQueryCommand( const QString &, KopeteMessageManager*) ),
+		i18n("USAGE: /query <nickname> - Open a provate chat with this user.") );
+
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("mode"),
+		SLOT( slotModeCommand( const QString &, KopeteMessageManager*) ),
+		i18n("USAGE: /mode <channel> <modes> - Set modes on the given channel.") );
+
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("nick"),
+		SLOT( slotNickCommand( const QString &, KopeteMessageManager*) ),
+		i18n("USAGE: /nick <nickname> - Change your nickname to the given one.") );
+
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("mode"),
+		SLOT( slotMeCommand( const QString &, KopeteMessageManager*) ),
+		i18n("USAGE: /me <action> - Do something.") );
+
 
 	QObject::connect( KopeteMessageManagerFactory::factory(), SIGNAL(aboutToDisplay(KopeteMessage &)), this, SLOT(slotMessageFilter(KopeteMessage &)) );
 }
@@ -180,6 +207,90 @@ void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 	}
 	else
 		kdDebug(14120) << k_funcinfo << "No accounts loaded!" << endl;
+}
+
+void IRCProtocol::slotTopicCommand( const QString &args, KopeteMessageManager *manager )
+{
+	KopeteContactPtrList members = manager->members();
+	IRCChannelContact *chan = static_cast<IRCChannelContact*>( members.first() );
+	if( chan )
+	{
+		if( !args.isEmpty() )
+			chan->setTopic( args );
+		else
+		{
+			KopeteMessage msg(manager->user(), manager->members(), i18n("Topic for %1 is %2").arg(chan->nickName()).arg(chan->topic()), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+			manager->appendMessage(msg);
+		}
+	}
+}
+
+void IRCProtocol::slotJoinCommand( const QString &args, KopeteMessageManager *manager )
+{
+	if( !args.isEmpty() )
+	{
+		QStringList argsList = KopeteCommandHandler::parseArguments( args );
+		if( argsList.front().startsWith( QString::fromLatin1("#") ) )
+			static_cast<IRCAccount*>( manager->account() )->findChannel( argsList.front() )->startChat();
+		else
+		{
+			KopeteMessage msg(manager->user(), manager->members(), i18n("\"%1\" is an invaid channel. Channels must start with '#'.").arg(argsList.front()), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+			manager->appendMessage(msg);
+		}
+	}
+}
+
+void IRCProtocol::slotQueryCommand( const QString &args, KopeteMessageManager *manager )
+{
+	if( !args.isEmpty() )
+	{
+		QStringList argsList = KopeteCommandHandler::parseArguments( args );
+		if( !argsList.front().startsWith( QString::fromLatin1("#") ) )
+			static_cast<IRCAccount*>( manager->account() )->findUser( argsList.front() )->startChat();
+		else
+		{
+			KopeteMessage msg(manager->user(), manager->members(), i18n("\"%1\" is an invaid nickname. Nicknames must not start with '#'.").arg(argsList.front()), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+			manager->appendMessage(msg);
+		}
+	}
+}
+
+void IRCProtocol::slotWhoisCommand( const QString &args, KopeteMessageManager *manager )
+{
+	if( !args.isEmpty() )
+	{
+		QStringList argsList = KopeteCommandHandler::parseArguments( args );
+		static_cast<IRCAccount*>( manager->account() )->engine()->whoisUser( argsList.first() );
+	}
+}
+
+void IRCProtocol::slotNickCommand( const QString &args, KopeteMessageManager *manager )
+{
+	if( !args.isEmpty() )
+	{
+		QStringList argsList = KopeteCommandHandler::parseArguments( args );
+		static_cast<IRCAccount*>( manager->account() )->successfullyChangedNick( QString::null, argsList.front() );
+	}
+}
+
+void IRCProtocol::slotModeCommand( const QString &args, KopeteMessageManager *manager )
+{
+	QStringList argsList = KopeteCommandHandler::parseArguments( args );
+	if( argsList.count() > 1 )
+	{
+		static_cast<IRCAccount*>( manager->account() )->engine()->changeMode( argsList.front(),
+			args.section( QRegExp(QString::fromLatin1("\\s+")), 1 ) );
+	}
+}
+
+void IRCProtocol::slotMeCommand( const QString &args, KopeteMessageManager *manager )
+{
+	if( !args.isEmpty() )
+	{
+		QStringList argsList = KopeteCommandHandler::parseArguments( args );
+		static_cast<IRCAccount*>( manager->account() )->engine()->actionContact(
+			static_cast<const IRCContact*>(manager->user())->nickName(), args );
+	}
 }
 
 #include "ircprotocol.moc"

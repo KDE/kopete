@@ -127,7 +127,6 @@ void IRCChannelContact::slotNamesList(const QString &channel, const QStringList 
 		kdDebug(14120) << k_funcinfo << "Names List:" << channel << endl;
 
 		QStringList mNickNames = nicknames;
-		KIRC::UserClass userclass;
 		for (QStringList::Iterator it = mNickNames.begin(); it != mNickNames.end(); it++)
 		{
 			if ((*it).lower() == mNickName.lower())

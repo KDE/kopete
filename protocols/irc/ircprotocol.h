@@ -77,7 +77,13 @@ public:
 
 private slots:
 	void slotMessageFilter( KopeteMessage &msg );
-
+	void slotTopicCommand( const QString &args, KopeteMessageManager *manager);
+	void slotJoinCommand( const QString &args, KopeteMessageManager *manager);
+	void slotNickCommand( const QString &args, KopeteMessageManager *manager);
+	void slotWhoisCommand( const QString &args, KopeteMessageManager *manager);
+	void slotMeCommand( const QString &args, KopeteMessageManager *manager);
+	void slotModeCommand( const QString &args, KopeteMessageManager *manager);
+	void slotQueryCommand( const QString &args, KopeteMessageManager *manager);
 
 private:
 	/** FIXME: Do something with this when Account support is added!!!!!!!! */
