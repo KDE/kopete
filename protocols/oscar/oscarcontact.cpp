@@ -599,21 +599,60 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 
 	kdDebug() << "AIM Plugin: original message: " << m << endl;
 
-	QRegExp expr;
-	expr.setCaseSensitive( false );
-	expr.setWildcard( true );
-	expr.setMinimal( true );
+	// This code relies on QT 3.1, when we support that,
+	// put it back in
+// 	QRegExp expr;
+// 	expr.setCaseSensitive( false );
+// 	expr.setWildcard( true );
+// 	expr.setMinimal( true );
 
-	QString result = m;
-	expr.setPattern( "^<html.*>" );
-	result.remove( expr );
-	expr.setPattern( "^<body.*>" );
-	result.remove( expr );
-	expr.setPattern( "</html>$" );
-	result.remove( expr );
-	expr.setPattern( "</body>$" );
-	result.remove( expr );
+ 	QString result = m;
+// 	expr.setPattern( "^<html.*>" );
+// 	result.remove( expr );
+// 	expr.setPattern( "^<body.*>" );
+// 	result.remove( expr );
+// 	expr.setPattern( "</html>$" );
+// 	result.remove( expr );
+// 	expr.setPattern( "</body>$" );
+// 	result.remove( expr );
 
+	bool removeMoreTags = true;
+	int pos;
+	while(removeMoreTags){
+			// If there are more beginning html tags
+			pos = result.find("<html>",0,false);
+			if(pos != -1){
+					result.remove(pos, 6);
+			}
+
+			// If there are more ending html tags
+			pos = result.find("</html>",0,false);
+			if(pos != -1){
+					result.remove(pos, 7);
+			}
+
+			// If there are more beginning body tags
+			pos = result.find("<body>",0,false);
+			if(pos != -1){
+					result.remove(pos, 6);
+			}
+
+			// If there are more ending body tags
+			pos = result.find("</body>",0,false);
+			if(pos != -1){
+					result.remove(pos, 7);
+			}
+
+			// Check if there are more tags to remove
+			removeMoreTags = false;
+			if((result.find("<html>",0,false) > -1) ||
+							(result.find("</html>",0,false) > -1) ||
+							(result.find("<body>",0,false) > -1) ||
+							(result.find("</body>",0,false) > -1)){
+					removeMoreTags = true;
+			}
+	}
+	
 	KopeteContactPtrList tmpList;
 	tmpList.append(mProtocol->myself());
 	KopeteMessage msg( this, tmpList, result, KopeteMessage::Inbound, KopeteMessage::RichText);
@@ -622,6 +661,10 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 
 	return msg;
 }
+
+
+
+	
 
 // removes a weird html-tag (and returns the attributes it contained)
 /*
