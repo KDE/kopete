@@ -310,8 +310,15 @@ void IRCContact::slotNewNickChange( const QString &oldnickname, const QString &n
 	if( user )
 	{
 		user->setNickName( newnickname );
-		//If we are tracking name changes...
+		//If tracking name changes....
 		user->setDisplayName( newnickname );
+
+		//If the user is in our contact list, then change the notify list nickname
+		if( !user->metaContact()->isTemporary() )
+		{
+			mEngine->removeFromNotifyList( oldnickname );
+			mEngine->addToNotifyList( newnickname );
+		}
 
 		KopeteMessage msg((KopeteContact *)this, mContact, i18n("%1 is now known as %2").arg(oldnickname).arg(newnickname), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 		manager()->appendMessage(msg);

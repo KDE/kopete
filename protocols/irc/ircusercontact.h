@@ -65,7 +65,6 @@ class IRCUserContact : public IRCContact
 		void slotBanDomain();
 		void slotBanUserDomain();
 		void slotKick();
-		void slotNewPrivMessage(const QString &originating, const QString &target, const QString &message);
 		void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 		void slotUserOnline( const QString &nick );
 

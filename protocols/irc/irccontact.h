@@ -50,6 +50,7 @@ class IRCContact : public KopeteContact
 		virtual const QString caption() const;
 
 		KopeteContact *locateUser( const QString &nickName );
+		KSParser* parser() { return mParser; };
 
 	signals:
 		void endSession();
