@@ -25,6 +25,8 @@
 // We don't want the per-skin includes, so pretend we have a skin header already
 #define __VALGRIND_SOMESKIN_H
 #include <valgrind/valgrind.h>
+#else
+#define RUNNING_ON_VALGRIND 0
 #endif
 
 #include <qapplication.h>
