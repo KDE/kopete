@@ -328,8 +328,10 @@ QDomDocument KopeteMessage::asXML()
 		messageNode.appendChild( toNode );
 
 		QDomElement bodyNode = doc.createElement( QString::fromLatin1("body") );
-		bodyNode.setAttribute( QString::fromLatin1("bgcolor"), d->bgColor.name() );
-		bodyNode.setAttribute( QString::fromLatin1("color"), d->bgColor.name() );
+		if( d->bgColor.isValid() )
+			bodyNode.setAttribute( QString::fromLatin1("bgcolor"), d->bgColor.name() );
+		if( d->fgColor.isValid() )
+			bodyNode.setAttribute( QString::fromLatin1("color"), d->fgColor.name() );
 		bodyNode.setAttribute( QString::fromLatin1("font"), d->font.family() );
 
 		QDomCDATASection bodyText = doc.createCDATASection( KopeteEmoticons::parseEmoticons(parseLinks( escapedBody() )) );
