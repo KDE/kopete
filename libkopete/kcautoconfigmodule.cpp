@@ -17,9 +17,11 @@
 
 */
 
-#include <kautoconfig.h>
-#include <qlayout.h>
 #include "kcautoconfigmodule.h"
+
+#include <qlayout.h>
+
+#include <kautoconfig.h>
 
 class KCAutoConfigModule::KCAutoConfigModulePrivate
 {
@@ -106,8 +108,7 @@ void KCAutoConfigModule::setMainWidget(QWidget *widget, const QString& group )
 	d->kautoconfig->retrieveSettings(true);
 }
 
-
-
-
 #include "kcautoconfigmodule.moc"
+
 // vim: sw=4 sts=4 et
+

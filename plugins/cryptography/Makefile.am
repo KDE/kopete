@@ -10,7 +10,7 @@ kopete_cryptography_la_LIBADD      = ../../libkopete/libkopete.la
 
 kcm_kopete_cryptography_la_SOURCES = cryptographypreferences.cpp cryptographyprefsbase.ui  kgpgselkey.cpp
 kcm_kopete_cryptography_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
-kcm_kopete_cryptography_la_LIBADD  = $(LIB_KOPETECOMPAT) $(LIB_KUTILS)
+kcm_kopete_cryptography_la_LIBADD  = ../../libkopete/libkopete.la $(LIB_KUTILS)
 
 service_DATA = kopete_cryptography.desktop
 servicedir = $(kde_servicesdir)

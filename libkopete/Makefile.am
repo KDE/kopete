@@ -14,7 +14,7 @@ lib_LTLIBRARIES = libkopete.la
 
 libkopete_la_SOURCES = kopeteonlinestatus.cpp kopeteprotocol.cpp kopetecontact.cpp kopetepluginmanager.cpp kopeteplugin.cpp \
 	kopetemessage.cpp kopetemessagemanager.cpp kopetemessagemanagerfactory.cpp kopetecontactlist.cpp kopetemetacontact.cpp \
-	kopeteawaydialog.cpp kopetetransfermanager.cpp kopetegroup.cpp \
+	kopeteawaydialog.cpp kopetetransfermanager.cpp kopetegroup.cpp kcautoconfigmodule.cpp \
 	kopeteaccountmanager.cpp kopeteaccount.cpp kopeteplugindataobject.cpp \
 	kopetecommandhandler.cpp kopetenotifyclient.cpp kopeteaway.cpp kopeteawayaction.cpp
 

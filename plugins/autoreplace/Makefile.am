@@ -11,7 +11,7 @@ kopete_autoreplace_la_LIBADD      = ../../libkopete/libkopete.la
 
 kcm_kopete_autoreplace_la_SOURCES     = autoreplacepreferences.cpp autoreplaceconfig.cpp autoreplaceprefs.ui
 kcm_kopete_autoreplace_la_LDFLAGS     = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
-kcm_kopete_autoreplace_la_LIBADD      = $(LIB_KOPETECOMPAT) $(LIB_KUTILS)
+kcm_kopete_autoreplace_la_LIBADD      = ../../libkopete/libkopete.la $(LIB_KUTILS)
 
 service_DATA = kopete_autoreplace.desktop
 servicedir = $(kde_servicesdir)
