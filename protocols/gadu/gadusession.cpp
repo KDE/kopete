@@ -1,10 +1,7 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
-// Current author and maintainer: Grzegorz Jaskiewicz
-//				gj at pointblue.com.pl
-//
-// Kopete initial author:
 // Copyright (C) 	2002-2003	 Zack Rusin <zack@kde.org>
+// Copyright (C) 	2002-2003	 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
 //
 // gaducommands.h - all basic, and not-session dependent commands
 // (meaning you don't have to be logged in for any
@@ -44,6 +41,7 @@
 GaduSession::GaduSession( QObject *parent, const char* name )
 	: QObject( parent, name ), session_(0), searchSeqNr_(0)
 {
+	textcodec = QTextCodec::codecForName( "CP1250" );
 }
 
 GaduSession::~GaduSession()
@@ -388,6 +386,170 @@ GaduSession::sendResult( gg_pubdir50_t result )
   
 }
 
+void
+GaduSession::requestContacts()
+{
+	if ( !session_ || session_->state != GG_STATE_CONNECTED) {
+		kdDebug(14100) <<" you need to be connected to send " << endl;
+		return;
+	}
+
+	if ( gg_userlist_request(session_, GG_USERLIST_GET, NULL) == -1 ) {
+		kdDebug(14100) <<" userlist export ERROR " << endl;
+		return;
+	}
+	kdDebug( 14100 ) << "Contacts list import..started " << endl;
+
+}
+
+void
+GaduSession::exportContacts( gaduContactsList *u )
+{
+	QPtrListIterator<contactLine>loo( *u );
+	unsigned int i;
+	QString plist, contacts;
+
+	if ( !session_ || session_->state != GG_STATE_CONNECTED) {
+		kdDebug( 14100 ) << "you need to connect to export Contacts list " << endl;
+		return;
+	}
+
+	for ( i=u->count() ; i-- ; ++loo ){ 
+//	name;surname;nick;displayname;telephone;group(s);uin;email;0;;0;
+		contacts +=
+			(*loo)->firstname+";"+(*loo)->surname+";"+(*loo)->nickname+";"+(*loo)->name+";"+
+			(*loo)->phonenr+";"+(*loo)->group+";"+(*loo)->uin+";"+(*loo)->email+";0;;0;\n";
+	}
+
+	// XXX:Remove before release
+	kdDebug(14100) <<"--------------------userlists\n" << contacts << "\n---------------" << endl;
+	
+	plist = textcodec->fromUnicode( contacts );
+
+	if ( gg_userlist_request( session_, GG_USERLIST_PUT, plist.latin1() ) == -1) {
+		kdDebug( 14100 ) << "export contact list failed " << endl;
+		return;
+	}
+
+	kdDebug( 14100 ) << "Contacts list export..started " << endl;
+
+}
+
+
+bool
+GaduSession::stringToContacts( gaduContactsList& gaducontactslist , const QString& sList )
+{
+	QString cline;
+	QStringList::iterator it;
+	QStringList strList ;
+	contactLine *cl = NULL;
+	bool email = false;
+
+	if (sList.isEmpty() || sList.isNull() || !sList.contains(';')){
+		return false;
+	}    
+    
+	if (!sList.contains('\n') && sList.contains(';')){
+		// basicaly, server stores contact list as it is
+		// even if i will send him windows 2000 readme file
+		// he will accept it, and he will return it on each contact import
+		// so, if you have any problems with contact list
+		// this is probably not my fault, only previous client issue
+		// iow: i am not bothered :-)
+		kdDebug(14100)<<"you have to retype your contacts, and export list again"<<endl;
+		kdDebug(14100)<<"send this line to author, if you think it should work"<<endl;
+		kdDebug(14100)<<"------------------------------------------------------"<<endl;
+		kdDebug(14100)<<"\"" << sList << "\""<<endl;
+		kdDebug(14100)<<"------------------------------------------------------"<<endl;
+		return false;
+	}
+    
+	QStringList ln  = QStringList::split( QChar('\n'),  sList, true );
+	QStringList::iterator lni = ln.begin( );
+		
+	while( lni != ln.end() ){
+		cline=(*lni);
+
+		if ( cline.isNull() ){
+			break;
+		}
+
+		kdDebug(14100)<<"\""<< cline << "\"" << endl;
+		    
+		strList  = QStringList::split( QChar(';'), cline, true );
+		if ( strList.count() == 12 ){
+			email=true;
+		}
+	
+		if ( strList.count() != 8 && email == false ){
+			kdDebug(14100)<< "fishy, maybe contact format was changed. Contact author/update software"<<endl;
+			kdDebug(14100)<<"nr of elements should be 8 or 12, but is "<<strList.count() << " LINE:" << cline <<endl;
+			++lni;
+			continue;
+		}
+
+		it = strList.begin();
+//each line ((firstname);(secondname);(nickname).;(name);(tel);(group);(uin);
+		    
+		if (cl==NULL){
+			cl=new contactLine;
+		}
+		    
+		cl->firstname	= (*it);
+		cl->surname	= (*++it);
+		cl->nickname	= (*++it);
+		cl->name		= (*++it);
+		cl->phonenr	= (*++it);
+		cl->group		= (*++it);
+		cl->uin		= (*++it);
+		if ( email ){
+			cl->email	= (*++it);
+        	}
+		else{
+			 cl->email	= "";
+		}
+
+		++lni;
+
+		if ( cl->uin.isNull() ){
+			kdDebug(14100) << "no Uin, strange "<<endl;
+			kdDebug(14100) << "LINE:" << cline <<endl;
+			// XXX: maybe i should consider this as an fatal error, and return false
+			continue;
+		}
+    
+		gaducontactslist.append(cl);
+		kdDebug(14100) << "adding to list ,uin:" << cl->uin <<endl;
+    
+		cl=NULL;
+	}
+	return true;
+}
+
+void 
+GaduSession::handleUserlist( gg_event *e )
+{
+	QString ul;
+	switch (e->event.userlist.type) {
+		case GG_USERLIST_GET_REPLY:
+			if (e->event.userlist.reply){
+				ul = e->event.userlist.reply;
+				kdDebug( 14100 ) << "Got Contacts list  OK " << endl;
+			}
+			else{
+				kdDebug( 14100 ) << "Got Contacts list  FAILED/EMPTY " << endl;
+				// XXX: send failed?
+			}
+			emit userListRecieved( ul );
+			break;
+
+		case GG_USERLIST_PUT_REPLY:
+			kdDebug( 14100 ) << "Contacts list exported  OK " << endl;
+			emit userListExported();
+			break;
+	
+	}
+}
 
 void
 GaduSession::checkDescriptor()
@@ -403,6 +565,7 @@ GaduSession::checkDescriptor()
 		delete write_;
 		read_ = 0;
 		write_ = 0;
+		gg_logoff( session_ );
 		gg_free_session( session_ );
 		session_ = 0;
 		kdDebug(14100)<<"Emitting disconnect"<<endl;
@@ -470,7 +633,7 @@ GaduSession::checkDescriptor()
 		sendResult( e->event.pubdir50 );
 	        break;
 	case GG_EVENT_USERLIST:
-		// XXX ADD 6.0 userlist event
+		handleUserlist(e);
 		break;
   default:
 		kdDebug(14100)<<"Unprocessed GaduGadu Event = "<<e->type<<endl;

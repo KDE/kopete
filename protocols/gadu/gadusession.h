@@ -2,6 +2,7 @@
 // gadusession.h
 //
 // Copyright (C)	2002	Zack Rusin <zack@kde.org>
+// Copyright (C)	2003 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -25,25 +26,37 @@
 #include <qptrlist.h>
 #include <qobject.h>
 #include <qstring.h>
+#include <qstringlist.h>
 
 #include <libgadu.h>
 
+struct contactLine{
+	QString name;
+	QString group;
+	QString uin;
+	QString firstname;
+	QString surname;
+	QString nickname;
+	QString phonenr;
+	QString email;
+};
 
+typedef QPtrList<contactLine> gaduContactsList;
 
 struct resLine{
-    QString uin;
-    QString firstname;
-    QString surname;
-    QString nickname;
-    QString age;
-    QString city;
-    int     status;
+	QString uin;
+	QString firstname;
+	QString surname;
+	QString nickname;
+	QString age;
+	QString city;
+	int	status;
 };
 
 typedef QPtrList<resLine> searchResult;
 
-
 class QSocketNotifier;
+class QStringList;
 
 class GaduSession : public QObject
 {
@@ -51,8 +64,9 @@ class GaduSession : public QObject
 public:
 	GaduSession( QObject *parent=0, const char* name=0 );
 	virtual ~GaduSession();
-	bool isConnected() const;
-	int	 status() const;
+	bool	isConnected() const;
+	int	status() const;
+	bool	stringToContacts( gaduContactsList& gaducontactslist , const QString& sList );
 
 public slots:
 	void login( struct gg_login_params& p );
@@ -70,6 +84,7 @@ public slots:
 	int	 ping();
 
 	int	 dccRequest( uin_t uin );
+	void	requestContacts();
 
   /*
    *  Initiates search in public directory, we need to be logged on to perform search !
@@ -89,6 +104,7 @@ public slots:
    *  This will be done on each @ref pubDirNewSearch(), if previuos is not released
    */
     void pubDirSearchClose();
+    void exportContacts( gaduContactsList *u );
   
 signals:
 	void error( const QString& title, const QString& message );
@@ -101,8 +117,9 @@ signals:
 	void connectionSucceed( struct gg_event* );
 	void disconnect();
 	void pubDirSearchResult( const searchResult & );
-  
-  
+	void userListRecieved( const QString& );  
+	void userListExported();
+	
 protected slots:
 	void enableNotifiers( int checkWhat );
 	void disableNotifiers();
@@ -111,14 +128,15 @@ protected slots:
 private:
 
 	void sendResult( gg_pubdir50_t result );
+	void handleUserlist( gg_event *e );
 
-	struct gg_session *session_;
+	struct gg_session	*session_;
 	QSocketNotifier		*read_;
 	QSocketNotifier		*write_;
-	gg_login_params params_;
-	int searchSeqNr_;
-
+	gg_login_params	params_;
+	QTextCodec 		*textcodec;
+	int				searchSeqNr_;
+	
 };
-
 
 #endif

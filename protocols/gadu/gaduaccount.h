@@ -111,7 +111,7 @@ private slots:
 	void notify( struct gg_event* e );
 	void statusChanged( struct gg_event* e );
 	void slotSessionDisconnect();
-	void userlist( const gaduContactsList& );
+	void userlist( const QString& contacts );
 	gaduContactsList *userlist();
 	void connectionFailed( struct gg_event* /*e*/ );
 	void connectionSucceed( struct gg_event* /*e*/ );

@@ -131,6 +131,15 @@ KActionMenu* GaduAccount::actionMenu()
 	arg( myself_->displayName(), accountId() ) );
 #endif
 	
+	if (session_->isConnected()){
+		searchAction->setEnabled(TRUE);
+		listputAction->setEnabled(TRUE);
+	}
+	else{
+		searchAction->setEnabled(FALSE);
+		listputAction->setEnabled(FALSE);
+	}
+	
 	actionMenu_->insert( onlineAction );
 	actionMenu_->insert( busyAction );
 	actionMenu_->insert( invisibleAction );
@@ -140,13 +149,6 @@ KActionMenu* GaduAccount::actionMenu()
 
 	actionMenu_->popupMenu()->insertSeparator();
 
-	if (session_->isConnected()){
-	    searchAction->setEnabled(TRUE);
-	}
-	else{
-	    searchAction->setEnabled(FALSE);
-	}
-	
 	actionMenu_->insert( searchAction );
 	
 //  actionMenu_->insert( new KAction( i18n("Change Password"), "", 0, this,
@@ -468,12 +470,11 @@ GaduAccount::connectionSucceed( struct gg_event* /*e*/ )
     status_ =  GaduProtocol::protocol()->convertStatus( session_->status() );
     myself_->setOnlineStatus( status_ );
     startNotify();
-    UserlistGetCommand *cmd = new UserlistGetCommand( this );
-    cmd->setInfo( accountId().toInt(), password() );
-    QObject::connect( cmd, SIGNAL(done(const gaduContactsList&)),
-    			SLOT(userlist(const gaduContactsList&)) );
-    cmd->execute();
-
+    
+    QObject::connect( session_, SIGNAL(userListRecieved( const QString& )),
+    			SLOT( userlist( const QString& )) );
+    session_->requestContacts();
+    
     if ( !pingTimer_ ) {
 	pingTimer_ = new QTimer( this );
 	QObject::connect( pingTimer_, SIGNAL(timeout()),
@@ -525,25 +526,31 @@ GaduAccount::slotSessionDisconnect()
 
 
 void
-GaduAccount::userlist( const gaduContactsList& u)
+GaduAccount::userlist( const QString& list )
 {
 	kdDebug(14100)<<"### Got userlist - gadu account"<<endl;
 	
+	gaduContactsList u;
 	QString contactname;
 	int i;
 	GaduContact *ucontact;
-		
-	QPtrListIterator< contactLine > loo(u);
 	
+	// XXX: give feedback about error
+	if ( session_->stringToContacts( u , list ) == false ){
+		return;
+	}
+
+	QPtrListIterator< contactLine > loo(u);
+
 	for ( i=u.count() ; i-- ; ){ 
 	    kdDebug(14100)<<"uin "<< (*loo)->uin << endl;
-	
-	    if ((*loo)->uin.isNull()){
+	    
+	    if ( (*loo)->uin.isNull() ){
 		kdDebug(14100) << "no Uin, strange.. "<<endl;
 		goto next_cont;
 	    }
 
- 	    if ( contacts()[(*loo)->uin] ){
+ 	    if ( contacts()[ (*loo)->uin ] ){
 		kdDebug(14100) << "UIN already exists in contacts "<< (*loo)->uin << endl; 
 	    }
 	    else{
@@ -603,14 +610,10 @@ void
 GaduAccount::slotExportContactsList()
 {
 	
-	UserlistPutCommand *cmd = new UserlistPutCommand( this, "exportListCmd" );
+	session_->exportContacts( userlist() );
 	
-	cmd->setInfo( myself_->uin(), password(), userlist() );
-	
-	QObject::connect( cmd, SIGNAL(done(const QString&, const QString&)),
-					SLOT(slotCommandDone(const QString&, const QString&)) );
-	QObject::connect( cmd, SIGNAL(error(const QString&, const QString&)),
-					SLOT(slotCommandError(const QString&, const QString&)) );
+//	QObject::connect( session_, SIGNAL(),
+//					SLOT( ) );
  
 }
 
