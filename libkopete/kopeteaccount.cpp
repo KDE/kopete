@@ -63,12 +63,12 @@ KopeteAccount::KopeteAccount(KopeteProtocol *parent, const QString& _accountId ,
 	d->id=_accountId;
 	d->autologin=false;
 	d->password=QString::null;
-	
+
 	//we have to delete the account before the custom protocol.
 	//because contact are deleted when the account is deleted
-	QObject::connect( parent , SIGNAL(unloading() ) , this , SLOT(deleteLater())); 
+	QObject::connect( parent , SIGNAL(unloading() ) , this , SLOT(deleteLater()));
 	KopeteAccountManager::manager()->registerAccount(this);
-	
+
 	//the prococol need to acess to myself, which is create later, in the customAccount constructor
 	QTimer::singleShot( 0, parent, SLOT( slotAccountAdded() ) );
 }
@@ -97,18 +97,18 @@ void KopeteAccount::setAccountId( const QString &accountId )
 
 QString KopeteAccount::toXML()
 {
-	QString xml = QString::fromLatin1( "  <account account-id=\"" ) + QStyleSheet::escape(d->id) + 
+	QString xml = QString::fromLatin1( "  <account account-id=\"" ) + QStyleSheet::escape(d->id) +
 		QString::fromLatin1( "\" protocol-id=\"" )  + QStyleSheet::escape( d->protocol->pluginId() ) + QString::fromLatin1( "\">\n" );
 
 	if( !d->password.isNull())
 	{
 		xml += QString::fromLatin1( "    <password>" ) + QStyleSheet::escape( cryptStr(d->password) ) + QString::fromLatin1( "</password>\n" );
 	}
-	
+
 	if( d->autologin )
 		xml += QString::fromLatin1("    <autologin/>\n");
-	
-	
+
+
 	// Store other plugin data
 	xml += KopetePluginDataObject::toXML();
 
@@ -174,7 +174,7 @@ QString KopeteAccount::getPassword( bool error, bool *ok )
 
 	KDialogBase *passwdDialog= new KDialogBase( qApp->mainWidget() ,"passwdDialog", true, i18n( "Password needed" ),
 				KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true );
-		
+
 	KopetePasswordDialog *view = new KopetePasswordDialog(passwdDialog);
 	passwdDialog->setMainWidget(view);
 
@@ -182,12 +182,12 @@ QString KopeteAccount::getPassword( bool error, bool *ok )
 		view->m_text->setText(i18n("<b>The password was wrong! Please re-enter your password for %1</b>").arg(protocol()->displayName()));
 	else
 		view->m_text->setText(i18n("Please enter password for %1").arg(protocol()->displayName()));
-	
+
 	view->m_login->setText(d->id);
 	view->m_autologin->setChecked( d->autologin );
 
 	QString pass=QString::null;
-	
+
 	if(passwdDialog->exec() == QDialog::Accepted )
 	{
 		pass=view->m_password->text();
@@ -301,7 +301,7 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 			parentContact->setTemporary(true);
 		else
 			parentContact->addToGroup( parentGroup );
-	
+
 		KopeteContactList::contactList()->addMetaContact( parentContact );;
 	}
 
@@ -322,12 +322,15 @@ KActionMenu* KopeteAccount::actionMenu()
 
 bool KopeteAccount::isConnected() const
 {
-    return myself()->onlineStatus().status() != KopeteOnlineStatus::Offline;
+	return myself()->onlineStatus().status() != KopeteOnlineStatus::Offline;
 }
 
 bool KopeteAccount::isAway() const
 {
-    return myself()->onlineStatus().status() == KopeteOnlineStatus::Away;
+	return myself()->onlineStatus().status() == KopeteOnlineStatus::Away;
 }
 
 #include "kopeteaccount.moc"
+
+// vim: set noet ts=4 sts=4 sw=4:
+
