@@ -177,6 +177,27 @@ signals:
 	 */
 	void pluginLoaded( KopetePlugin *plugin );
 
+	/**
+	 * @brief All plugins have been loaded by the plugin manager.
+	 *
+	 * This signal is emitted exactly ONCE, when the plugin manager has emptied
+	 * its plugin queue for the first time. This means that if you call an async
+	 * loadPlugin() before loadAllPlugins() this signal is probably emitted after
+	 * the initial call completes, unless you are quick enough to fill the queue
+	 * before it completes, which is a dangerous race you shouldn't count upon :)
+	 *
+	 * The signal is delayed one event loop iteration through a singleShot timer,
+	 * but that is not guaranteed to be enough for account instantiation. You may
+	 * need an additional timer for it in the code if you want to programmatically
+	 * act on it.
+	 *
+	 * If you use the signal for enabling/disabling GUI objects there is little
+	 * chance a user is able to activate them in the short while that's remaining,
+	 * the slow part of the code is over now and the remaining processing time
+	 * is neglectable for the user.
+	 */
+	void allPluginsLoaded();
+
 private slots:
 	/**
 	 * @brief Cleans up some references if the plugin is destroyed

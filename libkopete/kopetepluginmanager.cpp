@@ -50,9 +50,11 @@ public:
 	// The list of all address book keys used by each plugin
 	QMap<KopetePlugin *, QStringList> addressBookFields;
 
-	// When true we're shutting down and we should deref() the application
-	// if all plugins are gone
-	enum ShutdownMode { Running, ShuttingDown, DoneShutdown };
+	// The plugin manager's mode. The mode is StartingUp until loadAllPlugins()
+	// has finished loading the plugins, after which it is set to Running.
+	// ShuttingDown and DoneShutdown are used during Kopete shutdown by the
+	// async unloading of plugins.
+	enum ShutdownMode { StartingUp, Running, ShuttingDown, DoneShutdown };
 	ShutdownMode shutdownMode;
 
 	// Plugins pending for loading
@@ -85,7 +87,7 @@ KopetePluginManager::KopetePluginManager()
 	// This way we can unload plugins asynchronously, which is more
 	// robust if they are still doing processing.
 	kapp->ref();
-	d->shutdownMode = KopetePluginManagerPrivate::Running;
+	d->shutdownMode = KopetePluginManagerPrivate::StartingUp;
 
 	KSettings::Dispatcher::self()->registerInstance( KGlobal::instance(), this, SLOT( loadAllPlugins() ) );
 
@@ -234,13 +236,23 @@ void KopetePluginManager::loadAllPlugins()
 void KopetePluginManager::slotLoadNextPlugin()
 {
 	if ( d->pluginsToLoad.isEmpty() )
+	{
+		if ( d->shutdownMode == KopetePluginManagerPrivate::StartingUp )
+		{
+			d->shutdownMode = KopetePluginManagerPrivate::Running;
+			emit allPluginsLoaded();
+		}
 		return;
+	}
 
 	QString key = d->pluginsToLoad.pop();
 	loadPluginInternal( key );
 
-	if ( !d->pluginsToLoad.isEmpty() )
-		QTimer::singleShot( 0, this, SLOT( slotLoadNextPlugin() ) );
+	// Schedule the next run unconditionally to avoid code duplication on the
+	// allPluginsLoaded() signal's handling. This has the added benefit that
+	// the signal is delayed one event loop, so the accounts are more likely
+	// to be instantiated.
+	QTimer::singleShot( 0, this, SLOT( slotLoadNextPlugin() ) );
 }
 
 KopetePlugin * KopetePluginManager::loadPlugin( const QString &_pluginId, PluginLoadMode mode /* = LoadSync */ )
