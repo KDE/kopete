@@ -98,7 +98,7 @@
                                 <cstring>emailArea</cstring>
                             </property>
                             <property name="echoMode">
-                                <enum>Password</enum>
+                                <enum>Normal</enum>
                             </property>
                             <property name="toolTip" stdset="0">
                                 <string>Your E-mail address.</string>
@@ -113,6 +113,9 @@
                             </property>
                             <property name="maxLength">
                                 <number>256</number>
+                            </property>
+                            <property name="echoMode">
+                                <enum>Password</enum>
                             </property>
                             <property name="edited">
                                 <bool>true</bool>
