@@ -1,19 +1,20 @@
-/***************************************************************************
-                          Kopete Instant Messenger
-							 kopetewindow.h
-                            -------------------
-				(C) 2001-2002 by Duncan Mac-Vicar P. <duncan@kde.org>
-				(C) 2001-2002 by Stefan Gehn <sgehn@gmx.net>
- ***************************************************************************/
+/*
+    kopetewindow.h  -  Kopete Main Window
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+	Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett   <duncan@kde.org>
+    Copyright (c) 2001-2002 by Stefan Gehn <sgehn@gmx.net>
+
+    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #ifndef KOPETEWINDOW_H
 #define KOPETEWINDOW_H
@@ -29,6 +30,11 @@ class KSelectAction;
 class KopeteContactListView;
 class KopeteSystemTray;
 class QListViewItem;
+
+/**
+ * @author Duncan Mac-Vicar P. <duncan@kde.org>
+ *
+ */
 
 class KopeteWindow : public KMainWindow
 {

@@ -29,6 +29,11 @@ class KopeteFileTransferInfo;
 class KopeteMetaContact;
 class KopeteTransfer;
 
+/**
+ * @author Nick Betcher. <nbetcher@kde.org>
+ *
+ */
+
 class KopeteTransferManager : public KopeteFileTransferUI
 {
 Q_OBJECT

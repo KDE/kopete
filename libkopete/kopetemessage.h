@@ -1,17 +1,18 @@
 /*
 	kopetemessage.h  -  Base class for Kopete messages
 
-	copyright   : (c) 2002 by Martijn Klingens
-	email       : klingens@kde.org
+    Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
 
-	*************************************************************************
-	*                                                                       *
-	* This program is free software; you can redistribute it and/or modify  *
-	* it under the terms of the GNU General Public License as published by  *
-	* the Free Software Foundation; either version 2 of the License, or     *
-	* (at your option) any later version.                                   *
-	*                                                                       *
-	*************************************************************************
+    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
 */
 
 #ifndef _KOPETE_MESSAGE_H
@@ -26,6 +27,11 @@
 #include "qptrlist.h"
 
 typedef QPtrList<KopeteContact> KopeteContactPtrList;
+
+/**
+ * @author Martijn Klingens <klingens@kde.org>
+ *
+ */
 
 class KopeteMessage
 {

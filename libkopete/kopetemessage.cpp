@@ -1,17 +1,18 @@
 /*
 	kopetemessage.cpp  -  Base class for Kopete messages
 
-	copyright   : (c) 2002 by Martijn Klingens
-	email       : klingens@kde.org
+    Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
 
-	*************************************************************************
-	*                                                                       *
-	* This program is free software; you can redistribute it and/or modify  *
-	* it under the terms of the GNU General Public License as published by  *
-	* the Free Software Foundation; either version 2 of the License, or     *
-	* (at your option) any later version.                                   *
-	*                                                                       *
-	*************************************************************************
+    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
 */
 
 #include "kopetemessage.h"
@@ -28,41 +29,49 @@ KopeteMessage::KopeteMessage()
 
 
 KopeteMessage::KopeteMessage(const KopeteContact *fromKC,
-		KopeteContactPtrList toKC, QString body, MessageDirection direction) {
+		KopeteContactPtrList toKC, QString body, MessageDirection direction)
+{
 	init(QDateTime::currentDateTime(), fromKC, toKC, body, QString::null, direction);
 }
 
 KopeteMessage::KopeteMessage(const KopeteContact *fromKC,
-		KopeteContactPtrList toKC, QString body, QString subject, MessageDirection direction) {
+		KopeteContactPtrList toKC, QString body, QString subject, MessageDirection direction)
+{
 	init(QDateTime::currentDateTime(), fromKC, toKC, body, subject, direction);
 }
 
 KopeteMessage::KopeteMessage(QDateTime timeStamp,
 		const KopeteContact *fromKC, KopeteContactPtrList toKC, QString body,
-		MessageDirection direction) {
+		MessageDirection direction)
+{
 	init(timeStamp, fromKC, toKC, body, QString::null, direction);
 }
 
 KopeteMessage::KopeteMessage(QDateTime timeStamp,
 		const KopeteContact *fromKC, KopeteContactPtrList toKC, QString body,
-		QString subject, MessageDirection direction) {
+		QString subject, MessageDirection direction)
+{
 	init(timeStamp, fromKC, toKC, body, subject, direction);
 }
 
-void KopeteMessage::setFg(QColor color) {
+void KopeteMessage::setFg(QColor color)
+{
 	mFg = color;
 }
 
-void KopeteMessage::setBg(QColor color) {
+void KopeteMessage::setBg(QColor color)
+{
 	mBg = color;
 }
 
-void KopeteMessage::setFont(QFont font) {
+void KopeteMessage::setFont(QFont font)
+{
 	mFont = font;
 }
 
 void KopeteMessage::init(QDateTime timeStamp, const KopeteContact * from,
-		KopeteContactPtrList to, QString body, QString subject, MessageDirection direction) {
+		KopeteContactPtrList to, QString body, QString subject, MessageDirection direction)
+{
 	mTimestamp = timeStamp;
 	mFrom = from;
 	mTo = to;
@@ -74,10 +83,6 @@ void KopeteMessage::init(QDateTime timeStamp, const KopeteContact * from,
 	mFont = QFont();
 
 }
-
-
-
-
 
 /*
  * Local variables:

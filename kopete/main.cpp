@@ -1,19 +1,22 @@
-/***************************************************************************
-                          main.cpp  -  description
-                             -------------------
-    begin                : Wed Dec 26 03:12:10 CLST 2001
-    copyright            : (C) 2001 by Duncan Mac-Vicar Prett
-    email                : duncan@kde.org
- ***************************************************************************/
+/*
+	Kopete , The KDE Instant Messenger
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+	Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+
+	Viva Chile Mierda!
+	Started at Wed Dec 26 03:12:10 CLST 2001, Santiago de Chile
+
+    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
@@ -26,7 +29,7 @@
 static const char *description =
 	I18N_NOOP("Kopete, the KDE Instant Messenger");
 
-#define KOPETE_VERSION "0.4.1"
+#define KOPETE_VERSION "CVS>=20020808"
 	
 static KCmdLineOptions options[] =
 {

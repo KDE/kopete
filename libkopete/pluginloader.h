@@ -1,7 +1,12 @@
 /*
     pluginloader.h - Kopete Plugin Loader
 
-    Copyright (c) 2001-2002 by the Kopete developers  <kopete-devel@kde.org>
+	Copyright (c) 2002 by Duncan Mac-Vicar Prett       <duncan@kde.org>
+
+	Portions of this code based in Noatun plugin code:
+    Copyright (c) 2000-2002 The Noatun Developers
+
+    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -42,6 +47,11 @@ bool operator ==(const KopeteLibraryInfo &, const KopeteLibraryInfo &);
 
 class KopeteProtocol;
 class Plugin;
+
+/**
+ * @author Duncan Mac-Vicar P. <duncan@kde.org>
+ *
+ */
 
 class LibraryLoader : public QObject
 {

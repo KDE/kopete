@@ -29,9 +29,12 @@ class KopeteEvent;
 class KopeteMetaContact;
 
 /**
+ * @author Duncan Mac-Vicar P. <duncan@kde.org>
+ *
  * This class abstracts a generic contact/buddie.
  * Use it for inserting contacts in the contact list for example.
  */
+
 class KopeteContact : public QObject
 {
 	Q_OBJECT

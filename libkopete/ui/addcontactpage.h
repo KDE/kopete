@@ -22,8 +22,9 @@
 #include <kopeteprotocol.h>
 
 /**
-  *@author duncan
-  */
+ * @author Duncan Mac-Vicar P. <duncan@kde.org>
+ *
+ */
 
 class AddContactPage : public QWidget
 {

@@ -32,8 +32,10 @@ class KopeteFileTransferInfo;
 class KopeteTransfer;
 
 /**
- * @author duncan
+ * @author Duncan Mac-Vicar P. <duncan@kde.org>
+ *
  */
+
 class KopeteProtocol : public Plugin
 {
 public:
