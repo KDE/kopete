@@ -797,7 +797,7 @@ void MSNProtocol::slotKopeteGroupRemoved(KopeteGroup *g)
 			if(g == KopeteGroup::toplevel)
 				return;
 
-			KopeteGroup::toplevel->setPluginData(this,"id",0);
+			KopeteGroup::toplevel->setPluginData(this,"id","0");
 			KopeteGroup::toplevel->setPluginData(this,"displayName",g->pluginData(this,"displayName"));
 			g->setPluginData(this,"id",QString::null); //the group should be soon deleted, but make sure
 
@@ -812,7 +812,8 @@ void MSNProtocol::slotKopeteGroupRemoved(KopeteGroup *g)
 			if( c->serverGroups().contains( groupNumber ) && c->serverGroups().count() == 1 )
 				m_notifySocket->addContact( c->contactId(), c->displayName(), 0, MSNProtocol::FL );
 		}
-		m_notifySocket->removeGroup( groupNumber );
+		if(m_notifySocket)
+			m_notifySocket->removeGroup( groupNumber );
 	}
 }
 
