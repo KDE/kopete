@@ -373,7 +373,7 @@ void JabberAccount::connect ()
 
 	Jabber::StreamProxy proxy (proxyType, pluginData (protocol (), "ProxyName"), pluginData (protocol (), "ProxyPort").toInt ());
 
-	proxy.setUseAuth (pluginData (protocol (), "ProxyAuth"));
+	proxy.setUseAuth (pluginData (protocol (), "ProxyAuth")==QString::fromLatin1("true"));
 	proxy.setUser (pluginData (protocol (), "ProxyUser"));
 	proxy.setPass (pluginData (protocol (), "ProxyPass"));
 
@@ -643,7 +643,7 @@ void JabberAccount::setPresence (const KopeteOnlineStatus & status, const QStrin
 	  }
 }
 
-void JabberAccount::setAway (bool away, const QString & reason = QString::null)
+void JabberAccount::setAway (bool away, const QString & reason)
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Setting away mode." << endl;
 	setPresence (JabberProtocol::getJabberAway (), KopeteAway::getInstance ()->message ());
@@ -1289,42 +1289,45 @@ void JabberAccount::slotRegisterUserDone ()
 	registerFlag = 0;
 }
 
-/*void JabberAccount::addContact(KopeteMetaContact * mc, const QString & userID) {
-    /* First of all, create a Jabber::RosterItem from the information found
-     * in the KopeteMetaContact. 
+/*
+void JabberAccount::addContact(KopeteMetaContact * mc, const QString & userID)
+{
+	// First of all, create a Jabber::RosterItem from the information found
+	// in the KopeteMetaContact.
 
-    Jabber::RosterItem item;
-    KopeteGroupList groupList;
-    QStringList groupStringList;
+	Jabber::RosterItem item;
+	KopeteGroupList groupList;
+	QStringList groupStringList;
 
-    item.setJid(Jabber::Jid(userID));
-    item.setName(userID);
+	item.setJid(Jabber::Jid(userID));
+	item.setName(userID);
 
-    groupList = mc->groups();
-    for (KopeteGroup * g = groupList.first(); g; g = groupList.next())
-	groupStringList.append(g->displayName());
-    item.setGroups(groupStringList);
+	groupList = mc->groups();
+	for (KopeteGroup * g = groupList.first(); g; g = groupList.next())
+		groupStringList.append(g->displayName());
+	item.setGroups(groupStringList);
 
-    createAddContact(mc, item);
+	createAddContact(mc, item);
 
-     Add the new contact to our roster. 
-    Jabber::JT_Roster * rosterTask =
-	new Jabber::JT_Roster(jabberClient->rootTask());
+	Add the new contact to our roster.
+	Jabber::JT_Roster * rosterTask =
+		new Jabber::JT_Roster(jabberClient->rootTask());
 
-    rosterTask->set(item.jid(), item.name(), item.groups());
-    rosterTask->go(true);
+	rosterTask->set(item.jid(), item.name(), item.groups());
+	rosterTask->go(true);
 
-     Send a subscription request. 
-    subscribe(item.jid());
-}*/
+	Send a subscription request.
+	subscribe(item.jid());
+}
+*/
 
 void JabberAccount::updateContact (const Jabber::RosterItem & item)
 {
 	if (!isConnected ())
-	  {
-		  errorConnectFirst ();
-		  return;
-	  }
+	{
+		errorConnectFirst ();
+		return;
+	}
 
 	Jabber::JT_Roster * rosterTask = new Jabber::JT_Roster (jabberClient->rootTask ());
 
@@ -1335,10 +1338,10 @@ void JabberAccount::updateContact (const Jabber::RosterItem & item)
 void JabberAccount::removeContact (const Jabber::RosterItem & item)
 {
 	if (!isConnected ())
-	  {
-		  errorConnectFirst ();
-		  return;
-	  }
+	{
+		errorConnectFirst ();
+		return;
+	}
 
 	Jabber::JT_Roster * rosterTask = new Jabber::JT_Roster (jabberClient->rootTask ());
 

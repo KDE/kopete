@@ -1,10 +1,10 @@
  /*
   * jabberformtranslator.cpp
-  * 
+  *
   * Copyright (c) 2002 by the Kopete Developers <kopete-devel@kde.org>
-  * 
+  *
   * Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
-  * 
+  *
   * *************************************************************************
   * *                                                                       *
   * * This program is free software; you can redistribute it and/or modify  *
@@ -54,35 +54,33 @@ void JabberFormTranslator::translate (const Jabber::Form & form, QWidget * widge
 	int row = 1;
 
 	for (Jabber::Form::const_iterator it = form.begin (); it != form.end (); it++)
-	  {
-		  kdDebug (14130) << "[JabberFormTranslator] Adding field realName()==" <<
-			  (*it).realName () << ", fieldName()==" << (*it).fieldName () << " to the dialog" << endl;
+	{
+		kdDebug (14130) << "[JabberFormTranslator] Adding field realName()==" <<
+			(*it).realName () << ", fieldName()==" << (*it).fieldName () <<
+			" to the dialog" << endl;
 
-		  label = new QLabel ((*it).fieldName (), parentWidget (), (*it).fieldName ());
-		  formLayout->addWidget (label, row, 0);
-		  label->show ();
+		label = new QLabel ((*it).fieldName (), parentWidget (), (*it).fieldName().latin1());
+		formLayout->addWidget (label, row, 0);
+		label->show ();
 
-		  JabberFormLineEdit *edit = new JabberFormLineEdit ((*it).type (), (*it).realName (),
-															 (*it).value (), parentWidget ());
+		JabberFormLineEdit *edit = new JabberFormLineEdit ((*it).type (), (*it).realName (),
+			(*it).value (), parentWidget ());
 
-		  formLayout->addWidget (edit, row, 1);
-		  edit->show ();
+		formLayout->addWidget (edit, row, 1);
+		edit->show ();
 
-		  connect (this, SIGNAL (gatherData (Jabber::Form &)), edit, SLOT (slotGatherData (Jabber::Form &)));
+		connect (this, SIGNAL (gatherData (Jabber::Form &)), edit, SLOT (slotGatherData (Jabber::Form &)));
 
-		  row++;
-	  }
-
+		row++;
+	}
 }
 
 Jabber::Form & JabberFormTranslator::resultData ()
 {
-
 	/* Let all line edit fields write into our form. */
 	emit gatherData (privForm);
 
 	return privForm;
-
 }
 
 JabberFormTranslator::~JabberFormTranslator ()

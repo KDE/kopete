@@ -79,7 +79,7 @@ KopeteOnlineStatus JabberProtocol::JabberInvisible;
 
 K_EXPORT_COMPONENT_FACTORY (kopete_jabber, KGenericFactory < JabberProtocol >);
 
-JabberProtocol::JabberProtocol (QObject * parent, QString name, QStringList):KopeteProtocol (parent, name)
+JabberProtocol::JabberProtocol (QObject *parent, const char *name, const QStringList&):KopeteProtocol (parent, name)
 {
 
 	JabberOnline = KopeteOnlineStatus (KopeteOnlineStatus::Online, 25, this, 0, "jabber_online", i18n ("Go O&nline"), i18n ("Online"));
@@ -181,7 +181,7 @@ void JabberProtocol::connectAll ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberProtocol] connectAll()" << endl;
 	// QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
-	//for (JabberAccount *tmpAccount = accounts.first(); tmpAccount; tmpAccount++) 
+	//for (JabberAccount *tmpAccount = accounts.first(); tmpAccount; tmpAccount++)
 	//if (!accounts.isEmpty())
 	//{
 	//  JabberAccount * tmpAccount = accounts[0];

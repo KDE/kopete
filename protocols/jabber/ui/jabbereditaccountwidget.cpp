@@ -108,10 +108,10 @@ void JabberEditAccountWidget::reopen ()
 
 	leProxyName->setText (m_account->pluginData (m_protocol, "ProxyName"));
 	spbProxyPort->setValue (m_account->pluginData (m_protocol, "ProxyPort").toInt ());
-	cbProxyAuth->setChecked (m_account->pluginData (m_protocol, "ProxyAuth"));
+	cbProxyAuth->setChecked (m_account->pluginData (m_protocol, "ProxyAuth")==QString::fromLatin1("true"));
 	leProxyUser->setText (m_account->pluginData (m_protocol, "ProxyUser"));
 	leProxyPass->setText (m_account->pluginData (m_protocol, "ProxyPass"));
-	mAutoConnect->setChecked (m_account->pluginData (m_protocol, "AutoConnect"));
+	mAutoConnect->setChecked ((m_account->pluginData (m_protocol, "AutoConnect").toUInt()==1));
 
 	if (m_account->pluginData (m_protocol, "LogAll") == "true")
 		mLogAll->setChecked (true);

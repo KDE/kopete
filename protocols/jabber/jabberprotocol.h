@@ -1,11 +1,11 @@
  /*
   * jabberprotocol.h  -  Base class for the Kopete Jabber protocol
-  * 
+  *
   * Copyright (c) 2002 by Daniel Stone <dstone@kde.org>
   * Copyright (c) 2002 by Till Gerken <till@tantalo.net>
-  * 
+  *
   * Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
-  * 
+  *
   * *************************************************************************
   * *                                                                       *
   * * This program is free software; you can redistribute it and/or modify  *
@@ -73,7 +73,7 @@ class JabberProtocol:public KopeteProtocol
 	/**
 	 * Object constructor and destructor
 	 */
-	  JabberProtocol (QObject * parent, QString name, QStringList);
+	  JabberProtocol (QObject *parent, const char *name, const QStringList&);
 	 ~JabberProtocol ();
 
 	KActionMenu *protocolActions ();
