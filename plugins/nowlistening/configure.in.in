@@ -3,7 +3,7 @@ dnl AM_INIT_AUTOMAKE(mediacontrol, 0.1)
 dnl AC_PATH_PROG(XMMS_CONFIG, xmms-config, no)
 dnl AM_PATH_XMMS(1.0.0,,AC_MSG_ERROR([*** XMMS >= 1.0.0 not installed - please install first ***]))
 
-AC_DEFUN(AC_CHECK_XMMS,
+AC_DEFUN([AC_CHECK_XMMS],
 [
   AC_MSG_CHECKING([for libxmms])
   AC_CACHE_VAL(ac_cv_have_xmms,
