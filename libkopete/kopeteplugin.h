@@ -89,6 +89,9 @@ public:
 	 */
 	virtual KActionCollection *customChatActions(KopeteMessageManager*) { return 0l; };
 
+	/**
+	 * Returns a set of action items to be shown on chat window toolbars
+	 */
 	virtual KActionCollection *customToolbarActions() { return 0L; };
 
 	/**
