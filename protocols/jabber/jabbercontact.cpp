@@ -336,7 +336,7 @@ void JabberContact::slotResourceUnavailable(const Jid &jid) {
 	JabberResource *newResource = bestResource();
 	if (!newResource) {
 		kdDebug() << "Jabber contact: No best resource! User is offline." << endl;
-		slotUpdateContact("", "", 0, "");
+		slotUpdateContact(theirJID, "", 0, "");
 	}
 	else {
 		kdDebug() << "Jabber contact: Best resource is now " << newResource->resource() << "." << endl;
