@@ -30,6 +30,7 @@
 
 #include <preferencesdialog.h>
 #include <kopetewindow.h>
+#include "kopetemessagemanagerfactory.h"
 
 #include "ui/appearanceconfig.h"
 #include "plugin.h"
@@ -84,6 +85,7 @@ void Kopete::initialize()
 	mAppearance = new AppearanceConfig(m_mainWindow);
 	connect( mAppearance , SIGNAL(saved()), this, SIGNAL(signalSettingsChanged()));
 	mNotifier = new KopeteNotifier(this, "mNotifier");
+	mMessageManagerFactory = new KopeteMessageManagerFactory(this, "KMMFactory");
 
 	KConfig *config=KGlobal::config();
 	config->setGroup("");

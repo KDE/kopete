@@ -46,6 +46,7 @@
 
 class LibraryLoader;
 class KopeteLibraryInfo;
+class KopeteMessageManagerFactory;
 
 struct KopeteEmoticons
 {
@@ -93,6 +94,11 @@ public:
 	* preferences are, and where plugins embedd its preferences.
 	**/
 	AppearanceConfig *appearance() const { return mAppearance; }
+	/**
+	* Use it to access Kopete's plugin loader.
+	* You wouldnt need to use it from a plugin.
+	**/
+	KopeteMessageManagerFactory *sessionFactory() const { return mMessageManagerFactory; }
 	/**
 	* Use it to access Kopete's plugin loader.
 	* You wouldnt need to use it from a plugin.
@@ -150,6 +156,7 @@ private:
 	AppearanceConfig *mAppearance;
 	QString mEmoticonTheme;
 	KopeteNotifier *mNotifier;
+	KopeteMessageManagerFactory *mMessageManagerFactory;
 	void loadPlugins();
 
 public slots:

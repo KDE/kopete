@@ -2,7 +2,7 @@
 #include "kopetemessagemanagerfactory.h"
 #include <kdebug.h>
 
-KopeteMessageManagerFactory::KopeteMessageManagerFactory()
+KopeteMessageManagerFactory::KopeteMessageManagerFactory( QObject* parent = 0, const char* name = 0 ) : QObject(parent, name)
 {
 }
 

@@ -1,8 +1,8 @@
 /*
 	kopetemessagemanager.h - Manages all chats
 
-	Copyright   : (c) 2002 by Martijn Klingens
-	Email       : klingens@kde.org
+	Copyright   : (c) 2002 by Martijn Klingens <klingens@kde.org>
+                  (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
 	*************************************************************************
 	*                                                                       *

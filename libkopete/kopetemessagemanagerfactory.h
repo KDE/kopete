@@ -33,9 +33,10 @@ typedef QPtrList<KopeteMessageManager> KopeteMessageManagerList;
 
 class KopeteMessageManagerFactory : public QObject
 {
+Q_OBJECT
 public:
 	
-	KopeteMessageManagerFactory();
+	KopeteMessageManagerFactory( QObject* parent = 0, const char* name = 0 );
 	~KopeteMessageManagerFactory();
 	
 	/**
