@@ -26,7 +26,7 @@ Modified by Jason Keirstead <jason@keirstead.org>
 #include <qstring.h>
 #include <qcolor.h>
 #include <qregexp.h>
-
+#include <knotifyclient.h>
 #include <kdebug.h>
 #include "ksparser.h"
 
@@ -44,6 +44,7 @@ QString KSParser::parse( const QString &message )
 		{
 			case 3:
 			{
+				//Color code
 				if ( message[++i].digitValue() > -1 )
 				{
 					QString tagStyle;
@@ -79,10 +80,24 @@ QString KSParser::parse( const QString &message )
 				break;
 			}
 			case 2:
+				//Bold
 				res += toggleTag("b");
+				break;
+			case 6:
+				//Invert Colors
+				break;
+			case 7:
+				//System bell
+				KNotifyClient::beep( QString::fromLatin1("IRC beep event recieved in a message") );
+				break;
+
+			case 15:
+				//Plain Text, close all tags
+				res.append( popAll() );
 				break;
 
 			case 31:
+				//Underline
 				res += toggleTag("u");
 				break;
 
