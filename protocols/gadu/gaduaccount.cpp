@@ -34,7 +34,7 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const
 	isUsingTls=false;
 
 	myself_ = new GaduContact(  accountId().toInt(), accountId(),
-				    this, new KopeteMetaContact(), KopeteContact::OmitFromKABC );
+				    this, new KopeteMetaContact() );
 
 	initActions();
 	initConnections();
@@ -355,7 +355,7 @@ GaduAccount::messageReceived( struct gg_event* e )
 		KopeteMetaContact *metaContact = new KopeteMetaContact ();
 		metaContact->setTemporary (true);
 		c = new GaduContact(e->event.msg.sender, QString::number(e->event.msg.sender),
-							 this, metaContact, KopeteContact::OmitFromKABC );
+							 this, metaContact );
 		KopeteContactList::contactList ()->addMetaContact (metaContact);
 		addNotify( e->event.msg.sender );
 	}

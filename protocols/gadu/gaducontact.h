@@ -45,7 +45,7 @@ class GaduContact : public KopeteContact
 	
 public:
 	GaduContact( unsigned int uin, const QString& name,
-			KopeteAccount *account, KopeteMetaContact *parent, KopeteContact::AddMode mode );
+			KopeteAccount *account, KopeteMetaContact *parent );
 
 	virtual bool isReachable();
 	virtual void serialize(QMap<QString, QString> &serializedData, 
