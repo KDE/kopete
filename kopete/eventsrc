@@ -1,6 +1,7 @@
 [!Global!]
 IconName=kopete
 Comment=Kopete Messenger
+Comment[ca]=Missatger Kopete
 Comment[es]=Mensajería de Kopete
 Comment[fi]=Kopete viestin
 Comment[ja]=Kopete メッセンジャー
@@ -11,6 +12,7 @@ Comment[ven]=Murumiwa wa Kopete
 [kopete_event]
 Name=Event
 Name[bs]=Događaj
+Name[ca]=Esdeveniment
 Name[da]=Begivenhed
 Name[es]=Evento
 Name[fi]=Tapahtuma
@@ -23,6 +25,7 @@ Name[ven]=Mutambo
 Name[xh]=Isiganeko
 Comment=Sound Notification for Kopete Events
 Comment[bs]=Zvučna obavještenja za Kopete događaje
+Comment[ca]=Sons de notificació per als esdeveniments a Kopete
 Comment[da]=Lydpåmindelse for Kopete-begivenheder
 Comment[fi]=Äänivaroitus Kopete tapahtumille
 Comment[hr]=Zvučne obavijesti za Kopte događaje
@@ -38,6 +41,7 @@ default_presentation=1
 [kopete_incoming]
 Name=Incoming
 Name[bs]=Ulazni
+Name[ca]=Entrant
 Name[da]=Indkommende
 Name[es]=Entrante
 Name[fi]=Saapuva
@@ -49,6 +53,7 @@ Name[ven]=Zwine zwa khoutou da
 Name[xh]=Engenayo
 Comment=Incoming message arrives
 Comment[bs]=Dolazi poruka
+Comment[ca]=Arriba un missatge entrant
 Comment[da]=Indkommende besked ankommer
 Comment[fi]=Saapuva viesti
 Comment[ja]=Incomingメッセージが到着しました
@@ -63,6 +68,7 @@ default_presentation=0
 [kopete_outgoing]
 Name=Outgoing
 Name[bs]=Izlazni
+Name[ca]=Sortint
 Name[da]=Udgående
 Name[es]=Saliente
 Name[fi]=Lähtevä
@@ -74,6 +80,7 @@ Name[ven]=Zwine zwa khou tou bva
 Name[xh]=Ephumayo
 Comment=Outgoing message is sent
 Comment[bs]=Poslana je poruka
+Comment[ca]=S'envia un missatge sortint
 Comment[da]=Udgående besked er sendt
 Comment[fi]=Viest on lähetetty
 Comment[ja]=Outgoingメッセージが送信されました
@@ -88,12 +95,14 @@ default_presentation=0
 
 [kopete_online]
 Name=Online
+Name[ca]=En línia
 Name[es]=Conectado
 Name[fi]=Yhteys auki
 Name[sr]=На вези
 Name[sv]=Uppkopplad
 Comment=User goes online
 Comment[bs]=Korisnik ide online
+Comment[ca]=L'usuari entra en línia
 Comment[da]=Bruger går på nettet
 Comment[fi]=Käyttäjä avaa yhteyden
 Comment[sr]=Корисник се повезао
@@ -102,10 +111,12 @@ default_presentation=16
 
 [kopete_status_change]
 Name=Status Change
+Name[ca]=Canvia estatus
 Name[da]=Statusændring
 Name[es]=Cambiar estado
 Name[sr]=Промена статуса
 Comment=User changed his online status
+Comment[ca]=L'usuari canvia el seu estat a en línia
 Comment[da]=Bruger ændrede sin status på nettet
 Comment[sr]=Корисник је променио свој статус на вези
 default_sound=Kopete_Event.ogg
@@ -113,9 +124,11 @@ default_presentation=0
 
 [kopete_highlight]
 Name=Highlight
+Name[ca]=Ressaltat
 Name[da]=Fremhæv
 Name[sr]=Истицање
 Comment=A message was highlighted because it contained your nickname
+Comment[ca]=S'ha ressaltat un missatge degut a que conté el vostre sobrenom
 Comment[da]=En besked blev fremhævet fordi den indeholdt dit alias
 Comment[sr]=Порука је истакнута зато што је садржала ваш надимак
 default_sound=Kopete_Received.ogg
@@ -124,10 +137,12 @@ default_presentation=1
 
 [msn_mail]
 Name=MSN Mail
+Name[ca]=Correu de MSN
 Name[da]=MSN-Mail
 Name[es]=Correo MSN
 Name[sr]=MSN пошта
 Comment=A new email arrived in your MSN inbox
+Comment[ca]=Ha arribat un missatge a la vostra bústia de MSN
 Comment[da]=En ny e-post ankom til din MSN-indbakke
 Comment[sr]=Нова порука је стигла у ваше MSN сандуче
 default_presentation=2
