@@ -88,8 +88,6 @@ KopeteApplication::KopeteApplication()
 
 	//Create the emoticon installer
 	m_emoticonHandler = new Kopete::EmoticonMimeTypeHandler;
-
-	QObject::connect( this, SIGNAL( aboutToQuit() ), SLOT( slotCleanShutdown() ) );
 }
 
 KopeteApplication::~KopeteApplication()
@@ -317,14 +315,7 @@ void KopeteApplication::quitKopete()
 	}
 }
 
-void KopeteApplication::slotCleanShutdown()
-{
-	// save the contact list now, just in case a change was made very recently
-	// and it hasn't autosaved yet
-	Kopete::ContactList::self()->save();
-	Kopete::AccountManager::self()->save();
 
-}
 void KopeteApplication::commitData( QSessionManager &sm )
 {
 	m_isShuttingDown = true;

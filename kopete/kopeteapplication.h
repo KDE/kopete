@@ -76,7 +76,6 @@ private slots:
 	 * auto-connect
 	 */
 	void slotAllPluginsLoaded();
-	void slotCleanShutdown();
 private:
 	// The main window might get deleted behind our back (W_DestructiveClose),
 	// so use a guarded pointer
