@@ -1431,10 +1431,18 @@ void JabberProtocol::addContact(KopeteMetaContact *mc, const QString &userId)
 	// first of all, create a Jabber::RosterItem from the information found
 	// in the KopeteMetaContact
 	Jabber::RosterItem item;
+	KopeteGroupList groupList;
+	QStringList groupStringList;
 
 	item.setJid(Jabber::Jid(userId));
 	item.setName(userId);
-	item.setGroups(mc->groups().toStringList());
+
+	groupList = mc->groups();
+	for( KopeteGroup *g = groupList.first(); g; g = groupList.next() )
+	{
+		groupStringList.append( g->displayName() );
+	}
+	item.setGroups(groupStringList);
 
 	createAddContact(mc, item);
 

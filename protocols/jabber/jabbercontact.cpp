@@ -793,9 +793,19 @@ void JabberContact::slotStatusInvisible()
 void JabberContact::serialize( QMap<QString, QString> &serializedData,
 	QMap<QString, QString> & /* addressBookData */ )
 {
+	KopeteGroupList groupList;
+	QStringList groupStringList;
+
 	// Contact id and display name are already set for us, only add the rest
 	serializedData[ "identityId" ] = identityId();
-	serializedData[ "groups" ]     = groups().toStringList().join( "," );
+
+	groupList = groups();
+	for( KopeteGroup *g = groupList.first(); g; g = groupList.next() )
+	{
+		groupStringList.append( g->displayName() );
+	}
+
+	serializedData[ "groups" ]     = groupStringList.join( "," );
 }
 
 #include "jabbercontact.moc"

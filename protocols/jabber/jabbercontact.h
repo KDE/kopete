@@ -38,7 +38,6 @@ class KopeteMessage;
 class KopeteMessageManager;
 class KopeteMetaContact;
 class KopeteGroup;
-class KopeteGroupList;
 
 class Jabber::Jid;
 class Jabber::Message;
