@@ -458,7 +458,7 @@ void OscarAccount::slotGotServerBuddyList()
 						bit.current()->name, 0L,
 						DontChangeKABC, groupName, false);
 					//make sure we set the contact to be on the SSI
-					contact->setServerSide( true );
+					//contact->setServerSide( true );
 				}
 				break;
 			}
@@ -506,6 +506,7 @@ void OscarAccount::slotGotServerBuddyList()
 	//Get a list of contacts, if they're not on the SSI, move them to a new
 	//metacontact, and then move that new metacontact to the temp group
 	//so they're gone on kopete exit
+	/*
 	QDictIterator<KopeteContact> it(contacts());
 	for (; it.current(); ++it)
 	{
@@ -527,7 +528,7 @@ void OscarAccount::slotGotServerBuddyList()
 				delete oldContact; 
 			}
 		}
-	}
+	}*/
 
 	QObject::connect(KopeteContactList::contactList(), SIGNAL(groupAdded(KopeteGroup *)),
 		this, SLOT(slotGroupAdded(KopeteGroup *)));
