@@ -317,6 +317,13 @@ QString Kopete::parseHTML( QString message, bool parseURLs )
 				lastReplacement = idx;
 				result += "&nbsp;&nbsp;&nbsp;&nbsp;";
 				break;
+			case ' ':		// convert doubles spaces to HTML
+				if( (idx>0) && (text[idx-1]==' '))
+					result += "&nbsp;";
+				else
+					result += " ";
+				lastReplacement = idx;
+				break;
 
 			case '@':		// email-addresses or message-ids
 				if ( parseURLs )

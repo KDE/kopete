@@ -323,22 +323,23 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			}
 		}
 
-		kdDebug() << "MSNSwitchBoardService::slotReadMessage: Message: " <<
+		/*kdDebug() << "MSNSwitchBoardService::slotReadMessage: Message: " <<
 			endl << msg.right( msg.length() - msg.find("\r\n\r\n") - 4) <<
 			endl;
 
 		kdDebug() << "MSNSwitchBoardService::slotReadMessage: User handle: "
-			<< m_msgHandle << endl;
+			<< m_msgHandle << endl;*/
 
 		KopeteContactPtrList others;
-    others.append( MSNProtocol::protocol()->myself() );
-    QStringList::iterator it;
-    for ( it = m_chatMembers.begin(); it != m_chatMembers.end(); ++it )
-       if(*it != m_msgHandle) others.append( MSNProtocol::protocol()->contacts()[*it] );
+		others.append( MSNProtocol::protocol()->myself() );
+		QStringList::iterator it;
+		for ( it = m_chatMembers.begin(); it != m_chatMembers.end(); ++it )
+			if(*it != m_msgHandle) others.append( MSNProtocol::protocol()->contacts()[*it] );
 
-			KopeteMessage kmsg(
-			MSNProtocol::protocol()->contacts()[ m_msgHandle ] , others,
-			msg.right( msg.length() - msg.find("\r\n\r\n") - 4 ),
+		//FIXME: we should add a flag to KopeteMessage to specified that it's a plein text message
+		//      QStyleSheet::escape is a temporary code
+		KopeteMessage kmsg( MSNProtocol::protocol()->contacts()[ m_msgHandle ] , others,
+			QStyleSheet::escape(msg.right( msg.length() - msg.find("\r\n\r\n") - 4 )),
 			KopeteMessage::Inbound );
 
 		kmsg.setFg( fontColor );
@@ -400,9 +401,14 @@ void MSNSwitchBoardSocket::slotSendMsg( const KopeteMessage &msg )
 	sendCommand( "MSG", args, true, head );
 
 	// TODO: send our fonts as well
-	KopeteContactPtrList others;
-	others.append( MSNProtocol::protocol()->contacts()[ m_myHandle ] );
-	emit msgReceived( msg );    // send the own msg to chat window
+	//FIXME: we should add a flag to KopeteMessage to specified that it's a plein text message
+	// msg2 is used to send the own msg to chat window in a HTML format but it's a temporary code
+	// Just emit msgReceived( msg ) should be enough;
+	KopeteMessage msg2(  msg.timestamp() , msg.from() , msg.to() , QStyleSheet::escape(msg.body()), msg.direction());
+	msg2.setFg(msg.fg());
+	msg2.setFont(msg.font());
+	emit msgReceived( msg2);    
+	// send the own msg to chat window
 }
 
 void MSNSwitchBoardSocket::slotSocketClosed( int /*state */)
