@@ -217,6 +217,7 @@ Name[pt]=Seleccionado
 Name[pt_BR]=Seleccionado
 Name[sv]=Markera
 Comment=A message was highlighted because it contained your nickname
+Comment[es]=El mensaje fue destacado porque contiene su apodo.
 Comment[pt]=Uma mensagem foi seleccionada porque continha a sua alcunha
 Comment[pt_BR]=Uma mensagem foi seleccionada porque continha a sua alcunha
 Comment[sv]=Ett meddelande markerades eftersom det innehöll ditt smeknamn
