@@ -17,9 +17,15 @@ o Main Application
 	o Allow to use customs icon for groups and metacontacts (Stephan / Olivier)
 	o Allow the user to move a contact to a new metacontact (Olivier)
 	o Show a link in the passive popup (i whish this could be a kdelibs item) (Olivier)
+	o KAdressBook integration (Will)
+	o New Preference system (Martijn, Matt, Olivier)
+	o ChatWindow is a plugin internaly (Olivier)
+	o New chat window group policy: Group per metacontact and per groups (Jason)
 o MSN
 	o New account edit page, that allow to set phone numbers, and set if we want to
 	   block spam from unknown people, and show the reverse contactlist (Olivier)
+	o Display Picture (Olivier)
+	o Download and show custom emoticons (Olivier)
 
 Kopete 0.7.1
 ================
@@ -65,7 +71,7 @@ o Main App
 	o Kopete OnlineStatus architecture (Martijn)
 	o remove KopeteTransferManager (lilachaze)
 	o Create KopeteViewManager, clean up KopeteMessageManager (Jason)
-	o Migrate file transfers to use KIO (new standardised file transfer API in 
+	o Migrate file transfers to use KIO (new standardised file transfer API in
 	  KMM)
 	o General API cleanups (Everyone)
 	o License headers unification and correction (Duncan)
@@ -89,7 +95,7 @@ o MSN Plugin
 	o Show the user's web profile
 	o Use correct way to ping the server
 	o Don't reload the contactlist from server if it is not modified
-	o Correct handling of the hotmail inbox, and send mail to contact with 
+	o Correct handling of the hotmail inbox, and send mail to contact with
 	  hotmail
 	o Handle MSN Plus away reasons.
 	o Detect when the other party timed out and left the chat
@@ -136,7 +142,7 @@ o MSN plugin
 	o Hotmail mail notifications (Olivier, James)
 	o Phone number (Olivier)
 o ICQ Plugin
-	o Translate between message-encodings (needed for non-latin languages) 
+	o Translate between message-encodings (needed for non-latin languages)
 	  (Stefan)
 	o Server contacts import
 	o Receiving Files (Nick, Stefan)

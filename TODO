@@ -24,9 +24,6 @@ Beware: It's totally unsorted ;)
 
 - Save the account order in the config file !!!!!!
 
-- Make the chatwindow a plugin (or make all in libkopete to allow this in the
-    future without changing the api)   same for the contactlist  (Olivier)
-
 - Interface for application invitations, and better filetransfers support
 - KAB integration
 
@@ -97,8 +94,6 @@ For 1.0/kdenetwork:
 ---------------------------------------
 
 	- Handle the MSN PLUS! color codes
-	- Handle the MSN6 cutoms emoticon (at least add the capacity to view them)
-	- Handle the MSN6 buddy icons
 	- Show internals messages in chat window when filetransfers (go with the new
 	    interface for invitation in libkopete)
 
