@@ -43,8 +43,7 @@
 KopeteMetaContact::KopeteMetaContact()
 : QObject( KopeteContactList::contactList() )
 {
-	//TODO: implement m_trackChildNameChanges
-	m_trackChildNameChanges = true;
+	m_trackChildNameChanges = false;
 	m_temporary=false;
 //	m_isTopLevel=false;
 
@@ -83,7 +82,7 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 		if( m_displayName.isNull() )
 		{
 			setDisplayName( c->displayName() );
-			m_trackChildNameChanges=true;
+			m_trackChildNameChanges = false;
 		}
 
 		if (m_contacts.count() > 1)
