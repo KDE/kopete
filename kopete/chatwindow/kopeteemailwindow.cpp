@@ -548,21 +548,21 @@ bool KopeteEmailWindow::closeView( bool force )
 
 			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You are about to leave the group chat session <b>%1</b>.<br>"
 				"You will not receive future messages from this conversation.</qt>").arg(shortCaption), i18n("Closing Group Chat"),
-				i18n("&Close Chat"), i18n("Do not ask me this again"));
+				i18n("Cl&ose Chat"), QString::fromLatin1("AskCloseGroupChat"));
 		}
 
 		if( !d->unreadMessageFrom.isNull() && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You have received a message from <b>%1</b> in the last "
-				"second. Are you sure you want to close this chat?</qt>").arg(d->unreadMessageFrom), i18n("Unread Message"),
-				i18n("&Close Chat"), i18n("Do not ask me this again"));
+				"second. Are you sure you want to close this chat?</qt>").arg(unreadMessageFrom), i18n("Unread Message"),
+				i18n("Cl&ose Chat"), QString::fromLatin1("AskCloseChatRecentMessage"));
 		}
 
 		if( d->sendInProgress  && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel(this, i18n("You have a message send in progress, which will be "
-				"aborted if this window is closed. Are you sure you want to close this chat?"), i18n("Message in Transit"),
-				i18n("&Close Chat"), i18n("Do not ask me this again"));
+				"aborted if this chat is closed. Are you sure you want to close this chat?"), i18n("Message in Transit"),
+				i18n("Cl&ose Chat"), QString::fromLatin1("AskCloseChatMessageInProgress") );
 		}
 	}
 
@@ -630,16 +630,16 @@ void KopeteEmailWindow::raise(bool activate)
 	makeVisible();
 	KWin::setOnDesktop( winId(), KWin::currentDesktop() );
 	KMainWindow::raise();
-	
+
 	/* Removed Nov 2003
 	According to Zack, the user double-clicking a contact is not valid reason for a non-pager
 	to grab window focus. While I don't agree with this, and it runs contradictory to every other
 	IM out there, commenting this code out to agree with KWin policy.
-	
+
 	Redirect any bugs relating to the widnow now not grabbing focus on clicking a contact to KWin.
 		- Jason K
 	*/
-	
+
 	//Will not activate window if user was typing
 	if(activate)
 #if KDE_VERSION < KDE_MAKE_VERSION( 3, 1, 90 )
