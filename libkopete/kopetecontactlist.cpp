@@ -49,7 +49,7 @@ class KopeteContactList::KopeteContactListPrivate
 	QPtrList<KopeteGroup> selectedGroups;
 
 	QTimer *saveTimer;
-	
+
 	/**
 	 * Current contact list version * 10 ( i.e. '10' is version '1.0' )
 	 */
@@ -70,7 +70,7 @@ KopeteContactList::KopeteContactList()
 : QObject( kapp, "KopeteContactList" )
 {
 	d=new KopeteContactListPrivate;
-	
+
 	//no contactlist loaded yet, don't save them
 	d->loaded=false;
 
@@ -828,8 +828,8 @@ KopeteMetaContact* KopeteContactList::findMetaContactByContactId( const QString 
 	for ( ; it.current(); ++it )
 	{
 		QPtrList<KopeteContact> cl = it.current()->contacts();
-		QPtrListIterator<KopeteContact> kcit ( cl ); 
-		
+		QPtrListIterator<KopeteContact> kcit ( cl );
+
 		for ( ; kcit.current(); ++kcit )
 		{
 			if ( kcit.current()->contactId() == contactId )
@@ -852,9 +852,9 @@ QStringList KopeteContactList::contactFileProtocols(const QString &displayName)
 		QPtrListIterator<KopeteContact> jt( mContacts );
 		for ( ; jt.current(); ++jt )
 		{
-			kdDebug(14010) << "1" << jt.current()->protocol()->pluginId() << "\n";
+			kdDebug(14010) << "1" << jt.current()->protocol()->pluginId() << endl;
 			if( jt.current()->canAcceptFiles() ) {
-				kdDebug(14010) << jt.current()->protocol()->pluginId() << "\n";
+				kdDebug(14010) << jt.current()->protocol()->pluginId() << endl;
 				protocols.append ( jt.current()->protocol()->pluginId() );
 			}
 		}
@@ -871,12 +871,18 @@ KopeteGroupList KopeteContactList::groups() const
 
 void KopeteContactList::removeMetaContact(KopeteMetaContact *m)
 {
+	if ( !d->contacts.contains(m) )
+	{
+		kdDebug(14010) << k_funcinfo << "Trying to remove a not listed MetaContact." << endl;
+		return;
+	}
+
 	if ( d->selectedMetaContacts.contains( m ) )
 	{
 		d->selectedMetaContacts.remove( m );
 		setSelectedItems( d->selectedMetaContacts, d->selectedGroups );
 	}
-	
+
 	//removes subcontact from server here and now.
 	QPtrList<KopeteContact> cts=m->contacts();
 	for( KopeteContact *c = cts.first(); c; c = cts.next() )
