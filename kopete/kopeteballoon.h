@@ -23,23 +23,23 @@
 
 #include <qwidget.h>
 
-class QLabel;
+//class QLabel;
 
 /**
- * @author Duncan Mac-Vicar P. <duncan@kde.org>
+ * A little balloon for notifications
+ *
+ * @author Malte Starostik <malte@kde.org>
+ * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  */
 class KopeteBalloon : public QWidget
 {
 	Q_OBJECT
 
 public:
-	KopeteBalloon( const QString &text, const QString &pic );
-	KopeteBalloon();
-	~KopeteBalloon();
+	KopeteBalloon(const QString &text, const QString &pic);
+//	KopeteBalloon();
 
-	void setAnchor( const QPoint &anchor );
-
-	//virtual bool eventFilter( QObject *o, QEvent *ev );
+	void setAnchor(const QPoint &anchor);
 
 signals:
 	void signalButtonClicked();
@@ -50,9 +50,7 @@ protected:
 	virtual void updateMask();
 
 private:
-	QPoint m_anchor;
-	QLabel* m_image;
-	QLabel* m_caption;
+	QPoint mAnchor;
 };
 
 #endif

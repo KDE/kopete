@@ -29,69 +29,66 @@
 #endif
 
 #include <kapplication.h>
+#include <kdialog.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
 
 #include "kopeteballoon.h"
 #include "systemtray.h"
 
-KopeteBalloon::KopeteBalloon( const QString &text, const QString &pix )
-: QWidget( 0L, "KopeteBalloon", WStyle_StaysOnTop | WStyle_Customize |
-	WStyle_NoBorder | WStyle_Tool | WX11BypassWM )
+KopeteBalloon::KopeteBalloon(const QString &text, const QString &pix)
+: QWidget(0L, "KopeteBalloon", WStyle_StaysOnTop | WStyle_Customize |
+	WStyle_NoBorder | WStyle_Tool | WX11BypassWM)
 {
-	resize( 139, 104 );
+	setCaption("");
 
-	setCaption( trUtf8( "" ) );
-	QVBoxLayout *BalloonLayout = new QVBoxLayout( this, 24, 6, "BalloonLayout");
+	QVBoxLayout *BalloonLayout = new QVBoxLayout(this, 22, KDialog::spacingHint(), "BalloonLayout");
 
-	QHBoxLayout *Layout1 = new QHBoxLayout( 0, 0, 6, "Layout1");
+	// BEGIN Layout1
+	QHBoxLayout *Layout1 = new QHBoxLayout(this, 0, KDialog::spacingHint(), "Layout1");
+	QLabel *mCaption = new QLabel(text, this, "mCaption");
 
-	m_image = new QLabel( this, "m_image" );
-	m_image->setScaledContents( FALSE );
-	Layout1->addWidget( m_image );
+	if (!pix.isEmpty())
+	{
+		QLabel *mImage = new QLabel(this, "mImage");
+		mImage->setScaledContents(FALSE);
+		mImage->setPixmap(locate("data", pix));
 
-	m_caption = new QLabel( this, "m_caption" );
-	m_caption->setText( trUtf8( "" ) );
-	Layout1->addWidget( m_caption );
-	BalloonLayout->addLayout( Layout1 );
+		Layout1->addWidget(mImage);
+	}
+	Layout1->addWidget(mCaption);
+	// END Layout1
 
-	QHBoxLayout *Layout2 = new QHBoxLayout( 0, 0, 6, "Layout2");
-	QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-	Layout2->addItem( spacer );
 
-	QPushButton *viewButton = new QPushButton( this, "m_reject" );
-	viewButton->setText( i18n( "View" ) );
+	// BEGIN Layout2
+	QHBoxLayout *Layout2 = new QHBoxLayout(this, 0, KDialog::spacingHint(), "Layout2");
+	QPushButton *mViewButton = new QPushButton(i18n("View"), this, "mViewButton");
+	QPushButton *mIgnoreButton = new QPushButton(i18n("Ignore" ), this, "mIgnoreButton");
 
-	QPushButton *ignoreButton = new QPushButton( this );
-	ignoreButton->setText( i18n( "Ignore" ) );
+	Layout2->addStretch();
+	Layout2->addWidget(mViewButton);
+	Layout2->addWidget(mIgnoreButton);
+	Layout2->addStretch();
+	// END Layout2
 
-	Layout2->addWidget( viewButton );
-	Layout2->addWidget( ignoreButton );
 
-	QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-	Layout2->addItem( spacer_2 );
-	BalloonLayout->addLayout( Layout2 );
+	BalloonLayout->addLayout(Layout1);
+	BalloonLayout->addLayout(Layout2);
 
 	setPalette(QToolTip::palette());
-	setAutoMask(true);
+	setAutoMask(TRUE);
 
-	m_image->setPixmap(locate("data", pix));
-	m_caption->setText(text);
+	connect(mViewButton, SIGNAL(clicked()), SIGNAL(signalButtonClicked()));
+	connect(mViewButton, SIGNAL(clicked()), SLOT(deleteLater()));
 
-	connect( viewButton, SIGNAL( clicked() ), SIGNAL( signalButtonClicked() ) );
-	connect( ignoreButton, SIGNAL( clicked() ), SIGNAL( signalIgnoreButtonClicked() ) );
-	connect( viewButton, SIGNAL( clicked() ), SLOT( deleteLater() ) );
-	connect( ignoreButton, SIGNAL( clicked() ), SLOT( deleteLater() ) );
+	connect(mIgnoreButton, SIGNAL(clicked()), SIGNAL(signalIgnoreButtonClicked()));
+	connect(mIgnoreButton, SIGNAL(clicked()), SLOT(deleteLater()));
 }
 
-void KopeteBalloon::setAnchor( const QPoint &anchor)
+void KopeteBalloon::setAnchor(const QPoint &anchor)
 {
-	m_anchor = anchor;
+	mAnchor = anchor;
 	updateMask();
-}
-
-KopeteBalloon::~KopeteBalloon()
-{
 }
 
 void KopeteBalloon::updateMask()
@@ -121,14 +118,14 @@ void KopeteBalloon::updateMask()
 	// get screen-geometry for screen our anchor is on
 	// (geometry can differ from screen to screen!
 	#if KDE_VERSION > 0x030190
-		QRect deskRect = KGlobalSettings::desktopGeometry(m_anchor);
+		QRect deskRect = KGlobalSettings::desktopGeometry(mAnchor);
 	#else
 		QDesktopWidget* tmp = QApplication::desktop();
-		QRect deskRect = tmp->screenGeometry(tmp->screenNumber(m_anchor));
+		QRect deskRect = tmp->screenGeometry(tmp->screenNumber(mAnchor));
 	#endif
 
-	bool bottom = (m_anchor.y() + height()) > (deskRect.height() - 48);
-	bool right = (m_anchor.x() + width()) > (deskRect.width() - 48);
+	bool bottom = (mAnchor.y() + height()) > (deskRect.height() - 48);
+	bool right = (mAnchor.x() + width()) > (deskRect.width() - 48);
 
 	QPointArray arrow(4);
 	arrow.setPoint(0, QPoint(right ? width() : 0, bottom ? height() : 0));
@@ -138,11 +135,9 @@ void KopeteBalloon::updateMask()
 	mask += arrow;
 	setMask(mask);
 
-	move(right ? m_anchor.x() - width() : m_anchor.x(),
-	     bottom ? m_anchor.y() - height() : m_anchor.y());
+	move(right ? mAnchor.x() - width() : mAnchor.x(),
+	     bottom ? mAnchor.y() - height() : mAnchor.y());
 }
 
 #include "kopeteballoon.moc"
-
 // vim: set noet ts=4 sts=4 sw=4:
-
