@@ -87,15 +87,6 @@ QPtrList<KAction> *AIMContact::customContextMenuActions()
 	return actionCollection;
 }
 
-void AIMContact::setOwnProfile(const QString &profile)
-{
-	kdDebug(14152) << k_funcinfo << "Called." << endl;
-	if ( this == account()->myself() )
-	{
-		mUserProfile = profile;
-	}
-}
-
 const QString AIMContact::awayMessage()
 {
 	return property(mProtocol->awayMessage).value().toString();

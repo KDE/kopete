@@ -21,9 +21,10 @@
 #include <kdialogbase.h>
 #include "aiminfobase.h"
 
+namespace Kopete { class Contact; }
 class KTextEdit;
 class OscarAccount;
-class AIMContact;
+class AIMMyselfContact;
 class AIMAccount;
 class KHTMLPart;
 
@@ -31,13 +32,13 @@ class AIMUserInfoDialog : public KDialogBase
 {
 	Q_OBJECT
 	public:
-		AIMUserInfoDialog(AIMContact *c, AIMAccount *acc, bool modal,
+		AIMUserInfoDialog(Kopete::Contact *c, AIMAccount *acc, bool modal,
 			QWidget *parent, const char* name);
 		~AIMUserInfoDialog();
 
 	private:
 		AIMAccount *mAccount;
-		AIMContact *mContact;
+		Kopete::Contact* m_contact;
 		AIMUserInfoWidget *mMainWidget;
 		KTextBrowser *userInfoView;
 		KTextEdit *userInfoEdit;

@@ -217,8 +217,14 @@ public:
 	/** Request the extended status info */
 	void requestStatusInfo( const QString& contact );
 	
+	//! Run a whitepages search
 	void whitePagesSearch( const ICQWPSearchInfo& info );
+	
+	//! Run a UIN search
 	void uinSearch( const QString& uin );
+	
+	//! Update the user's AIM profile
+	void updateProfile( const QString& profile );
 	
 	/** Accessors needed for login */
 	QString host();

@@ -44,9 +44,6 @@ public:
 
 	const QString &userProfile() { return mUserProfile; }
 
-	/** !!! Only usable for the myself() contact */
-	void setOwnProfile( const QString &profile );
-
 	virtual const QString awayMessage();
 	virtual void setAwayMessage( const QString &message );
 	

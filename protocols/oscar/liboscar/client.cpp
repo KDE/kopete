@@ -676,6 +676,16 @@ void Client::uinSearch( const QString& uin )
 	ust->searchUserByUIN( uin );
 }
 
+void Client::updateProfile( const QString& profile )
+{
+	ProfileTask* pt = new ProfileTask( d->connections.first()->rootTask() );
+	pt->setProfileText( profile );
+	pt->go(true);
+}
+
+
 #include "client.moc"
 
 //kate: tab-width 4; indent-mode csands; space-indent off; replace-tabs off;
+
+

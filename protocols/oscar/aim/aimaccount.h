@@ -25,6 +25,7 @@
 #include "oscartypeclasses.h"
 
 #include "oscaraccount.h"
+#include "oscarmyselfcontact.h"
 
 
 namespace Kopete
@@ -36,6 +37,20 @@ class Group;
 class KAction;
 class OscarContact;
 class AIMContact;
+class AIMAccount;
+
+class AIMMyselfContact : public OscarMyselfContact
+{
+public:
+	AIMMyselfContact( AIMAccount *acct );
+	void userInfoUpdated();
+	void setOwnProfile( const QString& newProfile );
+	QString userProfile();
+	
+private:
+	QString m_profileString;
+	AIMAccount* m_acct;
+};
 
 class AIMAccount : public OscarAccount
 {

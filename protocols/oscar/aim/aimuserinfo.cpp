@@ -35,7 +35,7 @@
 #include <ktextedit.h>
 #include <krun.h>
 
-AIMUserInfoDialog::AIMUserInfoDialog( AIMContact *c, AIMAccount *acc, bool modal,
+AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, bool modal,
                                       QWidget *parent, const char* name )
 	: KDialogBase( parent, name, modal, i18n( "User Information on %1" )
 	               .arg( c->property( Kopete::Global::Properties::self()->nickName() ).value().toString() ),
@@ -43,7 +43,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( AIMContact *c, AIMAccount *acc, bool modal
 {
 	kdDebug(14200) << k_funcinfo << "for contact '" << c->contactId() << "'" << endl;
 
-	mContact = c;
+	m_contact = c;
 	mAccount = acc;
 
 	mMainWidget = new AIMUserInfoWidget(this, "aimuserinfowidget");
@@ -58,11 +58,11 @@ AIMUserInfoDialog::AIMUserInfoDialog( AIMContact *c, AIMAccount *acc, bool modal
 
 	QString nickName = c->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if( nickName.isEmpty() )
-		mMainWidget->txtNickName->setText( mContact->contactId() );
+		mMainWidget->txtNickName->setText( c->contactId() );
 	else
 		mMainWidget->txtNickName->setText( nickName );
 
-	if(mContact == mAccount->myself()) // edit own account profile
+	if(m_contact == mAccount->myself()) // edit own account profile
 	{
 		mMainWidget->lblWarnLevel->hide();
 		mMainWidget->txtWarnLevel->hide();
@@ -79,7 +79,13 @@ AIMUserInfoDialog::AIMUserInfoDialog( AIMContact *c, AIMAccount *acc, bool modal
 		userInfoEdit = new KTextEdit(QString::null, QString::null,
 			mMainWidget->userInfoFrame, "userInfoEdit");
 		userInfoEdit->setTextFormat(PlainText);
-		userInfoEdit->setText(mContact->userProfile());
+		
+		AIMMyselfContact* aimmc = dynamic_cast<AIMMyselfContact*>( c );
+		if ( !aimmc )
+			userInfoEdit->setText( aimmc->userProfile() );
+		else
+			userInfoEdit->setText( QString::null );
+		
 		setButtonText(Ok, i18n("&Save Profile"));
 		showButton(User1, false);
 		l->addWidget(userInfoEdit);
@@ -103,7 +109,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( AIMContact *c, AIMAccount *acc, bool modal
 		setEscapeButton(Ok);
 		l->addWidget(userInfoView);
 
-		if(mContact->isOnline())
+		if(m_contact->isOnline())
 		{
 			// Update the user view to indicate that we're requesting the user's profile
 			userInfoView->setText(i18n("Requesting User Profile, please wait..."));
@@ -120,10 +126,10 @@ void AIMUserInfoDialog::slotUpdateClicked()
 {
 	kdDebug(14200) << k_funcinfo << "Called." << endl;
 	QString newNick = mMainWidget->txtNickName->text();
-	QString currentNick = mContact->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	QString currentNick = m_contact->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if ( !newNick.isEmpty() && ( newNick != currentNick ) )
 	{
-		//mContact->rename(newNick);
+		//m_contact->rename(newNick);
 		//emit updateNickname(newNick);
 		setCaption(i18n("User Information on %1").arg(newNick));
 	}
@@ -137,10 +143,10 @@ void AIMUserInfoDialog::slotSaveClicked()
 	if (userInfoEdit)
 	{ // editable mode, set profile
 		QString newNick = mMainWidget->txtNickName->text();
-		QString currentNick = mContact->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+		QString currentNick = m_contact->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 		if(!newNick.isEmpty() && ( newNick != currentNick ) )
 		{
-			//mContact->rename(newNick);
+			//m_contact->rename(newNick);
 			//emit updateNickname(newNick);
 			setCaption(i18n("User Information on %1").arg(newNick));
 		}
@@ -161,13 +167,13 @@ void AIMUserInfoDialog::slotUpdateProfile()
 {
 	kdDebug(14152) << k_funcinfo << "Got User Profile." << endl;
 
-/*	mMainWidget->txtOnlineSince->setText(mContact->userInfo().onlinesince.toString());
-	mMainWidget->txtIdleTime->setText(QString::number(mContact->userInfo().idletime));
-	mMainWidget->txtAwayMessage->setText(mContact->awayMessage());
-	mMainWidget->txtWarnLevel->setText(QString::number(mContact->userInfo().evil)); */
+/*	mMainWidget->txtOnlineSince->setText(m_contact->userInfo().onlinesince.toString());
+	mMainWidget->txtIdleTime->setText(QString::number(m_contact->userInfo().idletime));
+	mMainWidget->txtAwayMessage->setText(m_contact->awayMessage());
+	mMainWidget->txtWarnLevel->setText(QString::number(m_contact->userInfo().evil)); */
 
 	AIMProtocol* p = static_cast<AIMProtocol*>( mAccount->protocol() );
-	QString awayMessage = mContact->property( p->awayMessage ).value().toString();
+	QString awayMessage = m_contact->property( p->awayMessage ).value().toString();
 	if ( awayMessage.isNull() )
 	{
 		mMainWidget->txtAwayMessage->hide();
@@ -179,7 +185,7 @@ void AIMUserInfoDialog::slotUpdateProfile()
 		mMainWidget->lblAwayMessage->show();
 	}
 
-	QString contactProfile = mContact->property( p->clientProfile ).value().toString();
+	QString contactProfile = m_contact->property( p->clientProfile ).value().toString();
 	if ( contactProfile.isNull() )
 	{
 		contactProfile =

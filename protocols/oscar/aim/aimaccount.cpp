@@ -38,28 +38,43 @@ const DWORD AIM_AWAY = 0x1;
 
 namespace Kopete { class MetaContact; }
 
-class AIMMyselfContact : public OscarMyselfContact
+AIMMyselfContact::AIMMyselfContact( AIMAccount *acct )
+: OscarMyselfContact( acct )
 {
-public:
-	AIMMyselfContact( AIMAccount *acct ) : OscarMyselfContact( acct ) {}
-	void userInfoUpdated()
-	{
-		if ( ( details().userClass() & 32 ) == 0 )
-			setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusOnline ); //we're online
-		else
-			setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusAway ); //we're away
-	}
-};
+	m_acct = acct;
+}
+
+void AIMMyselfContact::userInfoUpdated()
+{
+	if ( ( details().userClass() & 32 ) == 0 )
+		setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusOnline ); //we're online
+	else
+		setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusAway ); //we're away
+}
+
+void AIMMyselfContact::setOwnProfile( const QString& newProfile )
+{
+	m_profileString = newProfile;
+	if ( m_acct->isConnected() )
+		m_acct->engine()->updateProfile( newProfile );
+}
+
+QString AIMMyselfContact::userProfile()
+{
+	return m_profileString;
+}
 
 
 AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID, const char *name)
 	: OscarAccount(parent, accountID, name, false)
 {
 	kdDebug(14152) << k_funcinfo << accountID << ": Called."<< endl;
-	setMyself( new AIMMyselfContact( this ) );
+	AIMMyselfContact* mc = new AIMMyselfContact( this );
+	setMyself( mc );
 	myself()->setOnlineStatus( static_cast<AIMProtocol*>( parent )->statusOffline );
 	QString profile = configGroup()->readEntry( "Profile",
 		i18n( "Visit the Kopete website at <a href=\"http://kopete.kde.org\">http://kopete.kde.org</a>") );
+	mc->setOwnProfile( profile );
 }
 
 AIMAccount::~AIMAccount()
@@ -126,7 +141,9 @@ void AIMAccount::setAway(bool away, const QString &awayReason)
 void AIMAccount::setUserProfile(const QString &profile)
 {
 	kdDebug(14152) << k_funcinfo << "called." << endl;
-	static_cast<AIMContact *>(myself())->setOwnProfile(profile);
+	AIMMyselfContact* aimmc = dynamic_cast<AIMMyselfContact*>( myself() );
+	if ( aimmc )
+		aimmc->setOwnProfile( profile );
 	configGroup()->writeEntry( QString::fromLatin1( "Profile" ), profile );
 }
 
