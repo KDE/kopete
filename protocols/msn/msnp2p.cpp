@@ -796,8 +796,11 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 			error();
 		}
 	}
+	/* For example, if the context of a filetransfer invitation is split, it's impossible to determine the sessid
+	 * but we don't care, only the first part of the context interest us.
 	else
 		error();
+	 */
 }
 
 
