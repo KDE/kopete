@@ -12,6 +12,7 @@
 #include "client.h"
 #include "request.h"
 #include "requestfactory.h"
+#include "response.h"
 
 #include "logintask.h"
 
@@ -48,13 +49,26 @@ bool LoginTask::take( Transfer * transfer )
 {
 	if ( !forMe( transfer ) )
 		return false;
-/*	// read in myself()'s metadata fields and emit signal
-	Field::MultiField myselfFields();
-	emit gotMyself( );	
+	Response * response = dynamic_cast<Response *>( transfer );
+	if ( !response )
+		return false;
+	
+	// read in myself()'s metadata fields and emit signal
+	
+	Field::FieldList loginResponseFields = response->fields();
+	emit gotMyself( loginResponseFields );
 	
 	// create contact list
-	// locate contact list 
-	// create folders
+	// locate contact list
+	 
+	// extract folder fields 
+	
+	// emit folder signal
+	// extract contact fields 
+	// emit contact signal
+	// extract contact details
+	// emit contact details signal
+	
 	// create privacy list
 	// process the incoming contact list and spam libkopete with new contacts :D*/
 	return true;

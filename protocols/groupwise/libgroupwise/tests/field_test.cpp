@@ -10,12 +10,12 @@ int main()
 {
 	buildList();
 	// look for a field in the list
-	if ( fl.locate( NM_A_FA_MESSAGE ) )
+	if ( fl.locate( NM_A_FA_MESSAGE ) != -1 )
 		printf( "Found a field, where there was supposed to be one :)" );
 	else
 		printf( "Didn't find a field, where there was supposed to be one :(" );
 		
-	if ( fl.locate( NM_A_SZ_OBJECT_ID ) )
+	if ( fl.locate( NM_A_SZ_OBJECT_ID ) != -1 )
 		printf( "Found a field, where there was NOT supposed to be one :(" );
 	else
 		printf( "Didn't find a field, where there wasn't supposed to be one :)" );

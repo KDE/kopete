@@ -26,17 +26,26 @@ using namespace Field;
 
 /* === FieldList ==================================================== */
 
-FieldBase * FieldList::locate( QCString tag )
+int FieldList::locate( QCString tag, uint offset )
 {
+	if ( offset > ( count() - 1 ) )
+		return -1;
 	QPtrListIterator<Field::FieldBase> it( *this );
 	Field::FieldBase* field;
+	uint index = 0;
+	while ( ( index < offset ) )
+	{
+		++it;
+		++index;
+	}
 	while ( ( field = it.current() ) != 0 )
 	{
 		if ( field->tag() == tag )
-			return field;
+			return index;
 		++it;
+		++index;
 	}
-	return 0;	
+	return -1;	
 }
 
 /* === FieldBase ========================================================= */

@@ -23,6 +23,8 @@
 
 #include <kopeteaccount.h>
 
+#include "gwfield.h"
+
 class KActionMenu;
 class KopeteContact;
 class KopeteMetaContact;
@@ -80,15 +82,14 @@ protected slots:
 	 * Change the account's status.  Called by KActions and internally.
 	 */
 	void slotGoOnline();
-	/**
-	 * Change the account's status.  Called by KActions and internally.
-	 */
 	void slotGoAway();
-	/**
-	 * Change the account's status.  Called by KActions and internally.
-	 */
 	void slotGoOffline();
-
+	void slotGoBusy();
+	void slotGoAppearOffline();
+	/**
+	 * Update the local user's metadata
+	 */
+	void slotGotMyDetails( Field::FieldList & fields );
 };
 
 #endif

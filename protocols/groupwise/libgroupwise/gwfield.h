@@ -159,7 +159,13 @@ namespace Field
 	class FieldList : public QPtrList<FieldBase>
 	{
 		public:
-			FieldBase * locate( QCString tag );
+			/** 
+			 * Locate the first occurrence of a given field in the list
+			 * @param tag The tag name of the field to search for.
+			 * @param offset Optional offset to begin searching at.
+			 * @return The index of the first occurrence found, or -1 if none was found.
+			 */
+			int locate( QCString tag, uint offset = 0 );
 	};
 	
 	/** 

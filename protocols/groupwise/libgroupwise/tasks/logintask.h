@@ -44,6 +44,7 @@ public:
 signals:
 	void contactListItemAdded( ContactListItem & );
 	//void userRecord( UserRecord &, bool myself );
+	void gotMyself( Field::FieldList & );
 };
 
 #endif

@@ -27,7 +27,11 @@ bool RequestTask::forMe( Transfer * transfer ) const
 	if ( theResponse )
 	{
 		// if we can locate a transaction id field in its fields
-		Field::FieldBase * field = theResponse->fields().locate( NM_A_SZ_TRANSACTION_ID );
+		Field::FieldList fields = theResponse->fields();
+		Field::FieldBase * field;
+		int index;
+		if ( ( index = fields.locate( NM_A_SZ_TRANSACTION_ID ) ) != -1 )
+			field = theResponse->fields().at( index );
 		if ( field )
 		{
 			// if the transaction id matches ours, return true.

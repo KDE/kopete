@@ -109,8 +109,8 @@ void GroupWiseAccount::slotGoOnline ()
 		connect ();
 	else
 		myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAvailable );
-	updateContactStatus();
 }
+
 void GroupWiseAccount::slotGoAway ()
 {
 	kdDebug ( 14220 ) << k_funcinfo << endl;
@@ -119,9 +119,25 @@ void GroupWiseAccount::slotGoAway ()
 		connect();
 	
 	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAway );
-	updateContactStatus();
 }
 
+void GroupWiseAccount::slotGoBusy ()
+{
+	kdDebug ( 14220 ) << k_funcinfo << endl;
+
+	if (!isConnected ())
+		connect();
+	
+	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseBusy );
+}
+
+void GroupWiseAccount::slotGoAppearOffline ()
+{
+	kdDebug ( 14220 ) << k_funcinfo << endl;
+
+	if (!isConnected ())
+		connect();
+}
 
 void GroupWiseAccount::slotGoOffline ()
 {
@@ -154,5 +170,33 @@ void GroupWiseAccount::updateContactStatus()
 		itr.current()->setOnlineStatus( myself()->onlineStatus() );
 }
 
-
+void GroupWiseAccount::slotGotMyDetails( Field::FieldList & fields )
+{
+	Field::FieldBase* current = 0;
+	QString cn, dn, givenName, surname, fullName, awayMessage, authAttribute;
+	int status;
+	int index;
+	if ( ( index = fields.locate( NM_A_SZ_AUTH_ATTRIBUTE ) ) != -1 )
+		authAttribute = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
+	if ( ( index = fields.locate( NM_A_SZ_DN ) ) != -1 )
+		dn = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
+	if ( ( index = fields.locate( "CN" ) ) != -1 )
+		cn = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
+	if ( ( index = fields.locate( "Given Name" ) ) != -1 )
+		givenName = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
+	if ( ( index = fields.locate( "Surname" ) ) != -1 )
+		surname = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
+	if ( ( index = fields.locate( "Full Name" ) ) != -1 )
+		fullName = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
+	if ( ( index = fields.locate( NM_A_SZ_STATUS ) ) != -1 )
+		status = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString().toInt();
+	if ( ( index = fields.locate( NM_A_SZ_MESSAGE_BODY ) ) != -1 )
+		awayMessage = static_cast<Field::SingleField*>( fields.at( index ) )->value().toString();
+	
+	myself()->setProperty( GroupWiseProtocol::protocol()->propCN, cn );
+	myself()->setProperty( GroupWiseProtocol::protocol()->propGivenName, givenName );
+	myself()->setProperty( GroupWiseProtocol::protocol()->propLastName, surname );
+	myself()->setProperty( GroupWiseProtocol::protocol()->propFullName, fullName );
+	myself()->setProperty( GroupWiseProtocol::protocol()->propAwayMessage, awayMessage );
+}
 #include "gwaccount.moc"
