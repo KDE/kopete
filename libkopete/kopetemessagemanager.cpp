@@ -70,7 +70,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 		addContact( c, true );
 
 	connect( user, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ), this,
-		SLOT( slotStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
+		SLOT( slotOnlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
 	slotUpdateDisplayName();
 }
@@ -88,23 +88,30 @@ KopeteMessageManager::~KopeteMessageManager()
 	delete d;
 }
 
-void KopeteMessageManager::slotStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus )
+void KopeteMessageManager::slotOnlineStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus )
 {
-	if ( !KopetePrefs::prefs()->notifyAway() )
-		return;
-	if ( status.status() == KopeteOnlineStatus::Away )
+	kdDebug( 14010 ) << k_funcinfo << endl;
+	if ( c == d->mUser )
 	{
-		d->awayTime = QDateTime::currentDateTime();
-		KopeteMessage msg( c, d->mContactList, i18n( "%1 has been marked as away." ).arg( QString::fromLatin1( "/me" ) ),
+		if ( !KopetePrefs::prefs()->notifyAway() )
+			return;
+		if ( status.status() == KopeteOnlineStatus::Away )
+		{
+			d->awayTime = QDateTime::currentDateTime();
+			KopeteMessage msg( c, d->mContactList, i18n( "%1 has been marked as away." ).arg( QString::fromLatin1( "/me" ) ),
 			KopeteMessage::Outbound, KopeteMessage::PlainText );
-		sendMessage( msg );
+			sendMessage( msg );
+		}
+		else if ( oldStatus.status() == KopeteOnlineStatus::Away && status.status() == KopeteOnlineStatus::Online )
+		{
+			KopeteMessage msg( c, d->mContactList, i18n( "%1 is no longer marked as away. Gone since %1." ).arg( QString::fromLatin1( "/me" ) )
+				.arg( KGlobal::locale()->formatDateTime( d->awayTime, true ) ), KopeteMessage::Outbound, KopeteMessage::PlainText );
+			sendMessage( msg );
+		}
 	}
-	else if ( oldStatus.status() == KopeteOnlineStatus::Away && status.status() == KopeteOnlineStatus::Online )
-	{
-		KopeteMessage msg( c, d->mContactList, i18n( "%1 is no longer marked as away. Gone since %1." ).arg( QString::fromLatin1( "/me" ) )
-			.arg( KGlobal::locale()->formatDateTime( d->awayTime, true ) ), KopeteMessage::Outbound, KopeteMessage::PlainText );
-		sendMessage( msg );
-	}
+	
+	slotUpdateDisplayName();
+	emit onlineStatusChanged((KopeteContact*)c, status, oldStatus);
 }
 
 void KopeteMessageManager::setContactOnlineStatus( const KopeteContact *contact, const KopeteOnlineStatus &status )
@@ -137,7 +144,6 @@ const QString KopeteMessageManager::displayName()
 void KopeteMessageManager::setDisplayName( const QString &newName )
 {
 	d->displayName = newName;
-
 	emit displayNameChanged();
 }
 
@@ -167,7 +173,7 @@ void KopeteMessageManager::slotUpdateDisplayName()
 			d->displayName.append( QString::fromLatin1( ", " ) ).append( nextDisplayName );
 		}
 	}
-
+	kdDebug( 14010 ) << k_funcinfo << " : " << d->displayName <<endl;
 	emit displayNameChanged();
 }
 
@@ -241,6 +247,7 @@ void KopeteMessageManager::appendMessage( KopeteMessage &msg )
 
 void KopeteMessageManager::addContact( const KopeteContact *c, bool suppress )
 {
+	kdDebug( 14010 ) << k_funcinfo << endl;
 	if ( d->mContactList.contains( c ) )
 	{
 		kdDebug( 14010 ) << k_funcinfo << "Contact already exists" <<endl;
@@ -250,12 +257,15 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool suppress )
 	{
 		if ( d->mContactList.count() == 1 && d->isEmpty )
 		{
+			kdDebug( 14010 ) << k_funcinfo << " FUCKER ZONE " << endl;
+			/* We have only 1 contact before, so the status of the
+			   message manager was given from that contact status */
 			KopeteContact *old = d->mContactList.first();
 			d->mContactList.remove( old );
 			d->mContactList.append( c );
-
+			
 			disconnect( old, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
-			this, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &) ) );
+			this, SLOT( slotOnlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &) ) );
 
 			if ( old->metaContact() )
 				disconnect( old->metaContact(), SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SLOT( slotUpdateDisplayName() ) );
@@ -271,7 +281,7 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool suppress )
 		}
 
 		connect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
-			this, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &) ) );
+			this, SLOT( slotOnlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &) ) );
 ;
 		if ( c->metaContact() )
 			connect( c->metaContact(), SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SLOT( slotUpdateDisplayName() ) );
@@ -284,6 +294,7 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool suppress )
 
 void KopeteMessageManager::removeContact( const KopeteContact *c, const QString& reason )
 {
+	kdDebug( 14010 ) << k_funcinfo << endl;
 	if ( !c || !d->mContactList.contains( c ) )
 		return;
 
@@ -297,7 +308,7 @@ void KopeteMessageManager::removeContact( const KopeteContact *c, const QString&
 		d->mContactList.remove( c );
 
 		disconnect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
-			this, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &) ) );
+			this, SLOT( slotOnlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &) ) );
 
 		if ( c->metaContact() )
 			disconnect( c->metaContact(), SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SLOT( slotUpdateDisplayName() ) );

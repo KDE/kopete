@@ -61,8 +61,7 @@ class KMMPrivate;
  */
 class KopeteMessageManager : public QObject , public KXMLGUIClient
 {
-	// FIXME: Why is this a friend? Please document the use so we don't have to check the
-	//        code to find out - Martijn
+	// friend class so the object factory can access the protected constructor
 	friend class KopeteMessageManagerFactory;
 
 	Q_OBJECT
@@ -283,7 +282,7 @@ public slots:
 private slots:
 	void slotUpdateDisplayName();
 	void slotViewDestroyed();
-	void slotStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus );
+	void slotOnlineStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus );
 	void slotContactDestroyed( KopeteContact *contact );
 
 protected:

@@ -227,6 +227,8 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 		this, SLOT( slotContactAdded(const KopeteContact*, bool) ) );
 	connect( mgr, SIGNAL( contactRemoved(const KopeteContact*, const QString&) ),
 		this, SLOT( slotContactRemoved(const KopeteContact*, const QString&) ) );
+	connect( mgr, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & , const KopeteOnlineStatus &) ),
+		this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
 	connect ( chatView->browserExtension(), SIGNAL( openURLRequestDelayed( const KURL &, const KParts::URLArgs & ) ),
 		this, SLOT( slotOpenURLRequest( const KURL &, const KParts::URLArgs & ) ) );
@@ -738,6 +740,7 @@ void ChatView::slotChatDisplayNameChanged()
 
 void ChatView::slotContactNameChanged( const QString &oldName, const QString &newName )
 {
+	kdDebug(14000) << k_funcinfo << endl;
 	if( KopetePrefs::prefs()->showEvents() )
 		sendInternalMessage( i18n( "%1 is now known as %2" ).
 #if QT_VERSION < 0x030200
@@ -752,6 +755,7 @@ void ChatView::slotContactNameChanged( const QString &oldName, const QString &ne
 
 void ChatView::slotContactAdded(const KopeteContact *c, bool surpress)
 {
+	kdDebug(14000) << k_funcinfo << endl;
 	if( !memberContactMap.contains(c) )
 	{
 		QString contactName;
@@ -760,9 +764,6 @@ void ChatView::slotContactAdded(const KopeteContact *c, bool surpress)
 			this, SLOT( slotContactNameChanged( const QString &,const QString & ) ) );
 
 		mComplete->addItem( contactName );
-
-		connect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & , const KopeteOnlineStatus &) ),
-			this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
 		if( !surpress && memberContactMap.count() > 1 )
 			sendInternalMessage(  i18n("%1 has joined the chat.").arg(contactName) );
@@ -786,6 +787,7 @@ void ChatView::slotContactAdded(const KopeteContact *c, bool surpress)
 
 void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &reason )
 {
+	kdDebug(14000) << k_funcinfo << endl;
 	if ( memberContactMap.contains( contact ) && contact != m_manager->user() )
 	{
 		m_remoteTypingMap.remove( const_cast<KopeteContact *>( contact ) );
@@ -799,8 +801,6 @@ void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &
 		// When the last person leaves, don't disconnect the signals, since we're in a one-to-one chat
 		if ( msgManager()->members().count() > 0 )
 		{
-			disconnect( contact, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
-				this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 			disconnect( contact, SIGNAL( displayNameChanged( const QString &, const QString & ) ),
 				this, SLOT( slotContactNameChanged( const QString &, const QString & ) ) );
 		}
@@ -825,6 +825,7 @@ void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &
 
 void ChatView::setCaption( const QString &text, bool modified )
 {
+	kdDebug(14000) << k_funcinfo << endl;
 	QString newCaption = text;
 
 	//Save this caption
@@ -924,6 +925,7 @@ bool ChatView::canSend()
 
 void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnlineStatus &newStatus, const KopeteOnlineStatus &oldStatus )
 {
+	kdDebug(14000) << k_funcinfo << endl;
 	if ( contact && KopetePrefs::prefs()->showEvents() )
 	{
 		if ( contact->account() && contact == contact->account()->myself() )
@@ -970,7 +972,11 @@ void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnl
 		if(c)
 			m_tabBar->setTabIconSet( this , msgManager()->contactOnlineStatus( c ).iconFor( c ) );
 	}
+	
+	// update the windows caption
+	slotChatDisplayNameChanged();
 	emit updateStatusIcon( this );
+	
 
 	if ( ( oldStatus.status() == KopeteOnlineStatus::Offline )
 	  != ( newStatus.status() == KopeteOnlineStatus::Offline ) )
