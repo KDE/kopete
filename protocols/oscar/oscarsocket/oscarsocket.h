@@ -65,6 +65,8 @@ struct UserInfo
 	 long capabilities;
 	 long sessionlen;
 	 int idletime;
+
+	 unsigned long icqextstatus;
 };
 
 #define OSCAR_SERVER 		"login.oscar.aol.com"
@@ -73,11 +75,18 @@ struct UserInfo
 #define OSCAR_ONLINE			1
 #define OSCAR_AWAY			2
 
+const unsigned short ICQ_STATUS_OFFLINE            = 0xFFFF;
+const unsigned short ICQ_STATUS_AWAY               = 0x0001;
+const unsigned short ICQ_STATUS_DND                = 0x0002;
+const unsigned short ICQ_STATUS_NA                 = 0x0004;
+const unsigned short ICQ_STATUS_OCCUPIED           = 0x0010;
+const unsigned short ICQ_STATUS_FREEFORCHAT        = 0x0020;
+
 #define USERCLASS_TRIAL			0x0001
 #define USERCLASS_UNKNOWN2 	0x0002
-#define USERCLASS_AOL				0x0004
-#define USERCLASS_UNKNOWN4	0x0008
-#define USERCLASS_AIM				0x0010
+#define USERCLASS_AOL			0x0004
+#define USERCLASS_UNKNOWN4		0x0008
+#define USERCLASS_AIM			0x0010
 #define USERCLASS_AWAY			0x0020
 #define USERCLASS_ACTIVEBUDDY	0x0400
 
@@ -261,17 +270,21 @@ class OscarSocket : public OscarConnection
 	/** Activates the SSI list on the server */
 	void sendSSIActivate(void);
 	/** Parses the oncoming buddy server notification */
-	void parseBuddyChange(Buffer &inbuf);
+	void parseBuddyChange(Buffer &);
 	/** Parses offgoing buddy message from server */
-	void parseOffgoingBuddy(Buffer &inbuf);
+	void parseOffgoingBuddy(Buffer &);
 	/** Parses someone's user info */
-	void parseUserProfile(Buffer &inbuf);
+	void parseUserProfile(Buffer &);
 	/** Handles a redirect */
-	void parseRedirect(Buffer &inbuf);
+	void parseRedirect(Buffer &);
 	/** Parses a message ack from the server */
-	void parseMsgAck(Buffer &inbuf);
+	void parseMsgAck(Buffer &);
 	/** Parses a minityping notification from server */
-	void parseMiniTypeNotify(Buffer &inbuf);
+	void parseMiniTypeNotify(Buffer &);
+
+
+	void parseICQ_CLI_META(Buffer &);
+
 	/** Parses a rate change */
 	void parseRateChange(Buffer &inbuf);
 	/** Sends SSI add, modify, or delete request to reuse code */

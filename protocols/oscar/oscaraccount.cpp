@@ -28,107 +28,96 @@ OscarAccount::OscarAccount( KopeteProtocol *parent,
 			    const char *name)
     : KopeteAccount(parent, accountID, name)
 {
-    m_engine = 0L;
+	m_engine = 0L;
 
-    // Initialize our actions
-    initActions();
+	initActions(); // Initialize our actions
+	initActionMenu(); // Create our action menu
+	initEngine(); // Initialize the backend
 
-    // Create our action menu
-    initActionMenu();
+	// Create the internal buddy list for this account
+	m_internalBuddyList = new AIMBuddyList();
 
-    // Initialize the backend
-    initEngine();
+	// Init the myself contact
+	m_myself = new OscarContact( accountId(), accountId(), this, 0L);
 
-    // Create the internal buddy list for this account
-    m_internalBuddyList = new AIMBuddyList();
+	// Set us as offline to start with, just to be safe
+	m_myself->setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus(
+		OscarProtocol::OFFLINE));
 
-    // Init the myself contact
-    m_myself = new OscarContact( accountId(), accountId(), this, 0L);
+	// Instantiate the away dialog
+	m_awayDialog = new OscarChangeStatus( getEngine() );
 
-    // Set us as offline to start with, just to be safe
-    m_myself->setOnlineStatus(
-	OscarProtocol::protocol()->getOnlineStatus(
-	    OscarProtocol::OFFLINE ));
+	// The debug dialog
+	m_debugDialog = new OscarDebugDialog();
+	getEngine()->setDebugDialog( m_debugDialog );
 
-    // Instantiate the away dialog
-    m_awayDialog = new OscarChangeStatus( getEngine() );
+	initSignals(); // Initialize the signals and slots
 
-    // The debug dialog
-    m_debugDialog = new OscarDebugDialog();
-    getEngine()->setDebugDialog( m_debugDialog );
-
-    // Initialize the signals and slots
-    initSignals();
-
-    // Set our random new numbers
-    m_randomNewBuddyNum = 0;
-    m_randomNewGroupNum = 0;
+	// Set our random new numbers
+	m_randomNewBuddyNum = 0;
+	m_randomNewGroupNum = 0;
 }
 
 OscarAccount::~OscarAccount()
 {
-    kdDebug( 14150 ) << k_funcinfo << "[" << accountId()
-		     << "] deleted...Disconnecting..." << endl;
-    // Disconnect us
-    disconnect();
+	kdDebug( 14150 ) << k_funcinfo << "[" << accountId() << "] deleted...Disconnecting..." << endl;
+	// Disconnect us
+	disconnect();
 
-    // Delete the backend
-    if ( m_engine )
-    {
-	delete m_engine;
-	m_engine = 0L;
-    }
+	// Delete the backend
+	if (m_engine)
+	{
+		delete m_engine;
+		m_engine = 0L;
+	}
 
-    delete m_awayDialog;
-    delete m_debugDialog;
-    delete m_myself;
-    delete m_actionGoOnline;
-    delete m_actionGoOffline;
-    delete m_actionGoAway;
-    delete m_actionEditInfo;
-    delete m_actionShowDebug;
+	delete m_awayDialog;
+	delete m_debugDialog;
+	delete m_myself;
+	delete m_actionGoOnline;
+	delete m_actionGoOffline;
+	delete m_actionGoAway;
+	delete m_actionEditInfo;
+	delete m_actionShowDebug;
 }
 
 void OscarAccount::connect()
 {
-    kdDebug(14150) << "[OscarAccount: " << accountId()
-		   << "] connect()" << endl;
+	kdDebug(14150) << "[OscarAccount: " << accountId() << "] connect()" << endl;
 
-    // Get the screen name for this account
-    QString screenName = accountId();
+	// Get the screen name for this account
+	QString screenName = accountId();
 
-    if ( screenName != i18n("(No ScreenName Set)") )
-    { // If we have a screen name set
-	// Get the password
-	QString password = getPassword();
+	if ( screenName != i18n("(No ScreenName Set)") )
+	{	// If we have a screen name set
+		// Get the password
+		QString password = getPassword();
+		if (password.isNull())
+		{
+			slotError(i18n("Kopete is unable to attempt to signon to the " \
+					"AIM network because no password was specified in the " \
+					"preferences."), 0);
+		}
+		else
+		{
+			kdDebug(14150) <<  "[OscarAccount: " << accountId() << "] Logging in as " << screenName << endl;
 
-	if (password.isNull())
-	{
-	    slotError(i18n("Kopete is unable to attempt to signon to the " \
-			   "AIM network because no password was specified in the " \
-			   "preferences."), 0);
+			// Get the server and port from the preferences
+			QString server = pluginData(protocol(),  "Server");
+			QString port = pluginData(protocol(),  "Port");
+
+			// Connect, need to normalize the name first
+			m_engine->doLogin( server, port.toInt(), tocNormalize(screenName), password );
+
+			myself()->setOnlineStatus(
+			OscarProtocol::protocol()->getOnlineStatus( OscarProtocol::CONNECTING ));
+		}
 	}
 	else
 	{
-	    kdDebug(14150) <<  "[OscarAccount: " << accountId()
-			   << "] Logging in as " << screenName << endl;
-
-	    // Get the server and port from the preferences
-	    QString server = pluginData(protocol(),  "Server");
-	    QString port = pluginData(protocol(),  "Port");
-
-	    // Connect, need to normalize the name first
-	    m_engine->doLogin( server, port.toInt(), tocNormalize(screenName), password );
-
-	    myself()->setOnlineStatus(
-		OscarProtocol::protocol()->getOnlineStatus( OscarProtocol::CONNECTING ));
+		slotError(i18n("You have not specified your account name in the " \
+			"account set up yet, please do so."), 0);
 	}
-    }
-    else
-    {
-	slotError(i18n("You have not specified your account name in the " \
-		       "account set up yet, please do so."), 0);
-    }
 }
 
 void OscarAccount::disconnect()
@@ -156,19 +145,19 @@ void OscarAccount::setAway( bool away )
     kdDebug(14150) << "[OscarAccount: " << accountId()
 		   << "] setAway()" << endl;
 
-    if( away )
-    { // Set away
-	QString msg;
-	msg = KopeteAway::getInstance()->message();
-	if (msg.isEmpty())
-	    msg = " ";
-	// FIXME: Chris check this
-	m_engine->sendAway(true, msg);
-    }
-    else
-    { // Set back from away
-	m_engine->sendAway(false, "");
-    }
+	if( away )
+	{ // Set away
+		QString msg;
+		msg = KopeteAway::getInstance()->message();
+		if (msg.isEmpty())
+			msg=" ";
+		// FIXME: Chris check this
+		m_engine->sendAway(true, msg);
+	}
+	else
+	{ // Set back from away
+		m_engine->sendAway(false, "");
+	}
 }
 
 KopeteContact* OscarAccount::myself() const
@@ -184,61 +173,70 @@ OscarSocket* OscarAccount::getEngine()
 }
 
 
+bool OscarAccount::isICQ()
+{
+	bool isicq=(((accountId()[0]).isNumber()) && (accountId().length()>4));
+//	kdDebug(14150) << k_funcinfo << "Returning " << isicq << endl;
+	return isicq;
+}
 
 void OscarAccount::initActions()
 {
-    kdDebug(14150) << "[OscarAccount:" << accountId()
-		   << "] initActions() START" << endl;
+	kdDebug(14150) << k_funcinfo << "for account '" << accountId() << "'" << endl;
 
-    m_actionGoOnline = new KAction ( i18n("Online"), "oscar_online", 0,
-				     this, SLOT(slotGoOnline()),
-				     this, "actionOscarConnect" );
+	m_actionGoOnline = new KAction ( i18n("Online"), "oscar_online", 0,
+		this, SLOT(slotGoOnline()),
+		this, "actionGoOnline" );
 
-    m_actionGoOffline = new KAction ( i18n("Offline"), "oscar_offline", 0,
-				      this, SLOT(slotGoOffline()),
-				      this, "actionOscarConnect" );
+	m_actionGoOffline = new KAction ( i18n("Offline"), "oscar_offline", 0,
+		this, SLOT(slotGoOffline()),
+		this, "actionGoOffline" );
 
-    m_actionGoAway = new KAction ( i18n("Away"), "oscar_away", 0,
-				   this, SLOT(slotGoAway()),
-				   this, "actionOscarConnect" );
+	m_actionGoAway = new KAction ( i18n("Away"), "oscar_away", 0,
+		this, SLOT(slotGoAway()),
+		this, "actionGoAway" );
 
-    m_actionEditInfo =
-	KopeteStdAction::contactInfo(this,
-				     SLOT(slotEditInfo()),
-				     this, "actionInfo" );
+	m_actionEditInfo = KopeteStdAction::contactInfo(this,
+		SLOT(slotEditInfo()),
+		this, "actionInfo" );
 
-    m_actionShowDebug = new KAction( i18n("Show Debug"), "wizard", 0,
-				     this, SLOT(slotShowDebugDialog()),
-				     this, "actionInfo");
+	m_actionShowDebug = new KAction( i18n("Show Debug"), "wizard", 0,
+		this, SLOT(slotShowDebugDialog()),
+		this, "actionShowDebug");
 }
 
 void OscarAccount::initActionMenu()
 {
-    m_actionMenu = new KActionMenu( accountId(), this );
-    m_actionMenu->insert( m_actionGoOnline );
-    m_actionMenu->insert( m_actionGoOffline );
-    m_actionMenu->insert( m_actionGoAway );
-    m_actionMenu->popupMenu()->insertSeparator();
-    m_actionMenu->insert( m_actionEditInfo );
-    m_actionMenu->popupMenu()->insertSeparator();
-    m_actionMenu->insert( m_actionShowDebug );
+	QString icon;
+
+	if(isICQ())
+		icon="icq_online";
+	else
+		icon="oscar_online";
+
+	m_actionMenu = new KActionMenu( accountId(), icon, this, "OscarAccount::m_actionMenu" );
+	m_actionMenu->insert( m_actionGoOnline );
+	m_actionMenu->insert( m_actionGoOffline );
+	m_actionMenu->insert( m_actionGoAway );
+	m_actionMenu->popupMenu()->insertSeparator();
+	m_actionMenu->insert( m_actionEditInfo );
+	m_actionMenu->popupMenu()->insertSeparator();
+	m_actionMenu->insert( m_actionShowDebug );
 }
 
 void OscarAccount::initEngine()
 {
 	kdDebug( 14150 ) << k_funcinfo << "START; accountId="<< accountId() << endl;
-
 	QByteArray cook;
 	cook.duplicate("01234567",8);
 	m_engine = new OscarSocket(pluginData(protocol(), "server"), cook, this);
-
 	kdDebug( 14150 ) << k_funcinfo << "END; accountId=" << accountId() << endl;
 }
 
 void OscarAccount::initSignals()
 {
-    // Contact list signals for group management events
-    QObject::connect( KopeteContactList::contactList(),
+	// Contact list signals for group management events
+	QObject::connect( KopeteContactList::contactList(),
 		      SIGNAL( groupRenamed( KopeteGroup *, const QString & ) ),
 		      SLOT( slotKopeteGroupRenamed( KopeteGroup * )));
 
@@ -298,15 +296,14 @@ void OscarAccount::initSignals()
 
 void OscarAccount::setUserProfile( QString profile )
 {
-    // Tell the engine to set the profile
-    getEngine()->setMyProfile( profile );
-    // Save the user profile
-    setPluginData( protocol(),  "Profile", profile);
+	// Tell the engine to set the profile
+	getEngine()->setMyProfile( profile );
+	setPluginData(protocol(), "Profile", profile); // Save the user profile
 }
 
 KActionMenu* OscarAccount::actionMenu()
 {
-    return m_actionMenu;
+return m_actionMenu;
 }
 
 void OscarAccount::slotGoOnline()
@@ -348,9 +345,8 @@ void OscarAccount::slotGoOffline()
 void OscarAccount::slotGoAway()
 {
 	kdDebug(14150) << k_funcinfo << "Called" << endl;
-
 	if ( myself()->onlineStatus() ==
-		OscarProtocol::protocol()->getOnlineStatus( OscarProtocol::ONLINE))
+		OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ONLINE))
 	{
 		// Show the dialog, which takes care of the
 		// setting of the away message

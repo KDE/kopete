@@ -43,7 +43,8 @@ OscarConnection::~OscarConnection()
 		No need to connect the signal in derived classes, just override this slot */
 void OscarConnection::slotRead()
 {
-	kdDebug(14150) << "[OSCAR] OscarConnection: in slotRead(), " << bytesAvailable() << " bytes, name: " << mConnName << endl;
+	kdDebug(14150) << "[OSCAR] OscarConnection: in slotRead(), " << bytesAvailable() <<
+		" bytes, name: " << mConnName << endl;
 	Buffer inbuf;
 	int len = bytesAvailable();
 	char *buf = new char[len];
@@ -51,9 +52,8 @@ void OscarConnection::slotRead()
 	inbuf.setBuf(buf,len);
 	inbuf.print();
 
-	if(hasDebugDialog()){
-			debugDialog()->addMessageFromServer(inbuf.toString(),mConnName);
-	}
+	if(hasDebugDialog())
+		debugDialog()->addMessageFromServer(inbuf.toString(),mConnName);
 
 	delete buf;
 }
@@ -84,12 +84,15 @@ void OscarConnection::slotError(int errornum)
 
 void OscarConnection::setDebugDialog(OscarDebugDialog *dialog)
 {
-		if(dialog){
-				mDebugDialog = dialog;
-				mHaveDebugDialog = true;
-		} else {
-				mHaveDebugDialog = false;
-		}
+	if(dialog)
+	{
+		mDebugDialog = dialog;
+		mHaveDebugDialog = true;
+	}
+	else
+	{
+		mHaveDebugDialog = false;
+	}
 }
 
 /** Sets the currently logged in user's screen name */
@@ -141,6 +144,5 @@ void OscarConnection::setSocket( int socket )
 	QSocket::setSocket(socket);
 	emit connected();
 }
-
 
 #include "oscarconnection.moc"

@@ -90,6 +90,12 @@ public:
     /** Sets the server we connect to */
     void setServer( QString server );
 
+	 /** returns wether this account is used to connect to ICQ or AIM
+	  * true = ICQ
+	  * false = AIM
+	  */
+	 bool isICQ();
+
 public slots:
     /** Slot for telling this account to go online */
     void slotGoOnline();
