@@ -309,21 +309,21 @@ KopeteContact *KopeteMetaContact::preferredContact()
 		  indicate that messages are still pending.
 	*/
 
-	KopeteContact *c = 0L;
+	KopeteContact *contact = 0L;
 	int index=0;
 
 	QPtrList<KopeteAccount> accounts=KopeteAccountManager::manager()->accounts();
 	for( QPtrListIterator<KopeteContact> it( d->contacts ) ; it.current(); ++it )
 	{
-		if( ( *it )->isReachable() && ( !c || ( *it )->onlineStatus() > c->onlineStatus()  ||
-				( (*it)->account() && (*it)->onlineStatus() == c->onlineStatus() && index > accounts.findRef((*it)->account()) ) ) )
+		if( ( *it )->isReachable() && ( !contact || ( *it )->onlineStatus() > contact->onlineStatus()  ||
+				( (*it)->account() && (*it)->onlineStatus() == contact->onlineStatus() && index > accounts.findRef((*it)->account()) ) ) )
 		{
-			c = *it;
+			contact = *it;
 			index=accounts.findRef((*it)->account()) ;
 		}
 	}
 
-	return c;
+	return contact;
 }
 
 KopeteContact *KopeteMetaContact::execute()
@@ -441,15 +441,15 @@ void KopeteMetaContact::sendFile( const KURL &sourceURL, const QString &altFileN
 		return;
 
 	//Find the highest ranked protocol that can accept files
-	KopeteContact *c = d->contacts.first();
+	KopeteContact *contact = d->contacts.first();
 	for( QPtrListIterator<KopeteContact> it( d->contacts ) ; it.current(); ++it )
 	{
-		if( ( *it )->onlineStatus() > c->onlineStatus() && ( *it )->canAcceptFiles() )
-			c = *it;
+		if( ( *it )->onlineStatus() > contact->onlineStatus() && ( *it )->canAcceptFiles() )
+			contact = *it;
 	}
 
 	//Call the sendFile slot of this protocol
-	c->sendFile( sourceURL, altFileName, fileSize );
+	contact->sendFile( sourceURL, altFileName, fileSize );
 }
 
 void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldstatus  )
@@ -477,8 +477,8 @@ void KopeteMetaContact::setDisplayName( const QString &name )
 	d->trackChildNameChanges = false;
 
 	// Don't rename contacts on the server automagically as not everyone seems
-	// to like it. We need a GUI for this first, but that's post-0.6 work.
-	// After Kopete 0.6 is out we can think about the required options and/or
+	// to like it. We need a GUI for this first, but that's post-0.7 work.
+	// After Kopete 0.7 is out we can think about the required options and/or
 	// heuristics for when to sync to or from the server (and in what way)
 	// - Martijn
 #if 0
