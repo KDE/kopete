@@ -136,9 +136,9 @@ public:
 	/**
 	 * \brief computes the main "status" events for the contact
 	 */
-	QValueList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::StatusType& status);
+	QValueList<QTime> mainEvents(const Kopete::OnlineStatus::StatusType& status);
 	/// \brief used by mainEvents()
-	QValueList<int> StatisticsContact::computeCentroids(const QValueList<int>& centroids, const QValueList<int>& values);
+	QValueList<int> computeCentroids(const QValueList<int>& centroids, const QValueList<int>& values);
 
 	
 private:	
