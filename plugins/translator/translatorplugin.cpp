@@ -87,8 +87,7 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name,
     m_supported["babelfish"].append("es_en");
 
 	m_prefs = new TranslatorPreferences ( "locale", this );
-
-    
+ 
 	connect( kopeteapp, SIGNAL(aboutToDisplay(KopeteMessage&)),
 		 SLOT(slotIncomingMessage(KopeteMessage&)) );
 	connect( kopeteapp, SIGNAL(aboutToSend(KopeteMessage&)),
@@ -216,6 +215,5 @@ void TranslatorPlugin::slotJobDone ( KIO::Job *job)
 	QObject::disconnect( job, SIGNAL(result( KIO::Job *)), this, SLOT(slotJobDone( KIO::Job *)) );
 
 }
-
 
 

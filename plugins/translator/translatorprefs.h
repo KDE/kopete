@@ -59,9 +59,6 @@ private:
     QMap<int, QString> m_servicesIntKeyMap;
 	QMap<QString, int> m_servicesKeyIntMap;
 
-    /* key to description */
-    QMap<QString, QString> m_descMap;
-
 	/* Lang counter */
 	int m_lc;
 	/* Service counter */
