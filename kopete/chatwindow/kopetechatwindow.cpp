@@ -30,7 +30,6 @@
 #include <ktoolbar.h>
 #include <klocale.h>
 #include <kstdaction.h>
-#include <kstdaccel.h>
 #include <kdockwidget.h>
 #include <kaction.h>
 #include <kmenubar.h>
@@ -345,14 +344,12 @@ void KopeteChatWindow::initActions(void)
 
 	tabClose = KStdAction::close ( this, SLOT(slotChatClosed()), coll, "tabs_close" );
 
-	tabLeft = new KAction( i18n( "&Previous Chat" ), QString::fromLatin1( "1leftarrow" ), 0,
-		this, SLOT( slotPreviousTab() ), coll, "tabs_left" );
-	tabLeft->setShortcut( KStdAccel::Back );
+	tabLeft = KStdAction::back( this, SLOT( slotPreviousTab() ), coll, "tabs_left" );
+	tabLeft->setText( i18n( "&Previous Chat" ) );
 	tabLeft->setEnabled( false );
 
-	tabRight = new KAction( i18n( "&Next Chat" ), QString::fromLatin1( "1rightarrow" ), 0,
-		this, SLOT( slotNextTab() ), coll, "tabs_right" );
-	tabRight->setShortcut( KStdAccel::Forward );
+	tabRight = KStdAction::next( this, SLOT( slotNextTab() ), coll, "tabs_right" );
+	tabRight->setText( i18n( "&Next Chat" ) );
 	tabRight->setEnabled( false );
 
 	nickComplete = new KAction( i18n( "Nic&k Completion" ), QString::null, 0, this, SLOT( slotNickComplete() ), coll , "nick_compete");
