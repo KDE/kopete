@@ -695,15 +695,15 @@ void MSNAccount::slotKopeteGroupRemoved( KopeteGroup *g )
 
 		if ( m_notifySocket )
 		{
+			/*  -not needed anymore  remember that contact are supposed to be deleted when a group is deleted.
 			// if contact are contains only in the group we are removing, move it from the group 0
-			// FIXME: use only contact for this account
 			QDictIterator<KopeteContact> it( contacts() );
 			for ( ; it.current(); ++it )
 			{
 				MSNContact *c = static_cast<MSNContact *>( it.current() );
 				if ( c->serverGroups().contains( groupNumber ) && c->serverGroups().count() == 1 )
 					m_notifySocket->addContact( c->contactId(), c->displayName(), 0, MSNProtocol::FL );
-			}
+			}*/
 			m_notifySocket->removeGroup( groupNumber );
 		}
 	}
