@@ -1821,12 +1821,23 @@ void OscarSocket::parseError(WORD family, WORD snacID, Buffer &inbuf)
 		switch (family)
 		{
 			case OSCAR_FAM_2:
+				// Ignores recipient is not logged in errors, usually caused by querying aim userinfo
+				if (reason == 4)
+				{
+					kdDebug(14150) << k_funcinfo <<
+						"IGNORED Family 2 error, recipient not logged in" << endl;
+					return;
+				}
 				msg = i18n("Sending userprofile failed: %1").arg(msgerrreason[reason]);
 				break;
 			case OSCAR_FAM_4:
 				// Ignores rate to client errors, usually caused by querying away messages
 				if (reason == 3)
+				{
+					kdDebug(14150) << k_funcinfo <<
+						"IGNORED Family 4 error, rate to client" << endl;
 					return;
+				}
 				msg = i18n("Your message did not get sent because the following" \
 					" error occurred: %1").arg(msgerrreason[reason]);
 				break;

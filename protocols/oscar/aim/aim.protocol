@@ -1,5 +1,5 @@
 [Protocol]
-exec=aim_webhandler "%u"
+exec=kopete "%u"
 protocol=aim
 input=none
 output=none
@@ -9,3 +9,5 @@ reading=false
 writing=false
 makedir=false
 deleting=false
+URIMode=rawuri
+Icon=aim_icon

@@ -20,10 +20,18 @@
 
 #include "kopeteprotocol.h"
 #include "kopetecontactproperty.h"
+#include "kopetemimetypehandler.h"
 
 #include <qmap.h>
 
 class KopeteOnlineStatus;
+
+class AIMProtocolHandler : public Kopete::MimeTypeHandler
+{
+	public:
+		AIMProtocolHandler();
+		void handleURL(const KURL & url) const;
+};
 
 class AIMProtocol : public KopeteProtocol
 {
@@ -66,6 +74,7 @@ class AIMProtocol : public KopeteProtocol
 	private:
 		/** The active instance of oscarprotocol */
 		static AIMProtocol *protocolStatic_;
+		AIMProtocolHandler protohandler;
 };
 
 #endif

@@ -97,7 +97,9 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KURL & url) co
 		{
 			QDictIterator<KopeteAccount> it(accounts);
 			account = it.current();
-			QString nickuin = nick.isEmpty() ? uin : i18n("%1 (%2)").arg(nick, uin);
+			QString nickuin = nick.isEmpty() ?
+				i18n("'%1'").arg(uin) :
+				i18n("'%1' (%2)").arg(nick, uin);
 
 			if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
 				i18n("Do you want to add %1 to your contactlist?").arg(nickuin))

@@ -14,5 +14,5 @@ kopete_aim_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kopete_aim_la_LIBADD  = ../libkopete_oscar.la ui/libkopeteaimui.la \
 	$(top_builddir)/kopete/libkopete/libkopete.la
 
-service_DATA = kopete_aim.desktop
+service_DATA = kopete_aim.desktop aim.protocol
 servicedir = $(kde_servicesdir)

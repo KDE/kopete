@@ -21,18 +21,135 @@
 
 #include "aimprotocol.h"
 #include "aimaccount.h"
+#include "aimcontact.h"
 #include "aimaddcontactpage.h"
 #include "aimeditaccountwidget.h"
 
+#include "accountselector.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteglobal.h"
-#include "aimcontact.h"
+#include "kopeteuiglobal.h"
+
+#include <kdialogbase.h>
+#include <kmessagebox.h>
 
 typedef KGenericFactory<AIMProtocol> AIMProtocolFactory;
 
 K_EXPORT_COMPONENT_FACTORY( kopete_aim, AIMProtocolFactory( "kopete_aim_protocol" ) )
 
 AIMProtocol* AIMProtocol::protocolStatic_ = 0L;
+
+
+AIMProtocolHandler::AIMProtocolHandler() : Kopete::MimeTypeHandler(false)
+{
+	registerAsProtocolHandler(QString::fromLatin1("aim"));
+}
+
+void AIMProtocolHandler::handleURL(const KURL &url) const
+{
+/**
+ * Send a Message  =================================================
+ * aim:goim
+ * aim:goim?screenname=screen+name
+ * aim:goim?screenname=screen+name&message=message
+ * Add Buddy  ======================================================
+ * aim:addbuddy
+ * aim:addbuddy?screenname=screen+name
+ * Buddy Icon  =====================================================
+ * aim:buddyicon
+ * aim:buddyicon?src=image_source
+ * aim:buddyicon?screename=screen+name
+ * aim:buddyicon?src=image_source&screename=screen+name
+ * Get and Send Files  =============================================
+ * aim:getfile?screename=(sn)
+ * aim:sendfile?screenname=(sn)
+ * Register User  ==================================================
+ * aim:RegisterUser?ScreenName=sn&Password=pw&SignonNow=False
+ * Away Message  ===================================================
+ * aim:goaway?message=brb+or+something
+ **/
+
+	AIMProtocol *proto = AIMProtocol::protocol();
+	kdDebug(14190) << k_funcinfo << "URL url   : '" << url.url() << "'" << endl;
+	QString command = url.path();
+
+	if (command.startsWith("goim") || command.startsWith("addbuddy"))
+	{
+		if (command.startsWith("goim"))
+			command.remove(0,4);
+		else
+			command.remove(0,8);
+
+		if (!command.startsWith("?screenname="))
+		{
+			kdWarning(14190) << "Unhandled aim URI : " << url.url() << endl;
+			return;
+		}
+
+		command.remove(0, 12);
+
+		int andSign = command.find("&");
+		if (andSign > 0) // strip off anything else for now
+			command = command.left(andSign);
+		command.replace("+", " ");
+
+		QString screenname = tocNormalize(command);
+
+		KopeteAccount *account = 0;
+		QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts(proto);
+		// do not show chooser if we only have one account to "choose" from
+		if (accounts.count() == 1)
+		{
+			QDictIterator<KopeteAccount> it(accounts);
+			account = it.current();
+
+			if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
+				i18n("Do you want to add '%1' to your contactlist?").arg(command))
+				!= KMessageBox::Yes)
+			{
+				kdDebug(14190) << k_funcinfo << "Cancelled" << endl;
+				return;
+			}
+		}
+		else
+		{
+			KDialogBase *chooser = new KDialogBase(0, "chooser", true,
+				i18n("Choose Account"), KDialogBase::Ok|KDialogBase::Cancel,
+				KDialogBase::Ok, false);
+			AccountSelector *accSelector = new AccountSelector(proto, chooser,
+				"accSelector");
+			chooser->setMainWidget(accSelector);
+
+			int ret = chooser->exec();
+			KopeteAccount *account = accSelector->selectedItem();
+
+			delete chooser;
+			if (ret == QDialog::Rejected || account == 0)
+			{
+				kdDebug(14190) << k_funcinfo << "Cancelled" << endl;
+				return;
+			}
+		}
+
+
+		kdDebug(14190) << k_funcinfo <<
+			"Adding Contact; screenname = " << screenname << endl;
+		if (account->addContact(screenname, command, 0L,
+			KopeteAccount::DontChangeKABC, QString::null, true))
+		{
+			//KopeteContact *contact = account->contacts()[screenname];
+		}
+
+
+	}
+	else
+	{
+		kdWarning(14190) << "Unhandled aim URI : " << url.url() << endl;
+	}
+}
+
+
+
 
 AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
 : KopeteProtocol( AIMProtocolFactory::instance(), parent, name ),
