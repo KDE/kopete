@@ -6,7 +6,6 @@
 
 #include <qstring.h>
 
-#include "kopete.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemessagemanager.h"
 #include "kopetemetacontact.h"

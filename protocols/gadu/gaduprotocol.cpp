@@ -1,23 +1,22 @@
+#include <qapplication.h>
+#include <qcursor.h>
+#include <qtimer.h>
+
+#include <kaction.h>
 #include <kdebug.h>
 #include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <klineeditdlg.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <ksimpleconfig.h>
-#include <kaction.h>
 #include <kpopupmenu.h>
+#include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 
-#include "kopete.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
-#include "systemtray.h"
-
-#include <qcursor.h>
-#include <qtimer.h>
 
 #include "gaduprotocol.h"
 #include "gaducontact.h"
@@ -91,8 +90,6 @@ GaduProtocol::initActions()
     actionMenu_->insert( awayAction_ );
     actionMenu_->insert( busyAction_ );
     actionMenu_->insert( invisibleAction_ );
-
-    actionMenu_->plug( kopeteapp->systemTray()->contextMenu(), 1 );
 }
 
 void
