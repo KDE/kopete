@@ -146,7 +146,7 @@ public slots:
 	/**
 	 * Catch the rename dialog's results
 	 */
-	void slotRenameContact (const QString &oldName, const QString &newName);
+	void slotDisplayNameChanged (const QString &oldName, const QString &newName);
 
 protected slots:
 
@@ -247,6 +247,8 @@ private:
 	 * autoselection?
 	 */
 	bool resourceOverride, mEditingVCard;
+
+	bool mIsNetworkPush;
 
 	/**
 	 * Message manager in use to display a message

@@ -79,9 +79,12 @@ JabberContact::JabberContact (QString userId, QString nickname, QStringList grou
 	// specifically cause this instance to update this contact as offline
 	slotUpdatePresence (static_cast<JabberProtocol *>(protocol())->JabberKOSOffline, QString::null);
 
-	connect(this, SIGNAL(displayNameChanged(const QString &, const QString &)), this, SLOT(slotRenameContact(const QString &, const QString &)));
+	connect(this, SIGNAL(displayNameChanged(const QString &, const QString &)), this, SLOT(slotDisplayNameChanged(const QString &, const QString &)));
 
 	actionSendAuth = 0L;
+
+	mIsNetworkPush = false;
+
 }
 
 /* Return the user ID */
@@ -264,15 +267,25 @@ void JabberContact::slotUpdateContact (const XMPP::RosterItem & item)
 
 	// only update the nickname if its not empty
 	if (!item.name ().isEmpty () && !item.name ().isNull ())
+	{
+		/*
+		 * The setDisplayName() call unfortunately emits displayNameChanged()
+		 * which is also used for local renames. This means that we have to
+		 * differentiate in slotDisplayNameChanged() if the rename was actually
+		 * due to a network push or a local action. mIsNetworkPush keeps
+		 * this information.
+		 */
+		mIsNetworkPush = true;
 		setDisplayName (item.name ());
+	}
 
 }
 
-void JabberContact::slotRenameContact (const QString &oldName, const QString &newName)
+void JabberContact::slotDisplayNameChanged (const QString &oldName, const QString &newName)
 {
-	QString name = newName;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Display name changed from " << oldName << " to " << newName << ", network push: " << mIsNetworkPush << endl;
 
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Renaming contact " << oldName << " to " << newName << endl;
+	QString name = newName;
 
 	// if the name has been deleted, revert
 	// to using the user ID instead
@@ -281,17 +294,27 @@ void JabberContact::slotRenameContact (const QString &oldName, const QString &ne
 
 	rosterItem.setName (name);
 
-	// send rename request to protocol backend
-	if (!account()->isConnected())
+	/*
+	 * Only send a rename request if this is a local change
+	 * See slotUpdateContact() for details.
+	 */
+	if(!mIsNetworkPush)
 	{
-		static_cast<JabberAccount *>(account())->errorConnectFirst();
-		return;
+		// our display name has been changed, forward the change to the roster
+		if (!account()->isConnected())
+		{
+			static_cast<JabberAccount *>(account())->errorConnectFirst();
+			return;
+		}
+
+		XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster (static_cast<JabberAccount *>(account())->client()->rootTask ());
+
+		rosterTask->set (rosterItem.jid (), rosterItem.name (), rosterItem.groups ());
+		rosterTask->go (true);
 	}
 
-	XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster (static_cast<JabberAccount *>(account())->client()->rootTask ());
-
-	rosterTask->set (rosterItem.jid (), rosterItem.name (), rosterItem.groups ());
-	rosterTask->go (true);
+	// make sure the flag is being reset
+	mIsNetworkPush = false;
 
 }
 

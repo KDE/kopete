@@ -229,7 +229,7 @@ void dlgJabberVCard::slotSaveNickname ()
 	}
 	else
 	{
-		jc->slotRenameContact(m_mainWidget->leNick->text(), m_mainWidget->leNick->text());
+		jc->slotDisplayNameChanged(m_mainWidget->leNick->text(), m_mainWidget->leNick->text());
 	}
 
 }
