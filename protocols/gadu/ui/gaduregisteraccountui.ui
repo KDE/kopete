@@ -8,9 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>337</width>
-            <height>368</height>
+            <width>376</width>
+            <height>394</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>Register Account - Gadu-Gadu</string>
     </property>
     <vbox>
         <property name="name">
@@ -18,18 +21,52 @@
         </property>
         <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>layout47</cstring>
+                <cstring>layout33</cstring>
             </property>
             <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="KLineEdit" row="3" column="1">
+                <widget class="QLabel" row="0" column="0">
                     <property name="name">
-                        <cstring>valuePasswordVerify</cstring>
+                        <cstring>pixmapEmailAddress</cstring>
                     </property>
-                    <property name="echoMode">
-                        <enum>Password</enum>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>16</width>
+                            <height>16</height>
+                        </size>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>32767</width>
+                            <height>32767</height>
+                        </size>
+                    </property>
+                    <property name="scaledContents">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="1">
+                    <property name="name">
+                        <cstring>labelPasswordVerify</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="text">
+                        <string>Repeat Pass&amp;word:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>valuePasswordVerify</cstring>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>A confirmation of the password you would like to use.</string>
@@ -38,35 +75,7 @@
                         <string>A confirmation of the password you would like to use for this account.</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="2" column="0">
-                    <property name="name">
-                        <cstring>labelPassword</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Password:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>valuePassword</cstring>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>The password you would like to use.</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>The password you would like to use for this account.</string>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="4" column="1">
-                    <property name="name">
-                        <cstring>valueVerificationSequence</cstring>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>The text from the image below.</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>The text from the image below.  This is used to prevent abusive automated registration scripts.</string>
-                    </property>
-                </widget>
-                <widget class="KLineEdit" row="1" column="1" rowspan="2" colspan="1">
+                <widget class="KLineEdit" row="1" column="2">
                     <property name="name">
                         <cstring>valuePassword</cstring>
                     </property>
@@ -80,7 +89,91 @@
                         <string>The password you would like to use for this account.</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="4" column="0">
+                <widget class="KLineEdit" row="0" column="2">
+                    <property name="name">
+                        <cstring>valueEmailAddress</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Your E-mail address.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The E-mail address you would like to use to register this account.</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>pixmapVerificationSequence</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>16</width>
+                            <height>16</height>
+                        </size>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>32767</width>
+                            <height>32767</height>
+                        </size>
+                    </property>
+                    <property name="scaledContents">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="1">
+                    <property name="name">
+                        <cstring>labelEmailAddress</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;E-Mail Address:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>valueEmailAddress</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Your E-mail address.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The E-mail address you would like to use to register this account.</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>pixmapPasswordVerify</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>16</width>
+                            <height>16</height>
+                        </size>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>32767</width>
+                            <height>32767</height>
+                        </size>
+                    </property>
+                    <property name="scaledContents">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="1">
                     <property name="name">
                         <cstring>labelVerificationSequence</cstring>
                     </property>
@@ -100,46 +193,68 @@
                         <string>The text from the image below.  This is used to prevent abusive automated registration scripts.</string>
                     </property>
                 </widget>
-                <widget class="KLineEdit" row="0" column="1">
+                <widget class="QLineEdit" row="3" column="2">
                     <property name="name">
-                        <cstring>valueEmailAddress</cstring>
+                        <cstring>valueVerificationSequence</cstring>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>Your E-mail address.</string>
+                        <string>The text from the image below.</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>The E-mail address you would like to use to register this account.</string>
+                        <string>The text from the image below.  This is used to prevent abusive automated registration scripts.</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="0" column="0" rowspan="2" colspan="1">
+                <widget class="QLabel" row="1" column="0">
                     <property name="name">
-                        <cstring>labelEmailAddress</cstring>
+                        <cstring>pixmapPassword</cstring>
                     </property>
-                    <property name="text">
-                        <string>&amp;E-Mail Address:</string>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
                     </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>valueEmailAddress</cstring>
+                    <property name="minimumSize">
+                        <size>
+                            <width>16</width>
+                            <height>16</height>
+                        </size>
                     </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Your E-mail address.</string>
+                    <property name="maximumSize">
+                        <size>
+                            <width>32767</width>
+                            <height>32767</height>
+                        </size>
                     </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>The E-mail address you would like to use to register this account.</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="3" column="0">
-                    <property name="name">
-                        <cstring>labelPasswordVerify</cstring>
-                    </property>
-                    <property name="enabled">
+                    <property name="scaledContents">
                         <bool>true</bool>
                     </property>
+                </widget>
+                <widget class="QLabel" row="1" column="1">
+                    <property name="name">
+                        <cstring>labelPassword</cstring>
+                    </property>
                     <property name="text">
-                        <string>Repeat Pass&amp;word:</string>
+                        <string>&amp;Password:</string>
                     </property>
                     <property name="buddy" stdset="0">
+                        <cstring>valuePassword</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The password you would like to use.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The password you would like to use for this account.</string>
+                    </property>
+                </widget>
+                <widget class="KLineEdit" row="2" column="2">
+                    <property name="name">
                         <cstring>valuePasswordVerify</cstring>
+                    </property>
+                    <property name="echoMode">
+                        <enum>Password</enum>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>A confirmation of the password you would like to use.</string>
@@ -276,7 +391,7 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>20</height>
+                    <height>16</height>
                 </size>
             </property>
         </spacer>

@@ -28,6 +28,8 @@
 #include <kmessagebox.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include <kiconloader.h>
+#include <kglobal.h>
 
 #include "gaduregisteraccountui.h"
 #include "gaduregisteraccount.h"
@@ -47,6 +49,7 @@ GaduRegisterAccount::GaduRegisterAccount( QWidget* parent, const char* name )
 	cRegister = new RegisterCommand( this );
 
 	emailRegexp = new QRegExp(  "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}" );
+	hintPixmap = KGlobal::iconLoader()->loadIcon ( "gadu_protocol", KIcon::Small );
 
 	connect( this, SIGNAL( user1Clicked() ), SLOT( doRegister() ) );
 	connect( this, SIGNAL( okClicked() ), SLOT( slotClose() ) );
@@ -78,30 +81,60 @@ GaduRegisterAccount::doRegister( )
 void
 GaduRegisterAccount::validateInput()
 {
-	// FIXME: These need to use KDE default text color instead of hardcoded black.
-	if ( emailRegexp->exactMatch( ui->valueEmailAddress->text() ) &&
-		ui->valuePassword->text() == ui->valuePasswordVerify->text()  && !ui->valuePassword->text().isEmpty() && !ui->valuePasswordVerify->text().isEmpty() &&
-		!ui->valueVerificationSequence->text().isEmpty() )
+	int valid = true;
+	int passwordHighlight = false;
+
+	if ( !emailRegexp->exactMatch( ui->valueEmailAddress->text() ) )
 	{
-		enableButton( User1, true );
-		updateStatus( "" );
+		updateStatus( i18n( "Please enter a valid E-Mail Address." ) );
+		ui->pixmapEmailAddress->setPixmap ( hintPixmap );
+		valid = false;
 	}
 	else {
-		if ( !emailRegexp->exactMatch( ui->valueEmailAddress->text() ) )
-		{
-			updateStatus( i18n( "Please enter a valid E-Mail Address." ) );
-		} else if ( ( ui->valuePassword->text().isEmpty() ) || ( ui->valuePasswordVerify->text().isEmpty() ) )
-		{
-			updateStatus( i18n( "Please enter the same password twice." ) );
-		} else if ( ui->valuePassword->text() != ui->valuePasswordVerify->text() )
-		{
-			updateStatus( i18n( "Password entries do not match." ) );
-		} else if ( ui->valueVerificationSequence->text().isEmpty() )
-		{
-			updateStatus( i18n( "Please enter the verification sequence." ) );
-		}
-		enableButton( User1, false );
+		ui->pixmapEmailAddress->setText ( "" );
 	}
+
+	if ( valid && ( ( ui->valuePassword->text().isEmpty() ) || ( ui->valuePasswordVerify->text().isEmpty() ) ) )
+	{
+		updateStatus( i18n( "Please enter the same password twice." ) );
+		valid = false;
+		passwordHighlight = true;
+	}
+
+	if ( valid && ( ui->valuePassword->text() != ui->valuePasswordVerify->text() ) )
+	{
+		updateStatus( i18n( "Password entries do not match." ) );
+		valid = false;
+		passwordHighlight = true;
+	}
+
+	if ( valid && ( ui->valueVerificationSequence->text().isEmpty() ) )
+	{
+		updateStatus( i18n( "Please enter the verification sequence." ) );
+		ui->pixmapVerificationSequence->setPixmap ( hintPixmap );
+		valid = false;
+	}
+	else {
+		ui->pixmapVerificationSequence->setText ( "" );
+	}
+
+	if ( passwordHighlight == true )
+	{
+		ui->pixmapPassword->setPixmap ( hintPixmap );
+		ui->pixmapPasswordVerify->setPixmap ( hintPixmap );
+	}
+	else {
+		ui->pixmapPassword->setText ( "" );
+		ui->pixmapPasswordVerify->setText ( "" );
+	}
+
+	if ( valid )
+	{
+		// clear status message if we have valid data
+		updateStatus( i18n( "" ) );
+	}
+
+	enableButton( User1, valid );
 }
 
 void

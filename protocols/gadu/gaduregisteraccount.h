@@ -56,6 +56,7 @@ private:
 	GaduRegisterAccountUI*	ui;
 	RegisterCommand*	cRegister;
 	QRegExp*		emailRegexp; 
+	QPixmap			hintPixmap;
 };
 
 #endif
