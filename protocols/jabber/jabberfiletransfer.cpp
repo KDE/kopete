@@ -168,7 +168,7 @@ void JabberFileTransfer::slotTransferError ( int errorCode )
 
 		case XMPP::FileTransfer::ErrNeg:
 			mKopeteTransfer->slotError ( KopeteTransfer::Other,
-										 i18n("Couldn't negotiate a suitable connection for the file transfer with %1.").
+										 i18n("Unable to negotiate a suitable connection for the file transfer with %1.").
 										 arg(mXMPPTransfer->peer().full ()) );
 			break;
 
