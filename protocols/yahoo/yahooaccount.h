@@ -64,7 +64,7 @@ protected:
 
 protected slots:
 	virtual void loaded();
-	void slotGotBuddiesTimeout();				// timeout for reception of buddies list
+//	void slotGotBuddiesTimeout();				// timeout for reception of buddies list
 		
 	//void slotConnect();
 	void slotConnected();

@@ -31,6 +31,7 @@
 
 // System Includes
 #include <cstdlib>
+#include <cstring>
 
 #include "libyahoo2/yahoo2.h"
 #include "libyahoo2/yahoo2_callbacks.h"
@@ -57,6 +58,20 @@ YahooSessionManager::YahooSessionManager()
 YahooSessionManager::~YahooSessionManager()
 {
 	managerStatic_ = 0L;
+}
+
+void YahooSessionManager::setPager(QString host, int port)
+{
+	strcpy(pager_host, host);
+	QString portString = QString().setNum(port);
+	strcpy(pager_port, portString);
+}
+
+void YahooSessionManager::setFileTransfer(QString host, int port)
+{
+	strcpy(filetransfer_host, host);
+	QString portString = QString().setNum(port);
+	strcpy(filetransfer_port, portString);
 }
 
 int YahooSessionManager::socketDescriptor( int session_id )

@@ -51,7 +51,11 @@ public:
 	bool cleanSessions();
 	YahooSession* getSession(int id);
 	int getSessionCount();
-
+	
+	/* Sets the host and port for connection to the pager and f.t. servers */
+	void setPager(QString host, int port);
+	void setFileTransfer(QString host, int port);
+	
 	/* Receivers for libyahoo callbacks, resolve connection id and emit signal for the correct session */
 	void loginResponseReceiver( int id, int succ, char *url);
 	void gotIgnoreReceiver(int id, YList *igns);

@@ -122,9 +122,14 @@ void YahooProtocol::deserializeContact( KopeteMetaContact *metaContact,
 void YahooProtocol::slotSettingsChanged()
 {
 	kdDebug(14180) << "YahooProtocol::slotSettingsChanged()" <<endl;
-	m_server   = KGlobal::config()->readEntry("Server", "scs.yahoo.com");
+	m_server   = KGlobal::config()->readEntry("Server", "scs.yahoo.com");	
 	m_port     = KGlobal::config()->readNumEntry("Port", 5050);
 	m_logAll   = KGlobal::config()->readBoolEntry("LogAll", true);
+	m_importContacts   = KGlobal::config()->readBoolEntry("ImportContacts", true);
+	m_useGroupNames     = KGlobal::config()->readNumEntry("UseGroupNames", false);
+	
+	if(m_server == "cs.yahoo.com") m_server = "scs.yahoo.com";
+	// FIXME: take out the above line asap --- it's a nasty fix for people with a broken config from old versions.
 }
 
 AddContactPage *YahooProtocol::createAddContactWidget( QWidget * parent )

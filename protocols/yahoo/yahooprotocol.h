@@ -57,7 +57,9 @@ public:
 	
 	QString server() { return m_server; }
 	int port() { return m_port; }
-
+	bool importContacts() { return m_importContacts; }
+	bool useGroupNames() { return m_useGroupNames; }
+	
 public slots:
 	virtual AddContactPage *createAddContactWidget(QWidget * parent);
 	virtual EditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
@@ -72,7 +74,7 @@ private:
 	// Configuration data
 	QString m_server;
 	int m_port;
-	bool m_logAll;
+	bool m_logAll, m_useGroupNames, m_importContacts;
 };
 
 #endif
