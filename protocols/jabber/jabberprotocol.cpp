@@ -79,7 +79,7 @@ KopeteOnlineStatus JabberProtocol::JabberInvisible;
 
 K_EXPORT_COMPONENT_FACTORY (kopete_jabber, KGenericFactory < JabberProtocol >);
 
-JabberProtocol::JabberProtocol (QObject *parent, const char *name, const QStringList&):KopeteProtocol (parent, name)
+JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStringList &):KopeteProtocol (parent, name)
 {
 
 	JabberOnline = KopeteOnlineStatus (KopeteOnlineStatus::Online, 25, this, 0, "jabber_online", i18n ("Go O&nline"), i18n ("Online"));
@@ -100,10 +100,10 @@ JabberProtocol::JabberProtocol (QObject *parent, const char *name, const QString
 	/* This is meant to be a singleton, so we will check if we have
 	 * been loaded before. */
 	if (protocolInstance)
-	  {
-		  kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Warning: Protocol already " << "loaded, not initializing again." << endl;
-		  return;
-	  }
+	{
+		kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Warning: Protocol already " << "loaded, not initializing again." << endl;
+		return;
+	}
 
 	protocolInstance = this;
 
@@ -238,28 +238,29 @@ void JabberProtocol::slotSettingsChanged ()
 void JabberProtocol::deserializeContact (KopeteMetaContact * metaContact,
 										 const QMap < QString, QString > &serializedData, const QMap < QString, QString > & /* addressBookData */ )
 {
-//	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Deserializing data for metacontact " << metaContact->displayName () << "\n" << endl;
+//  kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Deserializing data for metacontact " << metaContact->displayName () << "\n" << endl;
 
 	QString contactId = serializedData["contactId"];
 	QString displayName = serializedData["displayName"];
-	QString accountId =  serializedData[ "accountId" ] ;
+	QString accountId = serializedData["accountId"];
 
-	if(accountId.isNull())
+	if (accountId.isNull ())
 	{
 		//Kopete 0.6.x contactlist
 		// FIXME: This should be in a KConfUpdate - Martijn
-		accountId=serializedData[ "identityId" ] ;
+		accountId = serializedData["identityId"];
 
 		/*KGlobal::config()->setGroup("Jabber");
-		accountId=KGlobal::config()->readEntry( "UserID", "" );*/
+		   accountId=KGlobal::config()->readEntry( "UserID", "" ); */
 	}
 
-	QDict<KopeteAccount> accounts=KopeteAccountManager::manager()->accounts(this);
-	KopeteAccount *account=accounts[accountId];
-	if( !account )
-		account = createNewAccount( accountId );
+	QDict < KopeteAccount > accounts = KopeteAccountManager::manager ()->accounts (this);
+	KopeteAccount *account = accounts[accountId];
 
-	if(account)
+	if (!account)
+		account = createNewAccount (accountId);
+
+	if (account)
 		account->addContact (contactId, displayName, metaContact);
 
 }

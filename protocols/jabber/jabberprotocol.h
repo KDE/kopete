@@ -73,7 +73,7 @@ class JabberProtocol:public KopeteProtocol
 	/**
 	 * Object constructor and destructor
 	 */
-	  JabberProtocol (QObject *parent, const char *name, const QStringList&);
+	  JabberProtocol (QObject * parent, const char *name, const QStringList &);
 	 ~JabberProtocol ();
 
 	KActionMenu *protocolActions ();

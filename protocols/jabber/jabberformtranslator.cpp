@@ -56,15 +56,14 @@ void JabberFormTranslator::translate (const Jabber::Form & form, QWidget * widge
 	for (Jabber::Form::const_iterator it = form.begin (); it != form.end (); it++)
 	{
 		kdDebug (14130) << "[JabberFormTranslator] Adding field realName()==" <<
-			(*it).realName () << ", fieldName()==" << (*it).fieldName () <<
-			" to the dialog" << endl;
+			(*it).realName () << ", fieldName()==" << (*it).fieldName () << " to the dialog" << endl;
 
-		label = new QLabel ((*it).fieldName (), parentWidget (), (*it).fieldName().latin1());
+		label = new QLabel ((*it).fieldName (), parentWidget (), (*it).fieldName ().latin1 ());
 		formLayout->addWidget (label, row, 0);
 		label->show ();
 
 		JabberFormLineEdit *edit = new JabberFormLineEdit ((*it).type (), (*it).realName (),
-			(*it).value (), parentWidget ());
+														   (*it).value (), parentWidget ());
 
 		formLayout->addWidget (edit, row, 1);
 		edit->show ();

@@ -113,18 +113,18 @@ KopeteMessageManager *JabberContact::manager (bool)
 
 	// create a new message manager if there is none
 	if (!messageManager)
-	  {
-		  kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberContact] Creating new message manager." << endl;
+	{
+		kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberContact] Creating new message manager." << endl;
 
-		  KopeteContactPtrList contactList;
+		KopeteContactPtrList contactList;
 
-		  contactList.append (this);
+		contactList.append (this);
 
-		  messageManager = KopeteMessageManagerFactory::factory ()->create (protocol->myself (), contactList, protocol->protocol ());
+		messageManager = KopeteMessageManagerFactory::factory ()->create (protocol->myself (), contactList, protocol->protocol ());
 
-		  QObject::connect (messageManager, SIGNAL (destroyed ()), this, SLOT (slotMessageManagerDeleted ()));
-		  QObject::connect (messageManager, SIGNAL (messageSent (KopeteMessage &, KopeteMessageManager *)), this, SLOT (slotSendMessage (KopeteMessage &)));
-	  }
+		QObject::connect (messageManager, SIGNAL (destroyed ()), this, SLOT (slotMessageManagerDeleted ()));
+		QObject::connect (messageManager, SIGNAL (messageSent (KopeteMessage &, KopeteMessageManager *)), this, SLOT (slotSendMessage (KopeteMessage &)));
+	}
 
 	return static_cast < KopeteMessageManager * >(messageManager);
 
@@ -174,51 +174,51 @@ KActionCollection *JabberContact::customContextMenuActions ()
 	// if the contact is online,
 	// display the resources we have for it
 	if (onlineStatus ().status () != KopeteOnlineStatus::Offline)
-	  {
-		  QStringList items;
-		  int activeItem = 0;
-		  JabberResource *tmpBestResource = bestResource ();
+	{
+		QStringList items;
+		int activeItem = 0;
+		JabberResource *tmpBestResource = bestResource ();
 
-		  // put best resource first
-		  items.append (i18n ("Automatic (best resource)"));
+		// put best resource first
+		items.append (i18n ("Automatic (best resource)"));
 
-		  if (!tmpBestResource->resource ().isNull ())
-			  items.append (tmpBestResource->resource ());
+		if (!tmpBestResource->resource ().isNull ())
+			items.append (tmpBestResource->resource ());
 
-		  // iterate through available resources
-		  int i = 1;
+		// iterate through available resources
+		int i = 1;
 
-		  for (JabberResource * tmpResource = resources.first (); tmpResource; tmpResource = resources.next (), i++)
+		for (JabberResource * tmpResource = resources.first (); tmpResource; tmpResource = resources.next (), i++)
+		{
+			// skip the default (empty) resource
+			if (tmpResource->resource ().isNull ())
 			{
-				// skip the default (empty) resource
-				if (tmpResource->resource ().isNull ())
-				  {
-					  i--;
-					  continue;
-				  }
-
-				// only add the item if it is not the best resource
-				// (which we already added above)
-				if (tmpResource != tmpBestResource)
-					items.append (tmpResource->resource ());
-
-				// mark the currently active resource
-				if (tmpResource->resource () == activeResource->resource () && resourceOverride)
-				  {
-					  kdDebug (14130) << "[JabberContact] Activating item " << i << " as active resource." << endl;
-					  activeItem = i;
-				  }
+				i--;
+				continue;
 			}
 
-		  actionSelectResource =
-			  new KSelectAction (i18n ("Select Resource"), "selectresource", 0, this, SLOT (slotSelectResource ()), actionCollection, "actionSelectResource");
+			// only add the item if it is not the best resource
+			// (which we already added above)
+			if (tmpResource != tmpBestResource)
+				items.append (tmpResource->resource ());
 
-		  // attach list to the menu action
-		  actionSelectResource->setItems (items);
+			// mark the currently active resource
+			if (tmpResource->resource () == activeResource->resource () && resourceOverride)
+			{
+				kdDebug (14130) << "[JabberContact] Activating item " << i << " as active resource." << endl;
+				activeItem = i;
+			}
+		}
 
-		  // make sure the active item is selected
-		  actionSelectResource->setCurrentItem (activeItem);
-	  }
+		actionSelectResource =
+			new KSelectAction (i18n ("Select Resource"), "selectresource", 0, this, SLOT (slotSelectResource ()), actionCollection, "actionSelectResource");
+
+		// attach list to the menu action
+		actionSelectResource->setItems (items);
+
+		// make sure the active item is selected
+		actionSelectResource->setCurrentItem (activeItem);
+	}
 
 	return actionCollection;
 
@@ -314,10 +314,10 @@ void JabberContact::syncGroups ()
 	KopeteGroupList groupList = metaContact ()->groups ();
 
 	for (KopeteGroup * g = groupList.first (); g; g = groupList.next ())
-	  {
-		  if (!g->displayName ().isEmpty ())
-			  groups.append (g->displayName ());
-	  }
+	{
+		if (!g->displayName ().isEmpty ())
+			groups.append (g->displayName ());
+	}
 	//FIXME: isn't there a problem is there are no groups (top-level only)
 	rosterItem.setGroups (groups);
 	//protocol->updateContact(rosterItem);
@@ -385,27 +385,27 @@ void JabberContact::slotSendMessage (KopeteMessage & message)
 	Jabber::Message jabberMessage;
 
 	if (protocol->isConnected ())
-	  {
-		  // convert the message
-		  km2jm (message, jabberMessage);
+	{
+		// convert the message
+		km2jm (message, jabberMessage);
 
-		  // send it
-		  protocol->jabberClient->sendMessage (jabberMessage);
+		// send it
+		protocol->jabberClient->sendMessage (jabberMessage);
 
-		  // append the message to the manager
-		  manager ()->appendMessage (message);
+		// append the message to the manager
+		manager ()->appendMessage (message);
 
-		  // tell the manager that we sent successfully
-		  manager ()->messageSucceeded ();
-	  }
+		// tell the manager that we sent successfully
+		manager ()->messageSucceeded ();
+	}
 	else
-	  {
-		  protocol->errorConnectFirst ();
+	{
+		protocol->errorConnectFirst ();
 
-		  // FIXME: there is no messageFailed() yet,
-		  // but we need to stop the animation etc.
-		  manager ()->messageSucceeded ();
-	  }
+		// FIXME: there is no messageFailed() yet,
+		// but we need to stop the animation etc.
+		manager ()->messageSucceeded ();
+	}
 
 }
 
@@ -418,34 +418,34 @@ JabberResource *JabberContact::bestResource ()
 
 	// iterate through all available resources
 	for (resource = tmpResource = resources.first (); tmpResource; tmpResource = resources.next ())
-	  {
-		  kdDebug (14130) << "[JabberContact] Processing resource " << tmpResource->resource () << endl;
+	{
+		kdDebug (14130) << "[JabberContact] Processing resource " << tmpResource->resource () << endl;
 
-		  if (tmpResource->priority () > resource->priority ())
+		if (tmpResource->priority () > resource->priority ())
+		{
+			kdDebug (14130) << "[JabberContact] Got better resource " << tmpResource->resource () << " through better priority." << endl;
+			resource = tmpResource;
+		}
+		else
+		{
+			if (tmpResource->priority () == resource->priority ())
 			{
-				kdDebug (14130) << "[JabberContact] Got better resource " << tmpResource->resource () << " through better priority." << endl;
-				resource = tmpResource;
-			}
-		  else
-			{
-				if (tmpResource->priority () == resource->priority ())
-				  {
-					  if (tmpResource->timestamp () >= resource->timestamp ())
-						{
-							kdDebug (14130) << "[JabberContact] Got better resource " << tmpResource->resource () << " through newer timestamp." << endl;
-							resource = tmpResource;
-						}
-					  else
-						{
-							kdDebug (14130) << "[JabberContact] Discarding resource " << tmpResource->resource () << " with older timestamp." << endl;
-						}
-				  }
+				if (tmpResource->timestamp () >= resource->timestamp ())
+				{
+					kdDebug (14130) << "[JabberContact] Got better resource " << tmpResource->resource () << " through newer timestamp." << endl;
+					resource = tmpResource;
+				}
 				else
-				  {
-					  kdDebug (14130) << "[JabberContact] Discarding resource " << tmpResource->resource () << " with worse priority." << endl;
-				  }
+				{
+					kdDebug (14130) << "[JabberContact] Discarding resource " << tmpResource->resource () << " with older timestamp." << endl;
+				}
 			}
-	  }
+			else
+			{
+				kdDebug (14130) << "[JabberContact] Discarding resource " << tmpResource->resource () << " with worse priority." << endl;
+			}
+		}
+	}
 
 	return resource;
 
@@ -468,32 +468,32 @@ void JabberContact::slotResourceAvailable (const Jabber::Jid &, const Jabber::Re
 	 * FIXME: this should be done using the QPtrList methods! (needs checking of pointer values)
 	 */
 	for (JabberResource * tmpResource = resources.first (); tmpResource; tmpResource = resources.next ())
-	  {
-		  if (tmpResource->resource () == resource.name ())
-			{
-				kdDebug (14130) << "[JabberContact] Resource " << tmpResource->resource () << " already added, removing instance with older timestamp" << endl;
-				resources.remove ();
-			}
-	  }
+	{
+		if (tmpResource->resource () == resource.name ())
+		{
+			kdDebug (14130) << "[JabberContact] Resource " << tmpResource->resource () << " already added, removing instance with older timestamp" << endl;
+			resources.remove ();
+		}
+	}
 
 	KopeteOnlineStatus status = JabberProtocol::getJabberOnline ();
 
 	if (resource.status ().show () == "chat")
-	  {
-		  status = JabberProtocol::getJabberChatty ();
-	  }
+	{
+		status = JabberProtocol::getJabberChatty ();
+	}
 	else if (resource.status ().show () == "away")
-	  {
-		  status = JabberProtocol::getJabberAway ();
-	  }
+	{
+		status = JabberProtocol::getJabberAway ();
+	}
 	else if (resource.status ().show () == "xa")
-	  {
-		  status = JabberProtocol::getJabberXA ();
-	  }
+	{
+		status = JabberProtocol::getJabberXA ();
+	}
 	else if (resource.status ().show () == "dnd")
-	  {
-		  status = JabberProtocol::getJabberDND ();
-	  }
+	{
+		status = JabberProtocol::getJabberDND ();
+	}
 
 	JabberResource *newResource = new JabberResource (resource.name (), resource.priority (),
 													  resource.status ().timeStamp (), status,
@@ -520,19 +520,19 @@ void JabberContact::slotResourceUnavailable (const Jabber::Jid & jid, const Jabb
 	kdDebug (14130) << "[JabberContact] Removing resource '" << jid.resource () << "' for " << userId () << endl;
 
 	for (tmpResource = resources.first (); tmpResource; tmpResource = resources.next ())
-	  {
-		  if (tmpResource->resource () == resource.name ())
-			{
-				kdDebug (14130) << "[JabberContact] Got a match in " << tmpResource->resource () << ", removing." << endl;
+	{
+		if (tmpResource->resource () == resource.name ())
+		{
+			kdDebug (14130) << "[JabberContact] Got a match in " << tmpResource->resource () << ", removing." << endl;
 
-				if (resources.remove ())
-					kdDebug (14130) << "[JabberContact] Successfully removed, there are now " << resources.count () << " resources!" << endl;
-				else
-					kdDebug (14130) << "[JabberContact] Ack! Couldn't remove the resource. Bugger!" << endl;
+			if (resources.remove ())
+				kdDebug (14130) << "[JabberContact] Successfully removed, there are now " << resources.count () << " resources!" << endl;
+			else
+				kdDebug (14130) << "[JabberContact] Ack! Couldn't remove the resource. Bugger!" << endl;
 
-				break;
-			}
-	  }
+			break;
+		}
+	}
 
 	JabberResource *newResource = bestResource ();
 
@@ -542,10 +542,10 @@ void JabberContact::slotResourceUnavailable (const Jabber::Jid & jid, const Jabb
 	// if override was in effect or we just deleted the current
 	// resource, switch to new resource
 	if (resourceOverride || (activeResource->resource () == resource.name ()))
-	  {
-		  resourceOverride = false;
-		  activeResource = newResource;
-	  }
+	{
+		resourceOverride = false;
+		activeResource = newResource;
+	}
 
 }
 
@@ -553,32 +553,32 @@ void JabberContact::slotSelectResource ()
 {
 
 	if (actionSelectResource->currentItem () == 0)
-	  {
-		  kdDebug (14130) << "[JabberContact] Removing active resource, trusting bestResource()." << endl;
+	{
+		kdDebug (14130) << "[JabberContact] Removing active resource, trusting bestResource()." << endl;
 
-		  resourceOverride = false;
-		  activeResource = bestResource ();
-	  }
+		resourceOverride = false;
+		activeResource = bestResource ();
+	}
 	else
-	  {
-		  QString selectedResource = actionSelectResource->currentText ();
+	{
+		QString selectedResource = actionSelectResource->currentText ();
 
-		  kdDebug (14130) << "[JabberContact] Moving to resource " << selectedResource << endl;
+		kdDebug (14130) << "[JabberContact] Moving to resource " << selectedResource << endl;
 
-		  resourceOverride = true;
+		resourceOverride = true;
 
-		  for (JabberResource * resource = resources.first (); resource; resource = resources.next ())
+		for (JabberResource * resource = resources.first (); resource; resource = resources.next ())
+		{
+			if (resource->resource () == selectedResource)
 			{
-				if (resource->resource () == selectedResource)
-				  {
-					  kdDebug (14130) << "[JabberContact] New active resource is " << resource->resource () << endl;
+				kdDebug (14130) << "[JabberContact] New active resource is " << resource->resource () << endl;
 
-					  activeResource = resource;
+				activeResource = resource;
 
-					  break;
-				  }
+				break;
 			}
-	  }
+		}
+	}
 
 }
 
@@ -587,10 +587,10 @@ void JabberContact::slotUserInfo ()
 {
 
 	if (!protocol->isConnected ())
-	  {
-		  protocol->errorConnectFirst ();
-		  return;
-	  }
+	{
+		protocol->errorConnectFirst ();
+		return;
+	}
 
 	Jabber::JT_VCard * task = new Jabber::JT_VCard (protocol->jabberClient->rootTask ());
 
@@ -608,22 +608,22 @@ void JabberContact::slotGotVCard ()
 	Jabber::JT_VCard * vCard = (Jabber::JT_VCard *) sender ();
 
 	if (!vCard->success () || vCard->vcard ().isIncomplete ())
-	  {
-		  // unsuccessful, or incomplete
-		  KMessageBox::error (qApp->mainWidget (), i18n ("Unable to retrieve vCard for %1").arg (vCard->jid ().userHost ()));
-		  return;
-	  }
+	{
+		// unsuccessful, or incomplete
+		KMessageBox::error (qApp->mainWidget (), i18n ("Unable to retrieve vCard for %1").arg (vCard->jid ().userHost ()));
+		return;
+	}
 
 	kdDebug (14130) << "[JabberContact] Got vCard for user " << vCard->jid ().userHost () << ", displaying." << endl;
 
 	dlgVCard = new dlgJabberVCard (qApp->mainWidget (), "dlgJabberVCard", vCard);
 
 	if (mEditingVCard)
-	  {
-		  connect (dlgVCard, SIGNAL (saveAsXML (QDomElement &)), this, SLOT (slotSaveVCard (QDomElement &)));
-		  dlgVCard->setReadOnly (false);
-		  mEditingVCard = false;
-	  }
+	{
+		connect (dlgVCard, SIGNAL (saveAsXML (QDomElement &)), this, SLOT (slotSaveVCard (QDomElement &)));
+		dlgVCard->setReadOnly (false);
+		mEditingVCard = false;
+	}
 	else
 		connect (dlgVCard, SIGNAL (updateNickname (const QString &)), this, SLOT (slotDoRenameContact (const QString &)));
 
@@ -644,10 +644,10 @@ void JabberContact::slotSaveVCard (QDomElement & vCardXML)
 {
 
 	if (!protocol->isConnected ())
-	  {
-		  protocol->errorConnectFirst ();
-		  return;
-	  }
+	{
+		protocol->errorConnectFirst ();
+		return;
+	}
 
 	Jabber::JT_VCard * task = new Jabber::JT_VCard (protocol->jabberClient->rootTask ());
 	Jabber::VCard vCard = Jabber::VCard ();
