@@ -18,6 +18,15 @@
 #ifndef MSNPROTOCOL_H
 #define MSNPROTOCOL_H
 
+#include "addcontactpage.h"
+#include "improtocol.h"
+#include "kmsnservice.h"
+#include "msnmessage.h"
+#include "msnmessagedialog.h"
+#include "msnpreferences.h"
+#include "newuserimpl.h"
+#include "statusbaricon.h"
+
 #include <qlabel.h>
 #include <qlist.h>
 #include <qmovie.h>
@@ -32,14 +41,7 @@
 #include <ksimpleconfig.h>
 #include <kurllabel.h>
 
-#include "addcontactpage.h"
-#include "improtocol.h"
-#include "kmsnservice.h"
-#include "msnmessage.h"
-#include "msnmessagedialog.h"
-#include "msnpreferences.h"
-#include "newuserimpl.h"
-#include "statusbaricon.h"
+#include <klocale.h> // for the whole plugin
 
 /**
   *@author duncan

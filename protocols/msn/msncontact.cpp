@@ -16,14 +16,22 @@
  ***************************************************************************/
 
 #include "msncontact.h"
-#include <contactlist.h>
-#include <qcursor.h>
-#include <qstringlist.h>
 
-#include <kmessagebox.h>
-#include <kdebug.h>
+#include <contactlist.h>
 #include "kmsncontact.h"
 #include <kmsnchatservice.h>
+
+#include <qcursor.h>
+#include <qstringlist.h>
+#include <qlistview.h>
+#include <qtimer.h>
+#include <qpixmap.h>
+#include <qstring.h>
+
+#include <kmessagebox.h>
+#include <kiconloader.h>
+#include <kpopupmenu.h>
+#include <kdebug.h>
 
 /* Constructor for no-groups */
 
@@ -123,13 +131,12 @@ void MSNContact::initContact(QString userid, const QString name, MSNProtocol *pr
 
 void MSNContact::initActions()
 {
-	actionChat = new KAction ( i18n("Start Chat"), "idea", 0, this, SLOT(slotChatThisUser()), this, "actionChat" );
-	actionRemoveFromGroup = new KAction ( i18n("Remove from group"), "edittrash", 0, this, SLOT(slotRemoveFromGroup()), this, "actionRemove" );
-	actionRemove = new KAction ( i18n("Delete contact"), "edittrash", 0, this, SLOT(slotRemoveThisUser()), this, "actionDelete" );
-	actionContactCopy = new KListAction ( i18n("Copy contact"), "editcopy", 0, this, SLOT(slotCopyThisUser()), this, "actionCopy" );	
-	actionContactMove = new KListAction ( i18n("Move contact"), "editcut", 0, this, SLOT(slotMoveThisUser()), this, "actionMove" );	
-	actionHistory = new KAction ( i18n("View History"), "history", 0, this, SLOT(slotHistory()), this, "actionDelete" );
-
+	actionChat				= new KAction ( i18n("Start Chat"), "idea", 0, this, SLOT(slotChatThisUser()), this, "actionChat" );
+	actionRemoveFromGroup	= new KAction ( i18n("Remove from group"), "edittrash", 0, this, SLOT(slotRemoveFromGroup()), this, "actionRemove" );
+	actionRemove			= new KAction ( i18n("Delete contact"), "edittrash", 0, this, SLOT(slotRemoveThisUser()), this, "actionDelete" );
+	actionContactCopy		= new KListAction ( i18n("Copy contact"), "editcopy", 0, this, SLOT(slotCopyThisUser()), this, "actionCopy" );
+	actionContactMove		= new KListAction ( i18n("Move contact"), "editcut", 0, this, SLOT(slotMoveThisUser()), this, "actionMove" );
+	actionHistory			= new KAction ( i18n("View History"), "history", 0, this, SLOT(slotHistory()), this, "actionDelete" );
 }
 
 void MSNContact::rightButtonPressed(const QPoint &point)

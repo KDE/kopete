@@ -18,22 +18,25 @@
 #ifndef MSNCONTACT_H
 #define MSNCONTACT_H
 
-#include <qlistview.h>
 #include "imcontact.h"
-#include <qobject.h>
-#include <qpixmap.h>
-#include <qstring.h>
-#include <qvaluestack.h>
-#include <qlistview.h>
-#include <kiconloader.h>
-#include <kpopupmenu.h>
-#include <qtimer.h>
-#include <kopete.h>
 #include "msnprotocol.h"
-#include <contactlist.h>
 #include <kmsnchatservice.h>
 
-/* Not ussefull yet */
+#include <kopete.h>
+#include <contactlist.h>
+
+#include <qvaluestack.h>
+
+
+class QTimer;
+class QPixmap;
+class QListView;
+class QListViewItem;
+class KPopupMenu;
+class KAction;
+class KListAction;
+
+/* Not usefull yet */
 struct MSNMessageStruct
 {
 	QString userid;
@@ -58,10 +61,11 @@ class MSNContact : public IMContact
 		QString mName;
 		bool hasLocalGroup;
 		QListViewItem *parentGroup;
+
 	public slots:
-		
 		void slotContactRemoved(QString, QString);
 		void slotChatThisUser();
+
 	private slots:
 		void slotRemoveThisUser();
 		void slotCopyThisUser();
@@ -75,8 +79,9 @@ class MSNContact : public IMContact
 		void slotDeleteMySelf ( bool );
 		void slotNewMessage(QString, QString, QString);
 		void slotFlashIcon();
+
 	private:
-		void initActions();	
+		void initActions();
 	
 		QString mStatus;
 		uint mStatus_n;
@@ -92,8 +97,9 @@ class MSNContact : public IMContact
 		KAction* actionChat;
 		KAction* actionInfo;
 		KAction* actionHistory;
-    KListAction *actionContactMove;
-   	KListAction *actionContactCopy;
+		KListAction *actionContactMove;
+		KListAction *actionContactCopy;
+
 	signals:
 		void chatToUser( QString );
 };
