@@ -90,7 +90,7 @@ bool KopetePasswordWidget::validate( int maxLength )
 {
 	if ( !mRemembered->isChecked() ) return true;
 	if ( maxLength <= 0 ) return true;
-	return QString::fromLocal8Bit( mPassword->password() ).length() < maxLength;
+	return QString::fromLocal8Bit( mPassword->password() ).length() < (uint)maxLength;
 }
 
 #include "kopetepasswordwidget.moc"
