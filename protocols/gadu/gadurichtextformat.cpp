@@ -52,7 +52,6 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 	if ( formatStructure == NULL || formats == 0 ) {
 		tmp = msg;
 		escapeBody( tmp );
-		kdDebug(14100) << "no rtf structure, plain message\n----------------------\n" << tmp << "\n----------------------"  << endl;
 		return tmp;
 	}
 
@@ -103,8 +102,6 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 			}
 			style += QString(" color: rgb( %1, %2, %3 ); ").arg( r ).arg( g ).arg( b );
 
-			kdDebug(14100) << "escape and add: \n----------------------\n" << nb << "\n----------------------" << endl;
-
 			tmp += formatOpeningTag( QString::fromLatin1("span"), QString::fromLatin1("style=\"%1\"").arg( style ) );
 			opened = true;
 
@@ -120,8 +117,6 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 	if ( opened ) {
 		tmp += formatClosingTag("span");
 	}
-
-	kdDebug(14100) << "----------\n" << tmp << "\n----------" << endl;
 
 	return tmp;
 }
@@ -146,7 +141,6 @@ KGaduMessage*
 GaduRichTextFormat::convertToGaduMessage( const KopeteMessage& message )
 {
 	QString htmlString = message.escapedBody();
-kdDebug(14100) << "-------------------------\n" << htmlString << "\n------------------"<<endl;
 	KGaduMessage* output = new KGaduMessage;
 	rtcs.blue  = rtcs.green = rtcs.red = 0;
 	color = QColor();
@@ -165,7 +159,6 @@ kdDebug(14100) << "-------------------------\n" << htmlString << "\n------------
 		while ( pos >= 0 ){
 			pos = findTags.search( htmlString );
 			rtfs.font = 0;
-			kdDebug( 14100 ) << "pos: " << pos <<", lastpos: " << lastpos << endl;
 			if ( pos != lastpos ) {
 				QString tmp;
 				if ( pos < 0 ) {
@@ -183,7 +176,6 @@ kdDebug(14100) << "-------------------------\n" << htmlString << "\n------------
 					tmp = unescapeGaduMessage( tmp );
 					output->message += tmp;
 					position += tmp.length();
-					kdDebug(14100) << "text between without encoding I reckon \"" << tmp << "\"" << endl;
 				}
 			}
 
@@ -195,8 +187,6 @@ kdDebug(14100) << "-------------------------\n" << htmlString << "\n------------
 
 				lastpos = pos + replacement.length();
 
-				kdDebug(14100) << "\nposition : " << pos << endl;
-				kdDebug(14100)  <<"--------------\nstyle: "  << endl;
 				for( QStringList::Iterator attrPair = styleAttrs.begin(); attrPair != styleAttrs.end(); ++attrPair ) {
 					QString attribute = (*attrPair).section(':',0,0);
 					QString value = (*attrPair).section(':',1);
@@ -212,7 +202,6 @@ kdDebug(14100) << "-------------------------\n" << htmlString << "\n------------
 				htmlString.replace( findTags.pos( 0 ), rep.length(), replacement );
 
 				replacement = unescapeGaduMessage( replacement );
-				kdDebug(14100) << " message: \"" <<replacement <<"\"\n---------------" << endl;
 				output->message += replacement;
 				position += replacement.length();
 			}
@@ -239,18 +228,14 @@ GaduRichTextFormat::parseAttributes( const QString attribute, const QString valu
 {
 	if( attribute == QString::fromLatin1("color") ) {
 		color.setNamedColor( value );
-		kdDebug(14100) << "color detected, value: \"" <<  value << "\"  " << endl;
 	}
 	if( attribute == QString::fromLatin1("font-weight") && value == QString::fromLatin1("600") ) {
-		kdDebug(14100) << " font bold " << endl;
 		rtfs.font |= GG_FONT_BOLD;
 	}
 	if( attribute == QString::fromLatin1("text-decoration")  && value == QString::fromLatin1("underline") ) {
-		kdDebug(14100) << " font underline "  << endl;
 		rtfs.font |= GG_FONT_UNDERLINE ;
 	}
 	if( attribute == QString::fromLatin1("font-style")  && value == QString::fromLatin1("italic") ) {
-		kdDebug(14100) << " font italic "  << endl;
 		rtfs.font |= GG_FONT_ITALIC;
 	}
 }
@@ -279,7 +264,6 @@ GaduRichTextFormat::insertRtf( uint position)
 		rtfs.position = position;
 		uint csize = rtf.size();
 		if ( rtf.resize( csize + sizeof( gg_msg_richtext_format ) ) == FALSE ) {
-			kdDebug( 14100 ) << "problem allocating memory, message cannot be sent" << endl;
 			return false;
 		};
 		memcpy( rtf.data()  + csize, &rtfs, sizeof( rtfs ) );
@@ -287,7 +271,6 @@ GaduRichTextFormat::insertRtf( uint position)
 		if ( rtfs.font & GG_FONT_COLOR ) {
 			csize = rtf.size();
 			if ( rtf.resize( csize + sizeof( gg_msg_richtext_color ) ) == FALSE ) {
-				kdDebug( 14100 ) << "problem allocating memory, message cannot be sent" << endl;
 				return false;
 			};
 			memcpy( rtf.data() + csize, &rtcs, sizeof( rtcs ) );
