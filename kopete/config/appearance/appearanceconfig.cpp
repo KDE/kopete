@@ -370,7 +370,6 @@ void AppearanceConfig::updateEmoticonlist()
 
 void AppearanceConfig::slotUseEmoticonsChanged( bool b )
 {
-	mPrfsEmoticons->setEnabled( b );
 	emitChanged();
 }
 
