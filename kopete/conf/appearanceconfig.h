@@ -25,7 +25,8 @@ class QFrame;
 class QTabWidget;
 class QCheckBox;
 class KListBox;
-class KIconView;
+//class KIconView;
+class KTextEdit;
 class KHTMLPart;
 class KopeteContact;
 class StyleEditDialog;
@@ -79,7 +80,8 @@ private:
 	QFrame* mEmoticonsTab;
 	QCheckBox *mUseEmoticonsChk;
 	KListBox *icon_theme_list;
-	KIconView *icon_theme_preview;
+//	KIconView *icon_theme_preview;
+	KTextEdit *icon_theme_preview;
 	KHTMLPart *preview;
 	KTextEditor::Document* editDocument;
 

@@ -48,7 +48,7 @@
                 </sizepolicy>
             </property>
             <property name="text">
-                <string>Highlight messages containing your nickname</string>
+                <string>Highlight messages containing your &amp;nickname</string>
             </property>
         </widget>
         <widget class="QButtonGroup">
@@ -56,7 +56,7 @@
                 <cstring>interfaceGroup</cstring>
             </property>
             <property name="title">
-                <string>Interface Preference</string>
+                <string>&amp;Interface Preference</string>
             </property>
             <vbox>
                 <property name="name">
@@ -85,7 +85,7 @@
                 <cstring>chatWindowGroup</cstring>
             </property>
             <property name="title">
-                <string>Chat Window Grouping Policy</string>
+                <string>Chat Window &amp;Grouping Policy</string>
             </property>
             <vbox>
                 <property name="name">
@@ -139,7 +139,10 @@
                         <cstring>txtChatViewBufferSize</cstring>
                     </property>
                     <property name="text">
-                        <string>Maximum Chat Window Lines:</string>
+                        <string>&amp;Maximum Chat Window Lines:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>mChatViewBufferSize</cstring>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>Limit the maximum number of lines visible in a chat window to improve speed for complex layouts.</string>

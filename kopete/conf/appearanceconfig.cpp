@@ -24,6 +24,7 @@
 #include <qhbuttongroup.h>
 #include <qspinbox.h>
 #include <qslider.h>
+#include <qlabel.h>
 
 #include <klineedit.h>
 #include <kcolorcombo.h>
@@ -42,7 +43,8 @@
 #include <kfontdialog.h>
 #include <ktrader.h>
 #include <klibloader.h>
-#include <kiconview.h>
+//#include <kiconview.h>
+#include <ktextedit.h>
 
 #include <ktexteditor/highlightinginterface.h>
 #include <ktexteditor/editinterface.h>
@@ -76,19 +78,32 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	mEmoticonsTab = new QFrame(mAppearanceTabCtl);
 	(new QVBoxLayout(mEmoticonsTab, KDialog::marginHint(),
 		KDialog::spacingHint()))->setAutoAdd(true);
-	mUseEmoticonsChk = new QCheckBox ( i18n("&Use emoticons"), mEmoticonsTab );
+	mUseEmoticonsChk = new QCheckBox(i18n("&Use emoticons"), mEmoticonsTab);
 	icon_theme_list = new KListBox(mEmoticonsTab, "icon_theme_list");
-	icon_theme_preview = new KIconView(mEmoticonsTab, "icon_theme_preview");
+	new QLabel(i18n("Preview:"), mEmoticonsTab);
+/*	icon_theme_preview = new KIconView(mEmoticonsTab, "icon_theme_preview");
 	icon_theme_preview->setFixedHeight(64);
 	icon_theme_preview->setItemsMovable(false);
 	icon_theme_preview->setSelectionMode(QIconView::NoSelection);
 	icon_theme_preview->setFocusPolicy(NoFocus);
 	icon_theme_preview->setSpacing(2);
+*/
+	icon_theme_preview = new KTextEdit(mEmoticonsTab, "icon_theme_preview");
+	icon_theme_preview->setFixedHeight(64);
+	icon_theme_preview->setFocusPolicy(NoFocus);
+	icon_theme_preview->setReadOnly(true);
+	icon_theme_preview->setWrapPolicy(QTextEdit::Anywhere);
+	icon_theme_preview->setTextFormat(Qt::RichText);
+/* // Doesn't work, don't ask me why [mETz]
+	QStyleSheet *style = icon_theme_preview->styleSheet();
+	QStyleSheetItem *img = style->item("img");
+	img->setMargin(QStyleSheetItem::MarginAll, 8);
+*/
 	connect(mUseEmoticonsChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotUseEmoticonsChanged(bool)));
 	connect(icon_theme_list, SIGNAL(selectionChanged()),
 		this, SLOT(slotSelectedEmoticonsThemeChanged()));
-	mAppearanceTabCtl->addTab( mEmoticonsTab, i18n("&Emoticons") );
+	mAppearanceTabCtl->addTab(mEmoticonsTab, i18n("&Emoticons"));
 
 
 	// "Chat Window" TAB ========================================================
@@ -261,17 +276,17 @@ void AppearanceConfig::reopen()
 	slotGreyIdleMetaContactsChanged(p->greyIdleMetaContacts());
 }
 
-void AppearanceConfig::slotUseEmoticonsChanged ( bool checked )
+void AppearanceConfig::slotUseEmoticonsChanged(bool b)
 {
-	icon_theme_list->setEnabled( checked );
-	icon_theme_preview->setEnabled( checked );
+	icon_theme_list->setEnabled(b);
+	icon_theme_preview->setEnabled(b);
 }
 
 void AppearanceConfig::slotSelectedEmoticonsThemeChanged()
 {
 //	kdDebug(14000) << k_funcinfo << "called." << endl;
 
-	icon_theme_preview->clear();
+/*	icon_theme_preview->clear();
 
 	KopeteEmoticons emoticons( icon_theme_list->currentText() );
 	QPixmap previewPixmap;
@@ -284,6 +299,18 @@ void AppearanceConfig::slotSelectedEmoticonsThemeChanged()
 		if (!previewPixmap.isNull())
 			new KIconViewItem(icon_theme_preview, 0, previewPixmap);
 	}
+*/
+
+	KopeteEmoticons emoticons(icon_theme_list->currentText());
+	QStringList smileys = emoticons.picList();
+	QString newContentText = "<qt>";
+
+	for(QStringList::Iterator it = smileys.begin(); it != smileys.end(); ++it )
+	{
+		newContentText += QString::fromLatin1("<img src=\"%1\"> ").arg(*it);
+	}
+	newContentText += QString::fromLatin1("</qt>");
+	icon_theme_preview->setText(newContentText);
 }
 
 void AppearanceConfig::slotTransparencyChanged ( bool checked )
