@@ -31,11 +31,6 @@
   *@author Till Gerken <till@tantalo.net>
   */
 
-class JabberProtocol;
-class JabberConnector;
-class QCheckBox;
-class QLineEdit;
-
 class JabberEditAccountWidget:public DlgJabberEditAccountWidget, public KopeteEditAccountWidget
 {
 
@@ -48,32 +43,20 @@ public:
 	virtual KopeteAccount *apply ();
 	bool settings_changed;
 
-private:
-	JabberProtocol *m_protocol;
-
-	QCA::TLS *jabberTLS;
-	XMPP::QCATLSHandler *jabberTLSHandler;
-	JabberConnector *jabberClientConnector;
-	XMPP::ClientStream *jabberClientStream;
-	XMPP::Client *jabberClient;
-
-	void reopen ();
-	void writeConfig ();
-	void cleanup ();
-
 private slots:
 	void registerClicked ();
+	void deleteClicked ();
 	void sslToggled (bool);
 	void configChanged ();
 	void updateServerField ();
-	void slotRegisterUserDone ();
+	void slotRegisterOkClicked ();
+	void slotRegisterCancelClicked ();
 
-	void slotTLSHandshaken ();
-	void slotCSAuthenticated ();
-	void slotCSWarning ();
-	void slotCSError (int error);
+private:
+	JabberProtocol *m_protocol;
 
-	void disconnect ();
+	void reopen ();
+	void writeConfig ();
 
 };
 

@@ -23,28 +23,18 @@
 #include <qpushbutton.h>
 #include <qspinbox.h>
 #include <qcombobox.h>
+#include <qlabel.h>
 #include <kmessagebox.h>
 #include <klocale.h>
-#include <qtimer.h>
 
 #include "kopeteuiglobal.h"
 
-#include "qca.h"
-#include "xmpp.h"
-#include "xmpp_tasks.h"
-
 #include "jabbereditaccountwidget.h"
-#include "jabberconnector.h"
+#include "jabberregisteraccount.h"
 
 JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, JabberAccount * ident, QWidget * parent, const char *name)
 						: DlgJabberEditAccountWidget (parent, name), KopeteEditAccountWidget (ident)
 {
-
-	jabberTLS = 0L;
-	jabberTLSHandler = 0L;
-	jabberClientConnector = 0L;
-	jabberClientStream = 0L;
-	jabberClient = 0L;
 
 	m_protocol = proto;
 
@@ -64,7 +54,6 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	connect (mID, SIGNAL (textChanged (const QString &)), this, SLOT (updateServerField ()));
 	connect (cbCustomServer, SIGNAL (toggled (bool)), this, SLOT (updateServerField ()));
 
-	connect (btnRegister, SIGNAL (clicked ()), this, SLOT (registerClicked ()));
 	connect (cbUseSSL, SIGNAL (toggled (bool)), this, SLOT (sslToggled (bool)));
 
 	connect (leLocalIP, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
@@ -74,10 +63,14 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	if (account())
 	{
 		this->reopen ();
-		btnRegister->setDisabled( true );
-	}
-	else {
-		btnRegister->setEnabled( true );
+		btnRegister->setEnabled ( false );
+/*		connect (btnRegister, SIGNAL (clicked ()), this, SLOT (deleteClicked ()));
+		lblRegistration->setText ( i18n ( "<i>Use this button to delete your account from the server. Please note that your contact list will be deleted permanently and you will not be able to log in again.</i>" ) );
+		btnRegister->setText ( i18n ( "&Delete Account" ) );
+*/	}
+	else
+	{
+		connect (btnRegister, SIGNAL (clicked ()), this, SLOT (registerClicked ()));
 	}
 }
 
@@ -130,7 +123,7 @@ void JabberEditAccountWidget::reopen ()
 
 KopeteAccount *JabberEditAccountWidget::apply ()
 {
-	kdDebug (14180) << "JabberEditAccount::apply()" << endl;
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << "JabberEditAccount::apply()" << endl;
 
 	if (!account())
 	{
@@ -243,224 +236,35 @@ void JabberEditAccountWidget::updateServerField ()
 
 }
 
+void JabberEditAccountWidget::deleteClicked ()
+{
+
+	// delete account here
+
+}
+
 void JabberEditAccountWidget::registerClicked ()
 {
 
-	if(!validateData())
-		return;
+	JabberRegisterAccount *registerDlg = new JabberRegisterAccount ( this );
+	connect ( registerDlg, SIGNAL ( okClicked () ), this, SLOT ( slotRegisterOkClicked () ) );
+	connect ( registerDlg, SIGNAL ( cancelClicked () ), this, SLOT ( slotRegisterCancelClicked () ) );
 
-	kdDebug(14131) << k_funcinfo << "Registering a new Jabber account." << endl;
-
-	btnRegister->setEnabled(false);
-
-	pbRegistration->setEnabled(true);
-
-	/*
-	 * Check for SSL availability first
-	 */
-	bool trySSL = false;
-	if ( cbUseSSL->isChecked () )
-	{
-		bool sslPossible = QCA::isSupported(QCA::CAP_TLS);
-
-		if (!sslPossible)
-		{
-			KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget (), KMessageBox::Error,
-								i18n ("SSL support could not be initialized for account %1. This is most likely because the QCA TLS plugin is not installed on your system.").
-								arg(mID->text()),
-								i18n ("Jabber SSL Error"));
-			return;
-		}
-		else
-		{
-			trySSL = true;
-		}
-	}
-
-	/*
-	 * Instantiate connector, responsible for dealing with the socket.
-	 * This class uses KDE's socket code, which in turn makes use of
-	 * the global proxy settings.
-	 */
-	jabberClientConnector = new JabberConnector;
-	jabberClientConnector->setOptHostPort ( mServer->text (), mPort->value () );
-	jabberClientConnector->setOptSSL(trySSL);
-
-	/*
-	 * Setup authentication layer
-	 */
-	if ( trySSL )
-	{
-		jabberTLS = new QCA::TLS;
-		jabberTLSHandler = new XMPP::QCATLSHandler(jabberTLS);
-
-		{
-			using namespace XMPP;
-			QObject::connect(jabberTLSHandler, SIGNAL(tlsHandshaken()), this, SLOT(slotTLSHandshaken()));
-		}
-	}
-
-	/*
-	 * Instantiate client stream which handles the network communication by referring
-	 * to a connector (proxying etc.) and a TLS handler (security layer)
-	 */
-	jabberClientStream = new XMPP::ClientStream(jabberClientConnector, jabberTLSHandler);
-
-	{
-		using namespace XMPP;
-		QObject::connect (jabberClientStream, SIGNAL (authenticated()),
-				  this, SLOT (slotCSAuthenticated ()));
-		QObject::connect (jabberClientStream, SIGNAL (warning (int)),
-				  this, SLOT (slotCSWarning ()));
-		QObject::connect (jabberClientStream, SIGNAL (error (int)),
-				  this, SLOT (slotCSError (int)));
-	}
-
-	/*
-	 * FIXME: This is required until we fully support XMPP 1.0
-	 *        Upon switching to XMPP 1.0, add full TLS capabilities
-	 *        with fallback (setOptProbe()) and remove the call below.
-	 */
-	jabberClientStream->setOldOnly(true);
-
-	/*
-	 * Initiate anti-idle timer (will be triggered every 55 seconds).
-	 */
-	jabberClientStream->setNoopTime(55000);
-
-	jabberClient = new XMPP::Client (this);
-
-	pbRegistration->setProgress(25);
-
-	/*
-	 * Start connection, no authentication
-	 */
-	jabberClient->connectToServer (jabberClientStream, XMPP::Jid(mID->text ()), false);
-
+	registerDlg->show ();
 
 }
 
-void JabberEditAccountWidget::cleanup ()
+void JabberEditAccountWidget::slotRegisterOkClicked ()
 {
 
-	delete jabberClient;
-	delete jabberClientStream;
-	delete jabberClientConnector;
-	delete jabberTLSHandler;
-	delete jabberTLS;
-
-	jabberTLS = 0L;
-	jabberTLSHandler = 0L;
-	jabberClientConnector = 0L;
-	jabberClientStream = 0L;
-	jabberClient = 0L;
+	//JabberRegisterAccount *registerDlg = static_cast<JabberRegisterAccount*>( sender () );
 
 }
 
-void JabberEditAccountWidget::disconnect ()
+void JabberEditAccountWidget::slotRegisterCancelClicked ()
 {
 
-	if(jabberClient)
-		jabberClient->close(true);
-
-	cleanup ();
-
-}
-
-void JabberEditAccountWidget::slotTLSHandshaken ()
-{
-	kdDebug(14131) << k_funcinfo << "TLS handshake done, testing certificate validity..." << endl;
-
-	pbRegistration->setProgress(50);
-
-	int validityResult = jabberTLS->certificateValidityResult ();
-
-	if(validityResult == QCA::TLS::Valid)
-	{
-		kdDebug(14131) << k_funcinfo << "Certificate is valid, continuing." << endl;
-
-		// valid certificate, continue
-		jabberTLSHandler->continueAfterHandshake ();
-	}
-	else
-	{
-		kdDebug(14131) << k_funcinfo << "Certificate is not valid, asking user what to do next." << endl;
-
-		// certificate is not valid, query the user
-		if(JabberAccount::handleTLSWarning (validityResult, mServer->text (), mID->text ()) == KMessageBox::Continue)
-		{
-			jabberTLSHandler->continueAfterHandshake ();
-		}
-		else
-		{
-			disconnect ();
-		}
-	}
-
-}
-
-void JabberEditAccountWidget::slotCSWarning ()
-{
-
-	// FIXME: with the next synch point of Iris, this should
-	//        have become a slot, so simply connect it through.
-	jabberClientStream->continueAfterWarning ();
-
-}
-
-void JabberEditAccountWidget::slotCSError (int error)
-{
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Error in stream signalled, disconnecting." << endl;
-
-	KopeteAccount::DisconnectReason errorClass;
-
-	// display message to user
-	JabberAccount::handleStreamError (error, jabberClientStream->errorCondition (), jabberClientConnector->errorCode (), mServer->text (), errorClass);
-
-	disconnect ();
-
-}
-
-void JabberEditAccountWidget::slotCSAuthenticated ()
-{
-
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Launching registration task..." << endl;
-
-	pbRegistration->setProgress(75);
-
-	/* start the client operation */
-	XMPP::Jid jid(mID->text ());
-	jabberClient->start ( jid.domain (), jid.node (), "", "" );
-
-	XMPP::JT_Register * task = new XMPP::JT_Register (jabberClient->rootTask ());
-	QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotRegisterUserDone ()));
-	task->reg (mID->text().section("@", 0, 0), mPass->text ());
-	task->go (true);
-
-}
-
-void JabberEditAccountWidget::slotRegisterUserDone ()
-{
-	XMPP::JT_Register * task = (XMPP::JT_Register *) sender ();
-
-	pbRegistration->setProgress(100);
-
-	if (task->success ())
-		KMessageBox::information (Kopete::UI::Global::mainWidget (), i18n ("Account successfully registered."), i18n ("Account Registration"));
-	else
-	{
-		KMessageBox::information (Kopete::UI::Global::mainWidget (), i18n ("Unable to create account on the server."), i18n ("Account Registration"));
-
-	}
-
-	// FIXME: this is required because Iris crashes if we try
-	//        to disconnect here. Hopefully Justin can fix this.
-	QTimer::singleShot(0, this, SLOT(disconnect ()));
-
-	pbRegistration->setEnabled(false);
-	pbRegistration->setProgress(0);
-
-	btnRegister->setEnabled(true);
+	//JabberRegisterAccount *registerDlg = static_cast<JabberRegisterAccount*>( sender () );
 
 }
 
@@ -472,7 +276,6 @@ void JabberEditAccountWidget::sslToggled (bool value)
 		if(!value && (mPort->value() == 5223))
 			mPort->stepDown ();
 }
-
 
 #include "jabbereditaccountwidget.moc"
 

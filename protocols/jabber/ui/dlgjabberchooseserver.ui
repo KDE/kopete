@@ -1,25 +1,31 @@
 <!DOCTYPE UI><UI version="3.2" stdsetdef="1">
-<class>jabberChooseServer</class>
-<widget class="QDialog">
+<class>DlgJabberChooseServer</class>
+<widget class="QWidget">
     <property name="name">
-        <cstring>jabberChooseServer</cstring>
+        <cstring>DlgJabberChooseServer</cstring>
     </property>
     <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>437</width>
-            <height>423</height>
+            <width>334</width>
+            <height>339</height>
         </rect>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>300</width>
+            <height>300</height>
+        </size>
     </property>
     <property name="caption">
         <string>Choose Server - Jabber</string>
     </property>
-    <vbox>
+    <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="KListView">
+        <widget class="QTable" row="0" column="0">
             <column>
                 <property name="text">
                     <string>Server</string>
@@ -27,49 +33,43 @@
                 <property name="pixmap">
                     <pixmap>image0</pixmap>
                 </property>
-                <property name="clickable">
-                    <bool>true</bool>
-                </property>
-                <property name="resizable">
-                    <bool>true</bool>
-                </property>
             </column>
             <column>
                 <property name="text">
                     <string>Description</string>
                 </property>
-                <property name="clickable">
-                    <bool>true</bool>
-                </property>
-                <property name="resizable">
-                    <bool>true</bool>
-                </property>
             </column>
-        <item>
-            <property name="text">
-                <string>DONT_TRANSLATE</string>
-            </property>
-            <property name="text">
-                <string>DO_NOT_TRANSLATE</string>
-            </property>
-            <property name="pixmap">
-                <pixmap></pixmap>
-            </property>
-            <property name="pixmap">
-                <pixmap></pixmap>
-            </property>
-        </item>
             <property name="name">
                 <cstring>listServers</cstring>
             </property>
-            <property name="fullWidth">
+            <property name="focusPolicy">
+                <enum>NoFocus</enum>
+            </property>
+            <property name="resizePolicy">
+                <enum>AutoOneFit</enum>
+            </property>
+            <property name="hScrollBarMode">
+                <enum>AlwaysOn</enum>
+            </property>
+            <property name="numRows">
+                <number>0</number>
+            </property>
+            <property name="numCols">
+                <number>2</number>
+            </property>
+            <property name="readOnly">
                 <bool>true</bool>
             </property>
-            <property name="itemsMovable">
+            <property name="sorting">
                 <bool>false</bool>
             </property>
+            <property name="selectionMode">
+                <enum>SingleRow</enum>
+            </property>
+            <property name="resizeMode" stdset="0">
+            </property>
         </widget>
-        <widget class="KActiveLabel">
+        <widget class="KActiveLabel" row="2" column="0">
             <property name="name">
                 <cstring>linkServerDetails</cstring>
             </property>
@@ -82,104 +82,26 @@
                 </sizepolicy>
             </property>
             <property name="text">
-                <string>&lt;center&gt;&lt;a href="http://www.jabber.org/user/publicservers.php"&gt;Details about free public Jabber servers&lt;/a&gt;&lt;/center&gt;</string>
+                <string>&lt;a href="http://www.jabber.org/user/publicservers.php"&gt;Details about free public Jabber servers&lt;/a&gt;</string>
             </property>
         </widget>
-        <widget class="Line">
+        <widget class="QLabel" row="1" column="0">
             <property name="name">
-                <cstring>lineButtonSeparator</cstring>
+                <cstring>lblStatus</cstring>
             </property>
-            <property name="frameShape">
-                <enum>HLine</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Sunken</enum>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
+            <property name="text">
+                <string></string>
             </property>
         </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layoutButtons</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacerButtonsLeft</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>buttonSelect</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Select</string>
-                    </property>
-                    <property name="default">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>buttonCancel</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Cancel</string>
-                    </property>
-                </widget>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacerButtonsRight</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-            </hbox>
-        </widget>
-    </vbox>
+    </grid>
 </widget>
 <images>
     <image name="image0">
-        <data format="PNG" length="683">89504e470d0a1a0a0000000d49484452000000100000001008060000001ff3ff610000027249444154789c8d92cd6f4c6114c67ff7bdf7bef78e32a525888f8a8f12896862d18888ae2a76161676ea3f500b6141c3ca4234b1a95d6b458918896043e233687c44438ba1a5d254b5cc303a77e6beef3d36a6693a5d7856e724e7f7e4c939c71111001cc701a0789b2677716b875ad4bcb7fcf30ef1af27b889e43c2b19493899dac33040854344a69b4286b6f853a724361253cc4a349191ef4f57c8b787a18cdfd3f2eb96924286b6999ce29ff2bdb4f89b3bbbddd50749e2516c344062be122c6e4505014e1810d586c4bedb9defa5a5c24d1b48b0a1d35bb31fb179dca00147b988790fce0fbc541d4a6b94d698ba14d6381d15ceab14d68d9b4ce1016ed848623489fd82d82c928ce0f806a534622c8952d8b05c9dc0ca38536347880bd749cafd88e9479c2f28bf88d21e4afb28ede3ea10fc7954253063714e6f340bcdd425445e22c947944e001fb12e622da23cd04b89265fe4aa12c4dfe3f6625f0ec73588bc47690737d0281de0864bf1525bf06ab613bd2e501efddd5ee19c997f903da10e858db59df57b56e106eb507e239046acc5960c13376fe6a2772fdad79f4a7ae6fc0380fea37edbe0b985529cdc267179b758d325d18f2ec99edf31d47fcc6b9abeda3f6e7a0715355f6dcbecdb347e60a7312dc6f7f856b84bfef314f7fb6a2f3c7f6e5ecd9eaf3258bb7a49d3e1d3c75b36ad5fc6db812c17afdca0efc3330626925db367e734482f98471c1b5ce5e04889f9ba889f4c22369c8baf36181bcf0d779cbd36bc3235b4e64fe127838383644785c86ba88a0f33ce58d1a7c76786ef3e1ab850bfbc91743a8d318652a9888cf4b4ff970140a96c7aba2ebf793592afa39cda4aa9a6b967cefcc05fdc5c3ecd789ac5590000000049454e44ae426082</data>
+        <data format="XPM.GZ" length="2846">789c75d54953dd381007f03b9fe255fa969aea585ea59a9a039084256c0f0810a6e6204b32fbfe58a7e6bb8fddff3609c90ce6f27b6acbea764bfef07e72b0b53e79ff61ee6ee6672761128efdede47dbcbfb878fef3af3ffe9e7b67eac9f05fb849feeeb7b977d3d9244c36ae2ed300ef7b50664cac337127b626cf9db885f3a22e075325762694324edfc4de74954c4e6b705ed595dc4fe2ceb842c6fdd16093e5be6e24be1e9ce7856f647e7f227685ad647db4230e65d178194fe26eb8c43cb8903f89df1e5d4a3c1d8a7d9559acff40dccf57c1e5e0d20c97b811fb2ad928f31f8b43e59b56c6dde0aa1d2ef1ba3895b194f5901d5cd7755307b93f8add70c9f87470636a5be2fe7d71d5b416f905b1b399433db706dbcc3695d4930ab1192ef1e660d7b8429fbf216e6dd2f9b3c1a18d59443df7c4a9772dcec5dd70897707f7a355c2f33f8a8bc66678fe17b5cb50bf4f62eb7223fd430fe2d0a40cf7afc2ce1658cff9e0646c9521fe515cfad2209f457555607ee99f543bafcf3f1337aecbe4fdd005eccb4ceacd976217cacccaf8bdd8b719fa830fd57926f5e62b38984ceac12fea5ac7a5bf53eb23c689e156f3e5353834fafc67b5c3faf862b491fcf949dd66526f967aa61082ce77a04e46eac7f23e536c8b1ce3ab70e80cf291fe4ba96f70a91fefc33137c8675edcb555867807c7d220bf95d139eedf53d746fa95b3d1fafc85c15dd666b9bc0fb670b4c88fbcba3f2164fcebab518f1bb1f10eef9f23dc6abf7003c760a45f7977748efbafc579db68fc231cfb05cbf34fd429c7fb3f1d5da0decba3b15fb85677c89fe4bceb8a7e39c8bf529b1cfd78acce612e5f8d7c315eb699e697d441dfcf0e9c8c9e4f97ea02f5a4237595cbf9c84be2fe80a9b17fa3ba413da8535bac97d2abf17ee53ce9ea100af8014ed6211f1d4faec27e9c8d463d19eb69fa7a231f525b7501275fa3bfcd683d9feed46d055fa9638e7c3e8fd6f3fbf6d518bf51a702cf43beb61dfbe71c4efd8692f8157572a8dff6abd10fd7ea0ef3d1c2e806cf43bfdace75a817d6e3a2b7e8974db8df7118bf57772df617fadf875062ff213fdf7738ce8f2775897a30fab58d49e7cfe1ae6ad11ff3eadae23c5d52fb12df4fa3ee2fb91ffd1b626cb05fb6e0ae8ea8d799ba89e8d799daeaf7e159ed1accff32da62bfcbf7a08b7dc658ffa2da27d47baa6e615a56077d1fe887d4cf88f59caa6327ef87e57bd20d7fb2fee90c17137b6e3970e4c41d1f8dbf7f8fe1633ee1533ee373bee04bbee26b3e7e1bc3377ccb773ce37b7ee0477ee2677ee179be7913b3c08bfc913ff1675ee2655ee155fec26bbcfe26668337798ba7bccd3bbccb5f798ff7f980bfbd8939e48c0de75c70c915d7dcb06547fc630c11796a2950a4441d1dd1319dd0299dbd8939a70bbaecc7afe89a6ee896ee6846f774fe36777aa0c73ee2899ee985e6698116e9e1e7faf4511fe9137da6255aa6155aa52fbfd6b08f59a375daa04ddaa2296d8fbffe14b343bbf495f6689f0ee8dbffc41c524686722aa8a4ea7f626a6ac892f3ecc9fbff8e99ce7ceb838f3ef9eefb6fbfc4787fe48ffdc98fb3f431fffc3ef72fd6519eaa</data>
     </image>
 </images>
-<connections>
-    <connection>
-        <sender>buttonCancel</sender>
-        <signal>clicked()</signal>
-        <receiver>jabberChooseServer</receiver>
-        <slot>close()</slot>
-    </connection>
-</connections>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>klistview.h</includehint>
     <includehint>kactivelabel.h</includehint>
 </includehints>
 </UI>

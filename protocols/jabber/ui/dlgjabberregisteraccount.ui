@@ -1,41 +1,77 @@
 <!DOCTYPE UI><UI version="3.2" stdsetdef="1">
-<class>jabberRegisterAccount</class>
-<widget class="QDialog">
+<class>DlgJabberRegisterAccount</class>
+<widget class="QWidget">
     <property name="name">
-        <cstring>jabberRegisterAccount</cstring>
+        <cstring>DlgJabberRegisterAccount</cstring>
     </property>
     <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>336</width>
-            <height>368</height>
+            <width>334</width>
+            <height>382</height>
         </rect>
     </property>
     <property name="caption">
         <string>Register Account - Jabber</string>
     </property>
-    <vbox>
+    <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLayoutWidget">
+        <widget class="QLabel" row="4" column="0">
             <property name="name">
-                <cstring>layoutInput</cstring>
+                <cstring>lblStatusMessage</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget" row="0" column="0">
+            <property name="name">
+                <cstring>layout3</cstring>
             </property>
             <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel" row="2" column="0">
+                <widget class="QLabel" row="0" column="0">
                     <property name="name">
-                        <cstring>labelPassword</cstring>
+                        <cstring>labelServer</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Password:</string>
+                        <string>Jabber &amp;Server:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>valuePassword</cstring>
+                        <cstring>leServer</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>labelPasswordVerify</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Repeat Password:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>lePasswordVerify</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="4" column="0">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Port:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>sbPort</cstring>
                     </property>
                 </widget>
                 <widget class="QLayoutWidget" row="0" column="1">
@@ -48,61 +84,42 @@
                         </property>
                         <widget class="QLineEdit">
                             <property name="name">
-                                <cstring>valueServer</cstring>
+                                <cstring>leServer</cstring>
                             </property>
                             <property name="text">
                                 <string></string>
                             </property>
                         </widget>
-                        <widget class="QPushButton">
+                        <widget class="KPushButton">
                             <property name="name">
-                                <cstring>buttonChooseServer</cstring>
+                                <cstring>btnChooseServer</cstring>
                             </property>
                             <property name="text">
                                 <string>C&amp;hoose...</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+H</string>
                             </property>
                         </widget>
                     </hbox>
                 </widget>
                 <widget class="QLineEdit" row="1" column="1">
                     <property name="name">
-                        <cstring>valueUsername</cstring>
+                        <cstring>leJID</cstring>
                     </property>
                     <property name="text">
                         <string></string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="0" column="0">
+                <widget class="KPasswordEdit" row="3" column="1">
                     <property name="name">
-                        <cstring>labelServer</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Jabber Ser&amp;ver:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>valueServer</cstring>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="2" column="1">
-                    <property name="name">
-                        <cstring>valuePassword</cstring>
-                    </property>
-                    <property name="echoMode">
-                        <enum>Password</enum>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="3" column="0">
-                    <property name="name">
-                        <cstring>labelPasswordVerify</cstring>
+                        <cstring>lePasswordVerify</cstring>
                     </property>
                     <property name="enabled">
                         <bool>true</bool>
                     </property>
-                    <property name="text">
-                        <string>Repeat Pass&amp;word:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>valuePasswordVerify</cstring>
+                    <property name="echoMode">
+                        <enum>Password</enum>
                     </property>
                 </widget>
                 <widget class="QLabel" row="1" column="0">
@@ -110,31 +127,50 @@
                         <cstring>labelUsername</cstring>
                     </property>
                     <property name="text">
-                        <string>Desired &amp;user name:</string>
+                        <string>Desired Jabber &amp;ID:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>valueUsername</cstring>
+                        <cstring>leJID</cstring>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="3" column="1">
+                <widget class="KPasswordEdit" row="2" column="1">
                     <property name="name">
-                        <cstring>valuePasswordVerify</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>true</bool>
+                        <cstring>lePassword</cstring>
                     </property>
                     <property name="echoMode">
                         <enum>Password</enum>
                     </property>
                 </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>labelPassword</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Pass&amp;word:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>lePassword</cstring>
+                    </property>
+                </widget>
+                <widget class="KIntSpinBox" row="4" column="1">
+                    <property name="name">
+                        <cstring>sbPort</cstring>
+                    </property>
+                    <property name="maxValue">
+                        <number>65535</number>
+                    </property>
+                </widget>
             </grid>
         </widget>
-        <widget class="QCheckBox">
+        <widget class="QCheckBox" row="1" column="0">
             <property name="name">
-                <cstring>cbUseSSL_2</cstring>
+                <cstring>cbUseSSL</cstring>
             </property>
             <property name="text">
                 <string>Use protocol encr&amp;yption (SSL)</string>
+            </property>
+            <property name="accel">
+                <string>Alt+Y</string>
             </property>
             <property name="checked">
                 <bool>true</bool>
@@ -146,7 +182,7 @@
                 <string>Check this box to enable SSL encrypted communication with the server.  Note that this is not end-to-end encryption, but rather encrypted communication with the server.</string>
             </property>
         </widget>
-        <spacer>
+        <spacer row="3" column="0">
             <property name="name">
                 <cstring>spacerMiddle</cstring>
             </property>
@@ -159,132 +195,41 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>110</height>
+                    <height>50</height>
                 </size>
             </property>
         </spacer>
-        <widget class="QLabel">
+        <widget class="QLabel" row="2" column="0">
             <property name="name">
-                <cstring>labelStatusMessage</cstring>
+                <cstring>lblJIDInformation</cstring>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>0</width>
+                    <height>100</height>
+                </size>
             </property>
             <property name="text">
                 <string></string>
             </property>
             <property name="alignment">
-                <set>AlignCenter</set>
+                <set>WordBreak|AlignVCenter</set>
             </property>
         </widget>
-        <widget class="Line">
-            <property name="name">
-                <cstring>lineButtonSeparator</cstring>
-            </property>
-            <property name="frameShape">
-                <enum>HLine</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Sunken</enum>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-        </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layoutButtons</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacerButtonsLeft</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>buttonRegister</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Register</string>
-                    </property>
-                    <property name="default">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>buttonCancel</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Cancel</string>
-                    </property>
-                </widget>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacerButtonsRight</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-            </hbox>
-        </widget>
-    </vbox>
+    </grid>
 </widget>
-<connections>
-    <connection>
-        <sender>buttonChooseServer</sender>
-        <signal>clicked()</signal>
-        <receiver>jabberRegisterAccount</receiver>
-        <slot>chooseServer()</slot>
-    </connection>
-    <connection>
-        <sender>buttonCancel</sender>
-        <signal>clicked()</signal>
-        <receiver>jabberRegisterAccount</receiver>
-        <slot>close()</slot>
-    </connection>
-    <connection>
-        <sender>buttonRegister</sender>
-        <signal>clicked()</signal>
-        <receiver>jabberRegisterAccount</receiver>
-        <slot>registerAccount()</slot>
-    </connection>
-</connections>
 <tabstops>
-    <tabstop>valueServer</tabstop>
-    <tabstop>buttonChooseServer</tabstop>
-    <tabstop>valueUsername</tabstop>
-    <tabstop>valuePassword</tabstop>
-    <tabstop>valuePasswordVerify</tabstop>
-    <tabstop>buttonRegister</tabstop>
-    <tabstop>buttonCancel</tabstop>
+    <tabstop>leServer</tabstop>
+    <tabstop>btnChooseServer</tabstop>
+    <tabstop>leJID</tabstop>
+    <tabstop>lePassword</tabstop>
+    <tabstop>lePasswordVerify</tabstop>
 </tabstops>
-<slots>
-    <slot>chooseServer()</slot>
-    <slot>registerAccount()</slot>
-</slots>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpassdlg.h</includehint>
+    <includehint>kpassdlg.h</includehint>
+    <includehint>knuminput.h</includehint>
+</includehints>
 </UI>
