@@ -87,7 +87,7 @@ public:
 	TypingNotifyTask * typingNotifyTask;
 	//Managers
 	SSIManager* ssiManager;
-	ConnectionList connections;
+	QValueList<Connection*> connections;
 	
 	//Our Userinfo
 	UserDetails ourDetails;
@@ -120,49 +120,30 @@ Client::Client( QObject* parent )
 
 Client::~Client()
 {
-	close();
 	
 	//delete the connections differently than in deleteConnections()
 	//deleteLater() seems to cause destruction order issues
-	QValueList<Connection*> connList = d->connections.getConnections();
-	QValueList<Connection*>::iterator it = connList.begin();
-	d->connections.removeAllConnections();
-	while ( it != connList.end() )
+	deleteStaticTasks();
+	QValueList<Connection*>::iterator it = d->connections.begin();
+	while ( it != d->connections.end() )
 	{
 		Connection* c = *it;
-		it = connList.remove( it );
+		it = d->connections.remove( it );
 		delete c;
 	}
-	
 	delete d->ssiManager;
 	delete d;
 }
 
-void Client::deleteConnections()
-{
-//	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Deleting " << d->connections.count() << " connections" << endl;
-	QValueList<Connection*> list = d->connections.getConnections();
-	QValueList<Connection*>::iterator it = list.begin();
-	d->connections.removeAllConnections();
-	while ( it != list.end() )
-	{
-		Connection* c = *it;
-		it = list.remove( it );
-		c->deleteLater();
-	}
-}
-
 void Client::connectToServer( Connection *c, const QString& server, bool auth )
 {
+	d->connections.append( c );
 	if ( auth == true )
 	{
-		d->connections.registerAuthConnection( c );
-	m_loginTask = new StageOneLoginTask( c->rootTask() );
-	connect( m_loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
+		m_loginTask = new StageOneLoginTask( c->rootTask() );
+		connect( m_loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
 	}
-	else
-		d->connections.registerBOSConnection( c );
-
+	
 	connect( c, SIGNAL( error( int ) ), SLOT( streamError( int ) ) );
 	connect( c, SIGNAL( error( const QString& ) ), SLOT( taskError( const QString& ) ) );
 
@@ -183,29 +164,22 @@ void Client::close()
 {
 	d->active = false;
 //	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Closing " << d->connections.count() << " connections" << endl;
-	deleteConnections();
 	//these are based on a connection. delete them.
-	delete d->errorTask;
-	delete d->onlineNotifier;
-	delete d->ownStatusTask;
-	delete d->messageReceiverTask;
-	delete d->ssiAuthTask;
-	delete d->icqInfoTask;
-	delete d->userInfoTask;
-	delete d->closeConnectionTask;
-	
-	d->errorTask = 0;
-	d->onlineNotifier = 0;
-	d->ownStatusTask = 0;
-	d->messageReceiverTask = 0;
-	d->ssiAuthTask = 0;
-	d->icqInfoTask = 0;
-	d->userInfoTask = 0;
-	d->closeConnectionTask = 0;
+	QValueList<Connection*>::iterator it = d->connections.begin();
+	while ( it != d->connections.end() )
+	{
+		Connection* c = *it;
+		it = d->connections.remove( it );
+		c->deleteLater();
+		c = 0;
+	}
+	deleteStaticTasks();
+
 	d->connectAsStatus = 0x0;
 	d->connectWithMessage = QString::null;
 //	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Clearing our internal SSI list" << endl;
 	d->ssiManager->clear();
+	
 }
 
 void Client::setStatus( AIMStatus status, const QString &_message )
@@ -224,7 +198,7 @@ void Client::setStatus( AIMStatus status, const QString &_message )
 			message = _message;
 	}
 
-	ProfileTask* pt = new ProfileTask( d->connections.bosConnection()->rootTask() );
+	ProfileTask* pt = new ProfileTask( d->connections.first()->rootTask() );
 	pt->setAwayMessage( message );
 	pt->go( true );
 }
@@ -235,7 +209,7 @@ void Client::setStatus( DWORD status, const QString &message )
 	if ( d->active )
 	{
 		//the first connection is always the BOS connection
-		ChangeVisibilityTask* cvt = new ChangeVisibilityTask( d->connections.bosConnection()->rootTask() );
+		ChangeVisibilityTask* cvt = new ChangeVisibilityTask( d->connections.first()->rootTask() );
 		if ( ( status & 0x0100 ) == 0x0100 )
 		{
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting invisible" << endl;
@@ -249,7 +223,7 @@ void Client::setStatus( DWORD status, const QString &message )
 		cvt->go( true );
 		
 		
-		SendDCInfoTask* sdcit = new SendDCInfoTask( d->connections.bosConnection()->rootTask(), status );
+		SendDCInfoTask* sdcit = new SendDCInfoTask( d->connections.first()->rootTask(), status );
 		sdcit->go( true ); //autodelete
 		// TODO: send away message
 	}
@@ -313,7 +287,7 @@ void Client::lt_loginFinished()
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "stage two login done. Setting up extra tasks and services" << endl;
 		initializeStaticTasks();
 		//setup the services
-		ServiceSetupTask* ssTask = new ServiceSetupTask( d->connections.bosConnection()->rootTask() );
+		ServiceSetupTask* ssTask = new ServiceSetupTask( d->connections.first()->rootTask() );
 		connect( ssTask, SIGNAL( finished() ), this, SLOT( serviceSetupFinished() ) );
 		ssTask->go( true ); //fire and forget
 		m_loginTaskTwo->deleteLater();
@@ -376,7 +350,7 @@ void Client::serviceSetupFinished()
 		setStatus( d->connectAsStatus, d->connectWithMessage );
 		
 		//retrieve offline messages
-		OfflineMessagesTask *offlineMsgTask = new OfflineMessagesTask( d->connections.bosConnection()->rootTask() );
+		OfflineMessagesTask *offlineMsgTask = new OfflineMessagesTask( d->connections.first()->rootTask() );
 		connect( offlineMsgTask, SIGNAL( receivedOfflineMessage(const Oscar::Message& ) ),
 				this, SIGNAL( messageReceived(const Oscar::Message& ) ) );
 		offlineMsgTask->go( true );
@@ -443,7 +417,7 @@ QCString Client::ipAddress() const
 
 void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
 { 
-	SendMessageTask *sendMsgTask = new SendMessageTask( d->connections.bosConnection()->rootTask() );
+	SendMessageTask *sendMsgTask = new SendMessageTask( d->connections.first()->rootTask() );
 	// Set whether or not the message is an automated response
 	sendMsgTask->setAutoResponse( isAuto );
 	sendMsgTask->setMessage( msg );
@@ -484,14 +458,14 @@ void Client::debug( const QString& str )
 void Client::initializeStaticTasks()
 {
 	//set up the extra tasks
-	d->errorTask = new ErrorTask( d->connections.bosConnection()->rootTask() );
-	d->onlineNotifier = new OnlineNotifierTask( d->connections.bosConnection()->rootTask() );
-	d->ownStatusTask = new OwnUserInfoTask( d->connections.bosConnection()->rootTask() );
-	d->messageReceiverTask = new MessageReceiverTask( d->connections.bosConnection()->rootTask() );
-	d->ssiAuthTask = new SSIAuthTask( d->connections.bosConnection()->rootTask() );
-	d->icqInfoTask = new ICQUserInfoRequestTask( d->connections.bosConnection()->rootTask() );
-	d->userInfoTask = new UserInfoTask( d->connections.bosConnection()->rootTask() );
-	d->typingNotifyTask = new TypingNotifyTask( d->connections.bosConnection()->rootTask() );
+	d->errorTask = new ErrorTask( d->connections.first()->rootTask() );
+	d->onlineNotifier = new OnlineNotifierTask( d->connections.first()->rootTask() );
+	d->ownStatusTask = new OwnUserInfoTask( d->connections.first()->rootTask() );
+	d->messageReceiverTask = new MessageReceiverTask( d->connections.first()->rootTask() );
+	d->ssiAuthTask = new SSIAuthTask( d->connections.first()->rootTask() );
+	d->icqInfoTask = new ICQUserInfoRequestTask( d->connections.first()->rootTask() );
+	d->userInfoTask = new UserInfoTask( d->connections.first()->rootTask() );
+	d->typingNotifyTask = new TypingNotifyTask( d->connections.first()->rootTask() );
 	
 	connect( d->onlineNotifier, SIGNAL( userIsOnline( const QString&, const UserDetails& ) ),
 	         this, SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ) );
@@ -530,7 +504,7 @@ void Client::removeGroup( const QString& groupName )
 	}
 	
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Removing group " << groupName << " from SSI" << endl;
-	SSIModifyTask* ssimt = new SSIModifyTask( d->connections.bosConnection()->rootTask() );
+	SSIModifyTask* ssimt = new SSIModifyTask( d->connections.first()->rootTask() );
 	if ( ssimt->removeGroup( groupName ) )
 		ssimt->go( true );
 }
@@ -544,7 +518,7 @@ void Client::addGroup( const QString& groupName )
 	}
 	
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding group " << groupName << " to SSI" << endl;
-	SSIModifyTask* ssimt = new SSIModifyTask( d->connections.bosConnection()->rootTask() );
+	SSIModifyTask* ssimt = new SSIModifyTask( d->connections.first()->rootTask() );
 	if ( ssimt->addGroup( groupName ) )
 		ssimt->go( true );
 }
@@ -558,7 +532,7 @@ void Client::addContact( const QString& contactName, const QString& groupName )
 	}
 	
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding contact " << contactName << " to SSI in group " << groupName << endl;
-	SSIModifyTask* ssimt = new SSIModifyTask( d->connections.bosConnection()->rootTask() );
+	SSIModifyTask* ssimt = new SSIModifyTask( d->connections.first()->rootTask() );
 	if ( ssimt->addContact( contactName, groupName )  )
 		ssimt->go( true );
 		
@@ -573,7 +547,7 @@ void Client::removeContact( const QString& contactName )
 	}
 	
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Removing contact " << contactName << " from SSI" << endl;
-	SSIModifyTask* ssimt = new SSIModifyTask( d->connections.bosConnection()->rootTask() );
+	SSIModifyTask* ssimt = new SSIModifyTask( d->connections.first()->rootTask() );
 	if ( ssimt->removeContact( contactName ) )
 		ssimt->go( true );
 }
@@ -587,7 +561,7 @@ void Client::renameGroup( const QString & oldGroupName, const QString & newGroup
 	}
 	
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Renaming group " << oldGroupName << " to " << newGroupName << endl;
-	SSIModifyTask* ssimt = new SSIModifyTask( d->connections.bosConnection()->rootTask() );
+	SSIModifyTask* ssimt = new SSIModifyTask( d->connections.first()->rootTask() );
 	if ( ssimt->renameGroup( oldGroupName, newGroupName ) )
 		ssimt->go( true );
 }
@@ -601,7 +575,7 @@ void Client::changeContactGroup( const QString& contact, const QString& newGroup
 	
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Changing " << contact << "'s group to "
 		<< newGroupName << endl;
-	SSIModifyTask* ssimt = new SSIModifyTask( d->connections.bosConnection()->rootTask() );
+	SSIModifyTask* ssimt = new SSIModifyTask( d->connections.first()->rootTask() );
 	if ( ssimt->changeGroup( contact, newGroupName ) )
 		ssimt->go( true );
 }
@@ -622,7 +596,7 @@ void Client::requestShortInfo( const QString& contactId )
 
 void Client::sendWarning( const QString& contact, bool anonymous )
 {
-	WarningTask* warnTask = new WarningTask( d->connections.bosConnection()->rootTask() );
+	WarningTask* warnTask = new WarningTask( d->connections.first()->rootTask() );
 	warnTask->setContact( contact );
 	warnTask->setAnonymous( anonymous );
 	QObject::connect( warnTask, SIGNAL( userWarned( const QString&, Q_UINT16, Q_UINT16 ) ),
@@ -672,7 +646,7 @@ void Client::requestStatusInfo( const QString& contact )
 
 void Client::whitePagesSearch( const ICQWPSearchInfo& info )
 {
-	UserSearchTask* ust = new UserSearchTask( d->connections.bosConnection()->rootTask() );
+	UserSearchTask* ust = new UserSearchTask( d->connections.first()->rootTask() );
 	connect( ust, SIGNAL( foundUser( const ICQSearchResult& ) ),
 	         this, SIGNAL( gotSearchResults( const ICQSearchResult& ) ) );
 	connect( ust, SIGNAL( searchFinished( int ) ), this, SIGNAL( endOfSearch( int ) ) );
@@ -682,7 +656,7 @@ void Client::whitePagesSearch( const ICQWPSearchInfo& info )
 
 void Client::uinSearch( const QString& uin )
 {
-	UserSearchTask* ust = new UserSearchTask( d->connections.bosConnection()->rootTask() );
+	UserSearchTask* ust = new UserSearchTask( d->connections.first()->rootTask() );
 	connect( ust, SIGNAL( foundUser( const ICQSearchResult& ) ),
 	         this, SIGNAL( gotSearchResults( const ICQSearchResult& ) ) );
 	connect( ust, SIGNAL( searchFinished( int ) ), this, SIGNAL( endOfSearch( int ) ) );
@@ -692,7 +666,7 @@ void Client::uinSearch( const QString& uin )
 
 void Client::updateProfile( const QString& profile )
 {
-	ProfileTask* pt = new ProfileTask( d->connections.bosConnection()->rootTask() );
+	ProfileTask* pt = new ProfileTask( d->connections.first()->rootTask() );
 	pt->setProfileText( profile );
 	pt->go(true);
 }
@@ -705,14 +679,14 @@ d->typingNotifyTask->setParams( contact, ( typing ? TypingNotifyTask::Begin : Ty
 
 void Client::requestBuddyIcon( const QString& user, const QByteArray& hash )
 {
-	if ( !d->connections.iconConnection() )
+	if ( d->connections.count() == 1 )
 	{
 		emit haveIconForContact( user, QByteArray() );
 		requestServerRedirect( 0x0010 );
 		return;
 	}
 
-	BuddyIconTask* bit = new BuddyIconTask( d->connections.iconConnection()->rootTask() );
+	BuddyIconTask* bit = new BuddyIconTask( d->connections.last()->rootTask() );
 	connect( bit, SIGNAL( haveIcon( const QString&, const QByteArray& ) ),
 	         this, SIGNAL( haveIconForContact( const QString&, const QByteArray& ) ) );
 	bit->requestIconFor( user );
@@ -726,7 +700,7 @@ void Client::requestServerRedirect( WORD family )
 	if ( d->redirectRequested == false  )
 	{
 		d->redirectRequested = true;
-		ServerRedirectTask* srt = new ServerRedirectTask( d->connections.bosConnection()->rootTask() );
+		ServerRedirectTask* srt = new ServerRedirectTask( d->connections.first()->rootTask() );
 		connect( srt, SIGNAL( haveServer( const QString&, const QByteArray&, WORD ) ),
 		         this, SLOT( haveServerForRedirect( const QString&, const QByteArray&, WORD ) ) );
 		srt->setService( family );
@@ -735,7 +709,7 @@ void Client::requestServerRedirect( WORD family )
 
 }
 
-void Client::haveServerForRedirect( const QString& host, const QByteArray& cookie, WORD family )
+void Client::haveServerForRedirect( const QString& host, const QByteArray& cookie, WORD )
 {
 	//create a new connection and set it up
 	int colonPos = host.find(':');
@@ -752,7 +726,7 @@ void Client::haveServerForRedirect( const QString& host, const QByteArray& cooki
 	}
 
 	Connection* c = createConnection( realHost, realPort );
-	d->connections.registerIconConnection( c );
+	d->connections.append( c );
 	//create the new login task
 	m_loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
 	m_loginTaskTwo->setCookie( cookie );
@@ -768,7 +742,7 @@ void Client::serverRedirectFinished( )
 {
 	if ( m_loginTaskTwo->statusCode() == 0 )
 	{ //stage two was successful
-		ClientReadyTask* crt = new ClientReadyTask( d->connections.iconConnection()->rootTask() );
+		ClientReadyTask* crt = new ClientReadyTask( d->connections.last()->rootTask() );
 		QValueList<int> families;
 		families.append( 0x0001 );
 		families.append( 0x0010 ); //FIXME un-hardcode icon connection family
@@ -790,5 +764,26 @@ Connection* Client::createConnection( const QString& host, const QString& port )
 	return c;
 }
 
+void Client::deleteStaticTasks()
+{
+	delete d->errorTask;
+	delete d->onlineNotifier;
+	delete d->ownStatusTask;
+	delete d->messageReceiverTask;
+	delete d->ssiAuthTask;
+	delete d->icqInfoTask;
+	delete d->userInfoTask;
+	delete d->closeConnectionTask;
+	
+	d->errorTask = 0;
+	d->onlineNotifier = 0;
+	d->ownStatusTask = 0;
+	d->messageReceiverTask = 0;
+	d->ssiAuthTask = 0;
+	d->icqInfoTask = 0;
+	d->userInfoTask = 0;
+	d->closeConnectionTask = 0;
+}
+	
 #include "client.moc"
 //kate: tab-width 4; indent-mode csands; space-indent off; replace-tabs off;

@@ -381,11 +381,12 @@ protected slots:
 	void serverRedirectFinished();
 
 private:
-	/** Delete the connections */
-	void deleteConnections();
 	
 	/** Initialize some static tasks */
 	void initializeStaticTasks();
+	
+	/** Delete the static tasks */
+	void deleteStaticTasks();
 	
 	Connection* createConnection( const QString& host, const QString& port );
 	
