@@ -195,13 +195,6 @@ private:
 	static AccountManager *s_self;
 	class Private;
 	Private *d;
-	
-	/**
-	 * used because notifyAccountReady.
-	 * TODO: remove when i'll merge the account with the branch
-	 */
-	friend class Account;
-
 };
 
 } //END namespace Kopete

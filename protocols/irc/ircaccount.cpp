@@ -352,8 +352,7 @@ void IRCAccount::setCustomCtcpReplies( const QMap< QString, QString > &replies )
 		val.append( QString::fromLatin1("%1=%2").arg( it.key() ).arg( it.data() ) );
 	}
 
-	KConfig *config = KGlobal::config();
-	config->setGroup( configGroup() );
+	KConfigGroup *config = configGroup();
 	config->writeEntry( "CustomCtcp", val );
 	config->sync();
 }
@@ -363,8 +362,7 @@ const QMap< QString, QString > IRCAccount::customCtcpReplies() const
 	QMap< QString, QString > replies;
 	QStringList replyList;
 
-	KConfig *config = KGlobal::config();
-	config->setGroup( configGroup() );
+	KConfigGroup *config = configGroup() ;
 	replyList = config->readListEntry( "CustomCtcp" );
 
 	for( QStringList::Iterator it = replyList.begin(); it != replyList.end(); ++it )
@@ -375,16 +373,14 @@ const QMap< QString, QString > IRCAccount::customCtcpReplies() const
 
 void IRCAccount::setConnectCommands( const QStringList &commands ) const
 {
-	KConfig *config = KGlobal::config();
-	config->setGroup( configGroup() );
+	KConfigGroup *config = configGroup() ;
 	config->writeEntry( "ConnectCommands", commands );
 	config->sync();
 }
 
 const QStringList IRCAccount::connectCommands() const
 {
-	KConfig *config = KGlobal::config();
-	config->setGroup( configGroup() );
+	KConfigGroup *config =  configGroup() ;
 	return config->readListEntry( "ConnectCommands" );
 }
 

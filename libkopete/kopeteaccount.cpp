@@ -26,6 +26,7 @@
 #include <kiconloader.h>
 #include <kiconeffect.h>
 
+
 #include "kopetecontactlist.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
@@ -42,13 +43,14 @@ static QString configGroup( Kopete::Protocol *protocol, const QString &accountId
 	return QString::fromLatin1( "Account_%2_%1" ).arg( accountId, protocol->pluginId() );
 }
 
+
 class KopeteAccountPrivate
 {
 public:
 	KopeteAccountPrivate( Kopete::Protocol *protocol, const QString &accountId )
 	 : protocol( protocol ), id( accountId )
-	 , password( configGroup( protocol, accountId ) )
-	 , autologin( false ), priority( 0 ), myself( 0 )
+	 , password( ::configGroup( protocol, accountId ) )
+	 , autoconnect( false ), priority( 0 ), myself( 0 )
 	 , suppressStatusTimer( 0 ), suppressStatusNotification( false )
 	 , blackList( new Kopete::BlackLister( protocol->pluginId(), accountId ) )
 	{
@@ -59,7 +61,7 @@ public:
 	Kopete::Protocol *protocol;
 	QString id;
 	Kopete::Password password;
-	bool autologin;
+	bool autoconnect;
 	uint priority;
 	QDict<Kopete::Contact> contacts;
 	QColor color;
@@ -67,19 +69,21 @@ public:
 	QTimer *suppressStatusTimer;
 	bool suppressStatusNotification;
 	Kopete::BlackLister *blackList;
+	KConfigGroup *configGroup;
 };
 
 Kopete::Account::Account( Kopete::Protocol *parent, const QString &accountId, const char *name )
- : Kopete::PluginDataObject( parent, name ), d( new KopeteAccountPrivate( parent, accountId ) )
+ : QObject( parent, name ), d( new KopeteAccountPrivate( parent, accountId ) )
 {
+	d->configGroup=new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Account_%1_%2" ).arg( d->protocol->pluginId(), d->id ));
+	
+	d->autoconnect = d->configGroup->readBoolEntry( "AutoConnect", false );
+	d->color = d->configGroup->readColorEntry( "Color", &d->color );
+	d->priority = d->configGroup->readNumEntry( "Priority", 0 );
+
 	d->suppressStatusTimer = new QTimer( this, "suppressStatusTimer" );
 	QObject::connect( d->suppressStatusTimer, SIGNAL( timeout() ),
 		this, SLOT( slotStopSuppression() ) );
-
-	if ( Kopete::AccountManager::self()->registerAccount( this ) )
-		QTimer::singleShot( 0, this, SLOT( slotAccountReady() ) );  
-	else
-		deleteLater();
 }
 
 Kopete::Account::~Account()
@@ -90,12 +94,8 @@ Kopete::Account::~Account()
 	while ( !d->contacts.isEmpty() )
 		delete *QDictIterator<Kopete::Contact>( d->contacts );
 
+	delete d->configGroup;
 	delete d;
-}
-
-void Kopete::Account::slotAccountReady()
-{
-	Kopete::AccountManager::self()->accountRegistered( this );
 }
 
 void Kopete::Account::connect( const Kopete::OnlineStatus& )
@@ -129,12 +129,17 @@ const QColor Kopete::Account::color() const
 void Kopete::Account::setColor( const QColor &color )
 {
 	d->color = color;
+	if ( d->color.isValid() )
+		d->configGroup->writeEntry( "Color", d->color );
+	else
+		d->configGroup->deleteEntry( "Color" );
 	emit colorChanged( color );
 }
 
 void Kopete::Account::setPriority( uint priority )
 {
  	d->priority = priority;
+	d->configGroup->writeEntry( "Priority", d->priority );
 }
 
 const uint Kopete::Account::priority() const
@@ -171,78 +176,11 @@ QPixmap Kopete::Account::accountIcon(const int size) const
 	return base;
 }
 
-QString Kopete::Account::configGroup() const
+KConfigGroup* Kopete::Account::configGroup() const
 {
-	return ::configGroup( protocol(), accountId() );
+	return d->configGroup;
 }
 
-void Kopete::Account::writeConfig( const QString &configGroupName )
-{
-	KConfig *config = KGlobal::config();
-	config->setGroup( configGroupName );
-
-	config->writeEntry( "Protocol", d->protocol->pluginId() );
-	config->writeEntry( "AccountId", d->id );
-	config->writeEntry( "Priority", d->priority );
-
-	config->writeEntry( "AutoConnect", d->autologin );
-
-	if ( d->color.isValid() )
-		config->writeEntry( "Color", d->color );
-	else
-		config->deleteEntry( "Color" );
-
-	// Store other plugin data
-	Kopete::PluginDataObject::writeConfig( configGroupName );
-}
-
-void Kopete::Account::readConfig( const QString &configGroupName )
-{
-	KConfig *config = KGlobal::config();
-	config->setGroup( configGroupName );
-
-	d->autologin = config->readBoolEntry( "AutoConnect", false );
-	d->color = config->readColorEntry( "Color", &d->color );
-	d->priority = config->readNumEntry( "Priority", 0 );
-
-	// Handle the plugin data, if any
-	QMap<QString, QString> entries = config->entryMap( configGroupName );
-	QMap<QString, QString>::Iterator entryIt;
-	QMap<QString, QMap<QString, QString> > pluginData;
-	for ( entryIt = entries.begin(); entryIt != entries.end(); ++entryIt )
-	{
-		if ( entryIt.key().startsWith( QString::fromLatin1( "PluginData_" ) ) )
-		{
-			QStringList data = QStringList::split( '_', entryIt.key(), true );
-			data.pop_front(); // Strip "PluginData_" first
-			QString pluginName = data.first();
-			data.pop_front();
-
-			// Join remainder and store it
-			pluginData[ pluginName ][ data.join( QString::fromLatin1( "_" ) ) ] = entryIt.data();
-		}
-	}
-
-	// Lastly, pass on the plugin data to the account
-	QMap<QString, QMap<QString, QString> >::Iterator pluginDataIt;
-	for ( pluginDataIt = pluginData.begin(); pluginDataIt != pluginData.end(); ++pluginDataIt )
-	{
-		Kopete::Plugin *plugin = Kopete::PluginManager::self()->plugin( pluginDataIt.key() );
-		if ( plugin )
-			setPluginData( plugin, pluginDataIt.data() );
-		else
-		{
-			kdDebug( 14010 ) << k_funcinfo <<
-				"No plugin object for id '" << pluginDataIt.key() << "'" << endl;
-		}
-	}
-	loaded();
-}
-
-void Kopete::Account::loaded()
-{
-	/* do nothing in default implementation */
-}
 
 QString Kopete::Account::password( bool error, bool *ok, unsigned int maxLength ) const
 {
@@ -276,12 +214,13 @@ void Kopete::Account::setPassword( const QString &pass )
 
 void Kopete::Account::setAutoConnect( bool b )
 {
-	d->autologin = b;
+	d->autoconnect = b;
 }
 
 bool Kopete::Account::autoConnect() const
 {
-	return d->autologin;
+	return d->autoconnect;
+	d->configGroup->writeEntry( "AutoConnect", d->autoconnect );
 }
 
 bool Kopete::Account::rememberPassword() const
@@ -481,6 +420,17 @@ bool Kopete::Account::isBlocked( const QString &contactId )
 {
 	return d->blackList->isBlocked( contactId );
 }
+
+void Kopete::Account::setPluginData( Kopete::Plugin *, const QString &key, const QString &value )
+{
+	configGroup()->writeEntry(key,value);
+}
+
+QString Kopete::Account::pluginData( Kopete::Plugin *, const QString &key ) const
+{
+	return configGroup()->readEntry(key);
+}
+
 
 #include "kopeteaccount.moc"
 // vim: set noet ts=4 sts=4 sw=4:

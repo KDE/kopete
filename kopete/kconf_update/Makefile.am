@@ -5,7 +5,7 @@ update_DATA = kopete-pluginloader.upd kopete-account-kconf_update.upd \
 	kopete-jabberpriorityaddition-kconf_update.upd
 update_SCRIPTS = kopete-pluginloader.pl kopete-account-kconf_update.sh \
 	kopete-pluginloader2.sh kopete-jabberproxytype-kconf_update.sh \
-	kopete-jabberpriorityaddition-kconf_update.sh
+	kopete-jabberpriorityaddition-kconf_update.sh kopete-account-0.10.pl
 updatedir = $(kde_datadir)/kconf_update
 
 # The Qt app cannot go into kde_datadir, that is not portable.

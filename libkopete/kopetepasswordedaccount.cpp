@@ -31,7 +31,7 @@ struct Kopete::PasswordedAccount::Private
 };
 
 Kopete::PasswordedAccount::PasswordedAccount( Kopete::Protocol *parent, const QString &acctId, uint maxLen, const char *name )
- : Kopete::Account( parent, acctId, name ), d( new Private( configGroup(), maxLen ) )
+ : Kopete::Account( parent, acctId, name ), d( new Private( QString::fromLatin1("Account_")+ parent->pluginId() + QString::fromLatin1("_") + acctId , maxLen ) )
 {
 }
 

@@ -508,7 +508,7 @@ void KopeteWindow::slotAccountRegistered( Kopete::Account *account )
 		SIGNAL(onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus &) ),
 		this, SLOT( slotAccountStatusIconChanged( Kopete::Contact * ) ) );
 
-	connect( account, SIGNAL( iconAppearanceChanged() ), SLOT( slotAccountStatusIconChanged() ) );
+//	connect( account, SIGNAL( iconAppearanceChanged() ), SLOT( slotAccountStatusIconChanged() ) );
 	connect( account, SIGNAL( colorChanged(const QColor& ) ), SLOT( slotAccountStatusIconChanged() ) );
 
 	connect( account->myself(),

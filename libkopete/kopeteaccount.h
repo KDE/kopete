@@ -19,12 +19,13 @@
 #ifndef KOPETEACCOUNT_H
 #define KOPETEACCOUNT_H
 
-#include "kopeteplugindataobject.h"
+#include "qobject.h"
 #include <kdemacros.h>
 #include <qdict.h>
 
 class QDomNode;
 class KActionMenu;
+class KConfigGroup;
 
 struct KopeteAccountPrivate;
 
@@ -64,7 +65,7 @@ class BlackLister;
  * loaded. in the same way, you can't set pluginData in the destructor, because the
  * XML file has already been written, and new changes will not be updated on the disk.
  */
-class Account : public PluginDataObject
+class Account : public QObject
 {
 	Q_OBJECT
 
@@ -263,33 +264,20 @@ public:
 	const QDict<Contact>& contacts();
 
 	/**
-	 * \brief Read the account's configuration
-	 *
-	 * Uses KConfig to read the configuration for this account
-	 *
-	 * @param configGroup the group in the config file to use.
-	 */
-	void readConfig( const QString &configGroup );
-
-	/**
-	 * Write the config back
-	 *
-	 * @param configGroup the group in the config file to use.
-	 */
-	void writeConfig( const QString &configGroup );
-
-	/**
 	 * \internal
 	 * Register a new Kopete::Contact with the account
 	 * To be called <b>only</b> from @ref Kopete::Contact constructor
 	 * not from any other class! (Not even a derived class).
 	 */
 	void registerContact( Contact *c );
-
+	
+	
 	/**
-	 * @return the name of the config group to be used
-	 */
-	QString configGroup() const;
+	  * Return the @ref KConfigGroup used to write and read special properties
+	  *
+	  * "Protocol", "AccountId" , "Color", "AutoConnect", "Priority", "Enabled" are reserved keyword already in use in that group
+	  */
+	KConfigGroup *configGroup() const;
 
 	/**
 	 * Indicates whether or not we should suppress status notifications
@@ -404,6 +392,13 @@ public slots:
 	 * @param contactId the contact to be removed from the blacklist
 	 */
 	virtual void unblock( const QString &contactId );
+	
+	
+	/**
+	 * @deprecated   place everithing in the constructor
+	 * @todo remove
+	 */
+	virtual void loaded() {};
 
 signals:
 	/**
@@ -418,24 +413,11 @@ signals:
 	
 	void accountDestroyed( const Kopete::Account* );
 
-protected slots:
-	/**
-	 * This method is called at the end of the fromXML function
-	 * since pluginData are not accessible yet in the constructor
-	 */
-	virtual void loaded();
-
 private slots:
 	/**
 	 * Track the deletion of a Kopete::Contact and cleanup
 	 */
 	void slotKopeteContactDestroyed( Kopete::Contact * );
-
-	/**
-	 * Called by a single shot hack to make the account tell its @ref Kopete::AccountManager
-	 * to signal that the account is fully created and ready to use.
-	 */
-	void slotAccountReady();
 
 	/**
 	 * Our online status changed.
@@ -453,6 +435,22 @@ private slots:
 private:
 
 	KopeteAccountPrivate *d;
+	
+	
+	
+public:
+	/**
+	 * @todo remove
+	 * @deprecated  uses configGroup
+	 */
+	void setPluginData( Plugin *plugin, const QString &key, const QString &value ) KDE_DEPRECATED;
+
+	/**
+	 * @todo remove
+	 * @deprecated  uses configGroup
+	 */
+	QString pluginData( Plugin *plugin, const QString &key ) const KDE_DEPRECATED;
+
 };
 
 }

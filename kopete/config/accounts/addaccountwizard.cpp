@@ -106,8 +106,8 @@ void AddAccountWizard::slotProtocolListDoubleClicked( QListViewItem *lvi)
 
 void AddAccountWizard::accept()
 {
-	//kdDebug( 14100 ) << k_funcinfo << endl;
-	Kopete::Account *account = m_accountPage->apply();
+	//registeredAccount shouldn't probably be called here.  anyway, if the account is already registered, it doesn't matter, it will not be registered twice.
+	Kopete::Account *account = Kopete::AccountManager::self()->registerAccount( m_accountPage->apply() );
 	if ( account && m_finish->mUseColor->isChecked() )
 		account->setColor( m_finish->mColorButton->color() );
 

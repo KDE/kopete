@@ -187,6 +187,10 @@ Account* AccountManager::registerAccount( Account *account )
 	d->accounts.append( account );	
 	d->accounts.sort();
 	
+	
+	//TODO: remove when all plugin are proted
+	account->loaded();
+	
 	// Connect to the account's status changed signal
 	connect(account->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact *,
 			const Kopete::OnlineStatus &, const Kopete::OnlineStatus &)),
@@ -195,9 +199,7 @@ Account* AccountManager::registerAccount( Account *account )
 
 	connect(account, SIGNAL(accountDestroyed(const Kopete::Account *)) , this, SLOT( unregisterAccount(const Kopete::Account *) ));
 
-#if 0 //TODO:  when the account will be ported to uses configgroup
 	emit accountRegistered( account );
-#endif
 	return account;
 }
 
@@ -237,12 +239,10 @@ Account * AccountManager::findAccount( const QString &protocolId, const QString 
 
 void AccountManager::removeAccount( Account *account )
 {
-//	kdDebug( 14010 ) << k_funcinfo << "Removing account '" << account->accountId() << "' and cleaning up config" << endl;
-
-#if 0 //TODO  when i'll convert to the configGroup API, i'll implemtent this
-
+#if 0 //TODO when the funciton will be there
 	if(!account->removeAccount())
 		return;
+#endif
 
 	Protocol *protocol = account->protocol();
 
@@ -267,14 +267,12 @@ void AccountManager::removeAccount( Account *account )
 		PluginManager::self()->setPluginEnabled( protocolName, false );
 		PluginManager::self()->unloadPlugin( protocolName );
 	}
-#endif
 }
 
 void AccountManager::save()
 {
 	//kdDebug( 14010 ) << k_funcinfo << endl;
 	
-#if 0 //TODO  when i'll convert to the configGroup API, i'll implemtent this
 	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
 		KConfigBase *config = it.current()->configGroup();
@@ -282,11 +280,6 @@ void AccountManager::save()
 		config->writeEntry( "Protocol", it.current()->protocol()->pluginId() );
 		config->writeEntry( "AccountId", it.current()->accountId() );
 	}
-#else
-	d->accounts.sort();
-	for ( QPtrListIterator<Kopete::Account> it( d->accounts ); it.current(); ++it )
-		it.current()->writeConfig( it.current()->configGroup() );
-#endif
 
 	KGlobal::config()->sync();
 }
@@ -355,9 +348,6 @@ void AccountManager::slotPluginLoaded( Plugin *plugin )
 				"Failed to create account for '" << accountId << "'" << endl;
 			continue;
 		}
-		
-		//TODO:  remove
-		account->readConfig( *it ) ;
 	}
 }
 
