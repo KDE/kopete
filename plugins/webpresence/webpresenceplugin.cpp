@@ -137,13 +137,26 @@ KTempFile* WebPresencePlugin::generateFile()
 	// insert the current date/time
 	output += h.oneLineTag( "listdate",
 			KGlobal::locale()->formatDateTime( QDateTime::currentDateTime() ) );
+			
 	output += h.openTag( "contact", "type=\"self\"" );
 
 	// insert the contact's name
-	output += h.oneLineTag( "name",
-			(  !m_prefs->useImName() && !m_prefs->userName().isEmpty() )
-			? m_prefs->userName( )
-			: protocols.first()->myself()->displayName() );
+	if ( m_prefs->useImName() && !m_prefs->userName().isEmpty() )
+		output += h.oneLineTag( "name",  m_prefs->userName() );
+	else
+	{
+		// pick the name from the first configured protocol
+		QString myName;
+		for ( KopeteProtocol *p = protocols.first(); p; p = protocols.next() )
+			if ( p->myself() != 0L )
+			{
+				myName = p->myself()->displayName();
+				break;
+			}
+		if ( myName.isNull() )
+			myName = i18n( "No Name Set Yet, configure your IM protocols and connect!" );
+		output += h.oneLineTag( "name",  myName );
+	}
 
 	// insert the list of the contact's protocols
 	output += h.openTag( "protocols" );
@@ -152,13 +165,19 @@ KTempFile* WebPresencePlugin::generateFile()
 			p; p = protocols.next() )
 	{
 		KopeteContact* me = p->myself();
+		
+		// save ourselves if the protocol hasn't initialised the local user's
+		// contact
+		if ( me == 0L )
+			break;
+			
 		output += h.openTag( "protocol" );
 
 		output += h.oneLineTag( "protoname", p->pluginId() );
 
 		output += h.oneLineTag( "protostatus", 
 				( me )
-				? statusAsString(  me->status() )
+				? statusAsString( me->status() )
 				: notKnown );
 		
 		if (  m_prefs->showAddresses() )
@@ -288,6 +307,7 @@ QString WebPresencePlugin::statusAsString( KopeteContact::ContactStatus c )
 		default:
 			status = "UNKNOWN";
 	}
+	
 	return status;
 }
 
