@@ -13,6 +13,7 @@
     *************************************************************************
 */
 
+#include <libxslt/xsltInternals.h>
 #include <libxslt/transform.h>
 #include <libxml/parser.h>
 
