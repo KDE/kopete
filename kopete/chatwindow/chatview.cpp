@@ -1133,7 +1133,7 @@ void ChatView::slotRightClick( const QString &, const QPoint &point )
 {
 	KPopupMenu *chatWindowPopup = new KPopupMenu();
 	Node n = chatView->nodeUnderMouse();
-	if( n.nodeType() == Node::TEXT_NODE )
+	while( n.nodeType() == Node::TEXT_NODE )
 		n = n.parentNode();
 
 	activeElement = n;
@@ -1166,7 +1166,7 @@ void ChatView::slotRightClick( const QString &, const QPoint &point )
 				chatWindowPopup->insertSeparator();
 			}
 		}
-		else if( activeElement.tagName() == QString::fromLatin1("A") )
+		else if( activeElement.tagName().lower() == QString::fromLatin1("a") )
 		{
 			copyURLAction->plug(chatWindowPopup);
 			chatWindowPopup->insertSeparator();
