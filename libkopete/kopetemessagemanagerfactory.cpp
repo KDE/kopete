@@ -19,6 +19,8 @@
 #include "kopetemessagemanager.h"
 #include "kopeteprotocol.h"
 
+#include "kopetecontact.h"
+
 #include <kdebug.h>
 
 KopeteMessageManagerFactory::KopeteMessageManagerFactory( QObject* parent,
@@ -35,53 +37,75 @@ KopeteMessageManager *KopeteMessageManagerFactory::create(
 	const KopeteContact *user, KopeteContactList _contacts, /* Touch that underscore and you die, along with ICQ not compiling. Fuck the underscore, that BLOWS CHUNKS. */
 	KopeteProtocol *protocol, QString logFile , int widget, int capabilities )
 {
-	bool createNewSession = false;
-	KopeteMessageManager *tmp;
-	KopeteMessageManagerList this_protocol_sessions;
-
 	/* We build the sessions list for this protocol */
-	for ( tmp = mSessionList.first(); tmp ; tmp = mSessionList.next() )
+	KopeteMessageManager *tmpKmm;
+	KopeteMessageManagerList this_protocol_sessions;
+	for ( tmpKmm = mSessionList.first(); tmpKmm ; tmpKmm = mSessionList.next() )
 	{
-		if ( tmp->protocol() == protocol )
+		if ( tmpKmm->protocol() == protocol )
 		{
-			this_protocol_sessions.append(tmp);
+			this_protocol_sessions.append(tmpKmm);
 		}
 	}
 
-	for ( tmp = this_protocol_sessions.first(); tmp ; tmp = this_protocol_sessions.next() )
-	{
-    	/* This way we support profiles for each protocol */
-		if ( user == tmp->user() )
-		{
-			kdDebug() << "[KopeteMessageManagerFactory] User match, looking session members" << endl;	
-			KopeteContactList contactlist = tmp->members();
-			KopeteContact *tmp_contact = contactlist.first();
-			for( ; tmp_contact; tmp_contact = contactlist.next() )
-			{
+	// Point this to the right KMM, if found
+	KopeteMessageManager* result = 0;
+
+	for ( KopeteMessageManager* kmm = this_protocol_sessions.first(); kmm && !result ; kmm = this_protocol_sessions.next() ) {
+		if ( user == kmm->user() ) {
+
+			kdDebug() << "[KopeteMessageManagerFactory] User match, looking session members" << endl;
+			QPtrList<KopeteContact> contactlist = kmm->members();
+
+			// set this to false if _contacts doesn't contain current kmm's contactlist
+			bool halfMatch = true;
+
+			KopeteContact *tmp_contact;
+			for (tmp_contact = contactlist.first(); tmp_contact && halfMatch; tmp_contact = contactlist.next()) {
 				if ( !_contacts.containsRef( tmp_contact ) )
 				{
-					kdDebug() << "[KopeteMessageManagerFactory] create() Oops, contact not found! new session needed!" << endl;	
-					createNewSession = true;
-					break;
+					kdDebug() << "[KopeteMessageManagerFactory] create() Oops, contact \"" << tmp_contact->name() << "\" not found! in _contacts" << endl;
+					halfMatch = false;
 				}
 			}
-			if ( createNewSession == false )
-			{
-				/* current session (tmp) is the same session the user is requesting */
-				return tmp;
-			}		
-		}
-		else
-		{
-			kdDebug() << "[KopeteMessageManagerFactory] User doesnt match, trying next session" << endl;	
-		}
-	}
-	
-	KopeteMessageManager *session = new KopeteMessageManager(user, _contacts, protocol, logFile, widget, capabilities);
-	connect( session, SIGNAL(dying(KopeteMessageManager*)), this, SLOT(slotRemoveSession(KopeteMessageManager*)));
-	(mSessionList).append(session);
-	return (session);
 
+			// If _contacts contains current kmm's contactlist, try the other way around
+			if (halfMatch) {
+
+				bool fullMatch = true;
+				for (tmp_contact = _contacts.first(); tmp_contact && fullMatch; tmp_contact = _contacts.next()) {
+					if ( !contactlist.containsRef( tmp_contact ) )
+					{
+						kdDebug() << "[KopeteMessageManagerFactory] create() Oops, contact \"" << tmp_contact->name() << "\" not found! in contactlist" << endl;
+						fullMatch = false;
+					}
+				}
+
+				// We have a winner
+				if (fullMatch) {
+					result = kmm;
+				}
+
+			}
+
+		} else {
+			kdDebug() << "[KopeteMessageManagerFactory] User doesnt match, trying next session" << endl;
+		}
+
+	}
+
+	if (0 == result) {
+		result = new KopeteMessageManager(user,  _contacts, protocol, logFile, widget, capabilities);
+		mSessionList.append(result);
+
+		/*
+		 * There's no need for a slot here... just add a public remove()
+		 * method and call from KMM's destructor
+		 */
+		connect( result, SIGNAL(dying(KopeteMessageManager*)), this, SLOT(slotRemoveSession(KopeteMessageManager*)));
+	}
+
+	return (result);
 }
 
 void KopeteMessageManagerFactory::slotRemoveSession( KopeteMessageManager *session)

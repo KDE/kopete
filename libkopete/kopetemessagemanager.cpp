@@ -123,7 +123,7 @@ void KopeteMessageManager::slotReadMessages()
 void KopeteMessageManager::messageSentFromWindow(const QString &message)
 {
 	QString body = message;
-	KopeteMessage tmpmessage(mUser, mContactList, QStyleSheet::escape(body), KopeteMessage::Outbound);
+	KopeteMessage tmpmessage(mUser, mContactList, body, KopeteMessage::Outbound);
 	if (mChatWindow->fg()->color().isValid()) {
 		tmpmessage.setFg(mChatWindow->fg()->color());
 	}
@@ -165,8 +165,6 @@ void KopeteMessageManager::slotEventDeleted(KopeteEvent *e)
 
 void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 {
-	bool isvisible = false;
-
 	mMessageQueue.append(msg);
 
 	if( mLogger )
@@ -180,12 +178,14 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 	}
 	else if ( mReadMode == Queued )
 	{
-    	/* First stage, see what to do */
+		bool isvisible = false;
+
+		/* First stage, see what to do */
 		if ( mChatWindow == 0L )
 		{
 			isvisible = false;
 		}
-		else if (  (mChatWindow != 0L) && ( mChatWindow->isHidden() || mChatWindow->isMinimized()) )
+		else if ( !mChatWindow->isVisible() )
         {
 			isvisible = false;
 		}
