@@ -375,15 +375,19 @@ void KopeteContactListView::slotMetaContactSelected( bool sel )
 {
 	bool set = sel;
 
-	int mccount = KopeteContactList::contactList()->selectedMetaContacts().count();
-	if( mccount == 1 )
+	if( sel )
 	{
 		KopeteMetaContact *kmc = KopeteContactList::contactList()->selectedMetaContacts().first();
 		set = sel && kmc->isReachable();
 		actionAddTemporaryContact->setEnabled( sel && kmc->isTemporary() );
 
 		// TODO: make available for several contacts
-		actionRemoveFromGroup->setEnabled( sel && (kmc->groups().count()>1 || !kmc->isTopLevel())  );
+		actionRemoveFromGroup->setEnabled( sel && (kmc->groups().count()>1 )  );
+	}
+	else
+	{
+		actionAddTemporaryContact->setEnabled(false);
+		actionRemoveFromGroup->setEnabled(false);
 	}
 
 	actionSendMessage->setEnabled( set );
@@ -823,49 +827,6 @@ void KopeteContactListView::slotContextMenu( KListView * /* listview */, QListVi
 void KopeteContactListView::slotShowAddContactDialog()
 {
 	( new AddContactWizard( qApp->mainWidget() ) )->show();
-}
-
-void KopeteContactListView::removeGroup()
-{
-	if ( !KopetePrefs::prefs()->sortByGroup() )
-		return;
-
-	if ( !removeGroupItem )
-		return;
-
-	QString msg;
-	if ( removeGroupItem->firstChild() )
-	{
-		msg = i18n( "<qt>Are you sure you want to remove the group <b>%1</b> and all contacts that are contained within it?</qt>" ).
-			arg( removeGroupItem->group()->displayName() );
-	}
-	else
-	{
-		msg = i18n( "<qt>Are you sure you want to remove the group <b>%1</b> from your contact list?</qt>" ).
-			arg( removeGroupItem->group()->displayName() );
-	}
-
-	if ( KMessageBox::warningYesNo( this, msg, i18n( "Remove Group" ) ) == KMessageBox::Yes )
-	{
-		QListViewItem *lvi, *lvi2;
-		for ( lvi = removeGroupItem->firstChild(); lvi; lvi = lvi2 )
-		{
-			lvi2 = lvi->nextSibling();
-			KopeteMetaContactLVI *kc = dynamic_cast<KopeteMetaContactLVI *>( lvi );
-			if ( kc )
-				kc->metaContact()->removeFromGroup( removeGroupItem->group() );
-		}
-
-		if( removeGroupItem->childCount() >= 1 )
-		{
-			kdDebug( 14000 ) << k_funcinfo << "Not all underlying MetaContacts are removed... Aborting" << endl;
-			return;
-		}
-
-		mGroups.remove( removeGroupItem );
-		KopeteContactList::contactList()->removeGroup( removeGroupItem->group() );
-		//delete removeGroupItem;
-	}
 }
 
 void KopeteContactListView::slotSettingsChanged( void )
@@ -1608,15 +1569,24 @@ void KopeteContactListView::slotRemove()
 
 	for( KopeteGroup *it = groups.first(); it; it = groups.next() )
 	{
-		removeGroupItem = getGroup( it, false );
+		KopeteGroupViewItem* removeGroupItem = getGroup( it, false );
 		QListViewItem *lvi, *lvi2;
 		for( lvi = removeGroupItem->firstChild(); lvi; lvi = lvi2 )
 		{
 			lvi2 = lvi->nextSibling();
 			KopeteMetaContactLVI *kc =
 				dynamic_cast<KopeteMetaContactLVI*>( lvi );
-			if( kc )
-				kc->metaContact()->removeFromGroup(it);
+			if(kc)
+			{
+				KopeteMetaContact *mc= kc->metaContact() ;
+				if(mc)
+				{
+					if(mc->groups().count()==1 && !mc->isTopLevel())
+						KopeteContactList::contactList()->removeMetaContact(mc);
+					else
+						mc->removeFromGroup(it);
+				}
+			}
 		}
 
 		if( removeGroupItem->childCount() >= 1 )

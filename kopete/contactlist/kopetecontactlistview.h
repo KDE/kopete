@@ -133,8 +133,6 @@ private slots:
 	void slotShowAddContactDialog();
 	void slotNewMessageEvent(KopeteEvent *);
 
-	void removeGroup();
-
 	/**
 	 * Handle renamed items by renaming the meta contact
 	 */
@@ -169,8 +167,6 @@ private:
 	QPtrList<KopeteGroupViewItem> mGroups;
 
 	QPtrList<KopeteMetaContactLVI> m_metaContacts;
-
-	KopeteGroupViewItem *removeGroupItem;
 
 	KopeteStatusGroupViewItem *m_onlineItem;
 	KopeteStatusGroupViewItem *m_offlineItem;
