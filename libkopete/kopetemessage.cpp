@@ -159,11 +159,15 @@ void KopeteMessage::setFont( const QFont &font )
 
 void KopeteMessage::highlight()
 {
-	//Why do you want to do this? aren't Fg and Bg sufficient?
-/*	setBody( QString::fromLatin1("<span style=\"background-color:%1;color:%2\">%3</span>")
+	/*
+	This code is required in case the user has the %F tags removed from ther message
+	(the don't want to see the users sent fonts and colorr), so they can still see the message
+	highlight
+	*/
+	setBody( QString::fromLatin1("<span style=\"background-color:%1;color:%2\">%3</span>")
 		.arg( KopetePrefs::prefs()->highlightBackground().name() )
 		.arg( KopetePrefs::prefs()->highlightForeground().name() )
-		.arg( escapedBody() ), RichText );*/
+		.arg( escapedBody() ), RichText );
 
 	setBg( KopetePrefs::prefs()->highlightBackground() );
 	setFg( KopetePrefs::prefs()->highlightForeground() );
@@ -256,8 +260,8 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 			colorMap.insert( fromName, newColor );
 		}
 		d->contactColor = colorMap[ fromName ];
-		
-		
+
+
 		//Highlight if the message contains the nickname (i think it should be place in the highlight plugin)
 		if( KopetePrefs::prefs()->highlightEnabled() && from->account() && from->account()->myself() &&
 			d->body.contains( QRegExp(QString::fromLatin1("\\b(%1)\\b").arg(from->account()->myself()->displayName()),false) ) )
@@ -340,7 +344,7 @@ QString KopeteMessage::parsedBody() const
 QString KopeteMessage::formatDisplayName( const QString &name ) const
 {
 	return QString::fromLatin1(
-		"<span class=\"KopeteDisplayName\" style=\"cursor:pointer\">") + 
+		"<span class=\"KopeteDisplayName\" style=\"cursor:pointer\">") +
 		QStyleSheet::escape(name) + QString::fromLatin1("</span>");
 }
 
