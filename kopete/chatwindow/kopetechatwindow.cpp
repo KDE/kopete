@@ -469,12 +469,14 @@ KStdAction::keyBindings( this, SLOT( slotConfKeys() ), coll );
 	// Pause the animation because otherwise it's running even when we're not
 	// showing it. This eats resources, and also triggers a pixmap leak in
 	// QMovie in at least Qt 3.1, Qt 3.2 and the current Qt 3.3 beta
-	animIcon.pause();
+	if( !animIcon.isNull() )  //and another QT bug:  it crash if we pause a null movie
+		animIcon.pause();
 
 	// we can't set the tool bar as parent, if we do, it will be deleted when we configure toolbars
 	anim = new QLabel( QString::null, 0L ,"kde toolbar widget" );
 	anim->setMargin(5);
 	anim->setPixmap( normalIcon );
+	
 
 	new KWidgetAction( anim , i18n("Toolbar Animation") , 0, 0 , 0 , coll , "toolbar_animation");
 
@@ -866,7 +868,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	//Update chat members actions
 	updateMembersActions();
 
-	if ( m_activeView->sendInProgress() )
+	if ( m_activeView->sendInProgress() && !animIcon.isNull() )
 	{
 		anim->setMovie( animIcon );
 		animIcon.unpause();
@@ -874,7 +876,8 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	else
 	{
 		anim->setPixmap( normalIcon );
-		animIcon.pause();
+		if( !animIcon.isNull() )
+			animIcon.pause();
 	}
 
 	if ( m_alwaysShowTabs || chatViewList.count() > 1 )
@@ -934,8 +937,11 @@ void KopeteChatWindow::slotSendMessage()
 {
 	if ( m_activeView && m_activeView->canSend() )
 	{
-		anim->setMovie( animIcon );
-		animIcon.unpause();
+		if( !animIcon.isNull() )
+		{
+			anim->setMovie( animIcon );
+			animIcon.unpause();
+		}
 		m_activeView->sendMessage();
 	}
 }
@@ -996,7 +1002,7 @@ void KopeteChatWindow::slotPlaceTabs( int placement )
 {
 	if( m_tabBar )
 	{
-//		kdDebug(14010) << k_funcinfo << "Placement:" << placement << endl;
+
 		if( placement == 0 )
 			m_tabBar->setTabPosition( QTabWidget::Top );
 		else
