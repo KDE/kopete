@@ -833,13 +833,13 @@ void KopeteContactList::removeGroup( KopeteGroup *g)
 	delete g;
 }
 
-bool KopeteContactList::dcopAddContact( const QString &protocolName, const QString &contactId,
+bool KopeteContactList::dcopAddContact( const QString &protocolName, const QString &accountId, const QString &contactId,
 	const QString &displayName, KopeteMetaContact *parentContact, const QString &groupName, bool isTemporary )
 {
 	//Get the protocol instance
-	/*KopeteAccount *myAccount = (KopeteProtocol*) LibraryLoader::pluginLoader()->searchByName( protocolName );
+	KopeteAccount *myAccount = KopeteAccountManager::manager()->findAccount( protocolName, accountId );
 
-	if( myProtocol != 0L )
+	if( myAccount )
 	{
 		QString contactName;
 
@@ -855,7 +855,7 @@ bool KopeteContactList::dcopAddContact( const QString &protocolName, const QStri
 				).arg(protocolName).arg(contactName), i18n("Allow contact?")) == 3) // Yes == 3
 		{
 			//User said Yes
-			myProtocol->addContact( contactId, displayName, parentContact, groupName, isTemporary );
+			myAccount->addContact( contactId, displayName, parentContact, groupName, isTemporary );
 			return true;
 		} else {
 			//User said No
@@ -867,9 +867,9 @@ bool KopeteContactList::dcopAddContact( const QString &protocolName, const QStri
 		KMessageBox::error( 0, i18n("An external application has attempted to add a contact using "
 				" the %1 protocol, which does not exist, or is not loaded.").arg( protocolName ),
 				i18n("Missing Protocol"));
-*/
-		return false;
 
+		return false;
+	}
 }
 
 KopeteGroup * KopeteContactList::getGroup(const QString& displayName, KopeteGroup::GroupType type)

@@ -72,13 +72,13 @@ void KopeteIface::sendFile(const QString &displayName, const KURL &sourceURL,
 	return KopeteContactList::contactList()->sendFile(displayName, sourceURL, altFileName, fileSize);
 }
 
-
-bool KopeteIface::addContact( const QString &protocolName, const QString &contactId,
+*/
+bool KopeteIface::addContact( const QString &protocolName, const QString &accountId, const QString &contactId,
 	const QString &displayName, const QString &groupName )
 {
-	return KopeteContactList::contactList()->dcopAddContact( protocolName, contactId, displayName, 0L, groupName );
+	return KopeteContactList::contactList()->dcopAddContact( protocolName, accountId, contactId, displayName, 0L, groupName );
 }
-*/
+
 
 // vim: set noet ts=4 sts=4 sw=4:
 

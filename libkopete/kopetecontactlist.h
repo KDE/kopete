@@ -163,11 +163,12 @@ public:
 	 * Adds a contact with the specified params. This function is exposed via DCOP
 	 *
 	 * @param protocolName The name of the protocol this contact is for ("ICQ", etc)
+	 * @param accountId The account id this contact is for (ex. "foo@hotmail.com" for MSN, etc)
 	 * @param userId The unique ID for this protocol
 	 * @param nickName The nickname of the contact (may equal userId for some protocols
 	 * @return Weather or not the contact was added sucessfully
 	 */
-	bool dcopAddContact( const QString &protocolName, const QString &contactId, const QString &displayName,
+	bool dcopAddContact( const QString &protocolName, const QString &accountId, const QString &contactId, const QString &displayName,
 		KopeteMetaContact *parentContact = 0L, const QString &groupName = QString::null, bool isTemporary = false );
 
 	/**
