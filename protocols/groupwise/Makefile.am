@@ -1,17 +1,23 @@
-METASOURCES = AUTO
+METASOURCES = ignore_global_warming.moc
 
 SUBDIRS = . icons libgroupwise
 
 AM_CPPFLAGS = $(KOPETE_INCLUDES) $(all_includes)
 
 noinst_HEADERS = gwprotocol.h gwcontact.h gwaccount.h gwaddcontactpage.h \
-	gweditaccountwidget.h gwfakeserver.h gwincomingmessage.h gwconnection.h
+	gweditaccountwidget.h gwfakeserver.h gwincomingmessage.h gwconnection.h \
+	gwbytestream.h gwconnector.h
 kde_module_LTLIBRARIES =  kopete_groupwise.la
 kopete_groupwise_la_SOURCES = gwprotocol.cpp gwcontact.cpp gwaccount.cpp \
 	gwaddcontactpage.cpp gwaddui.ui gweditaccountwidget.cpp gwaccountpreferences.ui \
-	gwfakeserver.cpp gwincomingmessage.cpp gwconnection.cpp
-kopete_groupwise_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
-kopete_groupwise_la_LIBADD = ../../libkopete/libkopete.la $(LIB_KIO)
+	gwfakeserver.cpp gwincomingmessage.cpp gwconnection.cpp gwbytestream.cpp \
+	gwconnector.cpp
+kopete_groupwise_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) \
+	$(all_libraries)
+kopete_groupwise_la_LIBADD = libgroupwise/libgroupwise.la \
+	../../libkopete/libkopete.la $(LIB_KIO)
 
 service_DATA = kopete_groupwise.desktop
-servicedir= $(kde_servicesdir)
+servicedir = $(kde_servicesdir)
+INCLUDES = -I$(top_srcdir)/kopete/protocols/groupwise/libgroupwise
+
