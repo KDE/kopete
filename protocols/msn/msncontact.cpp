@@ -20,8 +20,6 @@
 #include <klocale.h>
 #include <kpopupmenu.h>
 
-#include "kmsnservice.h"
-//#include "kopetechatwindow.h" // Debug, Martijn
 #include "kopetestdaction.h"
 #include "msncontact.h"
 #include "msnprotocol.h"
@@ -59,7 +57,7 @@ void MSNContact::initContact( const QString &msnId, const QString &nickname,
 	hasLocalGroup = false;
 
 	connect ( this, SIGNAL( chatToUser( QString ) ),
-		MSNProtocol::protocol()->msnService(),
+		MSNProtocol::protocol(),
 		SLOT( slotStartChatSession( QString ) ) );
 
 	setName( nickname );

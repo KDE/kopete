@@ -35,7 +35,6 @@ class KSimpleConfig;
 class KURLLabel;
 
 class KMSNChatService;
-class KMSNService;
 class KMSNServiceSocket;
 class MSNContact;
 class MSNMessageDialog;
@@ -124,8 +123,6 @@ public:
 	QStringList groups() const;
 	QStringList groupContacts( const QString &group ) const;
 
-	KMSNService* msnService() const;
-
 	void setSilent( bool s ) { m_silent = s; }
 	bool isSilent() { return m_silent; }
 
@@ -137,9 +134,13 @@ public:
 	 */
 	void setPublicName( const QString &name );
 
+	/**
+	 * Allow this blocked contact
+	 */
+	void contactUnBlock( QString handle );
+
 public slots:
 	void slotMessageDialogClosing( QString );
-	void slotIncomingChat( KMSNChatService *, QString );
 
 	void slotSyncContactList();
 
@@ -214,6 +215,26 @@ private slots:
 	void slotContactStatusChanged( QString handle, QString publicName, QString status );
 	void slotStatusChanged( QString status );
 
+	/**
+	 * Incoming RING command: connect to the Switchboard server and send
+	 * the startChat signal
+	 */
+	void slotCreateChat( QString sessionID, QString address, QString auth,
+		QString handle, QString publicName );
+
+	/**
+	 * Incoming XFR command: this is an result from
+	 * slotStartChatSession(handle)
+	 * connect to the switchboard server and sen startChat signal
+	 */
+	void slotCreateChat( QString address, QString auth);
+
+	/**
+	 * Start a new chat session: the result is an XFR command, see above
+     * FIXME: The chat session needs an update
+	 */
+	void slotStartChatSession( QString handle );
+
 private:
 	/**
 	 * Add contact to contact list and maintain a list of currently active
@@ -233,9 +254,6 @@ private:
 	 * shot - Martijn
 	 */
 	KMSNServiceSocket *serviceSocket() const;
-
-	// The MSN Engine
-	KMSNService *m_msnService;
 
 	StatusBarIcon *statusBarIcon;
 
@@ -284,6 +302,9 @@ private:
 	QString m_msnId;
 	QString m_password;
 	QString m_publicName;
+	QString m_msgHandle;
+
+	KMSNServiceSocket *m_serviceSocket;
 };
 
 #endif

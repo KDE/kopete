@@ -25,7 +25,6 @@
 #include <kstandarddirs.h>
 
 #include "kmsnchatservice.h"
-#include "kmsnservice.h"
 #include "kmsnservicesocket.h"
 #include "kopete.h"
 #include "msnaddcontactpage.h"
@@ -49,6 +48,8 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 	m_serial = 0;
 	m_silent = false;
 
+	m_serviceSocket = new KMSNServiceSocket;
+
 	mContactsFile = new KSimpleConfig( locateLocal( "data",
 		"kopete/msn.contacts" ) );
 	mGroupsFile = new KSimpleConfig( locateLocal( "data",
@@ -68,9 +69,6 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 	mPrefs = new MSNPreferences( "msn_protocol", this );
 	connect( mPrefs, SIGNAL( saved( void ) ),
 		this, SIGNAL( settingsChanged( void ) ) );
-
-	kdDebug() << "MSN Protocol Plugin: Creating MSN Engine\n";
-	m_msnService = new KMSNService;
 
 	// Connect to the signals from the serviceSocket, which is possible now
 	// the service has created the socket for us.
@@ -110,9 +108,12 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 		this, SLOT( slotPublicNameChanged( QString, QString ) ) );
 	connect( serviceSocket(), SIGNAL( newPublicName( QString ) ),
 		this, SLOT( slotPublicNameReceived( QString ) ) );
-
-	connect( m_msnService, SIGNAL( startChat( KMSNChatService *, QString ) ),
-				this, SLOT( slotIncomingChat( KMSNChatService *, QString ) ) );
+	connect( serviceSocket(),
+		SIGNAL( invitedToChat( QString, QString, QString, QString, QString ) ),
+		this,
+		SLOT( slotCreateChat( QString, QString, QString, QString, QString ) ) );
+	connect( serviceSocket(), SIGNAL( startChat( QString, QString ) ),
+		this, SLOT( slotCreateChat( QString, QString ) ) );
 
 	KConfig *cfg = KGlobal::config();
 	cfg->setGroup( "MSN" );
@@ -308,42 +309,6 @@ void MSNProtocol::slotSyncContactList()
 	tmp.append(tmpUin);
 	cnt=contactsFile->readNumEntry("Count",0);
 */
-}
-
-void MSNProtocol::slotIncomingChat(KMSNChatService *newboard, QString reqUserID)
-{
-	MSNMessageDialog *messageDialog;
-
-	// Maybe we have a copy of us in another group
-	for( messageDialog = mChatWindows.first() ; messageDialog; messageDialog = mChatWindows.next() )
-	{
-		if ( messageDialog->user()->userID() == reqUserID )
-			break;
-	}
-
-	if( messageDialog && messageDialog->isVisible() )
-	{
-		kdDebug() << "MSN Plugin: Incoming chat but Window already opened for " << reqUserID <<"\n";
-		messageDialog->setBoard( newboard );
-		connect(newboard,SIGNAL(msgReceived(QString,QString,QString, QFont, QColor)),messageDialog,SLOT(slotMessageReceived(QString,QString,QString, QFont, QColor)));
-		messageDialog->raise();
-	}
-	else
-	{
-		kdDebug() << "MSN Plugin: Incoming chat, no window, creating window for " << reqUserID <<"\n";
-		QString nick = publicName( reqUserID );
-
-		// FIXME: MSN message dialog needs status
-
-		// FIXME: We leak this object!
-		MSNUser *user = new MSNUser( reqUserID, nick, MSNUser::Online );
-		messageDialog = new MSNMessageDialog( user, newboard, this );
-//		connect( this, SIGNAL(userStateChanged(QString)), messageDialog, SLOT(slotUserStateChanged(QString)) );
-		connect( messageDialog, SIGNAL(closing(QString)), this, SLOT(slotMessageDialogClosing(QString)) );
-
-		mChatWindows.append( messageDialog );
-		messageDialog->show();
-	}
 }
 
 void MSNProtocol::slotMessageDialogClosing(QString handle)
@@ -587,11 +552,6 @@ void MSNProtocol::slotGoURL( QString url ) const
 	kapp->invokeBrowser( url );
 }
 
-KMSNService* MSNProtocol::msnService() const
-{
-	return m_msnService;
-}
-
 void MSNProtocol::addContact( const QString &userID )
 {
 	if( isConnected() )
@@ -689,7 +649,7 @@ const MSNProtocol* MSNProtocol::protocol()
 
 KMSNServiceSocket* MSNProtocol::serviceSocket() const
 {
-	return KMSNServiceSocket::kmsnServiceSocket();
+	return m_serviceSocket;
 }
 
 int MSNProtocol::groupNumber( const QString &group ) const
@@ -1009,6 +969,69 @@ void MSNProtocol::slotPublicNameChanged(QString handle, QString publicName)
 void MSNProtocol::setPublicName( const QString &publicName )
 {
 	serviceSocket()->changePublicName( publicName );
+}
+
+void MSNProtocol::slotCreateChat( QString address, QString auth)
+{
+	slotCreateChat( 0L, address, auth, m_msgHandle, publicName() );
+}
+
+void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
+	QString handle, QString /* publicName */ )
+{
+	// FIXME: Don't we leak this ?
+	KMSNChatService *chatService = new KMSNChatService();
+	chatService->setHandle( m_msnId );
+	chatService->connectToSwitchBoard( ID, address, auth );
+
+	MSNMessageDialog *messageDialog;
+
+	// Maybe we have a copy of us in another group
+	for( messageDialog = mChatWindows.first() ; messageDialog; messageDialog = mChatWindows.next() )
+	{
+		if ( messageDialog->user()->userID() == handle )
+			break;
+	}
+
+	if( messageDialog && messageDialog->isVisible() )
+	{
+		kdDebug() << "MSN Plugin: Incoming chat but Window already opened for " << handle <<"\n";
+		messageDialog->setBoard( chatService );
+		connect( chatService, SIGNAL(msgReceived(QString,QString,QString, QFont, QColor)),messageDialog,SLOT(slotMessageReceived(QString,QString,QString, QFont, QColor)));
+		messageDialog->raise();
+	}
+	else
+	{
+		kdDebug() << "MSN Plugin: Incoming chat, no window, creating window for " << handle <<"\n";
+		QString nick = publicName( handle );
+
+		// FIXME: MSN message dialog needs status
+
+		// FIXME: We leak this object!
+		MSNUser *user = new MSNUser( handle, nick, MSNUser::Online );
+		messageDialog = new MSNMessageDialog( user, chatService, this );
+//		connect( this, SIGNAL(userStateChanged(QString)), messageDialog, SLOT(slotUserStateChanged(QString)) );
+		connect( messageDialog, SIGNAL(closing(QString)), this, SLOT(slotMessageDialogClosing(QString)) );
+
+		mChatWindows.append( messageDialog );
+		messageDialog->show();
+	}
+}
+
+void MSNProtocol::slotStartChatSession( QString handle )
+{
+	if( isConnected() )
+	{
+		if( handle == m_msnId )
+			return;
+		m_msgHandle = handle;
+		serviceSocket()->createChatSession();
+	}
+}
+
+void MSNProtocol::contactUnBlock( QString handle )
+{
+	serviceSocket()->removeContact( handle, 0, BL );
 }
 
 #include "msnprotocol.moc"

@@ -17,7 +17,6 @@
 
 
 #include "kmsnservicesocket.h"
-#include "kmsnservice.h"
 #include "msnprotocol.h"
 
 // kde

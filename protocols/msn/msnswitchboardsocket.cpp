@@ -17,7 +17,6 @@
 
 
 #include "kmsnchatservice.h"
-#include "kmsnservice.h"
 #include "msnprotocol.h"
 #include <time.h>
 // qt

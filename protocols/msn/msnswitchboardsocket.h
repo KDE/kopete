@@ -29,7 +29,6 @@
   */
 
 class QSocket;
-class KMSNService;
 class KExtendedSocket;
 
 class KMSNChatService : public QObject  {
@@ -41,7 +40,6 @@ public:
 	QString msgHandle;
 	KStringHandler kstr;
 	QSocket *fileSocket;
-	KMSNService *imService;
 	int socketTimer;
 
 protected:
