@@ -168,9 +168,9 @@ void KopeteWindow::initActions()
 
 	KStdAction::configureToolbars(this, SLOT(slotConfToolbar()), actionCollection(), "settings_toolbars" );
 
-	actionShowOffliners = new KToggleAction( i18n( "Show Offline &Users" ), "viewmag", CTRL + Key_F,
+	actionShowOffliners = new KToggleAction( i18n( "Show Offline &Users" ), "viewmag", CTRL + Key_U,
 			this, SLOT( slotToggleShowOffliners() ), actionCollection(), "settings_show_offliners" );
-	actionShowEmptyGroups = new KToggleAction( i18n( "Show &Empty Groups" ), "folder_green", CTRL + Key_E,
+	actionShowEmptyGroups = new KToggleAction( i18n( "Show Empty &Groups" ), "folder_green", CTRL + Key_G,
 			this, SLOT( slotToggleShowEmptyGroups() ), actionCollection(), "settings_show_empty_groups" );
 
 	// sync actions, config and prefs-dialog
