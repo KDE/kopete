@@ -232,7 +232,8 @@ void KopeteContact::slotChangeMetaContact()
 	QPtrList<KopeteMetaContact> metaContacts = KopeteContactList::contactList()->metaContacts();
 	for( 	KopeteMetaContact *mc = metaContacts.first(); mc ; mc = metaContacts.next() )
 	{
-		new MetaContactListBoxItem(mc , m_selectMetaContactListBox  ) ;
+		if(!mc->isTemporary())
+			new MetaContactListBoxItem(mc , m_selectMetaContactListBox  ) ;
 	}
 
 	moveDialog->setMainWidget(w);
@@ -260,6 +261,10 @@ void KopeteContact::moveToMetaContact(KopeteMetaContact *m)
 	QStringList groups_old=m_metaContact->groups();
 	QStringList groups_current=groups();
 
+	m_metaContact->removeChild(this);
+	m->insertChild(this);
+	m_metaContact=m;
+
 	for( QStringList::ConstIterator it = groups_new.begin(); it != groups_new.end(); ++it )
 	{
 		QString group=*it;
@@ -272,10 +277,6 @@ void KopeteContact::moveToMetaContact(KopeteMetaContact *m)
 		if(groups_current.contains(group) && !groups_new.contains(group))
 			removeFromGroup(group);
 	}
-
-	m_metaContact->removeChild(this);
-	m->insertChild(this);
-	m_metaContact=m;
 
 	//TODO: connect this signal in each protocol for uptade the KopeteMetaContact map
 	emit moved(this);

@@ -870,14 +870,6 @@ void JabberProtocol::slotIconRightClicked(const QPoint&)
 
 void JabberProtocol::createAddContact(KopeteMetaContact *mc, const Jabber::RosterItem &item)
 {
-	// this flag tells us if we are dealing with a newly created metacontact
-	// created from the addcontact widget (which is empty by default) or
-	// if we are dealing with a non-existing contact that needs to be filled
-	// or if we are dealing with an existing contact that is filled and that
-	// simply needs updating (see the code to figure out how all that fits
-	// into a boolean)
-	bool emptyMetaContact = true;
-
 	if(!mc)
 	{
 		mc = KopeteContactList::contactList()->findContact(this->id(), myContact->userId(), item.jid().userHost());
@@ -886,66 +878,58 @@ void JabberProtocol::createAddContact(KopeteMetaContact *mc, const Jabber::Roste
 		{
 			JabberContact *jc = (JabberContact *)mc->findContact(this->id(), myContact->userId(), item.jid().userHost());
 
-			if(!jc)
-				emptyMetaContact = true;
+			if(jc)
+			{
+				// existing contact, update data
+				kdDebug() << "[JabberProtocol] Contact " << item.jid().userHost() << " already exists, updating" << endl;
+
+				jc->slotUpdateContact(item);
+
+				// Due to the fact that we serialize and deserialize contacts
+				// on startup, they usually exist in the GUI roster but not in
+				// our contact map associations yet after connecting.
+				// Make sure that we propagate the associations into the maps
+				// now.
+				contactMap.insert(item.jid().userHost(), jc);
+				metaContactMap.insert(jc, mc);
+
+				return;
+			}
 			else
-				emptyMetaContact = false;
+			{
+				kdDebug() << "[JabberProtocol]****Warning**** : " << item.jid().userHost() << " already exists, and can be found" << endl;
+			}
 		}
 	}
 
-	if (mc && !emptyMetaContact)
+	kdDebug() << "[JabberProtocol] Adding contact " << item.jid().userHost() << " ..." << endl;
+
+	bool isContactInList=true;;
+		
+	if(!mc)
 	{
-		// existing contact, update data
-		kdDebug() << "[JabberProtocol] Contact " << item.jid().userHost() << " already exists, updating" << endl;
-
-		JabberContact *jc = (JabberContact *)mc->findContact(this->id(), myContact->userId(), item.jid().userHost());
-
-		jc->slotUpdateContact(item);
-
-		// Due to the fact that we serialize and deserialize contacts
-		// on startup, they usually exist in the GUI roster but not in
-		// our contact map associations yet after connecting.
-		// Make sure that we propagate the associations into the maps
-		// now.
-		contactMap.insert(item.jid().userHost(), jc);
-		metaContactMap.insert(jc, mc);
-
+		isContactInList = false;
+		mc = new KopeteMetaContact();
 	}
+
+	QString contactName;
+		
+	if(item.name().isNull() || item.name().isEmpty())
+		contactName = item.jid().userHost();
 	else
-	{
-		kdDebug() << "[JabberProtocol] Adding contact " << item.jid().userHost() << " ..." << endl;
+		contactName = item.name();
 
-		bool isContactInList;
-		
-		if(!mc)
-		{
-			isContactInList = false;
-			mc = new KopeteMetaContact();
-		}
-		else
-		{
-			isContactInList = true;
-		}
+	JabberContact *jc = new JabberContact(item.jid().userHost(), contactName, item.groups(), this, mc, myContact->userId());
 
-		QString contactName;
-		
-		if(item.name().isNull() || item.name().isEmpty())
-			contactName = item.jid().userHost();
-		else
-			contactName = item.name();
+	connect(jc, SIGNAL(contactDestroyed(KopeteContact *)), this, SLOT(slotContactDestroyed(KopeteContact *)));
 
-		JabberContact *jc = new JabberContact(item.jid().userHost(), contactName, item.groups(), this, mc, myContact->userId());
+	mc->addContact(jc, isContactInList ? QStringList() : item.groups());
 
-		connect(jc, SIGNAL(contactDestroyed(KopeteContact *)), this, SLOT(slotContactDestroyed(KopeteContact *)));
+	contactMap.insert(item.jid().userHost(), jc);
+	metaContactMap.insert(jc, mc);
 
-		mc->addContact(jc, item.groups().empty() ? QStringList("Unknown") : item.groups());
-
-		contactMap.insert(item.jid().userHost(), jc);
-		metaContactMap.insert(jc, mc);
-
-		if(!isContactInList)
-			KopeteContactList::contactList()->addMetaContact(mc);
-	}
+	if(!isContactInList)
+		KopeteContactList::contactList()->addMetaContact(mc);
 
 }
 
