@@ -36,18 +36,19 @@ KopeteAway::KopeteAway()
 	
 	mAwayMessageList.clear(); // Empty the list
 	
-	/* Initialize the away message vector */
 	config = KGlobal::config();
+	
+	/* Load the saved away messages */
 	config->setGroup("Away Messages");
 	/* If Kopete has been run before, this will be true.
 	 * It's only false the first time Kopete is run
 	 */
 	if(config->hasKey("Titles")){
-		QStringList titles = config->readListEntry("Titles");
-		KopeteAwayMessage temp; //Temporary away message....
+		QStringList titles = config->readListEntry("Titles");  // Get the titles
+		KopeteAwayMessage temp; // Temporary away message....
 		for(QStringList::iterator i = titles.begin(); i != titles.end(); i++){
-			 temp.title = (*i); // Grab the title
-			 temp.message = config->readEntry(temp.title); // And the message
+			 temp.title = (*i); // Grab the title from the list of messages
+			 temp.message = config->readEntry(temp.title); // And the message (from disk)
 			 mAwayMessageList.append(temp); // And add it to the list
 		}
 	} else {
@@ -102,13 +103,13 @@ void KopeteAway::setGlobalAway(bool status)
 }
 
 void KopeteAway::save(){
-	/* Set the config group */
+	/* Set the away message settings in the Away Messages config group */
 	config->setGroup("Away Messages");
 	QStringList titles;
 	/* For each message, keep track of the title, and write out the message */
 	for(QValueList<KopeteAwayMessage>::iterator i = mAwayMessageList.begin(); i != mAwayMessageList.end(); i++){
-		titles.append((*i).title);
-		config->writeEntry((*i).title, (*i).message);
+		titles.append((*i).title); // Append the title to list of titles
+		config->writeEntry((*i).title, (*i).message); // Append Title->message pair to the config
 	}
 	
 	/* Write out the titles */
