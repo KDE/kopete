@@ -69,7 +69,7 @@ public:
 
 	QString toString() const;
 
-	bool isNumericMessage() const;
+	bool isNumeric() const;
 	bool isValid() const;
 	void dump() const;
 
@@ -81,6 +81,10 @@ public:
 		{ return m_prefix; }
 	inline const QString &command() const
 		{ return m_command; }
+	inline size_t count() const
+		{ return m_args.count(); }
+	inline const QString &arg(size_t i) const
+		{ return m_args[i]; }
 	inline const QStringList &args() const
 		{ return m_args; }
 	inline const QString &suffix() const

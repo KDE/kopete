@@ -301,7 +301,7 @@ QString KIRCMessage::toString() const
 	return msg;
 }
 
-bool KIRCMessage::isNumericMessage() const
+bool KIRCMessage::isNumeric() const
 {
 	QRegExp re(m_IRCNumericCommand);
 	return re.exactMatch( m_command );
