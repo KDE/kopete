@@ -226,15 +226,13 @@ void OscarAccount::initActionMenu()
 
 void OscarAccount::initEngine()
 {
-    kdDebug( 14150 ) << "[OscarAccount: " << accountId()
-		     << "] initEngine() START" << endl;
-    QByteArray cook;
-    cook.duplicate("01234567",8);
-    m_engine =
-	new OscarSocket( pluginData(protocol(),  "server"),
-			 cook, this );
-    kdDebug( 14150 ) << "[OscarAccount: "
-		     << "] initEngine() END" << endl;
+	kdDebug( 14150 ) << k_funcinfo << "START; accountId="<< accountId() << endl;
+
+	QByteArray cook;
+	cook.duplicate("01234567",8);
+	m_engine = new OscarSocket(pluginData(protocol(), "server"), cook, this);
+
+	kdDebug( 14150 ) << k_funcinfo << "END; accountId=" << accountId() << endl;
 }
 
 void OscarAccount::initSignals()
@@ -251,7 +249,7 @@ void OscarAccount::initSignals()
     // This is for when the user decides to add a group in the contact list
     QObject::connect( KopeteContactList::contactList(),
 		      SIGNAL( groupAdded(KopeteGroup *) ),
-		      SLOT( slotKopeteGroupAdded(KopeteGroup *) ) );
+		      SLOT( slotGroupAdded(KopeteGroup *) ) );
 
     // Protocol error
     QObject::connect( getEngine(),
@@ -349,113 +347,121 @@ void OscarAccount::slotGoOffline()
 
 void OscarAccount::slotGoAway()
 {
-    kdDebug(14150) << "[OscarProtocol] slotGoAway()" << endl;
-    if ( myself()->onlineStatus() ==
-	 OscarProtocol::protocol()->getOnlineStatus( OscarProtocol::ONLINE))
-    {
-	// Show the dialog, which takes care of the
-	// setting of the away message
-	m_awayDialog->show();
-    }
+	kdDebug(14150) << k_funcinfo << "Called" << endl;
+
+	if ( myself()->onlineStatus() ==
+		OscarProtocol::protocol()->getOnlineStatus( OscarProtocol::ONLINE))
+	{
+		// Show the dialog, which takes care of the
+		// setting of the away message
+		m_awayDialog->show();
+	}
 }
 
 void OscarAccount::slotEditInfo()
 {
-    OscarUserInfo *oscaruserinfo =
-	new OscarUserInfo(accountId(), accountId(),
-			  this, getEngine()->getMyProfile());
+	OscarUserInfo *oscaruserinfo;
 
-    // This is a modal dialog
-    oscaruserinfo->exec();
+	oscaruserinfo = new OscarUserInfo(
+		accountId(), accountId(),
+		this, getEngine()->getMyProfile());
+
+	oscaruserinfo->exec(); // This is a modal dialog
 }
 
 void OscarAccount::slotShowDebugDialog()
-{ // If there is a debug dialog, show it
-    if(m_debugDialog){
-	m_debugDialog->show();
-    }
+{
+	if(m_debugDialog)
+	{
+		m_debugDialog->show();
+	}
 }
 
 void OscarAccount::slotError(QString errmsg, int errorCode)
 {
-    kdDebug(14150) << "[OscarAccount: " << accountId()
-		   << "] slotError(), errmsg="
-		   << errmsg << ", errorCode=" << errorCode << "." << endl;
+	kdDebug(14150) << "[OscarAccount: " << accountId()
+		<< "] slotError(), errmsg="
+		<< errmsg << ", errorCode=" << errorCode << "." << endl;
 
-    //TODO: somebody add a comment about these two error-types
-    if (errorCode == 1 || errorCode == 5)
-	slotDisconnected();
+	//TODO: somebody add a comment about these two error-types
+	if (errorCode == 1 || errorCode == 5)
+		slotDisconnected();
 
-    KMessageBox::error(qApp->mainWidget(), errmsg);
+	KMessageBox::error(qApp->mainWidget(), errmsg);
 }
 
 
 // Called when we get disconnected
 void OscarAccount::slotDisconnected()
 {
-    kdDebug(14150) << "[OscarAccount: " << accountId()
-		   << "] slotDisconnected() and function info is: "
-		   << k_funcinfo << endl;
+	kdDebug(14150) << "[OscarAccount: " << accountId()
+		<< "] slotDisconnected() and function info is: "
+		<< k_funcinfo << endl;
 
-    myself()->setOnlineStatus(
-	OscarProtocol::protocol()->getOnlineStatus( OscarProtocol::OFFLINE ));
+	myself()->setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus( OscarProtocol::OFFLINE ));
 }
 
 // Called when a group is added by adding a contact
 void OscarAccount::slotGroupAdded(KopeteGroup *group)
 {
-    QString groupName = group->displayName();
+	kdDebug(14150) << k_funcinfo << "called" << endl;
 
-    // See if we already have this group
-    AIMGroup *aGroup = m_internalBuddyList->findGroup(groupName);
-    if (!aGroup)
-    {
-	aGroup = m_internalBuddyList->addGroup(m_randomNewGroupNum, groupName);
-	m_randomNewGroupNum++;
-	kdDebug(14150) << "[OscarAccount: " << accountId()
-		       << "] addGroup() being called" << endl;
-	if (isConnected()) {
-	    getEngine()->sendAddGroup(groupName);
+	QString groupName = group->displayName();
+
+	// See if we already have this group
+	AIMGroup *aGroup = m_internalBuddyList->findGroup(groupName);
+	if (!aGroup)
+	{
+		aGroup = m_internalBuddyList->addGroup(m_randomNewGroupNum, groupName);
+		m_randomNewGroupNum++;
+		kdDebug(14150) << "[OscarAccount: " << accountId() << "] addGroup() being called" << endl;
+		if (isConnected())
+		{
+			getEngine()->sendAddGroup(groupName);
+		}
 	}
-    }
-    else
-    { // The server already has it in it's list, don't worry about it
-	return;
-    }
+	else
+	{ // The server already has it in it's list, don't worry about it
+		kdDebug(14150) << "Group already existing" << endl;
+	}
 }
 
-void OscarAccount::slotGroupRenamed( const QString& groupName, uint groupNumber)
+void OscarAccount::slotGroupRenamed( const QString& /*groupName*/, uint /*groupNumber*/)
 {
-    // Nothing
+	kdDebug(14150) << k_funcinfo << "DOING NOTHING" << endl;
 }
 
-void OscarAccount::slotGroupRemoved( const QString& groupName, uint groupNumber)
+void OscarAccount::slotGroupRemoved( const QString& /*groupName*/, uint /*groupNumber*/)
 {
-    // Nothing
+	kdDebug(14150) << k_funcinfo << "DOING NOTHING" << endl;
 }
-void OscarAccount::slotKopeteGroupRenamed( KopeteGroup *group )
+
+void OscarAccount::slotKopeteGroupRenamed( KopeteGroup */*group*/ )
 {
-    // Nothing
+	kdDebug(14150) << k_funcinfo << "DOING NOTHING" << endl;
 }
-void OscarAccount::slotKopeteGroupRemoved( KopeteGroup *group )
+
+void OscarAccount::slotKopeteGroupRemoved( KopeteGroup */*group*/ )
 {
-    // Nothing
+	kdDebug(14150) << k_funcinfo << "DOING NOTHING" << endl;
 }
 
 // Called when we have gotten an IM
-void OscarAccount::slotGotIM(QString message, QString sender, bool isAuto)
+void OscarAccount::slotGotIM(QString /*message*/, QString sender, bool /*isAuto*/)
 {
-    kdDebug(14150) << "[OscarAccount: " << accountId()
-		   << "] slotGotIM(); got a buddy for the list, sender="
-		   << sender << endl;
+	kdDebug(14150) << "[OscarAccount: " << accountId() <<
+		"] slotGotIM(); got a buddy for the list, sender=" <<
+		sender << endl;
 
-    //basically, all this does is add the person to your buddy list
-    // TODO: Right now this has no support for "temporary" buddies
-    // because I could not think of a good way to do this with
-    // AIM.  Someone think of one - Chris
-    if (!m_internalBuddyList->findBuddy(sender)) {
-	addContact(tocNormalize(sender), sender, 0L, QString::null, false);
-    }
+	//basically, all this does is add the person to your buddy list
+	// TODO: Right now this has no support for "temporary" buddies
+	// because I could not think of a good way to do this with
+	// AIM.  Someone think of one - Chris
+
+	if (!m_internalBuddyList->findBuddy(sender))
+	{
+		addContact(tocNormalize(sender), sender, 0L, QString::null, false);
+	}
 }
 
 // Called when we retrieve the buddy list from the server
@@ -658,116 +664,115 @@ bool OscarAccount::addContactToMetaContact( const QString &contactId,
 
 		return (newContact != 0L);
 	    }
+		}
 	}
-    }
-    else
-    { // We're not even online, so don't bother
-	return false;
-    }
+	else
+	{ // We're not even online, so don't bother
+		return false;
+	}
 }
 
 void OscarAccount::slotOurStatusChanged( const KopeteOnlineStatus &newStatus )
 {
-    kdDebug( 14150 ) << k_funcinfo << "status=" << newStatus.internalStatus()
-		     << endl;
-    // update our own record of our status
-    myself()->setOnlineStatus( newStatus );
+	kdDebug( 14150 ) << k_funcinfo << "status=" << newStatus.internalStatus() << endl;
+	// update our own record of our status
+	myself()->setOnlineStatus( newStatus );
 }
 
 // Called when we have been warned
 void OscarAccount::slotGotWarning(int newlevel, QString warner)
 {  //this is not a natural decrease in level
-    if (m_userInfo.evil < newlevel)
-    {
-	QString warnMessage;
-	if(warner.isNull())
+	if (m_userInfo.evil < newlevel)
 	{
-	    warnMessage = i18n("anonymously");
-	}
-	else
-	{
-	    warnMessage = i18n("...warned by...", "by %1").arg(warner);
-	}
+		QString warnMessage;
 
-	QString message =
-	    i18n("You have been warned %1. Your new warning level is %2%.").arg(
-		warnMessage).arg(newlevel);
-	KMessageBox::sorry(0L,message);
-    }
-    m_userInfo.evil = newlevel;
+		if(warner.isNull())
+		{
+			warnMessage = i18n("anonymously");
+		}
+		else
+		{
+			warnMessage = i18n("...warned by...", "by %1").arg(warner);
+		}
+
+		QString message =
+			i18n("You have been warned %1. Your new warning level is %2%.").arg(warnMessage).arg(newlevel);
+
+		KMessageBox::sorry(0L,message);
+	}
+	m_userInfo.evil = newlevel;
 }
 
 
 void OscarAccount::slotGotDirectIMRequest(QString sn)
 {
-    QString title = i18n("Direct IM session request");
-    QString message =
+	QString title = i18n("Direct IM session request");
+	QString message =
 	i18n("%1 has requested a direct IM session with you.  " \
-	     "Direct IM sessions allow the remote user to see your IP " \
-	     "address, which can lead to security problems if you don't " \
-	     "trust him/her.  Do you want to establish a direct connection " \
-	     "to %2?").arg(sn).arg(sn);
+		"Direct IM sessions allow the remote user to see your IP " \
+		"address, which can lead to security problems if you don't " \
+		"trust him/her.  Do you want to establish a direct connection " \
+		"to %2?").arg(sn).arg(sn);
 
-    int result =
-	KMessageBox::questionYesNo(qApp->mainWidget(), message, title);
+	int result = KMessageBox::questionYesNo(qApp->mainWidget(), message, title);
 
-    if (result == KMessageBox::Yes)
-    {
-	getEngine()->sendDirectIMAccept(sn);
-    }
-    else if (result == KMessageBox::No)
-    {
-	getEngine()->sendDirectIMDeny(sn);
-    }
+	if (result == KMessageBox::Yes)
+	{
+		getEngine()->sendDirectIMAccept(sn);
+	}
+	else if (result == KMessageBox::No)
+	{
+		getEngine()->sendDirectIMDeny(sn);
+	}
 }
 
 void OscarAccount::slotGotMyUserInfo(UserInfo newInfo)
 {
-    m_userInfo = newInfo;
+	m_userInfo = newInfo;
 }
 
 void OscarAccount::slotIdleActivity()
 {
-    kdDebug(14150) << k_funcinfo << "got some activity, setting idle time with server to 0" << endl;
-    getEngine()->sendIdleTime( 0 );
+	kdDebug(14150) << k_funcinfo << "got some activity, setting idle time with server to 0" << endl;
+	getEngine()->sendIdleTime( 0 );
 }
 
 /** Called when there is no activity for a certain amount of time  */
 void OscarAccount::slotIdleTimeout()
 {
-    kdDebug(14150) << k_funcinfo << "got an idle timeout, setting idle time with server" << endl;
-    //idleTimeout() gives a value in minutes, engine wants seconds
-    int idleTimeout = 0;
-    QString idleString = pluginData(protocol(),  "IdleTimeOut");
-    idleTimeout = idleString.toInt();
+	kdDebug(14150) << k_funcinfo << "got an idle timeout, setting idle time with server" << endl;
+	//idleTimeout() gives a value in minutes, engine wants seconds
+	int idleTimeout = 0;
+	QString idleString = pluginData(protocol(),  "IdleTimeOut");
+	idleTimeout = idleString.toInt();
 
-    getEngine()->sendIdleTime( idleTimeout * 60 );
+	getEngine()->sendIdleTime( idleTimeout * 60 );
 }
 
 int OscarAccount::randomNewBuddyNum()
 {
-    return m_randomNewBuddyNum++;
+	return m_randomNewBuddyNum++;
 }
 
 int OscarAccount::randomNewGroupNum()
 {
-    return m_randomNewGroupNum++;
+	return m_randomNewGroupNum++;
 }
 
 AIMBuddyList *OscarAccount::internalBuddyList()
 {
-    return m_internalBuddyList;
+	return m_internalBuddyList;
 }
 
 void OscarAccount::setServer( QString server )
 {
-    setPluginData(protocol(),  "Server", server);
+	setPluginData(protocol(),  "Server", server);
 }
 
 void OscarAccount::setPort( int port )
 {
-    if ( port > 0 )
-    { // Do a little error checkin on it
-	setPluginData(protocol(), "Port", QString::number( port ));
-    }
+	if (port>0)// Do a little error checkin on it
+		setPluginData(protocol(), "Port", QString::number( port ));
 }
+
+#include "oscaraccount.moc"

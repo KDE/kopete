@@ -27,7 +27,6 @@ extern "C" {
 #include "oscaraccount.h"
 #include "oncomingsocket.h"
 #include "oscardebugdialog.h"
-#include "oscarsocket.moc"
 
 #include <qdatetime.h>
 #include <unistd.h>
@@ -48,6 +47,19 @@ static const char AIM_OTHER[] = { 0x00, 0x00, 0x00, 0xbb };
 #define AIM_COUNTRY "us"
 #define AIM_LANG "en"
 
+
+#define ICQ_CLIENTSTRING "ICQ Inc. - Product of ICQ (TM).2002a.5.37.1.3728.85"
+#define ICQ_CLIENTID 0x010A
+#define ICQ_MAJOR 0x0005
+#define ICQ_MINOR 0x0025
+#define ICQ_POINT 0x0001
+#define ICQ_BUILD 0x0e90
+static const char ICQ_OTHER[] = { 0x00, 0x00, 0x00, 0x55 };
+//#define ICQ_OTHER 0x00000055L
+#define ICQ_COUNTRY "us"
+#define ICQ_LANG "en"
+
+
 #define AIM_CAPS_BUDDYICON      0x00000001
 #define AIM_CAPS_VOICE          0x00000002
 #define AIM_CAPS_IMIMAGE        0x00000004
@@ -55,19 +67,19 @@ static const char AIM_OTHER[] = { 0x00, 0x00, 0x00, 0xbb };
 #define AIM_CAPS_GETFILE        0x00000010
 #define AIM_CAPS_SENDFILE       0x00000020
 #define AIM_CAPS_GAMES          0x00000040
-#define AIM_CAPS_SAVESTOCKS     0x00000080
-#define AIM_CAPS_SENDBUDDYLIST  0x00000100
-#define AIM_CAPS_GAMES2         0x00000200
-#define AIM_CAPS_ICQ            0x00000400
-#define AIM_CAPS_APINFO			0x00000800
-#define AIM_CAPS_ICQRTF			0x00001000
-#define AIM_CAPS_EMPTY			0x00002000
-#define AIM_CAPS_ICQSERVERRELAY 0x00004000
-#define AIM_CAPS_ICQUNKNOWN     0x00008000
-#define AIM_CAPS_TRILLIANCRYPT  0x00010000
-#define AIM_CAPS_LAST           0x00020000
+#define AIM_CAPS_SAVESTOCKS		0x00000080
+#define AIM_CAPS_SENDBUDDYLIST	0x00000100
+#define AIM_CAPS_GAMES2				0x00000200
+#define AIM_CAPS_ICQ					0x00000400
+#define AIM_CAPS_APINFO				0x00000800
+#define AIM_CAPS_ICQRTF				0x00001000
+#define AIM_CAPS_EMPTY				0x00002000
+#define AIM_CAPS_ICQSERVERRELAY	0x00004000
+#define AIM_CAPS_ICQUNKNOWN		0x00008000
+#define AIM_CAPS_TRILLIANCRYPT	0x00010000
+#define AIM_CAPS_LAST				0x00020000
 
-#define KOPETE_CAPS				AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE
+#define KOPETE_CAPS					AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE
 
 static const struct {
     DWORD flag;
@@ -196,34 +208,37 @@ static const int msgerrreasonlen = 25;
 
 OscarSocket::OscarSocket( const QString &connName, const QByteArray &cookie,
 	OscarAccount *account, QObject *parent, const char *name)
-    : OscarConnection("unknown", connName, Server, cookie, parent,name)
+	: OscarConnection("unknown", connName, Server, cookie, parent,name)
 {
-    connect(this, SIGNAL(connectionClosed()), this, SLOT(OnConnectionClosed()));
-    connect(this, SIGNAL(serverReady()), this, SLOT(OnServerReady()));
-    key = NULL;
-    mCookie = NULL;
-    idle = false;
-    rateClasses.setAutoDelete(TRUE);
-    myUserProfile = "Visit the Kopete website at <a href=""http://kopete.kde.org"">http://kopete.kde.org</a>";
-    isConnected = false;
+	connect(this, SIGNAL(connectionClosed()), this, SLOT(OnConnectionClosed()));
+	connect(this, SIGNAL(serverReady()), this, SLOT(OnServerReady()));
+	key = NULL;
+	mCookie = NULL;
+	idle = false;
+	rateClasses.setAutoDelete(TRUE);
+	myUserProfile = "Visit the Kopete website at <a href=""http://kopete.kde.org"">http://kopete.kde.org</a>";
+	isConnected = false;
 	// Save the account we're in
 	m_account = account;
 }
 
 OscarSocket::~OscarSocket(void)
 {
-    rateClasses.clear();
+	rateClasses.clear();
 }
 
 /** This is called when a connection is established */
 void OscarSocket::OnConnect(void)
 {
-    QString tmp = QString("Connected to " + peerName() + ", port %1").arg(peerPort());
-    kdDebug(14150) << "[OSCAR][OnConnect] Connected to " << peerName() << ", port " << peerPort() << endl;
-   	mDirectIMMgr = new OncomingSocket(this, address(), DirectIM);
-    mFileTransferMgr = new OncomingSocket(this, address(), SendFile, SENDFILE_PORT);
-    kdDebug(14150) << "[OSCAR] address() is " << address().toString() << " mDirectIMMgr->address() is " << mDirectIMMgr->address().toString() << endl;
-    emit connectionChanged(1,tmp);
+	kdDebug(14150) << "[OSCAR][OnConnect] Connected to " << peerName() << ", port " << peerPort() << endl;
+
+	mDirectIMMgr = new OncomingSocket(this, address(), DirectIM);
+	mFileTransferMgr = new OncomingSocket(this, address(), SendFile, SENDFILE_PORT);
+
+	kdDebug(14150) << "[OSCAR] address() is " << address().toString() <<
+		" mDirectIMMgr->address() is " << mDirectIMMgr->address().toString() << endl;
+
+	emit connectionChanged(1, QString("Connected to %2, port %1").arg(peerPort()).arg(peerName()));
 }
 
 /** This function is called when there is data to be read */
@@ -234,18 +249,18 @@ void OscarSocket::slotRead(void)
 	Buffer inbuf;
 
 	if ( fl.error ) //something went wrong, this shouldn't happen
-  {
-  	kdDebug(14150) << "[OSCAR] this is bad, flap read error occured " << endl;
-  	//dump packet, try to recover
-   	char *tmp = new char[bytesAvailable()];
-    readBlock(tmp, bytesAvailable());
-    inbuf.setBuf(tmp, bytesAvailable());
-    inbuf.print();
-    if (hasDebugDialog()) {
-    	debugDialog()->addMessageFromServer(inbuf.toString(), connectionName());
-    }
-    return;
-  }
+	{
+		kdDebug(14150) << "[OSCAR] this is bad, flap read error occured " << endl;
+		//dump packet, try to recover
+		char *tmp = new char[bytesAvailable()];
+		readBlock(tmp, bytesAvailable());
+		inbuf.setBuf(tmp, bytesAvailable());
+		inbuf.print();
+		if (hasDebugDialog())
+			debugDialog()->addMessageFromServer(inbuf.toString(), connectionName());
+		return;
+	}
+
 	if (bytesAvailable() < fl.length)
 	{
 		while (waitForMore(500) < fl.length)
@@ -258,15 +273,17 @@ void OscarSocket::slotRead(void)
 
 	inbuf.setBuf(buf,bytesread);
 
-	//kdDebug(14150) << "[OSCAR] Input: " << endl;
-	//inbuf.print();
-	if(hasDebugDialog()){
-			debugDialog()->addMessageFromServer(inbuf.toString(),connectionName());
-	}
+#ifdef OSCAR_PACKETLOG
+	kdDebug(14150) << "[OSCAR] Input: " << endl;
+	inbuf.print();
+#endif
+	if(hasDebugDialog())
+		debugDialog()->addMessageFromServer(inbuf.toString(),connectionName());
 
 	switch(fl.channel)
 	{
 		case 0x01: //new connection negotiation channel
+		{
 			DWORD flapversion;
 			flapversion = inbuf.getDWord();
 			if (flapversion == 0x00000001)
@@ -279,54 +296,74 @@ void OscarSocket::slotRead(void)
 				return;
 			}
 			break;
+		} // END 0x01
 
-		case 0x02: //snac data channel */
+		case 0x02: //snac data channel
+		{
 			SNAC s;
 			s = inbuf.getSnacHeader();
-			//printf("Snac family is %x, subtype is %x, flags are %x, id is %x\n",s.family,s.subtype,s.flags,s.id);
+
+			kdDebug(14150) << "SNAC(" << s.family << ", " << s.subtype <<
+				"), flags are "<< s.flags << ", id is " << s.id << endl;
+
 			switch(s.family)
 			{
 				case 0x0001: //generic service controls
 					switch(s.subtype)
 					{
-					case 0x0001:  //error
+						case 0x0001:  //error
+						{
 #ifdef OSCAR_PACKETLOG
 							kdDebug(14150) << "[OSCAR] Generic service error.. remaining data is:" << endl;
 							inbuf.print();
 #endif
-							emit protocolError(i18n("An unknown error occured. Please report this to the Kopete development team by visiting http://kopete.kde.org. The error message was: \"Generic service error: 0x0001/0x0001\""), 0);
+							emit protocolError(
+							i18n(
+								"An unknown error occured. " \
+								"Please report this to the Kopete development " \
+								"team by visiting http://kopete.kde.org. The error " \
+								"message was: \"Generic service error: SNAC(1,1)\""), 0);
 							break;
-					case 0x0003: //server ready
+						}
+						case 0x0003: //server ready
+						{
 							parseServerReady(inbuf);
 							break;
-					case 0x0005: //redirect
+						}
+						case 0x0005: //redirect
+						{
 							parseRedirect(inbuf);
 							break;
-					case 0x0007: //rate info request response
+						}
+						case 0x0007: //rate info request response, SRV_RATES
+						{
 							parseRateInfoResponse(inbuf);
 							break;
-					case 0x000f: //my user info
+						}
+						case 0x000f: //my user info
 							parseMyUserInfo(inbuf);
 							break;
-					case 0x000a: //rate change
+						case 0x000a: //rate change
 							parseRateChange(inbuf);
 							break;
-					case 0x0010: //warning notification
+						case 0x0010: //warning notification
 							parseWarningNotify(inbuf);
 							break;
-					case 0x0013: //message of the day
+						case 0x0013: //message of the day
 							parseMessageOfTheDay(inbuf);
 							break;
-					case 0x0018: //server versions
+						case 0x0018: //server versions
 							parseServerVersions(inbuf);
 							break;
-					case 0x001f: //requests a memory segment, part of aim.exe  EVIL AOL!!!
+						case 0x001f: //requests a memory segment, part of aim.exe  EVIL AOL!!!
 							parseMemRequest(inbuf);
 							break;
-					default:
-							kdDebug(14150) << "[OSCAR] Error: unknown family/subtype " << s.family << "/" << s.subtype << endl;
+						default:
+							kdDebug(14150) << "[OSCAR] Error: unknown SNAC(" <<
+								s.family << ", " << s.subtype << ")" << endl;
 					};
 					break;
+
 			case 0x0002: //locate service
 					switch(s.subtype) {
 					case 0x0003: //locate rights
@@ -387,7 +424,8 @@ void OscarSocket::slotRead(void)
 					};
 					break;
 			case 0x0013: //buddy list management
-					switch(s.subtype) {
+					switch(s.subtype)
+					{
 					case 0x0003: //ssi rights
 							parseSSIRights(inbuf);
 							break;
@@ -402,7 +440,8 @@ void OscarSocket::slotRead(void)
 					};
 					break;
 			case 0x0017: //authorization family
-					switch(s.subtype) {
+					switch(s.subtype)
+					{
 					case 0x0003: //authorization response (and hash) is being sent
 							parseAuthResponse(inbuf);
 							break;
@@ -417,11 +456,91 @@ void OscarSocket::slotRead(void)
 					kdDebug(14150) << "[OSCAR] Error: unknown family " << s.family << "/" << s.subtype << endl;
 			};
 			break;
-			//		case 0x03: //FLAP error channel
-			//			break;
-		case 0x04: //close connection negotiation channel
-			kdDebug(14150) << "[OSCAR] Got connection close request " << endl;
+		} // END 0x02
+
+		case 0x03: //FLAP error channel
+		{
+			kdDebug(14150) << "FLAP error channel, UNHANDLED" << endl;
+#ifdef OSCAR_PACKETLOG
+			kdDebug(14150) << "Input: " << endl;
+			inbuf.print();
+#endif
+			if(hasDebugDialog())
+				debugDialog()->addMessageFromServer(inbuf.toString(),connectionName());
 			break;
+		} // END 0x03
+
+		case 0x04: //close connection negotiation channel
+		{
+			kdDebug(14150) << "[OSCAR] Got connection close request, length=" << inbuf.getLength() << endl;
+			if(hasDebugDialog())
+				debugDialog()->addMessageFromServer(inbuf.toString(),connectionName());
+
+			// BEGIN TODO
+			// This is a part of icq login procedure,
+			// Move this into its own function!
+			QPtrList<TLV> lst = inbuf.getTLVList();
+
+			kdDebug(14150) << "contained TLVs:" << endl;
+			TLV *t;
+			for(t=lst.first(); t; t=lst.next())
+			{
+				kdDebug(14150) << "TLV(" << t->type << ") with length " << t->length << endl;
+			}
+
+			lst.setAutoDelete(TRUE);
+			TLV *uin = findTLV(lst,0x0001);
+			if(uin)
+			{
+				kdDebug(14150) << "found TLV(1) [UIN], uin=" << uin->data << endl;
+				delete [] uin->data;
+			}
+			TLV *server = findTLV(lst,0x0005);
+			TLV *cook = findTLV(lst,0x0006);
+
+			TLV *err = findTLV(lst,0x0008);
+			if (!err)
+				err = findTLV(lst,0x0009);
+			if (err)
+			{
+				kdDebug(14150) << "found TLV(8) [ERROR] error=" << ((err->data[0] << 8)|err->data[1]) << endl;
+				delete [] err->data;
+			}
+
+			TLV *descr = findTLV(lst,0x0004);
+			if(!descr)
+				descr = findTLV(lst,0x000b);
+			if(descr)
+			{
+				kdDebug(14150) << "found TLV(4) [DESCRIPTION] reason=" << descr->data << endl;
+				delete [] descr->data;
+			}
+
+			if (server)
+			{
+				kdDebug(14150) << "found TLV(5) [SERVER]" << endl;
+				QString ip = server->data;
+				int index = ip.find(':');
+				bosServer = ip.left(index);
+				ip.remove(0,index+1); //get rid of the colon and everything before it
+				bosPort = ip.toInt();
+				kdDebug(14150) << "we should reconnect to server " << bosServer <<
+					", ip.right(index) is " << ip <<
+					", bosPort is " << bosPort << endl;
+				delete[] server->data;
+			}
+
+			if (cook)
+			{
+				kdDebug(14150) << "found TLV(6) [COOKIE]" << endl;
+				mCookie = cook->data;
+				cookielen = cook->length;
+				connectToBos();
+			}
+			// END TODO
+
+			break;
+		}
 
 		default: //oh, crap, something's wrong
 		{
@@ -431,185 +550,287 @@ void OscarSocket::slotRead(void)
 			inbuf.print();
 #endif
 		}
+
 	} // END switch(fl.channel)
+
 	delete [] buf;
 }
 
 /** Sends an authorization request to the server */
 void OscarSocket::sendLoginRequest(void)
 {
-    Buffer outbuf;
-    outbuf.addSnac(0x0017,0x0006,0x0000,0x00000000);
-    outbuf.addTLV(0x0001,getSN().length(),getSN().latin1());
-    sendBuf(outbuf,0x02);
-    emit connectionChanged(2,QString("Requesting login for " + getSN() + "..."));
+	Buffer outbuf;
+	outbuf.addSnac(0x0017,0x0006,0x0000,0x00000000);
+	outbuf.addTLV(0x0001,getSN().length(),getSN().latin1());
+	sendBuf(outbuf,0x02);
+	emit connectionChanged(2,QString("Requesting login for " + getSN() + "..."));
 }
 
-/** encodes a password, outputs to the 3rd parameter */
+/** encodes a password, outputs to digest */
 int OscarSocket::encodePassword(unsigned char *digest)
 {
-    md5_state_t state;
+	md5_state_t state;
 
-    md5_init(&state);
-    md5_append(&state, (const md5_byte_t *)key, strlen(key));
-    md5_append(&state, (const md5_byte_t *)pass.latin1(), pass.length());
-    md5_append(&state, (const md5_byte_t *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
-    md5_finish(&state, (md5_byte_t *)digest);
+	md5_init(&state);
+	md5_append(&state, (const md5_byte_t *)key, strlen(key));
+	md5_append(&state, (const md5_byte_t *)pass.latin1(), pass.length());
+	md5_append(&state, (const md5_byte_t *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
+	md5_finish(&state, (md5_byte_t *)digest);
 
-    return 0;
+	return 0;
+}
+
+/**
+ * taken from libfaim !!!
+ * encodePasswordXOR - Encode a password using old XOR method
+ * @password: incoming password
+ * @encoded: buffer to put encoded password
+ *
+ * This takes a const pointer to a (null terminated) string
+ * containing the unencoded password.  It also gets passed
+ * an already allocated buffer to store the encoded password.
+ * This buffer should be the exact length of the password without
+ * the null.  The encoded password buffer /is not %NULL terminated/.
+ */
+QCString OscarSocket::encodePasswordXOR()
+{
+	const char *password = pass.latin1();
+	QCString encoded; //(strlen(password));
+
+	kdDebug(14150) << k_funcinfo << endl;
+//	kdDebug(14150) << "  unencoded pw='" << password << "'" << endl;
+	// v2.1 table, also works for ICQ
+
+	unsigned char encoding_table[] =
+	{
+		0xf3, 0x26, 0x81, 0xc4,
+		0x39, 0x86, 0xdb, 0x92,
+		0x71, 0xa3, 0xb9, 0xe6,
+		0x53, 0x7a, 0x95, 0x7c
+	};
+	unsigned int i;
+	for (i = 0; i < strlen(password); i++)
+	{
+		encoded += (password[i] ^ encoding_table[i]);
+//		kdDebug(14150) << "adding char '" << (char) (password[i] ^ encoding_table[i]) << "'" << endl;
+	}
+
+//	kdDebug(14150) << "  encoded pw='" << encoded << "', length=" << encoded.length() << endl;
+	return encoded;
 }
 
 /** adds the flap version to the buffer */
 void OscarSocket::putFlapVer(Buffer &outbuf)
 {
-    outbuf.addDWord(0x00000001);
+	outbuf.addDWord(0x00000001);
 }
 
 /** Called when a connection has been closed */
 void OscarSocket::OnConnectionClosed(void)
-{  // Get the online status
-    KopeteOnlineStatus status =
-	OscarProtocol::protocol()->getOnlineStatus(
-	    OscarProtocol::OFFLINE);
+{
+	kdDebug(14150) << "[OSCAR] Connection closed by server" << endl;
 
-    emit statusChanged( status );
-    kdDebug(14150) << "[OSCAR] Connection closed by server" << endl;
-    rateClasses.clear();
-    isConnected = false;
-    if (mDirectIMMgr)
-    	delete mDirectIMMgr;
- 	if (mFileTransferMgr)
-   		delete mFileTransferMgr;
+	rateClasses.clear();
+	isConnected = false;
+	if (mDirectIMMgr)
+		delete mDirectIMMgr;
+
+	if (mFileTransferMgr)
+		delete mFileTransferMgr;
+
+	emit statusChanged(
+		OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE)
+		);
 }
 
 /** Called when the server aknowledges the connection */
 void OscarSocket::OnConnAckReceived(void)
 {
-    kdDebug(14150) << "[OSCAR] OnConnAckReceived(): Sending flap version to server" << endl;
-    Buffer outbuf;
-    putFlapVer(outbuf);
-    sendBuf(outbuf,0x01);
-    sendLoginRequest();
+	kdDebug(14150) << k_funcinfo << endl;
+	// FIXME: bad way to check but works until icq support is fully integrated
+	const char *sn = getSN().latin1();
+	if ((sn[0] >= '0') && (sn[0] <= '9') && strlen(sn)>4)
+	{
+		kdDebug(14150) << k_funcinfo << "ICQ-LOGIN, sending ICQ login" << endl;
+		sendLoginICQ();
+	}
+	else
+	{
+		kdDebug(14150) << k_funcinfo << "AIM-LOGIN, Sending flap version to server" << endl;
+		Buffer outbuf;
+		putFlapVer(outbuf);
+		sendBuf(outbuf,0x01);
+		sendLoginRequest();
+	}
 }
 
 /** Sends the output buffer, and clears it */
 void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 {
+#ifdef OSCAR_PACKETLOG
+	kdDebug(14150) << "[OSCAR] Output: " << endl;
+	outbuf.print();
+#endif
+	if(hasDebugDialog())
+		debugDialog()->addMessageFromClient(outbuf.toString(), connectionName());
 
-		//kdDebug(14150) << "[OSCAR] Output: " << endl;
-		//outbuf.print();
-		if(hasDebugDialog()){
-				debugDialog()->addMessageFromClient(outbuf.toString(), connectionName());
-		}
-
-		outbuf.addFlap(chan);
-		writeBlock(outbuf.getBuf(),outbuf.getLength());
-		outbuf.clear();
+	outbuf.addFlap(chan);
+	writeBlock(outbuf.getBuf(),outbuf.getLength());
+	outbuf.clear();
 }
 
 /** Logs in the user! */
 void OscarSocket::doLogin(const QString &host, int port, const QString &s, const QString &password)
 {
-    disconnect(this, SIGNAL(connAckReceived()), this, SLOT(OnBosConnAckReceived()));
-    connect(this, SIGNAL(connAckReceived()), this, SLOT(OnConnAckReceived()));
-    disconnect(this, SIGNAL(connected()), this, SLOT(OnBosConnect()));
-    connect(this, SIGNAL(connected()), this, SLOT(OnConnect()));
-    setSN(s);
-    pass = password;
-    kdDebug(14150) << "[OSCAR] Connecting to " << host << ", port " << port << endl;
-    connectToHost(host,port);
+	kdDebug(14150) << k_funcinfo << endl;
+	kdDebug(14150) << "[OSCAR] Connecting to '" << host << "', port=" << port << endl;
+
+	disconnect(this, SIGNAL(connAckReceived()), this, SLOT(OnBosConnAckReceived()));
+	connect(this, SIGNAL(connAckReceived()), this, SLOT(OnConnAckReceived()));
+
+	disconnect(this, SIGNAL(connected()), this, SLOT(OnBosConnect()));
+	connect(this, SIGNAL(connected()), this, SLOT(OnConnect()));
+
+	setSN(s);
+	pass = password;
+
+	connectToHost(host,port);
 }
 
 /** The program does this when a key is received */
 void OscarSocket::parsePasswordKey(Buffer &inbuf)
 {
-	kdDebug(14150) << "[OSCAR] Got the key" << endl;;
+	kdDebug(14150) << k_funcinfo << "Got the key" << endl;;
+
 	WORD keylen;
 	keylen = inbuf.getWord();
 	if (key)
 		delete [] key;
 	key = inbuf.getBlock(keylen);
-  sendLogin();
+	sendLoginAIM();
 }
 
 /** Sends login information, actually logs onto the server */
-void OscarSocket::sendLogin(void)
+void OscarSocket::sendLoginAIM(void)
 {
-    kdDebug(14150) << "[OSCAR] Sending login info..." << endl;;
-    unsigned char digest[16];
-    digest[16] = '\0';  //do this so that addTLV sees a NULL-terminator
-    Buffer outbuf;
-    outbuf.addSnac(0x0017,0x0002,0x0000,0x00000000);
-    outbuf.addTLV(0x0001,getSN().length(),getSN().latin1());
-    encodePassword(digest);
-    outbuf.addTLV(0x0025,16,(char *)digest);
-    outbuf.addTLV(0x0003,0x32,AIM_CLIENTSTRING);
-    outbuf.addTLV16(0x0016,AIM_CLIENTID);
-    outbuf.addTLV16(0x0017,AIM_MAJOR);
-    outbuf.addTLV16(0x0018,AIM_MINOR);
-    outbuf.addTLV16(0x0019,AIM_POINT);
-    outbuf.addTLV16(0x001a,AIM_BUILD);
-    outbuf.addTLV(0x0014,0x0004,AIM_OTHER);
-    outbuf.addTLV(0x000f,0x0002,AIM_LANG);
-    outbuf.addTLV(0x000e,0x0002,AIM_COUNTRY);
-    //if set, old-style buddy lists will not work... you will need to use SSI
-    outbuf.addTLV8(0x004a,0x01);
-    //printf("Outbuf length before flap is: %d\n",outbuf.getLength());
-    sendBuf(outbuf,0x02);
-    kdDebug(14150) << "[OSCAR] sendLogin emitting connectionChanged" << endl;
-    emit connectionChanged(3,"Sending username and password...");
+	kdDebug(14150) << k_funcinfo << "Sending AIM login info..." << endl;;
+	unsigned char digest[16];
+	digest[16] = '\0';  //do this so that addTLV sees a NULL-terminator
+
+	Buffer outbuf;
+	outbuf.addSnac(0x0017,0x0002,0x0000,0x00000000);
+	outbuf.addTLV(0x0001,getSN().length(),getSN().latin1());
+
+	encodePassword(digest);
+
+	outbuf.addTLV(0x0025,16,(char *)digest);
+	outbuf.addTLV(0x0003,0x32,AIM_CLIENTSTRING);
+	outbuf.addTLV16(0x0016,AIM_CLIENTID);
+	outbuf.addTLV16(0x0017,AIM_MAJOR);
+	outbuf.addTLV16(0x0018,AIM_MINOR);
+	outbuf.addTLV16(0x0019,AIM_POINT);
+	outbuf.addTLV16(0x001a,AIM_BUILD);
+	outbuf.addTLV(0x0014,0x0004,AIM_OTHER);
+	outbuf.addTLV(0x000f,0x0002,AIM_LANG);
+	outbuf.addTLV(0x000e,0x0002,AIM_COUNTRY);
+
+	//if set, old-style buddy lists will not work... you will need to use SSI
+	outbuf.addTLV8(0x004a,0x01);
+
+	sendBuf(outbuf,0x02);
+	kdDebug(14150) << k_funcinfo << "emitting connectionChanged" << endl;
+	emit connectionChanged(3,"Sending username and password...");
 }
+
+void OscarSocket::sendLoginICQ(void)
+{
+	kdDebug(14150) << k_funcinfo << "Sending ICQ login info..." << endl;;
+
+	Buffer outbuf;
+
+	putFlapVer(outbuf); // FLAP Version
+	outbuf.addTLV(0x0001,getSN().length(),getSN().latin1()); // login name, i.e. ICQ UIN
+
+	QCString encodedPassword = encodePasswordXOR();
+	outbuf.addTLV(0x0002,encodedPassword.length(),encodedPassword);
+
+	outbuf.addTLV(0x0003,strlen(ICQ_CLIENTSTRING),ICQ_CLIENTSTRING);
+	outbuf.addTLV16(0x0016,ICQ_CLIENTID);
+	outbuf.addTLV16(0x0017,ICQ_MAJOR);
+	outbuf.addTLV16(0x0018,ICQ_MINOR);
+	outbuf.addTLV16(0x0019,ICQ_POINT);
+	outbuf.addTLV16(0x001a,ICQ_BUILD);
+	outbuf.addTLV(0x0014,0x0004,ICQ_OTHER); // distribution chan
+	outbuf.addTLV(0x000e,0x0002,ICQ_COUNTRY);
+	outbuf.addTLV(0x000f,0x0002,ICQ_LANG);
+
+//	kdDebug(14150) << "Outbuf length before flap is: " << outbuf.getLength() << endl;
+
+	sendBuf(outbuf,0x01);
+	kdDebug(14150) << k_funcinfo "emitting connectionChanged" << endl;
+	emit connectionChanged(3,"Sending username and password...");
+}
+
 
 /** Called when a cookie is received */
 void OscarSocket::connectToBos(void)
 {
-    kdDebug(14150) << "[OSCAR] Cookie received!... preparing to connect to BOS server" << endl;
-    emit connectionChanged(4,"Connecting to server...");
-    disconnect(this, SIGNAL(connAckReceived()), this, SLOT(OnConnAckReceived()));
-    connect(this, SIGNAL(connAckReceived()), this, SLOT(OnBosConnAckReceived()));
-    disconnect(this, SIGNAL(connected()), this, SLOT(OnConnect()));
-    connect(this, SIGNAL(connected()), this, SLOT(OnBosConnect()));
-    connectToHost(bosServer,bosPort);
+	kdDebug(14150) << k_funcinfo << "Cookie received!... preparing to connect to BOS server" << endl;
+
+	emit connectionChanged(4,"Connecting to server...");
+
+	disconnect(this, SIGNAL(connAckReceived()), this, SLOT(OnConnAckReceived()));
+	connect(this, SIGNAL(connAckReceived()), this, SLOT(OnBosConnAckReceived()));
+
+	disconnect(this, SIGNAL(connected()), this, SLOT(OnConnect()));
+	connect(this, SIGNAL(connected()), this, SLOT(OnBosConnect()));
+
+	connectToHost(bosServer,bosPort);
 }
 
 /** called when a conn ack is recieved for the BOS connection */
 void OscarSocket::OnBosConnAckReceived()
 {
-    kdDebug(14150) << "[OSCAR] Bos server ack'ed us!  Sending auth cookie" << endl;
-    sendCookie();
-    emit connectionChanged(5,"Connected to server, authorizing...");
+	kdDebug(14150) << "[OSCAR] Bos server ack'ed us!  Sending auth cookie" << endl;
+	sendCookie();
+	emit connectionChanged(5,"Connected to server, authorizing...");
 }
 
 /** Sends the authorization cookie to the BOS server */
 void OscarSocket::sendCookie(void)
 {
-    Buffer outbuf;
-    putFlapVer(outbuf);
-    outbuf.addTLV(0x0006,cookielen, mCookie);
-    sendBuf(outbuf,0x01);
+	kdDebug(14150) << k_funcinfo << endl;
+
+	Buffer outbuf;
+	putFlapVer(outbuf);
+	outbuf.addTLV(0x0006,cookielen, mCookie);
+	sendBuf(outbuf,0x01);
 }
 
 /** Called when the server is ready for normal commands */
 void OscarSocket::OnServerReady(void)
 {
-    emit connectionChanged(6,"Authorization successful, getting info from server");
+	kdDebug(14150) << k_funcinfo << endl;
+	emit connectionChanged(6,"Authorization successful, getting info from server");
 }
 
 /** Gets the rate info from the server */
 void OscarSocket::sendRateInfoRequest(void)
 {
-    kdDebug(14150) << "[OSCAR] Sending rate info request packet!" << endl;
-    Buffer outbuf;
-    outbuf.addSnac(0x0001,0x0006,0x0000,0x00000006);
-    sendBuf(outbuf,0x02);
+	kdDebug(14150) << k_funcinfo << "Sending rate info request packet!" << endl;
+	Buffer outbuf;
+	outbuf.addSnac(0x0001,0x0006,0x0000,0x00000006);
+	sendBuf(outbuf,0x02);
 }
 
 /** Parses the rate info response */
 void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 {
-	kdDebug(14150) << "[OSCAR] Parsing Rate Info Response" << endl;
+	kdDebug(14150) << k_funcinfo << "Parsing Rate Info Response" << endl;
+
 	RateClass *rc = NULL;
 	WORD numclasses = inbuf.getWord();
+
 	for (unsigned int i=0;i<numclasses;i++)
 	{
 		rc = new RateClass;
@@ -621,13 +842,16 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 		rc->disconnect = inbuf.getDWord();
 		rc->current = inbuf.getDWord();
 		rc->max = inbuf.getDWord();
+
 		//5 unknown bytes, depending on the 0x0001/0x0017 you send
 		for (int j=0;j<5;j++)
 				rc->unknown[j] = inbuf.getByte();
+
 		rateClasses.append(rc);
 	}
 
-	kdDebug(14150) << "[OSCAR] The buffer is " << inbuf.getLength() << " bytes long after reading the classes." << endl;
+	kdDebug(14150) << "[OSCAR] The buffer is " << inbuf.getLength() <<
+		" bytes long after reading the classes." << endl;
 #ifdef OSCAR_PACKETLOG
 	kdDebug(14150) << "[OSCAR] It looks like this: " << endl;
 	inbuf.print();
@@ -635,50 +859,59 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 
 	//now here come the members of each class
 	for (unsigned int i=0;i<numclasses;i++)
+	{
+		WORD classid = inbuf.getWord();
+		WORD count = inbuf.getWord();
+
+		kdDebug(14150) << "[OSCAR] Classid: " << classid << ", Count: " << count << endl;
+
+		RateClass *tmp;
+		for (tmp=rateClasses.first();tmp;tmp=rateClasses.next())  //find the class we're talking about
 		{
-				WORD classid = inbuf.getWord();
-				WORD count = inbuf.getWord();
-				kdDebug(14150) << "[OSCAR] Classid: " << classid << ", Count: " << count << endl;
-				RateClass *tmp;
-				for (tmp=rateClasses.first();tmp;tmp=rateClasses.next())  //find the class we're talking about
-						if (tmp->classid == classid)
-						{
-								rc = tmp;
-								break;
-						}
-				for (WORD j=0;j<count;j++)
-				{
-						SnacPair *s = new SnacPair;
-						s->group = inbuf.getWord();
-						s->type = inbuf.getWord();
-						if (rc)
-								rc->members.append(s);
-				}
+			if (tmp->classid == classid)
+			{
+				rc = tmp;
+				break;
+			}
 		}
-    kdDebug(14150) << "[OSCAR] The buffer is " << inbuf.getLength() << " bytes long after reading the rate info" << endl;
-    sendRateAck();
+
+		for (WORD j=0;j<count;j++)
+		{
+			SnacPair *s = new SnacPair;
+			s->group = inbuf.getWord();
+			s->type = inbuf.getWord();
+			if (rc)
+				rc->members.append(s);
+		}
+	}
+
+	kdDebug(14150) << "[OSCAR] The buffer is " << inbuf.getLength() <<
+		" bytes long after reading the rate info" << endl;
+	sendRateAck();
 }
 
 /** Tells the server we accept it's communist rate limits, even though I have no idea what they mean */
 void OscarSocket::sendRateAck()
 {
-    kdDebug(14150) << "[OSCAR] Sending rate ack" << endl;
-    emit connectionChanged(7,"Completing login...");
-    Buffer outbuf;
-    outbuf.addSnac(0x0001,0x0008,0x0000,0x00000008);
-    for (RateClass *rc=rateClasses.first();rc;rc=rateClasses.next())
-    {
-			if (rc->classid != 0x0015) //0x0015 is ICQ
-				outbuf.addWord(rc->classid);
-		}
-    sendBuf(outbuf,0x02);
-    requestInfo();
+	kdDebug(14150) << k_funcinfo << "Sending rate ack" << endl;
+	emit connectionChanged(7,"Completing login...");
+
+	Buffer outbuf;
+	outbuf.addSnac(0x0001,0x0008,0x0000,0x00000008);
+	for (RateClass *rc=rateClasses.first();rc;rc=rateClasses.next())
+	{
+		// FIXME what to do in icq-mode?
+		if (rc->classid != 0x0015) //0x0015 is ICQ
+			outbuf.addWord(rc->classid);
+	}
+	sendBuf(outbuf,0x02);
+	requestInfo();
 }
 
 /** Called on connection to bos server */
 void OscarSocket::OnBosConnect()
 {
-    kdDebug(14150) << "[OSCAR][OnConnect]: Connected to " << peerName() << ", port " << peerPort() << endl;
+	kdDebug(14150) << k_funcinfo << "Connected to " << peerName() << ", port " << peerPort() << endl;
 }
 
 /** Sends privacy flags to the server  */
@@ -712,101 +945,121 @@ void OscarSocket::parseMyUserInfo(Buffer &inbuf)
 /** parse the server's authorization response (which hopefully contains the cookie) */
 void OscarSocket::parseAuthResponse(Buffer &inbuf)
 {
-    QPtrList<TLV> lst = inbuf.getTLVList();
-    lst.setAutoDelete(TRUE);
-    TLV *sn = findTLV(lst,0x0001);  //screen name
-    TLV *url = findTLV(lst,0x0004);  //error url
-    TLV *bosip = findTLV(lst,0x0005); //bos server address
-    TLV *cook = findTLV(lst,0x0006); //authorization cookie
-    TLV *email = findTLV(lst,0x0007); //the e-mail address attached to the account
-    TLV *regstatus = findTLV(lst,0x0013); //whether the e-mail address is available to others
-    TLV *err = findTLV(lst,0x0008); //whether an error occured
-    if (mCookie)
-	delete[] mCookie;
-    if (err)
-    {
-	QString errorString;
-	int errorCode = 0;
-	switch((err->data[0] << 8)|err->data[1])
-	{
-		case 1: { errorString = i18n("Sign on failed because the screen name you provided is not registered on the AIM network. Please visit http://aim.aol.com to create a screen name for use on the AIM network."); errorCode = 1; break;  }
-		case 5: { errorString = i18n("Sign on failed because the password supplied for this screen name is invalid. Please check your password and try again."); errorCode = 5; break; }
-		case 0x11: { errorString = i18n("Sign on failed because your account is currently suspended."); errorCode = 0x11; break; }
-		case 0x14: { errorString = i18n("The AOL Instant Messenger service is temporarily unavailable.  Please try again later."); errorCode = 0x14; break; }
-		case 0x18: { errorString = i18n("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."); errorCode = 0x18; break; }
-		case 0x1c: { errorString = i18n("The client you are using is too old.  Please upgrade."); errorCode = 0x1c; break; }
-		default: { errorString = i18n("Authentication failed."); errorCode = (err->data[0] << 8) | err->data[1]; break; }
+	kdDebug(14150) << k_funcinfo << endl;
+
+	QPtrList<TLV> lst = inbuf.getTLVList();
+	lst.setAutoDelete(TRUE);
+	TLV *sn = findTLV(lst,0x0001);  //screen name
+	TLV *url = findTLV(lst,0x0004);  //error url
+	TLV *bosip = findTLV(lst,0x0005); //bos server address
+	TLV *cook = findTLV(lst,0x0006); //authorization cookie
+	TLV *email = findTLV(lst,0x0007); //the e-mail address attached to the account
+	TLV *regstatus = findTLV(lst,0x0013); //whether the e-mail address is available to others
+	TLV *err = findTLV(lst,0x0008); //whether an error occured
+	if (mCookie)
+		delete[] mCookie;
+
+	if (err)
+   {
+		QString errorString;
+		int errorCode = 0;
+
+		switch((err->data[0] << 8)|err->data[1])
+		{
+			case 1: { errorString = i18n("Sign on failed because the screen name you provided is not registered on the AIM network. Please visit http://aim.aol.com to create a screen name for use on the AIM network."); errorCode = 1; break;  }
+			case 5: { errorString = i18n("Sign on failed because the password supplied for this screen name is invalid. Please check your password and try again."); errorCode = 5; break; }
+			case 0x11: { errorString = i18n("Sign on failed because your account is currently suspended."); errorCode = 0x11; break; }
+			case 0x14: { errorString = i18n("The AOL Instant Messenger service is temporarily unavailable.  Please try again later."); errorCode = 0x14; break; }
+			case 0x18: { errorString = i18n("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."); errorCode = 0x18; break; }
+			case 0x1c: { errorString = i18n("The client you are using is too old.  Please upgrade."); errorCode = 0x1c; break; }
+			default: { errorString = i18n("Authentication failed."); errorCode = (err->data[0] << 8) | err->data[1]; break; }
+		}
+
+		emit protocolError(errorString, errorCode);
 	}
-	emit protocolError(errorString, errorCode);
-     }
-    if (bosip)
+
+	if (bosip)
 	{
-	    QString ip = bosip->data;
-	    int index;
-	    index = ip.find(':');
-	    bosServer = ip.left(index);
-	    ip.remove(0,index+1); //get rid of the colon and everything before it
-	    bosPort = ip.toInt();
-	    kdDebug(14150) << "[OSCAR] server is " << bosServer << ", ip.right(index) is " << ip
-		      << ", bosPort is " << bosPort << endl;
-	    delete[] bosip->data;
+		QString ip = bosip->data;
+		int index;
+		index = ip.find(':');
+		bosServer = ip.left(index);
+		ip.remove(0,index+1); //get rid of the colon and everything before it
+		bosPort = ip.toInt();
+
+		kdDebug(14150) << "[OSCAR] server is " << bosServer <<
+			", ip.right(index) is " << ip <<
+			", bosPort is " << bosPort << endl;
+
+		delete[] bosip->data;
 	}
-    if (cook)
+
+	if (cook)
 	{
-	    mCookie = cook->data;
-	    cookielen = cook->length;
-	    connectToBos();
+		mCookie = cook->data;
+		cookielen = cook->length;
+		connectToBos();
 	}
-    if (sn)
-	delete [] sn->data;
-    if (email)
-	delete [] email->data;
-    if (regstatus)
-	delete [] regstatus->data;
-    lst.clear();
-    if (url)
-    	delete [] url->data;
+
+	if (sn)
+		delete [] sn->data;
+
+	if (email)
+		delete [] email->data;
+
+	if (regstatus)
+		delete [] regstatus->data;
+
+	lst.clear();
+
+	if (url)
+		delete [] url->data;
 }
 
 /** finds a tlv of type typ in the list */
 TLV * OscarSocket::findTLV(QPtrList<TLV> &l, WORD typ)
 {
-    TLV *t;
-    for(t=l.first();t;t=l.next())
+	TLV *t;
+	for(t=l.first();t;t=l.next())
 	{
-	    if (t->type == typ)
-		return t;
+		if (t->type == typ)
+			return t;
 	}
-    return NULL;
+	return NULL;
 }
 
 /** tells the server that the client is ready to receive commands & stuff */
 void OscarSocket::sendClientReady(void)
 {
-    kdDebug(14150) << "[OSCAR] Sending client ready! " << endl;
-    Buffer outbuf;
-    outbuf.addSnac(0x0001,0x0002,0x0000,0x00000002);
-    for (RateClass *rc=rateClasses.first();rc;rc=rateClasses.next())
-    {
-			if (rc->classid != 0x0015) //0x0015 is ICQ
+	kdDebug(14150) << "[OSCAR] Sending client ready! " << endl;
+
+	Buffer outbuf;
+	outbuf.addSnac(0x0001,0x0002,0x0000,0x00000002);
+
+	for (RateClass *rc=rateClasses.first();rc;rc=rateClasses.next())
+	{
+		if (rc->classid != 0x0015) //0x0015 is ICQ
+		{
+			outbuf.addWord(rc->classid);
+
+			if (rc->classid == 0x0001 || rc->classid == 0x0013)
+				outbuf.addWord(0x0003);
+			else
+				outbuf.addWord(0x0001);
+
+			if (rc->classid == 0x0008 || rc->classid == 0x000b || rc->classid == 0x000c)
 			{
-				outbuf.addWord(rc->classid);
-				if (rc->classid == 0x0001 || rc->classid == 0x0013)
-					outbuf.addWord(0x0003);
-				else
-					outbuf.addWord(0x0001);
-				if (rc->classid == 0x0008 || rc->classid == 0x000b || rc->classid == 0x000c)
-				{
-					outbuf.addWord(0x0104);
-					outbuf.addWord(0x0001);
-				}
-				else
-				{
-					outbuf.addWord(0x0110);
-					outbuf.addWord(0x059b);
-				}
+				outbuf.addWord(0x0104);
+				outbuf.addWord(0x0001);
+			}
+			else
+			{
+				outbuf.addWord(0x0110);
+				outbuf.addWord(0x059b);
 			}
 		}
+	}
+
 /*  outbuf.addWord(0x0001);
 		outbuf.addWord(0x0003);
 		outbuf.addWord(0x0004);
@@ -835,29 +1088,28 @@ void OscarSocket::sendClientReady(void)
     outbuf.addWord(0x0001);
     outbuf.addWord(0x0004);
     outbuf.addWord(0x0001); */
-    sendBuf(outbuf,0x02);
-	KopeteOnlineStatus status =
-		OscarProtocol::protocol()->getOnlineStatus(
-			OscarProtocol::ONLINE);
-    emit statusChanged( status );
-    isConnected = true;
+
+	sendBuf(outbuf,0x02);
+	KopeteOnlineStatus status = OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ONLINE);
+	emit statusChanged( status );
+	isConnected = true;
 }
 
 /** Sends versions so that we get proper rate info */
 void OscarSocket::sendVersions(const WORD *families, const int len)
 {
-    Buffer outbuf;
-    outbuf.addSnac(0x0001,0x0017,0x0000,0x00000017);
-    for(int i=0;i<len;i++)
+	Buffer outbuf;
+	outbuf.addSnac(0x0001,0x0017,0x0000,0x00000017);
+	for(int i=0;i<len;i++)
 	{
-	    outbuf.addWord(families[i]);
-	    if (families[i] == 0x0001 || families[i] == 0x0013)
-		outbuf.addWord(0x0003);
-	    else
-		outbuf.addWord(0x0001);
+		outbuf.addWord(families[i]);
+		if (families[i] == 0x0001 || families[i] == 0x0013)
+			outbuf.addWord(0x0003);
+		else
+			outbuf.addWord(0x0001);
 	}
-    sendBuf(outbuf,0x02);
-    //sendRateInfoRequest();
+	sendBuf(outbuf,0x02);
+	//sendRateInfoRequest();
 }
 
 /** Handles AOL's evil attempt to thwart 3rd party apps using Oscar.
@@ -865,13 +1117,13 @@ void OscarSocket::sendVersions(const WORD *families, const int len)
  *  help from the good people at Gaim */
 void OscarSocket::parseMemRequest(Buffer &inbuf)
 {
-    DWORD offset = inbuf.getDWord();
-    DWORD len = inbuf.getDWord();
-    QPtrList<TLV> ql = inbuf.getTLVList();
-    ql.setAutoDelete(TRUE);
-    kdDebug(14150) << "[OSCAR][parseMemRequest] requested offset " << offset
-	      << ", length " << len << endl;
-    if (len == 0)
+	DWORD offset = inbuf.getDWord();
+	DWORD len = inbuf.getDWord();
+	QPtrList<TLV> ql = inbuf.getTLVList();
+	ql.setAutoDelete(TRUE);
+	kdDebug(14150) << k_funcinfo << "requested offset " << offset << ", length " << len << endl;
+
+	if (len == 0)
 	{
 	    kdDebug(14150) << "[OSCAR] Length is 0, hashing null!" << endl;
 	    md5_state_t state;
@@ -891,7 +1143,8 @@ void OscarSocket::parseMemRequest(Buffer &inbuf)
 	    outbuf.addString((char *)digest, 0x10);
 	    sendBuf(outbuf,0x02);
 	}
-    ql.clear();
+
+	ql.clear();
 }
 
 /** Sets idle time -- time is in minutes */
@@ -903,13 +1156,13 @@ void OscarSocket::sendIdleTime(DWORD time)
 	newidle = false;
     else
 	newidle = true;
-    if (newidle != idle) //only do stuff if idle status changed
+	if (newidle != idle) //only do stuff if idle status changed
 	{
-	    idle = newidle;
-	    Buffer outbuf;
-	    outbuf.addSnac(0x0001,0x0011,0x0000,0x00000000);
-	    outbuf.addDWord(time);
-	    sendBuf(outbuf,0x02);
+		idle = newidle;
+		Buffer outbuf;
+		outbuf.addSnac(0x0001,0x0011,0x0000,0x00000000);
+		outbuf.addDWord(time);
+		sendBuf(outbuf,0x02);
 	}
 }
 
@@ -1435,81 +1688,101 @@ void OscarSocket::parseIM(Buffer &inbuf)
 /** parses the aim standard user info block */
 UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 {
-    UserInfo u;
-    u.userclass = 0;
-    u.membersince = 0;
-    u.onlinesince = 0;
-    u.idletime = 0;
-    u.sessionlen = 0;
-		//Do some sanity checking on the length of the buffer
-		if(inbuf.getLength() > 0){
-				BYTE len = inbuf.getByte();
-				kdDebug(14150) << "[OSCAR] Finished getting user info" << endl;
+	UserInfo u;
+	u.userclass = 0;
+	u.membersince = 0;
+	u.onlinesince = 0;
+	u.idletime = 0;
+	u.sessionlen = 0;
+	//Do some sanity checking on the length of the buffer
+	if(inbuf.getLength() > 0)
+	{
+		BYTE len = inbuf.getByte();
+		kdDebug(14150) << "[OSCAR] Finished getting user info" << endl;
 
-				// First comes their screen name
-				char *cb = inbuf.getBlock(len);
-				u.sn = cb;
+		// First comes their screen name
+		char *cb = inbuf.getBlock(len);
+		u.sn = cb;
 
-				// Next comes the warning level
-				//for some reason aol multiplies the warning level by 10
-				u.evil = inbuf.getWord() / 10;
+		// Next comes the warning level
+		//for some reason aol multiplies the warning level by 10
+		u.evil = inbuf.getWord() / 10;
 
-				//the number of TLV's that follow
-				WORD tlvlen = inbuf.getWord();
-				kdDebug(14150) << "[OSCAR] ScreenName length: " << len << ", sn: " << u.sn << ", evil: " << u.evil
-									<< ", tlvlen: " << tlvlen << endl;
-				delete [] cb;
-				for (int i=0;i<tlvlen;i++)
+		//the number of TLV's that follow
+		WORD tlvlen = inbuf.getWord();
+		kdDebug(14150) << "[OSCAR] ScreenName length: " << len << ", sn: " << u.sn << ", evil: " << u.evil
+							<< ", tlvlen: " << tlvlen << endl;
+		delete [] cb;
+		for (int i=0;i<tlvlen;i++)
+		{
+			TLV t = inbuf.getTLV();
+			switch(t.type)
+			{
+				case 0x0001: //user class
 				{
-						TLV t = inbuf.getTLV();
-						switch(t.type) {
-						case 0x0001: //user class
-								u.userclass = (((BYTE)t.data[0] << 8)) | ((BYTE)t.data[1]);
-								break;
-						case 0x0002: //member since
-								u.membersince = (DWORD) (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
-										| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
-								break;
-						case 0x0003: //online since
-								kdDebug(14150) << "t.data: " << static_cast<uint>((BYTE)t.data[0]) << "\t" << static_cast<uint>((BYTE)t.data[1])  << "\t" << static_cast<uint>((BYTE)t.data[2]) << "\t" << static_cast<uint>((BYTE)t.data[3]) << endl;
-								kdDebug(14150) << "u.onlinesince: " << u.onlinesince << endl;
-								u.onlinesince = (DWORD) (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
-										| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
-								break;
-						case 0x0004: //idle time
-								u.idletime = (WORD) ((((BYTE)t.data[0]) << 8) | ((BYTE)t.data[1]));
-								break;
-								//case 0x000d: //capability info
-
-								//break;
-						case 0x000f: //session length (in seconds)
-								u.sessionlen = (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
-										| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
-								break;
-						case 0x0010: //session length (for AOL users)
-								u.sessionlen = (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
-										| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
-            		break;
-						default: //unknown info type
-								kdDebug(14150) << "[OSCAR][parseUserInfo] invalid tlv type " << t.type << endl;
-						};
-						delete [] t.data;
-
+					u.userclass = (((BYTE)t.data[0] << 8)) | ((BYTE)t.data[1]);
+					break;
 				}
-				// TODO [Sept 27 2002] gives compilation warning on third argument
-				// (warning: unsigned int format, long unsigned int arg (arg 3))
-				kdDebug(14150) << "[OSCAR], userclass: " << u.userclass << ", membersince: " << u.membersince
-									<< ", onlinesince: " << u.onlinesince << ", idletime: " << u.idletime << endl;
-				// (unsigned char)u.userclass, u.membersince,(unsigned short)u.onlinesince, u.idletime);
-		} else {
-				// Buffer had length of zero for some reason, so
-				u.userclass = -1;
-				u.membersince = 1;
-				u.onlinesince = 1;
-				u.idletime = -1;
-				u.sessionlen = -1;
+				case 0x0002: //member since
+				{
+					u.membersince = (DWORD) (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
+							| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
+					kdDebug(14150) << "[OSCAR] t.data: " << static_cast<uint>((BYTE)t.data[0]) << "\t" << static_cast<uint>((BYTE)t.data[1])  << "\t" << static_cast<uint>((BYTE)t.data[2]) << "\t" << static_cast<uint>((BYTE)t.data[3]) << endl;
+					kdDebug(14150) << "[OSCAR] u.membersince: " << u.membersince << endl;
+					break;
+				}
+				case 0x0003: //online since
+				{
+					u.onlinesince = (DWORD) (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
+							| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
+
+					kdDebug(14150) << "[OSCAR] t.data: " << static_cast<uint>((BYTE)t.data[0]) << "\t" << static_cast<uint>((BYTE)t.data[1])  << "\t" << static_cast<uint>((BYTE)t.data[2]) << "\t" << static_cast<uint>((BYTE)t.data[3]) << endl;
+					kdDebug(14150) << "[OSCAR] u.onlinesince: " << u.onlinesince << endl;
+					break;
+				}
+				case 0x0004: //idle time
+				{
+					u.idletime = (WORD) ((((BYTE)t.data[0]) << 8) | ((BYTE)t.data[1]));
+					break;
+				}
+				case 0x000d: //capability info
+				{
+					kdDebug(14150) << "[OSCAR] TLV(13) [CAPABILITIES], data='" << t.data << "'" << endl;
+					break;
+				}
+				case 0x000f: //session length (in seconds)
+				{
+					u.sessionlen = (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
+							| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
+					break;
+				}
+				case 0x0010: //session length (for AOL users)
+				{
+					u.sessionlen = (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
+							| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
+					break;
+				}
+				default: //unknown info type
+						kdDebug(14150) << "[OSCAR][parseUserInfo] unknown TLV(" << t.type << ")" << endl;
+			};
+			delete [] t.data;
 		}
-		return u;
+		// TODO [Sept 27 2002] gives compilation warning on third argument
+		// (warning: unsigned int format, long unsigned int arg (arg 3))
+		kdDebug(14150) << "[OSCAR], userclass: " << u.userclass << ", membersince: " << u.membersince
+							<< ", onlinesince: " << u.onlinesince << ", idletime: " << u.idletime << endl;
+		// (unsigned char)u.userclass, u.membersince,(unsigned short)u.onlinesince, u.idletime);
+	}
+	else
+	{
+		// Buffer had length of zero for some reason, so
+		u.userclass = -1;
+		u.membersince = 1;
+		u.onlinesince = 1;
+		u.idletime = -1;
+		u.sessionlen = -1;
+	}
+	return u;
 }
 
 
@@ -1957,25 +2230,28 @@ void OscarSocket::parseSSIAck(Buffer &/*inbuf*/)
 /** Deletes a buddy from the server side contact list */
 void OscarSocket::sendDelBuddy(const QString &budName, const QString &budGroup)
 {
-	kdDebug(14150) << "[OSCAR] Sending del buddy" << endl;
+	kdDebug(14150) << k_funcinfo << "Sending del buddy" << endl;
 	SSI *delitem = ssiData.findBuddy(budName,budGroup);
 	ssiData.print();
 	if (!delitem)
 	{
 		kdDebug(14150) << "[OSCAR] Item with name " << budName << " and group "
 			<< budGroup << "not found" << endl;
-		emit protocolError(budName + " in group " + budGroup + " was not found on the server's buddy list and cannot be deleted.",0);
+		emit protocolError(
+			i18n("%1 in group %2 was not found on the server's " \
+			"buddy list and cannot be deleted.").arg(budName).arg(budGroup),0);
+
 		return;
 	}
 
-	kdDebug(14150) << "[OSCAR] Deleting " << delitem->name << ", gid " << delitem->gid
+	kdDebug(14150) << k_funcinfo << "Deleting " << delitem->name << ", gid " << delitem->gid
 			<< ", bid " << delitem->bid << ", type " << delitem->type
 			<< ", datalength " << delitem->tlvlength << endl;
 
 	sendSSIAddModDel(delitem,0x000a);
 
 	if (!ssiData.remove(delitem))
-		kdDebug(14150) << "[OSCAR][sendDelBuddy] delitem was not found in the SSI list" << endl;
+		kdDebug(14150) << k_funcinfo << "delitem was not found in the SSI list" << endl;
 }
 
 /** Parses a warning notification */
@@ -1985,8 +2261,8 @@ void OscarSocket::parseWarningNotify(Buffer &inbuf)
 	kdDebug(14150) << "[OSCAR} Got a warning: new warning level is " << newevil << endl;
 	if (inbuf.getLength() != 0)
 	{
-	 	UserInfo u = parseUserInfo(inbuf);
-	  emit gotWarning(newevil,u.sn);
+		UserInfo u = parseUserInfo(inbuf);
+		emit gotWarning(newevil,u.sn);
 	}
 	else
 		emit gotWarning(newevil,QString::null);
@@ -1995,13 +2271,15 @@ void OscarSocket::parseWarningNotify(Buffer &inbuf)
 /** Parses a message error */
 void OscarSocket::parseError(Buffer &inbuf)
 {
-	QString msg = "Your message did not get sent: ";
+	QString msg;
 	WORD reason = inbuf.getWord();
-	kdDebug(14150) << "[OSCAR] Got an error: " << QTextStream::hex << reason << endl;
+	kdDebug(14150) << k_funcinfo << "Got an error: " << QTextStream::hex << reason << endl;
+
 	if (reason < msgerrreasonlen)
-		msg += msgerrreason[reason];
+		msg = i18n("Your message did not get sent: %1").arg(msgerrreason[reason]);
 	else
-		msg += "Unknown reason.";
+		msg = i18n("Your message did not get sent: Unknown reason.");
+
 	emit protocolError(msg,reason);
 }
 
@@ -2011,22 +2289,23 @@ type == 1: deny
 type == 2: accept  */
 void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousType, const KFileItem *finfo)
 {
-		OncomingSocket *sockToUse = serverSocket(rendezvousType);
-    Buffer outbuf;
-    outbuf.addSnac(0x0004,0x0006,0x0000,0x00000000);
-    QByteArray ck(8);
-   	//generate a random message cookie
-   	for (int i=0;i<8;i++)
-		{
-   	 ck[i] = static_cast<BYTE>(rand());
-		}
+	OncomingSocket *sockToUse = serverSocket(rendezvousType);
+	Buffer outbuf;
+	outbuf.addSnac(0x0004,0x0006,0x0000,0x00000000);
+	QByteArray ck(8);
+	//generate a random message cookie
+	for (int i=0;i<8;i++)
+	{
+		ck[i] = static_cast<BYTE>(rand());
+	}
 
-		//add this to the list of pending connections if it is a request
-		if ( type == 0 )
-		{
-			sockToUse->addPendingConnection(sn, ck, finfo, QString::null, 0, DirectInfo::Incoming);
-		}
-    outbuf.addString(ck,8);
+	//add this to the list of pending connections if it is a request
+	if ( type == 0 )
+	{
+		sockToUse->addPendingConnection(sn, ck, finfo, QString::null, 0, DirectInfo::Incoming);
+	}
+
+	outbuf.addString(ck,8);
     //channel 2
     outbuf.addWord(0x0002);
     //destination sn
@@ -2270,19 +2549,24 @@ void OscarSocket::sendBlock(const QString &sname)
 void OscarSocket::sendRemoveBlock(const QString &sname)
 {
 	kdDebug(14150) << "[OSCAR] Removing block on " << sname << endl;
-  SSI *delitem = ssiData.findDeny(sname);
-  if (!delitem)
+	SSI *delitem = ssiData.findDeny(sname);
+
+	if (!delitem)
 	{
 		kdDebug(14150) << "[OSCAR] Item with name " << sname << "not found" << endl;
-	 	emit protocolError(sname + " was not found on the server's deny list and cannot be deleted.",0);
-	  return;
+		emit protocolError( i18n("%1 was not found on the server's deny list and cannot be deleted.").arg(sname),0);
+		return;
 	}
-  kdDebug(14150) << "[OSCAR] Deleting " << delitem->name << ", gid " << delitem->gid
+
+	kdDebug(14150) << "[OSCAR] Deleting " << delitem->name << ", gid " << delitem->gid
 		<< ", bid " << delitem->bid << ", type " << delitem->type
-	  << ", datalength " << delitem->tlvlength << endl;
+		<< ", datalength " << delitem->tlvlength << endl;
+
 	sendSSIAddModDel(delitem,0x000a);
-  if (!ssiData.remove(delitem))
+
+	if (!ssiData.remove(delitem))
 		kdDebug(14150) << "[OSCAR][sendRemoveBlock] delitem was not found in the SSI list" << endl;
+
 	ssiData.print();
 
 	// NOTE TO TOM: use snac headers and SSI acks to do this more correctly
@@ -2292,94 +2576,106 @@ void OscarSocket::sendRemoveBlock(const QString &sname)
 /** Reads a FLAP header from the input */
 FLAP OscarSocket::getFLAP(void)
 {
-    FLAP fl;
-    int theword, theword2;
-    int start;
-    int chan;
-    fl.error = false;
+	FLAP fl;
+	int theword, theword2;
+	int start;
+	int chan;
+	fl.error = false;
 		//the FLAP start byte
-    if ((start = getch()) == 0x2a){
-				//get the channel ID
-				if ( (chan = getch()) == -1) {
-						kdDebug(14150) << "[OSCAR] Error reading channel ID: nothing to be read" << endl;
-						fl.error = true;
-				} else {
-						fl.channel = chan;
-				}
-
-				//get the sequence number
-				if((theword = getch()) == -1){
-						kdDebug(14150) << "[OSCAR] Error reading sequence number: nothing to be read" << endl;;
-						fl.error = true;
-				} else if((theword2 = getch()) == -1){
-						kdDebug(14150) << "[OSCAR] Error reading data field length: nothing to be read" << endl;
-						fl.error = true;
-				} else {
-						// Got both pieces of info we need...
-						fl.sequence_number = (theword << 8) | theword2;
-				}
-
-				//get the data field length
-				if ((theword = getch()) == -1) {
-						kdDebug(14150) << "[OSCAR] Error reading sequence number: nothing to be read" << endl;
-						fl.error = true;
-				} else if((theword2 = getch()) == -1){
-						kdDebug(14150) << "[OSCAR] Error reading data field length: nothing to be read" << endl;
-						fl.error = true;
-				} else {
-						fl.length = (theword << 8) | theword2;
-				}
-		} else {
-				kdDebug(14150) << "[OSCAR] Error reading FLAP... start byte is " << start << endl;
+	if ((start = getch()) == 0x2a)
+	{
+		//get the channel ID
+		if ( (chan = getch()) == -1)
+		{
+				kdDebug(14150) << "[OSCAR] Error reading channel ID: nothing to be read" << endl;
 				fl.error = true;
-				putch(start);
 		}
-    return fl;
+		else
+		{
+				fl.channel = chan;
+		}
+
+		//get the sequence number
+		if((theword = getch()) == -1)
+		{
+			kdDebug(14150) << "[OSCAR] Error reading sequence number: nothing to be read" << endl;;
+			fl.error = true;
+		}
+		else if((theword2 = getch()) == -1)
+		{
+				kdDebug(14150) << "[OSCAR] Error reading data field length: nothing to be read" << endl;
+				fl.error = true;
+		}
+		else
+		{
+				// Got both pieces of info we need...
+				fl.sequence_number = (theword << 8) | theword2;
+		}
+
+		//get the data field length
+		if ((theword = getch()) == -1)
+		{
+				kdDebug(14150) << "[OSCAR] Error reading sequence number: nothing to be read" << endl;
+				fl.error = true;
+		} else if((theword2 = getch()) == -1)
+		{
+				kdDebug(14150) << "[OSCAR] Error reading data field length: nothing to be read" << endl;
+				fl.error = true;
+		}
+		else
+		{
+				fl.length = (theword << 8) | theword2;
+		}
+	}
+	else
+	{
+		kdDebug(14150) << "[OSCAR] Error reading FLAP... start byte is " << start << endl;
+		fl.error = true;
+		putch(start);
+	}
+
+	return fl;
 }
 
 void OscarSocket::sendMiniTypingNotify(QString screenName,TypingNotify notifyType )
 {
-		//BLARG
-		kdDebug(14150) << "[OSCAR] Sending Typing notify " << endl;
+	kdDebug(14150) << "[OSCAR] Sending Typing notify " << endl;
 
-		//look for direct connection before sending through server
-		OscarConnection *dc = mDirectIMMgr->findConnection(screenName);
-		if ( dc )
-		{
-			kdDebug(14150) << "[OSCAR] Found direct connection, sending typing notify directly" << endl;
-			dc->sendTypingNotify(notifyType);
-			return;
-		}
+	//look for direct connection before sending through server
+	OscarConnection *dc = mDirectIMMgr->findConnection(screenName);
+	if(dc)
+	{
+		kdDebug(14150) << "[OSCAR] Found direct connection, sending typing notify directly" << endl;
+		dc->sendTypingNotify(notifyType);
+		return;
+	}
 
-		// Build the buffer
-		Buffer outbuf;
-		// This is header stuff for the SNAC
-		outbuf.addSnac(0x0004,0x0014,0x0000,0x00000001);
-		outbuf.addDWord(0x00000000);
-		outbuf.addDWord(0x00000000);
-		outbuf.addWord(0x0001);
-		// Screenname length is next
-		outbuf.addByte(screenName.length());
-		// Then the actual screen name
-		outbuf.addString(screenName.latin1(), screenName.length());
-		// Then the typing status
-		switch(notifyType){
+	Buffer outbuf;
+	// This is header stuff for the SNAC
+	outbuf.addSnac(0x0004,0x0014,0x0000,0x00000001);
+	outbuf.addDWord(0x00000000);
+	outbuf.addDWord(0x00000000);
+	outbuf.addWord(0x0001);
+	// Screenname length is next
+	outbuf.addByte(screenName.length());
+	// Then the actual screen name
+	outbuf.addString(screenName.latin1(), screenName.length());
+	// Then the typing status
+	switch(notifyType)
+	{
 		case TypingFinished:
-				outbuf.addWord(0x0000);
-				break;
+			outbuf.addWord(0x0000);
+			break;
 		case TextTyped:
-				outbuf.addWord(0x0001);
-				break;
+			outbuf.addWord(0x0001);
+			break;
 		case TypingBegun:
-				outbuf.addWord(0x0002);
-				break;
-		default:
-				// Error, bad bad, ouchie
-				return;
-		}
-
-		// Send it
-		sendBuf(outbuf, 0x02);
+			outbuf.addWord(0x0002);
+			break;
+		default: // error
+			return;
+	}
+	sendBuf(outbuf, 0x02);
 }
 
 /** Called when a direct IM is received */
@@ -2425,12 +2721,14 @@ void OscarSocket::sendFileSendRequest(const QString &sn, const KFileItem &finfo)
 OscarConnection * OscarSocket::sendFileSendAccept(const QString &sn, const QString &fileName)
 {
 	sendRendezvous(sn, 0x0001, AIM_CAPS_SENDFILE);
-	mFileTransferMgr->addFileInfo(sn, new KFileItem(KFileItem::Unknown, KFileItem::Unknown, fileName));
+	mFileTransferMgr->addFileInfo(sn,
+		new KFileItem(KFileItem::Unknown, KFileItem::Unknown, fileName));
+
 	return mFileTransferMgr->establishOutgoingConnection(sn);
 }
 
 /** Returns the appropriate server socket, based on the capability flag it is passed. */
-OncomingSocket * OscarSocket::serverSocket(DWORD capflag)
+OncomingSocket *OscarSocket::serverSocket(DWORD capflag)
 {
 	if ( capflag & AIM_CAPS_IMIMAGE ) //direct im
 		return mDirectIMMgr;
@@ -2445,16 +2743,11 @@ void OscarSocket::sendFileSendDeny(const QString &sn)
 }
 
 /** Called when a file transfer begins */
-void OscarSocket::OnFileTransferBegun(OscarConnection *con, const QString& file, const unsigned long size, const QString &recipient)
+void OscarSocket::OnFileTransferBegun(OscarConnection *con, const QString& file,
+	const unsigned long size, const QString &recipient)
 {
 	kdDebug(14150) << k_funcinfo << "emitting transferBegun()" << endl;
 	emit transferBegun(con, file, size, recipient);
 }
 
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 4
- * indent-tabs-mode: t
- * End:
- */
+#include "oscarsocket.moc"

@@ -300,16 +300,16 @@ void Buffer::doResize(int inc)
 	{
 		//don't worry, I'll be changing this to a QByteArray pretty soon
 		//in the meantime:
-    // before allocating memory, check to see if we can use what is already discarded
-    // if more than half the buffer has been discarded, we'll just relocate what we have
-    if ( (buf - alloc_buf) > (length + inc) )
-    {
-    	for (DWORD i=0;i<length;i++)
-     		alloc_buf[i] = buf[i];
-      buf = alloc_buf;	
-    }
-    else
-    {
+		// before allocating memory, check to see if we can use what is already discarded
+		// if more than half the buffer has been discarded, we'll just relocate what we have
+		if ( (buf - alloc_buf) > (length + inc) )
+		{
+			for (DWORD i=0;i<length;i++)
+				alloc_buf[i] = buf[i];
+			buf = alloc_buf;
+		}
+		else
+		{
 			char *tmp;
 			tmp = new char[(length + inc)*2];
 			for (DWORD i=0;i<length;i++)
