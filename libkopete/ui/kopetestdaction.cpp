@@ -27,6 +27,8 @@
 #include <ksettings/dialog.h>
 #include <kstdaction.h>
 #include <kstdguiitem.h>
+#include <kwin.h>
+#include <kcmultidialog.h>
 
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
@@ -101,6 +103,12 @@ void KopetePreferencesAction::slotShowPreferences()
 	if ( !s_settingsDialog )
 		s_settingsDialog = new KSettings::Dialog( KSettings::Dialog::Static, qApp->mainWidget() );
 	s_settingsDialog->show();
+	
+	s_settingsDialog->dialog()->raise();
+	
+	#if KDE_IS_VERSION( 3, 1, 90 )
+                KWin::activateWindow( s_settingsDialog->dialog()->winId() );
+	#endif
 }
 
 KAction* KopeteStdAction::preferences( KActionCollection *parent, const char *name )

@@ -378,6 +378,12 @@ void KopeteWindow::slotConfigurePlugins()
 	if ( !m_pluginConfig )
 		m_pluginConfig = new KopetePluginConfig( this );
 	m_pluginConfig->show();
+	
+	m_pluginConfig->raise();
+	
+	#if KDE_IS_VERSION( 3, 1, 90 )
+                KWin::activateWindow( m_pluginConfig->winId() );
+	#endif
 }
 
 void KopeteWindow::slotConfGlobalKeys()
