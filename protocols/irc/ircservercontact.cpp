@@ -55,7 +55,7 @@ IRCServerContact::IRCServerContact(const QString &server, const QString &nicknam
 		// GCC didn't like me calling connectNow(), not sure why
 		mWindow->mToolBar->removeItem(1);
 		mWindow->mToolBar->insertButton("connect_creating", 1, SIGNAL(clicked()), this, SLOT(disconnectNow()));
-		engine->connectToServer(mServer, 6667, QString("kopeteuser"), mNickname);
+		engine->connectToServer(mServer, 6667, QString("kopeteuser"), mNickname, "Kopete IRC 1.0");
 	} else {
 		mWindow->hide();
 	}
@@ -140,11 +140,11 @@ void IRCServerContact::connectNow()
 	mWindow->mToolBar->insertButton("connect_creating", 1, SIGNAL(clicked()), this, SLOT(disconnectNow()));
 	if (engine->isLoggedIn() == false && engine->state() == QSocket::Idle)
 	{
-		engine->connectToServer(mServer, 6667, QString("kopeteuser"), mNickname);
+		engine->connectToServer(mServer, 6667, QString("kopeteuser"), mNickname, "Kopete IRC 1.0");
 	} else {
 		engine->close();
 		slotQuitServer();
-		engine->connectToServer(mServer, 6667, QString("kopeteuser"), mNickname);
+		engine->connectToServer(mServer, 6667, QString("kopeteuser"), mNickname, "Kopete IRC 1.0");
 	}
 }
 
@@ -220,6 +220,8 @@ void IRCServerContact::nickInUseOnLogin(const QString &oldNickname)
 		mManager->linkServer(QString("%1@%2").arg(mNickname).arg(mServer), title);
 		engine->changeNickname(newNick);
 		newNickname(newNick);
+	} else {
+		engine->close();
 	}
 }
 

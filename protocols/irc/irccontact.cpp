@@ -435,6 +435,7 @@ IRCContact::~IRCContact()
 	{
 		mContact->activeQueries.remove(mTarget.lower());
 	}
+	mContact->activeContacts.remove(this);
 }
 
 void IRCContact::unloading()

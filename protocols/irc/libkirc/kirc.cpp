@@ -20,6 +20,7 @@
 #include "kirc.h"
 #include <kdebug.h>
 #include <qregexp.h>
+#include <sys/time.h>
 
 KIRC::KIRC()
 	: QSocket()
@@ -87,6 +88,32 @@ void KIRC::slotReadyRead()
 				// Fun!
 				message = message.remove(0, 1);
 				message = message.remove((message.length() -1), 1);
+				QString special = message.section(' ', 0, 0);
+				if (special.lower() == "ping")
+				{
+					timeval time;
+					if (gettimeofday(&time, 0) == 0)
+					{
+						QString time_reply = QString("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
+						QString reply = QString("NOTICE %1 :%2PING %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(time_reply).arg(QChar(0x01)).arg("\r\n");
+						writeBlock(reply.latin1(), reply.length());
+						emit repliedCtcp("PING", originating.section('!', 0, 0), time_reply);
+					}
+					return;
+				} else if (special.lower() == "version")
+				{
+					// Just remove newlines and line feeds because we don't want to user to get clever ;)
+					mVersionString.replace(QRegExp("[\\r\\n]*$"), "");
+					if (mVersionString.isEmpty())
+					{
+						// Don't edit this!
+						mVersionString = "Anonymous client using the KIRC engine";
+					}
+					QString reply = QString("NOTICE %1 :%2VERSION %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(mVersionString).arg(QChar(0x01)).arg("\r\n");
+					writeBlock(reply.latin1(), reply.length());
+					emit repliedCtcp("VERSION", originating.section('!', 0, 0), mVersionString);
+					return;
+				}
 				message = message.section(' ', 1);
 				if (target[0] == '#' || target[0] == '!' || target[0] == '&')
 				{
@@ -547,8 +574,9 @@ void KIRC::slotConnected()
 	writeBlock(ident.latin1(), ident.length());
 }
 
-void KIRC::connectToServer(const QString host, Q_UINT16 port, const QString username, const QString nickname)
+void KIRC::connectToServer(const QString host, Q_UINT16 port, const QString username, const QString nickname, const QString versionString)
 {
+	mVersionString = versionString;
 	mUsername = username;
 	mNickname = nickname;
 	mHost = host;
