@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>AliasDialog</class>
 <widget class="QDialog">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>405</width>
-            <height>292</height>
+            <height>296</height>
         </rect>
     </property>
     <property name="caption">
@@ -34,8 +34,15 @@
             <property name="name">
                 <cstring>command</cstring>
             </property>
+            <property name="toolTip" stdset="0">
+                <string>This is the command that you want to run when you execute this alias. </string>
+            </property>
             <property name="whatsThis" stdset="0">
-                <string>This is the command that you want to run when you execute this alias. You can use the variables %1, %2 ... %9 in your command, and they will be replaced with the arguments of the alias. Do not include the '/' in the command (if you do it will be stripped off anyway)</string>
+                <string>&lt;qt&gt;This is the command that you want to run when you execute this alias.
+
+You can use the variables &lt;b&gt;%1, %2 ... %9&lt;/b&gt; in your command, and they will be replaced with the arguments of the alias. The variable &lt;b&gt;%s&lt;/b&gt; will be replaced with all arguments. 
+
+Do not include the '/' in the command (if you do it will be stripped off anyway).&lt;/qt&gt;</string>
             </property>
         </widget>
         <widget class="KListView" row="2" column="1" rowspan="1" colspan="2">
@@ -71,6 +78,9 @@
             <property name="itemsMovable">
                 <bool>false</bool>
             </property>
+            <property name="toolTip" stdset="0">
+                <string>If you want this alias to only be active for certain protocols, select those protocols here.</string>
+            </property>
             <property name="whatsThis" stdset="0">
                 <string>If you want this alias to only be active for certain protocols, select those protocols here.</string>
             </property>
@@ -89,6 +99,9 @@
         <widget class="KLineEdit" row="0" column="1" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>alias</cstring>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>This is the alias you are adding (what you will type after the command identifier, '/').</string>
             </property>
             <property name="whatsThis" stdset="0">
                 <string>This is the alias you are adding (what you will type after the command identifier, '/'). Do not include the '/' (it will be stripped off if you do anyway).</string>
