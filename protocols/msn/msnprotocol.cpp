@@ -438,6 +438,7 @@ void MSNProtocol::slotGoOffline()
 		statusBarIcon->setPixmap(offlineIcon);
 	}
 }
+
 void MSNProtocol::slotGoAway()
 {
 	kdDebug() << "MSN Plugin: Going Away" << endl;
@@ -455,12 +456,13 @@ void MSNProtocol::slotConnectedToMSN(bool c)
 		slotDisconnected();
 }
 
-void MSNProtocol::slotUserStateChange (QString handle, QString nick, int newstatus)
+void MSNProtocol::slotUserStateChange( QString handle, QString nick,
+	int newstatus ) const
 {
 	kdDebug() << "MSN Plugin: User State change " << handle << " " << nick << " " << newstatus <<"\n";
 }
 
-void MSNProtocol::slotStateChanged (uint newstate)
+void MSNProtocol::slotStateChanged( uint newstate ) const
 {
 	kdDebug() << "MSN Plugin: My Status Changed to " << newstate <<"\n";
 	switch(newstate)
@@ -508,7 +510,8 @@ void MSNProtocol::slotStateChanged (uint newstate)
 	}
 }
 
-void MSNProtocol::slotInitContacts (QString status, QString userid, QString nick)
+void MSNProtocol::slotInitContacts( QString status, QString userid,
+	QString nick )
 {
 	kdDebug() << "MSN Plugin: User State change " << status << " " << userid << " " << nick <<"\n";
 	if ( status == "NLN" )
@@ -517,20 +520,20 @@ void MSNProtocol::slotInitContacts (QString status, QString userid, QString nick
 	}
 }
 
-
-void MSNProtocol::slotUserSetOffline (QString str)
+void MSNProtocol::slotUserSetOffline( QString str ) const
 {
 	kdDebug() << "MSN Plugin: User Set Offline " << str << "\n";
 }
 
-void MSNProtocol::slotContactAdded( QString handle, QString nick, QString group)
+void MSNProtocol::slotContactAdded( QString handle, QString nick,
+	QString group )
 {
 	kdDebug() << "MSN Plugin: Contact Added in group " << group << " ... creating contact" << endl;
 	kopeteapp->contactList()->addContact(new MSNContact( handle, nick, group, this ), group);
 }
 
 // Dont use this for now
-void MSNProtocol::slotNewUserFound (QString userid )
+void MSNProtocol::slotNewUserFound( QString userid )
 {
 	QString tmpnick = m_msnService->getPublicName(userid);
 	kdDebug() << "MSN Plugin: User found " << userid << " " << tmpnick <<"\n";
@@ -539,7 +542,7 @@ void MSNProtocol::slotNewUserFound (QString userid )
 }
 
 // Dont use this for now
-void MSNProtocol::slotNewUser (QString userid )
+void MSNProtocol::slotNewUser( QString userid )
 {
 	QString tmpnick = m_msnService->getPublicName(userid);
 	kdDebug() << "MSN Plugin: User found " << userid << " " << tmpnick <<"\n";
@@ -556,17 +559,17 @@ void MSNProtocol::slotAuthenticate( QString handle )
 	authDlg->show();
 }
 
-void MSNProtocol::slotAddContact( QString handle )
+void MSNProtocol::slotAddContact( QString handle ) const
 {
 	m_msnService->contactAdd( handle );
 }
 
-void MSNProtocol::slotBlockContact( QString handle)
+void MSNProtocol::slotBlockContact( QString handle ) const
 {
 	m_msnService->contactBlock( handle );
 }
 
-void MSNProtocol::slotGoURL( QString url)
+void MSNProtocol::slotGoURL( QString url ) const
 {
 	kapp->invokeBrowser( url );
 }
@@ -576,43 +579,45 @@ KMSNService* MSNProtocol::msnService() const
 	return m_msnService;
 }
 
-void MSNProtocol::addContact( const QString &userID )
+void MSNProtocol::addContact( const QString &userID ) const
 {
 	m_msnService->contactAdd( userID );
 }
 
-void MSNProtocol::removeContact( const QString &userID )
+void MSNProtocol::removeContact( const QString &userID ) const
 {
 	m_msnService->contactDelete( userID );
 }
 
-void MSNProtocol::removeFromGroup( const QString &userID, const QString &group )
+void MSNProtocol::removeFromGroup( const QString &userID,
+	const QString &group ) const
 {
 	m_msnService->contactRemove( userID, group );
 }
 
 void MSNProtocol::moveContact( const QString &userID, const QString &oldGroup,
-								const QString &newGroup )
+	const QString &newGroup ) const
 {
 	m_msnService->contactMove( userID, oldGroup, newGroup);
 }
 
-void MSNProtocol::copyContact( const QString &userID, const QString &newGroup )
+void MSNProtocol::copyContact( const QString &userID,
+	const QString &newGroup ) const
 {
 	m_msnService->contactCopy( userID, newGroup);
 }
 
-QStringList MSNProtocol::groups()
+QStringList MSNProtocol::groups() const
 {
 	return m_msnService->getGroups();
 }
 
-int MSNProtocol::contactStatus( const QString &handle )
+int MSNProtocol::contactStatus( const QString &handle ) const
 {
 	return m_msnService->status( handle );
 }
 
-QString MSNProtocol::publicName( const QString &handle )
+QString MSNProtocol::publicName( const QString &handle ) const
 {
 	return m_msnService->getPublicName( handle );
 }

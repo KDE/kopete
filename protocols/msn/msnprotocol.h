@@ -79,17 +79,17 @@ public:
 	virtual void setAvailable();
 	virtual bool isAway() const;
 
-	void addContact( const QString &userID );
-	void removeContact( const QString &userID );
-	void removeFromGroup( const QString &userID, const QString &group );
+	void addContact( const QString &userID ) const;
+	void removeContact( const QString &userID ) const;
+	void removeFromGroup( const QString &userID, const QString &group ) const;
 	void moveContact( const QString &userID, const QString &oldGroup,
-						const QString &newGroup );
-	void copyContact( const QString &userID, const QString &newGroup );
+						const QString &newGroup ) const;
+	void copyContact( const QString &userID, const QString &newGroup ) const;
 
-	int contactStatus( const QString &handle );
-	QString publicName( const QString &handle );
+	int contactStatus( const QString &handle ) const;
+	QString publicName( const QString &handle ) const;
 
-	QStringList groups();
+	QStringList groups() const;
 
 	KMSNService* msnService() const;
 
@@ -112,9 +112,9 @@ public slots:
 	void slotConnecting();
 
 	void slotContactAdded( QString, QString, QString );
-	void slotUserStateChange( QString, QString, int );
-	void slotStateChanged( uint );
-	void slotUserSetOffline( QString );
+	void slotUserStateChange( QString, QString, int ) const;
+	void slotStateChanged( uint ) const;
+	void slotUserSetOffline( QString ) const;
 	void slotInitContacts( QString, QString, QString );
 	void slotNewUserFound( QString );
 
@@ -123,12 +123,12 @@ public slots:
 	// Ask user to auth the new contact
 	void slotAuthenticate( QString );
 	// Add a Contact
-	void slotAddContact(QString);
+	void slotAddContact(QString) const;
 	// Block a Contact
-	void slotBlockContact(QString);
+	void slotBlockContact(QString) const;
 
 	// Group slots
-	void slotGoURL( const QString );
+	void slotGoURL( const QString ) const;
 
 signals:
 	void userStateChange( QString, QString, int );

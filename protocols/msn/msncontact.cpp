@@ -26,7 +26,8 @@
 #include "msnprotocol.h"
 
 // Constructor for no-groups
-MSNContact::MSNContact(QString userid, const QString name, QString group, MSNProtocol *protocol)
+MSNContact::MSNContact( QString userid, const QString name, QString group,
+						MSNProtocol *protocol )
 	: KopeteContact(protocol)
 {
 	mProtocol = protocol;
@@ -40,7 +41,8 @@ MSNContact::MSNContact(QString userid, const QString name, QString group, MSNPro
 	initContact(userid, name, protocol);
 }
 
-void MSNContact::initContact( QString /* userid */, const QString name, MSNProtocol *protocol)
+void MSNContact::initContact( QString /* userid */, const QString name,
+								const MSNProtocol *protocol)
 {
 	// We connect this signal so that we can tell when a user's status changes
 	connect( protocol, SIGNAL( updateContact( QString, uint ) ),

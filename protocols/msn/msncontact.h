@@ -38,58 +38,63 @@ class MSNContact : public KopeteContact
 	Q_OBJECT
 
 public:
-    MSNContact(QString userid, const QString name, QString group, MSNProtocol *protocol);
+	MSNContact( QString userid, const QString name, QString group,
+				MSNProtocol *protocol );
 
-    void initContact(QString userid, const QString name, MSNProtocol *protocol);
-    virtual void showContextMenu(QPoint);
-    virtual void execute();
+	void initContact( QString userid, const QString name,
+						const MSNProtocol *protocol );
+	virtual void showContextMenu(QPoint);
+	virtual void execute();
 
-    ContactStatus status() const;
-    QString statusText() const;
-    QString statusIcon() const;
-    int importance() const;
+	ContactStatus status() const;
+	QString statusText() const;
+	QString statusIcon() const;
+	int importance() const;
 
 public slots:
-    void slotContactRemoved(QString, QString);
-    void slotChatThisUser();
+	void slotContactRemoved( QString, QString );
+	void slotChatThisUser();
 
 signals:
-    void chatToUser( QString );
+	void chatToUser( QString );
 
 private slots:
-    void slotRemoveThisUser();
-    void slotCopyThisUser();
-    void slotMoveThisUser();
-    void slotRemoveFromGroup();
+	void slotRemoveThisUser();
+	void slotCopyThisUser();
+	void slotMoveThisUser();
+	void slotRemoveFromGroup();
 
-    void slotUpdateContact (QString, uint);
-    // We have to delete the contact if MSN disconenct
-    // We will use the engine signal
-    void slotDeleteMySelf ( bool );
+	void slotUpdateContact ( QString, uint );
+	// We have to delete the contact if MSN disconenct
+	// We will use the engine signal
+	void slotDeleteMySelf ( bool );
 
-    void slotHistoryDialogClosing();
-    void slotCloseHistoryDialog();
-    void slotViewHistory();
+	void slotHistoryDialogClosing();
+	void slotCloseHistoryDialog();
+	void slotViewHistory();
 
 private:
-    void initActions();
+	void initActions();
 
-    QString mUserID;
-    QString mName;
-    bool hasLocalGroup;
+	QString mUserID;
+	QString mName;
+	bool hasLocalGroup;
 
-    QString mGroup;
-    uint mStatus;
-    MSNProtocol *mProtocol;
-    KopeteHistoryDialog *historyDialog;
-    KPopupMenu *popup;
-    KAction* actionRemove;
-    KAction* actionRemoveFromGroup;
-    KAction* actionChat;
-    KAction* actionInfo;
-    KAction* actionHistory;
-    KListAction *actionContactMove;
-    KListAction *actionContactCopy;
+	QString mGroup;
+	uint mStatus;
+	const MSNProtocol *mProtocol;
+	KopeteHistoryDialog *historyDialog;
+	KPopupMenu *popup;
+	KAction* actionRemove;
+	KAction* actionRemoveFromGroup;
+	KAction* actionChat;
+	KAction* actionInfo;
+	KAction* actionHistory;
+	KListAction *actionContactMove;
+	KListAction *actionContactCopy;
 };
 
 #endif
+
+// vim: set noet ts=4 sts=4 sw=4:
+
