@@ -41,7 +41,7 @@ WPContact::WPContact(Kopete::Account *account, const QString &newHostName, const
 		else
 			newDisplayName += newHostName[i].lower();
 
-	setDisplayName(displayName == QString::null || displayName == "" ? newDisplayName : displayName);
+	setDisplayName(displayName.isEmpty() ? newDisplayName : displayName);
 	myWasConnected = false;
 
 	// Initialise and start the periodical checking for contact's status
