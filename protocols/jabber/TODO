@@ -43,3 +43,5 @@ TODO for Jabber:
   name to the server
 - clean up JabberAddContactPage (needs rewrite)
 - get rid of the createAddContact mess
+- make sure Jabber account editor also calls validateJID() when adding a
+  new contact (integrate it into validateData())
