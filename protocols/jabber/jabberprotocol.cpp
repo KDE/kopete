@@ -186,10 +186,15 @@ void JabberProtocol::Connect()
 	int port = KGlobal::config()->readNumEntry("Port", 5222);
 	
 	if(myContact)
+	{
+		contactMap.remove(myContact->userId());
 		delete myContact;
+	}
 
 	// create a contact instance for self
 	myContact = new JabberContact(QString("%1@%2").arg(userId, 1).arg(server, 2), userId, QStringList(i18n("Unknown")), this, 0L, QString::null);
+
+	contactMap.insert(myContact->userId(), myContact);
 
 	// set the title according to the new changes
 	actionStatusMenu->popupMenu()->changeTitle( menuTitleId , userId + "@" + server );
@@ -1101,11 +1106,6 @@ void JabberProtocol::slotGotVCard()
 {
 	Jabber::JT_VCard *vCard = (Jabber::JT_VCard *) sender();
 	
-	if ((vCard->jid().userHost() == myContact->userId()) && vCard->success()){ /* Gwah ... evil evil evil evil evil. */
-		myContact->slotGotVCard(vCard);
-		return;
-	}
-	
 	if (!(vCard->success() && !vCard->vcard().isIncomplete()))
 	{
 		// unsuccessful, or incomplete
@@ -1125,16 +1125,24 @@ void JabberProtocol::slotGotVCard()
 
 }
 
-void JabberProtocol::slotEditVCard() {
+void JabberProtocol::slotEditVCard()
+{
+
 	myContact->slotEditVCard();
+
 }
 
-void JabberProtocol::slotSaveVCard(QDomElement &vCardXML) {
-	Jabber::JT_VCard *tmpvCard = new Jabber::JT_VCard(jabberClient->rootTask());
+void JabberProtocol::slotSaveVCard(QDomElement &vCardXML)
+{
+
+	Jabber::JT_VCard *task = new Jabber::JT_VCard(jabberClient->rootTask());
 	Jabber::VCard vCard = Jabber::VCard();
+	
 	vCard.fromXml(vCardXML);
-	tmpvCard->set(vCard);
-	tmpvCard->go(true);
+	
+	task->set(vCard);
+	task->go(true);
+
 }
 
 void JabberProtocol::registerUser()
