@@ -63,7 +63,6 @@ void NLAmaroK::update()
 		if ( m_client->call( "amarok", "player", "nowPlaying()", data,
 					replyType, replyData ) )
 		{
-			m_playing = true;
 			QDataStream reply( replyData, IO_ReadOnly );
 
 			if ( replyType == "QString" ) {
