@@ -137,8 +137,8 @@ void KopeteBalloon::updateMask()
 		QRect deskRect = tmp->screenGeometry(tmp->screenNumber(mAnchor));
 	#endif
 
-	bool bottom = (mAnchor.y() + height()) > ((deskRect.y() + deskRect.height()) - 48);
-	bool right = (mAnchor.x() + width()) > ((deskRect.x() + deskRect.width()) - 48);
+	bool bottom = (mAnchor.y() + height()) > ((deskRect.y() + deskRect.height()));
+	bool right = (mAnchor.x() + width()) > ((deskRect.x() + deskRect.width()));
 
 	QPointArray arrow(4);
 	arrow.setPoint(0, QPoint(right ? width() : 0, bottom ? height() : 0));
@@ -150,8 +150,8 @@ void KopeteBalloon::updateMask()
 	mask += arrow;
 	setMask(mask);
 
-	move(right ? mAnchor.x() - width() : ( mAnchor.x() < 0 ? 0 : mAnchor.x() ),
-	     bottom ? mAnchor.y() - height() : ( mAnchor.y() < 0 ? 0 : mAnchor.y() ) );
+	move(right ? deskRect.x() + deskRect.width() - width() : ( mAnchor.x() < 0 ? 0 : mAnchor.x() ),
+	     bottom ? deskRect.y() + deskRect.height() - height() : ( mAnchor.y() < 0 ? 0 : mAnchor.y() ) );
 }
 
 #include "kopeteballoon.moc"
