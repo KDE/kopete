@@ -366,6 +366,10 @@ void OscarAccount::slotKopeteGroupRenamed(KopeteGroup *group, const QString &old
 	if ( !isConnected() )
 		return;
 
+	//We can't rename the top-level or temporary groups
+	if ( group->type() == KopeteGroup::TopLevel || group->type() == KopeteGroup::Temporary )
+		return;
+		
 	kdDebug(14150) << k_funcinfo << "Sending 'group rename' to server" << endl;
 	engine()->sendChangeGroupName(oldName, group->displayName());
 }
@@ -376,6 +380,11 @@ void OscarAccount::slotKopeteGroupRemoved(KopeteGroup *group)
 	if (!isConnected())
 		return;
 
+	//We can't rename the top-level or temporary groups 
+	//This shouldn't happen here, but it can't hurt.
+	if ( group->type() == KopeteGroup::TopLevel || group->type() == KopeteGroup::Temporary )
+		return;
+		
 	// This method should be called after the contacts have been removed
 	// We should then be able to remove the group from the server
 	kdDebug(14150) << k_funcinfo <<
@@ -444,9 +453,9 @@ void OscarAccount::slotGotServerBuddyList()
 				}
 				else
 				{
-					/*kdDebug(14150) << k_funcinfo <<
+					kdDebug(14150) << k_funcinfo <<
 						"ssiGroup is valid using group name = '" <<
-						ssiGroup->name << "'" << endl;*/
+						ssiGroup->name << "'" << endl;
 					groupName = ssiGroup->name;
 				}
 
@@ -529,7 +538,7 @@ void OscarAccount::slotGotServerBuddyList()
 			else
 			{
 				kdDebug(14150) << "Contact not on SSI, moving '" <<
-					c->displayName() << "' to temporary group." << endl;
+					c->displayName() << "' to 'Not in server' group." << endl;
 
 				oldMetaContact->removeContact(c);
 				KopeteMetaContact* kmc = new KopeteMetaContact;
