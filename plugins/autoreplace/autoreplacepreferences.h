@@ -18,7 +18,7 @@
 #ifndef AutoReplacePREFERENCES_H
 #define AutoReplacePREFERENCES_H
 
-#include <kcautoconfigmodule.h>
+#include "kcautoconfigmodule.h"
 
 class AutoReplacePrefsUI;
 class AutoReplaceConfig;

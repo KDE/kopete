@@ -22,7 +22,7 @@
 
 // KDE Includes
 #include <kgenericfactory.h>
-#include <kcautoconfigmodule.h>
+#include "kcautoconfigmodule.h"
 
 // Kopete Includes
 

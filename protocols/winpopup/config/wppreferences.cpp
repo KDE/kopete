@@ -21,7 +21,7 @@
 #include <klocale.h>
 #include <kurlrequester.h>
 #include <kgenericfactory.h>
-#include <kcautoconfigmodule.h>
+#include "kcautoconfigmodule.h"
 
 // Kopete Includes
 

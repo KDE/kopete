@@ -10,7 +10,7 @@
 #ifndef AliasPREFERENCES_H
 #define AliasPREFERENCES_H
 
-#include <kcautoconfigmodule.h>
+#include "kcautoconfigmodule.h"
 
 class AliasDialogBase;
 

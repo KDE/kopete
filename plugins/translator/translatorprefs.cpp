@@ -17,7 +17,7 @@
 
 
 #include <kgenericfactory.h>
-#include <kcautoconfigmodule.h>
+#include "kcautoconfigmodule.h"
 #include "translatorprefsbase.h"
 #include "translatorlanguages.h"
 #include <qcombobox.h>

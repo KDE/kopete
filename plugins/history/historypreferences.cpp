@@ -15,7 +15,7 @@
 */
 
 #include <kgenericfactory.h>
-#include <kcautoconfigmodule.h>
+#include "kcautoconfigmodule.h"
 #include "historyprefsui.h"
 #include <qcheckbox.h>
 
