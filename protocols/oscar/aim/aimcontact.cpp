@@ -281,8 +281,8 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	mAccount->engine()->sendIM(finalMessage, this, false);
 
 	// Show the message we just sent in the chat window
-	manager()->appendMessage(message);
-	manager()->messageSucceeded();
+	manager(true)->appendMessage(message);
+	manager(true)->messageSucceeded();
 }
 
 void AIMContact::slotUserInfo()

@@ -147,11 +147,9 @@ OscarContact::~OscarContact()
 }
 
 
-KopeteMessageManager* OscarContact::manager(bool /*canCreate*/)
+KopeteMessageManager* OscarContact::manager(bool canCreate)
 {
-	// FIXME: What was this canCreate for, we only allow one
-	// manager and create it if necessary so why use this bool? [mETz, 26.10.2003]
-	if(!mMsgManager /*&& canCreate*/)
+	if(!mMsgManager && canCreate)
 	{
 		/*kdDebug(14190) << k_funcinfo <<
 			"Creating new MessageManager for contact '" << displayName() << "'" << endl;*/
@@ -431,7 +429,7 @@ void OscarContact::slotDirectConnect()
 			i18n("Waiting for %1 to connect...").arg(mName),
 			KopeteMessage::Internal, KopeteMessage::PlainText );
 
-		manager()->appendMessage(msg);
+		manager(true)->appendMessage(msg);
 		mAccount->engine()->sendDirectIMRequest(mName);
 	}
 }
@@ -453,7 +451,7 @@ void OscarContact::slotDirectIMReady(QString name)
 		i18n("Direct connection to %1 established").arg(mName),
 		KopeteMessage::Internal, KopeteMessage::PlainText ) ;
 
-	manager()->appendMessage(msg);
+	manager(true)->appendMessage(msg);
 }
 
 void OscarContact::slotDirectIMConnectionClosed(QString name)
@@ -609,7 +607,7 @@ void OscarContact::receivedIM(KopeteMessage &msg)
 {
 	//kdDebug(14190) << k_funcinfo << "called" << endl;
 	// Tell the message manager that the buddy is done typing
-	manager()->receivedTypingMsg(this, false);
+	manager(true)->receivedTypingMsg(this, false);
 
 /*
 	// Build a KopeteMessage and set the body as Rich Text
@@ -617,9 +615,9 @@ void OscarContact::receivedIM(KopeteMessage &msg)
 	tmpList.append(account()->myself());
 	KopeteMessage kmsg(this, tmpList, msg.text, KopeteMessage::Inbound,
 		KopeteMessage::RichText);
-	manager()->appendMessage(kmsg);
+	manager(true)->appendMessage(kmsg);
 */
-	manager()->appendMessage(msg);
+	manager(true)->appendMessage(msg);
 
 #if 0
 	// send our away message in fire-and-forget-mode :)
@@ -646,7 +644,7 @@ void OscarContact::receivedIM(KopeteMessage &msg)
 			KopeteMessage message(mAccount->myself(), toContact,
 				responseDisplay, KopeteMessage::Outbound, KopeteMessage::RichText);
 
-			manager()->appendMessage(message);
+			manager(true)->appendMessage(message);
 			// Set the time we last sent an autoresponse
 			// which is right now
 			mLastAutoResponseTime = time(0L);

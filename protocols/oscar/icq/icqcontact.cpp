@@ -231,8 +231,8 @@ void ICQContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 		message.plainBody(), this, false);
 
 	// Show the message we just sent in the chat window
-	manager()->appendMessage(message);
-	manager()->messageSucceeded();
+	manager(true)->appendMessage(message);
+	manager(true)->messageSucceeded();
 }
 
 bool ICQContact::isReachable()
