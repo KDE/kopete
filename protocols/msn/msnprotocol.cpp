@@ -32,7 +32,7 @@
 
 typedef KGenericFactory<MSNProtocol> MSNProtocolFactory;
 
-K_EXPORT_COMPONENT_FACTORY( kopete_msn, MSNProtocolFactory( "kopete_msn" ) )
+K_EXPORT_COMPONENT_FACTORY( libkopete_msn_shared, MSNProtocolFactory( "kopete_msn" ) )
 
 MSNProtocol *MSNProtocol::s_protocol = 0L;
 

@@ -8,6 +8,8 @@ AM_CPPFLAGS = -I$(srcdir)/ui \
 kde_module_LTLIBRARIES = kopete_msn.la
 lib_LTLIBRARIES = libkopete_msn_shared.la
 
+CLEANFILES = dummy.cpp
+
 libkopete_msn_shared_la_SOURCES = msnprotocol.cpp msnaccount.cpp msnaddcontactpage.cpp msncontact.cpp \
 	msnsocket.cpp msnauthsocket.cpp msndispatchsocket.cpp msnmessagemanager.cpp msndebugrawcmddlg.cpp \
 	msnnotifysocket.cpp msnswitchboardsocket.cpp msnfiletransfersocket.cpp msninvitation.cpp msnp2p.cpp sha1.cpp
@@ -21,7 +23,8 @@ kopete_msn_la_LIBADD = libkopete_msn_shared.la
 kopete_msn_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 
 dummy.cpp:
-	echo > dummy.cpp
+	echo 'extern "C" void *init_libkopete_msn_shared();' > $@
+	echo 'extern "C" void *init_kopete_msn() { return init_libkopete_msn_shared(); }' >> $@
 
 service_DATA = msn.desktop
 servicedir = $(kde_servicesdir)
