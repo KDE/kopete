@@ -51,7 +51,6 @@
 #include "kopetepluginmanager.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
-#include "kopeteprotocolstatusbaricon.h"
 #include "kopetestdaction.h"
 #include "systemtray.h"
 
@@ -453,10 +452,6 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *a )
 
 	m_accountStatusBarIcons.insert( a, i );
 
-	// FIXME -Will
-	//slotProtocolStatusIconChanged( proto, proto->statusIcon() );
-
-
 	// this should be placed in the contactlistview insteads of, but i am lazy to redo a new slot
 	contactlist->actionAddContact->insert(new KAction( a->accountId() , a->protocol()->pluginIcon() , 0 , contactlist , SLOT( slotAddContact() ) , a));
 	slotAccountStatusIconChanged( a->myself() );
@@ -562,7 +557,7 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 	}
 	else
 	{
-//		kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconChanged(): "<< "Using movie."  << endl;
+		//kdDebug( 14000 ) << k_funcinfo << "Using movie."  << endl;
 		i->setMovie( mv );
 	}
 }
@@ -571,53 +566,6 @@ void KopeteWindow::slotAccountStatusIconRightClicked( KopeteAccount *account,
 	const QPoint &p )
 {
 	account->actionMenu()->popupMenu()->exec( p );
-}
-
-void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& status )
-{
-//	kdDebug(14000) << k_funcinfo << "Icon: " <<
-//		status.overlayIcon() << endl;
-
-	KopeteProtocolStatusBarIcon *i = static_cast<KopeteProtocolStatusBarIcon *>( m_protocolStatusBarIcons[ status.protocol() ] );
-	if( !i )
-		return;
-
-	// Because we want null pixmaps to detect the need for a loadMovie
-	// we can't use the SmallIcon() method directly
-	KIconLoader *loader = KGlobal::instance()->iconLoader();
-
-	QMovie mv = loader->loadMovie(status.overlayIcon(), KIcon::User);
-
-	if ( mv.isNull() )
-	{
-		// No movie found, fallback to pixmap
-		// Get the icon for our status
-
-		//QPixmap pm = SmallIcon( icon );
-		QPixmap pm = status.protocolIcon();
-		// Compat for the non-themed icons
-		// FIXME: When all icons are converted, remove this - Martijn
-		if(pm.isNull())
-			pm = loader->loadIcon( status.overlayIcon(), KIcon::User, 0, KIcon::DefaultState, 0L, true );
-
-		if(pm.isNull())
-		{
-			/* No Pixmap found, fallback to Unknown */
-//			kdDebug(14000) << k_funcinfo <<
-//				"Using unknown pixmap for status icon '" << status.overlayIcon() <<
-//				"'." << endl;
-			i->setPixmap( KIconLoader::unknown() );
-		}
-		else
-		{
-			i->setPixmap( pm );
-		}
-	}
-	else
-	{
-//		kdDebug(14000) << k_funcinfo << "Using movie." << endl;
-		i->setMovie( mv );
-	}
 }
 
 void KopeteWindow::slotTrayAboutToShowMenu( KPopupMenu * popup )

@@ -48,7 +48,6 @@ class KopeteContact;
 class KopeteSystemTray;
 class KopeteGlobalAwayDialog;
 class KopeteAccountStatusBarIcon;
-class KopeteProtocolStatusBarIcon;
 class KopeteOnlineStatus;
 
 /**
@@ -99,14 +98,6 @@ private slots:
 	 * Cleanup the status bar icon when the account is destroyed
 	 */
 	void slotAccountUnregistered( KopeteAccount *a);
-
-
-	/**
-	 * The status icon got changed, update it.
-	 * Note that iconName can also be a .mng movie instead of an icon.
-	 */
-	// TODO: Is this obsolete at 20030710? I can't see a call to it anywhere - Will
-	void slotProtocolStatusIconChanged( const KopeteOnlineStatus& status );
 
 	/**
 	 * The status icon got changed, update it.
@@ -192,14 +183,6 @@ private:
 	 * use QObject instead.
 	 */
 	QPtrDict<QObject> m_accountStatusBarIcons;
-
-	/**
-	 * This is really a dictionary of KopeteProtocolStatusBarIcon objects, but
-	 * QPtrDict requires a full class definition to be known to make
-	 * that work. And since I don't want to include that whole file here,
-	 * use QObject instead.
-	 */
-	QPtrDict<QObject> m_protocolStatusBarIcons;
 
 	/**
 	 * This is the away message selection dialog
