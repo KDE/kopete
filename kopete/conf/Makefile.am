@@ -7,18 +7,14 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
         -I$(top_builddir)/kopete/libkopete $(all_includes)
 
 noinst_LTLIBRARIES = libkopeteconf.la
-noinst_HEADERS = pluginconfig.h appearanceconfig.h accountconfig.h \
-	addaccountwizard.h behaviorconfig.h
+noinst_HEADERS = pluginconfig.h appearanceconfig.h  \
+	behaviorconfig.h
 
 libkopeteconf_la_SOURCES = pluginconfig.cpp \
 	styleeditdialog.ui appearanceconfig_chatwindow.ui \
 	appearanceconfig_colors.ui appearanceconfig.cpp \
 	behaviorconfig_general.ui behaviorconfig_chat.ui behaviorconfig.cpp \
-	kopeteawayconfigbase.ui kopeteawayconfigui.cpp \
-	accountconfigbase.ui accountconfig.cpp \
-	addaccountwizardpage1.ui addaccountwizardpage2.ui addaccountwizardpage3.ui \
-	addaccountwizard.cpp
-
+	kopeteawayconfigbase.ui kopeteawayconfigui.cpp
 libkopeteconf_la_LDFLAGS = $(all_libraries) -no-undefined
 libkopeteconf_la_LIBADD = ../../libkopete/libkopete.la -lktexteditor $(LIB_KDEUI)
 

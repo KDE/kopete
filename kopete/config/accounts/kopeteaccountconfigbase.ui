@@ -1,9 +1,9 @@
 <!DOCTYPE UI><UI version="3.1" stdsetdef="1">
-<class>AccountConfigBase</class>
+<class>KopeteAccountConfigBase</class>
 <author>Olivier Goffart</author>
 <widget class="QWidget">
     <property name="name">
-        <cstring>AccountConfigBase</cstring>
+        <cstring>KopeteAccountConfigBase</cstring>
     </property>
     <property name="geometry">
         <rect>

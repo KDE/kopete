@@ -27,7 +27,6 @@
 #include <klocale.h>
 #include <kcmdlineargs.h>
 
-#include "accountconfig.h"
 #include "kopeteaccount.h"
 #include "kopeteprotocol.h"
 #include "appearanceconfig.h"
@@ -62,7 +61,6 @@ Kopete::Kopete()
 
 	// Create the plugin preferences module
 	new PluginConfig( this );
-	new AccountConfig( m_mainWindow );
 	new AppearanceConfig( m_mainWindow );
 	new BehaviorConfig( m_mainWindow );
 

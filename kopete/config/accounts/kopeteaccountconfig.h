@@ -16,29 +16,29 @@
 #ifndef __ACCOUNTCONFIG_H
 #define __ACCOUNTCONFIG_H
 
-#include "configmodule.h"
+#include "kcmodule.h"
 
 /**
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  */
 
-class AccountConfigBase;
+class KopeteAccountConfigBase;
 class KopeteAccount;
 class QListViewItem;
 //class AddAccountWizard;
 
-class AccountConfig : public ConfigModule
+class KopeteAccountConfig : public KCModule
 {
 	Q_OBJECT
 
 public:
-	AccountConfig(QWidget * parent);
+	KopeteAccountConfig(QWidget *parent, const char *name, const QStringList &args );
 
 	virtual void save();
-	virtual void reopen();
+	virtual void load();
 
 private:
-	AccountConfigBase *m_view;
+	KopeteAccountConfigBase *m_view;
 	QMap <QListViewItem*,KopeteAccount*> m_accountItems;
 	KopeteAccount *previousAccount;
 

@@ -13,7 +13,7 @@
     *************************************************************************
 */
 
-#include "accountconfig.h"
+#include "kopeteaccountconfig.h"
 
 #include <qcheckbox.h>
 #include <qlayout.h>
@@ -23,24 +23,29 @@
 #include <kdialogbase.h>
 #include <klistview.h>
 #include <kcolorbutton.h>
+#include <kgenericfactory.h>
+#include <ktrader.h>
+#include <kdebug.h>
 
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "addaccountwizard.h"
-#include "accountconfigbase.h"
+#include "kopeteaccountconfigbase.h"
 #include "editaccountwidget.h"
 #include "kopeteaccountmanager.h"
 
-AccountConfig::AccountConfig(QWidget * parent) :
-	ConfigModule(
-		i18n("Accounts"),
-		i18n("Here You Can Manage Your Accounts"),
-		"personal", parent)
+
+typedef KGenericFactory<KopeteAccountConfig, QWidget> KopeteAccountConfigFactory;
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_accountconfig, KopeteAccountConfigFactory( "kcm_kopete_accountconfig" ) );
+
+
+KopeteAccountConfig::KopeteAccountConfig(QWidget *parent, const char * /* name */, const QStringList &args) :
+		KCModule( KopeteAccountConfigFactory::instance(), parent, args )
 {
 	previousAccount = 0L;
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
-	m_view = new AccountConfigBase(this, "AccountConfig::m_view");
+	m_view = new KopeteAccountConfigBase(this, "KopeteAccountConfig::m_view");
 
 	m_view->mButtonUp->setPixmap(SmallIcon("up"));
 	m_view->mButtonDown->setPixmap(SmallIcon("down"));
@@ -60,9 +65,12 @@ AccountConfig::AccountConfig(QWidget * parent) :
 		this, SLOT(slotAccountUp()));
 	connect(m_view->mButtonDown, SIGNAL(clicked()),
 		this, SLOT(slotAccountDown()));
+
+	setButtons(Help);
+	load();
 }
 
-void AccountConfig::save()
+void KopeteAccountConfig::save()
 {
 	if(previousAccount)
 	{
@@ -73,7 +81,7 @@ void AccountConfig::save()
 	KopeteAccountManager::manager()->save();
 }
 
-void AccountConfig::reopen()
+void KopeteAccountConfig::load()
 {
 	QListViewItem* lvi=0L;
 
@@ -93,7 +101,7 @@ void AccountConfig::reopen()
 	slotItemSelected();
 }
 
-void AccountConfig::slotItemSelected()
+void KopeteAccountConfig::slotItemSelected()
 {
 	QListViewItem *itemSelected = m_view->mAccountList->selectedItem();
 
@@ -134,7 +142,7 @@ void AccountConfig::slotItemSelected()
 	}
 }
 
-void AccountConfig::slotAccountUp()
+void KopeteAccountConfig::slotAccountUp()
 {
 	QListViewItem *itemSelected = m_view->mAccountList->selectedItem();
 	if(!itemSelected)
@@ -147,7 +155,7 @@ void AccountConfig::slotAccountUp()
 	slotItemSelected();
 }
 
-void AccountConfig::slotAccountDown()
+void KopeteAccountConfig::slotAccountDown()
 {
 	QListViewItem *itemSelected = m_view->mAccountList->selectedItem();
 	if(!itemSelected)
@@ -159,7 +167,7 @@ void AccountConfig::slotAccountDown()
 	slotItemSelected();
 }
 
-void AccountConfig::slotAddAccount()
+void KopeteAccountConfig::slotAddAccount()
 {
 	AddAccountWizard *m_addwizard;
 	m_addwizard= new AddAccountWizard(this, "addAccountWizard", true);
@@ -167,7 +175,7 @@ void AccountConfig::slotAddAccount()
 	m_addwizard->show();
 }
 
-void AccountConfig::slotEditAccount()
+void KopeteAccountConfig::slotEditAccount()
 {
 	QListViewItem *lvi=m_view->mAccountList->selectedItem();
 	if(!lvi)
@@ -176,7 +184,7 @@ void AccountConfig::slotEditAccount()
 	KopeteAccount *ident=m_accountItems[lvi];
 	KopeteProtocol *proto=ident->protocol();
 
-	KDialogBase *editDialog=new KDialogBase(this,"AccountConfig::editDialog",
+	KDialogBase *editDialog=new KDialogBase(this,"KopeteAccountConfig::editDialog",
 		true, i18n("Edit Account"),
 		KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true );
 
@@ -191,10 +199,10 @@ void AccountConfig::slotEditAccount()
 			m_accountWidget->apply();
 	}
 	editDialog->deleteLater();
-	reopen();
+	load();
 }
 
-void AccountConfig::slotRemoveAccount()
+void KopeteAccountConfig::slotRemoveAccount()
 {
 	QListViewItem *lvi=m_view->mAccountList->selectedItem();
 	if(!lvi)
@@ -213,10 +221,10 @@ void AccountConfig::slotRemoveAccount()
 	}
 }
 
-void AccountConfig::slotAddWizardDone()
+void KopeteAccountConfig::slotAddWizardDone()
 {
-	reopen();
+	load();
 }
 
-#include "accountconfig.moc"
+#include "kopeteaccountconfig.moc"
 // vim: set noet ts=4 sts=4 sw=4:

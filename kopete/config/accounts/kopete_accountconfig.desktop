@@ -1,0 +1,16 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=personal
+Type=Service
+ServiceTypes=KCModule
+
+X-KDE-ModuleType=Library
+X-KDE-Library=kopete_accountconfig
+X-KDE-FactoryName=KopeteAccountConfigFactory
+X-KDE-ParentApp=kopete
+X-KDE-ParentComponents=kopete
+
+Name=Accounts
+Comment=Manager all yours accounts:
+
+
