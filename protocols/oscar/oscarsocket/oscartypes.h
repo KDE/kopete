@@ -101,3 +101,5 @@ const WORD CLASS_UNKNOWN400		= 0x0400;  // Unknown bit
 const WORD CLASS_UNKNOWN800		= 0x0800; // Unknown bit
 
 #endif
+
+// vim: set noet ts=4 sts=4 sw=4:

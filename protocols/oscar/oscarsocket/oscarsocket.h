@@ -27,6 +27,7 @@
 #include <klocale.h>
 
 #include <qptrlist.h>
+#include <qvaluelist.h>
 #include <qdatetime.h>
 
 //class KFileItem;
@@ -1067,8 +1068,12 @@ class OscarSocket : public OscarConnection
 		bool isLoggedIn;
 		// Tells if we can send data to the server or not
 		bool mBlockSend;
-
-		/*
+		
+		/** Packet Queue for delayed sending. nuff said. :) */
+		QValueList<Buffer> mPacketQueue;
+		
+		
+		/**
 		 * counter to find out if we got all packets needed before sending
 		 * out more info and the final CLI_READY command which is the end
 		 * of a login procedure.

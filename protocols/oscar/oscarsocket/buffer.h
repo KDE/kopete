@@ -22,7 +22,6 @@
 #include "oscardebug.h"
 #include "oscartypes.h"
 
-#include <qobject.h>
 #include <qptrlist.h>
 #include <qcstring.h>
 
@@ -42,13 +41,13 @@ struct TLV
 };
 
 
-class Buffer : public QObject
-{
-	Q_OBJECT
+class QString;
 
+class Buffer
+{
 	public:
-		Buffer(QObject *parent=0, const char *name=0);
-		Buffer(char *b, Q_ULONG len, QObject *parent=0, const char *name=0);
+		Buffer();
+		Buffer(char *b, Q_ULONG len);
 		~Buffer();
 
 		/*
@@ -236,20 +235,6 @@ class Buffer : public QObject
 
 		int addBUIN(const char * s);
 		char *getBUIN();
-
-	signals:
-		/*
-		 * Emitted when an error occurs, error means exceeding
-		 * the buffer size while reading contents
-		 */
-		void bufError(QString);
-
-	public slots:
-		/*
-		 * Called when a buffer error occurs
-		 * i.e. reading more bytes than the buffer actually contains
-		 */
-		void slotBufferError(QString);
 
 	private:
 		/*

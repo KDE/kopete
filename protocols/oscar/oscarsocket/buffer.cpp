@@ -21,18 +21,16 @@
 
 #include <ctype.h>
 
-Buffer::Buffer(QObject *parent, const char *name)
-	: QObject(parent, name)
+Buffer::Buffer()
 {
 	mExtDataPointer=0L;
 	mExtDataLen=0;
 
 	mReadPos=0;
-	connect(this, SIGNAL(bufError(QString)), this, SLOT(slotBufferError(QString)));
+	//connect(this, SIGNAL(bufError(QString)), this, SLOT(slotBufferError(QString)));
 }
 
-Buffer::Buffer(char *b, Q_ULONG len, QObject *parent, const char *name)
-	: QObject(parent,name)
+Buffer::Buffer(char *b, Q_ULONG len)
 {
 #ifdef BUFFER_DEBUG
 	kdDebug(14150) << k_funcinfo << "Creating prefilled Buffer" << endl;
@@ -43,7 +41,7 @@ Buffer::Buffer(char *b, Q_ULONG len, QObject *parent, const char *name)
 	mBuffer.setRawData(mExtDataPointer, mExtDataLen);
 
 	mReadPos=0;
-	connect(this, SIGNAL(bufError(QString)), this, SLOT(slotBufferError(QString)));
+	//connect(this, SIGNAL(bufError(QString)), this, SLOT(slotBufferError(QString)));
 }
 
 Buffer::~Buffer()
@@ -251,7 +249,8 @@ BYTE Buffer::getByte()
 	}
 	else
 	{
-		emit bufError("Buffer::getByte(): mBuffer empty");
+		//emit bufError("Buffer::getByte(): mBuffer empty");
+		kdDebug(14150) << "Buffer::getByte(): mBuffer empty" << endl;
 	}
 	return thebyte;
 }
@@ -298,14 +297,14 @@ DWORD Buffer::getLEDWord()
 	retdword = (word2 << 16) | word1;
 	return retdword;
 }
-
+/*
 void Buffer::slotBufferError(QString s)
 {
 	kdDebug(14150) << " BUFFER ERROR: " << s << endl << "Stopping reporting errors" << endl;
 
 	disconnect(this, SIGNAL(bufError(QString)), this, SLOT(slotBufferError(QString)));
 }
-
+*/
 void Buffer::setBuf(char *b, const WORD len)
 {
 #ifdef BUFFER_DEBUG
@@ -559,5 +558,5 @@ QString Buffer::toString() const
 	return output;
 }
 
-#include "buffer.moc"
+//#include "buffer.moc"
 // vim: set noet ts=4 sts=4 sw=4:

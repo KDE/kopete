@@ -123,9 +123,15 @@ DWORD OscarSocket::setIPv4Address(const QString &address)
 void OscarSocket::slotToggleSend()
 {
 	if (mBlockSend)
+	{
+		kdDebug(14150) << k_funcinfo << "Removing send block" << endl;
 		mBlockSend=false;
+	}
 	else
+	{
+		kdDebug(14150) << k_funcinfo << "Adding send block" << endl;
 		mBlockSend=true;
+	}
 }
 
 void OscarSocket::slotConnected()
@@ -574,10 +580,25 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 	kdDebug(14150) << "--- OUTPUT ---" << outbuf.toString() << endl;
 #endif
 
-	if(socket()->socketStatus() != KExtendedSocket::connected || mBlockSend)
+	if(socket()->socketStatus() != KExtendedSocket::connected)
+	{
 		kdDebug(14150) << k_funcinfo << "Socket is NOT open, can't write to it right now" << endl;
+		return;
+	}
+	
+	if(mBlockSend)
+	{
+		//add the packet to the queue (at the end)
+		mPacketQueue.push_back(outbuf);
+	}
 	else
 	{
+		if (!mPacketQueue.empty())
+		{
+			mPacketQueue.push_back(outbuf);
+			outbuf = mPacketQueue.first();
+		}
+		
 		if(socket()->writeBlock(outbuf.buffer(), outbuf.length()) == -1)
 		{
 			kdDebug(14150) << k_funcinfo << "writeBlock() call failed!" << endl;
@@ -585,8 +606,10 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 				socket()->strError(socket()->socketStatus(), socket()->systemError())
 				<< endl;
 		}
+		outbuf.clear(); // get rid of the buffer contents
+		
 	}
-	outbuf.clear(); // get rid of the buffer contents
+	
 }
 
 // Logs in the user!
