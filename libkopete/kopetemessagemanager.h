@@ -20,11 +20,14 @@
 #include <qptrlist.h>
 #include <qobject.h>
 
+#include "kopetemessage.h"
+#include "kopetecontact.h"
 
 class KopeteContact;
 class KopeteMessage;
 class KopeteMessageManager;
 class QObject;
+class KopeteChatWindow;
 
 
 typedef QPtrList<KopeteContact>        KopeteContactList;
@@ -33,20 +36,13 @@ typedef QPtrList<KopeteMessageManager> KopeteMessageManagerList;
 
 class KopeteMessageManager : public QObject
 {
+friend class KopeteMessageManagerFactory;
 Q_OBJECT
 public:
 	/**
-	 * Create a new chat session. Provided is the initial list of contacts in
-	 * the session. If a session with exactly these contacts already exists,
-	 * it will be reused. Otherwise a new session is created.
+	 *	Reading mode
 	 */
-	static KopeteMessageManager* createSession( const KopeteContactList &contacts );
-
-	/**
-	 * Get a list of all open sessions
-	 */
-	static const KopeteMessageManagerList& sessions();
-
+	enum ReadingMode { Queued, Popup };
 	/**
 	 * Delete a chat manager instance
 	 */
@@ -66,6 +62,11 @@ public:
 	 * Remove a contact from the session
 	 */
 	void removeContact( const KopeteContact *c );
+
+	/**
+	 *	Read Messages
+	 */
+	void readMessages();
 
 	/**
 	 * Get a list of all contacts in the session
@@ -88,6 +89,9 @@ private:
 	KopeteMessageManager( const KopeteContactList &contacts,
 		QObject *parent = 0, const char *name = 0 );
 
+	KopeteContactList mContactList;
+	KopeteChatWindow *mChatWindow;
+	KopeteMessageList mMessageQueue;
 };
 
 #endif

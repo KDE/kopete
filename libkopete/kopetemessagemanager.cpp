@@ -8,14 +8,14 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContactList &contacts,
 
 }
 
-KopeteMessageManager* KopeteMessageManager::createSession( const KopeteContactList &contacts )
+
+
+KopeteMessageManager::~KopeteMessageManager()
 {
-	
- return (new KopeteMessageManager ( contacts ) );
 
 }
 
-KopeteMessageManager::~KopeteMessageManager()
+void KopeteMessageManager::readMessages()
 {
 
 }

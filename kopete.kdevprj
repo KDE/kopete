@@ -1508,7 +1508,7 @@ install_location=
 type=DATA
 
 [libkopete/Makefile.am]
-files=libkopete/kopetemessagemanager.cpp,libkopete/kopetemessagemanager.h
+files=libkopete/kopetemessagemanager.cpp,libkopete/kopetemessagemanager.h,libkopete/kopetemessagemanagerfactory.cpp,libkopete/kopetemessagemanagerfactory.h
 sharedlib_LDFLAGS=-version-info 0:0:0
 sharedlib_rootname=libkopete
 sub_dirs=
@@ -1521,6 +1521,18 @@ install_location=
 type=SOURCE
 
 [libkopete/kopetemessagemanager.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[libkopete/kopetemessagemanagerfactory.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[libkopete/kopetemessagemanagerfactory.h]
 dist=true
 install=false
 install_location=
