@@ -205,7 +205,7 @@ KActionMenu *YahooAccount::actionMenu()
 {
 //	kdDebug(14180) << k_funcinfo << endl;
 
-	KActionMenu *theActionMenu = new KActionMenu(accountId, myself()->onlineStatus().iconFor(this) ,this);
+	KActionMenu *theActionMenu = new KActionMenu(m_myself->displayName(), myself()->onlineStatus().iconFor(this) ,this);
 	theActionMenu->popupMenu()->insertTitle(m_myself->icon(), "Yahoo ("+m_myself->displayName()+")");
 
 	theActionMenu->insert(new KAction(i18n(YSTAvailable), YahooStatus(YahooStatus::Available).ys2kos().iconFor(this), 0, this, SLOT(slotGoOnline()), this, "actionYahooGoOnline"));
