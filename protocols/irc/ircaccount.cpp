@@ -441,7 +441,7 @@ void IRCAccount::connect()
 					IRCHostList::iterator it;
 					for ( it = hosts.begin(); it != hosts.end(); ++it )
 					{
-						if ( (*it)->ssl = true )
+						if ( (*it)->ssl == true )
 						{
 							sslFirst.append( *it );
 							it = hosts.remove( it );
