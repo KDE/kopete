@@ -36,8 +36,10 @@ void SetStatusTask::status( const uint newStatus, const QString &awayMessage, co
 	Request * setStatus = client()->requestFactory()->request( command );
 	Field::FieldList lst;
 	lst.append( new Field::SingleField( NM_A_SZ_STATUS, 0, NMFIELD_TYPE_UTF8, QString::number( newStatus ) ) );
-	lst.append( new Field::SingleField( NM_A_SZ_STATUS_TEXT, 0, NMFIELD_TYPE_UTF8, awayMessage ) );
-	lst.append( new Field::SingleField( NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_TYPE_UTF8, autoReply ) );
+	if ( !awayMessage.isNull() )
+		lst.append( new Field::SingleField( NM_A_SZ_STATUS_TEXT, 0, NMFIELD_TYPE_UTF8, awayMessage ) );
+	if ( !autoReply.isNull() )
+		lst.append( new Field::SingleField( NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_TYPE_UTF8, autoReply ) );
 	setStatus->setFields( lst );
 	setTransactionId( setStatus->transactionId() );
 	setTransfer( setStatus );

@@ -12,7 +12,7 @@
 #ifndef SETSTATUSTASK_H
 #define SETSTATUSTASK_H
 
-#include <requesttask.h>
+#include "requesttask.h"
 
 /**
 @author Kopete Developers

@@ -55,7 +55,6 @@ bool LoginTask::take( Transfer * transfer )
 	if ( !response )
 		return false;
 	response->fields().dump( true );
-	return true;
 	
 	// read in myself()'s metadata fields and emit signal
 	Field::FieldList loginResponseFields = response->fields();
@@ -65,18 +64,20 @@ bool LoginTask::take( Transfer * transfer )
 	// locate contact list
 	Field::MultiField * contactList = static_cast<Field::MultiField *>( 
 			*( loginResponseFields.find( NM_A_FA_CONTACT_LIST ) ) );
-	// extract wellfolder fields 
+	// extract folder fields 
 	// find a field in the contact list containing a folder
+	Field::FieldList contactListFields = contactList->fields();
 	//Field::FieldListIterator it = contactList->fields().find( NM_A_FA_FOLDER );
 	//Field::FieldListIterator end = contactList->fields().end();
 	// get the field and bump the iterator
 	Field::MultiField * folderContainer;
 
-	for ( Field::FieldListIterator it = contactList->fields().find( NM_A_FA_FOLDER );
-		  it != contactList->fields().end();
-		  it = contactList->fields().find( ++it, NM_A_FA_FOLDER ) )
+	for ( Field::FieldListIterator it = contactListFields.find( NM_A_FA_FOLDER );
+		  it != contactListFields.end();
+		  it = contactListFields.find( ++it, NM_A_FA_FOLDER ) )
 	{
-		cout << " found a folder!" << endl;
+		folderContainer = static_cast<Field::MultiField *>( *it );
+		extractFolder( folderContainer );
 	}
 		  
 /*	while ( folderContainer = dynamic_cast<Field::MultiField *>( *it ) )
@@ -100,6 +101,8 @@ bool LoginTask::take( Transfer * transfer )
 	
 	// create privacy list
 	*/
+	setSuccess();
+	
 	return true;
 }
 
