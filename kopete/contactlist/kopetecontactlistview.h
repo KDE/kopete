@@ -101,6 +101,11 @@ protected:
 	virtual void keyPressEvent( QKeyEvent *e );
 
 	virtual bool acceptDrag(QDropEvent *e) const;
+	
+	/**
+	 * Start a drag operation
+	 * @return a KMultipleDrag containing: 1) A QStoredDrag of type "application/x-qlistviewitem", 2) If the MC is associated with a KABC entry, i) a QTextDrag containing their email address, and ii) their vCard representation.
+	 */
 	virtual QDragObject *dragObject();
 
 	/**
