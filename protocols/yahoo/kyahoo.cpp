@@ -1080,6 +1080,9 @@ void YahooSession::slotWriteReady()
 	int fd = m_socket->fd();
 	kdDebug(14181) << k_funcinfo << "Socket FD: " << fd << endl;
 
+	if ( m_waitingForKeepalive )
+		m_waitingForKeepalive = false;
+		
 	ret = yahoo_write_ready( m_connId , fd, m_data );
 
 	if ( ret == -1 )
