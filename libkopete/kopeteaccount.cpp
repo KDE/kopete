@@ -25,8 +25,7 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kiconeffect.h>
-#include <kaction.h>
-#include <kpopupmenu.h>
+
 
 #include "kopetecontactlist.h"
 #include "kopeteaccount.h"
@@ -38,8 +37,6 @@
 #include "kopetegroup.h"
 #include "kopeteprefs.h"
 #include "kopeteblacklister.h"
-#include "kopeteonlinestatusmanager.h"
-#include "editaccountwidget.h"
 
 namespace Kopete 
 {
@@ -306,15 +303,7 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 KActionMenu * Account::actionMenu()
 {
 	//default implementation
-	KActionMenu * menu=new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ),  this );
-	QString nick=myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
-	menu->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ),
-		nick.isNull() ? accountId() :  i18n( "%2 <%1>" ).arg( accountId() , nick ) );
-	OnlineStatusManager::self()->createAccountStatusActions(this, menu);
-	menu->popupMenu()->insertSeparator();
-	menu->insert( new KAction ( i18n( "Properties" ),  0, this, SLOT( editAccount() ), menu, "actionAccountProperties" ) );
-
-	return menu;
+	return 0L;
 }
 
 
@@ -394,35 +383,6 @@ void Account::unblock( const QString &contactId )
 bool Account::isBlocked( const QString &contactId )
 {
 	return d->blackList->isBlocked( contactId );
-}
-
-void Account::editAccount(QWidget *parent)
-{
-	KDialogBase *editDialog = new KDialogBase( parent, "KopeteAccountConfig::editDialog", true,
-											 i18n( "Edit Account" ), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
-
-	KopeteEditAccountWidget *m_accountWidget = protocol()->createEditAccountWidget( this, editDialog );
-  	if ( !m_accountWidget )
-		return;
-
-	// FIXME: Why the #### is EditAccountWidget not a QWidget?!? This sideways casting
-	//        is braindead and error-prone. Looking at MSN the only reason I can see is
-	//        because it allows direct subclassing of designer widgets. But what is
-	//        wrong with embedding the designer widget in an empty QWidget instead?
-	//        Also, if this REALLY has to be a pure class and not a widget, then the
-	//        class should at least be renamed to EditAccountIface instead - Martijn
-	QWidget *w = dynamic_cast<QWidget *>( m_accountWidget );
-	if ( !w )
-		return;
-
-	editDialog->setMainWidget( w );
-	if ( editDialog->exec() == QDialog::Accepted )
-	{
-		if( m_accountWidget->validateData() )
-			m_accountWidget->apply();
-	}
-	
-	editDialog->deleteLater();
 }
 
 void Account::virtual_hook( uint /*id*/, void* /*data*/)

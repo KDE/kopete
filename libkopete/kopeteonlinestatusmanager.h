@@ -15,23 +15,20 @@
     *************************************************************************
 */
 
-#ifndef kopeteonlinestatusmanager_h__
-#define kopeteonlinestatusmanager_h__
+#ifndef __kopeteonlinestatusmanager_h__
+#define __kopeteonlinestatusmanager_h__
 
 #include <qobject.h>
 #include "kopeteonlinestatus.h"
-#include "kaction.h"
 
 class QString;
 class QPixmap;
 class QColor;
-class KActionMenu;
+
 
 namespace Kopete
 {
 	class OnlineStatus;
-	class Account;
-
 
 /**
  * OnlineStatusManager is a singleton which manage OnlineStatus
@@ -75,18 +72,8 @@ public:
 	 * @param options is a bitflag of @ref Options
 	 */
 	void registerOnlineStatus(const OnlineStatus& status, const QString &caption, unsigned int categories=0x00 , unsigned int options=0x0);
-
-	/**
-	 * insert "setStatus" actions from the given account to the specified actionMenu.
-	 *  (actions have that menu as parent QObject)
-	 * they are connected to the Account::setOnlineStatus signal
-	 *
-	 * Items are stored by status height.
-	 * 
-	 * @param account the account
-	 * @param parent  the ActionMenu where action are inserted
-	 */
-	void createAccountStatusActions( Account *account , KActionMenu *parent);
+	
+	
 
 private:
 	friend class OnlineStatus;
@@ -107,23 +94,6 @@ private:
 	OnlineStatusManager();
 	class Private;
 	Private *d;
-};
-
-
-/**
- * @internal
- */
-class OnlineStatusAction : public KAction
-{
-	Q_OBJECT
-  public:
-	OnlineStatusAction ( const OnlineStatus& status, const QString &text, const QIconSet &pix, QObject *parent=0, const char *name=0);
-  signals:
-	void activated( const Kopete::OnlineStatus& status );
-  private slots:
-	void slotActivated();
-  private:
-	OnlineStatus m_status;
 };
 
 }  //END namespace Kopete 
