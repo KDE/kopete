@@ -144,8 +144,6 @@ GaduRichTextFormat::formatClosingTag( const QString& tag )
 	return "</" + tag + ">";
 }
 
-
-
 // the initial idea stolen from IRC plugin
 KGaduMessage*
 GaduRichTextFormat::convertToGaduMessage( const KopeteMessage& message )
@@ -164,7 +162,7 @@ kdDebug(14100) << "-------------------------\n" << htmlString << "\n------------
 	if( htmlString.find( QString::fromLatin1("</span") ) > -1 ) {
 		QRegExp findTags( QString::fromLatin1("<span style=\"(.*)\">(.*)</span>") );
 		findTags.setMinimal( true );
-		int pos = 0;
+		int pos = 0, i = 0;
 		int lastpos = 0;
 
 		while ( pos >= 0 ){
@@ -214,13 +212,15 @@ kdDebug(14100) << "-------------------------\n" << htmlString << "\n------------
 					return NULL;
 				}
 
-				QRegExp rx( QString::fromLatin1("<span style=\"%1\">%2</span>" ).arg( styleHTML ).arg( replacement ) );
+				QRegExp rx( QString( "<span style=\"%1\">%2</span>" ).arg( styleHTML ).arg( replacement ) );
 				rx.setMinimal( true );
 				htmlString.replace( rx, replacement );
+
 				replacement = unescapeGaduMessage( replacement );
 				kdDebug(14100) << " message: \"" <<replacement <<"\"\n---------------" << endl;
 				output->message += replacement;
 				position += replacement.length();
+				i++;
 			}
 
 		}
