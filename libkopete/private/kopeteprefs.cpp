@@ -274,7 +274,7 @@ void KopetePrefs::setTransparencyColor(const QColor &value)
 	mTransparencyColor = value;
 }
 
-void KopetePrefs::setChatViewBufferSize(const int value)
+void KopetePrefs::setChatViewBufferSize( int value )
 {
 	mChatViewBufferSize = value;
 }

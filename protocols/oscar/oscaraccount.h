@@ -67,7 +67,7 @@ public:
 	/*
 	 * Accessor method for the action menu
 	 */
-	virtual KActionMenu* actionMenu()=0L;
+	virtual KActionMenu* actionMenu() = 0;
 
 	/*
 	 * Gets the next random new buddy num

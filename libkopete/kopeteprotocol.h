@@ -60,7 +60,7 @@ public:
 	 *
 	 * @return A new AddContactPage to be shown in the Add Contact Wizard
 	 */
-	virtual AddContactPage *createAddContactWidget( QWidget *parent, KopeteAccount *account ) = 0L;
+	virtual AddContactPage *createAddContactWidget( QWidget *parent, KopeteAccount *account ) = 0;
 
 	/**
 	 * @brief Create a new KopeteEditAccountWidget
@@ -70,7 +70,7 @@ public:
 	 * @param account is the KopeteAccount to edit. If it's 0L, then we create a new account
 	 * @param parent The parent of the 'to be returned' widget
 	 */
-	virtual KopeteEditAccountWidget * createEditAccountWidget( KopeteAccount *account, QWidget *parent ) = 0L;
+	virtual KopeteEditAccountWidget * createEditAccountWidget( KopeteAccount *account, QWidget *parent ) = 0;
 
 	/**
 	 * @brief Create an empty KopeteAccount
@@ -81,7 +81,7 @@ public:
 	 *
 	 * @return The new @ref KopeteAccount object created by this function
 	 */
-	virtual KopeteAccount *createNewAccount( const QString &accountId ) = 0L;
+	virtual KopeteAccount *createNewAccount( const QString &accountId ) = 0;
 
 	/**
 	 * @brief Determine whether the protocol supports offline messages.

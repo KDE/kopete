@@ -442,7 +442,7 @@ KIRCMessage KIRC::writeMessage(const QString &command, const QStringList &args, 
 		emit sentMessage(ircmsg);
 		return ircmsg;
 	}
-	kdDebug(14120) << "Must be connected error:" << command << args << suffix << endl;
+	kdDebug( 14120 ) << k_funcinfo << "Must be connected error:" << command << args.join( " " ) << suffix << endl;
 	return KIRCMessage();
 }
 
@@ -1568,3 +1568,4 @@ bool KIRC::CtcpReply_errorMsg(const KIRCMessage &msg)
 }
 
 #include "kirc.moc"
+

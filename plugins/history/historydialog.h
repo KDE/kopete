@@ -51,8 +51,8 @@ class HistoryDialog : public KDialogBase
 {
 	Q_OBJECT
 public:
-	HistoryDialog( KopeteContact *mContact, const bool showclose = true, int count = 50, QWidget* parent=0, const char* name="HistoryDialog");
-	HistoryDialog( KopeteMetaContact *mContact, const bool showclose = true, int count = 50, QWidget* parent=0, const char* name="HistoryDialog");
+	HistoryDialog( KopeteContact *mContact, bool showclose = true, int count = 50, QWidget* parent=0, const char* name="HistoryDialog");
+	HistoryDialog( KopeteMetaContact *mContact, bool showclose = true, int count = 50, QWidget* parent=0, const char* name="HistoryDialog");
 
 	void init();
 
