@@ -277,7 +277,6 @@ QString KopeteMessage::plainBody() const
 		replace( QRegExp( QString::fromLatin1( "&nbsp;" ) ), QString::fromLatin1( " " ) ).
 		replace( QRegExp( QString::fromLatin1( "&amp;" ) ), QString::fromLatin1( "&" ) );
 
-	kdDebug(14010) << "KopeteMessage::plainBody: " << r <<endl;
 	return r;
 }
 
@@ -320,7 +319,6 @@ QString KopeteMessage::escapedBody() const
 		return parsedString;
 	}
 
-	kdDebug(14010) << "KopeteMessage::escapeBody: not escape needed" <<endl;
 	return d->body;
 }
 
