@@ -87,13 +87,14 @@ JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList) : Kop
 	mIsConnected = false;
 	doRegister = false;
 	
-	// read remaining settings from configuration file
-	slotSettingsChanged();
 
 	// setup icons and actions
 	initIcons();
 	initActions();
 
+	// read remaining settings from configuration file
+	slotSettingsChanged();
+	
 	// initialize icon that sits in Kopete's status bar
 	statusBarIcon = new StatusBarIcon();
 	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint&)), this, SLOT(slotIconRightClicked(const QPoint&)));
@@ -460,7 +461,8 @@ void JabberProtocol::initActions()
 	
 	actionStatusMenu = new KActionMenu("Jabber", this);
 	
-	actionStatusMenu->popupMenu()->insertTitle(mUsername + "@" + mServer);
+	// will be overwritten in slotSettingsChanged, maybe there is a better way (gogo)
+	m_menuTitleId = actionStatusMenu->popupMenu()->insertTitle(""); 	
 	
 	actionStatusMenu->insert(actionGoOnline);
 	actionStatusMenu->insert(actionGoAway);
@@ -824,6 +826,10 @@ void JabberProtocol::slotSettingsChanged()
 	mResource = KGlobal::config()->readEntry("Resource", "Kopete");
 	mServer = KGlobal::config()->readEntry("Server", "jabber.org");
 	mPort = KGlobal::config()->readNumEntry("Port", 5222);
+
+	
+	// set the title according to the new changes
+	actionStatusMenu->popupMenu()->changeTitle( m_menuTitleId , mUsername + "@" + mServer );
 
 }
 

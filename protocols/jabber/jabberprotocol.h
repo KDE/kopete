@@ -149,9 +149,9 @@ private:
 	QString mUsername, mPassword, mServer, mResource;
 	int mPort;
 	bool doRegister;
-	int mStatus; /* If you use this for any purpose other than to determine the initial status, I will slice your testicles
-				  * off and have them on toast in the morning. */
-
+	int mStatus; /** If you use this for any purpose other than to determine the initial status, I will slice your testicles
+				  *  off and have them on toast in the morning. */
+	int m_menuTitleId; /** Save title id to change it to user@host when user changes settings. */
 	JabberPreferences *mPrefs;
 	static const JabberProtocol *sProtocol;
 	Jabber *mProtocol;
