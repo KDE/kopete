@@ -1,15 +1,15 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
-<class>dlgSendRaw</class>
-<widget class="QDialog">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<class>DlgSendRaw</class>
+<widget class="QWidget">
     <property name="name">
-        <cstring>dlgSendRaw</cstring>
+        <cstring>DlgSendRaw</cstring>
     </property>
     <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>330</width>
-            <height>227</height>
+            <width>329</width>
+            <height>226</height>
         </rect>
     </property>
     <property name="caption">
@@ -19,92 +19,131 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <property name="margin">
-            <number>11</number>
-        </property>
-        <property name="spacing">
-            <number>6</number>
-        </property>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblInfo</cstring>
-            </property>
-            <property name="paletteForegroundColor">
-                <color>
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>Type in the packet that should be sent to the server:</string>
-            </property>
-            <property name="buddy" stdset="0">
-                <cstring>lblRealStatus</cstring>
-            </property>
-        </widget>
-        <widget class="QTextEdit">
-            <property name="name">
-                <cstring>tePacket</cstring>
-            </property>
-        </widget>
         <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>Layout1</cstring>
+                <cstring>layout4</cstring>
             </property>
-            <hbox>
+            <vbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <property name="margin">
-                    <number>0</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <spacer>
+                <widget class="QLabel">
                     <property name="name">
-                        <cstring>Spacer1</cstring>
+                        <cstring>lblInfo</cstring>
                     </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>121</width>
-                            <height>0</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>btnFinish</cstring>
+                    <property name="paletteForegroundColor">
+                        <color>
+                            <red>0</red>
+                            <green>0</green>
+                            <blue>0</blue>
+                        </color>
                     </property>
                     <property name="text">
-                        <string>&amp;Send</string>
+                        <string>Type in the packet that should be sent to the server:</string>
                     </property>
-                    <property name="default">
-                        <bool>true</bool>
+                    <property name="buddy" stdset="0">
+                        <cstring>lblRealStatus</cstring>
                     </property>
                 </widget>
-                <widget class="QPushButton">
+                <widget class="QTextEdit">
                     <property name="name">
-                        <cstring>btnCancel</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Cancel</string>
+                        <cstring>tePacket</cstring>
                     </property>
                 </widget>
-            </hbox>
+                <widget class="QComboBox">
+                    <item>
+                        <property name="text">
+                            <string>User Defined</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Account Deletion</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Availability Status</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Message</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Message with Subject</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Roster Item</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Subscription</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>inputWidget</cstring>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout3</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>btnClaer</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Clea&amp;r</string>
+                            </property>
+                        </widget>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>btnSend</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Send</string>
+                            </property>
+                        </widget>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer2</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>16</width>
+                                    <height>25</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>btnClose</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Close</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+            </vbox>
         </widget>
     </vbox>
 </widget>
-<tabstops>
-    <tabstop>btnFinish</tabstop>
-    <tabstop>btnCancel</tabstop>
-</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

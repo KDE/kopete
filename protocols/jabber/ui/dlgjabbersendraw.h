@@ -33,14 +33,16 @@
  * @author Till <till@tantalo.net>
  * @author Chris TenHarmsel <tenharmsel@users.sf.net>
  */
-class dlgJabberSendRaw:public dlgSendRaw
+class dlgJabberSendRaw:public DlgSendRaw
 {
   Q_OBJECT public:
 	  dlgJabberSendRaw (Jabber::Client * engine, QWidget * parent = 0, const char *name = 0);
 	  virtual ~ dlgJabberSendRaw ();
 
-	public slots:void slotFinish ();
-	void slotCancel ();
+	public slots:
+		void slotFinish ();
+		void slotCancel ();
+		void slotCreateMessage(int );
 
   private:
 

@@ -17,21 +17,23 @@
 		*                                                                         *
 		***************************************************************************/
 
+#include <qcombobox.h>
 #include <qpushbutton.h>
 #include <qtextedit.h>
 #include <kdebug.h>
 #include "dlgjabbersendraw.h"
 
 
-dlgJabberSendRaw::dlgJabberSendRaw (Jabber::Client * engine, QWidget * parent, const char *name):dlgSendRaw (parent, name)
+dlgJabberSendRaw::dlgJabberSendRaw (Jabber::Client * engine, QWidget * parent, const char *name):DlgSendRaw (parent, name)
 {
 
 	// Grab the thing that lets us talk
 	mEngine = engine;
 
 	// Connect the GUI elements to things that do stuff
-	connect (btnFinish, SIGNAL (clicked ()), this, SLOT (slotFinish ()));
-	connect (btnCancel, SIGNAL (clicked ()), this, SLOT (slotCancel ()));
+	connect (btnSend, SIGNAL (clicked ()), this, SLOT (slotFinish ()));
+	connect (btnClose, SIGNAL (clicked ()), this, SLOT (slotCancel ()));
+	connect (inputWidget, SIGNAL (activated (int)), this, SLOT (sloCtreateMessage(int)));
 }
 
 dlgJabberSendRaw::~dlgJabberSendRaw ()
@@ -55,6 +57,10 @@ void dlgJabberSendRaw::slotCancel ()
 	tePacket->clear ();
 	// Hide ourselves
 	hide ();
+}
+
+void dlgJabberSendRaw::slotCreateMessage(int index)
+{
 }
 
 #include "dlgjabbersendraw.moc"
