@@ -281,7 +281,7 @@
                                             </sizepolicy>
                                         </property>
                                         <property name="text">
-                                            <string>Remember &amp;Password</string>
+                                            <string>Remember &amp;password</string>
                                         </property>
                                         <property name="accel">
                                             <string>Alt+P</string>
@@ -416,7 +416,7 @@
                                     <cstring>cbAutoConnect</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Connect Automatically at &amp;Startup</string>
+                                    <string>Connect automatically at &amp;startup</string>
                                 </property>
                                 <property name="accel">
                                     <string>Alt+S</string>
@@ -433,7 +433,7 @@
                                     <cstring>cbUseSSL</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Use Protocol Encr&amp;yption (SSL)</string>
+                                    <string>Use protocol encr&amp;yption (SSL)</string>
                                 </property>
                                 <property name="accel">
                                     <string>Alt+Y</string>
@@ -450,7 +450,7 @@
                                     <cstring>cbAllowPlainTextPassword</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Allow Plain-Text Password Authentication</string>
+                                    <string>Allow plain-text password authentication</string>
                                 </property>
                                 <property name="accel">
                                     <string></string>
@@ -586,7 +586,7 @@
                                     <cstring>cbCustomServer</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Override the Server In My Jabber ID</string>
+                                    <string>Override the server in my Jabber ID</string>
                                 </property>
                             </widget>
                         </grid>
@@ -737,7 +737,7 @@
                                                     <cstring>lblProxyType</cstring>
                                                 </property>
                                                 <property name="text">
-                                                    <string>Proxy T&amp;ype:</string>
+                                                    <string>Proxy t&amp;ype:</string>
                                                 </property>
                                                 <property name="buddy" stdset="0">
                                                     <cstring>cbProxyType</cstring>
@@ -903,7 +903,7 @@
                                     <cstring>cbProxyAuth</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Re&amp;quires Authentication</string>
+                                    <string>Re&amp;quires authentication</string>
                                 </property>
                                 <property name="accel">
                                     <string>Alt+Q</string>
@@ -963,7 +963,7 @@
                                     <cstring>textLabel2</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Local IP Address:</string>
+                                    <string>Local IP address:</string>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="3" column="0" rowspan="1" colspan="2">
@@ -987,7 +987,7 @@
                                     <cstring>textLabel4</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Local Port:</string>
+                                    <string>Local port:</string>
                                 </property>
                             </widget>
                             <widget class="QSpinBox" row="1" column="1">

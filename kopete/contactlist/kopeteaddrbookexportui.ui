@@ -37,7 +37,7 @@
                         <cstring>mLblUrl</cstring>
                     </property>
                     <property name="text">
-                        <string>url</string>
+                        <string>URL:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>comboBox4</cstring>
@@ -48,7 +48,7 @@
                         <cstring>mLblLastName</cstring>
                     </property>
                     <property name="text">
-                        <string>last name</string>
+                        <string>Last name:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>comboBox2</cstring>
@@ -64,7 +64,7 @@
                         <cstring>mLblFirstName</cstring>
                     </property>
                     <property name="text">
-                        <string>first name</string>
+                        <string>First name:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>comboBox1</cstring>
@@ -98,7 +98,7 @@
                         <cstring>mLblMobilePhone</cstring>
                     </property>
                     <property name="text">
-                        <string>mobile phone</string>
+                        <string>Mobile phone:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>mPhones_3</cstring>
@@ -117,7 +117,7 @@
                         <cstring>mLblEmail</cstring>
                     </property>
                     <property name="text">
-                        <string>email</string>
+                        <string>Email:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>mEmails</cstring>
@@ -144,7 +144,7 @@
                         <cstring>mLblHomePhone</cstring>
                     </property>
                     <property name="text">
-                        <string>home phone</string>
+                        <string>Home phone:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>mPhones</cstring>
@@ -155,7 +155,7 @@
                         <cstring>mLblWorkPhone</cstring>
                     </property>
                     <property name="text">
-                        <string>work phone</string>
+                        <string>Work phone:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>mPhones_2</cstring>

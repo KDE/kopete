@@ -380,7 +380,7 @@
                                     <cstring>textLabel1_2_2</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Default &amp;Charset:</string>
+                                    <string>Default &amp;charset:</string>
                                 </property>
                                 <property name="buddy" stdset="0">
                                     <cstring>charset</cstring>

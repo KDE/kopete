@@ -152,7 +152,7 @@
                 <cstring>textLabel1</cstring>
             </property>
             <property name="text">
-                <string>Style for History Browser:</string>
+                <string>Style for history browser:</string>
             </property>
         </widget>
         <widget class="KListView">

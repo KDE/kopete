@@ -165,13 +165,13 @@
                 <cstring>m_reversed</cstring>
             </property>
             <property name="text">
-                <string>I am on the contact list of this contact.</string>
+                <string>I am on the contact list of this contact</string>
             </property>
             <property name="toolTip" stdset="0">
                 <string>Show whether you are on the contact list of this user</string>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>If this box is checked, you are on this user's contact list. 
+                <string>If this box is checked, you are on this user's contact list.
 If not, the user has not added you to their list, or has removed you.</string>
             </property>
         </widget>

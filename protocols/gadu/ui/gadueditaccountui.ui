@@ -509,7 +509,7 @@
                                     <bool>false</bool>
                                 </property>
                                 <property name="title">
-                                    <string>Global DCC options</string>
+                                    <string>Global DCC Options</string>
                                 </property>
                                 <grid>
                                     <property name="name">
@@ -628,7 +628,7 @@
                                                                             <cstring>textLabel2_3</cstring>
                                                                         </property>
                                                                         <property name="text">
-                                                                            <string>Port</string>
+                                                                            <string>Port:</string>
                                                                         </property>
                                                                     </widget>
                                                                     <widget class="KRestrictedLine">
@@ -692,7 +692,7 @@
                                                             <cstring>dccSetDefaults</cstring>
                                                         </property>
                                                         <property name="text">
-                                                            <string>return to defaults</string>
+                                                            <string>Return to Defaults</string>
                                                         </property>
                                                     </widget>
                                                     <spacer>

@@ -97,7 +97,7 @@
                         <cstring>factoryEnabled</cstring>
                     </property>
                     <property name="text">
-                        <string>Allow access to the UI &amp;Factory</string>
+                        <string>Allow access to the UI &amp;factory</string>
                     </property>
                     <property name="accel">
                         <string>Alt+F</string>
@@ -166,7 +166,7 @@
                         <cstring>addScript</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Add a Script</string>
+                        <string>&amp;Add Script</string>
                     </property>
                     <property name="accel">
                         <string>Alt+A</string>
