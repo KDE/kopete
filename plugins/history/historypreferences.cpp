@@ -18,70 +18,63 @@
 #include <qcheckbox.h>
 
 #include <klocale.h>
+#include <kautoconfig.h>
 #include <kglobal.h>
 #include <kconfig.h>
 #include <knuminput.h>
 #include <kcolorbutton.h>
+#include <kgenericfactory.h>
 
 #include "historyprefsui.h"
 #include "historypreferences.h"
 
-HistoryPreferences::HistoryPreferences(QObject *parent)
-							: ConfigModule(i18n("History"),i18n("History Plugin"),"history",parent)
+
+typedef KGenericFactory<HistoryPreferences> HistoryConfigFactory;
+
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_history, HistoryConfigFactory( "kcm_kopete_history" ) );
+
+HistoryPreferences::HistoryPreferences( QWidget *parent, const char * /* name */, const QStringList &args )
+: KCModule( HistoryConfigFactory::instance(), parent, args )
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 
-	m_widget = new HistoryPrefsUI(this);
+	kautoconfig = new KAutoConfig(KGlobal::config(), this, "kautoconfig");
+	connect(kautoconfig, SIGNAL(widgetModified()), SLOT(slotSettingsChanged()));
+	connect(kautoconfig, SIGNAL(settingsChanged()), SLOT(slotSettingsChanged()));
+    kautoconfig->addWidget( new HistoryPrefsUI(this) , "History Plugin");
 
-	reopen();
+	load();
 }
 
-HistoryPreferences::~HistoryPreferences()
+/*HistoryPreferences::~HistoryPreferences()
 {
-}
+}*/
 
 
-void HistoryPreferences::reopen()
+void HistoryPreferences::load()
 {
-	KGlobal::config()->setGroup("History Plugin");
-
-	m_widget->newView->setChecked(KGlobal::config()->readBoolEntry("Auto chatwindow" , false ));
-	m_widget->nbNewView->setValue(KGlobal::config()->readNumEntry( "Number Auto chatwindow" , 7) );
-	m_widget->nbChatWindow->setValue(KGlobal::config()->readNumEntry( "Number ChatWindow", 20) );
-	QColor defaultcolor("dimgrey");
-	m_widget->m_color->setColor(KGlobal::config()->readColorEntry( "History Color", &defaultcolor));
+	kautoconfig->retrieveSettings(true);
 }
 
 void HistoryPreferences::save()
 {
 	KConfig *config = KGlobal::config();
 	config->setGroup("History Plugin");
-	config->writeEntry("Auto chatwindow", m_widget->newView->isChecked() );
-	config->writeEntry("Number Auto chatwindow",  m_widget->nbNewView->value() );
-	config->writeEntry("Number ChatWindow",  m_widget->nbChatWindow->value() );
-	config->writeEntry("History Color",  m_widget->m_color->color() );
+	config->writeEntry("Version",  "0.8" );
+	kautoconfig->saveSettings();
+}
 
-	config->writeEntry("Version",  "0.7" );
-
-	config->sync();
+void HistoryPreferences::defaults ()
+{
+	kautoconfig->resetSettings();
 }
 
 
-int HistoryPreferences::nbAutoChatwindow() const
+void HistoryPreferences::slotSettingsChanged()
 {
-	if(!m_widget->newView->isChecked())
-		return 0;
-	return m_widget->nbNewView->value();
-}
-
-int HistoryPreferences::nbChatwindow() const
-{
-	return m_widget->nbChatWindow->value();
-}
-
-QColor  HistoryPreferences::historyColor() const
-{
-	return m_widget->m_color->color();
+	// Just mark settings dirty, even if the user undoes his changes,
+	// because KPrefs will handle it in the near future.
+	setChanged( kautoconfig->hasChanged() );
 }
 
 #include "historypreferences.moc"

@@ -18,30 +18,32 @@
 #ifndef HISTORYPREFERENCES_H
 #define HISTORYPREFERENCES_H
 
-#include "configmodule.h"
-#include <qcolor.h>
 
-class HistoryPrefsUI;
+#include "kcmodule.h"
+
+class msnPrefsUI;
+class KAutoConfig;
 
 /**
-  *@author Olivier Goffart
-  */
+ * @author Olivier Goffart
+ */
+class HistoryPreferences : public KCModule
+{
+	Q_OBJECT
 
-class HistoryPreferences : public ConfigModule  {
-   Q_OBJECT
 public:
-
-	HistoryPreferences( QObject *parent=0);
-	~HistoryPreferences();
+	HistoryPreferences( QWidget *parent = 0, const char *name = 0, const QStringList &args = QStringList() );
 
 	virtual void save();
-	virtual void reopen();
+	virtual void load();
+	virtual void defaults();
 
-	int nbChatwindow() const;
-	int nbAutoChatwindow() const;
-	QColor historyColor() const;
+private slots:
+	void slotSettingsChanged();
+
 private:
-	HistoryPrefsUI *m_widget;
+	KAutoConfig *kautoconfig;
 };
+
 
 #endif

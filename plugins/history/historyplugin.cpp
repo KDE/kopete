@@ -18,6 +18,7 @@
 #include <kgenericfactory.h>
 #include <kaction.h>
 #include <kmessagebox.h>
+#include <kconfig.h>
 
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
@@ -27,7 +28,6 @@
 #include "historydialog.h"
 #include "historyplugin.h"
 #include "historylogger.h"
-#include "historypreferences.h"
 #include "historyguiclient.h"
 
 typedef KGenericFactory<HistoryPlugin> HistoryPluginFactory;
@@ -38,8 +38,6 @@ HistoryPlugin::HistoryPlugin( QObject *parent, const char *name, const QStringLi
 {
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToDisplay( KopeteMessage & ) ), this, SLOT( slotMessageDisplayed( KopeteMessage & ) ) );
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL( viewCreated( KopeteView* ) ), this, SLOT( slotViewCreated( KopeteView* ) ) );
-
-	m_prefs=new HistoryPreferences(this);
 
 
 	KAction *viewMetaContactHistory= new KAction( i18n("View &History" ), QString::fromLatin1( "history" ), 0, this, SLOT(slotViewHistory()), actionCollection() , "viewMetaContactHistory" );
@@ -200,7 +198,12 @@ void HistoryPlugin::slotViewHistory()
 
 void HistoryPlugin::slotViewCreated( KopeteView* v )
 {
-	if(m_prefs->nbAutoChatwindow() == 0)
+	KGlobal::config()->setGroup("History Plugin");
+	bool autoChatWindow=KGlobal::config()->readBoolEntry("Auto_chatwindow" , false );
+	int nbAutoChatWindow=KGlobal::config()->readNumEntry( "Number_Auto_chatwindow" , 7) ;
+//	m_nbChatWindow=KGlobal::config()->readNumEntry( "Number_ChatWindow", 20) ;
+
+	if(!autoChatWindow ||  nbAutoChatWindow == 0)
 		return;
 
 	KopeteMessageManager *m_currentMessageManager=v->msgManager();
@@ -218,7 +221,7 @@ void HistoryPlugin::slotViewCreated( KopeteView* v )
 
 	HistoryLogger *l=m_loggers[m_currentMessageManager]->logger();
 	l->setPositionToLast();
-	QValueList<KopeteMessage> msgs= l->readMessages(m_prefs->nbAutoChatwindow() , mb.first() /*FIXME*/ , HistoryLogger::AntiChronological , true );
+	QValueList<KopeteMessage> msgs= l->readMessages(nbAutoChatWindow , mb.first() /*FIXME*/ , HistoryLogger::AntiChronological , true );
 
 	// make sure the last message is not the one which will be appened right after the view is created (and which has just been logged in)
 	if(msgs.last().plainBody() == m_lastmessage.plainBody() &&  m_lastmessage.manager() == m_currentMessageManager)

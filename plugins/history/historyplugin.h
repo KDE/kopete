@@ -64,8 +64,6 @@ private slots:
 
 private:
 	QMap<KopeteMessageManager*,HistoryGUIClient*> m_loggers;
-	HistoryPreferences *m_prefs;
-
 	KopeteMessage m_lastmessage;
 };
 

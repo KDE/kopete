@@ -52,9 +52,9 @@ HistoryGUIClient::HistoryGUIClient(KopeteMessageManager *parent , const char *na
 	setXMLFile("historychatui.rc");
 
 	KGlobal::config()->setGroup("History Plugin");
-	m_autoChatWindow=KGlobal::config()->readBoolEntry("Auto chatwindow" , false );
-	//m_nbAutoChatWindow=KGlobal::config()->readNumEntry( "Number Auto chatwindow" , 7) ;
-	m_nbChatWindow=KGlobal::config()->readNumEntry( "Number ChatWindow", 20) ;
+	m_autoChatWindow=KGlobal::config()->readBoolEntry("Auto_chatwindow" , false );
+	//m_nbAutoChatWindow=KGlobal::config()->readNumEntry( "Number_Auto_chatwindow" , 7) ;
+	m_nbChatWindow=KGlobal::config()->readNumEntry( "Number_ChatWindow", 20) ;
 }
 
 

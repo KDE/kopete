@@ -262,7 +262,7 @@ QValueList<KopeteMessage> HistoryLogger::readMessages( unsigned int nb , const K
 
 	//getting the color for messages:
 	KGlobal::config()->setGroup("History Plugin");
-	QColor FGcolor=KGlobal::config()->readColorEntry( "History Color");
+	QColor FGcolor=KGlobal::config()->readColorEntry( "History_color" );
 
 	//Hello guest!
 
