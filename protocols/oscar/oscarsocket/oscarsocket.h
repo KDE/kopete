@@ -29,7 +29,7 @@
 #include <qptrlist.h>
 #include <qdatetime.h>
 
-class KFileItem;
+//class KFileItem;
 class OscarAccount;
 class OscarContact;
 class QTimer;
@@ -108,15 +108,6 @@ const DWORD AIM_CAPS_UTF8			= 0x00020000;
 const DWORD AIM_CAPS_IS_WEB			= 0x00040000;
 const DWORD AIM_CAPS_INTEROPERATE	= 0x00080000;
 const DWORD AIM_CAPS_LAST			= 0x00100000;
-
-
-// "to contactlist" means only the contactlist flashes, no sound or other display of incoming message
-const WORD P2P_ONLINE	= 0x0000; // user is online, message was received, file transfer accepted
-const WORD P2P_REFUSE	= 0x0100; // refused
-const WORD P2P_AWAY		= 0x0400; // accepted (to contact list) because of away
-const WORD P2P_OCC		= 0x0900; // refused because of occupied (retry by sending to contact list or as urgent)
-const WORD P2P_DND		= 0x0a00; // refused because of dnd (retry by sending to contact list)
-const WORD P2P_NA		= 0x0e00; // accepted (to contact list) because of na
 
 const struct
 {
@@ -216,7 +207,6 @@ const struct
 //#define KOPETE_AIM_CAPS			AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE
 #define KOPETE_AIM_CAPS			0 // our aim client is as stupid as bread
 #define KOPETE_ICQ_CAPS			AIM_CAPS_ICQSERVERRELAY | AIM_CAPS_UTF8 | AIM_CAPS_ISICQ
-
 //ICQ 2002b sends: CAP_AIM_SERVERRELAY, CAP_UTF8, CAP_RTFMSGS, CAP_AIM_ISICQ
 
 
@@ -265,44 +255,20 @@ const unsigned int OSCAR_OCC = 5;
 const unsigned int OSCAR_FFC = 6;
 const unsigned int OSCAR_CONNECTING = 10;
 
-const WORD OSCAR_FAM_1			= 0x0001; // Services
-const WORD OSCAR_FAM_2			= 0x0002; // Location
-const WORD OSCAR_FAM_3			= 0x0003; // Contacts, adding, removal, statuschanges
-const WORD OSCAR_FAM_4			= 0x0004; // ICBM, messaging
-const WORD OSCAR_FAM_9			= 0x0009; // BOS, visible/invisible lists
-const WORD OSCAR_FAM_11			= 0x000b; // Interval
-const WORD OSCAR_FAM_19			= 0x0013; // Roster, Contactlist
-const WORD OSCAR_FAM_21			= 0x0015; // icq metasearch, sms, offline messages
-const WORD OSCAR_FAM_23			= 0x0017; // new user, registration
-
-
 // used for SRV_RECVMSG, SNAC(4,7)
 const WORD MSGFORMAT_SIMPLE		= 0x0001;
 const WORD MSGFORMAT_ADVANCED	= 0x0002;
 const WORD MSGFORMAT_SERVER		= 0x0004;
 
-const char OSCAR_SERVER[] 		= "login.oscar.aol.com";
-const unsigned int OSCAR_PORT	= 5190;
+const QString AIM_SERVER		= "login.oscar.aol.com";
+const unsigned int AIM_PORT	= 5190;
 
-const WORD CLASS_TRIAL			= 0x0001;
-const WORD CLASS_ADMINISTRATOR	= 0x0002; // AOL admin
-const WORD CLASS_AOL			= 0x0004; // AOL staff user flag
-const WORD CLASS_COMMERCIAL		= 0x0008; // AOL commercial account flag
-const WORD CLASS_AIM			= 0x0010; // ICQ non-commercial account flag
-const WORD CLASS_AWAY			= 0x0020; //  Away status flag
-const WORD CLASS_ICQ			= 0x0040; //  ICQ user sign
-const WORD CLASS_WIRELESS		= 0x0080; // AOL wireless user
-const WORD CLASS_UNKNOWN100		= 0x0100; // Unknown bit
-const WORD CLASS_UNKNOWN200		= 0x0200;  // Unknown bit
-const WORD CLASS_UNKNOWN400		= 0x0400;  // Unknown bit
-//const WORD CLASS_ACTIVEBUDDY	= 0x0400;
-const WORD CLASS_UNKNOWN800		= 0x0800; // Unknown bit
 
 /*
  * Implements the actual communication with the oscar server
  * @author Tom Linsky
  * @author Stefan Gehn
-*/
+ */
 class OscarSocket : public OscarConnection
 {
 	Q_OBJECT

@@ -3,6 +3,7 @@
 
 #include <qlayout.h>
 #include <qcheckbox.h>
+#include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qspinbox.h>
 
@@ -10,13 +11,13 @@
 
 #include "aimprotocol.h"
 #include "aimaccount.h"
-//#include "oscarsocket.h"
+#include "oscartypes.h"
 
 AIMEditAccountWidget::AIMEditAccountWidget(AIMProtocol *protocol,
 	KopeteAccount *account, QWidget *parent, const char *name)
 	: QWidget(parent, name), EditAccountWidget(account)
 {
-	kdDebug(14190) << k_funcinfo << "Called." << endl;
+	//kdDebug(14190) << k_funcinfo << "Called." << endl;
 
 	mAccount = account;
 	mProtocol = protocol;
@@ -25,28 +26,30 @@ AIMEditAccountWidget::AIMEditAccountWidget(AIMProtocol *protocol,
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	mGui = new aimEditAccountUI(this, "AIMEditAccountWidget::mGui");
 
+	connect(mGui->btnServerDefaults, SIGNAL(clicked()),
+	this, SLOT(slotSetDefaultServer()));
+
+
 	// Read in the settings from the account if it exists
 	if (account)
 	{
 		if (account->rememberPassword())
 		{ // If we want to remember the password
 			mGui->mSavePassword->setChecked(true);
-			mGui->mPassword->setText(account->password(false, 0L, 8));
+			mGui->edtPassword->setText(account->password(false, 0L, 8));
 		}
-		mGui->mAccountId->setText(account->accountId());
+		mGui->edtAccountId->setText(account->accountId());
 		//Remove me after we can change Account IDs (Matt)
-		mGui->mAccountId->setDisabled(true);
+		mGui->edtAccountId->setDisabled(true);
 		mGui->mAutoLogon->setChecked(account->autoLogin());
-		mGui->mServer->setText(account->pluginData(protocol, "Server"));
-		mGui->mPort->setValue(account->pluginData(protocol,"Port").toInt());
+		mGui->edtServerAddress->setText(account->pluginData(protocol, "Server"));
+		mGui->sbxServerPort->setValue(account->pluginData(protocol,"Port").toInt());
 	}
 	else
 	{
 		// Just set the default saved password to true
 		mGui->mSavePassword->setChecked(true);
-		// These come from OscarSocket where they are #defined
-		mGui->mServer->setText( OSCAR_SERVER );
-		mGui->mPort->setValue( OSCAR_PORT );
+		slotSetDefaultServer();
 	}
 }
 
@@ -62,30 +65,30 @@ KopeteAccount *AIMEditAccountWidget::apply()
 	if (!mAccount)
 	{
 		kdDebug(14190) << k_funcinfo << "creating a new account" << endl;
-		QString newId = mGui->mAccountId->text();
+		QString newId = mGui->edtAccountId->text();
 		mAccount = new AIMAccount(mProtocol, newId);
 	}
 
 	// Check to see if we're saving the password, and set it if so
 	if (mGui->mSavePassword->isChecked())
-		mAccount->setPassword(mGui->mPassword->text());
+		mAccount->setPassword(mGui->edtPassword->text());
 	else
 		mAccount->setPassword(QString::null);
 
 	mAccount->setAutoLogin(mGui->mAutoLogon->isChecked()); // save the autologon choice
-	static_cast<OscarAccount *>(mAccount)->setServerAddress(mGui->mServer->text());
-	static_cast<OscarAccount *>(mAccount)->setServerPort(mGui->mPort->value());
+	static_cast<OscarAccount *>(mAccount)->setServerAddress(mGui->edtServerAddress->text());
+	static_cast<OscarAccount *>(mAccount)->setServerPort(mGui->sbxServerPort->value());
 
 	return mAccount;
 }
 
 bool AIMEditAccountWidget::validateData()
 {
-	kdDebug(14190) << k_funcinfo << "Called." << endl;
+	//kdDebug(14190) << k_funcinfo << "Called." << endl;
 
-	QString userName = mGui->mAccountId->text();
-	QString server = mGui->mServer->text();
-	int port = mGui->mPort->value();
+	QString userName = mGui->edtAccountId->text();
+	QString server = mGui->edtServerAddress->text();
+	int port = mGui->sbxServerPort->value();
 
 	if (userName.length() < 1)
 		return false;
@@ -97,8 +100,14 @@ bool AIMEditAccountWidget::validateData()
 		return false;
 
 	// Seems good to me
-	kdDebug(14190) << k_funcinfo << "Account data validated successfully." << endl;
+	//kdDebug(14190) << k_funcinfo << "Account data validated successfully." << endl;
 	return true;
+}
+
+void AIMEditAccountWidget::slotSetDefaultServer()
+{
+	mGui->edtServerAddress->setText(AIM_SERVER);
+	mGui->sbxServerPort->setValue(AIM_PORT);
 }
 
 #include "aimeditaccountwidget.moc"

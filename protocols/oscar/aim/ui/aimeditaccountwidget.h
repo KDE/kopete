@@ -32,23 +32,22 @@ class aimEditAccountUI;
 
 class AIMEditAccountWidget : public QWidget, public EditAccountWidget
 {
-    Q_OBJECT
-public:
-    /** Constructor */
-    AIMEditAccountWidget(AIMProtocol *protocol, KopeteAccount *account,
-			   QWidget *parent=0, const char *name=0);
-    /** Destructor */
-    virtual ~AIMEditAccountWidget();
-    /** Validates the input */
-    virtual bool validateData();
-    /** Applies the data */
-    virtual KopeteAccount *apply();
-protected:
-    /** Our account we're editing */
-    KopeteAccount *mAccount;
-    /** The Protocol we're in */
-    AIMProtocol *mProtocol;
-    /** The GUI */
-    aimEditAccountUI *mGui;
+	Q_OBJECT
+
+	public:
+		AIMEditAccountWidget(AIMProtocol *protocol, KopeteAccount *account,
+				QWidget *parent=0, const char *name=0);
+		virtual ~AIMEditAccountWidget();
+
+		virtual bool validateData();
+		virtual KopeteAccount *apply();
+
+	protected slots:
+		void slotSetDefaultServer();
+
+	protected:
+		KopeteAccount *mAccount;
+		AIMProtocol *mProtocol;
+		aimEditAccountUI *mGui;
 };
 #endif
