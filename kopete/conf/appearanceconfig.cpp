@@ -17,9 +17,10 @@
 #include "appearanceconfig.h"
 
 #include <qcheckbox.h>
-#include <qdir.h>
 #include <qframe.h>
 #include <qlabel.h>
+#include <qdir.h>
+#include <qtextstream.h>
 #include <qlayout.h>
 #include <qpixmap.h>
 #include <qwhatsthis.h>
@@ -28,6 +29,7 @@
 #include <qhbuttongroup.h>
 #include <qstringlist.h>
 #include <qtextedit.h>
+#include <qfileinfo.h>
 #include <qvgroupbox.h>
 #include <qspinbox.h>
 #include <qslider.h>
@@ -75,6 +77,7 @@
 #include "kopeteawayconfigui.h"
 #include "styleeditdialog.h"
 #include "kopetexsl.h"
+#include "preferencesdialog.h"
 
 #include <qtabwidget.h>
 
@@ -86,7 +89,7 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 		parent )
 {
 	(new QVBoxLayout(this))->setAutoAdd(true);
-	QTabWidget *mAppearanceTabCtl = new QTabWidget(this,"mAppearanceTabCtl");
+	mAppearanceTabCtl = new QTabWidget(this,"mAppearanceTabCtl");
 
 	editedItem = 0L;
 
@@ -143,12 +146,13 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	connect(mPrfsChatAppearance->textColor, SIGNAL(changed(const QColor &)), this, SLOT(slotUpdatePreview()));
 	connect(mPrfsChatAppearance->bgColor, SIGNAL(changed(const QColor &)), this, SLOT(slotUpdatePreview()));
 	connect(mPrfsChatAppearance->linkColor, SIGNAL(changed(const QColor &)), this, SLOT(slotUpdatePreview()));
-	connect(mPrfsChatAppearance->styleList, SIGNAL(selectionChanged( QListBoxItem *)), this, SLOT(slotUpdatePreview()));
+	connect(mPrfsChatAppearance->styleList, SIGNAL(selectionChanged( QListBoxItem *)), this, SLOT(slotStyleSelected()));
 	connect(mPrfsChatAppearance->addButton, SIGNAL(clicked()), this, SLOT(slotAddStyle()));
 	connect(mPrfsChatAppearance->editButton, SIGNAL(clicked()), this, SLOT(slotEditStyle()));
 	connect(mPrfsChatAppearance->deleteButton, SIGNAL(clicked()), this, SLOT(slotDeleteStyle()));
 	// ===========================================================================
 
+	errorAlert = false;
 	reopen(); // load settings from config
 	slotTransparencyChanged(mPrfsChatWindow->mTransparencyEnabled->isChecked());
 	slotShowTrayChanged();
@@ -201,13 +205,14 @@ void AppearanceConfig::save()
 	p->setHighlightBackground(mPrfsChatAppearance->backgroundColor->color());
 	p->setHighlightForeground(mPrfsChatAppearance->foregroundColor->color());
 
-	p->setChatStyles( mChatStyles );
 	p->setBgColor( mPrfsChatAppearance->bgColor->color() );
 	p->setTextColor(  mPrfsChatAppearance->textColor->color() );
 	p->setLinkColor( mPrfsChatAppearance->linkColor->color() );
 	p->setFontFace( mPrfsChatAppearance->fontFace->font() );
-	p->setKindMessagesHtml( mChatStyles[ mPrfsChatAppearance->styleList->selectedItem()->text() ] );
 
+	QString model = fileContents( itemMap[ mPrfsChatAppearance->styleList->selectedItem() ] );
+	if( !model.isEmpty() )
+		p->setKindMessagesHtml( model );
 
 	KopeteAway::getInstance()->setAutoAwayTimeout(mAwayConfigUI->mAwayTimeout->value()*60);
 	KopeteAway::getInstance()->setGoAvailable(mAwayConfigUI->mGoAvailable->isChecked());
@@ -218,6 +223,7 @@ void AppearanceConfig::save()
 	disconnect(KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()));
 	p->save();
 	connect(KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()));
+	errorAlert = false;
 }
 
 void AppearanceConfig::slotConfigChanged()
@@ -228,6 +234,8 @@ void AppearanceConfig::slotConfigChanged()
 
 void AppearanceConfig::reopen()
 {
+	if( errorAlert )
+		return;
 //	kdDebug(14000) << k_funcinfo << "called" << endl;
 	KopetePrefs *p = KopetePrefs::prefs();
 
@@ -301,34 +309,30 @@ void AppearanceConfig::reopen()
 	mPrfsChatAppearance->fontFace->setFont( p->fontFace() );
 	mPrfsChatAppearance->fontFace->setText( p->fontFace().family() );
 
-	mChatStyles = p->chatStyles();
+	QStringList mChatStyles = KGlobal::dirs()->findAllResources("appdata", QString::fromLatin1("styles/*.xsl") );
 	mPrfsChatAppearance->styleList->clear();
-	for( KopeteChatStyleMap::Iterator it = mChatStyles.begin(); it != mChatStyles.end(); ++it)
+	for( QStringList::Iterator it = mChatStyles.begin(); it != mChatStyles.end(); ++it)
 	{
-		mPrfsChatAppearance->styleList->insertItem( it.key() );
-		if( it.data() == p->kindMessagesHtml() )
-			mPrfsChatAppearance->styleList->setSelected( mPrfsChatAppearance->styleList->findItem(it.key()), true );
+		QFileInfo fi( *it );
+		QString fileName = fi.fileName().section('.',0,0);
+		mPrfsChatAppearance->styleList->insertItem( fileName, 0 );
+		itemMap.insert( mPrfsChatAppearance->styleList->firstItem(), *it );
+
+		if( fileContents( *it ) == p->kindMessagesHtml() )
+			mPrfsChatAppearance->styleList->setSelected( mPrfsChatAppearance->styleList->firstItem(), true );
 	}
+
 	mPrfsChatAppearance->styleList->sort();
 
-  	const QString wthis = i18n("Code:                                <br>\
-		<b>%M</b> : insert the Message                                   <br>\
-		<b>%T</b> : insert Timestamp                                     <br>\
-		<b>%F</b> : insert Fonts (the first open and the second close)   <br>\
-		<b>%b</b> : background color in html format ( #ABABAB )          <br>\
-		<b>%f</b> : insert the displayName of the sender                 <br>\
-		<b>%t</b> : insert the displayName of the reciever               <br>\
-									<br>\
-		<b>%i ... %i </b> : code between is parsed only if message is inbound <br> \
-		<b>%o ... %o </b> : code between is parsed only if message is outbound <br> \
-		<b>%a ... %a </b> : code between is parsed only if message is an action <br> \
-		<b>%s ... %s </b>: code between is parsed only if message is internal <br>\
-		<b>%e ... %e </b>: code between is parsed only if message is inbound or outbound <br>\
-									<br>\
-		<b>%%</b> : insert a '%'");
+	if( !mPrfsChatAppearance->styleList->selectedItem() && !PreferencesDialog::preferencesDialog()->isVisible())
+	{
+		errorAlert = true;
+		mAppearanceTabCtl->showPage( mPrfsChatAppearance );
+		PreferencesDialog::preferencesDialog()->show();
+		PreferencesDialog::preferencesDialog()->showPage(2);
+		KMessageBox::error( this, i18n("You do not have a valid Chat Window style chosen. Please select a new one now from the list below."), i18n("Invalid Style") );
+	}
 
-	//mPrfsChatAppearance->mle_codehtml->setText( p->kindMessagesHtml() );
-  	//QWhatsThis::add( mPrfsChatAppearance->mle_codehtml, wthis );
 	mAwayConfigUI->updateView();
 }
 
@@ -412,11 +416,29 @@ void AppearanceConfig::updateHighlight()
 	}
 }
 
+void AppearanceConfig::slotStyleSelected()
+{
+	QFileInfo fi( itemMap[ mPrfsChatAppearance->styleList->selectedItem() ] );
+	if( fi.isWritable() )
+	{
+		mPrfsChatAppearance->editButton->setEnabled( true );
+		mPrfsChatAppearance->deleteButton->setEnabled( true );
+	}
+	else
+	{
+		mPrfsChatAppearance->editButton->setEnabled( false );
+		mPrfsChatAppearance->deleteButton->setEnabled( false );
+	}
+
+	slotUpdatePreview();
+}
+
 void AppearanceConfig::slotEditStyle()
 {
 	slotAddStyle();
 	editedItem = mPrfsChatAppearance->styleList->selectedItem();
-	KTextEditor::editInterface( editDocument )->setText( mChatStyles[ editedItem->text() ] );
+	QString model = fileContents( itemMap[ editedItem] );
+	KTextEditor::editInterface( editDocument )->setText( model );
 	updateHighlight();
 	styleEditor->styleName->setText( editedItem->text() );
 }
@@ -428,7 +450,7 @@ void AppearanceConfig::slotDeleteStyle()
 		i18n("Delete Style"), i18n("Delete Style")) == KMessageBox::Continue )
 	{
 		QListBoxItem *style = mPrfsChatAppearance->styleList->selectedItem();
-		mChatStyles.remove( style->text() );
+		itemMap.remove( style );
 		if( style->next() )
 			mPrfsChatAppearance->styleList->setSelected( style->next(), true );
 		else
@@ -440,7 +462,7 @@ void AppearanceConfig::slotDeleteStyle()
 void AppearanceConfig::slotStyleSaved()
 {
 	delete editedItem;
-	mChatStyles[ styleEditor->styleName->text() ] = KTextEditor::editInterface( editDocument )->text();
+	//mChatStyles[ styleEditor->styleName->text() ] = KTextEditor::editInterface( editDocument )->text();
 
 	mPrfsChatAppearance->styleList->insertItem( styleEditor->styleName->text() );
 	mPrfsChatAppearance->styleList->sort();
@@ -457,54 +479,65 @@ void AppearanceConfig::slotUpdatePreview()
 	KopeteContactPtrList toList = KopeteContactPtrList();
 	toList.append( cTo );
 
-	KopeteMessage *msgIn = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is an incoming message"),KopeteMessage::Inbound );
-	KopeteMessage *msgOut = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is an outgoing message"),KopeteMessage::Outbound );
-	KopeteMessage *msgInt = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is an internal message"),KopeteMessage::Internal );
-	KopeteMessage *msgHigh = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is a highlighted message"),KopeteMessage::Inbound );
-	KopeteMessage *msgAct = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is an action message"),KopeteMessage::Action );
+	KopeteMessage msgIn( cFrom, toList, QString::fromLatin1("This is an incoming message"),KopeteMessage::Inbound );
+	KopeteMessage msgOut( cFrom, toList, QString::fromLatin1("This is an outgoing message"),KopeteMessage::Outbound );
+	KopeteMessage msgInt( cFrom, toList, QString::fromLatin1("This is an internal message"),KopeteMessage::Internal );
+	KopeteMessage msgHigh( cFrom, toList, QString::fromLatin1("This is a highlighted message"),KopeteMessage::Inbound );
+	KopeteMessage msgAct( cFrom, toList, QString::fromLatin1("This is an action message"),KopeteMessage::Action );
 
 	QString model;
 	QListBoxItem *style = mPrfsChatAppearance->styleList->selectedItem();
 	if( style )
 	{
-		if( mChatStyles.contains( style->text() ) )
-			model = mChatStyles[ style->text() ];
+		model = fileContents( itemMap[ style ] );
+
+		if( !model.isEmpty() )
+		{
+			preview->begin();
+			preview->write( QString::fromLatin1( "<html><head><style>body{font-family:%1;color:%2;}td{font-family:%3;color:%4;}.highlight{color:%5;background-color:%6}</style></head><body bgcolor=\"%7\" vlink=\"%8\" link=\"%9\">" )
+				.arg( mPrfsChatAppearance->fontFace->font().family() )
+				.arg( mPrfsChatAppearance->textColor->color().name() )
+				.arg( mPrfsChatAppearance->fontFace->font().family() )
+				.arg( mPrfsChatAppearance->textColor->color().name() )
+				.arg( mPrfsChatAppearance->bgColor->color().name() )
+				.arg( mPrfsChatAppearance->foregroundColor->color().name() )
+				.arg( mPrfsChatAppearance->backgroundColor->color().name() )
+				.arg( mPrfsChatAppearance->linkColor->color().name() )
+				.arg( mPrfsChatAppearance->linkColor->color().name() ) );
+
+			// incoming messages
+			preview->write( KopeteXSL::xsltTransform( msgIn.asXML().toString(), model ) );
+			msgIn.setFg(Qt::white);
+			msgIn.setBg(Qt::blue);
+			msgIn.setBody( QString::fromLatin1("This is a colored incoming message (random color)") );
+
+			preview->write( KopeteXSL::xsltTransform( msgIn.asXML().toString(), model ) );
+			preview->write( KopeteXSL::xsltTransform( msgOut.asXML().toString(), model ) );
+			preview->write( KopeteXSL::xsltTransform( msgInt.asXML().toString(), model ) );
+			preview->write( KopeteXSL::xsltTransform( msgAct.asXML().toString(), model ) );
+			preview->write( KopeteXSL::xsltTransform( msgHigh.asXML().toString(), model ) );
+
+			preview->write( QString::fromLatin1( "</body></html>" ) );
+			preview->end();
+		}
 	}
 
-	preview->begin();
-	preview->write( QString::fromLatin1( "<html><head><style>body{font-family:%1;color:%2;}td{font-family:%3;color:%4;}.highlight{color:%5;background-color:%6}</style></head><body bgcolor=\"%7\" vlink=\"%8\" link=\"%9\">" )
-		.arg( mPrfsChatAppearance->fontFace->font().family() )
-		.arg( mPrfsChatAppearance->textColor->color().name() )
-		.arg( mPrfsChatAppearance->fontFace->font().family() )
-		.arg( mPrfsChatAppearance->textColor->color().name() )
-		.arg( mPrfsChatAppearance->bgColor->color().name() )
-		.arg( mPrfsChatAppearance->foregroundColor->color().name() )
-		.arg( mPrfsChatAppearance->backgroundColor->color().name() )
-		.arg( mPrfsChatAppearance->linkColor->color().name() )
-		.arg( mPrfsChatAppearance->linkColor->color().name() ) );
-
-	// incoming messages
-	preview->write( KopeteXSL::xsltTransform( msgIn->asXML().toString(), model ) );
-	msgIn->setFg(Qt::white);
-	msgIn->setBg(Qt::blue);
-	msgIn->setBody( QString::fromLatin1("This is a colored incoming message (random color)") );
-
-	preview->write( KopeteXSL::xsltTransform( msgIn->asXML().toString(), model ) );
-	preview->write( KopeteXSL::xsltTransform( msgOut->asXML().toString(), model ) );
-	preview->write( KopeteXSL::xsltTransform( msgInt->asXML().toString(), model ) );
-	preview->write( KopeteXSL::xsltTransform( msgAct->asXML().toString(), model ) );
-	preview->write( KopeteXSL::xsltTransform( msgHigh->asXML().toString(), model ) );
-
-	preview->write( QString::fromLatin1( "</body></html>" ) );
-	preview->end();
-
-	delete msgIn;
-	delete msgOut;
-	delete msgInt;
-	delete msgHigh;
-	delete msgAct;
 	delete cFrom;
 	delete cTo;
+}
+
+QString AppearanceConfig::fileContents( const QString &path )
+{
+ 	QString contents;
+	QFile file( path );
+	if ( file.open( IO_ReadOnly ) )
+	{
+		QTextStream stream( &file );
+		contents = stream.read();
+		file.close();
+	}
+
+	return contents;
 }
 
 #include "appearanceconfig.moc"

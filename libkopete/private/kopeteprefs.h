@@ -24,8 +24,6 @@
 
 class KConfig;
 
-typedef QMap<QString,QString> KopeteChatStyleMap;
-
 class KopetePrefs : public QObject
 {
 	Q_OBJECT
@@ -80,7 +78,6 @@ public:
 	bool showTray() const { return mShowTray; }
 
 	int chatWindowPolicy() const { return mChatWindowPolicy; }
-	KopeteChatStyleMap chatStyles() const { return mChatStyles; }
 	QString kindMessagesHtml() const { return mKindMessagesHtml; }
 	QString defaultTheme() const { return QString::fromLatin1( "Default" ); }
 
@@ -114,7 +111,6 @@ public:
 	void setFontFace( const QFont & );
 	void setLinkColor( const QColor & );
 	void setShowTray(bool);
-	void setChatStyles( const KopeteChatStyleMap &);
 
 signals:
 	/**
@@ -166,7 +162,6 @@ private:
 	bool mShowTray;
 	bool mTransparancyChanged;
 	bool mAppearanceChanged;
-	KopeteChatStyleMap mChatStyles;
 
 	int mChatWindowPolicy;
 	QString mKindMessagesHtml;

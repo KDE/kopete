@@ -18,10 +18,11 @@
 #define __APPEARANCE_H
 
 #include "configmodule.h"
-#include "qptrlist.h"
+#include <qptrlist.h>
+#include <qmap.h>
 
 class QFrame;
-class KTabCtl;
+class QTabWidget;
 class QCheckBox;
 class KListBox;
 class KHTMLPart;
@@ -70,16 +71,16 @@ private slots:
 	void slotEditStyle();
 	void slotDeleteStyle();
 	void slotStyleSaved();
+	void slotStyleSelected();
 
 private:
-	KTabCtl* mAppearanceTabCtl; // The TabWidget
+	QTabWidget* mAppearanceTabCtl; // The TabWidget
 
 	// Widgets for Emoticon TAB
 	QFrame* mEmoticonsTab;
 	QCheckBox *mUseEmoticonsChk;
 	KListBox *icon_theme_list;
 	KHTMLPart *preview;
-	KopeteChatStyleMap mChatStyles;
 	KTextEditor::Document* editDocument;
 
 	// All other TABs have their own ui-file
@@ -91,8 +92,11 @@ private:
 
 	StyleEditDialog *styleEditor;
 	QListBoxItem *editedItem;
+	QMap<QListBoxItem*,QString> itemMap;
 
 	void updateHighlight();
+	bool errorAlert;
+	QString fileContents( const QString &path );
 
 };
 #endif

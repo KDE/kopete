@@ -297,9 +297,9 @@ QString KopeteMessage::parseLinks( const QString &message ) const
 
 QDomDocument KopeteMessage::asXML()
 {
-	QDomDocument doc = d->xmlDoc;
-	if( !doc.hasChildNodes() || d->contentsModified )
+	if( !d->xmlDoc.hasChildNodes() || d->contentsModified )
 	{
+		QDomDocument doc;
 		QDomElement messageNode = doc.createElement( QString::fromLatin1("message") );
 		messageNode.setAttribute( QString::fromLatin1("timestamp"), KGlobal::locale()->formatTime(d->timeStamp.time(), true) );
 		messageNode.setAttribute( QString::fromLatin1("importance"), d->importance );
@@ -346,10 +346,11 @@ QDomDocument KopeteMessage::asXML()
 
 		messageNode.appendChild( bodyNode );
 
+		d->xmlDoc = doc;
 		d->contentsModified = false;
 	}
 
-	return doc;
+	return d->xmlDoc;
 }
 
 QDateTime KopeteMessage::timestamp() const
