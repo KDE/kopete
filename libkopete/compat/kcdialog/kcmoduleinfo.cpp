@@ -29,14 +29,16 @@
 #include <kglobal.h>
 #include <kstandarddirs.h>
 
+#if 0 // I don't think Kopete needs this - Martijn
 KCModuleInfo::KCModuleInfo(const QString& desktopFile)
   : _fileName(desktopFile), d(0L)
 {
   _allLoaded = false;
 
   //kdDebug(1208) << "desktopFile = " << desktopFile << endl;
-  init( KService::serviceByDesktopPath(desktopFile) );
+  init( KService::serviceByStorageId(desktopFile) );
 }
+#endif
 
 KCModuleInfo::KCModuleInfo( KService::Ptr moduleInfo )
   : _fileName( moduleInfo->desktopEntryPath() )
@@ -58,7 +60,6 @@ KCModuleInfo::KCModuleInfo( const KCModuleInfo &rhs )
 // we can be sure that we get called when we are copied.
 KCModuleInfo &KCModuleInfo::operator=( const KCModuleInfo &rhs )
 {
-    _groups = rhs._groups;
     _keywords = rhs._keywords;
     _name = rhs._name;
     _icon = rhs._icon;
@@ -67,7 +68,6 @@ KCModuleInfo &KCModuleInfo::operator=( const KCModuleInfo &rhs )
     _fileName = rhs._fileName;
     _doc = rhs._doc;
     _comment = rhs._comment;
-    _parentcomponents = rhs._parentcomponents;
     _needsRootPrivileges = rhs._needsRootPrivileges;
     _isHiddenByDefault = rhs._isHiddenByDefault;
     _allLoaded = rhs._allLoaded;
@@ -103,8 +103,6 @@ void KCModuleInfo::init(KService::Ptr s)
 
   // get the keyword list
   setKeywords(_service->keywords());
-
-  setGroups( _service->property("X-KDE-Groups").toStringList() );
 }
 
 void
@@ -113,52 +111,25 @@ KCModuleInfo::loadAll()
   _allLoaded = true;
 
   // library and factory
-  setHandle( _service->property("X-KDE-FactoryName").toString() );
+  setHandle(_service->property("X-KDE-FactoryName", QVariant::String).toString());
 
-  // KCD parent
-  setParentComponents( _service->property("X-KDE-ParentComponents").toStringList() );
+  QVariant tmp;
 
   // read weight
-  setWeight( _service->property( "X-KDE-Weight" ).toInt() );
-  bool ok;
-  int v = _service->property("X-KDE-Weight").toInt( &ok );
-  if ( ok )
-     setWeight( v );
-  else
-     setWeight( -1 );
+  tmp = _service->property( "X-KDE-Weight", QVariant::Int );
+  setWeight( tmp.isValid() ? tmp.toInt() : -1 );
 
   // does the module need super user privileges?
-  setNeedsRootPrivileges( _service->property( "X-KDE-RootOnly" ).toBool() );
+  tmp = _service->property( "X-KDE-RootOnly", QVariant::Bool );
+  setNeedsRootPrivileges( tmp.isValid() ? tmp.toBool() : false );
 
   // does the module need to be shown to root only?
   // Deprecated !
-  setIsHiddenByDefault( _service->property( "X-KDE-IsHiddenByDefault" ).toBool() );
+  tmp = _service->property( "X-KDE-IsHiddenByDefault", QVariant::Bool );
+  setIsHiddenByDefault( tmp.isValid() ? tmp.toBool() : false );
 
   // get the documentation path
-  setDocPath( _service->property( "DocPath" ).toString() );
-}
-
-QStringList
-KCModuleInfo::moduleNames() const
-{
-  QStringList sl = _groups;
-  sl += _name;
-  return sl;
-}
-
-QCString 
-KCModuleInfo::moduleId() const
-{
-  if (!_allLoaded) const_cast<KCModuleInfo*>(this)->loadAll();
-
-  QString res;
-
-  QStringList::ConstIterator it;
-  for (it = _groups.begin(); it != _groups.end(); ++it)
-    res.append(*it+"-");
-  res.append(moduleName());
-
-  return res.ascii();
+  setDocPath( _service->property( "DocPath", QVariant::String ).toString() );
 }
 
 QString
@@ -189,15 +160,6 @@ KCModuleInfo::weight() const
     const_cast<KCModuleInfo*>(this)->loadAll();
 
   return _weight;
-}
-
-const QStringList &
-KCModuleInfo::parentComponents() const
-{
-  if( !_allLoaded )
-    const_cast<KCModuleInfo*>( this )->loadAll();
-
-  return _parentcomponents;
 }
 
 bool

@@ -23,9 +23,11 @@
 #include <qstyle.h>
 #include <qtimer.h>
 #include <qpushbutton.h>
+#include <qtooltip.h>
 
 #include <kglobalsettings.h>
 #include <kiconloader.h>
+#include <klocale.h>
 
 #include "ktabbar.h"
 #include "ktabwidget.h"
@@ -33,7 +35,8 @@
 KTabBar::KTabBar( QWidget *parent, const char *name )
     : QTabBar( parent, name ), mReorderStartTab( -1 ), mReorderPreviousTab( -1 ),
       mHoverCloseButtonTab( 0 ), mDragSwitchTab( 0 ), mHoverCloseButton( 0 ),
-      mHoverCloseButtonEnabled( false ), mTabReorderingEnabled( false )
+      mHoverCloseButtonEnabled( false ), mHoverCloseButtonDelayed( true ),
+      mTabReorderingEnabled( false )
 {
     setAcceptDrops( true );
     setMouseTracking( true );
@@ -156,14 +159,14 @@ void KTabBar::mouseMoveEvent( QMouseEvent *e )
 
     if ( mHoverCloseButtonEnabled && mReorderStartTab==-1) {
         QTab *t = selectTab( e->pos() );
-        
+
         //BEGIN Workaround
         //Qt3.2.0 (and 3.2.1) emit wrong local coordinates
         //for MouseMove events when the pointer leaves a widget. Discard those
-        //to avoid enabling the wrong hover button        
+        //to avoid enabling the wrong hover button
 #ifdef __GNUC__
 #warning "Workaround for Qt 3.2.0, 3.2.1 bug"
-#endif        
+#endif
         if ( e->globalPos() != mapToGlobal( e->pos() ) )
             return;
         //END Workaround
@@ -184,7 +187,7 @@ void KTabBar::mouseMoveEvent( QMouseEvent *e )
 #endif
             }
             else {
-                xoff = 5;
+                xoff = 7;
                 yoff = 0;
             }
             rect.moveLeft( t->rect().left() + 2 + xoff );
@@ -198,12 +201,15 @@ void KTabBar::mouseMoveEvent( QMouseEvent *e )
                 }
 
                 mHoverCloseButton = new QPushButton( this );
-                mHoverCloseButton->setIconSet( SmallIcon( "fileclose" ) );
+                mHoverCloseButton->setIconSet( KGlobal::iconLoader()->loadIcon("fileclose", KIcon::Toolbar, KIcon::SizeSmall, KIcon::ActiveState) );
                 mHoverCloseButton->setGeometry( rect );
-                mHoverCloseButton->setEnabled(false);
+                QToolTip::add(mHoverCloseButton,i18n("Close this tab"));
                 mHoverCloseButton->setFlat(true);
                 mHoverCloseButton->show();
-                mEnableCloseButtonTimer->start( QApplication::doubleClickInterval()*2, true );
+                if ( mHoverCloseButtonDelayed ) {
+                  mHoverCloseButton->setEnabled(false);
+                  mEnableCloseButtonTimer->start( QApplication::doubleClickInterval(), true );
+                }
                 mHoverCloseButtonTab = t;
                 connect( mHoverCloseButton, SIGNAL( clicked() ), SLOT( closeButtonClicked() ) );
                 return;
@@ -320,9 +326,12 @@ void KTabBar::paintLabel( QPainter *p, const QRect& br,
         int pixh = pixmap.height();
         r.setLeft( r.left() + pixw + 4 );
         r.setRight( r.right() + 2 );
-        // ### the pixmap shift should probably not be hardcoded..
-        p->drawPixmap( br.left() + 2 + ((selected == TRUE) ? 0 : 2),
-                         br.center().y()-pixh/2 + ((selected == TRUE) ? 0 : 2),
+
+        int inactiveXShift = style().pixelMetric( QStyle::PM_TabBarTabShiftHorizontal, this );
+        int inactiveYShift = style().pixelMetric( QStyle::PM_TabBarTabShiftVertical, this );
+
+        p->drawPixmap( br.left() + 2 + ((selected == TRUE) ? 0 : inactiveXShift),
+                         br.center().y()-pixh/2 + ((selected == TRUE) ? 0 : inactiveYShift),
                          pixmap );
     }
 
@@ -370,6 +379,16 @@ void KTabBar::setHoverCloseButton( bool button )
 bool KTabBar::hoverCloseButton() const
 {
     return mHoverCloseButtonEnabled;
+}
+
+void KTabBar::setHoverCloseButtonDelayed( bool delayed )
+{
+    mHoverCloseButtonDelayed = delayed;
+}
+
+bool KTabBar::hoverCloseButtonDelayed() const
+{
+    return mHoverCloseButtonDelayed;
 }
 
 void KTabBar::onLayoutChange()

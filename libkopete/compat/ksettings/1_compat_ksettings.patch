@@ -14,28 +14,24 @@ diff -u -p -r1.1 dialog.cpp
  namespace KSettings
  {
  
-@@ -277,8 +274,10 @@ void Dialog::createDialogFromServices()
- 	else
- 		d->dlg = new KCMultiDialog( KJanusWidget::IconList, i18n( "Preferences" ), d->parentwidget );
+@@ -277,9 +274,11 @@ void Dialog::createDialogFromServices()
+		d->dlg = new KCMultiDialog( KJanusWidget::IconList,
+			i18n( "Preferences" ), d->parentwidget );
  
 +#if KDE_IS_VERSION( 3, 1, 90 )
  	if( ! d->staticlistview )
- 		d->dlg->addButtonBelowList( i18n( "Configure..." ), this, SLOT( configureTree() ) );
+ 		d->dlg->addButtonBelowList( i18n( "Configure..." ), this,
+ 			SLOT( configureTree() ) );
 +#endif
  
  	connect( d->dlg, SIGNAL( okClicked() ), Dispatcher::self(), SLOT( syncConfiguration() ) );
  	connect( d->dlg, SIGNAL( applyClicked() ), Dispatcher::self(), SLOT( syncConfiguration() ) );
-@@ -288,12 +283,14 @@ void Dialog::createDialogFromServices()
- 	d->moduleinfos.sort();
- 	for( KCModuleInfo * info = d->moduleinfos.first(); info; info = d->moduleinfos.next() )
- 	{
-+//		kdDebug( 700 ) << "add module: " << info->fileName() << " with ParentComponents=" << info->parentComponents() << endl;
--		kdDebug( 700 ) << "add module: " << info->fileName() << " with ParentComponents=" << info->parentComponents() << endl;
+@@ -288,8 +283,10 @@ void Dialog::createDialogFromServices()
  		d->dlg->addModule( *info );
  	}
  
 +#if KDE_IS_VERSION( 3, 1, 90 )
- 	if( groupnames.size() > 1 )
+ 	if( d->groupmap.size() > 1 )
  		d->dlg->unfoldTreeList( true );
 +#endif
  }

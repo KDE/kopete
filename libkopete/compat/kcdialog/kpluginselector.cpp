@@ -45,7 +45,7 @@
 #include <qvaluelist.h>
 #include <kservice.h>
 #include <ktrader.h>
-#include <ktabwidget.h>
+#include "ktabwidget.h"
 #include <kiconloader.h>
 #include <kcmodule.h>
 #include "kcmoduleinfo.h"
@@ -88,6 +88,7 @@ struct KPluginSelectionWidget::KPluginSelectionWidgetPrivate
 
     QDict<KCModuleInfo> pluginconfigmodules;
     QMap<QString, int> widgetIDs;
+    QMap<KPluginInfo*, bool> plugincheckedchanged;
     QString catname;
     QValueList<KCModule*> modulelist;
     QPtrDict<QStringList> moduleParentComponents;
@@ -159,6 +160,7 @@ void KPluginSelectionWidget::init( const QValueList<KPluginInfo*> & plugininfos,
     for( QValueList<KPluginInfo*>::ConstIterator it = plugininfos.begin();
             it != plugininfos.end(); ++it )
     {
+        d->plugincheckedchanged[ *it ] = false;
         if( !( *it )->isHidden() &&
                 ( category.isNull() || ( *it )->category() == category ) )
         {
@@ -212,7 +214,10 @@ QWidget * KPluginSelectionWidget::insertKCM( QWidget * parent,
     }
     // add the KCM to the list so that we can call load/save/defaults on it
     d->modulelist.append( module );
-    d->moduleParentComponents.insert( module, new QStringList( moduleinfo.parentComponents() ) );
+    QStringList * parentComponents = new QStringList(
+            moduleinfo.service()->property(
+                "X-KDE-ParentComponents" ).toStringList() );
+    d->moduleParentComponents.insert( module, parentComponents );
     connect( module, SIGNAL( changed( bool ) ), SLOT( clientChanged( bool ) ) );
     return module;
 }
@@ -274,21 +279,20 @@ void KPluginSelectionWidget::updateConfigPage( KPluginInfo * plugininfo,
         return;
     }
 
-    // if no widget exists for the plugin (yet)
-    if( !d->widgetIDs.contains( plugininfo->pluginName() ) )
-    {
-        if( !plugininfo->kcmServices().empty() )
-            embeddPluginKCMs( plugininfo, checked );
-        else
-            //else no config...
-            d->kps->configPage( 1 );
-    }
+    if( plugininfo->kcmServices().empty() )
+        d->kps->configPage( 1 );
     else
     {
-        // the page already exists
-        int id = d->widgetIDs[ plugininfo->pluginName() ];
-        d->kps->configPage( id );
-        d->widgetstack->widget( id )->setEnabled( checked );
+        if( !d->widgetIDs.contains( plugininfo->pluginName() ) )
+            // if no widget exists for the plugin create it
+            embeddPluginKCMs( plugininfo, checked );
+        else
+        {
+            // the page already exists
+            int id = d->widgetIDs[ plugininfo->pluginName() ];
+            d->kps->configPage( id );
+            d->widgetstack->widget( id )->setEnabled( checked );
+        }
     }
 }
 
@@ -310,7 +314,9 @@ void KPluginSelectionWidget::executed( QListViewItem * item )
     if( item == 0 )
         return;
 
-    // FIXME: Why not a dynamic_cast? - Martijn
+    // Why not a dynamic_cast? - Martijn
+    // because this is what the Qt API suggests; and since gcc 3.x I don't
+    // trust dynamic_cast anymore - mkretz
     if( item->rtti() != 1 ) //check for a QCheckListItem
         return;
 
@@ -327,12 +333,26 @@ void KPluginSelectionWidget::executed( QListViewItem * item )
     {
         kdDebug( 702 ) << "Item changed state, emitting changed()" << endl;
 
-        //FIXME:
-        ++d->changed;
-        if ( d->changed == 1 )
-            emit changed( true );
+        if( ! d->plugincheckedchanged[ info ] )
+        {
+            ++d->changed;
+            if ( d->changed == 1 )
+                emit changed( true );
+        }
+        d->plugincheckedchanged[ info ] = true;
 
         checkDependencies( info );
+    }
+    else
+    {
+        if( d->plugincheckedchanged[ info ] )
+        {
+            --d->changed;
+            if ( d->changed == 0 )
+                emit changed( false );
+        }
+        d->plugincheckedchanged[ info ] = false;
+        // FIXME: plugins that depend on this plugin need to be disabled, too
     }
 
     updateConfigPage( info, checked );
@@ -429,6 +449,7 @@ class KPluginSelector::KPluginSelectorPrivate
             : frame( 0 )
             , tabwidget( 0 )
             , widgetstack( 0 )
+            , hideconfigpage( false )
             {
             }
 
@@ -436,6 +457,7 @@ class KPluginSelector::KPluginSelectorPrivate
         KTabWidget * tabwidget;
         QWidgetStack * widgetstack;
         QValueList<KPluginSelectionWidget *> pswidgets;
+        bool hideconfigpage;
 };
 
     KPluginSelector::KPluginSelector( QWidget * parent, const char * name )
@@ -457,7 +479,7 @@ class KPluginSelector::KPluginSelectorPrivate
 
     splitter->setOpaqueResize( true );
 
-    QLabel * label = new QLabel( i18n( "Select a plugin to configure it" ),
+    QLabel * label = new QLabel( i18n( "this plugin is not configurable" ),
             d->widgetstack );
     label->setAlignment( Qt::AlignCenter );
     d->widgetstack->addWidget( label, 1 );
@@ -548,12 +570,22 @@ QWidgetStack * KPluginSelector::widgetStack()
 inline void KPluginSelector::configPage( int id )
 {
     if( id == 1 )
+    {
         // no config page
-        d->widgetstack->hide();
+        if( d->hideconfigpage )
+            d->widgetstack->hide();
+        //else
+            //d->widgetstack->
+    }
     else
         d->widgetstack->show();
 
     d->widgetstack->raiseWidget( id );
+}
+
+void KPluginSelector::setShowEmptyConfigPage( bool show )
+{
+    d->hideconfigpage = !show;
 }
 
 void KPluginSelector::load()
