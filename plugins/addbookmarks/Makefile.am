@@ -1,5 +1,4 @@
-INCLUDES = -I$(top_srcdir)/kopete/libkopete -I/usr/qt/3/include \
-	-I/usr/kde/3.3/include
+INCLUDES = -I$(top_srcdir)/kopete/libkopete $(all_includes)
 METASOURCES = AUTO
 noinst_HEADERS = addbookmarksplugin.h addbookmarkspreferences.h \
 	addbookmarksprefssettings.h addbookmarksprefsui.h
