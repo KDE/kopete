@@ -285,6 +285,17 @@ public slots:
 	void addContact( const Kopete::Contact *c, bool suppress = false );
 
 	/**
+	 * Add a contact to the session with a pre-set initial status
+	 * @param c is the contact
+	 * @param initialStatus The initial contactOnlineStatus of the contact
+	 * @param suppress mean the there will be no automatic notifications in the chatwindow.
+	 *  (note that i don't like the param suppress at all. it is used in irc to show a different notification (with an info text)
+	 *   a QStringinfo would be more interesting, but it is also used to don't show the notification when entering in a channel)
+	 * @see contactOnlineStatus
+	 */
+	void addContact( const Kopete::Contact *c, const Kopete::OnlineStatus &initalStatus, bool suppress = false );
+
+	/**
 	 * Remove a contact from the session
 	 * @param contact is the contact
 	 * @param reason is the optional raison message showed in the chatwindow

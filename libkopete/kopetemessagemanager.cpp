@@ -284,6 +284,13 @@ void Kopete::ChatSession::appendMessage( Kopete::Message &msg )
 //	emit messageAppended( msg, this );
 }
 
+void Kopete::ChatSession::addContact( const Kopete::Contact *c, const Kopete::OnlineStatus &initialStatus, bool suppress )
+{
+	if( !d->contactStatus.contains(c) )
+		d->contactStatus[ c ] = initialStatus;
+	addContact( c, suppress );
+}
+
 void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 {
 	//kdDebug( 14010 ) << k_funcinfo << endl;
