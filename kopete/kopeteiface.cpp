@@ -174,12 +174,18 @@ void KopeteIface::disconnect(const QString &protocolId, const QString &accountId
 
 bool KopeteIface::loadPlugin( const QString& name )
 {
-	return KopetePluginManager::self()->loadPlugin(name);
+	QString argument=name;
+	if ( !argument.startsWith( "kopete_" ) )
+		argument.prepend( "kopete_" );
+	return KopetePluginManager::self()->loadPlugin(argument);
 }
 
 bool KopeteIface::unloadPlugin( const QString& name )
 {
-	return KopetePluginManager::self()->unloadPlugin( name );
+	QString argument=name;
+	if ( !argument.startsWith( "kopete_" ) )
+		argument.prepend( "kopete_" );
+	return KopetePluginManager::self()->unloadPlugin( argument );
 }
 
 // vim: set noet ts=4 sts=4 sw=4:
