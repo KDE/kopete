@@ -21,6 +21,7 @@
 // necessary for renderIcon, remove after!
 #include <qpainter.h>
 #include <qpixmap.h>
+#include <qbitmap.h>
 #include "kopeteprotocol.h"
 #include <kiconloader.h>
 
@@ -235,6 +236,15 @@ QPixmap KopeteOnlineStatus::customIcon( const QString& baseIcon ) const
 			QPixmap overlay = SmallIcon( d->overlayIcon );
 			if ( !overlay.isNull() )
 			{
+				// first combine the masks of both pixmaps
+				if ( overlay.mask() )
+				{
+					QBitmap mask = *basis.mask();
+					bitBlt( &mask, 0, 0, const_cast<QBitmap *>(overlay.mask()),
+						0, 0, overlay.width(), overlay.height(), Qt::OrROP );
+
+					basis.setMask(mask);
+				}
 				// draw the overlay on top of it
 				QPainter p( &basis );
 				p.drawPixmap( 0, 0, overlay );
