@@ -85,13 +85,6 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	protocolListView->clear();
 	m_accountItems.clear();
 
-	// read sticky settings
-	KConfig *config = kapp->config();
-	config->setGroup("Add Contact Wizard");
-	bool useKABC = config->readBoolEntry( "UseAddressBook", false );
-	chkAddressee->setChecked( useKABC );
-	setAppropriate( selectAddressee, useKABC );
-	
 	// Populate the accounts list
 	QCheckListItem* accountLVI = 0;
 	QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
@@ -134,19 +127,20 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	connect( protocolListView, SIGNAL(clicked(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
 	connect( protocolListView, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
 	connect( protocolListView, SIGNAL(spacePressed(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
+
+	// read sticky settings
+	KConfig *config = kapp->config();
+	config->setGroup("Add Contact Wizard");
+	bool useKABC = config->readBoolEntry( "UseAddressBook", false );
+	chkAddressee->setChecked( useKABC );
+	setAppropriate( selectAddressee, useKABC );
+	// load address book, if using KABC
+	slotCheckAddresseeChoice( useKABC );
 }
 
 
 AddContactWizard::~AddContactWizard()
 {
-}
-
-void AddContactWizard::slotLoadAddressees()
-{
-	addresseeListView->clear();
-	KABC::AddressBook::Iterator it;
-	for( it = m_addressBook->begin(); it != m_addressBook->end(); ++it )
-		/*KABC::AddresseeItem *item =*/ new KABC::AddresseeItem( addresseeListView, (*it) );
 }
 
 void AddContactWizard::slotAddAddresseeClicked()
@@ -176,6 +170,7 @@ void AddContactWizard::slotAddAddresseeClicked()
 #endif
 			}
 		}
+		slotLoadAddressees();
 	}
 }
 
@@ -187,17 +182,27 @@ void AddContactWizard::slotCheckAddresseeChoice( bool on )
 		// Get a reference to the address book
 		if ( !m_addressBook )
 		{
-			m_addressBook = KABC::StdAddressBook::self( true );
-			KABC::StdAddressBook::setAutomaticSave( false );
-		}
-		disconnect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ),
+			m_addressBook = KABC::StdAddressBook::self();
+			KABC::StdAddressBook::setAutomaticSave( true );
+			
+/*			connect( m_addressBook, SIGNAL( loadingFinished( Resource * ) ),
+				this, SLOT(slotLoadAddressees() ) );*/
+			connect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ),
 										   this, SLOT( slotLoadAddressees() ) );
-		connect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ),
-										this, SLOT( slotLoadAddressees() ) );
+			slotLoadAddressees();
+		}
 	}
 	else
-		disconnect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ),
-										   this, SLOT( slotLoadAddressees() ) );
+		disconnect( m_addressBook );
+
+}
+
+void AddContactWizard::slotLoadAddressees()
+{
+	addresseeListView->clear();
+	KABC::AddressBook::Iterator it;
+	for( it = m_addressBook->begin(); it != m_addressBook->end(); ++it )
+		new KABC::AddresseeItem( addresseeListView, (*it) );
 }
 
 void AddContactWizard::slotAddresseeListClicked( QListViewItem *addressee )
@@ -379,22 +384,7 @@ void AddContactWizard::next()
 void AddContactWizard::showPage( QWidget *page )
 {
 	if ( page == intro )
-	{
-		// make sure the first page's Next is always enabled
-		setNextEnabled( page, true);
-		if ( chkAddressee->isChecked() && addresseeListView->firstChild() == 0 ) // We must check this as we might be showing this page because the back button was pressed
-		{
-			// Get a reference to the address book
-			if ( m_addressBook == 0L )
-			{
-				m_addressBook = KABC::StdAddressBook::self( true );
-				KABC::StdAddressBook::setAutomaticSave( false );
-			}
-			disconnect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), this, SLOT( slotLoadAddressees() ) );
-			connect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), this, SLOT( slotLoadAddressees() ) );
-			slotLoadAddressees();
-		}
-	}
+		setNextEnabled( page, true); // make sure the first page's Next is always enabled
 
 	QWizard::showPage( page );
 
