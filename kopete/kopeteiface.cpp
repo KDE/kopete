@@ -58,8 +58,8 @@ QStringList KopeteIface::contactFileProtocols(QString displayName)
 {
 	return KopeteContactList::contactList()->contactFileProtocols(displayName); 
 }
-
-void KopeteIface::sendFile(const QString &displayName, const KURL &sourceURL, 
+/*
+void KopeteIface::sendFile(const QString &displayName, const KURL &sourceURL,
 	const QString &altFileName = QString::null, const unsigned long fileSize = 0L)
 {
 	return KopeteContactList::contactList()->sendFile(displayName, sourceURL, altFileName, fileSize);
@@ -71,6 +71,7 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &contac
 {
 	return KopeteContactList::contactList()->dcopAddContact( protocolName, contactId, displayName, 0L, groupName );
 }
+*/
 /*
  * Local variables:
  * c-indentation-style: k&r
