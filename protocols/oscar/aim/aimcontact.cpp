@@ -44,17 +44,12 @@ AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount
 	infoDialog=0L;
 
 	// Contact changed his online status
-	QObject::connect(
+	connect(
 		acc->engine(), SIGNAL(gotContactChange(const UserInfo &)),
 		this, SLOT(slotContactChanged(const UserInfo &)));
 
-	// Incoming minitype notification
-	QObject::connect(
-		acc->engine(), SIGNAL(gotMiniTypeNotification(const QString &, OscarConnection::TypingNotify)),
-		this, SLOT(slotGotMiniType(const QString &, OscarConnection::TypingNotify)));
-
 	// received userprofile
-	QObject::connect(
+	connect(
 		acc->engine(), SIGNAL(gotUserProfile(const UserInfo &, const QString &, const QString &)),
 		this, SLOT(slotGotProfile(const UserInfo &, const QString &, const QString &)));
 
@@ -132,25 +127,6 @@ QPtrList<KAction> *AIMContact::customContextMenuActions()
 	return actionCollection;
 }
 
-KopeteMessageManager* AIMContact::manager(bool)
-{
-	//kdDebug(14190) << k_funcinfo << "called" << endl;
-	// Check to see if we already have a message manager
-	if (!mMsgManager)
-	{
-		// The true flag here is to tell OscarContact that
-		// it can create the message mananger if it
-		// doesn't exist, which is the case here.
-		OscarContact::manager(true);
-
-		// Connect the typing signal to the slot here
-		QObject::connect(mMsgManager, SIGNAL(typingMsg(bool)),
-			this, SLOT(slotTyping(bool)));
-	}
-
-	// Return the message manager
-	return mMsgManager;
-}
 
 void AIMContact::setStatus(const unsigned int newStatus)
 {
@@ -176,39 +152,6 @@ void AIMContact::setStatus(const unsigned int newStatus)
 //		onlineStatus().description() << endl;
 }
 
-void AIMContact::slotTyping(bool typing)
-{
-//	kdDebug(14190) << k_funcinfo << "Typing: " << typing << endl;
-	mAccount->engine()->sendMiniTypingNotify(contactName(),
-		typing ? OscarSocket::TypingBegun : OscarSocket::TypingFinished );
-}
-
-// Called when we get a minityping notification
-void AIMContact::slotGotMiniType(const QString &screenName, OscarConnection::TypingNotify type)
-{
-	// Check to see if it's us
-	if(tocNormalize(screenName) != contactName())
-		return;
-
-//	kdDebug(14190) << k_funcinfo << "Got minitype notification for " << contactName() << endl;
-
-	// Only if we already have a message manager
-	if(mMsgManager == 0L)
-		return;
-
-	switch(type)
-	{
-		case (OscarConnection::TypingFinished):
-		case (OscarConnection::TextTyped): // Both of these are types of "not typing"
-			mMsgManager->receivedTypingMsg(this, false);
-			break;
-		case (OscarConnection::TypingBegun): // Typing started
-			mMsgManager->receivedTypingMsg(this, true);
-			break;
-		default:
-			break;
-	}
-}
 
 void AIMContact::slotContactChanged(const UserInfo &u)
 {
@@ -298,7 +241,16 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	if (message.plainBody().isEmpty()) // no text, do nothing
 		return;
 
-	// ===================================================================================
+	// Check to see if we're even online
+	if(!mAccount->isConnected())
+	{
+		KMessageBox::sorry(Kopete::UI::Global::mainWidget(),
+			i18n("<qt>You must be logged on to AIM before you can send a message to a user.</qt>"),
+			i18n("Not Signed On"));
+		return;
+	}
+
+	// ==========================================================================
 
 	QString finalMessage = "<HTML>";
 	if(message.bg().isValid())
@@ -317,29 +269,10 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	if(message.fg().isValid())
 		finalMessage += "</FONT>";
 	finalMessage += "</BODY></HTML>";
+
 	finalMessage.replace("&nbsp;", " ");
 
-	// ===================================================================================
-
-	// Check to see if we're even online
-	if(!mAccount->isConnected())
-	{
-		KMessageBox::sorry(Kopete::UI::Global::mainWidget(),
-			i18n("<qt>You must be logged on to AIM before you can send a message to a user.</qt>"),
-			i18n("Not Signed On"));
-		return;
-	}
-
-	// Check to see if the person we're sending the message to is online
-
-	if( onlineStatus().status() == KopeteOnlineStatus::Offline )
-	{
-		KMessageBox::sorry(Kopete::UI::Global::mainWidget(),
-			i18n("<qt>This user is not online at the moment for you to message them. "
-				"AIM users must be online for you to be able to message them.</qt>"),
-			i18n("User Not Online"));
-		return;
-	}
+	// ==========================================================================
 
 	// FIXME: We don't do HTML in ICQ
 	// we might be able to do that in AIM and we might also convert

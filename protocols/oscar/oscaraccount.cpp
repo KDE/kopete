@@ -123,10 +123,13 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 		engine(), SIGNAL(statusChanged(const unsigned int)),
 		this, SLOT(slotOurStatusChanged(const unsigned int)));
 
-	// Protocol error
 	QObject::connect(
 		engine(), SIGNAL(protocolError(QString, int, bool)),
 		this, SLOT(slotError(QString, int, bool)));
+
+	QObject::connect(
+		engine(), SIGNAL(wrongPassword()),
+		this, SLOT(slotPasswordWrong()));
 
 	QObject::connect(
 		engine(), SIGNAL(receivedMessage(const QString &, OscarMessage &)),
@@ -219,22 +222,19 @@ void OscarAccount::slotError(QString errmsg, int errorCode, bool isFatal)
 	if (isFatal)
 		OscarAccount::disconnect(KopeteAccount::Manual);
 
-	// suppress error dialog for password-was-wrong error, since we're about
-	// to pop up a password dialog saying the same thing when we try to reconenct
-	if (errorCode == 4 || errorCode == 5)
-	{
-		d->passwordWrong = true;
-		QTimer::singleShot(0, this, SLOT(connect()));
-	}
-	else
-	{
-		QString caption = engine()->isICQ() ?
-			i18n("Connection Lost - ICQ Plugin") :
-			i18n("Connection Lost - AIM Plugin");
+	QString caption = engine()->isICQ() ?
+		i18n("Connection Lost - ICQ Plugin") :
+		i18n("Connection Lost - AIM Plugin");
 
-		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(),
-			KMessageBox::Error, errmsg, caption, KMessageBox::Notify);
-	}
+	KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(),
+		KMessageBox::Error, errmsg, caption, KMessageBox::Notify);
+}
+
+void OscarAccount::slotPasswordWrong()
+{
+	OscarAccount::disconnect(KopeteAccount::Manual);
+	d->passwordWrong = true;
+	QTimer::singleShot(0, this, SLOT(connect()));
 }
 
 void OscarAccount::slotReceivedMessage(const QString &sender, OscarMessage &incomingMessage)

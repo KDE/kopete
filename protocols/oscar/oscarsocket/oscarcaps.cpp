@@ -262,8 +262,8 @@ const QString OscarSocket::capName(int capNumber)
 		case CAP_UTF8:
 			capString = "CAP_UTF8 ";
 			break;
-		case CAP_IS_WEB:
-			capString = "CAP_IS_WEB ";
+		case CAP_TYPING:
+			capString = "CAP_TYPING ";
 			break;
 		case CAP_INTEROPERATE:
 			capString = "CAP_INTEROPERATE ";

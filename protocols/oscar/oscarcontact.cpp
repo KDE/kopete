@@ -96,10 +96,14 @@ void OscarContact::initSignals()
 		mAccount->engine(), SIGNAL(gotContactChange(const UserInfo &)),
 		this, SLOT(slotParseUserInfo(const UserInfo &)));*/
 
-	connect(
-		mAccount->engine(), SIGNAL(gotAuthReply(const QString &, const QString &, bool)),
+	connect(mAccount->engine(),
+		SIGNAL(gotAuthReply(const QString &, const QString &, bool)),
 		this, SLOT(slotGotAuthReply(const QString &, const QString &, bool)));
 
+	// Incoming minitype notification
+	connect(mAccount->engine(),
+		SIGNAL(recvMTN(const QString &, OscarConnection::TypingNotify)),
+		this, SLOT(slotGotMiniType(const QString &, OscarConnection::TypingNotify)));
 #if 0
 	// New direct connection
 	connect(
@@ -158,10 +162,16 @@ KopeteMessageManager* OscarContact::manager(bool /*canCreate*/)
 		mMsgManager = KopeteMessageManagerFactory::factory()->create(account()->myself(), theContact, protocol());
 
 		// This is for when the user types a message and presses send
-		connect(mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)),
+		connect(mMsgManager,
+			SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)),
 			this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
+
 		// For when the message manager is destroyed
-		connect(mMsgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
+		connect(mMsgManager, SIGNAL(destroyed()),
+			this, SLOT(slotMessageManagerDestroyed()));
+
+		connect(mMsgManager, SIGNAL(typingMsg(bool)),
+			this, SLOT(slotTyping(bool)));
 	}
 	return mMsgManager;
 }
@@ -172,6 +182,42 @@ void OscarContact::slotMessageManagerDestroyed()
 	/*kdDebug(14190) << k_funcinfo <<
 		"MessageManager for contact '" << displayName() << "' destroyed" << endl;*/
 	mMsgManager = 0L;
+}
+
+
+void OscarContact::slotTyping(bool typing)
+{
+	mAccount->engine()->sendMiniTypingNotify(contactName(),
+		typing ? OscarSocket::TypingBegun : OscarSocket::TypingFinished);
+}
+
+
+void OscarContact::slotGotMiniType(const QString &name,
+	OscarConnection::TypingNotify type)
+{
+	// Check to see if it's us
+	if(tocNormalize(name) != contactName())
+		return;
+
+	// Only if we already have a message manager
+	if(mMsgManager == 0L)
+		return;
+
+	kdDebug(14190) << k_funcinfo <<
+		"Got minitype notification for " << contactName() << endl;
+
+	switch(type)
+	{
+		case (OscarConnection::TypingFinished):
+		case (OscarConnection::TextTyped): // Both of these are types of "not typing"
+			mMsgManager->receivedTypingMsg(this, false);
+			break;
+		case (OscarConnection::TypingBegun): // Typing started
+			mMsgManager->receivedTypingMsg(this, true);
+			break;
+		default:
+			break;
+	}
 }
 
 
@@ -186,6 +232,7 @@ void OscarContact::slotMainStatusChanged(const unsigned int newStatus)
 	}
 }
 
+
 void OscarContact::slotOffgoingBuddy(QString sn)
 {
 	if(tocNormalize(sn) != contactName())
@@ -197,10 +244,12 @@ void OscarContact::slotOffgoingBuddy(QString sn)
 	emit idleStateChanged(this);
 }
 
+
 void OscarContact::slotUpdateNickname(const QString newNickname)
 {
 	setDisplayName(newNickname);
 }
+
 
 void OscarContact::slotDeleteContact()
 {
@@ -220,92 +269,6 @@ void OscarContact::slotDeleteContact()
 	deleteLater();
 }
 
-#if 0
-void OscarContact::slotDirectConnect()
-{
-	kdDebug(14150) << k_funcinfo << "Requesting direct IM with " << mName << endl;
-
-	int result = KMessageBox::questionYesNo(
-		Kopete::UI::Global::mainWidget(),
-		i18n("<qt>Are you sure you want to establish a direct connection to %1? \
-		This will allow %2 to know your IP address, which can be dangerous if \
-		you do not trust this contact.</qt>")
-#if QT_VERSION < 0x030200
-			.arg(mName).arg(mName),
-#else
-			.arg(mName , mName),
-#endif
-		i18n("Request Direct IM with %1?").arg(mName));
-	if(result == KMessageBox::Yes)
-	{
-		execute();
-		KopeteContactPtrList p;
-		p.append(this);
-		KopeteMessage msg = KopeteMessage(
-			this, p,
-			i18n("Waiting for %1 to connect...").arg(mName),
-			KopeteMessage::Internal, KopeteMessage::PlainText );
-
-		manager()->appendMessage(msg);
-		mAccount->engine()->sendDirectIMRequest(mName);
-	}
-}
-
-void OscarContact::slotDirectIMReady(QString name)
-{
-	// Check if we're the one who is directly connected
-	if(tocNormalize(name) != contactName())
-		return;
-
-	kdDebug(14150) << k_funcinfo << "Setting direct connect state for '" <<
-		displayName() << "' to true" << endl;
-
-	mDirectlyConnected = true;
-	KopeteContactPtrList p;
-	p.append(this);
-	KopeteMessage msg = KopeteMessage(
-		this, p,
-		i18n("Direct connection to %1 established").arg(mName),
-		KopeteMessage::Internal, KopeteMessage::PlainText ) ;
-
-	manager()->appendMessage(msg);
-}
-
-void OscarContact::slotDirectIMConnectionClosed(QString name)
-{
-	// Check if we're the one who is directly connected
-	if ( tocNormalize(name) != tocNormalize(mName) )
-		return;
-
-	kdDebug(14150) << "[OscarContact] Setting direct connect state for '"
-		<< mName << "' to false." << endl;
-
-	mDirectlyConnected = false;
-}
-
-void OscarContact::sendFile(const KURL &sourceURL, const QString &/*altFileName*/,
-	const long unsigned int /*fileSize*/)
-{
-	KURL filePath;
-
-	//If the file location is null, then get it from a file open dialog
-	if( !sourceURL.isValid() )
-		filePath = KFileDialog::getOpenURL(QString::null ,"*", 0L, i18n("Kopete File Transfer"));
-	else
-		filePath = sourceURL;
-
-	if(!filePath.isEmpty())
-	{
-		KFileItem finfo(KFileItem::Unknown, KFileItem::Unknown, filePath);
-
-		kdDebug(14150) << k_funcinfo << "File size is " <<
-			(unsigned long)finfo.size() << endl;
-
-		//Send the file
-		mAccount->engine()->sendFileSendRequest(mName, finfo);
-	}
-}
-#endif
 
 // Called when the metacontact owning this contact has changed groups
 void OscarContact::syncGroups()
@@ -433,6 +396,91 @@ void OscarContact::slotTransferBegun(OscarConnection *con,
 	connect(
 		con, SIGNAL(percentComplete(unsigned int)),
 		tr, SLOT(slotPercentCompleted(unsigned int)));
+}
+
+void OscarContact::slotDirectConnect()
+{
+	kdDebug(14150) << k_funcinfo << "Requesting direct IM with " << mName << endl;
+
+	int result = KMessageBox::questionYesNo(
+		Kopete::UI::Global::mainWidget(),
+		i18n("<qt>Are you sure you want to establish a direct connection to %1? \
+		This will allow %2 to know your IP address, which can be dangerous if \
+		you do not trust this contact.</qt>")
+#if QT_VERSION < 0x030200
+			.arg(mName).arg(mName),
+#else
+			.arg(mName , mName),
+#endif
+		i18n("Request Direct IM with %1?").arg(mName));
+	if(result == KMessageBox::Yes)
+	{
+		execute();
+		KopeteContactPtrList p;
+		p.append(this);
+		KopeteMessage msg = KopeteMessage(
+			this, p,
+			i18n("Waiting for %1 to connect...").arg(mName),
+			KopeteMessage::Internal, KopeteMessage::PlainText );
+
+		manager()->appendMessage(msg);
+		mAccount->engine()->sendDirectIMRequest(mName);
+	}
+}
+
+void OscarContact::slotDirectIMReady(QString name)
+{
+	// Check if we're the one who is directly connected
+	if(tocNormalize(name) != contactName())
+		return;
+
+	kdDebug(14150) << k_funcinfo << "Setting direct connect state for '" <<
+		displayName() << "' to true" << endl;
+
+	mDirectlyConnected = true;
+	KopeteContactPtrList p;
+	p.append(this);
+	KopeteMessage msg = KopeteMessage(
+		this, p,
+		i18n("Direct connection to %1 established").arg(mName),
+		KopeteMessage::Internal, KopeteMessage::PlainText ) ;
+
+	manager()->appendMessage(msg);
+}
+
+void OscarContact::slotDirectIMConnectionClosed(QString name)
+{
+	// Check if we're the one who is directly connected
+	if ( tocNormalize(name) != tocNormalize(mName) )
+		return;
+
+	kdDebug(14150) << "[OscarContact] Setting direct connect state for '"
+		<< mName << "' to false." << endl;
+
+	mDirectlyConnected = false;
+}
+
+void OscarContact::sendFile(const KURL &sourceURL, const QString &/*altFileName*/,
+	const long unsigned int /*fileSize*/)
+{
+	KURL filePath;
+
+	//If the file location is null, then get it from a file open dialog
+	if( !sourceURL.isValid() )
+		filePath = KFileDialog::getOpenURL(QString::null ,"*", 0L, i18n("Kopete File Transfer"));
+	else
+		filePath = sourceURL;
+
+	if(!filePath.isEmpty())
+	{
+		KFileItem finfo(KFileItem::Unknown, KFileItem::Unknown, filePath);
+
+		kdDebug(14150) << k_funcinfo << "File size is " <<
+			(unsigned long)finfo.size() << endl;
+
+		//Send the file
+		mAccount->engine()->sendFileSendRequest(mName, finfo);
+	}
 }
 #endif
 

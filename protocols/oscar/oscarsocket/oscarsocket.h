@@ -986,6 +986,11 @@ class OscarSocket : public OscarConnection
 		 **/
 		void snacFailed(WORD);
 
+		/**
+		 * emitted if the login username or password are wrong
+		 **/
+		void wrongPassword();
+
 	protected slots:
 		/**
 		 * This function is called when there is data to be read from the socket

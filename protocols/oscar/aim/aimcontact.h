@@ -35,11 +35,6 @@ class AIMContact : public OscarContact
 		bool isReachable();
 		QPtrList<KAction> *customContextMenuActions();
 
-		/**
-		 * Reimplemented because AIM handles start/stop of typing
-		 */
-		KopeteMessageManager* manager(bool canCreate = false);
-
 		virtual void setStatus(const unsigned int newStatus);
 
 		const QString &userProfile() { return mUserProfile; }
@@ -56,13 +51,6 @@ class AIMContact : public OscarContact
 
 
 	private slots:
-		/**
-		 * Called when we get a minityping notification
-		 */
-		void slotGotMiniType(const QString &screenName,
-			OscarConnection::TypingNotify type);
-		void slotTyping(bool typing);
-
 		/**
 		 * Called when a buddy has changed status
 		 */

@@ -830,9 +830,13 @@ bool OscarSocket::parseAuthFailedCode(WORD errorCode)
 			}
 			else // error while logging in
 			{
+				emit wrongPassword();
+				return true;
+				/*
 				err = i18n("Sign on failed because either your %1 or " \
 					"password are invalid. Please check your settings for account %2.")
 					.arg(accountDescr).arg(getSN());
+				*/
 			}
 			break;
 		}
@@ -848,8 +852,11 @@ bool OscarSocket::parseAuthFailedCode(WORD errorCode)
 		case 0x0004: // Incorrect nick or password, re-enter
 		case 0x0005: // Mismatch nick or password, re-enter
 		{
-			err = i18n("Could not sign on to %1 with account %2 as the " \
+			emit wrongPassword();
+			return true;
+			/*err = i18n("Could not sign on to %1 with account %2 as the " \
 				"password was incorrect.").arg(accountType).arg(getSN());
+			*/
 			break;
 		}
 
@@ -1335,10 +1342,10 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 		{
 			/*kdDebug(14190) << k_funcinfo <<
 					"Client fuzzy search..." << endl;*/
-			if (u.hasCap(CAP_IS_WEB))
+			if (u.hasCap(CAP_TYPING))
 			{
-				/*kdDebug(14190) << k_funcinfo <<
-					"Client protocol version = " << u.version << endl;*/
+				kdDebug(14190) << k_funcinfo <<
+					"Client protocol version = " << u.version << endl;
 				switch (u.version)
 				{
 					case 10:
@@ -1509,15 +1516,16 @@ void OscarSocket::sendLocationInfo(const QString &profile)
 
 	if (mIsICQ)
 	{
-		capBuf.addString(oscar_caps[CAP_ICQSERVERRELAY], 16);
-		capBuf.addString(oscar_caps[CAP_UTF8], 16);
-		capBuf.addString(oscar_caps[CAP_ISICQ], 16);
-		capBuf.addString(oscar_caps[CAP_KOPETE], 16);
-		capBuf.addString(oscar_caps[CAP_RTFMSGS], 16);
+		capBuf.addString(oscar_caps[CAP_ICQSERVERRELAY], 16); // we support type-2 messages
+		capBuf.addString(oscar_caps[CAP_UTF8], 16); // we can send/receive UTF encoded messages
+		capBuf.addString(oscar_caps[CAP_ISICQ], 16); // I think this is an icq client, but maybe I'm wrong
+		capBuf.addString(oscar_caps[CAP_KOPETE], 16); // we are the borg, resistance is futile
+		capBuf.addString(oscar_caps[CAP_RTFMSGS], 16); // we do incoming RTF messages
+		capBuf.addString(oscar_caps[CAP_TYPING], 16); // we can send/receive typing notifications
 	}
 	else
 	{
-		capBuf.addString(oscar_caps[CAP_KOPETE], 16);
+		capBuf.addString(oscar_caps[CAP_KOPETE], 16); // we are the borg, resistance is futile
 	}
 
 	//kdDebug(14150) << k_funcinfo << "adding capabilities, size=" << capBuf.length() << endl;

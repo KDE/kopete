@@ -257,25 +257,25 @@ void OscarSocket::parseMiniTypeNotify(Buffer &inbuf)
 
 	int snlen = inbuf.getByte();
 	char *sn = inbuf.getBlock(snlen);
-	QString screenName = QString::fromLatin1(sn); // TODO: encoding
+	QString name = QString::fromLatin1(sn); // TODO: encoding
 	delete [] sn;
 
 	// Get the actual notification
 	WORD notification = inbuf.getWord();
 
 //	kdDebug(14150) << k_funcinfo <<
-//		"Determining Minitype from user '" << screenName << "'" << endl;
+//		"Determining Minitype from user '" << name << "'" << endl;
 
 	switch(notification)
 	{
 		case 0x0000: // Typing finished
-			emit gotMiniTypeNotification(screenName, OscarConnection::TypingFinished);
+			emit recvMTN(name, OscarConnection::TypingFinished);
 			break;
 		case 0x0001: // Text Typed
-			emit gotMiniTypeNotification(screenName, OscarConnection::TextTyped);
+			emit recvMTN(name, OscarConnection::TextTyped);
 			break;
 		case 0x0002: // Typing Started
-			emit gotMiniTypeNotification(screenName, OscarConnection::TypingBegun);
+			emit recvMTN(name, OscarConnection::TypingBegun);
 			break;
 		default:
 			kdDebug(14150) << k_funcinfo << "MiniType Error: " << notification << endl;
@@ -301,7 +301,7 @@ void OscarSocket::sendMiniTypingNotify(const QString &screenName, TypingNotify n
 
 	Buffer outbuf;
 	// This is header stuff for the SNAC
-	outbuf.addSnac(OSCAR_FAM_4,0x0014,0x0000,0x00000001);
+	outbuf.addSnac(OSCAR_FAM_4,0x0014,0x0000,0x00000000);
 	outbuf.addDWord(0x00000000);
 	outbuf.addDWord(0x00000000);
 	outbuf.addWord(0x0001);

@@ -147,15 +147,22 @@ class OscarContact : public KopeteContact
 	protected slots:
 		/** Called when a buddy has changed status */
 //		void slotBuddyChanged(UserInfo u);
+
+
 		/**
-		* Called when we are notified by the chat window
-		* that this person is being typed to...
-		*/
-//		void slotTyping(bool typing);
+		 * Called when we get a minityping notification
+		 */
+		void slotGotMiniType(const QString &screenName,
+			OscarConnection::TypingNotify type);
+		/**
+		 *  Called when we are notified by the chat window
+		 * that this person is being typed to...
+		 */
+		void slotTyping(bool typing);
 		/** Called when a buddy is offgoing */
 		void slotOffgoingBuddy(QString sn);
 		/** Called when we want to send a message */
-//		void slotSendMsg(KopeteMessage&, KopeteMessageManager *);
+		//void slotSendMsg(KopeteMessage&, KopeteMessageManager *);
 		/** Called when an IM is received */
 //		void slotIMReceived(QString sender, QString msg, bool isAuto);
 		/** Called when nickname needs to be updated */

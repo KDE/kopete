@@ -192,6 +192,8 @@ protected slots:
 
 	//void slotDelayedListSync();
 
+	void slotPasswordWrong();
+
 protected:
 	/*
 	 * Adds a contact to a meta contact

@@ -127,9 +127,10 @@ class OscarConnection : public QObject
 
 		/**
 		 * Emitted when we get a minityping notifications
-		 * First param is the screen name, second is the type
+		 * @param name is the screenname/UIN
+		 * @param type the type
 		 */
-		void gotMiniTypeNotification(const QString &, OscarConnection::TypingNotify);
+		void recvMTN(const QString &name, OscarConnection::TypingNotify type);
 
 		/**
 		 * Emitted when we are ready to send commands!
