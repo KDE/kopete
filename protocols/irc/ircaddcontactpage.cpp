@@ -62,6 +62,7 @@ IRCAddContactPage::IRCAddContactPage( QWidget *parent, IRCAccount *a ) : AddCont
 	mAccount = a;
 
 	connect( ircdata->searchButton, SIGNAL( clicked() ), this, SLOT( slotSearch() ) );
+	connect( ircdata->searchText, SIGNAL( returnPressed() ), this, SLOT( slotSearch() ) );
 	connect( ircdata->searchResults, SIGNAL( selectionChanged( QListViewItem*)), this,
 		SLOT( slotSelectionChanged( QListViewItem *) ) );
 }
