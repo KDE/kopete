@@ -46,6 +46,37 @@ class LibraryLoader;
 class KopeteLibraryInfo;
 class KopeteSystemTray;
 
+struct KopeteEmoticons
+{
+	QString biggrin;
+	QString clown;
+	QString confused;
+	QString coool;
+	QString cry;
+	QString devil;
+	QString edit;
+	QString frown;
+	QString heart;
+	QString homepage;
+	QString kwijl;
+	QString loveit;
+	QString michel;
+	QString profile;
+	QString puh;
+	QString puh2;
+	QString quote;
+	QString rc5;
+	QString redface;
+	QString sadley;
+	QString shadey;
+	QString sleephappy;
+	QString smile;
+	QString vork;
+	QString wink;
+	QString yummie;
+};
+
+
 /** Kopete is the base class of the project */
 class Kopete : public KUniqueApplication
 {
@@ -68,6 +99,11 @@ class Kopete : public KUniqueApplication
 	/** No descriptions */
 	void initPlugins();
 	/** No descriptions */
+	void initEmoticons();
+	QString parseEmoticons(QString);
+	QString parseHTML(QString);
+	QString parseURL(QString);
+
 	KStatusBar *statusBar();
   /** No descriptions */
   ContactList *contactList();
@@ -82,6 +118,7 @@ class Kopete : public KUniqueApplication
 	KopeteWindow *mainwindow;
 	LibraryLoader *mLibraryLoader;
 	KIconLoader *mIconLoader;
+	KopeteEmoticons mEmoticons;
 	static void cleverKCrashHack(int);
 	void loadPlugins();
 	KopeteSystemTray *tray;

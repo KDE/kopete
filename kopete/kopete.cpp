@@ -18,12 +18,14 @@
 #include <qvaluelist.h>
 #include <qlist.h>
 #include <qlayout.h>
+#include <qregexp.h>
 
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kcrash.h>
 #include <kglobal.h>
 #include <kiconloader.h>
+#include <kstandarddirs.h>
 
 #include <kopete.h>
 #include <preferencesdialog.h>
@@ -40,7 +42,7 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 {
 	//plugins = new PluginManager;
 	allConnected = false;
-
+    initEmoticons();
 	mLibraryLoader = new LibraryLoader;
 	mIconLoader = KGlobal::iconLoader();
 	mPref=new PreferencesDialog;
@@ -246,4 +248,62 @@ ContactList *Kopete::contactList()
 {
 	return mainwindow->contactlist;
 
+}
+
+void Kopete::initEmoticons()
+{
+	KStandardDirs dir;
+	mEmoticons.biggrin = dir.findResource("data","kopete/pics/emoticons/set1/biggrin.png");
+	mEmoticons.clown = dir.findResource("data","kopete/pics/emoticons/set1/clown.png");
+	mEmoticons.confused = dir.findResource("data","kopete/pics/emoticons/set1/confused.png");
+	mEmoticons.coool = dir.findResource("data","kopete/pics/emoticons/set1/coool.png");
+	mEmoticons.cry = dir.findResource("data","kopete/pics/emoticons/set1/cry.png");
+	mEmoticons.devil = dir.findResource("data","kopete/pics/emoticons/set1/devil.png");
+	mEmoticons.edit = dir.findResource("data","kopete/pics/emoticons/set1/edit.png");
+	mEmoticons.frown = dir.findResource("data","kopete/pics/emoticons/set1/frown.png");
+	mEmoticons.heart = dir.findResource("data","kopete/pics/emoticons/set1/heart.png");
+	mEmoticons.homepage = dir.findResource("data","kopete/pics/emoticons/set1/homepage.png");
+	mEmoticons.kwijl = dir.findResource("data","kopete/pics/emoticons/set1/kwijl.png");
+	mEmoticons.loveit = dir.findResource("data","kopete/pics/emoticons/set1/loveit.png");
+	mEmoticons.michel = dir.findResource("data","kopete/pics/emoticons/set1/michel.png");
+	mEmoticons.profile = dir.findResource("data","kopete/pics/emoticons/set1/profile.png");
+	mEmoticons.puh = dir.findResource("data","kopete/pics/emoticons/set1/puh.png");
+	mEmoticons.puh2 = dir.findResource("data","kopete/pics/emoticons/set1/puh2.png");
+	mEmoticons.quote = dir.findResource("data","kopete/pics/emoticons/set1/quote.png");
+	mEmoticons.rc5 = dir.findResource("data","kopete/pics/emoticons/set1/rc5.png");
+	mEmoticons.redface = dir.findResource("data","kopete/pics/emoticons/set1/redface.png");
+	mEmoticons.sadley = dir.findResource("data","kopete/pics/emoticons/set1/sadley.png");
+	mEmoticons.shadey = dir.findResource("data","kopete/pics/emoticons/set1/shadey.png");
+	mEmoticons.sleephappy = dir.findResource("data","kopete/pics/emoticons/set1/sleephappy.png");
+	mEmoticons.smile = dir.findResource("data","kopete/pics/emoticons/set1/smile.png");
+	mEmoticons.vork = dir.findResource("data","kopete/pics/emoticons/set1/vork.png");
+	mEmoticons.wink = dir.findResource("data","kopete/pics/emoticons/set1/wink.png");
+	mEmoticons.yummie = dir.findResource("data","kopete/pics/emoticons/set1/yummie.png");
+}
+
+QString Kopete::parseEmoticons( QString message )
+{
+	message = message.replace(QRegExp(":-\\)"),"<img src=\""+mEmoticons.smile+"\">");
+	message = message.replace(QRegExp(":\\)"),"<img src=\""+mEmoticons.smile+"\">");
+
+	message = message.replace(QRegExp(":-\\("),"<img src=\""+mEmoticons.sadley+"\">");
+	message = message.replace(QRegExp(":\\("),"<img src=\""+mEmoticons.sadley+"\">");
+
+	message = message.replace(QRegExp(";-\\)"),"<img src=\""+mEmoticons.wink+"\">");
+	message = message.replace(QRegExp(";\\)"),"<img src=\""+mEmoticons.wink+"\">");
+
+	//message = message.replace(QRegExp(":o"),"<img src=\""+strSmilie4+"\">");
+	//message = message.replace(QRegExp(":O"),"<img src=\""+strSmilie4+"\">");
+	//message = message.replace(QRegExp(":-o"),"<img src=\""+strSmilie4+"\">");
+	//message = message.replace(QRegExp(":-O"),"<img src=\""+strSmilie4+"\">");
+	
+	return message;
+}
+
+QString Kopete::parseHTML( QString message )
+{
+}
+
+QString Kopete::parseURL( QString message )
+{
 }
