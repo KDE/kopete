@@ -25,6 +25,7 @@
 
 #include "kopetecontactaction.h"
 #include "kopetecontactlist.h"
+#include "kopetecontact.h"
 #include "kopetemessagemanagerfactory.h"
 
 #include "yahooconferencemessagemanager.h"
