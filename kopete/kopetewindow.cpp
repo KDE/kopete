@@ -459,8 +459,8 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *a )
 		return;
 
 	connect( a,
-		SIGNAL( onlineStatusIconChanged( KopeteAccount *, const KopeteOnlineStatus& ) ),
-		SLOT( slotAccountStatusIconChanged( KopeteAccount *,const KopeteOnlineStatus& ) ) );
+		SIGNAL( onlineStatusIconChanged( KopeteAccount * ) ),
+		SLOT( slotAccountStatusIconChanged( KopeteAccount * ) ) );
 
 	KopeteAccountStatusBarIcon *i = new KopeteAccountStatusBarIcon( a, m_statusBarWidget );
 	connect( i, SIGNAL( rightClicked( KopeteAccount *, const QPoint & ) ),
@@ -494,8 +494,9 @@ void KopeteWindow::slotAccountUnregistered( KopeteAccount *a)
 	m_accountStatusBarIcons.remove( a );
 }
 
-void KopeteWindow::slotAccountStatusIconChanged( KopeteAccount *account, const KopeteOnlineStatus& status )
+void KopeteWindow::slotAccountStatusIconChanged( KopeteAccount *account )
 {
+	KopeteOnlineStatus status = account->myself()->onlineStatus();
 	kdDebug(14000) << "KopeteWindow::slotAccountStatusIconChanged() Icon: " <<
 		status.overlayIcon() << endl;
 
@@ -507,7 +508,8 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteAccount *account, const K
 	// we can't use the SmallIcon() method directly
 	KIconLoader *loader = KGlobal::instance()->iconLoader();
 
-	QMovie mv = loader->loadMovie(status.overlayIcon(), KIcon::User);
+	QMovie mv = loader->loadMovie( status.overlayIcon(),
+		 KIcon::User);
 
 	if ( mv.isNull() )
 	{
@@ -519,7 +521,8 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteAccount *account, const K
 		// Compat for the non-themed icons
 		// FIXME: When all icons are converted, remove this - Martijn
 		if( pm.isNull() )
-			pm = loader->loadIcon( status.overlayIcon(), KIcon::User, 0, KIcon::DefaultState, 0L, true );
+			pm = loader->loadIcon( status.overlayIcon(),
+				 KIcon::User, 0, KIcon::DefaultState, 0L, true );
 
 		if( pm.isNull() )
 		{
@@ -682,7 +685,7 @@ void KopeteWindow::slotSettingsChanged()
 		while ( ( a = it.current() ) != 0 )
 		{
 			++it;
-			slotAccountStatusIconChanged( a, a->myself()->onlineStatus() );
+			slotAccountStatusIconChanged( a );
 		}
 	}
 }

@@ -87,15 +87,15 @@ KopeteAccount::~KopeteAccount()
 
 void KopeteAccount::slotMyselfCreated()
 {
-	QObject::connect( myself(), SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &)), this, SLOT(slotMyselfStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & )) );
+	QObject::connect( myself(), SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &)), this, SLOT(slotMyselfStatusChanged( )) );
 
 	/* Lets emit our first account status */
-	emit onlineStatusIconChanged(this, myself()->onlineStatus() );
+	emit onlineStatusIconChanged( this );
 }
 
-void KopeteAccount::slotMyselfStatusChanged( KopeteContact */*contact*/, const KopeteOnlineStatus &status, const KopeteOnlineStatus &/*oldStatus*/ )
+void KopeteAccount::slotMyselfStatusChanged( )
 {
-	emit onlineStatusIconChanged(this, status);
+	emit onlineStatusIconChanged( this );
 }
 
 

@@ -107,7 +107,7 @@ private slots:
 	 * The status icon got changed, update it.
 	 * Note that iconName can also be a .mng movie instead of an icon.
 	 */
-	void slotAccountStatusIconChanged( KopeteAccount *account, const KopeteOnlineStatus& status );
+	void slotAccountStatusIconChanged( KopeteAccount *account );
 
 	/**
 	 * Show a context menu for a protocol

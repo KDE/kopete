@@ -217,7 +217,7 @@ signals:
 	/**
 	 * The myself status icon changed.
 	 */
-	void onlineStatusIconChanged( KopeteAccount *account, const KopeteOnlineStatus &status );
+	void onlineStatusIconChanged( KopeteAccount *account );
 
 protected slots:
 	/*
@@ -241,7 +241,7 @@ private slots:
 	/**
 	 * The myself status changed.
 	 */
-	void slotMyselfStatusChanged( KopeteContact *contact, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus );
+	void slotMyselfStatusChanged( );
 
 private:
 	KopeteAccountPrivate *d;
