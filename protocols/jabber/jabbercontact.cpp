@@ -37,7 +37,6 @@
 #include "jabbercontact.h"
 #include "jabberprotocol.h"
 #include "jabberresource.h"
-#include "jabbermessage.h"
 #include "kopetestdaction.h"
 #include "kopetemessage.h"
 #include "kopetemessagemanager.h"
