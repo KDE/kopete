@@ -79,6 +79,7 @@ void KopetePrefs::load()
 	mInterfacePreference	= config->readNumEntry("Interface Preference", 1);
 	mTextColor		= config->readColorEntry("Text Color", &Qt::black );
 	mBgColor		= config->readColorEntry("Bg Color", &Qt::white );
+	mLinkColor		= config->readColorEntry("Link Color", &Qt::blue );
 	mFontFace		= config->readFontEntry("Font Face");
 
 	mShowTray		= config->readBoolEntry( "Show Systemtray", true);
@@ -162,6 +163,7 @@ void KopetePrefs::save()
 	config->writeEntry("Font Face", mFontFace);
 	config->writeEntry("Text Color",mTextColor);
 	config->writeEntry("Bg Color", mBgColor);
+	config->writeEntry("Link Color", mLinkColor);
 
 	config->writeEntry("Interface Preference", mInterfacePreference);
 
@@ -289,6 +291,12 @@ void KopetePrefs::setBgColor( const QColor &value )
 {
 	mAppearanceChanged = mAppearanceChanged || !(value == mBgColor);
 	mBgColor = value;
+}
+
+void KopetePrefs::setLinkColor( const QColor &value )
+{
+	mAppearanceChanged = mAppearanceChanged || !(value == mLinkColor);
+	mLinkColor = value;
 }
 
 void KopetePrefs::setChatWindowPolicy(int value)

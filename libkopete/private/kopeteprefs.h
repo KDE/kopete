@@ -45,7 +45,7 @@ public:
 	 * when an instance is created
 	 */
 	void load();
-	
+
 	/**
 	 * Stores all pref-variables into KConfig
 	 */
@@ -68,11 +68,12 @@ public:
 	int transparencyValue() const { return mTransparencyValue; }
 	QColor transparencyColor() const { return mTransparencyColor; }
 	int chatViewBufferSize() const { return mChatViewBufferSize; }
-	QColor highlightBackground() const { return mHighlightBackground; }
-	QColor highlightForeground() const { return mHighlightForeground; }
-	QColor textColor() const { return mTextColor; }
-	QColor bgColor() const { return mBgColor; }
-	QFont fontFace() const { return mFontFace; }
+	const QColor &highlightBackground() const { return mHighlightBackground; }
+	const QColor &highlightForeground() const { return mHighlightForeground; }
+	const QColor &textColor() const { return mTextColor; }
+	const QColor &bgColor() const { return mBgColor; }
+	const QColor &linkColor() const { return mLinkColor; }
+	const QFont &fontFace() const { return mFontFace; }
 	bool highlightEnabled() const { return mHighlightEnabled; }
 	bool bgOverride() const { return mBgOverride; }
 	int interfacePreference() const { return mInterfacePreference; }
@@ -111,6 +112,7 @@ public:
 	void setBgColor( const QColor &);
 	void setTextColor( const QColor &);
 	void setFontFace( const QFont & );
+	void setLinkColor( const QColor & );
 	void setShowTray(bool);
 	void setChatStyles( const KopeteChatStyleMap &);
 
@@ -157,6 +159,7 @@ private:
 	QColor mHighlightForeground;
 	QColor mTextColor;
 	QColor mBgColor;
+	QColor mLinkColor;
 	QFont mFontFace;
 	bool mHighlightEnabled;
 	bool mBgOverride;

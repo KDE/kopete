@@ -142,6 +142,7 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	connect(mPrfsChatAppearance->fontFace, SIGNAL(clicked()), this, SLOT(slotChangeFont()));
 	connect(mPrfsChatAppearance->textColor, SIGNAL(changed(const QColor &)), this, SLOT(slotUpdatePreview()));
 	connect(mPrfsChatAppearance->bgColor, SIGNAL(changed(const QColor &)), this, SLOT(slotUpdatePreview()));
+	connect(mPrfsChatAppearance->linkColor, SIGNAL(changed(const QColor &)), this, SLOT(slotUpdatePreview()));
 	connect(mPrfsChatAppearance->styleList, SIGNAL(selectionChanged( QListBoxItem *)), this, SLOT(slotUpdatePreview()));
 	connect(mPrfsChatAppearance->addButton, SIGNAL(clicked()), this, SLOT(slotAddStyle()));
 	connect(mPrfsChatAppearance->editButton, SIGNAL(clicked()), this, SLOT(slotEditStyle()));
@@ -203,6 +204,7 @@ void AppearanceConfig::save()
 	p->setChatStyles( mChatStyles );
 	p->setBgColor( mPrfsChatAppearance->bgColor->color() );
 	p->setTextColor(  mPrfsChatAppearance->textColor->color() );
+	p->setLinkColor( mPrfsChatAppearance->linkColor->color() );
 	p->setFontFace( mPrfsChatAppearance->fontFace->font() );
 	p->setKindMessagesHtml( mChatStyles[ mPrfsChatAppearance->styleList->selectedItem()->text() ] );
 
@@ -294,6 +296,7 @@ void AppearanceConfig::reopen()
 	mPrfsChatAppearance->backgroundColor->setColor( p->highlightBackground() );
 
 	mPrfsChatAppearance->textColor->setColor( p->textColor() );
+	mPrfsChatAppearance->linkColor->setColor( p->linkColor() );
 	mPrfsChatAppearance->bgColor->setColor( p->bgColor() );
 	mPrfsChatAppearance->fontFace->setFont( p->fontFace() );
 	mPrfsChatAppearance->fontFace->setText( p->fontFace().family() );
@@ -464,12 +467,14 @@ void AppearanceConfig::slotUpdatePreview()
 	}
 
 	preview->begin();
-	preview->write( QString::fromLatin1( "<html><head><style>body{font-family:%1;color:%2;}td{font-family:%3;color:%4}</style></head><body bgcolor=\"%5\">" )
+	preview->write( QString::fromLatin1( "<html><head><style>body{font-family:%1;color:%2;}td{font-family:%3;color:%4}</style></head><body bgcolor=\"%5\" vlink=\"%6\" link=\"%7\">" )
 		.arg( mPrfsChatAppearance->fontFace->font().family() )
 		.arg( mPrfsChatAppearance->textColor->color().name() )
 		.arg( mPrfsChatAppearance->fontFace->font().family() )
 		.arg( mPrfsChatAppearance->textColor->color().name() )
-		.arg( mPrfsChatAppearance->bgColor->color().name() ) );
+		.arg( mPrfsChatAppearance->bgColor->color().name() )
+		.arg( mPrfsChatAppearance->linkColor->color().name() )
+		.arg( mPrfsChatAppearance->linkColor->color().name() ) );
 
 
 	// incoming messages
