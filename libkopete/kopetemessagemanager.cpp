@@ -40,7 +40,7 @@ void KopeteMessageManager::setReadMode( int mode )
 	}
 	else
 	{
-    	kdDebug() << "[KopeteMessageManager] ERROR: unknown reading method, setting to default" << endl;
+		kdDebug() << "[KopeteMessageManager] ERROR: unknown reading method, setting to default" << endl;
 		mReadMode = Queued;
 	}
 }
@@ -61,13 +61,12 @@ void KopeteMessageManager::readMessages()
 		/* We create the chat window */
 		mChatWindow = new KopeteChatWindow ();
 		/* When the window is shown, we have to delete tjis contact event */
-        kdDebug() << "[KopeteMessageManager] Connecting message box shown() to event killer" << endl;
+		kdDebug() << "[KopeteMessageManager] Connecting message box shown() to event killer" << endl;
 		connect ( mChatWindow, SIGNAL(shown()), this, SLOT(cancelUnreadMessageEvent()) );
 		connect ( mChatWindow, SIGNAL(destroyed()), this, SLOT(chatWindowClosing()) );
 	}
 	
 	KopeteMessage *tmp;
-	mMessageQueue.setAutoDelete(false);
 	while ( tmp = mMessageQueue.take() )
 	{
 			mChatWindow->messageReceived( *(tmp) );
@@ -123,14 +122,13 @@ void KopeteMessageManager::addContact( const KopeteContact *c )
 	{
 		if ( tmp == c )
 		{
-    		kdDebug() << "[KopeteMessageManager] Contact already exists" <<endl;
+			kdDebug() << "[KopeteMessageManager] Contact already exists" <<endl;
 			return;
 		}
 	}
-    kdDebug() << "[KopeteMessageManager] Contact Joined session" <<endl;
+
+	kdDebug() << "[KopeteMessageManager] Contact Joined session" <<endl;
 	mContactList.append(c);
-	
-	
 }
 
 void KopeteMessageManager::removeContact( const KopeteContact *c )
