@@ -95,7 +95,7 @@ IRCServerContact::IRCServerContact(IRCProtocol *protocol, bool connectNow)
 	if (connectNow == true)
 	{
 		m_ircChatWindow->show();
-		m_consoleView->messageBox->setFocus();
+		m_consoleView->messageEdit()->setFocus();
 	}
 	else
 	{
@@ -145,15 +145,15 @@ void IRCServerContact::slotConnectNow()
 		m_consoleView = new IRCConsoleView(m_serverName, m_engine, this, mTabView);
 		m_ircChatWindow->mTabWidget->addTab(mTabView, SmallIconSet("irc_servermsg"),m_serverName);
 
-		m_consoleView->messageBox->setFocus();
+		m_consoleView->messageEdit()->setFocus();
 		QObject::connect(m_consoleView, SIGNAL(quitRequested()), this, SLOT(slotQuitServer()));
 		QObject::connect(m_engine, SIGNAL(connectedToServer()), this, SLOT(updateToolbar()));
 	}
 	if (m_serverName == "(Console)")
 	{
 		QString message = i18n("You need to specify a server before trying to connect. The syntax is: /server irc.yourserver.com");
-		m_messenger->displayMessage(MessageTransport(message, QString(""), QString(""), QString(""), m_engine->nickName(), IRCMessage::UnknownMsg, m_serverName, m_consoleView->chatView));
-		m_consoleView->messageBox->setText("");
+		m_messenger->displayMessage(MessageTransport(message, QString(""), QString(""), QString(""), m_engine->nickName(), IRCMessage::UnknownMsg, m_serverName, m_consoleView->messageView()));
+		m_consoleView->messageEdit()->clear();
 		return;
 	}
 	m_ircChatWindow->mToolBar->removeItem(1);

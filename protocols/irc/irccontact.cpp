@@ -406,7 +406,7 @@ void IRCContact::execute()
 	}
 	if (chatView !=0)
 	{
-		chatView->messageBox->setFocus();
+		chatView->messageEdit()->setFocus();
 		return;
 	}
 	if (queryView !=0)
@@ -428,8 +428,8 @@ void IRCContact::slotPart()
 		{
 			if (chatView !=0)
 			{
-				chatView->chatView->append(partWarning);
-				chatView->chatView->scrollToBottom();
+				chatView->messageView()->append(partWarning);
+				chatView->messageView()->scrollToBottom();
 			}
 			m_waitingPart = true;
 			m_serverContact->engine()->partChannel(m_targetName ,QString("Using Kopete IRC Plugin"));
