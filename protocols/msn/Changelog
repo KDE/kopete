@@ -1,13 +1,32 @@
 Have fun using this all-improved plugin and feel free to contribute patches
 and other improvements to our mailing list! Although we all like to boast
 about our great work, we're sure there are still many bugs remaining, which
-is why we don't call this release 1.0, but only 0.4.1. Please read the
+is why we don't call this release 1.0, but only 0.5 Please read the
 release notes first before reporting bugs, but please do report anything
 not listed there!
 
 Thanks for your interest in Kopete!
 
-                        June 2002, The kopete team <kopete-devel@kde.org>
+                        September 2002, The kopete team <kopete-devel@kde.org>
+
+
+CHANGES IN THE MSN PLUGIN SINCE KOPETE 0.4.1
+
+- Added a local copy of the contact list, sychronised with the server list
+  on each connection
+
+- Added some online status (by right back, out to lunch, busy, invisible)
+  possibility of connecting dirrectly with a particular status (especially
+  useful with invisible) 
+
+- Fix multi-user chat
+
+- Added possibility to talk with user who aren't in the contact list
+
+- Incomming filetransfers
+
+- A lot of other bugfixes
+
 
 CHANGES IN THE MSN PLUGIN SINCE KOPETE 0.4
 
