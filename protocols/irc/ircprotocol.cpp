@@ -40,26 +40,26 @@ IRCProtocol *IRCProtocol::s_protocol = 0L;
 
 IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
 	: KopeteProtocol( parent, name ),
-	// FIXME: get a real icons for this.
-	m_ServerOnline(KopeteOnlineStatus::Online, 90, this, 2, "irc_server", QString::null, i18n("Online")),
-	m_ServerOffline(KopeteOnlineStatus::Offline, 80, this, 0, "irc_server", QString::null, i18n("Offline")),
 
-	m_ChannelOnline(KopeteOnlineStatus::Online, 70, this, 2, "irc_channel", i18n("Go O&nline"), i18n("Online")),
-	m_ChannelOffline(KopeteOnlineStatus::Offline, 60, this, 0, "irc_channel", i18n("Go O&ffline"), i18n("Offline")),
+	m_ServerStatusOnline(KopeteOnlineStatus::Online,	90, this, 21, "irc_server",	i18n("Go O&nline"),	i18n("Online")),
+	m_ServerStatusOffline(KopeteOnlineStatus::Offline,	80, this, 20, "irc_server",	i18n("Go O&ffline"),	i18n("Offline")),
 
-	m_UserOp(KopeteOnlineStatus::Online, 50, this, 4, "irc_op", QString::null, i18n("Online")),
-	m_UserVoice(KopeteOnlineStatus::Online, 40, this, 3, "irc_voice", QString::null, i18n("Online")),
-	m_UserOnline(KopeteOnlineStatus::Online, 30, this, 2, "irc_online", i18n("Go O&nline"), i18n("Online")),
-	m_UserAway(KopeteOnlineStatus::Away, 20, this, 1, "irc_away", i18n("Go &Away"), i18n("Away")),
-	m_UserConnecting(KopeteOnlineStatus::Connecting, 10, this, 0, "irc_connecting", i18n("Connecting"), i18n("Connecting")),
-	m_UserOffline(KopeteOnlineStatus::Offline, 0, this, 0, "irc_online", i18n("Go O&ffline"), i18n("Offline")),
+	m_ChannelStatusOnline(KopeteOnlineStatus::Online,	70, this, 11, "irc_channel",	i18n("Go O&nline"),	i18n("Online")),
+	m_ChannelStatusOffline(KopeteOnlineStatus::Offline,	60, this, 10, "irc_channel",	i18n("Go O&ffline"),	i18n("Offline")),
 
-	m_Unknown(KopeteOnlineStatus::Unknown, 0, this, 0, "status_unknown", "FIXME: Make this unselectable", i18n("Status not available"))
+	m_UserStatusOp(KopeteOnlineStatus::Online,		50, this, 5, "irc_op",		i18n("Go &Op"),		i18n("Op")),
+	m_UserStatusVoice(KopeteOnlineStatus::Online,		40, this, 4, "irc_voice",	i18n("Go &Voice"),	i18n("Voice")),
+	m_UserStatusOnline(KopeteOnlineStatus::Online,		30, this, 3, QString::null,	i18n("Go O&nline"),	i18n("Online")),
+	m_UserStatusAway(KopeteOnlineStatus::Away,		20, this, 2, "irc_away",	i18n("Set &Away"),	i18n("Away")),
+	m_UserStatusConnecting(KopeteOnlineStatus::Connecting,	10, this, 1, "irc_connecting",	i18n("Connecting"),	i18n("Connecting")),
+	m_UserStatusOffline(KopeteOnlineStatus::Offline,	 0, this, 0, QString::null,	i18n("Go O&ffline"),	i18n("Offline")),
+
+	m_StatusUnknown(KopeteOnlineStatus::Unknown, 999, this, 999, "status_unknown", "FIXME: Make this unselectable", i18n("Status not available"))
 {
+//	kdDebug(14120) << k_funcinfo << endl;
+
 	s_protocol = this;
 	mActions = 0L;
-
-//	kdDebug(14120) << k_funcinfo << endl;
 
 	//m_status = m_unknownStatus = m_Unknown;
 
@@ -67,6 +67,8 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	KConfig *cfg = KGlobal::config();
         cfg->setGroup("IRC");
+
+	addAddressBookField("messaging/irc", KopetePlugin::MakeIndexField);
 
 	//Migration code
 	if( cfg->hasKey("Nickname") )
@@ -317,7 +319,7 @@ void IRCProtocol::slotMeCommand( const QString &args, KopeteMessageManager *mana
 
 void IRCProtocol::slotKickCommand( const QString &args, KopeteMessageManager *manager )
 {
-	if( !args.isEmpty() && manager->contactOnlineStatus( manager->user() ) == m_UserOp )
+	if( !args.isEmpty() && manager->contactOnlineStatus( manager->user() ) == m_UserStatusOp )
 	{
 		QRegExp spaces(QString::fromLatin1("\\s+"));
 		QString nick = args.section( spaces, 0, 1);
@@ -331,7 +333,7 @@ void IRCProtocol::slotKickCommand( const QString &args, KopeteMessageManager *ma
 
 void IRCProtocol::slotBanCommand( const QString &args, KopeteMessageManager *manager )
 {
-	if( !args.isEmpty() && manager->contactOnlineStatus( manager->user() ) == m_UserOp )
+	if( !args.isEmpty() && manager->contactOnlineStatus( manager->user() ) == m_UserStatusOp )
 	{
 		QStringList argsList = KopeteCommandHandler::parseArguments( args );
 		KopeteContactPtrList members = manager->members();
@@ -363,7 +365,7 @@ void IRCProtocol::slotDevoiceCommand( const QString &args, KopeteMessageManager 
 
 void IRCProtocol::simpleModeChange( const QString &args, KopeteMessageManager *manager, const QString &mode )
 {
-	if( !args.isEmpty() && manager->contactOnlineStatus( manager->user() ) == m_UserOp )
+	if( !args.isEmpty() && manager->contactOnlineStatus( manager->user() ) == m_UserStatusOp )
 	{
 		QStringList argsList = KopeteCommandHandler::parseArguments( args );
 		KopeteContactPtrList members = manager->members();
@@ -376,4 +378,3 @@ void IRCProtocol::simpleModeChange( const QString &args, KopeteMessageManager *m
 #include "ircprotocol.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-

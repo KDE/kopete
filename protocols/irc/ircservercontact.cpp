@@ -31,7 +31,7 @@
 #include "ksparser.h"
 
 IRCServerContact::IRCServerContact(IRCContactManager *contactManager, const QString &servername, KopeteMetaContact *m)
-	: IRCContact( contactManager, servername, m, QString::fromLatin1("irc_contact_server_")+servername )
+	: IRCContact(contactManager, servername, m, "irc_server")
 {
 	QObject::connect(m_engine, SIGNAL(internalError(KIRC::EngineError, const KIRCMessage &)),
 			this, SLOT(engineInternalError(KIRC::EngineError, const KIRCMessage &)));
@@ -46,36 +46,36 @@ IRCServerContact::IRCServerContact(IRCContactManager *contactManager, const QStr
 void IRCServerContact::updateStatus()
 {
 	KIRC::EngineStatus status = m_engine->status();
-	KopeteOnlineStatus kopeteStatus;
 	switch( status )
 	{
 	case KIRC::Disconnected:
 	case KIRC::Connecting:
-		kopeteStatus = IRCProtocol::IRCServerOffline();
+		setOnlineStatus(m_protocol->m_ServerStatusOffline);
 		break;
 	case KIRC::Authentifying:
 	case KIRC::Connected:
 	case KIRC::Closing:
 		// should make some extra check here
-		kopeteStatus = IRCProtocol::IRCServerOnline();
+		setOnlineStatus(m_protocol->m_ServerStatusOnline);
 		break;
 	default:
-		kopeteStatus = IRCProtocol::IRCUnknown();
+		setOnlineStatus(m_protocol->m_StatusUnknown);
 	}
-	setOnlineStatus( kopeteStatus );
 }
 
+// FIXME: Remove me /* Obsolete */
 void IRCServerContact::slotServerOnline(const QString &server)
 {
 	if( server.lower() == m_nickName.lower() )
 	{
-		setOnlineStatus( IRCProtocol::IRCServerOnline() );
+//		setOnlineStatus( IRCProtocol::IRCServerOnline() );
 	}
 }
 
+// FIXME: Remove me /* Obsolete */
 void IRCServerContact::slotServerOffline()
 {
-	setOnlineStatus( IRCProtocol::IRCServerOffline() );
+//	setOnlineStatus( IRCProtocol::IRCServerOffline() );
 }
 
 const QString IRCServerContact::caption() const

@@ -62,20 +62,20 @@ public:
 
 	static IRCProtocol *protocol();
 
-	static KopeteOnlineStatus IRCServerOnline() { return s_protocol->m_ServerOnline; };
-	static KopeteOnlineStatus IRCServerOffline() { return s_protocol->m_ServerOffline; };
+	const KopeteOnlineStatus m_ServerStatusOnline;
+	const KopeteOnlineStatus m_ServerStatusOffline;
 
-	static KopeteOnlineStatus IRCChannelOnline() { return s_protocol->m_ChannelOnline; };
-	static KopeteOnlineStatus IRCChannelOffline() { return s_protocol->m_ChannelOffline; };
+	const KopeteOnlineStatus m_ChannelStatusOnline;
+	const KopeteOnlineStatus m_ChannelStatusOffline;
 
-	static KopeteOnlineStatus IRCUserOnline() { return s_protocol->m_UserOnline; };
-	static KopeteOnlineStatus IRCUserOp() { return s_protocol->m_UserOp; };
-	static KopeteOnlineStatus IRCUserVoice() { return s_protocol->m_UserVoice; };
-	static KopeteOnlineStatus IRCUserOffline() { return s_protocol->m_UserOffline; };
-	static KopeteOnlineStatus IRCUserAway() { return s_protocol->m_UserAway; };
-	static KopeteOnlineStatus IRCUserConnecting() { return s_protocol->m_UserConnecting; };
+	const KopeteOnlineStatus m_UserStatusOp;
+	const KopeteOnlineStatus m_UserStatusVoice;
+	const KopeteOnlineStatus m_UserStatusOnline;
+	const KopeteOnlineStatus m_UserStatusAway;
+	const KopeteOnlineStatus m_UserStatusConnecting;
+	const KopeteOnlineStatus m_UserStatusOffline;
 
-	static KopeteOnlineStatus IRCUnknown() { return s_protocol->m_Unknown; }
+	const KopeteOnlineStatus m_StatusUnknown;
 
 private slots:
 	void slotMessageFilter( KopeteMessage &msg );
@@ -99,21 +99,6 @@ private slots:
 
 private:
 	static IRCProtocol *s_protocol;
-
-	const KopeteOnlineStatus m_ServerOnline;
-	const KopeteOnlineStatus m_ServerOffline;
-
-	const KopeteOnlineStatus m_ChannelOnline;
-	const KopeteOnlineStatus m_ChannelOffline;
-
-	const KopeteOnlineStatus m_UserOp;
-	const KopeteOnlineStatus m_UserVoice;
-	const KopeteOnlineStatus m_UserOnline;
-	const KopeteOnlineStatus m_UserAway;
-	const KopeteOnlineStatus m_UserConnecting;
-	const KopeteOnlineStatus m_UserOffline;
-
-	const KopeteOnlineStatus m_Unknown;
 
 	KActionCollection *mActions;
 

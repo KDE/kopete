@@ -31,6 +31,7 @@ class KopeteMessageManager;
 class KopeteMetaContact;
 class KopeteView;
 
+class IRCProtocol;
 class IRCAccount;
 class IRCContactManager;
 
@@ -118,6 +119,7 @@ public:
 		void slotSendMsg(KopeteMessage &message, KopeteMessageManager *);
 
 protected:
+	IRCProtocol *m_protocol;
 	IRCAccount *m_account;
 	KIRC *m_engine;
 	KopeteMetaContact *m_metaContact;

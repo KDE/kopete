@@ -27,7 +27,7 @@
 #include "ksparser.h"
 
 IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString &nickname, KopeteMetaContact *m)
-	: IRCContact(contactManager, nickname, m, QString::fromLatin1("irc_contact_user_")+nickname),
+	: IRCContact(contactManager, nickname, m),
 	  m_isAway(false)
 {
 	mOnlineTimer = new QTimer( this );
@@ -43,31 +43,29 @@ IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString 
 void IRCUserContact::updateStatus()
 {
 	KIRC::EngineStatus status = m_engine->status();
-	KopeteOnlineStatus kopeteStatus;
 	switch( status )
 	{
 	case KIRC::Disconnected:
-		kopeteStatus = IRCProtocol::IRCUserOffline();
+		setOnlineStatus(m_protocol->m_UserStatusOffline);
 		break;
 	case KIRC::Connecting:
 	case KIRC::Authentifying:
-		kopeteStatus = IRCProtocol::IRCUserConnecting();
+		setOnlineStatus(m_protocol->m_UserStatusConnecting);
 		break;
 	case KIRC::Connected:
 	case KIRC::Closing:
 		// FIXME: should make some extra check here
 //		if(m_isOnline)
-//			kopeteStatus = IRCProtocol::IRCUserOnline();
+//			setOnlineStatus(m_protocol->m_UserStatusOnline);
 		if(m_isAway)
-			kopeteStatus = IRCProtocol::IRCUserAway();
+			setOnlineStatus(m_protocol->m_UserStatusAway);
 		else
-//			kopeteStatus = IRCProtocol::IRCUserOffline();
-			kopeteStatus = IRCProtocol::IRCUserOnline();
+//			setOnlineStatus(m_protocol->m_UserStatusOffline);
+			setOnlineStatus(m_protocol->m_UserStatusOnline);
 		break;
 	default:
-		kopeteStatus = IRCProtocol::IRCUnknown();
+		setOnlineStatus(m_protocol->m_StatusUnknown);
 	}
-	setOnlineStatus( kopeteStatus );
 }
 
 void IRCUserContact::setAway(bool isAway)
@@ -80,8 +78,8 @@ void IRCUserContact::slotUserOnline( const QString &nick )
 {
 	if( nick.lower() == m_nickName.lower() )
 	{
-		setOnlineStatus( IRCProtocol::IRCUserOnline() );
 		mOnlineTimer->start( 60000, true );
+		updateStatus();
 	}
 }
 
@@ -212,13 +210,13 @@ void IRCUserContact::slotIncomingModeChange( const QString &, const QString &cha
 		{
 			QString modeChange = mode.section(' ', 0, 0);
 			if(modeChange == QString::fromLatin1("+o"))
-				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserOp() );
+				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), m_protocol->m_UserStatusOp );
 			else if(modeChange == QString::fromLatin1("-o"))
-				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserOnline() );
+				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), m_protocol->m_UserStatusOnline );
 			else if(modeChange == QString::fromLatin1("+v"))
-				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserVoice() );
+				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), m_protocol->m_UserStatusVoice );
 			else if(modeChange == QString::fromLatin1("-v"))
-				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserOnline() );
+				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), m_protocol->m_UserStatusOnline );
 		}
 	}
 }

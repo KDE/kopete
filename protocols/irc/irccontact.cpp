@@ -42,6 +42,7 @@ struct whoIsInfo
 
 IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, KopeteMetaContact *metac, const QString& icon)
 	: KopeteContact(contactManager->account(), nick, metac, icon),
+	  m_protocol(static_cast<IRCProtocol *>(protocol())),
 	  m_account(contactManager->account()),
 	  m_engine(contactManager->engine()),
 	  m_metaContact(metac),
@@ -137,7 +138,7 @@ void IRCContact::slotUserDisconnected(const QString &user, const QString &reason
 		if ( c )
 		{
 			manager()->removeContact( c, i18n("Quit: \"%1\" ").arg(reason) );
-			c->setOnlineStatus( IRCProtocol::IRCUserOffline() );
+			c->setOnlineStatus( m_protocol->m_UserStatusOffline );
 			m_account->unregisterUser( nickname );
 		}
 	}

@@ -71,7 +71,7 @@ IRCAccount::~IRCAccount()
 
 void IRCAccount::loaded()
 {
-	setUserName(userName());
+	m_engine->setUserName(userName());
 }
 
 QString IRCAccount::userName()
@@ -89,13 +89,12 @@ KActionMenu *IRCAccount::actionMenu()
 {
 	QString menuTitle = QString::fromLatin1( " %1 <%2> " ).arg( accountId() ).arg( m_mySelf->onlineStatus().description() );
 
-	KActionMenu *mActionMenu = new KActionMenu( accountId(), this );
-	mActionMenu->popupMenu()->insertTitle( m_mySelf->onlineStatus().iconFor( m_mySelf ), menuTitle, 1 );
-	mActionMenu->setIconSet( QIconSet ( m_mySelf->onlineStatus().iconFor( m_mySelf ) ) );
+	KActionMenu *mActionMenu = new KActionMenu( accountId(), this, "IRCAccount::mActionMenu" );
+	mActionMenu->popupMenu()->insertTitle( m_mySelf->onlineStatus().iconFor( m_mySelf ), menuTitle );
 
-	mActionMenu->insert( new KAction ( i18n("Online"), IRCProtocol::IRCUserOnline().iconFor( this ), 0, this, SLOT(connect()), mActionMenu ) );
-	mActionMenu->insert( new KAction ( i18n("Away"), IRCProtocol::IRCUserAway().iconFor( this ), 0, this, SLOT(slotGoAway()), mActionMenu ) );
-	mActionMenu->insert( new KAction ( i18n("Offline"), IRCProtocol::IRCUserOffline().iconFor( this ), 0, this, SLOT(disconnect()), mActionMenu ) );
+	mActionMenu->insert( new KAction ( i18n("Go Online"), m_protocol->m_UserStatusOnline.iconFor( this ), 0, this, SLOT(connect()), mActionMenu ) );
+	mActionMenu->insert( new KAction ( i18n("Set Away"), m_protocol->m_UserStatusAway.iconFor( this ), 0, this, SLOT(slotGoAway()), mActionMenu ) );
+	mActionMenu->insert( new KAction ( i18n("Go Offline"), m_protocol->m_UserStatusOffline.iconFor( this ), 0, this, SLOT(disconnect()), mActionMenu ) );
 	mActionMenu->popupMenu()->insertSeparator();
 	mActionMenu->insert( new KAction ( i18n("Join Channel..."), "", 0, this, SLOT(slotJoinChannel()), mActionMenu ) );
 	mActionMenu->insert( new KAction ( i18n("Show Server Window"), "", 0, this, SLOT(slotShowServerWindow()), mActionMenu ) );
@@ -112,7 +111,6 @@ void IRCAccount::connect()
 	}
 	else if( m_engine->isDisconnected() )
 	{
-		m_mySelf->setOnlineStatus( IRCProtocol::IRCUserConnecting() );
 		m_engine->connectToServer( m_mySelf->nickName() );
 	}
 }
@@ -134,11 +132,7 @@ void IRCAccount::setAway( bool isAway, const QString &awayMessage )
 
 void IRCAccount::slotGoAway()
 {
-	if(engine()->isConnected())
-	{
-		m_mySelf->setOnlineStatus( IRCProtocol::IRCUserAway() );
-		engine()->setAway( true, KopeteAway::message() );
-	}
+	setAway( true, KopeteAway::message() );
 }
 
 void IRCAccount::slotShowServerWindow()
