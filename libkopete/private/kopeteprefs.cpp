@@ -353,5 +353,10 @@ void KopetePrefs::setRichText(bool value)
 	mRichText=value;
 }
 
+void KopetePrefs::setToolTipContents(const QStringList &value)
+{
+	mToolTipContents=value;
+}
+
 #include "kopeteprefs.moc"
 // vim: set noet ts=4 sts=4 sw=4:

@@ -122,6 +122,8 @@ public:
 	void setShowTray(bool);
 	void setNotifyAway(bool);
 	void setRichText(bool);
+	void setToolTipContents(const QStringList &);
+
 
 signals:
 	/**

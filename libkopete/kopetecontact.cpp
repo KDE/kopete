@@ -702,8 +702,8 @@ QString KopeteContact::toolTip() const
 		{
 			QString name = formattedName();
 			if(!name.isNull())
-				tip += i18n("<br><b>Name:</b>&nbsp;FORMATTED NAME",
-					"<br><b>Name:</b>&nbsp;%1").arg(name);
+				tip += i18n("<br><b>Full Name:</b>&nbsp;FORMATTED NAME",
+					"<br><b>Full Name:</b>&nbsp;%1").arg(name);
 		}
 		else if ((*it) == QString::fromLatin1("FormattedIdleTime"))
 		{
