@@ -150,7 +150,7 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 		}
 		else
 		{
-			IRCUserContact *contact = new IRCUserContact(mIdentity, nickname, KIRC::Normal);
+			IRCUserContact *contact = mIdentity->findUser( nickname );
 			contact->setOnlineStatus( KopeteContact::Online );
 			manager()->addContact((KopeteContact *)contact, true);
 
@@ -167,11 +167,11 @@ void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString
 	QString nickname = user.section('!', 0, 0);
 	if ( isConnected && channel.lower() == mNickName.lower() && nickname.lower() != mEngine->nickName().lower() )
 	{
-		KopeteContact *user = locateUser( nickname );
-		if ( user )
+		KopeteContact *c = locateUser( nickname );
+		if ( c )
 		{
-			manager()->removeContact( user, true );
-			delete user->metaContact();
+			manager()->removeContact( c, true );
+			mIdentity->unregisterUser( nickname );
 		}
 		KopeteMessage msg((KopeteContact *)this, mContact,
 		i18n("User %1 parted channel %2 (%3)").arg(nickname).arg(mNickName).arg(reason),

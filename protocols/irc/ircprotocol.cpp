@@ -94,7 +94,7 @@ const QString IRCProtocol::protocolIcon()
 void IRCProtocol::addContact(  const QString &server, const QString &contact, bool isChannel, KopeteMetaContact *m)
 {
 	kdDebug(14120) << "[IRCProtocol] addContact called" << endl;
-	IRCUserContact *query;
+	IRCUserContact *user;
 	IRCChannelContact *channel;
 	if (isChannel)
 	{
@@ -107,8 +107,8 @@ void IRCProtocol::addContact(  const QString &server, const QString &contact, bo
 			return;
 		}
 	} else {
-		query = identity->findQuery(contact);
-		if (query)
+		user = identity->findUser(contact);
+		if (user)
 		{
 		// TODO: Uncomment when IRCContact is implemented
 /*			kdWarning(14120) << k_funcinfo << "Contact already exists " << endl;

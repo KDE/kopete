@@ -42,6 +42,8 @@ class IRCUserContact : public IRCContact
 		virtual QString statusIcon() const;
 		virtual KActionCollection *customContextMenuActions() { return mCustomActions; };
 		virtual const QString caption() const;
+		uint conversations() const { return mConversations; };
+		void setConversations( uint conversations ) { mConversations = conversations; };
 
 	private slots:
 		void slotWhois();
@@ -69,6 +71,7 @@ class IRCUserContact : public IRCContact
 		KActionMenu *actionKick;
 		KActionMenu *actionBan;
 		KAction *actionWhois;
+		uint mConversations;
 
 		void contactMode( const QString &mode );
 };

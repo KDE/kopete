@@ -102,7 +102,9 @@ void IRCContact::slotMessageManagerDestroyed()
 {
 	KopeteContactPtrList contacts = mMsgManager->members();
 	for( KopeteContact *c = contacts.first(); c; c = contacts.next() )
-		delete c;
+	{
+		mIdentity->unregisterUser( static_cast<IRCContact*>(c)->nickName() );
+	}
 
 	emit( endSession() );
 	mMsgManager = 0L;
@@ -169,7 +171,7 @@ void IRCContact::slotUserDisconnected( const QString &user, const QString &reaso
 		KopeteMessage msg(c, mContact, i18n("User %1 has quit (\"%2\")").arg(nickname).arg(reason), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 		manager()->appendMessage(msg);
 		manager()->removeContact( c, true );
-		delete c;
+		mIdentity->unregisterUser( nickname );
 	}
 }
 

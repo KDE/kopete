@@ -71,7 +71,7 @@ class IRCContact : public KopeteContact
 
 	protected slots:
 		void slotSendMsg(KopeteMessage &message, KopeteMessageManager *);
-		
+
 	protected:
 		QPtrList<KopeteContact> mContact;
 		QPtrList<KopeteContact> mMyself;
