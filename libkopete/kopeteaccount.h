@@ -113,6 +113,10 @@ public:
 	 */
 	QString accountId() const;
 
+	/**
+	 * \return The label of this account, for the GUI
+	 */
+	QString accountLabel() const;
 
 	/**
 	 * \brief Get the priority of this account.
@@ -137,7 +141,7 @@ public:
 	void setExcludeConnect(bool);
 
 	/**
-	 * \brief Get if the account should not log in. 
+	 * \brief Get if the account should not log in.
 	 *
  	 * @return @c true if the account should not be connected when connectAll at startup, @c false otherwise.
 	 */
@@ -145,19 +149,19 @@ public:
 
 	/**
 	 * \brief Get the color for this account.
-	 * 
+	 *
  	 * The color will be used to visually differentiate this account from other accounts on the
 	 * same protocol.
-	 * 
+	 *
 	 * \return the user color for this account
 	 */
 	const QColor color() const;
 
 	/**
 	 * \brief Set the color for this account.
-	 * 
+	 *
 	 * This is called by Kopete's account config page; you don't have to set the color yourself.
-	 * 
+	 *
 	 * @sa @ref color()
 	 */
 	void setColor( const QColor &color);
@@ -166,7 +170,7 @@ public:
 	 * \brief Get the icon for this account.
 	 *
 	 * Generates an image of size @p size representing this account. The result is not cached.
-	 * 
+	 *
 	 * @param size the size of the icon. If the size is 0, the default size is used.
 	 * @return the icon for this account, colored if needed
 	 */
@@ -192,7 +196,7 @@ public:
 	 *
 	 * You should call the default implementation from your reimplementation, and add more actions
 	 * you require to the resulting action menu.
-	 * 
+	 *
 	 * @see OnlineStatusManager::registerOnlineStatus
 	 */
 	virtual KActionMenu* actionMenu() ;
@@ -232,7 +236,7 @@ public:
 	 *
 	 * If a contact for this account with ID @p contactId is not already on the contact list,
 	 * a new contact with that ID is created, and added to a new metacontact.
-	 * 
+	 *
 	 * If @p mode is @c ChangeKABC, MetaContact::updateKABC will be called on the resulting metacontact.
 	 * If @p mode is @c Temporary, MetaContact::setTemporary will be called on the resulting metacontact,
 	 * and the metacontact will not be added to @p group.
@@ -268,7 +272,7 @@ public:
 	 *
 	 * This is a convenience method that calls @ref Contact::isOnline() on @ref myself().
 	 * This function is safe to call if @ref setMyself() has not been called yet.
-	 * 
+	 *
 	 * @see @ref isConnectedChanged()
 	 */
 	bool isConnected() const;
@@ -291,7 +295,7 @@ public:
 
 	/**
 	 * @brief Remove the account from the server.
-	 * 
+	 *
 	 * Reimplement this if your protocol supports removing the accounts from the server.
 	 * This function is called by @ref AccountManager::removeAccount typically when you remove the
 	 * account on the account config page.
@@ -335,7 +339,7 @@ protected:
 	 *
 	 * This method is called by @ref addContact(). In this method, you should create the
 	 * new custom @ref Contact, using @p parentContact as the parent.
-	 * 
+	 *
 	 * If the metacontact is not temporary and the protocol supports it, you can add the
 	 * contact to the server.
 	 *
@@ -344,7 +348,15 @@ protected:
 	 * @return @c true if creating the contact succeeded, @c false on failure.
 	 */
 	virtual bool createContact( const QString &contactId, MetaContact *parentContact ) =0;
-	
+
+
+	/**
+	 * \brief Sets the account label
+	 *
+	 * @param label The label to set
+	 */
+	void setAccountLabel( const QString &label );
+
 protected slots:
 	/**
 	 * \brief The service has been disconnected
@@ -424,7 +436,7 @@ public slots:
 	/**
 	 * If @p away is @c true, set the account away with away message @p reason. Otherwise,
 	 * set the account to not be away.
-	 * 
+	 *
 	 * @todo change ; make use of setOnlineStatus
 	 */
 	virtual void setAway( bool away, const QString &reason = QString::null ) = 0;

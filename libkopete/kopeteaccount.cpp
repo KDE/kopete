@@ -63,6 +63,7 @@ public:
 
 	Protocol *protocol;
 	QString id;
+	QString accountLabel;
 	bool excludeconnect;
 	uint priority;
 	QDict<Contact> contacts;
@@ -172,6 +173,15 @@ KConfigGroup* Kopete::Account::configGroup() const
 	return d->configGroup;
 }
 
+void Account::setAccountLabel( const QString &label )
+{
+	d->accountLabel = label;
+}
+
+QString Account::accountLabel() const
+{
+	return d->accountLabel;
+}
 
 void Account::setExcludeConnect( bool b )
 {
@@ -312,10 +322,13 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 KActionMenu * Account::actionMenu()
 {
 	//default implementation
-	KActionMenu * menu=new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ),  this );
-	QString nick=myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
+	KActionMenu *menu = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ),  this );
+	QString nick = myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
+	QString label = accountLabel().isNull() ? accountId() : accountLabel();
 	menu->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ),
-		nick.isNull() ? accountId() :  i18n( "%2 <%1>" ).arg( accountId() , nick ) );
+		nick.isNull() ? label : i18n( "%2 <%1>" ).arg( label, nick )
+	);
+
 	OnlineStatusManager::self()->createAccountStatusActions(this, menu);
 	menu->popupMenu()->insertSeparator();
 	menu->insert( new KAction ( i18n( "Properties" ),  0, this, SLOT( editAccount() ), menu, "actionAccountProperties" ) );
