@@ -64,6 +64,9 @@ StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db,
 	mainWidget->datePicker->setDate(QDate::currentDate());
 	connect(mainWidget->askButton, SIGNAL(clicked()), this, SLOT(slotAskButtonClicked()));
 	
+	setFocus();
+	setEscapeButton(Close);
+	
 	generatePageGeneral();
 }
 
