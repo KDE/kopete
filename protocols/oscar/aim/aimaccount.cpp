@@ -40,9 +40,8 @@ AIMAccount::AIMAccount(KopeteProtocol *parent, QString accountID, const char *na
 
 AIMAccount::~AIMAccount()
 {
-	kdDebug(14190) << k_funcinfo << "[" << accountId() << "] deleted" << endl;
+	kdDebug(14190) << k_funcinfo << "for '" << accountId() << "' deleted" << endl;
 }
-
 
 void AIMAccount::loaded()
 {

@@ -40,7 +40,7 @@ ICQAccount::ICQAccount(KopeteProtocol *parent, QString accountID, const char *na
 	mWebAware = true;
 	mHideIP = false;
 	mInvisible = false;
-	mMyself = new ICQContact(accountId(), "", this, 0L);
+	mMyself = new ICQContact(accountId(), QString::null, this, 0L);
 
 	QObject::connect(mAwayDialog, SIGNAL(goAway(const int, const QString&)),
 		this, SLOT(slotAwayDialogReturned(const int, const QString&)));
@@ -58,7 +58,7 @@ void ICQAccount::loaded()
 
 ICQAccount::~ICQAccount()
 {
-	kdDebug(14200) << k_funcinfo << "[" << accountId() << "] deleted" << endl;
+	kdDebug(14200) << k_funcinfo << "for '" << accountId() << "' deleted" << endl;
 }
 
 KActionMenu* ICQAccount::actionMenu()
