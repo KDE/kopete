@@ -87,3 +87,5 @@ int CreateConferenceTask::conferenceId()
 {
 	return m_confId;
 }	
+
+#include "createconferencetask.moc"
