@@ -107,7 +107,9 @@ protected:
 	/**
 	 * Retrieve the list of contacts for this protocol
 	 *
-	 * FIXME: Make this const!
+	 * The list is guaranteed to contain only contacts for this protocol,
+	 * so you can safely use static_cast to your own derived contact class
+	 * if needed.
 	 */
 	const QDict<KopeteContact>& contacts();
 
