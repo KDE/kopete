@@ -87,12 +87,10 @@ public:
 	};
 
 	/**
-	 * Get group by number and vice versa.
-	 * Returns -1 resp QString::null if the search term was not found
-	 *
-	 * FIXME: Probably make private when KMSNService is completely ported
+	 * Get group by number. The reverse method is used only internally and
+	 * private.
+	 * Returns QString::null if the group was not found
 	 */
-	int groupNumber( const QString &groupName ) const;
 	QString groupName( uint number ) const;
 
 	// Plugin reimplementation
@@ -271,6 +269,12 @@ private slots:
 	void slotChangePublicName();
 
 private:
+	/**
+	 * Get group by name.
+	 * Returns -1 if the group was not found.
+	 */
+	int groupNumber( const QString &groupName ) const;
+
 	/**
 	 * Add contact to contact list and maintain a list of currently active
 	 * contacts. This way MSNContact doesn't need to do 'delete this' every
