@@ -166,7 +166,26 @@ void KopeteAccountManager::setAvailableAll()
 
 void KopeteAccountManager::registerAccount(KopeteAccount *i)
 {
-	m_accounts.append( i );
+	/* Anti-Crash: Valid account pointer? */
+	if ( !i )
+		return;
+
+	/* No, we dont allow accounts without id */
+	if ( !(i->accountId()).isNull() )
+	{
+		/* Lets check if account exists already in protocol namespace */
+		for ( KopeteAccount *acc = m_accounts.first() ; acc ; acc = m_accounts.next() )
+		{
+			if( ( i->protocol() == acc->protocol() ) && ( i->accountId() == acc->accountId() ) )
+			{
+				/* Duplicate!! */
+				return;
+			}
+		}
+		/* Ok seems sane */
+		m_accounts.append( i );
+	}
+
 }
 
 const QPtrList<KopeteAccount>& KopeteAccountManager::accounts() const
@@ -179,7 +198,7 @@ QDict<KopeteAccount> KopeteAccountManager::accounts(const KopeteProtocol *p)
 	QDict<KopeteAccount> dict;
 	for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
 	{
-		if(i->protocol() == p)
+		if( (i->protocol() == p) && !(i->accountId().isNull()) )
 			dict.insert(i->accountId() , i);
 	}
 	return dict;
@@ -274,15 +293,27 @@ void KopeteAccountManager::loadProtocol( KopetePlugin *plu )
 				QString accountId = element.attribute( QString::fromLatin1("account-id"), QString::null );
 				QString protocolId = element.attribute( QString::fromLatin1("protocol-id"), QString::null );
 
-				if( protocolId == protocol->pluginId() )
+				if( (protocolId == protocol->pluginId()) )
 				{
-					KopeteAccount *account = protocol->createNewAccount(accountId);
-					QDomNode accountNode = node.firstChild();
-					if (account && !account->fromXML( accountNode ) )
+					if ( !accountId.isEmpty() )
 					{
-						delete account;
-						account = 0L;
+						kdWarning(14010) << k_funcinfo << "Creating account for " << accountId << endl;
+						KopeteAccount *account = protocol->createNewAccount(accountId);
+						QDomNode accountNode = node.firstChild();
+						if (account && !account->fromXML( accountNode ) )
+						{
+							delete account;
+							account = 0L;
+						}
 					}
+					else
+					{
+						kdWarning(14010) << k_funcinfo << "Account with emtpy id!" << endl;
+					}
+				}
+				else
+				{
+					kdWarning(14010) << k_funcinfo << "This account belong to another protocol!" << endl;
 				}
 			}
 			else
