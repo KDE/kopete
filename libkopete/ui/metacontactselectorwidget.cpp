@@ -23,6 +23,7 @@
 #include <qimage.h>
 #include <qpixmap.h>
 #include <qpainter.h>
+#include <qlayout.h>
 
 #include <kapplication.h>
 #include <kconfig.h>
@@ -73,6 +74,11 @@ MetaContactSelectorWidgetLVI::MetaContactSelectorWidgetLVI(Kopete::MetaContact *
 	buildVisualComponents();
 }
 
+Kopete::MetaContact* MetaContactSelectorWidgetLVI::metaContact()
+{
+	return d->metaContact;
+}
+
 void MetaContactSelectorWidgetLVI::slotDisplayNameChanged()
 {
 	if ( d->nameText )
@@ -85,6 +91,11 @@ void MetaContactSelectorWidgetLVI::slotDisplayNameChanged()
 		else
 			listView()->sort();
 	}
+}
+
+QString MetaContactSelectorWidgetLVI::text ( int /* column */ ) const
+{
+	return d->metaContact->displayName();
 }
 
 void MetaContactSelectorWidgetLVI::slotPhotoChanged()
@@ -148,11 +159,20 @@ void MetaContactSelectorWidgetLVI::buildVisualComponents()
 
 	Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
 	d->contactIconBox = new BoxComponent( box, BoxComponent::Horizontal );
-
+	
+	slotUpdateContactBox();
 	slotDisplayNameChanged();
 	slotPhotoChanged();
 }
 
+void MetaContactSelectorWidgetLVI::slotUpdateContactBox()
+{
+	QPtrList<Kopete::Contact> contacts = d->metaContact->contacts();
+	for(Kopete::Contact *c = contacts.first(); c; c = contacts.next())
+	{
+		new ContactComponent(d->contactIconBox, c, IconSize( KIcon::Small ));
+	}
+}
 
 class MetaContactSelectorWidget::Private
 {
@@ -164,10 +184,10 @@ public:
 MetaContactSelectorWidget::MetaContactSelectorWidget( QWidget *parent, const char *name )
 		: QWidget( parent, name ), d( new Private() )
 {
-	QHBox *vbox = new QVBox(this);
-	d->widget = new MetaContactSelectorWidget_Base(vbox);
-	resize(300,300);
-
+	QBoxLayout *l = new QVBoxLayout(this);
+	d->widget = new MetaContactSelectorWidget_Base(this);
+	l->addWidget(d->widget);
+	
 	connect( d->widget->metaContactListView, SIGNAL( clicked(QListViewItem * ) ),
 			SIGNAL( metaContactListClicked( QListViewItem * ) ) );
 	connect( d->widget->metaContactListView, SIGNAL( selectionChanged( QListViewItem * ) ),
@@ -178,10 +198,9 @@ MetaContactSelectorWidget::MetaContactSelectorWidget( QWidget *parent, const cha
 	connect( Kopete::ContactList::self(), SIGNAL( metaContactAdded( MetaContact * ) ), this, SLOT( slotLoadMetaContacts() ) );
 	
 	d->widget->kListViewSearchLine->setListView(d->widget->metaContactListView);
-	slotLoadMetaContacts();
-
-	d->widget->metaContactListView->setColumnWidthMode(0, QListView::Manual);
-	d->widget->metaContactListView->setColumnWidth(0, 63); //Photo is 60, and it's nice to have a small gap, imho
+	d->widget->metaContactListView->setFullWidth( true );
+	d->widget->metaContactListView->header()->hide();
+	d->widget->metaContactListView->setColumnWidthMode(0, QListView::Maximum);
 	slotLoadMetaContacts();
 }
 
@@ -194,32 +213,33 @@ MetaContactSelectorWidget::~MetaContactSelectorWidget()
 
 Kopete::MetaContact* MetaContactSelectorWidget::metaContact()
 {
-	QListViewItem *item = 0L;
-	//item = static_cast<QListViewItem *>( addresseeListView->selectedItem() );
+	MetaContactSelectorWidgetLVI *item = 0L;
+	item = static_cast<MetaContactSelectorWidgetLVI *>( d->widget->metaContactListView->selectedItem() );
 
-	//if ( item )
-	//	m_addressee = item->addressee();
+	if ( item )
+		return item->metaContact();
 
 	return 0L;
 }
 
 void MetaContactSelectorWidget::selectMetaContact( Kopete::MetaContact *mc )
 {
-	/*
 	// iterate trough list view
-	QListViewItemIterator it( addresseeListView );
+	QListViewItemIterator it( d->widget->metaContactListView );
 	while( it.current() )
 	{
-		MetaContactItem *addrItem = (MetaContactItem *) it.current();
-		if ( addrItem->addressee().uid() == uid )
+		MetaContactSelectorWidgetLVI *item = (MetaContactSelectorWidgetLVI *) it.current();
+		if (!item)
+			continue;
+	
+		if ( mc == item->metaContact() )
 		{
 			// select the contact item
-			addresseeListView->setSelected( addrItem, true );
-			addresseeListView->ensureItemVisible( addrItem );
+			d->widget->metaContactListView->setSelected( item, true );
+			d->widget->metaContactListView->ensureItemVisible( item );
 		}
 		++it;
 	}
-	*/
 }
 
 bool MetaContactSelectorWidget::metaContactSelected()
@@ -237,7 +257,7 @@ void MetaContactSelectorWidget::slotLoadMetaContacts()
 	{
 		if( !mc->isTemporary() && mc != metaContact() )
 		{
-			MetaContactSelectorWidgetLVI *mclvi = new MetaContactSelectorWidgetLVI(mc, d->widget->metaContactListView);
+			new MetaContactSelectorWidgetLVI(mc, d->widget->metaContactListView);
 		}
 	}
 

@@ -71,10 +71,13 @@ class MetaContactSelectorWidgetLVI : public Kopete::UI::ListView::Item
 	Q_OBJECT
 public:
 	MetaContactSelectorWidgetLVI(Kopete::MetaContact *mc, QListView *parent, QObject *owner = 0, const char *name = 0 );
+	Kopete::MetaContact* metaContact();
+	virtual QString text ( int column ) const;
 protected slots:
 	void slotPhotoChanged();
 	void slotDisplayNameChanged();
 	void buildVisualComponents();
+	void slotUpdateContactBox();
 private:
 	class Private;
 	Private *d;
