@@ -1,4 +1,4 @@
-SUBDIRS = libyahoo2 ui icons
+SUBDIRS = libyahoo2 libkyahoo ui icons
 METASOURCES = AUTO
 
 AM_CPPFLAGS = $(KOPETE_INCLUDES) \
