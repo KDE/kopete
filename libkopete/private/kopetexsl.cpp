@@ -66,7 +66,6 @@ bool KopeteXSL::isValid( const QString &xslString )
 	//Cleanup
 	xsltCleanupGlobals();
 	xmlCleanupParser();
-	xmlMemoryDump();
 
 	return retVal;
 }
@@ -86,7 +85,6 @@ void KopeteXSLThread::run()
 	xmlDocPtr xmlDoc, xslDoc, resultDoc;
 
 	//Init Stuff
-	xmlInitMemory();
 	xmlLoadExtDtdDefaultValue = 0;
 	xmlSubstituteEntitiesDefault(1);
 
@@ -98,42 +96,49 @@ void KopeteXSLThread::run()
 	xmlDoc = xmlParseMemory( xmlCString, xmlCString.length() );
 	xslDoc = xmlParseMemory( xslCString, xslCString.length() );
 
-	if( xslDoc != NULL && xmlDoc != NULL )
+	if( xmlDoc != NULL )
 	{
-		style_sheet = xsltParseStylesheetDoc( xslDoc );
-		if( style_sheet != NULL )
+		if( xslDoc != NULL )
 		{
-			resultDoc = xsltApplyStylesheet(style_sheet, xmlDoc, NULL);
-			if( resultDoc != NULL )
+			style_sheet = xsltParseStylesheetDoc( xslDoc );
+			if( style_sheet != NULL )
 			{
-				//Save the result into the QString
-				xmlChar *mem;
-				int size;
-				xmlDocDumpMemory( resultDoc, &mem, &size );
-				m_resultString = QString::fromUtf8( QCString( (char*)mem, size + 1 ) );
-				delete mem;
+				resultDoc = xsltApplyStylesheet(style_sheet, xmlDoc, NULL);
+				if( resultDoc != NULL )
+				{
+					//Save the result into the QString
+					xmlChar *mem;
+					int size;
+					xmlDocDumpMemory( resultDoc, &mem, &size );
+					m_resultString = QString::fromUtf8( QCString( (char*)mem, size + 1 ) );
+					delete mem;
+					xmlFreeDoc(resultDoc);
+				}
+				else
+				{
+					kdDebug() << "Transformed document is null!!!" << endl;
+				}
+				xsltFreeStylesheet(style_sheet);
 			}
 			else
 			{
-				kdDebug() << "Transformed document is null!!!" << endl;
+				kdDebug() << "Document is not valid XSL!!!" << endl;
 			}
-			xmlFreeDoc(xmlDoc);
-			xsltFreeStylesheet(style_sheet);
 		}
 		else
 		{
-			kdDebug() << "Document is not valid XSL!!!" << endl;
+			kdDebug() << "XSL Document could not be parsed!!!" << endl;
 		}
+		xmlFreeDoc(xmlDoc);
 	}
 	else
 	{
-		kdDebug() << "XML/XSL Document could not be parsed!!!" << endl;
+		kdDebug() << "XML Document could not be parsed!!!" << endl;
 	}
 
 	//Cleanup
 	xsltCleanupGlobals();
 	xmlCleanupParser();
-	xmlMemoryDump();
 
 	//Signal completion
 	if( m_target && m_slotCompleted )

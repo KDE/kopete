@@ -266,7 +266,7 @@ QString KopeteMessage::parsedBody() const
 {
 	QDomElement bodyText = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
 	QString parsedBody = bodyText.text();
-	kdDebug() << k_funcinfo << parsedBody << endl;
+
 	if( d->format == ParsedHTML )
 		return parsedBody;
 	else
