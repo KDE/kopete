@@ -285,7 +285,7 @@ bool JabberAccount::addContactToMetaContact (const QString & contactId, const QS
 
 	XMPP::Jid jid ( contactId );
 	XMPP::RosterItem item ( jid );
-	item.setName ( metaContact->displayName () );			// FIXME: this is a workaround for a libkopete bug (displayName equals contactId)
+	item.setName ( metaContact->displayName () );
 	item.setGroups ( groupNames );
 
 	// this contact will be created with the "dirty" flag set

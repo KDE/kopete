@@ -67,7 +67,10 @@ bool JabberAddContactPage::apply ( KopeteAccount *account, KopeteMetaContact *pa
 	if( canadd && validateData () )
 	{
 		QString contactId = jabData->addID->text ();
-		QString displayName = jabData->addID->text ();
+		QString displayName = parentContact->displayName ();
+		
+		if ( displayName.isEmpty () )
+			displayName = contactId;
 
 		// collect all group names
 		QStringList groupNames;
@@ -75,13 +78,13 @@ bool JabberAddContactPage::apply ( KopeteAccount *account, KopeteMetaContact *pa
 		for(KopeteGroup *group = groupList.first(); group; group = groupList.next())
 			groupNames += group->displayName();
 
-		if ( account->addContact ( jabData->addID->text (), jabData->addID->text (), parentContact, KopeteAccount::ChangeKABC ) )
+		if ( account->addContact ( contactId, displayName, parentContact, KopeteAccount::ChangeKABC ) )
 		{
 			XMPP::RosterItem item;
 			XMPP::Jid jid ( contactId );
 
 			item.setJid ( jid );
-			item.setName ( contactId );
+			item.setName ( displayName );
 			item.setGroups ( groupNames );
 
 			// add the new contact to our roster.
