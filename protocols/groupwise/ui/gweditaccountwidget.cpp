@@ -29,7 +29,7 @@
 #include <kconfig.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-
+#include <kpassdlg.h>
 #include "kopetepasswordedaccount.h"
 #include "kopetepasswordwidget.h"
 
@@ -60,6 +60,10 @@ GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, Kopete:
 		m_preferencesDialog->m_server->setText( config->readEntry( "DefaultServer" ) );
 		m_preferencesDialog->m_port->setValue( config->readNumEntry( "DefaultPort", 8300 ) );
 	}
+	QWidget::setTabOrder( m_preferencesDialog->m_userId, m_preferencesDialog->m_password->mRemembered );
+	QWidget::setTabOrder( m_preferencesDialog->m_password->mRemembered, m_preferencesDialog->m_password->mPassword );
+	QWidget::setTabOrder( m_preferencesDialog->m_password->mPassword, m_preferencesDialog->m_autoConnect );
+
 }
 
 GroupWiseEditAccountWidget::~GroupWiseEditAccountWidget()
