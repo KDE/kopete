@@ -489,7 +489,7 @@ GaduAccount::userlist( const QString& u)
 
 	kdDebug(14100)<<"### Got userlist"<<endl;
 
-	QStringList ln  = QStringList::split( QChar('\n') , u, true );
+	QStringList ln  = QStringList::split( QChar('\n') , textcodec_->toUnicode(u), true );
 	QStringList::iterator lni=ln.begin();
 
 	while(lni != ln.end()){
