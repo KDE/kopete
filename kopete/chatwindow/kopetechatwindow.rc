@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui version="20" name="kopetechatwindow">
+<kpartgui version="21" name="kopetechatwindow">
 	<MenuBar>
 		<Menu noMerge="1" name="file">
 			<text>&amp;Chat</text>
@@ -54,5 +54,10 @@
 		<Separator lineSeparator="true"/>
 		<Action name="toolbar_animation"/>
 	</ToolBar>
+
+	<ToolBar name="statusToolBar">
+		<text>Status</text>
+	</ToolBar>
+
 
 </kpartgui>
