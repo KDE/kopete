@@ -29,6 +29,13 @@
 #include <qwidget.h>
 #include <qapplication.h>
 
+static WId mainWindowID()
+{
+	if ( QWidget *w = Kopete::UI::Global::mainWidget() )
+		return w->winId();
+	return 0;
+}
+
 class Kopete::WalletManager::Private
 {
 public:
@@ -58,21 +65,11 @@ Kopete::WalletManager::~WalletManager()
 	delete d;
 }
 
-namespace
-{
-	KStaticDeleter<Kopete::WalletManager> s_deleter;
-	Kopete::WalletManager *s_self = 0;
-	
-	WId mainWindowID()
-	{
-		if ( QWidget *w = Kopete::UI::Global::mainWidget() )
-			return w->winId();
-		return 0;
-	}
-}
-
 Kopete::WalletManager *Kopete::WalletManager::self()
 {
+	static KStaticDeleter<Kopete::WalletManager> s_deleter;
+	static Kopete::WalletManager *s_self = 0;
+
 	if ( !s_self )
 		s_deleter.setObject( s_self, new Kopete::WalletManager() );
 	return s_self;

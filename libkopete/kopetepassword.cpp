@@ -17,7 +17,15 @@
 #include "kopeteuiglobal.h"
 #include "kopetepassword.h"
 #include "kopetepassworddialog.h"
+
+#include <kdeversion.h>
+
+#if KDE_IS_VERSION( 3, 2, 0 )
 #include "kopetewalletmanager.h"
+#include <kwallet.h>
+#else
+namespace KWallet { class Wallet; }
+#endif
 
 #include <qapplication.h>
 #include <qlabel.h>
@@ -29,11 +37,9 @@
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kdebug.h>
-#include <kdeversion.h>
 #include <kdialogbase.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kwallet.h>
 #include <kiconloader.h>
 #include <kpassdlg.h>
 
@@ -93,7 +99,11 @@ public:
 	void begin()
 	{
 		kdDebug( 14010 ) << k_funcinfo << endl;
+#if KDE_IS_VERSION( 3, 2, 0 )
 		Kopete::WalletManager::self()->openWallet( this, SLOT( walletReceived( KWallet::Wallet* ) ) );
+#else
+		walletReceived( 0 );
+#endif
 	}
 
 	void walletReceived( KWallet::Wallet *wallet )
@@ -141,8 +151,10 @@ public:
 			return pwd;
 		}
 
+#if KDE_IS_VERSION( 3, 2, 0 )	
 		if ( mWallet && mWallet->readPassword( mPassword.d->configGroup, pwd ) == 0 && !pwd.isNull() )
 			return pwd;
+#endif
 
 		if ( mPassword.d->remembered && !mPassword.d->passwordFromKConfig.isNull() )
 			return mPassword.d->passwordFromKConfig;
@@ -279,13 +291,16 @@ public:
 			mPassword.d->remembered = false;
 			mPassword.d->passwordFromKConfig = QString::null;
 			mPassword.writeConfig();
+#if KDE_IS_VERSION( 3, 2, 0 )
 			if ( mWallet )
 				mWallet->removeEntry( mPassword.d->configGroup );
+#endif
 			return true;
 		}
 
 		kdDebug( 14010 ) << k_funcinfo << " setting password for " << mPassword.d->configGroup << endl;
 
+#if KDE_IS_VERSION( 3, 2, 0 )
 		if ( mWallet && mWallet->writePassword( mPassword.d->configGroup, mNewPass ) == 0 )
 		{
 			mPassword.d->remembered = true;
@@ -329,7 +344,7 @@ public:
 				return false;
 			}
 		}
-
+#endif
 		mPassword.d->remembered = true;
 		mPassword.d->passwordFromKConfig = mNewPass;
 		mPassword.writeConfig();
@@ -428,6 +443,7 @@ QString Kopete::Password::retrieve( const QPixmap &image, const QString &prompt,
 	uint maxLength = maximumLength();
 	if ( source == Kopete::Password::FromConfigOrUser )
 	{
+#if KDE_IS_VERSION( 3, 2, 0 )
 		if( KWallet::Wallet *wallet = Kopete::WalletManager::self()->wallet() )
 		{
 			// Before trying to read from the wallet, check if the config file holds a password.
@@ -443,7 +459,7 @@ QString Kopete::Password::retrieve( const QPixmap &image, const QString &prompt,
 			if ( wallet->readPassword( d->configGroup, pwd ) == 0 && !pwd.isNull() )
 				return pwd;
 		}
-
+#endif
 		if ( d->remembered && !d->passwordFromKConfig.isNull() )
 			return d->passwordFromKConfig;
 	}
