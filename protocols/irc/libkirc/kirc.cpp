@@ -455,21 +455,21 @@ void KIRC::slotReadyRead()
 					}
 					else
 					{
-						kdDebug(14120) << "Method error for line:" << msg.raw();
+						kdDebug(14120) << "Method error for line:" << msg.raw() << endl;
 						emit internalError(MethodFailed, msg);
 //						KMessageBox::error(0, msg.raw(), "Method error");
 					}
 				}
 				else
 				{
-					kdDebug(14120) << "Args are invalid for line:" << msg.raw();
+					kdDebug(14120) << "Args are invalid for line:" << msg.raw() << endl;
 					emit internalError(InvalidNumberOfArguments, msg);
 //					KMessageBox::error(0, msg.raw(), "Invalid args");
 				}
 			}
 			else
 			{
-				kdDebug(14120) << "Unknown IRC command for line:" << msg.raw();
+				kdDebug(14120) << "Unknown IRC command for line:" << msg.raw() << endl;
 				emit internalError(UnknownCommand, msg);
 //				KMessageBox::error(0, msg.raw(), "Unknown IRC line");
 			}
