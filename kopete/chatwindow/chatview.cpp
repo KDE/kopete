@@ -730,7 +730,12 @@ void ChatView::setCaption( const QString &text, bool modified )
 
 void ChatView::appendMessage(KopeteMessage &message)
 {
-	remoteTyping( message.from(), false );
+	//Note: it may happend that message not from contact in the list are hapened.
+	//  this is for example the case with the history
+	//(calling remoteTyping in this case is not fine because it adds the user to the chat)
+
+	if(typingMap.contains(message.from()))  
+		remoteTyping( message.from(), false );
 
 	//Need to copy this because it comes in as a const
 	KopeteMessage m = message;
