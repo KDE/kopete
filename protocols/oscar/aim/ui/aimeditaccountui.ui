@@ -435,6 +435,7 @@
     <tabstop>tabWidget6</tabstop>
     <tabstop>edtAccountId</tabstop>
     <tabstop>mSavePassword</tabstop>
+    <tabstop>edtPassword</tabstop>
     <tabstop>mAutoLogon</tabstop>
     <tabstop>buttonRegister</tabstop>
     <tabstop>optionOverrideServer</tabstop>
