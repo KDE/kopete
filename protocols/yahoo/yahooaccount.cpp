@@ -88,15 +88,14 @@ void YahooAccount::slotGoStatus( int status, const QString &awayMessage)
 
 	if( !isConnected() )
 	{
-		connect();
+		connect( m_protocol->statusFromYahoo( status ) );
 		stateOnConnection = status;
 	}
 	else
 	{
 		m_session->setAway( yahoo_status( status ), awayMessage, status ? 1 : 0 );
+		myself()->setOnlineStatus( m_protocol->statusFromYahoo( status ) );
 	}
-	
-	myself()->setOnlineStatus( m_protocol->statusFromYahoo( status) );
 }
 
 void YahooAccount::loaded()
@@ -165,6 +164,136 @@ QColor YahooAccount::getMsgColor(const QString& msg)
 	return Qt::black;
 }
 
+void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
+{
+	if ( sct == MakeConnections )
+	{
+	
+		QObject::connect(m_session, SIGNAL(loginResponse(int, const QString &)),
+				this, SLOT(slotLoginResponse(int, const QString &)) );
+	
+		QObject::connect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
+				this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
+	
+		QObject::connect(m_session, SIGNAL( buddyListFetched( int ) ),
+				this, SLOT(slotBuddyListFetched( int ) ) );
+	
+		QObject::connect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int)),
+				this, SLOT(slotStatusChanged(const QString&, int, const QString&, int)));
+	
+		QObject::connect(m_session, SIGNAL(gotIm(const QString&, const QString&, long, int)),
+				this, SLOT(slotGotIm(const QString &, const QString&, long, int)));
+	
+		QObject::connect(m_session, SIGNAL(gotConfInvite( const QString&, const QString&, const QString&,
+				const QStringList&)), this,
+				SLOT(slotGotConfInvite(const QString&, const QString&, const QString&, const QStringList&)));
+	
+		QObject::connect(m_session, SIGNAL(confUserDecline(const QString&, const QString &, const QString &)), this,
+				SLOT(slotConfUserDecline( const QString &, const QString &, const QString &)) );
+	
+		QObject::connect(m_session , SIGNAL(confUserJoin( const QString &, const QString &)), this,
+				SLOT(slotConfUserJoin( const QString &, const QString &)) );
+	
+		QObject::connect(m_session , SIGNAL(confUserLeave( const QString &, const QString &)), this,
+				SLOT(slotConfUserLeave( const QString &, const QString &)) );
+	
+		QObject::connect(m_session , SIGNAL(confMessage( const QString &, const QString &, const QString &)), this,
+				SLOT(slotConfMessage( const QString &, const QString &, const QString &)) );
+	
+		QObject::connect(m_session,
+				SIGNAL(gotFile(const QString &, const QString &, long, const QString &, const QString &, unsigned long)),
+				this,
+				SLOT(slotGotFile(const QString&, const QString&, long, const QString&, const QString&, unsigned long)));
+	
+		QObject::connect(m_session , SIGNAL(contactAdded(const QString &, const QString &, const QString &)), this,
+				SLOT(slotContactAdded(const QString &, const QString &, const QString &)));
+	
+		QObject::connect(m_session , SIGNAL(rejected(const QString &, const QString &)), this,
+				SLOT(slotRejected(const QString&, const QString&)));
+	
+		QObject::connect(m_session, SIGNAL(typingNotify(const QString &, int)), this ,
+				SLOT(slotTypingNotify(const QString &, int)));
+	
+		QObject::connect(m_session, SIGNAL(gameNotify(const QString &, int)), this,
+				SLOT(slotGameNotify( const QString &, int)));
+	
+		QObject::connect(m_session, SIGNAL(mailNotify(const QString&, const QString&, int)), this,
+				SLOT(slotMailNotify(const QString &, const QString&, int)));
+	
+		QObject::connect(m_session, SIGNAL(systemMessage(const QString&)), this,
+				SLOT(slotSystemMessage(const QString &)));
+	
+		QObject::connect(m_session, SIGNAL(error(const QString&, int)), this,
+				SLOT(slotError(const QString &, int )));
+	
+		QObject::connect(m_session, SIGNAL(gotIdentities(const QStringList &)), this,
+				SLOT(slotGotIdentities( const QStringList&)));
+	}
+	
+	if ( sct == DeleteConnections )
+	{
+		QObject::disconnect(m_session, SIGNAL(loginResponse(int, const QString &)),
+				this, SLOT(slotLoginResponse(int, const QString &)) );
+
+		QObject::disconnect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
+				this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
+
+		QObject::disconnect(m_session, SIGNAL( buddyListFetched( int ) ),
+					this, SLOT(slotBuddyListFetched( int ) ) );
+
+		QObject::disconnect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int)),
+				this, SLOT(slotStatusChanged(const QString&, int, const QString&, int)));
+
+		QObject::disconnect(m_session, SIGNAL(gotIm(const QString&, const QString&, long, int)),
+				this, SLOT(slotGotIm(const QString &, const QString&, long, int)));
+
+		QObject::disconnect(m_session, SIGNAL(gotConfInvite( const QString&, const QString&, const QString&,
+				const QStringList&)), this,
+				SLOT(slotGotConfInvite(const QString&, const QString&, const QString&, const QStringList&)));
+
+		QObject::disconnect(m_session, SIGNAL(confUserDecline(const QString&, const QString &, const QString &)), this,
+				SLOT(slotConfUserDecline( const QString &, const QString &, const QString &)) );
+
+		QObject::disconnect(m_session , SIGNAL(confUserJoin( const QString &, const QString &)), this,
+				SLOT(slotConfUserJoin( const QString &, const QString &)) );
+
+		QObject::disconnect(m_session , SIGNAL(confUserLeave( const QString &, const QString &)), this,
+				SLOT(slotConfUserLeave( const QString &, const QString &)) );
+
+		QObject::disconnect(m_session , SIGNAL(confMessage( const QString &, const QString &, const QString &)), this,
+				SLOT(slotConfMessage( const QString &, const QString &, const QString &)) );
+
+		QObject::disconnect(m_session,
+				SIGNAL(gotFile(const QString &, const QString &, long, const QString &, const QString &, unsigned long)),
+				this,
+				SLOT(slotGotFile(const QString&, const QString&, long, const QString&, const QString&, unsigned long)));
+
+		QObject::disconnect(m_session , SIGNAL(contactAdded(const QString &, const QString &, const QString &)), this,
+				SLOT(slotContactAdded(const QString &, const QString &, const QString &)));
+
+		QObject::disconnect(m_session , SIGNAL(rejected(const QString &, const QString &)), this,
+				SLOT(slotRejected(const QString&, const QString&)));
+
+		QObject::disconnect(m_session, SIGNAL(typingNotify(const QString &, int)), this ,
+				SLOT(slotTypingNotify(const QString &, int)));
+
+		QObject::disconnect(m_session, SIGNAL(gameNotify(const QString &, int)), this,
+				SLOT(slotGameNotify( const QString &, int)));
+
+		QObject::disconnect(m_session, SIGNAL(mailNotify(const QString&, const QString&, int)), this,
+				SLOT(slotMailNotify(const QString &, const QString&, int)));
+
+		QObject::disconnect(m_session, SIGNAL(systemMessage(const QString&)), this,
+				SLOT(slotSystemMessage(const QString &)));
+
+		QObject::disconnect(m_session, SIGNAL(error(const QString&, int)), this,
+				SLOT(slotError(const QString &, int )));
+
+		QObject::disconnect(m_session, SIGNAL(gotIdentities(const QStringList &)), this,
+				SLOT(slotGotIdentities( const QStringList&)));
+	}
+}
+
 void YahooAccount::connectWithPassword( const QString &passwd )
 {
 	if ( passwd.isNull() )
@@ -173,6 +302,7 @@ void YahooAccount::connectWithPassword( const QString &passwd )
 		return;
 	}
 
+	
 	QString server = "scs.msg.yahoo.com";
 	int port = 5050;
 
@@ -189,87 +319,21 @@ void YahooAccount::connectWithPassword( const QString &passwd )
 		kdDebug(14180) << "Attempting to connect to Yahoo on <" << server << ":" << port << ">. user <" << accountId() << ">" << endl;
 
 		static_cast<YahooContact*>( myself() )->setOnlineStatus( m_protocol->Connecting );
-		if(m_session)
+		if ( m_session && m_session->sessionId() > 0 ) 
 		{
-			if( m_session->sessionId() > 0)
-			{
 
-				/* We have a session, time to connect its signals to our plugin slots */
-				QObject::connect(m_session, SIGNAL(loginResponse(int, const QString &)),
-						this, SLOT(slotLoginResponse(int, const QString &)) );
+			initConnectionSignals( MakeConnections );
+			kdDebug(14180) << "Starting the login connection" << endl;
+			m_session->login( initialStatus().internalStatus() );
 
-				QObject::connect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
-						this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
-
-				QObject::connect(m_session, SIGNAL( buddyListFetched( int ) ),
-						 this, SLOT(slotBuddyListFetched( int ) ) );
-
-				QObject::connect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int)),
-						this, SLOT(slotStatusChanged(const QString&, int, const QString&, int)));
-
-				QObject::connect(m_session, SIGNAL(gotIm(const QString&, const QString&, long, int)),
-						this, SLOT(slotGotIm(const QString &, const QString&, long, int)));
-
-				QObject::connect(m_session, SIGNAL(gotConfInvite( const QString&, const QString&, const QString&,
-						const QStringList&)), this,
-						SLOT(slotGotConfInvite(const QString&, const QString&, const QString&, const QStringList&)));
-
-				QObject::connect(m_session, SIGNAL(confUserDecline(const QString&, const QString &, const QString &)), this,
-						SLOT(slotConfUserDecline( const QString &, const QString &, const QString &)) );
-
-				QObject::connect(m_session , SIGNAL(confUserJoin( const QString &, const QString &)), this,
-						SLOT(slotConfUserJoin( const QString &, const QString &)) );
-
-				QObject::connect(m_session , SIGNAL(confUserLeave( const QString &, const QString &)), this,
-						SLOT(slotConfUserLeave( const QString &, const QString &)) );
-
-				QObject::connect(m_session , SIGNAL(confMessage( const QString &, const QString &, const QString &)), this,
-						SLOT(slotConfMessage( const QString &, const QString &, const QString &)) );
-
-				QObject::connect(m_session,
-						SIGNAL(gotFile(const QString &, const QString &, long, const QString &, const QString &, unsigned long)),
-						this,
-						SLOT(slotGotFile(const QString&, const QString&, long, const QString&, const QString&, unsigned long)));
-
-				QObject::connect(m_session , SIGNAL(contactAdded(const QString &, const QString &, const QString &)), this,
-						SLOT(slotContactAdded(const QString &, const QString &, const QString &)));
-
-				QObject::connect(m_session , SIGNAL(rejected(const QString &, const QString &)), this,
-						SLOT(slotRejected(const QString&, const QString&)));
-
-				QObject::connect(m_session, SIGNAL(typingNotify(const QString &, int)), this ,
-						SLOT(slotTypingNotify(const QString &, int)));
-
-				QObject::connect(m_session, SIGNAL(gameNotify(const QString &, int)), this,
-						SLOT(slotGameNotify( const QString &, int)));
-
-				QObject::connect(m_session, SIGNAL(mailNotify(const QString&, const QString&, int)), this,
-						SLOT(slotMailNotify(const QString &, const QString&, int)));
-
-				QObject::connect(m_session, SIGNAL(systemMessage(const QString&)), this,
-						SLOT(slotSystemMessage(const QString &)));
-
-				QObject::connect(m_session, SIGNAL(error(const QString&, int)), this,
-						SLOT(slotError(const QString &, int )));
-
-				QObject::connect(m_session, SIGNAL(gotIdentities(const QStringList &)), this,
-						SLOT(slotGotIdentities( const QStringList&)));
-
-
-				kdDebug(14180) << "We appear to have connected on session: " << m_session << endl;
-
-				kdDebug(14180) << "Starting the login connection" << endl;
-				m_session->login( YAHOO_STATUS_AVAILABLE );
-
-			}
-			else
-			{
-				kdDebug(14180) << "Couldn't connect!" << endl;
-				// TODO: message box saying can't connect?
-			}
+		}
+		else
+		{
+			kdDebug(14180) << "Couldn't connect!" << endl;
+			// TODO: message box saying can't connect?
 		}
 	}
-	else if(isAway())
+	else if ( isAway() )
 	{	// They're really away, and they want to un-away.
 		slotGoOnline();
 	}
@@ -289,17 +353,18 @@ void YahooAccount::disconnect()
 		m_session->logOff();
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 
-		for(QDictIterator<KopeteContact> i(contacts()); i.current(); ++i)
-			static_cast<YahooContact *>(i.current())->setOnlineStatus( m_protocol->Offline );
+		for ( QDictIterator<KopeteContact> i( contacts() ); i.current(); ++i )
+			static_cast<YahooContact *>( i.current() )->setOnlineStatus( m_protocol->Offline );
 	}
 	else
-	{   //make sure we set everybody else offline explicitly, just for cleanup
-		kdDebug(14180) << "Ignoring disconnect request (not connected)." << endl;
+	{       //make sure we set everybody else offline explicitly, just for cleanup
+		kdDebug(14180) << "Ignoring disconnect request (not fully connected)." << endl;
 
-		for(QDictIterator<KopeteContact> i(contacts()); i.current(); ++i)
-			static_cast<YahooContact *>(i.current())->setOnlineStatus( m_protocol->Offline );
+		for ( QDictIterator<KopeteContact> i(contacts()); i.current(); ++i )
+			static_cast<YahooContact*>( i.current() )->setOnlineStatus( m_protocol->Offline );
 	}
 
+	initConnectionSignals( DeleteConnections );
 	theHaveContactList = false;
 }
 
@@ -321,7 +386,7 @@ void YahooAccount::slotConnected()
 void YahooAccount::slotGoOnline()
 {
 	if( !isConnected() )
-		connect();
+		connect( m_protocol->Online );
 	else
 		slotGoStatus(0);
 }
@@ -468,17 +533,19 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	if ( succ == YAHOO_LOGIN_OK || (succ == YAHOO_LOGIN_DUPL && m_lastDisconnectCode == 2) )
 	{
 		slotGotBuddies(yahooSession()->getLegacyBuddyList());
-		/*
-		 * FIXME: Right now, we only support connecting as online
-		 * Support needs to be added for invisible
-		 */
-		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Online );
+		
+		//Yahoo only supports connecting as invisible and online, nothing else
+		if ( initialStatus() == m_protocol->Invisible )
+			static_cast<YahooContact *>( myself() )->setOnlineStatus( initialStatus() );
+		else
+			static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Online );
+			
 		m_lastDisconnectCode = 0;
 		return;
 	}
 	else if(succ == YAHOO_LOGIN_PASSWD)
 	{
-		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
+		disconnect();
 		emit needReconnect();
 		return;
 	}

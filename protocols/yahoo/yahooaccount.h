@@ -54,6 +54,9 @@ class YahooAccount : public Kopete::PasswordedAccount
 	Q_OBJECT
 
 public:
+
+	enum SignalConnectionType { MakeConnections, DeleteConnections };
+	
 	YahooAccount(YahooProtocol *parent,const QString& accountID, const char *name = 0L);
 	~YahooAccount();
 
@@ -180,6 +183,12 @@ private slots:
 	void slotNeedReconnect();
 
 private:
+
+	/**
+	 * Handle the signal and slot connections and disconnects
+	 */
+	void initConnectionSignals( enum SignalConnectionType sct );
+
 	/**
 	 * internal (to the plugin) controls/flags
 	 * This should be kept in sync with server - if a buddy is removed, this should be changed accordingly.
