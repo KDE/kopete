@@ -52,7 +52,7 @@ k_dcop:
 	/**
 	 * Open a chat to a contact, and optionally set some initial text
 	 */
-	void messageContact( const QString &contactId, const QString &messageText = QString::null );
+	QString messageContact( const QString &contactId, const QString &messageText = QString::null );
 
 	/**
 	 * Describe the status of a contact by their metaContactId,

@@ -85,9 +85,13 @@ QStringList KopeteIface::contactFileProtocols(const QString &displayName)
 	return KopeteContactList::contactList()->contactFileProtocols(displayName);
 }
 
-void KopeteIface::messageContact( const QString &contactId, const QString &messageText )
+QString KopeteIface::messageContact( const QString &contactId, const QString &messageText )
 {
-	KopeteContactList::contactList()->messageContact( contactId, messageText );
+	KopeteMetaContact *mc = KopeteContactList::contactList()->findMetaContactByContactId( contactId );
+	if ( mc && mc->isReachable() )
+		KopeteContactList::contactList()->messageContact( contactId, messageText );
+	else
+		return "Unable to send message. The contact is not reachable";
 }
 /*
 void KopeteIface::sendFile(const QString &displayName, const KURL &sourceURL,
@@ -139,6 +143,8 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &accoun
 			realGroupName = groupName;
 
 		// Confirm with the user before we add the contact
+		// FIXME: This is completely bogus since the user may not
+		// even be at the computer. We just need to add the contact --Matt
 		if( KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n( "An external application is attempting to add the "
 			" '%1' contact '%2' to your contact list. Do you want to allow this?" )
 			.arg( protocolName ).arg( contactName ), i18n( "Allow Contact?" ) ) == 3 ) // Yes == 3
