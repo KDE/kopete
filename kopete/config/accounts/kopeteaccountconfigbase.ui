@@ -51,7 +51,7 @@
                 <string>Modify selected account</string>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>Let you edit accounts properties.</string>
+                <string>Let you edit account's properties.</string>
             </property>
         </widget>
         <widget class="QPushButton" row="2" column="1" rowspan="1" colspan="3">
@@ -164,7 +164,7 @@
             </property>
             <property name="whatsThis" stdset="0">
                 <string>Allows you to set a custom color for this account.
-The icon of every contact of this account will be coloured with this color. Usefull if you have several accounts of the same protocol</string>
+The icon of every contact of this account will be coloured with this color. Useful if you have several accounts of the same protocol</string>
             </property>
         </widget>
         <spacer row="5" column="1">
@@ -212,8 +212,8 @@ The icon of every contact of this account will be coloured with this color. Usef
                 <string>Increase the priority</string>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>Uses theses buttons to increase or decrease the priority.
-The priority is used to determine what contact to use when you click on a metacontact.  Kopete will use the contact of the account which has the greatest priority, if all contact has the same online status.</string>
+                <string>Uses these buttons to increase or decrease the priority.
+The priority is used to determine which contact to use when you click on a metacontact: Kopete will use the contact of the account with the greatest priority (if all contacts have the same online status.)</string>
             </property>
         </widget>
         <widget class="KPushButton" row="8" column="1" rowspan="1" colspan="2">
@@ -227,8 +227,8 @@ The priority is used to determine what contact to use when you click on a metaco
                 <string>Decrease the priority</string>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>Uses theses buttons to increase or decrease the priority.
-The priority is used to determine what contact to use when you click on a metacontact.  Kopete will use the contact of the account which has the greatest priority, if all contact has the same online status.</string>
+                <string>Uses these buttons to increase or decrease the priority.
+The priority is used to determine which contact to use when you click on a metacontact: Kopete will use the contact of the account with the greatest priority (if all contacts have the same online status.)</string>
             </property>
         </widget>
     </grid>

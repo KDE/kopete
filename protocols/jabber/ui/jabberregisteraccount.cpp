@@ -438,7 +438,7 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 
 	if (task->success ())
 	{
-		mMainWidget->lblStatusMessage->setText ( i18n ( "Registration successful!" ) );
+		mMainWidget->lblStatusMessage->setText ( i18n ( "Registration successful." ) );
 
 		// save settings to parent
 		mParentWidget->mServer->setText ( mMainWidget->leServer->text () );
