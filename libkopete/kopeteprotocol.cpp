@@ -26,18 +26,25 @@
 #include "kopetemetacontact.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
+#include "kopeteglobal.h"
+#include "kopetecontactproperty.h"
 
 class KopeteProtocolPrivate
 {
 public:
 	bool unloading;
 	int capabilities;
+	/* make sure we always have a lastSeen property as long as a
+	 * protocol is loaded
+	 */
+	Kopete::ContactPropertyTmpl propLastSeen;
 };
 
 KopeteProtocol::KopeteProtocol( KInstance *instance, QObject *parent, const char *name )
 : KopetePlugin( instance, parent, name )
 {
 	d = new KopeteProtocolPrivate;
+	d->propLastSeen = Kopete::Global::Properties::self()->lastSeen();
 	d->unloading = false;
 	d->capabilities = 0;
 }
@@ -255,6 +262,7 @@ KopeteContact *KopeteProtocol::deserializeContact(
 	const QMap<QString, QString> & /* addressBookData */ )
 {
 	/* Default implementation does nothing */
+	return 0;
 }
 
 void KopeteProtocol::slotAccountOnlineStatusChanged( KopeteContact *self, const KopeteOnlineStatus &newStatus,
