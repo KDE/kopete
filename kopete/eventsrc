@@ -442,8 +442,12 @@ Name=Low priority messages
 Name[da]=Breve med lav prioritet
 Name[et]=Madala prioriteediga sõnumid
 Name[nl]=Berichten met lage prioriteit
+Name[sv]=Lågprioriterat meddelande
 Name[ta]=குறைந்த முண்ணுரிமை உள்ள செய்திகள்
 Comment=A message marked with a low priority has been received
+Comment[da]=En indkommende besked med lav prioritet er blevet modtaget
+Comment[et]=Saabus madalaprioriteediline sõnum
+Comment[sv]=Ett inkommande meddelande har anlänt
 default_presentation=0
 
 
