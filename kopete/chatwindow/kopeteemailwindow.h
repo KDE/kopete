@@ -17,19 +17,15 @@
     *************************************************************************
 */
 
-#ifndef __KOPETEEMAILWINDOW_H__
-#define __KOPETEEMAILWINDOW_H__
+#ifndef KOPETEEMAILWINDOW_H
+#define KOPETEEMAILWINDOW_H
+
+#include "kopeteview.h"
 
 #include <kmainwindow.h>
 #include <kparts/mainwindow.h>
 
-#include "kopeteview.h"
-
-class KURL;
-
 namespace KParts { struct URLArgs; }
-
-class KopeteEmailWindowPrivate;
 
 class KopeteEmailWindow : KParts::MainWindow, public KopeteView
 {
@@ -38,29 +34,15 @@ class KopeteEmailWindow : KParts::MainWindow, public KopeteView
 public:
 	enum WindowMode { Send, Read, Reply };
 
-	/**
-	 * Constructs a KopeteEmailWindowBase as a child of 'parent', with the
-	 * name 'name' and widget flags set to 'f'.
-	 */
 	KopeteEmailWindow( Kopete::ChatSession *, bool foreignMessage );
-
-	/**
-	 * Destroys the object and frees any allocated resources
-	 */
 	~KopeteEmailWindow();
 
-	virtual void setCurrentMessage( const Kopete::Message &newMessage );
-
-	virtual void raise(bool activate=false);
-
-	virtual void makeVisible();
-
-	virtual bool closeView( bool force = false );
-
-	virtual bool isVisible();
-
 	virtual Kopete::Message currentMessage();
-
+	virtual void setCurrentMessage( const Kopete::Message &newMessage );
+	virtual void raise(bool activate=false);
+	virtual void makeVisible();
+	virtual bool closeView( bool force = false );
+	virtual bool isVisible();
 	virtual QTextEdit *editWidget();
 	virtual QWidget *mainWidget() { return this; }
 
@@ -78,31 +60,26 @@ signals:
 protected:
 	virtual void closeEvent( QCloseEvent *e );
 	virtual void windowActivationChange( bool activated );
-	virtual bool eventFilter( QObject *o, QEvent *e );
 
 private slots:
-	void slotReplySendClicked();
+	void slotReplySend();
+	void slotUpdateReplySend();
 	void slotReadNext();
 	void slotReadPrev();
-	void slotTextChanged();
 	void slotCloseView();
 
 	void slotSmileyActivated( const QString & );
 	void slotCopy();
-	void slotSetBgColor( const QColor & = QColor() );
-	void slotSetFgColor( const QColor & = QColor() );
-	void slotSetFont( const QFont & );
-	void slotSetFont();
 
 	void slotViewMenuBar();
-	void slotViewToolBar();
 
 	void slotConfToolbar();
 
 	void slotMarkMessageRead();
 
 private:
-	KopeteEmailWindowPrivate *d;
+	class Private;
+	Private *d;
 
 	void toggleMode( WindowMode );
 	void updateNextButton();
