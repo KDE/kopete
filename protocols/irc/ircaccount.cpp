@@ -88,6 +88,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 
 	triedAltNick = false;
 
+	m_contactManager = 0;
 	m_engine = new KIRC(this);
 
 	QMap< QString, QString> replies = customCtcpReplies();
