@@ -19,8 +19,11 @@
 #define KIRCTRANSFER_H
 
 #include <qdatastream.h>
+#include <qhostaddress.h>
 #include <qobject.h>
 #include <qtextstream.h>
+
+class KIRC;
 
 class KExtendedSocket;
 
@@ -33,15 +36,38 @@ class KIRCTransfer
 	Q_OBJECT
 
 public:
-	enum /*Media*/Type {
+	enum Type {
 		Unknown,
 		Chat,
 		FileOutgoing,
 		FileIncoming
 	};
 
+	enum Status {
+		Error_NoSocketSet	= -2,
+		Error			= -1,
+		Idle			= 0,
+		HostLookup,
+		Connecting,
+		Connected,
+		Closed
+	};
 public:
-	KIRCTransfer( Type type = Unknown, QObject *parent = 0L, const char *name = 0L );
+	KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress
+			Type type = Unknown,
+			QObject *parent = 0L, const char *name = 0L );
+
+	KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress,
+			QHostAddress peer_address, Q_UINT16 peer_port,
+			KIRCTransfer::Type type,
+			QObject *parent = 0L, const char *name = 0L );
+
+	KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress,
+			QHostAddress peer_address, Q_UINT16 peer_port,
+			KIRCTransfer::Type type,
+			QFile *file, Q_UINT32 file_size,
+			QObject *parent = 0L, const char *name = 0L );
+
 	~KIRCTransfer();
 
 	bool setSocket( KExtendedSocket *socket );
@@ -50,6 +76,9 @@ public:
 	{
 		return m_type;
 	}
+
+	Status status();
+	void connectToPeer();
 
 public slots:
 	void setCodec( QTextCodec *codec );

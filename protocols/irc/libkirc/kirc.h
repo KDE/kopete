@@ -318,6 +318,9 @@ private slots:
 	void quitTimeout();
 
 private:
+	void registerCtcpMethods();
+	void registerNumericReplies();
+
 	static const QRegExp isChannelRegex;
 
 	typedef bool ircMethod(const KIRCMessage &msg);

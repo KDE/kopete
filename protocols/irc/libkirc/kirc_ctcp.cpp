@@ -23,6 +23,25 @@
 
 #include "kirc.h"
 
+void KIRC::registerCtcpMethods()
+{
+//	CTCP Queries
+	addCtcpQueryIrcMethod("ACTION",		&KIRC::CtcpQuery_action,	-1,	-1,	"");
+	addCtcpQueryIrcMethod("CLIENTINFO",	&KIRC::CtcpQuery_clientInfo,	-1,	1,	"");
+	addCtcpQueryIrcMethod("DCC",		&KIRC::CtcpQuery_dcc,		4,	5,	"");
+	addCtcpQueryIrcMethod("FINGER",		&KIRC::CtcpQuery_finger,	-1,	0,	"");
+	addCtcpQueryIrcMethod("PING",		&KIRC::CtcpQuery_pingPong,	1,	1,	"");
+	addCtcpQueryIrcMethod("SOURCE",		&KIRC::CtcpQuery_source,	-1,	0,	"");
+	addCtcpQueryIrcMethod("TIME",		&KIRC::CtcpQuery_time,		-1,	0,	"");
+	addCtcpQueryIrcMethod("USERINFO",	&KIRC::CtcpQuery_userInfo,	-1,	0,	"");
+	addCtcpQueryIrcMethod("VERSION",	&KIRC::CtcpQuery_version,	-1,	0,	"");
+
+//	CTCP Replies
+	addCtcpReplyIrcMethod("ERRMSG",		&KIRC::CtcpReply_errorMsg,	1,	-1,	"");
+	addCtcpReplyIrcMethod("PING",		&KIRC::CtcpReply_pingPong,	1,	1,	"");
+	addCtcpReplyIrcMethod("VERSION",	&KIRC::CtcpReply_version,	-1,	-1,	"");
+}
+
 // Normal order for a ctcp commands:
 // CtcpRequest_*
 // CtcpQuery_*
@@ -53,7 +72,7 @@ void KIRC::CtcpRequest_action(const QString &contact, const QString &message)
 
 bool KIRC::CtcpQuery_action(const KIRCMessage &msg)
 {
-	QString target = msg.args()[0];
+	QString target = msg.arg(0);
 	if (target[0] == '#' || target[0] == '!' || target[0] == '&')
 		emit incomingAction(msg.nickFromPrefix(), target, msg.ctcpMessage().ctcpRaw());
 	else
@@ -100,11 +119,11 @@ void KIRC::CtcpRequest_dcc(const QString &nickname, const QString &filename, uin
 bool KIRC::CtcpQuery_dcc(const KIRCMessage &msg)
 {
 	const KIRCMessage &ctcpMsg = msg.ctcpMessage();
-	QString dccCommand = ctcpMsg.args()[0].upper();
+	QString dccCommand = ctcpMsg.arg(0).upper();
 
 	if (dccCommand == QString::fromLatin1("CHAT"))
 	{
-		if(ctcpMsg.args().size()!=4) return false;
+		if(ctcpMsg.argsSize()!=4) return false;
 
 		/* DCC CHAT type longip port
 		 *
@@ -113,19 +132,22 @@ bool KIRC::CtcpQuery_dcc(const KIRCMessage &msg)
 		 *  port   = Port on which the originator is waitng for a DCC chat
 		 */
 		bool okayHost, okayPort;
-		// should ctctArgs[1] be tested?
-		QHostAddress address(ctcpMsg.args()[2].toUInt(&okayHost));
-		unsigned int port = ctcpMsg.args()[3].toUInt(&okayPort);
+		// should ctctMsg.arg(1) be tested?
+		QHostAddress address(ctcpMsg.arg(2).toUInt(&okayHost));
+		unsigned int port = ctcpMsg.arg(3).toUInt(&okayPort);
 		if (okayHost && okayPort)
 		{
 			kdDebug(14120) << "Starting DCC chat window." << endl;
-			KIRCTransferHandler::self()->createClient(address, port, KIRCTransfer::Chat );
+			KIRCTransferHandler::self()->createClient(
+				this, msg.nickFromPrefix(),
+				address, port,
+				KIRCTransfer::Chat );
 			return true;
 		}
 	}
 	else if (dccCommand == QString::fromLatin1("SEND"))
 	{
-		if(ctcpMsg.args().size()!=5) return false;
+		if(ctcpMsg.argsSize()!=5) return false;
 
 		/* DCC SEND (filename) (longip) (port) (filesize)
 		 *
@@ -135,14 +157,18 @@ bool KIRC::CtcpQuery_dcc(const KIRCMessage &msg)
 		 *  filesize = Size of file being sent
 		 */
 		bool okayHost, okayPort, okaySize;
-		QFileInfo realfile(msg.args()[1]);
-		QHostAddress address(ctcpMsg.args()[2].toUInt(&okayHost));
-		unsigned int port = ctcpMsg.args()[3].toUInt(&okayPort);
-		unsigned int size = ctcpMsg.args()[4].toUInt(&okaySize);
+		QFileInfo realfile(msg.arg(1));
+		QHostAddress address(ctcpMsg.arg(2).toUInt(&okayHost));
+		unsigned int port = ctcpMsg.arg(3).toUInt(&okayPort);
+		unsigned int size = ctcpMsg.arg(4).toUInt(&okaySize);
 		if (okayHost && okayPort && okaySize)
 		{
 			kdDebug(14120) << "Starting DCC send file transfert." << endl;
-			KIRCTransferHandler::self()->createClient(address, port, KIRCTransfer::FileIncoming, (QFile *)0L, size );
+			KIRCTransferHandler::self()->createClient(
+				this, msg.nickFromPrefix(),
+				address, port,
+				KIRCTransfer::FileIncoming,
+				(QFile *)0L, size );
 			return true;
 		}
 	}
@@ -206,7 +232,7 @@ void KIRC::CtcpRequest_pingPong(const QString &target)
 bool KIRC::CtcpQuery_pingPong(const KIRCMessage &msg)
 {
 	writeCtcpReplyMessage(	msg.nickFromPrefix(), QString::null,
-				msg.ctcpMessage().command(), msg.ctcpMessage().args()[0]);
+				msg.ctcpMessage().command(), msg.ctcpMessage().arg(0));
 	return true;
 }
 

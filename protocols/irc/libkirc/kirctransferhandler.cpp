@@ -49,45 +49,21 @@ KIRCTransferServer *KIRCTransferHandler::server( Q_UINT16 port, int backlog )
 }
 
 KIRCTransfer *KIRCTransferHandler::createClient(
+	KIRC *engine, QString nick,// QString nick_peer_adress,
 	QHostAddress peer_address, Q_UINT16 peer_port,
 	KIRCTransfer::Type type,
 	QFile *file, Q_UINT32 file_size )
 {
-	return 0L;
-}
-/*
-KIRCTransfer *KIRCTransferHandler::initiateChatClient(
-	QHostAddress peer_address, Q_UINT16 peer_port,
-	KIRCTransfer::Type type, KIRCTransfer::Direction direction,
-	QFile *file, Q_UINT32 file_size )
-{
-	return 0L;
-}
-
-KIRCTransfer *KIRCTransferHandler::chatClient(
-	QHostAddress peer_address, Q_UINT16 peer_port,
-	KIRCTransfer::Type type, KIRCTransfer::Direction direction,
-	QFile *file, Q_UINT32 file_size )
-{
-	return 0L;
+	KIRCTransfer *client = new KIRCTransfer(
+		engine, nick,// QString nick_peer_adress,
+		peer_address, peer_port,
+		type,
+		file, file_size,
+		this );
+	transferCreated( client );
+	return client;
 }
 
-KIRCTransfer *KIRCTransferHandler::sendFileClient(
-	QHostAddress peer_address, Q_UINT16 peer_port,
-	KIRCTransfer::Type type, KIRCTransfer::Direction direction,
-	QFile *file, Q_UINT32 file_size )
-{
-	return 0L;
-}
-
-KIRCTransfer *KIRCTransferHandler::receiveFileClient(
-	QHostAddress peer_address, Q_UINT16 peer_port,
-	KIRCTransfer::Type type, KIRCTransfer::Direction direction,
-	QFile *file, Q_UINT32 file_size )
-{
-	return 0L;
-}
-*/
 /*
 File *DCCHandler::openFile( QString file, int mode = IO_ReadWrite )
 {

@@ -21,7 +21,25 @@
 
 #include "kirctransfer.h"
 
-KIRCTransfer::KIRCTransfer( Type type, QObject *parent, const char *name )
+KIRCTransfer::KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress
+				Type type,
+				QObject *parent, const char *name )
+	: QObject( parent, name ),
+//	  m_engine(engine), m_nick(nick),
+	  m_type(type),
+	  m_socket(0),
+	  m_file(0),
+	  m_file_size_cur(0), m_file_size_ack(0),
+	  m_received_bytes_limit(0), m_received_bytes(0),
+	  m_sent_bytes_limit(0), m_sent_bytes(0)
+{
+}
+
+KIRCTransfer::KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress
+				QHostAddress , Q_UINT16,
+				KIRCTransfer::Type type,
+				QFile *file, Q_UINT32 file_size,
+				QObject *parent, const char *name )
 	: QObject( parent, name ),
 	  m_type(type),
 	  m_received_bytes_limit(0), m_received_bytes(0),
@@ -43,6 +61,21 @@ KIRCTransfer::~KIRCTransfer()
 	default:
 		break;
 	}
+}
+/*
+KIRCTransfer::Status KIRCTransfer::status()
+{
+	if(m_socket)
+	{
+		return (KIRCTransfer::Status)m_socket->socketStatus();
+	}
+	return KExtendedSocket::error;
+}
+*/
+void KIRCTransfer::connectToPeer()
+{
+	if(m_socket)
+		m_socket->connect();
 }
 
 bool KIRCTransfer::setSocket( KExtendedSocket *socket )

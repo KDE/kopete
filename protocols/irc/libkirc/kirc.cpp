@@ -80,195 +80,8 @@ KIRC::KIRC( QObject *parent, const char *name) : QObject( parent, name ),
 	addIrcMethod("PING",	&KIRC::ping,	0,	0);
 	addIrcMethod("PONG",	&KIRC::pong,	0,	0);
 
-//	Numeric Replies:
-//	Note: Numeric replies always have the current nick or *(when undefined) as first argmuent.
-	addIrcMethod("001",	&KIRC::numericReply_001,	1,	1);
-
-	/* Gives information about the host, close to 004 (See case 004) in the form of:
-	 * ":Your host is <servername>, running version <ver>" */
-	addIrcMethod("002",	new KIRCMethodFunctor_S_Suffix<KIRC>(this, &KIRC::incomingConnectString,		1,	1));
-
-	/* Gives the date that this server was created (useful for determining the uptime of the server) in the form of:
-	 * "This server was created <date>" */
-	addIrcMethod("003",	new KIRCMethodFunctor_S_Suffix<KIRC>(this, &KIRC::incomingConnectString,		1,	1));
-	addIrcMethod("004",	&KIRC::numericReply_004,	5,	5);
-
-	/* NOT IN RFC1459 NOR RFC2812
-	 * Tells connections statistics about the server for the uptime activity:
-	 * ":Highest connection count: <integer> (<integer> clients) (<integer> since server was (re)started)"
-	 * This is not the only form of this message ignoring it for now.
-	 * FIXME: Implement me */
-	addIrcMethod("250",	new KIRCMethodFunctor_Ignore());
-
-	/* Tells how many user there are on all the different servers in the form of:
-	 * ":There are <integer> users and <integer> services on <integer> servers" */
-	addIrcMethod("251",	new KIRCMethodFunctor_Ignore());
-
-	/* Issues a number of operators on the server in the form of:
-	 * "<integer> :operator(s) online" */
-	// FIXME: send an integer instead of a QString
-	addIrcMethod("252",	&KIRC::numericReply_252,	2,	2);
-
-	/* Tells how many unknown connections the server has in the form of:
-	 * "<integer> :unknown connection(s)" */
-	// FIXME: send an integer instead of a QString
-	addIrcMethod("253",	&KIRC::numericReply_253,	2,	2);
-
-	/* Tells how many total channels there are on this network in the form of:
-	 * "<integer> :channels formed" */
-	// FIXME: send an integer instead of a QString
-	addIrcMethod("254",	&KIRC::numericReply_254,	2,	2);
-
-	/* Tells how many clients and servers *this* server handles in the form of:
-	 * ":I have <integer> clients and <integer> servers" */
-	addIrcMethod("255",	new KIRCMethodFunctor_S_Suffix<KIRC>(this, &KIRC::incomingConnectString, 1, 1));
-
-	//Server is too busy
-	addIrcMethod("263",	new KIRCMethodFunctor_Empty<KIRC>(this, &KIRC::incomingServerLoadTooHigh));
-
-	/* NOT IN RFC2812
-	 * Tells statistics about the current local server state:
-	 * ":Current local  users: <integer>  Max: <integer>" */
-	addIrcMethod("265",	new KIRCMethodFunctor_Ignore());
-
-	/* Tells statistics about the current global(the whole irc server chain) server state:
-	 * ":Current global users: <integer>  Max: <integer>" */
-	addIrcMethod("266",	new KIRCMethodFunctor_Ignore());
-
-	/* "<nick> :<away message>"
-	 */
-	addIrcMethod("301",	new KIRCMethodFunctor_SS_Suffix<KIRC,1>(this, &KIRC::incomingUserIsAway, 2, 2));
-
-	addIrcMethod("303",	&KIRC::numericReply_303,	1,	1);
-
-	/* ":You are no longer marked as being away"
-	 */
-	addIrcMethod("305",	new KIRCMethodFunctor_Ignore());
-
-	/* ":You have been marked as being away"
-	 */
-	addIrcMethod("306",	new KIRCMethodFunctor_Ignore());
-
-	/* Indicates that this user is identified with NICSERV on DALNET */
-	addIrcMethod("307",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingWhoIsIdentified, 2, 2));
-
-	/* Show info about a user (part of a /whois) in the form of:
-	 * "<nick> <user> <host> * :<real name>" */
-	addIrcMethod("311",	&KIRC::numericReply_311,	5,	5);
-
-	/* Show info about a server (part of a /whois) in the form of:
-	 * "<nick> <server> :<server info>" */
-	addIrcMethod("312",	&KIRC::numericReply_312,	3,	3);
-
-	/* Show info about an operator (part of a /whois) in the form of:
-	 * "<nick> :is an IRC operator" */
-	addIrcMethod("313",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingWhoIsOperator, 2, 2));
-
-	/* Show WHOWAS Info
-	 * "<nick> <user> <host> * :<real name>" */
-	addIrcMethod("314",	&KIRC::numericReply_314,	5,	5);
-
-	addIrcMethod("315",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingEndOfWho, 2, 2));
-
-	addIrcMethod("317",	&KIRC::numericReply_317,	3,	4);
-
-	/* Receive end of WHOIS in the form of
-	 * "<nick> :End of /WHOIS list" */
-	addIrcMethod("318",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingEndOfWhois, 2, 2));
-
-	addIrcMethod("319",	&KIRC::numericReply_319,	2,	2);
-
-	/* Indicates that this user is identified with NICSERV on FREENODE */
-	addIrcMethod("320",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingWhoIsIdentified, 2, 2));
-
-	/* RFC1459: "<channel> :Users  Name" ("Channel :Users  Name")
-	 * RFC2812: Obsolete. Not used. */
-	addIrcMethod("321",	new KIRCMethodFunctor_Ignore());
-
-	/* Received one channel from the LIST command.
-	 * "<channel> <# visible> :<topic>" */
-	addIrcMethod("322",	&KIRC::numericReply_322,	3,	3);
-
-	/* End of the LIST command.
-	 * ":End of LIST" */
-	addIrcMethod("323",	new KIRCMethodFunctor_Empty<KIRC>(this, &KIRC::incomingEndOfList));
-
-	addIrcMethod("324",	&KIRC::numericReply_324,	2,	4);
-	addIrcMethod("328",	&KIRC::numericReply_328,	2,	2);
-	addIrcMethod("329",	&KIRC::numericReply_329,	3,	3);
-	addIrcMethod("331",	&KIRC::numericReply_331,	2,	2);
-	addIrcMethod("332",	&KIRC::numericReply_332,	2,	2);
-	addIrcMethod("333",	&KIRC::numericReply_333,	4,	4);
-
-	//WHO Reply
-	addIrcMethod("352",	&KIRC::numericReply_352,	5,	10);
-
-	//NAMES list
-	addIrcMethod("353",	&KIRC::numericReply_353,	3,	3);
-
-	/* Gives a signal to indicate that the NAMES list has ended for a certain channel in the form of:
-	 * "<channel> :End of NAMES list" */
-	addIrcMethod("366",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingEndOfNames, 2, 2));
-
-	/* End of WHOWAS Request */
-	addIrcMethod("369",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingEndOfWhoWas, 2, 2));
-
-	/* Part of the MOTD.
-	 * ":- <text>" */
-	addIrcMethod("372",	&KIRC::numericReply_372,	1,	1);
-
-	/* Beginging the motd. This isn't emitted because the MOTD is sent out line by line.
-	 * ":- <server> Message of the day - "
-	 */
-	addIrcMethod("375",	&KIRC::numericReply_375,	1,	1);
-//	addIrcMethod("375",	KIRCMethodFunctor_S_Suffix(this, &KIRC::incomingStartOfMotd,	1,	1));
-
-	/* End of the motd.
-	 * ":End of MOTD command" */
-	addIrcMethod("376",	&KIRC::numericReply_376,	1,	1);
-
-	/* Gives a signal to indicate that the command issued failed because the person not being on IRC in the for of:
-	 * "<nickname> :No such nick/channel"
-	 *  - Used to indicate the nickname parameter supplied to a command is currently unused. */
-	addIrcMethod("401",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingNoNickChan, 2, 2));
-
-	addIrcMethod("404",	new KIRCMethodFunctor_SS_Suffix<KIRC, 1>(this, &KIRC::incomingCannotSendToChannel, 2, 2));
-
-	/* Like case 401, but when there *was* no such nickname
-	 * "<nickname> :There was no such nickname" */
-	addIrcMethod("406",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingWasNoNick, 2, 2));
-
-	addIrcMethod("433",	&KIRC::numericReply_433,	2,	2);
-
-	addIrcMethod("442",	new KIRCMethodFunctor_SS_Suffix<KIRC, 1>(this, &KIRC::incomingCannotSendToChannel, 2, 2));
-
-	/* Bad server password */
-	addIrcMethod("464",	&KIRC::numericReply_464,	1,	1);
-	/* Channel is Full */
-	addIrcMethod("471",	&KIRC::numericReply_471,	2,	2);
-	/* Invite Only */
-	addIrcMethod("473",	&KIRC::numericReply_473,	2,	2);
-	/* Banned */
-	addIrcMethod("474",	&KIRC::numericReply_474,	2,	2);
-	/* Wrong Chan-key */
-	addIrcMethod("475",	&KIRC::numericReply_475,	2,	2);
-
-
-//	CTCP Queries
-	addCtcpQueryIrcMethod("ACTION",		&KIRC::CtcpQuery_action,	-1,	-1,	"");
-	addCtcpQueryIrcMethod("CLIENTINFO",	&KIRC::CtcpQuery_clientInfo,	-1,	1,	"");
-	addCtcpQueryIrcMethod("DCC",		&KIRC::CtcpQuery_dcc,		4,	5,	"");
-	addCtcpQueryIrcMethod("FINGER",		&KIRC::CtcpQuery_finger,	-1,	0,	"");
-	addCtcpQueryIrcMethod("PING",		&KIRC::CtcpQuery_pingPong,	1,	1,	"");
-	addCtcpQueryIrcMethod("SOURCE",		&KIRC::CtcpQuery_source,	-1,	0,	"");
-	addCtcpQueryIrcMethod("TIME",		&KIRC::CtcpQuery_time,		-1,	0,	"");
-	addCtcpQueryIrcMethod("USERINFO",	&KIRC::CtcpQuery_userInfo,	-1,	0,	"");
-	addCtcpQueryIrcMethod("VERSION",	&KIRC::CtcpQuery_version,	-1,	0,	"");
-
-//	CTCP Replies
-	addCtcpReplyIrcMethod("ERRMSG",		&KIRC::CtcpReply_errorMsg,	1,	-1,	"");
-	addCtcpReplyIrcMethod("PING",		&KIRC::CtcpReply_pingPong,	1,	1,	"");
-	addCtcpReplyIrcMethod("VERSION",	&KIRC::CtcpReply_version,	-1,	-1,	"");
+	registerNumericReplies();
+	registerCtcpMethods();
 
 	m_VersionString = QString::fromLatin1("Anonymous client using the KIRC engine.");
 	m_UserString = QString::fromLatin1("Response not supplied by user.");
@@ -577,7 +390,7 @@ void KIRC::slotReadyRead()
 			{
 				if (method->checkMsgValidity(msg) &&
 					(!msg.isNumeric() ||
-					 (/*msg.isNumeric()&&*/msg.count() > 0 && msg.arg(0) == m_Nickname || msg.arg(0) == "*")))
+					 (/*msg.isNumeric()&&*/msg.argsSize() > 0 && msg.arg(0) == m_Nickname || msg.arg(0) == "*")))
 				{
 					emit receivedMessage(msg);
 					if (!method->operator()(msg))
@@ -748,7 +561,7 @@ bool KIRC::joinChannel(const KIRCMessage &msg)
 	 * This is the response of someone joining a channel.
 	 * Remember that this will be emitted when *you* /join a room for the first time */
 
-	if (msg.count()==1)
+	if (msg.argsSize()==1)
 		emit incomingJoinedChannel(msg.arg(0), msg.nickFromPrefix());
 	else
 		emit incomingJoinedChannel(msg.suffix(), msg.nickFromPrefix());

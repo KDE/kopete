@@ -48,6 +48,7 @@ public:
 	KIRCTransferServer *server( Q_UINT16 port, int backlog  = 1 );
 
 	KIRCTransfer *createClient(
+		KIRC *engine, QString nick,// QString nick_peer_adress,
 		QHostAddress peer_address, Q_UINT16 peer_port,
 		KIRCTransfer::Type type,
 		QFile *file = 0L, Q_UINT32 file_size = 0 );
@@ -63,18 +64,15 @@ public:
 //	void unregisterClient( DCCClient * );
 
 signals:
-//	void DCCServerCreated( DCCServer *server );
+	void transferServerCreated( KIRCTransferServer *server );
 	void transferCreated( KIRCTransfer *transfer );
 
 private:
 	static KIRCTransferHandler m_self;
 
 	KIRCTransferServer *m_server;
-//	QPtrList<DCCServer> m_DCCServers;
-//	QPtrList<DCCClient> m_DCCClients;
-
-//	static QPtrList<DCCServer> sm_DCCServers;
-//	static QPtrList<DCCClient> sm_DCCClients;
+//	QPtrList<KIRCTransferServer> m_servers;
+//	QPtrList<KIRCTransfer> m_clients;
 };
 
 #endif

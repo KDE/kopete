@@ -83,8 +83,8 @@ public:
 		{ return m_prefix.section('!', 0, 0); }
 	inline const QString &command() const
 		{ return m_command; }
-	inline size_t count() const
-		{ return m_args.count(); }
+	inline size_t argsSize() const
+		{ return m_args.size(); }
 	inline const QString &arg(size_t i) const
 		{ return m_args[i]; }
 	inline const QStringList &args() const
