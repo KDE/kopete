@@ -75,7 +75,8 @@ KopeteMessageManager *WPContact::msgManagerKEW()
 	{	QPtrList<KopeteContact> singleContact;
 		singleContact.append(this);
 		mMsgManagerKEW = kopeteapp->sessionFactory()->create(mProtocol->myself(), singleContact, mProtocol, "wp_logs/" + mUserID +".log", KopeteMessageManager::Email);
-		connect(mMsgManagerKEW, SIGNAL(messageSent(const KopeteMessage&)), this, SLOT(slotSendMsgKEW(const KopeteMessage&)));
+		connect(mMsgManagerKEW, SIGNAL(messageSent(const KopeteMessage&,KopeteMessageManager*)),
+			this, SLOT(slotSendMsgKEW(const KopeteMessage&)));
 	}
 	return mMsgManagerKEW;
 }
@@ -88,7 +89,8 @@ KopeteMessageManager *WPContact::msgManagerKCW()
 	{	QPtrList<KopeteContact> singleContact;
 		singleContact.append(this);
 		mMsgManagerKCW = kopeteapp->sessionFactory()->create(mProtocol->myself(), singleContact, mProtocol, "wp_logs/" + mUserID +".log", KopeteMessageManager::ChatWindow);
-		connect(mMsgManagerKCW, SIGNAL(messageSent(const KopeteMessage&)), this, SLOT(slotSendMsgKCW(const KopeteMessage&)));
+		connect(mMsgManagerKCW, SIGNAL(messageSent(const KopeteMessage&,KopeteMessageManager*)),
+			this, SLOT(slotSendMsgKCW(const KopeteMessage&)));
 	}
 	return mMsgManagerKCW;
 }

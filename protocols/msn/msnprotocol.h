@@ -204,7 +204,7 @@ private slots:
 	 * We received a message
 	 */
 	void slotMessageReceived( const KopeteMessage &msg );
-	void slotMessageSent( const KopeteMessage& msg );
+	void slotMessageSent( const KopeteMessage& msg, KopeteMessageManager *manager );
 
 	/**
 	 * Open the chat window for a specific user

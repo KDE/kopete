@@ -25,7 +25,7 @@
 
 KopeteMessageManagerFactory::KopeteMessageManagerFactory( QObject* parent,
 	const char* name )
-	: QObject( parent, name )
+	: QObject( parent, name ), mId( 0 )
 {
 }
 
@@ -34,55 +34,56 @@ KopeteMessageManagerFactory::~KopeteMessageManagerFactory()
 }
 
 KopeteMessageManager *KopeteMessageManagerFactory::create(
-	const KopeteContact *user, KopeteContactPtrList _contacts, /* Touch that underscore and you die, along with ICQ not compiling. Fuck the underscore, that BLOWS CHUNKS. */
+	const KopeteContact *user, KopeteContactPtrList chatContacts,
 	KopeteProtocol *protocol, QString logFile, enum KopeteMessageManager::WidgetType widget)
 {
 	/* We build the sessions list for this protocol */
-	KopeteMessageManager *tmpKmm;
-	KopeteMessageManagerList this_protocol_sessions;
-	for ( tmpKmm = mSessionList.first(); tmpKmm ; tmpKmm = mSessionList.next() )
+	KopeteMessageManagerDict protocolSessions;
+	QIntDictIterator<KopeteMessageManager> it( mSessionDict );
+	for ( ; it.current() ; ++it )
 	{
-		if ( tmpKmm->protocol() == protocol )
+		if ( it.current()->protocol() == protocol )
 		{
-			this_protocol_sessions.append(tmpKmm);
+			protocolSessions.insert( it.current()->id(), it.current() );
 		}
 	}
-
 	// Point this to the right KMM, if found
 	KopeteMessageManager* result = 0;
 
-	for ( KopeteMessageManager* kmm = this_protocol_sessions.first(); kmm && !result ; kmm = this_protocol_sessions.next() ) {
+	it = QIntDictIterator<KopeteMessageManager>( protocolSessions );
+	for ( KopeteMessageManager* kmm = it.current(); kmm && !result ; ++it , kmm = it.current()  ) {
 		if ( user == kmm->user() && widget == kmm->widget()) {
 
 			kdDebug() << "[KopeteMessageManagerFactory] User match, looking session members" << endl;
 			QPtrList<KopeteContact> contactlist = kmm->members();
 
-			// set this to false if _contacts doesn't contain current kmm's contactlist
+			// set this to false if chatContacts doesn't contain current kmm's contactlist
 			bool halfMatch = true;
 
-			KopeteContact *tmp_contact;
-			for (tmp_contact = contactlist.first(); tmp_contact && halfMatch; tmp_contact = contactlist.next()) {
-				if ( !_contacts.containsRef( tmp_contact ) )
+			KopeteContact *tmpContact;
+			for (tmpContact = contactlist.first(); tmpContact && halfMatch; tmpContact = contactlist.next()) {
+				if ( !chatContacts.containsRef( tmpContact ) )
 				{
-					kdDebug() << "[KopeteMessageManagerFactory] create() Oops, contact \"" << /* THIS CAUSES CRASHES, DONT ENABLE tmp_contact->displayName() << */ "\" not found! in _contacts" << endl;
+					kdDebug() << "[KopeteMessageManagerFactory] create() Oops, contact \"" << /* THIS CAUSES CRASHES, DONT ENABLE tmpContact->displayName() << */ "\" not found! in chatContacts" << endl;
 					halfMatch = false;
 				}
 			}
 
-			// If _contacts contains current kmm's contactlist, try the other way around
+			// If chatContacts contains current kmm's contactlist, try the other way around
 			if (halfMatch) {
 
 				bool fullMatch = true;
-				for (tmp_contact = _contacts.first(); tmp_contact && fullMatch; tmp_contact = _contacts.next()) {
-					if ( !contactlist.containsRef( tmp_contact ) )
+				for (tmpContact = chatContacts.first(); tmpContact && fullMatch; tmpContact = chatContacts.next()) {
+					if ( !contactlist.containsRef( tmpContact ) )
 					{
-						kdDebug() << "[KopeteMessageManagerFactory] create() Oops, contact \"" << tmp_contact->displayName() << "\" not found! in contactlist" << endl;
+						kdDebug() << "[KopeteMessageManagerFactory] create() Oops, contact \"" << tmpContact->displayName() << "\" not found! in contactlist" << endl;
 						fullMatch = false;
 					}
 				}
 
 				// We have a winner
 				if (fullMatch) {
+					kdDebug()<<"### That's not cool - found one"<<endl;
 					result = kmm;
 				}
 
@@ -95,8 +96,8 @@ KopeteMessageManager *KopeteMessageManagerFactory::create(
 	}
 
 	if (0 == result) {
-		result = new KopeteMessageManager(user,  _contacts, protocol, logFile, widget);
-		mSessionList.append(result);
+		result = new KopeteMessageManager(user,  chatContacts, protocol, ++mId, logFile, widget);
+		mSessionDict.insert( mId, result );
 
 		/*
 		 * There's no need for a slot here... just add a public remove()
@@ -107,33 +108,37 @@ KopeteMessageManager *KopeteMessageManagerFactory::create(
 	return (result);
 }
 
+KopeteMessageManager* KopeteMessageManagerFactory::findKopeteMessageManager( int id )
+{
+	return mSessionDict.find ( id );
+}
+
 void KopeteMessageManagerFactory::slotRemoveSession( KopeteMessageManager *session)
 {
-	mSessionList.setAutoDelete(false);
-	(mSessionList).remove(session);
+	mSessionDict.setAutoDelete( false );
+	mSessionDict.remove( session->id() );
 }
 
-KopeteMessageManagerList KopeteMessageManagerFactory::protocolSessions( KopeteProtocol *protocol)
+KopeteMessageManagerDict KopeteMessageManagerFactory::protocolSessions( KopeteProtocol *protocol)
 {
-	KopeteMessageManager *tmpKmm;
-	KopeteMessageManagerList this_protocol_sessions;
-	for ( tmpKmm = mSessionList.first(); tmpKmm ; tmpKmm = mSessionList.next() )
+	KopeteMessageManagerDict protocolSessions;
+	QIntDictIterator<KopeteMessageManager> it( mSessionDict );
+	for ( ; it.current() ; ++it )
 	{
-		if ( tmpKmm->protocol() == protocol )
+		if ( it.current()->protocol() == protocol )
 		{
-			this_protocol_sessions.append(tmpKmm);
+			protocolSessions.insert( it.current()->id(), it.current() );
 		}
 	}
-	return this_protocol_sessions;
+	return protocolSessions;
 }
 
-void KopeteMessageManagerFactory::cleanSessions( KopeteProtocol *protocol)
+void KopeteMessageManagerFactory::cleanSessions( KopeteProtocol *protocol )
 {
-	KopeteMessageManager *tmpKmm;
-	KopeteMessageManagerList protocol_sessions = protocolSessions( protocol );
-	for ( tmpKmm = protocol_sessions.first(); tmpKmm ; tmpKmm = protocol_sessions.next() )
+	QIntDictIterator<KopeteMessageManager> it( protocolSessions( protocol ) );
+	for ( ; it.current() ; ++it )
 	{
-			slotRemoveSession(tmpKmm);
+		slotRemoveSession( it.current() );
 	}
 }
 

@@ -467,11 +467,10 @@ void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 	else if( status == MSNSocket::Disconnected )
 	{
 
-		KopeteMessageManagerList protocol_sessions = kopeteapp->sessionFactory()->protocolSessions( this );
-		KopeteMessageManager *tmpKmm;
-		for ( tmpKmm = protocol_sessions.first(); tmpKmm ; tmpKmm = protocol_sessions.next() )
-        {
-			tmpKmm->slotSendEnabled(false);
+		QIntDictIterator<KopeteMessageManager> kmmIt( kopeteapp->sessionFactory()->protocolSessions( this ) );
+		for ( ; kmmIt.current() ; ++kmmIt )
+		{
+			kmmIt.current()->slotSendEnabled(false);
 		}
 
 		QMap<QString, MSNContact*>::Iterator it = m_contacts.begin();
@@ -1077,13 +1076,10 @@ void MSNProtocol::slotMessageReceived( const KopeteMessage &msg )
 		manager->appendMessage( msg );
 }
 
-void MSNProtocol::slotMessageSent( const KopeteMessage& msg )
+void MSNProtocol::slotMessageSent( const KopeteMessage& msg, KopeteMessageManager *manager )
 {
 	kdDebug() << "MSNProtocol::slotMessageSent: Message sent to " <<
 		msg.to().first()->displayName() << endl;
-
-	KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
-		m_myself, msg.to(), this );
 
 	MSNSwitchBoardSocket *service = m_switchBoardSockets[ manager ];
 	if( service )
@@ -1145,9 +1141,9 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 		// We may have a new KMM here, but it could just as well be an
 		// existing instance. To avoid connecting multiple times, try to
 		// disconnect the existing connection first
-		disconnect( manager, SIGNAL( messageSent( const KopeteMessage& ) ),
+		disconnect( manager, SIGNAL( messageSent( const KopeteMessage&, KopeteMessageManager* ) ),
 			this, SLOT( slotMessageSent( const KopeteMessage& ) ) );
-		connect( manager, SIGNAL( messageSent( const KopeteMessage& ) ),
+		connect( manager, SIGNAL( messageSent( const KopeteMessage&, KopeteMessageManager* ) ),
 			this, SLOT( slotMessageSent( const KopeteMessage& ) ) );
 		manager->readMessages();
 	}

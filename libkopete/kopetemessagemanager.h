@@ -40,6 +40,7 @@ class KopeteMessageLog;
 typedef QPtrList<KopeteContact>        KopeteContactPtrList;
 typedef QValueList<KopeteMessage>        KopeteMessageList;
 typedef QPtrList<KopeteMessageManager> KopeteMessageManagerList;
+struct  KMMPrivate;
 
 class KopeteMessageManager : public QObject
 {
@@ -89,9 +90,9 @@ public:
 	/**
 	 * Get Current Reading mode
 	 */
-	int readMode() { return mReadMode; };
+	int readMode() const;
 
-	WidgetType widget() { return mWidget; };
+	WidgetType widget() const;
 
 	/**
 	 * Read Messages
@@ -103,20 +104,26 @@ public:
 	 * Sorry, had to change this to members(), it was conflicting with
 	 * kxContact
 	 */
-	const KopeteContactPtrList& members() const { return mContactList; }
+	const KopeteContactPtrList& members() const;
 
 	/**
 	 * Get the local user in the session
 	 */
-	const KopeteContact* user() const { return mUser; };
-	const KopeteProtocol* protocol() const { return mProtocol; };
+	const KopeteContact* user() const;
+	const KopeteProtocol* protocol() const;
+
+	/**
+	 * @return Returns a unique identifier associated with this
+	 *         manager
+	 */
+	int id() const;
 
 signals:
 	/**
 	 * A message has been sent by the user or a plugin. The protocol should
 	 * connect to this signal to actually send the message over the wire.
 	 */
-	void messageSent(const KopeteMessage& msg);
+	void messageSent(const KopeteMessage& msg, KopeteMessageManager *);
 	void dying(KopeteMessageManager *);
 
 public slots:
@@ -138,21 +145,11 @@ private:
 	 * not create instances yourself directly!
 	 */
 	KopeteMessageManager( const KopeteContact *user, KopeteContactPtrList others,
-		KopeteProtocol *protocol, QString logFile = QString::null, enum WidgetType widget = ChatWindow,
-		QObject *parent = 0, const char *name = 0 );
-
-	KopeteContactPtrList mContactList;
-	const KopeteContact *mUser;
-	KopeteChatWindow *mChatWindow;
-	KopeteEmailWindow *mEmailWindow, *mEmailReplyWindow;
-	KopeteEvent *mUnreadMessageEvent;
-	KopeteMessageList mMessageQueue;
-	KopeteMessageLog *mLogger;
-	int mReadMode;
-	enum WidgetType mWidget;
-	QMap<const KopeteContact *, QStringList> resources;
-	KopeteProtocol *mProtocol;
-	bool mSendEnabled;
+			      KopeteProtocol *protocol, int id = 0, QString logFile = QString::null,
+			      enum WidgetType widget = ChatWindow,
+			      QObject *parent = 0, const char *name = 0 );
+	void setID( int );
+	KMMPrivate *d;
 };
 
 #endif
@@ -166,5 +163,6 @@ private:
  * indent-tabs-mode: t
  * End:
  */
+
 // vim: set noet ts=4 sts=4 sw=4:
 

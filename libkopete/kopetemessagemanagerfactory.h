@@ -19,6 +19,7 @@
 
 #include <qobject.h>
 #include <qptrlist.h>
+#include <qintdict.h>
 #include <qvaluelist.h>
 
 #include "kopetemessagemanager.h"
@@ -33,7 +34,7 @@ class KopeteProtocol;
 
 typedef QPtrList<KopeteContact>        KopeteContactPtrList;
 typedef QValueList<KopeteMessage>        KopeteMessageList;
-typedef QPtrList<KopeteMessageManager> KopeteMessageManagerList;
+typedef QIntDict<KopeteMessageManager> KopeteMessageManagerDict;
 
 class KopeteMessageManagerFactory : public QObject
 {
@@ -42,25 +43,27 @@ class KopeteMessageManagerFactory : public QObject
 public:
 	KopeteMessageManagerFactory( QObject* parent = 0, const char* name = 0 );
 	~KopeteMessageManagerFactory();
-	
+
 	/**
 	 * Create a new chat session. Provided is the initial list of contacts in
 	 * the session. If a session with exactly these contacts already exists,
 	 * it will be reused. Otherwise a new session is created.
 	 */
 	KopeteMessageManager* create(const KopeteContact *user,
-		KopeteContactPtrList _contacts, KopeteProtocol *protocol,
+		KopeteContactPtrList chatContacts, KopeteProtocol *protocol,
 		QString logFile = QString::null,
 		KopeteMessageManager::WidgetType widget = KopeteMessageManager::ChatWindow);
-	
+
+	KopeteMessageManager *findKopeteMessageManager( int );
+
 	/**
 	 * Get a list of all open sessions
 	 */
-	static const KopeteMessageManagerList& sessions();
+	static const KopeteMessageManagerDict& sessions();
 	/**
 	 * Get a list of all open sessions  for a protocol
 	 */
-	KopeteMessageManagerList protocolSessions( KopeteProtocol *);
+	KopeteMessageManagerDict protocolSessions( KopeteProtocol *);
 	/**
 	  *	Clean sessions for a protocol
 	  */
@@ -70,7 +73,8 @@ protected slots:
 	void slotRemoveSession( KopeteMessageManager *session );
 
 private:
-	KopeteMessageManagerList mSessionList;
+	int mId;
+	KopeteMessageManagerDict mSessionDict;
 };
 
 #endif
