@@ -39,8 +39,6 @@
 #include "kopeteuiglobal.h"
 
 #include "aim.h"
-#include "aimbuddy.h"
-#include "aimgroup.h"
 #include "oscarsocket.h"
 #include "oscaraccount.h"
 
@@ -198,40 +196,31 @@ void OscarContact::slotOffgoingBuddy(QString sn)
 void OscarContact::slotUpdateNickname(const QString newNickname)
 {
 	setDisplayName(newNickname);
-	//emit updateNickname ( newNickname );
-	mListContact->setAlias(newNickname);
 }
+
+void OscarContact::slotUpdateBuddy()
+{
+
+}
+
 
 void OscarContact::slotDeleteContact()
 {
 	kdDebug(14150) << k_funcinfo << "contact '" << displayName() << "'" << endl;
 
-	AIMGroup *group = mAccount->findGroup( mGroupId );
-
-	if(!group && metaContact() && metaContact()->groups().count() > 0)
+	QString grpName;
+	if( metaContact() && metaContact()->groups().count() > 0 )
 	{
-		QString grpName=metaContact()->groups().first()->displayName();
+		grpName = metaContact()->groups().first()->displayName();
 		kdDebug(14150) << k_funcinfo <<
 			"searching group by name '" << grpName << "'" << endl;
-		group = mAccount->findGroup( grpName );
 	}
 
-	if (!group)
-	{
-		kdDebug(14150) << k_funcinfo <<
-			"Couldn't find serverside group for contact, cannot delete on server :(" << endl;
-		if ( mAccount->engine()->isICQ() )
-			mAccount->engine()->sendDelBuddylist(contactName());
-		return;
-	}
-	else
-	{
-		if (waitAuth())
-			mAccount->engine()->sendDelBuddylist(contactName());
-		mAccount->engine()->sendDelBuddy(contactName(), group->name());
-	}
-
-	mAccount->removeBuddy( mListContact );
+	if ( mAccount->engine()->isICQ() )
+		mAccount->engine()->sendDelBuddylist(contactName());
+/*	if (waitAuth())
+		mAccount->engine()->sendDelBuddy(contactName(), grpName ); */
+	
 	deleteLater();
 }
 
@@ -358,7 +347,7 @@ void OscarContact::syncGroups()
 		kdDebug(14150) << k_funcinfo << "Could not get kopete group" << endl;
 		return;
 	}
-
+/*
 	if(!newOscarGroup)
 	{
 		// This is a new group, it doesn't exist on the server yet
@@ -392,6 +381,7 @@ void OscarContact::syncGroups()
 			currentOscarGroup->name(),
 			firstKopeteGroup->displayName());
 	}
+*/
 }
 
 #if 0
@@ -458,36 +448,8 @@ void OscarContact::rename(const QString &newNick)
 	kdDebug(14150) << k_funcinfo << "Rename '" << displayName() << "' to '" <<
 		newNick << "'" << endl;
 
-	AIMGroup *currentOscarGroup = 0L;
-
-	if(mAccount->isConnected())
-	{
-		//FIXME: group handling!
-		currentOscarGroup = mAccount->findGroup( mGroupId );
-		if(!currentOscarGroup)
-		{
-			if(metaContact() && metaContact()->groups().count() > 0)
-			{
-				QString grpName=metaContact()->groups().first()->displayName();
-				kdDebug(14150) << k_funcinfo <<
-					"searching group by name '" << grpName << "'" << endl;
-				currentOscarGroup = mAccount->findGroup( grpName );
-			}
-		}
-
-		if(currentOscarGroup)
-		{
-			mAccount->engine()->sendRenameBuddy(mName,
-				currentOscarGroup->name(), newNick);
-		}
-		else
-		{
-			kdDebug(14150) << k_funcinfo <<
-				"couldn't find AIMGroup for contact, can't rename on server" << endl;
-		}
-	}
-
-	mListContact->setAlias(newNick);
+	//TODO: group handling!
+	
 	setDisplayName(newNick);
 }
 
@@ -576,10 +538,11 @@ void OscarContact::slotGotAuthReply(const QString &contact, const QString &reaso
 	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() << "' reason='" <<
 		reason << "' granted=" << granted << endl;
 
-	setWaitAuth(granted);
+// TODO: Reimplement
+//	setWaitAuth(granted);
 
-	if (!waitAuth())
-		mAccount->engine()->sendDelBuddylist(tocNormalize(contact));
+/*	if (!waitAuth())
+		mAccount->engine()->sendDelBuddylist(tocNormalize(contact));*/
 
 	// FIXME: remove this method and handle auth in oscaraccount already!
 	/*
@@ -649,6 +612,7 @@ void OscarContact::receivedIM(KopeteMessage &msg)
 #endif
 }
 
+#if 0
 bool OscarContact::waitAuth() const
 {
 	// TODO: move var to OscarContact
@@ -659,6 +623,8 @@ void OscarContact::setWaitAuth(bool b) const
 {
 	mListContact->setWaitAuth(b);
 }
+
+#endif
 
 const unsigned int OscarContact::encoding()
 {
@@ -704,7 +670,7 @@ void OscarContact::setAwayMessage(const QString &message)
 
 void OscarContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &/*addressBookData*/)
 {
-	serializedData["awaitingAuth"] = waitAuth() ? "1" : "0";
+//	serializedData["awaitingAuth"] = waitAuth() ? "1" : "0";
 	serializedData["Encoding"] = QString::number(mEncoding);
 	serializedData["groupID"] = QString::number(mGroupId);
 }

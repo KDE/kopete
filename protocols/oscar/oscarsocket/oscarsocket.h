@@ -30,7 +30,6 @@
 #include <qdatetime.h>
 
 //class KFileItem;
-class AIMBuddy;
 class OscarAccount;
 class OscarContact;
 class QTimer;

@@ -348,8 +348,8 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	}
 
 	// Check to see if the person we're sending the message to is online
-	if((mListContact->status() == static_cast<int>(OSCAR_OFFLINE)) ||
-		(onlineStatus().status() == KopeteOnlineStatus::Offline))
+	
+	if( onlineStatus().status() == KopeteOnlineStatus::Offline )
 	{
 		KMessageBox::sorry(Kopete::UI::Global::mainWidget(),
 			i18n("<qt>This user is not online at the moment for you to message them. "

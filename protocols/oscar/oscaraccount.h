@@ -183,25 +183,12 @@ protected:
 		KopeteMetaContact *parentContact ) =0;
 
 	/*
-	 * Adds a contact to the internal list.
-	 * This means that the contact is already
-	 * on the server-side list
-	 */
-	virtual void addServerContact(AIMBuddy *buddy);
-
-	/*
 	 * Initializes the engine
 	 */
 	virtual void initEngine(bool);
 
-	/*
-	 * Adds a buddy that we queued to
-	 * the contact list
-	 */
-	void addOldContact(AIMBuddy *bud, KopeteMetaContact *meta=0l);
-
 	void syncLocalWithServerBuddyList();
-	AIMGroup * findOrCreateGroup( const QString& localGroup );
+
 
 private:
 	OscarAccountPrivate *d;

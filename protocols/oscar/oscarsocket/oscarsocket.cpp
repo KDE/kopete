@@ -32,10 +32,6 @@
 #include <kdebug.h>
 #include <kextsock.h>
 
-#include "aimbuddy.h"
-#include "aimgroup.h"
-
-
 // ---------------------------------------------------------------------------------------
 
 OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
@@ -1141,20 +1137,14 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 			", type=" << ssi->type << ", TLV length=" << ssi->tlvlength << endl;
 
 
-		AIMBuddy *bud;
 		switch (ssi->type)
 		{
 			case 0x0000: // normal contact
 			{
-				bud = new AIMBuddy(ssi->bid, ssi->gid, ssi->name);
-
 				// In case we already know that contact
 				OscarContact *contact = static_cast<OscarContact*>(mAccount->contacts()[ssi->name]);
 
-				AIMGroup *group = mAccount->findGroup( ssi->gid, OscarAccount::ServerSideContacts );
 				QString groupName = "\"Group not found\"";
-				if (group)
-					groupName = group->name();
 
 				kdDebug(14150) << k_funcinfo << "Adding Contact '" << ssi->name <<
 					"' to group " << ssi->gid << " (" <<  groupName << ")" << endl;
@@ -1172,8 +1162,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 						{
 							if(t->length > 0)
 							{
-								bud->setAlias(ServerToQString(t->data, contact, false));
-								//bud->setalias(QString::fromLocal8Bit(t->data));
+								// TODO: reimplement
 							}
 							break;
 						}
@@ -1189,8 +1178,8 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 							*/
 							/*kdDebug(14150) << k_funcinfo <<
 								"Contact has WAITAUTH set." << endl;*/
-							bud->setWaitAuth(true);
-							blmBuddies << bud->screenname();
+							//TODO: reimplement somehow. Set waitauth flag and add to blm lists
+							
 							break;
 						}
 
@@ -1230,8 +1219,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 				} // END for()
 
 				lst.clear();
-				bud->setServerSide( true );
-				mAccount->addBuddy( bud );
+				//TODO Find new way to add buddy
 				break;
 			}
 
@@ -1253,7 +1241,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 				{
 					kdDebug(14150) << k_funcinfo << "Adding Group " <<
 						ssi->gid << " (" <<  ssi->name << ")" << endl;
-					mAccount->addGroup( ssi->gid, ssi->name, OscarAccount::ServerSideContacts );
+					//TODO Add group new way
 				}
 				break;
 			}
@@ -1268,20 +1256,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 
 			case 0x0003: // TODO deny buddy AKA invisible list
 			{
-				// FIXME: We don't support the deny list yet, so the below
-				//        (commented out) code is not used anyway. To ease
-				//        the removal of AIMBuddy I commented it out. What
-				//        we need is a list of commented out buddies. This
-				//        used to be a simple QPtrList<AIMBuddy>, but I
-				//        guess almost anything will do. - Martijn
-			/*
-				bud = new AIMBuddy(ssi->bid, ssi->gid, ssi->name);
-				kdDebug(14150) << k_funcinfo << "Adding Contact '" << ssi->name <<
-					"' to INVISIBLE/DENY list." << endl;
-				bud->setServerSide( true );
-				mAccount->addBuddyDeny( bud );
-				emit denyAdded(ssi->name);
-			*/
+				kdDebug(14150) << k_funcinfo << "[TODO] Implement deny lists" << endl;
 				break;
 			}
 
@@ -3363,14 +3338,10 @@ void OscarSocket::parseSSIAck(Buffer &inbuf, const DWORD reqId)
 	WORD result = inbuf.getWord();
 	AckBuddy buddy = ackBuddy(reqId);
 
-	AIMBuddy *bud = 0L;
 	OscarContact *contact = 0L;
 
 	if ( !buddy.contactName.isEmpty() )
-	{
 		contact = static_cast<OscarContact*>(mAccount->contacts()[buddy.contactName]);
-		bud = mAccount->findBuddy( buddy.contactName );
-	}
 
 	switch(result)
 	{
@@ -3399,7 +3370,6 @@ void OscarSocket::parseSSIAck(Buffer &inbuf, const DWORD reqId)
 			contact->requestAuth();
 			sendAddBuddy(buddy.contactName, buddy.groupName, true);
 			sendAddBuddylist(buddy.contactName);
-			bud->setWaitAuth(true);
 			break;
 		default:
 			kdDebug(14150) << k_funcinfo << "Unknown result " << result << endl;
