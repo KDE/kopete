@@ -265,3 +265,5 @@ QByteArray ByteStream::takeArray(QByteArray *from, int size, bool del)
 //! error is indicated by \a code.
 
 // CS_NAMESPACE_END
+
+#include "bytestream.moc"

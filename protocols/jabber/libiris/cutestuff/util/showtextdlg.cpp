@@ -57,3 +57,5 @@ ShowTextDlg::ShowTextDlg(const QString &fname, bool rich, QWidget *parent, const
 
 	resize(560, 384);
 }
+
+#include "showtextdlg.moc"
