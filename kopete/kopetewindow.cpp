@@ -43,7 +43,7 @@
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
 #include "kopeteevent.h"
-#include "kopeteidentitymanager.h"
+#include "kopeteaccountmanager.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopetetransfermanager.h"

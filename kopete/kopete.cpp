@@ -27,9 +27,9 @@
 #include <kcmdlineargs.h>
 
 #include "appearanceconfig.h"
-#include "identityconfig.h"
+#include "accountconfig.h"
 #include "kopetecontactlist.h"
-#include "kopeteidentitymanager.h"
+#include "kopeteaccountmanager.h"
 #include "kopetewindow.h"
 #include "pluginloader.h"
 #include "pluginconfig.h"

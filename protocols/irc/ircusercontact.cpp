@@ -17,7 +17,7 @@
 
 #include "ircusercontact.h"
 #include "ircchannelcontact.h"
-#include "ircidentity.h"
+#include "ircaccount.h"
 #include "ircprotocol.h"
 #include "kopetemessagemanager.h"
 #include "kopeteviewmanager.h"

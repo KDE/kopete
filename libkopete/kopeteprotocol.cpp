@@ -27,8 +27,8 @@
 #include "kopetemessagemanagerfactory.h"
 #include "kopetegroup.h"
 #include "kopetemetacontact.h"
-#include "kopeteidentitymanager.h"
-#include "kopeteidentity.h"
+#include "kopeteaccountmanager.h"
+#include "kopeteaccount.h"
 #include "kopeteonlinestatus.h"
 
 KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)

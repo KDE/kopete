@@ -33,8 +33,8 @@
 #include "kopetecontactlist.h"
 #include "kopeteprotocol.h"
 #include "kopetemetacontact.h"
-#include "kopeteidentitymanager.h"
-#include "kopeteidentity.h"
+#include "kopeteaccountmanager.h"
+#include "kopeteaccount.h"
 #include "kopeteprotocol.h"
 
 AddContactWizard::AddContactWizard( QWidget *parent, const char *name )

@@ -32,13 +32,13 @@
 #include <kglobal.h>
 
 #include "kopetecontactlist.h"
-#include "kopeteidentitymanager.h"
+#include "kopeteaccountmanager.h"
 #include "kopetemetacontact.h"
 
 #include "msnaddcontactpage.h"
-#include "msneditidentitywidget.h"
+#include "msneditaccountwidget.h"
 #include "msncontact.h"
-#include "msnidentity.h"
+#include "msnaccount.h"
 #include "msnpreferences.h"
 #include "msnprotocol.h"
 #include "msnmessagemanager.h"

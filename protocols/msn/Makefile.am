@@ -7,7 +7,7 @@ AM_CPPFLAGS = -I$(srcdir)/ui \
 
 kde_module_LTLIBRARIES = kopete_msn.la
 
-kopete_msn_la_SOURCES = msnprotocol.cpp msnidentity.cpp \
+kopete_msn_la_SOURCES = msnprotocol.cpp msnaccount.cpp \
 	msnpreferences.cpp msnaddcontactpage.cpp \
 	msncontact.cpp msnsocket.cpp msnauthsocket.cpp msndispatchsocket.cpp msnmessagemanager.cpp\
 	msndebugrawcmddlg.cpp msnnotifysocket.cpp msnswitchboardsocket.cpp msnfiletransfersocket.cpp

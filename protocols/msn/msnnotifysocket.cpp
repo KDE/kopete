@@ -25,7 +25,7 @@
 #include "msnprotocol.h"
 #include "msncontact.h"
 #include "msnpreferences.h"
-#include "msnidentity.h"
+#include "msnaccount.h"
 
 #include <qregexp.h>
 

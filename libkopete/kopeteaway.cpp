@@ -18,7 +18,7 @@
 
 #include "kopeteaway.h"
 
-#include "kopeteidentitymanager.h"
+#include "kopeteaccountmanager.h"
 
 #include <qstring.h>
 #include <qdatetime.h>

@@ -38,7 +38,7 @@
 #include "msnmessagemanager.h"
 #include "msnnotifysocket.h"
 #include "msnprotocol.h"
-#include "msnidentity.h"
+#include "msnaccount.h"
 
 MSNContact::MSNContact( KopeteIdentity *identity, const QString &id, const QString &displayName, KopeteMetaContact *parent )
 : KopeteContact( identity, id, parent )

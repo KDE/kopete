@@ -31,7 +31,7 @@
 #include "kopeteonlinestatus.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
-#include "kopeteidentity.h"
+#include "kopeteaccount.h"
 #include "pluginloader.h"
 
 

@@ -33,8 +33,8 @@
 #include <kmessagebox.h>
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
-#include "kopeteidentity.h"
-#include "kopeteidentitymanager.h"
+#include "kopeteaccount.h"
+#include "kopeteaccountmanager.h"
 #include "pluginloader.h"
 #include "kopetegroup.h"
 

@@ -21,7 +21,7 @@
 #include <qregexp.h>
 
 #include "ircchannelcontact.h"
-#include "ircidentity.h"
+#include "ircaccount.h"
 
 #include "kirc.h"
 #include "ksparser.h"

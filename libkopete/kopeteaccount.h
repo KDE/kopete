@@ -1,0 +1,245 @@
+/*
+    kopeteaccount.h - Kopete Identity
+
+    Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
+
+#ifndef KOPETEIDENTITY_H
+#define KOPETEIDENTITY_H
+
+#include <qobject.h>
+#include <qdict.h>
+
+class QDomNode;
+class KActionMenu;
+
+class KopeteContact;
+class KopetePlugin;
+class KopeteProtocol;
+class KopeteMetaContact;
+
+struct KopeteIdentityPrivate;
+
+QString cryptStr(const QString &aStr);
+
+/**
+ * @author Olivier Goffart  <ogoffart@tiscalinet.be>
+ */
+class KopeteIdentity : public QObject
+{
+	Q_OBJECT
+
+public:
+	KopeteIdentity(KopeteProtocol *parent,const QString& identityID, const char *name=0L);
+	~KopeteIdentity();
+
+	/**
+	 * retrurn to protocol of this identity
+	 */
+	KopeteProtocol *protocol() const ;
+	/**
+	 * return the unique id of this identity which is the login
+	 */
+	QString identityId();
+
+	void setIdentityId( const QString &identityId );
+
+	/**
+	 * Get the password for this identity. Has the ability to open an input dialog
+	 * if the password is not currently set
+	 * @param error Set this value to true if you previously called getPassword and the
+	 * result was incorrect
+	 * @param ok is set to false if the user returned cancel
+	 * @return The password or QString::null if the user has canceled
+	 */
+	QString getPassword( bool error = false, bool *ok =0L );
+	/*
+	 * Set the password for this identity. A null identity mean that the password is not remember
+	 * Should be called only by EditIdentityWidget
+	 */
+	void setPassword(const QString &pass = QString::null);
+
+	/**
+	 * say if the password is remember
+	 */
+	 bool rememberPassword();
+
+	/*
+	 * Set if the identity should log in automaticaly or not
+	 */
+	void setAutoLogin(bool);
+	/*
+	 * Say if the identity should log in automaticaly
+	 */
+	bool autoLogin();
+
+	/**
+	 * Convenience method to store or change only a single field of the plugin data.
+	 */
+	void setPluginData( KopetePlugin *p, const QString &key, const QString &value );
+
+	/**
+	 * Convenience method to retrieve only a single field from the plugin
+	 * data. See @ref setPluginData().
+	 */
+	QString pluginData( KopetePlugin *p, const QString &key ) const;
+
+	/**
+	 * this will be called if main-kopete wants
+	 * the plugin to set the user's mode to away
+	 */
+	virtual void setAway(bool) = 0;
+
+	/**
+	 * Indicate whether the identity is connected at all.
+	 *
+	 * This is a convenience method that queries @ref KopeteContact::onlineStatus()
+	 * on @ref myself()
+	 */
+	bool isConnected() const;
+
+	/**
+	 * Indicate whether the identity is away.
+	 *
+	 * This is a convenience method that queries @ref KopeteContact::onlineStatus()
+	 * on @ref myself()
+	 */
+	bool isAway() const;
+
+	/**
+	 * Function has to be reimplemented in every single protocol
+	 * and return the KopeteContact associated with the 'home' user.
+	 * the myself contact MUST be created in the identity constructor!
+	 *
+	 * @return contact associated with the currently logged in user
+	 */
+	virtual KopeteContact* myself() const = 0;
+
+	/**
+	 * return the menu for this identity
+	 */
+	virtual KActionMenu* actionMenu();
+
+	/**
+	 * Retrieve the list of contacts for this protocol
+	 *
+	 * The list is guaranteed to contain only contacts for this identity,
+	 * so you can safely use static_cast to your own derived contact class
+	 * if needed.
+	 */
+	const QDict<KopeteContact>& contacts();
+
+	/**
+	 * Retrieve the list of contacts for this protocol and the given meta
+	 * contact.
+	 *
+	 * The list is guaranteed to contain only contacts for this protocol,
+	 * and only for the specified meta contact, so you can safely use
+	 * static_cast to your own derived contact class if needed.
+	 *
+	 * Note that unlike the void method @ref contacts() this method doesn't
+	 * returns a reference to the dictionary, because the protocol has no
+	 * internal data structure to reference. This makes the method slower
+	 * than @ref contacts(). Generally you don't need to use this method
+	 * very often, so it shouldn't really matter in practice.
+	 */
+	//QDict<KopeteContact> contacts( KopeteMetaContact *mc );
+
+	/**
+	 * Save the identity to an XML string. Only used internaly
+	 */
+	QString toXML();
+
+	/**
+	 * Load identity from XML
+	 */
+	bool fromXML(const QDomNode& cnode);
+
+	/**
+	 * @internal
+	 * Register a new KopeteContact with the identity
+	 * To be called ONLY from KopeteContact, not from any other class!
+	 * (Not even a derived class).
+	 */
+	void registerContact( KopeteContact *c );
+
+protected:
+	/**
+	 * Adds a contact to an existing MetaContact. Also performs any server-related
+	 * functions. *MUST* be implemented in each protocol
+	 *
+	 * @param contactId The unique ID for this protocol
+	 * @param displayName The displayname of the contact (may equal userId for some protocols
+	 * @param parentContact The metacontact to add this contact to
+	 */
+	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName,
+		 KopeteMetaContact *parentContact );
+
+public slots:
+	/**
+	 * Go online for this service.
+	 * This is a slot, so it can be called directly from e.g. a KAction.
+	 */
+	virtual void connect() = 0;
+
+	/**
+	 * Disconnect from this service.
+	 * This is a slot, so it can be called directly from e.g. a KAction.
+	 */
+	virtual void disconnect() = 0;
+
+	/**
+	 * Adds a contact to this protocol with the specified details
+	 *
+	 * @param contactId The unique ID for this protocol
+	 * @param displayName The displayname of the contact (may equal userId for some protocols
+	 * @param parentContact The metacontact to add this contact to
+	 * @param groupName The name of the group to add the contact to
+	 * @param isTemporary If this is a temporary contact
+	 * @return Pointer to the KopeteContact object which was added
+	 */
+	bool addContact( const QString &contactId, const QString &displayName = QString::null,
+		KopeteMetaContact *parentContact = 0L, const QString &groupName = QString::null, bool isTemporary = false);
+
+signals:
+	/**
+	 * this signal is emitted when this identity is deleted
+	 */
+	void identityDestroyed(KopeteIdentity * );
+
+	void identityIdChanged();
+
+	void passwordChanged();
+
+protected slots:
+	/*
+	 * This method is called at the end on fromXML fucntion
+	 * since pluginDatas are not accessible yest in constructor
+	 */
+	virtual void loaded();
+
+private slots:
+	/**
+	 * Track the deletion of a KopeteContact and cleanup
+	 */
+	void slotKopeteContactDestroyed( KopeteContact * );
+
+private:
+	KopeteIdentityPrivate *d;
+};
+
+#endif
+
+// vim: set noet ts=4 sts=4 sw=4:
+

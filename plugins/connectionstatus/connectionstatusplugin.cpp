@@ -20,7 +20,7 @@
 #include <kprocess.h>
 
 #include "connectionstatusplugin.h"
-#include "kopeteidentitymanager.h"
+#include "kopeteaccountmanager.h"
 
 K_EXPORT_COMPONENT_FACTORY(kopete_connectionstatus, KGenericFactory<ConnectionStatusPlugin>);
 

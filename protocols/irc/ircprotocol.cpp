@@ -35,13 +35,13 @@
 #include <kstandarddirs.h>
 
 #include "ircadd.h"
-#include "ircidentity.h"
+#include "ircaccount.h"
 #include "ircaddcontactpage.h"
 #include "ircpreferences.h"
 #include "kopetemetacontact.h"
 #include "ircchannelcontact.h"
-#include "kopeteidentitymanager.h"
-#include "irceditidentitywidget.h"
+#include "kopeteaccountmanager.h"
+#include "irceditaccountwidget.h"
 #include "kirc.h"
 #include "ksparser.h"
 

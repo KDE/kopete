@@ -35,7 +35,7 @@
 
 #include "kopetemessage.h"
 #include "msncontact.h"
-#include "msnidentity.h"
+#include "msnaccount.h"
 
 MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNIdentity *identity )
 : MSNSocket( identity )

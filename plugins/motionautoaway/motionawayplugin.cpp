@@ -31,7 +31,7 @@
 #include "motionawayplugin.h"
 #include "motionawaypreferences.h"
 #include "kopeteaway.h"
-#include "kopeteidentitymanager.h"
+#include "kopeteaccountmanager.h"
 
 // motion.c includes
 #include <stdio.h>

@@ -7,7 +7,7 @@
 #include "msnadd.h"
 #include "msnaddcontactpage.h"
 #include "msnprotocol.h"
-#include "kopeteidentity.h"
+#include "kopeteaccount.h"
 
 MSNAddContactPage::MSNAddContactPage(bool connected, QWidget *parent, const char *name )
 				  : AddContactPage(parent,name)

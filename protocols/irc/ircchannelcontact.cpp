@@ -17,7 +17,7 @@
 
 #include "ircchannelcontact.h"
 #include "ircusercontact.h"
-#include "ircidentity.h"
+#include "ircaccount.h"
 #include "ircprotocol.h"
 
 #include "kirc.h"

@@ -33,7 +33,7 @@
 #include "msnfiletransfersocket.h"
 #include "msnmessagemanager.h"
 #include "msnprotocol.h"
-#include "msnidentity.h"
+#include "msnaccount.h"
 #include "msnswitchboardsocket.h"
 
 MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteContact *user,
