@@ -281,8 +281,8 @@ KPopupMenu* KopeteContact::createContextMenu()
 
 	d->actionSendMessage->plug( menu );
 	d->actionChat->plug( menu );
-	d->actionSendFile->setEnabled( d->fileCapable );
-	d->actionSendFile->plug( menu );
+	if( d->fileCapable )
+		d->actionSendFile->plug( menu );
 	d->actionViewHistory->plug( menu );
 
 	// Protocol specific options will go below this separator
