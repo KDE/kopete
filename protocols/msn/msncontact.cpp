@@ -89,11 +89,11 @@ KActionCollection *MSNContact::customContextMenuActions()
 	KActionCollection *m_actionCollection = new KActionCollection(this);
 
 	// Block/unblock Contact
-	QString label = isBlocked() ? i18n( "Unblock User..." ) : i18n( "Block User..." );
+	QString label = isBlocked() ? i18n( "Unblock User" ) : i18n( "Block User" );
 	KAction* actionBlock = new KAction( label, "msn_blocked",0, this, SLOT( slotBlockUser() ), m_actionCollection, "actionBlock" );
 
 	//show profile
-	KAction* actionShowProfile = new KAction( i18n("Show Profile...") , 0, this, SLOT( slotShowProfile() ), m_actionCollection, "actionShowProfile" );
+	KAction* actionShowProfile = new KAction( i18n("Show Profile") , 0, this, SLOT( slotShowProfile() ), m_actionCollection, "actionShowProfile" );
 
 	// Send mail (only available if it is an hotmail account)
 	KAction* actionSendMail = new KAction( i18n("Send Email...") , "mail_generic",0, this, SLOT( slotSendMail() ), m_actionCollection, "actionSendMail" );

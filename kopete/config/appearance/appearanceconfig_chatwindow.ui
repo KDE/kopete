@@ -117,6 +117,17 @@
                         </spacer>
                         <widget class="KPushButton">
                             <property name="name">
+                                <cstring>addButton</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Add...</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+A</string>
+                            </property>
+                        </widget>
+                        <widget class="KPushButton">
+                            <property name="name">
                                 <cstring>importButton</cstring>
                             </property>
                             <property name="text">
@@ -139,17 +150,6 @@
                         </widget>
                         <widget class="KPushButton">
                             <property name="name">
-                                <cstring>addButton</cstring>
-                            </property>
-                            <property name="text">
-                                <string>&amp;Add...</string>
-                            </property>
-                            <property name="accel">
-                                <string>Alt+A</string>
-                            </property>
-                        </widget>
-                        <widget class="KPushButton">
-                            <property name="name">
                                 <cstring>editButton</cstring>
                             </property>
                             <property name="text">
@@ -164,7 +164,7 @@
                                 <cstring>deleteButton</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Delete...</string>
+                                <string>&amp;Delete</string>
                             </property>
                             <property name="accel">
                                 <string>Alt+D</string>
@@ -314,9 +314,9 @@
 </customwidgets>
 <tabstops>
     <tabstop>styleList</tabstop>
+    <tabstop>addButton</tabstop>
     <tabstop>importButton</tabstop>
     <tabstop>copyButton</tabstop>
-    <tabstop>addButton</tabstop>
     <tabstop>editButton</tabstop>
     <tabstop>deleteButton</tabstop>
     <tabstop>mTransparencyEnabled</tabstop>
