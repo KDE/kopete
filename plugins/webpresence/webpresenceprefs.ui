@@ -15,9 +15,6 @@
             <height>558</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>WebPresencePrefsUI</string>
-    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -142,9 +139,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;HTML using the default simple look</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+H</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
