@@ -252,8 +252,9 @@ redo:
 							fg.setRgb(tmp.mid(4,2).toInt(0, 16), tmp.mid(2,2).toInt(0,16), tmp.mid(0,2).toInt(0,16));
 					}
 
-					QString fontName = fontinfo.section( QRegExp( "(FN=|;)" ),
-						0, 0 ).replace( QRegExp( "%20" ), " " );
+					QString fontName = fontinfo.replace(
+						QRegExp( ".*(FN=" ), "" ).replace(
+						QRegExp( ";.*" ), "" ).replace( QRegExp( "%20" ), " " );
 					if( !fontName.isEmpty() )
 					{
 						kdDebug() << "**** Font: '" << fontName << "'" << endl;
