@@ -224,10 +224,14 @@ public slots:
 
 	/**
 	 * Sets the font of the edit area and outgoing messages to the specified value.
-	 * @param newFont The new font to use. If this is QFont(), then
-	 * a color chooser dialog is opened
+	 * @param newFont The new font to use.
 	 */
-	void setFont( const QFont &newFont = QFont() );
+	void setFont( const QFont &newFont );
+
+	/*
+	 * show a Font dialog and set the font selected by the user
+	 */
+	void setFont( );
 
 	/**
 	 * Sets the background color of the entry area, and outgoing messages

@@ -1199,11 +1199,15 @@ void ChatView::setBgColor( const QColor &newColor )
 		m_edit->setPalette(pal);
 }
 
+void ChatView::setFont(  )
+{
+	KFontDialog::getFont(mFont, false, this);
+	setFont(mFont);
+}
+
 void ChatView::setFont( const QFont &newFont )
 {
 	mFont=newFont;
-	if(newFont==QFont())
-		KFontDialog::getFont(mFont, false, this);
 	m_edit->setFont(mFont);
 }
 
