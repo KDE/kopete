@@ -20,6 +20,7 @@
 #include <kiconloader.h>
 #include <kdebug.h>
 
+#include "kopetecontactlistview.h"
 #include "kopetegroupviewitem.h"
 #include "kopetegroup.h"
 #include "kopeteprefs.h"
@@ -62,7 +63,8 @@ KopeteGroup* KopeteGroupViewItem::group() const
 
 void KopeteGroupViewItem::refreshDisplayName()
 {
-//	if(!m_group) return;
+	//if ( !m_group )
+	//	return;
 
 	QString newText;
 	// FIXME: I think handling the i18n for temporary and top level
@@ -102,7 +104,15 @@ void KopeteGroupViewItem::refreshDisplayName()
 
 	setText( 0, newText );
 	updateVisibility();
-	listView()->sort();
+
+	// Sorting in this slot is extremely expensive as it's called dozens of times and
+	// the sorting itself is rather slow. Therefore we call delayedSort, which tries
+	// to group multiple sort requests into one.
+	KopeteContactListView *lv = dynamic_cast<KopeteContactListView *>( listView() );
+	if ( lv )
+		lv->delayedSort();
+	else
+		listView()->sort();
 }
 
 QString KopeteGroupViewItem::key( int, bool ) const
@@ -141,27 +151,25 @@ void KopeteGroupViewItem::cancelRename( int col )
 void KopeteGroupViewItem::updateVisibility()
 {
 	int visibleUsers = onlineMemberCount;
-	if( KopetePrefs::prefs()->showOffline() )
+	if ( KopetePrefs::prefs()->showOffline() )
 		visibleUsers = totalMemberCount;
 
-	bool visible =
-		KopetePrefs::prefs()->showEmptyGroups() ||
-		( visibleUsers > 0 );
+	bool visible = KopetePrefs::prefs()->showEmptyGroups() || ( visibleUsers > 0 );
 
-	if( isVisible() != visible )
+	if ( isVisible() != visible )
 	{
 		setVisible( visible );
-		if( visible )
+		if ( visible )
 		{
 			// When calling setVisible(true) EVERY child item will be shown,
 			// even if they should be hidden.
 			// We just re-update the visibility of all child items
 			QListViewItem *lvi;
-			for( lvi = firstChild(); lvi; lvi = lvi->nextSibling() )
+			for ( lvi = firstChild(); lvi; lvi = lvi->nextSibling() )
 			{
-				KopeteMetaContactLVI *kc = dynamic_cast<KopeteMetaContactLVI*>( lvi );
-				if( kc )
-					kc->updateVisibility();
+				KopeteMetaContactLVI *kmc = dynamic_cast<KopeteMetaContactLVI *>( lvi );
+				if ( kmc )
+					kmc->updateVisibility();
 			}
 		}
 	}
@@ -169,15 +177,15 @@ void KopeteGroupViewItem::updateVisibility()
 
 void KopeteGroupViewItem::updateCustomIcons(bool treeView)
 {
-	//kdDebug(14000) << k_funcinfo << "Called, treeView=" << treeView << endl;
+	//kdDebug( 14000 ) << k_funcinfo << "treeView=" << treeView << endl;
 
 	// TODO: clever caching
-	if( !group()->useCustomIcon() )
+	if ( !group()->useCustomIcon() )
 		return;
 
-	if(treeView)
+	if ( treeView )
 	{
-		if( isOpen() )
+		if ( isOpen() )
 		{
 			open = SmallIcon( group()->icon( KopetePluginDataObject::Open ) );
 			setPixmap( 0, open );

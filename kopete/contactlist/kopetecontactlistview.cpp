@@ -26,6 +26,7 @@
 #include <qdragobject.h>
 #include <qheader.h>
 #include <qstylesheet.h>
+#include <qtimer.h>
 #include <qtooltip.h>
 
 #include <kaction.h>
@@ -62,6 +63,12 @@
 #include "kopetemessagemanagerfactory.h"
 
 #include "kopetelviprops.h"
+
+class KopeteContactListViewPrivate
+{
+public:
+	QTimer *sortTimer;
+};
 
 /*
 	Custom QToolTip for the contact list.
@@ -185,6 +192,10 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name )
 	: KListView( parent, name )
 {
+	d = new KopeteContactListViewPrivate;
+	d->sortTimer = new QTimer( this, "sortTimer" );
+	connect( d->sortTimer, SIGNAL( timeout() ), this, SLOT( slotSort() ) );
+
 	mShowAsTree = KopetePrefs::prefs()->treeView();
 	if ( mShowAsTree )
 	{
@@ -347,6 +358,8 @@ KopeteContactListView::~KopeteContactListView()
 {
 	QToolTip::remove( viewport() );
 	delete m_tooltip;
+
+	delete d;
 }
 
 void KopeteContactListView::slotMetaContactAdded( KopeteMetaContact *mc )
@@ -1834,5 +1847,20 @@ void KopeteContactListView::slotProperties()
 	}
 }
 
+void KopeteContactListView::delayedSort()
+{
+	if ( !d->sortTimer->isActive() )
+		d->sortTimer->start( 500, true );
+}
+
+void KopeteContactListView::slotSort()
+{
+	kdDebug() << k_funcinfo << endl;
+
+	sort();
+}
+
 #include "kopetecontactlistview.moc"
+
 // vim: set noet ts=4 sts=4 sw=4:
+

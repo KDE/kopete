@@ -44,6 +44,8 @@ class KActionMenu;
 
 class KopeteContactListViewToolTip;
 
+class KopeteContactListViewPrivate;
+
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  */
@@ -64,11 +66,18 @@ public:
 	// FIXME: Make this private again when meta contact is more mature...
 	KopeteGroupViewItem *getGroup( KopeteGroup* , bool add=true );
 
-
 	/**
 	 * Add a given group name and return it
 	 */
 	void addGroup( const QString groupName );
+
+	/**
+	 * Schedule a delayed sort operation. Sorts will be withheld for at most
+	 * half a second, after which they will be performed. This way multiple
+	 * sort calls can be safely bundled without writing complex code to avoid
+	 * the sorts entirely.
+	 */
+	void delayedSort();
 
 public slots:
 	/**
@@ -140,6 +149,12 @@ private slots:
 	void slotAddTemporaryContact();
 	void slotProperties();
 
+	/**
+	 * Sort the view when the timer expires.
+	 * Too bad QListView::sort() is not a slot itself...
+	 */
+	void slotSort();
+
 private:
 	bool mShowAsTree;
 
@@ -175,6 +190,8 @@ private:
 	KAction *actionRemoveFromGroup;
 	KAction *actionAddTemporaryContact;
 	KAction *actionProperties;
+
+	KopeteContactListViewPrivate *d;
 
 	public:
 		// This is public so the chatwinodw can handle sub actions
