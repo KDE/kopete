@@ -213,10 +213,7 @@ void MSNAccount::disconnect()
 
 KActionMenu * MSNAccount::actionMenu()
 {
-	KActionMenu *m_actionMenu = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ),  this );
-	m_actionMenu->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%2 <%1>" ).
-		arg( accountId(), myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
-
+	KActionMenu *m_actionMenu=Kopete::Account::actionMenu();
 	if ( isConnected() )
 	{
 		m_openInboxAction->setEnabled( true );
@@ -230,29 +227,12 @@ KActionMenu * MSNAccount::actionMenu()
 		m_changeDNAction->setEnabled( false );
 	}
 
-	m_actionMenu->insert( new KAction ( i18n( "Set O&nline" ),        MSNProtocol::protocol()->NLN.iconFor( this ), 0,
-		this, SLOT( slotGoOnline() ), m_actionMenu, "actionMSNConnect" ) );
-	m_actionMenu->insert( new KAction ( i18n( "Set &Away" ),          MSNProtocol::protocol()->AWY.iconFor( this ), 0,
-		this, SLOT( slotGoAway() ), m_actionMenu, "actionMSNConnect" ) );
-	m_actionMenu->insert( new KAction ( i18n( "Set &Busy" ),          MSNProtocol::protocol()->BSY.iconFor( this ), 0,
-		this, SLOT( slotGoBusy() ), m_actionMenu, "actionMSNConnect" ) );
-	m_actionMenu->insert( new KAction ( i18n( "Set Be &Right Back" ), MSNProtocol::protocol()->BRB.iconFor( this ), 0,
-		this, SLOT( slotGoBeRightBack() ), m_actionMenu, "actionMSNConnect" ) );
-	m_actionMenu->insert( new KAction ( i18n( "Set on &Phone" ),      MSNProtocol::protocol()->PHN.iconFor( this ), 0,
-		this, SLOT( slotGoOnThePhone() ), m_actionMenu, "actionMSNConnect" ) );
-	m_actionMenu->insert( new KAction ( i18n( "Set Out to &Lunch" ),  MSNProtocol::protocol()->LUN.iconFor( this ), 0,
-		this, SLOT( slotGoOutToLunch() ), m_actionMenu, "actionMSNConnect" ) );
-	m_actionMenu->insert( new KAction ( i18n( "Set &Invisible" ),     MSNProtocol::protocol()->HDN.iconFor( this ), 0,
-		this, SLOT( slotGoInvisible() ), m_actionMenu, "actionMSNConnect" ) );
-	m_actionMenu->insert( new KAction ( i18n( "Set &Offline" ),       MSNProtocol::protocol()->FLN.iconFor( this ), 0,
-		this, SLOT( slotGoOffline() ), m_actionMenu, "actionMSNConnect" ) );
-
 	m_actionMenu->popupMenu()->insertSeparator();
 
 	m_actionMenu->insert( m_changeDNAction );
 	m_actionMenu->insert( m_startChatAction );
 
-	m_actionMenu->popupMenu()->insertSeparator();
+//	m_actionMenu->popupMenu()->insertSeparator();
 
 	m_actionMenu->insert( m_openInboxAction );
 
@@ -322,7 +302,10 @@ void MSNAccount::slotGoInvisible()
 
 void MSNAccount::setOnlineStatus( const Kopete::OnlineStatus &status )
 {
-	if ( m_notifySocket )
+	m_awayReason = QString::null;
+	if(status.status()== Kopete::OnlineStatus::Offline)
+		disconnect();
+	else if ( m_notifySocket )
 	{
 		m_notifySocket->setStatus( status );
 	}

@@ -46,7 +46,6 @@ MSNProtocol *MSNProtocol::s_protocol = 0L;
 
 MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
 : Kopete::Protocol( MSNProtocolFactory::instance(), parent, name ),
-
 	NLN( Kopete::OnlineStatus::Online,    25, this, 1, QString::null,   i18n( "Online" ) , i18n( "Set O&nline" ), Kopete::OnlineStatusManager::Online ),
 	BSY( Kopete::OnlineStatus::Away,      20, this, 2, "msn_busy",      i18n( "Busy" ) , i18n( "Set &Busy" ), Kopete::OnlineStatusManager::Busy),
 	BRB( Kopete::OnlineStatus::Away,      22, this, 3, "msn_brb",       i18n( "Be Right Back" ), i18n( "Set Be &Right Back" )),
@@ -55,7 +54,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList &
 	LUN( Kopete::OnlineStatus::Away,      15, this, 6, "msn_lunch",     i18n( "Out to Lunch" ) , i18n( "Set Out To &Lunch" ) ),
 	FLN( Kopete::OnlineStatus::Offline,    0, this, 7, QString::null,   i18n( "Offline" ) , i18n( "Set &Offline" ), Kopete::OnlineStatusManager::Offline),
 	HDN( Kopete::OnlineStatus::Invisible,  3, this, 8, "msn_invisible", i18n( "Invisible" ) , i18n( "Set &Invisible" ), Kopete::OnlineStatusManager::Invisible ), 
-	IDL( Kopete::OnlineStatus::Away,      10, this, 9, "msn_away",      i18n( "Idle" ) ,  i18n( "Set &Invisible" ), Kopete::OnlineStatusManager::Invisible ),
+	IDL( Kopete::OnlineStatus::Away,      10, this, 9, "msn_away",      i18n( "Idle" ) ,  i18n( "Set &Idle" ), Kopete::OnlineStatusManager::Invisible ),
 	UNK( Kopete::OnlineStatus::Unknown,   25, this, 0, "status_unknown",i18n( "Status not available" ) ),
 	CNT( Kopete::OnlineStatus::Connecting, 2, this, 10,"msn_connecting",i18n( "Connecting" ) ),
 	propEmail(Kopete::Global::Properties::self()->emailAddress()),

@@ -180,6 +180,35 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 	return basis;
 }
 
+void OnlineStatusManager::createAccountStatusActions( Account *account , KActionMenu *parent)
+{
+	QMap< OnlineStatus , QPair<QString, unsigned int> > protocolMap=d->registeredStatus[account->protocol()];
+	QMap< OnlineStatus , QPair<QString, unsigned int> >::Iterator it;
+	for ( it = --protocolMap.end(); it != protocolMap.end(); --it )
+	{
+		OnlineStatus status=it.key();
+		QString caption=it.data().first;
+		OnlineStatusAction *action=new OnlineStatusAction( status, caption, status.iconFor(account) , parent  );
+		connect(action,SIGNAL(activated(const Kopete::OnlineStatus&)) , account, SLOT(setOnlineStatus(const Kopete::OnlineStatus&)));
+		if(parent)
+			parent->insert(action);
+		
+	}
+}
+
+
+OnlineStatusAction::OnlineStatusAction( const OnlineStatus& status, const QString &text, const QIconSet &pix, QObject *parent, const char *name)
+		: KAction( text, pix, KShortcut() , parent, name) , m_status(status)
+{
+	connect(this,SIGNAL(activated()),this,SLOT(slotActivated()));
+}
+
+void OnlineStatusAction::slotActivated()
+{
+	emit activated(m_status);
+}
+
+
 } //END namespace Kopete 
 
 #include "kopeteonlinestatusmanager.moc"

@@ -188,6 +188,13 @@ void KopeteAccountConfig::slotEditAccount()
 		return;
 
 	Kopete::Account *ident = lvi->account();
+
+	ident->editAccount(this);
+	
+	/*
+	 * Moved to Account::editAccount
+	 * TODO: remove
+	
 	Kopete::Protocol *proto = ident->protocol();
 
 	KDialogBase *editDialog = new KDialogBase( this, "KopeteAccountConfig::editDialog", true,
@@ -215,7 +222,7 @@ void KopeteAccountConfig::slotEditAccount()
 	}
 
 	// FIXME: Why deleteLater? It shouldn't be in use anymore at this point - Martijn
-	editDialog->deleteLater();
+	editDialog->deleteLater();*/
 	load();
 	Kopete::AccountManager::self()->save();
 }
