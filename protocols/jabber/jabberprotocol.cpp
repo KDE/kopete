@@ -318,11 +318,8 @@ void JabberProtocol::Disconnect()
 		jabberClient->close();
 	}
 
-	if(jabberClient)
-	{
-		delete jabberClient;
-		jabberClient = 0L;
-	}
+	jabberClient->deleteLater();
+	jabberClient = 0L;
 
 	kdDebug() << "[JabberProtocol] Disconnected." << endl;
 		
@@ -357,7 +354,7 @@ void JabberProtocol::slotDisconnected()
 	
 	kdDebug() << "[JabberProtocol] Disconnected from Jabber server." << endl;
 
-	delete jabberClient;
+	jabberClient->deleteLater();
 	jabberClient = 0L;
 	
 	statusBarIcon->setPixmap(offlineIcon);
@@ -417,6 +414,8 @@ void JabberProtocol::slotError(const Jabber::StreamError &error)
 			break;
 
 	}
+
+	Disconnect();
 
 }
 
