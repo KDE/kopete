@@ -68,9 +68,9 @@ public:
 
 protected:
 	// Helper for constructors
-	void init(QDateTime timeStamp, const KopeteContact * from, KopeteContactPtrList to, 
+	void init(QDateTime timeStamp, const KopeteContact * from, KopeteContactPtrList to,
 			  QString body, QString subject, MessageDirection direction);
-	
+
 	QDateTime mTimestamp;
 	const KopeteContact *mFrom;
 	QPtrList<KopeteContact> mTo;
@@ -83,6 +83,14 @@ protected:
 };
 
 #endif
+
+/*
+ * Local variables:
+ * c-indentation-style: k&r
+ * c-basic-offset: 8
+ * indent-tabs-mode: t
+ * End:
+ */
 
 // vim: set noet ts=4 sts=4 sw=4:
 
