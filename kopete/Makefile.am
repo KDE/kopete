@@ -20,7 +20,7 @@ SUBDIRS = addcontactwizard contactlist config . chatwindow kconf_update
 
 bin_PROGRAMS = kopete
 kopete_SOURCES = main.cpp \
-	kopete.cpp kopeteiface.cpp kopeteiface.skel \
+	kopeteapplication.cpp kopeteiface.cpp kopeteiface.skel \
 	systemtray.cpp \
 	kopeteballoon.cpp kopetewindow.cpp \
 	kopeteaccountstatusbaricon.cpp
