@@ -12,8 +12,8 @@ using Kopete::UserInfoDialog;
 #include "gaducontact.h"
 
 GaduContact::GaduContact( uin_t uin, const QString& name, KopeteAccount *account,
-					KopeteMetaContact* parent )
-	: KopeteContact( account, QString::number( uin ), parent )
+					KopeteMetaContact* parent, KopeteContact::AddMode mode )
+	: KopeteContact( account, QString::number( uin ), parent, mode )
 {
 	msgManager_ = 0L;
 	uin_ = uin;

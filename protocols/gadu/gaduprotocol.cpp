@@ -119,9 +119,9 @@ GaduProtocol::deserializeContact( KopeteMetaContact *metaContact,
 	}
 	
 	GaduAccount *gaccount = static_cast<GaduAccount *>(account);
-	
-	GaduContact *c= new GaduContact( cid.toUInt(), dn, 
-					account, metaContact );
+
+  	GaduContact *c= new GaduContact( cid.toUInt(), dn, 
+ 					account, metaContact, KopeteContact::OmitFromKABC );
 	
 	c->setParentIdentity( aid );
 	gaccount->addNotify( cid.toUInt() );

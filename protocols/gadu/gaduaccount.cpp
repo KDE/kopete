@@ -31,7 +31,7 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const
 	KGlobal::config()->setGroup("Gadu");
 
 	myself_ = new GaduContact(  accountId().toInt(), accountId(),
-				    this, new KopeteMetaContact() );
+				    this, new KopeteMetaContact(), KopeteContact::OmitFromKABC );
 
 	initActions();
 	initConnections();
@@ -165,7 +165,7 @@ bool GaduAccount::addContactToMetaContact( const QString& contactId, const QStri
 	
 	uin_t uinNumber = contactId.toUInt();
 	
-	GaduContact *newContact = new GaduContact( uinNumber, displayName, this, parentContact );
+	GaduContact *newContact = new GaduContact( uinNumber, displayName, this, parentContact, KopeteContact::AddToKABC );
 	newContact->setParentIdentity( accountId() );
 	addNotify( uinNumber );
 
