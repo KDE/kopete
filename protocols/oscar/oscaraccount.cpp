@@ -303,7 +303,7 @@ void OscarAccount::setUserProfile( QString profile )
 
 KActionMenu* OscarAccount::actionMenu()
 {
-return m_actionMenu;
+	return m_actionMenu;
 }
 
 void OscarAccount::slotGoOnline()
@@ -557,8 +557,16 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 	* The third situation is when somebody new messages you
 	*/
 
-	if(!myself()->isOnline()) // We're not even online, so don't bother
-		return false;
+	/*
+	  Duncan: commented, while connecting we are not yet online but
+	  we are adding server contacts that doesn't exist locally
+        */
+
+	//if(!myself()->isOnline()) // We're not even online, so don't bother
+	//{
+	//	kdDebug(14150) << k_funcinfo << "Can't add contact, we are offline" << endl;
+	//	return false;
+	//}
 
 	// Next check our internal list to see if we have this buddy
 	// already, findBuddy tocNormalizes the buddy name for us
