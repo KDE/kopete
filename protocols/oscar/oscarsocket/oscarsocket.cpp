@@ -349,8 +349,14 @@ void OscarSocket::slotRead()
 						case 0x000e: //server ack for adding/changing roster items
 							parseSSIAck(inbuf);
 							break;
-						case 0x000f: //ack when contactlist timesamp/length matches those values sent
+						case 0x000f: //ack when contactlist timestamp/length matches those values sent
 							parseRosterOk(inbuf);
+							break;
+						case 0x001b: // auth reply
+							parseAuthReply(inbuf);
+							break;
+						case 0x001c: // "added by" message
+							kdDebug(14150) << k_funcinfo << "IGNORE 'added by' message" << endl;
 							break;
 						default: //invalid subtype
 							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
@@ -1432,8 +1438,8 @@ void OscarSocket::parseIM(Buffer &inbuf)
 	unsigned int remotePort = 0;
 	QHostAddress qh;
 	QString message;
-	WORD msgtype = 0; //used to tell whether it is a direct IM requst, deny, or accept
-	DWORD capflag = 0; //used to tell what kind of rendezvous this is
+	WORD msgtype = 0x0000; //used to tell whether it is a direct IM requst, deny, or accept
+	DWORD capflag = 0x00000000; //used to tell what kind of rendezvous this is
 	OncomingSocket *sockToUse; //used to tell which listening socket to use
 	QString fileName; //the name of the file to be transferred (if any)
 	long unsigned int fileSize = 0; //the size of the file(s) to be transferred
@@ -2090,69 +2096,6 @@ void OscarSocket::parseUserOffline(Buffer &inbuf)
 //	kdDebug(14150) << k_funcifo << "contact left, screenname/UIN=" << u.sn << endl;
 	emit gotOffgoingBuddy(u.sn);
 }
-
-void OscarSocket::sendUserProfileRequest(const QString &sn)
-{
-	// docs: http://iserverd.khstu.ru/oscar/snac_02_05.html
-
-	kdDebug(14150) << k_funcinfo << "Called." << endl;
-
-	Buffer outbuf;
-	outbuf.addSnac(0x0002,0x0005,0x0000,0x00000000);
-
-	/*
-	AIM_GETINFO_GENERALINFO 0x00001
-	AIM_GETINFO_AWAYMESSAGE 0x00003
-	AIM_GETINFO_CAPABILITIES 0x0004
-	*/
-	outbuf.addWord(0x0005);
-
-	outbuf.addByte(sn.length());
-	outbuf.addString(sn.latin1(),sn.length());
-
-	sendBuf(outbuf,0x02);
-}
-
-void OscarSocket::parseUserProfile(Buffer &inbuf)
-{
-	// docs: http://iserverd.khstu.ru/oscar/snac_02_06.html
-
-	UserInfo u = parseUserInfo(inbuf);
-	QPtrList<TLV> tl = inbuf.getTLVList();
-	tl.setAutoDelete(TRUE);
-
-	QString profile;
-	QString away;
-	for (TLV *cur = tl.first();cur;cur = tl.next())
-	{
-		switch(cur->type)
-		{
-/*			case 0x0001: //profile text encoding
-				kdDebug(14150) << k_funcinfo << "text encoding is: " << cur->data << endl;
-				break;*/
-			case 0x0002: //profile text
-				kdDebug(14150) << k_funcinfo << "The profile is: " << cur->data << endl;
-				profile += QString::fromAscii(cur->data); // aim always seems to use us-ascii encoding
-				break;
-/*			case 0x0003: //away message encoding
-				kdDebug(14150) << k_funcinfo << "Away message encoding is: " << cur->data << endl;
-				break;*/
-			case 0x0004: //away message
-				kdDebug(14150) << k_funcinfo << "Away message is: " << cur->data << endl;
-				away += QString::fromAscii(cur->data); // aim always seems to use us-ascii encoding
-				break;
-			case 0x0005: //capabilities
-				kdDebug(14150) << k_funcinfo << "Got capabilities" << endl;
-				break;
-			default: //unknown
-				kdDebug(14150) << k_funcinfo << "Unknown user info type " << cur->type << endl;
-					break;
-		};
-	}
-	tl.clear();
-	emit gotUserProfile(u, profile, away);
-}
-
 
 void OscarSocket::sendWarning(const QString &target, bool isAnonymous)
 {
@@ -3488,6 +3431,55 @@ void OscarSocket::parseConnectionClosed(Buffer &inbuf)
 		connectToBos();
 	}
 	lst.clear();
+}
+
+void OscarSocket::sendAuthRequest(const QString &contact, const QString &reason)
+{
+	kdDebug(14150) << k_funcinfo << "contact='" << contact << "', reason='" << reason <<
+		"'" << endl;
+
+	Buffer outbuf;
+	outbuf.addSnac(0x0013,0x0018,0x0000,0x00000000);
+
+	outbuf.addByte(contact.length()); //dest sn length
+	outbuf.addString(contact.ascii(), contact.length()); //dest sn
+	outbuf.addLNTS(reason.local8Bit());
+	outbuf.addWord(0x0000);
+	sendBuf(outbuf,0x02);
+}
+
+void OscarSocket::sendAuthReply(const QString &contact, const QString &reason, bool grant)
+{
+	kdDebug(14150) << k_funcinfo << "contact='" << contact << "', reason='" << reason <<
+		"', grant=" << grant << endl;
+
+	Buffer outbuf;
+	outbuf.addSnac(0x0013,0x001a,0x0000,0x00000000);
+
+	outbuf.addByte(contact.length()); //dest sn length
+	outbuf.addString(contact.ascii(), contact.length()); //dest sn
+	if(grant)
+		outbuf.addByte(0x01);
+	else
+		outbuf.addByte(0x00);
+	outbuf.addLNTS(reason.local8Bit());
+	sendBuf(outbuf,0x02);
+}
+
+void OscarSocket::parseAuthReply(Buffer &inbuf)
+{
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
+
+	BYTE len=inbuf.getByte();
+	char *cb=inbuf.getBlock(len);
+	QString contact=QString::fromLocal8Bit(cb);
+	delete [] cb;
+	BYTE grant=inbuf.getByte();
+	char *r=inbuf.getLNTS();
+	QString reason=QString::fromLocal8Bit(r);
+	delete []r;
+
+	emit gotAuthReply(contact, reason, (grant==0x01));
 }
 
 #include "oscarsocket.moc"

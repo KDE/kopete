@@ -249,4 +249,73 @@ void OscarSocket::parseWarningNotify(Buffer &inbuf)
 		emit gotWarning(newevil,QString::null);
 }
 
+void OscarSocket::sendUserProfileRequest(const QString &sn)
+{
+	// docs: http://iserverd.khstu.ru/oscar/snac_02_05.html
+
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
+
+	Buffer outbuf;
+	outbuf.addSnac(0x0002,0x0005,0x0000,0x00000000);
+
+	/*
+	AIM_GETINFO_GENERALINFO 0x00001
+	AIM_GETINFO_AWAYMESSAGE 0x00003
+	AIM_GETINFO_CAPABILITIES 0x0004
+	*/
+	outbuf.addWord(0x0005);
+
+	outbuf.addByte(sn.length());
+	outbuf.addString(sn.latin1(),sn.length());
+
+	sendBuf(outbuf,0x02);
+}
+
+void OscarSocket::parseUserProfile(Buffer &inbuf)
+{
+	// docs: http://iserverd.khstu.ru/oscar/snac_02_06.html
+
+	UserInfo u = parseUserInfo(inbuf);
+	QPtrList<TLV> tl = inbuf.getTLVList();
+	tl.setAutoDelete(TRUE);
+
+	QString profile;
+	QString away;
+	for (TLV *cur = tl.first();cur;cur = tl.next())
+	{
+		switch(cur->type)
+		{
+			case 0x0001: //profile text encoding
+//				kdDebug(14150) << k_funcinfo << "text encoding is: " << cur->data << endl;
+				break;
+
+			case 0x0002: //profile text
+				kdDebug(14150) << k_funcinfo <<
+					"The profile is: '" << cur->data << "'" << endl;
+				profile += QString::fromAscii(cur->data); // aim always seems to use us-ascii encoding
+				break;
+
+			case 0x0003: //away message encoding
+//				kdDebug(14150) << k_funcinfo <<
+//					"Away message encoding is: " << cur->data << endl;
+				break;
+
+			case 0x0004: //away message
+				kdDebug(14150) << k_funcinfo << "Away message is: " << cur->data << endl;
+				away += QString::fromAscii(cur->data); // aim always seems to use us-ascii encoding
+				break;
+
+			case 0x0005: //capabilities
+				kdDebug(14150) << k_funcinfo << "Got capabilities" << endl;
+				break;
+
+			default: //unknown
+				kdDebug(14150) << k_funcinfo << "Unknown user info type " << cur->type << endl;
+					break;
+		};
+	}
+	tl.clear();
+	emit gotUserProfile(u, profile, away);
+}
+
 // vim: set noet ts=4 sts=4 sw=4:

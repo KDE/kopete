@@ -96,6 +96,10 @@ KActionCollection *AIMContact::customContextMenuActions()
 {
 	actionCollection = new KActionCollection(this);
 
+	KAction* actionRequestAuth = new KAction(i18n("&Request Authorization"), 0,
+		this, SLOT(slotRequestAuth()), actionCollection, "actionRequestAuth");
+	KAction* actionSendAuth = new KAction(i18n("&Send Authorization"), 0,
+		this, SLOT(slotSendAuth()), actionCollection, "actionSendAuth");
 	KAction* actionWarn = new KAction(i18n("&Warn"), 0,
 		this, SLOT(slotWarn()), actionCollection, "actionWarn");
 	KAction* actionBlock = new KAction(i18n("&Block"), 0,
@@ -103,6 +107,8 @@ KActionCollection *AIMContact::customContextMenuActions()
 	KAction* actionDirectConnect = new KAction(i18n("&Direct IM"), 0,
 		this, SLOT(slotDirectConnect()), actionCollection, "actionDirectConnect");
 
+	actionCollection->insert(actionRequestAuth);
+	actionCollection->insert(actionSendAuth);
 	actionCollection->insert(actionWarn);
 	actionCollection->insert(actionBlock);
 	actionCollection->insert(actionDirectConnect);
@@ -199,7 +205,7 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 
 //	kdDebug(14190) << k_funcinfo << "Called for '"
 //		<< displayName() << "', userclass=" << u.userclass << endl;
-
+/*
 	if(u.userclass & CLASS_AIM)
 		kdDebug(14190) << k_funcinfo << "AIM user" << endl;
 	if(u.userclass & CLASS_ICQ)
@@ -214,6 +220,7 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 		kdDebug(14190) << k_funcinfo << "AOL administrator account" << endl;
 	if(u.userclass & CLASS_UNKNOWN400)
 		kdDebug(14190) << k_funcinfo << "Active contact" << endl;
+*/
 
 	if(u.userclass & CLASS_AWAY)
 		setStatus(OSCAR_AWAY);

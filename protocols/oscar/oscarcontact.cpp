@@ -23,7 +23,8 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kfiledialog.h>
+//#include <kfiledialog.h>
+#include <klineeditdlg.h>
 
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
@@ -130,7 +131,9 @@ void OscarContact::initSignals()
 		KopeteContactList::contactList(), SIGNAL(groupRemoved(KopeteGroup*)),
 			this, SLOT(slotGroupRemoved(KopeteGroup *)));
 
-//	kdDebug(14150) << "[OscarContact] Finished initializing signal connections" << endl;
+	QObject::connect(
+		mAccount->engine(), SIGNAL(gotAuthReply(const QString &, const QString &, bool)),
+		this, SLOT(slotGotAuthReply(const QString &, const QString &, bool)));
 }
 
 OscarContact::~OscarContact()
@@ -307,11 +310,11 @@ void OscarContact::slotDirectConnect()
 void OscarContact::slotDirectIMReady(QString name)
 {
 	// Check if we're the one who is directly connected
-	if(tocNormalize(name) != mName)
+	if(tocNormalize(name) != contactName())
 		return;
 
-	kdDebug(14150) << "[OscarContact] Setting direct connect state for "
-				   << mName << " to true." << endl;
+	kdDebug(14150) << k_funcinfo << "Setting direct connect state for '" <<
+		displayName() << "' to true" << endl;
 
 	mDirectlyConnected = true;
 	KopeteContactPtrList p;
@@ -521,6 +524,75 @@ void OscarContact::slotParseUserInfo(const UserInfo &u)
 			emit idleStateChanged(this);
 	}
 	mSignonTime.setTime_t(u.onlinesince);
+}
+
+void OscarContact::slotRequestAuth()
+{
+	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() << "'" << endl;
+	bool ok = false;
+
+	QString reason = KLineEditDlg::getText(
+		i18n("Request Authorization"),
+		i18n("Reason for requesting authorization"),
+		QString::null,
+		&ok);
+	if(ok)
+	{
+		kdDebug(14150) << k_funcinfo << "Sending auth request to '" <<
+			displayName() << "'" << endl;
+		mAccount->engine()->sendAuthRequest(contactName(), reason);
+	}
+}
+
+void OscarContact::slotSendAuth()
+{
+	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() << "'" << endl;
+	bool ok = false;
+
+	// TODO: custom dialog also allowing a refusal
+
+	QString reason = KLineEditDlg::getText(
+		i18n("Grant Authorization"),
+		i18n("Reason for granting authorization"),
+		QString::null,
+		&ok);
+	if(ok)
+	{
+		mAccount->engine()->sendAuthReply(contactName(), reason, true);
+	}
+}
+
+void OscarContact::slotGotAuthReply(const QString &contact, const QString &reason, bool granted)
+{
+	if(contact != contactName())
+		return;
+
+	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() << "' reason='" <<
+		reason << "' granted=" << granted << endl;
+
+	setWaitAuth(granted);
+	if(granted)
+	{
+		QString message = i18n("<b>[Granted Authorization:]</b> %1").arg(reason);
+		gotIM(OscarSocket::GrantedAuth, message);
+	}
+	else
+	{
+		QString message = i18n("<b>[Declined Authorization:]</b> %1").arg(reason);
+		gotIM(OscarSocket::DeclinedAuth, message);
+	}
+}
+
+bool OscarContact::waitAuth() const
+{
+	// TODO: move var to OscarContact
+	kdDebug(14150) << k_funcinfo << "returning " << mListContact->waitAuth() << endl;
+	return mListContact->waitAuth();
+}
+
+void OscarContact::setWaitAuth(bool b) const
+{
+	mListContact->setWaitAuth(b);
 }
 
 #include "oscarcontact.moc"

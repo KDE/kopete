@@ -82,6 +82,9 @@ class OscarContact : public KopeteContact
 		const unsigned int  tcpVersion() const { return mTcpVersion; }
 		const QDateTime signonTime() const { return mSignonTime; }
 
+		bool waitAuth() const;
+		void setWaitAuth(bool b) const;
+
 	public slots:
 		/** Method to delete a contact from the contact list */
 		virtual void slotDeleteContact();
@@ -115,30 +118,6 @@ class OscarContact : public KopeteContact
 		*/
 		AIMBuddy *mListContact;
 
-	private:
-		/** Initializes signal connections */
-		void initSignals();
-
-		/** Initialzes the actions */
-		void initActions();
-
-	private:
-		/*
-		 * stuff filled from UserInfo
-		 */
-		unsigned int mIdle;
-		unsigned long mRealIP;
-		unsigned long mLocalIP;
-		unsigned int mPort;
-		unsigned int mFwType;
-		unsigned int mTcpVersion;
-		QDateTime mSignonTime;
-
-		/** Tells whether or not we have a direct connection with the contact */
-		bool mDirectlyConnected;
-
-		int groupID; // TODO: move the server groupid to OscarContact!
-
 	private slots:
 		/** Called when a buddy has changed status */
 //		void slotBuddyChanged(UserInfo u);
@@ -164,7 +143,7 @@ class OscarContact : public KopeteContact
 		/** Called when KMM is destroyed */
 		void slotMessageManagerDestroyed();
 		/** Called when we want to block the contact */
-		void slotBlock(void);
+		void slotBlock();
 		/** Called when we want to connect directly to this contact */
 		void slotDirectConnect();
 		/** Called when we become directly connected to the contact */
@@ -190,6 +169,35 @@ class OscarContact : public KopeteContact
 		void slotGroupRemoved( KopeteGroup * );
 
 		void slotParseUserInfo(const UserInfo &);
+
+		void slotRequestAuth();
+		void slotSendAuth();
+
+		void slotGotAuthReply(const QString &contact, const QString &reason, bool granted);
+
+	private:
+		/** Initializes signal connections */
+		void initSignals();
+
+		/** Initialzes the actions */
+		void initActions();
+
+	private:
+		/*
+		 * stuff filled from UserInfo
+		 */
+		unsigned int mIdle;
+		unsigned long mRealIP;
+		unsigned long mLocalIP;
+		unsigned int mPort;
+		unsigned int mFwType;
+		unsigned int mTcpVersion;
+		QDateTime mSignonTime;
+
+		/** Tells whether or not we have a direct connection with the contact */
+		bool mDirectlyConnected;
+
+		int groupID; // TODO: move the server groupid to OscarContact!
 };
 
 #endif

@@ -202,6 +202,17 @@ bool ICQContact::isReachable()
 KActionCollection *ICQContact::customContextMenuActions()
 {
 	actionCollection = new KActionCollection(this);
+
+	KAction* actionRequestAuth = new KAction(i18n("&Request Authorization"), 0,
+		this, SLOT(slotRequestAuth()), actionCollection, "actionRequestAuth");
+	KAction* actionSendAuth = new KAction(i18n("&Send Authorization"), 0,
+		this, SLOT(slotSendAuth()), actionCollection, "actionSendAuth");
+
+	actionRequestAuth->setEnabled(waitAuth());
+
+	actionCollection->insert(actionRequestAuth);
+	actionCollection->insert(actionSendAuth);
+
 	return actionCollection;
 }
 

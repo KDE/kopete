@@ -308,7 +308,7 @@ class OscarSocket : public OscarConnection
 	public:
 		enum OscarMessageType
 		{
-			Normal=0, Away, URL, SMS, WebPanel
+			Normal=0, Away, URL, SMS, WebPanel, GrantedAuth, DeclinedAuth
 		};
 
 		OscarSocket(const QString &connName, const QByteArray &cookie,
@@ -534,6 +534,9 @@ class OscarSocket : public OscarConnection
 		 */
 		void sendCLI_METASETGENERAL(ICQGeneralUserInfo &i);
 
+		void sendAuthRequest(const QString &contact, const QString &reason);
+		void sendAuthReply(const QString &contact, const QString &reason, bool grant);
+
 	public slots:
 		/*
 		 * This is called when a connection is established
@@ -724,6 +727,8 @@ class OscarSocket : public OscarConnection
 	void startKeepalive();
 	void stopKeepalive();
 
+	void parseAuthReply(Buffer &inbuf);
+
 	private slots:
 	/** Called when a connection has been closed */
 	void slotConnectionClosed();
@@ -838,6 +843,11 @@ class OscarSocket : public OscarConnection
 	 * do whatever it likes to do after successful login.
 	 */
 	void loggedIn();
+
+	/*
+	 * emitted when we received an authorization reply
+	 */
+	void gotAuthReply(const QString &, const QString &, bool);
 
 	protected:
 		ICQInfoItemList extractICQItemList( Buffer& theBuffer );
