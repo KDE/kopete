@@ -502,7 +502,10 @@ void IRCAccount::engineStatusChanged(KIRC::Engine::Status newStatus)
 		{
 			m_contactManager->addToNotifyList( m_engine->nickName() );
 
-			Kopete::ChatSession *manager = myServer()->manager();
+			Kopete::ChatSession *manager = myServer()->manager(Kopete::Contact::CanCreate);
+			if (!manager)
+				return;
+			
 			if (!autoConnect.isEmpty())
 				Kopete::CommandHandler::commandHandler()->processMessage( QString::fromLatin1("/join %1").arg(autoConnect), manager);
 
@@ -534,9 +537,12 @@ void IRCAccount::slotConnectedToServer()
 
 	m_contactManager->addToNotifyList( m_engine->nickName() );
 
-	Kopete::ChatSession *manager = myServer()->manager();
-	if( !autoConnect.isEmpty() )
-		Kopete::CommandHandler::commandHandler()->processMessage( QString::fromLatin1("/join %1").arg(autoConnect), manager );
+	Kopete::ChatSession *manager = myServer()->manager(Kopete::Contact::CanCreate);
+	if (!manager)
+		return;
+	
+	if(!autoConnect.isEmpty())
+		Kopete::CommandHandler::commandHandler()->processMessage( QString::fromLatin1("/join %1").arg(autoConnect), manager);
 
 	QStringList m_connectCommands = connectCommands();
 	for( QStringList::Iterator it = m_connectCommands.begin(); it != m_connectCommands.end(); ++it )

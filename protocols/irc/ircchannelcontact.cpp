@@ -183,23 +183,26 @@ void IRCChannelContact::slotAddNicknames()
 
 		mJoinedNicks.pop_front();
 		IRCContact *user;
-
-		if ( nickToAdd.lower() != MYACCOUNT->mySelf()->nickName().lower() )
+		
+		if (nickToAdd.lower() != MYACCOUNT->mySelf()->nickName().lower())
 		{
 			//kdDebug(14120) << k_funcinfo << m_nickName << " NICK: " << nickToAdd << endl;
 			user = MYACCOUNT->contactManager()->findUser(nickToAdd);
+			//FIXME: what if the user is already known to be away?
 			user->setOnlineStatus(m_protocol->m_UserStatusOnline);
-			manager()->addContact(static_cast<Kopete::Contact*>(user) , true);
 		}
 		else
 		{
 			user = MYACCOUNT->mySelf();
 		}
-
-		if ( firstChar == '@' || firstChar == '%' )
-			manager()->setContactOnlineStatus( static_cast<Kopete::Contact*>(user), m_protocol->m_UserStatusOp );
-		else if( firstChar == '+')
-			manager()->setContactOnlineStatus( static_cast<Kopete::Contact*>(user), m_protocol->m_UserStatusVoice );
+		
+		Kopete::OnlineStatus initialStatus = user->onlineStatus();
+		if (firstChar == '@' || firstChar == '%')
+			initialStatus = m_protocol->m_UserStatusOp;
+		else if (firstChar == '+')
+			initialStatus = m_protocol->m_UserStatusVoice;
+		
+		manager()->addContact(user, initialStatus, Kopete::ChatSession::ContactFound);
 	}
 }
 
@@ -282,6 +285,7 @@ void IRCChannelContact::userJoinedChannel(const QString &nickname)
 	else
 	{
 		IRCUserContact *contact = MYACCOUNT->contactManager()->findUser( nickname );
+		//FIXME: what if contact is already known to be away?
 		contact->setOnlineStatus( m_protocol->m_UserStatusOnline );
 		manager()->addContact((Kopete::Contact *)contact, true);
 		Kopete::Message msg((Kopete::Contact *)this, mMyself,
