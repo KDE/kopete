@@ -33,8 +33,12 @@ kopete_LDADD = \
 mydatadir = $(kde_datadir)/kopete
 mydata_DATA = kopeteui.rc eventsrc
 
-# this is where the desktop file will go
-xdg_apps_DATA = kopete.desktop
+# please remove the following 2 lines for the KDE 3.2 release...
+desktopdir   = $(kde_appsdir)/Internet
+desktop_DATA = kopete.desktop
+
+# ... and uncomment the following line instead
+# xdg_apps_DATA = kopete.desktop
 
 # vim: set noet:
 
