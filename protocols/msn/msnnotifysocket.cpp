@@ -202,6 +202,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			kdDebug(14140) << "MSNNotifySocket::parseCommand: " << authURL << endl;
 
 			KIO::Job *job = KIO::get( authURL , false, false );
+			job->addMetaData("cookies", "manual");
 			QObject::connect( job, SIGNAL(result( KIO::Job *)), this, SLOT(slotAuthJobDone( KIO::Job *)) );
 		}
 		else
@@ -498,7 +499,16 @@ void MSNNotifySocket::slotAuthJobDone ( KIO::Job *job)
 
 	if(m_kv.isNull())
 	{
-		//Now KDE has stored cookie of the previous page, we can send the auth
+		QStringList cookielist=QStringList::split("\n", job->queryMetaData("setcookies") );
+		QString cookies="Cookie: ";
+		for ( QStringList::Iterator it = cookielist.begin(); it != cookielist.end(); ++it )
+		{
+			kdDebug(14140) << "MSNNotifySocket::slotAuthJobDone: cl: " << *it << endl;
+			QRegExp rx("Set-Cookie: ([^;]*)");
+			rx.search(*it);
+			cookies+=rx.cap(1)+";";
+		}
+		kdDebug(14140) << "MSNNotifySocket::slotAuthJobDone: cookie: " << cookies << endl;
 
 		//QRegExp rx("lc=([1-9]*),id=([1-9]*),tw=([1-9]*),fs=[1-9]*,ru=[1-9a-zA-Z%]*,ct=[1-9]*,kpp=[1-9]*,kv=([1-9]*),");
 		QRegExp rx("lc=([0-9]*),id=([0-9]*),tw=([0-9]*),.*kv=([0-9]*),");
@@ -511,14 +521,16 @@ void MSNNotifySocket::slotAuthJobDone ( KIO::Job *job)
 			rx.cap( 2 ) + "&tw=" + rx.cap( 3 ) + "&cbid=" + rx.cap( 2 ) + "&da=passport.com&login=" +
 			m_account->accountId() + "&domain=passport.com&passwd=";
 
-		kdDebug( 14140 ) << "MSNNotifySocket::slotAuthJobDone: " << authURL << "(*************)" << endl;
-
-		authURL += escape( m_password );
-		KIO::Job *job = KIO::get( authURL, false, false );
+		kdDebug( 14140 ) << "MSNNotifySocket::slotAuthJobDone: " << authURL << "(*******)" << endl;
 
 		m_authData = QString::null;
 		m_kv=rx.cap(4);
 		if(m_kv.isNull()) m_kv="";
+
+		authURL += escape( m_password );
+		job = KIO::get( authURL, false, false );
+		job->addMetaData("cookies", "manual");
+		job->addMetaData("setcookies", cookies);
 
 		QObject::connect( job, SIGNAL(data( KIO::Job *,const QByteArray&)), this, SLOT(slotAuthJobDataReceived( KIO::Job *,const QByteArray&)) );
 		QObject::connect( job, SIGNAL(result( KIO::Job *)), this, SLOT(slotAuthJobDone( KIO::Job *)) );
