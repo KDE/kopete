@@ -1,8 +1,10 @@
 #include <ktextedit.h>
 #include <kaction.h>
 #include <kcolordialog.h>
+#include <kglobalsettings.h>
 #include <kfontdialog.h>
 #include <kdebug.h>
+#include <kconfig.h>
 #include <kdeversion.h>
 #include <qapplication.h>
 #include <qclipboard.h>
@@ -11,6 +13,7 @@
 
 #include "krichtexteditpart.h"
 #include "krichtexteditpart.moc"
+#include "kopeteprotocol.h"
 
 typedef KParts::GenericFactory<KopeteRichTextEditPart> KopeteRichTextEditPartFactory;
 K_EXPORT_COMPONENT_FACTORY( libkopeterichtexteditpart,  KopeteRichTextEditPartFactory )
@@ -28,8 +31,10 @@ KopeteRichTextEditPart::KopeteRichTextEditPart( QWidget *wparent, const char *wn
 	KopeteRichTextEditPart::KopeteRichTextEditPart( wparent, wname, false );
 }
 
-KopeteRichTextEditPart::KopeteRichTextEditPart( QWidget *parent, const char *name, bool supportsRichText )
-  : KParts::ReadOnlyPart( parent, name ? name : "rich_text_part" )
+KopeteRichTextEditPart::KopeteRichTextEditPart( QWidget *parent, const char *name, int capabilities )
+  : KParts::ReadOnlyPart( parent, name ? name : "rich_text_part" ),
+	m_capabilities( capabilities ),
+	m_richTextEnabled( true )
 {
 	// we need an instance
 	setInstance( KopeteRichTextEditPartFactory::instance() );
@@ -37,23 +42,44 @@ KopeteRichTextEditPart::KopeteRichTextEditPart( QWidget *parent, const char *nam
 	editor = new KopeteTextEdit( parent );
 	editor->setReadOnly( false );
 
-	simpleMode = !supportsRichText;
 	setWidget( editor );
+
+	m_richTextAvailable = (
+		m_capabilities & KopeteProtocol::RichFormatting ||
+		m_capabilities & KopeteProtocol::Alignment ||
+		m_capabilities & KopeteProtocol::RichFont ||
+		m_capabilities & KopeteProtocol::RichColor
+	);
+
 	createActions();
 
-	if( simpleMode ) //Only modidy bg and fg color and font
-	{
-		editor->setTextFormat( Qt::PlainText );
-		setXMLFile( "kopeterichtexteditpartsimple.rc" );
-	}
-	else //Modify rich text
+	setXMLFile( "kopeterichtexteditpartfull.rc" );
+	enableRichText->setEnabled( m_richTextAvailable );
+	enableRichText->setChecked( m_richTextAvailable );
+	slotSetRichTextEnabled( m_richTextAvailable );
+
+	//Set colors, font
+	readConfig();
+}
+
+void KopeteRichTextEditPart::slotSetRichTextEnabled( bool enable )
+{
+	if( enable )
 	{
 		editor->setTextFormat( Qt::RichText );
-		setXMLFile( "kopeterichtexteditpartfull.rc" );
+	}
+	else
+	{
+		editor->setTextFormat( Qt::PlainText );
 	}
 
-	// Spellchecking disabled when using rich text because the text we were getting from widget was coloured HTML!
-	editor->setCheckSpellingEnabled( !supportsRichText );
+	// Spellchecking disabled when using rich text because the
+	// text we were getting from widget was coloured HTML!
+	editor->setCheckSpellingEnabled( !richTextEnabled() );
+	checkSpelling->setEnabled( !richTextEnabled() );
+
+	//Enable / disable buttons
+	updateActions();
 }
 
 void KopeteRichTextEditPart::createActions()
@@ -73,79 +99,119 @@ KAboutData *KopeteRichTextEditPart::createAboutData()
 
 void KopeteRichTextEditPart::createActions( KActionCollection *ac )
 {
-	(void) new KAction( i18n("Text &Color..."), "color_line", 0,
+	enableRichText = new KToggleAction(i18n("Enable &Rich Text"), "pencil", 0,
+				ac, "enableRichText" );
+	connect( enableRichText, SIGNAL( toggled(bool) ),
+			this, SLOT( slotSetRichTextEnabled(bool) ) );
+
+	checkSpelling = new KAction( i18n("Check &Spelling"), "spellcheck", 0,
+				editor, SLOT( checkSpelling() ), ac, "check_spelling" );
+
+	//Fg Color
+	actionFgColor = new KAction( i18n("Text &Color..."), "color_line", 0,
 		this, SLOT( setFgColor() ),
 		ac, "format_color" );
 
-	(void) new KAction( i18n("Background Co&lor..."), "color_fill", 0,
+	//BG Color
+	actionBgColor = new KAction( i18n("Background Co&lor..."), "color_fill", 0,
 		this, SLOT( setBgColor() ),
 		ac, "format_bgcolor" );
 
+	//Font Family
 	action_font = new KFontAction( i18n("&Font"), 0,
 			ac, "format_font" );
 	connect( action_font, SIGNAL( activated( const QString & ) ),
 		this, SLOT( setFont( const QString & ) ) );
 
+	//Font Size
 	action_font_size = new KFontSizeAction( i18n("Font &Size"), 0,
 			ac, "format_font_size" );
 	connect( action_font_size, SIGNAL( fontSizeChanged(int) ),
 		editor, SLOT( setPointSize(int) ) );
 
-	if( !simpleMode )
-	{
-		action_bold = new KToggleAction( i18n("&Bold"), "text_bold", CTRL+Key_B,
-				ac, "format_bold" );
-		connect( action_bold, SIGNAL( toggled(bool) ),
-			editor, SLOT( setBold(bool) ) );
+	//Formatting
+	action_bold = new KToggleAction( i18n("&Bold"), "text_bold", CTRL+Key_B,
+			ac, "format_bold" );
+	connect( action_bold, SIGNAL( toggled(bool) ),
+		editor, SLOT( setBold(bool) ) );
 
-		action_italic = new KToggleAction( i18n("&Italic"), "text_italic", CTRL+Key_I,
-				ac, "format_italic" );
-		connect( action_italic, SIGNAL( toggled(bool) ),
-			editor, SLOT( setItalic(bool) ) );
+	action_italic = new KToggleAction( i18n("&Italic"), "text_italic", CTRL+Key_I,
+			ac, "format_italic" );
+	connect( action_italic, SIGNAL( toggled(bool) ),
+		editor, SLOT( setItalic(bool) ) );
 
-		action_underline = new KToggleAction( i18n("&Underline"), "text_under", CTRL+Key_U,
-					ac, "format_underline" );
-		connect( action_underline, SIGNAL( toggled(bool) ),
-			editor, SLOT( setUnderline(bool) ) );
+	action_underline = new KToggleAction( i18n("&Underline"), "text_under", CTRL+Key_U,
+				ac, "format_underline" );
+	connect( action_underline, SIGNAL( toggled(bool) ),
+		editor, SLOT( setUnderline(bool) ) );
 
-		action_align_left = new KToggleAction( i18n("Align &Left"), "text_left", 0,
-				ac, "format_align_left" );
-		connect( action_align_left, SIGNAL( toggled(bool) ),
-			this, SLOT( setAlignLeft(bool) ) );
-
-		action_align_center = new KToggleAction( i18n("Align &Center"), "text_center", 0,
-				ac, "format_align_center" );
-		connect( action_align_center, SIGNAL( toggled(bool) ),
-			this, SLOT( setAlignCenter(bool) ) );
-
-		action_align_right = new KToggleAction( i18n("Align &Right"), "text_right", 0,
-				ac, "format_align_right" );
-		connect( action_align_right, SIGNAL( toggled(bool) ),
-			this, SLOT( setAlignRight(bool) ) );
-
-		action_align_justify = new KToggleAction( i18n("&Justify"), "text_block", 0,
-				ac, "format_align_justify" );
-		connect( action_align_justify, SIGNAL( toggled(bool) ),
-			this, SLOT( setAlignJustify(bool) ) );
-
-		action_align_left->setExclusiveGroup( "alignment" );
-		action_align_center->setExclusiveGroup( "alignment" );
-		action_align_right->setExclusiveGroup( "alignment" );
-		action_align_justify->setExclusiveGroup( "alignment" );
-
-		connect( editor, SIGNAL( currentFontChanged( const QFont & ) ),
-			this, SLOT( updateCharFmt() ) );
-		connect( editor, SIGNAL( cursorPositionChanged( int,int ) ),
-			this, SLOT( updateAligment() ) );
-
-		updateCharFmt();
-		updateAligment();
-	}
+	connect( editor, SIGNAL( currentFontChanged( const QFont & ) ),
+		this, SLOT( updateCharFmt() ) );
+	updateCharFmt();
 
 	connect( editor, SIGNAL( currentFontChanged( const QFont & ) ),
 		this, SLOT( updateFont() ) );
-
 	updateFont();
+
+	//Alignment
+	action_align_left = new KToggleAction( i18n("Align &Left"), "text_left", 0,
+			ac, "format_align_left" );
+	connect( action_align_left, SIGNAL( toggled(bool) ),
+		this, SLOT( setAlignLeft(bool) ) );
+
+	action_align_center = new KToggleAction( i18n("Align &Center"), "text_center", 0,
+			ac, "format_align_center" );
+	connect( action_align_center, SIGNAL( toggled(bool) ),
+		this, SLOT( setAlignCenter(bool) ) );
+
+	action_align_right = new KToggleAction( i18n("Align &Right"), "text_right", 0,
+			ac, "format_align_right" );
+	connect( action_align_right, SIGNAL( toggled(bool) ),
+		this, SLOT( setAlignRight(bool) ) );
+
+	action_align_justify = new KToggleAction( i18n("&Justify"), "text_block", 0,
+			ac, "format_align_justify" );
+	connect( action_align_justify, SIGNAL( toggled(bool) ),
+		this, SLOT( setAlignJustify(bool) ) );
+
+	action_align_left->setExclusiveGroup( "alignment" );
+	action_align_center->setExclusiveGroup( "alignment" );
+	action_align_right->setExclusiveGroup( "alignment" );
+	action_align_justify->setExclusiveGroup( "alignment" );
+
+	connect( editor, SIGNAL( cursorPositionChanged( int,int ) ),
+		this, SLOT( updateAligment() ) );
+
+	updateAligment();
+}
+
+void KopeteRichTextEditPart::updateActions()
+{
+	actionFgColor->setEnabled( m_richTextEnabled &&
+		( m_capabilities & KopeteProtocol::BaseFgColor || m_capabilities & KopeteProtocol::RichColor )
+	);
+
+	actionBgColor->setEnabled( m_richTextEnabled &&
+		( m_capabilities & KopeteProtocol::BaseBgColor || m_capabilities & KopeteProtocol::RichColor )
+	);
+
+	bool activateFont = m_richTextEnabled &&
+		( m_capabilities & KopeteProtocol::BaseFont || m_capabilities & KopeteProtocol::RichFont );
+	action_font->setEnabled( activateFont );
+	action_font_size->setEnabled( activateFont );
+
+	bool activateFormat = m_richTextEnabled && (
+		m_capabilities & KopeteProtocol::BaseFormatting ||
+		m_capabilities & KopeteProtocol::RichFormatting );
+	action_bold->setEnabled( activateFormat );
+	action_italic->setEnabled(activateFormat);
+	action_underline->setEnabled(activateFormat);
+
+	bool activateAlignment = m_richTextEnabled && ( m_capabilities & KopeteProtocol::Alignment );
+	action_align_left->setEnabled( activateAlignment );
+	action_align_center->setEnabled( activateAlignment );
+	action_align_right->setEnabled( activateAlignment );
+	action_align_justify->setEnabled( activateAlignment );
 }
 
 void KopeteRichTextEditPart::updateCharFmt()
@@ -161,7 +227,7 @@ void KopeteRichTextEditPart::clear()
 	setFont( mFont );
 	setFgColor( mFgColor );
 
-	if( !simpleMode )
+	if( m_capabilities & KopeteProtocol::BaseFormatting || m_capabilities & KopeteProtocol::RichFormatting )
 	{
 		editor->setBold( action_bold->isChecked() );
 		editor->setItalic( action_italic->isChecked() );
@@ -199,6 +265,31 @@ void KopeteRichTextEditPart::updateFont()
 	action_font->setFont( editor->family() );
 }
 
+void KopeteRichTextEditPart::readConfig()
+{
+	KConfig *config = KGlobal::config();
+	config->setGroup("RichTextEditor");
+
+	QColor tmpColor = KGlobalSettings::textColor();
+	setFgColor( config->readColorEntry("FgColor", &tmpColor ) );
+
+	tmpColor = KGlobalSettings::baseColor();
+	setBgColor( config->readColorEntry("BgColor", &tmpColor ) );
+
+	QFont tmpFont = KGlobalSettings::generalFont();
+	setFont( config->readFontEntry("Font", &tmpFont ) );
+}
+
+void KopeteRichTextEditPart::writeConfig()
+{
+	KConfig *config = KGlobal::config();
+	config->setGroup("RichTextEditor");
+	config->writeEntry("Font", mFont );
+	config->writeEntry("BgColor", mBgColor );
+	config->writeEntry("FgColor", mFgColor );
+	config->sync();
+}
+
 void KopeteRichTextEditPart::setFgColor()
 {
 	QColor col;
@@ -208,13 +299,15 @@ void KopeteRichTextEditPart::setFgColor()
 		return;
 
 	setFgColor( col );
+
+	writeConfig();
 }
 
 void KopeteRichTextEditPart::setFgColor( const QColor &newColor )
 {
 	mFgColor = newColor;
 
-	if( simpleMode )
+	if( !(m_capabilities & KopeteProtocol::RichColor) )
 	{
 		QPalette pal = editor->palette();
 		pal.setColor(QPalette::Active, QColorGroup::Text, mFgColor );
@@ -238,6 +331,8 @@ void KopeteRichTextEditPart::setBgColor()
 		return;
 
 	setBgColor( col );
+
+	writeConfig();
 }
 
 void KopeteRichTextEditPart::setBgColor( const QColor &newColor )
@@ -260,6 +355,7 @@ void KopeteRichTextEditPart::setFont()
 	KFontDialog::getFont(mFont, false, editor);
 	setFont(mFont);
 	updateFont();
+	writeConfig();
 }
 
 void KopeteRichTextEditPart::setFont( const QFont &newFont )
@@ -270,8 +366,9 @@ void KopeteRichTextEditPart::setFont( const QFont &newFont )
 
 void KopeteRichTextEditPart::setFont( const QString &newFont )
 {
-	editor->setFamily(newFont);
-	mFont = editor->currentFont();
+	mFont = QFont( newFont );
+	editor->setFont(mFont);
+	writeConfig();
 }
 
 void KopeteRichTextEditPart::setAlignLeft( bool yes )

@@ -17,7 +17,7 @@ libkrichtexteditpart_la_LIBADD = $(KDE_RPATH) $(all_libraries) $(LIB_KPARTS) \
         $(LIB_KSPELL) $(LIB_KDEPRINT)
 
 partdir = $(kde_datadir)/kopeterichtexteditpart
-part_DATA = kopeterichtexteditpartsimple.rc kopeterichtexteditpartfull.rc
+part_DATA = kopeterichtexteditpartfull.rc
 	
 rcdir = $(kde_datadir)/kopete
 rc_DATA = kopetechatwindow.rc kopeteemailwindow.rc

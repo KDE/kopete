@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="krichtexteditpart" version="2">
+<kpartgui name="krichtexteditpart" version="5">
 <MenuBar>
   <Menu name="format"><text>F&amp;ormat</text>
     <Action name="format_bold"/>
@@ -20,6 +20,15 @@
   </Menu>
   <Merge />
 </MenuBar>
+
+<ToolBar name="mainToolBar"><text>Main Toolbar</text>
+  <Separator/>
+  <Action name="enableRichText"/>
+  <Separator/>
+  <Action name="check_spelling"/>
+  <Separator/>
+</ToolBar>
+
 <ToolBar name="formatToolBar"><text>Format Toolbar</text>
   <Action name="format_bold"/>
   <Action name="format_italic"/>

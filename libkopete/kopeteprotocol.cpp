@@ -55,10 +55,10 @@ KopeteProtocol::~KopeteProtocol()
 	delete d;
 }
 
-bool KopeteProtocol::supportsRichText() const
+int KopeteProtocol::richTextCapabilities() const
 {
 	//Return false by default
-	return false;
+	return 0;
 }
 
 KActionMenu* KopeteProtocol::protocolActions()

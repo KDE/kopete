@@ -243,10 +243,10 @@ void IRCProtocol::slotViewCreated( KopeteView *view )
 		new IRCGUIClient( view->msgManager() );
 }
 
-bool IRCProtocol::supportsRichText() const
+int IRCProtocol::richTextCapabilities() const
 {
 	//We support rich text
-	return true;
+	return KopeteProtocol::RichFormatting | KopeteProtocol::RichColor;
 }
 
 void IRCProtocol::slotMessageFilter( KopeteMessage &msg )

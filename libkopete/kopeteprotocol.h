@@ -46,6 +46,30 @@ class KopeteProtocol : public KopetePlugin
 
 public:
 	/**
+	 * Available capabilities for the rich text widget.
+	 *
+	 * richTextCapabilities() returns an ORed list of these, which
+	 * the edit widget interperts to determine what buttons to show
+	 */
+	enum RichTextCapabilities
+	{
+		BaseFgColor = 1,     // Setting the bg color of the whole edit widget / message
+		BaseBgColor = 2,     // Setting the fg color of the whole edit widget / message
+		RichColor = 4,       // Setting the fg/bg color of text portions individually
+		BaseFont = 8,        // Setting the font of the whole edit widget / message
+		RichFont = 16,       // Setting the font of text portions individually
+		BaseFormatting = 32, // Setting the formattinng of the whole edit widget / message
+		RichFormatting = 64, // Setting the formatting of text portions individually
+		Alignment = 128,     // Setting the alignment of text portions
+
+		//Shortcut for base properties only - basically MSN
+		BaseRTF =  43,
+
+		//Shortcut for All of the above - full HTML
+		FullRTF =  255
+	};
+
+	/**
 	 * @brief Constructor for KopeteProtocol
 	 *
 	 * @param instance The protocol's instance, every plugin needs to have a @ref KInstance of its own
@@ -128,8 +152,10 @@ public:
 
 	/**
 	 * Return if this protocol supports advanced rich text (HTML returned from chat widget)
+	 *
+	 * @see Kopete::UI::Global::RichTextCapabilities
 	 */
-	 virtual bool supportsRichText() const;
+	 virtual int richTextCapabilities() const;
 
 	/**
 	 * Reimplemented from KopetePlugin.

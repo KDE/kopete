@@ -182,7 +182,8 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	editDock = createDockWidget( QString::fromLatin1( "editDock" ), QPixmap(),
 		0L, QString::fromLatin1("editDock"), QString::fromLatin1(" ") );
 
-	editpart = new KopeteRichTextEditPart( editDock, "kopeterichtexteditpart", mgr->protocol()->supportsRichText() );
+	editpart = new KopeteRichTextEditPart( editDock, "kopeterichtexteditpart",
+		mgr->protocol()->richTextCapabilities() );
 
 	m_edit = static_cast<KTextEdit*>( editpart->widget() );
 
@@ -972,11 +973,11 @@ void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnl
 		if(c)
 			m_tabBar->setTabIconSet( this , msgManager()->contactOnlineStatus( c ).iconFor( c ) );
 	}
-	
+
 	// update the windows caption
 	slotChatDisplayNameChanged();
 	emit updateStatusIcon( this );
-	
+
 
 	if ( ( oldStatus.status() == KopeteOnlineStatus::Offline )
 	  != ( newStatus.status() == KopeteOnlineStatus::Offline ) )
@@ -1050,10 +1051,7 @@ void ChatView::messageSentSuccessfully()
 
 bool ChatView::isTyping()
 {
-	QString txt = m_edit->text();
-	if(!editpart->simple()) //remove all <p><br> and other html tags
-		txt.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null );
-
+	QString txt = m_edit->text( Qt::PlainText );
 	return !txt.stripWhiteSpace().isEmpty();
 }
 
@@ -1077,9 +1075,7 @@ void ChatView::slotTextChanged()
 
 void ChatView::historyUp()
 {
-	QString txt = m_edit->text();
-	if(!editpart->simple()) //remove all <p><br> and other html tags
-		txt.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null );
+	QString txt = m_edit->text( Qt::PlainText );
 	bool empty=txt.stripWhiteSpace().isEmpty();
 
 	if(historyPos == -1)
@@ -1111,9 +1107,7 @@ void ChatView::historyUp()
 
 void ChatView::historyDown()
 {
-	QString txt = m_edit->text();
-	if(!editpart->simple()) //remove all <p><br> and other html tags
-		txt.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null );
+	QString txt = m_edit->text(Qt::PlainText);
 	bool empty=txt.stripWhiteSpace().isEmpty();
 
 
@@ -1530,7 +1524,7 @@ void ChatView::setCurrentMessage( const KopeteMessage &message )
 
 KopeteMessage ChatView::currentMessage()
 {
-	KopeteMessage currentMsg = KopeteMessage( m_manager->user(), m_manager->members(), m_edit->text(), KopeteMessage::Outbound, editpart->simple() ? KopeteMessage::PlainText : KopeteMessage::RichText );
+	KopeteMessage currentMsg = KopeteMessage( m_manager->user(), m_manager->members(), m_edit->text(), KopeteMessage::Outbound, editpart->richTextEnabled() ? KopeteMessage::RichText : KopeteMessage::PlainText );
 
 	currentMsg.setBg( editpart->bgColor() );
 	currentMsg.setFg( editpart->fgColor() );

@@ -67,7 +67,7 @@ public:
 
 	virtual QPtrList<KAction> *customChatWindowPopupActions( const KopeteMessage &, DOM::Node & );
 
-	bool supportsRichText() const;
+	int richTextCapabilities() const;
 
 	static IRCProtocol *protocol();
 

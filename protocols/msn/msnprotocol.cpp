@@ -145,6 +145,11 @@ bool MSNProtocol::validContactId(const QString& userid)
 	return ( userid.contains('@') ==1 && userid.contains('.') >=1 && userid.contains(' ') == 0);
 }
 
+int MSNProtocol::richTextCapabilities() const
+{
+	return KopeteProtocol::BaseRTF;
+}
+
 #include "msnprotocol.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

@@ -22,8 +22,8 @@ class KopeteRichTextEditPart : public KParts::ReadOnlyPart
 	Q_OBJECT
 
 	public:
-		KopeteRichTextEditPart( QWidget *wparent, const char *wname, QObject*, const char*, const QStringList& );
-		KopeteRichTextEditPart( QWidget *wparent, const char *wname, bool supportsRichText );
+                KopeteRichTextEditPart( QWidget *wparent, const char *wname, QObject*, const char*, const QStringList& );
+		KopeteRichTextEditPart( QWidget *wparent, const char *wname, int capabilities );
 
 		/**
 		* Returns the current editor widget.
@@ -40,7 +40,9 @@ class KopeteRichTextEditPart : public KParts::ReadOnlyPart
 
 		void clear();
 
-		bool simple() { return simpleMode; }
+		int capabilities() { return m_capabilities; }
+
+		bool richTextEnabled() { return m_richTextAvailable && m_richTextEnabled; }
 
 		static KAboutData *createAboutData();
 
@@ -75,13 +77,25 @@ class KopeteRichTextEditPart : public KParts::ReadOnlyPart
 		* Creates the part's actions in the part's action collection.
 		*/
 		void createActions();
+		void updateActions();
 
 		void updateFont();
 		void updateCharFmt();
 		void updateAligment();
 
+		void slotSetRichTextEnabled( bool enable );
+
 	private:
+		void readConfig();
+		void writeConfig();
+
 		KopeteTextEdit *editor;
+		KAction *checkSpelling;
+		KToggleAction *enableRichText;
+
+		KAction *actionFgColor;
+		KAction *actionBgColor;
+
 		KToggleAction *action_bold;
 		KToggleAction *action_italic;
 		KToggleAction *action_underline;
@@ -94,7 +108,9 @@ class KopeteRichTextEditPart : public KParts::ReadOnlyPart
 		KToggleAction *action_align_center;
 		KToggleAction *action_align_justify;
 
-		bool simpleMode;
+		int m_capabilities;
+		bool m_richTextAvailable;
+		bool m_richTextEnabled;
 
 		QFont mFont;
 		QColor mBgColor;
