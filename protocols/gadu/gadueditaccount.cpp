@@ -105,7 +105,7 @@ GaduEditAccount::newUin( unsigned int uin, QString password )
 {
 	if ( uin ) {
 		loginEdit_->setText( QString::number( uin ) );
-		passwordWidget_->setPassword( password );
+		passwordEdit_->setText( password );
 	}
 	else {
 		// registration failed, enable button again
