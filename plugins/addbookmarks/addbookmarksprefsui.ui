@@ -12,9 +12,6 @@
             <height>421</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>BookmarksPrefsUI</string>
-    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -24,7 +21,7 @@
                 <cstring>buttonGroup1</cstring>
             </property>
             <property name="title">
-                <string>Use subfolder for each contact</string>
+                <string>Use Subfolder for Each Contact</string>
             </property>
             <vbox>
                 <property name="name">
