@@ -18,7 +18,6 @@
  ***************************************************************************/
 
 #include "dcchandler.h"
-#include <kdebug.h>
 #include <qdatastream.h>
 #include <qregexp.h>
 #include <netinet/in.h>
@@ -220,9 +219,7 @@ void DCCServer::slotReadyRead()
 	
 	int percentage = (ack * 100 / mFile->size());
 	
-	kdDebug() << "IRC Plugin: percentage == " << percentage << endl;
 	emit incomingAckPercent(percentage);
-	kdDebug() << "IRC Plugin: mFile->atEnd() == " << mFile->atEnd() << endl;
 	
 	if (mFile->atEnd())
 		emit sendFinished();
@@ -239,7 +236,6 @@ void DCCServer::sendNextPacket()
 		// Use data.length(), not 1024 because we might not have 1024 bytes (if we are at the end of the file for example)
 		mSocket->writeBlock(data, len);
 		int percentage = (mFile->at() * 100 / mFile->size());
-		kdDebug() << "IRC Plugin: sendNextPacket: QString::number(((mFile->at() * 100) / mFile->size())) == " << QString::number(((mFile->at() * 100) / mFile->size())) << endl;
 		emit sendingNonAckPercent(percentage);
 	}
 }

@@ -42,6 +42,7 @@
 #include "ircdccview.h"
 #include "dccconfirm.h"
 #include "ircdccreceive.h"
+#include "messagetransport.h"
 
 IRCServerContact::IRCServerContact(const QString &server, const QString &nickname, bool connectNow, IRCProtocol *protocol)
 {
@@ -138,11 +139,8 @@ void IRCServerContact::connectNow()
 	}
 	if (mServer == "(Console)")
 	{
-		QString parsed = QString("<img src=\"%1\"><b>").arg(locate("data", "kopete/pics/irc_unknowncmd.xpm"));
-		parsed.append(QStyleSheet::escape(i18n("Sorry, you need to specifiy a server before trying to connect. The syntax is: /server irc.yourserver.com")));
-		parsed.append("</b><br>");
-		mConsoleView->chatView->append(parsed);
-		mConsoleView->chatView->scrollToBottom();
+		QString message = i18n("Sorry, you need to specifiy a server before trying to connect. The syntax is: /server irc.yourserver.com");
+		messenger->displayMessage(MessageTransport(message, QString(""), QString(""), QString(""), engine->nickName(), IRCMessage::UnknownMsg, mServer, mConsoleView->chatView));
 		mConsoleView->messageBox->setText("");
 		return;
 	}
