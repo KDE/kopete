@@ -26,6 +26,7 @@
 
 #include <qdatetime.h>
 #include <qtimer.h>
+#include <qtextcodec.h>
 
 #include <kfileitem.h>
 #include <kdebug.h>
@@ -166,6 +167,7 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	connect(this, SIGNAL(connectionClosed()), this, SLOT(OnConnectionClosed()));
 	connect(this, SIGNAL(serverReady()), this, SLOT(OnServerReady()));
 	mIsICQ=isicq; // TODO: I have no idea if this is a good way of handling icq mode
+	toicqsrv_seq = 1;
 	key = NULL;
 	mCookie = NULL;
 	idle = false;
@@ -1074,7 +1076,7 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 		AIMBuddy *bud;
 		switch (ssi->type)
 		{
-			case 0x0000: //buddy
+			case 0x0000: // normal contact
 			{
 				bud = new AIMBuddy(ssi->bid, ssi->gid, ssi->name);
 				AIMGroup *group = blist.findGroup(ssi->gid);
@@ -1102,7 +1104,7 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 				break;
 			}
 
-			case 0x0001: //group
+			case 0x0001: //group of contacts
 			{
 
 				Buffer tmpBuf(ssi->tlvlist, ssi->tlvlength);
@@ -1142,7 +1144,9 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 	} // END while(inbuf.getLength() > 4)
 
 	blist.timestamp = inbuf.getDWord();
-	kdDebug(14150) << k_funcinfo <<  "Finished getting buddy list" << endl;
+	kdDebug(14150) << k_funcinfo <<  "Finished getting buddy list, timestamp=" <<
+		blist.timestamp << endl;
+
 	sendSSIActivate(); // send CLI_ROSTERACK
 	emit gotConfig(blist);
 
@@ -1376,11 +1380,11 @@ void OscarSocket::parseIM(Buffer &inbuf)
 			bool moreTLVs = true;
 			// This gets set if we are notified of an auto response
 			bool isAutoResponse = false;
-			while( moreTLVs )
+			while(moreTLVs)
 			{
-				kdDebug(14150) << k_funcinfo <<  "Got a normal IM block from '" << u.sn << "'" << endl;
+//				kdDebug(14150) << k_funcinfo <<  "Got a normal IM block from '" << u.sn << "'" << endl;
 				type = inbuf.getWord();
-				kdDebug(14150) << k_funcinfo <<  "type=" << type << endl;
+//				kdDebug(14150) << k_funcinfo <<  "type=" << type << endl;
 				switch(type)
 				{
 					case 0x0002: //TLV(2), message block
@@ -1389,12 +1393,12 @@ void OscarSocket::parseIM(Buffer &inbuf)
 						length = inbuf.getWord();
 
 						TLV caps = inbuf.getTLV(); // TLV(1281), CAPABILITIES
-
+/*
 						if (caps.type==1281)
 						{
 							kdDebug(14150) << k_funcinfo <<  "TODO: parse CAPABILITIES block!" << endl;
 						}
-
+*/
 						delete [] caps.data;
 
 						TLV tlvMessage = inbuf.getTLV(); // TLV(257), MESSAGE
@@ -1403,54 +1407,62 @@ void OscarSocket::parseIM(Buffer &inbuf)
 						{
 							Buffer msgBuf(tlvMessage.data, tlvMessage.length);
 							DWORD encoding = msgBuf.getDWord();
-							if (encoding!=0x00000000) // if it's not US-ASCII
-								kdDebug(14150) << k_funcinfo <<  "TODO: missing support for non 'US-ASCII' message encoding=" << encoding << endl;
-
 							// Get the message
 							char *messagetext = msgBuf.getBlock(msgBuf.getLength());
 
-							/*
-							// TODO: use qtextcodec here
-							QTextCodec *codec = QTextCodec::codecForName("KOI8-R"); // get codec
-							QString unicodeString = codec->toUnicode( messagetext ); // and convert
-							*/
-// 							if (encoding == 0x00020000) // UCS-2BE (or UTF-16)
-// 							else if (encoding == 0x00030000) // iso-8859-1
-//  							else if (encoding == 0x0003ffff) // cp-1257
-//  							else if (encoding == 0x0000ffff) // unknown
-// 							else // something else ;)
+							QTextCodec *codec;
+ 							if (encoding == 0x00020000) // UCS-2BE (or UTF-16)
+							{
+								codec = QTextCodec::codecForName("utf16");
+								message = codec->toUnicode(messagetext);
+							}
+	 						else if (encoding == 0x00030000) // iso-8859-1
+							{
+								codec = QTextCodec::codecForName("ISO8859-1");
+								message = codec->toUnicode(messagetext);
+							}
+  							else if (encoding == 0x0003ffff) // cp-1257
+							{
+								codec = QTextCodec::codecForName("CP1257");
+								message = codec->toUnicode(messagetext);
+							}
+  							else //if (encoding == 0x0000ffff) // unknown
 							{
 								message = QString::fromLocal8Bit(messagetext);
 							}
 
 							delete [] messagetext; // getBlock allocates memory, we HAVE to free it again!
 
-							kdDebug(14150) << k_funcinfo <<  "emit gotIM(), contact='" <<
-								u.sn << "', message='" << message << "'" << endl;
-
-							emit gotIM(message,u.sn,isAutoResponse);
+							kdDebug(14150) << k_funcinfo <<  "emit gotIM(), contact='" << u.sn <<
+								"', message='" << message <<
+								"' encoding=" << encoding << endl;
+							emit gotIM(message, u.sn, isAutoResponse);
 						}
 						else
 						{
-							kdDebug(14150) << k_funcinfo <<  "Cannot find TLV(257), no message inside packet???" << endl;
+							kdDebug(14150) << k_funcinfo <<
+								"Cannot find TLV(257), no message inside packet???" << endl;
 						}
 
 //						kdDebug(14150) << k_funcinfo <<  "deleting data from TLV(257)" << endl;
 						delete [] tlvMessage.data; // getTLV uses getBlock() internally! same as aboves delete applies
 
-						// Check to see if there's anything else
-						kdDebug(14150) << k_funcinfo <<  "remaining length=" << inbuf.getLength() << endl;
-
-
 						if(inbuf.getLength() > 0)
+						{
 							moreTLVs = true;
+ 							kdDebug(14150) << k_funcinfo <<
+								"remaining length after reading message=" << inbuf.getLength() << endl;
+						}
 						else
+						{
 							moreTLVs = false;
+						}
 						break;
 					} // END 0x0002
 
 					case 0x0004: // AIM Away message
 					{
+						kdDebug(14150) << k_funcinfo << "AIM autoresponse." << endl;
 						// There isn't actually a message in this TLV, it just specifies
 						// that the message that was send was an autoresponse
 						inbuf.getWord();
@@ -1467,6 +1479,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 
 					case 0x0008: // User Icon
 					{
+						kdDebug(14150) << k_funcinfo << "AIM USER ICON." << endl;
 						// TODO support this
 						// The length of the TLV
 						length = inbuf.getWord();
@@ -1482,7 +1495,8 @@ void OscarSocket::parseIM(Buffer &inbuf)
 
 					default: //unknown type
 					{
-						kdDebug(14150) << k_funcinfo <<  "Unknown message type, type=" << type << endl;
+						kdDebug(14150) << k_funcinfo <<
+							"Unknown message type, type=" << type << endl;
 						if(inbuf.getLength() > 0)
 							moreTLVs = true;
 						else
@@ -1501,9 +1515,9 @@ void OscarSocket::parseIM(Buffer &inbuf)
 				break;
 			}
 
-			kdDebug(14150) << "[OSCAR] IM received on channel 2 from " << u.sn << endl;
+			kdDebug(14150) << k_funcinfo << "IM received on channel 2 from " << u.sn << endl;
 			TLV tlv = inbuf.getTLV();
-			kdDebug(14150) << "[OSCAR] The first TLV is of type " << tlv.type;
+			kdDebug(14150) << k_funcinfo << "The first TLV is of type " << tlv.type;
 			if (tlv.type == 0x0005) //connection info
 			{
 				Buffer tmpbuf(tlv.data, tlv.length);
@@ -1526,7 +1540,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 					{
 						capflag |= oscar_caps[i].flag;
 						identified++;
-						break; /* should only match once... */
+						break; // should only match once...
 					}
 				}
 				delete [] cap;
@@ -1663,10 +1677,24 @@ void OscarSocket::parseIM(Buffer &inbuf)
 			break;
 		} // END MSGFORMAT_ADVANCED
 
-		case MSGFORMAT_SERVER: // non-acknowledged, server messages
+		case MSGFORMAT_SERVER: // non-acknowledged, server messages (ICQ ONLY I THINK)
 		{
-			kdDebug(14150) << k_funcinfo <<  "TODO: parse advanced oscar message used by ICQ" << endl;
-			// TODO: parse that big TLV(5) inside including TLV(10001) and all the stuff
+			TLV type4 = inbuf.getTLV();
+			kdDebug(14150) << k_funcinfo << "TLV.type=" << type4.type;
+
+			if (type4.type == 0x0005)
+			{
+				DWORD uin = inbuf.getDWord();
+				WORD msgtype = inbuf.getWord();
+				kdDebug(14150) << "server message, type=" << msgtype << endl;
+				WORD msgLen = inbuf.getWord();
+				char *msgtxt = inbuf.getBlock(msgLen);
+				message = QString::fromLocal8Bit(msgtxt);
+				delete [] msgtxt; // getBlock allocates memory, we HAVE to free it again!
+				kdDebug(14150) << k_funcinfo <<  "emit gotIM(), contact=" <<
+					u.sn << " == " << uin << "?, message='" << message << "'" << endl;
+				emit gotIM(message, u.sn, false);
+			}
 			break;
 		} // END MSGFORMAT_SERVER
 
@@ -1885,7 +1913,6 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 	sendBuf(outbuf,0x02);
 }
 
-
 void OscarSocket::sendSSIActivate(void)
 {
 	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_ROSTERACK), sending SSI Activate" << endl;
@@ -1894,7 +1921,6 @@ void OscarSocket::sendSSIActivate(void)
 	sendBuf(outbuf,0x02);
 }
 
-/** Parses the oncoming buddy server notification */
 void OscarSocket::parseBuddyChange(Buffer &inbuf)
 {
 	UserInfo u = parseUserInfo(inbuf);
@@ -1902,7 +1928,6 @@ void OscarSocket::parseBuddyChange(Buffer &inbuf)
 	emit gotBuddyChange(u);
 }
 
-/** Parses offgoing buddy message from server */
 void OscarSocket::parseOffgoingBuddy(Buffer &inbuf)
 {
 	UserInfo u = parseUserInfo(inbuf);
@@ -1910,7 +1935,6 @@ void OscarSocket::parseOffgoingBuddy(Buffer &inbuf)
 	emit gotOffgoingBuddy(u.sn);
 }
 
-/** Requests sn's user info */
 void OscarSocket::sendUserProfileRequest(const QString &sn)
 {
 	Buffer outbuf;

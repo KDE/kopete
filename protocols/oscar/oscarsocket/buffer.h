@@ -121,6 +121,13 @@ class Buffer : public QObject
 		char *getLEBlock(WORD len);
 
 		/*
+		 * Convenience function that gets a LNTS (long null terminated string)
+		 * from the buffer. Otherwise you'd need a getWord() + getBlock() call :)
+		 */
+		char *getLNTS();
+		char *getLELNTS();
+
+		/*
 		 * adds a 16-bit long TLV
 		 */
 		int addTLV16(const WORD type, const WORD data);

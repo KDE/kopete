@@ -42,8 +42,8 @@
 #include "kopetegroup.h"
 
 #include "icqaccount.h"
+#include "icquserinfo.h"
 #include "aim.h"
-#include "oscarsocket.h"
 #include "oscarsocket.icq.h"
 
 ICQContact::ICQContact(const QString name, const QString displayName,
@@ -52,6 +52,38 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 {
 	mProtocol = static_cast<ICQProtocol *>(protocol());
 	setOnlineStatus(mProtocol->statusOffline);
+	infoDialog = 0L;
+	userinfoRequestSequence=0;
+	userinfoReplyCount = 0;
+	generalInfo.uin=0;
+	generalInfo.nickName="";
+	generalInfo.firstName="";
+	generalInfo.lastName="";
+	generalInfo.eMail="";
+	generalInfo.city="";
+	generalInfo.state="";
+	generalInfo.phoneNumber="";
+	generalInfo.faxNumber="";
+	generalInfo.street="";
+	generalInfo.cellularNumber="";
+	generalInfo.zip="";
+	generalInfo.countryCode=0;
+	generalInfo.timezoneCode=0;
+	generalInfo.publishEmail=false;
+	generalInfo.showOnWeb=false;
+
+	workInfo.city="";
+	workInfo.state="";
+	workInfo.phone="";
+	workInfo.fax="";
+	workInfo.address="";
+	workInfo.zip="";
+	workInfo.countryCode=0;
+	workInfo.company="";
+	workInfo.department="";
+	workInfo.position="";
+	workInfo.occupation=0;
+	workInfo.homepage="";
 
 	// Buddy Changed
 	QObject::connect(
@@ -60,9 +92,12 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 	QObject::connect(
 		acc->getEngine(), SIGNAL(gotIM(QString,QString,bool)),
 		this, SLOT(slotIMReceived(QString,QString,bool)));
-
-// 	kdDebug(14200) << k_funcinfo "name='" << name <<
-// 		"', displayName='" << displayName << "' " << endl;
+	QObject::connect(
+		acc->getEngine(), SIGNAL(gotICQGeneralUserInfo(const int, const ICQGeneralUserInfo &)),
+		this, SLOT(slotUpdGeneralInfo(const int, const ICQGeneralUserInfo &)));
+	QObject::connect(
+		acc->getEngine(), SIGNAL(gotICQWorkUserInfo(const int, const ICQWorkUserInfo &)),
+		this, SLOT(slotUpdWorkInfo(const int, const ICQWorkUserInfo &)));
 }
 
 ICQContact::~ICQContact()
@@ -196,6 +231,69 @@ void ICQContact::setStatus(const unsigned int newStatus)
 
 	kdDebug(14200) << k_funcinfo << "'" << displayName() << "' is now " <<
 		onlineStatus().description() << endl;
+}
+
+void ICQContact::slotUserInfo()
+{
+	if (!infoDialog)
+	{
+		infoDialog = new ICQUserInfo(this, static_cast<ICQAccount*>(account()), false);
+		if(!infoDialog)
+			return;
+		connect(infoDialog, SIGNAL(closing()), this, SLOT(slotCloseUserInfoDialog()));
+		infoDialog->show();
+	}
+	else
+	{
+		infoDialog->raise();
+	}
+}
+
+void ICQContact::slotCloseUserInfoDialog()
+{
+	infoDialog->delayedDestruct();
+	infoDialog = 0L;
+}
+
+void ICQContact::requestUserInfo()
+{
+	kdDebug(14200) << k_funcinfo << "called" << endl;
+	userinfoReplyCount = 0;
+	userinfoRequestSequence =
+		account()->getEngine()->sendReqInfo(contactname().toULong());
+}
+
+
+void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf)
+{
+	// compare reply's sequence with the one we sent with our last request
+	if(seq != userinfoRequestSequence)
+		return;
+
+	kdDebug(14200) << k_funcinfo << "called; seq=" << seq << ", last saved seq=" <<
+		userinfoRequestSequence << endl;
+
+	generalInfo = inf;
+
+	userinfoReplyCount++; // number of packets that
+	if (userinfoReplyCount >= 2)
+		emit updatedUserInfo();
+}
+
+void ICQContact::slotUpdWorkInfo(const int seq, const ICQWorkUserInfo &inf)
+{
+	// compare reply's sequence with the one we sent with our last request
+	if(seq != userinfoRequestSequence)
+		return;
+
+	kdDebug(14200) << k_funcinfo << "called; seq=" << seq << ", last saved seq=" <<
+		userinfoRequestSequence << endl;
+
+	workInfo = inf;
+
+	userinfoReplyCount++; // number of packets that
+	if (userinfoReplyCount >= 2)
+		emit updatedUserInfo();
 }
 
 #include "icqcontact.moc"

@@ -2,8 +2,7 @@
     icquserinfo.cpp  -  ICQ Protocol Plugin
 
     Copyright (c) 2002 by Nick Betcher <nbetcher@kde.org>
-
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -28,30 +27,32 @@
 #include <klocale.h>
 #include <kurllabel.h>
 
-#include "client.h"
-#include "enable.h"
+//#include "client.h"
+//#include "enable.h"
+#include "icqaccount.h"
 #include "icqcontact.h"
-#include "icqprotocol.h"
+#include "oscarsocket.h"
 #include "icquserinfowidget.h"
 
-ICQUserInfo::ICQUserInfo( OscarContact *c, const QString nickName, OscarAccount *account, bool editable, QWidget *parent, const char* name)
-	: KDialogBase( parent, name, /*modal = */false, QString::null, Close | User1 | User2, Close,
-		false, i18n( "&Save Nickname" ), i18n("&Fetch Again") )
+ICQUserInfo::ICQUserInfo(ICQContact *c, ICQAccount *account, bool editable,
+	QWidget *parent, const char* name)
+	: KDialogBase(parent, name, false, QString::null, Close | User1 | User2,
+		Close, false, i18n("&Save Nickname"), i18n("&Fetch Again"))
 {
-	mName = nickName;
 	mAccount = account;
+	mContact = c;
 	mEditable = editable;
 
-	setCaption( i18n("User Info for %1").arg(mName));
+	setCaption(i18n("User Info for %1").arg(c->displayName()));
 
 	mMainWidget = new ICQUserInfoWidget(this, "mMainWidget");
 	setEditable(mEditable);
-	setMainWidget( mMainWidget );
+	setMainWidget(mMainWidget);
 
-	mMainWidget->roUIN->setText(QString::number(mUser->Uin));
+	mMainWidget->roUIN->setText(c->contactname());
 
 	// Defaults
-	mMainWidget->rwAge->setValue( 0 );
+	mMainWidget->rwAge->setValue(0);
 	mMainWidget->rwBday->setDate(QDate());
 	mMainWidget->roBday->setText("");
 
@@ -65,74 +66,48 @@ ICQUserInfo::ICQUserInfo( OscarContact *c, const QString nickName, OscarAccount 
 		this, SLOT(slotHomePageClicked(const QString &)));
 	connect(mMainWidget->prsEmailLabel, SIGNAL(leftClickedURL(const QString &)),
 		this, SLOT(slotEmailClicked(const QString &)));
-	connect(mMainWidget->wrkHomepageLabel, SIGNAL(leftClickedURL(const QString &)),
+	connect(
+		mMainWidget->wrkHomepageLabel, SIGNAL(leftClickedURL(const QString &)),
 		this, SLOT(slotHomePageClicked(const QString &)));
-	connect(c, SIGNAL(updatedInfoFull()),
-		this, SLOT(slotReadInfo()) );
+	connect(
+		c, SIGNAL(updatedUserInfo()),
+		this, SLOT(slotReadInfo()));
 
 	slotFetchInfo();
 }
 
 void ICQUserInfo::slotFetchInfo()
 {
-	if ( mAccount->engine()->isLogged() )
+	if(mAccount->isConnected())
 	{
-		kdDebug(14110) << k_funcinfo << "fetching User Info..." << endl;
-		mMainWidget->setDisabled( true );
+		kdDebug(14200) << k_funcinfo << "fetching User Info for '" <<
+			mContact->displayName() << "'." << endl;
+
+		mMainWidget->setDisabled(true);
 		enableButton(User1,false);
 		enableButton(User2,false);
-		mAccount->engine()->addInfoRequest(mUser->Uin, true); // go get me the info :)
-		setCaption( i18n("Fetching User Info for %1...").arg(mName));
+
+		mContact->requestUserInfo(); // initiate retrival of userinfo
+
+		setCaption( i18n("Fetching User Info for %1...").arg(mContact->displayName()));
 	}
 	else
-		kdDebug(14110) << k_funcinfo << "Ignore request to fetch User Info, NOT online!" << endl;
+		kdDebug(14200) << k_funcinfo << "Ignore request to fetch User Info, NOT online!" << endl;
 }
 
 void ICQUserInfo::slotReadInfo()
 {
-	kdDebug(14110) << k_funcinfo << "called for user '" << mName << "'." << endl;
-	setCaption( i18n("User Info for %1").arg(mName));
+	kdDebug(14200) << k_funcinfo << "called for user '" <<
+		mContact->displayName() << "'." << endl;
 
-	QString caps;
-	if (mUser->hasCap(0))
-		caps += "CAP_ISICQ ";
-	if (mUser->hasCap(1))
-		caps += "CAP_RTF ";
-	if(mUser->hasCap(2))
-		caps += "CAP_STR_2002 ";
-	if(mUser->hasCap(3))
-		caps += "CAP_IS_2002/CAP_UTF8 ";
-	if(mUser->hasCap(4))
-		caps += "CAP_SIM ";
-	if(mUser->hasCap(5))
-		caps += "CAP_STR_2001 ";
-	if(mUser->hasCap(6))
-		caps += "CAP_IS_2001 ";
-	if(mUser->hasCap(7))
-		caps += "CAP_IS_WEB ";
-	if(mUser->hasCap(8))
-		caps += "CAP_TRILLIAN ";
-	if(mUser->hasCap(9))
-		caps += "CAP_TRIL_CRYPT ";
-	if(mUser->hasCap(10))
-		caps += "CAP_LICQ ";
-	if(mUser->hasCap(11))
-		caps += "CAP_MACICQ ";
-	if(mUser->hasCap(12))
-		caps += "CAP_AIM_CHAT ";
-	if(mUser->hasCap(13))
-		caps += "CAP_MICQ ";
-
-	kdDebug(14110) << "caps=" << caps << ", mUser->Caps=" << mUser->Caps << "."<< endl;
-	kdDebug(14110) << "mUser->Build=" << mUser->Build << "."<< endl;
-	kdDebug(14110) << "mUser->client()='" << mUser->client().c_str() << "'"<< endl;
+	setCaption( i18n("User Info for %1").arg(mContact->displayName()));
 
 	mMainWidget->setDisabled( false );
 	enableButton(User1,true);
 	enableButton(User2,true);
 
 	QString homepage;
-
+/*
 //	if ( !mEditable ) // no idea how to get ip for ourselves
 	{
 		QHostAddress mIP;
@@ -147,46 +122,49 @@ void ICQUserInfo::slotReadInfo()
 		else
 			mMainWidget->roIPAddress->setText( QString("%1:%2").arg(mIP.toString()).arg(mPort) );
 	}
+*/
+	mMainWidget->rwNickName->setText(mContact->generalInfo.nickName);
+	mMainWidget->rwAlias->setText(mContact->displayName());
+	mMainWidget->rwFirstName->setText(mContact->generalInfo.firstName);
+	mMainWidget->rwLastName->setText(mContact->generalInfo.lastName);
 
-	mMainWidget->rwNickName->setText ( QString::fromLocal8Bit(mUser->Nick.c_str()) );
-	mMainWidget->rwAlias->setText ( QString::fromLocal8Bit(mUser->Alias.c_str()) );
-	mMainWidget->rwFirstName->setText ( QString::fromLocal8Bit(mUser->FirstName.c_str()) );
-	mMainWidget->rwLastName->setText ( QString::fromLocal8Bit(mUser->LastName.c_str()) );
-	
-	QString email = QString::fromLocal8Bit(mUser->EMail.c_str());
-	if ( mEditable )
-		mMainWidget->prsEmailEdit->setText( email );
+	QString email = mContact->generalInfo.eMail;
+	if (mEditable)
+		mMainWidget->prsEmailEdit->setText(email);
 	else
 	{
-		if ( email.isEmpty() ) // either NULL or ""
+		if (email.isEmpty()) // either NULL or ""
 		{
-			mMainWidget->prsEmailLabel->setText( i18n("unspecified") );
-			mMainWidget->prsEmailLabel->setURL( QString::null );
+			mMainWidget->prsEmailLabel->setText(i18n("unspecified"));
+			mMainWidget->prsEmailLabel->setURL(QString::null);
 			mMainWidget->prsEmailLabel->setDisabled( true );
 			mMainWidget->prsEmailLabel->setUseCursor( false ); // disable hand cursor on mouseover
-		} else {
-			mMainWidget->prsEmailLabel->setText( email );
-			mMainWidget->prsEmailLabel->setURL( email );
-			mMainWidget->prsEmailLabel->setDisabled( false );
-			mMainWidget->prsEmailLabel->setUseCursor( true ); // enable hand cursor on mouseover
+		}
+		else
+		{
+			mMainWidget->prsEmailLabel->setText(email);
+			mMainWidget->prsEmailLabel->setURL(email);
+			mMainWidget->prsEmailLabel->setDisabled(false);
+			mMainWidget->prsEmailLabel->setUseCursor(true); // enable hand cursor on mouseover
 		}
 	}
 
 	// PRIVATE COUNTRY ==============================
+/*
 	initCombo(mMainWidget->rwPrsCountry, mUser->Country, countries);
 	if ( !mEditable )
 		mMainWidget->roPrsCountry->setText( mMainWidget->rwPrsCountry->currentText() );
+*/
+	mMainWidget->prsStateEdit->setText(mContact->generalInfo.state);
+	mMainWidget->prsCityEdit->setText(mContact->generalInfo.city);
+	mMainWidget->prsZipcodeEdit->setText(mContact->generalInfo.zip);
+	mMainWidget->prsAddressEdit->setText(mContact->generalInfo.street);
 
-	mMainWidget->prsStateEdit->setText( QString::fromLocal8Bit(mUser->State.c_str()) );
-	mMainWidget->prsCityEdit->setText( QString::fromLocal8Bit(mUser->City.c_str()) );
-	mMainWidget->prsZipcodeEdit->setText( QString::fromLocal8Bit(mUser->Zip.c_str()) );
-	mMainWidget->prsAddressEdit->setText( QString::fromLocal8Bit(mUser->Address.c_str()) );
-	
-	mMainWidget->prsPhoneEdit->setText ( QString::fromLocal8Bit(mUser->HomePhone.c_str()) );
-	mMainWidget->prsCellphoneEdit->setText ( QString::fromLocal8Bit(mUser->PrivateCellular.c_str()) );
-	mMainWidget->prsFaxEdit->setText ( QString::fromLocal8Bit(mUser->HomeFax.c_str()) );
-
-	// TIMEZONE ====================================== 
+	mMainWidget->prsPhoneEdit->setText(mContact->generalInfo.phoneNumber);
+	mMainWidget->prsCellphoneEdit->setText(mContact->generalInfo.cellularNumber);
+	mMainWidget->prsFaxEdit->setText(mContact->generalInfo.faxNumber);
+/*
+	// TIMEZONE ======================================
 	initTZCombo (mMainWidget->rwTimezone, mUser->TimeZone );
 	if ( !mEditable )
 		mMainWidget->roTimezone->setText( mMainWidget->rwTimezone->currentText() );
@@ -202,7 +180,7 @@ void ICQUserInfo::slotReadInfo()
 		mMainWidget->rwAge->setValue( mUser->Age );
 
 	// GENDER ========================================
-//	kdDebug(14110) << "[ICQUserInfo] Gender of contact is " << mUser->Gender << endl;
+//	kdDebug(14200) << "[ICQUserInfo] Gender of contact is " << mUser->Gender << endl;
 	initCombo( mMainWidget->rwGender, mUser->Gender, genders);
 	if ( !mEditable ) // get text from hidden combobox and insert into readonly lineedit
 		mMainWidget->roGender->setText( mMainWidget->rwGender->currentText() );
@@ -255,7 +233,7 @@ void ICQUserInfo::slotReadInfo()
 	}
 
 	// LANGUAGES =========================================
-	
+
 	initCombo ( mMainWidget->rwLang1, mUser->Language1, languages );
 	initCombo ( mMainWidget->rwLang2, mUser->Language2, languages );
 	initCombo ( mMainWidget->rwLang3, mUser->Language3, languages );
@@ -265,53 +243,63 @@ void ICQUserInfo::slotReadInfo()
 		mMainWidget->roLang2->setText( mMainWidget->rwLang2->currentText() );
 		mMainWidget->roLang3->setText( mMainWidget->rwLang3->currentText() );
 	}
+*/
 
 	// WORK INFO ========================================
-	mMainWidget->wrkCityEdit->setText( QString::fromLocal8Bit(mUser->WorkCity.c_str()) );
-	mMainWidget->wrkStateEdit->setText( QString::fromLocal8Bit(mUser->WorkState.c_str()) );
-	mMainWidget->wrkPhoneEdit->setText ( QString::fromLocal8Bit(mUser->WorkPhone.c_str()) );
-	mMainWidget->wrkFaxEdit->setText ( QString::fromLocal8Bit(mUser->WorkFax.c_str()) );
-	mMainWidget->wrkAddressEdit->setText( QString::fromLocal8Bit(mUser->WorkAddress.c_str()) );
-	mMainWidget->wrkNameEdit->setText( QString::fromLocal8Bit(mUser->WorkName.c_str()) );
-	mMainWidget->wrkDepartmentEdit->setText( QString::fromLocal8Bit(mUser->WorkDepartment.c_str()) );
-	mMainWidget->wrkPositionEdit->setText( QString::fromLocal8Bit(mUser->WorkPosition.c_str()) );
+
+	mMainWidget->wrkCityEdit->setText(mContact->workInfo.city);
+	mMainWidget->wrkStateEdit->setText(mContact->workInfo.state);
+	mMainWidget->wrkPhoneEdit->setText (mContact->workInfo.phone);
+	mMainWidget->wrkFaxEdit->setText (mContact->workInfo.fax);
+	mMainWidget->wrkAddressEdit->setText(mContact->workInfo.address);
+	// TODO: mContact->workInfo.zip
+	mMainWidget->wrkNameEdit->setText(mContact->workInfo.company);
+	mMainWidget->wrkDepartmentEdit->setText(mContact->workInfo.department);
+	mMainWidget->wrkPositionEdit->setText(mContact->workInfo.position);
+	// TODO: mContact->workInfo.occupation
 
 	// WORK HOMEPAGE =====================================
-	homepage = "";
-	homepage = QString::fromLocal8Bit(mUser->WorkHomepage.c_str());
+
+	homepage = mContact->workInfo.homepage;
 	if ( mEditable )
 	{
-		mMainWidget->wrkHomepageEdit->setText( homepage );
-	} else {
+		mMainWidget->wrkHomepageEdit->setText(homepage);
+	}
+	else
+	{
 		if ( homepage.isEmpty() )
 		{
-			mMainWidget->wrkHomepageLabel->setText( i18n("unspecified") );
-			mMainWidget->wrkHomepageLabel->setURL( QString::null );
-			mMainWidget->wrkHomepageLabel->setDisabled( true );
-			mMainWidget->wrkHomepageLabel->setUseCursor( false ); // disable hand cursor on mouseover
-		} else {
+			mMainWidget->wrkHomepageLabel->setText(i18n("unspecified"));
+			mMainWidget->wrkHomepageLabel->setURL(QString::null);
+			mMainWidget->wrkHomepageLabel->setDisabled(true);
+			mMainWidget->wrkHomepageLabel->setUseCursor(false); // disable hand cursor on mouseover
+		}
+		else
+		{
 			QString tmpHP = homepage; // copy it, do not work on the original
-			mMainWidget->wrkHomepageLabel->setText( tmpHP );
+			mMainWidget->wrkHomepageLabel->setText(tmpHP);
 
 			if ( !tmpHP.contains("://") ) // assume http-protocol if not protocol given
 				tmpHP.prepend("http://");
-			mMainWidget->wrkHomepageLabel->setURL( tmpHP );
+			mMainWidget->wrkHomepageLabel->setURL(tmpHP);
 
-			mMainWidget->wrkHomepageLabel->setDisabled( false );
-			mMainWidget->wrkHomepageLabel->setUseCursor( true ); // enable hand cursor on mouseover
+			mMainWidget->wrkHomepageLabel->setDisabled(false);
+			mMainWidget->wrkHomepageLabel->setUseCursor(true); // enable hand cursor on mouseover
 		}
 	}
-	
+
+//mContact->workInfo.countryCode
+/*
 	initCombo (mMainWidget->rwWrkCountry, mUser->WorkCountry, countries );
 	if ( !mEditable )
 		mMainWidget->roWrkCountry->setText( mMainWidget->rwWrkCountry->currentText() );
-}
-
+*/
+} // END slotReadInfo()
 
 void ICQUserInfo::sendInfo()
 {
-	kdDebug(14110) << k_funcinfo << "called." << endl;
-
+	kdDebug(14200) << k_funcinfo << "called." << endl;
+/*
 	ICQUser *u = new ICQUser();
 
 	u->Nick = mMainWidget->rwNickName->text().local8Bit();
@@ -354,12 +342,13 @@ void ICQUserInfo::sendInfo()
 
 	mAccount->engine()->setInfo( u );
 	delete u;
-	kdDebug(14110) << "[ICQUserInfo] Done sending new userinfo to server" << endl;
+	kdDebug(14200) << "[ICQUserInfo] Done sending new userinfo to server" << endl;
+*/
 }
 
-void ICQUserInfo::setEditable ( bool e )
+void ICQUserInfo::setEditable(bool e)
 {
-//	kdDebug(14110) << k_funcinfo << "called. e=" << e << endl;
+	kdDebug(14200) << k_funcinfo << "called. e=" << e << endl;
 
 	// this one is only editable for setting users own info
 	// for contacts it displays their real nickname fetched from server
@@ -390,12 +379,13 @@ void ICQUserInfo::setEditable ( bool e )
 	mMainWidget->wrkZipcodeEdit->setReadOnly ( !e );
 	mMainWidget->wrkAddressEdit->setReadOnly ( !e );
 
-	if ( e )
+	if(e)
 	{
-//		kdDebug(14110) << "[ICQUserInfo] editable mode" << endl;
-		setButtonText(User1, i18n("&Send Info") );
+		kdDebug(14200) << k_funcinfo << "editable mode" << endl;
+		setButtonText(User1, i18n("&Send Info"));
 		// updating userinfo impossible while being offline
-		enableButton( User1, mAccount->myself()->onlineStatus().status() == KopeteOnlineStatus::Online );
+		enableButton(User1, mAccount->isConnected() );
+//		enableButton(User1, mAccount->myself()->onlineStatus().status() == KopeteOnlineStatus::Online );
 
 		mMainWidget->rwAlias->hide();
 		mMainWidget->txtAlias->hide();
@@ -408,7 +398,7 @@ void ICQUserInfo::setEditable ( bool e )
 
 		mMainWidget->roTimezone->hide();
 		mMainWidget->rwTimezone->show();
-		
+
 		mMainWidget->roLang1->hide();
 		mMainWidget->rwLang1->show();
 		mMainWidget->roLang2->hide();
@@ -430,7 +420,7 @@ void ICQUserInfo::setEditable ( bool e )
 	}
 	else
 	{
-//		kdDebug(14110) << "[ICQUserInfo] readonly mode" << endl;
+		kdDebug(14200) << k_funcinfo << "readonly mode" << endl;
 		mMainWidget->rwAlias->show();
 		mMainWidget->txtAlias->show();
 
@@ -442,7 +432,7 @@ void ICQUserInfo::setEditable ( bool e )
 
 		mMainWidget->rwTimezone->hide();
 		mMainWidget->roTimezone->show();
-		
+
 		mMainWidget->rwLang1->hide();
 		mMainWidget->roLang1->show();
 		mMainWidget->rwLang2->hide();
@@ -469,7 +459,6 @@ void ICQUserInfo::slotEmailClicked(const QString &email)
 	kapp->invokeMailer(email, QString::null);
 }
 
-
 void ICQUserInfo::slotHomePageClicked(const QString &url)
 {
 	kapp->invokeBrowser(url);
@@ -477,25 +466,18 @@ void ICQUserInfo::slotHomePageClicked(const QString &url)
 
 void ICQUserInfo::slotSaveClicked()
 {
-//	kdDebug(14110) << k_funcinfo << "called." << endl;
-	if ( mEditable )
+	kdDebug(14200) << k_funcinfo << "called." << endl;
+	if(mEditable)
 		sendInfo();
-	else
-		emit updateNickname( mMainWidget->rwAlias->text() );
+//	else
+//		emit updateNickname( mMainWidget->rwAlias->text() );
 }
 
 void ICQUserInfo::slotCloseClicked()
 {
-//	kdDebug(14110) << k_funcinfo << "called." << endl;
+	kdDebug(14200) << k_funcinfo << "called." << endl;
 	emit closing();
 }
 
 #include "icquserinfo.moc"
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:

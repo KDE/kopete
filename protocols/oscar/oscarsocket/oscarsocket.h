@@ -140,13 +140,52 @@ class ICQSearchResult
 		QString eMail;
 		bool needAuth;
 		unsigned int status; // 0=offline, 1=online, 2=not webaware
-		unsigned int sex; // 1=female, 2=male, 0=unspecified
-		unsigned int age;
 };
+
+
+class ICQGeneralUserInfo
+{
+	public:
+		unsigned long uin;
+		QString nickName;
+		QString firstName;
+		QString lastName;
+		QString eMail;
+		QString city;
+		QString state;
+		QString phoneNumber;
+		QString faxNumber;
+		QString street;
+		QString cellularNumber;
+		QString zip;
+		int countryCode;
+		int timezoneCode;
+		bool publishEmail;
+		bool showOnWeb;
+};
+
+class ICQWorkUserInfo
+{
+	public:
+		QString city;
+		QString state;
+		QString phone;
+		QString fax;
+		QString address;
+		QString zip;
+		int countryCode;
+		QString company;
+		QString department;
+		QString position;
+		int occupation;
+		QString homepage;
+};
+
 
 /*
  * Implements the actual communication with the oscar server
  * @author Tom Linsky
+ * @author Stefan Gehn
 */
 
 class OscarSocket : public OscarConnection
@@ -277,6 +316,12 @@ class OscarSocket : public OscarConnection
 			const QString &position,
 			int occupation,
 			bool onlineOnly); /*...*/
+
+		/*
+		 * Starts a userinfo request for ICQ, returns the sequence sent out with the request
+		 * Use it to compare a server reply's sequence
+		 */
+		WORD sendReqInfo(const unsigned long uin);
 
 	public slots:
 		/** This is called when a connection is established */
@@ -422,8 +467,10 @@ class OscarSocket : public OscarConnection
 
 	/*
 	 * send a CLI_TOICQSRV with subcommand and DATA supplied in data
+	 * returns the sequence sent out with the packet
+	 * incoming server replies will have the same sequence!
 	 */
-	void sendCLI_TOICQSRV(const WORD subcommand, Buffer &data);
+	WORD sendCLI_TOICQSRV(const WORD subcommand, Buffer &data);
 
 	void startKeepalive();
 	void stopKeepalive();
@@ -497,6 +544,20 @@ class OscarSocket : public OscarConnection
 	 */
 	void gotSearchResult(ICQSearchResult &, const int);
 
+	/*
+	 * emitted when a userinfo request yielded a result, ICQ SPECIFIC
+	 * word = sequence of the server reply
+	 */
+	void gotICQGeneralUserInfo(const int, const ICQGeneralUserInfo &);
+	void gotICQWorkUserInfo(const int, const ICQWorkUserInfo &);
+/*
+	void gotICQMoreUserInfo(const int, const ICQMoreUserInfo &);
+	void gotICQAboutUserInfo(const int, const ICQAboutUserInfo &);
+	void gotICQEmailUserInfo(const int, const ICQEmailUserInfo &);
+	void gotICQInterestUserInfo(const int, const ICQInterestUserInfo &);
+	void gotICQBackgroundUserInfo(const int, const ICQBackgroundUserInfo &);
+*/
+
 	private:
 		/** The OscarAccount we're assocated with */
 		OscarAccount *mAccount;
@@ -540,6 +601,10 @@ class OscarSocket : public OscarConnection
 		// TODO: save icq bit-fscking status in here
 //		unsigned long icqStatus;
 		bool mIsICQ;
+		/*
+		 * one up sequence used for packets of type CLI_TOICQSRV
+		 */
+		WORD toicqsrv_seq;
 
 
 	signals:

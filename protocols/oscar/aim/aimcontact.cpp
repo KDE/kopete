@@ -63,20 +63,20 @@ bool AIMContact::isReachable()
 
 KActionCollection *AIMContact::customContextMenuActions()
 {
-        actionCollection = new KActionCollection(this);
+	actionCollection = new KActionCollection(this);
 
-        KAction* actionWarn = new KAction(i18n("&Warn"), 0, this, SLOT(slotWarn()),
-			 actionCollection, "actionWarn");
-        KAction* actionBlock = new KAction(i18n("&Block"), 0, this, SLOT(slotBlock()),
-			actionCollection, "actionBlock");
-        KAction* actionDirectConnect = new KAction(i18n("&Direct IM"), 0, this,
-			SLOT(slotDirectConnect()), actionCollection, "actionDirectConnect");
+	KAction* actionWarn = new KAction(i18n("&Warn"), 0,
+		this, SLOT(slotWarn()), actionCollection, "actionWarn");
+	KAction* actionBlock = new KAction(i18n("&Block"), 0,
+		this, SLOT(slotBlock()), actionCollection, "actionBlock");
+	KAction* actionDirectConnect = new KAction(i18n("&Direct IM"), 0,
+		this, SLOT(slotDirectConnect()), actionCollection, "actionDirectConnect");
 
-		actionCollection->insert( actionWarn );
-		actionCollection->insert( actionBlock );
-		actionCollection->insert( actionDirectConnect );
+	actionCollection->insert( actionWarn );
+	actionCollection->insert( actionBlock );
+	actionCollection->insert( actionDirectConnect );
 
-        return actionCollection;
+	return actionCollection;
 }
 
 KopeteMessageManager* AIMContact::manager(bool)

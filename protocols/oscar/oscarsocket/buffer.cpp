@@ -409,4 +409,16 @@ void Buffer::doResize(int inc)
 	}
 }
 
+char *Buffer::getLNTS()
+{
+	WORD len = getWord();
+	return getBlock(len);
+}
+
+char *Buffer::getLELNTS()
+{
+	WORD len = getLEWord();
+	return getLEBlock(len);
+}
+
 // vim: set noet ts=4 sts=4 sw=4:

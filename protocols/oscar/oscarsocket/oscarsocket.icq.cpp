@@ -33,29 +33,6 @@ static const char ICQ_OTHER[] = { 0x00, 0x00, 0x00, 0x55 };
 #define ICQ_COUNTRY					"us"
 #define ICQ_LANG						"en"
 
-/*
-void OscarSocket::sendICQserverRequest(unsigned short cmd, unsigned short seq)
-{
-	Buffer outbuf;
-	outbuf.addSnac(OSCAR_FAM_21,0x0002,0x0000,seq);
-
-	//message TLV (type 2)
-	outbuf.addWord(0x0001);
-	int tlvlen = 0;
-	tlvlen += 4; // uin
-	tlvlen += 2; // SUBCOMMAND
-	tlvlen += 2; // SEQUENCE
-	// DATA?
-
-	outbuf.addWord(tlvlen);
-	outbuf.addDWord(ouruin);
-	outbuf.addWord(0x04BA); // request basic info (1210)
-	outbuf.addWord(seq);
-	outbuf.addDWord(otheruin);
-	sendBuf(outbuf,0x02);
-}
-*/
-
 /**
  * taken from libfaim !!!
  * encodePasswordXOR - Encode a password using old XOR method
@@ -95,7 +72,7 @@ QCString OscarSocket::encodePasswordXOR()
 	return encoded;
 }
 
-void OscarSocket::sendLoginICQ(void)
+void OscarSocket::sendLoginICQ()
 {
 	kdDebug(14150) << k_funcinfo <<  "Sending ICQ login info... (CLI_COOKIE)" << endl;;
 
@@ -138,7 +115,7 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 		return;
 	}
 
-	kdDebug(14150) << k_funcinfo <<  "Got SNAC(21,3) containing TLV(1) of length=" << tlv->length << endl;
+//	kdDebug(14150) << k_funcinfo <<  "Got SNAC(21,3) containing TLV(1) of length=" << tlv->length << endl;
 
 	Buffer fromicqsrv(tlv->data, tlv->length);
 
@@ -188,11 +165,11 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 
 		case 0x07da: //SRV_META
 		{
-//			kdDebug(14150) << "RECV (SRV_META), got meta result" << endl;
+			kdDebug(14150) << "RECV (SRV_META), got meta result" << endl;
 			WORD type = fromicqsrv.getLEWord();
-//			kdDebug(14150) << "type=" << type << endl;
+			kdDebug(14150) << "type=" << type << endl;
 			BYTE result = fromicqsrv.getLEByte();
-//			kdDebug(14150) << "result=" << (int)result << endl;
+			kdDebug(14150) << "result=" << (int)result << endl;
 
 			switch(type)
 			{
@@ -286,9 +263,202 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					break;
 				} // END SRV_METAFOUND  SRV_METALAST
 
+				case 0x019a: // SRV_METAINFO410  seems to be unused
+				{
+					kdDebug(14150) << "RECV (SRV_METAINFO410) !!!" << endl;
+					/*
+					WORD tmplen;
+					char *tmptxt;
+					ICQInfoResult res;
+
+					fromicqsrv.getLEWord(); // datalen
+					res.uin = fromicqsrv.getLEDWord();
+
+					tmplen = fromicqsrv.getLEWord();
+					if(tmplen>0)
+					{
+						tmptxt=fromicqsrv.getLEBlock(tmplen);
+						res.nickName = QString::fromLatin1(tmptxt);
+						delete [] tmptxt;
+					}
+					tmplen = fromicqsrv.getLEWord();
+					if(tmplen>0)
+					{
+						tmptxt=fromicqsrv.getLEBlock(tmplen);
+						res.firstName = QString::fromLatin1(tmptxt);
+						delete [] tmptxt;
+					}
+					tmplen = fromicqsrv.getLEWord();
+					if(tmplen>0)
+					{
+						tmptxt=fromicqsrv.getLEBlock(tmplen);
+						res.lastName = QString::fromLatin1(tmptxt);
+						delete [] tmptxt;
+					}
+					kdDebug(14150) << k_funcinfo << "emitting gotICQUserInfo()" << endl;
+					emit gotICQUserInfo(sequence, res);
+					*/
+					break;
+				} // END SRV_METAINFO410
+
+
+				case 200: // SRV_METAGENERAL
+				{
+					kdDebug(14150) << "RECV (SRV_METAGENERAL), parsing it..." << endl;
+					char *tmptxt;
+					ICQGeneralUserInfo res;
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.nickName = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.firstName = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.lastName = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.eMail = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.city = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.state = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.phoneNumber = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.faxNumber = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.street = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.cellularNumber = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.zip = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					res.countryCode = fromicqsrv.getLEWord();
+					res.timezoneCode = fromicqsrv.getLEByte(); // UTC+(tzcode * 30min)
+					res.publishEmail = (fromicqsrv.getLEByte()==0x01);
+					res.showOnWeb = (fromicqsrv.getLEWord()==0x0001);
+
+					kdDebug(14150) << k_funcinfo << "emitting gotICQGeneralUserInfo()" << endl;
+					emit gotICQGeneralUserInfo(sequence, res);
+					break;
+				}  // END SRV_METAGENERAL (200)
+
+				case 210: // SRV_METAWORK
+				{
+					kdDebug(14150) << "RECV (SRV_METAWORK), parsing it..." << endl;
+					char *tmptxt;
+					ICQWorkUserInfo res;
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.city = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.state = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.phone = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.fax = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.address = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.zip = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					res.countryCode = fromicqsrv.getLEWord();
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.company = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.department = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.position = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					res.occupation = fromicqsrv.getLEWord();
+
+					tmptxt = fromicqsrv.getLELNTS();
+					res.homepage = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
+
+					kdDebug(14150) << k_funcinfo << "emitting gotICQWorkUserInfo()" << endl;
+					emit gotICQWorkUserInfo(sequence, res);
+					break;
+				} // END SRV_METAWORK (210)
+
+				case 220:
+				{
+					kdDebug(14150) << "TODO: userinfo, SRV_METAMORE subtype=" << type << endl;
+					break;
+				}
+
+				case 230:
+				{
+					kdDebug(14150) << "TODO: userinfo, SRV_METAABOUT subtype=" << type << endl;
+					break;
+				}
+
+				case 235:
+				{
+					kdDebug(14150) << "TODO: userinfo, SRV_METAMOREEMAIL subtype=" << type << endl;
+					break;
+				}
+
+				case 240:
+				{
+					kdDebug(14150) << "TODO: userinfo, SRV_METAINTEREST subtype=" << type << endl;
+					break;
+				}
+
+				case 250:
+				{
+					kdDebug(14150) << "TODO: userinfo, SRV_METABACKGROUND subtype=" << type << endl;
+					break;
+				}
+
+				case 270:
+				{
+					kdDebug(14150) << "TODO: userinfo, SRV_META270 subtype=" << type << endl;
+					break;
+				}
+
+
+
+
 				default:
 				{
-					kdDebug(14150) << "SRV_META subtype unsupported!" << endl;
+					kdDebug(14150) << "SRV_META subtype UNHANDLED!" << endl;
 					break;
 				}
 			} // END switch(type)
@@ -302,7 +472,7 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 		}
 	} // END switch(subcmd)
 
-	kdDebug(14150) << k_funcinfo <<  "deleting tlv data" << endl;
+//	kdDebug(14150) << k_funcinfo <<  "deleting tlv data" << endl;
 
 	delete [] tlv->data;
 	kdDebug(14150) << k_funcinfo <<  "END" << endl;
@@ -614,12 +784,21 @@ bool requestAutoReply(unsigned long uin, unsigned long status)
 
 
 
-void OscarSocket::sendCLI_TOICQSRV(const WORD subcommand, Buffer &data)
+WORD OscarSocket::sendCLI_TOICQSRV(const WORD subcommand, Buffer &data)
 {
 	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_TOICQSRV), subcommand=" << subcommand << endl;
 
 	Buffer outbuf;
-	outbuf.addSnac(OSCAR_FAM_21,0x0002,0x0000,0x00010002);
+
+	DWORD word1 = 0x0001; // TODO: is this really right?
+	DWORD word2 = (toicqsrv_seq);
+	DWORD snacid = (word1 << 16) | word2;
+	kdDebug(14150) << k_funcinfo << "snacid=" << snacid << endl;
+
+	outbuf.addSnac(OSCAR_FAM_21,0x0002,0x0000,snacid);
+	// yum yum, one up sequence, starts at 1 and has to be 2 for the first
+	// usage on the LEWord added some lines under this comment ;)
+	toicqsrv_seq++;
 
 	int tlvLen = 10 + data.getLength();
 	kdDebug(14150) << k_funcinfo << "tlvLen=" << tlvLen << endl;
@@ -630,14 +809,18 @@ void OscarSocket::sendCLI_TOICQSRV(const WORD subcommand, Buffer &data)
 	outbuf.addLEWord(tlvLen-2); // length of data inside TLV, 8 if no data
 	outbuf.addLEDWord(getSN().toULong()); // own uin
 	outbuf.addLEWord(subcommand); // subcommand
-	outbuf.addLEWord(0x0002); // TODO: make this the snac sequence's upper Word minus 1!
+	outbuf.addLEWord(toicqsrv_seq); // TODO: make this the snac sequence's upper Word minus 1!
+	kdDebug(14150) << k_funcinfo << "toicqsrv_seq=" << toicqsrv_seq << endl;
+
 	if (data.getLength() > 0)
 		outbuf.addString(data.getBuf(), data.getLength());
 
-	kdDebug(14150) << "==========================================" << endl;
-	outbuf.print();
-	kdDebug(14150) << "==========================================" << endl;
+// 	kdDebug(14150) << "==========================================" << endl;
+// 	outbuf.print();
+// 	kdDebug(14150) << "==========================================" << endl;
+
 	sendBuf(outbuf, 0x2);
+	return (toicqsrv_seq);
 }
 
 void OscarSocket::sendCLI_SEARCHBYUIN(const unsigned long uin)
@@ -712,7 +895,7 @@ void OscarSocket::sendCLI_SEARCHWP(
 		search.addLEByte(0x00);
 
 	// BYTE xx LANGUAGE
-	search.addLEByte(0x00);
+	search.addLEByte(lang);
 
 	// LNTS CITY
 	search.addLEWord(city.length());
@@ -780,7 +963,8 @@ void OscarSocket::sendCLI_SEARCHWP(
 
 void OscarSocket::sendReqOfflineMessages()
 {
-	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_REQOFFLINEMSGS), requesting offline messages" << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"SEND (CLI_REQOFFLINEMSGS), requesting offline messages" << endl;
 
 	Buffer empty;
 	sendCLI_TOICQSRV(0x003c, empty);
@@ -788,10 +972,23 @@ void OscarSocket::sendReqOfflineMessages()
 
 void OscarSocket::sendAckOfflineMessages()
 {
-	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_ACKOFFLINEMSGS), acknowledging offline messages" << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"SEND (CLI_ACKOFFLINEMSGS), acknowledging offline messages" << endl;
 
 	Buffer empty;
 	sendCLI_TOICQSRV(0x003e, empty);
+}
+
+WORD OscarSocket::sendReqInfo(const unsigned long uin)
+{
+	kdDebug(14150) << k_funcinfo <<
+		"SEND (CLI_METAREQINFO), requesting user information" << endl;
+
+	Buffer req; // ! LITTLE-ENDIAN
+	req.addLEWord(0x04d0); // subtype: 1232
+	req.addLEDWord(uin);
+	WORD ret = sendCLI_TOICQSRV(0x07d0, req);
+	return ret;
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

@@ -2,7 +2,7 @@
     icquserinfo.h  -  ICQ Protocol Plugin
 
     Copyright (c) 2002 by Nick Betcher <nbetcher@kde.org>
-    
+
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -22,48 +22,41 @@
 #include <qhbox.h>
 #include <kdialogbase.h>
 
-
 class QComboBox;
-class OscarAccount;
-class OscarContact;
+class ICQAccount;
+class ICQContact;
 class ICQUserInfoWidget;
 
 class ICQUserInfo : public KDialogBase
 {
 	Q_OBJECT
 
-public:
-	ICQUserInfo( OscarContact *c, const QString name, OscarAccount *account, bool editable = false, QWidget *parent = 0, const char* name = "ICQUserInfo" );
+	public:
+		ICQUserInfo(ICQContact *, ICQAccount *, bool editable=false,
+			QWidget *parent = 0, const char* name = "ICQUserInfo");
 
-private:
-	QString mName;
-	OscarAccount *mAccount;
-	bool mEditable;
-	ICQUserInfoWidget *mMainWidget;
+	private:
+		void sendInfo();
+		void setEditable(bool);
+		void setCombo(QComboBox *, int, int);
 
-	void sendInfo(void);
-	void setEditable ( bool e );
-	void setCombo ( QComboBox *combo, int type, int value );
+	private slots:
+		void slotSaveClicked();
+		void slotCloseClicked();
+		void slotHomePageClicked(const QString &);
+		void slotEmailClicked(const QString &);
+		void slotFetchInfo(); // initiate fetching info from server
+		void slotReadInfo(); // read in results from fetch
 
-private slots:
-	void slotSaveClicked();
-	void slotCloseClicked();
-	void slotHomePageClicked(const QString &);
-	void slotEmailClicked(const QString &);
-	void slotFetchInfo(void); // initiate fetching info from server
-	void slotReadInfo(void); // read in results from fetch
+	signals:
+//		void updateNickname(const QString);
+		void closing();
 
-signals:
-	void updateNickname(const QString);
-	void closing( void );
+	private:
+		ICQAccount *mAccount;
+		ICQContact *mContact;
+		bool mEditable;
+		ICQUserInfoWidget *mMainWidget;
 };
 #endif
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
-
