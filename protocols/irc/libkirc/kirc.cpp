@@ -48,6 +48,8 @@ KIRC::KIRC(const QString host, const Q_UINT16 port)
 	failedNickOnLogin = false;
 	mHost = host;
 	mUsername = getpwuid(getuid())->pw_name;
+	mNotifyTimer = new QTimer(this);
+	connect( mNotifyTimer, SIGNAL(timeout()), this, SLOT( slotCheckOnline() ) );
 
 	if (port == 0)
 		mPort = 6667;
@@ -65,6 +67,7 @@ KIRC::KIRC(const QString host, const Q_UINT16 port)
 KIRC::~KIRC()
 {
 	kdDebug(14120) << k_funcinfo << endl;
+	delete mNotifyTimer;
 }
 
 Q_LONG KIRC::writeString(const QString &str)
@@ -82,6 +85,7 @@ void KIRC::slotError(int error)
 {
 	kdDebug(14120) << "Error, error code == " << error << endl;
 	loggedIn = false;
+	mNotifyTimer->stop();
 }
 
 void KIRC::slotBytesWritten(int /*bytes*/)
@@ -438,6 +442,8 @@ void KIRC::slotReadyRead()
 					*/
 					loggedIn = true;
 					emit connectedToServer();
+					mNotifyTimer->start( 60000 );
+					slotCheckOnline();
 					break;
 				}
 				case 002:
@@ -666,6 +672,15 @@ void KIRC::slotReadyRead()
 					emit incomingNickInUse(line.section(' ', 3, 3));
 					break;
 				}
+				case 303:
+				{
+					QStringList nicks = QStringList::split( QRegExp( QString::fromLatin1("\\s+") ), line.section(':', 2) );
+					for( QStringList::Iterator it = nicks.begin(); it != nicks.end(); ++it )
+					{
+						if( !(*it).stripWhiteSpace().isEmpty() )
+							emit( userOnline( *it ) );
+					}
+				}
 				default:
 				{
 					/*
@@ -718,6 +733,37 @@ void KIRC::quitIRC(const QString &reason)
 		statement.append("\r\n");
 		writeString(statement);
 		QTimer::singleShot(10000, this, SLOT(quitTimeout()));
+	}
+}
+
+void KIRC::addToNotifyList( const QString &nick )
+{
+	if( !mNotifyList.contains( nick.lower() ) )
+		mNotifyList.append( nick );
+}
+
+void KIRC::removeFromNotifyList( const QString &nick )
+{
+	if( mNotifyList.contains( nick.lower() ) )
+		mNotifyList.remove( nick.lower() );
+}
+
+void KIRC::slotCheckOnline()
+{
+	if( loggedIn && !mNotifyList.isEmpty() )
+	{
+		QString statement = QString::fromLatin1("ISON ");
+		for( QStringList::Iterator it = mNotifyList.begin(); it != mNotifyList.end(); ++it )
+		{
+			if( (statement.length() + (*it).length()) > 512 )
+			{
+				writeString( statement + QString::fromLatin1("\r\n") );
+				statement = QString::fromLatin1("ISON ");
+			}
+			else
+				statement.append( (*it) + QString::fromLatin1(" ") );
+		}
+		writeString( statement + QString::fromLatin1("\r\n") );
 	}
 }
 
@@ -865,6 +911,7 @@ void KIRC::slotConnectionClosed()
 		emit successfulQuit();
 
 	attemptingQuit = false;
+	mNotifyTimer->stop();
 }
 
 void KIRC::changeNickname(const QString &newNickname)
@@ -897,7 +944,6 @@ void KIRC::slotConnected()
 	ident.append(mNickname);
 	ident.append("\r\n");
 	writeString(ident);
-
 }
 
 void KIRC::connectToServer(const QString &nickname)

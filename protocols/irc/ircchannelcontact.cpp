@@ -70,7 +70,7 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 	QObject::connect(identity->engine(), SIGNAL(incomingExistingTopic(const QString &, const QString &)), this, SLOT( slotChannelTopic(const QString&, const QString &)));
 	QObject::connect(identity->engine(), SIGNAL(incomingTopicChange(const QString &, const QString &, const QString &)), this, SLOT( slotTopicChanged(const QString&,const QString&,const QString&)));
 	QObject::connect(identity->engine(), SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)), this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
-
+	QObject::connect(identity->engine(), SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()));
 	QObject::connect( this, SIGNAL( endSession() ), this, SLOT( slotPart() ) );
 
 	// TODO: make this configurable: (join on load)
@@ -81,6 +81,11 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 IRCChannelContact::~IRCChannelContact()
 {
 	mIdentity->unregisterChannel(mNickName);
+}
+
+void IRCChannelContact::slotConnectedToServer()
+{
+	setOnlineStatus( KopeteContact::Online );
 }
 
 void IRCChannelContact::slotNamesList(const QString &channel, const QString &nickname, const int mode)

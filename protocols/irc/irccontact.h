@@ -56,7 +56,6 @@ class IRCContact : public KopeteContact
 		void endSession();
 
 	private slots:
-		void slotConnectedToServer();
 		void slotConnectionClosed();
 		void slotMessageManagerDestroyed();
 		void slotNewMessage(const QString &originating, const QString &target, const QString &message);

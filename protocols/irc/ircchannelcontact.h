@@ -51,6 +51,7 @@ class IRCChannelContact : public IRCContact
 		void setMode( const QString &mode = QString::null );
 
 	private slots:
+		void slotConnectedToServer();
 		void slotUserJoinedChannel(const QString &, const QString &);
 		void slotJoin();
 		void slotPart();

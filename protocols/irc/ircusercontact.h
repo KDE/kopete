@@ -25,6 +25,7 @@ class KActionCollection;
 class KAction;
 class KActionMenu;
 class IRCChannelContact;
+class QTimer;
 
 class IRCUserContact : public IRCContact
 {
@@ -33,6 +34,7 @@ class IRCUserContact : public IRCContact
 	public:
 		// This class provides a KopeteContact for each user on the channel.
 		IRCUserContact(IRCIdentity *, const QString &nickname, KIRC::UserClass, KopeteMetaContact * = 0L);
+		~IRCUserContact();
 
 		// Userclass stuff
 		void setUserclass(KIRC::UserClass userclass) { mUserclass = userclass; }
@@ -51,8 +53,10 @@ class IRCUserContact : public IRCContact
 		void slotDevoice();
 		void slotCtcpPing();
 		void slotCtcpVersion();
+		void slotUserOffline();
 		void slotNewPrivMessage(const QString &originating, const QString &target, const QString &message);
 		void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
+		void slotUserOnline( const QString &nick );
 
 	private:
 		KIRC::UserClass mUserclass;
@@ -68,6 +72,7 @@ class IRCUserContact : public IRCContact
 		KAction *actionCtcpVersion;
 		KActionMenu *actionKick;
 		KActionMenu *actionBan;
+		QTimer *mOnlineTimer;
 
 		void contactMode( const QString &mode );
 };

@@ -26,6 +26,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kaction.h>
+#include <qtimer.h>
 
 IRCUserContact::IRCUserContact(IRCIdentity *identity, const QString &nickname, KIRC::UserClass userclass, KopeteMetaContact *m)
 	: IRCContact( identity, nickname, m )
@@ -55,8 +56,31 @@ IRCUserContact::IRCUserContact(IRCIdentity *identity, const QString &nickname, K
 	actionModeMenu->setEnabled( false );
 	mCustomActions->insert( actionModeMenu );
 
+	mOnlineTimer = new QTimer( this );
+	connect( mOnlineTimer, SIGNAL(timeout()), this, SLOT( slotUserOffline() ) );
+
 	QObject::connect(identity->engine(), SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)), this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
 	QObject::connect(identity->engine(), SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)), this, SLOT(slotNewPrivMessage(const QString &, const QString &, const QString &)));
+	QObject::connect(identity->engine(), SIGNAL(userOnline( const QString & )), this, SLOT(slotUserOnline(const QString &)));
+}
+
+IRCUserContact::~IRCUserContact()
+{
+	delete mOnlineTimer;
+}
+
+void IRCUserContact::slotUserOnline( const QString &nick )
+{
+	if( nick.lower() == mNickName.lower() )
+	{
+		setOnlineStatus( KopeteContact::Online );
+		mOnlineTimer->start( 90000, true );
+	}
+}
+
+void IRCUserContact::slotUserOffline()
+{
+	setOnlineStatus( KopeteContact::Offline );
 }
 
 QString IRCUserContact::statusIcon() const

@@ -21,8 +21,10 @@
 #include <qsocket.h>
 #include "dcchandler.h"
 #include <qstring.h>
+#include <qstringlist.h>
 
 class QHostAddress;
+class QTimer;
 
 /**
   *@author Nick Betcher <nbetcher@kde.org>
@@ -57,6 +59,8 @@ public:
 	void sendNotice(const QString &target, const QString &message);
 	void setPassword(const QString &passwd) { mPasswd = passwd; };
 	void changeMode( const QString &target, const QString &mode);
+	void addToNotifyList( const QString &nick );
+	void removeFromNotifyList( const QString &nick );
 
 enum UserClass
 {
@@ -75,6 +79,8 @@ private slots:
 	void slotBytesWritten(int);
 	void slotError(int);
 	void quitTimeout();
+	void slotCheckOnline();
+
 signals:
 	void connecting();
 	void incomingMotd(const QString &motd);
@@ -122,6 +128,7 @@ signals:
 	void incomingEndOfWhois(const QString &nickname);
 	void incomingNotice(const QString &originating, const QString &message);
 	void incomingModeChange(const QString &nick, const QString &channel, const QString &mode);
+	void userOnline( const QString &nick );
 
 private:
 	bool waitingFinishMotd;
@@ -137,6 +144,8 @@ private:
 	Q_UINT16 mPort;
 	QString mUsername;
 	QString mPasswd;
+	QStringList mNotifyList;
+	QTimer *mNotifyTimer;
 };
 
 #endif
