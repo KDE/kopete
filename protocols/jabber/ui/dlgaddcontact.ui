@@ -52,7 +52,7 @@
                 </widget>
                 <widget class="QLabel" row="0" column="0">
                     <property name="name">
-                        <cstring>addIDLabel</cstring>
+                        <cstring>lblID</cstring>
                     </property>
                     <property name="text">
                         <string>Jabber ID:</string>
