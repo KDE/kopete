@@ -103,7 +103,7 @@ void PluginListView::stateChanged( PluginListItem *item, bool b )
 }
 
 PluginConfig::PluginConfig( QObject *_parent )
-: ConfigModule( i18n( "PluginConfig" ), i18n( "Choose Your PluginConfig" ),
+: ConfigModule( i18n( "Plugins" ), i18n( "Here You Can Manage Your Plugins" ),
 	"input_devices_settings", _parent )
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
@@ -112,7 +112,7 @@ PluginConfig::PluginConfig( QObject *_parent )
 	QFrame *protocolTab = new QFrame( tabControl );
 	( new QVBoxLayout( protocolTab, KDialog::marginHint(),
 		KDialog::spacingHint() ) )->setAutoAdd( true );
-	( void ) new QLabel( i18n( "<b>Choose protocol plugins to use:</b>" ),
+	( void ) new QLabel( i18n( "<b>Select The Protocols You Would Like Loaded::</b>" ),
 		protocolTab );
 
 	protocolList = new PluginListView( protocolTab );
@@ -123,11 +123,11 @@ PluginConfig::PluginConfig( QObject *_parent )
 	QFrame *otherTab = new QFrame(tabControl);
 	( new QVBoxLayout( otherTab, KDialog::marginHint(),
 		KDialog::spacingHint() ) )->setAutoAdd( true );
-	( void ) new QLabel( i18n( "<b>Choose plugins to use</b>" ), otherTab );
+	( void ) new QLabel( i18n( "<b>Select The Plugins You Would Like Loaded:</b>" ), otherTab );
 
 	otherList = new PluginListView( otherTab );
 	connect(otherList, SIGNAL(stateChange(PluginListItem *, bool)), this, SLOT(stateChange(PluginListItem *, bool)));
-	tabControl->addTab(otherTab, i18n("Other PluginConfig"));
+	tabControl->addTab(otherTab, i18n("Other Plugins"));
 }
 
 void PluginConfig::reopen()
@@ -167,6 +167,8 @@ void PluginConfig::addPlugin( const QString &specFile )
 		mDeleted.remove( specFile );
 	else if( !mAdded.contains( specFile ) )
 		mAdded.append( specFile );
+
+	LibraryLoader::pluginLoader()->loadPlugin( specFile );
 }
 
 void PluginConfig::removePlugin( const QString &specFile )
@@ -175,19 +177,13 @@ void PluginConfig::removePlugin( const QString &specFile )
 		mAdded.remove( specFile );
 	else if( !mDeleted.contains( specFile ) )
 		mDeleted.append( specFile );
+
+	LibraryLoader::pluginLoader()->remove( specFile );
 }
 
 void PluginConfig::save()
 {
 	LibraryLoader *loader = LibraryLoader::pluginLoader();
-
-	// Load the plugins the user added
-	for(QStringList::Iterator i = mAdded.begin(); i != mAdded.end(); ++i)
-		loader->loadPlugin( *i );
-
-	// Remove the plugins the user removed
-	for (QStringList::Iterator i = mDeleted.begin(); i != mDeleted.end(); ++i)
-		loader->remove( *i );
 
 	// Round up the ones that weren't loaded right now, for saving in the configuration
 	QStringList specList(mAdded);
