@@ -447,41 +447,11 @@ void KopeteMetaContact::sendFile( const KURL &sourceURL, const QString &altFileN
 	c->sendFile( sourceURL, altFileName, fileSize );
 }
 
-void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
-	KopeteContact::ContactStatus  s  )
+void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c, KopeteContact::ContactStatus s  )
 {
-	emit contactStatusChanged(c,s);
-	OnlineStatus m = d->onlineStatus;
 	updateOnlineStatus();
 
-	if( ( d->onlineStatus != m ) && ( d->onlineStatus == Online ) && ( KopetePrefs::prefs()->soundNotify() ) )
-	{
-		KopetePrefs *pref = KopetePrefs::prefs();
-		/* I re-moved this in KopeteMetaContactLVI because now, systemTray is private api
-		#if KDE_VERSION >= 306
-		if ( pref->notifyOnline() && pref->showTray() )
-		{
-			KPassivePopup::message(
-				i18n( "%2 is now %1!" ).arg(statusString()).arg(displayName()),
-				QString(),
-				QPixmap( KGlobal::iconLoader()->iconPath(statusIcon(), KIcon::Small) ),
-				qApp->mainWidget() ); //KopeteSystemTray::systemTray() );
-		}
-		#endif*/
-
-		KopeteProtocol* proto = c->protocol();
-		if (!proto)
-		{
-			kdDebug(14010) << k_funcinfo << "KopeteContact is not from a valid Protocol" <<endl;
-			return;
-		}
-
-		if ( !proto->isAway() || pref->soundIfAway() )
-		{
-			KNotifyClient::event( QString::fromLatin1( "kopete_online" ), i18n( "%2 is now %1!" ).arg(
-				statusString() ).arg( displayName() ) );
-		}
-	}
+	emit contactStatusChanged( c, s );
 }
 
 void KopeteMetaContact::setDisplayName( const QString &name )
