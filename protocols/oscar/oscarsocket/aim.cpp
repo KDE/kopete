@@ -23,5 +23,5 @@
 #include <qregexp.h>
 QString tocNormalize(const QString &oldstr)
 {
-	return oldstr; //.lower().replace(" ","");
+	return oldstr.lower().replace(" ","");
 }

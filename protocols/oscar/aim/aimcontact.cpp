@@ -40,6 +40,7 @@ AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount
 
 	if(name == account()->accountId())
 	{
+		kdDebug(14200) << k_funcinfo << "Called for MYSELF contact" << endl;
 		QObject::connect(
 			acc->engine(), SIGNAL(gotMyUserInfo(const UserInfo &)),
 			this, SLOT(slotContactChanged(const UserInfo &)));
@@ -79,7 +80,7 @@ void AIMContact::setOwnProfile(const QString &profile)
 
 void AIMContact::slotGotProfile(const UserInfo &user, const QString &profile, const QString &away)
 {
-	if(tocNormalize(user.sn) != tocNormalize(mName))
+	if(tocNormalize(user.sn) != contactName())
 		return;
 	kdDebug(14200) << k_funcinfo << "Called for contact '" << displayName() << "'" << endl;
 	mUserProfile = profile;
@@ -179,7 +180,7 @@ void AIMContact::slotGotMiniType(const QString &screenName, int type)
 	if(tocNormalize(screenName) != contactName())
 		return;
 
-//	kdDebug(14190) << k_funcinfo << "Got minitype notification for " << mName << endl;
+//	kdDebug(14190) << k_funcinfo << "Got minitype notification for " << contactName() << endl;
 
 	// Only if we already have a message manager
 	if(!mMsgManager)
@@ -208,9 +209,10 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 	if (tocNormalize(u.sn) != contactName())
 		return; //this is not this contact
 
-//	kdDebug(14190) << k_funcinfo << "Called for '"
-//		<< displayName() << "', userclass=" << u.userclass << endl;
-/*
+	kdDebug(14190) << k_funcinfo << "Called for '"
+		<< displayName() << "', userclass=" << u.userclass << endl;
+
+	/*
 	if(u.userclass & CLASS_AIM)
 		kdDebug(14190) << k_funcinfo << "AIM user" << endl;
 	if(u.userclass & CLASS_ICQ)
@@ -225,7 +227,7 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 		kdDebug(14190) << k_funcinfo << "AOL administrator account" << endl;
 	if(u.userclass & CLASS_UNKNOWN400)
 		kdDebug(14190) << k_funcinfo << "Active contact" << endl;
-*/
+	*/
 
 	if(u.userclass & CLASS_AWAY)
 		setStatus(OSCAR_AWAY);
@@ -421,18 +423,18 @@ void AIMContact::slotWarn()
 		"(Warning a user on AIM will result in a \"Warning Level\"" \
 		" increasing for the user you warn. Once this level has reached a" \
 		" certain point, they will not be able to sign on. Please do not abuse" \
-		" this function, it is meant for legitimate practices.)</qt>" ).arg(mName);
+		" this function, it is meant for legitimate practices.)</qt>" ).arg(displayName());
 
 	int result = KMessageBox::questionYesNoCancel(
 		qApp->mainWidget(),
 		message,
-		i18n("Warn User %1?").arg(mName),
+		i18n("Warn User %1?").arg(displayName()),
 		i18n("Warn Anonymously"),
 		i18n("Warn"));
 
 	if (result == KMessageBox::Yes)
-		mAccount->engine()->sendWarning(mName, true);
+		mAccount->engine()->sendWarning(contactName(), true);
 	else if (result == KMessageBox::No)
-		mAccount->engine()->sendWarning(mName, false);
+		mAccount->engine()->sendWarning(contactName(), false);
 }
 #include "aimcontact.moc"

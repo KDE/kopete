@@ -12,7 +12,7 @@
   * (at your option) any later version.                                   *
   *                                                                       *
   *************************************************************************
-  */
+*/
 
 #include "oscarcontact.h"
 

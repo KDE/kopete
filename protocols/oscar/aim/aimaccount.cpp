@@ -1,15 +1,17 @@
-//
-//
-// C++ Implementation: cpp
-//
-// Description:
-//
-//
-// Author: Duncan Mac-Vicar Prett <duncan@kde.org>, (C) 2003
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+/*
+  aimaccount.cpp  -  Oscar Protocol Plugin, AIM part
+
+  Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+
+  *************************************************************************
+  *                                                                       *
+  * This program is free software; you can redistribute it and/or modify  *
+  * it under the terms of the GNU General Public License as published by  *
+  * the Free Software Foundation; either version 2 of the License, or     *
+  * (at your option) any later version.                                   *
+  *                                                                       *
+  *************************************************************************
+*/
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -17,6 +19,8 @@
 #include <kmessagebox.h>
 
 #include "kopetestdaction.h"
+
+#include "aim.h"
 
 #include "oscarchangestatus.h"
 #include "aimprotocol.h"
@@ -33,7 +37,7 @@ AIMAccount::AIMAccount(KopeteProtocol *parent, QString accountID, const char *na
 	mAwayMessage = QString::null;
 	mStatus = OSCAR_OFFLINE;
 
-	mMyself = new AIMContact(accountID, accountID, this, 0L);
+	mMyself = new AIMContact(tocNormalize(accountID), accountID, this, 0L);
 	QObject::connect(mAwayDialog, SIGNAL(goAway(const int, const QString&)),
 		this, SLOT(slotAwayDialogReturned(const int, const QString&)));
 }
