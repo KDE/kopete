@@ -186,12 +186,11 @@ void KopeteAccount::readConfig( const QString &configGroupName )
 	QMap<QString, QMap<QString, QString> >::Iterator pluginDataIt;
 	for ( pluginDataIt = pluginData.begin(); pluginDataIt != pluginData.end(); ++pluginDataIt )
 	{
-		QString pluginId = QString::fromLatin1( "kopete_" ) + pluginDataIt.key();
-		KopetePlugin *plugin = KopetePluginManager::self()->plugin( pluginId );
+		KopetePlugin *plugin = KopetePluginManager::self()->plugin( pluginDataIt.key() );
 		if ( plugin )
 			setPluginData( plugin, pluginDataIt.data() );
 		else
-			kdDebug( 14010 ) << k_funcinfo << "No plugin object found for id '" << pluginId << "'" << endl;
+			kdDebug( 14010 ) << k_funcinfo << "No plugin object found for id '" << pluginDataIt.key() << "'" << endl;
 	}
 
 	loaded();
@@ -227,7 +226,7 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 			}
 
 			if ( wallet && wallet->setFolder( QString::fromLatin1( "Kopete" ) ) &&
-				wallet->readPassword( protocol()->pluginId() + QString::fromLatin1( "_" ) + accountId(), pwd ) == 0 )
+				wallet->readPassword( configGroup(), pwd ) == 0 && !pwd.isNull() )
 			{
 				return pwd;
 			}
@@ -297,7 +296,7 @@ void KopeteAccount::setPassword( const QString &pass )
 			wallet->createFolder( QString::fromLatin1( "Kopete" ) );
 
 		if ( wallet->setFolder( QString::fromLatin1( "Kopete" ) ) &&
-			wallet->writePassword( protocol()->pluginId() + QString::fromLatin1( "_" ) + accountId(), pass ) == 0 )
+			wallet->writePassword( configGroup(), pass ) == 0 )
 		{
 			// Remove any pass from KConfig if it is still there
 			if ( !d->password.isNull() )

@@ -304,8 +304,20 @@ QStringList KopetePluginManager::addressBookFields( KopetePlugin *p ) const
 		return QStringList();
 }
 
-KopetePlugin* KopetePluginManager::plugin( const QString &pluginId ) const
+KopetePlugin* KopetePluginManager::plugin( const QString &_pluginId ) const
 {
+	// Hack for compatibility with KopetePlugin::pluginId(), which returns
+	// classname() instead of the internal name. Changing that is not easy
+	// as it invalidates the config file, the contact list, and most likely
+	// other code as well.
+	// For now, just transform FooProtocol to kopete_foo.
+	// FIXME: In the future we'll need to change this nevertheless to unify
+	//        the handling - Martijn
+	QString pluginId = _pluginId;
+	if ( pluginId.endsWith( QString::fromLatin1( "Protocol" ) ) )
+		pluginId = QString::fromLatin1( "kopete_" ) + _pluginId.lower().remove( QString::fromLatin1( "protocol" ) );
+	// End hack
+
 	KPluginInfo *info = 0L;
 	QValueList<KPluginInfo *>::ConstIterator it;
 	for ( it = d->plugins.begin(); it != d->plugins.end(); ++it )
