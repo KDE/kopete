@@ -85,16 +85,15 @@ public slots:
 	void appendMessage( Kopete::Message &message );
 
 signals:
-
 	/**
 	 * Emits before the context menu is about to show
 	 */
-	void contextMenuEvent( DOM::HTMLElement &element, KPopupMenu *popupMenu );
+	void contextMenuEvent( Kopete::Message &message, const QString &textUnderMouse, KPopupMenu *popupMenu );
 
 	/**
 	 * Emits before the tooltip is about to show
 	 */
-	void tooltipEvent( DOM::HTMLElement &element, QString &toolTip );
+	void tooltipEvent( Kopete::Message &message, const QString &textUnderMouse, QString &toolTip );
 
 private slots:
 	void slotOpenURLRequest( const KURL &url, const KParts::URLArgs &args );
@@ -159,7 +158,12 @@ private:
 	/**
 	 * Emits before the tooltip is about to show
 	 */
-	void emitTooltipEvent( DOM::HTMLElement &element, QString &toolTipString );
+	void emitTooltipEvent( Kopete::Message &message, const QString &textUnderMouse, QString &toolTipString );
+
+	/**
+	 * Returns the text currently under the mouse
+	 */
+	QString textUnderMouse();
 
 	class ToolTip;
 	friend class ToolTip;

@@ -23,6 +23,7 @@
 #include <qtooltip.h>
 
 #include <dom/dom_doc.h>
+#include <dom/dom_text.h>
 #include <dom/dom_element.h>
 #include <dom/html_base.h>
 #include <dom/html_document.h>
@@ -113,42 +114,44 @@ public:
 		// FIXME: it's wrong to look for the node under the mouse - this makes too many
 		//        assumptions about how tooltips work. but there is no nodeAtPoint.
 		DOM::Node node = m_chat->nodeUnderMouse();
-		while ( !node.isNull() && node.nodeType() != DOM::Node::ELEMENT_NODE )
-			node = node.parentNode();
-
-		DOM::HTMLElement currentElement = node;
-		QString result;
-		m_chat->emitTooltipEvent( currentElement, result );
-		if( !result.isEmpty() )
-		{
-			tip( node.getRect(), result );
-			return;
-		}
-
 		Kopete::Contact *contact = m_chat->contactFromNode( node );
-
-		QRect rect = node.getRect();
+		QString toolTipText;
 
 		// this tooltip is attached to the viewport widget, so translate the node's rect
 		// into its coordinates.
+		QRect rect = node.getRect();
 		rect = QRect( m_chat->view()->contentsToViewport( rect.topLeft() ),
-			m_chat->view()->contentsToViewport( rect.bottomRight() ) );
+			      m_chat->view()->contentsToViewport( rect.bottomRight() ) );
 
 		if( contact )
 		{
-			tip( rect, contact->toolTip() );
-			return;
+			toolTipText = contact->toolTip();
 		}
-
-		//Fall back to the title attribute
-		for( DOM::HTMLElement element = node; !element.isNull(); element = element.parentNode() )
+		else
 		{
-			if( element.hasAttribute( "title" ) )
+			//Get plugin specified tooltips
+			while ( !node.isNull() && ( node.nodeType() == DOM::Node::TEXT_NODE || ((DOM::HTMLElement)node).className() != "KopeteMessage" ) )
+			node = node.parentNode();
+
+			Kopete::Message &currentMessage = m_chat->messageMap[ ((DOM::HTMLElement)node).id().toInt() ];
+			m_chat->emitTooltipEvent( currentMessage, m_chat->textUnderMouse(), toolTipText );
+
+			if( toolTipText.isEmpty() )
 			{
-				tip( rect, QString( element.getAttribute( "title" ).string() ) );
-				return;
+				//Fall back to the title attribute
+				for( DOM::HTMLElement element = node; !element.isNull(); element = element.parentNode() )
+				{
+					if( element.hasAttribute( "title" ) )
+					{
+						toolTipText = element.getAttribute( "title" ).string();
+						break;
+					}
+				}
 			}
 		}
+
+		if( !toolTipText.isEmpty() )
+			tip( rect, toolTipText );
 	}
 
 private:
@@ -503,9 +506,6 @@ Kopete::Contact *ChatMessagePart::contactFromNode( const DOM::Node &n ) const
 	while ( !node.isNull() && ( node.nodeType() == DOM::Node::TEXT_NODE || ((DOM::HTMLElement)node).className() != "KopeteDisplayName" ) )
 		node = node.parentNode();
 
-	if ( !node.isNull() )
-		return 0;
-
 	DOM::HTMLElement element = node;
 	if ( element.className() != "KopeteDisplayName" )
 		return 0;
@@ -575,9 +575,24 @@ void ChatMessagePart::slotRightClick( const QString &, const QPoint &point )
 	}
 
 	//Emit for plugin hooks
-	emit contextMenuEvent( activeElement, chatWindowPopup );
+	DOM::HTMLElement messageElement = activeElement;
+	while ( !messageElement.isNull() && messageElement.className() != "KopeteMessage" )
+	    messageElement = messageElement.parentNode();
+	Kopete::Message &currentMessage = messageMap[ messageElement.id().toInt() ];
+
+	emit contextMenuEvent( currentMessage, textUnderMouse(), chatWindowPopup );
 
 	chatWindowPopup->popup( point );
+}
+
+QString ChatMessagePart::textUnderMouse()
+{
+	DOM::Node activeNode = nodeUnderMouse();
+	if( activeNode.nodeType() != DOM::Node::TEXT_NODE )
+		return QString::null;
+
+	DOM::Text textNode = activeNode;
+	return textNode.data().string();
 }
 
 void ChatMessagePart::slotCopyURL()
@@ -803,9 +818,9 @@ void ChatMessagePart::slotCloseView( bool force )
 	m_manager->view()->closeView( force );
 }
 
-void ChatMessagePart::emitTooltipEvent( DOM::HTMLElement &element, QString &toolTip )
+void ChatMessagePart::emitTooltipEvent( Kopete::Message &message, const QString &textUnderMouse, QString &toolTip )
 {
-	emit tooltipEvent( element, toolTip );
+	emit tooltipEvent( message, textUnderMouse, toolTip );
 }
 
 #include "chatmessagepart.moc"
