@@ -36,6 +36,8 @@ public:
 	 */
 	GroupWiseContactProperties( GroupWise::ContactDetails contactDetails, QObject *parent = 0, const char *name = 0 );
 	~GroupWiseContactProperties();
+	
+	void setupProperties( QMap< QString, QString > serverProps );
 
 private:
 	GroupWiseContactPropsWidget * m_propsWidget;
