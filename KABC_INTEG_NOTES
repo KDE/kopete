@@ -22,7 +22,7 @@ Use cases
 
 5a)  After abandoning Kopete, users start using a different KDE IM client, and would like to use the IM address details stored in the KDE address book.
 
-5b)  The user used another KDE IM Client.  But he discover Kopete which is finaly the best, so he decide to use it, and he would like to use information already existing in KABC
+5b)  The user used another KDE IM Client.  But he finally discovers Kopete,which is the best, decides to use it, and he would like to use information already existing in KABC
 
 6)  Protocols may deliver contact data that users may want to aggregate into the kabc entry.
 
@@ -75,6 +75,7 @@ Possible ACW order including kabc
 
 ( 5) could come after the welcome but this might be too different for users to swallow... Will)
         agreed - Olivier
+        yup - Matt
 
 Olivier: I think a step (the first?) should be to ask a displayname for the metacontact.
 
@@ -133,6 +134,7 @@ Against
 ~~~~~~~
 .) less consistent
 	(can someone explain me this? -Olivier)
+	Yes, I need more explanation on what consistent means. - Matt
 .) may confuse user?
 	how?
 
@@ -261,7 +263,6 @@ messenging/nickname    =>    Mr. X ; Mr. Y
 that looks fine, but how to make sure than Mr. X is for xxx@msn.com, imagine if we have icq contact, or other? (Gof)
 We should never store nicknames in kabc.  The metacontact name should be taken from the kabc formatted name (Will)
 
-
 Of course every fields shouldn't be stored in KABC (for example: MSN's groups, or others)
 to know what can be saved or not in kabc, i see two ways:
 1) KopeteMetaContact::setData( QString key , QString data , bool saveToKAB);
@@ -269,3 +270,5 @@ to know what can be saved or not in kabc, i see two ways:
 
 
 Syncing contactlist info currently takes place when Kopete exits.  other kabc apps write kabc during their runs.  We will have to make changes to do this and to make sure that we don't try to write 200 kabc entries simultaneously with individual tickets after fetching the SSCL for a new account.
+
+I don't think that syncing the KAB on an SSCL fetch is necessary. The only information we get when we fetch the SSCL is the contact name of that person who is on our SSCL, it's not until later, perhaps when we request the user info that we update the KAB. (Matt)
