@@ -45,117 +45,45 @@ class GaduPreferences;
 
 class GaduProtocol : public KopeteProtocol
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    typedef QMap< uin_t, GaduContact* > ContactsMap;
+	GaduProtocol( QObject *parent, const char *name , const QStringList &);
+	~GaduProtocol();
 
-    GaduProtocol( QObject *parent, const char *name , const QStringList &);
-    ~GaduProtocol();
+	static GaduProtocol *protocol();
 
-    static GaduProtocol *protocol();
+	// Plugin reimplementation
+	// {
+	AddContactPage *createAddContactWidget( QWidget *parent );
+	bool canSendOffline() const { return true; }
 
-    // Plugin reimplementation
-    // {
-    void setAway();
-    void setAvailable();
-
-    AddContactPage *createAddContactWidget( QWidget *parent );
-    bool canSendOffline() const { return true; }
-    KopeteContact *myself() const;
-    virtual void deserializeContact( KopeteMetaContact *metaContact,
-                                     const QMap<QString, QString> &serializedData,
-                                     const QMap<QString, QString> &addressBookData );
-
-    virtual KActionMenu* protocolActions();
-    // }
-    //!Plugin reimplementation
-    bool addContactToMetaContact( const QString &contactId, const QString &displayName,
-                                  KopeteMetaContact *parentContact );
-
-    void removeContact( const GaduContact *c );
-
-    const KopeteOnlineStatus GaduStatusOffline;
-    const KopeteOnlineStatus GaduStatusNotAvail;
-    const KopeteOnlineStatus GaduStatusNotAvailDescr;
-    const KopeteOnlineStatus GaduStatusBusy;
-    const KopeteOnlineStatus GaduStatusBusyDescr;
-    const KopeteOnlineStatus GaduStatusInvisible;
-    const KopeteOnlineStatus GaduStatusInvisibleDescr;
-    const KopeteOnlineStatus GaduStatusAvail;
-    const KopeteOnlineStatus GaduStatusAvailDescr;
-
-    KopeteOnlineStatus convertStatus( uint status );
-
-public slots:
-    virtual void connect();
-    virtual void disconnect();
-    void slotLogin();
-    void slotLogoff();
-    void addNotify( uin_t uin );
-    void notify( uin_t *userlist, int count );
-    void sendMessage( uin_t recipient, const QString& msg, int msgClass=GG_CLASS_CHAT );
-    void changeStatus( const KopeteOnlineStatus &status, const QString& descr=QString::null );
-
-    void slotGoOnline();
-    void slotGoOffline();
-    void slotGoInvisible();
-    void slotGoAway();
-    void slotGoBusy();
+	virtual void deserializeContact( KopeteMetaContact *metaContact,
+																	 const QMap<QString, QString> &serializedData,
+																	 const QMap<QString, QString> &addressBookData );
+	// }
+	//!Plugin reimplementation
 
 private slots:
-    void settingsChanged();
-
-protected slots:
-    void error( const QString& title, const QString& message );
-    void messageReceived( struct gg_event* );
-    void ackReceived( struct gg_event* );
-    void notify( struct gg_event* );
-    void notifyDescription( struct gg_event* );
-    void statusChanged( struct gg_event* );
-    void pong();
-    void connectionFailed( struct gg_event* );
-    void connectionSucceed( struct gg_event* );
-    void slotSessionDisconnect();
-    void userlist( const QStringList& );
-    void pingServer();
+  void settingsChanged();
 
 private:
-    void initConnections();
-    void initActions();
+	void initConnections();
+	void initActions();
 
-    static GaduProtocol* protocolStatic_;
+	static GaduProtocol* protocolStatic_;
 
-    GaduSession*           session_;
-    QPtrList<GaduCommand>  commandList_;
-    ContactsMap            contactsMap_;
+	GaduPreferences     *prefs_;
 
-    GaduContact         *myself_;
-    Q_UINT32             userUin_;
-    KopeteOnlineStatus   status_;
-    QString              password_;
-    QString              nick_;
-
-    GaduPreferences     *prefs_;
-
-    KActionMenu *actionMenu_;
-    KAction     *onlineAction_;
-    KAction     *busyAction_;
-    KAction     *awayAction_;
-    KAction     *invisibleAction_;
-    KAction     *offlineAction_;
-
-    QTimer  *pingTimer_;
+	const KopeteOnlineStatus gaduStatusOffline_;
+	const KopeteOnlineStatus gaduStatusNotAvail_;
+	const KopeteOnlineStatus gaduStatusNotAvailDescr_;
+	const KopeteOnlineStatus gaduStatusBusy_;
+	const KopeteOnlineStatus gaduStatusBusyDescr_;
+	const KopeteOnlineStatus gaduStatusInvisible_;
+	const KopeteOnlineStatus gaduStatusInvisibleDescr_;
+	const KopeteOnlineStatus gaduStatusAvail_;
+	const KopeteOnlineStatus gaduStatusAvailDescr_;
 };
 
 
 #endif
-
-/*
- * Local variables:
- * c-indentation-style: bsd
- * c-basic-offset: 4
- * indent-tabs-mode: nil
- * End:
- *
- * vim: set et ts=4 sts=4 sw=4:
- */
