@@ -3,7 +3,7 @@
 
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -91,6 +91,10 @@ void MSNNotifySocket::disconnect()
 
 void MSNNotifySocket::handleError( uint code, uint id )
 {
+	QString handle;
+	if(m_tmpHandles.contains(id))
+		handle=m_tmpHandles[id];
+
 	// See http://www.hypothetic.org/docs/msn/basics.php for a
 	// description of all possible error codes.
 	// TODO: Add support for all of these!
@@ -100,7 +104,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 205:
 	case 208:
 	{
-		QString msg = i18n( "<qt>The MSN user '%1' does not exist.<br>Please check the MSN ID.</qt>" ).arg( m_tmpLastHandle );
+		QString msg = i18n( "<qt>The MSN user '%1' does not exist.<br>Please check the MSN ID.</qt>" ).arg( handle );
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
@@ -120,7 +124,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 209:
 	{
-		if(m_tmpLastHandle==m_account->accountId())
+		if(handle==m_account->accountId())
 		{
 			QString msg = i18n( "Unable to change your display name.\n"
 				"Please ensure your display is not too long and does not contains censored words." );
@@ -147,7 +151,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		QString msg = i18n( "<qt>The user '%1' already exists in this group on the MSN server;<br>"
 			"if Kopete does not show the user, please send us a detailed bug report "
 			"at kopete-devel@kde.org containing the raw debug output on the "
-			"console (in gzipped format, as it is probably a lot of output.)</qt>" ).arg(m_tmpLastHandle);
+			"console (in gzipped format, as it is probably a lot of output.)</qt>" ).arg(handle);
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
@@ -161,7 +165,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 219:
 	{
-		QString msg = i18n( "The user '%1' seems to already be blocked or allowed on the server." ).arg(m_tmpLastHandle);
+		QString msg = i18n( "The user '%1' seems to already be blocked or allowed on the server." ).arg(handle);
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
@@ -199,7 +203,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 715:
 	{
-		//if(m_tmpLastHandle==m_account->accountId())
+		//if(handlev==m_account->accountId())
 		QString msg = i18n( "Your email address has not been verified with the MSN server.\n"
 			"You should have received a mail with a link to confirm your email address.\n"
 			"Some functions will be restricted if you do not confirm your email address." );
@@ -758,7 +762,6 @@ void MSNNotifySocket::removeGroup( uint group )
 
 void MSNNotifySocket::addContact( const QString &handle, const QString& publicName, uint group, int list )
 {
-	m_tmpLastHandle=handle;
 	QString args;
 	switch( list )
 	{
@@ -776,12 +779,12 @@ void MSNNotifySocket::addContact( const QString &handle, const QString& publicNa
 			list << "!" << endl;
 		return;
 	}
-	sendCommand( "ADD", args );
+	unsigned int id=sendCommand( "ADD", args );
+	m_tmpHandles[id]=handle;
 }
 
 void MSNNotifySocket::removeContact( const QString &handle, uint group,	int list )
 {
-	m_tmpLastHandle=handle;
 	QString args;
 	switch( list )
 	{
@@ -798,7 +801,8 @@ void MSNNotifySocket::removeContact( const QString &handle, uint group,	int list
 		kdDebug(14140) <<k_funcinfo  << "WARNING! Unknown list " << list << "!" << endl;
 		return;
 	}
-	sendCommand( "REM", args );
+	unsigned int id=sendCommand( "REM", args );
+	m_tmpHandles[id]=handle;
 }
 
 void MSNNotifySocket::setStatus( const Kopete::OnlineStatus &status )
@@ -818,14 +822,16 @@ void MSNNotifySocket::changePublicName(  QString publicName, const QString &hand
 		publicName=publicName.left(387);
 	}
 
-	m_tmpLastHandle=handle;
 	if( handle.isNull() )
 	{
-		sendCommand( "REA", m_account->accountId() + " " + escape ( publicName ) );
-		m_tmpLastHandle=m_account->accountId();
+		unsigned int id=sendCommand( "REA", m_account->accountId() + " " + escape ( publicName ) );
+		m_tmpHandles[id]=m_account->accountId();
 	}
 	else
-		sendCommand( "REA", handle + " " + escape ( publicName ) );
+	{
+		unsigned int id=sendCommand( "REA", handle + " " + escape ( publicName ) );
+		m_tmpHandles[id]=handle;
+	}
 }
 
 void MSNNotifySocket::changePhoneNumber( const QString &key, const QString &data )
@@ -883,13 +889,17 @@ void MSNNotifySocket::slotSendKeepAlive()
 		sendCommand( "PNG" , QString::null , false );
 		m_ping=true;
 	}
+
+	//at least 90 second has been ellapsed since the last messages
+	// we shouldn't receive error from theses command anymore
+	m_tmpHandles.clear();
 }
 
 void MSNNotifySocket::slotResetKeepAlive()
 {
-	// Fire the timer every 60 seconds. QTimer will reset a running timer
+	// Fire the timer every 90 seconds. QTimer will reset a running timer
 	// on a subsequent call if there has been activity again.
-	m_keepaliveTimer->start( 60000 );
+	m_keepaliveTimer->start( 90000 );
 }
 
 Kopete::OnlineStatus MSNNotifySocket::convertOnlineStatus( const QString &status )

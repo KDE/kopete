@@ -3,9 +3,9 @@
 
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
 
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     Portions taken from
     KMerlin   (c) 2001      by Olaf Lueg              <olueg@olsd.de>
@@ -162,6 +162,7 @@ private:
 
 	//know the last handle used
 	QString m_tmpLastHandle;
+	QMap <unsigned int,QString> m_tmpHandles;
 
 	//for hotmail inbox opening
 	bool m_isHotmailAccount;
