@@ -44,10 +44,10 @@ Using Kopete (1st draft, Will)
 		Shortcuts
 	        File transfers
 Configuring Kopete (1st draft, Will)
-	Global Shortcuts 
+	Global Shortcuts
 	Configure Dialog
 		Adding/Editing Accounts (
-		Behaviour 
+		Behaviour
 		Appearance
 	Loading Plugins
 Plugins (Outlined, Will)
@@ -224,7 +224,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </sect3><sect3 id="organise-contacts-adding">
 <title>Adding Contacts</title>
 <para>To add a contact, either select <menuchoice><guimenu>File</guimenu><guimenuitem>Add Contact...</guimenuitem></menuchoice> or click the <guibutton>Add Contact</guibutton> button on the toolbar.  This brings up the Add Contact Wizard.</para>
-<para>The Add Contact Wizard creates a new Metacontact using one or more &im; systems, byleads you through the following pages:</para>
+<para>The Add Contact Wizard creates a new Metacontact using one or more &im; systems, by leading you through the following pages.</para>
 
 <orderedlist>
 <listitem><para>Welcome Page.  Here you can choose whether you want to use the &kde; Address Book for this contact.  Storing &im; information in the &kde; Address Book will enable other &kde; &im; programs to share contact information with &kopete; and in future &kde; applications may use &kopete; to send information via &im;.  If you prefer to keep your &im; contacts separated, clear the checkbox here.</para></listitem>
@@ -334,7 +334,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <variablelist>
 <varlistentry><term>Red</term><listitem><para>Someone typed a message.</para></listitem></varlistentry>
 <varlistentry><term>Blue</term><listitem><para>Someone typed a message containing your nickname.</para></listitem></varlistentry>
-</variablelist> 
+</variablelist>
 <para>There are several different ways to control grouping.  To configure this behavior, go to the Chat tab of the Behavior page of the Configure &kopete; dialog.  You can also move chats between windows using the <menuchoice><guimenu>Tabs</guimenu></menuchoice> menu, and control the placement of the tabs in the window.</para></sect3>
 </sect2>
 <sect2 id="chat-window-group">
@@ -746,25 +746,25 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 
 <chapter id="faq">
 <title>Frequently Asked Questions</title>
-<qandaset> 
+<qandaset>
 <qandaentry>
 <question><para>What does &kopete; mean? How do I pronounce it?</para></question>
 <answer><para>&kopete;'s name comes from the chilean word Copete, meaning <quote>a drink with your friends</quote>. Duncan, the original author, recorded an <ulink type="audio/vorbis" url="http://kopete.kde.org/files/kopete_en.ogg">audio sample</ulink>.</para></answer>
 </qandaentry>
-<qandaentry> 
+<qandaentry>
 <question><para>How do I send messages using just the <keycap>Enter</keycap> key?</para>
 </question>
 <answer><para>You can change it in the Chat window using <menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure
 Shortcuts...</guimenuitem></menuchoice></para>
 <para>This is because In &kde; applications such as &kopete;, you configure keyboard shortcuts in the window where you use the shortcut.  <keycombo action="simul">&Ctrl;&Enter;</keycombo> is the &kde; default shortcut for Send Message.</para></answer>
-</qandaentry> 
-<qandaentry> 
+</qandaentry>
+<qandaentry>
 <question><para>When I have more than one messaging service under a user's name in my contact list and I click on that user's name, it will message them on the wrong messaging service.</para>
 </question>
 <answer><para>You can change the order of accounts Kopete tries to message people with by using the Up and Down arrows in the bottom right corner of the account configuration screen. Kopete will try to connect with accounts starting from the top. However, if one service has a higher status value that the others for that user, Kopete will use that one. For example, if a person has three services and two are maked as away and the third is marked as online, Kopete will always try to message the user using the online service.</para><tip><para>If you click on the small protocol icon on the right of the menu item, instead of on the person's name, you will always try to contact the person using that service!</para></tip>
 </answer>
-</qandaentry> 
-<qandaentry> 
+</qandaentry>
+<qandaentry>
 <question><para>I need to connect via a SOCKS proxy, but I can't find any proxy configuration options in &kopete;.  How do I set up &kopete; to use SOCKS?</para>
 </question>
 <answer><itemizedlist>
@@ -774,29 +774,29 @@ Shortcuts...</guimenuitem></menuchoice></para>
 </itemizedlist>
 </answer>
 </qandaentry>
-<qandaentry> 
+<qandaentry>
 <question><para>Is it possible to customise the icons I see in &kopete;?</para></question>
 <answer><para>You can switch between different emoticons using the Emoticons tab of the Appearance page of the Configure &kopete; dialog.</para>
 <para>To install new emoticons, first look at <ulink url="ttp://www.kde-look.org/content/search.php">KDE-Look.org</ulink>, where there are a lot of additional emoticon sets to download:</para>
 
-<para>The emoticons are easy to install - you just place a directory containing 
-the icon files and an XML file describing the mapping from text to picture in 
+<para>The emoticons are easy to install - you just place a directory containing
+the icon files and an XML file describing the mapping from text to picture in
 $KDEDIR/share/apps/kopete/pics/emoticons (or $KDEHOME, for example, in /home/joeuser/.kde/).</para>
 
 <orderedlist>
-<listitem><para>Copy the extracted directory to $KDEDIR/share/apps/kopete/pics/emoticons or 
+<listitem><para>Copy the extracted directory to $KDEDIR/share/apps/kopete/pics/emoticons or
  $HOME/.kde/share/apps/kopete/pics/emoticons (or wherever $KDEHOME is)</para></listitem>
 <listitem><para>Select Configure &kopete; from the Settings menu and click on Appearance in the left panel of the Preferences windows and click on the Emoticons tab</para></listitem>
-<listitem><para>Select the emoticons set you just installed from the list</para></listitem> 
+<listitem><para>Select the emoticons set you just installed from the list</para></listitem>
 <listitem><para>Now you can use the newly installed emoticons in Kopete</para></listitem>
 </orderedlist>
-<para>To replace the protocol icons, you'll have to replace the icons in  
-$KDEDIR/share/apps/kopete/icons, or provide replacements to override them in 
-the same dir under $KDEHOME.  At present there aren't any complete replacement 
+<para>To replace the protocol icons, you'll have to replace the icons in
+$KDEDIR/share/apps/kopete/icons, or provide replacements to override them in
+the same dir under $KDEHOME.  At present there aren't any complete replacement
 sets that you can simply extract there.</para>
 </answer>
 </qandaentry>
-</qandaset> 
+</qandaset>
 </chapter> <!-- faq -->
 
 <chapter id="specialised">
