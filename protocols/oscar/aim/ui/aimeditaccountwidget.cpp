@@ -36,7 +36,7 @@ AIMEditAccountWidget::AIMEditAccountWidget(AIMProtocol *protocol,
 		if (account->rememberPassword())
 		{ // If we want to remember the password
 			mGui->mSavePassword->setChecked(true);
-			mGui->edtPassword->setText(account->password(false, 0L, 8));
+			mGui->edtPassword->setText(account->password(false, 0L, 16));
 		}
 		mGui->edtAccountId->setText(account->accountId());
 		//Remove me after we can change Account IDs (Matt)
