@@ -252,3 +252,8 @@ The user has two ways to initiate such as thing:
             Blacklister &KopeteAccount::blacklister(). Seems cleaner than having
             the default implementation in KopeteAccount, which would smell of
             Refused Bequest.
+<roie>	Why is there need in a blacklister instance for each KopeteAccount? 
+	I thought of a global object of the form BlackLister::self()
+	I will also add a base class for protocol-specific blacklist processing.
+	To use it, the protocol will derieve a class from it, and reimplement 
+	few virtual functions.
