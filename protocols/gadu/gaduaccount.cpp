@@ -737,10 +737,10 @@ GaduAccount::slotExportContactsListToFile()
 	
 	saveListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null, 
 					(QWidget *)NULL, "gadu-list-save", false ); 
-	saveListDialog.setCaption( i18n(" Save Contacts list for account %1 as ...").arg( myself()->displayName() ) );
+	saveListDialog->setCaption( i18n(" Save Contacts list for account %1 as ...").arg( myself()->displayName() ) );
 	QString list = session_->contactsToString( userlist() );
-	saveListDialog.show();
-	kdDebug( 14100 ) << "kurwa mac: \n" << list << "\n" << endl;
+	saveListDialog->show();
+	kdDebug( 14100 ) << "user list :-): -----------------\n" << list << "\n-----------------------" << endl;
 }
 
 void
