@@ -30,6 +30,7 @@
 #include<qregexp.h>
 #include<qvaluelist.h>
 
+#include "xmpp_tasks.moc"
 using namespace XMPP;
 
 
