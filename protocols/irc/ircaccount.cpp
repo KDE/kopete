@@ -48,15 +48,20 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 	m_engine = new KIRC( m_server, m_port );
 	QString version=i18n("Kopete IRC Plugin %1 [http://kopete.kde.org]").arg(kapp->aboutData()->version());
 	m_engine->setVersionString( version  );
-	if( rememberPassword() )
-		m_engine->setPassword( password() );
 
 	QObject::connect(m_engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)),
 			this, SLOT(successfullyChangedNick(const QString &, const QString &)));
 
+
 	m_contactManager = new IRCContactManager(mNickName, m_server, this);
 	m_mySelf = m_contactManager->mySelf();
 	m_myServer = m_contactManager->myServer();
+
+	//Warning: requesting the password may ask to kwallet, this will open a dcop call and call QApplication::enter_loop
+	if( rememberPassword() )
+		m_engine->setPassword( password() );
+
+
 }
 
 IRCAccount::~IRCAccount()
