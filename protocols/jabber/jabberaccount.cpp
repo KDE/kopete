@@ -514,13 +514,220 @@ void JabberAccount::slotCSError (int error)
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Error in stream signalled, disconnecting." << endl;
 
+	QString errorText;
+	QString errorCondition;
+
 	/*
 	 * Display error to user.
-	 * FIXME: Add translations somehow? Maybe rewrite the messages here?
-	 * FIXME: Should probably add name of server we're referring to.
+	 * FIXME: for unknown errors, maybe add error codes?
 	 */
-	KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (), KMessageBox::Error,
-				       jabberClientStream->errorText (), i18n("Connection problem with Jabber server"));
+	switch(error)
+	{
+		case XMPP::Stream::ErrParse:
+			errorText = i18n("Malformed packet received.");
+			break;
+
+		case XMPP::Stream::ErrProtocol:
+			errorText = i18n("There was an unrecoverable error in the protocol.");
+			break;
+
+		case XMPP::Stream::ErrStream:
+			switch(jabberClientStream->errorCondition ())
+			{
+				case XMPP::Stream::GenericStreamError:
+					errorCondition = i18n("Generic stream error (sorry, I don't know any more detailed reason)");
+					break;
+				case XMPP::Stream::Conflict:
+					// FIXME: need a better error message here
+					errorCondition = i18n("There was a conflict in the information received.");
+					break;
+				case XMPP::Stream::ConnectionTimeout:
+					errorCondition = i18n("The connection timed out.");
+					break;
+				case XMPP::Stream::InternalServerError:
+					errorCondition = i18n("Internal server error.");
+					break;
+				case XMPP::Stream::InvalidFrom:
+					errorCondition = i18n("Packet received from an invalid address.");
+					break;
+				case XMPP::Stream::InvalidXml:
+					errorCondition = i18n("Malformed packet received.");
+					break;
+				case XMPP::Stream::PolicyViolation:
+					// FIXME: need a better error message here
+					errorCondition = i18n("Policy violation.");
+					break;
+				case XMPP::Stream::ResourceConstraint:
+					// FIXME: need a better error message here
+					errorCondition = i18n("Resource constraint.");
+					break;
+				case XMPP::Stream::SystemShutdown:
+					// FIXME: need a better error message here
+					errorCondition = i18n("System shutdown.");
+					break;
+				default:
+					errorCondition = i18n("Unknown reason.");
+					break;
+			}
+
+			errorText = i18n("There was an error in the protocol stream: %1").arg(errorCondition);
+			break;
+
+		case XMPP::ClientStream::ErrConnection:
+			switch(jabberClientConnector->errorCode ())
+			{
+				case XMPP::AdvancedConnector::ErrConnectionRefused:
+					errorCondition = i18n("Connection refused.");
+					break;
+				case XMPP::AdvancedConnector::ErrHostNotFound:
+					errorCondition = i18n("Host not found.");
+					break;
+				case XMPP::AdvancedConnector::ErrProxyConnect:
+					errorCondition = i18n("Could not connect to proxy server.");
+					break;
+				case XMPP::AdvancedConnector::ErrProxyNeg:
+					errorCondition = i18n("Could not negotiate with the proxy server.");
+					break;
+				case XMPP::AdvancedConnector::ErrProxyAuth:
+					errorCondition = i18n("Could not authenticate with the proxy server.");
+					break;
+				default:
+					errorCondition = i18n("Sorry, something unexpected happened that I don't know more about.");
+					break;
+			}
+
+			errorText = i18n("There was a connection error: %1").arg(errorCondition);
+			break;
+
+		case XMPP::ClientStream::ErrNeg:
+			switch(jabberClientStream->errorCondition())
+			{
+				case XMPP::ClientStream::HostUnknown:
+					// FIXME: need a better error message here
+					errorCondition = i18n("Unknown host.");
+					break;
+				case XMPP::ClientStream::RemoteConnectionFailed:
+					// FIXME: need a better error message here
+					errorCondition = i18n("Could not connect to a required remote resource.");
+					break;
+				case XMPP::ClientStream::SeeOtherHost:
+					errorCondition = i18n("Seems we have been redirected to %1. Don't know how to handle this.").arg(jabberClientStream->errorText ());
+					break;
+				case XMPP::ClientStream::UnsupportedVersion:
+					errorCondition = i18n("Unsupported protocol version.");
+					break;
+				default:
+					errorCondition = i18n("Unknown error.");
+					break;
+			}
+
+			errorText = i18n("There was a negotiation error: %1").arg(errorCondition);
+			break;
+
+		case XMPP::ClientStream::ErrTLS:
+			switch(jabberClientStream->errorCondition())
+			{
+				case XMPP::ClientStream::TLSStart:
+					errorCondition = i18n("Server rejected to start the TLS handshake.");
+					break;
+				case XMPP::ClientStream::TLSFail:
+					errorCondition = i18n("Failed to establish a secure connection.");
+					break;
+				default:
+					errorCondition = i18n("Unknown error.");
+					break;
+			}
+
+			errorText = i18n("There was a Transport Layer Security (TLS) error: %1").arg(errorCondition);
+			break;
+
+		case XMPP::ClientStream::ErrAuth:
+			switch(jabberClientStream->errorCondition())
+			{
+				case XMPP::ClientStream::GenericAuthError:
+					errorCondition = i18n("Login failed with unknown reason.");
+					break;
+				case XMPP::ClientStream::NoMech:
+					errorCondition = i18n("No appropriate authentication mechanism available.");
+					break;
+				case XMPP::ClientStream::BadProto:
+					errorCondition = i18n("Bad SASL authentication protocol.");
+					break;
+				case XMPP::ClientStream::BadServ:
+					errorCondition = i18n("Server failed mutual authentication.");
+					break;
+				case XMPP::ClientStream::EncryptionRequired:
+					errorCondition = i18n("Encryption is required but not present.");
+					break;
+				case XMPP::ClientStream::InvalidAuthzid:
+					errorCondition = i18n("Invalid ID.");
+					break;
+				case XMPP::ClientStream::InvalidMech:
+					errorCondition = i18n("Invalid mechanism.");
+					break;
+				case XMPP::ClientStream::InvalidRealm:
+					errorCondition = i18n("Invalid realm.");
+					break;
+				case XMPP::ClientStream::MechTooWeak:
+					errorCondition = i18n("Mechanism too weak.");
+					break;
+				case XMPP::ClientStream::NotAuthorized:
+					errorCondition = i18n("Wrong credentials supplied. (check your user ID and password)");
+					break;
+				case XMPP::ClientStream::TemporaryAuthFailure:
+					errorCondition = i18n("Temporary failure, please try again later.");
+					break;
+				default:
+					errorCondition = i18n("Unknown error.");
+					break;
+			}
+
+			errorText = i18n("There was an error authenticating with the server: %1").arg(errorCondition);
+			break;
+
+		case XMPP::ClientStream::ErrSecurityLayer:
+			switch(jabberClientStream->errorCondition())
+			{
+				case XMPP::ClientStream::LayerTLS:
+					errorCondition = i18n("Transport Security Layer (TLS) problem.");
+					break;
+				case XMPP::ClientStream::LayerSASL:
+					errorCondition = i18n("Simple Authentication and Security Layer (SASL) problem.");
+					break;
+				default:
+					errorCondition = i18n("Unknown error.");
+					break;
+			}
+
+			errorText = i18n("There was an error in the security layer: %1").arg(errorCondition);
+			break;
+
+		case XMPP::ClientStream::ErrBind:
+			switch(jabberClientStream->errorCondition())
+			{
+				case XMPP::ClientStream::BindNotAllowed:
+					errorCondition = i18n("No permission to bind the resource.");
+					break;
+				case XMPP::ClientStream::BindConflict:
+					errorCondition = i18n("Resource already in use.");
+					break;
+				default:
+					errorCondition = i18n("Unknown error.");
+					break;
+			}
+
+			errorText = i18n("Could not bind a resource: %1").arg(errorCondition);
+			break;
+
+		default:
+			errorText = i18n("Unknown error.");
+			break;
+	}
+
+	KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (),
+								   KMessageBox::Error,
+								   errorText,
+								   i18n("Connection problem with Jabber server %1").arg(server()));
 
 	disconnect ();
 
