@@ -69,7 +69,7 @@ bool MeanwhileAddContactPage::apply(
 
 bool MeanwhileAddContactPage::validateData()
 {
-    return theDialog->contactID->text() != "";
+    return ! theDialog->contactID->text().isEmpty();
 }
 
 #include "meanwhileaddcontactpage.moc"
