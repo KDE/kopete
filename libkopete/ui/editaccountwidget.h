@@ -20,7 +20,6 @@
 
 class KopeteAccount;
 
-#include "kopeteaccount.h"
 
 /**
  * @author Olivier Goffart <ogoffart@tiscalinet.be>

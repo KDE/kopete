@@ -16,6 +16,7 @@
 */
 
 #include "editaccountwidget.h"
+#include <kopeteaccount.h>
 
 EditAccountWidget::EditAccountWidget(KopeteAccount *i)
 {
