@@ -136,22 +136,6 @@
  * deleting outgoing Fields.
  */
 
-struct GWFolderItem
-{
-	int id; 
-	int sequence;
-	QString name;
-};
-
-struct GWContactItem
-{
-	int id;
-	int parentId;
-	int sequence;
-	QString dn;
-	QString displayName;
-};
-
 namespace Field
 {
 	/**

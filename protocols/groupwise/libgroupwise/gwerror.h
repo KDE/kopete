@@ -3,7 +3,9 @@
 #ifndef GW_ERROR_H
 #define GW_ERROR_H
 
+#include <qdatetime.h>
 #include <qglobal.h>
+#include <qstring.h>
 
 typedef Q_UINT16 NMERR_T;
 #define GROUPWISE_DEBUG_GLOBAL 14220
@@ -26,7 +28,7 @@ namespace GroupWise
 					Available = 2,
 					Busy = 3,
 					Away = 4,
-					AwayIdle= 5,
+					AwayIdle = 5,
 					Invalid = 6
 				};
 				
@@ -41,7 +43,53 @@ namespace GroupWise
 					ConferenceNotInstantiated,
 					FolderExists
 				};
+	
+	enum ConferenceFlags { 	Logged = 0x00000001,
+							Secure = 0x00000002,
+							Closed = 0x10000000
+						 };
+	
+	// helpful structs used to pass data between the client library and the application using it
+	struct ConferenceEvent 
+	{
+		QString guid;
+		QString user;
+		QTime timeStamp;
+		Q_UINT32 flags;
+	};
+	
+	struct FolderItem
+	{
+		uint id; 
+		uint sequence;
+		uint parentId;
+		QString name;
+	};
+	
+	struct ContactItem
+	{
+		int id;
+		int parentId;
+		int sequence;
+		QString dn;
+		QString displayName;
+	};
+
+	struct ContactDetails
+	{
+		QString cn, 
+				dn, 
+				givenName, 
+				surname, 
+				fullName, 
+				awayMessage, 
+				authAttribute;
+		int status;
+	};
 };
+
+// temporary typedef pending implementation
+typedef QString Message;
 					
 
 // #define NMERR_BASE							0x2000L
