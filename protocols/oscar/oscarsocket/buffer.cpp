@@ -214,7 +214,7 @@ int Buffer::addFlap(const BYTE channel, const WORD flapSequenceNum)
 	return mBuffer.size();
 }
 
-const DWORD Buffer::addSnac(const WORD family, const WORD subtype,
+DWORD Buffer::addSnac(const WORD family, const WORD subtype,
 	const WORD flags, DWORD id)
 {
 #ifdef BUFFER_DEBUG

@@ -327,10 +327,6 @@ class OscarSocket : public OscarConnection
 
 		bool isICQ() { return mIsICQ; }
 
-		/** Accessors for the addingAuthBuddy variable */
-		bool addingAuthBuddy() { return addAuthBuddy; }
-		void setAddingAuthBuddy(bool newValue) { addAuthBuddy = newValue; }
-
 		/*
 		 * Sends an authorization request to the server
 		 */
@@ -437,7 +433,7 @@ class OscarSocket : public OscarConnection
 		/*
 		 * Adds a buddy to the server side buddy list
 		 */
-		virtual void sendAddBuddy(const QString &name, const QString &group);
+		virtual void sendAddBuddy(const QString &name, const QString &group, bool addingAuthBuddy);
 
 		/*
 		 * Adds a buddy to the BLM service (not permanent, local only)
@@ -598,7 +594,7 @@ class OscarSocket : public OscarConnection
 		/* Map a buddy and his group to a request id */
 		void addBuddyToAckMap(const QString &contactName, const QString &groupName, const DWORD id);
 		/* Get the buddy for a given request id (will remove the entry from the map) */
-		AckBuddy* ackBuddy(const DWORD id);
+		AckBuddy ackBuddy(const DWORD id);
 
 		/*
 		 * Methods to convert incoming/outgoing text to/from the encoding needed.
@@ -820,10 +816,10 @@ class OscarSocket : public OscarConnection
 		void parseRateChange(Buffer &inbuf);
 
 		/** Sends SSI add, modify, or delete request to reuse code */
-		void sendSSIAddModDel(SSI *item, WORD request_type);
+		DWORD sendSSIAddModDel(SSI *item, WORD request_type);
 
 		/** Parses the SSI acknowledgment */
-		void parseSSIAck(Buffer &inbuf);
+		void parseSSIAck(Buffer &inbuf, const DWORD reqId);
 
 		/** Parses a warning notification */
 		void parseWarningNotify(Buffer &inbuf);
@@ -1178,10 +1174,7 @@ class OscarSocket : public OscarConnection
 		bool bSomethingOutgoing;
 
 		/* Used to map a buddy and his group to a server ack */
-		QMap<DWORD, AckBuddy*> m_ackBuddyMap;
-
-		/** Used to determine if a contact requires auth */
-		bool addAuthBuddy;
+		QMap<DWORD, AckBuddy> m_ackBuddyMap;
 };
 
 #endif

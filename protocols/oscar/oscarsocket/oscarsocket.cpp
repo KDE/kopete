@@ -63,7 +63,6 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	awaitingFirstPresenceBlock=OscarSocket::Waiting;
 	mBlockSend=false;
 	bSomethingOutgoing=false;
-	addAuthBuddy = false;
 
 	socket()->enableWrite(false); // don't spam us with readyWrite() signals
 	socket()->enableRead(true);
@@ -441,7 +440,7 @@ void OscarSocket::slotRead()
 							parseRosterData(inbuf);
 							break;
 						case 0x000e: //server ack for adding/changing roster items
-							parseSSIAck(inbuf);
+							parseSSIAck(inbuf, s.id);
 							break;
 						case 0x000f: //ack when contactlist timestamp/length matches those values sent
 							parseRosterOk(inbuf);
@@ -2902,7 +2901,7 @@ void OscarSocket::doLogoff()
 	}
 }
 
-void OscarSocket::sendAddBuddy(const QString &contactName, const QString &groupName)
+void OscarSocket::sendAddBuddy(const QString &contactName, const QString &groupName, bool addingAuthBuddy)
 {
 	SSI *newContact, *group;
 
@@ -2915,13 +2914,15 @@ void OscarSocket::sendAddBuddy(const QString &contactName, const QString &groupN
 		sendAddGroup(groupName);
 	}
 
-	newContact = ssiData.addContact(contactName, groupName);
+	newContact = ssiData.addContact(contactName, groupName, addingAuthBuddy);
 
 	kdDebug(14150) << k_funcinfo << "Adding " << newContact->name << ", gid " <<
 		newContact->gid << ", bid " << newContact->bid << ", type " << newContact->type
 		<< ", datalength " << newContact->tlvlength << endl;
 
-	sendSSIAddModDel(newContact, 0x0008);
+	DWORD reqId = sendSSIAddModDel(newContact, 0x0008);
+	addBuddyToAckMap(contactName, groupName, reqId);
+
 	// TODO: now we need to modify the group our buddy is in, i.e. edit TLV(0x00C9)
 	// containing the list of contactIDs inside that group
 //	sendSSIAddModDel(group, 0x0009);
@@ -3278,10 +3279,10 @@ void OscarSocket::sendDelGroup(const QString &groupName)
 }
 
 // Sends SSI add, modify, or delete request, to reuse code
-void OscarSocket::sendSSIAddModDel(SSI *item, WORD requestType)
+DWORD OscarSocket::sendSSIAddModDel(SSI *item, WORD requestType)
 {
 	if (!item)
-		return;
+		return(0);
 
 	switch(requestType)
 	{
@@ -3307,30 +3308,22 @@ void OscarSocket::sendSSIAddModDel(SSI *item, WORD requestType)
 		default:
 		{
 			kdDebug(14150) << k_funcinfo << "unknown requestType given, aborting" << endl;
-			return;
+			return(0);
 		}
 	}
 
 	Buffer outbuf;
-	outbuf.addSnac(0x0013,requestType,0x0000,0x00000000);
+	DWORD reqId = outbuf.addSnac(0x0013,requestType,0x0000,0x00000000);
 	outbuf.addBSTR(item->name.latin1()); // TODO: encoding
 	outbuf.addWord(item->gid); // TAG
 	outbuf.addWord(item->bid); // ID
 	outbuf.addWord(item->type); // TYPE
-	if (addAuthBuddy && requestType == 0x0008)
+	outbuf.addWord(item->tlvlength); // LEN
+	if (item->tlvlength > 0)
 	{
-		outbuf.addWord(4);
-		outbuf.addTLV(0x0066,0,0);
-	}
-	else
-	{
-		outbuf.addWord(item->tlvlength); // LEN
-		if (item->tlvlength > 0)
-		{
-			kdDebug(14150) << k_funcinfo << "Adding TLVs with length=" <<
-				item->tlvlength << endl;
-			outbuf.addString(item->tlvlist,item->tlvlength);
-		}
+		kdDebug(14150) << k_funcinfo << "Adding TLVs with length=" <<
+			item->tlvlength << endl;
+		outbuf.addString(item->tlvlist,item->tlvlength);
 	}
 
 	sendBuf(outbuf,0x02);
@@ -3342,15 +3335,25 @@ void OscarSocket::sendSSIAddModDel(SSI *item, WORD requestType)
 		addend.addSnac(0x0013,0x0012,0x0000,0x00000000);
 		sendBuf(addend,0x02);
 	}
-
+	return(reqId);
 }
 
 // Parses the SSI acknowledgment
-void OscarSocket::parseSSIAck(Buffer &inbuf)
+void OscarSocket::parseSSIAck(Buffer &inbuf, const DWORD reqId)
 {
 	kdDebug(14150) << k_funcinfo << "RECV SRV_SSIACK" << endl;
 
 	WORD result = inbuf.getWord();
+	AckBuddy buddy = ackBuddy(reqId);
+
+	AIMBuddy *bud = 0L;
+	OscarContact *contact = 0L;
+
+	if ( !buddy.contactName.isEmpty() )
+	{
+		contact = static_cast<OscarContact*>(mAccount->contacts()[buddy.contactName]);
+		bud = mAccount->findBuddy( buddy.contactName );
+	}
 
 	switch(result)
 	{
@@ -3368,19 +3371,21 @@ void OscarSocket::parseSSIAck(Buffer &inbuf)
 			break;
 		case SSIACK_LIMITEXD:
 			kdDebug(14150) << k_funcinfo << "Cannot add item, item limit exceeded." << endl;
-			emit gotSSIAck(result);
+			//FIXME: Remove contact!
 			break;
 		case SSIACK_ICQTOAIM:
 			kdDebug(14150) << k_funcinfo << "Cannot add ICQ contact to AIM list." << endl;
-			emit gotSSIAck(result);
+			//FIXME: Remove contact!
 			break;
 		case SSIACK_NEEDAUTH:
 			kdDebug(14150) << k_funcinfo << "Cannot add contact because he needs AUTH." << endl;
-			emit gotSSIAck(result);
+			contact->requestAuth();
+			sendAddBuddy(buddy.contactName, buddy.groupName, true);
+			sendAddBuddylist(buddy.contactName);
+			bud->setWaitAuth(true);
 			break;
 		default:
 			kdDebug(14150) << k_funcinfo << "Unknown result " << result << endl;
-			emit gotSSIAck(result);
 	}
 	//there isn't much here...
 	//we just need to signal to send the next item in the ssi queue
@@ -4239,24 +4244,28 @@ const QString OscarSocket::ServerToQString(const char* string, OscarContact *con
 
 void OscarSocket::addBuddyToAckMap(const QString &contactName, const QString &groupName, const DWORD id)
 {
+	kdDebug(14150) << k_funcinfo << "Mapping ID " << id << " to buddy " << contactName << endl;
 	AckBuddy buddy;
 	buddy.contactName = contactName;
 	buddy.groupName = groupName;
-	m_ackBuddyMap[id] = &buddy;
+	m_ackBuddyMap[id] = buddy;
 }
 
-AckBuddy* OscarSocket::ackBuddy(const DWORD id)
+AckBuddy OscarSocket::ackBuddy(const DWORD id)
 {
-	QMap<DWORD, AckBuddy*>::Iterator it;
+	AckBuddy buddy;
+	QMap<DWORD, AckBuddy>::Iterator it;
 	for (it = m_ackBuddyMap.begin() ; it != m_ackBuddyMap.end() ; it++)
 	{
 		if (it.key() == id)
 		{
+			kdDebug(14150) << k_funcinfo << "Found buddy " << it.data().contactName << ", group " << it.data().groupName << endl;
+			buddy = it.data();
 			m_ackBuddyMap.remove(it);
-			return(it.data());
+			break;
 		}
 	}
-	return(0L);
+	return(buddy);
 }
 
 OscarMessage::OscarMessage()

@@ -37,19 +37,6 @@ class AIMGroup;
 
 class OscarAccountPrivate;
 
-class BuddyWaitingSSIAck
-{
-public:
-	BuddyWaitingSSIAck();
-	void set(const QString &contact, const QString &group);
-	void unset();
-	QString contact() { return(contactName); }
-	QString group() { return(groupName); }
-private:
-	QString contactName;
-	QString groupName;
-};
-
 class OscarAccount : public KopeteAccount
 {
 	Q_OBJECT
@@ -108,9 +95,6 @@ public:
 
 	void setAwayMessage(const QString&);
 	const QString &awayMessage();
-
-	// Stores temporary user information when doing SSI operations
-	BuddyWaitingSSIAck buddyWaitingSSIAck;
 
 	/* Pure virtual to be implemented by ICQAccount and AIMAccount
 	 * sets the users status and if connected should send a status update to the server
@@ -201,11 +185,6 @@ protected slots:
 	 * Called when we get a request for a direct IM session with @sn
 	 */
 	void slotGotDirectIMRequest(QString sn);
-
-	/*
-	 * Called when we get a server ack on SSI change
-	 */
-	void slotGotSSIAck(WORD result);
 
 	/*
 	 * Called when there is no activity for a certain amount of time

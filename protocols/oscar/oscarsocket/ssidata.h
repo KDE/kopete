@@ -81,8 +81,8 @@ class SSIData : public QPtrList<SSI>
 		 * SSI returned by this method to change the Server
 		 * Side data
 		 */
-		SSI *addContact(const QString &name, const QString &group);
-		SSI *addContact(const int groupId, const int contactId);
+		SSI *addContact(const QString &name, const QString &group, bool addingAuthBuddy);
+		SSI *addContact(const int groupId, const int contactId, bool addingAuthBuddy);
 
 		/*
 		 * Finds the contact with given name and group...

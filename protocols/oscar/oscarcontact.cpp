@@ -423,9 +423,8 @@ void OscarContact::syncGroups()
 		// Contact is not on the SSI
 		kdDebug(14150) << k_funcinfo <<
 			"Could not get current Oscar group for contact '" << displayName() << "'. Adding contact to the SSI." << endl;
-		mAccount->engine()->sendAddBuddy(contactName(), firstKopeteGroup->displayName() );
-		mAccount->buddyWaitingSSIAck.set(contactName(), firstKopeteGroup->displayName() );
-	return;
+		mAccount->engine()->sendAddBuddy(contactName(), firstKopeteGroup->displayName(), false);
+		return;
 	}
 
 	if (currentOscarGroup->name() != firstKopeteGroup->displayName())

@@ -31,7 +31,7 @@ SSIData::~SSIData()
 
 // ========================================================================================
 
-SSI *SSIData::addContact(const QString &name, const QString &group)
+SSI *SSIData::addContact(const QString &name, const QString &group, bool addingAuthBuddy)
 {
 	SSI *tmp = findGroup(group);
 	if(!tmp) //the group does not exist
@@ -51,8 +51,17 @@ SSI *SSIData::addContact(const QString &name, const QString &group)
 
 	newitem->bid = maxbid + 1;
 	newitem->type = ROSTER_CONTACT;
-	newitem->tlvlist = 0L;
-	newitem->tlvlength = 0;
+	if (!addingAuthBuddy)
+	{
+		newitem->tlvlist = 0L;
+		newitem->tlvlength = 0;
+	}
+	else
+	{
+		// TLV(0x0066) with no data
+		newitem->tlvlist = "\x00\x66\x00\x00";
+		newitem->tlvlength = 4;
+	}
 
 	append(newitem);
 	return newitem;
