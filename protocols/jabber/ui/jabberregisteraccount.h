@@ -22,6 +22,7 @@
 
 #include <kdialogbase.h>
 #include <qregexp.h>
+#include <qpixmap.h>
 
 class DlgJabberRegisterAccount;
 class JabberProtocol;
@@ -66,17 +67,18 @@ private slots:
 	void slotCSError (int error);
 	void slotRegisterUserDone ();
 	void slotDeleteDialog ();
+	void validateData ();
 
 	void disconnect ();
 
 private:
 	void cleanup ();
-	bool validateData ();
 
 	DlgJabberRegisterAccount *mMainWidget;
 	JabberEditAccountWidget *mParentWidget;
 
 	QRegExp jidRegExp;
+	QPixmap hintPixmap;
 
 	QCA::TLS *jabberTLS;
 	XMPP::QCATLSHandler *jabberTLSHandler;

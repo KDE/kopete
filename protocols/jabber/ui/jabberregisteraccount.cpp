@@ -20,6 +20,8 @@
 #include "jabberregisteraccount.h"
 
 #include <klocale.h>
+#include <kiconloader.h>
+#include <kglobal.h>
 #include <kmessagebox.h>
 #include <klineedit.h>
 #include <kpassdlg.h>
@@ -68,6 +70,7 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent, 
 	jabberClient = 0L;
 
 	jidRegExp.setPattern ( "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}" );
+	hintPixmap = KGlobal::iconLoader()->loadIcon ( "jabber_online", KIcon::Small );
 
 	// get all settings from the main dialog
 	mMainWidget->leServer->setText ( parent->mServer->text () );
@@ -84,8 +87,16 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent, 
 	connect ( mMainWidget->leJID, SIGNAL ( textChanged ( const QString & ) ), this, SLOT ( slotJIDInformation () ) );
 	connect ( mMainWidget->cbUseSSL, SIGNAL ( toggled ( bool ) ), this, SLOT ( slotSSLToggled () ) );
 
+	connect ( mMainWidget->leServer, SIGNAL ( textChanged ( const QString & ) ), this, SLOT ( validateData () ) );
+	connect ( mMainWidget->leJID, SIGNAL ( textChanged ( const QString & ) ), this, SLOT ( validateData () ) );
+	connect ( mMainWidget->lePassword, SIGNAL ( textChanged ( const QString & ) ), this, SLOT ( validateData () ) );
+	connect ( mMainWidget->lePasswordVerify, SIGNAL ( textChanged ( const QString & ) ), this, SLOT ( validateData () ) );
+
 	// display JID info now
 	slotJIDInformation ();
+
+	// display validation info
+	validateData ();
 }
 
 
@@ -100,32 +111,56 @@ void JabberRegisterAccount::slotDeleteDialog ()
 
 }
 
-bool JabberRegisterAccount::validateData ()
+void JabberRegisterAccount::validateData ()
 {
 
-	if ( !jidRegExp.exactMatch ( mMainWidget->leJID->text() ) )
+	int valid = true;
+
+	if ( mMainWidget->leServer->text().isEmpty () )
 	{
-		KMessageBox::sorry(this, i18n("The Jabber ID you have chosen is invalid. "
-							"Please make sure it is in the form user@server.com, like an email address."),
-							i18n("Invalid Jabber ID"));
-
-		mMainWidget->lblStatusMessage->setText ( i18n ( "Please correct your Jabber ID." ) );
-
-		return false;
+		mMainWidget->lblStatusMessage->setText ( i18n ( "Please enter a server name." ) );
+		mMainWidget->pixServer->setPixmap ( hintPixmap );
+		valid = false;
+	}
+	else
+	{
+		mMainWidget->pixServer->setText ( "" );
 	}
 
-	if ( QString::fromLatin1 ( mMainWidget->lePassword->password () ) !=
-		 QString::fromLatin1 ( mMainWidget->lePasswordVerify->password () ) )
+	if ( valid && !jidRegExp.exactMatch ( mMainWidget->leJID->text() ) )
 	{
-		KMessageBox::sorry(this, i18n("The passwords do not match. Please enter them again."),
-							i18n("Jabber Passwords do not match"));
-
-		mMainWidget->lblStatusMessage->setText ( i18n ( "Please enter your password again." ) );
-
-		return false;
+		mMainWidget->lblStatusMessage->setText ( i18n ( "Please enter a valid Jabber ID." ) );
+		mMainWidget->pixJID->setPixmap ( hintPixmap );
+		valid = false;
+	}
+	else
+	{
+		mMainWidget->pixJID->setText ( "" );
 	}
 
-	return true;
+	if ( valid &&
+	   ( QString::fromLatin1 ( mMainWidget->lePassword->password () ).isEmpty () ||
+	   ( QString::fromLatin1 ( mMainWidget->lePassword->password () ) !=
+		 QString::fromLatin1 ( mMainWidget->lePasswordVerify->password () ) ) ) )
+	{
+		mMainWidget->lblStatusMessage->setText ( i18n ( "Please enter your password twice." ) );
+		mMainWidget->pixPassword->setPixmap ( hintPixmap );
+		mMainWidget->pixPasswordVerify->setPixmap ( hintPixmap );
+		valid = false;
+	}
+	else
+	{
+		mMainWidget->pixPassword->setText ( "" );
+		mMainWidget->pixPasswordVerify->setText ( "" );
+	}
+
+	if ( valid )
+	{
+		// clear status message if we have valid data
+		mMainWidget->lblStatusMessage->setText ( "" );
+	}
+
+	enableButtonOK ( valid );
 
 }
 
@@ -185,9 +220,6 @@ void JabberRegisterAccount::slotOk ()
 {
 
 	mMainWidget->lblStatusMessage->setText ( "" );
-
-	if ( !validateData () )
-		return;
 
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Registering a new Jabber account." << endl;
 
