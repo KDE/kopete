@@ -1,7 +1,7 @@
 METASOURCES = AUTO
 
 noinst_LTLIBRARIES = libxmpp.la
-INCLUDES = $(all_includes) -I../../cutestuff/network -I../../cutestuff/util -I../../cutestuff/ssl
+INCLUDES = -I../../cutestuff/network -I../../cutestuff/util -I../../cutestuff/ssl $(all_includes)
 
 libxmpp_la_LDFLAGS = -avoid-version -module
 
