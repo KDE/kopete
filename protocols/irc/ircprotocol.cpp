@@ -139,7 +139,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("devoice"),
 		SLOT( slotDevoiceCommand( const QString &, KopeteMessageManager*) ),
-		i18n("USAGE: /devoicep <nickanme> - Remove channel voice status from someone (Requires operator status).") );
+		i18n("USAGE: /devoice <nickname> - Remove channel voice status from someone (Requires operator status).") );
 
 
 	QObject::connect( KopeteMessageManagerFactory::factory(), SIGNAL(aboutToDisplay(KopeteMessage &)), this, SLOT(slotMessageFilter(KopeteMessage &)) );
