@@ -181,8 +181,11 @@ void OscarContact::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* sessi
 	//Why is this unused?
 	Q_UNUSED( session );
 	Oscar::Message message;
-
-	message.setText( msg.plainBody() );
+	
+	if ( account()->engine()->isIcq() )
+		message.setText( msg.plainBody() );
+	else
+		message.setText( msg.escapedBody() );
 	
 	message.setTimestamp( msg.timestamp() );
 	message.setSender( mAccount->accountId() );
