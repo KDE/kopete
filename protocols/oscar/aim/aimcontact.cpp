@@ -85,6 +85,11 @@ void AIMContact::slotGotProfile(const UserInfo &user, const QString &profile, co
 	kdDebug(14200) << k_funcinfo << "Called for contact '" << displayName() << "'" << endl;
 	mUserProfile = profile;
 	setAwayMessage(away);
+	if ( onlineStatus().internalStatus() == OSCAR_OFFLINE || user.onlinesince.isValid() )
+	{
+		kdDebug(14150) << k_funcinfo << "Attempting to set status to online for temp contact" << endl;
+		setStatus(OSCAR_ONLINE);
+	}
 	emit updatedProfile();
 }
 
