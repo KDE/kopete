@@ -67,7 +67,11 @@ class ICQContact : public OscarContact
 
 		virtual void setStatus(const unsigned int newStatus);
 
+		/** Request full user info */
 		void requestUserInfo();
+		
+		/** Request short user info */
+		void requestShortInfo();
 
 		/*
 		 * Do NOT use this for anything but the ICQAccount::myself() contact!
@@ -103,6 +107,7 @@ class ICQContact : public OscarContact
 		ICQInfoItemList interestInfo;
 		ICQInfoItemList currentBackground;
 		ICQInfoItemList pastBackground;
+		ICQSearchResult shortInfo;
 		
 		KAction *actionReadAwayMessage;
 		KAction *actionRequestAuth;
@@ -136,6 +141,7 @@ class ICQContact : public OscarContact
 		void slotUpdMoreUserInfo(const int, const ICQMoreUserInfo &);
 		void slotUpdAboutUserInfo(const int, const QString &);
 		void slotUpdEmailUserInfo(const int, const ICQMailList &);
+		void slotUpdShortInfo(const int, const ICQSearchResult &);
 
 		/*
 		* Store the interest user info for this contact and see if we have

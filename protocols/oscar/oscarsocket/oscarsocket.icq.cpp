@@ -562,6 +562,40 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					emit gotICQInfoItemList(sequence, current, past);
 					break;
 				}
+				
+				case 260:
+				{
+					kdDebug(14150) << k_funcinfo << "RECV (SRV_META_SHORT_USERINFO)"
+						<< endl;
+					char *tmptxt;
+					ICQSearchResult res;
+					kdDebug(14150) << k_funcinfo << "Success byte is " << result << endl;
+					if ( result == 0x0A )
+					{
+						tmptxt = fromicqsrv.getLELNTS();
+						kdDebug(14150) << k_funcinfo << "converting nickname string" << endl;
+						res.nickName = QString::fromLocal8Bit(tmptxt);
+						delete [] tmptxt;
+		
+						tmptxt = fromicqsrv.getLELNTS();
+						kdDebug(14150) << k_funcinfo << "converting firstname string" << endl;
+						res.firstName = QString::fromLocal8Bit(tmptxt);
+						delete [] tmptxt;
+		
+						tmptxt = fromicqsrv.getLELNTS();
+						kdDebug(14150) << k_funcinfo << "converting lastname string" << endl;
+						res.lastName = QString::fromLocal8Bit(tmptxt);
+						delete [] tmptxt;
+		
+						tmptxt = fromicqsrv.getLELNTS();
+						kdDebug(14150) << k_funcinfo << "converting email string" << endl;
+						res.eMail = QString::fromLocal8Bit(tmptxt);
+						delete [] tmptxt;
+					}
+				
+					emit gotICQShortInfo(sequence, res);
+					break;
+				}
 
 				case 270:
 				{
@@ -1269,6 +1303,16 @@ WORD OscarSocket::sendReqInfo(const unsigned long uin)
 
 	Buffer req; // ! LITTLE-ENDIAN
 	req.addLEWord(0x04d0); // subtype: 1232
+	req.addLEDWord(uin);
+	WORD ret = sendCLI_TOICQSRV(0x07d0, req);
+	return ret;
+}
+
+WORD OscarSocket::sendShortInfoReq(const unsigned long uin)
+{
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_META_SHORT_USERINFO), requesting short user info" << endl;
+	Buffer req;
+	req.addLEWord(0x04ba); //subtype: 1210
 	req.addLEDWord(uin);
 	WORD ret = sendCLI_TOICQSRV(0x07d0, req);
 	return ret;

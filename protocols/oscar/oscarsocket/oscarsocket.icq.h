@@ -81,6 +81,8 @@ class ICQSearchResult
 /**
  * Classes encapsulating user data retrieved from the server
  */
+
+
 class ICQGeneralUserInfo
 {
 	public:

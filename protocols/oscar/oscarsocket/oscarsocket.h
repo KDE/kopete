@@ -208,7 +208,7 @@ const struct
 
 	{AIM_CAPS_KOPETE,
 	{0x4b, 0x6f, 0x70, 0x65, 0x74, 0x65, 0x20, 0x49,	// TODO: change with each Kopete Release!
-	 0x43, 0x51, 0x20, 0x20, 0x00, 0x07, 0x5e, 0x00}},	//  "Kopete ICQ  " + 0 + 7 + 94 + 0
+	 0x43, 0x51, 0x20, 0x20, 0x00, 0x08, 0x5A, 0x00}},	//  "Kopete ICQ  " + 0 + 8 + 90 + 0
 
 	{AIM_CAPS_LAST,
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -551,6 +551,12 @@ class OscarSocket : public OscarConnection
 		 * Use it to compare a server reply's sequence
 		 */
 		WORD sendReqInfo(const unsigned long uin);
+		
+		/**
+		 * Starts a short info request for ICQ, returns the sequence sent out with the request
+		 * Use it to compare a server reply's sequence
+		 */
+		WORD sendShortInfoReq(const unsigned long uin);
 
 		/*
 		 * sends the general info for the uin owner to icq
@@ -1000,6 +1006,7 @@ class OscarSocket : public OscarConnection
 		void gotICQEmailUserInfo(const int, const ICQMailList &);
 		void gotICQInfoItemList(const int, const ICQInfoItemList &);
 		void gotICQInfoItemList(const int, const ICQInfoItemList &, const ICQInfoItemList &);
+		void gotICQShortInfo(const int, const ICQSearchResult &);
 
 		/*
 		 * emitted after CLIENT_READY packet, the account can now

@@ -83,12 +83,18 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 	QObject::connect(
 		acc->engine(), SIGNAL(gotICQInfoItemList(const int, const ICQInfoItemList &, const ICQInfoItemList & )),
 		this, SLOT(slotUpdBackgroundUserInfo(const int, const ICQInfoItemList &, const ICQInfoItemList & ) ) );
+		
+	QObject::connect(
+		acc->engine(), SIGNAL( gotICQShortInfo(const int, const ICQSearchResult& ) ),
+		this, SLOT( slotUpdShortInfo( const int, const ICQSearchResult& ) ) );
 
+	
 	if(name == displayName && account()->isConnected())
 	{
 		kdDebug(14200) << k_funcinfo << "ICQ Contact with no nickname, grabbing userinfo" << endl;
-		requestUserInfo();
+		requestShortInfo();
 	}
+	
 
 	actionReadAwayMessage = 0L;
 }
@@ -363,6 +369,14 @@ void ICQContact::requestUserInfo()
 		account()->engine()->sendReqInfo(contactName().toULong());
 }
 
+void ICQContact::requestShortInfo()
+{
+	//kdDebug(14200) << k_funcinfo << "called" << endl;
+	userinfoReplyCount = 0;
+	userinfoRequestSequence = 
+		account()->engine()->sendShortInfoReq( contactName().toULong() );
+}
+
 void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf)
 {
 	// compare reply's sequence with the one we sent with our last request
@@ -410,6 +424,41 @@ void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf
 	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
 		emit updatedUserInfo();
 }
+
+
+//FIXME: Share the code for first and last name and email address with 
+// the above function some how
+void ICQContact::slotUpdShortInfo(const int seq, const ICQSearchResult &inf)
+{
+	// compare reply's sequence with the one we sent with our last request
+	if(seq != userinfoRequestSequence)
+		return;
+	shortInfo = inf;
+	
+	if(!shortInfo.firstName.isEmpty())
+		setProperty("firstName", shortInfo.firstName);
+	else
+		removeProperty("firstName");
+
+	if(!shortInfo.lastName.isEmpty())
+		setProperty("lastName", shortInfo.lastName);
+	else
+		removeProperty("lastName");
+
+	if(!shortInfo.eMail.isEmpty())
+		setProperty("emailAddress", shortInfo.eMail);
+	else
+		removeProperty("emailAddress");
+		
+	if ( contactName() == displayName() && !shortInfo.nickName.isEmpty() )
+	{
+		kdDebug(14200) << k_funcinfo << "setting new displayname for former UIN-only Contact" << endl;
+		setDisplayName(shortInfo.nickName);
+	}
+
+	userinfoReplyCount++;
+}
+
 
 void ICQContact::slotUpdWorkInfo(const int seq, const ICQWorkUserInfo &inf)
 {
