@@ -19,6 +19,7 @@
 #include <kextsock.h>
 
 #include <qfile.h>
+#include <qtimer.h>
 
 #include "kirctransfer.h"
 
@@ -58,16 +59,26 @@ KIRCTransfer::~KIRCTransfer()
 	}
 	// m_file is automatically closed on destroy.
 }
-/*
-KIRCTransfer::Status KIRCTransfer::status()
+
+KIRCTransfer::Status KIRCTransfer::status() const
 {
 	if(m_socket)
 	{
-		return (KIRCTransfer::Status)m_socket->socketStatus();
+//		return (KIRCTransfer::Status)m_socket->socketStatus();
+		return Connected;
 	}
-	return KExtendedSocket::error;
+	return Error_NoSocket;
 }
-*/
+
+void KIRCTransfer::slotError( int error )
+{
+	if (m_socket->socketStatus () != KExtendedSocket::connecting)
+	{
+		// Connection in progress.. This is a signal fired wrong
+		m_socket->reset();
+		deleteLater();
+	}
+}
 
 bool KIRCTransfer::initiate()
 {
@@ -125,6 +136,15 @@ bool KIRCTransfer::initiate()
 	m_socket->enableRead(true);
 	m_socket->enableWrite(true);
 
+	m_socketDataStream.setDevice(m_socket);
+
+	// I wonder if calling this is really necessary
+	// As far as I understand, buffer (socket butffer at least) should be flushed while event-looping.
+	// But I'm not really sure of this, so I force the flush.
+	QTimer *timer = new QTimer( this );
+	connect( timer, SIGNAL(timeout()), this, SLOT(flush()) );
+	timer->start( 1000, FALSE ); // flush the streams at every seconds
+
 	return true;
 }
 
@@ -158,11 +178,37 @@ void KIRCTransfer::writeLine( const QString &line )
 	switch( m_type )
 	{
 	case Chat:
+//		m_socket.flush();
 		break;
 	default:
 //		operation not permitted on this type.
 		break;
 	}
+}
+
+/*
+ * This slot ensure that all the stream are flushed.
+ * This slot is called periodically internaly.
+ */
+ void KIRCTransfer::flush()
+{
+	/*
+	 * Enure the incoming file content in case of a crash.
+	 */
+	if(m_file.isOpen() && m_file.isWritable())
+		m_file.flush();
+
+	/*
+	 * Ensure that non interactive streams outputs (i.e file transfer acknowledge by example)
+	 * are sent (Don't stay in a local buffer).
+	 */
+	if(m_socket && status() == Connected)
+		m_socket->flush();
+}
+
+void KIRCTransfer::abort(const QString &/*reason*/)
+{
+	// Should close/abort the transfert
 }
 
 void KIRCTransfer::readyReadLine()
@@ -177,16 +223,26 @@ void KIRCTransfer::readyReadLine()
 void KIRCTransfer::readyReadFileIncoming()
 {
 	m_bufferLength = m_socket->readBlock(m_buffer, sizeof(m_buffer));
-	if (m_bufferLength != -1)
+	if(m_bufferLength > 0)
 	{
-		m_fileSizeCur += m_file.writeBlock(m_buffer, m_bufferLength);
-		if(m_fileSizeCur > m_fileSizeAck)
+		int written = m_file.writeBlock(m_buffer, m_bufferLength);
+		if(m_bufferLength == written)
 		{
-			m_fileSizeAck = m_fileSizeAck;
+			m_fileSizeCur += written;
+			m_fileSizeAck = m_fileSizeCur;
 			m_socketDataStream << m_fileSizeAck;
+			emit fileSizeAcknowledge( m_fileSizeAck );
+			return;
 		}
+		else
+			// Something bad happened while writting.
+			abort(m_file.errorString());
 	}
-	emitSignals();
+
+	if(m_bufferLength == -1)
+	{
+		abort("Error while reading socket");
+	}
 }
 
 void KIRCTransfer::writeFileOutgoing()
@@ -198,10 +254,12 @@ void KIRCTransfer::writeFileOutgoing()
 //		if (m_buffer_length != -1)
 //		{
 //			Q_LONG m_socket->writeBlock(m_buffer, m_buffer_length);
+//			m_socket->flush(); // Should think on using this
+//			emit fileSizeCurrent( m_fileSizeCur );
 //		}
 //	}
 //	else if (m_file_size_ack > m_file_size)
-//		abort the client something strage happend
+//		abort( "" );
 }
 
 void KIRCTransfer::readyReadFileOutgoing()
@@ -209,7 +267,7 @@ void KIRCTransfer::readyReadFileOutgoing()
 //	if( m_socket->canread( sizeof(m_file_size_ack) ) )
 	{
 		m_socketDataStream >> m_fileSizeAck;
-		emitSignals();
+		emit fileSizeAcknowledge( m_fileSizeAck );
 	}
 }
 

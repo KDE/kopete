@@ -45,9 +45,9 @@ public:
 	};
 
 	enum Status {
-		Error_NoSocketSet	= -2,
-		Error			= -1,
-		Idle			= 0,
+		Error_NoSocket	= -2,
+		Error		= -1,
+		Idle		= 0,
 		HostLookup,
 		Connecting,
 		Connected,
@@ -98,6 +98,8 @@ public slots:
 	void setCodec( QTextCodec *codec );
 	void writeLine( const QString &msg );
 
+	void flush();
+	void abort(const QString &);
 signals:
 	void readLine( const QString &msg );
 
@@ -117,6 +119,8 @@ protected:
 	void emitSignals();
 
 protected slots:
+	void slotError(int);
+
 	void readyReadLine();
 
 	void readyReadFileIncoming();
