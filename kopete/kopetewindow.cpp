@@ -256,22 +256,18 @@ void KopeteWindow::loadOptions()
 		resize(size);
 	}
 
+	KopetePrefs *p = KopetePrefs::prefs();
 	QString tmp = config->readEntry("State", "Shown");
-	if ( tmp == "Minimized" )
+	if ( tmp == "Minimized" && p->showTray())
 	{
 		showMinimized();
 	}
-	else if ( tmp == "Hidden" )
+	else if ( tmp == "Hidden" && p->showTray())
 	{
 		hide();
 	}
-	else
-	{
-		KopetePrefs *p = KopetePrefs::prefs();
-		// with no systray-icon we force calling show()
-		if ( !p->startDocked() || !p->showTray() )
-			show();
-	}
+	else if ( !p->startDocked() || !p->showTray() )
+		show();
 
 //	toolbarAction->setChecked( !toolBar("mainToolBar")->isHidden() );
 	menubarAction->setChecked( !menuBar()->isHidden() );

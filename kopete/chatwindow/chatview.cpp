@@ -622,6 +622,7 @@ void ChatView::slotContactAdded(const KopeteContact *c, bool surpress)
 		memberContactMap.insert(c, new KopeteContactLVI( this, c, membersList ) );
 	}
 	setTabState();
+	emit updateStatusIcon( this );
 }
 
 void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &reason )
@@ -659,6 +660,7 @@ void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &
 	}
 
 	setTabState();
+	emit updateStatusIcon( this );
 }
 
 void ChatView::setCaption( const QString &text, bool modified )
