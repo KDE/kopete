@@ -23,6 +23,8 @@
 #include <qmovie.h>
 #include <qpixmap.h>
 #include <qptrlist.h>
+#include <qptrdict.h>
+#include <qstringlist.h>
 #include <qsocket.h>
 #include <qdom.h>
 #include <qmap.h>
@@ -85,6 +87,21 @@ public:
 	virtual KopeteContact *createContact(KopeteMetaContact *, const QString &);
 	void registerUser();
 
+	/*
+	 * Serialize and deserialize contact data
+	 */
+	virtual bool serialize(KopeteMetaContact *contact, QStringList &data) const;
+	virtual void deserialize(KopeteMetaContact *contact, const QStringList &data);
+
+	/*
+	 * addressBookFields() returns a list of fields we are interested in
+	 * addressBookFieldChanged() is a notification slot for changes
+	 */
+	/*
+	virtual QStringList addressBookFields() const;
+	virtual void addressBookFieldChanged(KopeteMetaContact *contact, const QString &key);
+	*/
+		
 	static const JabberProtocol *protocol();
 
 public slots:
@@ -123,6 +140,9 @@ public slots:
 
 signals:
 	void protocolUnloading();
+
+private slots:
+	void slotContactDestroyed(KopeteContact *c);
 
 private:
 	typedef QMap<QString, JabberContact*> JabberContactList;
@@ -163,6 +183,7 @@ private:
 	// this is the local contact list used to keep Jabber contacts in
 	// synch with the related meta-contacts
 	JabberContactList contactList;
+	QPtrDict<JabberContact> metaContactMap;
 };
 
 #endif

@@ -116,12 +116,13 @@ JabberProtocol::~JabberProtocol()
 	
 	for(JabberContactList::iterator it = contactList.begin(); it != contactList.end(); it++)
 	{
-		delete it.data();
+		//delete it.data();
 		it.data() = 0;
 	}
 	
 	// clear the contact list
 	contactList.clear();
+	metaContactMap.clear();
 
 }
 
@@ -420,6 +421,79 @@ QString JabberProtocol::protocolIcon() const
 
 }
 
+/*
+ * Serialize contact data
+ */
+bool JabberProtocol::serialize(KopeteMetaContact *contact, QStringList &data) const
+{
+
+	kdDebug() << "[JabberProtocol] Serializing data for metacontact " << contact->displayName() << endl;
+
+	JabberContact *c = metaContactMap.find(contact);
+	
+	if(c)
+	{
+		data << c->userID() << c->displayName() << c->group();
+		
+		return true;
+	}
+	else
+	{
+		kdDebug() << "[JabberProtocol] Contact " << contact->displayName() << " not found in the map! Can't serialize." << endl;
+		
+		return false;
+	}
+	
+}
+
+/*
+ * Deserialize contact data
+ */
+void JabberProtocol::deserialize(KopeteMetaContact *contact, const QStringList &data)
+{
+
+	kdDebug() << "[JabberProtocol] Deserializing data for metacontact " << contact->displayName() << endl;
+	
+	JabberContact *c = new JabberContact(data[0], data[1], data[2], this, contact);
+	
+	metaContactMap.insert(contact, c);
+	contactList[c->userID()] = c;
+	
+	connect(c, SIGNAL(contactDestroyed(KopeteContact *)), this, SLOT(slotContactDestroyed(KopeteContact*)));
+	
+	contact->addContact(c, c->group());
+	
+}
+
+/*
+ * Cleans up when a contact is destroyed
+ */
+void JabberProtocol::slotContactDestroyed(KopeteContact *contact)
+{
+
+	metaContactMap.remove(contact->metaContact());
+
+}
+ 
+/*
+ * Return a list of address book fields we are interested in monitoring
+ */
+/*
+QStringList JabberProtocol::addressBookFields() const
+{
+
+}
+*/
+
+/*
+ * Notification slot in case one of the monitored address book fields changed
+ */
+/*
+void JabberProtocol::addressBookFieldChanged(KopeteMetaContact *contact, const QString &key)
+{
+
+}
+*/
 
 /*
  * Create and return "add contact" wizard
@@ -800,10 +874,14 @@ void JabberProtocol::slotNewContact(JabRosterEntry *contact)
 		JabberContact *jabContact = new JabberContact(contact->jid, contact->nick, group ? group : QString(""), this, 0L);
 		contactList[contact->jid] = jabContact;
 
+		connect(jabContact, SIGNAL(contactDestroyed(KopeteContact *)), this, SLOT(slotContactDestroyed(KopeteContact *)));
+		
 		kdDebug() << "[JabberProtocol] Contact has been added to contactList[]" << endl;
 		kdDebug() << "[JabberProtocol] New Contact's userID is " << contactList[contact->jid]->userID() << endl;
 		
 		m->addContact(jabContact, group ? QStringList(group) : QStringList("Unknown"));
+		
+		metaContactMap.insert(m, jabContact);
 	}
 
 	slotContactUpdated(contact); /* More kludges! Ugh. */
@@ -812,6 +890,7 @@ void JabberProtocol::slotNewContact(JabRosterEntry *contact)
 
 /*
  * Create a new contact
+ * FIXME: old API, needs to be removed!
  */
 KopeteContact *JabberProtocol::createContact(KopeteMetaContact *parent, const QString &data)
 {
@@ -821,7 +900,10 @@ KopeteContact *JabberProtocol::createContact(KopeteMetaContact *parent, const QS
 	
 	JabberContact *contact = new JabberContact(data, "", QString(""), this, parent);
 	
+	connect(contact, SIGNAL(contactDestroyed(KopeteContact *)), this, SLOT(slotContactDestroyed(KopeteContact *)));
+	
 	contactList[data] = contact;
+	metaContactMap.insert(parent, contact);
 	
 	return contact;
 
