@@ -53,6 +53,7 @@ protected slots:
 	virtual void back();
 	virtual void next();
 	virtual void accept();
+	virtual void reject();
 
 private:
 	QMap<QListViewItem *, KPluginInfo *> m_protocolItems;

@@ -42,6 +42,7 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 {
 	//kdDebug( 14100 ) << k_funcinfo << endl;
 	m_accountPage = 0L;
+	m_proto = 0L;
 
 	m_intro =         new AddAccountWizardPage1( this );
 	m_selectService = new AddAccountWizardPage2( this );
@@ -109,8 +110,31 @@ void AddAccountWizard::accept()
 	if ( account && m_finish->mUseColor->isChecked() )
 		account->setColor( m_finish->mColorButton->color() );
 
+	if(m_proto)
+	{
+		//Make sur the protocol is correctly enabled.  This is not realy needed, but still good
+		QString protocol_name=m_proto->pluginId().remove( "Protocol" ).lower();
+		KopetePluginManager::self()->setPluginEnabled( protocol_name , true );
+	}
+
 	// FIXME: Why deleteLater()? Can't we simply set W_DestructiveClose instead? - Martijn
+	//       or KWizard::accpet? - Olivier
 	deleteLater();
+}
+
+void AddAccountWizard::reject()
+{
+	if(m_proto && KopeteAccountManager::manager()->accounts(m_proto).isEmpty())
+	{
+		//FIXME: we should use a decent way to do that
+		QString protocol_name=m_proto->pluginId().remove( "Protocol" ).lower();
+
+//		KopetePluginManager::self()->setPluginEnabled( protocol_name , false );
+		KopetePluginManager::self()->unloadPlugin( protocol_name );
+
+	}
+
+	KWizard::reject();
 }
 
 void AddAccountWizard::back()
@@ -125,6 +149,7 @@ void AddAccountWizard::back()
 		//removePage( dynamic_cast<QWidget *>( m_accountPage ) );
 		//delete m_accountPage;
 		m_accountPage = 0L;
+		m_proto = 0L;
 
 		// removePage() already goes back to previous page, no back() needed
 	}
@@ -154,8 +179,6 @@ void AddAccountWizard::next()
 		QListViewItem *lvi = m_selectService->protocolListView->selectedItem();
 		if ( lvi )
 		{
-			kdDebug( 14100 ) << k_funcinfo << "Trying to load plugin " << m_protocolItems[ lvi ]->pluginName() << " by name" << endl;
-			KopetePluginManager::self()->setPluginEnabled( m_protocolItems[ lvi ]->pluginName() );
 			m_proto = dynamic_cast<KopeteProtocol *>( KopetePluginManager::self()->loadPlugin( m_protocolItems[ lvi ]->pluginName() ) );
 			if ( m_proto )
 			{
