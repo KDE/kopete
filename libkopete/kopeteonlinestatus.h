@@ -235,6 +235,7 @@ public:
 
 private:
 	KopeteOnlineStatusPrivate *d;
+	QPixmap cacheLookup( const QString& icon ) const;
 	QPixmap renderIcon( const QString& baseicon ) const;
 };
 

@@ -22,8 +22,10 @@
 #include <qpainter.h>
 #include <qpixmap.h>
 #include <qbitmap.h>
+#include <qmap.h>
 #include "kopeteprotocol.h"
 #include <kiconloader.h>
+#include <kiconeffect.h>
 #include <kdebug.h>
 #include <klocale.h>
 
@@ -37,6 +39,7 @@ struct KopeteOnlineStatusPrivate
 	QString caption;
 	QString description;
 	unsigned refCount;
+	QMap<QString, QPixmap> iconCache;
 };
 
 KopeteOnlineStatus::KopeteOnlineStatus( OnlineStatus status, unsigned weight, KopeteProtocol *protocol,
@@ -191,32 +194,53 @@ KopeteProtocol* KopeteOnlineStatus::protocol() const
 
 QPixmap KopeteOnlineStatus::iconFor( const KopeteContact *contact ) const
 {
+ 	QString iconName;
 	if ( contact->icon().isNull() )
 	{
 		if ( d->protocol )
-			return renderIcon( d->protocol->pluginIcon() );
+			iconName = d->protocol->pluginIcon();
 		else
-			return SmallIcon( QString::fromLatin1( "unknown" ) );
+			iconName = QString::fromLatin1( "unknown" );
 	}
 	else
-		return renderIcon( contact->icon() );
+		iconName = contact->icon();
+
+	return cacheLookup( iconName );
 }
 
 QPixmap KopeteOnlineStatus::iconFor( const KopeteAccount *account ) const
 {
 	//FIXME: support KopeteAccount having knowledge of a custom icon
+	QString iconName;
 	if ( d->protocol )
-		return renderIcon( d->protocol->pluginIcon() );
+		iconName = d->protocol->pluginIcon();
 	else
-		return SmallIcon( QString::fromLatin1( "unknown" ) );
+		iconName = QString::fromLatin1( "unknown" );
+
+	return cacheLookup( iconName );
 }
 
 QPixmap KopeteOnlineStatus::protocolIcon() const
 {
+	QString iconName;
 	if ( d->protocol )
-		return renderIcon( d->protocol->pluginIcon() );
+		iconName = d->protocol->pluginIcon();
 	else
-		return SmallIcon( QString::fromLatin1( "unknown" ) );
+		iconName = QString::fromLatin1( "unknown" );
+
+	return cacheLookup( iconName );
+}
+
+QPixmap KopeteOnlineStatus::cacheLookup( const QString& icon ) const
+{
+	if ( d->iconCache.contains( icon ) )
+		return d->iconCache[ icon ];
+	else
+	{
+		QPixmap newIcon = renderIcon( icon );
+		d->iconCache.insert( icon, newIcon );
+		return newIcon;
+	}
 }
 
 QPixmap KopeteOnlineStatus::renderIcon( const QString& baseIcon ) const
@@ -259,6 +283,8 @@ QPixmap KopeteOnlineStatus::renderIcon( const QString& baseIcon ) const
 				QPixmap overlay = SmallIcon( d->overlayIcon );
 				if ( !overlay.isNull() )
 				{
+					//KIconEffect::overlay( basis, overlay );
+
 					// first combine the masks of both pixmaps
 					if ( overlay.mask() )
 					{
