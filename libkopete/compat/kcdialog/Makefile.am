@@ -10,5 +10,7 @@ libkopetecompat_kcdialog_la_SOURCES = kcmodule.cpp kcmoduleinfo.cpp kcmoduleload
                         kcmultidialog.cpp  kselectentriesdialog.cpp \
                         kplugininfo.cpp kpluginselector.cpp ktabwidget.cpp ktabbar.cpp
 
+kde_servicetypes_DATA = kplugininfo.desktop
+
 # vim: et
 

@@ -91,12 +91,18 @@ void KCMultiDialog::apply()
     QStringList updatedModules;
     for( KCModule * m = modules.first(); m; m = modules.next() )
     {
-//        kdDebug(710) << k_funcinfo << m->name() << ' ' << ( m->aboutData() ? m->aboutData()->appName() : "" ) << endl;
+        kdDebug(710) << k_funcinfo << m->name() << ' ' << ( m->aboutData() ? m->aboutData()->appName() : "" ) << endl;
         if( m->changed() )
         {
             m->save();
+            if( m->changed() )
+            {
+                kdWarning( 710 ) << "The KCModule says it is changed right "
+                    "after it saved its configuration. A call to setChanged(false) in the save() method is missing." << endl;
+                m->setChanged( false );
+            }
             QStringList * names = moduleParentComponents[ m ];
-//            kdDebug(710) << k_funcinfo << *names << " saved and added to the list" << endl;
+            kdDebug(710) << k_funcinfo << *names << " saved and added to the list" << endl;
             for( QStringList::ConstIterator it = names->begin(); it != names->end(); ++it )
                 if( updatedModules.find( *it ) == updatedModules.end() )
                     updatedModules.append( *it );
@@ -104,7 +110,7 @@ void KCMultiDialog::apply()
     }
     for( QStringList::const_iterator it = updatedModules.begin(); it != updatedModules.end(); ++it )
     {
-//        kdDebug(710) << k_funcinfo << *it << " " << ( *it ).latin1() << endl;
+        kdDebug(710) << k_funcinfo << *it << " " << ( *it ).latin1() << endl;
         emit configCommitted( ( *it ).latin1() );
     }
 }
@@ -154,19 +160,20 @@ void KCMultiDialog::addModule(const QString& path, bool withfallback)
 {
     kdDebug(710) << "KCMultiDialog::addModule " << path << endl;
 
-    if (!KService::serviceByDesktopPath(path)) {
+    KService::Ptr s = KService::serviceByDesktopPath(path);
+    if (!s) {
       kdError() << "Desktop file '" << path << "' not found!" << endl;
       return;
     }
 
-    KCModuleInfo info(path, _baseGroup);
+    KCModuleInfo info(s);
     addModule(info, withfallback);
 }
 
 void KCMultiDialog::addModule(const KCModuleInfo& moduleinfo, bool withfallback)
 {
-//    kdDebug(710) << "KCMultiDialog::addModule " << moduleinfo.moduleName() <<
-//        " for ParentComponents=" << moduleinfo.parentComponents() << endl;
+    kdDebug(710) << "KCMultiDialog::addModule " << moduleinfo.moduleName() <<
+        " for ParentComponents=" << moduleinfo.parentComponents() << endl;
 
     QHBox* page = 0;
     if (!moduleinfo.service()->noDisplay())
@@ -184,20 +191,20 @@ void KCMultiDialog::addModule(const KCModuleInfo& moduleinfo, bool withfallback)
     moduleDict.insert(page, new LoadInfo(moduleinfo, withfallback));
     if (modules.isEmpty())
     {
-//        kdDebug(710) << k_funcinfo << moduleinfo.parentComponents() << endl;
+        kdDebug(710) << k_funcinfo << moduleinfo.parentComponents() << endl;
         slotAboutToShow(page);
     }
 }
 
 void KCMultiDialog::removeModule( const KCModuleInfo& moduleinfo )
 {
-//    kdDebug( 710 ) << k_funcinfo << moduleinfo.moduleName() << endl;
+    kdDebug( 710 ) << k_funcinfo << moduleinfo.moduleName() << endl;
     QPtrDictIterator<LoadInfo> it( moduleDict );
     for( ; it.current(); ++it )
     {
         if( it.current()->info == moduleinfo )
         {
-//            kdDebug( 710 ) << "found module to remove" << endl;
+            kdDebug( 710 ) << "found module to remove" << endl;
             QWidget * page = ( QWidget* )it.currentKey();
             delete it.current();
             moduleDict.remove( page );
@@ -213,7 +220,7 @@ void KCMultiDialog::slotAboutToShow(QWidget *page)
     if (!loadInfo)
        return;
 
-//    kdDebug(710) << k_funcinfo << loadInfo->info.parentComponents() << endl;
+    kdDebug(710) << k_funcinfo << loadInfo->info.parentComponents() << endl;
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -221,7 +228,7 @@ void KCMultiDialog::slotAboutToShow(QWidget *page)
 
     KCModule *module = KCModuleLoader::loadModule(loadInfo->info, loadInfo->withfallback);
 
-//    kdDebug(710) << k_funcinfo << loadInfo->info.parentComponents() << endl;
+    kdDebug(710) << k_funcinfo << loadInfo->info.parentComponents() << endl;
 
     if (!module)
     {
@@ -231,7 +238,7 @@ void KCMultiDialog::slotAboutToShow(QWidget *page)
         return;
     }
 
-//    kdDebug(710) << k_funcinfo << "ParentComponents=" << loadInfo->info.parentComponents() << endl;
+    kdDebug(710) << k_funcinfo << "ParentComponents=" << loadInfo->info.parentComponents() << endl;
     moduleParentComponents.insert( module, new QStringList( loadInfo->info.parentComponents() ) );
     module->reparent(page,0,QPoint(0,0),true);
     connect(module, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
