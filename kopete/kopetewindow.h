@@ -25,7 +25,7 @@
 
 class QLabel;
 class QListViewItem;
-
+class KGlobalAccel;
 class KAction;
 class KActionMenu;
 class KSelectAction;
@@ -108,6 +108,7 @@ public:
 	KAction* actionDisconnect;
 
 	KActionMenu* actionAwayMenu;
+	KActionMenu* actionDockMenu;
 	KAction* actionSetAway;
 	KAction* actionSetAvailable;
 
@@ -119,6 +120,7 @@ public:
 	KToggleAction *statusbarAction;
 	KToggleAction *actionShowOffliners;
 	KAction *actionShowTransfers;
+	KGlobalAccel *globalAccel;
 
 	KopeteSystemTray *tray;
 
@@ -128,6 +130,10 @@ private:
 	void initSystray ( void );
 	void loadOptions(void);
 	void saveOptions(void);
+	int docked;
+	bool hidden;
+	int deskRight;
+	QPoint position;
 
 	/**
 	 * This is really a dictionary of StatusBarIcon objects, but
@@ -141,7 +147,7 @@ private:
 	 * This is the away message selection dialog
 	 */
 	KopeteGlobalAwayDialog *m_awayMessageDialog;
-	
+
 private slots:
 	/**
 	 * Show the prefs dialog. See also the source for a description
@@ -149,6 +155,7 @@ private slots:
 	 */
 	void slotShowPreferencesDialog();
 	void slotSaveContactList();
+	void slotConfGlobalKeys();
 };
 
 #endif

@@ -18,7 +18,7 @@
 
 #include "kopetewindow.h"
 
-#include <qapplication.h>
+#include <kapplication.h>
 #include <qlayout.h>
 
 #include <kaction.h>
@@ -34,6 +34,7 @@
 #include <kedittoolbar.h>
 #include <kmenubar.h>
 #include <kstatusbar.h>
+#include <kglobalaccel.h>
 
 #include "addcontactwizard.h"
 #include "kopete.h"
@@ -46,6 +47,7 @@
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopetetransfermanager.h"
+#include "kopeteviewmanager.h"
 #include "kopeteglobalawaydialog.h"
 #include "pluginloader.h"
 #include "preferencesdialog.h"
@@ -133,7 +135,7 @@ void KopeteWindow::initActions ( void )
 
 	actionPrefs = KStdAction::preferences(
 		this, SLOT( slotShowPreferencesDialog() ),
-		actionCollection() );
+		actionCollection(), "settings_prefs" );
 
 	actionSave = new KAction( i18n("Save &Contact List"), "filesave", KStdAccel::shortcut(KStdAccel::Save),
 							this, SLOT(slotSaveContactList()),
@@ -141,19 +143,28 @@ void KopeteWindow::initActions ( void )
 
 	KStdAction::quit(this, SLOT(slotQuit()), actionCollection());
 
-	toolbarAction = KStdAction::showToolbar(this, SLOT(showToolbar()), actionCollection());
-	menubarAction = KStdAction::showMenubar(this, SLOT(showMenubar()), actionCollection());
-	statusbarAction = KStdAction::showStatusbar(this, SLOT(showStatusbar()), actionCollection());
+	toolbarAction = KStdAction::showToolbar(this, SLOT(showToolbar()), actionCollection(), "settings_showtoolbar" );
+	menubarAction = KStdAction::showMenubar(this, SLOT(showMenubar()), actionCollection(), "settings_showmenubar" );
+	statusbarAction = KStdAction::showStatusbar(this, SLOT(showStatusbar()), actionCollection(), "settings_showstatusbar");
 
-	KStdAction::keyBindings(this, SLOT(slotConfKeys()), actionCollection());
-	KStdAction::configureToolbars(this, SLOT(slotConfToolbar()), actionCollection());
+	KStdAction::keyBindings(this, SLOT(slotConfKeys()), actionCollection(), "settings_keys");
+	new KAction(i18n("Configure &Global Shortcuts"), "configure_shortcuts", 0, this,
+			SLOT(slotConfGlobalKeys()), actionCollection(), "settings_global");
+
+	KStdAction::configureToolbars(this, SLOT(slotConfToolbar()), actionCollection(), "settings_toolbars" );
 
 	actionShowOffliners = new KToggleAction( i18n("Show Offline &Users"), "viewmag", CTRL+Key_V,
-			this, SLOT(slotToggleShowOffliners()), actionCollection(), "options_show_offliners" );
+			this, SLOT(slotToggleShowOffliners()), actionCollection(), "settings_show_offliners" );
 
 	// sync actions, config and prefs-dialog
 	connect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
 	slotConfigChanged();
+
+	globalAccel = new KGlobalAccel( this );
+	globalAccel->insert( QString::fromLatin1("Read Message"), i18n("Read Message"), i18n("Read the next pending message"),
+		CTRL+SHIFT+Key_I, KKey::QtWIN+CTRL+Key_I, KopeteViewManager::viewManager(), SLOT(nextEvent()) );
+	globalAccel->readSettings();
+        globalAccel->updateConnections();
 
 	createGUI ( "kopeteui.rc" );
 }
@@ -249,6 +260,7 @@ void KopeteWindow::saveOptions(void)
 
 	saveMainWindowSettings( config, "General Options" );
 
+	globalAccel->writeSettings();
 	config->setGroup("General Options");
 	config->writeEntry("Position", pos());
 	config->writeEntry("Geometry", size());
@@ -319,6 +331,10 @@ void KopeteWindow::slotConfKeys()
 	KKeyDialog::configureKeys(actionCollection(), xmlFile(), true, this);
 }
 
+void KopeteWindow::slotConfGlobalKeys()
+{
+	KKeyDialog::configureKeys( globalAccel );
+}
 
 void KopeteWindow::slotConfToolbar()
 {
