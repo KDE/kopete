@@ -21,6 +21,9 @@
 #include <qdatastream.h>
 #include <qregexp.h>
 #include <qcstring.h>
+#ifdef NEED_TYPES_H
+#include <sys/types.h>
+#endif
 #include <inttypes.h>
 #ifndef __FreeBSD__
 #  include <netinet/in.h>
