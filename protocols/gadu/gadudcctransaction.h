@@ -63,7 +63,7 @@ private:
 	void enableNotifiers( int );
 	void disableNotifiers();
 	void checkDescriptor();
-	void closeDCC();;
+	void closeDCC();
 	void destroyNotifiers();
 	void createNotifiers( bool );
 	void askIncommingTransfer();
