@@ -232,7 +232,7 @@ GaduProtocol::addContact( const QString& uin, const QString& nick,
             //TODO: make this better
             m = new KopeteMetaContact();
             if ( !group.isEmpty() )
-                m->addToGroup( group );
+                m->moveToGroup( QString::null, group );
             KopeteContactList::contactList()->addMetaContact(m);
         }
     } else
@@ -295,7 +295,7 @@ GaduProtocol::slotLogin()
         return;
     }
     if ( !session_->isConnected() ) {
-        session_->login( userUin_, password_ );
+        session_->login( userUin_, password_, GG_STATUS_AVAIL );
     } else {
         session_->changeStatus( GG_STATUS_AVAIL );
         status_ = GG_STATUS_AVAIL;
@@ -478,7 +478,7 @@ GaduProtocol::connectionSucceed( struct gg_event* /*e*/ )
 {
     kdDebug()<<"#### Gadu-Gadu connected!"<<endl;
     //FIXME: remember last state and set it appropriately
-    changeStatus( GG_STATUS_INVISIBLE );
+    //changeStatus( GG_STATUS_INVISIBLE );
     UserlistGetCommand *cmd = new UserlistGetCommand( this );
     cmd->setInfo( userUin_, password_ );
     connect( cmd, SIGNAL(done(const QStringList&)),

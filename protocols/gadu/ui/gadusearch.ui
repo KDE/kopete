@@ -1,19 +1,19 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
-<class>MyDialog</class>
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<class>GaduSearchPage0</class>
 <widget class="QDialog">
     <property name="name">
-        <cstring>MyDialog</cstring>
+        <cstring>GaduSearchPage0</cstring>
     </property>
     <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>381</width>
-            <height>280</height>
+            <width>546</width>
+            <height>154</height>
         </rect>
     </property>
     <property name="caption">
-        <string>MyDialog</string>
+        <string>Search</string>
     </property>
     <property name="sizeGripEnabled">
         <bool>true</bool>
@@ -28,120 +28,99 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <spacer row="4" column="0">
+        <widget class="KLineEdit" row="3" column="1">
             <property name="name">
-                <cstring>Horizontal Spacing2</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-        </spacer>
-        <widget class="QPushButton" row="4" column="1">
-            <property name="name">
-                <cstring>buttonOk</cstring>
-            </property>
-            <property name="text">
-                <string>Register</string>
-            </property>
-            <property name="accel">
-                <number>0</number>
-            </property>
-            <property name="autoDefault">
-                <bool>true</bool>
-            </property>
-            <property name="default">
-                <bool>true</bool>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="4" column="2">
-            <property name="name">
-                <cstring>buttonCancel</cstring>
-            </property>
-            <property name="text">
-                <string>Cancel</string>
-            </property>
-            <property name="accel">
-                <number>0</number>
-            </property>
-            <property name="autoDefault">
-                <bool>true</bool>
+                <cstring>KLineEdit1_3_2</cstring>
             </property>
         </widget>
         <widget class="QLabel" row="1" column="0">
             <property name="name">
-                <cstring>TextLabel1</cstring>
+                <cstring>TextLabel2_2</cstring>
             </property>
             <property name="text">
-                <string>Your Email Address</string>
+                <string>First Name</string>
             </property>
         </widget>
         <widget class="QLabel" row="2" column="0">
             <property name="name">
-                <cstring>TextLabel2</cstring>
+                <cstring>TextLabel2_3</cstring>
             </property>
             <property name="text">
-                <string>Password</string>
+                <string>Last Name</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>textLabel2</cstring>
+            </property>
+            <property name="text">
+                <string>Nickname</string>
             </property>
         </widget>
         <widget class="QLabel" row="3" column="0">
             <property name="name">
-                <cstring>TextLabel3</cstring>
+                <cstring>TextLabel2_3_2</cstring>
             </property>
             <property name="text">
-                <string>Confirm Password</string>
+                <string>City</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="3" column="1" rowspan="1" colspan="2">
+        <widget class="KLineEdit" row="2" column="1">
             <property name="name">
-                <cstring>LineEdit2_2</cstring>
-            </property>
-            <property name="echoMode">
-                <enum>Password</enum>
+                <cstring>KLineEdit1_3</cstring>
             </property>
         </widget>
-        <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="2">
+        <widget class="KLineEdit" row="1" column="1">
             <property name="name">
-                <cstring>LineEdit2</cstring>
-            </property>
-            <property name="echoMode">
-                <enum>Password</enum>
+                <cstring>KLineEdit1_2</cstring>
             </property>
         </widget>
-        <widget class="QLineEdit" row="1" column="1" rowspan="1" colspan="2">
+        <widget class="QButtonGroup" row="0" column="2" rowspan="3" colspan="1">
             <property name="name">
-                <cstring>LineEdit1</cstring>
+                <cstring>ButtonGroup1</cstring>
             </property>
+            <property name="title">
+                <string>Gender</string>
+            </property>
+            <widget class="QRadioButton">
+                <property name="name">
+                    <cstring>RadioButton2</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>20</y>
+                        <width>121</width>
+                        <height>31</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Male</string>
+                </property>
+            </widget>
+            <widget class="QRadioButton">
+                <property name="name">
+                    <cstring>RadioButton2_2</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>50</y>
+                        <width>121</width>
+                        <height>31</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Female</string>
+                </property>
+            </widget>
         </widget>
-        <widget class="QLabel" row="0" column="0" rowspan="1" colspan="3">
+        <widget class="KLineEdit" row="0" column="1">
             <property name="name">
-                <cstring>TextLabel4</cstring>
-            </property>
-            <property name="text">
-                <string>&lt;B&gt;Registration:&lt;/B&gt;
-Enter here your current email address and the password which you will use to log on to the Gadu-Gadu server.</string>
-            </property>
-            <property name="textFormat">
-                <enum>RichText</enum>
+                <cstring>KLineEdit1</cstring>
             </property>
         </widget>
     </grid>
 </widget>
-<connections>
-    <connection>
-        <sender>buttonOk</sender>
-        <signal>clicked()</signal>
-        <receiver>MyDialog</receiver>
-        <slot>accept()</slot>
-    </connection>
-    <connection>
-        <sender>buttonCancel</sender>
-        <signal>clicked()</signal>
-        <receiver>MyDialog</receiver>
-        <slot>reject()</slot>
-    </connection>
-</connections>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
