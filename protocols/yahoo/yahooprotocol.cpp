@@ -37,8 +37,6 @@
 #include "yahoostatus.h"
 #include "yahooprotocol.h"
 #include "yahoocontact.h"
-#include "yahooimmessagemanager.h"
-#include "yahooconferencemessagemanager.h"
 
 /* Kopete Includes */
 #include "kopetecontact.h"
@@ -107,26 +105,6 @@ YahooProtocol* YahooProtocol::s_protocolStatic_ = 0L;
 YahooSession *YahooProtocol::yahooSession()
 {
 	return m_session ? m_session : 0L;
-}
-
-YahooImMessageManager* YahooProtocol::chatMsgManager( const QString &who )
-{
-	if ( m_chatMap[who] )
-	{
-		return m_chatMap[who];
-	}
-	else
-	{
-		YahooImMessageManager *newMM;
-		
-		KopeteContactPtrList contacts;
-		contacts.append(contact(who));
-		
-		newMM = new YahooImMessageManager(yahooSession(),myself(), contacts);
-
-		m_chatMap[who] = newMM;
-		return newMM;
-	}
 }
 
 /***************************************************************************
@@ -433,7 +411,7 @@ void YahooProtocol::slotGotIm( const QString &who, const QString &msg, long tm, 
 		addContact( who, who, 0L, QString::null, true );
 	}
 	
-	KopeteMessageManager *mm = chatMsgManager(who);
+	KopeteMessageManager *mm = contact(who)->manager();
 
 	// Tell the message manager that the buddy is done typing
 	mm->receivedTypingMsg(contact(who), false);

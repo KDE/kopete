@@ -16,12 +16,12 @@
     *                                                                       *
     *************************************************************************
 */
+#include "kopetemessagemanagerfactory.h"
 
 // Local Includes
 #include "yahoodebug.h"
 #include "yahoostatus.h"
 #include "yahoocontact.h"
-#include "yahooimmessagemanager.h"
 
 // QT Includes
 #include <qstring.h>
@@ -37,7 +37,7 @@ YahooContact::YahooContact(QString userId, QString fullName,
 	kdDebug(14180) << "YahooContact::YahooContact("<< userId << ", " << fullName << ")" << endl;
 
 	m_fullName = fullName;
-
+	m_manager = 0L;
 	m_status.setStatus(YahooStatus::Offline);
 
 	// Update ContactList
@@ -119,7 +119,41 @@ QString YahooContact::identityId() const
 
 KopeteMessageManager *YahooContact::manager( bool )
 {
-	return static_cast<KopeteMessageManager*>( static_cast<YahooProtocol*>( protocol() )->chatMsgManager( contactId() ) );
+	if( !m_manager )
+	{
+		KopeteContactPtrList m_them;
+		m_them.append( this );
+		m_manager = KopeteMessageManagerFactory::factory()->create(protocol()->myself(), m_them, protocol() );
+		connect( m_manager, SIGNAL( destroyed() ), this, SLOT( slotMessageManagerDestroyed() ) );
+		connect( m_manager, SIGNAL( messageSent(KopeteMessage &, KopeteMessageManager *) ), this, SLOT( slotSendMessage(KopeteMessage &, KopeteMessageManager * ) ) );
+	}
+
+	return m_manager;
+}
+
+void YahooContact::slotSendMessage(KopeteMessage &message, KopeteMessageManager * )
+{
+	KopeteContactPtrList m_them = manager()->members();
+	KopeteContact *target = m_them.first();
+	YahooProtocol *p = static_cast<YahooProtocol*>( protocol() );
+	p->yahooSession()->sendIm( p->myself()->identityId(), target->identityId(), message.escapedBody() );
+
+	// append message to window
+	manager()->appendMessage(message);
+	manager()->messageSucceeded();
+}
+
+void YahooContact::slotTyping(bool isTyping_ )
+{
+	KopeteContactPtrList m_them = manager()->members();
+	KopeteContact *target = m_them.first();
+	YahooProtocol *p = static_cast<YahooProtocol*>( protocol() );
+	p->yahooSession()->sendTyping( p->myself()->identityId(), target->identityId(), isTyping_ );
+}
+
+void YahooContact::slotMessageManagerDestroyed()
+{
+	m_manager = 0L;
 }
 
 /*

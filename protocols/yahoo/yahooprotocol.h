@@ -41,9 +41,6 @@ class KAction;
 class KopeteMetaContact;
 class KopeteMessage;
 
-class YahooImMessageManager;
-class YahooConferenceMessageManager;
-
 // Yahoo Protocol
 class YahooProtocol : public KopeteProtocol
 {
@@ -68,8 +65,7 @@ public:
 	YahooContact *contact( const QString &id );
 	YahooSession *yahooSession();
 	virtual const QString protocolIcon();
-	YahooImMessageManager* chatMsgManager( const QString &);
-	
+
 public slots:
 	void connect();			// Connect to server
 	void disconnect();		// Disconnect from server
@@ -118,9 +114,6 @@ protected slots:
 	void slotConnected();
 
 private:
-	YahooConferenceMessageManager* conferenceMsgManager( const QString &);
-
-
 	QMap <QString, YahooContact *> m_contactsMap;
 
 	int m_sessionId;	
@@ -131,10 +124,7 @@ private:
 	YahooPreferences *m_prefs;		// Preferences Object
 	YahooSession *m_session;			// Connection Object
 	YahooContact *m_myself;
-	
-	QMap< QString, YahooImMessageManager *> m_chatMap;
-	QMap< QString, YahooConferenceMessageManager *> m_conferenceMap;
-	
+
 	void initActions();	// Load Status Actions
 
 	KActionMenu *actionStatusMenu; // Statusbar Popup

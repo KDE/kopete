@@ -32,6 +32,7 @@
 /* KDE Includes */
 
 class YahooProtocol;
+class KopeteMessageManager;
 
 class YahooContact : public KopeteContact
 {
@@ -58,9 +59,15 @@ public slots:
 	virtual void slotUserInfo();
 	virtual void slotSendFile();
 
+private slots:
+	void slotMessageManagerDestroyed();
+	void slotSendMessage(KopeteMessage&, KopeteMessageManager* );
+	void slotTyping(bool);
+
 private:
 	QString m_fullName;
 	YahooStatus m_status;
+	KopeteMessageManager *m_manager;
 };
 
 #endif
