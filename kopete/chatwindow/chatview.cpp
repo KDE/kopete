@@ -373,7 +373,7 @@ void ChatView::setTabState( KopeteTabState newState = Undefined )
 			m_tabState = newState;
 
 		if( newState!= Typing )
-			setStatus ( i18n( "%1 person in the chat" ).arg( memberContactMap.count()  ) );
+			setStatus ( i18n( "%1 people in the chat" ).arg( memberContactMap.count()  ) );
 
 	}
 }
