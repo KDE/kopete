@@ -17,6 +17,9 @@
     *                                                                       *
     *************************************************************************
 */
+#include <qregexp.h>
+#include <qstringlist.h>
+
 #include <kgenericfactory.h>
 #include <kdebug.h>
 
@@ -93,6 +96,7 @@ KopeteContact *GroupWiseProtocol::deserializeContact(
 		return 0;
 	}
 
+	// FIXME: creating a contact with a userId here
 	return new GroupWiseContact(account, contactId, metaContact, objectId, parentId, sequence );
 }
 
@@ -247,4 +251,23 @@ QString GroupWiseProtocol::rtfizeText( const QString & plain )
 	return rtfTemplate.arg( outputText );
 }
 
+QString GroupWiseProtocol::dnToDotted( const QString & dn )
+{
+	QRegExp rx("[a-zA-Z]*=(.*)$", false );
+	if( !dn.find( '=' ) ) // if it's not a DN, return it unprocessed
+		return dn;
+
+	// split the dn into elements
+	QStringList elements = QStringList::split( ',', dn );
+	// remove the key, keep the value
+	for ( QStringList::Iterator it = elements.begin(); it != elements.end(); ++it )
+	{
+		if ( rx.search( *it ) != -1 )
+			*it = rx.cap( 1 );
+	}
+	QString dotted = elements.join( "." );
+	// reassemble as dotted
+
+	return dotted;
+}
 #include "gwprotocol.moc"

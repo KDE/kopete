@@ -159,6 +159,20 @@ GroupWiseMessageManager * GroupWiseAccount::messageManager( const KopeteContact*
 	return mgr;
 }
 
+GroupWiseContact * GroupWiseAccount::contactForDN( const QString & dn )
+{
+	QDictIterator<KopeteContact> it( contacts() );
+	// check if we have a DN for them
+	for( ; it.current(); ++it )
+	{
+		GroupWiseContact * candidate = static_cast<GroupWiseContact*>( it.current() );
+		if ( candidate->dn() == dn )
+			return candidate;
+	}
+	// we might have just added the contact with a user ID, try the first section of the dotted dn
+	return static_cast< GroupWiseContact * >( contacts()[ protocol()->dnToDotted( dn ).section( '.', 0, 0 ) ] );
+}
+
 void GroupWiseAccount::setAway( bool away, const QString & reason )
 {
 	if ( away )
@@ -336,7 +350,7 @@ void GroupWiseAccount::sendInvitation( const QString & guid, const GroupWiseCont
 	msg.guid = guid;
 	msg.message = "Default invitation message";
 	msg.rtfMessage = protocol()->rtfizeText( msg.message );
-	m_client->sendInvitation( guid, contact->contactId(), msg );
+	m_client->sendInvitation( guid, contact->dn(), msg );
 }
 
 void GroupWiseAccount::slotGoOnline()
@@ -480,7 +494,7 @@ void GroupWiseAccount::slotTLSReady( int secLayerCode )
 void GroupWiseAccount::receiveMessage( const ConferenceEvent & event )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " got a message in conference: " << event.guid << ",  from: " << event.user << ", message is: " << event.message << endl;
-	GroupWiseContact * contactFrom = static_cast<GroupWiseContact *>( contacts()[ event.user ] );
+	GroupWiseContact * contactFrom = contactForDN( event.user );
 	Q_ASSERT( contactFrom );
 	contactFrom->handleIncomingMessage( event, false );
 }
@@ -488,7 +502,7 @@ void GroupWiseAccount::receiveMessage( const ConferenceEvent & event )
 void GroupWiseAccount::receiveAutoReply( const ConferenceEvent & event )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " got an auto reply in conference: " << event.guid << ",  from: " << event.user << ", message is: " << event.message << endl;
-	GroupWiseContact * contactFrom = static_cast<GroupWiseContact *>( contacts()[ event.user ] );
+	GroupWiseContact * contactFrom = contactForDN( event.user );
 	Q_ASSERT( contactFrom );
 	contactFrom->handleIncomingMessage( event, true );
 }
@@ -549,9 +563,9 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 			<< ", parentId: " << contact.parentId 
 			<< ", dn: " << contact.dn 
 			<< ", displayName: " << contact.displayName << endl;
-			
-	// HACK: lowercased DN
-	GroupWiseContact * c = static_cast<GroupWiseContact *>( contacts()[ contact.dn.lower() ] );
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "\n dotted notation is '" << protocol()->dnToDotted( contact.dn ) << "'\n" <<endl;
+	
+	GroupWiseContact * c = contactForDN( contact.dn );
 	if ( c )
 	{
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - found contact in list, checking to see it's in this group " << endl;
@@ -575,7 +589,7 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 		KopeteMetaContact *metaContact = new KopeteMetaContact();
 		metaContact->setDisplayName( contact.displayName );
 		// HACK: lowercased DN
-		c = new GroupWiseContact( this, contact.dn.lower(), metaContact, contact.id, contact.parentId, contact.sequence );
+		c = new GroupWiseContact( this, contact.dn, metaContact, contact.id, contact.parentId, contact.sequence );
 		c->setProperty( Kopete::Global::Properties::self()->nickName(), contact.displayName );
 		KopeteGroupList groupList = KopeteContactList::contactList()->groups();
 		for ( KopeteGroup *grp = groupList.first(); grp; grp = groupList.next() )
@@ -642,7 +656,8 @@ void GroupWiseAccount::receiveContactUserDetails( const ContactDetails & details
 	if ( !details.dn.isNull() )
 	{
 		// are the details for someone in our contact list?
-		GroupWiseContact * detailsOwner = static_cast<GroupWiseContact *>( contacts()[ details.dn ] );
+		GroupWiseContact * detailsOwner = contactForDN( details.dn );
+
 		if( detailsOwner )
 		{
 			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - updating details for " << details.dn << endl;
@@ -685,7 +700,7 @@ void GroupWiseAccount::receiveTemporaryContact( const ContactDetails & details )
 void GroupWiseAccount::receiveStatus( const QString & contactId, Q_UINT16 status, const QString &awayMessage )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "got status for: " << contactId << ", status: " << status << ", away message: " << awayMessage << endl;
-	GroupWiseContact * c = static_cast<GroupWiseContact *>( contacts()[ contactId ] );
+	GroupWiseContact * c = contactForDN( contactId );
 	if ( c )
 	{
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - their KOS is: " << protocol()->gwStatusToKOS( status ).description() << endl;
@@ -718,7 +733,7 @@ void GroupWiseAccount::sendMessage( const QString &guid, const KopeteMessage & m
 	QStringList addresseeDNs;
 	KopeteContactPtrList addressees = message.to();
 	for ( KopeteContact * contact = addressees.first(); contact; contact = addressees.next() )
-		addresseeDNs.append( contact->contactId() );
+		addresseeDNs.append( static_cast< GroupWiseContact* >( contact )->dn() );
 	// send the message 
 	m_client->sendMessage( addresseeDNs, outMsg );
 }
@@ -780,6 +795,19 @@ bool GroupWiseAccount::addContactToMetaContact( const QString& contactId, const 
 void GroupWiseAccount::receiveContactCreated()
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+ 	CreateContactTask * cct = ( CreateContactTask * )sender();
+ 	if ( cct->success() )
+	{
+		client()->requestDetails( QStringList( cct->dn() ) );
+		client()->requestStatus( cct->dn() );
+	}
+	else
+	{
+		// delete the contact created optimistically the supplied userid;
+		KopeteContact * c = contacts()[ cct->userId() ];
+		if ( c )
+			delete c;
+	}
 }
 
 void GroupWiseAccount::slotConnectedElsewhere()
@@ -805,7 +833,7 @@ void GroupWiseAccount::receiveConferenceJoin( const QString & guid, const QStrin
 	// find each contact and add them to the GWMM, and tell them they are in the conference
 	for ( QValueList<QString>::ConstIterator it = participants.begin(); it != participants.end(); ++it )
 	{
-		GroupWiseContact * c = static_cast<GroupWiseContact *>( contacts()[ *it ] );
+		GroupWiseContact * c = contactForDN( *it );
 		if ( c )
 		{
 			mgr->addContact( c, true );
@@ -823,7 +851,7 @@ void GroupWiseAccount::receiveConferenceJoinNotify( const ConferenceEvent & even
 	GroupWiseMessageManager * mgr = m_managers[ event.guid ];
 	if ( mgr )
 	{
-		GroupWiseContact * c = static_cast<GroupWiseContact *>( contacts()[ event.user ] );
+		GroupWiseContact * c = contactForDN( event.user );
 		if ( c )
 		{
 			mgr->addContact( c );
@@ -842,7 +870,7 @@ void GroupWiseAccount::receiveConferenceLeft( const ConferenceEvent & event )
 	GroupWiseMessageManager * mgr = m_managers[ event.guid ];
 	if ( mgr )
 	{
-		GroupWiseContact * c = static_cast<GroupWiseContact *>( contacts()[ event.user ] );
+		GroupWiseContact * c = contactForDN( event.user );
 		if ( c )
 		{
 			mgr->removeContact( c );
@@ -862,7 +890,7 @@ void GroupWiseAccount::receiveInviteDeclined( const ConferenceEvent & event )
 	GroupWiseMessageManager * mgr = m_managers[ event.guid ];
 	if ( mgr )
 	{
-		GroupWiseContact * c = static_cast< GroupWiseContact *>( contacts()[ event.user ] );
+		GroupWiseContact * c = contactForDN( event.user );
 		if ( c )
 		{
 			QString from = c->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
@@ -881,7 +909,7 @@ void GroupWiseAccount::receiveInviteNotify( const ConferenceEvent & event )
 	GroupWiseMessageManager * mgr = m_managers[ event.guid ];
 	if ( mgr )
 	{
-		GroupWiseContact * c = static_cast< GroupWiseContact *>( contacts()[ event.user ] );
+		GroupWiseContact * c = contactForDN( event.user );
 		if ( c )
 		{
 			QString from = c->property( Kopete::Global::Properties::self()->nickName() ).value().toString();

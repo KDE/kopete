@@ -70,6 +70,12 @@ public:
 	 */
 	QString rtfizeText( const QString & plain );
 	/**
+	 * Convert full DNs to dotted-untyped format
+	 * Assumes the DN is normalised - comma separated, no spaces between elements
+	 * eg cn=wstephenson,o=suse becomes wstephenson.suse
+	 */
+	static QString dnToDotted( const QString & dn );
+	/**
 	 * Online statuses used for contacts' presence
 	 */
 	const KopeteOnlineStatus groupwiseUnknown;

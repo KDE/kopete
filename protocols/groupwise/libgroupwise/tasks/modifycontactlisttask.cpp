@@ -80,6 +80,9 @@ void ModifyContactListTask::processContactChange( Field::MultiField * container 
 	contact.sequence = current->value().toInt();
 	current = fl.findSingleField( NM_A_SZ_DISPLAY_NAME );
 	contact.displayName = current->value().toString();
+	current = fl.findSingleField( NM_A_SZ_DN );
+	contact.dn = current->value().toString();
+	
 	if ( container->method() == NMFIELD_METHOD_ADD )
 		emit gotContactAdded( contact );
 	else if ( container->method() == NMFIELD_METHOD_DELETE )

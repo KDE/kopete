@@ -134,7 +134,7 @@ void GroupWiseMessageManager::createConference()
 		KopeteContactPtrList chatMembers = members();
 		for ( KopeteContact * contact = chatMembers.first(); contact; contact = chatMembers.next() )
 		{
-			invitees.append( contact->contactId() );
+			invitees.append( static_cast< GroupWiseContact * >( contact )->dn() );
 		}
 		// this is where we will set the GUID and send any pending messages
 		connect( account(), SIGNAL( conferenceCreated( const int, const QString & ) ), SLOT( receiveGuid( const int, const QString & ) ) );

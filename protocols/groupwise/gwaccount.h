@@ -103,6 +103,11 @@ public:
 	 */
 	GroupWiseMessageManager * messageManager( const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const QString & guid );
 	/**
+	 * Look up a contact given a DN
+	 * Returns 0 if none found
+	 */
+	GroupWiseContact * contactForDN( const QString & dn );
+	/**
 	 * Create a conference (start a chat) on the server
 	 */
 	void createConference( const int clientId, const QStringList& invitees );

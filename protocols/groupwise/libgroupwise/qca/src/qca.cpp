@@ -691,6 +691,7 @@ public:
 Cert::Cert()
 {
 	d = new Private;
+	// crash because this is returning 0
 	d->c = (QCA_CertContext *)getContext(CAP_X509);
 }
 
@@ -703,7 +704,10 @@ Cert::Cert(const Cert &from)
 Cert & Cert::operator=(const Cert &from)
 {
 	delete d->c;
-	d->c = from.d->c->clone();
+	if ( from.d->c )
+		d->c = from.d->c->clone();
+	else 
+		d->c = 0;
 	return *this;
 }
 
@@ -832,6 +836,7 @@ public:
 		to_net.resize(0);
 		host = "";
 		hostMismatch = false;
+		// this causes the crash, because the Cert ctor is setting a null context
 		cert = Cert();
 		bytesEncoded = 0;
 		tryMore = false;

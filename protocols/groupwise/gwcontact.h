@@ -60,7 +60,7 @@ public:
 	/** 
 	 * Constructor
 	 * @param account The GroupWiseAccount this belongs to.
-	 * @param uniqueName The unique identifier for this contact, in GroupWise terms, the DN.
+	 * @param uniqueName The userId for this contact.  May be a DN, in which case it will be converted to dotted format for the contactId and stored.
 	 * @param parent The KopeteMetaContact this contact is part of.
 	 * @param objectId The contact's numeric object ID.
 	 * @param parentId The ID of this contact's parent (folder).
@@ -82,6 +82,11 @@ public:
 	 */
 	GroupWiseProtocol * protocol();
 
+	/**
+	 * Get the contact's DN (used for communications with the server, not the contactId )
+	 */
+	QString dn() const;
+	
 	/**
 	 * Update the contact's status and metadata from the supplied fields
 	 */
@@ -188,7 +193,7 @@ protected:
 	int m_objectId;
 	int m_parentId;
 	int m_sequence;
-	
+	QString m_dn;
 	KAction* m_actionPrefs;
 	KAction *m_actionBlock;
 	// all the message managers that this contact is currently chatting via

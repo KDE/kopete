@@ -146,6 +146,10 @@ void CreateContactTask::slotContactAdded( const ContactItem & addedContact )
 		{
 			qDebug( "CreateContactTask::slotContactAdded() - Contact Instance %s was created on the server, with objectId %i in folder %i",
 					addedContact.displayName.ascii(), addedContact.id, addedContact.parentId );
+			
+			if ( m_dn.isEmpty() )
+				m_dn = addedContact.dn;
+				
 			m_folders.remove( current );
 			break;
 		}

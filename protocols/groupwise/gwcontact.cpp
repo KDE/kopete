@@ -46,10 +46,12 @@ using namespace GroupWise;
 GroupWiseContact::GroupWiseContact( KopeteAccount* account, const QString &dn, 
 			KopeteMetaContact *parent, 
 			const int objectId, const int parentId, const int sequence )
-: KopeteContact( account, dn, parent ), m_objectId( objectId ), m_parentId( parentId ),
+: KopeteContact( account, GroupWiseProtocol::dnToDotted( dn ), parent ), m_objectId( objectId ), m_parentId( parentId ),
   m_sequence( sequence ), m_actionBlock( 0 )
 {
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " dn: " << dn << endl;
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " id supplied: " << dn << endl;
+	if ( dn.find( '=' ) )
+		m_dn = dn;
 	setOnlineStatus( ( parent && parent->isTemporary() ) ? protocol()->groupwiseUnknown : protocol()->groupwiseOffline );
 }
 
@@ -62,11 +64,18 @@ GroupWiseContact::~GroupWiseContact()
 		account()->client()->userDetailsManager()->removeContact( contactId() );
 }
 
+QString GroupWiseContact::dn() const
+{
+	return m_dn;
+}
+
 void GroupWiseContact::updateDetails( const ContactDetails & details )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	if ( !details.cn.isNull() )
 		setProperty( protocol()->propCN, details.cn );
+	if ( !details.dn.isNull() )
+		m_dn = details.dn;
 	if ( !details.givenName.isNull() )
 		setProperty( protocol()->propGivenName, details.givenName );
 	if ( !details.surname.isNull() )
@@ -237,13 +246,6 @@ QMap< QString, QString > GroupWiseContact::serverProperties()
 void GroupWiseContact::sendMessage( KopeteMessage &message )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	// convert to the what the server wants
-	// For this 'protocol', there's nothing to do
-	// send it
-/*	static_cast<GroupWiseAccount *>( account() )->server()->sendMessage(
-			message.to().first()->contactId(),
-			message.plainBody() );*/
-	// give it back to the manager to display
 	manager()->appendMessage( message );
 	// tell the manager it was sent successfully
 	manager()->messageSucceeded();
