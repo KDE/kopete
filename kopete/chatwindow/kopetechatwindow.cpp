@@ -453,6 +453,9 @@ void KopeteChatWindow::initActions(void)
 		this, SLOT( slotViewMembersRight() ), coll, "options_membersright" );
 	toggleMembers = new KToggleAction( i18n( "Show" ), QString::null, 0,
 		this, SLOT( slotToggleViewMembers() ), coll, "options_togglemembers" );
+#if KDE_IS_VERSION(3,2,90)
+	toggleMembers->setCheckedState(i18n("Hide"));
+#endif
 	//toggleMembers->setChecked( true );
 
 	actionSmileyMenu = new KopeteEmoticonAction( coll, "format_smiley" );
@@ -474,7 +477,7 @@ void KopeteChatWindow::initActions(void)
 KStdAction::keyBindings( this, SLOT( slotConfKeys() ), coll );
 	#endif
 
-	
+
 	KStdAction::configureToolbars(this, SLOT(slotConfToolbar()), coll);
 	KopeteStdAction::preferences( coll );
 

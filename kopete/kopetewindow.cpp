@@ -187,6 +187,11 @@ void KopeteWindow::initActions()
 	actionShowEmptyGroups = new KToggleAction( i18n( "Show Empty &Groups" ), "folder_green", CTRL + Key_G,
 			this, SLOT( slotToggleShowEmptyGroups() ), actionCollection(), "settings_show_empty_groups" );
 
+# if KDE_IS_VERSION(3,2,90)
+	actionShowOffliners->setCheckedState(i18n("Hide Offline &Users"));
+	actionShowEmptyGroups->setCheckedState(i18n("Hide Empty &Groups"));
+#endif
+
 	// sync actions, config and prefs-dialog
 	connect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
 	slotConfigChanged();

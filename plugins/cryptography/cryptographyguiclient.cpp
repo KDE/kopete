@@ -38,17 +38,17 @@ CryptographyGUIClient::CryptographyGUIClient(KopeteMessageManager *parent )
 
 	QPtrList<KopeteContact> mb=parent->members();
 	m_first=mb.first()->metaContact();
-	
+
 	if(!m_first)
 	{
 		deleteLater(); //we refuse to build this client, it is based on wrong parametters
 		return;
 	}
-	
+
 	setInstance( KGenericFactory<CryptographyPlugin>::instance() );
 
 
-	m_action=new KToggleAction( i18n("Encrypt messages" ), QString::fromLatin1( "encrypted" ), 0, this, SLOT(slotToggled()), actionCollection() , "cryptographyToggle" );
+	m_action=new KToggleAction( i18n("Encrypt Messages" ), QString::fromLatin1( "encrypted" ), 0, this, SLOT(slotToggled()), actionCollection() , "cryptographyToggle" );
 	m_action->setChecked( m_first->pluginData( CryptographyPlugin::plugin() , "encrypt_messages") != QString::fromLatin1("off") ) ;
 
 	setXMLFile("cryptographychatui.rc");
