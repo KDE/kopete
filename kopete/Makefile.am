@@ -1,4 +1,4 @@
-INCLUDES = -I$(top_srcdir)/kopete/libkopete \
+AM_CPPFLAGS = -I$(top_srcdir)/kopete/libkopete \
 	-I$(top_srcdir)/kopete/libkopete/ui \
 	-I$(srcdir)/conf \
 	-I$(srcdir)/addcontactwizard \

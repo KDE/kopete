@@ -1,7 +1,7 @@
 noinst_LTLIBRARIES = libkirc.la
 libkirc_la_SOURCES = kirc.cpp dcchandler.cpp
 
-INCLUDES= $(all_includes)
+AM_CPPFLAGS = $(all_includes)
 METASOURCES = AUTO
 
 #Generates some warnings!!!

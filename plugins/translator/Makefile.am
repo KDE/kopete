@@ -1,4 +1,4 @@
-INCLUDES = -I$(srcdir)/../../libkopete -I$(srcdir)/../../libkopete/ui $(all_includes)
+AM_CPPFLAGS = -I$(srcdir)/../../libkopete -I$(srcdir)/../../libkopete/ui $(all_includes)
 
 kde_module_LTLIBRARIES = kopete_translator.la
 

@@ -1,4 +1,4 @@
-INCLUDES = -I$(srcdir)/../../libkopete -I$(srcdir)/../../libkopete/ui $(XMMS_INCLUDES) $(all_includes)
+AM_CPPFLAGS = -I$(srcdir)/../../libkopete -I$(srcdir)/../../libkopete/ui $(XMMS_INCLUDES) $(all_includes)
 
 kde_module_LTLIBRARIES = kopete_nowlistening.la
 

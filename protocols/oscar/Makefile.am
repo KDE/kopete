@@ -1,6 +1,6 @@
 SUBDIRS = ui pixmaps oscarsocket data
 METASOURCES = AUTO
-INCLUDES = -I$(srcdir)/ui \
+AM_CPPFLAGS = -I$(srcdir)/ui \
     -I./ui \
     -I$(top_srcdir)/kopete/libkopete \
     -I$(top_srcdir)/kopete/libkopete/ui \

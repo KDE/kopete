@@ -1,5 +1,5 @@
 METASOURCES = AUTO
-INCLUDES = -I$(top_srcdir)/kopete/libkopete $(all_includes)
+AM_CPPFLAGS = -I$(top_srcdir)/kopete/libkopete $(all_includes)
 
 noinst_LTLIBRARIES = libkopeteui.la
 noinst_HEADERS = configmodule.h \

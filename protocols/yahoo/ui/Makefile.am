@@ -1,5 +1,5 @@
 noinst_LTLIBRARIES = libkopeteyahooui.la
-INCLUDES = -I$(srcdir)/../../../libkopete -I$(srcdir)/../../../libkopete/ui \
+AM_CPPFLAGS = -I$(srcdir)/../../../libkopete -I$(srcdir)/../../../libkopete/ui \
 		-I$(srcdir)/.. \
 		$(all_includes)
 

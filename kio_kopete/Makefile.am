@@ -1,4 +1,4 @@
-INCLUDES = -I$(top_builddir)/lib $(all_includes) 
+AM_CPPFLAGS = -I$(top_builddir)/lib $(all_includes) 
 
 METASOURCES = AUTO
 

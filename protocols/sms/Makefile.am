@@ -1,6 +1,6 @@
 METASOURCES = AUTO
 SUBDIRS = ui services
-INCLUDES = -I$(srcdir)/ui \
+AM_CPPFLAGS = -I$(srcdir)/ui \
 	-I./ui \
 	-I$(srcdir)/services \
 	-I./services \

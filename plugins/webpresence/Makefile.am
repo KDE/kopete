@@ -1,4 +1,4 @@
-INCLUDES = -I$(srcdir)/../../libkopete -I$(srcdir)/../../libkopete/ui $(all_includes) $(LIBXML_CFLAGS) $(LIBXSLT_CFLAGS)
+AM_CPPFLAGS = -I$(srcdir)/../../libkopete -I$(srcdir)/../../libkopete/ui $(all_includes) $(LIBXML_CFLAGS) $(LIBXSLT_CFLAGS)
 
 kde_module_LTLIBRARIES = kopete_webpresence.la
 

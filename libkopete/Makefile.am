@@ -1,6 +1,6 @@
 METASOURCES = AUTO
 SUBDIRS = ui
-INCLUDES = -I$(srcdir)/ui -I./ui $(all_includes)
+AM_CPPFLAGS = -I$(srcdir)/ui -I./ui $(all_includes)
 
 lib_LTLIBRARIES = libkopete.la
 
