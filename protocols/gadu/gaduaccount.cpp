@@ -511,7 +511,7 @@ GaduAccount::userlist( const gaduContactsList& u)
 	
 	QPtrListIterator< contactLine > loo(u);
 	
-	for ( i=u.count() ; i-- ; i!=0 ){ 
+	for ( i=u.count() ; i-- ; ){ 
 	    kdDebug(14100)<<"uin "<< (*loo)->uin << endl;
 	
 	    if ((*loo)->uin.isNull()){
