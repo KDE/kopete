@@ -161,24 +161,17 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	mTabWindow = new QRadioButton( i18n("Group all messages in the same chat window"), chatWindowGroup);
 	generalLayout->addWidget( chatWindowGroup );
 	
-	mTransparancyGroupBox = new QVGroupBox( mChatAppearanceTab, i18n("Chat Window Translucency") );
+	mTransparancyGroupBox = new QVGroupBox( i18n("Chat Window Translucency"), mChatAppearanceTab );
 	
 	mTransparancyEnabled = new QCheckBox ( i18n("Enable Translucency"), mTransparancyGroupBox );
 	QObject::connect( mTransparancyEnabled, SIGNAL(toggled(bool)), this, SLOT(slotTransparancyChanged( bool )));
 	
-	QHBoxLayout *h1 = new QHBoxLayout(mTransparancyGroupBox);
-	
-	QLabel *label1 = new QLabel( i18n( "Tint Color:"), mTransparancyGroupBox );
+	new QLabel( i18n( "Tint Color:"), mTransparancyGroupBox );
 	mTransparancyColor = new KColorCombo(mTransparancyGroupBox);
-	h1->addWidget( label1 );
-	h1->addWidget( mTransparancyColor);
 	
-	QHBoxLayout *h2 = new QHBoxLayout(mTransparancyGroupBox);
-	QLabel *label2 = new QLabel( i18n( "Translucency:"), mTransparancyGroupBox );
+	new QLabel( i18n( "Translucency:"), mTransparancyGroupBox );
 	mTransparancyValue = new QSlider ( 0, 100, 1, 50, Qt::Horizontal, mTransparancyGroupBox);
 	mTransparancyValue->setTickmarks( QSlider::NoMarks );
-	h2->addWidget( label2 );
-	h2->addWidget( mTransparancyValue );
 
 	generalLayout->addWidget( mTransparancyGroupBox );
 	
