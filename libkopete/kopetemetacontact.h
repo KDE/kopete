@@ -30,7 +30,7 @@ class KURL;
 
 class KopeteGroup;
 
-class KopeteMetaContactPrivate;
+struct KopeteMetaContactPrivate;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>

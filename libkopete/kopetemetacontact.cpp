@@ -38,9 +38,8 @@
 #define EMAIL_WINDOW 0
 #define CHAT_WINDOW 1
 
-class KopeteMetaContactPrivate
+struct KopeteMetaContactPrivate
 {
-public:
 	QPtrList<KopeteContact> contacts;
 
 	QString displayName;

@@ -23,7 +23,6 @@
 
 struct KopeteOnlineStatusPrivate
 {
-public:
 	KopeteOnlineStatus::OnlineStatus status;
 	unsigned weight;
 	KopeteProtocol *protocol;
