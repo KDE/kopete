@@ -79,7 +79,9 @@ void KopeteWalletManager::openWallet( QObject *object, const char *slot )
 {
 	if ( !d->signal )
 		d->signal = new KopeteWalletSignal;
+	// allow connecting to protected slots  by calling object->connect
 	connect( d->signal, SIGNAL( walletOpened( KWallet::Wallet* ) ), object, slot );
+	//object->connect( d->signal, SIGNAL( walletOpened( KWallet::Wallet* ) ), slot );
 	openWalletInner();
 }
 

@@ -10,6 +10,7 @@ class WalletReciever : public QObject
 	Q_OBJECT
 public slots:
 	void timer();
+private slots:
 	void gotWallet( KWallet::Wallet *w );
 };
 

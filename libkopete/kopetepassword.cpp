@@ -370,14 +370,15 @@ int KopetePassword::preferredImageSize()
 void KopetePassword::requestWithoutPrompt( QObject *returnObj, const char *slot )
 {
 	KopetePasswordRequest *request = new KopetePasswordGetRequestNoPrompt( *this );
-	connect( request, SIGNAL( requestFinished( const QString & ) ), returnObj, slot );
+	// call connect on returnObj so we can still connect if 'slot' is protected/private
+	returnObj->connect( request, SIGNAL( requestFinished( const QString & ) ), slot );
 	request->begin();
 }
 
 void KopetePassword::request( QObject *returnObj, const char *slot, const QPixmap &image, const QString &prompt, KopetePassword::PasswordSource source, unsigned int maxLength )
 {
 	KopetePasswordRequest *request = new KopetePasswordGetRequestPrompt( *this, image, prompt, source, maxLength );
-	connect( request, SIGNAL( requestFinished( const QString & ) ), returnObj, slot );
+	returnObj->connect( request, SIGNAL( requestFinished( const QString & ) ), slot );
 	request->begin();
 }
 
