@@ -56,18 +56,42 @@ void NLAmaroK::update()
 			QDataStream reply( replyData, IO_ReadOnly );
 			if ( replyType == "bool" ) {
 				reply >> m_playing;
-				kdDebug( 14307 ) << "checked if AmaroK is playing!" << endl;
 			}
 		}
 
-		if ( m_client->call( "amarok", "player", "nowPlaying()", data,
+		if ( m_client->call( "amarok", "player", "title()", data,
 					replyType, replyData ) )
 		{
 			QDataStream reply( replyData, IO_ReadOnly );
 
 			if ( replyType == "QString" ) {
-				reply >> result;
-				m_track = result;
+				reply >> newTrack;
+			}
+		}
+		if ( newTrack != m_track )
+		{
+			m_newTrack = true;
+			m_track = newTrack;
+		}
+		else
+			m_newTrack = false;
+
+		if ( m_client->call( "amarok", "player", "album()", data,
+					replyType, replyData ) )
+		{
+			QDataStream reply( replyData, IO_ReadOnly );
+
+			if ( replyType == "QString" ) {
+				reply >> m_album;
+			}
+		}
+		if ( m_client->call( "amarok", "player", "artist()", data,
+					replyType, replyData ) )
+		{
+			QDataStream reply( replyData, IO_ReadOnly );
+
+			if ( replyType == "QString" ) {
+				reply >> m_artist;
 			}
 		}
 	}
