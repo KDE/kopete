@@ -52,6 +52,9 @@ MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteCont
 		KopeteMessageManager* ) ),
 		this, SLOT( slotMessageSent( KopeteMessage&,
 		KopeteMessageManager* ) ) );
+
+	connect( this, SIGNAL( invitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNMessageManager*  , MSNContact*  ) ) ,
+		protocol,  SIGNAL( invitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNMessageManager*  , MSNContact*  ) ) );
 }
 
 MSNMessageManager::~MSNMessageManager()
@@ -279,51 +282,40 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 		MSNInvitation *msnI=m_invitations[cookie];
 		msnI->parseInvitation(msg);
 	}
-	/*	else  if( msg.contains("Invitation-Command: CANCEL") )
-	{
-		if(m_invitations.contains(cookie))
-		{
-			kdDebug(14140) << " MSNMessageManager::slotInvitation: canceled "<<  endl;
-			MSNFileTransferSocket *MFTS=m_invitations[cookie];
-			MFTS->parseInvitation(msg);
-			if(MFTS && MFTS->incoming())
-			{
-				MFTS->setCookie(0);
-				m_invitations.remove(cookie);
-			}
-			else
-			{
-				m_invitations.remove(cookie);
-				delete MFTS;
-			}
-		}
-	}*/
 	else if( msg.contains("Invitation-Command: INVITE") )
 	{
 		if( msg.contains(MSNFileTransferSocket::applicationID()) )
 		{
 			MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(user()->account()->accountId(),c,true,this);
-			connect(MFTS, SIGNAL( done(MSNFileTransferSocket*) ) , this , SLOT( slotFileTransferDone(MSNFileTransferSocket*) ));
+			connect(MFTS, SIGNAL( done(MSNInvitation*) ) , this , SLOT( invitationDone(MSNInvitation*) ));
 			m_invitations.insert( cookie  , MFTS);
-
 			MFTS->parseInvitation(msg);
 		}
 		else
 		{
-			rx=QRegExp("Application-Name: ([^\\r\\n]*)");
-			rx.search(msg);
-			QString invitname = rx.cap(1);
+			MSNInvitation *i=0l;
+			emit invitation( i , msg, cookie, this, c );
+			if(i)
+			{
+				m_invitations.insert( cookie  , i );
+			}
+			else
+			{
+				rx=QRegExp("Application-Name: ([^\\r\\n]*)");
+				rx.search(msg);
+				QString invitname = rx.cap(1);
 
-			QString body=i18n("%1 has sent an unimplemented invitation, the invitation was rejected.\nThe invitation was: %2").arg(c->displayName()).arg(invitname);
-			KopeteMessage tmpMsg = KopeteMessage( c , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText);
-			appendMessage(tmpMsg);
+				QString body=i18n("%1 has sent an unimplemented invitation, the invitation was rejected.\nThe invitation was: %2").arg(c->displayName()).arg(invitname);
+				KopeteMessage tmpMsg = KopeteMessage( c , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText);
+				appendMessage(tmpMsg);
 
-			m_chatService->sendCommand( "MSG" , "N", true, MSNInvitation::unimplemented(cookie) );
+				m_chatService->sendCommand( "MSG" , "N", true, MSNInvitation::unimplemented(cookie) );
+			}
 		}
 	}
 }
 
-void MSNMessageManager::slotFileTransferDone(MSNFileTransferSocket* MFTS)
+void MSNMessageManager::invitationDone(MSNInvitation* MFTS)
 {
 	m_invitations.remove(MFTS->cookie());
 //	MFTS->deleteLater();

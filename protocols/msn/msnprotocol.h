@@ -37,6 +37,7 @@ class MSNPreferences;
 class MSNNotifySocket;
 class MSNSwitchBoardSocket;
 class MSNMessageManager;
+class MSNInvitation;
 class KopeteMessageManager;
 class KopeteMetaContact;
 class KopeteContact;
@@ -131,6 +132,19 @@ private:
 
 	static MSNProtocol *s_protocol;
 	MSNPreferences *mPrefs;
+
+signals:
+	/**
+	 * A new msn invitation has been arrived. plugins can connect this signal to handle invitations.
+	 * if the invitationID match to their internal id. they can create a new MSNInvitation and pass it via invitation
+	 *
+	 * @param invitation should be set by the plugin to the new invitaiton. plugin should check it is equal to 0L before
+	 * @param bodyMSG is the whole invitation message
+	 * @param cookie is the invitation cookie
+	 * @param msnMM is the message manager
+	 * @param c is the contact
+	 */
+	void invitation(MSNInvitation*& invitation,  const QString &bodyMSG , long unsigned int cookie , MSNMessageManager* msnMM , MSNContact* c );
 };
 
 #endif

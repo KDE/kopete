@@ -23,7 +23,7 @@
 class MSNSwitchBoardSocket;
 class KActionCollection;
 class MSNInvitation;
-class MSNFileTransferSocket;
+class MSNContact;
 
 
 /**
@@ -50,6 +50,8 @@ public slots:
 	void slotCloseSession();
 	void slotInviteOtherContact();
 
+	void invitationDone( MSNInvitation*  );
+
 private slots:
 	void slotMessageSent( KopeteMessage &message, KopeteMessageManager *kmm );
 
@@ -58,8 +60,6 @@ private slots:
 	void slotInviteContact( KopeteContact *contact );
 	void slotAcknowledgement( unsigned int id, bool ack );
 	void slotInvitation( const QString &handle, const QString &msg );
-
-	void slotFileTransferDone( MSNFileTransferSocket* MFTS );
 
 	/**
 	 * (debug)
@@ -79,6 +79,12 @@ private:
 	QMap<unsigned int, KopeteMessage> m_messagesSent;
 
 	QMap<long unsigned int, MSNInvitation*> m_invitations;
+
+signals:
+	/*
+	 * This signal is relayed to the protocol and after, to plugins
+	 */
+	void invitation(MSNInvitation*& invitation,  const QString &bodyMSG , long unsigned int cookie , MSNMessageManager* msnMM , MSNContact* c );
 };
 
 #endif

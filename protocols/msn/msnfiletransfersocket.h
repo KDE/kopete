@@ -61,7 +61,7 @@ public slots:
 	void abort();
 
 signals:
-	void done( MSNFileTransferSocket * );
+	void done( MSNInvitation * );
 
 protected:
 	/**
