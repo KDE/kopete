@@ -215,7 +215,7 @@ void KopeteMessageManager::appendMessage( KopeteMessage &msg )
 
 	if( msg.direction() == KopeteMessage::Inbound )
 	{
-		if( KopetePrefs::prefs()->highlightEnabled() && msg.plainBody().contains( QRegExp(QString::fromLatin1("\\b(%1)\\b").arg(user()->displayName()),false) ) )
+		if( KopetePrefs::prefs()->highlightEnabled() && !user()->displayName().isEmpty() && msg.plainBody().contains( QRegExp(QString::fromLatin1("\\b(%1)\\b").arg(user()->displayName()),false) ) )
 			msg.setImportance( KopeteMessage::Highlight );
 
 		emit( messageReceived( msg, this ) );
