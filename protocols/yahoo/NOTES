@@ -1,11 +1,13 @@
 2003-06-10 - General Status (mattr)
-The config dialog doesn't destroy itself when unloaded.
-XSL parsing works now.
-kopete currently crashes with a custom away mode
-Pretty much all basic functionality is there now.
-Main thing to note is invisible mode, which won't work if you go straight from
-  offline->invisible, since it will go offline->online->invisible and the
-  opposite end will notice you go online.
+- color handling doesn't work, and neither does font handling
+    so basically, if the person on the other side has some custom fonts,
+    we won't be able to see them
+- XSL parsing works now.
+- The yahoo plugin crashes kopete while using a custom away mode
+- Pretty much all basic functionality is there now.
+- Main thing to note is invisible mode, which won't work if you go straight from
+    offline->invisible, since it will go offline->online->invisible and the
+    opposite end will notice you go online.
 
 
 
