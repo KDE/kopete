@@ -21,7 +21,7 @@
 #define MSNSOCKET_H
 
 #include <qobject.h>
-#include <qmap.h>
+#include <qvaluelist.h>
 
 class KExtendedSocket;
 
@@ -209,7 +209,6 @@ private slots:
 
 protected slots:
 	virtual void slotReadyWrite();
-
 
 private:
 	/**
