@@ -349,6 +349,8 @@ void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 		{
 			// If the above was false, there was a server command
 			mEngine->messageContact(mNickName, message.plainBody());
+			message.setBg( QColor() );
+			message.setFg( QColor() );
 			manager()->appendMessage(message);
 		}
 
