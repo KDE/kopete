@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libkopetejabberui.la
 INCLUDES = -I$(srcdir)/../../../libkopete -I$(srcdir)/../../../libkopete/ui \
-		-I$(srcdir)/.. \
+		-I$(srcdir)/.. -I$(srcdir)/../psi -I../psi \
 		$(all_includes)
 
 libkopetejabberui_la_METASOURCES = AUTO

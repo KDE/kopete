@@ -26,9 +26,9 @@
 
 #include "jabbercontact.h"
 #include "jabberaddcontactpage.h"
-#include "kjabber.h"
 #include "jabberprefs.h"
 #include "kopeteprotocol.h"
+#include "jabber.h"
 #include <kmessagebox.h>
 
 class QSocket;
@@ -127,7 +127,7 @@ class JabberProtocol:public QObject, public KopeteProtocol {
     int mPort;
 
     JabberPreferences *mPrefs;
-    KJabber *protocol;
+    Jabber *protocol;
 	JabberContact *myContact;
 	KMessageBox *authContact;
 };

@@ -26,6 +26,7 @@
 
 #include "kopete.h"
 #include "jabberprotocol.h"
+#include "jabcommon.h"
 #include "statusbaricon.h"
 
 JabberProtocol::JabberProtocol():QObject(0, "JabberProtocol"),
@@ -37,8 +38,8 @@ KopeteProtocol()
     initActions();
 
     authContact = new KMessageBox;
-    protocol = new KJabber;
-    connect(protocol,
+    protocol = new Jabber;
+/*  connect(protocol,
 	    SIGNAL(contactUpdated(QString, QString, QString, QString)),
 	    this,
 	    SLOT(slotContactUpdated(QString, QString, QString, QString)));
@@ -47,7 +48,7 @@ KopeteProtocol()
     connect(protocol, SIGNAL(newContact(QString, QString, QString)), this,
 	    SLOT(slotNewContact(QString, QString, QString)));
     connect(protocol, SIGNAL(gotMessage(QString, QString)), this,
-	    SLOT(slotNewMessage(QString, QString)));
+	    SLOT(slotNewMessage(QString, QString))); */
 
     statusBarIcon = new StatusBarIcon();
     QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)),
@@ -103,7 +104,7 @@ void JabberProtocol::Connect()
 			<< mServer << ":" << mPort << endl;
 		kdDebug() << "Jabber plugin: Using UserID " << mUsername <<
 		    " with password " << mPassword << endl;
-		protocol->Connect(mServer, mPort, mUsername, mPassword, mResource);
+		protocol->login(STATUS_ONLINE, "", 1, true);
 		myContact = new JabberContact(mUsername, mUsername, i18n("Unknown"), this);
 		mIsConnected = true;
 		statusBarIcon->setPixmap(onlineIcon);
@@ -120,7 +121,7 @@ void JabberProtocol::Connect()
 void JabberProtocol::Disconnect()
 {
     if (isConnected()) {
-		protocol->Disconnect();
+		protocol->disc();
 		kdDebug() << "Jabber plugin: Disconnected." << endl;
 		mIsConnected = false;
 		statusBarIcon->setPixmap(offlineIcon);
@@ -160,10 +161,11 @@ void JabberProtocol::setAvailable(void)
 
 bool JabberProtocol::isAway(void) const
 {
-    if (isConnected()) {
-		return (protocol->getStatus() == "away"
-			|| protocol->getStatus() == "xa"
-			|| protocol->getStatus() == "dnd");
+	kdDebug() << "Jabber plugin: isAway: " << protocol->status() << endl;
+	if (isConnected()) {
+		return (protocol->status() == STATUS_AWAY
+			|| protocol->status() == STATUS_XA
+			|| protocol->status() == STATUS_DND);
     }
 	else {
 		return false;
@@ -244,7 +246,7 @@ void JabberProtocol::slotGoOnline()
 		Connect();
     }
 	else {
-		protocol->setPresence("online", "");
+		protocol->setPresence(STATUS_ONLINE, "", 1);
     }
     statusBarIcon->setPixmap(onlineIcon);
 }
@@ -259,21 +261,21 @@ void JabberProtocol::slotGoOffline()
 void JabberProtocol::slotSetAway()
 {
     kdDebug() << "Jabber plugin: Setting away mode." << endl;
-    protocol->setPresence("away", "");
+    protocol->setPresence(STATUS_AWAY, "", 1);
     statusBarIcon->setPixmap(awayIcon);
 }
 
 void JabberProtocol::slotSetXA()
 {
     kdDebug() << "Jabber plugin: Setting extended away mode." << endl;
-    protocol->setPresence("xa", "");
+    protocol->setPresence(STATUS_XA, "", 1);
     statusBarIcon->setPixmap(awayIcon);
 }
 
 void JabberProtocol::slotSetDND()
 {
     kdDebug() << "Jabber plugin: Setting do not disturb mode." << endl;
-    protocol->setPresence("dnd", "");
+    protocol->setPresence(STATUS_DND, "", 1);
     statusBarIcon->setPixmap(naIcon);
 }
 
@@ -296,14 +298,14 @@ void JabberProtocol::removeUser(QString userID)
 {
     kdDebug() << "Jabber plugin: Protocol removing user " << userID <<
 	endl;
-    protocol->removeUser(userID);
+//    protocol->removeUser(userID);
 }
 
 void JabberProtocol::renameContact(QString userID, QString name)
 {
     kdDebug() << "Jabber plugin: Protocol renaming user " << userID <<
 	" to " << name << endl;
-    protocol->renameUser(userID, name);
+//    protocol->renameUser(userID, name);
 }
 
 void JabberProtocol::moveUser(QString userID, QString group, QString name,
@@ -311,14 +313,14 @@ void JabberProtocol::moveUser(QString userID, QString group, QString name,
 {
     kdDebug() << "Jabber plugin: Protocol moving user " << userID << " to "
 	<< group << endl;
-    protocol->moveUser(userID, name, group);
+//    protocol->moveUser(userID, name, group);
     kopeteapp->contactList()->moveContact(contact, group);
 }
 
 void JabberProtocol::addContact(QString userID)
 {
     kdDebug() << "Jabber plugin: Protocol adding user " << userID << endl;
-    protocol->addUser(userID);
+//    protocol->addUser(userID);
 }
 
 void JabberProtocol::slotUserWantsAuth(QString userID)
@@ -328,7 +330,7 @@ void JabberProtocol::slotUserWantsAuth(QString userID)
 	    i18n(" wants to add you to your contact list. Do you want to \
 			   authorize them?"),
 		i18n("Authorize Jabber user?")) == 3) {
-			protocol->authUser(userID);
+//			protocol->authUser(userID);
     }
 }
 
@@ -355,11 +357,13 @@ void JabberProtocol::slotSettingsChanged()
     mResource = KGlobal::config()->readEntry("Resource", "Kopete");
     mServer = KGlobal::config()->readEntry("Server", "jabber.org");
     mPort = KGlobal::config()->readNumEntry("Port", 5222);
+	protocol->setHost(mServer, mPort);
+	protocol->setAccount(mUsername, mPassword, mResource);
 }
 
 void JabberProtocol::slotSendMsg(QString userID, QString message) const
 {
-    protocol->slotSendMsg(userID, message);
+//    protocol->slotSendMsg(userID, message);
 }
 
 void JabberProtocol::slotNewMessage(QString userID, QString message)
