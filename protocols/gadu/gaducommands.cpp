@@ -201,7 +201,6 @@ void RegisterCommand::watcher()
 			return;
 		}
 
-		kdDebug( 14100 ) << "4  " << session_->state << endl;
 		gg_pub = (struct gg_pubdir *)session_->data;
 		emit operationStatus( i18n( "Token retrieving status: %1" ).arg( GaduSession::stateDescription( session_->state ) ) );
 		switch ( session_->state ) {
@@ -253,7 +252,6 @@ void RegisterCommand::watcher()
 			state = RegisterStateGotToken;
 			return;
 		}
-		kdDebug( 14100 ) << "4  " << session_->state << endl;
 		gg_pub = (gg_pubdir*) session_->data;
 		emit operationStatus( i18n( "Registration status: %1" ).arg( GaduSession::stateDescription( session_->state ) ) );
 		switch ( session_->state ) {
