@@ -139,9 +139,16 @@ void AddContactWizard::slotAddAddresseeClicked()
 	bool* ok;
 	*ok = false;
 	// Pop up add addressee dialog
+#if KDE_IS_VERSION (3,1,90)
 	QString addresseeName = KInputDialog::getText( i18n( "New Address Book Entry" ),
 												   i18n( "Name the new entry:" ),
 												   QString::null, ok, this ); 
+#else
+	QString addresseeName = KLineEditDlg::getText( i18n( "New Address Book Entry" ),
+												   i18n( "Name the new entry:" ),
+												   QString::null, ok, this ); 
+#endif												  
+
 	if ( *ok && !addresseeName.isEmpty() )
 	{
 		KABC::Addressee addr;
