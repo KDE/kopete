@@ -171,8 +171,15 @@ void KopeteMetaContact::setTopLevel( bool b )
 		emit topLevel(this, b);
 	}
 }
- 
-KopeteContact *KopeteMetaContact::findContact( const QString &protocolId, const QString &identityId, const QString &contactId )
+
+KopeteContact *KopeteMetaContact::findContact( const QString &protocolId,
+	const QString &identityId, const QString &contactId )
+{
+	return findContact( protocolId, identityId, contactId, true );
+}
+
+KopeteContact *KopeteMetaContact::findContact( const QString &protocolId,
+	const QString &identityId, const QString &contactId, bool allowRecursion )
 {
 	//kdDebug() << "*** Num contacts: " << m_contacts.count() << endl;
 	QPtrListIterator<KopeteContact> it( m_contacts );
@@ -183,7 +190,30 @@ KopeteContact *KopeteMetaContact::findContact( const QString &protocolId, const 
 			return it.current();
 	}
 
-	// Contact not found
+	// There is no active contact, but we may have cached plugin data
+	// from plugins that are not currently loaded
+	if( allowRecursion )
+	{
+		QMap<QString, QString>::ConstIterator it;
+		for( it = m_pluginData.begin(); it != m_pluginData.end(); ++it )
+		{
+			if( it.key() == protocolId )
+			{
+				QStringList strList = QStringList::split( "||", it.data() );
+				KopetePlugin *plugin = kopeteapp->libraryLoader()->searchByID(
+					it.key() );
+
+				if( plugin )
+					plugin->deserialize( this, strList );
+
+				// Recurse through what we have now, this time with recursion
+				// disabled to avoid endless loops
+				return findContact( protocolId, identityId, contactId, false );
+			}
+		}
+	}
+
+	// Contact really not found
 	return 0L;
 }
 
@@ -614,10 +644,9 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 			plugin->deserialize( this, strList );
 	}
 
-	//If a plugin is loaded, load data cached
+	// If a plugin is loaded, load data cached
 	connect( kopeteapp->libraryLoader(), SIGNAL( pluginLoaded(KopetePlugin*) ),
-			this, SLOT( slotPluginLoaded(KopetePlugin*) ) );
-
+		this, SLOT( slotPluginLoaded(KopetePlugin*) ) );
 
 	if ( m_groups.isEmpty() && ! m_isTopLevel )
 		m_isTopLevel = true;
@@ -671,7 +700,7 @@ void KopeteMetaContact::setTemporary( bool b , QString group )
 		}
 	}
 	else
-		moveToGroup("temporaryGroup",group);  
+		moveToGroup("temporaryGroup",group);
 }
 
 bool KopeteMetaContact::isDirty() const
@@ -684,15 +713,15 @@ void KopeteMetaContact::setDirty( bool b  )
 	m_dirty = b;
 }
 
-void KopeteMetaContact::slotPluginLoaded(KopetePlugin *p)
+void KopeteMetaContact::slotPluginLoaded( KopetePlugin *p )
 {
-	if(!p)
+	if( !p )
 		return;
+
 	QMap<QString, QString>::ConstIterator it;
 	for( it = m_pluginData.begin(); it != m_pluginData.end(); ++it )
 	{
-		KopetePlugin *plugin = kopeteapp->libraryLoader()->searchByID(it.key());
-		if(plugin==p)
+		if( p->id() == it.key() )
 		{
 			QStringList strList = QStringList::split( "||", it.data() );
 			p->deserialize( this, strList );

@@ -63,33 +63,12 @@ KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId,
 	QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
-		KopeteContact *c = it.current()->findContact( protocolId, identityId,
-				contactId );
-		if( c )
+		if( it.current()->findContact( protocolId, identityId, contactId ) )
 			return it.current();
 	}
-	//	kdDebug() << "KopeteContactList::findContact  *** Not found!" << endl;
+	// kdDebug() << "KopeteContactList::findContact  *** Not found!" << endl;
 	return 0L;
-
-		/*
-			//I think sameAsKC bad: the user can choose the metacontact's displayname.
-			//and search DON'T may be done with the displayname. (Olivier)
-
-		if (sameNameAsKC)
-		{
-			KopeteContact *c = it.current()->findContact( protocolId, identityId,
-				contactId );
-			if( c )
-				return it.current();
-		} else {
-			// How flexible does this need to be?
-			if (it.current()->displayName() == contactId)
-			{
-				if( it.current() )
-					return it.current();
-			}*/
 }
-
 
 void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 {

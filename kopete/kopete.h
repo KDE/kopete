@@ -198,9 +198,12 @@ private slots:
 	void slotMainWindowDestroyed();
 	void initialize();
 
-private:
-	void loadPlugins();
+	/**
+	 * Load all plugins
+	 */
+	void slotLoadPlugins();
 
+private:
 	PreferencesDialog *mPref;
 	Plugins *mPluginsModule;
 

@@ -283,6 +283,13 @@ private slots:
 	void slotPluginLoaded(KopetePlugin *p);
 
 private:
+	/**
+	 * Internal search method that allows recursive or non-recursive searches
+	 */
+	KopeteContact *findContact( const QString &protocolId,
+		const QString &identityId, const QString &contactId,
+		bool allowRecursion );
+
 	QPtrList<KopeteContact> m_contacts;
 
 	/**

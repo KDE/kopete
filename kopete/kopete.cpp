@@ -92,12 +92,14 @@ void Kopete::initialize()
 	connect( KopetePrefs::prefs() , SIGNAL(saved()), this, SIGNAL(signalSettingsChanged()));
 	mNotifier = new KopeteNotifier(this, "mNotifier");
 	mMessageManagerFactory = new KopeteMessageManagerFactory(this, "KMMFactory");
-        connect( mMessageManagerFactory, SIGNAL(messageReceived(KopeteMessage&)),
-                 SIGNAL(aboutToDisplay(KopeteMessage&)) );
-        connect( mMessageManagerFactory, SIGNAL(messageQueued(KopeteMessage&)),
-                 SIGNAL(aboutToSend(KopeteMessage&)) );
+	connect( mMessageManagerFactory,
+		SIGNAL( messageReceived( KopeteMessage & ) ),
+		SIGNAL( aboutToDisplay( KopeteMessage & ) ) );
+	connect( mMessageManagerFactory,
+		SIGNAL( messageQueued( KopeteMessage & ) ),
+		SIGNAL( aboutToSend( KopeteMessage & ) ) );
 
-	KConfig *config=KGlobal::config();
+	KConfig *config = KGlobal::config();
 	config->setGroup("");
 
 	// Ups! the user does not have plugins selected.
@@ -110,13 +112,13 @@ void Kopete::initialize()
 		config->writeEntry("Modules", modules);
 	}
 
+	QTimer::singleShot( 0, this, SLOT( slotLoadPlugins() ) );
+
 	// Ok, load saved plugins
-	loadPlugins();
 
 	KopeteContactList::contactList()->load();
 	mTransferManager = new KopeteTransferManager();
 }
-
 
 Kopete::~Kopete()
 {
@@ -128,6 +130,11 @@ Kopete::~Kopete()
 	delete mLibraryLoader;
 
 	kdDebug() << "[Kopete] END ~Kopete()" << endl;
+}
+
+void Kopete::slotLoadPlugins()
+{
+	mLibraryLoader->loadAll();
 }
 
 void Kopete::slotPreferences()
@@ -248,12 +255,6 @@ void Kopete::slotAddContact()
 	tmpdialog->show();
 }
 
-/** Load all plugins */
-void Kopete::loadPlugins()
-{
-	mLibraryLoader->loadAll();
-}
-
 /** Add a Event for notify */
 void Kopete::notifyEvent( KopeteEvent *event)
 {
@@ -280,28 +281,32 @@ QString Kopete::parseEmoticons( QString message )
 	// if emoticons are disabled, we do nothing
 	if ( !KopetePrefs::prefs()->useEmoticons() )
 		return message;
-		
+
 	//kdDebug() << "[[" << message << "]]" << endl;
 
 	QStringList emoticons = KopeteEmoticons::emoticons()->emoticonList();
 	QString em;
+
+#if (QT_VERSION-0 < 0x030100)
 	int p = -1;
+#endif
+
 	for ( QStringList::Iterator it = emoticons.begin(); it != emoticons.end(); ++it )
 	{
-		em = QStyleSheet::escape(*it); 
+		em = QStyleSheet::escape(*it);
 //		kdDebug() << "looking for " << em << endl;
 
-		#if (QT_VERSION-0 >= 0x030100)
+#if (QT_VERSION-0 >= 0x030100)
 		message.replace( em, "<img src=\"" +
 			KopeteEmoticons::emoticons()->emoticonToPicPath(*it) + "\">" );
-		#else
+#else
 		while ( (p = message.find(em,0,true)) != -1 )
 		{
 			message = message.remove( p, em.length() );
 			message = message.insert( p, "<img src=\"" +
 				KopeteEmoticons::emoticons()->emoticonToPicPath(*it) + "\">" );
 		}
-		#endif 
+#endif
 	}
 	//FIXME: if I tape "<-)" , "&lt;-)" is interpreted and the ;-) smileys is showed
 
