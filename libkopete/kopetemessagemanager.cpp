@@ -25,20 +25,22 @@
 #include <qregexp.h>
 
 #include <kdebug.h>
+#include <kdeversion.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kopetenotifyclient.h>
 
 #include "kopeteaccount.h"
 #include "kopetecommandhandler.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
+#include "kopetenotifyclient.h"
 #include "kopeteprefs.h"
 #include "kopeteview.h"
 
-struct KMMPrivate
+class KMMPrivate
 {
+public:
 	KopeteContactPtrList mContactList;
 	const KopeteContact *mUser;
 	QMap<const KopeteContact *, KopeteOnlineStatus> contactStatus;
@@ -201,7 +203,13 @@ void KopeteMessageManager::sendMessage( KopeteMessage &message )
 	{
 		emit messageSent( sentMessage, this );
 		if ( !account()->isAway() || KopetePrefs::prefs()->soundIfAway() )
+		{
+#if KDE_IS_VERSION( 3, 1, 1 )
 			KNotifyClient::event( 0, QString::fromLatin1( "kopete_outgoing" ), i18n( "Outgoing Message Sent" ) );
+#else
+			KNotifyClient::event( QString::fromLatin1( "kopete_outgoing" ), i18n( "Outgoing Message Sent" ) );
+#endif
+		}
 	}
 	else
 		emit messageSuccess();
