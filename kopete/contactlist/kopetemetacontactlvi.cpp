@@ -187,7 +187,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged(KopeteContact *c)
 
 	m_oldStatus = m_metaContact->status();
 
-	if(c->account()->myself()->onlineStatus().status() != KopeteOnlineStatus::Connecting)
+	if(c->account()->myself()->onlineStatus().status() != KopeteOnlineStatus::Connecting && ( !c->account()->isAway() || KopetePrefs::prefs()->soundIfAway()  ))
 	{
 		int winId = KopeteSystemTray::systemTray() ?
 			KopeteSystemTray::systemTray()->winId() : 0;
