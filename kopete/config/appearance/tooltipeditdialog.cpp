@@ -191,7 +191,9 @@ void TooltipEditDialog::slotDownButton()
 void TooltipEditDialog::slotAddButton()
 {
 	TooltipItem *item = static_cast<TooltipItem *>(mMainWidget->lstUnusedItems->currentItem());
-	kdDebug(14000) << k_funcinfo << endl;
+	if(!item)
+		return;
+	//kdDebug(14000) << k_funcinfo << endl;
 
 	// build a new one in the "used" list
 	new TooltipItem(mMainWidget->lstUsedItems, item->text(0), item->propertyName());
@@ -204,7 +206,9 @@ void TooltipEditDialog::slotAddButton()
 void TooltipEditDialog::slotRemoveButton()
 {
 	TooltipItem *item = static_cast<TooltipItem *>(mMainWidget->lstUsedItems->currentItem());
-	kdDebug(14000) << k_funcinfo << endl;
+	if(!item)
+		return;
+	//kdDebug(14000) << k_funcinfo << endl;
 
 	// build a new one in the "unused" list
 	new TooltipItem(mMainWidget->lstUnusedItems, item->text(0), item->propertyName());
