@@ -42,6 +42,7 @@ public:
 
 signals:
 	void rightClicked( KopeteProtocol *proto, const QPoint &p );
+	void leftClicked( KopeteProtocol *proto, const QPoint &p );
 
 protected:
 	virtual void mousePressEvent( QMouseEvent *me );

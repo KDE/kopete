@@ -47,6 +47,10 @@ void KopeteProtocolStatusBarIcon::mousePressEvent( QMouseEvent *me )
 	{
 		emit rightClicked( m_proto, QPoint( me->globalX(), me->globalY() ) );
 	}
+	else if( me->button() == QEvent::LeftButton )
+	{
+		emit leftClicked( m_proto, QPoint( me->globalX(), me->globalY() ) );
+	}
 }
 
 #include "kopeteprotocolstatusbaricon.moc"

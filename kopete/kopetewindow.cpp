@@ -463,6 +463,11 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *a )
 	connect( i, SIGNAL( rightClicked( KopeteAccount *, const QPoint & ) ),
 		SLOT( slotAccountStatusIconRightClicked( KopeteAccount *,
 		const QPoint & ) ) );
+	// Wanted by pmax, not sure if we should leave both in
+	// it'll confuse users if we take out the RMB function
+	connect( i, SIGNAL( leftClicked( KopeteAccount *, const QPoint & ) ),
+		SLOT( slotAccountStatusIconRightClicked( KopeteAccount *,
+		const QPoint & ) ) );
 
 	m_accountStatusBarIcons.insert( a, i );
 
