@@ -31,25 +31,6 @@
             <string>&amp;Cancel</string>
         </property>
     </widget>
-    <widget class="QPushButton">
-        <property name="name">
-            <cstring>btnFinish</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>170</x>
-                <y>140</y>
-                <width>71</width>
-                <height>31</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>&amp;Set Status</string>
-        </property>
-        <property name="default">
-            <bool>true</bool>
-        </property>
-    </widget>
     <widget class="QLabel">
         <property name="name">
             <cstring>lblInfo</cstring>
@@ -87,6 +68,25 @@
                 <width>310</width>
                 <height>102</height>
             </rect>
+        </property>
+    </widget>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>btnFinish</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>170</x>
+                <y>140</y>
+                <width>71</width>
+                <height>31</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>&amp;Send</string>
+        </property>
+        <property name="default">
+            <bool>true</bool>
         </property>
     </widget>
 </widget>
