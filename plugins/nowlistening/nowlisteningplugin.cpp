@@ -25,7 +25,7 @@
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <dcopclient.h>
 #include <kaction.h>
 #include <kstdguiitem.h>
@@ -98,12 +98,9 @@ KActionCollection *NowListeningPlugin::customContextMenuActions( KopeteMetaConta
 		m->displayName() << endl;
 	delete m_actionCollection;
 	m_actionCollection = new KActionCollection( this );
-	m_actionWantsAdvert = new KToggleAction( "Now Listening",
-			KStdGuiItem::ok().iconName(), 0, m_actionCollection,
-			"actionWantsAdvert" );
+	m_actionWantsAdvert = new KToggleAction( "Now Listening", 0, this, 
+			SLOT( slotContactWantsToggled() ), m_actionCollection, "actionWantsAdvert" );
 	m_actionWantsAdvert->setChecked( m->pluginData( this ).first() == "true" );
-	connect( m_actionWantsAdvert, SIGNAL( toggled( bool ) ),
-			this, SLOT( slotContactWantsToggled( bool ) ) );
 	m_actionCollection->insert( m_actionWantsAdvert );
 	m_currentMetaContact = m;
 	return m_actionCollection;
@@ -121,12 +118,13 @@ KActionCollection *NowListeningPlugin::customChatActions(  KopeteMessageManager*
 	return m_actionCollection;
 }
 
-void NowListeningPlugin::slotContactWantsToggled( bool on )
+void NowListeningPlugin::slotContactWantsToggled()
 {
 	kdDebug(14307) << "NowListeningPlugin::slotContactsWantsToggled()" << endl;
 	if ( m_actionWantsAdvert && m_currentMetaContact )
 	{
-		m_currentMetaContact->setPluginData( this, ( on ? "true" : "false" ) );
+		m_currentMetaContact->setPluginData( this, ( m_actionWantsAdvert->isChecked() 
+			? "true" : "false" ) );
 	}
 	return;
 }

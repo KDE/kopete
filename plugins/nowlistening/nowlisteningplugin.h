@@ -80,7 +80,7 @@ class NowListeningPlugin : public KopetePlugin
 		/**
 		 * called to change whether a contact should receive adverts
 		 */
-		void slotContactWantsToggled( bool on );
+		void slotContactWantsToggled();
 		/**
 		 * called to reactively send an advert
 		 */
