@@ -29,16 +29,19 @@ class NewUserImpl : public NewUser  {
 public: 
 	NewUserImpl(QWidget *parent=0, const char *name=0);
 	~NewUserImpl();
-	QString userHandle;
   /**  */
-  void setHandle(QString _handle, QString _public=QString::null);
+  void setHandle(const QString &_handle, const QString &_public=QString::null);
 public slots: // Public slots
   /**  */
   void slotClose();
 signals: // Signals
   /**  */
-  void addUser( const QString &);
-  void blockUser(QString);
+  void addUser( const QString & , const QString &);
+  void blockUser(const QString & );
+  
+ private:
+ QString userHandle;
+ QString publicName;
 };
 
 #endif

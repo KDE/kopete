@@ -150,34 +150,37 @@ void MSNAccount::connect()
 	//FIXME: don't use protocol here
 	m_notifySocket = new MSNNotifySocket( this, accountId() );
 
-	QObject::connect( m_notifySocket, SIGNAL( groupAdded( QString, uint,uint ) ),
-		SLOT( slotGroupAdded( QString, uint ) ) );
-	QObject::connect( m_notifySocket, SIGNAL( groupRenamed( QString, uint, uint ) ),
-		SLOT( slotGroupRenamed( QString, uint ) ) );
-	QObject::connect( m_notifySocket, SIGNAL( groupListed( QString, uint ) ),
-		SLOT( slotGroupAdded( QString, uint ) ) );
-	QObject::connect( m_notifySocket, SIGNAL(groupRemoved( uint, uint ) ),
+	QObject::connect( m_notifySocket, SIGNAL( groupAdded( const QString&, uint ) ),
+		SLOT( slotGroupAdded( const QString&, uint  ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( groupRenamed( const QString&, uint ) ),
+		SLOT( slotGroupRenamed( const QString&, uint ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( groupListed( const QString&, uint ) ),
+		SLOT( slotGroupAdded( const QString&, uint ) ) );
+	QObject::connect( m_notifySocket, SIGNAL(groupRemoved( uint ) ),
 		SLOT( slotGroupRemoved( uint ) ) );
-	QObject::connect( m_notifySocket, SIGNAL( contactList( QString, QString, QString, QString ) ),
-		SLOT( slotContactListed( QString, QString, QString, QString ) ) );
-	QObject::connect( m_notifySocket, SIGNAL( contactAdded( QString, QString, QString, uint, uint ) ),
-		SLOT( slotContactAdded( QString, QString, QString, uint, uint ) ) );
-	QObject::connect( m_notifySocket, SIGNAL( contactRemoved( QString, QString, uint, uint ) ),
-		SLOT( slotContactRemoved( QString, QString, uint, uint ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( contactList( const QString&, const QString&, const QString&, const QString& ) ),
+		SLOT( slotContactListed( const QString&, const QString&, const QString&, const QString& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( contactAdded( const QString&, const QString&, const QString&, uint ) ),
+		SLOT( slotContactAdded( const QString&, const QString&, const QString&, uint ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( contactRemoved( const QString&, const QString&, uint ) ),
+		SLOT( slotContactRemoved( const QString&, const QString&, uint ) ) );
 	QObject::connect( m_notifySocket, SIGNAL( statusChanged( const KopeteOnlineStatus & ) ),
 		SLOT( slotStatusChanged( const KopeteOnlineStatus & ) ) );
 	QObject::connect( m_notifySocket, SIGNAL( onlineStatusChanged( MSNSocket::OnlineStatus ) ),
 		SLOT( slotNotifySocketStatusChanged( MSNSocket::OnlineStatus ) ) );
-	QObject::connect( m_notifySocket, SIGNAL( publicNameChanged( QString ) ),
-		SLOT( slotPublicNameChanged( QString ) ) );
-	QObject::connect( m_notifySocket, SIGNAL( invitedToChat( QString, QString, QString, QString, QString ) ),
-		SLOT( slotCreateChat( QString, QString, QString, QString, QString ) ) );
-	QObject::connect( m_notifySocket, SIGNAL( startChat( QString, QString ) ),
-		SLOT( slotCreateChat( QString, QString ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( publicNameChanged( const QString& ) ),
+		SLOT( slotPublicNameChanged( const QString& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( invitedToChat( const QString&, const QString&, const QString&, const QString&, const QString& ) ),
+		SLOT( slotCreateChat( const QString&, const QString&, const QString&, const QString&, const QString& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( startChat( const QString&, const QString& ) ),
+		SLOT( slotCreateChat( const QString&, const QString& ) ) );
 	QObject::connect( m_notifySocket, SIGNAL( socketClosed( int ) ),
 		SLOT( slotNotifySocketClosed( int ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( newContactList() ) ,
+		SLOT( slotNewContactList() ) );
 	QObject::connect( m_notifySocket, SIGNAL( hotmailSeted( bool ) ),
 		m_openInboxAction, SLOT( setEnabled( bool ) ) );
+
 
 	m_notifySocket->setStatus( m_connectstatus );
 	m_notifySocket->connect( passwd );
@@ -449,7 +452,7 @@ void MSNAccount::slotStatusChanged( const KopeteOnlineStatus &status )
 	m_myself->setOnlineStatus( status );
 }
 
-void MSNAccount::slotPublicNameChanged( QString publicName )
+void MSNAccount::slotPublicNameChanged( const QString& publicName )
 {
 	if( publicName != m_myself->displayName() )
 	{
@@ -479,7 +482,7 @@ void MSNAccount::setPublicName( const QString &publicName )
 	}
 }
 
-void MSNAccount::slotGroupAdded( QString groupName, uint groupNumber )
+void MSNAccount::slotGroupAdded( const QString& groupName, uint groupNumber )
 {
 	// We have pending groups that we need add a contact to
 	if( tmp_addToNewGroup.count() > 0 )
@@ -555,7 +558,7 @@ void MSNAccount::slotGroupAdded( QString groupName, uint groupNumber )
 	m_groupList.insert( groupNumber, fallBack );
 }
 
-void MSNAccount::slotGroupRenamed( QString groupName, uint groupNumber )
+void MSNAccount::slotGroupRenamed( const QString& groupName, uint groupNumber )
 {
 	if( m_groupList.contains( groupNumber ) )
 	{
@@ -643,7 +646,28 @@ void MSNAccount::slotKopeteGroupRemoved(KopeteGroup *g)
 	}
 }
 
-void MSNAccount::slotContactListed( QString handle, QString publicName, QString group, QString list )
+void MSNAccount::slotNewContactList()
+{
+		m_allowList.clear();
+		m_blockList.clear();
+		m_groupList.clear();
+
+		//clear all date information which will be recieved.
+		//if the information is not anymore on the server, it will not be recieved
+		QDictIterator<KopeteContact> it( contacts() );
+		for ( ; it.current() ; ++it )
+		{
+			MSNContact *c=static_cast<MSNContact*>(*it);
+			c->setBlocked(false);
+			c->setAllowed(false);
+			c->setReversed(false);
+			c->setInfo( "PHH" , QString::null );
+			c->setInfo( "PHW" , QString::null );
+			c->setInfo( "PHM" , QString::null );
+		}
+}
+
+void MSNAccount::slotContactListed( const QString& handle, const QString& publicName, const QString& group, const QString& list )
 {
 	// On empty lists handle might be empty, ignore that
 	if( handle.isEmpty() )
@@ -706,13 +730,13 @@ void MSNAccount::slotContactListed( QString handle, QString publicName, QString 
 	else
 	{
 		//FIXME: merge theses two method
-		slotContactAdded(handle , publicName , list , 0 , 0 );
+		slotContactAdded(handle , publicName , list , 0  );
 	}
 	
 }
 
-void MSNAccount::slotContactAdded( QString handle, QString publicName,
-	QString list, uint  /*serial*/ , uint group )
+void MSNAccount::slotContactAdded( const QString& handle, const QString& publicName,
+	const QString& list , uint group )
 {
 	if( list == "FL" )
 	{
@@ -790,8 +814,8 @@ void MSNAccount::slotContactAdded( QString handle, QString publicName,
 			{
 				NewUserImpl *authDlg = new NewUserImpl(0);
 				authDlg->setHandle(handle, publicName);
-				QObject::connect( authDlg, SIGNAL(addUser( const QString & )), this, SLOT(slotAddContact( const QString & )));
-				QObject::connect( authDlg, SIGNAL(blockUser( QString )), this, SLOT(slotBlockContact( QString )));
+				QObject::connect( authDlg, SIGNAL(addUser( const QString &, const QString& )), this, SLOT(slotAddContact( const QString &, const QString& )));
+				QObject::connect( authDlg, SIGNAL(blockUser( const QString& )), this, SLOT(slotBlockContact( const QString& )));
 				authDlg->show();
 			}
 		}
@@ -802,7 +826,7 @@ void MSNAccount::slotContactAdded( QString handle, QString publicName,
 	}
 }
 
-void MSNAccount::slotContactRemoved( QString handle, QString list, uint /* serial */, uint group )
+void MSNAccount::slotContactRemoved( const QString& handle, const QString& list, uint group )
 {
 	if( list == "BL" )
 	{
@@ -854,15 +878,15 @@ void MSNAccount::slotContactRemoved( QString handle, QString list, uint /* seria
 	}
 }
 
-void MSNAccount::slotCreateChat( QString address, QString auth)
+void MSNAccount::slotCreateChat( const QString& address, const QString& auth)
 {
 	slotCreateChat( 0L, address, auth, m_msgHandle, m_msgHandle );
 }
 
-void MSNAccount::slotCreateChat( QString ID, QString address, QString auth,
-	QString handle, QString  publicName  )
+void MSNAccount::slotCreateChat( const QString& ID, const QString& address, const QString& auth,
+	const QString& handle_, const QString&  publicName  )
 {
-	handle = handle.lower();
+	QString handle = handle_.lower();
 
 	kdDebug(14140) << "MSNAccount::slotCreateChat: Creating chat for " << handle << endl;
 
@@ -884,7 +908,7 @@ void MSNAccount::slotCreateChat( QString ID, QString address, QString auth,
 	}
 }
 
-void MSNAccount::slotStartChatSession( QString handle )
+void MSNAccount::slotStartChatSession( const QString& handle )
 {
 	//FIXME: raise the manager if it does exist
 
@@ -908,7 +932,7 @@ void MSNAccount::slotStartChatSession( QString handle )
 }
 
 //--------
-void MSNAccount::slotBlockContact( QString handle ) 
+void MSNAccount::slotBlockContact( const QString& handle ) 
 {
 	if(m_allowList.contains(handle))
 		notifySocket()->removeContact( handle, 0, MSNProtocol::AL);
@@ -916,9 +940,9 @@ void MSNAccount::slotBlockContact( QString handle )
 		notifySocket()->addContact( handle, handle, 0, MSNProtocol::BL );
 }
 
-void MSNAccount::slotAddContact( const QString &userName )
+void MSNAccount::slotAddContact( const QString &userName , const QString &displayName)
 {
-	addContact( userName );
+	addContact( userName, displayName );
 }
 //----------
 

@@ -44,12 +44,12 @@ public:
 	virtual void disconnect();
 
 	void setStatus( const KopeteOnlineStatus &status );
-	void addContact( const QString &handle, QString pulicName, uint group , int list );
+	void addContact( const QString &handle, const QString& pulicName, uint group , int list );
 	void removeContact( const QString &handle, uint group, int list );
 
-	void addGroup( QString groupName );
+	void addGroup( const QString& groupName );
 	void removeGroup( uint group );
-	void renameGroup(QString groupName, uint group);
+	void renameGroup(const QString& groupName, uint group);
 
 	void changePublicName( const QString &publicName , const QString &handle=QString::null );
 
@@ -59,26 +59,24 @@ public slots:
 	void slotOpenInbox();
 
 signals:
-	//void newMail(QString, unsigned int);
-	void contactList(QString, QString, QString, QString);
-	void contactList(QString, QString, uint);
-//	void contactStatusChanged( const QString &msnId, const QString &publicName, MSNProtocol::Status status );
-	void contactStatus(QString, QString, QString );
-	void contactAdded(QString, QString, QString, uint, uint);
-	void contactRemoved(QString, QString, uint, uint);
+	void newContactList();
+	void contactList(const QString&, const QString&, const QString&, const QString&);
+//	void contactList(const QString&, const QString&, uint);
+	void contactStatus(const QString&, const QString&, const QString& );
+	void contactAdded(const QString&, const QString&, const QString&, uint);
+	void contactRemoved(const QString&, const QString&, uint);
 
-	void groupListed(QString, uint group);
-	void groupAdded( QString, uint group, uint serial);
-	void groupRenamed( QString, uint group, uint serial);
-	void groupRemoved( uint, uint);
+	void groupListed(const QString&, uint group);
+	void groupAdded( const QString&, uint group);
+	void groupRenamed( const QString&, uint group);
+	void groupRemoved( uint );
 
-	void invitedToChat(QString, QString, QString, QString, QString );
-	void startChat( QString, QString );
+	void invitedToChat(const QString&, const QString&, const QString&, const QString&, const QString& );
+	void startChat( const QString&, const QString& );
 
-	void publicNameChanged( QString );
+	void publicNameChanged( const QString& );
 	void statusChanged( const KopeteOnlineStatus &newStatus );
-
-//	void recievedInfo(QString, QString , QString);
+	
 	void hotmailSeted(bool) ;
 
 protected:

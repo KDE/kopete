@@ -24,18 +24,24 @@ NewUserImpl::~NewUserImpl(){
 }
 /**  */
 void NewUserImpl::slotClose(){
-	emit addUser(userHandle);
+	emit addUser(userHandle,publicName);
 	if(Block->isChecked()){
 		emit blockUser(userHandle);
 	}
 	delete this;
 }
 /**  */
-void NewUserImpl::setHandle(QString _handle ,QString _public){
+void NewUserImpl::setHandle(const QString & _handle ,const QString & _public){
 	if(_public.isNull())
+	{
 		handle->setText(_handle);
+		publicName = _handle;
+	}
 	else
+	{
 		handle->setText(_public+"\n("+_handle+")");
+		publicName = _public;
+	}
 		
 	userHandle = _handle;
 }

@@ -46,7 +46,7 @@
 #define KDE_IS_VERSION(x,y,z) 0
 #endif
 
-MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString &msnId )
+MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& msnId )
 : MSNAuthSocket( msnId, account )
 {
 	m_newstatus = MSNProtocol::protocol()->NLN;
@@ -170,11 +170,11 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		else
 		{
 			// Successful auth, sync contact list
-//			kdDebug(14140) << "Sending serial number" << endl;
-
-			//sendCommand( "SYN", QString::number( _serial ) );
-			sendCommand( "SYN", "0" );
-
+			QString serial=m_account->pluginData(m_account->protocol() , "serial" );
+			if(serial.isEmpty())
+				serial= "0";
+			sendCommand( "SYN", serial );
+			
 			// this is our current user and friendly name
 			// do some nice things with it  :-)
 			QString publicName = unescape( data.section( ' ', 2, 2 ) );
@@ -243,9 +243,10 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		else
 			group = 0;
 
-		// handle, publicName, List, serial , group
+		// handle, publicName, List,  group
 		emit contactAdded( msnId, unescape( data.section( ' ', 2, 2 ) ),
-			data.section( ' ', 0, 0 ), data.section( ' ', 1, 1 ).toUInt(), group );
+			data.section( ' ', 0, 0 ), group );
+		m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 1, 1 ) );
 	}
 	else if( cmd == "REM" ) // someone is removed from a list
 	{
@@ -255,9 +256,9 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		else
 			group = 0;
 
-		// handle, list, serial, group
-		emit contactRemoved( data.section( ' ', 2, 2 ), data.section( ' ', 0, 0 ),
-			data.section( ' ', 1, 1 ).toUInt(), group );
+		// handle, list, group
+		emit contactRemoved( data.section( ' ', 2, 2 ), data.section( ' ', 0, 0 ), group );
+		m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 1, 1 ) );
 	}
 	else if( cmd == "OUT" )
 	{
@@ -284,6 +285,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			if( c )
 				c->setDisplayName( unescape( data.section( ' ', 2, 2 ) ) );
 		}
+		m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 1,1) );
 	}
 	else if( cmd == "LSG" )
 	{
@@ -291,22 +293,23 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "ADG" )
 	{
-		// groupName, group , serial
+		// groupName, group 
 		emit groupAdded( unescape( data.section( ' ', 1, 1 ) ),
-			data.section( ' ', 2, 2 ).toUInt(),
-			data.section( ' ', 0, 0 ).toUInt() );
+			data.section( ' ', 2, 2 ).toUInt() );
+		m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 0, 0 ) );
 	}
 	else if( cmd == "REG" )
 	{
-		// groupName, group , serial
+		// groupName, group 
 		emit groupRenamed( unescape( data.section( ' ', 2, 2 ) ),
-			data.section( ' ', 1, 1 ).toUInt(),
-			data.section( ' ', 0, 0 ).toUInt() );
+			data.section( ' ', 1, 1 ).toUInt() );
+		m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 0, 0 ) );
 	}
 	else if( cmd == "RMG" )
 	{
-		// group , serial
-		emit groupRemoved( data.section( ' ', 1, 1 ).toUInt() , data.section( ' ', 0, 0 ).toUInt());
+		// group 
+		emit groupRemoved( data.section( ' ', 1, 1 ).toUInt() );
+		m_account->setPluginData(m_account->protocol() , "serial" ,  data.section( ' ', 0, 0 ) );
 	}
 	else if( cmd  == "CHL" )
 	{
@@ -317,15 +320,14 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "SYN" )
 	{
-/*		// this is the current serial on the server, if its different with the own we can get the user list
-		//isConnected = true;
-		uint serial = data.section( ' ', 0, 0 ).toUInt();
-		if( serial != _serial)
+		// this is the current serial on the server, if its different with the own we can get the user list
+		QString serial = data.section( ' ', 0, 0 );
+		if( serial != m_account->pluginData(m_account->protocol() , "serial") )
 		{
-			emit newSerial(serial);  // remove all contacts, msn sends a new contact list
-			_serial = serial;
-		}*/
-		//emit connected(true);
+			emit newContactList();  // remove all contacts datas, msn sends a new contact list
+			m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 0, 0 ) );
+		}
+
 		// set the status
 		setStatus( m_newstatus );
 	}
@@ -477,13 +479,13 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 	}
 }
 
-void MSNNotifySocket::addGroup(QString groupName)
+void MSNNotifySocket::addGroup(const QString& groupName)
 {
 	// escape spaces
 	sendCommand( "ADG", escape( groupName ) + " 0" );
 }
 
-void MSNNotifySocket::renameGroup( QString groupName, uint group )
+void MSNNotifySocket::renameGroup( const QString& groupName, uint group )
 {
 	// escape spaces
 	sendCommand( "REG", QString::number( group ) + " " +
@@ -495,7 +497,7 @@ void MSNNotifySocket::removeGroup( uint group )
 	sendCommand( "RMG", QString::number( group ) );
 }
 
-void MSNNotifySocket::addContact( const QString &handle, QString publicName, uint group, int list )
+void MSNNotifySocket::addContact( const QString &handle, const QString& publicName, uint group, int list )
 {
 	QString args;
 	switch( list )

@@ -69,7 +69,7 @@ public slots:
 	/**
 	 * Ask to the account to create a new chat session
 	 */
-	void slotStartChatSession( QString handle );
+	void slotStartChatSession( const QString& handle );
 
 protected:
 	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact );
@@ -103,19 +103,20 @@ private slots:
 	void slotStatusChanged( const KopeteOnlineStatus &status );
 	void slotNotifySocketClosed( int state );
 	void slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status );
-	void slotPublicNameChanged(QString publicName);
-	void slotContactRemoved(QString handle, QString list, uint serial, uint group );
-	void slotContactAdded(QString handle, QString publicName, QString list, uint serial, uint group );
-	void slotContactListed( QString handle, QString publicName, QString group, QString list );
+	void slotPublicNameChanged(const QString& publicName);
+	void slotContactRemoved(const QString& handle, const QString& list,  uint group );
+	void slotContactAdded(const QString& handle, const QString& publicName, const QString& list,  uint group );
+	void slotContactListed( const QString& handle, const QString& publicName, const QString& group, const QString& list );
+	void slotNewContactList();
 	/**
 	 * The group has successful renamed in the server
 	 * groupName: is new new group name
 	 */
-	void slotGroupRenamed( QString groupName, uint group );
+	void slotGroupRenamed( const QString& groupName, uint group );
 	/**
 	 * A new group was created on the server (or recieved durring an LSG command)
 	 */
-	void slotGroupAdded( QString groupName, uint groupNumber );
+	void slotGroupAdded( const QString& groupName, uint groupNumber );
 	/**
 	 * Group was removed from the server
 	 */
@@ -124,14 +125,15 @@ private slots:
 	 * Incoming RING command: connect to the Switchboard server and send
 	 * the startChat signal
 	 */
-	void slotCreateChat( QString sessionID, QString address, QString auth,
-		QString handle, QString publicName );
+	void slotCreateChat( const QString& sessionID, const QString& address, const QString& auth,
+		const QString& handle, const QString& publicName );
 	/**
 	 * Incoming XFR command: this is an result from
 	 * slotStartChatSession(handle)
 	 * connect to the switchboard server and sen startChat signal
 	 */
-	void slotCreateChat( QString address, QString auth);
+	void slotCreateChat( const QString& address, const QString& auth);
+
 
 	// ui related
 	/**
@@ -146,8 +148,8 @@ private slots:
 
 	/********************/	
 	/** add contact ui **/
-	void slotBlockContact( QString passport ) ;
-	void slotAddContact( const QString &userName );
+	void slotBlockContact( const QString& passport ) ;
+	void slotAddContact( const QString &userName , const QString& displayName);
 
 private:
 	KActionMenu *m_actionMenu;
