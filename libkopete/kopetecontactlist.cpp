@@ -89,21 +89,21 @@ void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 	emit metaContactAdded( mc );
 }
 
-/*void KopeteContactList::slotRemovedFromGroup( KopeteMetaContact *mc,
-	const QString &  )
+/*
+void KopeteContactList::slotRemovedFromGroup( KopeteMetaContact *mc, const QString &  )
 {
-	if( mc->groups().isEmpty() )
+	if ( mc->groups().isEmpty() )
 	{
-		kdDebug(14010) << "KopeteContactList::slotRemovedFromGroup: "
-			<< "contact removed from all groups: now toplevel." << endl;
+		kdDebug( 14010 ) << k_funcinfo << "Contact removed from all groups, is now top-level" << endl;
 		//m_contacts.remove( mc );
 		//mc->deleteLater();
 	}
-}                  */
+}
+*/
 
 void KopeteContactList::loadXML()
 {
-	addGroup( KopeteGroup::toplevel );
+	addGroup( KopeteGroup::topLevel() );
 
 	QString filename = locateLocal( "appdata", QString::fromLatin1( "contactlist.xml" ) );
 	if( filename.isEmpty() )
@@ -512,7 +512,7 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 					{
 						if( oldGroupElement.text() == QString::fromLatin1("Temporary") )
 							newGroup.setAttribute( QString::fromLatin1( "type" ), QString::fromLatin1( "temporary" ) );
-						else if( oldGroupElement.text() == QString::fromLatin1("TopLevel") )
+						else if( oldGroupElement.text() == QString::fromLatin1( "TopLevel" ) )
 							newGroup.setAttribute( QString::fromLatin1( "type" ), QString::fromLatin1( "top-level" ) );
 						else
 							newGroup.setAttribute( QString::fromLatin1( "type" ), QString::fromLatin1( "standard" ) );
@@ -847,7 +847,7 @@ void KopeteContactList::removeGroup( KopeteGroup *g)
 KopeteGroup * KopeteContactList::getGroup(const QString& displayName, KopeteGroup::GroupType type)
 {
 	if( type == KopeteGroup::Temporary )
-		return KopeteGroup::temporary;
+		return KopeteGroup::temporary();
 
 	KopeteGroup *groupIterator;
 	for ( groupIterator = m_groupList.first(); groupIterator; groupIterator = m_groupList.next() )

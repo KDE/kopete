@@ -226,7 +226,7 @@ void AddContactWizard::accept()
 			topLevel = false;
 		}
 	}
-	metaContact->setTopLevel( topLevel );
+	metaContact->addToGroup( KopeteGroup::topLevel() );
 
 	bool ok = protocolPages.isEmpty();
 

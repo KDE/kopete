@@ -1,19 +1,20 @@
-/***************************************************************************
-                          kopetegroupviewitem.cpp  -  description
-                             -------------------
-    begin                : lun oct 28 2002
-    copyright            : (C) 2002 by Olivier Goffart
-    email                : ogoffart@tiscalinet.be
- ***************************************************************************/
+/*
+    kopeteonlinestatus.cpp - Kopete Online Status
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Copyright (c) 2002-2003 by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
+
+    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #include <klocale.h>
 #include <kiconloader.h>
@@ -25,9 +26,8 @@
 #include "kopetemetacontactlvi.h"
 #include "kopetemetacontact.h"
 
-KopeteGroupViewItem::KopeteGroupViewItem(KopeteGroup *group_,
-	QListView *parent, const char *name )
-		: QObject(group_), QListViewItem(parent,name)
+KopeteGroupViewItem::KopeteGroupViewItem( KopeteGroup *group_, QListView *parent, const char *name )
+: QObject( group_ ), QListViewItem( parent, name )
 {
 	setVisible( false );
 	m_group = group_;
@@ -63,15 +63,25 @@ KopeteGroup* KopeteGroupViewItem::group() const
 void KopeteGroupViewItem::refreshDisplayName()
 {
 //	if(!m_group) return;
-	QString newText = m_group->displayName();
 
-	if( m_group == KopeteGroup::temporary )
+	QString newText;
+	switch ( m_group->type() )
+	{
+	case KopeteGroup::Temporary:
 		newText = i18n( "Not in your contact list" );
+		break;
+	case KopeteGroup::TopLevel:
+		newText = i18n( "Top-Level" );
+		break;
+	default:
+		newText = m_group->displayName();
+		break;
+    }
 
-	totalMemberCount=0;
-	onlineMemberCount=0;
+	totalMemberCount = 0;
+	onlineMemberCount = 0;
 
-	for(QListViewItem *lvi = firstChild() ; lvi; lvi = lvi->nextSibling() )
+	for ( QListViewItem *lvi = firstChild(); lvi; lvi = lvi->nextSibling() )
 	{
 		KopeteMetaContactLVI *kc = dynamic_cast<KopeteMetaContactLVI*>( lvi );
 		if ( kc )
@@ -83,10 +93,9 @@ void KopeteGroupViewItem::refreshDisplayName()
 	}
 
 	m_renameText = newText;
-	newText += "  ("+QString::number(onlineMemberCount)+"/"+QString::number(totalMemberCount)+")";
+	newText += " (" + QString::number( onlineMemberCount ) + "/" + QString::number( totalMemberCount ) + ")";
 
-	/*kdDebug(14000) << k_funcinfo << "newText='" << newText <<
-		"', old text= " << text(0) << endl;*/
+	//kdDebug( 14000 ) << k_funcinfo << "newText='" << newText << "', old text= " << text( 0 ) << endl;
 
 	setText( 0, newText );
 	updateVisibility();
@@ -97,9 +106,9 @@ QString KopeteGroupViewItem::key( int, bool ) const
 {
 	//Groups are placed after topLevel contact.
 	//Temporary group is the first group
-	if( group()->type() != KopeteGroup::Classic )
-		return "L"+text(0);
-	return "M"+text(0);
+	if ( group()->type() != KopeteGroup::Normal )
+		return "L" + text( 0 );
+	return "M" + text( 0 );
 }
 
 void KopeteGroupViewItem::startRename( int col )
@@ -188,3 +197,6 @@ void KopeteGroupViewItem::updateCustomIcons(bool treeView)
 }
 
 #include "kopetegroupviewitem.moc"
+
+// vim: set noet ts=4 sts=4 sw=4:
+

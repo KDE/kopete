@@ -1,9 +1,10 @@
 /*
-    kopetegroup.cpp  -  Kopete Group
+    kopetegroup.cpp - Kopete (Meta)Contact Group
 
-    Copyright (c) 2002      by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2003 by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -16,52 +17,66 @@
 */
 
 #include "kopetegroup.h"
+
 #include "kopetecontactlist.h"
 
-
 #include <klocale.h>
-
-KopeteGroup* KopeteGroup::toplevel = new KopeteGroup(i18n( "Contacts are put in groups. Top Level holds all groups (but can contain contacts too) Similar to KMail's folders", "Top Level" ) , KopeteGroup::TopLevel);
-KopeteGroup* KopeteGroup::temporary = new KopeteGroup(i18n("Not in your contact list"),KopeteGroup::Temporary);
 
 struct KopeteGroupPrivate
 {
 	QString displayName;
 	KopeteGroup::GroupType type;
 	bool expanded;
-	unsigned int groupId;
-
-	/*KopeteGroup *parentGroup;
-	//in case of the loading from xml, the group might not be already loaded
-	unsigned int parentGroupId;*/
+	uint groupId;
 
 	//Unique contact id per metacontact
-	static unsigned int uniqueGroupId;
+	static uint uniqueGroupId;
 };
 
-unsigned int KopeteGroupPrivate::uniqueGroupId=0;
+KopeteGroup *KopeteGroup::s_topLevel  = 0L;
+KopeteGroup *KopeteGroup::s_temporary = 0L;
 
-KopeteGroup::KopeteGroup(QString _name, GroupType _type)  : KopetePluginDataObject(KopeteContactList::contactList())
+KopeteGroup * KopeteGroup::topLevel()
 {
-	d = new KopeteGroupPrivate;
-	d->displayName=_name;
-	d->type=_type;
-	d->expanded = true;
-	d->groupId=0;
-/*	d->parentGroup=0L;
-	d->parentGroupId=0;*/
-}
-KopeteGroup::KopeteGroup()  : KopetePluginDataObject(KopeteContactList::contactList())
-{
-	d = new KopeteGroupPrivate;
-	d->expanded = true;
-	d->type=Classic;
-	d->displayName=QString::null;
-	d->groupId=0;
-/*	d->parentGroup=0L;
-	d->parentGroupId=0;*/
+	if ( !s_topLevel )
+	{
+		s_topLevel = new KopeteGroup(
+			i18n( "Contacts are put in groups. Top Level holds all groups (but can contain contacts too) Similar to KMail's folders", "Top Level" ),
+			KopeteGroup::TopLevel );
+	}
+
+	return s_topLevel;
 }
 
+KopeteGroup * KopeteGroup::temporary()
+{
+	if ( s_temporary )
+		s_temporary = new KopeteGroup( i18n( "Not in your contact list" ), KopeteGroup::Temporary );
+
+	return s_temporary;
+}
+
+uint KopeteGroupPrivate::uniqueGroupId = 0;
+
+KopeteGroup::KopeteGroup( const QString &_name, GroupType _type )
+: KopetePluginDataObject( KopeteContactList::contactList() )
+{
+	d = new KopeteGroupPrivate;
+	d->displayName = _name;
+	d->type = _type;
+	d->expanded = true;
+	d->groupId = 0;
+}
+
+KopeteGroup::KopeteGroup()
+: KopetePluginDataObject( KopeteContactList::contactList() )
+{
+	d = new KopeteGroupPrivate;
+	d->expanded = true;
+	d->type = Normal;
+	d->displayName = QString::null;
+	d->groupId = 0;
+}
 
 KopeteGroup::~KopeteGroup()
 {
@@ -71,114 +86,114 @@ KopeteGroup::~KopeteGroup()
 const QDomElement KopeteGroup::toXML()
 {
 	QDomDocument group;
-	group.appendChild( group.createElement(QString::fromLatin1("kopete-group")) );
-	group.documentElement().setAttribute( QString::fromLatin1("groupId"), QString::number( groupId()) );
+	group.appendChild( group.createElement( QString::fromLatin1( "kopete-group" ) ) );
+	group.documentElement().setAttribute( QString::fromLatin1( "groupId" ), QString::number( groupId() ) );
 
 	QString type;
-	if( d->type == Temporary )
+	switch ( d->type )
+	{
+	case Temporary:
 		type = QString::fromLatin1( "temporary" );
-	else if( d->type == TopLevel )
+		break;
+	case TopLevel:
 		type = QString::fromLatin1( "top-level" );
-	else
-		type = QString::fromLatin1( "standard" ); // == Classic
+		break;
+	default:
+		type = QString::fromLatin1( "standard" ); // == Normal
+		break;
+	}
 
-	group.documentElement().setAttribute( QString::fromLatin1("type"), type );
-	group.documentElement().setAttribute( QString::fromLatin1("view"), QString::fromLatin1( d->expanded ? "expanded" : "collapsed" )  );
+	group.documentElement().setAttribute( QString::fromLatin1( "type" ), type );
+	group.documentElement().setAttribute( QString::fromLatin1( "view" ), QString::fromLatin1( d->expanded ? "expanded" : "collapsed" )  );
 
-	QDomElement displayName = group.createElement(QString::fromLatin1("display-name"));
+	QDomElement displayName = group.createElement( QString::fromLatin1( "display-name" ) );
 	displayName.appendChild( group.createTextNode( d->displayName ) );
 	group.documentElement().appendChild( displayName );
 
-	/*if( parentGroup() != KopeteGroup::toplevel )
-	{
-		QDomElement parentG = group.createElement(QString::fromLatin1("parent-group"));
-		parentG.setAttribute( QString::fromLatin1("groupId"), QString::number( parentGroup()->groupId()) );
-		group.documentElement().appendChild( parentG );
-	}*/
-
 	// Store other plugin data
 	QValueList<QDomElement> pluginData = KopetePluginDataObject::toXML();
-	for( QValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
+	for ( QValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
 		group.documentElement().appendChild( group.importNode( *it, true ) );
 
 	return group.documentElement();
 }
 
-bool KopeteGroup::fromXML( const QDomElement& data )
+bool KopeteGroup::fromXML( const QDomElement &data )
 {
-	QString strGroupId = data.attribute( QString::fromLatin1("groupId") );
-	if( !strGroupId.isEmpty() )
+	QString strGroupId = data.attribute( QString::fromLatin1( "groupId" ) );
+	if ( !strGroupId.isEmpty() )
 	{
 		d->groupId = strGroupId.toUInt();
-		if( d->groupId > d->uniqueGroupId )
+		if ( d->groupId > d->uniqueGroupId )
 			d->uniqueGroupId = d->groupId;
 	}
+
 	QString type = data.attribute( QString::fromLatin1( "type" ), QString::fromLatin1( "standard" ) );
-	if( type == QString::fromLatin1( "temporary" ) )
+	if ( type == QString::fromLatin1( "temporary" ) )
 	{
-		if(d->type != Temporary)
+		if ( d->type != Temporary )
 		{
-			temporary->fromXML(data);
+			s_temporary->fromXML( data );
 			return false;
 		}
 	}
-	else if( type == QString::fromLatin1( "top-level" ) )
+	else if ( type == QString::fromLatin1( "top-level" ) )
 	{
-		if(d->type != TopLevel)
+		if ( d->type != TopLevel )
 		{
-			toplevel->fromXML(data);
+			s_topLevel->fromXML( data );
 			return false;
 		}
 	}
 	else
-		d->type = Classic;
+	{
+		d->type = Normal;
+	}
 
 	QString view = data.attribute( QString::fromLatin1( "view" ), QString::fromLatin1( "expanded" ) );
 	d->expanded = ( view != QString::fromLatin1( "collapsed" ) );
 
 	QDomNode groupData = data.firstChild();
-	while( !groupData.isNull() )
+	while ( !groupData.isNull() )
 	{
 		QDomElement groupElement = groupData.toElement();
-		if( groupElement.tagName() == QString::fromLatin1( "display-name" ) )
-		{
-//			if( groupElement.text().isEmpty() )
-//				return false;
+		if ( groupElement.tagName() == QString::fromLatin1( "display-name" ) )
 			d->displayName = groupElement.text();
-		}
-		/*else if( groupElement.tagName() == QString::fromLatin1( "parent-group" ) )
-		{
-			d->parentGroupId = groupElement.attribute( QString::fromLatin1( "groupId" ) , QString::fromLatin1( "0" ) ).toUInt();
-		}*/
-		else //if( groupElement.tagName() == QString::fromLatin1( "plugin-data" ) || groupElement.tagName() == QString::fromLatin1( "custom-icons" ))
-		{
-			KopetePluginDataObject::fromXML(groupElement);
-		}
+		else
+			KopetePluginDataObject::fromXML( groupElement );
 
 		groupData = groupData.nextSibling();
 	}
 
-	// sanity checks. We must not have groups without a displayname. "Classic" should never happen.
+	// sanity checks. We must not have groups without a displayname. "Normal" should never happen.
 	// Should "Default" be i18n()ed as well?
 	if ( d->displayName.isEmpty() )
 	{
-		d->displayName = (d->type == Temporary) ? i18n("Not in your contact list") :
-							(d->type == TopLevel) ? QString::fromLatin1("Default") :
-										QString::fromLatin1("Classic");
+		switch ( d->type )
+		{
+		case Temporary:
+			d->displayName = i18n( "Not in your contact list" );
+			break;
+		case TopLevel:
+			d->displayName = QString::fromLatin1( "Default" );
+			break;
+		default:
+			d->displayName = QString::fromLatin1( "Normal" );
+			break;
+		}
 	}
 
-//	return true;
-	return (d->type==Classic);
-	//FIXME: this workaroud allow to save data for the top-level group
+	//FIXME: this workaround allows to save data for the top-level group
+	return ( d->type == Normal );
 }
 
-void KopeteGroup::setDisplayName(const QString &s)
+void KopeteGroup::setDisplayName( const QString &s )
 {
-	if( d->displayName != s )
+	if ( d->displayName != s )
 	{
 		QString oldname = d->displayName;
 		d->displayName = s;
-		emit renamed(this, oldname);
+		emit renamed( this, oldname );
 	}
 }
 
@@ -191,58 +206,31 @@ KopeteGroup::GroupType KopeteGroup::type() const
 {
 	return d->type;
 }
-void KopeteGroup::setType(GroupType t)
+
+void KopeteGroup::setType( GroupType t )
 {
 	d->type = t;
 }
 
-void KopeteGroup::setExpanded(bool in_expanded)
+void KopeteGroup::setExpanded( bool isExpanded )
 {
-	d->expanded = in_expanded;
+	d->expanded = isExpanded;
 }
-bool KopeteGroup::expanded() const
+
+bool KopeteGroup::isExpanded() const
 {
 	return d->expanded;
 }
 
-unsigned int KopeteGroup::groupId() const
+uint KopeteGroup::groupId() const
 {
-	if( d->groupId == 0 )
+	if ( d->groupId == 0 )
 		d->groupId = ++d->uniqueGroupId;
 
 	return d->groupId;
 }
 
-/*KopeteGroup* KopeteGroup::parentGroup()
-{
-	if(d->parentGroup)
-		return d->parentGroup;
-	else if(d->parentGroupId!=0)
-	{
-		KopeteGroup *g=KopeteContactList::contactList()->getGroup(d->parentGroupId);
-		if(g)
-		{
-			d->parentGroup=g;
-			return g;
-		}
-	}
-	return KopeteGroup::toplevel;
-}
-
-void KopeteGroup::setParentGroup(KopeteGroup* g)
-{
-	KopeteGroup *old_one=parentGroup();
-	if(!g)
-		g=KopeteGroup::toplevel;
-	KopeteGroup *gr=g->parentGroup();
-	while(gr && gr != KopeteGroup::toplevel)
-	{
-		if(gr==this)
-			return;
-		gr=gr->parentGroup();
-	}
-	d->parentGroup=g;
-	emit movedToGroup( old_one , g , this );
-}*/
-
 #include "kopetegroup.moc"
+
+// vim: set noet ts=4 sts=4 sw=4:
+

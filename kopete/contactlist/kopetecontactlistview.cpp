@@ -412,7 +412,7 @@ void KopeteContactListView::slotMetaContactDeleted( KopeteMetaContact *mc )
 
 void KopeteContactListView::slotAddedToGroup( KopeteMetaContact *mc, KopeteGroup *to )
 {
-	if(!KopetePrefs::prefs()->sortByGroup() && to!=KopeteGroup::temporary)
+	if ( !KopetePrefs::prefs()->sortByGroup() && to->type() != KopeteGroup::Temporary )
 		return;
 
 	//check if the contact isn't already in the group
@@ -443,7 +443,7 @@ void KopeteContactListView::slotAddedToGroup( KopeteMetaContact *mc, KopeteGroup
 
 void KopeteContactListView::slotRemovedFromGroup( KopeteMetaContact *mc, KopeteGroup *from )
 {
-	if(!KopetePrefs::prefs()->sortByGroup() && from!=KopeteGroup::temporary)
+	if ( !KopetePrefs::prefs()->sortByGroup() && from->type() != KopeteGroup::Temporary )
 		return;
 
 	KopeteGroupViewItem *group_item = getGroup( from , false );
@@ -478,7 +478,7 @@ void KopeteContactListView::slotRemovedFromGroup( KopeteMetaContact *mc, KopeteG
 		if(!yes)
 		{
 			mc->isTopLevel(); //put the contact to toplevel
-			slotMovedToGroup( mc, from, KopeteGroup::toplevel );
+			slotMovedToGroup( mc, from, KopeteGroup::topLevel() );
 			return;
 		}
 	}
@@ -501,14 +501,14 @@ void KopeteContactListView::slotRemovedFromGroup( KopeteMetaContact *mc, KopeteG
 	group_item->refreshDisplayName();
 
 	//delete temporary-group if it is empty
-	if(from == KopeteGroup::temporary)
+	if ( from->type() == KopeteGroup::Temporary )
 	{
-		KopeteGroupViewItem *m_temporaryGroup=getGroup(KopeteGroup::temporary, false);
-		if(m_temporaryGroup->childCount() ==0)
+		KopeteGroupViewItem *m_temporaryGroup = getGroup( KopeteGroup::temporary(), false );
+		if ( m_temporaryGroup->childCount() == 0 )
 		{
-			mGroups.remove(m_temporaryGroup);
+			mGroups.remove( m_temporaryGroup );
 			delete m_temporaryGroup;
-			m_temporaryGroup=0l;
+			m_temporaryGroup = 0L;
 		}
 	}
 
@@ -518,11 +518,11 @@ void KopeteContactListView::slotRemovedFromGroup( KopeteMetaContact *mc, KopeteG
 
 void KopeteContactListView::slotMovedToGroup( KopeteMetaContact *mc, KopeteGroup *from, KopeteGroup *to )
 {
-	if(!KopetePrefs::prefs()->sortByGroup())
+	if ( !KopetePrefs::prefs()->sortByGroup() )
 	{
-		if(to==KopeteGroup::temporary)
+		if ( to->type() == KopeteGroup::Temporary )
 			slotAddedToGroup( mc, to );
-		else if(from==KopeteGroup::temporary)
+		else if ( from->type() == KopeteGroup::Temporary )
 			slotRemovedFromGroup( mc, from );
 		return;
 	}
@@ -572,14 +572,15 @@ void KopeteContactListView::slotMovedToGroup( KopeteMetaContact *mc, KopeteGroup
 		}
 	}
 
-	if(from==KopeteGroup::temporary)
-	{	//delete temporary-group if it is empty
-		KopeteGroupViewItem *m_temporaryGroup=getGroup(KopeteGroup::temporary, false);
-		if(m_temporaryGroup && m_temporaryGroup->childCount() ==0)
+	if ( from->type() == KopeteGroup::Temporary )
+	{
+		// Delete temporary group if it is empty
+		KopeteGroupViewItem *m_temporaryGroup = getGroup( KopeteGroup::temporary(), false );
+		if ( m_temporaryGroup && m_temporaryGroup->childCount() == 0 )
 		{
-			mGroups.remove(m_temporaryGroup);
+			mGroups.remove( m_temporaryGroup );
 			delete m_temporaryGroup;
-			m_temporaryGroup=0l;
+			m_temporaryGroup = 0L;
 		}
 	}
 }
@@ -601,16 +602,15 @@ void KopeteContactListView::removeContact( KopeteMetaContact *c )
 			m_metaContacts.next();
 	}
 
-
 	//delete temporary-group if it is empty
-	KopeteGroupViewItem *m_temporaryGroup=getGroup(KopeteGroup::temporary, false);
-	if(m_temporaryGroup)
+	KopeteGroupViewItem *m_temporaryGroup = getGroup( KopeteGroup::temporary(), false );
+	if ( m_temporaryGroup )
 	{
-		if(m_temporaryGroup->childCount() ==0)
+		if ( m_temporaryGroup->childCount() == 0 )
 		{
-			mGroups.remove(m_temporaryGroup);
+			mGroups.remove( m_temporaryGroup );
 			delete m_temporaryGroup;
-			m_temporaryGroup=0l;
+			m_temporaryGroup = 0L;
 		}
 	}
 }
@@ -620,7 +620,7 @@ KopeteGroupViewItem *KopeteContactListView::getGroup( KopeteGroup *Kgroup , bool
 	if( !Kgroup )
 		return 0L;
 
-	if( Kgroup == KopeteGroup::toplevel)
+	if ( Kgroup->type() == KopeteGroup::TopLevel )
 		return 0L;
 
 	for( KopeteGroupViewItem *it = mGroups.first(); it; it = mGroups.next() )
@@ -635,7 +635,7 @@ KopeteGroupViewItem *KopeteContactListView::getGroup( KopeteGroup *Kgroup , bool
 	KopeteGroupViewItem *item = new KopeteGroupViewItem( Kgroup, this );
 	mGroups.append( item );
 
-	if( Kgroup->expanded() )
+	if ( Kgroup->isExpanded() )
 	{
 		item->setOpen( true );
 		slotExpanded( item );
@@ -951,8 +951,8 @@ void KopeteContactListView::slotSettingsChanged( void )
 					m_metaContacts.remove( li );
 					delete li;
 
-					if( mc->isTopLevel() )
-						slotAddedToGroup( mc, KopeteGroup::toplevel );
+					if ( mc->isTopLevel() )
+						slotAddedToGroup( mc, KopeteGroup::topLevel() );
 					KopeteGroupList list=mc->groups();
 					for(KopeteGroup *it=list.first() ; it; it=list.next() )
 						slotAddedToGroup( mc, it );
@@ -990,9 +990,9 @@ void KopeteContactListView::slotSettingsChanged( void )
 			}
 		}  while (cont);
 		gi = mGroups.first();
-		while ( (gi=mGroups.current()) )
+		while ( ( gi = mGroups.current() ) != 0L )
 		{
-			if ( gi->group() != KopeteGroup::temporary)
+			if ( gi->group()->type() != KopeteGroup::Temporary )
 			{
 				mGroups.remove( gi );
 				delete gi;
@@ -1167,20 +1167,21 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 	}
 	else if(source_metaLVI  && !dest_metaLVI && !dest_groupLVI)
 	{
-		if(source_metaLVI->group() == KopeteGroup::toplevel)
+		if ( source_metaLVI->group()->type() == KopeteGroup::TopLevel )
 			return;
+
 		if(source_metaLVI->metaContact()->isTemporary())
 		{
 			int r=KMessageBox::questionYesNo( qApp->mainWidget(), i18n( "<qt>Would you like to add this contact to your contact list?</qt>" ),
 				i18n( "Kopete" ), KStdGuiItem::yes(),KStdGuiItem::no(),"addTemporaryWhenMoving" );
 
-			if(r==KMessageBox::Yes)
-				source_metaLVI->metaContact()->setTemporary( false, KopeteGroup::toplevel );
+			if ( r == KMessageBox::Yes )
+				source_metaLVI->metaContact()->setTemporary( false, KopeteGroup::topLevel() );
 		}
 		else
 		{
 //			kdDebug(14000) << "KopeteContactListView::slotDropped : moving the meta contact " << source_metaLVI->metaContact()->displayName()			<< " to top-level " <<	endl;
-			source_metaLVI->metaContact()->moveToGroup(source_metaLVI->group() , KopeteGroup::toplevel);
+			source_metaLVI->metaContact()->moveToGroup( source_metaLVI->group(), KopeteGroup::topLevel() );
 		}
 	}
 	else if(source_contact && dest_metaLVI) //we are moving a contact to another metacontact
@@ -1266,7 +1267,7 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 		{
 			if(source_metaLVI->group() == dest_groupLVI->group())
 				return false;
-			if(dest_groupLVI->group() == KopeteGroup::temporary)
+			if ( dest_groupLVI->group()->type() == KopeteGroup::Temporary )
 				return false;
 	//		if(source_metaLVI->metaContact()->isTemporary())
 	//			return false;
@@ -1274,7 +1275,7 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 		}
 		else if(source_metaLVI  && !dest_metaLVI && !dest_groupLVI && !source_contact) //we are moving a metacontact to toplevel
 		{
-			if(source_metaLVI->group() == KopeteGroup::toplevel)
+			if ( source_metaLVI->group()->type() == KopeteGroup::TopLevel )
 				return false;
 	//		if(source_metaLVI->metaContact()->isTemporary())
 	//			return false;
@@ -1536,9 +1537,9 @@ void KopeteContactListView::slotMoveToGroup()
 	KopeteGroup *g=metaLVI->group();
 
 	//FIXME! what ios two groups have the same name?
-	KopeteGroup *to = actionMove->currentItem() ? KopeteContactList::contactList()->getGroup( actionMove->currentText() )  : KopeteGroup::toplevel;
+	KopeteGroup *to = actionMove->currentItem() ? KopeteContactList::contactList()->getGroup( actionMove->currentText() ) : KopeteGroup::topLevel();
 
-	if( !to ||  to==KopeteGroup::temporary )
+	if( !to || to->type() == KopeteGroup::Temporary )
 		return;
 
 
@@ -1548,7 +1549,7 @@ void KopeteContactListView::slotMoveToGroup()
 				i18n( "Kopete" ), KStdGuiItem::yes(),KStdGuiItem::no(),"addTemporaryWhenMoving" ) == KMessageBox::Yes )
 		{
 			m->setTemporary(false,g);
-			m->moveToGroup( KopeteGroup::toplevel, to );
+			m->moveToGroup( KopeteGroup::topLevel(), to );
 		}
 	}
 	else if( !m->groups().contains( to ) )
@@ -1565,12 +1566,12 @@ void KopeteContactListView::slotCopyToGroup()
 	if(!m)
 		return;
 
-	//FIXME! what ios two groups have the same name?
+	//FIXME! what if two groups have the same name?
 	KopeteGroup *to = actionCopy->currentItem() ?
 		KopeteContactList::contactList()->getGroup( actionCopy->currentText() ) :
-		KopeteGroup::toplevel;
+		KopeteGroup::topLevel();
 
-	if( !to || to == KopeteGroup::temporary )
+	if( !to || to->type() == KopeteGroup::Temporary )
 		return;
 
 	if( m->isTemporary() )

@@ -1,9 +1,10 @@
 /*
-    kopetegroup.h - Kopete's Group
+    kopetegroup.h - Kopete (Meta)Contact Group
 
-    Copyright (c) 2002 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2003 by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -19,13 +20,12 @@
 #define KOPETEGROUP_H
 
 #include "kopeteplugindataobject.h"
-#include <qstringlist.h>
-#include <qvaluelist.h>
-#include <qdom.h>
+
+#include <qptrlist.h>
 
 class QDomElement;
-class KopetePlugin;
-struct KopeteGroupPrivate;
+
+class KopeteGroupPrivate;
 
 /**
  * @author Olivier Goffart
@@ -35,45 +35,52 @@ class KopeteGroup : public KopetePluginDataObject
 	Q_OBJECT
 
 public:
-	enum GroupType { Classic, Temporary, TopLevel};
+	enum GroupType { Normal, Temporary, TopLevel };
 
-	KopeteGroup();
 	/**
-	 * Constructor: note that the constructor doesn't add the group automatically to the contactlist.
+	 * Create an empty group
+	 * Note that the constructor doesn't add the group automatically to the contactlist.
 	 * use @ref KopeteContactList::addGroup() to add it
 	 */
-	KopeteGroup(QString name, GroupType type=Classic);
-//	KopeteGroup(const KopeteGroup &);
+	KopeteGroup();
+
+	/**
+	 * Overloaded constructor to create a group of the specified type.
+	 */
+	KopeteGroup( const QString &name, GroupType type = Normal );
+
 	~KopeteGroup();
 
 	/**
-	 *   return the group displayName
+	 * return the group displayName
 	 */
-	QString displayName() const ;
+	QString displayName() const;
 
 	/**
 	 *  rename the group
 	 */
-	void setDisplayName (const QString&);
+	void setDisplayName( const QString &newName );
 
 	/**
 	 * return the group type
 	 */
-	GroupType type() const ;
+	GroupType type() const;
+
 	/**
 	 * set the group type
 	 */
-	void setType(GroupType);
+	void setType( GroupType newType );
 
 	/**
 	 * Return the unique id for this group
 	 */
-	unsigned int groupId() const;
+	uint groupId() const;
 
 	/**
 	 * @internal
 	 */
 	const QDomElement toXML();
+
 	/**
 	 * @internal
 	 */
@@ -82,46 +89,39 @@ public:
 	/**
 	 * set if the group is expanded. this is saved to the xml contactlist file
 	 */
-	void setExpanded(bool in_expanded) ;
-	/**
-	 * say if the group is expanded or not,
-	 */
-	bool expanded() const;
+	void setExpanded( bool expanded );
 
 	/**
-	 * set the parent group
-	 * a group = 0L means the top-level group
+	 * return whether the group is expanded or not,
 	 */
-	//void setParentGroup(KopeteGroup*);
-	/**
-	 * Accessor to the parent group.
-	 */
-	//KopeteGroup* parentGroup();
-
+	bool isExpanded() const;
 
 	/**
 	 * a link to the toplevel group
 	 */
-	static KopeteGroup *toplevel;
+	static KopeteGroup *topLevel();
+
 	/**
 	 * a link to the temporary group
 	 */
-	static KopeteGroup *temporary;
+	static KopeteGroup *temporary();
 
 signals:
 	/**
 	 * The group has been renamed
 	 */
-	void renamed(KopeteGroup* , const QString& );
-	/**
-	 * The group has changed parents
-	 */
-	//void movedToGroup( KopeteGroup *from , KopeteGroup *to, KopeteGroup *this_one );
+	void renamed( KopeteGroup *group , const QString &oldName );
 
 private:
+	static KopeteGroup *s_topLevel;
+	static KopeteGroup *s_temporary;
+
 	KopeteGroupPrivate *d;
 };
 
 typedef QPtrList<KopeteGroup> KopeteGroupList;
 
 #endif
+
+// vim: set noet ts=4 sts=4 sw=4:
+

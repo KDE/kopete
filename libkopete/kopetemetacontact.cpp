@@ -205,17 +205,9 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 
 bool KopeteMetaContact::isTopLevel()
 {
-	if( d->groups.isEmpty() )
-		d->groups.append( KopeteGroup::toplevel );
-	return( d->groups.contains( KopeteGroup::toplevel ) );
-}
-
-void KopeteMetaContact::setTopLevel( bool b )
-{
-	if(b)
-		addToGroup(KopeteGroup::toplevel);
-	else
-		removeFromGroup(KopeteGroup::toplevel);
+	if ( d->groups.isEmpty() )
+		d->groups.append( KopeteGroup::topLevel() );
+	return( d->groups.contains( KopeteGroup::topLevel() ) );
 }
 
 KopeteContact *KopeteMetaContact::findContact( const QString &protocolId,
@@ -531,19 +523,17 @@ void KopeteMetaContact::slotContactNameChanged( const QString &/*oldName*/, cons
 
 void KopeteMetaContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
 {
-	if( isTemporary() && to != KopeteGroup::temporary )
+	if ( isTemporary() && to->type() != KopeteGroup::Temporary )
 		return;
 
-	if( !from || !d->groups.contains( from ) ||
-		( !isTopLevel() && from == KopeteGroup::toplevel ) )
+	if ( !from || !d->groups.contains( from ) || ( !isTopLevel() && from->type() == KopeteGroup::TopLevel ) )
 	{
 		// We're adding, not moving, because 'from' is illegal
 		addToGroup( to );
 		return;
 	}
 
-	if( !to || d->groups.contains( to ) ||
-		( isTopLevel() && to == KopeteGroup::toplevel ) )
+	if ( !to || d->groups.contains( to ) || ( isTopLevel() && to->type() == KopeteGroup::TopLevel ) )
 	{
 		// We're removing, not moving, because 'to' is illegal
 		removeFromGroup( from );
@@ -563,9 +553,8 @@ void KopeteMetaContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
 
 void KopeteMetaContact::removeFromGroup( KopeteGroup *group )
 {
-	if( !group || !d->groups.contains( group ) ||
-		( !isTopLevel() && group == KopeteGroup::toplevel ) ||
-		( isTemporary() && group == KopeteGroup::temporary ) )
+	if ( !group || !d->groups.contains( group ) || ( !isTopLevel() && group->type() == KopeteGroup::TopLevel ) ||
+		( isTemporary() && group->type() == KopeteGroup::Temporary ) )
 	{
 		return;
 	}
@@ -580,13 +569,11 @@ void KopeteMetaContact::removeFromGroup( KopeteGroup *group )
 
 void KopeteMetaContact::addToGroup( KopeteGroup *to )
 {
-	if( d->temporary && to != KopeteGroup::temporary )
+	if ( d->temporary && to->type() != KopeteGroup::Temporary )
 		return;
 
-	if( !to || d->groups.contains( to ) || ( to == KopeteGroup::toplevel && isTopLevel() ) )
-	{
+	if ( !to || d->groups.contains( to ) || ( to->type() == KopeteGroup::TopLevel && isTopLevel() ) )
 		return;
-	}
 
 	d->groups.append( to );
 
@@ -598,8 +585,6 @@ void KopeteMetaContact::addToGroup( KopeteGroup *to )
 
 KopeteGroupList KopeteMetaContact::groups() const
 {
-/*	if(d->groups.isEmpty())
-		d->groups.append(KopeteGroup::toplevel);*/
 	return d->groups;
 }
 
@@ -682,7 +667,7 @@ bool KopeteMetaContact::fromXML( const QDomElement& element )
 						d->groups.append( KopeteContactList::contactList()->getGroup( groupElement.text() ) );
 				}
 				else if( groupElement.tagName() == QString::fromLatin1( "top-level" ) ) //kopete 0.6 contactlist
-					d->groups.append( KopeteGroup::toplevel );
+					d->groups.append( KopeteGroup::topLevel() );
 
 				group = group.nextSibling();
 			}
@@ -731,8 +716,8 @@ bool KopeteMetaContact::isTemporary() const
 void KopeteMetaContact::setTemporary( bool isTemporary, KopeteGroup *group )
 {
 	d->temporary = isTemporary;
-	KopeteGroup *temporaryGroup = KopeteGroup::temporary;
-	if( d->temporary )
+	KopeteGroup *temporaryGroup = KopeteGroup::temporary();
+	if ( d->temporary )
 	{
 		addToGroup (temporaryGroup);
 		KopeteGroup *g;

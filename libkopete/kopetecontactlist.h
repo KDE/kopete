@@ -166,7 +166,7 @@ public:
 	 * If a group already exists with the given name and the given type, the existing group will be returned.
  	 * Otherwise, a new group will be created.
 	 */
-	KopeteGroup * getGroup(const QString& displayName, KopeteGroup::GroupType type=KopeteGroup::Classic);
+	KopeteGroup * getGroup( const QString &displayName, KopeteGroup::GroupType type = KopeteGroup::Normal );
 
 	/**
 	 * return the group with the given unique id. if none is found return 0L

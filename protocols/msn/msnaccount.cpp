@@ -625,7 +625,7 @@ void MSNAccount::addGroup( const QString &groupName, const QString& contactToAdd
 
 void MSNAccount::slotKopeteGroupRenamed( KopeteGroup *g )
 {
-	if ( g->type() == KopeteGroup::Classic )
+	if ( g->type() == KopeteGroup::Normal )
 	{
 		if ( !g->pluginData( protocol(), accountId() + " id" ).isEmpty() )
 		{
@@ -651,11 +651,11 @@ void MSNAccount::slotKopeteGroupRemoved( KopeteGroup *g )
 		{
 			// the group #0 can't be deleted
 			// then we set it as the top-level group
-			if ( g == KopeteGroup::toplevel )
+			if ( g->type() == KopeteGroup::TopLevel )
 				return;
 
-			KopeteGroup::toplevel->setPluginData( protocol(), accountId() + " id", "0" );
-			KopeteGroup::toplevel->setPluginData( protocol(), accountId() + " displayName", g->pluginData( protocol(), accountId() + " displayName" ) );
+			KopeteGroup::topLevel()->setPluginData( protocol(), accountId() + " id", "0" );
+			KopeteGroup::topLevel()->setPluginData( protocol(), accountId() + " displayName", g->pluginData( protocol(), accountId() + " displayName" ) );
 			g->setPluginData( protocol(), accountId() + " id", QString::null ); // the group should be soon deleted, but make sure
 
 			return;

@@ -352,7 +352,7 @@ void KopeteMetaContactLVI::slotAddToNewGroup()
 
 void KopeteMetaContactLVI::slotAddTemporaryContact()
 {
-	m_metaContact->setTemporary( false, KopeteGroup::toplevel );
+	m_metaContact->setTemporary( false, KopeteGroup::topLevel() );
 }
 
 void KopeteMetaContactLVI::slotConfigChanged()
@@ -497,11 +497,10 @@ uint KopeteMetaContactLVI::lastContactIconX() const
 
 KopeteGroup *KopeteMetaContactLVI::group()
 {
-	if(m_parentGroup)
-		if(m_parentGroup->group() && m_parentGroup->group() != KopeteGroup::toplevel)
-			return m_parentGroup->group();
-
-	return KopeteGroup::toplevel;
+	if ( m_parentGroup && m_parentGroup->group() != KopeteGroup::topLevel() )
+		return m_parentGroup->group();
+	else
+		return KopeteGroup::topLevel();
 }
 
 QString KopeteMetaContactLVI::key( int, bool ) const
@@ -533,14 +532,15 @@ bool KopeteMetaContactLVI::isTopLevel() const
 
 bool KopeteMetaContactLVI::isGrouped() const
 {
-	if(m_parentView)
+	if ( m_parentView )
 		return true;
-	if(!m_parentGroup)
+
+	if ( !m_parentGroup || !m_parentGroup->group() )
 		return false;
-	if(!m_parentGroup->group())
+
+	if ( m_parentGroup->group() == KopeteGroup::temporary() && !KopetePrefs::prefs()->sortByGroup() )
 		return false;
-	if(m_parentGroup->group()==KopeteGroup::temporary && !KopetePrefs::prefs()->sortByGroup())
-		return false;
+
 	return true;
 }
 

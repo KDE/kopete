@@ -1,10 +1,10 @@
 /*
     kopetemetacontact.h - Kopete Meta Contact
 
-	Copyright (c) 2002      by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
-    Copyright (c) 2003		by Will Stephenson		  <will@stevello.free-online.co.uk>
+    Copyright (c) 2003      by Will Stephenson        <will@stevello.free-online.co.uk>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -21,12 +21,13 @@
 #ifndef __kopetemetacontact_h__
 #define __kopetemetacontact_h__
 
+#include <qdom.h>
 #include <qobject.h>
 #include <qptrlist.h>
-#include <qdom.h>
-#include <kabc/addressbook.h>
 
-//#include "kopetegroup.h"
+#include <kabc/addressbook.h>
+#include <kdemacros.h>
+
 #include "kopetecontact.h"
 #include "kopeteonlinestatus.h"
 #include "kopeteplugindataobject.h"
@@ -34,7 +35,6 @@
 class QDomNode;
 
 class KURL;
-
 
 struct KopeteMetaContactPrivate;
 
@@ -208,16 +208,9 @@ public:
 
 	/**
 	 * @brief Return true if the contact is shown at toplevel.
-	 * You may now check if @ref groups() contains @ref KopeteGroup::toplevel
+	 * You may also check if @ref groups() contains @ref KopeteGroup::topLevel()
 	 */
 	bool isTopLevel();
-
-	/**
-	 * add or remove from top-level
-	 * @obsolete
-	 * use @ref addToGroup() with @ref KopeteGroup::toplevel
-	 */
-	void setTopLevel( bool b = true );
 
 	/**
 	 * @brief remove the contact from this metacontact
