@@ -195,15 +195,8 @@ void MeanwhileAccount::meanwhileGoOffline()
         server = NULL;
     }
     myself()->setOnlineStatus(MeanwhileProtocol::protocol()->meanwhileOffline);
-
-    QDictIterator<Kopete::Contact> it(contacts());
-
-    for( ; it.current(); ++it )
-    {
-        Kopete::Contact *contact =
-                static_cast<Kopete::Contact *>(it.current());
-        contact->setOnlineStatus(MeanwhileProtocol::protocol()->meanwhileOffline);
-    }
+    setAllContactsStatus(MeanwhileProtocol::protocol()->meanwhileOffline);
+    disconnected( Manual );
 }
 
 void MeanwhileAccount::meanwhileGoAway()
