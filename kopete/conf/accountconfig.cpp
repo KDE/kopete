@@ -156,7 +156,7 @@ void AccountConfig::slotRemoveAccount()
 	if(lvi)
 	{
 		KopeteAccount *i=m_accountItems[lvi];
-		if( KMessageBox::warningContinueCancel( this, i18n("Are you sure you want to remove the account \"%1?\"").arg( i->accountId() ),
+		if( KMessageBox::warningContinueCancel( this, i18n("Are you sure you want to remove the account \"%1\"?").arg( i->accountId() ),
 			 i18n("Remove Account"), i18n("Remove Account")) == KMessageBox::Continue )
 		{
 			m_accountItems.remove(lvi);

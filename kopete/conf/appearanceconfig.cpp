@@ -23,8 +23,6 @@
 #include <qlayout.h>
 #include <qpixmap.h>
 #include <qwhatsthis.h>
-#include <qpushbutton.h>
-#include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qvbuttongroup.h>
 #include <qhbuttongroup.h>
@@ -34,6 +32,8 @@
 #include <qspinbox.h>
 #include <qslider.h>
 
+#include <klineedit.h>
+#include <klistbox.h>
 #include <kcolorcombo.h>
 #include <kcolorbutton.h>
 #include <kcombobox.h>
@@ -54,6 +54,15 @@
 #include <ktabctl.h>
 #include <kglobalsettings.h>
 #include <khtml_part.h>
+#include <kpushbutton.h>
+#include <kfontdialog.h>
+#include <ktrader.h>
+#include <klibloader.h>
+
+#include <ktexteditor/highlightinginterface.h>
+#include <ktexteditor/editinterface.h>
+#include <ktexteditor/document.h>
+#include <ktexteditor/view.h>
 
 #include "appearanceconfig_general.h"
 #include "appearanceconfig_contactlist.h"
@@ -66,6 +75,7 @@
 #include "kopetecontact.h"
 #include "kopeteaway.h"
 #include "kopeteawayconfigui.h"
+#include "styleeditdialog.h"
 
 AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	ConfigModule (
@@ -76,6 +86,8 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 {
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	KTabCtl *mAppearanceTabCtl = new KTabCtl(this);
+
+	editedItem = 0L;
 
 	// "General" TAB =============================================================
 	mPrfsGeneral = new AppearanceConfig_General(mAppearanceTabCtl);
@@ -123,12 +135,16 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	l->addWidget( htmlWidget );
 
 	mAppearanceTabCtl->addTab( mPrfsChatAppearance, i18n("Chat &Appearance") );
-	connect(mPrfsChatAppearance->cb_Kind, SIGNAL(activated(int)), this, SLOT(slotSelectKind(int)));
-	connect(mPrfsChatAppearance->previewButton, SIGNAL(pressed()), this, SLOT(slotUpdatePreview()));
 	connect(mPrfsChatAppearance->highlightEnabled, SIGNAL(toggled(bool)), this, SLOT(slotHighlightChanged()));
 	connect(mPrfsChatAppearance->foregroundColor, SIGNAL(changed(const QColor &)), this, SLOT(slotHighlightChanged()));
 	connect(mPrfsChatAppearance->backgroundColor, SIGNAL(changed(const QColor &)), this, SLOT(slotHighlightChanged()));
-
+	connect(mPrfsChatAppearance->fontFace, SIGNAL(clicked()), this, SLOT(slotChangeFont()));
+	connect(mPrfsChatAppearance->textColor, SIGNAL(changed(const QColor &)), this, SLOT(slotUpdatePreview()));
+	connect(mPrfsChatAppearance->bgColor, SIGNAL(changed(const QColor &)), this, SLOT(slotUpdatePreview()));
+	connect(mPrfsChatAppearance->styleList, SIGNAL(selectionChanged( QListBoxItem *)), this, SLOT(slotUpdatePreview()));
+	connect(mPrfsChatAppearance->addButton, SIGNAL(clicked()), this, SLOT(slotAddStyle()));
+	connect(mPrfsChatAppearance->editButton, SIGNAL(clicked()), this, SLOT(slotEditStyle()));
+	connect(mPrfsChatAppearance->deleteButton, SIGNAL(clicked()), this, SLOT(slotDeleteStyle()));
 	// ===========================================================================
 
 	reopen(); // load settings from config
@@ -166,9 +182,6 @@ void AppearanceConfig::save()
 	p->setIconTheme( icon_theme_list->currentText() );
 	p->setUseEmoticons ( mUseEmoticonsChk->isChecked() );
 
-	// "Chat Appearance" TAB
-	p->setKindMessagesHtml ( mPrfsChatAppearance->mle_codehtml->text() );
-
 	// "Chat Window" TAB
 	p->setRaiseMsgWindow( mPrfsChatWindow->cb_RaiseMsgWindowChk->isChecked() );
 	p->setShowEvents( mPrfsChatWindow->cb_ShowEventsChk->isChecked() );
@@ -185,6 +198,13 @@ void AppearanceConfig::save()
 	p->setHighlightEnabled(mPrfsChatAppearance->highlightEnabled->isChecked());
 	p->setHighlightBackground(mPrfsChatAppearance->backgroundColor->color());
 	p->setHighlightForeground(mPrfsChatAppearance->foregroundColor->color());
+
+	p->setChatStyles( mChatStyles );
+	p->setBgColor( mPrfsChatAppearance->bgColor->color() );
+	p->setTextColor(  mPrfsChatAppearance->textColor->color() );
+	p->setFontFace( mPrfsChatAppearance->fontFace->font() );
+	p->setKindMessagesHtml( mChatStyles[ mPrfsChatAppearance->styleList->selectedItem()->text() ] );
+
 
 	KopeteAway::getInstance()->setAutoAwayTimeout(mAwayConfigUI->mAwayTimeout->value()*60);
 	KopeteAway::getInstance()->setGoAvailable(mAwayConfigUI->mGoAvailable->isChecked());
@@ -271,27 +291,41 @@ void AppearanceConfig::reopen()
 	mPrfsChatAppearance->highlightEnabled->setChecked( p->highlightEnabled() );
 	mPrfsChatAppearance->foregroundColor->setColor( p->highlightForeground() );
 	mPrfsChatAppearance->backgroundColor->setColor( p->highlightBackground() );
-  const QString wthis = i18n("Code:                                <br>\
-	<b>%M</b> : insert the Message                                   <br>\
-	<b>%T</b> : insert Timestamp                                     <br>\
-	<b>%F</b> : insert Fonts (the first open and the second close)   <br>\
-	<b>%b</b> : background color in html format ( #ABABAB )          <br>\
-	<b>%f</b> : insert the displayName of the sender                 <br>\
-	<b>%t</b> : insert the displayName of the reciever               <br>\
-                                                                   <br>\
-	<b>%i ... %i </b> : code between is parsed only if message is inbound <br> \
-	<b>%o ... %o </b> : code between is parsed only if message is outbound <br> \
-	<b>%a ... %a </b> : code between is parsed only if message is an action <br> \
-	<b>%s ... %s </b>: code between is parsed only if message is internal <br>\
-	<b>%e ... %e </b>: code between is parsed only if message is inbound or outbound <br>\
-                                                                     <br>\
-	<b>%%</b> : insert a '%'");
 
-	mPrfsChatAppearance->mle_codehtml->setText( p->kindMessagesHtml() );
-  QWhatsThis::add( mPrfsChatAppearance->mle_codehtml, wthis );
+	mPrfsChatAppearance->textColor->setColor( p->textColor() );
+	mPrfsChatAppearance->bgColor->setColor( p->bgColor() );
+	mPrfsChatAppearance->fontFace->setFont( p->fontFace() );
+	mPrfsChatAppearance->fontFace->setText( p->fontFace().family() );
+
+	mChatStyles = p->chatStyles();
+	mPrfsChatAppearance->styleList->clear();
+	for( KopeteChatStyleMap::Iterator it = mChatStyles.begin(); it != mChatStyles.end(); ++it)
+	{
+		mPrfsChatAppearance->styleList->insertItem( it.key() );
+		if( it.data() == p->kindMessagesHtml() )
+			mPrfsChatAppearance->styleList->setSelected( mPrfsChatAppearance->styleList->findItem(it.key()), true );
+	}
+	mPrfsChatAppearance->styleList->sort();
+
+  	const QString wthis = i18n("Code:                                <br>\
+		<b>%M</b> : insert the Message                                   <br>\
+		<b>%T</b> : insert Timestamp                                     <br>\
+		<b>%F</b> : insert Fonts (the first open and the second close)   <br>\
+		<b>%b</b> : background color in html format ( #ABABAB )          <br>\
+		<b>%f</b> : insert the displayName of the sender                 <br>\
+		<b>%t</b> : insert the displayName of the reciever               <br>\
+									<br>\
+		<b>%i ... %i </b> : code between is parsed only if message is inbound <br> \
+		<b>%o ... %o </b> : code between is parsed only if message is outbound <br> \
+		<b>%a ... %a </b> : code between is parsed only if message is an action <br> \
+		<b>%s ... %s </b>: code between is parsed only if message is internal <br>\
+		<b>%e ... %e </b>: code between is parsed only if message is inbound or outbound <br>\
+									<br>\
+		<b>%%</b> : insert a '%'");
+
+	//mPrfsChatAppearance->mle_codehtml->setText( p->kindMessagesHtml() );
+  	//QWhatsThis::add( mPrfsChatAppearance->mle_codehtml, wthis );
 	mAwayConfigUI->updateView();
-
-	slotUpdatePreview();
 }
 
 void AppearanceConfig::slotConfigSound()
@@ -328,14 +362,82 @@ void AppearanceConfig::slotShowTrayChanged()
 	mPrfsGeneral->mBalloonNotifyChk->setEnabled(check);
 }
 
-void AppearanceConfig::slotSelectKind(int k)
+void AppearanceConfig::slotChangeFont()
 {
-	if(k > 0)
-	{
-		QString model = KopetePrefs::KindMessagesHTML(k-1);
-		mPrfsChatAppearance->mle_codehtml->setText( model );
-	}
+	QFont mFont = KopetePrefs::prefs()->fontFace();
+	KFontDialog::getFont( mFont );
+	KopetePrefs::prefs()->setFontFace( mFont );
+	mPrfsChatAppearance->fontFace->setFont( mFont );
+	mPrfsChatAppearance->fontFace->setText( mFont.family() );
 	slotUpdatePreview();
+}
+
+void AppearanceConfig::slotAddStyle()
+{
+	editedItem = 0L;
+	styleEditor = new StyleEditDialog(0L,"style", true);
+	(new QHBoxLayout( styleEditor->editFrame ))->setAutoAdd( true );
+	KTrader::OfferList offers = KTrader::self()->query( "KTextEditor/Document" );
+	KService::Ptr service = *offers.begin();
+	KLibFactory *factory = KLibLoader::self()->factory( service->library() );
+	editDocument = static_cast<KTextEditor::Document *>( factory->create( styleEditor->editFrame, 0, "KTextEditor::Document" ) );
+	editDocument->createView( styleEditor->editFrame, 0 )->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding) );
+	KTextEditor::editInterface( editDocument )->setText( QString::fromLatin1("<table width=\"100%%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n\n\n\n</td></tr></table>") );
+	updateHighlight();
+	styleEditor->show();
+	connect( styleEditor->buttonOk, SIGNAL(clicked()), this, SLOT(slotStyleSaved()) );
+	connect( styleEditor->buttonCancel, SIGNAL(clicked()), styleEditor, SLOT(deleteLater()) );
+}
+
+void AppearanceConfig::updateHighlight()
+{
+	KTextEditor::HighlightingInterface *hi = KTextEditor::highlightingInterface( editDocument );
+	int count = hi->hlModeCount();
+	for( int i=0; i < count; i++ )
+	{
+		if( hi->hlModeName(i) == QString::fromLatin1("HTML") )
+		{
+			hi->setHlMode(i);
+			break;
+		}
+	}
+}
+
+void AppearanceConfig::slotEditStyle()
+{
+	slotAddStyle();
+	editedItem = mPrfsChatAppearance->styleList->selectedItem();
+	KTextEditor::editInterface( editDocument )->setText( mChatStyles[ editedItem->text() ] );
+	updateHighlight();
+	styleEditor->styleName->setText( editedItem->text() );
+}
+
+void AppearanceConfig::slotDeleteStyle()
+{
+	if( KMessageBox::warningContinueCancel( this, i18n("Are you sure you want to delete the style \"%1\"?")
+		.arg( mPrfsChatAppearance->styleList->selectedItem()->text() ),
+		i18n("Delete Style"), i18n("Delete Style")) == KMessageBox::Continue )
+	{
+		QListBoxItem *style = mPrfsChatAppearance->styleList->selectedItem();
+		mChatStyles.remove( style->text() );
+		if( style->next() )
+			mPrfsChatAppearance->styleList->setSelected( style->next(), true );
+		else
+			mPrfsChatAppearance->styleList->setSelected( style->prev(), true );
+		delete style;
+	}
+}
+
+void AppearanceConfig::slotStyleSaved()
+{
+	delete editedItem;
+	mChatStyles[ styleEditor->styleName->text() ] = KTextEditor::editInterface( editDocument )->text();
+
+	mPrfsChatAppearance->styleList->insertItem( styleEditor->styleName->text() );
+	mPrfsChatAppearance->styleList->sort();
+	mPrfsChatAppearance->styleList->setSelected( mPrfsChatAppearance->styleList->findItem( styleEditor->styleName->text() ), true );
+
+	styleEditor->deleteLater();
 }
 
 void AppearanceConfig::slotUpdatePreview()
@@ -349,13 +451,25 @@ void AppearanceConfig::slotUpdatePreview()
 	KopeteMessage *msgIn = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is an incoming message"),KopeteMessage::Inbound );
 	KopeteMessage *msgOut = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is an outgoing message"),KopeteMessage::Outbound );
 	KopeteMessage *msgInt = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is an internal message"),KopeteMessage::Internal );
-	KopeteMessage *msgHigh = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is an highlighted message"),KopeteMessage::Inbound );
+	KopeteMessage *msgHigh = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is a highlighted message"),KopeteMessage::Inbound );
 	KopeteMessage *msgAct = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is an action message"),KopeteMessage::Action );
 
-	QString model = mPrfsChatAppearance->mle_codehtml->text();
+	QString model;
+	QListBoxItem *style = mPrfsChatAppearance->styleList->selectedItem();
+	if( style )
+	{
+		if( mChatStyles.contains( style->text() ) )
+			model = mChatStyles[ style->text() ];
+	}
 
 	preview->begin();
-	preview->write( QString::fromLatin1( "<html><body>" ) );
+	preview->write( QString::fromLatin1( "<html><head><style>body{font-family:%1;color:%2;}td{font-family:%3;color:%4}</style></head><body bgcolor=\"%5\">" )
+		.arg( mPrfsChatAppearance->fontFace->font().family() )
+		.arg( mPrfsChatAppearance->textColor->color().name() )
+		.arg( mPrfsChatAppearance->fontFace->font().family() )
+		.arg( mPrfsChatAppearance->textColor->color().name() )
+		.arg( mPrfsChatAppearance->bgColor->color().name() ) );
+
 
 	// incoming messages
 	preview->write( msgIn->transformMessage( model ) );

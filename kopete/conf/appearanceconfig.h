@@ -26,6 +26,8 @@ class QCheckBox;
 class KListBox;
 class KHTMLPart;
 class KopeteContact;
+class StyleEditDialog;
+class QListBoxItem;
 
 class AppearanceConfig_General;
 class AppearanceConfig_ChatWindow;
@@ -33,7 +35,13 @@ class AppearanceConfig_ChatAppearance;
 class AppearanceConfig_Contactlist;
 class KopeteAwayConfigUI;
 
+namespace KTextEditor {
+	class View;
+	class Document;
+}
+
 typedef QPtrList<KopeteContact> KopeteContactPtrList;
+typedef QMap<QString,QString> KopeteChatStyleMap;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -49,9 +57,6 @@ public:
 	virtual void save();
 	virtual void reopen();
 
-public slots:
-	void slotSelectKind(int k);
-
 private slots:
 	void slotConfigSound();
 	void slotUseEmoticonsChanged(bool);
@@ -60,6 +65,11 @@ private slots:
 	void slotUpdatePreview();
 	void slotShowTrayChanged();
 	void slotHighlightChanged();
+	void slotChangeFont();
+	void slotAddStyle();
+	void slotEditStyle();
+	void slotDeleteStyle();
+	void slotStyleSaved();
 
 private:
 	KTabCtl* mAppearanceTabCtl; // The TabWidget
@@ -69,6 +79,8 @@ private:
 	QCheckBox *mUseEmoticonsChk;
 	KListBox *icon_theme_list;
 	KHTMLPart *preview;
+	KopeteChatStyleMap mChatStyles;
+	KTextEditor::Document* editDocument;
 
 	// All other TABs have their own ui-file
 	AppearanceConfig_General *mPrfsGeneral;
@@ -76,6 +88,11 @@ private:
 	AppearanceConfig_ChatAppearance *mPrfsChatAppearance;
 	AppearanceConfig_ChatWindow *mPrfsChatWindow;
 	KopeteAwayConfigUI *mAwayConfigUI;
+
+	StyleEditDialog *styleEditor;
+	QListBoxItem *editedItem;
+
+	void updateHighlight();
 
 };
 #endif
