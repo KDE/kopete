@@ -64,8 +64,8 @@ KopeteCommandHandler::KopeteCommandHandler() : QObject( qApp )
 	registerCommand( this, QString::fromLatin1("clear"), SLOT( slotClearCommand( const QString &, KopeteMessageManager * ) ),
 		i18n("USAGE: /clear - Clears the active view's chat buffer.") );
 
-	registerCommand( this, QString::fromLatin1("me"), SLOT( slotMeCommand( const QString &, KopeteMessageManager * ) ),
-		i18n("USAGE: /me <text> - Formats message as in \"<nickname> went to the store\".") );
+	/*registerCommand( this, QString::fromLatin1("me"), SLOT( slotMeCommand( const QString &, KopeteMessageManager * ) ),
+		i18n("USAGE: /me <text> - Formats message as in \"<nickname> went to the store\".") );*/
 
 	registerCommand( this, QString::fromLatin1("away"), SLOT( slotAwayCommand( const QString &, KopeteMessageManager * ) ),
 		i18n("USAGE: /away [<reason>] - Sets you away/back in the current account only.") );
@@ -250,12 +250,12 @@ void KopeteCommandHandler::slotCloseCommand( const QString &, KopeteMessageManag
 	manager->view()->closeView();
 }
 
-void KopeteCommandHandler::slotMeCommand( const QString &args, KopeteMessageManager *manager )
+/*void KopeteCommandHandler::slotMeCommand( const QString &args, KopeteMessageManager *manager )
 {
 	QString output = manager->user()->displayName() + QChar(' ') + args;
 	KopeteMessage msg(manager->user(), manager->members(), output, KopeteMessage::Outbound, KopeteMessage::PlainText);
 	manager->sendMessage(msg);
-}
+}*/
 
 void KopeteCommandHandler::slotExecReturnedData(KProcess *proc, char *buff, int bufflen )
 {
