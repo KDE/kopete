@@ -653,7 +653,7 @@ YY_DECL
 #line 46 "rtf.ll"
 
 
-#line 655 "rtf.cc"
+#line 657 "rtf.cc"
 
 	if ( (yy_init) )
 		{
@@ -788,7 +788,7 @@ YY_RULE_SETUP
 #line 57 "rtf.ll"
 ECHO;
 	YY_BREAK
-#line 790 "rtf.cc"
+#line 792 "rtf.cc"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1489,10 +1489,10 @@ YY_BUFFER_STATE rtf_scan_buffer  (char * base, yy_size_t  size )
  * @note If you want to scan bytes that may contain NUL values, then use
  *       rtf_scan_bytes() instead.
  */
-YY_BUFFER_STATE rtf_scan_string (yyconst char * str )
+YY_BUFFER_STATE rtf_scan_string (yyconst char * yy_str )
 {
     
-	return rtf_scan_bytes(str,strlen(str) );
+	return rtf_scan_bytes(yy_str,strlen(yy_str) );
 }
 
 /** Setup the input buffer state to scan the given bytes. The next call to rtflex() will
