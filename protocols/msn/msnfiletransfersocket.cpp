@@ -24,7 +24,8 @@
 
 // kde
 #include <kdebug.h>
-#include <kextendedsocket.h>
+#include <kserversocket.h>
+#include <kbufferedsocket.h>
 #include <kfiledialog.h>
 #include <klocale.h>
 
@@ -32,6 +33,8 @@
 #include "kopetecontact.h"
 #include "msnmessagemanager.h"
 #include "msnswitchboardsocket.h"
+
+using namespace KNetwork;
 
 MSNFileTransferSocket::MSNFileTransferSocket(const QString &handle, KopeteContact *c,bool incoming, QObject* parent)
 	: MSNSocket(parent) , MSNInvitation(incoming, MSNFileTransferSocket::applicationID() , i18n("File Transfer - MSN Plugin"))
@@ -43,7 +46,7 @@ MSNFileTransferSocket::MSNFileTransferSocket(const QString &handle, KopeteContac
 	m_contact=c;
 	ready=true;
 
-	QObject::connect( this, SIGNAL( socketClosed( int ) ), this, SLOT( slotSocketClosed( ) ) );
+	QObject::connect( this, SIGNAL( socketClosed() ), this, SLOT( slotSocketClosed() ) );
 	QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ), this, SLOT(slotReadBlock( const QByteArray & ) ) );
 }
 
@@ -176,17 +179,15 @@ void MSNFileTransferSocket::setKopeteTransfer(KopeteTransfer *kt)
 
 void MSNFileTransferSocket::listen(int port)
 {
-	m_server = new KExtendedSocket();
+	m_server = new KServerSocket();
 
 	QObject::connect( m_server, SIGNAL(readyAccept()), this,  SLOT(slotAcceptConnection()));
-	m_server->setPort(port);
-	m_server->setSocketFlags(  KExtendedSocket::noResolve
-                            | KExtendedSocket::passiveSocket
-                            | KExtendedSocket::anySocket);
-	int listenResult = m_server->listen(1);
+	m_server->setAddress(QString::number(port));
 
+	kdDebug(14140) << "MSNFileTransferSocket::listen: about to listen"<<endl;
+	bool listenResult = m_server->listen(1);
 	kdDebug(14140) << "MSNFileTransferSocket::listen: result: "<<  listenResult <<endl;
-	m_server->setBlockingMode(true);
+	m_server->setBlocking(true);
 	QTimer::singleShot( 60000, this, SLOT(slotTimer()) );
 	kdDebug(14140) << "MSNFileTransferSocket::listen done" <<endl;
 }

@@ -202,8 +202,8 @@ void MSNAccount::createNotificationServer( const QString &host, uint port )
 		SLOT( slotCreateChat( const QString&, const QString&, const QString&, const QString&, const QString& ) ) );
 	QObject::connect( m_notifySocket, SIGNAL( startChat( const QString&, const QString& ) ),
 		SLOT( slotCreateChat( const QString&, const QString& ) ) );
-	QObject::connect( m_notifySocket, SIGNAL( socketClosed( int ) ),
-		SLOT( slotNotifySocketClosed( int ) ) );
+	QObject::connect( m_notifySocket, SIGNAL( socketClosed() ),
+		SLOT( slotNotifySocketClosed() ) );
 	QObject::connect( m_notifySocket, SIGNAL( newContactList() ),
 		SLOT( slotNewContactList() ) );
 	QObject::connect( m_notifySocket, SIGNAL( receivedNotificationServer(const QString&, uint )  ), 
@@ -493,7 +493,7 @@ void MSNAccount::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status )
 	// static_cast<MSNProtocol *>( protocol() )->slotNotifySocketStatusChanged( status );
 }
 
-void MSNAccount::slotNotifySocketClosed( int  state  )
+void MSNAccount::slotNotifySocketClosed()
 {
 	kdDebug( 14140 ) << k_funcinfo << endl;
 
@@ -503,12 +503,15 @@ void MSNAccount::slotNotifySocketClosed( int  state  )
 	myself()->setOnlineStatus( MSNProtocol::protocol()->FLN );
 	if ( m_badpassword )
 		connect();
+
+#if 0
 	else if ( state == 0x10 ) // connection died unexpectedly
 	{
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error , i18n( "The connection with the MSN server was lost unexpectedly.\n"
 			"If you cannot reconnect now, the server might be down. In that case, please try again later." ),
 			i18n( "Connection Lost - MSN Plugin" ), KMessageBox::Notify );
 	}
+#endif
 
 	// kdDebug( 14140 ) << "MSNAccount::slotNotifySocketClosed - done" << endl;
 }

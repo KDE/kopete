@@ -25,7 +25,9 @@
 
 class QFile;
 
-class KExtendedSocket;
+namespace KNetwork {
+  class KServerSocket;
+}
 
 class KopeteTransfer;
 class KopeteFileTransferInfo;
@@ -105,7 +107,7 @@ private:
 	QString m_fileName;
 	KopeteTransfer* m_kopeteTransfer;
 	QFile *m_file ;
-	KExtendedSocket *m_server;
+	KNetwork::KServerSocket *m_server;
 
 	bool ready;
 

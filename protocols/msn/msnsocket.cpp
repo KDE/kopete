@@ -26,12 +26,16 @@
 #include <qtimer.h>
 
 #include <kdebug.h>
-#include <kextsock.h>
+#include <kbufferedsocket.h>
+#include <kserversocket.h>
+#include <kresolver.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kurl.h>
 
 #include "kopeteuiglobal.h"
+
+using namespace KNetwork;
 
 MSNSocket::MSNSocket(QObject* parent)  : QObject (parent)
 {
@@ -71,15 +75,12 @@ void MSNSocket::connect( const QString &server, uint port )
 	m_waitBlockSize = 0;
 	m_buffer = Buffer( 0 );
 
-	m_lookupStatus = Processing;
-
 	//m_sendQueue.clear();
 
 	m_server = server;
 	m_port = port;
-	m_socket = new KExtendedSocket( server, port, KExtendedSocket::bufferedSocket );
+	m_socket = new KBufferedSocket( server, QString::number(port) );
 	 //can this prevent the kopete frezee? (http://lists.kde.org/?l=kopete-devel&m=107117795131722&w=2)
-	m_socket->setBlockingMode( false );
 
 	m_socket->enableRead( true );
 
@@ -89,28 +90,15 @@ void MSNSocket::connect( const QString &server, uint port )
 
 	QObject::connect( m_socket, SIGNAL( readyRead() ),             this, SLOT( slotDataReceived() ) );
 	QObject::connect( m_socket, SIGNAL( readyWrite() ),            this, SLOT( slotReadyWrite() ) );
-	QObject::connect( m_socket, SIGNAL( lookupFinished( int ) ),   this, SLOT( slotLookupFinished( int ) ) );
-	QObject::connect( m_socket, SIGNAL( connectionSuccess() ),     this, SLOT( slotConnectionSuccess() ) );
-	QObject::connect( m_socket, SIGNAL( connectionFailed( int ) ), this, SLOT( slotSocketError( int ) ) );
-	QObject::connect( m_socket, SIGNAL( closed( int ) ),           this, SLOT( slotSocketClosed( int ) ) );
+	QObject::connect( m_socket, SIGNAL( hostFound() ),	       this, SLOT( slotHostFound() ) );
+	QObject::connect( m_socket, SIGNAL( connected( const KResolverEntry&) ), this, SLOT( slotConnectionSuccess() ) );
+	QObject::connect( m_socket, SIGNAL( gotError( int ) ),         this, SLOT( slotSocketError( int ) ) );
+	QObject::connect( m_socket, SIGNAL( closed( ) ),               this, SLOT( slotSocketClosed( ) ) );
 
 	aboutToConnect();
 
-	// FIXME KDE4?
-	// Ideally we want to the full connection to MSN to be handled async,
-	// but due to some design issues in QDns this fails if people with
-	// dialup connections start Kopete before their internet connection.
-	// The workaround from TrollTech is to not use QDns, but use the
-	// libc gethostbyname call instead. The sync calls in KExtendedSocket
-	// use this, only the async lookup uses DNS.
-	// This is slightly annoying as it blocks the GUI for the duration
-	// of the DNS lookup, but properly configured systems will hardly
-	// notice that. Besides, there's nothing we can do about it...
-	// For Qt 4/KDE 4 we can hopefully leave the lookup to the socket
-	// again and remove the manual lookup call. This cannot be fixed
-	// in Qt 3 unfortunately.
-	m_socket->lookup();
-	m_socket->startAsyncConnect();
+	// start the asynchronous connection
+	m_socket->connect();
 }
 
 void MSNSocket::disconnect()
@@ -118,7 +106,7 @@ void MSNSocket::disconnect()
 	if ( m_socket )
 		m_socket->closeNow();
 	else
-		slotSocketClosed( -1 );
+		slotSocketClosed();
 }
 
 void MSNSocket::aboutToConnect()
@@ -149,13 +137,12 @@ void MSNSocket::slotSocketError( int error )
 {
 	kdDebug( 14140 ) << k_funcinfo << "Error: " << error << endl;
 
-	m_socket->cancelAsyncConnect();
-
 	QString errormsg = i18n( "There was an error while connecting to the MSN server.\nError message:\n" );
-	if ( m_lookupStatus == Failed )
-		errormsg += i18n( "Unable to lookup %1" ).arg( m_socket->host() );
+	if ( error == KSocketBase::LookupFailure )
+		errormsg += i18n( "Unable to lookup %1" ).arg( m_socket->peerResolver().nodeName() );
 	else
-		errormsg += KExtendedSocket::strError( error, m_socket->systemError() );
+	        // FIXME when there is a method to show up error strings!
+          	errormsg += i18n( "Error %1" ).arg( m_socket->error() );
 
 	//delete m_socket;
 	m_socket->deleteLater();
@@ -164,7 +151,7 @@ void MSNSocket::slotSocketError( int error )
 	setOnlineStatus( Disconnected );
 	emit connectionFailed();
 	//like if the socket is closed
-	emit socketClosed( -1 );
+	emit socketClosed();
 
 	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error, errormsg, i18n( "MSN Plugin" ) );
 }
@@ -541,22 +528,18 @@ QString MSNSocket::unescape( const QString &str )
 
 void MSNSocket::slotConnectionSuccess()
 {
-	m_socket->setBlockingMode( false );
 	//kdDebug( 14140 ) << k_funcinfo << endl;
 	doneConnect();
 }
 
-void MSNSocket::slotLookupFinished( int count )
+void MSNSocket::slotHostFound()
 {
-	if ( count == 0 )
-		m_lookupStatus = Failed;
-	else
-		m_lookupStatus = Success;
+        // nothing to do
 }
 
-void MSNSocket::slotSocketClosed( int state )
+void MSNSocket::slotSocketClosed()
 {
-	kdDebug( 14140 ) << k_funcinfo << "Socket closed. State: 0x" << QString::number( state, 16 ) << endl;
+        kdDebug( 14140 ) << k_funcinfo << "Socket closed. " << endl;
 
 	if ( !m_socket ||  m_onlineStatus == Disconnected )
 	{
@@ -571,7 +554,7 @@ void MSNSocket::slotSocketClosed( int state )
 	m_socket->deleteLater();
 	m_socket = 0L;
 
-	emit socketClosed( state );
+	emit socketClosed();
 }
 
 // Used in MSNFileTransferSocket
@@ -592,7 +575,7 @@ void MSNSocket::sendBytes( const QByteArray &data )
 	m_socket->enableWrite( true );
 }
 
-bool MSNSocket::accept( KExtendedSocket *server )
+bool MSNSocket::accept( KServerSocket *server )
 {
 	if ( m_socket )
 	{
@@ -600,11 +583,8 @@ bool MSNSocket::accept( KExtendedSocket *server )
 		return false;
 	}
 
-	int acceptResult = server->accept( m_socket );
-	kdDebug( 14140 ) << k_funcinfo << "Result: " << acceptResult << ", m_socket: " << m_socket << endl;
-
-	if ( acceptResult )
-		return false;
+	m_socket = static_cast<KBufferedSocket*>(server->accept());
+	kdDebug( 14140 ) << k_funcinfo << "Result: " << (m_socket != 0L) << ", m_socket: " << m_socket << endl;
 
 	if ( !m_socket )
 		return false;
@@ -614,19 +594,15 @@ bool MSNSocket::accept( KExtendedSocket *server )
 	m_id = 0;
 	//m_lastId = 0;
 	m_waitBlockSize = 0;
-	m_lookupStatus = Processing;
 
-	m_socket->setBlockingMode( false );
+	m_socket->setBlocking( false );
 	m_socket->enableRead( true );
 	m_socket->enableWrite( true );
-	m_socket->setBufferSize( -1, -1 );
 
 	QObject::connect( m_socket, SIGNAL( readyRead() ),             this, SLOT( slotDataReceived() ) );
 	QObject::connect( m_socket, SIGNAL( readyWrite() ),            this, SLOT( slotReadyWrite() ) );
-	QObject::connect( m_socket, SIGNAL( closed( int ) ),           this, SLOT( slotSocketClosed( int ) ) );
-	QObject::connect( m_socket, SIGNAL( connectionFailed( int ) ), this, SLOT( slotSocketError( int ) ) );
-
-	m_socket->setSocketFlags( KExtendedSocket::anySocket | KExtendedSocket::inputBufferedSocket | KExtendedSocket::outputBufferedSocket );
+	QObject::connect( m_socket, SIGNAL( closed() ),                this, SLOT( slotSocketClosed() ) );
+	QObject::connect( m_socket, SIGNAL( gotError( int ) ),         this, SLOT( slotSocketError( int ) ) );
 
 	doneConnect();
 	return true;
@@ -637,17 +613,17 @@ QString MSNSocket::getLocalIP()
 	if ( !m_socket )
 		return QString::null;
 
-	const KSocketAddress *address = m_socket->localAddress();
-	if ( !address  )
-	{
-		kdWarning( 14140 ) << k_funcinfo << "IP not found!" << endl;
-		return QString::null;
-	}
+	const KSocketAddress address = m_socket->localAddress();
 
-	QString ip = address->pretty();
+	QString ip = address.nodeName();
+
+#if 0
+	// FIXME. Addresses can never have -
+	// Why is this here?
 	ip = ip.replace( "-", " " );
 	if ( ip.contains( " " ) )
 		ip = ip.left( ip.find( " " ) );
+#endif
 
 	kdDebug( 14140 ) << k_funcinfo << "IP: " << ip  <<endl;
 	//delete address;

@@ -24,7 +24,10 @@
 #include <qobject.h>
 #include <qvaluelist.h>
 
-class KExtendedSocket;
+namespace KNetwork {
+  class KBufferedSocket;
+  class KServerSocket;
+}
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
@@ -117,7 +120,7 @@ signals:
 	/**
 	 * The connection was closed
 	 */
-	void socketClosed( int );
+	void socketClosed();
 
 	/**
 	 * The socket just sent a command from the queue. This signal is used in
@@ -182,7 +185,7 @@ protected:
 	 * Used in MSNFileTransferSocket
 	 */
 	virtual void bytesReceived( const QByteArray & );
-	bool accept( KExtendedSocket * );
+	bool accept( KNetwork::KServerSocket * );
 	void sendBytes( const QByteArray &data );
 
 	const QString &server() { return m_server; }
@@ -209,14 +212,14 @@ private slots:
 	/**
 	 * Sets m_lookupProgress to 'Finished' if count > 0 or 'Failed' if count = 0.
 	 */
-	void slotLookupFinished( int count );
+	void slotHostFound( );
 
 	/**
 	 * Check if new lines of data are available and process the first line
 	 */
 	void slotReadLine();
 
-	void slotSocketClosed( int state );
+	void slotSocketClosed();
 
 protected slots:
 	virtual void slotReadyWrite();
@@ -249,16 +252,11 @@ private:
 	 */
 	void parseLine( const QString &str );
 
-	KExtendedSocket *m_socket;
+	KNetwork::KBufferedSocket *m_socket;
 	OnlineStatus m_onlineStatus;
 
 	QString m_server;
 	uint m_port;
-
-	/**
-	 * Contains the status of the Lookup process.
-	 */
-	LookupStatus m_lookupStatus;
 
 	/**
 	 * The size of the requested block for block-based reads

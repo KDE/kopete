@@ -84,7 +84,7 @@ void MSNSwitchBoardSocket::connectToSwitchBoard(QString ID, QString address, QSt
 	QObject::connect( this, SIGNAL( onlineStatusChanged( MSNSocket::OnlineStatus ) ),
 		this, SLOT( slotOnlineStatusChanged( MSNSocket::OnlineStatus ) ) );
 
-	QObject::connect( this, SIGNAL( socketClosed( int ) ),
+	QObject::connect( this, SIGNAL( socketClosed( ) ),
 		this, SLOT( slotSocketClosed( ) ) );
 
 	connect( server, port );
