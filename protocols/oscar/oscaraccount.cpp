@@ -226,7 +226,7 @@ void OscarAccount::slotError(QString errmsg, int errorCode)
 	KMessageBox::queuedMessageBox(0, KMessageBox::Error, errmsg,
 		i18n("Connection Lost - ICQ Plugin"), KMessageBox::Notify);
 
-	if (errorCode == 0 || errorCode == 5)
+	if (errorCode == 5)
 	{
 		d->passwordWrong = true;
 		connect();
