@@ -162,7 +162,8 @@ bool MSNEditAccountWidget::validateData()
 	if( MSNProtocol::validContactId(userid) )
 		return true;
 
-	KMessageBox::sorry(this, i18n("<qt>You must enter a valid email address as login.</qt>"), i18n("MSN Messenger"));
+	KMessageBox::queuedMessageBox( 0L, KMessageBox::Sorry,
+			i18n( "<qt>You must enter a valid email address.</qt>" ), i18n( "MSN Plugin" )  );
 	return false;
 }
 

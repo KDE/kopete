@@ -172,7 +172,8 @@ void MSNSocket::slotSocketError( int error )
 	//like if the socket is closed
 	emit( socketClosed( -1 ) );
 
-	KMessageBox::error( 0, errormsg, i18n( "MSN Plugin" ) );
+	KMessageBox::queuedMessageBox( 0L, KMessageBox::Error,
+		errormsg, i18n( "MSN Plugin" ) );
 }
 
 void MSNSocket::slotDataReceived()
@@ -397,7 +398,7 @@ void MSNSocket::handleError( uint code, uint /*id*/ )
 
 	if (!msg.isEmpty())
 	{
-		KMessageBox::error(0, msg, i18n( "MSN Plugin" ) );
+		KMessageBox::queuedMessageBox( 0L, KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 	}
 
 	return;

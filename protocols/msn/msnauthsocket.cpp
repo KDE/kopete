@@ -58,8 +58,9 @@ void MSNAuthSocket::handleError( uint code, uint id )
 		if( !m_msgBoxShown )
 		{
 			m_msgBoxShown = true;*/
-		KMessageBox::information( 0, i18n( "The MSN server is busy.\n"
-				"Please retry." ) , i18n( "MSN Plugin" ) );
+		KMessageBox::queuedMessageBox( qApp->mainWidget(), KMessageBox::Information,
+				 i18n( "The MSN server is busy.\n"
+				       "Please retry." ) , i18n( "MSN Plugin" ) , KMessageBox::Notify );
 		break;
 	}
 

@@ -299,9 +299,9 @@ void MSNAccount::slotStartChat()
 {
 	if ( !isConnected() )
 	{
-		KMessageBox::error( 0l,
+		KMessageBox::queuedMessageBox( 0L, KMessageBox::Error,
 			i18n( "<qt>Please go online before you start a chat.</qt>" ),
-			i18n( "MSN Plugin" ) );
+			i18n( "MSN Plugin" ) , KMessageBox::Notify );
 		return;
 	}
 
@@ -320,7 +320,8 @@ void MSNAccount::slotStartChat()
 		}
 		else
 		{
-			KMessageBox::error( 0l, i18n( "<qt>You must enter a valid email address.</qt>" ), i18n( "MSN Plugin" ) );
+			KMessageBox::queuedMessageBox( 0L, KMessageBox::Sorry,
+				i18n( "<qt>You must enter a valid email address.</qt>" ), i18n( "MSN Plugin" ) );
 		}
 	}
 }
@@ -351,8 +352,6 @@ void MSNAccount::slotChangePublicName()
 
 	if ( ok )
 	{
-		// For some stupid reasons the public name is not allowed to contain
-		// the text 'msn'. It would result in an error 209 from the server.
 		if ( name.length() > 387 )
 		{
 			KMessageBox::error( 0L,
@@ -454,23 +453,22 @@ void MSNAccount::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status )
 	// static_cast<MSNProtocol *>( protocol() )->slotNotifySocketStatusChanged( status );
 }
 
-void MSNAccount::slotNotifySocketClosed( int /* state */ )
+void MSNAccount::slotNotifySocketClosed( int  state  )
 {
 	kdDebug( 14140 ) << k_funcinfo << endl;
-/*
-	// FIXME: Kopete crash when i show this message box...
-	if ( state == 0x10 ) // connection died unexpectedly
-	{
-		KMessageBox::error( qApp->mainWidget(), i18n( "Connection with the MSN server was lost unexpectedly.\n"
-			"If you are unable to reconnect, please try again later." ), i18n( "Connection Lost - MSN Plugin" ) );
-	}
-*/
+
 	m_badpassword = m_notifySocket->badPassword();
 	m_notifySocket->deleteLater();
 	m_notifySocket = 0l;
 	m_myself->setOnlineStatus( MSNProtocol::protocol()->FLN );
 	if ( m_badpassword )
 		connect();
+	else if ( state == 0x10 ) // connection died unexpectedly
+	{
+		KMessageBox::queuedMessageBox( 0, KMessageBox::Error , i18n( "Connection with the MSN server was lost unexpectedly.\n"
+			"If you are unable to reconnect, please try again later." ), i18n( "Connection Lost - MSN Plugin" ) , KMessageBox::Notify);
+	}
+
 	// kdDebug( 14140 ) << "MSNAccount::slotNotifySocketClosed - done" << endl;
 }
 

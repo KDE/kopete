@@ -110,7 +110,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	{
 		QString msg = i18n( "<qt>Invalid user!<br>"
 			"This MSN user does not exist: <b>%1</b>.<br>Please check the MSN ID.</qt>" ).arg(m_tmpLastHandle);
-		KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
+		KMessageBox::queuedMessageBox( 0L, KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
 	case 209:
@@ -118,14 +118,14 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		if(m_tmpLastHandle==msnId())
 		{
 			QString msg = i18n( "Your nickname has not been changed, maybe it contains incorrect words or it was too long" );
-			KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
+			KMessageBox::queuedMessageBox( 0L, KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 		}
 		/*else
 		 {
 			QString msg = i18n( "You are trying to change the display name of an user who has not "
 				"confirmed his or her email address.\n"
 				"The contact was not renamed on the server." );
-			KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
+			KMessageBox::queuedMessageBox( 0L, KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 		}*/
 		break;
 	}
@@ -135,7 +135,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 			"If this is not the case, please send us a detailed bug report "
 			"at kopete-devel@kde.org containing the raw output on the "
 			"console (in gzipped format, as it is probably a lot of output!)</qt>" ).arg(m_tmpLastHandle);
-		KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
+		KMessageBox::queuedMessageBox( 0L, KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
 	case 216:
@@ -150,32 +150,33 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	{
 		QString msg = i18n( "The maximum number of group is reached.\n"
 			"You can't have more than 30 groups" );
-		KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
+		KMessageBox::queuedMessageBox( 0L, KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
 	case 710:
 	{
 		QString msg = i18n( "You can't open a hotmail inbox because you haven't a valid hotmail/msn account." );
-		KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
+		KMessageBox::queuedMessageBox( 0L, KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
 	case 800:
 	{
 		QString msg = i18n( "You are trying to change your status, or your nickname too rapidely.\n"
 		 		"This might happen if you added yourself on your contact list" );
-		KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
+		KMessageBox::queuedMessageBox( 0L, KMessageBox::Error, msg, i18n( "MSN Plugin" ) );
 		//FIXME: try to fix this problem
 		break;
 	}
 	case 913:
 	{
 		QString msg = i18n( "You cannot send messages when you are offline or when you appear offline." );
-		KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
+		KMessageBox::queuedMessageBox( 0L, KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
 		break;
 	}
 	case 910:
 	case 921:
-		KMessageBox::error( 0, i18n( "MSN Server is busy or temporary unavailable. Try to reconnect later." ) , i18n( "MSN Plugin" ) );
+	    KMessageBox::queuedMessageBox( 0L, KMessageBox::Error,
+			i18n( "MSN Server is busy or temporary unavailable. Try to reconnect later." ) , i18n( "MSN Plugin" ) );
 		break;
 	default:
 		MSNAuthSocket::handleError( code, id );
@@ -303,7 +304,8 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		disconnect();
 		if( data.section( ' ', 0, 0 ) == "OTH" )
 		{
-			KMessageBox::information( 0, i18n( "You have connected from another client." ) , i18n ("MSN Plugin") );
+			KMessageBox::queuedMessageBox( 0L, KMessageBox::Information ,
+				 i18n( "You have connected from another client." ) , i18n ("MSN Plugin") );
 		}
 	}
 	else if( cmd == "CHG" )
@@ -544,9 +546,10 @@ void MSNNotifySocket::slotAuthJobDone ( KIO::Job *job)
 		if(m_authData.contains("CookiesDisabled"))
 		{
 			disconnect();
-			KMessageBox::error( 0, "Impossible to connect to MSN Network.\n"
-							"Your Web browser options are currently set to disable cookies.\n"
-							"To use .NET Passport, you must enable cookies at least for the passport.com domain", i18n( "MSN Plugin" ) );
+			KMessageBox::queuedMessageBox( 0L, KMessageBox::Error,
+						i18n("Impossible to connect to MSN Network.\n"
+						     "Your Web browser options are currently set to disable cookies.\n"
+						     "To use .NET Passport, you must enable cookies at least for the passport.com domain"), i18n( "MSN Plugin" ) );
 			return;
 		}
 
@@ -784,7 +787,8 @@ void MSNNotifySocket::slotDispatchClosed()
 	if(!dispatchOK)
 	{
 		if(!badPassword())
-			KMessageBox::error( 0, i18n( "Connection failed.\nTry again later." ) , i18n ("MSN Plugin") );
+			KMessageBox::queuedMessageBox( 0L, KMessageBox::Error,
+				i18n( "Connection failed.\nTry again later." ) , i18n ("MSN Plugin") );
 		//because "this socket" isn't already connected, doing this manualy
 		emit onlineStatusChanged( Disconnected );
 		emit socketClosed(-1);
@@ -797,7 +801,8 @@ void MSNNotifySocket::slotSendKeepAlive()
 	if(m_ping)
 	{
 		disconnect();
-		KMessageBox::information( 0, i18n( "Connection with the MSN network has been lost" ) , i18n ("MSN Plugin") );
+		KMessageBox::queuedMessageBox( 0L, KMessageBox::Information,
+			i18n( "Connection with the MSN network has been lost" ) , i18n ("MSN Plugin") );
 		return;
 	}
 	else

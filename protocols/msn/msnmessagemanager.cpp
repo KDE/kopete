@@ -296,7 +296,8 @@ void MSNMessageManager::slotInviteOtherContact()
 
 	if( handle.contains('@') != 1 || handle.contains('.') <1)
 	{
-			KMessageBox::error(0l, i18n("<qt>You must enter a valid email address.</qt>"), i18n("MSN Plugin"));
+			KMessageBox::queuedMessageBox( 0L, KMessageBox::Sorry,
+					i18n("<qt>You must enter a valid email address.</qt>"), i18n("MSN Plugin"));
 			return;
 	}
 
