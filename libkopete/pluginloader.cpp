@@ -219,12 +219,19 @@ KopetePlugin *LibraryLoader::loadPlugin( const QString &spec_ )
 	if(plugin)
 		return plugin;
 
-	int error=0;
+	int error = 0;
 	plugin = KParts::ComponentFactory::createInstanceFromQuery<KopetePlugin>(
-		QString::fromLatin1("Kopete/Plugin"),
-		QString::fromLatin1("[X-Kopete-Plugin-Id]=='%1'").arg(pluginId), this, 0, QStringList(), &error);
+		QString::fromLatin1( "Kopete/Plugin" ),
+		QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='kopete_%1'" ).arg( pluginId ), this, 0, QStringList(), &error );
 
-	if(plugin)
+	if ( !plugin )
+	{
+		plugin = KParts::ComponentFactory::createInstanceFromQuery<KopetePlugin>(
+			QString::fromLatin1( "Kopete/Plugin" ),
+			QString::fromLatin1( "[X-Kopete-Plugin-Id]=='%1'" ).arg( pluginId ), this, 0, QStringList(), &error );
+	}
+
+	if( plugin )
 	{
 		m_loadedPlugins.insert(spec, plugin);
 
