@@ -215,7 +215,7 @@ void KopeteWindow::initActions()
 	new KAction( i18n( "Configure &Global Shortcuts..." ), "configure_shortcuts", 0, this,
 		SLOT( slotConfGlobalKeys() ), actionCollection(), "settings_global" );
 
-	KStdAction::configureToolbars(this, SLOT(slotConfToolbar()), actionCollection(), "settings_toolbars" );
+	KStdAction::configureToolbars( this, SLOT(slotConfToolbar()), actionCollection() );
 	KStdAction::configureNotifications(this, SLOT(slotConfNotifications()), actionCollection(), "settings_notifications" );
 
 	actionShowOffliners = new KToggleAction( i18n( "Show Offline &Users" ), "viewmag", CTRL + Key_U,
