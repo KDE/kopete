@@ -179,6 +179,7 @@ AddContactPage *MSNProtocol::getAddContactWidget(QWidget *parent)
 void MSNProtocol::initIcons()
 {
 	KIconLoader *loader = KGlobal::iconLoader();
+    KStandardDirs dir;
 
 	protocolIcon = QPixmap(loader->loadIcon("msn_protocol", KIcon::User));
 	onlineIcon = QPixmap(loader->loadIcon("msn_online", KIcon::User));
@@ -186,8 +187,7 @@ void MSNProtocol::initIcons()
 	awayIcon = QPixmap(loader->loadIcon("msn_away", KIcon::User));
 	naIcon = QPixmap(loader->loadIcon("msn_na", KIcon::User));
 	kdDebug() << "MSN Plugin: Loading animation " << loader->moviePath("msn_connecting", KIcon::User) << endl;
-	connectingIcon = QMovie(loader->loadMovie("msn_connecting.mng", KIcon::User));
-	//connectingIcon = QMovie("/opt/kde3/share/apps/kopete/pics/msn_connecting.mng");
+	connectingIcon = QMovie(dir.findResource("data","kopete/pics/msn_connecting.mng"));
 }
 
 void MSNProtocol::initActions()
@@ -217,7 +217,7 @@ void MSNProtocol::slotIconRightClicked(const QPoint point)
 /* While trying to connect :-) */
 void MSNProtocol::slotConnecting()
 {
-	//statusBarIcon->setMovie(connectingIcon);	
+	statusBarIcon->setMovie(connectingIcon);	
 }
 
 /** NOTE: CALL THIS ONLY BEING CONNECTED */

@@ -262,55 +262,83 @@ void Kopete::initEmoticons()
     mEmoticonTheme = config->readEntry("EmoticonTheme", "Default");
 	/* Happy emoticons */
 	/* :-) */
-	mEmoticons.smile = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/smile.png");
+	mEmoticons.smile = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/smile.mng");
+	if ( mEmoticons.smile.isNull() )
+		mEmoticons.smile = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/smile.png");
 	/* ;-) */
-	mEmoticons.wink = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/wink.png");
-    /* :-P */
-	mEmoticons.tongue = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/tongue.png");
+	mEmoticons.wink = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/wink.mng");
+    if ( mEmoticons.wink.isNull() )
+		mEmoticons.wink = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/wink.png");
+	/* :-P */
+	mEmoticons.tongue = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/tongue.mng");
+	if ( mEmoticons.tongue.isNull() )
+		mEmoticons.tongue = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/tongue.png");
 	/* :-D*/
-	mEmoticons.biggrin = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/bigrin.png");
+	mEmoticons.biggrin = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/bigrin.mng");
+	if ( mEmoticons.biggrin.isNull() )
+		mEmoticons.biggrin = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/biggrin.png");
 	
 	/* Sad emoticons */
-    mEmoticons.unhappy = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/unhappy.png");
-	mEmoticons.cry = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/cry.png");
-
+	mEmoticons.unhappy = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/unhappy.mng");
+	if ( mEmoticons.unhappy.isNull() )
+		mEmoticons.unhappy = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/unhappy.png");
+	
+	mEmoticons.cry = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/cry.mng");
+    if ( mEmoticons.cry.isNull() )
+		mEmoticons.cry = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/cry.png");
+	
 	/* Surprise */
-	mEmoticons.oh = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/oh.png");
-
+	mEmoticons.oh = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/oh.mng");
+    if ( mEmoticons.oh.isNull() )
+		mEmoticons.oh = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/oh.png");
+	
 }
 
 QString Kopete::parseEmoticons( QString message )
 {
-	message = message.replace(QRegExp(":-\\)"),"<img src=\""+mEmoticons.smile+"\">");
-	message = message.replace(QRegExp(":\\)"),"<img src=\""+mEmoticons.smile+"\">");
-
-	message = message.replace(QRegExp(";-\\)"),"<img src=\""+mEmoticons.wink+"\">");
-	message = message.replace(QRegExp(";\\)"),"<img src=\""+mEmoticons.wink+"\">");
-
-	message = message.replace(QRegExp(":p"),"<img src=\""+mEmoticons.tongue+"\">");
-	message = message.replace(QRegExp(":P"),"<img src=\""+mEmoticons.tongue+"\">");
-	message = message.replace(QRegExp(":-p"),"<img src=\""+mEmoticons.tongue+"\">");
-	message = message.replace(QRegExp(":-P"),"<img src=\""+mEmoticons.tongue+"\">");
-	
-	message = message.replace(QRegExp(":D"),"<img src=\""+mEmoticons.biggrin+"\">");
-	message = message.replace(QRegExp(":d"),"<img src=\""+mEmoticons.biggrin+"\">");
-	message = message.replace(QRegExp(":-D"),"<img src=\""+mEmoticons.biggrin+"\">");
-	message = message.replace(QRegExp(":-d"),"<img src=\""+mEmoticons.biggrin+"\">");
-	message = message.replace(QRegExp(":>"),"<img src=\""+mEmoticons.biggrin+"\">");
-	message = message.replace(QRegExp(":->"),"<img src=\""+mEmoticons.biggrin+"\">");
-	
-
-	message = message.replace(QRegExp(":-\\("),"<img src=\""+mEmoticons.unhappy+"\">");
-	message = message.replace(QRegExp(":\\("),"<img src=\""+mEmoticons.unhappy+"\">");
-
-	message = message.replace(QRegExp(":'-\\("),"<img src=\""+mEmoticons.cry+"\">");
-	message = message.replace(QRegExp(":'\\("),"<img src=\""+mEmoticons.cry+"\">");
-
-	message = message.replace(QRegExp(":o"),"<img src=\""+mEmoticons.oh+"\">");
-	message = message.replace(QRegExp(":O"),"<img src=\""+mEmoticons.oh+"\">");
-	message = message.replace(QRegExp(":-o"),"<img src=\""+mEmoticons.oh+"\">");
-	message = message.replace(QRegExp(":-O"),"<img src=\""+mEmoticons.oh+"\">");
-	
+	if ( !mEmoticons.smile.isNull() )
+	{
+		message = message.replace(QRegExp(":-\\)"),"<img src=\""+mEmoticons.smile+"\">");
+		message = message.replace(QRegExp(":\\)"),"<img src=\""+mEmoticons.smile+"\">");
+	}
+	if ( !mEmoticons.wink.isNull() )
+	{
+		message = message.replace(QRegExp(";-\\)"),"<img src=\""+mEmoticons.wink+"\">");
+		message = message.replace(QRegExp(";\\)"),"<img src=\""+mEmoticons.wink+"\">");
+    }
+	if ( !mEmoticons.tongue.isNull() )
+	{
+		message = message.replace(QRegExp(":p"),"<img src=\""+mEmoticons.tongue+"\">");
+		message = message.replace(QRegExp(":P"),"<img src=\""+mEmoticons.tongue+"\">");
+		message = message.replace(QRegExp(":-p"),"<img src=\""+mEmoticons.tongue+"\">");
+		message = message.replace(QRegExp(":-P"),"<img src=\""+mEmoticons.tongue+"\">");
+	}
+	if ( !mEmoticons.biggrin.isNull() )
+	{
+		message = message.replace(QRegExp(":D"),"<img src=\""+mEmoticons.biggrin+"\">");
+		message = message.replace(QRegExp(":d"),"<img src=\""+mEmoticons.biggrin+"\">");
+		message = message.replace(QRegExp(":-D"),"<img src=\""+mEmoticons.biggrin+"\">");
+		message = message.replace(QRegExp(":-d"),"<img src=\""+mEmoticons.biggrin+"\">");
+		message = message.replace(QRegExp(":>"),"<img src=\""+mEmoticons.biggrin+"\">");
+		message = message.replace(QRegExp(":->"),"<img src=\""+mEmoticons.biggrin+"\">");
+	}
+    if ( !mEmoticons.unhappy.isNull() )
+	{
+		message = message.replace(QRegExp(":-\\("),"<img src=\""+mEmoticons.unhappy+"\">");
+		message = message.replace(QRegExp(":\\("),"<img src=\""+mEmoticons.unhappy+"\">");
+    }
+	if ( !mEmoticons.cry.isNull() )
+	{
+		message = message.replace(QRegExp(":'-\\("),"<img src=\""+mEmoticons.cry+"\">");
+		message = message.replace(QRegExp(":'\\("),"<img src=\""+mEmoticons.cry+"\">");
+    }
+	if ( !mEmoticons.oh.isNull() )
+	{
+		message = message.replace(QRegExp(":o"),"<img src=\""+mEmoticons.oh+"\">");
+		message = message.replace(QRegExp(":O"),"<img src=\""+mEmoticons.oh+"\">");
+		message = message.replace(QRegExp(":-o"),"<img src=\""+mEmoticons.oh+"\">");
+		message = message.replace(QRegExp(":-O"),"<img src=\""+mEmoticons.oh+"\">");
+	}
 	#warning "TODO: Sleep emoticon parsing pending"
 	
 	return message;
