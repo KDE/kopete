@@ -26,6 +26,7 @@
 #include "kopetemessagemanager.h"
 #include "jabberprotocol.h"
 #include "jabcommon.h"
+#include "dlgjabbervcard.h"
 
 JabberContact::JabberContact(QString userID, QString nickname, QString group, JabberProtocol *protocol, KopeteMetaContact *mc) : KopeteContact(protocol->id(), mc) {
     mProtocol = protocol;
@@ -447,18 +448,7 @@ void JabberContact::slotSnarfVCard() {
 
 void JabberContact::slotGotVCard(JT_VCard *vCard) {
 	kdDebug() << "[JabberContact] Got vCard for user " << vCard->jid << ", displaying." << endl;
-	dlgVCard = new dlgJabberVCard(kopeteapp->mainWindow(), "dlgJabberVCard");
-	dlgVCard->JabberIDLabel->setText(vCard->jid);
-	dlgVCard->nickNameLabel->setText(vCard->vcard.field[vNickname]);
-	dlgVCard->fullNameLabel->setText(vCard->vcard.field[vFullname]);
-	dlgVCard->birthdayLabel->setText(vCard->vcard.field[vBday]);
-	dlgVCard->emailAddressLabel->setText(vCard->vcard.field[vEmail]);
-	dlgVCard->homepageLabel->setText(vCard->vcard.field[vHomepage]);
-	dlgVCard->addressLabel->setText(vCard->vcard.field[vStreet]);
-	dlgVCard->cityLabel->setText(vCard->vcard.field[vCity]);
-	dlgVCard->stateLabel->setText(QString("%1 %2").arg(vCard->vcard.field[vState], 1).arg(vCard->vcard.field[vPcode], 2));
-	dlgVCard->countryLabel->setText(vCard->vcard.field[vCountry]);
-	dlgVCard->phoneNumberLabel->setText(vCard->vcard.field[vPhone]);
+	dlgVCard = new dlgJabberVCard(kopeteapp->mainWindow(), "dlgJabberVCard", vCard);
 	dlgVCard->show();
 	dlgVCard->raise();
 }

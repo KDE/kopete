@@ -1,73 +1,36 @@
-/* jabbervcard.h, by Daniel Stone <dstone@kde.org>.
- * Licensed under the GNU General Public License, etc, etc. */
+/***************************************************************************
+                          dlgjabbervcard.h  -  description
+                             -------------------
+    begin                : Thu Aug 08 2002
+    copyright            : (C) 2002 by Till Gerken
+    email                : till@tantalo.net
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
 
 #ifndef DLGJABBERVCARD_H
 #define DLGJABBERVCARD_H
 
-#include <qvariant.h>
-#include <qdialog.h>
-#include <kurllabel.h>
+#include "dlgvcard.h"
+#include "jabcommon.h"
+#include "jabtasks.h"
 
-class QVBoxLayout; 
-class QHBoxLayout; 
-class QGridLayout; 
-class KURLLabel;
-class QGroupBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-
-class dlgJabberVCard : public QDialog
+class dlgJabberVCard : public dlgVCard
 { 
     Q_OBJECT
 
 public:
-    dlgJabberVCard( QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
+    dlgJabberVCard( QWidget* parent = 0, const char* name = 0, JT_VCard *vCard = 0 );
     ~dlgJabberVCard();
-
-    QGroupBox* GroupBox1;
-    QLabel* TextLabel2;
-    QLabel* nickNameLabel;
-    QLabel* TextLabel3;
-    QLabel* JabberIDLabel;
-    KURLLabel* homepageLabel;
-    QLabel* TextLabel29;
-    QLabel* ageLabel;
-    QLabel* TextLabel27;
-    QLabel* genderLabel;
-    QLabel* TextLabel26;
-    QLabel* TextLabel31;
-    QLabel* birthdayLabel;
-    QLabel* fullNameLabel;
-    QLabel* TextLabel9;
-    QLabel* TextLabel7;
-    QPushButton* cmdClose;
-    QPushButton* cmdSave;
-    QGroupBox* GroupBox3;
-    QLabel* TextLabel18;
-    QLabel* addressLabel;
-    QLabel* TextLabel16;
-    QLabel* cellularPhoneNumber;
-    QLabel* TextLabel14;
-    QLabel* phoneNumberLabel;
-    QLabel* TextLabel12;
-    KURLLabel* emailAddressLabel;
-    QLabel* cityLabel;
-    QLabel* TextLabel22;
-    QLabel* TextLabel20;
-    QLabel* countryLabel;
-    QLabel* TextLabel24;
-    QLabel* stateLabel;
-
-
-protected:
-    QGridLayout* dlgJabberVCardLayout;
-    QGridLayout* GroupBox1Layout;
-    QGridLayout* GroupBox3Layout;
-    QGridLayout* Layout10;
-    QGridLayout* Layout3;
-    QGridLayout* Layout5;
-    QGridLayout* Layout1;
+    
+    void assignVCard(JT_VCard *vCard);
 };
 
 #endif // DLGJABBERVCARD_H
