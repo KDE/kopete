@@ -977,7 +977,7 @@ void IRCProtocol::slotSaveNetworkConfig()
 
 		QDomNode serversNode = networkNode.appendChild( doc.createElement("servers") );
 
-		for( QValueList<IRCHost*>::iterator it2 = net->hosts.begin(); it2 != net->hosts.end(); it2++ )
+		for( QValueList<IRCHost*>::iterator it2 = net->hosts.begin(); it2 != net->hosts.end(); ++it2 )
 		{
 			QDomNode serverNode = serversNode.appendChild( doc.createElement("server") );
 
