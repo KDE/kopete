@@ -15,6 +15,7 @@ Beware: It's totally unsorted ;)
 - Add a way to detect when a protocol goes offline involuntary. In that case
   try a reconnect first and only leave the protocol offline if the reconnect
   fails. Alternatively, retry reconnecting with increasing intervals.
+  -> PARTLY DONE, see KopeteAccount::disconnect() functions
 
 - Prevent attempting to send while offline where appropriate
 
@@ -25,6 +26,7 @@ Beware: It's totally unsorted ;)
 - Interface for application invitations, and better filetransfers support
 
 - KAB integration
+  -> DONE?
 
 
 ================================================================================
@@ -46,7 +48,7 @@ OSCAR ICQ/AIM TODO ITEMS
 	  (should work if kopete groupname == serverside groupname)
 	X Base Buffer class on something like QDataStream (if possible),
 	  I don't like all the pointer stuff in here
-	- get rid of AIMContactList, AIMBuddy (almost gone already) and AIMGroup.
+	X get rid of AIMContactList, AIMBuddy (almost gone already) and AIMGroup.
 
 	ICQ specific ===========================================================
 	X support simple icq type-2 messages so we can send/receive away
@@ -65,9 +67,8 @@ OSCAR ICQ/AIM TODO ITEMS
 	  these signals.
 	- ignore lists (needs proper group-handling)
 	- invisible list (needs proper group-handling)
-	- support sending your own icq userinfo to the server,
-	  it's easy to do for me but because of the mass of items takes lots of
-	  time and is extremely boring.
+	- support sending all of your own icq userinfo to the server,
+	  it's easy to do but a lot of of boring work
 
 	AIM specific ===========================================================
 	- Nothing in here yet, I'd appreciate somebody with more extensive use
