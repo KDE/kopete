@@ -109,7 +109,7 @@ void KWinPopup::messageHandler()
 		QTextStream fin(&infile);
 
 		From = fin.readLine();
-		Date = QDateTime::fromString(fin.readLine());
+		Date = QDateTime::fromString(fin.readLine(), Qt::ISODate);
 
 		for(; !fin.eof(); )
 			Text += fin.readLine() + "\n";
