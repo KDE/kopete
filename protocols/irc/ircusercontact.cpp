@@ -115,10 +115,9 @@ void IRCUserContact::userOnline()
 	m_isOnline = true;
 	mOnlineTimer->start( 45000, true );
 	updateStatus();
-	if( mInfo.lastUpdate.isNull() || mInfo.lastUpdate.secsTo( QTime::currentTime() ) > 45 )
+	if( !metaContact()->isTemporary() )
 	{
-		m_engine->writeMessage( QString::fromLatin1("WHO %1").arg(m_nickName) );
-
+		m_engine->writeMessage( QString::fromLatin1("WHOIS %1").arg(m_nickName) );
 	}
 }
 

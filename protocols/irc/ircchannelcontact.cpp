@@ -78,7 +78,10 @@ void IRCChannelContact::slotUpdateInfo()
 	*/
 
 	if( m_isConnected )
+	{
 		setProperty( QString::fromLatin1("channelMembers"), i18n("Members"), manager()->members().count() );
+		m_engine->writeMessage( QString::fromLatin1("WHO %1").arg(m_nickName) );
+	}
 	else
 	{
 		removeProperty( QString::fromLatin1("channelMembers") );
