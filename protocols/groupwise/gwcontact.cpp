@@ -6,6 +6,13 @@
     Based on Testbed   
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
     
+	Blocking status taken from MSN
+    Copyright (c) 2003      by Will Stephenson		  <will@stevello.free-online.co.uk>
+    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002      by Ryan Cumming           <bodnar42@phalynx.dhs.org>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
@@ -38,6 +45,7 @@
 #include "gwfakeserver.h"
 #include "gwmessagemanager.h"
 #include "gwprotocol.h"
+#include "privacymanager.h"
 #include "userdetailsmanager.h"
 
 #include "gwcontact.h"
@@ -51,8 +59,12 @@ GroupWiseContact::GroupWiseContact( KopeteAccount* account, const QString &dn,
   m_sequence( sequence ), m_actionBlock( 0 )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " id supplied: " << dn << endl;
-	if ( dn.find( '=' ) )
+	if ( dn.find( '=' ) != -1 )
+	{
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "dn: " << dn << " m_dn before: " << m_dn << endl;
 		m_dn = dn;
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "dn: " << dn << " m_dn after: " << m_dn << endl;
+	}
 	setOnlineStatus( ( parent && parent->isTemporary() ) ? protocol()->groupwiseUnknown : protocol()->groupwiseOffline );
 }
 
@@ -219,15 +231,16 @@ QPtrList<KAction> *GroupWiseContact::customContextMenuActions()
 	QPtrList<KAction> *m_actionCollection = new QPtrList<KAction>;
 
 	// Block/unblock Contact
-	QString label = /*isBlocked()*/false ? i18n( "Unblock User" ) : i18n( "Block User" );
+	QString label = account()->isContactBlocked( m_dn ) ? i18n( "Unblock User" ) : i18n( "Block User" );
 	if( !m_actionBlock )
 	{
-		m_actionBlock = new KAction( label, "msn_blocked",0, this, SLOT( slotBlockUser() ),
+		m_actionBlock = new KAction( label, "msn_blocked",0, this, SLOT( slotBlock() ),
 			this, "actionBlock" );
 	}
 	else
 		m_actionBlock->setText( label );
-
+	m_actionBlock->setEnabled( account()->isConnected() );
+	
 	m_actionCollection->append( m_actionBlock );
 
 	return m_actionCollection;
@@ -309,6 +322,7 @@ void GroupWiseContact::joinConference( const QString & guid )
 
 void GroupWiseContact::leaveConference( const QString & guid )
 {
+	//TODO: Implement leaveConference.
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "NOT IMPLEMENTED" << endl;
 }
 
@@ -436,6 +450,59 @@ void GroupWiseContact::syncGroups()
 	}
 }
 
+void GroupWiseContact::slotBlock()
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	if ( account()->isConnected() )
+	{
+		if ( account()->isContactBlocked( m_dn ) )
+			account()->client()->privacyManager()->addAllow( m_dn );
+		else
+			account()->client()->privacyManager()->addDeny( m_dn );
+	}
+}
+
+void GroupWiseContact::setOnlineStatus( const KopeteOnlineStatus& status )
+{
+	if ( account()->isContactBlocked( m_dn ) && status.internalStatus() < 15 )
+	{
+		KopeteContact::setOnlineStatus(KopeteOnlineStatus(status.status() , (status.weight()==0) ? 0 : (status.weight() -1)  ,
+			protocol() , status.internalStatus()+15 , QString::fromLatin1("msn_blocked"),
+			status.caption() ,  i18n("%1|Blocked").arg( status.description() ) ) );
+	}
+	else
+	{
+		if(status.internalStatus() >= 15)
+		{	//the user is not blocked, but the status is blocked
+			switch(status.internalStatus()-15)
+			{
+				case 0:
+					KopeteContact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseUnknown );
+					break;
+				case 2:
+					KopeteContact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOffline );
+					break;
+				case 3:
+					KopeteContact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAvailable );
+					break;
+				case 4:
+					KopeteContact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseBusy );
+					break;
+				case 5:
+					KopeteContact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAway );
+					break;
+				case 6:
+					KopeteContact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAwayIdle );
+					break;
+				default:
+					KopeteContact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseUnknown );
+					break;
+			}
+		}
+		else
+			KopeteContact::setOnlineStatus(status);
+	}
+}
 
 #include "gwcontact.moc"
 

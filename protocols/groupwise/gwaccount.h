@@ -121,6 +121,12 @@ public:
 	 * Invite someone to join a conference
 	 */
 	void sendInvitation( const QString & guid, const GroupWiseContact * contact, const QString & message );
+	
+	/**
+	 * Check a contact's blocking status
+	 * Only works when connected - otherwise always returns false
+	 */
+	bool isContactBlocked( const QString & m_dn );
 public slots:
 
 	void slotTestRTFize();

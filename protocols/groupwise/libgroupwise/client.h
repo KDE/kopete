@@ -9,9 +9,10 @@
 #include "rtf2html.h"
 #include "transfer.h"
 
-class Task;
+class PrivacyManager;
 class RequestFactory;
 class UserDetailsManager;
+class Task;
 
 using namespace GroupWise;
 
@@ -193,6 +194,11 @@ fd		 * @param password
 		 * Used to track known user details and issue new details requests
 		 */
 		UserDetailsManager * userDetailsManager();
+		/**
+		 * Get a reference to the PrivacyManager for this Client.
+		 * Used to track and manipulate server side privacy settings
+		 */
+		PrivacyManager * privacyManager();
 		/**
 		 * Access the root Task for this client, so tasks may be added to it.
 		 */

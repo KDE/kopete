@@ -6,7 +6,13 @@
     Based on Testbed   
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
     
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+	Blocking status taken from MSN
+    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002      by Ryan Cumming           <bodnar42@phalynx.dhs.org>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    
+	Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -142,6 +148,11 @@ public:
 	 * Updates this contact's group membership and display name on the server
 	 */
 	void syncGroups();
+	/**
+	 * Updates this contact's online status, including blocking status
+	 */
+	void setOnlineStatus(const KopeteOnlineStatus& status);
+
 public slots:
 	/**
 	 * Transmits an outgoing message to the server 
@@ -180,7 +191,10 @@ protected slots:
 	 * destroyed - probably by the chatwindow being closed
 	 */
 	void slotMessageManagerDeleted( QObject *sender );
-	
+	/**
+	 * Block or unblock the contact, toggle its current blocking state
+	 */
+	void slotBlock();
 protected:
 	KActionCollection* m_actionCollection;
 	

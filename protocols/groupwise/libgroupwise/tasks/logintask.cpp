@@ -9,6 +9,9 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+
+#include <kdebug.h> 
+
 #include "client.h"
 #include "response.h"
 #include "userdetailsmanager.h"
@@ -84,7 +87,12 @@ bool LoginTask::take( Transfer * transfer )
 		container = static_cast<Field::MultiField *>( *it );
 		extractContact( container );
 	}
-	// TODO: create privacy list
+	
+	// create privacy list
+	// NOTE: It's important to do this AFTER the contact list, 
+	// because then the user details in the contact list will have been cached
+	extractPrivacy( loginResponseFields );
+	
 	setSuccess();
 	
 	return true;
@@ -188,4 +196,76 @@ ContactDetails LoginTask::extractUserDetails( Field::FieldList & fields )
 	return cd;
 }
 
+void LoginTask::extractPrivacy( Field::FieldList & fields )
+{
+	bool privacyLocked = false;
+	bool defaultDeny = false;
+	QStringList allowList;
+	QStringList denyList;
+	// read blocking
+	// may be a single field or may be an array 
+	Field::FieldListIterator it = fields.find( NM_A_LOCKED_ATTR_LIST );
+	if ( it != fields.end() )
+	{
+		if ( Field::SingleField * sf = dynamic_cast<Field::SingleField *>( *it ) )
+		{
+			if ( sf->value().toString().find( NM_A_BLOCKING ) )
+				privacyLocked = true;
+		}
+		else if ( Field::MultiField * mf = dynamic_cast<Field::MultiField *>( *it ) )
+		{
+			Field::FieldList fl = mf->fields();
+			for ( Field::FieldListIterator it = fl.begin(); it != fl.end(); ++it )
+			{
+				if ( Field::SingleField * sf = dynamic_cast<Field::SingleField *>( *it ) )
+				{
+					if ( sf->tag() == NM_A_BLOCKING )
+					{
+						privacyLocked = true;
+						break;
+					}
+				}
+			}
+		}
+	}
+	
+	// read default privacy policy
+	Field::SingleField * sf = fields.findSingleField( NM_A_BLOCKING );
+	if ( sf )
+		defaultDeny = ( sf->value().toInt() != 0 );
+	
+		
+	// read deny list
+	denyList = readPrivacyItems( NM_A_BLOCKING_DENY_LIST, fields );
+	// read allow list
+	allowList = readPrivacyItems( NM_A_BLOCKING_ALLOW_LIST, fields );
+	emit gotPrivacySettings( privacyLocked, defaultDeny, allowList, denyList );
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "locked is " << privacyLocked << ", default is " << defaultDeny << "\nallow list is: " << allowList << "\ndeny list is: " << denyList << endl;
+}
+
+QStringList LoginTask::readPrivacyItems( const QCString & tag, Field::FieldList & fields )
+{
+	QStringList items;
+	
+	Field::FieldListIterator it = fields.find( tag );
+	if ( it != fields.end() )
+	{
+		if ( Field::SingleField * sf = dynamic_cast<Field::SingleField *>( *it ) )
+		{
+			items.append( sf->value().toString().lower() );
+		}
+		else if ( Field::MultiField * mf = dynamic_cast<Field::MultiField *>( *it ) )
+		{
+			Field::FieldList fl = mf->fields();
+			for ( Field::FieldListIterator it = fl.begin(); it != fl.end(); ++it )
+			{
+				if ( Field::SingleField * sf = dynamic_cast<Field::SingleField *>( *it ) )
+				{
+					items.append( sf->value().toString().lower() );
+				}
+			}
+		}
+	}
+	return items;
+}
 #include "logintask.moc"

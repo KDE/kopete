@@ -56,6 +56,7 @@
 #include "gwclientstream.h"
 #include "gwconnector.h"
 #include "gwmessagemanager.h"
+#include "privacymanager.h"
 #include "ui/gwprivacy.h"
 #include "ui/gwreceiveinvitationdialog.h"
 #include "qcatlshandler.h"
@@ -789,7 +790,7 @@ bool GroupWiseAccount::addContactToMetaContact( const QString& contactId, const 
 	// 
 	// Since addContactToMetaContact expects synchronous contact creation 
 	// we have to create the contact optimistically.
-	GroupWiseContact * c = new GroupWiseContact( this, contactId, parentContact, 0, 0, 0 );
+	/*GroupWiseContact * c = */new GroupWiseContact( this, contactId, parentContact, 0, 0, 0 );
 
 	// If the CreateContactTask finishes with an error, we'll have to 
 	// delete the contact we just created, in receiveContactCreated :/
@@ -902,7 +903,7 @@ void GroupWiseAccount::receiveInviteDeclined( const ConferenceEvent & event )
 		GroupWiseContact * c = contactForDN( event.user );
 		if ( c )
 		{
-			QString from = c->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+			QString from = c->metaContact()->displayName();
 
 			KopeteMessage declined = KopeteMessage( mgr->user(), mgr->members(), i18n("%1 has rejected an invitation to join this conversation.").arg( from ), KopeteMessage::Internal, KopeteMessage::PlainText );
 			mgr->appendMessage( declined );
@@ -983,6 +984,14 @@ void GroupWiseAccount::slotPrivacy()
 	KDialogBase * privacyDialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "gwprivacydialog", false, i18n( "Account specific privacy settings", "Manage Privacy for %1" ).arg( accountId() ), KDialogBase::Ok );
 	privacyDialog->setMainWidget( new GroupWisePrivacyWidget( privacyDialog ) );
 	privacyDialog->show();
+}
+
+bool GroupWiseAccount::isContactBlocked( const QString & dn )
+{
+	if ( isConnected() )
+		return client()->privacyManager()->isBlocked( dn );
+	else 
+		return false;
 }
 
 #include "gwaccount.moc"

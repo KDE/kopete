@@ -12,11 +12,7 @@
 #ifndef LOGINTASK_H
 #define LOGINTASK_H
 
-#include <qstring.h> //see typedef
-
 #include "requesttask.h"
-
-typedef QString ContactListItem; // temp typedef pending impl
 
 using namespace GroupWise;
 
@@ -42,12 +38,15 @@ protected:
 	void extractFolder( Field::MultiField * folderContainer );
 	void extractContact( Field::MultiField * contactContainer );
 	ContactDetails extractUserDetails( Field::FieldList & fields );
+	void extractPrivacy( Field::FieldList & fields );
+	QStringList readPrivacyItems( const QCString & tag, Field::FieldList & fields );
 
 signals:
 	void gotMyself( const ContactDetails & );
 	void gotFolder( const FolderItem & );
 	void gotContact( const ContactItem & );
 	void gotContactUserDetails( const ContactDetails & );
+	void gotPrivacySettings( bool locked, bool defaultDeny, const QStringList & allowList, const QStringList & denyList );
 };
 
 #endif

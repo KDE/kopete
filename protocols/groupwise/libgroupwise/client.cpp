@@ -1,6 +1,7 @@
 #include <qapplication.h>
 
 #include "gwclientstream.h"
+#include "privacymanager.h"
 #include "requestfactory.h"
 #include "task.h"
 #include "tasks/conferencetask.h"
@@ -35,6 +36,7 @@ public:
 	bool active;
 	RequestFactory * requestFactory;
 	UserDetailsManager * userDetailsMgr;
+	PrivacyManager * privacyMgr;
 };
 
 Client::Client(QObject *par)
@@ -50,6 +52,7 @@ Client::Client(QObject *par)
 	d->root = new Task(this, true);
 	d->requestFactory = new RequestFactory;
 	d->userDetailsMgr = new UserDetailsManager( this, "userdetailsmgr" );
+	d->privacyMgr = new PrivacyManager( this, "privacymgr" );
 	d->stream = 0;
 }
 
@@ -112,6 +115,9 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 			
 	connect( login, SIGNAL( gotContactUserDetails( const ContactDetails & ) ), 
 			this, SIGNAL( contactUserDetailsReceived( const ContactDetails & ) ) ) ;
+
+	connect( login, SIGNAL( gotPrivacySettings( bool, bool, const QStringList &, const QStringList & ) ),
+			privacyManager(), SLOT( slotGotPrivacyDetails( bool, bool, const QStringList &, const QStringList & ) ) );
 			
 	connect( login, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
 	
@@ -418,6 +424,11 @@ QString Client::genUniqueId()
 	s.sprintf("a%x", d->id_seed);
 	d->id_seed += 0x10;
 	return s;
+}
+
+PrivacyManager * Client::privacyManager()
+{
+	return d->privacyMgr;
 }
 
 RequestFactory * Client::requestFactory()
