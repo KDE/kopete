@@ -307,20 +307,15 @@ public:
 };
 //! \endif
 
-static QLibrary *lib = 0;
 static QSSL *qssl = 0;
 static QString *ssl_error = 0;
 static QString sslErrorLog;
 static bool ssl_tried = false;
 
-//! QSSL plugin
-static QSSL * (*_createQSSL)();
-static int (*_version)();
-
 //! \brief Creates QSSL object
 //!
 //! This function will load the QSSL plugin and create the QSSL object for you.
-static bool QSSL_load(const QString &_path)
+static bool QSSL_load(const QString & /* path */)
 {
 	if(qssl)
 		return true;
