@@ -18,9 +18,6 @@ TODO for Jabber:
 - should the away dialog pop up when going away using the account context menu?
 - verify FIXMEs in JabberContact
 - group chat needs a bit of rework
-- ignore presence information from other resources of myContact
-  (using Psi with the same account and going offline in Psi causes Kopete
-   to treat that information as if it went offline itself)
 - when opening the prefs dialog, make sure that the password dialog does not pop up
 - add a button for server defaults
 - on a failed connection attempt, the animation does not stop

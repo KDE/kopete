@@ -1045,11 +1045,17 @@ void JabberAccount::slotGroupChatError (const Jabber::Jid & jid, int error, QStr
 void JabberAccount::slotResourceAvailable (const Jabber::Jid & jid, const Jabber::Resource & resource)
 {
 
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] New resource available for " << jid.userHost () << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New resource available for " << jid.userHost () << endl;
 
 	if (!contacts ()[jid.userHost ()])
 	{
-		kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Trying to add a resource, but " << "couldn't find an entry for " << jid.userHost () << endl;
+		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Trying to add a resource, but " << "couldn't find an entry for " << jid.userHost () << endl;
+		return;
+	}
+
+	if(static_cast<JabberContact *>(contacts()[jid.userHost()]) == myContact)
+	{
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Ignoring resource by other client for ourselves." << endl;
 		return;
 	}
 
@@ -1067,7 +1073,14 @@ void JabberAccount::slotResourceUnavailable (const Jabber::Jid & jid, const Jabb
 		return;
 	}
 
+	if(static_cast<JabberContact *>(contacts()[jid.userHost()]) == myContact)
+	{
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Ignoring resource by other client for ourselves." << endl;
+		return;
+	}
+
 	static_cast < JabberContact * >(contacts ()[jid.userHost ()])->slotResourceUnavailable (jid, resource);
+
 }
 
 void JabberAccount::slotEditVCard ()
