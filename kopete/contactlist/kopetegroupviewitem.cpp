@@ -21,6 +21,7 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kdebug.h>
+#include <kapplication.h>
 
 #include "kopetecontactlistview.h"
 #include "kopetegroupviewitem.h"
@@ -106,6 +107,7 @@ void KopeteGroupViewItem::initLVI()
 
 	connect( KopetePrefs::prefs(), SIGNAL( contactListAppearanceChanged() ),
 		SLOT( slotConfigChanged() ) );
+	connect( kapp, SIGNAL( appearanceChanged() ),  SLOT( slotConfigChanged() ) );
 
 	connect( m_group, SIGNAL( iconAppearanceChanged() ), SLOT( updateIcon() ) );
 
