@@ -19,7 +19,6 @@
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
-#include "kopete.h"
 
 #include <qlineedit.h>
 #include <qcheckbox.h>
