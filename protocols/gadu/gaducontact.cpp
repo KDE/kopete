@@ -33,12 +33,6 @@ GaduContact::GaduContact( const QString& /*protocolId*/, uin_t uin,
 }
 
 QString
-GaduContact::data() const
-{
-    return QString::number( uin_ );
-}
-
-QString
 GaduContact::identityId() const
 {
     return parentIdentity_;

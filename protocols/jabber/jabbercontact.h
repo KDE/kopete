@@ -109,11 +109,6 @@ public:
 	 */
 	JabberResource *bestResource();
 
-	/*
-	 * Contact ID and associated data
-	 */
-	virtual QString data() const;
-
 	/**
 	 * Serialize contact
 	 */
