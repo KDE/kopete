@@ -44,6 +44,7 @@ private:
 private slots:
 	void slotHighlightNick();
 	void slotHighlightOthers();
+	void slotUseMDI();
 
 };
 

@@ -88,6 +88,7 @@ signals:
 	void incomingNoNickChan(const QString &);
 	void incomingWasNoNick(const QString &);
 	void incomingWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
+	void incomingUnknown(const QString &);
 private:
 	bool waitingFinishMotd;
 	bool loggedIn;

@@ -35,6 +35,7 @@
 class IRCQueryView;
 class QVBox;
 class QStringList;
+class IRCServerContact;
 
 class IRCContact : public IMContact
 {
@@ -42,6 +43,7 @@ class IRCContact : public IMContact
 public:
 	IRCContact(QListViewItem *parent, const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact);
 	IRCContact(QListViewItem *parent, const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, const QStringList pengingMessages);
+	~IRCContact();
 	virtual void rightButtonPressed(const QPoint &);
 	virtual void leftButtonDoubleClicked();
 	KIRC *engine;

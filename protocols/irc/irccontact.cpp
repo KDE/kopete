@@ -17,6 +17,7 @@
 
 #include <klocale.h>
 #include "irccontact.h"
+#include "ircservercontact.h"
 #include <kmessagebox.h>
 #include <qlayout.h>
 #include <kdialog.h>
@@ -55,13 +56,15 @@ IRCContact::IRCContact(QListViewItem *parent, const QString &server, const QStri
 	}
 	QString user = "kopeteuser";
 	QString nick = KGlobal::config()->readEntry("Nickname", "KopeteUser");
-	
+
 	mContact = contact;
 	mTarget = target;
 	mPort = port;
 	mUsername = user;
 	mNickname = nick;
 	mJoinOnConnect = joinOnConnect;
+
+	mContact->activeContacts.append(this);
 
 	init();
 
@@ -108,6 +111,8 @@ IRCContact::IRCContact(QListViewItem *parent, const QString &server, const QStri
 	mNickname = nick;
 	mJoinOnConnect = joinOnConnect;
 
+	mContact->activeContacts.append(this);
+
 	init();
 
 	connect(mContact->engine, SIGNAL(connectionClosed()), this, SLOT(slotServerQuit()));
@@ -128,13 +133,9 @@ IRCContact::IRCContact(QListViewItem *parent, const QString &server, const QStri
 
 void IRCContact::slotServerQuit()
 {
-	if (chatView != 0)
+	if (mTabPage != 0)
 	{
-		delete chatView;
-		if (mTabPage != 0)
-		{
-			delete mTabPage;
-		}
+		delete mTabPage;
 	}
 }
 
@@ -310,6 +311,11 @@ void IRCContact::slotPartedChannel(const QString &originating, const QString &ch
 	{
 		unloading();
 	}
+}
+
+IRCContact::~IRCContact()
+{
+	mContact->activeContacts.remove(this);
 }
 
 void IRCContact::unloading()

@@ -83,7 +83,7 @@ void KIRC::slotReadyRead()
 			QString message = line.section(' ', 3);
 			message.remove(0,1);
 			message.replace(QRegExp("[\\r\\n]*$"), "");
-			if ((QChar(message[0]).category()) == QChar::Other_Control && (QChar(message[(message.length() -1)]).category()) == QChar::Other_Control)
+			if (QChar(message[0]).unicode() == 1 && (QChar(message[(message.length() -1)])).unicode() == 1)
 			{
 				// Fun!
 				message = message.remove(0, 1);
@@ -297,6 +297,7 @@ void KIRC::slotReadyRead()
 					QString realName = line.section(' ', 7,7);
 					realName.remove(0, 1);
 					emit incomingWhoIsUser(line.section(' ', 3, 3), line.section(' ', 4, 4), line.section(' ', 5, 5), realName);
+					break;
 				}
 				case 332:
 				{
@@ -367,12 +368,14 @@ void KIRC::slotReadyRead()
 					command is currently unused.
 					*/
 					emit incomingNoNickChan(line.section(' ', 3, 3));
+					break;
 				}
 				case 406:
 					/*
 					Like case 401, but when there *was* no such nickname
 					*/
 					emit incomingWasNoNick(line.section(' ', 3, 3));
+					break;
 				case 433:
 				{
 					/*
@@ -387,6 +390,14 @@ void KIRC::slotReadyRead()
 					}
 					// And this is the signal for if someone is trying to use the /nick command or such when already logged in, but it's already in use
 					emit incomingNickInUse(line.section(' ', 3, 3));
+					break;
+				}
+				default:
+				{
+					/*
+					Any other messages the server decides to send us that we don't understand or have implemented (the latter is probably the case)
+					*/
+					emit incomingUnknown(line);
 					break;
 				}
 			}

@@ -22,12 +22,12 @@
 #include <qstring.h>
 #include "kopete.h"
 #include <klistview.h>
-#include "ircservermanager.h"
 #include <qtimer.h>
 #include <ircchatwindow.h>
 #include <imcontact.h>
 #include <qdict.h>
-#include "ircmessage.h"
+#include <qptrlist.h>
+#include "irccontact.h"
 
 class KIRC;
 class IMContact;
@@ -35,12 +35,16 @@ class QVBox;
 class IRCConsoleView;
 class KPopupMenu;
 class QStringList;
+class IRCCmdParser;
+class IRCServerManager;
+class IRCMessage;
 
 class IRCServerContact : public IMContact
 {
 Q_OBJECT
 public:
 	IRCServerContact(const QString &, const QString &, bool, IRCServerManager *);
+	IRCServerContact(IRCServerManager *manager);
 	KIRC *engine;
 	const QString &nickName() { return mNickname; };
 	const QString &serverName() { return mServer; };
@@ -55,18 +59,20 @@ public:
 	QString mQuitMessage;
 	QStringList activeQueries;
 	IRCMessage *messenger;
-private:
-	bool tryingQuit;
+	IRCCmdParser *parser;
+	QPtrList<IRCContact> activeContacts;
+	void setmWindow(IRCChatWindow *parent);
 	QVBox *mTabView;
+	bool tryingQuit;
+	bool closing;
+private:
 	IRCConsoleView *mConsoleView;
 	KPopupMenu *popup;
-	bool closing;
 private slots:
 	void nickInUseOnLogin(const QString &);
 	void slotChangedNick(const QString &, const QString &);
 	void slotServerHasQuit();
 	void forceDisconnect();
-	void disconnectNow();
 	void updateToolbar();
 	void incomingMessage(const QString &, const QString &, const QString &);
 	void incomingAction(const QString &, const QString &, const QString &);
@@ -74,6 +80,7 @@ public slots:
 	void slotQuitServer();
 	void connectNow();
 	void promptChannelJoin();
+	void disconnectNow();
 signals:
 	void quittingServer();
 	void serverQuit();

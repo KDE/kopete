@@ -27,6 +27,9 @@
 #include "kopete.h"
 #include <ircaddcontactpage.h>
 #include "ircchatview.h"
+#include "ircservercontact.h"
+#include "ircmessage.h"
+#include "ircservermanager.h"
 
 ///////////////////////////////////////////////////
 //           Constructor & Destructor
@@ -54,6 +57,14 @@ IRCProtocol::IRCProtocol(): QObject(0, "IRC"), IMProtocol()
 	{
 		KMessageBox::sorry(kopeteapp->mainWindow(), i18n("<qt>Sorry, you haven't setup your IRC settings for the first time, please do so by going to File->Configure Kopete->IRC Plugin. Once you are done there, please try connecting again.</qt>"), "Preferences non-existant");
 		return;
+	}
+
+	KGlobal::config()->setGroup("IRC");
+	if (KGlobal::config()->readBoolEntry("HideConsole", false) == false)
+	{
+		IRCServerContact *contact = new IRCServerContact(manager);
+		IRCChatWindow *window = new IRCChatWindow("(Console)", contact);
+		contact->setmWindow(window);
 	}
 
 	/** Autoconnect if is selected in config */

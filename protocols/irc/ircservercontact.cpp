@@ -17,6 +17,7 @@
 
 #include "ircservercontact.h"
 #include <qinputdialog.h>
+#include <kconfig.h>
 #include <klocale.h>
 #include <qinputdialog.h>
 #include <kdebug.h>
@@ -29,14 +30,19 @@
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
 #include <qstringlist.h>
+#include <kstddirs.h>
 #include "kirc.h"
 #include "imcontact.h"
+#include "ircmessage.h"
+#include "irccmdparser.h"
 #include "irccontact.h"
+#include "ircservermanager.h"
 #include "ircmessage.h"
 
 IRCServerContact::IRCServerContact(const QString &server, const QString &nickname, bool connectNow, IRCServerManager *manager)
 	: IMContact( kopeteapp->contactList() )
 {
+	parser = new IRCCmdParser(this);
 	messenger = new IRCMessage();
 	tryingQuit = false;
 	closing = false;
@@ -79,8 +85,59 @@ IRCServerContact::IRCServerContact(const QString &server, const QString &nicknam
 	}
 }
 
+IRCServerContact::IRCServerContact(IRCServerManager *manager)
+	: IMContact( kopeteapp->contactList() )
+{
+	activeContacts.setAutoDelete(true);
+	parser = new IRCCmdParser(this);
+	messenger = new IRCMessage();
+	tryingQuit = false;
+	closing = false;
+	engine = new KIRC();
+	mQuitMessage = "Using Kopete IRC Plugin";
+	QObject::connect(engine, SIGNAL(incomingFailedNickOnLogin(const QString &)), this, SLOT(nickInUseOnLogin(const QString &)));
+	QObject::connect(engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)), this, SLOT(slotChangedNick(const QString &, const QString &)));
+	QObject::connect(engine, SIGNAL(successfulQuit()), this, SLOT(slotServerHasQuit()));
+	QObject::connect(engine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)), this, SLOT(incomingMessage(const QString &, const QString &, const QString &)));
+	QObject::connect(engine, SIGNAL(incomingAction(const QString &, const QString &, const QString &)), this, SLOT(incomingAction(const QString &, const QString &, const QString &)));
+	mManager = manager;
+	mNickname = KGlobal::config()->readEntry("Nickname", "KopeteUser");
+	mServer = "(Console)";
+
+	QObject::connect(engine, SIGNAL(connectedToServer()), this, SLOT(updateToolbar()));
+
+	setText(0, "(Console)");
+}
+
+void IRCServerContact::setmWindow(IRCChatWindow *parent)
+{
+	mWindow = parent;
+	QObject::connect(mWindow, SIGNAL(windowClosing()), this, SLOT(slotQuitServer()));
+	mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(connectNow()));
+
+	mTabView = new QVBox(mWindow->mTabWidget);
+	mConsoleView = new IRCConsoleView(mServer, engine, this, mTabView);
+	mWindow->mTabWidget->addTab(mTabView, mServer);
+
+	mWindow->show();
+	mConsoleView->show();
+
+	QObject::connect(mConsoleView, SIGNAL(quitRequested()), this, SLOT(slotQuitServer()));
+	QObject::connect(this, SIGNAL(connecting()), mConsoleView, SLOT(slotConnecting()));
+}
+
 void IRCServerContact::connectNow()
 {
+	if (mServer == "(Console)")
+	{
+		QString parsed = QString("<img src=\"%1\"><b>").arg(locate("data", "kopete/pics/irc_unknowncmd.xpm"));
+		parsed.append(QStyleSheet::escape(i18n("Sorry, you need to specifiy a server before trying to connect. The syntax is: /server irc.yourserver.com")));
+		parsed.append("</b><br>");
+		mConsoleView->chatView->append(parsed);
+		mConsoleView->chatView->scrollToBottom();
+		mConsoleView->messageBox->setText("");
+		return;
+	}
 	mWindow->mToolBar->removeItem(1);
 	mWindow->mToolBar->insertButton("connect_creating", 1, SIGNAL(clicked()), this, SLOT(disconnectNow()));
 	if (engine->isLoggedIn() == false && engine->state() == QSocket::Idle)
@@ -257,12 +314,15 @@ void IRCServerContact::slotQuitServer()
 	} else {
 		emit serverQuit();
 		mManager->removeServer(text(0));
-		// Crashes when we are closing the dialog for some reason :(
 		if (closing == false)
 		{
 			mWindow->mToolBar->removeItem(1);
 			mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(connectNow()));
 		} else {
+			if (mWindow != 0)
+			{
+				delete mWindow;
+			}
 			delete this;
 		}
 		tryingQuit = false;
@@ -291,7 +351,8 @@ bool IRCServerContact::parentClosing()
 			tryingQuit = false;
 			closing = true;
 			slotQuitServer();
-			return true;
+			// We do this here because we want to wait for the server to disconnect first, then later we destroy this class
+			return false;
 		} else {
 			return false;
 		}
@@ -308,9 +369,11 @@ bool IRCServerContact::parentClosing()
 			}
 		} else {
 			mManager->removeServer(text(0));
-			delete this;
+			closing = true;
+			slotQuitServer();
 		}
 	}
 	return true;
 }
+
 #include "ircservercontact.moc"

@@ -22,8 +22,8 @@
         </property>
         <property name="geometry">
             <rect>
-                <x>0</x>
-                <y>0</y>
+                <x>5</x>
+                <y>5</y>
                 <width>430</width>
                 <height>320</height>
             </rect>
@@ -46,6 +46,12 @@
                         <width>415</width>
                         <height>115</height>
                     </rect>
+                </property>
+                <property name="frameShape">
+                    <enum>Box</enum>
+                </property>
+                <property name="frameShadow">
+                    <enum>Sunken</enum>
                 </property>
                 <property name="title">
                     <string>Login Information</string>
@@ -252,7 +258,7 @@
                 <cstring>tab</cstring>
             </property>
             <attribute name="title">
-                <string>Channels</string>
+                <string>Highlighting</string>
             </attribute>
             <widget class="QGroupBox">
                 <property name="name">
@@ -262,7 +268,7 @@
                     <rect>
                         <x>5</x>
                         <y>10</y>
-                        <width>410</width>
+                        <width>415</width>
                         <height>154</height>
                     </rect>
                 </property>
@@ -421,8 +427,169 @@
                 <cstring>tab</cstring>
             </property>
             <attribute name="title">
-                <string>Queries</string>
+                <string>Output Control</string>
             </attribute>
+            <widget class="QGroupBox">
+                <property name="name">
+                    <cstring>GroupBox4</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>5</x>
+                        <y>120</y>
+                        <width>415</width>
+                        <height>85</height>
+                    </rect>
+                </property>
+                <property name="title">
+                    <string>Extras:</string>
+                </property>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>chkSideIcons</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>15</x>
+                            <y>25</y>
+                            <width>335</width>
+                            <height>16</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Show task specific icons next to each event in the windows.</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>chkShowTimes</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>15</x>
+                            <y>50</y>
+                            <width>386</width>
+                            <height>16</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Show a timestamp to the left of all messages.</string>
+                    </property>
+                </widget>
+            </widget>
+            <widget class="QButtonGroup">
+                <property name="name">
+                    <cstring>ButtonGroup1</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>3</x>
+                        <y>7</y>
+                        <width>416</width>
+                        <height>105</height>
+                    </rect>
+                </property>
+                <property name="title">
+                    <string>Window Behavior:</string>
+                </property>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>useMDI</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>15</x>
+                            <y>25</y>
+                            <width>391</width>
+                            <height>16</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Group and add each contact to a tabbed window, per server. (Tabbed MDI)</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>chkMinimizeQueries</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>35</x>
+                            <y>50</y>
+                            <width>371</width>
+                            <height>16</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Minimize private conversation (query) tabs when first messsaged.</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>useSDI</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>15</x>
+                            <y>70</y>
+                            <width>391</width>
+                            <height>21</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Open a new window for each new contact. e.g. channel, query, server (SDI)</string>
+                    </property>
+                </widget>
+            </widget>
+        </widget>
+        <widget class="QWidget">
+            <property name="name">
+                <cstring>tab</cstring>
+            </property>
+            <attribute name="title">
+                <string>General</string>
+            </attribute>
+            <widget class="QGroupBox">
+                <property name="name">
+                    <cstring>GroupBox7</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>5</x>
+                        <y>10</y>
+                        <width>416</width>
+                        <height>55</height>
+                    </rect>
+                </property>
+                <property name="title">
+                    <string></string>
+                </property>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>chkHideConsole</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>15</x>
+                            <y>20</y>
+                            <width>386</width>
+                            <height>16</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Close the server console window when the IRC plugin loads.</string>
+                    </property>
+                </widget>
+            </widget>
         </widget>
     </widget>
 </widget>

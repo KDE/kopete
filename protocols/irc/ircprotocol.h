@@ -24,10 +24,11 @@
 #include "ircpreferences.h"
 #include <statusbaricon.h>
 #include <addcontactpage.h>
-#include <improtocol.h>
+#include "improtocol.h"
 #include "kirc.h"
-#include "ircservermanager.h"
-#include "ircservercontact.h"
+
+class IRCServerContact;
+class IRCServerManager;
 
 /**
   *@author duncan
