@@ -23,6 +23,6 @@ TODO for Jabber:
 - going away globally does not allow returning to online mode
 - should the away dialog pop up when going away using the account context menu?
 - add canSendOffline() to JabberProtocol
-- messages contain HTML-like tags (bug 60700)
 - verify FIXMEs in JabberContact
 - save "auto connect" in account preferences
+- support XHTML message types

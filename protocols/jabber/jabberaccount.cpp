@@ -824,7 +824,7 @@ void JabberAccount::slotSubscription (const Jabber::Jid & jid, const QString & t
 			mc = KopeteContactList::contactList ()->findContact (protocol ()->pluginId (), accountId (), jid.userHost ());
 
 			/* If it is not, ask the user if he wants to subscribe in return. */
-			if (!mc && (KMessageBox::questionYesNo (qApp->mainWidget (),
+			if ((!mc || mc->isTemporary()) && (KMessageBox::questionYesNo (qApp->mainWidget (),
 													i18n
 													("Do you want to add %1 to your contact "
 													 "list in return?").arg (jid.userHost (), 1), i18n ("Add Jabber User?")) == KMessageBox::Yes))

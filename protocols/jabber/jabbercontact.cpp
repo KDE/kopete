@@ -352,7 +352,7 @@ void JabberContact::km2jm (const KopeteMessage & km, Jabber::Message & jm)
 		jabMessage.setTo (Jabber::Jid (to->userId ()));
 
 	//jabMessage.setFrom(from->userId();
-	jabMessage.setBody (km.parsedBody (), true);
+	jabMessage.setBody (km.plainBody (), true);
 	jabMessage.setSubject (km.subject ());
 
 	// determine type of the widget and set message type accordingly
@@ -372,6 +372,7 @@ void JabberContact::slotReceivedMessage (const Jabber::Message & message)
 	KopeteContactPtrList contactList;
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberContact] Received Message Type:" << message.type () << endl;
+
 	// determine message type
 	if (message.type () == "chat")
 		type = KopeteMessage::Chat;
@@ -381,8 +382,8 @@ void JabberContact::slotReceivedMessage (const Jabber::Message & message)
 	contactList.append (account()->myself ());
 
 	// convert Jabber::Message into KopeteMessage
-	KopeteMessage newMessage (message.timeStamp (),
-							  this, contactList, message.body (), message.subject (), KopeteMessage::Inbound, KopeteMessage::PlainText, type);
+	KopeteMessage newMessage (message.timeStamp (), this, contactList, message.body (), message.subject (),
+							  KopeteMessage::Inbound, KopeteMessage::PlainText, type);
 
 	// add it to the manager
 	manager ()->appendMessage (newMessage);
