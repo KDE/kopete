@@ -173,6 +173,7 @@ void JabberProtocol::Connect()
 		connect(mProtocol, SIGNAL(resourceAvailable(const Jid &, const JabResource &)), this, SLOT(slotResourceAvailable(const Jid &, const JabResource &)));
 		connect(mProtocol, SIGNAL(resourceUnavailable(const Jid &)), this, SLOT(slotResourceUnavailable(const Jid &)));
 		connect(mProtocol, SIGNAL(authRequest(const Jid &)), this, SLOT(slotUserWantsAuth(const Jid &)));
+		connect(mProtocol, SIGNAL(authRemove(const Jid &)), this, SLOT(slotUserDeletedAuth(const Jid &)));
 		connect(mProtocol, SIGNAL(messageReceived(const JabMessage &)), this, SLOT(slotNewMessage(const JabMessage &)));
 		connect(mProtocol, SIGNAL(error(JabError *)), this, SLOT(slotError(JabError *)));
 
@@ -736,6 +737,19 @@ void JabberProtocol::slotUserWantsAuth(const Jid &jid)
 				mProtocol->subscribe(userID);
 	}
 
+}
+
+/*
+ * A user deleted you from his contact list (call from Psi backend) 
+ */
+
+void JabberProtocol::slotUserDeletedAuth(const Jid &jid)
+{
+
+	QString userID = QString("%1@%2").arg(jid.user(), 1).arg(jid.host(), 2);
+	
+	kdDebug() << "[JabberProtocol] " << userID << " deleted auth!" << endl;
+	
 }
 
 /*

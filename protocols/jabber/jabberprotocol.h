@@ -110,6 +110,7 @@ public slots:
 	void slotNewContact(JabRosterEntry *);
 	void slotContactUpdated(JabRosterEntry *);
 	void slotUserWantsAuth(const Jid &);
+	void slotUserDeletedAuth(const Jid &);
 	void slotSettingsChanged(void);
 	void slotResourceAvailable(const Jid &, const JabResource &);
 	void slotResourceUnavailable(const Jid &);
