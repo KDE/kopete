@@ -379,6 +379,7 @@ void KopeteMessageManager::readMessages()
 			KWin::setOnDesktop(mainWindow()->winId() , KWin::currentDesktop()); //set on the desktop
 			mainWindow()->raise(); // make it top window
 			mainWindow()->makeWidgetDockVisible(mainView);
+			mainWindow()->setActiveWindow();
 		}
 	}
 	d->isBusy=false;
