@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>397</width>
-            <height>355</height>
+            <width>457</width>
+            <height>352</height>
         </rect>
     </property>
     <property name="caption">
@@ -30,6 +30,9 @@
             <property name="text">
                 <string>&amp;New...</string>
             </property>
+            <property name="toolTip" stdset="0">
+                <string>Add new account</string>
+            </property>
         </widget>
         <widget class="QPushButton" row="1" column="1" rowspan="1" colspan="3">
             <property name="name">
@@ -38,6 +41,9 @@
             <property name="text">
                 <string>&amp;Modify...</string>
             </property>
+            <property name="toolTip" stdset="0">
+                <string>Modify selected account</string>
+            </property>
         </widget>
         <widget class="QPushButton" row="2" column="1" rowspan="1" colspan="3">
             <property name="name">
@@ -45,6 +51,9 @@
             </property>
             <property name="text">
                 <string>&amp;Remove</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Remove selected account</string>
             </property>
         </widget>
         <widget class="KListView" row="0" column="0" rowspan="9" colspan="1">
@@ -82,7 +91,13 @@
                 <cstring>mUseColor</cstring>
             </property>
             <property name="text">
-                <string>Use custom color</string>
+                <string>Use &amp;custom color</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Use custom color for account</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Allows you to set a custom color for this account</string>
             </property>
         </widget>
         <spacer row="6" column="3" rowspan="3" colspan="1">
@@ -125,6 +140,12 @@
             </property>
             <property name="text">
                 <string></string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Account custom color selector</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>apart.&lt;/qt&gt;</string>
             </property>
         </widget>
         <spacer row="5" column="1">
@@ -200,9 +221,6 @@
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>klistview.h</includehint>
     <includehint>kcolorbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
 </includehints>
 </UI>
