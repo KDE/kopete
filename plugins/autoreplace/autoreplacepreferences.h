@@ -26,7 +26,7 @@ class AutoReplacePrefsUI;
 	// add button enabled only when k and v are present 
 	// remove button enabled only when a QListViewItem is selected 
 	// signal/slot when map changes (needed?)
-	// dont autoreplace outgoing messages checkbox
+	// capital letter not just at the beginning but always after ". ", "! "...
 
 class AutoReplacePreferences : public ConfigModule  {
    Q_OBJECT
@@ -42,6 +42,7 @@ public:
 	
 	WordsToReplace getMap() const { return map; };	// O(1) implicity shared
 	bool getAutoreplaceIncoming() const { return autoreplaceIncoming; };
+	bool getAutoreplaceOutgoing() const { return autoreplaceOutgoing; };
 	bool getAddDot() const { return addDot; };
 	bool getUpper() const { return upper; };
 

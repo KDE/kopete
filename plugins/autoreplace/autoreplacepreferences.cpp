@@ -93,9 +93,11 @@ void AutoReplacePreferences::reopen()
 
 	// checkboxes
 	autoreplaceIncoming = KGlobal::config()->readBoolEntry( "AutoReplaceIncoming" , false );
+	autoreplaceOutgoing = KGlobal::config()->readBoolEntry( "AutoReplaceOutgoing" , true );
 	addDot = KGlobal::config()->readBoolEntry( "DotEndSentence" , false );
 	upper = KGlobal::config()->readBoolEntry( "CapitalizeBeginningSentence" , false );
 	preferencesDialog->m_cb_incoming->setChecked( autoreplaceIncoming );
+	preferencesDialog->m_cb_outgoing->setChecked( autoreplaceOutgoing );
 	preferencesDialog->m_cb_dot->setChecked( addDot );
 	preferencesDialog->m_cb_upper->setChecked( upper );
 
@@ -129,9 +131,11 @@ void AutoReplacePreferences::save()
 
 	// save checkboxes
 	autoreplaceIncoming = preferencesDialog->m_cb_incoming->isChecked();
+	autoreplaceOutgoing = preferencesDialog->m_cb_outgoing->isChecked();
 	addDot = preferencesDialog->m_cb_dot->isChecked();
 	upper = preferencesDialog->m_cb_upper->isChecked();
 	config->writeEntry("AutoReplaceIncoming", autoreplaceIncoming);
+	config->writeEntry("AutoReplaceOutgoing", autoreplaceOutgoing);
 	config->writeEntry("DotEndSentence", addDot);
 	config->writeEntry("CapitalizeBeginningSentence", upper);
 

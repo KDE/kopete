@@ -43,9 +43,10 @@ public:
 	~AutoReplacePlugin();
 
 public slots:
-	// file:/usr/share/qt3/doc/html/signalsandslots.html
 	void slotAutoReplaceOutgoingMessage( KopeteMessage & msg );
 	void slotAutoReplaceIncomingMessage( KopeteMessage & msg );
+	void slotAddDot( KopeteMessage & msg );
+	void slotCapitolize( KopeteMessage & msg );
 
 private:
 	void autoReplaceMessage( KopeteMessage & msg );
