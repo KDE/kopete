@@ -287,11 +287,8 @@ void IRCServerContact::slotChangedNick(const QString &, const QString &newNick)
 void IRCServerContact::nickInUseOnLogin(const QString &oldNickname)
 {
 	bool okay = false;
-	QString message = i18n("<qt>The nickname ");
-	message.append(oldNickname);
-	message.append(i18n(" is currently in use by another user. Enter a new nickname you would like to use:"));
-	QString title = i18n(oldNickname);
-	title.append(i18n(" is currently in use, choose another</qt>"));
+	QString message = i18n("<qt>The nickname %1 is currently in use by another user. Enter a new nickname you would like to use:</qt>").arg(oldNickname);
+	QString title = i18n("<qt>%1 is currently in use, choose another</qt>").arg(oldNickname);
 	QString suggested = oldNickname;
 	suggested.append("-");
 	QString newNick = QInputDialog::getText(title, message, QLineEdit::Normal, suggested, &okay);
