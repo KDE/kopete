@@ -25,3 +25,5 @@ TODO for Jabber:
 - remove KOS from all classes, make them contact specific for Greg's enhancements,
   make all classes use JabberProtocol::OnlineStatus instead
 - allow account ID changes
+- rewrite vCard handling (move protocol logic into the vCard class)
+- clean up class names in the ui directory, no real scheme there right now
