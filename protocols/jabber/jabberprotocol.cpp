@@ -25,11 +25,12 @@
 #include <kstandarddirs.h>
 #include <klineeditdlg.h>
 
-#include <qstringlist.h>
-#include <qmap.h>
-#include <qpixmap.h>
-#include <qmovie.h>
+#include <qapplication.h>
 #include <qcursor.h>
+#include <qmap.h>
+#include <qmovie.h>
+#include <qpixmap.h>
+#include <qstringlist.h>
 
 #include <psi/client.h>
 #include <psi/stream.h>
@@ -40,7 +41,6 @@
 #include <sys/utsname.h>
 
 #include "kopete.h"
-#include "systemtray.h"   // I believe that this belongs into kopete.h
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
@@ -49,7 +49,6 @@
 #include "kopeteprotocol.h"
 #include "kopeteplugin.h"
 #include "addcontactpage.h"
-#include "systemtray.h"
 #include "jabbercontact.h"
 #include "jabberprefs.h"
 #include "dlgjabberstatus.h"
@@ -112,7 +111,7 @@ JabberProtocol::~JabberProtocol()
 void JabberProtocol::errorConnectFirst()
 {
 
-	KMessageBox::error(qApp->mainWidget(), i18n("Please connect first"), i18n("Error"));
+	KMessageBox::error( qApp->mainWidget(), i18n( "Please connect first" ), i18n( "Error" ) );
 
 }
 
@@ -1644,12 +1643,5 @@ void JabberProtocol::slotGetServices()
 
 #include "jabberprotocol.moc"
 
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
+

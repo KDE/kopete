@@ -16,6 +16,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <qapplication.h>
 #include <qcursor.h>
 #include <qfont.h>
 #include <qptrlist.h>
@@ -37,7 +38,6 @@
 #include "jabberprotocol.h"
 #include "jabberresource.h"
 #include "jabbermessage.h"
-#include "kopete.h"
 #include "kopetestdaction.h"
 #include "kopetemessage.h"
 #include "kopetemessagemanager.h"
@@ -709,7 +709,7 @@ void JabberContact::slotGotVCard(Jabber::JT_VCard *vCard)
 
 	kdDebug() << "[JabberContact] Got vCard for user " << vCard->jid().userHost() << ", displaying." << endl;
 
-	dlgVCard = new dlgJabberVCard(qApp->mainWidget(), "dlgJabberVCard", vCard);
+	dlgVCard = new dlgJabberVCard( qApp->mainWidget(), "dlgJabberVCard", vCard );
 
 	if (mEditingVCard) {
 		connect(dlgVCard, SIGNAL(saveAsXML(QDomElement &)), this, SLOT(slotSaveVCard(QDomElement &)));
@@ -849,21 +849,9 @@ void JabberContact::slotMoved(KopeteMetaContact* from)
 
 	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ),
 			protocol, SLOT (serialize(KopeteMetaContact*) ));
-
-
-
 }
-
 
 #include "jabbercontact.moc"
 
-// vim: noet ts=4 sts=4 sw=4:
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 
