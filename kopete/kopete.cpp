@@ -170,7 +170,11 @@ void Kopete::slotSetAwayAll(void)
 	{
 		kdDebug() << "[Kopete] slotSetAwayAll() for plugin: " << (*i).name << endl;
 		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;
-		IMProtocol *prot =  static_cast<IMProtocol*>(tmpprot);
+		IMProtocol *prot =  dynamic_cast<IMProtocol*>(tmpprot);
+
+		if (!prot)
+			continue;
+
 		if ( prot->isConnected() && !prot->isAway() )
 		{
 			kdDebug() << "[Kopete] setting away-mode for: " << (*i).name << endl;
@@ -189,7 +193,11 @@ void Kopete::slotSetAvailableAll(void)
 	{
 		kdDebug() << "[Kopete] slotSetAvailableAll() for plugin: " << (*i).name << endl;
 		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;
-		IMProtocol *prot =  static_cast<IMProtocol*>(tmpprot);
+		IMProtocol *prot =  dynamic_cast<IMProtocol*>(tmpprot);
+
+		if (!prot)
+			continue;
+
 		if ( prot->isConnected() && prot->isAway() )
 		{
 			kdDebug() << "[Kopete] setting available-mode for: " << (*i).name << endl;
