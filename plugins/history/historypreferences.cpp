@@ -14,67 +14,21 @@
     *************************************************************************
 */
 
-#include <qlayout.h>
-#include <qcheckbox.h>
-
-#include <klocale.h>
-#include <kautoconfig.h>
-#include <kglobal.h>
-#include <kconfig.h>
-#include <knuminput.h>
-#include <kcolorbutton.h>
 #include <kgenericfactory.h>
-
+#include <kcautoconfigmodule.h>
 #include "historyprefsui.h"
-#include "historypreferences.h"
 
+class HistoryPreferences;
 
 typedef KGenericFactory<HistoryPreferences> HistoryConfigFactory;
-
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_history, HistoryConfigFactory( "kcm_kopete_history" ) )
 
-HistoryPreferences::HistoryPreferences( QWidget *parent, const char * /* name */, const QStringList &args )
-: KCModule( HistoryConfigFactory::instance(), parent, args )
+class HistoryPreferences : public KCAutoConfigModule
 {
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
+public:
+	HistoryPreferences( QWidget *parent = 0, const char * = 0, const QStringList &args = QStringList() ) : KCAutoConfigModule( HistoryConfigFactory::instance(), parent, args )
+	{
+		setMainWidget( new HistoryPrefsUI( this ) , "History Plugin");
+	}
+};
 
-	kautoconfig = new KAutoConfig(KGlobal::config(), this, "kautoconfig");
-	connect(kautoconfig, SIGNAL(widgetModified()), SLOT(slotSettingsChanged()));
-	connect(kautoconfig, SIGNAL(settingsChanged()), SLOT(slotSettingsChanged()));
-    kautoconfig->addWidget( new HistoryPrefsUI(this) , "History Plugin");
-
-	load();
-}
-
-/*HistoryPreferences::~HistoryPreferences()
-{
-}*/
-
-
-void HistoryPreferences::load()
-{
-	kautoconfig->retrieveSettings(true);
-}
-
-void HistoryPreferences::save()
-{
-	KConfig *config = KGlobal::config();
-	config->setGroup("History Plugin");
-	config->writeEntry("Version",  "0.8" );
-	kautoconfig->saveSettings();
-}
-
-void HistoryPreferences::defaults ()
-{
-	kautoconfig->resetSettings();
-}
-
-
-void HistoryPreferences::slotSettingsChanged()
-{
-	// Just mark settings dirty, even if the user undoes his changes,
-	// because KPrefs will handle it in the near future.
-	setChanged( kautoconfig->hasChanged() );
-}
-
-#include "historypreferences.moc"

@@ -55,6 +55,10 @@ HistoryPlugin::HistoryPlugin( QObject *parent, const char *name, const QStringLi
 		}
 	}
 
+	KConfig *config = KGlobal::config();
+	config->setGroup("History Plugin");
+	config->writeEntry("Version",  "0.8" );
+
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
 	QIntDict<KopeteMessageManager> sessions = KopeteMessageManagerFactory::factory()->sessions();
 	QIntDictIterator<KopeteMessageManager> it( sessions );
