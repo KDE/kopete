@@ -30,6 +30,7 @@ namespace Kopete
 
 /**
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
+ * @author Richard Smith   <richard@metafoo.co.uk>
  *
  * Kopete::MessageEvent is used when a new messages arrives, it is
  * caught by the UI. It contains just informations about
@@ -45,41 +46,77 @@ public:
 	~MessageEvent();
 
 	/**
-	 * @return the message
+	 * @return A copy of the message
 	 */
 	Kopete::Message message();
+	
+	/**
+	 * Sets the message contained in this event.
+	 * @param message The new value for the message
+	 */
+	void setMessage( const Kopete::Message &message );
 
 	/**
 	 * The state of the event.
-	 * - Nothing means that the event has not been accepted or ignored
-	 * - Applied if the event has been applied
-	 * - Ignored if the event has been ignored
+	 * - @c Nothing means that the event has not been accepted or ignored
+	 * - @c Applied if the event has been applied
+	 * - @c Ignored if the event has been ignored
 	 */
 	enum EventState { Nothing , Applied , Ignored };
 
 	EventState state();
 
-
-signals:
-	/**
-	 * The event is processed
-	 **/
-	void done(Kopete::MessageEvent *);
-
-private:
-	Kopete::Message m_message;
-	EventState m_state;
-
 public slots:
 	/**
+	 * @deprecated Use accept() instead to continue the processing of this event once the caller has moved to using MessageHandlers
+	 * 
 	 * execute the event
 	 */
 	void apply();
+	
 	/**
+	 * @deprecated Use discard() instead to destroy this event once the caller has moved to using MessageHandlers
+	 * 
 	 * ignore the event
 	 */
 	void ignore();
+	
+	/**
+	 * @brief Passes the event to the next handler
+	 * 
+	 * Call this when you've finished processing this event
+	 */
+	void accept();
+	
+	/**
+	 * @brief Discards the event
+	 *
+	 * If this event should not be processed any further, this function
+	 * should be called to discard it.
+	 */
+	void discard();
+	
+signals:
+	/**
+	 * The event has been processed
+	 */
+	void done(Kopete::MessageEvent *);
+	
+	/**
+	 * The event has been discarded.
+	 * @param event The event sending the signal.
+	 */
+	void discarded(Kopete::MessageEvent *event);
+	
+	/**
+	 * The event has been accepted by its current handler.
+	 * @param event The event sending the signal.
+	 */
+	void accepted(Kopete::MessageEvent *event);
 
+private:
+	class Private;
+	Private *d;
 };
 
 }

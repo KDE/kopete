@@ -28,41 +28,67 @@
 namespace Kopete
 {
 
-MessageEvent::MessageEvent( const Message& m, QObject *parent, const char *name ) : QObject(parent,name)
+class MessageEvent::Private
 {
-	m_message=m;
-	m_state= Nothing;
+public:
+	Kopete::Message message;
+	EventState state;
+};
+
+MessageEvent::MessageEvent( const Message& m, QObject *parent, const char *name )
+ : QObject(parent,name), d( new Private )
+{
+	d->message = m;
+	d->state = Nothing;
 }
 
 MessageEvent::~MessageEvent()
 {
 	kdDebug(14010) << k_funcinfo << endl;
 	emit done(this);
+	delete d;
 }
 
 Kopete::Message MessageEvent::message()
 {
-	return m_message;
+	return d->message;
+}
+
+void MessageEvent::setMessage( const Kopete::Message &message )
+{
+	d->message = message;
 }
 
 MessageEvent::EventState MessageEvent::state()
 {
-	return m_state;
+	return d->state;
 }
 
 void MessageEvent::apply()
 {
 	kdDebug(14010) << k_funcinfo << endl;
-	m_state= Applied;
+	d->state = Applied;
 	deleteLater();
 }
 
 void MessageEvent::ignore()
 {
-	if( m_message.from()->metaContact() && m_message.from()->metaContact()->isTemporary() )
-		ContactList::self()->removeMetaContact( m_message.from()->metaContact() );
-	m_state= Ignored;
+	// FIXME: this should be done by the contact list for itself.
+	if( d->message.from()->metaContact() && d->message.from()->metaContact()->isTemporary() )
+		ContactList::self()->removeMetaContact( d->message.from()->metaContact() );
+	d->state = Ignored;
 	deleteLater();
+}
+
+void MessageEvent::accept()
+{
+	emit accepted(this);
+}
+
+void MessageEvent::discard()
+{
+	emit discarded(this);
+	delete this;
 }
 
 }
