@@ -25,10 +25,11 @@
 #include "ircservermanager.h"
 #include <qtimer.h>
 #include <ircchatwindow.h>
+#include <imcontact.h>
 
 #include "kirc.h"
 
-class IRCServerContact : public QObject, public QListViewItem
+class IRCServerContact : public QObject, public KListViewItem
 {
 Q_OBJECT
 public:

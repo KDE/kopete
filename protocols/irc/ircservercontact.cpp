@@ -21,7 +21,7 @@
 #include <kdebug.h>
 
 IRCServerContact::IRCServerContact(const QString &server, const QString &nickname, bool connectNow, IRCServerManager *manager)
-	: QListViewItem(kopeteapp->contactList())
+	: KListViewItem( kopeteapp->contactList() )
 {
 	tryingQuit = false;
 	engine = new KIRC();
