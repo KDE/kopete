@@ -30,7 +30,9 @@
 #include "kopetecontactlist.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
+#include "kopeteidentity.h"
 #include "pluginloader.h"
+
 
 #define EMAIL_WINDOW 0
 #define CHAT_WINDOW 1
@@ -242,10 +244,16 @@ KopeteContact *KopeteMetaContact::findContact( const QString &protocolId,
 		if( ( it.current()->contactId() == contactId ) &&
 				( QString::fromLatin1( it.current()->protocol()->pluginId() ) == protocolId ) )
 		{
-      if ( identityId.isEmpty() )
+			if ( identityId.isEmpty() )
+			{
 				return it.current();
-			else if (it.current()->identityId() == identityId)
-				return it.current();
+			}
+		
+			if(it.current()->identity())
+			{
+				if(it.current()->identity()->identityId() == identityId)
+					return it.current();
+			}
 		}
 	}
 

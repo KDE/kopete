@@ -90,17 +90,6 @@ public:
 	KopeteMetaContact *metaContact() const;
 
 	/**
-	 * Returns the identity this contact belongs to (i.e. for
-	 * having multiple contacts of the same protocol in the metacontact)
-	 * FIXME: This is a bad description, could someone clear it up?
-	 *
-	 * @return THe identity of the ID
-	 *
-	 * OBSOLETE: use identiy() isteads
-	 */
-	virtual QString identityId() const;
-
-	/**
 	 * Serialize the contact for storage in the contact list.
 	 *
 	 * The provided serializedData contain the contact id in the field

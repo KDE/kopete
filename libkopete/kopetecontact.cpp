@@ -216,11 +216,6 @@ const int KopeteContact::conversations() const
 	return d->conversations;
 }
 
-QString KopeteContact::identityId() const
-{
-	return QString::null;
-}
-
 void KopeteContact::rename( const QString &name )
 {
 	// Default implementation immediately sets the new name
