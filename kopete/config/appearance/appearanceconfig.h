@@ -75,6 +75,7 @@ private slots:
 	void slotStyleSaved();
 	void slotStyleSelected();
 	void slotGreyIdleMetaContactsChanged(bool);
+	void emitChanged();
 
 private:
 	QTabWidget* mAppearanceTabCtl;
