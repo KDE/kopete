@@ -459,10 +459,30 @@ QString HistoryLogger::getFileName(const KopeteContact* c, unsigned int month)
 
 	QString name = c->protocol()->pluginId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
 			QString::fromLatin1( "/" ) +
+			c->account()->accountId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
+			QString::fromLatin1( "/" ) +
 			c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
-		d.toString(".yyyyMM");
+			d.toString(".yyyyMM");
 
-	return locateLocal( "data", QString::fromLatin1( "kopete/logs/" ) + name+ QString::fromLatin1( ".xml" ) ) ;
+	QString filename=locateLocal( "data", QString::fromLatin1( "kopete/logs/" ) + name+ QString::fromLatin1( ".xml" ) ) ;
+
+	//Check if there is a kopete 0.7.x file
+	QFileInfo fi(filename);
+	if(!fi.exists())
+	{
+		name = c->protocol()->pluginId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
+				QString::fromLatin1( "/" ) +
+				c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
+				d.toString(".yyyyMM");
+
+		QString filename2=locateLocal( "data", QString::fromLatin1( "kopete/logs/" ) + name+ QString::fromLatin1( ".xml" ) ) ;
+
+		QFileInfo fi2(filename2);
+		if(fi2.exists())
+			return filename2;
+	}
+
+	return filename;
 
 }
 
@@ -471,20 +491,46 @@ unsigned int HistoryLogger::getFistMonth(const KopeteContact *c)
 	if(!c)
 		return getFistMonth();
 
+	QRegExp rx( "\\.(\\d\\d\\d\\d)(\\d\\d)" );
+	QFileInfo *fi;
 
-	QDir d(locateLocal("data",QString("kopete/logs/%1").arg(c->protocol()->pluginId().replace(
-		QRegExp(QString::fromLatin1("[./~?*]")),QString::fromLatin1("-"))))
-		);
+	//check if there are Kopete 0.7.x
+	QDir d1(locateLocal("data",QString("kopete/logs/")+
+		c->protocol()->pluginId().replace( QRegExp(QString::fromLatin1("[./~?*]")),QString::fromLatin1("-"))
+		));
+	d1.setFilter( QDir::Files | QDir::NoSymLinks );
+	d1.setSorting( QDir::Name );
+
+	const QFileInfoList *list1 = d1.entryInfoList();
+	QFileInfoListIterator it1( *list1 );
+
+	while ( (fi = it1.current()) != 0 )
+	{
+		if(fi->fileName().contains(c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) )))
+		{
+			rx.search(fi->fileName());
+			int result = 12*(QDate::currentDate().year() - rx.cap(1).toUInt()) +QDate::currentDate().month() - rx.cap(2).toUInt();
+			return result;
+		}
+		++it1;
+	}
+	//end of kopete 0.7.x check
+
+
+
+
+
+	QDir d(locateLocal("data",QString("kopete/logs/")+
+		c->protocol()->pluginId().replace( QRegExp(QString::fromLatin1("[./~?*]")),QString::fromLatin1("-")) +
+		QString::fromLatin1( "/" ) +
+		c->account()->accountId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) )
+		));
 
 	d.setFilter( QDir::Files | QDir::NoSymLinks );
 	d.setSorting( QDir::Name );
 
 	const QFileInfoList *list = d.entryInfoList();
 	QFileInfoListIterator it( *list );
-	QFileInfo *fi;
-
-	QRegExp rx( "\\.(\\d\\d\\d\\d)(\\d\\d)" );
-
 	while ( (fi = it.current()) != 0 )
 	{
 		if(fi->fileName().contains(c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) )))
