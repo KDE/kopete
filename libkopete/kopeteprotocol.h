@@ -194,14 +194,14 @@ private slots:
 	 * @internal
 	 * The account changed online status. Used while unloading the protocol.
 	 */
-	void slotAccountOnlineStatusChanged( Contact *self );
+	void slotAccountOnlineStatusChanged( Kopete::Contact *self );
 
 	/**
 	 * @internal
 	 * The account is destroyed. When it's the last account we emit the
 	 * readyForUnload signal. Used while unloading the protocol.
 	 */
-	void slotAccountDestroyed( QObject *account );
+	void slotAccountDestroyed(  );
 
 
 public:

@@ -2,7 +2,7 @@
     kopeteaccountmanager.cpp - Kopete Account Manager
 
     Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
-    Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2003-2004 by Olivier Goffart       <ogoffart@tiscalinet.be>
 
     Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
@@ -32,98 +32,102 @@
 #include "kopeteprotocol.h"
 #include "kopetecontact.h"
 #include "kopetepluginmanager.h"
+#include "kopeteonlinestatus.h"
 
-class KopeteAccountPtrList : public QPtrList<Kopete::Account>
-{
-	protected:
-		int compareItems( KopeteAccountPtrList::Item a, KopeteAccountPtrList::Item b )
-		{
-			uint priority1 = static_cast<Kopete::Account*>(a)->priority();
-			uint priority2 = static_cast<Kopete::Account*>(b)->priority();
+namespace Kopete {
 
-			if( priority1 == priority2 )
-				return 0;
-			else if( priority1 > priority2 )
-				return 1;
-			else
-				return -1;
-		}
-};
-
-class KopeteAccountManagerPrivate
+class AccountManager::Private
 {
 public:
-	static Kopete::AccountManager *s_manager;
 
-	KopeteAccountPtrList accounts;
+	class AccountPtrList : public QPtrList<Account>
+	{
+		protected:
+			int compareItems( AccountPtrList::Item a, AccountPtrList::Item b )
+			{
+				uint priority1 = static_cast<Account*>(a)->priority();
+				uint priority2 = static_cast<Account*>(b)->priority();
+	
+				if( a==b ) //two account are equal only if they are equal :-)
+					return 0;  // remember than an account can be only once on the list, but two account may have the same priority when loading
+				else if( priority1 > priority2 )
+					return 1;
+				else
+					return -1;
+			}
+	} accounts;
+
 };
 
-Kopete::AccountManager * KopeteAccountManagerPrivate::s_manager = 0L;
+AccountManager * AccountManager::s_self = 0L;
 
-Kopete::AccountManager * Kopete::AccountManager::self()
+AccountManager * AccountManager::self()
 {
-	if ( !KopeteAccountManagerPrivate::s_manager )
-		KopeteAccountManagerPrivate::s_manager = new Kopete::AccountManager;
+	if ( !s_self )
+		s_self = new AccountManager;
 
-	return KopeteAccountManagerPrivate::s_manager;
+	return s_self;
 }
 
-Kopete::AccountManager::AccountManager()
-: QObject( qApp, "Kopete::AccountManager" )
+
+AccountManager::AccountManager()
+: QObject( qApp, "KopeteAccountManager" )
 {
-	d = new KopeteAccountManagerPrivate;
+	d = new Private;
 }
 
-Kopete::AccountManager::~AccountManager()
+
+AccountManager::~AccountManager()
 {
-	KopeteAccountManagerPrivate::s_manager = 0L;
+	s_self = 0L;
 
 	delete d;
 }
 
-void Kopete::AccountManager::connectAll()
+void AccountManager::connectAll()
 {
-	for ( QPtrListIterator<Kopete::Account> it( d->accounts ); it.current(); ++it )
-		it.current()->connect();
+	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+		if(it.current()->autoConnect())
+			it.current()->connect();
 }
 
-void Kopete::AccountManager::disconnectAll()
+void AccountManager::disconnectAll()
 {
-	for ( QPtrListIterator<Kopete::Account> it( d->accounts ); it.current(); ++it )
+	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 		it.current()->disconnect();
 }
 
-void Kopete::AccountManager::setAwayAll( const QString &awayReason )
+void AccountManager::setAwayAll( const QString &awayReason )
 {
-	Kopete::Away::setGlobalAway( true );
+	Away::setGlobalAway( true );
 
-	for ( QPtrListIterator<Kopete::Account> it( d->accounts ); it.current(); ++it )
+	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
 		// FIXME: ICQ's invisible online should be set to invisible away
-		Kopete::Contact *self = it.current()->myself();
-		bool isInvisible = self && self->onlineStatus().status() == Kopete::OnlineStatus::Invisible;
+		Contact *self = it.current()->myself();
+		bool isInvisible = self && self->onlineStatus().status() == OnlineStatus::Invisible;
 		if ( it.current()->isConnected() && !isInvisible )
 			it.current()->setAway( true, awayReason.isNull() ? Kopete::Away::message() : awayReason );
 	}
 }
 
-void Kopete::AccountManager::setAvailableAll()
+void AccountManager::setAvailableAll()
 {
-	Kopete::Away::setGlobalAway( false );
-
-	for ( QPtrListIterator<Kopete::Account> it( d->accounts ); it.current(); ++it )
+	Away::setGlobalAway( false );
+	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
 		if ( it.current()->isConnected() && it.current()->isAway() )
 			it.current()->setAway( false );
 	}
 }
 
-QColor Kopete::AccountManager::guessColor( Kopete::Protocol *protocol )
+QColor AccountManager::guessColor( Protocol *protocol ) const
 {
 	// FIXME: Use a different algoritm. It should check if the color is really not
 	//        used - Olivier
 	int protocolCount = 0;
-	for ( QPtrListIterator<Kopete::Account> it( d->accounts ); it.current(); ++it )
+
+	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
 		if ( it.current()->protocol()->pluginId() == protocol->pluginId() )
 			protocolCount++;
@@ -159,32 +163,60 @@ QColor Kopete::AccountManager::guessColor( Kopete::Protocol *protocol )
 	return color;
 }
 
-bool Kopete::AccountManager::registerAccount( Kopete::Account *account )
+Account* AccountManager::registerAccount( Account *account )
 {
-
-	if ( !account || account->accountId().isNull() )
-		return false;
-
-	// If this account already exists, do nothing
-	for ( QPtrListIterator<Kopete::Account> it( d->accounts ); it.current(); ++it )
+	if( !account || d->accounts.contains( account ) )
+		return account;
+		
+	if( account->accountId().isEmpty() )
 	{
-		if ( ( account->protocol() == it.current()->protocol() ) && ( account->accountId() == it.current()->accountId() ) )
-			return false;
+		account->deleteLater();
+		return 0L;
 	}
 
-	d->accounts.append( account );
-	return true;
+	// If this account already exists, do nothing
+	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	{
+		if ( ( account->protocol() == it.current()->protocol() ) && ( account->accountId() == it.current()->accountId() ) )
+		{
+			account->deleteLater();
+			return 0L;
+		}
+	}
+
+	d->accounts.append( account );	
+	d->accounts.sort();
+	
+	// Connect to the account's status changed signal
+	connect(account->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact *,
+			const Kopete::OnlineStatus &, const Kopete::OnlineStatus &)),
+		this, SLOT(slotAccountOnlineStatusChanged(Kopete::Contact *,
+			const Kopete::OnlineStatus &, const Kopete::OnlineStatus &)));
+
+	connect(account, SIGNAL(accountDestroyed(const Kopete::Account *)) , this, SLOT( unregisterAccount(const Kopete::Account *) ));
+
+#if 0 //TODO:  when the account will be ported to uses configgroup
+	emit accountRegistered( account );
+#endif
+	return account;
 }
 
-const QPtrList<Kopete::Account>& Kopete::AccountManager::accounts() const
+void AccountManager::unregisterAccount( const Account *account )
+{
+	kdDebug( 14010 ) << k_funcinfo << "Unregistering account " << account->accountId() << endl;
+	d->accounts.remove( account );
+	emit accountUnregistered( account );
+}
+
+const QPtrList<Account>& AccountManager::accounts() const
 {
 	return d->accounts;
 }
 
-QDict<Kopete::Account> Kopete::AccountManager::accounts( const Kopete::Protocol *protocol )
+QDict<Account> AccountManager::accounts( const Protocol *protocol ) const
 {
-	QDict<Kopete::Account> dict;
-	for ( QPtrListIterator<Kopete::Account> it( d->accounts ); it.current(); ++it )
+	QDict<Account> dict;
+	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
 		if ( it.current()->protocol() == protocol && !it.current()->accountId().isNull() )
 			dict.insert( it.current()->accountId(), it.current() );
@@ -193,9 +225,9 @@ QDict<Kopete::Account> Kopete::AccountManager::accounts( const Kopete::Protocol 
 	return dict;
 }
 
-Kopete::Account * Kopete::AccountManager::findAccount( const QString &protocolId, const QString &accountId )
+Account * AccountManager::findAccount( const QString &protocolId, const QString &accountId )
 {
-	for ( QPtrListIterator<Kopete::Account> it( d->accounts ); it.current(); ++it )
+	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
 		if ( it.current()->protocol()->pluginId() == protocolId && it.current()->accountId() == accountId )
 			return it.current();
@@ -203,57 +235,65 @@ Kopete::Account * Kopete::AccountManager::findAccount( const QString &protocolId
 	return 0L;
 }
 
-void Kopete::AccountManager::removeAccount( Kopete::Account *account )
+void AccountManager::removeAccount( Account *account )
 {
-	kdDebug( 14010 ) << k_funcinfo << "Removing account '" <<
-		account->accountId() << "' and cleaning up config" << endl;
+//	kdDebug( 14010 ) << k_funcinfo << "Removing account '" << account->accountId() << "' and cleaning up config" << endl;
 
-	Kopete::Protocol *protocol = account->protocol();
+#if 0 //TODO  when i'll convert to the configGroup API, i'll implemtent this
 
-	KConfig *config = KGlobal::config();
-	QString groupName = account->configGroup();
+	if(!account->removeAccount())
+		return;
+
+	Protocol *protocol = account->protocol();
+
+
+	KConfigGroup *configgroup = account->configGroup();
 
 	// Clean up the account list
 	d->accounts.remove( account );
 
+	// Clean up configuration
+	configgroup->deleteGroup();
+	configgroup->sync();
+
 	delete account;
 
-	// Clean up configuration
-	config->deleteGroup( groupName );
-	config->sync();
-
-	if ( Kopete::AccountManager::self()->accounts( protocol ).isEmpty() )
+	if ( accounts( protocol ).isEmpty() )
 	{
 		// FIXME: pluginId() should return the internal name and not the class name, so
 		//        we can get rid of this hack - Olivier/Martijn
 		QString protocolName = protocol->pluginId().remove( QString::fromLatin1( "Protocol" ) ).lower();
 
-		Kopete::PluginManager::self()->setPluginEnabled( protocolName, false );
-		Kopete::PluginManager::self()->unloadPlugin( protocolName );
+		PluginManager::self()->setPluginEnabled( protocolName, false );
+		PluginManager::self()->unloadPlugin( protocolName );
 	}
+#endif
 }
 
-void Kopete::AccountManager::unregisterAccount( Kopete::Account *account )
-{
-	/*kdDebug( 14010 ) << k_funcinfo << "Unregistering account " <<
-		account->accountId() << endl;*/
-	d->accounts.remove( account );
-	emit accountUnregistered( account );
-}
-
-void Kopete::AccountManager::save()
+void AccountManager::save()
 {
 	//kdDebug( 14010 ) << k_funcinfo << endl;
+	
+#if 0 //TODO  when i'll convert to the configGroup API, i'll implemtent this
+	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	{
+		KConfigBase *config = it.current()->configGroup();
+	
+		config->writeEntry( "Protocol", it.current()->protocol()->pluginId() );
+		config->writeEntry( "AccountId", it.current()->accountId() );
+	}
+#else
 	d->accounts.sort();
 	for ( QPtrListIterator<Kopete::Account> it( d->accounts ); it.current(); ++it )
 		it.current()->writeConfig( it.current()->configGroup() );
+#endif
 
 	KGlobal::config()->sync();
 }
 
-void Kopete::AccountManager::load()
+void AccountManager::load()
 {
-	connect( Kopete::PluginManager::self(), SIGNAL( pluginLoaded( Kopete::Plugin * ) ),
+	connect( PluginManager::self(), SIGNAL( pluginLoaded( Kopete::Plugin * ) ),
 		this, SLOT( slotPluginLoaded( Kopete::Plugin * ) ) );
 
 	// Iterate over all groups that start with "Account_" as those are accounts
@@ -271,13 +311,13 @@ void Kopete::AccountManager::load()
 			protocol = QString::fromLatin1( "kopete_" ) + protocol.lower().remove( QString::fromLatin1( "protocol" ) );
 
 		if ( config->readBoolEntry( "Enabled", true ) )
-			Kopete::PluginManager::self()->loadPlugin( protocol, Kopete::PluginManager::LoadAsync );
+			PluginManager::self()->loadPlugin( protocol, PluginManager::LoadAsync );
 	}
 }
 
-void Kopete::AccountManager::slotPluginLoaded( Kopete::Plugin *plugin )
+void AccountManager::slotPluginLoaded( Plugin *plugin )
 {
-	Kopete::Protocol* protocol = dynamic_cast<Kopete::Protocol*>( plugin );
+	Protocol* protocol = dynamic_cast<Protocol*>( plugin );
 	if ( !protocol )
 		return;
 
@@ -307,50 +347,32 @@ void Kopete::AccountManager::slotPluginLoaded( Kopete::Plugin *plugin )
 		kdDebug( 14010 ) << k_funcinfo <<
 			"Creating account for '" << accountId << "'" << endl;
 		
-		Kopete::Account *account = 0L;
-		account = protocol->createNewAccount( accountId );
+		Account *account = 0L;
+		account = registerAccount( protocol->createNewAccount( accountId ) );
 		if ( !account )
 		{
 			kdWarning( 14010 ) << k_funcinfo <<
 				"Failed to create account for '" << accountId << "'" << endl;
 			continue;
 		}
-		account->readConfig( *it );
+		
+		//TODO:  remove
+		account->readConfig( *it ) ;
 	}
 }
 
-void Kopete::AccountManager::autoConnect()
+void AccountManager::slotAccountOnlineStatusChanged(Contact *c,
+	const OnlineStatus &oldStatus, const OnlineStatus &newStatus)
 {
-	for ( QPtrListIterator<Kopete::Account> it( d->accounts ); it.current(); ++it )
-	{
-		if ( it.current()->autoConnect() )
-			it.current()->connect();
-	}
-}
-
-void Kopete::AccountManager::notifyAccountReady( Kopete::Account *account )
-{
-	//kdDebug(14010) << k_funcinfo << account->accountId() << endl;
-	emit accountReady( account );
-	d->accounts.sort();
-
-	// Connect to the account's status changed signal
-	connect(account->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact *,
-			const Kopete::OnlineStatus &, const Kopete::OnlineStatus &)),
-		this, SLOT(slotAccountOnlineStatusChanged(Kopete::Contact *,
-			const Kopete::OnlineStatus &, const Kopete::OnlineStatus &)));
-}
-
-void Kopete::AccountManager::slotAccountOnlineStatusChanged(Kopete::Contact *c,
-	const Kopete::OnlineStatus &oldStatus, const Kopete::OnlineStatus &newStatus)
-{
-	Kopete::Account *account = c->account();
+	Account *account = c->account();
 	if (!account)
 		return;
 
 	//kdDebug(14010) << k_funcinfo << endl;
 	emit accountOnlineStatusChanged(account, oldStatus, newStatus);
 }
+
+} //END namespace Kopete
 
 #include "kopeteaccountmanager.moc"
 // vim: set noet ts=4 sts=4 sw=4:

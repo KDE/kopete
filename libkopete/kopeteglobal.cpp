@@ -191,9 +191,9 @@ const ContactPropertyTmpl &Properties::createProp(const QString &key,
 
 	if(!d->mTemplates.contains(key))
 	{
-		kdDebug(14000) << k_funcinfo <<
+/*		kdDebug(14000) << k_funcinfo <<
 			"CREATING NEW ContactPropertyTmpl WITH key = " << key  <<
-			", label = " << label << ", persisten = " << persistent << endl;
+			", label = " << label << ", persisten = " << persistent << endl;*/
 		new ContactPropertyTmpl(key, label, icon, persistent);
 	}
 	return tmpl(key);

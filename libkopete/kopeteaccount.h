@@ -71,7 +71,7 @@ class Account : public PluginDataObject
 	Q_PROPERTY( QString accountId READ accountId )
 	Q_PROPERTY( QString password READ password WRITE setPassword )
 	Q_PROPERTY( bool rememberPassword READ rememberPassword )
-	Q_PROPERTY( bool autoLogin READ autoLogin WRITE setAutoLogin )
+	Q_PROPERTY( bool autoConnect READ autoConnect WRITE setAutoConnect )
 	Q_PROPERTY( QColor color READ color WRITE setColor )
 	Q_PROPERTY( QPixmap accountIcon READ accountIcon )
 	Q_PROPERTY( bool isConnected READ isConnected )
@@ -415,6 +415,8 @@ signals:
 	 * The color of the account has been changed
 	 */
 	void colorChanged( const QColor & );
+	
+	void accountDestroyed( const Kopete::Account* );
 
 protected slots:
 	/**

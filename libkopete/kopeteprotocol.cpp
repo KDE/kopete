@@ -86,13 +86,13 @@ void Protocol::slotAccountOnlineStatusChanged( Contact *self )
 	if ( !self || !self->account() || self->account()->isConnected())
 		return;
 
-	connect( self->account(), SIGNAL( destroyed( QObject * ) ),
-		this, SLOT( slotAccountDestroyed( QObject * ) ) );
+	connect( self->account(), SIGNAL(accountDestroyed(const Kopete::Account* )),
+		this, SLOT( slotAccountDestroyed( ) ) );
 
 	self->account()->deleteLater();
 }
 
-void Protocol::slotAccountDestroyed( QObject * /* account */ )
+void Protocol::slotAccountDestroyed( )
 {
 	QDict<Account> dict = AccountManager::self()->accounts( this );
 	if ( dict.isEmpty() )
@@ -114,7 +114,10 @@ void Protocol::aboutToUnload()
 
 	// Disconnect all accounts
 	QDict<Account> accounts = AccountManager::self()->accounts( this );
-	for ( QDictIterator<Account> it( accounts ); it.current() ; ++it )
+	
+	if ( accounts.isEmpty() )
+		emit readyForUnload();
+	else for ( QDictIterator<Account> it( accounts ); it.current() ; ++it )
 	{
 		if ( it.current()->myself() && it.current()->myself()->isOnline() )
 		{
@@ -122,8 +125,8 @@ void Protocol::aboutToUnload()
 				" is still connected, disconnecting..." << endl;
 
 			QObject::connect( it.current()->myself(),
-				SIGNAL( onlineStatusChanged( Contact *, const OnlineStatus &, const OnlineStatus & ) ),
-				this, SLOT( slotAccountOnlineStatusChanged( Contact * ) ) );
+				SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
+				this, SLOT( slotAccountOnlineStatusChanged( Kopete::Contact * ) ) );
 			it.current()->disconnect();
 
 			allDisconnected = false;
@@ -134,8 +137,8 @@ void Protocol::aboutToUnload()
 			kdDebug( 14010 ) << k_funcinfo << it.current()->accountId() <<
 				" is already disconnected, deleting..." << endl;
 
-			QObject::connect( it.current(), SIGNAL( destroyed( QObject * ) ),
-				this, SLOT( slotAccountDestroyed( QObject * ) ) );
+			QObject::connect( it.current(), SIGNAL( accountDestroyed( const Kopete::Account* ) ),
+				this, SLOT( slotAccountDestroyed( ) ) );
 			it.current()->deleteLater();
 		}
 	}

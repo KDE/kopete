@@ -25,6 +25,7 @@
 #include <kio/job.h>
 
 #include "kopetecontact.h"
+#include "kopeteonlinestatus.h"
 
 class QTimer;
 class KTempFile;

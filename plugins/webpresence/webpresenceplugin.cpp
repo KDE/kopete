@@ -55,7 +55,7 @@ WebPresencePlugin::WebPresencePlugin( QObject *parent, const char *name, const Q
 {
 	m_writeScheduler = new QTimer( this );
 	connect ( m_writeScheduler, SIGNAL( timeout() ), this, SLOT( slotWriteFile() ) );
-	connect( Kopete::AccountManager::self(), SIGNAL(accountReady(Kopete::Account*)),
+	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account*)),
 				this, SLOT( listenToAllAccounts() ) );
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(Kopete::Account*)),
 				this, SLOT( listenToAllAccounts() ) );

@@ -77,24 +77,25 @@ Kopete::Account::Account( Kopete::Protocol *parent, const QString &accountId, co
 		this, SLOT( slotStopSuppression() ) );
 
 	if ( Kopete::AccountManager::self()->registerAccount( this ) )
-		QTimer::singleShot( 0, this, SLOT( slotAccountReady() ) );
+		QTimer::singleShot( 0, this, SLOT( slotAccountReady() ) );  
 	else
 		deleteLater();
 }
 
 Kopete::Account::~Account()
 {
+	emit accountDestroyed(this);
+
 	// Delete all registered child contacts first
 	while ( !d->contacts.isEmpty() )
 		delete *QDictIterator<Kopete::Contact>( d->contacts );
-	Kopete::AccountManager::self()->unregisterAccount( this );
 
 	delete d;
 }
 
 void Kopete::Account::slotAccountReady()
 {
-	Kopete::AccountManager::self()->notifyAccountReady( this );
+	Kopete::AccountManager::self()->accountRegistered( this );
 }
 
 void Kopete::Account::connect( const Kopete::OnlineStatus& )

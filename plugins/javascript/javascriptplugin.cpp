@@ -216,7 +216,7 @@ JavaScriptPlugin::JavaScriptPlugin( QObject *parent, const char *name, const QSt
 	connect( Kopete::MessageManagerFactory::self(), SIGNAL( aboutToSend( Kopete::Message & ) ),
 		this, SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
 
-	connect( Kopete::AccountManager::self(), SIGNAL( accountReady( Kopete::Account * ) ),
+	connect( Kopete::AccountManager::self(), SIGNAL( accountRegistered( Kopete::Account * ) ),
 		this, SLOT( slotAccountCreated( Kopete::Account * ) ) );
 
 	KJSEmbed::JSSecurityPolicy::setDefaultPolicy( KJSEmbed::JSSecurityPolicy::CapabilityAll );

@@ -51,8 +51,7 @@ ContactPropertyTmpl::ContactPropertyTmpl(const QString &key,
 	ContactPropertyTmpl other = Kopete::Global::Properties::self()->tmpl(key);
 	if(other.isNull())
 	{
-		kdDebug(14000) << k_funcinfo <<
-			"Creating new template for key = '" << key << "'" << endl;
+//		kdDebug(14000) << k_funcinfo << "Creating new template for key = '" << key << "'" << endl;
 
 		d = new ContactPropertyTmplPrivate;
 		d->refCount = 1;
@@ -66,8 +65,7 @@ ContactPropertyTmpl::ContactPropertyTmpl(const QString &key,
 	}
 	else
 	{
-		kdDebug(14000) << k_funcinfo <<
-			"Using existing template for key = '" << key << "'" << endl;
+//		kdDebug(14000) << k_funcinfo << "Using existing template for key = '" << key << "'" << endl;
 		d = other.d;
 		d->refCount++;
 	}

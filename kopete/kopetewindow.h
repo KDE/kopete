@@ -97,7 +97,7 @@ private slots:
 	/**
 	 * Cleanup the status bar icon when the account is destroyed
 	 */
-	void slotAccountUnregistered( Kopete::Account *a);
+	void slotAccountUnregistered( const Kopete::Account *a);
 
 	/**
 	 * The status icon got changed, update it.

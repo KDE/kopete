@@ -64,6 +64,7 @@
 #include "kopeteawayaction.h"
 #include "kopeteuiglobal.h"
 #include "systemtray.h"
+#include "kopeteonlinestatus.h"
 
 
 KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
@@ -97,10 +98,10 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	/* Please note that I tried to put this in the slotAllPluginsLoaded() function
 	 * but it seemed to break the account icons in the statusbar --Matt */
 
-	connect( Kopete::AccountManager::self(), SIGNAL(accountReady(Kopete::Account*)),
+	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account*)),
 		this, SLOT(slotAccountRegistered(Kopete::Account*)));
-	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(Kopete::Account*)),
-		this, SLOT(slotAccountUnregistered(Kopete::Account*)));
+	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account*)),
+		this, SLOT(slotAccountUnregistered(const Kopete::Account*)));
 
 	createGUI ( "kopeteui.rc", false );
 
@@ -531,7 +532,7 @@ void KopeteWindow::slotAccountRegistered( Kopete::Account *account )
 	slotAccountStatusIconChanged( account->myself() );
 }
 
-void KopeteWindow::slotAccountUnregistered( Kopete::Account *account)
+void KopeteWindow::slotAccountUnregistered( const Kopete::Account *account)
 {
 //	kdDebug(14000) << k_funcinfo << "Called." << endl;
 	QPtrList<Kopete::Account>  accounts = Kopete::AccountManager::self()->accounts();
@@ -541,12 +542,13 @@ void KopeteWindow::slotAccountUnregistered( Kopete::Account *account)
 		actionDisconnect->setEnabled(false);
 	}
 
-	KopeteAccountStatusBarIcon *sbIcon = static_cast<KopeteAccountStatusBarIcon *>( m_accountStatusBarIcons[ account ] );
+	// the (void*)  is to remove the const.  i don't know why QPtrList doesn't accept const ptr as key.
+	KopeteAccountStatusBarIcon *sbIcon = static_cast<KopeteAccountStatusBarIcon *>( m_accountStatusBarIcons[ (void*)account ] );
 
 	if( !sbIcon )
 		return;
 
-	m_accountStatusBarIcons.remove( account );
+	m_accountStatusBarIcons.remove( (void*)account );
 	delete sbIcon;
 
 	makeTrayToolTip();
