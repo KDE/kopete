@@ -85,7 +85,8 @@ KopeteGroup::~KopeteGroup()
 QPtrList<KopeteMetaContact> KopeteGroup::members() const
 {
 	QPtrList<KopeteMetaContact> members = KopeteContactList::contactList()->metaContacts();
-	while( members.current() )
+	// members is a *copy* of the meta contacts, so using first(), next() and remove() is fine.
+	for( members.first(); members.current(); )
 	{
 		if ( members.current()->groups().contains( this ) )
 			members.next();
