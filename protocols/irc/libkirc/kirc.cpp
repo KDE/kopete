@@ -32,9 +32,6 @@ KIRC::KIRC()
 	QObject::connect(this, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
 	QObject::connect(this, SIGNAL(bytesWritten(int)), this, SLOT(slotBytesWritten(int)));
 	QObject::connect(this, SIGNAL(error(int)), this, SLOT(slotError(int)));
-	mNickname = "";
-	mUsername = "";
-	mHost = "";
 }
 
 KIRC::~KIRC()
@@ -85,6 +82,15 @@ void KIRC::slotReadyRead()
 			QString message = line.section(' ', 3);
 			message.replace(QRegExp("[\\r\\n]*$"), "");
 			message = message.remove(0, 1);
+			if ((QChar(message[0]).category()) == QChar::Other_Control && (QChar(message[(message.length() -1)]).category()) == QChar::Other_Control)
+			{
+				// Fun!
+				message = message.remove(0, 1);
+				message = message.remove((message.length() -1), 1);
+				message = message.section(' ', 1);
+				emit incomingAction(originating, target, message);
+				return;
+			}
 			emit incomingMessage(originating, target, message);
 		}
 		if (command == QString("PART"))
@@ -249,6 +255,10 @@ void KIRC::slotReadyRead()
 					QStringList namesList = QStringList::split(' ', names);
 					for (QStringList::Iterator it = namesList.begin(); it != namesList.end(); it++)
 					{
+						if ((*it).lower() == mNickname.lower())
+						{
+							continue;
+						}
 						if ((*it)[0] == '@')
 						{
 							(*it) = (*it).remove(0, 1);
@@ -294,6 +304,23 @@ void KIRC::joinChannel(const QCString &name)
 	}
 }
 
+void KIRC::actionContact(const QString &contact, const QString &message)
+{
+	if (state() == QSocket::Connected && loggedIn == true)
+	{
+		QString statement = "PRIVMSG ";
+		statement.append(contact);
+		statement.append(" :");
+		statement.append(0x01);
+		statement.append("ACTION ");
+		statement.append(message);
+		statement.append(0x01);
+		statement.append("\r\n");
+		writeBlock(statement.local8Bit(), statement.length());
+		emit incomingAction(mNickname, contact, message);
+	}
+}
+
 void KIRC::messageContact(const QCString &contact, const QCString &message)
 {
 	if (state() == QSocket::Connected && loggedIn == true)
@@ -305,7 +332,7 @@ void KIRC::messageContact(const QCString &contact, const QCString &message)
 		statement.append("\r\n");
 		writeBlock(statement.data(), statement.length());
 		// Ahhhhhhhh, fix this ASAP:
-		emit incomingMessage(QString("Error403-"), contact, message);
+		emit incomingMessage(mNickname, contact, message);
 	}
 }
 
@@ -336,7 +363,7 @@ void KIRC::slotConnected()
 	writeBlock(ident.latin1(), ident.length());
 }
 
-void KIRC::connectToServer(const QString host, Q_UINT16 port, const QString &username, const QString &nickname)
+void KIRC::connectToServer(const QString host, Q_UINT16 port, const QString username, const QString nickname)
 {
 	mUsername = username;
 	mNickname = nickname;

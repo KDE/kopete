@@ -32,9 +32,14 @@ Q_OBJECT
 public:
 	KIRC();
 	~KIRC();
-	void connectToServer(const QString host, Q_UINT16 port, const QString &, const QString &);
+	void connectToServer(const QString host, Q_UINT16 port, const QString, const QString);
 	void joinChannel(const QCString &);
 	void messageContact(const QCString &contact, const QCString &message);
+	void actionContact(const QString &contact, const QString &message);
+	QString &userName() { return mUsername; };
+	QString &nickName() { return mNickname; };
+	QString &host() { return mHost; };
+	bool isLoggedIn() { return loggedIn; };
 enum UserClass
 {
 	Normal = 0,
@@ -67,6 +72,7 @@ signals:
 	void incomingEndOfMotd();
 	void incomingStartOfMotd();
 	void incomingPartedChannel(const QString &user, const QString &channel, const QString &reason);
+	void incomingAction(const QString &originating, const QString &target, const QString &message);
 private:
 	bool waitingFinishMotd;
 	bool loggedIn;

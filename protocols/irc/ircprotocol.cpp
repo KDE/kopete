@@ -23,6 +23,7 @@
 #include "ircprotocol.h"
 #include "irccontact.h"
 #include <ircadd.h>
+#include <klocale.h>
 #include "kopete.h"
 #include <ircaddcontactpage.h>
 #include "ircchatview.h"
@@ -47,29 +48,23 @@ IRCProtocol::IRCProtocol(): QObject(0, "IRC"), IMProtocol()
 	new IRCPreferences(protocolIcon, this);
 
 	KGlobal::config()->setGroup("IRC");
-
-	/** Autoconnect if is selected in config */
-	if ( KGlobal::config()->readBoolEntry("AutoConnect", "0") )
+	if (KGlobal::config()->hasKey("Nickname") == false)
 	{
-		Connect();
+		KMessageBox::sorry(kopeteapp->mainWindow(), i18n("<qt>Sorry, you haven't setup your IRC settings for the first time, please do so by going to File->Configure Kopete->IRC Plugin. Once you are done there, please try connecting again.</qt>"), "Preferences non-existant");
+		return;
 	}
-	mIsConnected = false;
+
 	engine = new KIRC();
 	QObject::connect(engine, SIGNAL(incomingMotd(const QString &)), this, SLOT(slotIncomingMotd(const QString &)));
 	QObject::connect(engine, SIGNAL(connectedToServer()), this, SLOT(slotConnectedToHost()));
 	QObject::connect(engine, SIGNAL(userJoinedChannel(const QString &, const QString &)), this, SLOT(slotUserJoinedChannel(const QString &, const QString &)));
 	QObject::connect(engine, SIGNAL(incomingNamesList(const QString &, const QString &, const int)), this, SLOT(slotNamesList(const QString &, const QString &, const int)));
 	
-	/*
-	**********************************************************************************************
-	*        Attention!!!!! CHANGE THESE VALUES TO WHAT YOU WANT!!!!!       *
-	*                                                                                                                           *
-	**********************************************************************************************
-	*/
-	QString nickname = "Error403-";
-	QString username = "Error4o3";
-
-	engine->connectToServer(QString("irc.openprojects.net"), 6667, username, nickname);
+	/** Autoconnect if is selected in config */
+	if ( KGlobal::config()->readBoolEntry("AutoConnect", "0") )
+	{
+		Connect();
+	}
 }
 
 void IRCProtocol::slotNamesList(const QString &channel, const QString &name, int userClass)
@@ -79,7 +74,7 @@ void IRCProtocol::slotNamesList(const QString &channel, const QString &name, int
 
 void IRCProtocol::slotConnectedToHost()
 {
-	mIsConnected = true;
+
 }
 
 void IRCProtocol::slotUserJoinedChannel(const QString &user, const QString &channel)
@@ -101,6 +96,7 @@ void IRCProtocol::addContact(const QString &server, const QString &contact)
 	QObject::connect(engine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)), chatView, SLOT(incomingMessage(const QString &, const QString &, const QString &)));
 	QObject::connect(engine, SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)), chatView, SLOT(userPartedChannel(const QString &, const QString &, const QString &)));
 	QObject::connect(engine, SIGNAL(incomingNamesList(const QString &, const QString &, const int)), chatView, SLOT(incomingNamesList(const QString &, const QString &, const int)));
+	QObject::connect(engine, SIGNAL(incomingAction(const QString &, const QString &, const QString &)), chatView, SLOT(incomingAction(const QString &, const QString &, const QString &)));
 }
 
 IRCProtocol::~IRCProtocol()
@@ -132,7 +128,12 @@ bool IRCProtocol::unload()
 
 void IRCProtocol::Connect()
 {
-
+	KGlobal::config()->setGroup("IRC");
+	QString server = KGlobal::config()->readEntry("Server", "irc.openprojects.net");
+	unsigned int port = KGlobal::config()->readEntry("Port", "6667").toUInt();
+	QString user = "kopeteuser";
+	QString nick = KGlobal::config()->readEntry("Nickname", "KopeteUser");
+	engine->connectToServer(server, port, user, nick);
 }
 
 void IRCProtocol::Disconnect()
@@ -174,4 +175,4 @@ void IRCProtocol::initIcons()
 	privmsgIcon = QPixmap(loader->loadIcon("irc_privmsg", KIcon::User));
 }
 
-		
+
