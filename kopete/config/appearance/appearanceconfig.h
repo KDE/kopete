@@ -48,7 +48,7 @@ namespace KTextEditor
 	class Document;
 }
 
-typedef QPtrList<Kopete::Contact> Kopete::ContactPtrList;
+typedef QPtrList<Kopete::Contact> ContactPtrList;
 typedef QMap<QString,QString> KopeteChatStyleMap;
 
 /**
