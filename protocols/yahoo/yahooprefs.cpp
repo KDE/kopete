@@ -44,7 +44,8 @@ YahooPreferences::YahooPreferences(const QString & pixmap,
 					QObject * parent) : ConfigModule(i18n("Yahoo Plugin"), 
 					i18n("Yahoo Protocol"), pixmap, parent)
 {
-	DEBUG(0, "YahooPreferences::YahooPreferences(" << pixmap << ", ?)");
+	DEBUG(YDMETHOD, "YahooPreferences::YahooPreferences(" << pixmap << 
+			", <parent>)");
 
     (new QVBoxLayout(this))->setAutoAdd(true);
     preferencesDialog = new dlgPreferences(this);
@@ -69,14 +70,14 @@ YahooPreferences::YahooPreferences(const QString & pixmap,
 // Destructor
 YahooPreferences::~YahooPreferences()
 {
-	DEBUG(0, "YahooPreferences::~YahooPreferences()");
+	DEBUG(YDMETHOD, "YahooPreferences::~YahooPreferences()");
 }
 
 
 // Save preferences
 void YahooPreferences::save()
 {
-	DEBUG(0, "YahooPreferences::save()");
+	DEBUG(YDMETHOD, "YahooPreferences::save()");
     KConfig *config = KGlobal::config();
     config->setGroup("Yahoo");
     config->writeEntry("UserID", preferencesDialog->mID->text());

@@ -21,7 +21,9 @@
 
 // Local Includes
 #include "yahoodebug.h"
+#include "yahoostatus.h"
 #include "yahooprotocol.h"
+#include "yahoocontact.h"
 
 // Kopete Includes
 #include "kopete.h"
@@ -43,9 +45,14 @@ class KPopupMenu;
 // Yahoo Protocol
 YahooProtocol::YahooProtocol() : QObject(0, "YahooProtocol"), KopeteProtocol()
 {
-	DEBUG(0, "YahooProtocol::YahooProtocol");
+	DEBUG(YDMETHOD, "YahooProtocol::YahooProtocol()");
 
-	kdDebug() << "Yahoo plugin: Loading ..." << endl;
+	DEBUG(YDINFO, "Loading Yahoo Plugin...");
+
+	// Create Connection
+    protocol = new KYahoo;
+    connect(protocol, SIGNAL(newContact(QString, QString, QString)), this,
+	    SLOT(slotNewContact(QString, QString, QString)));
 
 	// Load icons
     initIcons();
@@ -74,12 +81,20 @@ YahooProtocol::YahooProtocol() : QObject(0, "YahooProtocol"), KopeteProtocol()
 		Connect();
 }
 
+
+// Destructor
+YahooProtocol::~YahooProtocol()
+{
+	DEBUG(YDMETHOD, "YahooProtocol::~YahooProtocol()");
+}
+
+
 // Unload statusbar icon
 bool YahooProtocol::unload()
 {
-	DEBUG(0, "YahooProtocol::unload");
+	DEBUG(YDMETHOD, "YahooProtocol::unload()");
 
-    kdDebug() << "Yahoo plugin: Unloading...\n";
+    DEBUG(YDINFO, "Unloading YahooProtocol...");
     if (kopeteapp->statusBar()) {
 		kopeteapp->statusBar()->removeWidget(statusBarIcon);
 		delete statusBarIcon;
@@ -93,35 +108,58 @@ bool YahooProtocol::unload()
 // Connect to server
 void YahooProtocol::Connect()
 {
-	DEBUG(0, "YahooProtocol::Connect");
+	DEBUG(YDMETHOD, "YahooProtocol::Connect()");
+
+    if (!isConnected()) {
+		DEBUG(YDINFO, "Attempting to connect to Yahoo server <"
+			<< mServer << ":" << mPort << "< with user <" << mUsername << ">");
+		protocol->Connect(mServer, mPort, mUsername, mPassword);
+    } 
+	else if (isAway()) {	// They're really away, and they want to un-away. 
+		// XXX slotGoOnline();
+    } 
+	else {			// Nope, just your regular crack junky. 
+		DEBUG(YDINFO, 
+		"Yahoo plugin: Ignoring connect request (already connected).");
+    }
 }
 
 
 // Disconnect from server
 void YahooProtocol::Disconnect()
 {
-	DEBUG(0, "YahooProtocol::Disconnect");
+	DEBUG(YDMETHOD, "YahooProtocol::Disconnect()");
+
+    if (isConnected()) {
+		DEBUG(YDINFO, "Attempting to disconnect from Yahoo server "
+			<< mServer);
+		protocol->Disconnect();
+    } 
+	else {			// Again, what's with the crack? Sheez. 
+		DEBUG(YDINFO, 
+			"Ignoring disconnect request (not connected).");
+    }
 }
 
 
 // Set user available
 void YahooProtocol::setAvailable()
 {
-	DEBUG(0, "YahooProtocol::setAvailable");
+	DEBUG(YDMETHOD, "YahooProtocol::setAvailable()");
 }
 
 
 // Set user away
 void YahooProtocol::setAway()
 {
-	DEBUG(0, "YahooProtocol::setAway");
+	DEBUG(YDMETHOD, "YahooProtocol::setAway()");
 }
 
 
 // Return true if connected
 bool YahooProtocol::isConnected() const
 {
-	DEBUG(0, "YahooProtocol::isConnect");
+	DEBUG(YDMETHOD, "YahooProtocol::isConnected()");
 	return false; // XXX 
 }
 
@@ -129,7 +167,7 @@ bool YahooProtocol::isConnected() const
 // Return true if away
 bool YahooProtocol::isAway() const
 {
-	DEBUG(0, "YahooProtocol::isAway");
+	DEBUG(YDMETHOD, "YahooProtocol::isAway()");
 
 	return false; // XXX 
 }
@@ -138,7 +176,7 @@ bool YahooProtocol::isAway() const
 // Return protocol icon name
 QString YahooProtocol::protocolIcon() const
 {
-	DEBUG(0, "YahooProtocol::protocolIcon");
+	DEBUG(YDMETHOD, "YahooProtocol::protocolIcon");
 
 	return ""; // XXX
 }
@@ -146,7 +184,7 @@ QString YahooProtocol::protocolIcon() const
 // Return "add contact" dialog
 AddContactPage *YahooProtocol::createAddContactWidget(QWidget * parent)
 {
-	DEBUG(0, "YahooProtocol::createAddContactWidget");
+	DEBUG(YDMETHOD, "YahooProtocol::createAddContactWidget(<parent>)");
 
 	return NULL; // XXX
 }
@@ -155,7 +193,7 @@ AddContactPage *YahooProtocol::createAddContactWidget(QWidget * parent)
 // CallBack when clicking on statusbar icon
 void YahooProtocol::slotIconRightClicked(const QPoint)
 {
-	DEBUG(0, "YahooProtocol::slotIconRightClicked");
+	DEBUG(YDMETHOD, "YahooProtocol::slotIconRightClicked(<qpoint>)");
 
     QString handle = mUsername + "@" + mServer;
 
@@ -183,7 +221,7 @@ void YahooProtocol::slotIconRightClicked(const QPoint)
 // Callback when settings changed
 void YahooProtocol::slotSettingsChanged()
 {
-	DEBUG(0, "YahooProtocol::slotSettingsChanged");
+	DEBUG(YDMETHOD, "YahooProtocol::slotSettingsChanged()");
 
     mUsername = KGlobal::config()->readEntry("UserID", "");
     mPassword = KGlobal::config()->readEntry("Password", "");
@@ -192,10 +230,24 @@ void YahooProtocol::slotSettingsChanged()
 }
 
 
+// Add a contact to main window
+void YahooProtocol::slotNewContact(QString userID, QString name,
+				    QString group)
+{
+	DEBUG(YDMETHOD, "YahooProtocol::slotNewContact(" << userID << ", " 
+			<< name << ", " << group << ")");
+
+    if (group == QString("")) {
+		group = i18n("Unknown");
+    }
+    kopeteapp->contactList()->addContact( new YahooContact(userID, name, group, this), group);
+}
+
+
 // Private initIcons
 void YahooProtocol::initIcons()
 {
-	DEBUG(0, "YahooProtocol::initIcons");
+	DEBUG(YDMETHOD, "YahooProtocol::initIcons()");
 
     KIconLoader *loader = KGlobal::iconLoader();
     KStandardDirs dir;
@@ -211,34 +263,36 @@ void YahooProtocol::initIcons()
 // Private initActions
 void YahooProtocol::initActions()
 {
-    actionGoOnline = new KAction(i18n("Online"), "yahoo_online", 
+	DEBUG(YDMETHOD, "YahooProtocol::initActions()");
+
+    actionGoOnline = new KAction(YSTAvailable, "yahoo_online", 
 			0, this, SLOT(Connect()), this, "actionYahooConnect");
     actionGoOffline = new KAction(i18n("Offline"), "yahoo_offline", 
 			0, this, SLOT(Disconnect()), this, "actionYahooDisconnect");
-    actionGoStatus001 = new KAction(i18n("Be Right Back"), "yahoo_busy", 
+    actionGoStatus001 = new KAction(YSTBeRightBack, "yahoo_busy", 
 			0, this, SLOT(Connect()), this, "actionYahooConnect");
-    actionGoStatus002 = new KAction(i18n("Busy"), "yahoo_busy", 
+    actionGoStatus002 = new KAction(YSTBusy, "yahoo_busy", 
 			0, this, SLOT(Connect()), this, "actionYahooConnect");
-    actionGoStatus003 = new KAction(i18n("Not At Home"), "yahoo_busy", 
+    actionGoStatus003 = new KAction(YSTNotAtHome, "yahoo_busy", 
 			0, this, SLOT(Connect()), this, "actionYahooConnect");
-    actionGoStatus004 = new KAction(i18n("Not At My Desk"), "yahoo_busy", 
+    actionGoStatus004 = new KAction(YSTNotAtMyDesk, "yahoo_busy", 
 			0, this, SLOT(Connect()), this, "actionYahooConnect");
-    actionGoStatus005 = new KAction(i18n("Not In The Office"), "yahoo_busy", 
+    actionGoStatus005 = new KAction(YSTNotInTheOffice, "yahoo_busy", 
 			0, this, SLOT(Connect()), this, "actionYahooConnect");
-    actionGoStatus006 = new KAction(i18n("On The Phone"), "yahoo_busy", 
+    actionGoStatus006 = new KAction(YSTOnThePhone, "yahoo_busy", 
 			0, this, SLOT(Connect()), this, "actionYahooConnect");
-    actionGoStatus007 = new KAction(i18n("On Vacation"), "yahoo_busy", 
+    actionGoStatus007 = new KAction(YSTOnVacation, "yahoo_busy", 
 			0, this, SLOT(Connect()), this, "actionYahooConnect");
-    actionGoStatus008 = new KAction(i18n("Out To Lunch"), "yahoo_busy", 
+    actionGoStatus008 = new KAction(YSTOutToLunch, "yahoo_busy", 
 			0, this, SLOT(Connect()), this, "actionYahooConnect");
-    actionGoStatus009 = new KAction(i18n("Stepped Out"), "yahoo_busy", 
+    actionGoStatus009 = new KAction(YSTSteppedOut, "yahoo_busy", 
 			0, this, SLOT(Connect()), this, "actionYahooConnect");
     actionGoStatus012 = new KAction(i18n("Invisible"), "yahoo_offline", 
 			0, this, SLOT(Connect()), this, "actionYahooConnect"); // XXX Connect with invisible on
     actionGoStatus099 = new KAction(i18n("Custom"), "yahoo_online", 
 			0, this, SLOT(Connect()), this, "actionYahooConnect"); // XXX Get some dialogbox
-    actionGoStatus999 = new KAction(i18n("Idle"), "yahoo_idle", 
-			0, this, SLOT(Connect()), this, "actionYahooConnect"); // XXX Get some dialogbox
+    actionGoStatus999 = new KAction(YSTIdle, "yahoo_idle", 
+			0, this, SLOT(Connect()), this, "actionYahooConnect"); 
 
     actionStatusMenu = new KActionMenu("Yahoo", this);
     actionStatusMenu->insert(actionGoOnline);

@@ -24,6 +24,7 @@
 
 // Local Includes
 #include "yahooprefs.h"
+#include "kyahoo.h"
 
 // Kopete Includes
 
@@ -45,7 +46,10 @@ class YahooProtocol : public QObject, public KopeteProtocol {
 	Q_OBJECT public:
 
 		YahooProtocol();	// Constructor
+		~YahooProtocol();	// Destructor
 		bool unload();		// Unload statusbar icon
+
+		void addContact(QString);
 
 	public slots:
 		void Connect();			// Connect to server
@@ -64,6 +68,8 @@ class YahooProtocol : public QObject, public KopeteProtocol {
 							// CallBack when clicking on statusbar icon
 		void slotSettingsChanged(void);
 							// Callback when settings changed
+		void slotNewContact(QString, QString, QString);
+							// XXX ?
 
 		// XXX void slotConnect();		
 		// XXX void slotDisconnect();
@@ -78,6 +84,8 @@ class YahooProtocol : public QObject, public KopeteProtocol {
 		StatusBarIcon *statusBarIcon;	// Statusbar Icon Object
 		KPopupMenu *popup;				// Statusbar Popup
 		YahooPreferences *mPrefs;		// Preferences Object
+		KYahoo *protocol;				// Connection Object
+
 		QPixmap onlineIcon;				// Icons
 		QPixmap offlineIcon;
 		QPixmap busyIcon;
