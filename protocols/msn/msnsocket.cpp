@@ -206,7 +206,24 @@ void MSNSocket::slotDataReceived()
 			kdDebug( 14140 ) << k_funcinfo << "Read " << ret << " bytes into 4kb block." << endl;
 		}
 
-		kdDebug( 14141 ) << k_funcinfo << QString( QCString( buf, avail ) ).stripWhiteSpace() << endl;
+		// Simple check to avoid dumping the binary data from the icons and emoticons to kdDebug:
+		// all MSN commands start with one or more uppercase characters.
+		// For now just check the first three chars, let's see how accurate it is.
+		// Additionally, if we receive an MSN-P2P packet, strip off anything after the P2P header.
+		QString rawData = QString( QCString( buf, avail ) ).stripWhiteSpace().replace(
+			QRegExp( "(P2P-Dest:.[a-zA-Z@.]*).*" ), "\\1\n\n(Stripped binary data)" );
+
+		bool isBinary = false;
+		for ( uint i = 0; i < 3 ; ++i )
+		{
+			if ( rawData[ i ] < 'A' || rawData[ i ] > 'Z' )
+				isBinary = true;
+		}
+
+		if ( isBinary )
+			kdDebug( 14141 ) << k_funcinfo << "(Stripped binary data)" << endl;
+		else
+			kdDebug( 14141 ) << k_funcinfo << rawData << endl;
 
 		// fill the buffer with the received data
 		m_buffer.add( buf, ret );
