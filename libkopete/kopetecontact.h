@@ -274,7 +274,7 @@ public slots:
 	 */
 	virtual void slotViewHistory() = 0;
 	
-	/** 
+	/**
 	 * Method to delete a contact from the contact list, 
 	 * should be implemented by protocol plugin to handle
 	 * protocol-specific actions required to delete a contact

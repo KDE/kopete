@@ -1,29 +1,31 @@
 /*
-	kopetemessagemanager.cpp - Manages all chats
+    kopetemessagemanager.cpp - Manages all chats
 
-	Copyright   : (c) 2002 by Martijn Klingens <klingens@kde.org>
+    Copyright   : (c) 2002 by Martijn Klingens <klingens@kde.org>
                       (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-		      (c) 2002 by Daniel Stone <dstone@kde.org>
+              (c) 2002 by Daniel Stone <dstone@kde.org>
 
-	*************************************************************************
-	*                                                                       *
-	* This program is free software; you can redistribute it and/or modify  *
-	* it under the terms of the GNU General Public License as published by  *
-	* the Free Software Foundation; either version 2 of the License, or     *
-	* (at your option) any later version.                                   *
-	*                                                                       *
-	*************************************************************************
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
 */
 
-#include "kopetemessagemanager.h"
-#include "kopetechatwindow.h"
-#include "kopeteevent.h"
 #include "kopete.h"
-#include "kopeteprefs.h"
-#include "kopeteemailwindow.h"
-#include "kopeteprotocol.h"
-#include "kopetemessagelog.h"
 #include "kopeteaway.h"
+#include "kopetechatwindow.h"
+#include "kopeteemailwindow.h"
+#include "kopeteevent.h"
+#include "kopetemessagelog.h"
+#include "kopetemessagemanager.h"
+#include "kopeteprefs.h"
+#include "kopeteprotocol.h"
+
+#include <qregexp.h>
 
 #include <kcolorbutton.h>
 #include <kdebug.h>
@@ -57,9 +59,10 @@ struct KMMPrivate
 	bool isBusy;
 };
 
-KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteContactPtrList others,
-		KopeteProtocol *protocol, int id, QString logFile, enum WidgetType widget,
-		QObject *parent, const char *name) : QObject( parent, name)
+KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
+	KopeteContactPtrList others, KopeteProtocol *protocol, int id,
+	enum WidgetType widget, QObject *parent, const char *name )
+: QObject( parent, name )
 {
 	d = new KMMPrivate;
 	d->mSendEnabled = true;
@@ -72,7 +75,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteCon
 	d->mProtocol = protocol;
 	d->mWidget = widget;
 	d->mId = id;
-	d->mLog = (logFile.isEmpty()) ? false : true;
+	d->mLog = true;
 	d->isEmpty= others.isEmpty();
 	d->mCanBeDeleted= false;
 	d->isBusy=false;
@@ -80,12 +83,13 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteCon
 	readModeChanged();
 	connect( KopetePrefs::prefs(), SIGNAL(queueChanged()), this, SLOT(readModeChanged()));
 
-	if (!logFile.isEmpty())	{
-		QString logFileName = "kopete/" + logFile;
-		d->mLogger = new KopeteMessageLog(logFileName, this);
-	}
-	else
-		d->mLogger = 0L;
+	// Replace '.', '/' and '~' in the user id with '-' to avoid possible
+	// directory traversal, although appending '.log' and the rest of the
+	// code should really make overwriting files possible anyway.
+	KopeteContact *c = others.first();
+	QString logFileName = "kopete/" + QString( c->protocol()->id() ) +
+		"/" + c->id().replace( QRegExp( "[./~]" ), "-" ) + ".log";
+	d->mLogger = new KopeteMessageLog( logFileName, this );
 
 //	connect(protocol, SIGNAL(destroyed()), this, SLOT(slotProtocolUnloading()));
 }

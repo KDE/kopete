@@ -1,18 +1,18 @@
 /*
-	kopetemessagemanager.h - Manages all chats
+    kopetemessagemanager.h - Manages all chats
 
-	Copyright   : (c) 2002 by Martijn Klingens <klingens@kde.org>
+    Copyright   : (c) 2002 by Martijn Klingens <klingens@kde.org>
                   (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-				  (c) 2002 by Daniel Stone <dstone@kde.org>
+                  (c) 2002 by Daniel Stone <dstone@kde.org>
 
-	*************************************************************************
-	*                                                                       *
-	* This program is free software; you can redistribute it and/or modify  *
-	* it under the terms of the GNU General Public License as published by  *
-	* the Free Software Foundation; either version 2 of the License, or     *
-	* (at your option) any later version.                                   *
-	*                                                                       *
-	*************************************************************************
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
 */
 
 #ifndef __KOPETEMESSAGEMANAGER_H__
@@ -42,11 +42,13 @@ struct  KMMPrivate;
 
 class KopeteMessageManager : public QObject
 {
-friend class KopeteMessageManagerFactory;
-Q_OBJECT
+	friend class KopeteMessageManagerFactory;
+
+	Q_OBJECT
+
 public:
 	/**
-	 *	Reading mode
+	 * Reading mode
 	 */
 	enum ReadingMode { Queued, Popup };
 
@@ -76,8 +78,7 @@ public:
 	int readMode() const;
 
 	/**
-	 * true if logging is turned on (which is the default
-	 * is KMM is constructed with a logFile)
+	 * true if logging is turned on
 	 */
 	bool logging() const;
 
@@ -107,8 +108,8 @@ public:
 	 *         manager
 	 */
 	int id() const;
-  /** No descriptions */
-  KopeteMessage currentMessage();
+
+	KopeteMessage currentMessage();
 
 signals:
 	/**
@@ -133,18 +134,16 @@ signals:
 
 //	void typingMsg();
 
-
 public slots:
 	void readModeChanged();
 	void slotSendEnabled(bool);
 
 	/**
 	 * Enables/disables logging
-	 * WARNING: logging will only work if KMM is constructed
-	 *          with a valid logFile variable
 	 */
 	void setLogging( bool on );
-  	/**
+
+	/**
 	 * Append a message to the queue
 	 */
 	void appendMessage( const KopeteMessage &msg );
@@ -179,7 +178,6 @@ public slots:
 	 */
 	void slotMessageSent(KopeteMessage &message);
 
-
 protected slots:
 	void slotCancelUnreadMessageEvent();
 	void slotEventDeleted(KopeteEvent *);
@@ -195,10 +193,10 @@ protected:
 	 * static factory method createSession() creates the object. You may
 	 * not create instances yourself directly!
 	 */
-	KopeteMessageManager( const KopeteContact *user, KopeteContactPtrList others,
-			      KopeteProtocol *protocol, int id = 0, QString logFile = QString::null,
-			      enum WidgetType widget = ChatWindow,
-			      QObject *parent = 0, const char *name = 0 );
+	KopeteMessageManager( const KopeteContact *user,
+		KopeteContactPtrList others, KopeteProtocol *protocol, int id = 0,
+		enum WidgetType widget = ChatWindow, QObject *parent = 0,
+		const char *name = 0 );
 	void setID( int );
 
 private:
@@ -212,16 +210,6 @@ private:
 };
 
 #endif
-
-
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 
 // vim: set noet ts=4 sts=4 sw=4:
 
