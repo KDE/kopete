@@ -31,7 +31,7 @@ namespace KIRC
 {
 class Transfer;
 class TransferHandler;
-};
+}
 
 class IRCTransferHandler
 	: public QObject

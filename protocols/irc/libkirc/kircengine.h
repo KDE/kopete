@@ -488,6 +488,6 @@ private:
 	KExtendedSocket *m_sock;
 };
 
-};
+}
 
 #endif

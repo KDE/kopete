@@ -146,6 +146,6 @@ private:
 	static QRegExp m_IRCNumericCommand;
 };
 
-};
+}
 
 #endif // KIRCMESSAGE_H

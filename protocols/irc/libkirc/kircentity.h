@@ -102,6 +102,6 @@ private:
 	KNetwork::KResolver *m_resolver;
 };
 
-};
+}
 
 #endif

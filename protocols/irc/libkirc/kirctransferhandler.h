@@ -74,6 +74,6 @@ private:
 //	QPtrList<Transfer> m_clients;
 };
 
-};
+}
 
 #endif

@@ -186,6 +186,6 @@ protected:
 	Q_UINT32	m_sentBytesLimit;
 };
 
-};
+}
 
 #endif
