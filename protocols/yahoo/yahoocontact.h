@@ -70,6 +70,8 @@ public slots:
 	 */
 	void syncToServer();
 
+	void syncGroups();
+
 private slots:
 	void slotMessageManagerDestroyed();
 	void slotSendMessage(KopeteMessage &);
