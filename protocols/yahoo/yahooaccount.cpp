@@ -3,8 +3,6 @@
 
     Copyright (c) 2003 by Gav Wood               <gav@kde.org>
     Copyright (c) 2003-2004 by Matt Rogers       <matt.rogers@kdemail.net>
-    Copyright (c) 2004 by Duncan Mac-Vicar P.    <duncan@kde.org>
-    
     Based on code by Olivier Goffart             <ogoffart@tiscalinet.be>
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -32,7 +30,6 @@
 #include <kdebug.h>
 #include <kaction.h>
 #include <kpopupmenu.h>
-#include <kinputdialog.h>
 #include <kmessagebox.h>
 #include <kapplication.h>
 
@@ -40,7 +37,6 @@
 #include <kopetemessagemanager.h>
 #include <kopetemessage.h>
 #include <kopetepassword.h>
-#include "kopeteglobal.h"
 #include <kopeteuiglobal.h>
 #include <kopetenotifyclient.h>
 
@@ -77,17 +73,12 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	static_cast<YahooContact *>( myself() )->setOnlineStatus( parent->Offline );
 
 	QObject::connect( this, SIGNAL( needReconnect() ), this, SLOT( slotNeedReconnect() ) );
-	initActions();
+
 }
 
 YahooAccount::~YahooAccount()
 {
 	delete theAwayDialog;
-}
-
-void YahooAccount::initActions()
-{
-	m_joinConferenceAction = new KAction( i18n( "&Join Conference..." ), "mail_generic", 0, this, SLOT( slotJoinConference() ), this, "joinConferenceAction" );
 }
 
 void YahooAccount::slotGoStatus( int status, const QString &awayMessage)
@@ -415,33 +406,13 @@ void YahooAccount::slotBuddyListFetched( int numBuddies )
 	theHaveContactList = true;
 }
 
-void YahooAccount::slotJoinConference()
-{
-	bool ok;
-	QString room = KInputDialog::getText( i18n( "Join Conference - Yahoo Plugin" ),
-		i18n( "Please enter the name of the room you want to join:" ), QString::null, &ok ).lower();
-	if ( ok )
-	{
-		if( !isConnected() )
-		{
-			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, i18n( "<qt>You are offline. You must be connected to join a conference room.</qt>" ), i18n( "Yahoo Plugin" ) );
-			// abort
-			return;
-		}
-		else
-		{
-			m_session->conferenceLogon( accountId(), QStringList(), room);
-		}
-	}
-}
-
 KActionMenu *YahooAccount::actionMenu()
 {
 //	kdDebug(14180) << k_funcinfo << endl;
 	//TODO: Use a QSignalMapper so all the slots can be consolidated into one function
 
-	KActionMenu *theActionMenu = new KActionMenu( displayName(), myself()->onlineStatus().iconFor(this), this );
-	theActionMenu->popupMenu()->insertTitle( myself()->icon(), "Yahoo (" + displayName() + ")");
+	KActionMenu *theActionMenu = new KActionMenu( myself()->displayName(), myself()->onlineStatus().iconFor(this), this );
+	theActionMenu->popupMenu()->insertTitle( myself()->icon(), "Yahoo (" + myself()->displayName() + ")");
 
 	theActionMenu->insert(new KAction(m_protocol->Online.caption(),
 		m_protocol->Online.iconFor(this), 0, this, SLOT(slotGoOnline()),
@@ -494,9 +465,6 @@ KActionMenu *YahooAccount::actionMenu()
 	theActionMenu->insert(new KAction(m_protocol->Offline.caption(),
 		m_protocol->Offline.iconFor(this), 0, this, SLOT(slotGoOffline()),
 		this, "actionYahooGoOffline"));
-		
-	theActionMenu->popupMenu()->insertSeparator();
-	theActionMenu->insert( m_joinConferenceAction );
 
 	return theActionMenu;
 }
@@ -509,11 +477,6 @@ void YahooAccount::slotGotBuddies( const YList */*theList*/ )
 YahooContact *YahooAccount::contact( const QString &id )
 {
 	return static_cast<YahooContact *>(contacts()[id]);
-}
-
-QString YahooAccount::displayName()
-{
-	return myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
 }
 
 bool YahooAccount::addContactToMetaContact(const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact )
@@ -692,29 +655,29 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 
 }
 
-void YahooAccount::slotGotConfInvite( const QString &who, const QString &room, const QString & /* msg */, const QStringList & /* members */ )
+void YahooAccount::slotGotConfInvite( const QString & /* who */, const QString & /* room */, const QString & /* msg */, const QStringList & /* members */ )
 {
-	kdDebug(14180) << k_funcinfo << who << " " << room << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 }
 
-void YahooAccount::slotConfUserDecline( const QString &who , const QString &room, const QString &msg)
+void YahooAccount::slotConfUserDecline( const QString & /* who */, const QString & /* room */, const QString & /* msg */ )
 {
-	kdDebug(14180) << k_funcinfo << who << " " << room << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 }
 
-void YahooAccount::slotConfUserJoin( const QString &who , const QString &room  )
+void YahooAccount::slotConfUserJoin( const QString & /* who */, const QString & /* room */ )
 {
-	kdDebug(14180) << k_funcinfo << who << " " << room << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 }
 
-void YahooAccount::slotConfUserLeave( const QString &who, const QString &room)
+void YahooAccount::slotConfUserLeave( const QString & /* who */, const QString & /* room */ )
 {
-	kdDebug(14180) << k_funcinfo << who << " " << room << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 }
 
-void YahooAccount::slotConfMessage( const QString &who, const QString &room, const QString & /* msg */ )
+void YahooAccount::slotConfMessage( const QString & /* who */, const QString & /* room */, const QString & /* msg */ )
 {
-	kdDebug(14180) << k_funcinfo << who << " " << room << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 }
 
 void YahooAccount::slotGotFile( const QString & /* who */, const QString & /* url */, long /* expires */, const QString & /* msg */,

@@ -3,8 +3,6 @@
 
     Copyright (c) 2003 by Gav Wood               <gav@kde.org>
     Copyright (c) 2003 by Matt Rogers            <mattrogers@sbcglobal.net>
-    Copyright (c) 2004 by Duncan Mac-Vicar P.    <duncan@kde.org>
-    
     Based on code by Olivier Goffart             <ogoffart@tiscalinet.be>
     Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -129,15 +127,6 @@ protected:
 	 * Remove color codes from a message
 	 */
 	QString stripMsgColorCodes(const QString& msg);
-	/**
-	 * init actions
-	 */
-	void initActions();
-	
-	/**
-	 * wrapper for contact nick property
-	 */
-	QString displayName();
 
 protected slots:
 	virtual void loaded();
@@ -156,26 +145,10 @@ protected slots:
 	void slotGotIm(const QString &who, const QString &msg, long tm, int stat);
 	void slotGotConfInvite(const QString &who, const QString &room, const QString &msg, const QStringList &members);
 	void slotConfUserDecline(const QString &who, const QString &room, const QString &msg);
-	
-	/**
-	 * an user joined a conference room
-	 */
 	void slotConfUserJoin(const QString &who, const QString &room);
-	/**
-	 * an user left a conference room
-	 */
 	void slotConfUserLeave(const QString &who, const QString &room);
-	/**
-	 * a message was sent in a conference room
-	 */
 	void slotConfMessage(const QString &who, const QString &room, const QString &msg);
-	/**
-	 * someone is trying to send a file
-	 */
 	void slotGotFile(const QString &who, const QString &url, long expires, const QString &msg, const QString &fname, unsigned long fesize);
-	/**
-	 * a contact was added
-	 */
 	void slotContactAdded(const QString &myid, const QString &who, const QString &msg);
 	void slotRejected(const QString &, const QString &);
 	void slotTypingNotify(const QString &, int );
@@ -187,11 +160,6 @@ protected slots:
 	//void slotHostConnect(const QString &host, int port);
 
 	void slotBuddyListFetched( int numBuddies );
-	
-	/**
-	 * Joins a conference asking for the conference name
-	 */
-	void slotJoinConference();
 
 private slots:
 	// various status slots for the action menu
@@ -215,10 +183,6 @@ private slots:
 	void slotNeedReconnect();
 
 private:
-	/**
-	 * join conference action
-	 */
-	KAction *m_joinConferenceAction;
 
 	/**
 	 * Handle the signal and slot connections and disconnects
