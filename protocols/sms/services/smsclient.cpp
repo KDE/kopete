@@ -52,7 +52,7 @@ void SMSClient::send(const KopeteMessage& msg)
 	QString nr = msg.to().first()->id();
 	
 	*p << programName;
-	*p << provider + ":" + nr
+	*p << provider + ":" + nr;
     *p << message;
 
 	connect( p, SIGNAL(processExited(KProcess *)), this, SLOT(slotSendFinished(KProcess*)));
