@@ -120,19 +120,44 @@ KActionMenu *JabberAccount::actionMenu ()
 	m_actionMenu->popupMenu()->insertTitle(myContact->onlineStatus().iconFor(myContact), i18n( "%2 <%1>" ).
 		arg(accountId()).arg(myContact->displayName()));
 
-	m_actionMenu->insert(new KAction (i18n ("Online"), "jabber_online", 0, this, SLOT (slotGoOnline ()), this, "actionJabberConnect"));
-	m_actionMenu->insert(new KAction (i18n ("Free to Chat"), "jabber_chatty", 0, this, SLOT (slotGoChatty ()), this, "actionJabberChatty"));
-	m_actionMenu->insert(new KAction (i18n ("Away"), "jabber_away", 0, this, SLOT (slotGoAway ()), this, "actionJabberAway"));
-	m_actionMenu->insert(new KAction (i18n ("Extended Away"), "jabber_away", 0, this, SLOT (slotGoXA ()), this, "actionJabberXA"));
-	m_actionMenu->insert(new KAction (i18n ("Do Not Disturb"), "jabber_na", 0, this, SLOT (slotGoDND ()), this, "actionJabberDND"));
-	m_actionMenu->insert(new KAction (i18n ("Invisible"), "jabber_invisible", 0, this, SLOT (slotGoInvisible ()), this, "actionJabberInvisible"));
-	m_actionMenu->insert(new KAction (i18n ("Offline"), "jabber_offline", 0, this, SLOT (slotGoOffline ()), this, "actionJabberDisconnect"));
+	m_actionMenu->insert(new KAction (mProtocol->JabberOnline.caption(),
+		mProtocol->JabberOnline.iconFor(this), 0, this, SLOT (slotGoOnline ()), this,
+		"actionJabberConnect"));
+
+	m_actionMenu->insert(new KAction (mProtocol->JabberChatty.caption(),
+		mProtocol->JabberChatty.iconFor(this), 0, this, SLOT (slotGoChatty ()), this,
+		"actionJabberChatty"));
+
+	m_actionMenu->insert(new KAction (mProtocol->JabberAway.caption(),
+		mProtocol->JabberAway.iconFor(this), 0, this, SLOT (slotGoAway ()), this,
+		"actionJabberAway"));
+
+	m_actionMenu->insert(new KAction (mProtocol->JabberXA.caption(),
+		mProtocol->JabberXA.iconFor(this), 0, this, SLOT (slotGoXA ()), this,
+		"actionJabberXA"));
+
+	m_actionMenu->insert(new KAction (mProtocol->JabberDND.caption(),
+		mProtocol->JabberDND.iconFor(this), 0, this, SLOT (slotGoDND ()), this,
+		"actionJabberDND"));
+
+	m_actionMenu->insert(new KAction (mProtocol->JabberInvisible.caption(),
+		mProtocol->JabberInvisible.iconFor(this), 0, this, SLOT (slotGoInvisible ()), this,
+		"actionJabberInvisible"));
+
+	m_actionMenu->insert(new KAction (mProtocol->JabberOffline.caption(),
+		mProtocol->JabberOffline.iconFor(this), 0, this,SLOT (slotGoOffline ()), this,
+		"actionJabberDisconnect"));
+
 	m_actionMenu->popupMenu()->insertSeparator();
-	m_actionMenu->insert(new KAction (i18n ("Join Groupchat..."), "filenew", 0, this, SLOT (slotJoinNewChat ()), this, "actionJoinChat"));
+	m_actionMenu->insert(new KAction (i18n ("Join Groupchat..."), "filenew", 0,
+		this, SLOT (slotJoinNewChat ()), this, "actionJoinChat"));
 	m_actionMenu->popupMenu()->insertSeparator();
-	m_actionMenu->insert(new KAction (i18n ("Services..."), "filenew", 0, this, SLOT (slotGetServices ()), this, "actionJabberServices"));
-	m_actionMenu->insert(new KAction (i18n ("Send Raw Packet to Server..."), "filenew", 0, this, SLOT (slotSendRaw ()), this, "actionJabberSendRaw"));
-	m_actionMenu->insert(new KAction (i18n ("Edit User Info..."), "identity", 0, this, SLOT (slotEditVCard ()), this, "actionEditVCard"));
+	m_actionMenu->insert(new KAction (i18n ("Services..."), "filenew", 0,
+		this, SLOT (slotGetServices ()), this, "actionJabberServices"));
+	m_actionMenu->insert(new KAction (i18n ("Send Raw Packet to Server..."), "filenew", 0,
+		this, SLOT (slotSendRaw ()), this, "actionJabberSendRaw"));
+	m_actionMenu->insert(new KAction (i18n ("Edit User Info..."), "identity", 0,
+		this, SLOT (slotEditVCard ()), this, "actionEditVCard"));
 
 	return m_actionMenu;
 }
@@ -474,7 +499,7 @@ void JabberAccount::slotError (const Jabber::StreamError & error)
 void JabberAccount::setPresence (const KopeteOnlineStatus & status, const QString & reason, int priority)
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting new presence." << endl;
-	
+
 	if (isConnected () || (status == protocol()->JabberConnecting) ||
 	   (myContact->onlineStatus() == protocol()->JabberConnecting))
 	{
