@@ -1,6 +1,19 @@
 Kopete, The KDE Instant Messenger - ChangeLog
 ------------------------------------------
 
+ HEAD
+=======
+
+o Main Application
+	o Blink the metacontact status icon on the contact list whan changing the
+	  status (Olivier)
+	o Hide empty groups (David)
+	o Show the idle time in the tool-tip (Olivier)
+	o Add DCop interface to connect/disconnect an account, or load/unload a
+	  plugin. Make possible to select what account to connect with the command
+	  line. (Olivier)
+
+
 Kopete 0.7 (released 2003/08/04)
 ================================
 
@@ -11,7 +24,7 @@ o Main App
 
 	o Drag and Drop contacts between metacontacts (Olivier)
 	o Show an icon while DNDing on the contactlist (Will, Olivier>
-	o Fix up fire and forget message window, make it work for all protocols 
+	o Fix up fire and forget message window, make it work for all protocols
 	  (Jason)
 	o Make send message keyboard shortcuts into customisable KActions (Jason)
 	o Message in transit animation (Jason)
@@ -26,7 +39,7 @@ o Main App
 	o New icon effects architecture. with overlays (Will)
 	o KopeteCommandhandler for /commands. Kopete-wide support of /part, /close,
 	  /clear, /exec, /help, /me (Jason)
-	o New Account Password Handling, passwords are not stored in plain text 
+	o New Account Password Handling, passwords are not stored in plain text
 	  any more (Olivier)
 	o Kopete OnlineStatus architecture (Martijn)
 	o remove KopeteTransferManager (lilachaze)
