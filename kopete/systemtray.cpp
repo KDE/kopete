@@ -270,6 +270,12 @@ void KopeteSystemTray::slotConfigChanged()
 
 void KopeteSystemTray::slotReevaluateAccountStates()
 {
+	// If there is a pending message, we don't need to refresh the system tray now.
+	// This function will even be called when the animation will stop.
+	if ( mIsBlinking )
+		return;
+
+	
 	//kdDebug(14010) << k_funcinfo << endl;
 	bool bOnline = false;
 	bool bAway = false;
