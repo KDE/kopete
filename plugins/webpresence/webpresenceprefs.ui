@@ -24,7 +24,7 @@
                 <x>10</x>
                 <y>10</y>
                 <width>370</width>
-                <height>433</height>
+                <height>378</height>
             </rect>
         </property>
         <vbox>
@@ -36,7 +36,7 @@
                     <cstring>textLabel1_2_2</cstring>
                 </property>
                 <property name="text">
-                    <string>&lt;b&gt;When&lt;/b&gt;</string>
+                    <string>&lt;b&gt;Upload information about your IM status&lt;/b&gt;</string>
                 </property>
             </widget>
             <widget class="QLayoutWidget">
@@ -113,14 +113,6 @@
                     <enum>Sunken</enum>
                 </property>
             </widget>
-            <widget class="QLabel">
-                <property name="name">
-                    <cstring>textLabel1_2_3</cstring>
-                </property>
-                <property name="text">
-                    <string>&lt;b&gt;Where&lt;/b&gt;</string>
-                </property>
-            </widget>
             <widget class="QLayoutWidget">
                 <property name="name">
                     <cstring>layout9</cstring>
@@ -134,7 +126,7 @@
                             <cstring>textLabel1</cstring>
                         </property>
                         <property name="text">
-                            <string>Upload &amp;web presence data here:</string>
+                            <string>Upload &amp;web presence data to this URL:</string>
                         </property>
                         <property name="buddy" stdset="0">
                             <cstring>m_url</cstring>
@@ -196,14 +188,6 @@
                     <enum>Sunken</enum>
                 </property>
             </widget>
-            <widget class="QLabel">
-                <property name="name">
-                    <cstring>textLabel1_2_3_2</cstring>
-                </property>
-                <property name="text">
-                    <string>&lt;b&gt;What&lt;/b&gt;</string>
-                </property>
-            </widget>
             <widget class="QButtonGroup">
                 <property name="name">
                     <cstring>buttonGroup2_2</cstring>
@@ -215,14 +199,6 @@
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QRadioButton">
-                        <property name="name">
-                            <cstring>m_rbNoFormat</cstring>
-                        </property>
-                        <property name="text">
-                            <string>just &amp;XML</string>
-                        </property>
-                    </widget>
                     <widget class="QRadioButton">
                         <property name="name">
                             <cstring>m_rbDefaultStyleSheet</cstring>
@@ -257,6 +233,14 @@
                             </widget>
                         </hbox>
                     </widget>
+                    <widget class="QRadioButton">
+                        <property name="name">
+                            <cstring>m_rbNoFormat</cstring>
+                        </property>
+                        <property name="text">
+                            <string>just &amp;XML</string>
+                        </property>
+                    </widget>
                 </vbox>
             </widget>
             <widget class="QCheckBox">
@@ -276,14 +260,6 @@
                 </property>
                 <property name="frameShadow">
                     <enum>Sunken</enum>
-                </property>
-            </widget>
-            <widget class="QLabel">
-                <property name="name">
-                    <cstring>textLabel1_2</cstring>
-                </property>
-                <property name="text">
-                    <string>&lt;b&gt;Who&lt;/b&gt;</string>
                 </property>
             </widget>
             <widget class="QButtonGroup">
