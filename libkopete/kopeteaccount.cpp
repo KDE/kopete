@@ -175,10 +175,14 @@ void KopeteAccount::writeConfig( const QString &configGroupName )
 	config->writeEntry( "Protocol", d->protocol->pluginId() );
 	config->writeEntry( "AccountId", d->id );
 
+#if KDE_IS_VERSION( 3, 1, 90 )
+	config->deleteEntry( "Password" ); // now in KWallet
+#else
 	if ( d->rememberPassword )
 		config->writeEntry( "Password", cryptStr( d->password ) );
 	else
 		config->deleteEntry( "Password" );
+#endif
 
 	config->writeEntry( "RememberPassword", d->rememberPassword );
 	config->writeEntry( "AutoConnect", d->autologin );
@@ -256,17 +260,16 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 					QObject::connect(d->wallet, SIGNAL(walletClosed()), this, SLOT(walletClosed()));
 				}
 			}
-			QString pwd;
 
 			// Before trying to read from the wallet, check if the config file holds a password.
 			// If so, remove it from the config and set it through KWallet instead.
 			if ( !d->password.isNull() )
 			{
-				pwd = d->password;
-				setPassword( pwd );
-				return pwd;
+				setPassword( d->password );
+				return d->password;
 			}
 
+			QString pwd;
 			if ( d->wallet && d->wallet->setFolder( QString::fromLatin1( "Kopete" ) ) &&
 				d->wallet->readPassword( configGroup(), pwd ) == 0 && !pwd.isNull() )
 			{
@@ -328,6 +331,8 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 
 void KopeteAccount::setPassword( const QString &pass )
 {
+	d->rememberPassword = !pass.isNull();
+
 #if KDE_IS_VERSION( 3, 1, 90 )
 	kdDebug( 14010 ) << k_funcinfo << endl;
 
