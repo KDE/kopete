@@ -7,18 +7,10 @@
     <property name="geometry">
         <rect>
             <x>0</x>
-            <y>2</y>
-            <width>403</width>
-            <height>122</height>
+            <y>0</y>
+            <width>361</width>
+            <height>117</height>
         </rect>
-    </property>
-    <property name="sizePolicy">
-        <sizepolicy>
-            <hsizetype>5</hsizetype>
-            <vsizetype>4</vsizetype>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-        </sizepolicy>
     </property>
     <property name="caption">
         <string>Form1</string>
@@ -30,6 +22,14 @@
         <widget class="QFrame" row="2" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>frame3</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>4</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
             </property>
             <property name="frameShape">
                 <enum>StyledPanel</enum>
