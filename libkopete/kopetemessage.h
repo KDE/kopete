@@ -52,7 +52,7 @@ public:
 	 * Direction of a message.
 	 * - Inbound is from the chat partner
 	 * - Outbound is from the user.
-	 * - Internal messages are messages wgich are not send via the network. this is just a notification than plugin can show on the chat window
+	 * - Internal messages are messages which are not send via the network. this is just a notification than plugin can show on the chat window
 	 * - Action is for the /me command , like on irc
 	 */
 	enum MessageDirection { Inbound = 0, Outbound = 1, Internal= 2, Action = 3 };
