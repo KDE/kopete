@@ -1677,7 +1677,7 @@ void KopeteContactListView::insertUndoItem( KopeteContactListView::UndoItem *u)
 		m_redo=i;
 	}
 	actionRedo->setEnabled(false);
-	undoTimer.start(3*60*1000); //the user has 3 minutes to undo.
+	undoTimer.start(10*60*1000); 
 }
 
 
@@ -1809,13 +1809,13 @@ void KopeteContactListView::slotUndo()
 	}
 	actionUndo->setEnabled(m_undo);
 	actionRedo->setEnabled(m_redo);
-	undoTimer.start(3*60*1000);
+	undoTimer.start(10*60*1000);
 }
 
 void KopeteContactListView::slotRedo()
 {
 	bool step = false;
-	while(m_redo && (!step || m_redo->isStep ))
+	while(m_redo && (!step || !m_redo->isStep ))
 	{
 		bool success=false;
 		switch (m_redo->type)
@@ -1897,7 +1897,7 @@ void KopeteContactListView::slotRedo()
 		
 		if(success) //the undo item has been correctly performed
 		{
-			step|=m_redo->isStep;
+			step=true;
 			UndoItem *u=m_redo->next;
 			m_redo->next=m_undo;
 			m_undo=m_redo;
@@ -1915,19 +1915,25 @@ void KopeteContactListView::slotRedo()
 	}
 	actionUndo->setEnabled(m_undo);
 	actionRedo->setEnabled(m_redo);
-	undoTimer.start(3*60*1000);
+	undoTimer.start(10*60*1000);
 }
 
 void KopeteContactListView::slotTimeout()
 {
 	undoTimer.stop();
-	while(m_undo) 
+	
+	//we will keep one (complete) undo action
+	UndoItem *Sdel=m_undo;
+	while(Sdel && !Sdel->isStep)
+		Sdel=Sdel->next;
+
+	if(Sdel) while( Sdel->next ) 
 	{
-		UndoItem *u=m_undo->next;
-		delete m_undo;
-		m_undo=u;
+		UndoItem *u=Sdel->next->next;
+		delete Sdel->next;
+		Sdel->next=u;
 	}
-	actionUndo->setEnabled(false);
+	actionUndo->setEnabled(m_undo);
 	while(m_redo)
 	{
 		UndoItem *i=m_redo->next;
