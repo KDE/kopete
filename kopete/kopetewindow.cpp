@@ -64,7 +64,6 @@
 #include "kopeteawayaction.h"
 #include "kopeteuiglobal.h"
 #include "systemtray.h"
-#include "kopeteonlinestatus.h"
 
 
 KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
@@ -610,18 +609,18 @@ void KopeteWindow::makeTrayToolTip()
 	if(m_tray)
 	{
 		QToolTip::remove(m_tray);
-
-		QString tt = QString::fromLatin1("<qt><table>");
+			
+		QString tt = QString::fromLatin1("<qt>");
 		QPtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
 		for(Kopete::Account *a = accounts.first(); a; a = accounts.next())
 		{
 			Kopete::Contact *self = a->myself();
-			tt += i18n("<tr><td>STATUS ICON <b>PROTOCOL NAME</b> (ACCOUNT NAME)</td><td>STATUS DESCRIPTION</td></tr>",
-				"<tr><td><img src=\"kopete-account-icon:%3:%4\">&nbsp;<b>%1</b>&nbsp;(%2)</td><td align=\"right\">%5</td></tr>")
+			tt += i18n( "Account tooltip information: <nobr>ICON <b>PROTOCOL:</b> NAME (<i>STATUS</i>)<br/>",
+			            "<nobr><img src=\"kopete-account-icon:%3:%4\"> <b>%1:</b> %2 (<i>%5</i>)<br/>" )
 				.arg( a->protocol()->displayName() ).arg( a->accountId(), KURL::encode_string( a->protocol()->pluginId() ),
-					KURL::encode_string( a->accountId() ), self->onlineStatus().description() );
+				KURL::encode_string( a->accountId() ), self->onlineStatus().description() );
 		}
-		tt += QString::fromLatin1("</table></qt>");
+		tt += QString::fromLatin1("</qt>");
 		QToolTip::add(m_tray, tt);
 	}
 }
