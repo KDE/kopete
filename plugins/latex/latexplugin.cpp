@@ -2,6 +2,7 @@
     Kopete Latex Plugin
 
     Copyright (c) 2004 by Duncan Mac-Vicar Prett   <duncan@kde.org>
+    Copyright (c) 2004-2005 by Olivier Goffart  <ogoffart@kde. org>
 
     Kopete    (c) 2001-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -47,7 +48,8 @@ LatexPlugin::LatexPlugin( QObject *parent, const char *name, const QStringList &
 		s_pluginStatic = this;
 
 	mMagickNotFoundShown = false;
-	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToDisplay( Kopete::Message & ) ), SLOT( slotHandleLatex( Kopete::Message & ) ) );
+	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToDisplay( Kopete::Message & ) ), SLOT( slotMessageAboutToShow( Kopete::Message & ) ) );
+	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToSend(Kopete::Message& )  ), this,  SLOT(slotMessageAboutToSend(Kopete::Message& )  ) );
 	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
 	
 	m_convScript = KStandardDirs::findExe("kopete_latexconvert.sh");
@@ -67,7 +69,7 @@ LatexPlugin* LatexPlugin::plugin()
 LatexPlugin* LatexPlugin::s_pluginStatic = 0L;
 
 
-void LatexPlugin::slotHandleLatex( Kopete::Message& msg )
+void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 {
 	QString mMagick = KStandardDirs::findExe("convert");
 	if ( mMagick.isEmpty() )
@@ -112,29 +114,8 @@ void LatexPlugin::slotHandleLatex( Kopete::Message& msg )
 		{
 			QString match = rg.cap(0);
 //			kdDebug() << k_funcinfo << " captured: " << match << endl;
-			QString latexFormula = match;
-			latexFormula.replace("$$","");  
-			
-			// setup a temp file for the rendered image
-			KTempFile tempFile;
-			tempFile.close();
-			
-			KProcess p;
-			QString fileName;
-			
-			fileName = tempFile.name();
-			
-			QString argumentRes = "-r %1x%2";
-			QString argumentOut = "-o %1";
-			int hDPI, vDPI;
-			hDPI = LatexConfig::self()->horizontalDPI();
-			vDPI = LatexConfig::self()->verticalDPI();
-			p << m_convScript <<  argumentRes.arg(QString::number(hDPI), QString::number(vDPI)) << argumentOut.arg(fileName) << latexFormula  ;
-			
-			kdDebug() << k_funcinfo  << " Rendering " << m_convScript << " " <<  argumentRes.arg(QString::number(hDPI), QString::number(vDPI)) << " " << argumentOut.arg(fileName);
-			
-			// FIXME our sucky sync filter API limitations :-)
-			p.start(KProcess::Block);
+			QString formul=match;
+			QString fileName=handleLatex(formul.replace("$$",""));
 			
 //			kdDebug() << k_funcinfo  << " render process finished..." << endl;
 			
@@ -148,11 +129,10 @@ void LatexPlugin::slotHandleLatex( Kopete::Message& msg )
 				buffer.open( IO_WriteOnly );
 				renderedImage.save( &buffer, "PNG" );
 				QString imageURL = QString::fromLatin1("data:image/png;base64,%1").arg( KCodecs::base64Encode( ba ) );
-				replaceMap[QStyleSheet::escape(match)] = imageURL;
+				replaceMap[Kopete::Message::escape(match)] = imageURL;
 			}
 			#else
-			QString imageURL = fileName;
-			replaceMap[QStyleSheet::escape(match)] = imageURL;
+			replaceMap[Kopete::Message::escape(match)] = fileName;
 			#endif
 			// ok, go for the next one
 			pos += rg.matchedLength();
@@ -163,7 +143,7 @@ void LatexPlugin::slotHandleLatex( Kopete::Message& msg )
 	if(replaceMap.isEmpty()) //we haven't found any latex strings
 		return;
 
-	messageText=QStyleSheet::escape(messageText);
+	messageText=Kopete::Message::escape(messageText);
 
 	for (QMap<QString,QString>::ConstIterator it = replaceMap.begin(); it != replaceMap.end(); ++it)
 	{
@@ -172,13 +152,71 @@ void LatexPlugin::slotHandleLatex( Kopete::Message& msg )
 		messageText.replace(it.key(), " <img src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
 	}
 
-	//Finish the "HTMLisation" of the message.  TODO: do it in a Kopete::Message::escape
-	messageText.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br />" ) )
-				.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) )
-				.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
-				
 	msg.setBody( messageText, Kopete::Message::RichText );
 }
+
+
+void LatexPlugin::slotMessageAboutToSend( Kopete::Message& msg)
+{
+	//disabled because to work correctly, we need to find what special has the gif we can send over MSN
+#if 0
+	KConfig *config = KGlobal::config();
+	config->setGroup("Latex Plugin");
+
+	if(!config->readBoolEntry("ParseOutgoing", false))
+		return;
+
+	QString messageText = msg.plainBody();
+	if( !messageText.contains("$$"))
+		return;
+/*	if( msg.from()->protocol()->pluginId()!="MSNProtocol" )
+	return;*/
+
+	// this searches for $$formula$$
+	QRegExp rg("^\\s*\\$\\$([^$]+)\\$\\$\\s*$");
+
+	if( rg.search(messageText) != -1 )
+	{
+		QString latexFormula = rg.cap(1);
+
+		QString url = handleLatex(latexFormula);
+
+
+		if(!url.isNull())
+		{
+			QString escapedLATEX= QStyleSheet::escape(messageText).replace("\"","&quot;");
+			QString messageText="<img src=\"" + url + "\" alt=\"" + escapedLATEX + "\" title=\"" + escapedLATEX +"\"  />";
+			msg.setBody( messageText, Kopete::Message::RichText );
+		}
+	}
+#endif
+}
+
+QString LatexPlugin::handleLatex(const QString &latexFormula)
+{
+	KTempFile *tempFile=new KTempFile( locateLocal( "tmp", "kopetelatex-" ), ".png" );
+	tempFile->setAutoDelete(true);
+	m_tempFiles.append(tempFile);
+	m_tempFiles.setAutoDelete(true);
+	QString fileName = tempFile->name();
+
+	KProcess p;
+			
+	QString argumentRes = "-r %1x%2";
+	QString argumentOut = "-o %1";
+	//QString argumentFormat = "-fgif";  //we uses gif format because MSN only handle gif
+	int hDPI, vDPI;
+	hDPI = LatexConfig::self()->horizontalDPI();
+	vDPI = LatexConfig::self()->verticalDPI();
+	p << m_convScript <<  argumentRes.arg(QString::number(hDPI), QString::number(vDPI)) << argumentOut.arg(fileName) /*<< argumentFormat*/ << latexFormula  ;
+			
+	kdDebug() << k_funcinfo  << " Rendering " << m_convScript << " " <<  argumentRes.arg(QString::number(hDPI), QString::number(vDPI)) << " " << argumentOut.arg(fileName) << endl;
+			
+	// FIXME our sucky sync filter API limitations :-)
+	p.start(KProcess::Block);
+	return fileName;
+}
+
 
 void LatexPlugin::slotSettingsChanged()
 {

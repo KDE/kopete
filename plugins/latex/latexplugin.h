@@ -4,6 +4,7 @@
     Kopete Latex Plugin
 
     Copyright (c) 2004 by Duncan Mac-Vicar Prett   <duncan@kde.org>
+    Copyright (c) 2004-2005 by Olivier Goffart  <ogoffart@kde. org>
 
     Kopete    (c) 2001-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -23,11 +24,14 @@
 #include <qobject.h>
 #include <qstring.h>
 
+#include <ktempfile.h>
+
 #include "kopetemessage.h"
 #include "kopeteplugin.h"
 
 class QStringList;
 class QString;
+
 
 namespace Kopete { class Message; }
 
@@ -46,14 +50,20 @@ public:
 	~LatexPlugin();
 
 public slots:
-	void slotHandleLatex( Kopete::Message& msg );
 	void slotSettingsChanged();
-
+	void slotMessageAboutToShow( Kopete::Message& msg );
+	void slotMessageAboutToSend( Kopete::Message& msg );
 
 private:
+	/**
+	 * gives a latex formula, and return the filename of the file where the latex is stored.
+     */
+	QString handleLatex(const QString &latex);
+	
 	static LatexPlugin* s_pluginStatic;
 	QString m_convScript;
 	bool mMagickNotFoundShown;
+	QPtrList<KTempFile> m_tempFiles;
 };
 
 #endif
