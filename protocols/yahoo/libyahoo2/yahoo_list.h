@@ -1,7 +1,7 @@
 /*
- * libyahoo2: yahoo_list.h
+ * llist.h: linked list routines
  *
- * Some code copyright (C) 2002, Philip S Tellis <philip . tellis AT gmx . net>
+ * Some code copyright (C) 2002-2003, Philip S Tellis <philip . tellis AT gmx . net>
  * Other code copyright Meredydd Luff <meredydd AT everybuddy.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,39 +22,53 @@
 
 /*
  * This is a replacement for the GList.  It only provides functions that 
- * we use in libyahoo2.  Thanks to Meredyyd from everybuddy dev for doing 
+ * we use in Ayttm.  Thanks to Meredyyd from everybuddy dev for doing 
  * most of it.
  */
 
-#ifndef __YAHOO_LIST_H__
-#define __YAHOO_LIST_H__
+#ifndef __YLIST_H__
+#define __YLIST_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _YList {
-  struct _YList * next;
-  struct _YList * prev;
-  void * data;
+	struct _YList *next;
+	struct _YList *prev;
+	void *data;
 } YList;
 
-typedef int (*YListCompFunc)(const void *, const void *);
+typedef int (*YListCompFunc) (const void *, const void *);
+typedef void (*YListFunc) (void *, void *);
 
-YList * y_list_append(YList * list, void * data);
-YList * y_list_remove_link(YList * list, const YList * _link);
-YList * y_list_remove(YList * list, void * data);
+YList *y_list_append(YList * list, void *data);
+YList *y_list_prepend(YList * list, void *data);
+YList *y_list_remove_link(YList * list, YList * link);
+YList *y_list_remove(YList * list, void *data);
 
-YList * y_list_copy(YList * list);
+YList *y_list_insert_sorted(YList * list, void * data, YListCompFunc comp);
+
+YList *y_list_copy(YList * list);
+
+YList *y_list_concat(YList * list, YList * add);
+
+YList *y_list_find(YList * list, const void *data);
+YList *y_list_find_custom(YList * list, const void *data, YListCompFunc comp);
+
+YList *y_list_nth(YList * list, int n);
+
+void y_list_foreach(YList * list, YListFunc fn, void *user_data);
 
 void y_list_free_1(YList * list);
 void y_list_free(YList * list);
-int y_list_length(YList * list);
+int  y_list_length(const YList * list);
+int  y_list_empty(const YList * list);
+int  y_list_singleton(const YList * list);
 
-YList * y_list_find_custom(YList * list, void * data, YListCompFunc comp);
+#define y_list_next(list)	list->next
 
 #ifdef __cplusplus
 }
 #endif
-
 #endif

@@ -53,6 +53,21 @@ typedef enum {
 } yahoo_input_condition;
 
 /*
+ * A callback function called when an asynchronous connect completes.
+ * 
+ * Params:
+ *     fd    - The file descriptor that has been connected, or -1 on error
+ *     error - The value of errno set by the call to connect or 0 if no error
+ *             Set both fd and error to 0 if the connect was cancelled by the
+ *             user
+ *     callback_data - the callback_data passed to the ext_yahoo_connect_async
+ *             function
+ */
+typedef void (*yahoo_connect_callback)(int fd, int error, void *callback_data);
+
+
+
+/*
  * The following functions need to be implemented in the client
  * interface.  They will be called by the library when each
  * event occurs.
@@ -122,6 +137,18 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_got_identities)(int id, YList * ids);
 
 
 
+
+/*
+ * Name: ext_yahoo_got_cookies
+ * 	Called when the cookie list is got from the server
+ * Params:
+ * 	id   - the id that identifies the server connection
+ */
+void YAHOO_CALLBACK_TYPE(ext_yahoo_got_cookies)(int id);
+
+
+
+
 /*
  * Name: ext_yahoo_status_changed
  * 	Called when remote user's status changes.
@@ -131,6 +158,7 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_got_identities)(int id, YList * ids);
  * 	stat - status code (enum yahoo_status)
  * 	msg  - the message if stat == YAHOO_STATUS_CUSTOM
  * 	away - whether the contact is away or not (YAHOO_STATUS_CUSTOM)
+ * 	       for YAHOO_STATUS_IDLE, this is the number of seconds he is idle
  */
 void YAHOO_CALLBACK_TYPE(ext_yahoo_status_changed)(int id, char *who, int stat, char *msg, int away);
 
@@ -149,8 +177,9 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_status_changed)(int id, char *who, int stat, 
  * 				1
  * 				2 == error sending message
  * 				5
+ * 	utf8 - whether the message is encoded as utf8 or not
  */
-void YAHOO_CALLBACK_TYPE(ext_yahoo_got_im)(int id, char *who, char *msg, long tm, int stat);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_got_im)(int id, char *who, char *msg, long tm, int stat, int utf8);
 
 
 
@@ -208,6 +237,67 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_conf_userjoin)(int id, char *who, char *room)
 void YAHOO_CALLBACK_TYPE(ext_yahoo_conf_userleave)(int id, char *who, char *room);
 
 
+/*
+ * Name: ext_yahoo_chat_cat_xml
+ * 	Called when joining the chatroom.
+ * Params:
+ * 	id      - the id that identifies the server connection
+ * 	room    - the room joined, used in all other chat calls, freed by library after call
+ * 	topic   - the topic of the room, freed by library after call
+ *      members - the initial members of the chatroom (null terminated YList of yahoo_chat_member's) Must be freed by the client
+ */
+void YAHOO_CALLBACK_TYPE(ext_yahoo_chat_cat_xml)(int id, char *xml);
+
+/*
+ * Name: ext_yahoo_chat_join
+ * 	Called when joining the chatroom.
+ * Params:
+ * 	id      - the id that identifies the server connection
+ * 	room    - the room joined, used in all other chat calls, freed by library after call
+ * 	topic   - the topic of the room, freed by library after call
+ *      members - the initial members of the chatroom (null terminated YList of yahoo_chat_member's) Must be freed by the client
+ */
+void YAHOO_CALLBACK_TYPE(ext_yahoo_chat_join)(int id, char *room, char *topic, YList *members);
+
+/*
+ * Name: ext_yahoo_chat_userjoin
+ * 	Called when someone joins the chatroom.
+ * Params:
+ * 	id   - the id that identifies the server connection
+ * 	room - the room joined
+ * 	who  - the user who has joined, Must be freed by the client
+ */
+void YAHOO_CALLBACK_TYPE(ext_yahoo_chat_userjoin)(int id, char *room, struct yahoo_chat_member *who);
+
+
+
+
+/*
+ * Name: ext_yahoo_chat_userleave
+ * 	Called when someone leaves the chatroom.
+ * Params:
+ * 	id   - the id that identifies the server connection
+ * 	room - the room left
+ * 	who  - the user who has left (Just the User ID)
+ */
+void YAHOO_CALLBACK_TYPE(ext_yahoo_chat_userleave)(int id, char *room, char *who);
+
+
+
+
+/*
+ * Name: ext_yahoo_chat_message
+ * 	Called when someone messages in the chatroom.
+ * Params:
+ * 	id   - the id that identifies the server connection
+ * 	room - the room
+ * 	who  - the user who messaged (Just the user id)
+ * 	msg  - the message
+ * 	msgtype  - 1 = Normal message
+ * 		   2 = /me type message
+ * 	utf8 - whether the message is utf8 encoded or not
+ */
+void YAHOO_CALLBACK_TYPE(ext_yahoo_chat_message)(int id, char *who, char *room, char *msg, int msgtype, int utf8);
 
 
 /*
@@ -218,8 +308,9 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_conf_userleave)(int id, char *who, char *room
  * 	who  - the user who messaged
  * 	room - the room
  * 	msg  - the message
+ * 	utf8 - whether the message is utf8 encoded or not
  */
-void YAHOO_CALLBACK_TYPE(ext_yahoo_conf_message)(int id, char *who, char *room, char *msg);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_conf_message)(int id, char *who, char *room, char *msg, int utf8);
 
 
 
@@ -322,6 +413,82 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_system_message)(int id, char *msg);
 
 
 
+
+
+
+
+
+/*
+ * Name: ext_yahoo_got_webcam_image
+ * 	Called when you get a webcam update
+ *	An update can either be receiving an image, a part of an image or
+ *	just an update with a timestamp
+ * Params:
+ * 	id         - the id that identifies the server connection
+ * 	who        - the user who's webcam we're viewing
+ *	image      - image data
+ *	image_size - length of the image in bytes
+ *	real_size  - actual length of image data
+ *	timestamp  - milliseconds since the webcam started
+ *
+ *	If the real_size is smaller then the image_size then only part of
+ *	the image has been read. This function will keep being called till
+ *	the total amount of bytes in image_size has been read. The image
+ *	received is in JPEG-2000 Code Stream Syntax (ISO/IEC 15444-1).
+ *	The size of the image will be either 160x120 or 320x240.
+ *	Each webcam image contains a timestamp. This timestamp should be
+ *	used to keep the image in sync since some images can take longer
+ *	to transport then others. When image_size is 0 we can still receive
+ *	a timestamp to stay in sync
+ */
+void YAHOO_CALLBACK_TYPE(ext_yahoo_got_webcam_image)(int id, const char * who,
+		unsigned char *image, unsigned int image_size, unsigned int real_size,
+		unsigned int timestamp);
+
+
+
+
+/*
+ * Name: ext_yahoo_webcam_invite
+ * 	Called when you get a webcam invitation
+ * Params:
+ * 	id   - the id that identifies the server connection
+ * 	from - who the invitation is from
+ */
+void YAHOO_CALLBACK_TYPE(ext_yahoo_webcam_invite)(int id, char *from);
+
+
+
+
+/*
+ * Name: ext_yahoo_webcam_invite_reply
+ * 	Called when you get a response to a webcam invitation
+ * Params:
+ * 	id   - the id that identifies the server connection
+ * 	from - who the invitation response is from
+ *      accept - 0 (decline), 1 (accept)
+ */
+void YAHOO_CALLBACK_TYPE(ext_yahoo_webcam_invite_reply)(int id, char *from, int accept);
+
+
+
+/*
+ * Name: ext_yahoo_webcam_closed
+ * 	Called when the webcam connection closed
+ * Params:
+ * 	id   - the id that identifies the server connection
+ * 	who  - the user who we where connected to
+ *      reason - reason why the connection closed
+ *	         1 = user stopped broadcasting
+ *	         2 = user cancelled viewing permission
+ *	         3 = user declines permission
+ *	         4 = user does not have webcam online
+ */
+void YAHOO_CALLBACK_TYPE(ext_yahoo_webcam_closed)(int id, char *who, int
+reason);
+
+
+
 /*
  * Name: ext_yahoo_error
  * 	Called on error.
@@ -335,6 +502,27 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_error)(int id, char *err, int fatal);
 
 
 
+/*
+ * Name: ext_yahoo_webcam_viewer
+ *	Called when a viewer disconnects/connects/requests to connect
+ * Params:
+ *	id  - the id that identifies the server connection
+ *	who - the viewer
+ *	connect - 0=disconnect 1=connect 2=request
+ */
+void YAHOO_CALLBACK_TYPE(ext_yahoo_webcam_viewer)(int id, char *who, int connect);
+
+
+
+
+/*
+ * Name: ext_yahoo_webcam_data_request
+ *	Called when you get a request for webcam images
+ * Params:
+ *	id   - the id that identifies the server connection
+ *	send - whether to send images or not
+ */
+void YAHOO_CALLBACK_TYPE(ext_yahoo_webcam_data_request)(int id, int send);
 
 
 
@@ -347,7 +535,10 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_error)(int id, char *err, int fatal);
  * Returns:
  * 	0
  */
-int YAHOO_CALLBACK_TYPE(ext_yahoo_log)(const char *fmt, ...);
+int YAHOO_CALLBACK_TYPE(ext_yahoo_log)(char *fmt, ...);
+
+
+
 
 
 
@@ -355,20 +546,23 @@ int YAHOO_CALLBACK_TYPE(ext_yahoo_log)(const char *fmt, ...);
 
 /*
  * Name: ext_yahoo_add_handler
- * 	Add a listener for the fd
+ * 	Add a listener for the fd.  Must call yahoo_read_ready
+ * 	when a YAHOO_INPUT_READ fd is ready and yahoo_write_ready
+ * 	when a YAHOO_INPUT_WRITE fd is ready.
  * Params:
  * 	id   - the id that identifies the server connection
  * 	fd   - the fd on which to listen
  * 	cond - the condition on which to call the callback
+ * 	data - callback data to pass to yahoo_*_ready
  */
-void YAHOO_CALLBACK_TYPE(ext_yahoo_add_handler)(int id, int fd, yahoo_input_condition cond);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_add_handler)(int id, int fd, yahoo_input_condition cond, void *data);
 
 
 
 
 /*
  * Name: ext_yahoo_remove_handler
- * 	Remove the listener for the fd
+ * 	Remove the listener for the fd.
  * Params:
  * 	id   - the id that identifies the server connection
  * 	fd   - the fd on which to listen
@@ -389,6 +583,34 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_remove_handler)(int id, int fd);
  * 	a unix file descriptor to the socket
  */
 int YAHOO_CALLBACK_TYPE(ext_yahoo_connect)(char *host, int port);
+
+
+
+
+
+
+
+
+/*
+ * Name: ext_yahoo_connect_async
+ * 	Connect to a host:port asynchronously.  This function should return
+ * 	immediately returing a tag used to identify the connection handler,
+ * 	or a pre-connect error (eg: host name lookup failure).
+ * 	Once the connect completes (successfully or unsuccessfully), callback
+ * 	should be called (see the signature for yahoo_connect_callback).
+ * 	The callback may safely be called before this function returns, but
+ * 	it should not be called twice.
+ * Params:
+ * 	id   - the id that identifies this connection
+ * 	host - the host to connect to
+ * 	port - the port to connect on
+ * 	callback - function to call when connect completes
+ * 	callback_data - data to pass to the callback function
+ * Returns:
+ * 	a unix file descriptor to the socket
+ */
+int YAHOO_CALLBACK_TYPE(ext_yahoo_connect_async)(int id, char *host, int port, 
+		yahoo_connect_callback callback, void *callback_data);
 
 #ifdef USE_STRUCT_CALLBACKS
 };

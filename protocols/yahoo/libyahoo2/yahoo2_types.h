@@ -43,7 +43,7 @@ enum yahoo_status {
 	YAHOO_STATUS_CUSTOM = 99,
 	YAHOO_STATUS_IDLE = 999,
 	YAHOO_STATUS_OFFLINE = 0x5a55aa56, /* don't ask */
-	YAHOO_STATUS_TYPING = 0x16
+	YAHOO_STATUS_NOTIFY = 0x16
 };
 #define YAHOO_STATUS_GAME	0x2 		/* Games don't fit into the regular status model */
 
@@ -51,7 +51,8 @@ enum yahoo_login_status {
 	YAHOO_LOGIN_OK = 0,
 	YAHOO_LOGIN_PASSWD = 13,
 	YAHOO_LOGIN_LOCK = 14,
-	YAHOO_LOGIN_DUPL = 99
+	YAHOO_LOGIN_DUPL = 99,
+	YAHOO_LOGIN_SOCK = -1
 };
 
 enum yahoo_error {
@@ -100,7 +101,41 @@ enum yahoo_log_level {
 
 enum yahoo_connection_type {
 	YAHOO_CONNECTION_PAGER=0,
-	YAHOO_CONNECTION_HTTP=1
+	YAHOO_CONNECTION_FT,
+	YAHOO_CONNECTION_YAB,
+	YAHOO_CONNECTION_WEBCAM_MASTER,
+	YAHOO_CONNECTION_WEBCAM,
+	YAHOO_CONNECTION_CHATCAT
+};
+
+enum yahoo_webcam_direction_type {
+        YAHOO_WEBCAM_DOWNLOAD=0,
+        YAHOO_WEBCAM_UPLOAD
+};
+
+/* chat member attribs */
+#define YAHOO_CHAT_MALE 0x8000
+#define YAHOO_CHAT_FEMALE 0x10000
+#define YAHOO_CHAT_FEMALE 0x10000
+#define YAHOO_CHAT_DUNNO 0x400
+#define YAHOO_CHAT_WEBCAM 0x10
+
+struct yahoo_webcam {
+	int direction;     /* Uploading or downloading */
+	int conn_type;     /* 0=Dialup, 1=DSL/Cable, 2=T1/Lan */
+
+	char *user;        /* user we are viewing */
+	char *server;      /* webcam server to connect to */
+	char *key;         /* key to connect to the server with */
+	char *description; /* webcam description */
+	char *my_ip;       /* own ip number */
+};
+
+struct yahoo_webcam_data {
+	unsigned int data_size;
+	unsigned int to_read;
+	unsigned int timestamp;
+	unsigned char packet_type;
 };
 
 struct yahoo_data {
@@ -117,27 +152,55 @@ struct yahoo_data {
 	YList *identities;
 	char  *login_id;
 
-	int   fd;
-	int   type;
-
 	int   current_status;
 	int   initial_status;
 	int   logged_in;
 
-	int id;
+	int   session_id;
 
-	int client_id;
+	int   client_id;
 
-	unsigned char	*rxqueue;
-	int   rxlen;
-	char *rawbuddylist;
-	char *ignorelist;
+	char  *rawbuddylist;
+	char  *ignorelist;
+};
+
+struct yab {
+	char *id;
+	char *fname;
+	char *lname;
+	char *nname;
+	char *email;
+	char *hphone;
+	char *wphone;
+	char *mphone;
+	int  dbid;
 };
 
 struct yahoo_buddy {
 	char *group;
 	char *id;
 	char *real_name;
+	struct yab *yab_entry;
+};
+
+/*
+ * Function pointer to be passed to http get/post and send file
+ */
+typedef void (*yahoo_get_fd_callback)(int id, int fd, int error, void *data);
+
+/*
+ * Function pointer to be passed to yahoo_get_url_handle
+ */
+typedef void (*yahoo_get_url_handle_callback)(int id, int fd, int error,
+		const char *filename, unsigned long size, void *data);
+
+
+struct yahoo_chat_member {
+	char *id;
+	int  age;
+	int  attribs;
+	char *alias;
+	char *location;
 };
 
 #ifdef __cplusplus

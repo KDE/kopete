@@ -46,9 +46,13 @@
 #  define strcasecmp	g_strcasecmp
 # endif
 
+# define snprintf	g_snprintf
+# define vsnprintf	g_vsnprintf
+
 #else
 
 # include <stdlib.h>
+# include <stdarg.h>
 
 # define FREE(x)		if(x) {free(x); x=NULL;}
 
@@ -57,11 +61,16 @@
 # define y_renew(type, mem, n)	(type *)realloc(mem, n)
 
 void * y_memdup(const void * addr, int n);
-char ** y_strsplit(const char * str, const char * sep, int nelem);
+char ** y_strsplit(char * str, char * sep, int nelem);
 void y_strfreev(char ** vector);
 
 int strncasecmp(const char * s1, const char * s2, size_t n);
 int strcasecmp(const char * s1, const char * s2);
+
+char * strdup(const char *s);
+
+int snprintf(char *str, size_t size, const char *format, ...);
+int vsnprintf(char *str, size_t size, const char *format, va_list ap);
 
 #endif
 
@@ -81,7 +90,13 @@ int strcasecmp(const char * s1, const char * s2);
 #define MAX(x,y) ((x)>(y)?(x):(y))
 #endif
 
+/* 
+ * The following three functions return newly allocated memory.
+ * You must free it yourself
+ */
 char * y_string_append(char * str, char * append);
+char * y_str_to_utf8(const char * in);
+char * y_utf8_to_str(const char * in);
 
 #endif
 
