@@ -281,7 +281,7 @@ bool KIRCMessage::matchForIRCRegExp(QRegExp &regexp, const QString &line,
 	{
 		prefix  = regexp.cap(1);
 		command = regexp.cap(2);
-		args    = QStringList::split(QRegExp(" "), regexp.cap(3).stripWhiteSpace());
+		args    = QStringList::split(' ', regexp.cap(3).stripWhiteSpace());
 		suffix  = regexp.cap(4);
 		return true;
 	}
