@@ -65,5 +65,82 @@ const unsigned char SHARED_FILES_SIGN[16] =
 */
 // ==================================================================
 
+
+class ICQSearchResult
+{
+	public:
+		unsigned long uin;
+		QString nickName;
+		QString firstName;
+		QString lastName;
+		QString eMail;
+		bool needAuth;
+		unsigned int status; // 0=offline, 1=online, 2=not webaware
+};
+
+/**
+ * Classes encapsulating user data retrieved from the server
+ */
+class ICQGeneralUserInfo
+{
+	public:
+		unsigned long uin;
+		QString nickName;
+		QString firstName;
+		QString lastName;
+		QString eMail;
+		QString city;
+		QString state;
+		QString phoneNumber;
+		QString faxNumber;
+		QString street;
+		QString cellularNumber;
+		QString zip;
+		int countryCode;
+		char timezoneCode;
+		bool publishEmail;
+		bool showOnWeb;
+};
+
+class ICQWorkUserInfo
+{
+	public:
+		QString city;
+		QString state;
+		QString phone;
+		QString fax;
+		QString address;
+		QString zip;
+		int countryCode;
+		QString company;
+		QString department;
+		QString position;
+		int occupation;
+		QString homepage;
+};
+
+class ICQMoreUserInfo
+{
+	public:
+		int age;
+		unsigned int gender;
+		QString homepage;
+		QDate birthday;
+		unsigned int lang1;
+		unsigned int lang2;
+		unsigned int lang3;
+};
+
+class ICQInfoItem
+{
+	public:
+		int category;
+		QString description;
+};
+
+
+typedef QMap<QString, bool> ICQMailList;
+typedef QValueList<ICQInfoItem> ICQInfoItemList;
+
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

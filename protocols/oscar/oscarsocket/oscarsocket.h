@@ -21,17 +21,21 @@
 #include "ssidata.h"
 #include "aimbuddylist.h"
 #include "oncomingsocket.h"
+#include "oscarsocket.icq.h"
 
 #include <qptrlist.h>
 
+// ========================================================================================
 
-//define this if you want to get tons of packets printed out
+// Define this if you want to get tons of packets printed out
 //#define OSCAR_PACKETLOG 1
 
-//define this if you want to get yoiur password in both plaintext and encrypted form printed out
-//!!! security issue in case you don't remove your logfile afterwards !!!
+// Define this if you want to get yoiur password in both plaintext and encrypted form
+// printed out
+// !!! security issue in case you don't remove your logfile afterwards !!!
 //#define OSCAR_PWDEBUG 1
 
+// ========================================================================================
 
 class KFileItem;
 class OscarAccount;
@@ -159,82 +163,6 @@ const unsigned int OSCAR_CONNECTING = 10;
 #define KOPETE_ICQ_CAPS			AIM_CAPS_ICQSERVERRELAY | /*AIM_CAPS_UTF8 | AIM_CAPS_RTFMSGS |*/ AIM_CAPS_ISICQ
 
 //ICQ 2002b sends: CAP_AIM_SERVERRELAY, CAP_UTF8, CAP_RTFMSGS, CAP_AIM_ISICQ
-
-class ICQSearchResult
-{
-	public:
-		unsigned long uin;
-		QString nickName;
-		QString firstName;
-		QString lastName;
-		QString eMail;
-		bool needAuth;
-		unsigned int status; // 0=offline, 1=online, 2=not webaware
-};
-
-/**
- * Classes encapsulating user data retrieved from the server
- */
-class ICQGeneralUserInfo
-{
-	public:
-		unsigned long uin;
-		QString nickName;
-		QString firstName;
-		QString lastName;
-		QString eMail;
-		QString city;
-		QString state;
-		QString phoneNumber;
-		QString faxNumber;
-		QString street;
-		QString cellularNumber;
-		QString zip;
-		int countryCode;
-		char timezoneCode;
-		bool publishEmail;
-		bool showOnWeb;
-};
-
-class ICQWorkUserInfo
-{
-	public:
-		QString city;
-		QString state;
-		QString phone;
-		QString fax;
-		QString address;
-		QString zip;
-		int countryCode;
-		QString company;
-		QString department;
-		QString position;
-		int occupation;
-		QString homepage;
-};
-
-class ICQMoreUserInfo
-{
-	public:
-		int age;
-		unsigned int gender;
-		QString homepage;
-		QDate birthday;
-		unsigned int lang1;
-		unsigned int lang2;
-		unsigned int lang3;
-};
-
-class ICQInfoItem
-{
-	public:
-		int category;
-		QString description;
-};
-
-
-typedef QMap<QString, bool> ICQMailList;
-typedef QValueList<ICQInfoItem> ICQInfoItemList;
 
 /*
  * Implements the actual communication with the oscar server

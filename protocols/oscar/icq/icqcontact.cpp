@@ -158,7 +158,7 @@ void ICQContact::slotOffgoingBuddy(QString sender)
 	slotUpdateBuddy();
 }
 
-void ICQContact::gotIM(OscarSocket::OscarMessageType type, const QString &message)
+void ICQContact::gotIM(OscarSocket::OscarMessageType /*type*/, const QString &message)
 {
 	// Build a KopeteMessage and set the body as Rich Text
 	KopeteContactPtrList tmpList;

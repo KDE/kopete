@@ -15,7 +15,6 @@
 */
 
 #include "oscarsocket.h"
-#include "oscarsocket.icq.h"
 
 #include <stdlib.h>
 #include <netinet/in.h> // for htonl()

@@ -779,10 +779,7 @@ void ICQProtocol::contactInfo2UserInfoWidget(ICQContact *c, ICQUserInfoWidget *w
 		}
 		i++;
 	}
-
-
-
-}
+} // END contactInfo2UserInfoWidget()
 
 // Called when we want to return the active instance of the protocol
 ICQProtocol *ICQProtocol::protocol()

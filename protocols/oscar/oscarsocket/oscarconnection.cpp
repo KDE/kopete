@@ -82,7 +82,6 @@ void OscarConnection::slotError(int errornum)
 	}
 }
 
-/** Sets the currently logged in user's screen name */
 void OscarConnection::setSN(const QString &newSN)
 {
 	mSN = newSN;
@@ -91,9 +90,6 @@ void OscarConnection::setSN(const QString &newSN)
 void OscarConnection::sendIM(const QString &/*message*/, bool /*isAuto*/)
 {}
 
-/** Sends a typing notification to the server
-		@param notifyType Type of notify to send
- */
 void OscarConnection::sendTypingNotify(TypingNotify /*notifyType*/)
 {
 	kdDebug(14150) << k_funcinfo <<

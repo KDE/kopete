@@ -19,7 +19,9 @@
 
 #include <qlayout.h>
 #include <qcheckbox.h>
+#include <qcombobox.h>
 #include <qlineedit.h>
+#include <qtextedit.h>
 #include <qspinbox.h>
 #include <qpushbutton.h>
 
@@ -41,8 +43,9 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 {
 	kdDebug(14200) << k_funcinfo << "Called." << endl;
 
-	mAccount = account;
-	mProtocol = protocol;
+	mAccount=account;
+	mProtocol=protocol;
+	mModified=false;
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	mTop = new KJanusWidget(this, "ICQEditAccountWidget::mTop",
@@ -153,6 +156,21 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		else
 			mProtocol->setTZComboValue(mUserInfoSettings->rwTimezone, tmpTz.toInt());
 
+		// Private TAB ==============================================================
+		mUserInfoSettings->prsCityEdit->setText(mAccount->pluginData(mProtocol, "PrivateCity"));
+		mUserInfoSettings->prsStateEdit->setText(mAccount->pluginData(mProtocol, "PrivateState"));
+		mUserInfoSettings->prsPhoneEdit->setText(mAccount->pluginData(mProtocol, "PrivatePhone"));
+		mUserInfoSettings->prsCellphoneEdit->setText(mAccount->pluginData(mProtocol, "PrivateCellular"));
+		mUserInfoSettings->prsFaxEdit->setText(mAccount->pluginData(mProtocol, "PrivateFax"));
+		mUserInfoSettings->prsZipcodeEdit->setText(mAccount->pluginData(mProtocol, "PrivateZip"));
+		mProtocol->setComboFromTable(mUserInfoSettings->rwPrsCountry, mProtocol->countries(),
+			mAccount->pluginData(mProtocol, "PrivateCountry").toInt());
+
+		mUserInfoSettings->prsAddressEdit->setText(mAccount->pluginData(mProtocol, "PrivateAddress"));
+		mUserInfoSettings->prsHomepageEdit->setText(mAccount->pluginData(mProtocol, "PrivateHomepage"));
+		mUserInfoSettings->prsEmailEdit->setText(mAccount->pluginData(mProtocol, "PrivateEmail"));
+		// ==========================================================================
+
 		QHBoxLayout *buttons = new QHBoxLayout(detLay);
 		buttons->addStretch(1);
 		QPushButton *fetch = new QPushButton(i18n("Fetch From Server"), det, "fetch");
@@ -165,7 +183,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 
 		connect(fetch, SIGNAL(clicked()), this, SLOT(slotFetchInfo()));
 		// TODO: support sending userinfo
-// 		connect(send, SIGNAL(clicked()), this, SLOT(slotSend()));
+ 		connect(send, SIGNAL(clicked()), this, SLOT(slotSend()));
 		connect(
 			mAccount->myself(), SIGNAL(updatedUserInfo()),
 			this, SLOT(slotReadInfo()));
@@ -178,6 +196,17 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		mAccountSettings->chkSavePassword->setChecked(true);
 		slotSetDefaultServer();
 	}
+
+	connect(mUserInfoSettings->prsCityEdit, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
+	connect(mUserInfoSettings->prsStateEdit, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
+	connect(mUserInfoSettings->prsPhoneEdit, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
+	connect(mUserInfoSettings->prsCellphoneEdit, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
+	connect(mUserInfoSettings->prsFaxEdit, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
+	connect(mUserInfoSettings->prsZipcodeEdit, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
+	connect(mUserInfoSettings->rwPrsCountry, SIGNAL(activated(int)), this, SLOT(slotModified()));
+	connect(mUserInfoSettings->prsAddressEdit, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
+	connect(mUserInfoSettings->prsHomepageEdit, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
+	connect(mUserInfoSettings->prsEmailEdit, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
 }
 
 KopeteAccount *ICQEditAccountWidget::apply()
@@ -234,12 +263,37 @@ KopeteAccount *ICQEditAccountWidget::apply()
 	mAccount->setPluginData(mProtocol, "Timezone", QString::number(
 		mProtocol->getTZComboValue(mUserInfoSettings->rwTimezone)));
 
+	// Private TAB
+	mAccount->setPluginData(mProtocol, "PrivateCity",
+		mUserInfoSettings->prsCityEdit->text());
+	mAccount->setPluginData(mProtocol, "PrivateState",
+		mUserInfoSettings->prsStateEdit->text());
+	mAccount->setPluginData(mProtocol, "PrivatePhone",
+		mUserInfoSettings->prsPhoneEdit->text());
+	mAccount->setPluginData(mProtocol, "PrivateCellular",
+		mUserInfoSettings->prsCellphoneEdit->text());
+	mAccount->setPluginData(mProtocol, "PrivateFax",
+		mUserInfoSettings->prsFaxEdit->text());
+	mAccount->setPluginData(mProtocol, "PrivateZip",
+		mUserInfoSettings->prsZipcodeEdit->text());
+	mAccount->setPluginData(mProtocol, "PrivateCountry", QString::number(
+		mProtocol->getCodeForCombo(mUserInfoSettings->rwPrsCountry, mProtocol->countries())));
+	mAccount->setPluginData(mProtocol, "PrivateAddress",
+		mUserInfoSettings->prsAddressEdit->text());
+	mAccount->setPluginData(mProtocol, "PrivateHomepage",
+		mUserInfoSettings->prsHomepageEdit->text());
+	mAccount->setPluginData(mProtocol, "PrivateEmail",
+		mUserInfoSettings->prsEmailEdit->text());
+	// =======================================================
+
 	static_cast<ICQContact *>(mAccount->myself())->setOwnDisplayName(
 		mUserInfoSettings->rwNickName->text());
 
 	static_cast<ICQAccount *>(mAccount)->reloadPluginData();
 
-	// TODO: optionally send updated userinfo to server if connected
+	if(mModified)
+		slotSend();
+
 	return mAccount;
 }
 
@@ -294,13 +348,48 @@ void ICQEditAccountWidget::slotReadInfo()
 
 	mProtocol->contactInfo2UserInfoWidget(
 		static_cast<ICQContact *>(mAccount->myself()), mUserInfoSettings, true);
+	mModified=false;
 } // END slotReadInfo()
-
 
 void ICQEditAccountWidget::slotSetDefaultServer()
 {
 	mAccountSettings->edtServerAddress->setText(ICQ_SERVER);
 	mAccountSettings->edtServerPort->setValue(ICQ_PORT);
+}
+
+void ICQEditAccountWidget::slotSend()
+{
+	if(!mAccount->isConnected())
+		return;
+
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
+
+	ICQGeneralUserInfo generalInfo;
+	generalInfo.uin=static_cast<ICQContact *>(mAccount->myself())->contactName().toULong();
+	generalInfo.nickName=mUserInfoSettings->rwNickName->text();
+	generalInfo.firstName=mUserInfoSettings->rwFirstName->text();
+	generalInfo.lastName=mUserInfoSettings->rwLastName->text();
+	generalInfo.eMail=mUserInfoSettings->prsEmailEdit->text();
+	generalInfo.city=mUserInfoSettings->prsCityEdit->text();
+	generalInfo.state=mUserInfoSettings->prsStateEdit->text();
+	generalInfo.phoneNumber=mUserInfoSettings->prsPhoneEdit->text();
+	generalInfo.faxNumber=mUserInfoSettings->prsFaxEdit->text();
+	generalInfo.street=mUserInfoSettings->prsAddressEdit->text();
+	generalInfo.cellularNumber=mUserInfoSettings->prsCellphoneEdit->text();
+	generalInfo.zip=mUserInfoSettings->prsZipcodeEdit->text();
+	generalInfo.countryCode=mProtocol->getCodeForCombo(mUserInfoSettings->rwPrsCountry, mProtocol->countries());
+	generalInfo.timezoneCode=mProtocol->getTZComboValue(mUserInfoSettings->rwTimezone);
+	generalInfo.publishEmail=false; // TODO
+	generalInfo.showOnWeb=false; // TODO
+
+	static_cast<ICQAccount *>(mAccount)->engine()->sendCLI_METASETGENERAL(generalInfo);
+
+	mModified=false;
+}
+
+void ICQEditAccountWidget::slotModified()
+{
+	mModified=true;
 }
 
 #include "icqeditaccountwidget.moc"

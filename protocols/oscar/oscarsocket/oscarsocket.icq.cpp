@@ -1174,8 +1174,7 @@ void OscarSocket::sendCLI_METASETGENERAL(ICQGeneralUserInfo &i)
 
 	Buffer req; // ! LITTLE-ENDIAN
 	req.addLEWord(0x03ea); // subtype: 1002
-	req.addLELNTS(i.nickName.local8Bit());
-	req.addLELNTS(i.nickName.latin1());
+	req.addLELNTS(i.nickName.latin1()); // TODO: check encoding
 	req.addLELNTS(i.firstName.latin1());
 	req.addLELNTS(i.lastName.latin1());
 	req.addLELNTS(i.eMail.latin1());

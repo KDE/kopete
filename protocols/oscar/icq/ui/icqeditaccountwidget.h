@@ -43,6 +43,8 @@ class ICQEditAccountWidget : public QWidget, public EditAccountWidget
 		void slotFetchInfo();
 		void slotReadInfo();
 		void slotSetDefaultServer();
+		void slotSend();
+		void slotModified();
 
 	protected:
 		/*
@@ -59,6 +61,7 @@ class ICQEditAccountWidget : public QWidget, public EditAccountWidget
 		ICQEditAccountUI *mAccountSettings;
 		ICQUserInfoWidget *mUserInfoSettings;
 		KJanusWidget *mTop;
+		bool mModified;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:
