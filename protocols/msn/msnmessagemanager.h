@@ -36,7 +36,7 @@ class MSNMessageManager : public Kopete::MessageManager
 	Q_OBJECT
 
 public:
-	MSNMessageManager( Kopete::Protocol *protocol, const Kopete::Contact *user, KopeteContactPtrList others, const char *name = 0 );
+	MSNMessageManager( Kopete::Protocol *protocol, const Kopete::Contact *user, Kopete::ContactPtrList others, const char *name = 0 );
 	~MSNMessageManager();
 
 	void createChat( const QString &handle, const QString &address, const QString &auth, const QString &ID = QString::null );

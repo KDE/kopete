@@ -127,7 +127,7 @@ void IRCChannelContact::messageManagerDestroyed()
 	if(manager(false))
 	{
 		part();
-		KopeteContactPtrList contacts = manager()->members();
+		Kopete::ContactPtrList contacts = manager()->members();
 
 		// remove all the users on the channel
 		for( Kopete::Contact *c = contacts.first(); c; c = contacts.next() )

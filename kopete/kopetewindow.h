@@ -35,7 +35,7 @@ class KToggleAction;
 
 class KopeteAccountStatusBarIcon;
 class KopeteContactListView;
-class KopeteAwayAction;
+namespace Kopete { class AwayAction; }
 class KopetePluginConfig;
 class KopeteSystemTray;
 
@@ -148,7 +148,7 @@ public:
 
 	KActionMenu* actionAwayMenu;
 	KActionMenu* actionDockMenu;
-	KopeteAwayAction* selectAway;
+	Kopete::AwayAction* selectAway;
 	KAction* actionSetAvailable;
 
 	KAction* actionPrefs;

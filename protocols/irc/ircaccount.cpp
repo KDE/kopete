@@ -133,7 +133,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 	QObject::connect(m_engine, SIGNAL(incomingServerLoadTooHigh()),
 		this, SLOT(slotServerBusy()));
 
-	mAwayAction = new KopeteAwayAction ( i18n("Set Away"),
+	mAwayAction = new Kopete::AwayAction ( i18n("Set Away"),
 		m_protocol->m_UserStatusAway.iconFor( this ), 0, this,
 		SLOT(slotGoAway( const QString & )), this );
 
@@ -612,7 +612,7 @@ bool IRCAccount::addContactToMetaContact( const QString &contactId, const QStrin
 	{//This should NEVER happen
 		Kopete::MetaContact *old = c->metaContact();
 		c->setMetaContact( m );
-		KopeteContactPtrList children = old->contacts();
+		Kopete::ContactPtrList children = old->contacts();
 		if( children.isEmpty() )
 			Kopete::ContactList::contactList()->removeMetaContact( old );
 	}
@@ -694,7 +694,7 @@ void IRCAccount::appendMessage( const QString &message, MessageType type )
 
 	if( destination & ActiveWindow )
 	{
-		KopeteView *activeView = KopeteMessageManagerFactory::factory()->activeView();
+		KopeteView *activeView = Kopete::MessageManagerFactory::factory()->activeView();
 		if( activeView && activeView->msgManager()->account() == this )
 		{
 			Kopete::MessageManager *manager = activeView->msgManager();

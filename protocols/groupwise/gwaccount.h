@@ -104,7 +104,7 @@ public:
 	/** 
 	 * Utility access to a message manager instance for a given GUID
 	 */
-	GroupWiseMessageManager * messageManager( const Kopete::Contact* user, KopeteContactPtrList others, Kopete::Protocol* protocol, const ConferenceGuid & guid );
+	GroupWiseMessageManager * messageManager( const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const ConferenceGuid & guid );
 	/**
 	 * Look up a contact given a DN
 	 * Returns 0 if none found
@@ -161,7 +161,7 @@ protected slots:
 	void slotGoAppearOffline();
 	/**
 	 * Set an auto reply message for use when the account is away
-	 * TODO: Extend KopeteAwayAction so you can set multiple ones there.
+	 * TODO: Extend Kopete::AwayAction so you can set multiple ones there.
 	 */
 	void slotSetAutoReply();
 	/**

@@ -28,7 +28,7 @@
 
 class KAction;
 class KActionMenu;
-class KopeteAwayAction;
+namespace Kopete { class AwayAction; }
 
 namespace Kopete { class MetaContact; }
 namespace Kopete { class Message; }
@@ -200,7 +200,7 @@ private slots:
 private:
 	Kopete::MessageManager *m_manager;
 	QString mNickName;
-	KopeteAwayAction *mAwayAction;
+	Kopete::AwayAction *mAwayAction;
 	bool triedAltNick;
 	QString autoConnect;
 

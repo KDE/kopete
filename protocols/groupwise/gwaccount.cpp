@@ -102,10 +102,10 @@ KActionMenu* GroupWiseAccount::actionMenu()
 	theActionMenu->insert( new KAction (GroupWiseProtocol::protocol()->groupwiseAvailable.caption(),
 		GroupWiseProtocol::protocol()->groupwiseAvailable.iconFor(this), 0, this, SLOT ( slotGoOnline() ), this,
 		"actionGroupWiseConnect") );
-	theActionMenu->insert( new KopeteAwayAction (GroupWiseProtocol::protocol()->groupwiseAway.caption(),
+	theActionMenu->insert( new Kopete::AwayAction (GroupWiseProtocol::protocol()->groupwiseAway.caption(),
 		GroupWiseProtocol::protocol()->groupwiseAway.iconFor(this), 0, this, SLOT ( slotGoAway( const QString & ) ), this,
 		"actionGroupWiseAway") );
-	theActionMenu->insert( new KopeteAwayAction (GroupWiseProtocol::protocol()->groupwiseBusy.caption(),
+	theActionMenu->insert( new Kopete::AwayAction (GroupWiseProtocol::protocol()->groupwiseBusy.caption(),
 		GroupWiseProtocol::protocol()->groupwiseBusy.iconFor(this), 0, this, SLOT ( slotGoBusy( const QString & ) ), this,
 		"actionGroupWiseBusy") );
 	theActionMenu->insert( new KAction ( "A&ppear Offline", "groupwise_invisible", 0, this, 
@@ -149,7 +149,7 @@ GroupWiseProtocol *GroupWiseAccount::protocol() const
 	return static_cast<GroupWiseProtocol *>( Kopete::Account::protocol() );
 }
 
-GroupWiseMessageManager * GroupWiseAccount::messageManager( const Kopete::Contact* user, KopeteContactPtrList others, Kopete::Protocol* protocol, const GroupWise::ConferenceGuid & guid )
+GroupWiseMessageManager * GroupWiseAccount::messageManager( const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const GroupWise::ConferenceGuid & guid )
 {
 	GroupWiseMessageManager * mgr = m_managers[ guid ];
 	if ( !mgr )
@@ -832,7 +832,7 @@ void GroupWiseAccount::sendMessage( const GroupWise::ConferenceGuid &guid, const
 	outMsg.rtfMessage = protocol()->rtfizeText( message.plainBody() );
 	// make a list of DNs to send to
 	QStringList addresseeDNs;
-	KopeteContactPtrList addressees = message.to();
+	Kopete::ContactPtrList addressees = message.to();
 	for ( Kopete::Contact * contact = addressees.first(); contact; contact = addressees.next() )
 		addresseeDNs.append( static_cast< GroupWiseContact* >( contact )->dn() );
 	// send the message 
@@ -946,7 +946,7 @@ void GroupWiseAccount::receiveInvitation( const ConferenceEvent & event )
 void GroupWiseAccount::receiveConferenceJoin( const GroupWise::ConferenceGuid & guid, const QStringList & participants, const QStringList & invitees )
 {
 	// get a new GWMM
-	KopeteContactPtrList others;
+	Kopete::ContactPtrList others;
 	GroupWiseMessageManager * mgr = messageManager( myself(), others, protocol(), guid );
 	// find each contact and add them to the GWMM, and tell them they are in the conference
 	for ( QValueList<QString>::ConstIterator it = participants.begin(); it != participants.end(); ++it )

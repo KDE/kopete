@@ -25,7 +25,7 @@
 #include "kopetecommand.h"
 #include "kopeteuiglobal.h"
 
-KopeteCommand::KopeteCommand( QObject *parent, const QString &command, const char* handlerSlot,
+Kopete::Command::Command( QObject *parent, const QString &command, const char* handlerSlot,
 	const QString &help, Kopete::CommandHandler::CommandType type, const QString &formatString,
 	uint minArgs, int maxArgs, const KShortcut &cut, const QString &pix )
 	: KAction( command[0].upper() + command.right( command.length() - 1).lower(), pix, cut, parent,
@@ -34,7 +34,7 @@ KopeteCommand::KopeteCommand( QObject *parent, const QString &command, const cha
 	init( command, handlerSlot, help, type, formatString, minArgs, maxArgs );
 }
 
-void KopeteCommand::init( const QString &command, const char* slot, const QString &help,
+void Kopete::Command::init( const QString &command, const char* slot, const QString &help,
 	Kopete::CommandHandler::CommandType type, const QString &formatString, uint minArgs, int maxArgs )
 {
 	m_command = command;
@@ -53,9 +53,9 @@ void KopeteCommand::init( const QString &command, const char* slot, const QStrin
 	QObject::connect( this, SIGNAL( activated() ), this, SLOT( slotAction() ) );
 }
 
-void KopeteCommand::slotAction()
+void Kopete::Command::slotAction()
 {
-	Kopete::MessageManager *manager = KopeteMessageManagerFactory::factory()->activeView()->msgManager();
+	Kopete::MessageManager *manager = Kopete::MessageManagerFactory::factory()->activeView()->msgManager();
 
 	QString args;
 	if( m_minArgs > 0 )
@@ -68,7 +68,7 @@ void KopeteCommand::slotAction()
 	processCommand( args, manager, true );
 }
 
-void KopeteCommand::processCommand( const QString &args, Kopete::MessageManager *manager, bool gui )
+void Kopete::Command::processCommand( const QString &args, Kopete::MessageManager *manager, bool gui )
 {
 	QStringList mArgs = Kopete::CommandHandler::parseArguments( args );
 	if( mArgs.count() < m_minArgs )
@@ -115,7 +115,7 @@ void KopeteCommand::processCommand( const QString &args, Kopete::MessageManager 
 	}
 }
 
-void KopeteCommand::printError( const QString &error, Kopete::MessageManager *manager, bool gui ) const
+void Kopete::Command::printError( const QString &error, Kopete::MessageManager *manager, bool gui ) const
 {
 	if( gui )
 	{

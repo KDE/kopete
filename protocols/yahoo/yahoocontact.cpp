@@ -122,9 +122,9 @@ Kopete::MessageManager *YahooContact::manager( bool )
 {
 	if( !m_manager )
 	{
-		KopeteContactPtrList m_them;
+		Kopete::ContactPtrList m_them;
 		m_them.append( this );
-		m_manager = KopeteMessageManagerFactory::factory()->create( m_account->myself(), m_them, protocol() );
+		m_manager = Kopete::MessageManagerFactory::factory()->create( m_account->myself(), m_them, protocol() );
 		connect( m_manager, SIGNAL( destroyed() ), this, SLOT( slotMessageManagerDestroyed() ) );
 		connect( m_manager, SIGNAL( messageSent ( Kopete::Message&, Kopete::MessageManager* ) ), this, SLOT( slotSendMessage( Kopete::Message& ) ) );
 		connect( m_manager, SIGNAL( typingMsg( bool) ), this, SLOT( slotTyping( bool ) ) );
@@ -143,7 +143,7 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 	QString messageText = message.plainBody();
 	kdDebug(14180) << "Sending message: " << messageText << endl;
 
-	KopeteContactPtrList m_them = manager()->members();
+	Kopete::ContactPtrList m_them = manager()->members();
 	Kopete::Contact *target = m_them.first();
 
 	m_account->yahooSession()->sendIm( static_cast<YahooContact*>(m_account->myself())->m_userId,
@@ -156,7 +156,7 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 
 void YahooContact::slotTyping(bool isTyping_ )
 {
-	KopeteContactPtrList m_them = manager()->members();
+	Kopete::ContactPtrList m_them = manager()->members();
 	Kopete::Contact *target = m_them.first();
 
 

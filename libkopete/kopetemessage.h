@@ -31,15 +31,10 @@ struct KopeteMessagePrivate;
 
 namespace Kopete
 {
+
 class Contact;
-}
-
-typedef QPtrList<Kopete::Contact> KopeteContactPtrList;
-
-namespace Kopete
-{
-
 class MessageManager;
+typedef QPtrList<Contact> ContactPtrList;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
@@ -114,7 +109,7 @@ public:
 	 * @param format Format of the message
 	 * @param type Type of the message, see @ref MessageType
 	 */
-	Message( const Contact *fromKC, const KopeteContactPtrList &toKC, const QString &body,
+	Message( const Contact *fromKC, const ContactPtrList &toKC, const QString &body,
 		MessageDirection direction, MessageFormat format = PlainText, MessageType type = Undefined );
 
 	/**
@@ -140,7 +135,7 @@ public:
 	 * @param format Format of the message
 	 * @param type Type of the message, see @ref MessageType
 	 */
-	Message( const Contact *fromKC, const KopeteContactPtrList &toKC, const QString &body,
+	Message( const Contact *fromKC, const ContactPtrList &toKC, const QString &body,
 		const QString &subject, MessageDirection direction, MessageFormat format = PlainText, MessageType type = Undefined );
 
 	/**
@@ -153,7 +148,7 @@ public:
 	 * @param format Format of the message
 	 * @param type Type of the message, see @ref MessageType
 	 */
-	Message( const QDateTime &timeStamp, const Contact *fromKC, const KopeteContactPtrList &toKC,
+	Message( const QDateTime &timeStamp, const Contact *fromKC, const ContactPtrList &toKC,
 		const QString &body, MessageDirection direction, MessageFormat format = PlainText, MessageType type = Undefined );
 
 	/**
@@ -167,7 +162,7 @@ public:
 	 * @param format Format of the message
 	 * @param type Type of the message, see @ref MessageType
 	 */
-	Message( const QDateTime &timeStamp, const Contact *fromKC, const KopeteContactPtrList &toKC,
+	Message( const QDateTime &timeStamp, const Contact *fromKC, const ContactPtrList &toKC,
 		const QString &body, const QString &subject, MessageDirection direction,
 		MessageFormat format = PlainText, MessageType type = Undefined );
 
@@ -199,7 +194,7 @@ public:
 	 * Accessor method for the KopeteContacts that this message was sent to
 	 * @return Pointer list of the KopeteContacts this message was sent to
 	 */
-	KopeteContactPtrList to() const;
+	Kopete::ContactPtrList to() const;
 
 	/**
 	 * @return the @ref MessageType of this message
@@ -371,7 +366,7 @@ private:
 	/**
 	 * Helper for constructors
 	 */
-	void init( const QDateTime &timeStamp, const Contact *from, const KopeteContactPtrList &to,
+	void init( const QDateTime &timeStamp, const Contact *from, const ContactPtrList &to,
 		const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, MessageType type );
 
 	/**

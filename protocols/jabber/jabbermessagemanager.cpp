@@ -26,13 +26,13 @@
 #include "jabbercontact.h"
 
 JabberMessageManager::JabberMessageManager ( JabberProtocol *protocol, const JabberBaseContact *user,
-											 KopeteContactPtrList others, const QString &resource, const char *name )
+											 Kopete::ContactPtrList others, const QString &resource, const char *name )
 											 : Kopete::MessageManager ( user, others, protocol, 0, name )
 {
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId () << endl;
 
 	// make sure Kopete knows about this instance
-	KopeteMessageManagerFactory::factory()->addMessageManager ( this );
+	Kopete::MessageManagerFactory::factory()->addMessageManager ( this );
 
 	connect ( this, SIGNAL ( messageSent ( Kopete::Message &, Kopete::MessageManager * ) ),
 			  this, SLOT ( slotMessageSent ( Kopete::Message &, Kopete::MessageManager * ) ) );
@@ -53,7 +53,7 @@ void JabberMessageManager::updateDisplayName ()
 {
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << endl;
 
-	KopeteContactPtrList chatMembers = members ();
+	Kopete::ContactPtrList chatMembers = members ();
 
 	// make sure we do have members in the chat
 	if ( !chatMembers.first () )

@@ -605,7 +605,7 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 {
 	QFont msgFont;
 	QDateTime msgDT;
-	KopeteContactPtrList justMe;
+	Kopete::ContactPtrList justMe;
 
 	if( !contact( who ) )
 	{

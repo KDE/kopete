@@ -52,9 +52,8 @@ using namespace DOM;
 namespace Kopete
 {
 class MessageManager;
+typedef QPtrList<Contact> ContactPtrList;
 }
-
-typedef QPtrList<Kopete::Contact> KopeteContactPtrList;
 
 namespace KParts { struct URLArgs; class Part; }
 

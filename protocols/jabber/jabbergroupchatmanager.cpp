@@ -26,7 +26,7 @@
 #include "jabbercontact.h"
 
 JabberGroupChatManager::JabberGroupChatManager ( JabberProtocol *protocol, const JabberBaseContact *user,
-											 KopeteContactPtrList others, XMPP::Jid roomJid, const char *name )
+											 Kopete::ContactPtrList others, XMPP::Jid roomJid, const char *name )
 											 : Kopete::MessageManager ( user, others, protocol, 0, name )
 {
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId () << endl;
@@ -34,7 +34,7 @@ JabberGroupChatManager::JabberGroupChatManager ( JabberProtocol *protocol, const
 	mRoomJid = roomJid;
 
 	// make sure Kopete knows about this instance
-	KopeteMessageManagerFactory::factory()->addMessageManager ( this );
+	Kopete::MessageManagerFactory::factory()->addMessageManager ( this );
 
 	connect ( this, SIGNAL ( messageSent ( Kopete::Message &, Kopete::MessageManager * ) ),
 			  this, SLOT ( slotMessageSent ( Kopete::Message &, Kopete::MessageManager * ) ) );

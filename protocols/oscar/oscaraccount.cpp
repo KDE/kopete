@@ -300,7 +300,7 @@ void OscarAccount::slotReceivedMessage(const QString &sender, OscarMessage &inco
 				break;
 		}
 
-		KopeteContactPtrList tmpList;
+		Kopete::ContactPtrList tmpList;
 		tmpList.append(myself());
 
 		Kopete::Message kmsg(

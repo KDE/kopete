@@ -68,15 +68,15 @@ KopeteViewManager::KopeteViewManager (QObject *parent, const char *name, const Q
 	d->activeView = 0L;
 	d->foreignMessage=false;
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ), this, SLOT( slotPrefsChanged() ) );
-	connect( KopeteMessageManagerFactory::factory() , SIGNAL ( requestView(KopeteView*& , Kopete::MessageManager * , Kopete::Message::MessageType  ) ) ,
+	connect( Kopete::MessageManagerFactory::factory() , SIGNAL ( requestView(KopeteView*& , Kopete::MessageManager * , Kopete::Message::MessageType  ) ) ,
 		this, SLOT (slotRequestView(KopeteView*& , Kopete::MessageManager * , Kopete::Message::MessageType  )));
-	connect( KopeteMessageManagerFactory::factory() , SIGNAL( display( Kopete::Message &, Kopete::MessageManager *) ),
+	connect( Kopete::MessageManagerFactory::factory() , SIGNAL( display( Kopete::Message &, Kopete::MessageManager *) ),
 		this, SLOT ( messageAppended( Kopete::Message &, Kopete::MessageManager *) ) );
 
-	connect( KopeteMessageManagerFactory::factory() , SIGNAL ( getActiveView(KopeteView*&  ) ) ,
+	connect( Kopete::MessageManagerFactory::factory() , SIGNAL ( getActiveView(KopeteView*&  ) ) ,
 		this, SLOT (slotGetActiveView(KopeteView*&)));
 
-	connect( KopeteMessageManagerFactory::factory() , SIGNAL( readMessage() ),
+	connect( Kopete::MessageManagerFactory::factory() , SIGNAL( readMessage() ),
 		this, SLOT ( nextEvent() ) );
 
 
@@ -172,7 +172,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::MessageMa
 				KopeteEvent *event=new KopeteEvent(msg,manager);
 				d->eventList.append( event );
 				connect(event, SIGNAL(done(KopeteEvent *)), this, SLOT(slotEventDeleted(KopeteEvent *)));
-				KopeteMessageManagerFactory::factory()->postNewEvent(event);
+				Kopete::MessageManagerFactory::factory()->postNewEvent(event);
 			}
 		}
 		else

@@ -35,7 +35,7 @@ class JabberMessageManager : public Kopete::MessageManager
 
 public:
 	JabberMessageManager ( JabberProtocol *protocol, const JabberBaseContact *user,
-						   KopeteContactPtrList others, const QString &resource = "",
+						   Kopete::ContactPtrList others, const QString &resource = "",
 						   const char *name = 0 );
 
 	/**

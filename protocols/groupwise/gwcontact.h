@@ -109,7 +109,7 @@ public:
 	/** 
 	 * Locate or create a messagemanager for the specified group of contacts
 	 */
-	GroupWiseMessageManager *manager ( KopeteContactPtrList chatMembers, bool canCreate = false );
+	GroupWiseMessageManager *manager ( Kopete::ContactPtrList chatMembers, bool canCreate = false );
 
 	/**
 	 * Received a message from the server.

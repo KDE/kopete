@@ -48,9 +48,9 @@ NetMeetingPlugin::NetMeetingPlugin( QObject *parent, const char *name, const QSt
 		connect(Kopete::PluginManager::self() , SIGNAL(pluginLoaded(Kopete::Plugin*) ), this, SLOT(slotPluginLoaded(Kopete::Plugin*)));
 
 
-	connect( KopeteMessageManagerFactory::factory(), SIGNAL( messageManagerCreated( Kopete::MessageManager * )) , SLOT( slotNewKMM( Kopete::MessageManager * ) ) );
+	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( messageManagerCreated( Kopete::MessageManager * )) , SLOT( slotNewKMM( Kopete::MessageManager * ) ) );
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
-	QIntDict<Kopete::MessageManager> sessions = KopeteMessageManagerFactory::factory()->sessions();
+	QIntDict<Kopete::MessageManager> sessions = Kopete::MessageManagerFactory::factory()->sessions();
 	QIntDictIterator<Kopete::MessageManager> it( sessions );
 	for ( ; it.current() ; ++it )
 	{

@@ -51,7 +51,7 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 	 * Instantiate a new message manager without members.
 	 */
 	mManager = new JabberGroupChatManager ( protocol (), subContact,
-											KopeteContactPtrList (), XMPP::Jid ( rosterItem.jid().userHost () ) );
+											Kopete::ContactPtrList (), XMPP::Jid ( rosterItem.jid().userHost () ) );
 
 	connect ( mManager, SIGNAL ( closing ( Kopete::MessageManager* ) ), this, SLOT ( slotMessageManagerDeleted () ) );
 
@@ -126,7 +126,7 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 	// message type is always chat in a groupchat
 	type = Kopete::Message::Chat;
 
-	KopeteContactPtrList contactList;
+	Kopete::ContactPtrList contactList;
 	contactList.append ( mManager->user () );
 
 	// check for errors

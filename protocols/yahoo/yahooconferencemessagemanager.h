@@ -33,7 +33,7 @@ class YahooConferenceMessageManager : public Kopete::MessageManager
 	Q_OBJECT
 
 public:
-	YahooConferenceMessageManager( const QString &m_yahooRoom, Kopete::Protocol *protocol, const Kopete::Contact *user, KopeteContactPtrList others, const char *name = 0 );
+	YahooConferenceMessageManager( const QString &m_yahooRoom, Kopete::Protocol *protocol, const Kopete::Contact *user, Kopete::ContactPtrList others, const char *name = 0 );
 	~YahooConferenceMessageManager();
 private:
 	QString m_yahooRoom;

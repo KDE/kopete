@@ -92,7 +92,7 @@ KActionMenu* AIMAccount::actionMenu()
 			"AIMAccount::mActionOnline"));
 
 	mActionMenu->insert(
-		new KopeteAwayAction(p->statusAway.caption(),
+		new Kopete::AwayAction(p->statusAway.caption(),
 		p->statusAway.iconFor(this), 0,
 		this, SLOT(slotGoAway( const QString & )), this, "AIMAccount::mActionNA" ) );
 

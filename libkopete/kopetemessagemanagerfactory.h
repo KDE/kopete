@@ -35,26 +35,24 @@ namespace Kopete
 class Contact;
 class Protocol;
 
-}
-
-typedef QPtrList<Kopete::Contact>        KopeteContactPtrList;
-typedef QValueList<Kopete::Message>      KopeteMessageList;
-typedef QIntDict<Kopete::MessageManager> KopeteMessageManagerDict;
+typedef QPtrList<Contact>        ContactPtrList;
+typedef QValueList<Message>      MessageList;
+typedef QIntDict<MessageManager> MessageManagerDict;
 
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  *
- * KopeteMessageManagerFactory is responsible for creating and tracking Kopete::MessageManager
+ * Kopete::MessageManagerFactory is responsible for creating and tracking Kopete::MessageManager
  * instances for each chat.
  */
-class KopeteMessageManagerFactory : public QObject
+class MessageManagerFactory : public QObject
 {
 	Q_OBJECT
 
 public:
-	static KopeteMessageManagerFactory* factory();
+	static MessageManagerFactory* factory();
 
-	~KopeteMessageManagerFactory();
+	~MessageManagerFactory();
 
 	/**
 	 * Create a new chat session. Provided is the initial list of contacts in
@@ -66,7 +64,7 @@ public:
 	 * @return A pointer to a new or reused Kopete::MessageManager.
 	 */
 	Kopete::MessageManager* create( const Kopete::Contact *user,
-		KopeteContactPtrList chatContacts, Kopete::Protocol *protocol);
+		Kopete::ContactPtrList chatContacts, Kopete::Protocol *protocol);
 
 	/**
 	 * Find a chat session, if one exists, that matches the given list of contacts.
@@ -76,10 +74,10 @@ public:
 	 * @return A pointer to an existing Kopete::MessageManager, or 0L if none was found.
 	 */
 	Kopete::MessageManager* findMessageManager( const Kopete::Contact *user,
-		KopeteContactPtrList chatContacts, Kopete::Protocol *protocol);
+		Kopete::ContactPtrList chatContacts, Kopete::Protocol *protocol);
 
 	/**
-	 * Registers a Kopete::MessageManager (or subclass thereof) with the KopeteMessageManagerFactory
+	 * Registers a Kopete::MessageManager (or subclass thereof) with the Kopete::MessageManagerFactory
 	 */
 	void addMessageManager(Kopete::MessageManager *);
 
@@ -93,7 +91,7 @@ public:
 	/**
 	 * Get a list of all open sessions.
 	 */
-	const KopeteMessageManagerDict& sessions();
+	const Kopete::MessageManagerDict& sessions();
 
 	/**
 	 * @internal
@@ -193,14 +191,16 @@ signals:
 	 void getActiveView( KopeteView *& );
 
 private:
-	KopeteMessageManagerFactory( QObject* parent = 0, const char* name = 0 );
+	MessageManagerFactory( QObject* parent = 0, const char* name = 0 );
 
 	int mId;
-	KopeteMessageManagerDict mSessionDict;
+	Kopete::MessageManagerDict mSessionDict;
 
-	static KopeteMessageManagerFactory *s_factory;
+	static MessageManagerFactory *s_factory;
 
 };
+
+}
 
 #endif
 

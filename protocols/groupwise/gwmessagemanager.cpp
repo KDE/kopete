@@ -54,7 +54,7 @@ void GroupWiseMessageManager::Dict::remove( const ConferenceGuid & key )
 	QMap< ConferenceGuid, GroupWiseMessageManager * >::remove( key.left( CONF_GUID_END ) );
 }
 
-GroupWiseMessageManager::GroupWiseMessageManager(const Kopete::Contact* user, KopeteContactPtrList others, Kopete::Protocol* protocol, const GroupWise::ConferenceGuid & guid, int id, const char* name): Kopete::MessageManager(user, others, protocol, 0, name), m_guid( guid ), m_flags( 0 ), m_searchDlg( 0 ), m_memberCount( others.count() )
+GroupWiseMessageManager::GroupWiseMessageManager(const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const GroupWise::ConferenceGuid & guid, int id, const char* name): Kopete::MessageManager(user, others, protocol, 0, name), m_guid( guid ), m_flags( 0 ), m_searchDlg( 0 ), m_memberCount( others.count() )
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId() << endl;
 
@@ -62,7 +62,7 @@ GroupWiseMessageManager::GroupWiseMessageManager(const Kopete::Contact* user, Ko
 	setInstance( protocol->instance() );
 	
 	// make sure Kopete knows about this instance
-	KopeteMessageManagerFactory::factory()->addMessageManager ( this );
+	Kopete::MessageManagerFactory::factory()->addMessageManager ( this );
 
 	connect ( this, SIGNAL( messageSent ( Kopete::Message &, Kopete::MessageManager * ) ),
 			  SLOT( slotMessageSent ( Kopete::Message &, Kopete::MessageManager * ) ) );
@@ -152,7 +152,7 @@ void GroupWiseMessageManager::createConference()
 		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 		// form a list of invitees
 		QStringList invitees;
-		KopeteContactPtrList chatMembers = members();
+		Kopete::ContactPtrList chatMembers = members();
 		for ( Kopete::Contact * contact = chatMembers.first(); contact; contact = chatMembers.next() )
 		{
 			invitees.append( static_cast< GroupWiseContact * >( contact )->dn() );

@@ -589,7 +589,7 @@ void ChatView::createMembersList()
 
 		membersDock->setWidget( membersList );
 
-		KopeteContactPtrList members = m_manager->members();
+		Kopete::ContactPtrList members = m_manager->members();
 
 		if ( members.first() && members.first()->metaContact() != 0 )
 		{
@@ -624,7 +624,7 @@ void ChatView::toggleMembersVisibility()
 		d->visibleMembers = !d->visibleMembers;
 		membersStatus = d->visibleMembers ? Visible : Hidden;
 		placeMembersList( membersDockPosition );
-		KopeteContactPtrList members = m_manager->members();
+		Kopete::ContactPtrList members = m_manager->members();
 		if ( members.first()->metaContact() )
 		{
 			members.first()->metaContact()->setPluginData( m_manager->protocol(),
@@ -1004,7 +1004,7 @@ bool ChatView::canSend()
 {
 	if ( !m_manager ) return false;
 
-	KopeteContactPtrList members = m_manager->members();
+	Kopete::ContactPtrList members = m_manager->members();
 
 	// can't send if there's nothing *to* send...
 	if ( m_edit->text().isEmpty() )
@@ -1341,7 +1341,7 @@ const QString ChatView::addNickLinks( const QString &html ) const
 {
 	QString retVal = html;
 
-	KopeteContactPtrList members = m_manager->members();
+	Kopete::ContactPtrList members = m_manager->members();
 	for ( QPtrListIterator<Kopete::Contact> it( members ); it.current(); ++it )
 	{
 		QString nick = (*it)->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
@@ -1965,7 +1965,7 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 	}
 	else if ( event->provides( "text/uri-list" ) && m_manager->members().count() == 1 )
 	{
-		KopeteContactPtrList members = m_manager->members();
+		Kopete::ContactPtrList members = m_manager->members();
 		Kopete::Contact *contact = members.first();
 		if ( contact && contact->canAcceptFiles() );
 			event->accept();
@@ -2017,7 +2017,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 	}
 	else if ( event->provides( "text/uri-list" ) && m_manager->members().count() == 1 )
 	{
-		KopeteContactPtrList members = m_manager->members();
+		Kopete::ContactPtrList members = m_manager->members();
 		Kopete::Contact *contact = members.first();
 		
 		if ( !contact || !contact->canAcceptFiles() || !QUriDrag::canDecode( event )  )

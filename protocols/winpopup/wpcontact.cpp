@@ -75,7 +75,7 @@ Kopete::MessageManager* WPContact::manager( bool )	// TODO: use the parameter as
 		QPtrList<Kopete::Contact> singleContact;
 		singleContact.append(this);
 
-		m_manager = KopeteMessageManagerFactory::factory()->create( account()->myself(), singleContact, protocol() );
+		m_manager = Kopete::MessageManagerFactory::factory()->create( account()->myself(), singleContact, protocol() );
 
 		connect(m_manager, SIGNAL(messageSent(Kopete::Message &, Kopete::MessageManager *)), this, SLOT(slotSendMessage(Kopete::Message &)));
   		connect(m_manager, SIGNAL(messageSent(Kopete::Message &, Kopete::MessageManager *)), m_manager, SLOT(appendMessage(Kopete::Message &)));

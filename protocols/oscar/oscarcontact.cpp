@@ -157,7 +157,7 @@ Kopete::MessageManager* OscarContact::manager(bool canCreate)
 		QPtrList<Kopete::Contact> theContact;
 		theContact.append(this);
 
-		mMsgManager = KopeteMessageManagerFactory::factory()->create(account()->myself(), theContact, protocol());
+		mMsgManager = Kopete::MessageManagerFactory::factory()->create(account()->myself(), theContact, protocol());
 
 		// This is for when the user types a message and presses send
 		connect(mMsgManager,
@@ -422,7 +422,7 @@ void OscarContact::slotDirectConnect()
 	if(result == KMessageBox::Yes)
 	{
 		execute();
-		KopeteContactPtrList p;
+		Kopete::ContactPtrList p;
 		p.append(this);
 		Kopete::Message msg = Kopete::Message(
 			this, p,
@@ -444,7 +444,7 @@ void OscarContact::slotDirectIMReady(QString name)
 		displayName() << "' to true" << endl;
 
 	mDirectlyConnected = true;
-	KopeteContactPtrList p;
+	Kopete::ContactPtrList p;
 	p.append(this);
 	Kopete::Message msg = Kopete::Message(
 		this, p,
@@ -611,7 +611,7 @@ void OscarContact::receivedIM(Kopete::Message &msg)
 
 /*
 	// Build a Kopete::Message and set the body as Rich Text
-	KopeteContactPtrList tmpList;
+	Kopete::ContactPtrList tmpList;
 	tmpList.append(account()->myself());
 	Kopete::Message kmsg(this, tmpList, msg.text, Kopete::Message::Inbound,
 		Kopete::Message::RichText);
@@ -632,7 +632,7 @@ void OscarContact::receivedIM(Kopete::Message &msg)
 			// Send the autoresponse
 			mAccount->engine()->sendIM(Kopete::Away::getInstance()->message(), this, true);
 			// Build a pointerlist to insert this contact into
-			KopeteContactPtrList toContact;
+			Kopete::ContactPtrList toContact;
 			toContact.append(this);
 			// Display the autoresponse
 			// Make it look different

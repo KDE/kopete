@@ -207,13 +207,13 @@ JavaScriptPlugin::JavaScriptPlugin( QObject *parent, const char *name, const QSt
 		pluginStatic_ = this;
 
 	//Kopete::Message events
-	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToDisplay( Kopete::Message & ) ),
+	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( aboutToDisplay( Kopete::Message & ) ),
 		this, SLOT( slotDisplayMessage( Kopete::Message & ) ) );
 
-	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToReceive( Kopete::Message & ) ),
+	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( aboutToReceive( Kopete::Message & ) ),
 		this, SLOT( slotIncomingMessage( Kopete::Message & ) ) );
 
-	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToSend( Kopete::Message & ) ),
+	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( aboutToSend( Kopete::Message & ) ),
 		this, SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
 
 	connect( Kopete::AccountManager::manager(), SIGNAL( accountReady( Kopete::Account * ) ),
@@ -282,10 +282,10 @@ void JavaScriptPlugin::slotAccountCreated( Kopete::Account *a )
 		ep->jsEngine->factory()->addType( "Kopete::MetaContact" );
 		ep->jsEngine->factory()->addType( "Kopete::ContactList" );
 		ep->jsEngine->factory()->addType( "Kopete::MessageManager" );
-		ep->jsEngine->factory()->addType( "KopeteMessageManagerFactory" );
+		ep->jsEngine->factory()->addType( "Kopete::MessageManagerFactory" );
 		ep->jsEngine->factory()->addType( "KopeteView" );
 
-		ep->jsEngine->addObject( KopeteMessageManagerFactory::factory(), "MessageManagerFactory" );
+		ep->jsEngine->addObject( Kopete::MessageManagerFactory::factory(), "MessageManagerFactory" );
 		ep->jsEngine->addObject( Kopete::AccountManager::manager(), "AccountManager" );
 
 		KJS::Object account = ep->jsEngine->addObject( a, "Account" );

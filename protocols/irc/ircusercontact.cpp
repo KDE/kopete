@@ -210,14 +210,14 @@ void IRCUserContact::slotBanUserDomain()
 
 void IRCUserContact::slotKick()
 {
-	KopeteContactPtrList members = mActiveManager->members();
+	Kopete::ContactPtrList members = mActiveManager->members();
 	QString channelName = static_cast<IRCContact*>( members.first() )->nickName();
 	MYACCOUNT->engine()->kickUser(m_nickName, channelName, QString::null);
 }
 
 void IRCUserContact::contactMode( const QString &mode )
 {
-	KopeteContactPtrList members = mActiveManager->members();
+	Kopete::ContactPtrList members = mActiveManager->members();
 	QString channelName = static_cast<IRCContact*>( members.first() )->nickName();
 	MYACCOUNT->engine()->changeMode( channelName, QString::fromLatin1("%1 %2").arg(mode).arg(m_nickName) );
 }
@@ -383,7 +383,7 @@ QPtrList<KAction> *IRCUserContact::customContextMenuActions( Kopete::MessageMana
 	{
 		QPtrList<KAction> *mCustomActions = new QPtrList<KAction> ();
 		mActiveManager = manager;
-		KopeteContactPtrList members = mActiveManager->members();
+		Kopete::ContactPtrList members = mActiveManager->members();
 		IRCChannelContact *isChannel = dynamic_cast<IRCChannelContact*>( members.first() );
 
 		if( !actionCtcpMenu )

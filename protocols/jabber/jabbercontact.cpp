@@ -247,7 +247,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	else
 		type = Kopete::Message::Email;
 
-	KopeteContactPtrList contactList;
+	Kopete::ContactPtrList contactList;
 	contactList.append ( account()->myself () );
 
 	// check for errors
@@ -583,11 +583,11 @@ void JabberContact::slotMessageManagerDeleted ( QObject *sender )
 
 }
 
-JabberMessageManager *JabberContact::manager ( KopeteContactPtrList chatMembers, bool canCreate )
+JabberMessageManager *JabberContact::manager ( Kopete::ContactPtrList chatMembers, bool canCreate )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "called, canCreate: " << canCreate << endl;
 
-	Kopete::MessageManager *_manager = KopeteMessageManagerFactory::factory()->findMessageManager ( account()->myself(), chatMembers, protocol() );
+	Kopete::MessageManager *_manager = Kopete::MessageManagerFactory::factory()->findMessageManager ( account()->myself(), chatMembers, protocol() );
 	JabberMessageManager *manager = dynamic_cast<JabberMessageManager*>( _manager );
 
 	/*
@@ -622,7 +622,7 @@ Kopete::MessageManager *JabberContact::manager ( bool canCreate )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "called, canCreate: " << canCreate << endl;
 
-	KopeteContactPtrList chatMembers;
+	Kopete::ContactPtrList chatMembers;
 	chatMembers.append ( this );
 
 	return manager ( chatMembers, canCreate );
@@ -659,7 +659,7 @@ JabberMessageManager *JabberContact::manager ( const QString &resource, bool can
 		 * This means, we will have to create a new one with a
 		 * preselected resource.
 		 */
-		KopeteContactPtrList chatmembers;
+		Kopete::ContactPtrList chatmembers;
 		chatmembers.append ( this );
 		JabberMessageManager *manager = new JabberMessageManager ( protocol(),
 																   static_cast<JabberBaseContact *>(account()->myself()),

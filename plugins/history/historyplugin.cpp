@@ -54,9 +54,9 @@ HistoryPlugin::HistoryPlugin( QObject *parent, const char *name, const QStringLi
 	connect(Kopete::ContactList::contactList(), SIGNAL(metaContactSelected(bool)),
 		viewMetaContactHistory, SLOT(setEnabled(bool)));
 
-	connect(KopeteMessageManagerFactory::factory(), SIGNAL(aboutToDisplay(Kopete::Message &)),
+	connect(Kopete::MessageManagerFactory::factory(), SIGNAL(aboutToDisplay(Kopete::Message &)),
 		this, SLOT(slotMessageDisplayed(Kopete::Message &)));
-	connect(KopeteMessageManagerFactory::factory(), SIGNAL(viewCreated(KopeteView*)),
+	connect(Kopete::MessageManagerFactory::factory(), SIGNAL(viewCreated(KopeteView*)),
 		this, SLOT(slotViewCreated(KopeteView*)));
 
 	connect(this, SIGNAL(settingsChanged()), this, SLOT(slotSettingsChanged()));
@@ -76,7 +76,7 @@ HistoryPlugin::HistoryPlugin( QObject *parent, const char *name, const QStringLi
 
 	// Add GUI action to all existing kmm objects
 	// (Needed if the plugin is enabled while kopete is already running)
-	QIntDict<Kopete::MessageManager> sessions = KopeteMessageManagerFactory::factory()->sessions();
+	QIntDict<Kopete::MessageManager> sessions = Kopete::MessageManagerFactory::factory()->sessions();
 	QIntDictIterator<Kopete::MessageManager> it( sessions );
 	for ( ; it.current() ; ++it )
 	{

@@ -43,7 +43,7 @@
 class KMMPrivate
 {
 public:
-	KopeteContactPtrList mContactList;
+	Kopete::ContactPtrList mContactList;
 	const Kopete::Contact *mUser;
 	QMap<const Kopete::Contact *, Kopete::OnlineStatus> contactStatus;
 	Kopete::Protocol *mProtocol;
@@ -58,7 +58,7 @@ public:
 };
 
 Kopete::MessageManager::MessageManager( const Kopete::Contact *user,
-	KopeteContactPtrList others, Kopete::Protocol *protocol, int id, const char *name )
+	Kopete::ContactPtrList others, Kopete::Protocol *protocol, int id, const char *name )
 : QObject( user->account(), name )
 {
 	d = new KMMPrivate;
@@ -88,7 +88,7 @@ Kopete::MessageManager::~MessageManager()
 	if ( !d )
 		return;
 	d->mCanBeDeleted = false; //prevent double deletion
-	KopeteMessageManagerFactory::factory()->removeSession( this );
+	Kopete::MessageManagerFactory::factory()->removeSession( this );
 	emit closing( this );
 	delete d;
 }
@@ -169,7 +169,7 @@ void Kopete::MessageManager::slotUpdateDisplayName()
 	emit displayNameChanged();
 }
 
-const KopeteContactPtrList& Kopete::MessageManager::members() const
+const Kopete::ContactPtrList& Kopete::MessageManager::members() const
 {
 	return d->mContactList;
 }
@@ -352,7 +352,7 @@ KopeteView* Kopete::MessageManager::view( bool canCreate, Kopete::Message::Messa
 {
 	if ( !d->view && canCreate )
 	{
-		d->view = KopeteMessageManagerFactory::factory()->createView( this, type );
+		d->view = Kopete::MessageManagerFactory::factory()->createView( this, type );
 		if ( d->view )
 		{
 			connect( d->view->mainWidget(), SIGNAL( closing( KopeteView * ) ), this, SLOT( slotViewDestroyed( ) ) );

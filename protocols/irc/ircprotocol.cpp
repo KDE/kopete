@@ -250,10 +250,10 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		QString::fromLatin1("query %s"),
 		i18n("USAGE: /msg <nickname> [<message>] - Alias for QUERY <nickname> <message>."), Kopete::CommandHandler::SystemAlias, 1 );
 
-	QObject::connect( KopeteMessageManagerFactory::factory(), SIGNAL(aboutToDisplay(Kopete::Message &)),
+	QObject::connect( Kopete::MessageManagerFactory::factory(), SIGNAL(aboutToDisplay(Kopete::Message &)),
 		this, SLOT(slotMessageFilter(Kopete::Message &)) );
 
-	QObject::connect( KopeteMessageManagerFactory::factory(), SIGNAL( viewCreated( KopeteView* ) ),
+	QObject::connect( Kopete::MessageManagerFactory::factory(), SIGNAL( viewCreated( KopeteView* ) ),
 		this, SLOT( slotViewCreated( KopeteView* ) ) );
 
 	setRichTextCapabilities( Kopete::Protocol::RichBFormatting | Kopete::Protocol::RichUFormatting | Kopete::Protocol::RichColor );
@@ -415,7 +415,7 @@ void IRCProtocol::slotListCommand( const QString &/*args*/, Kopete::MessageManag
 
 void IRCProtocol::slotTopicCommand( const QString &args, Kopete::MessageManager *manager )
 {
-	KopeteContactPtrList members = manager->members();
+	Kopete::ContactPtrList members = manager->members();
 	IRCChannelContact *chan = dynamic_cast<IRCChannelContact*>( members.first() );
 	if( chan )
 	{
@@ -471,7 +471,7 @@ void IRCProtocol::slotInviteCommand( const QString &args, Kopete::MessageManager
 	}
 	else
 	{
-		KopeteContactPtrList members = manager->members();
+		Kopete::ContactPtrList members = manager->members();
 		c = dynamic_cast<IRCChannelContact*>( members.first() );
 	}
 
@@ -557,7 +557,7 @@ void IRCProtocol::slotModeCommand( const QString &args, Kopete::MessageManager *
 
 void IRCProtocol::slotMeCommand( const QString &args, Kopete::MessageManager *manager )
 {
-	KopeteContactPtrList members = manager->members();
+	Kopete::ContactPtrList members = manager->members();
 	QStringList argsList = Kopete::CommandHandler::parseArguments( args );
 	static_cast<IRCAccount*>( manager->account() )->engine()->CtcpRequest_action(
 		static_cast<const IRCContact*>(members.first())->nickName(), args );
@@ -570,7 +570,7 @@ void IRCProtocol::slotKickCommand( const QString &args, Kopete::MessageManager *
 		QRegExp spaces(QString::fromLatin1("\\s+"));
 		QString nick = args.section( spaces, 0, 0);
 		QString reason = args.section( spaces, 1);
-		KopeteContactPtrList members = manager->members();
+		Kopete::ContactPtrList members = manager->members();
 		QString channel = static_cast<IRCContact*>( members.first() )->nickName();
 		if( KIRCEntity::isChannel(channel) )
 			static_cast<IRCAccount*>( manager->account() )->engine()->kickUser( nick, channel, reason );
@@ -587,7 +587,7 @@ void IRCProtocol::slotBanCommand( const QString &args, Kopete::MessageManager *m
 	if( manager->contactOnlineStatus( manager->user() ) == m_UserStatusOp )
 	{
 		QStringList argsList = Kopete::CommandHandler::parseArguments( args );
-		KopeteContactPtrList members = manager->members();
+		Kopete::ContactPtrList members = manager->members();
 		IRCChannelContact *chan = static_cast<IRCChannelContact*>( members.first() );
 		if( chan && chan->locateUser( argsList.front() ) )
 			chan->setMode( QString::fromLatin1("+b %1").arg( argsList.front() ) );
@@ -602,7 +602,7 @@ void IRCProtocol::slotBanCommand( const QString &args, Kopete::MessageManager *m
 void IRCProtocol::slotPartCommand( const QString &args, Kopete::MessageManager *manager )
 {
 	QStringList argsList = Kopete::CommandHandler::parseArguments( args );
-	KopeteContactPtrList members = manager->members();
+	Kopete::ContactPtrList members = manager->members();
 	IRCChannelContact *chan = static_cast<IRCChannelContact*>( members.first() );
 
 	if( chan )
@@ -645,7 +645,7 @@ void IRCProtocol::simpleModeChange( const QString &args, Kopete::MessageManager 
 	if( manager->contactOnlineStatus( manager->user() ) == m_UserStatusOp )
 	{
 		QStringList argsList = Kopete::CommandHandler::parseArguments( args );
-		KopeteContactPtrList members = manager->members();
+		Kopete::ContactPtrList members = manager->members();
 		IRCChannelContact *chan = static_cast<IRCChannelContact*>( members.first() );
 		if( chan )
 		{

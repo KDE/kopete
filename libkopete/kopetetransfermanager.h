@@ -135,6 +135,7 @@ class Transfer : public KIO::Job
 	Q_OBJECT
 
 public:
+	/** FIXME: remove */
 	enum KopeteTransferError
 	{
 		CanceledLocal,

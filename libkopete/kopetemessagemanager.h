@@ -31,13 +31,9 @@
 // FIXME: get rid of this include in header
 #include "kopetemessage.h"
 
-typedef QPtrList<Kopete::Contact>   KopeteContactPtrList;
-typedef QValueList<Kopete::Message> KopeteMessageList;
-
 class KMMPrivate;
 
 class KopeteView;
-class KopeteMessageManagerFactory;
 
 namespace Kopete
 {
@@ -47,6 +43,10 @@ class Message;
 class Protocol;
 class OnlineStatus;
 class Account;
+class MessageManagerFactory;
+
+typedef QPtrList<Contact>   ContactPtrList;
+typedef QValueList<Message> MessageList;
 
 
 /**
@@ -68,7 +68,7 @@ class Account;
 class MessageManager : public QObject , public KXMLGUIClient
 {
 	// friend class so the object factory can access the protected constructor
-	friend class KopeteMessageManagerFactory;
+	friend class MessageManagerFactory;
 
 	Q_OBJECT
 
@@ -83,7 +83,7 @@ public:
 	/**
 	 * @brief Get a list of all contacts in the session
 	 */
-	const KopeteContactPtrList& members() const;
+	const ContactPtrList& members() const;
 
 	/**
 	 * @brief Get the local user in the session
@@ -178,13 +178,13 @@ signals:
 
 	/**
 	 * a message will be soon shown in the chatwindow.
-	 * See @ref KopeteMessageManagerFactory::aboutToShow() signal
+	 * See @ref Kopete::MessageManagerFactory::aboutToShow() signal
 	 */
 	void messageAppended( Kopete::Message &msg, Kopete::MessageManager *kmm = 0L );
 
 	/**
 	 * a message will be soon received
-	 * See @ref KopeteMessageManagerFactory::aboutToReceive() signal
+	 * See @ref Kopete::MessageManagerFactory::aboutToReceive() signal
 	 */
 	void messageReceived( Kopete::Message &msg, Kopete::MessageManager *kmm = 0L );
 
@@ -194,7 +194,7 @@ signals:
 	 * The message is going to be sent.
 	 * protocols can connect to this signal to send the message ro the network.
 	 * the protocol have also to call @ref appendMessage() and @ref messageSucceeded()
-	 * See also @ref KopeteMessageManagerFactory::aboutToSend() signal
+	 * See also @ref Kopete::MessageManagerFactory::aboutToSend() signal
 	 */
 	void messageSent( Kopete::Message &msg, Kopete::MessageManager *kmm = 0L );
 
@@ -318,7 +318,7 @@ protected:
 	 * static factory method createSession() creates the object. You may
 	 * not create instances yourself directly!
 	 */
-	MessageManager( const Contact *user, KopeteContactPtrList others,
+	MessageManager( const Contact *user, ContactPtrList others,
 		Protocol *protocol, int id = 0, const char *name = 0 );
 
 	void setMMId( int );

@@ -36,7 +36,7 @@ AutoReplacePlugin::AutoReplacePlugin( QObject *parent, const char * name, const 
 
 	m_prefs = new AutoReplaceConfig;
 
-	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToSend( Kopete::Message & ) ),
+	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( aboutToSend( Kopete::Message & ) ),
 		this, SLOT( slotAboutToSend( Kopete::Message & ) ) );
 
 	connect( this, SIGNAL( settingsChanged() ), this, SLOT( slotSettingsChanged() ) );

@@ -34,7 +34,7 @@ HighlightPlugin::HighlightPlugin( QObject *parent, const char *name, const QStri
 	if( !pluginStatic_ )
 		pluginStatic_=this;
 
-	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToDisplay( Kopete::Message & ) ), SLOT( slotIncomingMessage( Kopete::Message & ) ) );
+	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( aboutToDisplay( Kopete::Message & ) ), SLOT( slotIncomingMessage( Kopete::Message & ) ) );
 	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
 
 	m_config = new HighlightConfig;

@@ -214,17 +214,17 @@ KActionMenu *JabberAccount::actionMenu ()
 										 mProtocol->JabberKOSChatty.iconFor ( this ),
 										 0, this, SLOT ( slotGoChatty () ), this, "actionJabberChatty") );
 
-	m_actionMenu->insert ( new KopeteAwayAction ( mProtocol->JabberKOSAway.caption (),
+	m_actionMenu->insert ( new Kopete::AwayAction ( mProtocol->JabberKOSAway.caption (),
 												  mProtocol->JabberKOSAway.iconFor ( this ),
 												  0, this, SLOT ( slotGoAway ( const QString & ) ),
 												  this, "actionJabberAway") );
 
-	m_actionMenu->insert ( new KopeteAwayAction ( mProtocol->JabberKOSXA.caption (),
+	m_actionMenu->insert ( new Kopete::AwayAction ( mProtocol->JabberKOSXA.caption (),
 												  mProtocol->JabberKOSXA.iconFor ( this ),
 												  0, this, SLOT ( slotGoXA ( const QString & ) ),
 												  this, "actionJabberXA") );
 
-	m_actionMenu->insert ( new KopeteAwayAction ( mProtocol->JabberKOSDND.caption (),
+	m_actionMenu->insert ( new Kopete::AwayAction ( mProtocol->JabberKOSDND.caption (),
 												  mProtocol->JabberKOSDND.iconFor ( this ),
 												  0, this, SLOT ( slotGoDND ( const QString & ) ),
 												  this, "actionJabberDND") );

@@ -16,10 +16,10 @@ K_EXPORT_COMPONENT_FACTORY( kopete_msginfo, KGenericFactory<MsgInfoPlugin>( "kop
 MsgInfoPlugin::MsgInfoPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
 : Kopete::Plugin( KGlobal::instance(), parent, name )
 {
-	connect( KopeteMessageManagerFactory::factory(),
+	connect( Kopete::MessageManagerFactory::factory(),
 		SIGNAL( aboutToDisplay( Kopete::Message & ) ),
 		SLOT( slotProcessDisplay( Kopete::Message & ) ) );
-	connect( KopeteMessageManagerFactory::factory(),
+	connect( Kopete::MessageManagerFactory::factory(),
 		SIGNAL( aboutToSend( Kopete::Message & ) ),
 		SLOT( slotProcessSend( Kopete::Message & ) ) );
 }

@@ -22,15 +22,18 @@
 #include <kaction.h>
 #include "kopetecommandhandler.h"
 
-class Kopete::MessageManager;
+namespace Kopete
+{
 
-class KopeteCommand : public KAction
+class MessageManager;
+
+class Command : public KAction
 {
 	Q_OBJECT
 
 	public:
 		/**
-		 * Creates a KopeteCommand object
+		 * Creates a Kopete::Command object
 		 *
 		 * @param parent The plugin who owns this command
 		 * @param command The command we want to handle, not including the '/'
@@ -42,15 +45,15 @@ class KopeteCommand : public KAction
 		 * @param type If this command is an alias, and what type
 		 * @param formatString The formatString of the alias if any
 		 */
-		 KopeteCommand( QObject *parent, const QString &command, const char* handlerSlot,
-		 	const QString &help = QString::null, Kopete::CommandHandler::CommandType type = Kopete::CommandHandler::Normal, const QString &formatString = QString::null,
+		 Command( QObject *parent, const QString &command, const char* handlerSlot,
+		 	const QString &help = QString::null, CommandHandler::CommandType type = CommandHandler::Normal, const QString &formatString = QString::null,
 			uint minArgs = 0, int maxArgs = -1, const KShortcut &cut = 0,
 			const QString &pix = QString::null );
 
 		/**
 		 * Process this command
 		 */
-		void processCommand( const QString &args, Kopete::MessageManager *manager, bool gui = false );
+		void processCommand( const QString &args, MessageManager *manager, bool gui = false );
 
 		/**
 		 * Returns the command this object handles
@@ -65,7 +68,7 @@ class KopeteCommand : public KAction
 		 /**
 		  * Returns the type of the command
 		  */
-		 const Kopete::CommandHandler::CommandType type() const { return m_type; };
+		 const CommandHandler::CommandType type() const { return m_type; };
 
 	signals:
 		/**
@@ -83,17 +86,19 @@ class KopeteCommand : public KAction
 
 	private:
 		void init( const QString &command, const char* slot, const QString &help,
-			Kopete::CommandHandler::CommandType type, const QString &formatString,
+			CommandHandler::CommandType type, const QString &formatString,
 			uint minArgs, int maxArgs );
 
-		void printError( const QString &error, Kopete::MessageManager *manager, bool gui = false ) const;
+		void printError( const QString &error, MessageManager *manager, bool gui = false ) const;
 
 		QString m_command;
 		QString m_help;
 		QString m_formatString;
 		uint m_minArgs;
 		int m_maxArgs;
-		Kopete::CommandHandler::CommandType m_type;
+		CommandHandler::CommandType m_type;
 };
+
+}
 
 #endif

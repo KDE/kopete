@@ -50,10 +50,10 @@
 #endif
 
 MSNMessageManager::MSNMessageManager( Kopete::Protocol *protocol, const Kopete::Contact *user,
-	KopeteContactPtrList others, const char *name )
+	Kopete::ContactPtrList others, const char *name )
 : Kopete::MessageManager( user, others, protocol, 0, name )
 {
-	KopeteMessageManagerFactory::factory()->addMessageManager( this );
+	Kopete::MessageManagerFactory::factory()->addMessageManager( this );
 	m_chatService = 0l;
 //	m_msgQueued = 0L;
 
@@ -90,7 +90,7 @@ MSNMessageManager::MSNMessageManager( Kopete::Protocol *protocol, const Kopete::
 			//How to know when a our view is created?  We can't.
 			// but chances are the next created view will be for this KMM
 			// And if it is not?  never mind. the icon will just be sized 22x22
-			connect( KopeteMessageManagerFactory::factory() , SIGNAL(viewActivated(KopeteView* )) , this, SLOT(slotDisplayPictureChanged()) );
+			connect( Kopete::MessageManagerFactory::factory() , SIGNAL(viewActivated(KopeteView* )) , this, SLOT(slotDisplayPictureChanged()) );
 			//it's viewActivated and not viewCreated because the view get his mainwindow only when it is shown.
 		}
 	}
@@ -532,7 +532,7 @@ void MSNMessageManager::slotDisplayPictureChanged()
 			if(w)
 			{
 				//We connected that in the constructor.  we don't need to keep this slot active.
-				disconnect( KopeteMessageManagerFactory::factory() , SIGNAL(viewActivated(KopeteView* )) , this, SLOT(slotDisplayPictureChanged()) );
+				disconnect( Kopete::MessageManagerFactory::factory() , SIGNAL(viewActivated(KopeteView* )) , this, SLOT(slotDisplayPictureChanged()) );
 			
 				QPtrListIterator<KToolBar>  it=w->toolBarIterator() ;
 				KAction *imgAction=actionCollection()->action("msnDisplayPicture");

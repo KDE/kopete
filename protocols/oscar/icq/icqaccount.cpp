@@ -74,23 +74,23 @@ KActionMenu* ICQAccount::actionMenu()
 		p->statusOffline.iconFor(this), 0,
 		this, SLOT(slotGoOffline()), this, "ICQAccount::mActionOffline");
 
-	KopeteAwayAction* mActionAway = new KopeteAwayAction(p->statusAway.caption(),
+	Kopete::AwayAction* mActionAway = new Kopete::AwayAction(p->statusAway.caption(),
 		p->statusAway.iconFor(this), 0,
 		this, SLOT(slotGoAway( const QString & )), this, "ICQAccount::mActionAway" );
 
-	KopeteAwayAction* mActionNA = new KopeteAwayAction(p->statusNA.caption(),
+	Kopete::AwayAction* mActionNA = new Kopete::AwayAction(p->statusNA.caption(),
 		p->statusNA.iconFor(this), 0,
 		this, SLOT(slotGoNA( const QString & )), this, "ICQAccount::mActionNA" );
 
-	KopeteAwayAction* mActionDND = new KopeteAwayAction(p->statusDND.caption(),
+	Kopete::AwayAction* mActionDND = new Kopete::AwayAction(p->statusDND.caption(),
 		p->statusDND.iconFor(this), 0,
 		this, SLOT(slotGoDND( const QString & )), this, "ICQAccount::mActionDND" );
 
-	KopeteAwayAction* mActionOCC = new KopeteAwayAction(p->statusOCC.caption(),
+	Kopete::AwayAction* mActionOCC = new Kopete::AwayAction(p->statusOCC.caption(),
 		p->statusOCC.iconFor(this), 0,
 		this, SLOT(slotGoOCC( const QString & )), this, "ICQAccount::mActionOCC" );
 
-	KopeteAwayAction* mActionFFC = new KopeteAwayAction(p->statusFFC.caption(),
+	Kopete::AwayAction* mActionFFC = new Kopete::AwayAction(p->statusFFC.caption(),
 		p->statusFFC.iconFor(this), 0,
 		this, SLOT(slotGoFFC( const QString & )), this, "ICQAccount::mActionFCC" );
 

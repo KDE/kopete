@@ -42,7 +42,7 @@
 
 IRCGUIClient::IRCGUIClient( Kopete::MessageManager *parent ) : QObject(parent) , KXMLGUIClient(parent)
 {
-	KopeteContactPtrList members = parent->members();
+	Kopete::ContactPtrList members = parent->members();
 	if( members.count() > 0 )
 	{
 		m_user = static_cast<IRCContact*>( members.first() );

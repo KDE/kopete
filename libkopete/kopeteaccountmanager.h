@@ -166,7 +166,7 @@ signals:
 	 * \param newStatus The new online status
 	 */
 	void accountOnlineStatusChanged(Kopete::Account *account,
-		const Kopete::OnlineStatus &oldStatus, const Kopete::OnlineStatus &newStatus);
+	   const Kopete::OnlineStatus &oldStatus, const Kopete::OnlineStatus &newStatus);
 
 private:
 	/**
@@ -198,7 +198,7 @@ private:
 private slots:
 	void slotPluginLoaded( Kopete::Plugin *plugin );
 	void slotAccountOnlineStatusChanged(Kopete::Contact *c,
-		const Kopete::OnlineStatus &oldStatus, const Kopete::OnlineStatus &newStatus);
+	    const Kopete::OnlineStatus &oldStatus, const Kopete::OnlineStatus &newStatus);
 
 private:
 	KopeteAccountManagerPrivate *d;

@@ -201,7 +201,7 @@ void ICQContact::slotOffgoingBuddy(QString sender)
 void ICQContact::gotIM(OscarSocket::OscarMessageType /*type*/, const QString &message)
 {
 	// Build a Kopete::Message and set the body as Rich Text
-	KopeteContactPtrList tmpList;
+	Kopete::ContactPtrList tmpList;
 	tmpList.append(account()->myself());
 	Kopete::Message msg(this, tmpList, message, Kopete::Message::Inbound,
 		Kopete::Message::RichText);

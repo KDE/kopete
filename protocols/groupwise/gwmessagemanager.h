@@ -156,13 +156,13 @@ protected slots:
 	void slotShowArchiving();
 private:
 	
-	GroupWiseMessageManager(const Kopete::Contact* user, KopeteContactPtrList others, Kopete::Protocol* protocol, const ConferenceGuid & guid, int id = 0, const char* name = 0);
+	GroupWiseMessageManager(const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const ConferenceGuid & guid, int id = 0, const char* name = 0);
 	
 	ConferenceGuid m_guid; // The conference's globally unique identifier, which is given to it by the server
 	int m_flags; // flags for secure connections, central logging and "conference closed" as given by the server
 	
 	QValueList< Kopete::Message > m_pendingOutgoingMessages; // messages queued while we wait for the server to tell us the conference is created.
-	KopeteContactPtrList m_pendingInvites; // people we wanted to invite to the conference, queued while waiting for the conference to be created.
+	Kopete::ContactPtrList m_pendingInvites; // people we wanted to invite to the conference, queued while waiting for the conference to be created.
 	KActionMenu *m_actionInvite;
 	QPtrList<KAction> m_inviteActions;
 	// labels showing secure and logging status
@@ -172,7 +172,7 @@ private:
 	GroupWiseSearch * m_search;
 	KDialogBase * m_searchDlg;
 	// contacts who have been invited to join but have not yet joined the chat
-	KopeteContactPtrList m_invitees;
+	Kopete::ContactPtrList m_invitees;
 	// track the number of members actually in the chat
 	uint m_memberCount;
 

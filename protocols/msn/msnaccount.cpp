@@ -447,8 +447,8 @@ void MSNAccount::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status )
 	else if ( status == MSNSocket::Disconnected )
 	{
 /*
-		KopeteMessageManagerDict sessions =
-			KopeteMessageManagerFactory::factory()->protocolSessions( this );
+		Kopete::MessageManagerDict sessions =
+			Kopete::MessageManagerFactory::factory()->protocolSessions( this );
 		QIntDictIterator<Kopete::MessageManager> kmmIt( sessions );
 		for ( ; kmmIt.current(); ++kmmIt )
 		{
@@ -1084,7 +1084,7 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 		MSNMessageManager *manager = dynamic_cast<MSNMessageManager*>( c->manager( false ) );
 		if(!manager)
 		{
-			KopeteContactPtrList chatmembers;
+			Kopete::ContactPtrList chatmembers;
 			chatmembers.append(c);
 			manager = new MSNMessageManager( protocol(), myself(), chatmembers  );
 		}

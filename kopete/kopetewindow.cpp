@@ -145,7 +145,7 @@ void KopeteWindow::initActions()
 	actionConnect->setEnabled(false);
 	actionDisconnect->setEnabled(false);
 
-	selectAway = new KopeteAwayAction( i18n("&Set Away Globally"), SmallIcon("kopeteaway"), 0,
+	selectAway = new Kopete::AwayAction( i18n("&Set Away Globally"), SmallIcon("kopeteaway"), 0,
 		this, SLOT( slotGlobalAwayMessageSelect( const QString & ) ), actionCollection(),
 		"SetAwayAll" );
 
@@ -196,7 +196,7 @@ void KopeteWindow::initActions()
 
 	globalAccel = new KGlobalAccel( this );
 	globalAccel->insert( QString::fromLatin1("Read Message"), i18n("Read Message"), i18n("Read the next pending message"),
-		CTRL+SHIFT+Key_I, KKey::QtWIN+CTRL+Key_I, KopeteMessageManagerFactory::factory() , SIGNAL(readMessage()) );
+		CTRL+SHIFT+Key_I, KKey::QtWIN+CTRL+Key_I, Kopete::MessageManagerFactory::factory() , SIGNAL(readMessage()) );
 
 	globalAccel->insert( QString::fromLatin1("Show/Hide Contact List"), i18n("Show/Hide Contact List"), i18n("Show or hide the contact list"),
 		CTRL+SHIFT+Key_C, KKey::QtWIN+CTRL+Key_C, this, SLOT(slotShowHide()) );

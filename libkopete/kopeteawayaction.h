@@ -22,15 +22,18 @@
 #include <kactionclasses.h>
 #include <kaction.h>
 
+namespace Kopete
+{
+
 /**
- * @class KopeteAwayAction
+ * @class Kopete::AwayAction
  *
- * KopeteAwayAction is a KAction that lets you select an away message
+ * Kopete::AwayAction is a KAction that lets you select an away message
  * from the list of predefined away messages, or enter a custom one.
  *
  * @author Jason Keirstead   <jason@keirstead.org>
  */
-class KopeteAwayAction : public KSelectAction
+class AwayAction : public KSelectAction
 {
 	Q_OBJECT
 	public:
@@ -39,7 +42,7 @@ class KopeteAwayAction : public KSelectAction
 		 * @p text, @p pix, @p cut, @p receiver, @p slot, @p parent and
 		 * @p name are all handled by KSelectAction.
 		 **/
-		KopeteAwayAction(const QString &text, const QIconSet &pix,
+		AwayAction(const QString &text, const QIconSet &pix,
 			const KShortcut &cut, const QObject *receiver, const char *slot,
 			QObject *parent, const char *name = 0);
 
@@ -56,5 +59,7 @@ class KopeteAwayAction : public KSelectAction
 	private:
 		int reasonCount;
 };
+
+}
 
 #endif

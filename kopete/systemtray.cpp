@@ -60,7 +60,7 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent, const char* name)
 	mKopeteIcon = loadIcon("kopete");
 
 	connect(mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()));
-	connect(KopeteMessageManagerFactory::factory() , SIGNAL(newEvent(KopeteEvent*)),
+	connect(Kopete::MessageManagerFactory::factory() , SIGNAL(newEvent(KopeteEvent*)),
 		this, SLOT(slotNewEvent(KopeteEvent*)));
 	connect(KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()));
 

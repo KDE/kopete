@@ -157,7 +157,7 @@ Kopete::MessageManager * GroupWiseContact::manager( bool canCreate )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "called, canCreate: " << canCreate << endl;
 
-	KopeteContactPtrList chatMembers;
+	Kopete::ContactPtrList chatMembers;
 	chatMembers.append( this );
 
 	return manager( chatMembers, canCreate );
@@ -170,7 +170,7 @@ Kopete::MessageManager * GroupWiseContact::manager( bool canCreate )
 	{
 		QPtrList<Kopete::Contact> contacts;
 		contacts.append(this);
-		m_msgManager = KopeteMessageManagerFactory::factory()->create(account()->myself(), contacts, protocol());
+		m_msgManager = Kopete::MessageManagerFactory::factory()->create(account()->myself(), contacts, protocol());
 		connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::MessageManager*)),
 				this, SLOT( sendMessage( Kopete::Message& ) ) );
 		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
@@ -178,11 +178,11 @@ Kopete::MessageManager * GroupWiseContact::manager( bool canCreate )
 	}*/
 }
 
-GroupWiseMessageManager * GroupWiseContact::manager( KopeteContactPtrList chatMembers, bool canCreate )
+GroupWiseMessageManager * GroupWiseContact::manager( Kopete::ContactPtrList chatMembers, bool canCreate )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	
-	Kopete::MessageManager *_manager = KopeteMessageManagerFactory::factory()->findMessageManager ( account()->myself(), chatMembers, protocol() );
+	Kopete::MessageManager *_manager = Kopete::MessageManagerFactory::factory()->findMessageManager ( account()->myself(), chatMembers, protocol() );
 	GroupWiseMessageManager *mgr = dynamic_cast<GroupWiseMessageManager*>( _manager );
 
 	/*
@@ -213,7 +213,7 @@ GroupWiseMessageManager * GroupWiseContact::manager( const GroupWise::Conference
 			// we've received the first message from a new conference.
 			// create a message manager with the given guid
 			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - this GroupWiseMessageManager is new to us. " << endl;
-			KopeteContactPtrList chatMembers;
+			Kopete::ContactPtrList chatMembers;
 			chatMembers.append ( this );
 			mgr = account()->messageManager( account()->myself(), chatMembers, protocol(), guid );
 			connect( mgr, SIGNAL( destroyed( QObject * ) ), this, SLOT( slotMessageManagerDeleted ( QObject * ) ) );
@@ -299,7 +299,7 @@ void GroupWiseContact::slotMessageManagerDeleted( QObject *sender )
 void GroupWiseContact::handleIncomingMessage( const ConferenceEvent & message, bool autoReply )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << m_dn << " sent a " << ( autoReply ? "auto-reply" : "message" ) << " to conference: " << message.guid << ", message: " << message.message << endl;
-	KopeteContactPtrList contactList;
+	Kopete::ContactPtrList contactList;
 	contactList.append ( account()->myself () );
 	GroupWiseMessageManager *mgr = manager( message.guid, true );
 

@@ -80,7 +80,7 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::MessageManager *manager )
 
 	//Take the first and the first? What else?
 	Kopete::Group *group = 0L;
-	KopeteContactPtrList members = manager->members();
+	Kopete::ContactPtrList members = manager->members();
 	Kopete::MetaContact *metaContact = members.first()->metaContact();
 
 	if ( metaContact )
@@ -955,7 +955,7 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 	contactsMenu->clear();
 
 	Kopete::Contact *contact;
-	KopeteContactPtrList m_them;
+	Kopete::ContactPtrList m_them;
 
 	if( m_popupView )
 		m_them = m_popupView->msgManager()->members();

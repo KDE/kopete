@@ -23,7 +23,7 @@
 #include "kopeteawayaction.h"
 #include "kopeteaway.h"
 
-KopeteAwayAction::KopeteAwayAction(const QString &text, const QIconSet &pix, const KShortcut &cut,
+Kopete::AwayAction::AwayAction(const QString &text, const QIconSet &pix, const KShortcut &cut,
 	const QObject *receiver, const char *slot, QObject *parent, const char *name ) :
 	KSelectAction(text, pix, cut, parent, name )
 {
@@ -41,7 +41,7 @@ KopeteAwayAction::KopeteAwayAction(const QString &text, const QIconSet &pix, con
 	slotAwayChanged();
 }
 
-void KopeteAwayAction::slotAwayChanged()
+void Kopete::AwayAction::slotAwayChanged()
 {
 	QStringList awayMessages = Kopete::Away::getInstance()->getMessages();
 	for( QStringList::iterator it = awayMessages.begin(); it != awayMessages.end(); ++it )
@@ -55,7 +55,7 @@ void KopeteAwayAction::slotAwayChanged()
 	setCurrentItem( -1 );
 }
 
-void KopeteAwayAction::slotSelectAway( int index )
+void Kopete::AwayAction::slotSelectAway( int index )
 {
 	Kopete::Away *mAway = Kopete::Away::getInstance();
 	QString awayReason;

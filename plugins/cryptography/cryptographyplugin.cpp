@@ -54,10 +54,10 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const
 	if( !pluginStatic_ )
 		pluginStatic_=this;
 
-	connect( KopeteMessageManagerFactory::factory(),
+	connect( Kopete::MessageManagerFactory::factory(),
 		SIGNAL( aboutToDisplay( Kopete::Message & ) ),
 		SLOT( slotIncomingMessage( Kopete::Message & ) ) );
-	connect( KopeteMessageManagerFactory::factory(),
+	connect( Kopete::MessageManagerFactory::factory(),
 		SIGNAL( aboutToSend( Kopete::Message & ) ),
 		SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
 
@@ -73,9 +73,9 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const
 	loadSettings();
 	connect(this, SIGNAL(settingsChanged()), this, SLOT( loadSettings() ) );
 	
-	connect( KopeteMessageManagerFactory::factory(), SIGNAL( messageManagerCreated( Kopete::MessageManager * )) , SLOT( slotNewKMM( Kopete::MessageManager * ) ) );
+	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( messageManagerCreated( Kopete::MessageManager * )) , SLOT( slotNewKMM( Kopete::MessageManager * ) ) );
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
-	QIntDict<Kopete::MessageManager> sessions = KopeteMessageManagerFactory::factory()->sessions();
+	QIntDict<Kopete::MessageManager> sessions = Kopete::MessageManagerFactory::factory()->sessions();
 	QIntDictIterator<Kopete::MessageManager> it( sessions );
 	for ( ; it.current() ; ++it )
 	{

@@ -75,7 +75,7 @@ Kopete::MessageManager *JabberGroupMemberContact::manager ( bool canCreate )
 	if ( !mManager && !canCreate )
 		return 0;
 
-	KopeteContactPtrList chatMembers;
+	Kopete::ContactPtrList chatMembers;
 	chatMembers.append ( this );
 
 	/*
@@ -113,7 +113,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 	// message type is always chat in a groupchat
 	type = Kopete::Message::Chat;
 
-	KopeteContactPtrList contactList;
+	Kopete::ContactPtrList contactList;
 	contactList.append ( manager( true )->user () );
 
 	// check for errors

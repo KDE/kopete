@@ -479,7 +479,7 @@ QValueList<Kopete::Message> HistoryLogger::readMessages(unsigned int lines,
 					if(!from)
 						from= dir==Kopete::Message::Inbound ? currentContact : currentContact->account()->myself();
 
-					KopeteContactPtrList to;
+					Kopete::ContactPtrList to;
 					to.append( dir==Kopete::Message::Inbound ? currentContact->account()->myself() : currentContact );
 
 					if(!timestamp.isValid())

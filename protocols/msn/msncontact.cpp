@@ -106,10 +106,10 @@ bool MSNContact::isReachable()
 
 Kopete::MessageManager *MSNContact::manager( bool canCreate )
 {
-	KopeteContactPtrList chatmembers;
+	Kopete::ContactPtrList chatmembers;
 	chatmembers.append(this);
 
-	Kopete::MessageManager *_manager = KopeteMessageManagerFactory::factory()->findMessageManager(  account()->myself(), chatmembers, protocol() );
+	Kopete::MessageManager *_manager = Kopete::MessageManagerFactory::factory()->findMessageManager(  account()->myself(), chatmembers, protocol() );
 	MSNMessageManager *manager = dynamic_cast<MSNMessageManager*>( _manager );
 	if(!manager &&  canCreate)
 	{

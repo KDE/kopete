@@ -73,7 +73,7 @@ Kopete::MessageManager* MeanwhileContact::manager( bool )
 		contacts.append(this);
 
 		m_msgManager = 
-				KopeteMessageManagerFactory::factory()->create(
+				Kopete::MessageManagerFactory::factory()->create(
 									account()->myself(), 
 									contacts, protocol());
 
@@ -109,7 +109,7 @@ void MeanwhileContact::slotUserInfo()
 
 void MeanwhileContact::sendMessage( Kopete::Message &message )
 {
-	KopeteContactPtrList m_them = manager()->members();
+	Kopete::ContactPtrList m_them = manager()->members();
     Kopete::Contact *target = m_them.first();
 	(static_cast<MeanwhileAccount *>( account() ))->server->sendIm(
 			static_cast<MeanwhileContact*>(target),
@@ -121,7 +121,7 @@ void MeanwhileContact::sendMessage( Kopete::Message &message )
 void MeanwhileContact::receivedMessage( const QString &message )
 {
 	Kopete::Message *newMessage;
-	KopeteContactPtrList contactList;
+	Kopete::ContactPtrList contactList;
 	account();
 	contactList.append( account()->myself() );
 	newMessage = new Kopete::Message( this, contactList, 
@@ -139,7 +139,7 @@ void MeanwhileContact::slotMessageManagerDestroyed()
 
 void MeanwhileContact::slotMeTypingMsg(bool isTyping)
 {
-	KopeteContactPtrList m_them = manager()->members();
+	Kopete::ContactPtrList m_them = manager()->members();
     Kopete::Contact *target = m_them.first();
 	(static_cast<MeanwhileAccount *>( account() ))->server->sendTyping(
 			static_cast<MeanwhileContact*>(target),isTyping);

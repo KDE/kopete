@@ -304,7 +304,7 @@ void MeanwhileAccount::slotMesgReceived(
 
     contact = static_cast<MeanwhileContact *>(contacts()[fromUser]);
     // Create a Kopete::Message
-    KopeteContactPtrList contactList;
+    Kopete::ContactPtrList contactList;
     contactList.append( myself() );
     Kopete::Message newMessage( contact, contactList, msg, Kopete::Message::Inbound );
 
@@ -323,7 +323,7 @@ void MeanwhileAccount::slotUserTyping(
 
     contact = static_cast<MeanwhileContact *>(contacts()[user]);
     // Create a Kopete::Message
-    KopeteContactPtrList contactList;
+    Kopete::ContactPtrList contactList;
     contactList.append( myself() );
 
     // Add it to the manager

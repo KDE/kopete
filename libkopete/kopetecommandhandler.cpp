@@ -34,6 +34,8 @@
 #include "kopetecontact.h"
 #include "kopetecommand.h"
 
+using Kopete::CommandList;
+
 typedef QMap<QObject*, CommandList> PluginCommandMap;
 typedef QMap<QString,QString> CommandMap;
 typedef QPair<Kopete::MessageManager*, Kopete::Message::MessageDirection> ManagerPair;
@@ -51,7 +53,7 @@ class KopeteCommandGUIClient : public QObject, public KXMLGUIClient
 					manager->protocol()
 			);
 
-			for( QDictIterator<KopeteCommand> it( mCommands ); it.current(); ++it )
+			for( QDictIterator<Kopete::Command> it( mCommands ); it.current(); ++it )
 			{
 				KAction *a = static_cast<KAction*>( it.current() );
 				actionCollection()->insert( a );
@@ -134,7 +136,7 @@ Kopete::CommandHandler::CommandHandler() : QObject( qApp )
 	connect( Kopete::PluginManager::self(), SIGNAL( pluginLoaded( Kopete::Plugin*) ),
 		this, SLOT(slotPluginLoaded(Kopete::Plugin*) ) );
 
-	connect( KopeteMessageManagerFactory::factory(), SIGNAL( viewCreated( KopeteView * ) ),
+	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( viewCreated( KopeteView * ) ),
 		this, SLOT( slotViewCreated( KopeteView* ) ) );
 }
 
@@ -159,7 +161,7 @@ void Kopete::CommandHandler::registerCommand( QObject *parent, const QString &co
 {
 	QString lowerCommand = command.lower();
 
-	KopeteCommand *mCommand = new KopeteCommand( parent, lowerCommand, handlerSlot, help,
+	Kopete::Command *mCommand = new Kopete::Command( parent, lowerCommand, handlerSlot, help,
 		Normal, QString::null, minArgs, maxArgs, cut, pix);
 	p->pluginCommands[ parent ].insert( lowerCommand, mCommand );
 }
@@ -175,7 +177,7 @@ void Kopete::CommandHandler::registerAlias( QObject *parent, const QString &alia
 {
 	QString lowerAlias = alias.lower();
 
-	KopeteCommand *mCommand = new KopeteCommand( parent, lowerAlias, 0L, help, type,
+	Kopete::Command *mCommand = new Kopete::Command( parent, lowerAlias, 0L, help, type,
 		formatString, minArgs, maxArgs, cut, pix );
 	p->pluginCommands[ parent ].insert( lowerAlias, mCommand );
 }
@@ -200,7 +202,7 @@ bool Kopete::CommandHandler::processMessage( const QString &msg, Kopete::Message
 	QString args = msg.section( spaces, 1 );
 
 	CommandList mCommands = commands( manager->protocol() );
-	KopeteCommand *c = mCommands[ command ];
+	Kopete::Command *c = mCommands[ command ];
 	if(c)
 	{
 		kdDebug(14010) << k_funcinfo << "Handled Command" << endl;
@@ -232,7 +234,7 @@ void Kopete::CommandHandler::slotHelpCommand( const QString &args, Kopete::Messa
 		output = i18n( "Available Commands:\n" );
 
 		CommandList mCommands = commands( manager->user()->protocol() );
-		QDictIterator<KopeteCommand> it( mCommands );
+		QDictIterator<Kopete::Command> it( mCommands );
 		for( ; it.current(); ++it )
 		{
 			output.append( it.current()->command().upper() + '\t' );
@@ -247,7 +249,7 @@ void Kopete::CommandHandler::slotHelpCommand( const QString &args, Kopete::Messa
 	else
 	{
 		QString command = parseArguments( args ).front().lower();
-		KopeteCommand *c = commands( manager->user()->protocol() )[ command ];
+		Kopete::Command *c = commands( manager->user()->protocol() )[ command ];
 		if( c && !c->help().isNull() )
 			output = c->help();
 		else
@@ -425,7 +427,7 @@ CommandList Kopete::CommandHandler::commands( Kopete::Protocol *protocol )
 
 void Kopete::CommandHandler::addCommands( CommandList &from, CommandList &to, CommandType type )
 {
-	QDictIterator<KopeteCommand> itDict( from );
+	QDictIterator<Kopete::Command> itDict( from );
 	for( ; itDict.current(); ++itDict )
 	{
 		if( !to[ itDict.currentKey() ] &&

@@ -26,9 +26,7 @@ class KProcess;
 struct CommandHandlerPrivate;
 
 class KopeteView;
-class KopeteCommand;
 class KopeteCommandGUIClient;
-typedef QDict<KopeteCommand> CommandList;
 
 namespace Kopete
 {
@@ -36,6 +34,9 @@ namespace Kopete
 class MessageManager;
 class Plugin;
 class Protocol;
+class Command;
+
+typedef QDict<Command> CommandList;
 
 /**
  * @author Jason Keirstead   <jason@keirstead.org>

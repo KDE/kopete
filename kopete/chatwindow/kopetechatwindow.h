@@ -48,9 +48,8 @@ class Message;
 class MessageManager;
 class Contact;
 class Protocol;
+typedef QPtrList<Contact>  ContactPtrList;
 }
-
-typedef QPtrList<Kopete::Contact>  KopeteContactPtrList;
 
 class KopeteChatWindow : public KParts::MainWindow
 {

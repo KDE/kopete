@@ -21,7 +21,7 @@
 #include "jabberbasecontact.h"
 #include "xmpp_vcard.h"
 
-#include "kopetemessagemanager.h" // needed for silly KopeteContactPtrList
+#include "kopetemessagemanager.h" // needed for silly Kopete::ContactPtrList
 
 class JabberMessageManager;
 
@@ -165,7 +165,7 @@ private:
 	 * looks for a message manager with a given
 	 * list of contacts as members.
 	 */
-	JabberMessageManager *manager ( KopeteContactPtrList chatMembers, bool canCreate = false );
+	JabberMessageManager *manager ( Kopete::ContactPtrList chatMembers, bool canCreate = false );
 
 	/**
 	 * Sends subscription messages.

@@ -61,11 +61,11 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QSt
 
 	m_languages = new TranslatorLanguages;
 
-	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToDisplay( Kopete::Message & ) ),
+	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( aboutToDisplay( Kopete::Message & ) ),
 		this, SLOT( slotIncomingMessage( Kopete::Message & ) ) );
-	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToSend( Kopete::Message & ) ),
+	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( aboutToSend( Kopete::Message & ) ),
 		this, SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
-	connect( KopeteMessageManagerFactory::factory(), SIGNAL( messageManagerCreated( Kopete::MessageManager * ) ),
+	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( messageManagerCreated( Kopete::MessageManager * ) ),
 		this, SLOT( slotNewKMM( Kopete::MessageManager * ) ) );
 
 	QStringList keys;
@@ -81,7 +81,7 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QSt
 	setXMLFile( "translatorui.rc" );
 
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
-	QIntDict<Kopete::MessageManager> sessions = KopeteMessageManagerFactory::factory()->sessions();
+	QIntDict<Kopete::MessageManager> sessions = Kopete::MessageManagerFactory::factory()->sessions();
 	QIntDictIterator<Kopete::MessageManager> it( sessions );
 	for ( ; it.current() ; ++it )
 		slotNewKMM( it.current() );
