@@ -60,6 +60,7 @@ OscarContact::OscarContact(const QString& name, const QString& displayName,
 	mEncoding=0;
 	mGroupId=0;
 	mMsgManager=0L;
+	mIsServerSide = false;
 
 	setFileCapable(false);
 

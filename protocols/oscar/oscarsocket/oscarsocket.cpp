@@ -3354,7 +3354,7 @@ void OscarSocket::parseAuthReply(Buffer &inbuf)
 
 void OscarSocket::sendBuddylistAdd(QStringList &contacts)
 {
-	kdDebug(14150) << k_funcinfo << "SEND CLI_ADDCONTACT (add to local userlist?)" << endl;
+	kdDebug(14150) << k_funcinfo << "SEND CLI_ADDCONTACT (add to local userlist)" << endl;
 
 	Buffer outbuf;
 	outbuf.addSnac(0x0003,0x0004,0x0000,0x00000000);
@@ -3369,7 +3369,7 @@ void OscarSocket::sendBuddylistAdd(QStringList &contacts)
 
 void OscarSocket::sendBuddylistDel(QStringList &contacts)
 {
-	kdDebug(14150) << k_funcinfo << "SEND CLI_DELCONTACT" << endl;
+	kdDebug(14150) << k_funcinfo << "SEND CLI_DELCONTACT (delete from local userlist)" << endl;
 
 	Buffer outbuf;
 	outbuf.addSnac(0x0003,0x0005,0x0000,0x00000000);
