@@ -434,7 +434,7 @@ void IRCAccount::connect()
 
 void IRCAccount::slotConnectedToServer()
 {
-	m_contactManager->checkOnlineNotifyList();
+	m_contactManager->addToNotifyList( m_engine->nickName() );
 
 	QStringList m_connectCommands = connectCommands();
 	for( QStringList::Iterator it = m_connectCommands.begin(); it != m_connectCommands.end(); ++it )
@@ -455,6 +455,7 @@ void IRCAccount::slotDisconnected()
 {
 	triedAltNick = false;
 	mySelf()->setOnlineStatus( m_protocol->m_UserStatusOffline );
+	m_contactManager->removeFromNotifyList( m_engine->nickName() );
 }
 
 void IRCAccount::disconnect()
@@ -536,11 +537,13 @@ bool IRCAccount::isConnected()
 }
 
 
-void IRCAccount::successfullyChangedNick(const QString &, const QString &newnick)
+void IRCAccount::successfullyChangedNick(const QString &oldnick, const QString &newnick)
 {
 	kdDebug(14120) << k_funcinfo << "Changing nick to " << newnick << endl;
 	mNickName = newnick;
 	mySelf()->setNickName( mNickName );
+	m_contactManager->removeFromNotifyList( oldnick );
+	m_contactManager->addToNotifyList( newnick );
 }
 
 bool IRCAccount::addContactToMetaContact( const QString &contactId, const QString &displayName,

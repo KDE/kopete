@@ -44,6 +44,8 @@ class IRCContactManager;
 class IRCChannelContact
 	: public IRCContact
 {
+	friend class IRCSignalMapper;
+
 	Q_OBJECT
 
 public:
@@ -74,8 +76,23 @@ public:
 	virtual QPtrList<KAction> *customContextMenuActions();
 	virtual const QString caption() const;
 
+	//Methods handled by the signal mapper
+	void userJoinedChannel(const QString &user);
+	void userPartedChannel(const QString &user, const QString &reason);
+	void userKicked(const QString &nick, const QString &nickKicked, const QString &reason);
+	void channelTopic(const QString &topic);
+	void topicChanged(const QString &nick, const QString &newtopic);
+	void topicUser(const QString &nick, const QDateTime &time);
+	void namesList(const QStringList &nicknames);
+	void incomingModeChange(const QString &nick, const QString &mode);
+	void incomingChannelMode(const QString &mode, const QString &params );
+	void failedChankey();
+	void failedChanBanned();
+	void failedChanInvite();
+	void failedChanFull();
+
 public slots:
-	virtual void updateStatus();
+	void updateStatus();
 
 	/**
 	 * Sets the topic of this channel
@@ -101,27 +118,12 @@ public slots: // should be viewCreated( KopeteView* )
 	void slotJoinChannel( KopeteView* );
 
 private slots:
-	void slotConnectedToServer();
-	void slotUserJoinedChannel(const QString &, const QString &);
-	void slotJoin();
-	void slotUserPartedChannel(const QString &user, const QString &channel, const QString &reason);
-	void slotUserKicked(const QString &nick, const QString &channel,
-		const QString &nickKicked, const QString &reason);
-	void slotChannelTopic(const QString &channel, const QString &topic);
-	void slotTopicChanged(const QString &nick, const QString &channel, const QString &newtopic);
-	void slotTopicUser(const QString &channel, const QString &nick, const QDateTime &time);
-	void slotNamesList(const QString &channel, const QStringList &nicknames);
-	void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
-	void slotIncomingChannelMode( const QString &channel, const QString &mode, const QString &params );
 	void slotIncomingUserIsAway( const QString &nick, const QString &reason );
 	void slotModeChanged();
 	void slotAddNicknames();
-	void slotFailedChankey(const QString &channame);
-	void slotFailedChanBanned( const QString &channame );
-	void slotFailedChanInvite( const QString &channame );
-	void slotFailedChanFull( const QString &channame );
+	void slotConnectedToServer();
+	void slotJoin();
 	void slotUpdateInfo();
-
 
 private:
 	// KAction stuff:

@@ -90,7 +90,7 @@ bool KIRC::numericReply_303(const KIRCMessage &msg)
 	for(QStringList::Iterator it = nicks.begin(); it != nicks.end(); ++it)
 	{
 		if (!(*it).stripWhiteSpace().isEmpty())
-			emit userOnline(*it);
+			emit incomingUserOnline(*it);
 	}
 	return true;
 }

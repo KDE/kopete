@@ -55,10 +55,12 @@ class IRCContactManager
 		KIRC *engine() const { return m_engine; }
 
 		IRCChannelContact *findChannel(const QString &channel, KopeteMetaContact *m=0);
-		bool existChannel(const QString &channel);
+		IRCChannelContact *existChannel(const QString &channel) const;
 
 		IRCUserContact *findUser(const QString &nick, KopeteMetaContact *m=0);
-		bool existUser(const QString &nick);
+		IRCUserContact *existUser(const QString &nick) const;
+
+		IRCContact *existContact( const QString &id ) const;
 
 	public slots:
 		void unregister(KopeteContact *contact);
@@ -86,8 +88,8 @@ class IRCContactManager
 		IRCAccount *m_account;
 		KIRC *m_engine;
 
-		QMap<QString, IRCChannelContact *> m_channels;
-		QMap<QString, IRCUserContact *> m_users;
+		QDict<IRCChannelContact> m_channels;
+		QDict<IRCUserContact> m_users;
 
 		IRCServerContact *m_myServer;
 		IRCUserContact *m_mySelf;
@@ -96,10 +98,9 @@ class IRCContactManager
 		QTimer *m_NotifyTimer;
 		bool isonRecieved;
 		int socketTimeout;
+
+		static const QRegExp isChannel;
 };
-
-
-
 
 #endif // IRCCONTACTMANAGER_H
 

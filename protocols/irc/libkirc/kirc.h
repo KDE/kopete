@@ -181,10 +181,10 @@ signals:
 	void incomingTopicChange(const QString &, const QString &, const QString &);
 	void incomingExistingTopic(const QString &, const QString &); /* 332 */
 	void incomingTopicUser(const QString &channel, const QString &user, const QDateTime &time); /*333*/
-	void userJoinedChannel(const QString &user, const QString &channel);
+	void incomingJoinedChannel(const QString &channel,const QString &nick);
+	void incomingPartedChannel(const QString &channel,const QString &nick, const QString &reason);
 	void incomingNamesList(const QString &channel, const QStringList &nicknames);
 	void incomingEndOfNames(const QString &channel);
-	void incomingPartedChannel(const QString &user, const QString &channel, const QString &reason);
 	void incomingChannelMode(const QString &channel, const QString &mode, const QString &params);
 	void incomingCannotSendToChannel(const QString  &channel, const QString &message);
 
@@ -194,7 +194,7 @@ signals:
 	void incomingAction(const QString &originating, const QString &target, const QString &message);
 
 	//Response Signals
-	void userOnline(const QString &nick);
+	void incomingUserOnline(const QString &nick);
 	void incomingWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
 	void incomingWhoIsServer(const QString &nickname, const QString &server, const QString &serverInfo);
 	void incomingWhoIsOperator(const QString &nickname);
@@ -203,9 +203,9 @@ signals:
 	void incomingSignOnTime(const QString &nickname, unsigned long seconds); /* 317 */
 	void incomingEndOfWhois(const QString &nickname);
 
-	void incomingWhoReply( const QString &channel, const QString &user, const QString &host,
-		const QString &server, const QString &nick, bool away, const QString &flag, uint hops,
-		const QString &realName );
+	void incomingWhoReply( const QString &nick, const QString &channel, const QString &user, const QString &host,
+		const QString &server,bool away, const QString &flag, uint hops, const QString &realName );
+
 	void incomingEndOfWho( const QString &query );
 
 	//Error Message Signals

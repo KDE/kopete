@@ -45,49 +45,6 @@ IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QS
 	QObject::connect(KopeteMessageManagerFactory::factory(), SIGNAL(viewCreated(KopeteView*)),
 			this, SLOT(slotJoinChannel(KopeteView*)) );
 
-	// KIRC Engine stuff
-	QObject::connect(m_engine, SIGNAL(userJoinedChannel(const QString &, const QString &)),
-		this, SLOT(slotUserJoinedChannel(const QString &, const QString &)));
-
-	QObject::connect(m_engine, SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)),
-		this, SLOT(slotUserPartedChannel(const QString &, const QString &, const QString &)));
-
-	QObject::connect(m_engine, SIGNAL(incomingKick(const QString &, const QString &,const QString &, const QString &)),
-		this, SLOT(slotUserKicked(const QString &, const QString &, const QString &, const QString &)));
-
-	QObject::connect(m_engine, SIGNAL(incomingNamesList(const QString &, const QStringList &)),
-		this, SLOT(slotNamesList(const QString &, const QStringList &)));
-
-	QObject::connect(m_engine, SIGNAL(incomingExistingTopic(const QString &, const QString &)),
-		this, SLOT(slotChannelTopic(const QString&, const QString &)));
-
-	QObject::connect(m_engine, SIGNAL(incomingTopicChange(const QString &, const QString &, const QString &)),
-		this, SLOT(slotTopicChanged(const QString&,const QString&,const QString&)));
-
-	QObject::connect(m_engine, SIGNAL(incomingTopicUser(const QString &, const QString &, const QDateTime &)),
-		this, SLOT(slotTopicUser(const QString&,const QString&,const QDateTime&)));
-
-	QObject::connect(m_engine, SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)),
-		this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
-
-	QObject::connect(m_engine, SIGNAL(incomingChannelMode(const QString&, const QString&, const QString&)),
-		this, SLOT(slotIncomingChannelMode(const QString&,const QString&, const QString&)));
-
-	QObject::connect(m_engine, SIGNAL(connectedToServer()),
-		this, SLOT(slotConnectedToServer()));
-
-	QObject::connect(m_engine, SIGNAL(incomingFailedChankey(const QString &)),
-		this, SLOT(slotFailedChankey(const QString&)));
-
-	QObject::connect(m_engine, SIGNAL(incomingFailedChanFull(const QString &)),
-		this, SLOT(slotFailedChanFull(const QString&)));
-
-	QObject::connect(m_engine, SIGNAL(incomingFailedChanInvite(const QString &)),
-		this, SLOT(slotFailedChanInvite(const QString&)));
-
-	QObject::connect(m_engine, SIGNAL(incomingFailedChanBanned(const QString &)),
-		this, SLOT(slotFailedChanBanned(const QString&)));
-
 	QObject::connect(m_engine, SIGNAL(incomingUserIsAway( const QString &, const QString & )),
 		this, SLOT(slotIncomingUserIsAway(const QString &, const QString &)));
 
@@ -151,14 +108,11 @@ void IRCChannelContact::slotConnectedToServer()
 		m_engine->joinChannel(m_nickName, password());
 }
 
-void IRCChannelContact::slotNamesList(const QString &channel, const QStringList &nicknames)
+void IRCChannelContact::namesList(const QStringList &nicknames)
 {
-	if ( m_isConnected && channel.lower() == m_nickName.lower() )
-	{
-		mJoinedNicks += nicknames;
-		if( mJoinedNicks.count() == nicknames.count() )
-			slotAddNicknames();
-	}
+	mJoinedNicks += nicknames;
+	if( mJoinedNicks.count() == nicknames.count() )
+		slotAddNicknames();
 }
 
 void IRCChannelContact::slotAddNicknames()
@@ -207,15 +161,13 @@ void IRCChannelContact::slotUpdateInfo()
 	}
 }
 
-void IRCChannelContact::slotChannelTopic(const QString &channel, const QString &topic)
+void IRCChannelContact::channelTopic(const QString &topic)
 {
-	if( m_isConnected && m_nickName.lower() == channel.lower() )
-	{
-		mTopic = topic;
-		manager()->setDisplayName( caption() );
-		KopeteMessage msg((KopeteContact*)this, mMyself, i18n("Topic for %1 is %2").arg(m_nickName).arg(mTopic), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		/*manager()->*/appendMessage(msg);
-	}
+	mTopic = topic;
+	manager()->setDisplayName( caption() );
+	KopeteMessage msg((KopeteContact*)this, mMyself, i18n("Topic for %1 is %2").arg(m_nickName).arg(mTopic),
+		KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+	appendMessage(msg);
 }
 
 void IRCChannelContact::slotJoin()
@@ -254,43 +206,38 @@ void IRCChannelContact::slotIncomingUserIsAway( const QString &nick, const QStri
 	}
 }
 
-void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString &channel)
+void IRCChannelContact::userJoinedChannel(const QString &nickname)
 {
-	if( m_isConnected && (channel.lower() == m_nickName.lower()) )
+	if ( nickname.lower() == m_account->mySelf()->nickName().lower() )
 	{
-		QString nickname = user.section('!', 0, 0);
-		if ( nickname.lower() == m_account->mySelf()->nickName().lower() )
+		KopeteMessage msg((KopeteContact *)this, mMyself,
+			i18n("You have joined channel %1").arg(m_nickName),
+			KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+		msg.setImportance( KopeteMessage::Low); //set the importance manualy to low
+		appendMessage(msg);
+		while( !messageQueue.isEmpty() )
 		{
-			KopeteMessage msg((KopeteContact *)this, mMyself,
-				i18n("You have joined channel %1").arg(m_nickName),
-				KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-			msg.setImportance( KopeteMessage::Low); //set the importance manualy to low
-			appendMessage(msg);
-			while( !messageQueue.isEmpty() )
-			{
-				slotSendMsg( messageQueue.front(), manager() );
-				messageQueue.pop_front();
-			}
-			setMode( QString::null );
+			slotSendMsg( messageQueue.front(), manager() );
+			messageQueue.pop_front();
 		}
-		else
-		{
-			IRCUserContact *contact = m_account->contactManager()->findUser( nickname );
-			contact->setOnlineStatus( m_protocol->m_UserStatusOnline );
-			manager()->addContact((KopeteContact *)contact, true);
-			KopeteMessage msg((KopeteContact *)this, mMyself,
-				i18n("User <b>%1</b> [%2] joined channel %3").arg(nickname).arg(user.section('!', 1)).arg(m_nickName),
-				KopeteMessage::Internal, KopeteMessage::RichText, KopeteMessage::Chat);
-			msg.setImportance( KopeteMessage::Low); //set the importance manualy to low
-			manager()->appendMessage(msg);
-		}
+		setMode( QString::null );
+	}
+	else
+	{
+		IRCUserContact *contact = m_account->contactManager()->findUser( nickname );
+		contact->setOnlineStatus( m_protocol->m_UserStatusOnline );
+		manager()->addContact((KopeteContact *)contact, true);
+		KopeteMessage msg((KopeteContact *)this, mMyself,
+			i18n("User <b>%1</b> joined channel %2").arg(nickname).arg(m_nickName),
+			KopeteMessage::Internal, KopeteMessage::RichText, KopeteMessage::Chat);
+		msg.setImportance( KopeteMessage::Low); //set the importance manualy to low
+		manager()->appendMessage(msg);
 	}
 }
 
-void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString &channel, const QString &reason)
+void IRCChannelContact::userPartedChannel(const QString &nickname,const QString &reason)
 {
-	QString nickname = user.section('!', 0, 0);
-	if ( m_isConnected && channel.lower() == m_nickName.lower() && nickname.lower() != m_engine->nickName().lower() )
+	if ( nickname.lower() != m_engine->nickName().lower() )
 	{
 		KopeteContact *c = locateUser( nickname );
 		if ( c )
@@ -301,33 +248,29 @@ void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString
 	}
 }
 
-void IRCChannelContact::slotUserKicked(const QString &nick, const QString &channel,
-		const QString &nickKicked, const QString &reason)
+void IRCChannelContact::userKicked(const QString &nick, const QString &nickKicked, const QString &reason)
 {
-	if ( m_isConnected && channel.lower() == m_nickName.lower() )
-	{
-		QString r = i18n("Kicked by %1.").arg( nick );
-		if( reason != nick )
-			r.append( i18n(" Reason: %2").arg( reason ) );
+	QString r = i18n("Kicked by %1.").arg( nick );
+	if( reason != nick )
+		r.append( i18n(" Reason: %2").arg( reason ) );
 
-		if( nickKicked.lower() != m_engine->nickName().lower() )
+	if( nickKicked.lower() != m_engine->nickName().lower() )
+	{
+		KopeteContact *c = locateUser( nickKicked );
+		if ( c )
 		{
-			KopeteContact *c = locateUser( nickKicked );
-			if ( c )
-			{
-				manager()->removeContact( c, r );
-				m_account->contactManager()->unregisterUser(c);
-				KopeteMessage msg( (KopeteContact *)this, mMyself,
-					r, KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-				msg.setImportance(KopeteMessage::Low);
-				appendMessage(msg);
-			}
+			manager()->removeContact( c, r );
+			m_account->contactManager()->unregisterUser(c);
+			KopeteMessage msg( (KopeteContact *)this, mMyself,
+				r, KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+			msg.setImportance(KopeteMessage::Low);
+			appendMessage(msg);
 		}
-		else
-		{
-			KMessageBox::error(0l, r, i18n("IRC Plugin"));
-			manager()->view()->closeView();
-		}
+	}
+	else
+	{
+		KMessageBox::error(0l, r, i18n("IRC Plugin"));
+		manager()->view()->closeView();
 	}
 }
 
@@ -359,78 +302,67 @@ void IRCChannelContact::setTopic(const QString &topic)
 	}
 }
 
-void IRCChannelContact::slotTopicChanged(const QString &nick, const QString &channel, const QString &newtopic)
+void IRCChannelContact::topicChanged(const QString &nick, const QString &newtopic)
 {
-	if( m_isConnected && m_nickName.lower() == channel.lower() )
-	{
-		mTopic = newtopic;
-		manager()->setDisplayName( caption() );
-		KopeteMessage msg(m_account->myServer(), mMyself,
-			i18n("%1 has changed the topic to: %2").arg(nick).arg(newtopic), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		msg.setImportance(KopeteMessage::Low); //set the importance manualy to low
-		appendMessage(msg);
-	}
+	mTopic = newtopic;
+	manager()->setDisplayName( caption() );
+	KopeteMessage msg(m_account->myServer(), mMyself,
+		i18n("%1 has changed the topic to: %2").arg(nick).arg(newtopic),
+		KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+	msg.setImportance(KopeteMessage::Low); //set the importance manualy to low
+	appendMessage(msg);
 }
 
-void IRCChannelContact::slotTopicUser(const QString &channel, const QString &nick, const QDateTime &time)
+void IRCChannelContact::topicUser(const QString &nick, const QDateTime &time)
 {
-	if( m_isConnected && m_nickName.lower() == channel.lower() )
-	{
-		KopeteMessage msg( m_account->myServer(), mMyself,
-			i18n("Topic set by %1 at %2").arg(nick).arg(
-				KGlobal::locale()->formatDateTime(time, true)
-			), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		msg.setImportance(KopeteMessage::Low); //set the importance manualy to low
-		appendMessage(msg);
-	}
+	KopeteMessage msg( m_account->myServer(), mMyself,
+		i18n("Topic set by %1 at %2").arg(nick).arg(
+			KGlobal::locale()->formatDateTime(time, true)
+		), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+	msg.setImportance(KopeteMessage::Low); //set the importance manualy to low
+	appendMessage(msg);
 }
 
-void IRCChannelContact::slotIncomingModeChange( const QString &nick, const QString &channel, const QString &mode )
+void IRCChannelContact::incomingModeChange( const QString &nick, const QString &mode )
 {
-	if( m_isConnected && m_nickName.lower() == channel.lower() )
-	{
-		KopeteMessage msg((KopeteContact *)this, mMyself, i18n("%1 sets mode %2 on  %3").arg(nick).arg(mode).arg(m_nickName), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		msg.setImportance( KopeteMessage::Low); //set the importance manualy to low
-		appendMessage(msg);
+	KopeteMessage msg((KopeteContact *)this, mMyself, i18n("%1 sets mode %2 on  %3").arg(nick).arg(mode).arg(m_nickName), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+	msg.setImportance( KopeteMessage::Low); //set the importance manualy to low
+	appendMessage(msg);
 
-		bool inParams = false;
-		bool modeEnabled = false;
-		QString params = QString::null;
-		for( uint i=0; i < mode.length(); i++ )
+	bool inParams = false;
+	bool modeEnabled = false;
+	QString params = QString::null;
+	for( uint i=0; i < mode.length(); i++ )
+	{
+		switch( mode[i] )
 		{
-			switch( mode[i] )
-			{
-				case '+':
-					modeEnabled = true;
-					break;
+			case '+':
+				modeEnabled = true;
+				break;
 
-				case '-':
-					modeEnabled = false;
-					break;
+			case '-':
+				modeEnabled = false;
+				break;
 
-				case ' ':
-					inParams = true;
-					break;
-				default:
-					if( inParams )
-						params.append( mode[i] );
-					else
-						toggleMode( mode[i], modeEnabled, false );
-					break;
-			}
+			case ' ':
+				inParams = true;
+				break;
+			default:
+				if( inParams )
+					params.append( mode[i] );
+				else
+					toggleMode( mode[i], modeEnabled, false );
+				break;
 		}
 	}
 }
 
-void IRCChannelContact::slotIncomingChannelMode( const QString &channel, const QString &mode, const QString &params )
+void IRCChannelContact::incomingChannelMode( const QString &mode, const QString &params )
 {
-	if( m_isConnected && (channel.lower() == m_nickName.lower()) )
+	for( uint i=1; i < mode.length(); i++ )
 	{
-		for( uint i=1; i < mode.length(); i++ )
-		{
-			if( mode[i] != 'l' && mode[i] != 'k' )
-				toggleMode( mode[i], true, false );
-		}
+		if( mode[i] != 'l' && mode[i] != 'k' )
+			toggleMode( mode[i], true, false );
 	}
 }
 
@@ -449,54 +381,43 @@ void IRCChannelContact::slotModeChanged()
 	toggleMode( 'i', actionModeI->isChecked(), true );
 }
 
-void IRCChannelContact::slotFailedChanBanned(const QString &channel)
+void IRCChannelContact::failedChanBanned()
 {
-	if ( m_isConnected && channel.lower() == m_nickName.lower() )
-	{
-		manager()->deleteLater();
-		KMessageBox::error( 0l,
-			i18n("<qt>You can not join %1 because you have been banned.</qt>").arg(channel), i18n("IRC Plugin") );
-	}
+	manager()->deleteLater();
+	KMessageBox::error( 0l,
+		i18n("<qt>You can not join %1 because you have been banned.</qt>").arg(m_nickName),
+		i18n("IRC Plugin") );
 }
 
-void IRCChannelContact::slotFailedChanInvite(const QString &channel)
+void IRCChannelContact::failedChanInvite()
 {
-	if ( m_isConnected && channel.lower() == m_nickName.lower() )
-	{
-		manager()->deleteLater();
-		KMessageBox::error( 0l,
-			i18n("<qt>You can not join %1 because it is set to invite only, and no one has invited you.</qt>").arg(channel), i18n("IRC Plugin") );
-	}
+	manager()->deleteLater();
+	KMessageBox::error( 0l,
+		i18n("<qt>You can not join %1 because it is set to invite only, and no one has invited you.</qt>").arg(m_nickName), i18n("IRC Plugin") );
 }
 
-void IRCChannelContact::slotFailedChanFull(const QString &channel)
+void IRCChannelContact::failedChanFull()
 {
-	if ( m_isConnected && channel.lower() == m_nickName.lower() )
-	{
-		manager()->deleteLater();
-		KMessageBox::error( 0l,
-			i18n("<qt>You can not join %1 because it has reached its user limit.</qt>").arg(channel),
-			i18n("IRC Plugin") );
-	}
+	manager()->deleteLater();
+	KMessageBox::error( 0l,
+		i18n("<qt>You can not join %1 because it has reached its user limit.</qt>").arg(m_nickName),
+		i18n("IRC Plugin") );
 }
 
-void IRCChannelContact::slotFailedChankey(const QString &channel)
+void IRCChannelContact::failedChankey()
 {
-	if ( m_isConnected && channel.lower() == m_nickName.lower() )
-	{
-		bool ok;
-		QString diaPassword = KInputDialog::getText( i18n( "IRC Plugin" ),
-			i18n( "Please enter key for channel %1: ").arg(channel),
-			QString::null,
-			&ok );
+	bool ok;
+	QString diaPassword = KInputDialog::getText( i18n( "IRC Plugin" ),
+		i18n( "Please enter key for channel %1: ").arg(m_nickName),
+		QString::null,
+		&ok );
 
-		if ( !ok )
-			manager()->deleteLater();
-		else
-		{
-			setPassword(diaPassword);
-			m_engine->joinChannel(channel, password());
-		}
+	if ( !ok )
+		manager()->deleteLater();
+	else
+	{
+		setPassword(diaPassword);
+		m_engine->joinChannel(m_nickName, password());
 	}
 }
 
@@ -542,7 +463,7 @@ bool IRCChannelContact::modeEnabled( QChar mode, QString *value )
 {
 	if( !value )
 		return modeMap[mode];
-	
+
 	return false;
 }
 

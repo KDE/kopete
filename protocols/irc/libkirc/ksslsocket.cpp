@@ -15,9 +15,6 @@
     *************************************************************************
 */
 
-#include <sys/select.h>
-
-#include <qtimer.h>
 #include <qsocketnotifier.h>
 
 #include <dcopclient.h>
@@ -168,7 +165,8 @@ void KSSLSocket::slotConnected()
 
 void KSSLSocket::slotDisconnected()
 {
-	readNotifier()->setEnabled(false);
+	if( readNotifier() )
+		readNotifier()->setEnabled(false);
 }
 
 void KSSLSocket::showInfoDialog( QWidget *parent, bool modal )

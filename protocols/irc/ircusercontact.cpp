@@ -43,29 +43,7 @@ IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString 
 
 	QObject::connect(m_engine, SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)),
 		this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
-	QObject::connect(m_engine, SIGNAL(userOnline( const QString & )),
-		this, SLOT(slotUserOnline(const QString &)));
-	QObject::connect(m_engine, SIGNAL(incomingUserIsAway( const QString &, const QString & )),
-		this, SLOT(slotIncomingUserIsAway(const QString &, const QString &)));
 
-	QObject::connect(m_engine, SIGNAL(incomingWhoIsUser(const QString &, const QString &, const QString &, const QString &)) ,
-			this, SLOT( slotNewWhoIsUser(const QString &, const QString &, const QString &, const QString &) ) );
-
-	QObject::connect(m_engine, SIGNAL(incomingWhoIsServer(const QString &, const QString &, const QString &)),
-			this, SLOT(slotNewWhoIsServer(const QString &, const QString &, const QString &)));
-	QObject::connect(m_engine, SIGNAL(incomingWhoIsOperator(const QString &)),
-			this, SLOT(slotNewWhoIsOperator(const QString &)));
-	QObject::connect(m_engine, SIGNAL(incomingWhoIsIdle(const QString &, unsigned long )),
-			this, SLOT(slotNewWhoIsIdle(const QString &, unsigned long )));
-	QObject::connect(m_engine, SIGNAL(incomingWhoIsChannels(const QString &, const QString &)),
-			this, SLOT(slotNewWhoIsChannels(const QString &, const QString &)));
-	QObject::connect(m_engine, SIGNAL(incomingEndOfWhois(const QString &)),
-			this, SLOT( slotWhoIsComplete(const QString &)));
-
-	QObject::connect(m_engine, SIGNAL(incomingWhoReply(const QString &, const QString &, const QString &,
-		const QString &, const QString &, bool, const QString &, uint, const QString & )),
-		this, SLOT( slotNewWhoReply(const QString &, const QString &, const QString &, const QString &,
-		const QString &, bool, const QString &, uint, const QString &)));
 
 	actionCtcpMenu = 0L;
 
@@ -122,32 +100,26 @@ void IRCUserContact::setAway(bool isAway)
 	updateStatus();
 }
 
-void IRCUserContact::slotIncomingUserIsAway( const QString &nick, const QString &reason )
+void IRCUserContact::incomingUserIsAway(const QString &reason )
 {
-	if( nick.lower() == m_nickName.lower() )
+	if( manager(false ) )
 	{
-		if( manager(false ) )
-		{
-			KopeteMessage msg( (KopeteContact*)m_account->myServer(), mMyself,
-				i18n("%1 is away (%2)").arg( m_nickName ).arg( reason ),
-				KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
-			manager()->appendMessage(msg);
-		}
+		KopeteMessage msg( (KopeteContact*)m_account->myServer(), mMyself,
+			i18n("%1 is away (%2)").arg( m_nickName ).arg( reason ),
+			KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
+		manager()->appendMessage(msg);
 	}
 }
 
-void IRCUserContact::slotUserOnline( const QString &nick )
+void IRCUserContact::userOnline()
 {
-	if( nick.lower() == m_nickName.lower() )
+	m_isOnline = true;
+	mOnlineTimer->start( 45000, true );
+	updateStatus();
+	if( mInfo.lastUpdate.isNull() || mInfo.lastUpdate.secsTo( QTime::currentTime() ) > 45 )
 	{
-		m_isOnline = true;
-		mOnlineTimer->start( 45000, true );
-		updateStatus();
-		if( mInfo.lastUpdate.isNull() || mInfo.lastUpdate.secsTo( QTime::currentTime() ) > 45 )
-		{
-			m_engine->writeMessage( QString::fromLatin1("WHO %1").arg(m_nickName) );
-			mInfo.lastUpdate = QTime::currentTime();
-		}
+		m_engine->writeMessage( QString::fromLatin1("WHO %1").arg(m_nickName) );
+		mInfo.lastUpdate = QTime::currentTime();
 	}
 }
 
@@ -226,79 +198,67 @@ void IRCUserContact::slotCtcpVersion()
 	m_engine->sendCtcpVersion(m_nickName);
 }
 
-void IRCUserContact::slotNewWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname)
+void IRCUserContact::newWhoIsUser(const QString &username, const QString &hostname, const QString &realname)
 {
-	if( m_nickName == nickname )
+	mInfo.channels.clear();
+	mInfo.userName = username;
+	mInfo.hostName = hostname;
+	mInfo.realName = realname;
+}
+
+void IRCUserContact::newWhoIsServer(const QString &servername, const QString &serverinfo)
+{
+	mInfo.serverName = servername;
+	mInfo.serverInfo = serverinfo;
+}
+
+void IRCUserContact::newWhoIsIdle(unsigned long idle)
+{
+	mInfo.idle = idle;
+}
+
+void IRCUserContact::newWhoIsOperator()
+{
+	mInfo.isOperator = true;
+}
+
+void IRCUserContact::newWhoIsChannels(const QString &channel)
+{
+	mInfo.channels.append( channel );
+}
+
+void IRCUserContact::whoIsComplete()
+{
+	updateInfo();
+
+	if( m_protocol->commandInProgress() )
 	{
-		mInfo.channels.clear();
-		mInfo.userName = username;
-		mInfo.hostName = hostname;
-		mInfo.realName = realname;
-	}
-}
+		//User info
+		QString msg = i18n("%1 is (%2@%3): %4\n")
+			.arg(m_nickName)
+			.arg(mInfo.userName)
+			.arg(mInfo.hostName)
+			.arg(mInfo.realName);
 
-void IRCUserContact::slotNewWhoIsServer(const QString &nickname, const QString &servername, const QString &serverinfo)
-{
-	if( m_nickName == nickname )
-	{
-		mInfo.serverName = servername;
-		mInfo.serverInfo = serverinfo;
-	}
-}
+		if( mInfo.isOperator )
+			msg += i18n("%1 is an IRC operator\n").arg(m_nickName);
 
-void IRCUserContact::slotNewWhoIsIdle(const QString &nickname, unsigned long idle)
-{
-	if( m_nickName == nickname )
-		mInfo.idle = idle;
-}
+		//Channels
+		msg += i18n("on channels %1\n").arg(mInfo.channels.join(" ; "));
 
-void IRCUserContact::slotNewWhoIsOperator(const QString &nickname)
-{
-	if( m_nickName == nickname )
-		mInfo.isOperator = true;
-}
+		//Server
+		msg += i18n("on IRC via server %1 ( %2 )\n").arg(mInfo.serverName).arg(mInfo.serverInfo);
 
-void IRCUserContact::slotNewWhoIsChannels(const QString &nickname, const QString &channel)
-{
-	if( m_nickName == nickname )
-		mInfo.channels.append( channel );
-}
+		//Idle
+		QString idleTime = formattedIdleTime();
+		msg += i18n("idle: %2\n").arg( idleTime.isEmpty() ? QString::number(0) : idleTime );
 
-void IRCUserContact::slotWhoIsComplete(const QString &nickname)
-{
-	if( m_nickName == nickname )
-	{
-		updateInfo();
+		//End
+		KopeteMessage m( m_account->myServer(), mMyself, msg, KopeteMessage::Internal,
+			KopeteMessage::PlainText, KopeteMessage::Chat );
 
-		if( m_protocol->commandInProgress() )
-		{
-			//User info
-			QString msg = i18n("%1 is (%2@%3): %4\n")
-				.arg(nickname)
-				.arg(mInfo.userName)
-				.arg(mInfo.hostName)
-				.arg(mInfo.realName);
-
-			if( mInfo.isOperator )
-				msg += i18n("%1 is an IRC operator\n").arg(nickname);
-
-			//Channels
-			msg += i18n("on channels %1\n").arg(mInfo.channels.join(" ; "));
-
-			//Server
-			msg += i18n("on IRC via server %1 ( %2 )\n").arg(mInfo.serverName).arg(mInfo.serverInfo);
-
-			//Idle
-			QString idleTime = formattedIdleTime();
-			msg += i18n("idle: %2\n").arg( idleTime.isEmpty() ? QString::number(0) : idleTime );
-
-			//End
-			KopeteMessage m( m_account->myServer(), mMyself, msg, KopeteMessage::Internal,
-				KopeteMessage::PlainText, KopeteMessage::Chat );
-
-			KopeteMessageManagerFactory::factory()->activeView()->appendMessage(m);
-			m_protocol->setCommandInProgress(false);
-		}
+		KopeteMessageManagerFactory::factory()->activeView()->appendMessage(m);
+		m_protocol->setCommandInProgress(false);
 	}
 }
 
@@ -318,30 +278,26 @@ void IRCUserContact::updateInfo()
 	setIdleTime( mInfo.idle );
 }
 
-void IRCUserContact::slotNewWhoReply( const QString &channel, const QString &user, const QString &host,
-			const QString &server, const QString &nick, bool away, const QString &flags, uint hops,
-			const QString &realName )
+void IRCUserContact::newWhoReply( const QString &channel, const QString &user, const QString &host,
+	const QString &server, bool away, const QString &flags, uint hops, const QString &realName )
 {
-	if( nick == m_nickName )
+	if( !mInfo.channels.contains( channel ) )
+		mInfo.channels.append( channel );
+
+	mInfo.userName = user;
+	mInfo.hostName = host;
+	mInfo.serverName = server;
+	mInfo.flags = flags;
+	mInfo.hops = hops;
+	mInfo.realName = realName;
+
+	setAway(away);
+
+	updateInfo();
+
+	if( m_protocol->commandInProgress() )
 	{
-		if( !mInfo.channels.contains( channel ) )
-			mInfo.channels.append( channel );
-
-		mInfo.userName = user;
-		mInfo.hostName = host;
-		mInfo.serverName = server;
-		mInfo.flags = flags;
-		mInfo.hops = hops;
-		mInfo.realName = realName;
-
-		setAway(away);
-
-		updateInfo();
-
-		if( m_protocol->commandInProgress() )
-		{
-			m_protocol->setCommandInProgress(false);
-		}
+		m_protocol->setCommandInProgress(false);
 	}
 }
 
@@ -426,13 +382,13 @@ void IRCUserContact::slotIncomingModeChange( const QString &, const QString &cha
 		{
 			QString modeChange = mode.section(' ', 0, 0);
 			if(modeChange == QString::fromLatin1("+o"))
-				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), m_protocol->m_UserStatusOp );
+				chan->manager()->setContactOnlineStatus( this, m_protocol->m_UserStatusOp );
 			else if(modeChange == QString::fromLatin1("-o"))
-				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), m_protocol->m_UserStatusOnline );
+				chan->manager()->setContactOnlineStatus( this, m_protocol->m_UserStatusOnline );
 			else if(modeChange == QString::fromLatin1("+v"))
-				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), m_protocol->m_UserStatusVoice );
+				chan->manager()->setContactOnlineStatus( this, m_protocol->m_UserStatusVoice );
 			else if(modeChange == QString::fromLatin1("-v"))
-				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), m_protocol->m_UserStatusOnline );
+				chan->manager()->setContactOnlineStatus( this, m_protocol->m_UserStatusOnline );
 		}
 	}
 }

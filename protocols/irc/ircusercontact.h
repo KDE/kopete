@@ -70,6 +70,19 @@ public:
 
 	QString formattedName() const;
 
+	//Methods handled by the signal mapper
+	void incomingUserIsAway(const QString &message );
+	void userOnline();
+	void newWhoIsUser(const QString &username, const QString &hostname, const QString &realname);
+	void newWhoIsServer(const QString &server, const QString &serverInfo);
+	void newWhoIsOperator();
+	void newWhoIsIdle(unsigned long seconds);
+	void newWhoIsChannels(const QString &channel);
+	void whoIsComplete();
+	void newWhoReply( const QString &channel, const QString &user, const QString &host,
+		const QString &server, bool away, const QString &flags, uint hops,
+		const QString &realName );
+
 protected slots:
 	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
 	virtual void action(IRCContact *from, IRCContact *to, const QString &action);
@@ -86,23 +99,13 @@ private slots:
 	void slotBanDomain();
 	void slotBanUserDomain();
 	void slotKick();
-	void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
-	void slotIncomingUserIsAway( const QString &nick, const QString &message );
-	void slotUserOnline(const QString &nick);
 	void slotUserOffline();
-
-	void slotNewWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
-	void slotNewWhoIsServer(const QString &nickname, const QString &server, const QString &serverInfo);
-	void slotNewWhoIsOperator(const QString &nickname);
-	void slotNewWhoIsIdle(const QString &nickname, unsigned long seconds);
-	void slotNewWhoIsChannels(const QString &nickname, const QString &channel);
-	void slotWhoIsComplete(const QString &nickname);
-	void slotNewWhoReply( const QString &channel, const QString &user, const QString &host,
-		const QString &server, const QString &nick, bool away, const QString &flags, uint hops,
-		const QString &realName );
 
 	virtual void updateStatus();
 	virtual void slotUserInfo();
+
+	//This can't be handled by the contact manager since
+	void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 
 private:
 	KActionMenu *actionModeMenu;

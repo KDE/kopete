@@ -723,10 +723,12 @@ bool KIRC::joinChannel(const KIRCMessage &msg)
 	 * assumed ":<channel>"
 	 * This is the response of someone joining a channel.
 	 * Remember that this will be emitted when *you* /join a room for the first time */
+
 	if (msg.args().size()==1)
-		emit userJoinedChannel(msg.prefix(), msg.args()[0]);
+		emit incomingJoinedChannel(msg.args()[0], getNickFromPrefix(msg.prefix()));
 	else
-		emit userJoinedChannel(msg.prefix(), msg.suffix());
+		emit incomingJoinedChannel(msg.suffix(), getNickFromPrefix(msg.prefix()));
+
 	return true;
 }
 
@@ -743,7 +745,7 @@ bool KIRC::partChannel(const KIRCMessage &msg)
 	 * "<channel> *( "," <channel> ) [ <Part Message> ]"
 	 */
 	kdDebug(14120) << "User parting" << endl;
-	emit incomingPartedChannel(msg.prefix(), msg.args()[0], msg.suffix());
+	emit incomingPartedChannel(msg.args()[0], getNickFromPrefix(msg.prefix()), msg.suffix());
 	return true;
 }
 

@@ -33,11 +33,16 @@
 #include "ircusercontact.h"
 
 #include "irccontactmanager.h"
+#include "ircsignalhandler.h"
+
+const QRegExp IRCContactManager::isChannel( QString::fromLatin1("^[#!+&][^\\s,:]+$") );
 
 IRCContactManager::IRCContactManager(const QString &nickName, IRCAccount *account, const char *name)
 	: QObject(account, name),
 	  m_account(account),
-	  m_engine(account->engine())
+	  m_engine(account->engine()),
+	  m_channels( QDict<IRCChannelContact>( 17, false ) ),
+	  m_users( QDict<IRCUserContact>( 577, false ) )
 {
 	m_mySelf = findUser(nickName);
 
@@ -74,11 +79,12 @@ IRCContactManager::IRCContactManager(const QString &nickName, IRCAccount *accoun
 		socketTimeout = config.readNumEntry( "ReadTimeout", 15 ) * 1000;
 	}
 
-	m_NotifyList.append( nickName );
 	m_NotifyTimer = new QTimer(this);
 	QObject::connect(m_NotifyTimer, SIGNAL(timeout()),
 			this, SLOT(checkOnlineNotifyList()));
 	m_NotifyTimer->start(30000); // check online every 30sec
+
+	new IRCSignalHandler(this);
 }
 
 void IRCContactManager::slotNewNickChange(const QString &oldnick, const QString &newnick)
@@ -86,7 +92,7 @@ void IRCContactManager::slotNewNickChange(const QString &oldnick, const QString 
 	IRCUserContact *c =  m_users[ oldnick ];
 	if( c )
 	{
-		m_users[ newnick ] = c;
+		m_users.insert(newnick, c);
 		m_users.remove(oldnick);
 	}
 }
@@ -129,10 +135,9 @@ void IRCContactManager::unregister(KopeteContact *contact)
 
 IRCChannelContact *IRCContactManager::findChannel(const QString &name, KopeteMetaContact *m)
 {
-	QString lowerName = name.lower();
-	IRCChannelContact *channel = 0;
+	IRCChannelContact *channel = m_channels[ name ];
 
-	if ( !m_channels.contains( lowerName ) )
+	if ( !channel )
 	{
 		if( !m )
 		{
@@ -141,16 +146,17 @@ IRCChannelContact *IRCContactManager::findChannel(const QString &name, KopeteMet
 		}
 
 		channel = new IRCChannelContact(this, name, m);
-		m_channels.insert( lowerName, channel );
+		m_channels.insert( name, channel );
 		QObject::connect(channel, SIGNAL(contactDestroyed(KopeteContact *)),
 			this, SLOT(unregisterChannel(KopeteContact *)));
 	}
-	else
-	{
-		channel = m_channels[ lowerName ];
-	}
 
 	return channel;
+}
+
+IRCChannelContact *IRCContactManager::existChannel( const QString &channel ) const
+{
+	return m_channels[ channel ];
 }
 
 void IRCContactManager::unregisterChannel(KopeteContact *contact)
@@ -160,16 +166,15 @@ void IRCContactManager::unregisterChannel(KopeteContact *contact)
 		!channel->isChatting() &&
 		channel->metaContact())
 	{
-		m_channels.remove( channel->nickName().lower() );
+		m_channels.remove( channel->nickName() );
 	}
 }
 
 IRCUserContact *IRCContactManager::findUser(const QString &name, KopeteMetaContact *m)
 {
-	QString lowerName = name.lower();
-	IRCUserContact *user = 0;
+	IRCUserContact *user = m_users[ name ];
 
-	if ( !m_users.contains( lowerName ) )
+	if ( !user )
 	{
 		if( !m )
 		{
@@ -178,16 +183,25 @@ IRCUserContact *IRCContactManager::findUser(const QString &name, KopeteMetaConta
 		}
 
 		user = new IRCUserContact(this, name, m);
-		m_users.insert( lowerName, user );
+		m_users.insert( name, user );
 		QObject::connect(user, SIGNAL(contactDestroyed(KopeteContact *)),
 				this, SLOT(unregisterUser(KopeteContact *)));
 	}
-	else
-	{
-		user = m_users[ lowerName ];
-	}
 
 	return user;
+}
+
+IRCUserContact *IRCContactManager::existUser( const QString &user ) const
+{
+	return m_users[ user ];
+}
+
+IRCContact *IRCContactManager::existContact( const QString &id ) const
+{
+	if( isChannel.search( id ) != -1 )
+		return existChannel( id );
+	else
+		return existUser( id );
 }
 
 void IRCContactManager::unregisterUser(KopeteContact *contact)
@@ -198,7 +212,7 @@ void IRCContactManager::unregisterUser(KopeteContact *contact)
 		!user->isChatting())
 	{
 		kdDebug(14120) << k_funcinfo << user->nickName() << endl;
-		m_users.remove( user->nickName().lower() );
+		m_users.remove( user->nickName() );
 	}
 }
 
@@ -223,7 +237,7 @@ void IRCContactManager::checkOnlineNotifyList()
 	{
 		isonRecieved = false;
 		m_engine->isOn( m_NotifyList );
-		QTimer::singleShot( socketTimeout, this, SLOT( slotIsonTimeout() ) );
+		//QTimer::singleShot( socketTimeout, this, SLOT( slotIsonTimeout() ) );
 	}
 }
 
