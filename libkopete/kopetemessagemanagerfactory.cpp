@@ -157,6 +157,11 @@ KopeteMessageManagerDict KopeteMessageManagerFactory::protocolSessions( KopetePr
 	return protocolSessions;
 }
 
+const KopeteMessageManagerDict& KopeteMessageManagerFactory::sessions( )
+{
+	return mSessionDict;
+}
+
 void KopeteMessageManagerFactory::cleanSessions( KopeteProtocol *protocol )
 {
 	KopeteMessageManagerDict sessions=protocolSessions( protocol );

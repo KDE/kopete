@@ -65,7 +65,7 @@ public:
 	/**
 	 * Get a list of all open sessions
 	 */
-	static const KopeteMessageManagerDict& sessions();
+	const KopeteMessageManagerDict& sessions();
 	/**
 	 * Get a list of all open sessions  for a protocol
 	 */
