@@ -118,6 +118,17 @@ void KopetePassword::writeConfig()
 
 QString KopetePassword::retrieve( bool error, bool *ok, unsigned int maxLength )
 {
+	QString prompt;
+	if ( error )
+		prompt = i18n( "<b>The password was wrong! Please re-enter your password for %1 (%2)</b>" ).arg( d->displayName, d->id );
+	else
+		prompt = i18n( "Please enter your password for %1 (%2)" ).arg( d->displayName, d->id );
+
+	return retrieve( QPixmap(), prompt, error, ok, maxLength );
+}
+
+QString KopetePassword::retrieve( const QPixmap &image, const QString &prompt, bool error, bool *ok, unsigned int maxLength )
+{
 	if ( ok )
 		*ok = true;
 
@@ -144,31 +155,25 @@ QString KopetePassword::retrieve( bool error, bool *ok, unsigned int maxLength )
 		if ( d->remembered && !d->passwordFromKConfig.isNull() )
 			return d->passwordFromKConfig;
 	}
+	else
+	{
+		// Error? Invalidate any stored pass
+		set();
+	}
 
+	// FIXME: why is this allocated on the heap?
 	KDialogBase *passwdDialog = new KDialogBase( qApp->mainWidget(), "passwdDialog", true, i18n( "Password Required" ),
 		KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
 
 	KopetePasswordDialog *view = new KopetePasswordDialog( passwdDialog );
-
-	if ( error )
-	{
-		view->m_text->setText( i18n( "<b>The password was wrong! Please re-enter your password for %1</b>" ).arg( d->displayName ) );
-
-		// Invalidate any stored pass
-		set();
-	}
-	else
-	{
-		view->m_text->setText( i18n( "Please enter your password for %1" ).arg( d->displayName ) );
-	}
-
 	passwdDialog->setMainWidget( view );
 
-	view->m_login->setText( d->id );
-// TODO	view->m_autologin->setChecked( d->autologin );
+	view->m_text->setText( prompt );
+	view->m_image->setPixmap( image );
 	if ( maxLength != 0 )
 		view->m_password->setMaxLength( maxLength );
 
+	// FIXME: either document what these are for or remove them - lilac
 	view->adjustSize();
 	passwdDialog->adjustSize();
 
@@ -176,7 +181,6 @@ QString KopetePassword::retrieve( bool error, bool *ok, unsigned int maxLength )
 	if ( passwdDialog->exec() == QDialog::Accepted )
 	{
 		d->remembered = view->m_save_passwd->isChecked();
-// TODO		d->autologin = view->m_autologin->isChecked();
 		pass = view->m_password->text();
 		if ( d->remembered )
 			set( pass );
@@ -195,6 +199,8 @@ void KopetePassword::set( const QString &pass )
 {
 	if ( pass.isNull() )
 	{
+		kdDebug( 14010 ) << k_funcinfo << " clearing password" << endl;
+
 		// FIXME: This is a quick workaround for the problem that after Jason
 		//        added the rememberPassword flag he didn't accordingly update
 		//        all plugins to setRememberPassword( false ), so they now
@@ -202,31 +208,28 @@ void KopetePassword::set( const QString &pass )
 		//
 		//        After KDE 3.2 this should be fixed by disallowing null
 		//        passwords here and adding said property setter method - Martijn
-		d->passwordFromKConfig = QString::null;
 		d->remembered = false;
+		d->passwordFromKConfig = QString::null;
 		writeConfig();
 		return;
 	}
 
 #if KDE_IS_VERSION( 3, 1, 90 )
-	kdDebug( 14010 ) << k_funcinfo << endl;
-
-	if ( KWallet::Wallet *wallet = KopeteWalletManager::self()->wallet() )
-	{
-		if ( wallet->writePassword( d->configGroup, pass ) == 0 )
-		{
-			// Remove any pass from KConfig if it is still there
-			if ( !d->passwordFromKConfig.isNull() )
-			{
-				d->passwordFromKConfig = QString::null;
-				writeConfig();
-			}
-			return;
-		}
-	}
+	kdDebug( 14010 ) << k_funcinfo << " setting password for " << d->configGroup << endl;
 
 	if ( KWallet::Wallet::isEnabled() )
 	{
+		if ( KWallet::Wallet *wallet = KopeteWalletManager::self()->wallet() )
+		{
+			if ( wallet->writePassword( d->configGroup, pass ) == 0 )
+			{
+				d->remembered = true;
+				d->passwordFromKConfig = QString::null;
+				writeConfig();
+				return;
+			}
+		}
+
 		// If we end up here, the wallet is enabled, but failed somehow.
 		// Ask the user what to do now.
 		if ( KMessageBox::warningContinueCancel( qApp->mainWidget(),
@@ -241,6 +244,7 @@ void KopetePassword::set( const QString &pass )
 	}
 #endif
 
+	d->remembered = true;
 	d->passwordFromKConfig = pass;
 	writeConfig();
 }

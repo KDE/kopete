@@ -19,6 +19,8 @@
 
 #include <qobject.h>
 
+class QPixmap;
+
 /**
  * @author Richard Smith       <kde@metafoo.co.uk>
  *
@@ -48,16 +50,20 @@ public:
 	 * Get the password. Has the ability to open an input dialog
 	 * if the password is not currently set.
 	 *
+	 * @param image An image to display in the enter password dialog.
+	 * @param prompt The message to display to the user, asking for a
+	 *        password. Can be any Qt RichText string.
 	 * @param error Set this value to true if you previously called
 	 *        password and the result was incorrect (the password was
 	 *        wrong). It adds a label in the input dialog saying that the
-	 *        password was wrong and invalidates any stored password.
+	 *        password was wrong.
 	 * @param ok This value is set to false if the user cancelled an
 	 *        Enter Password dialog, true otherwise.
 	 * @param maxLength The maximum length for a password, restricts the
 	 *        length of the password that can be entered. 0 means no limit.
 	 * @return The password or QString::null if the user has canceled
 	 */
+	QString retrieve( const QPixmap &image, const QString &prompt, bool error = false, bool *ok = 0, unsigned int maxLength = 0 );
 	QString retrieve( bool error = false, bool *ok = 0, unsigned int maxLength = 0 );
 
 	/**

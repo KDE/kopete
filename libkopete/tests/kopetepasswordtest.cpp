@@ -14,7 +14,10 @@
     *************************************************************************
 */
 
+#include "kopetepassword.h"
+
 #include <qtextstream.h>
+#include <qpixmap.h>
 
 #include <kaboutdata.h>
 #include <kapplication.h>
@@ -22,8 +25,6 @@
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kstandarddirs.h>
-
-#include "kopetepassword.h"
 
 static QTextStream _out( stdout, IO_WriteOnly );
 
@@ -33,6 +34,8 @@ static KCmdLineOptions opts[] =
  { "group <group>", I18N_NOOP("Config group to store settings in"), "TestGroup" },
  { "set <new>", I18N_NOOP("Set password to new"), "" },
  { "error", I18N_NOOP("Claim password was erroneous"), "" },
+ { "prompt <prompt>", I18N_NOOP("Password prompt"), "Enter a password" },
+ { "image <filename>", I18N_NOOP("Image to display in password dialog"), "" },
 };
 
 int main( int argc, char *argv[] )
@@ -49,9 +52,13 @@ int main( int argc, char *argv[] )
 	QString newPwd = args->getOption("set");
 	QString group = args->getOption("group");
 	bool error = args->isSet("error");
+	QString prompt = args->getOption("prompt");
+	QPixmap image = QString(args->getOption("image"));
+
+	_out << (image.isNull() ? "image is null" : "image is valid") << endl;
 
 	KopetePassword pwd( group, id, id );
-	QString pass = pwd.retrieve( error );
+	QString pass = pwd.retrieve( image, prompt, error );
 
 	if ( !pass.isNull() )
 		_out << "Read password: " << pass << endl;
@@ -70,7 +77,7 @@ int main( int argc, char *argv[] )
 			_out << "Setting password to " << newPwd << endl;
 		}
 		pwd.set( newPwd );
-		pass = pwd.retrieve();
+		pass = pwd.retrieve( image, i18n("Hopefully this popped up because you set the password to the empty string.") );
 		if( pass == newPwd )
 			_out << "Password successfully set." << endl;
 		else
