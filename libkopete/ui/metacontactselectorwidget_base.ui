@@ -115,7 +115,8 @@
     </grid>
 </widget>
 <includes>
-    <include location="local" impldecl="in declaration">klistviewsearchline.h</include>
+   <include location="local" impldecl="in declaration">klistviewsearchline.h</include>
+   <include location="local" impldecl="in declaration">kopetelistview.h</include>
     <include location="global" impldecl="in declaration">qheader.h</include>
 </includes>
 <layoutdefaults spacing="6" margin="11"/>
