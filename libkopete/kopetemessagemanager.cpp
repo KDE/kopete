@@ -96,13 +96,13 @@ void KopeteMessageManager::slotStatusChanged( KopeteContact *c, const KopeteOnli
 	{
 		d->awayTime = QDateTime::currentDateTime();
 		KopeteMessage msg(c, d->mContactList, i18n("%1 has been marked as away.")
-			.arg(c->displayName()), KopeteMessage::Outbound, KopeteMessage::PlainText);
+			.arg( QString::fromLatin1("/me") ), KopeteMessage::Outbound, KopeteMessage::PlainText);
 		sendMessage( msg );
 	}
 	else if( oldStatus.status() == KopeteOnlineStatus::Away && status.status() == KopeteOnlineStatus::Online )
 	{
 		KopeteMessage msg(c, d->mContactList, i18n("%1 is no longer marked as away. Gone since %1")
-			.arg(c->displayName()).arg(KGlobal::locale()->formatDateTime(d->awayTime, true)), KopeteMessage::Outbound, KopeteMessage::PlainText);
+			.arg( QString::fromLatin1("/me") ).arg(KGlobal::locale()->formatDateTime(d->awayTime, true)), KopeteMessage::Outbound, KopeteMessage::PlainText);
 		sendMessage( msg );
 	}
 }
