@@ -215,14 +215,12 @@ void StatisticsDialog::generatePageFromQStringList(QStringList values, const QSt
 	"<a href=\"monthofyear:12\">December</a>&nbsp;"
 	"</span></div><br>"));
 	
-	mainWidget->listView->addColumn(i18n("Status"));
-	mainWidget->listView->addColumn(i18n("Start Date"));
-	mainWidget->listView->addColumn(i18n("End Date"));
-	mainWidget->listView->addColumn(i18n("Start Date"));
-	mainWidget->listView->addColumn(i18n("End Date"));
-	
-	
-	
+//	mainWidget->listView->addColumn(i18n("Status"));
+//	mainWidget->listView->addColumn(i18n("Start Date"));
+//	mainWidget->listView->addColumn(i18n("End Date"));
+//	mainWidget->listView->addColumn(i18n("Start Date"));
+//	mainWidget->listView->addColumn(i18n("End Date"));
+
 	QString todayString;
 	todayString.append(i18n("<div class=\"statgroup\" title=\"Contact status history for today\"><h2>Today</h2><table width=\"100%\"><tr><td>Status</td><td>From</td><td>To</td></tr>"));
 	
@@ -346,10 +344,10 @@ void StatisticsDialog::generatePageFromQStringList(QStringList values, const QSt
 		}
 		
 		// We add a listview item to the log list
-		QDateTime listViewDT1, listViewDT2;
-		listViewDT1.setTime_t(values[i+1].toInt());
-		listViewDT2.setTime_t(values[i+2].toInt());
-		new KListViewItem(mainWidget->listView, values[i], values[i+1], values[i+2], listViewDT1.toString(), listViewDT2.toString());
+		// QDateTime listViewDT1, listViewDT2;
+		// listViewDT1.setTime_t(values[i+1].toInt());
+		// listViewDT2.setTime_t(values[i+2].toInt());
+		// new KListViewItem(mainWidget->listView, values[i], values[i+1], values[i+2], listViewDT1.toString(), listViewDT2.toString());
 	}
 
 	

@@ -20,6 +20,9 @@
             <verstretch>0</verstretch>
         </sizepolicy>
     </property>
+    <property name="caption">
+        <string>StatisticsWidget</string>
+    </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -33,7 +36,7 @@
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Ask Database</string>
+                    <string>Ask &amp;Database</string>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -206,7 +209,7 @@
                                             <cstring>askButton</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>Ask</string>
+                                            <string>&amp;Ask</string>
                                         </property>
                                     </widget>
                                 </hbox>
@@ -233,35 +236,14 @@
                     </widget>
                 </grid>
             </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>TabPage</cstring>
-                </property>
-                <attribute name="title">
-                    <string>Log</string>
-                </attribute>
-                <grid>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="KListView" row="0" column="0">
-                        <property name="name">
-                            <cstring>listView</cstring>
-                        </property>
-                    </widget>
-                </grid>
-            </widget>
         </widget>
     </grid>
 </widget>
-<customwidgets>
-</customwidgets>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>kdatepicker.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>kdatetbl.h</includehint>
     <includehint>ktimewidget.h</includehint>
-    <includehint>klistview.h</includehint>
 </includehints>
 </UI>
