@@ -743,5 +743,12 @@ default_presentation=2
 
 [icq_authorization]
 Name=ICQ Authorization
+Name[bg]=Оторизация на ICQ
+Name[ga]=Údárú ICQ
+Name[nl]=ICQ-autorisatie
+Name[pt]=Autorização ICQ
+Name[pt_BR]=Autorização ICQ
+Name[sv]=ICQ-behörighetskontroll
+Name[zh_CN]=ICQ 身份验证
 Comment=An ICQ user has authorized/declined your authorization request
 default_presentation=16
