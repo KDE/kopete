@@ -681,14 +681,20 @@ void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &
 	{
 		m_remoteTypingMap.remove( const_cast<KopeteContact *>( contact ) );
 
-		disconnect( contact, SIGNAL( displayNameChanged( const QString &, const QString & ) ),
-			this, SLOT( slotContactNameChanged( const QString &, const QString & ) ) );
-
 		QString contactName = contact->displayName();
 		mComplete->removeItem( contactName );
 
-		disconnect( contact, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
-			this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
+		delete memberContactMap[ contact ];
+		memberContactMap.remove( contact );
+
+		// When the last person leaves, don't disconnect the signals, since we're in a one-to-one chat
+		if ( msgManager()->members().count() > 0 )
+		{
+			disconnect( contact, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
+				this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
+			disconnect( contact, SIGNAL( displayNameChanged( const QString &, const QString & ) ),
+				this, SLOT( slotContactNameChanged( const QString &, const QString & ) ) );
+		}
 
 		if ( reason.isEmpty() )
 			sendInternalMessage( i18n( "%1 has left the chat." ).arg( contactName ) ) ;
@@ -702,9 +708,6 @@ void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &
 #endif
 			);
 		}
-
-		delete memberContactMap[ contact ];
-		memberContactMap.remove( contact );
 	}
 
 	setTabState();
@@ -1526,7 +1529,7 @@ void KopeteContactLVI::slotExecute( QListViewItem *item )
 		((KopeteContact*)m_contact)->execute();
 }
 
-
 #include "chatview.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
+
