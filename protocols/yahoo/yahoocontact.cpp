@@ -56,11 +56,6 @@ YahooContact::YahooContact(KopeteAccount *account, const QString &userId, const 
 		syncToServer();
 }
 
-YahooContact::~YahooContact()
-{
-	kdDebug(14180) << "Yahoo::~YahooContact()" << endl;
-}
-
 void YahooContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData)
 {
 	kdDebug(14180) << "Yahoo::serialize(...)" << endl;

@@ -78,10 +78,6 @@ IRCContact::IRCContact(IRCAccount *account, const QString &nick, KopeteMetaConta
 	isConnected = false;
 }
 
-IRCContact::~IRCContact()
-{
-}
-
 bool IRCContact::isReachable()
 {
 	if ( onlineStatus().status() != KopeteOnlineStatus::Offline && onlineStatus().status() != KopeteOnlineStatus::Unknown )

@@ -42,7 +42,6 @@ class YahooContact : public KopeteContact
 	Q_OBJECT
 public:
 	YahooContact(KopeteAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact);
-	~YahooContact();
 
 	virtual bool isOnline() const;
 	virtual bool isReachable();

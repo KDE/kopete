@@ -117,11 +117,6 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol, KopeteMe
 	theContacts.append( this );
 }
 
-OscarContact::~OscarContact()
-{
-	kdDebug(14150) << "[OscarContact] ~OscarContact()" << endl;
-}
-
 /** Return the protocol specific serialized data that a plugin may want to store a contact list. */
 QString OscarContact::data(void) const
 {

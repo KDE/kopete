@@ -44,7 +44,7 @@ public:
 	OscarContact(const QString name,
 			OscarProtocol *protocol,
 			KopeteMetaContact *parent);
-	~OscarContact();
+
 	/**
 	 * Return the protocol specific serialized data
 	 * that a plugin may want to store a contact list.

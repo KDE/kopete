@@ -45,7 +45,6 @@ class IRCContact : public KopeteContact
 	
 	public:
 		IRCContact(IRCAccount *account, const QString &nick, KopeteMetaContact *metac);
-		~IRCContact();
 
 		/**
 		 * Sets the nickname of this contact. The nickname is distinct from the displayName
