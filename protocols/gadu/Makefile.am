@@ -2,6 +2,7 @@ METASOURCES = AUTO
 SUBDIRS = lib ui pixmaps icons
 AM_CPPFLAGS = -I$(srcdir)/ui \
 	-I./ui \
+	-I./lib \
 	-I$(srcdir)/lib \
 	$(KOPETE_INCLUDES) \
 	$(all_includes)
