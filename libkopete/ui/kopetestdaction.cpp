@@ -27,7 +27,7 @@ void KopeteGroupList::slotUpdateList()
 KAction* KopeteStdAction::chat( const QObject *recvr, const char *slot,
 	QObject* parent, const char *name )
 {
-	return new KAction( "&Chat...", "mail_generic", 0, recvr, slot, parent,
+	return new KAction( "Start &Chat...", "mail_generic", 0, recvr, slot, parent,
 		name );
 }
 
@@ -64,7 +64,7 @@ KListAction *KopeteStdAction::moveContact(const QObject *recvr, const char *slot
 KListAction *KopeteStdAction::copyContact( const QObject *recvr,
 	const char *slot, QObject* parent, const char *name )
 {
-	return new KopeteGroupList( "&Copy Contact", "editcopy", 0, recvr, slot,
+	return new KopeteGroupList( "Cop&y Contact", "editcopy", 0, recvr, slot,
 		parent, name );
 }
 
