@@ -743,5 +743,5 @@ default_presentation=2
 
 [icq_authorization]
 Name=ICQ Authorization
-Comment=A ICQ user has authorized/declined your authorization request
+Comment=An ICQ user has authorized/declined your authorization request
 default_presentation=16
