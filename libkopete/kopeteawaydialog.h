@@ -18,7 +18,6 @@
 #ifndef KOPETEAWAYDIALOG_H
 #define KOPETEAWAYDIALOG_H
 
-class QString;
 class KopeteAway;
 class QKeyEvent;
 

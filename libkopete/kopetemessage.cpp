@@ -446,12 +446,13 @@ QString KopeteMessage::escapedBody() const
 	{
 		escapedBody = QStyleSheet::escape( escapedBody );
  		//Replace carriage returns inside the text
-		escapedBody.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br/>" ) );
+		escapedBody.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br />" ) );
 
 		//Replace a tab with 4 spaces
 		escapedBody.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
 
-		//Replace multiple spaces with &nbsp;  //do not remplace everyspace so we break the linebreak
+		//Replace multiple spaces with &nbsp;
+		//do not replace every space so we break the linebreak
 		escapedBody.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
 	}
 

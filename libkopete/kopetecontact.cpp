@@ -22,7 +22,15 @@
 #include <qapplication.h>
 
 #include <kdebug.h>
+
+#include <kdeversion.h>
+#if KDE_IS_VERSION( 3, 1, 90 )
 #include <kinputdialog.h>
+#else
+#include <klineeditdlg.h>
+#endif
+
+#include <kdialogbase.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
 #include <kmessagebox.h>
@@ -271,18 +279,23 @@ KPopupMenu* KopeteContact::popupMenu()
 	return menu;
 }
 
-void KopeteContact::slotChangeDisplayName(){
-	bool okClicked;
+void KopeteContact::slotChangeDisplayName()
+{
+#if KDE_IS_VERSION( 3, 1, 90 )
 	QString newName = KInputDialog::getText( i18n( "Change Alias" ), i18n( "New alias for %1:" ).arg( contactId() ),
-		displayName(), &okClicked );
+		displayName());
+#else
+	QString newName = KLineEditDlg::getText( i18n( "Change Alias" ), i18n( "New alias for %1:" ).arg( contactId() ),
+		displayName());
+#endif
 
-	if( okClicked )
+	if( !newName.isNull() )
 		setDisplayName( newName );
 }
 
 void KopeteContact::slotChangeMetaContact()
 {
-	KDialogBase *moveDialog= new KDialogBase( qApp->mainWidget(), "moveDialog", true, i18n( "Move Contact" ),
+	KDialogBase *moveDialog = new KDialogBase( qApp->mainWidget(), "moveDialog", true, i18n( "Move Contact" ),
 		KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
 
 	QVBox *w = new QVBox( moveDialog );
