@@ -21,10 +21,10 @@
             <cstring>unnamed</cstring>
         </property>
         <property name="margin">
-            <number>11</number>
+            <number>0</number>
         </property>
         <property name="spacing">
-            <number>6</number>
+            <number>0</number>
         </property>
         <widget class="QTabWidget">
             <property name="name">
