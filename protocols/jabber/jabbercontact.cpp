@@ -86,7 +86,8 @@ void JabberContact::initActions() {
 void JabberContact::showContextMenu(QPoint, QString) {
     popup = new KPopupMenu();
     popup->insertTitle(userID() + " (" + mResource + ")");
-    actionChat->plug(popup);
+	KGlobal::config()->setGroup("Jabber");
+	actionChat->plug(popup);
 	if (mStatus != STATUS_OFFLINE) {
 		QStringList items;
 		int activeItem;
@@ -228,7 +229,7 @@ void JabberContact::slotChatThisUser() {
 }
 
 void JabberContact::execute() {
-    slotChatThisUser();
+	slotChatThisUser();
 }
 
 void JabberContact::slotNewMessage(const JabMessage &message) {
@@ -245,10 +246,7 @@ void JabberContact::slotNewMessage(const JabMessage &message) {
 	contactList.append(mProtocol->myself());
 	KopeteMessage jabberMessage(this, contactList, message.body, message.subject, KopeteMessage::Inbound);
 	kdDebug() << "Jabber contact: Past new KM" << endl;
-	if (message.type == JABMESSAGE_CHAT)
 		msgManagerKCW()->appendMessage(jabberMessage);
-	else
-		msgManagerKEW()->appendMessage(jabberMessage);
 	kdDebug() << "Jabber contact: end slotNewMessage" << endl;
 }
 
