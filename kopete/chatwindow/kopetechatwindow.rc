@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui version="27" name="kopetechatwindow">
+<kpartgui version="28" name="kopetechatwindow">
 	<MenuBar>
 		<Menu noMerge="1" name="file">
 			<text>&amp;Chat</text>
@@ -46,9 +46,9 @@
 	<ToolBar name="mainToolBar" fullWidth="true">
 		<text>Main Toolbar</text>
 		<Action name="format_smiley"/>
-		<Separator lineSeparator="true"/>
+		<Separator weakSeparator="true" lineSeparator="true"/>
 		<Merge />
-		<Separator lineSeparator="true"/>
+		<Separator weakSeparator="true" lineSeparator="true"/>
 		<Action name="toolbar_animation"/>
 	</ToolBar>
 
