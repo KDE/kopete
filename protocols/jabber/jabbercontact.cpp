@@ -153,6 +153,13 @@ KActionCollection *JabberContact::customContextMenuActions ()
 	actionStatusDND = new KAction (i18n ("Do Not Disturb"), "jabber_na", 0, this, SLOT (slotStatusDND ()), actionSetAvailability, "actionDND");
 	actionStatusInvisible =
 		new KAction (i18n ("Invisible"), "jabber_invisible", 0, this, SLOT (slotStatusInvisible ()), actionSetAvailability, "actionInvisible");
+	
+	actionSetAvailability->insert(actionStatusOnline );
+	actionSetAvailability->insert(actionStatusChatty );
+	actionSetAvailability->insert(actionStatusAway );
+	actionSetAvailability->insert(actionStatusXA);
+	actionSetAvailability->insert(actionStatusDND);
+	actionSetAvailability->insert(actionStatusInvisible);
 
 	KGlobal::config ()->setGroup ("Jabber");
 
