@@ -315,7 +315,6 @@ void KopeteContact::slotMoveDialogOkClicked()
 void KopeteContact::setMetaContact( KopeteMetaContact *m )
 {
 	KopeteMetaContact *old = m_metaContact;
-	m_metaContact->removeContact( this );
 	m->addContact( this );
 
 	KopeteGroupList newGroups = m->groups();
@@ -327,6 +326,8 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 	m->insertChild( this );
 	m_metaContact = m;
 
+	old->removeContact( this );
+	
 	// Reconnect signals to the new meta contact
 	disconnect( old, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
 		protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );

@@ -194,7 +194,11 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 		}
 		emit contactRemoved(c);
 	}
-	updateOnlineStatus();
+	
+	if( m_contacts.count() == 0 )
+		KopeteContactList::contactList()->removeMetaContact( this );
+	else
+		updateOnlineStatus();
 }
 
 bool KopeteMetaContact::isTopLevel()
