@@ -209,13 +209,13 @@ void JabberContact::initActions()
 
 	// Availability status
 	if (!actionStatusAway)
-		actionStatusAway = new KAction(i18n("Temporarily away"), "", 0, this,SLOT(slotStatusAway()), this,  "actionAway");
+		actionStatusAway = new KAction(i18n("Away"), "jabber_away", 0, this,SLOT(slotStatusAway()), this,  "actionAway");
 	if (!actionStatusChat)
-		actionStatusChat = new KAction(i18n("Free to chat"), "", 0, this, SLOT(slotStatusChat()), this, "actionChat");
+		actionStatusChat = new KAction(i18n("Free to chat"), "jabber_online", 0, this, SLOT(slotStatusChat()), this, "actionChat");
 	if (!actionStatusXA)
-		actionStatusXA = new KAction(i18n("Extended away"), "", 0, this, SLOT(slotStatusXA()),this, "actionXA");
+		actionStatusXA = new KAction(i18n("Extended away"), "jabber_away", 0, this, SLOT(slotStatusXA()),this, "actionXA");
 	if (!actionStatusDND)
-		actionStatusDND = new KAction(i18n("Do not Disturb"), "", 0, this, SLOT(slotStatusDND()), this, "actionDND");
+		actionStatusDND = new KAction(i18n("Do not Disturb"), "jabber_na", 0, this, SLOT(slotStatusDND()), this, "actionDND");
 }
 
 void JabberContact::showContextMenu(const QPoint& point, const QString&)
@@ -299,7 +299,7 @@ void JabberContact::showContextMenu(const QPoint& point, const QString&)
 
 	// Availability popup menu
 	KPopupMenu *popup_status = new KPopupMenu();
-	popup->insertItem("Availabilty", popup_status);
+	popup->insertItem("Set availabilty", popup_status);
 
 	actionStatusChat->plug(popup_status);
 	actionStatusAway->plug(popup_status);
