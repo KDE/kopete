@@ -57,9 +57,7 @@ public:
 		BaseBgColor = 2,     // Setting the fg color of the whole edit widget / message
 		RichFgColor = 4,       // Setting the fg/bg color of text portions individually
 		RichBgColor = 8,       // Setting the fg/bg color of text portions individually
-		// Combination of two above
-		RichColor = RichBgColor | RichFgColor,
-
+		
 		BaseFont = 16,        // Setting the font of the whole edit widget / message
 		RichFont = 32,       // Setting the font of text portions individually
 
@@ -73,13 +71,16 @@ public:
 		RichIFormatting = 1024,
 		RichBFormatting = 2048,
 
+		Alignment = 4096,     // Setting the alignment of text portions
+
 		// Setting the formatting of the whole edit widget / message
 		BaseFormatting = BaseIFormatting | BaseUFormatting | BaseBFormatting,
 
 		// Setting the formatting of text portions individually
 		RichFormatting = RichIFormatting | RichUFormatting | RichBFormatting,
 
-		Alignment = 4096,     // Setting the alignment of text portions
+		RichColor = RichBgColor | RichFgColor,
+		BaseColor = BaseBgColor | BaseFgColor,
 
 		//Shortcut for All of the above - full HTML
 		FullRTF =  65535
