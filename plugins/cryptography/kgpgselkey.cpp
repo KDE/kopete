@@ -106,7 +106,7 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal):KDialog
   vbox->addWidget(keysListpr);
   if (showlocal==true)
     {
-      local = new QCheckBox(QString(i18n("Local signature (cannot be exported)")),page);
+      local = new QCheckBox(i18n("Local signature (cannot be exported)"),page);
       vbox->addWidget(local);
     }
 
