@@ -189,33 +189,35 @@ void MSNMessageManager::slotMessageSent(KopeteMessage &message,KopeteMessageMana
 
 void MSNMessageManager::slotMessageReceived( KopeteMessage &msg )
 {
-	if(msg.plainBody().startsWith("AutoMessage: "))
+	if( msg.plainBody().startsWith( "AutoMessage: " ) )
 	{
 		//FIXME: HardCodded color are not so good
-		msg.setFg(QColor("SlateGray3"));
+		msg.setFg( QColor( "SlateGray3" ) );
 		QFont f;
-		f.setItalic(true);
-		msg.setFont(f);
+		f.setItalic( true );
+		msg.setFont( f );
 	}
-	appendMessage(msg);
-	if(account()->isAway() && !static_cast<MSNAccount*>(account())->awayReason().isEmpty())
+	appendMessage( msg );
+	if( account()->isAway() && !static_cast<MSNAccount *>( account() )->awayReason().isEmpty() )
 	{
-		KGlobal::config()->setGroup("MSN");
-		if( KGlobal::config()->readBoolEntry( "SendAwayMessages", true ) &&
-			( !m_awayMessageTime.isValid()  ||  m_awayMessageTime.elapsed() > 1000* KGlobal::config()->readNumEntry( "AwayMessagesSeconds", 90 ))  )
+		KConfig *config = KGlobal::config();
+		config->setGroup( "MSN" );
+		if ( config->readBoolEntry( "SendAwayMessages", true ) &&
+			( !m_awayMessageTime.isValid() ||
+			m_awayMessageTime.elapsed() > 1000 * config->readNumEntry( "AwayMessagesSeconds", 90 ) )  )
 		{
-			//Don't translate "Auto-Message:" This string is caught by MSN Plus! , (and also by kopete now)
-			KopeteMessage msg2(user(), members() , "AutoMessage: " + static_cast<MSNAccount*>(account())->awayReason() , KopeteMessage::Outbound );
-			msg2.setFg(QColor("SlateGray3"));
+			// Don't translate "Auto-Message:" This string is caught by MSN Plus! (and also by kopete now)
+			KopeteMessage msg2( user(), members(),
+				"AutoMessage: " + static_cast<MSNAccount *>( account() )->awayReason(), KopeteMessage::Outbound );
+			msg2.setFg( QColor( "SlateGray3" ) );
 			QFont f;
-			f.setItalic(true);
-			msg2.setFont(f);
-			slotMessageSent(msg2,this);
+			f.setItalic( true );
+			msg2.setFont( f );
+			slotMessageSent( msg2, this );
 			m_awayMessageTime.restart();
 		}
 	}
 }
-
 
 void MSNMessageManager::slotActionInviteAboutToShow()
 {
