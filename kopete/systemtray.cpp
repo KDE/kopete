@@ -82,14 +82,14 @@ KopeteSystemTray::~KopeteSystemTray()
 
 void KopeteSystemTray::mousePressEvent( QMouseEvent *me )
 {
-	if ( me->button() == QEvent::MidButton )
+	if (
+		(me->button() == QEvent::MidButton || me->button() == QEvent::LeftButton) &&
+		mIsBlinking )
 	{
-		if ( mIsBlinking )
-		{
-			mouseDoubleClickEvent( me );
-			return;
-		}
+		mouseDoubleClickEvent( me );
+		return;
 	}
+
 	KSystemTray::mousePressEvent( me );
 }
 
