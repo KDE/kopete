@@ -11,10 +11,10 @@ libgroupwise_tasks_la_SOURCES = requesttask.cpp eventtask.cpp logintask.cpp \
 			sendinvitetask.cpp joinconferencetask.cpp leaveconferencetask.cpp rejectinvitetask.cpp \
 			keepalivetask.cpp createcontacttask.cpp modifycontactlisttask.cpp createfoldertask.cpp \
 			movecontacttask.cpp updateitemtask.cpp createcontactinstancetask.cpp deleteitemtask.cpp \
-		updatefoldertask.cpp updatecontacttask.cpp searchtask.cpp
+		updatefoldertask.cpp updatecontacttask.cpp searchtask.cpp pollsearchresultstask.cpp
 noinst_HEADERS = requesttask.h eventtask.h logintask.h setstatustask.h \
 			statustask.h conferencetask.h createconferencetask.h sendmessagetask.h \
 			getdetailstask.h getstatustask.h typingtask.h connectiontask.h sendinvitetask.h \
 			joinconferencetask.h leaveconferencetask.h rejectinvitetask.h createcontacttask.h \
 			modifycontactlisttask.h createfoldertask.h movecontacttask.h updateitemtask.h deleteitemtask.h \
-		updatefoldertask.h updatecontacttask.h searchtask.h
+		updatefoldertask.h updatecontacttask.h searchtask.h pollsearchresultstask.h
