@@ -457,7 +457,7 @@ void JabberProtocol::initActions()
 	actionGoXA = new KAction(i18n("Extended Away"), "jabber_away", 0, this, SLOT(slotSetXA()), this, "actionJabberXA");
 	actionGoDND = new KAction(i18n("Do Not Disturb"), "jabber_na", 0, this, SLOT(slotSetDND()), this, "actionJabberDND");
 	actionGoOffline = new KAction(i18n("Offline"), "jabber_offline", 0, this, SLOT(slotDisconnect()), this, "actionJabberDisconnect");
-	actionSendRaw = new KAction(i18n("Send raw packet..."), "jabber_offline", 0, this, SLOT(slotSendRaw()), this, "actionJabberSendRaw");
+	actionSendRaw = new KAction(i18n("Send raw packet..."), "filenew", 0, this, SLOT(slotSendRaw()), this, "actionJabberSendRaw");
 	
 	actionStatusMenu = new KActionMenu("Jabber", this);
 	
