@@ -27,7 +27,7 @@ Comment[ta]=உடனடி தூதர்
 Comment[uk]=Програма обміну повідомленнями Kopete
 Comment[ven]=Murumiwa wa Kopete
 Comment[xx]=xxKopete Messengerxx
-Comment[zh_CN]=Kopete 即时消息客户程序
+Comment[zh_CN]=Kopete 信使
 
 [kopete_event]
 Name=Event
@@ -171,6 +171,7 @@ Comment[ru]=Получено новое сообщение
 Comment[sv]=Ett inkommande meddelande har anlänt
 Comment[ta]=உள்வரும் தகவல் பெறப்பட்டது
 Comment[xx]=xxAn incoming message has been receivedxx
+Comment[zh_CN]=收到了消息
 default_sound=Kopete_Received.ogg
 default_presentation=64
 
@@ -229,6 +230,7 @@ Comment[ru]=Исходящее сообщение отправлено
 Comment[sv]=Ett utgående meddelande har skickats
 Comment[ta]=வெளிச்செல்ல வேண்டிய தகவல் அனுப்பட்டது
 Comment[xx]=xxAn outgoing message has been sentxx
+Comment[zh_CN]=送出了消息
 default_sound=Kopete_Sent.ogg
 default_presentation=0
 
@@ -280,6 +282,7 @@ Comment[ru]=Пользователь вошёл в сеть
 Comment[sv]=En användare har kopplat upp
 Comment[ta]=பயனர் உரையாட வந்துள்ளார்
 Comment[xx]=xxA contact has come onlinexx
+Comment[zh_CN]=联系人上线
 default_sound=Kopete_User_is_Online.ogg
 default_presentation=16
 
@@ -330,6 +333,7 @@ Comment[ru]=Пользователь вышел из сети
 Comment[sv]=En användare har kopplat ner
 Comment[ta]=பயனர் வெளியேறிவிட்டார்
 Comment[xx]=xxA contact has gone offlinexx
+Comment[zh_CN]=联系人离线
 default_sound=Kopete_Event.ogg
 default_presentation=0
 
@@ -386,6 +390,7 @@ Comment[pt_BR]=O usuário mudou o seu status de on-line
 Comment[sv]=Uppkopplingsstatus för en användare har ändrats
 Comment[ta]= இணைய உரையாடலில் பயனரின் நிலை மாற்றப்பட்டது
 Comment[xx]=xxA contact's online status has changedxx
+Comment[zh_CN]=联系人更改了他的在线状态
 default_sound=Kopete_Event.ogg
 default_presentation=0
 
@@ -439,6 +444,7 @@ Comment[pt_BR]=Uma mensagem de destaque foi recebida
 Comment[sv]=Ett markerat meddelande har tagits emot
 Comment[ta]=தனிப்படுத்தப்பட்ட செய்தி பெறப்பட்டது
 Comment[xx]=xxA highlighted message has been receivedxx
+Comment[zh_CN]=收到了突出显示的消息
 default_sound=Kopete_Received.ogg
 default_presentation=65
 
@@ -454,6 +460,7 @@ Name[pt]=Mensagens de baixa prioridade
 Name[pt_BR]=Mensagens de baixa prioridade
 Name[sv]=Lågprioriterat meddelande
 Name[ta]=குறைந்த முண்ணுரிமை உள்ள செய்திகள்
+Name[zh_CN]=低优先级消息
 Comment=A message marked with a low priority has been received
 Comment[bg]=Пристигна съобщение с нисък приоритет
 Comment[da]=En indkommende besked med lav prioritet er blevet modtaget
@@ -463,6 +470,7 @@ Comment[nl]=Er is een bericht met een lage prioriteit binnengekomen
 Comment[pt]=Foi recebida uma mensagem marcada como de baixo prioridade
 Comment[pt_BR]=Foi recebida uma mensagem marcada como de baixo prioridade
 Comment[sv]=Ett inkommande meddelande har anlänt
+Comment[zh_CN]=收到了标为低优先级的消息
 default_presentation=0
 
 
@@ -478,6 +486,7 @@ Name[ru]=Почта Yahoo
 Name[sv]=Yahoo e-post
 Name[ta]=யாஊ கடிதம்
 Name[xx]=xxYahoo Mailxx
+Name[zh_CN]=Yahoo 邮件
 Comment=New email has arrived in your Yahoo inbox
 Comment[bg]=Пристигна нова поща в Yahoo
 Comment[da]=Ny e-post ankom til din Yahoo-indbakke
@@ -490,6 +499,7 @@ Comment[pt_BR]=Chegou uma mensagem nova à sua caixa de correio do Yahoo
 Comment[sv]=Ett nytt brev har anlänt i din Yahoo-inkorg
 Comment[ta]=உங்கள் மின் அஞ்சல் பெட்டிக்குள் புதிய மின்னஞ்சல் ஒன்று வந்துள்ளது
 Comment[xx]=xxNew email has arrived in your Yahoo inboxxx
+Comment[zh_CN]=您的 Yahoo 收件箱中有新邮件到达
 default_presentation=16
 
 [msn_mail]
@@ -537,4 +547,5 @@ Comment[pt_BR]=chegou um novo e-mail em sua caixa de entrada MSN
 Comment[sv]=Ett nytt brev har anlänt i din MSN-inkorg
 Comment[ta]=உங்கள் எம் எஸ் என் அஞ்சல் பெட்டிக்கு புதிய மின்னஞ்சல் வந்துள்ளது
 Comment[xx]=xxNew email has arrived in your MSN inboxxx
+Comment[zh_CN]=您的 MSN 收件箱中有新邮件到达
 default_presentation=2
