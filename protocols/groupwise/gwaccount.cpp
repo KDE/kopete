@@ -28,6 +28,7 @@
 #include <kaboutdata.h>
 #include <kaction.h>
 #include <kapplication.h>
+#include <kconfig.h>
 #include <kdebug.h>
 #include <kdialogbase.h>
 #include <kinputdialog.h>
