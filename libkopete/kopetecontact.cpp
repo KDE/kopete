@@ -224,7 +224,8 @@ KPopupMenu* KopeteContact::popupMenu( KopeteMessageManager *manager )
 	d->actionChangeAlias = KopeteStdAction::changeAlias( this, SLOT( slotChangeDisplayName() ), menu, "actionChangeAlias" );
 	d->actionDeleteContact = KopeteStdAction::deleteContact( this, SLOT( slotDeleteContact() ), menu, "actionDeleteContact" );
 	d->actionChangeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( slotChangeMetaContact() ), menu, "actionChangeMetaContact" );
-	d->actionAddContact = new KAction( i18n( "&Add Contact..." ), QString::fromLatin1( "bookmark_add" ), 0,
+		//FIXME: after string frezee add a &
+	d->actionAddContact = new KAction( i18n( "Add to Your Contact List" ), QString::fromLatin1( "bookmark_add" ), 0,
 		this, SLOT( slotAddContact() ), menu, "actionAddContact" );
 
 	bool reach = isReachable() && d->account->isConnected(); // save calling a method several times
