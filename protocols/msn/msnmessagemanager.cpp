@@ -21,6 +21,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
+#include <kconfig.h>
 
 #include "kopetecontactaction.h"
 #include "kopetecontactlist.h"
@@ -199,13 +200,19 @@ void MSNMessageManager::slotMessageReceived( KopeteMessage &msg )
 	appendMessage(msg);
 	if(account()->isAway() && !static_cast<MSNAccount*>(account())->awayReason().isEmpty())
 	{
-		//Don't translate "Auto-Message:" This string is caught by MSN Plus! , (and also by kopete now)
-		KopeteMessage msg2(user(), members() , "AutoMessage: " + static_cast<MSNAccount*>(account())->awayReason() , KopeteMessage::Outbound );
-		msg2.setFg(QColor("SlateGray3"));
-		QFont f;
-		f.setItalic(true);
-		msg2.setFont(f);
-		slotMessageSent(msg2,this);
+		KGlobal::config()->setGroup("MSN");
+		if( KGlobal::config()->readBoolEntry( "SendAwayMessages", true ) &&
+			( !m_awayMessageTime.isValid()  ||  m_awayMessageTime.elapsed() > 1000* KGlobal::config()->readNumEntry( "AwayMessagesSeconds", 90 ))  )
+		{
+			//Don't translate "Auto-Message:" This string is caught by MSN Plus! , (and also by kopete now)
+			KopeteMessage msg2(user(), members() , "AutoMessage: " + static_cast<MSNAccount*>(account())->awayReason() , KopeteMessage::Outbound );
+			msg2.setFg(QColor("SlateGray3"));
+			QFont f;
+			f.setItalic(true);
+			msg2.setFont(f);
+			slotMessageSent(msg2,this);
+			m_awayMessageTime.restart();
+		}
 	}
 }
 

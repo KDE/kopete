@@ -89,6 +89,8 @@ private:
 
 	QMap<long unsigned int, MSNInvitation*> m_invitations;
 
+	QTime m_awayMessageTime;
+
 
 signals:
 	/*
