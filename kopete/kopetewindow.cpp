@@ -478,7 +478,7 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *a )
 	// Adds tooltip for each status icon
 	// usefull in case You have many accounts 
 	// over one protocol
-        QToolTip::add(i, a->fullAccountName());
+        QToolTip::add(i, a->accountId() );
 	
 	// FIXME -Will
 	//slotProtocolStatusIconChanged( proto, proto->statusIcon() );
@@ -515,7 +515,7 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteAccount *account )
 		
 	// probably we have to change tooltip :-)
 	QToolTip::remove(i);
-	QToolTip::add(i, account->fullAccountName());
+	QToolTip::add(i, account->accountId());
 
 	// Because we want null pixmaps to detect the need for a loadMovie
 	// we can't use the SmallIcon() method directly
