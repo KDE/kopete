@@ -1123,7 +1123,7 @@ bool Kopete::MetaContact::syncWithKABC()
 								if ( chosen )
 								{
 									kdDebug( 14010 ) << "Adding " << *it << " to " << chosen->accountId() << endl;
-									if ( chosen->addContact( *it, QString::null, this ) )
+									if ( chosen->addContact( *it, this ) )
 										contactAdded = true;
 									else
 										KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,

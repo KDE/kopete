@@ -40,6 +40,7 @@
 #include <kopeteuiglobal.h>
 #include <kopetenotifyclient.h>
 #include <kopetemetacontact.h>
+#include <kopetecontactlist.h>
 
 // Yahoo
 #include "yahooaccount.h"
@@ -571,8 +572,8 @@ void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, co
 	if ( !contact( userid ) )
 	{
 		kdDebug(14180) << "SS Contact " << userid << " is not in the contact list. Adding..." << endl;
-		QString groupName = group;
-		addContact(userid, alias.isEmpty() ? userid : alias, 0, Kopete::Account::ChangeKABC, group);
+		Kopete::Group *g=Kopete::ContactList::self()->getGroup(group);
+		addMetaContact(userid, alias.isEmpty() ? userid : alias, g, Kopete::Account::ChangeKABC);
 	}
 
 }
@@ -613,7 +614,7 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	if( !contact( who ) )
 	{
 		kdDebug(14180) << "Adding contact " << who << endl;
-		addContact( who, who, 0L, Kopete::Account::DontChangeKABC, QString::null, true );
+		addMetaContact( who,who,  0L, Kopete::Account::Temporary );
 	}
 
     //Parse the message for it's properties

@@ -41,7 +41,7 @@ bool MSNAddContactPage::apply( Kopete::Account* i, Kopete::MetaContact*m )
 	if ( validateData() )
 	{
 		QString userid = msndata->addID->text();
-		return i->addContact( userid , userid, m, Kopete::Account::ChangeKABC );
+		return i->addContact( userid , m, Kopete::Account::ChangeKABC );
 	}
 	return false;
 }

@@ -112,7 +112,7 @@ GaduEditContact::slotApply()
 
 	if ( contact_ == NULL ) {
 		// contact doesn't exists yet, create it and set all the details
-		bool s = account_->addContact( cl_->uin, GaduContact::findBestContactName( cl_ ), 0L, Kopete::Account::DontChangeKABC, QString::null, false );
+		bool s = account_->addMetaContact( cl_->uin, GaduContact::findBestContactName( cl_ ), 0L, Kopete::Account::DontChangeKABC);
 		if ( s == false ) {
 			kdDebug(14100) << "There was a problem adding UIN "<< cl_->uin << "to users list" << endl;
 			return;

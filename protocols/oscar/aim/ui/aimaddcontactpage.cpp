@@ -69,7 +69,7 @@ bool AIMAddContactPage::apply(Kopete::Account *account,
 {
 	if(validateData())
 	{ // If everything is ok
-		return account->addContact(tocNormalize(m_gui->addSN->text()), m_gui->addSN->text(), metaContact, Kopete::Account::ChangeKABC );
+		return account->addContact(tocNormalize(m_gui->addSN->text()), metaContact, Kopete::Account::ChangeKABC );
 	}
 	return false;
 }

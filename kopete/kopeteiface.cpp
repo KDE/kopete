@@ -135,7 +135,7 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &accoun
 	if( myAccount )
 	{
 		QString contactName;
-		QString realGroupName;
+		Kopete::Group *realGroup=0L;
 		//If the nickName isn't specified we need to display the userId in the prompt
 		if( displayName.isEmpty() || displayName.isNull() )
 			contactName = contactId;
@@ -143,7 +143,7 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &accoun
 			contactName = displayName;
 
 		if ( !groupName.isEmpty() )
-			realGroupName = groupName;
+			realGroup=Kopete::ContactList::self()->getGroup( groupName );
 
 		// Confirm with the user before we add the contact
 		// FIXME: This is completely bogus since the user may not
@@ -153,7 +153,7 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &accoun
 			.arg( protocolName ).arg( contactName ), i18n( "Allow Contact?" ) ) == 3 ) // Yes == 3
 		{
 			//User said Yes
-			myAccount->addContact( contactId, contactName, 0L, Kopete::Account::DontChangeKABC, realGroupName, false );
+			myAccount->addMetaContact( contactId, contactName, realGroup, Kopete::Account::DontChangeKABC);
 			return true;
 		} else {
 			//User said No

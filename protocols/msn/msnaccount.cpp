@@ -344,7 +344,7 @@ void MSNAccount::slotStartChat()
 		if ( MSNProtocol::validContactId( handle ) )
 		{
 			if ( !contacts()[ handle ] )
-				addContact( handle, handle, 0L, Kopete::Account::DontChangeKABC, QString::null, true );
+				addMetaContact( handle, handle, 0L, Kopete::Account::Temporary );
 
 			contacts()[ handle ]->execute();
 		}
@@ -1064,7 +1064,7 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 //	kdDebug( 14140 ) << k_funcinfo <<"Creating chat for " << handle << endl;
 
 	if ( !contacts()[ handle ] )
-		addContact( handle, publicName, 0L, Kopete::Account::DontChangeKABC, QString::null, true );
+		addMetaContact( handle, publicName, 0L, Kopete::Account::Temporary );
 
 	MSNContact *c = static_cast<MSNContact *>( contacts()[ handle ] );
 

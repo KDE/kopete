@@ -788,7 +788,7 @@ GaduAccount::userlist( const QString& contactsListString )
 		}
 		else {
 			contactName = GaduContact::findBestContactName( &contactsList[i] );
-			bool s = addContact( contactsList[i].uin, contactName, 0L, Kopete::Account::DontChangeKABC, QString::null, false );
+			bool s = addMetaContact( contactsList[i].uin, contactName, 0L, Kopete::Account::DontChangeKABC);
 			if ( s == false ) {
 				kdDebug(14100) << "There was a problem adding UIN "<< contactsList[i].uin << "to users list" << endl;
 				continue;

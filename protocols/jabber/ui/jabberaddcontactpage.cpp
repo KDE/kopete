@@ -78,7 +78,7 @@ bool JabberAddContactPage::apply ( Kopete::Account *account, Kopete::MetaContact
 		for(Kopete::Group *group = groupList.first(); group; group = groupList.next())
 			groupNames += group->displayName();
 
-		if ( account->addContact ( contactId, displayName, parentContact, Kopete::Account::ChangeKABC ) )
+		if ( account->addContact ( contactId, parentContact, Kopete::Account::ChangeKABC ) )
 		{
 			XMPP::RosterItem item;
 			XMPP::Jid jid ( contactId );

@@ -247,91 +247,113 @@ const QDict<Kopete::Contact>& Kopete::Account::contacts()
 }
 
 
-bool Kopete::Account::addContact( const QString &contactId, const QString &displayName,
-	Kopete::MetaContact *parentContact, const AddMode mode, const QString &groupName, bool isTemporary )
+
+Kopete::MetaContact *Kopete::Account::addMetaContact( const QString &contactId, const QString &displayName , Kopete::Group *group, Kopete::Account::AddMode mode  ) 
 {
-	if ( contactId == accountId() )
+	if ( contactId == d->myself->contactId() )
 	{
 		kdDebug( 14010 ) << k_funcinfo <<
 			"WARNING: the user try to add myself to his contactlist - abort" << endl;
-		return false;
+		return 0L;
+	}
+	bool isTemporary = mode == Temporary;
+	
+	Contact *c = d->contacts[ contactId ];
+
+	if(!group)
+		group=Group::topLevel();
+
+	if ( c && c->metaContact() )
+	{
+		if ( c->metaContact()->isTemporary() && !isTemporary )
+		{
+			kdDebug( 14010 ) << k_funcinfo <<  " You are trying to add an existing temporary contact. Just add it on the list" << endl;
+			
+			c->metaContact()->setTemporary(false, group );
+			ContactList::self()->addMetaContact(c->metaContact());
+		}
+		else
+		{
+			// should we here add the contact to the parentContact if any?
+			kdDebug( 14010 ) << k_funcinfo << "Contact already exists" << endl;
+		}
+		return c->metaContact();
 	}
 
-	Kopete::Group *parentGroup = 0L;
-	//If this is a temporary contact, use the temporary group
-	if ( !groupName.isNull() )
-		parentGroup = isTemporary ? Kopete::Group::temporary() : Kopete::ContactList::self()->getGroup( groupName );
+	MetaContact *parentContact = new MetaContact();
+	if(!displayName.isEmpty())
+		parentContact->setDisplayName( displayName );
 
-	if(!parentGroup && parentContact)
-		parentGroup=parentContact->groups().first();
+	//Set it as a temporary contact if requested
+	if ( isTemporary )
+		parentContact->setTemporary( true );
+	else
+		parentContact->addToGroup( group );
 
+	if ( c )
+	{
+		c->setMetaContact( parentContact );
+		if ( mode == ChangeKABC )
+		{
+			parentContact->updateKABC();
+		}
+	}
+	else
+	{
+		if ( !createContact( contactId, parentContact ) )
+		{
+			delete parentContact;
+			return 0L;
+		}
+	}
+		
+	ContactList::self()->addMetaContact( parentContact );
+	return parentContact;
+}
 
-	Kopete::Contact *c = d->contacts[ contactId ];
+bool Kopete::Account::addContact(const QString &contactId , Kopete::MetaContact *parent, AddMode mode )
+{
+	if ( contactId == myself()->contactId() )
+	{
+		kdDebug( 14010 ) << k_funcinfo <<
+			"WARNING: the user try to add myself to his contactlist - abort" << endl;
+		return 0L;
+	}
+
+	bool isTemporary= parent->isTemporary();
+	Contact *c = d->contacts[ contactId ];
 	if ( c && c->metaContact() )
 	{
 		if ( c->metaContact()->isTemporary() && !isTemporary )
 		{
 			kdDebug( 14010 ) <<
-				"Kopete::Account::addContact: You are trying to add an existing temporary contact. Just add it on the list" << endl;
-			/* //FIXME: calling this can produce a message to delete the old contazct which should be deleted in many case.
-			if(c->metaContact() != parentContact)
-				c->setMetaContact(parentContact);*/
+				"Account::addContact: You are trying to add an existing temporary contact. Just add it on the list" << endl;
 
-			c->metaContact()->setTemporary(false, parentGroup );
-			if(!Kopete::ContactList::self()->metaContacts().contains(c->metaContact()))
-				Kopete::ContactList::self()->addMetaContact(c->metaContact());
+				//setMetaContact ill take care about the deletion of the old contact
+			c->setMetaContact(parent);
+			return true;
 		}
 		else
 		{
 			// should we here add the contact to the parentContact if any?
-			kdDebug( 14010 ) << "Kopete::Account::addContact: Contact already exists" << endl;
+			kdDebug( 14010 ) << "Account::addContact: Contact already exists" << endl;
 		}
 		return false; //(the contact is not in the correct metacontact, so false)
 	}
 
-	if ( parentContact )
-	{
-		//If we are given a MetaContact to add to that is marked as temporary. but
-		//this contact is not temporary, then change the metacontact to non-temporary
-		if ( parentContact->isTemporary() && !isTemporary )
-			parentContact->setTemporary( false, parentGroup );
-		else
-			parentContact->addToGroup( parentGroup );
-	}
-	else
-	{
-		//Create a new MetaContact
-		parentContact = new Kopete::MetaContact();
-		//parentContact->setDisplayName( displayName );
+	bool success= createContact(contactId, parent);
 
-		//Set it as a temporary contact if requested
-		if ( isTemporary )
-			parentContact->setTemporary( true );
-		else
-			parentContact->addToGroup( parentGroup );
-
-		Kopete::ContactList::self()->addMetaContact( parentContact );
-	}
-
-	if ( c )
-	{
-		c->setMetaContact( parentContact );
-	}
-	else
-	{
-		if ( !createContact( contactId , parentContact ) )
-			return false;
-	}
-
-	if ( mode == ChangeKABC )
+	if ( success && mode == ChangeKABC )
 	{
 		kdDebug( 14010 ) << k_funcinfo << " changing KABC" << endl;
-		parentContact->updateKABC();
+		parent->updateKABC();
 	}
-	/*else
-		kdDebug( 14010 ) << k_funcinfo << " leaving KABC" << endl;*/
-	return true;
+	
+	return success;
 }
+
+
+
 
 KActionMenu * Kopete::Account::actionMenu()
 {

@@ -158,7 +158,7 @@ void MSNMessageManager::createChat( const QString &handle,
 void MSNMessageManager::slotUserJoined( const QString &handle, const QString &publicName, bool IRO )
 {
 	if( !account()->contacts()[ handle ] )
-		account()->addContact( handle, publicName, 0L, Kopete::Account::DontChangeKABC, QString::null, true);
+		account()->addMetaContact( handle, publicName, 0L, Kopete::Account::Temporary);
 
 	MSNContact *c = static_cast<MSNContact*>( account()->contacts()[ handle ] );
 

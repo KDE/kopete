@@ -210,7 +210,7 @@ Kopete::Contact *JabberProtocol::deserializeContact (Kopete::MetaContact * metaC
 	}
 
 	if (account)
-		account->addContact (contactId, displayName, metaContact);
+		account->addContact (contactId,  metaContact);
 	return account->contacts()[contactId];
 }
 

@@ -91,7 +91,7 @@ GaduAddContactPage::apply( Kopete::Account* a , Kopete::MetaContact* mc )
 			kdDebug(14100) << "Problem because accounts differ: " << a->accountId()
 							<< " , " << account_->accountId() << endl;
 		}
-		if ( a->addContact( userid, name.isEmpty() ? userid : name, mc, Kopete::Account::ChangeKABC ) == false ) {
+		if ( !a->addContact( userid,  mc, Kopete::Account::ChangeKABC )  ) {
 			return false;
 		}
 		GaduContact *contact = static_cast<GaduContact*>( a->contacts()[ userid ] );

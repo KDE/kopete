@@ -101,7 +101,7 @@ bool GroupWiseAddContactPage::apply( Kopete::Account* account, Kopete::MetaConta
 		else
 			return false;
 
-		return ( account->addContact ( contactId, displayName, parentContact, Kopete::Account::ChangeKABC ) );
+		return ( account->addContact ( contactId, parentContact, Kopete::Account::ChangeKABC ) );
 	}
 	else
 		return false;

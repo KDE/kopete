@@ -350,7 +350,7 @@ Kopete::Contact *IRCProtocol::deserializeContact( Kopete::MetaContact *metaConta
 		Kopete::Account *a = accounts[ serializedData[ "accountId" ] ];
 		if( a )
 		{
-			a->addContact( contactId, displayName, metaContact );
+			a->addContact( contactId, metaContact );
 			return a->contacts()[contactId];
 		}
 		else

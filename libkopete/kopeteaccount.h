@@ -38,6 +38,7 @@ class Protocol;
 class MetaContact;
 class OnlineStatus;
 class BlackLister;
+class Group;
 
 /**
  * @author Olivier Goffart  <ogoffart@tiscalinet.be>
@@ -84,7 +85,7 @@ public:
 	/**
 	 * \brief Describes what should be done when the contact is added to a metacontact
 	 */
-	enum AddMode { ChangeKABC=0, DontChangeKABC=1 };
+	enum AddMode { ChangeKABC=0, DontChangeKABC=1 ,  Temporary=2  };
 
 	/**
 	 * \brief Describes how the account was disconnected
@@ -354,20 +355,35 @@ public slots:
 	 */
 	virtual void disconnect( DisconnectReason reason );
 
+
 	/**
-	 * \brief Adds a contact to this protocol with the specified details
+	 * \brief add a contact to a new metacontact
 	 *
-	 * @param contactId The unique ID for this protocol
-	 * @param displayName The displayname of the contact (may equal userId for some protocols
-	 * @param parentContact The metacontact to add this contact to
-	 * @param mode If the KDE addressbook should be changed to include the new contact. Don't change if you are using this method to deserialise.
-	 * @param groupName The name of the group to add the contact to
-	 * @param isTemporary If this is a temporary contact
-	 * @return true if the contact was added, false if not
+	 * This method will add a new metacontact containing only the contact.
+	 * It will take care the contact isn't already on the contactlist.
+	 * if it is already, the contact is not created, but the metacontact containing the contact is returned
+	 *
+	 * @param contactId The @ref Contact::contactId
+	 * @param displayName The displayname (alias) of the new metacontact. Let empty if not applicable.
+	 * @param group the group to add the contact. if NULL, it will be added to toplevel
+	 * @param mode If the KDE addressbook should be changed to include the new contact. Don't change if you are using this method to deserialise.  
+	 *   if Temporary, @p group is not used
+	 * @return the new metacontact or 0L if no contact was created because of error.
 	 */
-	bool addContact( const QString &contactId, const QString &displayName = QString::null,
-		Kopete::MetaContact *parentContact = 0L, const AddMode mode = DontChangeKABC,
-		const QString &groupName = QString::null, bool isTemporary = false ) ;
+	MetaContact *addMetaContact( const QString &contactId, const QString &displayName = QString::null, Group *group=0L, AddMode mode = DontChangeKABC ) ;
+
+	/**
+	 * @brief add a contact to an existing metacontact
+	 *
+	 * This method will check if the contact is not already in the contactlist, and if not, will add a contact
+	 * to the given metacontact.
+	 *
+	 * @param contactId The @ref Contact::contactId of the contact
+	 * @param parent The metaContact parent (must exists)
+	 * @param mode If the KDE address book should be updated. see @ref AddMode.  
+	 *
+	 */
+	bool addContact(const QString &contactId , MetaContact *parent, AddMode mode = DontChangeKABC );
 
 	/**
 	 * this will be called if main-kopete wants
