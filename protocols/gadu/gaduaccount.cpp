@@ -125,6 +125,8 @@ GaduAccount::initConnections()
 				SLOT( slotSearchResult( const SearchResult& ) ) );
 	QObject::connect( session_, SIGNAL( userListExported() ),
 				SLOT( userListExportDone() ) );
+	QObject::connect( session_, SIGNAL( userListRecieved( const QString& ) ),
+				SLOT( userlist( const QString& ) ) );
 }
 
 void
@@ -603,8 +605,6 @@ GaduAccount::connectionSucceed( )
 	myself()->setProperty( "awayMessage", lastDescription );
 	startNotify();
 
-	QObject::connect( session_, SIGNAL( userListRecieved( const QString& ) ),
-					SLOT( userlist( const QString& ) ) );
 	session_->requestContacts();
 
 	if ( !pingTimer_ ) {
