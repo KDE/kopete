@@ -81,6 +81,12 @@ public:
 	bool loadPlugin( const QString &spec );
 
 	/**
+	 * Search by Id
+	 * ex: "ICQProtocol"
+	 */
+	KopetePlugin *searchByID( const QString &Id );
+
+	/**
 	 * Search by name
 	 * ex: "ICQ"
 	 */

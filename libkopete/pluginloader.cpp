@@ -307,6 +307,21 @@ KopetePlugin * LibraryLoader::searchByName(const QString &name)
 	return 0L;
 }
 
+KopetePlugin* LibraryLoader::searchByID(  const QString &Id )
+{
+	QValueList<KopeteLibraryInfo> l = loaded();
+
+	for ( QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i )
+	{
+		KopetePlugin *tmp_plug = mLibHash[ ( *i ).specfile ];
+		if (  tmp_plug->pluginId() == Id )
+		{
+			return tmp_plug;
+		}
+	}
+	return NULL;
+}
+
 QString LibraryLoader::pluginName(KopetePlugin *plugin)
 {
 	for( QDictIterator<KopetePlugin> i( mLibHash ); i.current(); ++i )
