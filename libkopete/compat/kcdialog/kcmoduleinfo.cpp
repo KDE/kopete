@@ -111,31 +111,31 @@ KCModuleInfo::loadAll()
   _allLoaded = true;
 
   // library and factory
-  setHandle(_service->property("X-KDE-FactoryName", QVariant::String).toString());
+  setHandle(_service->property("X-KDE-FactoryName").toString());
 
   QVariant tmp;
 
   // read weight
-  tmp = _service->property( "X-KDE-Weight", QVariant::Int );
+  tmp = _service->property( "X-KDE-Weight" );
   setWeight( tmp.isValid() ? tmp.toInt() : -1 );
 
   // does the module need super user privileges?
-  tmp = _service->property( "X-KDE-RootOnly", QVariant::Bool );
+  tmp = _service->property( "X-KDE-RootOnly" );
   setNeedsRootPrivileges( tmp.isValid() ? tmp.toBool() : false );
 
   // does the module need to be shown to root only?
   // Deprecated !
-  tmp = _service->property( "X-KDE-IsHiddenByDefault", QVariant::Bool );
+  tmp = _service->property( "X-KDE-IsHiddenByDefault");
   setIsHiddenByDefault( tmp.isValid() ? tmp.toBool() : false );
 
   // get the documentation path
-  setDocPath( _service->property( "DocPath", QVariant::String ).toString() );
+  setDocPath( _service->property( "DocPath" ).toString() );
 }
 
 QString
 KCModuleInfo::docPath() const
 {
-  if (!_allLoaded) 
+  if (!_allLoaded)
     const_cast<KCModuleInfo*>(this)->loadAll();
 
   return _doc;

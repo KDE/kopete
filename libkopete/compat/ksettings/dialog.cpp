@@ -281,7 +281,7 @@ void Dialog::createDialogFromServices()
 		for( KCModuleInfo * info = d->moduleinfos.first(); info;
 				info = d->moduleinfos.next() )
 		{
-			QVariant tmp = info->service()->property( "X-KDE-CfgDlgHierarchy", QVariant::String );
+			QVariant tmp = info->service()->property( "X-KDE-CfgDlgHierarchy" );
 			if( ! tmp.isValid() )
 				continue;
 			QString id = tmp.toString();

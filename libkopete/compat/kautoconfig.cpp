@@ -27,6 +27,7 @@
 #endif
 #include <kconfig.h>
 #include <kapplication.h>
+#include <kdeversion.h>
 
 class KAutoConfig::KAutoConfigPrivate {
 
@@ -195,19 +196,22 @@ bool KAutoConfig::saveSettings() {
       ++it;
       QVariant defaultValue = d->defaultValues[groupWidget];
       QVariant currentValue = propertyMap->property(groupWidget);
-
+#if KDE_IS_VERSION( 3, 1, 90 )
       if(!config->hasDefault(groupWidget->name()) && currentValue == defaultValue){
         config->revertToDefault(groupWidget->name());
         widgetChanged = true;
       }
       else{
+#endif
         QVariant savedValue = config->readPropertyEntry(groupWidget->name(),
                                                              defaultValue);
         if(savedValue != currentValue){
           config->writeEntry(groupWidget->name(), currentValue);
           widgetChanged = true;
         }
+#if KDE_IS_VERSION( 3, 1, 90 )
       }
+#endif
     }
     d->changed |= widgetChanged;
     if(widgetChanged)

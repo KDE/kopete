@@ -243,8 +243,7 @@ void KCMultiDialog::slotAboutToShow(QWidget *page)
 
     QStringList parentComponents = loadInfo->info.service()->property(
             "X-KDE-ParentComponents" ).toStringList();
-    kdDebug(710) << k_funcinfo << "ParentComponents=" << parentComponents
-        << endl;
+//    kdDebug(710) << k_funcinfo << "ParentComponents=" << parentComponents << endl;
     moduleParentComponents.insert( module,
             new QStringList( parentComponents ) );
     module->reparent(page,0,QPoint(0,0),true);

@@ -326,9 +326,14 @@ void KTabBar::paintLabel( QPainter *p, const QRect& br,
         int pixh = pixmap.height();
         r.setLeft( r.left() + pixw + 4 );
         r.setRight( r.right() + 2 );
-
+#if QT_VERSION >= 0x030200
         int inactiveXShift = style().pixelMetric( QStyle::PM_TabBarTabShiftHorizontal, this );
         int inactiveYShift = style().pixelMetric( QStyle::PM_TabBarTabShiftVertical, this );
+#else  //FIXME! WARNING  i don't know if i can set this to 0
+        int inactiveXShift = 0;
+        int inactiveYShift = 0;
+#endif
+
 
         p->drawPixmap( br.left() + 2 + ((selected == TRUE) ? 0 : inactiveXShift),
                          br.center().y()-pixh/2 + ((selected == TRUE) ? 0 : inactiveYShift),
