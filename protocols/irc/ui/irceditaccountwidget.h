@@ -44,7 +44,7 @@ class IRCEditAccountWidget : public IRCEditAccountBase, public KopeteEditAccount
 		void slotAddCommand();
 		void slotAddCtcp();
 		void slotEditNetworks();
-		void slotUpdateNetworks();
+		void slotUpdateNetworks( const QString & );
 		void slotUpdateNetworkDescription( const QString & );
 
 	private:

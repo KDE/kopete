@@ -118,7 +118,7 @@ public:
 	void editNetworks( const QString &networkName = QString::null );
 
 signals:
-	void networkConfigUpdated();
+	void networkConfigUpdated( const QString &selectedNetwork );
 
 private slots:
 	// FIXME: All the code for managing the networks list should be in another class - Will 

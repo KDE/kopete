@@ -108,10 +108,10 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 	connect( network, SIGNAL( activated( const QString & ) ),
 		this, SLOT( slotUpdateNetworkDescription( const QString &) ) );
 
-	connect( IRCProtocol::protocol(), SIGNAL( networkConfigUpdated() ),
-		this, SLOT( slotUpdateNetworks() ) );
+	connect( IRCProtocol::protocol(), SIGNAL( networkConfigUpdated( const QString & ) ),
+		this, SLOT( slotUpdateNetworks( const QString & ) ) );
 
-	slotUpdateNetworks();
+	slotUpdateNetworks( QString::null );
 }
 
 IRCEditAccountWidget::~IRCEditAccountWidget()
@@ -123,7 +123,7 @@ IRCAccount *IRCEditAccountWidget::account ()
 	return dynamic_cast<IRCAccount *>(KopeteEditAccountWidget::account () );
 }
 
-void IRCEditAccountWidget::slotUpdateNetworks()
+void IRCEditAccountWidget::slotUpdateNetworks( const QString & selectedNetwork )
 {
 	network->clear();
 
@@ -139,7 +139,7 @@ void IRCEditAccountWidget::slotUpdateNetworks()
 	{
 		IRCNetwork * current = IRCProtocol::protocol()->networks()[*it];
 		network->insertItem( current->name );
-		if( account() && account()->networkName() == current->name )
+		if ( ( account() && account()->networkName() == current->name ) || current->name == selectedNetwork )
 		{
 			network->setCurrentItem( i );
 			description->setText( current->description );
@@ -204,7 +204,6 @@ QString IRCEditAccountWidget::generateAccountId( const QString &network )
 	while( config->hasGroup( QString("Account_%1_%2").arg( m_protocol->pluginId() ).arg( nextId ) ) )
 	{
 		nextId = QString::fromLatin1("%1_%2").arg( network ).arg( ++accountNumber );
-		accountNumber++;
 	}
 	kdDebug( 14120 ) << k_funcinfo << " ID IS: " << nextId << endl;
 	return nextId;

@@ -955,7 +955,7 @@ void IRCProtocol::slotSaveNetworkConfig()
 {
 	// store any changes in the UI
 	storeCurrentNetwork();
-	kdDebug( 14020 ) <<  k_funcinfo << m_uiCurrentHostSelection << endl;
+	kdDebug( 14120 ) <<  k_funcinfo << m_uiCurrentHostSelection << endl;
 	storeCurrentHost();
 	
 	QDomDocument doc("irc-networks");
@@ -997,7 +997,7 @@ void IRCProtocol::slotSaveNetworkConfig()
 	stream << doc.toString(4);
 	xmlFile.close();
 
-	emit networkConfigUpdated();
+	emit networkConfigUpdated( netConf->networkList->currentText() );
 }
 
 void IRCProtocol::slotReadNetworks()
