@@ -1,6 +1,7 @@
 #include "smssendprovider.h"
-#include "smsglobal.h"
 #include "smscontact.h"
+#include "smsprotocol.h"
+#include "kopeteaccount.h"
 
 #include <kdeversion.h>
 #include <kprocess.h>
@@ -11,13 +12,12 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 
-SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& prefixValue, SMSContact* contact, QObject* parent, const char *name)
-	: QObject( parent, name )
+SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& prefixValue, KopeteAccount* account, QObject* parent, const char *name)
+	: QObject( parent, name ), m_account(account)
 {
 
 	provider = providerName;
 	prefix = prefixValue;
-	m_contact = contact;
 	m_maxSize = 160;
 
 	messagePos = -1;
@@ -39,7 +39,7 @@ SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& pre
 
 				names.append(options[0].replace(0,1,""));
 				descriptions.append(args[1]);
-				values.append(SMSGlobal::readConfig(group, names[names.count()-1], m_contact));
+				values.append(m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg(group).arg(names[names.count()-1])));
 
 				if( args[0].contains("Message") || args[0].contains("message")
 					|| args[0].contains("message") || args[0].contains("nachricht")
@@ -107,10 +107,8 @@ void SMSSendProvider::save(QPtrList<SMSSendArg>& args)
 
 	for (unsigned i=0; i < args.count(); i++)
 	{
-		if (args.at(i)->value->text().isEmpty())
-			SMSGlobal::deleteConfig(group, args.at(i)->argName->text(), m_contact);
-		else
-			SMSGlobal::writeConfig(group, args.at(i)->argName->text(), m_contact, args.at(i)->value->text());
+		if (!args.at(i)->value->text().isEmpty())
+			m_account->setPluginData(SMSProtocol::protocol(), QString("%1:%2").arg(group).arg(args.at(i)->argName->text()), args.at(i)->value->text());
 	}
 }
 

@@ -13,7 +13,7 @@ class SMSSend : public SMSService
 {
 	Q_OBJECT
 public:
-	SMSSend(SMSContact* contact);
+	SMSSend(KopeteAccount* account);
 	~SMSSend();
 
 	void send(const KopeteMessage& msg);

@@ -13,14 +13,11 @@ class SMSAddContactPage : public AddContactPage
 {
    Q_OBJECT
 public:
-	SMSAddContactPage(SMSProtocol *owner, QWidget *parent=0, const char *name=0);
+	SMSAddContactPage(QWidget *parent=0, const char *name=0);
 	~SMSAddContactPage();
 	smsAddUI *smsdata;
-	SMSProtocol *plugin;
 	virtual bool validateData();
-public slots: // Public slots
-  virtual void slotFinish(KopeteMetaContact*);
-
+	virtual bool apply( KopeteAccount*, KopeteMetaContact* );
 };
 
 

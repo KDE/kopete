@@ -1,6 +1,7 @@
 #include "smsadd.h"
 #include "smsaddcontactpage.h"
 #include "smsprotocol.h"
+#include "kopeteaccount.h"
 
 #include <qlayout.h>
 #include <qlineedit.h>
@@ -9,12 +10,11 @@
 #include <kmessagebox.h>
 
 
-SMSAddContactPage::SMSAddContactPage(SMSProtocol *owner, QWidget *parent, const char *name )
+SMSAddContactPage::SMSAddContactPage(QWidget *parent, const char *name )
 				  : AddContactPage(parent,name)
 {
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	smsdata = new smsAddUI(this);
-	plugin = owner;
 }
 
 SMSAddContactPage::~SMSAddContactPage()
@@ -22,12 +22,17 @@ SMSAddContactPage::~SMSAddContactPage()
 
 }
 
-void SMSAddContactPage::slotFinish(KopeteMetaContact *m)
+bool SMSAddContactPage::apply(KopeteAccount* a, KopeteMetaContact* m)
 {
-	QString nr = smsdata->addNr->text();
-	QString name = smsdata->addName->text();
+	if ( validateData() )
+	{
+		QString nr = smsdata->addNr->text();
+		QString name = smsdata->addName->text();
+
+		return a->addContact(nr, name, m);
+	}
 	
-	plugin->addContact( nr, name, m );
+	return false;
 }
 
 

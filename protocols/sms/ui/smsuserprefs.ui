@@ -24,25 +24,6 @@
                 <cstring>telNumber</cstring>
             </property>
         </widget>
-        <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>uSpecific</cstring>
-            </property>
-            <property name="text">
-                <string>User specific settings</string>
-            </property>
-        </widget>
-        <widget class="QFrame" row="2" column="0" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>frame3</cstring>
-            </property>
-            <property name="frameShape">
-                <enum>StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Raised</enum>
-            </property>
-        </widget>
         <widget class="QLabel" row="0" column="0">
             <property name="name">
                 <cstring>textLabel3</cstring>

@@ -7,20 +7,35 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef SMSPREFERENCES_H
-#define SMSPREFERENCES_H
+#ifndef SMSEDITACCOUNTWIDGET_H
+#define SMSEDITACCOUNTWIDGET_H
 
-#include "configmodule.h"
+#include <qwidget.h>
+#include "editaccountwidget.h"
 
-class QVBoxLayout;
 class SMSService;
+class smsPrefsUI;
+class KopeteAccount;
 
-class SMSPreferences : public ConfigModule
+class SMSEditAccountWidget : public QWidget, public EditAccountWidget
 {
 	Q_OBJECT
 public:
-	SMSPreferences( const QString &pixmap, QObject *parent = 0 );
-	~SMSPreferences();
+	SMSEditAccountWidget(KopeteAccount *account, QWidget *parent);
+	~SMSEditAccountWidget();
+
+	bool validateData();
+	KopeteAccount* apply();
+public slots:
+	void setServicePreferences(const QString& serviceName);
+	void showDescription();
+protected:
+	smsPrefsUI *preferencesDialog;
+	QWidget *configWidget;
+	SMSService *service;
+
+signals:
+	void saved();
 };
 
 #endif

@@ -34,7 +34,20 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QLabel" row="0" column="0">
+	<widget class="QLabel" row="0" column="0">
+	    <property name="name">
+	        <cstring>textLabel2</cstring>
+            </property>
+	    <property name="text">
+	        <cstring>Account name:</cstring>
+            </property>
+	</widget>
+	<widget class="QLineEdit" row="0" column="1">
+	    <property name="name">
+	        <cstring>accountId</cstring>
+            </property>
+	</widget>
+        <widget class="QLabel" row="1" column="0">
             <property name="name">
                 <cstring>textLabel1</cstring>
             </property>
@@ -42,7 +55,7 @@
                 <string>Service name:</string>
             </property>
         </widget>
-        <widget class="QComboBox" row="0" column="1">
+        <widget class="QComboBox" row="1" column="1">
             <property name="name">
                 <cstring>serviceName</cstring>
             </property>
@@ -55,7 +68,7 @@
                 </sizepolicy>
             </property>
         </widget>
-        <widget class="QFrame" row="1" column="0" rowspan="1" colspan="3">
+        <widget class="QFrame" row="2" column="0" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>frame3</cstring>
             </property>
@@ -66,7 +79,7 @@
                 <enum>Raised</enum>
             </property>
         </widget>
-        <widget class="QPushButton" row="0" column="2">
+        <widget class="QPushButton" row="1" column="2">
             <property name="name">
                 <cstring>descButton</cstring>
             </property>

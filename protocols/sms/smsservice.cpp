@@ -1,9 +1,8 @@
 #include "smsservice.h"
 
-SMSService::SMSService(SMSContact* contact)
-	: QObject()
+SMSService::SMSService(KopeteAccount* account)
+	: QObject(), m_account(account)
 {
-	m_contact = contact;
 }
 
 SMSService::~SMSService()

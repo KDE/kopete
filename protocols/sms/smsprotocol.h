@@ -46,24 +46,16 @@ public:
 	virtual void deserializeContact( KopeteMetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 
-	virtual AddContactPage *createAddContactWidget( QWidget *parent );
-
-	SMSContact* addContact( const QString& nr , const QString& name, KopeteMetaContact *m=0L);
-
-	KopeteContact *myself() const;
+	virtual AddContactPage *createAddContactWidget( QWidget *parent , KopeteAccount *i);
+	virtual EditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
+	virtual KopeteAccount *createNewAccount(const QString &accountId);
 
 	const KopeteOnlineStatus SMSOnline;
-	const KopeteOnlineStatus SMSOffline;
 	const KopeteOnlineStatus SMSUnknown;
-
-public slots:
-	virtual void connect();
-	virtual void disconnect();
+	const KopeteOnlineStatus SMSOffline;
 
 private:
 	static SMSProtocol* s_protocol;
-
-	SMSContact *m_mySelf;
 };
 
 #endif

@@ -12,7 +12,7 @@ class SMSContact;
 class SMSService : public QObject
 {
 public:
-	SMSService(SMSContact* contact);
+	SMSService(KopeteAccount* account);
 	virtual ~SMSService();
 
 	virtual void send(const KopeteMessage& msg) = 0;
@@ -25,7 +25,7 @@ public slots:
 signals:
 	void messageSent(const KopeteMessage&);
 protected:
-	SMSContact* m_contact;
+	KopeteAccount* m_account;
 } ;
 
 #endif //SMSSERVICE_H

@@ -14,11 +14,12 @@
 #include "serviceloader.h"
 #include "smsprotocol.h"
 #include "smsuserpreferences.h"
-#include "smsglobal.h"
+#include "smsaccount.h"
 
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
+#include "kopeteaccount.h"
 
 #include <qlineedit.h>
 #include <qcheckbox.h>
@@ -29,30 +30,27 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 
-SMSContact::SMSContact( SMSProtocol* _protocol, const QString &phoneNumber,
+SMSContact::SMSContact( KopeteAccount* _account, const QString &phoneNumber,
 	const QString &displayName, KopeteMetaContact *parent )
-: KopeteContact( _protocol, phoneNumber, parent )
+: KopeteContact( _account, phoneNumber, parent )
 {
 	setPhoneNumber( phoneNumber );
 	setDisplayName( displayName );
-	m_serviceName = QString::null;
 
-	initActions();
+	m_actionCollection = 0L;
+	m_actionPrefs = new KAction(i18n("&User Preferences"), 0, this, SLOT(userPrefs()), m_actionCollection, "userPrefs");
 
 	m_msgManager = 0L;
 
-	setOnlineStatus( _protocol->SMSUnknown );
+	setOnlineStatus( SMSProtocol::protocol()->SMSUnknown );
 }
 
 void SMSContact::serialize( QMap<QString, QString> &serializedData,
 	QMap<QString, QString> & /* addressBookData */ )
 {
-	// Contact id and display name are already set for us, only add the rest
-	if( !serviceName().isNull() )
-	{
-		serializedData[ "serviceName" ]  = serviceName();
-		serializedData[ "servicePrefs" ] = servicePrefs().join( "," );
-	}
+	// Contact id and display name are already set for us
+	if (m_phoneNumber != contactId())
+		serializedData[ "contactId" ] = m_phoneNumber;
 }
 
 KopeteMessageManager* SMSContact::manager( bool )
@@ -65,7 +63,7 @@ KopeteMessageManager* SMSContact::manager( bool )
 	{
 		QPtrList<KopeteContact> contacts;
 		contacts.append(this);
-		m_msgManager = KopeteMessageManagerFactory::factory()->create(protocol()->myself(), contacts, protocol());
+		m_msgManager = KopeteMessageManagerFactory::factory()->create(account()->myself(), contacts, protocol());
 		connect(m_msgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager*)),
 		this, SLOT(slotSendMessage(KopeteMessage&)));
 		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
@@ -81,14 +79,14 @@ void SMSContact::slotMessageManagerDestroyed()
 
 void SMSContact::slotSendMessage(KopeteMessage &msg)
 {
-	QString sName = SMSGlobal::readConfig("SMS", "ServiceName", this);
+	QString sName = account()->pluginData(protocol(), "ServiceName");
 
-	SMSService* s = ServiceLoader::loadService( sName, this );
+	SMSService* s = ServiceLoader::loadService( sName, account() );
 
 	if ( s == 0L)
 		return;
 
-	connect ( s, SIGNAL(messageSent(KopeteMessage&)),
+	connect ( s, SIGNAL(messageSent(const KopeteMessage&)),
 		this, SLOT(messageSent(KopeteMessage&)));
 
 	int msgLength = msg.plainBody().length();
@@ -143,72 +141,6 @@ QString SMSContact::phoneNumber()
 void SMSContact::setPhoneNumber( const QString phoneNumber )
 {
 	m_phoneNumber = phoneNumber;
-}
-
-QString SMSContact::serviceName()
-{
-	return m_serviceName;
-}
-
-void SMSContact::setServiceName(QString name)
-{
-	m_serviceName = name;
-}
-
-QString SMSContact::servicePref(QString name)
-{
-	return m_servicePrefs[name];
-}
-
-void SMSContact::setServicePref(QString name, QString value)
-{
-	m_servicePrefs.insert(name, value);
-}
-
-void SMSContact::deleteServicePref(QString name)
-{
-	m_servicePrefs.erase(name);
-}
-
-void SMSContact::clearServicePrefs()
-{
-	m_servicePrefs.clear();
-	m_serviceName = QString::null;
-}
-
-QStringList SMSContact::servicePrefs()
-{
-	QStringList prefs;
-
-	for (QMap<QString, QString>::Iterator it = m_servicePrefs.begin();
-			it != m_servicePrefs.end(); ++it)
-	{
-		QString key = it.key();
-		if (key.length() == 0)
-			continue;
-		QString data = it.data();
-		if (data.length() == 0)
-			continue;
-		prefs.append(QString("%1=%2").arg(key.replace(QRegExp("="),"\\=")).arg(data.replace(QRegExp("="),"\\=")));
-	}
-
-	return prefs;
-}
-
-void SMSContact::setServicePrefs(QStringList prefs)
-{
-	for ( QStringList::Iterator it = prefs.begin(); it != prefs.end(); ++it)
-	{
-		QRegExp r("(.*)[^\\]=(.*)");
-		r.search(*it);
-		setServicePref(r.cap(1).replace(QRegExp("\\="), "="), r.cap(2).replace(QRegExp("\\="), "="));
-	}
-}
-
-void SMSContact::initActions()
-{
-	m_actionCollection = 0L;
-	m_actionPrefs = new KAction(i18n("&User Preferences"), 0, this, SLOT(userPrefs()), m_actionCollection, "userPrefs");
 }
 
 KActionCollection* SMSContact::customContextMenuActions()

@@ -1,7 +1,8 @@
 #include "smssend.h"
 #include "smssendprefs.h"
 #include "smssendprovider.h"
-#include "smsglobal.h"
+#include "smsprotocol.h"
+#include "kopeteaccount.h"
 
 #include <qdir.h>
 #include <qcombobox.h>
@@ -16,8 +17,8 @@
 #include <kurlrequester.h>
 #include <kmessagebox.h>
 
-SMSSend::SMSSend(SMSContact* contact)
-	: SMSService(contact)
+SMSSend::SMSSend(KopeteAccount* account)
+	: SMSService(account)
 {
 	prefWidget = 0L;
 }
@@ -28,7 +29,7 @@ SMSSend::~SMSSend()
 
 void SMSSend::send(const KopeteMessage& msg)
 {
-	QString provider = SMSGlobal::readConfig("SMSSend", "ProviderName", m_contact);
+	QString provider = m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSSend").arg("ProviderName"));
 
 	if (provider.length() < 1)
 	{
@@ -36,14 +37,14 @@ void SMSSend::send(const KopeteMessage& msg)
 		return;
 	}
 
-	QString prefix = SMSGlobal::readConfig("SMSSend", "Prefix", m_contact);
+	QString prefix = m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSSend").arg("Prefix"));
 	if (prefix.isNull())
 	{
 		KMessageBox::error(0L, i18n("No prefix set for SMSSend, please change it in the configuration dialog"), i18n("No Prefix"));
 		return;
 	}
 
-	SMSSendProvider* s = new SMSSendProvider(provider, prefix, m_contact, this);
+	SMSSendProvider* s = new SMSSendProvider(provider, prefix, m_account, this);
 
 	connect( s, SIGNAL(messageSent(const KopeteMessage &)), this, SIGNAL(messageSent(const KopeteMessage &)));
 
@@ -56,7 +57,7 @@ QWidget* SMSSend::configureWidget(QWidget* parent)
 		prefWidget = new SMSSendPrefsUI(parent);
 	
 	prefWidget->program->setMode(KFile::Directory);
-	QString prefix = SMSGlobal::readConfig("SMSSend", "Prefix", m_contact);
+	QString prefix = m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSSend").arg("Prefix"));
 	if (prefix.isNull())
 	{
 		QDir d("/usr/share/smssend");
@@ -92,10 +93,10 @@ void SMSSend::savePreferences()
 {
 	if (prefWidget != 0L)
 	{
-		SMSGlobal::writeConfig("SMSSend", "Prefix", m_contact, prefWidget->program->url());
-		SMSGlobal::writeConfig("SMSSend", "ProviderName", m_contact, prefWidget->provider->currentText());
+		m_account->setPluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSSend").arg("Prefix"), prefWidget->program->url());
+		m_account->setPluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSSend").arg("ProviderName"), prefWidget->provider->currentText());
 		SMSSendProvider* s = new SMSSendProvider(prefWidget->provider->currentText(),
-			prefWidget->program->url(), m_contact, this);
+			prefWidget->program->url(), m_account, this);
 		s->save(args);
 	}
 }
@@ -127,7 +128,7 @@ void SMSSend::loadProviders(const QString &prefix)
 
 	prefWidget->provider->insertStringList(p);
 
-	QString pName = SMSGlobal::readConfig("SMSSend", "ProviderName", m_contact);
+	QString pName = m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSSend").arg("ProviderName"));
 	bool found=false;
 	for (int i=0; i < prefWidget->provider->count(); i++)
 	{
@@ -150,7 +151,7 @@ void SMSSend::setOptions(const QString& name)
 	args.setAutoDelete(true);
 	args.clear();
 
-	SMSSendProvider* s = new SMSSendProvider(name, prefWidget->program->url(), m_contact, this);
+	SMSSendProvider* s = new SMSSendProvider(name, prefWidget->program->url(), m_account, this);
 
 	for (int i=0; i < s->count(); i++)
 	{
@@ -168,13 +169,13 @@ void SMSSend::setOptions(const QString& name)
 
 int SMSSend::maxSize()
 {
-	QString pName = SMSGlobal::readConfig("SMSSend", "ProviderName", m_contact);
+	QString pName = m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSSend").arg("ProviderName"));
 	if (pName.length() < 1)
 		return 160;
-	QString prefix = SMSGlobal::readConfig("SMSSend", "Prefix", m_contact);
+	QString prefix = m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSSend").arg("Prefix"));
 	if (prefix.isNull())
 		prefix = "/usr";
-	SMSSendProvider* s = new SMSSendProvider(pName, prefix, m_contact, this);
+	SMSSendProvider* s = new SMSSendProvider(pName, prefix, m_account, this);
 	return s->maxSize();
 }
 

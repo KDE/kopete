@@ -8,13 +8,19 @@
  ***************************************************************************/
 
 #include "smsprotocol.h"
-#include "smspreferences.h"
+#include "smseditaccountwidget.h"
 #include "smscontact.h"
 #include "smsaddcontactpage.h"
 #include "kopetemetacontact.h"
+#include "kopeteaccountmanager.h"
+#include "kopeteaccount.h"
+#include "smsaccount.h"
+#include "smspreferences.h"
 #include <kgenericfactory.h>
 #include <kmessagebox.h>
 #include <kdebug.h>
+#include <kconfig.h>
+
 
 K_EXPORT_COMPONENT_FACTORY( kopete_sms, KGenericFactory<SMSProtocol> );
 
@@ -34,8 +40,6 @@ SMSProtocol::SMSProtocol( QObject *parent, const char *name, const QStringList& 
 	QString protocolId = pluginId();
 
 	addAddressBookField( "messaging/sms", KopetePlugin::MakeIndexField );
-
-	m_mySelf = new SMSContact(protocol(), "", "", 0);
 }
 
 SMSProtocol::~SMSProtocol()
@@ -43,36 +47,14 @@ SMSProtocol::~SMSProtocol()
 	s_protocol = 0L;
 }
 
-void SMSProtocol::connect()
+AddContactPage *SMSProtocol::createAddContactWidget(QWidget *parent, KopeteAccount * /*i*/)
 {
-	m_mySelf->setOnlineStatus( SMSOnline );
-
-	// FIXME: Set all contacts to SMSUnknown here
+	return (new SMSAddContactPage(parent));
 }
 
-void SMSProtocol::disconnect()
+EditAccountWidget* SMSProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
 {
-	m_mySelf->setOnlineStatus( SMSOffline );
-
-	// FIXME: Set all contacts to SMSOffline here
-}
-
-KopeteContact* SMSProtocol::myself() const
-{
-	return m_mySelf;
-}
-
-AddContactPage *SMSProtocol::createAddContactWidget(QWidget *parent)
-{
-	return (new SMSAddContactPage(this,parent));
-}
-
-SMSContact* SMSProtocol::addContact( const QString& nr , const QString& name, KopeteMetaContact *m)
-{
-	SMSContact* c = new SMSContact(protocol(), nr, name, m);
-	c->setOnlineStatus( SMSUnknown ); // FIXME: Set to offline when protocol is offline
-	m->addContact(c);
-	return c;
+	return new SMSEditAccountWidget(account, parent);
 }
 
 SMSProtocol* SMSProtocol::s_protocol = 0L;
@@ -85,16 +67,30 @@ SMSProtocol* SMSProtocol::protocol()
 void SMSProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> & /* addressBookData */ )
 {
-	SMSContact* c = addContact( serializedData[ "contactId" ], serializedData[ "displayName" ], metaContact );
+	QString contactId = serializedData[ "contactId" ];
+	QString accountId = serializedData[ "accountId" ];
+	QString displayName = serializedData[ "displayName" ];
 
-	QString serviceName = serializedData[ "serviceName" ];
-	if( !serviceName.isNull() )
+	QDict<KopeteAccount> accounts=KopeteAccountManager::manager()->accounts(this);
+
+	if(accountId.isNull() && accounts.count() == 0) // FIXME Is this the right way?
 	{
-		c->setServiceName( serviceName );
-		c->setServicePrefs( QStringList::split( ',', serializedData[ "servicePrefs" ] ) );
+		// FIXME import the old one correct (KConfUpdate)
+		KGlobal::config()->setGroup("SMS");
+		accountId=KGlobal::config()->readEntry( "serviceName" );
 	}
+
+	KopeteAccount *account = accounts[accountId];
+	if ( !account )
+		account = createNewAccount( accountId );
+	
+	/*SMSContact* c =*/ new SMSContact( account, contactId, displayName, metaContact );
 }
 
+KopeteAccount* SMSProtocol::createNewAccount(const QString &accountId)
+{
+	return new SMSAccount(this, accountId);
+}
 #include "smsprotocol.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

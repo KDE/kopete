@@ -12,29 +12,17 @@
 
 #include <klocale.h>
 #include <qlayout.h>
+#include <qlabel.h>
 
 SMSPreferences::SMSPreferences( const QString &pixmap, QObject *parent )
 	: ConfigModule( i18n( "SMS Plugin" ), i18n( "Sending messages to cellphones" ), pixmap, parent )
 {
 	(new QBoxLayout(this, QBoxLayout::Down))->setAutoAdd(true);
-	prefBase = new SMSPreferencesBase( 0L, this );
-
-	connect (prefBase, SIGNAL(saved()), this, SIGNAL(saved()));
+	new QLabel(i18n("Nothing to configure"), this );
 }
 
 SMSPreferences::~SMSPreferences()
 {
-	delete prefBase;
-}
-
-void SMSPreferences::save()
-{
-	prefBase->save();
-}
-
-void SMSPreferences::reopen()
-{
-	prefBase->reopen();
 }
 
 #include "smspreferences.moc"

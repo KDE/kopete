@@ -17,7 +17,7 @@
 
 #include <qstring.h>
 
-class SMSProtocol;
+class SMSAccount;
 class KopeteMessageManager;
 class KopeteMetaContact;
 
@@ -28,7 +28,7 @@ class SMSContact : public KopeteContact
 {
 	Q_OBJECT
 public:
-	SMSContact( SMSProtocol* _protocol, const QString &phoneNumber,
+	SMSContact( KopeteAccount* _account, const QString &phoneNumber,
 		const QString &displayName, KopeteMetaContact *parent );
 
 	KActionCollection* customContextMenuActions();
@@ -37,17 +37,6 @@ public:
 
 	QString phoneNumber();
 	void setPhoneNumber( const QString phoneNumber );
-
-	QString serviceName();
-	void setServiceName(QString name);
-
-	QString servicePref(QString name);
-	void setServicePref(QString name, QString value);
-	void deleteServicePref(QString name);
-	void clearServicePrefs();
-
-	QStringList servicePrefs();
-	void setServicePrefs(QStringList prefs);
 
 	/**
 	 * Serialize contact
@@ -70,14 +59,10 @@ private slots:
 	void slotMessageManagerDestroyed();
 
 private:
-	void initActions();
-
 	KActionCollection* m_actionCollection;
 	KAction* m_actionPrefs;
 
 	QString m_phoneNumber;
-	QString m_serviceName;
-	QMap<QString, QString> m_servicePrefs;
 
 	KopeteMessageManager* m_msgManager;
 };

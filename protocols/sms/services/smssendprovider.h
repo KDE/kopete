@@ -15,7 +15,7 @@ class SMSSendProvider : public QObject
 {
 	Q_OBJECT
 public:
-	SMSSendProvider(const QString& providerName, const QString& prefixValue, SMSContact* contact, QObject* parent = 0, const char* name = 0);
+	SMSSendProvider(const QString& providerName, const QString& prefixValue, KopeteAccount* account, QObject* parent = 0, const char* name = 0);
 	~SMSSendProvider();
 
 	int count();
@@ -43,7 +43,7 @@ private:
 	QString prefix;
 	QStringList output;
 
-	SMSContact* m_contact;
+	KopeteAccount* m_account;
 
 	KopeteMessage m_msg;
 

@@ -7,32 +7,33 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef SMSPREFERENCES_H
-#define SMSPREFERENCES_H
+#ifndef SMSACCOUNT_H
+#define SMSACCOUNT_H
 
-#include "configmodule.h"
+#include "kopeteaccount.h"
 
-class QVBoxLayout;
-class SMSService;
+class SMSProtocol;
+class SMSContact;
 
-class SMSPreferences : public ConfigModule
+class SMSAccount : public KopeteAccount
 {
 	Q_OBJECT
+
 public:
-	SMSPreferences( const QString &pixmap, QObject *parent = 0 );
-	~SMSPreferences();
-};
+	SMSAccount( SMSProtocol *parent, const QString &accountID, const char *name = 0L );
+	~SMSAccount();
+
+	virtual void setAway( bool away );
+	virtual KopeteContact* myself() const;
+
+public slots:
+	virtual void connect();
+	virtual void disconnect();
+protected:
+	bool addContactToMetaContact( const QString &contactId, const QString &displayName,
+		KopeteMetaContact *parentContact );
+private:
+	SMSContact* m_myself;
+} ;
 
 #endif
-
-
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
-// vim: set noet ts=4 sts=4 sw=4:
-

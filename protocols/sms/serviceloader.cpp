@@ -4,13 +4,13 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 
-SMSService* ServiceLoader::loadService(const QString& name, SMSContact* contact)
+SMSService* ServiceLoader::loadService(const QString& name, KopeteAccount* account)
 {
 	SMSService* s;
 	if (name == "SMSSend")
-		s = new SMSSend(contact);
+		s = new SMSSend(account);
 	else if (name == "SMSClient")
-		s = new SMSClient(contact);
+		s = new SMSClient(account);
 	else
 	{
 		KMessageBox::sorry(0L, i18n("Could not load service %1").arg(name), 

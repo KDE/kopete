@@ -16,7 +16,7 @@ class SMSClient : public SMSService
 {
 	Q_OBJECT
 public:
-	SMSClient(SMSContact* contact);
+	SMSClient(KopeteAccount* account);
 	~SMSClient();
 
 	void send(const KopeteMessage& msg);
