@@ -26,6 +26,7 @@
 #include <qcheckbox.h>
 #include <kextsock.h>
 #include <qconnection.h>
+#include <qvalidator.h>
 
 #include "kirc.h"
 #include "ircaccount.h"
@@ -51,6 +52,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		mPort->setDisabled(true);
 
 		mUserName->setText( m_IRCAccount->userName() );
+		mUserName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^\\s]*$"), mUserName ) );
 		mAltNickname->setText( m_IRCAccount->altNick() );
 		partMessage->setText( m_IRCAccount->defaultPart() );
 		quitMessage->setText( m_IRCAccount->defaultQuit() );
