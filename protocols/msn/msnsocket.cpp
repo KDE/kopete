@@ -2,9 +2,9 @@
     msnsocket.cpp - Base class for the sockets used in MSN
 
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     Portions of this code are taken from KMerlin,
               (c) 2001      by Olaf Lueg              <olueg@olsd.de>
@@ -370,7 +370,6 @@ void MSNSocket::handleError( uint code, uint /* id */ )
 		break;
 */
 	case 500:
-		disconnect();
 		msg = i18n ( "An internal server error occurred. Please try again later." );
 		break;
 	case 502:
@@ -380,7 +379,6 @@ void MSNSocket::handleError( uint code, uint /* id */ )
 	case 910:
 	case 912:
 	case 922:
-		disconnect();
 		msg = i18n ( "The MSN server is busy. Please try again later." );
 		break;
 	case 601:
@@ -390,7 +388,6 @@ void MSNSocket::handleError( uint code, uint /* id */ )
 	case 915:
 	case 916:
 	case 917:
-		disconnect();
 		msg = i18n ( "The server is not available at the moment. Please try again later." );
 		break;
 	default:
