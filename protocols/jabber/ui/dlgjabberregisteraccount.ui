@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>355</width>
-            <height>388</height>
+            <width>377</width>
+            <height>444</height>
         </rect>
     </property>
     <property name="caption">
@@ -19,7 +19,7 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLabel" row="4" column="0">
+        <widget class="QLabel" row="2" column="0">
             <property name="name">
                 <cstring>lblStatusMessage</cstring>
             </property>
@@ -30,24 +30,7 @@
                 <set>AlignCenter</set>
             </property>
         </widget>
-        <widget class="QCheckBox" row="1" column="0">
-            <property name="name">
-                <cstring>cbUseSSL</cstring>
-            </property>
-            <property name="text">
-                <string>Use protocol encr&amp;yption (SSL)</string>
-            </property>
-            <property name="checked">
-                <bool>true</bool>
-            </property>
-            <property name="toolTip" stdset="0">
-                <string>Check this box to enable SSL encrypted communication with the server.</string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>Check this box to enable SSL encrypted communication with the server.  Note that this is not end-to-end encryption, but rather encrypted communication with the server.</string>
-            </property>
-        </widget>
-        <spacer row="3" column="0">
+        <spacer row="1" column="0">
             <property name="name">
                 <cstring>spacerMiddle</cstring>
             </property>
@@ -60,73 +43,19 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>50</height>
+                    <height>60</height>
                 </size>
             </property>
         </spacer>
-        <widget class="QLabel" row="2" column="0">
-            <property name="name">
-                <cstring>lblJIDInformation</cstring>
-            </property>
-            <property name="minimumSize">
-                <size>
-                    <width>0</width>
-                    <height>100</height>
-                </size>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-            <property name="alignment">
-                <set>WordBreak|AlignVCenter</set>
-            </property>
-        </widget>
         <widget class="QLayoutWidget" row="0" column="0">
             <property name="name">
-                <cstring>layout5</cstring>
+                <cstring>layout7</cstring>
             </property>
             <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel" row="4" column="0">
-                    <property name="name">
-                        <cstring>textLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Port:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>sbPort</cstring>
-                    </property>
-                </widget>
-                <widget class="QLayoutWidget" row="0" column="1">
-                    <property name="name">
-                        <cstring>layoutServerEntry</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QLineEdit">
-                            <property name="name">
-                                <cstring>leServer</cstring>
-                            </property>
-                            <property name="text">
-                                <string></string>
-                            </property>
-                        </widget>
-                        <widget class="KPushButton">
-                            <property name="name">
-                                <cstring>btnChooseServer</cstring>
-                            </property>
-                            <property name="text">
-                                <string>C&amp;hoose...</string>
-                            </property>
-                        </widget>
-                    </hbox>
-                </widget>
-                <widget class="QLabel" row="1" column="0">
+                <widget class="QLabel" row="1" column="1">
                     <property name="name">
                         <cstring>lblJID</cstring>
                     </property>
@@ -137,134 +66,7 @@
                         <cstring>leJID</cstring>
                     </property>
                 </widget>
-                <widget class="QLabel" row="2" column="0">
-                    <property name="name">
-                        <cstring>lblPassword</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Pass&amp;word:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>lePassword</cstring>
-                    </property>
-                </widget>
-                <widget class="KIntSpinBox" row="4" column="1">
-                    <property name="name">
-                        <cstring>sbPort</cstring>
-                    </property>
-                    <property name="maxValue">
-                        <number>65535</number>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>lblServer</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Jabber &amp;Server:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>leServer</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="2" column="2">
-                    <property name="name">
-                        <cstring>pixPassword</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>0</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>16</width>
-                            <height>16</height>
-                        </size>
-                    </property>
-                    <property name="maximumSize">
-                        <size>
-                            <width>32767</width>
-                            <height>32767</height>
-                        </size>
-                    </property>
-                    <property name="scaledContents">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="2">
-                    <property name="name">
-                        <cstring>pixServer</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>0</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>16</width>
-                            <height>16</height>
-                        </size>
-                    </property>
-                    <property name="maximumSize">
-                        <size>
-                            <width>32767</width>
-                            <height>32767</height>
-                        </size>
-                    </property>
-                    <property name="scaledContents">
-                        <bool>true</bool>
-                    </property>
-                </widget>
                 <widget class="QLabel" row="3" column="0">
-                    <property name="name">
-                        <cstring>lblPasswordVerify</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>true</bool>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Repeat Password:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>lePasswordVerify</cstring>
-                    </property>
-                </widget>
-                <widget class="KPasswordEdit" row="2" column="1">
-                    <property name="name">
-                        <cstring>lePassword</cstring>
-                    </property>
-                    <property name="echoMode">
-                        <enum>Password</enum>
-                    </property>
-                </widget>
-                <widget class="KPasswordEdit" row="3" column="1">
-                    <property name="name">
-                        <cstring>lePasswordVerify</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>true</bool>
-                    </property>
-                    <property name="echoMode">
-                        <enum>Password</enum>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="1" column="1">
-                    <property name="name">
-                        <cstring>leJID</cstring>
-                    </property>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="3" column="2">
                     <property name="name">
                         <cstring>pixPasswordVerify</cstring>
                     </property>
@@ -292,7 +94,75 @@
                         <bool>true</bool>
                     </property>
                 </widget>
-                <widget class="QLabel" row="1" column="2">
+                <widget class="QLayoutWidget" row="0" column="2">
+                    <property name="name">
+                        <cstring>layoutServerEntry</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLineEdit">
+                            <property name="name">
+                                <cstring>leServer</cstring>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                        </widget>
+                        <widget class="KPushButton">
+                            <property name="name">
+                                <cstring>btnChooseServer</cstring>
+                            </property>
+                            <property name="text">
+                                <string>C&amp;hoose...</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+H</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QLabel" row="2" column="1">
+                    <property name="name">
+                        <cstring>lblPassword</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Pass&amp;word:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>lePassword</cstring>
+                    </property>
+                </widget>
+                <widget class="KIntSpinBox" row="4" column="2">
+                    <property name="name">
+                        <cstring>sbPort</cstring>
+                    </property>
+                    <property name="maxValue">
+                        <number>65535</number>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="5" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>cbUseSSL</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Use protocol encr&amp;yption (SSL)</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+Y</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Check this box to enable SSL encrypted communication with the server.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Check this box to enable SSL encrypted communication with the server.  Note that this is not end-to-end encryption, but rather encrypted communication with the server.</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
                     <property name="name">
                         <cstring>pixJID</cstring>
                     </property>
@@ -318,6 +188,142 @@
                     </property>
                     <property name="scaledContents">
                         <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="4" column="1">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Port:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>sbPort</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="1">
+                    <property name="name">
+                        <cstring>lblPasswordVerify</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Repeat Password:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>lePasswordVerify</cstring>
+                    </property>
+                </widget>
+                <widget class="KPasswordEdit" row="2" column="2">
+                    <property name="name">
+                        <cstring>lePassword</cstring>
+                    </property>
+                    <property name="echoMode">
+                        <enum>Password</enum>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>pixServer</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>16</width>
+                            <height>16</height>
+                        </size>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>32767</width>
+                            <height>32767</height>
+                        </size>
+                    </property>
+                    <property name="scaledContents">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="1">
+                    <property name="name">
+                        <cstring>lblServer</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Jabber &amp;Server:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>leServer</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="6" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>lblJIDInformation</cstring>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>0</width>
+                            <height>100</height>
+                        </size>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="alignment">
+                        <set>WordBreak|AlignVCenter</set>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>pixPassword</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>16</width>
+                            <height>16</height>
+                        </size>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>32767</width>
+                            <height>32767</height>
+                        </size>
+                    </property>
+                    <property name="scaledContents">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="KPasswordEdit" row="3" column="2">
+                    <property name="name">
+                        <cstring>lePasswordVerify</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="echoMode">
+                        <enum>Password</enum>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="1" column="2">
+                    <property name="name">
+                        <cstring>leJID</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
                     </property>
                 </widget>
             </grid>
