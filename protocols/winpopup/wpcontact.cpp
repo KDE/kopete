@@ -15,14 +15,16 @@
  *                                                                         *
  ***************************************************************************/
 
+// Qt Includes
+#include <qdatetime.h>
+#include <qfont.h>
+#include <qregexp.h>
+
+// KDE Includes
+#include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <qfont.h>
-
-// Local Includes
-#include "wpcontact.h"
-#include "wpprotocol.h"
-#include "wpdebug.h"
+#include <kpopupmenu.h>
 
 // Kopete Includes
 #include "kopetestdaction.h"
@@ -30,12 +32,10 @@
 #include "kopetemessagemanager.h"
 #include "kopetecontactlist.h"
 
-// Qt Includes
-#include <qdatetime.h>
-#include <qregexp.h>
-
-// KDE Includes
-#include <kconfig.h>
+// Local Includes
+#include "wpcontact.h"
+#include "wpprotocol.h"
+#include "wpdebug.h"
 
 WPContact::WPContact( const QString &userID, const QString &displayName, const QString &group, WPProtocol *protocol, KopeteMetaContact *parent )
 : KopeteContact( protocol->id(), parent )

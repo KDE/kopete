@@ -20,9 +20,11 @@
 #include <qstring.h>
 #include <kconfig.h>
 #include <qmultilineedit.h>
-#include <klocale.h>
 
-#include <kopete.h>
+#include <klocale.h>
+#include <kglobal.h>
+
+#include "kopete.h"
 #include "kopeteawaydialog.h"
 
 KopeteAway *KopeteAway::instance = 0L;

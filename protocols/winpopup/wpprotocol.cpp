@@ -28,8 +28,10 @@
 
 // Kopete Includes
 #include "kopete.h"
+#include "kopetecontactlistview.h"
 #include "kopetemetacontact.h"
 #include "statusbaricon.h"
+#include "systemtray.h"
 
 // QT Includes
 #include <qcursor.h>
@@ -38,15 +40,18 @@
 #include <qregexp.h>
 
 // KDE Includes
+#include <kaction.h>
 #include <kdebug.h>
-#include <kiconloader.h>
-#include <kstandarddirs.h>
-#include <ksimpleconfig.h>
 #include <kgenericfactory.h>
-#include <kstdguiitem.h>
+#include <kiconloader.h>
 #include <klocale.h>
-#include <kpushbutton.h>
 #include <kmessagebox.h>
+#include <kpopupmenu.h>
+#include <kpushbutton.h>
+#include <ksimpleconfig.h>
+#include <kstandarddirs.h>
+#include <kstatusbar.h>
+#include <kstdguiitem.h>
 
 class KPopupMenu;
 

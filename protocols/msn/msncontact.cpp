@@ -21,6 +21,7 @@
 #include <kpopupmenu.h>
 
 #include "kopete.h"
+#include "kopetecontactlistview.h"
 #include "kopetestdaction.h"
 #include "msncontact.h"
 #include "msnprotocol.h"

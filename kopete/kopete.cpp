@@ -1,9 +1,9 @@
 /*
     kopete.cpp
 
-	Kopete Instant Messenger Main Class
+    Kopete Instant Messenger Main Class
 
-	Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett   <duncan@kde.org>
+    Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett   <duncan@kde.org>
 
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -17,45 +17,34 @@
     *************************************************************************
 */
 
-#include "kopete.moc"
 #include "kopete.h"
 
-#include <qvaluelist.h>
-#include <qlist.h>
-#include <qlayout.h>
 #include <qregexp.h>
-#include <qpixmap.h>
-#include <qpainter.h>
-#include <qbrush.h>
+#include <qtimer.h>
 
 #include <kconfig.h>
 #include <kdebug.h>
-#include <kglobal.h>
 #include <kiconloader.h>
-#include <kstandarddirs.h>
 #include <klocale.h>
 
-#include "preferencesdialog.h"
+#include "addwizardimpl.h"
 #include "appearanceconfig.h"
-#include "kopeteuserpreferences.h"
-#include "kopetewindow.h"
-#include "kopetemessagemanagerfactory.h"
-#include "kopeteemoticons.h"
-#include "kopeteprefs.h"
 #include "kopeteaway.h"
 #include "kopetecontactlist.h"
-#include "kopetemetacontact.h"
+#include "kopeteemoticons.h"
+#include "kopetemessagemanagerfactory.h"
+#include "kopetenotifier.h"
+#include "kopeteprefs.h"
+#include "kopeteprotocol.h"
 #include "kopetetransfermanager.h"
-
-#include "plugin.h"
+#include "kopeteuserpreferences.h"
+#include "kopetewindow.h"
 #include "pluginloader.h"
 #include "pluginmodule.h"
-#include <addwizardimpl.h>
-
-class Plugins;
+#include "preferencesdialog.h"
 
 Kopete::Kopete()
-	: KUniqueApplication( true, true, true )
+: KUniqueApplication( true, true, true )
 {
 	/*
 	 * This is a workaround for a quite odd problem:
@@ -607,12 +596,7 @@ void Kopete::slotShowTransfers()
 	transferManager()->show();
 }
 
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
+#include "kopete.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
+

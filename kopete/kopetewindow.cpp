@@ -1,7 +1,7 @@
 /*
     kopetewindow.cpp  -  Kopete Main Window
 
-	Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett   <duncan@kde.org>
+    Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett   <duncan@kde.org>
     Copyright (c) 2001-2002 by Stefan Gehn <sgehn@gmx.net>
 
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
@@ -17,23 +17,25 @@
 */
 
 #include "kopetewindow.h"
-#include "kopetewindow.moc"
-
-#include "kopetecontactlistview.h"
-#include "kopetecontact.h"
-#include "kopete.h"
-#include "kopeteballoon.h"
-#include "systemtray.h"
 
 #include <qlayout.h>
 
+#include <kaction.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kstdaction.h>
 #include <kmessagebox.h>
+#include <kpopupmenu.h>
+#include <kstdaction.h>
 
-KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(parent,name)
+#include "kopete.h"
+#include "kopeteballoon.h"
+#include "kopetecontact.h"
+#include "kopetecontactlistview.h"
+#include "systemtray.h"
+
+KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
+: KMainWindow( parent, name )
 {
 	kdDebug() << "[KopeteWindow] KopeteWindow()" << endl;
 
@@ -247,12 +249,7 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 #endif
 }
 
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
+#include "kopetewindow.moc"
+
 // vim: set noet ts=4 sts=4 sw=4:
 

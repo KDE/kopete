@@ -18,12 +18,13 @@
 
 #include "kopetemetacontact.h"
 
+#include <kdebug.h>
+#include <klocale.h>
+
 #include "kopete.h"
 #include "kopetecontactlist.h"
+#include "kopetecontactlistview.h"
 #include "kopetemetacontactlvi.h"
-
-#include <klocale.h>
-#include <kdebug.h>
 
 // FIXME: Add parent!!
 KopeteMetaContact::KopeteMetaContact()

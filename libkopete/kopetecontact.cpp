@@ -17,15 +17,18 @@
 */
 
 #include "kopetecontact.h"
-#include "kopetemetacontact.h"
-#include "kopete.h"
 
-#include <qtimer.h>
-#include <qpixmap.h>
 #include <qimage.h>
-#include <klistview.h>
+#include <qpixmap.h>
+#include <qtimer.h>
+
 #include <kdebug.h>
+#include <kiconloader.h>
+#include <klistview.h>
 #include <klocale.h>
+
+#include "kopete.h"
+#include "kopetemetacontact.h"
 
 KopeteContact::KopeteContact( const QString &protocolId, KopeteMetaContact *parent )
 	: QObject( parent )

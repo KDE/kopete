@@ -17,30 +17,35 @@
 
 #include <qcursor.h>
 
+#include <kaction.h>
 #include <kdebug.h>
 #include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <klineeditdlg.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kpopupmenu.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
+#include <kstatusbar.h>
 
-#include "msnswitchboardsocket.h"
-#include "msnnotifysocket.h"
 #include "kopete.h"
 #include "kopetecontactlist.h"
+#include "kopetemessagemanager.h"
+#include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
+#include "kopetewindow.h"
 #include "msnaddcontactpage.h"
 #include "msncontact.h"
 #include "msndebugrawcmddlg.h"
 #include "msnidentity.h"
-#include "kopetemessagemanager.h"
-#include "kopetemessagemanagerfactory.h"
+#include "msnnotifysocket.h"
 #include "msnpreferences.h"
 #include "msnprotocol.h"
+#include "msnswitchboardsocket.h"
 #include "newuserimpl.h"
 #include "statusbaricon.h"
+#include "systemtray.h"
 
 K_EXPORT_COMPONENT_FACTORY( kopete_msn, KGenericFactory<MSNProtocol> );
 
@@ -48,8 +53,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	const QStringList & /* args */ )
 : KopeteProtocol( parent, name )
 {
-
-    QString protocolId = this->id();
+	QString protocolId = this->id();
 
 	if( s_protocol )
 		kdDebug() << "MSNProtocol::MSNProtocol: WARNING: s_protocol already defined!" << endl;

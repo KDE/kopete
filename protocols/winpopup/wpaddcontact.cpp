@@ -34,12 +34,13 @@
 #include <qcheckbox.h>
 
 // KDE Includes
-#include <kconfig.h>
 #include <kcombobox.h>
-#include <klistbox.h>
-#include <kglobal.h>
-#include <klocale.h>
+#include <kconfig.h>
 #include <kdebug.h>
+#include <kglobal.h>
+#include <kiconloader.h>
+#include <klistbox.h>
+#include <klocale.h>
 #include <kurlrequester.h>
 
 
