@@ -51,7 +51,6 @@ YahooPreferences::YahooPreferences(const QString &pixmap, QObject *parent)
 	m_config->setGroup("Yahoo");
 	m_yahooPrefsDialog->mServer->setText(m_config->readEntry("Server", "scs.yahoo.com"));
 	m_yahooPrefsDialog->mPort->setValue(m_config->readNumEntry("Port", 5050));
-	m_yahooPrefsDialog->mLogAll->setChecked(m_config->readBoolEntry("LogAll", true));
 	m_yahooPrefsDialog->mImportContacts->setChecked(m_config->readBoolEntry("ImportContacts", true));
 	m_yahooPrefsDialog->mUseGroupNames->setChecked(m_config->readBoolEntry("UseGroupNames", false));
 }
@@ -72,7 +71,6 @@ void YahooPreferences::save()
 	m_config->setGroup("Yahoo");
 	m_config->writeEntry("Server", m_yahooPrefsDialog->mServer->text());
 	m_config->writeEntry("Port", m_yahooPrefsDialog->mPort->text());
-	m_config->writeEntry("LogAll", m_yahooPrefsDialog->mLogAll->isChecked());
 	m_config->writeEntry("ImportContacts", m_yahooPrefsDialog->mImportContacts->isChecked());
 	m_config->writeEntry("UseGroupNames", m_yahooPrefsDialog->mUseGroupNames->isChecked());
 	m_config->sync();
