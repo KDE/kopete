@@ -452,6 +452,11 @@ void MSNNotifySocket::slotOpenInbox()
 	sendCommand("URL", "INBOX" );
 }
 
+void MSNNotifySocket::sendMail(const QString &email)
+{
+	sendCommand("URL", QString("COMPOSE " + email).utf8() );
+}
+
 void MSNNotifySocket::slotReadMessage( const QString &msg )
 {
 	if(msg.contains("text/x-msmsgsinitialemailnotification"))

@@ -55,6 +55,8 @@ public:
 
 	void createChatSession();
 
+	void sendMail(const QString &email);
+
 public slots:
 	void slotOpenInbox();
 

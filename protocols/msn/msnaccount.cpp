@@ -1014,6 +1014,13 @@ bool MSNAccount::addContactToMetaContact( const QString &contactId, const QStrin
 	return false;
 }
 
+bool MSNAccount::isHotmail()
+{
+	if(!m_openInboxAction)
+		return false;
+	return m_openInboxAction->isEnabled();
+}
+
 #include "msnaccount.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

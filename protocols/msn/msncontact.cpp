@@ -78,13 +78,18 @@ KActionCollection *MSNContact::customContextMenuActions()
 
 	// Block/unblock Contact
 	QString label = isBlocked() ? i18n( "Unblock User" ) : i18n( "Block User" );
-	KAction* actionBlock = new KAction( label, "msn_blocked", this, SLOT( slotBlockUser() ), m_actionCollection, "actionBlock" );
+	KAction* actionBlock = new KAction( label, "msn_blocked",0, this, SLOT( slotBlockUser() ), m_actionCollection, "actionBlock" );
 
 	//show profile
 	KAction* actionShowProfile = new KAction( i18n("Show Profile") , 0, this, SLOT( slotShowProfile() ), m_actionCollection, "actionShowProfile" );
 
+	// Send mail (only available if it is an hotmail account)
+	KAction* actionSendMail = new KAction( i18n("Send Mail") , "mail_generic",0, this, SLOT( slotSendMail() ), m_actionCollection, "actionSendMail" );
+	actionSendMail->setEnabled( static_cast<MSNAccount*>(account())->isHotmail());
+
 	m_actionCollection->insert( actionBlock );
 	m_actionCollection->insert( actionShowProfile );
+	m_actionCollection->insert( actionSendMail );
 
 	return m_actionCollection;
 }
@@ -450,6 +455,15 @@ void MSNContact::setOnlineStatus(const KopeteOnlineStatus& status)
 		}
 		else
 			KopeteContact::setOnlineStatus(status);
+	}
+}
+
+void MSNContact::slotSendMail()
+{
+	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
+	if( notify )
+	{
+		notify->sendMail( contactId() );
 	}
 }
 

@@ -66,6 +66,11 @@ public:
 	QString awayReason()
 		{ return m_awayReason; }
 
+	/**
+	 * return true if we are able to send mail, or to open hotmail inbox
+	 */
+	bool isHotmail();
+
 public slots:
 	virtual void connect() ;
 	virtual void disconnect() ;

@@ -127,6 +127,7 @@ public slots:
 private slots:
 	void slotBlockUser();
 	void slotShowProfile();
+	void slotSendMail();
 
 private:
 	QMap<uint, KopeteGroup *> m_serverGroups;
