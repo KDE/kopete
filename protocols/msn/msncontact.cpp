@@ -28,10 +28,13 @@ MSNContact::MSNContact(QListViewItem *parent, QString userid, const QString name
 	mName = name;
 	mUserID = userid;
 	messageTimer = new QTimer();
-	messageQueue = new QValueStack<MSNMessage>;
+	messageQueue = new QValueStack<MSNMessageStruct>;
 	isMessageIcon = false;
+	mBoard = new SwitchBoard;
+	mBoard->setHandle(mUserID);
 	// We connect this signal so that we can tell when a user's status changes
 	QObject::connect(protocol, SIGNAL(userStateChange(QString, QString, QString)), this, SLOT(slotUserStateChange (QString, QString, QString) ));
+	 QObject::connect(protocol->engine, SIGNAL(startChat(SwitchBoard *, QString)), this, SLOT(slotIncomingChat (SwitchBoard *, QString) ));
 	//QObject::connect(protocol->engine->switchboard, SIGNAL(messageReceived(QString ,QString) ), this, SLOT(slotNewMessage(QString, QString)));
 	QObject::connect(messageTimer, SIGNAL(timeout()), this, SLOT(slotFlashIcon()));
 
@@ -51,28 +54,43 @@ void MSNContact::rightButtonPressed(const QPoint &point)
 
 void MSNContact::leftButtonDoubleClicked()
 {
-	if (messageQueue->isEmpty() == false)
-	{
-		MSNMessage tmpMessage = messageQueue->pop();
-		if (messageQueue->isEmpty() == true)
-		{
-			messageTimer->stop();
-			if (isMessageIcon == true)
-			{
-				slotFlashIcon();
-			}
-		}
-		QString tmp = "<qt>Message from ";
-		tmp.append(mName);
-		tmp.append(":\n");
-		tmp.append(tmpMessage.message);
-		tmp.append("</qt>");
-		KMessageBox::information(kopeteapp->mainWindow(), tmp, QString(QString("Message from ").append(mName)));
-	} else {
-		KMessageBox::information(kopeteapp->mainWindow(), "Send a message to this user here.", "Send a message");
-	}
-
+	mProtocol->engine->wantSwitchboard(mUserID);
 }
+
+void MSNContact::slotIncomingChat(SwitchBoard *newboard, QString reqUserID)
+{
+	kdDebug() << "MSN Plugin: Incoming chat " << reqUserID <<"\n";
+	if ( reqUserID == mUserID )
+	{
+ 		if (messageBoxInited == true && messageBox->isVisible() == true)
+ 		{
+ 			messageBox->raise();
+ 			return;
+ 		}
+ 		messageBox = new MSNMessage(this, mUserID, mName, mStatus, newboard,mProtocol);
+ 		messageBoxInited = true;
+ 		QObject::connect(newboard, SIGNAL(messageReceived(QString ,QString )), messageBox, SLOT(messageReceived(QString, QString)));
+ 		QObject::connect(newboard, SIGNAL( switchBoardIsActive(bool) ), messageBox, SLOT( slotSwitchBoardIsActive(bool) ));
+		QObject::connect(this, SIGNAL(userStateChanged(QString)), messageBox, SLOT(slotUserStateChanged(QString)));
+ 		messageBox->show();
+	}
+}
+
+void MSNContact::slotMessageBoxClosing()
+{
+	if (messageBoxInited == true && messageBox->isVisible() == true)
+	{
+		messageBoxInited = false;
+		delete messageBox;
+	}
+}
+
+void MSNContact::removeThisUser()
+{
+	mProtocol->engine->slotRemoveUser(mUserID);
+	delete this;
+}
+
 
 void MSNContact::slotUserStateChange (QString state, QString handle, QString publicname)
 {

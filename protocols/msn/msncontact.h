@@ -28,12 +28,16 @@
 #include <qtimer.h>
 #include "kopete.h"
 #include "msnprotocol.h"
+#include "msnmessage.h"
+#include <switchboard.h>
 
-struct MSNMessage
+struct MSNMessageStruct
 {
 	QString userid;
 	QString message;
 };
+
+class MSNMessage;
 
 class MSNContact : public IMContact
 {
@@ -43,7 +47,12 @@ class MSNContact : public IMContact
 		MSNContact(QListViewItem *parent, QString userid, const QString name, MSNProtocol *protocol);
 		virtual void rightButtonPressed(const QPoint &);
 		virtual void leftButtonDoubleClicked();
+		SwitchBoard *mBoard;
+	public slots:
+		void slotMessageBoxClosing();
+		void slotIncomingChat(SwitchBoard *, QString);
 	private slots:
+		void removeThisUser();
 		void slotUserStateChange (QString str, QString str1, QString str2);
 		void slotNewMessage(QString, QString);
 		void slotFlashIcon();
@@ -55,8 +64,10 @@ class MSNContact : public IMContact
 		//QPixmap onlineIcon;
 		//QPixmap offlineIcon;
 		MSNProtocol *mProtocol;
-		QValueStack<MSNMessage> *messageQueue;
+		QValueStack<MSNMessageStruct> *messageQueue;
 		QTimer *messageTimer;
+		MSNMessage *messageBox;
+		bool messageBoxInited;
 };
 
 #endif
