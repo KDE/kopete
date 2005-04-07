@@ -71,12 +71,13 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	m_lastDisconnectCode = 0;
 	m_currentMailCount = 0;
 
-	setMyself( new YahooContact( this, accountId, accountId, Kopete::ContactList::self()->myself() ) );
-	static_cast<YahooContact *>( myself() )->setOnlineStatus( parent->Offline );
+	YahooContact* _myself=new YahooContact( this, accountId, accountId, Kopete::ContactList::self()->myself() );
+	setMyself( _myself );
+	_myself->setOnlineStatus( parent->Offline );
 
 	QString displayName = configGroup()->readEntry(QString::fromLatin1("displayName"));
 	if(!displayName.isEmpty())
-		myself()->rename(displayName);  //TODO: might cause problems depending on rename semantics
+		_myself->setNickName(displayName);
 }
 
 YahooAccount::~YahooAccount()
@@ -421,9 +422,9 @@ KActionMenu *YahooAccount::actionMenu()
 //	kdDebug(14180) << k_funcinfo << endl;
 	//TODO: Use a QSignalMapper so all the slots can be consolidated into one function
 
-	KActionMenu *theActionMenu = new KActionMenu( myself()->displayName(), myself()->onlineStatus().iconFor(this), this );
+	KActionMenu *theActionMenu = new KActionMenu( myself()->nickName(), myself()->onlineStatus().iconFor(this), this );
 	theActionMenu->popupMenu()->insertTitle( myself()->icon(),
-	                                         "Yahoo (" + myself()->displayName() + ")");
+	                                         "Yahoo (" + myself()->nickName() + ")");
 
 	theActionMenu->insert(new KAction(i18n( "Online" ),
 	                                  m_protocol->Online.iconFor(this), 0, this, SLOT(slotGoOnline()),

@@ -54,7 +54,7 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 	m_account = account;
 
 	// Update ContactList
-	setDisplayName( fullName );
+	setNickName( fullName );
 	setOnlineStatus( static_cast<YahooProtocol*>( m_account->protocol() )->Offline );
 
 	if ( m_account->haveContactList() )
@@ -105,7 +105,7 @@ void YahooContact::sync(unsigned int flags)
 	else
 	{
 		QString newGroup = metaContact()->groups().first()->displayName();
-		if ( flags == Kopete::Contact::DisplayNameChanged)
+		if ( flags & Kopete::Contact::MovedBetweenGroup )
 		{
 			kdDebug(14180) << k_funcinfo << "contact changed groups. moving on server" << endl;
 			m_account->yahooSession()->changeBuddyGroup( contactId(), m_groupName, newGroup );
