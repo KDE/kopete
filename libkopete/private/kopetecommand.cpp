@@ -99,15 +99,18 @@ void Kopete::Command::processCommand( const QString &args, Kopete::ChatSession *
 			m_type == Kopete::CommandHandler::SystemAlias )
 		{
 			QString formatString = m_formatString;
-			if( formatString.contains( QString::fromLatin1("%s") ) )
-				formatString.replace( QString::fromLatin1("%s"), args );
-			else
+
+			// Translate %s to the whole string and %n to current nickname
+
+			formatString.replace( QString::fromLatin1("%n"), manager->myself()->nickName() );
+			formatString.replace( QString::fromLatin1("%s"), args );
+
+			// Translate %1..%N to word1..wordN
+
+			while( mArgs.count() > 0 )
 			{
-				while( mArgs.count() > 0 )
-				{
-					formatString = formatString.arg( mArgs.front() );
-					mArgs.pop_front();
-				}
+				formatString = formatString.arg( mArgs.front() );
+				mArgs.pop_front();
 			}
 
 			kdDebug(14010) << "New Command after processing alias: " << formatString << endl;
