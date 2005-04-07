@@ -357,7 +357,8 @@ const ProtocolList AliasPreferences::selectedProtocols( EditAliasDialog *dialog 
 		if( item->isSelected() )
 		{
 
-			// Some plugins return 0x0 as ID and cause a crash... check for it
+			// If you dont have the selected protocol enabled, Kopete::PluginManager::self()->plugin
+			// will return NULL, check for that
 
 			if(Kopete::PluginManager::self()->plugin( static_cast<ProtocolItem*>(item)->id) )
 				protocolList.append( (Kopete::Protocol*)
@@ -412,9 +413,21 @@ void AliasPreferences::slotEditAlias()
 			{
 				QString command = editDialog.command->text();
 
-				if( alias == oldAlias ||
-					!Kopete::CommandHandler::commandHandler()->commandHandled( alias ) )
+				if( alias == oldAlias )
 				{
+					ProtocolList selProtocols = selectedProtocols( &editDialog );
+
+					for( ProtocolList::Iterator it = selProtocols.begin(); it != selProtocols.end(); ++it )
+					{
+						if( Kopete::CommandHandler::commandHandler()->commandHandledByProtocol( alias, *it ) )
+						{
+							KMessageBox::error( this, i18n("<qt>Could not add alias <b>%1</b>. This "
+							"command is already being handled by either another alias or "
+							"Kopete itself.</qt>").arg(alias), i18n("Could Not Add Alias") );
+						return;
+						}
+					}
+
 					for( ProtocolList::Iterator it = protocols.begin(); it != protocols.end(); ++it )
 					{
 						Kopete::CommandHandler::commandHandler()->unregisterAlias(
@@ -425,12 +438,8 @@ void AliasPreferences::slotEditAlias()
 
 					delete item;
 
-					addAlias( alias, command, selectedProtocols( &editDialog ) );
+					addAlias( alias, command, selProtocols );
 					emit KCModule::changed(true);
-				}
-				else
-				{
-					KMessageBox::error( this, i18n("<qt>Could not add alias <b>%1</b>. This command is already being handled by either another alias or Kopete itself.</qt>").arg(alias),i18n("Could Not Add Alias") );
 				}
 			}
 		}
