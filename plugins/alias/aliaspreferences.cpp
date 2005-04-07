@@ -415,7 +415,16 @@ void AliasPreferences::slotEditAlias()
 
 				if( alias == oldAlias )
 				{
-					ProtocolList selProtocols = selectedProtocols( &editDialog );
+                                        for( ProtocolList::Iterator it = protocols.begin(); it != protocols.end(); ++it )
+                                        {
+                                                Kopete::CommandHandler::commandHandler()->unregisterAlias(
+                                                        *it,
+                                                        oldAlias
+                                                );
+                                        }
+
+
+                                        ProtocolList selProtocols = selectedProtocols( &editDialog );
 
 					for( ProtocolList::Iterator it = selProtocols.begin(); it != selProtocols.end(); ++it )
 					{
@@ -426,14 +435,6 @@ void AliasPreferences::slotEditAlias()
 							"Kopete itself.</qt>").arg(alias), i18n("Could Not Add Alias") );
 						return;
 						}
-					}
-
-					for( ProtocolList::Iterator it = protocols.begin(); it != protocols.end(); ++it )
-					{
-						Kopete::CommandHandler::commandHandler()->unregisterAlias(
-							*it,
-							oldAlias
-						);
 					}
 
 					delete item;
