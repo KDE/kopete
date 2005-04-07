@@ -189,11 +189,12 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 	if ( color.isValid() )
 		*basis = KIconEffect().apply( *basis, KIconEffect::Colorize, 1, color, 0);
 
-	// Apply standard Disabled effect to generate account-offline icons
 	// Note that we do this before compositing the overlay, since we want
 	// that to be colored in this case.
-	if ( statusFor.internalStatus() == Kopete::OnlineStatus::AccountOffline )
-		*basis = KIconEffect().apply( *basis, KIcon::Small, KIcon::DisabledState );
+	if ( statusFor.internalStatus() == Kopete::OnlineStatus::AccountOffline || statusFor.status() == Kopete::OnlineStatus::Offline )
+	{
+		*basis = KIconEffect().apply( *basis, KIconEffect::ToGray , 0.85, QColor() , false  );
+	}
 
 	//composite the iconOverlay for this status and the supplied baseIcon
 	QStringList overlays = statusFor.overlayIcons();
@@ -217,13 +218,6 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 			}
 		}
 	}
-
-	// Apply standard Disabled effect to generate Offline icons
-	// This will probably look crap on the Unknown icon
-	// FIXME This won't return icons that are not installed using Martijn's
-	// automake magic so we'd have to use UserIcon instead of SmallIcon
-	if ( statusFor.status() == OnlineStatus::Offline )
-		*basis = KIconEffect().apply( *basis, KIcon::Small, KIcon::DisabledState );
 
 	// no need to scale if the icon is already of the required size (assuming height == width!)
 	if ( basis->width() != size )
