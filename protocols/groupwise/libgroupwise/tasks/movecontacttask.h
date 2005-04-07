@@ -43,7 +43,7 @@ private:
 	int m_targetFolder;
 	QString m_dn;
 	QString m_displayName;
-	
+	ContactItem m_contactToMove;	
 };
 
 #endif

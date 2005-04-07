@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>GroupWiseContactPropsWidget</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,94 +8,70 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>506</width>
-            <height>533</height>
+            <width>373</width>
+            <height>444</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>GroupWiseContactPropsWidget</string>
     </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>m_userId</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>5</vsizetype>
+                    <horstretch>3</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>USER_ID</string>
+            </property>
+        </widget>
+        <widget class="Line">
+            <property name="name">
+                <cstring>line4</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+        </widget>
         <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>layout21</cstring>
+                <cstring>layout15</cstring>
             </property>
             <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <spacer row="1" column="0">
-                    <property name="name">
-                        <cstring>spacer5_2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>40</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QLabel" row="6" column="2">
+                <widget class="QLineEdit" row="4" column="1">
                     <property name="name">
                         <cstring>m_lastName</cstring>
                     </property>
                     <property name="text">
-                        <string>USER_LAST_NAME</string>
+                        <string></string>
                     </property>
-                </widget>
-                <widget class="QLineEdit" row="4" column="2">
-                    <property name="name">
-                        <cstring>m_displayName</cstring>
+                    <property name="readOnly">
+                        <bool>true</bool>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Change the display name used for this contact</string>
                     </property>
                 </widget>
-                <widget class="Line" row="2" column="0" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>line1</cstring>
-                    </property>
-                    <property name="frameShape">
-                        <enum>HLine</enum>
-                    </property>
-                    <property name="frameShadow">
-                        <enum>Sunken</enum>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="2">
-                    <property name="name">
-                        <cstring>m_status</cstring>
-                    </property>
-                    <property name="text">
-                        <string>USER_STATUS</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="5" column="2">
-                    <property name="name">
-                        <cstring>m_firstName</cstring>
-                    </property>
-                    <property name="text">
-                        <string>USER_FIRST_NAME</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="6" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>textLabel11</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Last name:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="1">
+                <widget class="QLabel" row="0" column="0">
                     <property name="name">
                         <cstring>textLabel14</cstring>
                     </property>
@@ -103,7 +79,37 @@
                         <string>Status:</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="3" column="0" rowspan="2" colspan="2">
+                <widget class="QLineEdit" row="2" column="1">
+                    <property name="name">
+                        <cstring>m_displayName</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="readOnly">
+                        <bool>false</bool>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Change the display name used for this contact</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="1" rowspan="2" colspan="1">
+                    <property name="name">
+                        <cstring>m_status</cstring>
+                    </property>
+                    <property name="text">
+                        <string>USER_STATUS</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>textLabel10</cstring>
+                    </property>
+                    <property name="text">
+                        <string>First name:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0" rowspan="2" colspan="1">
                     <property name="name">
                         <cstring>lbl_displayName</cstring>
                     </property>
@@ -114,47 +120,28 @@
                         <cstring>m_displayName</cstring>
                     </property>
                 </widget>
-                <widget class="QLabel" row="5" column="0" rowspan="1" colspan="2">
+                <widget class="QLineEdit" row="3" column="1">
                     <property name="name">
-                        <cstring>textLabel10</cstring>
+                        <cstring>m_firstName</cstring>
                     </property>
                     <property name="text">
-                        <string>First name:</string>
+                        <string></string>
+                    </property>
+                    <property name="readOnly">
+                        <bool>true</bool>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Change the display name used for this contact</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="0" column="2">
+                <widget class="QLabel" row="4" column="0">
                     <property name="name">
-                        <cstring>m_userId</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>5</hsizetype>
-                            <vsizetype>5</vsizetype>
-                            <horstretch>3</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
+                        <cstring>textLabel11</cstring>
                     </property>
                     <property name="text">
-                        <string>USER_ID</string>
+                        <string>Last name:</string>
                     </property>
                 </widget>
-                <spacer row="0" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>spacer5</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>120</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
             </grid>
         </widget>
         <widget class="Line">
@@ -179,7 +166,7 @@
                 <string>Additional properties:</string>
             </property>
         </widget>
-        <widget class="QListView">
+        <widget class="KListView">
             <column>
                 <property name="text">
                     <string>Property</string>
@@ -205,8 +192,26 @@
             <property name="name">
                 <cstring>m_propsView</cstring>
             </property>
+            <property name="allColumnsShowFocus">
+                <bool>true</bool>
+            </property>
+            <property name="resizeMode">
+                <enum>AllColumns</enum>
+            </property>
+            <property name="fullWidth">
+                <bool>true</bool>
+            </property>
+            <property name="itemsMovable">
+                <bool>false</bool>
+            </property>
+            <property name="shadeSortColumn">
+                <bool>false</bool>
+            </property>
         </widget>
     </vbox>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>klistview.h</includehint>
+</includehints>
 </UI>

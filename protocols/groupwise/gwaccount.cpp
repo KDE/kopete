@@ -20,22 +20,16 @@
 
 #include <sys/utsname.h>
 
-#include <qdatetime.h>
 #include <qvalidator.h>
-#include <qvaluelist.h>
-#include <qvariant.h>
 
 #include <kaboutdata.h>
-#include <kaction.h>
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kdialogbase.h>
 #include <kinputdialog.h>
-#include <kglobal.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kpopupmenu.h>
 
 #include <kopeteuiglobal.h>
 #include <kopeteaway.h>
@@ -43,25 +37,25 @@
 #include <kopetecontactlist.h>
 #include <kopetegroup.h>
 #include <kopeteglobal.h>
-#include <kopetemessagemanagerfactory.h>
 #include <kopetemetacontact.h>
 #include <kopetepassword.h>
 #include <kopeteview.h>
-#include <connectionmanager.h>
-
 
 #include "client.h"
 #include "qca.h"
 #include "gwcontact.h"
+#include "gwcontactlist.h"
 #include "gwprotocol.h"
-#include "gwclientstream.h"
 #include "gwconnector.h"
 #include "gwmessagemanager.h"
 #include "privacymanager.h"
 #include "qcatlshandler.h"
 #include "userdetailsmanager.h"
 #include "tasks/createcontacttask.h"
+#include "tasks/createcontactinstancetask.h"
 #include "tasks/deleteitemtask.h"
+#include "tasks/movecontacttask.h"
+#include "tasks/updatecontacttask.h"
 #include "tasks/updatefoldertask.h"
 #include "ui/gwprivacy.h"
 #include "ui/gwprivacydialog.h"
@@ -94,8 +88,9 @@ GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& ac
 	m_QCATLS = 0;
 	m_tlsHandler = 0;
 	m_clientStream = 0;
-	m_client= 0;
+	m_client = 0;
 	m_dontSync = false;
+	m_serverListModel = 0;
 }
 
 GroupWiseAccount::~GroupWiseAccount()
@@ -109,9 +104,8 @@ KActionMenu* GroupWiseAccount::actionMenu()
 
 	m_actionAutoReply->setEnabled( isConnected() );
 	m_actionManagePrivacy->setEnabled( isConnected() );
-
-	m_actionMenu->insert( m_actionAutoReply );
 	m_actionMenu->insert( m_actionManagePrivacy );
+	m_actionMenu->insert( m_actionAutoReply );
 	/* Used for debugging */
 	/*
 	theActionMenu->insert( new KAction ( "Test rtfize()", QString::null, 0, this,
@@ -184,8 +178,8 @@ GroupWiseChatSession * GroupWiseAccount::chatSession( Kopete::ContactPtrList oth
 							SLOT( slotLeavingConference( GroupWiseChatSession * ) ) );
 			break;
 		}
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo <<
-				" no message manager available." << endl;
+		//kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo <<
+		//		" no message manager available." << endl;
 	}
 	while ( 0 );
 	//dumpManagers();
@@ -352,8 +346,10 @@ void GroupWiseAccount::performConnectWithPassword( const QString &password )
 	NovellDN dn;
 	dn.dn = "maeuschen";
 	dn.server = "reiser.suse.de";
+	m_serverListModel = new GWContactList( this );
 	myself()->setOnlineStatus( protocol()->groupwiseConnecting );
 	m_client->connectToServer( m_clientStream, dn, true );
+
 }
 
 void GroupWiseAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const QString &reason )
@@ -380,17 +376,16 @@ void GroupWiseAccount::setOnlineStatus( const Kopete::OnlineStatus& status, cons
 		// Appear Offline is achieved by explicitly setting the status to offline, 
 		// rather than disconnecting as when really going offline.
 		if ( status == protocol()->groupwiseAppearOffline )
-			m_client->setStatus( GroupWise::Offline, reason, m_autoReply );
+			m_client->setStatus( GroupWise::Offline, reason, configGroup()->readEntry( "AutoReply" ) );
 		else
-			m_client->setStatus( ( GroupWise::Status )status.internalStatus(), reason, m_autoReply );
+			m_client->setStatus( ( GroupWise::Status )status.internalStatus(), reason, configGroup()->readEntry( "AutoReply" ) );
 	}
 	// going online
 	else
 	{
 		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Must be connected before changing status" << endl;
-		m_initialStatus = ( GroupWise::Status )status.internalStatus();
 		m_initialReason = reason;
-		connect();
+		connect( status );
 	}
 }
 
@@ -411,9 +406,8 @@ void GroupWiseAccount::disconnect( Kopete::Account::DisconnectReason reason )
 	}
 
 	// clear the model of the server side contact list, so that when we reconnect, there will not be any stale entries to confuse GroupWiseContact::syncGroups()
-	QDictIterator<Kopete::Contact> it( contacts() );
-	for ( ; it.current(); ++it )
-		static_cast< GroupWiseContact * >( *it  )->purgeCLInstances();
+	delete m_serverListModel;
+	m_serverListModel = 0;
 
 	// make sure that the connection animation gets stopped if we're still
 	// in the process of connecting
@@ -459,7 +453,108 @@ void GroupWiseAccount::sendInvitation( const GroupWise::ConferenceGuid & guid, c
 void GroupWiseAccount::slotLoggedIn()
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	reconcileOfflineChanges();
+	
 	myself()->setOnlineStatus( protocol()->groupwiseAvailable );
+	if ( initialStatus() != Kopete::OnlineStatus(Kopete::OnlineStatus::Online) )
+		m_client->setStatus( ( GroupWise::Status )initialStatus().internalStatus(), m_initialReason, configGroup()->readEntry( "AutoReply" ) );
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "initial status was " << initialStatus().description() << ", initial reason was " << m_initialReason << endl;
+}
+
+void GroupWiseAccount::reconcileOfflineChanges()
+{
+	m_dontSync = true;
+	//sanity check the server side model vs our contact list.
+	//Contacts might have been removed from some groups or entirely on the server.  
+	//Any contact not present on the server should be deleted locally.
+
+	// for each metacontact group membership:
+	// for each GroupWiseContact
+	//   get its contact list instances
+	//   get its metacontact's groups
+	//   for each group
+	//    is there no CLI with the same id?
+	//     if MC has no other contacts
+	//       if MC's groups size is 1
+	//         remove MC
+	//       else
+	//         remove from group
+	//     else
+	//       if MC's groups size is 1 and group is topLevel
+	//         remove contact
+	//       else  // Contact's group membership were changed elsewhere, but we can't change it here without 
+	//             // affecting other protocols' contacts
+	//       	set flag to warn user that incompatible changes were made on other client
+	bool conflicts = false;
+	QDictIterator<Kopete::Contact> it( contacts() );
+	for ( ; it.current(); ++it )
+	{
+		if ( *it == myself() )
+			continue;
+
+		GroupWiseContact * c = static_cast< GroupWiseContact *>( *it );
+		GWContactInstanceList instances = m_serverListModel->instancesWithDn( c->dn() );
+		QPtrList<Kopete::Group> groups = c->metaContact()->groups();
+		QPtrListIterator<Kopete::Group> grpIt( groups );
+		while ( *grpIt )
+		{
+			QPtrListIterator<Kopete::Group> candidate = grpIt;
+			++grpIt;
+			bool found = false;
+			GWContactInstanceList::Iterator instIt = instances.begin();
+			for ( ; instIt != instances.end(); ++instIt )
+			{
+				QString groupId = ( *candidate )->pluginData(  protocol(), accountId() + " objectId" );
+				if ( groupId.isEmpty() )
+					if ( *candidate == Kopete::Group::topLevel() )
+						groupId = "0";	// hack the top level's objectId to 0
+					else
+						continue;
+
+				GWFolder * folder = ::qt_cast<GWFolder*>( ( *instIt )->parent() );
+				if ( folder->id == ( unsigned int )groupId.toInt() )
+				{
+					found = true;
+					instances.remove( instIt );
+					break;
+				}
+			}
+			if ( !found )
+			{
+				if ( c->metaContact()->contacts().count() == 1 )
+				{
+					if ( c->metaContact()->groups().count() == 1 )
+					{
+						kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "contact instance " << c->dn() << " not found on server side list, deleting metacontact with only this contact, in one group" << c->metaContact()->displayName() << endl;
+						Kopete::ContactList::self()->removeMetaContact( c->metaContact() );
+						break;
+					}
+					else
+					{
+						kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "contact instance " << c->dn() << " not found, removing metacontact " << c->metaContact()->displayName() << " from group " << ( *candidate )->displayName() << endl;
+						c->metaContact()->removeFromGroup( *candidate );
+					}
+				}
+				else
+				{
+					if ( c->metaContact()->groups().count() == 1 )
+					{
+						kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "contact instance " << c->dn() << " not found, removing contact " << c->metaContact()->displayName() << " from metacontact with other contacts " << endl;
+						c->deleteLater();
+						break;
+					}
+					else
+						kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "metacontact " << c->metaContact()->displayName( ) << "has multiple children and group membership, and contact " << c->dn() << " was removed from one group on the server." << endl;
+						conflicts = true;
+				}
+			} // 
+		} //end while, now check the next group membership
+	} //end for, now check the next groupwise contact
+	if ( conflicts )
+		// show queuedmessagebox
+		;
+		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, i18n( "A change happened to your GroupWise contact list while you were offline which was impossible to reconcile." ), i18n( "Conflicting changes made offline" ) );
+	m_dontSync = false;
 }
 
 void GroupWiseAccount::slotLoginFailed()
@@ -485,7 +580,7 @@ void GroupWiseAccount::slotKopeteGroupRenamed( Kopete::Group * renamedGroup )
 			if ( fi.id != 0 )
 			{
 				fi.sequence = renamedGroup->pluginData( protocol(), accountId() + " sequence" ).toInt();
-				fi.name	= renamedGroup->pluginData( protocol(), accountId() + " serverDisplayName" );
+				fi.name= renamedGroup->pluginData( protocol(), accountId() + " serverDisplayName" );
 
 				UpdateFolderTask * uft = new UpdateFolderTask( client()->rootTask() );
 				uft->renameFolder( renamedGroup->displayName(), fi );
@@ -725,43 +820,45 @@ void GroupWiseAccount::receiveFolder( const FolderItem & folder )
 		kdWarning( GROUPWISE_DEBUG_GLOBAL ) << " - received a nested folder.  These were not supported in GroupWise or Kopete as of Sept 2004, aborting! (parentId = " << folder.parentId << ")" << endl;
 		return;
 	}
+
+	GWFolder * fld = m_serverListModel->addFolder( folder.id, folder.sequence, folder.name );
+	Q_ASSERT( fld );
+
 	// either find a local group and record these details there, or create a new group to suit
 	Kopete::Group * found = 0;
 	QPtrList<Kopete::Group> groupList = Kopete::ContactList::self()->groups();
 	for ( Kopete::Group *grp = groupList.first(); grp; grp = groupList.next() )
 	{
 		// see if there is already a local group that matches this group
-		if ( grp->pluginData( protocol(), accountId() + " serverDisplayName" ) == folder.name )
+		QString groupId = grp->pluginData( protocol(), accountId() + " objectId" );
+		if ( groupId.isEmpty() )
+			if ( folder.name == grp->displayName() ) // no match on id, match on display name instead
+			{
+				grp->setPluginData( protocol(), accountId() + " objectId", QString::number( folder.id ) );
+				found = grp;
+				break;
+			}
+		if ( folder.id == (unsigned int)groupId.toInt() )
 		{
 			// was it renamed locally while we were offline?
 			if ( grp->displayName() != folder.name )
+			{
 				slotKopeteGroupRenamed( grp );
+				grp->setPluginData( protocol(), accountId() + " serverDisplayName", grp->displayName() );
+				fld->displayName = grp->displayName();
+			}
 
-			found = grp;
-			break;
-		}
-		else
-		if ( grp->displayName() == folder.name )
-		{
 			found = grp;
 			break;
 		}
 	}
 
-	if ( found )
+	if ( !found )
 	{
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - folder already exists locally" << endl;
-		found->setPluginData( protocol(), accountId() + " objectId", QString::number( folder.id ) );
-		found->setPluginData( protocol(), accountId() + " serverDisplayName", folder.name );
-		found->setPluginData( protocol(), accountId() + " sequence", QString::number( folder.sequence ) );
-	}
-	else
-	{
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - creating local folder" << endl;
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - not found locally, creating Kopete::Group" << endl;
 		Kopete::Group * grp = new Kopete::Group( folder.name );
-		grp->setPluginData( protocol(), accountId() + " objectId", QString::number( folder.id ) );
 		grp->setPluginData( protocol(), accountId() + " serverDisplayName", folder.name );
-		grp->setPluginData( protocol(), accountId() + " sequence", QString::number( folder.sequence ) );
+		grp->setPluginData( protocol(), accountId() + " objectId", QString::number( folder.id ) );
 		Kopete::ContactList::self()->addGroup( grp );
 	}
 }
@@ -774,56 +871,50 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 			<< ", parentId: " << contact.parentId
 			<< ", dn: " << contact.dn
 			<< ", displayName: " << contact.displayName << endl;
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "\n dotted notation is '" << protocol()->dnToDotted( contact.dn ) << "'\n" <<endl;
+	//kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "\n dotted notation is '" << protocol()->dnToDotted( contact.dn ) << "'\n" <<endl;
+
+	// add to new style contact list
+	GWContactInstance * gwInst = m_serverListModel->addContactInstance( contact.id, contact.parentId, contact.sequence, contact.displayName, contact.dn );
+	Q_ASSERT( gwInst );
 
 	GroupWiseContact * c = contactForDN( contact.dn );
-	if ( c )
-	{
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - found contact in list, checking to see it's in this group " << endl;
-		// check the metacontact is in the group this listing-of-the-contact is in...
-		Kopete::MetaContact *metaContact = c->metaContact();
-		Kopete::GroupList groupList = Kopete::ContactList::self()->groups();
-		for ( Kopete::Group *grp = groupList.first(); grp; grp = groupList.next() )
-		{
-			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - seeking in group named: " << grp->displayName() << ", id: " << grp->pluginData( protocol(), accountId() + " objectId" ).toInt() << " our parentId is: " << contact.parentId << endl;
-			if ( (uint)grp->pluginData( protocol(), accountId() + " objectId" ).toInt() == contact.parentId )
-			{
-				kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - matches, adding." << endl;
-				m_dontSync = true;
-				metaContact->addToGroup( grp ); //addToGroup() is safe to call if already a member
-				m_dontSync = false;
-				break;
-			}
-		}
-	}
-	else
+	// this contact is new to us, create him on the server
+	if ( !c )
 	{
 		Kopete::MetaContact *metaContact = new Kopete::MetaContact();
 		metaContact->setDisplayName( contact.displayName );
 		c = new GroupWiseContact( this, contact.dn, metaContact, contact.id, contact.parentId, contact.sequence );
-		Kopete::GroupList groupList = Kopete::ContactList::self()->groups();
-
-		for ( Kopete::Group *grp = groupList.first(); grp; grp = groupList.next() )
-		{
-			if ( (uint)grp->pluginData( protocol(), accountId() + " objectId" ).toInt() == contact.parentId )
-			{
-			  m_dontSync = true;
-			  metaContact->addToGroup( grp );
-			  m_dontSync = false;
-			  break;
-			}
-		}
 		Kopete::ContactList::self()->addMetaContact( metaContact );
 	}
-	// finally, record this contact list instance in the contact
-	ContactListInstance inst;
-	inst.objectId = contact.id;
-	inst.parentId = contact.parentId;
-	inst.sequence = contact.sequence;
-	c->addCLInstance( inst );
-	// set the contact's display name - this usually renames the metacontact, triggering a syncGroups. so we do this AFTER adding the CLInstance
-	// otherwise, syncGroups thinks the contact does not exist yet on the server and generates a redundant createcontacttask
-	c->setProperty( Kopete::Global::Properties::self()->nickName(), contact.displayName );
+	// add the metacontact to the ContactItem's group, if not there aleady
+	if ( contact.parentId == 0 )
+		c->metaContact()->addToGroup( Kopete::Group::topLevel() );
+	else
+	{
+		// check the metacontact is in the group this listing-of-the-contact is in...
+		GWFolder * folder = m_serverListModel->findFolderById( contact.parentId );
+		if ( !folder ) // inconsistent
+		{
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - ERROR - contact's folder doesn't exist on server" << endl;
+			DeleteItemTask * dit = new DeleteItemTask( client()->rootTask() );
+			dit->item( contact.parentId, contact.id );
+//			QObject::connect( dit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
+			dit->go( true );
+			return;
+		}
+		Kopete::Group *grp = Kopete::ContactList::self()->findGroup( folder->displayName );
+		// grp should exist, because we receive the folders from the server before the contacts
+		if ( grp )
+		{
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - making sure MC is in group " << grp->displayName() << endl;
+			m_dontSync = true;
+			c->metaContact()->addToGroup( grp ); //addToGroup() is safe to call if already a member
+			m_dontSync = false;
+		}
+	}
+
+	c->setNickName( contact.displayName );
+	//m_serverListModel->dump();
 }
 
 void GroupWiseAccount::receiveAccountDetails( const ContactDetails & details )
@@ -975,43 +1066,57 @@ bool GroupWiseAccount::createContact( const QString& contactId, Kopete::MetaCont
 			topLevel = true;
 			continue;
 		}
-		bool ok = true;
+
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "looking up: " << group->displayName() << endl;
+		GWFolder * fld = m_serverListModel->findFolderByName( group->displayName() );
 		FolderItem fi;
-		fi.parentId = 0;
-		fi.id = ( group->pluginData( protocol(), accountId() + " objectId" ) ).toInt( &ok );
-		if ( !ok )
+		if ( fld )
+		{
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << fld->displayName << endl;
+			//FIXME - get rid of FolderItem & co
+			fi.parentId = ::qt_cast<GWFolder*>( fld->parent() )->id;
+			fi.id = fld->id;
+			fi.name = fld->displayName;
+		}
+		else
+		{
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "folder: " << group->displayName() << 
+				"not found in server list model." << endl;
+			fi.parentId = 0;
 			fi.id = 0;
-		fi.name = group->displayName();
+			fi.name = group->displayName();
+		}
 		folders.append( fi );
+
 	}
 
-	// find out the highest folder sequence number
-	int highestFreeSequence = 0;
-	groupList = Kopete::ContactList::self()->groups();
-	for ( Kopete::Group *group = groupList.first(); group; group = groupList.next() )
-	{
-		bool ok = true;
-		int sequence = ( group->pluginData( protocol(), accountId() + " sequence" ) ).toInt( &ok );
-		if ( sequence >= highestFreeSequence )
-			highestFreeSequence = sequence + 1;
-	}
+	// find out the sequence number to use for any new folders
+	int highestFreeSequence = m_serverListModel->maxSequenceNumber() + 1;
 
 	// send this list along with the contact details to the server
 	// CreateContactTask will create the missing folders on the server
 	// and then add the contact to each one
 	// finally it will signal finished(), and we can query it for the details
-	// we gave it earlier and a list of ContactListInstances, and create the GroupWiseContact
-	// and make sure the contact was successfully created.
+	// we gave it earlier and make sure the contact was successfully created.
 	//
 	// Since ToMetaContact expects synchronous contact creation
 	// we have to create the contact optimistically.
-	/*GroupWiseContact * c = */new GroupWiseContact( this, contactId, parentContact, 0, 0, 0 );
+	new GroupWiseContact( this, contactId, parentContact, 0, 0, 0 );
 
-	// If the CreateContactTask finishes with an error, we'll have to
+	// If the CreateContactTask finishes with an error, we have to
 	// delete the contact we just created, in receiveContactCreated :/
 
+	if ( folders.isEmpty() && !topLevel )
+	{
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "aborting because we didn't find any groups to add them to" << endl;
+		return false;
+	}
+	
+	// get the contact's full name to use as the display name of the created contact
+	ContactDetails dt = client()->userDetailsManager()->details( contactId );
+	
 	CreateContactTask * cct = new CreateContactTask( client()->rootTask() );
-	cct->contactFromUserId( contactId, parentContact->displayName(), highestFreeSequence, folders, topLevel );
+	cct->contactFromUserId( contactId, dt.fullName, highestFreeSequence, folders, topLevel );
 	QObject::connect( cct, SIGNAL( finished() ), SLOT( receiveContactCreated() ) );
 	cct->go( true );
 	return true;
@@ -1020,11 +1125,24 @@ bool GroupWiseAccount::createContact( const QString& contactId, Kopete::MetaCont
 void GroupWiseAccount::receiveContactCreated()
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
- 	CreateContactTask * cct = ( CreateContactTask * )sender();
- 	if ( cct->success() )
+	m_serverListModel->dump();
+
+	CreateContactTask * cct = ( CreateContactTask * )sender();
+	if ( cct->success() )
 	{
-		client()->requestDetails( QStringList( cct->dn() ) );
-		client()->requestStatus( cct->dn() );
+		if ( client()->userDetailsManager()->known( cct->dn() ) )
+		{
+			ContactDetails dt = client()->userDetailsManager()->details( cct->dn() );
+			GroupWiseContact * c = contactForDN( cct->dn() );
+			c->setOnlineStatus( protocol()->gwStatusToKOS( dt.status ) );
+			c->setNickName( dt.fullName );
+			c->updateDetails( dt );
+		}
+		else
+		{
+			client()->requestDetails( QStringList( cct->dn() ) );
+			client()->requestStatus( cct->dn() );
+		}
 	}
 	else
 	{
@@ -1034,6 +1152,44 @@ void GroupWiseAccount::receiveContactCreated()
 			delete c;
 	}
 }
+
+void GroupWiseAccount::deleteContact( GroupWiseContact * contact )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	contact->setDeleting( true );
+	if ( isConnected() )
+	{
+		// remove all the instances of this contact from the server's contact list
+		GWContactInstanceList instances = m_serverListModel->instancesWithDn( contact->dn() );
+		GWContactInstanceList::iterator it = instances.begin();
+		for ( ; it != instances.end(); ++it )
+		{
+			DeleteItemTask * dit = new DeleteItemTask( client()->rootTask() );
+			dit->item( ::qt_cast<GWFolder*>( (*it)->parent() )->id, (*it)->id );
+			QObject::connect( dit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
+			dit->go( true );
+		}
+	}
+}
+
+void GroupWiseAccount::receiveContactDeleted( const ContactItem & instance )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	// an instance of this contact was deleted on the server.
+	// Remove it from the model of the server side list,
+	// and if there are no other instances of this contact, delete the contact
+	m_serverListModel->removeInstanceById( instance.id );
+	m_serverListModel->dump();
+
+	GWContactInstanceList instances = m_serverListModel->instancesWithDn( instance.dn );
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - " << instance.dn << " now has " << instances.count() << " instances remaining." << endl;
+	GroupWiseContact * c = contactForDN( instance.dn );
+	if ( c && instances.count() == 0 && c->deleting() )
+	{
+		c->deleteLater();
+	}
+}
+
 
 void GroupWiseAccount::slotConnectedElsewhere()
 {
@@ -1172,10 +1328,10 @@ void GroupWiseAccount::slotSetAutoReply()
 	QRegExp rx( ".*" );
     QRegExpValidator validator( rx, this );
 	QString newAutoReply = KInputDialog::getText( i18n( "Enter Auto-Reply Message" ),
-			 i18n( "Please enter an Auto-Reply message that will be shown to users who message you while Away or Busy" ), m_autoReply,
+			 i18n( "Please enter an Auto-Reply message that will be shown to users who message you while Away or Busy" ), configGroup()->readEntry( "AutoReply" ),
 			 &ok, Kopete::UI::Global::mainWidget(), "autoreplymessagedlg", &validator );
 	if ( ok )
-		m_autoReply = newAutoReply;
+		configGroup()->writeEntry( "AutoReply", newAutoReply );
 }
 
 void GroupWiseAccount::slotTestRTFize()
@@ -1223,6 +1379,196 @@ void GroupWiseAccount::dumpManagers()
 bool GroupWiseAccount::dontSync()
 {
 	return m_dontSync;
+}
+
+void GroupWiseAccount::syncContact( GroupWiseContact * contact )
+{
+	if ( dontSync() )
+		return;
+	
+	if ( contact != myself() )
+	{
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+		if ( !isConnected() )
+		{
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "not connected, can't sync display name or group membership" << endl;
+			return;
+		}
+	
+		// if this is a temporary contact, don't bother
+		if ( contact->metaContact()->isTemporary() )
+			return;
+
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " = CONTACT '" << contact->nickName() << "' IS IN " << contact->metaContact()->groups().count() << " MC GROUPS, AND HAS " << m_serverListModel->instancesWithDn( contact->dn() ).count() << " CONTACT LIST INSTANCES." << endl;
+
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " = LOOKING FOR NOOP GROUP MEMBERSHIPS" << endl;
+		// 1) Seek matches between CLIs and MCGs and remove from the lists without taking any action. match on objectid, parentid
+		// 2) Each remaining unmatched pair is a move, initiate and remove - need to take care to always use greatest unused sequence number - if we have to set the sequence number to the following sequence number within the folder, we may have a problem where after the first move, we have to wait for the state of the CLIs to be updated pending the completion of the first move - this would be difficult to cope with, because our current lists would be out of date, or we'd have to restart the sync - assuming the first move created a new matched CLI-MCG pair, we could do that with little cost.
+		// 3) Any remaining entries in MCG list are adds, carry out
+		// 4) Any remaining entries in CLI list are removes, carry out
+
+		// start by discovering the next free group sequence number in case we have to add any groups
+		int nextFreeSequence = m_serverListModel->maxSequenceNumber() + 1;
+		// 1)
+		// make a list of all the groups the metacontact is in
+		QPtrList<Kopete::Group> groupList = contact->metaContact()->groups();
+		// make a list of all the groups this contact is in, according to the server model
+		GWContactInstanceList instances = m_serverListModel->instancesWithDn( contact->dn() );
+
+		// seek corresponding pairs in both lists and remove
+		// ( for each group )
+		QPtrListIterator< Kopete::Group > grpIt( groupList );
+		while ( *grpIt )
+		{
+			QPtrListIterator< Kopete::Group > candidateGrp( groupList );
+			candidateGrp = grpIt;
+			++grpIt;
+	
+			GWContactInstanceList::Iterator instIt = instances.begin();
+			const GWContactInstanceList::Iterator instEnd = instances.end();
+			// ( see if a contactlist instance matches the group)
+			while ( instIt != instEnd )
+			{
+				GWContactInstanceList::Iterator candidateInst = instIt;
+				++instIt;
+				GWFolder * folder = ::qt_cast<GWFolder *>( ( *candidateInst )->parent() );
+				kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - Looking for a match, MC grp '" 
+					<< ( *candidateGrp )->displayName() 
+					<< "', GWFolder '" << folder->displayName << "', objectId is " << folder->id << endl;
+				
+				if ( ( folder->id == 0 && ( ( *candidateGrp ) == Kopete::Group::topLevel() ) )
+						|| ( ( *candidateGrp )->displayName() == folder->displayName ) )
+				{
+					//this pair matches, we can remove its members from both lists )
+					kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - match! removing both entries" << endl;
+					instances.remove( candidateInst );
+					groupList.remove( *candidateGrp );
+					break;
+				}
+			}
+		}
+		
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " = LOOKING FOR UNMATCHED PAIRS => GROUP MOVES" << endl;
+		grpIt.toFirst();
+		// ( take the first pair and carry out a move )
+		while ( *grpIt && !instances.isEmpty() )
+		{
+			QPtrListIterator< Kopete::Group > candidateGrp( groupList );
+			candidateGrp = grpIt;
+			++grpIt;
+			GWContactInstanceList::Iterator instIt = instances.begin();
+			GWFolder * sourceFolder =::qt_cast<GWFolder*>( ( *instIt)->parent() );
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - moving contact instance from group '" << sourceFolder->displayName << "' to group '" << ( *candidateGrp )->displayName() << "'" << endl;
+
+			// create contactItem parameter
+			ContactItem instance;
+			instance.id = ( *instIt )->id;
+			instance.parentId = sourceFolder->id;
+			instance.sequence = ( *instIt )->sequence;
+			instance.dn = ( *instIt )->dn;
+			instance.displayName = contact->nickName();
+			// identify the destination folder
+			GWFolder * destinationFolder = m_serverListModel->findFolderByName( ( ( *candidateGrp )->displayName() ) );
+			if ( destinationFolder ) // folder already exists on the server
+			{
+				MoveContactTask * mit = new MoveContactTask( client()->rootTask() );
+				mit->moveContact( instance, destinationFolder->id );
+				QObject::connect( mit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
+				mit->go();
+			}
+			else if ( *candidateGrp == Kopete::Group::topLevel() )
+			{	
+				MoveContactTask * mit = new MoveContactTask( client()->rootTask() );
+				mit->moveContact( instance, 0 );
+				QObject::connect( mit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
+				mit->go();
+			}
+			else
+			{
+				MoveContactTask * mit = new MoveContactTask( client()->rootTask() );
+				QObject::connect( mit, SIGNAL( gotContactDeleted( const ContactItem & ) ), 
+								  SLOT( receiveContactDeleted( const ContactItem & ) ) );
+				// discover the next free sequence number and add the group using that
+				mit->moveContactToNewFolder( instance, nextFreeSequence++,
+											 ( *candidateGrp )->displayName() );
+				mit->go( true );
+			}
+			groupList.remove( candidateGrp );
+			instances.remove( instIt );
+		}
+
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " = LOOKING FOR ADDS" << endl;
+		grpIt.toFirst();
+		while ( *grpIt )
+		{
+			QPtrListIterator< Kopete::Group > candidateGrp( groupList );
+			candidateGrp = grpIt;
+			++grpIt;
+			GWFolder * destinationFolder = m_serverListModel->findFolderByName( ( ( *candidateGrp )->displayName() ) );
+			Q_ASSERT( destinationFolder ); // might not exist on the server yet
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - add a contact instance for group '" << destinationFolder->displayName << "'" << endl;
+
+			CreateContactInstanceTask * ccit = new CreateContactInstanceTask( client()->rootTask() );
+			QObject::connect( ccit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
+
+			// does this group exist on the server?  Create the contact appropriately
+			int parentId = destinationFolder->id;
+			if ( true )
+				ccit->contactFromUserId( contact->dn(), contact->metaContact()->displayName(), parentId );
+			else
+			{
+				// discover the next free sequence number and add the group using that
+				ccit->contactFromUserIdAndFolder( contact->dn(), contact->metaContact()->displayName(), nextFreeSequence++, ( *candidateGrp )->displayName() );
+			}
+			ccit->go( true );
+			groupList.remove( candidateGrp );
+		}
+
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " = LOOKING FOR REMOVES" << endl;
+		GWContactInstanceList::Iterator instIt = instances.begin();
+		const GWContactInstanceList::Iterator instEnd = instances.end();
+		// ( remove each remaining contactlist instance, because it doesn't exist locally any more )
+		while ( instIt != instEnd )
+		{
+			GWContactInstanceList::Iterator candidateInst = instIt;
+			++instIt;
+			GWFolder * folder =::qt_cast<GWFolder*>( ( *candidateInst )->parent() );
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - remove contact instance '"<< ( *candidateInst )->id << "' in group '" << folder->displayName << "'" << endl;
+
+			DeleteItemTask * dit = new DeleteItemTask( client()->rootTask() );
+			dit->item( folder->id, (*candidateInst)->id );
+			QObject::connect( dit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
+			dit->go( true );
+
+			instances.remove( candidateInst );
+		}
+
+		// start an UpdateItem
+		if ( contact->metaContact()->displayName() != contact->nickName() )
+		{
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " updating the contact's display name to the metacontact's: " << contact->metaContact()->displayName() << endl;
+			// form a list of the contact's groups
+			GWContactInstanceList instances = m_serverListModel->instancesWithDn( contact->dn() );
+			GWContactInstanceList::Iterator it = instances.begin();
+			const GWContactInstanceList::Iterator end = instances.end();
+			for ( ; it != end; ++it )
+			{
+				QValueList< ContactItem > instancesToChange;
+				ContactItem instance;
+				instance.id = (*it)->id;
+				instance.parentId = ::qt_cast<GWFolder *>( (*it)->parent() )->id;
+				instance.sequence = (*it)->sequence;
+				instance.dn = contact->dn();
+				instance.displayName = contact->nickName();
+				instancesToChange.append( instance );
+
+				UpdateContactTask * uct = new UpdateContactTask( client()->rootTask() );
+				uct->renameContact( contact->metaContact()->displayName(), instancesToChange );
+				QObject::connect ( uct, SIGNAL( finished() ), contact, SLOT( renamedOnServer() ) );
+				uct->go( true );
+			}
+ 		}
+	}
 }
 
 #include "gwaccount.moc"

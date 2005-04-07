@@ -19,8 +19,8 @@
 #include <qcheckbox.h>
 #include <qlabel.h>
 
+#include <kconfig.h>
 #include <klocale.h>
-#include <qlabel.h>
 #include <kopetecontact.h>
 #include <kopeteglobal.h>
 #include <kopetemetacontact.h>
@@ -64,7 +64,7 @@ void ReceiveInvitationDialog::slotYesClicked()
 	m_account->client()->joinConference( m_guid );
 	// save the state of always accept invitations
 	QString alwaysAccept = m_wid->cb_dontShowAgain->isChecked() ? "true" : "false";
-	m_account->setPluginData( GroupWiseProtocol::protocol(), "AlwaysAcceptInvitations", alwaysAccept );
+	m_account->configGroup()->writeEntry( "AlwaysAcceptInvitations", alwaysAccept );
 	deleteLater();
 }
 

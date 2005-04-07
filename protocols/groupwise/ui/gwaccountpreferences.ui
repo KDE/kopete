@@ -99,7 +99,7 @@
                                     <cstring>m_autoConnect</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Exclude from connection</string>
+                                    <string>Exclude from connect all</string>
                                 </property>
                                 <property name="accel">
                                     <string></string>

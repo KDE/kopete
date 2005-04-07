@@ -145,18 +145,6 @@ namespace GroupWise
 		QString rtfMessage;
 	};
 
-	/**
-	* Represents an instance of a contact in the server side contact list
-	*/
-	struct ContactListInstance
-	{
-		int objectId;
-		int parentId;
-		int sequence;
-	};
-
-	typedef QValueList< ContactListInstance > CLInstanceList;
-	
 	struct UserSearchQueryTerm
 	{
 		QString field;

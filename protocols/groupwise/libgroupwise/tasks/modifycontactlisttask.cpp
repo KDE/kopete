@@ -81,6 +81,10 @@ bool ModifyContactListTask::take( Transfer * transfer )
 
 void ModifyContactListTask::processContactChange( Field::MultiField * container )
 {
+	if ( !( container->method() == NMFIELD_METHOD_ADD
+			|| container->method() == NMFIELD_METHOD_DELETE ) )
+		return;
+
 	client()->debug( "ModifyContactListTask::processContactChange()" );
 	Field::SingleField * current;
 	Field::FieldList fl = container->fields();
@@ -104,6 +108,10 @@ void ModifyContactListTask::processContactChange( Field::MultiField * container 
 
 void ModifyContactListTask::processFolderChange( Field::MultiField * container )
 {
+	if ( !( container->method() == NMFIELD_METHOD_ADD
+			|| container->method() == NMFIELD_METHOD_DELETE ) )
+		return;
+
 	client()->debug( "ModifyContactListTask::processFolderChange()" );
 	FolderItem folder;
 	Field::SingleField * current;
