@@ -348,13 +348,12 @@ const ProtocolList AliasPreferences::selectedProtocols( EditAliasDialog *dialog 
 	{
 		if( item->isSelected() )
 		{
-                        // If you don't have the selected protocol enabled, Kopete::PluginManager::self()->plugin()
-                        // will return NULL, check for that
+			// If you don't have the selected protocol enabled, Kopete::PluginManager::self()->plugin()
+			// will return NULL, check for that
 
-                        if(Kopete::PluginManager::self()->plugin( static_cast<ProtocolItem*>(item)->id) )
-                                protocolList.append( (Kopete::Protocol*)
-                                        Kopete::PluginManager::self()->plugin( static_cast<ProtocolItem*>(item)->id )
-                        );
+			if(Kopete::PluginManager::self()->plugin( static_cast<ProtocolItem*>(item)->id) )
+				protocolList.append( (Kopete::Protocol*)
+					Kopete::PluginManager::self()->plugin( static_cast<ProtocolItem*>(item)->id ) );
 		}
 		item = item->nextSibling();
 	}
