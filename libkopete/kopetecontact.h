@@ -545,41 +545,6 @@ private:
 	Private *d;
 
 
-
-public:
-
-//MOC_SKIP_BEGIN//
-//(moc doesn't like the KDE_DEPRECATED macro)
-
-	/**
-	 * @todo remove
-	 * @deprecated  Use setNickName, or set the nickName property
-	 */
-	KDE_DEPRECATED void rename( const QString &name )
-	{
-		setNickName( name );
-	}
-
-	/**
-	 * @todo remove
-	 * @deprecated  Use setNickName, or set the nickName property
-	 */
-	KDE_DEPRECATED void setDisplayName( const QString &name )
-	{
-		setNickName( name );
-	}
-
-	/**
-	 * @todo remove
-	 * @deprecated  Use nickName, or get the nickName property
-	 */
-	KDE_DEPRECATED QString displayName() const
-	{
-		return nickName();
-	}
-
-//MOC_SKIP_END//
-
 };
 
 
