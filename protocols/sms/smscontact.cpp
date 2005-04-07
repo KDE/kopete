@@ -35,7 +35,7 @@ SMSContact::SMSContact( Kopete::Account* _account, const QString &phoneNumber,
 : Kopete::Contact( _account, phoneNumber, parent ), m_phoneNumber( phoneNumber )
 {
 	kdWarning( 14160 ) << k_funcinfo << " this = " << this << ", phone = " << phoneNumber << endl;
-	setDisplayName( displayName );
+	setNickName( displayName );
 
 	m_msgManager = 0L;
 	m_actionPrefs = 0L;
@@ -152,7 +152,7 @@ const QString &SMSContact::phoneNumber()
 void SMSContact::setPhoneNumber( const QString phoneNumber )
 {
 	deleteLater();
-	new SMSContact(account(), phoneNumber, displayName(), metaContact());
+	new SMSContact(account(), phoneNumber, nickName(), metaContact());
 }
 
 QPtrList<KAction>* SMSContact::customContextMenuActions()

@@ -31,7 +31,7 @@ SMSUserPreferences::SMSUserPreferences( SMSContact* contact )
 	userPrefs = new SMSUserPrefsUI( topWidget );
 
 	userPrefs->telNumber->setText(m_contact->phoneNumber());
-	userPrefs->title->setText(m_contact->displayName());
+	userPrefs->title->setText(m_contact->nickName());
 }
 
 SMSUserPreferences::~SMSUserPreferences()
