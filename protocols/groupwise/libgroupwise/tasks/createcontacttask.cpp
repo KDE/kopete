@@ -95,6 +95,7 @@ void CreateContactTask::onGo()
 		ccit->contactFromDN( m_userId, m_displayName, 0 );
 		ccit->go( true );
 	}
+	client()->debug( "CreateContactTask::onGo() - DONE" );
 }
 
 void CreateContactTask::slotContactAdded( const ContactItem & addedContact )

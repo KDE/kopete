@@ -16,18 +16,24 @@
     *************************************************************************
 */
 
+#include <qclipboard.h>
 #include <qheader.h>
 #include <qlabel.h>
 #include <qlineedit.h>
-#include <qlistview.h>
+#include <klistview.h>
 #include <qmap.h>
+#include <qpopupmenu.h>
 
+#include <kapplication.h>
+#include <kdebug.h>
 #include <kdialogbase.h>
 #include <klocale.h>
 #include <kopeteglobal.h>
 #include <kopeteonlinestatus.h>
 #include <kopetemetacontact.h>
 #include <kopeteuiglobal.h>
+#include <kaction.h>
+#include <kstdaction.h>
 
 #include "gwcontact.h"
 #include "gwcontactpropswidget.h"
@@ -35,11 +41,10 @@
 
 #include "gwcontactproperties.h"
 
-GroupWiseContactProperties::GroupWiseContactProperties( GroupWiseContact * contact, QObject *parent, const char *name)
+GroupWiseContactProperties::GroupWiseContactProperties( GroupWiseContact * contact, QWidget *parent, const char *name)
  : QObject(parent, name)
 {
-	m_dialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "gwcontactpropsdialog", false, i18n( "Contact Properties" ), KDialogBase::Ok );
-	m_propsWidget = new GroupWiseContactPropsWidget( m_dialog );
+	init();
 	// set up the contents of the props widget
 	m_propsWidget->m_userId->setText( contact->contactId() );
 	m_propsWidget->m_status->setText( contact->onlineStatus().description() );
@@ -48,40 +53,51 @@ GroupWiseContactProperties::GroupWiseContactProperties( GroupWiseContact * conta
 	m_propsWidget->m_lastName->setText( contact->property( Kopete::Global::Properties::self()->lastName() ).value().toString() );
 	
 	setupProperties( contact->serverProperties() );
-	
-	// insert the props widget into the dialog
-	m_dialog->setMainWidget( m_propsWidget );
 	m_dialog->show();
 }
 
-GroupWiseContactProperties::GroupWiseContactProperties( GroupWise::ContactDetails cd, QObject *parent, const char *name )
+GroupWiseContactProperties::GroupWiseContactProperties( GroupWise::ContactDetails cd, QWidget *parent, const char *name )
  : QObject(parent, name)
 {
-	m_dialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "gwcontactpropsdialog", false, i18n( "Contact Properties" ), KDialogBase::Ok );
-	m_propsWidget = new GroupWiseContactPropsWidget( m_dialog );
+	init();
 	// set up the contents of the props widget
 	m_propsWidget->m_userId->setText( GroupWiseProtocol::protocol()->dnToDotted( cd.dn ) );
 	m_propsWidget->m_status->setText( GroupWiseProtocol::protocol()->gwStatusToKOS( cd.status ).description() );
 	m_propsWidget->m_displayName->setText( cd.fullName.isEmpty() ? ( cd.givenName + " " + cd.surname ) : cd.fullName );
 	m_propsWidget->m_firstName->setText( cd.givenName );
 	m_propsWidget->m_lastName->setText( cd.surname );
-	
+
 	setupProperties( cd.properties );
-	
+
+	m_dialog->show();
+}
+
+GroupWiseContactProperties::~GroupWiseContactProperties()
+{
+}
+
+void GroupWiseContactProperties::init()
+{
+	m_dialog = new KDialogBase( ::qt_cast<QWidget*>( parent() ), "gwcontactpropsdialog", false, i18n( "Contact Properties" ), KDialogBase::Ok );
+	m_propsWidget = new GroupWiseContactPropsWidget( m_dialog );
+	// set up the context menu and copy action
+	m_copyAction = KStdAction::copy( this, SLOT( slotCopy() ), 0 );
+	connect( m_propsWidget->m_propsView, 
+			 SIGNAL( contextMenuRequested( QListViewItem *, const QPoint & , int) ),
+			 SLOT( slotShowContextMenu( QListViewItem *, const QPoint & ) ) );
+
 	// insert the props widget into the dialog
 	m_dialog->setMainWidget( m_propsWidget );
-	m_dialog->show();
 }
 
 void GroupWiseContactProperties::setupProperties( QMap< QString, QString > serverProps )
 {
-	// now do the properties
 	m_propsWidget->m_propsView->header()->hide();
-	m_propsWidget->m_propsView->setAllColumnsShowFocus( true );
 	QMap< QString, QString >::Iterator it;
 	QMap< QString, QString >::Iterator end = serverProps.end();
 	for ( it = serverProps.begin(); it != end; ++it )
 	{
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " adding property: " << it.key() << ", " << it.data() << endl;
 		QString key = it.key();
 		QString localised;
 		if ( key == "telephoneNumber" )
@@ -101,12 +117,28 @@ void GroupWiseContactProperties::setupProperties( QMap< QString, QString > serve
 		else
 			localised = key;
 
-		new QListViewItem( m_propsWidget->m_propsView, localised, it.data() );
+		new KListViewItem( m_propsWidget->m_propsView, localised, it.data() );
 	}
 }
 
-GroupWiseContactProperties::~GroupWiseContactProperties()
+void GroupWiseContactProperties::slotShowContextMenu( QListViewItem * item, const QPoint & pos )
 {
+	if ( item )
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "for item " << item->text(0) << ", " << item->text(1) << endl;
+	else
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "no selected item" << endl;
+	QPopupMenu * popupMenu = new QPopupMenu( m_propsWidget->m_propsView );
+	m_copyAction->plug( popupMenu );
+	popupMenu->exec( pos );
 }
 
+void GroupWiseContactProperties::slotCopy()
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	if ( m_propsWidget->m_propsView->currentItem() )
+	{
+		QClipboard *cb = kapp->clipboard();
+		cb->setText( m_propsWidget->m_propsView->currentItem()->text( 1 ) );
+	}
+}
 #include "gwcontactproperties.moc"

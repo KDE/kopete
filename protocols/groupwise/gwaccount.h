@@ -21,24 +21,22 @@
 #ifndef GW_ACCOUNT_H
 #define GW_ACCOUNT_H
 
-#include <qvaluelist.h>
-#include <qdict.h>
-
-#include <kopeteaccount.h>
-#include <kopetemessage.h>
-#include <kopetepasswordedaccount.h>
-#include <managedconnectionaccount.h>
+#include <kopetemessagemanagerfactory.h>
 
 #include "gwerror.h"
-#include "gwfield.h"
-#include "gwmessagemanager.h"
+
+#include <managedconnectionaccount.h>
 
 class KActionMenu;
-namespace Kopete { class Contact; }
-namespace Kopete { class Group; }
-namespace Kopete { class MetaContact; }
+
+namespace Kopete {
+	class Contact;
+	class Group;
+	class MetaContact; 
+}
 
 class GroupWiseContact;
+class GroupWiseChatSession;
 class GroupWiseProtocol;
 class KNetworkConnector;
 namespace QCA {
@@ -47,20 +45,13 @@ namespace QCA {
 class QCATLSHandler;
 class ClientStream;
 class Client;
-
-/**
- * This represents an account connected to GroupWise
- * @author Will Stephensonconst int GroupWiseAccount::port() const
-{
-	return pluginData( protocol(), "Port" ).toInt();
-}
-
-const QString GroupWiseAccount::server() const
-
-*/
+class GWContactList;
 
 using namespace GroupWise;
 
+/**
+ * This represents an account on a Novell GroupWise Messenger Server
+ */
 class GroupWiseAccount : public Kopete::ManagedConnectionAccount
 {
 	Q_OBJECT
@@ -76,10 +67,14 @@ public:
 	void dumpManagers();
 	// DEBUG ONLY
 	/**
-	 * Creates a protocol specific Kopete::Contact subclass and adds it to the supplie
+	 * Creates a protocol specific Kopete::Contact subclass and adds it to the supplied
 	 * Kopete::MetaContact
 	 */
 	virtual bool createContact(const QString& contactId, Kopete::MetaContact* parentContact);
+	/**
+	 * Delete a contact on the server
+	 */
+	void deleteContact( GroupWiseContact * contact );
 	/**
 	 * Called when Kopete is set globally away
 	 */
@@ -141,6 +136,7 @@ public:
 	 */
 	bool dontSync();
 	
+	void syncContact( GroupWiseContact * contact );
 public slots:
 
 	void slotTestRTFize();
@@ -196,6 +192,10 @@ protected slots:
 	 * Called after we create a contact on the server
 	 */
 	void receiveContactCreated();
+	/**
+	 * Handles the response to deleting a contact on the server
+	 */
+	void receiveContactDeleted( const ContactItem & instance );
 	// SLOTS HANDLING PROTOCOL EVENTS
 	/**
 	 * Called when the server has a message for us.
@@ -302,6 +302,10 @@ protected:
 
 	GroupWiseChatSession * findChatSessionByGuid( const GroupWise::ConferenceGuid & guid );
 	/**
+	 * reconcile any changes to the contact list which happened offline
+	 */
+	void reconcileOfflineChanges();
+	/**
 	 * Memory management
 	 */
 	void cleanup();
@@ -310,8 +314,6 @@ private:
 	KActionMenu * m_actionMenu;
 	KAction * m_actionAutoReply;
 	KAction * m_actionManagePrivacy;
-	// current auto reply message
-	QString m_autoReply;
 	// Network code
 	KNetworkConnector * m_connector;
 	QCA::TLS * m_QCATLS;
@@ -320,10 +322,10 @@ private:
 	// Client, entry point of libgroupwise
 	Client * m_client;
 
-	GroupWise::Status m_initialStatus;
 	QString m_initialReason;
 	QValueList<GroupWiseChatSession*> m_chatSessions;
 	bool m_dontSync;
+	GWContactList * m_serverListModel;
 };
 
 #endif

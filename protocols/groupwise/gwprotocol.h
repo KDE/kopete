@@ -92,7 +92,7 @@ public:
 	const Kopete::OnlineStatus groupwiseConnecting;
 
 	/**
-	 * Represents contacts that are Away
+	 * Contact properties
 	 */
 	const Kopete::ContactPropertyTmpl propGivenName;
 	const Kopete::ContactPropertyTmpl propLastName;
@@ -100,6 +100,9 @@ public:
 	const Kopete::ContactPropertyTmpl propAwayMessage;
 	const Kopete::ContactPropertyTmpl propAutoReply;
 	const Kopete::ContactPropertyTmpl propCN;
+	const Kopete::ContactPropertyTmpl propPhoneWork;
+	const Kopete::ContactPropertyTmpl propPhoneMobile;
+	const Kopete::ContactPropertyTmpl propEmail;
 	
 	
 protected:

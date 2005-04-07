@@ -48,14 +48,14 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const char *name, const Q
 			i18n( "Offline" ), i18n( "O&ffline" ), Kopete::OnlineStatusManager::Offline ),
 	  groupwiseAvailable  ( Kopete::OnlineStatus::Online,  25, this, GroupWise::Available, QString::null, 
 			i18n( "Available" ), i18n( "A&vailable" ), Kopete::OnlineStatusManager::Online ),
-	  groupwiseBusy       ( Kopete::OnlineStatus::Away,    18, this, GroupWise::Busy, "groupwise_busy", 
+	  groupwiseBusy       ( Kopete::OnlineStatus::Away,    18, this, GroupWise::Busy, "contact_busy_overlay", 
 			i18n( "Busy" ), i18n( "&Busy" ), Kopete::OnlineStatusManager::Busy, Kopete::OnlineStatusManager::HasAwayMessage ),
-	  groupwiseAway       ( Kopete::OnlineStatus::Away,    20, this, GroupWise::Away, "groupwise_away", 
+	  groupwiseAway       ( Kopete::OnlineStatus::Away,    20, this, GroupWise::Away, "contact_away_overlay", 
 			i18n( "Away" ), i18n( "&Away" ), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasAwayMessage ),
-	  groupwiseAwayIdle   ( Kopete::OnlineStatus::Away,    15, this, GroupWise::AwayIdle, "groupwise_away", 
+	  groupwiseAwayIdle   ( Kopete::OnlineStatus::Away,    15, this, GroupWise::AwayIdle, "contact_away_overlay", 
 			i18n( "Idle" ), "FIXME: Make groupwiseAwayIdle unselectable", Kopete::OnlineStatusManager::Busy,
 			Kopete::OnlineStatusManager::HideFromMenu ),
-	  groupwiseAppearOffline( Kopete::OnlineStatus::Invisible, 2, this, 98, "groupwise_invisible",
+	  groupwiseAppearOffline( Kopete::OnlineStatus::Invisible, 2, this, 98, "contact_invisible_overlay",
 	  		i18n( "Appear Offline" ), i18n( "A&ppear Offline" ), Kopete::OnlineStatusManager::Invisible ),
 /* initialise Kopete::OnlineStatus used by the protocol, but that are not user selectable */
 	  groupwiseUnknown    ( Kopete::OnlineStatus::Unknown, 25, this, GroupWise::Unknown, "status_unknown",
@@ -69,7 +69,10 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const char *name, const Q
 	  propFullName( Kopete::Global::Properties::self()->fullName() ),
 	  propAwayMessage( Kopete::Global::Properties::self()->awayMessage() ),
 	  propAutoReply( "groupwiseAutoReply", i18n( "Auto Reply Message" ), QString::null, false, false ),
-	  propCN( "groupwiseCommonName", i18n( "Common Name" ), QString::null, true, false )
+	  propCN( "groupwiseCommonName", i18n( "Common Name" ), QString::null, true, false ),
+	  propPhoneWork( Kopete::Global::Properties::self()->workPhone() ),
+	  propPhoneMobile( Kopete::Global::Properties::self()->privateMobilePhone() ),
+	  propEmail( Kopete::Global::Properties::self()->emailAddress() )
 {
 	// ^^ That is all member initialiser syntax, not broken indentation!
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;

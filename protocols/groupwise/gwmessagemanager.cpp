@@ -360,11 +360,9 @@ void GroupWiseChatSession::slotInviteOtherContact()
 		// show search dialog
 		QWidget * w = ( view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) : 
 					Kopete::UI::Global::mainWidget() );
-		m_searchDlg = new KDialogBase( w, "invitesearchdialog", false, i18n( "Search for contact to invite" ), KDialogBase::Ok|KDialogBase::Cancel|KDialogBase::User1, KDialogBase::User1, true, KGuiItem( i18n( "&Search" ) ) );
+		m_searchDlg = new KDialogBase( w, "invitesearchdialog", false, i18n( "Search For Contact To Invite" ), KDialogBase::Ok|KDialogBase::Cancel );
 		m_search = new GroupWiseSearch( account(), QListView::Single, true, m_searchDlg, "invitesearchwidget" );
 		m_searchDlg->setMainWidget( m_search );
-		connect( m_searchDlg, SIGNAL( okClicked() ), SLOT( slotSearchedForUsers() ) );
-		connect( m_searchDlg, SIGNAL( user1Clicked() ), m_search, SLOT( doSearch() ) );
 		connect( m_search, SIGNAL( selectionValidates( bool ) ), m_searchDlg, SLOT( enableButtonOK( bool ) ) );
 		m_searchDlg->enableButtonOK( false );
 	}
