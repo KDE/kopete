@@ -20,9 +20,8 @@
 #include <klocale.h>
 #include <kpopupmenu.h>
 
-#include <qstylesheet.h>
-
 #include "kopeteawayaction.h"
+#include "kopetemessage.h"
 
 #include "client.h"
 #include "icquserinfo.h"
@@ -309,17 +308,7 @@ QString ICQAccount::sanitizedMessage( const Oscar::Message& message )
 {
 	if ( message.type() == 1 || message.type() == 4 )
 	{
-		QString html = QStyleSheet::escape( message.text() );
- 		//Replace carriage returns inside the text
-		html.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br />" ) );
-		//Replace a tab with 4 spaces
-		html.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
-
-		//Replace multiple spaces with &nbsp;
-		//do not replace every space so we break the linebreak
-		html.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
-
-		return html;
+		return Kopete::Message::escape( message.text() );
 	}
 	else 
 		kdWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "ICQ type 2 messages not supported yet. Message text:" << message.text() << endl;
