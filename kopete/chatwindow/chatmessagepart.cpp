@@ -174,6 +174,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	setJavaEnabled( false );
 	setPluginsEnabled( false );
 	setMetaRefreshEnabled( false );
+	setOnlyLocalReferences( true );
 
 	begin();
 	write( QString::fromLatin1( "<html><head>\n"
