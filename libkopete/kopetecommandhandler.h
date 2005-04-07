@@ -170,6 +170,15 @@ class KOPETE_EXPORT CommandHandler : public QObject
 		 */
 		bool commandHandled( const QString &command );
 
+		/**
+		 * \brief Check if a command is already handled by a spesific protocol
+		 *
+		 * @param command The command to check
+		 * @param protocol The protocol to check
+		 * @return True if the command is already being handled, False if not
+		 */
+		bool commandHandledByProtocol( const QString &command, Protocol *);
+
 	private slots:
 		void slotPluginLoaded( Kopete::Plugin * );
 		void slotPluginDestroyed( QObject * );

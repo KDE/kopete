@@ -393,6 +393,27 @@ bool Kopete::CommandHandler::commandHandled( const QString &command )
 	return false;
 }
 
+bool Kopete::CommandHandler::commandHandledByProtocol( const QString &command, Kopete::Protocol *protocol )
+{
+	// Make sure the protocol is not NULL
+	if(!protocol)
+		return false;
+
+	// Fetch the commands for the protocol
+	CommandList commandList = commands( protocol );
+	QDictIterator<Kopete::Command> it ( commandList );
+
+	// Loop through commands and check if they match the supplied command
+	for( ; it.current(); ++it )
+	{
+		if( it.current()->command().lower() == command )
+			return true;
+	}
+
+	// No commands found
+	return false;
+}
+
 CommandList Kopete::CommandHandler::commands( Kopete::Protocol *protocol )
 {
 	CommandList commandList(63, false);
