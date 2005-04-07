@@ -59,6 +59,13 @@ Transfer* SnacProtocol::parse( const QByteArray & packet, uint& bytes )
 	*m_din >> w;
 	f.length = w;
 	
+	if ( ( f.length + 6 ) > packet.size() )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Packet not big enough to parse!" << endl;
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "packet size is " << packet.size()
+			<< " we need " << f.length + 6 << endl;
+		return 0;
+	}
 	//snac parsing
 	*m_din >> w;
 	s.family = w;
