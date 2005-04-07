@@ -172,7 +172,7 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 			{
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo 
 					<< "Not enough bytes to make a correct transfer. Have " << wire.size()
-					<< " bytes. need " << flapLength << " bytes" << endl;
+					<< " bytes. need " << flapLength + 6 << " bytes" << endl;
 				m_state = NeedMore;
 				return bytesParsed;
 			}
@@ -203,7 +203,10 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 					emit incomingData();
 				}
 				else
+				{
 					bytesParsed = 0;
+					m_state = NeedMore;
+				}
 			}
 		}
 		else 
@@ -243,3 +246,4 @@ bool CoreProtocol::okToProceed()
 }
 
 #include "coreprotocol.moc"
+//kate: indent-mode csands; tab-width 4;
