@@ -36,7 +36,7 @@ MeanwhileContact::MeanwhileContact(
 						Kopete::MetaContact *_parent )
 	: Kopete::Contact( _account, _userId, _parent )
 {
-	setDisplayName( _nickname );
+	setNickName( _nickname );
 	m_msgManager = 0L;
 	meanwhileId = _userId;
 
