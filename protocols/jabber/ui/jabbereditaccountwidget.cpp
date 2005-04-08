@@ -63,6 +63,7 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	connect (sbLocalPort, SIGNAL (valueChanged (int)), this, SLOT (configChanged ()));
 	connect (leProxyJID, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
 
+	
 	if (account())
 	{
 		this->reopen ();
@@ -72,6 +73,9 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	{
 		connect (btnRegister, SIGNAL (clicked ()), this, SLOT (registerClicked ()));
 	}
+	QWidget::setTabOrder( mID, mPass->mRemembered );
+	QWidget::setTabOrder( mPass->mRemembered, mPass->mPassword );
+	QWidget::setTabOrder( mPass->mPassword, cbAutoConnect );
 }
 
 JabberEditAccountWidget::~JabberEditAccountWidget ()
