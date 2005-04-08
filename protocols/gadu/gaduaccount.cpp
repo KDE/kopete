@@ -867,7 +867,6 @@ GaduAccount::slotExportContactsListToFile()
 	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
 
 	if ( p->saveListDialog->exec() == QDialog::Accepted ) {
-
 		QCString list = p->textcodec_->fromUnicode( userlist()->asString() );
 
 		if ( tempFile.status() ) {
