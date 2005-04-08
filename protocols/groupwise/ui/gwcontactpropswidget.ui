@@ -204,9 +204,6 @@
             <property name="itemsMovable">
                 <bool>false</bool>
             </property>
-            <property name="shadeSortColumn">
-                <bool>false</bool>
-            </property>
         </widget>
     </vbox>
 </widget>
