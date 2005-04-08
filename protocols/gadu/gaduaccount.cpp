@@ -916,7 +916,7 @@ GaduAccount::slotImportContactsFromFile()
 	if ( p->loadListDialog->exec() == QDialog::Accepted ) {
 		url = p->loadListDialog->selectedURL();
 		kdDebug(14100) << "a:" << url << "\nb:" << oname << endl;
-		if ( KIO::NetAccess::download( url, oname,	Kopete::UI::Global::mainWidget() ) ) {
+		if ( KIO::NetAccess::download( url, oname, Kopete::UI::Global::mainWidget() ) ) {
 			QFile tempFile( oname );
 			if ( tempFile.open( IO_ReadOnly ) ) {
 				list = tempFile.readAll();
