@@ -996,6 +996,7 @@
     <tabstop>mNickName</tabstop>
     <tabstop>mAltNickname</tabstop>
     <tabstop>mUserName</tabstop>
+    <tabstop>m_realNameLineEdit</tabstop>
     <tabstop>network</tabstop>
     <tabstop>editButton</tabstop>
     <tabstop>preferSSL</tabstop>

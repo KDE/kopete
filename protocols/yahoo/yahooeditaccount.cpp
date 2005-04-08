@@ -22,12 +22,14 @@
 #include <qgroupbox.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
+#include <qcheckbox.h>
 
 // KDE Includes
 #include <klocale.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <krun.h>
+#include <kpassdlg.h>
 
 // Kopete Includes
 #include <addcontactpage.h>
@@ -56,6 +58,11 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 	}
 
 	QObject::connect(buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
+
+	/* Set tab order to password custom widget correctly */
+	QWidget::setTabOrder( mAutoConnect, mPasswordWidget->mRemembered );
+	QWidget::setTabOrder( mPasswordWidget->mRemembered, mPasswordWidget->mPassword );
+	QWidget::setTabOrder( mPasswordWidget->mPassword, buttonRegister );
 
 	show();
 }
