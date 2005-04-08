@@ -78,6 +78,10 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, Q
 	}
 
 	QObject::connect( registerNew, SIGNAL( clicked( ) ), SLOT( registerNewAccount( ) ) );
+	QWidget::setTabOrder( loginEdit_, passwordWidget_->mRemembered );
+	QWidget::setTabOrder( passwordWidget_->mRemembered, passwordWidget_->mPassword );
+	QWidget::setTabOrder( passwordWidget_->mPassword, autoLoginCheck_ );
+
 }
 
 void
