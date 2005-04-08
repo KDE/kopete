@@ -256,7 +256,7 @@ void ListView::slotContextMenu( KListView * /*listview*/,
 	if ( !item )
 		clearSelection();
 
-	if( Item *myItem = dynamic_cast<Item*>( item ) )
+//	if( Item *myItem = dynamic_cast<Item*>( item ) )
 		;// TODO: myItem->contextMenu( point );
 }
 
