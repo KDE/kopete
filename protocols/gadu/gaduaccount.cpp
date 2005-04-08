@@ -898,6 +898,9 @@ GaduAccount::slotExportContactsListToFile()
 void
 GaduAccount::slotImportContactsFromFile()
 {
+	KURL url;
+	QCString list;
+	QString oname;
 
 	if ( p->loadListDialog ) {
 		kdDebug( 14100 ) << "load contacts from file: alread waiting for input " << endl ;
@@ -911,17 +914,9 @@ GaduAccount::slotImportContactsFromFile()
 	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
 
 	if ( p->loadListDialog->exec() == QDialog::Accepted ) {
-
-		QCString list;
-
-		KURL url = p->loadListDialog->selectedURL();
-		QString oname;
-		kdDebug(14100) << "a:"<<url<<"\nb:" << oname << endl;
-		if ( KIO::NetAccess::download(	url,
-						oname,
-						Kopete::UI::Global::mainWidget()
-						) ) {
-
+		url = p->loadListDialog->selectedURL();
+		kdDebug(14100) << "a:" << url << "\nb:" << oname << endl;
+		if ( KIO::NetAccess::download( url, oname,	Kopete::UI::Global::mainWidget() ) ) {
 			QFile tempFile( oname );
 			if ( tempFile.open( IO_ReadOnly ) ) {
 				list = tempFile.readAll();
