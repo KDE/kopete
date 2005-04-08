@@ -743,6 +743,8 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 // 		kdDebug( 14000 ) << k_funcinfo << "Unhandled event: [" << o << "][" << o->name() << "][" << o->className() << "][" << e->type() << "]" << endl;
 		return KListView::eventFilter( o, e ); // Pass the event to KListView
 	}
+	
+	return false;
 }
 
 void ListView::slotCurrentChanged( QListViewItem *item )
