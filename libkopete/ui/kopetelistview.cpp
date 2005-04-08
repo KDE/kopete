@@ -98,12 +98,12 @@ struct ListView::Private
 	//! The status of smooth scrolling, enabled or disabled.
 	bool smoothScrollingEnabled;
 	//! This will be the QTimer's ID which will be updating smooth scrolling animation.
-	int smoothScrollingTimer;
+	double smoothScrollingTimer;
 	//! The time interval which the smooth scrolling will be updated.
-	int smoothScrollingTimerInterval;
+	double smoothScrollingTimerInterval;
 	//! This will be the target scroll bar position. Note that this value is in the sense of contents height in
 	//! in the scroll bar, not the regular XY coordinates in the widget.
-	int targetScrollBarValue;
+	double targetScrollBarValue;
 	//! Meta current scroll bar value, this will be used to make precise calculation, note that data type is double
 	//! Otherwise extra coding would be necessary to workaround lost precisions all around.
 	double metaScrollBarCurrentValue;
@@ -330,7 +330,7 @@ void ListView::setSmoothScrolling( bool b )
 		// Intercept scrollbar's events
 		verticalScrollBar()->installEventFilter( this );
 		// Install the timer
-		d->smoothScrollingTimer = startTimer( d->smoothScrollingTimerInterval );
+		d->smoothScrollingTimer = startTimer( (int)d->smoothScrollingTimerInterval );
 		// If we want to enable smooth scrolling when item has changed with keypresses etc, we need this
 		connect( this, SIGNAL( currentChanged( QListViewItem* ) ), this, SLOT( slotCurrentChanged(QListViewItem*) ) );
 		// Disable autoscroll, we will do it the smooth way.
@@ -348,7 +348,7 @@ void ListView::setSmoothScrolling( bool b )
 		// Restore line/page step sizes
 		verticalScrollBar()->setLineStep( d->smoothScrollingLineStep );
 		// Kill the already started timer
-		killTimer( d->smoothScrollingTimer );
+		killTimer( (int)d->smoothScrollingTimer );
 		d->smoothScrollingTimer = 0;
 		// We don't need to list currentChanged anymore
 		disconnect( this, SIGNAL( currentChanged( QListViewItem* ) ), this, SLOT( slotCurrentChanged(QListViewItem*) ) );
@@ -367,12 +367,12 @@ bool ListView::smoothScrolling()
 	return d->smoothScrollingEnabled;
 }
 
-void ListView::setSmoothScrollingTimerInterval( int i )
+void ListView::setSmoothScrollingTimerInterval( double i )
 {
 	d->smoothScrollingTimerInterval = i;
 }
 
-int ListView::smoothScrollingTimerInterval()
+double ListView::smoothScrollingTimerInterval()
 {
 	return d->smoothScrollingTimerInterval;
 }
