@@ -64,12 +64,12 @@ public:
 	 * Sets the update interval of smooth scrolling animation.
 	 * @param interval is the interval in ms.
 	 */
-	void setSmoothScrollingTimerInterval( int interval );
+	void setSmoothScrollingTimerInterval( double interval );
 
 	/**
 	 * Gets the current update interval.
 	 */
-	int smoothScrollingTimerInterval();
+	double smoothScrollingTimerInterval();
 
 	/**
 	 * Sets scroll auto hide feature
