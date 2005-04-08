@@ -246,7 +246,7 @@ void ListView::slotDoubleClicked( QListViewItem *item )
 }
 
 void ListView::slotContextMenu( KListView * /*listview*/,
-	QListViewItem *item, const QPoint &point )
+	QListViewItem *item, const QPoint &/*point*/ )
 {
 	if ( item && !item->isSelected() )
 	{
