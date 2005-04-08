@@ -747,6 +747,7 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 
 void ListView::slotCurrentChanged( QListViewItem *item )
 {
+	if( !item ) return;
 	// If the current item changed due to mouse click then don't center it in the listview. Do this just for key presses.
 	if( d->mousePressed ){ d->mousePressed = false; return; }
 	d->targetScrollBarValue = itemPos(item) - static_cast<double>(visibleHeight()/2.0) + item->height();
