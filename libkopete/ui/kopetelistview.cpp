@@ -362,7 +362,7 @@ void ListView::setSmoothScrolling( bool b )
 	}
 }
 
-bool ListView::smoothScrolling()
+bool ListView::smoothScrolling() const
 {
 	return d->smoothScrollingEnabled;
 }
@@ -372,7 +372,7 @@ void ListView::setSmoothScrollingTimerInterval( double i )
 	d->smoothScrollingTimerInterval = i;
 }
 
-double ListView::smoothScrollingTimerInterval()
+double ListView::smoothScrollingTimerInterval() const
 {
 	return d->smoothScrollingTimerInterval;
 }

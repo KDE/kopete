@@ -58,7 +58,7 @@ public:
 	/**
 	 * Gets the smooth scrolling status
 	 */
-	bool smoothScrolling();
+	bool smoothScrolling() const;
 
 	/**
 	 * Sets the update interval of smooth scrolling animation.
@@ -69,7 +69,7 @@ public:
 	/**
 	 * Gets the current update interval.
 	 */
-	double smoothScrollingTimerInterval();
+	double smoothScrollingTimerInterval() const;
 
 	/**
 	 * Sets scroll auto hide feature
