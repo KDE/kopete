@@ -50,6 +50,11 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 		mGui->sbxServerPort->setValue( portEntry );
 	}
 	QObject::connect( mGui->buttonRegister, SIGNAL( clicked() ), this, SLOT( slotOpenRegister() ) );
+
+	/* Set tab order to password custom widget correctly */
+	QWidget::setTabOrder( mGui->edtAccountId, mGui->mPasswordWidget->mRemembered );
+	QWidget::setTabOrder( mGui->mPasswordWidget->mRemembered, mGui->mPasswordWidget->mPassword );
+	QWidget::setTabOrder( mGui->mPasswordWidget->mPassword, mGui->mAutoLogon );
 }
 
 AIMEditAccountWidget::~AIMEditAccountWidget()
