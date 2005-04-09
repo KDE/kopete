@@ -737,12 +737,16 @@ void JabberAccount::slotIncomingFileTransfer ()
 
 void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status  , const QString &reason)
 {
+#warning  TODO do this properly
+  //and actually set the correct status  - Olivier  2005-04-09
 	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Online )
 		connect( status );
 	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Offline )
 		disconnect( Kopete::Account::Manual );
 	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Away )
 		setAway( true, reason );
+	else if(isConnected() && isAway() &&  status.status() == Kopete::OnlineStatus::Online )
+		setAway(false, reason );
 }
 
 void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )
