@@ -32,6 +32,8 @@
 #include <kmessagebox.h>
 #include <krun.h>
 #include <ktempfile.h>
+#include <kconfig.h>
+#include <kglobal.h>
 #include <qregexp.h>
 
 #include "kopetecontactlist.h"
@@ -633,7 +635,10 @@ void MSNContact::setObject(const QString &obj)
 	removeProperty( Kopete::Global::Properties::self()->photo()  ) ;
 	emit displayPictureChanged();
 
-//	manager(Kopete::Contact::CanCreate); //create the manager which will download the photo automatically.
+	KConfig *config = KGlobal::config();
+	config->setGroup( "MSN" );
+	if ( config->readNumEntry( "DownloadPicture", 1 ) >= 2 && !obj.isEmpty() )
+		manager(Kopete::Contact::CanCreate); //create the manager which will download the photo automatically.
 }
 
 #include "msncontact.moc"

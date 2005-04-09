@@ -377,16 +377,66 @@
                                     <string>This option will notify you when a contact start typing his message, before the message is sent or finished.</string>
                                 </property>
                             </widget>
-                            <widget class="QCheckBox">
+                            <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>AutoDownloadPicture</cstring>
+                                    <cstring>layout13</cstring>
                                 </property>
-                                <property name="text">
-                                    <string>Automatically &amp;download the display picture if possible</string>
-                                </property>
-                                <property name="checked">
-                                    <bool>true</bool>
-                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLabel">
+                                        <property name="name">
+                                            <cstring>textLabel1_4</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Download the msn picture :</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>&lt;qt&gt;&lt;p&gt;Indicate when Koete will download the picture oh contacts&lt;/p&gt;
+&lt;dl&gt;&lt;dt&gt;Only manually&lt;/dt&gt;&lt;dd&gt;The picture is not downloaded automatically, but only when the user request it&lt;/dd&gt;
+&lt;dt&gt;When a chat is open&lt;/dt&gt;&lt;dd&gt;The picture is downloaded when a conversation socket is open, ie. when you open a chatwindow&lt;/dd&gt;
+&lt;dt&gt;Automatically&lt;/dt&gt;&lt;dd&gt;Always try to download the picture if the contact has one.  &lt;b&gt;Note :&lt;/b&gt; this will open a socket, and let know the user you are downloading his picture.&lt;/dd&gt;&lt;/dl&gt;</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QComboBox">
+                                        <item>
+                                            <property name="text">
+                                                <string>Only manualy</string>
+                                            </property>
+                                        </item>
+                                        <item>
+                                            <property name="text">
+                                                <string>When a chat is open (default)</string>
+                                            </property>
+                                        </item>
+                                        <item>
+                                            <property name="text">
+                                                <string>Automatically (read help)</string>
+                                            </property>
+                                        </item>
+                                        <property name="name">
+                                            <cstring>DownloadPicture</cstring>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>3</hsizetype>
+                                                <vsizetype>0</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="currentItem">
+                                            <number>1</number>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>&lt;qt&gt;&lt;p&gt;Indicate when Koete will download the picture oh contacts&lt;/p&gt;
+&lt;dl&gt;&lt;dt&gt;Only manually&lt;/dt&gt;&lt;dd&gt;The picture is not downloaded automatically, but only when the user request it&lt;/dd&gt;
+&lt;dt&gt;When a chat is open&lt;/dt&gt;&lt;dd&gt;The picture is downloaded when a conversation socket is open, ie. when you open a chatwindow&lt;/dd&gt;
+&lt;dt&gt;Automatically&lt;/dt&gt;&lt;dd&gt;Always try to download the picture if the contact has one.  &lt;b&gt;Note :&lt;/b&gt; this will open a socket, and let know the user you are downloading his picture.&lt;/dd&gt;&lt;/dl&gt;</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
                             </widget>
                             <widget class="QCheckBox">
                                 <property name="name">
@@ -1143,7 +1193,7 @@ If this option is enabled, Kopete will send the away message automatically.</str
 </customwidgets>
 <images>
     <image name="image0">
-        <data format="XBM.GZ" length="79">789c534e494dcbcc4b554829cdcdad8c2fcf4c29c95030e0524611cd48cd4ccf28010a1797249664262b2467241641a592324b8aa363156c15aab914146aadb90067111b1f</data>
+        <data format="PNG" length="826">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b0000030149444154388db59531681b5718c77f0e377c070e3c810a3a70e0041eac51852e0a19e45134830a1d9a4c69a04bc8928e990a693a640e1d0c8642b08742321894c1507991b484c890902bb8701a047760c3bd21701fe4201dde49b6a41a32b8df72dcbbeffdbefffbbfefbd5b1b0c07cce266ebe667ae2006c3c1dada0cdc3be87d6e6c35b0d692a409d9c7ec8b20d65ae29398d19b1114e7e3de4ce98b3f5e10dc0053cf0951b4506496e1b964bf7ce6c585d9054c62d01d617ca48be0596553cf496d8f2c8b01c5f795fc93904e85ec4c01a152857a5d9175d0b2805c872080f18595ccc1499a10a225d4e2fbc2877786fe81253ab6c04c8d106e09db5d43ab0d146e5c64d1a23938fb98a185cea1c33eecfd9eba49eb427dcb201e245365f2b7b2fb5b4a3a31dcb927178afe07d86901df870fefa4842aed6f6b74ba42e52b4014d580e1eb9cbd9d94de7e4aad16d2f9be02d805f0b5e532f927a1ffcacea1777f122a8105b164a7c25faf323a5d9f1f1fd600e1e5bec59e2d4b5c7ef5209d0ad17b8b31864e57c0b3e0815ac3ee33253ab664a770ff5185d1a1cb8d2267d3e58aa1dc7d2508cbe597d0e74fdd269aaaf0f52d414c4ea3e9762c996869e42560d7a72e41c4799a2586e74f95e8d8151481fa86efbe7b3398ac58b1a2b8527589f15451ad303ac2293542ad6648a796278f13a27185e4c4754310facb98c53a79e19a3fdc1426ff28c3d7399d1f7cb25343eb96106cf83c790ce9c4f2eb831855c55485663327992eb6dc8a6259874ed700b0b793323cccb9ffa842b30d6133e3e75fea989ac15a8b16ca76b746b0b92278d919774c5b6d48a78697fb29bbcf52468742a32120909c24e899ce67beed5be2db01e22d1e9485bb620e47f9ee9e606a21bd3f5d3744c7e7c54d55e87443867d8b554515ac5db4620e8e4f62263170fd1cdee90aad7640141992891b0f367c9adfe4049bb07d3b7022bd8c687c0978f46684ee084150b65ac1fcca94591b7a90a496e4c095164fb016a2b192a497795cc0f84817aebe25f7bf70ccc54a575c555c03f78ffa5fc0570d1f0c076bff0232285a09643cc7ce0000000049454e44ae426082</data>
     </image>
 </images>
 <connections>
@@ -1216,17 +1266,17 @@ If this option is enabled, Kopete will send the away message automatically.</str
 </connections>
 <tabstops>
     <tabstop>tabWidget3</tabstop>
-    <tabstop>m_login</tabstop>
-    <tabstop>m_autologin</tabstop>
-    <tabstop>buttonRegister</tabstop>
     <tabstop>optionOverrideServer</tabstop>
     <tabstop>m_serverName</tabstop>
     <tabstop>m_serverPort</tabstop>
     <tabstop>NotifyNewChat</tabstop>
-    <tabstop>AutoDownloadPicture</tabstop>
+    <tabstop>DownloadPicture</tabstop>
     <tabstop>useCustomEmoticons</tabstop>
     <tabstop>SendAwayMessages</tabstop>
     <tabstop>AwayMessageSeconds</tabstop>
+    <tabstop>m_login</tabstop>
+    <tabstop>m_autologin</tabstop>
+    <tabstop>buttonRegister</tabstop>
     <tabstop>m_displayName</tabstop>
     <tabstop>m_phw</tabstop>
     <tabstop>m_phh</tabstop>

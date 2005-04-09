@@ -178,7 +178,7 @@ void MSNChatSession::slotUserJoined( const QString &handle, const QString &publi
 
 	KConfig *config = KGlobal::config();
 	config->setGroup( "MSN" );
-	if ( members().count()==1 && config->readBoolEntry( "AutoDownloadPicture", true ) && !c->object().isEmpty() && !c->hasProperty(Kopete::Global::Properties::self()->photo().key()))
+	if ( members().count()==1 && config->readNumEntry( "DownloadPicture", 1 ) >= 1 && !c->object().isEmpty() && !c->hasProperty(Kopete::Global::Properties::self()->photo().key()))
 		slotRequestPicture();
 }
 
@@ -581,7 +581,7 @@ void MSNChatSession::slotDisplayPictureChanged()
 		{
 			KConfig *config = KGlobal::config();
 			config->setGroup( "MSN" );
-			if ( config->readBoolEntry( "AutoDownloadPicture", true ) && !c->object().isEmpty() )
+			if ( config->readNumEntry( "DownloadPicture", 1 ) >= 1 && !c->object().isEmpty() )
 				slotRequestPicture();
 		}
 	}
