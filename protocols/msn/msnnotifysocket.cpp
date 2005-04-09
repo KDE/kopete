@@ -212,10 +212,13 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 800:
 	{
-		QString msg = i18n( "You are trying to change your status, or your display name too rapidly.\n"
+		//This happen when too much commends are sent to the server.
+		//the command will not be executed, too bad.
+		// ignore it for now, as we don't really know what command it was.
+/*		QString msg = i18#n( "You are trying to change your status, or your display name too rapidly.\n"
 	 		"This might happen if you added yourself to your own contact list." );
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
-		//FIXME: try to fix this problem
+		//FIXME: try to fix this problem*/
 		break;
 	}
 	case 911:
