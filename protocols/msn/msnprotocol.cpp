@@ -54,7 +54,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList &
 	LUN( Kopete::OnlineStatus::Away,      15, this, 6, "contact_food_overlay",     i18n( "Out to Lunch" ) , i18n( "Out To &Lunch" ) ),
 	FLN( Kopete::OnlineStatus::Offline,    0, this, 7, QString::null,   i18n( "Offline" ) , i18n( "&Offline" ), Kopete::OnlineStatusManager::Offline , Kopete::OnlineStatusManager::DisabledIfOffline),
 	HDN( Kopete::OnlineStatus::Invisible,  3, this, 8, "contact_invisible_overlay", i18n( "Invisible" ) , i18n( "&Invisible" ), Kopete::OnlineStatusManager::Invisible ), 
-	IDL( Kopete::OnlineStatus::Away,      10, this, 9, "contact_away_overlay",      i18n( "Idle" ) ,  i18n( "&Idle" ), Kopete::OnlineStatusManager::Invisible ),
+	IDL( Kopete::OnlineStatus::Away,      10, this, 9, "contact_away_overlay",      i18n( "Idle" ) ,  i18n( "&Idle" ), Kopete::OnlineStatusManager::Idle , Kopete::OnlineStatusManager::HideFromMenu ),
 	UNK( Kopete::OnlineStatus::Unknown,   25, this, 0, "status_unknown",i18n( "Status not available" ) ),
 	CNT( Kopete::OnlineStatus::Connecting, 2, this, 10,"msn_connecting",i18n( "Connecting" ) ),
 	propEmail(Kopete::Global::Properties::self()->emailAddress()),
