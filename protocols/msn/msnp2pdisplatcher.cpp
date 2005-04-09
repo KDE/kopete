@@ -25,6 +25,7 @@
 #include <qregexp.h>
 #include <qfile.h>
 #include <qtextcodec.h>
+#include <qapplication.h> //to be removed
 
 // kde
 #include <kdebug.h>
@@ -327,6 +328,45 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 			Kopete::TransferManager::transferManager()->askIncomingTransfer(c  , filename , filesize, QString::null, QString::number(m_sessionId));
 
 		}
+#if MSN_WEBCAM  //The code for the webcam doesn't works fine yet
+		else if(AppID==4) //webcam
+		{
+			//TODO invitation patati patata ......
+
+			//accept webcam
+			MSNP2PWebcam *p2p=new MSNP2PWebcam(m_sessionId, this);
+			m_p2pList.insert(m_sessionId, p2p);
+			p2p->m_msgHandle=m_msgHandle;
+			p2p->m_myHandle=m_myHandle;
+			p2p->m_branch=randomid();
+			p2p->m_CallID=randomid();
+
+	
+//			if(m_p2pList.contains(m_sessionId))
+	//			p2p=dynamic_cast<MSNP2PIncoming *>(m_p2pList[m_sessionId]);
+
+			if(p2p)
+			{
+//				QObject::connect(transfer , SIGNAL(transferCanceled()), p2p, SLOT(abortCurrentTransfer()));
+//				QObject::connect(transfer,  SIGNAL(destroyed()) , p2p , SLOT(slotKopeteTransferDestroyed()));
+
+				QString content="SessionID: " + QString::number( m_sessionId ) +"\r\n\r\n";
+
+				p2p->makeMSNSLPMessage( OK, content);
+
+				content="Bridges: TRUDPv1 TCPv1\r\n"
+						"NetID: -1280904111\r\n"
+						"Conn-Type: Symmetric-NAT\r\n"
+						"UPnPNat: false\r\n"
+						"ICF: false\r\n\r\n";
+
+				p2p->makeMSNSLPMessage( INVITE, content);
+
+				p2p->makeSIPMessage("syn");
+
+			}
+		}
+#endif
 		else  //unknwon AppID
 		{
 			error();
@@ -350,6 +390,12 @@ void MSNP2PDisplatcher::requestDisplayPicture( const QString &myHandle, const QS
 	p2p->m_obj=msnObject;
 	p2p->m_myHandle=myHandle;
 	p2p->m_msgHandle=msgHandle;
+
+	if(m_msgHandle.isEmpty())
+	{
+		m_myHandle=myHandle;
+		m_msgHandle=msgHandle;
+	}
 
 	kdDebug(14141) << k_funcinfo << msnObject << endl;
 
@@ -461,6 +507,38 @@ void MSNP2PDisplatcher::sendImage(const QString& fileName)
 	p2p->m_totalDataSize= toSend.size();
 	QTimer::singleShot( 10, p2p, SLOT(slotSendData()) ); //Go for upload
 }
+
+#if MSN_WEBCAM
+void MSNP2PDisplatcher::startWebcam(const QString &myHandle, const QString &msgHandle)
+{
+	unsigned long int sessID=rand()%0xFFFFFF00+4;
+
+	MSNP2PWebcam *p2p=new MSNP2PWebcam(sessID, this);
+	m_p2pList.insert(sessID, p2p);
+	p2p->m_myHandle=myHandle;
+	p2p->m_msgHandle=msgHandle;
+	p2p->m_branch=randomid();
+	p2p->m_CallID=randomid();
+
+	
+	if(m_msgHandle.isEmpty())
+	{
+		m_myHandle=myHandle;
+		m_msgHandle=msgHandle;
+	}
+
+	
+	QString content="EUF-GUID: {4BD96FC0-AB17-4425-A14A-439185962DC8}\r\n"
+			"SessionID: "+ QString::number(sessID)+"\r\n"
+			"AppID: 4\r\n"
+			"Context: ewBCADgAQgBFADcAMABEAEUALQBFADIAQwBBAC0ANAA0ADAAMAAtAEEARQAwADMALQA4ADgARgBGADgANQBCADkARgA0AEUAOAB9AA==\r\n\r\n";
+
+	// context is the base64 of the utf16 of {B8BE70DE-E2CA-4400-AE03-88FF85B9F4E8}
+
+	p2p->makeMSNSLPMessage( INVITE , content );
+}
+#endif
+
 
 
 void MSNP2PDisplatcher::finished( MSNP2P *f)

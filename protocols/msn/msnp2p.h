@@ -19,6 +19,8 @@
 #include <qobject.h>
 #include <qstrlist.h>
 
+#define MSN_WEBCAM 0
+
 
 namespace Kopete { class Transfer; }
 namespace Kopete { struct FileTransferInfo; }
@@ -104,6 +106,24 @@ public:
 
 };
 
+
+#if MSN_WEBCAM
+class MSNP2PWebcam : public MSNP2P
+{
+//Q_OBJECT
+public:
+	MSNP2PWebcam( unsigned long int sessionID , MSNP2PDisplatcher *parent);
+	~MSNP2PWebcam( );
+
+	virtual void parseMessage(MessageStruct & );
+	virtual void error();
+
+//private:
+	void makeSIPMessage(const QString &message);
+		
+
+};
+#endif
 
 
 

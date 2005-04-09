@@ -74,6 +74,8 @@ void MSNP2P::makeMSNSLPMessage( MessageType type, QString content )
 	{
 		case INVITE:
 			method="INVITE MSNMSGR:"+ m_msgHandle + "  MSNSLP/1.0";
+			if(!content.contains("AppID"))
+				contentType="application/x-msnmsgr-transreqbody";
 			CSeq="0";
 			break;
 		case DECLINE:
@@ -185,15 +187,18 @@ void MSNP2P::sendP2PMessage(const QByteArray &dataMessage)
 	binHeader[25]=(int)size/256;
 
 	//Ack sessionID
+#if ! MSN_WEBCAM
 	binHeader[32]=(char)(rand()%256);
 	binHeader[33]=(char)(rand()%256);
 	binHeader[34]=(char)(rand()%256);
 	binHeader[35]=(char)(rand()%256);
-
-	/*binHeader[32]=0xDE;
+#else
+	//For webcam, the OK and INVITE message should have the smae id, but not others.
+	binHeader[32]=0xDE;
 	binHeader[33]=0xC7;
 	binHeader[34]=0x07;
-	binHeader[35]=0x14;*/
+	binHeader[35]=0x14;
+#endif
 
 
 	//merge all in a unique message
@@ -325,6 +330,144 @@ void MSNP2P::parseMessage(MessageStruct &msgStr)
 		sendP2PAck( msgStr.message.data() );
 }
 
+//---------------------------------------------------------------
+
+#if MSN_WEBCAM
+
+MSNP2PWebcam::MSNP2PWebcam( unsigned long int sessionID , MSNP2PDisplatcher *parent )
+	: MSNP2P(sessionID , parent)
+{
+}
+
+MSNP2PWebcam::~MSNP2PWebcam()
+{
+}
+
+
+
+
+
+void MSNP2PWebcam::parseMessage(MessageStruct &msgStr)
+{
+	MSNP2P::parseMessage(msgStr);
+	if(msgStr.message[msgStr.message.size()-1]!='\4')
+		return;
+
+	QByteArray dataMessage;
+	dataMessage.duplicate((char*)(msgStr.message.data()+48) , msgStr.dataMessageSize);
+	QString echoS="";
+	//QString debug2="";
+
+	unsigned int f=0;
+	while(f<dataMessage.size())
+	{
+		echoS+="\n";
+		
+		for(unsigned int q=0; q<16 ; q++)
+		{
+			if(q+f<dataMessage.size())
+			{
+				unsigned int N=(unsigned int) (dataMessage[q+f]);
+				if(N<16)
+					echoS+="0";
+				echoS+=QString::number( N  ,16)+" ";
+			}
+			else
+				echoS+="   ";
+		}
+		echoS+="   ";
+		
+		for(unsigned int q=0; (q<16 && (q+f)<dataMessage.size()) ; q++)
+		{
+			unsigned char X=dataMessage[q+f];
+			char C=((char)(( X<128 && X>31 ) ? X : '.'));
+			echoS+=QString::fromLatin1(&C,1);
+		}
+
+		f+=16;
+	}
+	
+	kdDebug(14141) << k_funcinfo << dataMessage.size() << echoS << endl;
+
+	QString secretHiddenMessage;
+	for(int pos=10; pos<dataMessage.size(); pos+=2)
+	{
+		secretHiddenMessage+=dataMessage[pos];
+	}
+
+	
+	kdDebug(14141) << k_funcinfo << "Secret hidden message: " << secretHiddenMessage << "\n" << endl;
+	if(secretHiddenMessage.length() < 5)
+		makeSIPMessage(secretHiddenMessage);
+}
+
+void MSNP2PWebcam::makeSIPMessage(const QString &message)
+{
+	QByteArray  dataMessage(10+message.length()*2);
+	dataMessage[0]=0x80;
+	dataMessage[1]=0x17;
+	dataMessage[2]=0x2a;
+	dataMessage[3]=0x01;
+	dataMessage[4]=0x08;
+	dataMessage[5]=0x00;
+	dataMessage[6]=0x08;
+	dataMessage[7]=0x00;
+	dataMessage[8]=0x00;
+	dataMessage[9]=0x00;
+	for(int f=0; f<message.length(); f++)
+	{
+		dataMessage[10+2*f]=message[f].latin1();
+		dataMessage[11+2*f]=0x00;
+	}
+
+	QString echoS="";
+	//QString debug2="";
+
+	unsigned int f=0;
+	while(f<dataMessage.size())
+	{
+		echoS+="\n";
+		
+		for(unsigned int q=0; q<16 ; q++)
+		{
+			if(q+f<dataMessage.size())
+			{
+				unsigned int N=(unsigned int) (dataMessage[q+f]);
+				if(N<16)
+					echoS+="0";
+				echoS+=QString::number( N  ,16)+" ";
+			}
+			else
+				echoS+="   ";
+		}
+		echoS+="   ";
+		
+		for(unsigned int q=0; (q<16 && (q+f)<dataMessage.size()) ; q++)
+		{
+			unsigned char X=dataMessage[q+f];
+			char C=((char)(( X<128 && X>31 ) ? X : '.'));
+			echoS+=QString::fromLatin1(&C,1);
+		}
+
+		f+=16;
+	}
+	
+	kdDebug(14141) << k_funcinfo << dataMessage.size() << echoS << endl;
+
+
+	
+	m_footer='\4';
+	sendP2PMessage(dataMessage);
+	m_footer='\0';
+}
+
+
+void MSNP2PWebcam::error()
+{
+	MSNP2P::error();
+}
+
+#endif
 
 
 #include "msnp2p.moc"

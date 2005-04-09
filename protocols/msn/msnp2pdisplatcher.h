@@ -71,6 +71,14 @@ public slots:
 	 */
 	void sendImage( const QString &fileName);
 
+#if MSN_WEBCAM
+public:
+	/**
+	 * Start a webcam transfer
+	 */
+	 void startWebcam(const QString &myHandle, const QString &msgHandle);
+#endif
+
 protected:
 	virtual void parseMessage(MessageStruct & );
 

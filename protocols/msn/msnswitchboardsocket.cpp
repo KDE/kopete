@@ -455,6 +455,22 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		return -1;
 	}
 
+#if MSN_WEBCAM   //this is to test webcam
+	if(msg.plainBody().contains("/webcam"))
+	{
+		if(!m_p2p)
+		{
+			m_p2p=new MSNP2PDisplatcher(this , "msnp2p protocol" );
+			QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
+			QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
+					this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
+			QObject::connect( m_p2p, SIGNAL( fileReceived( KTempFile *, const QString& ) ) , this , SLOT(slotEmoticonReceived( KTempFile *, const QString& ) ) ) ;
+		}
+		m_p2p->startWebcam( m_myHandle , m_msgHandle);
+		return -3;
+	}
+#endif
+
 	if( msg.format() & Kopete::Message::RichText )
 	{
 		QRegExp rx("^\\s*<img src=\"([^>\"]+)\"[^>]*>\\s*$");
