@@ -110,6 +110,14 @@ public:
 	Account *registerAccount( Account *account );
 
 
+	/**
+	 * Flag to be used in setOnlineStatus
+	 *
+	 * @c ConnectIfOffline : if set, this will connect offlines account with the status.
+	 */
+	enum SetOnlineStatusFlag { ConnectIfOffline };
+			
+
 public slots:
 	/**
 	 * \brief Connect all accounts at once.
@@ -125,13 +133,24 @@ public slots:
 	void disconnectAll();
 
 	/**
+	 * @brief Set all accounts a status in the specified category
+	 *
+	 * Account that are offline will not be connected, unless the ConnectIfOffline flag is set.
+	 * 
+	 * @param category is one of the Kopete::OnlineStatusManager::Categories
+	 * @param awayMessage is the new away message
+	 * @param flags is a bitmask of SetOnlineStatusFlag
+	 */
+	void setOnlineStatus( /*Kopete::OnlineStatusManager::Categories*/ uint category,
+						  const QString& awayMessage = QString::null, uint flags=0);
+
+	/**
 	 * \brief Set all accounts to away at once.
 	 *
 	 * All account that are connected, but not invisible will be set to away
 	 * @see Account::setAway
 	 * @param awayReason is the away message that will be set.
 	 *
-	 * @todo find a way to set globaly away with some other onlinestatus
 	 */
 	void setAwayAll( const QString &awayReason = QString::null );
 

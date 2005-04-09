@@ -25,6 +25,7 @@
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
 #include "kopeteonlinestatus.h"
+#include "kopeteonlinestatusmanager.h"
 #include "kopetecontact.h"
 #include "kopeteprefs.h"
 
@@ -363,8 +364,11 @@ void Kopete::Away::setActivity()
 			d->autoAwayAccounts.setAutoDelete(false);
 			for(Kopete::Account *i=d->autoAwayAccounts.first() ; i; i=d->autoAwayAccounts.current() )
 			{
-				if(i->isConnected() && i->isAway()) {
-					i->setAway(false);
+				if(i->isConnected() && i->isAway())
+				{
+					i->setOnlineStatus( Kopete::OnlineStatusManager::self()->onlineStatus( i->protocol() ,
+										Kopete::OnlineStatusManager::Online ) ,
+					getInstance()->d->awayMessage);	
 				}
 
 				// remove() makes the next entry in the list the current one,
@@ -386,12 +390,14 @@ void Kopete::Away::setAutoAway()
 	// We remember them so later we only set the accounts to
 	// available that we set to away (and not the user).
 	QPtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
-	for(Kopete::Account *i=accounts.first() ; i; i=accounts.next() )
+	for(Kopete::Account *i=accounts.first() ; i; i=accounts.next()  )
 	{
 		if(i->myself()->onlineStatus().status() == Kopete::OnlineStatus::Online)
 		{
 			d->autoAwayAccounts.append(i);
-			i->setAway( true, getInstance()->d->awayMessage);
+			i->setOnlineStatus( Kopete::OnlineStatusManager::self()->onlineStatus( i->protocol() ,
+													Kopete::OnlineStatusManager::Idle ) ,
+								getInstance()->d->awayMessage);
 		}
 	}
 }

@@ -92,6 +92,27 @@ void OnlineStatusManager::registerOnlineStatus( const OnlineStatus &status, cons
 	d->registeredStatus[status.protocol()].insert(status, s );
 }
 
+OnlineStatus OnlineStatusManager::onlineStatus(Protocol * protocol, Categories category)
+{
+	Private::ProtocolMap protocolMap=d->registeredStatus[protocol];
+
+	int mask=category;
+	do
+	{
+		Private::ProtocolMap::Iterator it;
+		for ( it = protocolMap.begin(); it != protocolMap.end(); it++ )
+		{
+			unsigned int catgs=it.data().categories;
+			if(catgs & mask)
+				return it.key();
+		}
+		//no status found in this category, try the previous one.
+		mask >>=1;
+	} while (mask > 0);
+	
+	kdWarning() << "No status in the category " << category << " for the protocol " << protocol->displayName() <<endl;
+}
+
 QString OnlineStatusManager::fingerprint( const OnlineStatus &statusFor, const QString& icon, int size, QColor color, bool idle)
 {
 	// create a 'fingerprint' to use as a hash key

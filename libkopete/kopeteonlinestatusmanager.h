@@ -49,8 +49,6 @@ public:
 	 * Kopete will uses categories to have a more general system than siply globaly away.
 	 * 
 	 * Idealy, in each protocol, there should be one status per categories (status may be in several or in none categories
-	 *
-	 * @todo  this is not yet implemented in kopete but reserved for futur use  (i hope soon)
 	 */
 	enum Categories
 	{
@@ -107,6 +105,13 @@ public:
 	 * @param parent  the ActionMenu where action are inserted
 	 */
 	void createAccountStatusActions( Account *account , KActionMenu *parent);
+
+	/**
+	 * return the status of the @p protocol which is in the category @p category
+	 *
+	 * If no status has been registered in this category, return the one in the category which is the most similair
+	 */
+	OnlineStatus onlineStatus(Protocol *protocol, Categories category);
 
 private:
 	friend class OnlineStatus;

@@ -33,6 +33,7 @@
 #include "kopetecontact.h"
 #include "kopetepluginmanager.h"
 #include "kopeteonlinestatus.h"
+#include "kopeteonlinestatusmanager.h"
 
 namespace Kopete {
 
@@ -132,6 +133,20 @@ void AccountManager::setAwayAll( const QString &awayReason )
 			it.current()->setAway( true, awayReason );
 	}
 }
+
+void AccountManager::setOnlineStatus( uint category , const QString& awayMessage, uint flags )
+{
+	OnlineStatusManager::Categories katgor=(OnlineStatusManager::Categories)category;
+
+	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
+	{
+		Account *account=it.current();
+		if(account->isConnected() || (flags & ConnectIfOffline) );
+			account->setOnlineStatus( OnlineStatusManager::self()->onlineStatus(account->protocol() , katgor) ,
+			                          awayMessage );
+	}
+}
+
 
 QColor AccountManager::guessColor( Protocol *protocol ) const
 {
