@@ -28,7 +28,8 @@
 #include "meanwhileserver.h"
 #include "meanwhilecontact.h"
 
-#define HERE kdDebug() << k_funcinfo << endl;
+#define MEANWHILE_DEBUG 14200
+#define HERE kdDebug( 14200 ) << k_funcinfo << endl;
 
 extern "C"
 {
@@ -152,7 +153,7 @@ MEANWHILE_HOOK(on_stop(
 HERE
     REMOVE_UNUSED_VAR_WARNING(s);
 
- kdDebug() << "close: " << mwError(reason) << endl;
+    kdDebug( 14200 ) << "close: " << mwError(reason) << endl;
     if (reason & ERR_FAILURE)
     {
         emit serverNotificationReceived(QString(mwError(reason)));
@@ -166,7 +167,7 @@ MEANWHILE_HOOK(on_setUserStatus(
                on_setUserStatus(s,msg))
 {
 HERE
-    kdDebug() << "meanwhile status for " << ((s->login.user_id==NULL)?"null":s->login.user_id) << " changed to " << (msg->status.status) << endl;
+    kdDebug( 14200 ) << "meanwhile status for " << ((s->login.user_id==NULL)?"null":s->login.user_id) << " changed to " << (msg->status.status) << endl;
         struct mwAwareIdBlock id = 
                 { 
                     mwAware_USER,
@@ -559,8 +560,8 @@ int MeanwhileLibrary::sendIm(const QString &toUser, const QString &msg)
 HERE
   struct mwIdBlock t = { (char *) toUser.ascii(), NULL };
 
-  kdDebug() << "sending data to user " << toUser.ascii() << endl;
-  kdDebug() << msg.ascii() << endl;
+  kdDebug( 14200 ) << "sending data to user " << toUser.ascii() << endl;
+  kdDebug( 14200 ) << msg.ascii() << endl;
   //prettyprint(msg.ascii(),14);
   return !mwServiceIM_sendText(srvc_im, &t, msg.ascii());
 }
