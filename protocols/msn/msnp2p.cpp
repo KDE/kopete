@@ -40,7 +40,15 @@
 //kopete
 #include <kopetetransfermanager.h>
 
-
+/**
+ * if VAR is a char*  and VAL is an integer, assing VAR[START] to VAR[START+4]  the value of VAL
+ */
+#define MKDWORD(VAR, START, VAL) {\
+	(VAR)[(START)]=  (char)( ((VAL)&0x000000FF) ) ;  \
+	(VAR)[(START)+1]=(char)( ((VAL)&0x0000FF00)  >> 8 ) ; \
+	(VAR)[(START)+2]=(char)( ((VAL)&0x00FF0000)  >> 16 ) ; \
+	(VAR)[(START)+3]=(char)( ((VAL)&0xFF000000)  >> 24 ) ; \
+}
 
 MSNP2P::MSNP2P( unsigned long int sessionID , MSNP2PDisplatcher *parent ) : QObject (parent)
 {
@@ -140,33 +148,20 @@ void MSNP2P::sendP2PMessage(const QByteArray &dataMessage)
 		m_msgIdentifier++;
 
 
-	//SessionID     (it's byll if the transfer has not started.  (i.e the footer == 0)
-	unsigned long int sessionID= m_footer ? m_sessionId : 0;
-	binHeader[0]=(char)(sessionID%256);
-	binHeader[1]=(char)((unsigned long int)(sessionID/256)%256);
-	binHeader[2]=(char)((unsigned long int)(sessionID/(256*256))%256);
-	binHeader[3]=(char)((unsigned long int)(sessionID/(256*256*256))%256);
+	//SessionID     (it's nyll if the transfer has not started.  (i.e the footer == 0)
+	if(m_footer)
+		MKDWORD(binHeader,0,m_sessionId);
 
 	//MessageID
-	binHeader[4]=(char)(m_msgIdentifier%256);
-	binHeader[5]=(char)((unsigned long int)(m_msgIdentifier/256)%256);
-	binHeader[6]=(char)((unsigned long int)(m_msgIdentifier/(256*256))%256);
-	binHeader[7]=(char)((unsigned long int)(m_msgIdentifier/(256*256*256))%256);
+	MKDWORD(binHeader,4,m_msgIdentifier);
 
 	//offset
-	binHeader[8]=(char)(m_offset%256);
-	binHeader[9]=(char)((unsigned long int)(m_offset/256)%256);
-	binHeader[10]=(char)((unsigned long int)(m_offset/(256*256))%256);
-	binHeader[11]=(char)((unsigned long int)(m_offset/(256*256*256))%256);
+	MKDWORD(binHeader,8,m_offset);
 
 	unsigned int size=dataMessage.size();
-
 	if(m_totalDataSize) //it's a splitted message
 	{
-		binHeader[16]=(char)(m_totalDataSize%256);
-		binHeader[17]=(char)((unsigned long int)(m_totalDataSize/256)%256);
-		binHeader[18]=(char)((unsigned long int)(m_totalDataSize/(256*256))%256);
-		binHeader[19]=(char)((unsigned long int)(m_totalDataSize/(256*256*256))%256);
+		MKDWORD(binHeader,16,m_totalDataSize);
 
 		//update offset
 		m_offset+=size;
@@ -178,20 +173,15 @@ void MSNP2P::sendP2PMessage(const QByteArray &dataMessage)
 	}
 	else //not a splitted message, the total size is the current size
 	{
-		binHeader[16]=(char)size%256;
-		binHeader[17]=(int)size/256;
+		MKDWORD(binHeader,16,size);
 	}
 
 	//message size
-	binHeader[24]=(char)size%256;
-	binHeader[25]=(int)size/256;
+	MKDWORD(binHeader,24,size);
 
 	//Ack sessionID
 #if ! MSN_WEBCAM
-	binHeader[32]=(char)(rand()%256);
-	binHeader[33]=(char)(rand()%256);
-	binHeader[34]=(char)(rand()%256);
-	binHeader[35]=(char)(rand()%256);
+	MKDWORD(binHeader,32,rand()%0x8FFFFFF0+4);
 #else
 	//For webcam, the OK and INVITE message should have the smae id, but not others.
 	binHeader[32]=0xDE;
@@ -246,10 +236,7 @@ void MSNP2P::sendP2PAck( const char* originalHeader )
 	}
 	else
 		m_msgIdentifier++;
-	binHeader[4]=(char)(m_msgIdentifier%256);
-	binHeader[5]=(char)((unsigned long int)(m_msgIdentifier/256)%256);
-	binHeader[6]=(char)((unsigned long int)(m_msgIdentifier/(256*256))%256);
-	binHeader[7]=(char)((unsigned long int)(m_msgIdentifier/(256*256*256))%256);
+	MKDWORD(binHeader,4,m_msgIdentifier);
 
 	if(a)
 		m_msgIdentifier-=4;
