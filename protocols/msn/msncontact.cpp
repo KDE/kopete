@@ -389,6 +389,10 @@ void MSNContact::sync( unsigned int changed )
 
 	unsigned int count=m_serverGroups.count();
 
+	//Don't add the contact if it's myslef.
+	if(count==0 && contactId() == account()->accountId() )
+		return;
+
 	//STEP ONE : add the contact to every kopetegroups where the MC is
 	QPtrList<Kopete::Group> groupList = metaContact()->groups();
 	for ( Kopete::Group *group = groupList.first(); group; group = groupList.next() )
