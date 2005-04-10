@@ -219,7 +219,7 @@ bool Group::fromXML( const QDomElement &data )
 		}
 	}
 
-	//FIXME: this workaround allows to save data for the top-level group
+	//this allows to save data for the top-level group in the top-level group
 	return ( d->type == Normal );
 }
 

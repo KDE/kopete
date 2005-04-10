@@ -169,19 +169,13 @@ MetaContact *ContactList::findMetaContactByDisplayName( const QString &displayNa
 
 MetaContact* ContactList::findMetaContactByContactId( const QString &contactId ) const
 {
-	QPtrListIterator<MetaContact> it( d->contacts );
-	//FIXME: This loop isn't very efficient
-		// maybe it's more efficient to loop accounts and use the Account::Contact  QDict  -Olivier
+	QPtrList<Account> acts=AccountManager::self()->accounts();
+	QPtrListIterator<Account> it( acts );
 	for ( ; it.current(); ++it )
 	{
-		QPtrList<Contact> cl = it.current()->contacts();
-		QPtrListIterator<Contact> kcit ( cl );
-
-		for ( ; kcit.current(); ++kcit )
-		{
-			if ( kcit.current()->contactId() == contactId )
-				return kcit.current()->metaContact();
-		}
+		Contact *c=(*it)->contacts()[contactId];
+		if(c && c->metaContact())
+			return c->metaContact();
 	}
 	return 0L;
 }

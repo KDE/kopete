@@ -518,7 +518,7 @@ QDomElement Message::contactNode( QDomDocument doc, const Contact *contact )
 
 	contactNode.appendChild( metacontactNameNode );
 
-	// FIXME: protocol() returns NULL here in the style preview in appearance config.
+	// protocol() returns NULL here in the style preview in appearance config.
 	// this isn't the right place to work around it, since contacts should never have
 	// no protocol, but it works for now.
 	QString iconName = QString::fromLatin1("kopete");

@@ -186,11 +186,6 @@ void Contact::slotAddContact()
 
 KPopupMenu* Contact::popupMenu( ChatSession *manager )
 {
-	// FIXME:
-	// This should perhaps be KActionCollection * Contact::contactActions()
-	// to avoid passing around KPopupMenu's (Jason)
-	//
-
 	// Build the menu
 	KPopupMenu *menu = new KPopupMenu();
 

@@ -150,8 +150,9 @@ void AccountManager::setOnlineStatus( uint category , const QString& awayMessage
 
 QColor AccountManager::guessColor( Protocol *protocol ) const
 {
-	// FIXME: Use a different algoritm. It should check if the color is really not
-	//        used - Olivier
+	// In a perfect wold, we should check if the color is actually not used by the account.
+	// Anyway, this is not really required,  It would be a difficult job for about nothing more.
+	//   -- Olivier
 	int protocolCount = 0;
 
 	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
