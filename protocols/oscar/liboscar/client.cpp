@@ -65,7 +65,7 @@ public:
 	uint port;
 	int tzoffset;
 	bool active;
-	
+
 	enum { StageOne, StageTwo };
 	int stage;
 
@@ -90,10 +90,10 @@ public:
 	//Managers
 	SSIManager* ssiManager;
 	QValueList<Connection*> connections;
-	
+
 	//Our Userinfo
 	UserDetails ourDetails;
-	
+
 };
 
 Client::Client( QObject* parent )
@@ -124,7 +124,7 @@ Client::Client( QObject* parent )
 
 Client::~Client()
 {
-	
+
 	//delete the connections differently than in deleteConnections()
 	//deleteLater() seems to cause destruction order issues
 	deleteStaticTasks();
@@ -152,7 +152,7 @@ void Client::connectToServer( Connection *c, const QString& server, bool auth )
 		m_loginTask = new StageOneLoginTask( c->rootTask() );
 		connect( m_loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
 	}
-	
+
 	connect( c, SIGNAL( error( int ) ), SLOT( streamError( int ) ) );
 	connect( c, SIGNAL( error( const QString& ) ), SLOT( taskError( const QString& ) ) );
 
@@ -188,7 +188,7 @@ void Client::close()
 	d->connectWithMessage = QString::null;
 //	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Clearing our internal SSI list" << endl;
 	d->ssiManager->clear();
-	
+
 }
 
 void Client::setStatus( AIMStatus status, const QString &_message )
@@ -200,7 +200,7 @@ void Client::setStatus( AIMStatus status, const QString &_message )
 	if ( status == Online )
 		message = QString::fromAscii("");
 	else
-	{ 
+	{
 		if ( _message.isEmpty() )
 			message = QString::fromAscii(" ");
 		else
@@ -230,8 +230,8 @@ void Client::setStatus( DWORD status, const QString &message )
 			cvt->setVisible( true );
 		}
 		cvt->go( true );
-		
-		
+
+
 		SendDCInfoTask* sdcit = new SendDCInfoTask( d->connections.first()->rootTask(), status );
 		sdcit->go( true ); //autodelete
 		// TODO: send away message
@@ -306,16 +306,16 @@ void Client::lt_loginFinished()
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "stage one login done" << endl;
 		disconnect( m_loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
-		
+
 		if ( m_loginTask->statusCode() == 0 ) //we can start stage two
 		{
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "no errors reported from stage one. moving to stage two" << endl;
-			
+
 			//cache these values since they'll be deleted when we close the connections (which deletes the tasks)
 			d->host = m_loginTask->bosServer();
 			d->port = m_loginTask->bosPort().toUInt();
 			d->cookie = m_loginTask->loginCookie();
-			close(); 
+			close();
 			QTimer::singleShot( 100, this, SLOT(startStageTwo() ) );
 		}
 		else
@@ -324,11 +324,11 @@ void Client::lt_loginFinished()
 			emit error( FatalProtocolError, m_loginTask->statusCode(), m_loginTask->statusString() );
 			close(); //deletes the connections for us
 		}
-		
+
 		m_loginTask->deleteLater();
 		m_loginTask = 0;
 	}
-	
+
 }
 
 void Client::startStageTwo()
@@ -338,13 +338,13 @@ void Client::startStageTwo()
 	d->closeConnectionTask = new CloseConnectionTask( c->rootTask() );
 	QObject::connect( d->closeConnectionTask, SIGNAL( disconnected( int, const QString& ) ),
 	                  this, SLOT( disconnectionError( int, const QString& ) ) );
-	
+
 	//create the new login task
 	m_loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
 	m_loginTaskTwo->setCookie( d->cookie );
 	QObject::connect( m_loginTaskTwo, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
-	
-	
+
+
 	//connect
 	connectToServer( c, d->host, false ) ;
 	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
@@ -357,14 +357,14 @@ void Client::serviceSetupFinished()
 	if ( isIcq() )
 	{
 		setStatus( d->connectAsStatus, d->connectWithMessage );
-		
+
 		//retrieve offline messages
 		OfflineMessagesTask *offlineMsgTask = new OfflineMessagesTask( d->connections.first()->rootTask() );
 		connect( offlineMsgTask, SIGNAL( receivedOfflineMessage(const Oscar::Message& ) ),
 				this, SIGNAL( messageReceived(const Oscar::Message& ) ) );
 		offlineMsgTask->go( true );
 	}
-	
+
 	emit haveSSIList();
 	emit loggedIn();
 }
@@ -373,7 +373,7 @@ void Client::receivedIcqInfo( const QString& contact, unsigned int type )
 {
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "received icq info for " << contact
 		<< " of type " << type << endl;
-	
+
 	if ( type == ICQUserInfoRequestTask::Short )
 		emit receivedIcqShortInfo( contact );
 	else
@@ -425,7 +425,7 @@ QCString Client::ipAddress() const
 }
 
 void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
-{ 
+{
 	SendMessageTask *sendMsgTask = new SendMessageTask( d->connections.first()->rootTask() );
 	// Set whether or not the message is an automated response
 	sendMsgTask->setAutoResponse( isAuto );
@@ -475,32 +475,32 @@ void Client::initializeStaticTasks()
 	d->icqInfoTask = new ICQUserInfoRequestTask( d->connections.first()->rootTask() );
 	d->userInfoTask = new UserInfoTask( d->connections.first()->rootTask() );
 	d->typingNotifyTask = new TypingNotifyTask( d->connections.first()->rootTask() );
-	
+
 	connect( d->onlineNotifier, SIGNAL( userIsOnline( const QString&, const UserDetails& ) ),
 	         this, SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ) );
 	connect( d->onlineNotifier, SIGNAL( userIsOffline( const QString&, const UserDetails& ) ),
 	         this, SLOT( offlineUser( const QString&, const UserDetails & ) ) );
-	
+
 	connect( d->ownStatusTask, SIGNAL( gotInfo() ), this, SLOT( haveOwnUserInfo() ) );
-	
+
 	connect( d->messageReceiverTask, SIGNAL( receivedMessage( const Oscar::Message& ) ),
 	         this, SIGNAL( messageReceived( const Oscar::Message& ) ) );
-	
+
 	connect( d->ssiAuthTask, SIGNAL( authRequested( const QString&, const QString& ) ),
 	         this, SIGNAL( authRequestReceived( const QString&, const QString& ) ) );
 	connect( d->ssiAuthTask, SIGNAL( authReplied( const QString&, const QString&, bool ) ),
 	         this, SIGNAL( authReplyReceived( const QString&, const QString&, bool ) ) );
-	
-	connect( d->icqInfoTask, SIGNAL( receivedInfoFor( const QString&, unsigned int ) ), 
+
+	connect( d->icqInfoTask, SIGNAL( receivedInfoFor( const QString&, unsigned int ) ),
 	         this, SLOT( receivedIcqInfo( const QString&, unsigned int ) ) );
-	
+
 	connect( d->userInfoTask, SIGNAL( receivedProfile( const QString&, const QString& ) ),
 	         this, SIGNAL( receivedProfile( const QString&, const QString& ) ) );
 	connect( d->userInfoTask, SIGNAL( receivedAwayMessage( const QString&, const QString& ) ),
 	         this, SIGNAL( receivedAwayMessage( const QString&, const QString& ) ) );
 	connect( d->typingNotifyTask, SIGNAL( typingStarted( const QString& ) ),
 	         this, SIGNAL( userStartedTyping( const QString& ) ) );
-	connect( d->typingNotifyTask, SIGNAL( gotInfo( const QString& ) ),
+	connect( d->typingNotifyTask, SIGNAL( typingFinished( const QString& ) ),
 	         this, SIGNAL( userStoppedTyping( const QString& ) ) );
 }
 
@@ -511,7 +511,7 @@ void Client::removeGroup( const QString& groupName )
 		//emit error( NotConnectedError, 0, i18n( "Cannot remove %1 from the server because we are not connected" ).arg( groupName  ) );
 		return;
 	}
-	
+
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Removing group " << groupName << " from SSI" << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( d->connections.first()->rootTask() );
 	if ( ssimt->removeGroup( groupName ) )
@@ -525,7 +525,7 @@ void Client::addGroup( const QString& groupName )
 		//emit error( NotConnectedError, 0, i18n( "Cannot add %1 to the server because the account is not connected" ).arg( groupName ) );
 		return;
 	}
-	
+
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding group " << groupName << " to SSI" << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( d->connections.first()->rootTask() );
 	if ( ssimt->addGroup( groupName ) )
@@ -539,12 +539,12 @@ void Client::addContact( const QString& contactName, const QString& groupName )
 		emit error( NotConnectedError, 0, i18n( "Cannot add %1 to the server because the account is not connected" ).arg( groupName ) );
 		return;
 	}
-	
+
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding contact " << contactName << " to SSI in group " << groupName << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( d->connections.first()->rootTask() );
 	if ( ssimt->addContact( contactName, groupName )  )
 		ssimt->go( true );
-		
+
 }
 
 void Client::removeContact( const QString& contactName )
@@ -554,7 +554,7 @@ void Client::removeContact( const QString& contactName )
 		emit error( NotConnectedError, 0, i18n( "Cannot remove %1 from the server because the account is not connected" ).arg( contactName ) );
 		return;
 	}
-	
+
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Removing contact " << contactName << " from SSI" << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( d->connections.first()->rootTask() );
 	if ( ssimt->removeContact( contactName ) )
@@ -568,7 +568,7 @@ void Client::renameGroup( const QString & oldGroupName, const QString & newGroup
 		//emit error( NotConnectedError, 0, i18n( "Cannot rename %1 on the server because the account is not connected" ).arg( oldGroupName ) );
 		return;
 	}
-	
+
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Renaming group " << oldGroupName << " to " << newGroupName << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( d->connections.first()->rootTask() );
 	if ( ssimt->renameGroup( oldGroupName, newGroupName ) )
@@ -581,7 +581,7 @@ void Client::changeContactGroup( const QString& contact, const QString& newGroup
 	{
 		return;
 	}
-	
+
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Changing " << contact << "'s group to "
 		<< newGroupName << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( d->connections.first()->rootTask() );
@@ -741,7 +741,7 @@ void Client::haveServerForRedirect( const QString& host, const QByteArray& cooki
 	m_loginTaskTwo->setCookie( cookie );
 	QObject::connect( m_loginTaskTwo, SIGNAL( finished() ), this, SLOT( serverRedirectFinished() ) );
 
-	
+
 	//connect
 	connectToServer( c, d->host, false );
 	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
@@ -783,7 +783,7 @@ void Client::deleteStaticTasks()
 	delete d->icqInfoTask;
 	delete d->userInfoTask;
 	delete d->closeConnectionTask;
-	
+
 	d->errorTask = 0;
 	d->onlineNotifier = 0;
 	d->ownStatusTask = 0;
@@ -793,6 +793,6 @@ void Client::deleteStaticTasks()
 	d->userInfoTask = 0;
 	d->closeConnectionTask = 0;
 }
-	
+
 #include "client.moc"
 //kate: tab-width 4; indent-mode csands; space-indent off; replace-tabs off;
