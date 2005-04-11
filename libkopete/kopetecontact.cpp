@@ -544,12 +544,17 @@ unsigned long int Contact::idleTime() const
 
 void Contact::setIdleTime( unsigned long int t )
 {
+	bool idleChanged = false;
+	if(d->idleTime != t)
+		idleChanged = true;
 	d->idleTime=t;
 	if(t > 0)
 		d->idleTimer.start();
-	//FIXME: if t == 0, idleTime() will now return garbage
+//FIXME: if t == 0, idleTime() will now return garbage
 //	else
 //		d->idleTimer.stop();
+	if(idleChanged)
+		emit idleStateChanged(this);
 }
 
 
