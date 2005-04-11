@@ -496,8 +496,10 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 			head += "U";
 		head += "; ";
 	}
+	else head+="FN=; EF=; ";
 	/**
 	 * I don't know what to set by default, so i decided to set nothing.  CF Bug 82734
+	 * (but don't forgeto to add an empty FN= and EF= ,  or webmessenger will break. (CF Bug 102371) )
 	  else head+="FN=MS%20Serif; EF=; ";
 	 */
 
