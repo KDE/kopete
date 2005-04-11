@@ -30,6 +30,7 @@ class QStringList;
 struct KopeteAwayPrivate;
 
 class KopeteGlobalAwayDialog;
+class KopeteAwayDialog;
 
 namespace Kopete
 {
