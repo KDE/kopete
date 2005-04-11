@@ -230,7 +230,7 @@ KActionMenu *JabberAccount::actionMenu ()
 												  0, this, SLOT ( slotGoDND ( const Kopete::OnlineStatus&, const QString & ) ),
 												  this, "actionJabberDND") );
 
-	m_actionMenu->insert ( new KAction ( i18n ("I&nvisible"),
+	m_actionMenu->insert ( new KAction ( i18n ("In&visible"),
 										 mProtocol->JabberKOSInvisible.iconFor ( this ),
 										 0, this, SLOT ( slotGoInvisible () ),
 										 this, "actionJabberInvisible") );
