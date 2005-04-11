@@ -56,7 +56,7 @@ class KOPETE_EXPORT Away : public QObject
 {
 Q_OBJECT
 
-friend class KopeteAwayDialog;
+friend class ::KopeteAwayDialog;
 
 public:
 
