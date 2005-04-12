@@ -182,7 +182,7 @@ void OscarContact::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* sessi
 	Q_UNUSED( session );
 	Oscar::Message message;
 	
-	message.setText( msg.escapedBody().replace( "&nbsp;" ), " " );
+	message.setText( msg.escapedBody().replace( "&nbsp;", " " ) );
 	
 	message.setTimestamp( msg.timestamp() );
 	message.setSender( mAccount->accountId() );
