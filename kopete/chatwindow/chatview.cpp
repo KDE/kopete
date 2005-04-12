@@ -543,7 +543,6 @@ void ChatView::remoteTyping( const Kopete::Contact *contact, bool isTyping )
 
 	// Loop through the map, constructing a string of people typing
 	QStringList typingList;
-	QString statusTyping;
 	QPtrDictIterator<QTimer> it( m_remoteTypingMap );
 
 	for( ; it.current(); ++it )
@@ -553,12 +552,16 @@ void ChatView::remoteTyping( const Kopete::Contact *contact, bool isTyping )
 		typingList.append( c->metaContact() ? c->metaContact()->displayName() : ( nick.isEmpty() ? c->contactId() : nick ) );
 	}
 
-	statusTyping = typingList.join( QString::fromLatin1( ", " ) );
-
 	// Update the status area
 	if( !typingList.isEmpty() )
 	{
-		setStatusText( i18n( "%1 is typing a message", "%1 are typing a message", typingList.count() ).arg( statusTyping ) );
+		if ( typingList.count() == 1 )
+			setStatusText( i18n( "%1 is typing a message" ).arg( typingList.first() ) );
+		else
+		{
+			QString statusTyping = typingList.join( QString::fromLatin1( ", " ) );
+			setStatusText( i18n( "%1 is a list of names", "%1 are typing a message" ).arg( statusTyping ) );
+		}
 		setTabState( Typing );
 	}
 	else
