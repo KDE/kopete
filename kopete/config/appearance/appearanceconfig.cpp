@@ -739,7 +739,7 @@ void AppearanceConfig::slotGetStyles()
 	// you have to do this by hand when providing your own Engine
 	KNS::ProviderLoader * p = new KNS::ProviderLoader( this );
 	QObject::connect( p, SIGNAL( providersLoaded(Provider::List*) ), d, SLOT( slotProviders (Provider::List *) ) );
-	p->load( "kopete/chatstyle", "http://www.stevello.free-online.co.uk/khotnewstuff/chatwindowstyle-providers.xml" );
+	p->load( "kopete/chatstyle", "http://download.kde.org/khotnewstuff/kopetestyles-providers.xml" );
 	d->exec();
 }
 
@@ -875,7 +875,7 @@ void AppearanceConfig::slotGetThemes()
 	KConfig* config = KGlobal::config();
 	config->setGroup( "KNewStuff" );
 	config->writeEntry( "ProvidersUrl",
-						"http://www.stevello.free-online.co.uk/khotnewstuff/emoticon-providers.xml" );
+						"http://download.kde.org/khotnewstuff/emoticons-providers.xml" );
 	config->writeEntry( "StandardResource", "emoticons" );
 	config->writeEntry( "Uncompress", "application/x-gzip" );
 	config->sync();
