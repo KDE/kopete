@@ -194,9 +194,6 @@
                     <property name="text">
                         <string>&amp;Search</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+S</string>
-                    </property>
                     <property name="default">
                         <bool>true</bool>
                     </property>
@@ -328,9 +325,6 @@
                             </property>
                             <property name="text">
                                 <string>Detai&amp;ls</string>
-                            </property>
-                            <property name="accel">
-                                <string>Alt+L</string>
                             </property>
                         </widget>
                         <spacer>
