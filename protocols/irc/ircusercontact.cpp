@@ -178,7 +178,7 @@ void IRCUserContact::userOnline()
 {
 	m_isOnline = true;
 	updateStatus();
-	if (this != ircAccount()->mySelf() && !metaContact()->isTemporary())
+	if (this != ircAccount()->mySelf() && !metaContact()->isTemporary() && ircAccount()->isConnected())
 	{
 		mOnlineTimer->start( 45000, true );
 		ircAccount()->setCurrentCommandSource(0);
@@ -317,9 +317,12 @@ void IRCUserContact::newWhoIsChannels(const QString &channel)
 
 void IRCUserContact::whoIsComplete()
 {
+	Kopete::ChatSession *commandSource = ircAccount()->currentCommandSource();
+
 	updateInfo();
 
-	if( isChatting() && ircAccount()->currentCommandSource() == manager() )
+	if( isChatting() && commandSource &&
+		commandSource == manager(Kopete::Contact::CannotCreate) )
 	{
 		//User info
 		QString msg = i18n("%1 is (%2@%3): %4<br/>")
