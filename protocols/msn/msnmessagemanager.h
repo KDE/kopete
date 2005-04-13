@@ -87,7 +87,7 @@ private slots:
 	 */
 	void slotDebugRawCommand();
 
-	void slotSendWizz();
+	void slotSendNudge();
 
 private:
 

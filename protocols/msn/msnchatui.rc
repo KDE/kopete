@@ -5,7 +5,7 @@
 			<text>&amp;Chat</text>
 			<Action name="msnInvite" />
 			<Action name="msnRequestDisplayPicture" />
-			<Action name="msnSendWizz" />
+			<Action name="msnSendNudge" />
 <!--			<Menu name="debug">
 				<text>&amp;Debug</text>
 				<Action name="msnDebugRawCommand" />

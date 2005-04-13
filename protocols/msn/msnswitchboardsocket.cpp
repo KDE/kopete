@@ -389,18 +389,9 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 					if(!c)
 						return;
 
-					if(!m_p2p)
-					{
-						m_p2p=new MSNP2PDisplatcher(this , "msnp2p protocol" );
-						QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
-						QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
-								this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
-						QObject::connect( m_p2p, SIGNAL( fileReceived( KTempFile *, const QString& ) ) , this , SLOT(slotEmoticonReceived( KTempFile *, const QString& ) ) ) ;
-					}
-
 					// we are receiving emoticons, so delay message display until received signal
 					m_recvIcons++;
-					m_p2p->requestDisplayPicture( m_myHandle, m_msgHandle, msnobj );
+					p2pDisplatcher()->requestDisplayPicture( m_myHandle, m_msgHandle, msnobj );
 				}
 				pos=rx.search(msg, pos+rx.matchedLength());
 			}
@@ -408,14 +399,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	}
 	else if( type== "application/x-msnmsgrp2p" )
 	{
-		if(!m_p2p)
-		{
-			m_p2p=new MSNP2PDisplatcher(this , "msnp2p protocol" );
-			QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
-			QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
-				this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
-			QObject::connect( m_p2p, SIGNAL( fileReceived( KTempFile *, const QString& ) ) , this , SLOT(slotEmoticonReceived( KTempFile *, const QString& ) ) ) ;
-		}
+		p2pDisplatcher();  //create a p2p displatcher if none exist yet
 	}
 	else
 	{
@@ -458,15 +442,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 #if MSN_WEBCAM   //this is to test webcam
 	if(msg.plainBody().contains("/webcam"))
 	{
-		if(!m_p2p)
-		{
-			m_p2p=new MSNP2PDisplatcher(this , "msnp2p protocol" );
-			QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
-			QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
-					this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
-			QObject::connect( m_p2p, SIGNAL( fileReceived( KTempFile *, const QString& ) ) , this , SLOT(slotEmoticonReceived( KTempFile *, const QString& ) ) ) ;
-		}
-		m_p2p->startWebcam( m_myHandle , m_msgHandle);
+		p2pDisplatcher()->startWebcam( m_myHandle , m_msgHandle);
 		return -3;
 	}
 #endif
@@ -477,16 +453,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		QRegExp rx("^\\s*<img src=\"([^>\"]+)\"[^>]*>\\s*$");
 		if(rx.search(msg.escapedBody()) != -1)
 		{
-			if(!m_p2p)
-			{
-				m_p2p=new MSNP2PDisplatcher(this , "msnp2p protocol" );
-				QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
-				QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
-						this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
-				QObject::connect( m_p2p, SIGNAL( fileReceived( KTempFile *, const QString& ) ) , this , SLOT(slotEmoticonReceived( KTempFile *, const QString& ) ) ) ;
-			}
-
-			m_p2p->sendImage(rx.cap(1));
+			p2pDisplatcher()->sendImage(rx.cap(1));
 
 			return -3;
 		}
@@ -671,17 +638,7 @@ void MSNSwitchBoardSocket::requestDisplayPicture()
 	if(!c)
 		return;
 
-	if(!m_p2p)
-	{
-		m_p2p=new MSNP2PDisplatcher(this , "msnp2p protocol" );
-		QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
-		QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
-				this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
-		QObject::connect( m_p2p, SIGNAL( fileReceived( KTempFile *, const QString& ) ) , this , SLOT(slotEmoticonReceived( KTempFile *, const QString& ) ) ) ;
-	}
-
-
-	m_p2p->requestDisplayPicture( m_myHandle, m_msgHandle, c->object());
+	p2pDisplatcher()->requestDisplayPicture( m_myHandle, m_msgHandle, c->object());
 }
 
 void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString &msnObj )
@@ -788,7 +745,7 @@ Kopete::Message &MSNSwitchBoardSocket::parseCustomEmoticons(Kopete::Message &kms
 	return kmsg;
 }
 
-int MSNSwitchBoardSocket::sendWizz()
+int MSNSwitchBoardSocket::sendNudge()
 {
 	QCString message = QString( "MIME-Version: 1.0\r\n"
 			"Content-Type: text/x-msnmsgr-datacast\r\n"
@@ -821,6 +778,19 @@ QString MSNSwitchBoardSocket::parseFontAttr(QString str, QString attr)
 		tmp = str.mid(pos1+3, pos2 - pos1 - 3);
 
 	return tmp;
+}
+
+MSNP2PDisplatcher *MSNSwitchBoardSocket::p2pDisplatcher()
+{
+	if(!m_p2p)
+	{
+		m_p2p=new MSNP2PDisplatcher(this , "msnp2p protocol" );
+		QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
+		QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
+						  this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
+		QObject::connect( m_p2p, SIGNAL( fileReceived( KTempFile *, const QString& ) ) , this , SLOT(slotEmoticonReceived( KTempFile *, const QString& ) ) ) ;
+	}
+	return m_p2p;
 }
 
 #include "msnswitchboardsocket.moc"

@@ -98,7 +98,9 @@ public:
 	void userLeftChat( const QString &handle , const QString &reason );
 	int sendMsg( const Kopete::Message &msg );
 
-	int sendWizz();
+	int sendNudge();
+
+	MSNP2PDisplatcher *p2pDisplatcher();
 
 public slots:
 	void slotCloseSession();
