@@ -77,6 +77,8 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 	new KAction( i18n( "Send Raw C&ommand..." ), 0, this, SLOT( slotDebugRawCommand() ), actionCollection(), "msnDebugRawCommand" ) ;
 	#endif
 
+	new KAction( i18n( "Send Wizz" ), 0, this, SLOT(slotSendWizz() ), actionCollection(), "msnSendWizz" ) ;
+
 	MSNContact *c = static_cast<MSNContact*>( others.first() );
 	(new KAction( i18n( "Request Display Picture" ), "image", 0,  this, SLOT( slotRequestPicture() ), actionCollection(), "msnRequestDisplayPicture" ))->setEnabled(!c->object().isEmpty());
 
@@ -624,6 +626,12 @@ void MSNChatSession::receivedTypingMsg( const QString &contactId, bool b )
 	m_newSession=false;
 	if(c)
 		Kopete::ChatSession::receivedTypingMsg(c,b);
+}
+
+void MSNChatSession::slotSendWizz()
+{
+	if(m_chatService)
+		m_chatService->sendWizz();
 }
 
 #include "msnmessagemanager.moc"

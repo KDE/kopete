@@ -471,6 +471,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 	}
 #endif
 
+
 	if( msg.format() & Kopete::Message::RichText )
 	{
 		QRegExp rx("^\\s*<img src=\"([^>\"]+)\"[^>]*>\\s*$");
@@ -787,6 +788,17 @@ Kopete::Message &MSNSwitchBoardSocket::parseCustomEmoticons(Kopete::Message &kms
 	return kmsg;
 }
 
+int MSNSwitchBoardSocket::sendWizz()
+{
+	QCString message = QString( "MIME-Version: 1.0\r\n"
+			"Content-Type: text/x-msnmsgr-datacast\r\n"
+			"\r\n"
+			"ID: 1\r\n"
+			"\r\n\r\n" ).utf8();
+
+	QString args = "U";
+	return sendCommand( "MSG", args, true, message );
+}
 
 
 

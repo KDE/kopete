@@ -1,10 +1,11 @@
 <!DOCTYPE kpartgui>
-<kpartgui version="3" name="kopete_msn_chat">
+<kpartgui version="4" name="kopete_msn_chat">
 	<MenuBar>
 		<Menu noMerge="1" name="file">
 			<text>&amp;Chat</text>
 			<Action name="msnInvite" />
 			<Action name="msnRequestDisplayPicture" />
+			<Action name="msnSendWizz" />
 <!--			<Menu name="debug">
 				<text>&amp;Debug</text>
 				<Action name="msnDebugRawCommand" />

@@ -87,6 +87,8 @@ private slots:
 	 */
 	void slotDebugRawCommand();
 
+	void slotSendWizz();
+
 private:
 
 	MSNSwitchBoardSocket *m_chatService;

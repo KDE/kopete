@@ -98,6 +98,8 @@ public:
 	void userLeftChat( const QString &handle , const QString &reason );
 	int sendMsg( const Kopete::Message &msg );
 
+	int sendWizz();
+
 public slots:
 	void slotCloseSession();
 	void slotInviteContact(const QString &handle);
