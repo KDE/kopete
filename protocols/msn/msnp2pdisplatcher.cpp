@@ -338,8 +338,8 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 			m_p2pList.insert(m_sessionId, p2p);
 			p2p->m_msgHandle=m_msgHandle;
 			p2p->m_myHandle=m_myHandle;
-			p2p->m_branch=randomid();
-			p2p->m_CallID=randomid();
+			p2p->m_branch=m_branch;
+			p2p->m_CallID=m_CallID;
 
 	
 //			if(m_p2pList.contains(m_sessionId))
@@ -347,22 +347,19 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 
 			if(p2p)
 			{
-//				QObject::connect(transfer , SIGNAL(transferCanceled()), p2p, SLOT(abortCurrentTransfer()));
-//				QObject::connect(transfer,  SIGNAL(destroyed()) , p2p , SLOT(slotKopeteTransferDestroyed()));
-
 				QString content="SessionID: " + QString::number( m_sessionId ) +"\r\n\r\n";
 
 				p2p->makeMSNSLPMessage( OK, content);
 
-				content="Bridges: TRUDPv1 TCPv1\r\n"
+/*				content="Bridges: TRUDPv1 TCPv1\r\n"
 						"NetID: -1280904111\r\n"
 						"Conn-Type: Symmetric-NAT\r\n"
 						"UPnPNat: false\r\n"
 						"ICF: false\r\n\r\n";
 
-				p2p->makeMSNSLPMessage( INVITE, content);
+				p2p->makeMSNSLPMessage( INVITE, content);*/
 
-				p2p->makeSIPMessage("syn");
+//				p2p->makeSIPMessage("syn");
 
 			}
 		}
