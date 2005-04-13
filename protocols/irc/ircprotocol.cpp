@@ -575,7 +575,7 @@ void IRCProtocol::slotQueryCommand( const QString &args, Kopete::ChatSession *ma
 
 void IRCProtocol::slotWhoisCommand( const QString &args, Kopete::ChatSession *manager )
 {
-	static_cast<IRCAccount*>( manager->account() )->engine()->whoisUser( args );
+	static_cast<IRCAccount*>( manager->account() )->engine()->whois( args );
 	static_cast<IRCAccount*>( manager->account() )->setCurrentCommandSource( manager );
 }
 

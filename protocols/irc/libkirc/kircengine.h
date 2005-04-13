@@ -247,7 +247,7 @@ public slots:
 	void topic(const QString &channel, const QString &topic);
 	void user(const QString &newUsername, const QString &hostname, const QString &newRealname);
 	void user(const QString &newUsername, Q_UINT8 mode, const QString &newRealname);
-	void whoisUser(const QString &user);
+	void whois(const QString &user);
 
 
 	/* CTCP commands */

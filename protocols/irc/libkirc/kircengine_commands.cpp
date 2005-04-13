@@ -303,7 +303,7 @@ void Engine::notice(Message &msg)
 		invokeCtcpCommandOfMessage(m_ctcpReplies, msg);
 }
 
-void Engine::whoisUser(const QString &user)
+void Engine::whois(const QString &user)
 {
 	writeMessage("WHOIS", user);
 }

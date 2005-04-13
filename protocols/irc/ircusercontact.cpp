@@ -181,7 +181,8 @@ void IRCUserContact::userOnline()
 	if (this != ircAccount()->mySelf() && !metaContact()->isTemporary())
 	{
 		mOnlineTimer->start( 45000, true );
-		kircEngine()->writeMessage( QString::fromLatin1("WHOIS %1").arg(m_nickName) );
+		ircAccount()->setCurrentCommandSource(0);
+		kircEngine()->whois(m_nickName);
 	}
 
 	removeProperty( m_protocol->propLastSeen );
@@ -192,7 +193,7 @@ void IRCUserContact::slotUserInfo()
 	if (isChatting())
 	{
 		ircAccount()->setCurrentCommandSource(manager());
-		kircEngine()->whoisUser( m_nickName );
+		kircEngine()->whois(m_nickName);
 	}
 }
 
