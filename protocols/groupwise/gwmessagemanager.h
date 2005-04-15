@@ -26,23 +26,23 @@ class GroupWiseAccount;
 class GroupWiseContact;
 class GroupWiseSearch;
 /**
- * Specialised message manager, which tracks the GUID used by GroupWise to uniquely identify a given chat, and provides invite actions and logging and security indicators.  To instantiate call @ref GroupWiseAccount::messageManager().
+ * Specialised message manager, which tracks the GUID used by GroupWise to uniquely identify a given chat, and provides invite actions and logging and security indicators.  To instantiate call @ref GroupWiseAccount::chatSession().
  * @author SUSE AG
 */
 
 using namespace GroupWise;
 
-class GroupWiseMessageManager : public KopeteMessageManager
+class GroupWiseChatSession : public KopeteMessageManager
 {
 Q_OBJECT
 
 friend class GroupWiseAccount;
 
 public:
-	/** 
-	 * The destructor emits leavingConference so that the account can tell the server that the user has left the chat
+	/**
+     * The destructor emits leavingConference so that the account can tell the server that the user has left the chat
 	 */
-	~GroupWiseMessageManager();
+	~GroupWiseChatSession();
 	/**
 	 * The conference's globally unique identifier, which is given to it by the server
 	 */
@@ -94,13 +94,9 @@ signals:
 	 */
 	void conferenceCreated();
 	/**
-	 * Tell the contact that the server wouldn't create a conference
+	 * Tell the account that the GroupWiseChatSession is closing so it can tell the server that the user has left the conference
 	 */
-	// NOT DECIDED IF WE NEED THIS YET
-	/**
-	 * Tell the account that the GroupWiseMessageManager is closing so it can tell the server that the user has left the conference
-	 */
-	void leavingConference( GroupWiseMessageManager * );
+	void leavingConference( GroupWiseChatSession * );
 protected:
 	/**
 	 * Start the process of creating a conference for this GWMM on the server.
@@ -149,7 +145,7 @@ protected slots:
 	void slotShowArchiving();
 private:
 	
-	GroupWiseMessageManager(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const ConferenceGuid & guid, int id = 0, const char* name = 0);
+	GroupWiseChatSession(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const ConferenceGuid & guid, int id = 0, const char* name = 0);
 	
 	ConferenceGuid m_guid; // The conference's globally unique identifier, which is given to it by the server
 	int m_flags; // flags for secure connections, central logging and "conference closed" as given by the server
@@ -168,6 +164,13 @@ private:
 	KopeteContactPtrList m_invitees;
 	// track the number of members actually in the chat
 	uint m_memberCount;
+	
+	/**
+	 * return an unique identifier for that kmm
+	 * @todo check it!
+	*/
+	uint mmId() const;
+	uint m_mmId;
 
 };
 

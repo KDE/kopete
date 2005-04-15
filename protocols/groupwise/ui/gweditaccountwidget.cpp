@@ -29,7 +29,7 @@
 #include <kconfig.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-
+#include <kpassdlg.h>
 #include "kopetepasswordedaccount.h"
 #include "kopetepasswordwidget.h"
 
@@ -60,6 +60,10 @@ GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, KopeteA
 		m_preferencesDialog->m_server->setText( config->readEntry( "DefaultServer" ) );
 		m_preferencesDialog->m_port->setValue( config->readNumEntry( "DefaultPort", 8300 ) );
 	}
+	QWidget::setTabOrder( m_preferencesDialog->m_userId, m_preferencesDialog->m_password->mRemembered );
+	QWidget::setTabOrder( m_preferencesDialog->m_password->mRemembered, m_preferencesDialog->m_password->mPassword );
+	QWidget::setTabOrder( m_preferencesDialog->m_password->mPassword, m_preferencesDialog->m_autoConnect );
+
 }
 
 GroupWiseEditAccountWidget::~GroupWiseEditAccountWidget()
@@ -80,10 +84,10 @@ void GroupWiseEditAccountWidget::reOpen()
 	m_preferencesDialog->m_userId->setDisabled( true );
 	m_preferencesDialog->m_userId->setText( account()->accountId() );
 	m_preferencesDialog->m_password->load( &account()->password() );
-	m_preferencesDialog->m_server->setText( account()->pluginData( GroupWiseProtocol::protocol(), "Server") );
-	m_preferencesDialog->m_port->setValue( account()->pluginData( GroupWiseProtocol::protocol(), "Port" ).toInt() );
+	m_preferencesDialog->m_server->setText( account()->myConfigGroup()->readEntry( "Server") );
+	m_preferencesDialog->m_port->setValue( account()->myConfigGroup()->readNumEntry( "Port" ) );
 	m_preferencesDialog->m_autoConnect->setChecked( account()->autoLogin() );
-	m_preferencesDialog->m_alwaysAccept->setChecked( account()->pluginData( GroupWiseProtocol::protocol(), "AlwaysAcceptInvitations" ) == "true" );
+	m_preferencesDialog->m_alwaysAccept->setChecked( account()->myConfigGroup()->readBoolEntry( "AlwaysAcceptInvitations" ) );
 }
 
 KopeteAccount* GroupWiseEditAccountWidget::apply()
@@ -97,7 +101,7 @@ KopeteAccount* GroupWiseEditAccountWidget::apply()
 	{
 		KMessageBox::information(this,
 					i18n("The changes you just made will take effect next time you log in with GroupWise."),
-					i18n("GroupWise settings changed while signed in"));
+					i18n("GroupWise Settings Changed While Signed In"));
 	}
 
 	writeConfig();
@@ -113,10 +117,12 @@ bool GroupWiseEditAccountWidget::validateData()
 void GroupWiseEditAccountWidget::writeConfig()
 {
 	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
-	account()->setPluginData( GroupWiseProtocol::protocol(), "Server", m_preferencesDialog->m_server->text() );
-	account()->setPluginData( GroupWiseProtocol::protocol(), "Port", QString::number( m_preferencesDialog->m_port->value() ) );
+	account()->myConfigGroup()->writeEntry( "Server", m_preferencesDialog->m_server->text() );
+	account()->myConfigGroup()->writeEntry( "Port", QString::number( m_preferencesDialog->m_port->value() ) );
+	account()->myConfigGroup()->writeEntry( "AlwaysAcceptInvitations", 
+			m_preferencesDialog->m_alwaysAccept->isChecked() ? "true" : "false" );
+	
 	account()->setAutoLogin( m_preferencesDialog->m_autoConnect->isChecked() );
-	account()->setPluginData( GroupWiseProtocol::protocol(), "AlwaysAcceptInvitations", m_preferencesDialog->m_alwaysAccept->isChecked() ? "true" : "false" );
 	m_preferencesDialog->m_password->save( &account()->password() );
 	settings_changed = false;
 }

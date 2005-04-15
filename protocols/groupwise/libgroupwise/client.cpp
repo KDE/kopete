@@ -148,27 +148,12 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 
 void Client::close()
 {
-	qDebug( "Client::close()" );
+	debug( "Client::close()" );
 	if(d->stream) {
-		if(d->active) {
-/*			for(QValueList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end(); it++) {
-				GroupChat &i = *it;
-				i.status = GroupChat::Closing;
-
-				JT_Presence *j = new JT_Presence(rootTask());
-				Status s;
-				s.setIsAvailable(false);
-				j->pres(i.j, s);
-				j->go(true);
-			}*/
-		}
-
 		d->stream->disconnect(this);
 		d->stream->close();
 		d->stream = 0;
 	}
-// 	disconnected();
-// 	cleanup();
 }
 
 QString Client::host()
@@ -205,7 +190,7 @@ void Client::initialiseEventTasks()
 
 void Client::setStatus( GroupWise::Status status, const QString & reason, const QString & autoReply )
 {
-	qDebug( "Setting status to %i", status );
+	debug( QString("Setting status to %1").arg( status ) );;
 	SetStatusTask * sst = new SetStatusTask( d->root );
 	sst->status( status, reason, autoReply );
 	connect( sst, SIGNAL( finished() ), this, SLOT( sst_statusChanged() ) );
@@ -223,7 +208,6 @@ void Client::requestStatus( const QString & userDN )
 
 void Client::sendMessage( const QStringList & addresseeDNs, const OutgoingMessage & message )
 {
-	qDebug( "Sending message..." );
 	SendMessageTask * smt = new SendMessageTask( d->root );
 	smt->message( addresseeDNs, message );
 	smt->go( true );
@@ -276,7 +260,6 @@ void Client::rejectInvitation( const GroupWise::ConferenceGuid & guid )
 
 void Client::leaveConference( const GroupWise::ConferenceGuid & guid )
 {
-	qDebug( "Client::leaveConference()" );
 	LeaveConferenceTask * lct = new LeaveConferenceTask( d->root );
 	lct->leave( guid );
 	//connect( lct, SIGNAL( finished() ), SLOT( lct_leftConference() ) );
@@ -285,7 +268,6 @@ void Client::leaveConference( const GroupWise::ConferenceGuid & guid )
 
 void Client::sendInvitation( const GroupWise::ConferenceGuid & guid, const QString & dn, const GroupWise::OutgoingMessage & message )
 {
-	qDebug( "Client::sendInvitation()" );
 	SendInviteTask * sit = new SendInviteTask( d->root );
 	QStringList invitees( dn );
 	sit->invite( guid, dn, message );
@@ -295,12 +277,12 @@ void Client::sendInvitation( const GroupWise::ConferenceGuid & guid, const QStri
 // SLOTS //
 void Client::streamError( int error )
 {
-	qDebug( "CLIENT ERROR (Error %i)", error );
+	debug( QString( "CLIENT ERROR (Error %1)" ).arg( error ) );
 }
 
 void Client::streamReadyRead()
 {
-	qDebug( "CLIENT STREAM READY READ" );
+	debug( "CLIENT STREAM READY READ" );
 	// take the incoming transfer and distribute it to the task tree
 	Transfer * transfer = d->stream->read();
 	distribute( transfer );
@@ -308,11 +290,11 @@ void Client::streamReadyRead()
 
 void Client::lt_loginFinished()
 {
-	qDebug( "Client::lt_loginFinished() got login finished" );
+	debug( "Client::lt_loginFinished()" );
 	const LoginTask * lt = (LoginTask *)sender();
 	if ( lt->success() )
 	{
-		qDebug( "Client::lt_loginFinished() LOGIN SUCCEEDED" );
+		debug( "Client::lt_loginFinished() LOGIN SUCCEEDED" );
 		// set our initial status
 		SetStatusTask * sst = new SetStatusTask( d->root );
 		sst->status( GroupWise::Available, QString::null, QString::null );
@@ -326,7 +308,7 @@ void Client::lt_loginFinished()
 	}
 	else
 	{
-		qDebug( "Client::lt_loginFinished() LOGIN FAILED" );
+		debug( "Client::lt_loginFinished() LOGIN FAILED" );
 		emit loginFailed();
 	}
 	// otherwise client should disconnect and signal failure that way??
@@ -337,14 +319,13 @@ void Client::sst_statusChanged()
 	const SetStatusTask * sst = (SetStatusTask *)sender();
 	if ( sst->success() )
 	{
-		qDebug( "status change succeeded" );
 		emit ourStatusChanged( sst->requestedStatus(), sst->awayMessage(), sst->autoReply() );
 	}
 }
 
 void Client::ct_messageReceived( const ConferenceEvent & messageEvent )
 {
-	qDebug( "parsing received message's RTF" );
+	debug( "parsing received message's RTF" );
 	ConferenceEvent transformedEvent = messageEvent;
 	RTF2HTML parser;
 	QString rtf = messageEvent.message;
@@ -363,11 +344,10 @@ void Client::cct_conferenceCreated()
 	const CreateConferenceTask * cct = ( CreateConferenceTask * )sender();
 	if ( cct->success() )
 	{
-		qDebug( "conference created" );
 		emit conferenceCreated( cct->clientConfId(), cct->conferenceGUID() );
 	}
 	else
-	{	qDebug( "conference creation FAILED" );
+	{
 		emit conferenceCreationFailed( cct->clientConfId(), cct->statusCode() );
 	}
 }
@@ -375,14 +355,16 @@ void Client::cct_conferenceCreated()
 void Client::jct_joinConfCompleted()
 {
 	const JoinConferenceTask * jct = ( JoinConferenceTask * )sender();
-	qDebug( "Joined conference %s, participants are: ", jct->guid().ascii() );
+#ifdef LIBGW_DEBUG
+	debug( QString( "Joined conference %1, participants are: " ).arg( jct->guid() ) );
 	QStringList parts = jct->participants();
 	for ( QStringList::Iterator it = parts.begin(); it != parts.end(); ++it )
-		qDebug( " - %s", (*it).ascii() );
-	qDebug( "invitees are: " );
+		debug( QString( " - %1" ).arg(*it) );
+	debug( "invitees are: " );
 	QStringList invitees = jct->invitees();
 	for ( QStringList::Iterator it = invitees.begin(); it != invitees.end(); ++it )
-		qDebug( " - %s", (*it).ascii() );
+		debug( QString( " - %1" ).arg(*it) );
+#endif
 	emit conferenceJoined( jct->guid(), jct->participants(), jct->invitees() );
 }
 
@@ -422,17 +404,17 @@ QCString Client::ipAddress()
 void Client::distribute( Transfer * transfer )
 {
 	if( !rootTask()->take( transfer ) )
-		qDebug( "CLIENT: root task refused transfer" );
+		debug( "CLIENT: root task refused transfer" );
 	// at this point the transfer is no longer needed
 	delete transfer;
 }
 
 void Client::send( Request * request )
 {
-	qDebug( "CLIENT::send()" );
+	debug( "CLIENT::send()" );
 	if( !d->stream )
 	{	
-		qDebug( "CLIENT - NO STREAM TO SEND ON!");
+		debug( "CLIENT - NO STREAM TO SEND ON!");
 		return;
 	}
 // 	QString out = request.toString();
@@ -442,9 +424,13 @@ void Client::send( Request * request )
 	d->stream->write( request );
 }
 
-void Client::debug(const QString &str)
+void Client::debug( const QString &str )
 {
-	qDebug( "CLIENT: %s", str.ascii() );
+#ifdef LIBGW_USE_KDEBUG
+	kdDebug( GROUPWISE_DEBUG_LIBGW ) << "debug: " << str << endl;
+#else
+	qDebug( "CLIENT: %s\n", str.ascii() );
+#endif
 }
 
 QString Client::genUniqueId()

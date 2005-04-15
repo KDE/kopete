@@ -2,10 +2,10 @@
     gwaccount.h - Kopete GroupWise Protocol
 
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
-    Based on Testbed    
+
+    Based on Testbed
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
-    
+
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
@@ -21,23 +21,20 @@
 #ifndef GW_ACCOUNT_H
 #define GW_ACCOUNT_H
 
-#include <qvaluelist.h>
-#include <qdict.h>
-
-#include <kopeteaccount.h>
-#include <kopetemessage.h>
-#include <kopetepasswordedaccount.h>
+#include <kopetemessagemanagerfactory.h>
 
 #include "gwerror.h"
-#include "gwfield.h"
-#include "gwmessagemanager.h"
+
+#include <kopetepasswordedaccount.h>
 
 class KActionMenu;
+
 class KopeteContact;
 class KopeteGroup;
 class KopeteMetaContact;
 
 class GroupWiseContact;
+class GroupWiseChatSession;
 class GroupWiseProtocol;
 class KNetworkConnector;
 namespace QCA {
@@ -46,20 +43,13 @@ namespace QCA {
 class QCATLSHandler;
 class ClientStream;
 class Client;
-
-/**
- * This represents an account connected to GroupWise
- * @author Will Stephensonconst int GroupWiseAccount::port() const
-{
-	return pluginData( protocol(), "Port" ).toInt();
-}
-
-const QString GroupWiseAccount::server() const
-
-*/
+class GWContactList;
 
 using namespace GroupWise;
 
+/**
+ * This represents an account on a Novell GroupWise Messenger Server
+ */
 class GroupWiseAccount : public Kopete::PasswordedAccount
 {
 	Q_OBJECT
@@ -70,24 +60,28 @@ public:
 	 * Construct the context menu used for the status bar icon
 	 */
 	virtual KActionMenu* actionMenu();
-	
+
 	// DEBUG ONLY
 	void dumpManagers();
 	// DEBUG ONLY
 	/**
-	 * Creates a protocol specific KopeteContact subclass and adds it to the supplie
-	 * KopeteMetaContact
+	 * Creates a protocol specific Kopete::Contact subclass and adds it to the supplied
+	 * Kopete::MetaContact
 	 */
 	virtual bool addContactToMetaContact(const QString& contactId, const QString& displayName, KopeteMetaContact* parentContact);
+	/**
+	 * Delete a contact on the server
+	 */
+	void deleteContact( GroupWiseContact * contact );
 	/**
 	 * Called when Kopete is set globally away
 	 */
 	virtual void setAway(bool away, const QString& reason);
-	/** 
+	/**
 	 * Utility access to the port given by the user
 	 */
 	const int port() const;
-	/** 
+	/**
 	 * Utility access to the server given by the user
 	 */
 	const QString server() const;
@@ -101,10 +95,10 @@ public:
 	 * to start Tasks directly on the client and respond directly to their signals.
 	 */
 	Client * client() const;
-	/** 
+	/**
 	 * Utility to create or access a message manager instance for a given GUID and set of contacts
 	 */
-	GroupWiseMessageManager * messageManager( KopeteContactPtrList others, const ConferenceGuid & guid, bool canCreate );
+	GroupWiseChatSession * chatSession( QPtrList<KopeteContact> others, const ConferenceGuid & guid, bool canCreate );
 	/**
 	 * Look up a contact given a DN
 	 * Returns 0 if none found
@@ -114,17 +108,17 @@ public:
 	 * Create a conference (start a chat) on the server
 	 */
 	void createConference( const int clientId, const QStringList& invitees );
-	
+
 	/**
 	 * Send a message
-	 */ 
+	 */
 	void sendMessage( const ConferenceGuid & guid, const KopeteMessage & message );
-	
+
 	/**
 	 * Invite someone to join a conference
 	 */
 	void sendInvitation( const ConferenceGuid & guid, const QString & dn, const QString & message );
-	
+
 	/**
 	 * Check a contact's blocking status
 	 * Only works when connected - otherwise always returns false
@@ -134,34 +128,40 @@ public:
 	 * Set up a temporary contact (not on our contact list but is messaging us or involved in a conversation that we have been invited to.
 	 */
 	GroupWiseContact * createTemporaryContact( const QString & dn );
+
+	/**
+	 * Check whether sync is not currently needed
+	 */
+	bool dontSync();
+	
+	void syncContact( GroupWiseContact * contact );
+	/* added to simulate Kopete 0.10 API */
+	KConfig * myConfigGroup() const;
 public slots:
 
 	void slotTestRTFize();
-	
+
 	/* Connects to the server. */
-	virtual void connectWithPassword ( const QString &password );
+	void connectWithPassword ( const QString &password );
 
 	/* Disconnects from the server. */
 	virtual void disconnect();
 	virtual void disconnect( KopeteAccount::DisconnectReason reason );
-signals: 
+
+	/** Set the online status for the account. Reimplemented from Kopete::Account */
+	void setOnlineStatus( const KopeteOnlineStatus& status , const QString &reason = QString::null);
+signals:
 	void conferenceCreated( const int mmId, const GroupWise::ConferenceGuid & guid );
 	void conferenceCreationFailed( const int mmId, const int statusCode );
 	void contactTyping( const ConferenceEvent & );
 	void contactNotTyping( const ConferenceEvent & );
 	void privacyChanged( const QString & dn, bool allowed );
+
+	
 protected slots:
 	/**
-	 * Change the account's status.  Called by KActions and internally.
-	 */
-	void slotGoOnline();
-	void slotGoAway( const QString & reason );
-	void slotGoOffline();
-	void slotGoBusy( const QString & reason );
-	void slotGoAppearOffline();
-	/**
 	 * Set an auto reply message for use when the account is away
-	 * TODO: Extend KopeteAwayAction so you can set multiple ones there.
+	 * TODO: Extend Kopete::AwayAction so you can set multiple ones there.
 	 */
 	void slotSetAutoReply();
 	/**
@@ -184,19 +184,23 @@ protected slots:
 	void receiveContact( const ContactItem & );
 	/**
 	 * Called when we receive a CONTACT'S METADATA (including initial status) from the server side contact list,
-	 * or in response to an explicity query.  This is necessary to handle some events from the server.  
+	 * or in response to an explicity query.  This is necessary to handle some events from the server.
 	 * These events are queued in the account until the data arrives and then we handle the event.
 	 */
 	void receiveContactUserDetails( const GroupWise::ContactDetails & );
 	/**
-	 * Called after we create a contact on the server 
+	 * Called after we create a contact on the server
 	 */
 	void receiveContactCreated();
+	/**
+	 * Handles the response to deleting a contact on the server
+	 */
+	void receiveContactDeleted( const ContactItem & instance );
 	// SLOTS HANDLING PROTOCOL EVENTS
 	/**
-	 * Called when the server has a message for us.  
-	 * This identifies the sending KopeteContact and passes the message on to it,
-	 * in order to locate the MessageManager and finally pass to the GUI.
+	 * Called when the server has a message for us.
+	 * This identifies the sending Kopete::Contact and passes the message on to it,
+	 * in order to locate the ChatSession and finally pass to the GUI.
 	 */
 	void receiveMessage( const ConferenceEvent & event );
 	void receiveAutoReply( const ConferenceEvent & event );
@@ -210,13 +214,13 @@ protected slots:
 	void changeOurStatus( GroupWise::Status, const QString &, const QString & );
 	/**
 	 * Called when we've been disconnected for logging in as this user somewhere else
-	 */ 
+	 */
 	void slotConnectedElsewhere();
-	/** 
+	/**
 	 * Called when we've logged in successfully
 	 */
 	void slotLoggedIn();
-	/** 
+	/**
 	 * Called when a login attempt failed
 	 */
 	void slotLoginFailed();
@@ -270,49 +274,66 @@ protected slots:
 	void slotCSDisconnected();
 	void slotCSError( int error );
 	void slotCSWarning( int warning );
-	
+
 	// HOUSEKEEPING
 	/**
 	 * We listen for the destroyed() signal and leave any conferences we
 	 * might have been in, and remove it from our map.
 	 */
-	void slotLeavingConference( GroupWiseMessageManager * );
-	
+	void slotLeavingConference( GroupWiseChatSession * );
+
 	/** Debug slots */
 	void slotConnError();
 	void slotConnConnected();
+	/**
+	 * Change the account's status.  Called by KActions and internally.
+	 */
+	void slotGoOnline();
+	void slotGoAway( const QString & reason );
+	void slotGoOffline();
+	void slotGoBusy( const QString & reason );
+	void slotGoAppearOffline();
 protected:
 	/**
 	 * Sends a status message to the server - called by the status specific slotGoAway etc
 	 */
-	void setStatus( GroupWise::Status status, const QString & reason = QString::null );
+	//void setStatus( GroupWise::Status status, const QString & reason = QString::null );
 
 	/**
-	 * Received a message from the server.
-	 * Find the conversation that this message belongs to, and display it there.
-	 * @param autoReply Indicates that the message is an auto reply - doesn't contain any RTF.
-	 */
+	* Received a message from the server.
+	* Find the conversation that this message belongs to, and display it there.
+	* @param autoReply Indicates that the message is an auto reply - doesn't contain any RTF.
+	*/
 	void handleIncomingMessage( const ConferenceEvent & event, bool autoReply );
-	
-	GroupWiseMessageManager * findMessageManagerByGuid( const GroupWise::ConferenceGuid & guid );
+
+	int handleTLSWarning (int warning, QString server, QString accountId);
+
+	GroupWiseChatSession * findChatSessionByGuid( const GroupWise::ConferenceGuid & guid );
+	/**
+	 * reconcile any changes to the contact list which happened offline
+	 */
+	void reconcileOfflineChanges();
 	/**
 	 * Memory management
 	 */
 	void cleanup();
 private:
-	// current auto reply message
-	QString m_autoReply;
-	// Network code 
+	// action menu and its actions
+	KActionMenu * m_actionMenu;
+	KAction * m_actionAutoReply;
+	KAction * m_actionManagePrivacy;
+	// Network code
 	KNetworkConnector * m_connector;
 	QCA::TLS * m_QCATLS;
 	QCATLSHandler *	m_tlsHandler;
 	ClientStream * m_clientStream;
 	// Client, entry point of libgroupwise
 	Client * m_client;
-	
-	GroupWise::Status m_initialStatus;
+
 	QString m_initialReason;
-	QValueList<GroupWiseMessageManager*> m_managers;
+	QValueList<GroupWiseChatSession*> m_chatSessions;
+	bool m_dontSync;
+	GWContactList * m_serverListModel;
 };
 
 #endif

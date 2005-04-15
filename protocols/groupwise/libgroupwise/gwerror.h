@@ -24,10 +24,15 @@
 #include <qstring.h>
 
 typedef Q_UINT16 NMERR_T;
-#define GROUPWISE_DEBUG_GLOBAL 14310
+#define GROUPWISE_DEBUG_GLOBAL 14190
+#define GROUPWISE_DEBUG_LIBGW 14191
+#define GROUPWISE_DEBUG_RAW 14192
 
 #define BLANK_GUID "[00000000-00000000-00000000-0000-0000]"
 #define CONF_GUID_END 27
+
+#define LIBGW_DEBUG 1
+#define LIBGW_USE_KDEBUG 1
 
 namespace GroupWise
 {
@@ -140,18 +145,6 @@ namespace GroupWise
 		QString rtfMessage;
 	};
 
-	/**
-	* Represents an instance of a contact in the server side contact list
-	*/
-	struct ContactListInstance
-	{
-		int objectId;
-		int parentId;
-		int sequence;
-	};
-
-	typedef QValueList< ContactListInstance > CLInstanceList;
-	
 	struct UserSearchQueryTerm
 	{
 		QString field;

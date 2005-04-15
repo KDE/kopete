@@ -26,7 +26,7 @@
 #include <editaccountwidget.h>
 
 class QVBoxLayout;
-class KopeteAccount;
+class KopeteAccount; 
 class GroupWiseAccountPreferences;
 
 /**

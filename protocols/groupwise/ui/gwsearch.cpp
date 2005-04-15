@@ -64,6 +64,7 @@ GroupWiseSearch::GroupWiseSearch( GroupWiseAccount * account, QListView::Selecti
 	m_results->setAllColumnsShowFocus( true );
 	connect( m_details, SIGNAL( clicked() ), SLOT( slotShowDetails() ) );
 	connect( m_results, SIGNAL( selectionChanged() ), SLOT( slotValidateSelection() ) );
+	connect( m_search, SIGNAL( clicked() ), SLOT( slotDoSearch() ) );
 }
 
 
@@ -71,7 +72,16 @@ GroupWiseSearch::~GroupWiseSearch()
 {
 }
 
-void GroupWiseSearch::doSearch()
+void GroupWiseSearch::slotClear()
+{
+	m_firstName->clear();
+	m_lastName->clear();
+	m_userId->clear();
+	m_title->clear();
+	m_dept->clear();
+}
+
+void GroupWiseSearch::slotDoSearch()
 {
 	// build a query
 	QValueList< GroupWise::UserSearchQueryTerm > searchTerms;
@@ -142,9 +152,9 @@ void GroupWiseSearch::slotShowDetails()
 		ContactDetails dt = selected.first();
 		GroupWiseContact * c = m_account->contactForDN( dt.dn );
 		if ( c )
-			new GroupWiseContactProperties( c, parent(), "gwcontactproperties" );
+			new GroupWiseContactProperties( c, this, "gwcontactproperties" );
 		else
-			new GroupWiseContactProperties( dt, parent(), "gwcontactproperties" );
+			new GroupWiseContactProperties( dt, this, "gwcontactproperties" );
 	}
 }
 
@@ -154,7 +164,7 @@ void GroupWiseSearch::slotGotSearchResults()
 	SearchTask * st = ( SearchTask * )sender();
 	m_searchResults = st->results();
 	
-	m_matchCount->setText( i18n( "%1 matching users found" ).arg( m_searchResults.count() ) );
+	m_matchCount->setText( i18n( "1 matching user found", "%n matching users found", m_searchResults.count() ) );
 
 	m_results->clear();
 	QValueList< GroupWise::ContactDetails >::Iterator it = m_searchResults.begin();
@@ -253,7 +263,6 @@ void GroupWiseSearch::slotValidateSelection()
 	else
 	{
 		// check that at least one item is selected
-		bool ok = false;
 		QListViewItemIterator it( m_results );
 		while ( it.current() )
 		{

@@ -58,7 +58,11 @@ void MoveContactTask::moveContact( const ContactItem & contact, const int newPar
 
 void MoveContactTask::moveContactToNewFolder( const ContactItem & contact, const int newSequenceNumber, const QString & folderDisplayName )
 {
-	qDebug("MoveContactTask::moveContactToNewFolder - NOT_IMPLEMENTED" );
+	client()->debug("MoveContactTask::moveContactToNewFolder()" );
+	m_folderSequence = newSequenceNumber;
+	m_folderDisplayName = folderDisplayName;
+	m_contactToMove = contact;
+	
 }
 
 void MoveContactTask::onGo()
@@ -72,6 +76,8 @@ void MoveContactTask::onGo()
 
 void MoveContactTask::onFolderCreated()
 {
-	
+	client()->debug("MoveContactTask::onFolderCreated()" );
+	moveContact( m_contactToMove, m_folderId );
+	RequestTask::onGo();
 }
 #include "movecontacttask.moc"

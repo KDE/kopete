@@ -42,6 +42,7 @@ GroupWiseProtocol *GroupWiseProtocol::s_protocol = 0L;
 
 GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const char *name, const QStringList &/*args*/ )
 	: KopeteProtocol( GroupWiseProtocolFactory::instance(), parent, name ),
+/* initialise KopeteOnlineStatus that should be user selectable in the user interface */
 	  groupwiseUnknown    ( KopeteOnlineStatus::Unknown, 25, this, 0, "status_unknown",
 	  		"FIXME: Make this unselectable", i18n( "Unknown" ) ),
 	  groupwiseOffline ( KopeteOnlineStatus::Offline,    0,  this, 1, QString::null, 
@@ -60,18 +61,21 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const char *name, const Q
 	  		"FIXME: Make this unselectable", i18n( "Connecting" ) ),
 	  groupwiseAppearOffline( KopeteOnlineStatus::Online,22, this, 98, "groupwise_invisible",
 	  		i18n( "A&ppear Offline" ), i18n( "Appear Offline" ) ),
-	  propGivenName( Kopete::Global::Properties::self()->firstName() ),
-	  propLastName( Kopete::Global::Properties::self()->lastName() ),
+	  propGivenName( Kopete::Global::Properties::self()->lastName() ),
 	  propFullName( Kopete::Global::Properties::self()->fullName() ),
 	  propAwayMessage( Kopete::Global::Properties::self()->awayMessage() ),
 	  propAutoReply( "groupwiseAutoReply", i18n( "Auto Reply Message" ), QString::null, false, false ),
-	  propCN( "groupwiseCommonName", i18n( "Common Name" ), QString::null, true, false )
+	  propCN( "groupwiseCommonName", i18n( "Common Name" ), QString::null, true, false ),
+	  propPhoneWork( Kopete::Global::Properties::self()->workPhone() ),
+	  propPhoneMobile( Kopete::Global::Properties::self()->privateMobilePhone() ),
+	  propEmail( Kopete::Global::Properties::self()->emailAddress() )
 {
 	// ^^ That is all member initialiser syntax, not broken indentation!
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 
 	s_protocol = this;
-	
+
+  addAddressBookField( "messaging/groupwise", KopetePlugin::MakeIndexField );
 }
 
 GroupWiseProtocol::~GroupWiseProtocol()

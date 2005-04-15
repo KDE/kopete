@@ -176,14 +176,12 @@ void GroupWisePrivacyDialog::slotAddClicked()
 {
 	if ( !m_searchDlg )
 	{
-		m_searchDlg = new KDialogBase( this, "invitesearchdialog", false, 
-				i18n( "privacy dialog title","Search for contact to add to privacy list" ),
-				KDialogBase::Ok|KDialogBase::Cancel|KDialogBase::User1, 
-				KDialogBase::User1, true, KGuiItem( i18n( "&Search" ) ) );
+		m_searchDlg = new KDialogBase( this, "privacysearchdialog", false, 
+				i18n( "Search For Contact To Block" ),
+				KDialogBase::Ok|KDialogBase::Cancel );
 		m_search = new GroupWiseSearch( m_account, QListView::Multi, false, m_searchDlg, "privacysearchwidget" );
 		m_searchDlg->setMainWidget( m_search );
 		connect( m_searchDlg, SIGNAL( okClicked() ), SLOT( slotSearchedForUsers() ) );
-		connect( m_searchDlg, SIGNAL( user1Clicked() ), m_search, SLOT( doSearch() ) );
 		connect( m_search, SIGNAL( selectionValidates( bool ) ), m_searchDlg, SLOT( enableButtonOK( bool ) ) );
 		m_searchDlg->enableButtonOK( false );
 	}

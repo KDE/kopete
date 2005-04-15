@@ -41,9 +41,9 @@ class KAction;
 class KActionCollection;
 class KopeteAccount;
 class GroupWiseAccount;
-class GroupWiseMessageManager;
+class GroupWiseChatSession;
 class GroupWiseProtocol;
-class KopeteMetaContact;
+namespace Kopete { class MetaContact; }
 
 using namespace GroupWise;
 
@@ -102,7 +102,7 @@ public:
 	virtual QPtrList<KAction> *customContextMenuActions();
 	
 	/**
-	 * Returns a KopeteMessageManager associated with this contact
+	 * Returns a KopeteChatSession associated with this contact
 	 */
 	virtual KopeteMessageManager *manager( bool canCreate = false );
 
@@ -110,44 +110,10 @@ public:
 	 * Access the contact's server properties
 	 */
 	QMap< QString, QString > serverProperties();
-	
-	// CONTACT LIST MANAGEMENT FUNCTIONS
-	/**
-	 *  These functions model the server side contact list structure enough to allow Kopete to manipulate it correctly
-	 *  In GroupWise, a contactlist is composed of folders, containing contacts.  But the contacts don't record which 
-	 *  folders they are in.  Instead, each contact entry represents an instance of that contact within the list.  
-	 *  In Kopete's model, this looks like duplicate contacts (illegal), so instead we have unique contacts, 
-	 *  each (by way of its metacontact) knowing membership of potentially >1 KopeteGroups.  Contacts contain a list of the 
-	 *  server side list instances.  Contact list management operations affect this list, which is updated during every
-	 *  operation.  Having this list allows us to update the server side contact list and keep changes synchronised across 
-	 *  different clients.
-	 *  The list is volatile - it is not stored in stable storage, but is purged on disconnect and recreated at login.
-	 */
-	/**
-	 * Add an instance to this contact
-	 */
-	void addCLInstance( const ContactListInstance & );
-	/**
-	 * Remove an instance from this contact
-	 */
-	void removeCLInstance( const int objectId );
-	/** 
-	 * See if this contact contains an instance with this ID
-	 */
-	bool hasCLObjectId( const int objectId ) const;
-	/**
-	 * Get a list of all this contact's instances
-	 */
-	CLInstanceList instances() const;
-	/**
-	 * Remove all this contact's contact list instances, called on disconnect so that a clean list is formed on reconnect.
-	 */
-	void purgeCLInstances();
-
 	/** 
 	 * Updates this contact's group membership and display name on the server
 	 */
-	void syncGroups();
+	void sync( unsigned int);
 	/**
 	 * Updates this contact's online status, including blocking status
 	 */
@@ -155,28 +121,30 @@ public:
 	/**
 	 * Are this contact's chats being administratively logged?
 	 */
-	bool archiving();
-
+	bool archiving() const;
+	/**
+	 * Is this contact in the process of being deleted
+	 */
+	bool deleting() const;
+	/**
+	 * Mark this contact as being deleted
+	 */
+	void setDeleting( bool deleting );
 public slots:
 	/**
 	 * Transmits an outgoing message to the server 
 	 * Called when the chat window send button has been pressed
-	 * (in response to the relevant KopeteMessageManager signal)
+	 * (in response to the relevant KopeteChatSession signal)
 	 */
 	void sendMessage( KopeteMessage &message );
 	/**
 	 * Delete this contact on the server
 	 */
-	virtual void slotDeleteContact();
-	/**
-	 * Receive notification that an instance of this contact on the server was deleted
-	 * If all the instance of the contact are deleted, the contact will delete itself with deleteLater()
-	 */
-	void receiveContactDeleted( const ContactItem & );
+	virtual void deleteContact();
 	/**
 	 * Called when the call to rename the contact on the server has completed
 	 */
-	void slotRenamedOnServer();
+	void renamedOnServer();
 	
 protected:
 	// debug function to see what message managers we have on the server
@@ -204,8 +172,6 @@ protected:
 	QString m_displayName;
 	KAction* m_actionPrefs;
 	KAction *m_actionBlock;
-	// a list of all the instances that this contact appears in the server side contact list
-	CLInstanceList m_instances;
 	// Novell Messenger Properties, as received by the server.  
 	// Unfortunately we don't the domain of the set of keys, so they are not easily mappable to KopeteContactProperties
 	QMap< QString, QString > m_serverProperties;

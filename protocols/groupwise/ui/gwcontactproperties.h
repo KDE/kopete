@@ -24,6 +24,8 @@
 
 class GroupWiseContactPropsWidget;
 class KDialogBase;
+class QListViewItem;
+class KAction;
 
 /**
 Logic, wrapping UI, for displaying contact properties
@@ -37,17 +39,21 @@ public:
 	/**
 	 * Display properties given a GroupWiseContact
 	 */ 
-	GroupWiseContactProperties( GroupWiseContact * contact, QObject *parent, const char *name );
+	GroupWiseContactProperties( GroupWiseContact * contact, QWidget *parent, const char *name );
 	/**
 	 * Display properties given a GroupWise::ContactDetails
 	 */
-	GroupWiseContactProperties( GroupWise::ContactDetails contactDetails, QObject *parent = 0, const char *name = 0 );
+	GroupWiseContactProperties( GroupWise::ContactDetails contactDetails, QWidget *parent = 0, const char *name = 0 );
 	~GroupWiseContactProperties();
-	
+protected:
 	void setupProperties( QMap< QString, QString > serverProps );
-
+	void init();
+protected slots:
+	void slotShowContextMenu( QListViewItem *, const QPoint & );
+	void slotCopy();
 private:
 	GroupWiseContactPropsWidget * m_propsWidget;
+	KAction * m_copyAction;
 	KDialogBase * m_dialog;
 };
 

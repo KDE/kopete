@@ -38,14 +38,15 @@ public:
 			QWidget *parent = 0, const char *name = 0);
 	~GroupWiseSearch();
 	QValueList< GroupWise::ContactDetails > selectedResults();
-public slots:
-	void doSearch();
 signals:
 	void selectionValidates( bool );
 protected:
 	unsigned char searchOperation( int comboIndex );
 protected slots:
+	void slotClear();
+	void slotDoSearch();
 	void slotGotSearchResults();
+	// shows a GroupWiseContactProperties for the selected contact.  Dialog's parent is this instance
 	void slotShowDetails();
 	void slotValidateSelection();
 private:

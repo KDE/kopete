@@ -39,20 +39,23 @@
 
 #include "gwmessagemanager.h"
 
-GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const GroupWise::ConferenceGuid & guid, int id, const char* name): KopeteMessageManager(user, others, protocol, 0, name), m_guid( guid ), m_flags( 0 ), m_searchDlg( 0 ), m_memberCount( others.count() )
+GroupWiseChatSession::GroupWiseChatSession(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const GroupWise::ConferenceGuid & guid, int id, const char* name): KopeteMessageManager(user, others, protocol, 0, name), m_guid( guid ), m_flags( 0 ), m_searchDlg( 0 ), m_memberCount( others.count() )
 {
 	Q_UNUSED( id );
+	static uint s_id=0;
+	m_mmId=++s_id;
+	
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId() << endl;
 
 	// Needed because this is (indirectly) a KXMLGuiClient, so it can find the gui description .rc file
 	setInstance( protocol->instance() );
 	
 	// make sure Kopete knows about this instance
-	KopeteMessageManagerFactory::factory()->addKopeteMessageManager ( this );
+	 KopeteMessageManagerFactory::factory()->addKopeteMessageManager( this );
 
 	connect ( this, SIGNAL( messageSent ( KopeteMessage &, KopeteMessageManager * ) ),
 			  SLOT( slotMessageSent ( KopeteMessage &, KopeteMessageManager * ) ) );
-	connect( this, SIGNAL( typingMsg ( bool ) ), SLOT( slotSendTypingNotification ( bool ) ) );
+	connect( this, SIGNAL( myselfTyping ( bool ) ), SLOT( slotSendTypingNotification ( bool ) ) );
 	connect( account(), SIGNAL( contactTyping( const ConferenceEvent & ) ), 
 						SLOT( slotGotTypingNotification( const ConferenceEvent & ) ) );
 	connect( account(), SIGNAL( contactNotTyping( const ConferenceEvent & ) ), 
@@ -65,7 +68,7 @@ GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, Kope
 	m_secure = new KAction( i18n( "Security Status" ), "encrypted", KShortcut(), this, SLOT( slotShowSecurity() ), actionCollection(), "gwSecureChat" );
 	m_secure->setToolTip( i18n( "Conversation is secure" ) );
 	
-	m_logging = new KAction( i18n( " Archiving Status" ), "logchat", KShortcut(), this, SLOT( slotShowArchiving() ), actionCollection(), "gwLoggingChat" );
+	m_logging = new KAction( i18n( "Archiving Status" ), BarIcon( "logging" ), KShortcut(), this, SLOT( slotShowArchiving() ), actionCollection(), "gwLoggingChat" );
 	updateArchiving();
 	
 	setXMLFile("gwchatui.rc");
@@ -74,12 +77,17 @@ GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, Kope
 	m_invitees.setAutoDelete( true );
 }
 
-GroupWiseMessageManager::~GroupWiseMessageManager()
+GroupWiseChatSession::~GroupWiseChatSession()
 {
 	emit leavingConference( this );
 }
 
-void GroupWiseMessageManager::setGuid( const GroupWise::ConferenceGuid & guid )
+uint GroupWiseChatSession::mmId() const
+{
+  return m_mmId;
+}
+
+void GroupWiseChatSession::setGuid( const GroupWise::ConferenceGuid & guid )
 {
 	if ( m_guid.isEmpty() )
 	{
@@ -90,30 +98,29 @@ void GroupWiseMessageManager::setGuid( const GroupWise::ConferenceGuid & guid )
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "attempted to change the conference's GUID when already set!" << endl;
 }
 
-bool GroupWiseMessageManager::closed()
+bool GroupWiseChatSession::closed()
 {
 	return m_flags & GroupWise::Closed;
 }
 
-bool GroupWiseMessageManager::logging()
+bool GroupWiseChatSession::logging()
 {
 	return m_flags & GroupWise::Logging;
 }
 
-bool GroupWiseMessageManager::secure()
+bool GroupWiseChatSession::secure()
 {
 	return m_flags & GroupWise::Secure;
 }
 
-void GroupWiseMessageManager::setClosed()
+void GroupWiseChatSession::setClosed()
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " Conference " << m_guid << " is now Closed " << endl;
-
 	m_guid = QString::null;
 	m_flags = m_flags | GroupWise::Closed;
 }
 
-void GroupWiseMessageManager::setLogging( bool logging )
+void GroupWiseChatSession::setLogging( bool logging )
 {
 	if ( logging )
 		m_flags = m_flags | GroupWise::Logging;
@@ -121,7 +128,7 @@ void GroupWiseMessageManager::setLogging( bool logging )
 		m_flags = m_flags & !GroupWise::Logging;
 }
 
-void GroupWiseMessageManager::setSecure( bool secure )
+void GroupWiseChatSession::setSecure( bool secure )
 {
 	if ( secure )
 		m_flags = m_flags | GroupWise::Secure;
@@ -129,12 +136,12 @@ void GroupWiseMessageManager::setSecure( bool secure )
 		m_flags = m_flags & !GroupWise::Secure;
 }
 
-GroupWiseAccount *  GroupWiseMessageManager::account()
+GroupWiseAccount *  GroupWiseChatSession::account()
 {
 	return static_cast<GroupWiseAccount *>( KopeteMessageManager::account() );
 }
 
-void GroupWiseMessageManager::createConference()
+void GroupWiseChatSession::createConference()
 {
 	if ( m_guid.isEmpty() )
 	{
@@ -157,7 +164,7 @@ void GroupWiseMessageManager::createConference()
 		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " tried to create conference on the server when it was already instantiated" << endl;
 }
 
-void GroupWiseMessageManager::receiveGuid( const int newMmId, const GroupWise::ConferenceGuid & guid )
+void GroupWiseChatSession::receiveGuid( const int newMmId, const GroupWise::ConferenceGuid & guid )
 {
 	if ( newMmId == mmId() )
 	{
@@ -183,7 +190,7 @@ void GroupWiseMessageManager::receiveGuid( const int newMmId, const GroupWise::C
 	}
 }
 
-void GroupWiseMessageManager::slotCreationFailed( const int failedId, const int statusCode )
+void GroupWiseChatSession::slotCreationFailed( const int failedId, const int statusCode )
 {
 	if ( failedId == mmId() )
 	{
@@ -195,7 +202,7 @@ void GroupWiseMessageManager::slotCreationFailed( const int failedId, const int 
 	}
 }
 
-void GroupWiseMessageManager::slotSendTypingNotification( bool typing )
+void GroupWiseChatSession::slotSendTypingNotification( bool typing )
 {
 	// only send a notification if we've got a conference going and we are not Appear Offline
 	if ( !m_guid.isEmpty() && m_memberCount &&
@@ -203,7 +210,7 @@ void GroupWiseMessageManager::slotSendTypingNotification( bool typing )
 				account()->client()->sendTyping( guid(), typing );
 }
 
-void GroupWiseMessageManager::slotMessageSent( KopeteMessage & message, KopeteMessageManager * )
+void GroupWiseChatSession::slotMessageSent( KopeteMessage & message, KopeteMessageManager * )
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	if( account()->isConnected() )
@@ -254,19 +261,19 @@ void GroupWiseMessageManager::slotMessageSent( KopeteMessage & message, KopeteMe
 	}
 }
 
-void GroupWiseMessageManager::slotGotTypingNotification( const ConferenceEvent& event )
+void GroupWiseChatSession::slotGotTypingNotification( const ConferenceEvent& event )
 {
 	if ( event.guid == guid() )
 		receivedTypingMsg( static_cast<GroupWiseProtocol *>( protocol() )->dnToDotted( event.user ), true );
 }
 
-void GroupWiseMessageManager::slotGotNotTypingNotification( const ConferenceEvent& event )
+void GroupWiseChatSession::slotGotNotTypingNotification( const ConferenceEvent& event )
 {
 	if ( event.guid == guid() )
 		receivedTypingMsg( static_cast<GroupWiseProtocol *>( protocol() )->dnToDotted( event.user ), false );
 }
 
-void GroupWiseMessageManager::dequeueMessagesAndInvites()
+void GroupWiseChatSession::dequeueMessagesAndInvites()
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	for ( QValueListIterator< KopeteMessage > it = m_pendingOutgoingMessages.begin();
@@ -286,7 +293,7 @@ void GroupWiseMessageManager::dequeueMessagesAndInvites()
 	m_pendingInvites.clear();
 }
 
-void GroupWiseMessageManager::slotActionInviteAboutToShow()
+void GroupWiseChatSession::slotActionInviteAboutToShow()
 {
 	// We can't simply insert  KAction in this menu bebause we don't know when to delete them.
 	//  items inserted with insert items are automatically deleted when we call clear
@@ -314,7 +321,7 @@ void GroupWiseMessageManager::slotActionInviteAboutToShow()
 	m_inviteActions.append( b ) ;
 }
 
-void GroupWiseMessageManager::slotInviteContact( KopeteContact * contact )
+void GroupWiseChatSession::slotInviteContact( KopeteContact * contact )
 {
 	if ( m_guid.isEmpty() )
 	{
@@ -329,7 +336,7 @@ void GroupWiseMessageManager::slotInviteContact( KopeteContact * contact )
 		QRegExp rx( ".*" );
 		QRegExpValidator validator( rx, this );
 		QString inviteMessage = KInputDialog::getText( i18n( "Enter Invitation Message" ),
-				i18n( "Enter the reason for the invitation, or leave blank for no reason" ), QString(),
+		    i18n( "Enter the reason for the invitation, or leave blank for no reason:" ), QString(),
 				&ok, w ? w : Kopete::UI::Global::mainWidget(), "invitemessagedlg", &validator );
 		if ( ok )
 		{	
@@ -339,32 +346,30 @@ void GroupWiseMessageManager::slotInviteContact( KopeteContact * contact )
 	}
 }
 
-void GroupWiseMessageManager::inviteContact( const QString &contactId )
+void GroupWiseChatSession::inviteContact( const QString &contactId )
 {
 	KopeteContact * contact = account()->contacts()[ contactId ];
 	if ( contact )
 		slotInviteContact( contact );
 }
 
-void GroupWiseMessageManager::slotInviteOtherContact()
+void GroupWiseChatSession::slotInviteOtherContact()
 {
 	if ( !m_searchDlg )
 	{
 		// show search dialog
 		QWidget * w = ( view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) : 
 					Kopete::UI::Global::mainWidget() );
-		m_searchDlg = new KDialogBase( w, "invitesearchdialog", false, i18n( "Search for contact to invite" ), KDialogBase::Ok|KDialogBase::Cancel|KDialogBase::User1, KDialogBase::User1, true, KGuiItem( i18n( "&Search" ) ) );
+		m_searchDlg = new KDialogBase( w, "invitesearchdialog", false, i18n( "Search for contact to invite" ), KDialogBase::Ok|KDialogBase::Cancel );
 		m_search = new GroupWiseSearch( account(), QListView::Single, true, m_searchDlg, "invitesearchwidget" );
 		m_searchDlg->setMainWidget( m_search );
-		connect( m_searchDlg, SIGNAL( okClicked() ), SLOT( slotSearchedForUsers() ) );
-		connect( m_searchDlg, SIGNAL( user1Clicked() ), m_search, SLOT( doSearch() ) );
 		connect( m_search, SIGNAL( selectionValidates( bool ) ), m_searchDlg, SLOT( enableButtonOK( bool ) ) );
 		m_searchDlg->enableButtonOK( false );
 	}
 	m_searchDlg->show();
 }
 
-void GroupWiseMessageManager::slotSearchedForUsers()
+void GroupWiseChatSession::slotSearchedForUsers()
 {
 	// create an item for each result, in the block list
 	QValueList< ContactDetails > selected = m_search->selectedResults();
@@ -377,7 +382,7 @@ void GroupWiseMessageManager::slotSearchedForUsers()
 		QRegExp rx( ".*" );
 		QRegExpValidator validator( rx, this );
 		QString inviteMessage = KInputDialog::getText( i18n( "Enter Invitation Message" ),
-				i18n( "Enter the reason for the invitation, or leave blank for no reason" ), QString(),
+		    i18n( "Enter the reason for the invitation, or leave blank for no reason:" ), QString(),
 				&ok, w , "invitemessagedlg", &validator );
 		if ( ok )
 		{	
@@ -386,7 +391,7 @@ void GroupWiseMessageManager::slotSearchedForUsers()
 	}
 }
 
-void GroupWiseMessageManager::addInvitee( const KopeteContact * c )
+void GroupWiseChatSession::addInvitee( const KopeteContact * c )
 {
 	// create a placeholder contact for each invitee
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
@@ -400,7 +405,7 @@ void GroupWiseMessageManager::addInvitee( const KopeteContact * c )
 	m_invitees.append( invitee );
 }
 
-void GroupWiseMessageManager::joined( GroupWiseContact * c )
+void GroupWiseChatSession::joined( GroupWiseContact * c )
 {
 	// we add the real contact before removing the placeholder, 
 	// because otherwise KMM will delete itself when the last member leaves.
@@ -424,7 +429,7 @@ void GroupWiseMessageManager::joined( GroupWiseContact * c )
 	++m_memberCount;
 }
 
-void GroupWiseMessageManager::left( GroupWiseContact * c )
+void GroupWiseChatSession::left( GroupWiseContact * c )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	removeContact( c );
@@ -446,7 +451,7 @@ void GroupWiseMessageManager::left( GroupWiseContact * c )
 	}
 }
 
-void GroupWiseMessageManager::inviteDeclined( GroupWiseContact * c )
+void GroupWiseChatSession::inviteDeclined( GroupWiseContact * c )
 {
 	// look for the invitee and remove it
 	KopeteContact * pending;
@@ -468,7 +473,7 @@ void GroupWiseMessageManager::inviteDeclined( GroupWiseContact * c )
 	appendMessage( declined );
 }
 
-void GroupWiseMessageManager::updateArchiving()
+void GroupWiseChatSession::updateArchiving()
 {
 	bool archiving = false;
 	QPtrListIterator< KopeteContact > it( members() );
@@ -494,14 +499,14 @@ void GroupWiseMessageManager::updateArchiving()
 	}
 }
 
-void GroupWiseMessageManager::slotShowSecurity()
+void GroupWiseChatSession::slotShowSecurity()
 {
 	QWidget * w = ( view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) :
 				Kopete::UI::Global::mainWidget() ); 
 	KMessageBox::queuedMessageBox( w, KMessageBox::Information, i18n( "This conversation is secured with SSL security." ), i18n("Security Status" ) );
 }
 
-void GroupWiseMessageManager::slotShowArchiving()
+void GroupWiseChatSession::slotShowArchiving()
 {
 	QWidget * w = ( view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) :
 				Kopete::UI::Global::mainWidget() ); 

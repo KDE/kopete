@@ -11,7 +11,7 @@ libkopetegroupwiseui_la_LDFLAGS = $(all_libraries)
 libkopetegroupwiseui_la_SOURCES = gwaccountpreferences.ui gwaddcontactpage.cpp \
 					gwaddui.ui gweditaccountwidget.cpp gwreceiveinvitationdialog.cpp \
 					gwshowinvitation.ui gwcontactpropswidget.ui gwcontactproperties.cpp gwprivacy.ui \
-			gwsearchwidget.ui gwprivacydialog.cpp gwsearch.cpp
+					gwsearchwidget.ui gwprivacydialog.cpp gwsearch.cpp
 
 noinst_HEADERS = gwreceiveinvitationdialog.h gwcontactproperties.h \
 		gwprivacydialog.h gwsearch.h

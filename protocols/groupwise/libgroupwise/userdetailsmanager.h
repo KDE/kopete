@@ -73,6 +73,8 @@ signals:
 	void gotContactDetails( const GroupWise::ContactDetails & );
 protected slots:
 	void slotReceiveContactDetails( const GroupWise::ContactDetails & );
+protected:
+	void dump( const QStringList & list );
 private:
 	QStringList m_pendingDNs;	// a list of DNs that have pending requests
 	Client * m_client;

@@ -25,6 +25,7 @@
 
 #include <kopeteprotocol.h>
 #include "kopetecontactproperty.h"
+#include "kopeteonlinestatus.h"
 
 /**
  * Encapsulates the generic actions associated with this protocol
@@ -80,18 +81,18 @@ public:
 	/**
 	 * Online statuses used for contacts' presence
 	 */
-	const KopeteOnlineStatus groupwiseUnknown;
 	const KopeteOnlineStatus groupwiseOffline;
 	const KopeteOnlineStatus groupwiseAvailable;
 	const KopeteOnlineStatus groupwiseBusy;
 	const KopeteOnlineStatus groupwiseAway;
 	const KopeteOnlineStatus groupwiseAwayIdle;
+	const KopeteOnlineStatus groupwiseAppearOffline;
+	const KopeteOnlineStatus groupwiseUnknown;
 	const KopeteOnlineStatus groupwiseInvalid;
 	const KopeteOnlineStatus groupwiseConnecting;
-	const KopeteOnlineStatus groupwiseAppearOffline;
 
 	/**
-	 * Represents contacts that are Away
+	 * Contact properties
 	 */
 	const Kopete::ContactPropertyTmpl propGivenName;
 	const Kopete::ContactPropertyTmpl propLastName;
@@ -99,6 +100,9 @@ public:
 	const Kopete::ContactPropertyTmpl propAwayMessage;
 	const Kopete::ContactPropertyTmpl propAutoReply;
 	const Kopete::ContactPropertyTmpl propCN;
+	const Kopete::ContactPropertyTmpl propPhoneWork;
+	const Kopete::ContactPropertyTmpl propPhoneMobile;
+	const Kopete::ContactPropertyTmpl propEmail;
 	
 	
 protected:
