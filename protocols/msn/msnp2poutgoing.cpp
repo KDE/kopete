@@ -53,12 +53,35 @@ void MSNP2POutgoing::parseMessage(MessageStruct &msgStr)
 	{
 		m_parent->finished(this);
 	}
+#if MSN_NEWFILETRANSFER
+	else if (dataMessage.contains("OK"))
+	{//this is a file transfer.
+		if(dataMessage.contains("application/x-msnmsgr-sessionreqbody"))
+		{ //first OK
+			//send second invite
+			QString content="TODO\r\n\r\n"; //TODO  (this will work kopete -> kopete, but that's all)
+			makeMSNSLPMessage( INVITE , content );
+		}
+		else //if(dataMessage.contains("application/x-msnmsgr-transreqbody"))
+		{
+			m_Sfile->open(IO_ReadOnly);
+			m_footer='\2';
+			m_totalDataSize=m_Sfile->size();
+			m_offset=0;
+			kdDebug(14140) << k_funcinfo <<" ok "  << m_Sfile->size()<< endl;
+			slotSendData();
+			//start to send
+			
+		}
+	}
+#endif
 
 }
 
 
 void MSNP2POutgoing::slotSendData()
 {
+	kdDebug(14140) << k_funcinfo << endl;
 	char ptr[1200];
 	char *data;
 	int bytesRead =0;

@@ -172,6 +172,7 @@ void MSNP2PDisplatcher::slotReadMessage( const QByteArray &msg )
 				if(!p2p)
 				{
 					p2p=this;
+					kdDebug(14140) << k_funcinfo << " we got the SID in SessionID: "  << endl;
 				}
 			}
 			else
@@ -185,15 +186,18 @@ void MSNP2PDisplatcher::slotReadMessage( const QByteArray &msg )
 					QMap<unsigned long int , MSNP2P* >::iterator it;
 					for ( it = m_p2pList.begin(); it != m_p2pList.end(); ++it )
 					{
+						kdDebug(14140) << k_funcinfo <<it.data()->m_CallID<< " =?= "<< callID  << "  (sid= " << it.key() << endl;
 						if(it.data()->m_CallID == callID)
 						{
 							p2p=it.data();
+							kdDebug(14140) << k_funcinfo << " we got the SID in call_ID "  << endl;
 							break;
 						}
 					}
 				}
 			}
 		}
+		kdDebug(14140) << k_funcinfo << " SID not found "  << endl;
 		p2p->parseMessage( msgStr );
 	}
 }
@@ -535,6 +539,76 @@ void MSNP2PDisplatcher::startWebcam(const QString &myHandle, const QString &msgH
 	p2p->makeMSNSLPMessage( INVITE , content );
 }
 #endif
+
+
+#if MSN_NEWFILETRANSFER
+
+/**
+ * if VAR is a char*  and VAL is an integer, assing VAR[START] to VAR[START+4]  the value of VAL
+ */
+#define MKDWORD(VAR, START, VAL) {\
+	(VAR)[(START)]=  (char)( ((VAL)&0x000000FF) ) ;  \
+	(VAR)[(START)+1]=(char)( ((VAL)&0x0000FF00)  >> 8 ) ; \
+	(VAR)[(START)+2]=(char)( ((VAL)&0x00FF0000)  >> 16 ) ; \
+	(VAR)[(START)+3]=(char)( ((VAL)&0xFF000000)  >> 24 ) ; \
+}
+
+
+
+void MSNP2PDisplatcher::sendFile(const QString& fileN ,unsigned int fileSize, const QString &myHandle, const QString &msgHandle)
+{
+	unsigned long int sessID=rand()%0xFFFFFF00+4;
+
+	MSNP2POutgoing *p2p=new MSNP2POutgoing(sessID, this);
+	m_p2pList.insert(sessID, p2p);
+	p2p->m_myHandle=myHandle;
+	p2p->m_msgHandle=msgHandle;
+	p2p->m_branch=randomid();
+	p2p->m_CallID=randomid();
+
+	
+	if(m_msgHandle.isEmpty())
+	{
+		m_myHandle=myHandle;
+		m_msgHandle=msgHandle;
+	}
+
+
+	QByteArray binaryContext(574);
+	binaryContext.fill('\0');
+	MKDWORD(binaryContext,0,574);  //this is probably the size
+	MKDWORD(binaryContext,4,2);    //I don't know.what's this
+	MKDWORD(binaryContext,8,fileSize);
+	MKDWORD(binaryContext,16,1);    //we don't have preview.
+
+	QTextCodec *codec = QTextCodec::codecForName("ISO-10646-UCS-2");
+	if(!codec)
+		return; //abort();
+	int taille;;
+	QCString utf16FileName=codec->fromUnicode(fileN /*.right( fileN.length() - fileN.findRev( '/' ) - 1 )*/ , taille );
+
+	
+	if(taille > 574-19-16)
+		taille= 574-19-16;
+	for(int f=0; f<taille; f++)
+	{
+		binaryContext[19+f]=utf16FileName[f];
+	}
+
+	binaryContext[570]=binaryContext[571]=binaryContext[572]=binaryContext[573]=0xFF;
+	QString context=QString::fromUtf8(KCodecs::base64Encode( binaryContext ));
+
+	QString content="EUF-GUID: {5D3E02AB-6190-11D3-BBBB-00C04F795683}\r\n"
+			"SessionID: "+ QString::number(sessID)+"\r\n"
+			"AppID: 2\r\n"
+			"Context: " + context + "\r\n\r\n";
+
+	p2p->makeMSNSLPMessage( INVITE , content );
+
+	p2p->m_Sfile = new QFile( fileN );
+}
+#endif
+
 
 
 

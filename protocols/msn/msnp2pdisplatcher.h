@@ -79,6 +79,14 @@ public:
 	 void startWebcam(const QString &myHandle, const QString &msgHandle);
 #endif
 
+#if MSN_NEWFILETRANSFER
+	/**
+	 * send a file.
+	 * @param filename must be the name of a file QFile can handle
+	 */
+	 void sendFile(const QString& filename , unsigned int fileSize, const QString &myHandle, const QString &msgHandle);
+#endif
+
 protected:
 	virtual void parseMessage(MessageStruct & );
 

@@ -20,6 +20,7 @@
 #include <qstrlist.h>
 
 #define MSN_WEBCAM 0
+#define MSN_NEWFILETRANSFER 0
 
 
 namespace Kopete { class Transfer; }
@@ -120,7 +121,7 @@ public:
 
 //private:
 	void makeSIPMessage(const QString &message);
-		
+
 
 };
 #endif

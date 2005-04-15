@@ -45,6 +45,7 @@
 #include "msnfiletransfersocket.h"
 #include "msnaccount.h"
 #include "msnswitchboardsocket.h"
+#include "msnp2pdisplatcher.h"
 
 #if !defined NDEBUG
 #include "msndebugrawcmddlg.h"
@@ -472,6 +473,12 @@ void MSNChatSession::invitationDone(MSNInvitation* MFTS)
 void MSNChatSession::sendFile(const QString &fileLocation, const QString &/*fileName*/,
 	long unsigned int fileSize)
 {
+#if MSN_NEWFILETRANSFER
+	if(m_chatService && members().getFirst())
+	{
+		m_chatService->p2pDisplatcher()->sendFile(fileLocation, fileSize, account()->accountId() , members().getFirst()->contactId()   );
+	}
+#else
 //	if(m_chatService)
 //	{
 		//If the alternate filename is null, then get the filename from the location (FIXME)
@@ -491,6 +498,7 @@ void MSNChatSession::sendFile(const QString &fileLocation, const QString &/*file
 
 		initInvitation(MFTS);
 //	}
+#endif
 }
 
 void MSNChatSession::initInvitation(MSNInvitation* invitation)
