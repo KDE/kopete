@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>GroupWiseContactPropsWidget</class>
 <widget class="QWidget">
     <property name="name">
@@ -202,9 +202,6 @@
                 <bool>true</bool>
             </property>
             <property name="itemsMovable">
-                <bool>false</bool>
-            </property>
-            <property name="shadeSortColumn">
                 <bool>false</bool>
             </property>
         </widget>
