@@ -172,6 +172,7 @@ void OscarContact::sync(unsigned int flags)
 void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& details  )
 {
 	Q_UNUSED( contact );
+	setProperty( Kopete::Global::Properties::self()->onlineSince(), details.onlineSinceTime() );
 	setIdleTime( details.idleTime() );
 	m_warningLevel = details.warningLevel();
 }
