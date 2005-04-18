@@ -196,6 +196,8 @@ void BehaviorConfig::load()
 	mPrfsChat->truncateContactNameEnabled->setChecked(p->truncateContactNames());
 	mPrfsChat->mMaxContactNameLength->setValue(p->maxConactNameLength());
 
+
+	mPrfsChat->viewPlugin->clear();
 	int selectedIdx = 0, i = 0;
 	for(  QValueList<KPluginInfo*>::iterator it = viewPlugins.begin(); it != viewPlugins.end(); ++it )
 	{
