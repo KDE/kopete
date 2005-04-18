@@ -468,7 +468,9 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 
 	if(msg.font() != QFont() )
 	{
-		head += "FN=" + escape( msg.font().family());
+		//It's verry strange that if the font name is bigger than 31 char, the _server_ close the socket and don't deliver the message.
+		//  the real question is why ?   my guess is that MS patched the server because a bug in their client,  but that's just a guess.
+		head += "FN=" + escape( msg.font().family().left(31));
 		head += "; EF=";
 		if(msg.font().bold())
 			head += "B";
