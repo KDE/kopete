@@ -25,6 +25,7 @@
 #include <qptrlist.h>
 #include <qmap.h>
 
+#include <klocale.h>
 #include <kabc/addressbook.h>
 #include <kabc/resource.h>
 #include <kabc/stdaddressbook.h>
@@ -77,24 +78,24 @@ KabcExportWizard::KabcExportWizard( QWidget *parent, const char *name )
 	// if there were no writable address books, tell the user
 	if ( counter == 0 )
 	{
-		m_addrBooks->insertItem( "No writeable addressbook resource found." );
-		m_addrBooks->insertItem( "Add or enable one using the KDE Control Centre." );
+		m_addrBooks->insertItem( i18n( "No writeable addressbook resource found." ) );
+		m_addrBooks->insertItem( i18n( "Add or enable one using the KDE Control Centre." ) );
 		m_addrBooks->setEnabled( false );
 	}
 
 	if ( m_addrBooks->count() == 1 )
 		m_addrBooks->setSelected( 0, true );
 	
-	
 	// fill contact list
 	QPtrList<Kopete::MetaContact> contacts = Kopete::ContactList::self()->metaContacts();
 	QPtrListIterator<Kopete::MetaContact> it( contacts );
 	counter = 0;
+	QString alreadyIn = i18n( " (already in address book)" );
 	for (; it.current(); ++it)
 	{
 		m_contactMap.insert( counter, it.current() );
 		QCheckListItem * lvi = new ContactLVI( it.current(), m_contactList,
-																							 it.current()->displayName(), QCheckListItem::CheckBox );
+				it.current()->displayName(), QCheckListItem::CheckBox );
 		lvi->setOn( false );
 		if ( it.current()->metaContactId().contains(':') )
 		{
@@ -102,7 +103,7 @@ KabcExportWizard::KabcExportWizard( QWidget *parent, const char *name )
 			lvi->setEnabled( true );
 		}
 		else
-			lvi->setEnabled( false );
+			lvi->setText( 0, lvi->text( 0 ) + alreadyIn );
 	}
 }
 
@@ -156,7 +157,7 @@ void KabcExportWizard::accept()
 			// if it is checked and enabled
 			if ( item->isEnabled() && item->isOn() )
 			{
-				kdDebug() << "creating addressee " << item->mc->displayName() << " in address book " << selectedResource->resourceName() << endl;
+				kdDebug( 14000 ) << "creating addressee " << item->mc->displayName() << " in address book " << selectedResource->resourceName() << endl;
 				// create a new addressee in the selected resource
 				KABC::Addressee addr;
 				addr.setNameFromString( item->mc->displayName() );

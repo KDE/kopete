@@ -126,6 +126,12 @@
                 <property name="name">
                     <cstring>m_contactList</cstring>
                 </property>
+                <property name="allColumnsShowFocus">
+                    <bool>true</bool>
+                </property>
+                <property name="resizeMode">
+                    <enum>AllColumns</enum>
+                </property>
             </widget>
             <widget class="QLayoutWidget">
                 <property name="name">
