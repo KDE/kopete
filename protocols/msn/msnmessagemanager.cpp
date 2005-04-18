@@ -267,7 +267,7 @@ void MSNChatSession::slotMessageReceived( Kopete::Message &msg )
 		config->setGroup( "MSN" );
 		if ( config->readBoolEntry( "SendAwayMessages", false ) &&
 			( !m_awayMessageTime.isValid() ||
-			m_awayMessageTime.elapsed() > 1000 * config->readNumEntry( "AwayMessagesSeconds", 90 ) )  )
+			m_awayMessageTime.elapsed() > 1000 * config->readNumEntry( "AwayMessageSeconds", 90 ) )  )
 		{
 			// Don't translate "Auto-Message:" This string is caught by MSN Plus! (and also by kopete now)
 			Kopete::Message msg2( myself(), members(),
