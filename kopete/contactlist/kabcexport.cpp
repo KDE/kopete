@@ -30,6 +30,7 @@
 #include <kabc/stdaddressbook.h>
 #include <kopetecontactlist.h>
 #include <kopetemetacontact.h>
+#include <klocale.h>
 
 #include "kabcpersistence.h"
 
@@ -77,8 +78,8 @@ KabcExportWizard::KabcExportWizard( QWidget *parent, const char *name )
 	// if there were no writable address books, tell the user
 	if ( counter == 0 )
 	{
-		m_addrBooks->insertItem( "No writeable addressbook resource found." );
-		m_addrBooks->insertItem( "Add or enable one using the KDE Control Centre." );
+		m_addrBooks->insertItem( i18n("No writeable addressbook resource found.") );
+		m_addrBooks->insertItem( i18n("Add or enable one using the KDE Control Center.") );
 		m_addrBooks->setEnabled( false );
 	}
 
