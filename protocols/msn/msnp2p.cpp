@@ -185,6 +185,12 @@ void MSNP2P::sendP2PMessage(const QByteArray &dataMessage)
 	binHeader[24]=(char)size%256;
 	binHeader[25]=(int)size/256;
 
+	if(m_footer=='\1' && size>4)
+	{	//when sending the data of an image, the flag is set to 0x20
+		//  size>4 is because the data preparation message has not this flag.
+		binHeader[28]=0x20;
+	}
+
 	//Ack sessionID
 	binHeader[32]=(char)(rand()%256);
 	binHeader[33]=(char)(rand()%256);
