@@ -26,10 +26,19 @@
 #include <qmap.h>
 
 #include <klocale.h>
+#include <kmessagebox.h>
+#include <kabc/addressee.h>
 #include <kabc/addressbook.h>
+#include <kabc/phonenumber.h>
+#include <kabc/picture.h>
 #include <kabc/resource.h>
 #include <kabc/stdaddressbook.h>
+
+#include <kabcpersistence.h>
+#include <kopetecontact.h>
 #include <kopetecontactlist.h>
+#include <kopetecontactproperty.h>
+#include <kopeteglobal.h>
 #include <kopetemetacontact.h>
 
 #include "kabcpersistence.h"
@@ -157,20 +166,84 @@ void KabcExportWizard::accept()
 			// if it is checked and enabled
 			if ( item->isEnabled() && item->isOn() )
 			{
-				kdDebug( 14000 ) << "creating addressee " << item->mc->displayName() << " in address book " << selectedResource->resourceName() << endl;
-				// create a new addressee in the selected resource
 				KABC::Addressee addr;
-				addr.setNameFromString( item->mc->displayName() );
-				addr.setResource( selectedResource );
-				m_addressBook->insertAddressee( addr );
-				// set the metacontact's id to that of the new addressee 
-				// - this causes the addressbook to be written by libkopete
-				item->mc->setMetaContactId( addr.uid() );
+				addr = m_addressBook->findByUid( item->mc->metaContactId() );
+				if ( addr.isEmpty() ) // unassociated contact
+				{
+					kdDebug( 14000 ) << "creating addressee " << item->mc->displayName() << " in address book " << selectedResource->resourceName() << endl;
+					// create a new addressee in the selected resource
+					addr.setResource( selectedResource );
+
+					// set name
+					QPtrList<Kopete::Contact> contacts = item->mc->contacts();
+					if ( contacts.count() == 1 )
+					{
+						Kopete::ContactProperty prop;
+						prop = contacts.first()->property(
+								Kopete::Global::Properties::self()->fullName() );
+						if ( prop.isNull() )
+							addr.setNameFromString( item->mc->displayName() );
+						else
+							addr.setNameFromString(  prop.value().toString() );
+					}
+					else
+						addr.setNameFromString( item->mc->displayName() );
+
+					// set details
+					exportDetails( item->mc, addr );
+					m_addressBook->insertAddressee( addr );
+					// set the metacontact's id to that of the new addressee 
+					// - this causes the addressbook to be written by libkopete
+					item->mc->setMetaContactId( addr.uid() );
+				}
+				else
+				{
+					exportDetails( item->mc, addr );
+					m_addressBook->insertAddressee( addr );
+				}
 			}
 			++it;
 		}
 	}
+	// request a write in case we only changed details on existing linked addressee
+	Kopete::KABCPersistence::self()->writeAddressBook( selectedResource );
 	QDialog::accept();
+}
+
+void KabcExportWizard::exportDetails( Kopete::MetaContact * mc, KABC::Addressee & addr )
+{
+	// for each contact
+	QPtrList<Kopete::Contact> contacts = mc->contacts();
+	QPtrListIterator<Kopete::Contact> cit( contacts );
+	for( ; cit.current(); ++cit )
+	{
+		Kopete::ContactProperty prop;
+		prop = (*cit)->property( Kopete::Global::Properties::self()->emailAddress() );
+		if ( !prop.isNull() )
+		{
+			addr.insertEmail( prop.value().toString() );
+		}
+		prop = (*cit)->property( Kopete::Global::Properties::self()->privatePhone() );
+		if ( !prop.isNull() )
+		{
+			addr.insertPhoneNumber( KABC::PhoneNumber( prop.value().toString(), KABC::PhoneNumber::Home ) );
+		}
+		prop = (*cit)->property( Kopete::Global::Properties::self()->workPhone() );
+		if ( !prop.isNull() )
+		{
+			addr.insertPhoneNumber( KABC::PhoneNumber( prop.value().toString(), KABC::PhoneNumber::Work ) );
+		}
+		prop = (*cit)->property( Kopete::Global::Properties::self()->privateMobilePhone() );
+		if ( !prop.isNull() )
+		{
+			addr.insertPhoneNumber( KABC::PhoneNumber( prop.value().toString(), KABC::PhoneNumber::Cell ) );
+		}
+	
+	}
+	// metacontact photo
+	QImage photo = mc->photo();
+	if ( !photo.isNull() )
+		addr.setPhoto( KABC::Picture( photo ) );
 }
 
 #include "kabcexport.moc"

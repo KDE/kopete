@@ -22,6 +22,7 @@
 
 namespace KABC {
 	class AddressBook;
+	class Addressee;
 }
 
 namespace Kopete {
@@ -44,6 +45,8 @@ Q_OBJECT
 		void slotDeselectAll();
 		void slotSelectAll();
 		void slotResourceSelectionChanged( QListBoxItem * lbi );
+	protected:
+		void exportDetails( Kopete::MetaContact * mc, KABC::Addressee & addr );
 	private:
 		KABC::AddressBook* m_addressBook;
 		QMap<int, KABC::Resource*> m_resourceMap;
