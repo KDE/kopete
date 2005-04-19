@@ -129,7 +129,7 @@ QString KIMIfaceImpl::displayName( const QString & uid )
 
 int KIMIfaceImpl::presenceStatus( const QString & uid )
 {
-	kdDebug( 14000 ) << k_funcinfo << endl;
+	//kdDebug( 14000 ) << k_funcinfo << endl;
 	int p = -1;
 	Kopete::MetaContact *m = Kopete::ContactList::self()->metaContact( uid );
 	if ( m )
@@ -160,7 +160,7 @@ int KIMIfaceImpl::presenceStatus( const QString & uid )
 
 QString KIMIfaceImpl::presenceString( const QString & uid )
 {
-	kdDebug( 14000 ) <<  "KIMIfaceImpl::presenceString" << endl;
+	//kdDebug( 14000 ) <<  "KIMIfaceImpl::presenceString" << endl;
 	QString p;
 	Kopete::MetaContact *m = Kopete::ContactList::self()->metaContact( uid );
 	if ( m )
