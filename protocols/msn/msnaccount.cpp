@@ -940,7 +940,7 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 			static_cast<MSNContact *>( ct )->setReversed( true );
 		}
 		m_reverseList.append( handle );
-		configGroup()->writeEntry( "reversekList" , m_reverseList ) ;
+		configGroup()->writeEntry( "reverseList" , m_reverseList ) ;
 	}
 }
 
