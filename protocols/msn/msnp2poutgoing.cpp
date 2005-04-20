@@ -59,7 +59,11 @@ void MSNP2POutgoing::parseMessage(MessageStruct &msgStr)
 		if(dataMessage.contains("application/x-msnmsgr-sessionreqbody"))
 		{ //first OK
 			//send second invite
-			QString content="TODO\r\n\r\n"; //TODO  (this will work kopete -> kopete, but that's all)
+			QString content="Bridges: TCPv1\r\n"
+					"NetID: 0\r\n"
+					"Conn-Type: Restricted-NAT\r\n"
+					"UPnPNat: false\r\n"
+					"ICF: false\r\n\r\n"; 
 			makeMSNSLPMessage( INVITE , content );
 		}
 		else //if(dataMessage.contains("application/x-msnmsgr-transreqbody"))

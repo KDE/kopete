@@ -46,14 +46,14 @@
 
 static QString randomid()
 {
-	return QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
+	return (QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
 			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-"
 			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-"
 			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-"
 			+ QString::number(rand()%0xAAFF+0x1111, 16) + "-"
 			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
 			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)
-			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16);
+			+ QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)).upper();
 }
 
 
@@ -584,8 +584,8 @@ void MSNP2PDisplatcher::sendFile(const QString& fileN ,unsigned int fileSize, co
 	QTextCodec *codec = QTextCodec::codecForName("ISO-10646-UCS-2");
 	if(!codec)
 		return; //abort();
-	int taille;;
-	QCString utf16FileName=codec->fromUnicode(fileN /*.right( fileN.length() - fileN.findRev( '/' ) - 1 )*/ , taille );
+	int taille;
+	QCString utf16FileName=codec->fromUnicode(fileN.right( fileN.length() - fileN.findRev( '/' ) - 1 ) , taille );
 
 	
 	if(taille > 574-19-16)
