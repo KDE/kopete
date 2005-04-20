@@ -324,7 +324,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		// status handle publicName strangeNumber MSNOBJECT
 		MSNContact *c = static_cast<MSNContact*>( m_account->contacts()[ data.section( ' ', 1, 1 ) ] );
-		if( c )
+		if( c && c->contactId() != m_account->accountId() )
 		{
 			QString publicName=unescape( data.section( ' ', 2, 2 ) );
 			if (publicName!=c->property( Kopete::Global::Properties::self()->nickName()).value().toString())
@@ -350,7 +350,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	else if( cmd == "FLN" )
 	{
 		MSNContact *c = static_cast<MSNContact*>( m_account->contacts()[ data.section( ' ', 0, 0 ) ] );
-		if( c )
+		if( c && c->contactId() != m_account->accountId() )
 		{
 			c->setOnlineStatus( MSNProtocol::protocol()->FLN );
 			c->removeProperty(  MSNProtocol::protocol()->propClient );
