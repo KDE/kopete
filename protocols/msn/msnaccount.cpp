@@ -1215,12 +1215,19 @@ void MSNAccount::resetPictureObject(bool silent)
 	QString old=m_pictureObj;
 
 	if(!configGroup()->readBoolEntry("exportCustomPicture"))
+	{
 		m_pictureObj="";
+		myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
+	}
 	else
 	{
-		QFile pictFile(locateLocal( "appdata", "msnpicture-"+ accountId().lower().replace(QRegExp("[./~]"),"-")  +".png"  ) );
+		QString fn=locateLocal( "appdata", "msnpicture-"+ accountId().lower().replace(QRegExp("[./~]"),"-")  +".png"  );
+		QFile pictFile( fn );
 		if(!pictFile.open(IO_ReadOnly))
+		{
 			m_pictureObj="";
+			myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
+		}
 		else
 		{
 			QByteArray ar=pictFile.readAll();
@@ -1229,6 +1236,7 @@ void MSNAccount::resetPictureObject(bool silent)
 			QString size=QString::number( pictFile.size() );
 			QString all= "Creator"+accountId()+"Size"+size+"Type3Locationkopete.tmpFriendlyAAA=SHA1D"+ sha1d;
 			m_pictureObj="<msnobj Creator=\"" + accountId() + "\" Size=\"" + size  + "\" Type=\"3\" Location=\"kopete.tmp\" Friendly=\"AAA=\" SHA1D=\""+sha1d+"\" SHA1C=\""+ QString(KCodecs::base64Encode(SHA1::hashString(all.utf8())))  +"\"/>";
+			myself()->setProperty( Kopete::Global::Properties::self()->photo() ,  fn );
 		}
 	}
 
