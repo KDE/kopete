@@ -92,25 +92,45 @@ void OnlineStatusManager::registerOnlineStatus( const OnlineStatus &status, cons
 	d->registeredStatus[status.protocol()].insert(status, s );
 }
 
-OnlineStatus OnlineStatusManager::onlineStatus(Protocol * protocol, Categories category)
+OnlineStatus OnlineStatusManager::onlineStatus(Protocol * protocol, Categories category) const
 {
+	/* Each category has a number which is a power of two, so it is possible to have several categories per online status
+	 * the logaritm in base two if this number, which represent the bit which is equal to 1 in the number is chosen to be in a tree
+	 *           1     (0 is reserved for Offline)
+	 *         /   \
+	 *        2      3
+	 *      / \     /  \
+	 *     4  5     6    7
+	 *   /\  / \   / \   / \
+	 *  8 9 10 11 12 13 14 15 
+	 *  To get the parent of a key, one just divide per two the number
+	 */
+	
 	Private::ProtocolMap protocolMap=d->registeredStatus[protocol];
 
-	int mask=category;
+	int categ_nb=-1;  //the logaritm of category
+	uint category_=category;
+	while(category_)
+	{
+		category_ >>= 1;
+		categ_nb++;
+	} //that code will give the log +1
+
 	do
 	{
 		Private::ProtocolMap::Iterator it;
 		for ( it = protocolMap.begin(); it != protocolMap.end(); it++ )
 		{
 			unsigned int catgs=it.data().categories;
-			if(catgs & mask)
+			if(catgs & (1<<(categ_nb)))
 				return it.key();
 		}
 		//no status found in this category, try the previous one.
-		mask >>=1;
-	} while (mask > 0);
+		categ_nb=(int)(categ_nb/2);
+	} while (categ_nb > 0);
 	
 	kdWarning() << "No status in the category " << category << " for the protocol " << protocol->displayName() <<endl;
+	return OnlineStatus();
 }
 
 QString OnlineStatusManager::fingerprint( const OnlineStatus &statusFor, const QString& icon, int size, QColor color, bool idle)

@@ -115,7 +115,7 @@ public:
 	 *
 	 * @c ConnectIfOffline : if set, this will connect offlines account with the status.
 	 */
-	enum SetOnlineStatusFlag { ConnectIfOffline };
+	enum SetOnlineStatusFlag { ConnectIfOffline=0x01 };
 			
 
 public slots:

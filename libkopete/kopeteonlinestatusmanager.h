@@ -49,16 +49,24 @@ public:
 	 * Kopete will uses categories to have a more general system than siply globaly away.
 	 * 
 	 * Idealy, in each protocol, there should be one status per categories (status may be in several or in none categories
+	 *
+	 * Idle is the status used for auto-away
+	 *
+	 * Status number are organised so that make a tree.
 	 */
+	//please be carrefull when modifying values of status.  read comment in onlineStatus()
 	enum Categories
 	{
-		Offline=0x01,
-		Online=0x02,
-		Away=0x04,
-		Idle=0x10, /**< Status used for auto away  */
-		Busy=0x20,
-		Invisible=0x40
+		Idle=1<<8,/*1<<9*/     Invisible=1<<10,
+		//  \     /             /
+		  /*1<<4*/    Busy=1<<5,           FreeForChat=1<<6,         /* 1<<7*/
+		//   \       /                         /
+		     Away=1<<2,                   /* 1<<3 */
+		//       \                           /
+						Online=1<<1,
+		Offline=1
 	};
+	
 
 	/**
 	 * @see registerOnlineStatus
@@ -111,7 +119,7 @@ public:
 	 *
 	 * If no status has been registered in this category, return the one in the category which is the most similair
 	 */
-	OnlineStatus onlineStatus(Protocol *protocol, Categories category);
+	OnlineStatus onlineStatus(Protocol *protocol, Categories category) const;
 
 private:
 	friend class OnlineStatus;

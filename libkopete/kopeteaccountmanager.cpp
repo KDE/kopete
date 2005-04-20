@@ -141,7 +141,7 @@ void AccountManager::setOnlineStatus( uint category , const QString& awayMessage
 	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
 		Account *account=it.current();
-		if(account->isConnected() || (flags & ConnectIfOffline) );
+		if(account->isConnected() || (flags & ConnectIfOffline) )
 			account->setOnlineStatus( OnlineStatusManager::self()->onlineStatus(account->protocol() , katgor) ,
 			                          awayMessage );
 	}
