@@ -95,6 +95,10 @@ private slots:
 	 * set all the protocols to away
 	 */
 	void slotGlobalAwayMessageSelect( const QString & );
+	void slotGlobalBusyMessageSelect( const QString & );
+	void slotSetInvisibleAll(  );
+
+	
 	void slotQuit();
 
 	/**
@@ -169,7 +173,10 @@ public:
 	KActionMenu* actionAwayMenu;
 	KActionMenu* actionDockMenu;
 	Kopete::AwayAction* selectAway;
+	Kopete::AwayAction* selectBusy;
 	KAction* actionSetAvailable;
+	KAction* actionSetInvisible;
+	
 
 	KAction* actionPrefs;
 	KAction* actionQuit;

@@ -66,6 +66,7 @@
 #include "kopeteawayaction.h"
 #include "kopeteuiglobal.h"
 #include "systemtray.h"
+#include "kopeteonlinestatusmanager.h"
 
 /* KMainWindow is very broken from our point of view - it deref()'s the app
  * when the last visible KMainWindow is destroyed. But when our main window is 
@@ -189,6 +190,17 @@ void KopeteWindow::initActions()
 		this, SLOT( slotGlobalAwayMessageSelect( const QString & ) ), actionCollection(),
 		"SetAwayAll" );
 
+	selectBusy = new Kopete::AwayAction( i18n("&Busy"), SmallIcon("kopeteaway"), 0,
+					 this, SLOT( slotGlobalBusyMessageSelect( const QString & ) ), actionCollection(),
+					 "SetBusyAll" );
+
+
+	actionSetInvisible = new KAction( i18n( "&invisible" ), "kopeteavailable", 0 ,
+		  this, SLOT( slotSetInvisibleAll() ), actionCollection(),
+		  "SetInvisibleAll" );
+
+	
+
 	actionSetAvailable = new KAction( i18n( "&Online" ),
 		"kopeteavailable", 0 , Kopete::AccountManager::self(),
 		SLOT( setAvailableAll() ), actionCollection(),
@@ -199,6 +211,8 @@ void KopeteWindow::initActions()
 	actionAwayMenu->setDelayed( false );
 	actionAwayMenu->insert(actionSetAvailable);
 	actionAwayMenu->insert(selectAway);
+	actionAwayMenu->insert(selectBusy);
+	actionAwayMenu->insert(actionSetInvisible);
 	actionAwayMenu->insert(actionDisconnect);
 
 	actionPrefs = KopeteStdAction::preferences( actionCollection(), "settings_prefs" );
@@ -469,6 +483,19 @@ void KopeteWindow::slotGlobalAwayMessageSelect( const QString &awayReason )
 	Kopete::Away::getInstance()->setGlobalAwayMessage( awayReason );
 	Kopete::AccountManager::self()->setAwayAll( awayReason );
 }
+
+void KopeteWindow::slotGlobalBusyMessageSelect( const QString &awayReason )
+{
+	Kopete::Away::getInstance()->setGlobalAwayMessage( awayReason );
+	Kopete::AccountManager::self()->setOnlineStatus(
+			Kopete::OnlineStatusManager::Busy , awayReason );
+}
+
+void KopeteWindow::slotSetInvisibleAll(  )
+{
+	Kopete::AccountManager::self()->setOnlineStatus( Kopete::OnlineStatusManager::Invisible  );
+}
+
 
 
 bool KopeteWindow::queryClose()
