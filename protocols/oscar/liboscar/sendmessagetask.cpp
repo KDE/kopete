@@ -47,7 +47,10 @@ void SendMessageTask::setAutoResponse( bool autoResponse )
 void SendMessageTask::onGo()
 {
 	if ( m_message.text().isEmpty() )
+	{
+		setError(-1, "No message to send");
 		return;
+	}
 	
 	//FIXME Right now we only send channel 1. We also need to
 	//support channel 4 and 2
@@ -126,6 +129,7 @@ void SendMessageTask::onGo()
 
 	Transfer* t = createTransfer( f, s, b );
 	send( t );
+	setSuccess(true);
 }
 
 /* Old oscarsocket code, which is here for reference in case this doesn't work
