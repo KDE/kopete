@@ -183,7 +183,7 @@
                                     <string>&amp;Real name:</string>
                                 </property>
                                 <property name="buddy" stdset="0">
-                                    <cstring>mUserName</cstring>
+                                    <cstring>m_realNameLineEdit</cstring>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="2" column="0">
