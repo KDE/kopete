@@ -62,3 +62,5 @@ void YahooWebcamDialog::webcamClosed( int reason  )
 }
 
 // kate: indent-mode csands; tab-width 4;
+
+#include "yahoowebcamdialog.moc"
