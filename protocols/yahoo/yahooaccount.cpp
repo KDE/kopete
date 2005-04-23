@@ -38,7 +38,7 @@
 #include <kopetemessage.h>
 #include <kopetepassword.h>
 #include <kopeteuiglobal.h>
-#include <kopetenotifyclient.h>
+#include <knotifyclient.h>
 #include <kopetemetacontact.h>
 #include <kopetecontactlist.h>
 

@@ -21,7 +21,7 @@ Color parser code courtesy of ksirc <http://www.kde.org>
 Modified by Jason Keirstead <jason@keirstead.org>
 */
 
-#include <kopetenotifyclient.h>
+#include <knotifyclient.h>
 #include <kdebug.h>
 #include <qbuffer.h>
 #include <qdatastream.h>

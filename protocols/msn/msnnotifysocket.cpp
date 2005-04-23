@@ -37,8 +37,9 @@
 #include <kio/job.h>
 #include <qfile.h>
 #include <kconfig.h>
+#include <knotification.h>
 
-#include "kopetenotifyclient.h"
+
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 
@@ -679,8 +680,9 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 
 		if(mailCount > 0 )
 		{
-			KNotifyClient::event( 0, "msn_mail", i18n( "You have one unread message in your MSN inbox.",
-				"You have %n unread messages in your MSN inbox.", mailCount ), i18n( "Open &Inbox..." ), this, SLOT( slotOpenInbox() ) );
+			QObject::connect(KNotification::event( "msn_mail", i18n( "You have one unread message in your MSN inbox.",
+					"You have %n unread messages in your MSN inbox.", mailCount ), 0 , 0 , i18n( "Open &Inbox..." ) ),
+				SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 		}
 	}
 	else if(msg.contains("text/x-msmsgsactivemailnotification"))
@@ -699,8 +701,9 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 
 		mailCount++;
 
-		KNotifyClient::event( 0, "msn_mail" , i18n( "You have one new email from %1 in your MSN inbox." ).arg(m),
-			i18n( "Open &Inbox..." ), this, SLOT( slotOpenInbox() ) );
+		QObject::connect(KNotification::event( "msn_mail",i18n( "You have one new email from %1 in your MSN inbox." ).arg(m),
+										0 , 0 , i18n( "Open &Inbox..." ) ),
+				SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 	}
 	else if(msg.contains("text/x-msmsgsprofile"))
 	{

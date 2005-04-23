@@ -35,7 +35,7 @@
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemessagehandlerchain.h"
 #include "kopetemetacontact.h"
-#include "kopetenotifyclient.h"
+#include "knotification.h"
 #include "kopeteprefs.h"
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
@@ -243,9 +243,7 @@ void Kopete::ChatSession::sendMessage( Kopete::Message &message )
 		emit messageSent( sentMessage, this );
 		if ( !account()->isAway() || KopetePrefs::prefs()->soundIfAway() )
 		{
-			KNotifyClient::event(Kopete::UI::Global::mainWidget()->winId(),
-				QString::fromLatin1( "kopete_outgoing" ),
-				i18n( "Outgoing Message Sent" ) );
+			KNotification::event(QString::fromLatin1( "kopete_outgoing" ),	i18n( "Outgoing Message Sent" ) );
 		}
 	}
 	else
@@ -481,6 +479,8 @@ void Kopete::ChatSession::setMayInvite( bool b )
 }
 
 #include "kopetemessagemanager.moc"
+
+
 
 // vim: set noet ts=4 sts=4 sw=4:
 

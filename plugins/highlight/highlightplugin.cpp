@@ -17,7 +17,7 @@
 
 #include <qregexp.h>
 #include <kgenericfactory.h>
-#include <kopetenotifyclient.h>
+#include <knotifyclient.h>
 
 #include "kopetemessagemanagerfactory.h"
 

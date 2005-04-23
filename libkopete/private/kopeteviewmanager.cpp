@@ -22,8 +22,9 @@
 #include <qptrlist.h>
 #include <qstylesheet.h>
 #include <kplugininfo.h>
+#include <knotification.h>
+#include <kglobal.h>
 
-#include "kopetenotifyclient.h"
 #include "kopeteprefs.h"
 #include "kopeteaccount.h"
 #include "kopetepluginmanager.h"
@@ -174,10 +175,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 
 		if ( !outgoingMessage && ( !manager->account()->isAway() || KopetePrefs::prefs()->soundIfAway() ) )
 		{
-			int winId = 0;  //KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 			QWidget *w=dynamic_cast<QWidget*>(manager->view(false));
-			if(w) winId=w->topLevelWidget()->winId();
-
 			KConfig *config = KGlobal::config();
 			config->setGroup("General");
 			if( !manager->view(false) || !w || manager->view() != d->activeView ||
@@ -208,8 +206,10 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					default:
 						event = QString::fromLatin1( "kopete_contact_incoming" );
 				}
-				KNotifyClient::event(winId,  event, body.arg( QStyleSheet::escape(msgFrom), QStyleSheet::escape(msgText) ), msg.from()->metaContact(),
-					i18n("View") , const_cast<Kopete::Contact*>(msg.from()) , SLOT(execute()) );
+				KNotification *notify=KNotification::event(msg.from()->metaContact() , event, body.arg( QStyleSheet::escape(msgFrom), QStyleSheet::escape(msgText) ), 0, /*msg.from()->metaContact(),*/
+							w , i18n("View") );
+
+				connect(notify,SIGNAL(activated(unsigned int )), const_cast<Kopete::Contact*>(msg.from()) , SLOT(execute()) );
 			}
 		}
 	}

@@ -50,7 +50,6 @@
 #include "kopetegroup.h"
 #include "kopetegroupviewitem.h"
 #include "kopetemetacontact.h"
-#include "kopetenotifyclient.h"
 #include "kopetemetacontactlvi.h"
 #include "kopeteaccount.h"
 #include "kopeteprotocol.h"

@@ -3,7 +3,7 @@
 
     Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
     Copyright (c) 2002-2004 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart@ kde.org>
     Copyright (c) 2002      by Duncan Mac-Vicar P     <duncan@kde.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
@@ -24,7 +24,7 @@
 #include <qmime.h>
 #include <qstylesheet.h>
 
-#include "kopetenotifyclient.h"
+#include "knotification.h"
 #include <kdebug.h>
 #include <kiconeffect.h>
 #include <kimageeffect.h>
@@ -347,23 +347,12 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 	{
 		if ( !c->account()->isAway() || KopetePrefs::prefs()->soundIfAway() )
 		{
-			int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
+			//int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 
-			QString text;
-			if(!m_metaContact->photo().isNull())
-			{
-				text= i18n("<qt><table cellpadding=\"0\" cellspacing=\"0\"><tr><td><img src=\"kopete-metacontact-photo:%1\"></td><td>%2 is now %3</td></tr></table></qt>")
-						.arg( KURL::encode_string( m_metaContact->metaContactId()) ,
-						 Kopete::Emoticons::parseEmoticons( QStyleSheet::escape(m_metaContact->displayName()) ),
-						 Kopete::Emoticons::parseEmoticons( QStyleSheet::escape(c->onlineStatus().description()) ) );
-			}
-			else
-			{
-				//QString text = i18n( "%2 is now %1." ).arg( m_metaContact->statusString(), m_metaContact->displayName() );
-				text = i18n( "%2 is now %1." ).arg( c->onlineStatus().description(), Kopete::Emoticons::parseEmoticons( m_metaContact->displayName() ) );
-			}
-
-
+			QString text = i18n( "<qt><i>%1</i> is now %2.</qt>" )
+					.arg( Kopete::Emoticons::parseEmoticons( QStyleSheet::escape(m_metaContact->displayName()) ) ,
+						  QStyleSheet::escape(c->onlineStatus().description()));
+			
 			// figure out what's happened
 			enum ChangeType { noChange, noEvent, signedIn, changedStatus, signedOut };
 			ChangeType t = noChange;
@@ -417,13 +406,15 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 			case noChange:
 				break;
 			case signedIn:
-				KNotifyClient::event( winId,  "kopete_contact_online", text, m_metaContact, i18n( "Chat" ), this, SLOT( execute() ) );
+				connect(KNotification::event(m_metaContact, "kopete_contact_online", text, m_metaContact->photo(), KopeteSystemTray::systemTray(), i18n( "Chat" )) ,
+						SIGNAL(activated(unsigned int )) , this, SLOT( execute() ) );
 				break;
 			case changedStatus:
-				KNotifyClient::event( winId , "kopete_contact_status_change", text, m_metaContact, i18n( "Chat" ), this, SLOT( execute() ) );
+				connect(KNotification::event(m_metaContact, "kopete_contact_status_change", text, m_metaContact->photo(), KopeteSystemTray::systemTray(), i18n( "Chat" )) ,
+						SIGNAL(activated(unsigned int )) , this, SLOT( execute() ));
 				break;
 			case signedOut:
-				KNotifyClient::event( winId , "kopete_contact_offline", text, m_metaContact, i18n( "Offline" ), 0, 0 );
+				KNotification::event(m_metaContact, "kopete_contact_offline", text, m_metaContact->photo(), KopeteSystemTray::systemTray());
 				break;
 			}
 		}
