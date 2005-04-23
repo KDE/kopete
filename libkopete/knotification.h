@@ -21,7 +21,7 @@
 #define KNOTIFICATION_H
 
 
-
+#include <qpixmap.h>
 #include <qobject.h>
 #include <qstringlist.h>
 #include <kdemacros.h>
@@ -116,7 +116,7 @@ public:
 	 * @param actions is a list of actions text.
 	 */
 	static KNotification *event( const QString& eventId , const QString& text=QString::null,
-								 const QPixmap& pixmap=0, QWidget *widget=0L,
+								 const QPixmap& pixmap=QPixmap(), QWidget *widget=0L,
 								 const QStringList &actions=QStringList());
 
 
@@ -140,7 +140,7 @@ public:
 	* @todo  find a proper way to do contect-depedent notifications
 	*/
 	static KNotification *event( Kopete::MetaContact *mc, const QString& eventId , const QString& text=QString::null,
-								const QPixmap& pixmap=0, QWidget *widget=0L,
+								 const QPixmap& pixmap=QPixmap(), QWidget *widget=0L,
 								const QStringList &actions=QStringList());
 };
 
