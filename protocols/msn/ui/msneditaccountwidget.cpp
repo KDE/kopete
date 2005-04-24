@@ -280,10 +280,26 @@ void MSNEditAccountWidget::slotSelectImage()
 	QString futurName = locateLocal( "appdata", "msnpicture-" + account()->accountId().lower().replace( QRegExp( "[./~]" ), "-" ) + ".png" );
 
 	QImage img( path );
-	img = img.smoothScale( 96, 96 );
-	if ( !img.isNull() && img.save( futurName, "PNG" ) )
-	{
-		d->ui->m_displayPicture->setPixmap( futurName );
+
+	if(!img.isNull()) {
+		img = img.smoothScale( 96, 96, QImage::ScaleMax );
+		// crop image if not square
+		if(img.width() > img.height()) {
+			img = img.copy((img.width()-img.height())/2, 0, img.height(), img.height());
+		}
+		else if(img.height() > img.width()) {
+			img = img.copy(0, (img.height()-img.width())/2, img.width(), img.width());
+		}
+
+		if ( img.save( futurName, "PNG" ) )
+		{
+			d->ui->m_displayPicture->setPixmap( futurName );
+		}
+		else
+		{
+			KMessageBox::sorry( this, i18n( "<qt>An error occurred when trying to change the display picture.<br>"
+				"Make sure that you have selected a correct image file</qt>" ), i18n( "MSN Plugin" ) );
+		}
 	}
 	else
 	{
