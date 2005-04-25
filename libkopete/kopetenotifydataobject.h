@@ -49,7 +49,8 @@ class KOPETE_EXPORT NotifyDataObject
 		QDomElement notifyDataToXML();
 		bool notifyDataFromXML( const QDomElement& element );
 	private:
-		QDict<NotifyEvent> m_events;
+		class Private;
+		NotifyDataObject::Private* d;
 };
 
 }
