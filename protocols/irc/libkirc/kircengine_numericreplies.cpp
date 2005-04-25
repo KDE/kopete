@@ -48,11 +48,11 @@ void Engine::bindNumericReplies()
 	bind(265, this, SLOT(numericReply_265(KIRC::Message &)));
 	bind(266, this, SLOT(numericReply_266(KIRC::Message &)));
 
-	bind(301, this, SLOT(numericReply_301(KIRC::Message &)), 2, 2); // incomingUserIsAway
-	bind(303, this, SLOT(numericReply_303(KIRC::Message &)), 1, 1); // incomingUserOnline
-	bind(305, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0 ); // You are no longer marked as away
-	bind(306, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0 ); // You are marked as away
-	bind(307, this, SLOT(dumpSuffix(KIRC::Message&)),0,0); // Who Knows?
+	bind(301, this, SLOT(numericReply_301(KIRC::Message &)), 2, 2);
+	bind(303, this, SLOT(numericReply_303(KIRC::Message &)), 1, 1);
+	bind(305, this, SLOT(ignoreMessage(KIRC::Message &)), 0, 0 ); // You are no longer marked as away
+	bind(306, this, SLOT(ignoreMessage(KIRC::Message &)), 0, 0 ); // You are marked as away
+	bind(307, this, SLOT(numericReply_307(KIRC::Message &)), 1, 1);
 	bind(311, this, SLOT(numericReply_311(KIRC::Message &)), 5, 5);
 	bind(312, this, SLOT(numericReply_312(KIRC::Message &)), 3, 3);
 //	bind(313, this, SLOT(numericReply_313(KIRC::Message &)), 2, 2); // incomingWhoIsOperator
@@ -265,12 +265,13 @@ void Engine::numericReply_303(Message &msg)
 // {
 // }
 
-/* 307:
+/* 307: ":is a registered nick"
  * DALNET: Indicates that this user is identified with NICSERV.
  */
-// void Engine::numericReply_307(Message &msg)
-// {
-// }
+void Engine::numericReply_307(Message &msg)
+{
+//	emit incomingWhoiIsUserNickIsRegistered(Kopete::Message::unescape(msg.arg(1)));
+}
 
 /* 311: "<nick> <user> <host> * :<real name>"
  * Show info about a user (part of a /whois) in the form of:
