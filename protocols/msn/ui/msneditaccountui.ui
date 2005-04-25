@@ -393,16 +393,16 @@
                                             <string>Download the msn picture :</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>&lt;qt&gt;&lt;p&gt;Indicate when Koete will download the picture oh contacts&lt;/p&gt;
-&lt;dl&gt;&lt;dt&gt;Only manually&lt;/dt&gt;&lt;dd&gt;The picture is not downloaded automatically, but only when the user request it&lt;/dd&gt;
-&lt;dt&gt;When a chat is open&lt;/dt&gt;&lt;dd&gt;The picture is downloaded when a conversation socket is open, ie. when you open a chatwindow&lt;/dd&gt;
-&lt;dt&gt;Automatically&lt;/dt&gt;&lt;dd&gt;Always try to download the picture if the contact has one.  &lt;b&gt;Note :&lt;/b&gt; this will open a socket, and let know the user you are downloading his picture.&lt;/dd&gt;&lt;/dl&gt;</string>
+                                            <string>&lt;qt&gt;&lt;p&gt;Indicate when Kopete will download the pictures of contacts&lt;/p&gt;
+&lt;dl&gt;&lt;dt&gt;Only manually&lt;/dt&gt;&lt;dd&gt;The picture is not downloaded automatically, only when the user requests it&lt;/dd&gt;
+&lt;dt&gt;When a chat is open&lt;/dt&gt;&lt;dd&gt;The picture is downloaded when a conversation socket is opened, i.e. when you open a chat window&lt;/dd&gt;
+&lt;dt&gt;Automatically&lt;/dt&gt;&lt;dd&gt;Always try to download the picture if the contact has one.  &lt;b&gt;Note :&lt;/b&gt; this will open a socket, and let know the user you are downloading their picture.&lt;/dd&gt;&lt;/dl&gt;</string>
                                         </property>
                                     </widget>
                                     <widget class="QComboBox">
                                         <item>
                                             <property name="text">
-                                                <string>Only manualy</string>
+                                                <string>Only manually</string>
                                             </property>
                                         </item>
                                         <item>
