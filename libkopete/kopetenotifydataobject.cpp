@@ -20,40 +20,48 @@
 #include "kopetenotifydataobject.h"
 #include "kopetenotifyevent.h"
 
+class Kopete::NotifyDataObject::Private
+{
+public:
+	QDict<Kopete::NotifyEvent> events;
+};
+
 Kopete::NotifyDataObject::NotifyDataObject()
 {
-	m_events.setAutoDelete( true );
+	d = new Private();
+	d->events.setAutoDelete( true );
 }
 
 Kopete::NotifyDataObject::~NotifyDataObject()
 {
+	delete d;
 }
 
 Kopete::NotifyEvent * Kopete::NotifyDataObject::notifyEvent( const QString &event ) const
 {
-	Kopete::NotifyEvent *evt = m_events.find( event );
+	Kopete::NotifyEvent *evt = d->events.find( event );
 	return evt;
 }
 
 void Kopete::NotifyDataObject::setNotifyEvent( const QString& event, Kopete::NotifyEvent *notifyEvent )
 {
-	m_events.replace( event, notifyEvent );
+	d->events.replace( event, notifyEvent );
 }
 
 bool Kopete::NotifyDataObject::removeNotifyEvent( const QString &event )
 {
-	return m_events.remove( event );
+	return d->events.remove( event );
 }
 
 QDomElement Kopete::NotifyDataObject::notifyDataToXML()
 {
 	QDomDocument notify;
 	QDomElement notifications;
-	if ( !m_events.isEmpty() )
+	if ( !d->events.isEmpty() )
 	{
 		//<custom-notifications>
 		notifications = notify.createElement( QString::fromLatin1( "custom-notifications" ) );
-		QDictIterator<Kopete::NotifyEvent> it( m_events );
+		QDictIterator<Kopete::NotifyEvent> it( d->events );
 		for ( ; it.current(); ++it )
 		{
 			//<event name="..." suppress-common="true|false">
