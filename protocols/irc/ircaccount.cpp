@@ -228,6 +228,11 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 	setMyself( m_contactManager->mySelf() );
 	setAccountLabel( QString::fromLatin1("%1@%2").arg(mNickName,networkName) );
 	m_myServer = m_contactManager->myServer();
+
+	m_joinChannelAction = new KAction ( i18n("Join Channel..."), QString::null, 0, this,
+				SLOT(slotJoinChannel()), this);
+	m_searchChannelAction = new KAction ( i18n("Search Channels..."), QString::null, 0, this,
+				SLOT(slotSearchChannels()), this);
 }
 
 IRCAccount::~IRCAccount()
@@ -448,10 +453,13 @@ KActionMenu *IRCAccount::actionMenu()
 
 	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
 
+	m_joinChannelAction->setEnabled( isConnected() );
+	m_searchChannelAction->setEnabled( isConnected() );
+
 	mActionMenu->popupMenu()->insertSeparator();
-	mActionMenu->insert( new KAction ( i18n("Join Channel..."), "", 0, this, SLOT(slotJoinChannel()), mActionMenu ) );
-	mActionMenu->insert( new KAction ( i18n("Search Channels..."), "", 0, this, SLOT(slotSearchChannels()), mActionMenu ) );
-	mActionMenu->insert( new KAction ( i18n("Show Server Window"), "", 0, this, SLOT(slotShowServerWindow()), mActionMenu ) );
+	mActionMenu->insert(m_joinChannelAction);
+	mActionMenu->insert(m_searchChannelAction);
+	mActionMenu->insert( new KAction ( i18n("Show Server Window"), QString::null, 0, this, SLOT(slotShowServerWindow()), mActionMenu ) );
 
 	if( m_engine->isConnected() && m_engine->useSSL() )
 	{
@@ -678,7 +686,8 @@ void IRCAccount::slotShowServerWindow()
 
 bool IRCAccount::isConnected()
 {
-	return ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline );
+//	return ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline );
+	return m_engine->isConnected();
 }
 
 void IRCAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason )

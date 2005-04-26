@@ -248,6 +248,9 @@ private:
 
 	QMap< QString, QString > m_customCtcp;
 	Kopete::ChatSession *commandSource;
+
+	KAction *m_joinChannelAction;
+	KAction *m_searchChannelAction;
 };
 
 #endif
