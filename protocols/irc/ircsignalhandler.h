@@ -55,21 +55,25 @@ struct IRCSignalMappingBase{};
 struct IRCSignalMappingT : IRCSignalMappingBase
 {
 	virtual void exec( const QString & ) = 0;
+	virtual ~IRCSignalMappingT() {};
 };
 
 struct IRCSignalMappingSingleT : IRCSignalMappingBase
 {
 	virtual void exec( const QString &, const QString & ) = 0;
+	virtual ~IRCSignalMappingSingleT() {};
 };
 
 struct IRCSignalMappingDoubleT : IRCSignalMappingBase
 {
 	virtual void exec( const QString &, const QString &, const QString & ) = 0;
+	virtual ~IRCSignalMappingDoubleT() {};
 };
 
 struct IRCSignalMappingTripleT : IRCSignalMappingBase
 {
 	virtual void exec( const QString &, const QString &, const QString &, const QString & ) = 0;
+	virtual ~IRCSignalMappingTripleT() {};
 };
 
 /***
@@ -159,7 +163,7 @@ template <class TClass>
 class IRCSignalMapping : public IRCSignalMappingT
 {
 	public:
-		IRCSignalMapping( IRCContactManager *mgr, const char *signal,
+		IRCSignalMapping( IRCContactManager *mgr, const char * /*signal*/,
 			void (TClass::*m)() ) : manager(mgr), method(m){}
 
 		void exec( const QString &id )
@@ -181,7 +185,7 @@ template <class TClass>
 class IRCSignalMappingSingle : public IRCSignalMappingSingleT
 {
 	public:
-		IRCSignalMappingSingle<TClass>( IRCContactManager *mgr, const char *signal,
+		IRCSignalMappingSingle<TClass>( IRCContactManager *mgr, const char * /*signal*/,
 			void (TClass::*m)(const QString&) ) : manager(mgr), method(m){}
 
 		void exec( const QString &id, const QString &arg )
@@ -203,7 +207,7 @@ template <class TClass>
 class IRCSignalMappingDouble : public IRCSignalMappingDoubleT
 {
 	public:
-		IRCSignalMappingDouble<TClass>( IRCContactManager *mgr, const char *signal,
+		IRCSignalMappingDouble<TClass>( IRCContactManager *mgr, const char * /*signal*/,
 			void (TClass::*m)(const QString&,const QString&) ) : manager(mgr), method(m){}
 
 		void exec( const QString &id,const QString &arg, const QString &arg2 )
@@ -226,7 +230,7 @@ template <class TClass>
 class IRCSignalMappingTriple : public IRCSignalMappingTripleT
 {
 	public:
-		IRCSignalMappingTriple<TClass>( IRCContactManager *mgr, const char *signal,
+		IRCSignalMappingTriple<TClass>( IRCContactManager *mgr, const char * /*signal*/,
 			void (TClass::*m)(const QString&,const QString&,const QString&) )
 			: manager(mgr), method(m){}
 
