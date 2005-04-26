@@ -38,7 +38,7 @@ namespace Kopete { class MetaContact; }
  */
 class KDE_EXPORT KNotification : public QObject
 {
-Q_OBJECT;
+        Q_OBJECT
 public:
 	~KNotification();
 	   
