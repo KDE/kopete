@@ -202,13 +202,15 @@ void KNotification::notifyByPassivePopup(const QPixmap &pix )
 		QLabel *pil=new QLabel(hb);
 		pil->setPixmap(pix);
 		pil->setScaledContents(true);
-		if(pix.height() > 80 )
+		if(pix.height() > 80 && pix.height() > pix.width() )
 		{
 			pil->setMaximumHeight(80);
+			pil->setMaximumWidth(80*pix.width()/pix.height());
 		}
-		if(pix.width() > 80 )
+		else if(pix.width() > 80 && pix.height() <= pix.width())
 		{
 			pil->setMaximumWidth(80);
+			pil->setMaximumHeight(80*pix.height()/pix.width());
 		}
 		vb=new QVBox(hb);
 		QLabel *msg = new QLabel( d->text, vb, "msg_label" );
