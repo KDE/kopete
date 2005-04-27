@@ -161,7 +161,14 @@ KPluginInfo *PluginManager::pluginInfo( const Plugin *plugin ) const
 
 void PluginManager::shutdown()
 {
-//	kdDebug( 14010 ) << k_funcinfo << kdBacktrace() << endl;
+	if(d->shutdownMode != Private::Running)
+	{
+		kdDebug( 14010 ) << k_funcinfo << "called when not running.  / state = " << d->shutdownMode << endl;
+		return;
+	}
+
+	d->shutdownMode = Private::ShuttingDown;
+	
 
 	/* save the contact list now, just in case a change was made very recently
 	   and it hasn't autosaved yet
@@ -170,9 +177,6 @@ void PluginManager::shutdown()
 	*/
 	Kopete::ContactList::self()->save();
 	Kopete::AccountManager::self()->save();
-	
-	
-	d->shutdownMode = Private::ShuttingDown;
 	
 	// Remove any pending plugins to load, we're shutting down now :)
 	d->pluginsToLoad.clear();
