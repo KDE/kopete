@@ -254,7 +254,7 @@ void KopeteApplication::slotAllPluginsLoaded()
 
 int KopeteApplication::newInstance()
 {
-	kdDebug(14000) << k_funcinfo << endl;
+//	kdDebug(14000) << k_funcinfo << endl;
 	handleURLArgs();
 
 	/**
@@ -281,8 +281,7 @@ int KopeteApplication::newInstance()
 void KopeteApplication::handleURLArgs()
 {
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-	kdDebug(14000) << k_funcinfo << "called with " << args->count() <<
-		" arguments to handle." << endl;
+//	kdDebug(14000) << k_funcinfo << "called with " << args->count() << " arguments to handle." << endl;
 
 	if ( args->count() > 0 )
 	{

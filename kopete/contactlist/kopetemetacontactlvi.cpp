@@ -92,10 +92,6 @@ public:
 			//QMimeSourceFactory::defaultFactory()->setImage( "contactimg", metaContact->photo() );
 			toolTip += QString::fromLatin1("<img src=\"%1\">").arg( photoName );
         }
-        else
-        {
-			kdDebug( 14010 ) << k_funcinfo << "null picture" << endl;
-        }
 
 		toolTip += QString::fromLatin1("</td><td>");
 		toolTip += QString::fromLatin1("<b><font size=\"+1\">%1</font></b><br><br>").arg(Kopete::Emoticons::parseEmoticons( metaContact->displayName()) );

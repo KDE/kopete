@@ -85,8 +85,8 @@ void ToolTip::maybeTip( const QPoint &pos )
 			return;
 
 		toolTip.second.moveBy( xAdjust, yAdjust );
-		kdDebug( 14000 ) << k_funcinfo << "Adding tooltip: itemRect: "
-		                 << toolTip.second << ", tooltip:  " << toolTip.first << endl;
+// 		kdDebug( 14000 ) << k_funcinfo << "Adding tooltip: itemRect: "
+// 		                 << toolTip.second << ", tooltip:  " << toolTip.first << endl;
 		tip( toolTip.second, toolTip.first );
 	}
 }

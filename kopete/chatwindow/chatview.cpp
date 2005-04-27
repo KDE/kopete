@@ -484,8 +484,8 @@ void ChatView::toggleMembersVisibility()
 
 void ChatView::placeMembersList( KDockWidget::DockPosition dp )
 {
-	kdDebug(14000) << k_funcinfo << "Members list policy " << membersStatus <<
-			", visible " << d->visibleMembers << endl;
+// 	kdDebug(14000) << k_funcinfo << "Members list policy " << membersStatus <<
+// 			", visible " << d->visibleMembers << endl;
 
 	if ( d->visibleMembers )
 	{
@@ -631,7 +631,7 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 
 void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString &reason, Kopete::Message::MessageFormat format, bool suppressNotification )
 {
-	kdDebug(14000) << k_funcinfo << endl;
+// 	kdDebug(14000) << k_funcinfo << endl;
 	if ( contact != m_manager->myself() )
 	{
 		m_remoteTypingMap.remove( const_cast<Kopete::Contact *>( contact ) );
@@ -665,7 +665,7 @@ QString& ChatView::caption() const
 
 void ChatView::setCaption( const QString &text, bool modified )
 {
-	kdDebug(14000) << k_funcinfo << endl;
+// 	kdDebug(14000) << k_funcinfo << endl;
 	QString newCaption = text;
 
 	//Save this caption
@@ -741,7 +741,7 @@ void ChatView::slotToggleRtfToolbar( bool enabled )
 
 void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &newStatus, const Kopete::OnlineStatus &oldStatus )
 {
-	kdDebug(14000) << k_funcinfo << endl;
+// 	kdDebug(14000) << k_funcinfo << endl;
 	bool inhibitNotification = ( newStatus.status() == Kopete::OnlineStatus::Unknown ||
 	                             oldStatus.status() == Kopete::OnlineStatus::Unknown );
 	if ( contact && KopetePrefs::prefs()->showEvents() && !inhibitNotification )

@@ -76,7 +76,7 @@ bool MimeTypeHandler::registerAsMimeHandler( const QString &mimeType )
 
 	g_mimeHandlers.insert( mimeType, this );
 	d->mimeTypes.append( mimeType );
-	kdDebug(14010) << k_funcinfo << "Mime type " << mimeType << " registered" << endl;
+//	kdDebug(14010) << k_funcinfo << "Mime type " << mimeType << " registered" << endl;
 	return true;
 }
 

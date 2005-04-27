@@ -401,9 +401,9 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 		d->suppressStatusTimer.start( 5000, true );
 	}
 
-	kdDebug(14010) << k_funcinfo << "account " << d->id << " changed status. was "
+/*	kdDebug(14010) << k_funcinfo << "account " << d->id << " changed status. was "
 	               << Kopete::OnlineStatus::statusTypeToString(oldStatus.status()) << ", is "
-	               << Kopete::OnlineStatus::statusTypeToString(newStatus.status()) << endl;
+	               << Kopete::OnlineStatus::statusTypeToString(newStatus.status()) << endl;*/
 	if ( wasOffline != isOffline )
 		emit isConnectedChanged();
 }
