@@ -429,6 +429,14 @@ void MSNSwitchBoardSocket::sendTypingMsg( bool isTyping )
 	if( !isTyping )
 		return;
 
+	if ( onlineStatus() != Connected || m_chatMembers.empty())
+	{
+		//we are not yet in a chat.
+		//if we send that command now, we may get disconnected.
+		return;
+	}
+
+
 	QCString message = QString( "MIME-Version: 1.0\r\n"
 		"Content-Type: text/x-msmsgscontrol\r\n"
 		"TypingUser: " + m_myHandle + "\r\n"
