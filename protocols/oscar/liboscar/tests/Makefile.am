@@ -3,8 +3,8 @@ INCLUDES = -I$(top_srcdir)/kopete/protocols/oscar/liboscar -I$(top_builddir)/kop
 METASOURCES = AUTO
 check_PROGRAMS = logintest userinfotest ssigrouptest redirecttest ipaddrtest
 
-clientstream_test_SOURCES = clientstream_test.cpp
-clientstream_test_LDADD = $(LIB_QT) $(LIB_KDECORE) ../liboscar.la
+#clientstream_test_SOURCES = clientstream_test.cpp
+#clientstream_test_LDADD = $(LIB_QT) $(LIB_KDECORE) ../liboscar.la
 
 logintest_SOURCES = logintest.cpp
 logintest_LDADD = $(LIB_QT) $(LIB_KDECORE) ../liboscar.la
