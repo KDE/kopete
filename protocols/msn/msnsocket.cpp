@@ -467,7 +467,6 @@ void MSNSocket::slotReadyWrite()
 		kdDebug( 14141 ) << k_funcinfo << "Sending command: " << QString( *it ).stripWhiteSpace() << endl;
 		m_socket->writeBlock( *it, ( *it ).length() );
 		m_sendQueue.remove( it );
-		emit commandSent();
 
 		// If the queue is empty again stop waiting for readyWrite signals
 		// because of the CPU usage
