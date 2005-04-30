@@ -253,6 +253,32 @@ void ICQContact::receivedShortInfo( const QString& contact )
 	
 }
 
+void ICQContact::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session )
+{
+	//Why is this unused?
+	Q_UNUSED( session );
+	Oscar::Message message;
+	
+	message.setText( msg.plainBody() );
+	
+	message.setTimestamp( msg.timestamp() );
+	message.setSender( mAccount->accountId() );
+	message.setReceiver( mName );
+	message.setType( 0x01 );
+	
+	//TODO add support for type 2 messages
+	/*if ( msg.type() == Kopete::Message::PlainText )
+		message.setType( 0x01 );
+	else
+		message.setType( 0x02 );*/
+	//TODO: we need to check for channel 0x04 messages too;
+	
+	mAccount->engine()->sendMessage( message );
+	manager(Kopete::Contact::CanCreate)->appendMessage(msg);
+	manager(Kopete::Contact::CanCreate)->messageSucceeded();
+}
+
+
 #if 0
 void ICQContact::slotContactChanged(const UserInfo &u)
 {

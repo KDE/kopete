@@ -166,6 +166,8 @@ AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
 	else
 		protocolStatic_ = this;
 
+	setCapabilities(0x1FFF); // setting capabilities - FIXME to use proper enum
+	kdDebug(14152) << k_funcinfo << "capabilities set to 0x1FFF" << endl;
 	addAddressBookField("messaging/aim", Kopete::Plugin::MakeIndexField);
 }
 

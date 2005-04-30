@@ -118,8 +118,10 @@ protected:
 private:
 	void initActions();
 
+protected slots:
+	virtual void slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session) = 0;
+	
 private slots:
-	void slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session);
 	void chatSessionDestroyed();
 	
 };

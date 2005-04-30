@@ -73,6 +73,9 @@ public slots:
 signals:
 	void updatedProfile();
 
+protected slots:
+	virtual void slotSendMsg(Kopete::Message& message, Kopete::ChatSession *);
+	
 private slots:
 	void closeUserInfoDialog();
 	void warnUser();

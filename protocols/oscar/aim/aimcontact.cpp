@@ -270,6 +270,85 @@ void AIMContact::warnUser()
 		mAccount->engine()->sendWarning( contactId(), false);
 }
 
+void AIMContact::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *)
+{
+	Oscar::Message msg;
+	QString s;
+	
+	if (message.plainBody().isEmpty()) // no text, do nothing
+		return;
+	//okay, now we need to change the message.escapedBody from real HTML to aimhtml.
+	//looking right now for docs on that "format".
+	//looks like everything except for alignment codes comes in the format of spans
+	
+	//font-style:italic -> <i>
+	//font-weight:600 -> <b> (anything > 400 should be <b>, 400 is not bold)
+	//text-decoration:underline -> <u>
+	//font-family: -> <font face="">
+	//font-size:xxpt -> <font ptsize=xx>
+	
+	s=message.escapedBody();
+	s.replace ( QRegExp( QString::fromLatin1("<span style=\"([^\"]*)\">([^<]*)</span>")),
+			QString::fromLatin1("<style>\\1;\"\\2</style>"));
+
+	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)font-style:italic;([^\"]*)\"([^<]*)</style>")),
+	            QString::fromLatin1("<i><style>\\1\\2\"\\3</style></i>"));
+	
+	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)font-weight:600;([^\"]*)\"([^<]*)</style>")),
+	            QString::fromLatin1("<b><style>\\1\\2\"\\3</style></b>"));
+	
+	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)text-decoration:underline;([^\"]*)\"([^<]*)</style>")),
+	            QString::fromLatin1("<u><style>\\1\\2\"\\3</style></u>"));
+
+	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)font-family:([^;]*);([^\"]*)\"([^<]*)</style>")),
+	            QString::fromLatin1("<font face=\"\\2\"><style>\\1\\3\"\\4</style></font>"));
+	
+	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)font-size:([^p]*)pt;([^\"]*)\"([^<]*)</style>")),
+				QString::fromLatin1("<font ptsize=\"\\2\"><style>\\1\\3\"\\4</style></font>"));
+	
+	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)color:([^;]*);([^\"]*)\"([^<]*)</style>")),
+	            QString::fromLatin1("<font color=\"\\2\"><style>\\1\\3\"\\4</style></font>"));
+	
+	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)\"([^<]*)</style>")),
+	            QString::fromLatin1("\\2"));
+	
+	//okay now change the <font ptsize="xx"> to <font size="xx">
+	
+	//0-9 are size 1
+	s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"\\d\">")),
+	            QString::fromLatin1("<font size=\"1\">"));
+	//10-11 are size 2
+	s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"1[01]\">")),
+	            QString::fromLatin1("<font size=\"2\">"));
+	//12-13 are size 3
+	s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"1[23]\">")),
+	            QString::fromLatin1("<font size=\"3\">"));
+	//14-16 are size 4
+	s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"1[456]\">")),
+	            QString::fromLatin1("<font size=\"4\">"));
+	//17-22 are size 5
+	s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"(?:1[789]|2[012])\">")),
+	            QString::fromLatin1("<font size=\"5\">"));
+	//23-29 are size 6
+	s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"2[3456789]\">")),QString::fromLatin1("<font size=\"6\">"));
+	//30- (and any I missed) are size 7
+	s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"[^\"]*\">")),QString::fromLatin1("<font size=\"7\">"));
+	
+	kdDebug(14190) << k_funcinfo << "sending "
+		<< s << endl;
+	
+	msg.setText(s);
+	msg.setReceiver(mName);
+	msg.setTimestamp(message.timestamp());
+	msg.setType(0x01);
+	
+	mAccount->engine()->sendMessage(msg);
+	
+	// Show the message we just sent in the chat window
+	manager(Kopete::Contact::CanCreate)->appendMessage(message);
+	manager(Kopete::Contact::CanCreate)->messageSucceeded();
+}
+
 void AIMContact::sendAutoResponse(Kopete::Message& msg)
 {
 	// The target time is 2 minutes later than the last message

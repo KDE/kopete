@@ -98,7 +98,9 @@ private:
 
 	bool mInvisible;
 	*/
-
+protected slots:
+	virtual void slotSendMsg(Kopete::Message& message, Kopete::ChatSession *);
+	
 private slots:
 	/** Request authorization from this contact */
 	void slotRequestAuth();
