@@ -263,6 +263,16 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 			++( serializedDataIt.data() );
 		}
 
+		const QString& accountId=sd[ QString::fromLatin1( "accountId" ) ];
+		// myself was allowed in the contactlist in old version of kopete.
+		// But if one keep it on the contactlist now, it may conflict witht he myself metacontact.
+		// So ignore it
+		if(accountId == sd[ QString::fromLatin1( "contactId" ) ] )
+		{
+			kdDebug( 14010 ) << k_funcinfo << "Myself contact was on the contactlist.xml for account " << accountId << ".  Ignore it" << endl;
+			continue;
+		}
+
 		// FIXME: This code almost certainly breaks when having more than
 		//        one contact in a meta contact. There are solutions, but
 		//        they are all hacky and the API needs revision anyway (see
@@ -290,7 +300,7 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 		// (our our config is corrupted). Pick the first available account there. This
 		// might not be what you want for corrupted accounts, but it's correct for people
 		// who migrate from 0.6, as there's only one account in that case
-		if( sd[ QString::fromLatin1( "accountId" ) ].isNull() )
+		if( accountId.isNull() )
 		{
 			QDict<Account> accounts = AccountManager::self()->accounts( this );
 			if ( accounts.count() > 0 )
@@ -307,6 +317,7 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 			}
 		}
 
+		
 		Contact *c = deserializeContact( metaContact, sd, ad );
 		if (c) // should never be null but I do not like crashes
 			c->deserializeProperties( sd );
