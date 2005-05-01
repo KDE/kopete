@@ -61,6 +61,7 @@ ICQSearchDialog::~ICQSearchDialog()
 
 void ICQSearchDialog::startSearch()
 {
+	clearResults();
 	m_searchUI->stopButton->setEnabled( true );
 	connect( m_account->engine(), SIGNAL( gotSearchResults( const ICQSearchResult& ) ),
 	         this, SLOT( newResult( const ICQSearchResult& ) ) );
