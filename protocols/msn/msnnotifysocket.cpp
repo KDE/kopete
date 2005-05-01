@@ -48,7 +48,7 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 : MSNSocket( account )
 {
 	m_newstatus = MSNProtocol::protocol()->NLN;
-	
+
 	m_isHotmailAccount=false;
 	m_ping=false;
 
@@ -59,8 +59,6 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 
 	m_keepaliveTimer = new QTimer( this, "m_keepaliveTimer" );
 	QObject::connect( m_keepaliveTimer, SIGNAL( timeout() ), SLOT( slotSendKeepAlive() ) );
-
-	QObject::connect( this, SIGNAL( commandSent() ), SLOT( slotResetKeepAlive() ) );
 }
 
 MSNNotifySocket::~MSNNotifySocket()
@@ -245,7 +243,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 {
 	//kdDebug(14140) << "MSNNotifySocket::parseCommand: Command: " << cmd << endl;
 
-	
+
 	if ( cmd == "VER" )
 	{
 		sendCommand( "CVR", "0x0409 winnt 5.1 i386 MSNMSGR 6.0.0602 MSMSGS " + m_account->accountId() );
@@ -301,6 +299,9 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			// do some nice things with it  :-)
 			QString publicName = unescape( data.section( ' ', 2, 2 ) );
 			emit publicNameChanged( publicName );
+
+			// We are connected start to ping
+			slotSendKeepAlive();
 		}
 	}
 	else if( cmd == "LST" )
@@ -355,9 +356,9 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "XFR" )
 	{
-		QString stype=data.section( ' ', 0, 0 ); 
+		QString stype=data.section( ' ', 0, 0 );
 		if( stype=="SB" ) //switchboard connection (chat)
-		{ 
+		{
 			// Address, AuthInfo
 			emit startChat( data.section( ' ', 1, 1 ), data.section( ' ', 3, 3 ) );
 		}
@@ -370,7 +371,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			emit receivedNotificationServer( server, port );
 			disconnect();
 		}
-		
+
 	}
 	else if( cmd == "RNG" )
 	{
@@ -526,6 +527,10 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		//this is a reply from a ping
 		m_ping=false;
+
+		// id is the timeout in fact, and we remove 5% of it
+		m_keepaliveTimer->start( id * 950, true );
+		kdDebug( 14140 ) << k_funcinfo << "timerTimeout=" << id << "sec"<< endl;
 	}
 	else if( cmd == "URL" )
 	{
@@ -893,13 +898,6 @@ void MSNNotifySocket::slotSendKeepAlive()
 	//at least 90 second has been ellapsed since the last messages
 	// we shouldn't receive error from theses command anymore
 	m_tmpHandles.clear();
-}
-
-void MSNNotifySocket::slotResetKeepAlive()
-{
-	// Fire the timer every 90 seconds. QTimer will reset a running timer
-	// on a subsequent call if there has been activity again.
-	m_keepaliveTimer->start( 90000 );
 }
 
 Kopete::OnlineStatus MSNNotifySocket::convertOnlineStatus( const QString &status )

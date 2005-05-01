@@ -62,7 +62,7 @@ public:
 	void createChatSession();
 
 	void sendMail(const QString &email);
-	
+
 	bool badPassword() { return m_badPassword; }
 
 public slots:
@@ -88,8 +88,8 @@ signals:
 	void statusChanged( const Kopete::OnlineStatus &newStatus );
 
 	void hotmailSeted(bool) ;
-	
-	
+
+
 	/**
 	 * When the dispatch server sends us the notification server to use, this
 	 * signal is emitted. After this the socket is automatically closed.
@@ -109,7 +109,7 @@ protected:
 	 * This reimplementation handles most of the other MSN error codes.
 	 */
 	virtual void handleError( uint code, uint id );
-	
+
 	/**
 	 * This reimplementation sets up the negotiating with the server and
 	 * suppresses the change of the status to online until the handshake
@@ -130,12 +130,6 @@ private slots:
 	 * MSN closing the connection
 	 */
 	void slotSendKeepAlive();
-
-	/**
-	 * Reset the keepalive time after the socket has sent a command.
-	 */
-	void slotResetKeepAlive();
-
 
 
 	void slotAuthJobDataReceived ( KIO::Job *, const QByteArray &data);
@@ -175,7 +169,7 @@ private:
 	QTimer *m_keepaliveTimer;
 
 	bool m_ping;
-	
+
 	bool m_badPassword;
 };
 
