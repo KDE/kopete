@@ -34,36 +34,36 @@
 
 #include "kopeteaccountmanager.h"
 #include "kopetecommandhandler.h"
+#include "kopeteglobal.h"
 #include "kopeteonlinestatusmanager.h"
 #include "kopeteonlinestatus.h"
 #include "kopeteview.h"
 #include "kopeteuiglobal.h"
-#include "kopeteglobal.h"
 
-#include <qregexp.h>
-#include <dom/html_element.h>
 #undef KDE_NO_COMPAT
 #include <kaction.h>
-#include <kdebug.h>
-#include <klineeditdlg.h>
-#include <kgenericfactory.h>
-#include <ksimpleconfig.h>
-#include <kiconloader.h>
-#include <kstandarddirs.h>
-#include <kglobal.h>
 #include <kcharsets.h>
-#include <kuser.h>
-#include <unistd.h>
+#include <kdebug.h>
+#include <kgenericfactory.h>
+#include <kglobal.h>
+#include <kinputdialog.h>
+#include <kiconloader.h>
 #include <kmessagebox.h>
+#include <ksimpleconfig.h>
+#include <kstandarddirs.h>
+#include <kuser.h>
 
-#include <qlineedit.h>
-#include <qdom.h>
-#include <qtimer.h>
-#include <qfile.h>
-#include <qpushbutton.h>
-#include <qspinbox.h>
 #include <qcheckbox.h>
+#include <qdom.h>
+#include <qfile.h>
+#include <qlineedit.h>
+#include <qpushbutton.h>
+#include <qregexp.h>
+#include <qspinbox.h>
 #include <qvalidator.h>
+
+#include <dom/html_element.h>
+#include <unistd.h>
 
 typedef KGenericFactory<IRCProtocol> IRCProtocolFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_irc, IRCProtocolFactory( "kopete_irc" )  )
@@ -957,7 +957,10 @@ void IRCProtocol::slotNewHost()
 	IRCHost *host = new IRCHost;
 	// prompt for a name
 	bool ok;
-	QString name = KLineEditDlg::getText(i18n("New Host"), i18n("Enter the hostname of the new server:"), QString::null, &ok, Kopete::UI::Global::mainWidget() );
+	QString name = KInputDialog::getText(
+			i18n("New Host"),
+			i18n("Enter the hostname of the new server:"),
+			QString::null, &ok, Kopete::UI::Global::mainWidget() );
 	if ( ok )
 	{
 		// dupe check
@@ -992,7 +995,11 @@ void IRCProtocol::slotRenameNetwork()
 	{
 		bool ok;
 		// popup up a dialog containing the current name
-		QString name = KLineEditDlg::getText(i18n("Rename Network"), i18n("Enter the new name for this network:"), m_uiCurrentNetworkSelection, &ok, Kopete::UI::Global::mainWidget() );
+		QString name = KInputDialog::getText(
+				i18n("Rename Network"),
+				i18n("Enter the new name for this network:"),
+				m_uiCurrentNetworkSelection, &ok,
+				Kopete::UI::Global::mainWidget() );
 		if ( ok )
 		{
 			if ( m_uiCurrentNetworkSelection != name )

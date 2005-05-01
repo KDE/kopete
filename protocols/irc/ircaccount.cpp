@@ -40,15 +40,16 @@
 #include <kaction.h>
 #include <kaboutdata.h>
 #include <kapplication.h>
+#include <kconfig.h>
+#include <kcompletionbox.h>
 #include <kdebug.h>
+#include <kglobal.h>
+#include <kinputdialog.h>
 #include <klineedit.h>
 #include <klineeditdlg.h>
-#include <kcompletionbox.h>
 #include <kmessagebox.h>
-#include <kpopupmenu.h>
-#include <kconfig.h>
-#include <kglobal.h>
 #include <knotifyclient.h>
+#include <kpopupmenu.h>
 
 #include <qlayout.h>
 #include <qtimer.h>
@@ -246,10 +247,15 @@ void IRCAccount::slotNickInUse( const QString &nick )
 	QString altNickName = altNick();
 	if( triedAltNick || altNickName.isEmpty() )
 	{
-		QString newNick = KLineEditDlg::getText(i18n( "IRC Plugin"),
-			i18n("The nickname %1 is already in use. Please enter an alternate nickname:").arg(nick), nick);
+		QString newNick = KInputDialog::getText(
+				i18n("IRC Plugin"),
+				i18n("The nickname %1 is already in use. Please enter an alternate nickname:").arg(nick),
+				nick);
 
-		m_engine->nick(newNick);
+		if (newNick.isNull())
+			disconnect();
+		else
+			m_engine->nick(newNick);
 	}
 	else
 	{
