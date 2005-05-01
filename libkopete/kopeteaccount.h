@@ -84,9 +84,10 @@ public:
 	 * Manual means that the disconnection was done by the user and no reconnection
 	 * will take place. Any other value will reconnect the account on disconnection.
 	 * The case where the password is wrong will be handled differently.
-	 * @see @ref disconnected
+	 * @see @ref disconnected 
 	 */
 	enum DisconnectReason {
+		OtherClient = -4,    ///< connection went down because another client connected the same account
 		BadPassword = -3,    ///< connection failed because password was incorrect
 		BadUserName = -2,    ///< connection failed because user name was invalid / unknown
 		InvalidHost = -1,    ///< connection failed because host is unreachable
@@ -367,9 +368,12 @@ protected slots:
 	 * You have to call this method when you are disconnected. Depending on the value of
 	 * @p reason, this function may attempt to reconnect to the server.
 	 *
+	 * - BadPassword will ask again for the password
+	 * - OtherClient will show a message box
+	 *
 	 * @param reason the reason for the disconnection.
 	 */
-	virtual void disconnected( DisconnectReason reason );
+	virtual void disconnected( Kopete::Account::DisconnectReason reason );
 
 	/**
 	 * @brief Sets the online status of all contacts in this account to the same value

@@ -96,6 +96,15 @@ bool Kopete::PasswordedAccount::removeAccount()
 	return Kopete::Account::removeAccount();
 }
 
+void Kopete::PasswordedAccount::disconnected( Kopete::Account::DisconnectReason reason )
+{
+	if(reason==Kopete::Account::BadPassword || reason==Kopete::Account::BadUserName)
+	{
+		password().setWrong(true);
+	}
+	Kopete::Account::disconnected(reason);
+}
+
 
 #include "kopetepasswordedaccount.moc"
 

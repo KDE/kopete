@@ -114,6 +114,12 @@ void Account::disconnected( DisconnectReason reason )
 		//use a timer to allow the plugins to clean up after return
 		QTimer::singleShot(0, this, SLOT(connect()));
 	}
+	if(reason== OtherClient)
+	{
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information ,
+			i18n( "You have connected from another client or computer to the account '%1'" ).arg(d->id) ,
+			i18n ("Account diconnected - Kopete") );
+	}
 }
 
 Protocol *Account::protocol() const

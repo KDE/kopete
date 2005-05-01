@@ -88,6 +88,7 @@ public:
 	 */
 	virtual bool removeAccount();
 
+
 public slots:
 	/**
 	 * Called when your account should attempt to connect.
@@ -103,6 +104,14 @@ protected:
 	 * if you have a custom message to show the user.
 	 */
 	virtual QString passwordPrompt();
+
+protected slots:
+	/**
+	 * @internal
+	 * Reimplemented to set the password wrong if the reason is BadPassword
+	 */
+	virtual void disconnected( Kopete::Account::DisconnectReason reason );
+
 
 private:
 	class Private;
