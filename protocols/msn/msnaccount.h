@@ -118,7 +118,6 @@ private slots:
 	// notifySocket related
 	void slotStatusChanged( const Kopete::OnlineStatus &status );
 	void slotNotifySocketClosed();
-	void slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status );
 	void slotPublicNameChanged(const QString& publicName);
 	void slotContactRemoved(const QString& handle, const QString& list,  uint group );
 	void slotContactAdded(const QString& handle, const QString& publicName, const QString& list,  uint group );

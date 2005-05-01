@@ -187,8 +187,6 @@ void MSNAccount::createNotificationServer( const QString &host, uint port )
 		SLOT( slotContactRemoved( const QString&, const QString&, uint ) ) );
 	QObject::connect( m_notifySocket, SIGNAL( statusChanged( const Kopete::OnlineStatus & ) ),
 		SLOT( slotStatusChanged( const Kopete::OnlineStatus & ) ) );
-	QObject::connect( m_notifySocket, SIGNAL( onlineStatusChanged( MSNSocket::OnlineStatus ) ),
-		SLOT( slotNotifySocketStatusChanged( MSNSocket::OnlineStatus ) ) );
 	QObject::connect( m_notifySocket, SIGNAL( publicNameChanged( const QString& ) ),
 		SLOT( slotPublicNameChanged( const QString& ) ) );
 	QObject::connect( m_notifySocket, SIGNAL( invitedToChat( const QString&, const QString&, const QString&, const QString&, const QString& ) ),
@@ -349,73 +347,6 @@ void MSNAccount::slotOpenInbox()
 		m_notifySocket->slotOpenInbox();
 }
 
-void MSNAccount::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status )
-{
-	// FIXME:
-	if ( status == MSNSocket::Connected )
-	{
-		// Sync public name when needed
-/*
-		if ( m_publicNameSyncNeeded )
-		{
-			kdDebug( 14140 ) << "MSNProtocol::slotOnlineStatusChanged: Syncing public name to "
-				<< m_publicName << endl;
-			setPublicName( m_publicName );
-			m_publicNameSyncNeeded = false;
-		}
-		else
-		{
-			kdDebug( 14140 ) << "MSNProtocol::slotOnlineStatusChanged: Leaving public name as "
-				<< m_publicName << endl;
-		}
-		// Now pending changes are updated if we want to sync both ways
-		m_publicNameSyncMode = SyncBoth;
-*/
-		// setStatusIcon( "msn_online" );
-	}
-	else if ( status == MSNSocket::Disconnected )
-	{
-/*
-		Kopete::ChatSessionDict sessions =
-			Kopete::ChatSessionManager::self()->protocolSessions( this );
-		QIntDictIterator<Kopete::ChatSession> kmmIt( sessions );
-		for ( ; kmmIt.current(); ++kmmIt )
-		{
-			// Disconnect all active chats (but don't actually remove the
-			// chat windows, the user might still want to view them!)
-			MSNChatSession *msnMM = dynamic_cast<MSNChatSession *>( kmmIt.current() );
-			if ( msnMM )
-			{
-				kdDebug( 14140 ) << "MSNProtocol::slotOnlineStatusChanged: "
-					<< "Closed MSNChatSession because the protocol socket "
-					<< "closed." << endl;
-				msnMM->slotCloseSession();
-			}
-		}
-*/
-
-/*
-		m_allowList.clear();
-		m_blockList.clear();
-		m_reverseList.clear();
-
-		m_groupList.clear();
-*/
-		// setStatusIcon( "msn_offline" );
-
-		// Reset flags. They can't be set in the connect method, because
-		// offline changes might have been made before. Instead the c'tor
-		// sets the defaults, and the disconnect slot resets those defaults
-		// FIXME: Can't we share this code?
-		// m_publicNameSyncMode = SyncFromServer;
-	}
-	else if ( status == MSNSocket::Connecting )
-	{
-		// for ( QDictIterator<Kopete::Contact> it( contacts() ); it.current(); ++it )
-		//	static_cast<MSNContact *>( *it )->setMsnStatus( MSNProtocol::FLN );
-	}
-	// static_cast<MSNProtocol *>( protocol() )->slotNotifySocketStatusChanged( status );
-}
 
 void MSNAccount::slotNotifySocketClosed()
 {
