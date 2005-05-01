@@ -40,6 +40,7 @@
 #include "kopetepassword.h"
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
+#include "kopetemessagemanagerfactory.h"
 #include "contactaddednotifydialog.h"
 
 #include "sha1.h"
@@ -393,10 +394,6 @@ void MSNAccount::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status )
 		}
 */
 
-		setAllContactsStatus( MSNProtocol::protocol()->FLN );
-		// FIXME: give correct disconnect reason
-		disconnected( Manual );
-
 /*
 		m_allowList.clear();
 		m_blockList.clear();
@@ -428,7 +425,24 @@ void MSNAccount::slotNotifySocketClosed()
 	m_notifySocket->deleteLater();
 	m_notifySocket = 0l;
 	myself()->setOnlineStatus( MSNProtocol::protocol()->FLN );
+	setAllContactsStatus( MSNProtocol::protocol()->FLN );
 	disconnected(reason);
+
+	
+	if(reason == Kopete::Account::OtherClient)
+	{ //close all chat sessions,   so new message will arive to the other client.
+		
+		QValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
+		QValueList<Kopete::ChatSession*>::Iterator it;
+		for (it=sessions.begin() ; it != sessions.end() ; it++ )
+		{
+			MSNChatSession *msnCS = dynamic_cast<MSNChatSession *>( *it );
+			if ( msnCS && msnCS->account() == this )
+			{
+				msnCS->slotCloseSession();
+			}
+		}
+	}
 	
 #if 0
 	else if ( state == 0x10 ) // connection died unexpectedly
