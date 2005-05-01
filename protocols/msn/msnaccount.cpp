@@ -424,16 +424,12 @@ void MSNAccount::slotNotifySocketClosed()
 {
 	kdDebug( 14140 ) << k_funcinfo << endl;
 
-	password().setWrong( m_notifySocket->badPassword() );
+	Kopete::Account::DisconnectReason reason=(Kopete::Account::DisconnectReason)(m_notifySocket->disconnectReason());
 	m_notifySocket->deleteLater();
 	m_notifySocket = 0l;
 	myself()->setOnlineStatus( MSNProtocol::protocol()->FLN );
-	if ( password().isWrong() )
-		disconnected( BadPassword );
-	else
-		//FIXME: give correct disconnect reason
-		disconnected( Manual );
-
+	disconnected(reason);
+	
 #if 0
 	else if ( state == 0x10 ) // connection died unexpectedly
 	{

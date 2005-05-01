@@ -52,6 +52,7 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 
 	m_isHotmailAccount=false;
 	m_ping=false;
+	m_disconnectReason=Kopete::Account::Unknown;
 
 	m_account = account;
 	m_password=password;
@@ -76,6 +77,8 @@ void MSNNotifySocket::doneConnect()
 
 void MSNNotifySocket::disconnect()
 {
+	if(	m_disconnectReason==Kopete::Account::Unknown )
+		m_disconnectReason=Kopete::Account::Manual;
 	if( onlineStatus() == Connected )
 		sendCommand( "OUT", QString::null, false );
 
@@ -223,7 +226,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		break;
 	}
 	case 911:
-		m_badPassword = true;
+		m_disconnectReason=Kopete::Account::BadPassword;
 		disconnect();
 		break;
 	case 913:
@@ -294,7 +297,8 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		else
 		{
 			// Successful auth
-			m_badPassword=false;
+			m_disconnectReason=Kopete::Account::Unknown;
+
 			// sync contact list
 			QString serial=m_account->configGroup()->readEntry( "serial" , "0" );
 			if(serial.isEmpty()) //0.9 comatibility
@@ -413,12 +417,11 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "OUT" )
 	{
-		disconnect();
 		if( data.section( ' ', 0, 0 ) == "OTH" )
 		{
-			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information ,
-				i18n( "You have connected from another computer to the MSN server." ) , i18n ("MSN Plugin") );
+			m_disconnectReason=Kopete::Account::OtherClient;
 		}
+		disconnect();
 	}
 	else if( cmd == "CHG" )
 	{
@@ -660,7 +663,7 @@ void MSNNotifySocket::slotAuthJobDone ( KIO::Job *job)
 		QRegExp rx(/*URL=http://memberservices.passport.net/memberservice.srf*/"\\?did=[0-9]*&(t=[0-9A-Za-z!$*]*&p=[0-9A-Za-z!$*]*)\"");
 		rx.search(m_authData);
 
-		m_badPassword=true;  //if this disconnect, that mean the password was bad
+		m_disconnectReason=Kopete::Account::BadPassword;  //if this disconnect, that mean the password was bad
 		sendCommand("USR" , "TWN S " + rx.cap(1));
 	}
 }
@@ -890,9 +893,10 @@ void MSNNotifySocket::slotSendKeepAlive()
 	//we did not received the previous QNG
 	if(m_ping)
 	{
+		m_disconnectReason=Kopete::Account::ConnectionReset;
 		disconnect();
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information,
-			i18n( "The connection with the MSN network has been lost." ) , i18n ("MSN Plugin") );
+		/*KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information,
+		i18n( "The connection with the MSN network has been lost." ) , i18n ("MSN Plugin") );*/
 		return;
 	}
 	else

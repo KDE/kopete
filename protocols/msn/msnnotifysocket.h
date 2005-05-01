@@ -63,7 +63,10 @@ public:
 
 	void sendMail(const QString &email);
 
-	bool badPassword() { return m_badPassword; }
+	/**
+	 * this should return a  Kopete::Account::DisconnectReason value
+	 */
+	int  disconnectReason() { return m_disconnectReason; }
 
 public slots:
 	void slotOpenInbox();
@@ -170,7 +173,7 @@ private:
 
 	bool m_ping;
 
-	bool m_badPassword;
+	int m_disconnectReason;
 };
 
 #endif
