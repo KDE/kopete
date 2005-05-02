@@ -272,7 +272,6 @@ void IRCAccount::slotNickInUseAlert( const QString &nick )
 void IRCAccount::setAltNick( const QString &altNick )
 {
 	configGroup()->writeEntry(QString::fromLatin1( "altNick" ), altNick);
-	configGroup()->sync();
 }
 
 const QString IRCAccount::altNick() const
@@ -284,7 +283,6 @@ void IRCAccount::setAutoShowServerWindow( bool show )
 {
 	autoShowServerWindow = show;
 	configGroup()->writeEntry(QString::fromLatin1( "AutoShowServerWindow" ), autoShowServerWindow);
-	configGroup()->sync();
 }
 
 const QString IRCAccount::networkName() const
@@ -299,7 +297,6 @@ void IRCAccount::setUserName( const QString &userName )
 {
 	m_engine->setUserName(userName);
 	configGroup()->writeEntry(CONFIG_USERNAME, userName);
-	configGroup()->sync();
 }
 
 const QString IRCAccount::userName() const
@@ -311,7 +308,6 @@ void IRCAccount::setRealName( const QString &userName )
 {
 	m_engine->setRealName(userName);
 	configGroup()->writeEntry(CONFIG_REALNAME, userName);
-	configGroup()->sync();
 }
 
 const QString IRCAccount::realName() const
@@ -326,7 +322,6 @@ void IRCAccount::setNetwork( const QString &network )
 	{
 		m_network = net;
 		configGroup()->writeEntry(CONFIG_NETWORKNAME, network);
-		configGroup()->sync();
 		setAccountLabel(network);
 	}
 	else
@@ -343,7 +338,6 @@ void IRCAccount::setNickName( const QString &nick )
 {
 	mNickName = nick;
 	configGroup()->writeEntry(CONFIG_NICKNAME, mNickName);
-	configGroup()->sync();
 
 	if( mySelf() )
 		mySelf()->setNickName( mNickName );
@@ -354,7 +348,6 @@ void IRCAccount::setCodec( QTextCodec *codec )
 {
 	mCodec = codec;
 	configGroup()->writeEntry(CONFIG_CODECMIB, codec->mibEnum());
-	configGroup()->sync();
 
 	if( mCodec )
 		m_engine->setDefaultCodec( mCodec );
@@ -369,14 +362,12 @@ QTextCodec *IRCAccount::codec() const
 void IRCAccount::setDefaultPart( const QString &defaultPart )
 {
 	configGroup()->writeEntry( QString::fromLatin1( "defaultPart" ), defaultPart );
-	configGroup()->sync();
 }
 
 // FIXME: Move this to a dictionnary
 void IRCAccount::setDefaultQuit( const QString &defaultQuit )
 {
 	configGroup()->writeEntry( QString::fromLatin1( "defaultQuit" ), defaultQuit );
-	configGroup()->sync();
 }
 
 // FIXME: Move this to a dictionnary
@@ -405,9 +396,7 @@ void IRCAccount::setCustomCtcpReplies( const QMap< QString, QString > &replies )
 		val.append( QString::fromLatin1("%1=%2").arg( it.key() ).arg( it.data() ) );
 	}
 
-	KConfigGroup *config = configGroup();
-	config->writeEntry( "CustomCtcp", val );
-	config->sync();
+	configGroup()->writeEntry( "CustomCtcp", val );
 }
 
 const QMap< QString, QString > IRCAccount::customCtcpReplies() const
@@ -415,8 +404,7 @@ const QMap< QString, QString > IRCAccount::customCtcpReplies() const
 	QMap< QString, QString > replies;
 	QStringList replyList;
 
-	KConfigGroup *config = configGroup() ;
-	replyList = config->readListEntry( "CustomCtcp" );
+	replyList = configGroup()->readListEntry( "CustomCtcp" );
 
 	for( QStringList::Iterator it = replyList.begin(); it != replyList.end(); ++it )
 		replies[ (*it).section('=', 0, 0 ) ] = (*it).section('=', 1 );
@@ -426,15 +414,12 @@ const QMap< QString, QString > IRCAccount::customCtcpReplies() const
 
 void IRCAccount::setConnectCommands( const QStringList &commands ) const
 {
-	KConfigGroup *config = configGroup() ;
-	config->writeEntry( "ConnectCommands", commands );
-	config->sync();
+	configGroup()->writeEntry( "ConnectCommands", commands );
 }
 
 const QStringList IRCAccount::connectCommands() const
 {
-	KConfigGroup *config =  configGroup() ;
-	return config->readListEntry( "ConnectCommands" );
+	return configGroup()->readListEntry( "ConnectCommands" );
 }
 
 void IRCAccount::setMessageDestinations( int serverNotices, int serverMessages,
@@ -445,7 +430,6 @@ void IRCAccount::setMessageDestinations( int serverNotices, int serverMessages,
 	config->writeEntry( "ServerMessages", serverMessages );
 	config->writeEntry( "InformationReplies", informationReplies );
 	config->writeEntry( "ErrorMessages", errorMessages );
-	config->sync();
 
 	m_serverNotices = (MessageDestination)serverNotices;
 	m_serverMessages = (MessageDestination)serverMessages;
@@ -779,9 +763,10 @@ void IRCAccount::slotJoinChannel()
 	if (!isConnected())
 		return;
 
-	KConfig *config = kapp->config();
-	config->setGroup( QString::fromLatin1("Account_IRCProtocol_") + accountId());
+	KConfigGroup *config =  configGroup();
+
 	QStringList chans = config->readListEntry("Recent Channel list");
+	//kdDebug(14120) << "Recent channel list from config: " << chans << endl;
 
 	KLineEditDlg dlg(
 		i18n("Please enter name of the channel you want to join:"),
@@ -815,7 +800,6 @@ void IRCAccount::slotJoinChannel()
 		if( !chans.isEmpty() )
 		{
 			config->writeEntry( "Recent Channel list", chans );
-			config->sync();
 		}
 	}
 }
