@@ -581,18 +581,28 @@ void MSNP2PDisplatcher::sendFile(const QString& fileN ,unsigned int fileSize, co
 	MKDWORD(binaryContext,8,fileSize);
 	MKDWORD(binaryContext,16,1);    //we don't have preview.
 
-	QTextCodec *codec = QTextCodec::codecForName("ISO-10646-UCS-2");
+	/*QTextCodec *codec = QTextCodec::codecForName("ISO-10646-UCS-2");
 	if(!codec)
 		return; //abort();
 	int taille;
-	QCString utf16FileName=codec->fromUnicode(fileN.right( fileN.length() - fileN.findRev( '/' ) - 1 ) , taille );
+	QCString utf16FileName=codec->fromUnicode(fileN.right( fileN.length() - fileN.findRev( '/' ) - 1 ) , taille );*/
+	QByteArray utf16FileName;
+	QDataStream stream(utf16FileName, IO_WriteOnly);
+	stream.setByteOrder(QDataStream::LittleEndian);
+	stream << fileN.right( fileN.length() - fileN.findRev( '/' ) - 1 );
 
-	
+	unsigned int taille = utf16FileName.size();
 	if(taille > 574-19-16)
 		taille= 574-19-16;
-	for(int f=0; f<taille; f++)
+	
+
+	taille-=4; //to skip the string size
+	kdDebug() << k_funcinfo << taille << endl;
+
+	for(unsigned int f=0; f<taille; f++)
 	{
-		binaryContext[19+f]=utf16FileName[f];
+		//+4 to skip the string length
+		binaryContext[20+f]=utf16FileName[f+4];
 	}
 
 	binaryContext[570]=binaryContext[571]=binaryContext[572]=binaryContext[573]=0xFF;
