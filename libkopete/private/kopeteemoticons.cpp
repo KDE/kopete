@@ -120,6 +120,7 @@ QValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseM
 	size_t pos;
 
 	bool inHTMLTag = false;
+	bool inHTMLLink = false;
 	bool inHTMLEntity = false;
 	QString needle; // search for this
 	for ( pos = 0; pos < message.length(); pos++ )
@@ -132,6 +133,11 @@ QValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseM
 			{
 				if ( c == '<' ) { // If not check if are going into one
 					inHTMLTag = true; // If we are, change the state to inHTML
+					if ( message[ pos + 1 ] == 'a' )
+					{
+						inHTMLLink = true; // don't put smileys in urls
+					}
+					p = c;
 					continue;
 				}
 			}
@@ -139,7 +145,12 @@ QValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseM
 			{ 
 				if ( c == '>' ) { // Check if it ends
 					inHTMLTag = false;	 // If so, change the state
+					if ( p == 'a' )
+					{
+						inHTMLLink = false;
+					}
 				}
+				p = c;
 				continue;
 			}
 		}
@@ -153,6 +164,12 @@ QValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseM
 					inHTMLEntity = true;
 				}
 			}
+		}
+
+		if ( inHTMLLink ) // i can't think of any situation where a link adress might need emoticons
+		{
+			p = c;
+			continue;
 		}
 
 		if ( mode & StrictParse )
