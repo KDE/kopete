@@ -68,7 +68,7 @@ IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, K
 
 IRCContact::~IRCContact()
 {
-//	kdDebug(14120) << k_funcinfo << mNickName << endl;
+//	kdDebug(14120) << k_funcinfo << m_nickName << endl;
 	if (metaContact() && metaContact()->isTemporary() && !isChatting(m_chatSession))
 		metaContact()->deleteLater();
 }
@@ -352,7 +352,7 @@ KopeteView *IRCContact::view()
 		return m_chatSession->view(false);
 	return 0L;
 }
-void IRCContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData)
+void IRCContact::serialize(QMap<QString, QString> & /*serializedData*/, QMap<QString, QString> &addressBookData)
 {
 	// write the
 	addressBookData[ protocol()->addressBookIndexField() ] = ( contactId() + QChar(0xE120) + account()->accountId() );
