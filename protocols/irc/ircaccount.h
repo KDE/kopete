@@ -118,7 +118,8 @@ public:
 		Ignore = 5
 	};
 
-	IRCAccount(IRCProtocol *p, const QString &accountid, const QString &autoConnect = QString::null);
+	IRCAccount(IRCProtocol *p, const QString &accountid, const QString &autoConnect = QString::null,
+			const QString& networkName = QString::null, const QString &nickName = QString::null);
 	~IRCAccount();
 
 	void setNickName( const QString & );
