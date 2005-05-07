@@ -771,9 +771,7 @@ void IRCAccount::slotJoinChannel()
 	if (!isConnected())
 		return;
 
-	KConfigGroup *config =  configGroup();
-
-	QStringList chans = config->readListEntry("Recent Channel list");
+	QStringList chans = configGroup()->readListEntry( "Recent Channel list" );
 	//kdDebug(14120) << "Recent channel list from config: " << chans << endl;
 
 	KLineEditDlg dlg(
@@ -782,33 +780,37 @@ void IRCAccount::slotJoinChannel()
 		Kopete::UI::Global::mainWidget()
 	);
 
-	if (!chans.isEmpty())
-	{
-		dlg.lineEdit()->setCompletedItems( chans );
-		dlg.lineEdit()->setCompletionMode( KGlobalSettings::CompletionPopupAuto );
-	}
+	KCompletion comp;
+	comp.insertItems( chans );
 
-	if (dlg.exec() == QDialog::Accepted)
+	dlg.lineEdit()->setCompletionObject( &comp );
+	dlg.lineEdit()->setCompletionMode( KGlobalSettings::CompletionPopup );
+
+	while( true )
 	{
+		if( dlg.exec() != QDialog::Accepted )
+			break;
+
 		QString chan = dlg.text();
-		chans = dlg.lineEdit()->completionBox()->items();
-		chans.append( chan );
+		if( chan.isNull() )
+			break;
 
-		if( !chan.isNull() )
+		if( KIRC::Entity::isChannel( chan ) )
 		{
-			if( KIRC::Entity::isChannel( chan ) )
-				contactManager()->findChannel( chan )->startChat();
-			else
-				KMessageBox::error( Kopete::UI::Global::mainWidget(),
-					i18n("\"%1\" is an invalid channel. Channels must start with '#', '!', '+', or '&'.")
-					.arg(chan), i18n("IRC Plugin")
-				);
+			contactManager()->findChannel( chan )->startChat();
+
+			// push the joined channel to first in list
+			chans.remove( chan );
+			chans.prepend( chan );
+
+			configGroup()->writeEntry( "Recent Channel list", chans );
+			break;
 		}
 
-		if( !chans.isEmpty() )
-		{
-			config->writeEntry( "Recent Channel list", chans );
-		}
+		KMessageBox::error( Kopete::UI::Global::mainWidget(),
+			i18n("\"%1\" is an invalid channel. Channels must start with '#', '!', '+', or '&'.").arg(chan),
+			i18n("IRC Plugin")
+			);
 	}
 }
 
