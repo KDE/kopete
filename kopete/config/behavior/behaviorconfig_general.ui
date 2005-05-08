@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>488</width>
-            <height>380</height>
+            <width>493</width>
+            <height>449</height>
         </rect>
     </property>
     <property name="caption">
@@ -56,7 +56,7 @@
                 <cstring>notifyGroupBox</cstring>
             </property>
             <property name="title">
-                <string>&amp;Notifications</string>
+                <string>Notifications</string>
             </property>
             <vbox>
                 <property name="name">
@@ -75,7 +75,7 @@
                         <cstring>mTrayflashNotifyChk</cstring>
                     </property>
                     <property name="text">
-                        <string>Flash the system &amp;tray on new messages</string>
+                        <string>&amp;Flash the system tray on new messages</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
@@ -127,6 +127,17 @@
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>Automatically connect all your accounts when Kopete starts</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mMouseNavigation</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Use mouse &amp;navigation instead of scroll-bars</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>This navigation scheme is designed to remove the vertical scrollbar. Instead of dragging the scrollbar you just move your mouse on the list vertically: as you move your mouse, the list will move in the opposite direction and you can reach your target contact. Every contact list item collides with the mouse cursor at one certain point.</string>
                     </property>
                 </widget>
             </vbox>

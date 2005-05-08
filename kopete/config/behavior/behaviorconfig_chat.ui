@@ -87,7 +87,7 @@
                 <cstring>chatWindowGroup</cstring>
             </property>
             <property name="title">
-                <string>Chat Window &amp;Grouping Policy</string>
+                <string>Chat Window Grouping Policy</string>
             </property>
             <vbox>
                 <property name="name">

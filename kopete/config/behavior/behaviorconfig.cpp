@@ -84,6 +84,8 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 			this, SLOT(slotSettingsChanged(bool)));
 	connect(mPrfsGeneral->mAutoConnect, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsGeneral->mMouseNavigation, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
 
 
 	// "Chat" TAB ===============================================================
@@ -132,6 +134,7 @@ void BehaviorConfig::save()
 	p->setBalloonNotify(mPrfsGeneral->mBalloonNotifyChk->isChecked());
 	p->setSoundIfAway(mPrfsGeneral->mSoundIfAwayChk->isChecked());
 	p->setAutoConnect(mPrfsGeneral->mAutoConnect->isChecked());
+	p->setContactListMouseNavigation(mPrfsGeneral->mMouseNavigation->isChecked());
 	config->setGroup("General");
 	config->writeEntry("EventIfActive", mPrfsGeneral->mEventIfActive->isChecked());
 
@@ -176,6 +179,7 @@ void BehaviorConfig::load()
 	mPrfsGeneral->mBalloonNotifyChk->setChecked ( p->balloonNotify() );
 	mPrfsGeneral->mSoundIfAwayChk->setChecked( p->soundIfAway() );
 	mPrfsGeneral->mAutoConnect->setChecked( p->autoConnect() );
+	mPrfsGeneral->mMouseNavigation->setChecked( p->contactListMouseNavigation() );
 	slotShowTrayChanged( mPrfsGeneral->mShowTrayChk->isChecked() );
 	config->setGroup("General");
 	mPrfsGeneral->mEventIfActive->setChecked(config->readBoolEntry("EventIfActive", true));

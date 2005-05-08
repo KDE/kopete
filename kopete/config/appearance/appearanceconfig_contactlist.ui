@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>480</width>
-            <height>638</height>
+            <height>715</height>
         </rect>
     </property>
     <property name="caption">
@@ -24,7 +24,7 @@
                 <cstring>groupBox1</cstring>
             </property>
             <property name="title">
-                <string>La&amp;yout</string>
+                <string>Layout</string>
             </property>
             <vbox>
                 <property name="name">
@@ -99,7 +99,7 @@
                 <cstring>mDisplayMode</cstring>
             </property>
             <property name="title">
-                <string>Contact Display &amp;Mode</string>
+                <string>Contact Display Mode</string>
             </property>
             <vbox>
                 <property name="name">
@@ -147,7 +147,7 @@
                 <cstring>groupBox2</cstring>
             </property>
             <property name="title">
-                <string>Contact List &amp;Animations</string>
+                <string>Contact List Animations</string>
             </property>
             <vbox>
                 <property name="name">
@@ -175,17 +175,6 @@
                     </property>
                     <property name="text">
                         <string>Fo&amp;ld in / out contacts as they appear / disappear</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>mMouseNavigation</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Use mouse &amp;navigation instead of scroll-bars</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>This navigation scheme is designed to remove the vertical scrollbar. Instead of dragging the scrollbar you just move your mouse on the list vertically: as you move your mouse, the list will move in the opposite direction and you can reach your target contact. Every contact list item collides with the mouse cursor at one certain point.</string>
                     </property>
                 </widget>
             </vbox>

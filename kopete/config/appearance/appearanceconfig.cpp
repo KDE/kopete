@@ -254,8 +254,6 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 		this, SLOT(emitChanged()));
 	connect(mPrfsContactList->mFoldVisibility, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
-	connect(mPrfsContactList->mMouseNavigation, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()));
 	connect(mPrfsContactList->mAutoHide, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
 	connect(mPrfsContactList->mAutoHideVScroll, SIGNAL(toggled(bool)),
@@ -349,7 +347,6 @@ void AppearanceConfig::save()
 	p->setContactListAnimation(mPrfsContactList->mAnimateChanges->isChecked());
 	p->setContactListFading(mPrfsContactList->mFadeVisibility->isChecked());
 	p->setContactListFolding(mPrfsContactList->mFoldVisibility->isChecked());
-	p->setContactListMouseNavigation(mPrfsContactList->mMouseNavigation->isChecked());
 
 	// "Colors & Fonts" TAB =====================================================
 	p->setHighlightBackground(mPrfsColors->backgroundColor->color());
@@ -409,7 +406,6 @@ void AppearanceConfig::load()
 	mPrfsContactList->mFadeVisibility->setChecked( false );
 #endif
 	mPrfsContactList->mFoldVisibility->setChecked( p->contactListFolding() );
-	mPrfsContactList->mMouseNavigation->setChecked( p->contactListMouseNavigation() );
 	mPrfsContactList->mAutoHide->setChecked( p->contactListAutoHide() );
 	mPrfsContactList->mAutoHideVScroll->setChecked( p->contactListAutoHideVScroll() );
 	mPrfsContactList->mAutoHideTimeout->setValue( p->contactListAutoHideTimeout() );
