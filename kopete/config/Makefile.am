@@ -1,2 +1,2 @@
-SUBDIRS= plugins accounts behavior appearance 
+SUBDIRS = plugins accounts behavior appearance avdevice
 
