@@ -501,6 +501,11 @@ QString Account::pluginData( Plugin* /*plugin*/, const QString &key ) const
 	return configGroup()->readEntry(key);
 }
 
+void Account::setAway(bool away, const QString& reason)
+{
+	setOnlineStatus( OnlineStatusManager::self()->onlineStatus(protocol() , away ? OnlineStatusManager::Away : OnlineStatusManager::Online)  , reason );
+}
+
 void Account::virtual_hook( uint /*id*/, void* /*data*/)
 {
 }

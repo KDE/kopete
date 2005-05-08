@@ -446,7 +446,7 @@ public slots:
 	 *
 	 * @todo change ; make use of setOnlineStatus
 	 */
-	virtual void setAway( bool away, const QString &reason = QString::null ) = 0;
+	virtual void setAway( bool away, const QString &reason = QString::null );
 
 	/**
 	 * Reimplement this function to set the online status
