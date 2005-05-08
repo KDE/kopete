@@ -1,0 +1,15 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=cinecamera
+Type=Service
+ServiceTypes=KCModule
+
+X-KDE-ModuleType=Library
+X-KDE-Library=kopete_avdeviceconfig
+X-KDE-FactoryName=KopeteAVDeviceConfigFactory
+X-KDE-ParentApp=kopete
+X-KDE-ParentComponents=kopete
+
+Name=Devices
+Comment=Here You Can Alter Kopete's Video And Audio Devices' Settings
+DocPath=kopete/configure-dialog.html#configuring-avdevice
