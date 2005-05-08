@@ -133,22 +133,22 @@ QValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseM
 			{
 				if ( c == '<' ) { // If not check if are going into one
 					inHTMLTag = true; // If we are, change the state to inHTML
-					if ( message[ pos + 1 ] == 'a' )
-					{
-						inHTMLLink = true; // don't put smileys in urls
-					}
 					p = c;
 					continue;
 				}
 			}
 			else // We are already in a HTML tag
-			{ 
+			{
 				if ( c == '>' ) { // Check if it ends
 					inHTMLTag = false;	 // If so, change the state
 					if ( p == 'a' )
 					{
 						inHTMLLink = false;
 					}
+				}
+				else if ( c == 'a' && p == '<' ) // check if we just entered an achor tag
+				{
+					inHTMLLink = true; // don't put smileys in urls
 				}
 				p = c;
 				continue;
