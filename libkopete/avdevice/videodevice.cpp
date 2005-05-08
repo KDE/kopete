@@ -9,6 +9,7 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+#include <assert.h>
 #include <iostream>
 #include <ostream>
 #include <sstream>
@@ -77,6 +78,8 @@ int VideoDevice::openDevice()
 		fprintf (stderr, "Cannot open '%s': %d, %s\n", path.c_str(), errno, strerror (errno));
 		exit (EXIT_FAILURE);
 	}
+
+	return 0;
 }
 
 
@@ -96,7 +99,7 @@ int VideoDevice::xioctl(int request, void *arg)
 /*!
     \fn VideoDevice::processImage(const void *p)
  */
-void VideoDevice::processImage(const void *p)
+void VideoDevice::processImage(const void * /* p */)
 {
     /// @todo implement me
 }
@@ -559,7 +562,7 @@ int Kopete::AV::VideoDevice::selectInput(int input)
 /*!
     \fn Kopete::AV::VideoDevice::setResolution(int width, int height)
  */
-int Kopete::AV::VideoDevice::setResolution(int width, int height)
+int Kopete::AV::VideoDevice::setResolution(int /* width */, int /* height */)
 {
     /// @todo implement me
 	return (EXIT_SUCCESS);
