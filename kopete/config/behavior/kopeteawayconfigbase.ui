@@ -113,6 +113,9 @@
                     <property name="name">
                         <cstring>TextLabel2</cstring>
                     </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
                     <property name="text">
                         <string>Become away after</string>
                     </property>
@@ -120,6 +123,9 @@
                 <widget class="QSpinBox" row="1" column="1">
                     <property name="name">
                         <cstring>mAutoAwayTimeout</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
                     </property>
                     <property name="maxValue">
                         <number>999</number>
@@ -131,6 +137,9 @@
                 <widget class="QLabel" row="1" column="2">
                     <property name="name">
                         <cstring>TextLabel3</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
                     </property>
                     <property name="text">
                         <string>minutes of user inactivity</string>
@@ -156,6 +165,9 @@
                 <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="4">
                     <property name="name">
                         <cstring>mGoAvailable</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
                     </property>
                     <property name="text">
                         <string>Become available when detecting activity again</string>
