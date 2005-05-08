@@ -42,8 +42,6 @@ class MSNAccount : public Kopete::PasswordedAccount
 public:
 	MSNAccount( MSNProtocol *parent, const QString &accountID, const char *name = 0L );
 
-	virtual void setAway( bool away, const QString & );
-
 	/*
 	 * return the menu for this account
 	 */
