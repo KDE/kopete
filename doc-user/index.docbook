@@ -812,7 +812,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <qandaentry>
 <question><para>Is it possible to customize the icons I see in &kopete;?</para></question>
 <answer><para>You can switch between different emoticons using the Emoticons tab of the Appearance page of the Configure &kopete; dialog.</para>
-<para>To install new emoticons, first look at <ulink url="ttp://www.kde-look.org/content/search.php">KDE-Look.org</ulink>, where there are a lot of additional emoticon sets to download:</para>
+<para>To install new emoticons, first look at <ulink url="http://www.kde-look.org/content/search.php">KDE-Look.org</ulink>, where there are a lot of additional emoticon sets to download:</para>
 
 <para>The emoticons are easy to install - you just place a directory containing
 the icon files along with an XML file describing the mapping from text to picture in
