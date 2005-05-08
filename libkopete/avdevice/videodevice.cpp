@@ -27,7 +27,7 @@
 #include <asm/types.h>
 #include <linux/fs.h>
 #include <linux/kernel.h>
-#include <linux/videodev2.h>
+#include <linux/videodev.h>
 
 
 #include "videodevice.h"
@@ -118,6 +118,7 @@ int VideoDevice::getFrame()
 void VideoDevice::initDevice()
 {
     /// @todo implement me
+#ifdef HAVE_V4L2
 	struct v4l2_capability cap;
 	struct v4l2_cropcap cropcap;
 	struct v4l2_crop crop;
@@ -202,6 +203,7 @@ void VideoDevice::initDevice()
 		case IO_METHOD_MMAP:    initMmap ();                         break;
 		case IO_METHOD_USERPTR: initUserptr (fmt.fmt.pix.sizeimage); break;
 	}
+#endif
 }
 
 
@@ -259,6 +261,7 @@ void VideoDevice::initRead(unsigned int buffer_size)
 void VideoDevice::initMmap()
 {
     /// @todo implement me
+#ifdef HAVE_V4L2
 	struct v4l2_requestbuffers req;
 
 	CLEAR (req);
@@ -313,6 +316,7 @@ void VideoDevice::initMmap()
 		if (MAP_FAILED == buffers[n_buffers].start)
 		errnoExit ("mmap");
 	}
+#endif
 }
 
 
@@ -322,6 +326,7 @@ void VideoDevice::initMmap()
 void VideoDevice::initUserptr(unsigned int buffer_size)
 {
     /// @todo implement me
+#ifdef HAVE_V4L2
 	struct v4l2_requestbuffers req;
 
 	CLEAR (req);
@@ -362,6 +367,7 @@ void VideoDevice::initUserptr(unsigned int buffer_size)
 			exit (EXIT_FAILURE);
 		}
 	}
+#endif
 }
 
 
@@ -385,6 +391,7 @@ void VideoDevice::setDevice(int device)
 void VideoDevice::startCapturing()
 {
     /// @todo implement me
+#ifdef HAVE_V4L2
 	unsigned int i;
 	enum v4l2_buf_type type;
 
@@ -424,6 +431,7 @@ void VideoDevice::startCapturing()
 				errnoExit ("VIDIOC_STREAMON");
 			break;
 	}
+#endif
 }
 
 
@@ -433,6 +441,7 @@ void VideoDevice::startCapturing()
 void VideoDevice::stopCapturing()
 {
     /// @todo implement me
+#ifdef HAVE_V4L2
 	enum v4l2_buf_type type;
 
 	switch (io_type)
@@ -446,6 +455,7 @@ void VideoDevice::stopCapturing()
 				errnoExit ("VIDIOC_STREAMOFF");
 			break;
 	}
+#endif
 }
 
 
@@ -455,6 +465,7 @@ void VideoDevice::stopCapturing()
 int VideoDevice::readFrame()
 {
     /// @todo implement me
+#ifdef HAVE_V4L2
 	struct v4l2_buffer buf;
 	unsigned int i;
 
@@ -518,6 +529,7 @@ int VideoDevice::readFrame()
 				errnoExit ("VIDIOC_QBUF");
 			break;
 	}
+#endif
 	return 1;
 }
 
@@ -533,11 +545,14 @@ int VideoDevice::readFrame()
 int Kopete::AV::VideoDevice::selectInput(int input)
 {
     /// @todo implement me
+#ifdef HAVE_V4L2
 	if (-1 == ioctl (descriptor, VIDIOC_S_INPUT, &input))
 	{
 		perror ("VIDIOC_S_INPUT");
 	return (EXIT_FAILURE);
 	}
+	return (EXIT_SUCCESS);
+#endif
 }
 
 
@@ -547,6 +562,7 @@ int Kopete::AV::VideoDevice::selectInput(int input)
 int Kopete::AV::VideoDevice::setResolution(int width, int height)
 {
     /// @todo implement me
+	return (EXIT_SUCCESS);
 }
 
 
@@ -556,4 +572,5 @@ int Kopete::AV::VideoDevice::setResolution(int width, int height)
 int Kopete::AV::VideoDevice::scanDevices()
 {
     /// @todo implement me
+	return (EXIT_SUCCESS);
 }
