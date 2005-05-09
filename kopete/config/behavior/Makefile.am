@@ -15,4 +15,4 @@ service_DATA = kopete_avdeviceconfig.desktop
 servicedir = $(kde_servicesdir)
 
 # vim: set noet:
-noinst_HEADERS = avdeviceconfig_videoconfig.h
+
