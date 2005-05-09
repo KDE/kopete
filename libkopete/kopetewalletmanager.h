@@ -21,6 +21,8 @@
 
 #include <kdemacros.h>
 
+#include "kopete_export.h"
+
 namespace KWallet { class Wallet; }
 
 namespace Kopete
@@ -32,7 +34,7 @@ namespace Kopete
  * The Kopete::WalletManager class is a singleton, which looks after Kopete's
  * KWallet connection.
  */
-class WalletManager : public QObject
+class KOPETE_EXPORT WalletManager : public QObject
 {
 	Q_OBJECT
 
