@@ -14,6 +14,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(kopete_srcdir)/kopete/config/plugins \
 	-I$(kopete_builddir)/kopete/conf \
 	-I$(kopete_srcdir)/libkopete/private \
+	-I$(kopete_srcdir)/libkopete/avdevice \
 	-I$(kopete_srcdir) \
 	$(all_includes)
 KDE_ICON = AUTO
