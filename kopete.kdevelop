@@ -12,20 +12,20 @@
     </keywords>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description/>
+    <description></description>
     <ignoreparts>
       <part>kdevabbrev</part>
-      <part>kdevbookmarks</part>
-      <part>kdevdistpart</part>
-      <part>kdevvalgrind</part>
       <part>kdevdebugger</part>
+      <part>kdevvalgrind</part>
       <part>kdevctags2</part>
+      <part>kdevbookmarks</part>
       <part>kdevsnippet</part>
       <part>kdevquickopen</part>
       <part>kdevfileselector</part>
+      <part>kdevdistpart</part>
     </ignoreparts>
     <secondaryLanguages/>
-    <versioncontrol>kdevcvsservice</versioncontrol>
+    <versioncontrol>kdevsubversion</versioncontrol>
   </general>
   <kdevfileview>
     <groups>
@@ -135,7 +135,7 @@
     </make>
     <general>
       <useconfiguration>default</useconfiguration>
-      <activetarget>protocols/yahoo/ui/libkopeteyahooui.la</activetarget>
+      <activetarget>kopete/config/avdevice/kcm_kopete_avdeviceconfig.la</activetarget>
     </general>
     <run>
       <mainprogram>kopete/kopete</mainprogram>
@@ -209,11 +209,9 @@
       <automaticHeaderCompletion>true</automaticHeaderCompletion>
       <headerCompletionDelay>250</headerCompletionDelay>
     </codecompletion>
-    <references>
-      <pcs>KDElibs</pcs>
-    </references>
+    <references/>
     <creategettersetter>
-      <prefixGet/>
+      <prefixGet></prefixGet>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>
