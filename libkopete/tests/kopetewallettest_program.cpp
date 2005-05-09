@@ -27,7 +27,7 @@
 #include <kwallet.h>
 
 #include "kopetewalletmanager.h"
-#include "kopetewallettest.h"
+#include "kopetewallettest_program.h"
 
 static QTextStream _out( stdout, IO_WriteOnly );
 
@@ -93,6 +93,6 @@ int main( int argc, char *argv[] )
 	return qApp->exec();
 }
 
-#include "kopetewallettest.moc"
+#include "kopetewallettest_program.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

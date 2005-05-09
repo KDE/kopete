@@ -1,28 +1,35 @@
-AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_ASCII_CAST \
+AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_ASCII_CAST -DQT_NO_COMPAT \
 	$(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private -I$(top_srcdir)/kopete/libkopete/ui $(all_includes)
-
-LDADD = $(LIB_KIO)
-
 METASOURCES = AUTO
 
-check_PROGRAMS = kopeteemoticontest kopetewallettest kopetepasswordtest kopetelinktest kopetepropertiestest
+check_LTLIBRARIES = kunittest_kopetelinktest.la kunittest_kopetepropertiestest.la kunittest_kopeteemoticontest.la
 
-kopeteemoticontest_SOURCES = kopeteemoticontest.cpp
-kopeteemoticontest_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH)
-kopeteemoticontest_LDADD = ../libkopete.la
+check_PROGRAMS = kopetewallettest_program kopetepasswordtest_program
 
-kopetewallettest_SOURCES = kopetewallettest.cpp
-kopetewallettest_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH)
-kopetewallettest_LDADD = ../libkopete.la
+kunittest_kopetelinktest_la_SOURCES = kopetelinktest.cpp
+kunittest_kopetelinktest_la_LIBADD = -lkunittest ../libkopete.la
+kunittest_kopetelinktest_la_LDFLAGS = -module $(KDE_CHECK_PLUGIN) $(all_libraries)
 
-kopetepasswordtest_SOURCES = kopetepasswordtest.cpp
-kopetepasswordtest_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH)
-kopetepasswordtest_LDADD = ../libkopete.la
+kunittest_kopetepropertiestest_la_SOURCES = kopetepropertiestest.cpp ../kopeteproperties.cpp
+kunittest_kopetepropertiestest_la_LIBADD = -lkunittest ../libkopete.la
+kunittest_kopetepropertiestest_la_LDFLAGS = -module $(KDE_CHECK_PLUGIN) $(all_libraries)
 
-kopetelinktest_SOURCES = kopetelinktest.cpp
-kopetelinktest_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH)
-kopetelinktest_LDADD = ../libkopete.la
+kunittest_kopeteemoticontest_la_SOURCES = kopeteemoticontest.cpp
+kunittest_kopeteemoticontest_la_LIBADD = -lkunittest ../libkopete.la
+kunittest_kopeteemoticontest_la_LDFLAGS = -module $(KDE_CHECK_PLUGIN) $(all_libraries)
 
-kopetepropertiestest_SOURCES = kopetepropertiestest.cpp
-kopetepropertiestest_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH)
-kopetepropertiestest_LDADD = ../libkopete.la
+kopetewallettest_program_SOURCES = kopetewallettest_program.cpp
+kopetewallettest_program_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH)
+kopetewallettest_program_LDADD = ../libkopete.la
+
+kopetepasswordtest_program_SOURCES = kopetepasswordtest_program.cpp
+kopetepasswordtest_program_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH)
+kopetepasswordtest_program_LDADD = ../libkopete.la
+
+noinst_HEADERS = kopetelinktest.h kopetepropertiestest.h kopeteemoticontest.h
+
+check-local:
+	kunittestmodrunner
+guicheck:
+	kunittestmod $(PWD)
+

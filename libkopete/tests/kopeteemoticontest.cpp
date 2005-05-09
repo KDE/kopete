@@ -1,9 +1,10 @@
 /*
-    Tests for the emoticon engine
+    Tests for Kopete::Message::parseEmoticons
 
-    Copyright (c) 2003      by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
+    Copyright (c) 2005      by Duncan Mac-Vicar       <duncan@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -15,19 +16,18 @@
     *************************************************************************
 */
 
-#include <qtextstream.h>
-
-#include <kaboutdata.h>
-#include <kapplication.h>
-#include <kcmdlineargs.h>
-#include <kdebug.h>
+#include <qstring.h>
 #include <kglobal.h>
 #include <kstandarddirs.h>
 
+#include <kunittest/module.h>
+#include "kopeteemoticontest.h"
 #include "kopeteemoticons.h"
-#include "kopeteprefs.h"
 
-static QTextStream _out( stdout, IO_WriteOnly );
+using namespace KUnitTest;
+
+KUNITTEST_MODULE( kunittest_kopeteemoticontest, "KopeteSuite");
+KUNITTEST_MODULE_REGISTER_TESTER( KopeteEmoticonTest );
 
 /*
   There are three sets of tests, the Kopete 0.7 baseline with tests that were
@@ -44,15 +44,15 @@ static QTextStream _out( stdout, IO_WriteOnly );
   A set should end with an entry containing at least one null pointer.
 */
 
-typedef const char * TestSet[][ 2 ];
+typedef const char * EmoticonTestSet[][ 2 ];
 
 
-static TestSet kopete07Baseline =
+static EmoticonTestSet kopete07Baseline =
 {
 	{ NULL, NULL }
 };
 
-static TestSet knownGood =
+static EmoticonTestSet knownGood =
 {
 	{ ":):)", "<img align=\"center\" width=\"20\" height=\"20\" src=\"smile.png\" title=\":)\"/>"
 			  "<img align=\"center\" width=\"20\" height=\"20\" src=\"smile.png\" title=\":)\"/>" },
@@ -63,7 +63,7 @@ static TestSet knownGood =
 	{ NULL, NULL }
 };
 
-static TestSet knownBroken =
+static EmoticonTestSet knownBroken =
 {
 	{ ":))", ":))" },
 	{ "In a sentence:practical example", "In a sentence:practical example" },
@@ -80,53 +80,36 @@ static TestSet knownBroken =
 	{ NULL, NULL }
 };
 
-void runTests( QString description, TestSet tests )
+void KopeteEmoticonTest::allTests()
 {
-	// Detect the image path by copying some code from kopeteemoticons.cpp
-	// Use the KMess-Cartoon theme because it has a smiley for the troublesome ':/' pattern, which
-	// also exists in http:// URIs. (Default doesn't have such a smiley, making it useless for
-	// the test.)
+	testKnownGood();
+	testKnownBroken();
+}
+
+void KopeteEmoticonTest::testKnownBroken()
+{
 	QString path = KGlobal::dirs()->findResource( "emoticons", "KMess-Cartoon/smile.png" ).replace( "smile.png", QString::null );
-
-	_out << endl;
-	_out << "* Running test set '" << description << "'" << endl;
-
 	uint i = 0;
-	while ( tests[ i ][ 0 ] && tests[ i ][ 1 ] )
+	while ( knownBroken[ i ][ 0 ] && knownBroken[ i ][ 1 ] )
 	{
-		QString result = Kopete::Emoticons::parseEmoticons( tests[ i ][ 0 ] ).replace( path, QString::null );
-
-		if ( result == tests[ i ][ 1 ] )
-		{
-			_out << "  - Succeeded test for '" << tests[ i ][ 0 ] << "'" << endl;
-		}
-		else
-		{
-			_out << "  - FAILED test for '" << tests[ i ][ 0 ] << "'" << endl;
-			_out << "    Expected output: '" << tests[ i ][ 1 ] << "'" << endl;
-			_out << "    Real output:     '" << result << "'" << endl;
-		}
-
+		QString result = Kopete::Emoticons::parseEmoticons( knownBroken[ i ][ 0 ] ).replace( path, QString::null );	
+		XFAIL(result, QString::fromLatin1(knownBroken[ i ][ 1 ]));
+		i++;
+	}
+}
+void KopeteEmoticonTest::testKnownGood()
+{
+	QString path = KGlobal::dirs()->findResource( "emoticons", "KMess-Cartoon/smile.png" ).replace( "smile.png", QString::null );
+	uint i = 0;
+	while ( knownGood[ i ][ 0 ] && knownGood[ i ][ 1 ] )
+	{
+		QString result = Kopete::Emoticons::parseEmoticons( knownGood[ i ][ 0 ] ).replace( path, QString::null );	
+		CHECK(result, QString::fromLatin1(knownGood[ i ][ 1 ]));
 		i++;
 	}
 }
 
-int main( int argc, char *argv[] )
-{
-	KAboutData aboutData( "kopeteemoticontest", "kopeteemoticontest", "version" );
-	KCmdLineArgs::init( argc, argv, &aboutData );
-	KApplication app( "kopeteemoticontest" );
 
-	// Set prefs (but don't save them :)
-	KopetePrefs::prefs()->setUseEmoticons( true );
-	KopetePrefs::prefs()->setIconTheme( "KMess-Cartoon" );
 
-	runTests( "Baseline of working emoticons in Kopete 0.7", kopete07Baseline );
-	runTests( "Known working tests", knownGood );
-	runTests( "Known broken tests", knownBroken );
 
-	return 0;
-}
-
-// vim: set noet ts=4 sts=4 sw=4:
-
+ 

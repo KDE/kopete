@@ -1,8 +1,10 @@
 /*
-    Tests for the Kopete properties classes
+    Tests for Kopete Properties
 
     Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2005      by Duncan Mac-Vicar       <duncan@kde.org>
+
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -14,14 +16,24 @@
     *************************************************************************
 */
 
+#include <kunittest/module.h>
+
 #include "kopeteproperties.h"
 
+#include <qstring.h>
 #include <qtextstream.h>
 
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kglobal.h>
 #include <kstandarddirs.h>
+
+#include "kopetepropertiestest.h"
+
+using namespace KUnitTest;
+
+KUNITTEST_MODULE( kunittest_kopetepropertiestest, "KopeteSuite");
+KUNITTEST_MODULE_REGISTER_TESTER( KopetePropertiesTest );
 
 using namespace Kopete::Properties;
 
@@ -35,10 +47,13 @@ public:
 	const char *name() const { return "foo"; }
 } fooProperty;
 
-int main( int argc, char *argv[] )
+void KopetePropertiesTest::allTests()
 {
 	PropertyHost myPropertyHost;
-	Q_ASSERT( myPropertyHost.property(fooProperty).isNull() );
+	CHECK( myPropertyHost.property(fooProperty).isNull(), true);
 	myPropertyHost.setProperty( fooProperty, QString::fromLatin1("Foo!") );
-	Q_ASSERT( myPropertyHost.property(fooProperty) == QString::fromLatin1("Foo!") );
+	CHECK( myPropertyHost.property(fooProperty), QString::fromLatin1("Foo!") );
 }
+
+	
+ 

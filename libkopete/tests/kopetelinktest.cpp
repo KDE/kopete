@@ -2,8 +2,9 @@
     Tests for Kopete::Message::parseLinks
 
     Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
+    Copyright (c) 2005      by Duncan Mac-Vicar       <duncan@kde.org>
 
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -15,20 +16,19 @@
     *************************************************************************
 */
 
-#include <qtextstream.h>
+#include <qstring.h>
 
-#include <kaboutdata.h>
-#include <kapplication.h>
-#include <kcmdlineargs.h>
-#include <kdebug.h>
-#include <kglobal.h>
-#include <kstandarddirs.h>
+#include <kunittest/module.h>
+#include "kopetelinktest.h"
 
 #define private public
 #include "kopetemessage.h"
 #undef private
 
-static QTextStream _out( stdout, IO_WriteOnly );
+using namespace KUnitTest;
+
+KUNITTEST_MODULE( kunittest_kopetelinktest, "KopeteSuite");
+KUNITTEST_MODULE_REGISTER_TESTER( KopeteLinkTest );
 
 /*
   There are four sets of tests: for each of plain text and html, we have those
@@ -41,10 +41,9 @@ static QTextStream _out( stdout, IO_WriteOnly );
   A set should end with an entry containing at least one null pointer.
 */
 
-typedef const char * TestSet[][ 2 ];
+typedef const char * LinkTestSet[][ 2 ];
 
-
-static TestSet knownGoodPlain =
+static LinkTestSet knownGoodPlain =
 {
 	{ "$URL", "<a href=\"$URL\" title=\"$URL\">$URL</a>" },
 	{ "$URL/", "<a href=\"$URL/\" title=\"$URL/\">$URL/</a>" },
@@ -52,65 +51,90 @@ static TestSet knownGoodPlain =
 	{ NULL, NULL }
 };
 
-static TestSet knownBrokenPlain =
+static LinkTestSet knownBrokenPlain =
 {
 	{ NULL, NULL }
 };
 
-static TestSet knownGoodHTML =
+static LinkTestSet knownGoodHTML =
 {
 	{ "$URL", "<a href=\"$URL\" title=\"$URL\">$URL</a>" },
 	{ "<a href=\"$URL\">KDE</a>", "<a href=\"$URL\">KDE</a>" },
 	{ NULL, NULL }
 };
 
-static TestSet knownBrokenHTML =
+static LinkTestSet knownBrokenHTML =
 {
 	{ "<a href=\"$URL\" title=\"$URL\">$URL</a>", "<a href=\"$URL\" title=\"$URL\">$URL</a>" },
 	{ NULL, NULL }
 };
 
-void runTests( QString description, TestSet tests, Kopete::Message::MessageFormat format )
+void KopeteLinkTest::allTests()
 {
-	_out << endl;
-	_out << "* Running test set '" << description << "'" << endl;
+	testKnownGoodHTML();
+	testKnownBrokenHTML();
+	testKnownGoodPlain();
+	testKnownBrokenPlain();
+}
 
+void KopeteLinkTest::testKnownGoodHTML()
+{
 	uint i = 0;
-	while ( tests[ i ][ 0 ] && tests[ i ][ 1 ] )
+	while ( knownGoodHTML[ i ][ 0 ] && knownGoodHTML[ i ][ 1 ] )
 	{
-		QString input = tests[ i ][ 0 ], expected = tests[ i ][ 1 ];
+		QString input = knownGoodHTML[ i ][ 0 ], expected = knownGoodHTML[ i ][ 1 ];
 		input.replace( "$URL","http://www.kde.org" );
 		expected.replace( "$URL","http://www.kde.org" );
-		QString result = Kopete::Message::parseLinks( input, format );
-
-		if ( result == expected )
-		{
-			_out << "  - Succeeded test for '" << input << "'" << endl;
-		}
-		else
-		{
-			_out << "  - FAILED test for '" << input << "'" << endl;
-			_out << "    Expected output: '" << expected << "'" << endl;
-			_out << "    Real output:     '" << result << "'" << endl;
-		}
-
+		QString result = Kopete::Message::parseLinks( input, Kopete::Message::RichText );
+	
+		CHECK(result, expected);
 		i++;
 	}
 }
 
-int main( int argc, char *argv[] )
+void KopeteLinkTest::testKnownBrokenHTML()
 {
-	KAboutData aboutData( "kopetelinktest", "kopetelinktest", "version" );
-	KCmdLineArgs::init( argc, argv, &aboutData );
-	KApplication app( "kopetelinktest" );
-
-	runTests( "Known working plaintext tests", knownGoodPlain, Kopete::Message::PlainText );
-	runTests( "Known broken plaintext tests", knownBrokenPlain, Kopete::Message::PlainText );
-	runTests( "Known working HTML tests", knownGoodHTML, Kopete::Message::RichText );
-	runTests( "Known broken HTML tests", knownBrokenHTML, Kopete::Message::RichText );
-
-	return 0;
+	uint i = 0;
+	while ( knownBrokenHTML[ i ][ 0 ] && knownBrokenHTML[ i ][ 1 ] )
+	{
+		QString input = knownBrokenHTML[ i ][ 0 ], expected = knownBrokenHTML[ i ][ 1 ];
+		input.replace( "$URL","http://www.kde.org" );
+		expected.replace( "$URL","http://www.kde.org" );
+		QString result = Kopete::Message::parseLinks( input, Kopete::Message::RichText );
+	
+		XFAIL(result, expected);
+		i++;
+	}
+}
+void KopeteLinkTest::testKnownGoodPlain()
+{
+	uint i = 0;
+	while ( knownGoodPlain[ i ][ 0 ] && knownGoodPlain[ i ][ 1 ] )
+	{
+		QString input = knownGoodPlain[ i ][ 0 ], expected = knownGoodPlain[ i ][ 1 ];
+		input.replace( "$URL","http://www.kde.org" );
+		expected.replace( "$URL","http://www.kde.org" );
+		QString result = Kopete::Message::parseLinks( input, Kopete::Message::PlainText );
+	
+		CHECK(result, expected);
+		i++;
+	}
 }
 
-// vim: set noet ts=4 sts=4 sw=4:
+void KopeteLinkTest::testKnownBrokenPlain()
+{
+	uint i = 0;
+	while ( knownBrokenPlain[ i ][ 0 ] && knownBrokenPlain[ i ][ 1 ] )
+	{
+		QString input = knownBrokenPlain[ i ][ 0 ], expected = knownBrokenPlain[ i ][ 1 ];
+		input.replace( "$URL","http://www.kde.org" );
+		expected.replace( "$URL","http://www.kde.org" );
+		QString result = Kopete::Message::parseLinks( input, Kopete::Message::PlainText );
+	
+		XFAIL(result, expected);
+		i++;
+	}
+}
 
+
+ 

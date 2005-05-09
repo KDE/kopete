@@ -14,7 +14,7 @@
     *************************************************************************
 */
 
-#include "kopetepasswordtest.h"
+#include "kopetepasswordtest_program.h"
 #include "kopetepassword.h"
 
 #include <qtextstream.h>
@@ -82,7 +82,7 @@ int main( int argc, char *argv[] )
 
 	_out << (image.isNull() ? "image is null" : "image is valid") << endl;
 
-	Password pwd( passwordId );
+	Password pwd( passwordId, 0, false );
 	pwd.setWrong( error );
 
 	_out << "Cached value is null: " << pwd.cachedValue().isNull() << endl;
@@ -127,6 +127,6 @@ int main( int argc, char *argv[] )
 	return 0;
 }
 
-#include "kopetepasswordtest.moc"
+#include "kopetepasswordtest_program.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
