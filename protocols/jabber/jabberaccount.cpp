@@ -194,7 +194,7 @@ void JabberAccount::setS5bPort ( int port )
 	if ( !s5bServer()->start ( port ) )
 	{
 		KMessageBox::sorry ( Kopete::UI::Global::mainWidget (),
-							 i18n ( "Could not bind Jabber file transfer manager to local port, please check your settings." ),
+							 i18n ( "Could not bind Jabber file transfer manager to local port. Please check if the file transfer port is already in use or choose another port in the account settings." ),
 							 i18n ( "Failed to start Jabber File Transfer Manager" ) );
 	}
 
