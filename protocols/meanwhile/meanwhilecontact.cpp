@@ -20,7 +20,7 @@
 #include <klocale.h>
 
 #include "kopeteaccount.h"
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
 
 #include "meanwhileprotocol.h"

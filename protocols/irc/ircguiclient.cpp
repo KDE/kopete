@@ -34,7 +34,7 @@
 #include <kdebug.h>
 #include <qdom.h>
 
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 #include "kcodecaction.h"
 #include "ircguiclient.h"
 #include "ircaccount.h"

@@ -31,8 +31,8 @@
 // Kopete Includes
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
-#include "kopetemessagemanagerfactory.h"
-#include "kopetemessagemanager.h"
+#include "kopetechatsessionmanager.h"
+#include "kopetechatsession.h"
 #include "kopetemessage.h"
 
 // Local Includes

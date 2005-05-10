@@ -30,7 +30,7 @@
 #include <kpassivepopup.h>
 #include <kinputdialog.h>
 
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopeteuiglobal.h"
 
 #include "icquserinfo.h"

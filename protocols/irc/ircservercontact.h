@@ -22,7 +22,7 @@
 
 #include "kircengine.h"
 
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 
 #include <qvaluelist.h>
 #include <qstringlist.h>

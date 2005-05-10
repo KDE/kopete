@@ -21,7 +21,7 @@
 #include "ircaccount.h"
 #include "ircprotocol.h"
 
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopeteview.h"
 
 #include <kaction.h>

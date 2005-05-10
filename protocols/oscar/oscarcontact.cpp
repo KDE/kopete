@@ -28,7 +28,7 @@
 #include <kdeversion.h>
 
 #include "kopeteaccount.h"
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"

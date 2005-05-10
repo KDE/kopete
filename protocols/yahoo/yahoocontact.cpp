@@ -18,10 +18,10 @@
     *************************************************************************
 */
 #include "kopetegroup.h"
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 #include "kopeteonlinestatus.h"
 #include "kopetemetacontact.h"
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
 #include "kopeteuiglobal.h"
 

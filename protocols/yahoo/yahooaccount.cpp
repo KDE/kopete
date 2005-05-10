@@ -34,7 +34,7 @@
 #include <kapplication.h>
 
 // Kopete
-#include <kopetemessagemanager.h>
+#include <kopetechatsession.h>
 #include <kopetemessage.h>
 #include <kopetepassword.h>
 #include <kopeteuiglobal.h>

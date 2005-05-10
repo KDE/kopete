@@ -21,7 +21,7 @@
 #ifndef GW_ACCOUNT_H
 #define GW_ACCOUNT_H
 
-#include <kopetemessagemanagerfactory.h>
+#include <kopetechatsessionmanager.h>
 
 #include "gwerror.h"
 

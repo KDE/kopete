@@ -14,7 +14,7 @@
 
 #include <qptrqueue.h>
 #include <kopetemessage.h>
-#include <kopetemessagemanager.h>
+#include <kopetechatsession.h>
 
 #include "gwerror.h"
 

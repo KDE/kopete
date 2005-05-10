@@ -19,7 +19,7 @@
 #ifndef IRCUSERCONTACT_H
 #define IRCUSERCONTACT_H
 
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "irccontact.h"
 #include "kopeteonlinestatus.h"
 

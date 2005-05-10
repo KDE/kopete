@@ -25,7 +25,7 @@
 #include <kopetecontact.h>
 #include <kopetecontactaction.h>
 #include <kopetemetacontact.h>
-#include <kopetemessagemanagerfactory.h>
+#include <kopetechatsessionmanager.h>
 #include <kopeteprotocol.h>
 #include <kopeteuiglobal.h>
 #include <kopeteview.h>

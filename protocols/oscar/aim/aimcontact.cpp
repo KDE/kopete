@@ -25,7 +25,7 @@
 #include <kmessagebox.h>
 
 #include "kopeteaway.h"
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 #include "kopeteuiglobal.h"
 #include "kopetemetacontact.h"
 

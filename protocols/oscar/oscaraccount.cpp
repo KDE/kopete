@@ -28,7 +28,7 @@
 #include "kopeteuiglobal.h"
 #include "kopetecontactlist.h"
 #include "kopetecontact.h"
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 
 #include <assert.h>
 

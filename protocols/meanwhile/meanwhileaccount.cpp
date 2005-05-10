@@ -20,7 +20,7 @@
 #include "meanwhileplugin.h"
 #include "meanwhileaccount.h"
 #include "meanwhilecontact.h"
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 #include "kopetepassword.h"
 #include "kopetecontactlist.h"
 

@@ -33,7 +33,7 @@
 #include "gaducontactlist.h"
 #include "gadusession.h"
 
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopetegroup.h"
 #include "kopetemetacontact.h"
 #include "kopetestdaction.h"
