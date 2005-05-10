@@ -24,7 +24,7 @@
 #include "jabberaccount.h"
 #include "jabberfiletransfer.h"
 #include "jabbergroupchatmanager.h"
-#include "jabbermessagemanager.h"
+#include "jabberchatsession.h"
 #include "jabbercontactpool.h"
 #include "kopetemetacontact.h"
 

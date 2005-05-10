@@ -34,7 +34,7 @@
 #include "kopetemessagemanagerfactory.h"
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
-#include "jabbermessagemanager.h"
+#include "jabberchatsession.h"
 #include "jabberresourcepool.h"
 #include "jabberfiletransfer.h"
 #include "dlgjabbervcard.h"

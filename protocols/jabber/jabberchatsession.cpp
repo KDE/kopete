@@ -1,5 +1,5 @@
 /*
-    jabbermessagemanager.cpp - Jabber Message Manager
+    jabberchatsession.cpp - Jabber Chat Session
 
     Copyright (c) 2004 by Till Gerken            <till@tantalo.net>
 
@@ -15,7 +15,7 @@
     *************************************************************************
 */
 
-#include "jabbermessagemanager.h"
+#include "jabberchatsession.h"
 
 #include <qptrlist.h>
 #include <kconfig.h>
@@ -262,7 +262,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 
 }
 
-#include "jabbermessagemanager.moc"
+#include "jabberchatsession.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 // kate: tab-width 4; replace-tabs off; space-indent off;

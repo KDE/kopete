@@ -25,7 +25,7 @@ kopete_jabber_la_SOURCES = \
 	jabbercontactpool.cpp \
 	jabberformtranslator.cpp \
 	jabberformlineedit.cpp \
-	jabbermessagemanager.cpp \
+	jabberchatsession.cpp \
 	jabbergroupchatmanager.cpp \
 	jabberfiletransfer.cpp \
 	jabberbytestream.cpp \

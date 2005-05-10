@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef JABBERMESSAGEMANAGER_H
-#define JABBERMESSAGEMANAGER_H
+#ifndef JABBERCHATSESSION_H
+#define JABBERCHATSESSION_H
 
 #include "kopetemessagemanager.h"
 
