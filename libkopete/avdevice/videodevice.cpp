@@ -1,7 +1,7 @@
 //
 // C++ Implementation: videodevice
 //
-// Description: 
+// Description:
 //
 //
 // Author: Cláudio da Silveira Pinheiro <taupter@gmail.com>, (C) 2005
@@ -28,6 +28,11 @@
 #include <asm/types.h>
 #include <linux/fs.h>
 #include <linux/kernel.h>
+
+#ifndef __u64 //required by videodev.h
+#define __u64 unsigned long long
+#endif
+
 #include <linux/videodev.h>
 
 
