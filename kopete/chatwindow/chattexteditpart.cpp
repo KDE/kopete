@@ -17,7 +17,7 @@
 
 #include "chattexteditpart.h"
 
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 #include "kopeteonlinestatus.h"
 #include "kopeteprotocol.h"
 #include "kopeteglobal.h"

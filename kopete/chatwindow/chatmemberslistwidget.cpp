@@ -17,7 +17,7 @@
 
 #include "chatmemberslistwidget.h"
 
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 #include "kopetecontact.h"
 #include "kopeteonlinestatus.h"
 #include "kopeteglobal.h"

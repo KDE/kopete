@@ -64,9 +64,9 @@
 #include "kopeteprotocol.h"
 #include "kopetestatusgroupviewitem.h"
 #include "kopetestdaction.h"
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopetecontact.h"
-#include "kopetemessagemanager.h" //needed to send the URL
+#include "kopetechatsession.h" //needed to send the URL
 #include "kopetemessage.h"       //needed to send the URL
 #include "kopeteglobal.h"
 #include "kopetelviprops.h"

@@ -48,7 +48,7 @@
 
 #include "chatmemberslistwidget.h"
 #include "kopetechatwindow.h"
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 #include "kopetemetacontact.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprefs.h"

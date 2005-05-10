@@ -24,7 +24,7 @@
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
 #include "kopeteemoticonaction.h"
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 #include "kopeteplugin.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprefs.h"

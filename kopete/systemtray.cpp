@@ -30,7 +30,7 @@
 #include <kdebug.h>
 #include <kiconloader.h>
 #include "kopeteuiglobal.h"
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopeteballoon.h"
 #include "kopeteprefs.h"
 #include "kopetemetacontact.h"

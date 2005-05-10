@@ -54,7 +54,7 @@
 #include "kopetechatwindow.h"
 #include "kopeteemoticonaction.h"
 #include "kopetegroup.h"
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 #include "kopetemetacontact.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprefs.h"

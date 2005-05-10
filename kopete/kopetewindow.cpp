@@ -57,7 +57,7 @@
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
 #include "kopetelistviewsearchline.h"
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopetepluginconfig.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprefs.h"
