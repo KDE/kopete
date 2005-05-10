@@ -60,8 +60,6 @@ public:
 	/* Returns the action menu for this account. */
 	virtual KActionMenu *actionMenu ();
 
-	virtual void setAway (bool away, const QString & reason = QString::null);
-
 	/* Return the resource of the client */
 	const QString resource () const;
 	const QString server () const;
@@ -176,8 +174,6 @@ private:
 	 */
 	int mCurrentPenaltyTime;
 
-	void setAvailable ();
-
 	/* Set up our actions for the status menu. */
 	void initActions ();
 
@@ -203,8 +199,6 @@ private:
 private slots:
 		/* Connects to the server. */
 	void slotConnect ();
-
-	void slotGoOffline ();
 
 	/* Disconnects from the server. */
 	void slotDisconnect ();
@@ -235,24 +229,6 @@ private slots:
 
 	/* Called from Psi: debug messages from the backend. */
 	void slotPsiDebug (const QString & msg);
-
-	/* Set online mode (presence-wise, and connection-wise). */
-	void slotGoOnline ();
-
-	/* Set global presence to "free for chat", no reason.. */
-	void slotGoChatty ();
-
-	/* Set global presence to "away". */
-	void slotGoAway ( const QString & );
-
-	/* Set global presence to "extended away". */
-	void slotGoXA ( const QString & );
-
-	/* Set global presence to "do not disturb". */
-	void slotGoDND ( const Kopete::OnlineStatus&, const QString & );
-
-	/* Set global presence to "invisible", no reason. */
-	void slotGoInvisible ();
 
 	/* Sends a raw message to the server (use with caution) */
 	void slotSendRaw ();

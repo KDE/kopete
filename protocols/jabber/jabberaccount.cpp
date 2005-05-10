@@ -202,43 +202,7 @@ void JabberAccount::setS5bPort ( int port )
 
 KActionMenu *JabberAccount::actionMenu ()
 {
-	KActionMenu *m_actionMenu = new KActionMenu ( accountId (), myself()->onlineStatus().iconFor ( this ), this );
-
-	m_actionMenu->popupMenu()->insertTitle ( myself()->onlineStatus().iconFor ( myself () ),
-											 i18n("%2 <%1>").arg ( accountId (), myself()->property(protocol()->propNickName).value().toString () ) );
-
-	m_actionMenu->insert ( new KAction ( i18n ("O&nline"),
-										 mProtocol->JabberKOSOnline.iconFor ( this ),
-										 0, this, SLOT ( slotGoOnline () ), this, "actionJabberConnect") );
-
-	m_actionMenu->insert ( new KAction ( i18n ("F&ree to Chat"),
-										 mProtocol->JabberKOSChatty.iconFor ( this ),
-										 0, this, SLOT ( slotGoChatty () ), this, "actionJabberChatty") );
-
-	m_actionMenu->insert ( new Kopete::AwayAction ( i18n ("A&way"),
-												  mProtocol->JabberKOSAway.iconFor ( this ),
-												  0, this, SLOT ( slotGoAway ( const QString & ) ),
-												  this, "actionJabberAway") );
-
-	m_actionMenu->insert ( new Kopete::AwayAction ( i18n ("E&xtended Away"),
-												  mProtocol->JabberKOSXA.iconFor ( this ),
-												  0, this, SLOT ( slotGoXA ( const QString & ) ),
-												  this, "actionJabberXA") );
-
-	m_actionMenu->insert ( new Kopete::AwayAction (  mProtocol->JabberKOSDND, i18n ("&Do Not Disturb"),
-												  mProtocol->JabberKOSDND.iconFor ( this ),
-												  0, this, SLOT ( slotGoDND ( const Kopete::OnlineStatus&, const QString & ) ),
-												  this, "actionJabberDND") );
-
-	m_actionMenu->insert ( new KAction ( i18n ("In&visible"),
-										 mProtocol->JabberKOSInvisible.iconFor ( this ),
-										 0, this, SLOT ( slotGoInvisible () ),
-										 this, "actionJabberInvisible") );
-
-	m_actionMenu->insert ( new KAction ( i18n ("O&ffline"),
-										 mProtocol->JabberKOSOffline.iconFor ( this ),
-										 0, this, SLOT ( slotGoOffline () ),
-										 this, "actionJabberDisconnect") );
+	KActionMenu *m_actionMenu = Kopete::Account::actionMenu();
 
 	m_actionMenu->popupMenu()->insertSeparator();
 
@@ -737,16 +701,34 @@ void JabberAccount::slotIncomingFileTransfer ()
 
 void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status  , const QString &reason)
 {
-#warning  TODO do this properly
-  //and actually set the correct status  - Olivier  2005-04-09
-	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Online )
-		connect( status );
-	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Offline )
+	if( status.status() == Kopete::OnlineStatus::Offline )
+	{
 		disconnect( Kopete::Account::Manual );
-	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Away )
-		setAway( true, reason );
-	else if(isConnected() && isAway() &&  status.status() == Kopete::OnlineStatus::Online )
-		setAway(false, reason );
+		return;
+	}
+
+	if( isConnecting () )
+	{
+		errorConnectionInProgress ();
+		return;
+	}
+
+	static const char* statuses[]={ "" , "chat" , "away" , "xa" , "dnd" , "" , "" };
+
+	XMPP::Status xmppstatus ( statuses[status.internalStatus()%7] , "", 0, true );
+
+	if(status.internalStatus() == 6 )
+		xmppstatus.setIsInvisible(true);
+
+	if ( !isConnected () )
+	{		/* We are not connected yet, so connect now. */
+		initialPresence = xmppstatus;
+		connect ();
+	}
+	else
+	{
+		setPresence ( xmppstatus );
+	}
 }
 
 void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )
@@ -1163,181 +1145,6 @@ void JabberAccount::setPresence ( const XMPP::Status &status )
 		{
 			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "We were not connected, presence update aborted." << endl;
 		}
-	}
-
-}
-
-void JabberAccount::setAway (bool away, const QString & reason)
-{
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting away mode: " << away << endl;
-
-	if(away)
-		setPresence ( XMPP::Status ( "away", reason, 0, true ) );
-	else
-		setPresence ( XMPP::Status ( "", reason, 0, true ) );
-
-}
-
-void JabberAccount::setAvailable (void)
-{
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Coming back from away mode." << endl;
-	slotGoOnline ();
-}
-
-void JabberAccount::slotGoOnline ()
-{
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
-
-	if( isConnecting () )
-	{
-		errorConnectionInProgress ();
-		return;
-	}
-
-	XMPP::Status status ( "", "", 0, true );
-
-	if ( !isConnected () )
-	{
-		/* We are not connected yet, so connect now. */
-		initialPresence = status;
-		connect ();
-	}
-	else
-	{
-		setPresence ( status );
-	}
-
-}
-
-void JabberAccount::slotGoOffline ()
-{
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
-
-	disconnect ( Kopete::Account::Manual );
-}
-
-void JabberAccount::slotGoChatty ()
-{
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
-
-	if( isConnecting () )
-	{
-		errorConnectionInProgress ();
-		return;
-	}
-
-	XMPP::Status status ( "chat", "", 0, true );
-
-	if ( !isConnected () )
-	{
-		/* We are not connected yet, so connect now. */
-		initialPresence = status;
-		connect ();
-	}
-	else
-	{
-		setPresence ( status );
-	}
-
-}
-
-void JabberAccount::slotGoAway ( const QString &reason )
-{
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
-
-	if( isConnecting () )
-	{
-		errorConnectionInProgress ();
-		return;
-	}
-
-	XMPP::Status status ( "away", reason, 0, true );
-
-	if ( !isConnected () )
-	{
-		/* We are not connected yet, so connect now. */
-		initialPresence = status;
-		connect ();
-	}
-	else
-	{
-		setPresence ( status );
-	}
-
-}
-
-void JabberAccount::slotGoXA ( const QString &reason )
-{
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
-
-	if( isConnecting () )
-	{
-		errorConnectionInProgress ();
-		return;
-	}
-
-	XMPP::Status status ( "xa", reason, 0, true );
-
-	if ( !isConnected () )
-	{
-		/* We are not connected yet, so connect now. */
-		initialPresence = status;
-		connect ();
-	}
-	else
-	{
-		setPresence ( status );
-	}
-
-}
-
-void JabberAccount::slotGoDND ( const Kopete::OnlineStatus&, const QString &reason )
-{
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
-
-	if( isConnecting () )
-	{
-		errorConnectionInProgress ();
-		return;
-	}
-
-	XMPP::Status status ( "dnd", reason, 0, true );
-
-	if ( !isConnected () )
-	{
-		/* We are not connected yet, so connect now. */
-		initialPresence = status;
-		connect ();
-	}
-	else
-	{
-		setPresence ( status );
-	}
-
-}
-
-void JabberAccount::slotGoInvisible ()
-{
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
-
-	if( isConnecting () )
-	{
-		errorConnectionInProgress ();
-		return;
-	}
-
-	XMPP::Status status ( "", "", 0, true );
-	status.setIsInvisible ( true );
-
-	if ( !isConnected () )
-	{
-		/* We are not connected yet, so connect now. */
-		initialPresence = status;
-		connect ();
-	}
-	else
-	{
-		setPresence ( status );
 	}
 
 }
