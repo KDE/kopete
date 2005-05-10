@@ -72,7 +72,10 @@ JabberFormTranslator::JabberFormTranslator (const XMPP::Form & form, QWidget * p
 
 XMPP::Form & JabberFormTranslator::resultData ()
 {
-	/* Let all line edit fields write into our form. */
+	// clear form data
+	privForm = XMPP::Form ();
+
+	// let all line edit fields write into our form
 	emit gatherData (privForm);
 
 	return privForm;
