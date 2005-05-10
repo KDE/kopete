@@ -20,7 +20,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopeteview.h"
 #include "kopetecommand.h"
 #include "kopeteuiglobal.h"

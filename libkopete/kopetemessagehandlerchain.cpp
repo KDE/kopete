@@ -17,7 +17,7 @@
 #include "kopetemessagehandlerchain.h"
 #include "kopetemessagehandler.h"
 #include "kopetemessageevent.h"
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 
 #include <kdebug.h>
 

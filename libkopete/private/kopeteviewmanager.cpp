@@ -29,7 +29,7 @@
 #include "kopeteaccount.h"
 #include "kopetepluginmanager.h"
 #include "kopeteviewplugin.h"
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
 #include "kopetemessageevent.h"
 #include "kopeteview.h"

@@ -39,7 +39,7 @@
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopetestdaction.h"
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 #include "kopeteview.h"
 #include "kopetemetacontact.h"
 #include "kopeteprefs.h"

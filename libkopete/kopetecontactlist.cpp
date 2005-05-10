@@ -30,7 +30,7 @@
 #include <kstandarddirs.h>
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 //#include "kopetemessage.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"

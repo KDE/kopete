@@ -1,5 +1,5 @@
 /*
-    kopetemessagemanager.cpp - Manages all chats
+    kopetechatsession.cpp - Manages all chats
 
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002      by Daniel Stone           <dstone@kde.org>
@@ -19,7 +19,7 @@
     *************************************************************************
 */
 
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 
 #include <qapplication.h>
 #include <qregexp.h>
@@ -32,7 +32,7 @@
 
 #include "kopeteaccount.h"
 #include "kopetecommandhandler.h"
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopetemessagehandlerchain.h"
 #include "kopetemetacontact.h"
 #include "knotification.h"
@@ -478,7 +478,7 @@ void Kopete::ChatSession::setMayInvite( bool b )
 	d->mayInvite=b;
 }
 
-#include "kopetemessagemanager.moc"
+#include "kopetechatsession.moc"
 
 
 

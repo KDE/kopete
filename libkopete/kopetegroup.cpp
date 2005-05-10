@@ -21,7 +21,7 @@
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 
 #include <klocale.h>
 

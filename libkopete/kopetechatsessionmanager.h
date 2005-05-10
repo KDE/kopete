@@ -1,5 +1,5 @@
 /*
-    kopetemessagemanagerfactory.h - Creates chat sessions
+    kopetechatsessionmanager.h - Creates chat sessions
 
     Copyright (c) 2002-2003 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
@@ -23,7 +23,7 @@
 #include <qintdict.h>
 #include <qvaluelist.h>
 
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 #include "kopetemessage.h"
 
 #include <kopete_export.h>

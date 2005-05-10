@@ -24,7 +24,7 @@
 #include <kaction.h>
 #include <qdom.h>
 
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"
 #include "kopeteview.h"

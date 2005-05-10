@@ -15,7 +15,7 @@ lib_LTLIBRARIES = libkopete.la
 
 libkopete_la_SOURCES = knotification.cpp connectionmanager.cpp kopeteonlinestatus.cpp kopeteonlinestatusmanager.cpp \
 	kopeteprotocol.cpp kopetecontact.cpp kopetepluginmanager.cpp kopeteplugin.cpp \
-	kopetemessage.cpp kopetemessagemanager.cpp kopetemessagemanagerfactory.cpp \
+	kopetemessage.cpp kopetechatsession.cpp kopetechatsessionmanager.cpp \
 	kopetecontactlist.cpp kopetemetacontact.cpp kopeteawaydialog.cpp kopetetransfermanager.cpp \
 	kopetegroup.cpp kcautoconfigmodule.cpp kopeteaccountmanager.cpp kopeteaccount.cpp \
 	kopetecontactlistelement.cpp kopetecommandhandler.cpp kopeteaway.cpp \
@@ -50,7 +50,7 @@ kopeteinclude_HEADERS = kopeteaccount.h kopeteaccountmanager.h kopeteawayaction.
 	kopeteblacklister.h kopetecommandhandler.h kopetecontact.h kopetecontactlistelement.h kopetecontactlist.h \
 	kopetecontactproperty.h kopeteeventpresentation.h kopete_export.h kopeteglobal.h kopetegroup.h \
 	kopetemessageevent.h kopetemessage.h kopetemessagehandlerchain.h kopetemessagehandler.h \
-	kopetemessagemanagerfactory.h kopetemessagemanager.h kopetemetacontact.h kopetemimetypehandler.h \
+	kopetechatsession.h kopetechatsessionmanager.h kopetemetacontact.h kopetemimetypehandler.h \
 	kopeteonlinestatus.h kopeteonlinestatusmanager.h kopetepasswordedaccount.h \
 	kopetepassword.h kopeteplugin.h kopeteprotocol.h kopetesimplemessagehandler.h kopetetask.h \
 	kopetetransfermanager.h kopeteuiglobal.h kopetexsl.h kabcpersistence.h managedconnectionaccount.h \

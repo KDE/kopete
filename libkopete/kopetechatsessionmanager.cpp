@@ -1,5 +1,5 @@
 /*
-    kopetemessagemanagerfactory.cpp - Creates chat sessions
+    kopetechatsessionmanager.cpp - Creates chat sessions
 
     Copyright (c) 2002-2003 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
@@ -15,7 +15,7 @@
     *************************************************************************
 */
 
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopeteviewmanager.h"
 
 #include <kapplication.h>
@@ -191,7 +191,7 @@ KopeteView *ChatSessionManager::activeView()
 
 } //END namespace Kopete
 
-#include "kopetemessagemanagerfactory.moc"
+#include "kopetechatsessionmanager.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 
