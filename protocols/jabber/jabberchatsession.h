@@ -15,12 +15,10 @@
     *************************************************************************
 */
 
-#ifndef JABBERCHATSESSION_H
-#define JABBERCHATSESSION_H
+#ifndef JABBERMESSAGEMANAGER_H
+#define JABBERMESSAGEMANAGER_H
 
 #include "kopetemessagemanager.h"
-
-#include "im.h"
 
 class JabberProtocol;
 class JabberAccount;
@@ -58,6 +56,11 @@ public:
 	 */
 	const QString &resource () const;
 
+	/**
+	 * Re-generate the display name
+	 */
+	void updateDisplayName ();
+
 public slots:
 	/**
 	 * Show a message to the chatwindow, or append it to the queue.
@@ -77,19 +80,9 @@ private slots:
 	void slotSendTypingNotification ( bool typing );
 	void slotMessageSent ( Kopete::Message &message, Kopete::ChatSession *kmm );
 
-	/**
-	 * Re-generate the display name
-	 */
-	void slotUpdateDisplayName ();
-
 private:
-	/**
-	 * Send a notification (XMPP::MsgEvent) to the members of the chatsession.
-	 * SlotSendTypingNotification uses it.
-	 */
-	void sendNotification( XMPP::MsgEvent event );
-	
 	QString mResource;
+
 };
 
 #endif

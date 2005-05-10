@@ -30,19 +30,16 @@
 class JabberFormTranslator:public QWidget
 {
 
-Q_OBJECT
+  Q_OBJECT public:
+	  JabberFormTranslator (const XMPP::Form & form, QWidget * parent = 0, const char *name = 0);
+	 ~JabberFormTranslator ();
 
-public:
-	JabberFormTranslator (const XMPP::Form & form, QWidget * parent = 0, const char *name = 0);
-	~JabberFormTranslator ();
+	  XMPP::Form & resultData ();
 
-	XMPP::Form & resultData ();
+	  signals:void gatherData (XMPP::Form & form);
 
-signals:
-	void gatherData (XMPP::Form & form);
-
-private:
-	XMPP::Form privForm;
+  private:
+	  XMPP::Form privForm;
 
 };
 
