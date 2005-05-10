@@ -24,7 +24,7 @@
 #include <klocale.h>
 #include <kgenericfactory.h>
 
-#include "msnmessagemanager.h"
+#include "msnchatsession.h"
 #include "msncontact.h"
 
 #include "netmeetingguiclient.h"

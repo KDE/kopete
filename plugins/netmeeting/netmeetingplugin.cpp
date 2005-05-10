@@ -22,9 +22,9 @@
 #include <kaboutdata.h>
 
 #include "kopetepluginmanager.h"
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 
-#include "msnmessagemanager.h"
+#include "msnchatsession.h"
 #include "msnprotocol.h"
 #include "msncontact.h"
 

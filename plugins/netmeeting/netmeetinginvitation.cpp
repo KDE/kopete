@@ -17,7 +17,7 @@
 
 #include "kopeteuiglobal.h"
 
-#include "msnmessagemanager.h"
+#include "msnchatsession.h"
 #include "msnswitchboardsocket.h"
 #include "msncontact.h"
 #include "kopetemetacontact.h"
