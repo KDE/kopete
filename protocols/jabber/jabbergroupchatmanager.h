@@ -18,7 +18,7 @@
 #ifndef JABBERGROUPCHATMANAGER_H
 #define JABBERGROUPCHATMANAGER_H
 
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 #include "xmpp.h"
 
 class JabberProtocol;

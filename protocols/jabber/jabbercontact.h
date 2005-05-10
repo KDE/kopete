@@ -21,7 +21,7 @@
 #include "jabberbasecontact.h"
 #include "xmpp_vcard.h"
 
-#include "kopetemessagemanager.h" // needed for silly Kopete::ContactPtrList
+#include "kopetechatsession.h" // needed for silly Kopete::ContactPtrList
 
 class JabberChatSession;
 

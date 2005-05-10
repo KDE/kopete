@@ -18,7 +18,7 @@
 #ifndef JABBERCHATSESSION_H
 #define JABBERCHATSESSION_H
 
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 
 #include "im.h"
 

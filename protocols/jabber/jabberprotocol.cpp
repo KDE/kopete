@@ -40,7 +40,7 @@
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 #include "kopeteonlinestatusmanager.h"
 #include "kopeteaway.h"
 #include "kopeteglobal.h"

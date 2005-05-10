@@ -20,7 +20,7 @@
 #include <qptrlist.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopeteview.h"
 #include "jabberprotocol.h"
 #include "jabberaccount.h"

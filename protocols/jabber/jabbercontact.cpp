@@ -31,7 +31,7 @@
 
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
 #include "jabberchatsession.h"
