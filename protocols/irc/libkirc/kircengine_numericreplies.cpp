@@ -55,26 +55,27 @@ void Engine::bindNumericReplies()
 	bind(307, this, SLOT(numericReply_307(KIRC::Message &)), 1, 1);
 	bind(311, this, SLOT(numericReply_311(KIRC::Message &)), 5, 5);
 	bind(312, this, SLOT(numericReply_312(KIRC::Message &)), 3, 3);
-//	bind(313, this, SLOT(numericReply_313(KIRC::Message &)), 2, 2); // incomingWhoIsOperator
+	bind(313, this, SLOT(numericReply_313(KIRC::Message &)), 2, 2);
 	bind(314, this, SLOT(numericReply_314(KIRC::Message &)), 5, 5);
-	bind(315, this, SLOT(numericReply_315(KIRC::Message &)), 2, 2); //incomingEndOfWho
+	bind(315, this, SLOT(numericReply_315(KIRC::Message &)), 2, 2);
 	bind(317, this, SLOT(numericReply_317(KIRC::Message &)), 3, 4);
-	bind(318, this, SLOT(numericReply_318(KIRC::Message &)), 2, 2); // incomingEndOfWhois
+	bind(318, this, SLOT(numericReply_318(KIRC::Message &)), 2, 2);
 	bind(319, this, SLOT(numericReply_319(KIRC::Message &)), 2, 2);
-	bind(320, this, SLOT(numericReply_320(KIRC::Message &)), 2, 2); // incomingWhoIsIdentified
-//	bind(321, Engine::IgnoreMethod );
+	bind(320, this, SLOT(numericReply_320(KIRC::Message &)), 2, 2);
+	bind(321, this, SLOT(ignoreMessage(KIRC::Message &)), 0, 0 );
 	bind(322, this, SLOT(numericReply_322(KIRC::Message &)), 3, 3);
-	bind(323, this, SLOT(numericReply_323(KIRC::Message &)), 1, 1); // incomingEndOfList
+	bind(323, this, SLOT(numericReply_323(KIRC::Message &)), 1, 1);
 	bind(324, this, SLOT(numericReply_324(KIRC::Message &)), 2, 4);
 	bind(328, this, SLOT(numericReply_328(KIRC::Message &)), 2, 2);
 	bind(329, this, SLOT(numericReply_329(KIRC::Message &)), 3, 3);
+	bind(330, this, SLOT(ignoreMessage(KIRC::Message &)), 0, 0); // ??? 
 	bind(331, this, SLOT(numericReply_331(KIRC::Message &)), 2, 2);
 	bind(332, this, SLOT(numericReply_332(KIRC::Message &)), 2, 2);
 	bind(333, this, SLOT(numericReply_333(KIRC::Message &)), 4, 4);
 	bind(352, this, SLOT(numericReply_352(KIRC::Message &)), 5, 10);
 	bind(353, this, SLOT(numericReply_353(KIRC::Message &)), 3, 3);
-	bind(366, this, SLOT(numericReply_366(KIRC::Message &)), 2, 2); // incomingEndOfNames
-//	bind(369, this, SLOT(numericReply_369(KIRC::Message &)), 2, 2); // incomingEndOfWhoWas
+	bind(366, this, SLOT(numericReply_366(KIRC::Message &)), 2, 2);
+	bind(369, this, SLOT(numericReply_369(KIRC::Message &)), 2, 2);
 	bind(372, this, SLOT(numericReply_372(KIRC::Message &)), 1, 1);
 	bind(375, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0 );
 	bind(376, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0 );
@@ -292,6 +293,9 @@ void Engine::numericReply_312(Message &msg)
 /* 313: "<nick> :is an IRC operator"
  * Show info about an operator (part of a /whois).
  */
+void Engine::numericReply_313(Message &msg)
+{
+}
 
 /* 314: "<nick> <user> <host> * :<real name>"
  * Show WHOWAS Info
@@ -454,13 +458,16 @@ void Engine::numericReply_366(Message &msg)
 /* 369:
  * End of WHOWAS Request
  */
+void Engine::numericReply_369(Message &msg)
+{
+}
 
 /* 372: ":- <text>"
  * Part of the MOTD.
  */
 void Engine::numericReply_372(Message &msg)
 {
-	emit incomingMotd( msg.suffix() );
+	emit incomingMotd(msg.suffix());
 }
 
 /* 375: ":- <server> Message of the day - "
