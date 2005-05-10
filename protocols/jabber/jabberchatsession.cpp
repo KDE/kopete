@@ -42,17 +42,19 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 
 	connect ( this, SIGNAL ( myselfTyping ( bool ) ), this, SLOT ( slotSendTypingNotification ( bool ) ) );
 
+	connect ( this, SIGNAL ( onlineStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus& ) ), this, SLOT ( slotUpdateDisplayName () ) );
+
 	// check if the user ID contains a hardwired resource,
 	// we'll have to use that one in that case
 	XMPP::Jid jid ( user->contactId () );
 
 	mResource = jid.resource().isEmpty () ? resource : jid.resource ();
 
-	updateDisplayName ();
+	slotUpdateDisplayName ();
 
 }
 
-void JabberChatSession::updateDisplayName ()
+void JabberChatSession::slotUpdateDisplayName ()
 {
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << endl;
 
@@ -102,7 +104,7 @@ void JabberChatSession::appendMessage ( Kopete::Message &msg, const QString &fro
 
 	mResource = fromResource;
 
-	updateDisplayName ();
+	slotUpdateDisplayName ();
 
 	Kopete::ChatSession::appendMessage ( msg );
 

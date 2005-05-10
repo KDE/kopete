@@ -58,11 +58,6 @@ public:
 	 */
 	const QString &resource () const;
 
-	/**
-	 * Re-generate the display name
-	 */
-	void updateDisplayName ();
-
 public slots:
 	/**
 	 * Show a message to the chatwindow, or append it to the queue.
@@ -81,6 +76,11 @@ public slots:
 private slots:
 	void slotSendTypingNotification ( bool typing );
 	void slotMessageSent ( Kopete::Message &message, Kopete::ChatSession *kmm );
+
+	/**
+	 * Re-generate the display name
+	 */
+	void slotUpdateDisplayName ();
 
 private:
 	/**
