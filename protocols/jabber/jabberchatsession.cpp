@@ -1,5 +1,5 @@
 /*
-    jabbermessagemanager.cpp - Jabber Message Manager
+    jabberchatsession.cpp - Jabber Chat Session
 
     Copyright (c) 2004 by Till Gerken            <till@tantalo.net>
 
@@ -15,7 +15,7 @@
     *************************************************************************
 */
 
-#include "jabbermessagemanager.h"
+#include "jabberchatsession.h"
 
 #include <qptrlist.h>
 #include <kconfig.h>
@@ -42,17 +42,19 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 
 	connect ( this, SIGNAL ( myselfTyping ( bool ) ), this, SLOT ( slotSendTypingNotification ( bool ) ) );
 
+	connect ( this, SIGNAL ( onlineStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus& ) ), this, SLOT ( slotUpdateDisplayName () ) );
+
 	// check if the user ID contains a hardwired resource,
 	// we'll have to use that one in that case
 	XMPP::Jid jid ( user->contactId () );
 
 	mResource = jid.resource().isEmpty () ? resource : jid.resource ();
 
-	updateDisplayName ();
+	slotUpdateDisplayName ();
 
 }
 
-void JabberChatSession::updateDisplayName ()
+void JabberChatSession::slotUpdateDisplayName ()
 {
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << endl;
 
@@ -102,51 +104,74 @@ void JabberChatSession::appendMessage ( Kopete::Message &msg, const QString &fro
 
 	mResource = fromResource;
 
-	updateDisplayName ();
+	slotUpdateDisplayName ();
 
 	Kopete::ChatSession::appendMessage ( msg );
 
+	// We send the notifications for Delivered and Displayed events. More granular management
+	// (ie.: send Displayed event when it is really displayed)
+	// of these events would require changes in the chatwindow API.
+	
+	if ( account()->configGroup()->readBoolEntry ("SendEvents", true) )
+	{
+		if ( account()->configGroup()->readBoolEntry ("SendDeliveredEvent", true) ) 
+			sendNotification( DeliveredEvent );
+		if ( account()->configGroup()->readBoolEntry ("SendDisplayedEvent", true) )
+			sendNotification( DisplayedEvent );
+	}
+}
+
+void JabberChatSession::sendNotification( XMPP::MsgEvent event )
+{
+	if ( !account()->isConnected () )
+		return;
+
+	JabberContact *contact;
+	QPtrListIterator<Kopete::Contact> listIterator ( members () );
+
+	while ( ( contact = dynamic_cast<JabberContact*>( listIterator.current () ) ) != 0 )
+	{
+		++listIterator;
+		if ( contact->isContactRequestingEvent( event ) )
+		{
+			// create JID for us as sender
+			XMPP::Jid fromJid ( myself()->contactId () );
+			fromJid.setResource ( account()->pluginData ( protocol (), "Resource" ) );
+	
+			// create JID for the recipient
+			XMPP::Jid toJid ( contact->contactId () );
+	
+			// set resource properly if it has been selected already
+			if ( !resource().isEmpty () )
+				toJid.setResource ( resource () );
+	
+			XMPP::Message message;
+	
+			message.setFrom ( fromJid );
+			message.setTo ( toJid );
+	
+			// store composing event depending on state
+			message.addEvent ( event );
+	
+			// send message
+			account()->client()->sendMessage ( message );
+		}
+	}
 }
 
 void JabberChatSession::slotSendTypingNotification ( bool typing )
 {
+	if ( !account()->configGroup()->readBoolEntry ("SendEvents", true)
+		|| !account()->configGroup()->readBoolEntry("SendComposingEvent", true) ) 
+		return;
+
+	// create JID for us as sender
+	XMPP::Jid fromJid ( myself()->contactId () );
+	fromJid.setResource ( account()->configGroup()->readEntry( "Resource", QString::null ) );
 
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Sending out typing notification (" << typing << ") to all chat members." << endl;
 
-	if ( !account()->isConnected () )
-		return;
-
-	Kopete::Contact *contact;
-	QPtrListIterator<Kopete::Contact> listIterator ( members () );
-
-	while ( ( contact = listIterator.current () ) != 0 )
-	{
-		++listIterator;
-
-		// create JID for us as sender
-		XMPP::Jid fromJid ( myself()->contactId () );
-		fromJid.setResource ( account()->configGroup()->readEntry( "Resource", QString::null ) );
-
-		// create JID for the recipient
-		XMPP::Jid toJid ( contact->contactId () );
-
-		// set resource properly if it has been selected already
-		if ( !resource().isEmpty () )
-			toJid.setResource ( resource () );
-
-		XMPP::Message message;
-
-		message.setFrom ( fromJid );
-		message.setTo ( toJid );
-
-		// store composing event depending on state
-		typing ? message.addEvent ( ComposingEvent ) : message.addEvent ( CancelEvent );
-
-		// send message
-		account()->client()->sendMessage ( message );
-
-	}
-
+	typing ? sendNotification( ComposingEvent ) : sendNotification( CancelEvent );
 }
 
 void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::ChatSession * )
@@ -212,7 +237,14 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 			jabberMessage.setType ( "chat" );
 		}
 
-		// send the message
+		// add request for all notifications
+		jabberMessage.addEvent( OfflineEvent );
+		jabberMessage.addEvent( ComposingEvent );
+		jabberMessage.addEvent( DeliveredEvent );
+		jabberMessage.addEvent( DisplayedEvent );
+		
+
+        // send the message
 		account()->client()->sendMessage ( jabberMessage );
 
 		// append the message to the manager
@@ -232,7 +264,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 
 }
 
-#include "jabbermessagemanager.moc"
+#include "jabberchatsession.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 // kate: tab-width 4; replace-tabs off; space-indent off;
