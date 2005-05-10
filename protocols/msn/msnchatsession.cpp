@@ -1,5 +1,5 @@
 /*
-    msnmessagemanager.cpp - MSN Message Manager
+    msnchatsession.cpp - MSN Message Manager
 
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
 
@@ -15,7 +15,7 @@
     *************************************************************************
 */
 
-#include "msnmessagemanager.h"
+#include "msnchatsession.h"
 
 #include <qlabel.h>
 #include <qimage.h>
@@ -36,7 +36,7 @@
 #include "kopetecontactaction.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 #include "kopeteview.h"
@@ -642,7 +642,7 @@ void MSNChatSession::slotSendNudge()
 		m_chatService->sendNudge();
 }
 
-#include "msnmessagemanager.moc"
+#include "msnchatsession.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

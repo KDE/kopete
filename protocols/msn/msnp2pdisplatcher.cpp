@@ -39,7 +39,7 @@
 
 
 //kopete
-#include <kopetemessagemanager.h>  // { Just for getting the contact
+#include <kopetechatsession.h>  // { Just for getting the contact
 #include <kopeteaccount.h>         // {
 #include <kopetetransfermanager.h>
 

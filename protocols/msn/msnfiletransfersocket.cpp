@@ -32,7 +32,7 @@
 #include "kopetetransfermanager.h"
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
-#include "msnmessagemanager.h"
+#include "msnchatsession.h"
 #include "msnswitchboardsocket.h"
 
 using namespace KNetwork;

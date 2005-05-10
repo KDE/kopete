@@ -33,14 +33,14 @@
 
 #include "msncontact.h"
 #include "msnnotifysocket.h"
-#include "msnmessagemanager.h"
+#include "msnchatsession.h"
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
 #include "kopetemetacontact.h"
 #include "kopetepassword.h"
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "contactaddednotifydialog.h"
 
 #include "sha1.h"

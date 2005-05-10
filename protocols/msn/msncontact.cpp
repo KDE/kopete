@@ -37,14 +37,14 @@
 #include <qregexp.h>
 
 #include "kopetecontactlist.h"
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 
 #include "msninfo.h"
-#include "msnmessagemanager.h"
+#include "msnchatsession.h"
 #include "msnnotifysocket.h"
 #include "msnaccount.h"
 

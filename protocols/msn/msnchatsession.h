@@ -1,5 +1,5 @@
 /*
-    msnmessagemanager.h - MSN Message Manager
+    msnchatsession.h - MSN Message Manager
 
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
@@ -18,7 +18,7 @@
 #ifndef MSNMESSAGEMANAGER_H
 #define MSNMESSAGEMANAGER_H
 
-#include "kopetemessagemanager.h"
+#include "kopetechatsession.h"
 
 class MSNSwitchBoardSocket;
 class KActionCollection;

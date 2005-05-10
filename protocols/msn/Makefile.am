@@ -11,7 +11,7 @@ lib_LTLIBRARIES = libkopete_msn_shared.la
 CLEANFILES = dummy.cpp
 
 libkopete_msn_shared_la_SOURCES = msnprotocol.cpp msnaccount.cpp msnaddcontactpage.cpp msncontact.cpp \
-	msnsocket.cpp msnmessagemanager.cpp msndebugrawcmddlg.cpp \
+	msnsocket.cpp msnchatsession.cpp msndebugrawcmddlg.cpp \
 	msnnotifysocket.cpp msnswitchboardsocket.cpp msnfiletransfersocket.cpp msninvitation.cpp \
 	msnp2p.cpp msnp2pdisplatcher.cpp msnp2pincoming.cpp msnp2poutgoing.cpp sha1.cpp
 

@@ -32,7 +32,7 @@
 #include "msncontact.h"
 #include "msnaccount.h"
 #include "msnprotocol.h"
-#include "msnmessagemanager.h"
+#include "msnchatsession.h"
 
 typedef KGenericFactory<MSNProtocol> MSNProtocolFactory;
 #if KDE_IS_VERSION(3,2,90)
