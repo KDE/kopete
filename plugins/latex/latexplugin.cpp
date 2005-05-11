@@ -8,7 +8,7 @@
 
     *************************************************************************
     *                                                                       *
-    * This program is free software; you can redistribute it and/or mod|  *
+    * This program is free software; you can redistribute it and/or modify  *
     * it under the terms of the GNU General Public License as published by  *
     * the Free Software Foundation; either version 2 of the License, or     *
     * (at your option) any later version.                                   *
@@ -44,7 +44,7 @@ LatexPlugin::LatexPlugin( QObject *parent, const char *name, const QStringList &
 : Kopete::Plugin( LatexPluginFactory::instance(), parent, name )
 {
 //	kdDebug() << k_funcinfo << endl;
-	|( !s_pluginStatic )
+	if( !s_pluginStatic )
 		s_pluginStatic = this;
 
 	mMagickNotFoundShown = false;
@@ -72,10 +72,10 @@ LatexPlugin* LatexPlugin::s_pluginStatic = 0L;
 void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 {
 	QString mMagick = KStandardDirs::findExe("convert");
-	| ( mMagick.isEmpty() )
+	if ( mMagick.isEmpty() )
 	{
 		// show just once
-		| (  !mMagickNotFoundShown )
+		if (  !mMagickNotFoundShown )
 		{
 			KMessageBox::queuedMessageBox(
 			    Kopete::UI::Global::mainWidget(),
@@ -83,12 +83,12 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 			);
 			mMagickNotFoundShown = true;
 		}
-		// dont try to parse | convert is not installed
+		// dont try to parse if convert is not installed
 		return;
 	}
 	
 	QString messageText = msg.plainBody();
-	|( !messageText.contains("$$"))
+	if( !messageText.contains("$$"))
 		return;
 
 	//kdDebug() << k_funcinfo << " Using converter: " << m_convScript << endl;
@@ -110,21 +110,21 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 //		kdDebug() << k_funcinfo  << " searching pos: " << pos << endl;
 		pos = rg.search(messageText, pos);
 		
-		| (pos >= 0 )
+		if (pos >= 0 )
 		{
 			QString match = rg.cap(0);
 			pos += rg.matchedLength();
 
 			QString formul=match;
-			|(!securityCheck(formul))
+			if(!securityCheck(formul))
 				continue;
 			
 			QString fileName=handleLatex(formul.replace("$$",""));
 			
 			// get the image and encode it with base64
-			#| ENCODED_IMAGE_MODE
+			#if ENCODED_IMAGE_MODE
 			QImage renderedImage( fileName );
-			| ( !renderedImage.isNull() )
+			if ( !renderedImage.isNull() )
 			{
 				QByteArray ba;
 				QBuffer buffer( ba );
@@ -135,11 +135,11 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 			}
 			#else
 			replaceMap[Kopete::Message::escape(match)] = fileName;
-			#end|
+			#endif
 		}
 	}
 
-	|(replaceMap.isEmpty()) //we haven't found any latex strings
+	if(replaceMap.isEmpty()) //we haven't found any latex strings
 		return;
 
 	messageText=Kopete::Message::escape(messageText);
@@ -157,40 +157,40 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 
 void LatexPlugin::slotMessageAboutToSend( Kopete::Message& msg)
 {
-	//disabled because to work correctly, we need to find what special has the g| we can send over MSN
-#| 0
+	//disabled because to work correctly, we need to find what special has the gif we can send over MSN
+#if 0
 	KConfig *config = KGlobal::config();
 	config->setGroup("Latex Plugin");
 
-	|(!config->readBoolEntry("ParseOutgoing", false))
+	if(!config->readBoolEntry("ParseOutgoing", false))
 		return;
 
 	QString messageText = msg.plainBody();
-	|( !messageText.contains("$$"))
+	if( !messageText.contains("$$"))
 		return;
-/*	|( msg.from()->protocol()->pluginId()!="MSNProtocol" )
+/*	if( msg.from()->protocol()->pluginId()!="MSNProtocol" )
 	return;*/
 
 	// this searches for $$formula$$
 	QRegExp rg("^\\s*\\$\\$([^$]+)\\$\\$\\s*$");
 
-	|( rg.search(messageText) != -1 )
+	if( rg.search(messageText) != -1 )
 	{
 		QString latexFormula = rg.cap(1);
-		|(!securityCheck( latexFormula ))
+		if(!securityCheck( latexFormula ))
 			return;
 
 		QString url = handleLatex(latexFormula);
 
 
-		|(!url.isNull())
+		if(!url.isNull())
 		{
 			QString escapedLATEX= QStyleSheet::escape(messageText).replace("\"","&quot;");
 			QString messageText="<img src=\"" + url + "\" alt=\"" + escapedLATEX + "\" title=\"" + escapedLATEX +"\"  />";
 			msg.setBody( messageText, Kopete::Message::RichText );
 		}
 	}
-#end|
+#endif
 }
 
 QString LatexPlugin::handleLatex(const QString &latexFormula)
@@ -205,7 +205,7 @@ QString LatexPlugin::handleLatex(const QString &latexFormula)
 			
 	QString argumentRes = "-r %1x%2";
 	QString argumentOut = "-o %1";
-	//QString argumentFormat = "-fg|";  //we uses gif format because MSN only handle gif
+	//QString argumentFormat = "-fgif";  //we uses gif format because MSN only handle gif
 	int hDPI, vDPI;
 	hDPI = LatexConfig::self()->horizontalDPI();
 	vDPI = LatexConfig::self()->verticalDPI();
@@ -220,7 +220,7 @@ QString LatexPlugin::handleLatex(const QString &latexFormula)
 
 bool LatexPlugin::securityCheck(const QString &latexFormula)
 {
-	return !latexFormula.contains(QRegExp("\\\\(def|let|futurelet|newcommand|renewcomment|else|fi|write|input|include"
+	return !latexFormula.contains(QRegExp("\\\\(def|let|futurelet|newcommand|renewcomment|if[a-z]*|else|fi|write|input|include"
 			"|chardef|catcode|makeatletter|noexpand|toksdef|every|errhelp|errorstopmode|scrollmode|nonstopmode|batchmode"
 			"|read|csname|newhelp|relax|afterground|afterassignment|expandafter|noexpand|special|command|loop|repeat|toks"
 			"|output|line|mathcode|name|item|section|mbox|DeclareRobustCommand)[^a-zA-Z]"));
