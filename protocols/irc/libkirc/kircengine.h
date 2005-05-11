@@ -20,6 +20,7 @@
 #ifndef KIRCENGINE_H
 #define KIRCENGINE_H
 
+#include "kircentity.h"
 #include "kircmessage.h"
 #include "kircmessageredirector.h"
 #include "kirctransfer.h"
@@ -171,6 +172,8 @@ public:
 
 	inline void addCustomCtcp( const QString &ctcp, const QString &reply )
 	{ customCtcpMap[ ctcp.lower() ] = reply; }
+
+	KIRC::EntityPtr getEntity(const QString &name);
 
 public slots:
 	//Message output
@@ -358,6 +361,8 @@ signals:
 	void incomingCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
 
 private slots:
+	void destroyed(KIRC::Entity *entity);
+
 	void slotReadyRead();
 
 	void slotConnected();
@@ -481,6 +486,8 @@ private:
 	bool m_ReqsPasswd;
 	bool m_FailedNickOnLogin;
 	bool m_useSSL;
+
+	QValueList<KIRC::Entity *> m_entities;
 
 	QString m_VersionString;
 	QString m_UserString;

@@ -458,4 +458,17 @@ bool Engine::invokeCtcpCommandOfMessage(const QDict<MessageRedirector> &map, Mes
 	return false;
 }
 
+EntityPtr Engine::getEntity(const QString &name)
+{
+	Entity *entity = 0;
+	//FIXME: Do the searching code here.
+	connect(entity, SIGNAL(destroyed(KIRC::Entity *)), SLOT(destroyed(KIRC::Entity *)));
+	return EntityPtr(entity);
+}
+
+void Engine::destroyed(KIRC::Entity *entity)
+{
+	m_entities.remove(entity);
+}
+
 #include "kircengine.moc"
