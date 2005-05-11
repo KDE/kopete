@@ -49,6 +49,7 @@ public:
 	};
 
 	Entity(const QString &name, const Type type = Unknown);
+	virtual ~Entity();
 
 	QString name() const;
 	QString host() const;
@@ -73,6 +74,9 @@ public:
 
 	QString userHost() const;
 	static QString userHost(const QString &s);
+
+signals:
+	void destroyed(KIRC::Entity *self);
 
 private:
 

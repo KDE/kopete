@@ -47,6 +47,11 @@ Entity::Entity(const QString &, const Type type)
 //	rename(name, type);
 }
 
+Entity::~Entity()
+{
+	emit destroyed(this);
+}
+
 QString Entity::name() const
 {
 	return m_name;
