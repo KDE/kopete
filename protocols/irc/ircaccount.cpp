@@ -894,6 +894,19 @@ IRCServerContact *IRCAccount::myServer() const
 	return m_myServer;
 }
 
+IRCContact *IRCAccount::getContact(const QString&name)
+{
+	IRCContact *contact = 0;
+	//FIXME: do the search here
+	QObject::connect(contact, SIGNAL(destroyed(IRCContact *)), SLOT(destroyed(IRCContact *)));
+	return contact;
+}
+
+void IRCAccount::destroyed(IRCContact *contact)
+{
+	m_contacts.remove(contact);
+}
+
 #include "ircaccount.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

@@ -71,6 +71,8 @@ IRCContact::~IRCContact()
 //	kdDebug(14120) << k_funcinfo << m_nickName << endl;
 	if (metaContact() && metaContact()->isTemporary() && !isChatting(m_chatSession))
 		metaContact()->deleteLater();
+
+	emit destroyed(this);
 }
 
 IRCAccount *IRCContact::ircAccount() const

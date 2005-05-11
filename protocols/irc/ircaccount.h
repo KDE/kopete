@@ -31,6 +31,7 @@
 #include <qstringlist.h>
 
 class ChannelList;
+class IRCContact;
 class IRCChannelContact;
 class IRCContactManager;
 class IRCServerContact;
@@ -120,7 +121,7 @@ public:
 
 	IRCAccount(IRCProtocol *p, const QString &accountid, const QString &autoConnect = QString::null,
 			const QString& networkName = QString::null, const QString &nickName = QString::null);
-	~IRCAccount();
+	virtual ~IRCAccount();
 
 	void setNickName( const QString & );
 
@@ -168,6 +169,8 @@ public:
 
 	Kopete::ChatSession *currentCommandSource();
 
+	IRCContact *getContact(const QString &name);
+
 public slots:
 
 	virtual KActionMenu *actionMenu();
@@ -210,6 +213,8 @@ protected:
 private slots:
 	void engineStatusChanged(KIRC::Engine::Status newStatus);
 
+	void destroyed(IRCContact *contact);
+
 	void slotFailedServerPassword();
 	void slotGoAway( const QString &reason );
 	void slotJoinNamedChannel( const QString &channel );
@@ -244,6 +249,7 @@ private:
 
 	ChannelListDialog *m_channelList;
 
+	QValueList<IRCContact *> m_contacts;
 	IRCContactManager *m_contactManager;
 	IRCServerContact *m_myServer;
 

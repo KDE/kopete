@@ -60,7 +60,7 @@ class IRCContact
 
 public:
 	IRCContact(IRCContactManager *contactManager, const QString &nick, Kopete::MetaContact *metac, const QString& icon = QString::null);
-	~IRCContact();
+	virtual ~IRCContact();
 
 	IRCAccount *ircAccount() const;
 	KIRC::Engine *kircEngine() const;
@@ -109,6 +109,9 @@ public:
 	 * which server the contact relates to
 	 */
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
+
+signals:
+	void destoyed(IRCContact *self);
 
 public slots:
 	void setCodec( const QTextCodec *codec );
