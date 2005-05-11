@@ -263,9 +263,11 @@ bool Client::isActive() const
 void Client::groupChatChangeNick(const QString &host, const QString &room, const QString &nick, const Status &_s)
 {
 	Jid jid(room + "@" + host + "/" + nick);
-	for(QValueList<GroupChat>::ConstIterator it = d->groupChatList.begin(); it != d->groupChatList.end(); it++) {
-		const GroupChat &i = *it;
+	for(QValueList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end(); it++) {
+		GroupChat &i = *it;
 		if(i.j.compare(jid, false)) {
+			i.j = jid;
+
 			Status s = _s;
 			s.setIsAvailable(true);
 

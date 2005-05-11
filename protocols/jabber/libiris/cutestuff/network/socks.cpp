@@ -25,6 +25,8 @@
 #include<qptrlist.h>
 #include<qtimer.h>
 #include<qguardedptr.h>
+#include<qsocketdevice.h>
+#include<qsocketnotifier.h>
 
 #ifdef Q_OS_UNIX
 #include<sys/types.h>
@@ -45,8 +47,174 @@
 // CS_NAMESPACE_BEGIN
 
 //----------------------------------------------------------------------------
+// SocksUDP
+//----------------------------------------------------------------------------
+static QByteArray sp_create_udp(const QString &host, Q_UINT16 port, const QByteArray &buf)
+{
+	// detect for IP addresses
+	//QHostAddress addr;
+	//if(addr.setAddress(host))
+	//	return sp_set_request(addr, port, cmd1);
+
+	QCString h = host.utf8();
+	h.truncate(255);
+	h = QString::fromUtf8(h).utf8(); // delete any partial characters?
+	int hlen = h.length();
+
+	int at = 0;
+	QByteArray a(4);
+	a[at++] = 0x00; // reserved
+	a[at++] = 0x00; // reserved
+	a[at++] = 0x00; // frag
+	a[at++] = 0x03; // address type = domain
+
+	// host
+	a.resize(at+hlen+1);
+	a[at++] = hlen;
+	memcpy(a.data() + at, h.data(), hlen);
+	at += hlen;
+
+	// port
+	a.resize(at+2);
+	unsigned short p = htons(port);
+	memcpy(a.data() + at, &p, 2);
+	at += 2;
+
+	a.resize(at+buf.size());
+	memcpy(a.data() + at, buf.data(), buf.size());
+
+	return a;
+}
+
+struct SPS_UDP
+{
+	QString host;
+	Q_UINT16 port;
+	QByteArray data;
+};
+
+static int sp_read_udp(QByteArray *from, SPS_UDP *s)
+{
+	int full_len = 4;
+	if((int)from->size() < full_len)
+		return 0;
+
+	QString host;
+	QHostAddress addr;
+	unsigned char atype = from->at(3);
+
+	if(atype == 0x01) {
+		full_len += 4;
+		if((int)from->size() < full_len)
+			return 0;
+		Q_UINT32 ip4;
+		memcpy(&ip4, from->data() + 4, 4);
+		addr.setAddress(ntohl(ip4));
+		host = addr.toString();
+	}
+	else if(atype == 0x03) {
+		++full_len;
+		if((int)from->size() < full_len)
+			return 0;
+		unsigned char host_len = from->at(4);
+		full_len += host_len;
+		if((int)from->size() < full_len)
+			return 0;
+		QCString cs(host_len+1);
+		memcpy(cs.data(), from->data() + 5, host_len);
+		host = QString::fromLatin1(cs);
+	}
+	else if(atype == 0x04) {
+		full_len += 16;
+		if((int)from->size() < full_len)
+			return 0;
+		Q_UINT8 a6[16];
+		memcpy(a6, from->data() + 4, 16);
+		addr.setAddress(a6);
+		host = addr.toString();
+	}
+
+	full_len += 2;
+	if((int)from->size() < full_len)
+		return 0;
+
+	Q_UINT16 p;
+	memcpy(&p, from->data() + full_len - 2, 2);
+
+	s->host = host;
+	s->port = ntohs(p);
+	s->data.resize(from->size() - full_len);
+	memcpy(s->data.data(), from->data() + full_len, s->data.size());
+
+	return 1;
+}
+
+class SocksUDP::Private
+{
+public:
+	QSocketDevice *sd;
+	QSocketNotifier *sn;
+	SocksClient *sc;
+	QHostAddress routeAddr;
+	int routePort;
+	QString host;
+	int port;
+};
+
+SocksUDP::SocksUDP(SocksClient *sc, const QString &host, int port, const QHostAddress &routeAddr, int routePort)
+:QObject(sc)
+{
+	d = new Private;
+	d->sc = sc;
+	d->sd = new QSocketDevice(QSocketDevice::Datagram);
+	d->sd->setBlocking(false);
+	d->sn = new QSocketNotifier(d->sd->socket(), QSocketNotifier::Read);
+	connect(d->sn, SIGNAL(activated(int)), SLOT(sn_activated(int)));
+	d->host = host;
+	d->port = port;
+	d->routeAddr = routeAddr;
+	d->routePort = routePort;
+}
+
+SocksUDP::~SocksUDP()
+{
+	delete d->sn;
+	delete d->sd;
+	delete d;
+}
+
+void SocksUDP::change(const QString &host, int port)
+{
+	d->host = host;
+	d->port = port;
+}
+
+void SocksUDP::write(const QByteArray &data)
+{
+	QByteArray buf = sp_create_udp(d->host, d->port, data);
+	d->sd->setBlocking(true);
+	d->sd->writeBlock(buf.data(), buf.size(), d->routeAddr, d->routePort);
+	d->sd->setBlocking(false);
+}
+
+void SocksUDP::sn_activated(int)
+{
+	QByteArray buf(8192);
+	int actual = d->sd->readBlock(buf.data(), buf.size());
+	buf.resize(actual);
+	packetReady(buf);
+}
+
+//----------------------------------------------------------------------------
 // SocksClient
 //----------------------------------------------------------------------------
+#define REQ_CONNECT      0x01
+#define REQ_BIND         0x02
+#define REQ_UDPASSOCIATE 0x03
+
+#define RET_SUCCESS      0x00
+#define RET_UNREACHABLE  0x04
+#define RET_CONNREFUSED  0x05
 
 // spc = socks packet client
 // sps = socks packet server
@@ -189,7 +357,7 @@ static int sps_get_authUsername(QByteArray *from, SPSS_AUTHUSERNAME *s)
 }
 
 // connectRequest
-static QByteArray sp_set_connectRequest(const QHostAddress &addr, unsigned short port, unsigned char cmd1=0x01)
+static QByteArray sp_set_request(const QHostAddress &addr, unsigned short port, unsigned char cmd1)
 {
 	int at = 0;
 	QByteArray a(4);
@@ -228,12 +396,12 @@ static QByteArray sp_set_connectRequest(const QHostAddress &addr, unsigned short
 	return a;
 }
 
-static QByteArray sp_set_connectRequest(const QString &host, Q_UINT16 port, unsigned char cmd1=0x01)
+static QByteArray sp_set_request(const QString &host, Q_UINT16 port, unsigned char cmd1)
 {
 	// detect for IP addresses
 	QHostAddress addr;
 	if(addr.setAddress(host))
-		return sp_set_connectRequest(addr, port, cmd1);
+		return sp_set_request(addr, port, cmd1);
 
 	QCString h = host.utf8();
 	h.truncate(255);
@@ -271,7 +439,7 @@ struct SPS_CONNREQ
 	Q_UINT16 port;
 };
 
-static int sp_get_connectRequest(QByteArray *from, SPS_CONNREQ *s)
+static int sp_get_request(QByteArray *from, SPS_CONNREQ *s)
 {
 	int full_len = 4;
 	if((int)from->size() < full_len)
@@ -353,6 +521,10 @@ public:
 	int rport;
 
 	int pending;
+
+	bool udp;
+	QString udpAddr;
+	int udpPort;
 };
 
 SocksClient::SocksClient(QObject *parent)
@@ -401,6 +573,7 @@ void SocksClient::reset(bool clear)
 	d->recvBuf.resize(0);
 	d->active = false;
 	d->waiting = false;
+	d->udp = false;
 	d->pending = 0;
 }
 
@@ -415,7 +588,7 @@ void SocksClient::setAuth(const QString &user, const QString &pass)
 	d->pass = pass;
 }
 
-void SocksClient::connectToHost(const QString &proxyHost, int proxyPort, const QString &host, int port)
+void SocksClient::connectToHost(const QString &proxyHost, int proxyPort, const QString &host, int port, bool udpMode)
 {
 	reset(true);
 
@@ -423,6 +596,7 @@ void SocksClient::connectToHost(const QString &proxyHost, int proxyPort, const Q
 	d->port = proxyPort;
 	d->real_host = host;
 	d->real_port = port;
+	d->udp = udpMode;
 
 #ifdef PROX_DEBUG
 	fprintf(stderr, "SocksClient: Connecting to %s:%d", proxyHost.latin1(), proxyPort);
@@ -454,7 +628,7 @@ void SocksClient::writeData(const QByteArray &buf)
 
 void SocksClient::write(const QByteArray &buf)
 {
-	if(d->active)
+	if(d->active && !d->udp)
 		d->sock.write(buf);
 }
 
@@ -516,8 +690,10 @@ void SocksClient::sock_readyRead()
 			processOutgoing(block);
 	}
 	else {
-		appendRead(block);
-		readyRead();
+		if(!d->udp) {
+			appendRead(block);
+			readyRead();
+		}
 	}
 }
 
@@ -608,21 +784,21 @@ void SocksClient::processOutgoing(const QByteArray &block)
 	}
 	else if(d->step == StepRequest) {
 		SPS_CONNREQ s;
-		int r = sp_get_connectRequest(&d->recvBuf, &s);
+		int r = sp_get_request(&d->recvBuf, &s);
 		if(r == -1) {
 			reset(true);
 			error(ErrProxyNeg);
 			return;
 		}
 		else if(r == 1) {
-			if(s.cmd != 0x00) {
+			if(s.cmd != RET_SUCCESS) {
 #ifdef PROX_DEBUG
 				fprintf(stderr, "SocksClient: client << Error >> [%02x]\n", s.cmd);
 #endif
 				reset(true);
-				if(s.cmd == 0x04)
+				if(s.cmd == RET_UNREACHABLE)
 					error(ErrHostNotFound);
-				else if(s.cmd == 0x05)
+				else if(s.cmd == RET_CONNREFUSED)
 					error(ErrConnectionRefused);
 				else
 					error(ErrProxyNeg);
@@ -632,6 +808,14 @@ void SocksClient::processOutgoing(const QByteArray &block)
 #ifdef PROX_DEBUG
 			fprintf(stderr, "SocksClient: client << Success >>\n");
 #endif
+			if(d->udp) {
+				if(s.address_type == 0x03)
+					d->udpAddr = s.host;
+				else
+					d->udpAddr = s.addr.toString();
+				d->udpPort = s.port;
+			}
+
 			d->active = true;
 
 			QGuardedPtr<QObject> self = this;
@@ -654,7 +838,13 @@ void SocksClient::do_request()
 	fprintf(stderr, "SocksClient: Requesting ...\n");
 #endif
 	d->step = StepRequest;
-	writeData(sp_set_connectRequest(d->real_host, d->real_port));
+	int cmd = d->udp ? REQ_UDPASSOCIATE : REQ_CONNECT;
+	QByteArray buf;
+	if(!d->real_host.isEmpty())
+		buf = sp_set_request(d->real_host, d->real_port, cmd);
+	else
+		buf = sp_set_request(QHostAddress(), 0, cmd);
+	writeData(buf);
 }
 
 void SocksClient::sock_bytesWritten(int x)
@@ -758,7 +948,7 @@ void SocksClient::continueIncoming()
 	}
 	else if(d->step == StepRequest) {
 		SPS_CONNREQ s;
-		int r = sp_get_connectRequest(&d->recvBuf, &s);
+		int r = sp_get_request(&d->recvBuf, &s);
 		if(r == -1) {
 			reset(true);
 			error(ErrProxyNeg);
@@ -766,12 +956,21 @@ void SocksClient::continueIncoming()
 		}
 		else if(r == 1) {
 			d->waiting = true;
-			if(!s.host.isEmpty())
-				d->rhost = s.host;
-			else
-				d->rhost = s.addr.toString();
-			d->rport = s.port;
-			incomingRequest(d->rhost, d->rport);
+			if(s.cmd == REQ_CONNECT) {
+				if(!s.host.isEmpty())
+					d->rhost = s.host;
+				else
+					d->rhost = s.addr.toString();
+				d->rport = s.port;
+				incomingConnectRequest(d->rhost, d->rport);
+			}
+			else if(s.cmd == REQ_UDPASSOCIATE) {
+				incomingUDPAssociateRequest();
+			}
+			else {
+				requestDeny();
+				return;
+			}
 		}
 	}
 }
@@ -815,23 +1014,25 @@ void SocksClient::authGrant(bool b)
 	continueIncoming();
 }
 
-void SocksClient::requestGrant(bool b)
+void SocksClient::requestDeny()
 {
 	if(d->step != StepRequest || !d->waiting)
 		return;
 
-	// request response
+	// response
 	d->waiting = false;
-	unsigned char cmd1;
-	if(b)
-		cmd1 = 0x00; // success
-	else
-		cmd1 = 0x04; // host not found
-	writeData(sp_set_connectRequest(d->rhost, d->rport, cmd1));
-	if(!b) {
-		reset(true);
+	writeData(sp_set_request(d->rhost, d->rport, RET_UNREACHABLE));
+	reset(true);
+}
+
+void SocksClient::grantConnect()
+{
+	if(d->step != StepRequest || !d->waiting)
 		return;
-	}
+
+	// response
+	d->waiting = false;
+	writeData(sp_set_request(d->rhost, d->rport, RET_SUCCESS));
 	d->active = true;
 #ifdef PROX_DEBUG
 	fprintf(stderr, "SocksClient: server << Success >>\n");
@@ -844,6 +1045,24 @@ void SocksClient::requestGrant(bool b)
 	}
 }
 
+void SocksClient::grantUDPAssociate(const QString &relayHost, int relayPort)
+{
+	if(d->step != StepRequest || !d->waiting)
+		return;
+
+	// response
+	d->waiting = false;
+	writeData(sp_set_request(relayHost, relayPort, RET_SUCCESS));
+	d->udp = true;
+	d->active = true;
+#ifdef PROX_DEBUG
+	fprintf(stderr, "SocksClient: server << Success >>\n");
+#endif
+
+	if(!d->recvBuf.isEmpty())
+		d->recvBuf.resize(0);
+}
+
 QHostAddress SocksClient::peerAddress() const
 {
 	return d->sock.peerAddress();
@@ -852,6 +1071,21 @@ QHostAddress SocksClient::peerAddress() const
 Q_UINT16 SocksClient::peerPort() const
 {
 	return d->sock.peerPort();
+}
+
+QString SocksClient::udpAddress() const
+{
+	return d->udpAddr;
+}
+
+Q_UINT16 SocksClient::udpPort() const
+{
+	return d->udpPort;
+}
+
+SocksUDP *SocksClient::createUDP(const QString &host, int port, const QHostAddress &routeAddr, int routePort)
+{
+	return new SocksUDP(this, host, port, routeAddr, routePort);
 }
 
 //----------------------------------------------------------------------------
@@ -864,17 +1098,22 @@ public:
 
 	ServSock serv;
 	QPtrList<SocksClient> incomingConns;
+	QSocketDevice *sd;
+	QSocketNotifier *sn;
 };
 
 SocksServer::SocksServer(QObject *parent)
 :QObject(parent)
 {
 	d = new Private;
+	d->sd = 0;
+	d->sn = 0;
 	connect(&d->serv, SIGNAL(connectionReady(int)), SLOT(connectionReady(int)));
 }
 
 SocksServer::~SocksServer()
 {
+	stop();
 	d->incomingConns.setAutoDelete(true);
 	d->incomingConns.clear();
 	delete d;
@@ -885,13 +1124,32 @@ bool SocksServer::isActive() const
 	return d->serv.isActive();
 }
 
-bool SocksServer::listen(Q_UINT16 port)
+bool SocksServer::listen(Q_UINT16 port, bool udp)
 {
-	return d->serv.listen(port);
+	stop();
+	if(!d->serv.listen(port))
+		return false;
+	if(udp) {
+		d->sd = new QSocketDevice(QSocketDevice::Datagram);
+		d->sd->setBlocking(false);
+		if(!d->sd->bind(QHostAddress(), port)) {
+			delete d->sd;
+			d->sd = 0;
+			d->serv.stop();
+			return false;
+		}
+		d->sn = new QSocketNotifier(d->sd->socket(), QSocketNotifier::Read);
+		connect(d->sn, SIGNAL(activated(int)), SLOT(sn_activated(int)));
+	}
+	return true;
 }
 
 void SocksServer::stop()
 {
+	delete d->sn;
+	d->sn = 0;
+	delete d->sd;
+	d->sd = 0;
 	d->serv.stop();
 }
 
@@ -922,6 +1180,15 @@ SocksClient *SocksServer::takeIncoming()
 	return c;
 }
 
+void SocksServer::writeUDP(const QHostAddress &addr, int port, const QByteArray &data)
+{
+	if(d->sd) {
+		d->sd->setBlocking(true);
+		d->sd->writeBlock(data.data(), data.size(), addr, port);
+		d->sd->setBlocking(false);
+	}
+}
+
 void SocksServer::connectionReady(int s)
 {
 	SocksClient *c = new SocksClient(s, this);
@@ -937,6 +1204,18 @@ void SocksServer::connectionError()
 	c->deleteLater();
 }
 
-// CS_NAMESPACE_END
+void SocksServer::sn_activated(int)
+{
+	QByteArray buf(8192);
+	int actual = d->sd->readBlock(buf.data(), buf.size());
+	buf.resize(actual);
+	QHostAddress pa = d->sd->peerAddress();
+	int pp = d->sd->peerPort();
+	SPS_UDP s;
+	int r = sp_read_udp(&buf, &s);
+	if(r != 1)
+		return;
+	incomingUDP(s.host, s.port, pa, pp, s.data);
+}
 
-#include "socks.moc"
+// CS_NAMESPACE_END

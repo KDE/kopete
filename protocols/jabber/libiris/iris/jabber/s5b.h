@@ -22,12 +22,14 @@
 #define XMPP_S5B_H
 
 #include<qobject.h>
+#include<qcstring.h>
 #include<qptrlist.h>
 #include<qvaluelist.h>
 #include"im.h"
 #include"bytestream.h"
 
 class SocksClient;
+class SocksUDP;
 
 namespace XMPP
 {
@@ -40,24 +42,41 @@ namespace XMPP
 	typedef QPtrList<S5BConnection> S5BConnectionList;
 	typedef QPtrListIterator<S5BConnection> S5BConnectionListIt;
 
+	class S5BDatagram
+	{
+	public:
+		S5BDatagram();
+		S5BDatagram(int source, int dest, const QByteArray &data);
+
+		int sourcePort() const;
+		int destPort() const;
+		QByteArray data() const;
+
+	private:
+		int _source, _dest;
+		QByteArray _buf;
+	};
+
 	class S5BConnection : public ByteStream
 	{
 		Q_OBJECT
 	public:
-		enum { ErrRefused, ErrConnect, ErrProxy, ErrSocket };
-		enum { Idle, Requesting, Connecting, WaitingForAccept, Active };
+		enum Mode { Stream, Datagram };
+		enum Error { ErrRefused, ErrConnect, ErrProxy, ErrSocket };
+		enum State { Idle, Requesting, Connecting, WaitingForAccept, Active };
 		~S5BConnection();
 
 		Jid proxy() const;
 		void setProxy(const Jid &proxy);
 
-		void connectToJid(const Jid &peer, const QString &sid);
+		void connectToJid(const Jid &peer, const QString &sid, Mode m = Stream);
 		void accept();
 		void close();
 
 		Jid peer() const;
 		QString sid() const;
 		bool isRemote() const;
+		Mode mode() const;
 		int state() const;
 
 		bool isOpen() const;
@@ -65,6 +84,10 @@ namespace XMPP
 		QByteArray read(int bytes=0);
 		int bytesAvailable() const;
 		int bytesToWrite() const;
+
+		void writeDatagram(const S5BDatagram &);
+		S5BDatagram readDatagram();
+		int datagramsAvailable() const;
 
 	signals:
 		void proxyQuery();                             // querying proxy for streamhost information
@@ -75,6 +98,7 @@ namespace XMPP
 		void proxyConnect();                           // connecting to proxy
 		void waitingForActivation();                   // waiting for activation (target only)
 		void connected();                              // connection active
+		void datagramReady();
 
 	private slots:
 		void doPending();
@@ -85,15 +109,20 @@ namespace XMPP
 		void sc_bytesWritten(int);
 		void sc_error(int);
 
+		void su_packetReady(const QByteArray &buf);
+
 	private:
 		class Private;
 		Private *d;
 
 		void reset(bool clear=false);
+		void handleUDP(const QByteArray &buf);
+		void sendUDP(const QByteArray &buf);
 
 		friend class S5BManager;
 		void man_waitForAccept(const S5BRequest &r);
-		void man_clientReady(SocksClient *);
+		void man_clientReady(SocksClient *, SocksUDP *);
+		void man_udpReady(const QByteArray &buf);
 		void man_failed(int);
 		S5BConnection(S5BManager *, QObject *parent=0);
 	};
@@ -123,6 +152,8 @@ namespace XMPP
 
 	private slots:
 		void ps_incoming(const S5BRequest &req);
+		void ps_incomingUDPSuccess(const Jid &from, const QString &dstaddr);
+		void ps_incomingActivate(const Jid &from, const QString &sid, const Jid &streamHost);
 		void item_accepted();
 		void item_tryingHosts(const StreamHostList &list);
 		void item_proxyConnect();
@@ -151,15 +182,18 @@ namespace XMPP
 		void con_accept(S5BConnection *);
 		void con_reject(S5BConnection *);
 		void con_unlink(S5BConnection *);
+		void con_sendUDP(S5BConnection *, const QByteArray &buf);
 
 		friend class S5BServer;
 		bool srv_ownsHash(const QString &key) const;
 		void srv_incomingReady(SocksClient *sc, const QString &key);
+		void srv_incomingUDP(bool init, const QHostAddress &addr, int port, const QString &key, const QByteArray &data);
 		void srv_unlink();
 
 		friend class Item;
 		void doSuccess(const Jid &peer, const QString &id, const Jid &streamHost);
 		void doError(const Jid &peer, const QString &id, int, const QString &);
+		void doActivate(const Jid &peer, const QString &sid, const Jid &streamHost);
 	};
 
 	class S5BConnector : public QObject
@@ -170,8 +204,9 @@ namespace XMPP
 		~S5BConnector();
 
 		void reset();
-		void start(const StreamHostList &hosts, const QString &key, int timeout);
+		void start(const Jid &self, const StreamHostList &hosts, const QString &key, bool udp, int timeout);
 		SocksClient *takeClient();
+		SocksUDP *takeUDP();
 		StreamHost streamHostUsed() const;
 
 		class Item;
@@ -186,6 +221,9 @@ namespace XMPP
 	private:
 		class Private;
 		Private *d;
+
+		friend class S5BManager;
+		void man_udpSuccess(const Jid &streamHost);
 	};
 
 	// listens on a port for serving
@@ -207,6 +245,7 @@ namespace XMPP
 
 	private slots:
 		void ss_incomingReady();
+		void ss_incomingUDP(const QString &host, int port, const QHostAddress &addr, int sourcePort, const QByteArray &data);
 		void item_result(bool);
 
 	private:
@@ -218,6 +257,7 @@ namespace XMPP
 		void unlink(S5BManager *);
 		void unlinkAll();
 		const QPtrList<S5BManager> & managerList() const;
+		void writeUDP(const QHostAddress &addr, int port, const QByteArray &data);
 	};
 
 	class JT_S5B : public Task
@@ -227,7 +267,7 @@ namespace XMPP
 		JT_S5B(Task *);
 		~JT_S5B();
 
-		void request(const Jid &to, const QString &sid, const StreamHostList &hosts, bool fast);
+		void request(const Jid &to, const QString &sid, const StreamHostList &hosts, bool fast, bool udp=false);
 		void requestProxyInfo(const Jid &to);
 		void requestActivation(const Jid &to, const QString &sid, const Jid &target);
 
@@ -252,6 +292,7 @@ namespace XMPP
 		QString id, sid;
 		StreamHostList hosts;
 		bool fast;
+		bool udp;
 	};
 	class JT_PushS5B : public Task
 	{
@@ -260,13 +301,19 @@ namespace XMPP
 		JT_PushS5B(Task *);
 		~JT_PushS5B();
 
+		int priority() const;
+
 		void respondSuccess(const Jid &to, const QString &id, const Jid &streamHost);
 		void respondError(const Jid &to, const QString &id, int code, const QString &str);
+		void sendUDPSuccess(const Jid &to, const QString &dstaddr);
+		void sendActivate(const Jid &to, const QString &sid, const Jid &streamHost);
 
 		bool take(const QDomElement &);
 
 	signals:
 		void incoming(const S5BRequest &req);
+		void incomingUDPSuccess(const Jid &from, const QString &dstaddr);
+		void incomingActivate(const Jid &from, const QString &sid, const Jid &streamHost);
 	};
 
 	class StreamHost

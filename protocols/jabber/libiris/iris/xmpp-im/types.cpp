@@ -623,7 +623,7 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 		d->urlList += u;
 	}
 	
-        // events
+    // events
 	d->eventList.clear();
 	nl = root.elementsByTagNameNS("jabber:x:event", "x");
 	if (nl.count()) {
@@ -639,8 +639,6 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 				d->eventList += ComposingEvent;
 			else if (evtag == "delivered")
 				d->eventList += DeliveredEvent;
-			else if (evtag == "offline")
-				d->eventList += OfflineEvent;
 		}
 		if (d->eventList.isEmpty())
 			d->eventList += CancelEvent;

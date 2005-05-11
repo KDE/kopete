@@ -30,7 +30,6 @@
 #include<qregexp.h>
 #include<qvaluelist.h>
 
-#include "xmpp_tasks.moc"
 using namespace XMPP;
 
 
@@ -678,6 +677,7 @@ JT_Message::JT_Message(Task *parent, const Message &msg)
 :Task(parent)
 {
 	m = msg;
+	m.setId(id());
 }
 
 JT_Message::~JT_Message()

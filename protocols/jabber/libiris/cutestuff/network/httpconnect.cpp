@@ -365,5 +365,3 @@ void HttpConnect::sock_error(int x)
 }
 
 // CS_NAMESPACE_END
-
-#include "httpconnect.moc"
