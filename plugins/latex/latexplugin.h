@@ -59,6 +59,11 @@ private:
 	 * gives a latex formula, and return the filename of the file where the latex is stored.
      */
 	QString handleLatex(const QString &latex);
+
+	/**
+	 * return false if the latex formula may contains malicious commands
+	 */
+	bool securityCheck(const QString & formula);
 	
 	static LatexPlugin* s_pluginStatic;
 	QString m_convScript;
