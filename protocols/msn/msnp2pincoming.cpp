@@ -114,7 +114,6 @@ void MSNP2PIncoming::parseMessage(MessageStruct &msgStr)
 		{
 			if(! m_kopeteTransfer )
 			{
-				error();
 				return;
 			}
 			//Parse the message to get some info for replying
@@ -149,6 +148,10 @@ void MSNP2PIncoming::parseMessage(MessageStruct &msgStr)
 		else if (dataMessage.contains("BYE"))
 		{
 			abortCurrentTransfer();
+		}
+		else if(dataMessage.contains("200 OK"))
+		{
+			//ignore
 		}
 		else
 		{ //this seems to be _probably_ (just a guess) a utf-16 message.   we will download it completely.
