@@ -25,6 +25,7 @@
 #include <unistd.h>
 #include <signal.h>
 
+#undef __STRICT_ANSI__
 #include <asm/types.h>
 #include <linux/fs.h>
 #include <linux/kernel.h>
@@ -34,7 +35,7 @@
 #endif
 
 #include <linux/videodev.h>
-
+#define __STRICT_ANSI__
 
 #include "videodevice.h"
 
@@ -43,6 +44,17 @@
 namespace Kopete {
 
 namespace AV {
+
+VideoDevice* pinstance=NULL;
+
+VideoDevice* VideoDevice::getInstance ()
+{
+	if (instance == NULL)
+	{
+		instance = new VideoDevice;
+	}
+	return instance;
+}
 
 VideoDevice::VideoDevice()
 {
@@ -60,9 +72,9 @@ VideoDevice::~VideoDevice()
 
 
 /*!
-    \fn VideoDevice::openDevice()
+    \fn VideoDevice::open()
  */
-int VideoDevice::openDevice()
+int VideoDevice::open()
 {
     /// @todo implement me
 	struct stat st;
@@ -77,14 +89,14 @@ int VideoDevice::openDevice()
 		fprintf (stderr, "%s is no device\n", path.c_str());
 		exit (EXIT_FAILURE);
 	}
-	descriptor = open (path.c_str(), O_RDWR /* required */ | O_NONBLOCK, 0);
+	descriptor = ::open (path.c_str(), O_RDWR /* required */ | O_NONBLOCK, 0);
 	if (-1 == descriptor)
 	{
 		fprintf (stderr, "Cannot open '%s': %d, %s\n", path.c_str(), errno, strerror (errno));
 		exit (EXIT_FAILURE);
 	}
 
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 
@@ -104,9 +116,10 @@ int VideoDevice::xioctl(int request, void *arg)
 /*!
     \fn VideoDevice::processImage(const void *p)
  */
-void VideoDevice::processImage(const void * /* p */)
+int VideoDevice::processImage(const void * /* p */)
 {
     /// @todo implement me
+	return EXIT_SUCCESS;
 }
 
 
@@ -116,14 +129,14 @@ void VideoDevice::processImage(const void * /* p */)
 int VideoDevice::getFrame()
 {
     /// @todo implement me
-	return 1;
+	return EXIT_SUCCESS;
 }
 
 
 /*!
     \fn VideoDevice::initDevice()
  */
-void VideoDevice::initDevice()
+int VideoDevice::initDevice()
 {
     /// @todo implement me
 #ifdef HAVE_V4L2
@@ -142,7 +155,7 @@ void VideoDevice::initDevice()
 		}
 		else
 		{
-			errnoExit ("VIDIOC_QUERYCAP");
+			return errnoReturn ("VIDIOC_QUERYCAP");
 		}
 	}
 	if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE))
@@ -193,7 +206,7 @@ void VideoDevice::initDevice()
 	fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
 
 	if (-1 == xioctl (VIDIOC_S_FMT, &fmt))
-		errnoExit ("VIDIOC_S_FMT");
+		return errnoReturn ("VIDIOC_S_FMT");
 
   // Note VIDIOC_S_FMT may change width and height.
 
@@ -218,30 +231,31 @@ void VideoDevice::initDevice()
 /*!
     \fn VideoDevice::closeDevice()
  */
-void VideoDevice::closeDevice()
+int VideoDevice::closeDevice()
 {
     /// @todo implement me
 	if (-1 == close (descriptor))
-		errnoExit ("close");
+		return errnoReturn ("close");
 	descriptor = -1;
+	return EXIT_SUCCESS;
 }
 
 
 /*!
-    \fn VideoDevice::errnoExit(const char* s)
+    \fn VideoDevice::errnoReturn(const char* s)
  */
-void VideoDevice::errnoExit(const char* s)
+int VideoDevice::errnoReturn(const char* s)
 {
     /// @todo implement me
 	fprintf (stderr, "%s error %d, %s\n",s, errno, strerror (errno));
-	exit (EXIT_FAILURE);
+	return EXIT_FAILURE;
 }
 
 
 /*!
     \fn VideoDevice::initRead(unsigned int buffer_size)
  */
-void VideoDevice::initRead(unsigned int buffer_size)
+int VideoDevice::initRead(unsigned int buffer_size)
 {
     /// @todo implement me
 	buffers.resize(1);
@@ -249,7 +263,7 @@ void VideoDevice::initRead(unsigned int buffer_size)
 	if (buffers.size()==0)
 	{
 		fprintf (stderr, "Out of memory\n");
-		exit (EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	buffers[0].length = buffer_size;
@@ -258,15 +272,16 @@ void VideoDevice::initRead(unsigned int buffer_size)
 	if (!buffers[0].start)
 	{
 		fprintf (stderr, "Out of memory\n");
-		exit (EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
+	return EXIT_SUCCESS;
 }
 
 
 /*!
     \fn VideoDevice::initMmap()
  */
-void VideoDevice::initMmap()
+int VideoDevice::initMmap()
 {
     /// @todo implement me
 #ifdef HAVE_V4L2
@@ -283,11 +298,11 @@ void VideoDevice::initMmap()
 		if (EINVAL == errno)
 		{
 			fprintf (stderr, "%s does not support memory mapping\n", path.c_str());
-			exit (EXIT_FAILURE);
+			return EXIT_FAILURE;
 		}
 		else
 		{
-			errnoExit ("VIDIOC_REQBUFS");
+			return errnoReturn ("VIDIOC_REQBUFS");
 		}
 	}
 
@@ -316,22 +331,23 @@ void VideoDevice::initMmap()
 		buf.index  = n_buffers;
 
 		if (-1 == xioctl (VIDIOC_QUERYBUF, &buf))
-			errnoExit ("VIDIOC_QUERYBUF");
+			return errnoReturn ("VIDIOC_QUERYBUF");
 
 		buffers[n_buffers].length = buf.length;
 		buffers[n_buffers].start = mmap (NULL /* start anywhere */, buf.length, PROT_READ | PROT_WRITE /* required */, MAP_SHARED /* recommended */, descriptor, buf.m.offset);
 
 		if (MAP_FAILED == buffers[n_buffers].start)
-		errnoExit ("mmap");
+		return errnoReturn ("mmap");
 	}
 #endif
+	return EXIT_SUCCESS;
 }
 
 
 /*!
     \fn VideoDevice::initUserptr()
  */
-void VideoDevice::initUserptr(unsigned int buffer_size)
+int VideoDevice::initUserptr(unsigned int buffer_size)
 {
     /// @todo implement me
 #ifdef HAVE_V4L2
@@ -352,7 +368,7 @@ void VideoDevice::initUserptr(unsigned int buffer_size)
 		}
 		else
 		{
-			errnoExit ("VIDIOC_REQBUFS");
+			return errnoReturn ("VIDIOC_REQBUFS");
 		}
 	}
 
@@ -376,13 +392,14 @@ void VideoDevice::initUserptr(unsigned int buffer_size)
 		}
 	}
 #endif
+return EXIT_SUCCESS;
 }
 
 
 /*!
     \fn VideoDevice::setDevice(int device)
  */
-void VideoDevice::setDevice(int device)
+int VideoDevice::setDevice(int device)
 {
     /// @todo implement me
 	std::ostringstream temp;
@@ -390,13 +407,14 @@ void VideoDevice::setDevice(int device)
 	temp << "/dev/video" << device;
 	path = temp.str();
 	std::cout << path;
+	return EXIT_SUCCESS;
 }
 
 
 /*!
     \fn VideoDevice::startCapturing()
  */
-void VideoDevice::startCapturing()
+int VideoDevice::startCapturing()
 {
     /// @todo implement me
 #ifdef HAVE_V4L2
@@ -416,11 +434,11 @@ void VideoDevice::startCapturing()
 				buf.memory = V4L2_MEMORY_MMAP;
 				buf.index  = i;
 				if (-1 == xioctl (VIDIOC_QBUF, &buf))
-					errnoExit ("VIDIOC_QBUF");
+					return errnoReturn ("VIDIOC_QBUF");
 			}
 			type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 			if (-1 == xioctl (VIDIOC_STREAMON, &type))
-				errnoExit ("VIDIOC_STREAMON");
+				return errnoReturn ("VIDIOC_STREAMON");
 			break;
 		case IO_METHOD_USERPTR:
 			for (i = 0; i < n_buffers; ++i)
@@ -432,21 +450,22 @@ void VideoDevice::startCapturing()
 				buf.m.userptr = (unsigned long) buffers[i].start;
 				buf.length    = buffers[i].length;
 				if (-1 == xioctl (VIDIOC_QBUF, &buf))
-					errnoExit ("VIDIOC_QBUF");
+					return errnoReturn ("VIDIOC_QBUF");
 			}
 			type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 			if (-1 == xioctl (VIDIOC_STREAMON, &type))
-				errnoExit ("VIDIOC_STREAMON");
+				return errnoReturn ("VIDIOC_STREAMON");
 			break;
 	}
 #endif
+	return EXIT_SUCCESS;
 }
 
 
 /*!
     \fn VideoDevice::stopCapturing()
  */
-void VideoDevice::stopCapturing()
+int VideoDevice::stopCapturing()
 {
     /// @todo implement me
 #ifdef HAVE_V4L2
@@ -460,10 +479,11 @@ void VideoDevice::stopCapturing()
 		case IO_METHOD_USERPTR:
 			type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 			if (-1 == xioctl (VIDIOC_STREAMOFF, &type))
-				errnoExit ("VIDIOC_STREAMOFF");
+				return errnoReturn ("VIDIOC_STREAMOFF");
 			break;
 	}
 #endif
+return EXIT_SUCCESS;
 }
 
 
@@ -485,10 +505,10 @@ int VideoDevice::readFrame()
 				switch (errno)
 				{
 					case EAGAIN:
-						return 0;
+						return EXIT_FAILURE;
 					case EIO: /* Could ignore EIO, see spec. fall through */
 					default:
-					errnoExit ("read");
+					return errnoReturn ("read");
 				}
 			}
 			processImage (buffers[0].start);
@@ -502,16 +522,16 @@ int VideoDevice::readFrame()
 				switch (errno)
 				{
 					case EAGAIN:
-						return 0;
+						return EXIT_FAILURE;
 					case EIO: /* Could ignore EIO, see spec. fall through */
 					default:
-						errnoExit ("VIDIOC_DQBUF");
+						return errnoReturn ("VIDIOC_DQBUF");
 				}
 			}
 			assert (buf.index < n_buffers);
 			processImage (buffers[buf.index].start);
 			if (-1 == xioctl (VIDIOC_QBUF, &buf))
-				errnoExit ("VIDIOC_QBUF");
+				return errnoReturn ("VIDIOC_QBUF");
 			break;
 		case IO_METHOD_USERPTR:
 			CLEAR (buf);
@@ -522,10 +542,10 @@ int VideoDevice::readFrame()
 				switch (errno)
 				{
 					case EAGAIN:
-						return 0;
+						return EXIT_FAILURE;
 					case EIO: /* Could ignore EIO, see spec. fall through */
 					default:
-						errnoExit ("VIDIOC_DQBUF");
+						return errnoReturn ("VIDIOC_DQBUF");
 				}
 			}
 			for (i = 0; i < n_buffers; ++i)
@@ -534,11 +554,11 @@ int VideoDevice::readFrame()
 			assert (i < n_buffers);
 			processImage ((void *) buf.m.userptr);
 			if (-1 == xioctl (VIDIOC_QBUF, &buf))
-				errnoExit ("VIDIOC_QBUF");
+				return errnoReturn ("VIDIOC_QBUF");
 			break;
 	}
 #endif
-	return 1;
+	return EXIT_SUCCESS;
 }
 
 
@@ -557,9 +577,9 @@ int Kopete::AV::VideoDevice::selectInput(int input)
 	if (-1 == ioctl (descriptor, VIDIOC_S_INPUT, &input))
 	{
 		perror ("VIDIOC_S_INPUT");
-	return (EXIT_FAILURE);
+	return EXIT_FAILURE;
 	}
-	return (EXIT_SUCCESS);
+	return EXIT_SUCCESS;
 #endif
 }
 
@@ -570,7 +590,7 @@ int Kopete::AV::VideoDevice::selectInput(int input)
 int Kopete::AV::VideoDevice::setResolution(int /* width */, int /* height */)
 {
     /// @todo implement me
-	return (EXIT_SUCCESS);
+	return EXIT_SUCCESS;
 }
 
 
@@ -580,5 +600,5 @@ int Kopete::AV::VideoDevice::setResolution(int /* width */, int /* height */)
 int Kopete::AV::VideoDevice::scanDevices()
 {
     /// @todo implement me
-	return (EXIT_SUCCESS);
+	return EXIT_SUCCESS;
 }

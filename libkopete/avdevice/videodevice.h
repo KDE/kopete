@@ -31,15 +31,16 @@ class VideoDevicePrivate;
 class VideoDevice
 {
 public:
+	static VideoDevice* getInstance();
 	VideoDevice();
 	~VideoDevice();
-	int openDevice();
+	int open();
 	int getFrame();
-	void initDevice();
-	void closeDevice();
-	void setDevice(int device);
-	void startCapturing();
-	void stopCapturing();
+	int initDevice();
+	int closeDevice();
+	int setDevice(int device);
+	int startCapturing();
+	int stopCapturing();
 	int readFrame();
 	int selectInput(int input);
 	int setResolution(int width, int height);
@@ -66,11 +67,13 @@ protected:
 		unsigned int     n_buffers;
 protected:
 	int xioctl(int request, void *arg);
-	void processImage(const void *p);
-	void errnoExit(const char* s);
-	void initRead(unsigned int buffer_size);
-	void initMmap();
-	void initUserptr(unsigned int buffer_size);
+	int processImage(const void *p);
+	int errnoReturn(const char* s);
+	int initRead(unsigned int buffer_size);
+	int initMmap();
+	int initUserptr(unsigned int buffer_size);
+private:
+	static VideoDevice* instance;
 };
 
 }
