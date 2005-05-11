@@ -113,11 +113,13 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 		if (pos >= 0 )
 		{
 			QString match = rg.cap(0);
-//			kdDebug() << k_funcinfo << " captured: " << match << endl;
+			pos += rg.matchedLength();
+
 			QString formul=match;
-			QString fileName=handleLatex(formul.replace("$$",""));
+			if(!securityCheck(formul))
+				continue;
 			
-//			kdDebug() << k_funcinfo  << " render process finished..." << endl;
+			QString fileName=handleLatex(formul.replace("$$",""));
 			
 			// get the image and encode it with base64
 			#if ENCODED_IMAGE_MODE
@@ -134,9 +136,6 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 			#else
 			replaceMap[Kopete::Message::escape(match)] = fileName;
 			#endif
-			// ok, go for the next one
-			pos += rg.matchedLength();
-
 		}
 	}
 
@@ -178,6 +177,8 @@ void LatexPlugin::slotMessageAboutToSend( Kopete::Message& msg)
 	if( rg.search(messageText) != -1 )
 	{
 		QString latexFormula = rg.cap(1);
+		if(!securityCheck( latexFormula ))
+			return;
 
 		QString url = handleLatex(latexFormula);
 
@@ -217,6 +218,14 @@ QString LatexPlugin::handleLatex(const QString &latexFormula)
 	return fileName;
 }
 
+bool LatexPlugin::securityCheck(const QString &latexFormula)
+{
+	return !latexFormula.contains(QRegExp("\\\\(def|let|futurelet|newcommand|renewcomment|if[a-z]*|else|fi|write|input|include"
+			"|chardef|catcode|makeatletter|noexpand|toksdef|every|errhelp|errorstopmode|scrollmode|nonstopmode|batchmode"
+			"|read|csname|newhelp|relax|afterground|afterassignment|expandafter|noexpand|special|command|loop|repeat|toks"
+			"|output|line|mathcode|name|item|section|mbox|DeclareRobustCommand)[^a-zA-Z]"));
+
+}
 
 void LatexPlugin::slotSettingsChanged()
 {
