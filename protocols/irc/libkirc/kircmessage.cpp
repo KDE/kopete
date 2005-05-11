@@ -240,7 +240,7 @@ bool Message::matchForIRCRegExp(const QCString &line, const QTextCodec *codec, M
 	if(matchForIRCRegExp(m_IRCCommandType1, codec, line, message))
 		return true;
 #ifdef _IRC_STRICTNESS_
-	if(!matchForIRCRegExp(m_IRCCommandType2, codec, line, message)
+	if(!matchForIRCRegExp(m_IRCCommandType2, codec, line, message))
 		return true;
 #endif // _IRC_STRICTNESS_
 	return false;
