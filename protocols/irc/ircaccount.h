@@ -30,7 +30,8 @@
 #include <qstring.h>
 #include <qstringlist.h>
 
-class ChannelList;
+class ChannelListDialog;
+
 class IRCContact;
 class IRCChannelContact;
 class IRCContactManager;
@@ -63,26 +64,6 @@ struct IRCNetwork
 	QString name;
 	QString description;
 	QValueList<IRCHost*> hosts;
-};
-
-class ChannelListDialog
-	: public KDialogBase
-{
-	Q_OBJECT
-
-	public:
-		ChannelListDialog(KIRC::Engine *engine, const QString &caption, QObject *target, const char* slotJoinChan);
-
-		void clear();
-
-		void search();
-
-	private slots:
-		void slotChannelDoubleClicked( const QString & );
-
-	private:
-		KIRC::Engine *m_engine;
-		ChannelList *m_list;
 };
 
 class IRCAccount

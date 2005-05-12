@@ -21,21 +21,22 @@
 #include "irccontact.h"
 #include "irccontactmanager.h"
 #include "ircprotocol.h"
-#include "channellist.h"
 
 #include "ircservercontact.h"
 #include "ircchannelcontact.h"
 #include "ircusercontact.h"
 
+#include "channellistdialog.h"
+
 #include "kircengine.h"
 
+#include "kopeteaccountmanager.h"
 #include "kopeteaway.h"
 #include "kopeteawayaction.h"
-#include "kopeteuiglobal.h"
+#include "kopetecommandhandler.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
-#include "kopeteaccountmanager.h"
-#include "kopetecommandhandler.h"
+#include "kopeteuiglobal.h"
 #include "kopeteview.h"
 #include "kopetepassword.h"
 
@@ -55,40 +56,6 @@
 
 #include <qlayout.h>
 #include <qtimer.h>
-
-ChannelListDialog::ChannelListDialog(KIRC::Engine *engine, const QString &caption, QObject *target, const char* slotJoinChan)
-	: KDialogBase(Kopete::UI::Global::mainWidget(), "channel_list_widget", false, caption, Close)
-{
-	m_engine = engine;
-	m_list = new ChannelList( this, engine );
-
-	connect( m_list, SIGNAL( channelDoubleClicked( const QString & ) ),
-		target, slotJoinChan );
-
-	connect( m_list, SIGNAL( channelDoubleClicked( const QString & ) ),
-		this, SLOT( slotChannelDoubleClicked( const QString & ) ) );
-
-	new QHBoxLayout( m_list, 0, spacingHint() );
-
-	setInitialSize( QSize( 500, 400 ) );
-	setMainWidget( m_list );
-	show();
-}
-
-void ChannelListDialog::clear()
-{
-	m_list->clear();
-}
-
-void ChannelListDialog::search()
-{
-	m_list->search();
-}
-
-void ChannelListDialog::slotChannelDoubleClicked( const QString & )
-{
-	close();
-}
 
 const QString IRCAccount::CONFIG_CODECMIB = QString::fromLatin1("Codec");
 const QString IRCAccount::CONFIG_NETWORKNAME = QString::fromLatin1("NetworkName");
