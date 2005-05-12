@@ -131,6 +131,8 @@ private slots:
 	void slotRightClick( const QString &, const QPoint &point );
 
 	void slotCopyURL();
+    
+    void slotSaveCustomEmoticon();
 
 	void slotCloseView( bool force = false );
 
@@ -157,6 +159,7 @@ private:
 	KAction *printAction;
 	KAction *closeAction;
 	KAction *copyURLAction;
+    KAction *saveCustomEmoticonAction;
 
 	void readOverrides();
 
