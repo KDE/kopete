@@ -246,9 +246,23 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 			QString content="SessionID: " + QString::number( m_sessionId ) + "\r\n\r\n" ;
 			p2p->makeMSNSLPMessage( OK, content );
 
-			//prepare to send the file
-			p2p->m_Sfile = new QFile( locateLocal( "appdata", "msnpicture-" +
-						m_myHandle.lower().replace(QRegExp("[./~]"),"-")  +".png" ) );
+    		// the context is a Base64 version of the msnobj
+		    rx=QRegExp("Context: ([0-9a-zA-Z+/=]*)");
+    		rx.search( dataMessage );
+    		QCString msnobj;
+    		KCodecs::base64Decode( rx.cap(1).utf8() , msnobj);
+    		kdDebug(14140) << "Requesting pic" << msnobj << endl;
+    		rx=QRegExp("<msnobj\\s+Creator=\"(\\S+)\"\\s+Size=\"(\\S+)\"\\s+Type=\"(\\S+)\"\\s+Location=\"(\\S+)\"\\s+Friendly=\"(\\S+)\"\\s+SHA1D=\"(\\S+)\"\\s+SHA1C=\"(\\S+)\"/>");
+    		rx.search(msnobj);
+			
+    		// The display picture's name is 'kopete.tmp'
+    		QString fname = 
+    		  (rx.cap(4) == "kopete.tmp")
+        		? locateLocal( "appdata", "msnpicture-"+m_myHandle.lower().replace(QRegExp("[./~]"),"-")+".png" )
+        		: KGlobal::dirs()->findResource( "emoticons", QString::fromLatin1("custom/") + rx.cap(4));
+    		
+    		//prepare to send the file
+			p2p->m_Sfile = new QFile( fname );
 			if(!p2p->m_Sfile->open(IO_ReadOnly))  {/* TODO: error?*/ }
 
 			p2p->m_footer='\1' ;
