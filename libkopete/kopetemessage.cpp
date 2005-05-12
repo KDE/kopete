@@ -478,14 +478,16 @@ QDomElement Message::contactNode( QDomDocument doc, const Contact *contact )
 
 	static const int nameColorsLen = sizeof(nameColors) / sizeof(nameColors[0]) - 1;
 
-	QString contactName = contact->property(Global::Properties::self()->nickName()).value().toString();
-	if( p->truncateContactNames() )
-	{
-		contactName = KStringHandler::csqueeze( contactName, p->maxConactNameLength() );
-	}
-
+	QString contactName = contact->metaContact() ? contact->metaContact()->displayName() : contact->contactId();
+	
 	if(contactName.isEmpty())
-		contactName = contact->metaContact() ? contact->metaContact()->displayName() : contact->contactId();
+	{
+		contactName = contact->property(Global::Properties::self()->nickName()).value().toString();
+		if( p->truncateContactNames() )
+		{
+			contactName = KStringHandler::csqueeze( contactName, p->maxConactNameLength() );
+		}
+	}
 
 	QString metacontactName = contact->metaContact() ? contact->metaContact()->displayName() : contactName;
 	QDomElement contactNode = doc.createElement( QString::fromLatin1("contact") );
