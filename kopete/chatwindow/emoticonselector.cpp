@@ -42,6 +42,12 @@ EmoticonLabel::EmoticonLabel(const QString &emoticonText, const QString &pixmapP
 	// although it does it correctly for setPixmap. Therefore here is a little workaround
 	// to tell our minimum size.
 	QPixmap p(pixmapPath);
+    //
+    // Some of the custom icons are rather large
+    // so lets limit them to a maximum size for this display panel
+    //
+    if (p.width() > 32 or p.height() > 32)
+        p.resize(32, 32);
 	setMinimumSize(p.size());
 }
 
