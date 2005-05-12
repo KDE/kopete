@@ -159,7 +159,7 @@ void ChannelListItem::paintCell( QPainter *p, const QColorGroup &cg, int column,
 		_cg.setColor(QColorGroup::Text , _cg.highlightedText() );
 
 	QSimpleRichText myrichtext( text(column), paint.font() );
-	myrichtext.draw(  &paint, 0, 0, paint.window(), cg );
+	myrichtext.draw(  &paint, 0, 0, paint.window(), _cg );
 
 	paint.end();
 	p->drawPixmap( 0, 0, back );
