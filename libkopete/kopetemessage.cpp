@@ -467,7 +467,7 @@ QDomElement Message::contactNode( QDomDocument doc, const Contact *contact )
 
 	// These colors are used for coloring nicknames. I tried to use
 	// colors both visible on light and dark background.
-	static const char* nameColors[] =
+	static const char* const nameColors[] =
 	{
 		"red", "blue" , "gray", "magenta", "violet", "olive", "yellowgreen",
 		"darkred", "darkgreen", "darksalmon", "darkcyan", "darkyellow",
