@@ -33,20 +33,27 @@ class AVDeviceConfig : public KCModule
 {
 Q_OBJECT
 public:
-    AVDeviceConfig(QWidget *parent, const char *  name , const QStringList &args);
+	AVDeviceConfig(QWidget *parent, const char *  name , const QStringList &args);
 
-    ~AVDeviceConfig();
-    virtual void save();
-    virtual void load();
+	~AVDeviceConfig();
+	virtual void save();
+	virtual void load();
 
 private slots:
-    void slotSettingsChanged(bool);
-    void slotValueChanged(int);
-
+	void slotSettingsChanged(bool);
+	void slotValueChanged(int);
+	void slotDeviceKComboBoxChanged(int);
+	void slotInputKComboBoxChanged(int);
+	void slotStandardKComboBoxChanged(int);
+	void slotBrightSliderChanged(int);
+	void slotContrastSliderChanged(int);
+	void slotSaturationSliderChanged(int);
+	void slotHueSliderChanged(int);
+	void slotImageAutoAdjustBrightContrastChanged(bool);
 private:
-    QTabWidget* mAVDeviceTabCtl;
-    AVDeviceConfig_VideoDevice *mPrfsVideoDevice;
-    AVDeviceConfig_AudioDevice *mPrfsAudioDevice;
+	QTabWidget* mAVDeviceTabCtl;
+	AVDeviceConfig_VideoDevice *mPrfsVideoDevice;
+	AVDeviceConfig_AudioDevice *mPrfsAudioDevice;
 };
 
 #endif

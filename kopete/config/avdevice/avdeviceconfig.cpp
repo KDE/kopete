@@ -25,6 +25,7 @@
 #include <qhbuttongroup.h>
 #include <qspinbox.h>
 #include <qcombobox.h>
+#include <qslider.h>
 
 #include <kdebug.h>
 #include <kplugininfo.h>
@@ -33,6 +34,7 @@
 #include <kgenericfactory.h>
 #include <ktrader.h>
 #include <kconfig.h>
+#include <kcombobox.h>
 
 #include <qtabwidget.h>
 
@@ -48,7 +50,18 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 // "General" TAB ============================================================
 //  mPrfsGeneral = new BehaviorConfig_General(mBehaviorTabCtl);
   mPrfsVideoDevice = new AVDeviceConfig_VideoDevice(mAVDeviceTabCtl);
-//  connect(mPrfsVideoDevice->mShowTrayChk, SIGNAL(toggled(bool)),this, SLOT(slotShowTrayChanged(bool)));
+//	connect(mPrfsVideoDevice->mdevicekComboBox, SIGNAL(toggled(bool)),this, SLOT(slotDeviceComboBoxChanged(bool)));
+	connect(mPrfsVideoDevice->mDeviceKComboBox,               SIGNAL(valueChanged(int)),  this, SLOT(slotDeviceKComboBoxChanged(int)));
+	connect(mPrfsVideoDevice->mInputKComboBox,                SIGNAL(valueChanged(int)),  this, SLOT(slotInputKComboBoxChanged(int)));
+	connect(mPrfsVideoDevice->mStandardKComboBox,             SIGNAL(valueChanged(int)),  this, SLOT(slotStandardKComboBoxChanged(int)));
+	connect(mPrfsVideoDevice->mBrightSlider,                  SIGNAL(valueChanged(int)),  this, SLOT(slotBrightSliderChanged(int)));
+	connect(mPrfsVideoDevice->mContrastSlider,                SIGNAL(valueChanged(int)),  this, SLOT(slotContrastSliderChanged(int)));
+	connect(mPrfsVideoDevice->mSaturationSlider,              SIGNAL(valueChanged(int)),  this, SLOT(slotSaturationSliderChanged(int)));
+	connect(mPrfsVideoDevice->mHueSlider,                     SIGNAL(valueChanged(int)),  this, SLOT(slotHueSliderChanged(int)));
+	connect(mPrfsVideoDevice->mImageAutoAdjustBrightContrast, SIGNAL(toggled(bool)),      this, SLOT(slotImageAutoAdjustBrightContrastChanged(bool)));
+/*	connect(mPrfsEmoticons->chkUseEmoticons,                  SIGNAL(toggled(bool)),      this, SLOT(slotUseEmoticonsChanged(bool)));
+	connect(mPrfsEmoticons->icon_theme_list,                  SIGNAL(selectionChanged()), this, SLOT(slotSelectedEmoticonsThemeChanged()));
+*/
   mAVDeviceTabCtl->addTab(mPrfsVideoDevice, i18n("&Video"));
 }
 
@@ -82,5 +95,37 @@ void AVDeviceConfig::slotSettingsChanged(bool){
 }
 
 void AVDeviceConfig::slotValueChanged(int){
+  emit changed( true );
+}
+
+void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
+  emit changed( true );
+}
+
+void AVDeviceConfig::slotInputKComboBoxChanged(int){
+  emit changed( true );
+}
+
+void AVDeviceConfig::slotStandardKComboBoxChanged(int){
+  emit changed( true );
+}
+
+void AVDeviceConfig::slotBrightSliderChanged(int){
+  emit changed( true );
+}
+
+void AVDeviceConfig::slotContrastSliderChanged(int){
+  emit changed( true );
+}
+
+void AVDeviceConfig::slotSaturationSliderChanged(int){
+  emit changed( true );
+}
+
+void AVDeviceConfig::slotHueSliderChanged(int){
+  emit changed( true );
+}
+
+void AVDeviceConfig::slotImageAutoAdjustBrightContrastChanged(bool){
   emit changed( true );
 }
