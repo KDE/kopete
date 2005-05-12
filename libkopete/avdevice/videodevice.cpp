@@ -1,14 +1,20 @@
-//
-// C++ Implementation: videodevice
-//
-// Description:
-//
-//
-// Author: Cláudio da Silveira Pinheiro <taupter@gmail.com>, (C) 2005
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+/*
+    videodevice.cpp  -  Kopete Video Device Low-level Support
+
+    Copyright (c) 2005 by Cláudio da Silveira Pinheiro   <taupter@gmail.com>
+
+    Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This library is free software; you can redistribute it and/or         *
+    * modify it under the terms of the GNU Lesser General Public            *
+    * License as published by the Free Software Foundation; either          *
+    * version 2 of the License, or (at your option) any later version.      *
+    *                                                                       *
+    *************************************************************************
+*/
+
 #include <assert.h>
 #include <iostream>
 #include <ostream>
@@ -404,7 +410,7 @@ int VideoDevice::setDevice(int device)
     /// @todo implement me
 	std::ostringstream temp;
 
-	temp << "/dev/video" << device;
+	temp << "/dev/v4l/video" << device;
 	path = temp.str();
 	std::cout << path;
 	return EXIT_SUCCESS;
@@ -600,5 +606,81 @@ int Kopete::AV::VideoDevice::setResolution(int /* width */, int /* height */)
 int Kopete::AV::VideoDevice::scanDevices()
 {
     /// @todo implement me
+/*
+int vpScan(struct VideoDevicePool *devicepool)
+{
+  unsigned char currentdirectory[STRING_BUFFER];
+  char path[]="/dev/v4l/";
+  char devname[]="video";
+  struct dirent **eps;
+  struct stat status;
+  int n=0;
+  int cnt;
+
+  getcwd(currentdirectory,STRING_SIZE);
+    
+  devicepool->numdevices=0;
+  devicepool->numinputs=0;
+
+  chdir(path);
+  n=scandir(path,&eps, one, alphasort);
+  if (n>=0)
+  {
+     for (cnt=0; cnt<n;++cnt)
+    {
+      if (stat(eps[cnt]->d_name,&status)!=0)
+      {
+        fprintf(stderr,"%s: stat()\n", strerror(errno));
+      }
+      if((status.st_mode&S_IFMT)==S_IFCHR)
+      {
+        if(!(strncmp(eps[cnt]->d_name,devname,5)))
+        {
+          if(!(devicepool->numdevices))
+            devicepool->device=malloc(sizeof (struct VideoDevice));
+          else
+            devicepool->device=realloc(devicepool->device,((sizeof (struct VideoDevice))*((devicepool->numdevices)+1)));
+
+          printf("Probing device: %02d\n",devicepool->numdevices);
+
+          snprintf(devicepool->device[devicepool->numdevices].name,STRING_SIZE,"Video device %02d",devicepool->numdevices);
+          snprintf(devicepool->device[devicepool->numdevices].path,STRING_SIZE,"%s%s",path,eps[cnt]->d_name);
+
+          devicepool->device[devicepool->numdevices].descriptor=open(devicepool->device[devicepool->numdevices].path,O_RDWR);
+          if ((devicepool->device[devicepool->numdevices].descriptor)<0)
+          {
+            fprintf(stderr,"Could not open device: %s\n",devicepool->device[devicepool->numdevices].path);
+            realloc(devicepool->device,((sizeof (struct VideoDevice))*(devicepool->numdevices)));
+          }
+          else
+          {
+            if (ioctl (devicepool->device[devicepool->numdevices].descriptor, VIDIOCGCAP, &(devicepool->device[devicepool->numdevices].capabilities)) == -1)
+            {
+              perror ("ioctl (VIDIOCGCAP)");
+              return EXIT_FAILURE;                  
+            }
+            devicepool->device[devicepool->numdevices].newframe=
+                             vidStart(&devicepool->device[devicepool->numdevices],
+                             devicepool->device[devicepool->numdevices].capabilities.maxwidth,
+                             devicepool->device[devicepool->numdevices].capabilities.maxheight,1);
+            devicepool->numinputs+=devicepool->device[devicepool->numdevices].capabilities.channels;
+            devicepool->numdevices++;
+//            devicepool->numinputs+=devicepool->device[devicepool->numdevices].capabilities.channels;
+          }
+        }
+      }
+    }
+    showdevicepoolproperties(devicepool);
+    chdir(currentdirectory);
+    return devicepool->numdevices;
+  }
+  else
+  {
+    perror("Couldn't open the directory");
+  }
+  chdir(currentdirectory);
+  return 0;
+}
+*/
 	return EXIT_SUCCESS;
 }

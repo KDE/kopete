@@ -12,7 +12,7 @@
     </keywords>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description></description>
+    <description/>
     <ignoreparts>
       <part>kdevabbrev</part>
       <part>kdevdebugger</part>
@@ -38,7 +38,7 @@
       <hidenonlocation>false</hidenonlocation>
     </groups>
     <tree>
-      <hidenonprojectfiles>true</hidenonprojectfiles>
+      <hidenonprojectfiles>false</hidenonprojectfiles>
       <hidepatterns></hidepatterns>
       <showvcsfields>true</showvcsfields>
     </tree>
@@ -211,7 +211,7 @@
     </codecompletion>
     <references/>
     <creategettersetter>
-      <prefixGet></prefixGet>
+      <prefixGet/>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>

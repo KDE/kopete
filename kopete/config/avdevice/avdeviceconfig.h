@@ -1,14 +1,20 @@
-//
-// C++ Interface: avdeviceconfig
-//
-// Description: 
-//
-//
-// Author: Cláudio da Silveira Pinheiro <taupter@gmail.com>, (C) 2005
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+/*
+    avdeviceconfig.h  -  Kopete Video Device Configuration Panel
+
+    Copyright (c) 2005 by Cláudio da Silveira Pinheiro   <taupter@gmail.com>
+
+    Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
+
 #ifndef AVDEVICECONFIG_H
 #define AVDEVICECONFIG_H
 
@@ -40,7 +46,7 @@ private slots:
 private:
     QTabWidget* mAVDeviceTabCtl;
     AVDeviceConfig_VideoDevice *mPrfsVideoDevice;
-  AVDeviceConfig_AudioDevice *mPrfsAudioDevice;
+    AVDeviceConfig_AudioDevice *mPrfsAudioDevice;
 };
 
 #endif
