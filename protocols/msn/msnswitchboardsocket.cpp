@@ -347,8 +347,12 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		if(chunk != 0 && !m_msgQueue.isEmpty())
 		{
 			QString msg=m_msgQueue.last().plainBody();
+    		m_msgQueue.pop_back(); //removes the last item 	 
+    		kmsg.setBody( msg+ message, Kopete::Message::PlainText ); 	 
+		} 	 
+    	
+    	if(chunk == 0 )
 			m_chunks=chunks;
-		}
 		else if(chunk+1 >=  m_chunks)
 			m_chunks=0;
 
