@@ -214,7 +214,7 @@ void Engine::slotConnected()
 
 void Engine::slotConnectionClosed()
 {
-    setStatus(Disconnected);
+	setStatus(Disconnected);
 }
 
 void Engine::error(int errCode)
@@ -461,7 +461,15 @@ bool Engine::invokeCtcpCommandOfMessage(const QDict<MessageRedirector> &map, Mes
 EntityPtr Engine::getEntity(const QString &name)
 {
 	Entity *entity = 0;
-	//FIXME: Do the searching code here.
+
+	#pragma warning Do the searching code here.
+
+	if (!entity)
+	{
+		entity = new Entity(name);
+		m_entities.append(entity);
+	}
+
 	connect(entity, SIGNAL(destroyed(KIRC::Entity *)), SLOT(destroyed(KIRC::Entity *)));
 	return EntityPtr(entity);
 }

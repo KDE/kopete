@@ -35,6 +35,12 @@
 #include "irccontactmanager.h"
 #include "ksparser.h"
 
+IRCContact::IRCContact(IRCAccount *account, KIRC::EntityPtr entity, Kopete::MetaContact *metac, const QString& icon)
+	: Kopete::Contact(account, entity->name(), metac, icon),
+	  m_chatSession(0)
+{
+}
+
 IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, Kopete::MetaContact *metac, const QString& icon)
 	: Kopete::Contact(contactManager->account(), nick, metac, icon),
 	  m_nickName(nick),
@@ -92,6 +98,20 @@ bool IRCContact::isReachable()
 		return true;
 
 	return false;
+}
+
+const QString IRCContact::caption() const
+{
+	return QString::null;
+}
+/*
+const QString IRCContact::formatedName() const
+{
+	return QString::null;
+}
+*/
+void IRCContact::updateStatus()
+{
 }
 
 void IRCContact::privateMessage(IRCContact *, IRCContact *, const QString &)

@@ -101,6 +101,9 @@ public:
 		: KSharedPtr<KIRC::Entity>(entity)
 	{ }
 
+	EntityPtr(const KIRC::EntityPtr &entity)
+		: KSharedPtr<KIRC::Entity>(entity)
+	{ }
 };
 
 class EntityPtrList

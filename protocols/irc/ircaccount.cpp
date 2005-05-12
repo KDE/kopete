@@ -27,6 +27,8 @@
 #include "ircchannelcontact.h"
 #include "ircusercontact.h"
 
+#include "kircengine.h"
+
 #include "kopeteaway.h"
 #include "kopeteawayaction.h"
 #include "kopeteuiglobal.h"
@@ -894,10 +896,20 @@ IRCServerContact *IRCAccount::myServer() const
 	return m_myServer;
 }
 
-IRCContact *IRCAccount::getContact(const QString&name)
+IRCContact *IRCAccount::getContact(const QString &name, Kopete::MetaContact *metac)
 {
+	KIRC::EntityPtr entity(m_engine->getEntity(name));
 	IRCContact *contact = 0;
-	//FIXME: do the search here
+
+	#pragma warning Do the search code here.
+
+	if (!contact)
+	{
+		#pragma warning Make a temporary meta contact if metac is null
+		contact = new IRCContact(this, entity, metac);
+		m_contacts.append(contact);
+	}
+
 	QObject::connect(contact, SIGNAL(destroyed(IRCContact *)), SLOT(destroyed(IRCContact *)));
 	return contact;
 }

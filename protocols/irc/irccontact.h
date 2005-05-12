@@ -20,6 +20,8 @@
 #ifndef IRCCONTACT_H
 #define IRCCONTACT_H
 
+#include "kircentity.h"
+
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
@@ -59,6 +61,7 @@ class IRCContact
 	Q_OBJECT
 
 public:
+	IRCContact(IRCAccount *account, KIRC::EntityPtr entity, Kopete::MetaContact *metac, const QString& icon = QString::null);
 	IRCContact(IRCContactManager *contactManager, const QString &nick, Kopete::MetaContact *metac, const QString& icon = QString::null);
 	virtual ~IRCContact();
 
@@ -92,7 +95,7 @@ public:
 	 */
 	bool isChatting( Kopete::ChatSession *avoid = 0L ) const;
 
-	virtual const QString caption() const = 0;
+	virtual const QString caption() const;
 //	virtual const QString formatedName() const;
 
 	virtual Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate);
@@ -115,7 +118,7 @@ signals:
 
 public slots:
 	void setCodec( const QTextCodec *codec );
-	virtual void updateStatus() = 0;
+	virtual void updateStatus();
 
 protected slots:
 	virtual void slotSendMsg(Kopete::Message &message, Kopete::ChatSession *);
@@ -131,6 +134,8 @@ protected slots:
 	virtual void initConversation() {};
 
 protected:
+	KIRC::EntityPtr m_entity;
+
 	QString m_nickName;
 	Kopete::ChatSession *m_chatSession;
 
