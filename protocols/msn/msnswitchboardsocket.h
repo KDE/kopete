@@ -96,7 +96,8 @@ public:
 	const QStringList &chatMembers() { return m_chatMembers; }
 
 	void userLeftChat( const QString &handle , const QString &reason );
-	int sendMsg( const Kopete::Message &msg );
+	int  sendMsg( const Kopete::Message &msg );
+    int  sendCustomEmoticon(const QString &name, const QString &filename);
 
 	int sendNudge();
 

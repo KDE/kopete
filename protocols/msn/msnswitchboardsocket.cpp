@@ -29,6 +29,8 @@
 #include <qregexp.h>
 #include <qimage.h>
 #include <qtimer.h>
+#include <qfile.h>
+#include <qfileinfo.h>
 
 // kde
 #include <kdebug.h>
@@ -37,6 +39,7 @@
 #include <kaboutdata.h>
 #include <ktempfile.h>
 #include <kconfig.h>
+#include <kmdcodec.h>
 
 // for the display picture
 #include "msnp2pdisplatcher.h"
@@ -48,7 +51,9 @@
 #include "kopetemessage.h"
 #include "kopetecontact.h"
 #include "kopeteuiglobal.h"
+#include "private/kopeteemoticons.h"
 
+#include "sha1.h"
 
 
 MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNAccount *account , QObject *parent )
@@ -221,7 +226,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		if(c)
 			c->setProperty(  MSNProtocol::protocol()->propClient , clientStr );
 	}
-
+    
 	// incoming message for File-transfer
 	if( type== "text/x-msmsgsinvite"  )
 	{
@@ -342,12 +347,8 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		if(chunk != 0 && !m_msgQueue.isEmpty())
 		{
 			QString msg=m_msgQueue.last().plainBody();
-			m_msgQueue.pop_back(); //removes the last item
-			kmsg.setBody( msg+ message, Kopete::Message::PlainText );
-		}
-
-		if(chunk == 0 )
 			m_chunks=chunks;
+		}
 		else if(chunk+1 >=  m_chunks)
 			m_chunks=0;
 
@@ -367,7 +368,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			emit msgReceived( parseCustomEmoticons( kmsg ) );
 
 	}
-	else if( type== "text/x-mms-emoticon" )
+	else if( type== "text/x-mms-emoticon" || type== "text/x-mms-animemoticon")
 	{
 		KConfig *config = KGlobal::config();
 		config->setGroup( "MSN" );
@@ -437,6 +438,43 @@ void MSNSwitchBoardSocket::slotInviteContact(const QString &handle)
 	m_msgHandle=handle;
 	sendCommand( "CAL", handle );
 }
+//
+// Send a custum emoticon
+//
+int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString &filename)
+{
+    int ret = 0;
+    QFileInfo fi(filename);
+
+    // open the icon file
+    QFile pictFile(fi.filePath());
+    if (pictFile.open(IO_ReadOnly)) {
+    
+        QByteArray ar   = pictFile.readAll();
+        pictFile.close();
+        
+        QString sha1d   = QString(KCodecs::base64Encode(SHA1::hash(ar)));
+        QString size    = QString::number( pictFile.size() );
+        QString all     = "Creator" + m_account->accountId() +
+                        "Size" + size +
+                        "Type3Location" + fi.fileName() +
+                        "FriendlyAAA=SHA1D" + sha1d;
+        QString sha1c   = QString(KCodecs::base64Encode(SHA1::hashString(all.utf8())));
+        QString picObj  = "<msnobj Creator=\"" + m_account->accountId() + 
+                        "\" Size=\"" + size  + 
+                        "\" Type=\"3\" Location=\""+ fi.fileName() +
+                        "\" Friendly=\"AAA=\" SHA1D=\""+sha1d+
+                        "\" SHA1C=\""+sha1c+"\"/>";
+        QString msg = 
+            "MIME-Version: 1.0\r\n"
+            "Content-Type: text/x-mms-emoticon\r\n"
+            "\r\n" + 
+            name + "\t" + picObj + "\t\r\n";
+        
+        ret = sendCommand("MSG", "A", true, msg.utf8());
+    }
+    return ret;
+}
 
 // this sends a short message to the server
 int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
@@ -455,6 +493,31 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 	}
 #endif
 
+    QMap<QString, QString> emap = Kopete::Emoticons::self()->customEmoticonAndPicList();
+    
+    //
+    // This /addem is a temporary hack, someone show remove it at some stage:  sc00t
+    //
+    if(msg.plainBody().contains("/addem"))
+	{
+    	QRegExp rx("^/addem\\s+(\\S+)\\s+(\\S+)\\s*$");
+    	if (rx.search(msg.plainBody()) != -1) {
+            if (!emap.contains(rx.cap(1))) {
+                Kopete::Emoticons::self()->addCustomEmoticon(rx.cap(2), rx.cap(1));
+    	    }
+    	}
+    	return -3; // I'm just guessing what to return here :)
+	}
+    
+    //
+    // Check the list for any custom emoticons
+    //
+    for (QMap<QString, QString>::const_iterator itr = emap.begin(); itr != emap.end(); itr++) {
+        if ( msg.plainBody().contains(itr.key()) ) {
+            sendCustomEmoticon(itr.key(), itr.data());
+        }
+    }
+    
 
 	if( msg.format() & Kopete::Message::RichText )
 	{
