@@ -43,7 +43,7 @@ public:
 	int open();
 	int getFrame();
 	int initDevice();
-	int closeDevice();
+	int close();
 	int setDevice(int device);
 	int startCapturing();
 	int stopCapturing();
@@ -51,6 +51,7 @@ public:
 	int selectInput(int input);
 	int setResolution(int width, int height);
 	int scanDevices();
+	~VideoDevice();
 
 protected:
 	std::string name;
@@ -80,7 +81,6 @@ protected:
 	int initUserptr(unsigned int buffer_size);
 private:
 	VideoDevice();
-	~VideoDevice();
 	static VideoDevice* s_self;
 };
 

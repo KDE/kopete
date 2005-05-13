@@ -236,12 +236,12 @@ int VideoDevice::initDevice()
 
 
 /*!
-    \fn VideoDevice::closeDevice()
+    \fn VideoDevice::close()
  */
-int VideoDevice::closeDevice()
+int VideoDevice::close()
 {
     /// @todo implement me
-	if (-1 == close (descriptor))
+	if (-1 == ::close (descriptor))
 		return errnoReturn ("close");
 	descriptor = -1;
 	return EXIT_SUCCESS;
