@@ -19,6 +19,7 @@
 #define AVDEVICECONFIG_H
 
 #include "kcmodule.h"
+#include "videodevice.h"
 
 class QFrame;
 class QTabWidget;
@@ -54,6 +55,7 @@ private:
 	QTabWidget* mAVDeviceTabCtl;
 	AVDeviceConfig_VideoDevice *mPrfsVideoDevice;
 	AVDeviceConfig_AudioDevice *mPrfsAudioDevice;
+	Kopete::AV::VideoDevice *d ;
 };
 
 #endif

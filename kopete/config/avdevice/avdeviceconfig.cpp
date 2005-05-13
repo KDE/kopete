@@ -38,19 +38,18 @@
 
 #include <qtabwidget.h>
 
+//#include "videodevice.h"
 typedef KGenericFactory<AVDeviceConfig, QWidget> KopeteAVDeviceConfigFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_avdeviceconfig, KopeteAVDeviceConfigFactory( "kcm_kopete_avdeviceconfig" ) )
 
 AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStringList &args)
  : KCModule( KopeteAVDeviceConfigFactory::instance(), parent, args )
 {
-  (new QVBoxLayout(this))->setAutoAdd(true);
-  mAVDeviceTabCtl = new QTabWidget(this, "mAVDeviceTabCtl");
+	(new QVBoxLayout(this))->setAutoAdd(true);
+	mAVDeviceTabCtl = new QTabWidget(this, "mAVDeviceTabCtl");
 
-// "General" TAB ============================================================
-//  mPrfsGeneral = new BehaviorConfig_General(mBehaviorTabCtl);
-  mPrfsVideoDevice = new AVDeviceConfig_VideoDevice(mAVDeviceTabCtl);
-//	connect(mPrfsVideoDevice->mdevicekComboBox, SIGNAL(toggled(bool)),this, SLOT(slotDeviceComboBoxChanged(bool)));
+// "Video" TAB ============================================================
+	mPrfsVideoDevice = new AVDeviceConfig_VideoDevice(mAVDeviceTabCtl);
 	connect(mPrfsVideoDevice->mDeviceKComboBox,               SIGNAL(valueChanged(int)),  this, SLOT(slotDeviceKComboBoxChanged(int)));
 	connect(mPrfsVideoDevice->mInputKComboBox,                SIGNAL(valueChanged(int)),  this, SLOT(slotInputKComboBoxChanged(int)));
 	connect(mPrfsVideoDevice->mStandardKComboBox,             SIGNAL(valueChanged(int)),  this, SLOT(slotStandardKComboBoxChanged(int)));
@@ -59,15 +58,18 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 	connect(mPrfsVideoDevice->mSaturationSlider,              SIGNAL(valueChanged(int)),  this, SLOT(slotSaturationSliderChanged(int)));
 	connect(mPrfsVideoDevice->mHueSlider,                     SIGNAL(valueChanged(int)),  this, SLOT(slotHueSliderChanged(int)));
 	connect(mPrfsVideoDevice->mImageAutoAdjustBrightContrast, SIGNAL(toggled(bool)),      this, SLOT(slotImageAutoAdjustBrightContrastChanged(bool)));
-/*	connect(mPrfsEmoticons->chkUseEmoticons,                  SIGNAL(toggled(bool)),      this, SLOT(slotUseEmoticonsChanged(bool)));
-	connect(mPrfsEmoticons->icon_theme_list,                  SIGNAL(selectionChanged()), this, SLOT(slotSelectedEmoticonsThemeChanged()));
-*/
+
   mAVDeviceTabCtl->addTab(mPrfsVideoDevice, i18n("&Video"));
+//d->getInstance();
+//d = Kopete::AV::VideoDevice::self();
+//d->getInstance();
+d->setDevice(0);
 }
 
 
 AVDeviceConfig::~AVDeviceConfig()
 {
+//	delete d;
 }
 
 
