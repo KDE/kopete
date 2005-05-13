@@ -39,8 +39,7 @@ class VideoDevicePrivate;
 class KOPETE_EXPORT VideoDevice
 {
 public:
-	VideoDevice();
-	~VideoDevice();
+	static VideoDevice* self();
 	int open();
 	int getFrame();
 	int initDevice();
@@ -80,8 +79,9 @@ protected:
 	int initMmap();
 	int initUserptr(unsigned int buffer_size);
 private:
-	static VideoDevice* self();
-	static VideoDevice* m_instance;
+	VideoDevice();
+	~VideoDevice();
+	static VideoDevice* s_self;
 };
 
 }

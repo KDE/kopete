@@ -51,15 +51,15 @@ namespace Kopete {
 
 namespace AV {
 
-VideoDevice* pinstance=NULL;
+VideoDevice *VideoDevice::s_self = NULL;
 
 VideoDevice* VideoDevice::self()
 {
-	if (pinstance == NULL)
+	if (s_self == NULL)
 	{
-		pinstance = new VideoDevice;
+		s_self = new VideoDevice;
 	}
-	return pinstance;
+	return s_self;
 }
 
 VideoDevice::VideoDevice()
@@ -231,6 +231,7 @@ int VideoDevice::initDevice()
 		case IO_METHOD_USERPTR: initUserptr (fmt.fmt.pix.sizeimage); break;
 	}
 #endif
+	return EXIT_SUCCESS;
 }
 
 
