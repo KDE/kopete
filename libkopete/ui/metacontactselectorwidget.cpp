@@ -39,6 +39,7 @@
 #include <klistviewsearchline.h>
 
 #include "kopetelistview.h"
+#include "kopetelistviewsearchline.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
 #include "metacontactselectorwidget_base.h"
