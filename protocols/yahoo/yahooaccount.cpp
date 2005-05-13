@@ -639,14 +639,8 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	
 	kdDebug(14180) << "Message after stripping color codes '" << newMsgText << "'" << endl;
 	
-	newMsgText.replace("<font","</font><font");
-	// if message contained <font>, remove first </font> and add </font> to end
-	int index = newMsgText.find("</font>");
-	if ( index != -1 )
-	{
-		newMsgText.remove(index, 7);
-		newMsgText.append("</font>");
-	}
+	newMsgText.replace( QRegExp("<font([^>]*)size=\"([^>]*)\"([^>]*)>"), 
+	                    QString::fromLatin1("<font\\1style=\"font-size:\\2pt\">" ) );
 	
 	kdDebug(14180) << "Message after fixing font tags '" << newMsgText << "'" << endl;
 	
