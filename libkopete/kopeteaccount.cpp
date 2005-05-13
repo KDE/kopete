@@ -118,7 +118,7 @@ void Account::disconnected( DisconnectReason reason )
 	{
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information ,
 			i18n( "You have connected from another client or computer to the account '%1'" ).arg(d->id) ,
-			i18n ("Account diconnected - Kopete") );
+			i18n ("Account Disconnected - Kopete") );
 	}
 }
 
