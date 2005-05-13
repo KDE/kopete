@@ -55,11 +55,11 @@ VideoDevice* pinstance=NULL;
 
 VideoDevice* VideoDevice::self()
 {
-	if (m_instance == NULL)
+	if (pinstance == NULL)
 	{
-		m_instance = new VideoDevice;
+		pinstance = new VideoDevice;
 	}
-	return m_instance;
+	return pinstance;
 }
 
 VideoDevice::VideoDevice()
