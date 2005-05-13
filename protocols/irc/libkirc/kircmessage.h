@@ -40,14 +40,11 @@ namespace KIRC
 class Engine;
 
 class Message
+	: public QObject
 {
+	Q_OBJECT
+
 public:
-	Message();
-	Message(const KIRC::Message &obj);
-	Message(const KIRC::Message *obj);
-
-	~Message();
-
 	static void writeRawMessage(KIRC::Engine *engine, const QTextCodec *codec, const QString &str);
 
 	static void writeMessage(KIRC::Engine *engine, const QTextCodec *codec, const QString &str);
@@ -62,6 +59,12 @@ public:
 	static void writeCtcpMessage(KIRC::Engine *engine, const QTextCodec *codec,
 		const QString &command, const QString &to, const QString &suffix,
 		const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null );
+
+	Message();
+	Message(const KIRC::Message &obj);
+	Message(const KIRC::Message *obj);
+
+	~Message();
 
 	inline const QString nickFromPrefix() const
 	{ return Kopete::Message::unescape(KIRC::Entity::userNick(m_prefix)); }

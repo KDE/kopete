@@ -3,9 +3,9 @@
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003-2004 by Jason Keirstead <jason@keirstead.org>
-    Copyright (c) 2003-2004 by Michel Hermier <michel.hermier@wanadoo.fr>
+    Copyright (c) 2003-2005 by Michel Hermier <michel.hermier@wanadoo.fr>
 
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -865,7 +865,11 @@ IRCServerContact *IRCAccount::myServer() const
 
 IRCContact *IRCAccount::getContact(const QString &name, Kopete::MetaContact *metac)
 {
-	KIRC::EntityPtr entity(m_engine->getEntity(name));
+	return getContact(m_engine->getEntity(name), metac);
+}
+
+IRCContact *IRCAccount::getContact(KIRC::EntityPtr entity, Kopete::MetaContact *metac)
+{
 	IRCContact *contact = 0;
 
 	#pragma warning Do the search code here.

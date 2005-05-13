@@ -353,3 +353,5 @@ void Message::dump() const
 		m_ctcpMessage->dump();
 	}
 }
+
+#include "kircmessage.moc"

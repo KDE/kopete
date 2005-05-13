@@ -20,6 +20,7 @@
 #ifndef IRCCONTACT_H
 #define IRCCONTACT_H
 
+#include "kircengine.h"
 #include "kircentity.h"
 
 #include "kopetecontact.h"
@@ -132,6 +133,11 @@ protected slots:
 	virtual void deleteContact();
 	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
 	virtual void initConversation() {};
+
+	void receivedMessage(	KIRC::Engine::ServerMessageType type,
+				const KIRC::EntityPtr &from,
+				const KIRC::EntityPtrList &to,
+				const QString &msg);
 
 protected:
 	KIRC::EntityPtr m_entity;

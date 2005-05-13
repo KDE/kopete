@@ -32,8 +32,8 @@ using namespace KIRC;
 void Engine::bindNumericReplies()
 {
 	bind(1, this, SLOT(numericReply_001(KIRC::Message &)), 1, 1);
-	bind(2, this, SLOT(numericReply_002(KIRC::Message &)), 1, 1); // incomingConnectString
-	bind(3, this, SLOT(numericReply_003(KIRC::Message &)), 1, 1); // incomingConnectString
+	bind(2, this, SLOT(numericReply_002(KIRC::Message &)), 1, 1);
+	bind(3, this, SLOT(numericReply_003(KIRC::Message &)), 1, 1);
 	bind(4, this, SLOT(numericReply_004(KIRC::Message &)), 5, 5);
 	bind(5, this, SLOT(numericReply_004(KIRC::Message &)), 1, 1);
 
@@ -68,7 +68,7 @@ void Engine::bindNumericReplies()
 	bind(324, this, SLOT(numericReply_324(KIRC::Message &)), 2, 4);
 	bind(328, this, SLOT(numericReply_328(KIRC::Message &)), 2, 2);
 	bind(329, this, SLOT(numericReply_329(KIRC::Message &)), 3, 3);
-	bind(330, this, SLOT(ignoreMessage(KIRC::Message &)), 0, 0); // ??? 
+	bind(330, this, SLOT(ignoreMessage(KIRC::Message &)), 0, 0); // ???
 	bind(331, this, SLOT(numericReply_331(KIRC::Message &)), 2, 2);
 	bind(332, this, SLOT(numericReply_332(KIRC::Message &)), 2, 2);
 	bind(333, this, SLOT(numericReply_333(KIRC::Message &)), 4, 4);
@@ -92,16 +92,7 @@ void Engine::bindNumericReplies()
 	bind(475, this, SLOT(numericReply_475(KIRC::Message &)), 2, 2);
 
 	//Freenode seems to use this for a non-RFC compliant purpose, as does Unreal
-	bind(477, this, SLOT(dumpSuffix(KIRC::Message&)),0,0);
-}
-
-/*
- * Use this for numeric codes that have multiple definitions, so we can't know what they are.
- * Dumps the message suffix to the screen
- */
-void Engine::dumpSuffix(KIRC::Message &msg)
-{
-	emit incomingUnknown(msg.suffix());
+	bind(477, this, SLOT(emitSuffix(KIRC::Message&)),0,0);
 }
 
 /* 001: "Welcome to the Internet Relay Network <nick>!<user>@<host>"
@@ -123,7 +114,7 @@ void Engine::numericReply_001(Message &msg)
 	/* At this point we are connected and the server is ready for us to being taking commands
 	 * although the MOTD comes *after* this.
 	 */
-	emit incomingConnectString(msg.suffix());
+	emitSuffix(msg);
 
 	setStatus(Connected);
 }
@@ -133,7 +124,7 @@ void Engine::numericReply_001(Message &msg)
  */
 void Engine::numericReply_002(Message &msg)
 {
-	emit incomingConnectString( msg.suffix() );
+	emitSuffix(msg);
 }
 
 /* 003: "This server was created <date>"
@@ -142,7 +133,7 @@ void Engine::numericReply_002(Message &msg)
  */
 void Engine::numericReply_003(Message &msg)
 {
-	emit incomingConnectString( msg.suffix() );
+	emitSuffix(msg);
 }
 
 /* 004: "<servername> <version> <available user modes> <available channel modes>"

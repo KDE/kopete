@@ -95,6 +95,16 @@ public:
 		Disconnected
 	};
 
+	enum ServerMessageType
+	{
+		ErrorMessage = -1,
+		PrivateMessage,
+		InfoMessage,
+
+		MessageOfTheDayMessage,
+		MessageOfTheDayCondensedMessage
+	};
+
 	Engine( QObject *parent = 0, const char* name = 0 );
 	~Engine();
 
@@ -269,17 +279,26 @@ signals:
 
 	void receivedMessage(KIRC::Message &);
 
-	void successfullyChangedNick(const QString &, const QString &);
-
-	/** Give a server message as a string.
-	 * The given server message could have been translated to your locale.
+	/**
+	 * Emit a received message.
+	 * The received message could have been translated to your locale.
 	 *
-	 * @note This method obsolete incomingConnectString.
+	 * @param type the message type.
+	 * @param from the originator of the message.
+	 * @param to is the list of entities that are related to this message.
+	 * @param msg the message (usually translated).
+	 *
 	 * @note Most of the following numeric messages should be deprecated, and call this method instead.
 	 *	 Most of the methods, using it, update KIRC::Entities.
-	 *	 Some of the known untranslable message (like MOTD) are sent indirectly, via dedicated API.
+	 *	 Lists based messages are sent via dedicated API, therefore they don't use this.
 	 */
-//	void serverMessage(const QString &msg);
+	// @param args the args to apply to this message.
+	void receivedMessage(	KIRC::Engine::ServerMessageType type,
+				const KIRC::EntityPtr &from,
+				const KIRC::EntityPtrList &to,
+				const QString &msg);
+
+	void successfullyChangedNick(const QString &, const QString &);
 
 	//ServerContact Signals
 	void incomingMotd(const QString &motd);
@@ -369,9 +388,8 @@ private slots:
 	void slotConnectionClosed();
 	void error(int errCode = 0);
 
-	inline void ignoreMessage(KIRC::Message &){}
-
-	void dumpSuffix(KIRC::Message &);
+	void ignoreMessage(KIRC::Message &msg);
+	void emitSuffix(KIRC::Message &);
 
 	void error(KIRC::Message &msg);
 	void join(KIRC::Message &msg);
@@ -488,6 +506,8 @@ private:
 	bool m_useSSL;
 
 	QValueList<KIRC::Entity *> m_entities;
+	KIRC::EntityPtr m_server;
+	KIRC::EntityPtr m_self;
 
 	QString m_VersionString;
 	QString m_UserString;

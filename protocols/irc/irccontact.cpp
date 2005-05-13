@@ -380,4 +380,18 @@ void IRCContact::serialize(QMap<QString, QString> & /*serializedData*/, QMap<QSt
 	addressBookData[ protocol()->addressBookIndexField() ] = ( contactId() + QChar(0xE120) + account()->accountId() );
 }
 
+void IRCContact::receivedMessage( KIRC::Engine::ServerMessageType type,
+				const KIRC::EntityPtr &from,
+				const KIRC::EntityPtrList &to,
+				const QString &msg)
+{
+	if (to.contains(m_entity))
+	{
+		IRCContact *fromContact = ircAccount()->getContact(from);
+		Kopete::Message msg(fromContact, manager()->members(), msg, Kopete::Message::Inbound,
+				    Kopete::Message::RichText, CHAT_VIEW);
+		appendMessage(msg);
+	}
+}
+
 #include "irccontact.moc"

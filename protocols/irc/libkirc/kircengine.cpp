@@ -479,4 +479,13 @@ void Engine::destroyed(KIRC::Entity *entity)
 	m_entities.remove(entity);
 }
 
+void Engine::ignoreMessage(KIRC::Message &/*msg*/)
+{
+}
+
+void Engine::emitSuffix(KIRC::Message &msg)
+{
+	emit receivedMessage(InfoMessage, m_server, m_server, msg.suffix());
+}
+
 #include "kircengine.moc"

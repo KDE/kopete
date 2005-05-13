@@ -151,6 +151,7 @@ public:
 	Kopete::ChatSession *currentCommandSource();
 
 	IRCContact *getContact(const QString &name, Kopete::MetaContact *metac=0);
+	IRCContact *getContact(KIRC::EntityPtr entity, Kopete::MetaContact *metac=0);
 
 public slots:
 
