@@ -22,6 +22,8 @@
 #include <iostream>
 #include <string>
 
+#include "kopete_export.h"
+
 namespace Kopete {
 
 namespace AV {
@@ -34,7 +36,7 @@ This class allows kopete to check for the existence, open, configure, test, set 
 
 class VideoDevicePrivate;
 
-class VideoDevice
+class KOPETE_EXPORT VideoDevice
 {
 public:
 	VideoDevice();
