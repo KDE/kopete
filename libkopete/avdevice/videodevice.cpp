@@ -53,13 +53,13 @@ namespace AV {
 
 VideoDevice* pinstance=NULL;
 
-VideoDevice* VideoDevice::getInstance ()
+VideoDevice* VideoDevice::self()
 {
-	if (instance == NULL)
+	if (m_instance == NULL)
 	{
-		instance = new VideoDevice;
+		m_instance = new VideoDevice;
 	}
-	return instance;
+	return m_instance;
 }
 
 VideoDevice::VideoDevice()

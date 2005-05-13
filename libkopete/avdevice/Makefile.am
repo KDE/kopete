@@ -1,6 +1,6 @@
 INCLUDES = 
 METASOURCES = AUTO
-lib_LTLIBRARIES = libvideodevice.la
-libvideodevice_la_LDFLAGS = -module $(all_libraries)
+lib_LTLIBRARIES = libkopete_videodevice.la
+libkopete_videodevice_la_LDFLAGS = -module $(all_libraries)
 noinst_HEADERS = videodevice.h
-libvideodevice_la_SOURCES = videodevice.cpp
+libkopete_videodevice_la_SOURCES = videodevice.cpp

@@ -37,7 +37,6 @@ class VideoDevicePrivate;
 class VideoDevice
 {
 public:
-	static VideoDevice* getInstance();
 	VideoDevice();
 	~VideoDevice();
 	int open();
@@ -79,7 +78,8 @@ protected:
 	int initMmap();
 	int initUserptr(unsigned int buffer_size);
 private:
-	static VideoDevice* instance;
+	static VideoDevice* self();
+	static VideoDevice* m_instance;
 };
 
 }
