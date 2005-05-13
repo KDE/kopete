@@ -88,18 +88,18 @@ int VideoDevice::open()
 	if (-1 == stat (path.c_str(), &st))
 	{
 		fprintf (stderr, "Cannot identify '%s': %d, %s\n", path.c_str(), errno, strerror (errno));
-		exit (EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 	if (!S_ISCHR (st.st_mode))
 	{
 		fprintf (stderr, "%s is no device\n", path.c_str());
-		exit (EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 	descriptor = ::open (path.c_str(), O_RDWR /* required */ | O_NONBLOCK, 0);
 	if (-1 == descriptor)
 	{
 		fprintf (stderr, "Cannot open '%s': %d, %s\n", path.c_str(), errno, strerror (errno));
-		exit (EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	return EXIT_SUCCESS;
@@ -157,7 +157,7 @@ int VideoDevice::initDevice()
 		if (EINVAL == errno)
 		{
 			fprintf (stderr, "%s is no V4L2 device\n", path.c_str());
-			exit (EXIT_FAILURE);
+			return EXIT_FAILURE;
 		}
 		else
 		{
@@ -167,7 +167,7 @@ int VideoDevice::initDevice()
 	if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE))
 	{
 		fprintf (stderr, "%s is no video capture device\n", path.c_str());
-		exit (EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 	switch (io_type)
 	{
@@ -175,7 +175,7 @@ int VideoDevice::initDevice()
 			if (!(cap.capabilities & V4L2_CAP_READWRITE))
 			{
 				fprintf (stderr, "%s does not support read i/o\n", path.c_str());
-				exit (EXIT_FAILURE);
+				return EXIT_FAILURE;
 			}
 			break;
 		case IO_METHOD_MMAP:
@@ -183,7 +183,7 @@ int VideoDevice::initDevice()
 			if (!(cap.capabilities & V4L2_CAP_STREAMING))
 			{
 				fprintf (stderr, "%s does not support streaming i/o\n", path.c_str());
-				exit (EXIT_FAILURE);
+				return EXIT_FAILURE;
 			}
 			break;
 	}
@@ -315,7 +315,7 @@ int VideoDevice::initMmap()
 	if (req.count < 2)
 	{
 		fprintf (stderr, "Insufficient buffer memory on %s\n", path.c_str());
-		exit (EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	buffers.resize(req.count);
@@ -323,7 +323,7 @@ int VideoDevice::initMmap()
 	if (buffers.size()==0)
 	{
 		fprintf (stderr, "Out of memory\n");
-		exit (EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	for (n_buffers = 0; n_buffers < req.count; ++n_buffers)
@@ -370,7 +370,7 @@ int VideoDevice::initUserptr(unsigned int buffer_size)
 		if (EINVAL == errno)
 		{
 			fprintf (stderr, "%s does not support user pointer i/o\n", path.c_str());
-			exit (EXIT_FAILURE);
+			return EXIT_FAILURE;
 		}
 		else
 		{
@@ -383,7 +383,7 @@ int VideoDevice::initUserptr(unsigned int buffer_size)
 	if (buffers.size()==0)
 	{
 		fprintf (stderr, "Out of memory\n");
-		exit (EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	for (n_buffers = 0; n_buffers < 4; ++n_buffers)
@@ -394,7 +394,7 @@ int VideoDevice::initUserptr(unsigned int buffer_size)
 		if (!buffers[n_buffers].start)
 		{
 			fprintf (stderr, "Out of memory\n");
-			exit (EXIT_FAILURE);
+			return EXIT_FAILURE;
 		}
 	}
 #endif
