@@ -200,10 +200,12 @@ QPtrList<KAction> *YahooContact::customContextMenuActions()
 
 void YahooContact::slotUserInfo()
 {
-	//kdDebug(14180) << k_funcinfo << endl;
-
-	QString profileSiteString = QString::fromLatin1("http://profiles.yahoo.com/") + m_userId;
-	KRun::runURL( KURL( profileSiteString ) , "text/html" );
+	kdDebug(14180) << k_funcinfo << endl;
+	if( m_account->yahooSession() )
+		m_account->yahooSession()->getUserInfo( m_userId );
+	else
+		KMessageBox::information( Kopete::UI::Global::mainWidget(), i18n("You need to connect to the service in order to use this feature."),
+		                         i18n("Not connected") );
 }
 
 void YahooContact::slotSendFile()

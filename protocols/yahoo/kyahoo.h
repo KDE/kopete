@@ -31,8 +31,13 @@
 // KDE Includes
 
 class YahooSession;
+struct YahooUserInfo;
 class KExtendedSocket;
 class QSocketNotifier;
+namespace KIO	{ 
+	class Job;
+	class TransferJob; 
+}
 
 class YahooConnectionManager
 {
@@ -147,6 +152,9 @@ public:
 	QStringList getIdentities();
 	QString getCookie( const QString &which);
 	QString getProfile_url( void );
+	void getUserInfo( const QString &who );
+	void viewUserProfile( const QString &who );
+	void saveAdressBookEntry( const YahooUserInfo &entry);
 	
 	//webcam handlers
 	void requestWebcam( const QString& from );
@@ -258,6 +266,9 @@ private slots:
 	void slotLoginResponseReceiver( int succ, char *url);
 	void slotReadReady();
 	void slotWriteReady();
+	void slotUserInfoResult( KIO::Job* );
+	void slotUserInfoData( KIO::Job*, const QByteArray & );
+	void slotUserInfoSaved( KIO::Job* );
 
 private:
 	/* Private constructor */
@@ -270,7 +281,10 @@ private:
 	void *m_data;
 
 	QString m_Username, m_Password, m_Server; // User data
-
+	QString m_UserInfo;
+	QString m_targetID;					// userID of the target user, e.g. for UserInfo() or SendFile() ...
+	KIO::TransferJob *mTransferJob;
+	
 	int m_Port;
 	int m_Status;
 	int m_connId;

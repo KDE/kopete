@@ -18,16 +18,23 @@
 
 // Local Includes
 #include "kyahoo.h"
-
-
+#include "kopeteuiglobal.h"
+#include "yahoouserinfo.h"
 
 // QT Includes
 #include <qfile.h>
 #include <qtimer.h>
+#include <qdom.h>
 
 // KDE Includes
+#include <klocale.h>
 #include <kdebug.h>
+#include <kmessagebox.h>
 #include <kiconloader.h>
+#include <krun.h>
+#include <kio/global.h>
+#include <kio/job.h>
+#include <kio/jobclasses.h>
 #include <kimageio.h>
 
 // System Includes
@@ -513,6 +520,130 @@ void YahooSession::closeWebcam( const QString& from )
 void YahooSession::slotLoginResponseReceiver( int /* succ */, char * /* url */ )
 {
 	kdDebug(14181)<< k_funcinfo << endl;
+}
+
+void YahooSession::getUserInfo( const QString &who )
+{
+	m_targetID = who;
+	m_UserInfo = QString::null;
+	//QString url = QString::fromLatin1("http://insider.msg.yahoo.com/ycontent/?filter=timef&ab2=0&intl=us&os=win&%1&%2").arg(getCookie("y")).arg(getCookie("t"));
+	QString url = QString::fromLatin1("http://insider.msg.yahoo.com/ycontent/?filter=timef&ab2=0&intl=us&os=win");
+	
+	mTransferJob = KIO::get( url , false, false );
+	mTransferJob->addMetaData("cookies", "manual");
+	mTransferJob->addMetaData("setcookies", QString::fromLatin1("Cookie: Y=%1; T=%2").arg(getCookie("y")).arg(getCookie("t")) );
+	connect( mTransferJob, SIGNAL( data( KIO::Job *, const QByteArray & ) ), this, SLOT( slotUserInfoData( KIO::Job*, const QByteArray & ) ) );
+	connect( mTransferJob, SIGNAL( result( KIO::Job *) ), this, SLOT( slotUserInfoResult( KIO::Job* ) ) );
+}
+
+void YahooSession::slotUserInfoResult( KIO::Job* job )
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	if ( job->error () || mTransferJob->isErrorPage () )
+		kdDebug(14180) << k_funcinfo << "Could not retrieve server side addressbook for user info." << endl;
+	else {
+		QDomDocument doc;
+		QDomNodeList list;
+		QDomElement e;
+		QString msg;
+		uint it = 0;
+		
+		kdDebug(14180) << k_funcinfo << "Server side Adressbook successfully retrieved." << endl;
+		//kdDebug(14180) << "Adressbook:" << endl << m_UserInfo << endl;
+		
+		doc.setContent( m_UserInfo );
+		list = doc.elementsByTagName( "record" );			// Get records
+		
+		for( it = 0; it < list.count(); it++ )	{
+			if( !list.item( it ).isElement() )
+				continue;
+			e = list.item( it ).toElement();
+			if( e.attribute("userid") != m_targetID )
+				continue;
+			
+			YahooUserInfo info;
+			kdDebug(14180) << k_funcinfo << "dbID: " << e.attribute("dbid")  << endl;
+			info.userID = e.attribute("userid");
+			info.abID = e.attribute("dbid");
+			info.firstName = e.attribute( "fname" );
+			info.lastName = e.attribute( "lname" );
+			info.nickName = e.attribute( "nname" );
+			info.email =  e.attribute( "email" );
+			info.phoneHome = e.attribute( "hphone" );
+			info.phoneWork = e.attribute( "wphone" );
+			info.phoneMobile = e.attribute( "mphone" );
+			
+			YahooUserInfoDialog* theDialog = new YahooUserInfoDialog( Kopete::UI::Global::mainWidget(), "User Information" );
+			theDialog->setUserInfo( info );
+			theDialog->setSession( this );
+			theDialog->show();
+			
+			return;
+		}
+		
+		// If we get here, no entry was found --> ask to create a new one
+		if( KMessageBox::Yes == KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(), i18n( "Do you want to create a new entry?" ), i18n( "No Yahoo Addressbook Entry Found" )) ){
+			YahooUserInfo info;
+			info.userID = m_targetID;
+			info.abID = "-1";
+			
+			YahooUserInfoDialog* theDialog = new YahooUserInfoDialog( Kopete::UI::Global::mainWidget(), "User Information" );
+			theDialog->setUserInfo( info );
+			theDialog->setSession( this );
+			theDialog->show();
+		} else {
+			viewUserProfile( m_targetID );
+		}
+	}	
+}
+
+void YahooSession::slotUserInfoData( KIO::Job* /*job*/, const QByteArray &info  )
+{
+	kdDebug(14180) << k_funcinfo << endl;	
+	m_UserInfo += info;	
+}
+
+void YahooSession::saveAdressBookEntry( const YahooUserInfo &entry)
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	QString url; 
+	
+	if( entry.abID.toInt() > 0 )	{		// This is an Update --> append entry-ID
+		url = QString::fromLatin1("http://insider.msg.yahoo.com/ycontent/?addab2=0&ee=1&ow=1&id=%0&fn=%1&ln=%2&yid=%3&nn=%4&e=%5&hp=%6&wp=%7").arg(entry.abID).arg(entry.firstName).arg(entry.lastName).arg(entry.userID).arg(entry.nickName).arg(entry.email).arg(entry.phoneHome).arg(entry.phoneWork);
+		//url += QString::fromLatin1("&%1&%2&%3&%4").arg(getCookie("y")).arg(getCookie("t")).arg(getCookie("b")).arg(getCookie("q"));
+	} else {
+	url = QString::fromLatin1("http://address.yahoo.com/yab/us?A=m&v=PG&ver=2&fn=%0&ln=%1&yid=%2&nn=%3&e=%4&hp=%5&wp=%6").arg(entry.firstName).arg(entry.lastName).arg(entry.userID).arg(entry.nickName).arg(entry.email).arg(entry.phoneHome).arg(entry.phoneWork);
+	/*url = QString::fromLatin1("http://insider.msg.yahoo.com/ycontent/?addab2=0&fn=%0&ln=%1&yid=%2&nn=%3&e=%4&hp=%5&wp=%6").arg(entry.firstName).arg(entry.lastName).arg(entry.userID).arg(entry.nickName).arg(entry.email).arg(entry.phoneHome).arg(entry.phoneWork);*/
+		//url += QString::fromLatin1("&%1&%2&%3&%4").arg(getCookie("y")).arg(getCookie("t")).arg(getCookie("b")).arg(getCookie("q"));
+
+	}
+	kdDebug(14180) << url << endl;
+	
+	m_UserInfo = QString::null;
+	mTransferJob = KIO::get( url , false, false );
+	mTransferJob->addMetaData("cookies", "manual");
+	mTransferJob->addMetaData("setcookies", QString::fromLatin1("Cookie: Y=%1; T=%2").arg(getCookie("y")).arg(getCookie("t")) );
+	connect( mTransferJob, SIGNAL( data( KIO::Job *, const QByteArray & ) ), this, SLOT( slotUserInfoData( KIO::Job*, const QByteArray & ) ) );
+	connect( mTransferJob, SIGNAL( result( KIO::Job *) ), this, SLOT( slotUserInfoSaved( KIO::Job* ) ) );
+}
+void YahooSession::slotUserInfoSaved( KIO::Job* job )
+{
+	kdDebug(14180) << k_funcinfo << endl << "Return data:" << m_UserInfo << endl;
+	
+	if ( job->error() || mTransferJob->isErrorPage() || m_UserInfo.find(m_targetID) < 0 )	{
+		kdDebug(14180) << "Could not save the adressbook entry." << endl;
+		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n( "An unknown error occured. A possible reason is a invalid email address." ), i18n("Error") );
+	} else {
+		kdDebug(14180) << "Adressbook entry succesfully saved." << endl;		
+	}
+}
+
+void YahooSession::viewUserProfile( const QString &who )
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	
+	QString profileSiteString = QString::fromLatin1("http://profiles.yahoo.com/") + who;
+	KRun::runURL( KURL( profileSiteString ) , "text/html" );	
 }
 
  /*
