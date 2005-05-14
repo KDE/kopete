@@ -11,6 +11,7 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Devices
+Name[bg]=Устройства
 Name[br]=Trobarzhelloù
 Name[da]=Enheder
 Name[eo]=Aparatoj
@@ -24,6 +25,7 @@ Name[vi]=Thiết bềE
 Name[xh]=Amacebo
 Name[zu]=Amacebo
 Comment=Here You Can Alter Kopete's Video And Audio Devices' Settings
+Comment[bg]=Настройки на видео и аудио устройствата на програмата
 Comment[da]=Her kan du ændre Kopete's video- og lydenheds opsætning
 Comment[sv]=Här kan du ändra Kopetes video- och ljudenhetsinställningar
 DocPath=kopete/configure-dialog.html#configuring-avdevice
