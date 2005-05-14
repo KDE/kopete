@@ -34,7 +34,6 @@ class Protocol;
 
 class AddAccountWizardPage1;
 class AddAccountWizardPage2;
-class AddAccountWizardPage3;
 class KopeteEditAccountWidget;
 
 /**
@@ -46,7 +45,6 @@ class AddAccountWizard : public KWizard
 
 public:
 	AddAccountWizard( QWidget *parent = 0, const char *name = 0 , bool modal = false );
-	~AddAccountWizard();
 
 private slots:
 	void slotProtocolListClicked( QListViewItem *item );
@@ -59,12 +57,11 @@ protected slots:
 	virtual void reject();
 
 private:
-	QMap<QListViewItem *, KPluginInfo *> m_protocolItems;
-	KopeteEditAccountWidget *m_accountPage;
-	AddAccountWizardPage1 *m_intro;
-	AddAccountWizardPage2 *m_selectService;
-	AddAccountWizardPage3 *m_finish;
-	Kopete::Protocol *m_proto;
+	QMap<QListViewItem *, KPluginInfo *>  m_protocolItems;
+	KopeteEditAccountWidget              *m_accountPage;
+	AddAccountWizardPage1                *m_selectService;
+	AddAccountWizardPage2                *m_finish;
+	Kopete::Protocol                     *m_proto;
 };
 
 #endif
