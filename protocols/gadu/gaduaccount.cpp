@@ -694,25 +694,25 @@ GaduAccount::dccOff()
 }
 
 void
-GaduAccount::slotIncomingDcc( unsigned int UIN )
+GaduAccount::slotIncomingDcc( unsigned int uin )
 {
 	GaduContact* contact;
 	GaduDCCTransaction* trans;
 
-	if ( !UIN ) {
+	if ( !uin ) {
 		return;
 	}
 
-	contact = static_cast<GaduContact*>( contacts()[ QString::number( UIN ) ] );
+	contact = static_cast<GaduContact*>( contacts()[ QString::number( uin ) ] );
 
 	if ( !contact ) {
-	  kdDebug(14100) << "attempt to make dcc connection from unknown uin " << UIN << endl;
+	  kdDebug(14100) << "attempt to make dcc connection from unknown uin " << uin << endl;
 		return;
 	}
 
 	// if incapabile to transfer files, forget about it.
 	if ( contact->contactPort() < 10 ) {
-	  kdDebug(14100) << "can't respond to " << UIN << " request, his listeing port is too low" << endl;
+	  kdDebug(14100) << "can't respond to " << uin << " request, his listeing port is too low" << endl;
 	  return;
 	}
 
