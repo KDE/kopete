@@ -53,7 +53,7 @@ Message::Message()
 }
 
 Message::Message(const Message &obj)
-	: m_ctcpMessage(0)
+        : QObject(), m_ctcpMessage(0)
 {
 	m_raw = obj.m_raw;
 
