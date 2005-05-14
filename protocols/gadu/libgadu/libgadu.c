@@ -50,22 +50,22 @@
 #include "compat.h"
 #include "libgadu.h"
 
-int gg_debug_level;
+int gg_debug_level = 0;
 void (*gg_debug_handler)(int level, const char *format, va_list ap) = NULL;
 
-int gg_dcc_port;
-unsigned long gg_dcc_ip;
+int gg_dcc_port = 0;
+unsigned long gg_dcc_ip = 0;
 
-unsigned long gg_local_ip;
+unsigned long gg_local_ip = 0;
 /*
  * zmienne opisuj±ce parametry proxy http.
  */
-char *gg_proxy_host;
-int gg_proxy_port;
-int gg_proxy_enabled;
-int gg_proxy_http_only;
-char *gg_proxy_username;
-char *gg_proxy_password;
+char *gg_proxy_host = NULL;
+int gg_proxy_port = 0;
+int gg_proxy_enabled = 0;
+int gg_proxy_http_only = 0;
+char *gg_proxy_username = NULL;
+char *gg_proxy_password = NULL;
 
 #ifndef lint 
 static char rcsid[]
@@ -408,7 +408,7 @@ int gg_read(struct gg_session *sess, char *buf, int length)
  */
 int gg_write(struct gg_session *sess, const char *buf, int length)
 {
-	int res;
+	int res = 0;
 
 #ifdef __GG_LIBGADU_HAVE_OPENSSL
 	if (sess->ssl) {
@@ -1202,7 +1202,7 @@ int gg_image_reply(struct gg_session *sess, uin_t recipient, const char *filenam
 	struct gg_send_msg s;
 	const char *tmp;
 	char buf[1910];
-	int res;
+	int res = -1;
 
 	gg_debug(GG_DEBUG_FUNCTION, "** gg_image_reply(%p, %d, \"%s\", %p, %d);\n", sess, recipient, filename, image, size);
 
