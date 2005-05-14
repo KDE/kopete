@@ -388,9 +388,9 @@ void IRCContact::receivedMessage( KIRC::Engine::ServerMessageType type,
 	if (to.contains(m_entity))
 	{
 		IRCContact *fromContact = ircAccount()->getContact(from);
-		Kopete::Message msg(fromContact, manager()->members(), msg, Kopete::Message::Inbound,
-				    Kopete::Message::RichText, CHAT_VIEW);
-		appendMessage(msg);
+		Kopete::Message message(fromContact, manager()->members(), msg, Kopete::Message::Inbound,
+					Kopete::Message::RichText, CHAT_VIEW);
+		appendMessage(message);
 	}
 }
 
