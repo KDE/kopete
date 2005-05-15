@@ -464,9 +464,6 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                     <property name="name">
                         <cstring>ScanCheck</cstring>
                     </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
                     <property name="geometry">
                         <rect>
                             <x>10</x>
@@ -477,6 +474,9 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                     </property>
                     <property name="text">
                         <string>Scan f&amp;or unread</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>If this is checked, Kopete will ask Skype on login, if it has any unshowed messages and show them. This is handy if you start Kopete later than Skype and Skype is configured not to show incoming messages.</string>

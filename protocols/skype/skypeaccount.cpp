@@ -46,6 +46,8 @@ class SkypeAccountPrivate {
 		bool hitch;
 		///The mark read messages mode
 		bool markRead;
+		///Search for unread messages on login?
+		bool searchForUnread;
 		///Metacontact for all users that aren't in the list
 		Kopete::MetaContact notInListUsers;
 		///Constructor
@@ -72,6 +74,7 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, 
 	KConfigGroup *config = configGroup();
 	author = config->readEntry("Authorization");//get the name how to authorize myself
 	launchType = config->readNumEntry("Launch");//launch the skype?
+	setScanForUnread(config->readBoolEntry("ScanForUnread"));
 
 	//Now, connect the signals
 	QObject::connect(&d->skype, SIGNAL(wentOnline()), this, SLOT(wentOnline()));
@@ -179,6 +182,7 @@ void SkypeAccount::save() {
 	config->writeEntry("Launch", launchType);//and the launch type
 	config->writeEntry("Hitch", getHitchHike());//save the hitch hike messages mode
 	config->writeEntry("MarkRead", getMarkRead());//save the Mark read messages mode
+	config->writeEntry("ScanForUnread", getScanForUnread());
 
 	//save it into the skype connection as well
 	d->skype.setValues(launchType, author);
@@ -320,6 +324,15 @@ void SkypeAccount::receivedIm(const QString &user, const QString &message) {
 	}
 
 	cont->receiveIm(message);//let the contact show the message
+}
+
+void SkypeAccount::setScanForUnread(bool value) {
+	d->searchForUnread = value;
+	d->skype.setScanForUnread(value);
+}
+
+bool SkypeAccount::getScanForUnread() const {
+	return d->searchForUnread;
 }
 
 #include "skypeaccount.moc"

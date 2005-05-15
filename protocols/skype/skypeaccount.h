@@ -143,6 +143,12 @@ Q_OBJECT
 		 */
 		bool getMarkRead() const;
 		/**
+		 * Is the scan for unread message on login enabled?
+		 * @return Is it enabled or not?
+		 * @see setSearchForUnread
+		 */
+		bool getScanForUnread() const;
+		/**
 		 * @return true if this user already has opened chat session, false if he doesn't have opened chat session or the user do not exist
 		 * @param userId ID of the user in interest
 		 */
@@ -196,6 +202,12 @@ Q_OBJECT
 		 * @see setHitchHike
 		 */
 		void setMarkRead(bool value);
+		/**
+		 * Set if there should be scan for unread messages when kopete connects to Skype.
+		 * @param value Enable or disable the scan.
+		 * @see getScanForUnread
+		 */
+		void setScanForUnread(bool value);
 	signals:
 		/**
 		 * This is emited when the ID of the last sent message is known

@@ -99,6 +99,11 @@ class Skype : public QObject
 		 * @see SkypeAccount::setMarkRead
 		 */
 		void setMarkMode(bool value);
+		/**
+		 * Enables/disables scanning for unread messages after login
+		 * @see SkypeAccount::setScanForUnread
+		 */
+		void setScanForUnread(bool value);
 	public slots:
 		/**
 		 * Tell the skype to go online

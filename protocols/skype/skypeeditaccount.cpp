@@ -57,6 +57,7 @@ skypeEditAccount::skypeEditAccount(SkypeProtocol *protocol, Kopete::Account *acc
 			AuthorEdit->setText(d->account->author);//set the name
 		MarkCheck->setChecked(d->account->getMarkRead());//set the get read mode
 		HitchCheck->setChecked(d->account->getHitchHike());
+		ScanCheck->setChecked(d->account->getScanForUnread());
 	} else {
 		///@todo Make this unneeded :)
 		KMessageBox::information(this, i18n("Please nota that this version of Skype plugin is a development version and it is probable it will cause more problems than solve. You have boon warned"), i18n("Version info"));
@@ -95,6 +96,7 @@ Kopete::Account *skypeEditAccount::apply() {
 		skype->author = "";//nothing unusual
 	skype->setHitchHike(HitchCheck->isChecked());//save the hitch hike mode and activat ethe new value
 	skype->setMarkRead(MarkCheck->isChecked());//set the mark read messages mode and activate it
+	skype->setScanForUnread(ScanCheck->isChecked());
 	skype->save();//save it to config
 	return skype;//return the account
 }

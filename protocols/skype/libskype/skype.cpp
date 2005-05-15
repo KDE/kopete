@@ -75,6 +75,10 @@ class SkypePrivate {
 		bool mark;
 		///The skype account this connection belongs to
 		SkypeAccount &account;
+		///Should we show the message that Skype died? It if off when going offline, this removes that onnoying message when logging off and skype finishes first.
+		bool showDeadMessage;
+		///Do we automatically scan for unread messages on login?
+		bool scanForUnread;
 		///Constructor
 		SkypePrivate(SkypeAccount &_account) : account(_account) {};//initialize all that needs it
 };
@@ -107,42 +111,49 @@ Skype::~Skype() {
 
 void Skype::setOnline() {
 	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	d->showDeadMessage = true;
 
 	queueSkypeMessage("SET USERSTATUS ONLINE", true);//just send the message
 }
 
 void Skype::setOffline() {
 	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	d->showDeadMessage = false;
 
 	queueSkypeMessage("SET USERSTATUS OFFLINE", true);
 }
 
 void Skype::setAway() {
 	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	d->showDeadMessage = true;
 
 	queueSkypeMessage("SET USERSTATUS AWAY", true);
 }
 
 void Skype::setNotAvailable() {
 	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	d->showDeadMessage = true;
 
 	queueSkypeMessage("SET USERSTATUS NA", true);
 }
 
 void Skype::setDND() {
 	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	d->showDeadMessage = true;
 
 	queueSkypeMessage("SET USERSTATUS DND", true);
 }
 
 void Skype::setInvisible() {
 	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	d->showDeadMessage = true;
 
 	queueSkypeMessage("SET USERSTATUS INVISIBLE", true);
 }
 
 void Skype::setSkypeMe() {
 	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	d->showDeadMessage = true;
 
 	queueSkypeMessage("SET USERSTATUS SKYPEME", true);
 }
@@ -218,7 +229,8 @@ void Skype::connectionDone(int error, int protocolVer) {
 void Skype::error(const QString &message) {
 	kdDebug(65320) << k_funcinfo << endl;//some debug info
 
-	KMessageBox::error(0L, message, i18n("Skype protocol"));//Show the message
+	if (d->showDeadMessage)//just skip the eror message if we are going offline, noone ever cares.
+		KMessageBox::error(0L, message, i18n("Skype protocol"));//Show the message
 }
 
 void Skype::skypeMessage(const QString &message) {
@@ -270,6 +282,8 @@ void Skype::skypeMessage(const QString &message) {
 					continue;//just skip the empty names
 				emit newUser(name);//add the user to list
 			}
+			if (d->scanForUnread)
+				search("MISSEDMESSAGES");
 		}
 	} else if (messageType == "USER") {//This is for some contact
 		const QString &contactId = message.section(' ', 1, 1);//take the second part, it is the user name
@@ -294,6 +308,16 @@ void Skype::skypeMessage(const QString &message) {
 			} else if (value == "SENDING") {//Sendign out some message, that means it is a new one
 				if ((d->connection % QString("GET CHATMESSAGE %1 TYPE").arg(messageId)).section(' ', 3, 3).stripWhiteSpace().upper() == "SAID")//it is some message I'm interested in
 					emit gotMessageId(messageId);//Someone may be interested in its ID
+			}
+		}
+	} else if (messageType == "CHATMESSAGES") {
+		if (d->searchFor == "MISSEDMESSAGES") {//Theese are messages we did not read yet
+			QStringList messages = QStringList::split(' ', message.section(' ', 1));//get the meassage IDs
+			for (QStringList::iterator it = messages.begin(); it != messages.end(); ++it) {
+				QString Id = (*it).stripWhiteSpace();
+				if (Id.isEmpty())
+					continue;
+				skypeMessage(QString("CHATMESSAGE %1 STATUS RECEIVED").arg(Id));//simulate incoming message notification
 			}
 		}
 	}
@@ -395,6 +419,10 @@ void Skype::send(const QString &user, const QString &message) {
 	kdDebug(65320) << k_funcinfo <<  endl;//some debug info
 
 	d->connection << QString("MESSAGE %1 %2").arg(user).arg(message);//just ask skype to send it
+}
+
+void Skype::setScanForUnread(bool value) {
+	d->scanForUnread = value;
 }
 
 #include "skype.moc"
