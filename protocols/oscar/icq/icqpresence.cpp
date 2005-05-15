@@ -40,7 +40,8 @@ struct PresenceTypeData
 	unsigned long getFlag;
 	QString visibleName;
 	QString invisibleName;
-	const char *icon;
+	const char *visibleIcon;
+	const char *invisibleIcon;
 	
 	static const PresenceTypeData *all();
 	static const PresenceTypeData &forType( Presence::Type type );
@@ -62,13 +63,13 @@ const PresenceTypeData *PresenceTypeData::all()
 	 */
 	static const PresenceTypeData data[] =
 	{
-		{ Presence::Offline,      OnlineStatus::Offline, OFFLINE,  OFFLINE, i18n("Offline"),        i18n("Offline"), 0 },
-		{ Presence::DoNotDisturb, OnlineStatus::Away,    SET_DND,  IS_DND,  i18n("Do Not Disturb"), i18n("Do Not Disturb (Invisible)"), "contact_busy_overlay" },
-		{ Presence::Occupied,     OnlineStatus::Away,    SET_OCC,  IS_OCC,  i18n("Occupied"),       i18n("Occupied (Invisible)"), "contact_busy_overlay" },
-		{ Presence::NotAvailable, OnlineStatus::Away,    SET_NA,   IS_NA,   i18n("Not Available"),  i18n("Not Available (Invisible)"), "contact_xa_overlay" },
-		{ Presence::Away,         OnlineStatus::Away,    SET_AWAY, IS_AWAY, i18n("Away"),           i18n("Away (Invisible)"), "contact_away_overlay" },
-		{ Presence::FreeForChat,  OnlineStatus::Online,  SET_FFC,  IS_FFC,  i18n("Free For Chat"),  i18n("Free For Chat (Invisible)"), "icq_ffc" },
-		{ Presence::Online,       OnlineStatus::Online,  ONLINE,   ONLINE,  i18n("Online"),         i18n("Online (Invisible)"), 0 }
+		{ Presence::Offline,      OnlineStatus::Offline, OFFLINE,  OFFLINE, i18n("Offline"),        i18n("Offline"), 0, "contact_invisible_overlay" },
+		{ Presence::DoNotDisturb, OnlineStatus::Away,    SET_DND,  IS_DND,  i18n("Do Not Disturb"), i18n("Do Not Disturb (Invisible)"), "contact_busy_overlay", "contact_invisible_overlay" },
+		{ Presence::Occupied,     OnlineStatus::Away,    SET_OCC,  IS_OCC,  i18n("Occupied"),       i18n("Occupied (Invisible)"), "contact_busy_overlay", "contact_invisible_overlay" },
+		{ Presence::NotAvailable, OnlineStatus::Away,    SET_NA,   IS_NA,   i18n("Not Available"),  i18n("Not Available (Invisible)"), "contact_xa_overlay", "contact_invisible_overlay" },
+		{ Presence::Away,         OnlineStatus::Away,    SET_AWAY, IS_AWAY, i18n("Away"),           i18n("Away (Invisible)"), "contact_away_overlay", "contact_invisible_overlay" },
+		{ Presence::FreeForChat,  OnlineStatus::Online,  SET_FFC,  IS_FFC,  i18n("Free For Chat"),  i18n("Free For Chat (Invisible)"), "icq_ffc", "contact_invisible_overlay" },
+		{ Presence::Online,       OnlineStatus::Online,  ONLINE,   ONLINE,  i18n("Online"),         i18n("Online (Invisible)"), 0, "contact_invisible_overlay" }
 	};
 	return data;
 }
@@ -124,9 +125,15 @@ public:
 		for ( uint n = 0; n < Presence::TypeCount; ++n )
 		{
 			const PresenceTypeData &data = PresenceTypeData::forType( static_cast<Presence::Type>(n) );
+			QStringList overlayIcons( data.visibleIcon );
+			QString description( data.visibleName );
+			if( invisible ) {
+				overlayIcons << data.invisibleIcon;
+				description = data.invisibleName;
+			}
 			Kopete::OnlineStatus status( data.onlineStatusType, Presence::TypeCount - n,
-			                             ICQProtocol::protocol(), n + invisibleOffset, data.icon,
-			                             invisible ? data.invisibleName : data.visibleName );
+			                             ICQProtocol::protocol(), n + invisibleOffset,
+										 overlayIcons, description );
 			statusList.push_back( status );
 		}
 	}
