@@ -1,7 +1,7 @@
 /*
     kopetemessageevent.h - Kopete Message Event
 
-    Copyright (c) 2003 by Olivier Goffart <ogoffart@tiscalinet.be>
+    Copyright (c) 2003 by Olivier Goffart <ogoffart @ kde.org>
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002 by Hendrik vom Lehn <hvl@linux-4-ever.de>
     Copyright (c) 2004 by Richard Smith <richard@metafoo.co.uk>
@@ -31,7 +31,7 @@ namespace Kopete
 {
 
 /**
- * @author Olivier Goffart <ogoffart@tiscalinet.be>
+ * @author Olivier Goffart <ogoffart @ kde.org>
  * @author Richard Smith   <richard@metafoo.co.uk>
  *
  * Kopete::MessageEvent is used when a new messages arrives, it is

@@ -1,4 +1,4 @@
-//Olivier Goffart <ogoffart@tiscalinet.be>
+//Olivier Goffart <ogoffart @ kde.org>
 // 2003 06 26
 
 #include "historyplugin.h" //just needed because we are a member of this class

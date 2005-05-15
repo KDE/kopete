@@ -3,7 +3,7 @@
 
     Copyright (c) 2003 by Gav Wood               <gav@kde.org>
     Copyright (c) 2003-2004 by Matt Rogers       <matt.rogers@kdemail.net>
-    Based on code by Olivier Goffart             <ogoffart@tiscalinet.be>
+    Based on code by Olivier Goffart             <ogoffart @ kde.org>
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************

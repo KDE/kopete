@@ -2,7 +2,7 @@
     kopeteaway.h  -  Kopete Away
 
     Copyright (c) 2002 by Hendrik vom Lehn <hvl@linux-4-ever.de>
-    Copyright (c) 2003 Olivier Goffart     <ogoffart@tiscalinet.be>
+    Copyright (c) 2003 Olivier Goffart     <ogoffart @ kde.org>
 
     Kopete (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -51,7 +51,7 @@ namespace Kopete
  *
  * @author Hendrik vom Lehn <hvl@linux-4-ever.de>
  * @author Chris TenHarmsel <tenharmsel@users.sourceforge.net>
- * @author Olivier Goffart <ogoffart@tiscalinet.be>
+ * @author Olivier Goffart <ogoffart @ kde.org>
 
  */
 class KOPETE_EXPORT Away : public QObject

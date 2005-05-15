@@ -1,7 +1,7 @@
 /*
     cryptographyguiclient.cpp
 
-    Copyright (c) 2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2004 by Olivier Goffart        <ogoffart @ kde.org>
 
     *************************************************************************
     *                                                                       *

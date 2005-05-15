@@ -1,7 +1,7 @@
 /*
     addcontactwizard.h - Kopete's Add Contact Wizard
 
-    Copyright (c) 2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2004 by Olivier Goffart        <ogoffart @ kde.org>
     Copyright (c) 2003 by Will Stephenson        <will@stevello.free-online.co.uk>
     Copyright (c) 2002 by Nick Betcher           <nbetcher@kde.org>
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>

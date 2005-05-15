@@ -3,7 +3,7 @@
 
     Kopete Translator Plugin
 
-    Copyright (c) 2003 by Olivier Goffart <ogoffart@tiscalinet.be>
+    Copyright (c) 2003 by Olivier Goffart <ogoffart @ kde.org>
 
     Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -31,7 +31,7 @@
 namespace Kopete { class ChatSession; }
 
 /**
-  * @author Olivier Goffart <ogoffart@tiscalinet.be>
+  * @author Olivier Goffart <ogoffart @ kde.org>
   */
 
 class TranslatorGUIClient : public QObject , public KXMLGUIClient

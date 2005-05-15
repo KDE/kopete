@@ -1,7 +1,7 @@
 /*
   icqprotocol.cpp  -  ICQ Protocol Plugin
 
-  Copyright (c) 2003      by Olivier Goffart        <ogoffart@tiscalinet.be>
+  Copyright (c) 2003      by Olivier Goffart        <ogoffart @ kde.org>
   Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
   Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 

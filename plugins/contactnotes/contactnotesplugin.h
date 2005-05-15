@@ -3,7 +3,7 @@
                              -------------------
     begin                : lun sep 16 2002
     copyright            : (C) 2002 by Olivier Goffart
-    email                : ogoffart@tiscalinet.be
+    email                : ogoffart @ kde.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -31,7 +31,7 @@ class KActionCollection;
 namespace Kopete { class MetaContact; }
 
 /**
-  * @author Olivier Goffart <ogoffart@tiscalinet.be>
+  * @author Olivier Goffart <ogoffart @ kde.org>
   *
   * Kopete Contact Notes Plugin
   *

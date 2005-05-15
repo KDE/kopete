@@ -2,7 +2,7 @@
     editaccountwidget.h - Kopete Account Widget
 
     Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
-    Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2003      by Olivier Goffart       <ogoffart @ kde.org>
 
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
@@ -29,7 +29,7 @@ class Account;
 class KopeteEditAccountWidgetPrivate;
 
 /**
- * @author Olivier Goffart <ogoffart@tiscalinet.be>
+ * @author Olivier Goffart <ogoffart @ kde.org>
  *
  * This class is used by the protocol plugins to add specific protocol fields in the add account wizard,
  * or in the account preferences. If the given account is 0L, then you will have to create a new account

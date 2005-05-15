@@ -1,7 +1,7 @@
 /*
     netmeetingplugin.cpp
 
-    Copyright (c) 2003-2004 by Olivier Goffart <ogoffart@tiscalinet.be>
+    Copyright (c) 2003-2004 by Olivier Goffart <ogoffart @ kde.org>
 
     *************************************************************************
     *                                                                       *

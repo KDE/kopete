@@ -4,7 +4,7 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002      by Daniel Stone           <dstone@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @ kde.org>
     Copyright (c) 2003      by Jason Keirstead        <jason@keirstead.org>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>

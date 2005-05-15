@@ -2,7 +2,7 @@
     editaccountwidget.cpp - Kopete Account Widget
 
     Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
-    Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2003      by Olivier Goffart       <ogoffart @ kde.org>
 
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 

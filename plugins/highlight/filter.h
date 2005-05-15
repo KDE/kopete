@@ -3,7 +3,7 @@
                              -------------------
     begin                : mar 14 2003
     copyright            : (C) 2003 by Olivier Goffart
-    email                : ogoffart@tiscalinet.be
+    email                : ogoffart @ kde.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -23,7 +23,7 @@
 #include <qcolor.h>
 
 /**
- * @author Olivier Goffart <ogoffart@tiscalinet.be>
+ * @author Olivier Goffart <ogoffart @ kde.org>
  **/
 class Filter
 {

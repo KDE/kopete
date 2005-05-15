@@ -1,7 +1,7 @@
 /*
     accountconfig.h  -  Kopete account config page
 
-    Copyright (c) 2003-2004 by Olivier Goffart <ogoffart@tiscalinet.be>
+    Copyright (c) 2003-2004 by Olivier Goffart <ogoffart @ kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -28,7 +28,7 @@ class Account;
 class KopeteAccountConfigBase;
 
 /**
- * @author Olivier Goffart <ogoffart@tiscalinet.be>
+ * @author Olivier Goffart <ogoffart @ kde.org>
  */
 class KopeteAccountConfig : public KCModule
 {

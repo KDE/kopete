@@ -2,7 +2,7 @@
                           netmeetingpreferences.h  -  description
                              -------------------
     copyright            : (C) 2004 by Olivier Goffart
-    email                : ogoffart@tiscalinet.be
+    email                : ogoffart @ kde.org
  ***************************************************************************/
 
 /***************************************************************************

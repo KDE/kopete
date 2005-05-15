@@ -2,7 +2,7 @@
     msnsocket.h - Base class for the sockets used in MSN
 
     Copyright (c) 2002      by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @ kde.org>
     Kopete    (c) 2002      by the Kopete developers  <kopete-devel@kde.org>
 
     Portions of this code are taken from KMerlin,
