@@ -22,6 +22,10 @@
 #include <cstdlib>
 #include <cerrno>
 
+#include <kdebug.h>
+#include <klocale.h>
+#include <qstring.h>
+
 #include <sys/time.h>
 #include <sys/mman.h>
 #include <sys/ioctl.h>
@@ -43,6 +47,7 @@
 #include <linux/videodev.h>
 #define __STRICT_ANSI__
 
+#include "videoinput.h"
 #include "videodevice.h"
 
 #define CLEAR(x) memset (&(x), 0, sizeof (x))
@@ -152,6 +157,10 @@ int VideoDevice::initDevice()
 	struct v4l2_format fmt;
 	unsigned int min;
 
+	int inputisok=EXIT_SUCCESS;
+
+	memset(&cap, 0, sizeof(cap));
+
 	if (-1 == xioctl (VIDIOC_QUERYCAP, &cap))
 	{
 		if (EINVAL == errno)
@@ -187,6 +196,71 @@ int VideoDevice::initDevice()
 			}
 			break;
 	}
+
+//	kdDebug() << "V4L2Dev: device \"" << cap << "\" capabilities: " << endl;
+	kdDebug() << "  Driver: " << (const char*)cap.driver << " "
+		<< ((cap.version>>16) & 0xFF) << "."
+		<< ((cap.version>> 8) & 0xFF) << "."
+		<< ((cap.version    ) & 0xFF) << endl;
+	kdDebug() << "  Card: " << (const char*)cap.card << endl;
+	kdDebug() << "  Bus info: " << (const char*)cap.card << endl;
+
+	kdDebug() << "  Capabilities:" << endl;
+	if(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)
+		kdDebug() << "    Video capture" << endl;
+	if(cap.capabilities & V4L2_CAP_VIDEO_OUTPUT)
+		kdDebug() << "    Video output" << endl;
+	if(cap.capabilities & V4L2_CAP_VIDEO_OVERLAY)
+		kdDebug() << "    Video overlay" << endl;
+	if(cap.capabilities & V4L2_CAP_VBI_CAPTURE)
+		kdDebug() << "    VBI capture" << endl;
+	if(cap.capabilities & V4L2_CAP_VBI_OUTPUT)
+		kdDebug() << "    VBI output" << endl;
+	if(cap.capabilities & V4L2_CAP_RDS_CAPTURE)
+		kdDebug() << "    RDS capture" << endl;
+	if(cap.capabilities & V4L2_CAP_TUNER)
+		kdDebug() << "    Tuner IO" << endl;
+	if(cap.capabilities & V4L2_CAP_AUDIO)
+		kdDebug() << "    Audio IO" << endl;
+	if(cap.capabilities & V4L2_CAP_READWRITE)
+		kdDebug() << "    Read/Write interface" << endl;
+	if(cap.capabilities & V4L2_CAP_ASYNCIO)
+		kdDebug() << "    Async IO interface" << endl;
+	if(cap.capabilities & V4L2_CAP_STREAMING)
+		kdDebug() << "    Streaming interface" << endl;
+
+	kdDebug() << "Enumerating video inputs: " << endl;
+//    ok = true;
+	m_video_input.clear();
+	for(m_video_inputs=0; inputisok==EXIT_SUCCESS; m_video_inputs++)
+	{
+		struct v4l2_input input;
+		memset(&input, 0, sizeof(input));
+		input.index = m_video_inputs;
+		inputisok=xioctl(VIDIOC_ENUMINPUT, &input);
+		if(inputisok==EXIT_SUCCESS)
+		{
+			Kopete::AV::VideoInput tempinput;
+			tempinput.name = QString::fromLatin1((const char*)input.name);
+			tempinput.hastuner=input.type & V4L2_INPUT_TYPE_TUNER;
+			m_video_input.push_back(tempinput);
+			kdDebug() << "Input " << m_video_inputs << ": " << tempinput.name << " (tuner: " << ((input.type & V4L2_INPUT_TYPE_TUNER) != 0) << ")" << endl;
+			if((input.type & V4L2_INPUT_TYPE_TUNER) != 0)
+			{
+//				_tunerForInput[name] = desc.tuner;
+//				_isTuner = true;
+			}
+			else
+			{
+//				_tunerForInput[name] = -1;
+			}
+		}
+	}
+	kdDebug() << "Grand total of " << m_video_inputs << " video inputs for this device." << endl;
+	for (int loop=0; loop < m_video_inputs; loop++)
+		kdDebug() << "Input " << loop << ": " << m_video_input[loop].name << " (tuner: " << m_video_input[loop].hastuner << ")" << endl;
+
+
 
 // Select video input, video standard and tune here.
 
@@ -565,6 +639,7 @@ int VideoDevice::readFrame()
 			break;
 	}
 #endif
+// put frame copy operation here
 	return EXIT_SUCCESS;
 }
 

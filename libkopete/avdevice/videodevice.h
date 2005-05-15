@@ -20,9 +20,12 @@
 
 #include <vector>
 #include <iostream>
-#include <string>
+
 
 #include "kopete_export.h"
+#include "videoinput.h"
+#include <qstring.h>
+#include <qvaluevector.h>
 
 namespace Kopete {
 
@@ -39,6 +42,7 @@ class VideoDevicePrivate;
 class KOPETE_EXPORT VideoDevice
 {
 public:
+	typedef QValueVector<Kopete::AV::VideoInput> VideoInputVector;
 	static VideoDevice* self();
 	int open();
 	int getFrame();
@@ -52,6 +56,7 @@ public:
 	int setResolution(int width, int height);
 	int scanDevices();
 	~VideoDevice();
+	static QValueVector<Kopete::AV::VideoInput> m_video_input;
 
 protected:
 	std::string name;
@@ -72,6 +77,7 @@ protected:
 	};
 		std::vector<buffer> buffers;
 		unsigned int     n_buffers;
+	static int m_video_inputs;
 protected:
 	int xioctl(int request, void *arg);
 	int processImage(const void *p);
