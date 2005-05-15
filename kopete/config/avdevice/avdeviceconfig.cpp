@@ -59,17 +59,23 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 	connect(mPrfsVideoDevice->mHueSlider,                     SIGNAL(valueChanged(int)), this, SLOT(slotHueSliderChanged(int)));
 	connect(mPrfsVideoDevice->mImageAutoAdjustBrightContrast, SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoAdjustBrightContrastChanged(bool)));
 
-	 mAVDeviceTabCtl->addTab(mPrfsVideoDevice, i18n("&Video"));
+	mAVDeviceTabCtl->addTab(mPrfsVideoDevice, i18n("&Video"));
 	d = Kopete::AV::VideoDevice::self();
+	d->scanDevices();
 	d->setDevice(0);
 	d->open();
-	d->close();
+	d->initDevice();
+	d->selectInput(2);
+	d->startCapturing();
+	d->getFrame();
 }
 
 
 AVDeviceConfig::~AVDeviceConfig()
 {
-	delete d;
+	d->stopCapturing();
+	d->close();
+//	delete d;
 }
 
 
@@ -130,4 +136,29 @@ void AVDeviceConfig::slotHueSliderChanged(int){
 
 void AVDeviceConfig::slotImageAutoAdjustBrightContrastChanged(bool){
   emit changed( true );
+}
+
+
+/*!
+    \fn AVDeviceConfig::fillDeviceCombo()
+ */
+int AVDeviceConfig::fillDeviceCombo()
+{
+    /// @todo implement me
+}
+
+/*!
+    \fn AVDeviceConfig::fillInputCombo()
+ */
+int AVDeviceConfig::fillInputCombo()
+{
+    /// @todo implement me
+}
+
+/*!
+    \fn AVDeviceConfig::fillStandardCombo()
+ */
+int AVDeviceConfig::fillStandardCombo()
+{
+    /// @todo implement me
 }
