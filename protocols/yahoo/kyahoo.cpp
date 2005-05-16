@@ -632,7 +632,7 @@ void YahooSession::slotUserInfoSaved( KIO::Job* job )
 	
 	if ( job->error() || mTransferJob->isErrorPage() || m_UserInfo.find(m_targetID) < 0 )	{
 		kdDebug(14180) << "Could not save the adressbook entry." << endl;
-		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n( "An unknown error occured. A possible reason is a invalid email address." ), i18n("Error") );
+		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n( "An unknown error occurred. A possible reason is a invalid email address." ), i18n("Error") );
 	} else {
 		kdDebug(14180) << "Adressbook entry succesfully saved." << endl;		
 	}

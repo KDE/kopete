@@ -767,7 +767,7 @@ If you do not currently have an account, please click the button to create one.<
                                                 <cstring>textLabel1_5_3_2_4</cstring>
                                             </property>
                                             <property name="text">
-                                                <string>Madein Name</string>
+                                                <string>Maiden Name</string>
                                             </property>
                                         </widget>
                                         <widget class="QLabel">
@@ -807,7 +807,7 @@ If you do not currently have an account, please click the button to create one.<
                                 <cstring>textLabel1_5_3_2_4_2</cstring>
                             </property>
                             <property name="text">
-                                <string>Values below are going to be used in search, but won't show up in results.</string>
+                                <string>Values below are going to be used in search, but will not appear in results.</string>
                             </property>
                         </widget>
                         <spacer row="1" column="0">
