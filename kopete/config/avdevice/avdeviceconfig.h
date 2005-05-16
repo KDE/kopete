@@ -56,10 +56,6 @@ private:
 	AVDeviceConfig_VideoDevice *mPrfsVideoDevice;
 	AVDeviceConfig_AudioDevice *mPrfsAudioDevice;
 	Kopete::AV::VideoDevice *d ;
-protected:
-	int fillDeviceCombo();
-	int fillInputCombo();
-	int fillStandardCombo();
 };
 
 #endif

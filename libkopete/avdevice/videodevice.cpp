@@ -232,7 +232,7 @@ int VideoDevice::initDevice()
 	kdDebug() << "libkopete (avdevice): Enumerating video inputs: " << endl;
 //    ok = true;
 	m_video_input.clear();
-	for(int loop=0; inputisok==EXIT_SUCCESS; loop++)
+	for(unsigned int loop=0; inputisok==EXIT_SUCCESS; loop++)
 	{
 		struct v4l2_input input;
 		memset(&input, 0, sizeof(input));
@@ -257,7 +257,7 @@ int VideoDevice::initDevice()
 		}
 	}
 	kdDebug() << "libkopete (avdevice): Grand total of " << m_video_input.size() << " video inputs for this device." << endl;
-	for (int loop=0; loop < m_video_input.size(); loop++)
+	for (unsigned int loop=0; loop < m_video_input.size(); loop++)
 		kdDebug() << "libkopete (avdevice): Input " << loop << ": " << m_video_input[loop].name << " (tuner: " << m_video_input[loop].hastuner << ")" << endl;
 
 
@@ -661,6 +661,7 @@ int Kopete::AV::VideoDevice::selectInput(int input)
 		perror ("VIDIOC_S_INPUT");
 	return EXIT_FAILURE;
 	}
+	kdDebug() << "libkopete (avdevice): selectInput: Selected input " << input << " (" << m_video_input[input].name << ")" << endl;
 	return EXIT_SUCCESS;
 #endif
 }
@@ -675,6 +676,22 @@ int Kopete::AV::VideoDevice::setResolution(int /* width */, int /* height */)
 	return EXIT_SUCCESS;
 }
 
+/*!
+    \fn Kopete::AV::VideoDevice::fillInputKComboBox(KComboBox *combobox)
+ */
+int Kopete::AV::VideoDevice::fillInputKComboBox(KComboBox *combobox)
+{
+    /// @todo implement me
+	kdDebug() << "libkopete (avdevice): fillInputKComboBox: Called." << endl;
+	combobox->clear();
+	if(m_video_input.size()>0)
+		for (unsigned int loop=0; loop < m_video_input.size(); loop++)
+		{
+			combobox->insertItem(m_video_input[loop].name);
+			kdDebug() << "libkopete (avdevice): InputKCombobox: Added input" << loop << ": " << m_video_input[loop].name << " (tuner: " << m_video_input[loop].hastuner << ")" << endl;
+		}
+	return EXIT_SUCCESS;
+}
 
 /*!
     \fn Kopete::AV::VideoDevice::scanDevices()

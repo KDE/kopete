@@ -65,6 +65,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 	d->setDevice(0);
 	d->open();
 	d->initDevice();
+	d->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 	d->selectInput(2);
 	d->startCapturing();
 	d->getFrame();
@@ -111,7 +112,8 @@ void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
 }
 
 void AVDeviceConfig::slotInputKComboBoxChanged(int){
-  emit changed( true );
+	d->selectInput(mPrfsVideoDevice->mInputKComboBox->currentItem());
+	emit changed( true );
 }
 
 void AVDeviceConfig::slotStandardKComboBoxChanged(int){
@@ -136,29 +138,4 @@ void AVDeviceConfig::slotHueSliderChanged(int){
 
 void AVDeviceConfig::slotImageAutoAdjustBrightContrastChanged(bool){
   emit changed( true );
-}
-
-
-/*!
-    \fn AVDeviceConfig::fillDeviceCombo()
- */
-int AVDeviceConfig::fillDeviceCombo()
-{
-    /// @todo implement me
-}
-
-/*!
-    \fn AVDeviceConfig::fillInputCombo()
- */
-int AVDeviceConfig::fillInputCombo()
-{
-    /// @todo implement me
-}
-
-/*!
-    \fn AVDeviceConfig::fillStandardCombo()
- */
-int AVDeviceConfig::fillStandardCombo()
-{
-    /// @todo implement me
 }

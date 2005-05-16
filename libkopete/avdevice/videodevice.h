@@ -26,6 +26,7 @@
 #include "videoinput.h"
 #include <qstring.h>
 #include <qvaluevector.h>
+#include <kcombobox.h>
 
 namespace Kopete {
 
@@ -56,6 +57,7 @@ public:
 	int scanDevices();
 	~VideoDevice();
 	QValueVector<Kopete::AV::VideoInput> m_video_input;
+	int fillInputKComboBox(KComboBox *combobox);
 
 protected:
 	std::string name;

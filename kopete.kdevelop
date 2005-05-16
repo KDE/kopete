@@ -135,7 +135,7 @@
     </make>
     <general>
       <useconfiguration>default</useconfiguration>
-      <activetarget>kopete/config/avdevice/kcm_kopete_avdeviceconfig.la</activetarget>
+      <activetarget>libkopete/avdevice/libkopete_videodevice.la</activetarget>
     </general>
     <run>
       <mainprogram>kopete/kopete</mainprogram>
