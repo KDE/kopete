@@ -23,7 +23,7 @@
 
 
 #include "kopete_export.h"
-//#include "videoinput.h"
+#include "videoinput.h"
 #include <qstring.h>
 #include <qvaluevector.h>
 
@@ -38,16 +38,6 @@ This class allows kopete to check for the existence, open, configure, test, set 
 */
 
 class VideoDevicePrivate;
-
-class KOPETE_EXPORT VideoInput
-{
-public:
-	VideoInput();
-	~VideoInput();
-	QString name;
-	int  hastuner;
-
-};
 
 class KOPETE_EXPORT VideoDevice
 {
@@ -65,7 +55,7 @@ public:
 	int setResolution(int width, int height);
 	int scanDevices();
 	~VideoDevice();
-	static QValueVector<Kopete::AV::VideoInput> m_video_input;
+	QValueVector<Kopete::AV::VideoInput> m_video_input;
 
 protected:
 	std::string name;
@@ -86,7 +76,6 @@ protected:
 	};
 		std::vector<buffer> buffers;
 		unsigned int     n_buffers;
-	static int m_video_inputs;
 protected:
 	int xioctl(int request, void *arg);
 	int processImage(const void *p);

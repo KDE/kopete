@@ -47,7 +47,7 @@
 #include <linux/videodev.h>
 #define __STRICT_ANSI__
 
-//#include "videoinput.h"
+#include "videoinput.h"
 #include "videodevice.h"
 
 #define CLEAR(x) memset (&(x), 0, sizeof (x))
@@ -57,15 +57,6 @@ namespace Kopete {
 namespace AV {
 
 VideoDevice *VideoDevice::s_self = NULL;
-
-VideoInput::VideoInput()
-{
-}
-
-
-VideoInput::~VideoInput()
-{
-}
 
 VideoDevice* VideoDevice::self()
 {
@@ -207,45 +198,45 @@ int VideoDevice::initDevice()
 	}
 
 //	kdDebug() << "V4L2Dev: device \"" << cap << "\" capabilities: " << endl;
-	kdDebug() << "  Driver: " << (const char*)cap.driver << " "
+	kdDebug() << "libkopete (avdevice): Driver: " << (const char*)cap.driver << " "
 		<< ((cap.version>>16) & 0xFF) << "."
 		<< ((cap.version>> 8) & 0xFF) << "."
 		<< ((cap.version    ) & 0xFF) << endl;
-	kdDebug() << "  Card: " << (const char*)cap.card << endl;
-	kdDebug() << "  Bus info: " << (const char*)cap.card << endl;
+	kdDebug() << "libkopete (avdevice): Card: " << (const char*)cap.card << endl;
+	kdDebug() << "libkopete (avdevice): Bus info: " << (const char*)cap.card << endl;
 
-	kdDebug() << "  Capabilities:" << endl;
+	kdDebug() << "libkopete (avdevice): Capabilities:" << endl;
 	if(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)
-		kdDebug() << "    Video capture" << endl;
+		kdDebug() << "libkopete (avdevice):     Video capture" << endl;
 	if(cap.capabilities & V4L2_CAP_VIDEO_OUTPUT)
-		kdDebug() << "    Video output" << endl;
+		kdDebug() << "libkopete (avdevice):     Video output" << endl;
 	if(cap.capabilities & V4L2_CAP_VIDEO_OVERLAY)
-		kdDebug() << "    Video overlay" << endl;
+		kdDebug() << "libkopete (avdevice):     Video overlay" << endl;
 	if(cap.capabilities & V4L2_CAP_VBI_CAPTURE)
-		kdDebug() << "    VBI capture" << endl;
+		kdDebug() << "libkopete (avdevice):     VBI capture" << endl;
 	if(cap.capabilities & V4L2_CAP_VBI_OUTPUT)
-		kdDebug() << "    VBI output" << endl;
+		kdDebug() << "libkopete (avdevice):     VBI output" << endl;
 	if(cap.capabilities & V4L2_CAP_RDS_CAPTURE)
-		kdDebug() << "    RDS capture" << endl;
+		kdDebug() << "libkopete (avdevice):     RDS capture" << endl;
 	if(cap.capabilities & V4L2_CAP_TUNER)
-		kdDebug() << "    Tuner IO" << endl;
+		kdDebug() << "libkopete (avdevice):     Tuner IO" << endl;
 	if(cap.capabilities & V4L2_CAP_AUDIO)
-		kdDebug() << "    Audio IO" << endl;
+		kdDebug() << "libkopete (avdevice):     Audio IO" << endl;
 	if(cap.capabilities & V4L2_CAP_READWRITE)
-		kdDebug() << "    Read/Write interface" << endl;
+		kdDebug() << "libkopete (avdevice):     Read/Write interface" << endl;
 	if(cap.capabilities & V4L2_CAP_ASYNCIO)
-		kdDebug() << "    Async IO interface" << endl;
+		kdDebug() << "libkopete (avdevice):     Async IO interface" << endl;
 	if(cap.capabilities & V4L2_CAP_STREAMING)
-		kdDebug() << "    Streaming interface" << endl;
+		kdDebug() << "libkopete (avdevice):     Streaming interface" << endl;
 
-	kdDebug() << "Enumerating video inputs: " << endl;
+	kdDebug() << "libkopete (avdevice): Enumerating video inputs: " << endl;
 //    ok = true;
 	m_video_input.clear();
-	for(m_video_inputs=0; inputisok==EXIT_SUCCESS; m_video_inputs++)
+	for(int loop=0; inputisok==EXIT_SUCCESS; loop++)
 	{
 		struct v4l2_input input;
 		memset(&input, 0, sizeof(input));
-		input.index = m_video_inputs;
+		input.index = loop;
 		inputisok=xioctl(VIDIOC_ENUMINPUT, &input);
 		if(inputisok==EXIT_SUCCESS)
 		{
@@ -253,7 +244,7 @@ int VideoDevice::initDevice()
 			tempinput.name = QString::fromLatin1((const char*)input.name);
 			tempinput.hastuner=input.type & V4L2_INPUT_TYPE_TUNER;
 			m_video_input.push_back(tempinput);
-			kdDebug() << "Input " << m_video_inputs << ": " << tempinput.name << " (tuner: " << ((input.type & V4L2_INPUT_TYPE_TUNER) != 0) << ")" << endl;
+			kdDebug() << "libkopete (avdevice): Input " << loop << ": " << tempinput.name << " (tuner: " << ((input.type & V4L2_INPUT_TYPE_TUNER) != 0) << ")" << endl;
 			if((input.type & V4L2_INPUT_TYPE_TUNER) != 0)
 			{
 //				_tunerForInput[name] = desc.tuner;
@@ -265,9 +256,9 @@ int VideoDevice::initDevice()
 			}
 		}
 	}
-	kdDebug() << "Grand total of " << m_video_inputs << " video inputs for this device." << endl;
-	for (int loop=0; loop < m_video_inputs; loop++)
-		kdDebug() << "Input " << loop << ": " << m_video_input[loop].name << " (tuner: " << m_video_input[loop].hastuner << ")" << endl;
+	kdDebug() << "libkopete (avdevice): Grand total of " << m_video_input.size() << " video inputs for this device." << endl;
+	for (int loop=0; loop < m_video_input.size(); loop++)
+		kdDebug() << "libkopete (avdevice): Input " << loop << ": " << m_video_input[loop].name << " (tuner: " << m_video_input[loop].hastuner << ")" << endl;
 
 
 
