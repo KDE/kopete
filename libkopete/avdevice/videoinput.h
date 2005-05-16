@@ -12,27 +12,6 @@
 #ifndef KOPETE_AVVIDEOINPUT_H
 #define KOPETE_AVVIDEOINPUT_H
 
-#include <qstring.h>
 #include "kopete_export.h"
+#include <qstring.h>
 
-namespace Kopete {
-
-namespace AV {
-
-/**
-@author Kopete Developers
-*/
-class KOPETE_EXPORT VideoInput{
-public:
-	VideoInput();
-	~VideoInput();
-	QString name;
-	int  hastuner;
-
-};
-
-}
-
-}
-
-#endif

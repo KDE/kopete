@@ -47,7 +47,7 @@
 #include <linux/videodev.h>
 #define __STRICT_ANSI__
 
-#include "videoinput.h"
+//#include "videoinput.h"
 #include "videodevice.h"
 
 #define CLEAR(x) memset (&(x), 0, sizeof (x))
@@ -57,6 +57,15 @@ namespace Kopete {
 namespace AV {
 
 VideoDevice *VideoDevice::s_self = NULL;
+
+VideoInput::VideoInput()
+{
+}
+
+
+VideoInput::~VideoInput()
+{
+}
 
 VideoDevice* VideoDevice::self()
 {
