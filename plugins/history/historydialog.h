@@ -21,6 +21,7 @@
 
 #include <kdialogbase.h>
 #include <qstringlist.h>
+#include <klistview.h>
 
 #include "kopetemessage.h"
 
@@ -49,60 +50,48 @@ class HistoryDialog : public KDialogBase
 		HistoryDialog(Kopete::MetaContact *mc, int count=50, QWidget* parent=0,
 			const char* name="HistoryDialog");
 
+		/**
+		 * Calls init(Kopete::Contact *c) for each subcontact of the metacontact
+		 */
 		void init();
+		void init(Kopete::Contact *c);
 
 	signals:
 		void closing();
 
 	private slots:
-		/**
-		* < button clicked
-		*/
-		void slotPrevClicked();
-
-		/**
-		* > button clicked
-		*/
-		void slotNextClicked();
-
-		/**
-		* << button clicked
-		*/
-		void slotBackClicked();
-
-		/**
-		* >> button clicked
-		*/
-		void slotForwardClicked();
-
-		/**
-		* search button clicked
-		*/
-		void slotSearchClicked();
-
-		/**
-		* checkbox mReversed toggled
-		*/
-		void slotReversedToggled( bool toggled );
-
-		/**
-		* checkbox mIncoming toggled
-		*/
-		void slotIncomingToggled( bool toggled );
-
 		void slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/*args*/);
+
+		/**
+		 * Called when a date is selected in the treeview
+		 */
+		void dateSelected(QListViewItem *);
 
 	private:
 		enum Disabled { Prev=1, Next=2 };
 		void refreshEnabled( /*Disabled*/ uint disabled );
 
+		/**
+		 * Show the messages in the HTML View
+		 */
 		void setMessages(QValueList<Kopete::Message> m);
 
+		/**
+		 * Search if @param item already has @param text child
+		 */
+		bool hasChild(KListViewItem* item, int month);
+		
 		// amount of entries to read at once
 		unsigned int msgCount;
 
 		HistoryLogger *mLogger;
+
+		/**
+		 * We show history dialog to look at the log for a metacontact. Here is this metacontact.
+		 */
 		Kopete::MetaContact *mMetaContact;
+
+
 		// History View
 		KHTMLView *mHtmlView;
 		KHTMLPart *mHtmlPart;

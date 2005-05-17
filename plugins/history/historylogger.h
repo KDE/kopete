@@ -87,6 +87,14 @@ public:
 		const Kopete::Contact *c=0, Sens sens=Default,
 		bool reverseOrder=false, bool colorize=true);
 
+	/** 
+	 * Same as the following, but for one date. I did'nt reuse the above function
+	 * because its structure is really different.
+	 * Read all the messages for the given @param date
+     */
+	QValueList<Kopete::Message> readMessages(QDate date);
+
+
 	/**
 	 * The pausition is set to the last message
 	 */
@@ -102,6 +110,10 @@ public:
 	 */
 	void setCurrentMonth(int month);
 
+	/**
+     * @return The list of the days for which there is a log for m_metaContact for month of *  @param date (don't care of the day)
+     */
+	QValueList<int> getDaysForMonth(QDate date);
 
 private:
 	bool m_hideOutgoing;
@@ -127,6 +139,8 @@ private:
 	 */
 	QDomDocument getDocument(const Kopete::Contact *c, unsigned int month , bool canLoad=true , bool* contain=0L);
 
+	QDomDocument getDocument(const Kopete::Contact *c, const QDate date, bool canLoad=true, bool* contain=0L);
+
 	/**
 	 * look over files to get the last month for this contact
 	 */
@@ -146,9 +160,10 @@ private:
 
 	/*
 	 * get the filename of the xml file which contains the history from the
-	 * contact in the specified month
+	 * contact in the specified month. Specify date in order to get the filename for
+	 * the given date.year() date.month().
 	 */
-	static QString getFileName(const Kopete::Contact* , unsigned int month);
+	static QString getFileName(const Kopete::Contact* , QDate date);
 
 	/*
 	 * the metacontact we are using
