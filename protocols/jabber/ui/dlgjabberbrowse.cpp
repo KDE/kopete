@@ -129,7 +129,11 @@ void dlgJabberBrowse::slotSentForm ()
 
 		row++;
 	}
-
+	for (int i = 0; i < 5; i++)
+	{
+		tblResults->setColumnStretchable (i, false);
+		tblResults->adjustColumn (i);
+	}
 }
 
 dlgJabberBrowse::~dlgJabberBrowse ()

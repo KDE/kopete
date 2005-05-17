@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>dlgBrowse</class>
 <widget class="QDialog">
     <property name="name">
@@ -19,82 +19,98 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QTable" row="0" column="1">
-            <column>
-                <property name="text">
-                    <string>JID</string>
-                </property>
-            </column>
-            <column>
-                <property name="text">
-                    <string>First Name</string>
-                </property>
-            </column>
-            <column>
-                <property name="text">
-                    <string>Last Name</string>
-                </property>
-            </column>
-            <column>
-                <property name="text">
-                    <string>Nick</string>
-                </property>
-            </column>
-            <column>
-                <property name="text">
-                    <string>Email</string>
-                </property>
-            </column>
+        <widget class="QSplitter" row="0" column="0">
             <property name="name">
-                <cstring>tblResults</cstring>
+                <cstring>splitter1</cstring>
             </property>
-            <property name="resizePolicy">
-                <enum>AutoOne</enum>
+            <property name="orientation">
+                <enum>Horizontal</enum>
             </property>
-            <property name="numRows">
-                <number>0</number>
-            </property>
-            <property name="numCols">
-                <number>5</number>
-            </property>
-            <property name="readOnly">
-                <bool>true</bool>
-            </property>
-            <property name="selectionMode">
-                <enum>NoSelection</enum>
-            </property>
-            <property name="focusStyle">
-                <enum>FollowStyle</enum>
-            </property>
-        </widget>
-        <widget class="QGroupBox" row="0" column="0">
-            <property name="name">
-                <cstring>dynamicForm</cstring>
-            </property>
-            <property name="title">
-                <string>Search For</string>
-            </property>
-            <vbox>
+            <widget class="QGroupBox">
                 <property name="name">
-                    <cstring>unnamed</cstring>
+                    <cstring>dynamicForm</cstring>
                 </property>
-                <widget class="QLabel">
+                <property name="title">
+                    <string>Search For</string>
+                </property>
+                <vbox>
                     <property name="name">
-                        <cstring>lblWait</cstring>
+                        <cstring>unnamed</cstring>
                     </property>
-                    <property name="lineWidth">
-                        <number>1</number>
-                    </property>
+                    <widget class="QLabel">
+                        <property name="name">
+                            <cstring>lblWait</cstring>
+                        </property>
+                        <property name="lineWidth">
+                            <number>1</number>
+                        </property>
+                        <property name="text">
+                            <string>Please wait while retrieving search form...</string>
+                        </property>
+                        <property name="alignment">
+                            <set>WordBreak|AlignVCenter</set>
+                        </property>
+                    </widget>
+                </vbox>
+            </widget>
+            <widget class="QTable">
+                <column>
                     <property name="text">
-                        <string>Please wait while retrieving search form...</string>
+                        <string>JID</string>
                     </property>
-                    <property name="alignment">
-                        <set>WordBreak|AlignVCenter</set>
+                </column>
+                <column>
+                    <property name="text">
+                        <string>First Name</string>
                     </property>
-                </widget>
-            </vbox>
+                </column>
+                <column>
+                    <property name="text">
+                        <string>Last Name</string>
+                    </property>
+                </column>
+                <column>
+                    <property name="text">
+                        <string>Nick</string>
+                    </property>
+                </column>
+                <column>
+                    <property name="text">
+                        <string>Email</string>
+                    </property>
+                </column>
+                <property name="name">
+                    <cstring>tblResults</cstring>
+                </property>
+                <property name="sizePolicy">
+                    <sizepolicy>
+                        <hsizetype>7</hsizetype>
+                        <vsizetype>7</vsizetype>
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                    </sizepolicy>
+                </property>
+                <property name="resizePolicy">
+                    <enum>AutoOneFit</enum>
+                </property>
+                <property name="numRows">
+                    <number>0</number>
+                </property>
+                <property name="numCols">
+                    <number>5</number>
+                </property>
+                <property name="readOnly">
+                    <bool>true</bool>
+                </property>
+                <property name="selectionMode">
+                    <enum>NoSelection</enum>
+                </property>
+                <property name="focusStyle">
+                    <enum>FollowStyle</enum>
+                </property>
+            </widget>
         </widget>
-        <widget class="QLayoutWidget" row="1" column="0" rowspan="1" colspan="2">
+        <widget class="QLayoutWidget" row="1" column="0">
             <property name="name">
                 <cstring>buttonsLayout</cstring>
             </property>
@@ -126,8 +142,19 @@
                     <property name="enabled">
                         <bool>false</bool>
                     </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
                     <property name="text">
                         <string>&amp;Search</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+S</string>
                     </property>
                     <property name="default">
                         <bool>true</bool>
@@ -137,8 +164,19 @@
                     <property name="name">
                         <cstring>btnClose</cstring>
                     </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
                     <property name="text">
                         <string>&amp;Close</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+C</string>
                     </property>
                     <property name="autoDefault">
                         <bool>true</bool>
@@ -151,6 +189,8 @@
         </widget>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>btnClose</sender>
