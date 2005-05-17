@@ -67,7 +67,7 @@ protected:
 	{
 		IO_METHOD_READ,
 		IO_METHOD_MMAP,
-		IO_METHOD_USERPTR,
+		IO_METHOD_USERPTR
 	} io_method;
 	io_method io_type;
 
