@@ -18,13 +18,14 @@
 #ifndef KOPETE_AVVIDEODEVICE_H
 #define KOPETE_AVVIDEODEVICE_H
 
-#include <vector>
+#include <qvaluevector.h>
 #include <iostream>
 
 
 #include "kopete_export.h"
 #include "videoinput.h"
 #include <qstring.h>
+#include <qimage.h>
 #include <qvaluevector.h>
 #include <kcombobox.h>
 
@@ -52,6 +53,7 @@ public:
 	int startCapturing();
 	int stopCapturing();
 	int readFrame();
+	int getImage(QImage *qimage);
 	int selectInput(int input);
 	int setResolution(int width, int height);
 	int scanDevices();
@@ -67,17 +69,27 @@ protected:
 	{
 		IO_METHOD_READ,
 		IO_METHOD_MMAP,
-		IO_METHOD_USERPTR
+		IO_METHOD_USERPTR,
 	} io_method;
 	io_method io_type;
 
+	struct buffer2
+	{
+		int height;
+		int width;
+		int pixfmt;
+		size_t size;
+		QValueVector <uchar> data;
+	};
 	struct buffer
 	{
 		void * start;
 		size_t length;
 	};
-		std::vector<buffer> buffers;
-		unsigned int     n_buffers;
+	QValueVector<buffer> buffers;
+	unsigned int     n_buffers;
+	buffer2 currentbuffer;
+
 protected:
 	int xioctl(int request, void *arg);
 	int processImage(const void *p);
