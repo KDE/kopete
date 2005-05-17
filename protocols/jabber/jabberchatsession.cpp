@@ -69,10 +69,18 @@ void JabberChatSession::updateDisplayName ()
 
 	QString statusText = i18n("a contact's online status in parenthesis.", " (%1)")
 							.arg( chatMembers.first()->onlineStatus().description() );
-	if ( jid.resource().isEmpty () )
-		setDisplayName ( chatMembers.first()->metaContact()->displayName () + statusText );
+
+	if ( chatMembers.first()->metaContact() == 0 )
+	{
+		setDisplayName ( jid.full () );
+	}
 	else
-		setDisplayName ( chatMembers.first()->metaContact()->displayName () + "/" + jid.resource () + statusText );
+	{
+		if ( jid.resource().isEmpty () )
+			setDisplayName ( chatMembers.first()->metaContact()->displayName () + statusText );
+		else
+			setDisplayName ( chatMembers.first()->metaContact()->displayName () + "/" + jid.resource () + statusText );
+	}
 
 }
 
