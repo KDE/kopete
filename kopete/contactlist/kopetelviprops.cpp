@@ -173,6 +173,7 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	mainWidget->chkTrackChildPhoto->setChecked( item->metaContact()->photoSource() != 0 );
 	mainWidget->chkTrackChildDisplayName->setEnabled( item->metaContact()->contacts().count() > 0 );
 	mainWidget->chkTrackChildPhoto->setEnabled( item->metaContact()->contacts().count() > 0 );
+	mainWidget->chkSyncPhoto->setEnabled( mainWidget->chkTrackChildPhoto->isEnabled() );
 	mainWidget->chkSyncPhoto->setChecked( item->metaContact()->isPhotoSyncedWithKABC() );
 	mainWidget->cmbAccount->setEnabled( mainWidget->chkTrackChildDisplayName->isChecked() );
 	mainWidget->btnClear->setIconSet( SmallIconSet( QApplication::reverseLayout() ? "locationbar_erase" : "clear_left" ) );
@@ -299,6 +300,7 @@ KopeteMetaLVIProps::~KopeteMetaLVIProps()
 void KopeteMetaLVIProps::slotSetPhotoComboEnabled( bool on )
 {
 	mainWidget->cmbAccountPhoto->setEnabled(on);
+	mainWidget->chkSyncPhoto->setEnabled(on);
 	mainWidget->lblPhotoAccount->setEnabled(on);
 }
 
