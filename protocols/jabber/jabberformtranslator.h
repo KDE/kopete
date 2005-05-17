@@ -42,7 +42,7 @@ signals:
 	void gatherData (XMPP::Form & form);
 
 private:
-	XMPP::Form privForm;
+	XMPP::Form emptyForm, privForm;
 
 };
 
