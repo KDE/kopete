@@ -94,7 +94,7 @@ void YahooAccount::slotGoStatus( int status, const QString &awayMessage)
 	}
 	else
 	{
-		m_session->setAway( yahoo_status( status ), awayMessage, status ? 1 : 0 );
+		m_session->setAway( yahoo_status( status ), awayMessage, ( status !=0 && status != 99 ) ? 1 : 0 );
 		myself()->setOnlineStatus( m_protocol->statusFromYahoo( status ) );
 	}
 }
