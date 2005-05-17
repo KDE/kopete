@@ -35,6 +35,8 @@
 #include <ktrader.h>
 #include <kconfig.h>
 #include <kcombobox.h>
+#include <qimage.h>
+#include <qpixmap.h>
 
 #include <qtabwidget.h>
 
@@ -66,9 +68,14 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 	d->open();
 	d->initDevice();
 	d->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
-	d->selectInput(2);
+	d->selectInput(0);
 	d->startCapturing();
 	d->getFrame();
+	d->getImage(&qimage);
+	qpixmap.convertFromImage(qimage,0);
+	mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
+	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
+	qtimer.start(1000,FALSE);
 }
 
 
@@ -138,4 +145,14 @@ void AVDeviceConfig::slotHueSliderChanged(int){
 
 void AVDeviceConfig::slotImageAutoAdjustBrightContrastChanged(bool){
   emit changed( true );
+}
+
+void AVDeviceConfig::slotUpdateImage()
+{
+	d->getFrame();
+	d->getImage(&qimage);
+	qpixmap.convertFromImage(qimage,0);
+	mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
+	kdDebug() << "kopete (avdeviceconfig_videoconfig): Image updated." << endl;
+//	emit changed( true );
 }

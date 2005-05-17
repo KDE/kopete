@@ -20,6 +20,9 @@
 
 #include "kcmodule.h"
 #include "videodevice.h"
+#include <qimage.h>
+#include <qpixmap.h>
+#include <qtimer.h>
 
 class QFrame;
 class QTabWidget;
@@ -51,11 +54,15 @@ private slots:
 	void slotSaturationSliderChanged(int);
 	void slotHueSliderChanged(int);
 	void slotImageAutoAdjustBrightContrastChanged(bool);
+	void slotUpdateImage();
 private:
 	QTabWidget* mAVDeviceTabCtl;
 	AVDeviceConfig_VideoDevice *mPrfsVideoDevice;
 	AVDeviceConfig_AudioDevice *mPrfsAudioDevice;
 	Kopete::AV::VideoDevice *d ;
+	QImage qimage;
+	QPixmap qpixmap;
+	QTimer qtimer;
 };
 
 #endif
