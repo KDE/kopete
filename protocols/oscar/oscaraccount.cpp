@@ -214,55 +214,6 @@ void OscarAccount::slotGoOnline()
 	//do nothing
 }
 
-void OscarAccount:: protocolError( int error, int psError, const QString& message )
-{
-	QString realMessage = message;
-	if ( error == Client::NoError )
-		return;
-	
-	if ( error == Client::NotConnectedError )
-	{
-		KMessageBox::queuedMessageBox( 0, KMessageBox::Error, message, i18n( "%1 Not Connected to %2" )
-		                               .arg( d->engine->userId(), d->engine->isIcq() ? i18n( "ICQ" ) : i18n( "AIM" ) ) );
-	}
-	
-	if ( error == Client::FatalProtocolError )
-	{
-		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Received fatal protocol error" << error << ", " 
-			<< psError << endl;
-		disconnect();
-		if ( psError == 5 )
-		{
-			disconnected( Kopete::Account::BadPassword );
-			password().setWrong( true );
-			return;
-		}
-		
-		if ( psError == 16 || psError == 2 )
-		{
-			disconnected( Kopete::Account::Manual );
-			realMessage = i18n("The %1 service is temporarily unavailable. Please try again later.")
-			              .arg( d->engine->isIcq() ? i18n( "ICQ" ) : i18n( "AIM" ) );
-		}
-		
-		if ( psError == 0 ) //zero is a generic error when i don't know what's wrong. :/
-		{
-			disconnected( Kopete::Account::Manual );
-		}
-		
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
-		                               realMessage, i18n( "%1 Disconnected" ).arg( d->engine->userId() ) );
-		return;
-	}
-	
-	if ( error == Client::NonFatalProtocolError )
-	{
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
-		                               message, i18n( "account id", "%1" ).arg( d->engine->userId() ) );
-	}
-}
-
-
 void OscarAccount::kopeteGroupRemoved( Kopete::Group* group )
 {
 	if ( isConnected() )
@@ -338,13 +289,6 @@ void OscarAccount::setServerPort(int port)
 		configGroup()->writeEntry( QString::fromLatin1( "Port" ), port );
 	else //set to default 5190
 		configGroup()->writeEntry( QString::fromLatin1( "Port" ), 5190 );
-}
-
-void OscarAccount::slotPasswordWrong()
-{
-	OscarAccount::disconnect();
-	password().setWrong();
-	QTimer::singleShot(0, this, SLOT(connect()));
 }
 
 Connection* OscarAccount::setupConnection( const QString& server, uint port )

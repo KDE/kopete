@@ -290,14 +290,6 @@ signals:
 	/** We were disconnected because we connected elsewhere */
 	void connectedElsewhere();
 
-	/**
-	 * A protocol error happened
-	 * \param code the generic error code for this error
-	 * \param psError the protocol specific error code for this error
-	 * \param error the i18n'ed message for the erro
-	 */
-	void error( int code, int psError, const QString& error );
-	
 	/** We have our own user info */
 	void haveOwnInfo();
 	
@@ -358,16 +350,6 @@ protected slots:
 	/** Stream connected for stage two login */
 	void streamConnected();
 
-	/**
-	 * Used by the client stream to notify errors to upper layers.
-	 */
-	void streamError( int error );
-	
-	/**
-	 * Used by the connection to notify about errors in tasks
-	 */
-	void taskError( const QString& message );
-	
 	/** We have our own user info */
 	void haveOwnUserInfo();
 	
@@ -379,8 +361,6 @@ protected slots:
 	
 	/** we have normal user info for a contact */
 	void receivedInfo( Q_UINT16 sequence );
-	
-	void disconnectionError( int, const QString& );
 	
 	void offlineUser( const QString&, const UserDetails& );
 	

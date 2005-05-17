@@ -118,15 +118,9 @@ public:
 	
 	void send( Transfer* t ) const;
 	void forcedSend( Transfer* t ) const;
-	void taskError( const QString& message );
 	
 signals:
-	/** There was an error in the stream */
-	void error( int );
-	
-	/** There was an error from one of the tasks */
-	void error( const QString& message );
-	
+
 	/** There's data ready to read */
 	void readyRead();
 	

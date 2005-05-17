@@ -168,11 +168,6 @@ void Connection::forcedSend( Transfer* request ) const
 	d->clientStream->write( request );
 }
 
-void Connection::taskError( const QString& message )
-{
-	emit error( message );
-}
-
 void Connection::initSequence()
 {
 	d->snacSequence = KApplication::random();

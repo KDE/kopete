@@ -77,8 +77,6 @@ public slots:
 	void slotGoOffline();
 	
 	void slotGoOnline();
-	
-	void protocolError( int error, int psError, const QString& message );
 
 protected:
 	/**
@@ -104,8 +102,6 @@ protected:
 	virtual QString sanitizedMessage( const Oscar::Message& message ) = 0;
 
 protected slots:
-	
-	void slotPasswordWrong();
 	
 	void slotGotSSIList();
 	

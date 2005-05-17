@@ -154,8 +154,6 @@ void Client::connectToServer( Connection *c, const QString& server, bool auth )
 	}
 
 	connect( c, SIGNAL( error( int ) ), SLOT( streamError( int ) ) );
-	connect( c, SIGNAL( error( const QString& ) ), SLOT( taskError( const QString& ) ) );
-
 	c->connectToServer(server, auth);
 }
 
@@ -264,17 +262,6 @@ SSIManager* Client::ssiManager() const
 }
 
 // SLOTS //
-void Client::streamError( int error )
-{
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "CLIENT ERROR (Error" << error << ")";
-	disconnectionError( 0, i18n( "An unknown error has occurred and the connection "
-	                             "has been closed." ) );
-}
-
-void Client::taskError( const QString& message )
-{
-	emit error( NonFatalProtocolError, 0, message );
-}
 
 void Client::streamConnected()
 {
@@ -321,7 +308,6 @@ void Client::lt_loginFinished()
 		else
 		{
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "errors reported. not moving to stage two" << endl;
-			emit error( FatalProtocolError, m_loginTask->statusCode(), m_loginTask->statusString() );
 			close(); //deletes the connections for us
 		}
 
@@ -384,12 +370,6 @@ void Client::receivedInfo( Q_UINT16 sequence )
 {
 	UserDetails details = d->userInfoTask->getInfoFor( sequence );
 	emit receivedUserInfo( details.userId(), details );
-}
-
-void Client::disconnectionError( int e, const QString& s )
-{
-	close();
-	emit error( FatalProtocolError, e, s );
 }
 
 void Client::offlineUser( const QString& user, const UserDetails& )
@@ -536,7 +516,6 @@ void Client::addContact( const QString& contactName, const QString& groupName )
 {
 	if ( !d->active )
 	{
-		emit error( NotConnectedError, 0, i18n( "Cannot add %1 to the server because the account is not connected" ).arg( groupName ) );
 		return;
 	}
 
@@ -550,10 +529,8 @@ void Client::addContact( const QString& contactName, const QString& groupName )
 void Client::removeContact( const QString& contactName )
 {
 	if ( !d->active )
-	{
-		emit error( NotConnectedError, 0, i18n( "Cannot remove %1 from the server because the account is not connected" ).arg( contactName ) );
 		return;
-	}
+
 
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Removing contact " << contactName << " from SSI" << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( d->connections.first()->rootTask() );
@@ -564,10 +541,7 @@ void Client::removeContact( const QString& contactName )
 void Client::renameGroup( const QString & oldGroupName, const QString & newGroupName )
 {
 	if ( !d->active )
-	{
-		//emit error( NotConnectedError, 0, i18n( "Cannot rename %1 on the server because the account is not connected" ).arg( oldGroupName ) );
 		return;
-	}
 
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Renaming group " << oldGroupName << " to " << newGroupName << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( d->connections.first()->rootTask() );
@@ -578,9 +552,7 @@ void Client::renameGroup( const QString & oldGroupName, const QString & newGroup
 void Client::changeContactGroup( const QString& contact, const QString& newGroupName )
 {
 	if ( !d->active )
-	{
 		return;
-	}
 
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Changing " << contact << "'s group to "
 		<< newGroupName << endl;
