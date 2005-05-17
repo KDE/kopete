@@ -29,6 +29,8 @@ JabberFormTranslator::JabberFormTranslator (const XMPP::Form & form, QWidget * p
 	privForm.setInstructions (form.instructions ());
 	privForm.setKey (form.key ());
 
+	emptyForm = privForm;
+
 	/* Add instructions to layout. */
 	QVBoxLayout *innerLayout = new QVBoxLayout (this, 0, 4);
 
@@ -73,7 +75,7 @@ JabberFormTranslator::JabberFormTranslator (const XMPP::Form & form, QWidget * p
 XMPP::Form & JabberFormTranslator::resultData ()
 {
 	// clear form data
-	privForm = XMPP::Form ();
+	privForm = emptyForm;
 
 	// let all line edit fields write into our form
 	emit gatherData (privForm);
