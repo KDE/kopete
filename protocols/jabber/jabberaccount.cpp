@@ -167,7 +167,7 @@ void JabberAccount::removeS5bAddress ( const QString &address )
 {
 	QStringList newList;
 
-	m_s5bAddressList.remove ( address );
+	m_s5bAddressList.remove ( m_s5bAddressList.find ( address ) );
 
 	if ( m_s5bAddressList.isEmpty () )
 	{
