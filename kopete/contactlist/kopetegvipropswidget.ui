@@ -12,9 +12,6 @@
             <height>223</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>KopeteGVIPropsWidget</string>
-    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>

@@ -12,9 +12,6 @@
             <height>422</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>KopeteMetaLVIPropsWidget</string>
-    </property>
     <property name="toolTip" stdset="0">
         <string></string>
     </property>
@@ -123,9 +120,6 @@
                                         <property name="text">
                                             <string>E&amp;xport Details...</string>
                                         </property>
-                                        <property name="accel">
-                                            <string>Alt+X</string>
-                                        </property>
                                         <property name="toolTip" stdset="0">
                                             <string>Export contact's details to the KDE Address Book</string>
                                         </property>
@@ -156,9 +150,6 @@
                                         </property>
                                         <property name="text">
                                             <string>&amp;Import Contacts</string>
-                                        </property>
-                                        <property name="accel">
-                                            <string>Alt+I</string>
                                         </property>
                                         <property name="toolTip" stdset="0">
                                             <string>Import contacts from the KDE Address Book</string>
@@ -279,9 +270,6 @@
                                 </property>
                                 <property name="text">
                                     <string>Use the photo given &amp;by the server</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+B</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Use the name of the child contact</string>

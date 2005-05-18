@@ -129,9 +129,6 @@
                                 <property name="text">
                                     <string>Re&amp;gister New Account</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+G</string>
-                                </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Register a new account on this network.</string>
                                 </property>
@@ -158,9 +155,6 @@
                                 </property>
                                 <property name="text">
                                     <string>E&amp;xclude from connection</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+X</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
                                     <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
@@ -248,9 +242,6 @@
                                 <property name="text">
                                     <string>Use protocol encr&amp;yption (SSL)</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+Y</string>
-                                </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check this box to enable SSL encrypted communication with the server.</string>
                                 </property>
@@ -265,9 +256,6 @@
                                 <property name="text">
                                     <string>Allow plain-te&amp;xt password authentication</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+X</string>
-                                </property>
                                 <property name="checked">
                                     <bool>true</bool>
                                 </property>
@@ -278,9 +266,6 @@
                                 </property>
                                 <property name="text">
                                     <string>&amp;Override default server information</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+O</string>
                                 </property>
                                 <property name="checked">
                                     <bool>false</bool>
@@ -908,9 +893,6 @@ If two resources have the same priority, the messages will be sent to the one co
                                 </property>
                                 <property name="text">
                                     <string>&amp;Hide system and client info</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+H</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
                                     <string>By default, Kopete gives the other users some info about your system and the client. You can check this box in order to  hide those infos.</string>
