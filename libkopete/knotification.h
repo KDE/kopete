@@ -31,17 +31,56 @@ namespace Kopete { class MetaContact; }
 
 /**
  * KNotification is used to notify some event to the user.
- * 
+ *
+ * It covers severals kind of notifications
+ *
+ * @li Interface events:
+ * For notify the user he/she just performed an operation, like maximizing a
+ * window. This permit to play sounds when a dialog appears.
+ * This is an instent notification.  It ends automatically after a small timeout
+ *
+ * @li complex notifications:
+ * Notify when one received a new message, or when something important happened
+ * the user has to know.  This notification has a start and a end.  It start when
+ * the event actually occurs, and finish when the message is readed. 
+ *
+ *
  * use the static funciton event() to fire an event
  *
  * the returned KNotification pointer may be used to connect signals or slots
+ *
+ * @author Olivier Goffart  <ogoffart @ kde.org>
  */
 class KDE_EXPORT KNotification : public QObject
 {
         Q_OBJECT
 public:
+
+	enum NotificationFlags
+	{
+		/**
+		 * When the notification is activated, raise the notification's widget.
+		 *
+		 * This will change the desktop, raise the window, and switch to the tab.
+		 */
+		RaiseWidgetOnActivation=0x01,
+
+		/**
+		 * The notification will be automatically closed after a timeout.
+		 */
+		CloseOnTimeout=0x02,
+		/**
+		 * The notification will be automatically closed if the widget() becomes
+		 * activated.
+		 * 
+		 * If the widget is already activated when the notification occurs, the
+		 * notification will be closed after a small timeout.
+		 */
+		CloseWhenWidgetActivated=0x03,
+	};
+
+	
 	~KNotification();
-	   
 
     /**
 	 * @brief the widget associated to the notification
@@ -89,12 +128,25 @@ public slots:
 	 */
 	void close();
 
+	/**
+	 * @brief Raise the widget.
+	 * This will change the desktop, activate the window, and the tab if needed.
+	 */
+	void raiseWidget();
+
 
 
 private:
 	struct Private;
 	Private *d;
-	KNotification();
+	KNotification(QObject *parent=0L);
+	/**
+	 * recursive function that raise the widget. @p w
+	 *
+	 * @see raiseWidget()
+	 */
+	static void raiseWidget(QWidget *w);
+
 
 private slots:
 	void notifyByMessagebox();
@@ -107,17 +159,26 @@ public:
 	/**
 	 * @brief emit an event
 	 *
-	 * @Note the text is shown in a QLabel, you should make sure to escape the html is needed.
+	 * A popup may be showed, a sound may be played, depending the config.
+	 *
+	 * return a KNotification .  You may use that pointer to connect some signals or slot.
+	 * the pointer is automatically deleted when the event is closed.
+	 * 
+	 * Make sure you use one of the CloseOnTimeOut or CloseWhenWidgetActivated, if not,
+	 * you have to close yourself the notification.
+	 * 
+	 * @note the text is shown in a QLabel, you should make sure to escape the html is needed.
 	 *
 	 * @param eventId is the name of the event
 	 * @param text is the text of the notification which may be shown in the popup.
 	 * @param pixmap is a picture which may be shown in the popup
 	 * @param widget is a widget where the notification raports to
 	 * @param actions is a list of actions text.
+	 * @param flags is a bitmask of NotificationsFlags  
 	 */
 	static KNotification *event( const QString& eventId , const QString& text=QString::null,
-								 const QPixmap& pixmap=QPixmap(), QWidget *widget=0L,
-								 const QStringList &actions=QStringList());
+			const QPixmap& pixmap=QPixmap(), QWidget *widget=0L,
+			const QStringList &actions=QStringList(), unsigned int flags=CloseOnTimeout);
 
 
 	/**
@@ -129,10 +190,10 @@ public:
 	 * @param actions is a list of actions text.
 	 * ...
 	 */
-	static KNotification *userEvent( const QString& text,
-				const QPixmap& pixmap, QWidget *widget,
-				QStringList actions,int present, int level,
-				const QString &sound, const QString &file, const QString &commandline);
+	static KNotification *userEvent( const QString& text, const QPixmap& pixmap,
+				QWidget *widget, QStringList actions,int present, int level,
+				const QString &sound, const QString &file,
+				const QString &commandline, unsigned int flags);
 
 
 
@@ -141,7 +202,8 @@ public:
 	*/
 	static KNotification *event( Kopete::MetaContact *mc, const QString& eventId , const QString& text=QString::null,
 								 const QPixmap& pixmap=QPixmap(), QWidget *widget=0L,
-								const QStringList &actions=QStringList());
+								 const QStringList &actions=QStringList(),unsigned int flags=CloseOnTimeout);
+
 };
 
 

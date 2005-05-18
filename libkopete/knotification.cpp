@@ -29,6 +29,7 @@
 #include <kprocess.h>
 #include <kdialog.h>
 #include <kmacroexpander.h>
+#include <kwin.h>
 
 
 #include <qvbox.h>
@@ -38,6 +39,7 @@
 #include <qstylesheet.h>
 #include <qlabel.h>
 #include <qtimer.h>
+#include <qtabwidget.h>
 
 static WId checkWinId( const QString &appName, WId senderWinId )
 {
@@ -71,7 +73,6 @@ static WId checkWinId( const QString &appName, WId senderWinId )
 }
 
 
-
 struct KNotification::Private
 {
 	QWidget *widget;
@@ -80,7 +81,8 @@ struct KNotification::Private
 	int level;
 };
 
-KNotification::KNotification() : d(new Private)
+KNotification::KNotification(QObject *parent) :
+		QObject(parent) , d(new Private)
 {
 }
 
@@ -267,11 +269,42 @@ void KNotification::close()
 }
 
 
+void KNotification::raiseWidget()
+{
+	if(!d->widget)
+		return;
+	
+	raiseWidget(d->widget);
+}
+
+
+void KNotification::raiseWidget(QWidget *w)
+{
+	//TODO  this funciton is far from finished.
+	if(w->isTopLevel())
+	{
+		w->raise();
+		KWin::activateWindow( w->winId() );
+	}
+	else
+	{
+		QWidget *pw=w->parentWidget();
+		raiseWidget(pw);
+
+		if( QTabWidget *tab_widget=dynamic_cast<QTabWidget*>(pw))
+		{
+			tab_widget->showPage(w);
+		}
+	}
+}
+
+
+
 
 
 KNotification *KNotification::event( const QString& message , const QString& text,
 			const QPixmap& pixmap, QWidget *widget,
-			const QStringList &actions)
+			const QStringList &actions, unsigned int flags)
 {
 	/* NOTE:  this function still use the KNotifyClient,
 	 *        in the futur (KDE4) all the function of the knotifyclient will be moved there.
@@ -325,13 +358,12 @@ KNotification *KNotification::event( const QString& message , const QString& tex
 			commandline = eventsFile.readPathEntry( "default_commandline" );
 	}
 
-	return userEvent( text, pixmap, widget, actions,  present , level, sound, file, commandline );
+	return userEvent( text, pixmap, widget, actions,  present , level, sound, file, commandline, flags );
 }
 
-KNotification *KNotification::userEvent( const QString& text,
-									 const QPixmap& pixmap, QWidget *widget,
-									 QStringList actions,int present, int level,
-									 const QString &sound, const QString &file, const QString &commandline)
+KNotification *KNotification::userEvent( const QString& text, const QPixmap& pixmap, QWidget *widget,
+				QStringList actions,int present, int level, const QString &sound, const QString &file,
+				const QString &commandline, unsigned int flags)
 {
 
 	/* NOTE:  this function still use the KNotifyClient,
@@ -340,7 +372,7 @@ KNotification *KNotification::userEvent( const QString& text,
 	 */
 
 	
-	KNotification *notify=new KNotification();
+	KNotification *notify=new KNotification(widget);
 	notify->d->widget=widget;
 	notify->d->text=text;
 	notify->d->actions=actions;
@@ -365,8 +397,11 @@ KNotification *KNotification::userEvent( const QString& text,
 	{
 		QTimer::singleShot(0,notify,SLOT(notifyByMessagebox()));
 	}
-	else  //not a message box
+	else  //not a message box  (because closing the event when a message box is there is suicide)
+		if(flags & CloseOnTimeout)
+	{
 		QTimer::singleShot(6*1000, notify, SLOT(close()));
+	}
 	if ( present & KNotifyClient::Execute )
 	{
 		QString appname = QString::fromAscii( KNotifyClient::instance()->instanceName() );
@@ -449,7 +484,7 @@ static KNotification *performCustomNotifications( QWidget *widget, Kopete::MetaC
 					evt->firePresentation( Kopete::EventPresentation::Chat );
 				}
 				// fire the event
-				n=KNotification::userEvent( text, mc->photo(), widget, QStringList() , present, 0, sound, QString::null, QString::null );
+				n=KNotification::userEvent( text, mc->photo(), widget, QStringList() , present, 0, sound, QString::null, QString::null , KNotification::CloseOnTimeout);
 			}
 		}
 
@@ -473,8 +508,8 @@ static KNotification *performCustomNotifications( QWidget *widget, Kopete::MetaC
 
 
 KNotification *KNotification::event( Kopete::MetaContact *mc, const QString& message ,
-									 const QString& text, const QPixmap& pixmap,
-									 QWidget *widget, const QStringList &actions)
+			const QString& text, const QPixmap& pixmap, QWidget *widget,
+			const QStringList &actions, unsigned int flags)
 {
 	if (message.isEmpty()) return 0;
     
@@ -489,7 +524,7 @@ KNotification *KNotification::event( Kopete::MetaContact *mc, const QString& mes
 	else
 	{
 		//kdDebug( 14000 ) << "carrying out common notifications" << endl;
-		return event(  message, text, pixmap, widget , actions );
+		return event(  message, text, pixmap, widget , actions, flags);
 	}
 }
 
