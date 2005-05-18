@@ -29,7 +29,7 @@
 #include <kmdcodec.h>
 #include <kmessagebox.h>
 
-#include "kopetechatsessionmanager.h"
+#include "kopetemessagemanagerfactory.h"
 #include "kopeteuiglobal.h"
 
 #include "latexplugin.h"
