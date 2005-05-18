@@ -553,8 +553,13 @@ void MSNContact::setOnlineStatus(const Kopete::OnlineStatus& status)
 {
 	if(isBlocked() && status.internalStatus() < 15)
 	{
-		Kopete::Contact::setOnlineStatus(Kopete::OnlineStatus(status.status() , (status.weight()==0) ? 0 : (status.weight() -1)  ,
-			protocol() , status.internalStatus()+15 , QString::fromLatin1("msn_blocked") ,  i18n("%1|Blocked").arg( status.description() ) ) );
+		Kopete::Contact::setOnlineStatus(
+				Kopete::OnlineStatus(status.status() ,
+				(status.weight()==0) ? 0 : (status.weight() -1)  ,
+				protocol() ,
+				status.internalStatus()+15 ,
+				status.overlayIcons() + QStringList("msn_blocked") ,
+				i18n("%1|Blocked").arg( status.description() ) ) );
 	}
 	else if(!isBlocked() && status.internalStatus() >= 15)
 	{	//the user is not blocked, but the status is blocked
