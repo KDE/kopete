@@ -76,7 +76,7 @@ public:
 		 * If the widget is already activated when the notification occurs, the
 		 * notification will be closed after a small timeout.
 		 */
-		CloseWhenWidgetActivated=0x03,
+		CloseWhenWidgetActivated=0x03
 	};
 
 	
