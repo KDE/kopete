@@ -29,7 +29,7 @@
 #include <kmdcodec.h>
 #include <kmessagebox.h>
 
-#include "kopetemessagemanagerfactory.h"
+#include "kopetechatsessionmanager.h"
 #include "kopeteuiglobal.h"
 
 #include "latexplugin.h"
@@ -124,6 +124,8 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 			// get the image and encode it with base64
 			#if ENCODED_IMAGE_MODE
 			QImage renderedImage( fileName );
+			imagePxWidth = renderedImage.width();
+			imagePxHeight = renderedImage.height();
 			if ( !renderedImage.isNull() )
 			{
 				QByteArray ba;
@@ -146,9 +148,14 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 
 	for (QMap<QString,QString>::ConstIterator it = replaceMap.begin(); it != replaceMap.end(); ++it)
 	{
+		int imagePxWidth = 0;
+		int imagePxHeight = 0;
+		QImage theImage(*it);
+		imagePxWidth = theImage.width();
+		imagePxHeight = theImage.height();
 		QString escapedLATEX=it.key();
 		escapedLATEX.replace("\"","&quot;");  //we need  the escape quotes because that string will be in a title="" argument
-		messageText.replace(it.key(), " <img src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
+		messageText.replace(it.key(), " <img width=\"" + QString::number(imagePxWidth) + "\" height=\"" + QString::number(imagePxHeight) + "\" src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
 	}
 
 	msg.setBody( messageText, Kopete::Message::RichText );
@@ -157,6 +164,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 
 void LatexPlugin::slotMessageAboutToSend( Kopete::Message& msg)
 {
+	Q_UNUSED(msg)
 	//disabled because to work correctly, we need to find what special has the gif we can send over MSN
 #if 0
 	KConfig *config = KGlobal::config();
