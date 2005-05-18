@@ -315,7 +315,7 @@ public:
 	 * \brief Set the current idle time in seconds.
 	 * Kopete will automatically calculate the time in @ref idleTime
 	 * except if you set 0.
-	 // 
+	 //
 	 // FIXME: Can we make this just 'unsigned long' ? QT Properties can't handle
 	 // 'unsigned long int'
 	 */
@@ -350,11 +350,12 @@ public:
 	 * taken from this one
 	 * @param value The value to store
 	 *
-	 * \note Setting a NULL value removes the property if it already existed.
-	 * <b>don't</b> abuse this for property-removal, instead use
+	 * \note Setting a NULL value or an empty QString castable value
+	 * removes the property if it already existed.
+	 * <b>Don't</b> abuse this for property-removal, instead use
 	 * @ref removeProperty() if you want to remove on purpose.
-	 * Removal on NULL is to clean up the list of properties and to purge them
-	 * from UI
+	 * The Removal is done to clean up the list of properties and to purge them
+	 * from UI.
 	 **/
 	void setProperty(const Kopete::ContactPropertyTmpl &tmpl, const QVariant &value);
 

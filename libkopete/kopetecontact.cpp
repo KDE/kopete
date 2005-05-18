@@ -264,7 +264,7 @@ void Contact::changeMetaContact()
 	QVBox *w = new QVBox( moveDialog );
 	w->setSpacing( KDialog::spacingHint() );
 	Kopete::UI::MetaContactSelectorWidget *selector = new Kopete::UI::MetaContactSelectorWidget(w);
-	selector->setLabelMessage(i18n( "Select the meta contact to which you want to move this contact:" ));	
+	selector->setLabelMessage(i18n( "Select the meta contact to which you want to move this contact:" ));
 
 	QCheckBox *chkCreateNew = new QCheckBox( i18n( "Create a new metacontact for this contact" ), w );
 	QWhatsThis::add( chkCreateNew , i18n( "If you select this option, a new metacontact will be created in the top-level group "
@@ -596,7 +596,7 @@ void Contact::setProperty(const Kopete::ContactPropertyTmpl &tmpl,
 		return;
 	}
 
-	if(value.isNull())
+	if(value.isNull() || value.canCast(QVariant::String) && value.toString().isEmpty())
 	{
 		removeProperty(tmpl);
 	}
@@ -604,10 +604,13 @@ void Contact::setProperty(const Kopete::ContactPropertyTmpl &tmpl,
 	{
 		QVariant oldValue = property(tmpl.key()).value();
 
-		Kopete::ContactProperty prop(tmpl, value);
-		d->properties.insert(tmpl.key(), prop, true);
+		if(oldValue != value)
+		{
+			Kopete::ContactProperty prop(tmpl, value);
+			d->properties.insert(tmpl.key(), prop, true);
 
-		emit propertyChanged(this, tmpl.key(), oldValue, value);
+			emit propertyChanged(this, tmpl.key(), oldValue, value);
+		}
 	}
 }
 
@@ -819,10 +822,6 @@ void Kopete::Contact::slotUnblock()
 
 void Kopete::Contact::setNickName( const QString &name )
 {
-	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-	if( name == nick )
-		return;
-
 	setProperty( Kopete::Global::Properties::self()->nickName(), name );
 }
 
