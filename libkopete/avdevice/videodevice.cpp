@@ -35,6 +35,8 @@
 #include <unistd.h>
 #include <signal.h>
 
+#ifdef __linux__
+
 #undef __STRICT_ANSI__
 #include <asm/types.h>
 #include <linux/fs.h>
@@ -42,10 +44,12 @@
 
 #ifndef __u64 //required by videodev.h
 #define __u64 unsigned long long
-#endif
+#endif // __u64
 
 #include <linux/videodev.h>
 #define __STRICT_ANSI__
+
+#endif // __linux__
 
 #include "videoinput.h"
 #include "videodevice.h"
@@ -69,8 +73,6 @@ VideoDevice* VideoDevice::self()
 
 VideoDevice::VideoDevice()
 {
-//	io_type    = IO_METHOD_READ;
-	io_type    = IO_METHOD_MMAP;
 	descriptor = -1;
 	n_buffers  = 0;
 }
@@ -180,25 +182,6 @@ int VideoDevice::initDevice()
 		fprintf (stderr, "%s is no video capture device\n", path.c_str());
 		return EXIT_FAILURE;
 	}
-	switch (io_type)
-	{
-		case IO_METHOD_READ:
-			if (!(cap.capabilities & V4L2_CAP_READWRITE))
-			{
-				fprintf (stderr, "%s does not support read i/o\n", path.c_str());
-				return EXIT_FAILURE;
-			}
-			break;
-		case IO_METHOD_MMAP:
-		case IO_METHOD_USERPTR:
-			if (!(cap.capabilities & V4L2_CAP_STREAMING))
-			{
-				fprintf (stderr, "%s does not support streaming i/o\n", path.c_str());
-				return EXIT_FAILURE;
-			}
-			break;
-	}
-
 //	kdDebug() << "V4L2Dev: device \"" << cap << "\" capabilities: " << endl;
 	kdDebug() << "libkopete (avdevice): Driver: " << (const char*)cap.driver << " "
 		<< ((cap.version>>16) & 0xFF) << "."
@@ -224,12 +207,25 @@ int VideoDevice::initDevice()
 		kdDebug() << "libkopete (avdevice):     Tuner IO" << endl;
 	if(cap.capabilities & V4L2_CAP_AUDIO)
 		kdDebug() << "libkopete (avdevice):     Audio IO" << endl;
+
+	io_type = IO_METHOD_NONE;
 	if(cap.capabilities & V4L2_CAP_READWRITE)
+	{
+		io_type = IO_METHOD_READ;
 		kdDebug() << "libkopete (avdevice):     Read/Write interface" << endl;
+	}
 	if(cap.capabilities & V4L2_CAP_ASYNCIO)
 		kdDebug() << "libkopete (avdevice):     Async IO interface" << endl;
 	if(cap.capabilities & V4L2_CAP_STREAMING)
+	{
+		io_type = IO_METHOD_MMAP;
 		kdDebug() << "libkopete (avdevice):     Streaming interface" << endl;
+	}
+	if(io_type==IO_METHOD_NONE)
+	{
+		fprintf (stderr, "Found no suitable input/output method for %s\n", path.c_str());
+		return EXIT_FAILURE;
+	}
 
 	kdDebug() << "libkopete (avdevice): Enumerating video inputs: " << endl;
 //    ok = true;
@@ -266,7 +262,7 @@ int VideoDevice::initDevice()
 
 // Select video input, video standard and tune here.
 
-/*	cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	if (-1 == xioctl (VIDIOC_CROPCAP, &cropcap))
 	{ // Errors ignored.
 	}
@@ -279,7 +275,7 @@ int VideoDevice::initDevice()
 			case EINVAL: break;  // Cropping not supported.
 			default:     break;  // Errors ignored.
 		}
-	}*/
+	}
 	CLEAR (fmt);
 	if (-1 == xioctl (VIDIOC_G_FMT, &fmt))
 //		return errnoReturn ("VIDIOC_S_FMT");
@@ -307,6 +303,7 @@ int VideoDevice::initDevice()
 
 	switch (io_type)
 	{
+		case IO_METHOD_NONE:    return EXIT_FAILURE;                 break;
 		case IO_METHOD_READ:    initRead (fmt.fmt.pix.sizeimage);    break;
 		case IO_METHOD_MMAP:    initMmap ();                         break;
 		case IO_METHOD_USERPTR: initUserptr (fmt.fmt.pix.sizeimage); break;
@@ -356,7 +353,7 @@ int VideoDevice::initRead(unsigned int buffer_size)
 	}
 
 	buffers[0].length = buffer_size;
-	buffers[0].start = malloc (buffer_size);
+	buffers[0].start = (uchar *)malloc (buffer_size);
 
 	currentbuffer.size = buffer_size; // not really useful, cause currentbuffer.data.size() does the same thing
 	currentbuffer.data.resize(buffer_size);
@@ -427,7 +424,7 @@ int VideoDevice::initMmap()
 			return errnoReturn ("VIDIOC_QUERYBUF");
 
 		buffers[n_buffers].length = buf.length;
-		buffers[n_buffers].start = mmap (NULL /* start anywhere */, buf.length, PROT_READ | PROT_WRITE /* required */, MAP_SHARED /* recommended */, descriptor, buf.m.offset);
+		buffers[n_buffers].start = (uchar *) mmap (NULL /* start anywhere */, buf.length, PROT_READ | PROT_WRITE /* required */, MAP_SHARED /* recommended */, descriptor, buf.m.offset);
 
 		if (MAP_FAILED == buffers[n_buffers].start)
 		return errnoReturn ("mmap");
@@ -478,7 +475,7 @@ int VideoDevice::initUserptr(unsigned int buffer_size)
 	for (n_buffers = 0; n_buffers < 4; ++n_buffers)
 	{
 		buffers[n_buffers].length = buffer_size;
-		buffers[n_buffers].start = malloc (buffer_size);
+		buffers[n_buffers].start = (uchar *) malloc (buffer_size);
 
 		if (!buffers[n_buffers].start)
 		{
@@ -519,7 +516,10 @@ int VideoDevice::startCapturing()
 	kdDebug() << "libkopete (avdevice): startCapturing() called." << endl;
 	switch (io_type)
 	{
-		case IO_METHOD_READ: /* Nothing to do. */
+		case IO_METHOD_NONE: // Card cannot capture frames
+			return EXIT_FAILURE;
+			break;
+		case IO_METHOD_READ: // Nothing to do
 			break;
 		case IO_METHOD_MMAP:
 			for (i = 0; i < n_buffers; ++i)
@@ -570,7 +570,10 @@ int VideoDevice::stopCapturing()
 
 	switch (io_type)
 	{
-		case IO_METHOD_READ: /* Nothing to do. */
+		case IO_METHOD_NONE: // Card cannot capture frames
+			return EXIT_FAILURE;
+			break;
+		case IO_METHOD_READ: // Nothing to do
 			break;
 		case IO_METHOD_MMAP:
 		case IO_METHOD_USERPTR:
@@ -597,6 +600,9 @@ int VideoDevice::readFrame()
 	kdDebug() << "libkopete (avdevice): readFrame() called." << endl;
 	switch (io_type)
 	{
+		case IO_METHOD_NONE: // Card cannot capture frames
+			return EXIT_FAILURE;
+			break;
 		case IO_METHOD_READ:
 //			if (-1 == read (descriptor, buffers[0].start, buffers[0].length))
 			if (-1 == read (descriptor, &currentbuffer.data[0], currentbuffer.data.size()))
@@ -611,7 +617,14 @@ int VideoDevice::readFrame()
 				}
 			}
 			processImage (buffers[0].start);
-//			memcpy(currentbuffer.data[0], buffers[0].start, buffers[0].length);
+			for(size_t loop=0; loop<currentbuffer.data.size(); loop+=4)
+			{
+				currentbuffer.data[loop]  =currentbuffer.data[loop+3];
+				currentbuffer.data[loop+3]=currentbuffer.data[loop+1];
+				currentbuffer.data[loop+1]=currentbuffer.data[loop+2];
+				currentbuffer.data[loop+2]=currentbuffer.data[loop+3];
+				currentbuffer.data[loop+3]=255;
+			}
 			break;
 		case IO_METHOD_MMAP:
 			CLEAR (buf);
@@ -630,7 +643,14 @@ int VideoDevice::readFrame()
 			}
 			assert (buf.index < n_buffers);
 			processImage (buffers[buf.index].start);
-			memcpy(&currentbuffer.data[0], buffers[buf.index].start, currentbuffer.data.size());
+			for(size_t loop=0; loop<currentbuffer.data.size(); loop+=4)
+			{
+				currentbuffer.data[loop]  =buffers[buf.index].start[loop+3];
+				currentbuffer.data[loop+1]=buffers[buf.index].start[loop+2];
+				currentbuffer.data[loop+2]=buffers[buf.index].start[loop+1];
+				currentbuffer.data[loop+3]=255;
+			}
+//			memcpy(&currentbuffer.data[0], buffers[buf.index].start, currentbuffer.data.size());
 			if (-1 == xioctl (VIDIOC_QBUF, &buf))
 				return errnoReturn ("VIDIOC_QBUF");
 			break;
@@ -676,11 +696,19 @@ int VideoDevice::readFrame()
 int Kopete::AV::VideoDevice::getImage(QImage *qimage)
 {
     /// @todo implement me
-	int result=0;
+	unsigned long long result=0;
+	unsigned long long R=0, G=0, B=0, A=0;
 	for(unsigned int loop=0;loop < currentbuffer.data.size();loop++)
 	result+=currentbuffer.data[loop];
 	kdDebug() << " ------ Data size: " << currentbuffer.data.size() << "----------------- Result: " << result << " -----------------------------" << endl;
-//        qimage->QImage (&currentbuffer.data[0], 320, 240, 32, 0, 0, QImage::IgnoreEndian);
+	for(unsigned int loop=0;loop < currentbuffer.data.size();loop+=4)
+	{
+		R+=currentbuffer.data[loop];
+		G+=currentbuffer.data[loop+1];
+		B+=currentbuffer.data[loop+2];
+		A+=currentbuffer.data[loop+3];
+	}
+	kdDebug() << " ------ R: " << R << "------ G: " << G << "------ B: " << B << "------ A: " << A << "------" << endl;
 	qimage->create(320,240,32,QImage::IgnoreEndian);
 	memcpy(qimage->bits(),&currentbuffer.data[0], currentbuffer.data.size());
 	return EXIT_SUCCESS;

@@ -67,6 +67,7 @@ protected:
 	int descriptor;
 	typedef enum
 	{
+		IO_METHOD_NONE,
 		IO_METHOD_READ,
 		IO_METHOD_MMAP,
 		IO_METHOD_USERPTR,
@@ -83,7 +84,7 @@ protected:
 	};
 	struct buffer
 	{
-		void * start;
+		uchar * start;
 		size_t length;
 	};
 	QValueVector<buffer> buffers;
