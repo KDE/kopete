@@ -133,7 +133,7 @@ void MSNSocket::setOnlineStatus( MSNSocket::OnlineStatus status )
 
 void MSNSocket::slotSocketError( int error )
 {
-	kdWarning( 14140 ) << k_funcinfo << "Error: " << error << endl;
+	kdWarning( 14140 ) << k_funcinfo << "Error: " << error << " (" << m_socket->errorString() << ")" << endl;
 
 	if(!KSocketBase::isFatalError(error))
 		return;

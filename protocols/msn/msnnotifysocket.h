@@ -29,6 +29,7 @@
 class MSNDispatchSocket;
 class MSNAccount;
 class KTempFile;
+class SslLoginHandler;
 
 #include <kio/job.h>
 
@@ -134,9 +135,9 @@ private slots:
 	 */
 	void slotSendKeepAlive();
 
-
-	void slotAuthJobDataReceived ( KIO::Job *, const QByteArray &data);
-	void slotAuthJobDone ( KIO::Job *);
+	void sslLoginFailed();
+	void sslLoginIncorrect();
+	void sslLoginSucceeded(QString);
 
 
 private:
@@ -167,7 +168,7 @@ private:
 	QString m_kv;
 	QString m_sid;
 	QString m_loginTime;
-	QString m_authData;
+	SslLoginHandler *m_sslLoginHandler;
 
 	QTimer *m_keepaliveTimer;
 
