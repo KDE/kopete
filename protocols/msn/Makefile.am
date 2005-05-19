@@ -1,4 +1,4 @@
-METASOURCES = AUTO
+stMETASOURCES = AUTO
 SUBDIRS = ui . icons config
 AM_CPPFLAGS = -I$(srcdir)/ui \
 	-I./ui \
@@ -11,8 +11,8 @@ lib_LTLIBRARIES = libkopete_msn_shared.la
 CLEANFILES = dummy.cpp
 
 libkopete_msn_shared_la_SOURCES = msnprotocol.cpp msnaccount.cpp msnaddcontactpage.cpp msncontact.cpp \
-	msnsocket.cpp msnmessagemanager.cpp msndebugrawcmddlg.cpp \
-	msnnotifysocket.cpp msnswitchboardsocket.cpp msnfiletransfersocket.cpp msninvitation.cpp msnp2p.cpp sha1.cpp
+	msnsocket.cpp msnmessagemanager.cpp msndebugrawcmddlg.cpp sslloginhandler.cpp \
+	msnnotifysocket.cpp msnswitchboardsocket.cpp msnfiletransfersocket.cpp msninvitation.cpp msnp2p.cpp sha1.cpp 
 
 libkopete_msn_shared_la_LIBADD  = ./ui/libkopetemsnui.la ../../libkopete/libkopete.la $(LIB_KIO)
 libkopete_msn_shared_la_LDFLAGS = -version-info 0:0:0 -no-undefined $(all_libraries)
