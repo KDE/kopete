@@ -583,12 +583,11 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 
 void MSNNotifySocket::sslLoginFailed()
 {
-	m_disconnectReason=Kopete::Account::InvalidHost;
 	disconnect();
 }
 void MSNNotifySocket::sslLoginIncorrect()
 {
-	m_disconnectReason=Kopete::Account::BadPassword;
+	m_badPassword = true;
 	disconnect();
 }
 void MSNNotifySocket::sslLoginSucceeded(QString a)
