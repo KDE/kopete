@@ -90,7 +90,7 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 	m_mediaPlayer->append( new NLKscd( m_client ) );
 	m_mediaPlayer->append( new NLNoatun( m_client ) );
 	m_mediaPlayer->append( new NLJuk( m_client ) );
-	m_mediaPlayer->append( new NLAmaroK( m_client ) );
+	m_mediaPlayer->append( new NLamaroK( m_client ) );
 	m_mediaPlayer->append( new NLKaffeine( m_client ) );
 
 #if defined Q_WS_X11 && !defined K_WS_QTONLY && HAVE_XMMS

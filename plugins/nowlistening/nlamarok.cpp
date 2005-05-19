@@ -8,7 +8,7 @@
 	Copyright (c) 2002,2003,2004 by the Kopete developers  <kopete-devel@kde.org>
 	
 	Purpose: 
-	This class abstracts the interface to AmaroK by
+	This class abstracts the interface to amaroK by
 	implementing NLMediaPlayer
 
     *************************************************************************
@@ -27,14 +27,14 @@
 #include "nlmediaplayer.h"
 #include "nlamarok.h"
 
-NLAmaroK::NLAmaroK( DCOPClient *client ) : NLMediaPlayer()
+NLamaroK::NLamaroK( DCOPClient *client ) : NLMediaPlayer()
 {
 	m_client = client;
 	m_type = Audio;
-	m_name = "AmaroK";
+	m_name = "amaroK";
 }
 
-void NLAmaroK::update()
+void NLamaroK::update()
 {
 	m_playing = false;
 	m_newTrack = false;
@@ -43,7 +43,7 @@ void NLAmaroK::update()
 	QCString replyType;
 	QString result;
 
-	// see if AmaroK is  registered with DCOP
+	// see if amaroK is  registered with DCOP
 	if ( !m_client->isApplicationRegistered( "amarok" ) )
 	{
 		kdDebug ( 14307 ) << "AmaroK is not running!\n" << endl;

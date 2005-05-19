@@ -27,10 +27,10 @@
 
 #include <dcopclient.h>
 
-class NLAmaroK : public NLMediaPlayer
+class NLamaroK : public NLMediaPlayer
 {
 	public:
-		NLAmaroK( DCOPClient *client );
+		NLamaroK( DCOPClient *client );
 		virtual void update();
 	protected:
 		DCOPClient *m_client;
