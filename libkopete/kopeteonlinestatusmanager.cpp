@@ -176,11 +176,15 @@ QPixmap OnlineStatusManager::cacheLookupByMimeSource( const QString &mimeSource 
 
 // This code was forked from the broken KImageEffect::blendOnLower, but it's
 // been so heavily fixed and rearranged it's hard to recognise that now.
-static void blendOnLower( const QImage &upper_, QImage &lower )
+static void blendOnLower( const QImage &upper_, QImage &lower, const QPoint &offset )
 {
 	if ( upper_.width() <= 0 || upper_.height() <= 0 )
 		return;
 	if ( lower.width() <= 0 || lower.height() <= 0 )
+		return;
+	if ( offset.x() < 0 || offset.x() >= lower.width() )
+		return;
+	if ( offset.y() < 0 || offset.y() >= lower.height() )
 		return;
 
 	QImage upper = upper_;
@@ -189,16 +193,18 @@ static void blendOnLower( const QImage &upper_, QImage &lower )
 	if ( lower.depth() != 32 )
 		lower = lower.convertDepth( 32 );
 
-	int cw = std::min( upper.width(), lower.width() ),
-	    ch = std::min( upper.height(), lower.height() );
+	const int cx = offset.x();
+	const int cy = offset.y();
+	const int cw = std::min( upper.width() + cx, lower.width() );
+	const int ch = std::min( upper.height() + cy, lower.height() );
 	const int m = 255;
 
-	for ( int j = 0; j < ch; j++ )
+	for ( int j = cy; j < ch; ++j )
 	{
-		QRgb *u = (QRgb*)upper.scanLine(j);
-		QRgb *l = (QRgb*)lower.scanLine(j);
+		QRgb *u = (QRgb*)upper.scanLine(j - cy);
+		QRgb *l = (QRgb*)lower.scanLine(j) + cx;
 
-		for( int k = cw; k; ++u, ++l, --k )
+		for( int k = cx; k < cw; ++u, ++l, ++k )
 		{
 			int ua = qAlpha(*u);
 			if ( !ua )
@@ -214,6 +220,83 @@ static void blendOnLower( const QImage &upper_, QImage &lower )
 			*l = qRgba( r, g, b, a );
 		}
 	}
+}
+
+// Get bounding box of image via alpha channel
+static QRect getBoundingBox( const QImage& image )
+{
+	const int width = image.width();
+	const int height = image.height();
+	if ( width <= 0 || height <= 0 )
+		return QRect();
+
+	// scan image from left to right and top to bottom
+	// to get upper left corner of bounding box
+	int x1 = width - 1;
+	int y1 = height - 1;
+	for ( int j = 0; j < height; ++j )
+	{
+		QRgb *i = (QRgb*)image.scanLine(j);
+
+		for( int k = 0; k < width; ++i, ++k )
+		{
+			if ( qAlpha(*i) )
+			{
+				x1 = std::min( x1, k );
+				y1 = std::min( y1, j );
+				break;
+			}
+		}
+	}
+
+	// scan image from right to left and bottom to top
+	// to get lower right corner of bounding box
+	int x2 = 0;
+	int y2 = 0;
+	for ( int j = height-1; j >= 0; --j )
+	{
+		QRgb *i = (QRgb*)image.scanLine(j) + width-1;
+
+		for( int k = width-1; k >= 0; --i, --k )
+		{
+			if ( qAlpha(*i) )
+			{
+				x2 = std::max( x2, k );
+				y2 = std::max( y2, j );
+				break;
+			}
+		}
+	}
+	return QRect( x1, y1, std::max( 0, x2-x1+1 ), std::max( 0, y2-y1+1 ) );
+}
+
+// Get offset for upperImage to blend it in the i%4-th corner of lowerImage:
+// bottom right, bottom left, top left, top right
+static QPoint getOffsetForCorner( const QImage& upperImage, const QImage& lowerImage, const int i )
+{
+	const int dX = lowerImage.width() - upperImage.width();
+	const int dY = lowerImage.height() - upperImage.height();
+	const int corner = i % 4;
+	QPoint offset;
+	switch( corner ) {
+		case 0:
+			// bottom right
+			offset = QPoint( dX, dY );
+			break;
+		case 1:
+			// bottom left
+			offset = QPoint( 0, dY );
+			break;
+		case 2:
+			// top left
+			offset = QPoint( 0, 0 );
+			break;
+		case 3:
+			// top right
+			offset = QPoint( dX, 0 );
+			break;
+	}
+	return offset;
 }
 
 QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const QString& baseIcon, int size, QColor color, bool idle) const
@@ -243,6 +326,7 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 	{
 		KIconLoader *loader = KGlobal::instance()->iconLoader();
 
+		int i = 0;
 		for( QStringList::iterator it = overlays.begin(), end = overlays.end(); it != end; ++it )
 		{
 			QPixmap overlay = loader->loadIcon(*it, KIcon::Small, 0 ,
@@ -254,7 +338,17 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 				// there's no way to do this in Qt. In fact, there's no way to do this
 				// in KDE since KImageEffect is so badly broken.
 				QImage basisImage = basis->convertToImage();
-				blendOnLower( overlay.convertToImage(), basisImage );
+				QImage overlayImage = overlay.convertToImage();
+				QPoint offset;
+				if ( (*it).endsWith( QString::fromLatin1( "_overlay" ) ) )
+				{
+					// it is possible to have more than one overlay icon
+					// to avoid overlapping we place them in different corners
+					overlayImage = overlayImage.copy( getBoundingBox( overlayImage ) );
+					offset = getOffsetForCorner( overlayImage, basisImage, i );
+					++i;
+				}
+				blendOnLower( overlayImage, basisImage, offset );
 				basis->convertFromImage( basisImage );
 			}
 		}
