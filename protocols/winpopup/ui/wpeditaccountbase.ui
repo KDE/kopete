@@ -8,14 +8,14 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>463</width>
-            <height>387</height>
+            <width>519</width>
+            <height>403</height>
         </rect>
     </property>
     <property name="caption">
         <string>Account Preferences - WinPopup</string>
     </property>
-    <vbox>
+    <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
@@ -25,7 +25,18 @@
         <property name="spacing">
             <number>0</number>
         </property>
-        <widget class="QTabWidget">
+        <widget class="QLabel" row="0" column="1">
+            <property name="name">
+                <cstring>labelStatusMessage</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
+        </widget>
+        <widget class="QTabWidget" row="0" column="0">
             <property name="name">
                 <cstring>tabWidget10</cstring>
             </property>
@@ -34,13 +45,13 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>B&amp;asic Setup</string>
+                    <string>Basic &amp;Setup</string>
                 </attribute>
-                <vbox>
+                <grid>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QGroupBox">
+                    <widget class="QGroupBox" row="0" column="0">
                         <property name="name">
                             <cstring>groupBox51</cstring>
                         </property>
@@ -64,7 +75,7 @@
                                             <cstring>label1</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>&amp;Hostname:</string>
+                                            <string>Hos&amp;tname:</string>
                                         </property>
                                         <property name="buddy" stdset="0">
                                             <cstring>mHostName</cstring>
@@ -92,7 +103,7 @@
                                             <cstring>doInstallSamba</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>&amp;Install Into Samba</string>
+                                            <string>I&amp;nstall Into Samba</string>
                                         </property>
                                         <property name="toolTip" stdset="0">
                                             <string>Install support into Samba to enable this service.</string>
@@ -108,7 +119,10 @@
                                     <cstring>mAutoConnect</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>&amp;Exclude from connection</string>
+                                    <string>Excl&amp;ude from connection</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+U</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
                                     <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
@@ -116,24 +130,24 @@
                             </widget>
                         </vbox>
                     </widget>
-                    <widget class="QGroupBox">
+                    <widget class="QGroupBox" row="1" column="0">
                         <property name="name">
                             <cstring>groupBox22</cstring>
                         </property>
                         <property name="title">
                             <string>Information</string>
                         </property>
-                        <vbox>
+                        <grid>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLabel">
+                            <widget class="QLabel" row="0" column="0">
                                 <property name="name">
                                     <cstring>textLabel12</cstring>
                                 </property>
                                 <property name="sizePolicy">
                                     <sizepolicy>
-                                        <hsizetype>3</hsizetype>
+                                        <hsizetype>5</hsizetype>
                                         <vsizetype>1</vsizetype>
                                         <horstretch>0</horstretch>
                                         <verstretch>0</verstretch>
@@ -146,9 +160,9 @@
                                     <set>WordBreak|AlignTop</set>
                                 </property>
                             </widget>
-                        </vbox>
+                        </grid>
                     </widget>
-                    <spacer>
+                    <spacer row="2" column="0">
                         <property name="name">
                             <cstring>spacer30</cstring>
                         </property>
@@ -161,28 +175,208 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>220</height>
+                                <height>140</height>
                             </size>
                         </property>
                     </spacer>
-                </vbox>
+                </grid>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>TabPage</cstring>
+                </property>
+                <attribute name="title">
+                    <string>S&amp;ystem</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <spacer row="2" column="0">
+                        <property name="name">
+                            <cstring>spacer4</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>135</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QGroupBox" row="1" column="0">
+                        <property name="name">
+                            <cstring>groupBox5</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Information</string>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
+                                <property name="name">
+                                    <cstring>textLabel2_2</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>&lt;i&gt;These options apply to all WinPopup accounts!&lt;/i&gt;</string>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                    <widget class="QGroupBox" row="0" column="0">
+                        <property name="name">
+                            <cstring>groupBox4</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Protocol Preferences</string>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel" row="1" column="0">
+                                <property name="name">
+                                    <cstring>textLabel4</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Host check frequency:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="0" column="0">
+                                <property name="name">
+                                    <cstring>textLabel3</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Message check frequency:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="2" column="0">
+                                <property name="name">
+                                    <cstring>textLabel1</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Path to 'smbclient' executable:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget" row="0" column="1" rowspan="3" colspan="1">
+                                <property name="name">
+                                    <cstring>layout6</cstring>
+                                </property>
+                                <vbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLayoutWidget">
+                                        <property name="name">
+                                            <cstring>layout4</cstring>
+                                        </property>
+                                        <hbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="KIntSpinBox">
+                                                <property name="name">
+                                                    <cstring>mMessageCheckFreq</cstring>
+                                                </property>
+                                                <property name="sizePolicy">
+                                                    <sizepolicy>
+                                                        <hsizetype>7</hsizetype>
+                                                        <vsizetype>0</vsizetype>
+                                                        <horstretch>0</horstretch>
+                                                        <verstretch>0</verstretch>
+                                                    </sizepolicy>
+                                                </property>
+                                                <property name="maxValue">
+                                                    <number>3600</number>
+                                                </property>
+                                                <property name="minValue">
+                                                    <number>1</number>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>textLabel5</cstring>
+                                                </property>
+                                                <property name="sizePolicy">
+                                                    <sizepolicy>
+                                                        <hsizetype>3</hsizetype>
+                                                        <vsizetype>5</vsizetype>
+                                                        <horstretch>0</horstretch>
+                                                        <verstretch>0</verstretch>
+                                                    </sizepolicy>
+                                                </property>
+                                                <property name="text">
+                                                    <string>second(s)</string>
+                                                </property>
+                                            </widget>
+                                        </hbox>
+                                    </widget>
+                                    <widget class="QLayoutWidget">
+                                        <property name="name">
+                                            <cstring>layout5</cstring>
+                                        </property>
+                                        <hbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="KIntSpinBox">
+                                                <property name="name">
+                                                    <cstring>mHostCheckFreq</cstring>
+                                                </property>
+                                                <property name="sizePolicy">
+                                                    <sizepolicy>
+                                                        <hsizetype>7</hsizetype>
+                                                        <vsizetype>0</vsizetype>
+                                                        <horstretch>0</horstretch>
+                                                        <verstretch>0</verstretch>
+                                                    </sizepolicy>
+                                                </property>
+                                                <property name="maxValue">
+                                                    <number>3600</number>
+                                                </property>
+                                                <property name="minValue">
+                                                    <number>1</number>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>textLabel6</cstring>
+                                                </property>
+                                                <property name="sizePolicy">
+                                                    <sizepolicy>
+                                                        <hsizetype>3</hsizetype>
+                                                        <vsizetype>5</vsizetype>
+                                                        <horstretch>0</horstretch>
+                                                        <verstretch>0</verstretch>
+                                                    </sizepolicy>
+                                                </property>
+                                                <property name="text">
+                                                    <string>second(s)</string>
+                                                </property>
+                                            </widget>
+                                        </hbox>
+                                    </widget>
+                                    <widget class="KURLRequester">
+                                        <property name="name">
+                                            <cstring>mSmbcPath</cstring>
+                                        </property>
+                                    </widget>
+                                </vbox>
+                            </widget>
+                        </grid>
+                    </widget>
+                </grid>
             </widget>
         </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>labelStatusMessage</cstring>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-            <property name="alignment">
-                <set>AlignCenter</set>
-            </property>
-        </widget>
-    </vbox>
+    </grid>
 </widget>
-<customwidgets>
-</customwidgets>
 <connections>
     <connection>
         <sender>doInstallSamba</sender>
@@ -202,6 +396,11 @@
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>kurlrequester.h</includehint>
+    <includehint>klineedit.h</includehint>
     <includehint>kpushbutton.h</includehint>
 </includehints>
 </UI>

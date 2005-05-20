@@ -25,6 +25,8 @@
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <kurlrequester.h>
+#include <kmessagebox.h>
+#include <klocale.h>
 
 // Kopete Includes
 #include <addcontactpage.h>
@@ -32,12 +34,11 @@
 // Local Includes
 #include "wpaddcontactbase.h"
 #include "wpaccount.h"
-#include "wpdebug.h"
 #include "wpaddcontact.h"
 
 WPAddContact::WPAddContact(WPProtocol *owner, WPAccount *newAccount, QWidget *parent, const char *name): AddContactPage(parent, name)
 {
-	DEBUG(WPDMETHOD, "WPAddContact::WPAddContact(<owner>, " << newAccount << ", <parent>, " << name << ")");
+//	kdDebug(14170) << "WPAddContact::WPAddContact(<owner>, " << newAccount << ", <parent>, " << name << ")" << endl;
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	theDialog = new WPAddContactBase(this);
@@ -53,48 +54,62 @@ WPAddContact::WPAddContact(WPProtocol *owner, WPAccount *newAccount, QWidget *pa
 
 WPAddContact::~WPAddContact()
 {
-	DEBUG(WPDMETHOD, "WPAddContact::~WPAddContact()");
 }
 
 void WPAddContact::slotUpdateGroups()
 {
-	DEBUG(WPDMETHOD, "WPAddContact::slotUpdateGroups()");
+	kdDebug(14170) << "WPAddContact::slotUpdateGroups()" << endl;
 
 	theDialog->mHostGroup->clear();
-    QStringList Groups = theAccount->getGroups();
-	for(QStringList::Iterator i = Groups.begin(); i != Groups.end(); i++)
+	QStringList Groups = theAccount->getGroups();
+	QStringList::ConstIterator end = Groups.end();
+	for (QStringList::ConstIterator i = Groups.begin(); i != end; i++)
 		theDialog->mHostGroup->insertItem(SmallIcon("network"), *i);
 	slotSelected(theDialog->mHostGroup->currentText());
 }
 
 void WPAddContact::slotSelected(const QString &Group)
 {
-	DEBUG(WPDMETHOD, "WPAddContact::slotSelected(" << Group << ")");
+	kdDebug(14170) << "WPAddContact::slotSelected(" << Group << ")" << endl;
 
 	theDialog->mHostName->clear();
 	QStringList Hosts = theAccount->getHosts(Group);
-	for(QStringList::Iterator i = Hosts.begin(); i != Hosts.end(); i++)
+	QStringList::ConstIterator end = Hosts.end();
+	for (QStringList::ConstIterator i = Hosts.begin(); i != end; i++)
 		theDialog->mHostName->insertItem(SmallIcon("personal"), *i);
 }
 
 bool WPAddContact::validateData()
 {
-	DEBUG(WPDMETHOD, "WPAddContact::validateData()");
+	kdDebug(14170) << "WPAddContact::validateData()" << endl;
 
-	return !theDialog->mHostName->currentText().isEmpty();
+	QString tmpHostName = theDialog->mHostName->currentText();
+
+	if (tmpHostName.isEmpty()) {
+		KMessageBox::sorry(this, i18n("<qt>You must enter a valid hostname.</qt>"), i18n("WinPopup"));
+		return false;
+	}
+
+	// If our own host is not allowed as contact localhost should be forbidden as well,
+	// additionally somehow localhost as contact crashes when receiving a message from it?? GF
+	if (tmpHostName.upper() == "LOCALHOST") {
+		KMessageBox::sorry(this, i18n("<qt>LOCALHOST is not allowed as contact.</qt>"), i18n("WinPopup"));
+		return false;
+	}
+
+	return true;
 }
 
 bool WPAddContact::apply(Kopete::Account *theAccount, Kopete::MetaContact *theMetaContact)
 {
-	DEBUG(WPDMETHOD, "WPAddContact::apply(" << theAccount << ", " << theMetaContact << ")");
+	kdDebug(14170) << "WPAddContact::apply(" << theAccount << ", " << theMetaContact << ")" << endl;
 
-	// TODO: make the displayname an option
-	theAccount->addContact(theDialog->mHostName->currentText(), theDialog->mHostName->currentText(), theMetaContact, Kopete::Account::ChangeKABC );
-	DEBUG(WPDMETHOD, "WPAddContact::apply()");
+	// TODO: make the nickname an option
+	theAccount->addContact(theDialog->mHostName->currentText(), theMetaContact, Kopete::Account::ChangeKABC );
 	return true;
 }
 
 #include "wpaddcontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-
+// kate: tab-width 4; indent-width 4; replace-trailing-space-save on;

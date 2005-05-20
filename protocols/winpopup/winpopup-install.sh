@@ -18,19 +18,20 @@ mv -f ~/smb.conf.new $i
 chown root:root $i
 chmod 644 $i
 
-# Create a nobody-friendly winpopup directory somewhere "safe"
+# Create a winpopup directory somewhere "safe"
 #rm -rf /var/lib/winpopup --- a bit strong?
-mkdir /var/lib/winpopup
-chown nobody:nogroup /var/lib/winpopup
-chmod 755 /var/lib/winpopup
+if [ ! -d /var/lib/winpopup ]; then
+	mkdir -p /var/lib/winpopup
+fi
 
-# Put a message file in there to reserve our place
+chmod 0777 /var/lib/winpopup
+
+# This is to help if somebody grades up from the old behavior
+if [ -n "`ls -A /var/lib/winpopup/`" ]; then
+	chmod 666 /var/lib/winpopup/*
+fi
+
 rm -f /var/lib/winpopup/message
-touch /var/lib/winpopup/message
-chown nobody:nogroup /var/lib/winpopup/message
-chmod 644 /var/lib/winpopup/message
 
 # Force Samba to reread configuration
 killall -HUP smbd
-killall -HUP nmbd
-

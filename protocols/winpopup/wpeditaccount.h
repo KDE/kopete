@@ -1,5 +1,5 @@
 /***************************************************************************
-                          wpaddcontact.h  -  description
+                          wpeditaccount.h  -  description
                              -------------------
     begin                : Wed Jan 23 2002
     copyright            : (C) 2002 by Gav Wood
@@ -15,8 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef __WPEDITIDENTITY_H
-#define __WPEDITIDENTITY_H
+#ifndef WPEDITACCOUNT_H
+#define WPEDITACCOUNT_H
 
 // KDE Includes
 
@@ -26,6 +26,8 @@
 #include "editaccountwidget.h"
 
 // Local Includes
+#include "wpprotocol.h"
+#include "wpaccount.h"
 #include "wpeditaccountbase.h"
 
 namespace Kopete { class Account; }
@@ -35,13 +37,15 @@ class WPEditAccount: public WPEditAccountBase, public KopeteEditAccountWidget
 	Q_OBJECT
 
 private:
-	WPProtocol *theProtocol;
+	WPProtocol *mProtocol;
+	WPAccount *mAccount;
 
 public:
 	WPEditAccount(WPProtocol *protocol, Kopete::Account *theAccount, QWidget *parent = 0, const char *name = 0);
 
 	virtual bool validateData();
-	
+	void writeConfig();
+
 public slots:
 	virtual Kopete::Account *apply();
 	virtual void installSamba();
@@ -50,4 +54,4 @@ public slots:
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-
+// kate: tab-width 4; indent-width 4; replace-trailing-space-save on;

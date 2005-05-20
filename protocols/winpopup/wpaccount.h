@@ -18,8 +18,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef __WPACCOUNT_H
-#define __WPACCOUNT_H
+#ifndef WPACCOUNT_H
+#define WPACCOUNT_H
 
 
 // QT Includes
@@ -33,14 +33,12 @@
 #include "kopeteonlinestatus.h"
 
 // Local Includes
-#include "libwinpopup.h"
 #include "wpcontact.h"
 #include "wpaddcontact.h"
 
 class KPopupMenu;
 class KActionMenu;
 class KAction;
-class WPContact;
 class WPProtocol;
 class KopeteWinPopup;
 
@@ -60,7 +58,7 @@ public:
 	virtual void setAway(bool status, const QString &);	// Set user away
 
 public slots:
-	virtual void connect();						// Connect to server
+	virtual void connect(const Kopete::OnlineStatus &);						// Connect to server
 	virtual void disconnect();					// Disconnect from server
 
 	void goAvailable() { setAway(false, QString::null); }		// Two convenience slots
@@ -70,7 +68,6 @@ public slots:
 public:
 	const QStringList getGroups();
 	const QStringList getHosts(const QString &Group);
-	const QStringList getHostDetails( const QString &Host );
 
 // Stuff used by WPContact
 public:
@@ -85,20 +82,29 @@ public slots:
 	 */
 	void slotSendMessage(const QString &Body, const QString &Destination);
 
-protected:
-	virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentContact);
-
-private slots:
 	/**
 	 * Called when a new message arrives with the message's data.
 	 */
 	void slotGotNewMessage(const QString &Body, const QDateTime &Arrival, const QString &From);
+
+	/* Reimplemented from Kopete::Account */
+	void setOnlineStatus( const Kopete::OnlineStatus &status , const QString &reason = QString::null);
+
+	void slotSettingsChanged();
+
+protected:
+	virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentContact);
+
+private slots:
 //	void updateAccountId();
 
 private:
 	QString theAwayMessage;			// The message to give when the user is away
-	KopeteWinPopup *theInterface;		// Our KopeteWinPopup instance
+
+signals:
+	void settingsChanged();
 };
 
 #endif
 
+// kate: tab-width 4; indent-width 4; replace-trailing-space-save on;

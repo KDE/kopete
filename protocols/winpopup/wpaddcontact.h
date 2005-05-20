@@ -15,8 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef __WPADDCONTACT_H
-#define __WPADDCONTACT_H
+#ifndef WPADDCONTACT_H
+#define WPADDCONTACT_H
 
 // Local Includes
 
@@ -46,10 +46,10 @@ public:
 	~WPAddContact();
 
 	virtual bool validateData();
-	
+
 public slots:
 	virtual bool apply(Kopete::Account *theAccount, Kopete::MetaContact *theMetaContact);
-	
+
 	void slotSelected(const QString &Group);
 	void slotUpdateGroups();
 };
@@ -57,4 +57,4 @@ public slots:
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-
+// kate: tab-width 4; indent-width 4; replace-trailing-space-save on;

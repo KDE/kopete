@@ -8,7 +8,7 @@ PATH=/bin
 [ ! -f "$1" -o ! -r "$1" ] && exit 1
 
 # Create a unique filename
-filename="/var/lib/winpopup/.wp`date +%N`"
+filename="/var/lib/winpopup/`date +%s_%N`"
 
 # Put the remote host name into the file
 echo "$2" > $filename
@@ -17,12 +17,19 @@ echo "$2" > $filename
 echo `date --iso-8601=seconds` >> $filename
 
 # Finally the message
-cat "$1" | tr "\000" "\012" >> $filename
+#cat "$1" | tr "\000" "\012" >> $filename
+# This tr eats the messages? GF
+cat "$1" >> $filename
 
 # Make sure the file is owned by nobody and is readable
-chown nobody:nogroup $filename
-chmod 644 $filename
+#chown nobody:nogroup $filename
+# Just to be sure
+#chmod 666 $filename
 
 # Move the new message file into the pickup place
-mv -f $filename /var/lib/winpopup/message
+# Doesn't this overwrite short before received messages? GF
+#mv -f $filename /var/lib/winpopup/message
+
+# Remove the message from samba
+rm -f "$1"
 

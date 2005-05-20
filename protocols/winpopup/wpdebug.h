@@ -15,25 +15,4 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef WPDEBUG_H
-#define WPDEBUG_H
-
-#define WPDEBUGLEVEL 0
-
-#define WPDMETHOD	0
-#define WPDPROTOCOL	1
-#define WPDDEBUG		2
-#define WPDINFO		3
-#define WPDERROR		4
-
-#ifdef DEBUG
-#undef DEBUG
-#endif
-
-#define DEBUG(level, text) \
-	if(level >= WPDEBUGLEVEL) { kdDebug( 14170 ) << "WinPopup Plugin [" << level << "] [" << __FILE__ << ":" << __LINE__ << "]: " << text << endl; }
-
-#endif
-
-// vim: set noet ts=4 sts=4 sw=4:
-
+// Remove this file.

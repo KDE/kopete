@@ -23,6 +23,7 @@
 
 // KDE Includes
 #include <kdialogbase.h>
+#include <kprocio.h>
 
 // Local Includes
 #include "wpuserinfowidget.h"
@@ -37,7 +38,11 @@ class WPUserInfo : public KDialogBase
 	public:
 		WPUserInfo( WPContact *, WPAccount *, QWidget *parent = 0, const char* name = "WPUserInfo" );
 
+		void startDetailsProcess(const QString &host);
+
 	private slots:
+		void slotDetailsProcessReady(KProcIO *d);
+		void slotDetailsProcessExited(KProcess *d);
 		void slotCloseClicked();
 
 	signals:
@@ -46,6 +51,10 @@ class WPUserInfo : public KDialogBase
 	private:
 		WPContact *m_contact;
 		WPUserInfoWidget *m_mainWidget;
+
+		QString Comment, Workgroup, OS, Software;
 };
 
 #endif
+
+// kate: tab-width 4; indent-width 4; replace-trailing-space-save on;

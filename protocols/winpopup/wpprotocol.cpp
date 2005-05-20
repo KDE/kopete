@@ -19,6 +19,8 @@
  ***************************************************************************/
 
 // QT Includes
+#include <qmap.h>
+#include <qdict.h>
 
 // KDE Includes
 #include <kapplication.h>
@@ -34,9 +36,9 @@
 
 // Local Includes
 #include "wpprotocol.h"
-#include "wpdebug.h"
 #include "wpeditaccount.h"
 #include "wpaccount.h"
+#include "wpcontact.h"
 
 class KPopupMenu;
 
@@ -48,11 +50,11 @@ K_EXPORT_COMPONENT_FACTORY( kopete_wp, WPProtocolFactory( "kopete_wp" )  )
 // WP Protocol
 WPProtocol::WPProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
 : Kopete::Protocol( WPProtocolFactory::instance(), parent, name ),
-	WPOnline(  Kopete::OnlineStatus::Online,  25, this, 0,  QString::null,    i18n( "Go O&nline" ),   i18n( "Online" ) ),
-	WPAway(    Kopete::OnlineStatus::Away,    20, this, 1,  "wp_away",      i18n( "Go &Away" ),     i18n( "Away" ) ),
-	WPOffline( Kopete::OnlineStatus::Offline, 0,  this, 2,  QString::null,   i18n( "Go O&ffline" ),  i18n( "Offline" ) )
+	WPOnline(  Kopete::OnlineStatus::Online,  25, this, 0,  QString::null, i18n("Online"),  i18n("Online")),
+	WPAway(    Kopete::OnlineStatus::Away,    20, this, 1,  "wp_away",     i18n("Away"),    i18n("Away")),
+	WPOffline( Kopete::OnlineStatus::Offline, 0,  this, 2,  QString::null, i18n("Offline"), i18n("Offline"))
 {
-	DEBUG(WPDMETHOD, "WPProtocol::WPProtocol()");
+//	kdDebug(14170) << "WPProtocol::WPProtocol()" << endl;
 
 	sProtocol = this;
 
@@ -60,56 +62,31 @@ WPProtocol::WPProtocol( QObject *parent, const char *name, const QStringList & /
 //	initActions();
 	// TODO: Maybe use this in the future?
 
-	// Set up initial settings
-	KGlobal::config()->setGroup("WinPopup");
-	QString theSMBClientPath = KGlobal::config()->readEntry("SMBClientPath", "/usr/bin/smbclient");
-	QString theInitialSearchHost = KGlobal::config()->readEntry("InitialSearchHost", "127.0.0.1");
-	int theHostCheckFrequency = KGlobal::config()->readNumEntry("HostCheckFrequency", 60);
-	int theMessageCheckFrequency = KGlobal::config()->readNumEntry("MessageCheckFrequency", 5);
-	KGlobal::config()->writeEntry("SMBClientPath", theSMBClientPath);
-	KGlobal::config()->writeEntry("InitialSearchHost", theInitialSearchHost);
-	KGlobal::config()->writeEntry("HostCheckFrequency", theHostCheckFrequency);
-	KGlobal::config()->writeEntry("MessageCheckFrequency", theMessageCheckFrequency);
-
-	// Call slotSettingsChanged() to get it all registered.
-	slotSettingsChanged();
-
-	connect(this, SIGNAL(settingsChanged()), SLOT(slotSettingsChanged()));
-
 	addAddressBookField( "messaging/winpopup", Kopete::Plugin::MakeIndexField );
+
+	KGlobal::config()->setGroup("WinPopup");
+	QString smbClientBin = KGlobal::config()->readEntry("SmbcPath", "/usr/bin/smbclient");
+	int groupCheckFreq = KGlobal::config()->readNumEntry("HostCheckFreq", 60);
+	int messageCheckFreq = KGlobal::config()->readNumEntry("MessageCheckFreq", 5);
+
+	popupClient = new WinPopupLib(smbClientBin, groupCheckFreq, messageCheckFreq);
+	QObject::connect(popupClient, SIGNAL(signalNewMessage(const QString &, const QDateTime &, const QString &)),
+		this, SLOT(slotReceivedMessage(const QString &, const QDateTime &, const QString &)));
 }
 
 // Destructor
 WPProtocol::~WPProtocol()
 {
-	DEBUG(WPDMETHOD, "WPProtocol::~WPProtocol()");
+//	kdDebug(14170) <<  "WPProtocol::~WPProtocol()" << endl;
 
-	sProtocol = 0L;
+	sProtocol = 0;
 }
 
 AddContactPage *WPProtocol::createAddContactWidget(QWidget *parent, Kopete::Account *theAccount)
 {
-	DEBUG(WPDMETHOD, "WPProtocol::~createAddContactWidget(<parent>, " << theAccount << ")");
+//	kdDebug(14170) << "WPProtocol::createAddContactWidget(<parent>, " << theAccount << ")" << endl;
 
 	return new WPAddContact(this, dynamic_cast<WPAccount *>(theAccount), parent);
-}
-
-KopeteWinPopup *WPProtocol::createInterface(const QString &theHostName)
-{
-	KGlobal::config()->setGroup("WinPopup");
-	QString theSMBClientPath = KGlobal::config()->readEntry("SMBClientPath", "/usr/bin/smbclient");
-	QString theInitialSearchHost = KGlobal::config()->readEntry("InitialSearchHost", "127.0.0.1");
-	int theHostCheckFrequency = KGlobal::config()->readNumEntry("HostCheckFrequency", 60);
-	int theMessageCheckFrequency = KGlobal::config()->readNumEntry("MessageCheckFrequency", 5);
-	KopeteWinPopup *newOne = new KopeteWinPopup(theSMBClientPath, theInitialSearchHost, theHostName, theHostCheckFrequency, theMessageCheckFrequency);
-	theInterfaces.append(newOne);
-	return newOne;
-}
-
-void WPProtocol::destroyInterface(KopeteWinPopup *theInterface)
-{
-	theInterfaces.removeRef(theInterface);
-	delete theInterface;
 }
 
 Kopete::Contact *WPProtocol::deserializeContact( Kopete::MetaContact *metaContact,
@@ -120,17 +97,17 @@ Kopete::Contact *WPProtocol::deserializeContact( Kopete::MetaContact *metaContac
 	QString accountId = serializedData[ "accountId" ];
 
 	WPAccount *theAccount = static_cast<WPAccount *>(Kopete::AccountManager::self()->findAccount(protocol()->pluginId(), accountId));
-	if(!theAccount)
-	{	DEBUG(WPDINFO, "Account " << accountId << " not found");
+	if(!theAccount)	{
+		kdDebug(14170) <<  "Account " << accountId << " not found" << endl;
 		return 0;
 	}
 
-	if(theAccount->contacts()[contactId])
-	{	DEBUG(WPDINFO, "User " << contactId << " already in contacts map");
+	if(theAccount->contacts()[contactId]) {
+		kdDebug(14170) << "User " << contactId << " already in contacts map" << endl;
 		return 0;
 	}
 
-	theAccount->addContact(contactId, serializedData["displayName"], metaContact, Kopete::Account::DontChangeKABC, serializedData["group"]);
+	theAccount->addContact(contactId, metaContact, Kopete::Account::DontChangeKABC);
 	return theAccount->contacts()[contactId];
 }
 
@@ -146,20 +123,19 @@ Kopete::Account *WPProtocol::createNewAccount(const QString &accountId)
 
 void WPProtocol::slotSettingsChanged()
 {
-	DEBUG(WPDMETHOD, "WPProtocol::slotSettingsChanged()");
+	kdDebug(14170) <<  "WPProtocol::slotSettingsChanged()" << endl;
 
 	KGlobal::config()->setGroup("WinPopup");
-	for(KopeteWinPopup *i = theInterfaces.first(); i != theInterfaces.last(); i = theInterfaces.next())
-	{	i->setSMBClientPath(KGlobal::config()->readEntry("SMBClientPath", "/usr/bin/smbclient"));
-		i->setInitialSearchHost(KGlobal::config()->readEntry("InitialSearchHost", "127.0.0.1"));
-		i->setHostCheckFrequency(KGlobal::config()->readNumEntry("HostCheckFrequency", 60));
-		i->setMessageCheckFrequency(KGlobal::config()->readNumEntry("MessageCheckFrequency", 5));
-	}
+	QString smbClientBin = KGlobal::config()->readEntry("SmbcPath", "/usr/bin/smbclient");
+	int groupCheckFreq = KGlobal::config()->readNumEntry("HostCheckFreq", 60);
+	int messageCheckFreq = KGlobal::config()->readNumEntry("MessageCheckFreq", 5);
+
+	popupClient->settingsChanged(smbClientBin, groupCheckFreq, messageCheckFreq);
 }
 
 void WPProtocol::installSamba()
 {
-	DEBUG(WPDMETHOD, "WPProtocol::installSamba()");
+//	kdDebug(14170) <<  "WPProtocol::installSamba()" endl;
 
 	QStringList args;
 	args += KStandardDirs::findExe("winpopup-install.sh");
@@ -170,7 +146,42 @@ void WPProtocol::installSamba()
 		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Updating the Samba configuration file failed."), i18n("Configuration Failed"));
 }
 
+/**
+ * search the contact for the new message and give it to its account
+ */
+void WPProtocol::slotReceivedMessage(const QString &Body, const QDateTime &Time, const QString &From)
+{
+	bool foundContact = false;
+	QString accountKey = QString::null;
+	QDict<Kopete::Account> Accounts = Kopete::AccountManager::self()->accounts(protocol());
+	for (QDictIterator<Kopete::Account> it(Accounts); it.current(); ++it) {
+		QDict<Kopete::Contact> Contacts = it.current()->contacts();
+		Kopete::Contact *theContact = Contacts[From];
+		if (theContact != 0) {
+			foundContact = true;
+			dynamic_cast<WPAccount *>(it.current())->slotGotNewMessage(Body, Time, From);
+			break;
+		}
+
+		if (accountKey.isEmpty() && it.current()->isConnected()) accountKey = it.currentKey();
+	}
+
+	// What to do with messages with no contact?
+	// Maybe send them to the next online account? GF
+	if (!foundContact) {
+		if (!accountKey.isEmpty())
+			dynamic_cast<WPAccount *>(Accounts[accountKey])->slotGotNewMessage(Body, Time, From);
+		else
+			kdDebug(14170) << "No contact or connected account found!" << endl;
+	}
+}
+
+void WPProtocol::sendMessage(const QString &Body, const QString &Destination)
+{
+	popupClient->sendMessage(Body, Destination);
+}
+
 #include "wpprotocol.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-
+// kate: tab-width 4; indent-width 4; replace-trailing-space-save on;

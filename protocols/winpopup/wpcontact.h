@@ -15,8 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef __WPCONTACT_H
-#define __WPCONTACT_H
+#ifndef WPCONTACT_H
+#define WPCONTACT_H
 
 // KDE Includes
 #include <kaction.h>
@@ -56,7 +56,7 @@ public:
 //	virtual bool isOnline() const;
 	virtual bool isReachable();
 	virtual QPtrList<KAction> *customContextMenuActions();
-	virtual Kopete::ChatSession *manager(bool canCreate = false);
+	virtual Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate);
 	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
 
 public slots:
@@ -81,3 +81,5 @@ private:
 };
 
 #endif
+
+// kate: tab-width 4; indent-width 4; replace-trailing-space-save on;

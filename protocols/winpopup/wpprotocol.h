@@ -18,15 +18,13 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef __WPPROTOCOL_H
-#define __WPPROTOCOL_H
-
+#ifndef WPPROTOCOL_H
+#define WPPROTOCOL_H
 
 // QT Includes
 #include <qpixmap.h>
 #include <qptrlist.h>
-
-// KDE Includes
+#include <qdatetime.h>
 
 // Kopete Includes
 #include "kopetemetacontact.h"
@@ -45,28 +43,6 @@ class WPContact;
 class WPAccount;
 
 /**
- * This is a subclass of the KWinPopup class needed in order to use the virtual
- * methods and communicate nicely with Kopete.
- */
-class KopeteWinPopup: public KWinPopup
-{
-	Q_OBJECT
-
-public slots:
-	void slotSendMessage(const QString &Body, const QString &Destination) { sendMessage(Body, Destination); }
-
-signals:
-	void newMessage(const QString &Body, const QDateTime &Arrival, const QString &From);
-
-protected:
-	virtual void receivedMessage(const QString &Body, const QDateTime &Arrival, const QString &From) { emit newMessage(Body, Arrival, From); }
-
-public:
-	KopeteWinPopup(const QString &SMBClientPath, const QString &InitialSearchHost, const QString &HostName, int HostCheckFrequency, int MessageCheckFrequency) :
-		KWinPopup(SMBClientPath, InitialSearchHost, HostName, HostCheckFrequency, MessageCheckFrequency) {}
-};
-
-/**
  * The actual Protocol class used by Kopete.
  */
 class WPProtocol : public Kopete::Protocol
@@ -82,6 +58,11 @@ public:
 	virtual KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent);
 	virtual Kopete::Account *createNewAccount(const QString &accountId);
 
+	const QStringList getGroups() {return popupClient->getGroups(); }
+	const QStringList getHosts(const QString &Group) { return popupClient->getHosts(Group); }
+	bool checkHost(const QString &Name) { return popupClient->checkHost(Name); }
+	bool checkMessageDir() { return popupClient->checkMessageDir(); }
+
 // Kopete::Plugin overloading
 public:
 	virtual Kopete::Contact *deserializeContact(Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData);
@@ -89,21 +70,22 @@ public:
 // Stuff used internally & by colleague classes
 public:
 	static WPProtocol *protocol() { return sProtocol; }
-	KopeteWinPopup *createInterface(const QString &theHostName);
-	void destroyInterface(KopeteWinPopup *theInterface);
 
 	const Kopete::OnlineStatus WPOnline;
 	const Kopete::OnlineStatus WPAway;
 	const Kopete::OnlineStatus WPOffline;
+	void sendMessage(const QString &Body, const QString &Destination);
 
 public slots:
 	void slotSettingsChanged(void);			// Callback when settings changed
-	void installSamba();					// Modify smb.conf to use winpopup-send.sh script
+	void installSamba();				// Modify smb.conf to use winpopup-send.sh script
+	void slotReceivedMessage(const QString &Body, const QDateTime &Time, const QString &From);
 
 private:
-	QPtrList<KopeteWinPopup> theInterfaces;	// List of all the interfaces created
+	WinPopupLib *popupClient;
 	static WPProtocol *sProtocol;			// Singleton
 };
 
 #endif
 
+// kate: tab-width 4; indent-width 4; replace-trailing-space-save on;
