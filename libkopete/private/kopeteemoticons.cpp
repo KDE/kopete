@@ -367,6 +367,7 @@ void Emoticons::initEmoticons( const QString &theme )
     files += KGlobal::dirs()->findResource( "emoticons",  d->theme + QString::fromLatin1( "/emoticons.xml" ) );
     
     QString custom = KGlobal::dirs()->findResource("emoticons", QString::fromLatin1("custom/emoticons.xml"));
+#if KDE_IS_VERSION(3,4,0)
     if (custom.isNull()) {// Create the custom dir and default file if it doesnt exist
         QString dir = KGlobal::dirs()->saveLocation("emoticons", QString::fromLatin1("custom/"));
         KIO::NetAccess::mkdir(dir, static_cast<QWidget*>(0));
@@ -380,6 +381,7 @@ void Emoticons::initEmoticons( const QString &theme )
             f.close();
         }
     }
+#endif    
     files += custom;
     
     for (QStringList::ConstIterator filename=files.begin(); filename!=files.end(); ++filename ) 
