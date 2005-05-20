@@ -1,4 +1,4 @@
-stMETASOURCES = AUTO
+METASOURCES = AUTO
 SUBDIRS = ui . icons config
 AM_CPPFLAGS = -I$(srcdir)/ui \
 	-I./ui \
