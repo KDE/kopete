@@ -8,18 +8,18 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>480</width>
-            <height>715</height>
+            <width>495</width>
+            <height>445</height>
         </rect>
     </property>
     <property name="caption">
         <string>Contact List Appearance</string>
     </property>
-    <vbox>
+    <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QGroupBox">
+        <widget class="QGroupBox" row="0" column="0">
             <property name="name">
                 <cstring>groupBox1</cstring>
             </property>
@@ -44,6 +44,9 @@
                     </property>
                     <property name="text">
                         <string>Show tree &amp;branch lines</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+B</string>
                     </property>
                 </widget>
                 <widget class="QLayoutWidget">
@@ -78,6 +81,9 @@
                             <property name="text">
                                 <string>In&amp;dent contacts</string>
                             </property>
+                            <property name="accel">
+                                <string>Alt+D</string>
+                            </property>
                         </widget>
                     </hbox>
                 </widget>
@@ -88,13 +94,16 @@
                     <property name="text">
                         <string>&amp;Hide vertical scrollbar</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+H</string>
+                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>&lt;b&gt;Always&lt;/b&gt; disables the vetical scrollbar</string>
                     </property>
                 </widget>
             </vbox>
         </widget>
-        <widget class="QButtonGroup">
+        <widget class="QButtonGroup" row="0" column="1">
             <property name="name">
                 <cstring>mDisplayMode</cstring>
             </property>
@@ -142,44 +151,7 @@
                 </widget>
             </vbox>
         </widget>
-        <widget class="QGroupBox">
-            <property name="name">
-                <cstring>groupBox2</cstring>
-            </property>
-            <property name="title">
-                <string>Contact List Animations</string>
-            </property>
-            <vbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>mAnimateChanges</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Animate changes to contact list items</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>mFadeVisibility</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Fade in / out contacts as the&amp;y appear / disappear</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>mFoldVisibility</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Fo&amp;ld in / out contacts as they appear / disappear</string>
-                    </property>
-                </widget>
-            </vbox>
-        </widget>
-        <widget class="QGroupBox">
+        <widget class="QGroupBox" row="2" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>groupBox3</cstring>
             </property>
@@ -293,7 +265,44 @@
                 </widget>
             </vbox>
         </widget>
-        <widget class="QLayoutWidget">
+        <widget class="QGroupBox" row="1" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>groupBox2</cstring>
+            </property>
+            <property name="title">
+                <string>Contact List Animations</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mAnimateChanges</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Animate changes to contact list items</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mFadeVisibility</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Fade in / out contacts as the&amp;y appear / disappear</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mFoldVisibility</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Fo&amp;ld in / out contacts as they appear / disappear</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QLayoutWidget" row="3" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>layout8</cstring>
             </property>
@@ -328,7 +337,7 @@
                 </spacer>
             </hbox>
         </widget>
-        <spacer>
+        <spacer row="4" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>spacer15</cstring>
             </property>
@@ -341,11 +350,11 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>40</height>
+                    <height>16</height>
                 </size>
             </property>
         </spacer>
-    </vbox>
+    </grid>
 </widget>
 <connections>
     <connection>
