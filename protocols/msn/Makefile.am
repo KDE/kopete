@@ -1,3 +1,4 @@
+KDE_OPTIONS = nofinal
 METASOURCES = AUTO
 SUBDIRS = ui . icons config
 AM_CPPFLAGS = -I$(srcdir)/ui \
