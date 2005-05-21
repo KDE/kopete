@@ -28,6 +28,7 @@
 #include <qimage.h>
 #include <qvaluevector.h>
 #include <kcombobox.h>
+#include "videodevicelistitem.h"
 
 namespace Kopete {
 
@@ -58,6 +59,7 @@ public:
 	int setResolution(int width, int height);
 	int scanDevices();
 	~VideoDevice();
+	QValueVector <Kopete::AV::VideoDeviceListItem> m_videodevice;
 	QValueVector<Kopete::AV::VideoInput> m_video_input;
 	int fillInputKComboBox(KComboBox *combobox);
 
@@ -67,10 +69,9 @@ protected:
 	int descriptor;
 	typedef enum
 	{
-		VIDEODEV_TYPE_NONE,
-		VIDEODEV_TYPE_V4L,
-		VIDEODEV_TYPE_V4L2OLD,
-		VIDEODEV_TYPE_V4L2,
+		VIDEODEV_DRIVER_NONE,
+		VIDEODEV_DRIVER_V4L,
+		VIDEODEV_DRIVER_V4L2,
 	} videodev_driver;
 	videodev_driver m_driver;
 	typedef enum
@@ -106,6 +107,7 @@ protected:
 	int initRead(unsigned int buffer_size);
 	int initMmap();
 	int initUserptr(unsigned int buffer_size);
+	void guessDriver();
 private:
 	VideoDevice();
 	static VideoDevice* s_self;

@@ -25,6 +25,7 @@
 
 #include <kdebug.h>
 #include <klocale.h>
+#include <qdir.h>
 
 #include <sys/time.h>
 #include <sys/mman.h>
@@ -175,12 +176,13 @@ int VideoDevice::initDevice()
 			if (-1 == xioctl (VIDIOCGCAP, &V4L_capabilities))
 			{
 				perror ("ioctl (VIDIOCGCAP)");
+				m_driver = VIDEODEV_DRIVER_NONE;
 				return EXIT_FAILURE;
 			}
 			else
 			{
 				kdDebug() << "libkopete (avdevice): intDevice(): " << path.c_str() << " is a V4L device." << endl;
-				m_driver = VIDEODEV_TYPE_V4L;
+				m_driver = VIDEODEV_DRIVER_V4L;
 			}
 		}
 		else
@@ -190,62 +192,83 @@ int VideoDevice::initDevice()
 	}
 	else
 	{
+		if (!(V4L2_capabilities.capabilities & V4L2_CAP_VIDEO_CAPTURE))
+		{
+			kdDebug() << "libkopete (avdevice): intDevice(): " << path.c_str() << " is not a video capture device." << endl;
+			m_driver = VIDEODEV_DRIVER_NONE;
+			return EXIT_FAILURE;
+		}
 		kdDebug() << "libkopete (avdevice): intDevice(): " << path.c_str() << " is a V4L2 device." << endl;
-		m_driver=VIDEODEV_TYPE_V4L2;
+		m_driver=VIDEODEV_DRIVER_V4L2;
 	}
 
-// Now we must execute the proper initialization according to the type of the driver. Not implemented yet.
-	if (!(V4L2_capabilities.capabilities & V4L2_CAP_VIDEO_CAPTURE))
+// Now we must execute the proper initialization according to the type of the driver.
+	switch(m_driver)
 	{
-		kdDebug() << "libkopete (avdevice): intDevice(): " << path.c_str() << " is not a video capture device." << endl;
-		return EXIT_FAILURE;
-	}
-	kdDebug() << "libkopete (avdevice): Driver: " << (const char*)V4L2_capabilities.driver << " "
-		<< ((V4L2_capabilities.version>>16) & 0xFF) << "."
-		<< ((V4L2_capabilities.version>> 8) & 0xFF) << "."
-		<< ((V4L2_capabilities.version    ) & 0xFF) << endl;
-	kdDebug() << "libkopete (avdevice): Card: " << (const char*)V4L2_capabilities.card << endl;
+		case VIDEODEV_DRIVER_V4L2:
+			kdDebug() << "libkopete (avdevice): Driver: " << (const char*)V4L2_capabilities.driver << " "
+				<< ((V4L2_capabilities.version>>16) & 0xFF) << "."
+				<< ((V4L2_capabilities.version>> 8) & 0xFF) << "."
+				<< ((V4L2_capabilities.version    ) & 0xFF) << endl;
+			kdDebug() << "libkopete (avdevice): Card: " << (const char*)V4L2_capabilities.card << endl;
 
-	kdDebug() << "libkopete (avdevice): Capabilities:" << endl;
-	if(V4L2_capabilities.capabilities & V4L2_CAP_VIDEO_CAPTURE)
-		kdDebug() << "libkopete (avdevice):     Video capture" << endl;
-	if(V4L2_capabilities.capabilities & V4L2_CAP_VIDEO_OUTPUT)
-		kdDebug() << "libkopete (avdevice):     Video output" << endl;
-	if(V4L2_capabilities.capabilities & V4L2_CAP_VIDEO_OVERLAY)
-		kdDebug() << "libkopete (avdevice):     Video overlay" << endl;
-	if(V4L2_capabilities.capabilities & V4L2_CAP_VBI_CAPTURE)
-		kdDebug() << "libkopete (avdevice):     VBI capture" << endl;
-	if(V4L2_capabilities.capabilities & V4L2_CAP_VBI_OUTPUT)
-		kdDebug() << "libkopete (avdevice):     VBI output" << endl;
-	if(V4L2_capabilities.capabilities & V4L2_CAP_RDS_CAPTURE)
-		kdDebug() << "libkopete (avdevice):     RDS capture" << endl;
-	if(V4L2_capabilities.capabilities & V4L2_CAP_TUNER)
-		kdDebug() << "libkopete (avdevice):     Tuner IO" << endl;
-	if(V4L2_capabilities.capabilities & V4L2_CAP_AUDIO)
-		kdDebug() << "libkopete (avdevice):     Audio IO" << endl;
+			kdDebug() << "libkopete (avdevice): Capabilities:" << endl;
+			if(V4L2_capabilities.capabilities & V4L2_CAP_VIDEO_CAPTURE)
+				kdDebug() << "libkopete (avdevice):     Video capture" << endl;
+			if(V4L2_capabilities.capabilities & V4L2_CAP_VIDEO_OUTPUT)
+				kdDebug() << "libkopete (avdevice):     Video output" << endl;
+			if(V4L2_capabilities.capabilities & V4L2_CAP_VIDEO_OVERLAY)
+				kdDebug() << "libkopete (avdevice):     Video overlay" << endl;
+			if(V4L2_capabilities.capabilities & V4L2_CAP_VBI_CAPTURE)
+				kdDebug() << "libkopete (avdevice):     VBI capture" << endl;
+			if(V4L2_capabilities.capabilities & V4L2_CAP_VBI_OUTPUT)
+				kdDebug() << "libkopete (avdevice):     VBI output" << endl;
+			if(V4L2_capabilities.capabilities & V4L2_CAP_RDS_CAPTURE)
+				kdDebug() << "libkopete (avdevice):     RDS capture" << endl;
+			if(V4L2_capabilities.capabilities & V4L2_CAP_TUNER)
+				kdDebug() << "libkopete (avdevice):     Tuner IO" << endl;
+			if(V4L2_capabilities.capabilities & V4L2_CAP_AUDIO)
+				kdDebug() << "libkopete (avdevice):     Audio IO" << endl;
+			break;
+		case VIDEODEV_DRIVER_V4L:
+
+			break;
+		case VIDEODEV_DRIVER_NONE:
+
+			break;
+	}
 
 	m_io_method = IO_METHOD_NONE;
-	if(V4L2_capabilities.capabilities & V4L2_CAP_READWRITE)
+	switch(m_driver)
 	{
-		m_io_method = IO_METHOD_READ;
-		kdDebug() << "libkopete (avdevice):     Read/Write interface" << endl;
-	}
-	if(V4L2_capabilities.capabilities & V4L2_CAP_ASYNCIO)
-		kdDebug() << "libkopete (avdevice):     Async IO interface" << endl;
-	if(V4L2_capabilities.capabilities & V4L2_CAP_STREAMING)
-	{
-		m_io_method = IO_METHOD_MMAP;
-//		m_io_method = IO_METHOD_USERPTR;
-		kdDebug() << "libkopete (avdevice):     Streaming interface" << endl;
-	}
-	if(m_io_method==IO_METHOD_NONE)
-	{
-		fprintf (stderr, "Found no suitable input/output method for %s\n", path.c_str());
-		return EXIT_FAILURE;
+		case VIDEODEV_DRIVER_V4L2:
+			if(V4L2_capabilities.capabilities & V4L2_CAP_READWRITE)
+			{
+				m_io_method = IO_METHOD_READ;
+				kdDebug() << "libkopete (avdevice):     Read/Write interface" << endl;
+			}
+			if(V4L2_capabilities.capabilities & V4L2_CAP_ASYNCIO)
+				kdDebug() << "libkopete (avdevice):     Async IO interface" << endl;
+			if(V4L2_capabilities.capabilities & V4L2_CAP_STREAMING)
+			{
+				m_io_method = IO_METHOD_MMAP;
+//				m_io_method = IO_METHOD_USERPTR;
+				kdDebug() << "libkopete (avdevice):     Streaming interface" << endl;
+			}
+			if(m_io_method==IO_METHOD_NONE)
+			{
+				fprintf (stderr, "Found no suitable input/output method for %s\n", path.c_str());
+				return EXIT_FAILURE;
+			}
+			break;
+		case VIDEODEV_DRIVER_V4L:
+			break;
+		case VIDEODEV_DRIVER_NONE:
+
+			break;
 	}
 
 	kdDebug() << "libkopete (avdevice): Enumerating video inputs: " << endl;
-//    ok = true;
 	m_video_input.clear();
 	for(unsigned int loop=0; inputisok==EXIT_SUCCESS; loop++)
 	{
@@ -797,81 +820,86 @@ int Kopete::AV::VideoDevice::fillInputKComboBox(KComboBox *combobox)
 int Kopete::AV::VideoDevice::scanDevices()
 {
     /// @todo implement me
-/*
-int vpScan(struct VideoDevicePool *devicepool)
-{
-  unsigned char currentdirectory[STRING_BUFFER];
-  char path[]="/dev/v4l/";
-  char devname[]="video";
-  struct dirent **eps;
-  struct stat status;
-  int n=0;
-  int cnt;
 
-  getcwd(currentdirectory,STRING_SIZE);
-    
-  devicepool->numdevices=0;
-  devicepool->numinputs=0;
+	QDir videodevice_dir;
+	const QString videodevice_dir_path=QString::fromLatin1("/dev/v4l/");
+	const QString videodevice_dir_filter=QString::fromLatin1("video*");
+	videodevice_dir.setPath(videodevice_dir_path);
+	videodevice_dir.setNameFilter(videodevice_dir_filter);
+        videodevice_dir.setFilter( QDir::System | QDir::NoSymLinks | QDir::Readable | QDir::Writable );
+        videodevice_dir.setSorting( QDir::Name );
+	struct stat status;
+	int n=0;
+	int cnt;
 
-  chdir(path);
-  n=scandir(path,&eps, one, alphasort);
-  if (n>=0)
-  {
-     for (cnt=0; cnt<n;++cnt)
-    {
-      if (stat(eps[cnt]->d_name,&status)!=0)
-      {
-        fprintf(stderr,"%s: stat()\n", strerror(errno));
-      }
-      if((status.st_mode&S_IFMT)==S_IFCHR)
-      {
-        if(!(strncmp(eps[cnt]->d_name,devname,5)))
-        {
-          if(!(devicepool->numdevices))
-            devicepool->device=malloc(sizeof (struct VideoDevice));
-          else
-            devicepool->device=realloc(devicepool->device,((sizeof (struct VideoDevice))*((devicepool->numdevices)+1)));
+	const QFileInfoList *list = videodevice_dir.entryInfoList();
+	QFileInfoListIterator it( *list );
+	QFileInfo *fi;
 
-          printf("Probing device: %02d\n",devicepool->numdevices);
+	m_videodevice.clear();
+	kdDebug() << "libkopete (avdevice): scanDevices() called" << endl;
+	while ( (fi = it.current()) != 0 )
+	{
+		kdDebug() << "libkopete (avdevice): Found device " << fi->fileName().latin1() << endl;
+		++it;
+	}
 
-          snprintf(devicepool->device[devicepool->numdevices].name,STRING_SIZE,"Video device %02d",devicepool->numdevices);
-          snprintf(devicepool->device[devicepool->numdevices].path,STRING_SIZE,"%s%s",path,eps[cnt]->d_name);
+/*	chdir(path);
+	n=scandir(path,&eps, one, alphasort);
+	if (n>=0)
+	{
+		for (cnt=0; cnt<n;++cnt)
+		{
+			if (stat(eps[cnt]->d_name,&status)!=0)
+			{
+				fprintf(stderr,"%s: stat()\n", strerror(errno));
+			}
+			if((status.st_mode&S_IFMT)==S_IFCHR)
+			{
+				if(!(strncmp(eps[cnt]->d_name,devname,5)))
+				{
+					if(!(devicepool->numdevices))
+						devicepool->device=malloc(sizeof (struct VideoDevice));
+					else
+						devicepool->device=realloc(devicepool->device,((sizeof (struct VideoDevice))*((devicepool->numdevices)+1)));
 
-          devicepool->device[devicepool->numdevices].descriptor=open(devicepool->device[devicepool->numdevices].path,O_RDWR);
-          if ((devicepool->device[devicepool->numdevices].descriptor)<0)
-          {
-            fprintf(stderr,"Could not open device: %s\n",devicepool->device[devicepool->numdevices].path);
-            realloc(devicepool->device,((sizeof (struct VideoDevice))*(devicepool->numdevices)));
-          }
-          else
-          {
-            if (ioctl (devicepool->device[devicepool->numdevices].descriptor, VIDIOCGCAP, &(devicepool->device[devicepool->numdevices].capabilities)) == -1)
-            {
-              perror ("ioctl (VIDIOCGCAP)");
-              return EXIT_FAILURE;                  
-            }
-            devicepool->device[devicepool->numdevices].newframe=
-                             vidStart(&devicepool->device[devicepool->numdevices],
-                             devicepool->device[devicepool->numdevices].capabilities.maxwidth,
-                             devicepool->device[devicepool->numdevices].capabilities.maxheight,1);
-            devicepool->numinputs+=devicepool->device[devicepool->numdevices].capabilities.channels;
-            devicepool->numdevices++;
-//            devicepool->numinputs+=devicepool->device[devicepool->numdevices].capabilities.channels;
-          }
-        }
-      }
-    }
-    showdevicepoolproperties(devicepool);
-    chdir(currentdirectory);
-    return devicepool->numdevices;
-  }
-  else
-  {
-    perror("Couldn't open the directory");
-  }
-  chdir(currentdirectory);
-  return 0;
-}
+					printf("Probing device: %02d\n",devicepool->numdevices);
+					snprintf(devicepool->device[devicepool->numdevices].name,STRING_SIZE,"Video device %02d",devicepool->numdevices);
+					snprintf(devicepool->device[devicepool->numdevices].path,STRING_SIZE,"%s%s",path,eps[cnt]->d_name);
+
+					devicepool->device[devicepool->numdevices].descriptor=open(devicepool->device[devicepool->numdevices].path,O_RDWR);
+					if ((devicepool->device[devicepool->numdevices].descriptor)<0)
+					{
+						fprintf(stderr,"Could not open device: %s\n",devicepool->device[devicepool->numdevices].path);
+						realloc(devicepool->device,((sizeof (struct VideoDevice))*(devicepool->numdevices)));
+					}
+					else
+					{
+						if (ioctl (devicepool->device[devicepool->numdevices].descriptor, VIDIOCGCAP, &(devicepool->device[devicepool->numdevices].capabilities)) == -1)
+						{
+							perror ("ioctl (VIDIOCGCAP)");
+							return EXIT_FAILURE;
+						}
+						devicepool->device[devicepool->numdevices].newframe=
+						vidStart(&devicepool->device[devicepool->numdevices],
+						devicepool->device[devicepool->numdevices].capabilities.maxwidth,
+						devicepool->device[devicepool->numdevices].capabilities.maxheight,1);
+						devicepool->numinputs+=devicepool->device[devicepool->numdevices].capabilities.channels;
+						devicepool->numdevices++;
+//						devicepool->numinputs+=devicepool->device[devicepool->numdevices].capabilities.channels;
+					}
+				}
+			}
+		}
+		showdevicepoolproperties(devicepool);
+		chdir(currentdirectory);
+		return devicepool->numdevices;
+	}
+	else
+	{
+		perror("Couldn't open the directory");
+	}
+	return 0;
 */
 	return EXIT_SUCCESS;
 }
