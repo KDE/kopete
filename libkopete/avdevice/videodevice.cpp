@@ -155,7 +155,8 @@ int VideoDevice::initDevice()
 {
     /// @todo implement me
 #ifdef HAVE_V4L2
-	struct v4l2_capability cap;
+	struct v4l2_capability V4L2_capabilities;
+	struct video_capability V4L_capabilities;
 	struct v4l2_cropcap cropcap;
 	struct v4l2_crop crop;
 	struct v4l2_format fmt;
@@ -163,65 +164,81 @@ int VideoDevice::initDevice()
 
 	int inputisok=EXIT_SUCCESS;
 
-	memset(&cap, 0, sizeof(cap));
+	memset(&V4L2_capabilities, 0, sizeof(V4L2_capabilities));
 
-	if (-1 == xioctl (VIDIOC_QUERYCAP, &cap))
+	if (-1 == xioctl (VIDIOC_QUERYCAP, &V4L2_capabilities))
 	{
 		if (EINVAL == errno)
 		{
-			fprintf (stderr, "%s is no V4L2 device\n", path.c_str());
-			return EXIT_FAILURE;
+			kdDebug() << "libkopete (avdevice): intDevice(): " << path.c_str() << " is no V4L2 device." << endl;
+			kdDebug() << "libkopete (avdevice): intDevice(): " << path.c_str() << " Trying V4L API." << endl;
+			if (-1 == xioctl (VIDIOCGCAP, &V4L_capabilities))
+			{
+				perror ("ioctl (VIDIOCGCAP)");
+				return EXIT_FAILURE;
+			}
+			else
+			{
+				kdDebug() << "libkopete (avdevice): intDevice(): " << path.c_str() << " is a V4L device." << endl;
+				m_driver = VIDEODEV_TYPE_V4L;
+			}
 		}
 		else
 		{
 			return errnoReturn ("VIDIOC_QUERYCAP");
 		}
 	}
-	if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE))
+	else
 	{
-		fprintf (stderr, "%s is no video capture device\n", path.c_str());
+		kdDebug() << "libkopete (avdevice): intDevice(): " << path.c_str() << " is a V4L2 device." << endl;
+		m_driver=VIDEODEV_TYPE_V4L2;
+	}
+
+// Now we must execute the proper initialization according to the type of the driver. Not implemented yet.
+	if (!(V4L2_capabilities.capabilities & V4L2_CAP_VIDEO_CAPTURE))
+	{
+		kdDebug() << "libkopete (avdevice): intDevice(): " << path.c_str() << " is not a video capture device." << endl;
 		return EXIT_FAILURE;
 	}
-//	kdDebug() << "V4L2Dev: device \"" << cap << "\" capabilities: " << endl;
-	kdDebug() << "libkopete (avdevice): Driver: " << (const char*)cap.driver << " "
-		<< ((cap.version>>16) & 0xFF) << "."
-		<< ((cap.version>> 8) & 0xFF) << "."
-		<< ((cap.version    ) & 0xFF) << endl;
-	kdDebug() << "libkopete (avdevice): Card: " << (const char*)cap.card << endl;
-	kdDebug() << "libkopete (avdevice): Bus info: " << (const char*)cap.card << endl;
+	kdDebug() << "libkopete (avdevice): Driver: " << (const char*)V4L2_capabilities.driver << " "
+		<< ((V4L2_capabilities.version>>16) & 0xFF) << "."
+		<< ((V4L2_capabilities.version>> 8) & 0xFF) << "."
+		<< ((V4L2_capabilities.version    ) & 0xFF) << endl;
+	kdDebug() << "libkopete (avdevice): Card: " << (const char*)V4L2_capabilities.card << endl;
 
 	kdDebug() << "libkopete (avdevice): Capabilities:" << endl;
-	if(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)
+	if(V4L2_capabilities.capabilities & V4L2_CAP_VIDEO_CAPTURE)
 		kdDebug() << "libkopete (avdevice):     Video capture" << endl;
-	if(cap.capabilities & V4L2_CAP_VIDEO_OUTPUT)
+	if(V4L2_capabilities.capabilities & V4L2_CAP_VIDEO_OUTPUT)
 		kdDebug() << "libkopete (avdevice):     Video output" << endl;
-	if(cap.capabilities & V4L2_CAP_VIDEO_OVERLAY)
+	if(V4L2_capabilities.capabilities & V4L2_CAP_VIDEO_OVERLAY)
 		kdDebug() << "libkopete (avdevice):     Video overlay" << endl;
-	if(cap.capabilities & V4L2_CAP_VBI_CAPTURE)
+	if(V4L2_capabilities.capabilities & V4L2_CAP_VBI_CAPTURE)
 		kdDebug() << "libkopete (avdevice):     VBI capture" << endl;
-	if(cap.capabilities & V4L2_CAP_VBI_OUTPUT)
+	if(V4L2_capabilities.capabilities & V4L2_CAP_VBI_OUTPUT)
 		kdDebug() << "libkopete (avdevice):     VBI output" << endl;
-	if(cap.capabilities & V4L2_CAP_RDS_CAPTURE)
+	if(V4L2_capabilities.capabilities & V4L2_CAP_RDS_CAPTURE)
 		kdDebug() << "libkopete (avdevice):     RDS capture" << endl;
-	if(cap.capabilities & V4L2_CAP_TUNER)
+	if(V4L2_capabilities.capabilities & V4L2_CAP_TUNER)
 		kdDebug() << "libkopete (avdevice):     Tuner IO" << endl;
-	if(cap.capabilities & V4L2_CAP_AUDIO)
+	if(V4L2_capabilities.capabilities & V4L2_CAP_AUDIO)
 		kdDebug() << "libkopete (avdevice):     Audio IO" << endl;
 
-	io_type = IO_METHOD_NONE;
-	if(cap.capabilities & V4L2_CAP_READWRITE)
+	m_io_method = IO_METHOD_NONE;
+	if(V4L2_capabilities.capabilities & V4L2_CAP_READWRITE)
 	{
-		io_type = IO_METHOD_READ;
+		m_io_method = IO_METHOD_READ;
 		kdDebug() << "libkopete (avdevice):     Read/Write interface" << endl;
 	}
-	if(cap.capabilities & V4L2_CAP_ASYNCIO)
+	if(V4L2_capabilities.capabilities & V4L2_CAP_ASYNCIO)
 		kdDebug() << "libkopete (avdevice):     Async IO interface" << endl;
-	if(cap.capabilities & V4L2_CAP_STREAMING)
+	if(V4L2_capabilities.capabilities & V4L2_CAP_STREAMING)
 	{
-		io_type = IO_METHOD_MMAP;
+		m_io_method = IO_METHOD_MMAP;
+//		m_io_method = IO_METHOD_USERPTR;
 		kdDebug() << "libkopete (avdevice):     Streaming interface" << endl;
 	}
-	if(io_type==IO_METHOD_NONE)
+	if(m_io_method==IO_METHOD_NONE)
 	{
 		fprintf (stderr, "Found no suitable input/output method for %s\n", path.c_str());
 		return EXIT_FAILURE;
@@ -301,7 +318,7 @@ int VideoDevice::initDevice()
 	if (fmt.fmt.pix.sizeimage < min)
 		fmt.fmt.pix.sizeimage = min;
 
-	switch (io_type)
+	switch (m_io_method)
 	{
 		case IO_METHOD_NONE:    return EXIT_FAILURE;                 break;
 		case IO_METHOD_READ:    initRead (fmt.fmt.pix.sizeimage);    break;
@@ -514,7 +531,7 @@ int VideoDevice::startCapturing()
 	enum v4l2_buf_type type;
 
 	kdDebug() << "libkopete (avdevice): startCapturing() called." << endl;
-	switch (io_type)
+	switch (m_io_method)
 	{
 		case IO_METHOD_NONE: // Card cannot capture frames
 			return EXIT_FAILURE;
@@ -568,7 +585,7 @@ int VideoDevice::stopCapturing()
 #ifdef HAVE_V4L2
 	enum v4l2_buf_type type;
 
-	switch (io_type)
+	switch (m_io_method)
 	{
 		case IO_METHOD_NONE: // Card cannot capture frames
 			return EXIT_FAILURE;
@@ -598,7 +615,7 @@ int VideoDevice::readFrame()
 	unsigned int i;
 
 	kdDebug() << "libkopete (avdevice): readFrame() called." << endl;
-	switch (io_type)
+	switch (m_io_method)
 	{
 		case IO_METHOD_NONE: // Card cannot capture frames
 			return EXIT_FAILURE;
@@ -674,6 +691,13 @@ int VideoDevice::readFrame()
 					break;
 			assert (i < n_buffers);
 			processImage ((void *) buf.m.userptr);
+			for(size_t loop=0; loop<currentbuffer.data.size(); loop+=4)
+			{
+				currentbuffer.data[loop]  =buffers[i].start[loop+3];
+				currentbuffer.data[loop+1]=buffers[i].start[loop+2];
+				currentbuffer.data[loop+2]=buffers[i].start[loop+1];
+				currentbuffer.data[loop+3]=255;
+			}
 			if (-1 == xioctl (VIDIOC_QBUF, &buf))
 				return errnoReturn ("VIDIOC_QBUF");
 			break;
@@ -682,11 +706,6 @@ int VideoDevice::readFrame()
 // put frame copy operation here
 	kdDebug() << "libkopete (avdevice): readFrame() exited successfuly." << endl;
 	return EXIT_SUCCESS;
-}
-
-
-}
-
 }
 
 /*!
@@ -698,6 +717,9 @@ int Kopete::AV::VideoDevice::getImage(QImage *qimage)
     /// @todo implement me
 	unsigned long long result=0;
 	unsigned long long R=0, G=0, B=0, A=0;
+	uchar Rmax=0, Gmax=0, Bmax=0, Amax=0;
+	uchar Rmin=255, Gmin=255, Bmin=255, Amin=0;
+
 	for(unsigned int loop=0;loop < currentbuffer.data.size();loop++)
 	result+=currentbuffer.data[loop];
 	kdDebug() << " ------ Data size: " << currentbuffer.data.size() << "----------------- Result: " << result << " -----------------------------" << endl;
@@ -707,8 +729,19 @@ int Kopete::AV::VideoDevice::getImage(QImage *qimage)
 		G+=currentbuffer.data[loop+1];
 		B+=currentbuffer.data[loop+2];
 		A+=currentbuffer.data[loop+3];
+		if (currentbuffer.data[loop]   < Rmin) Rmin = currentbuffer.data[loop];
+		if (currentbuffer.data[loop+1] < Gmin) Gmin = currentbuffer.data[loop+1];
+		if (currentbuffer.data[loop+2] < Bmin) Bmin = currentbuffer.data[loop+2];
+		if (currentbuffer.data[loop+3] < Amin) Amin = currentbuffer.data[loop+3];
+		if (currentbuffer.data[loop]   > Rmax) Rmax = currentbuffer.data[loop];
+		if (currentbuffer.data[loop+1] > Gmax) Gmax = currentbuffer.data[loop+1];
+		if (currentbuffer.data[loop+2] > Bmax) Bmax = currentbuffer.data[loop+2];
+		if (currentbuffer.data[loop+3] > Amax) Amax = currentbuffer.data[loop+3];
 	}
 	kdDebug() << " ------ R: " << R << "------ G: " << G << "------ B: " << B << "------ A: " << A << "------" << endl;
+	kdDebug() << " ------ Rmin: " << Rmin << "------ Gmin: " << Gmin << "------ Bmin: " << Bmin << "------ Amin: " << Amin << "------" << endl;
+	kdDebug() << " ------ Rmax: " << Rmax << "------ Gmax: " << Gmax << "------ Bmax: " << Bmax << "------ Amax: " << Amax << "------" << endl;
+
 	qimage->create(320,240,32,QImage::IgnoreEndian);
 	memcpy(qimage->bits(),&currentbuffer.data[0], currentbuffer.data.size());
 	return EXIT_SUCCESS;
@@ -841,4 +874,9 @@ int vpScan(struct VideoDevicePool *devicepool)
 }
 */
 	return EXIT_SUCCESS;
+}
+
+
+}
+
 }

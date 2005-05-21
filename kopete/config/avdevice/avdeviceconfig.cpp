@@ -61,6 +61,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 	connect(mPrfsVideoDevice->mHueSlider,                     SIGNAL(valueChanged(int)), this, SLOT(slotHueSliderChanged(int)));
 	connect(mPrfsVideoDevice->mImageAutoAdjustBrightContrast, SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoAdjustBrightContrastChanged(bool)));
 
+	mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
 	mAVDeviceTabCtl->addTab(mPrfsVideoDevice, i18n("&Video"));
 	d = Kopete::AV::VideoDevice::self();
 	d->scanDevices();
@@ -152,6 +153,7 @@ void AVDeviceConfig::slotUpdateImage()
 	d->getFrame();
 	d->getImage(&qimage);
 	qpixmap.convertFromImage(qimage,0);
+//	bitBlt((QPaintDevice*)&m_video_image, 0, 0, (QPaintDevice*)&qpixmap, 0, Qt::CopyROP);
 	mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
 	kdDebug() << "kopete (avdeviceconfig_videoconfig): Image updated." << endl;
 //	emit changed( true );

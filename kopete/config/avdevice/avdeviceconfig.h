@@ -61,7 +61,7 @@ private:
 	AVDeviceConfig_AudioDevice *mPrfsAudioDevice;
 	Kopete::AV::VideoDevice *d ;
 	QImage qimage;
-	QPixmap qpixmap;
+	QPixmap qpixmap, m_video_image;
 	QTimer qtimer;
 };
 

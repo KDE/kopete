@@ -67,12 +67,20 @@ protected:
 	int descriptor;
 	typedef enum
 	{
+		VIDEODEV_TYPE_NONE,
+		VIDEODEV_TYPE_V4L,
+		VIDEODEV_TYPE_V4L2OLD,
+		VIDEODEV_TYPE_V4L2,
+	} videodev_driver;
+	videodev_driver m_driver;
+	typedef enum
+	{
 		IO_METHOD_NONE,
 		IO_METHOD_READ,
 		IO_METHOD_MMAP,
-		IO_METHOD_USERPTR
+		IO_METHOD_USERPTR,
 	} io_method;
-	io_method io_type;
+	io_method m_io_method;
 
 	struct buffer2
 	{
