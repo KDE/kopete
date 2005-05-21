@@ -153,8 +153,21 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 	// Yahoo does not understand XML/HTML message data, so send plain text
 	// instead.  (Yahoo has its own format for "rich text".)
 	QString messageText = message.plainBody();
-	kdDebug(14180) << "Sending message: " << messageText << endl;
-
+	kdDebug(14180) << "Original message: " << messageText << endl;
+	
+	// Apply size, bold, italic, underlined and color-settings
+	messageText = QString("<font face=\"%1\" size=\"%2\">%3").arg(message.font().family()).arg(message.font().pointSize()).arg(messageText); 
+	if( message.font().bold() )
+		messageText = QString("\033[1m%1\033[x1m").arg(messageText);
+	if( message.font().italic() )
+		messageText = QString("\033[2m%1\033[x2m").arg(messageText);
+	if( message.font().underline() )
+		messageText = QString("\033[4m%1\033[x4m").arg(messageText);
+	if( message.fg() != Qt::black )
+		messageText = QString("\033[%1m%2\033[#000000m").arg(message.fg().name()).arg(messageText);
+	
+	kdDebug(14180) << "Converted message: " << messageText << endl;
+	
 	Kopete::ContactPtrList m_them = manager(Kopete::Contact::CanCreate)->members();
 	Kopete::Contact *target = m_them.first();
 
