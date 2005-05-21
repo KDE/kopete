@@ -179,7 +179,7 @@ GaduContactsList::asString()
 				(*it).group + ";"+
 				(*it).uin + ";"+
 				(*it).email +
-				";0;;0;\n";
+				";0;;0;\r\n";
 		}
 	}
 	return contacts;
