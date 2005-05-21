@@ -188,7 +188,7 @@ QValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseM
 				// If this is an HTML, then search for the HTML form of the emoticon.
 				// For instance <o) => &gt;o)
 				needle = ( mode & SkipHTML ) ? (*it).matchTextEscaped : (*it).matchText;
-				if ( ( pos == message.find( needle, pos ) ) )
+				if ( ( pos == (size_t)message.find( needle, pos ) ) )
 				{
 					if( mode & StrictParse )
 					{
