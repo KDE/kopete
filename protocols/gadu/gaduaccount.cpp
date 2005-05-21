@@ -92,13 +92,17 @@ public:
 
 // FIXME: use dynamic cache please, i consider this as broken resolution of this problem
 
-static const int NUM_SERVERS = 5;
+static const int NUM_SERVERS = 9;
 static const char* const servers_ip[ NUM_SERVERS ] = {
 	"217.17.41.88",
+	"217.17.41.92",
+	"217.17.41.93",
  	"217.17.41.85",
 	"217.17.41.87",
 	"217.17.41.86",
 	"217.17.41.84",
+	"217.17.41.83",
+	"217.17.41.82",
 };
 
  GaduAccount::GaduAccount( Kopete::Protocol* parent, const QString& accountID,const char* name )
