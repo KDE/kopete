@@ -137,7 +137,10 @@ KActionMenu* ICQAccount::actionMenu()
 	
 	actionMenu->popupMenu()->insertSeparator();
 	
-	KToggleAction* actionInvisible = new KToggleAction( i18n( "In&visible" ), "icq_invisible", 0, this, SLOT( slotToggleInvisible() ), this );
+	KToggleAction* actionInvisible = 
+	    new KToggleAction( i18n( "In&visible" ),
+	                       Presence( presence().type(), Presence::Invisible ).toOnlineStatus().iconFor( this ),
+	                       0, this, SLOT( slotToggleInvisible() ), this );
 	actionInvisible->setChecked( presence().visibility() == ICQ::Presence::Invisible );
 	actionMenu->insert( actionInvisible );
 	
