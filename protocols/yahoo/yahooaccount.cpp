@@ -54,6 +54,7 @@ YahooAwayDialog::YahooAwayDialog(YahooAccount* account, QWidget *parent, const c
 
 void YahooAwayDialog::setAway(int awayType)
 {
+	awayType = 0;
 	theAccount->setAway(awayType, getSelectedAwayMessage());
 }
 
@@ -94,7 +95,7 @@ void YahooAccount::slotGoStatus( int status, const QString &awayMessage)
 	}
 	else
 	{
-		m_session->setAway( yahoo_status( status ), awayMessage, ( status !=0 && status != 99 ) ? 1 : 0 );
+		m_session->setAway( yahoo_status( status ), awayMessage, status? 1 : 0 );
 		myself()->setOnlineStatus( m_protocol->statusFromYahoo( status ) );
 	}
 }
@@ -597,21 +598,28 @@ void YahooAccount::slotGotIdentities( const QStringList & /* ids */ )
 	//kdDebug(14180) << k_funcinfo << endl;
 }
 
-void YahooAccount::slotStatusChanged( const QString &who, int stat, const QString &msg, int /* away */)
+void YahooAccount::slotStatusChanged( const QString &who, int stat, const QString &msg, int  away )
 {
 //	kdDebug(14180) << k_funcinfo << endl;
 	Kopete::Contact *kc = contact( who );
 	if ( kc )
 	{
 		Kopete::OnlineStatus newStatus = static_cast<YahooProtocol*>( m_protocol )->statusFromYahoo( stat );
-		if ( newStatus == static_cast<YahooProtocol*>( m_protocol )->Custom )
-			kc->setProperty( m_protocol->awayMessage, msg );
+
+		if( newStatus == static_cast<YahooProtocol*>( m_protocol )->Custom ) {
+			if( away == 0 )
+				newStatus = static_cast<YahooProtocol*>( m_protocol )->Online;
+			kc->setProperty( m_protocol->awayMessage, msg);
+		}
 		else
 			kc->removeProperty( m_protocol->awayMessage );
-
+		
+		if( newStatus == static_cast<YahooProtocol*>( m_protocol )->Idle ) {
+			// TODO: Use the argument 'away' to set the idleTime
+		}
+		
 		kc->setOnlineStatus( newStatus );
 	}
-
 }
 
 void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, int /*stat*/)
