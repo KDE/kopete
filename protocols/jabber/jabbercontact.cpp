@@ -302,14 +302,14 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			if ( description.isEmpty () )
 			{
 				newMessage = new Kopete::Message ( message.timeStamp (), this, contactList,
-												 QString ( "<a href=\"%1\">%2</a>" ).arg ( url ).arg ( url ),
+												 QString ( "<a href=\"%1\">%2</a>" ).arg ( url, url ),
 												 message.subject (), Kopete::Message::Inbound,
 												 Kopete::Message::RichText, viewPlugin );
 			}
 			else
 			{
 				newMessage = new Kopete::Message ( message.timeStamp (), this, contactList,
-												 QString ( "<a href=\"%1\">%2</a>" ).arg ( url ).arg ( description ),
+												 QString ( "<a href=\"%1\">%2</a>" ).arg ( url, description ),
 												 message.subject (), Kopete::Message::Inbound,
 												 Kopete::Message::RichText, viewPlugin );
 			}
