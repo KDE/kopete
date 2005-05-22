@@ -31,7 +31,6 @@
 #include <khtml_part.h>
 #include <khtmlview.h>
 
-#include <qfile.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
@@ -328,24 +327,35 @@ void HistoryDialog::searchFirstStep()
 
 	for( ; it.current(); ++it )
 	{
-		QFile file(mLogger->getFileName(*it, mSearch->item->date()));
-		file.open(IO_ReadOnly);
-		if (!&file)
+		QString fullText;
+		if (mSearch->item->date().month() != mSearch->datePrevious.month())
 		{
-			continue;
+			QFile file(mLogger->getFileName(*it, mSearch->item->date()));
+			file.open(IO_ReadOnly);
+			if (!&file)
+			{
+				mSearch->datePrevious = mSearch->item->date();
+				continue;
+			}
+			QTextStream stream(&file);
+			fullText = stream.read();
+			file.close();
 		}
-		QTextStream stream(&file);
-		QString fullText = stream.read();
-		file.close();
-		if (fullText.contains(mMainWidget->searchLine->text()))
+		if ((mSearch->foundPrevious
+			&& mSearch->item->date().month() == mSearch->datePrevious.month())
+			|| fullText.contains(mMainWidget->searchLine->text()))
 		{
 			mSearch->dateSearchMap[mSearch->item->date()] = true;
+			mSearch->foundPrevious = true;
 			break;
 		}
 		else if (!mSearch->dateSearchMap[mSearch->item->date()])
 		{
 			mSearch->dateSearchMap[mSearch->item->date()] = false;
 		}
+
+		mSearch->datePrevious = mSearch->item->date();
+		
 	}
 
 	mSearch->item = static_cast<KListViewDateItem *>(mSearch->item->nextSibling());
@@ -451,6 +461,7 @@ void HistoryDialog::slotSearch()
 
 	mSearch = new Search();
 	mSearch->item = 0;
+	mSearch->foundPrevious = false;
 
 	mMainWidget->searchProgress->setProgress(0);
 

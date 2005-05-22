@@ -19,8 +19,10 @@
 #ifndef _HISTORYDIALOG_H
 #define _HISTORYDIALOG_H
 
-#include <kdialogbase.h>
+#include <qfile.h>
 #include <qstringlist.h>
+
+#include <kdialogbase.h>
 #include <klistview.h>
 
 #include "kopetemessage.h"
@@ -115,6 +117,9 @@ class HistoryDialog : public KDialogBase
 				KListViewDateItem *item;
 
 				int resultMatches;
+
+				bool foundPrevious;
+				QDate datePrevious;
 		} *mSearch;
 };
 
