@@ -129,7 +129,7 @@ void HistoryPlugin::slotViewHistory()
 
 		// TODO: Keep track of open dialogs and raise instead of
 		// opening a new (duplicated) one
-		new HistoryDialog(m, lines);
+		new HistoryDialog(m);
 	}
 }
 

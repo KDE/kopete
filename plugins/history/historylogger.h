@@ -115,6 +115,13 @@ public:
      */
 	QValueList<int> getDaysForMonth(QDate date);
 
+	/**
+	 * Get the filename of the xml file which contains the history from the
+	 * contact in the specified @param date. Specify @param date in order to get the filename for
+	 * the given date.year() date.month().
+	 */
+	static QString getFileName(const Kopete::Contact* , QDate date);
+
 private:
 	bool m_hideOutgoing;
 	bool m_filterCaseSensitive;
@@ -158,12 +165,7 @@ private:
 	 */
 	int m_cachedMonth;
 
-	/*
-	 * get the filename of the xml file which contains the history from the
-	 * contact in the specified month. Specify date in order to get the filename for
-	 * the given date.year() date.month().
-	 */
-	static QString getFileName(const Kopete::Contact* , QDate date);
+
 
 	/*
 	 * the metacontact we are using

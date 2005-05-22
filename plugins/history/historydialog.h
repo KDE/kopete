@@ -37,6 +37,9 @@ class KHTMLPart;
 class KURL;
 namespace KParts { struct URLArgs; class Part; }
 
+
+class KListViewDateItem;
+
 /**
  * @author Richard Stellingwerff <remenic@linuxfromscratch.org>
  * @author Stefan Gehn <metz AT gehn.net>
@@ -47,8 +50,9 @@ class HistoryDialog : public KDialogBase
 	Q_OBJECT
 
 	public:
-		HistoryDialog(Kopete::MetaContact *mc, int count=50, QWidget* parent=0,
+		HistoryDialog(Kopete::MetaContact *mc, QWidget* parent=0,
 			const char* name="HistoryDialog");
+		~HistoryDialog();
 
 		/**
 		 * Calls init(Kopete::Contact *c) for each subcontact of the metacontact
@@ -62,10 +66,18 @@ class HistoryDialog : public KDialogBase
 	private slots:
 		void slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/*args*/);
 
-		/**
-		 * Called when a date is selected in the treeview
-		 */
+		// Called when a date is selected in the treeview
 		void dateSelected(QListViewItem *);
+
+		void slotSearch();
+
+		// Reinitialise search
+		void slotSearchErase();
+		void slotSearchTextChanged(const QString& txt); // To enable/disable search button
+
+		void searchFirstStep();
+		void searchSecondStep();
+		
 
 	private:
 		enum Disabled { Prev=1, Next=2 };
@@ -80,9 +92,6 @@ class HistoryDialog : public KDialogBase
 		 * Search if @param item already has @param text child
 		 */
 		bool hasChild(KListViewItem* item, int month);
-		
-		// amount of entries to read at once
-		unsigned int msgCount;
 
 		HistoryLogger *mLogger;
 
@@ -97,6 +106,16 @@ class HistoryDialog : public KDialogBase
 		KHTMLPart *mHtmlPart;
 		HistoryViewer *mMainWidget;
 		Kopete::XSLT *mXsltParser;
+
+		struct Search
+		{
+				typedef QMap<QDate, bool> DateSearchMap;
+				DateSearchMap dateSearchMap;
+
+				KListViewDateItem *item;
+
+				int resultMatches;
+		} *mSearch;
 };
 
 #endif
