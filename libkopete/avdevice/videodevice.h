@@ -51,7 +51,7 @@ public:
 	int checkDevice(int handle, VideoDeviceListItem *videodevice);
 	int initDevice();
 	int close();
-	int setDevice(int device);
+	int selectDevice(int device);
 	int startCapturing();
 	int stopCapturing();
 	int readFrame();

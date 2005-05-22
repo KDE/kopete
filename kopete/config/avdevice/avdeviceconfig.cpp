@@ -65,7 +65,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 	mAVDeviceTabCtl->addTab(mPrfsVideoDevice, i18n("&Video"));
 	d = Kopete::AV::VideoDevice::self();
 	d->scanDevices();
-	d->setDevice(0);
+	d->selectDevice(0);
 	d->open();
 	d->initDevice();
 	d->fillDeviceKcomboBox(mPrfsVideoDevice->mDeviceKComboBox);
@@ -77,7 +77,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 	qpixmap.convertFromImage(qimage,0);
 	mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
-	qtimer.start(1000,FALSE);
+	qtimer.start(500,FALSE);
 }
 
 
@@ -117,7 +117,18 @@ void AVDeviceConfig::slotValueChanged(int){
 }
 
 void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
-  emit changed( true );
+	int newdevice = mPrfsVideoDevice->mInputKComboBox->currentItem();
+	if ((newdevice < d->m_videodevice.size())&&(newdevice!=d->m_current_device))
+	{
+		d->selectDevice(newdevice);
+		d->open();
+		d->initDevice();
+		d->fillDeviceKcomboBox(mPrfsVideoDevice->mDeviceKComboBox);
+		d->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
+		d->selectInput(0);
+		d->startCapturing();
+	}
+	emit changed( true );
 }
 
 void AVDeviceConfig::slotInputKComboBoxChanged(int){

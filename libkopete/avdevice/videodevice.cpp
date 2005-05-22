@@ -69,6 +69,11 @@ int VideoDevice::open()
     /// @todo implement me
 
 	kdDebug() << "libkopete (avdevice): open() called" << endl;
+	if(-1 != descriptor)
+	{
+		kdDebug() << "libkopete (avdevice): open() Device is already open" << endl;
+		return EXIT_SUCCESS;
+	}
 	file.setName(m_videodevice[m_current_device].full_filename);
 	file.open( IO_ReadWrite | IO_Raw ); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
 	if(file.isOpen())
@@ -212,6 +217,11 @@ int VideoDevice::initDevice()
 	unsigned int min;
 
 	kdDebug() << "libkopete (avdevice): initDevice() started" << endl;
+	if(-1 == descriptor)
+	{
+		kdDebug() << "libkopete (avdevice): initDevice() Device is not open" << endl;
+		return EXIT_FAILURE;
+	}
 	int inputisok=EXIT_SUCCESS;
 
 	checkDevice(descriptor, &(m_videodevice[m_current_device]));
@@ -338,9 +348,11 @@ int VideoDevice::initDevice()
 int VideoDevice::close()
 {
     /// @todo implement me
+	stopCapturing();
 	if (-1 == ::close (descriptor))
 		return errnoReturn ("close");
 	descriptor = -1;
+	file.close();
 	return EXIT_SUCCESS;
 }
 
@@ -398,7 +410,7 @@ int VideoDevice::initMmap()
 
 	CLEAR (req);
 
-	req.count  = 4;
+	req.count  = 2;
 	req.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	req.memory = V4L2_MEMORY_MMAP;
 
@@ -466,7 +478,7 @@ int VideoDevice::initUserptr(unsigned int buffer_size)
 
 	CLEAR (req);
 
-	req.count  = 4;
+	req.count  = 2;
 	req.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	req.memory = V4L2_MEMORY_USERPTR;
 
@@ -508,17 +520,20 @@ return EXIT_SUCCESS;
 
 
 /*!
-    \fn VideoDevice::setDevice(int device)
+    \fn VideoDevice::selectDevice(int device)
  */
-int VideoDevice::setDevice(int device)
+int VideoDevice::selectDevice(int device)
 {
     /// @todo implement me
 	if(device >= m_videodevice.size())
 	{
-		kdDebug() << "libkopete (avdevice): setDevice(" << device <<"): Device does not exist." << endl;
+		kdDebug() << "libkopete (avdevice): selectDevice(" << device <<"): Device does not exist." << endl;
 		return EXIT_FAILURE;
 	}
+	close();
+	scanDevices();
 	m_current_device = device;
+
 	return EXIT_SUCCESS;
 }
 
@@ -757,10 +772,24 @@ int Kopete::AV::VideoDevice::selectInput(int input)
 {
     /// @todo implement me
 #ifdef HAVE_V4L2
-	if (-1 == ioctl (descriptor, VIDIOC_S_INPUT, &input))
+	switch (m_videodevice[m_current_device].m_driver)
 	{
-		perror ("VIDIOC_S_INPUT");
-		return EXIT_FAILURE;
+		case VIDEODEV_DRIVER_V4L2:
+			if (-1 == ioctl (descriptor, VIDIOC_S_INPUT, &input))
+			{
+				perror ("VIDIOC_S_INPUT");
+				return EXIT_FAILURE;
+			}
+			break;
+		case VIDEODEV_DRIVER_V4L:
+			if (-1 == ioctl (descriptor, VIDIOCSCHAN, &input))
+			{
+				perror ("ioctl (VIDIOCSCHAN)");
+				return EXIT_FAILURE;
+			}
+			break;
+		case VIDEODEV_DRIVER_NONE:
+			break;
 	}
 	kdDebug() << "libkopete (avdevice): selectInput: Selected input " << input << " (" << m_video_input[input].name << ")" << endl;
 	return EXIT_SUCCESS;
