@@ -41,34 +41,15 @@
 #include <qtimer.h>
 #include <qtabwidget.h>
 
-static WId checkWinId( const QString &appName, WId senderWinId )
+
+
+//TODO,  make the KNotification aware of the systemtray.
+#include "kopeteuiglobal.h"
+static WId checkWinId( const QString &/*appName*/, WId senderWinId )
 {
-	if ( senderWinId == 0 )
-	{
-		QCString senderId = kapp->dcopClient()->senderId();
-		QCString compare = (appName + QString::fromLatin1("-mainwindow")).latin1();
-		int len = compare.length();
-        // kdDebug() << "notifyByPassivePopup: appName=" << appName << " sender=" << senderId << endl;
+	if(senderWinId==0)
+		senderWinId=Kopete::UI::Global::sysTrayWId();
 
-		QCStringList objs = kapp->dcopClient()->remoteObjects( senderId );
-		for (QCStringList::ConstIterator it = objs.begin(); it != objs.end(); it++ ) {
-			QCString obj( *it );
-			if ( obj.left(len) == compare) {
-                // kdDebug( ) << "found " << obj << endl;
-				QCString replyType;
-				QByteArray data, replyData;
-
-				if ( kapp->dcopClient()->call(senderId, obj, "getWinID()", data, replyType, replyData) ) {
-					QDataStream answer(replyData, IO_ReadOnly);
-					if (replyType == "int") {
-						answer >> senderWinId;
-                        // kdDebug() << "SUCCESS, found getWinID(): type='" << QString(replyType)
-                        //      << "' senderWinId=" << senderWinId << endl;
-					}
-				}
-			}
-		}
-	}
 	return senderWinId;
 }
 
