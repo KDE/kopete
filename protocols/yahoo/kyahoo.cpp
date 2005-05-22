@@ -154,7 +154,7 @@ YahooSession* YahooSessionManager::createSession( const QString username, const 
 	YahooSession *session;
 
 	kdDebug(14181) << k_funcinfo << " Initializing" << endl;
-	id = yahoo_init( username.local8Bit(), password.local8Bit() );
+	id = yahoo_init_with_attributes( username.local8Bit(), password.local8Bit(), "pager_host", pager_host, "pager_port", QString(pager_port).toInt(), 0L );
 
 	session = new YahooSession(id, username, password);
 
@@ -1199,6 +1199,7 @@ int YahooSession::_hostAsyncConnectReceiver( char *host, int port,
 	KExtendedSocket* yahooSocket = new KExtendedSocket( host, port );
 
 	// TODO Do an async connect in the future
+	yahooSocket->setTimeout( 30 );		//prevent endless blocking, but an async connect would really be nice
 	error = yahooSocket->connect();
 
 	if ( !error )

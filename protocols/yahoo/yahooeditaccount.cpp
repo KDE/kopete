@@ -22,6 +22,7 @@
 #include <qgroupbox.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
+#include <qspinbox.h>
 #include <qcheckbox.h>
 
 // KDE Includes
@@ -30,6 +31,7 @@
 #include <kmessagebox.h>
 #include <krun.h>
 #include <kpassdlg.h>
+#include <kconfig.h>
 
 // Kopete Includes
 #include <addcontactpage.h>
@@ -55,6 +57,15 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 		mScreenName->setDisabled(true);
 		mAutoConnect->setChecked(acct->excludeConnect());
 		mPasswordWidget->load( &acct->password() );
+
+		QString pagerServer = account()->configGroup()->readEntry("Server", "scs.msg.yahoo.com");
+		int pagerPort = account()->configGroup()->readNumEntry("Port", 5050);
+		if( pagerServer != "scs.msg.yahoo.com" || pagerPort != 5050 )
+			optionOverrideServer->setChecked( true );
+		else
+			optionOverrideServer->setChecked( false );
+		editServerAddress->setText( pagerServer );
+		sbxServerPort->setValue( pagerPort );
 	}
 
 	QObject::connect(buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
@@ -96,6 +107,14 @@ Kopete::Account *YahooEditAccount::apply()
 	yahooAccount->setExcludeConnect( mAutoConnect->isChecked() );
 
 	mPasswordWidget->save( &yahooAccount->password() );
+
+	if( optionOverrideServer->isChecked() )	{
+		yahooAccount->setServer( editServerAddress->text() );
+		yahooAccount->setPort( sbxServerPort->value() );
+	} else {
+		yahooAccount->setServer( "scs.msg.yahoo.com" );
+		yahooAccount->setPort( 5050 );
+	}
 
 	return yahooAccount;
 }

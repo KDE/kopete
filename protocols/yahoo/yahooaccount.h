@@ -91,6 +91,15 @@ public:
 
 	void setImportContacts(bool newSetting);
 
+	/**
+	 * Set the pager server
+	 */
+	void setServer( const QString &server );
+	
+	/**
+	 * Set the port of the pager server
+	 */
+	void setPort( int port );
 public slots:
 	/**
 	 * Connect to the Yahoo service

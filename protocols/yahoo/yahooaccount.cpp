@@ -86,6 +86,16 @@ YahooAccount::~YahooAccount()
 	delete theAwayDialog;
 }
 
+void YahooAccount::setServer( const QString &server )
+{
+	configGroup()->writeEntry( QString::fromLatin1( "Server" ), server );	
+}
+
+void YahooAccount::setPort( int port )
+{
+	configGroup()->writeEntry( QString::fromLatin1( "Port" ), port );	
+}
+
 void YahooAccount::slotGoStatus( int status, const QString &awayMessage)
 {
 	if( !isConnected() )
@@ -329,8 +339,8 @@ void YahooAccount::connectWithPassword( const QString &passwd )
 		return;
 	}
 	
-	QString server = "scs.msg.yahoo.com";
-	int port = 5050;
+	QString server = configGroup()->readEntry( "Server", "scs.msg.yahoo.com" );
+	int port = configGroup()->readNumEntry( "Port", 5050 );
 
 	YahooSessionManager::manager()->setPager( server, port );
 	m_session = YahooSessionManager::manager()->createSession( accountId(), passwd );
