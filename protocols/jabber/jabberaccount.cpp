@@ -29,6 +29,8 @@
 
 #include "jabberaccount.h"
 
+#include <time.h>
+
 #include <qstring.h>
 #include <qregexp.h>
 #include <qtimer.h>
@@ -463,6 +465,9 @@ void JabberAccount::connectWithPassword ( const QString &password )
 		QObject::connect (jabberClient, SIGNAL (debugText (const QString &)), this, SLOT (slotPsiDebug (const QString &)));
 	}
 
+	//
+	// Determine system name
+	//
 	struct utsname utsBuf;
 
 	uname (&utsBuf);
@@ -478,7 +483,41 @@ void JabberAccount::connectWithPassword ( const QString &password )
 		jabberClient->setClientName ("");
 		jabberClient->setClientVersion ("");
 		jabberClient->setOSName ("");
-	}	
+	}
+
+	//
+	// Set timezone information (code from Psi)
+	// Copyright (C) 2001-2003  Justin Karneges
+	//
+	time_t x;
+	time(&x);
+	char str[256];
+	char fmt[32];
+	int timezoneOffset;
+	QString timezoneString;
+	
+	strcpy ( fmt, "%z" );
+	strftime ( str, 256, fmt, localtime ( &x ) );
+	
+	if ( strcmp ( fmt, str ) )
+	{
+		QString s = str;
+		if ( s.at ( 0 ) == '+' )
+			s.remove ( 0, 1 );
+		s.truncate ( s.length () - 2 );
+		timezoneOffset = s.toInt();
+	}
+
+	strcpy ( fmt, "%Z" );
+	strftime ( str, 256, fmt, localtime ( &x ) );
+
+	if ( strcmp ( fmt, str ) )
+		timezoneString = str;
+	// end of timezone code
+
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Determined timezone " << timezoneString << " with UTC offset " << timezoneOffset << " hours." << endl;
+
+	jabberClient->setTimeZone ( timezoneString, timezoneOffset );
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Connecting to Jabber server " << server() << ":" << port() << endl;
 
