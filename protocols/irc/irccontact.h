@@ -69,7 +69,7 @@ public:
 	IRCAccount *ircAccount() const;
 	KIRC::Engine *kircEngine() const;
 
-	const QString caption() const;
+	QString caption() const;
 
 	/**
 	 * This function attempts to find the nickname specified within the current chat
@@ -110,7 +110,7 @@ public slots:
 
 	void setCodec(QTextCodec *codec);
 
-protected slots:
+private slots:
 	void entityUpdated();
 
 	void slotSendMsg(Kopete::Message &message, Kopete::ChatSession *);
@@ -124,8 +124,17 @@ protected slots:
 	void deleteContact();
 	void initConversation() {};
 
+private:
+//	QString server_caption() const;
+	void server_updateStatus();
 
-protected:
+//	QString channel_caption() const;
+	void channel_updateStatus();
+
+//	QString user_caption() const;
+	void user_updateStatus();
+
+private:
 	KIRC::EntityPtr m_entity;
 
 	Kopete::ChatSession *m_chatSession;

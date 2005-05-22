@@ -453,7 +453,7 @@ EntityPtr Engine::getEntity(const QString &name)
 {
 	Entity *entity = 0;
 
-	#pragma warning "Do the searching code here."
+	#warning Do the searching code here.
 
 	if (!entity)
 	{

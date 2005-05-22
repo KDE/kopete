@@ -15,10 +15,8 @@
     *************************************************************************
 */
 
-#include "ircchannelcontact.h"
-#include "ircusercontact.h"
-#include "ircservercontact.h"
 #include "ircaccount.h"
+#include "irccontact.h"
 #include "ircprotocol.h"
 
 #include "kopeteview.h"
@@ -37,7 +35,35 @@
 #include <kmessagebox.h>
 
 #include <qtimer.h>
+/*
+const QString IRCContact::channel_caption() const
+{
+	QString cap = QString::fromLatin1("%1 @ %2").arg(m_nickName).arg(kircEngine()->currentHost());
+	if(!mTopic.isEmpty())
+		cap.append( QString::fromLatin1(" - %1").arg(Kopete::Message::unescape(mTopic)) );
 
+	return cap;
+}
+*/
+void IRCContact::channel_updateStatus()
+{
+	KIRC::Engine::Status status = kircEngine()->status();
+	switch (status)
+	{
+		case KIRC::Engine::Idle:
+		case KIRC::Engine::Connecting:
+		case KIRC::Engine::Authentifying:
+			setOnlineStatus(m_protocol->m_ChannelStatusOffline);
+			break;
+		case KIRC::Engine::Connected:
+		case KIRC::Engine::Closing:
+			setOnlineStatus(m_protocol->m_ChannelStatusOnline);
+			break;
+		default:
+			setOnlineStatus(m_protocol->m_StatusUnknown);
+	}
+}
+/*
 //This is the number of nicknames we will process concurrently when joining a channel
 //Lower numbers ensure less GUI blocking, but take marginally longer to complete.
 //Higher numbers are absolute fastest, but block GUI until all members are added
@@ -74,14 +100,12 @@ IRCChannelContact::~IRCChannelContact()
 
 void IRCChannelContact::slotUpdateInfo()
 {
-	/** This woudl be nice, but it generates server errors too often
+//	This woudl be nice, but it generates server errors too often
+//	if( !manager(Kopete::Contact::CannotCreate) && onlineStatus() == m_protocol->m_ChannelStatusOnline )
+//		kircEngine()->writeMessage( QString::fromLatin1("LIST %1").arg(m_nickName) );
+//	else
+//		setProperty( QString::fromLatin1("channelMembers"), i18n("Members"), manager()->members().count() );
 
-	if( !manager(Kopete::Contact::CannotCreate) && onlineStatus() == m_protocol->m_ChannelStatusOnline )
-		kircEngine()->writeMessage( QString::fromLatin1("LIST %1").arg(m_nickName) );
-	else
-		setProperty( QString::fromLatin1("channelMembers"), i18n("Members"), manager()->members().count() );
-
-	*/
 	KIRC::Engine *engine = kircEngine();
 
 	if (manager(Kopete::Contact::CannotCreate))
@@ -107,25 +131,6 @@ void IRCChannelContact::slotChannelListed( const QString &channel, uint members,
 		mTopic = topic;
 		setProperty(m_protocol->propChannelMembers, members);
 		setProperty(m_protocol->propChannelTopic, topic);
-	}
-}
-
-void IRCChannelContact::updateStatus()
-{
-	KIRC::Engine::Status status = kircEngine()->status();
-	switch (status)
-	{
-		case KIRC::Engine::Idle:
-		case KIRC::Engine::Connecting:
-		case KIRC::Engine::Authentifying:
-			setOnlineStatus(m_protocol->m_ChannelStatusOffline);
-			break;
-		case KIRC::Engine::Connected:
-		case KIRC::Engine::Closing:
-			setOnlineStatus(m_protocol->m_ChannelStatusOnline);
-			break;
-		default:
-			setOnlineStatus(m_protocol->m_StatusUnknown);
 	}
 }
 
@@ -450,8 +455,7 @@ void IRCChannelContact::incomingModeChange( const QString &nick, const QString &
 	}
 }
 
-void IRCChannelContact::incomingChannelMode( const QString &mode,
-	const QString &/*params*/ )
+void IRCChannelContact::incomingChannelMode(const QString &mode, const QString &params)
 {
 	for( uint i=1; i < mode.length(); i++ )
 	{
@@ -627,4 +631,4 @@ void IRCChannelContact::slotHomepage()
 	       new KRun( KURL( homePage ), 0, false);
 	}
 }
-
+*/

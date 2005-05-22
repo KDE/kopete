@@ -865,11 +865,11 @@ IRCContact *IRCAccount::getContact(KIRC::EntityPtr entity, MetaContact *metac)
 {
 	IRCContact *contact = 0;
 
-	#pragma warning Do the search code here.
+	#warning Do the search code here.
 
 	if (!contact)
 	{
-		#pragma warning Make a temporary meta contact if metac is null
+		#warning Make a temporary meta contact if metac is null
 		contact = new IRCContact(this, entity, metac);
 		m_contacts.append(contact);
 	}

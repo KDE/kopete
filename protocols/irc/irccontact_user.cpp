@@ -15,11 +15,8 @@
     *************************************************************************
 */
 
-#include "ircusercontact.h"
-#include "ircservercontact.h"
-#include "ircchannelcontact.h"
-#include "irccontactmanager.h"
 #include "ircaccount.h"
+#include "irccontact.h"
 #include "ircprotocol.h"
 #include "kcodecaction.h"
 
@@ -32,33 +29,13 @@
 #include <klocale.h>
 
 #include <qtimer.h>
-
-IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString &nickname, Kopete::MetaContact *m )
-	: IRCContact(contactManager, nickname, m ),
-	  m_isAway(false)
+/*
+QString IRCContact::user_caption() const
 {
-	setFileCapable(true);
-
-	mOnlineTimer = new QTimer( this );
-	m_isOnline = metaContact()->isTemporary();
-
-	QObject::connect(mOnlineTimer, SIGNAL(timeout()), this, SLOT( slotUserOffline() ) );
-
-	QObject::connect(kircEngine(), SIGNAL(incomingChannelModeChange(const QString&, const QString&, const QString&)),
-		this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
-
-	actionCtcpMenu = 0L;
-
-	mInfo.isOperator = false;
-	mInfo.isIdentified = false;
-	mInfo.idle = 0;
-	mInfo.hops = 0;
-	mInfo.away = false;
-
-	updateStatus();
+	return i18n("%1 @ %2").arg(m_nickName).arg(kircEngine()->currentHost());
 }
-
-void IRCUserContact::updateStatus()
+*/
+void IRCContact::user_updateStatus()
 {
         Kopete::OnlineStatus newStatus;
 
@@ -78,16 +55,16 @@ void IRCUserContact::updateStatus()
 
 		case KIRC::Engine::Connected:
 		case KIRC::Engine::Closing:
-			if (m_isAway)
-				newStatus = m_protocol->m_UserStatusAway;
-			else if (m_isOnline)
+//			if (m_isAway)
+//				newStatus = m_protocol->m_UserStatusAway;
+//			else if (m_isOnline)
 				newStatus = m_protocol->m_UserStatusOnline;
 			break;
 
 		default:
 			newStatus = m_protocol->m_StatusUnknown;
 	}
-
+/*
 	// This may not be created yet ( for myself() on startup )
 	if( ircAccount()->contactManager() )
 	{
@@ -123,8 +100,34 @@ void IRCUserContact::updateStatus()
 			}
 		}
 	}
-
+*/
 	setOnlineStatus( newStatus );
+}
+
+/*
+IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString &nickname, Kopete::MetaContact *m )
+	: IRCContact(contactManager, nickname, m ),
+	  m_isAway(false)
+{
+	setFileCapable(true);
+
+	mOnlineTimer = new QTimer( this );
+	m_isOnline = metaContact()->isTemporary();
+
+	QObject::connect(mOnlineTimer, SIGNAL(timeout()), this, SLOT( slotUserOffline() ) );
+
+	QObject::connect(kircEngine(), SIGNAL(incomingChannelModeChange(const QString&, const QString&, const QString&)),
+		this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
+
+	actionCtcpMenu = 0L;
+
+	mInfo.isOperator = false;
+	mInfo.isIdentified = false;
+	mInfo.idle = 0;
+	mInfo.hops = 0;
+	mInfo.away = false;
+
+	updateStatus();
 }
 
 void IRCUserContact::sendFile(const KURL &sourceURL, const QString&, unsigned int)
@@ -513,3 +516,4 @@ void IRCUserContact::setManagerStatus(IRCChannelContact *channel, int statusAdju
 
 	channel->manager()->setContactOnlineStatus(this, newStatus);
 }
+*/

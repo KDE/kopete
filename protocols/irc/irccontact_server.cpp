@@ -16,9 +16,8 @@
     *************************************************************************
 */
 
-#include "ircusercontact.h"
-#include "ircservercontact.h"
 #include "ircaccount.h"
+#include "irccontact.h"
 #include "ircprotocol.h"
 
 #include "kopetechatsessionmanager.h"
@@ -29,7 +28,39 @@
 #include <klocale.h>
 
 #include <qtimer.h>
+/*
+QString IRCContact::server_caption() const
+{
+	return i18n("%1 @ %2").arg(ircAccount()->mySelf()->nickName() ).arg(
+		kircEngine()->currentHost().isEmpty() ? ircAccount()->networkName() : kircEngine()->currentHost()
+	);
+}
+*/
+void IRCContact::server_updateStatus()
+{
+	KIRC::Engine::Status status = kircEngine()->status();
+	switch( status )
+	{
+		case KIRC::Engine::Idle:
+		case KIRC::Engine::Connecting:
+//			if( m_chatSession )
+//				m_chatSession->setDisplayName( caption() );
+			setOnlineStatus( m_protocol->m_ServerStatusOffline );
+			break;
 
+		case KIRC::Engine::Authentifying:
+		case KIRC::Engine::Connected:
+		case KIRC::Engine::Closing:
+			// should make some extra check here
+			setOnlineStatus( m_protocol->m_ServerStatusOnline );
+			break;
+
+		default:
+			setOnlineStatus( m_protocol->m_StatusUnknown );
+	}
+}
+
+/*
 IRCServerContact::IRCServerContact(IRCContactManager *contactManager, const QString &servername, Kopete::MetaContact *m)
 	: IRCContact(contactManager, servername, m, "irc_server")
 {
@@ -37,13 +68,12 @@ IRCServerContact::IRCServerContact(IRCContactManager *contactManager, const QStr
 
 	QObject::connect(engine, SIGNAL(internalError(KIRC::Engine::Error, KIRC::Message &)),
 			this, SLOT(engineInternalError(KIRC::Engine::Error, KIRC::Message &)));
-/*
+
 	//FIXME: Have some kind of a debug option for raw input/ouput display??
-	QObject::connect(engine, SIGNAL(sentMessage(KIRC::Message &)),
-			this, SLOT(engineSentMessage(KIRC::Message &)));
-	QObject::connect(engine, SIGNAL(receivedMessage(KIRC::Message &)),
-			this, SLOT(engineReceivedMessage(KIRC::Message &)));
-*/
+//	QObject::connect(engine, SIGNAL(sentMessage(KIRC::Message &)),
+//			this, SLOT(engineSentMessage(KIRC::Message &)));
+//	QObject::connect(engine, SIGNAL(receivedMessage(KIRC::Message &)),
+//			this, SLOT(engineReceivedMessage(KIRC::Message &)));
 
 	QObject::connect(engine, SIGNAL(incomingNotice(const QString &, const QString &)),
 			this, SLOT(slotIncomingNotice(const QString &, const QString &)));
@@ -64,30 +94,6 @@ IRCServerContact::IRCServerContact(IRCContactManager *contactManager, const QStr
 			this, SLOT(slotViewCreated(KopeteView*)) );
 
 	updateStatus();
-}
-
-void IRCServerContact::updateStatus()
-{
-	KIRC::Engine::Status status = kircEngine()->status();
-	switch( status )
-	{
-		case KIRC::Engine::Idle:
-		case KIRC::Engine::Connecting:
-			if( m_chatSession )
-				m_chatSession->setDisplayName( caption() );
-			setOnlineStatus( m_protocol->m_ServerStatusOffline );
-			break;
-
-		case KIRC::Engine::Authentifying:
-		case KIRC::Engine::Connected:
-		case KIRC::Engine::Closing:
-			// should make some extra check here
-			setOnlineStatus( m_protocol->m_ServerStatusOnline );
-			break;
-
-		default:
-			setOnlineStatus( m_protocol->m_StatusUnknown );
-	}
 }
 
 void IRCServerContact::engineInternalError(KIRC::Engine::Error engineError, KIRC::Message &ircmsg)
@@ -191,3 +197,4 @@ void IRCServerContact::slotViewCreated( KopeteView *v )
 	if (m_chatSession && v->msgManager() == m_chatSession)
 		QTimer::singleShot(500, this, SLOT(slotDumpMessages()));
 }
+*/

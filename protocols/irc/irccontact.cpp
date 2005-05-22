@@ -112,6 +112,7 @@ void IRCContact::entityUpdated()
 {
 	Global::Properties *prop = Global::Properties::self();
 
+	// Basic entity properties.
 	setProperty(prop->nickName(), m_entity->name());
 //	setProperty(???->serverName(), m_entity->server());
 //	setProperty(???->type(), m_entity->type());
@@ -122,105 +123,55 @@ void IRCContact::entityUpdated()
 //	setProperty(???->topic(), m_entity->topic());
 
 	// Contact properties
+
+	// Update Icon properties
+	switch(m_entity->type())
+	{
+//	case KIRC::Entity::Unknown: // Use default
+	case KIRC::Entity::Server:
+		setIcon("irc_server");
+		break;
+	case KIRC::Entity::Channel:
+		setIcon("irc_channel");
+		break;
+//	case KIRC::Entity::Service: // Use default for now
+//		setIcon("irc_service");
+//		break;
+	case KIRC::Entity::User:
+		setIcon("irc_user");
+		break;
+	default:
+//		setIcon("irc_unknown");
+		break;
+	}
+
+	updateStatus();
 }
 
-const QString IRCContact::caption() const
+QString IRCContact::caption() const
 {
 	return QString::null;
 }
-/*
-const QString IRCServerContact::caption() const
-{
-	return i18n("%1 @ %2").arg(ircAccount()->mySelf()->nickName() ).arg(
-		kircEngine()->currentHost().isEmpty() ? ircAccount()->networkName() : kircEngine()->currentHost()
-	);
-}
-
-const QString IRCChannelContact::caption() const
-{
-	QString cap = QString::fromLatin1("%1 @ %2").arg(m_nickName).arg(kircEngine()->currentHost());
-	if(!mTopic.isEmpty())
-		cap.append( QString::fromLatin1(" - %1").arg(Kopete::Message::unescape(mTopic)) );
-
-	return cap;
-}
-
-const QString IRCUserContact::caption() const
-{
-	return i18n("%1 @ %2").arg(m_nickName).arg(kircEngine()->currentHost());
-}
-*/
 
 void IRCContact::updateStatus()
 {
-        Kopete::OnlineStatus newStatus;
-
-	switch (kircEngine()->status())
+	switch (m_entity->type())
 	{
-		case KIRC::Engine::Idle:
-			newStatus = m_protocol->m_UserStatusOffline;
-			break;
-
-		case KIRC::Engine::Connecting:
-		case KIRC::Engine::Authentifying:
-			if (this == ircAccount()->mySelf())
-				newStatus = m_protocol->m_UserStatusConnecting;
-			else
-				newStatus = m_protocol->m_UserStatusOffline;
-			break;
-
-		case KIRC::Engine::Connected:
-//			if (m_isAway)
-//				newStatus = m_protocol->m_UserStatusAway;
-//			else if (m_isOnline)
-				newStatus = m_protocol->m_UserStatusOnline;
-			break;
-
-		case KIRC::Engine::Closing:
-			newStatus = m_protocol->m_UserStatusOffline;
-			break;
-
-		default:
-			newStatus = m_protocol->m_StatusUnknown;
+//	case KIRC::Entity::Unknown: // Use default
+	case KIRC::Entity::Server:
+		server_updateStatus();
+		break;
+	case KIRC::Entity::Channel:
+		channel_updateStatus();
+		break;
+//	case KIRC::Entity::Service: // Use default for now
+	case KIRC::Entity::User:
+		user_updateStatus();
+		break;
+	default:
+		setOnlineStatus(m_protocol->m_StatusUnknown);
+		break;
 	}
-/*
-	// This may not be created yet ( for myself() on startup )
-	if( ircAccount()->contactManager() )
-	{
-		QValueList<IRCChannelContact*> channels = ircAccount()->contactManager()->findChannelsByMember(this);
-
-		for( QValueList<IRCChannelContact*>::iterator it = channels.begin(); it != channels.end(); ++it )
-		{
-			IRCChannelContact *channel = *it;
-			Kopete::OnlineStatus currentStatus = channel->manager()->contactOnlineStatus(this);
-
-			if( currentStatus.internalStatus() > IRCProtocol::Online )
-			{
-				if( !(currentStatus.internalStatus() & IRCProtocol::Away) && newStatus == m_protocol->m_UserStatusAway )
-				{
-					channel->manager()->setContactOnlineStatus(
-						this, m_protocol->statusLookup(
-							(IRCProtocol::IRCStatus)(currentStatus.internalStatus()+IRCProtocol::Away)
-						)
-					);
-				}
-				else if( (currentStatus.internalStatus() & IRCProtocol::Away) && newStatus == m_protocol->m_UserStatusOnline )
-				{
-					channel->manager()->setContactOnlineStatus(
-						this, m_protocol->statusLookup(
-							(IRCProtocol::IRCStatus)(currentStatus.internalStatus()-IRCProtocol::Away)
-						)
-					);
-				}
-				else if( newStatus.internalStatus() < IRCProtocol::Away )
-				{
-					channel->manager()->setContactOnlineStatus( this, newStatus );
-				}
-			}
-		}
-	}
-*/
-	setOnlineStatus( newStatus );
 }
 
 bool IRCContact::isReachable()
