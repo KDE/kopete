@@ -65,7 +65,6 @@
 #include "kopetestdaction.h"
 #include "kopeteawayaction.h"
 #include "kopeteuiglobal.h"
-#include "systemtray.h"
 #include "kopeteonlinestatusmanager.h"
 
 /* KMainWindow is very broken from our point of view - it deref()'s the app
