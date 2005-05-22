@@ -170,6 +170,8 @@ void dlgJabberVCard::assignVCard (const XMPP::VCard &vCard)
 	}
 
 	// email
+	m_mainWidget->urlWorkEmail->setUseCursor ( false );
+	m_mainWidget->urlHomeEmail->setUseCursor ( false );
 	for(XMPP::VCard::EmailList::const_iterator it = vCard.emailList().begin(); it != vCard.emailList().end(); it++)
 	{
 		XMPP::VCard::Email email = (*it);
@@ -179,7 +181,7 @@ void dlgJabberVCard::assignVCard (const XMPP::VCard &vCard)
 			m_mainWidget->leWorkEmail->setText (email.userid);
 			m_mainWidget->urlWorkEmail->setText (email.userid);
 			m_mainWidget->urlWorkEmail->setURL ("mailto:" + email.userid);
-			m_mainWidget->urlWorkEmail->setUseCursor ( !email.userid.isEmpty () );
+			m_mainWidget->urlWorkEmail->setUseCursor ( !email.userid.stripWhiteSpace().isEmpty () );
 		}
 		else
 		if(email.home)
@@ -187,18 +189,7 @@ void dlgJabberVCard::assignVCard (const XMPP::VCard &vCard)
 			m_mainWidget->leHomeEmail->setText (email.userid);
 			m_mainWidget->urlHomeEmail->setText (email.userid);
 			m_mainWidget->urlHomeEmail->setURL ("mailto:" + email.userid);
-			m_mainWidget->urlHomeEmail->setUseCursor ( !email.userid.isEmpty () );
-		}
-		else
-		// we don't support editing the following addresses but will display them
-		if(email.internet || email.x400)
-		{
-			m_mainWidget->urlHomeEmail->setText (email.userid);
-			m_mainWidget->urlHomeEmail->setURL ("mailto:" + email.userid);
-			m_mainWidget->urlHomeEmail->setUseCursor ( !email.userid.isEmpty () );
-			m_mainWidget->urlWorkEmail->setText (email.userid);
-			m_mainWidget->urlWorkEmail->setURL ("mailto:" + email.userid);
-			m_mainWidget->urlWorkEmail->setUseCursor ( !email.userid.isEmpty () );
+			m_mainWidget->urlHomeEmail->setUseCursor ( !email.userid.stripWhiteSpace().isEmpty () );
 		}
 	}
 
