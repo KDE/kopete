@@ -299,10 +299,20 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			QString description = (*it).desc().isEmpty() ? (*it).url() : (*it).desc();
 			QString url = (*it).url ();
 
-			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList,
-											 QString ( "<a href=\"%1\">%2</a>" ).arg ( url ).arg ( description ),
-											 message.subject (), Kopete::Message::Inbound,
-											 Kopete::Message::RichText, viewPlugin );
+			if ( description.isEmpty () )
+			{
+				newMessage = new Kopete::Message ( message.timeStamp (), this, contactList,
+												 QString ( "<a href=\"%1\">%2</a>" ).arg ( url ).arg ( url ),
+												 message.subject (), Kopete::Message::Inbound,
+												 Kopete::Message::RichText, viewPlugin );
+			}
+			else
+			{
+				newMessage = new Kopete::Message ( message.timeStamp (), this, contactList,
+												 QString ( "<a href=\"%1\">%2</a>" ).arg ( url ).arg ( description ),
+												 message.subject (), Kopete::Message::Inbound,
+												 Kopete::Message::RichText, viewPlugin );
+			}
 
 			mManager->appendMessage ( *newMessage, message.from().resource () );
 
