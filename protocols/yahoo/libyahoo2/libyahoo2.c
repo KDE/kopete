@@ -1275,6 +1275,9 @@ static void yahoo_process_status(struct yahoo_input_data *yid, struct yahoo_pack
 	int idle = 0;
 	char *msg = NULL;
 
+	/*FIX for Custom Status Message*/
+	int custom_status = 0;
+
 	if(pkt->service == YAHOO_SERVICE_LOGOFF && pkt->status == -1) {
 		YAHOO_CALLBACK(ext_yahoo_login_response)(yd->client_id, YAHOO_LOGIN_DUPL, NULL);
 		return;
@@ -1326,7 +1329,8 @@ static void yahoo_process_status(struct yahoo_input_data *yid, struct yahoo_pack
 			if (state == YAHOO_STATUS_AVAILABLE) {
 				YAHOO_CALLBACK(ext_yahoo_status_changed)(yd->client_id, name, state, NULL, 0);
 			} else if (state == YAHOO_STATUS_CUSTOM) {
-				YAHOO_CALLBACK(ext_yahoo_status_changed)(yd->client_id, name, state, msg, away);
+				/*YAHOO_CALLBACK(ext_yahoo_status_changed)(yd->client_id, name, state, msg, away);*/
+				custom_status = 1;	/*FIX for Custom Status Message*/
 			} else {
 				YAHOO_CALLBACK(ext_yahoo_status_changed)(yd->client_id, name, state, NULL, idle);
 			}
@@ -1344,6 +1348,10 @@ static void yahoo_process_status(struct yahoo_input_data *yid, struct yahoo_pack
 			break;
 		}
 	}
+
+	/*FIX for Custom Status Message*/
+	if (custom_status)
+		YAHOO_CALLBACK(ext_yahoo_status_changed)(yd->client_id, name, state, msg, away);
 }
 
 static void yahoo_process_list(struct yahoo_input_data *yid, struct yahoo_packet *pkt)
