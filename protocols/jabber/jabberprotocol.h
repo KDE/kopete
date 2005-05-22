@@ -70,7 +70,7 @@ public:
 	virtual Kopete::Contact *deserializeContact (Kopete::MetaContact * metaContact,
 									 const QMap < QString, QString > &serializedData, const QMap < QString, QString > &addressBookData);
 
-	enum OnlineStatus { JabberOnline, JabberChatty, JabberAway, JabberXA, JabberDND,
+	enum OnlineStatus { JabberOnline, JabberFreeForChat, JabberAway, JabberXA, JabberDND,
 						JabberOffline, JabberInvisible, JabberConnecting };
 
 	const Kopete::OnlineStatus JabberKOSChatty;

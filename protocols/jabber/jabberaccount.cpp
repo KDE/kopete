@@ -717,21 +717,44 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status  , const
 		return;
 	}
 
-	static const char* statuses[]={ "" , "chat" , "away" , "xa" , "dnd" , "" , "" };
+	XMPP::Status xmppStatus ( "", reason );
 
-	XMPP::Status xmppstatus ( statuses[status.internalStatus()%7] , "", 0, true );
+	switch ( status.internalStatus () )
+	{
+		case JabberProtocol::JabberFreeForChat:
+			xmppStatus.setShow ( "chat" );
+			break;
 
-	if(status.internalStatus() == 6 )
-		xmppstatus.setIsInvisible(true);
+		case JabberProtocol::JabberOnline:
+			xmppStatus.setShow ( "" );
+			break;
+
+		case JabberProtocol::JabberAway:
+			xmppStatus.setShow ( "away" );
+			break;
+
+		case JabberProtocol::JabberXA:
+			xmppStatus.setShow ( "xa" );
+			break;
+
+		case JabberProtocol::JabberDND:
+			xmppStatus.setShow ( "dnd" );
+			break;
+
+		case JabberProtocol::JabberInvisible:
+			xmppStatus.setIsInvisible ( true );
+			break;
+	}
 
 	if ( !isConnected () )
-	{		/* We are not connected yet, so connect now. */
-		initialPresence = xmppstatus;
+	{
+		// we are not connected yet, so connect now
+		initialPresence = xmppStatus;
 		connect ();
 	}
 	else
 	{
-		setPresence ( xmppstatus );
+		setPresence ( xmppStatus );
 	}
 }
 
