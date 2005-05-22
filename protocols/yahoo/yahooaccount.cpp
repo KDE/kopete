@@ -32,13 +32,14 @@
 #include <kpopupmenu.h>
 #include <kmessagebox.h>
 #include <kapplication.h>
+#include <krun.h>
 
 // Kopete
 #include <kopetechatsession.h>
 #include <kopetemessage.h>
 #include <kopetepassword.h>
 #include <kopeteuiglobal.h>
-#include <knotifyclient.h>
+#include <knotification.h>
 #include <kopetemetacontact.h>
 #include <kopetecontactlist.h>
 
@@ -733,15 +734,15 @@ void YahooAccount::slotMailNotify( const QString& from, const QString& /* subjec
 
 	if ( cnt > m_currentMailCount && from.isEmpty() )
 	{
-		KNotifyClient::event( Kopete::UI::Global::sysTrayWId(), "yahoo_mail",
-		                      i18n( "You have one unread message in your Yahoo inbox.",
-		                            "You have %n unread messages in your Yahoo inbox.", cnt ));
+		QObject::connect(KNotification::event( "yahoo_mail", i18n( "You have one unread message in your Yahoo inbox.",
+			"You have %n unread messages in your Yahoo inbox.", cnt ), 0 , 0 , i18n( "Open Inbox..." ) ),
+		                 SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 		m_currentMailCount = cnt;
 	}
 	else if ( cnt > m_currentMailCount )
 	{	kdDebug(14180) << k_funcinfo << "attempting to trigger event" << endl;
-		KNotifyClient::event( Kopete::UI::Global::sysTrayWId(), "yahoo_mail",
-		                      i18n( "You have a message from %1 in your Yahoo inbox.").arg(from));
+		QObject::connect(KNotification::event( "yahoo_mail", i18n( "You have a message from %1 in your Yahoo inbox.").arg(from) 
+			, 0 , 0 , i18n( "Open Inbox..." ) ), SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 		m_currentMailCount = cnt;
 	}
 }
@@ -781,6 +782,11 @@ void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const Q
 	{
 		slotGoStatus( status.internalStatus(), reason );
 	}
+}
+
+void YahooAccount::slotOpenInbox()
+{
+	KRun::runURL( KURL( QString::fromLatin1("http://mail.yahoo.com/") ) , "text/html" );
 }
 
 #include "yahooaccount.moc"

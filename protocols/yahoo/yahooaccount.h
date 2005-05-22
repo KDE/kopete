@@ -139,6 +139,7 @@ protected slots:
 	void slotConnected();
 	void slotGoOnline();
 	void slotGoOffline();
+	void slotOpenInbox();				// Open Yahoo Mailbox in browser
 
 	void slotGoStatus(int status, const QString &awayMessage = QString::null);
 	void slotLoginResponse(int succ, const QString &url);
