@@ -191,8 +191,10 @@ Kopete::Protocol* Kopete::ChatSession::protocol() const
 #include "kopetemessagehandler.h"
 #include "kopetemessageevent.h"
 
+namespace Kopete {
+
 // FIXME: remove this and the friend decl in KMM
-class Kopete::TemporaryKMMCallbackAppendMessageHandler : public Kopete::MessageHandler
+class TemporaryKMMCallbackAppendMessageHandler : public Kopete::MessageHandler
 {
 	Kopete::ChatSession *manager;
 public:
@@ -207,6 +209,8 @@ public:
 		delete event;
 	}
 };
+
+}
 
 class TempFactory : public Kopete::MessageHandlerFactory
 {
