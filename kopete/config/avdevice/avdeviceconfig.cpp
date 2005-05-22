@@ -118,7 +118,7 @@ void AVDeviceConfig::slotValueChanged(int){
 
 void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
 	int newdevice = mPrfsVideoDevice->mInputKComboBox->currentItem();
-	if ((newdevice < d->m_videodevice.size())&&(newdevice!=d->m_current_device))
+	if ((newdevice < d->m_videodevice.size())&&(newdevice!=d->currentDevice()))
 	{
 		d->selectDevice(newdevice);
 		d->open();

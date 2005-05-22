@@ -64,6 +64,8 @@ public:
 	QValueVector<Kopete::AV::VideoInput> m_video_input;
 	int fillDeviceKcomboBox(KComboBox *combobox);
 	int fillInputKComboBox(KComboBox *combobox);
+	int currentDevice();
+	int currentInput();
 
 protected:
 	std::string name;
@@ -96,6 +98,7 @@ protected:
 	buffer2 currentbuffer;
 	QFile file;
 	int m_current_device;
+	int m_current_input;
 
 protected:
 	int xioctl(int request, void *arg);

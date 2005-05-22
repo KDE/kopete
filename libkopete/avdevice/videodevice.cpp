@@ -792,6 +792,7 @@ int Kopete::AV::VideoDevice::selectInput(int input)
 			break;
 	}
 	kdDebug() << "libkopete (avdevice): selectInput: Selected input " << input << " (" << m_video_input[input].name << ")" << endl;
+	m_current_input=input;
 	return EXIT_SUCCESS;
 #endif
 }
@@ -886,4 +887,23 @@ int Kopete::AV::VideoDevice::scanDevices()
 
 }
 
+}
+
+
+/*!
+    \fn Kopete::AV::VideoDevice::currentDevice()
+ */
+int Kopete::AV::VideoDevice::currentDevice()
+{
+    /// @todo implement me
+	return m_current_device;
+}
+
+/*!
+    \fn Kopete::AV::VideoDevice::currentInput()
+ */
+int Kopete::AV::VideoDevice::currentInput()
+{
+    /// @todo implement me
+	return m_current_input;
 }
