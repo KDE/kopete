@@ -131,6 +131,7 @@ int VideoDevice::getFrame()
  */
 int VideoDevice::checkDevice(int handle, VideoDeviceListItem *videodevice)
 {
+#ifdef HAVE_V4L2
 	memset(&videodevice->V4L2_capabilities, 0, sizeof(videodevice->V4L2_capabilities));
 
 	if (-1 == ioctl (handle, VIDIOC_QUERYCAP, &videodevice->V4L2_capabilities))
@@ -167,10 +168,12 @@ int VideoDevice::checkDevice(int handle, VideoDeviceListItem *videodevice)
 		kdDebug() << "libkopete (avdevice): intDevice(): " << path.c_str() << " is a V4L2 device." << endl;
 		videodevice->m_driver=VIDEODEV_DRIVER_V4L2;
 	}
+#endif // HAVE_V4L2
 
 // Now we must execute the proper initialization according to the type of the driver.
 	switch(videodevice->m_driver)
 	{
+#ifdef HAVE_V4L2
 		case VIDEODEV_DRIVER_V4L2:
 			kdDebug() << "libkopete (avdevice): Driver: " << (const char*)videodevice->V4L2_capabilities.driver << " "
 				<< ((videodevice->V4L2_capabilities.version>>16) & 0xFF) << "."
@@ -196,6 +199,7 @@ int VideoDevice::checkDevice(int handle, VideoDeviceListItem *videodevice)
 			if(videodevice->V4L2_capabilities.capabilities & V4L2_CAP_AUDIO)
 				kdDebug() << "libkopete (avdevice):     Audio IO" << endl;
 			break;
+#endif // HAVE_V4L2
 		case VIDEODEV_DRIVER_V4L:
 
 			break;
