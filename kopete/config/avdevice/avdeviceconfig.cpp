@@ -165,8 +165,8 @@ void AVDeviceConfig::slotUpdateImage()
 	d->getFrame();
 	d->getImage(&qimage);
 	qpixmap.convertFromImage(qimage,0);
-//	bitBlt((QPaintDevice*)&m_video_image, 0, 0, (QPaintDevice*)&qpixmap, 0, Qt::CopyROP);
-	mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
+	bitBlt(mPrfsVideoDevice->mVideoImageLabel, 0, 0, &qimage, 0, Qt::CopyROP);
+//	mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
 	kdDebug() << "kopete (avdeviceconfig_videoconfig): Image updated." << endl;
 //	emit changed( true );
 }
