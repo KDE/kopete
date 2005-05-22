@@ -146,7 +146,7 @@ void KopeteRichTextEditPart::createActions( KActionCollection *ac )
 	action_font_size = new KFontSizeAction( i18n("Font &Size"), 0,
 			ac, "format_font_size" );
 	connect( action_font_size, SIGNAL( fontSizeChanged(int) ),
-		editor, SLOT( setPointSize(int) ) );
+		this, SLOT( setFontSize(int) ) );
 
 	//Formatting
 	action_bold = new KToggleAction( i18n("&Bold"), "text_bold", CTRL+Key_B,
@@ -374,7 +374,14 @@ void KopeteRichTextEditPart::setBgColor( const QColor &newColor )
 		editor->setPalette(pal);
 }
 
-
+void KopeteRichTextEditPart::setFontSize( int size )
+{
+	mFont.setPointSize( size );
+	if( m_capabilities & Kopete::Protocol::RichFont )
+		editor->setPointSize( size );
+	else if( m_capabilities & Kopete::Protocol::BaseFont)
+		editor->setFont( mFont );
+}
 
 void KopeteRichTextEditPart::setFont()
 {
