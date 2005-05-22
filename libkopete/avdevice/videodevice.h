@@ -48,6 +48,7 @@ public:
 	static VideoDevice* self();
 	int open();
 	int getFrame();
+	int checkDevice(int handle, VideoDeviceListItem *videodevice);
 	int initDevice();
 	int close();
 	int setDevice(int device);
@@ -61,19 +62,13 @@ public:
 	~VideoDevice();
 	QValueVector <Kopete::AV::VideoDeviceListItem> m_videodevice;
 	QValueVector<Kopete::AV::VideoInput> m_video_input;
+	int fillDeviceKcomboBox(KComboBox *combobox);
 	int fillInputKComboBox(KComboBox *combobox);
 
 protected:
 	std::string name;
 	std::string path;
 	int descriptor;
-	typedef enum
-	{
-		VIDEODEV_DRIVER_NONE,
-		VIDEODEV_DRIVER_V4L,
-		VIDEODEV_DRIVER_V4L2,
-	} videodev_driver;
-	videodev_driver m_driver;
 	typedef enum
 	{
 		IO_METHOD_NONE,
@@ -99,6 +94,8 @@ protected:
 	QValueVector<buffer> buffers;
 	unsigned int     n_buffers;
 	buffer2 currentbuffer;
+	QFile file;
+	int m_current_device;
 
 protected:
 	int xioctl(int request, void *arg);
