@@ -39,7 +39,8 @@ struct KSSLSocketPrivate
 	QSocketNotifier *socketNotifier;
 };
 
-KSSLSocket::KSSLSocket() : KExtendedSocket()
+KSSLSocket::KSSLSocket()
+	: KExtendedSocket()
 {
 	d = new KSSLSocketPrivate;
 	d->kssl = 0;

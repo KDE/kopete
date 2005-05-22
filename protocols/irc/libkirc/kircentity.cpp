@@ -40,16 +40,22 @@ const QRegExp Entity::sm_userStrictRegExp(QString::fromLatin1("^([^\\s,:!@]+)!([
 
 const QRegExp Entity::sm_channelRegExp( QString::fromLatin1("^[#!+&][^\\s,]+$") );
 
-Entity::Entity(const QString &, const Type type)
+Entity::Entity(const QString &name, const Type type)
 	: QObject(0, "KIRC::Entity"),
 	  m_type(type)
 {
-//	rename(name, type);
+	setName(name);
 }
 
 Entity::~Entity()
 {
 	emit destroyed(this);
+}
+
+void Entity::setName(const QString &name)
+{
+	m_name = name;
+	emit updated();
 }
 
 QString Entity::name() const
@@ -59,19 +65,7 @@ QString Entity::name() const
 
 QString Entity::host() const
 {
-	switch(m_type)
-	{
-//	case Unknown:
-	case Server:
-		return m_name;
-//	case Channel:
-	case Service:
-	case User:
-		return userHost();
-	default:
-		kdDebug(14121) << k_funcinfo << "No host defined for type:" << m_type;
-		return QString::null;
-	}
+	return m_host;
 }
 
 KIRC::Entity::Type Entity::type() const
@@ -91,42 +85,15 @@ KIRC::Entity::Type Entity::guessType(const QString &)
 	return Unknown;
 }
 
-QString Entity::userNick() const
+void Entity::setCodec(QTextCodec *codec)
 {
-	return userNick(m_name);
+	m_codec = codec;
+	emit updated();
 }
 
-QString Entity::userNick(const QString &s)
+QTextCodec *Entity::codec() const
 {
-	return userInfo(s, 1);
-}
-
-QString Entity::userName() const
-{
-	return userName(m_name);
-}
-
-QString Entity::userName(const QString &s)
-{
-	return userInfo(s, 2);
-}
-
-QString Entity::userHost() const
-{
-	return userHost(m_name);
-}
-
-QString Entity::userHost(const QString &s)
-{
-	return userInfo(s, 3);
-}
-
-QString Entity::userInfo(const QString &s, int num)
-{
-	QRegExp userRegExp(sm_userRegExp);
-	userRegExp.search(s);
-	return userRegExp.cap(num);
+	return m_codec;
 }
 
 #include "kircentity.moc"
-

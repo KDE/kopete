@@ -1,9 +1,9 @@
 /*
     irctransferhandler.cpp - IRC transfer.
 
-    Copyright (c) 2004      by Michel Hermier <michel.hermier@wanadoo.fr>
+    Copyright (c) 2004-2005 by Michel Hermier <michel.hermier@wanadoo.fr>
 
-    Kopete    (c) 2004      by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2004-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -15,18 +15,17 @@
     *************************************************************************
 */
 
-#include <kdebug.h>
+#include "irccontact.h"
+#include "irctransferhandler.h"
+
+#include "kirctransfer.h"
+#include "kirctransferhandler.h"
+
+#include "kopetemetacontact.h"
 
 #include <kopetetransfermanager.h>
 
-#include "libkirc/kirctransfer.h"
-#include "libkirc/kirctransferhandler.h"
-
-#include "kopetemetacontact.h"
-#include "irccontact.h"
-#include "irccontactmanager.h"
-
-#include "irctransferhandler.h"
+#include <kdebug.h>
 
 IRCTransferHandler *IRCTransferHandler::self()
 {
@@ -51,7 +50,7 @@ IRCTransferHandler::IRCTransferHandler()
 }
 
 void IRCTransferHandler::transferCreated(KIRC::Transfer *t)
-{
+{/*
 	kdDebug(14120) << k_funcinfo << endl;
 
 	IRCContact *contact = IRCContactManager::existContact(t->engine(), t->nick());
@@ -85,7 +84,7 @@ void IRCTransferHandler::transferCreated(KIRC::Transfer *t)
 	default:
 		kdDebug(14120) << k_funcinfo << "Unknown transfer type" << endl;
 		t->deleteLater();
-	}
+	}*/
 }
 
 void IRCTransferHandler::transferAccepted(Kopete::Transfer *kt, const QString &file)

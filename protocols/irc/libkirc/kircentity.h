@@ -18,14 +18,14 @@
 #ifndef KIRCENTITY_H
 #define KIRCENTITY_H
 
-#include <kdeversion.h>
-#include <kresolver.h>
 #include <ksharedptr.h>
 
 #include <qobject.h>
 #include <qregexp.h>
 #include <qstring.h>
 #include <qvaluelist.h>
+
+class QTextCodec;
 
 namespace KIRC
 {
@@ -48,15 +48,21 @@ public:
 		User
 	};
 
-	Entity(const QString &name, const Type type = Unknown);
-	virtual ~Entity();
+	static KIRC::Entity::Type guessType(const QString &name);
 
-	QString name() const;
-	QString host() const;
+	Entity(const QString &name = QString::null, const Type type = Unknown);
+	virtual ~Entity();
 
 	KIRC::Entity::Type type() const;
 	KIRC::Entity::Type guessType();
-	static KIRC::Entity::Type guessType(const QString &name);
+
+	void setName(const QString &);
+	QString name() const;
+
+	QString host() const;
+
+	void setCodec(QTextCodec *);
+	QTextCodec *codec() const;
 
 	// FIXME: Remove these is* functions ... They are duplicate with the ::guessType(const QString&)
 	inline static bool isUser( const QString &s )
@@ -66,17 +72,10 @@ public:
 	inline static bool isChannel( const QString &s )
 		{ return sm_channelRegExp.exactMatch(s); };
 
-	QString userNick() const;
-	static QString userNick(const QString &s);
-
-	QString userName() const;
-	static QString userName(const QString &s);
-
-	QString userHost() const;
-	static QString userHost(const QString &s);
-
 signals:
 	void destroyed(KIRC::Entity *self);
+
+	void updated();
 
 private:
 
@@ -87,10 +86,11 @@ private:
 	static const QRegExp sm_channelRegExp;
 
 	KIRC::Entity::Type m_type;
-	QString	m_name;
 
-	// peer ip address if the entity is a User.
-	QString m_address;
+	QString	m_name;
+	QString m_host;
+
+	QTextCodec *m_codec;
 };
 
 class EntityPtr

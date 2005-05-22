@@ -2,11 +2,11 @@
 /*
     kircnumericreplies.cpp - IRC Client
 
-    Copyright (c) 2003      by Michel Hermier <michel.hermier@wanadoo.fr>
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
+    Copyright (c) 2003-2005 by Michel Hermier <michel.hermier@wanadoo.fr>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -19,6 +19,9 @@
 */
 
 #include "kircengine.h"
+
+#include <kdebug.h>
+#include <klocale.h>
 
 #include <qtimer.h>
 
@@ -92,7 +95,7 @@ void Engine::bindNumericReplies()
 	bind(475, this, SLOT(numericReply_475(KIRC::Message &)), 2, 2);
 
 	//Freenode seems to use this for a non-RFC compliant purpose, as does Unreal
-	bind(477, this, SLOT(emitSuffix(KIRC::Message&)),0,0);
+	bind(477, this, SLOT(receivedServerMessage(KIRC::Message&)),0,0);
 }
 
 /* 001: "Welcome to the Internet Relay Network <nick>!<user>@<host>"
@@ -114,7 +117,7 @@ void Engine::numericReply_001(Message &msg)
 	/* At this point we are connected and the server is ready for us to being taking commands
 	 * although the MOTD comes *after* this.
 	 */
-	emitSuffix(msg);
+	receivedServerMessage(msg);
 
 	setStatus(Connected);
 }
@@ -124,7 +127,7 @@ void Engine::numericReply_001(Message &msg)
  */
 void Engine::numericReply_002(Message &msg)
 {
-	emitSuffix(msg);
+	receivedServerMessage(msg);
 }
 
 /* 003: "This server was created <date>"
@@ -133,7 +136,7 @@ void Engine::numericReply_002(Message &msg)
  */
 void Engine::numericReply_003(Message &msg)
 {
-	emitSuffix(msg);
+	receivedServerMessage(msg);
 }
 
 /* 004: "<servername> <version> <available user modes> <available channel modes>"
@@ -141,7 +144,7 @@ void Engine::numericReply_003(Message &msg)
  */
 void Engine::numericReply_004(Message &msg)
 {
-	emit incomingHostInfo(msg.arg(1),msg.arg(2),msg.arg(3),msg.arg(4));
+//	emit incomingHostInfo(msg.arg(1),msg.arg(2),msg.arg(3),msg.arg(4));
 }
 
 /* 005:
@@ -149,7 +152,7 @@ void Engine::numericReply_004(Message &msg)
  */
 void Engine::numericReply_005(Message &msg)
 {
-	emit incomingConnectString( msg.toString() );
+//	emit incomingConnectString(msg.toString());
 }
 
 /* 250: ":Highest connection count: <integer> (<integer> clients)
@@ -159,7 +162,7 @@ void Engine::numericReply_005(Message &msg)
  */
 void Engine::numericReply_250(Message &msg)
 {
-	emit incomingConnectString( msg.suffix() );
+	receivedServerMessage(msg);
 }
 
 /* 251: ":There are <integer> users and <integer> services on <integer> servers"
@@ -167,14 +170,15 @@ void Engine::numericReply_250(Message &msg)
  */
 void Engine::numericReply_251(Message &msg)
 {
-	emit incomingConnectString( msg.suffix() );
+	receivedServerMessage(msg);
 }
+
 /* 252: "<integer> :operator(s) online"
  * Issues a number of operators on the server in the form of:
  */
 void Engine::numericReply_252(Message &msg)
 {
-	emit incomingConnectString( msg.arg(1) + ' ' + msg.suffix() );
+	receivedServerMessage(msg, i18n("There are %1 operators online").arg(msg.arg(1)));
 }
 
 /* 253: "<integer> :unknown connection(s)"
@@ -182,14 +186,15 @@ void Engine::numericReply_252(Message &msg)
  */
 void Engine::numericReply_253(Message &msg)
 {
-	emit incomingConnectString( msg.arg(1) + ' ' + msg.suffix() );
+	receivedServerMessage(msg, i18n("There are %1 unknown connections").arg(msg.arg(1)));
 }
 
-/* Tells how many total channels there are on this network in the form of:
- * "<integer> :channels formed" */
+/* 254: "<integer> :channels formed"
+ * Tells how many total channels there are on this network.
+ *  */
 void Engine::numericReply_254(Message &msg)
 {
-	emit incomingConnectString( msg.arg(1) + ' ' + msg.suffix() );
+	receivedServerMessage(msg, i18n("There are %1 channel formed").arg(msg.arg(1)));
 }
 
 /* 255: ":I have <integer> clients and <integer> servers"
@@ -197,7 +202,7 @@ void Engine::numericReply_254(Message &msg)
  */
 void Engine::numericReply_255(Message &msg)
 {
-	emit incomingConnectString( msg.suffix() );
+	receivedServerMessage(msg);
 }
 
 /* 263:
@@ -214,7 +219,7 @@ void Engine::numericReply_263(Message &)
  */
 void Engine::numericReply_265(Message &msg)
 {
-	emit incomingConnectString( msg.suffix() );
+	receivedServerMessage(msg);
 }
 
 /* 266: ":Current global users: <integer>  Max: <integer>"
@@ -222,14 +227,14 @@ void Engine::numericReply_265(Message &msg)
  */
 void Engine::numericReply_266(Message &msg)
 {
-	emit incomingConnectString( msg.suffix() );
+	receivedServerMessage(msg);
 }
 
 /* 301: "<nick> :<away message>"
  */
 void Engine::numericReply_301(Message &msg)
 {
-	emit incomingUserIsAway(Kopete::Message::unescape(msg.arg(1)), msg.suffix());
+	emit incomingUserIsAway(msg.arg(1), msg.suffix());
 }
 
 /* 303: ":*1<nick> *(" " <nick> )"
@@ -240,7 +245,7 @@ void Engine::numericReply_303(Message &msg)
 	for(QStringList::Iterator it = nicks.begin(); it != nicks.end(); ++it)
 	{
 		if (!(*it).stripWhiteSpace().isEmpty())
-			emit incomingUserOnline(Kopete::Message::unescape(*it));
+			emit incomingUserOnline(*it);
 	}
 }
 
@@ -262,7 +267,7 @@ void Engine::numericReply_303(Message &msg)
  */
 void Engine::numericReply_307(Message &msg)
 {
-//	emit incomingWhoiIsUserNickIsRegistered(Kopete::Message::unescape(msg.arg(1)));
+//	emit incomingWhoiIsUserNickIsRegistered(msg.arg(1));
 }
 
 /* 311: "<nick> <user> <host> * :<real name>"
@@ -270,7 +275,7 @@ void Engine::numericReply_307(Message &msg)
  */
 void Engine::numericReply_311(Message &msg)
 {
-	emit incomingWhoIsUser(Kopete::Message::unescape(msg.arg(1)), msg.arg(2), msg.arg(3), msg.suffix());
+	emit incomingWhoIsUser(msg.arg(1), msg.arg(2), msg.arg(3), msg.suffix());
 }
 
 /* 312: "<nick> <server> :<server info>"
@@ -278,7 +283,7 @@ void Engine::numericReply_311(Message &msg)
  */
 void Engine::numericReply_312(Message &msg)
 {
-	emit incomingWhoIsServer(Kopete::Message::unescape(msg.arg(1)), msg.arg(2), msg.suffix());
+	emit incomingWhoIsServer(msg.arg(1), msg.arg(2), msg.suffix());
 }
 
 /* 313: "<nick> :is an IRC operator"
@@ -293,23 +298,23 @@ void Engine::numericReply_313(Message &msg)
  */
 void Engine::numericReply_314(Message &msg)
 {
-	emit incomingWhoWasUser(Kopete::Message::unescape(msg.arg(1)), msg.arg(2), msg.arg(3), msg.suffix());
+	emit incomingWhoWasUser(msg.arg(1), msg.arg(2), msg.arg(3), msg.suffix());
 }
 
 void Engine::numericReply_315(Message &msg)
 {
-	emit incomingEndOfWho(Kopete::Message::unescape(msg.arg(1)));
+	emit incomingEndOfWho(msg.arg(1));
 }
 
+/* RFC say: "<nick> <integer> :seconds idle"
+ * Some servers say: "<nick> <integer> <integer> :seconds idle, signon time"
+ * Show info about someone who is idle (part of a /whois) in the form of:
+ */
 void Engine::numericReply_317(Message &msg)
 {
-	/* RFC say: "<nick> <integer> :seconds idle"
-	 * Some servers say: "<nick> <integer> <integer> :seconds idle, signon time"
-	 * Show info about someone who is idle (part of a /whois) in the form of:
-	 */
-	emit incomingWhoIsIdle(Kopete::Message::unescape(msg.arg(1)), msg.arg(2).toULong());
+	emit incomingWhoIsIdle(msg.arg(1), msg.arg(2).toULong());
 	if (msg.argsSize()==4)
-		emit incomingSignOnTime(Kopete::Message::unescape(msg.arg(1)),msg.arg(3).toULong());
+		emit incomingSignOnTime(msg.arg(1),msg.arg(3).toULong());
 }
 
 /* 318: "<nick>{<space><realname>} :End of /WHOIS list"
@@ -317,15 +322,15 @@ void Engine::numericReply_317(Message &msg)
  */
 void Engine::numericReply_318(Message &msg)
 {
-	emit incomingEndOfWhois(Kopete::Message::unescape(msg.arg(1)));
+	emit incomingEndOfWhois(msg.arg(1));
 }
 
+/* 319: "<nick> :{[@|+]<channel><space>}"
+ * Show info a channel a user is logged in (part of a /whois) in the form of:
+ */
 void Engine::numericReply_319(Message &msg)
 {
-	/* Show info a channel a user is logged in (part of a /whois) in the form of:
-	 * "<nick> :{[@|+]<channel><space>}"
-	 */
-	emit incomingWhoIsChannels(Kopete::Message::unescape(msg.arg(1)), msg.suffix());
+	emit incomingWhoIsChannels(msg.arg(1), msg.suffix());
 }
 
 /* 320:
@@ -333,7 +338,7 @@ void Engine::numericReply_319(Message &msg)
  */
 void Engine::numericReply_320(Message &msg)
 {
-	emit incomingWhoIsIdentified(Kopete::Message::unescape(msg.arg(1)));
+	emit incomingWhoIsIdentified(msg.arg(1));
 }
 
 /* 321: "<channel> :Users  Name" ("Channel :Users  Name")
@@ -346,9 +351,7 @@ void Engine::numericReply_320(Message &msg)
  */
 void Engine::numericReply_322(Message &msg)
 {
-	//kdDebug(14120) << k_funcinfo << "Listed " << msg.arg(1) << endl;
-
-	emit incomingListedChan(Kopete::Message::unescape(msg.arg(1)), msg.arg(2).toUInt(), msg.suffix());
+	emit incomingListedChan(msg.arg(1), msg.arg(2).toUInt(), msg.suffix());
 }
 
 /* 323: ":End of LIST"
@@ -363,7 +366,7 @@ void Engine::numericReply_323(Message &)
  */
 void Engine::numericReply_324(Message &msg)
 {
-	emit incomingChannelMode(Kopete::Message::unescape(msg.arg(1)), msg.arg(2), msg.arg(3));
+	emit incomingChannelMode(msg.arg(1), msg.arg(2), msg.arg(3));
 }
 
 /* 328: "<channel> <mode> <mode params>"
@@ -371,7 +374,7 @@ void Engine::numericReply_324(Message &msg)
 void Engine::numericReply_328(Message &msg)
 {
 	kdDebug(14120) << k_funcinfo << endl;
-	emit incomingChannelHomePage(Kopete::Message::unescape(msg.arg(1)), msg.suffix());
+	emit incomingChannelHomePage(msg.arg(1), msg.suffix());
 }
 
 /* 329: "%s %lu"
@@ -395,7 +398,7 @@ void Engine::numericReply_331( Message &)
  */
 void Engine::numericReply_332(Message &msg)
 {
-	emit incomingExistingTopic(Kopete::Message::unescape(msg.arg(1)), msg.suffix());
+	emit incomingExistingTopic(msg.arg(1), msg.suffix());
 }
 
 /* 333:
@@ -406,7 +409,7 @@ void Engine::numericReply_333( Message &msg )
 	kdDebug(14120) << k_funcinfo << endl;
 	QDateTime d;
 	d.setTime_t( msg.arg(3).toLong() );
-	emit incomingTopicUser( Kopete::Message::unescape(msg.arg(1)), Kopete::Message::unescape(msg.arg(2)), d );
+	emit incomingTopicUser(msg.arg(1), msg.arg(2), d );
 }
 
 /* 352:
@@ -417,8 +420,8 @@ void Engine::numericReply_352(Message &msg)
 	QStringList suffix = QStringList::split( ' ', msg.suffix() );
 
 	emit incomingWhoReply(
-		Kopete::Message::unescape(msg.arg(5)),
-		Kopete::Message::unescape(msg.arg(1)),
+		msg.arg(5),
+		msg.arg(1),
 		msg.arg(2),
 		msg.arg(3),
 		msg.arg(4),
@@ -435,7 +438,7 @@ void Engine::numericReply_352(Message &msg)
  */
 void Engine::numericReply_353(Message &msg)
 {
-	emit incomingNamesList(Kopete::Message::unescape(msg.arg(2)), QStringList::split(' ', msg.suffix()));
+	emit incomingNamesList(msg.arg(2), QStringList::split(' ', msg.suffix()));
 }
 
 /* 366: "<channel> :End of NAMES list"
@@ -475,7 +478,7 @@ void Engine::numericReply_372(Message &msg)
  */
 void Engine::numericReply_401(Message &msg)
 {
-	emit incomingNoSuchNickname( Kopete::Message::unescape(msg.arg(1)) );
+	emit incomingNoSuchNickname(msg.arg(1));
 }
 
 /* 406: "<nickname> :There was no such nickname"
@@ -483,7 +486,7 @@ void Engine::numericReply_401(Message &msg)
  */
 void Engine::numericReply_406(Message &msg)
 {
-	emit incomingNoSuchNickname( Kopete::Message::unescape(msg.arg(1)) );
+	emit incomingNoSuchNickname(msg.arg(1));
 }
 
 /* 433: "<nick> :Nickname is already in use"
@@ -497,13 +500,13 @@ void Engine::numericReply_433(Message &msg)
 		// This differs because the server won't send us a response back telling us our nick changed
 		// (since we aren't logged in).
 		m_FailedNickOnLogin = true;
-		emit incomingFailedNickOnLogin(Kopete::Message::unescape(msg.arg(1)));
+		emit incomingFailedNickOnLogin(msg.arg(1));
 	}
 	else
 	{
 		// And this is the signal for if someone is trying to use the /nick command or such when already logged in,
 		// but it's already in use
-		emit incomingNickInUse(Kopete::Message::unescape(msg.arg(1)));
+		emit incomingNickInUse(msg.arg(1));
 	}
 }
 
@@ -521,7 +524,7 @@ void Engine::numericReply_464(Message &/*msg*/)
  */
 void Engine::numericReply_471(Message &msg)
 {
-	emit incomingFailedChanFull(Kopete::Message::unescape(msg.arg(1)));
+	emit incomingFailedChanFull(msg.arg(1));
 }
 
 /* 473:
@@ -529,7 +532,7 @@ void Engine::numericReply_471(Message &msg)
  */
 void Engine::numericReply_473(Message &msg)
 {
-	emit incomingFailedChanInvite(Kopete::Message::unescape(msg.arg(1)));
+	emit incomingFailedChanInvite(msg.arg(1));
 }
 
 /* 474:
@@ -537,7 +540,7 @@ void Engine::numericReply_473(Message &msg)
  */
 void Engine::numericReply_474(Message &msg)
 {
-	emit incomingFailedChanBanned(Kopete::Message::unescape(msg.arg(1)));
+	emit incomingFailedChanBanned(msg.arg(1));
 }
 
 /* 475:
@@ -545,7 +548,7 @@ void Engine::numericReply_474(Message &msg)
  */
 void Engine::numericReply_475(Message &msg)
 {
-	emit incomingFailedChankey(Kopete::Message::unescape(msg.arg(1)));
+	emit incomingFailedChankey(msg.arg(1));
 }
 
 /* 477: "<channel> :You need a registered nick to join that channel."

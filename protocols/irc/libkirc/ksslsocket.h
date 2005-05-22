@@ -25,7 +25,8 @@
 
 class KSSLSocketPrivate;
 
-class KSSLSocket : public KExtendedSocket
+class KSSLSocket
+	: public KExtendedSocket
 {
 	Q_OBJECT
 

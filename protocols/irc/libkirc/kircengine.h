@@ -1,11 +1,11 @@
 /*
     kircengine.h - IRC Client
 
-    Copyright (c) 2003-2004 by Michel Hermier <michel.hermier@wanadoo.fr>
-    Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
+    Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
+    Copyright (c) 2003-2005 by Michel Hermier <michel.hermier@wanadoo.fr>
 
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -25,13 +25,7 @@
 #include "kircmessageredirector.h"
 #include "kirctransfer.h"
 
-#include <kdeversion.h>
-
-// FIXME: Move the following kdedebug class to the *.cpp.
-#include <kdebug.h>
-#if KDE_VERSION < KDE_MAKE_VERSION( 3, 1, 90 )
-#include <kdebugclasses.h>
-#endif
+#include <kbufferedsocket.h>
 
 #include <qdatetime.h>
 #include <qdict.h>
@@ -145,24 +139,19 @@ public:
 	inline void setReqsPassword(bool b)
 		{ m_ReqsPasswd = b; };
 
-	const bool useSSL() const { return m_useSSL; };
 	void setUseSSL( bool useSSL );
+	const bool useSSL() const { return m_useSSL; };
 
-	inline const QTextCodec *codec() const
-		{ return defaultCodec; };
-
-	const QTextCodec *codecForNick( const QString &nick ) const;
-
-	inline void setDefaultCodec( QTextCodec* codec )
-		{ defaultCodec = codec; };
+	void setDefaultCodec(QTextCodec *codec);
+	QTextCodec *defaultCodec() const;
 
 	void setVersionString(const QString &versionString);
 	void setUserString(const QString &userString);
 	void setSourceString(const QString &sourceString);
 	void connectToServer(const QString &host, Q_UINT16 port, const QString &nickname, bool useSSL = false);
 
-	KExtendedSocket *socket()
-		{ return m_sock; };
+	KNetwork::KBufferedSocket *socket()
+		{ return m_socket; };
 
 	inline KIRC::Engine::Status status() const
 		{ return m_status; }
@@ -173,9 +162,6 @@ public:
 	inline bool isConnected() const
 		{ return m_status == Connected; }
 
-	inline void setCodec( const QString &nick, const QTextCodec *codec )
-		{ codecs.replace( nick, codec ); }
-
 	/* Custom CTCP replies handling */
 	inline QString &customCtcp( const QString &s )
 	{ return customCtcpMap[s];  }
@@ -184,6 +170,8 @@ public:
 	{ customCtcpMap[ ctcp.lower() ] = reply; }
 
 	KIRC::EntityPtr getEntity(const QString &name);
+	KIRC::EntityPtr server();
+	KIRC::EntityPtr self();
 
 public slots:
 	//Message output
@@ -310,7 +298,6 @@ signals:
 	void incomingConnectString(const QString &clients);
 
 	//Channel Contact Signals
-	void incomingMessage(const QString &originating, const QString &target, const QString &message);
 	void incomingTopicChange(const QString &, const QString &, const QString &);
 	void incomingExistingTopic(const QString &, const QString &);
 	void incomingTopicUser(const QString &channel, const QString &user, const QDateTime &time);
@@ -324,15 +311,9 @@ signals:
 	void incomingChannelHomePage(const QString &channel, const QString &url);
 
 	//Contact Signals
-	void incomingPrivMessage(const QString &, const QString &, const QString &);
 	void incomingQuitIRC(const QString &user, const QString &reason);
 	void incomingUserModeChange(const QString &nick, const QString &mode);
 	void incomingNoSuchNickname(const QString &nick);
-
-	// CTCP Signals
-//	void action(const QString &from, const QString &to, const QString &message);
-	void incomingAction(const QString &channel, const QString &originating, const QString &message);
-	void incomingPrivAction(const QString &target, const QString &originating, const QString &message);
 
 	//Response Signals
 	void incomingUserOnline(const QString &nick);
@@ -389,7 +370,8 @@ private slots:
 	void error(int errCode = 0);
 
 	void ignoreMessage(KIRC::Message &msg);
-	void emitSuffix(KIRC::Message &);
+	void receivedServerMessage(KIRC::Message &msg); // emit the suffix of the message.
+	void receivedServerMessage(KIRC::Message &msg, const QString &message);
 
 	void error(KIRC::Message &msg);
 	void join(KIRC::Message &msg);
@@ -491,6 +473,9 @@ private:
 	//Static regexes
 	static const QRegExp m_RemoveLinefeeds;
 
+	KNetwork::KBufferedSocket *m_socket;
+	QTextCodec *m_defaultCodec;
+
 	KIRC::Engine::Status m_status;
 	QString m_Host;
 	Q_UINT16 m_Port;
@@ -520,10 +505,6 @@ private:
 	QDict<KIRC::MessageRedirector> m_ctcpReplies;
 
 	QMap<QString, QString> customCtcpMap;
-	QDict<QTextCodec> codecs;
-	QTextCodec *defaultCodec;
-
-	KExtendedSocket *m_sock;
 };
 
 }

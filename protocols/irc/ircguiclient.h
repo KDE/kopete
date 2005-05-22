@@ -1,8 +1,9 @@
 /*
    ircguiclient.h
 
-    Copyright (c) 2003 by Jason Keirstead        <jason@keirstead.org>
-    Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
+    Copyright (c) 2003      by Michel Hermier <michel.hermier@wanadoo.fr>
+    Kopete    (c) 2003-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -19,24 +20,31 @@
 #include <qobject.h>
 #include <kxmlguiclient.h>
 
-namespace Kopete { class ChatSession; }
+namespace Kopete
+{
+	class ChatSession;
+}
+
 class IRCContact;
 
 /**
  *@author Jason Keirstead
  */
-class IRCGUIClient : public QObject , public KXMLGUIClient
+class IRCGUIClient
+	: public QObject,
+	  public KXMLGUIClient
 {
 	Q_OBJECT
-	public:
-		IRCGUIClient( Kopete::ChatSession *parent = 0 );
-		~IRCGUIClient();
-	
-	private slots:
-		void slotSelectCodec( const QTextCodec *codec );
-		
-	private:
-		IRCContact *m_user;
+
+public:
+	IRCGUIClient(Kopete::ChatSession *parent = 0);
+	~IRCGUIClient();
+
+private slots:
+	void slotSelectCodec(QTextCodec *codec);
+
+private:
+	IRCContact *m_contact;
 };
 
 #endif

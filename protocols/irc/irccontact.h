@@ -62,23 +62,14 @@ class IRCContact
 	Q_OBJECT
 
 public:
-	IRCContact(IRCAccount *account, KIRC::EntityPtr entity, Kopete::MetaContact *metac, const QString& icon = QString::null);
-	IRCContact(IRCContactManager *contactManager, const QString &nick, Kopete::MetaContact *metac, const QString& icon = QString::null);
+	IRCContact(IRCAccount *account, KIRC::EntityPtr entity,
+		Kopete::MetaContact *metac = 0, const QString& icon = QString::null);
 	virtual ~IRCContact();
 
 	IRCAccount *ircAccount() const;
 	KIRC::Engine *kircEngine() const;
 
-	/**
-	 * Sets the nickname of this contact. The nickname is distinct from the displayName
-	 * in case trackNameChanges is disabled.
-	 */
-	void setNickName(const QString &nickname);
-
-	/**
-	 * Returns the nickname / channel name
-	 */
-	const QString &nickName() const { return m_nickName; }
+	const QString caption() const;
 
 	/**
 	 * This function attempts to find the nickname specified within the current chat
@@ -86,9 +77,9 @@ public:
 	 * exist in this session. More useful for channels. Calling IRCChannelContact::locateUser()
 	 * for example tells you if a user is in a certain channel.
 	 */
-	Kopete::Contact *locateUser( const QString &nickName );
+	Kopete::Contact *locateUser(const QString &nickName);
 
-	virtual bool isReachable();
+	bool isReachable();
 
 	/**
 	 * return true if the contact is in a chat. false if the contact is in no chats
@@ -96,14 +87,11 @@ public:
 	 */
 	bool isChatting( Kopete::ChatSession *avoid = 0L ) const;
 
-	virtual const QString caption() const;
-//	virtual const QString formatedName() const;
+	Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate);
 
-	virtual Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate);
+	void appendMessage(Kopete::Message &);
 
-	virtual void appendMessage( Kopete::Message & );
-
-	const QTextCodec *codec();
+	QTextCodec *codec();
 
 	KopeteView *view();
 
@@ -112,37 +100,34 @@ public:
 	 * so that other IRC programs reading this from KAddressBook have a chance of figuring
 	 * which server the contact relates to
 	 */
-	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
+	void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
 signals:
 	void destoyed(IRCContact *self);
 
 public slots:
-	void setCodec( const QTextCodec *codec );
-	virtual void updateStatus();
+	void updateStatus();
+
+	void setCodec(QTextCodec *codec);
 
 protected slots:
-	virtual void slotSendMsg(Kopete::Message &message, Kopete::ChatSession *);
+	void entityUpdated();
+
+	void slotSendMsg(Kopete::Message &message, Kopete::ChatSession *);
 	QString sendMessage( const QString &msg );
 
-	virtual void chatSessionDestroyed();
+	void chatSessionDestroyed();
 
 	void slotNewNickChange( const QString &oldnickname, const QString &newnickname);
 	void slotUserDisconnected( const QString &nickname, const QString &reason);
 
-	virtual void deleteContact();
-	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
-	virtual void initConversation() {};
+	void deleteContact();
+	void initConversation() {};
 
-	void receivedMessage(	KIRC::Engine::ServerMessageType type,
-				const KIRC::EntityPtr &from,
-				const KIRC::EntityPtrList &to,
-				const QString &msg);
 
 protected:
 	KIRC::EntityPtr m_entity;
 
-	QString m_nickName;
 	Kopete::ChatSession *m_chatSession;
 
 	QPtrList<Kopete::Contact> mMyself;

@@ -19,7 +19,7 @@
 
 #include "kircengine.h"
 
-#include <kextsock.h>
+#include <kdebug.h>
 
 #include <qtimer.h>
 
@@ -87,18 +87,18 @@ void Engine::join(const QString &name, const QString &key)
 	writeMessage("JOIN", args);
 }
 
+/* RFC say: "( <channel> *( "," <channel> ) [ <key> *( "," <key> ) ] ) / "0""
+ * suspected: ":<channel> *(" "/"," <channel>)"
+ * assumed ":<channel>"
+ * This is the response of someone joining a channel.
+ * Remember that this will be emitted when *you* /join a room for the first time
+ */
 void Engine::join(Message &msg)
 {
-	/* RFC say: "( <channel> *( "," <channel> ) [ <key> *( "," <key> ) ] ) / "0""
-	* suspected: ":<channel> *(" "/"," <channel>)"
-	* assumed ":<channel>"
-	* This is the response of someone joining a channel.
-	* Remember that this will be emitted when *you* /join a room for the first time */
-
 	if (msg.argsSize()==1)
-		emit incomingJoinedChannel(Kopete::Message::unescape(msg.arg(0)), msg.nickFromPrefix());
+		emit incomingJoinedChannel(msg.arg(0), msg.prefix());
 	else
-		emit incomingJoinedChannel(Kopete::Message::unescape(msg.suffix()), msg.nickFromPrefix());
+		emit incomingJoinedChannel(msg.suffix(), msg.prefix());
 }
 
 void Engine::kick(const QString &user, const QString &channel, const QString &reason)
@@ -106,12 +106,17 @@ void Engine::kick(const QString &user, const QString &channel, const QString &re
 	writeMessage("KICK", QStringList(channel) << user << reason);
 }
 
+/* The given user is kicked.
+ * "<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]"
+ */
 void Engine::kick(Message &msg)
 {
-	/* The given user is kicked.
-	* "<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]"
-	*/
-	emit incomingKick( Kopete::Message::unescape(msg.arg(0)), msg.nickFromPrefix(), msg.arg(1), msg.suffix());
+	emit incomingKick(msg.arg(0), msg.prefix(), msg.arg(1), msg.suffix());
+}
+
+void Engine::list()
+{
+	writeMessage("LIST", QString::null);
 }
 
 void Engine::mode(const QString &target, const QString &mode)
@@ -124,12 +129,17 @@ void Engine::mode(Message &msg)
 	/* Change the mode of a user.
 	* "<nickname> *( ( "+" / "-" ) *( "i" / "w" / "o" / "O" / "r" ) )"
 	*/
-	QStringList args = msg.args();
+	QStringList args = msg.argList();
 	args.pop_front();
-	if( Entity::isChannel( msg.arg(0) ) )
-		emit incomingChannelModeChange( msg.arg(0), msg.nickFromPrefix(), args.join(" "));
+	if (Entity::isChannel(msg.arg(0)))
+		emit incomingChannelModeChange(msg.arg(0), msg.prefix(), args.join(" "));
 	else
-		emit incomingUserModeChange( msg.nickFromPrefix(), args.join(" "));
+		emit incomingUserModeChange(msg.prefix(), args.join(" "));
+}
+
+void Engine::motd(const QString &server)
+{
+	writeMessage("MOTD", server);
 }
 
 void Engine::nick(const QString &newNickname)
@@ -145,13 +155,6 @@ void Engine::nick(Message &msg)
 	QString oldNick = msg.prefix().section('!', 0, 0);
 	QString newNick = msg.suffix();
 
-	if( codecs[ oldNick ] )
-	{
-		QTextCodec *c = codecs[ oldNick ];
-		codecs.remove( oldNick );
-		codecs.insert( newNick, c );
-	}
-
 	if (oldNick.lower() == m_Nickname.lower())
 	{
 		emit successfullyChangedNick(oldNick, msg.suffix());
@@ -159,6 +162,24 @@ void Engine::nick(Message &msg)
 	}
 	else
 		emit incomingNickChange(oldNick, msg.suffix());
+
+//	Entity *fromEntity = msg.entityPrefic();
+//	emit receivedMessage(Info, fromEntity, KIRC::EntityPtrList::null, i18n(""));
+//	fromEntity->rename();
+}
+
+void Engine::notice(const QString &target, const QString &message)
+{
+	writeMessage("NOTICE", target, message);
+}
+
+void Engine::notice(Message &msg)
+{
+	if(!msg.suffix().isEmpty())
+		emit incomingNotice(msg.arg(0), msg.suffix());
+
+	if(msg.hasCtcpMessage())
+		invokeCtcpCommandOfMessage(m_ctcpReplies, msg);
 }
 
 void Engine::part(const QString &channel, const QString &reason)
@@ -174,7 +195,7 @@ void Engine::part(Message &msg)
 	* "<channel> *( "," <channel> ) [ <Part Message> ]"
 	*/
 	kdDebug(14120) << "User parting" << endl;
-	emit incomingPartedChannel(msg.arg(0), msg.nickFromPrefix(), msg.suffix());
+	emit incomingPartedChannel(msg.arg(0), msg.prefix(), msg.suffix());
 }
 
 void Engine::pass(const QString &password)
@@ -189,6 +210,29 @@ void Engine::ping(Message &msg)
 
 void Engine::pong(Message &/*msg*/)
 {
+}
+
+void Engine::privmsg(const QString &contact, const QString &message)
+{
+//	writeMessage("PRIVMSG", contact, message, codecForNick(contact));
+	writeMessage("PRIVMSG", contact, message);
+}
+
+void Engine::privmsg(Message &msg)
+{
+	if (!msg.suffix().isEmpty())
+	{
+		emit receivedMessage(
+			PrivateMessage,
+			msg.entityFromPrefix(),
+			msg.entityFromArg(0),
+			msg.suffix());
+	}
+
+	if( msg.hasCtcpMessage() )
+	{
+		invokeCtcpCommandOfMessage(m_ctcpQueries, msg);
+	}
 }
 
 void Engine::quit(const QString &reason, bool /*now*/)
@@ -208,6 +252,20 @@ void Engine::quit(Message &msg)
 	 */
 	kdDebug(14120) << "User quiting" << endl;
 	emit incomingQuitIRC(msg.prefix(), msg.suffix());
+//	emit receivedMessage(InfoMessage, msg.prefixEntity(), m_server, msg.suffix());
+}
+
+void Engine::topic(const QString &channel, const QString &topic)
+{
+	writeMessage("TOPIC", channel, topic);
+}
+
+void Engine::topic(Message &msg)
+{
+	/* The topic of a channel changed. emit the channel, new topic, and the person who changed it.
+	 * "<channel> [ <topic> ]"
+	 */
+	emit incomingTopicChange(msg.arg(0), msg.prefix(), msg.suffix());
 }
 
 void Engine::user(const QString &newUserName, const QString &hostname, const QString &newRealName)
@@ -233,75 +291,6 @@ void Engine::user(const QString &newUserName, Q_UINT8 mode, const QString &newRe
 	m_realName = newRealName;
 
 	writeMessage("USER", QStringList(m_Username) << QString::number(mode) << QChar('*'), m_realName);
-}
-
-void Engine::topic(const QString &channel, const QString &topic)
-{
-	writeMessage("TOPIC", channel, topic);
-}
-
-void Engine::topic(Message &msg)
-{
-	/* The topic of a channel changed. emit the channel, new topic, and the person who changed it.
-	 * "<channel> [ <topic> ]"
-	 */
-	emit incomingTopicChange(msg.arg(0), msg.nickFromPrefix(), msg.suffix());
-}
-
-void Engine::list()
-{
-	writeMessage("LIST", QString::null);
-}
-
-void Engine::motd(const QString &server)
-{
-	writeMessage("MOTD", server);
-}
-
-void Engine::privmsg(const QString &contact, const QString &message)
-{
-	writeMessage("PRIVMSG", contact, message, codecForNick( contact ) );
-}
-
-void Engine::privmsg(Message &msg)
-{
-	/* This is a signal that indicates there is a new message.
-	 * This can be either from a channel or from a specific user. */
-	Message m = msg;
-	if (!m.suffix().isEmpty())
-	{
-		QString user = m.arg(0);
-		QString message = m.suffix();
-		const QTextCodec *codec = codecForNick( user );
-		if (codec != defaultCodec)
-			msg.decodeAgain( codec );
-
-		if (Entity::isChannel(user))
-			emit incomingMessage(msg.nickFromPrefix(), Kopete::Message::unescape(msg.arg(0)), message );
-		else
-			emit incomingPrivMessage(msg.nickFromPrefix(), Kopete::Message::unescape(msg.arg(0)), message );
-
-//		emit receivedMessage(PrivateMessage, msg.entityFrom(), msg.entityTo(), message);
-	}
-
-	if( msg.hasCtcpMessage() )
-	{
-		invokeCtcpCommandOfMessage(m_ctcpQueries, msg);
-	}
-}
-
-void Engine::notice(const QString &target, const QString &message)
-{
-	writeMessage("NOTICE", target, message);
-}
-
-void Engine::notice(Message &msg)
-{
-	if(!msg.suffix().isEmpty())
-		emit incomingNotice(msg.arg(0), msg.suffix());
-
-	if(msg.hasCtcpMessage())
-		invokeCtcpCommandOfMessage(m_ctcpReplies, msg);
 }
 
 void Engine::whois(const QString &user)

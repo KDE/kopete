@@ -1,10 +1,10 @@
 /*
-    kirc.cpp - IRC Client
+    kircengine.cpp - IRC Client
 
-    Copyright (c) 2003-2004 by Michel Hermier <michel.hermier@wanadoo.fr>
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
+    Copyright (c) 2003-2005 by Michel Hermier <michel.hermier@wanadoo.fr>
 
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -25,7 +25,6 @@
 
 #include <kconfig.h>
 #include <kdebug.h>
-#include <kextsock.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
 
@@ -36,14 +35,13 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>
-
-#include <kopetemessage.h>
-
+/*
 #ifndef KIRC_SSL_SUPPORT
 #define KIRC_SSL_SUPPORT
 #endif
-
+*/
 using namespace KIRC;
+using namespace KNetwork;
 
 // FIXME: Remove slotConnected() and error(int errCode) while going to KNetwork namespace
 
@@ -54,14 +52,17 @@ const QRegExp Engine::m_RemoveLinefeeds( QString::fromLatin1("[\\r\\n]*$") );
 
 Engine::Engine(QObject *parent, const char *name)
 	: QObject(parent, QString::fromLatin1("[KIRC::Engine]%1").arg(name).latin1()),
+	  m_socket(0),
+	  m_defaultCodec(QTextCodec::codecForMib(4)),
 	  m_status(Idle),
 	  m_FailedNickOnLogin(false),
 	  m_useSSL(false),
+	  m_server(new Entity()),
+	  m_self(new Entity()),
 	  m_commands(101, false),
 //	  m_numericCommands(101),
 	  m_ctcpQueries(17, false),
-	  m_ctcpReplies(17, false),
-	  codecs(577,false)
+	  m_ctcpReplies(17, false)
 {
 	setUserName(QString::null);
 
@@ -77,37 +78,34 @@ Engine::Engine(QObject *parent, const char *name)
 	m_UserString = QString::fromLatin1("Response not supplied by user.");
 	m_SourceString = QString::fromLatin1("Unknown client, known source.");
 
-	defaultCodec = QTextCodec::codecForMib(4);
-	kdDebug(14120) << "Setting default engine codec, " << defaultCodec->name() << endl;
-
-	m_sock = 0L;
+//	kdDebug(14120) << "Setting default engine codec, " << defaultCodec->name() << endl;
 }
 
 Engine::~Engine()
 {
 	kdDebug(14120) << k_funcinfo << m_Host << endl;
 	quit("KIRC Deleted", true);
-	if( m_sock )
-		delete m_sock;
+	if (m_socket)
+		delete m_socket;
 }
 
-void Engine::setUseSSL( bool useSSL )
+//bool Engine::setupSocket(bool useSSL)
+void Engine::setUseSSL(bool useSSL)
 {
 	kdDebug(14120) << k_funcinfo << useSSL << endl;
 
-	if( !m_sock || useSSL != m_useSSL )
+	if (m_socket)
+		delete m_socket;
+
+	if( !m_socket || useSSL != m_useSSL )
 	{
-		if( m_sock )
-			delete m_sock;
-
 		m_useSSL = useSSL;
-
 
 		if( m_useSSL )
 		{
 		#ifdef KIRC_SSL_SUPPORT
-			m_sock = new KSSLSocket;
-			m_sock->setSocketFlags( KExtendedSocket::inetSocket );
+			m_socket = new KSSLSocket(this);
+			m_socket->setSocketFlags( KExtendedSocket::inetSocket );
 		}
 		else
 		#else
@@ -116,17 +114,17 @@ void Engine::setUseSSL( bool useSSL )
 		}
 		#endif
 		{
-			m_sock = new KExtendedSocket;
-			m_sock->setSocketFlags( KExtendedSocket::inputBufferedSocket | KExtendedSocket::inetSocket );
+			m_socket = new KBufferedSocket(QString::null, QString::null, this);
+//			m_socket->setSocketFlags( KExtendedSocket::inputBufferedSocket | KExtendedSocket::inetSocket );
 		}
 
-		QObject::connect(m_sock, SIGNAL(closed(int)),
+		QObject::connect(m_socket, SIGNAL(closed(int)),
 				 this, SLOT(slotConnectionClosed()));
-		QObject::connect(m_sock, SIGNAL(readyRead()),
+		QObject::connect(m_socket, SIGNAL(readyRead()),
 				 this, SLOT(slotReadyRead()));
-		QObject::connect(m_sock, SIGNAL(connectionSuccess()),
+		QObject::connect(m_socket, SIGNAL(connectionSuccess()),
 				 this, SLOT(slotConnected()));
-		QObject::connect(m_sock, SIGNAL(connectionFailed(int)),
+		QObject::connect(m_socket, SIGNAL(connectionFailed(int)),
 				 this, SLOT(error(int)));
 	}
 }
@@ -151,7 +149,7 @@ void Engine::setStatus(Engine::Status status)
 		// Do nothing.
 		break;
 	case Authentifying:
-		m_sock->enableRead(true);
+		m_socket->enableRead(true);
 
 		// If password is given for this server, send it now, and don't expect a reply
 		if (!(password()).isEmpty())
@@ -165,8 +163,8 @@ void Engine::setStatus(Engine::Status status)
 		// Do nothing.
 		break;
 	case Closing:
-		m_sock->close();
-		m_sock->reset();
+		m_socket->close();
+		m_socket->reset();
 		setStatus(Idle);
 		break;
 	case AuthentifyingFailed:
@@ -190,21 +188,28 @@ void Engine::connectToServer(const QString &host, Q_UINT16 port, const QString &
 	m_Port = port;
 
 	kdDebug(14120) << "Trying to connect to server " << m_Host << ":" << m_Port << endl;
-	kdDebug(14120) << "Sock status: " << m_sock->socketStatus() << endl;
+	kdDebug(14120) << "Sock status: " << m_socket->state() << endl;
 
-	if( !m_sock->setAddress(m_Host, m_Port) )
-		kdDebug(14120) << k_funcinfo << "setAddress failed. Status:  " << m_sock->socketStatus() << endl;
-
-	if( m_sock->startAsyncConnect() == 0 )
+	if (m_socket->connect(m_Host, QString::number(m_Port)))
 	{
-		kdDebug(14120) << k_funcinfo << "Success!. Status: " << m_sock->socketStatus() << endl;
+		kdDebug(14120) << k_funcinfo << "Success!. Status: " << m_socket->state() << endl;
 		setStatus(Connecting);
 	}
 	else
 	{
-		kdDebug(14120) << k_funcinfo << "Failed. Status: " << m_sock->socketStatus() << endl;
+		kdDebug(14120) << k_funcinfo << "Failed. Status: " << m_socket->state() << endl;
 		setStatus(Disconnected);
 	}
+}
+
+void Engine::setDefaultCodec( QTextCodec* codec )
+{
+	m_defaultCodec = codec;
+}
+
+QTextCodec *Engine::defaultCodec() const
+{
+	return m_defaultCodec;
 }
 
 void Engine::slotConnected()
@@ -219,12 +224,13 @@ void Engine::slotConnectionClosed()
 
 void Engine::error(int errCode)
 {
+	if (errCode == KSocketBase::WouldBlock)
+		// ignore non-fatal error
+		return;
+
 	kdDebug(14120) << k_funcinfo << "Socket error: " << errCode << endl;
-	if (m_sock->socketStatus () != KExtendedSocket::connecting)
-	{
-		// Connection in progress.. This is a signal fired wrong
-		setStatus(Disconnected);
-	}
+
+	setStatus(Disconnected);
 }
 
 void Engine::setVersionString(const QString &newString)
@@ -313,33 +319,31 @@ bool Engine::bindCtcpReply(const QString &command, QObject *object, const char *
  */
 void Engine::writeRawMessage(const QString &rawMsg)
 {
-	Message::writeRawMessage(this, defaultCodec, rawMsg);
+	Message::writeRawMessage(this, m_defaultCodec, rawMsg);
 }
 
 /* Message will be quoted before beeing send.
  */
 void Engine::writeMessage(const QString &msg, const QTextCodec *codec)
 {
-	Message::writeMessage(this, codec ? codec : defaultCodec, msg);
+	Message::writeMessage(this, codec ? codec : m_defaultCodec, msg);
 }
 
 void Engine::writeMessage(const QString &command, const QStringList &args, const QString &suffix, const QTextCodec *codec)
 {
-	Message::writeMessage(this, codec ? codec : defaultCodec, command, args, suffix );
+	Message::writeMessage(this, codec ? codec : m_defaultCodec, command, args, suffix );
 }
 
 void Engine::writeCtcpMessage(const QString &command, const QString &to, const QString &ctcpMessage)
 {
-	Message::writeCtcpMessage(this, defaultCodec, command, to, ctcpMessage);
+	Message::writeCtcpMessage(this, m_defaultCodec, command, to, ctcpMessage);
 }
 
 void Engine::writeCtcpMessage(const QString &command, const QString &to, const QString &suffix,
 		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix, bool )
 {
-	QString nick =  Entity::userNick(to);
-
-	Message::writeCtcpMessage(this, codecForNick( nick ), command, nick, suffix,
-		ctcpCommand, ctcpArgs, ctcpSuffix );
+//	Message::writeCtcpMessage(this, nick, command, to, suffix,
+//		ctcpCommand, ctcpArgs, ctcpSuffix );
 }
 
 void Engine::slotReadyRead()
@@ -348,9 +352,10 @@ void Engine::slotReadyRead()
 	// close the socket unexpectedly
 	bool parseSuccess;
 
-	if (m_sock->socketStatus() == KExtendedSocket::connected && m_sock->canReadLine())
+//	if (m_socket->state() == KSocketBase::Connected && m_socket->canReadLine())
+	if (m_socket->canReadLine())
 	{
-		Message msg = Message::parse(this, defaultCodec, &parseSuccess);
+		Message msg = Message::parse(this, &parseSuccess);
 		if (parseSuccess)
 		{
 			emit receivedMessage(msg);
@@ -370,54 +375,40 @@ void Engine::slotReadyRead()
 
 				if (!errors.isEmpty())
 				{
-					kdDebug(14120) << "Method error for line:" << msg.raw() << endl;
+//					kdDebug(14120) << "Method error for line:" << msg.raw() << endl;
 					emit internalError(MethodFailed, msg);
 				}
 			}
 			else if (msg.isNumeric())
 			{
-				kdWarning(14120) << "Unknown IRC numeric reply for line:" << msg.raw() << endl;
-				emit incomingUnknown(msg.raw());
+//				kdWarning(14120) << "Unknown IRC numeric reply for line:" << msg.raw() << endl;
+//				emit incomingUnknown(msg.raw());
 			}
 			else
 			{
-				kdWarning(14120) << "Unknown IRC command for line:" << msg.raw() << endl;
+//				kdWarning(14120) << "Unknown IRC command for line:" << msg.raw() << endl;
 				emit internalError(UnknownCommand, msg);
 			}
 		}
 		else
 		{
-			emit incomingUnknown(msg.raw());
+//			emit incomingUnknown(msg.raw());
 			emit internalError(ParsingFailed, msg);
 		}
 
 		QTimer::singleShot( 0, this, SLOT( slotReadyRead() ) );
 	}
 
-	if(m_sock->socketStatus() != KExtendedSocket::connected)
-		error();
-}
-
-const QTextCodec *Engine::codecForNick( const QString &nick ) const
-{
-	if( nick.isEmpty() )
-		return defaultCodec;
-
-	QTextCodec *codec = codecs[ nick ];
-	kdDebug(14120) << nick << " has codec " << codec << endl;
-
-	if( !codec )
-		return defaultCodec;
-	else
-		return codec;
+//	if(m_socket->socketStatus() != KExtendedSocket::connected)
+//		error();
 }
 
 void Engine::showInfoDialog()
 {
-	if( m_useSSL )
+/*	if( m_useSSL )
 	{
-		static_cast<KSSLSocket*>( m_sock )->showInfoDialog();
-	}
+		static_cast<KSSLSocket*>( m_socket )->showInfoDialog();
+	}*/
 }
 
 /*
@@ -439,21 +430,21 @@ bool Engine::invokeCtcpCommandOfMessage(const QDict<MessageRedirector> &map, Mes
 			if (errors.isEmpty())
 				return true;
 
-			kdDebug(14120) << "Method error for line:" << ctcpMsg.raw();
-			writeCtcpErrorMessage(msg.prefix(), msg.ctcpRaw(),
-				QString::fromLatin1("%1 internal error(s)").arg(errors.size()));
+//			kdDebug(14120) << "Method error for line:" << ctcpMsg.raw();
+//			writeCtcpErrorMessage(msg.prefix(), msg.ctcpRaw(),
+//				QString::fromLatin1("%1 internal error(s)").arg(errors.size()));
 		}
 		else
 		{
-			kdDebug(14120) << "Unknow IRC/CTCP command for line:" << ctcpMsg.raw();
-			writeCtcpErrorMessage(msg.prefix(), msg.ctcpRaw(), "Unknown CTCP command");
+//			kdDebug(14120) << "Unknow IRC/CTCP command for line:" << ctcpMsg.raw();
+//			writeCtcpErrorMessage(msg.prefix(), msg.ctcpRaw(), "Unknown CTCP command");
 
-			emit incomingUnknownCtcp(msg.ctcpRaw());
+//			emit incomingUnknownCtcp(msg.ctcpRaw());
 		}
 	}
 	else
 	{
-		kdDebug(14120) << "Message do not embed a CTCP message:" << msg.raw();
+//		kdDebug(14120) << "Message do not embed a CTCP message:" << msg.raw();
 	}
 	return false;
 }
@@ -462,7 +453,7 @@ EntityPtr Engine::getEntity(const QString &name)
 {
 	Entity *entity = 0;
 
-	#pragma warning Do the searching code here.
+	#pragma warning "Do the searching code here."
 
 	if (!entity)
 	{
@@ -470,8 +461,19 @@ EntityPtr Engine::getEntity(const QString &name)
 		m_entities.append(entity);
 	}
 
-	connect(entity, SIGNAL(destroyed(KIRC::Entity *)), SLOT(destroyed(KIRC::Entity *)));
+	connect(entity, SIGNAL(destroyed(KIRC::Entity *)),
+		this, SLOT(destroyed(KIRC::Entity *)));
 	return EntityPtr(entity);
+}
+
+EntityPtr Engine::server()
+{
+	return m_server;
+}
+
+EntityPtr Engine::self()
+{
+	return m_self;
 }
 
 void Engine::destroyed(KIRC::Entity *entity)
@@ -483,9 +485,14 @@ void Engine::ignoreMessage(KIRC::Message &/*msg*/)
 {
 }
 
-void Engine::emitSuffix(KIRC::Message &msg)
+void Engine::receivedServerMessage(KIRC::Message &msg)
 {
-	emit receivedMessage(InfoMessage, m_server, m_server, msg.suffix());
+	receivedServerMessage(msg, msg.suffix());
+}
+
+void Engine::receivedServerMessage(KIRC::Message &msg, const QString &message)
+{
+//	emit receivedMessage(InfoMessage, msg.prefix(), EntityPtrList(), message);
 }
 
 #include "kircengine.moc"

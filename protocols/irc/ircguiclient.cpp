@@ -1,8 +1,9 @@
 /*
     ircguiclient.cpp
 
-    Copyright (c) 2003 by Jason Keirstead        <jason@keirstead.org>
-    Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
+    Kopete    (c) 2003-2005 by Michel Hermier <michel.hermier@wanadoo.fr>
+    Kopete    (c) 2003-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -14,38 +15,28 @@
     *************************************************************************
 */
 
-#include <klocale.h>
-
-#include <kdeversion.h>
-#if KDE_IS_VERSION( 3, 1, 90 )
-	#include <kactioncollection.h>
-#else
-// ------------------------------------------------------------
-// TODO: UGLY HACK, remove when we drop KDE 3.1 compatibility
-#ifdef KDE_NO_COMPAT
-#undef KDE_NO_COMPAT
-#include <kaction.h>
-#define KDE_NO_COMPAT 1
-#endif
-// ------------------------------------------------------------
-#endif
-
-#include <qptrlist.h>
-#include <kdebug.h>
-#include <qdom.h>
-
-#include "kopetechatsession.h"
-#include "kcodecaction.h"
 #include "ircguiclient.h"
 #include "ircaccount.h"
 #include "irccontact.h"
+#include "kcodecaction.h"
 
-IRCGUIClient::IRCGUIClient( Kopete::ChatSession *parent ) : QObject(parent) , KXMLGUIClient(parent)
+#include "kopetechatsession.h"
+
+#include <kaction.h>
+#include <kdebug.h>
+#include <klocale.h>
+
+#include <qdom.h>
+#include <qptrlist.h>
+
+IRCGUIClient::IRCGUIClient(Kopete::ChatSession *parent)
+	: QObject(parent),
+	  KXMLGUIClient(parent)
 {
 	Kopete::ContactPtrList members = parent->members();
 	if( members.count() > 0 )
 	{
-		m_user = static_cast<IRCContact*>( members.first() );
+		m_contact = static_cast<IRCContact*>( members.first() );
 
 		/***
 		FIXME: Why doesn't this work???? Have to use DOM hack below now...
@@ -62,7 +53,7 @@ IRCGUIClient::IRCGUIClient( Kopete::ChatSession *parent ) : QObject(parent) , KX
 
 		QDomDocument doc = domDocument();
 		QDomNode menu = doc.documentElement().firstChild().firstChild();
-		QPtrList<KAction> *actions = m_user->customContextMenuActions( parent );
+		QPtrList<KAction> *actions = m_contact->customContextMenuActions( parent );
 		if( actions )
 		{
 			for( KAction *a = actions->first(); a; a = actions->next() )
@@ -92,9 +83,9 @@ IRCGUIClient::~IRCGUIClient()
 {
 }
 
-void IRCGUIClient::slotSelectCodec( const QTextCodec *codec )
+void IRCGUIClient::slotSelectCodec(QTextCodec *codec)
 {
-	m_user->setCodec( codec );
+	m_contact->setCodec(codec);
 }
 
 #include "ircguiclient.moc"

@@ -1,11 +1,11 @@
 /*
     kirc_ctcp.h - IRC Client
 
-    Copyright (c) 2003      by Michel Hermier <michel.hermier@wanadoo.fr>
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
+    Copyright (c) 2003-2005 by Michel Hermier <michel.hermier@wanadoo.fr>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -21,15 +21,17 @@
 
 #include "kircengine.h"
 #include "kirctransferhandler.h"
+
+#include "kdebug.h"
+
+#include <qfileinfo.h>
+#include <qregexp.h>
+
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <kextsock.h>
-
-#include <qfileinfo.h>
-#include <qregexp.h>
 
 using namespace KIRC;
 
@@ -70,33 +72,21 @@ void Engine::bindCtcp()
 /* Generic ctcp commnd for the /ctcp trigger */
 void Engine::CtcpRequestCommand(const QString &contact, const QString &command)
 {
-	if(m_status == Connected)
-	{
-		writeCtcpQueryMessage(contact, QString::null, command);
-//		emit ctcpCommandMessage( contact, command );
-	}
+	writeCtcpQueryMessage(contact, QString::null, command);
 }
 
 void Engine::CtcpRequest_action(const QString &contact, const QString &message)
 {
-	if(m_status == Connected)
-	{
-		writeCtcpQueryMessage(contact, QString::null, "ACTION", message);
-
-		if( Entity::isChannel(contact) )
-			emit incomingAction(Kopete::Message::unescape(contact), Kopete::Message::unescape(m_Nickname), message);
-		else
-			emit incomingPrivAction(Kopete::Message::unescape(m_Nickname), Kopete::Message::unescape(contact), message);
-	}
+	writeCtcpQueryMessage(contact, QString::null, "ACTION", message);
 }
 
 void Engine::CtcpQuery_action(Message &msg)
 {
-	QString target = msg.arg(0);
+/*	QString target = msg.arg(0);
 	if (target[0] == '#' || target[0] == '!' || target[0] == '&')
-		emit incomingAction(target, msg.nickFromPrefix(), msg.ctcpMessage().ctcpRaw());
+		emit incomingAction(target, msg, msg.ctcpMessage().ctcpRaw());
 	else
-		emit incomingPrivAction(msg.nickFromPrefix(), Kopete::Message::unescape(target), msg.ctcpMessage().ctcpRaw());
+		emit incomingPrivAction(msg, target, msg.ctcpMessage().ctcpRaw());*/
 }
 
 /*
@@ -116,15 +106,15 @@ void Engine::CtcpQuery_clientinfo(Message &msg)
 			"without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING,"
 			"ACTION.");
 
-	writeCtcpReplyMessage(	msg.nickFromPrefix(), QString::null,
+	writeCtcpReplyMessage(	msg.prefix(), QString::null,
 				msg.ctcpMessage().command(), QString::null, clientinfo);
 }
 
 void Engine::CtcpRequest_dcc(const QString &nickname, const QString &fileName, uint port, Transfer::Type type)
 {
-	if(	m_status != Connected ||
-		m_sock->localAddress() == 0 ||
-		m_sock->localAddress()->nodeName().isNull())
+/*	if(	m_status != Connected ||
+		m_socket->localAddress() == 0 ||
+		m_socket->localAddress()->nodeName().isNull())
 		return;
 
 	switch(type)
@@ -165,7 +155,7 @@ void Engine::CtcpRequest_dcc(const QString &nickname, const QString &fileName, u
 		case Transfer::Unknown:
 		default:
 			break;
-	}
+	}*/
 }
 
 void Engine::CtcpQuery_dcc(Message &msg)
@@ -191,7 +181,7 @@ void Engine::CtcpQuery_dcc(Message &msg)
 		{
 			kdDebug(14120) << "Starting DCC chat window." << endl;
 			TransferHandler::self()->createClient(
-				this, msg.nickFromPrefix(),
+				this, msg.prefix(),
 				address, port,
 				Transfer::Chat );
 		}
@@ -216,7 +206,7 @@ void Engine::CtcpQuery_dcc(Message &msg)
 		{
 			kdDebug(14120) << "Starting DCC send file transfert for file:" << ctcpMsg.arg(1) << endl;
 			TransferHandler::self()->createClient(
-				this, msg.nickFromPrefix(),
+				this, msg.prefix(),
 				address, port,
 				Transfer::FileIncoming,
 				ctcpMsg.arg(1), size );
@@ -246,7 +236,7 @@ void Engine::CtcpQuery_finger( Message &)
 void Engine::CtcpRequest_ping(const QString &target)
 {
 	kdDebug(14120) << k_funcinfo << endl;
-
+/*
 	timeval time;
 	if (gettimeofday(&time, 0) == 0)
 	{
@@ -260,18 +250,18 @@ void Engine::CtcpRequest_ping(const QString &target)
 		writeCtcpQueryMessage(	target, QString::null, "PING", timeReply);
 	}
 //	else
-//		((MessageRedirector *)sender())->error("failed to get current time");
+//		((MessageRedirector *)sender())->error("failed to get current time");*/
 }
 
 void Engine::CtcpQuery_ping(Message &msg)
 {
-	writeCtcpReplyMessage(	msg.nickFromPrefix(), QString::null,
+	writeCtcpReplyMessage(	msg.prefix(), QString::null,
 				msg.ctcpMessage().command(), msg.ctcpMessage().arg(0));
 }
 
 void Engine::CtcpReply_ping(Message &msg)
 {
-	timeval time;
+/*	timeval time;
 	if (gettimeofday(&time, 0) == 0)
 	{
 		// FIXME: the time code is wrong for usec
@@ -298,21 +288,21 @@ void Engine::CtcpReply_ping(Message &msg)
 			diffString = QString::fromLatin1("%1 seconds, %2 milliseconds").arg(seconds).arg(millSec);
 		}
 
-		emit incomingCtcpReply(QString::fromLatin1("PING"), msg.nickFromPrefix(), diffString);
+		emit incomingCtcpReply(QString::fromLatin1("PING"), msg.prefix(), diffString);
 	}
 //	else
-//		((MessageRedirector *)sender())->error("failed to get current time");
+//		((MessageRedirector *)sender())->error("failed to get current time");*/
 }
 
 void Engine::CtcpQuery_source(Message &msg)
 {
-	writeCtcpReplyMessage(msg.nickFromPrefix(), QString::null,
+	writeCtcpReplyMessage(msg.prefix(), QString::null,
 			      msg.ctcpMessage().command(), m_SourceString);
 }
 
 void Engine::CtcpQuery_time(Message &msg)
 {
-	writeCtcpReplyMessage(msg.nickFromPrefix(), QString::null,
+	writeCtcpReplyMessage(msg.prefix(), QString::null,
 			      msg.ctcpMessage().command(), QDateTime::currentDateTime().toString(),
 			      QString::null, false);
 }
@@ -324,7 +314,7 @@ void Engine::CtcpQuery_userinfo(Message &msg)
 	if (userinfo.isNull())
 		userinfo = m_UserString;
 
-	writeCtcpReplyMessage(msg.nickFromPrefix(), QString::null,
+	writeCtcpReplyMessage(msg.prefix(), QString::null,
 			      msg.ctcpMessage().command(), QString::null, userinfo);
 }
 
@@ -341,11 +331,11 @@ void Engine::CtcpQuery_version(Message &msg)
 	if (response.isNull())
 		response = m_VersionString;
 
-	writeCtcpReplyMessage(msg.nickFromPrefix(),
+	writeCtcpReplyMessage(msg.prefix(),
 		msg.ctcpMessage().command() + " " + response);
 }
 
 void Engine::CtcpReply_version(Message &msg)
 {
-	emit incomingCtcpReply(msg.ctcpMessage().command(), msg.nickFromPrefix(), msg.ctcpMessage().ctcpRaw());
+//	emit incomingCtcpReply(msg.ctcpMessage().command(), msg.prefix(), msg.ctcpMessage().ctcpRaw());
 }

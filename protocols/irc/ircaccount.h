@@ -3,8 +3,9 @@
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
+    Copyright (c) 2003-2005 by Michel Hermier <michel.hermier@wanadoo.fr>
 
-    Kopete    (c) 2002      by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -33,11 +34,7 @@
 class ChannelListDialog;
 
 class IRCContact;
-class IRCChannelContact;
-class IRCContactManager;
-class IRCServerContact;
 class IRCProtocol;
-class IRCUserContact;
 
 namespace Kopete
 {
@@ -104,17 +101,18 @@ public:
 			const QString& networkName = QString::null, const QString &nickName = QString::null);
 	virtual ~IRCAccount();
 
-	void setNickName( const QString & );
-
 	void setAutoShowServerWindow( bool show );
 
-	void setAltNick( const QString & );
+	void setNickName(const QString &);
+	const QString nickName() const;
+/*
+	void setAltNick(const QString &);
 	const QString altNick() const;
-
-	void setUserName( const QString & );
+*/
+	void setUserName(const QString &);
 	const QString userName() const;
 
-	void setRealName( const QString & );
+	void setRealName(const QString &);
 	const QString realName() const;
 
 	const QStringList connectCommands() const;
@@ -170,13 +168,11 @@ public slots:
 	// Returns the IRCProtocol instance for contacts
 	IRCProtocol *protocol() const { return m_protocol; }
 
-	IRCContactManager *contactManager() const { return m_contactManager; }
-
 	// Returns the Kopete::Contact of the user
-	IRCUserContact *mySelf() const;
+	IRCContact *mySelf() const;
 
 	// Returns the Kopete::Contact of the server of the user
-	IRCServerContact *myServer() const;
+	IRCContact *myServer() const;
 
 	void successfullyChangedNick(const QString &, const QString &);
 
@@ -188,6 +184,7 @@ public slots:
 	void listChannels();
 
 	void appendMessage( const QString &message, MessageType type = Default );
+	void appendInternalMessage(const QString &message);
 
 protected:
 	virtual bool createContact( const QString &contactId, Kopete::MetaContact *parentContact ) ;
@@ -197,12 +194,17 @@ private slots:
 
 	void destroyed(IRCContact *contact);
 
+	void receivedMessage(	KIRC::Engine::ServerMessageType type,
+				const KIRC::EntityPtr &from,
+				const KIRC::EntityPtrList &to,
+				const QString &msg);
+
 	void slotFailedServerPassword();
 	void slotGoAway( const QString &reason );
 	void slotJoinNamedChannel( const QString &channel );
 	void slotJoinChannel();
 	void slotShowServerWindow();
-	void slotNickInUse( const QString &nick );
+//	void slotNickInUse( const QString &nick );
 	void slotNickInUseAlert( const QString &nick );
 	void slotServerBusy();
 	void slotNoSuchNickname( const QString &nick );
@@ -213,9 +215,7 @@ private slots:
 
 private:
 	Kopete::ChatSession *m_manager;
-	QString mNickName;
 	Kopete::AwayAction *mAwayAction;
-	bool triedAltNick;
 	bool autoShowServerWindow;
 	QString autoConnect;
 
@@ -232,10 +232,10 @@ private:
 	ChannelListDialog *m_channelList;
 
 	QValueList<IRCContact *> m_contacts;
-	IRCContactManager *m_contactManager;
-	IRCServerContact *m_myServer;
+	IRCContact *m_server;
+	IRCContact *m_self;
 
-	QMap< QString, QString > m_customCtcp;
+	QMap<QString, QString> m_customCtcp;
 	Kopete::ChatSession *commandSource;
 
 	KAction *m_joinChannelAction;

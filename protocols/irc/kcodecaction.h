@@ -1,8 +1,9 @@
 /*
    kcodecaction.h
 
-    Copyright (c) 2003 by Jason Keirstead        <jason@keirstead.org>
-    Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2003      by Jason Keirstead        <jason@keirstead.org>
+    Copyright (c) 2003-2005 by Michel Hermier <michel.hermier@wanadoo.fr>
+    Kopete    (c) 2003-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -16,32 +17,29 @@
 #ifndef KCODECACTION_H
 #define KCODECACTION_H
 
-#include <kdeversion.h>
+#include <kaction.h>
+
 #include <qintdict.h>
 
-#if KDE_IS_VERSION( 3, 1, 90 )
-	#include <kactionclasses.h>
-#else
-	#include <kaction.h>
-#endif
-
-class KCodecAction : public KSelectAction
+class KCodecAction
+	: public KSelectAction
 {
 	Q_OBJECT
-	public:
-		KCodecAction( const QString &text, const KShortcut &cut = KShortcut(),
-			QObject *parent = 0, const char *name = 0 );
 
-		void setCodec( const QTextCodec *codec );
+public:
+	KCodecAction(const QString &text, const KShortcut &cut = KShortcut(),
+		QObject *parent = 0, const char *name = 0);
 
-	signals:
-		void activated( const QTextCodec * );
+	void setCodec(QTextCodec *codec);
 
-	private slots:
-		void slotActivated( int );
+signals:
+	void activated(QTextCodec *);
 
-	private:
-		QIntDict<QTextCodec> codecMap;
+private slots:
+	void slotActivated(int);
+
+private:
+	QIntDict<QTextCodec> codecMap;
 };
 
 #endif

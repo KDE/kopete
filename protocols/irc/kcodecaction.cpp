@@ -19,7 +19,8 @@
 #include "kcodecaction.h"
 
 KCodecAction::KCodecAction( const QString &text, const KShortcut &cut,
-		QObject *parent, const char *name ) : KSelectAction( text, "", cut, parent, name )
+		QObject *parent, const char *name )
+	: KSelectAction( text, "", cut, parent, name )
 {
 	QObject::connect( this, SIGNAL( activated( int ) ),
 		this, SLOT(slotActivated( int )) );
@@ -36,17 +37,17 @@ KCodecAction::KCodecAction( const QString &text, const KShortcut &cut,
 	setItems( items );
 }
 
-void KCodecAction::slotActivated( int index )
+void KCodecAction::slotActivated(int index)
 {
-	emit activated( codecMap[ index ] );
+	emit activated(codecMap[index]);
 }
 
-void KCodecAction::setCodec( const QTextCodec *codec )
+void KCodecAction::setCodec(QTextCodec *codec)
 {
-	for( QIntDictIterator<QTextCodec> it( codecMap ); it.current(); ++it )
+	for(QIntDictIterator<QTextCodec> it( codecMap ); it.current(); ++it)
 	{
-		if( it.current() == codec )
-			setCurrentItem( it.currentKey() );
+		if(it.current() == codec)
+			setCurrentItem(it.currentKey());
 	}
 }
 

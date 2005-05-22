@@ -10,15 +10,10 @@ kde_module_LTLIBRARIES = kopete_irc.la
 kopete_irc_la_SOURCES = \
 	ircaccount.cpp  \
 	ircaddcontactpage.cpp \
-	ircchannelcontact.cpp \
 	irccontact.cpp \
 	ircguiclient.cpp \
 	ircprotocol.cpp \
-	ircservercontact.cpp \
-	ircsignalhandler.cpp \
 	irctransferhandler.cpp \
-	ircusercontact.cpp \
-	irccontactmanager.cpp \
 	kcodecaction.cpp \
 	ksparser.cpp
 

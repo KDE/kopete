@@ -19,7 +19,7 @@
 #include "irceditaccountwidget.h"
 
 #include "ircaccount.h"
-#include "ircusercontact.h"
+#include "irccontact.h"
 #include "ircprotocol.h"
 
 #include "kircengine.h"
@@ -58,7 +58,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		QString serverInfo = account()->accountId();
 
 		mNickName->setText( nickName );
-		mAltNickname->setText( account()->altNick() );
+//		mAltNickname->setText( account()->altNick() );
 		mUserName->setText( account()->userName() );
 		m_realNameLineEdit->setText( account()->realName() );
 
@@ -241,7 +241,7 @@ Kopete::Account *IRCEditAccountWidget::apply()
 
 	mPasswordWidget->save( &account()->password() );
 
-	account()->setAltNick( mAltNickname->text() );
+//	account()->setAltNick( mAltNickname->text() );
 	account()->setUserName( mUserName->text() );
 	account()->setRealName( m_realNameLineEdit->text() );
 	account()->setDefaultPart( partMessage->text() );
