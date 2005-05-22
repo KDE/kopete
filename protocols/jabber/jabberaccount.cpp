@@ -462,7 +462,9 @@ void JabberAccount::connectWithPassword ( const QString &password )
 						SLOT (slotGroupChatPresence (const Jid &, const Status &)));
 		QObject::connect (jabberClient, SIGNAL (groupChatError (const Jid &, int, const QString &)), this,
 						SLOT (slotGroupChatError (const Jid &, int, const QString &)));
-		QObject::connect (jabberClient, SIGNAL (debugText (const QString &)), this, SLOT (slotPsiDebug (const QString &)));
+		//QObject::connect (jabberClient, SIGNAL (debugText (const QString &)), this, SLOT (slotPsiDebug (const QString &)));
+		QObject::connect (jabberClient, SIGNAL (xmlIncoming(const QString& )), this, SLOT (slotIncomingXML (const QString &)));
+		QObject::connect (jabberClient, SIGNAL (xmlOutgoing(const QString& )), this, SLOT (slotOutgoingXML (const QString &)));
 	}
 
 	//
@@ -537,6 +539,28 @@ void JabberAccount::slotPsiDebug (const QString & _msg)
 	msg = msg.replace( QRegExp( "<digest>[^<]*</digest>\n" ), "<digest>[Filtered]</digest>\n" );
 
 	kdDebug (JABBER_DEBUG_PROTOCOL) << k_funcinfo << "Psi: " << msg << endl;
+
+}
+
+void JabberAccount::slotIncomingXML (const QString & _msg)
+{
+	QString msg = _msg;
+
+	msg = msg.replace( QRegExp( "<password>[^<]*</password>\n" ), "<password>[Filtered]</password>\n" );
+	msg = msg.replace( QRegExp( "<digest>[^<]*</digest>\n" ), "<digest>[Filtered]</digest>\n" );
+
+	kdDebug (JABBER_DEBUG_PROTOCOL) << k_funcinfo << "XML IN: " << msg << endl;
+
+}
+
+void JabberAccount::slotOutgoingXML (const QString & _msg)
+{
+	QString msg = _msg;
+
+	msg = msg.replace( QRegExp( "<password>[^<]*</password>\n" ), "<password>[Filtered]</password>\n" );
+	msg = msg.replace( QRegExp( "<digest>[^<]*</digest>\n" ), "<digest>[Filtered]</digest>\n" );
+
+	kdDebug (JABBER_DEBUG_PROTOCOL) << k_funcinfo << "XML OUT: " << msg << endl;
 
 }
 

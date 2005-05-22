@@ -229,6 +229,8 @@ private slots:
 
 	/* Called from Psi: debug messages from the backend. */
 	void slotPsiDebug (const QString & msg);
+	void slotIncomingXML (const QString &msg);
+	void slotOutgoingXML (const QString &msg);
 
 	/* Sends a raw message to the server (use with caution) */
 	void slotSendRaw ();
