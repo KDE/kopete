@@ -55,6 +55,7 @@ int main( int argc, char *argv[] )
 		I18N_NOOP("(c) 2001-2004, Duncan Mac-Vicar Prett\n(c) 2002-2005, Kopete Development Team"), "kopete-devel@kde.org", "http://kopete.kde.org");
 
 	aboutData.addAuthor ( "Duncan Mac-Vicar Prett", I18N_NOOP("Original author, Developer"), "duncan@kde.org", "http://www.mac-vicar.org/~duncan" );
+	aboutData.addAuthor ( "Andre Duffeck", I18N_NOOP("Developer, Yahoo"), "andre@duffeck.de" );
 	aboutData.addAuthor ( "Till Gerken", I18N_NOOP("Developer, Jabber plugin maintainer"), "till@tantalo.net");
 	aboutData.addAuthor ( "Olivier Goffart", I18N_NOOP("Developer, MSN plugin maintainer"), "ogoffart @ kde.org");
 	aboutData.addAuthor ( "Andy Goossens", I18N_NOOP("Developer"), "andygoossens@telenet.be" );
