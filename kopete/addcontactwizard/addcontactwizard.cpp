@@ -22,14 +22,6 @@
 //		true
 //	|
 //	V
-//	Select Account
-//		( Only 1 account ) OR ( An account is selected )
-//	|
-//	V
-//	(Each AddContactPage)
-//		( Own conditions)
-//	|
-//	V
 //	Select Address Book Entry
 //		( Addressee is selected AND is not already associated with a contact )
 //			OR Do not use address book is checked
@@ -37,6 +29,14 @@
 //	V
 //	Select Display Name and Group
 //		true
+//	|
+//	V
+//	Select Account
+//		( Only 1 account ) OR ( An account is selected )
+//	|
+//	V
+//	(Each AddContactPage)
+//		( Own conditions)
 //	|
 //	V
 //	Finish
@@ -52,11 +52,11 @@
 
 #include <kdeversion.h>
 #include <kinputdialog.h>
+#include <kinputdialog.h>
 
 #include <kpushbutton.h>
 #include <kdebug.h>
 #include <klistview.h>
-
 // used for its AddresseeItem class
 #include <kabc/addresseedialog.h>
 #include <kabc/addressbook.h>
@@ -74,8 +74,8 @@
 AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 : AddContactWizard_Base( parent, name )
 {
-	// Add the AddressBook Selection Widget
-	m_addressbookSelectorWidget = new Kopete::UI::AddressBookSelectorWidget(this->page(2));
+    //QVBox *kabcPageVbox = new QVBox(this->page(1));
+	m_addressbookSelectorWidget = new Kopete::UI::AddressBookSelectorWidget(this->page(1));
 	selectAddresseeLayout->addWidget(m_addressbookSelectorWidget);
 
 	// Populate the groups list
@@ -98,8 +98,7 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 		accountLVI= new QCheckListItem( protocolListView, i->accountLabel(), QCheckListItem::CheckBox);
 		accountLVI->setText(1,i->protocol()->displayName() + QString::fromLatin1(" ") );
 		//FIXME - I'm not sure the column 1 is a right place for the colored icon -Olivier
-		//CHANGED - Trying icon at column 0 -Michaël
-		accountLVI->setPixmap(0, i->accountIcon() );
+		accountLVI->setPixmap( 1, i->accountIcon() );
 		m_accountItems.insert(accountLVI,i);
 	}
 	protocolListView->setCurrentItem( protocolListView->firstChild() );
@@ -278,7 +277,7 @@ void AddContactWizard::next()
 				addPage->show();
 
 				insertPage( addPage, i18n( "The user has to select the contact to add to the given account name", 
-					"Choose New Contact For %1 Account <b>%2</b>" ).arg( i->protocol()->displayName() ).arg( item->text(0) ), indexOf( selectAddressee ) );
+					"Choose New Contact For %1 Account <b>%2</b>" ).arg( i->protocol()->displayName() ).arg( item->text(0) ), indexOf( finis ) );
 				protocolPages.insert( i , addPage );
 			}
 		}
@@ -321,10 +320,6 @@ void AddContactWizard::showPage( QWidget *page )
 
 	QWizard::showPage( page );
 
-	if(page == selectGroup)
-		groupList->setFocus(); // make the keyboard navigation easier
-	if(page == selectService)
-		protocolListView->setFocus();
 	if ( page == finis )
 		finishButton()->setFocus();
 }
