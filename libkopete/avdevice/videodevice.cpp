@@ -153,7 +153,6 @@ int VideoDevice::checkDevice(int handle, VideoDeviceListItem *videodevice)
 		{
 
 			kdDebug() << "libkopete (avdevice): intDevice(): " << path.c_str() << " is no V4L2 device." << endl;
-
 		}
 		else
 		{
@@ -161,6 +160,8 @@ int VideoDevice::checkDevice(int handle, VideoDeviceListItem *videodevice)
 		}
 	}
 #endif
+	memset(&videodevice->V4L_capabilities, 0, sizeof(videodevice->V4L_capabilities));
+
 	if(videodevice->m_driver==VIDEODEV_DRIVER_NONE)
 	{
 		kdDebug() << "libkopete (avdevice): intDevice(): " << path.c_str() << " Trying V4L API." << endl;
@@ -177,8 +178,14 @@ int VideoDevice::checkDevice(int handle, VideoDeviceListItem *videodevice)
 		}
 	}
 #endif
+	dumpDeviceCapabilities(videodevice);
 
-// Now we must execute the proper initialization according to the type of the driver.
+	// Now we must execute the proper initialization according to the type of the driver.
+	return EXIT_SUCCESS;
+}
+
+void VideoDevice::dumpDeviceCapabilities(VideoDeviceListItem *videodevice)
+{
 	switch(videodevice->m_driver)
 	{
 #ifdef __linux__
@@ -219,9 +226,7 @@ int VideoDevice::checkDevice(int handle, VideoDeviceListItem *videodevice)
 
 			break;
 	}
-	return EXIT_SUCCESS;
 }
-
 
 /*!
     \fn VideoDevice::initDevice()

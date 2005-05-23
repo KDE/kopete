@@ -67,6 +67,8 @@ public:
 	int currentDevice();
 	int currentInput();
 
+	void dumpDeviceCapabilities(VideoDeviceListItem *videodevice);
+
 protected:
 	std::string name;
 	std::string path;
