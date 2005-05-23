@@ -67,8 +67,6 @@ public:
 	int currentDevice();
 	int currentInput();
 
-	void dumpDeviceCapabilities(VideoDeviceListItem *videodevice);
-
 protected:
 	std::string name;
 	std::string path;
@@ -108,6 +106,7 @@ protected:
 	int xioctl(int request, void *arg);
 	int processImage(const void *p);
 	int errnoReturn(const char* s);
+	void showDeviceCapabilities(VideoDeviceListItem *videodevice);
 	int initRead();
 	int initMmap();
 	int initUserptr();

@@ -146,6 +146,7 @@ int VideoDevice::checkDevice(int handle, VideoDeviceListItem *videodevice)
 		}
 		kdDebug() << "libkopete (avdevice): intDevice(): " << path.c_str() << " is a V4L2 device." << endl;
 		videodevice->m_driver = VIDEODEV_DRIVER_V4L2;
+		videodevice->name=QString::fromLocal8Bit((const char*)videodevice->V4L2_capabilities.card);
 	}
 	else
 	{
@@ -175,16 +176,20 @@ int VideoDevice::checkDevice(int handle, VideoDeviceListItem *videodevice)
 		{
 			kdDebug() << "libkopete (avdevice): intDevice(): " << path.c_str() << " is a V4L device." << endl;
 			videodevice->m_driver = VIDEODEV_DRIVER_V4L;
+			videodevice->name=QString::fromLocal8Bit((const char*)videodevice->V4L_capabilities.name);
 		}
 	}
 #endif
-	dumpDeviceCapabilities(videodevice);
+	showDeviceCapabilities(videodevice);
 
 	// Now we must execute the proper initialization according to the type of the driver.
 	return EXIT_SUCCESS;
 }
 
-void VideoDevice::dumpDeviceCapabilities(VideoDeviceListItem *videodevice)
+/*!
+    \fn VideoDevice::showDeviceCapabilities(VideoDeviceListItem *videodevice)
+ */
+void VideoDevice::showDeviceCapabilities(VideoDeviceListItem *videodevice)
 {
 	switch(videodevice->m_driver)
 	{
@@ -195,7 +200,6 @@ void VideoDevice::dumpDeviceCapabilities(VideoDeviceListItem *videodevice)
 				<< ((videodevice->V4L2_capabilities.version>>16) & 0xFF) << "."
 				<< ((videodevice->V4L2_capabilities.version>> 8) & 0xFF) << "."
 				<< ((videodevice->V4L2_capabilities.version    ) & 0xFF) << endl;
-			videodevice->name=QString::fromLocal8Bit((const char*)videodevice->V4L2_capabilities.card);
 			kdDebug() << "libkopete (avdevice): Card: " << videodevice->name << endl;
 			kdDebug() << "libkopete (avdevice): Capabilities:" << endl;
 			if(videodevice->V4L2_capabilities.capabilities & V4L2_CAP_VIDEO_CAPTURE)
@@ -217,7 +221,6 @@ void VideoDevice::dumpDeviceCapabilities(VideoDeviceListItem *videodevice)
 			break;
 #endif
 		case VIDEODEV_DRIVER_V4L:
-			videodevice->name=QString::fromLocal8Bit((const char*)videodevice->V4L_capabilities.name);
 			kdDebug() << "libkopete (avdevice): Card: " << videodevice->name << endl;
 			kdDebug() << "libkopete (avdevice): Capabilities:" << endl;
 			break;
