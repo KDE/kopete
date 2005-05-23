@@ -917,7 +917,7 @@ int Kopete::AV::VideoDevice::setResolution(int /* width */, int /* height */)
 /*!
     \fn Kopete::AV::VideoDevice::fillInputKComboBox(KComboBox *combobox)
  */
-int Kopete::AV::VideoDevice::fillDeviceKcomboBox(KComboBox *combobox)
+int Kopete::AV::VideoDevice::fillDeviceKComboBox(KComboBox *combobox)
 {
     /// @todo implement me
 	kdDebug() << "libkopete (avdevice): fillInputKComboBox: Called." << endl;
