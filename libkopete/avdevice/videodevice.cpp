@@ -131,33 +131,12 @@ int VideoDevice::getFrame()
  */
 int VideoDevice::checkDevice(int handle, VideoDeviceListItem *videodevice)
 {
+	videodevice->m_driver=VIDEODEV_DRIVER_NONE;
+#ifdef __linux__
 #ifdef HAVE_V4L2
 	memset(&videodevice->V4L2_capabilities, 0, sizeof(videodevice->V4L2_capabilities));
 
-	if (-1 == ioctl (handle, VIDIOC_QUERYCAP, &videodevice->V4L2_capabilities))
-	{
-		if (EINVAL == errno)
-		{
-			kdDebug() << "libkopete (avdevice): intDevice(): " << path.c_str() << " is no V4L2 device." << endl;
-			kdDebug() << "libkopete (avdevice): intDevice(): " << path.c_str() << " Trying V4L API." << endl;
-			if (-1 == ioctl (handle, VIDIOCGCAP, &videodevice->V4L_capabilities))
-			{
-				perror ("ioctl (VIDIOCGCAP)");
-				videodevice->m_driver = VIDEODEV_DRIVER_NONE;
-				return EXIT_FAILURE;
-			}
-			else
-			{
-				kdDebug() << "libkopete (avdevice): intDevice(): " << path.c_str() << " is a V4L device." << endl;
-				videodevice->m_driver = VIDEODEV_DRIVER_V4L;
-			}
-		}
-		else
-		{
-			return errnoReturn ("VIDIOC_QUERYCAP");
-		}
-	}
-	else
+	if (-1 != ioctl (handle, VIDIOC_QUERYCAP, &videodevice->V4L2_capabilities))
 	{
 		if (!(videodevice->V4L2_capabilities.capabilities & V4L2_CAP_VIDEO_CAPTURE))
 		{
@@ -166,13 +145,43 @@ int VideoDevice::checkDevice(int handle, VideoDeviceListItem *videodevice)
 			return EXIT_FAILURE;
 		}
 		kdDebug() << "libkopete (avdevice): intDevice(): " << path.c_str() << " is a V4L2 device." << endl;
-		videodevice->m_driver=VIDEODEV_DRIVER_V4L2;
+		videodevice->m_driver = VIDEODEV_DRIVER_V4L2;
 	}
-#endif // HAVE_V4L2
+	else
+	{
+		if (EINVAL == errno)
+		{
+
+			kdDebug() << "libkopete (avdevice): intDevice(): " << path.c_str() << " is no V4L2 device." << endl;
+
+		}
+		else
+		{
+			return errnoReturn ("VIDIOC_QUERYCAP");
+		}
+	}
+#endif
+	if(videodevice->m_driver==VIDEODEV_DRIVER_NONE)
+	{
+		kdDebug() << "libkopete (avdevice): intDevice(): " << path.c_str() << " Trying V4L API." << endl;
+		if (-1 == ioctl (handle, VIDIOCGCAP, &videodevice->V4L_capabilities))
+		{
+			perror ("ioctl (VIDIOCGCAP)");
+			videodevice->m_driver = VIDEODEV_DRIVER_NONE;
+			return EXIT_FAILURE;
+		}
+		else
+		{
+			kdDebug() << "libkopete (avdevice): intDevice(): " << path.c_str() << " is a V4L device." << endl;
+			videodevice->m_driver = VIDEODEV_DRIVER_V4L;
+		}
+	}
+#endif
 
 // Now we must execute the proper initialization according to the type of the driver.
 	switch(videodevice->m_driver)
 	{
+#ifdef __linux__
 #ifdef HAVE_V4L2
 		case VIDEODEV_DRIVER_V4L2:
 			kdDebug() << "libkopete (avdevice): Driver: " << (const char*)videodevice->V4L2_capabilities.driver << " "
@@ -199,10 +208,13 @@ int VideoDevice::checkDevice(int handle, VideoDeviceListItem *videodevice)
 			if(videodevice->V4L2_capabilities.capabilities & V4L2_CAP_AUDIO)
 				kdDebug() << "libkopete (avdevice):     Audio IO" << endl;
 			break;
-#endif // HAVE_V4L2
+#endif
 		case VIDEODEV_DRIVER_V4L:
-
+			videodevice->name=QString::fromLocal8Bit((const char*)videodevice->V4L_capabilities.name);
+			kdDebug() << "libkopete (avdevice): Card: " << videodevice->name << endl;
+			kdDebug() << "libkopete (avdevice): Capabilities:" << endl;
 			break;
+#endif
 		case VIDEODEV_DRIVER_NONE:
 
 			break;
@@ -217,7 +229,6 @@ int VideoDevice::checkDevice(int handle, VideoDeviceListItem *videodevice)
 int VideoDevice::initDevice()
 {
     /// @todo implement me
-#ifdef HAVE_V4L2
 	unsigned int min;
 
 	kdDebug() << "libkopete (avdevice): initDevice() started" << endl;
@@ -233,6 +244,8 @@ int VideoDevice::initDevice()
 	m_io_method = IO_METHOD_NONE;
 	switch(m_videodevice[m_current_device].m_driver)
 	{
+#ifdef __linux__
+#ifdef HAVE_V4L2
 		case VIDEODEV_DRIVER_V4L2:
 			if(m_videodevice[m_current_device].V4L2_capabilities.capabilities & V4L2_CAP_READWRITE)
 			{
@@ -253,8 +266,11 @@ int VideoDevice::initDevice()
 				return EXIT_FAILURE;
 			}
 			break;
+#endif
 		case VIDEODEV_DRIVER_V4L:
+			m_io_method=IO_METHOD_READ;
 			break;
+#endif
 		case VIDEODEV_DRIVER_NONE:
 
 			break;
@@ -262,29 +278,69 @@ int VideoDevice::initDevice()
 
 	kdDebug() << "libkopete (avdevice): Enumerating video inputs: " << endl;
 	m_video_input.clear();
-	for(unsigned int loop=0; inputisok==EXIT_SUCCESS; loop++)
+
+	switch(m_videodevice[m_current_device].m_driver)
 	{
-		struct v4l2_input input;
-		memset(&input, 0, sizeof(input));
-		input.index = loop;
-		inputisok=xioctl(VIDIOC_ENUMINPUT, &input);
-		if(inputisok==EXIT_SUCCESS)
-		{
-			Kopete::AV::VideoInput tempinput;
-			tempinput.name = QString::fromLatin1((const char*)input.name);
-			tempinput.hastuner=input.type & V4L2_INPUT_TYPE_TUNER;
-			m_video_input.push_back(tempinput);
-			kdDebug() << "libkopete (avdevice): Input " << loop << ": " << tempinput.name << " (tuner: " << ((input.type & V4L2_INPUT_TYPE_TUNER) != 0) << ")" << endl;
-			if((input.type & V4L2_INPUT_TYPE_TUNER) != 0)
+#ifdef __linux__
+#ifdef HAVE_V4L2
+		case VIDEODEV_DRIVER_V4L2:
+			for(unsigned int loop=0; inputisok==EXIT_SUCCESS; loop++)
 			{
-//				_tunerForInput[name] = desc.tuner;
-//				_isTuner = true;
+				struct v4l2_input input;
+				memset(&input, 0, sizeof(input));
+				input.index = loop;
+				inputisok=xioctl(VIDIOC_ENUMINPUT, &input);
+				if(inputisok==EXIT_SUCCESS)
+				{
+					Kopete::AV::VideoInput tempinput;
+					tempinput.name = QString::fromLocal8Bit((const char*)input.name);
+					tempinput.hastuner=input.type & V4L2_INPUT_TYPE_TUNER;
+					m_video_input.push_back(tempinput);
+					kdDebug() << "libkopete (avdevice): Input " << loop << ": " << tempinput.name << " (tuner: " << ((input.type & V4L2_INPUT_TYPE_TUNER) != 0) << ")" << endl;
+					if((input.type & V4L2_INPUT_TYPE_TUNER) != 0)
+					{
+//						_tunerForInput[name] = desc.tuner;
+//						_isTuner = true;
+					}
+					else
+					{
+//						_tunerForInput[name] = -1;
+					}
+				}
 			}
-			else
+			break;
+#endif
+		case VIDEODEV_DRIVER_V4L:
+//			m_video_input.resize(m_videodevice[m_current_device].V4L_capabilities.channels);
+			for(unsigned int loop=0; inputisok==EXIT_SUCCESS; loop++)
 			{
-//				_tunerForInput[name] = -1;
+				struct video_channel input;
+				memset(&input, 0, sizeof(input));
+				input.channel = loop;
+				input.norm    = 1;
+				inputisok=xioctl(VIDIOCGCHAN, &input);
+				if(inputisok==EXIT_SUCCESS)
+				{
+					Kopete::AV::VideoInput tempinput;
+					tempinput.name = QString::fromLocal8Bit((const char*)input.name);
+					tempinput.hastuner=input.flags & VIDEO_VC_TUNER;
+					m_video_input.push_back(tempinput);
+					kdDebug() << "libkopete (avdevice): Input " << loop << ": " << tempinput.name << " (tuner: " << ((input.flags & VIDEO_VC_TUNER) != 0) << ")" << endl;
+/*					if((input.type & V4L2_INPUT_TYPE_TUNER) != 0)
+					{
+//						_tunerForInput[name] = desc.tuner;
+//						_isTuner = true;
+					}
+					else
+					{
+//						_tunerForInput[name] = -1;
+					}
+*/				}
 			}
-		}
+			break;
+#endif
+		case VIDEODEV_DRIVER_NONE:
+			break;
 	}
 	kdDebug() << "libkopete (avdevice): Grand total of " << m_video_input.size() << " video inputs for this device." << endl;
 	for (unsigned int loop=0; loop < m_video_input.size(); loop++)
@@ -308,39 +364,85 @@ int VideoDevice::initDevice()
 			default:     break;  // Errors ignored.
 		}
 	}
-	CLEAR (m_videodevice[m_current_device].fmt);
-	if (-1 == xioctl (VIDIOC_G_FMT, &m_videodevice[m_current_device].fmt))
-//		return errnoReturn ("VIDIOC_S_FMT");
-		kdDebug() << "libkopete (avdevice): VIDIOC_G_FMT failed (" << errno << ")." << endl;
 
-	m_videodevice[m_current_device].fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-	m_videodevice[m_current_device].fmt.fmt.pix.width       = 320;
-	m_videodevice[m_current_device].fmt.fmt.pix.height      = 240;
-	m_videodevice[m_current_device].fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB32;
-	m_videodevice[m_current_device].fmt.fmt.pix.field       = V4L2_FIELD_ANY;
+// Change resolution and colorspace for the video device
+	switch(m_videodevice[m_current_device].m_driver)
+	{
+#ifdef __linux__
+#ifdef HAVE_V4L2
+		case VIDEODEV_DRIVER_V4L2:
+			CLEAR (m_videodevice[m_current_device].fmt);
+			if (-1 == xioctl (VIDIOC_G_FMT, &m_videodevice[m_current_device].fmt))
+//				return errnoReturn ("VIDIOC_S_FMT");
+				kdDebug() << "libkopete (avdevice): VIDIOC_G_FMT failed (" << errno << ")." << endl;
+			m_videodevice[m_current_device].fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+			m_videodevice[m_current_device].fmt.fmt.pix.width       = 320;
+			m_videodevice[m_current_device].fmt.fmt.pix.height      = 240;
+			m_videodevice[m_current_device].fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
+			m_videodevice[m_current_device].fmt.fmt.pix.field       = V4L2_FIELD_ANY;
+			if (-1 == xioctl (VIDIOC_S_FMT, &m_videodevice[m_current_device].fmt))
+//				return errnoReturn ("VIDIOC_S_FMT");
+				kdDebug() << "libkopete (avdevice): VIDIOC_S_FMT failed (" << errno << ")." << endl;
+				// Note VIDIOC_S_FMT may change width and height.
+			else
+			{
+// Buggy driver paranoia.
+				min = m_videodevice[m_current_device].fmt.fmt.pix.width * 2;
+				if (m_videodevice[m_current_device].fmt.fmt.pix.bytesperline < min)
+					m_videodevice[m_current_device].fmt.fmt.pix.bytesperline = min;
+				min = m_videodevice[m_current_device].fmt.fmt.pix.bytesperline * m_videodevice[m_current_device].fmt.fmt.pix.height;
+				if (m_videodevice[m_current_device].fmt.fmt.pix.sizeimage < min)
+					m_videodevice[m_current_device].fmt.fmt.pix.sizeimage = min;
+				m_buffer_size=m_videodevice[m_current_device].fmt.fmt.pix.sizeimage ;
+			}
+			break;
+#endif
+		case VIDEODEV_DRIVER_V4L:
+			struct video_picture V4L_picture;
+			if (xioctl (VIDIOCGWIN, &m_videodevice[m_current_device].V4L_videowindow)== -1)
+			{
+				perror ("ioctl VIDIOCGWIN");
+				return (NULL);
+			}
+			m_videodevice[m_current_device].V4L_videowindow.width  = 320;
+			m_videodevice[m_current_device].V4L_videowindow.height = 240;
+			m_videodevice[m_current_device].V4L_videowindow.clipcount=0;
+			if (xioctl (VIDIOCSWIN, &m_videodevice[m_current_device].V4L_videowindow)== -1)
+			{
+				perror ("ioctl VIDIOCSWIN");
+				return (NULL);
+			}
+			if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
+				kdDebug() << "libkopete (avdevice): VIDIOCGPICT failed (" << errno << ")." << endl;
+			kdDebug() << "libkopete (avdevice): V4L_picture.palette: " << V4L_picture.palette << endl;
+			V4L_picture.palette = VIDEO_PALETTE_RGB32;
+			if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
+				kdDebug() << "libkopete (avdevice): VIDIOCSPICT failed (" << errno << ")." << endl;
+			kdDebug() << "libkopete (avdevice): V4L_picture.palette: " << V4L_picture.palette << endl;
 
-	if (-1 == xioctl (VIDIOC_S_FMT, &m_videodevice[m_current_device].fmt))
-//		return errnoReturn ("VIDIOC_S_FMT");
-		kdDebug() << "libkopete (avdevice): VIDIOC_S_FMT failed (" << errno << ")." << endl;
-
-  // Note VIDIOC_S_FMT may change width and height.
-
-  // Buggy driver paranoia.
-	min = m_videodevice[m_current_device].fmt.fmt.pix.width * 2;
-	if (m_videodevice[m_current_device].fmt.fmt.pix.bytesperline < min)
-		m_videodevice[m_current_device].fmt.fmt.pix.bytesperline = min;
-	min = m_videodevice[m_current_device].fmt.fmt.pix.bytesperline * m_videodevice[m_current_device].fmt.fmt.pix.height;
-	if (m_videodevice[m_current_device].fmt.fmt.pix.sizeimage < min)
-		m_videodevice[m_current_device].fmt.fmt.pix.sizeimage = min;
+			if(-1 == xioctl(VIDIOCGFBUF,&m_videodevice[m_current_device].V4L_videobuffer))
+				kdDebug() << "libkopete (avdevice): VIDIOCGFBUF failed (" << errno << ")." << endl;
+			else
+			{
+// Buggy driver paranoia.
+				min = m_videodevice[m_current_device].V4L_videobuffer.width * 2;
+				if (m_videodevice[m_current_device].V4L_videobuffer.bytesperline < min)
+					m_videodevice[m_current_device].V4L_videobuffer.bytesperline = min;
+				m_buffer_size = m_videodevice[m_current_device].V4L_videobuffer.height * m_videodevice[m_current_device].V4L_videobuffer.bytesperline;
+			}
+			break;
+#endif
+		case VIDEODEV_DRIVER_NONE:
+			break;
+	}
 
 	switch (m_io_method)
 	{
-		case IO_METHOD_NONE:    return EXIT_FAILURE;                                                 break;
-		case IO_METHOD_READ:    initRead (m_videodevice[m_current_device].fmt.fmt.pix.sizeimage);    break;
-		case IO_METHOD_MMAP:    initMmap ();                                                         break;
-		case IO_METHOD_USERPTR: initUserptr (m_videodevice[m_current_device].fmt.fmt.pix.sizeimage); break;
+		case IO_METHOD_NONE:                    break;
+		case IO_METHOD_READ:    initRead ();    break;
+		case IO_METHOD_MMAP:    initMmap ();    break;
+		case IO_METHOD_USERPTR: initUserptr (); break;
 	}
-#endif
 	kdDebug() << "libkopete (avdevice): initDevice() exited successfuly" << endl;
 	return EXIT_SUCCESS;
 }
@@ -352,11 +454,13 @@ int VideoDevice::initDevice()
 int VideoDevice::close()
 {
     /// @todo implement me
+	kdDebug() << "libkopete (avdevice): initRead called." << endl;
 	stopCapturing();
-	if (-1 == ::close (descriptor))
-		return errnoReturn ("close");
+	if(file.isOpen())
+		file.close();
+	else
+		kdDebug() << "libkopete (avdevice): close() Device already closed." << endl;
 	descriptor = -1;
-	file.close();
 	return EXIT_SUCCESS;
 }
 
@@ -375,7 +479,7 @@ int VideoDevice::errnoReturn(const char* s)
 /*!
     \fn VideoDevice::initRead(unsigned int buffer_size)
  */
-int VideoDevice::initRead(unsigned int buffer_size)
+int VideoDevice::initRead()
 {
     /// @todo implement me
 	buffers.resize(1);
@@ -386,12 +490,13 @@ int VideoDevice::initRead(unsigned int buffer_size)
 		fprintf (stderr, "Out of memory\n");
 		return EXIT_FAILURE;
 	}
+	kdDebug() << "libkopete (avdevice): initRead m_buffer_size: " << m_buffer_size << endl;
 
-	buffers[0].length = buffer_size;
-	buffers[0].start = (uchar *)malloc (buffer_size);
+	buffers[0].length = m_buffer_size;
+	buffers[0].start = (uchar *)malloc (m_buffer_size);
 
-	currentbuffer.size = buffer_size; // not really useful, cause currentbuffer.data.size() does the same thing
-	currentbuffer.data.resize(buffer_size);
+	currentbuffer.size = m_buffer_size; // not really useful, cause currentbuffer.data.size() does the same thing
+	currentbuffer.data.resize(m_buffer_size);
 
 	if (!buffers[0].start)
 	{
@@ -474,7 +579,7 @@ int VideoDevice::initMmap()
 /*!
     \fn VideoDevice::initUserptr()
  */
-int VideoDevice::initUserptr(unsigned int buffer_size)
+int VideoDevice::initUserptr()
 {
     /// @todo implement me
 #ifdef HAVE_V4L2
@@ -509,8 +614,8 @@ int VideoDevice::initUserptr(unsigned int buffer_size)
 
 	for (n_buffers = 0; n_buffers < 4; ++n_buffers)
 	{
-		buffers[n_buffers].length = buffer_size;
-		buffers[n_buffers].start = (uchar *) malloc (buffer_size);
+		buffers[n_buffers].length = m_buffer_size;
+		buffers[n_buffers].start = (uchar *) malloc (m_buffer_size);
 
 		if (!buffers[n_buffers].start)
 		{
@@ -526,7 +631,7 @@ return EXIT_SUCCESS;
 /*!
     \fn VideoDevice::selectDevice(int device)
  */
-int VideoDevice::selectDevice(int device)
+int VideoDevice::selectDevice(unsigned int device)
 {
     /// @todo implement me
 	if(device >= m_videodevice.size())
@@ -632,10 +737,12 @@ return EXIT_SUCCESS;
 int VideoDevice::readFrame()
 {
     /// @todo implement me
+	unsigned int i;
+#ifdef __linux__
 #ifdef HAVE_V4L2
 	struct v4l2_buffer buf;
-	unsigned int i;
-
+#endif
+#endif
 	kdDebug() << "libkopete (avdevice): readFrame() called." << endl;
 	switch (m_io_method)
 	{
@@ -643,9 +750,11 @@ int VideoDevice::readFrame()
 			return EXIT_FAILURE;
 			break;
 		case IO_METHOD_READ:
-//			if (-1 == read (descriptor, buffers[0].start, buffers[0].length))
-			if (-1 == read (descriptor, &currentbuffer.data[0], currentbuffer.data.size()))
+			kdDebug() << "libkopete (avdevice): readFrame() Using IO_METHOD_READ." << endl;
+			unsigned int bytesread =read (descriptor, &currentbuffer.data[0], currentbuffer.data.size());
+			if (-1 == bytesread)
 			{
+				kdDebug() << "libkopete (avdevice): readFrame() IO_METHOD_READ failed." << endl;
 				switch (errno)
 				{
 					case EAGAIN:
@@ -655,17 +764,15 @@ int VideoDevice::readFrame()
 					return errnoReturn ("read");
 				}
 			}
-			processImage (buffers[0].start);
-			for(size_t loop=0; loop<currentbuffer.data.size(); loop+=4)
+			if(currentbuffer.data.size() < bytesread)
 			{
-				currentbuffer.data[loop]  =currentbuffer.data[loop+3];
-				currentbuffer.data[loop+3]=currentbuffer.data[loop+1];
-				currentbuffer.data[loop+1]=currentbuffer.data[loop+2];
-				currentbuffer.data[loop+2]=currentbuffer.data[loop+3];
-				currentbuffer.data[loop+3]=255;
+				kdDebug() << "libkopete (avdevice): readFrame() IO_METHOD_READ returned less bytes (" << bytesread << ") than it was asked for (" << currentbuffer.data.size() <<")." << endl;
 			}
+			processImage (buffers[0].start);
 			break;
 		case IO_METHOD_MMAP:
+#ifdef __linux__
+#ifdef HAVE_V4L2
 			CLEAR (buf);
 			buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 			buf.memory = V4L2_MEMORY_MMAP;
@@ -682,18 +789,14 @@ int VideoDevice::readFrame()
 			}
 			assert (buf.index < n_buffers);
 			processImage (buffers[buf.index].start);
-			for(size_t loop=0; loop<currentbuffer.data.size(); loop+=4)
-			{
-				currentbuffer.data[loop]  =buffers[buf.index].start[loop+3];
-				currentbuffer.data[loop+1]=buffers[buf.index].start[loop+2];
-				currentbuffer.data[loop+2]=buffers[buf.index].start[loop+1];
-				currentbuffer.data[loop+3]=255;
-			}
-//			memcpy(&currentbuffer.data[0], buffers[buf.index].start, currentbuffer.data.size());
 			if (-1 == xioctl (VIDIOC_QBUF, &buf))
 				return errnoReturn ("VIDIOC_QBUF");
+#endif
+#endif
 			break;
 		case IO_METHOD_USERPTR:
+#ifdef __linux__
+#ifdef HAVE_V4L2
 			CLEAR (buf);
 			buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 			buf.memory = V4L2_MEMORY_USERPTR;
@@ -713,18 +816,12 @@ int VideoDevice::readFrame()
 					break;
 			assert (i < n_buffers);
 			processImage ((void *) buf.m.userptr);
-			for(size_t loop=0; loop<currentbuffer.data.size(); loop+=4)
-			{
-				currentbuffer.data[loop]  =buffers[i].start[loop+3];
-				currentbuffer.data[loop+1]=buffers[i].start[loop+2];
-				currentbuffer.data[loop+2]=buffers[i].start[loop+1];
-				currentbuffer.data[loop+3]=255;
-			}
 			if (-1 == xioctl (VIDIOC_QBUF, &buf))
 				return errnoReturn ("VIDIOC_QBUF");
+#endif
+#endif
 			break;
 	}
-#endif
 // put frame copy operation here
 	kdDebug() << "libkopete (avdevice): readFrame() exited successfuly." << endl;
 	return EXIT_SUCCESS;
@@ -775,9 +872,10 @@ int Kopete::AV::VideoDevice::getImage(QImage *qimage)
 int Kopete::AV::VideoDevice::selectInput(int input)
 {
     /// @todo implement me
-#ifdef HAVE_V4L2
 	switch (m_videodevice[m_current_device].m_driver)
 	{
+#ifdef __linux__
+#ifdef HAVE_V4L2
 		case VIDEODEV_DRIVER_V4L2:
 			if (-1 == ioctl (descriptor, VIDIOC_S_INPUT, &input))
 			{
@@ -785,20 +883,24 @@ int Kopete::AV::VideoDevice::selectInput(int input)
 				return EXIT_FAILURE;
 			}
 			break;
+#endif
 		case VIDEODEV_DRIVER_V4L:
-			if (-1 == ioctl (descriptor, VIDIOCSCHAN, &input))
+			struct video_channel V4L_input;
+			V4L_input.channel=input;
+			V4L_input.norm=1;
+			if (-1 == ioctl (descriptor, VIDIOCSCHAN, &V4L_input))
 			{
 				perror ("ioctl (VIDIOCSCHAN)");
 				return EXIT_FAILURE;
 			}
 			break;
+#endif
 		case VIDEODEV_DRIVER_NONE:
 			break;
 	}
 	kdDebug() << "libkopete (avdevice): selectInput: Selected input " << input << " (" << m_video_input[input].name << ")" << endl;
 	m_current_input=input;
 	return EXIT_SUCCESS;
-#endif
 }
 
 /*!

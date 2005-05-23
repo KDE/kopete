@@ -50,10 +50,12 @@ namespace AV {
 typedef enum
 {
 	VIDEODEV_DRIVER_NONE,
+#ifdef __linux__
 	VIDEODEV_DRIVER_V4L,
 #ifdef HAVE_V4L2
 	VIDEODEV_DRIVER_V4L2,
-#endif // HAVE_V4L2
+#endif
+#endif
 } videodev_driver;
 
 class VideoDeviceListItem{
@@ -64,14 +66,17 @@ public:
 	QString full_filename;
 	videodev_driver m_driver;
 //protected:
+#ifdef __linux__
 #ifdef HAVE_V4L2
 	struct v4l2_capability V4L2_capabilities;
 	struct v4l2_cropcap cropcap;
 	struct v4l2_crop crop;
 	struct v4l2_format fmt;
-#endif // HAVE_V4L2
-
+#endif
 	struct video_capability V4L_capabilities;
+	struct video_window V4L_videowindow;
+	struct video_buffer V4L_videobuffer;
+#endif	
 };
 
 }

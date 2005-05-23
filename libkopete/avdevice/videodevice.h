@@ -51,7 +51,7 @@ public:
 	int checkDevice(int handle, VideoDeviceListItem *videodevice);
 	int initDevice();
 	int close();
-	int selectDevice(int device);
+	int selectDevice(unsigned int device);
 	int startCapturing();
 	int stopCapturing();
 	int readFrame();
@@ -96,6 +96,8 @@ protected:
 	QValueVector<buffer> buffers;
 	unsigned int     n_buffers;
 	buffer2 currentbuffer;
+	int m_buffer_size;
+
 	QFile file;
 	int m_current_device;
 	int m_current_input;
@@ -104,9 +106,9 @@ protected:
 	int xioctl(int request, void *arg);
 	int processImage(const void *p);
 	int errnoReturn(const char* s);
-	int initRead(unsigned int buffer_size);
+	int initRead();
 	int initMmap();
-	int initUserptr(unsigned int buffer_size);
+	int initUserptr();
 	void guessDriver();
 private:
 	VideoDevice();
