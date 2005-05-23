@@ -62,6 +62,8 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 	
 	m_webcamDialog = 0L;
 	m_webcamAction = 0L;
+
+	m_buzzAction = 0L;
 }
 
 YahooContact::~YahooContact()
@@ -203,8 +205,14 @@ QPtrList<KAction> *YahooContact::customContextMenuActions()
 		m_webcamAction = new KAction( i18n( "View &Webcam" ), "camera_unmount", KShortcut(),
 		                              this, SLOT( requestWebcam() ), this, "view_webcam" );
 	}
-	
 	actionCollection->append( m_webcamAction );
+	
+	if ( !m_buzzAction )
+	{
+		m_buzzAction = new KAction( i18n( "&Buzz Contact" ), KShortcut(), this, SLOT( buzzContact() ), this, "buzz_contact");
+	}
+	actionCollection->append( m_buzzAction );
+	
 	return actionCollection;
 	
 
@@ -224,6 +232,14 @@ void YahooContact::slotUserInfo()
 void YahooContact::slotSendFile()
 {
 	kdDebug(14180) << k_funcinfo << endl;
+}
+
+void YahooContact::buzzContact()
+{
+	Kopete::ContactPtrList m_them = manager(Kopete::Contact::CanCreate)->members();
+	Kopete::Contact *target = m_them.first();
+	
+	m_account->yahooSession()->buzzContact(	static_cast<YahooContact*>(m_account->myself())->m_userId, static_cast<YahooContact*>(target)->m_userId );
 }
 
 void YahooContact::requestWebcam()

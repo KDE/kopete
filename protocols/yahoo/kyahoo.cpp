@@ -281,6 +281,12 @@ void YahooSession::sendTyping( const QString &from, const QString &who, int typ)
 	yahoo_send_typing( m_connId, from.local8Bit(), who.local8Bit(), typ );
 }
 
+void YahooSession::buzzContact( const QString &from, const QString &who )
+{
+	kdDebug(14181) << k_funcinfo << endl;
+	yahoo_send_im( m_connId, from.local8Bit(), who.local8Bit(), "<ding>", 1);
+}
+
 void YahooSession::setAway( enum yahoo_status state, const QString &msg, int away)
 {
 	kdDebug(14181)<< k_funcinfo << state << ", " << msg << ", " << away << "]" << m_connId << endl;

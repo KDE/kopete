@@ -62,7 +62,7 @@ public slots:
 	void requestWebcam();
 	void closeWebcamDialog();
 	void webcamClosed( const QString& contact, int reason );
-
+	void buzzContact();
 
 	/**
 	 * Must be called after the contact list has been received
@@ -91,6 +91,8 @@ private:
 	KAction* m_webcamAction;
 	YahooWebcamDialog* m_webcamDialog;
 	
+	//buzz
+	KAction* m_buzzAction;	
 };
 
 #endif

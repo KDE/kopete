@@ -131,6 +131,7 @@ public slots:
 public:
 	void sendIm( const QString &from, const QString &who, const QString &msg);
 	void sendTyping( const QString &from, const QString &who, int typ);
+ 	void buzzContact( const QString &from, const QString&who );
 	void setAway( enum yahoo_status state, const QString &msg, int away);
 	void addBuddy( const QString &who, const QString &group);
 	void removeBuddy( const QString &who, const QString &group);
