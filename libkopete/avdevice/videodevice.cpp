@@ -738,6 +738,8 @@ int VideoDevice::readFrame()
 {
     /// @todo implement me
 	unsigned int i;
+	unsigned int bytesread;
+
 #ifdef __linux__
 #ifdef HAVE_V4L2
 	struct v4l2_buffer buf;
@@ -750,8 +752,8 @@ int VideoDevice::readFrame()
 			return EXIT_FAILURE;
 			break;
 		case IO_METHOD_READ:
-			kdDebug() << "libkopete (avdevice): readFrame() Using IO_METHOD_READ." << endl;
-			unsigned int bytesread =read (descriptor, &currentbuffer.data[0], currentbuffer.data.size());
+			kdDebug() << "libkopete (avdevice): readFrame() Using IO_METHOD_READ.File descriptor: " << descriptor << "Buffer address: " << &currentbuffer.data[0] << "Size: " << currentbuffer.data.size() << endl;
+			bytesread =read (descriptor, &currentbuffer.data[0], currentbuffer.data.size());
 			if (-1 == bytesread)
 			{
 				kdDebug() << "libkopete (avdevice): readFrame() IO_METHOD_READ failed." << endl;
