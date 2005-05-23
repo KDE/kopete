@@ -974,6 +974,10 @@ int Kopete::AV::VideoDevice::scanDevices()
         videodevice_dir.setSorting( QDir::Name );
 
 	const QFileInfoList *list = videodevice_dir.entryInfoList();
+
+	if (!list)
+		return EXIT_FAILURE;
+
 	QFileInfoListIterator fileiterator ( *list );
 	QFileInfo *fileinfo;
 	QFile file;

@@ -60,7 +60,7 @@ public:
 	int setResolution(int width, int height);
 	int scanDevices();
 	~VideoDevice();
-	QValueVector <Kopete::AV::VideoDeviceListItem> m_videodevice;
+	QValueVector<Kopete::AV::VideoDeviceListItem> m_videodevice;
 	QValueVector<Kopete::AV::VideoInput> m_video_input;
 	int fillDeviceKComboBox(KComboBox *combobox);
 	int fillInputKComboBox(KComboBox *combobox);
