@@ -349,7 +349,8 @@ int VideoDevice::initDevice()
 
 
 // Select video input, video standard and tune here.
-
+#ifdef __linux__
+#ifdef HAVE_V4L2
 	m_videodevice[m_current_device].cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	if (-1 == xioctl (VIDIOC_CROPCAP, &m_videodevice[m_current_device].cropcap))
 	{ // Errors ignored.
@@ -364,6 +365,8 @@ int VideoDevice::initDevice()
 			default:     break;  // Errors ignored.
 		}
 	}
+#endif
+#endif
 
 // Change resolution and colorspace for the video device
 	switch(m_videodevice[m_current_device].m_driver)
@@ -753,7 +756,7 @@ int VideoDevice::readFrame()
 			break;
 		case IO_METHOD_READ:
 			kdDebug() << "libkopete (avdevice): readFrame() Using IO_METHOD_READ.File descriptor: " << descriptor << "Buffer address: " << &currentbuffer.data[0] << "Size: " << currentbuffer.data.size() << endl;
-			bytesread =read (descriptor, &currentbuffer.data[0], currentbuffer.data.size());
+			bytesread = read (descriptor, &currentbuffer.data[0], currentbuffer.data.size());
 			if (-1 == bytesread)
 			{
 				kdDebug() << "libkopete (avdevice): readFrame() IO_METHOD_READ failed." << endl;
