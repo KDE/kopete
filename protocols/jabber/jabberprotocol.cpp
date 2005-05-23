@@ -66,7 +66,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_jabber, JabberProtocolFactory( "kopete_jabber
 
 JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStringList &)
 : Kopete::Protocol( JabberProtocolFactory::instance(), parent, name ),
-	JabberKOSChatty(Kopete::OnlineStatus::Online,        100, this, JabberFreeForChat, "jabber_chatty", i18n ("Free to Chat"), i18n ("Free to Chat"), Kopete::OnlineStatusManager::FreeForChat ),
+	JabberKOSChatty(Kopete::OnlineStatus::Online,        100, this, JabberFreeForChat, "jabber_chatty", i18n ("Free for Chat"), i18n ("Free for Chat"), Kopete::OnlineStatusManager::FreeForChat ),
 	JabberKOSOnline(Kopete::OnlineStatus::Online,         90, this, JabberOnline, QString::null, i18n ("Online"), i18n ("Online"), Kopete::OnlineStatusManager::Online ),
 	JabberKOSAway(Kopete::OnlineStatus::Away,             80, this, JabberAway, "contact_away_overlay", i18n ("Away"), i18n ("Away"), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasAwayMessage),
 	JabberKOSXA(Kopete::OnlineStatus::Away,               70, this, JabberXA, "contact_xa_overlay", i18n ("Extended Away"), i18n ("Extended Away"), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasAwayMessage),
