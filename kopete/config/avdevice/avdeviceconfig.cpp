@@ -68,7 +68,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 	d->selectDevice(0);
 	d->open();
 	d->initDevice();
-	d->fillDeviceKcomboBox(mPrfsVideoDevice->mDeviceKComboBox);
+	d->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
 	d->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 	d->selectInput(0);
 	d->startCapturing();
@@ -123,7 +123,7 @@ void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
 		d->selectDevice(newdevice);
 		d->open();
 		d->initDevice();
-		d->fillDeviceKcomboBox(mPrfsVideoDevice->mDeviceKComboBox);
+		d->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
 		d->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 		d->selectInput(0);
 		d->startCapturing();
