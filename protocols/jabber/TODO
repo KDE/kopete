@@ -27,3 +27,4 @@ TODO for Jabber:
 - allow fetching vCard from "auth user?" dialog
 - allow adding file transfer reasons
 - support resuming
+- support addAddressBookField
