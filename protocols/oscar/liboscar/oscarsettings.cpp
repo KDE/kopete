@@ -49,6 +49,16 @@ bool Settings::requireAuth() const
 	return m_requireAuth;
 }
 
+void Settings::setRespectRequireAuth( bool respect )
+{
+	m_respectRequireAuth = respect;
+}
+
+bool Settings::respectRequireAuth() const
+{
+	return m_respectRequireAuth;
+}
+
 void Settings::setHideIP( bool hide )
 {
 	m_hideIP = hide;
