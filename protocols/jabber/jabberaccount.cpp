@@ -372,7 +372,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 	 */
 	jabberClientConnector = new JabberConnector;
 	jabberClientConnector->setOptHostPort (server (), port ());
-	jabberClientConnector->setOptSSL(trySSL);
+	jabberClientConnector->setOptSSL ( trySSL );
 
 	/*
 	 * Setup authentication layer
@@ -386,6 +386,9 @@ void JabberAccount::connectWithPassword ( const QString &password )
 			using namespace XMPP;
 			QObject::connect(jabberTLSHandler, SIGNAL(tlsHandshaken()), this, SLOT(slotTLSHandshaken()));
 		}
+
+		QPtrList<QCA::Cert> certStore;
+		jabberTLS->setCertificateStore ( certStore );
 	}
 
 	/*
@@ -906,7 +909,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 	QString errorText;
 	QString errorCondition;
 
-	errorClass = Kopete::Account::Unknown;
+	errorClass = Kopete::Account::InvalidHost;
 
 	/*
 	 * Display error to user.
@@ -915,10 +918,12 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 	switch(streamError)
 	{
 		case XMPP::Stream::ErrParse:
+			errorClass = Kopete::Account::Unknown;
 			errorText = i18n("Malformed packet received.");
 			break;
 
 		case XMPP::Stream::ErrProtocol:
+			errorClass = Kopete::Account::Unknown;
 			errorText = i18n("There was an unrecoverable error in the protocol.");
 			break;
 
@@ -965,7 +970,6 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			break;
 
 		case XMPP::ClientStream::ErrConnection:
-			errorClass = Kopete::Account::InvalidHost;
 			switch(connectorCode)
 			{
  				case KNetwork::KSocketBase::LookupFailure:
@@ -1047,7 +1051,6 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			break;
 
 		case XMPP::ClientStream::ErrTLS:
-			errorClass = Kopete::Account::InvalidHost;
 			switch(streamCondition)
 			{
 				case XMPP::ClientStream::TLSStart:
@@ -1065,7 +1068,6 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			break;
 
 		case XMPP::ClientStream::ErrAuth:
-			errorClass = Kopete::Account::InvalidHost;
 			switch(streamCondition)
 			{
 				case XMPP::ClientStream::GenericAuthError:
@@ -1110,7 +1112,6 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			break;
 
 		case XMPP::ClientStream::ErrSecurityLayer:
-			errorClass = Kopete::Account::InvalidHost;
 			switch(streamCondition)
 			{
 				case XMPP::ClientStream::LayerTLS:
@@ -1128,7 +1129,6 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			break;
 
 		case XMPP::ClientStream::ErrBind:
-			errorClass = Kopete::Account::InvalidHost;
 			switch(streamCondition)
 			{
 				case XMPP::ClientStream::BindNotAllowed:
