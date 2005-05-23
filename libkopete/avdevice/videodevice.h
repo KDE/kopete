@@ -62,7 +62,7 @@ public:
 	~VideoDevice();
 	QValueVector <Kopete::AV::VideoDeviceListItem> m_videodevice;
 	QValueVector<Kopete::AV::VideoInput> m_video_input;
-	int fillDeviceKcomboBox(KComboBox *combobox);
+	int fillDeviceKComboBox(KComboBox *combobox);
 	int fillInputKComboBox(KComboBox *combobox);
 	int currentDevice();
 	int currentInput();
