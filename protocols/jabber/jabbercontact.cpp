@@ -961,10 +961,12 @@ bool JabberContact::isContactRequestingEvent( XMPP::MsgEvent event )
 		return mRequestDeliveredEvent;
 	else if ( event == DisplayedEvent )
 		return mRequestDisplayedEvent;
-	else if ( event == ComposingEvent)
+	else if ( event == ComposingEvent )
+		return mRequestComposingEvent;
+	else if ( event == CancelEvent )
 		return mRequestComposingEvent;
 	else
-		return true;
+		return false;
 }
 
 
