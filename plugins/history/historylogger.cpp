@@ -808,12 +808,14 @@ bool HistoryLogger::filterRegExp() const
 
 QValueList<int> HistoryLogger::getDaysForMonth(QDate date)
 {
-	QRegExp rxTime("(\\d+) (\\d+):(\\d+)($|:)(\\d*)"); //(with a 0.7.x compatibility)
+	QRegExp rxTime("time=\"(\\d+) \\d+:\\d+(:\\d+)?\""); //(with a 0.7.x compatibility)
 
 	QValueList<int> dayList;
 
 	QPtrList<Kopete::Contact> contacts = m_metaContact->contacts();
 	QPtrListIterator<Kopete::Contact> it(contacts);
+
+	int lastDay=0;
 	
 	for(; it.current(); ++it)
 	{
@@ -828,9 +830,13 @@ QValueList<int> HistoryLogger::getDaysForMonth(QDate date)
 		while( (pos = rxTime.search(fullText, pos)) != -1)
 		{
 			pos += rxTime.matchedLength();
+			int day=rxTime.capturedTexts()[1].toInt();
 			
-			if (dayList.find(rxTime.capturedTexts()[1].toInt()) == dayList.end()) // avoid duplicates
-				dayList.append(rxTime.capturedTexts()[1].toInt());			
+			if ( day !=lastDay && dayList.find(day) == dayList.end()) // avoid duplicates
+			{
+				dayList.append(rxTime.capturedTexts()[1].toInt());
+				lastDay=day;
+			}
 		}
 	}
 	return dayList;
