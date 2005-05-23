@@ -816,12 +816,14 @@ QValueList<int> HistoryLogger::getDaysForMonth(QDate date)
 	QPtrListIterator<Kopete::Contact> it(contacts);
 
 	int lastDay=0;
-	
 	for(; it.current(); ++it)
 	{
-		kdDebug() << getFileName(*it, date) << endl;
+//		kdDebug() << getFileName(*it, date) << endl;
 		QFile file(getFileName(*it, date));
-		file.open(IO_ReadOnly);
+		if(!file.open(IO_ReadOnly))
+		{
+			continue;
+		}
 		QTextStream stream(&file);
 		QString fullText = stream.read();
 		file.close();

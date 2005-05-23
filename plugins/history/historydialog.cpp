@@ -38,6 +38,7 @@
 #include <qdir.h>
 #include <qdatetime.h>
 #include <qheader.h>
+#include <qlabel.h>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -130,7 +131,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 		this, SLOT(slotOpenURLRequest(const KURL &, const KParts::URLArgs &)));
 	connect(mMainWidget->dateListView, SIGNAL(clicked(QListViewItem*)), this, SLOT(dateSelected(QListViewItem*)));
 	connect(mMainWidget->searchButton, SIGNAL(clicked()), this, SLOT(slotSearch()));
-	connect(mMainWidget->searchLine, SIGNAL(returnPressed(QString&)), this, SLOT(slotSearch()));
+	connect(mMainWidget->searchLine, SIGNAL(returnPressed()), this, SLOT(slotSearch()));
 	connect(mMainWidget->searchLine, SIGNAL(textChanged(const QString&)), this, SLOT(slotSearchTextChanged(const QString&)));
 	connect(mMainWidget->searchErase, SIGNAL(clicked()), this, SLOT(slotSearchErase()));
 
@@ -160,15 +161,41 @@ void HistoryDialog::init()
 	{
 		init(*it);
 	}
+
+	qHeapSort(m_monthsList);
+
+	initProgressBar(i18n("Loading..."),m_monthsList.count());
+	QTimer::singleShot(0,this,SLOT(slotLoadDays()));
+}
+
+void HistoryDialog::slotLoadDays()
+{
+	if(m_monthsList.isEmpty())
+	{
+		doneProgressBar();
+		return;
+	}
+
+	QDate cDate=m_monthsList.first();
+	m_monthsList.pop_front();
+	QValueList<int> dayList = mLogger->getDaysForMonth(cDate);
+	for (unsigned int i=0; i<dayList.count(); i++)
+	{
+		QDate c2Date(cDate.year(),cDate.month(),dayList[i]);
+		if (!mMainWidget->dateListView->findItem(c2Date.toString(), 0))
+			new KListViewDateItem(mMainWidget->dateListView, c2Date);
+	}
+	mMainWidget->searchProgress->advance(1);
+	QTimer::singleShot(0,this,SLOT(slotLoadDays()));
 }
 
 void HistoryDialog::init(Kopete::Contact *c)
 {
 	// Get year and month list
 	QRegExp rx( "\\.(\\d\\d\\d\\d)(\\d\\d)" );
-	QFileInfo *fi;
-	
+	const QString contact_in_filename=c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) );
 
+	QFileInfo *fi;
 	// BEGIN check if there are Kopete 0.7.x
 	QDir d1(locateLocal("data",QString("kopete/logs/")+
 			c->protocol()->pluginId().replace( QRegExp(QString::fromLatin1("[./~?*]")),QString::fromLatin1("-"))
@@ -178,29 +205,23 @@ void HistoryDialog::init(Kopete::Contact *c)
 
 	const QFileInfoList *list1 = d1.entryInfoList();
 	QFileInfoListIterator it1( *list1 );
-
+	
 	while ( (fi = it1.current()) != 0 )
 	{
-		if(fi->fileName().contains(c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) )))
+		if(fi->fileName().contains(contact_in_filename))
 		{
 			rx.search(fi->fileName());
 			
 			// We search for an item in the list view with the same year. If then we add the month
 			QDate cDate = QDate(rx.cap(1).toInt(), rx.cap(2).toInt(), 1);
 
-            QValueList<int> dayList = mLogger->getDaysForMonth(cDate);
-			for (int i=0; i<dayList.count(); i++)
-			{
-				if (!mMainWidget->dateListView->findItem(QDate(rx.cap(1).toInt(), rx.cap(2).toInt(), dayList[i]).toString(), 0))
-					new KListViewDateItem(mMainWidget->dateListView, QDate(rx.cap(1).toInt(), rx.cap(2).toInt(), dayList[i]));
-			}	
-
-	        mMainWidget->dateListView->update();
-        	qApp->processEvents();
+			if(!m_monthsList.contains(cDate))
+				m_monthsList.append(cDate);
 		}
 		++it1;
 	}
 	// END of kopete 0.7.x check
+
 
 	QString logDir = locateLocal("data",QString("kopete/logs/")+
 			c->protocol()->pluginId().replace( QRegExp(QString::fromLatin1("[./~?*]")),QString::fromLatin1("-")) +
@@ -214,27 +235,18 @@ void HistoryDialog::init(Kopete::Contact *c)
 	QFileInfoListIterator it( *list );
 	while ( (fi = it.current()) != 0 )
 	{
-		if(fi->fileName().contains(c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) )))
+		if(fi->fileName().contains(contact_in_filename)) 
 		{
-			
 			rx.search(fi->fileName());
 			
 			// We search for an item in the list view with the same year. If then we add the month
 			QDate cDate = QDate(rx.cap(1).toInt(), rx.cap(2).toInt(), 1);
 
-            QValueList<int> dayList = mLogger->getDaysForMonth(cDate);
-			for (int i=0; i<dayList.count(); i++)
-			{
-			if (!mMainWidget->dateListView->findItem(QDate(rx.cap(1).toInt(), rx.cap(2).toInt(), dayList[i]).toString(), 0))
-				new KListViewDateItem(mMainWidget->dateListView, QDate(rx.cap(1).toInt(), rx.cap(2).toInt(), dayList[i]));
-			}	
-
-	        mMainWidget->dateListView->update();
-        	qApp->processEvents();
+			if(!m_monthsList.contains(cDate))
+				m_monthsList.append(cDate);
 		}
 		++it;
 	}
-	// END of kopete 0.7.x check
 }
 
 void HistoryDialog::dateSelected(QListViewItem* it)
@@ -368,7 +380,7 @@ void HistoryDialog::searchFirstStep()
 	else
 	{
 		mSearch->item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
-		mMainWidget->searchProgress->setTotalSteps(mMainWidget->dateListView->childCount());
+		initProgressBar(i18n("Searching...") , mMainWidget->dateListView->childCount() );
 		QTimer::singleShot(0, this, SLOT(searchSecondStep()));
 	}
 
@@ -471,6 +483,21 @@ void HistoryDialog::slotSearch()
 
 	mSearch->item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
 	QTimer::singleShot(0, this, SLOT(searchFirstStep()));
+}
+
+
+void HistoryDialog::initProgressBar(const QString& text, int nbSteps)
+{
+	mMainWidget->searchProgress->setTotalSteps(nbSteps);
+	mMainWidget->searchProgress->setProgress(0);
+	mMainWidget->searchProgress->show();
+	mMainWidget->statusLabel->setText(text);
+}
+
+void HistoryDialog::doneProgressBar()
+{
+	mMainWidget->searchProgress->hide();
+	mMainWidget->statusLabel->setText("ready");
 }
 
 #include "historydialog.moc"

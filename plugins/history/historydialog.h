@@ -31,7 +31,6 @@ class HistoryViewer;
 
 //class HistoryWidget;
 namespace Kopete { class MetaContact; }
-namespace Kopete { class XSLT; }
 class HistoryLogger;
 class KHTMLView;
 class KHTMLPart;
@@ -56,16 +55,14 @@ class HistoryDialog : public KDialogBase
 			const char* name="HistoryDialog");
 		~HistoryDialog();
 
-		/**
-		 * Calls init(Kopete::Contact *c) for each subcontact of the metacontact
-		 */
-		void init();
-		void init(Kopete::Contact *c);
-
 	signals:
 		void closing();
 
 	private slots:
+		void init();
+		void slotLoadDays();
+
+		
 		void slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/*args*/);
 
 		// Called when a date is selected in the treeview
@@ -85,6 +82,10 @@ class HistoryDialog : public KDialogBase
 		enum Disabled { Prev=1, Next=2 };
 		void refreshEnabled( /*Disabled*/ uint disabled );
 
+		void initProgressBar(const QString& text, int nbSteps);
+		void doneProgressBar();
+		void init(Kopete::Contact *c);
+
 		/**
 		 * Show the messages in the HTML View
 		 */
@@ -102,12 +103,12 @@ class HistoryDialog : public KDialogBase
 		 */
 		Kopete::MetaContact *mMetaContact;
 
+		QValueList<QDate> m_monthsList;
 
 		// History View
 		KHTMLView *mHtmlView;
 		KHTMLPart *mHtmlPart;
 		HistoryViewer *mMainWidget;
-		Kopete::XSLT *mXsltParser;
 
 		struct Search
 		{
