@@ -53,8 +53,6 @@ private slots:
 	void sslToggled (bool);
 	void configChanged ();
 	void updateServerField ();
-	void slotRegisterOkClicked ();
-	void slotRegisterCancelClicked ();
 
 private:
 	JabberProtocol *m_protocol;

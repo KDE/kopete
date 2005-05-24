@@ -258,8 +258,6 @@ void JabberEditAccountWidget::registerClicked ()
 {
 
 	JabberRegisterAccount *registerDlg = new JabberRegisterAccount ( this );
-	connect ( registerDlg, SIGNAL ( okClicked () ), this, SLOT ( slotRegisterOkClicked () ) );
-	connect ( registerDlg, SIGNAL ( cancelClicked () ), this, SLOT ( slotRegisterCancelClicked () ) );
 
 	registerDlg->show ();
 
@@ -320,20 +318,6 @@ void JabberEditAccountWidget::slotChangePwClicked ()
 		tlChangePassError->show();
 		return;
 	}
-}
-
-void JabberEditAccountWidget::slotRegisterOkClicked ()
-{
- 	
-	//JabberRegisterAccount *registerDlg = static_cast<JabberRegisterAccount*>( sender () );
-
-}
-
-void JabberEditAccountWidget::slotRegisterCancelClicked ()
-{
-
-	//JabberRegisterAccount *registerDlg = static_cast<JabberRegisterAccount*>( sender () );
-
 }
 
 void JabberEditAccountWidget::sslToggled (bool value)
