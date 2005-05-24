@@ -300,7 +300,7 @@ int VideoDevice::initDevice()
 				inputisok=xioctl(VIDIOC_ENUMINPUT, &input);
 				if(inputisok==EXIT_SUCCESS)
 				{
-					Kopete::AV::VideoInput tempinput;
+					VideoInput tempinput;
 					tempinput.name = QString::fromLocal8Bit((const char*)input.name);
 					tempinput.hastuner=input.type & V4L2_INPUT_TYPE_TUNER;
 					m_video_input.push_back(tempinput);
@@ -329,7 +329,7 @@ int VideoDevice::initDevice()
 				inputisok=xioctl(VIDIOCGCHAN, &input);
 				if(inputisok==EXIT_SUCCESS)
 				{
-					Kopete::AV::VideoInput tempinput;
+					VideoInput tempinput;
 					tempinput.name = QString::fromLocal8Bit((const char*)input.name);
 					tempinput.hastuner=input.flags & VIDEO_VC_TUNER;
 					m_video_input.push_back(tempinput);
@@ -663,10 +663,7 @@ int VideoDevice::selectDevice(unsigned int device)
  */
 int VideoDevice::startCapturing()
 {
-    /// @todo implement me
-#ifdef HAVE_V4L2
 	unsigned int i;
-	enum v4l2_buf_type type;
 
 	kdDebug() << "libkopete (avdevice): startCapturing() called." << endl;
 	switch (m_io_method)
@@ -677,38 +674,50 @@ int VideoDevice::startCapturing()
 		case IO_METHOD_READ: // Nothing to do
 			break;
 		case IO_METHOD_MMAP:
-			for (i = 0; i < n_buffers; ++i)
+#ifdef __linux__
+#ifdef HAVE_V4L2
 			{
-				struct v4l2_buffer buf;
-				CLEAR (buf);
-				buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-				buf.memory = V4L2_MEMORY_MMAP;
-				buf.index  = i;
-				if (-1 == xioctl (VIDIOC_QBUF, &buf))
-					return errnoReturn ("VIDIOC_QBUF");
+				for (i = 0; i < n_buffers; ++i)
+				{
+					struct v4l2_buffer buf;
+					CLEAR (buf);
+					buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+					buf.memory = V4L2_MEMORY_MMAP;
+					buf.index  = i;
+					if (-1 == xioctl (VIDIOC_QBUF, &buf))
+						return errnoReturn ("VIDIOC_QBUF");
+				}
+				enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+				if (-1 == xioctl (VIDIOC_STREAMON, &type))
+					return errnoReturn ("VIDIOC_STREAMON");
 			}
-			type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-			if (-1 == xioctl (VIDIOC_STREAMON, &type))
-				return errnoReturn ("VIDIOC_STREAMON");
+#endif
+#endif
 			break;
 		case IO_METHOD_USERPTR:
-			for (i = 0; i < n_buffers; ++i)
+#ifdef __linux__
+#ifdef HAVE_V4L2
 			{
-				struct v4l2_buffer buf;
-				CLEAR (buf);
-				buf.type      = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-				buf.memory    = V4L2_MEMORY_USERPTR;
-				buf.m.userptr = (unsigned long) buffers[i].start;
-				buf.length    = buffers[i].length;
-				if (-1 == xioctl (VIDIOC_QBUF, &buf))
-					return errnoReturn ("VIDIOC_QBUF");
+				for (i = 0; i < n_buffers; ++i)
+				{
+					struct v4l2_buffer buf;
+					CLEAR (buf);
+					buf.type      = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+					buf.memory    = V4L2_MEMORY_USERPTR;
+					buf.m.userptr = (unsigned long) buffers[i].start;
+					buf.length    = buffers[i].length;
+					if (-1 == xioctl (VIDIOC_QBUF, &buf))
+						return errnoReturn ("VIDIOC_QBUF");
+				}
+				enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+				if (-1 == xioctl (VIDIOC_STREAMON, &type))
+					return errnoReturn ("VIDIOC_STREAMON");
 			}
-			type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-			if (-1 == xioctl (VIDIOC_STREAMON, &type))
-				return errnoReturn ("VIDIOC_STREAMON");
+#endif
+#endif
 			break;
 	}
-#endif
+
 	kdDebug() << "libkopete (avdevice): startCapturing() exited successfuly." << endl;
 	return EXIT_SUCCESS;
 }
@@ -720,9 +729,6 @@ int VideoDevice::startCapturing()
 int VideoDevice::stopCapturing()
 {
     /// @todo implement me
-#ifdef HAVE_V4L2
-	enum v4l2_buf_type type;
-
 	switch (m_io_method)
 	{
 		case IO_METHOD_NONE: // Card cannot capture frames
@@ -732,13 +738,16 @@ int VideoDevice::stopCapturing()
 			break;
 		case IO_METHOD_MMAP:
 		case IO_METHOD_USERPTR:
-			type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-			if (-1 == xioctl (VIDIOC_STREAMOFF, &type))
-				return errnoReturn ("VIDIOC_STREAMOFF");
+#ifdef HAVE_V4L2
+			{
+				enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+				if (-1 == xioctl (VIDIOC_STREAMOFF, &type))
+					return errnoReturn ("VIDIOC_STREAMOFF");
+			}
+#endif
 			break;
 	}
-#endif
-return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
 
 
@@ -844,7 +853,7 @@ int VideoDevice::readFrame()
     \fn Kopete::AV::VideoDevice::getImage(const QImage *qimage)
  */
 
-int Kopete::AV::VideoDevice::getImage(QImage *qimage)
+int VideoDevice::getImage(QImage *qimage)
 {
     /// @todo implement me
 	unsigned long long result=0;
@@ -874,7 +883,42 @@ int Kopete::AV::VideoDevice::getImage(QImage *qimage)
 	kdDebug() << " ------ Rmin: " << Rmin << "------ Gmin: " << Gmin << "------ Bmin: " << Bmin << "------ Amin: " << Amin << "------" << endl;
 	kdDebug() << " ------ Rmax: " << Rmax << "------ Gmax: " << Gmax << "------ Bmax: " << Bmax << "------ Amax: " << Amax << "------" << endl;
 
-	qimage->create(320,240,32,QImage::IgnoreEndian);
+#ifdef __linux__
+#ifdef HAVE_V4L2
+	if (m_videodevice[m_current_device].m_driver == VIDEODEV_DRIVER_V4L2)
+	{
+		qimage->create(
+			m_videodevice[m_current_device].fmt.pix.width,
+			m_videodevice[m_current_device].fmt.pix.height,
+			32,
+			QImage::IgnoreEndian);
+	}
+	else
+#endif
+	if (m_videodevice[m_current_device].m_driver == VIDEODEV_DRIVER_V4L)
+	{
+		kdDebug() << QString::fromLatin1("width = %1 , height = %2 , depth = %3")
+			.arg(m_videodevice[m_current_device].V4L_videobuffer.width)
+			.arg(m_videodevice[m_current_device].V4L_videobuffer.height)
+			.arg(m_videodevice[m_current_device].V4L_videobuffer.depth)
+			<< endl;
+		kdDebug() << QString::fromLatin1("size = %1")
+			.arg(	m_videodevice[m_current_device].V4L_videobuffer.width *
+				m_videodevice[m_current_device].V4L_videobuffer.height *
+				m_videodevice[m_current_device].V4L_videobuffer.depth / 8)
+			<< endl;
+		qimage->create(
+			m_videodevice[m_current_device].V4L_videobuffer.width,
+			m_videodevice[m_current_device].V4L_videobuffer.height,
+			32,
+			QImage::IgnoreEndian);
+	}
+//	else
+#endif
+	{
+		qimage->create(320,240,32,QImage::IgnoreEndian);
+	}
+
 	memcpy(qimage->bits(),&currentbuffer.data[0], currentbuffer.data.size());
 	return EXIT_SUCCESS;
 }
@@ -882,7 +926,7 @@ int Kopete::AV::VideoDevice::getImage(QImage *qimage)
 /*!
     \fn Kopete::AV::VideoDevice::selectInput(int input)
  */
-int Kopete::AV::VideoDevice::selectInput(int input)
+int VideoDevice::selectInput(int input)
 {
     /// @todo implement me
 	switch (m_videodevice[m_current_device].m_driver)
@@ -919,7 +963,7 @@ int Kopete::AV::VideoDevice::selectInput(int input)
 /*!
     \fn Kopete::AV::VideoDevice::setResolution(int width, int height)
  */
-int Kopete::AV::VideoDevice::setResolution(int /* width */, int /* height */)
+int VideoDevice::setResolution(int /* width */, int /* height */)
 {
     /// @todo implement me
 	return EXIT_SUCCESS;
@@ -928,7 +972,7 @@ int Kopete::AV::VideoDevice::setResolution(int /* width */, int /* height */)
 /*!
     \fn Kopete::AV::VideoDevice::fillInputKComboBox(KComboBox *combobox)
  */
-int Kopete::AV::VideoDevice::fillDeviceKComboBox(KComboBox *combobox)
+int VideoDevice::fillDeviceKComboBox(KComboBox *combobox)
 {
     /// @todo implement me
 	kdDebug() << "libkopete (avdevice): fillInputKComboBox: Called." << endl;
@@ -945,7 +989,7 @@ int Kopete::AV::VideoDevice::fillDeviceKComboBox(KComboBox *combobox)
 /*!
     \fn Kopete::AV::VideoDevice::fillInputKComboBox(KComboBox *combobox)
  */
-int Kopete::AV::VideoDevice::fillInputKComboBox(KComboBox *combobox)
+int VideoDevice::fillInputKComboBox(KComboBox *combobox)
 {
     /// @todo implement me
 	kdDebug() << "libkopete (avdevice): fillInputKComboBox: Called." << endl;
@@ -962,7 +1006,7 @@ int Kopete::AV::VideoDevice::fillInputKComboBox(KComboBox *combobox)
 /*!
     \fn Kopete::AV::VideoDevice::scanDevices()
  */
-int Kopete::AV::VideoDevice::scanDevices()
+int VideoDevice::scanDevices()
 {
     /// @todo implement me
 
@@ -1007,16 +1051,10 @@ int Kopete::AV::VideoDevice::scanDevices()
 	return EXIT_SUCCESS;
 }
 
-
-}
-
-}
-
-
 /*!
     \fn Kopete::AV::VideoDevice::currentDevice()
  */
-int Kopete::AV::VideoDevice::currentDevice()
+int VideoDevice::currentDevice()
 {
     /// @todo implement me
 	return m_current_device;
@@ -1025,8 +1063,12 @@ int Kopete::AV::VideoDevice::currentDevice()
 /*!
     \fn Kopete::AV::VideoDevice::currentInput()
  */
-int Kopete::AV::VideoDevice::currentInput()
+int VideoDevice::currentInput()
 {
     /// @todo implement me
 	return m_current_input;
+}
+
+}
+
 }
