@@ -21,6 +21,7 @@
 #include "jabberfiletransfer.h"
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kconfig.h>
 #include "kopeteuiglobal.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
@@ -119,7 +120,7 @@ void JabberFileTransfer::initializeVariables ()
 	mTransferId = -1;
 	mBytesTransferred = 0;
 	mBytesToTransfer = 0;
-	mXMPPTransfer->setProxy ( XMPP::Jid ( mAccount->pluginData ( mAccount->protocol (), "ProxyJID" ) ) );
+	mXMPPTransfer->setProxy ( XMPP::Jid ( mAccount->configGroup()->readEntry ( "ProxyJID" ) ) );
 
 }
 

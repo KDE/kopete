@@ -347,7 +347,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 	 * Check for SSL availability first
 	 */
 	bool trySSL = false;
-	if (pluginData (protocol (), "UseSSL") == "true")
+	if ( configGroup ()->readBoolEntry ( "UseSSL", false ) )
 	{
 		bool sslPossible = QCA::isSupported(QCA::CAP_TLS);
 
@@ -428,7 +428,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 	/*
 	 * Allow plaintext password authentication or not?
 	 */
-	jabberClientStream->setAllowPlain(pluginData (protocol (), "AllowPlainTextPassword") == QString::fromLatin1("true"));
+	jabberClientStream->setAllowPlain( configGroup()->readBoolEntry ( "AllowPlainTextPassword", false ) );
 
 	/*
 	 * Setup client layer.
@@ -529,7 +529,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 	setPresence( XMPP::Status ("connecting", "", 0, true) );
 
 	jabberClient->connectToServer (jabberClientStream,
-				       XMPP::Jid(accountId() + QString("/") + pluginData( protocol (), "Resource")),
+				       XMPP::Jid ( accountId() + QString("/") + resource () ),
 				       true);
 
 }
@@ -703,9 +703,9 @@ void JabberAccount::slotCSAuthenticated ()
 	 * FIXME: This is ugly!
 	 */
 	KGlobal::config()->setGroup("Jabber");
-	if ( !KGlobal::config()->readEntry ( "LocalIP", "" ).isEmpty () )
+	if ( !KGlobal::config()->readEntry ( "LocalIP" ).isEmpty () )
 	{
-		localAddress = KGlobal::config()->readEntry ( "LocalIP", "" );
+		localAddress = KGlobal::config()->readEntry ( "LocalIP" );
 	}
 	else
 	{
@@ -732,7 +732,7 @@ void JabberAccount::slotCSAuthenticated ()
 
 	/* start the client operation */
 	XMPP::Jid jid(accountId());
-	jabberClient->start ( jid.domain(), jid.node(), password().cachedValue(), pluginData( protocol (), "Resource") );
+	jabberClient->start ( jid.domain(), jid.node(), password().cachedValue(), resource () );
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Requesting roster..." << endl;
 
@@ -1203,7 +1203,7 @@ void JabberAccount::setPresence ( const XMPP::Status &status )
 	XMPP::Status newStatus = status;
 
 	// make sure the status gets the correct priority
-	newStatus.setPriority ( pluginData (protocol (), "Priority").toInt () );
+	newStatus.setPriority ( configGroup()->readNumEntry ( "Priority", 5 ) );
 
 	XMPP::Jid jid ( myself()->contactId () );
 	XMPP::Resource newResource ( resource (), newStatus );
@@ -1726,21 +1726,21 @@ void JabberAccount::slotEditVCard ()
 const QString JabberAccount::resource () const
 {
 
-	return pluginData (protocol (), "Resource");
+	return configGroup()->readEntry ( "Resource", "Kopete" );
 
 }
 
 const QString JabberAccount::server () const
 {
 
-	return pluginData (protocol (), QString::fromLatin1 ("Server"));
+	return configGroup()->readEntry ( "Server" );
 
 }
 
 const int JabberAccount::port () const
 {
 
-	return pluginData (protocol (), "Port").toInt ();
+	return configGroup()->readNumEntry ( "Port", 5222 );
 
 }
 

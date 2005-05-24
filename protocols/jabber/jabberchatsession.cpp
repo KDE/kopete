@@ -136,7 +136,7 @@ void JabberChatSession::sendNotification( XMPP::MsgEvent event )
 		{
 			// create JID for us as sender
 			XMPP::Jid fromJid ( myself()->contactId () );
-			fromJid.setResource ( account()->pluginData ( protocol (), "Resource" ) );
+			fromJid.setResource ( account()->resource () );
 	
 			// create JID for the recipient
 			XMPP::Jid toJid ( contact->contactId () );
