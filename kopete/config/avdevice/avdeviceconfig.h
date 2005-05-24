@@ -23,7 +23,10 @@
 #include <qimage.h>
 #include <qpixmap.h>
 #include <qtimer.h>
-#include <qgl.h>
+
+#ifdef HAVE_GL
+# include <qgl.h>
+#endif
 
 class QFrame;
 class QTabWidget;
@@ -64,7 +67,9 @@ private:
 	QImage qimage;
 	QPixmap qpixmap, m_video_image;
 	QTimer qtimer;
+#ifdef HAVE_GL
 	QGLWidget m_video_gl;
+#endif
 };
 
 #endif
