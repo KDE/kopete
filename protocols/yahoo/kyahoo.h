@@ -216,6 +216,9 @@ signals:
 	/** emitted when someone send us a message */
 	void gotIm( const QString &who, const QString &msg, long tm, int stat);
 
+	/** emitted when someone buzz us */
+	void gotBuzz( const QString &who, long tm );
+	
 	/** emitted when someone invites us into a conference room */
 	void gotConfInvite( const QString &who, const QString &room, const QString &msg, const QStringList &members);
 

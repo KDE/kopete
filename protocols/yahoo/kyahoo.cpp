@@ -1011,8 +1011,14 @@ void YahooSession::_gotImReceiver( char *who, char *msg, long tm, int stat, int 
 	else
 		convertedMessage = QString::fromLocal8Bit( msg );
 
-	kdDebug(14181)<<"got IM"<<endl;
-	emit gotIm( QString::fromLocal8Bit( who ), convertedMessage, tm, stat );
+	if ( convertedMessage == "<ding>" ) {
+		kdDebug(14181)<<"got BUZZ"<<endl;
+		emit gotBuzz( QString::fromLocal8Bit( who ), tm );
+	}
+	else {
+		kdDebug(14181)<<"got IM"<<endl;
+		emit gotIm( QString::fromLocal8Bit( who ), convertedMessage, tm, stat );
+	}
 }
 
 void YahooSession::_gotConfInviteReceiver( char *who, char *room, char *msg, YList *members )

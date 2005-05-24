@@ -149,6 +149,7 @@ protected slots:
 	void slotGotIdentities(const QStringList &);
 	void slotStatusChanged(const QString &who, int stat, const QString &msg, int away);
 	void slotGotIm(const QString &who, const QString &msg, long tm, int stat);
+	void slotGotBuzz(const QString &who, long tm);
 	void slotGotConfInvite(const QString &who, const QString &room, const QString &msg, const QStringList &members);
 	void slotConfUserDecline(const QString &who, const QString &room, const QString &msg);
 	void slotConfUserJoin(const QString &who, const QString &room);

@@ -202,6 +202,9 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session, SIGNAL(gotIm(const QString&, const QString&, long, int)),
 		                 this, SLOT(slotGotIm(const QString &, const QString&, long, int)));
 		
+		QObject::connect(m_session, SIGNAL(gotBuzz(const QString&, long)),
+		                 this, SLOT(slotGotBuzz(const QString &, long)));
+
 		QObject::connect(m_session, SIGNAL( gotConfInvite( const QString&, const QString&,
 		                                                   const QString&, const QStringList&) ),
 		                 this,
@@ -267,6 +270,9 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		
 		QObject::disconnect(m_session, SIGNAL(gotIm(const QString&, const QString&, long, int)),
 		                    this, SLOT(slotGotIm(const QString &, const QString&, long, int)));
+
+		QObject::disconnect(m_session, SIGNAL(gotBuzz(const QString&, long)),
+		                    this, SLOT(slotGotBuzz(const QString &, long)));
 		
 		QObject::disconnect(m_session,
 		                    SIGNAL( gotConfInvite( const QString&, const QString&,
@@ -679,6 +685,39 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	
 	kmsg.setFg( fgColor );
 	mm->appendMessage(kmsg);
+}
+
+void YahooAccount::slotGotBuzz( const QString &who, long tm )
+{
+	QFont msgFont;
+	QDateTime msgDT;
+	Kopete::ContactPtrList justMe;
+	
+	if( !contact( who ) )
+	{
+		kdDebug(14180) << "Adding contact " << who << endl;
+		addContact( who,who,  0L, Kopete::Account::Temporary );
+	}
+	
+	if (tm == 0)
+		msgDT.setTime_t(time(0L));
+	else
+		msgDT.setTime_t(tm, Qt::LocalTime);
+	
+	justMe.append(myself());
+	
+	QString buzzMsgText = i18n("This string is shown when the user is buzzed by a contact", "Buzz!!");
+	
+	Kopete::Message kmsg(msgDT, contact(who), justMe, buzzMsgText,
+	                     Kopete::Message::Inbound , Kopete::Message::PlainText);
+	QColor fgColor( "gold" );
+	kmsg.setFg( fgColor );
+	
+	Kopete::ChatSession *mm = contact(who)->manager(Kopete::Contact::CanCreate);
+	mm->appendMessage(kmsg);
+	
+	/* TODO play a sound */
+	
 }
 
 void YahooAccount::slotGotConfInvite( const QString & /* who */, const QString & /* room */, const QString & /* msg */, const QStringList & /* members */ )
