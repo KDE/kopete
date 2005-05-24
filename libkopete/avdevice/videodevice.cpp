@@ -888,8 +888,8 @@ int VideoDevice::getImage(QImage *qimage)
 	if (m_videodevice[m_current_device].m_driver == VIDEODEV_DRIVER_V4L2)
 	{
 		qimage->create(
-			m_videodevice[m_current_device].fmt.pix.width,
-			m_videodevice[m_current_device].fmt.pix.height,
+			m_videodevice[m_current_device].fmt.fmt.pix.width,
+			m_videodevice[m_current_device].fmt.fmt.pix.height,
 			32,
 			QImage::IgnoreEndian);
 	}
