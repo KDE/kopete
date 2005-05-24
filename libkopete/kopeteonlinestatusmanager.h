@@ -1,9 +1,9 @@
 /*
     kopeteonlinestatusmanager.h
 
-    Copyright (c) 2004 by Olivier Goffart  <ogoffart @ tiscalinet.be>
+    Copyright (c) 2004-2005 by Olivier Goffart  <ogoffart @ kde.org>
 
-    Kopete    (c) 2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2004-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -57,8 +57,8 @@ public:
 	//please be carrefull when modifying values of status.  read comment in onlineStatus()
 	enum Categories
 	{
-		Idle=1<<8,/*1<<9*/     Invisible=1<<10,
-		//  \     /             /
+		Idle=1<<8,  ExtendedAway=1<<9 , Invisible=1<<10,
+		//  \     /             __________/
 		  /*1<<4*/    Busy=1<<5,           FreeForChat=1<<6,         /* 1<<7*/
 		//   \       /                         /
 		     Away=1<<2,                   /* 1<<3 */
@@ -94,6 +94,7 @@ public:
 	 * You can set the status to be in the predefined categories.
 	 * Ideally, each category should own one status.
 	 * A status may be in several categories, or in none.
+	 * There shouldn't be more than one status per protocol per categories.
 	 *
 	 * @param status The status to register
 	 * @param caption The caption that will appear in menus (e.g. "Set &Away")
