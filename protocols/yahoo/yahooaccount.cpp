@@ -107,6 +107,10 @@ void YahooAccount::slotGoStatus( int status, const QString &awayMessage)
 	else
 	{
 		m_session->setAway( yahoo_status( status ), awayMessage, status? 1 : 0 );
+		
+		//sets the awayMessage property for the owner of the account. shows up in the statusbar icon's tooltip. the property is unset when awayMessage is null
+		myself()->setProperty( m_protocol->awayMessage, awayMessage );
+
 		myself()->setOnlineStatus( m_protocol->statusFromYahoo( status ) );
 	}
 }
