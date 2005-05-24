@@ -120,11 +120,20 @@ k_dcop:
 	 * set all account away using the global away function
 	 */
 	void setAway();
+
+	/**
+	 * set all account away using the global away function
+	 * and set an away message
+	 */
+	void setAway( const QString &msg ) { setAway( msg, true ); }
+
 	/**
 	 * set all account away using the global away function
 	 * and set an away message.
+	 * @param away decides if the message is away/non-away
 	 */
-	void setAway(const QString &msg);
+	void setAway( const QString &msg, bool away );
+
 	/**
 	 * set Available all accountes
 	 */

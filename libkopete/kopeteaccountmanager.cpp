@@ -120,7 +120,7 @@ void AccountManager::disconnectAll()
 		it.current()->disconnect();
 }
 
-void AccountManager::setAwayAll( const QString &awayReason )
+void AccountManager::setAwayAll( const QString &awayReason, bool away )
 {
 	Away::setGlobalAway( true );
 
@@ -130,7 +130,7 @@ void AccountManager::setAwayAll( const QString &awayReason )
 		Contact *self = it.current()->myself();
 		bool isInvisible = self && self->onlineStatus().status() == OnlineStatus::Invisible;
 		if ( it.current()->isConnected() && !isInvisible )
-			it.current()->setAway( true, awayReason );
+			it.current()->setAway( away, awayReason );
 	}
 }
 

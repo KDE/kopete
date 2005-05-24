@@ -271,9 +271,9 @@ void KopeteIface::setAway()
 	Kopete::AccountManager::self()->setAwayAll();
 }
 
-void KopeteIface::setAway(const QString &msg)
+void KopeteIface::setAway(const QString &msg, bool away)
 {
-	Kopete::AccountManager::self()->setAwayAll(msg);
+	Kopete::AccountManager::self()->setAwayAll(msg, away);
 }
 
 void KopeteIface::setAvailable()

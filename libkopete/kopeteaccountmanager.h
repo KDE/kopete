@@ -150,9 +150,9 @@ public slots:
 	 * All account that are connected, but not invisible will be set to away
 	 * @see Account::setAway
 	 * @param awayReason is the away message that will be set.
-	 *
+	 * @param away decides whether the message is away/non-away
 	 */
-	void setAwayAll( const QString &awayReason = QString::null );
+	void setAwayAll( const QString &awayReason = QString::null, bool away=true );
 
 	/**
 	 * \brief Connect or make available every account.  
