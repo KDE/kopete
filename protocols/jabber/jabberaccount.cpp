@@ -103,7 +103,6 @@ JabberAccount::~JabberAccount ()
 
 	// this is causing a lot of trouble because the accounts other contacts access myself(), and that takes place in ~Account(), after myself has been deleted
 	//delete myself()->metaContact ();
-
 }
 
 void JabberAccount::cleanup ()
@@ -532,6 +531,36 @@ void JabberAccount::connectWithPassword ( const QString &password )
 				       XMPP::Jid ( accountId() + QString("/") + resource () ),
 				       true);
 
+}
+
+void JabberAccount::changePassword ( const QString &password )
+{
+	XMPP::JT_Register * task = new XMPP::JT_Register ( client()->rootTask () );
+   	QObject::connect (task, SIGNAL ( finished () ), this, SLOT (slotChangePasswordDone () ));
+
+    	task->changepw ( password );
+	task->go ( true );
+	return;
+}
+
+void JabberAccount:: slotChangePasswordDone()
+{
+	XMPP::JT_Register * task = (XMPP::JT_Register *) sender ();
+ 	QObject::disconnect (task, SIGNAL (finished ()), this, SLOT (slotChangePwDone ()));
+	if ( task->success () ) 
+	{
+		KMessageBox::information (Kopete::UI::Global::mainWidget (),
+								  i18n ("Password has been changed but the change isn't instantaneous, you still have to use the old one for a short time"),
+								  i18n ("Jabber "));
+		emit passwordChangedSuccess ();
+ 	} 
+	else 
+	{
+		KMessageBox::error (Kopete::UI::Global::mainWidget (),
+								  i18n ("Unable to change your password, your server may not allow this, or maybe you given a bad password to connect"),
+								  i18n ("Jabber "));
+		emit passwordChangedError ();
+	}
 }
 
 void JabberAccount::slotPsiDebug (const QString & _msg)

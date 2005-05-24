@@ -29,6 +29,8 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kpassdlg.h>
+#include <kopetepassword.h>
+#include <kopetepasswordedaccount.h>
 
 #include "kopeteuiglobal.h"
 #include "kopetepasswordwidget.h"
@@ -62,8 +64,11 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	connect (leLocalIP, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
 	connect (sbLocalPort, SIGNAL (valueChanged (int)), this, SLOT (configChanged ()));
 	connect (leProxyJID, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
-
 	
+	connect (btnChangePw, SIGNAL ( clicked() ), this, SLOT ( slotChangePwClicked () ));
+
+	tlChangePwSuccess->hide();
+	tlChangePassError->hide();
 	if (account())
 	{
 		this->reopen ();
@@ -71,6 +76,9 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	}
 	else
 	{
+		btnChangePw->setEnabled( false );
+		pePassword1->setEnabled( false );
+		pePassword2->setEnabled( false );
 		connect (btnRegister, SIGNAL (clicked ()), this, SLOT (registerClicked ()));
 	}
 	QWidget::setTabOrder( mID, mPass->mRemembered );
@@ -257,9 +265,66 @@ void JabberEditAccountWidget::registerClicked ()
 
 }
 
+void JabberEditAccountWidget::slotChangePwDone () 
+{
+	QObject::disconnect( account(), SIGNAL( passwordChangedSuccess() ), this, SLOT( slotChangePwDone() ));
+	QObject::disconnect( account(), SIGNAL( passwordChangedError() ), this, SLOT( slotChangePwDone() ));
+
+	pePassword1->erase();
+	pePassword2->erase();
+	pePassword1->setEnabled( true );
+	pePassword2->setEnabled( true );
+	btnChangePw->setEnabled( true );	
+}
+
+void JabberEditAccountWidget::slotChangePassword () 
+{
+	QObject::disconnect( account(),SIGNAL( isConnectedChanged () ),  this, SLOT ( slotChangePassword () ));
+	QObject::connect( account(), SIGNAL( passwordChangedSuccess() ), this, SLOT( slotChangePwDone() ));
+	QObject::connect( account(), SIGNAL( passwordChangedError() ), this, SLOT( slotChangePwDone() ));
+	account()->changePassword( pePassword1->password() );
+}
+
+void JabberEditAccountWidget::slotChangePwClicked ()
+{
+	tlChangePassError->hide();
+	if (QString::compare( pePassword1->password(), pePassword2->password() ) == 0) 
+	{
+		pePassword1->setEnabled( false );
+		pePassword2->setEnabled( false );
+		btnChangePw->setEnabled( false );
+		// Not connected, we will try to connect
+		if(!( account()->isConnected() )) 
+		{
+			if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget (),
+							i18n("You need to be connected to change your password. Do you want to connect now?") ) == KMessageBox::Yes)
+			{
+				QObject::connect ( account(), SIGNAL ( isConnectedChanged () ), this, SLOT ( slotChangePassword () ) );
+				account()->connect();
+			}
+			else
+			{
+				pePassword1->setEnabled( true );
+				pePassword2->setEnabled( true );
+				btnChangePw->setEnabled( true );
+ 				return;
+			}
+		}
+		else
+		{
+			slotChangePassword();
+		}
+	} 
+	else 
+	{
+		tlChangePassError->show();
+		return;
+	}
+}
+
 void JabberEditAccountWidget::slotRegisterOkClicked ()
 {
-
+ 	
 	//JabberRegisterAccount *registerDlg = static_cast<JabberRegisterAccount*>( sender () );
 
 }

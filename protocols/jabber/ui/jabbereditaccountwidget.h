@@ -46,6 +46,9 @@ public:
 
 private slots:
 	void registerClicked ();
+	void slotChangePwDone ();
+	void slotChangePwClicked ();
+	void slotChangePassword ();
 	void deleteClicked ();
 	void sslToggled (bool);
 	void configChanged ();

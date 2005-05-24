@@ -26,12 +26,6 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <property name="margin">
-            <number>0</number>
-        </property>
-        <property name="spacing">
-            <number>0</number>
-        </property>
         <widget class="QLabel" row="0" column="1">
             <property name="name">
                 <cstring>labelStatusMessage</cstring>
@@ -61,7 +55,7 @@
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <spacer row="2" column="0">
+                    <spacer row="3" column="0">
                         <property name="name">
                             <cstring>spacer8</cstring>
                         </property>
@@ -69,12 +63,12 @@
                             <enum>Vertical</enum>
                         </property>
                         <property name="sizeType">
-                            <enum>Expanding</enum>
+                            <enum>Maximum</enum>
                         </property>
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>140</height>
+                                <height>50</height>
                             </size>
                         </property>
                     </spacer>
@@ -207,6 +201,117 @@
                                 </property>
                                 <property name="enabled">
                                     <bool>true</bool>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                    <widget class="QGroupBox" row="2" column="0">
+                        <property name="name">
+                            <cstring>groupBox8_2</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>3</hsizetype>
+                                <vsizetype>3</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="title">
+                            <string>Change password</string>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel" row="1" column="0">
+                                <property name="name">
+                                    <cstring>tlChangePassError</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>3</hsizetype>
+                                        <vsizetype>5</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="font">
+                                    <font>
+                                        <bold>1</bold>
+                                    </font>
+                                </property>
+                                <property name="text">
+                                    <string>&lt;p align="center"&gt;&lt;font color="#f4081b"&gt;Error: Passwords don't match !!!&lt;/font&gt;&lt;/p&gt;</string>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget" row="0" column="0">
+                                <property name="name">
+                                    <cstring>layout40</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLayoutWidget">
+                                        <property name="name">
+                                            <cstring>layout39</cstring>
+                                        </property>
+                                        <grid>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QLabel" row="1" column="0">
+                                                <property name="name">
+                                                    <cstring>textLabel2_2</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Retype your 
+new password</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel" row="0" column="0">
+                                                <property name="name">
+                                                    <cstring>textLabel1</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>New password</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="KPasswordEdit" row="0" column="1">
+                                                <property name="name">
+                                                    <cstring>pePassword1</cstring>
+                                                </property>
+                                            </widget>
+                                            <widget class="KPasswordEdit" row="1" column="1">
+                                                <property name="name">
+                                                    <cstring>pePassword2</cstring>
+                                                </property>
+                                            </widget>
+                                        </grid>
+                                    </widget>
+                                    <widget class="QPushButton">
+                                        <property name="name">
+                                            <cstring>btnChangePw</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Change &amp;your password</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                            <widget class="QLabel" row="0" column="0">
+                                <property name="name">
+                                    <cstring>tlChangePwSuccess</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="text">
+                                    <string>&lt;p align="center"&gt;Password has been changed but the change isn't instantaneous, you still have to use the old one for a short time&lt;/p&gt;</string>
                                 </property>
                             </widget>
                         </grid>
@@ -681,7 +786,7 @@ If two resources have the same priority, the messages will be sent to the one co
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Privac&amp;y</string>
+                    <string>&amp;Privacy</string>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -722,7 +827,7 @@ If two resources have the same priority, the messages will be sent to the one co
                                                     <bool>true</bool>
                                                 </property>
                                                 <property name="text">
-                                                    <string>Always &amp;send notifications</string>
+                                                    <string>Always send not&amp;ifications</string>
                                                 </property>
                                                 <property name="checked">
                                                     <bool>true</bool>
@@ -969,9 +1074,14 @@ If two resources have the same priority, the messages will be sent to the one co
     <tabstop>cbSendDeliveredEvent</tabstop>
     <tabstop>cbSendDisplayedEvent</tabstop>
     <tabstop>cbSendComposingEvent</tabstop>
+    <tabstop>btnChangePw</tabstop>
+    <tabstop>pePassword1</tabstop>
+    <tabstop>pePassword2</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>kopete::ui::passwordwidget.h</includehint>
+    <includehint>kpassdlg.h</includehint>
+    <includehint>kpassdlg.h</includehint>
 </includehints>
 </UI>

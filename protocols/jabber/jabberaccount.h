@@ -127,6 +127,7 @@ public slots:
 	/* Connects to the server. */
 	void connectWithPassword ( const QString &password );
 
+	void changePassword ( const QString &password );
 	/* Disconnects from the server. */
 	void disconnect ();
 
@@ -135,6 +136,10 @@ public slots:
 
 	/* Reimplemented from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
+
+signals:
+	void passwordChangedSuccess ();
+	void passwordChangedError ();
 
 protected:
 	/**
@@ -242,6 +247,7 @@ private slots:
 	void slotGroupChatPresence (const Jid & jid, const Status & status);
 	void slotGroupChatError (const Jid & jid, int error, const QString & reason);
 
+	void slotChangePasswordDone();
 	/* Incoming subscription request. */
 	void slotSubscription (const Jid & jid, const QString & type);
 
