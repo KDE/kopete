@@ -41,6 +41,8 @@ public:
 		QString phonenr;
 		QString email;
 		bool 	ignored;
+		bool 	offlineTo;
+		QString landline;
 	};
 
 	GaduContactsList();
@@ -52,7 +54,8 @@ public:
 				QString& uin, QString& firstname,
 				QString& surname, QString& nickname,
 				QString& phonenr, QString& email,
-				bool& 	ignored
+				bool 	ignored, bool offlineTo,
+				QString& landline
 	);
 	unsigned int size();
 	const GaduContactsList::ContactLine& operator[]( unsigned int i );

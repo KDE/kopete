@@ -23,6 +23,7 @@
 
 #include "gaducontactlist.h"
 #include "qstringlist.h"
+#include "kdebug.h"
 
 GaduContactsList::GaduContactsList()
 {
@@ -61,43 +62,34 @@ GaduContactsList::GaduContactsList( QString sList )
 		strList  = QStringList::split( QChar( ';' ), cline, true );
 
 		stringIterator = strList.begin();
-
-		// ignored contact
-		if ( strList.count() == 7 ) {
-			 // well, this is probably it - you're d00med d|_|de :-)
-			if ( (*stringIterator) == QString( "i" ) ) {
-				ContactLine c;
-				c.uin		= strList[6];
-				c.ignored	= true;
-				cList.append( c );
-
-				++lni;
-				continue;
-			}
-			else {
-				++lni;
-				continue;
-			}
-		}
-
-		if ( strList.count() == 12 ) {
+		
+		if ( strList.count() >= 12 ) {
 			email = true;
 		}
 		else {
 			email = false;
-			if ( strList.count() != 8 ) {
-				++lni;
-				continue;
-			}
 		}
 
 
-//each line ((firstname);(secondname);(nickname);(displayname);(tel);(group);(uin);
-
+//each line ((firstname);(secondname);(nickname);(altnick);(tel);(group);(uin);
+// new stuff attached at the end:
+// email;aliveSoundfile;notifyType;msgSoundType;messageSound;offlineTo;homePhone;
 		stringIterator = strList.begin();
 
-		cl.ignored		= false;
 		cl.firstname		= (*stringIterator);
+
+		if ( cl.firstname == QString( "i" ) ) {
+			kdDebug(14100) << cline << " ignored" << endl;
+			cl.ignored	= true;
+			cl.uin		= strList[6];
+			++lni;
+			cList.append( cl );
+			continue;
+		}
+		else {
+			cl.ignored = false;
+		}
+
 		cl.surname		= (*++stringIterator);
 		cl.nickname		= (*++stringIterator);
 		cl.displayname		= (*++stringIterator);
@@ -106,6 +98,16 @@ GaduContactsList::GaduContactsList( QString sList )
 		cl.uin			= (*++stringIterator);
 		if ( email ) {
 			cl.email	= (*++stringIterator);
+			// no use for custom sounds, at least now
+			++stringIterator;
+			++stringIterator;
+			++stringIterator;
+			++stringIterator;
+
+			if ( stringIterator != strList.end() ) {
+				cl.offlineTo = (*++stringIterator) == QString("0") ? false : true;
+				cl.landline  = (*++stringIterator);
+			}
         	}
 		else {
 			 cl.email	= empty;
@@ -118,7 +120,6 @@ GaduContactsList::GaduContactsList( QString sList )
 		}
 
 		cList.append( cl );
-
 	}
 
 	return;
@@ -140,7 +141,9 @@ GaduContactsList::addContact(
 		QString& nickname,
 		QString& phonenr,
 		QString& email,
-		bool& 	ignored
+		bool ignored,
+		bool offlineTo,
+		QString& landline
 )
 {
 	ContactLine cl;
@@ -154,6 +157,8 @@ GaduContactsList::addContact(
 	cl.phonenr	= phonenr;
 	cl.email	= email;
 	cl.ignored	= ignored;
+	cl.offlineTo	= offlineTo;
+	cl.landline	= landline;
 
 	cList.append( cl );
 
@@ -169,7 +174,7 @@ GaduContactsList::asString()
 			contacts += "i;;;;;;" + (*it).uin + "\n";
 		}
 		else {
-//	name;surname;nick;displayname;telephone;group(s);uin;email;0;;0;
+//	name;surname;nick;displayname;telephone;group(s);uin;email;;0;0;;offlineTo;homePhone;
 			contacts +=
 				(*it).firstname + ";"+
 				(*it).surname + ";"+
@@ -179,7 +184,11 @@ GaduContactsList::asString()
 				(*it).group + ";"+
 				(*it).uin + ";"+
 				(*it).email +
-				";0;;0;\r\n";
+				";;0;0;;" +
+				((*it).offlineTo == true ? QString("1") : QString("0"))
+				+ ";" +
+				(*it).landline +
+				";\r\n";
 		}
 	}
 	return contacts;

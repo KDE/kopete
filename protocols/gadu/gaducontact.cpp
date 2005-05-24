@@ -270,6 +270,9 @@ GaduContact::contactDetails()
 	cl->uin		= QString::number( uin_ );
 	cl->displayname	= metaContact()->displayName();
 
+	cl->offlineTo	= false;
+	cl->landline	= QString("");
+
 	groupList = metaContact()->groups();
 
 	Kopete::Group* gr;

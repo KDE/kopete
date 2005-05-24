@@ -68,7 +68,7 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 		if ( font & GG_FONT_IMAGE ) {
 			i += sizeof( gg_msg_richtext_image );
 			pointer += sizeof( gg_msg_richtext_image );
-			tmp += "<b>[this should be a picture, not yet implemented]</b>";
+			tmp += "<b><img src=\"file:///tmp/dupa.gif\"></b>";
 		}
 		else {
 			nb = msg.mid( j, position - j );
