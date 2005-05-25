@@ -70,6 +70,13 @@ YahooContact::~YahooContact()
 {
 }
 
+void YahooContact::setOnlineStatus(const Kopete::OnlineStatus &status)
+{
+	Contact::setOnlineStatus( status );
+	if( status.status() == Kopete::OnlineStatus::Offline ) 
+		removeProperty( ((YahooProtocol*)(m_account->protocol()))->awayMessage);
+}
+
 void YahooContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData)
 {
 	//kdDebug(14180) << k_funcinfo << endl;

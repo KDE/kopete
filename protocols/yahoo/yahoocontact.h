@@ -48,6 +48,7 @@ public:
 	virtual Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlags canCreate= Kopete::Contact::CanCreate );
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
+	void setOnlineStatus(const Kopete::OnlineStatus &status);
 	void setYahooStatus( const Kopete::OnlineStatus& );
 
 	/** The group name getter and setter methods**/
