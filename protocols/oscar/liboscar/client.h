@@ -311,6 +311,16 @@ signals:
 	/** we've received an authorization reply */
 	void authReplyReceived( const QString& contact, const QString& reason, bool auth );
 	
+	/** 
+	 * we've received an error from a task and need to notify somebody
+	 */
+	void taskError( const Oscar::SNAC& s, int errCode, bool fatal );
+	
+	/**
+	 * we've received a socket error and need to notify somebody
+	 */
+	void socketError( int errCode, const QString& msg );
+	
 	void receivedIcqShortInfo( const QString& contact );
 	void receivedIcqLongInfo( const QString& contact );
 	
