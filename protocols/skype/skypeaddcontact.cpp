@@ -31,7 +31,7 @@ class SkypeAddContactWidget : public SkypeAddContactBase {
 	private:
 	public:
 		SkypeAddContactWidget(QWidget *parent, const char *name = 0L) : SkypeAddContactBase(parent, name) {
-			kdDebug(65320) << k_funcinfo << endl;//some debug info
+			kdDebug(14311) << k_funcinfo << endl;//some debug info
 		}
 };
 
@@ -43,7 +43,7 @@ class SkypeAddContactPrivate {
 };
 
 SkypeAddContact::SkypeAddContact(SkypeProtocol *protocol, QWidget *parent, SkypeAccount *account, const char *name) : AddContactPage(parent, name) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	d = new SkypeAddContactPrivate();//create the d ponter
 	d->protocol = protocol;//remember the protocol
@@ -55,14 +55,14 @@ SkypeAddContact::SkypeAddContact(SkypeProtocol *protocol, QWidget *parent, Skype
 
 
 SkypeAddContact::~SkypeAddContact() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	//free everything (the widget is deleted automatically)
 	delete d;
 }
 
 bool SkypeAddContact::validateData() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (d->widget->NameEdit->text().isEmpty()) {//He wrote nothing
 		KMessageBox::sorry(d->widget, i18n("You must write the contact's name"), i18n("Wrong information"));//Tell the user I don't like this at all
@@ -78,7 +78,7 @@ bool SkypeAddContact::validateData() {
 }
 
 bool SkypeAddContact::apply(Kopete::Account *, Kopete::MetaContact *metaContact) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	d->account->addContact(d->widget->NameEdit->text(), metaContact, Kopete::Account::ChangeKABC);//add it there
 	return true;//all OK

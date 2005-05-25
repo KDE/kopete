@@ -81,10 +81,12 @@ class SkypePrivate {
 		bool scanForUnread;
 		///Constructor
 		SkypePrivate(SkypeAccount &_account) : account(_account) {};//initialize all that needs it
+		///List of known calls, so they are not showed twice
+		QValueList<QString> knownCalls;
 };
 
 Skype::Skype(SkypeAccount &account) : QObject() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	d = new SkypePrivate(account);//create the d-pointer
 
@@ -101,7 +103,7 @@ Skype::Skype(SkypeAccount &account) : QObject() {
 
 
 Skype::~Skype() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (d->connection.connected())
 		d->connection << QString("SET USERSTATUS OFFLINE");
@@ -110,56 +112,56 @@ Skype::~Skype() {
 }
 
 void Skype::setOnline() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 	d->showDeadMessage = true;
 
 	queueSkypeMessage("SET USERSTATUS ONLINE", true);//just send the message
 }
 
 void Skype::setOffline() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 	d->showDeadMessage = false;
 
 	queueSkypeMessage("SET USERSTATUS OFFLINE", true);
 }
 
 void Skype::setAway() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 	d->showDeadMessage = true;
 
 	queueSkypeMessage("SET USERSTATUS AWAY", true);
 }
 
 void Skype::setNotAvailable() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 	d->showDeadMessage = true;
 
 	queueSkypeMessage("SET USERSTATUS NA", true);
 }
 
 void Skype::setDND() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 	d->showDeadMessage = true;
 
 	queueSkypeMessage("SET USERSTATUS DND", true);
 }
 
 void Skype::setInvisible() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 	d->showDeadMessage = true;
 
 	queueSkypeMessage("SET USERSTATUS INVISIBLE", true);
 }
 
 void Skype::setSkypeMe() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 	d->showDeadMessage = true;
 
 	queueSkypeMessage("SET USERSTATUS SKYPEME", true);
 }
 
 void Skype::queueSkypeMessage(const QString &message, bool deleteQueue) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (d->connection.connected()) {//we are connected, so just send it
 		d->connection << message;//just send it
@@ -173,7 +175,7 @@ void Skype::queueSkypeMessage(const QString &message, bool deleteQueue) {
 }
 
 void Skype::setValues(int launchType, const QString &appName) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	d->appName = appName;
 	if (d->appName.isEmpty()) //The defaut one?
@@ -194,14 +196,14 @@ void Skype::setValues(int launchType, const QString &appName) {
 }
 
 void Skype::closed(int) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	emit wentOffline();//No longer connected
 	d->messageQueue.clear();//no messages will wait, it was lost
 }
 
 void Skype::connectionDone(int error, int protocolVer) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (error == seSuccess) {//It worked
 		if (protocolVer < PROTOCOL_MIN) {//The protocol is too old, it is not useable
@@ -227,14 +229,14 @@ void Skype::connectionDone(int error, int protocolVer) {
 }
 
 void Skype::error(const QString &message) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (d->showDeadMessage)//just skip the eror message if we are going offline, noone ever cares.
 		KMessageBox::error(0L, message, i18n("Skype protocol"));//Show the message
 }
 
 void Skype::skypeMessage(const QString &message) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	QString messageType = message.section(' ', 0, 0).stripWhiteSpace().upper();//get the first part of the message
 	if (messageType == "CONNSTATUS") {//the connection status
@@ -275,7 +277,7 @@ void Skype::skypeMessage(const QString &message) {
 		QString theRest = message.section(' ', 1).stripWhiteSpace();//take the rest
 		if (d->searchFor == "FRIENDS") {//it was initial search for al users
 			QStringList names = QStringList::split(",", theRest);//divide it into names by comas
-			kdDebug(65320) << "Names: " << names << endl;//write what you have done with that
+			kdDebug(14311) << "Names: " << names << endl;//write what you have done with that
 			for (QStringList::iterator it = names.begin(); it != names.end(); ++it) {//run trough the names
 				QString name = (*it).stripWhiteSpace();//get the name only
 				if (name.isEmpty())
@@ -291,7 +293,7 @@ void Skype::skypeMessage(const QString &message) {
 		if ((type == "FULLNAME") || (type == "DISPLAYNAME") || (type == "SEX") || (type == "ONLINESTATUS") || (type == "BUDDYSTATUS")) {
 			const QString &info = message.section(' ', 2);//and the rest is just the message for that contact
 			emit contactInfo(contactId, info);//and let the contact know
-		} else kdDebug(65320) << "Unknown message for contact, ignored" << endl;
+		} else kdDebug(14311) << "Unknown message for contact, ignored" << endl;
 	} else if (messageType == "CHATMESSAGE") {//something with message, maebe incoming/sent
 		QString messageId = message.section(' ', 1, 1).stripWhiteSpace();//get the second part of message - it is the message ID
 		QString type = message.section(' ', 2, 2).stripWhiteSpace().upper();//This part significates what about the message are we talking about (status, body, etc..)
@@ -320,17 +322,71 @@ void Skype::skypeMessage(const QString &message) {
 				skypeMessage(QString("CHATMESSAGE %1 STATUS RECEIVED").arg(Id));//simulate incoming message notification
 			}
 		}
+	} else if (messageType == "CALL") {
+		const QString &callId = message.section(' ', 1, 1).stripWhiteSpace();
+		if (message.section(' ', 2, 2).stripWhiteSpace().upper() == "STATUS") {
+			if (d->knownCalls.findIndex(callId) == -1) {//new call
+				d->knownCalls << callId;
+				const QString &userId = (d->connection % QString("GET CALL %1 PARTNER_HANDLE").arg(callId)).section(' ', 3, 3).stripWhiteSpace();
+				emit newCall(callId, userId);
+			}
+			const QString &status = message.section(' ', 3, 3).stripWhiteSpace().upper();
+			if (status == "FAILED") {
+				int reason = (d->connection % QString("GET CALL %1 FAILUREREASON").arg(callId)).section(' ', 3, 3).stripWhiteSpace().toInt();
+				QString errorText = i18n("Unknown error");
+				switch (reason) {
+					case 1:
+						errorText = i18n("Misc error");
+						break;
+					case 2:
+						errorText = i18n("User or phone number does not exist");
+						break;
+					case 3:
+						errorText = i18n("User is offline");
+						break;
+					case 4:
+						errorText = i18n("No proxy found");
+						break;
+					case 5:
+						errorText = i18n("Session terminated");
+						break;
+					case 6:
+						errorText = i18n("No common codec found");
+						break;
+					case 7:
+						errorText = i18n("Sound I/O error");
+						break;
+					case 8:
+						errorText = i18n("Problem with remote sound device");
+						break;
+					case 9:
+						errorText = i18n("Call blocked by recipient");
+						break;
+					case 10:
+						errorText = i18n("Recipient not a friend");
+						break;
+					case 11:
+						errorText = i18n("User not authorized by recipient");
+						break;
+					case 12:
+						errorText = i18n("Sound recording error");
+						break;
+				}
+				emit callError(callId, errorText);
+			}
+			emit callStatus(callId, status);
+		}
 	}
 }
 
 void Skype::getContactBuddy(const QString &contact) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	d->connection << QString("GET USER %1 BUDDYSTATUS").arg(contact);//just make a message asking for the buddystatus of user and send it
 }
 
 void Skype::resetStatus() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	switch (d->connStatus) {
 		case csOffline:
@@ -375,14 +431,14 @@ void Skype::resetStatus() {
 }
 
 void Skype::search(const QString &what) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	d->searchFor = what.section(' ', 0, 0).stripWhiteSpace().upper();
 	d->connection << QString("SEARCH %1").arg(what.upper());//search for that
 }
 
 void Skype::getContactInfo(const QString &contact) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	d->connection << QString("GET USER %1 FULLNAME").arg(contact)//ask for full name
 	<< QString("GET USER %1 SEX").arg(contact)//ask for sex
@@ -404,7 +460,7 @@ void Skype::setMarkMode(bool value) {
 }
 
 void Skype::hitchHike(const QString &messageId) {
-	kdDebug(65320) << k_funcinfo << "Message: " << messageId << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << "Message: " << messageId << endl;//some debug info
 
 	const QString &user = (d->connection % QString("GET CHATMESSAGE %1 FROM_HANDLE").arg(messageId)).section(' ', 3, 3).stripWhiteSpace();//ask skyp for a sender of that message and filter out the blouat around (like CHATMESSAGE 123...)
 
@@ -416,13 +472,56 @@ void Skype::hitchHike(const QString &messageId) {
 }
 
 void Skype::send(const QString &user, const QString &message) {
-	kdDebug(65320) << k_funcinfo <<  endl;//some debug info
+	kdDebug(14311) << k_funcinfo <<  endl;//some debug info
 
 	d->connection << QString("MESSAGE %1 %2").arg(user).arg(message);//just ask skype to send it
 }
 
 void Skype::setScanForUnread(bool value) {
 	d->scanForUnread = value;
+}
+
+void Skype::makeCall(const QString &userId) {
+	kdDebug(14311) << k_funcinfo <<  endl;//some debug info
+
+	d->connection << QString("CALL %1").arg(userId);
+}
+
+void Skype::acceptCall(const QString &callId) {
+	kdDebug(14311) << k_funcinfo <<  endl;//some debug info
+
+	d->connection << QString("SET CALL %1 STATUS INPROGRESS").arg(callId);
+}
+
+void Skype::hangUp(const QString &callId) {
+	kdDebug(14311) << k_funcinfo <<  endl;//some debug info
+
+	d->connection << QString("SET CALL %1 STATUS FINISHED").arg(callId);
+}
+
+void Skype::togleHoldCall(const QString &callId) {
+	kdDebug(14311) << k_funcinfo <<  endl;//some debug info
+
+	const QString &status = (d->connection % QString("GET CALL %1 STATUS").arg(callId)).section(' ', 3, 3).stripWhiteSpace().upper();
+	if ((status == "ONHOLD") || (status == "LOCALHOLD"))
+		d->connection << QString("SET CALL %1 STATUS INPROGRESS").arg(callId);
+	else
+		d->connection << QString("SET CALL %1 STATUS ONHOLD").arg(callId);
+}
+
+bool Skype::isCallIncoming(const QString &callId) {
+	const QString &type = (d->connection % QString("GET CALL %1 TYPE").arg(callId)).section(' ', 3, 3).stripWhiteSpace().upper();
+	return ((type == "INCOMING_P2P") || (type == "INCOMING_PSTN"));
+}
+
+void Skype::getSkypeOut() {
+	const QString &curr = (d->connection % QString("GET PROFILE PSTN_BALANCE_CURRENCY")).section(' ', 2, 2).stripWhiteSpace().upper();
+	if (curr.isEmpty()) {
+		emit skypeOutInfo(0, "");	
+	} else {
+		int value = (d->connection % QString("GET PROFILE PSTN_BALANCE")).section(' ', 2, 2).stripWhiteSpace().toInt();
+		emit skypeOutInfo(value, curr);
+	}
 }
 
 #include "skype.moc"

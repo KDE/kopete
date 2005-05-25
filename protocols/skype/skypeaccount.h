@@ -87,6 +87,12 @@ Q_OBJECT
 		 * @param message The text of the message
 		 */
 		void receivedIm(const QString &user, const QString &message);
+		/**
+		 * New cal to show (or not, depending on setup) the call control window.
+		 * @param callId ID of the new call
+		 * @param userId User that is on the other end. If conference, list of IDs divided by spaces.
+		 */
+		void newCall(const QString &callId, const QString &userId);
 	protected:
 		/**
 		 * Creates new skype contact and adds it into the parentContact.
@@ -153,6 +159,25 @@ Q_OBJECT
 		 * @param userId ID of the user in interest
 		 */
 		bool userHasChat(const QString &userId);
+		/**
+		 * @return Should a control window be showed for calls?
+		 */
+		bool getCallControl() const;
+		/**
+		 * Is that call incoming or not?
+		 * @param callId What call you want to know?
+		 * @return true if the call is incoming call (someone calls you), false otherwise (outgoing, not a call at all..)
+		 */
+		bool isCallIncoming(const QString &callId);
+		/**
+		 * @return The time after the call finished to auto-closing the window. If auto-closing is disabled, 0 is returned
+		 * @see setCallWindowTimeout
+		 */
+		int closeCallWindowTimeout() const;
+		/**
+		 * @return Returns name that shouls be showed by a call window
+		 */
+		QString getUserLabel(const QString &userId);
 	public slots:
 		/**
 		 * Disconnects from server.
@@ -208,6 +233,20 @@ Q_OBJECT
 		 * @see getScanForUnread
 		 */
 		void setScanForUnread(bool value);
+		/**
+		 * Make a call to that user
+		 * @param user To who we call.
+		 */
+		void makeCall(SkypeContact *user);
+		/**
+		 * Set if a control window will be showed for calls.
+		 * @param value Is it enabled or disabled now?
+		 */
+		void setCallControl(bool value);
+		/**
+		 * Sets timeout in seconds how long will be call window visible after the call finished. If you want to disable it, set to 0.
+		 */
+		void setCloseWindowTimeout(int timeout);
 	signals:
 		/**
 		 * This is emited when the ID of the last sent message is known
@@ -219,6 +258,11 @@ Q_OBJECT
 		 * @param messageId Id of the message that has been sent
 		 */
 		void sentMessage(const QString &messageId);
+		/**
+		 * This slot notifies of connecting/disconnecting. Needed to be sure, if alling is possible.
+		 * @param online Are we online now?
+		 */
+		void connectionStatus(bool online);
 };
 
 #endif

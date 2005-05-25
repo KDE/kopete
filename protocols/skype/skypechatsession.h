@@ -19,7 +19,7 @@
 #ifndef SKYPECHATSESSION_H
 #define SKYPECHATSESSION_H
 
-#include <kopetemessagemanager.h>
+#include <kopetechatsession.h>
 
 class SkypeProtocol;
 class SkypeAccount;

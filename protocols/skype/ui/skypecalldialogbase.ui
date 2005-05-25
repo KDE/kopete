@@ -1,0 +1,276 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>SkypeCallDialogBase</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>SkypeCallDialogBase</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>385</width>
+            <height>211</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Skype call</string>
+    </property>
+    <property name="sizeGripEnabled">
+        <bool>false</bool>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout3</cstring>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel" row="0" column="1">
+                    <property name="name">
+                        <cstring>NameLabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="alignment">
+                        <set>WordBreak|AlignVCenter</set>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Partners name</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Name of the other person of call (or list of names if the call is conference).</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Name:</string>
+                    </property>
+                    <property name="alignment">
+                        <set>AlignVCenter|AlignRight</set>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Partners</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Name</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>textLabel2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Time:</string>
+                    </property>
+                    <property name="alignment">
+                        <set>AlignVCenter|AlignRight</set>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Time elapsed</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>together.</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="1">
+                    <property name="name">
+                        <cstring>CreditLabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="alignment">
+                        <set>WordBreak|AlignVCenter</set>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Skype-out credits left</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Skype-ou credits left</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="1">
+                    <property name="name">
+                        <cstring>TimeLabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="alignment">
+                        <set>WordBreak|AlignVCenter</set>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Time elapsed</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Total time elapsed by the call/&lt;br /&gt;time elapsed by the call and on hold together.</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="1">
+                    <property name="name">
+                        <cstring>StatusLabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="alignment">
+                        <set>WordBreak|AlignVCenter</set>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>textLabel1_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Status:</string>
+                    </property>
+                    <property name="alignment">
+                        <set>AlignVCenter|AlignRight</set>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>textLabel3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Skype-out credits:</string>
+                    </property>
+                    <property name="alignment">
+                        <set>AlignVCenter|AlignRight</set>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Skype-out credits left</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Skype-ou credits left</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout4</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer3</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>50</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>AcceptButton</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Accept</string>
+                    </property>
+                    <property name="accel">
+                        <string></string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Accept call</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Accept incoming call</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>HangButton</cstring>
+                    </property>
+                    <property name="text">
+                        <string>H&amp;ang up</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Finish the call</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Terminate the call</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>HoldButton</cstring>
+                    </property>
+                    <property name="text">
+                        <string>H&amp;old</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Hold the call</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Interrupt the call for a moment and resume (or hang up) it later</string>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>50</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+            </hbox>
+        </widget>
+    </vbox>
+</widget>
+<connections>
+    <connection>
+        <sender>AcceptButton</sender>
+        <signal>clicked()</signal>
+        <receiver>SkypeCallDialogBase</receiver>
+        <slot>acceptCall()</slot>
+    </connection>
+    <connection>
+        <sender>HangButton</sender>
+        <signal>clicked()</signal>
+        <receiver>SkypeCallDialogBase</receiver>
+        <slot>hangUp()</slot>
+    </connection>
+    <connection>
+        <sender>HoldButton</sender>
+        <signal>clicked()</signal>
+        <receiver>SkypeCallDialogBase</receiver>
+        <slot>holdCall()</slot>
+    </connection>
+</connections>
+<slots>
+    <slot access="protected" specifier="pure virtual">acceptCall()</slot>
+    <slot access="protected" specifier="pure virtual">holdCall()</slot>
+    <slot access="protected" specifier="pure virtual">hangUp()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

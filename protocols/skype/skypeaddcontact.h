@@ -27,7 +27,8 @@ class SkypeProtocol;
 class SkypeAccount;
 
 /**
- * @author Kopete Developers
+ * @author Michal Vaner (vorner)
+ * Just a widget with a line and label ;-)
  */
 class SkypeAddContact : public AddContactPage
 {
@@ -54,7 +55,7 @@ class SkypeAddContact : public AddContactPage
 		virtual bool validateData();
 	public slots:
 		/**
-		 * Adds it into the account.kdDebug(65320) << k_funcinfo << endl;//some debug info
+		 * Adds it into the account.kdDebug(14311) << k_funcinfo << endl;//some debug info
 		 * @param account Where to add it.
 		 * @param metaContact Metacontact wich will hold it.
 		 * @return True if it worked, false if not.

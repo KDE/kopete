@@ -20,7 +20,8 @@
 #include "skypeaccount.h"
 #include "skypeprotocol.h"
 #include "skypecontact.h"
-#include <skype.h>
+#include "skype.h"
+#include "skypecalldialog.h"
 
 #include <qstring.h>
 #include <kopetemetacontact.h>
@@ -48,14 +49,18 @@ class SkypeAccountPrivate {
 		bool markRead;
 		///Search for unread messages on login?
 		bool searchForUnread;
+		///Do we show call control window?
+		bool callControl;
 		///Metacontact for all users that aren't in the list
 		Kopete::MetaContact notInListUsers;
 		///Constructor
 		SkypeAccountPrivate(SkypeAccount &account) : skype(account) {};//just an empty constructor
+		///Automatic close of call window when the call finishes (in seconds, 0 -> disabled)
+		int callWindowTimeout;
 };
 
 SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, "Skype", (char *)0) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	//keep track of what accounts the protocol has
 	protocol->registerAccount(this);
@@ -75,6 +80,7 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, 
 	author = config->readEntry("Authorization");//get the name how to authorize myself
 	launchType = config->readNumEntry("Launch");//launch the skype?
 	setScanForUnread(config->readBoolEntry("ScanForUnread"));
+	setCallControl(config->readBoolEntry("CallControl"));
 
 	//Now, connect the signals
 	QObject::connect(&d->skype, SIGNAL(wentOnline()), this, SLOT(wentOnline()));
@@ -90,16 +96,18 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, 
 	QObject::connect(&d->skype, SIGNAL(receivedIM(const QString&, const QString& )), this, SLOT(receivedIm(const QString&, const QString& )));
 	QObject::connect(&d->skype, SIGNAL(gotMessageId(const QString& )), this, SIGNAL(gotMessageId(const QString& )));//every time some ID is known inform the contacts
 	QObject::connect(&d->skype, SIGNAL(sentMessage(const QString& )), this, SIGNAL(sentMessage(const QString& )));//inform contacts of sent messages
+	QObject::connect(&d->skype, SIGNAL(newCall(const QString&, const QString&)), this, SLOT(newCall(const QString&, const QString&)));
 
 	//set values for the connection (should be updated if changed)
 	d->skype.setValues(launchType, author);
 	setHitchHike(config->readBoolEntry("Hitch", true));
 	setMarkRead(config->readBoolEntry("MarkRead", true));//read the modes of account
+	d->callWindowTimeout = config->readNumEntry("CloseWindowTimeout", 3);
 }
 
 
 SkypeAccount::~SkypeAccount() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	d->protocol->unregisterAccount();//This account no longer exists
 
@@ -108,21 +116,21 @@ SkypeAccount::~SkypeAccount() {
 }
 
 bool SkypeAccount::createContact(const QString &contactID, Kopete::MetaContact *parentContact) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (!contact(contactID)) {//check weather it is not used already
 		SkypeContact *newContact = new SkypeContact(this, contactID, parentContact);//create the contact
 
 		return newContact != 0L;//test weather it was created
 	} else {
-		kdDebug(65320) << k_funcinfo << "Contact already exists:" << contactID << endl;//Tell that it is not OK
+		kdDebug(14311) << k_funcinfo << "Contact already exists:" << contactID << endl;//Tell that it is not OK
 
 		return false;
 	}
 }
 
 void SkypeAccount::setAway(bool away, const QString &reason) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (away)
 		setOnlineStatus(d->protocol->Away, reason);
@@ -131,7 +139,7 @@ void SkypeAccount::setAway(bool away, const QString &reason) {
 }
 
 void SkypeAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const QString &) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (status == d->protocol->Online)
 		d->skype.setOnline();//Go online
@@ -148,23 +156,23 @@ void SkypeAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const QSt
 	else if (status == d->protocol->SkypeMe)
 		d->skype.setSkypeMe();
 	else
-		kdDebug(65320) << "Unknown online status" << endl;//Just a warning that I do not know that status
+		kdDebug(14311) << "Unknown online status" << endl;//Just a warning that I do not know that status
 }
 
 void SkypeAccount::disconnect() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	setOnlineStatus(d->protocol->Offline, "");
 }
 
 SkypeContact *SkypeAccount::contact(const QString &id) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	return static_cast<SkypeContact *>(contacts()[id]);//get the contact and convert it into the skype contact, there are no other contacts anyway
 }
 
 void SkypeAccount::connect(const Kopete::OnlineStatus &Status) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if ((Status != d->protocol->Online) && (Status != d->protocol->Away) &&
 		(Status != d->protocol->NotAvailable) && (Status != d->protocol->DoNotDisturb) &&
@@ -175,7 +183,7 @@ void SkypeAccount::connect(const Kopete::OnlineStatus &Status) {
 }
 
 void SkypeAccount::save() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	KConfigGroup *config = configGroup();//get the config
 	config->writeEntry("Authorization", author);//write the authorization name
@@ -183,75 +191,86 @@ void SkypeAccount::save() {
 	config->writeEntry("Hitch", getHitchHike());//save the hitch hike messages mode
 	config->writeEntry("MarkRead", getMarkRead());//save the Mark read messages mode
 	config->writeEntry("ScanForUnread", getScanForUnread());
+	config->writeEntry("CallControl", getCallControl());
+	config->writeEntry("CloseWindowTimeout", d->callWindowTimeout);
 
 	//save it into the skype connection as well
 	d->skype.setValues(launchType, author);
 }
 
 void SkypeAccount::wentOnline() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	myself()->setOnlineStatus(d->protocol->Online);//just set the icon
+	emit connectionStatus(true);
 }
 
 void SkypeAccount::wentOffline() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	myself()->setOnlineStatus(d->protocol->Offline);//just change the icon
+	emit connectionStatus(false);
 }
 
 void SkypeAccount::wentAway() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	myself()->setOnlineStatus(d->protocol->Away);//just change the icon
+	emit connectionStatus(true);
 }
 
 void SkypeAccount::wentNotAvailable() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	myself()->setOnlineStatus(d->protocol->NotAvailable);
+	emit connectionStatus(true);
 }
 
 void SkypeAccount::wentDND() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	myself()->setOnlineStatus(d->protocol->DoNotDisturb);
+	emit connectionStatus(true);
 }
 
 void SkypeAccount::wentInvisible() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	myself()->setOnlineStatus(d->protocol->Invisible);
+	emit connectionStatus(true);
 }
 
 void SkypeAccount::wentSkypeMe() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	myself()->setOnlineStatus(d->protocol->SkypeMe);
+	emit connectionStatus(true);
 }
 
 void SkypeAccount::statusConnecting() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	myself()->setOnlineStatus(d->protocol->Connecting);
+	emit connectionStatus(false);
 }
 
 void SkypeAccount::newUser(const QString &name) {
-	kdDebug(65320) << k_funcinfo << QString("name = %1").arg(name) << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << QString("name = %1").arg(name) << endl;//some debug info
 	if (contacts().find(name))
 		return;
 	addContact(name);
 }
 
 void SkypeAccount::prepareContact(SkypeContact *contact) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	QObject::connect(&d->skype, SIGNAL(updateAllContacts()), contact, SLOT(requestInfo()));//all contacts will know that
 	QObject::connect(contact, SIGNAL(infoRequest(const QString& )), &d->skype, SLOT(getContactInfo(const QString& )));//How do we ask for info?
+	QObject::connect(this, SIGNAL(connectionStatus(bool )), contact, SLOT(connectionStatus(bool )));
 }
 
 void SkypeAccount::updateContactInfo(const QString &contact, const QString &change) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	SkypeContact *cont = static_cast<SkypeContact *> (contacts().find(contact));//get the contact
 	if (cont)
@@ -275,7 +294,7 @@ SkypeProtocol &SkypeAccount::protocol() {
 }
 
 void SkypeAccount::sendMessage(Kopete::Message &message) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	const QString &user = message.to().at(0)->contactId();//get id of the first contact, messages to multiple people are not yet possible
 	const QString &body = message.plainBody();//get the text of the message
@@ -311,7 +330,7 @@ bool SkypeAccount::userHasChat(const QString &userId) {
 }
 
 void SkypeAccount::receivedIm(const QString &user, const QString &message) {
-	kdDebug(65320) << k_funcinfo << "User: " << user << ", message: " << message << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << "User: " << user << ", message: " << message << endl;//some debug info
 
 	SkypeContact *cont = static_cast<SkypeContact *> (contacts().find(user));//get the right contact
 
@@ -334,5 +353,54 @@ void SkypeAccount::setScanForUnread(bool value) {
 bool SkypeAccount::getScanForUnread() const {
 	return d->searchForUnread;
 }
+
+void SkypeAccount::makeCall(SkypeContact *user) {
+	d->skype.makeCall(user->contactId());
+}
+
+bool SkypeAccount::getCallControl() const {
+	return d->callControl;
+}
+
+void SkypeAccount::setCallControl(bool value) {
+	d->callControl = value;
+}
+
+void SkypeAccount::newCall(const QString &callId, const QString &userId) {
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
+
+	if (d->callControl) {//Show the skype call control window
+		SkypeCallDialog *dialog = new SkypeCallDialog(callId, userId, this);//It should free itself when it is closed
+		QObject::connect(&d->skype, SIGNAL(callStatus(const QString&, const QString& )), dialog, SLOT(updateStatus(const QString&, const QString& )));
+		QObject::connect(dialog, SIGNAL(acceptTheCall(const QString& )), &d->skype, SLOT(acceptCall(const QString& )));
+		QObject::connect(dialog, SIGNAL(hangTheCall(const QString& )), &d->skype, SLOT(hangUp(const QString& )));
+		QObject::connect(dialog, SIGNAL(togleHoldCall(const QString& )), &d->skype, SLOT(togleHoldCall(const QString& )));
+		QObject::connect(&d->skype, SIGNAL(callError(const QString&, const QString& )), dialog, SLOT(updateError(const QString&, const QString& )));
+		QObject::connect(&d->skype, SIGNAL(skypeOutInfo(int, const QString& )), dialog, SLOT(skypeOutInfo(int, const QString& )));
+		QObject::connect(dialog, SIGNAL(updateSkypeOut()), &d->skype, SLOT(getSkypeOut()));
+		d->skype.getSkypeOut();
+	}
+}
+
+bool SkypeAccount::isCallIncoming(const QString &callId) {
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
+
+	return d->skype.isCallIncoming(callId);
+}
+
+void SkypeAccount::setCloseWindowTimeout(int timeout) {
+	d->callWindowTimeout = timeout;
+}
+
+int SkypeAccount::closeCallWindowTimeout() const {
+	return d->callWindowTimeout;
+}
+
+QString SkypeAccount::getUserLabel(const QString &userId) {
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
+
+	return QString("%1 (%2)").arg(contact(userId)->nickName()).arg(userId);
+}
+	
 
 #include "skypeaccount.moc"

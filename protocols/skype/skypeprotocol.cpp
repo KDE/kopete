@@ -57,7 +57,7 @@ SkypeProtocol::SkypeProtocol(QObject *parent, const char *name, const QStringLis
 	NoAuth(Kopete::OnlineStatus::Offline, 0, this, 10, "contact_unknown_overlay", i18n("Not authorized")),
 	Phone(Kopete::OnlineStatus::Online, 0, this, 11, "contact_phone_overlay", i18n("SkypeOut contact"))
 {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 	//create the d pointer
 	d = new SkypeProtocolPrivate();
 	//add address book field
@@ -66,52 +66,52 @@ SkypeProtocol::SkypeProtocol(QObject *parent, const char *name, const QStringLis
 
 
 SkypeProtocol::~SkypeProtocol() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 	//release the memory
 	delete d;
 }
 
 Kopete::Account *SkypeProtocol::createNewAccount(const QString &) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 	//just create one
 	return new SkypeAccount(this);
 }
 
 AddContactPage *SkypeProtocol::createAddContactWidget(QWidget *parent, Kopete::Account *account) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 	return new SkypeAddContact(this, parent, (SkypeAccount *)account, 0L);
 }
 
 KopeteEditAccountWidget *SkypeProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 	return new skypeEditAccount(this, account, parent);//create the widget and return it
 }
 
 void SkypeProtocol::registerAccount(SkypeAccount *account) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	d->account = account;
 }
 
 void SkypeProtocol::unregisterAccount() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	d->account = 0L;//forget everything about the account
 }
 
 bool SkypeProtocol::hasAccount() const {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	return (d->account);
 }
 
 Kopete::Contact *SkypeProtocol::deserializeContact(Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> &) {
-	kdDebug(65320) << k_funcinfo << "Name: " << serializedData["contactId"] << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << "Name: " << serializedData["contactId"] << endl;//some debug info
 
 	QString contactID = serializedData["contactId"];//get the contact ID
 
 	if (!d->account) {
-		kdDebug(65320) << "Account does not exists, skiping contact creation" << endl;//write error for debuging
+		kdDebug(14311) << "Account does not exists, skiping contact creation" << endl;//write error for debuging
 		return 0L;//create nothing
 	}
 

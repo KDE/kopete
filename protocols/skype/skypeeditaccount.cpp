@@ -31,6 +31,7 @@
 #include <qlineedit.h>
 #include <kdebug.h>
 #include <qbuttongroup.h>
+#include <qspinbox.h>
 
 class SkypeEditAccountPrivate {
 	public:
@@ -41,7 +42,7 @@ class SkypeEditAccountPrivate {
 };
 
 skypeEditAccount::skypeEditAccount(SkypeProtocol *protocol, Kopete::Account *account, QWidget *parent) : SkypeEditAccountBase(parent), KopeteEditAccountWidget(account) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	d = new SkypeEditAccountPrivate();//the d pointer
 	d->protocol = protocol;//I may need the protocol later
@@ -58,18 +59,23 @@ skypeEditAccount::skypeEditAccount(SkypeProtocol *protocol, Kopete::Account *acc
 		MarkCheck->setChecked(d->account->getMarkRead());//set the get read mode
 		HitchCheck->setChecked(d->account->getHitchHike());
 		ScanCheck->setChecked(d->account->getScanForUnread());
+		CallCheck->setChecked(d->account->getCallControl());
+		if (d->account->closeCallWindowTimeout()) {
+			AutoCloseCallCheck->setChecked(true);
+			CloseTimeoutSpin->setValue(d->account->closeCallWindowTimeout());
+		} else AutoCloseCallCheck->setChecked(false);
 	} else {
 		///@todo Make this unneeded :)
-		KMessageBox::information(this, i18n("Please nota that this version of Skype plugin is a development version and it is probable it will cause more problems than solve. You have boon warned"), i18n("Version info"));
+		KMessageBox::information(this, i18n("Please note that this version of Skype plugin is a development version and it is probable it will cause more problems than solve. You have boon warned"), i18n("Version info"));
 	}
 }
 
 skypeEditAccount::~skypeEditAccount() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 }
 
 bool skypeEditAccount::validateData() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (d->protocol->hasAccount() && (!account())) {//he wants to create some account witch name is already used
 		KMessageBox::sorry(this, i18n("You can have only one skype account"), i18n("Wrong information"));//Tell him to use something other
@@ -80,7 +86,7 @@ bool skypeEditAccount::validateData() {
 }
 
 Kopete::Account *skypeEditAccount::apply() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	//first, I need a pointer to that account
 	if (!account()) //it does not exist
@@ -97,12 +103,13 @@ Kopete::Account *skypeEditAccount::apply() {
 	skype->setHitchHike(HitchCheck->isChecked());//save the hitch hike mode and activat ethe new value
 	skype->setMarkRead(MarkCheck->isChecked());//set the mark read messages mode and activate it
 	skype->setScanForUnread(ScanCheck->isChecked());
+	skype->setCallControl(CallCheck->isChecked());
 	skype->save();//save it to config
 	return skype;//return the account
 }
 
 void skypeEditAccount::testLaunch() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 }
 
 #include "skypeeditaccount.moc"

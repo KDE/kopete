@@ -40,7 +40,7 @@ class SkypeConnectionPrivate {
 };
 
 SkypeConnection::SkypeConnection() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	d = new SkypeConnectionPrivate;//create the d pointer
 	d->fase = cfNotConnected;//not connected yet
@@ -50,14 +50,14 @@ SkypeConnection::SkypeConnection() {
 }
 
 SkypeConnection::~SkypeConnection() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	disconnectSkype();//disconnect before you leave
 	delete d;//Remove the D pointer
 }
 
 void SkypeConnection::startLogOn() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	DBusQt::Message ping("com.Skype.API", "/com/Skype", "com.Skype.API", "Ping");//create a ping message
 	ping.setAutoActivation(true);
@@ -76,10 +76,10 @@ void SkypeConnection::startLogOn() {
 }
 
 void SkypeConnection::gotMessage(const DBusQt::Message &message) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (message.member() == "Ping") {//Skype wants to know if we are alive
-		kdDebug(65320) << "Skype sent us ping, responding" << endl;
+		kdDebug(14311) << "Skype sent us ping, responding" << endl;
 		DBusQt::Message reply(message);//Create the reply
 		reply << getpid();//respond with our PID
 		d->conn->send(reply);//send it
@@ -93,7 +93,7 @@ void SkypeConnection::gotMessage(const DBusQt::Message &message) {
 		}
 
 		if (message.expectReply()) {
-			kdDebug(65320) << "Message expects reply, sending a dummy one" << endl;
+			kdDebug(14311) << "Message expects reply, sending a dummy one" << endl;
 			DBusQt::Message *reply = new DBusQt::Message(message);//generate a reply for that message
 			(*reply) << QString("ERROR 2");//write there seme error
 			d->conn->send(*reply);//send the message
@@ -103,7 +103,7 @@ void SkypeConnection::gotMessage(const DBusQt::Message &message) {
 }
 
 void SkypeConnection::parseMessage(const QString &message) {
-	kdDebug(65320) << k_funcinfo << QString("(message: %1)").arg(message) << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << QString("(message: %1)").arg(message) << endl;//some debug info
 
 	switch (d->fase) {
 		case cfNameSent: {
@@ -138,7 +138,7 @@ void SkypeConnection::parseMessage(const QString &message) {
 }
 
 void SkypeConnection::connectSkype(bool start, const QString &appName, int protocolVer) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (d->fase != cfNotConnected)
 		return;
@@ -179,7 +179,7 @@ void SkypeConnection::connectSkype(bool start, const QString &appName, int proto
 }
 
 void SkypeConnection::disconnectSkype(skypeCloseReason reason) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (!d->conn) //nothing to disconnect
 		return;
@@ -192,7 +192,7 @@ void SkypeConnection::disconnectSkype(skypeCloseReason reason) {
 }
 
 void SkypeConnection::send(const QString &message) {
-	kdDebug(65320) << k_funcinfo << QString("(message: %1)").arg(message) << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << QString("(message: %1)").arg(message) << endl;//some debug info
 
 	if (d->fase == cfNotConnected)
 		return;//not connected, posibly because of earlier error, do not show it again
@@ -218,13 +218,13 @@ void SkypeConnection::send(const QString &message) {
 }
 
 bool SkypeConnection::connected() const {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	return d->fase == cfConnected;
 }
 
 int SkypeConnection::protocolVer() const {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	return d->protocolVer;//just give him the protocol version
 }
@@ -235,7 +235,7 @@ SkypeConnection &SkypeConnection::operator <<(const QString &message) {
 }
 
 QString SkypeConnection::operator %(const QString &message) {
-	kdDebug(65320) << k_funcinfo << "message: " << message << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << "message: " << message << endl;//some debug info
 
 	if (d->fase == cfNotConnected)
 		return "";//not connected, posibly because of earlier error, do not show it again
@@ -255,7 +255,7 @@ QString SkypeConnection::operator %(const QString &message) {
 	}
 
 	for (DBusQt::Message::iterator it = reply.begin(); it != reply.end(); ++it) {
-		kdDebug(65320) << (*it).toString() << endl;//show what we have received
+		kdDebug(14311) << (*it).toString() << endl;//show what we have received
 		return (*it).toString();//ok, just return it
 	}
 

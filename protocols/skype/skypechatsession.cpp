@@ -23,7 +23,7 @@
 #include "skypecontact.h"
 
 #include <kdebug.h>
-#include <kopetemessagemanagerfactory.h>
+#include <kopetechatsessionmanager.h>
 #include <qdict.h>
 #include <qstring.h>
 
@@ -45,7 +45,7 @@ class SkypeChatSessionPrivate {
 		 * @param _account Reference to the account this chat belongs to
 		 */
 		SkypeChatSessionPrivate(SkypeProtocol *_protocol, SkypeAccount *_account) {
-			kdDebug(65320) << k_funcinfo << endl;//some debug info
+			kdDebug(14311) << k_funcinfo << endl;//some debug info
 			//save given values
 			account = _account;
 			protocol = _protocol;
@@ -64,7 +64,7 @@ static Kopete::ContactPtrList constructList(SkypeContact *contact) {
 
 SkypeChatSession::SkypeChatSession(SkypeAccount *account, SkypeContact *contact) :
 		Kopete::ChatSession(account->myself(), constructList(contact), &account->protocol(), (char *)0L) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	//create the D-pointer
 	d = new SkypeChatSessionPrivate(&account->protocol(), account);
@@ -74,13 +74,13 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, SkypeContact *contact)
 
 
 SkypeChatSession::~SkypeChatSession() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	delete d;//remove the D pointer
 }
 
 void SkypeChatSession::message(Kopete::Message &message) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	d->lastMessage = new Kopete::Message(message);//copy the message, I need to store it for a while
 	connect(d->account, SIGNAL(gotMessageId(const QString& )), this, SLOT(knowId(const QString& )));//get the Id when it is known
@@ -88,7 +88,7 @@ void SkypeChatSession::message(Kopete::Message &message) {
 }
 
 void SkypeChatSession::knowId(const QString &id) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	disconnect(d->account, SIGNAL(gotMessageId(const QString& )), this, SLOT(knowId(const QString& )));//OK, I know it, it is enough, nothing more is needed. THIS IS NEEDED HERE, IT WOULD NOT WORK WITHOUT THIS
 	d->pending.insert(id, d->lastMessage);//put the message into list of unsent
@@ -101,7 +101,7 @@ void SkypeChatSession::knowId(const QString &id) {
 }
 
 void SkypeChatSession::messageSent(const QString &id) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	Kopete::Message *mes = d->pending.take(id);//get the message out of the dictionary
 	if (mes) {//We had the message, it was ours

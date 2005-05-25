@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>448</width>
-            <height>391</height>
+            <width>556</width>
+            <height>387</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -41,7 +41,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>B&amp;asic Setup</string>
+                    <string>&amp;Basic Setup</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -163,7 +163,7 @@
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>&amp;Launch</string>
+                    <string>Lau&amp;nch</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -411,77 +411,248 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Act&amp;ivity</string>
+                    <string>Activit&amp;y</string>
                 </attribute>
-                <widget class="QCheckBox">
+                <vbox>
                     <property name="name">
-                        <cstring>HitchCheck</cstring>
+                        <cstring>unnamed</cstring>
                     </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>10</x>
-                            <y>10</y>
-                            <width>250</width>
-                            <height>23</height>
-                        </rect>
-                    </property>
-                    <property name="text">
-                        <string>Hitchhike incoming &amp;messages</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Show all incoming messages</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>This will show all skype incoming messages. If this is off, they are showed only if the message belongs to chat that is started by kopete.</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>MarkCheck</cstring>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>10</x>
-                            <y>40</y>
-                            <width>120</width>
-                            <height>23</height>
-                        </rect>
-                    </property>
-                    <property name="text">
-                        <string>Mar&amp;k as read</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>This will mark incoming messages as read so if you have Skype set up not to automatically pop-up chats, it will not flash that exclamation icon.</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>ScanCheck</cstring>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>10</x>
-                            <y>70</y>
-                            <width>150</width>
-                            <height>23</height>
-                        </rect>
-                    </property>
-                    <property name="text">
-                        <string>Scan f&amp;or unread</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>If this is checked, Kopete will ask Skype on login, if it has any unshowed messages and show them. This is handy if you start Kopete later than Skype and Skype is configured not to show incoming messages.</string>
-                    </property>
-                </widget>
+                    <widget class="QCheckBox">
+                        <property name="name">
+                            <cstring>HitchCheck</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Hitchhike incoming &amp;messages</string>
+                        </property>
+                        <property name="checked">
+                            <bool>true</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Show all incoming messages</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>This will show all skype incoming messages. If this is off, they are showed only if the message belongs to chat that is started by kopete.</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox">
+                        <property name="name">
+                            <cstring>MarkCheck</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Mar&amp;k as read</string>
+                        </property>
+                        <property name="checked">
+                            <bool>true</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>This will mark incoming messages as read so if you have Skype set up not to automatically pop-up chats, it will not flash that exclamation icon.</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox">
+                        <property name="name">
+                            <cstring>ScanCheck</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Scan f&amp;or unread</string>
+                        </property>
+                        <property name="checked">
+                            <bool>true</bool>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>If this is checked, Kopete will ask Skype on login, if it has any unshowed messages and show them. This is handy if you start Kopete later than Skype and Skype is configured not to show incoming messages.</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox">
+                        <property name="name">
+                            <cstring>CallCheck</cstring>
+                        </property>
+                        <property name="text">
+                            <string>S&amp;how call control</string>
+                        </property>
+                        <property name="checked">
+                            <bool>true</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Show call control window for all cals</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>This will show a call control window for every call (both incoming and outgoing). If it is off, you can call from Kopete, byt you have to control that call from Skype.</string>
+                        </property>
+                    </widget>
+                    <widget class="QLayoutWidget">
+                        <property name="name">
+                            <cstring>layout9</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <spacer>
+                                <property name="name">
+                                    <cstring>spacer9</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Fixed</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>AutoCloseCallCheck</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Autoc&amp;lose</string>
+                                </property>
+                                <property name="checked">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>Auto close the call control window</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>This will close tha call control window automatically when the call finishes</string>
+                                </property>
+                            </widget>
+                            <spacer>
+                                <property name="name">
+                                    <cstring>spacer14</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>361</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                        </hbox>
+                    </widget>
+                    <widget class="QLayoutWidget">
+                        <property name="name">
+                            <cstring>layout8</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <spacer>
+                                <property name="name">
+                                    <cstring>spacer10</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>31</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>textLabel1_3</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>5</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string>Timeout:</string>
+                                </property>
+                            </widget>
+                            <widget class="QSpinBox">
+                                <property name="name">
+                                    <cstring>CloseTimeoutSpin</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>7</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="maxValue">
+                                    <number>120</number>
+                                </property>
+                                <property name="minValue">
+                                    <number>1</number>
+                                </property>
+                            </widget>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>textLabel2_2</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>5</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string>s</string>
+                                </property>
+                            </widget>
+                            <spacer>
+                                <property name="name">
+                                    <cstring>spacer12</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>301</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                        </hbox>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer13</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>141</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </vbox>
             </widget>
         </widget>
     </hbox>
@@ -492,6 +663,24 @@ By default, kopete provides kopete as its name, but if you suspect another appli
         <signal>toggled(bool)</signal>
         <receiver>AuthorEdit</receiver>
         <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>CallCheck</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>AutoCloseCallCheck</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>AutoCloseCallCheck</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>CloseTimeoutSpin</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>CallCheck</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>AutoCloseCallCheck</receiver>
+        <slot>setChecked(bool)</slot>
     </connection>
 </connections>
 <slots>

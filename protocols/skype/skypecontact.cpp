@@ -24,8 +24,11 @@
 #include <kdebug.h>
 #include <qstring.h>
 #include <kopetemessage.h>
-#include <kopetemessagemanager.h>
-#include <kopetemessagemanagerfactory.h>
+#include <kopetechatsession.h>
+#include <kopetechatsessionmanager.h>
+#include <qptrlist.h>
+#include <kaction.h>
+#include <klocale.h>
 
 typedef enum {
 	osOffline,
@@ -57,30 +60,35 @@ class SkypeContactPrivate {
 		buddyStatus buddy;
 		///The chat session
 		SkypeChatSession *session;
+		///The action to call the user
+		KAction *callContactAction;
 };
 
 SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::MetaContact *parent, bool user)
 	: Kopete::Contact(account, id, parent, QString::null) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	d = new SkypeContactPrivate;//create the insides
 	d->session = 0L;//no session yet
 	d->account = account;//save the account for future, it will be needed
 	account->prepareContact(this);//let the account prepare us
 	d->user = user;
+	d->callContactAction = 0L;
+	connect(this, SIGNAL(setCallPossible(bool )), this, SLOT(enableCall(bool )));
+	connect(this, SIGNAL(onlineStatusChanged(Kopete::Contact*, Kopete::OnlineStatus&, Kopete::OnlineStatus&)), this, SLOT(statusChanged()));
 	if (account->canComunicate() && user)
 		emit infoRequest(contactId());//retrieve information
 }
 
 SkypeContact::~SkypeContact() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	//free memory
 	delete d;
 }
 
 Kopete::ChatSession *SkypeContact::manager(Kopete::Contact::CanCreateFlags CanCreate) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if ((!d->session) && (CanCreate)) {//It is not there and I can create it
 		d->session = new SkypeChatSession(d->account, this);
@@ -91,21 +99,21 @@ Kopete::ChatSession *SkypeContact::manager(Kopete::Contact::CanCreateFlags CanCr
 	return d->session;//and return it
 }
 
-void SkypeContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+void SkypeContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &) {
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	serializedData["contactId"] = contactId();//save the ID
 }
 
 void SkypeContact::requestInfo() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (d->user)
 		emit infoRequest(contactId());//just ask for the info
 }
 
 void SkypeContact::setInfo(const QString &change) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	const QString &property = change.section(' ', 0, 0).stripWhiteSpace().upper();//get the first part
 	if (property == "FULLNAME") {
@@ -128,7 +136,7 @@ void SkypeContact::setInfo(const QString &change) {
 		} else if (status == "NA") {
 			d->status = osNA;
 		} else if (status == "DND") {
-			d->status = osDND;	kdDebug(65320) << k_funcinfo << endl;//some debug info
+			d->status = osDND;	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 		} else if (status == "SKYPEOUT") {
 			d->status = osSkypeOut;
@@ -164,7 +172,7 @@ QString SkypeContact::formattedName() const {
 }
 
 void SkypeContact::resetStatus() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	SkypeProtocol &protocol = d->account->protocol();//get the protocol
 
@@ -210,7 +218,7 @@ void SkypeContact::resetStatus() {
 }
 
 bool SkypeContact::isReachable() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	switch (d->buddy) {
 		case bsNotInList:
@@ -230,7 +238,7 @@ bool SkypeContact::isReachable() {
 }
 
 void SkypeContact::removeChat() {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	d->session = 0L;//it exists no more or it is no longer of this contact
 }
@@ -240,7 +248,7 @@ bool SkypeContact::hasChat() const {
 }
 
 void SkypeContact::receiveIm(const QString &message) {
-	kdDebug(65320) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (!hasChat()) {
 		manager(CanCreate);//create it
@@ -250,6 +258,48 @@ void SkypeContact::receiveIm(const QString &message) {
 
 	Kopete::Message mes(this, d->account->myself(), message, Kopete::Message::Inbound);//create the message
 	d->session->appendMessage(mes);//add it to the session
+}
+
+QPtrList<KAction> *SkypeContact::customContextMenuActions() {
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
+
+	QPtrList<KAction> *actions = new QPtrList<KAction>();
+
+	if (!d->callContactAction) {
+		d->callContactAction = new KAction(i18n("Call Contact"), "call_contact", KShortcut(), this, SLOT(call()), this, "call_contact");
+		statusChanged();//This one takes care of disabling/enabling this action depending on the user's status.
+	}
+
+	actions->append(d->callContactAction);
+
+	return actions;
+}
+
+void SkypeContact::enableCall(bool value) {
+	if (d->callContactAction)
+		d->callContactAction->setEnabled(value);
+}
+
+void SkypeContact::statusChanged() {
+	const Kopete::OnlineStatus &myStatus = onlineStatus();
+	SkypeProtocol &protocol = d->account->protocol();
+	if ((myStatus == protocol.Online) || (myStatus == protocol.Away) || (myStatus == protocol.NotAvailable) || (myStatus == protocol.DoNotDisturb) || (myStatus == protocol.NoAuth) || (myStatus == protocol.NotInList) || (myStatus == protocol.Phone) || (myStatus == protocol.SkypeMe))
+		emit setCallPossible(true);
+	else
+		emit setCallPossible(false);
+}
+
+void SkypeContact::call() {
+	kdDebug(14311) << k_funcinfo << endl;//some debug info
+
+	d->account->makeCall(this);
+}
+
+void SkypeContact::connectionStatus(bool connected) {
+	if (connected) {
+		statusChanged();
+	} else
+		emit setCallPossible(false);
 }
 
 #include "skypecontact.moc"

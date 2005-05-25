@@ -104,6 +104,12 @@ class Skype : public QObject
 		 * @see SkypeAccount::setScanForUnread
 		 */
 		void setScanForUnread(bool value);
+		/**
+		 * Is that call incoming call?
+		 * @param callId What call you mean?
+		 * @return true if the call is incoming
+		 */
+		bool isCallIncoming(const QString &callId);
 	public slots:
 		/**
 		 * Tell the skype to go online
@@ -156,6 +162,53 @@ class Skype : public QObject
 		 * @see sentMessage
 		 */
 		void send(const QString &user, const QString &body);
+		/**
+		 * Begins new call.
+		 * @param userId ID of user to call
+		 * @see acceptCall
+		 * @see hangUp
+		 * @see holdCall
+		 * @see callStatus
+		 * @see callError
+		 */
+		void makeCall(const QString &userId);
+		/**
+		 * Accept an incoming call
+		 * @param callId ID of call to accept.
+		 * @see makeCall
+		 * @see hangUp
+		 * @see holdCall
+		 * @see callStatus
+		 * @see callError
+		 * @see newCall
+		 */
+		void acceptCall(const QString &callId);
+		/**
+		 * Hang up (finish) call in progress or deny an incoming call
+		 * @param callId Which one
+		 * @see makeCall
+		 * @see acceptCall
+		 * @see holdCall
+		 * @see callStatus
+		 * @see callError
+		 * @see newCall
+		 */
+		void hangUp(const QString &callId);
+		/**
+		 * Hold call in progress or resume holded call. That call will not finish, you just leave it for later.
+		 * @param callId Which call
+		 * @see makeCall
+		 * @see acceptCall
+		 * @see hangUp
+		 * @see callStatus
+		 * @see callError
+		 * @see newCall
+		 */
+		void togleHoldCall(const QString &callId);
+		/**
+		 * Get the skoype out balance
+		 */
+		void getSkypeOut();
 	signals:
 		/**
 		 * Emited when the skype changes to online (or says it goes online)
@@ -220,6 +273,48 @@ class Skype : public QObject
 		 * @param id ID of the sent message
 		 */
 		void sentMessage(const QString &id);
+		/**
+		 * This slot notifies about call status (onhold, in progress, routing, finished..)
+		 * @param callId WHat call is it?
+		 * @param status New status of the call.
+		 * @see makeCall
+		 * @see acceptCall
+		 * @see hangUp
+		 * @see holdCall
+		 * @see callError
+		 * @see newCall
+		 */
+		void callStatus(const QString &callId, const QString &status);
+		/**
+		 * This slot informs of error that happened to the call. It is translated error and can be directly showed to user.
+		 * @param callId ID of the call that has an error.
+		 * @param message The error text
+		 * @see makeCall
+		 * @see acceptCall
+		 * @see hangUp
+		 * @see holdCall
+		 * @see callStatus
+		 * @see newCall
+		 */
+		void callError(const QString &callId, const QString &message);
+		/**
+		 * Indicates a new call is established (is being established, incoming or so). In short, there is some new call.
+		 * @param callId ID of the new call
+		 * @param userId ID of the other user, or list of users (if more than one) divided by spaces
+		 * @see makeCall
+		 * @see acceptCall
+		 * @see hangUp
+		 * @see holdCall]
+		 * @see callStatus
+		 * @see callError
+		 */
+		void newCall(const QString &callId, const QString &userId);
+		/**
+		 * Skype out balance info
+		 * @param balance How much does the user have
+		 * @param currency And what is it that he has
+		 */
+		void skypeOutInfo(int balance, const QString &currency);
 };
 
 #endif

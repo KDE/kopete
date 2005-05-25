@@ -28,6 +28,8 @@ namespace Kopete {
 	class MetaContact;
 	class ChatSession;
 }
+class KAction;
+template <class T> class QPtrList;
 
 /**
  * @author Kopete Developers
@@ -43,6 +45,12 @@ class SkypeContact : public Kopete::Contact
 	private slots:
 		///This will note that the session was destroyed and therefore can't be used again. As well used when the chat becomes multi-user so it no longer belongs to this contact
 		void removeChat();
+		///This slot calls a contact
+		void call();
+		///Enables or disables the call action depending on if it can be called or not.
+		void enableCall(bool value);
+		///The status changed, so there should be update of the availiblity of some things
+		void statusChanged();
 	public:
 		/**
 		 * Constructor.
@@ -71,6 +79,8 @@ class SkypeContact : public Kopete::Contact
 		virtual bool isReachable();
 		///Does this contact has opened chat session?
 		bool hasChat() const;
+		///Tell kopete which actions to show in the contact pop-up menu
+		QPtrList<KAction> *customContextMenuActions();
 	public slots:
 		/**
 		 * Please ask for the contact information (emit infoReques with your name)
@@ -86,12 +96,22 @@ class SkypeContact : public Kopete::Contact
 		 * @param message The message to show
 		 */
 		void receiveIm(const QString &message);
+		/**
+		 * connection status changed
+		 * @param connected Are we connected now?
+		 */
+		void connectionStatus(bool connected);
 	signals:
 		/**
 		 * There is a request to get/refresh the contact info from skype
 		 * @param contact Wich contact wants it?
 		 */
 		void infoRequest(const QString &contact);
+		/**
+		 * The possibility to call this contact has changed, so GUI should enable/disable some buttons.
+		 * @param value Is it possible to call it now?
+		 */
+		void setCallPossible(bool value);
 };
 
 #endif
