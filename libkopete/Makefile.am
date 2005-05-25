@@ -2,7 +2,13 @@ include ../../admin/Doxyfile.am
 DOXYGEN_REFERENCES = kio kdecore kdeui
 DOXYGEN_EXCLUDE = compat
 
-SUBDIRS = private ui . tests avdevice
+if ENABLE_AV
+AVDEVICEDIR = avdevice
+else
+AVDEVICEDIR =
+endif
+
+SUBDIRS = private ui . tests $(AVDEVICEDIR)
 
 METASOURCES = AUTO
 
