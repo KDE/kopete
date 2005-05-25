@@ -189,7 +189,7 @@ void ICQSearchResult::fill( Buffer* buffer )
 	if ( len > 0 )
 		email = QString( buffer->getBlock( len ) );
 	
-	auth = ( buffer->getByte() == 0x01 );
+	auth = ( buffer->getByte() != 0x01 );
 	online = ( buffer->getLEWord() == 0x0001 );
 	switch ( buffer->getByte() )
 	{
