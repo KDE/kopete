@@ -103,6 +103,17 @@ public:
 	static QString errorDescription( int err );
 	static QString stateDescription( int state );
 	void dccRequest( const unsigned int );
+	unsigned int getPersonalInformation();
+	/*
+	 * Initiates search in public directory, we need to be logged on to perform search !
+	 * This returns false, if you are unable to search (fe you are not logged on, you don't have memory)
+	 * This does not checks parametrs !
+	 * Calling this function more times with the same params, will continue this search as long as
+	 * @ref pubDirSearchClose() will not be called
+	 * You must set @ref pubDirSearchResult() signal before calling this function, otherwise no result
+	 * will be returned
+	 */
+	bool pubDirSearch( QString&, QString&, QString&, int, QString&, int, int, int, bool );
 
 public slots:
 	void	login( KGaduLoginParams* login );
@@ -116,17 +127,6 @@ public slots:
 	int	ping();
 
 	void	requestContacts();
-
-	/*
-	*  Initiates search in public directory, we need to be logged on to perform search !
-	*  This returns false, if you are unable to search (fe you are not logged on, you don't have memory)
-	*  This does not checks parametrs !
-	*  Calling this function more times with the same params, will continue this search as long as
-	*  @ref pubDirSearchClose() will not be called
-	*  You must set @ref pubDirSearchResult() signal before calling this function, otherwise no result
-	*  will be returned
-	*/
-	bool pubDirSearch( QString&, QString&, QString&, int, QString&, int, int, int, bool );
 
 	/*
 	*  Releases all allocated memory needed to perform search.

@@ -328,37 +328,59 @@ GaduSession::pubDirSearchClose()
 	searchSeqNr_=0;
 }
 
+unsigned int
+GaduSession::getPersonalInformation()
+{
+	gg_pubdir50_t searchRequest;
+	unsigned int seqNr;
+	
+	if ( isConnected() == false ) {
+		return 0;
+	}
+
+	searchRequest = gg_pubdir50_new( GG_PUBDIR50_READ );
+	if ( !searchRequest ) {
+		return 0;
+	}
+        
+	seqNr = gg_pubdir50( session_, searchRequest );
+	gg_pubdir50_free( searchRequest );
+	
+	return seqNr;
+}
+				
+
 bool
 GaduSession::pubDirSearch(QString& name, QString& surname, QString& nick, int UIN, QString& city,
                             int gender, int ageFrom, int ageTo, bool onlyAlive)
 {
 	QString bufYear;
-	gg_pubdir50_t searchRequest_;
+	gg_pubdir50_t searchRequest;
 
 	if ( !session_ ) {
 		return false;
 	}
 
-	searchRequest_ = gg_pubdir50_new( GG_PUBDIR50_SEARCH_REQUEST );
-	if ( !searchRequest_ ) {
+	searchRequest = gg_pubdir50_new( GG_PUBDIR50_SEARCH_REQUEST );
+	if ( !searchRequest ) {
 		return false;
 	}
 
 	if ( !UIN ) {
 		if (name.length()) {
-			gg_pubdir50_add( searchRequest_, GG_PUBDIR50_FIRSTNAME,
+			gg_pubdir50_add( searchRequest, GG_PUBDIR50_FIRSTNAME,
 						(const char*)textcodec->fromUnicode( name ) );
 		}
 		if ( surname.length() ) {
-			gg_pubdir50_add( searchRequest_, GG_PUBDIR50_LASTNAME,
+			gg_pubdir50_add( searchRequest, GG_PUBDIR50_LASTNAME,
 						(const char*)textcodec->fromUnicode( surname ) );
 		}
 		if ( nick.length() ) {
-			gg_pubdir50_add( searchRequest_, GG_PUBDIR50_NICKNAME,
+			gg_pubdir50_add( searchRequest, GG_PUBDIR50_NICKNAME,
 						(const char*)textcodec->fromUnicode( nick ) );
 		}
 		if ( city.length() ) {
-			gg_pubdir50_add( searchRequest_, GG_PUBDIR50_CITY,
+			gg_pubdir50_add( searchRequest, GG_PUBDIR50_CITY,
 						(const char*)textcodec->fromUnicode( city ) );
 		}
 		if ( ageFrom || ageTo ) {
@@ -366,42 +388,40 @@ GaduSession::pubDirSearch(QString& name, QString& surname, QString& nick, int UI
 			QString yearTo = QString::number( QDate::currentDate().year() - ageTo );
 
 			if ( ageFrom && ageTo ) {
-				gg_pubdir50_add( searchRequest_, GG_PUBDIR50_BIRTHYEAR,
+				gg_pubdir50_add( searchRequest, GG_PUBDIR50_BIRTHYEAR,
 							(const char*)textcodec->fromUnicode( yearFrom + " " + yearTo ) );
 			}
 			if ( ageFrom ) {
-				gg_pubdir50_add( searchRequest_, GG_PUBDIR50_BIRTHYEAR,
+				gg_pubdir50_add( searchRequest, GG_PUBDIR50_BIRTHYEAR,
 							(const char*)textcodec->fromUnicode( yearFrom ) );
 			}
 			else {
-				gg_pubdir50_add( searchRequest_, GG_PUBDIR50_BIRTHYEAR,
+				gg_pubdir50_add( searchRequest, GG_PUBDIR50_BIRTHYEAR,
 							(const char*)textcodec->fromUnicode( yearTo ) );
 			}
 		}
 
 		switch ( gender ) {
 			case 1:
-				gg_pubdir50_add( searchRequest_, GG_PUBDIR50_GENDER, GG_PUBDIR50_GENDER_MALE );
+				gg_pubdir50_add( searchRequest, GG_PUBDIR50_GENDER, GG_PUBDIR50_GENDER_MALE );
 			break;
 			case 2:
-				gg_pubdir50_add( searchRequest_, GG_PUBDIR50_GENDER, GG_PUBDIR50_GENDER_FEMALE );
+				gg_pubdir50_add( searchRequest, GG_PUBDIR50_GENDER, GG_PUBDIR50_GENDER_FEMALE );
 			break;
 		}
 
 		if ( onlyAlive ) {
-			gg_pubdir50_add( searchRequest_, GG_PUBDIR50_ACTIVE, GG_PUBDIR50_ACTIVE_TRUE );
+			gg_pubdir50_add( searchRequest, GG_PUBDIR50_ACTIVE, GG_PUBDIR50_ACTIVE_TRUE );
 		}
 	}
 	// otherwise we are looking only for one fellow with this nice UIN
 	else{
-		gg_pubdir50_add( searchRequest_, GG_PUBDIR50_UIN, QString::number( UIN ).ascii() );
+		gg_pubdir50_add( searchRequest, GG_PUBDIR50_UIN, QString::number( UIN ).ascii() );
 	}
 
-	gg_pubdir50_add( searchRequest_, GG_PUBDIR50_START, QString::number(searchSeqNr_).ascii() );
-
-	gg_pubdir50( session_, searchRequest_ );
-
-	gg_pubdir50_free( searchRequest_ );
+	gg_pubdir50_add( searchRequest, GG_PUBDIR50_START, QString::number(searchSeqNr_).ascii() );
+	gg_pubdir50( session_, searchRequest );
+	gg_pubdir50_free( searchRequest );
 
 	return true;
 }
@@ -414,6 +434,10 @@ GaduSession::sendResult( gg_pubdir50_t result )
 	SearchResult sres;
 
 	count = gg_pubdir50_count( result );
+
+	if ( !count ) {
+		kdDebug(14100) << "there was nothing found in public directory for requested details" << endl;
+	}
 
 	for ( i = 0; i < count; i++ ) {
 
@@ -705,6 +729,7 @@ GaduSession::checkDescriptor()
 		case GG_EVENT_CONN_SUCCESS:
 			kdDebug(14100) << "success server: " << session_->server_addr << endl;
 			emit connectionSucceed();
+			kdDebug(14100) << "getting personal info " << getPersonalInformation() << endl;
 		break;
 		case GG_EVENT_CONN_FAILED:
 			kdDebug(14100) << "failed server: " << session_->server_addr << endl;
