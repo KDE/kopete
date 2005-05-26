@@ -377,8 +377,6 @@ void HistoryDialog::searchZeroStep()
 {
 	searchFirstStep();
 
-	kdDebug() << "END !" << endl;
-
 	mSearch->item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
 	initProgressBar(i18n("Searching...") , mMainWidget->dateListView->childCount());
 	QTimer::singleShot(0, this, SLOT(searchSecondStep()));
@@ -386,7 +384,6 @@ void HistoryDialog::searchZeroStep()
 
 void HistoryDialog::searchFirstStep()
 {
-	kdDebug() << "it" << endl;
 	if (!mSearch)
 	{
 		delete mSearch;
@@ -446,7 +443,6 @@ void HistoryDialog::searchFirstStep()
 		// Next iteration
 		searchFirstStep();
 	}
-	kdDebug() << "END" << endl;
 }
 
 void HistoryDialog::searchSecondStep()
@@ -455,10 +451,8 @@ void HistoryDialog::searchSecondStep()
 		return;
 
 	mMainWidget->searchProgress->advance(1);
-	kdDebug() << "Hello" << endl;
 	mLogger= new HistoryLogger(mSearch->item->metaContact(), this);
 	QValueList<Kopete::Message> msgs = mLogger->readMessages(mSearch->item->date());
-	kdDebug() << "Hello2" << endl;
 	for (int i = 0; i<msgs.count(); i++)
 	{
 		if (msgs[i].plainBody().contains(mMainWidget->searchLine->text(), false))
