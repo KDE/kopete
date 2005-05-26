@@ -37,6 +37,7 @@ JabberGroupMemberContact::JabberGroupMemberContact (const XMPP::RosterItem &rost
 {
 
 	mc->setDisplayName ( rosterItem.jid().resource() );
+	setNickName ( rosterItem.jid().resource() );
 
 	setFileCapable ( true );
 
