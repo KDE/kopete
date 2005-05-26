@@ -61,7 +61,8 @@ static const QString CHAT_VIEW( QString::fromLatin1("kopete_chatwindow") );
 /**
  * @author Nick Betcher <nbetcher@kde.org>
  */
-class IRCProtocol : public Kopete::Protocol
+class IRCProtocol
+	: public Kopete::Protocol
 {
 	Q_OBJECT
 

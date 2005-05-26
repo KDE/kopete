@@ -57,14 +57,16 @@ Engine::Engine(QObject *parent, const char *name)
 	  m_status(Idle),
 	  m_FailedNickOnLogin(false),
 	  m_useSSL(false),
-	  m_server(new Entity()),
-	  m_self(new Entity()),
+	  m_server(new Entity(QString::null, Entity::Server)),
+	  m_self(new Entity(QString::null, Entity::User)),
 	  m_commands(101, false),
 //	  m_numericCommands(101),
 	  m_ctcpQueries(17, false),
 	  m_ctcpReplies(17, false)
 {
 	setUserName(QString::null);
+
+	m_entities << m_server << m_self;
 
 	m_commands.setAutoDelete(true);
 	m_ctcpQueries.setAutoDelete(true);

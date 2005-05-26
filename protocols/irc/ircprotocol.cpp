@@ -67,31 +67,31 @@
 using namespace Kopete;
 
 typedef KGenericFactory<IRCProtocol> IRCProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_irc, IRCProtocolFactory( "kopete_irc" )  )
+K_EXPORT_COMPONENT_FACTORY(kopete_irc, IRCProtocolFactory("kopete_irc"))
 
 IRCProtocol *IRCProtocol::s_protocol = 0L;
 
 IRCProtocolHandler::IRCProtocolHandler()
-	: MimeTypeHandler( false )
+	: MimeTypeHandler(false)
 {
-	registerAsProtocolHandler( QString::fromLatin1("irc") );
+	registerAsProtocolHandler(QString::fromLatin1("irc"));
 }
 
-void IRCProtocolHandler::handleURL( const KURL &url ) const
+void IRCProtocolHandler::handleURL(const KURL &url) const
 {
 	kdDebug(14120) << url << endl;
-	if( !url.isValid() )
+	if (!url.isValid())
 		return;
 
 	unsigned short port = url.port();
-	if( port == 0 )
+	if (port == 0)
 		port = 6667;
 
 	QString chan = url.url().section('/',3);
-	if( chan.isEmpty() )
+	if (chan.isEmpty())
 		return;
 
-	KUser user( getuid() );
+	KUser user(getuid());
 	QString accountId = QString::fromLatin1("%1@%2:%3").arg(
 		user.loginName(),
 		url.host(),
@@ -338,31 +338,31 @@ const OnlineStatus IRCProtocol::statusLookup( IRCStatus status ) const
 	}
 }
 
-void IRCProtocol::slotViewCreated( KopeteView *view )
+void IRCProtocol::slotViewCreated(KopeteView *view)
 {
-	if( view->msgManager()->protocol() == this )
-		new IRCGUIClient( view->msgManager() );
+	if (view->msgManager()->protocol() == this)
+		new IRCGUIClient(view->msgManager());
 }
 
 void IRCProtocol::slotMessageFilter(Message &msg)
 {
-	if( msg.from()->protocol() == this )
+	if (msg.from()->protocol() == this)
 	{
 		QString messageText = msg.escapedBody();
 
 		//Add right click for channels, only replace text not in HTML tags
-		messageText.replace( QRegExp( QString::fromLatin1("(?![^<]+>)(#[^#\\s]+)(?![^<]+>)") ), QString::fromLatin1("<span class=\"KopeteLink\" type=\"IRCChannel\">\\1</span>") );
+		messageText.replace(QRegExp( QString::fromLatin1("(?![^<]+>)(#[^#\\s]+)(?![^<]+>)")), QString::fromLatin1("<span class=\"KopeteLink\" type=\"IRCChannel\">\\1</span>") );
 
 		msg.setBody( messageText, Message::RichText );
 	}
 }
 
-QPtrList<KAction> *IRCProtocol::customChatWindowPopupActions( const Message &m, DOM::Node &n )
+QPtrList<KAction> *IRCProtocol::customChatWindowPopupActions(const Message &m, DOM::Node &n)
 {
 	DOM::HTMLElement e = n;
 
 	//isNull checks that the cast was successful
-	if( !e.isNull() && !m.to().isEmpty() )
+	if (!e.isNull() && !m.to().isEmpty())
 	{
 		activeNode = n;
 		activeAccount = static_cast<IRCAccount*>( m.from()->account() );
@@ -434,45 +434,46 @@ void IRCProtocol::slotRawCommand( const QString &args, ChatSession *manager )
 
 void IRCProtocol::slotQuoteCommand( const QString &args, ChatSession *manager )
 {
-	if( !args.isEmpty() )
+	if (!args.isEmpty())
 	{
-		static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage( args );
+		static_cast<IRCAccount *>(manager->account())->engine()->writeMessage(args);
 	}
 	else
 	{
-		static_cast<IRCAccount*>( manager->account() )->appendMessage(
-			i18n("You must enter some text to send to the server."), IRCAccount::ErrorReply );
+		static_cast<IRCAccount *>(manager->account())->appendMessage(
+			i18n("You must enter some text to send to the server."), IRCAccount::ErrorReply);
 	}
 }
 
-void IRCProtocol::slotCtcpCommand( const QString &args, ChatSession *manager )
+void IRCProtocol::slotCtcpCommand(const QString &args, ChatSession *manager)
 {
-	if( !args.isEmpty() )
+	if (!args.isEmpty())
 	{
 		QString user = args.section( ' ', 0, 0 );
 		QString message = args.section( ' ', 1 );
-		static_cast<IRCAccount*>( manager->account() )->engine()->writeCtcpQueryMessage( user, QString::null, message );
+		static_cast<IRCAccount*>(manager->account())->engine()->writeCtcpQueryMessage(
+			user, QString::null, message);
 	}
 }
 
-void IRCProtocol::slotMotdCommand( const QString &args, ChatSession *manager )
-{
-	QStringList argsList = CommandHandler::parseArguments( args );
-	static_cast<IRCAccount*>( manager->account() )->engine()->motd(argsList.front());
-}
-
-void IRCProtocol::slotPingCommand( const QString &args, ChatSession *manager )
+void IRCProtocol::slotMotdCommand(const QString &args, ChatSession *manager)
 {
 	QStringList argsList = CommandHandler::parseArguments(args);
-	static_cast<IRCAccount*>( manager->account() )->engine()->CtcpRequest_ping(argsList.front());
+	static_cast<IRCAccount*>(manager->account())->engine()->motd(argsList.front());
 }
 
-void IRCProtocol::slotListCommand( const QString &/*args*/, ChatSession *manager )
+void IRCProtocol::slotPingCommand(const QString &args, ChatSession *manager)
 {
-	static_cast<IRCAccount*>( manager->account() )->listChannels();
+	QStringList argsList = CommandHandler::parseArguments(args);
+	static_cast<IRCAccount*>(manager->account())->engine()->CtcpRequest_ping(argsList.front());
 }
 
-void IRCProtocol::slotTopicCommand( const QString &args, ChatSession *manager )
+void IRCProtocol::slotListCommand(const QString &/*args*/, ChatSession *manager)
+{
+	static_cast<IRCAccount*>(manager->account())->listChannels();
+}
+
+void IRCProtocol::slotTopicCommand(const QString &args, ChatSession *manager)
 {/*
 	ContactPtrList members = manager->members();
 	IRCChannelContact *chan = dynamic_cast<IRCChannelContact*>( members.first() );
@@ -493,7 +494,7 @@ void IRCProtocol::slotTopicCommand( const QString &args, ChatSession *manager )
 	}*/
 }
 
-void IRCProtocol::slotJoinCommand( const QString &arg, ChatSession *manager )
+void IRCProtocol::slotJoinCommand(const QString &arg, ChatSession *manager)
 {/*
 	QStringList args = CommandHandler::parseArguments( arg );
 	if( KIRC::Entity::isChannel(args[0]) )
@@ -511,7 +512,7 @@ void IRCProtocol::slotJoinCommand( const QString &arg, ChatSession *manager )
 	}*/
 }
 
-void IRCProtocol::slotInviteCommand( const QString &args, ChatSession *manager )
+void IRCProtocol::slotInviteCommand(const QString &args, ChatSession *manager)
 {/*
 	IRCChannelContact *c = 0L;
 	QStringList argsList = CommandHandler::parseArguments( args );
@@ -550,7 +551,7 @@ void IRCProtocol::slotInviteCommand( const QString &args, ChatSession *manager )
 	}*/
 }
 
-void IRCProtocol::slotQueryCommand( const QString &args, ChatSession *manager )
+void IRCProtocol::slotQueryCommand(const QString &args, ChatSession *manager)
 {/*
 	QString user = args.section( ' ', 0, 0 );
 	QString rest = args.section( ' ', 1 );
@@ -1193,8 +1194,4 @@ void IRCProtocol::slotMoveServerDown()
 	}
 }
 
-
-
 #include "ircprotocol.moc"
-
-// vim: set noet ts=4 sts=4 sw=4:
