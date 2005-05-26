@@ -31,6 +31,7 @@ class HistoryViewer;
 
 //class HistoryWidget;
 namespace Kopete { class MetaContact; }
+namespace Kopete { class XSLT; }
 class HistoryLogger;
 class KHTMLView;
 class KHTMLPart;
@@ -41,11 +42,23 @@ namespace KParts { struct URLArgs; class Part; }
 
 class KListViewDateItem;
 
+class DMPair
+{
+	public:
+		DMPair() {md = QDate(0, 0, 0); mc = 0; }
+		DMPair(QDate d, Kopete::MetaContact *c) { md = d; mc =c; }
+		QDate date() const { return md; }
+		Kopete::MetaContact* metaContact() const { return mc; }
+		bool operator==(const DMPair p1) const { return p1.date() == this->date() && p1.metaContact() == this->metaContact(); }
+	private:
+		QDate md;
+		Kopete::MetaContact *mc;
+};
+
 /**
  * @author Richard Stellingwerff <remenic@linuxfromscratch.org>
  * @author Stefan Gehn <metz AT gehn.net>
  */
-
 class HistoryDialog : public KDialogBase
 {
 	Q_OBJECT
@@ -55,14 +68,15 @@ class HistoryDialog : public KDialogBase
 			const char* name="HistoryDialog");
 		~HistoryDialog();
 
+		/**
+		 * Calls init(Kopete::Contact *c) for each subcontact of the metacontact
+		 */
+
+
 	signals:
 		void closing();
 
 	private slots:
-		void init();
-		void slotLoadDays();
-
-		
 		void slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/*args*/);
 
 		// Called when a date is selected in the treeview
@@ -73,10 +87,15 @@ class HistoryDialog : public KDialogBase
 		// Reinitialise search
 		void slotSearchErase();
 		void slotSearchTextChanged(const QString& txt); // To enable/disable search button
+		void slotContactChanged(int index);
 
+		void searchZeroStep();
 		void searchFirstStep();
 		void searchSecondStep();
-		
+
+		void init();
+		void slotLoadDays();
+
 
 	private:
 		enum Disabled { Prev=1, Next=2 };
@@ -84,12 +103,15 @@ class HistoryDialog : public KDialogBase
 
 		void initProgressBar(const QString& text, int nbSteps);
 		void doneProgressBar();
+		void init(Kopete::MetaContact *mc);
 		void init(Kopete::Contact *c);
 
 		/**
 		 * Show the messages in the HTML View
 		 */
 		void setMessages(QValueList<Kopete::Message> m);
+
+		void listViewShowElements(bool s);
 
 		/**
 		 * Search if @param item already has @param text child
@@ -103,16 +125,22 @@ class HistoryDialog : public KDialogBase
 		 */
 		Kopete::MetaContact *mMetaContact;
 
-		QValueList<QDate> m_monthsList;
+		QPtrList<Kopete::MetaContact> mMetaContactList;
 
 		// History View
 		KHTMLView *mHtmlView;
 		KHTMLPart *mHtmlPart;
 		HistoryViewer *mMainWidget;
+		Kopete::XSLT *mXsltParser;
+
+		struct Init
+		{
+			QValueList<DMPair> dateMCList; // mc for MetaContact
+		} mInit;
 
 		struct Search
 		{
-				typedef QMap<QDate, bool> DateSearchMap;
+				typedef QMap<KListViewDateItem*, bool> DateSearchMap;
 				DateSearchMap dateSearchMap;
 
 				KListViewDateItem *item;
@@ -121,6 +149,8 @@ class HistoryDialog : public KDialogBase
 
 				bool foundPrevious;
 				QDate datePrevious;
+
+				Kopete::MetaContact *currentMetaContact;
 		} *mSearch;
 };
 

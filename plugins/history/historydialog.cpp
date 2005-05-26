@@ -23,6 +23,7 @@
 #include "kopetexsl.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
+#include "kopetecontactlist.h"
 
 #include <dom/dom_doc.h>
 #include <dom/dom_element.h>
@@ -50,24 +51,29 @@
 #include <klistviewsearchline.h>
 #include <kprogress.h>
 #include <kiconloader.h>
+#include <kcombobox.h>
 
 class KListViewDateItem : public KListViewItem
 {
 public:
-    KListViewDateItem(KListView* parent, QDate date);
+    KListViewDateItem(KListView* parent, QDate date, Kopete::MetaContact *mc);
 	QDate date() { return mDate; }
+	Kopete::MetaContact *metaContact() { return mMetaContact; }
+
 public:
 	int compare(QListViewItem *i, int col, bool ascending) const;
 private:
     QDate mDate;
+	Kopete::MetaContact *mMetaContact;
 };
 
 
 
-KListViewDateItem::KListViewDateItem(KListView* parent, QDate date)
-		: KListViewItem(parent, date.toString())
+KListViewDateItem::KListViewDateItem(KListView* parent, QDate date, Kopete::MetaContact *mc)
+		: KListViewItem(parent, date.toString(), mc->displayName())
 {
 	mDate = date;
+	mMetaContact = mc;
 }
 
 int KListViewDateItem::compare(QListViewItem *i, int col, bool ascending) const
@@ -93,14 +99,30 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 
 	// Class member initializations
 	mSearch = 0L;
+	mLogger = 0L;
+
+	// FIXME: Allow to show this dialog for only one contact
 	mMetaContact = mc;
-	mLogger= new HistoryLogger(mMetaContact, this);
+
+	
 
 	// Widgets initializations
 	mMainWidget = new HistoryViewer(this, "HistoryDialog::mMainWidget");
 	mMainWidget->dateListView->header()->hide();
 	mMainWidget->searchLine->setFocus();
 	mMainWidget->searchErase->setPixmap(BarIcon("locationbar_erase"));
+
+	mMainWidget->contactComboBox->insertItem("All");
+	mMetaContactList = Kopete::ContactList::self()->metaContacts();
+	QPtrListIterator<Kopete::MetaContact> it(mMetaContactList);
+	for(; it.current(); ++it)
+	{
+		mMainWidget->contactComboBox->insertItem((*it)->displayName());
+	}
+
+	if (mMetaContact)
+		mMainWidget->contactComboBox->setCurrentItem(mMetaContactList.find(mMetaContact)+1);
+
 	setMainWidget(mMainWidget);
 
 	// Initializing HTML Part
@@ -134,6 +156,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 	connect(mMainWidget->searchLine, SIGNAL(returnPressed()), this, SLOT(slotSearch()));
 	connect(mMainWidget->searchLine, SIGNAL(textChanged(const QString&)), this, SLOT(slotSearchTextChanged(const QString&)));
 	connect(mMainWidget->searchErase, SIGNAL(clicked()), this, SLOT(slotSearchErase()));
+	connect(mMainWidget->contactComboBox, SIGNAL(activated(int)), this, SLOT(slotContactChanged(int)));
 
 	resize(650, 700);
 	centerOnScreen(this);
@@ -152,41 +175,62 @@ HistoryDialog::~HistoryDialog()
 
 void HistoryDialog::init()
 {
-	if(!mMetaContact)
-		return;
-
-	QPtrList<Kopete::Contact> contacts=mMetaContact->contacts();
-	QPtrListIterator<Kopete::Contact> it( contacts );
-	for( ; it.current(); ++it )
+	if(mMetaContact)
 	{
-		init(*it);
+		delete mLogger;
+		mLogger= new HistoryLogger(mMetaContact, this);
+		init(mMetaContact);
 	}
+	else
+	{
+		QPtrListIterator<Kopete::MetaContact> it(mMetaContactList);
+		for(; it.current(); ++it)
+		{
+			mLogger= new HistoryLogger(*it, this);
+			init(*it);
+			delete mLogger;
+			mLogger = 0;
+		}
 
-	qHeapSort(m_monthsList);
-
-	initProgressBar(i18n("Loading..."),m_monthsList.count());
+	}
+	initProgressBar(i18n("Loading..."),mInit.dateMCList.count());
 	QTimer::singleShot(0,this,SLOT(slotLoadDays()));
 }
 
 void HistoryDialog::slotLoadDays()
 {
-	if(m_monthsList.isEmpty())
-	{
-		doneProgressBar();
-		return;
-	}
+		if(mInit.dateMCList.isEmpty())
+		{
+				doneProgressBar();
+				return;
+		}
+		
+		DMPair pair(mInit.dateMCList.first());
+		mInit.dateMCList.pop_front();
+		mLogger= new HistoryLogger(pair.metaContact(), this);
+		QValueList<int> dayList = mLogger->getDaysForMonth(pair.date());
+		for (unsigned int i=0; i<dayList.count(); i++)
+		{
+				QDate c2Date(pair.date().year(),pair.date().month(),dayList[i]);
+				if (mInit.dateMCList.find(pair) == mInit.dateMCList.end())
+						new KListViewDateItem(mMainWidget->dateListView, c2Date, pair.metaContact());
+		}
+		delete mLogger;
+		mLogger = 0;
+		mMainWidget->searchProgress->advance(1);
+		QTimer::singleShot(0,this,SLOT(slotLoadDays()));
+}
 
-	QDate cDate=m_monthsList.first();
-	m_monthsList.pop_front();
-	QValueList<int> dayList = mLogger->getDaysForMonth(cDate);
-	for (unsigned int i=0; i<dayList.count(); i++)
+void HistoryDialog::init(Kopete::MetaContact *mc)
+{
+	QPtrList<Kopete::Contact> contacts=mc->contacts();
+	QPtrListIterator<Kopete::Contact> it( contacts );
+
+	for( ; it.current(); ++it )
 	{
-		QDate c2Date(cDate.year(),cDate.month(),dayList[i]);
-		if (!mMainWidget->dateListView->findItem(c2Date.toString(), 0))
-			new KListViewDateItem(mMainWidget->dateListView, c2Date);
+		kdDebug() << "    " << (*it)->nickName() << endl;
+		init(*it);
 	}
-	mMainWidget->searchProgress->advance(1);
-	QTimer::singleShot(0,this,SLOT(slotLoadDays()));
 }
 
 void HistoryDialog::init(Kopete::Contact *c)
@@ -194,8 +238,9 @@ void HistoryDialog::init(Kopete::Contact *c)
 	// Get year and month list
 	QRegExp rx( "\\.(\\d\\d\\d\\d)(\\d\\d)" );
 	const QString contact_in_filename=c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) );
-
 	QFileInfo *fi;
+	
+
 	// BEGIN check if there are Kopete 0.7.x
 	QDir d1(locateLocal("data",QString("kopete/logs/")+
 			c->protocol()->pluginId().replace( QRegExp(QString::fromLatin1("[./~?*]")),QString::fromLatin1("-"))
@@ -205,23 +250,22 @@ void HistoryDialog::init(Kopete::Contact *c)
 
 	const QFileInfoList *list1 = d1.entryInfoList();
 	QFileInfoListIterator it1( *list1 );
-	
+
 	while ( (fi = it1.current()) != 0 )
 	{
 		if(fi->fileName().contains(contact_in_filename))
 		{
 			rx.search(fi->fileName());
 			
-			// We search for an item in the list view with the same year. If then we add the month
 			QDate cDate = QDate(rx.cap(1).toInt(), rx.cap(2).toInt(), 1);
 
-			if(!m_monthsList.contains(cDate))
-				m_monthsList.append(cDate);
+			DMPair pair(cDate, c->metaContact());
+			mInit.dateMCList.append(pair);
+
 		}
 		++it1;
 	}
 	// END of kopete 0.7.x check
-
 
 	QString logDir = locateLocal("data",QString("kopete/logs/")+
 			c->protocol()->pluginId().replace( QRegExp(QString::fromLatin1("[./~?*]")),QString::fromLatin1("-")) +
@@ -235,15 +279,16 @@ void HistoryDialog::init(Kopete::Contact *c)
 	QFileInfoListIterator it( *list );
 	while ( (fi = it.current()) != 0 )
 	{
-		if(fi->fileName().contains(contact_in_filename)) 
+		if(fi->fileName().contains(contact_in_filename))
 		{
+			
 			rx.search(fi->fileName());
 			
 			// We search for an item in the list view with the same year. If then we add the month
 			QDate cDate = QDate(rx.cap(1).toInt(), rx.cap(2).toInt(), 1);
 
-			if(!m_monthsList.contains(cDate))
-				m_monthsList.append(cDate);
+			DMPair pair(cDate, c->metaContact());
+			mInit.dateMCList.append(pair);
 		}
 		++it;
 	}
@@ -257,9 +302,12 @@ void HistoryDialog::dateSelected(QListViewItem* it)
 
 	QDate chosenDate = QDate::fromString(item->text(0));
 
+	mLogger= new HistoryLogger(item->metaContact(), this);
 	QValueList<Kopete::Message> msgs=mLogger->readMessages(chosenDate);
-	setMessages(msgs);
+	delete mLogger;
+	mLogger = 0;
 
+	setMessages(msgs);
 }
 
 void HistoryDialog::setMessages(QValueList<Kopete::Message> msgs)
@@ -325,49 +373,70 @@ void HistoryDialog::slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/
 	new KRun(url, 0, false); // false = non-local files
 }
 
+void HistoryDialog::searchZeroStep()
+{
+	searchFirstStep();
+
+	kdDebug() << "END !" << endl;
+
+	mSearch->item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
+	initProgressBar(i18n("Searching...") , mMainWidget->dateListView->childCount());
+	QTimer::singleShot(0, this, SLOT(searchSecondStep()));
+}
+
 void HistoryDialog::searchFirstStep()
 {
-	if (!mSearch || !mSearch->item)
+	kdDebug() << "it" << endl;
+	if (!mSearch)
 	{
 		delete mSearch;
 		mSearch = 0L;
 		return;
 	}
 
-	QPtrList<Kopete::Contact> contacts=mMetaContact->contacts();
-	QPtrListIterator<Kopete::Contact> it( contacts );
+	if (!mSearch->currentMetaContact)
+		return;
 
-	for( ; it.current(); ++it )
+	if (mMetaContactList.at(mMainWidget->contactComboBox->currentItem()) == mSearch->item->metaContact())
 	{
-		QString fullText;
-		if (mSearch->item->date().month() != mSearch->datePrevious.month())
-		{
-			QFile file(mLogger->getFileName(*it, mSearch->item->date()));
-			file.open(IO_ReadOnly);
-			if (!&file)
-			{
-				mSearch->datePrevious = mSearch->item->date();
-				continue;
-			}
-			QTextStream stream(&file);
-			fullText = stream.read();
-			file.close();
-		}
-		if ((mSearch->foundPrevious
-			&& mSearch->item->date().month() == mSearch->datePrevious.month())
-			|| fullText.contains(mMainWidget->searchLine->text()))
-		{
-			mSearch->dateSearchMap[mSearch->item->date()] = true;
-			mSearch->foundPrevious = true;
-			break;
-		}
-		else if (!mSearch->dateSearchMap[mSearch->item->date()])
-		{
-			mSearch->dateSearchMap[mSearch->item->date()] = false;
-		}
+		mLogger = new HistoryLogger(mSearch->item->metaContact(), this);
 
-		mSearch->datePrevious = mSearch->item->date();
+		QPtrList<Kopete::Contact> contacts=mSearch->item->metaContact()->contacts();
+		QPtrListIterator<Kopete::Contact> it( contacts );
+
+		for( ; it.current(); ++it )
+		{
+			QString fullText;
+			if (mSearch->item->date().month() != mSearch->datePrevious.month())
+			{
+				QFile file(mLogger->getFileName(*it, mSearch->item->date()));
+				file.open(IO_ReadOnly);
+				if (!&file)
+				{
+					mSearch->datePrevious = mSearch->item->date();
+					continue;
+				}
+				QTextStream stream(&file);
+				fullText = stream.read();
+				file.close();
+			}
+			if ((mSearch->foundPrevious
+				&& mSearch->item->date().month() == mSearch->datePrevious.month())
+				|| fullText.contains(mMainWidget->searchLine->text(), false))
+			{
+				mSearch->dateSearchMap[mSearch->item] = true;
+				mSearch->foundPrevious = true;
+				break;
+			}
+			else if (!mSearch->dateSearchMap[mSearch->item])
+			{
+				mSearch->dateSearchMap[mSearch->item] = false;
+			}
+
+			mSearch->datePrevious = mSearch->item->date();
 		
+		}
+		delete mLogger;
 	}
 
 	mSearch->item = static_cast<KListViewDateItem *>(mSearch->item->nextSibling());
@@ -375,17 +444,9 @@ void HistoryDialog::searchFirstStep()
 	if(mSearch->item != 0)
 	{
 		// Next iteration
-		QTimer::singleShot(0,this,SLOT(searchFirstStep()));
+		searchFirstStep();
 	}
-	else
-	{
-		mSearch->item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
-		initProgressBar(i18n("Searching...") , mMainWidget->dateListView->childCount() );
-		QTimer::singleShot(0, this, SLOT(searchSecondStep()));
-	}
-
-
-
+	kdDebug() << "END" << endl;
 }
 
 void HistoryDialog::searchSecondStep()
@@ -394,22 +455,25 @@ void HistoryDialog::searchSecondStep()
 		return;
 
 	mMainWidget->searchProgress->advance(1);
-
+	kdDebug() << "Hello" << endl;
+	mLogger= new HistoryLogger(mSearch->item->metaContact(), this);
 	QValueList<Kopete::Message> msgs = mLogger->readMessages(mSearch->item->date());
+	kdDebug() << "Hello2" << endl;
 	for (int i = 0; i<msgs.count(); i++)
 	{
-		if (msgs[i].plainBody().contains(mMainWidget->searchLine->text()))
+		if (msgs[i].plainBody().contains(mMainWidget->searchLine->text(), false))
 		{
-			mSearch->dateSearchMap[mSearch->item->date()] = true;
+			mSearch->dateSearchMap[mSearch->item] = true;
 			break;
 		}
 		else
-			mSearch->dateSearchMap[mSearch->item->date()] = false;
+			mSearch->dateSearchMap[mSearch->item] = false;
 	}
 
-	if (mSearch->dateSearchMap[mSearch->item->date()])
+	if (mSearch->dateSearchMap[mSearch->item] && mMetaContactList.at(mMainWidget->contactComboBox->currentItem()) == mSearch->item->metaContact())
 	{
 		mSearch->item->setVisible(true);
+;
 	}
 	else
 	{
@@ -426,6 +490,7 @@ void HistoryDialog::searchSecondStep()
 	else
 	{
 		mMainWidget->searchButton->setText("&Search");
+		delete mLogger;
 		delete mSearch;
 		mSearch = 0L;
 	}
@@ -444,24 +509,25 @@ void HistoryDialog::slotSearchTextChanged(const QString& searchText)
 	}
 }
 
-void HistoryDialog::slotSearchErase()
+void HistoryDialog::listViewShowElements(bool s)
 {
-	mMainWidget->searchLine->setText(QString::null);
-
 	KListViewDateItem* item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
 	do
 	{
-			item->setVisible(true);
+			item->setVisible(s);
 			item = static_cast<KListViewDateItem*>(item->nextSibling());
 	}
 	while(item != 0);
 }
 
+void HistoryDialog::slotSearchErase()
+{
+	mMainWidget->searchLine->setText(QString::null);
+	listViewShowElements(true);
+}
+
 void HistoryDialog::slotSearch()
 {
-	if(!mMetaContact)
-		return;
-
 	if (mSearch)
 	{
 		mMainWidget->searchButton->setText("&Search");
@@ -471,33 +537,48 @@ void HistoryDialog::slotSearch()
 		return;
 	}
 
+	listViewShowElements(false);
+
 	mSearch = new Search();
 	mSearch->item = 0;
 	mSearch->foundPrevious = false;
 
 	mMainWidget->searchProgress->setProgress(0);
 
-
-
 	mMainWidget->searchButton->setText("&Cancel");
 
 	mSearch->item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
-	QTimer::singleShot(0, this, SLOT(searchFirstStep()));
+
+	searchZeroStep();
 }
 
+void HistoryDialog::slotContactChanged(int index)
+{
+	mMainWidget->dateListView->clear();
+	if (index == 0)
+	{
+		mMetaContact = 0;
+		init();
+	}
+	else
+	{
+		mMetaContact = mMetaContactList.at(index-1);
+		init();
+	}
+}
 
 void HistoryDialog::initProgressBar(const QString& text, int nbSteps)
 {
-	mMainWidget->searchProgress->setTotalSteps(nbSteps);
-	mMainWidget->searchProgress->setProgress(0);
-	mMainWidget->searchProgress->show();
-	mMainWidget->statusLabel->setText(text);
+		mMainWidget->searchProgress->setTotalSteps(nbSteps);
+		mMainWidget->searchProgress->setProgress(0);
+		mMainWidget->searchProgress->show();
+		mMainWidget->statusLabel->setText(text);
 }
 
 void HistoryDialog::doneProgressBar()
 {
-	mMainWidget->searchProgress->hide();
-	mMainWidget->statusLabel->setText("ready");
+		mMainWidget->searchProgress->hide();
+		mMainWidget->statusLabel->setText("ready");
 }
 
 #include "historydialog.moc"
