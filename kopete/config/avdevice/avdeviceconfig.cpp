@@ -66,7 +66,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 	d = Kopete::AV::VideoDevicePool::self();
 	d->scanDevices();
 	d->open(0);
-	d->initDevice();
+	d->setSize(320, 240);
 	d->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
 	d->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 	d->selectInput(0);
@@ -76,7 +76,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 	qpixmap.convertFromImage(qimage,0);
 	mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
-	qtimer.start(2000,FALSE);
+	qtimer.start(500,FALSE);
 }
 
 
@@ -123,6 +123,7 @@ void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
 	{
 	kdDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) should change device. " << endl;
 		d->open(newdevice);
+		d->setSize(320, 240);
 		d->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 		d->selectInput(0);
 		d->startCapturing();
@@ -162,9 +163,12 @@ void AVDeviceConfig::slotImageAutoAdjustBrightContrastChanged(bool){
 
 void AVDeviceConfig::slotUpdateImage()
 {
-	d->getFrame();
-	d->getImage(&qimage);
-	bitBlt(mPrfsVideoDevice->mVideoImageLabel, 0, 0, &qimage, 0, Qt::CopyROP);
-	kdDebug() << "kopete (avdeviceconfig_videoconfig): Image updated." << endl;
+	if(d->isOpen())
+	{
+		d->getFrame();
+		d->getImage(&qimage);
+		bitBlt(mPrfsVideoDevice->mVideoImageLabel, 0, 0, &qimage, 0, Qt::CopyROP);
+		kdDebug() << "kopete (avdeviceconfig_videoconfig): Image updated." << endl;
 //	emit changed( true );
+	}
 }

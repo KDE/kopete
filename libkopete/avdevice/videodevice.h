@@ -76,13 +76,14 @@ public:
 	int checkDevice();
 	int showDeviceCapabilities();
 	int initDevice();
-	int inputs();
+	unsigned int inputs();
 	int width();
 	int minWidth();
 	int maxWidth();
 	int height();
 	int minHeight();
 	int maxHeight();
+	int setSize( int newwidth, int newheight);
 	unsigned int currentInput();
 	int selectInput(int input);
 	int startCapturing();
@@ -105,7 +106,6 @@ public:
 	struct v4l2_format fmt;
 #endif
 	struct video_capability V4L_capabilities;
-	struct video_window V4L_videowindow;
 	struct video_buffer V4L_videobuffer;
 #endif	
 	QValueVector<Kopete::AV::VideoInput> input;

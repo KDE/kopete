@@ -88,9 +88,14 @@ int VideoDevicePool::open(unsigned int device)
 	m_current_device = device;
 	kdDebug() << "libkopete (avdevice): open(" << device << ") Calling open()." << endl;
 	open();
-	m_videodevice[currentDevice()].initDevice();
+//	m_videodevice[currentDevice()].initDevice();
 	kdDebug() << "libkopete (avdevice): open(" << device << ") exited successfuly." << endl;
 	return EXIT_SUCCESS;
+}
+
+bool VideoDevicePool::isOpen()
+{
+	return m_videodevice[currentDevice()].isOpen();
 }
 
 /*!
@@ -112,15 +117,6 @@ int VideoDevicePool::getFrame()
 	return EXIT_SUCCESS;
 }
 
-
-/*!
-    \fn VideoDevicePool::checkDevice()
- */
-int VideoDevicePool::checkDevice(int device)
-{
-	return m_videodevice[device].checkDevice();
-}
-
 /*!
     \fn VideoDevicePool::showDeviceCapabilities(int device)
  */
@@ -129,14 +125,40 @@ int VideoDevicePool::showDeviceCapabilities(unsigned int device)
 	return m_videodevice[device].showDeviceCapabilities();
 }
 
-/*!
-    \fn VideoDevicePool::initDevice()
- */
-int VideoDevicePool::initDevice()
+int VideoDevicePool::width()
 {
-	return m_videodevice[currentDevice()].initDevice();
+	return m_videodevice[currentDevice()].width();
 }
 
+int VideoDevicePool::minWidth()
+{
+	return m_videodevice[currentDevice()].minWidth();
+}
+
+int VideoDevicePool::maxWidth()
+{
+	return m_videodevice[currentDevice()].maxWidth();
+}
+
+int VideoDevicePool::height()
+{
+	return m_videodevice[currentDevice()].height();
+}
+
+int VideoDevicePool::minHeight()
+{
+	return m_videodevice[currentDevice()].minHeight();
+}
+
+int VideoDevicePool::maxHeight()
+{
+	return m_videodevice[currentDevice()].maxHeight();
+}
+
+int VideoDevicePool::setSize( int newwidth, int newheight)
+{
+	return m_videodevice[currentDevice()].setSize(newwidth, newheight);
+}
 
 /*!
     \fn VideoDevicePool::close()
@@ -193,15 +215,6 @@ int VideoDevicePool::selectInput(int newinput)
 }
 
 /*!
-    \fn Kopete::AV::VideoDevicePool::setResolution(int width, int height)
- */
-int VideoDevicePool::setResolution(int /* width */, int /* height */)
-{
-    /// @todo implement me
-	return EXIT_SUCCESS;
-}
-
-/*!
     \fn Kopete::AV::VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
  */
 int VideoDevicePool::fillDeviceKComboBox(KComboBox *combobox)
@@ -210,11 +223,14 @@ int VideoDevicePool::fillDeviceKComboBox(KComboBox *combobox)
 	kdDebug() << "libkopete (avdevice): fillInputKComboBox: Called." << endl;
 	combobox->clear();
 	if(m_videodevice.size()>0)
+	{
 		for (unsigned int loop=0; loop < m_videodevice.size(); loop++)
 		{
 			combobox->insertItem(m_videodevice[loop].name);
 			kdDebug() << "libkopete (avdevice): DeviceKCombobox: Added device " << loop << ": " << m_videodevice[loop].name << endl;
 		}
+		combobox->setCurrentItem(currentDevice());
+	}
 	return EXIT_SUCCESS;
 }
 
@@ -302,7 +318,7 @@ int VideoDevicePool::currentInput()
 /*!
     \fn Kopete::AV::VideoDevicePool::currentInput()
  */
-int VideoDevicePool::inputs()
+unsigned int VideoDevicePool::inputs()
 {
     /// @todo implement me
 	return m_videodevice[currentDevice()].inputs();

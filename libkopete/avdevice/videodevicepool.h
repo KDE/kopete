@@ -48,16 +48,21 @@ public:
 	static VideoDevicePool* self();
 	int open();
 	int open(unsigned int device);
+	bool isOpen();
 	int getFrame();
-	int checkDevice(int device);
-	int initDevice();
+	int width();
+	int minWidth();
+	int maxWidth();
+	int height();
+	int minHeight();
+	int maxHeight();
+	int setSize( int newwidth, int newheight);
 	int close();
 	int startCapturing();
 	int stopCapturing();
 	int readFrame();
 	int getImage(QImage *qimage);
 	int selectInput(int newinput);
-	int setResolution(int width, int height);
 	int scanDevices();
 	~VideoDevicePool();
 	QValueVector<Kopete::AV::VideoDevice> m_videodevice;
@@ -65,7 +70,7 @@ public:
 	int fillInputKComboBox(KComboBox *combobox);
 	unsigned int currentDevice();
 	int currentInput();
-	int inputs();
+	unsigned int inputs();
 
 protected:
 protected:

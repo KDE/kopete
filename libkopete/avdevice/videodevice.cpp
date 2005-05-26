@@ -99,7 +99,7 @@ int VideoDevice::open()
 			return EXIT_FAILURE;
 		}
 	}
-//	initDevice();
+	initDevice();
 	kdDebug() << "libkopete (avdevice): VideoDevice::open() exited successfuly" << endl;
 	return EXIT_SUCCESS;
 }
@@ -419,93 +419,11 @@ int VideoDevice::initDevice()
 #endif
 #endif
 
-// Change resolution and colorspace for the video device
-	switch(m_driver)
-	{
-#ifdef __linux__
-#ifdef HAVE_V4L2
-		case VIDEODEV_DRIVER_V4L2:
-			CLEAR (fmt);
-			if (-1 == xioctl (VIDIOC_G_FMT, &fmt))
-//				return errnoReturn ("VIDIOC_S_FMT");
-				kdDebug() << "libkopete (avdevice): VIDIOC_G_FMT failed (" << errno << ")." << endl;
-			fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-			fmt.fmt.pix.width       = 320;
-			fmt.fmt.pix.height      = 240;
-			fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
-			fmt.fmt.pix.field       = V4L2_FIELD_ANY;
-			if (-1 == xioctl (VIDIOC_S_FMT, &fmt))
-//				return errnoReturn ("VIDIOC_S_FMT");
-				kdDebug() << "libkopete (avdevice): VIDIOC_S_FMT failed (" << errno << ")." << endl;
-				// Note VIDIOC_S_FMT may change width and height.
-			else
-			{
-// Buggy driver paranoia.
-				min = fmt.fmt.pix.width * 2;
-				if (fmt.fmt.pix.bytesperline < min)
-					fmt.fmt.pix.bytesperline = min;
-				min = fmt.fmt.pix.bytesperline * fmt.fmt.pix.height;
-				if (fmt.fmt.pix.sizeimage < min)
-					fmt.fmt.pix.sizeimage = min;
-				m_buffer_size=fmt.fmt.pix.sizeimage ;
-			}
-			break;
-#endif
-		case VIDEODEV_DRIVER_V4L:
-			if (xioctl (VIDIOCGWIN, &V4L_videowindow)== -1)
-			{
-				perror ("ioctl VIDIOCGWIN");
-				return (NULL);
-			}
-			V4L_videowindow.width  = 320;
-			V4L_videowindow.height = 240;
-			V4L_videowindow.clipcount=0;
-			if (xioctl (VIDIOCSWIN, &V4L_videowindow)== -1)
-			{
-				perror ("ioctl VIDIOCSWIN");
-				return (NULL);
-			}
-
-			struct video_picture V4L_picture;
-			if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
-				kdDebug() << "libkopete (avdevice): VIDIOCGPICT failed (" << errno << ")." << endl;
-			kdDebug() << "libkopete (avdevice): V4L_picture.palette: " << V4L_picture.palette << endl;
-			V4L_picture.palette = VIDEO_PALETTE_RGB32;
-			if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
-				kdDebug() << "libkopete (avdevice): VIDIOCSPICT failed (" << errno << ")." << endl;
-			kdDebug() << "libkopete (avdevice): V4L_picture.palette: " << V4L_picture.palette << endl;
-
-/*			if(-1 == xioctl(VIDIOCGFBUF,&V4L_videobuffer))
-				kdDebug() << "libkopete (avdevice): VIDIOCGFBUF failed (" << errno << "): Card cannot stream" << endl;*/
-// Buggy driver paranoia.
-/*kdDebug() << "------------------------- ------- -- WILL SET THE m_buffer_size !!! -- ------- -----------------------------------------" << endl;
-kdDebug() << "------------------------- ------- -- V4L_videobuffer.width       : " << V4L_videobuffer.width << " !!! -- ------- -----------------------------------------" << endl;
-kdDebug() << "------------------------- ------- -- V4L_videobuffer.height      : " << V4L_videobuffer.height << " !!! -- ------- -----------------------------------------" << endl;
-kdDebug() << "------------------------- ------- -- V4L_videobuffer.bytesperline: " << V4L_videobuffer.bytesperline << " !!! -- ------- -----------------------------------------" << endl;
-				min = V4L_videobuffer.width * 3;
-				if (V4L_videobuffer.bytesperline < min)
-					V4L_videobuffer.bytesperline = min;
-				m_buffer_size = V4L_videobuffer.height * V4L_videobuffer.bytesperline;*/
-			m_buffer_size=V4L_videowindow.width * V4L_videowindow.height * 4;
-kdDebug() << "------------------------- ------- -- m_buffer_size: " << m_buffer_size << " !!! -- ------- -----------------------------------------" << endl;
-			break;
-#endif
-		case VIDEODEV_DRIVER_NONE:
-			break;
-	}
-
-	switch (m_io_method)
-	{
-		case IO_METHOD_NONE:                    break;
-		case IO_METHOD_READ:    initRead ();    break;
-		case IO_METHOD_MMAP:    initMmap ();    break;
-		case IO_METHOD_USERPTR: initUserptr (); break;
-	}
 	kdDebug() << "libkopete (avdevice): initDevice() exited successfuly" << endl;
 	return EXIT_SUCCESS;
 }
 
-int VideoDevice::inputs()
+unsigned int VideoDevice::inputs()
 {
 	return input.size();
 }
@@ -539,6 +457,104 @@ int VideoDevice::minHeight()
 int VideoDevice::maxHeight()
 {
 	return maxheight;
+}
+
+int VideoDevice::setSize( int newwidth, int newheight)
+{
+kdDebug() << "libkopete: VideoDevice::SetSize(" << newwidth << ", " << newheight << ") called." << endl;
+	if(newwidth  > maxwidth ) newwidth  = maxwidth;
+	if(newheight > maxheight) newheight = maxheight;
+	if(newwidth  < minwidth ) newwidth  = minwidth;
+	if(newheight < minheight) newheight = minheight;
+
+	currentwidth  = newwidth;
+	currentheight = newheight;
+
+// Change resolution and colorspace for the video device
+	switch(m_driver)
+	{
+#ifdef __linux__
+#ifdef HAVE_V4L2
+		case VIDEODEV_DRIVER_V4L2:
+			CLEAR (fmt);
+			if (-1 == xioctl (VIDIOC_G_FMT, &fmt))
+//				return errnoReturn ("VIDIOC_S_FMT");
+				kdDebug() << "libkopete (avdevice): VIDIOC_G_FMT failed (" << errno << ")." << endl;
+			fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+			fmt.fmt.pix.width       = width();
+			fmt.fmt.pix.height      = height();
+			fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
+			fmt.fmt.pix.field       = V4L2_FIELD_ANY;
+			if (-1 == xioctl (VIDIOC_S_FMT, &fmt))
+//				return errnoReturn ("VIDIOC_S_FMT");
+				kdDebug() << "libkopete (avdevice): VIDIOC_S_FMT failed (" << errno << ")." << endl;
+				// Note VIDIOC_S_FMT may change width and height.
+			else
+			{
+// Buggy driver paranoia.
+				min = fmt.fmt.pix.width * 2;
+				if (fmt.fmt.pix.bytesperline < min)
+					fmt.fmt.pix.bytesperline = min;
+				min = fmt.fmt.pix.bytesperline * fmt.fmt.pix.height;
+				if (fmt.fmt.pix.sizeimage < min)
+					fmt.fmt.pix.sizeimage = min;
+				m_buffer_size=fmt.fmt.pix.sizeimage ;
+			}
+			break;
+#endif
+		case VIDEODEV_DRIVER_V4L:
+			{
+				struct video_window V4L_videowindow;
+
+kdDebug() << "------------- width: " << V4L_videowindow.width << " Height: " << V4L_videowindow.height << " Clipcount: " << V4L_videowindow.clipcount << " -----------------" << endl;
+
+			if (xioctl (VIDIOCGWIN, &V4L_videowindow)== -1)
+			{
+				perror ("ioctl VIDIOCGWIN");
+//				return (NULL);
+			}
+			V4L_videowindow.width  = width();
+			V4L_videowindow.height = height();
+			V4L_videowindow.clipcount=0;
+			if (xioctl (VIDIOCSWIN, &V4L_videowindow)== -1)
+			{
+				perror ("ioctl VIDIOCSWIN");
+//				return (NULL);
+			}
+kdDebug() << "------------- width: " << V4L_videowindow.width << " Height: " << V4L_videowindow.height << " Clipcount: " << V4L_videowindow.clipcount << " -----------------" << endl;
+
+			struct video_picture V4L_picture;
+			if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
+				kdDebug() << "libkopete (avdevice): VIDIOCGPICT failed (" << errno << ")." << endl;
+			kdDebug() << "libkopete (avdevice): V4L_picture.palette: " << V4L_picture.palette << " Depth: " << V4L_picture.depth << endl;
+			V4L_picture.palette = VIDEO_PALETTE_RGB32;
+			V4L_picture.depth   = 32;
+			if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
+				kdDebug() << "libkopete (avdevice): VIDIOCSPICT failed (" << errno << ")." << endl;
+			kdDebug() << "libkopete (avdevice): V4L_picture.palette: " << V4L_picture.palette << " Depth: " << V4L_picture.depth << endl;
+
+/*			if(-1 == xioctl(VIDIOCGFBUF,&V4L_videobuffer))
+				kdDebug() << "libkopete (avdevice): VIDIOCGFBUF failed (" << errno << "): Card cannot stream" << endl;*/
+
+			m_buffer_size = width() * height() * V4L_picture.depth / 8;
+kdDebug() << "------------------------- ------- -- m_buffer_size: " << m_buffer_size << " !!! -- ------- -----------------------------------------" << endl;
+			}
+			break;
+#endif
+		case VIDEODEV_DRIVER_NONE:
+			break;
+	}
+
+	switch (m_io_method)
+	{
+		case IO_METHOD_NONE:                    break;
+		case IO_METHOD_READ:    initRead ();    break;
+		case IO_METHOD_MMAP:    initMmap ();    break;
+		case IO_METHOD_USERPTR: initUserptr (); break;
+	}
+
+kdDebug() << "libkopete: VideoDevice::SetSize(" << newwidth << ", " << newheight << ") exited successfulycalled." << endl;
+	return EXIT_SUCCESS;
 }
 
 /*!
@@ -762,7 +778,7 @@ int VideoDevice::getImage(QImage *qimage)
 
 	for(unsigned int loop=0;loop < currentbuffer.data.size();loop++)
 		result+=currentbuffer.data[loop];
-	kdDebug() << "libkopete getImage(QImage *qimage) Data size: " << currentbuffer.data.size() << " Result: " << result;
+	kdDebug() << "libkopete getImage(QImage *qimage) Data size: " << currentbuffer.data.size() << " Result: " << result << endl;
 	for(unsigned int loop=0;loop < currentbuffer.data.size();loop+=4)
 	{
 		R+=currentbuffer.data[loop];
@@ -784,7 +800,7 @@ int VideoDevice::getImage(QImage *qimage)
 
 	qimage->create(width(), height(),32, QImage::IgnoreEndian);
 
-//	memcpy(qimage->bits(),&currentbuffer.data[0], currentbuffer.data.size());
+	memcpy(qimage->bits(),&currentbuffer.data[0], currentbuffer.data.size());
 	return EXIT_SUCCESS;
 }
 
