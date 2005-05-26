@@ -175,7 +175,7 @@ RegisterCommand::execute()
 {
 	if ( state != RegisterStateGotToken || email_.isEmpty() || password_.isEmpty() || tokenString.isEmpty() ) {
 		// get token first || fill information
-		kdDebug(14100) << "not enough info to ruun execute, state: " << state << " , email: " << email_ << ", password present " << !password_.isEmpty() << ", token string:" << tokenString << endl;
+		kdDebug(14100) << "not enough info to run execute, state: " << state << " , email: " << email_ << ", password present " << !password_.isEmpty() << ", token string:" << tokenString << endl;
 		return;
 	}
 	session_ = gg_register3( email_.ascii(), password_.ascii(), tokenId.ascii(), tokenString.ascii(), 1 );
