@@ -414,6 +414,7 @@ GaduAccount::changeStatus( const Kopete::OnlineStatus& status, const QString& de
 			p->pingTimer_->stop();
 		}
 	}
+	p->lastDescription = descr;
 }
 
 void
