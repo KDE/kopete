@@ -19,7 +19,7 @@
 #define AVDEVICECONFIG_H
 
 #include "kcmodule.h"
-#include "videodevice.h"
+#include "videodevicepool.h"
 #include <qimage.h>
 #include <qpixmap.h>
 #include <qtimer.h>
@@ -63,7 +63,7 @@ private:
 	QTabWidget* mAVDeviceTabCtl;
 	AVDeviceConfig_VideoDevice *mPrfsVideoDevice;
 	AVDeviceConfig_AudioDevice *mPrfsAudioDevice;
-	Kopete::AV::VideoDevice *d ;
+	Kopete::AV::VideoDevicePool *d ;
 	QImage qimage;
 	QPixmap qpixmap, m_video_image;
 	QTimer qtimer;

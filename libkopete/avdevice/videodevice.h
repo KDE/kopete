@@ -1,76 +1,118 @@
-/*
-    videodevice.h  -  Kopete Video Device Low-level Support
+//
+// C++ Interface: videodevicelistitem
+//
+// Description: 
+//
+//
+// Author: Kopete Developers <kopete-devel@kde.org>, (C) 2005
+//
+// Copyright: See COPYING file that comes with this distribution
+//
+//
+#ifndef KOPETE_AVVIDEODEVICELISTITEM_H
+#define KOPETE_AVVIDEODEVICELISTITEM_H
 
-    Copyright (c) 2005 by Cláudio da Silveira Pinheiro   <taupter@gmail.com>
+#include <sys/time.h>
+#include <sys/mman.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <signal.h>
 
-    Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
+#ifdef __linux__
 
-    *************************************************************************
-    *                                                                       *
-    * This library is free software; you can redistribute it and/or         *
-    * modify it under the terms of the GNU Lesser General Public            *
-    * License as published by the Free Software Foundation; either          *
-    * version 2 of the License, or (at your option) any later version.      *
-    *                                                                       *
-    *************************************************************************
-*/
+#undef __STRICT_ANSI__
+#include <asm/types.h>
+#include <linux/fs.h>
+#include <linux/kernel.h>
 
-#ifndef KOPETE_AVVIDEODEVICE_H
-#define KOPETE_AVVIDEODEVICE_H
+#ifndef __u64 //required by videodev.h
+#define __u64 unsigned long long
+#endif // __u64
 
-#include <qvaluevector.h>
-#include <iostream>
+#include <linux/videodev.h>
+#define __STRICT_ANSI__
 
+#endif // __linux__
 
-#include "kopete_export.h"
-#include "videoinput.h"
 #include <qstring.h>
+#include <qfile.h>
 #include <qimage.h>
 #include <qvaluevector.h>
 #include <kcombobox.h>
-#include "videodevicelistitem.h"
+
+#include "videoinput.h"
 
 namespace Kopete {
 
 namespace AV {
 
 /**
-This class allows kopete to check for the existence, open, configure, test, set parameters, grab frames from and close a given video capture card using the Video4Linux API.
-
-@author Cláudio da Silveira Pinheiro
+@author Kopete Developers
 */
-
-class VideoDevicePrivate;
-
-class KOPETE_EXPORT VideoDevice
+typedef enum
 {
-public:
-	static VideoDevice* self();
-	int open();
-	int getFrame();
-	int checkDevice(int handle, VideoDeviceListItem *videodevice);
-	int initDevice();
-	int close();
-	int selectDevice(unsigned int device);
-	int startCapturing();
-	int stopCapturing();
-	int readFrame();
-	int getImage(QImage *qimage);
-	int selectInput(int input);
-	int setResolution(int width, int height);
-	int scanDevices();
-	~VideoDevice();
-	QValueVector<Kopete::AV::VideoDeviceListItem> m_videodevice;
-	QValueVector<Kopete::AV::VideoInput> m_video_input;
-	int fillDeviceKComboBox(KComboBox *combobox);
-	int fillInputKComboBox(KComboBox *combobox);
-	int currentDevice();
-	int currentInput();
+	VIDEODEV_DRIVER_NONE,
+#ifdef __linux__
+	VIDEODEV_DRIVER_V4L,
+#ifdef HAVE_V4L2
+	VIDEODEV_DRIVER_V4L2,
+#endif
+#endif
+} videodev_driver;
 
+class VideoDevice{
 protected:
-	std::string name;
-	std::string path;
+	int xioctl(int request, void *arg);
+	int errnoReturn(const char* s);
+public:
+	VideoDevice();
+	~VideoDevice();
+	int setFileName(QString filename);
+	int open();
+	bool isOpen();
+	int checkDevice();
+	int showDeviceCapabilities();
+	int initDevice();
+	int inputs();
+	int width();
+	int minWidth();
+	int maxWidth();
+	int height();
+	int minHeight();
+	int maxHeight();
+	unsigned int currentInput();
+	int selectInput(int input);
+	int startCapturing();
+	int readFrame();
+	int processImage(const void *p);
+	int getImage(QImage *qimage);
+	int stopCapturing();
+	int close();
+	QString name;
+	QString full_filename;
+	videodev_driver m_driver;
 	int descriptor;
+
+//protected:
+#ifdef __linux__
+#ifdef HAVE_V4L2
+	struct v4l2_capability V4L2_capabilities;
+	struct v4l2_cropcap cropcap;
+	struct v4l2_crop crop;
+	struct v4l2_format fmt;
+#endif
+	struct video_capability V4L_capabilities;
+	struct video_window V4L_videowindow;
+	struct video_buffer V4L_videobuffer;
+#endif	
+	QValueVector<Kopete::AV::VideoInput> input;
+//	QFile file;
+protected:
+	int currentwidth, minwidth, maxwidth, currentheight, minheight, maxheight;
+
 	typedef enum
 	{
 		IO_METHOD_NONE,
@@ -98,22 +140,12 @@ protected:
 	buffer2 currentbuffer;
 	int m_buffer_size;
 
-	QFile file;
-	int m_current_device;
 	int m_current_input;
 
-protected:
-	int xioctl(int request, void *arg);
-	int processImage(const void *p);
-	int errnoReturn(const char* s);
-	void showDeviceCapabilities(VideoDeviceListItem *videodevice);
 	int initRead();
 	int initMmap();
 	int initUserptr();
-	void guessDriver();
-private:
-	VideoDevice();
-	static VideoDevice* s_self;
+
 };
 
 }

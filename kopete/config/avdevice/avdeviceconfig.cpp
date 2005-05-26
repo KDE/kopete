@@ -27,7 +27,6 @@
 #include <qcombobox.h>
 #include <qslider.h>
 
-#include <kdebug.h>
 #include <kplugininfo.h>
 #include <klocale.h>
 #include <kpushbutton.h>
@@ -47,6 +46,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_avdeviceconfig, KopeteAVDeviceConfigFacto
 AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStringList &args)
  : KCModule( KopeteAVDeviceConfigFactory::instance(), parent, args )
 {
+	kdDebug() << "kopete:config (avdevice): KopeteAVDeviceConfigFactory::instance() called. " << endl;
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	mAVDeviceTabCtl = new QTabWidget(this, "mAVDeviceTabCtl");
 
@@ -63,10 +63,9 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 
 	mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
 	mAVDeviceTabCtl->addTab(mPrfsVideoDevice, i18n("&Video"));
-	d = Kopete::AV::VideoDevice::self();
+	d = Kopete::AV::VideoDevicePool::self();
 	d->scanDevices();
-	d->selectDevice(0);
-	d->open();
+	d->open(0);
 	d->initDevice();
 	d->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
 	d->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
@@ -77,7 +76,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 	qpixmap.convertFromImage(qimage,0);
 	mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
-	qtimer.start(500,FALSE);
+	qtimer.start(2000,FALSE);
 }
 
 
@@ -117,17 +116,18 @@ void AVDeviceConfig::slotValueChanged(int){
 }
 
 void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
-	int newdevice = mPrfsVideoDevice->mInputKComboBox->currentItem();
+	kdDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. " << endl;
+	unsigned int newdevice = mPrfsVideoDevice->mDeviceKComboBox->currentItem();
+	kdDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) Current device: " << d->currentDevice() << "New device: " << newdevice << endl;
 	if ((newdevice < d->m_videodevice.size())&&(newdevice!=d->currentDevice()))
 	{
-		d->selectDevice(newdevice);
-		d->open();
-		d->initDevice();
-		d->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
+	kdDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) should change device. " << endl;
+		d->open(newdevice);
 		d->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 		d->selectInput(0);
 		d->startCapturing();
 	}
+	kdDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. " << endl;
 	emit changed( true );
 }
 
