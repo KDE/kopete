@@ -462,7 +462,7 @@ GaduSession::sendResult( gg_pubdir50_t result )
 
 	searchSeqNr_ = gg_pubdir50_next( result );
 
-	emit pubDirSearchResult( sres, result->seq );
+	emit pubDirSearchResult( sres, gg_pubdir50_seq( result ) );
 }
 
 void
