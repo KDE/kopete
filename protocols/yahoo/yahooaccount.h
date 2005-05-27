@@ -168,6 +168,8 @@ protected slots:
 
 	void slotBuddyListFetched( int numBuddies );
 
+	void slotReceiveFileAccepted( Kopete::Transfer *trans, const QString& fileName );
+
 private slots:
 	// various status slots for the action menu
 	void slotGoStatus001() { slotGoStatus(1); } // Be Right Back

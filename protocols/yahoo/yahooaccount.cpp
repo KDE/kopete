@@ -42,6 +42,7 @@
 #include <knotification.h>
 #include <kopetemetacontact.h>
 #include <kopetecontactlist.h>
+#include <kopetetransfermanager.h>
 
 // Yahoo
 #include "yahooaccount.h"
@@ -745,10 +746,22 @@ void YahooAccount::slotConfMessage( const QString & /* who */, const QString & /
 //	kdDebug(14180) << k_funcinfo << endl;
 }
 
-void YahooAccount::slotGotFile( const QString & /* who */, const QString & /* url */, long /* expires */, const QString & /* msg */,
-	const QString & /* fname */, unsigned long /* fesize */ )
+void YahooAccount::slotGotFile( const QString &  who, const QString &  url , long /* expires */, const QString &  msg ,
+	const QString &  fname, unsigned long  fesize  )
 {
-//	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(14180) << k_funcinfo << "Received File from " << who << ": " << msg << endl;
+	kdDebug(14180) << k_funcinfo << "Filename :" << fname << " size:" << fesize << endl;
+	
+	Kopete::TransferManager::transferManager()->askIncomingTransfer( contact( who ) , fname, fesize, msg, url );	
+	QObject::connect( Kopete::TransferManager::transferManager(), SIGNAL( accepted( Kopete::Transfer *, const QString& ) ),
+					this, SLOT( slotReceiveFileAccepted( Kopete::Transfer *, const QString& ) ) );
+}
+
+void YahooAccount::slotReceiveFileAccepted(Kopete::Transfer *trans, const QString& /*fileName*/)
+{	
+	m_session->getUrlHandle( trans );
+	QObject::disconnect( Kopete::TransferManager::transferManager(), SIGNAL( accepted( Kopete::Transfer *, const QString& ) ),
+					this, SLOT( slotReceiveFileAccepted( Kopete::Transfer *, const QString& ) ) );
 }
 
 void YahooAccount::slotContactAdded( const QString & /* myid */, const QString & /* who */, const QString & /* msg */ )

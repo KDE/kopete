@@ -22,6 +22,7 @@
 #include <qobject.h>
 #include <kextendedsocket.h>
 #include <qstring.h>
+#include <qfile.h>
 #include <qmap.h>
 #include <qpixmap.h>
 
@@ -37,6 +38,10 @@ class QSocketNotifier;
 namespace KIO	{ 
 	class Job;
 	class TransferJob; 
+}
+namespace Kopete{
+class Transfer;
+class Contact;
 }
 
 class YahooConnectionManager
@@ -144,8 +149,8 @@ public:
 	void conferenceMessage( const QString & from, const QStringList &who, const QString &room, const QString &msg);
 	void conferenceLogon( const QString & from, const QStringList &who, const QString &room);
 	void conferenceLogoff( const QString & from, const QStringList &who, const QString &room);
-	int sendFile( const QString &who, const QString &msg, const QString &name, long size);
-	int getUrlHandle( const QString &url, const QString &filename, unsigned long *filesize);
+	int sendFile( const QString &who, const QString &msg, const QString &name, long size);	
+	int getUrlHandle( Kopete::Transfer *trans );
 	enum yahoo_status currentStatus();
 	const YList *getLegacyBuddyList();
 	QStringList getBuddylist();
@@ -164,6 +169,8 @@ public:
 	/* Private Receivers for libyahoo callbacks, we capture them  and emit signals
 	   called only by libyahoo callbacks, don't use them */
 
+	void _receiveFileProceed( int id, int fd, int error,
+	                          const char *filename, unsigned long size, void *data );
 	void _loginResponseReceiver(int succ, const char *url);
 	void _gotIgnoreReceiver(YList *igns);
 	void _gotBuddiesReceiver(YList *buds);
@@ -194,7 +201,7 @@ public:
 	                      unsigned int real_size, unsigned int timestamp );
 	void _webcamDisconnected( const char* who, int reason );
 
-signals:
+signals:	
 	/** emitted when server says login OK */
 	void loginResponse( int succ, const QString &url);
 
@@ -273,7 +280,7 @@ private slots:
 	void slotUserInfoResult( KIO::Job* );
 	void slotUserInfoData( KIO::Job*, const QByteArray & );
 	void slotUserInfoSaved( KIO::Job* );
-
+	
 private:
 	/* Private constructor */
 	YahooSession(int id, const QString username, const QString password);
@@ -283,7 +290,11 @@ private:
 
 	YahooConnectionManager m_connManager;
 	void *m_data;
-
+	
+	Kopete::Contact* m_contact;
+	Kopete::Transfer* m_kopeteTransfer;
+	QString m_Filename;							  // Filename for Send file
+	QFile m_File;
 	QString m_Username, m_Password, m_Server; // User data
 	QString m_UserInfo;
 	QString m_targetID;					// userID of the target user, e.g. for UserInfo() or SendFile() ...

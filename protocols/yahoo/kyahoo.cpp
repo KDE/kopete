@@ -19,12 +19,16 @@
 // Local Includes
 #include "kyahoo.h"
 #include "kopeteuiglobal.h"
+#include "kopetetransfermanager.h"
+#include "kopetecontact.h"
+#include "kopetemetacontact.h"
 #include "yahoouserinfo.h"
 
 // QT Includes
 #include <qfile.h>
 #include <qtimer.h>
 #include <qdom.h>
+#include <qtextstream.h>
 
 // KDE Includes
 #include <klocale.h>
@@ -56,6 +60,11 @@ char webcam_port[MAX_PREF_LEN] = "5100";
 char webcam_description[MAX_PREF_LEN] = "Philips ToUcam Pro";
 char local_host[MAX_PREF_LEN] = "";
 int conn_type = 1;
+
+extern "C" {
+	void receive_file_callback( int id, int fd, int error,
+	                            const char *filename, unsigned long size, void *data );
+}
 
 struct connect_callback_data
 {
@@ -98,7 +107,7 @@ KExtendedSocket* YahooConnectionManager::connectionForFD( int fd )
 void YahooConnectionManager::remove( KExtendedSocket* socket )
 {
 	QValueList<KExtendedSocket*>::iterator it, ycEnd = m_connectionList.end();
-	for ( it = m_connectionList.begin(); it != ycEnd; )
+	for ( it = m_connectionList.begin(); it != ycEnd; it++ )
 	{
 		if ( ( *it ) == socket )
 		{
@@ -440,38 +449,29 @@ void YahooSession::conferenceLogoff( const QString &from, const QStringList &who
 }
 
 int YahooSession::sendFile( const QString& /*who*/, const QString& /*msg*/,
-		const QString& /*name*/, long /*size*/ )
-{
+               const QString& /*name*/, long /*size*/ )
+{	
 	// FIXME 0,0 is the callback and void *data
 	// void (*yahoo_get_fd_callback)(int id, int fd, int error, void *data);
-
+	
 	//return yahoo_send_file(m_connId, who.local8Bit(), msg.local8Bit(),
-	//				 name.local8Bit(), size, file_send_callback ,0);
+	//                               name.local8Bit(), size, file_send_callback ,0);
 	return 0;
-
+	
 }
 
-int YahooSession::getUrlHandle( const QString& /*url*/, const QString& /*filename*/,
-		unsigned long* /*filesize*/ )
+
+int YahooSession::getUrlHandle( Kopete::Transfer *trans )
 {
-	/*
-	FIXME! API CHANGED! add callback and data to the call
-	FIXME why is filesize an unsigned long pointer?
 	char *_url;
-	char *_filename;
-	int result;
 
-	_url = strdup(url.local8Bit());
-	_filename = strdup(QFile::encodeName(filename));
+	m_kopeteTransfer = trans;
+	_url = strdup( trans->info().internalId().local8Bit() );
+	m_Filename = strdup( QFile::encodeName(trans->destinationURL().path()) );
 
-	result = yahoo_get_url_handle(m_connId, _url, _filename, filesize);
+	yahoo_get_url_handle(m_connId, _url, receive_file_callback, 0);
 
 	free(_url);
-	free(_filename);
-
-	return result;
-	*/
-
 	return 0;
 }
 
@@ -894,15 +894,56 @@ void YAHOO_CALLBACK_TYPE( ext_yahoo_webcam_data_request )( int /*id*/, int /*sen
 {
 	/* Not implemented , No receiver yet */
 }
-
+	
+void receive_file_callback( int id, int fd, int error,
+	                            const char *filename, unsigned long size, void *data )
+{
+	YahooSession *session = YahooSessionManager::manager()->session( id );
+	if ( session )
+		session->_receiveFileProceed( id, fd, error, filename, size, data );
+}
 /* End of extern C */
 }
+
 
 /*
     *************************************************************************
     * Private Session Callback Receiver, don't use them                     *
     *************************************************************************
 */
+
+void YahooSession::_receiveFileProceed( int id, int fd, int /*error*/,
+                                        const char */*filename*/, unsigned long /*size*/, void */*data*/ )
+{
+	kdDebug(14181) << k_funcinfo << "FD:" << fd << " Filename:" << m_Filename <<endl;
+	int read = 0, received = 0;
+	char buf[1024];
+	KExtendedSocket* socket = m_connManager.connectionForFD( fd );
+	if ( !socket )
+	{
+		kdDebug(14181) << k_funcinfo << "No existing socket for connection found. We're screwed" << endl;
+		return;
+	}
+	
+	QFile file( m_Filename );
+	if ( file.open(IO_WriteOnly ) )
+	{
+		QTextStream stream( &file );
+		while( (read = socket->readBlock( buf, 1024 )) > 0 )
+		{
+			stream << buf;
+			received += read;
+			m_kopeteTransfer->slotProcessed( received );
+		}
+		m_kopeteTransfer->slotComplete();
+		file.close();
+	} else	
+		m_kopeteTransfer->slotError( KIO::ERR_CANNOT_OPEN_FOR_WRITING, i18n("Cannot open file %1 for writing.\n%2")
+									.arg( m_Filename, file.errorString() ) );
+	
+	ext_yahoo_remove_handler( id, fd );
+	return;
+}
 
 void YahooSession::_loginResponseReceiver( int succ, const char *url )
 {
