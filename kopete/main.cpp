@@ -63,11 +63,11 @@ int main( int argc, char *argv[] )
 	aboutData.addAuthor ( "Grzegorz Jaskiewicz", I18N_NOOP("Developer, Gadu plugin maintainer"), "gj@pointblue.com.pl" );
 	aboutData.addAuthor ( "Jason Keirstead", I18N_NOOP("Developer, IRC maintainer"), "jason@keirstead.org", "http://www.keirstead.org");
 	aboutData.addAuthor ( "Martijn Klingens", I18N_NOOP("Developer"), "klingens@kde.org" );
-	aboutData.addAuthor ( "Matt Rogers", I18N_NOOP("Developer, Yahoo plugin and Oscar plugin maintainer"), "mattrogers@sbcglobal.net" );
+	aboutData.addAuthor ( "Chetan Reddy", I18N_NOOP("Developer, Yahoo"), "chetan13@gmail.com" );
+	aboutData.addAuthor ( "Matt Rogers", I18N_NOOP("Developer, AIM, ICQ, and Yahoo plugin maintainer"), "mattr@kde.org" );
 	aboutData.addAuthor ( "Zack Rusin", I18N_NOOP("Developer, original Gadu plugin author"), "zack@kde.org" );
 	aboutData.addAuthor ( "Richard Smith", I18N_NOOP("Developer, UI maintainer"), "kde@metafoo.co.uk" );
 	aboutData.addAuthor ( "Will Stephenson", I18N_NOOP("Developer, GroupWise maintainer"), "lists@stevello.free-online.co.uk" );
-	aboutData.addAuthor ( "Gav Wood", I18N_NOOP("Developer, WinPopup plugin maintainer"), "gjw102@york.ac.uk" );
 
 	aboutData.addCredit ( "Luciash d' Being", I18N_NOOP("Kopete's icon author") );
 	aboutData.addCredit ( "Steve Cable", I18N_NOOP("Sounds") );
@@ -84,6 +84,7 @@ int main( int argc, char *argv[] )
 	aboutData.addCredit ( "Daniel Stone", I18N_NOOP("Former developer, Jabber plugin author"), "daniel@fooishbar.org", "http://fooishbar.org");
 	aboutData.addCredit ( "Chris TenHarmsel", I18N_NOOP("Former developer, Oscar plugin"), "tenharmsel@users.sourceforge.net");
 	aboutData.addCredit ( "Hendrik vom Lehn", I18N_NOOP("Former developer"), "hennevl@hennevl.de", "http://www.hennevl.de");
+	aboutData.addCredit ( "Gav Wood", I18N_NOOP("Former developer and WinPopup maintainer"), "gav@indigoarchive.net" );
 
 	aboutData.setTranslator( I18N_NOOP("_: NAME OF TRANSLATORS\nYour names"),
 		I18N_NOOP("_: EMAIL OF TRANSLATORS\nYour emails") );
