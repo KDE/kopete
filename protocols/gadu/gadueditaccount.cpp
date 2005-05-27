@@ -22,6 +22,7 @@
 #include "gadueditaccount.h"
 #include "gaduaccount.h"
 #include "gaduprotocol.h"
+#include "gadusession.h"
 
 #include <qradiobutton.h>
 #include <qcombobox.h>
@@ -56,32 +57,59 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, Q
 	if ( account() == NULL ) {
 		useTls_->setCurrentItem( GaduAccount::TLS_no );
 		registerNew->setEnabled( true );
+		account_ = NULL;
 	}
 	else {
+		account_ = static_cast<GaduAccount*>(ident);
+
 		registerNew->setDisabled( true );
 		loginEdit_->setDisabled( true );
-		loginEdit_->setText( account()->accountId() );
+		loginEdit_->setText( account_->accountId() );
 
-		passwordWidget_->load( &static_cast<GaduAccount*>(account())->password() );
-		
-		QString nick = account()->myself()->property( 
-				Kopete::Global::Properties::self()->nickName() ).value().toString();	
+		passwordWidget_->load( &account_->password() );
+
+		QString nick = account()->myself()->property(
+				Kopete::Global::Properties::self()->nickName() ).value().toString();
 		if ( nick.isEmpty() ) {
-			nick = account()->myself()->contactId();
+			nick = account_->myself()->contactId();
 		}
-		
+
 		nickName->setText( nick );
 
-		autoLoginCheck_->setChecked( account()->excludeConnect() );
-		dccCheck_->setChecked( static_cast<GaduAccount*>(account())->dccEnabled() );
-		useTls_->setCurrentItem( isSsl ?  ( static_cast<GaduAccount*> (account()) ->useTls() ) : 2 );
+		autoLoginCheck_->setChecked( account_->excludeConnect() );
+		dccCheck_->setChecked( account_->dccEnabled() );
+		useTls_->setCurrentItem( isSsl ? ( account_ ->useTls() ) : 2 );
+
+		connect( account(), SIGNAL( pubDirSearchResult( const SearchResult&, unsigned int ) ),
+					SLOT( slotSearchResult( const SearchResult&, unsigned int ) ) );
+		seqNr = account_->getPersonalInformation();
 	}
 
-	QObject::connect( registerNew, SIGNAL( clicked( ) ), SLOT( registerNewAccount( ) ) );
+	connect( registerNew, SIGNAL( clicked( ) ), SLOT( registerNewAccount( ) ) );
+
 	QWidget::setTabOrder( loginEdit_, passwordWidget_->mRemembered );
 	QWidget::setTabOrder( passwordWidget_->mRemembered, passwordWidget_->mPassword );
 	QWidget::setTabOrder( passwordWidget_->mPassword, autoLoginCheck_ );
 
+}
+
+void
+GaduEditAccount::slotSearchResult( const SearchResult& result, unsigned int seq )
+{
+	if ( !( seq != 0 && seqNr != 0 && seq == seqNr ) ) {
+		return;
+	}
+
+	uiName->setText( result[0].firstname );
+	uiSurname->setText( result[0].surname );
+	uiNick->setText( result[0].nickname );
+	uiYOB->setText( result[0].age );
+	uiCity->setText( result[0].city );
+
+	uiMeiden->setText( "" );
+	uiOrgin->setText( "" );
+
+	disconnect( SLOT( slotSearchResult( const SearchResult&, unsigned int ) ) );
 }
 
 void
@@ -143,21 +171,22 @@ GaduEditAccount::apply()
 {
 	if ( account() == NULL ) {
 		setAccount( new GaduAccount( protocol_, loginEdit_->text() ) );
+		account_ = static_cast<GaduAccount*>( account() );
 	}
 
-	account()->setExcludeConnect( autoLoginCheck_->isChecked() );
+	account_->setExcludeConnect( autoLoginCheck_->isChecked() );
 
-	passwordWidget_->save( &static_cast<GaduAccount*>(account())->password() );
+	passwordWidget_->save( &account_->password() );
 
-	account()->myself()->setProperty( Kopete::Global::Properties::self()->nickName(), nickName->text() );
-	
+	account_->myself()->setProperty( Kopete::Global::Properties::self()->nickName(), nickName->text() );
+
 	// this is changed only here, so i won't add any proper handling now
-        account()->configGroup()->writeEntry( QString::fromAscii( "nickName" ), nickName->text() );
-		
-	account()->setExcludeConnect( autoLoginCheck_->isChecked() );
-	( static_cast<GaduAccount*> (account()) )->setUseTls( (GaduAccount::tlsConnection) useTls_->currentItem() );
+        account_->configGroup()->writeEntry( QString::fromAscii( "nickName" ), nickName->text() );
 
-	if ( static_cast<GaduAccount*>(account())->setDcc( dccCheck_->isChecked() ) == false ) {
+	account_->setExcludeConnect( autoLoginCheck_->isChecked() );
+	account_->setUseTls( (GaduAccount::tlsConnection) useTls_->currentItem() );
+
+	if ( account_->setDcc( dccCheck_->isChecked() ) == false ) {
 		KMessageBox::sorry( this, i18n( "<b>Starting DCC listening socket failed; dcc is not working now.</b>" ), i18n( "Gadu-Gadu" ) );
 	}
 

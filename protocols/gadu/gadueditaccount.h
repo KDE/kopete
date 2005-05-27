@@ -25,9 +25,11 @@
 #include "gadueditaccountui.h"
 #include "editaccountwidget.h"
 #include "gaduregisteraccount.h"
+#include "gadusession.h"
 
 class GaduAccount;
 class GaduProtocol;
+
 namespace Kopete { class Account; }
 
 class GaduEditAccount : public GaduAccountEditUI, public KopeteEditAccountWidget
@@ -43,13 +45,16 @@ private slots:
 	void registerNewAccount();
 	void newUin( unsigned int, QString  );
 	void registrationFailed();
+	void slotSearchResult( const SearchResult&, unsigned int );
 
 private:
 	GaduProtocol*		protocol_;
-	bool				reg_in_progress;
-	bool				isSsl;
+	bool			reg_in_progress;
+	bool			isSsl;
 	RegisterCommand*	rcmd;
-	GaduRegisterAccount* regDialog;
+	GaduRegisterAccount*	regDialog;
+	GaduAccount*		account_;
+	unsigned int 		seqNr;
 };
 
 #endif

@@ -65,6 +65,7 @@ public:
 	void sendFile( GaduContact* );
 	//}
 	enum tlsConnection{ TLS_ifAvaliable = 0, TLS_only, TLS_no };
+	unsigned int getPersonalInformation();
 
 public slots:
 	//{

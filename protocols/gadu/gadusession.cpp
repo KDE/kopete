@@ -442,9 +442,9 @@ GaduSession::sendResult( gg_pubdir50_t result )
 
 	for ( i = 0; i < count; i++ ) {
 		resultLine.uin		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_UIN ) );
-		resultLine.firstname	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_FIRSTNAME ));
-		resultLine.surname	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_LASTNAME ));
-		resultLine.nickname	= textcodec->toUnicode( gg_pubdir50_get(result, i, GG_PUBDIR50_NICKNAME ) );
+		resultLine.firstname	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_FIRSTNAME ) );
+		resultLine.surname	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_LASTNAME ) );
+		resultLine.nickname	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_NICKNAME ) );
 		resultLine.age		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_BIRTHYEAR ) );
 		resultLine.city		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_CITY ) );
 		QString stat		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_STATUS ) );
@@ -461,8 +461,12 @@ GaduSession::sendResult( gg_pubdir50_t result )
 	}
 
 	searchSeqNr_ = gg_pubdir50_next( result );
-
-	emit pubDirSearchResult( sres, gg_pubdir50_seq( result ) );
+	if ( count ) {
+		emit pubDirSearchResult( sres, gg_pubdir50_seq( result ) );
+	}
+	else {
+		emit pubDirSearchResult( sres, 0 );
+	}
 }
 
 void

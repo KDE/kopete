@@ -948,12 +948,17 @@ GaduAccount::slotImportContactsFromFile()
 	p->loadListDialog = NULL;
 }
 
+unsigned int
+GaduAccount::getPersonalInformation()
+{
+	return p->session_->getPersonalInformation();
+}
+
 void
 GaduAccount::slotExportContactsList()
 {
 	p->session_->exportContactsOnServer( userlist() );
 }
-
 
 GaduContactsList*
 GaduAccount::userlist()
