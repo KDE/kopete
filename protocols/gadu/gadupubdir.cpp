@@ -146,8 +146,8 @@ GaduPublicDir::initConnections()
 	connect( this, SIGNAL( user1Clicked() ), SLOT( slotNewSearch() ) );
 	connect( this, SIGNAL( user3Clicked() ), SLOT( slotAddContact() ) );
 
-	connect( mAccount, SIGNAL( pubDirSearchResult( const SearchResult& ) ),
-				SLOT( slotSearchResult( const SearchResult& ) ) );
+	connect( mAccount, SIGNAL( pubDirSearchResult( const SearchResult&, unsigned int ) ),
+				SLOT( slotSearchResult( const SearchResult&, unsigned int ) ) );
 
 	connect( mMainWidget->nameS,		SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
 	connect( mMainWidget->surname,		SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
@@ -232,7 +232,7 @@ GaduPublicDir::iconForStatus( uint status )
 }
 
 void
-GaduPublicDir::slotSearchResult( const SearchResult& result )
+GaduPublicDir::slotSearchResult( const SearchResult& result, unsigned int seq )
 {
 	QListView* list = mMainWidget->listFound;
 

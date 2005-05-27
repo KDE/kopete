@@ -202,8 +202,8 @@ GaduAccount::initConnections()
 				SLOT( slotSessionDisconnect( Kopete::Account::DisconnectReason ) ) );
 	QObject::connect( p->session_, SIGNAL( ackReceived( unsigned int ) ),
 				SLOT( ackReceived( unsigned int ) ) );
-	QObject::connect( p->session_, SIGNAL( pubDirSearchResult( const SearchResult& ) ),
-				SLOT( slotSearchResult( const SearchResult& ) ) );
+	QObject::connect( p->session_, SIGNAL( pubDirSearchResult( const SearchResult&, unsigned int  ) ),
+				SLOT( slotSearchResult( const SearchResult&, unsigned int ) ) );
 	QObject::connect( p->session_, SIGNAL( userListExported() ),
 				SLOT( userListExportDone() ) );
 	QObject::connect( p->session_, SIGNAL( userListRecieved( const QString& ) ),
@@ -1015,7 +1015,7 @@ GaduAccount::slotDescription()
 	delete away;
 }
 
-bool
+unsigned int
 GaduAccount::pubDirSearch( QString& name, QString& surname, QString& nick,
 			    int UIN, QString& city, int gender,
 			    int ageFrom, int ageTo, bool onlyAlive )
@@ -1031,9 +1031,9 @@ GaduAccount::pubDirSearchClose()
 }
 
 void
-GaduAccount::slotSearchResult( const SearchResult& result )
+GaduAccount::slotSearchResult( const SearchResult& result, unsigned int seq )
 {
-	emit pubDirSearchResult( result );
+	emit pubDirSearchResult( result, seq );
 }
 
 void

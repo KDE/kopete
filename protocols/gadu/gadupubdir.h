@@ -48,7 +48,7 @@ public:
 private slots:
 	void slotSearch();
 	void slotNewSearch();
-	void slotSearchResult( const SearchResult& result );
+	void slotSearchResult( const SearchResult& result, unsigned int seq );
 	void slotAddContact();
 	void inputChanged( const QString& );
 	void inputChanged( bool );

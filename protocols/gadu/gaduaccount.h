@@ -100,7 +100,7 @@ public slots:
 	// those two functions are connected straight to gadusession ones
 	// with the same names/params. This was the easiest way to
 	// make this interface public
-	bool pubDirSearch( QString& name, QString& surname, QString& nick,
+	unsigned int pubDirSearch( QString& name, QString& surname, QString& nick,
 			    int UIN, QString& city, int gender,
 			    int ageFrom, int ageTo, bool onlyAlive );
 	void pubDirSearchClose();
@@ -114,7 +114,7 @@ public slots:
 	bool setDcc( bool );
 
 signals:
-	void pubDirSearchResult( const SearchResult& );
+	void pubDirSearchResult( const SearchResult&, unsigned int );
 
 protected:
 	//{
@@ -147,7 +147,7 @@ private slots:
 	void slotCommandDone( const QString&, const QString& );
 	void slotCommandError( const QString&, const QString& );
 
-	void slotSearchResult( const SearchResult& result );
+	void slotSearchResult( const SearchResult& result, unsigned int seq );
 	void userListExportDone();
 
 	void slotIncomingDcc( unsigned int );
