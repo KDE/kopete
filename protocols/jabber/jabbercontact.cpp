@@ -18,6 +18,7 @@
 #include "jabbercontact.h"
 
 #include "xmpp_tasks.h"
+#include "im.h"
 
 #include <qtimer.h>
 #include <qdatetime.h>
@@ -35,6 +36,7 @@
 #include "kopetechatsessionmanager.h"
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
+#include "jabberclient.h"
 #include "jabberchatsession.h"
 #include "jabberresourcepool.h"
 #include "jabberfiletransfer.h"
@@ -136,7 +138,7 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 	else
 	{
 		QStringList items;
-		ResourceList availableResources;
+		XMPP::ResourceList availableResources;
 
 		int activeItem = 0, i = 1;
 		const XMPP::Resource lockedResource = account()->resourcePool()->lockedResource ( mRosterItem.jid () );
@@ -146,7 +148,7 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 
 		account()->resourcePool()->findResources ( mRosterItem.jid (), availableResources );
 
-		for (ResourceList::iterator it = availableResources.begin(); it != availableResources.end(); ++it, i++)
+		for ( XMPP::ResourceList::iterator it = availableResources.begin(); it != availableResources.end(); ++it, i++)
 		{
 			items.append ( (*it).name() );
 
@@ -235,15 +237,15 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		if (message.body().isEmpty())
 		// Then here could be event notifications
 		{
-			if (message.containsEvent ( CancelEvent ) )
+			if (message.containsEvent ( XMPP::CancelEvent ) )
 				mManager->receivedTypingMsg ( this, false );
-			else if (message.containsEvent ( ComposingEvent ) )
+			else if (message.containsEvent ( XMPP::ComposingEvent ) )
 				mManager->receivedTypingMsg ( this, true );
-			else if (message.containsEvent ( DisplayedEvent ) )
+			else if (message.containsEvent ( XMPP::DisplayedEvent ) )
 				mManager->receivedEventNotification ( i18n("Message has been displayed") );
-			else if (message.containsEvent ( DeliveredEvent ) )
+			else if (message.containsEvent ( XMPP::DeliveredEvent ) )
 				mManager->receivedEventNotification ( i18n("Message has been delivered") );
-			else if (message.containsEvent ( OfflineEvent ) )
+			else if (message.containsEvent ( XMPP::OfflineEvent ) )
 			{
 	        	mManager->receivedEventNotification( i18n("Message stored on the server, contact offline") );
 			}
@@ -251,10 +253,10 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		else
 		// Then here could be event notification requests
 		{
-			mRequestComposingEvent = message.containsEvent ( ComposingEvent ) ? true : false;
-			mRequestOfflineEvent = message.containsEvent ( OfflineEvent ) ? true : false;
-			mRequestDeliveredEvent = message.containsEvent ( DeliveredEvent ) ? true : false;
-			mRequestDisplayedEvent = message.containsEvent ( DisplayedEvent) ? true : false;
+			mRequestComposingEvent = message.containsEvent ( XMPP::ComposingEvent ) ? true : false;
+			mRequestOfflineEvent = message.containsEvent ( XMPP::OfflineEvent ) ? true : false;
+			mRequestDeliveredEvent = message.containsEvent ( XMPP::DeliveredEvent ) ? true : false;
+			mRequestDisplayedEvent = message.containsEvent ( XMPP::DisplayedEvent) ? true : false;
 		}
 	}
 
@@ -356,7 +358,7 @@ void JabberContact::slotCheckVCard ()
 		mVCardUpdateInProgress = true;
 
 		// current data is older than 24 hours, request a new one
-		QTimer::singleShot ( account()->getPenaltyTime () * 1000, this, SLOT ( slotGetTimedVCard () ) );
+		QTimer::singleShot ( account()->client()->getPenaltyTime () * 1000, this, SLOT ( slotGetTimedVCard () ) );
 	}
 
 }
@@ -881,7 +883,7 @@ void JabberContact::sendPresence ( const XMPP::Status status )
 	XMPP::Status newStatus = status;
 
 	// honour our priority
-	newStatus.setPriority ( account()->pluginData ( protocol (), "Priority" ).toInt () );
+	newStatus.setPriority ( account()->configGroup()->readNumEntry ( "Priority", 5 ) );
 
 	XMPP::JT_Presence * task = new XMPP::JT_Presence ( account()->client()->rootTask () );
 

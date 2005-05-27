@@ -20,12 +20,9 @@
 #define DLGJABBERSENDRAW_H
 
 #include <qwidget.h>
-#include "im.h"
-#include "xmpp.h"
 #include "dlgsendraw.h"
 
-
-
+class JabberClient;
 
 /**
  * A dialog to send raw strings to the jabber server.
@@ -38,42 +35,41 @@
  */
 class dlgJabberSendRaw:public DlgSendRaw
 {
-  Q_OBJECT
+Q_OBJECT
 
-	public:
-	  dlgJabberSendRaw (XMPP::Client * engine, QWidget * parent = 0, const char *name = 0);
-	  virtual ~ dlgJabberSendRaw ();
+public:
+	dlgJabberSendRaw ( JabberClient *client, QWidget * parent = 0, const char *name = 0);
+	virtual ~ dlgJabberSendRaw ();
 
-	public slots:
+public slots:
 
-		/**
-		 * Closes the SendRaw Dialog.
-		 */
-		void slotCancel ();
+	/**
+	 * Closes the SendRaw Dialog.
+	 */
+	void slotCancel ();
 
-		/**
-		 * Clears current xml message in tePacket.
-		 */
-		void slotClear ();
+	/**
+	 * Clears current xml message in tePacket.
+	 */
+	void slotClear ();
 
-		/**
-		 * Sets a xml message in tePacket(QTextWidget)
-		 * according to the state of inputWidget.
-		 */
-		void slotCreateMessage (int);
+	/**
+	 * Sets a xml message in tePacket(QTextWidget)
+	 * according to the state of inputWidget.
+	 */
+	void slotCreateMessage (int);
 
-		/**
-		 * Sends a xml message to the server,
-		 * clears tePacket afterwards.
-		 */
-		void slotSend();
+	/**
+	 * Sends a xml message to the server,
+	 * clears tePacket afterwards.
+	 */
+	void slotSend();
 
-	private:
-
-		/**
-		 * This is what we talk through
-		 */
-		XMPP::Client * mEngine;
+private:
+	/**
+	 * This is what we talk through
+	 */
+	JabberClient *m_client;
 };
 
 

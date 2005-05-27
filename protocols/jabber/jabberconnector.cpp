@@ -124,4 +124,9 @@ void JabberConnector::setOptSSL ( bool ssl )
 
 }
 
+void JabberConnector::setOptProbe ( bool )
+{
+	// FIXME: Implement this.
+}
+
 #include "jabberconnector.moc"

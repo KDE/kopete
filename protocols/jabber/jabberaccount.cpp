@@ -41,6 +41,7 @@
 #include <klocale.h>
 #include <kapplication.h>
 #include <kaboutdata.h>
+#include <ksocketbase.h>
 
 #include "kopetepassword.h"
 #include "kopeteawayaction.h"
@@ -49,6 +50,7 @@
 #include "kopetegroup.h"
 #include "kopetecontactlist.h"
 #include "jabberconnector.h"
+#include "jabberclient.h"
 #include "jabberprotocol.h"
 #include "jabberresourcepool.h"
 #include "jabbercontactpool.h"
@@ -61,36 +63,24 @@
 
 #include <sys/utsname.h>
 
-XMPP::S5BServer *JabberAccount::m_s5bServer = 0L;
-QStringList JabberAccount::m_s5bAddressList;
-
 JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId, const char *name)
 			  :Kopete::PasswordedAccount ( parent, accountId, 0, name )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Instantiating new account " << accountId << endl;
 
-	mProtocol = parent;
+	m_protocol = parent;
 
-	jabberClient = 0L;
-	jabberClientStream = 0L;
-	jabberClientConnector = 0L;
-	jabberTLS = 0L;
-	jabberTLSHandler = 0L;
+	m_jabberClient = 0L;
 
-	mResourcePool = 0L;
-	mContactPool = 0L;
-
-	mCurrentPenaltyTime = 0;
+	m_resourcePool = 0L;
+	m_contactPool = 0L;
 
 	// add our own contact to the pool
 	JabberContact *myContact = contactPool()->addContact ( XMPP::RosterItem ( accountId ), Kopete::ContactList::self()->myself(), false );
 	setMyself( myContact );
 
-	initialPresence = XMPP::Status ( "", "", 5, true );
+	m_initialPresence = XMPP::Status ( "", "", 5, true );
 
-	// initiate penalty timer
-	QTimer::singleShot ( JABBER_PENALTY_TIME * 1000, this, SLOT ( slotUpdatePenaltyTime () ) );
-	
 #warning  this is a temporary solution.  remove also the definition of this in jabberaccount.h
 	dontSync=false;
 }
@@ -100,103 +90,26 @@ JabberAccount::~JabberAccount ()
 	disconnect ( Kopete::Account::Manual );
 
 	cleanup ();
-
-	// this is causing a lot of trouble because the accounts other contacts access myself(), and that takes place in ~Account(), after myself has been deleted
-	//delete myself()->metaContact ();
 }
 
 void JabberAccount::cleanup ()
 {
 
-	delete jabberClient;
-	delete jabberClientStream;
-	delete jabberClientConnector;
-	delete jabberTLSHandler;
-	delete jabberTLS;
+	delete m_jabberClient;
 
-	jabberClient = 0L;
-	jabberClientStream = 0L;
-	jabberClientConnector = 0L;
-	jabberTLS = 0L;
-	jabberTLSHandler = 0L;
+	m_jabberClient = 0L;
 
 }
 
-XMPP::S5BServer *JabberAccount::s5bServer ()
+void JabberAccount::setS5BServerPort ( int port )
 {
 
-	if ( !m_s5bServer )
+	if ( !m_jabberClient )
 	{
-		KGlobal::config()->setGroup("Jabber");
-		m_s5bServer = new XMPP::S5BServer ();
-		QObject::connect ( m_s5bServer, SIGNAL ( destroyed () ), this, SLOT ( slotS5bServerGone () ) );
-		setS5bPort ( KGlobal::config()->readNumEntry ( "LocalPort", 8010 ) );
+		return;
 	}
 
-	return m_s5bServer;
-
-}
-
-void JabberAccount::slotS5bServerGone ()
-{
-
-	m_s5bServer = 0L;
-
-	if ( jabberClient )
-		jabberClient->s5bManager()->setServer( 0L );
-
-}
-
-void JabberAccount::addS5bAddress ( const QString &address )
-{
-	QStringList newList;
-
-	m_s5bAddressList.append ( address );
-
-	// now filter the list without dupes
-	for ( QStringList::Iterator it = m_s5bAddressList.begin (); it != m_s5bAddressList.end (); ++it )
-	{
-		if ( !newList.contains ( *it ) )
-			newList.append ( *it );
-	}
-
-	s5bServer()->setHostList ( newList );
-
-}
-
-void JabberAccount::removeS5bAddress ( const QString &address )
-{
-	QStringList newList;
-
-	QStringList::iterator it = m_s5bAddressList.find ( address );
-	if ( it != m_s5bAddressList.end () )
-	{
-		m_s5bAddressList.remove ( it );
-	}
-
-	if ( m_s5bAddressList.isEmpty () )
-	{
-		delete m_s5bServer;
-		m_s5bServer = 0L;
-	}
-	else
-	{
-		// now filter the list without dupes
-		for ( QStringList::Iterator it = m_s5bAddressList.begin (); it != m_s5bAddressList.end (); ++it )
-		{
-			if ( !newList.contains ( *it ) )
-				newList.append ( *it );
-		}
-
-		s5bServer()->setHostList ( newList );
-	}
-
-}
-
-void JabberAccount::setS5bPort ( int port )
-{
-
-	if ( !s5bServer()->start ( port ) )
+	if ( !m_jabberClient->setS5BServerPort ( port ) )
 	{
 		KMessageBox::sorry ( Kopete::UI::Global::mainWidget (),
 							 i18n ( "Could not bind Jabber file transfer manager to local port. Please check if the file transfer port is already in use or choose another port in the account settings." ),
@@ -232,20 +145,20 @@ KActionMenu *JabberAccount::actionMenu ()
 JabberResourcePool *JabberAccount::resourcePool ()
 {
 
-	if ( !mResourcePool )
-		mResourcePool = new JabberResourcePool ( this );
+	if ( !m_resourcePool )
+		m_resourcePool = new JabberResourcePool ( this );
 
-	return mResourcePool;
+	return m_resourcePool;
 
 }
 
 JabberContactPool *JabberAccount::contactPool ()
 {
 
-	if ( !mContactPool )
-		mContactPool = new JabberContactPool ( this );
+	if ( !m_contactPool )
+		m_contactPool = new JabberContactPool ( this );
 
-	return mContactPool;
+	return m_contactPool;
 
 }
 
@@ -325,170 +238,84 @@ void JabberAccount::connectWithPassword ( const QString &password )
 	}
 
 	/* Don't do anything if we are already connected. */
-	if (isConnected ())
+	if ( isConnected () )
 		return;
 
-	/* This is dirty but has to be done: if a previous connection attempt
-	 * failed, psi doesn't handle recovering too well. we are not allowed to
-	 * call close in the slotConnected() slot since it causes a crash, so we
-	 * have to delete the psi backend altogether here for safety if it still
-	 * exists.
-	 * FIXME: verify that this problem still exists with Iris.
-	 */
-	if (jabberClient)
+	// instantiate new client backend or clean up old one
+	if ( !m_jabberClient )
 	{
-		jabberClient->close ();
+		m_jabberClient = new JabberClient;
+	
+		QObject::connect ( m_jabberClient, SIGNAL ( csDisconnected () ), this, SLOT ( slotCSDisconnected () ) );
+		QObject::connect ( m_jabberClient, SIGNAL ( csError ( int ) ), this, SLOT ( slotCSError ( int ) ) );
+		QObject::connect ( m_jabberClient, SIGNAL ( tlsWarning ( int ) ), this, SLOT ( slotHandleTLSWarning ( int ) ) );
+		QObject::connect ( m_jabberClient, SIGNAL ( connected () ), this, SLOT ( slotConnected () ) );
 
-		cleanup ();
+		QObject::connect ( m_jabberClient, SIGNAL ( subscription ( const XMPP::Jid &, const QString & ) ),
+				   this, SLOT ( slotSubscription ( const XMPP::Jid &, const QString & ) ) );
+		QObject::connect ( m_jabberClient, SIGNAL ( rosterRequestFinished ( bool ) ),
+				   this, SLOT ( slotRosterRequestFinished ( bool ) ) );
+		QObject::connect ( m_jabberClient, SIGNAL ( newContact ( const XMPP::RosterItem & ) ),
+				   this, SLOT ( slotNewContact ( const XMPP::RosterItem & ) ) );
+		QObject::connect ( m_jabberClient, SIGNAL ( contactUpdated ( const XMPP::RosterItem & ) ),
+				   this, SLOT ( slotContactUpdated ( const XMPP::RosterItem & ) ) );
+		QObject::connect ( m_jabberClient, SIGNAL ( contactDeleted ( const XMPP::RosterItem & ) ),
+				   this, SLOT ( slotContactDeleted ( const XMPP::RosterItem & ) ) );
+		QObject::connect ( m_jabberClient, SIGNAL ( resourceAvailable ( const XMPP::Jid &, const XMPP::Resource & ) ),
+				   this, SLOT ( slotResourceAvailable ( const XMPP::Jid &, const XMPP::Resource & ) ) );
+		QObject::connect ( m_jabberClient, SIGNAL ( resourceUnavailable ( const XMPP::Jid &, const XMPP::Resource & ) ),
+				   this, SLOT ( slotResourceUnavailable ( const XMPP::Jid &, const XMPP::Resource & ) ) );
+		QObject::connect ( m_jabberClient, SIGNAL ( messageReceived ( const XMPP::Message & ) ),
+				   this, SLOT ( slotReceivedMessage ( const XMPP::Message & ) ) );
+		QObject::connect ( m_jabberClient, SIGNAL ( incomingFileTransfer () ),
+				   this, SLOT ( slotIncomingFileTransfer () ) );
+		QObject::connect ( m_jabberClient, SIGNAL ( groupChatJoined ( const XMPP::Jid & ) ),
+				   this, SLOT ( slotGroupChatJoined ( const XMPP::Jid & ) ) );
+		QObject::connect ( m_jabberClient, SIGNAL ( groupChatLeft ( const XMPP::Jid & ) ),
+				   this, SLOT ( slotGroupChatLeft ( const XMPP::Jid & ) ) );
+		QObject::connect ( m_jabberClient, SIGNAL ( groupChatPresence ( const XMPP::Jid &, const XMPP::Status & ) ),
+				   this, SLOT ( slotGroupChatPresence ( const XMPP::Jid &, const XMPP::Status & ) ) );
+		QObject::connect ( m_jabberClient, SIGNAL ( groupChatError ( const XMPP::Jid &, int, const QString & ) ),
+				   this, SLOT ( slotGroupChatError ( const XMPP::Jid &, int, const QString & ) ) );
+		QObject::connect ( m_jabberClient, SIGNAL ( debugMessage ( const QString & ) ),
+				   this, SLOT ( slotClientDebugMessage ( const QString & ) ) );
+	}
+	else
+	{
+		m_jabberClient->disconnect ();
 	}
 
-	/*
-	 * Check for SSL availability first
-	 */
-	bool trySSL = false;
-	if ( configGroup ()->readBoolEntry ( "UseSSL", false ) )
-	{
-		bool sslPossible = QCA::isSupported(QCA::CAP_TLS);
+	// we need to use the old protocol for now
+	m_jabberClient->setUseXMPP09 ( true );
 
-		if (!sslPossible)
-		{
-			KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget (), KMessageBox::Error,
-								i18n ("SSL support could not be initialized for account %1. This is most likely because the QCA TLS plugin is not installed on your system.").
-								arg(myself()->contactId()),
-								i18n ("Jabber SSL Error"));
-			return;
-		}
-		else
-		{
-			trySSL = true;
-		}
-	}
+	// set SSL flag (this should be converted to forceTLS when using the new protocol)
+	m_jabberClient->setUseSSL ( configGroup()->readBoolEntry ( "UseSSL", false ) );
 
-	/*
-	 * Instantiate connector, responsible for dealing with the socket.
-	 * This class uses KDE's socket code, which in turn makes use of
-	 * the global proxy settings.
-	 */
-	jabberClientConnector = new JabberConnector;
-	jabberClientConnector->setOptHostPort (server (), port ());
-	jabberClientConnector->setOptSSL ( trySSL );
+	// override server and port (this should be dropped when using the new protocol and no direct SSL)
+	m_jabberClient->setOverrideHost ( true, server (), port () );
 
-	/*
-	 * Setup authentication layer
-	 */
-	if ( trySSL )
-	{
-		jabberTLS = new QCA::TLS;
-		jabberTLSHandler = new XMPP::QCATLSHandler(jabberTLS);
+	// allow plaintext password authentication or not?
+	m_jabberClient->setAllowPlainTextPassword ( configGroup()->readBoolEntry ( "AllowPlainTextPassword", false ) );
 
-		{
-			using namespace XMPP;
-			QObject::connect(jabberTLSHandler, SIGNAL(tlsHandshaken()), this, SLOT(slotTLSHandshaken()));
-		}
-
-		QPtrList<QCA::Cert> certStore;
-		jabberTLS->setCertificateStore ( certStore );
-	}
-
-	/*
-	 * Instantiate client stream which handles the network communication by referring
-	 * to a connector (proxying etc.) and a TLS handler (security layer)
-	 */
-	jabberClientStream = new XMPP::ClientStream(jabberClientConnector, jabberTLSHandler);
-
-	{
-		using namespace XMPP;
-		QObject::connect (jabberClientStream, SIGNAL (needAuthParams(bool, bool, bool)),
-				  this, SLOT (slotCSNeedAuthParams (bool, bool, bool)));
-		QObject::connect (jabberClientStream, SIGNAL (authenticated()),
-				  this, SLOT (slotCSAuthenticated ()));
-		QObject::connect (jabberClientStream, SIGNAL (connectionClosed ()),
-				  this, SLOT (slotCSDisconnected ()));
-		QObject::connect (jabberClientStream, SIGNAL (delayedCloseFinished ()),
-				  this, SLOT (slotCSDisconnected ()));
-		QObject::connect (jabberClientStream, SIGNAL (warning (int)),
-				  this, SLOT (slotCSWarning (int)));
-		QObject::connect (jabberClientStream, SIGNAL (error (int)),
-				  this, SLOT (slotCSError (int)));
-	}
-
-	/*
-	 * FIXME: This is required until we fully support XMPP 1.0
-	 *        Upon switching to XMPP 1.0, add full TLS capabilities
-	 *        with fallback (setOptProbe()) and remove the call below.
-	 */
-	jabberClientStream->setOldOnly(true);
-
-	/*
-	 * Initiate anti-idle timer (will be triggered every 55 seconds).
-	 */
-	jabberClientStream->setNoopTime(55000);
-
-	/*
-	 * Allow plaintext password authentication or not?
-	 */
-	jabberClientStream->setAllowPlain( configGroup()->readBoolEntry ( "AllowPlainTextPassword", false ) );
-
-	/*
-	 * Setup client layer.
-	 */
-	jabberClient = new XMPP::Client (this);
-
-	/*
-	 * Enable file transfer (IP and server will be set after connection
-	 * has been established.
-	 */
-	jabberClient->setFileTransferEnabled ( true );
-
-	/* This should only be done here to connect the signals, otherwise it is a
-	 * bad idea.
-	 */
-	{
-		using namespace XMPP;
-		QObject::connect (jabberClient, SIGNAL (subscription (const Jid &, const QString &)),
-						  this, SLOT (slotSubscription (const Jid &, const QString &)));
-		QObject::connect (jabberClient, SIGNAL (rosterRequestFinished ( bool, int, const QString & ) ),
-						  this, SLOT (slotRosterRequestFinished ( bool, int, const QString & ) ) );
-		QObject::connect (jabberClient, SIGNAL (rosterItemAdded (const RosterItem &)), this, SLOT (slotNewContact (const RosterItem &)));
-		QObject::connect (jabberClient, SIGNAL (rosterItemUpdated (const RosterItem &)), this, SLOT (slotContactUpdated (const RosterItem &)));
-		QObject::connect (jabberClient, SIGNAL (rosterItemRemoved (const RosterItem &)), this, SLOT (slotContactDeleted (const RosterItem &)));
-		QObject::connect (jabberClient, SIGNAL (resourceAvailable (const Jid &, const Resource &)), this,
-						SLOT (slotResourceAvailable (const Jid &, const Resource &)));
-		QObject::connect (jabberClient, SIGNAL (resourceUnavailable (const Jid &, const Resource &)), this,
-						SLOT (slotResourceUnavailable (const Jid &, const Resource &)));
-		QObject::connect (jabberClient, SIGNAL (messageReceived (const Message &)), this, SLOT (slotReceivedMessage (const Message &)));
-		QObject::connect (jabberClient->fileTransferManager(), SIGNAL (incomingReady()), this, SLOT (slotIncomingFileTransfer ()));
-		QObject::connect (jabberClient, SIGNAL (groupChatJoined (const Jid &)), this, SLOT (slotGroupChatJoined (const Jid &)));
-		QObject::connect (jabberClient, SIGNAL (groupChatLeft (const Jid &)), this, SLOT (slotGroupChatLeft (const Jid &)));
-		QObject::connect (jabberClient, SIGNAL (groupChatPresence (const Jid &, const Status &)), this,
-						SLOT (slotGroupChatPresence (const Jid &, const Status &)));
-		QObject::connect (jabberClient, SIGNAL (groupChatError (const Jid &, int, const QString &)), this,
-						SLOT (slotGroupChatError (const Jid &, int, const QString &)));
-		//QObject::connect (jabberClient, SIGNAL (debugText (const QString &)), this, SLOT (slotPsiDebug (const QString &)));
-		QObject::connect (jabberClient, SIGNAL (xmlIncoming(const QString& )), this, SLOT (slotIncomingXML (const QString &)));
-		QObject::connect (jabberClient, SIGNAL (xmlOutgoing(const QString& )), this, SLOT (slotOutgoingXML (const QString &)));
-	}
+	// enable file transfer (if empty, IP will be set after connection has been established)
+	KGlobal::config()->setGroup ( "Jabber" );
+	m_jabberClient->setFileTransfersEnabled ( true, KGlobal::config()->readEntry ( "LocalIP" ) );
+	setS5BServerPort ( KGlobal::config()->readNumEntry ( "LocalPort", 8010 ) );
 
 	//
 	// Determine system name
 	//
-	struct utsname utsBuf;
-
-	uname (&utsBuf);
-
-	if (!configGroup()->readBoolEntry("HideSystemInfo", false))
+	if ( !configGroup()->readBoolEntry ( "HideSystemInfo", false ) )
 	{
-		jabberClient->setClientName ("Kopete");
-		jabberClient->setClientVersion (kapp->aboutData ()->version ());
-		jabberClient->setOSName (QString ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2));
-	}
-	else
-	{
-		jabberClient->setClientName ("");
-		jabberClient->setClientVersion ("");
-		jabberClient->setOSName ("");
-	}
+		struct utsname utsBuf;
 
+		uname (&utsBuf);
+
+		m_jabberClient->setClientName ("Kopete");
+		m_jabberClient->setClientVersion (kapp->aboutData ()->version ());
+		m_jabberClient->setOSName (QString ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2));
+	}
+	
 	//
 	// Set timezone information (code from Psi)
 	// Copyright (C) 2001-2003  Justin Karneges
@@ -521,86 +348,68 @@ void JabberAccount::connectWithPassword ( const QString &password )
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Determined timezone " << timezoneString << " with UTC offset " << timezoneOffset << " hours." << endl;
 
-	jabberClient->setTimeZone ( timezoneString, timezoneOffset );
+	m_jabberClient->setTimeZone ( timezoneString, timezoneOffset );
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Connecting to Jabber server " << server() << ":" << port() << endl;
 
 	setPresence( XMPP::Status ("connecting", "", 0, true) );
 
-	jabberClient->connectToServer (jabberClientStream,
-				       XMPP::Jid ( accountId() + QString("/") + resource () ),
-				       true);
+	switch ( m_jabberClient->connect ( XMPP::Jid ( accountId () + QString("/") + resource () ), password ) )
+	{
+		case JabberClient::NoTLS:
+			// no SSL support, at the connecting stage this means the problem is client-side
+			KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget (), KMessageBox::Error,
+								i18n ("SSL support could not be initialized for account %1. This is most likely because the QCA TLS plugin is not installed on your system.").
+								arg(myself()->contactId()),
+								i18n ("Jabber SSL Error"));
+			break;
+	
+		case JabberClient::Ok:
+		default:
+			// everything alright!
+			break;
+	}
 
 }
 
-void JabberAccount::changePassword ( const QString &password )
-{
-	XMPP::JT_Register * task = new XMPP::JT_Register ( client()->rootTask () );
-   	QObject::connect (task, SIGNAL ( finished () ), this, SLOT (slotChangePasswordDone () ));
-
-    	task->changepw ( password );
-	task->go ( true );
-	return;
-}
-
+// FIXME FIXME this needs to be in the UI code!
+/*
 void JabberAccount:: slotChangePasswordDone()
 {
 	XMPP::JT_Register * task = (XMPP::JT_Register *) sender ();
- 	QObject::disconnect (task, SIGNAL (finished ()), this, SLOT (slotChangePwDone ()));
+	QObject::disconnect (task, SIGNAL (finished ()), this, SLOT (slotChangePwDone ()));
 	if ( task->success () ) 
 	{
 		KMessageBox::information (Kopete::UI::Global::mainWidget (),
-								  i18n ("Password has been changed but the change isn't instantaneous, you still have to use the old one for a short time"),
-								  i18n ("Jabber "));
+								  i18n ("Password has been changed but the change isn't instantaneous, you still have to use the old one for a short time."),
+								  i18n ("Jabber Password Change"));
 		emit passwordChangedSuccess ();
- 	} 
+	}
 	else 
 	{
 		KMessageBox::error (Kopete::UI::Global::mainWidget (),
-								  i18n ("Unable to change your password, your server may not allow this, or maybe you given a bad password to connect"),
-								  i18n ("Jabber "));
+								  i18n ("Unable to change your password. Either the connection password was incorrect or your server does not allow your password to be changed."),
+								  i18n ("Jabber Password Change"));
 		emit passwordChangedError ();
 	}
 }
+*/
 
-void JabberAccount::slotPsiDebug (const QString & _msg)
+void JabberAccount::slotClientDebugMessage ( const QString &msg )
 {
-	QString msg = _msg;
 
-	msg = msg.replace( QRegExp( "<password>[^<]*</password>\n" ), "<password>[Filtered]</password>\n" );
-	msg = msg.replace( QRegExp( "<digest>[^<]*</digest>\n" ), "<digest>[Filtered]</digest>\n" );
-
-	kdDebug (JABBER_DEBUG_PROTOCOL) << k_funcinfo << "Psi: " << msg << endl;
+	kdDebug (JABBER_DEBUG_PROTOCOL) << k_funcinfo << msg << endl;
 
 }
 
-void JabberAccount::slotIncomingXML (const QString & _msg)
-{
-	QString msg = _msg;
-
-	msg = msg.replace( QRegExp( "<password>[^<]*</password>\n" ), "<password>[Filtered]</password>\n" );
-	msg = msg.replace( QRegExp( "<digest>[^<]*</digest>\n" ), "<digest>[Filtered]</digest>\n" );
-
-	kdDebug (JABBER_DEBUG_PROTOCOL) << k_funcinfo << "XML IN: " << msg << endl;
-
-}
-
-void JabberAccount::slotOutgoingXML (const QString & _msg)
-{
-	QString msg = _msg;
-
-	msg = msg.replace( QRegExp( "<password>[^<]*</password>\n" ), "<password>[Filtered]</password>\n" );
-	msg = msg.replace( QRegExp( "<digest>[^<]*</digest>\n" ), "<digest>[Filtered]</digest>\n" );
-
-	kdDebug (JABBER_DEBUG_PROTOCOL) << k_funcinfo << "XML OUT: " << msg << endl;
-
-}
-
-int JabberAccount::handleTLSWarning (int warning, QString server, QString accountId)
+bool JabberAccount::handleTLSWarning ( JabberClient *jabberClient, int warning )
 {
 	QString validityString, code;
 
-	switch(warning)
+	QString server = jabberClient->jid().domain ();
+	QString accountId = jabberClient->jid().bare ();
+
+	switch ( warning )
 	{
 		case QCA::TLS::NoCert:
 			validityString = i18n("No certificate was presented.");
@@ -655,130 +464,50 @@ int JabberAccount::handleTLSWarning (int warning, QString server, QString accoun
 			break;
 		}
 
-	return KMessageBox::warningContinueCancel(Kopete::UI::Global::mainWidget (),
+	return ( KMessageBox::warningContinueCancel ( Kopete::UI::Global::mainWidget (),
 						  i18n("The certificate of server %1 could not be validated for account %2: %3").
-						  arg(server).
-						  arg(accountId).
-						  arg(validityString),
+						  arg(server, accountId, validityString),
 						  i18n("Jabber Connection Certificate Problem"),
 						  KStdGuiItem::cont(),
-						  QString("KopeteTLSWarning") + server + code);
+						  QString("KopeteTLSWarning") + server + code) == KMessageBox::Continue );
 
 }
 
-void JabberAccount::slotTLSHandshaken ()
+void JabberAccount::slotHandleTLSWarning ( int validityResult )
 {
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Handling TLS warning..." << endl;
 
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "TLS handshake done, testing certificate validity..." << endl;
-
-	int validityResult = jabberTLS->certificateValidityResult ();
-
-	if(validityResult == QCA::TLS::Valid)
+	if ( handleTLSWarning ( m_jabberClient, validityResult ) )
 	{
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Certificate is valid, continuing." << endl;
-
-		// valid certificate, continue
-		jabberTLSHandler->continueAfterHandshake ();
+		// resume stream
+		m_jabberClient->continueAfterTLSWarning ();
 	}
 	else
 	{
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Certificate is not valid, asking user what to do next." << endl;
-
-		// certificate is not valid, query the user
-		if(handleTLSWarning (validityResult, server (), myself()->contactId ()) == KMessageBox::Continue)
-		{
-			jabberTLSHandler->continueAfterHandshake ();
-		}
-		else
-		{
-			disconnect ( Kopete::Account::Manual );
-		}
+		// disconnect stream
+		disconnect ( Kopete::Account::Manual );
 	}
 
 }
 
-void JabberAccount::slotCSNeedAuthParams (bool user, bool pass, bool realm)
-{
-
-	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Sending auth credentials..." << endl;
-
-	XMPP::Jid jid(accountId());
-
-	if(user)
-	{
-		jabberClientStream->setUsername(jid.node());
-	}
-
-	if(pass)
-	{
-		jabberClientStream->setPassword(password().cachedValue());
-	}
-
-	if(realm)
-	{
-		jabberClientStream->setRealm(jid.domain());
-	}
-
-	jabberClientStream->continueAfterParams();
-
-}
-
-void JabberAccount::slotCSAuthenticated ()
+void JabberAccount::slotConnected ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Connected to Jabber server." << endl;
 
-	/*
-	 * Determine local IP address.
-	 * FIXME: This is ugly!
-	 */
-	KGlobal::config()->setGroup("Jabber");
-	if ( !KGlobal::config()->readEntry ( "LocalIP" ).isEmpty () )
-	{
-		localAddress = KGlobal::config()->readEntry ( "LocalIP" );
-	}
-	else
-	{
-		// code for Iris-type bytestreams
-		ByteStream *irisByteStream = jabberClientConnector->stream();
-		if ( irisByteStream->inherits ( "BSocket" ) || irisByteStream->inherits ( "XMPP::BSocket" ) )
-		{
-			localAddress = ( (BSocket *)irisByteStream )->address().toString ();
-		}
-
-		// code for the KDE-type bytestream
-		JabberByteStream *kdeByteStream = dynamic_cast<JabberByteStream*>(jabberClientConnector->stream());
-		if( kdeByteStream )
-		{
-			localAddress = kdeByteStream->socket()->localAddress().nodeName ();
-		}
-	}
-
-	/**
-	 * Setup file transfer
-	 */
-	addS5bAddress ( localAddress );
-	jabberClient->s5bManager()->setServer ( s5bServer () );
-
-	/* start the client operation */
-	XMPP::Jid jid(accountId());
-	jabberClient->start ( jid.domain(), jid.node(), password().cachedValue(), resource () );
-
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Requesting roster..." << endl;
-
-	/* Request roster. */
-	jabberClient->rosterRequest ();
+	m_jabberClient->requestRoster ();
 
 	/* Since we are online now, set initial presence. Don't do this
 	 * before the roster request or we will receive presence
 	 * information before we have updated our roster with actual
-	 * contacts from the server! (libpsi won't forward presence
+	 * contacts from the server! (Iris won't forward presence
 	 * information in that case either). */
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting initial presence..." << endl;
-	setPresence ( initialPresence );
+	setPresence ( m_initialPresence );
 
 }
 
-void JabberAccount::slotRosterRequestFinished ( bool success, int /*statusCode*/, const QString &/*statusString*/ )
+void JabberAccount::slotRosterRequestFinished ( bool success )
 {
 
 	if ( success )
@@ -844,7 +573,7 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status  , const
 	if ( !isConnected () )
 	{
 		// we are not connected yet, so connect now
-		initialPresence = xmppStatus;
+		m_initialPresence = xmppStatus;
 		connect ();
 	}
 	else
@@ -861,7 +590,7 @@ void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )
 	{
 		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Still connected, closing connection..." << endl;
 		/* Tell backend class to disconnect. */
-		jabberClient->close ();
+		m_jabberClient->disconnect ();
 	}
 
 	// make sure that the connection animation gets stopped if we're still
@@ -869,8 +598,8 @@ void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )
 	setPresence ( XMPP::Status ("", "", 0, false) );
 
 	/* FIXME:
-	 * We should delete the XMPP::Client instance here,
-	 * but active timers in psi prevent us from doing so.
+	 * We should delete the JabberClient instance here,
+	 * but active timers in Iris prevent us from doing so.
 	 * (in a failed connection attempt, these timers will
 	 * try to access an already deleted object).
 	 * Instead, the instance will lurk until the next
@@ -900,36 +629,15 @@ void JabberAccount::slotCSDisconnected ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Disconnected from Jabber server." << endl;
 
-	/* FIXME:
-	 * We should delete the XMPP::Client instance here,
-	 * but timers etc prevent us from doing so. (Psi does
-	 * not like to be deleted from a slot).
+	/*
+	 * We should delete the JabberClient instance here,
+	 * but timers etc prevent us from doing so. Iris does
+	 * not like to be deleted from a slot.
 	 */
 
 	/* It seems that we don't get offline notifications when going offline
 	 * with the protocol, so clear all resources manually. */
 	resourcePool()->clear();
-
-	// delete local address from S5B server
-	removeS5bAddress ( localAddress );
-
-}
-
-void JabberAccount::slotCSWarning (int /*warning*/)
-{
-
-	/*
-	 * FIXME: these warnings don't mean anything to the user just yet,
-	 *        so we simply ignore them (pre XMPP 1.0 warning, no TLS warning).
-	 *
-	switch(warning)
-	{
-		case XMPP::ClientStream::WarnOldVersion:
-		case XMPP::ClientStream::WarnNoTLS:
-	}
-	*/
-
-	jabberClientStream->continueAfterWarning ();
 
 }
 
@@ -1191,12 +899,12 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 
 }
 
-void JabberAccount::slotCSError (int error)
+void JabberAccount::slotCSError ( int error )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Error in stream signalled." << endl;
 
 	if ( ( error == XMPP::ClientStream::ErrAuth )
-		&& ( jabberClientStream->errorCondition () == XMPP::ClientStream::NotAuthorized ) )
+		&& ( client()->clientStream()->errorCondition () == XMPP::ClientStream::NotAuthorized ) )
 	{
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Incorrect password, retrying." << endl;
 
@@ -1212,13 +920,10 @@ void JabberAccount::slotCSError (int error)
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Disconnecting." << endl;
 
 		// display message to user
-		handleStreamError (error, jabberClientStream->errorCondition (), jabberClientConnector->errorCode (), server (), errorClass);
+		handleStreamError (error, client()->clientStream()->errorCondition (), client()->clientConnector()->errorCode (), server (), errorClass);
 
 		disconnect ( errorClass );
 
-		// manually force the slot to be called since in case of an error,
-		// libpsi will most likely be confused and not emit signals anymore
-		slotCSDisconnected();
 	}
 
 }
@@ -1255,7 +960,7 @@ void JabberAccount::setPresence ( const XMPP::Status &status )
 		{
 			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Sending new presence to the server." << endl;
 
-			XMPP::JT_Presence * task = new XMPP::JT_Presence (jabberClient->rootTask ());
+			XMPP::JT_Presence * task = new XMPP::JT_Presence ( client()->rootTask ());
 
 			task->pres ( newStatus );
 			task->go ( true );
@@ -1277,7 +982,7 @@ void JabberAccount::slotSendRaw ()
 		return;
 	}
 
-	new dlgJabberSendRaw (jabberClient, Kopete::UI::Global::mainWidget());
+	new dlgJabberSendRaw ( client (), Kopete::UI::Global::mainWidget());
 
 }
 
@@ -1317,7 +1022,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 					break;
 				}
 
-				task = new XMPP::JT_Presence ( jabberClient->rootTask () );
+				task = new XMPP::JT_Presence ( client()->rootTask () );
 
 				task->sub ( jid, "subscribed" );
 				task->go ( true );
@@ -1334,7 +1039,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 												   arg (jid.userHost (), 1), i18n ("Add Jabber User?")) == KMessageBox::Yes) )
 				{
 					// Subscribe to user's presence.
-					task = new XMPP::JT_Presence ( jabberClient->rootTask () );
+					task = new XMPP::JT_Presence ( client()->rootTask () );
 
 					task->sub ( jid, "subscribe" );
 					task->go ( true );
@@ -1356,7 +1061,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 					break;
 				}
 
-				task = new XMPP::JT_Presence ( jabberClient->rootTask () );
+				task = new XMPP::JT_Presence ( client()->rootTask () );
 
 				task->sub ( jid, "unsubscribed" );
 				task->go ( true );
@@ -1392,7 +1097,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 				/*
 				 * Delete this contact from our roster.
 				 */
-				task = new XMPP::JT_Roster (jabberClient->rootTask ());
+				task = new XMPP::JT_Roster ( client()->rootTask ());
 
 				task->remove (jid);
 				task->go (true);
@@ -1724,29 +1429,6 @@ void JabberAccount::slotResourceUnavailable (const XMPP::Jid & jid, const XMPP::
 
 }
 
-int JabberAccount::getPenaltyTime ()
-{
-
-	int currentTime = mCurrentPenaltyTime;
-
-	mCurrentPenaltyTime += JABBER_PENALTY_TIME;
-
-	return currentTime;
-
-}
-
-void JabberAccount::slotUpdatePenaltyTime ()
-{
-
-	if ( mCurrentPenaltyTime >= JABBER_PENALTY_TIME )
-		mCurrentPenaltyTime -= JABBER_PENALTY_TIME;
-	else
-		mCurrentPenaltyTime = 0;
-
-	QTimer::singleShot ( JABBER_PENALTY_TIME * 1000, this, SLOT ( slotUpdatePenaltyTime () ) );
-
-}
-
 void JabberAccount::slotEditVCard ()
 {
 	static_cast<JabberContact *>( myself() )->slotUserInfo ();
@@ -1770,13 +1452,6 @@ const int JabberAccount::port () const
 {
 
 	return configGroup()->readNumEntry ( "Port", 5222 );
-
-}
-
-XMPP::Client *JabberAccount::client()
-{
-
-	return jabberClient;
 
 }
 

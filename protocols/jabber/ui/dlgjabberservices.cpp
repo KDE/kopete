@@ -24,8 +24,8 @@
 #include <qlineedit.h>
 #include <qtable.h>
 
-
 #include "jabberaccount.h"
+#include "jabberclient.h"
 #include "dlgjabberregister.h"
 #include "dlgjabberbrowse.h"
 #include "dlgjabberservices.h"

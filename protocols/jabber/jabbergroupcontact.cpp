@@ -22,6 +22,7 @@
 #include <kfiledialog.h>
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
+#include "jabberclient.h"
 #include "jabberfiletransfer.h"
 #include "jabbergroupchatmanager.h"
 #include "jabbergroupmembercontact.h"
@@ -278,7 +279,7 @@ void JabberGroupContact::slotChatSessionDeleted ()
 
 	if ( account()->isConnected () )
 	{
-		account()->client()->groupChatLeave ( mRosterItem.jid().host (), mRosterItem.jid().user () );
+		account()->client()->leaveGroupChat ( mRosterItem.jid().host (), mRosterItem.jid().user () );
 	}
 
 }

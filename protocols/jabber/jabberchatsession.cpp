@@ -26,6 +26,7 @@
 #include "kopeteview.h"
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
+#include "jabberclient.h"
 #include "jabbercontact.h"
 
 JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBaseContact *user,
@@ -114,10 +115,15 @@ void JabberChatSession::appendMessage ( Kopete::Message &msg, const QString &fro
 	
 	if ( account()->configGroup()->readBoolEntry ("SendEvents", true) )
 	{
-		if ( account()->configGroup()->readBoolEntry ("SendDeliveredEvent", true) ) 
-			sendNotification( DeliveredEvent );
+		if ( account()->configGroup()->readBoolEntry ("SendDeliveredEvent", true) )
+		{
+			sendNotification( XMPP::DeliveredEvent );
+		}
+		
 		if ( account()->configGroup()->readBoolEntry ("SendDisplayedEvent", true) )
-			sendNotification( DisplayedEvent );
+		{
+			sendNotification( XMPP::DisplayedEvent );
+		}
 	}
 }
 

@@ -378,15 +378,15 @@ void JabberRegisterAccount::slotTLSHandshaken ()
 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Certificate is not valid, asking user what to do next." << endl;
 
 		// certificate is not valid, query the user
-		if(JabberAccount::handleTLSWarning (validityResult, mMainWidget->leServer->text (), mMainWidget->leJID->text ()) == KMessageBox::Continue)
+		//if(JabberAccount::handleTLSWarning (validityResult, mMainWidget->leServer->text (), mMainWidget->leJID->text ()) == KMessageBox::Continue)
 		{
 			jabberTLSHandler->continueAfterHandshake ();
 		}
-		else
-		{
-			mMainWidget->lblStatusMessage->setText ( i18n ( "Security handshake failed." ) );
-			disconnect ();
-		}
+		//else
+		//{
+		//	mMainWidget->lblStatusMessage->setText ( i18n ( "Security handshake failed." ) );
+		//	disconnect ();
+		//}
 	}
 
 }

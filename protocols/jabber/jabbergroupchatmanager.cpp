@@ -24,6 +24,7 @@
 #include "kopeteview.h"
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
+#include "jabberclient.h"
 #include "jabbercontact.h"
 
 JabberGroupChatManager::JabberGroupChatManager ( JabberProtocol *protocol, const JabberBaseContact *user,

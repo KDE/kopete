@@ -35,6 +35,7 @@
 #include "kopeteuiglobal.h"
 #include "kopetepasswordwidget.h"
 
+#include "jabberclient.h"
 #include "jabbereditaccountwidget.h"
 #include "jabberregisteraccount.h"
 
@@ -164,7 +165,7 @@ Kopete::Account *JabberEditAccountWidget::apply ()
 
 	this->writeConfig ();
 
-	static_cast<JabberAccount*>(account())->setS5bPort ( sbLocalPort->value () );
+	static_cast<JabberAccount*>(account())->setS5BServerPort ( sbLocalPort->value () );
 
 	return account();
 }
@@ -280,7 +281,7 @@ void JabberEditAccountWidget::slotChangePassword ()
 	QObject::disconnect( account(),SIGNAL( isConnectedChanged () ),  this, SLOT ( slotChangePassword () ));
 	QObject::connect( account(), SIGNAL( passwordChangedSuccess() ), this, SLOT( slotChangePwDone() ));
 	QObject::connect( account(), SIGNAL( passwordChangedError() ), this, SLOT( slotChangePwDone() ));
-	account()->changePassword( pePassword1->password() );
+	account()->client()->changePassword( pePassword1->password() );
 }
 
 void JabberEditAccountWidget::slotChangePwClicked ()

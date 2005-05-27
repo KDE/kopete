@@ -23,28 +23,20 @@
 #ifndef JABBERACCOUNT_H
 #define JABBERACCOUNT_H
 
-// include these because of namespace reasons
-#include <im.h>
-#include <xmpp.h>
-#include <s5b.h>
-
 // we need these for type reasons
 #include <kopetepasswordedaccount.h>
 #include <kopeteonlinestatus.h>
+#include <im.h>
 
-class JabberConnector;
-class JabberProtocol;
 class QString;
 class QStringList;
-namespace Kopete { class MetaContact; }
 class KActionMenu;
 class JabberResourcePool;
 class JabberContact;
 class JabberContactPool;
-
-#define JABBER_PENALTY_TIME	3
-
-using namespace XMPP;
+class JabberClient;
+class JabberProtocol;
+namespace Kopete { class MetaContact; }
 
 /* @author Daniel Stone, Till Gerken */
 
@@ -53,8 +45,7 @@ class JabberAccount : public Kopete::PasswordedAccount
 	Q_OBJECT
 
 public:
-	  JabberAccount (JabberProtocol * parent, const QString & accountID, const char *name = 0L);
-	/* Standard null destructor. */
+	JabberAccount (JabberProtocol * parent, const QString & accountID, const char *name = 0L);
 	 ~JabberAccount ();
 
 	/* Returns the action menu for this account. */
@@ -68,18 +59,19 @@ public:
 	JabberResourcePool *resourcePool ();
 	JabberContactPool *contactPool ();
 
-	XMPP::Client *client();
-
 	/* to get the protocol from the account */
 	JabberProtocol *protocol () const
 	{
-		return mProtocol;
+		return m_protocol;
 	}
 
-	/**
-	 * Returns if a connection attempt is currently in progress.
-	 */
-	bool isConnecting ();
+	JabberClient *client () const
+	{
+		return m_jabberClient;
+	}
+
+	// change the default S5B server port
+	void setS5BServerPort ( int port );
 
 	/* Tells the user to connect first before they can do whatever it is
 	 * that they want to do. */
@@ -94,40 +86,27 @@ public:
 
 	/*
 	 * Handle TLS warnings. Displays a dialog and returns the user's choice.
-	 * Parameters: Warning code from QCA::TLS, server name, account ID
-	 * Returns KMessageBox::ButtonCode
+	 * Parameters: Warning code from QCA::TLS
+	 * Automatically resumes the stream if wanted.
 	 */
-	static int handleTLSWarning (int warning, QString server, QString accountId);
-
+	/**
+	 * Handle a TLS warning. Displays a dialog and returns if the
+	 * stream can be continued or not.
+	 * @param client JabberClient instance
+	 * @param warning Warning code from QCA::TLS
+	 * @return True if stream can be resumed.
+	 */
+	static bool handleTLSWarning ( JabberClient *client, int warning );
+	
 	/*
 	 * Handle stream errors. Displays a dialog and returns.
 	 */
 	static void handleStreamError (int streamError, int streamCondition, int connectorCode, QString server, Kopete::Account::DisconnectReason &errorClass);
 
-	/**
-	 * Return the current, shared S5B server instance.
-	 */
-	XMPP::S5BServer *s5bServer ();
-	void addS5bAddress ( const QString &address );
-	void removeS5bAddress ( const QString &address );
-	void setS5bPort ( int port );
-
-	/**
-	 * As the Jabber servers shouldn't be bombarded with
-	 * requests, time intensive queries and mass queries
-	 * should be slowed down to reasonable intervals.
-	 * The method here offers a penalty service that
-	 * returns a time in seconds a query should be
-	 * delayed in order to not flood the server.
-	 * Current hard-coded interval is 3 seconds.
-	 */
-	int getPenaltyTime ();
-
 public slots:
 	/* Connects to the server. */
 	void connectWithPassword ( const QString &password );
 
-	void changePassword ( const QString &password );
 	/* Disconnects from the server. */
 	void disconnect ();
 
@@ -136,10 +115,6 @@ public slots:
 
 	/* Reimplemented from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
-
-signals:
-	void passwordChangedSuccess ();
-	void passwordChangedError ();
 
 protected:
 	/**
@@ -162,38 +137,21 @@ protected:
 	virtual bool createContact (const QString & contactID, Kopete::MetaContact * parentContact);
 
 private:
-	/* Psi backend for this account. */
-	XMPP::Client *jabberClient;
-	XMPP::ClientStream *jabberClientStream;
-	JabberConnector *jabberClientConnector;
-	QCA::TLS *jabberTLS;
-	XMPP::QCATLSHandler *jabberTLSHandler;
+	JabberProtocol *m_protocol;
 
-	JabberResourcePool *mResourcePool;
-	JabberContactPool *mContactPool;
+	// backend for this account
+	JabberClient *m_jabberClient;
 
-	QString localAddress;
-
-	/*
-	 * Current penalty time
-	 */
-	int mCurrentPenaltyTime;
+	JabberResourcePool *m_resourcePool;
+	JabberContactPool *m_contactPool;
 
 	/* Set up our actions for the status menu. */
 	void initActions ();
 
 	void cleanup ();
 
-	JabberProtocol *mProtocol;
-
 	/* Initial presence to set after connecting. */
-	XMPP::Status initialPresence;
-
-	/* Caches the title ID of the account context menu. */
-	int menuTitleId;
-
-	static XMPP::S5BServer *m_s5bServer;
-	static QStringList m_s5bAddressList;
+	XMPP::Status m_initialPresence;
 
 	/**
 	 * Sets our own presence. Updates our resource in the
@@ -201,79 +159,75 @@ private:
 	 */
 	void setPresence ( const XMPP::Status &status );
 
+	/**
+	 * Returns if a connection attempt is currently in progress.
+	 */
+	bool isConnecting ();
+
 private slots:
-		/* Connects to the server. */
+	/* Connects to the server. */
 	void slotConnect ();
 
 	/* Disconnects from the server. */
 	void slotDisconnect ();
 
-	/* Login if the connection was OK. */
-	void slotCSNeedAuthParams (bool user, bool pass, bool realm);
+	// handle a TLS warning
+	void slotHandleTLSWarning ( int validityResult );
 
-	/* Called from Psi: tells us when we're logged in OK. */
-	void slotCSAuthenticated ();
+	// we are connected to the server
+	void slotConnected ();
 
 	/* Called from Psi: tells us when we've been disconnected from the server. */
 	void slotCSDisconnected ();
 
-	/* Called from Psi: alerts us to a protocol warning. */
-	void slotCSWarning (int);
-
 	/* Called from Psi: alerts us to a protocol error. */
 	void slotCSError (int);
 
-	/* Called from Psi: report certificate status */
-	void slotTLSHandshaken ();
-
 	/* Called from Psi: roster request finished */
-	void slotRosterRequestFinished ( bool success, int statusCode, const QString &statusString );
+	void slotRosterRequestFinished ( bool success );
 
 	/* Called from Psi: incoming file transfer */
 	void slotIncomingFileTransfer ();
 
 	/* Called from Psi: debug messages from the backend. */
-	void slotPsiDebug (const QString & msg);
-	void slotIncomingXML (const QString &msg);
-	void slotOutgoingXML (const QString &msg);
+	void slotClientDebugMessage (const QString &msg);
 
 	/* Sends a raw message to the server (use with caution) */
 	void slotSendRaw ();
 
 	/* Slots for handling group chats. */
 	void slotJoinNewChat ();
-	void slotGroupChatJoined (const Jid & jid);
-	void slotGroupChatLeft (const Jid & jid);
-	void slotGroupChatPresence (const Jid & jid, const Status & status);
-	void slotGroupChatError (const Jid & jid, int error, const QString & reason);
+	void slotGroupChatJoined ( const XMPP::Jid &jid );
+	void slotGroupChatLeft ( const XMPP::Jid &jid );
+	void slotGroupChatPresence ( const XMPP::Jid &jid, const XMPP::Status &status );
+	void slotGroupChatError ( const XMPP::Jid &jid, int error, const QString &reason );
 
-	void slotChangePasswordDone();
 	/* Incoming subscription request. */
-	void slotSubscription (const Jid & jid, const QString & type);
+	void slotSubscription ( const XMPP::Jid &jid, const QString &type );
 
 	/**
 	 * A new item appeared in our roster, synch it with the
 	 * contact list.
 	 */
-	void slotNewContact (const RosterItem &);
+	void slotNewContact ( const XMPP::RosterItem & );
 
 	/**
 	 * An item has been deleted from our roster,
 	 * delete it from our contact pool.
 	 */
-	void slotContactDeleted (const RosterItem &);
+	void slotContactDeleted ( const XMPP::RosterItem & );
 
 	/* Update a contact's details. */
-	void slotContactUpdated (const RosterItem &);
+	void slotContactUpdated ( const XMPP::RosterItem & );
 
 	/* Someone on our contact list had (another) resource come online. */
-	void slotResourceAvailable (const Jid &, const Resource &);
+	void slotResourceAvailable ( const XMPP::Jid &, const XMPP::Resource & );
 
 	/* Someone on our contact list had (another) resource go offline. */
-	void slotResourceUnavailable (const Jid &, const Resource &);
+	void slotResourceUnavailable ( const XMPP::Jid &, const XMPP::Resource & );
 
 	/* Displays a new message. */
-	void slotReceivedMessage (const Message &);
+	void slotReceivedMessage ( const XMPP::Message & );
 
 	/* Gets the user's vCard from the server for editing. */
 	void slotEditVCard ();
@@ -281,13 +235,6 @@ private slots:
 	/* Get the services list from the server for management. */
 	void slotGetServices ();
 
-	void slotS5bServerGone ();
-
-	/*
-	 * Update penalty timer
-	 */
-	void slotUpdatePenaltyTime ();
-	
 public:
 	/*
 	 * this is only a temporary solution to don't have an infinite loop whensyncing the contactlist

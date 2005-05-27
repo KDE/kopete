@@ -22,7 +22,10 @@
 #include <klocale.h>
 #include <kdialogbase.h>
 #include <qlineedit.h>
+
 #include "jabberaccount.h"
+#include "jabberclient.h"
+
 #include "dlgchatjoin.h"
 
 dlgJabberChatJoin::dlgJabberChatJoin (JabberAccount *account, QWidget * parent, const char *name)
@@ -49,7 +52,7 @@ void dlgJabberChatJoin::slotOk ()
 	dlgChatJoin *widget = dynamic_cast<dlgChatJoin *>(mainWidget ());
 
 	// send the join request
-	m_account->client()->groupChatJoin(widget->leServer->text(), widget->leRoom->text(), widget->leNick->text());
+	m_account->client()->joinGroupChat ( widget->leServer->text (), widget->leRoom->text (), widget->leNick->text () );
 
 	delete this;
 

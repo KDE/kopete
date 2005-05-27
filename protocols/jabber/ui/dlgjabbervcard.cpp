@@ -43,6 +43,7 @@
 #include "jabberaccount.h"
 #include "jabbercontactpool.h"
 #include "jabberbasecontact.h"
+#include "jabberclient.h"
 #include "dlgvcard.h"
 
 /*

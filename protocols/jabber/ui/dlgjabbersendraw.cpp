@@ -16,21 +16,24 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "dlgjabbersendraw.h"
+
 #include <qcombobox.h>
 #include <qpushbutton.h>
 #include <qtextedit.h>
 #include <kdebug.h>
-#include "dlgjabbersendraw.h"
+#include "jabberclient.h"
 
-
-dlgJabberSendRaw::dlgJabberSendRaw (XMPP::Client * engine, QWidget * parent, const char *name)
-	: DlgSendRaw (parent, name), mEngine(engine)
+dlgJabberSendRaw::dlgJabberSendRaw ( JabberClient *client, QWidget *parent, const char *name )
+	: DlgSendRaw (parent, name)
 {
 	// Connect the GUI elements to things that do stuff
 	connect (btnSend, SIGNAL (clicked ()), this, SLOT (slotSend ()));
 	connect (btnClose, SIGNAL (clicked ()), this, SLOT (slotCancel ()));
 	connect (btnClear, SIGNAL (clicked ()), this, SLOT (slotClear ()));
 	connect (inputWidget, SIGNAL (activated (int)), this, SLOT (slotCreateMessage (int)));
+
+	m_client = client;
 
 	show();
 }
@@ -56,7 +59,7 @@ void dlgJabberSendRaw::slotCreateMessage(int index)
 	switch (index) {
 		case 1:
 			tePacket->setText(QString("<iq type='set' to='%1'>\n<query xmlns='jabber:iq:register'><remove/>\n</query>\n</iq>")
-						.arg(mEngine->host()));
+						.arg ( m_client->jid().domain () ) );
 			break;
 		case 2:
 			tePacket->setText("<presence>\n<show>\?\?\?</show>\n<status>\?\?\?</status>\n</presence>");
@@ -66,15 +69,12 @@ void dlgJabberSendRaw::slotCreateMessage(int index)
 			break;
 		case 4:
 			tePacket->setText(QString("<message to='USER@DOMAIN' from='%1@%2/%3'>\n<body>Body text</body>\n</message>")
-						.arg(mEngine->user())
-						.arg(mEngine->host())
-						.arg(mEngine->resource()));
+						.arg ( m_client->jid().node (), m_client->jid().domain (), m_client->jid().resource () ) );
 			break;
 		case 5:
 			tePacket->setText(QString("<message to='USER@DOMAIN' from='%1@%2/%3'>\n<subject>Subject</subject><body>Body text</body>\n</message>")
-						.arg(mEngine->user())
-						.arg(mEngine->host())
-						.arg(mEngine->resource()));
+						.arg ( m_client->jid().node (), m_client->jid().domain (), m_client->jid().resource () ) );
+
 			break;
 		case 6:
 			tePacket->setText("<iq type='set'>\n<query xmlns='jabber:iq:roster'>\n<item name='NAME' jid='USER@DOMAIN'>\n<group>GROUP</group>\n</item>\n</query>\n</iq>");
@@ -96,7 +96,7 @@ void dlgJabberSendRaw::slotSend()
 	kdDebug (14130) << "[dlgJabberSendRaw] Sending RAW message" << endl;
 
 	// Tell our engine to send
-	mEngine->send (tePacket->text ());
+	m_client->send (tePacket->text ());
 
 	// set temlapte combobox to "User Defined" and clear content
 	inputWidget->setCurrentItem(0);

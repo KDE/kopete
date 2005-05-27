@@ -29,6 +29,7 @@
 
 #include "dlgaddcontact.h"
 #include "jabberaccount.h"
+#include "jabberclient.h"
 #include "xmpp_tasks.h"
 
 JabberAddContactPage::JabberAddContactPage (Kopete::Account * owner, QWidget * parent, const char *name):AddContactPage (parent, name)

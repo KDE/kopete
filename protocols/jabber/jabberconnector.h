@@ -39,12 +39,13 @@ public:
 
 	~JabberConnector ();
 
-	virtual void connectToServer ( const QString &server );
-	virtual ByteStream *stream () const;
-	virtual void done ();
+	void connectToServer ( const QString &server );
+	ByteStream *stream () const;
+	void done ();
 
 	void setOptHostPort ( const QString &host, Q_UINT16 port );
 	void setOptSSL ( bool );
+	void setOptProbe ( bool );
 
 	int errorCode ();
 

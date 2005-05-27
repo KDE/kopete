@@ -28,6 +28,7 @@
 #include "kopetetransfermanager.h"
 #include "jabberaccount.h"
 #include "jabberprotocol.h"
+#include "jabberclient.h"
 #include "jabbercontactpool.h"
 #include "jabberbasecontact.h"
 #include "jabbercontact.h"
