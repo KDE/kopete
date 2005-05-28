@@ -218,6 +218,10 @@ class Skype : public QObject
 		 * Sends one ping and takes actions if it can not be delivered (skype is down)
 		 */
 		void ping();
+		/**
+		 * What DBus bus is used?
+		 */
+		void setBus(int bus);
 	signals:
 		/**
 		 * Emited when the skype changes to online (or says it goes online)

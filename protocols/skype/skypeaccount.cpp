@@ -59,6 +59,8 @@ class SkypeAccountPrivate {
 		int callWindowTimeout;
 		///Are the pings enabled?
 		bool pings;
+		///What bus are we using, session (0) or system (1)?
+		int bus;
 };
 
 SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, "Skype", (char *)0) {
@@ -83,6 +85,7 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, 
 	launchType = config->readNumEntry("Launch");//launch the skype?
 	setScanForUnread(config->readBoolEntry("ScanForUnread"));
 	setCallControl(config->readBoolEntry("CallControl"));
+	setBus(config->readNumEntry("Bus", 1));
 
 	//Now, connect the signals
 	QObject::connect(&d->skype, SIGNAL(wentOnline()), this, SLOT(wentOnline()));
@@ -197,6 +200,7 @@ void SkypeAccount::save() {
 	config->writeEntry("CallControl", getCallControl());
 	config->writeEntry("CloseWindowTimeout", d->callWindowTimeout);
 	config->writeEntry("Pings", getPings());
+	config->writeEntry("Bus", getBus());
 
 	//save it into the skype connection as well
 	d->skype.setValues(launchType, author);
@@ -413,6 +417,15 @@ void SkypeAccount::setPings(bool enabled) {
 
 bool SkypeAccount::getPings() const {
 	return d->pings;
+}
+
+int SkypeAccount::getBus() const {
+	return d->bus;
+}
+
+void SkypeAccount::setBus(int bus) {
+	d->bus = bus;
+	d->skype.setBus(bus);
 }
 
 #include "skypeaccount.moc"

@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>556</width>
-            <height>397</height>
+            <width>561</width>
+            <height>404</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -166,7 +166,7 @@
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Lau&amp;nch</string>
+                    <string>&amp;Launch</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -310,7 +310,7 @@
                             <cstring>textLabel2</cstring>
                         </property>
                         <property name="text">
-                            <string>If you get error that Skype was not found and it is running, check instructions at http://www.skype.com/community/devzone/SkypeAPIforLinux.html</string>
+                            <string>If you get error that Skype was not found and it is running, check instructions at http://www.skype.com/community/devzone/SkypeAPIforLinux.html or use session bus. (start skype with --use-session-dbus)</string>
                         </property>
                         <property name="alignment">
                             <set>WordBreak|AlignVCenter</set>
@@ -340,7 +340,7 @@
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Authori&amp;zation</string>
+                    <string>Connection</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -379,6 +379,53 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                             </widget>
                         </vbox>
                     </widget>
+                    <widget class="QButtonGroup">
+                        <property name="name">
+                            <cstring>BusGroup</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Bus</string>
+                        </property>
+                        <property name="selectedId" stdset="0">
+                            <number>0</number>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>What bus do you want to use</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>What bus do you want to use to connect to Skyoe?&lt;br/&gt;Session: Your own, other people can not get to that. (use --use-session-dbus to start skype on that bus)&lt;br/&gt;System: This one is shared by all people on the same computer. Oddly, this one is used by default by Skype.&lt;br/&gt;ou have to use the same as uses Skype</string>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QRadioButton">
+                                <property name="name">
+                                    <cstring>radioButton4</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Sessi&amp;on</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+O</string>
+                                </property>
+                                <property name="checked">
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                            <widget class="QRadioButton">
+                                <property name="name">
+                                    <cstring>radioButton5</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>S&amp;ystem</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+Y</string>
+                                </property>
+                            </widget>
+                        </hbox>
+                    </widget>
                     <widget class="QLabel">
                         <property name="name">
                             <cstring>textLabel1_2</cstring>
@@ -403,7 +450,7 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>41</height>
+                                <height>50</height>
                             </size>
                         </property>
                     </spacer>
@@ -414,7 +461,7 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Activit&amp;y</string>
+                    <string>&amp;Activity</string>
                 </attribute>
                 <vbox>
                     <property name="name">

@@ -88,7 +88,8 @@ class SkypePrivate {
 		bool pings;
 		///Pinging timer
 		QTimer *pingTimer;
-		///This pings the skype and tests it if it is OK
+		///What bus is used now?
+		int bus;
 };
 
 Skype::Skype(SkypeAccount &account) : QObject() {
@@ -180,7 +181,7 @@ void Skype::queueSkypeMessage(const QString &message, bool deleteQueue) {
 		if (deleteQueue)
 			d->messageQueue.clear();//delete all old messages
 		d->messageQueue << message;//add the new one
-		d->connection.connectSkype(d->start, d->appName, PROTOCOL_MAX);//try to connect
+		d->connection.connectSkype(d->start, d->appName, PROTOCOL_MAX, d->bus);//try to connect
 	}
 }
 
@@ -568,6 +569,10 @@ void Skype::enablePings(bool enabled) {
 
 void Skype::ping() {
 	d->connection << QString("PING");
+}
+
+void Skype::setBus(int bus) {
+	d->bus = bus;
 }
 
 #include "skype.moc"

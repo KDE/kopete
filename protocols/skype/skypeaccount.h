@@ -32,6 +32,9 @@ namespace Kopete {
 	class Message;
 }
 
+#define DBUS_SESSION 0
+#define DBUS_SYSTEM 1
+
 /**
  * @author Michal Vaner
  * @short Skype account
@@ -183,6 +186,11 @@ Q_OBJECT
 		 * @return You guess..
 		 */
 		bool getPings() const;
+		/**
+		 * What bus is set to use now?
+		 * @return 0 as session bus, 1 as system wide
+		 */
+		int getBus() const;
 	public slots:
 		/**
 		 * Disconnects from server.
@@ -258,6 +266,11 @@ Q_OBJECT
 		 * @param enabled Are they on or off from now?
 		 */
 		void setPings(bool enabled);
+		/**
+		 * Sets bus on which Skype listens
+		 * @param bus 0 -> session bus, 1 -> system wide bus
+		 */
+		void setBus(int bus);
 	signals:
 		/**
 		 * This is emited when the ID of the last sent message is known

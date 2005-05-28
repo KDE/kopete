@@ -137,7 +137,7 @@ void SkypeConnection::parseMessage(const QString &message) {
 	}
 }
 
-void SkypeConnection::connectSkype(bool start, const QString &appName, int protocolVer) {
+void SkypeConnection::connectSkype(bool start, const QString &appName, int protocolVer, int bus) {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (d->fase != cfNotConnected)
@@ -146,7 +146,10 @@ void SkypeConnection::connectSkype(bool start, const QString &appName, int proto
 	d->appName = appName;
 	d->protocolVer = protocolVer;
 
-	d->conn = new DBusQt::Connection(DBUS_BUS_SYSTEM, this);
+	if (bus == 0) 
+		d->conn = new DBusQt::Connection(DBUS_BUS_SESSION, this);
+	else 
+		d->conn = new DBusQt::Connection(DBUS_BUS_SYSTEM, this);
 
 	if ((!d->conn) || (!d->conn->isConnected())) {
 		emit error(i18n("Could not connect to DBus"));

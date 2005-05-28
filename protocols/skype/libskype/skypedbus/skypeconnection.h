@@ -67,8 +67,9 @@ class SkypeConnection : public QObject
 		 * @param start indicates weather the skype should be started or not if it is not running. If yes, then it will be launched, if not, error will be produced. If it is already running, it has no effect.
 		 * @param appName tells as what application it should authorise itself (this will user see on the "do you want to allow" dialog box)
 		 * @param protocolVer Maximal protocol version that this app manages
+		 * @param bus 0 - session bus, 1 - system bus
 		 */
-		void connectSkype(bool start, const QString &appName, int protocolVer);
+		void connectSkype(bool start, const QString &appName, int protocolVer, int bus);
 		/**
 		 * Disconnects from skype
 		 * @see connectionClosed

@@ -61,6 +61,7 @@ skypeEditAccount::skypeEditAccount(SkypeProtocol *protocol, Kopete::Account *acc
 		ScanCheck->setChecked(d->account->getScanForUnread());
 		CallCheck->setChecked(d->account->getCallControl());
 		PingsCheck->setChecked(d->account->getPings());
+		BusGroup->setButton(d->account->getBus());
 		if (d->account->closeCallWindowTimeout()) {
 			AutoCloseCallCheck->setChecked(true);
 			CloseTimeoutSpin->setValue(d->account->closeCallWindowTimeout());
@@ -106,6 +107,7 @@ Kopete::Account *skypeEditAccount::apply() {
 	skype->setScanForUnread(ScanCheck->isChecked());
 	skype->setCallControl(CallCheck->isChecked());
 	skype->setPings(PingsCheck->isChecked());
+	skype->setBus(BusGroup->selectedId());
 	skype->save();//save it to config
 	return skype;//return the account
 }
