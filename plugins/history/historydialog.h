@@ -89,7 +89,6 @@ class HistoryDialog : public KDialogBase
 		void slotSearchTextChanged(const QString& txt); // To enable/disable search button
 		void slotContactChanged(int index);
 
-		void searchZeroStep();
 		void searchFirstStep();
 		void searchSecondStep();
 

@@ -193,6 +193,7 @@ void HistoryDialog::init()
 		}
 
 	}
+
 	initProgressBar(i18n("Loading..."),mInit.dateMCList.count());
 	QTimer::singleShot(0,this,SLOT(slotLoadDays()));
 }
@@ -228,7 +229,6 @@ void HistoryDialog::init(Kopete::MetaContact *mc)
 
 	for( ; it.current(); ++it )
 	{
-		kdDebug() << "    " << (*it)->nickName() << endl;
 		init(*it);
 	}
 }
@@ -373,12 +373,80 @@ void HistoryDialog::slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/
 	new KRun(url, 0, false); // false = non-local files
 }
 
-void HistoryDialog::searchZeroStep()
+// Disable search button if there is no search text
+void HistoryDialog::slotSearchTextChanged(const QString& searchText)
 {
-	searchFirstStep();
+	if (searchText.isEmpty())
+	{
+		mMainWidget->searchButton->setEnabled(false);
+	}
+	else
+	{
+		mMainWidget->searchButton->setEnabled(true);
+	}
+}
+
+void HistoryDialog::listViewShowElements(bool s)
+{
+	KListViewDateItem* item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
+	do
+	{
+			item->setVisible(s);
+			item = static_cast<KListViewDateItem*>(item->nextSibling());
+	}
+	while(item != 0);
+}
+
+// Erase the search line, show all date/metacontacts items in the list (accordint to the
+// metacontact selected in the combobox)
+void HistoryDialog::slotSearchErase()
+{
+	mMainWidget->searchLine->setText(QString::null);
+	listViewShowElements(true);
+}
+
+// Search initialization
+void HistoryDialog::slotSearch()
+{
+	/*
+	* How does the search work
+	* ------------------------
+	* We do the search respecting the current metacontact filter item. So to do this, we iterate (searchFirstStep()) over
+	* the elements in the KListView (KListViewDateItems) and, for each one, we iterate over its subcontacts, retrieving the log
+	* files of each one, log files in which we do a fulltext search. If we match the keyword, we use dateSearchMap to mark that this
+	* month (each file stores one month) contains the word.
+	*
+	* Then, in second step, we are going to look in each file which days do match the keyword. We do this in a second step because
+	* it is much slower since it involves xml parsing. If one day do match, we show the item in the listview. Else, we hide it. That's all.
+	*
+	* Keyword highlighting is done in setMessages() : if the search field isn't empty, we highlight the search keyword.
+	*
+	* The search is _not_ case sensitive
+	* TODO: Speed up search ! Solutions : indexing ? having one log file/day (it will completly avoid the XML Parsing during the search) ?
+	*/
+
+	if (mSearch)
+	{
+		mMainWidget->searchButton->setText("&Search");
+		delete mSearch;
+		mSearch = 0L;
+		return;
+	}
+
+	listViewShowElements(false);
+
+	mSearch = new Search();
+	mSearch->item = 0;
+	mSearch->foundPrevious = false;
+
+	mMainWidget->searchProgress->setProgress(0);
+	mMainWidget->searchButton->setText("&Cancel");
 
 	mSearch->item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
+	searchFirstStep();
+
 	initProgressBar(i18n("Searching...") , mMainWidget->dateListView->childCount());
+	mSearch->item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
 	QTimer::singleShot(0, this, SLOT(searchSecondStep()));
 }
 
@@ -391,10 +459,8 @@ void HistoryDialog::searchFirstStep()
 		return;
 	}
 
-	if (!mSearch->currentMetaContact)
-		return;
-
-	if (mMetaContactList.at(mMainWidget->contactComboBox->currentItem()) == mSearch->item->metaContact())
+	if (mMainWidget->contactComboBox->currentItem() == 0
+			|| mMetaContactList.at(mMainWidget->contactComboBox->currentItem()-1) == mSearch->item->metaContact())
 	{
 		mLogger = new HistoryLogger(mSearch->item->metaContact(), this);
 
@@ -434,6 +500,7 @@ void HistoryDialog::searchFirstStep()
 		
 		}
 		delete mLogger;
+		mLogger = 0L;
 	}
 
 	mSearch->item = static_cast<KListViewDateItem *>(mSearch->item->nextSibling());
@@ -464,7 +531,7 @@ void HistoryDialog::searchSecondStep()
 			mSearch->dateSearchMap[mSearch->item] = false;
 	}
 
-	if (mSearch->dateSearchMap[mSearch->item] && mMetaContactList.at(mMainWidget->contactComboBox->currentItem()) == mSearch->item->metaContact())
+	if (mSearch->dateSearchMap[mSearch->item] && (mMainWidget->contactComboBox->currentItem() == 0 || mMetaContactList.at(mMainWidget->contactComboBox->currentItem()-1) == mSearch->item->metaContact()))
 	{
 		mSearch->item->setVisible(true);
 ;
@@ -483,69 +550,18 @@ void HistoryDialog::searchSecondStep()
 	}
 	else
 	{
-		mMainWidget->searchButton->setText("&Search");
+		// The search is finished
 		delete mLogger;
 		delete mSearch;
 		mSearch = 0L;
-	}
-
-}
-
-void HistoryDialog::slotSearchTextChanged(const QString& searchText)
-{
-	if (searchText.isEmpty())
-	{
-		mMainWidget->searchButton->setEnabled(false);
-	}
-	else
-	{
-		mMainWidget->searchButton->setEnabled(true);
-	}
-}
-
-void HistoryDialog::listViewShowElements(bool s)
-{
-	KListViewDateItem* item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
-	do
-	{
-			item->setVisible(s);
-			item = static_cast<KListViewDateItem*>(item->nextSibling());
-	}
-	while(item != 0);
-}
-
-void HistoryDialog::slotSearchErase()
-{
-	mMainWidget->searchLine->setText(QString::null);
-	listViewShowElements(true);
-}
-
-void HistoryDialog::slotSearch()
-{
-	if (mSearch)
-	{
+		mLogger = 0L;
 		mMainWidget->searchButton->setText("&Search");
-
-		delete mSearch;
-		mSearch = 0L;
-		return;
+		doneProgressBar();
 	}
 
-	listViewShowElements(false);
-
-	mSearch = new Search();
-	mSearch->item = 0;
-	mSearch->foundPrevious = false;
-
-	mMainWidget->searchProgress->setProgress(0);
-
-	mMainWidget->searchButton->setText("&Cancel");
-
-	mSearch->item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
-
-	searchZeroStep();
 }
 
+// When a contact is selected in the combobox. Item 0 is All contacts.
 void HistoryDialog::slotContactChanged(int index)
 {
 	mMainWidget->dateListView->clear();
@@ -572,7 +588,7 @@ void HistoryDialog::initProgressBar(const QString& text, int nbSteps)
 void HistoryDialog::doneProgressBar()
 {
 		mMainWidget->searchProgress->hide();
-		mMainWidget->statusLabel->setText("ready");
+		mMainWidget->statusLabel->setText("Ready");
 }
 
 #include "historydialog.moc"
