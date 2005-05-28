@@ -357,6 +357,23 @@ void MSNContact::clearServerGroups()
 
 void MSNContact::sync( unsigned int changed )
 {
+	// Apply the global identity if applicable
+	if(contactId() == account()->accountId())
+	{
+		KConfig *configIdentity = KGlobal::config();
+		configIdentity->setGroup("GlobalIdentity");
+		bool useGlobal = configIdentity->readBoolEntry("enableGlobalIdentity");
+		bool useAccount = configIdentity->readBoolEntry("checkAccountNick");
+		QString accountSelected = configIdentity->readEntry("accountSelected");
+		 // Apply the global identity
+		if(useGlobal && (!(accountSelected == account()->accountId()) || !useAccount))
+		{
+			kdDebug( 14140 ) << k_funcinfo << "Applying Global Identity on a MSN account." << endl;
+			static_cast<MSNAccount*>(account())->setPublicName(Kopete::ContactList::self()->myself()->displayName());
+		}
+		return;
+	}
+
 	if( !  (changed & Kopete::Contact::MovedBetweenGroup) )
 		return;  //we are only interested by a change in groups
 
@@ -389,8 +406,8 @@ void MSNContact::sync( unsigned int changed )
 
 	unsigned int count=m_serverGroups.count();
 
-	//Don't add the contact if it's myslef.
-	if(count==0 && contactId() == account()->accountId() )
+	//Don't add the contact if it's myself.
+	if(count==0 && contactId() == account()->accountId())
 		return;
 
 	//STEP ONE : add the contact to every kopetegroups where the MC is
@@ -485,8 +502,6 @@ void MSNContact::sync( unsigned int changed )
 		QString nick=property( Kopete::Global::Properties::self()->nickName()).value().toString();
 		notify->addContact( contactId(), nick.isEmpty() ? contactId() : nick, 0, MSNProtocol::FL );
 	}
-
-
 }
 
 void MSNContact::contactAddedToGroup( uint groupNumber, Kopete::Group *group )

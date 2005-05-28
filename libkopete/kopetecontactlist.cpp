@@ -1,6 +1,7 @@
 /*
     kopetecontactlist.cpp - Kopete's Contact List backend
 
+    Copyright (c) 2005      by Michaël Larouche       <shock@shockdev.ca.tc>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @ kde.org>
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
@@ -28,6 +29,8 @@
 #include <kdebug.h>
 #include <ksavefile.h>
 #include <kstandarddirs.h>
+#include <kconfig.h>
+#include <kglobal.h>
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
 #include "kopetechatsession.h"
@@ -291,13 +294,50 @@ MetaContact* ContactList::myself()
 	return d->myself;
 }
 
+void ContactList::loadGlobalIdentity()
+{
+	//kdDebug(14010) << k_funcinfo << endl;
+	bool useGlobal=false, useAccountNickname=false;
+	QString globalNickName, accountSelected, protocolSelected;
 
+	// Load the saved global identity in the configuration
+	KConfig *configIdentity = KGlobal::config();
+	
+	configIdentity->setGroup("GlobalIdentity");
+	useGlobal = configIdentity->readBoolEntry("enableGlobalIdentity");
+	useAccountNickname = configIdentity->readBoolEntry("checkAccountNick");
+	globalNickName = configIdentity->readEntry("Nickname");
+	accountSelected = configIdentity->readEntry("accountSelected");
+	protocolSelected = configIdentity->readEntry("protocolSelected");
+	
+	if(useGlobal)
+	{
+		if(useAccountNickname)
+		{
+			Account *syncAccount = AccountManager::self()->findAccount(protocolSelected, accountSelected);
+			
+			if(syncAccount != 0)
+			{
+				// Set the display name source of the 
+				myself()->setNameSource(syncAccount->myself());
+				kdDebug(14010) << k_funcinfo << "Global Identity applied !" << endl;
+			}
+		}
+		else
+		{
+			kdDebug(14010) << k_funcinfo << "Global Identity applied !" << endl;	
+			myself()->setDisplayName(globalNickName);
+		}
+		
+	}
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void ContactList::load()
 {
 	loadXML();
+	loadGlobalIdentity();
 }
 
 void ContactList::loadXML()

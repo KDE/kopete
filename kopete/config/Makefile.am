@@ -5,6 +5,6 @@ AVDEVICEDIR =
 endif
 
 
-SUBDIRS = plugins accounts behavior appearance $(AVDEVICEDIR)
+SUBDIRS = plugins accounts behavior appearance identity $(AVDEVICEDIR)
 
 

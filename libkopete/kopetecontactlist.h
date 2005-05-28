@@ -318,6 +318,10 @@ public: //TODO I think all theses method should be moved to the decop interface.
 	void messageContact( const QString &displayName, const QString &messageText = QString::null );
 
 	
+	/**
+	  * Load the global identity details into the myself MetaContact
+          */  	
+	void loadGlobalIdentity();
 	
 
 public slots:
@@ -346,8 +350,6 @@ private:
 	 * Save the contact list to XML file
 	 */
 	void saveXML();
-	
-	
 };
 
 } //END namespace Kopete
