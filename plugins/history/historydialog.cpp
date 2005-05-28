@@ -196,6 +196,9 @@ void HistoryDialog::init()
 
 	initProgressBar(i18n("Loading..."),mInit.dateMCList.count());
 	QTimer::singleShot(0,this,SLOT(slotLoadDays()));
+
+	if (!mMainWidget->searchLine->text().isEmpty())
+		slotSearch();
 }
 
 void HistoryDialog::slotLoadDays()
@@ -449,6 +452,8 @@ void HistoryDialog::slotSearch()
 
 void HistoryDialog::searchFirstStep()
 {
+	QRegExp rx("^ <msg.*time=\"(\\d+) \\d+:\\d+:\\d+\" >");
+
 	if (!mSearch)
 	{
 		delete mSearch;
@@ -456,50 +461,44 @@ void HistoryDialog::searchFirstStep()
 		return;
 	}
 
-	if (!mSearch->item->isVisible())
+	if (mSearch->dateSearchMap[mSearch->item->date()] != mSearch->item->metaContact())
 	{
-	if (mMainWidget->contactComboBox->currentItem() == 0
-			|| mMetaContactList.at(mMainWidget->contactComboBox->currentItem()-1) == mSearch->item->metaContact())
-	{
-		mLogger = new HistoryLogger(mSearch->item->metaContact(), this);
-
-		QPtrList<Kopete::Contact> contacts=mSearch->item->metaContact()->contacts();
-		QPtrListIterator<Kopete::Contact> it( contacts );
-
-		for( ; it.current(); ++it )
+		if (mMainWidget->contactComboBox->currentItem() == 0
+				|| mMetaContactList.at(mMainWidget->contactComboBox->currentItem()-1) == mSearch->item->metaContact())
 		{
-			if (mSearch->item->date().year() != mSearch->datePrevious.year()
-				|| mSearch->item->date().month() != mSearch->datePrevious.month())
-				mSearch->foundPrevious = false;
-
-			mSearch->datePrevious = mSearch->item->date();
-
-			QString fullText;
-			QRegExp rx(" <msg.*time=\"(\\d\\d) \\d\\d:\\d\\d:\\d\\d\" >");
-			rx.setMinimal(true);
-			
-			QFile file(mLogger->getFileName(*it, mSearch->item->date()));
-			file.open(IO_ReadOnly);
-			if (!&file)
+			mLogger = new HistoryLogger(mSearch->item->metaContact(), this);
+	
+			QPtrList<Kopete::Contact> contacts=mSearch->item->metaContact()->contacts();
+			QPtrListIterator<Kopete::Contact> it( contacts );
+	
+			for( ; it.current(); ++it )
 			{
-				continue;
-			}
-			QTextStream stream(&file);
-			QString textLine;
-			while((textLine = stream.readLine()) != QString::null)
-			{
-				if (textLine.contains(mMainWidget->searchLine->text()))
+				mSearch->datePrevious = mSearch->item->date();
+	
+				QString fullText;
+
+				QFile file(mLogger->getFileName(*it, mSearch->item->date()));
+				file.open(IO_ReadOnly);
+				if (!&file)
 				{
-					rx.search(textLine);
-					mSearch->dateSearchMap[QDate(mSearch->item->date().year(),mSearch->item->date().month(),rx.cap(1).toInt())] = mSearch->item->metaContact();
+					continue;
 				}
+				QTextStream stream(&file);
+				QString textLine;
+				while((textLine = stream.readLine()) != QString::null)
+				{
+					if (textLine.contains(mMainWidget->searchLine->text(), false))
+					{
+						rx.search(textLine);
+						mSearch->dateSearchMap[QDate(mSearch->item->date().year(),mSearch->item->date().month(),rx.cap(1).toInt())] = mSearch->item->metaContact();
+					}
+				}
+				
+				file.close();
 			}
-			
-			file.close();
+			delete mLogger;
+			mLogger = 0L;
 		}
-		delete mLogger;
-		mLogger = 0L;
-	}
 	}
 
 	mSearch->item = static_cast<KListViewDateItem *>(mSearch->item->nextSibling());
