@@ -413,16 +413,15 @@ void HistoryDialog::slotSearch()
 	* ------------------------
 	* We do the search respecting the current metacontact filter item. So to do this, we iterate (searchFirstStep()) over
 	* the elements in the KListView (KListViewDateItems) and, for each one, we iterate over its subcontacts, retrieving the log
-	* files of each one, log files in which we do a fulltext search. If we match the keyword, we use dateSearchMap to mark that this
-	* month (each file stores one month) contains the word.
+	* files of each one, log files in which we do a fulltext search. If we match the keyword, we use dateSearchMap to mark which days
+	* in this file contain the keyword.
 	*
-	* Then, in second step, we are going to look in each file which days do match the keyword. We do this in a second step because
-	* it is much slower since it involves xml parsing. If one day do match, we show the item in the listview. Else, we hide it. That's all.
+	* Then, we only show the items for which there is a correct dateSearchMap
 	*
 	* Keyword highlighting is done in setMessages() : if the search field isn't empty, we highlight the search keyword.
 	*
 	* The search is _not_ case sensitive
-	* TODO: Speed up search ! Solutions : indexing ? having one log file/day (it will completly avoid the XML Parsing during the search) ?
+	* TODO: Speed up search ! Solutions : optimisations ?
 	*/
 
 	if (mSearch)
@@ -439,15 +438,13 @@ void HistoryDialog::slotSearch()
 	mSearch->item = 0;
 	mSearch->foundPrevious = false;
 
-	mMainWidget->searchProgress->setProgress(0);
+	initProgressBar("Searching ...",mMainWidget->dateListView->childCount() );
 	mMainWidget->searchButton->setText("&Cancel");
 
 	mSearch->item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
 	searchFirstStep();
 
-	initProgressBar(i18n("Searching...") , mMainWidget->dateListView->childCount());
-	mSearch->item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
-	QTimer::singleShot(0, this, SLOT(searchSecondStep()));
+
 }
 
 void HistoryDialog::searchFirstStep()
@@ -459,6 +456,8 @@ void HistoryDialog::searchFirstStep()
 		return;
 	}
 
+	if (!mSearch->item->isVisible())
+	{
 	if (mMainWidget->contactComboBox->currentItem() == 0
 			|| mMetaContactList.at(mMainWidget->contactComboBox->currentItem()-1) == mSearch->item->metaContact())
 	{
@@ -469,38 +468,38 @@ void HistoryDialog::searchFirstStep()
 
 		for( ; it.current(); ++it )
 		{
-			QString fullText;
-			if (mSearch->item->date().month() != mSearch->datePrevious.month())
-			{
-				QFile file(mLogger->getFileName(*it, mSearch->item->date()));
-				file.open(IO_ReadOnly);
-				if (!&file)
-				{
-					mSearch->datePrevious = mSearch->item->date();
-					continue;
-				}
-				QTextStream stream(&file);
-				fullText = stream.read();
-				file.close();
-			}
-			if ((mSearch->foundPrevious
-				&& mSearch->item->date().month() == mSearch->datePrevious.month())
-				|| fullText.contains(mMainWidget->searchLine->text(), false))
-			{
-				mSearch->dateSearchMap[mSearch->item] = true;
-				mSearch->foundPrevious = true;
-				break;
-			}
-			else if (!mSearch->dateSearchMap[mSearch->item])
-			{
-				mSearch->dateSearchMap[mSearch->item] = false;
-			}
+			if (mSearch->item->date().year() != mSearch->datePrevious.year()
+				|| mSearch->item->date().month() != mSearch->datePrevious.month())
+				mSearch->foundPrevious = false;
 
 			mSearch->datePrevious = mSearch->item->date();
-		
+
+			QString fullText;
+			QRegExp rx(" <msg.*time=\"(\\d\\d) \\d\\d:\\d\\d:\\d\\d\" >");
+			rx.setMinimal(true);
+			
+			QFile file(mLogger->getFileName(*it, mSearch->item->date()));
+			file.open(IO_ReadOnly);
+			if (!&file)
+			{
+				continue;
+			}
+			QTextStream stream(&file);
+			QString textLine;
+			while((textLine = stream.readLine()) != QString::null)
+			{
+				if (textLine.contains(mMainWidget->searchLine->text()))
+				{
+					rx.search(textLine);
+					mSearch->dateSearchMap[QDate(mSearch->item->date().year(),mSearch->item->date().month(),rx.cap(1).toInt())] = mSearch->item->metaContact();
+				}
+			}
+			
+			file.close();
 		}
 		delete mLogger;
 		mLogger = 0L;
+	}
 	}
 
 	mSearch->item = static_cast<KListViewDateItem *>(mSearch->item->nextSibling());
@@ -508,58 +507,25 @@ void HistoryDialog::searchFirstStep()
 	if(mSearch->item != 0)
 	{
 		// Next iteration
-		searchFirstStep();
+		mMainWidget->searchProgress->advance(1);
+
+		QTimer::singleShot(0,this,SLOT(searchFirstStep()));
 	}
-}
-
-void HistoryDialog::searchSecondStep()
-{
-	if (!mSearch)
-		return;
-
-	mMainWidget->searchProgress->advance(1);
-	mLogger= new HistoryLogger(mSearch->item->metaContact(), this);
-	QValueList<Kopete::Message> msgs = mLogger->readMessages(mSearch->item->date());
-	for (int i = 0; i<msgs.count(); i++)
+	else
 	{
-		if (msgs[i].plainBody().contains(mMainWidget->searchLine->text(), false))
+		mSearch->item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
+		do
 		{
-			mSearch->dateSearchMap[mSearch->item] = true;
-			break;
+			if (mSearch->dateSearchMap[mSearch->item->date()] == mSearch->item->metaContact())
+				mSearch->item->setVisible(true);
 		}
-		else
-			mSearch->dateSearchMap[mSearch->item] = false;
-	}
-
-	if (mSearch->dateSearchMap[mSearch->item] && (mMainWidget->contactComboBox->currentItem() == 0 || mMetaContactList.at(mMainWidget->contactComboBox->currentItem()-1) == mSearch->item->metaContact()))
-	{
-		mSearch->item->setVisible(true);
-;
-	}
-	else
-	{
-		mSearch->item->setVisible(false);
-	}
-
-	mSearch->item = static_cast<KListViewDateItem*>(mSearch->item->nextSibling());
-
-	if(mSearch->item != 0)
-	{
-		// Next iteration
-		QTimer::singleShot(0,this,SLOT(searchSecondStep()));
-	}
-	else
-	{
-		// The search is finished
-		delete mLogger;
-		delete mSearch;
-		mSearch = 0L;
-		mLogger = 0L;
+		while(mSearch->item = static_cast<KListViewDateItem *>(mSearch->item->nextSibling()));
 		mMainWidget->searchButton->setText("&Search");
 		doneProgressBar();
 	}
-
 }
+
+
 
 // When a contact is selected in the combobox. Item 0 is All contacts.
 void HistoryDialog::slotContactChanged(int index)

@@ -90,7 +90,6 @@ class HistoryDialog : public KDialogBase
 		void slotContactChanged(int index);
 
 		void searchFirstStep();
-		void searchSecondStep();
 
 		void init();
 		void slotLoadDays();
@@ -139,7 +138,7 @@ class HistoryDialog : public KDialogBase
 
 		struct Search
 		{
-				typedef QMap<KListViewDateItem*, bool> DateSearchMap;
+				typedef QMap<QDate, Kopete::MetaContact*> DateSearchMap;
 				DateSearchMap dateSearchMap;
 
 				KListViewDateItem *item;
