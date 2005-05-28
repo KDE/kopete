@@ -114,6 +114,7 @@ void YahooConnectionManager::remove( KExtendedSocket* socket )
 			it = m_connectionList.remove( it );
 			socket->reset();
 			delete socket;
+			return;
 		}
 	}
 }
