@@ -64,6 +64,7 @@ public:
 	const Kopete::ContactPropertyTmpl lastName;
 	const Kopete::ContactPropertyTmpl awayMessage;
 	const Kopete::ContactPropertyTmpl emailAddress;
+	const Kopete::ContactPropertyTmpl ipAddress;
 	const Kopete::ContactPropertyTmpl clientFeatures;
 	const Kopete::ContactPropertyTmpl buddyIconHash;
 

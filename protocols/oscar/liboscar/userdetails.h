@@ -18,6 +18,7 @@
 #ifndef USERDETAILS_H
 #define USERDETAILS_H
 
+#include <ksocketaddress.h>
 #include "oscartypes.h"
 #include <kopete_export.h>
 
@@ -37,8 +38,8 @@ public:
 	QString userId() const; //! User ID accessor
 	int warningLevel() const; //! Warning level accessor
 	WORD idleTime() const; //! Idle time accessor
-	DWORD dcInternalIp() const; //! DC local IP accessor
-	DWORD dcExternalIp() const; //! DC outside IP accessor
+	KNetwork::KIpAddress dcInternalIp() const; //! DC local IP accessor
+	KNetwork::KIpAddress dcExternalIp() const; //! DC outside IP accessor
 	DWORD dcPort() const; //! DC port number
 	QDateTime onlineSinceTime() const; //! Online since accessor
 	QDateTime memberSinceTime() const; //! Member since accessor
@@ -70,8 +71,8 @@ private:
 	DWORD m_capabilities; //TLV 0x05
 	QString m_clientVersion; /// the version of client they're using
 	QString m_clientName; /// the name of the client they're using
-	DWORD m_dcOutsideIp; /// DC Real IP Address - TLV 0x0A
-	DWORD m_dcInsideIp; /// DC Internal IP Address - TLV 0x0C
+	KNetwork::KIpAddress m_dcOutsideIp; /// DC Real IP Address - TLV 0x0A
+	KNetwork::KIpAddress m_dcInsideIp; /// DC Internal IP Address - TLV 0x0C
 	DWORD m_dcPort; /// DC Port - TLV 0x0C
 	BYTE m_dcType; /// DC Type - TLV 0x0C
 	WORD m_dcProtoVersion; /// DC Protocol Version - TLV 0x0C

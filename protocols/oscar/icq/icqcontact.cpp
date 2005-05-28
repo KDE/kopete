@@ -101,6 +101,11 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	ICQ::Presence presence = ICQ::Presence::fromOscarStatus( details.extendedStatus() & 0xffff );
 	setOnlineStatus( presence.toOnlineStatus() );
 	
+	if ( details.dcExternalIp().isUnspecified() )
+		removeProperty( mProtocol->ipAddress );
+	else
+		setProperty( mProtocol->ipAddress, details.dcExternalIp().toString() );
+	
 	if ( details.clientName().isEmpty() )
 		removeProperty( mProtocol->clientFeatures );
 	else

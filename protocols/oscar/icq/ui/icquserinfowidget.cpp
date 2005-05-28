@@ -84,7 +84,7 @@ void ICQUserInfoWidget::fillBasicInfo( const ICQGeneralUserInfo& ui )
 	m_genInfoWidget->uinEdit->setText( m_contact->contactId() );
 	m_genInfoWidget->nickNameEdit->setText( ui.nickname );
 	m_genInfoWidget->fullNameEdit->setText( ui.firstName + " " + ui.lastName );
-	m_genInfoWidget->ipEdit->setText( QString::fromLatin1( "0.0.0.0" ) );
+	m_genInfoWidget->ipEdit->setText( m_contact->property( "ipAddress" ).value().toString() );
 	m_genInfoWidget->emailEdit->setText( ui.email );
 	m_genInfoWidget->cityEdit->setText( ui.city );
 	m_genInfoWidget->stateEdit->setText( ui.state );

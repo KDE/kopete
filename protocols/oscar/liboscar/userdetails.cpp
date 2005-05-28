@@ -18,6 +18,9 @@
 #include "userdetails.h"
 
 #include "buffer.h"
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <qptrlist.h>
@@ -32,8 +35,6 @@ UserDetails::UserDetails()
 	m_idleTime = 0;
 	m_extendedStatus = 0;
 	m_capabilities = 0;
-	m_dcOutsideIp = 0;
-	m_dcInsideIp = 0;
 	m_dcPort = 0;
 	m_dcType = 0;
 	m_dcProtoVersion = 0;
@@ -65,12 +66,12 @@ WORD UserDetails::idleTime() const
 	return m_idleTime;
 }
 
-DWORD UserDetails::dcInternalIp() const
+KNetwork::KIpAddress UserDetails::dcInternalIp() const
 {
 	return m_dcInsideIp;
 }
 
-DWORD UserDetails::dcExternalIp() const
+KNetwork::KIpAddress UserDetails::dcExternalIp() const
 {
 	return m_dcOutsideIp;
 }
@@ -152,11 +153,11 @@ void UserDetails::fill( Buffer * buffer )
 				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Extended status is " << QString::number( m_extendedStatus, 16 ) << endl;
 				break;
 			case 0x000A: //external IP address
-				m_dcOutsideIp = b.getDWord();
-				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "External IP address is " << m_dcOutsideIp << endl;
+				m_dcOutsideIp = KNetwork::KIpAddress( ntohl( b.getDWord() ) );
+				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "External IP address is " << m_dcOutsideIp.toString() << endl;
 				break;
 			case 0x000C: //DC info
-				m_dcInsideIp = b.getDWord();
+				m_dcInsideIp = KNetwork::KIpAddress( ntohl( b.getDWord() ) );
 				m_dcPort = b.getDWord();
 				m_dcType = b.getByte();
 				m_dcProtoVersion = b.getWord();
