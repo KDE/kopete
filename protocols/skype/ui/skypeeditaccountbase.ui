@@ -20,10 +20,7 @@
             <verstretch>0</verstretch>
         </sizepolicy>
     </property>
-    <property name="caption">
-        <string>SkypeEditAccountBase</string>
-    </property>
-    <hbox>
+    <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
@@ -183,7 +180,7 @@
                             <string>Launch Skype</string>
                         </property>
                         <property name="selectedId" stdset="0">
-                            <number>1</number>
+                            <number>0</number>
                         </property>
                         <property name="whatsThis" stdset="0">
                             <string>You can set weather and when should kopete launch skype.</string>
@@ -192,14 +189,6 @@
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QRadioButton">
-                                <property name="name">
-                                    <cstring>LaunchAlwaysRadio</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Alwa&amp;ys</string>
-                                </property>
-                            </widget>
                             <widget class="QRadioButton">
                                 <property name="name">
                                     <cstring>LaunchNeededRadio</cstring>
@@ -252,43 +241,45 @@
                     </widget>
                     <widget class="QLayoutWidget">
                         <property name="name">
-                            <cstring>layout3</cstring>
+                            <cstring>layout12</cstring>
                         </property>
                         <hbox>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <spacer>
+                            <widget class="QLabel">
                                 <property name="name">
-                                    <cstring>spacer5</cstring>
+                                    <cstring>textLabel1_4</cstring>
                                 </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
+                                <property name="text">
+                                    <string>Launch timeout:</string>
                                 </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>40</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <widget class="QPushButton">
+                            </widget>
+                            <widget class="QSpinBox">
                                 <property name="name">
-                                    <cstring>pushButton2</cstring>
+                                    <cstring>spinBox3</cstring>
                                 </property>
                                 <property name="enabled">
                                     <bool>false</bool>
                                 </property>
+                                <property name="maxValue">
+                                    <number>60</number>
+                                </property>
+                                <property name="minValue">
+                                    <number>3</number>
+                                </property>
+                            </widget>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>textLabel2_3</cstring>
+                                </property>
                                 <property name="text">
-                                    <string>&amp;Test launch</string>
+                                    <string>s</string>
                                 </property>
                             </widget>
                             <spacer>
                                 <property name="name">
-                                    <cstring>spacer6</cstring>
+                                    <cstring>spacer23</cstring>
                                 </property>
                                 <property name="orientation">
                                     <enum>Horizontal</enum>
@@ -298,12 +289,32 @@
                                 </property>
                                 <property name="sizeHint">
                                     <size>
-                                        <width>40</width>
+                                        <width>151</width>
                                         <height>20</height>
                                     </size>
                                 </property>
                             </spacer>
                         </hbox>
+                    </widget>
+                    <widget class="QCheckBox">
+                        <property name="name">
+                            <cstring>DBusCheck</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>Launch DBus</string>
+                        </property>
+                        <property name="accel">
+                            <string></string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Launches DBus when not running</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>This will start session DBus if connection is set to session and it is not running. The prefered way is to set it in startup script, thought, so this if off by default.</string>
+                        </property>
                     </widget>
                     <widget class="QLabel">
                         <property name="name">
@@ -329,7 +340,7 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>61</height>
+                                <height>60</height>
                             </size>
                         </property>
                     </spacer>
@@ -340,7 +351,7 @@
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Connection</string>
+                    <string>C&amp;onnection</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -406,9 +417,6 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                                 <property name="text">
                                     <string>Sessi&amp;on</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+O</string>
-                                </property>
                                 <property name="checked">
                                     <bool>true</bool>
                                 </property>
@@ -419,9 +427,6 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                                 </property>
                                 <property name="text">
                                     <string>S&amp;ystem</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+Y</string>
                                 </property>
                             </widget>
                         </hbox>
@@ -474,9 +479,6 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                         <property name="text">
                             <string>Hitchhike incoming &amp;messages</string>
                         </property>
-                        <property name="accel">
-                            <string>Alt+M</string>
-                        </property>
                         <property name="checked">
                             <bool>true</bool>
                         </property>
@@ -521,9 +523,6 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                         </property>
                         <property name="text">
                             <string>S&amp;how call control</string>
-                        </property>
-                        <property name="accel">
-                            <string>Alt+H</string>
                         </property>
                         <property name="checked">
                             <bool>true</bool>
@@ -655,6 +654,9 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                                 <property name="minValue">
                                     <number>1</number>
                                 </property>
+                                <property name="value">
+                                    <number>5</number>
+                                </property>
                             </widget>
                             <widget class="QLabel">
                                 <property name="name">
@@ -696,10 +698,7 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                             <cstring>PingsCheck</cstring>
                         </property>
                         <property name="text">
-                            <string>Ping Skype</string>
-                        </property>
-                        <property name="accel">
-                            <string></string>
+                            <string>Pi&amp;ng Skype</string>
                         </property>
                         <property name="checked">
                             <bool>true</bool>
@@ -731,7 +730,7 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                 </vbox>
             </widget>
         </widget>
-    </hbox>
+    </vbox>
 </widget>
 <connections>
     <connection>

@@ -222,6 +222,10 @@ class Skype : public QObject
 		 * What DBus bus is used?
 		 */
 		void setBus(int bus);
+		/**
+		 * Start DBus if not wunning?
+		 */
+		void setStartDBus(bool value);
 	signals:
 		/**
 		 * Emited when the skype changes to online (or says it goes online)

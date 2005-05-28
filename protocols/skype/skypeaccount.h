@@ -111,7 +111,7 @@ Q_OBJECT
 		 */
 		SkypeAccount(SkypeProtocol *protocol);
 		/**
-		 * Destructor.
+		 * Destructor 
 		 */
 		~SkypeAccount();
 		/**
@@ -191,6 +191,11 @@ Q_OBJECT
 		 * @return 0 as session bus, 1 as system wide
 		 */
 		int getBus() const;
+		/**
+		 * Is starting Dbus when it is not running enabled?
+		 * @return You guess..
+		 */
+		bool getStartDBus() const;
 	public slots:
 		/**
 		 * Disconnects from server.
@@ -271,6 +276,10 @@ Q_OBJECT
 		 * @param bus 0 -> session bus, 1 -> system wide bus
 		 */
 		void setBus(int bus);
+		/**
+		 * Should be DBus started when needed?
+		 */
+		void setStartDBus(bool enabled);
 	signals:
 		/**
 		 * This is emited when the ID of the last sent message is known

@@ -101,13 +101,14 @@ Skype::Skype(SkypeAccount &account) : QObject() {
 	d->connStatus = csOffline;
 	d->onlineStatus = usOffline;
 	d->searchFor = "";
-	d->pingTimer = 0L;
 	d->pings = false;
+	d->pingTimer = new QTimer;
 
 	connect(&d->connection, SIGNAL(connectionClosed(int)), this, SLOT(closed(int)));//tell me if you close/lose the connection
 	connect(&d->connection, SIGNAL(connectionDone(int, int)), this, SLOT(connectionDone(int, int)));//Do something whe he finishes connecting
 	connect(&d->connection, SIGNAL(error(const QString&)), this, SLOT(error(const QString&)));//Listen for errors
 	connect(&d->connection, SIGNAL(received(const QString&)), this, SLOT(skypeMessage(const QString&)));//Take all incoming messages
+	connect(d->pingTimer, SIGNAL(timeout()), this, SLOT(ping()));
 }
 
 
@@ -117,7 +118,8 @@ Skype::~Skype() {
 	if (d->connection.connected())
 		d->connection << QString("SET USERSTATUS OFFLINE");
 
-	delete d->pingTimer;
+	d->pingTimer->stop();
+	d->pingTimer->deleteLater();
 
 	delete d;//release the memory
 }
@@ -193,14 +195,10 @@ void Skype::setValues(int launchType, const QString &appName) {
 		d->appName = "Kopete";
 	d->launchType = launchType;
 	switch (launchType) {
-		case 0: //start the skype always
-			///@todo Launch the skype now
-			d->start = false;//Once is enough
-			break;
-		case 1: //start the skype if it is needed
+		case 0: //start the skype if it is needed
 			d->start = true;//just set autostart
 			break;
-		case 2: //do not start
+		case 1: //do not start
 			d->start = false;//do not start
 			break;
 	}
@@ -211,16 +209,13 @@ void Skype::closed(int) {
 
 	emit wentOffline();//No longer connected
 	d->messageQueue.clear();//no messages will wait, it was lost
-	delete d->pingTimer;
-	d-> pingTimer = 0L;
+	d->pingTimer->stop();
 }
 
 void Skype::connectionDone(int error, int protocolVer) {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	if (d->pings) {
-		d->pingTimer = new QTimer();
-		connect(d->pingTimer, SIGNAL(timeout()), this, SLOT(ping()));
 		d->pingTimer->start(1000);
 	}
 
@@ -553,16 +548,11 @@ void Skype::enablePings(bool enabled) {
 	d->pings = enabled;
 
 	if (!enabled) {
-		delete d->pingTimer;
-		d->pingTimer = 0L;
+		d->pingTimer->stop();
 		return;
 	}
 
 	if (d->connStatus != csOffline) {
-		if (d->pingTimer)
-			return;//It is alredy created
-		d->pingTimer = new QTimer();
-		connect(d->pingTimer, SIGNAL(timeout()), this, SLOT(ping()));
 		d->pingTimer->start(1000);
 	}
 }
@@ -573,6 +563,10 @@ void Skype::ping() {
 
 void Skype::setBus(int bus) {
 	d->bus = bus;
+}
+
+void Skype::setStartDBus(bool enabled) {
+	///@todo do this
 }
 
 #include "skype.moc"

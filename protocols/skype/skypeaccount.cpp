@@ -61,6 +61,8 @@ class SkypeAccountPrivate {
 		bool pings;
 		///What bus are we using, session (0) or system (1)?
 		int bus;
+		///Do we start DBus if needed?
+		bool startDBus;
 };
 
 SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, "Skype", (char *)0) {
@@ -86,6 +88,7 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, 
 	setScanForUnread(config->readBoolEntry("ScanForUnread"));
 	setCallControl(config->readBoolEntry("CallControl"));
 	setBus(config->readNumEntry("Bus", 1));
+	setStartDBus(config->readBoolEntry("StartDBus", false));
 
 	//Now, connect the signals
 	QObject::connect(&d->skype, SIGNAL(wentOnline()), this, SLOT(wentOnline()));
@@ -201,6 +204,7 @@ void SkypeAccount::save() {
 	config->writeEntry("CloseWindowTimeout", d->callWindowTimeout);
 	config->writeEntry("Pings", getPings());
 	config->writeEntry("Bus", getBus());
+	config->writeEntry("StartDBus", getStartDBus());
 
 	//save it into the skype connection as well
 	d->skype.setValues(launchType, author);
@@ -406,8 +410,18 @@ int SkypeAccount::closeCallWindowTimeout() const {
 
 QString SkypeAccount::getUserLabel(const QString &userId) {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
+	
+	Kopete::Contact *cont = contact(userId);
+	
+	if (!cont) {
+		addContact(userId, QString::null, 0L, Temporary);//create a temporary contact
 
-	return QString("%1 (%2)").arg(contact(userId)->nickName()).arg(userId);
+		cont = (contacts().find(userId));//It should be there now
+		if (!cont)
+			return userId;//something odd,.but better do nothing than crash
+	}
+
+	return QString("%1 (%2)").arg(cont->nickName()).arg(userId);
 }
 	
 void SkypeAccount::setPings(bool enabled) {
@@ -426,6 +440,15 @@ int SkypeAccount::getBus() const {
 void SkypeAccount::setBus(int bus) {
 	d->bus = bus;
 	d->skype.setBus(bus);
+}
+
+void SkypeAccount::setStartDBus(bool enable) {
+	d->startDBus = true;
+	d->skype.setStartDBus(enable);
+}
+
+bool SkypeAccount::getStartDBus() const {
+	return d->startDBus;
 }
 
 #include "skypeaccount.moc"

@@ -62,13 +62,14 @@ skypeEditAccount::skypeEditAccount(SkypeProtocol *protocol, Kopete::Account *acc
 		CallCheck->setChecked(d->account->getCallControl());
 		PingsCheck->setChecked(d->account->getPings());
 		BusGroup->setButton(d->account->getBus());
+		DBusCheck->setChecked(d->account->getStartDBus());
 		if (d->account->closeCallWindowTimeout()) {
 			AutoCloseCallCheck->setChecked(true);
 			CloseTimeoutSpin->setValue(d->account->closeCallWindowTimeout());
 		} else AutoCloseCallCheck->setChecked(false);
 	} else {
 		///@todo Make this unneeded :)
-		KMessageBox::information(this, i18n("Please note that this version of Skype plugin is a development version and it is probable it will cause more problems than solve. You have boon warned"), i18n("Version info"));
+		KMessageBox::information(this, i18n("Please note that this version of Skype plugin is a development version and it is probable it will cause more problems than solve. You have been warned"), i18n("Version info"));
 	}
 }
 
@@ -108,6 +109,7 @@ Kopete::Account *skypeEditAccount::apply() {
 	skype->setCallControl(CallCheck->isChecked());
 	skype->setPings(PingsCheck->isChecked());
 	skype->setBus(BusGroup->selectedId());
+	skype->setStartDBus(DBusCheck->isChecked());
 	skype->save();//save it to config
 	return skype;//return the account
 }
