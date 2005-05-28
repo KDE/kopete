@@ -125,7 +125,8 @@ void ICQUserInfoWidget::fillEmailInfo( const ICQEmailInfo& )
 void ICQUserInfoWidget::fillMoreInfo( const ICQMoreUserInfo& ui )
 {
 	m_genInfoWidget->ageSpinBox->setValue( ui.age );
-	m_genInfoWidget->birthday->setText( KGlobal::locale()->formatDate( ui.birthday,true ) );
+	if ( ui.birthday.isValid() )
+		m_genInfoWidget->birthday->setText( KGlobal::locale()->formatDate( ui.birthday,true ) );
 		
 	QString gender = static_cast<ICQProtocol*>( m_contact->protocol() )->genders()[ui.gender];
 	m_genInfoWidget->genderEdit->setText( gender );

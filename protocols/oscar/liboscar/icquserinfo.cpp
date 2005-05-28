@@ -127,7 +127,9 @@ void ICQMoreUserInfo::fill( Buffer* buffer )
 		WORD year = buffer->getLEWord();
 		BYTE month = buffer->getByte();
 		BYTE day = buffer->getByte();
-		if ( year == 0 && month == 0 && day == 0 )
+		
+		// set birthday to NULL if at least one of the values in the buffer is 0
+		if ( year == 0 || month == 0 || day == 0 )
 			birthday = QDate();
 		else
 			birthday = QDate( year, month, day );
