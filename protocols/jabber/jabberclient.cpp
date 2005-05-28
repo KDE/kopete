@@ -484,7 +484,7 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	/*
 	 * Return an error if we should force TLS but it's not available.
 	 */
-	if ( ( forceTLS () || useSSL () ) && !QCA::isSupported ( QCA::CAP_TLS ) )
+	if ( ( forceTLS () || useSSL () || probeSSL () ) && !QCA::isSupported ( QCA::CAP_TLS ) )
 	{
 		return NoTLS;
 	}
