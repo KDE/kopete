@@ -1,5 +1,5 @@
 /*  This file is part of the KDE project
-    Copyright (C) 2005 Michal Vaner <vorner@seznam.cz>
+    Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -60,6 +60,7 @@ skypeEditAccount::skypeEditAccount(SkypeProtocol *protocol, Kopete::Account *acc
 		HitchCheck->setChecked(d->account->getHitchHike());
 		ScanCheck->setChecked(d->account->getScanForUnread());
 		CallCheck->setChecked(d->account->getCallControl());
+		PingsCheck->setChecked(d->account->getPings());
 		if (d->account->closeCallWindowTimeout()) {
 			AutoCloseCallCheck->setChecked(true);
 			CloseTimeoutSpin->setValue(d->account->closeCallWindowTimeout());
@@ -104,6 +105,7 @@ Kopete::Account *skypeEditAccount::apply() {
 	skype->setMarkRead(MarkCheck->isChecked());//set the mark read messages mode and activate it
 	skype->setScanForUnread(ScanCheck->isChecked());
 	skype->setCallControl(CallCheck->isChecked());
+	skype->setPings(PingsCheck->isChecked());
 	skype->save();//save it to config
 	return skype;//return the account
 }

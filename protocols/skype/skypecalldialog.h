@@ -1,5 +1,5 @@
 /*  This file is part of the KDE project
-    Copyright (C) 2005 Michal Vaner <vorner@seznam.cz>
+    Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -83,7 +83,7 @@ class SkypeCallDialog : public SkypeCallDialogBase
 		 * Hold or resume a call (depending on its actual status
 		 * @param callId What call are we tlking about
 		 */
-		void togleHoldCall(const QString &callId);
+		void toggleHoldCall(const QString &callId);
 		/**
 		 * Tell me the skype out balance, please
 		 */

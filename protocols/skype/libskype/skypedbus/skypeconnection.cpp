@@ -208,6 +208,7 @@ void SkypeConnection::send(const QString &message) {
 		if (d->fase != cfConnected)
 			emit connectionDone(seUnknown, 0);//Connection attempt finished with error
 		disconnectSkype(crLost);//lost the connection
+
 		return;//this is enough, no more errors please..
 	}
 

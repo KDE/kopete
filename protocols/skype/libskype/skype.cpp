@@ -1,5 +1,5 @@
 /*  This file is part of the KDE project
-    Copyright (C) 2005 Michal Vaner <vorner@seznam.cz>
+    Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -25,6 +25,7 @@
 #include <qstring.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <qtimer.h>
 
 #define PROTOCOL_MAX 3
 #define PROTOCOL_MIN 3
@@ -83,6 +84,11 @@ class SkypePrivate {
 		SkypePrivate(SkypeAccount &_account) : account(_account) {};//initialize all that needs it
 		///List of known calls, so they are not showed twice
 		QValueList<QString> knownCalls;
+		///Are the pings enabled?
+		bool pings;
+		///Pinging timer
+		QTimer *pingTimer;
+		///This pings the skype and tests it if it is OK
 };
 
 Skype::Skype(SkypeAccount &account) : QObject() {
@@ -94,6 +100,8 @@ Skype::Skype(SkypeAccount &account) : QObject() {
 	d->connStatus = csOffline;
 	d->onlineStatus = usOffline;
 	d->searchFor = "";
+	d->pingTimer = 0L;
+	d->pings = false;
 
 	connect(&d->connection, SIGNAL(connectionClosed(int)), this, SLOT(closed(int)));//tell me if you close/lose the connection
 	connect(&d->connection, SIGNAL(connectionDone(int, int)), this, SLOT(connectionDone(int, int)));//Do something whe he finishes connecting
@@ -107,6 +115,8 @@ Skype::~Skype() {
 
 	if (d->connection.connected())
 		d->connection << QString("SET USERSTATUS OFFLINE");
+
+	delete d->pingTimer;
 
 	delete d;//release the memory
 }
@@ -200,10 +210,18 @@ void Skype::closed(int) {
 
 	emit wentOffline();//No longer connected
 	d->messageQueue.clear();//no messages will wait, it was lost
+	delete d->pingTimer;
+	d-> pingTimer = 0L;
 }
 
 void Skype::connectionDone(int error, int protocolVer) {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
+
+	if (d->pings) {
+		d->pingTimer = new QTimer();
+		connect(d->pingTimer, SIGNAL(timeout()), this, SLOT(ping()));
+		d->pingTimer->start(1000);
+	}
 
 	if (error == seSuccess) {//It worked
 		if (protocolVer < PROTOCOL_MIN) {//The protocol is too old, it is not useable
@@ -231,8 +249,12 @@ void Skype::connectionDone(int error, int protocolVer) {
 void Skype::error(const QString &message) {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
+	disconnect(&d->connection, SIGNAL(error(const QString&)), this, SLOT(error(const QString&)));//One arror at a time is enough, stop flooding the user
+
 	if (d->showDeadMessage)//just skip the eror message if we are going offline, noone ever cares.
 		KMessageBox::error(0L, message, i18n("Skype protocol"));//Show the message
+
+	connect(&d->connection, SIGNAL(error(const QString&)), this, SLOT(error(const QString&)));//Continue showing more errors in future
 }
 
 void Skype::skypeMessage(const QString &message) {
@@ -499,7 +521,7 @@ void Skype::hangUp(const QString &callId) {
 	d->connection << QString("SET CALL %1 STATUS FINISHED").arg(callId);
 }
 
-void Skype::togleHoldCall(const QString &callId) {
+void Skype::toggleHoldCall(const QString &callId) {
 	kdDebug(14311) << k_funcinfo <<  endl;//some debug info
 
 	const QString &status = (d->connection % QString("GET CALL %1 STATUS").arg(callId)).section(' ', 3, 3).stripWhiteSpace().upper();
@@ -517,11 +539,35 @@ bool Skype::isCallIncoming(const QString &callId) {
 void Skype::getSkypeOut() {
 	const QString &curr = (d->connection % QString("GET PROFILE PSTN_BALANCE_CURRENCY")).section(' ', 2, 2).stripWhiteSpace().upper();
 	if (curr.isEmpty()) {
-		emit skypeOutInfo(0, "");	
+		emit skypeOutInfo(0, "");
 	} else {
 		int value = (d->connection % QString("GET PROFILE PSTN_BALANCE")).section(' ', 2, 2).stripWhiteSpace().toInt();
 		emit skypeOutInfo(value, curr);
 	}
+}
+
+void Skype::enablePings(bool enabled) {
+	kdDebug(14311) << k_funcinfo <<  endl;//some debug info
+
+	d->pings = enabled;
+
+	if (!enabled) {
+		delete d->pingTimer;
+		d->pingTimer = 0L;
+		return;
+	}
+
+	if (d->connStatus != csOffline) {
+		if (d->pingTimer)
+			return;//It is alredy created
+		d->pingTimer = new QTimer();
+		connect(d->pingTimer, SIGNAL(timeout()), this, SLOT(ping()));
+		d->pingTimer->start(1000);
+	}
+}
+
+void Skype::ping() {
+	d->connection << QString("PING");
 }
 
 #include "skype.moc"

@@ -1,5 +1,5 @@
 /*  This file is part of the KDE project
-    Copyright (C) 2005 Michal Vaner <vorner@seznam.cz>
+    Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -75,7 +75,7 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 	d->user = user;
 	d->callContactAction = 0L;
 	connect(this, SIGNAL(setCallPossible(bool )), this, SLOT(enableCall(bool )));
-	connect(this, SIGNAL(onlineStatusChanged(Kopete::Contact*, Kopete::OnlineStatus&, Kopete::OnlineStatus&)), this, SLOT(statusChanged()));
+	connect(this, SIGNAL(onlineStatusChanged(Kopete::Contact*,const Kopete::OnlineStatus&,const Kopete::OnlineStatus&)), this, SLOT(statusChanged()));
 	if (account->canComunicate() && user)
 		emit infoRequest(contactId());//retrieve information
 }

@@ -1,5 +1,5 @@
 /*  This file is part of the KDE project
-    Copyright (C) 2005 Michal Vaner <vorner@seznam.cz>
+    Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -204,11 +204,20 @@ class Skype : public QObject
 		 * @see callError
 		 * @see newCall
 		 */
-		void togleHoldCall(const QString &callId);
+		void toggleHoldCall(const QString &callId);
 		/**
 		 * Get the skoype out balance
 		 */
 		void getSkypeOut();
+		/**
+		 * Sets if the Skype is checked in short intervals by pings. If you turn that off, you will not know when skype exits.
+		 * @param enabled Ping or not?
+		 */
+		void enablePings(bool enabled);
+		/**
+		 * Sends one ping and takes actions if it can not be delivered (skype is down)
+		 */
+		void ping();
 	signals:
 		/**
 		 * Emited when the skype changes to online (or says it goes online)

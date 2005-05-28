@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>556</width>
-            <height>387</height>
+            <height>397</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -19,6 +19,9 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
         </sizepolicy>
+    </property>
+    <property name="caption">
+        <string>SkypeEditAccountBase</string>
     </property>
     <hbox>
         <property name="name">
@@ -424,6 +427,9 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                         <property name="text">
                             <string>Hitchhike incoming &amp;messages</string>
                         </property>
+                        <property name="accel">
+                            <string>Alt+M</string>
+                        </property>
                         <property name="checked">
                             <bool>true</bool>
                         </property>
@@ -468,6 +474,9 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                         </property>
                         <property name="text">
                             <string>S&amp;how call control</string>
+                        </property>
+                        <property name="accel">
+                            <string>Alt+H</string>
                         </property>
                         <property name="checked">
                             <bool>true</bool>
@@ -635,6 +644,26 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                             </spacer>
                         </hbox>
                     </widget>
+                    <widget class="QCheckBox">
+                        <property name="name">
+                            <cstring>PingsCheck</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Ping Skype</string>
+                        </property>
+                        <property name="accel">
+                            <string></string>
+                        </property>
+                        <property name="checked">
+                            <bool>true</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>If this is enabled, Kopete keeps track of wether the Skype is running.</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>This keeps track of wether Skype is running. Turning this off makes only sence it you're trying to get some not-flooded debug output.</string>
+                        </property>
+                    </widget>
                     <spacer>
                         <property name="name">
                             <cstring>spacer13</cstring>
@@ -648,7 +677,7 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>141</height>
+                                <height>60</height>
                             </size>
                         </property>
                     </spacer>

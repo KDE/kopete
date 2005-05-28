@@ -1,5 +1,5 @@
 /*  This file is part of the KDE project
-    Copyright (C) 2005 Michal Vaner <vorner@seznam.cz>
+    Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -178,6 +178,11 @@ Q_OBJECT
 		 * @return Returns name that shouls be showed by a call window
 		 */
 		QString getUserLabel(const QString &userId);
+		/**
+		 * Are pings to Skype enabled?
+		 * @return You guess..
+		 */
+		bool getPings() const;
 	public slots:
 		/**
 		 * Disconnects from server.
@@ -247,6 +252,12 @@ Q_OBJECT
 		 * Sets timeout in seconds how long will be call window visible after the call finished. If you want to disable it, set to 0.
 		 */
 		void setCloseWindowTimeout(int timeout);
+		/**
+		 * Turns pinging skype on/off
+		 * If it is on, every second a ping message is sent to skype so track of if Skype is running is still hold. f it is off, skype can be turned off and you won't know it.
+		 * @param enabled Are they on or off from now?
+		 */
+		void setPings(bool enabled);
 	signals:
 		/**
 		 * This is emited when the ID of the last sent message is known

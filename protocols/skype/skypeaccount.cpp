@@ -1,5 +1,5 @@
 /*  This file is part of the KDE project
-    Copyright (C) 2005 Michal Vaner <vorner@seznam.cz>
+    Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -57,6 +57,8 @@ class SkypeAccountPrivate {
 		SkypeAccountPrivate(SkypeAccount &account) : skype(account) {};//just an empty constructor
 		///Automatic close of call window when the call finishes (in seconds, 0 -> disabled)
 		int callWindowTimeout;
+		///Are the pings enabled?
+		bool pings;
 };
 
 SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, "Skype", (char *)0) {
@@ -103,6 +105,7 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol) : Kopete::Account(protocol, 
 	setHitchHike(config->readBoolEntry("Hitch", true));
 	setMarkRead(config->readBoolEntry("MarkRead", true));//read the modes of account
 	d->callWindowTimeout = config->readNumEntry("CloseWindowTimeout", 3);
+	setPings(config->readBoolEntry("Pings", true));
 }
 
 
@@ -193,6 +196,7 @@ void SkypeAccount::save() {
 	config->writeEntry("ScanForUnread", getScanForUnread());
 	config->writeEntry("CallControl", getCallControl());
 	config->writeEntry("CloseWindowTimeout", d->callWindowTimeout);
+	config->writeEntry("Pings", getPings());
 
 	//save it into the skype connection as well
 	d->skype.setValues(launchType, author);
@@ -374,7 +378,7 @@ void SkypeAccount::newCall(const QString &callId, const QString &userId) {
 		QObject::connect(&d->skype, SIGNAL(callStatus(const QString&, const QString& )), dialog, SLOT(updateStatus(const QString&, const QString& )));
 		QObject::connect(dialog, SIGNAL(acceptTheCall(const QString& )), &d->skype, SLOT(acceptCall(const QString& )));
 		QObject::connect(dialog, SIGNAL(hangTheCall(const QString& )), &d->skype, SLOT(hangUp(const QString& )));
-		QObject::connect(dialog, SIGNAL(togleHoldCall(const QString& )), &d->skype, SLOT(togleHoldCall(const QString& )));
+		QObject::connect(dialog, SIGNAL(toggleHoldCall(const QString& )), &d->skype, SLOT(toggleHoldCall(const QString& )));
 		QObject::connect(&d->skype, SIGNAL(callError(const QString&, const QString& )), dialog, SLOT(updateError(const QString&, const QString& )));
 		QObject::connect(&d->skype, SIGNAL(skypeOutInfo(int, const QString& )), dialog, SLOT(skypeOutInfo(int, const QString& )));
 		QObject::connect(dialog, SIGNAL(updateSkypeOut()), &d->skype, SLOT(getSkypeOut()));
@@ -402,5 +406,13 @@ QString SkypeAccount::getUserLabel(const QString &userId) {
 	return QString("%1 (%2)").arg(contact(userId)->nickName()).arg(userId);
 }
 	
+void SkypeAccount::setPings(bool enabled) {
+	d->skype.enablePings(enabled);
+	d->pings = enabled;
+}
+
+bool SkypeAccount::getPings() const {
+	return d->pings;
+}
 
 #include "skypeaccount.moc"
