@@ -1,6 +1,7 @@
 /*
     kopetelistviewitem.cpp - Kopete's modular QListViewItems
 
+    Copyright (c) 2005      by Engin AYDOGAN          <engin@bzzzt.biz>
     Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
@@ -43,6 +44,7 @@
 #endif
 
 #include <limits.h>
+#include <limits> // for std::numeric_limits
 
 namespace Kopete {
 namespace UI {
@@ -522,6 +524,11 @@ void ImageComponent::paint( QPainter *painter, const QColorGroup & )
 	painter->drawPixmap( rc & ourRc, d->image );
 }
 
+void ImageComponent::scale( int w, int h, QImage::ScaleMode mode )
+{
+	QImage im = d->image.convertToImage();
+	setPixmap( QPixmap( im.smoothScale( w, h, mode ) ) );
+}
 // TextComponent
 
 class TextComponent::Private
@@ -700,16 +707,20 @@ void DisplayNameComponent::setText( const QString& text )
 	tokens = Kopete::Emoticons::tokenizeEmoticons( text );
 	ImageComponent *ic;
 
+	QFont font;
+	QFontMetrics fontMetrics( font );
+	int fontHeight = fontMetrics.height();
 	for ( token = tokens.begin(); token != tokens.end(); ++token )
 	{
 		switch ( (*token).type )
 		{
 		case Kopete::Emoticons::Text:
-			new TextComponent( this, QFont(), (*token).text );
+			new TextComponent( this, font, (*token).text );
 		break;
 		case Kopete::Emoticons::Image:
 			ic = new ImageComponent( this );
 			ic->setPixmap( QPixmap( (*token).picPath ) );
+			ic->scale( std::numeric_limits<int>::max(), fontHeight, QImage::ScaleMin );
 		break;
 		default:
 			kdDebug( 14010 ) << k_funcinfo << "This should have not happened!" << endl;

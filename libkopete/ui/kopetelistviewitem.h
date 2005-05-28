@@ -1,6 +1,7 @@
 /*
     kopetelistviewitem.h - Kopete's modular QListViewItems
 
+    Copyright (c) 2005      by Engin AYDOGAN          <engin@bzzzt.biz>
     Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
@@ -22,6 +23,7 @@
 #include <kopetecontact.h>
 
 #include <utility>
+#include <qimage.h>
 
 class QPixmap;
 
@@ -296,6 +298,7 @@ public:
 
 	void paint( QPainter *painter, const QColorGroup &cg );
 
+	void scale( int w, int h, QImage::ScaleMode );
 	static int RTTI;
 	virtual int rtti() const { return RTTI; }
 private:
