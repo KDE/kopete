@@ -323,7 +323,8 @@ void ContactList::loadGlobalIdentity()
 				kdDebug(14010) << k_funcinfo << "Global Identity applied !" << endl;
 			}
 		}
-		else
+		// Only apply the new nickname if it's different
+		else if(myself()->displayName() != globalNickName)
 		{
 			kdDebug(14010) << k_funcinfo << "Global Identity applied !" << endl;	
 			myself()->setDisplayName(globalNickName);
