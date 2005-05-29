@@ -26,20 +26,8 @@
 
 class DlgJabberRegisterAccount;
 class JabberProtocol;
-class JabberConnector;
+class JabberClient;
 class JabberEditAccountWidget;
-
-namespace QCA
-{
-	class TLS;
-}
-
-namespace XMPP
-{
-	class QCATLSHandler;
-	class ClientStream;
-	class Client;
-}
 
 /**
 @author Till Gerken
@@ -61,10 +49,11 @@ private slots:
 	void slotJIDInformation ();
 	void slotSSLToggled ();
 	void slotOk ();
-	void slotTLSHandshaken ();
-	void slotCSAuthenticated ();
-	void slotCSWarning ();
-	void slotCSError (int error);
+
+	void slotHandleTLSWarning ( int validityResult );
+	void slotCSError ( int error );
+	void slotConnected ();
+
 	void slotRegisterUserDone ();
 	void slotDeleteDialog ();
 	void validateData ();
@@ -72,19 +61,13 @@ private slots:
 	void disconnect ();
 
 private:
-	void cleanup ();
-
 	DlgJabberRegisterAccount *mMainWidget;
 	JabberEditAccountWidget *mParentWidget;
 
 	QRegExp jidRegExp;
 	QPixmap hintPixmap;
 
-	QCA::TLS *jabberTLS;
-	XMPP::QCATLSHandler *jabberTLSHandler;
-	JabberConnector *jabberClientConnector;
-	XMPP::ClientStream *jabberClientStream;
-	XMPP::Client *jabberClient;
+	JabberClient *jabberClient;
 
 	bool mSuccess;
 };

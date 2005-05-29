@@ -79,8 +79,9 @@ public:
 	 * Connect to a Jabber server.
 	 * @param jid JID to connect to.
 	 * @param password Password to authenticate with.
+	 * @param auth True if authentication should be done, false if not.
 	 */
-	ErrorCode connect ( const XMPP::Jid &jid, const QString &password );
+	ErrorCode connect ( const XMPP::Jid &jid, const QString &password, bool auth = true );
 
 	/**
 	 * Disconnect from Jabber server.
@@ -339,16 +340,23 @@ signals:
 	void connected ();
 
 	/**
-	 * Client stream disconnected.
-	 * This means that the socket has
-	 * been closed.
+	 * Client stream authenticated. This
+	 * signal is emitted when the socket
+	 * connection has been successfully
+	 * established, before sending the login
+	 * packet.
 	 */
-	void csDisconnected ();
+	void csAuthenticated ();
 
 	/**
 	 * Client stream error.
 	 */
 	void csError ( int error );
+
+	/**
+	 * Client stream was disconnected.
+	 */
+	void csDisconnected ();
 
 	/**
 	 * TLS problem encountered.
@@ -373,7 +381,7 @@ signals:
 	 * Fatal error has been encountered,
 	 * further operations are not possible.
 	 */
-	void error ( ErrorCode code );
+	void error ( JabberClient::ErrorCode code );
 
 	/**
 	 * Roster has been transmitted and processed.

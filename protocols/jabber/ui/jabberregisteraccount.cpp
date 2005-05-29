@@ -41,6 +41,7 @@
 #include "kopetepasswordwidget.h"
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
+#include "jabberclient.h"
 #include "jabberconnector.h"
 #include "jabbereditaccountwidget.h"
 #include "jabberchooseserver.h"
@@ -65,12 +66,12 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent, 
 	enableButtonSeparator ( true );
 
 	// clear variables
-	jabberTLS = 0L;
-	jabberTLSHandler = 0L;
-	jabberClientConnector = 0L;
-	jabberClientStream = 0L;
-	jabberClient = 0L;
+	jabberClient = new JabberClient ();
 
+	connect ( jabberClient, SIGNAL ( csError ( int ) ), this, SLOT ( slotCSError ( int ) ) );
+	connect ( jabberClient, SIGNAL ( tlsWarning ( int ) ), this, SLOT ( slotHandleTLSWarning ( int ) ) );
+	connect ( jabberClient, SIGNAL ( connected () ), this, SLOT ( slotConnected () ) );
+	
 	jidRegExp.setPattern ( "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}" );
 	hintPixmap = KGlobal::iconLoader()->loadIcon ( "jabber_online", KIcon::Small );
 
@@ -106,6 +107,7 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent, 
 
 JabberRegisterAccount::~JabberRegisterAccount()
 {
+	delete jabberClient;
 }
 
 void JabberRegisterAccount::slotDeleteDialog ()
@@ -245,103 +247,33 @@ void JabberRegisterAccount::slotOk ()
 
 	mMainWidget->lblStatusMessage->setText ( i18n ( "Connecting to server..." ) );
 
-	/*
-	 * Check for SSL availability first
-	 */
-	bool trySSL = false;
-	if ( mMainWidget->cbUseSSL->isChecked () )
-	{
-		bool sslPossible = QCA::isSupported(QCA::CAP_TLS);
+	// cancel any previous attempt
+	jabberClient->disconnect ();
 
-		if (!sslPossible)
-		{
+	// FIXME: we need to use the old protocol for now
+	jabberClient->setUseXMPP09 ( true );
+
+	jabberClient->setUseSSL ( mMainWidget->cbUseSSL->isChecked () );
+
+	// FIXME: check this when using the new protocol
+	jabberClient->setOverrideHost ( true, mMainWidget->leServer->text (), mMainWidget->sbPort->value () );
+
+	// start connection, no authentication
+	switch ( jabberClient->connect ( XMPP::Jid ( mMainWidget->leJID->text () ), QString::null, false ) )
+	{
+		case JabberClient::NoTLS:
+			// no SSL support, at the connecting stage this means the problem is client-side
 			KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget (), KMessageBox::Error,
 								i18n ("SSL support could not be initialized for account %1. This is most likely because the QCA TLS plugin is not installed on your system.").
-								arg(mMainWidget->leJID->text()),
+								arg ( mMainWidget->leJID->text () ),
 								i18n ("Jabber SSL Error"));
-			return;
-		}
-		else
-		{
-			trySSL = true;
-		}
+			break;
+	
+		case JabberClient::Ok:
+		default:
+			// everything alright!
+			break;
 	}
-
-	/*
-	 * Instantiate connector, responsible for dealing with the socket.
-	 * This class uses KDE's socket code, which in turn makes use of
-	 * the global proxy settings.
-	 */
-	jabberClientConnector = new JabberConnector;
-	jabberClientConnector->setOptHostPort ( mMainWidget->leServer->text (), mMainWidget->sbPort->value () );
-	jabberClientConnector->setOptSSL(trySSL);
-
-	/*
-	 * Setup authentication layer
-	 */
-	if ( trySSL )
-	{
-		jabberTLS = new QCA::TLS;
-		jabberTLSHandler = new XMPP::QCATLSHandler(jabberTLS);
-
-		{
-			using namespace XMPP;
-			QObject::connect(jabberTLSHandler, SIGNAL(tlsHandshaken()), this, SLOT(slotTLSHandshaken()));
-		}
-	}
-
-	/*
-	 * Instantiate client stream which handles the network communication by referring
-	 * to a connector (proxying etc.) and a TLS handler (security layer)
-	 */
-	jabberClientStream = new XMPP::ClientStream(jabberClientConnector, jabberTLSHandler);
-
-	{
-		using namespace XMPP;
-		QObject::connect (jabberClientStream, SIGNAL (authenticated()),
-				  this, SLOT (slotCSAuthenticated ()));
-		QObject::connect (jabberClientStream, SIGNAL (warning (int)),
-				  this, SLOT (slotCSWarning ()));
-		QObject::connect (jabberClientStream, SIGNAL (error (int)),
-				  this, SLOT (slotCSError (int)));
-	}
-
-	/*
-	 * FIXME: This is required until we fully support XMPP 1.0
-	 *        Upon switching to XMPP 1.0, add full TLS capabilities
-	 *        with fallback (setOptProbe()) and remove the call below.
-	 */
-	jabberClientStream->setOldOnly(true);
-
-	/*
-	 * Initiate anti-idle timer (will be triggered every 55 seconds).
-	 */
-	jabberClientStream->setNoopTime(55000);
-
-	jabberClient = new XMPP::Client (this);
-
-	/*
-	 * Start connection, no authentication
-	 */
-	jabberClient->connectToServer (jabberClientStream, XMPP::Jid(mMainWidget->leJID->text ()), false);
-
-
-}
-
-void JabberRegisterAccount::cleanup ()
-{
-
-	delete jabberClient;
-	delete jabberClientStream;
-	delete jabberClientConnector;
-	delete jabberTLSHandler;
-	delete jabberTLS;
-
-	jabberTLS = 0L;
-	jabberTLSHandler = 0L;
-	jabberClientConnector = 0L;
-	jabberClientStream = 0L;
-	jabberClient = 0L;
 
 }
 
@@ -349,54 +281,27 @@ void JabberRegisterAccount::disconnect ()
 {
 
 	if(jabberClient)
-		jabberClient->close(true);
-
-	cleanup ();
+		jabberClient->disconnect ();
 
 	if ( !mSuccess )
 		enableButtonOK ( true );
 
 }
 
-void JabberRegisterAccount::slotTLSHandshaken ()
+void JabberRegisterAccount::slotHandleTLSWarning ( int validityResult )
 {
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "TLS handshake done, testing certificate validity..." << endl;
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Handling TLS warning..." << endl;
 
-	mMainWidget->lblStatusMessage->setText ( i18n ( "Security handshake..." ) );
-
-	int validityResult = jabberTLS->certificateValidityResult ();
-
-	if(validityResult == QCA::TLS::Valid)
+	if ( JabberAccount::handleTLSWarning ( jabberClient, validityResult ) )
 	{
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Certificate is valid, continuing." << endl;
-
-		// valid certificate, continue
-		jabberTLSHandler->continueAfterHandshake ();
+		// resume stream
+		jabberClient->continueAfterTLSWarning ();
 	}
 	else
 	{
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Certificate is not valid, asking user what to do next." << endl;
-
-		// certificate is not valid, query the user
-		//if(JabberAccount::handleTLSWarning (validityResult, mMainWidget->leServer->text (), mMainWidget->leJID->text ()) == KMessageBox::Continue)
-		{
-			jabberTLSHandler->continueAfterHandshake ();
-		}
-		//else
-		//{
-		//	mMainWidget->lblStatusMessage->setText ( i18n ( "Security handshake failed." ) );
-		//	disconnect ();
-		//}
+		// disconnect stream
+		disconnect ();
 	}
-
-}
-
-void JabberRegisterAccount::slotCSWarning ()
-{
-
-	// FIXME: with the next synch point of Iris, this should
-	//        have become a slot, so simply connect it through.
-	jabberClientStream->continueAfterWarning ();
 
 }
 
@@ -409,22 +314,17 @@ void JabberRegisterAccount::slotCSError (int error)
 	mMainWidget->lblStatusMessage->setText ( i18n ( "Protocol error." ) );
 
 	// display message to user
-	JabberAccount::handleStreamError (error, jabberClientStream->errorCondition (), jabberClientConnector->errorCode (), mMainWidget->leServer->text (), errorClass);
+	JabberAccount::handleStreamError (error, jabberClient->clientStream()->errorCondition (), jabberClient->clientConnector()->errorCode (), mMainWidget->leServer->text (), errorClass);
 
 	disconnect ();
 
 }
 
-void JabberRegisterAccount::slotCSAuthenticated ()
+void JabberRegisterAccount::slotConnected ()
 {
-
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Launching registration task..." << endl;
 
-	mMainWidget->lblStatusMessage->setText ( i18n ( "Authentication successful, registering new account..." ) );
-
-	/* start the client operation */
-	XMPP::Jid jid(mMainWidget->leJID->text ());
-	jabberClient->start ( jid.domain (), jid.node (), "", "" );
+	mMainWidget->lblStatusMessage->setText ( i18n ( "Connected successfully, registering new account..." ) );
 
 	XMPP::JT_Register * task = new XMPP::JT_Register (jabberClient->rootTask ());
 	QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotRegisterUserDone ()));

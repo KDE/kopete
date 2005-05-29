@@ -27,6 +27,7 @@
 #include <kopetepasswordedaccount.h>
 #include <kopeteonlinestatus.h>
 #include <im.h>
+#include "jabberclient.h"
 
 class QString;
 class QStringList;
@@ -34,7 +35,6 @@ class KActionMenu;
 class JabberResourcePool;
 class JabberContact;
 class JabberContactPool;
-class JabberClient;
 class JabberProtocol;
 namespace Kopete { class MetaContact; }
 
@@ -173,6 +173,9 @@ private slots:
 
 	// handle a TLS warning
 	void slotHandleTLSWarning ( int validityResult );
+
+	// handle client errors
+	void slotClientError ( JabberClient::ErrorCode errorCode );
 
 	// we are connected to the server
 	void slotConnected ();

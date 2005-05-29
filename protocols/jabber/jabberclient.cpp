@@ -468,7 +468,7 @@ XMPP::Jid JabberClient::jid () const
 
 }
 
-JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QString &password )
+JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QString &password, bool auth )
 {
 	/*
 	 * Close any existing connection.
@@ -623,7 +623,7 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 
 	m_jabberClient->setTimeZone ( timeZoneName (), timeZoneOffset () );
 
-	m_jabberClient->connectToServer ( m_jabberClientStream, jid, true );
+	m_jabberClient->connectToServer ( m_jabberClientStream, jid, auth );
 
 	return Ok;
 

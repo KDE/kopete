@@ -250,6 +250,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 		QObject::connect ( m_jabberClient, SIGNAL ( csError ( int ) ), this, SLOT ( slotCSError ( int ) ) );
 		QObject::connect ( m_jabberClient, SIGNAL ( tlsWarning ( int ) ), this, SLOT ( slotHandleTLSWarning ( int ) ) );
 		QObject::connect ( m_jabberClient, SIGNAL ( connected () ), this, SLOT ( slotConnected () ) );
+		QObject::connect ( m_jabberClient, SIGNAL ( error ( JabberClient::ErrorCode ) ), this, SLOT ( slotClientError ( JabberClient::ErrorCode ) ) );
 
 		QObject::connect ( m_jabberClient, SIGNAL ( subscription ( const XMPP::Jid &, const QString & ) ),
 				   this, SLOT ( slotSubscription ( const XMPP::Jid &, const QString & ) ) );
@@ -486,6 +487,23 @@ void JabberAccount::slotHandleTLSWarning ( int validityResult )
 	{
 		// disconnect stream
 		disconnect ( Kopete::Account::Manual );
+	}
+
+}
+
+void JabberAccount::slotClientError ( JabberClient::ErrorCode errorCode )
+{
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Handling client error..." << endl;
+
+	switch ( errorCode )
+	{
+		case JabberClient::NoTLS:
+		default:
+			KMessageBox::error ( Kopete::UI::Global::mainWidget (),
+					     i18n ("An encrypted connection with the Jabber server could not be established."),
+					     i18n ("Jabber Connection Error"));
+			disconnect ( Kopete::Account::Manual );
+			break;
 	}
 
 }
