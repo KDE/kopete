@@ -409,6 +409,17 @@ void Kopete::Password::readConfig()
 void Kopete::Password::writeConfig()
 {
 	KConfig *config = KGlobal::config();
+	if(!config->hasGroup(d->configGroup))
+	{
+		//### (KOPETE)
+		// if the kopete account has been removed, we have no way to know it.
+		//  but we don't want in any case to recreate the group.
+		//  see Bug 106460
+		// (the problem is that when we remove the account, we remove the password
+		//  also, which cause a call to this function )
+		return;
+	}
+		  
 	config->setGroup( d->configGroup );
 
 	if ( d->remembered && !d->passwordFromKConfig.isNull() )
