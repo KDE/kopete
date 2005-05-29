@@ -202,21 +202,18 @@ void JabberBaseContact::reevaluateStatus ()
 	{
 		// icon, resource name and priority
 		resourceListStr += QString ( "<tr><td><img src=\"kopete-onlinestatus-icon:%1\" /> <b>%2</b> (Priority: %3)</td></tr>" ).
-						   arg ( protocol()->resourceToKOS(*it).mimeSourceFor ( account () ) ).
-						   arg ( (*it).name () ).
-						   arg ( (*it).priority () );
+						   arg ( protocol()->resourceToKOS(*it).mimeSourceFor ( account () ),
+								 (*it).name (), QString::number ( (*it).priority () ) );
 
 		// resource timestamp
 		resourceListStr += QString ( "<tr><td>%1: %2</td></tr>" ).
-						   arg ( i18n ( "Timestamp" ) ).
-						   arg ( (*it).status().timeStamp().toString ( Qt::LocalDate ) );
-		
+						   arg ( i18n ( "Timestamp" ), KGlobal::locale()->formatDateTime ( (*it).status().timeStamp(), true, true ) );
+
 		// message, if any
 		if ( !(*it).status().status().stripWhiteSpace().isEmpty () )
 		{
 			resourceListStr += QString ( "<tr><td>%1: %2</td></tr>" ).
-							   arg ( i18n ( "Message" ) ).
-							   arg ( (*it).status().status () );
+							   arg ( i18n ( "Message" ), (*it).status().status () );
 		}
 	}
 	
