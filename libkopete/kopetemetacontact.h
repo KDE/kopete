@@ -3,7 +3,7 @@
 
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2004 by Duncan Mac-Vicar Prett <duncan@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @tiscalinet.be>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart @ kde.org>
     Copyright (c) 2003      by Will Stephenson        <will@stevello.free-online.co.uk>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
@@ -119,7 +119,20 @@ public:
 	Contact *findContact( const QString &protocolId, const QString &accountId, const QString &contactId );
 
 	/**
-	 * @return the display name showed in the contactlist window, or in the chatwindow
+	 * @brief the display name showed in the contactlist window
+	 *
+	 * The displayname is the name which should be shown almost everywere to
+	 * represent the metacontact.  (in the contactlist, in the chatwindow, ....)
+	 *
+	 * This is a kind of alias, set by the kopete user, as opposed to a nickname
+	 * set by the contact itself.
+	 *
+	 * If the protocol support alias serverside, the metacontact displayname
+	 * should probably be syncronized with the alias on the server.
+	 *
+	 * By default, if the user has not set itself any displayname, libkopete will
+	 * take care to syncronize it with the nickName property of child contact.
+	 * The subcontact used is @ref namesource 
 	 */
 	QString displayName() const;
 
@@ -127,7 +140,11 @@ public:
 	 * @brief Set the displayName.
 	 *
 	 * this metohd may emit @ref displayNameChanged signal.
+	 * And will call @ref Kopete::Contact::sync 
+	 * 
 	 * If @ref nameSource was not null, it will automatically set it to null
+	 * 
+	 * @see displayName()
 	 */
 	void setDisplayName( const QString &name );
 
@@ -135,7 +152,7 @@ public:
 	 * @brief get the subcontact being tracked for its displayname (null if not tracking)
 	 *
 	 * The MetaContact will adjust its displayName() every time the
-	 * "nameSource" changes its name.
+	 * "nameSource" changes its nickname property.
 	 */
 	Contact *nameSource() const;
 
@@ -149,6 +166,7 @@ public:
 
 	/**
 	 * @brief set the subcontact whose name is to be tracked (set to null to disable tracking)
+	 * @see nameSource
 	 */
 	void setNameSource( Contact* contact );
 
