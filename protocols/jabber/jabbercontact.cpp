@@ -30,6 +30,9 @@
 #include <kfiledialog.h>
 #include <kaction.h>
 #include <kapplication.h>
+// For Global Identity stuff
+#include <kconfig.h> 
+#include <kglobal.h> 
 
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
@@ -729,6 +732,26 @@ void JabberContact::deleteContact ()
 
 void JabberContact::sync ( unsigned int)
 {
+	if ( contactId () == account()->accountId() && account()->isConnected() )
+	{
+		KConfig * configIdentity = KGlobal::config();
+		configIdentity->setGroup("GlobalIdentity");
+		bool useGlobal = configIdentity->readBoolEntry("enableGlobalIdentity");
+		bool useAccount = configIdentity->readBoolEntry("checkAccountNick");
+		QString accountSelected = configIdentity->readEntry("accountSelected");
+		 // Apply the global identity
+		if( useGlobal && ( !(accountSelected == account()->accountId()) || !useAccount) )
+		{
+			// request vCard
+			XMPP::JT_VCard *task = new XMPP::JT_VCard( account()->client()->rootTask () );
+			// Save the global identity in
+			QObject::connect(task, SIGNAL( finished () ), this, SLOT( slotApplyGlobalIdentity()) );
+			task->get(mRosterItem.jid ());
+			task->go (true);
+		}
+		return;
+	}
+
 	#warning  dontsync is a temporary solution
 	if( account()->dontSync )
 		return;
@@ -761,6 +784,24 @@ void JabberContact::sync ( unsigned int)
 	rosterTask->set ( mRosterItem.jid (), metaContact()->displayName (), mRosterItem.groups () );
 	rosterTask->go (true);
 
+}
+
+void JabberContact::slotApplyGlobalIdentity()
+{
+	kdDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Applying Global Identity for Jabber" << endl;
+
+	XMPP::JT_VCard *taskvCard = (XMPP::JT_VCard *) sender();
+	XMPP::VCard vCard = taskvCard->vcard();
+	
+	vCard.setNickName( metaContact()->displayName() );
+	
+	// Save the vCard on server.
+	XMPP::JT_VCard *task = new XMPP::JT_VCard( account()->client()->rootTask() );
+	task->set( vCard );
+	task->go(true);
+
+	// Update the nickname property
+	setProperty ( protocol()->propNickName, metaContact()->displayName());
 }
 
 void JabberContact::sendFile ( const KURL &sourceURL, const QString &/*fileName*/, uint /*fileSize*/ )

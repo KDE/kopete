@@ -147,6 +147,11 @@ private slots:
 	 */
 	void slotGotVCard ();
 
+	/**
+	 * Apply the global identity in the myself vCard.
+	 */ 
+	void slotApplyGlobalIdentity();
+
 private:
 
 	/**
