@@ -90,6 +90,12 @@ public:
 	virtual void handleIncomingMessage ( const XMPP::Message &message ) = 0;
 
 	/**
+	 * Update the resource property of the
+	 * contact, listing all available resources.
+	 */
+	void updateResourceList ();
+
+	/**
 	 * Re-evaluate online status. Gets called
 	 * whenever a resource is added, removed, or
 	 * changed in the resource pool.

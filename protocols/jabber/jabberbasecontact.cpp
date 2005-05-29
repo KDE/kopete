@@ -28,6 +28,7 @@
 
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
+#include "jabberresource.h"
 #include "jabberresourcepool.h"
 #include "kopetemetacontact.h"
 
@@ -164,6 +165,51 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 
 }
 
+void JabberBaseContact::updateResourceList ()
+{
+	/*
+	 * Set available resources.
+	 * This is a bit more complicated: We need to generate
+	 * all images dynamically from the KOS icons and store
+	 * them into the mime factory, then plug them into
+	 * the richtext.
+	 */
+	JabberResourcePool::ResourceList resourceList;
+	account()->resourcePool()->findResources ( XMPP::Jid ( contactId () ), resourceList );
+
+	QString resourceListStr = "<table cellspacing=\"0\">";
+
+	for ( JabberResourcePool::ResourceList::iterator it = resourceList.begin (); it != resourceList.end (); ++it )
+	{
+		// icon, resource name and priority
+		resourceListStr += QString ( "<tr><td><img src=\"kopete-onlinestatus-icon:%1\" /> <b>%2</b> (Priority: %3)</td></tr>" ).
+						   arg ( protocol()->resourceToKOS((*it)->resource()).mimeSourceFor ( account () ),
+								 (*it)->resource().name (), QString::number ( (*it)->resource().priority () ) );
+
+		// client name, version, OS
+		if ( !(*it)->clientName().isEmpty () )
+		{
+			resourceListStr += QString ( "<tr><td>%1: %2 (%3)</td></tr>" ).
+							   arg ( i18n ( "Client" ), (*it)->clientName (), (*it)->clientSystem () );
+		}
+
+		// resource timestamp
+		resourceListStr += QString ( "<tr><td>%1: %2</td></tr>" ).
+						   arg ( i18n ( "Timestamp" ), KGlobal::locale()->formatDateTime ( (*it)->resource().status().timeStamp(), true, true ) );
+
+		// message, if any
+		if ( !(*it)->resource().status().status().stripWhiteSpace().isEmpty () )
+		{
+			resourceListStr += QString ( "<tr><td>%1: %2</td></tr>" ).
+							   arg ( i18n ( "Message" ), (*it)->resource().status().status () );
+		}
+	}
+	
+	resourceListStr += "</table>";
+	
+	setProperty ( protocol()->propAvailableResources, resourceListStr );
+}
+
 void JabberBaseContact::reevaluateStatus ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Determining new status for " << contactId () << endl;
@@ -186,40 +232,7 @@ void JabberBaseContact::reevaluateStatus ()
 		removeProperty ( protocol()->propAwayMessage );
 	}
 
-	/*
-	 * Set available resources.
-	 * This is a bit more complicated: We need to generate
-	 * all images dynamically from the KOS icons and store
-	 * them into the mime factory, then plug them into
-	 * the richtext.
-	 */
-	JabberResourcePool::ResourceList resourceList;
-	account()->resourcePool()->findResources ( XMPP::Jid ( contactId () ), resourceList );
-
-	QString resourceListStr = "<table cellspacing=\"0\">";
-
-	for ( JabberResourcePool::ResourceList::iterator it = resourceList.begin (); it != resourceList.end (); ++it )
-	{
-		// icon, resource name and priority
-		resourceListStr += QString ( "<tr><td><img src=\"kopete-onlinestatus-icon:%1\" /> <b>%2</b> (Priority: %3)</td></tr>" ).
-						   arg ( protocol()->resourceToKOS(*it).mimeSourceFor ( account () ),
-								 (*it).name (), QString::number ( (*it).priority () ) );
-
-		// resource timestamp
-		resourceListStr += QString ( "<tr><td>%1: %2</td></tr>" ).
-						   arg ( i18n ( "Timestamp" ), KGlobal::locale()->formatDateTime ( (*it).status().timeStamp(), true, true ) );
-
-		// message, if any
-		if ( !(*it).status().status().stripWhiteSpace().isEmpty () )
-		{
-			resourceListStr += QString ( "<tr><td>%1: %2</td></tr>" ).
-							   arg ( i18n ( "Message" ), (*it).status().status () );
-		}
-	}
-	
-	resourceListStr += "</table>";
-	
-	setProperty ( protocol()->propAvailableResources, resourceListStr );
+	updateResourceList ();
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New status for " << contactId () << " is " << status.description () << endl;
 	setOnlineStatus ( status );

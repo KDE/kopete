@@ -135,7 +135,7 @@ private slots:
 	 * Triggered as soon as Kopete changes its online state.
 	 */
 	void slotCheckVCard ();
-	
+
 	/**
 	 * Triggered from a timer, requests the vCard.
 	 * Timer is initiated by slotCheckVCard().

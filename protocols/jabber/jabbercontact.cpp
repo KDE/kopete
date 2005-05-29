@@ -38,6 +38,7 @@
 #include "jabberaccount.h"
 #include "jabberclient.h"
 #include "jabberchatsession.h"
+#include "jabberresource.h"
 #include "jabberresourcepool.h"
 #include "jabberfiletransfer.h"
 #include "dlgjabbervcard.h"
@@ -70,12 +71,14 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount 
 
 	if ( !account->myself () )
 	{
+		// this contact is the myself instance
 		connect ( this,
 				  SIGNAL ( onlineStatusChanged ( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 				  this, SLOT ( slotCheckVCard () ) );
 	}
 	else
 	{
+		// this contact is a regular contact
 		connect ( account->myself (),
 				  SIGNAL ( onlineStatusChanged ( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 				  this, SLOT ( slotCheckVCard () ) );
@@ -86,7 +89,9 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount 
 		 */
 		if ( ( account->myself()->onlineStatus().status () == Kopete::OnlineStatus::Online ) ||
 			 ( account->myself()->onlineStatus().status () == Kopete::OnlineStatus::Away ) )
+		{
 			slotCheckVCard ();
+		}
 	}
 
 	// call moved from superclass, see JabberBaseContact for details

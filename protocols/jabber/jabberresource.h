@@ -23,8 +23,11 @@
  */
 
 #include <qobject.h>
+#include <qstring.h>
 #include <im.h>
 #include "jabberprotocol.h"
+
+class JabberAccount;
 
 class JabberResource:public QObject
 {
@@ -32,7 +35,7 @@ class JabberResource:public QObject
 Q_OBJECT
 
 public:
-	JabberResource (const XMPP::Jid &jid, const XMPP::Resource &resource);
+	JabberResource (JabberAccount *account, const XMPP::Jid &jid, const XMPP::Resource &resource);
 	~JabberResource ();
 
 	const XMPP::Jid &jid() const;
@@ -40,9 +43,20 @@ public:
 
 	void setResource ( const XMPP::Resource &resource );
 
+	const QString &clientName () const;
+	const QString &clientSystem () const;
+
+signals:
+	void updated ( JabberResource * );
+
+private slots:
+	void slotGotClientVersion ();
+
 private:
 	XMPP::Jid mJid;
 	XMPP::Resource mResource;
+	JabberAccount *mAccount;
+	QString mClientName, mClientSystem;
 
 };
 

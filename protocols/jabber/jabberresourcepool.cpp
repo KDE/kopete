@@ -55,6 +55,18 @@ void JabberResourcePool::slotResourceDestroyed (QObject *sender)
 
 }
 
+void JabberResourcePool::slotResourceUpdated ( JabberResource *resource )
+{
+
+	QPtrList<JabberBaseContact> list = mAccount->contactPool()->findRelevantSources ( resource->jid () );
+
+	for(JabberBaseContact *mContact = list.first (); mContact; mContact = list.next ())
+	{
+		mContact->updateResourceList ();
+	}
+
+}
+
 void JabberResourcePool::notifyRelevantContacts ( const XMPP::Jid &jid )
 {
 
@@ -93,8 +105,9 @@ void JabberResourcePool::addResource ( const XMPP::Jid &jid, const XMPP::Resourc
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Adding new resource " << resource.name() << " for " << jid.userHost() << endl;
 
 	// create new resource instance and add it to the dictionary
-	JabberResource *newResource = new JabberResource(jid, resource);
+	JabberResource *newResource = new JabberResource(mAccount, jid, resource);
 	connect ( newResource, SIGNAL ( destroyed (QObject *) ), this, SLOT ( slotResourceDestroyed (QObject *) ) );
+	connect ( newResource, SIGNAL ( updated (JabberResource *) ), this, SLOT ( slotResourceUpdated (JabberResource *) ) );
 	mPool.append ( newResource );
 
 	// send notifications out to the relevant contacts that
@@ -312,7 +325,7 @@ const XMPP::Resource &JabberResourcePool::bestResource ( const XMPP::Jid &jid, b
 
 }
 
-void JabberResourcePool::findResources ( const XMPP::Jid &jid, ResourceList &resourceList )
+void JabberResourcePool::findResources ( const XMPP::Jid &jid, JabberResourcePool::ResourceList &resourceList )
 {
 
 	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())
@@ -325,7 +338,26 @@ void JabberResourcePool::findResources ( const XMPP::Jid &jid, ResourceList &res
 				// thus we have to ignore this resource
 				continue;
 
-			resourceList.append ( mResource->resource() );
+			resourceList.append ( mResource );
+		}
+	}
+
+}
+
+void JabberResourcePool::findResources ( const XMPP::Jid &jid, XMPP::ResourceList &resourceList )
+{
+
+	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())
+	{
+		if ( mResource->jid().userHost().lower() == jid.userHost().lower() )
+		{
+			// we found a resource for the JID, let's see if the JID already contains a resource
+			if ( !jid.resource().isEmpty() && ( jid.resource().lower() != mResource->resource().name().lower() ) )
+				// the JID contains a resource but it's not the one we have in the dictionary,
+				// thus we have to ignore this resource
+				continue;
+
+			resourceList.append ( mResource->resource () );
 		}
 	}
 

@@ -35,7 +35,7 @@ Q_OBJECT
 public:
 	static XMPP::Resource EmptyResource;
 
-	typedef QValueList<XMPP::Resource> ResourceList;
+	typedef QPtrList<JabberResource> ResourceList;
 
 	/**
 	 * Default constructor
@@ -99,10 +99,12 @@ public:
 	/**
 	 * Find all resources that exist for a given JID
 	 */
-	void findResources ( const XMPP::Jid &jid, ResourceList &resourceList );
+	void findResources ( const XMPP::Jid &jid, JabberResourcePool::ResourceList &resourceList );
+	void findResources ( const XMPP::Jid &jid, XMPP::ResourceList &resourceList );
 
 private slots:
 	void slotResourceDestroyed ( QObject *sender );
+	void slotResourceUpdated ( JabberResource *resource );
 
 private:
 	QPtrList<JabberResource> mPool;
