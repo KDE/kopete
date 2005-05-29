@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Type=Service
 X-Kopete-Version=1000900
-Icon=skype
+Icon=skype_protocol
 ServiceTypes=Kopete/Protocol
 X-KDE-Library=kopete_skype
 X-Kopete-Messaging-Protocol=messaging/skype
