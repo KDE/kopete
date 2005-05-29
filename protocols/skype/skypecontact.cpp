@@ -117,17 +117,16 @@ void SkypeContact::setInfo(const QString &change) {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 	kdDebug(14311) << "info is: " << change << endl;//some debug info
 
-	const QString &property = change.section(' ', 0, 0).stripWhiteSpace().upper();//get the first part
-	if (property == "FULLNAME") {
+	const QString &receivedProperty = change.section(' ', 0, 0).stripWhiteSpace().upper();//get the first part
+	if (receivedProperty == "FULLNAME") {
 		setProperty( Kopete::Global::Properties::self()->fullName(), change.section(' ', 1).stripWhiteSpace() );//save the name
-	} else if (property == "DISPLAYNAME") {
+	} else if (receivedProperty == "DISPLAYNAME") {
 		const QString &name = change.section(' ', 1).stripWhiteSpace();//get the name
 		if (name.isEmpty())
-			;
-			//setNickName(  );//no display name provided, use full name as a replace (if it is empty as well, kopete will use the id instead automatically)
+			setNickName( property( Kopete::Global::Properties::self()->fullName() ).value().toString() );
 		else
 			setNickName(name);//set the display name
-	} else if (property == "ONLINESTATUS") {//The online status eather changed or we just logged in and I asked for it
+	} else if (receivedProperty == "ONLINESTATUS") {//The online status eather changed or we just logged in and I asked for it
 		const QString &status = change.section(' ', 1, 1).stripWhiteSpace().upper();//get the status
 
 		if (status == "OFFLINE") {
@@ -148,7 +147,7 @@ void SkypeContact::setInfo(const QString &change) {
 		}
 
 		resetStatus();
-	} else if (property == "BUDDYSTATUS") {
+	} else if (receivedProperty == "BUDDYSTATUS") {
 		int value = change.section(' ', 1, 1).stripWhiteSpace().toInt();//get the value
 
 		switch (value) {
@@ -167,12 +166,21 @@ void SkypeContact::setInfo(const QString &change) {
 		}
 
 		resetStatus();
-	} else if ( property == "PHONE_HOME" ) {
-		setProperty( d->account->protocol()->propPrivatePhone, change.section(' ', 1).stripWhiteSpace() );
-	} else if ( property == "PHONE_OFFICE" ) {
-		setProperty( d->account->protocol()->propWorkPhone, change.section(' ', 1).stripWhiteSpace() );
-	} else if ( property == "PHONE_MOBILE" ) {
-		setProperty( d->account->protocol()->propPrivateMobilePhone, change.section(' ', 1).stripWhiteSpace() );
+	} else
+	{
+		QString propValue = change.section(' ', 1).stripWhiteSpace();
+		if ( !propValue.isEmpty() )
+		{
+			if ( receivedProperty == "PHONE_HOME" ) {
+				setProperty( d->account->protocol()->propPrivatePhone, change.section(' ', 1).stripWhiteSpace() );
+			} else if ( receivedProperty == "PHONE_OFFICE" ) {
+				setProperty( d->account->protocol()->propWorkPhone, change.section(' ', 1).stripWhiteSpace() );
+			} else if ( receivedProperty == "PHONE_MOBILE" ) {
+				setProperty( d->account->protocol()->propPrivateMobilePhone, change.section(' ', 1).stripWhiteSpace() );
+			} else if ( receivedProperty == "HOMEPAGE" ) {
+				setProperty( d->account->protocol()->propPrivateMobilePhone, change.section(' ', 1).stripWhiteSpace() );
+			}
+		}
 	}
 }
 
