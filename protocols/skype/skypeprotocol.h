@@ -54,6 +54,17 @@ class SkypeProtocol : public Kopete::Protocol
 		const Kopete::OnlineStatus NotInList;
 		const Kopete::OnlineStatus NoAuth;
 		const Kopete::OnlineStatus Phone;
+		// contact properties
+/*		const Kopete::ContactPropertyTmpl propAwayMessage;
+		const Kopete::ContactPropertyTmpl propFirstName;
+		const Kopete::ContactPropertyTmpl propLastName;*/
+		const Kopete::ContactPropertyTmpl propFullName;
+// 		const Kopete::ContactPropertyTmpl propEmailAddress;
+		const Kopete::ContactPropertyTmpl propPrivatePhone;
+		const Kopete::ContactPropertyTmpl propPrivateMobilePhone;
+		const Kopete::ContactPropertyTmpl propWorkPhone;
+// 		const Kopete::ContactPropertyTmpl propWorkMobilePhone;
+		const Kopete::ContactPropertyTmpl propLastSeen;
 		/**
 		 * Constructor. This is called automatically on library load.
 		 * @param parent Parent of the object.

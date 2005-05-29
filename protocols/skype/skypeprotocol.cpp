@@ -55,7 +55,14 @@ SkypeProtocol::SkypeProtocol(QObject *parent, const char *name, const QStringLis
 	Connecting(Kopete::OnlineStatus::Connecting, 0, this, 8, "skype_connect", i18n("Connecting")),
 	NotInList(Kopete::OnlineStatus::Offline, 0, this, 9, "contact_unknown_overlay", i18n("Not in skype list")),
 	NoAuth(Kopete::OnlineStatus::Offline, 0, this, 10, "contact_unknown_overlay", i18n("Not authorized")),
-	Phone(Kopete::OnlineStatus::Online, 0, this, 11, "contact_phone_overlay", i18n("SkypeOut contact"))
+	Phone(Kopete::OnlineStatus::Online, 0, this, 11, "contact_phone_overlay", i18n("SkypeOut contact")),
+	/** Contact property templates */
+	propFullName(Kopete::Global::Properties::self()->fullName()),
+	propPrivatePhone(Kopete::Global::Properties::self()->privatePhone()),
+	propPrivateMobilePhone(Kopete::Global::Properties::self()->privateMobilePhone()),
+	propWorkPhone(Kopete::Global::Properties::self()->workPhone()),
+	propLastSeen(Kopete::Global::Properties::self()->lastSeen())
+
 {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 	//create the d pointer

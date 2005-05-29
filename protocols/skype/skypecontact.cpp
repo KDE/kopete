@@ -26,6 +26,7 @@
 #include <kopetemessage.h>
 #include <kopetechatsession.h>
 #include <kopetechatsessionmanager.h>
+#include <kopetecontactproperty.h>
 #include <qptrlist.h>
 #include <kaction.h>
 #include <klocale.h>
@@ -114,14 +115,16 @@ void SkypeContact::requestInfo() {
 
 void SkypeContact::setInfo(const QString &change) {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
+	kdDebug(14311) << "info is: " << change << endl;//some debug info
 
 	const QString &property = change.section(' ', 0, 0).stripWhiteSpace().upper();//get the first part
 	if (property == "FULLNAME") {
-		d->fullName = change.section(' ', 1).stripWhiteSpace();//save the name
+		setProperty( Kopete::Global::Properties::self()->fullName(), change.section(' ', 1).stripWhiteSpace() );//save the name
 	} else if (property == "DISPLAYNAME") {
 		const QString &name = change.section(' ', 1).stripWhiteSpace();//get the name
 		if (name.isEmpty())
-			setNickName(d->fullName);//no display name provided, use full name as a replace (if it is empty as well, kopete will use the id instead automatically)
+			;
+			//setNickName(  );//no display name provided, use full name as a replace (if it is empty as well, kopete will use the id instead automatically)
 		else
 			setNickName(name);//set the display name
 	} else if (property == "ONLINESTATUS") {//The online status eather changed or we just logged in and I asked for it
@@ -164,6 +167,12 @@ void SkypeContact::setInfo(const QString &change) {
 		}
 
 		resetStatus();
+	} else if ( property == "PHONE_HOME" ) {
+		setProperty( d->account->protocol()->propPrivatePhone, change.section(' ', 1).stripWhiteSpace() );
+	} else if ( property == "PHONE_OFFICE" ) {
+		setProperty( d->account->protocol()->propWorkPhone, change.section(' ', 1).stripWhiteSpace() );
+	} else if ( property == "PHONE_MOBILE" ) {
+		setProperty( d->account->protocol()->propPrivateMobilePhone, change.section(' ', 1).stripWhiteSpace() );
 	}
 }
 
