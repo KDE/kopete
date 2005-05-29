@@ -108,7 +108,6 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent,
 
 	// Widgets initializations
 	mMainWidget = new HistoryViewer(this, "HistoryDialog::mMainWidget");
-	mMainWidget->dateListView->header()->hide();
 	mMainWidget->searchLine->setFocus();
 	mMainWidget->searchErase->setPixmap(BarIcon("locationbar_erase"));
 
@@ -196,16 +195,14 @@ void HistoryDialog::init()
 
 	initProgressBar(i18n("Loading..."),mInit.dateMCList.count());
 	QTimer::singleShot(0,this,SLOT(slotLoadDays()));
-
-	if (!mMainWidget->searchLine->text().isEmpty())
-		slotSearch();
 }
 
 void HistoryDialog::slotLoadDays()
 {
 		if(mInit.dateMCList.isEmpty())
 		{
-				doneProgressBar();
+				if (!mMainWidget->searchLine->text().isEmpty())
+				QTimer::singleShot(0, this, SLOT(slotSearch()));
 				return;
 		}
 		
@@ -223,6 +220,8 @@ void HistoryDialog::slotLoadDays()
 		mLogger = 0;
 		mMainWidget->searchProgress->advance(1);
 		QTimer::singleShot(0,this,SLOT(slotLoadDays()));
+
+
 }
 
 void HistoryDialog::init(Kopete::MetaContact *mc)
@@ -520,6 +519,9 @@ void HistoryDialog::searchFirstStep()
 		}
 		while(mSearch->item = static_cast<KListViewDateItem *>(mSearch->item->nextSibling()));
 		mMainWidget->searchButton->setText("&Search");
+
+		delete mSearch;
+		mSearch = 0L;
 		doneProgressBar();
 	}
 }
