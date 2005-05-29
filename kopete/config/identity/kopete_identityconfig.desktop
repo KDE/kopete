@@ -11,7 +11,5 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Identity
-Name[fr]=Identité
 Comment=Here you can manage your global identity
-Comment[fr]=Vous pouvez gérer votre identité globale ici
 
