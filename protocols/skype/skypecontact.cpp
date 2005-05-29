@@ -174,19 +174,19 @@ QString SkypeContact::formattedName() const {
 void SkypeContact::resetStatus() {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
-	SkypeProtocol &protocol = d->account->protocol();//get the protocol
+	SkypeProtocol * protocol = d->account->protocol();//get the protocol
 
 	if (d->status == osSkypeOut) {
-		setOnlineStatus(protocol.Phone);//this is the SkypeOut contact, in many ways special
+		setOnlineStatus(protocol->Phone);//this is the SkypeOut contact, in many ways special
 		return;
 	}
 
 	switch (d->buddy) {
 		case bsNotInList:
-			setOnlineStatus(protocol.NotInList);
+			setOnlineStatus(protocol->NotInList);
 			return;
 		case bsNoAuth:
-			setOnlineStatus(protocol.NoAuth);
+			setOnlineStatus(protocol->NoAuth);
 			return;
 		case bsInList://just put there normal status
 			break;
@@ -194,25 +194,25 @@ void SkypeContact::resetStatus() {
 
 	switch (d->status) {
 		case osOffline:
-			setOnlineStatus(protocol.Offline);
+			setOnlineStatus(protocol->Offline);
 			break;
 		case osOnline:
-			setOnlineStatus(protocol.Online);
+			setOnlineStatus(protocol->Online);
 			break;
 		case osAway:
-			setOnlineStatus(protocol.Away);
+			setOnlineStatus(protocol->Away);
 			break;
 		case osNA:
-			setOnlineStatus(protocol.NotAvailable);
+			setOnlineStatus(protocol->NotAvailable);
 			break;
 		case osDND:
-			setOnlineStatus(protocol.DoNotDisturb);
+			setOnlineStatus(protocol->DoNotDisturb);
 			break;
 		case osSkypeOut:
-			setOnlineStatus(protocol.Phone);
+			setOnlineStatus(protocol->Phone);
 			break;
 		case osSkypeMe:
-			setOnlineStatus(protocol.SkypeMe);
+			setOnlineStatus(protocol->SkypeMe);
 			break;
 	}
 }
@@ -282,8 +282,8 @@ void SkypeContact::enableCall(bool value) {
 
 void SkypeContact::statusChanged() {
 	const Kopete::OnlineStatus &myStatus = onlineStatus();
-	SkypeProtocol &protocol = d->account->protocol();
-	if ((myStatus == protocol.Online) || (myStatus == protocol.Away) || (myStatus == protocol.NotAvailable) || (myStatus == protocol.DoNotDisturb) || (myStatus == protocol.NoAuth) || (myStatus == protocol.NotInList) || (myStatus == protocol.Phone) || (myStatus == protocol.SkypeMe))
+	SkypeProtocol * protocol = d->account->protocol();
+	if ((myStatus == protocol->Online) || (myStatus == protocol->Away) || (myStatus == protocol->NotAvailable) || (myStatus == protocol->DoNotDisturb) || (myStatus == protocol->NoAuth) || (myStatus == protocol->NotInList) || (myStatus == protocol->Phone) || (myStatus == protocol->SkypeMe))
 		emit setCallPossible(true);
 	else
 		emit setCallPossible(false);

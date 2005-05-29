@@ -63,11 +63,11 @@ static Kopete::ContactPtrList constructList(SkypeContact *contact) {
 }
 
 SkypeChatSession::SkypeChatSession(SkypeAccount *account, SkypeContact *contact) :
-		Kopete::ChatSession(account->myself(), constructList(contact), &account->protocol(), (char *)0L) {
+		Kopete::ChatSession(account->myself(), constructList(contact), account->protocol(), (char *)0L) {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
 	//create the D-pointer
-	d = new SkypeChatSessionPrivate(&account->protocol(), account);
+	d = new SkypeChatSessionPrivate(account->protocol(), account);
 	Kopete::ChatSessionManager::self()->registerChatSession( this );
 	connect(this, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)), this, SLOT(message(Kopete::Message& )));//this will send the messages from this user going out
 }

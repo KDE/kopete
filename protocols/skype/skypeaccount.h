@@ -140,7 +140,7 @@ Q_OBJECT
 		///Can we comunicate with the skype? (not with the network, just with the program)
 		bool canComunicate();
 		///returns the protocol
-		SkypeProtocol &protocol();
+		SkypeProtocol * protocol();
 		/**
 		 * @return Is the HitchHike mode enabled or not?
 		 * @see setHitchHike

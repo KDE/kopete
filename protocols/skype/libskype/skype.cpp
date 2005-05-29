@@ -308,7 +308,10 @@ void Skype::skypeMessage(const QString &message) {
 	} else if (messageType == "USER") {//This is for some contact
 		const QString &contactId = message.section(' ', 1, 1);//take the second part, it is the user name
 		const QString &type = message.section(' ', 2, 2).stripWhiteSpace().upper();//get what it is
-		if ((type == "FULLNAME") || (type == "DISPLAYNAME") || (type == "SEX") || (type == "ONLINESTATUS") || (type == "BUDDYSTATUS")) {
+		if ((type == "FULLNAME") || (type == "DISPLAYNAME") || (type == "SEX") ||
+			(type == "PHONE_HOME") || (type == "PHONE_OFFICE") ||
+			(type == "PHONE_MOBILE") ||
+			(type == "ONLINESTATUS") || (type == "BUDDYSTATUS")) {
 			const QString &info = message.section(' ', 2);//and the rest is just the message for that contact
 			emit contactInfo(contactId, info);//and let the contact know
 		} else kdDebug(14311) << "Unknown message for contact, ignored" << endl;
@@ -461,6 +464,9 @@ void Skype::getContactInfo(const QString &contact) {
 	d->connection << QString("GET USER %1 FULLNAME").arg(contact)//ask for full name
 	<< QString("GET USER %1 SEX").arg(contact)//ask for sex
 	<< QString("GET USER %1 DISPLAYNAME").arg(contact)//ask for the nick-name
+	<< QString("GET USER %1 PHONE_HOME").arg(contact)//ask for the nick-name
+	<< QString("GET USER %1 PHONE_OFFICE").arg(contact)//ask for the nick-name
+	<< QString("GET USER %1 PHONE_MOBILE").arg(contact)//ask for the nick-name
 	<< QString("GET USER %1 ONLINESTATUS").arg(contact)//ask for the online status
 	<< QString("GET USER %1 BUDDYSTATUS").arg(contact);//and the rest of info
 }

@@ -301,8 +301,8 @@ bool SkypeAccount::canComunicate() {
 	return d->skype.canComunicate();
 }
 
-SkypeProtocol &SkypeAccount::protocol() {
-	return *d->protocol;
+SkypeProtocol * SkypeAccount::protocol() {
+	return d->protocol;
 }
 
 void SkypeAccount::sendMessage(Kopete::Message &message) {
