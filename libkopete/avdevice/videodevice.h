@@ -64,10 +64,22 @@ typedef enum
 } videodev_driver;
 
 class VideoDevice{
-protected:
-	int xioctl(int request, void *arg);
-	int errnoReturn(const char* s);
 public:
+	typedef enum
+	{
+		PIXELFORMAT_NONE,
+		PIXELFORMAT_GREY,
+		PIXELFORMAT_RGB332,
+		PIXELFORMAT_RGB555,
+		PIXELFORMAT_RGB555X,
+		PIXELFORMAT_RGB565,
+		PIXELFORMAT_RGB565X,
+		PIXELFORMAT_RGB24,
+		PIXELFORMAT_BGR24,
+		PIXELFORMAT_RGB32,
+		PIXELFORMAT_BGR32,
+	} pixel_format;
+
 	VideoDevice();
 	~VideoDevice();
 	int setFileName(QString filename);
@@ -84,6 +96,9 @@ public:
 	int minHeight();
 	int maxHeight();
 	int setSize( int newwidth, int newheight);
+	pixel_format setPixelFormat(pixel_format newformat);
+	int pixelFormatCode(pixel_format pixelformat);
+	QString pixelFormatName(pixel_format pixelformat);
 	unsigned int currentInput();
 	int selectInput(int input);
 	int startCapturing();
@@ -92,6 +107,7 @@ public:
 	int getImage(QImage *qimage);
 	int stopCapturing();
 	int close();
+
 	QString name;
 	QString full_filename;
 	videodev_driver m_driver;
@@ -120,13 +136,14 @@ protected:
 		IO_METHOD_MMAP,
 		IO_METHOD_USERPTR,
 	} io_method;
+
 	io_method m_io_method;
 
 	struct buffer2
 	{
 		int height;
 		int width;
-		int pixfmt;
+		pixel_format pixelformat;
 		size_t size;
 		QValueVector <uchar> data;
 	};
@@ -141,7 +158,10 @@ protected:
 	int m_buffer_size;
 
 	int m_current_input;
+	pixel_format m_pixelformat;
 
+	int xioctl(int request, void *arg);
+	int errnoReturn(const char* s);
 	int initRead();
 	int initMmap();
 	int initUserptr();

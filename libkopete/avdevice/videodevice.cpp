@@ -523,21 +523,17 @@ kdDebug() << "------------- width: " << V4L_videowindow.width << " Height: " << 
 			}
 kdDebug() << "------------- width: " << V4L_videowindow.width << " Height: " << V4L_videowindow.height << " Clipcount: " << V4L_videowindow.clipcount << " -----------------" << endl;
 
-			struct video_picture V4L_picture;
-			if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
-				kdDebug() << "libkopete (avdevice): VIDIOCGPICT failed (" << errno << ")." << endl;
-			kdDebug() << "libkopete (avdevice): V4L_picture.palette: " << V4L_picture.palette << " Depth: " << V4L_picture.depth << endl;
-			V4L_picture.palette = VIDEO_PALETTE_RGB32;
-			V4L_picture.depth   = 32;
-			if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
-				kdDebug() << "libkopete (avdevice): VIDIOCSPICT failed (" << errno << ")." << endl;
-			kdDebug() << "libkopete (avdevice): V4L_picture.palette: " << V4L_picture.palette << " Depth: " << V4L_picture.depth << endl;
+			if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB32))
+			{
+				kdDebug() << "libkopete (avdevice): Card seems to not support RGB32 format. Trying RGB24." << endl;
+				if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB24))
+					kdDebug() << "libkopete (avdevice): Card seems to not support RGB24 format. Fallback to it is not yet implemented." << endl;
+			}
+//			kdDebug() << "libkopete (avdevice): V4L_picture.palette: " << V4L_picture.palette << " Depth: " << V4L_picture.depth << endl;
 
 /*			if(-1 == xioctl(VIDIOCGFBUF,&V4L_videobuffer))
 				kdDebug() << "libkopete (avdevice): VIDIOCGFBUF failed (" << errno << "): Card cannot stream" << endl;*/
 
-			m_buffer_size = width() * height() * V4L_picture.depth / 8;
-kdDebug() << "------------------------- ------- -- m_buffer_size: " << m_buffer_size << " !!! -- ------- -----------------------------------------" << endl;
 			}
 			break;
 #endif
@@ -556,6 +552,87 @@ kdDebug() << "------------------------- ------- -- m_buffer_size: " << m_buffer_
 kdDebug() << "libkopete: VideoDevice::SetSize(" << newwidth << ", " << newheight << ") exited successfulycalled." << endl;
 	return EXIT_SUCCESS;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+VideoDevice::pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
+{
+kdDebug() << "libkopete: VideoDevice::setPixelFormat() called." << endl;
+// Change the pixel format for the video device
+	switch(m_driver)
+	{
+#ifdef __linux__
+#ifdef HAVE_V4L2
+		case VIDEODEV_DRIVER_V4L2:
+			CLEAR (fmt);
+			if (-1 == xioctl (VIDIOC_G_FMT, &fmt))
+//				return errnoReturn ("VIDIOC_S_FMT");
+				kdDebug() << "libkopete (avdevice): VIDIOC_G_FMT failed (" << errno << ")." << endl;
+			fmt.fmt.pix.pixelformat = pixelFormatCode(newformat);
+			if (-1 == xioctl (VIDIOC_S_FMT, &fmt))
+//				return errnoReturn ("VIDIOC_S_FMT");
+				kdDebug() << "libkopete (avdevice): VIDIOC_S_FMT failed (" << errno << ")." << endl;
+			}
+			break;
+#endif
+		case VIDEODEV_DRIVER_V4L:
+			{
+			struct video_picture V4L_picture;
+			if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
+				kdDebug() << "libkopete (avdevice): VIDIOCGPICT failed (" << errno << ")." << endl;
+			kdDebug() << "libkopete (avdevice): V4L_picture.palette: " << V4L_picture.palette << " Depth: " << V4L_picture.depth << endl;
+			V4L_picture.palette = pixelFormatCode(newformat);
+			V4L_picture.depth   = 32;
+			if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
+			{
+				kdDebug() << "libkopete (avdevice): Card seems to not support " << pixelFormatName(newformat) << " format. Fallback to it is not yet implemented." << endl;
+			}
+			if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
+				kdDebug() << "libkopete (avdevice): VIDIOCGPICT failed (" << errno << ")." << endl;
+
+			kdDebug() << "libkopete (avdevice): V4L_picture.palette: " << V4L_picture.palette << " Depth: " << V4L_picture.depth << endl;
+
+/*			if(-1 == xioctl(VIDIOCGFBUF,&V4L_videobuffer))
+				kdDebug() << "libkopete (avdevice): VIDIOCGFBUF failed (" << errno << "): Card cannot stream" << endl;*/
+
+			m_buffer_size = width() * height() * V4L_picture.depth / 8;
+kdDebug() << "------------------------- ------- -- m_buffer_size: " << m_buffer_size << " !!! -- ------- -----------------------------------------" << endl;
+				m_pixelformat=newformat;
+				return newformat;
+			}
+			break;
+#endif
+		case VIDEODEV_DRIVER_NONE:
+			break;
+	}
+	return PIXELFORMAT_NONE;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*!
     \fn Kopete::AV::VideoDevice::selectInput(int input)
@@ -771,46 +848,51 @@ int VideoDevice::processImage(const void * /* p */)
 int VideoDevice::getImage(QImage *qimage)
 {
     /// @todo implement me
-	unsigned long long result=0;
-	unsigned long long R=0, G=0, B=0, A=0;
-	int Rmax=0, Gmax=0, Bmax=0, Amax=0;
-	int Rmin=255, Gmin=255, Bmin=255, Amin=0;
-
-	for(unsigned int loop=0;loop < currentbuffer.data.size();loop++)
-		result+=currentbuffer.data[loop];
-	kdDebug() << "libkopete getImage(QImage *qimage) Data size: " << currentbuffer.data.size() << " Result: " << result << endl;
-	for(unsigned int loop=0;loop < currentbuffer.data.size();loop+=4)
-	{
-		R+=currentbuffer.data[loop];
-		G+=currentbuffer.data[loop+1];
-		B+=currentbuffer.data[loop+2];
-//		A+=currentbuffer.data[loop+3];
-		if (currentbuffer.data[loop]   < Rmin) Rmin = currentbuffer.data[loop];
-		if (currentbuffer.data[loop+1] < Gmin) Gmin = currentbuffer.data[loop+1];
-		if (currentbuffer.data[loop+2] < Bmin) Bmin = currentbuffer.data[loop+2];
-//		if (currentbuffer.data[loop+3] < Amin) Amin = currentbuffer.data[loop+3];
-		if (currentbuffer.data[loop]   > Rmax) Rmax = currentbuffer.data[loop];
-		if (currentbuffer.data[loop+1] > Gmax) Gmax = currentbuffer.data[loop+1];
-		if (currentbuffer.data[loop+2] > Bmax) Bmax = currentbuffer.data[loop+2];
-//		if (currentbuffer.data[loop+3] > Amax) Amax = currentbuffer.data[loop+3];
-	}
-	kdDebug() << " R: " << R << " G: " << G << " B: " << B << " A: " << A <<
-		" Rmin: " << Rmin << " Gmin: " << Gmin << " Bmin: " << Bmin << " Amin: " << Amin <<
-		" Rmax: " << Rmax << " Gmax: " << Gmax << " Bmax: " << Bmax << " Amax: " << Amax << endl;
-
 	qimage->create(width(), height(),32, QImage::IgnoreEndian);
+	uchar *bits=qimage->bits();
+kdDebug() << "libkopete (avdevice): getImage() Capturing in " << pixelFormatName(currentbuffer.pixelformat) << endl;
+	switch(currentbuffer.pixelformat)
+	{
+		case PIXELFORMAT_NONE	: break;
+		case PIXELFORMAT_GREY	: break;
+		case PIXELFORMAT_RGB332	: break;
+		case PIXELFORMAT_RGB555	: break;
+		case PIXELFORMAT_RGB555X: break;
+		case PIXELFORMAT_RGB565	: break;
+		case PIXELFORMAT_RGB565X: break;
+		case PIXELFORMAT_RGB24	:
+			{
+				int step=0;
+				for(unsigned int loop=0;loop < currentbuffer.data.size();loop+=4)
+				{
+					bits[loop]   = currentbuffer.data[step];
+					bits[loop+1] = currentbuffer.data[step+1];
+					bits[loop+2] = currentbuffer.data[step+2];
+					bits[loop+3] = 255;
+					step+=3;
+				}
+			}
+			break;
+		case PIXELFORMAT_BGR24	: break;
+			{
+				int step=0;
+				for(unsigned int loop=0;loop < currentbuffer.data.size();loop+=4)
+				{
+					bits[loop]   = currentbuffer.data[step+2];
+					bits[loop+1] = currentbuffer.data[step+1];
+					bits[loop+2] = currentbuffer.data[step];
+					bits[loop+3] = 255;
+					step+=3;
+				}
+			}
+			break;
+		case PIXELFORMAT_RGB32	: memcpy(bits,&currentbuffer.data[0], currentbuffer.data.size());
+			break;
+		case PIXELFORMAT_BGR32	: break;
+	}
 
-	memcpy(qimage->bits(),&currentbuffer.data[0], currentbuffer.data.size());
 	return EXIT_SUCCESS;
 }
-
-
-
-
-
-
-
-
 
 /*!
     \fn VideoDevice::stopCapturing()
@@ -857,6 +939,75 @@ int VideoDevice::close()
 	return EXIT_SUCCESS;
 }
 
+
+
+
+int VideoDevice::pixelFormatCode(pixel_format pixelformat)
+{
+	switch(m_driver)
+	{
+#ifdef __linux__
+#ifdef HAVE_V4L2
+		case VIDEODEV_DRIVER_V4L2:
+			switch(pixelformat)
+			{
+				case PIXELFORMAT_NONE	: return 0;			break;
+				case PIXELFORMAT_GREY	: return V4L2_PIX_FMT_GREY;	break;
+				case PIXELFORMAT_RGB332	: return V4L2_PIX_FMT_RGB332;	break;
+				case PIXELFORMAT_RGB555	: return V4L2_PIX_FMT_RGB555;	break;
+				case PIXELFORMAT_RGB555X: return V4L2_PIX_FMT_RGB555X;	break;
+				case PIXELFORMAT_RGB565	: return V4L2_PIX_FMT_RGB565;	break;
+				case PIXELFORMAT_RGB565X: return V4L2_PIX_FMT_RGB565X;	break;
+				case PIXELFORMAT_RGB24	: return V4L2_PIX_FMT_RGB24;	break;
+				case PIXELFORMAT_BGR24	: return V4L2_PIX_FMT_BGR24;	break;
+				case PIXELFORMAT_RGB32	: return V4L2_PIX_FMT_RGB32;	break;
+				case PIXELFORMAT_BGR32	: return V4L2_PIX_FMT_BGR32;	break;
+			}
+			break;
+#endif
+		case VIDEODEV_DRIVER_V4L:
+			switch(pixelformat)
+			{
+				case PIXELFORMAT_NONE	: return 0;			break;
+				case PIXELFORMAT_GREY	: return VIDEO_PALETTE_GREY;	break;
+				case PIXELFORMAT_RGB332	: return VIDEO_PALETTE_HI240;	break;
+				case PIXELFORMAT_RGB555	: return VIDEO_PALETTE_RGB555;	break;
+				case PIXELFORMAT_RGB555X: return PIXELFORMAT_NONE;	break;
+				case PIXELFORMAT_RGB565	: return VIDEO_PALETTE_RGB565;	break;
+				case PIXELFORMAT_RGB565X: return PIXELFORMAT_NONE;	break;
+				case PIXELFORMAT_RGB24	: return VIDEO_PALETTE_RGB24;	break;
+				case PIXELFORMAT_BGR24	: return PIXELFORMAT_NONE;	break;
+				case PIXELFORMAT_RGB32	: return VIDEO_PALETTE_RGB32;	break;
+				case PIXELFORMAT_BGR32	: return PIXELFORMAT_NONE;	break;
+			}
+			break;
+#endif
+		case VIDEODEV_DRIVER_NONE:
+			return PIXELFORMAT_NONE;	break;
+	}
+	return PIXELFORMAT_NONE;
+}
+
+QString VideoDevice::pixelFormatName(pixel_format pixelformat)
+{
+	QString returnvalue;
+	switch(pixelformat)
+	{
+		case PIXELFORMAT_NONE	: returnvalue = "None";			break;
+		case PIXELFORMAT_GREY	: returnvalue = "8-bit Grayscale";	break;
+		case PIXELFORMAT_RGB332	: returnvalue = "8-bit RGB332";		break;
+		case PIXELFORMAT_RGB555	: returnvalue = "16-bit RGB555";	break;
+		case PIXELFORMAT_RGB555X: returnvalue = "16-bit RGB555X";	break;
+		case PIXELFORMAT_RGB565	: returnvalue = "16-bit RGB565";	break;
+		case PIXELFORMAT_RGB565X: returnvalue = "16-bit RGB565X";	break;
+		case PIXELFORMAT_RGB24	: returnvalue = "24-bit RGB24";		break;
+		case PIXELFORMAT_BGR24	: returnvalue = "24-bit BGR24";		break;
+		case PIXELFORMAT_RGB32	: returnvalue = "32-bit RGB32";		break;
+		case PIXELFORMAT_BGR32	: returnvalue = "32-bit BGR32";		break;
+	}
+	return returnvalue;
+}
+
 /*!
     \fn VideoDevice::initRead(unsigned int buffer_size)
  */
@@ -873,9 +1024,11 @@ int VideoDevice::initRead()
 	}
 	kdDebug() << "libkopete (avdevice): initRead m_buffer_size: " << m_buffer_size << endl;
 
+//	buffers[0].pixelformat=m_pixelformat;
 	buffers[0].length = m_buffer_size;
 	buffers[0].start = (uchar *)malloc (m_buffer_size);
 
+	currentbuffer.pixelformat=m_pixelformat;
 	currentbuffer.size = m_buffer_size; // not really useful, cause currentbuffer.data.size() does the same thing
 	currentbuffer.data.resize(m_buffer_size);
 
