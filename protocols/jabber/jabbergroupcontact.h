@@ -42,11 +42,6 @@ public:
 	QPtrList<KAction> *customContextMenuActions ();
 
 	/**
-	 * Start a rename request.
-	 */
-	void rename ( const QString &newName );
-
-	/**
 	 * Deal with an incoming message for this contact.
 	 */
 	void handleIncomingMessage ( const XMPP::Message &message );

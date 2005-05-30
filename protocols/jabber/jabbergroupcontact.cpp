@@ -97,11 +97,6 @@ QPtrList<KAction> *JabberGroupContact::customContextMenuActions ()
 
 }
 
-void JabberGroupContact::rename ( const QString &/*newName*/ )
-{
-
-}
-
 Kopete::ChatSession *JabberGroupContact::manager ( Kopete::Contact::CanCreateFlags /*canCreate*/ )
 {
 

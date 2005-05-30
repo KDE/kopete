@@ -184,36 +184,6 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 	return actionCollection;
 
 }
-void JabberContact::rename ( const QString &newName )
-{
-
-	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Renaming " << contactId () << " to " << newName << endl;
-
-	// our display name has been changed, forward the change to the roster
-	if (!account()->isConnected())
-	{
-		account()->errorConnectFirst();
-		return;
-	}
-
-	// we can't rename a contact without meta contact (FIXME! libkopete issue)
-	if ( !metaContact() )
-		return;
-
-	// only forward change if this is not a temporary contact
-	if ( !metaContact()->isTemporary () )
-	{
-		XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
-
-		rosterTask->set ( mRosterItem.jid (), newName, mRosterItem.groups ());
-		rosterTask->go ( true );
-	}
-	else
-	{
-		metaContact()->setDisplayName ( newName );
-	}
-
-}
 
 void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 {
@@ -408,26 +378,12 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	 * no alias has been set so far, we'll update
 	 * the contact's alias to the nick set in the vCard.
 	 */
-	if ( !vCard.nickName().isEmpty () )
+	if ( !vCard.nickName().isEmpty () && mRosterItem.name().isEmpty () )
 	{
-		if ( metaContact() && ( metaContact()->displayName () == contactId () ) )
-		{
-			/*
-			 * Set the alias to the nick, as no alias
-			 * is present so far.
-			 */
-			rename ( vCard.nickName () );
-		}
-
 		/*
 		 * Update the property
 		 */
 		setProperty ( protocol()->propNickName, vCard.nickName () );
-	}
-	else
-	{
-		// no nickname has been set, remove it from the prop list
-		removeProperty ( protocol()->propNickName );
 	}
 
 	/**

@@ -245,7 +245,7 @@ void dlgJabberVCard::slotSaveNickname ()
 	}
 	else
 	{
-		jc->rename ( m_mainWidget->leNick->text() );
+		jc->setProperty ( jc->protocol()->propNickName, m_mainWidget->leNick->text() );
 	}
 
 }
