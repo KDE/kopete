@@ -670,7 +670,7 @@ void DisplayNameComponent::layout( const QRect &rect )
 				if ( comp->rtti() == Rtti_TextComponent )
 				{
 					comp->show();
-					comp->layout( QRect( usedWidth+ rect.left(), 0,
+					comp->layout( QRect( usedWidth+ rect.left(), rect.top(),
 							     totalWidth - usedWidth,
 							     comp->heightForWidth( totalWidth - usedWidth ) ) );
 				} else {
@@ -680,7 +680,7 @@ void DisplayNameComponent::layout( const QRect &rect )
 			else 
 			{
 				comp->show();
-				comp->layout( QRect( usedWidth+ rect.left(), 0,
+				comp->layout( QRect( usedWidth+ rect.left(), rect.top(),
 						     comp->widthForHeight( rect.height() ),
 						     comp->heightForWidth( rect.width() ) ) );
 			}
