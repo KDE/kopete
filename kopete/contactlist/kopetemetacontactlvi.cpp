@@ -136,7 +136,7 @@ public:
 	            metaContactPhoto( 0L ), currentMode( -1 ) {}
 	ListView::ImageComponent *metaContactIcon;
 	ListView::DisplayNameComponent *nameText;
-	ListView::TextComponent *extraText;
+	ListView::DisplayNameComponent *extraText;
 	ListView::BoxComponent *contactIconBox;
 	ListView::ImageComponent *metaContactPhoto;
 	ListView::BoxComponent *spacerBox;
@@ -675,7 +675,7 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 		d->metaContactIcon = new ImageComponent( hbox );
 		Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
 		d->nameText = new DisplayNameComponent( vbox );
-		d->extraText = new TextComponent( vbox );
+		d->extraText = new DisplayNameComponent( vbox );
 
 		Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
 		d->contactIconBox = new BoxComponent( box, BoxComponent::Horizontal );
@@ -692,7 +692,7 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 		new VSpacerComponent( imageBox );
 		Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
 		d->nameText = new DisplayNameComponent( vbox );
-		d->extraText = new TextComponent( vbox );
+		d->extraText = new DisplayNameComponent( vbox );
 
 		Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
 		d->contactIconBox = new BoxComponent( box, BoxComponent::Horizontal );
